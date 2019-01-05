@@ -68,7 +68,6 @@ void CShareData_IO::SaveShareData()
 
 	@param[in] bRead true: 読み込み / false: 書き込み
 	@return 設定データの読み込み/保存が成功したかどうか
-	@note 読み込みの場合、言語設定切り替え後にMRUエントリが無い場合は新規インストール後とみなし false を返す事で初期設定を適用させる
 
 	@date 2004-01-11 D.S.Koba CProfile変更によるコード簡略化
 	@date 2005-04-05 D.S.Koba 各セクションの入出力を関数として分離
@@ -96,6 +95,15 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 	if( bRead ){
 		if( !cProfile.ReadProfile( szIniFileName ) ){
 			/* 設定ファイルが存在しない */
+			LANGID langId = GetUserDefaultUILanguage();
+			// Windowsの表示言語が日本語でない場合は言語設定を英語にする
+			if (langId != MAKELANGID( LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN )) {
+				DLLSHAREDATA* pShareData = &GetDllShareData();
+				_tcscpy(pShareData->m_Common.m_sWindow.m_szLanguageDll, L"sakura_lang_en_US.dll");
+				cProfile.IOProfileData( L"Common", L"szLanguageDll", MakeStringBufferT( pShareData->m_Common.m_sWindow.m_szLanguageDll ) );
+				CSelectLang::ChangeLang( pShareData->m_Common.m_sWindow.m_szLanguageDll );
+				pcShare->RefreshString();
+			}
 			return false;
 		}
 
@@ -126,14 +134,6 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 		cProfile.IOProfileData( L"Common", L"szLanguageDll", MakeStringBufferT( pShareData->m_Common.m_sWindow.m_szLanguageDll ) );
 		CSelectLang::ChangeLang( pShareData->m_Common.m_sWindow.m_szLanguageDll );
 		pcShare->RefreshString();
-
-		// 新規インストール後の設定ファイルは言語設定しか存在しない
-		// MRUのエントリが無い場合は新規と判断
-		int _MRU_Counts = 0;
-		if (!cProfile.IOProfileData( LTEXT("MRU"), LTEXT("_MRU_Counts"), _MRU_Counts )){
-			// 言語設定の切り替えだけして false を返す事で初期設定を適用させる
-			return false;
-		}
 	}
 
 	// Feb. 12, 2006 D.S.Koba
