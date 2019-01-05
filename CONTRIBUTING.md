@@ -8,7 +8,7 @@
 * 不具合を直したり、機能を追加するプログラムを書く
 
 # Pull Requestのガイドライン
-Wikiの方をごらんください。
+WikiのPull Requestガイドラインをごらんください。
 
 https://github.com/sakura-editor/sakura/wiki/11.SakuraEditor_PRGuide
 
@@ -17,6 +17,6 @@ https://github.com/sakura-editor/sakura/wiki/11.SakuraEditor_PRGuide
 
 みなさんからいただいたPull Requestやデータの著作権はそれぞれの作者の方が保有しますが、サクラエディタプロジェクトがzlib Licenseでそれを公開することに同意したものとして扱います。
 
-zlib以外のライセンス(GPLやApacheライセンスなど)が適用された著作物をPull Request等で提供する場合や、不安なことがありましたらissueや掲示板でご一報ください。
+zlib License以外のライセンス(GPLやApacheライセンスなど)が適用された著作物をPull Request等で提供する場合や、不安なことがありましたらGitHub Issuesや掲示板でご一報ください。
 
 [掲示板一覧](https://sakura-editor.github.io/#bbs) 
