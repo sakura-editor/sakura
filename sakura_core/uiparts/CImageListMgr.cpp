@@ -455,8 +455,8 @@ void CImageListMgr::MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
 				auto pxh = textColorH;
 				// 相対輝度を求める
 				auto l = GetRelativeLuminance( px );
-				// 相対輝度に係数をかけ、下駄をはかせる
-				std::get<HLS_L>( pxh ) = l * .5 / textColorL + .5;
+				// 相対輝度に係数をかけ、下駄をはかせる(係数の1.000001はゼロ除算対策)
+				std::get<HLS_L>( pxh ) *= l / (1.000001 - textColorL) / 2 + 1;
 				// マップに登録する
 				ditherMap[px] = FromHLS( pxh );
 			}
