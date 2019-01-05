@@ -242,21 +242,23 @@ _HlsTuple ToHLS( const COLORREF color )
 	auto B = (double) GetBValue( color ) / 255.;
 	auto MIN = std::min( { R, G, B } );
 	auto MAX = std::max( { R, G, B } );
+	auto M = MAX + MIN;
+	auto m = MAX - MIN;
 	double H;
 	if ( MIN == MAX ) {
 		H = std::numeric_limits<double>::infinity();
 	}
 	else if ( MIN == B ) {
-		H = 60. * (G - R) / (MAX - MIN) + 60.;
+		H = 60. * (m == 0 ? 0 : ((G - R) / m)) + 60.;
 	}
 	else if ( MIN == R ) {
-		H = 60. * (B - G) / (MAX - MIN) + 180.;
+		H = 60. * (m == 0 ? 0 : ((B - G) / m)) + 180.;
 	}
 	else if ( MIN == G ) {
-		H = 60. * (R - B) / (MAX - MIN) + 300.;
+		H = 60. * (m == 0 ? 0 : ((R - B) / m)) + 300.;
 	}
-	auto L = (MAX + MIN) / 2.;
-	auto S = (MAX - MIN) / (1 - std::abs( MAX + MIN - 1 ));
+	auto L = M / 2.;
+	auto S = M == 0 ? 0 : m / (1 - std::abs( M - 1 ));
 	return std::make_tuple( H, S, L );
 }
 
@@ -396,11 +398,10 @@ void CImageListMgr::MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
 		hdcSrc, nXSrc, nYSrc, cx(), cy(), SRCCOPY );
 
 	// ディザカラーを決める
-	COLORREF btnShadow = ::GetSysColor( COLOR_BTNSHADOW );
-	COLORREF btnFace = ::GetSysColor( COLOR_BTNFACE );
-	COLORREF textColor = btnShadow != btnFace
-		? ::GetSysColor( COLOR_3DSHADOW )
-		: ::GetSysColor( COLOR_BTNHILIGHT );
+	COLORREF btnShadow = ::GetSysColor( COLOR_3DSHADOW );
+	COLORREF btnFace = ::GetSysColor( COLOR_3DFACE );
+	COLORREF btnHighlight = ::GetSysColor( COLOR_BTNHILIGHT );
+	COLORREF textColor = btnShadow != btnFace ? btnShadow : btnHighlight;
 
 	// 相対輝度とHLS値を求める
 	auto textColorL = GetRelativeLuminance( textColor );
@@ -451,12 +452,14 @@ void CImageListMgr::MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
 
 			// マップに未登録の色ならマップに登録する
 			if ( ditherMap.find( px ) == ditherMap.end() ) {
+				// 相対輝度を求める
+				auto rl = GetRelativeLuminance( px );
 				// ディザカラーをベースにする
 				auto pxh = textColorH;
-				// 相対輝度を求める
-				auto l = GetRelativeLuminance( px );
-				// 相対輝度に係数をかけ、下駄をはかせる(係数の1.000001はゼロ除算対策)
-				std::get<HLS_L>( pxh ) *= (l - textColorL + 0.000001) / (1.000001 - textColorL) + 1;
+				// ディザカラーの輝度を取得する
+				auto pxL = std::get<HLS_L>( pxh );
+				// ピクセルの相対輝度[0,1]がHLS輝度[pxL,1]に対応するように変換する
+				std::get<HLS_L>( pxh ) = pxL + rl * (1 - pxL);
 				// マップに登録する
 				ditherMap[px] = FromHLS( pxh );
 			}
