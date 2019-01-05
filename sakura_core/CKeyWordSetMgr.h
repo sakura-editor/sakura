@@ -43,7 +43,6 @@
 #define		MAX_SETNUM		100	//2007.12.01 genta 最大値増加
 #define		MAX_SETNAMELEN	32
 
-
 //! キーワード総数 (2005.01.27 1セットあたりの数→セット全体の総数へ意味変更)
 #define		MAX_KEYWORDNUM	15000
 #define		MAX_KEYWORDLEN	63
@@ -89,7 +88,7 @@ public:
 	void SortKeyWord( int nIdx ); /* ｎ番目のセットのキーワードをソートする */  //MIK
 
 	// From Here 2004.07.29 Moca 追加 可変長記憶
-	int SetKeyWordArr( int, int, const wchar_t* );			//!< iniからキーワードを設定する
+	int SetKeyWordArr( int nIdx, int nSize, const wchar_t* pszKeyWordArr );			//!< iniからキーワードを設定する
 	int SetKeyWordArr(						//!< キーワードの配列から設定する
 		int				nIdx,				//!< [in] キーワードセット番号
 		int				nSize,				//!< [in] ppszKeyWordArrの要素数
@@ -164,11 +163,6 @@ protected:
 	void KeywordMaxLen(int nIdx);
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CKEYWORDSETMGR_H_ */
-
-
-
 

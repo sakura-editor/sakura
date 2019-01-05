@@ -29,13 +29,8 @@
 #include <Windows.h>
 #include <tchar.h>
 
-
-
-
-
 /* ウィンドウのID */
 #define IDW_STATUSBAR 123
-
 
 #define IDM_SELWINDOW		10000
 #define IDM_SELMRU			11000
@@ -50,14 +45,9 @@ enum enumShowDlg {
 	SHOW_TOGGLE			= 2,
 };
 
-
 /* 選択領域描画用パラメータ */
 extern const COLORREF	SELECTEDAREA_RGB;
 extern const int		SELECTEDAREA_ROP2;
-
-
-
-
 
 //@@@ From Here 2003.05.31 MIK
 /*! タブウインドウ用メッセージサブコマンド */
@@ -86,7 +76,6 @@ enum EBarChangeNotifyType {
 #define	CUSTMENU_INDEX_FOR_TABWND		24
 //右クリックメニューで使うカスタムメニューのインデックス	//@@@ 2003.06.13 MIK
 #define	CUSTMENU_INDEX_FOR_RBUTTONUP	0
-
 
 /*!< 色タイプ */
 //@@@ From Here 2006.12.18 ryoji
@@ -195,22 +184,14 @@ struct SSearchOption{
 	{
 		return !operator==(rhs);
 	}
-
 };
-
-
 
 //2007.10.02 kobake CEditWndのインスタンスへのポインタをここに保存しておく
 class CEditWnd;
 extern CEditWnd* g_pcEditWnd;
 
-
 HINSTANCE G_AppInstance();
-
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _GLOBAL_H_ */
-
-
-
 

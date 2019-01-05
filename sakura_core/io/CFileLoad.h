@@ -77,7 +77,7 @@ public:
 //	bool ReadIgnoreLine( void ); // 1行読み飛ばす
 
 	//! ファイルの日時を取得する
-	BOOL GetFileTime( FILETIME*, FILETIME*, FILETIME* ); // inline
+	BOOL GetFileTime( FILETIME* pftCreate, FILETIME* pftLastAccess, FILETIME* pftLastWrite ); // inline
 
 	//	Jun. 08, 2003 Moca
 	//! 開いたファイルにはBOMがあるか？
@@ -143,7 +143,6 @@ protected:
 	int		m_nReadOffset2;
 	EConvertResult m_nTempResult;
 
-private:
 	DISALLOW_COPY_AND_ASSIGN(CFileLoad);
 }; // class CFileLoad
 
@@ -172,7 +171,5 @@ inline DWORD CFileLoad::FilePointer( DWORD offset, DWORD origin )
 	return fp;
 }
 
-
 #endif /* SAKURA_CFILELOAD_H_ */
-
 

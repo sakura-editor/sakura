@@ -33,6 +33,8 @@ struct GrepInfo {
 	CNativeW		cmGrepRep;			//!< 置換キー
 	CNativeT		cmGrepFile;			//!< 検索対象ファイル
 	CNativeT		cmGrepFolder;		//!< 検索対象フォルダ
+	CNativeT		cmExcludeFile;		//!< 除外対象ファイル
+	CNativeT		cmExcludeFolder;	//!< 除外対象フォルダ
 	SSearchOption	sGrepSearchOption;	//!< 検索オプション
 	bool			bGrepCurFolder;		//!< カレントディレクトリを維持
 	bool			bGrepStdout;		//!< 標準出力モード
@@ -48,7 +50,6 @@ struct GrepInfo {
 	bool			bGrepPaste;			//!< クリップボードから貼り付け
 	bool			bGrepBackup;		//!< 置換でバックアップを保存
 };
-
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -122,6 +123,4 @@ private:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CCOMMANDLINE_H_ */
-
-
 

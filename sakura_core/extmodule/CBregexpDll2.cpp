@@ -45,7 +45,6 @@ LPCTSTR CBregexpDll2::GetDllNameImp( int index )
 	return _T("bregonig.dll");
 }
 
-
 /*!
 	DLLの初期化
 

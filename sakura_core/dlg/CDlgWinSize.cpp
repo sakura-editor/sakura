@@ -63,7 +63,6 @@ CDlgWinSize::~CDlgWinSize()
 	return;
 }
 
-
 // !モーダルダイアログの表示
 int CDlgWinSize::DoModal(
 	HINSTANCE		hInstance,
@@ -104,7 +103,6 @@ BOOL CDlgWinSize::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 }
-
 
 BOOL CDlgWinSize::OnBnClicked( int wID )
 {
@@ -172,7 +170,6 @@ void CDlgWinSize::SetData( void )
 	RenewItemState();
 }
 
-
 /*! ダイアログボックスのデータを読み出す
 */
 int CDlgWinSize::GetData( void )
@@ -216,7 +213,6 @@ int CDlgWinSize::GetData( void )
 	return TRUE;
 }
 
-
 /*! 利用可能・不可の状態を更新する
 */
 void CDlgWinSize::RenewItemState( void )
@@ -244,5 +240,4 @@ LPVOID CDlgWinSize::GetHelpIdTable( void )
 {
 	return (LPVOID)p_helpids;
 }
-
 

@@ -19,7 +19,6 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-
 #include "StdAfx.h"
 #include "CNormalProcess.h"
 #include "CCommandLine.h"
@@ -49,7 +48,6 @@ CNormalProcess::CNormalProcess( HINSTANCE hInstance, LPCTSTR lpCmdLine )
 CNormalProcess::~CNormalProcess()
 {
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     プロセスハンドラ                        //
@@ -133,7 +131,6 @@ bool CNormalProcess::InitializeProcess()
 		}
 	}
 
-
 	// プラグイン読み込み
 	MY_TRACETIME( cRunningTimer, "Before Init Jack" );
 	/* ジャック初期化 */
@@ -213,6 +210,8 @@ bool CNormalProcess::InitializeProcess()
 				&gi.cmGrepRep,
 				&gi.cmGrepFile,
 				&gi.cmGrepFolder,
+				&gi.cmExcludeFile,
+				&gi.cmExcludeFolder,
 				gi.bGrepCurFolder,
 				gi.bGrepSubFolder,
 				gi.bGrepStdout,
@@ -273,7 +272,6 @@ bool CNormalProcess::InitializeProcess()
 			_tcsncpy( pEditWnd->m_cDlgGrep.m_szFolder, cmemGrepFolder.GetStringPtr(), nSize );	/* 検索フォルダ */
 			pEditWnd->m_cDlgGrep.m_szFolder[nSize-1] = _T('\0');
 
-			
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
 			int nRet = pEditWnd->m_cDlgGrep.DoModal( GetProcessInstance(), pEditWnd->GetHwnd(),  NULL);
 			if( FALSE != nRet ){
@@ -484,8 +482,6 @@ void CNormalProcess::OnExitProcess()
 	CPluginManager::getInstance()->UnloadAllPlugin();		// Mpve here	2010/7/11 Uchi
 }
 
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         実装補助                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -522,7 +518,6 @@ HANDLE CNormalProcess::_GetInitializeMutex() const
 	}
 	return hMutex;
 }
-
 
 /*!
 	@brief 複数ファイル読み込み

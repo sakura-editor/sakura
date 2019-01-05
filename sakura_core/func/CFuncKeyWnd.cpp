@@ -47,11 +47,6 @@ LRESULT CALLBACK CFuncKeyWndProc(
 }
 ***/
 
-
-
-
-
-
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CFuncKeyWnd::CFuncKeyWnd()
 : CWnd(_T("::CFuncKeyWnd"))
@@ -98,18 +93,12 @@ CFuncKeyWnd::CFuncKeyWnd()
 	return;
 }
 
-
-
-
 CFuncKeyWnd::~CFuncKeyWnd()
 {
 	/* 表示用フォント */
 	::DeleteObject( m_hFont );
 	return;
 }
-
-
-
 
 /* ウィンドウ オープン */
 HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDoc, bool bSizeBox )
@@ -152,7 +141,6 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 		NULL // handle to menu, or child-window identifier
 	);
 
-
 	m_hwndSizeBox = NULL;
 	if( m_bSizeBox ){
 		m_hwndSizeBox = ::CreateWindowEx(
@@ -180,18 +168,11 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 	return GetHwnd();
 }
 
-
-
-
 /* ウィンドウ クローズ */
 void CFuncKeyWnd::Close( void )
 {
 	this->DestroyWindow();
 }
-
-
-
-
 
 ///* WM_SIZE処理 */
 //void CFuncKeyWnd::OnSize(
@@ -233,7 +214,6 @@ LRESULT CFuncKeyWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 	return 0L;
 }
 
-
 #if 0//////////////////////////////////////////////////////////////
 LRESULT CFuncKeyWnd::DispatchEvent(
 	HWND	hwnd,	// handle of window
@@ -263,8 +243,6 @@ LRESULT CFuncKeyWnd::DispatchEvent(
 }
 #endif//////////////////////////////////////////////////////////////
 
-
-
 LRESULT CFuncKeyWnd::OnCommand( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
 	int		i;
@@ -287,7 +265,6 @@ LRESULT CFuncKeyWnd::OnCommand( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 	return 0L;
 }
 
-
 // WM_TIMERタイマーの処理
 LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
@@ -295,7 +272,6 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 //	UINT uMsg,	// WM_TIMER message
 //	UINT idEvent,	// timer identifier
 //	DWORD dwTime 	// current system time
-
 
 	//	return;
 	if( NULL == GetHwnd() ){
@@ -359,7 +335,6 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	return 0;
 }
 
-
 // WM_DESTROY処理
 LRESULT CFuncKeyWnd::OnDestroy( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
@@ -387,8 +362,6 @@ LRESULT CFuncKeyWnd::OnDestroy( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	return 0L;
 }
 
-
-
 /*! ボタンのサイズを計算 */
 int CFuncKeyWnd::CalcButtonSize( void )
 {
@@ -413,10 +386,7 @@ int CFuncKeyWnd::CalcButtonSize( void )
 //		return ( rc.right - rc.left - nCxVScroll = - nButtonNum -  ( (nButtonNum + m_nButtonGroupNum - 1) / m_nButtonGroupNum - 1 ) * 12 ) / nButtonNum;
 	}
 	return ( rc.right - rc.left - nCxVScroll - nButtonNum -  ( (nButtonNum + m_nButtonGroupNum - 1) / m_nButtonGroupNum - 1 ) * 12 ) / nButtonNum;
-
 }
-
-
 
 /*! ボタンの生成
 	@date 2007.02.05 ryoji ボタンの水平位置・幅の設定処理を削除（OnSizeで再配置されるので不要）
@@ -457,13 +427,9 @@ void CFuncKeyWnd::CreateButtons( void )
 	return;
 }
 
-
-
-
 /*! サイズボックスの表示／非表示切り替え */
 void CFuncKeyWnd::SizeBox_ONOFF( bool bSizeBox )
 {
-
 	RECT		rc;
 	::GetWindowRect( GetHwnd(), &rc );
 	if( m_bSizeBox == bSizeBox ){
@@ -496,8 +462,6 @@ void CFuncKeyWnd::SizeBox_ONOFF( bool bSizeBox )
 	return;
 }
 
-
-
 // タイマーの更新を開始／停止する。 20060126 aroka
 // ファンクションキー表示はタイマーにより更新しているが、
 // アプリのフォーカスが外れたときに親ウィンドウからON/OFFを
@@ -518,6 +482,4 @@ void CFuncKeyWnd::Timer_ONOFF( bool bStart )
 	}
 	return;
 }
-
-
 

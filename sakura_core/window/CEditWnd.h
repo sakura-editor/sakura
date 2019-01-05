@@ -72,7 +72,6 @@ class CPlug;
 class CEditDoc;
 struct DLLSHAREDATA;
 
-
 //メインウィンドウ内コントロールID
 #define IDT_EDIT		455  // 20060128 aroka
 #define IDT_TOOLBAR		456
@@ -161,14 +160,12 @@ public:
 	LRESULT OnNcLButtonUp(WPARAM wp, LPARAM lp);
 	LRESULT OnLButtonDblClk(WPARAM wp, LPARAM lp);
 
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           通知                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 	//ファイル名変更通知
 	void ChangeFileNameNotify( const TCHAR* pszTabCaption, const TCHAR* pszFilePath, bool bIsGrep );	//@@@ 2003.05.31 MIK, 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         メニュー                            //
@@ -196,7 +193,6 @@ public:
 	void LayoutMiniMap();				// ミニマップの配置処理
 	void EndLayoutBars( BOOL bAdjust = TRUE );	/* バーの配置終了処理 */	// 2006.12.19 ryoji
 
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           設定                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -209,7 +205,6 @@ public:
 	void SetPageScrollByWheel( BOOL bState ) { m_bPageScrollByWheel = bState; }		// ホイール操作によるページスクロール有無を設定する（TRUE=あり, FALSE=なし）	// 2009.01.17 nasukoji
 	void SetHScrollByWheel( BOOL bState ) { m_bHorizontalScrollByWheel = bState; }	// ホイール操作による横スクロール有無を設定する（TRUE=あり, FALSE=なし）	// 2009.01.17 nasukoji
 	void ClearMouseState( void );		// 2009.01.17 nasukoji	マウスの状態をクリアする（ホイールスクロール有無状態をクリア）
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           情報                              //
@@ -235,7 +230,6 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	void PrintMenubarMessage( const TCHAR* msg );
 	void SendStatusMessage( const TCHAR* msg );		//	Dec. 4, 2002 genta 実体をCEditViewから移動
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      ウィンドウ操作                         //
@@ -265,7 +259,6 @@ public:
 	void RestorePhysPosOfAllView( CLogicPointEx* pptPosArray );
 	// 互換BMPによる画面バッファ 2007.09.09 Moca
 	void Views_DeleteCompatibleBitmap(); //!< CEditViewの画面バッファを削除
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       各種アクセサ                          //
@@ -425,9 +418,7 @@ private:
 
 public:
 	ESelectCountMode	m_nSelectCountMode; // 選択文字カウント方法
-
 };
-
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* SAKURA_CEDITWND_E9E9A41A_05E0_48D5_8F66_9C734A98FB30_H_ */

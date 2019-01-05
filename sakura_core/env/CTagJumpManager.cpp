@@ -31,7 +31,6 @@
 
 #include "CTagJumpManager.h"
 
-
 /*!
 	@brief タグジャンプ情報の保存
 
@@ -56,7 +55,6 @@ void CTagJumpManager::PushTagJump(const TagJump *pTagJump)
 	m_pShareData->m_sTagJump.m_TagJump[i] = *pTagJump;
 	m_pShareData->m_sTagJump.m_TagJumpTop = i;
 }
-
 
 /*!
 	@brief タグジャンプ情報の参照

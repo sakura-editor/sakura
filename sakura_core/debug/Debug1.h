@@ -65,9 +65,6 @@ void DebugOutA( LPCSTR lpFmt, ...);
 	#define RELPRINT   Do_not_define_USE_RELPRINT
 #endif	// USE_RELPRINT
 
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* SAKURA_DEBUG1_587B8A50_4B0A_4E5E_A638_40FB1EC301CA_H_ */
-
-
 

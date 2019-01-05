@@ -184,6 +184,9 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	);
 	cmemMsg.AppendString( _T(" ") _T(VER_PLATFORM) );
 	cmemMsg.AppendString( _T(SPACE_WHEN_DEBUG) _T(VER_CONFIG) );
+#ifdef APPVEYOR_DEV_VERSION
+	cmemMsg.AppendString( _T(APPVEYOR_DEV_VERSION_STR_WITH_SPACE) );
+#endif
 #ifdef ALPHA_VERSION
 	cmemMsg.AppendString( _T(" ") _T(ALPHA_VERSION_STR));
 #endif
@@ -288,7 +291,6 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	*/
 	return FALSE;
 }
-
 
 BOOL CDlgAbout::OnBnClicked( int wID )
 {
@@ -507,7 +509,6 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 	return CallWindowProc( pUrlWnd->m_pOldProc, hWnd, msg, wParam, lParam );
 }
 //@@@ 2002.01.18 add end
-
 
 //WM_SETTEXTハンドラ
 //https://docs.microsoft.com/en-us/windows/desktop/winmsg/wm-settext

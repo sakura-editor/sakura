@@ -39,7 +39,7 @@ LIBS= \
  -lshell32 -lole32 -loleaut32 \
  -luuid -lcomctl32 -limm32 \
  -lmpr -limagehlp \
- -static-libgcc -static-libstdc++ -mwindows -s
+ -static-libgcc -static-libstdc++ -mwindows -municode -s
 
 exe= sakura_lang_en_US.dll
 

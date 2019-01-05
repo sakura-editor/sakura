@@ -47,7 +47,6 @@ public:
 
 	//実装
 	virtual bool DoDecode( const CNativeW& pcData, CMemory* pDest )=0;
-
 };
 
 #endif /* SAKURA_CDECODE_D68AE385_FC75_40FC_8BB4_F838CA7A8BB0_H_ */

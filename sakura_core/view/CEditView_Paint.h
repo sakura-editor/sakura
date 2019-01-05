@@ -27,7 +27,6 @@
 
 class CEditView;
 
-
 //! クリッピング領域を計算する際のフラグ
 enum EPaintArea{
 	PAINT_LINENUMBER = (1<<0), //!< 行番号

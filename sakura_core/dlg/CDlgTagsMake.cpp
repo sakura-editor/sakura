@@ -103,7 +103,6 @@ BOOL CDlgTagsMake::OnBnClicked( int wID )
 	case IDCANCEL:
 		::EndDialog( GetHwnd(), FALSE );
 		return TRUE;
-
 	}
 
 	/* 基底クラスメンバ */
@@ -183,5 +182,4 @@ LPVOID CDlgTagsMake::GetHelpIdTable( void )
 {
 	return (LPVOID)p_helpids;
 }
-
 

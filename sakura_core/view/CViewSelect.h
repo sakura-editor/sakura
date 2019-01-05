@@ -152,13 +152,11 @@ public:
 		return m_bBeginBoxSelect;
 	}
 
-
 private:
 	//参照
 	CEditView*	m_pcEditView;
 
 public:
-
 
 	bool	m_bDrawSelectArea;		// 選択範囲を描画したか	// 02/12/13 ai
 

@@ -32,7 +32,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, const TCHAR*, LPARAM );	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE hInstance, HWND hwndParent, const TCHAR* pszCurrentFilePath, LPARAM lParam );	/* モーダルダイアログの表示 */
 
 	bool		m_bPaste;
 	bool		m_bBackup;
@@ -55,10 +55,6 @@ protected:
 	int GetData( void );	/* ダイアログデータの取得 */
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* SAKURA_CDLGGREP_REPLACE_H_ */
-
-
 

@@ -93,7 +93,6 @@ public:
 	void _SetPrevLine(CDocLine* pcDocLine){ m_pPrev = pcDocLine; }
 	void _SetNextLine(CDocLine* pcDocLine){ m_pNext = pcDocLine; }
 	
-
 private: //####
 	CDocLine*	m_pPrev;	//!< 一つ前の要素
 	CDocLine*	m_pNext;	//!< 一つ後の要素
@@ -110,13 +109,9 @@ public:
 	};
 	MarkType m_sMark;
 
-private:
 	DISALLOW_COPY_AND_ASSIGN(CDocLine);
 };
 
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CDOCLINE_H_ */
-
-
 

@@ -48,7 +48,6 @@ typedef int (__cdecl *MIGEMO_PROC_INT2CHAR)(unsigned int, unsigned char*);
  */
 typedef struct _migemo migemo;
 
-
 #include "CDllHandler.h"
 #include "util/design_template.h"
 
@@ -139,11 +138,7 @@ public:
 #endif
 	int migemo_is_enable();
 	int migemo_load_all();
-
 };
 
-
 #endif
-
-
 

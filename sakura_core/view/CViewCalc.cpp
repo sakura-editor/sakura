@@ -41,7 +41,6 @@ CLogicInt CViewCalc::LineColumnToIndex( const CDocLine* pcDocLine, CLayoutInt nC
 	return i2;
 }
 
-
 /* 指定された桁に対応する行のデータ内の位置を調べる Ver1
 	
 	@@@ 2002.09.28 YAZAKI CLayoutが必要になりました。
@@ -60,8 +59,6 @@ CLogicInt CViewCalc::LineColumnToIndex( const CLayout* pcLayout, CLayoutInt nCol
 	i2 += it.getIndex();
 	return i2;
 }
-
-
 
 /* 指定された桁に対応する行のデータ内の位置を調べる Ver0 */
 /* 指定された桁より、行が短い場合はpnLineAllColLenに行全体の表示桁数を返す */
@@ -91,10 +88,6 @@ CLogicInt CViewCalc::LineColumnToIndex2( const CLayout* pcLayout, CLayoutInt nCo
 	return i2;
 }
 
-
-
-
-
 /*
 ||	指定された行のデータ内の位置に対応する桁の位置を調べる
 ||
@@ -116,7 +109,6 @@ CLayoutInt CViewCalc::LineIndexToColumn( const CLayout* pcLayout, CLogicInt nInd
 	return nPosX2;
 }
 
-
 /*
 ||	指定された行のデータ内の位置に対応する桁の位置を調べる
 ||
@@ -136,6 +128,4 @@ CLayoutInt CViewCalc::LineIndexToColumn( const CDocLine* pcDocLine, CLogicInt nI
 	nPosX2 += it.getColumn();
 	return nPosX2;
 }
-
-
 

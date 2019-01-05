@@ -29,8 +29,6 @@
 #include "io/CTextStream.h"
 #include "extmodule/CBregexp.h"
 
-
-
 /*! ルールファイルの1行を管理する構造体
 
 	@date 2002.04.01 YAZAKI
@@ -45,8 +43,6 @@ struct SOneRule {
 	int		nRegexOption;
 	int		nRegexMode; // 0 ==「Mode=Regex」, 1 == 「Mode=RegexReplace」
 };
-
-
 
 /*! ルールファイルを読み込み、ルール構造体の配列を作成する
 
@@ -424,8 +420,6 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstri
 	delete [] pRegex;
 	return;
 }
-
-
 
 /*! ブックマークリスト作成（無理矢理！）
 

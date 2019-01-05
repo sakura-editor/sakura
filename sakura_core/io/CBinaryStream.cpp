@@ -2,7 +2,6 @@
 #include "StdAfx.h"
 #include "CBinaryStream.h"
 
-
 CBinaryInputStream::CBinaryInputStream(LPCTSTR tszFilePath)
 : CStream(tszFilePath,_T("rb"))
 {
@@ -24,11 +23,8 @@ int CBinaryInputStream::Read(void* pBuffer, int nSizeInBytes)
 	return fread(pBuffer,1,nSizeInBytes,GetFp());
 }
 
-
-
 CBinaryOutputStream::CBinaryOutputStream(LPCTSTR tszFilePath, bool bExceptionMode)
 : COutputStream(tszFilePath,_T("wb"),bExceptionMode)
 {
 }
-
 

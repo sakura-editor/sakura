@@ -36,7 +36,6 @@
 //コンストラクタ
 CPluginManager::CPluginManager()
 {
-
 	//pluginsフォルダの場所を取得
 	TCHAR szPluginPath[_MAX_PATH];
 	GetInidir( szPluginPath, _T("plugins\\") );	//iniと同じ階層のpluginsフォルダを検索
@@ -79,7 +78,6 @@ bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 	HANDLE hFind;
 	CZipFile	cZipFile;
 
-
 	//プラグインフォルダの配下を検索
 	WIN32_FIND_DATA wf;
 	hFind = FindFirstFile( (m_sBaseDir + _T("*")).c_str(), &wf );
@@ -114,7 +112,6 @@ bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 
 	return true;
 }
-
 
 //新規プラグインを追加する(下請け)
 bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, const tstring& sSearchDir, bool& bCancel )
@@ -176,7 +173,6 @@ bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, 
 	return bFindNewDir;
 }
 
-
 //新規プラグインを追加する(下請け)Zip File
 bool CPluginManager::SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, const tstring& sSearchDir, bool& bCancel )
 {
@@ -211,7 +207,6 @@ bool CPluginManager::SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, 
 	FindClose( hFind );
 	return bNewPlugin;
 }
-
 
 //Zipプラグインを導入する
 bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, const tstring& sZipFile, bool bInSearch )

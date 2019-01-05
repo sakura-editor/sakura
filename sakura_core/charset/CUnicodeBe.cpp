@@ -7,7 +7,6 @@
 
 #include "codechecker.h"
 
-
 void CUnicodeBe::GetBom(CMemory* pcmemBom)
 {
 	static const BYTE UTF16BE_BOM[]={0xFE,0xFF};

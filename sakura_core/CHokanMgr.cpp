@@ -28,7 +28,6 @@
 
 WNDPROC			gm_wpHokanListProc;
 
-
 LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	// Modified by KEITA for WIN64 2003.9.6
@@ -55,8 +54,6 @@ LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 	}
 	return CallWindowProc( gm_wpHokanListProc, hwnd, uMsg, wParam, lParam);
 }
-
-
 
 CHokanMgr::CHokanMgr()
 {
@@ -93,14 +90,12 @@ void CHokanMgr::ChangeView( LPARAM pcEditView )
 
 void CHokanMgr::Hide( void )
 {
-
 	::ShowWindow( GetHwnd(), SW_HIDE );
 	m_nCurKouhoIdx = -1;
 	/* 入力フォーカスを受け取ったときの処理 */
 	CEditView* pcEditView = reinterpret_cast<CEditView*>(m_lParam);
 	pcEditView->OnSetFocus();
 	return;
-
 }
 
 /*!	初期化
@@ -206,8 +201,6 @@ int CHokanMgr::Search(
 		}
 	}
 
-
-
 //	m_hFont = hFont;
 	m_poWin.x = ppoWin->x;
 	m_poWin.y = ppoWin->y;
@@ -216,19 +209,10 @@ int CHokanMgr::Search(
 //	m_cmemCurWord.SetData( pszCurWord, lstrlen( pszCurWord ) );
 	m_cmemCurWord.SetString( pszCurWord );
 
-
 	m_nCurKouhoIdx = 0;
 //	SetCurKouhoStr();
 
-
-
 //	::ShowWindow( GetHwnd(), SW_SHOWNA );
-
-
-
-
-
-
 
 	HWND hwndList;
 	hwndList = GetItemHwnd( IDC_LIST_WORDS );
@@ -241,9 +225,7 @@ int CHokanMgr::Search(
 	}
 	List_SetCurSel( hwndList, 0 );
 
-
 //@@	::EnableWindow( ::GetParent( ::GetParent( m_hwndParent ) ), FALSE );
-
 
 	int nX;
 	int nY;
@@ -317,7 +299,6 @@ int CHokanMgr::Search(
 	::MoveWindow( GetHwnd(), nX, nY, nCX, nCY, TRUE );
 	::ShowWindow( GetHwnd(), SW_SHOWNA );
 
-
 //	2001/06/18 asa-o:
 	ShowTip();	// 補完ウィンドウで選択中の単語にキーワードヘルプを表示
 
@@ -358,7 +339,6 @@ void CHokanMgr::HokanSearchByKeyword(
 		}
 	}
 }
-
 
 /*!
 	標準以外のメッセージを捕捉する
@@ -474,7 +454,6 @@ BOOL CHokanMgr::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	/* 基底クラスメンバ */
 //-	CreateSizeBox();
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
-
 }
 
 BOOL CHokanMgr::OnDestroy( void )
@@ -482,10 +461,7 @@ BOOL CHokanMgr::OnDestroy( void )
 	/* 基底クラスメンバ */
 	CreateSizeBox();
 	return CDialog::OnDestroy();
-
-
 }
-
 
 BOOL CHokanMgr::OnSize( WPARAM wParam, LPARAM lParam )
 {
@@ -503,7 +479,6 @@ BOOL CHokanMgr::OnSize( WPARAM wParam, LPARAM lParam )
 	HWND	hwndCtrl;
 	POINT	po;
 	RECT	rcDlg;
-
 
 	::GetClientRect( GetHwnd(), &rcDlg );
 	nWidth = rcDlg.right - rcDlg.left;  // width of client area
@@ -545,9 +520,7 @@ BOOL CHokanMgr::OnSize( WPARAM wParam, LPARAM lParam )
 	ShowTip();	// 補完ウィンドウで選択中の単語にキーワードヘルプを表示
 
 	return TRUE;
-
 }
-
 
 BOOL CHokanMgr::OnLbnSelChange( HWND hwndCtl, int wID )
 {
@@ -555,8 +528,6 @@ BOOL CHokanMgr::OnLbnSelChange( HWND hwndCtl, int wID )
 	ShowTip();	// 補完ウィンドウで選択中の単語にキーワードヘルプを表示
 	return TRUE;
 }
-
-
 
 /* 補完実行 */
 BOOL CHokanMgr::DoHokan( int nVKey )
@@ -731,5 +702,4 @@ LPVOID CHokanMgr::GetHelpIdTable(void)
 	return (LPVOID)p_helpids;
 }
 //@@@ 2002.01.18 add end
-
 

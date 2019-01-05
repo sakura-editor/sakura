@@ -37,7 +37,7 @@ public:
 
 public:
 	// インターフェース
-	int DoModal( HINSTANCE, HWND, SResult* );	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE hInstance, HWND hwndParent, SResult* psResult );	/* モーダルダイアログの表示 */
 
 protected:
 	// 実装ヘルパ関数
@@ -68,10 +68,6 @@ private:
 	bool m_bEnableTempChange;				//一時適用の有効化
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CDLGTYPELIST_H_ */
-
-
 

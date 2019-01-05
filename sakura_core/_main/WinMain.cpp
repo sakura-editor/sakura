@@ -21,11 +21,44 @@
 
 #include "StdAfx.h"
 #include <Ole2.h>
+#include <locale.h>
 #include "CProcessFactory.h"
 #include "CProcess.h"
 #include "util/os.h"
 #include "util/module.h"
 #include "debug/CRunningTimer.h"
+#include "version.h"
+
+// アプリ名。2007.09.21 kobake 整理
+#ifdef _UNICODE
+#define _APP_NAME_(TYPE) TYPE("sakura")
+#else
+#define _APP_NAME_(TYPE) TYPE("sakura")
+#endif
+
+#ifdef _DEBUG
+#define _APP_NAME_2_(TYPE) TYPE("(デバッグ版)")
+#else
+#define _APP_NAME_2_(TYPE) TYPE("")
+#endif
+
+#ifdef ALPHA_VERSION
+#define _APP_NAME_3_(TYPE) TYPE("(Alpha Version)")
+#else
+#define _APP_NAME_3_(TYPE) TYPE("")
+#endif
+
+#ifdef APPVEYOR_DEV_VERSION
+#define _APP_NAME_DEV_(TYPE) TYPE("(dev Version)")
+#else
+#define _APP_NAME_DEV_(TYPE) TYPE("")
+#endif
+
+#define _GSTR_APPNAME_(TYPE)  _APP_NAME_(TYPE) _APP_NAME_2_(TYPE) _APP_NAME_DEV_(TYPE) _APP_NAME_3_(TYPE)
+
+const TCHAR g_szGStrAppName[]  = (_GSTR_APPNAME_(_T)   ); // この変数を直接参照せずに GSTR_APPNAME を使うこと
+const CHAR  g_szGStrAppNameA[] = (_GSTR_APPNAME_(ATEXT)); // この変数を直接参照せずに GSTR_APPNAME_A を使うこと
+const WCHAR g_szGStrAppNameW[] = (_GSTR_APPNAME_(LTEXT)); // この変数を直接参照せずに GSTR_APPNAME_W を使うこと
 
 /*!
 	Windows Entry point
@@ -37,21 +70,12 @@
 	コントロールプロセスはCControlProcessクラスのインスタンスを作り、
 	エディタプロセスはCNormalProcessクラスのインスタンスを作る。
 */
-#ifdef __MINGW32__
-int WINAPI WinMain(
-	HINSTANCE	hInstance,		//!< handle to current instance
-	HINSTANCE	hPrevInstance,	//!< handle to previous instance
-	LPSTR		lpCmdLineA,		//!< pointer to command line
-	int			nCmdShow		//!< show state of window
-)
-#else
 int WINAPI _tWinMain(
 	HINSTANCE	hInstance,		//!< handle to current instance
 	HINSTANCE	hPrevInstance,	//!< handle to previous instance
 	LPTSTR		lpCmdLine,		//!< pointer to command line
 	int			nCmdShow		//!< show state of window
 )
-#endif
 {
 #ifdef USE_LEAK_CHECK_WITH_CRTDBG
 	// 2009.9.10 syat メモリリークチェックを追加
@@ -76,32 +100,7 @@ int WINAPI _tWinMain(
 	CProcessFactory aFactory;
 	CProcess *process = 0;
 	try{
-#ifdef __MINGW32__
-		LPTSTR pszCommandLine;
-		pszCommandLine = ::GetCommandLine();
-		// 実行ファイル名をスキップする
-		if( _T('\"') == *pszCommandLine ){
-			pszCommandLine++;
-			while( _T('\"') != *pszCommandLine && _T('\0') != *pszCommandLine ){
-				pszCommandLine++;
-			}
-			if( _T('\"') == *pszCommandLine ){
-				pszCommandLine++;
-			}
-		}else{
-			while( _T(' ') != *pszCommandLine && _T('\t') != *pszCommandLine
-				&& _T('\0') != *pszCommandLine ){
-				pszCommandLine++;
-			}
-		}
-		// 次のトークンまで進める
-		while( _T(' ') == *pszCommandLine || _T('\t') == *pszCommandLine ){
-			pszCommandLine++;
-		}
-		process = aFactory.Create( hInstance, pszCommandLine );
-#else
 		process = aFactory.Create( hInstance, lpCmdLine );
-#endif
 		MY_TRACETIME( cRunningTimer, "ProcessObject Created" );
 	}
 	catch(...){
@@ -114,5 +113,4 @@ int WINAPI _tWinMain(
 	::OleUninitialize();	// 2009.01.07 ryoji 追加
 	return 0;
 }
-
 

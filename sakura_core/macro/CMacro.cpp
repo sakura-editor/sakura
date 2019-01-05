@@ -1445,7 +1445,6 @@ bool CMacro::HandleCommand(
 	return true;
 }
 
-
 inline bool VariantToBStr(Variant& varCopy, const VARIANT& arg)
 {
 	return VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(arg) ), 0, VT_BSTR) == S_OK;
@@ -2457,5 +2456,4 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		return false;
 	}
 }
-
 

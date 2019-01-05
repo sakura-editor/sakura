@@ -25,7 +25,6 @@
 #ifndef SAKURA_STDAPI_85471C2C_6AEE_410D_BD09_A59056A5BA68_H_
 #define SAKURA_STDAPI_85471C2C_6AEE_410D_BD09_A59056A5BA68_H_
 
-
 //ランタイム情報ライブラリにアクセスするWindowsヘッダを参照する
 //c++規格への準拠が厳しくなったため、WindowsSDKが無名enumをtypedefするコードが怒られる。
 #if defined(_MSC_VER) && _MSC_VER >= 1900
@@ -37,7 +36,6 @@
 #else
 	#include <ImageHlp.h> //MakeSureDirectoryPathExists
 #endif
-
 
 //デバッグ用。
 //VistaだとExtTextOutの結果が即反映されない。この関数を用いると即反映されるので、
@@ -60,7 +58,6 @@ namespace ApiWrap
 #else
 	#define MakeSureDirectoryPathExistsT MakeSureDirectoryPathExists
 #endif
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//              W系描画API (ANSI版でも利用可能)                //
@@ -142,8 +139,6 @@ namespace ApiWrap
 	);
 #endif
 
-
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//             その他W系API (ANSI版でも利用可能)               //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -166,7 +161,6 @@ namespace ApiWrap
 		int			nBufferCount	//!< バッファのサイズ。文字単位。
 	);
 #endif
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                    描画API 不具合ラップ                     //
@@ -206,7 +200,6 @@ namespace ApiWrap
 		return (::GetKeyState(VK_MENU)&0x8000)!=0;
 	}
 
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//             SendMessage,PostMessage意味付け                 //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -224,10 +217,8 @@ namespace ApiWrap
 
 	//WM_COMMAND系の PostMessage は PostMessageCmd に差し替えておく。
 	#define PostMessageCmd PostMessage
-
 }
 using namespace ApiWrap;
-
 
 #endif /* SAKURA_STDAPI_85471C2C_6AEE_410D_BD09_A59056A5BA68_H_ */
 /*[EOF]*/

@@ -17,7 +17,6 @@ bool CFigure_HanSpace::Match(const wchar_t* pText, int nTextLen) const
 	return false;
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         描画実装                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

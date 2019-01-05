@@ -39,8 +39,6 @@ void CType_Awk::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_nKeyWordSetIdx[0] = 6;						/* キーワードセット */
 }
 
-
-
 const wchar_t* g_ppszKeywordsAWK[] = {
 	L"BEGIN",
 	L"END",

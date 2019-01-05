@@ -78,9 +78,6 @@ public:
 	static bool WriteProfSettings(SProfileSettings& settings);
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* SAKURA_CDLGPROFILEMGR_H_ */
-
 

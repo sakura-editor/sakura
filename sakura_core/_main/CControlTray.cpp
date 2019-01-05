@@ -80,6 +80,12 @@ void CControlTray::DoGrep()
 	if( 0 < m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
 		_tcscpy( m_cDlgGrep.m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダ */
 	}
+	if (0 < m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
+		_tcscpy(m_cDlgGrep.m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);	/* 除外ファイル */
+	}
+	if (0 < m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
+		_tcscpy(m_cDlgGrep.m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);	/* 除外フォルダ */
+	}
 
 	/* Grepダイアログの表示 */
 	int nRet = m_cDlgGrep.DoModal( m_hInstance, NULL, _T("") );
@@ -92,19 +98,26 @@ void CControlTray::DoGrep()
 
 void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep& cDlgGrep)
 {
-
 	/*======= Grepの実行 =============*/
 	/* Grep結果ウィンドウの表示 */
 
 	CNativeW		cmWork1;
 	CNativeT		cmWork2;
 	CNativeT		cmWork3;
+	CNativeT		cmWorkExcludeFile;
+	CNativeT		cmWorkExcludeFolder;
 	cmWork1.SetString( cDlgGrep.m_strText.c_str() );
 	cmWork2.SetString( cDlgGrep.m_szFile );
 	cmWork3.SetString( cDlgGrep.m_szFolder );
+
+	cmWorkExcludeFile.SetString(cDlgGrep.m_szExcludeFile);
+	cmWorkExcludeFolder.SetString(cDlgGrep.m_szExcludeFolder);
+
 	cmWork1.Replace( L"\"", L"\"\"" );
 	cmWork2.Replace( _T("\""), _T("\"\"") );
 	cmWork3.Replace( _T("\""), _T("\"\"") );
+	cmWorkExcludeFile.Replace(  _T("\""), _T("\"\""));
+	cmWorkExcludeFolder.Replace(_T("\""), _T("\"\""));
 
 	// -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
 	CNativeT cCmdLine;
@@ -147,7 +160,6 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 		false, NULL, GetDllShareData().m_Common.m_sTabBar.m_bNewWindow? true : false );
 }
 
-
 /* ウィンドウプロシージャじゃ */
 static LRESULT CALLBACK CControlTrayWndProc(
 	HWND	hwnd,	// handle of window
@@ -175,9 +187,6 @@ static LRESULT CALLBACK CControlTrayWndProc(
 	}
 }
 
-
-
-
 /////////////////////////////////////////////////////////////////////////////
 // CControlTray
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
@@ -201,7 +210,6 @@ CControlTray::CControlTray()
 	return;
 }
 
-
 CControlTray::~CControlTray()
 {
 	delete m_pcPropertyManager;
@@ -210,9 +218,6 @@ CControlTray::~CControlTray()
 
 /////////////////////////////////////////////////////////////////////////////
 // CControlTray メンバ関数
-
-
-
 
 /* 作成 */
 HWND CControlTray::Create( HINSTANCE hInstance )
@@ -322,9 +327,6 @@ bool CControlTray::CreateTrayIcon( HWND hWnd )
 	return true;
 }
 
-
-
-
 /* メッセージループ */
 void CControlTray::MessageLoop( void )
 {
@@ -341,11 +343,7 @@ void CControlTray::MessageLoop( void )
 		::DispatchMessage( &msg );
 	}
 	return;
-
 }
-
-
-
 
 /* タスクトレイのアイコンに関する処理 */
 BOOL CControlTray::TrayMessage( HWND hDlg, DWORD dwMessage, UINT uID, HICON hIcon, const TCHAR* pszTip )
@@ -369,10 +367,6 @@ BOOL CControlTray::TrayMessage( HWND hDlg, DWORD dwMessage, UINT uID, HICON hIco
 	}
 	return res;
 }
-
-
-
-
 
 /* メッセージ処理 */
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
@@ -428,7 +422,6 @@ LRESULT CControlTray::DispatchEvent(
 	case WM_EXITMENULOOP:
 		m_cMenuDrawer.EndDrawMenu();
 		break;
-
 
 	/* タスクトレイ左クリックメニューへのショートカットキー登録 */
 	case WM_HOTKEY:
@@ -525,7 +518,6 @@ LRESULT CControlTray::DispatchEvent(
 			);
 		}
 		return (LRESULT)hwndHtmlHelp;
-
 
 	/* 編集ウィンドウオブジェクトからのオブジェクト削除要求 */
 	case MYWM_DELETE_ME:
@@ -951,7 +943,6 @@ LRESULT CControlTray::DispatchEvent(
 								NULL,
 								m_pShareData->m_Common.m_sTabBar.m_bNewWindow? true : false
 							);
-
 						}
 						//	To Here Oct. 27, 2000 genta
 					}
@@ -1059,9 +1050,6 @@ LRESULT CControlTray::DispatchEvent(
 	}
 	return DefWindowProc( hwnd, uMsg, wParam, lParam );
 }
-
-
-
 
 /* WM_COMMANDメッセージ処理 */
 void CControlTray::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
@@ -1321,7 +1309,6 @@ bool CControlTray::OpenNewEditor(
 	return bRet;
 }
 
-
 /*!	新規編集ウィンドウの追加 ver 2:
 
 	@date Oct. 24, 2000 genta create.
@@ -1362,8 +1349,6 @@ bool CControlTray::OpenNewEditor2(
 	return OpenNewEditor( hInstance, hWndParent, sLoadInfo, cCmdLine.c_str(), sync, NULL, bNewWindow );
 }
 //	To Here Oct. 24, 2000 genta
-
-
 
 void CControlTray::ActiveNextWindow(HWND hwndParent)
 {
@@ -1442,8 +1427,6 @@ void CControlTray::ActivePrevWindow(HWND hwndParent)
 	}
 }
 
-
-
 /*!	サクラエディタの全終了
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
@@ -1476,9 +1459,6 @@ void CControlTray::TerminateApplication(
 	return;
 }
 
-
-
-
 /*!	すべてのウィンドウを閉じる
 
 	@date Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
@@ -1507,9 +1487,6 @@ BOOL CControlTray::CloseAllEditor(
 	delete []pWndArr;
 	return bRes;
 }
-
-
-
 
 /*! ポップアップメニュー(トレイ左ボタン) */
 int	CControlTray::CreatePopUpMenu_L( void )

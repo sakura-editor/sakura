@@ -36,7 +36,6 @@ public:
 	SFilePath	m_szCurDir;	/* カレントディレクトリ */
 	bool	m_bEditable;			/* 編集ウィンドウへの入力可能 */	// 2009.02.21 ryoji
 
-
 protected:
 	SComboBoxItemDeleter m_comboDel;
 	CRecentCmd m_cRecentCmd;
@@ -49,13 +48,8 @@ protected:
 	BOOL OnInitDialog(HWND hwnd, WPARAM wParam, LPARAM lParam);
 	BOOL OnBnClicked(int wID);
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
-
-
 };
-
-
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CDLGEXEC_H_ */
-
 

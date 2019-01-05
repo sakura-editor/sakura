@@ -39,8 +39,6 @@ void CType_Dos::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_nKeyWordSetIdx[0] = 7;					/* キーワードセット */
 }
 
-
-
 const wchar_t* g_ppszKeywordsBAT[] = {
 	L"PATH",
 	L"PROMPT",

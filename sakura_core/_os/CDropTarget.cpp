@@ -20,7 +20,6 @@
 #include "_main/global.h"
 #include "CClipboard.h"
 
-
 COleLibrary CYbInterfaceBase::m_olelib;
 
 CYbInterfaceBase::CYbInterfaceBase()
@@ -52,8 +51,6 @@ HRESULT CYbInterfaceBase::QueryInterfaceImpl(
 
 /////////////////////////////////////////
 
-
-
 COleLibrary::COleLibrary()//:m_dwCount(0)	// 2009.01.08 ryoji m_dwCount削除
 {
 	return;
@@ -66,7 +63,6 @@ COleLibrary::~COleLibrary()
 	return;
 }
 
-
 void COleLibrary::Initialize()
 {
 // 2009.01.08 ryoji OleInitialize削除（WinMainにOleInitialize/OleUninitialize追加）
@@ -74,7 +70,6 @@ void COleLibrary::Initialize()
 //		::OleInitialize( NULL );
 	return;
 }
-
 
 void COleLibrary::UnInitialize()
 {
@@ -84,7 +79,6 @@ void COleLibrary::UnInitialize()
 	return;
 }
 
-
 #define DECLARE_YB_INTERFACEIMPL( BASEINTERFACE ) \
 template<> REFIID CYbInterfaceImpl<BASEINTERFACE>::m_owniid = IID_##BASEINTERFACE;
 
@@ -92,8 +86,6 @@ DECLARE_YB_INTERFACEIMPL( IDataObject )
 DECLARE_YB_INTERFACEIMPL( IDropSource )
 DECLARE_YB_INTERFACEIMPL( IDropTarget )
 DECLARE_YB_INTERFACEIMPL( IEnumFORMATETC )
-
-
 
 CDropTarget::CDropTarget( CEditWnd* pCEditWnd )
 {
@@ -111,13 +103,11 @@ CDropTarget::CDropTarget( CEditView* pCEditView )
 	return;
 }
 
-
 CDropTarget::~CDropTarget()
 {
 	Revoke_DropTarget();
 	return;
 }
-
 
 BOOL CDropTarget::Register_DropTarget( HWND hWnd )
 {
@@ -128,7 +118,6 @@ BOOL CDropTarget::Register_DropTarget( HWND hWnd )
 	m_hWnd_DropTarget = hWnd;
 	return TRUE;
 }
-
 
 BOOL CDropTarget::Revoke_DropTarget( void )
 {
@@ -162,7 +151,6 @@ STDMETHODIMP CDropTarget::DragLeave( void )
 	return m_pcEditView->DragLeave();
 }
 
-
 STDMETHODIMP CDropTarget::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
 	if( m_pcEditWnd ){	// 2008.06.20 ryoji
@@ -170,7 +158,6 @@ STDMETHODIMP CDropTarget::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POIN
 	}
 	return m_pcEditView->Drop( pDataObject, dwKeyState, pt, pdwEffect );
 }
-
 
 STDMETHODIMP CDropSource::QueryContinueDrag( BOOL bEscapePressed, DWORD dwKeyState )
 {
@@ -181,14 +168,10 @@ STDMETHODIMP CDropSource::QueryContinueDrag( BOOL bEscapePressed, DWORD dwKeySta
 	return S_OK;
 }
 
-
 STDMETHODIMP CDropSource::GiveFeedback( DWORD dropEffect )
 {
 	return DRAGDROP_S_USEDEFAULTCURSORS;
 }
-
-
-
 
 /** 転送対象の文字列を設定する
 	@param lpszText [in] 文字列
@@ -388,7 +371,6 @@ STDMETHODIMP CDataObject::EnumDAdvise( LPENUMSTATDATA* )
 	return OLE_E_ADVISENOTSUPPORTED;
 }
 
-
 /** IEnumFORMATETC::Next
 	@date 2008.03.26 ryoji 新規作成
 */
@@ -445,6 +427,4 @@ STDMETHODIMP CEnumFORMATETC::Clone(IEnumFORMATETC** ppenum)
 {
 	return E_NOTIMPL;
 }
-
-
 

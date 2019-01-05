@@ -17,7 +17,6 @@
 #include "outline/CFuncInfoArr.h"
 #include "outline/CFuncInfo.h"
 
-
 /* CFuncInfoArrクラス構築 */
 CFuncInfoArr::CFuncInfoArr()
 {
@@ -26,9 +25,6 @@ CFuncInfoArr::CFuncInfoArr()
 	m_nAppendTextLenMax = 0;
 	return;
 }
-
-
-
 
 /* CFuncInfoArrクラス消滅 */
 CFuncInfoArr::~CFuncInfoArr()
@@ -54,7 +50,6 @@ void CFuncInfoArr::Empty( void )
 	return;
 }
 
-
 /* 0<=の指定番号のデータを返す */
 /* データがない場合はNULLを返す */
 CFuncInfo* CFuncInfoArr::GetAt( int nIdx )
@@ -64,8 +59,6 @@ CFuncInfo* CFuncInfoArr::GetAt( int nIdx )
 	}
 	return m_ppcFuncInfoArr[nIdx];
 }
-
-
 
 /*! 配列の最後にデータを追加する */
 void CFuncInfoArr::AppendData( CFuncInfo* pcFuncInfo )
@@ -79,8 +72,6 @@ void CFuncInfoArr::AppendData( CFuncInfo* pcFuncInfo )
 	m_nFuncInfoArrNum++;
 	return;
 }
-
-
 
 /*! 配列の最後にデータを追加する
 
@@ -141,7 +132,6 @@ void CFuncInfoArr::AppendData(
 {
 	AppendData(nFuncLineCRLF,nFuncLineLAYOUT,to_tchar(pszFuncName),nInfo,nDepth);
 }
-
 
 void CFuncInfoArr::DUMP( void )
 {

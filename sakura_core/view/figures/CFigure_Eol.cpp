@@ -46,7 +46,6 @@ void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView);
 //2007.08.30 kobake 追加
 void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcView, bool bTrans);
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        CFigure_Eol                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -241,7 +240,6 @@ void _DispEOF(
 	pcView->GetTextDrawer().DispText(gr, pDispPos, nHeightMargin, szEof, nEofLen, bTrans);
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       改行描画実装                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -307,7 +305,6 @@ void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcVi
 	//描画位置を進める(2桁)
 	pDispPos->ForwardDrawCol(nCol);
 }
-
 
 //	May 23, 2000 genta
 /*!

@@ -28,7 +28,6 @@
 //2007.09.23 kobake m_nTagJumpKeywordArrNum, m_szTagJumpKeywordArr を m_aTagJumpKeywords にまとめました
 //2007.12.13 kobake DLLSHAREDATAへの簡易アクセサを用意
 
-
 #ifndef SAKURA_ENV_CSHAREDATA_H_
 #define SAKURA_ENV_CSHAREDATA_H_
 
@@ -81,7 +80,6 @@ public:
 
 	BOOL IsPrivateSettings( void );
 
-
 	//マクロ関連
 	int			GetMacroFilename( int idx, TCHAR* pszPath, int nBufLen ); // idxで指定したマクロファイル名（フルパス）を取得する	//	Jun. 14, 2003 genta 引数追加．書式変更
 	bool		BeReloadWhenExecuteMacro( int idx );	//	idxで指定したマクロは、実行するたびにファイルを読み込む設定か？
@@ -101,12 +99,12 @@ protected:
 	*/
 
 	//	Jan. 30, 2005 genta 初期化関数の分割
-	void InitKeyword(DLLSHAREDATA*);
-	bool InitKeyAssign(DLLSHAREDATA*); // 2007.11.04 genta 起動中止のため値を返す
-	void RefreshKeyAssignString(DLLSHAREDATA*);
-	void InitToolButtons(DLLSHAREDATA*);
-	void InitTypeConfigs(DLLSHAREDATA*, std::vector<STypeConfig*>&);
-	void InitPopupMenu(DLLSHAREDATA*);
+	void InitKeyword(DLLSHAREDATA* pShareData);
+	bool InitKeyAssign(DLLSHAREDATA* pShareData); // 2007.11.04 genta 起動中止のため値を返す
+	void RefreshKeyAssignString(DLLSHAREDATA* pShareData);
+	void InitToolButtons(DLLSHAREDATA* pShareData);
+	void InitTypeConfigs(DLLSHAREDATA* pShareData, std::vector<STypeConfig*>& types);
+	void InitPopupMenu(DLLSHAREDATA* pShareData);
 
 public:
 	static void InitFileTree(SFileTree*);
@@ -117,13 +115,8 @@ private:
 	DLLSHAREDATA*	m_pShareData;
 	std::vector<STypeConfig*>* 	m_pvTypeSettings;	//	(コントロールプロセスのみ)
 	HWND			m_hwndTraceOutSource;	// TraceOutA()起動元ウィンドウ（いちいち起動元を指定しなくてすむように）
-
 };
-
-
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* SAKURA_ENV_CSHAREDATA_H_ */
-
-
 

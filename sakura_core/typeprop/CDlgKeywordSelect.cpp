@@ -65,7 +65,6 @@ static const int keyword_select_target_combo[ KEYWORD_SELECT_NUM ] = {
 	IDC_COMBO10
 };
 
-
 CDlgKeywordSelect::CDlgKeywordSelect()
 {
 	m_pCKeyWordSetMgr = &(m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr);
@@ -77,7 +76,6 @@ CDlgKeywordSelect::~CDlgKeywordSelect()
 {
 	return;
 }
-
 
 /* !モーダルダイアログの表示
 */
@@ -106,7 +104,6 @@ BOOL CDlgKeywordSelect::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam
 
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 }
-
 
 BOOL CDlgKeywordSelect::OnBnClicked( int wID )
 {
@@ -159,7 +156,6 @@ void CDlgKeywordSelect::SetData( void )
 	}
 }
 
-
 /*! ダイアログデータの設定
 */
 int CDlgKeywordSelect::GetData( void )
@@ -190,5 +186,4 @@ LPVOID CDlgKeywordSelect::GetHelpIdTable( void )
 {
 	return (LPVOID)p_helpids;
 }
-
 

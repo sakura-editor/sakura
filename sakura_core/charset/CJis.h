@@ -67,7 +67,6 @@ public:
 //	static const char* TABLE_JISESCDATA[];
 };
 
-
 #if 0 // codechecker.h に定義されている
 /*! JIS コードのエスケープシーケンスたち */
 /*
@@ -84,7 +83,6 @@ public:
 	JIS X 0201 ラテン    1b 28 48            ESC ( H         (歴史的[*2])
 	JIS X 0201 片仮名    1b 28 49            ESC ( I
 	ISO/IEC 646 IRV      1b 28 42            ESC ( B
-	
 	
 	  [*1] 各バイトを便宜的にISO/IEC 646 IRVの文字で表したもの。
 	       ただしESCはバイト値1bを表す。

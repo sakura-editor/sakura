@@ -32,7 +32,6 @@
 #include "CSearchKeywordManager.h"
 #include "recent/CRecent.h"
 
-
 /*!	m_aSearchKeysにpszSearchKeyを追加する。
 	YAZAKI
 */
@@ -75,4 +74,22 @@ void CSearchKeywordManager::AddToGrepFolderArr( const TCHAR* pszGrepFolder )
 	CRecentGrepFolder	cRecentGrepFolder;
 	cRecentGrepFolder.AppendItem( pszGrepFolder );
 	cRecentGrepFolder.Terminate();
+}
+
+/*!	m_aExcludeFilesにpszExcludeFileを追加する
+*/
+void CSearchKeywordManager::AddToExcludeFileArr(const TCHAR* pszExcludeFile)
+{
+	CRecentExcludeFile	cRecentExcludeFile;
+	cRecentExcludeFile.AppendItem(pszExcludeFile);
+	cRecentExcludeFile.Terminate();
+}
+
+/*!	m_aExcludeFolders.size()にpszExcludeFolderを追加する
+*/
+void CSearchKeywordManager::AddToExcludeFolderArr(const TCHAR* pszExcludeFolder)
+{
+	CRecentExcludeFolder	cRecentExcludeFolder;
+	cRecentExcludeFolder.AppendItem(pszExcludeFolder);
+	cRecentExcludeFolder.Terminate();
 }

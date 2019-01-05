@@ -635,7 +635,6 @@ bool CPropTypesKeyHelp::Import(HWND hwndDlg)
 	return true;
 }
 
-
 /*! キーワードヘルプファイルリストのインポートエクスポート
 
 	@date 2006.04.10 fon 新規作成
@@ -648,7 +647,6 @@ bool CPropTypesKeyHelp::Export(HWND hwndDlg)
 	// エクスポート
 	return cImpExpKeyHelp.ExportUI(m_hInstance, hwndDlg);
 }
-
 
 /*! 辞書の説明のフォーマット揃え
 
@@ -690,5 +688,4 @@ static TCHAR* GetFileName(const TCHAR* fullpath)
 	}
 	return const_cast<TCHAR*>(pszName);
 }
-
 

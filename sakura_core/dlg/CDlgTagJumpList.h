@@ -112,7 +112,6 @@ private:
 	void ClearPrevFindInfo();
 	bool GetFullPathAndLine( int index, TCHAR *fullPath, int count, int *lineNum, int *depth );
 
-
 	//! depthから完全パス名(相対パス/絶対パス)を作成する
 	static TCHAR* GetFullPathFromDepth(TCHAR* pszOutput, int count, TCHAR* basePath, const TCHAR* fileName, int depth);
 	static TCHAR* CopyDirDir( TCHAR* dest, const TCHAR* target, const TCHAR* base );
@@ -160,7 +159,6 @@ private:
 	POINT	m_ptDefaultSize;
 	RECT	m_rcItems[11];
 
-private:
 	DISALLOW_COPY_AND_ASSIGN(CDlgTagJumpList);
 };
 

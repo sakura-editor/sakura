@@ -118,4 +118,3 @@ void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, 
 	return;
 }
 
-

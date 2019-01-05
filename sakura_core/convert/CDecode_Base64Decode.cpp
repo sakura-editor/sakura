@@ -28,7 +28,6 @@
 		   distribution.
 */
 
-
 #include "StdAfx.h"
 #include "convert/CDecode_Base64Decode.h"
 #include "charset/charcode.h"

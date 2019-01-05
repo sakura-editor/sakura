@@ -51,8 +51,6 @@ protected:
 	static int _UniToUtf7SetD_block( const wchar_t* pSrc, const int nSrcLen, char* pDst );
 	static int _UniToUtf7SetB_block( const wchar_t* pSrc, const int nSrcLen, char* pDst );
 	static int UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst );
-
-
 };
 
 #endif /* SAKURA_CUTF7_D489ED48_E52A_43DD_8124_CB439CA30FC8_H_ */

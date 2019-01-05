@@ -12,7 +12,6 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       各種判定定数                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -163,9 +162,6 @@ int CJis::_JisToUni_block( const unsigned char* pSrc, const int nSrcLen, unsigne
 	return pw - pDst;
 }
 
-
-
-
 /*
 	JIS → Unicode 変換
 */
@@ -237,12 +233,9 @@ int CJis::JisToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pb
 	return pw - reinterpret_cast<unsigned short*>(pDst);
 }
 
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     インターフェース                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
 
 /* E-Mail(JIS→Unicode)コード変換 */
 //2007.08.13 kobake 追加
@@ -269,7 +262,6 @@ EConvertResult CJis::JISToUnicode(const CMemory& cSrc, CNativeW* pDstMem, bool b
 		}
 	}
 
-
 	// 変換先バッファを取得
 	wchar_t* pDst = new (std::nothrow) wchar_t[nsrclen * 3 + 1];
 	if( pDst == NULL ){
@@ -282,7 +274,6 @@ EConvertResult CJis::JISToUnicode(const CMemory& cSrc, CNativeW* pDstMem, bool b
 	// pDstMem にセット
 	pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, nDstLen * sizeof(wchar_t) );
 
-	
 	delete [] pDst;
 
 	if( berror == false ){
@@ -291,7 +282,6 @@ EConvertResult CJis::JISToUnicode(const CMemory& cSrc, CNativeW* pDstMem, bool b
 		return RESULT_LOSESOME;
 	}
 }
-
 
 /*!
 	SJIS -> JIS 変換
@@ -343,8 +333,6 @@ int CJis::_SjisToJis_char( const unsigned char* pSrc, unsigned char* pDst, EChar
 
 	return nret;
 }
-
-
 
 int CJis::UniToJis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pbError )
 {
@@ -452,7 +440,6 @@ int CJis::UniToJis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pb
 	return pw - reinterpret_cast<unsigned char*>(pDst);
 }
 
-
 EConvertResult CJis::UnicodeToJIS(const CNativeW& cSrc, CMemory* pDstMem)
 {
 	bool berror=false;
@@ -481,10 +468,6 @@ EConvertResult CJis::UnicodeToJIS(const CNativeW& cSrc, CMemory* pDstMem)
 		return RESULT_COMPLETE;
 	}
 }
-
-
-
-
 
 // 文字コード表示用	UNICODE → Hex 変換	2008/6/9 Uchi
 EConvertResult CJis::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)

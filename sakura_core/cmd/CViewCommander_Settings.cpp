@@ -29,7 +29,6 @@
 #include "CPropertyManager.h"
 #include "util/window.h"
 
-
 /*! ツールバーの表示/非表示
 
 	@date 2006.12.19 ryoji 表示切替は CEditWnd::LayoutToolBar(), CEditWnd::EndLayoutBars() で行うように変更
@@ -51,8 +50,6 @@ void CViewCommander::Command_SHOWTOOLBAR( void )
 	);
 }
 
-
-
 /*! ファンクションキーの表示/非表示
 
 	@date 2006.12.19 ryoji 表示切替は CEditWnd::LayoutFuncKey(), CEditWnd::EndLayoutBars() で行うように変更
@@ -73,8 +70,6 @@ void CViewCommander::Command_SHOWFUNCKEY( void )
 		pCEditWnd->GetHwnd()
 	);
 }
-
-
 
 /*! タブ(ウインドウ)の表示/非表示
 
@@ -109,8 +104,6 @@ void CViewCommander::Command_SHOWTAB( void )
 	);
 }
 
-
-
 /*! ステータスバーの表示/非表示
 
 	@date 2006.12.19 ryoji 表示切替は CEditWnd::LayoutStatusBar(), CEditWnd::EndLayoutBars() で行うように変更
@@ -131,8 +124,6 @@ void CViewCommander::Command_SHOWSTATUSBAR( void )
 		pCEditWnd->GetHwnd()
 	);
 }
-
-
 
 /*! ミニマップの表示/非表示
 
@@ -155,8 +146,6 @@ void CViewCommander::Command_SHOWMINIMAP( void )
 	);
 }
 
-
-
 /* タイプ別設定一覧 */
 void CViewCommander::Command_TYPE_LIST( void )
 {
@@ -178,8 +167,6 @@ void CViewCommander::Command_TYPE_LIST( void )
 	return;
 }
 
-
-
 /*! タイプ別設定一時適用 */
 void CViewCommander::Command_CHANGETYPE( int nTypePlusOne )
 {
@@ -196,15 +183,11 @@ void CViewCommander::Command_CHANGETYPE( int nTypePlusOne )
 	}
 }
 
-
-
 /* タイプ別設定 */
 void CViewCommander::Command_OPTION_TYPE( void )
 {
 	CEditApp::getInstance()->OpenPropertySheetTypes( -1, GetDocument()->m_cDocType.GetDocumentType() );
 }
-
-
 
 /* 共通設定 */
 void CViewCommander::Command_OPTION( void )
@@ -212,8 +195,6 @@ void CViewCommander::Command_OPTION( void )
 	/* 設定プロパティシート テスト用 */
 	CEditApp::getInstance()->OpenPropertySheet( -1 );
 }
-
-
 
 /* フォント設定 */
 void CViewCommander::Command_FONT( void )
@@ -264,8 +245,6 @@ void CViewCommander::Command_FONT( void )
 	}
 	return;
 }
-
-
 
 /*! フォントサイズ設定
 	@param fontSize フォントサイズ（1/10ポイント単位）
@@ -364,8 +343,6 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 	}
 }
 
-
-
 /*! 現在のウィンドウ幅で折り返し
 
 	@date 2002.01.14 YAZAKI 現在のウィンドウ幅で折り返されているときは、最大値にするように
@@ -391,7 +368,6 @@ void CViewCommander::Command_WRAPWINDOWWIDTH( void )	//	Oct. 7, 2000 JEPRO WRAPW
 
 	GetEditWindow()->ChangeLayoutParam( true, GetDocument()->m_cLayoutMgr.GetTabSpaceKetas(), GetDocument()->m_cLayoutMgr.m_tsvInfo.m_nTsvMode, newKetas );
 	
-
 	//	Aug. 14, 2005 genta 共通設定へは反映させない
 //	m_pCommanderView->m_pTypeData->m_nMaxLineKetas = m_nViewColNum;
 
@@ -402,8 +378,6 @@ void CViewCommander::Command_WRAPWINDOWWIDTH( void )	//	Oct. 7, 2000 JEPRO WRAPW
 	m_pCommanderView->RedrawAll();
 	return;
 }
-
-
 
 //	from CViewCommander_New.cpp
 /*!	履歴の管理(ダイアログ)
@@ -422,8 +396,6 @@ void CViewCommander::Command_Favorite( void )
 
 	return;
 }
-
-
 
 /*!
 	@brief テキストの折り返し方法を変更する
@@ -483,8 +455,6 @@ void CViewCommander::Command_TEXTWRAPMETHOD( int nWrapMethod )
 	}
 }
 
-
-
 /*!
 	@brief 文字カウント方法を変更する
 	
@@ -516,8 +486,6 @@ void CViewCommander::Command_SELECT_COUNT_MODE( int nMode )
 		*pnSelectCountMode = ( ESelectCountMode )nMode;
 	}
 }
-
-
 
 /*!	@brief 引用符の設定
 	@date Jan. 29, 2005 genta 新規作成

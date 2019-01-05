@@ -157,8 +157,6 @@ bool CSearchStringPattern::SetPattern(HWND hwnd, const wchar_t* pszPattern, int 
 	return true;
 }
 
-
-
 #define toLoHiLower(bLoHiCase, ch) (bLoHiCase? (ch) : skr_towlower(ch))
 
 /*!
@@ -312,7 +310,6 @@ void CSearchAgent::CreateWordList(
 	}
 }
 
-
 /*!	単語単位検索
 */
 const wchar_t* CSearchAgent::SearchStringWord(
@@ -348,9 +345,6 @@ const wchar_t* CSearchAgent::SearchStringWord(
 	return NULL;
 }
 
-
-
-
 /* 現在位置の単語の範囲を調べる */
 // 2001/06/23 N.Nakatani WhereCurrentWord()変更 WhereCurrentWord_2をコールするようにした
 bool CSearchAgent::WhereCurrentWord(
@@ -376,9 +370,6 @@ bool CSearchAgent::WhereCurrentWord(
 	/* 現在位置の単語の範囲を調べる */
 	return CWordParse::WhereCurrentWord_2( pLine, nLineLen, nIdx, pnIdxFrom, pnIdxTo, pcmcmWord, pcmcmWordLeft );
 }
-
-
-
 
 // 現在位置の左右の単語の先頭位置を調べる
 bool CSearchAgent::PrevOrNextWord(
@@ -459,9 +450,6 @@ bool CSearchAgent::PrevOrNextWord(
 	}
 	return true;
 }
-
-
-
 
 /*! 単語検索
 
@@ -769,9 +757,6 @@ end_of_func:;
 	return nRetVal;
 }
 
-
-
-
 /* 指定範囲のデータを置換(削除 & データを挿入)
   Fromを含む位置からToの直前を含むデータを削除する
   Fromの位置へテキストを挿入する
@@ -908,7 +893,6 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 			/* 削除する長さに改行も含める */
 			nWorkLen = nLineLen - nWorkPos; // 2002/2/10 aroka CMemory変更
 		}
-
 
 		/* 行全体の削除 */
 		if( nWorkLen >= nLineLen ){ // 2002/2/10 aroka CMemory変更
@@ -1109,8 +1093,6 @@ prev_line:;
 
 	/* 挿入データを行終端で区切った行数カウンタ */
 	pCDocLine = m_pcDocLineMgr->GetLine( pArg->sDelRange.GetFrom().GetY2() );
-
-
 
 	int nInsSize = pArg->pInsData->size();
 	bool bInsertLineMode = false;

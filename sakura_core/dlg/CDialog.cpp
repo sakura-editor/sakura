@@ -56,7 +56,6 @@ INT_PTR CALLBACK MyDialogProc(
 	}
 }
 
-
 /*!	コンストラクタ
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
@@ -80,7 +79,6 @@ CDialog::CDialog(bool bSizable, bool bCheckShareData)
 	m_nHeight = -1;
 
 	return;
-
 }
 CDialog::~CDialog()
 {
@@ -173,8 +171,6 @@ void CDialog::CloseDialog( INT_PTR nModalRetVal )
 	}
 	return;
 }
-
-
 
 BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
@@ -292,7 +288,6 @@ BOOL CDialog::OnDestroy( void )
 	return TRUE;
 }
 
-
 BOOL CDialog::OnBnClicked( int wID )
 {
 	switch( wID ){
@@ -352,12 +347,10 @@ BOOL CDialog::OnSize( WPARAM wParam, LPARAM lParam )
 		::InvalidateRect( m_hwndSizeBox, NULL, TRUE );
 	}
 	return FALSE;
-
 }
 
 BOOL CDialog::OnMove( WPARAM wParam, LPARAM lParam )
 {
-
 	/* ダイアログの位置の記憶 */
 	if( !m_bInited ){
 		return TRUE;
@@ -372,10 +365,7 @@ BOOL CDialog::OnMove( WPARAM wParam, LPARAM lParam )
 	m_nHeight = rc.bottom - rc.top;
 	DEBUG_TRACE( _T("CDialog::OnMove() m_xPos=%d m_yPos=%d\n"), m_xPos, m_yPos );
 	return TRUE;
-
 }
-
-
 
 void CDialog::CreateSizeBox( void )
 {
@@ -395,13 +385,7 @@ void CDialog::CreateSizeBox( void )
 		(LPVOID) NULL										/* pointer not needed */
 	);
 	::ShowWindow( m_hwndSizeBox, SW_SHOW );
-
 }
-
-
-
-
-
 
 /* ダイアログのメッセージ処理 */
 INT_PTR CDialog::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
@@ -714,7 +698,6 @@ void CDialog::GetItemClientRect( int wID, RECT& rc )
 	rc.bottom = po.y;
 }
 
-
 static const TCHAR* TSTR_SUBCOMBOBOXDATA = _T("SubComboBoxData");
 
 static void DeleteItem(HWND hwnd, CRecent* pRecent)
@@ -760,7 +743,6 @@ LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	return CallWindowProc(data->pEditWndProc, hwnd, uMsg, wParam, lParam);
 }
-
 
 LRESULT CALLBACK SubListBoxProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -828,7 +810,6 @@ LRESULT CALLBACK SubComboBoxProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	}
 	return CallWindowProc(data->pComboBoxWndProc, hwnd, uMsg, wParam, lParam);
 }
-
 
 void CDialog::SetComboBoxDeleter( HWND hwndCtl, SComboBoxItemDeleter* data )
 {

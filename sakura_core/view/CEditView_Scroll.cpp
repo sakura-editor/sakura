@@ -90,43 +90,16 @@ BOOL CEditView::CreateScrollBar()
 		::ShowScrollBar( m_hwndHScrollBar, SB_CTL, TRUE );
 	}
 
-
 	/* サイズボックス */
 	if( GetDllShareData().m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
-		m_hwndSizeBox = ::CreateWindowEx(
-			WS_EX_CONTROLPARENT/*0L*/, 			/* no extended styles */
-			_T("SCROLLBAR"),					/* scroll bar control class */
-			NULL,								/* text for window title bar */
-			WS_VISIBLE | WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
-			0,									/* horizontal position */
-			0,									/* vertical position */
-			200,								/* width of the scroll bar */
-			CW_USEDEFAULT,						/* default height */
-			GetHwnd(), 							/* handle of main window */
-			(HMENU) NULL,						/* no menu for a scroll bar */
-			G_AppInstance(),						/* instance owning this window */
-			(LPVOID) NULL						/* pointer not needed */
-		);
+		::ShowWindow( m_hwndSizeBoxPlaceholder, SW_HIDE );
+		::ShowWindow( m_hwndSizeBox, SW_SHOW );
 	}else{
-		m_hwndSizeBox = ::CreateWindowEx(
-			0L, 								/* no extended styles */
-			_T("STATIC"),						/* scroll bar control class */
-			NULL,								/* text for window title bar */
-			WS_VISIBLE | WS_CHILD/* | SBS_SIZEBOX | SBS_SIZEGRIP*/, /* scroll bar styles */
-			0,									/* horizontal position */
-			0,									/* vertical position */
-			200,								/* width of the scroll bar */
-			CW_USEDEFAULT,						/* default height */
-			GetHwnd(), 							/* handle of main window */
-			(HMENU) NULL,						/* no menu for a scroll bar */
-			G_AppInstance(),						/* instance owning this window */
-			(LPVOID) NULL						/* pointer not needed */
-		);
+		::ShowWindow( m_hwndSizeBox, SW_HIDE );
+		::ShowWindow( m_hwndSizeBoxPlaceholder, SW_SHOW );
 	}
 	return TRUE;
 }
-
-
 
 /*! スクロールバー破棄
 	@date 2006.12.19 ryoji 新規作成
@@ -145,11 +118,8 @@ void CEditView::DestroyScrollBar()
 		m_hwndHScrollBar = NULL;
 	}
 
-	if( m_hwndSizeBox )
-	{
-		::DestroyWindow( m_hwndSizeBox );
-		m_hwndSizeBox = NULL;
-	}
+	::ShowWindow( m_hwndSizeBox, SW_HIDE );
+	::ShowWindow( m_hwndSizeBoxPlaceholder, SW_HIDE );
 }
 
 /*! 垂直スクロールバーメッセージ処理
@@ -197,10 +167,10 @@ CLayoutInt CEditView::OnVScroll( int nScrollCode, int nPos )
 		nScrollVal = ScrollAtV( GetTextArea().GetViewTopLine() - GetTextArea().m_nViewRowNum );
 		break;
 	case SB_THUMBPOSITION:
-		nScrollVal = ScrollAtV( CLayoutInt(nPos) );
+		nScrollVal = ScrollAtV( CLayoutInt(nPos), FALSE );
 		break;
 	case SB_THUMBTRACK:
-		nScrollVal = ScrollAtV( CLayoutInt(nPos) );
+		nScrollVal = ScrollAtV( CLayoutInt(nPos), FALSE );
 		break;
 	case SB_TOP:
 		nScrollVal = ScrollAtV( CLayoutInt(0) );
@@ -255,11 +225,11 @@ CLayoutInt CEditView::OnHScroll( int nScrollCode, int nPos )
 		nScrollVal = ScrollAtH( GetTextArea().GetRightCol() );
 		break;
 	case SB_THUMBPOSITION:
-		nScrollVal = ScrollAtH( CLayoutInt(nPos) );
+		nScrollVal = ScrollAtH( CLayoutInt(nPos), FALSE );
 //		MYTRACE( _T("nPos=%d\n"), nPos );
 		break;
 	case SB_THUMBTRACK:
-		nScrollVal = ScrollAtH( CLayoutInt(nPos) );
+		nScrollVal = ScrollAtH( CLayoutInt(nPos), FALSE );
 //		MYTRACE( _T("nPos=%d\n"), nPos );
 		break;
 	case SB_LEFT:
@@ -273,7 +243,7 @@ CLayoutInt CEditView::OnHScroll( int nScrollCode, int nPos )
 	return nScrollVal;
 }
 
-static void setScrollInfoIfNeeded(HWND hWndScrollBar, int nMax, UINT nPage, int nPos)
+static void setScrollInfoIfNeeded(HWND hWndScrollBar, int nMax, UINT nPage, int nPos, BOOL bRedraw)
 {
 	SCROLLINFO siPrev;
 	siPrev.cbSize = sizeof(siPrev);
@@ -306,7 +276,7 @@ static void setScrollInfoIfNeeded(HWND hWndScrollBar, int nMax, UINT nPage, int 
 		si.nMax  = nMax;
 		si.nPage = nPage;
 		si.nPos  = nPos;
-		::SetScrollInfo( hWndScrollBar, SB_CTL, &si, TRUE );
+		::SetScrollInfo( hWndScrollBar, SB_CTL, &si, bRedraw );
 	}
 }
 
@@ -320,7 +290,7 @@ static void setScrollInfoIfNeeded(HWND hWndScrollBar, int nMax, UINT nPage, int 
 	@date 2008.06.08 ryoji 水平スクロール範囲にぶら下げ余白を追加
 	@date 2009.08.28 nasukoji	「折り返さない」選択時のスクロールバー調整
 */
-void CEditView::AdjustScrollBars()
+void CEditView::AdjustScrollBars( BOOL bRedraw )
 {
 	if( !GetDrawSwitch() ){
 		return;
@@ -344,7 +314,8 @@ void CEditView::AdjustScrollBars()
 		setScrollInfoIfNeeded(m_hwndVScrollBar,
 							  (Int)nAllLines / nVScrollRate - 1,					/* 全行数 */
 							  (Int)GetTextArea().m_nViewRowNum / nVScrollRate,		/* 表示域の行数 */
-							  (Int)GetTextArea().GetViewTopLine() / nVScrollRate	/* 表示域の一番上の行(0開始) */
+							  (Int)GetTextArea().GetViewTopLine() / nVScrollRate,	/* 表示域の一番上の行(0開始) */
+							  bRedraw
 		);
 		m_nVScrollRate = nVScrollRate;				/* 垂直スクロールバーの縮尺 */
 		
@@ -365,7 +336,8 @@ void CEditView::AdjustScrollBars()
 		setScrollInfoIfNeeded(m_hwndHScrollBar,
 							  (Int)GetRightEdgeForScrollBar() - 1,		// 2009.08.28 nasukoji	スクロールバー制御用の右端座標を取得
 							  (Int)GetTextArea().m_nViewColNum,			/* 表示域の桁数 */
-							  (Int)GetTextArea().GetViewLeftCol()		/* 表示域の一番左の桁(0開始) */
+							  (Int)GetTextArea().GetViewLeftCol(),		/* 表示域の一番左の桁(0開始) */
+							  bRedraw
 		);
 
 		//	2006.1.28 aroka 判定条件誤り修正 (バーが消えてもスクロールしない)
@@ -382,11 +354,12 @@ void CEditView::AdjustScrollBars()
 /*! 指定上端行位置へスクロール
 
 	@param nPos [in] スクロール位置
+	@param bRedrawScrollBar [in] スクロールバーを再描画するかどうか
 	@retval 実際にスクロールした行数 (正:下方向/負:上方向)
 
 	@date 2004.09.11 genta 行数を戻り値として返すように．(同期スクロール用)
 */
-CLayoutInt CEditView::ScrollAtV( CLayoutInt nPos )
+CLayoutInt CEditView::ScrollAtV( CLayoutInt nPos, BOOL bRedrawScrollBar )
 {
 	CLayoutInt	nScrollRowNum;
 	RECT		rcScrol;
@@ -409,7 +382,9 @@ CLayoutInt CEditView::ScrollAtV( CLayoutInt nPos )
 	/* スクロール */
 	if( t_abs( nScrollRowNum ) >= GetTextArea().m_nViewRowNum ){
 		GetTextArea().SetViewTopLine( CLayoutInt(nPos) );
-		::InvalidateRect( GetHwnd(), NULL, TRUE );
+		CMyRect rect = GetTextArea().GetAreaRect();
+		rect.left = 0;
+		::InvalidateRect( GetHwnd(), &rect, TRUE );
 	}else{
 		rcScrol.left = 0;
 		rcScrol.right = GetTextArea().GetAreaRight();
@@ -445,7 +420,7 @@ CLayoutInt CEditView::ScrollAtV( CLayoutInt nPos )
 	}
 
 	/* スクロールバーの状態を更新する */
-	AdjustScrollBars();
+	AdjustScrollBars(bRedrawScrollBar);
 
 	/* キャレットの表示・更新 */
 	GetCaret().ShowEditCaret();
@@ -455,19 +430,17 @@ CLayoutInt CEditView::ScrollAtV( CLayoutInt nPos )
 	return -nScrollRowNum;	//方向が逆なので符号反転が必要
 }
 
-
-
-
 /*! 指定左端桁位置へスクロール
 
 	@param nPos [in] スクロール位置
+	@param bRedrawScrollBar [in] スクロールバーを再描画するかどうか
 	@retval 実際にスクロールした桁数 (正:右方向/負:左方向)
 
 	@date 2004.09.11 genta 桁数を戻り値として返すように．(同期スクロール用)
 	@date 2008.06.08 ryoji 水平スクロール範囲にぶら下げ余白を追加
 	@date 2009.08.28 nasukoji	「折り返さない」選択時右に行き過ぎないようにする
 */
-CLayoutInt CEditView::ScrollAtH( CLayoutInt nPos )
+CLayoutInt CEditView::ScrollAtH( CLayoutInt nPos, BOOL bRedrawScrollBar )
 {
 	RECT		rcScrol;
 	RECT		rcClip2;
@@ -534,14 +507,13 @@ CLayoutInt CEditView::ScrollAtH( CLayoutInt nPos )
 	::ReleaseDC( GetHwnd(), hdc );
 
 	/* スクロールバーの状態を更新する */
-	AdjustScrollBars();
+	AdjustScrollBars(bRedrawScrollBar);
 
 	/* キャレットの表示・更新 */
 	GetCaret().ShowEditCaret();
 
 	return -nScrollColNum;	//方向が逆なので符号反転が必要
 }
-
 
 void CEditView::ScrollDraw(CLayoutInt nScrollRowNum, CLayoutInt nScrollColNum, const RECT& rcScroll, const RECT& rcClip, const RECT& rcClip2)
 {
@@ -630,7 +602,6 @@ void CEditView::ScrollDraw(CLayoutInt nScrollRowNum, CLayoutInt nScrollColNum, c
 	}
 }
 
-
 void CEditView::MiniMapRedraw(bool bUpdateAll)
 {
 	if( this == &m_pcEditWnd->GetActiveView() && m_pcEditWnd->GetMiniMap().GetHwnd() ){
@@ -698,7 +669,6 @@ void CEditView::MiniMapRedraw(bool bUpdateAll)
 		::UpdateWindow( miniMap.GetHwnd() );
 	}
 }
-
 
 /*!	垂直同期スクロール
 

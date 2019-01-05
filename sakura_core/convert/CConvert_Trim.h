@@ -27,7 +27,6 @@
 
 #include "CConvert.h"
 
-
 class CConvert_Trim : public CConvert{
 public:
 	CConvert_Trim(bool bLeft, bool bExtEol) : m_bLeft(bLeft), m_bExtEol(bExtEol) { }

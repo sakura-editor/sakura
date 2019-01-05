@@ -43,43 +43,44 @@ public:
 	static void SaveShareData();	/* 共有データの保存 */
 
 protected:
-	static bool ShareData_IO_2( bool );	/* 共有データの保存 */
+	static bool ShareData_IO_2( bool bRead );	/* 共有データの保存 */
 
 	// Feb. 12, 2006 D.S.Koba
-	static void ShareData_IO_Mru( CDataProfile& );
-	static void ShareData_IO_Keys( CDataProfile& );
-	static void ShareData_IO_Grep( CDataProfile& );
-	static void ShareData_IO_Folders( CDataProfile& );
-	static void ShareData_IO_Cmd( CDataProfile& );
-	static void ShareData_IO_Nickname( CDataProfile& );
-	static void ShareData_IO_Common( CDataProfile& );
-	static void ShareData_IO_Toolbar( CDataProfile&, CMenuDrawer* );
-	static void ShareData_IO_CustMenu( CDataProfile& );
-	static void ShareData_IO_Font( CDataProfile& );
-	static void ShareData_IO_KeyBind( CDataProfile& );
-	static void ShareData_IO_Print( CDataProfile& );
-	static void ShareData_IO_Types( CDataProfile& );
-	static void ShareData_IO_KeyWords( CDataProfile& );
-	static void ShareData_IO_Macro( CDataProfile& );
-	static void ShareData_IO_Statusbar( CDataProfile& );	// 2008/6/21 Uchi
-	static void ShareData_IO_Plugin( CDataProfile&, CMenuDrawer* );		// 2009/11/30 syat
-	static void ShareData_IO_MainMenu( CDataProfile& );		// 2010/5/15 Uchi
-	static void ShareData_IO_Other( CDataProfile& );
+	static void ShareData_IO_Mru( CDataProfile& cProfile );
+	static void ShareData_IO_Keys( CDataProfile& cProfile );
+	static void ShareData_IO_Grep( CDataProfile& cProfile );
+	static void ShareData_IO_Folders( CDataProfile& cProfile );
+	static void ShareData_IO_Cmd( CDataProfile& cProfile );
+	static void ShareData_IO_Nickname( CDataProfile& cProfile );
+	static void ShareData_IO_Common( CDataProfile& cProfile );
+	static void ShareData_IO_Toolbar( CDataProfile& cProfile, CMenuDrawer* pcMenuDrawer );
+	static void ShareData_IO_CustMenu( CDataProfile& cProfile );
+	static void ShareData_IO_Font( CDataProfile& cProfile );
+	static void ShareData_IO_KeyBind( CDataProfile& cProfile );
+	static void ShareData_IO_Print( CDataProfile& cProfile );
+	static void ShareData_IO_Types( CDataProfile& cProfile );
+	static void ShareData_IO_KeyWords( CDataProfile& cProfile );
+	static void ShareData_IO_Macro( CDataProfile& cProfile );
+	static void ShareData_IO_Statusbar( CDataProfile& cProfile );	// 2008/6/21 Uchi
+	static void ShareData_IO_Plugin( CDataProfile& cProfile, CMenuDrawer* pcMenuDrawer );	// 2009/11/30 syat
+	static void ShareData_IO_MainMenu( CDataProfile& cProfile );		// 2010/5/15 Uchi
+	static void ShareData_IO_Other( CDataProfile& cProfile );
 
 public:
-	static void ShareData_IO_FileTree( CDataProfile&, SFileTree&, const WCHAR* );
-	static void ShareData_IO_FileTreeItem( CDataProfile&, SFileTreeItem&, const WCHAR*, int i );
-	static void ShareData_IO_Type_One( CDataProfile&, STypeConfig& , const WCHAR* );	// 2010/04/12 Uchi 分離
+	static void ShareData_IO_FileTree( CDataProfile& cProfile, SFileTree& fileTree, const WCHAR* pszSecName );
+	static void ShareData_IO_FileTreeItem( CDataProfile& cProfile, SFileTreeItem& item,
+										   const WCHAR* pszSecName, int i );
+	static void ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& types, const WCHAR* pszSecName);	// 2010/04/12 Uchi 分離
 
 public:
-	static void IO_CustMenu( CDataProfile&, CommonSetting_CustomMenu&, bool );
-	static void IO_KeyBind( CDataProfile&, CommonSetting_KeyBind&, bool);		// 2012.11.22 aroka
+	static void IO_CustMenu( CDataProfile& cProfile, CommonSetting_CustomMenu& menu, bool bOutCmdName);
+	static void IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& sKeyBind, bool bOutCmdName);		// 2012.11.22 aroka
 	static void IO_MainMenu( CDataProfile& c, CommonSetting_MainMenu& s, bool b ){		// 2010/5/15 Uchi
 		IO_MainMenu(c, NULL, s, b);
 	}
 	static void IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstring>* pData,
 		CommonSetting_MainMenu& mainmenu, bool bOutCmdName);
-	static void IO_ColorSet( CDataProfile* , const WCHAR* , ColorInfo* );	/* 色設定 I/O */ // Feb. 12, 2006 D.S.Koba
+	static void IO_ColorSet( CDataProfile* pcProfile, const WCHAR* pszSecName, ColorInfo* pColorInfoArr );	/* 色設定 I/O */ // Feb. 12, 2006 D.S.Koba
 };
 
 #endif /* SAKURA_CSHAREDATA_IO_AA81C249_631D_40B0_AAFF_2F163748954B9_H_ */

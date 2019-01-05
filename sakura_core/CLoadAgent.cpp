@@ -288,7 +288,6 @@ void CLoadAgent::OnAfterLoad(const SLoadInfo& sLoadInfo)
 		pcDoc->m_cLayoutMgr.ClearLayoutLineWidth();		// 各行のレイアウト行長の記憶をクリアする
 }
 
-
 void CLoadAgent::OnFinalLoad(ELoadResult eLoadResult)
 {
 	CEditDoc* pcDoc = GetListeningDoc();

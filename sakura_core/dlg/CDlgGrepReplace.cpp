@@ -69,8 +69,6 @@ CDlgGrepReplace::CDlgGrepReplace()
 	return;
 }
 
-
-
 /* モーダルダイアログの表示 */
 int CDlgGrepReplace::DoModal( HINSTANCE hInstance, HWND hwndParent, const TCHAR* pszCurrentFilePath, LPARAM lParam )
 {
@@ -88,6 +86,35 @@ int CDlgGrepReplace::DoModal( HINSTANCE hInstance, HWND hwndParent, const TCHAR*
 	if( m_szFolder[0] == _T('\0') && m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
 		_tcscpy( m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダ */
 	}
+	
+	/* 除外ファイル */
+	if (m_szExcludeFile[0] == _T('\0')) {
+		if (m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
+			_tcscpy(m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);
+		}
+		else {
+			/* ユーザーの利便性向上のために除外ファイルに対して初期値を設定する */
+			_tcscpy(m_szExcludeFile, DEFAULT_EXCLUDE_FILE_PATTERN);	/* 除外ファイル */
+
+			/* 履歴に残して後で選択できるようにする */
+			m_pShareData->m_sSearchKeywords.m_aExcludeFiles.push_back(DEFAULT_EXCLUDE_FILE_PATTERN);
+		}
+	}
+
+	/* 除外フォルダ */
+	if (m_szExcludeFolder[0] == _T('\0')) {
+		if (m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
+			_tcscpy(m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);
+		}
+		else {
+			/* ユーザーの利便性向上のために除外フォルダに対して初期値を設定する */
+			_tcscpy(m_szExcludeFolder, DEFAULT_EXCLUDE_FOLDER_PATTERN);	/* 除外フォルダ */
+			
+			/* 履歴に残して後で選択できるようにする */
+			m_pShareData->m_sSearchKeywords.m_aExcludeFolders.push_back(DEFAULT_EXCLUDE_FOLDER_PATTERN);
+		}
+	}
+
 	if( pszCurrentFilePath ){	// 2010.01.10 ryoji
 		_tcscpy(m_szCurrentFilePath, pszCurrentFilePath);
 	}
@@ -109,13 +136,11 @@ BOOL CDlgGrepReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	return CDlgGrep::OnInitDialog( hwndDlg, wParam, lParam );
 }
 
-
 BOOL CDlgGrepReplace::OnDestroy()
 {
 	m_cFontText2.ReleaseOnDestroy();
 	return CDlgGrep::OnDestroy();
 }
-
 
 BOOL CDlgGrepReplace::OnBnClicked( int wID )
 {
@@ -144,8 +169,6 @@ BOOL CDlgGrepReplace::OnBnClicked( int wID )
 	return CDlgGrep::OnBnClicked( wID );
 }
 
-
-
 /* ダイアログデータの設定 */
 void CDlgGrepReplace::SetData( void )
 {
@@ -160,9 +183,6 @@ void CDlgGrepReplace::SetData( void )
 
 	CDlgGrep::SetData();
 }
-
-
-
 
 /*! ダイアログデータの取得
 	TRUE==正常  FALSE==入力エラー
@@ -201,5 +221,4 @@ LPVOID CDlgGrepReplace::GetHelpIdTable(void)
 {
 	return (LPVOID)p_helpids;
 }
-
 

@@ -29,7 +29,6 @@
 #include "util/window.h"
 #include "sakura_rc.h"
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      メッセージ処理                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -74,8 +73,6 @@ GEN_PROPTYPES_CALLBACK(PropTypesColor,		CPropTypesColor)
 GEN_PROPTYPES_CALLBACK(PropTypesSupport,	CPropTypesSupport)
 GEN_PROPTYPES_CALLBACK(PropTypesRegex,		CPropTypesRegex)
 GEN_PROPTYPES_CALLBACK(PropTypesKeyHelp,	CPropTypesKeyHelp)
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        生成と破棄                           //
@@ -224,8 +221,6 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	return nRet;
 }
 
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         イベント                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -251,8 +246,6 @@ void CPropTypes::OnHelp( HWND hwndParent, int nPageID )
 	}
 }
 
-
-
 /*!	コントロールにフォント設定する
 	@date 2013.04.24 Uchi
 */
@@ -271,8 +264,6 @@ HFONT CPropTypes::SetCtrlFont( HWND hwndDlg, int idc_ctrl, const LOGFONT& lf )
 
 	return hFont;
 }
-
-
 
 /*!	フォントラベルにフォントとフォント名設定する
 	@date 2013.04.24 Uchi

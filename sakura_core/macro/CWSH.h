@@ -60,5 +60,4 @@ private:
 	List m_IfObjArr;
 };
 
-
 #endif

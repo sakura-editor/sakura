@@ -32,7 +32,6 @@
 
 void _DefaultConfig(STypeConfig* pType);
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          CType                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -54,7 +53,6 @@ void CType::InitTypeConfig(int nIdx, STypeConfig& type)
 	//個別設定
 	InitTypeConfigImp(&type);
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        CShareData                           //
@@ -144,7 +142,6 @@ void CShareData::InitKeyword(DLLSHAREDATA* pShareData)
 #undef PopulateKeyword
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        デフォルト                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -199,7 +196,7 @@ void _DefaultConfig(STypeConfig* pType)
 
 	// 文字コード設定
 	pType->m_encoding.m_bPriorCesu8 = false;
-	pType->m_encoding.m_eDefaultCodetype = CODE_SJIS;
+	pType->m_encoding.m_eDefaultCodetype = CODE_UTF8;
 	pType->m_encoding.m_eDefaultEoltype = EOL_CRLF;
 	pType->m_encoding.m_bDefaultBom = false;
 
@@ -213,7 +210,6 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_bRTrimPrevLine = false;		// 2005.10.11 ryoji 改行時に末尾の空白を削除
 
 	pType->m_nIndentLayout = 0;	/* 折り返しは2行目以降を字下げ表示 */
-
 
 	assert( COLORIDX_LAST <= _countof(pType->m_ColorInfoArr) );
 	for( int i = 0; i < COLORIDX_LAST; ++i ){
@@ -229,6 +225,7 @@ void _DefaultConfig(STypeConfig* pType)
 		POINT pt ={0,0};
 		pType->m_backImgPosOffset = pt;
 	}
+	pType->m_backImgOpacity = 0xFF;
 	pType->m_bLineNumIsCRLF = true;					// 行番号の表示 false=折り返し単位／true=改行単位
 	pType->m_nLineTermType = 1;						// 行番号区切り 0=なし 1=縦線 2=任意
 	pType->m_cLineTermChar = L':';					// 行番号区切り文字

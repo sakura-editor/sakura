@@ -57,7 +57,6 @@ public:
 	EFileTreeSettingFrom	m_eFileTreeSettingLoadType;
 };
 
-
 //!	アウトライン解析ダイアログボックス
 class CDlgFuncList : public CDialog
 {
@@ -100,8 +99,7 @@ public:
 	void SyncColor( void );
 	void SetWindowText( const TCHAR* szTitle );		//ダイアログタイトルの設定
 	EFunctionCode GetFuncCodeRedraw(int outlineType);
-	void LoadFileTreeSetting( CFileTreeSetting&, SFilePath& );
-	static void ReadFileTreeIni( CDataProfile&, CFileTreeSetting& );
+	void LoadFileTreeSetting( CFileTreeSetting& data, SFilePath& IniDirPath );
 
 protected:
 	bool m_bInChangeLayout;
@@ -153,8 +151,8 @@ protected:
 
 	//	Apr. 23, 2005 genta リストビューのソートを関数として独立させた
 	void SortListView(HWND hwndList, int sortcol);
-	static int CALLBACK CompareFunc_Asc( LPARAM, LPARAM, LPARAM );
-	static int CALLBACK CompareFunc_Desc( LPARAM, LPARAM, LPARAM );
+	static int CALLBACK CompareFunc_Asc( LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort );
+	static int CALLBACK CompareFunc_Desc( LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort );
 
 	// 2001.12.03 hor
 //	void SetTreeBookMark( HWND );		/* ツリーコントロールの初期化：ブックマーク */
@@ -225,10 +223,6 @@ private:
 	RECT				m_rcItems[12];
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* SAKURA_CDLGFUNCLIST_H_ */
-
-
 

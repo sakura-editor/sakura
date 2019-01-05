@@ -50,9 +50,6 @@ void CType_Html::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = true;				//シングルクォートの色分けOFF
 }
 
-
-
-
 /*! HTML アウトライン解析
 
 	@author zenryaku
@@ -389,8 +386,6 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 		}
 	}
 }
-
-
 
 const wchar_t* g_ppszKeywordsHTML[] = {
 	L"_blank",

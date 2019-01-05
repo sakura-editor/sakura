@@ -31,14 +31,12 @@
 // 要先行定義
 // #define DLLSHAREDATA.h
 
-
 // 2004/06/21 novice タグジャンプ機能追加
 //! タグジャンプ情報
 struct TagJump {
 	HWND		hwndReferer;				//!< 参照元ウィンドウ
 	CLogicPoint	point;						//!< ライン, カラム
 };
-
 
 //共有メモリ内構造体
 //2004/06/21 タグジャンプ機能追加
@@ -59,7 +57,6 @@ struct SShare_TagJump{
 	BOOL				m_bTagJumpAnyWhere;				//!< 文字列の途中にマッチ
 };
 
-
 class CTagJumpManager{
 public:
 	CTagJumpManager()
@@ -67,8 +64,8 @@ public:
 		m_pShareData = &GetDllShareData();
 	}
 	//タグジャンプ関連	// 2004/06/21 novice タグジャンプ機能追加
-	void PushTagJump(const TagJump *);		//!< タグジャンプ情報の保存
-	bool PopTagJump(TagJump *);				//!< タグジャンプ情報の参照
+	void PushTagJump(const TagJump * pTagJump);		//!< タグジャンプ情報の保存
+	bool PopTagJump(TagJump *pTagJump);				//!< タグジャンプ情報の参照
 private:
 	DLLSHAREDATA* m_pShareData;
 };

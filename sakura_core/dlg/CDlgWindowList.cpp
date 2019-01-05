@@ -42,7 +42,6 @@ static const SAnchorList anchorList[] = {
 	{IDC_BUTTON_HELP,           ANCHOR_BOTTOM},
 };
 
-
 CDlgWindowList::CDlgWindowList()
 	: CDialog(true)
 {
@@ -86,7 +85,6 @@ BOOL CDlgWindowList::OnBnClicked(int wID)
 	return CDialog::OnBnClicked(wID);
 }
 
-
 void CDlgWindowList::GetDataListView(std::vector<HWND>& aHwndList)
 {
 	HWND hwndList = GetItemHwnd(IDC_LIST_WINDOW);
@@ -107,7 +105,6 @@ void CDlgWindowList::GetDataListView(std::vector<HWND>& aHwndList)
 	}
 }
 
-
 void CDlgWindowList::CommandSave()
 {
 	std::vector<HWND> aHwndList;
@@ -121,7 +118,6 @@ void CDlgWindowList::CommandSave()
 	SetData();
 }
 
-
 void CDlgWindowList::CommandClose()
 {
 	std::vector<HWND> aHwndList;
@@ -134,7 +130,6 @@ void CDlgWindowList::CommandClose()
 	}
 	SetData();
 }
-
 
 void CDlgWindowList::SetData()
 {
@@ -165,18 +160,15 @@ void CDlgWindowList::SetData()
 	return;
 }
 
-
 int CDlgWindowList::GetData()
 {
 	return TRUE;
 }
 
-
 LPVOID CDlgWindowList::GetHelpIdTable()
 {
 	return (LPVOID)p_helpids;
 }
-
 
 INT_PTR CDlgWindowList::DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -194,7 +186,6 @@ BOOL CDlgWindowList::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	_SetHwnd(hwndDlg);
 
 	CreateSizeBox();
-	CDialog::OnSize();
 
 	RECT rc;
 	::GetWindowRect(hwndDlg, &rc);
@@ -213,6 +204,7 @@ BOOL CDlgWindowList::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 		m_nHeight = rcDialog.bottom - rcDialog.top;
 	}
 	SetDialogPosSize();
+	OnSize(0, 0);
 
 	HWND hwndList = GetItemHwnd(IDC_LIST_WINDOW);
 	RECT rcListView;
@@ -235,7 +227,6 @@ BOOL CDlgWindowList::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	return CDialog::OnInitDialog(hwndDlg, wParam, lParam);
 }
 
-
 BOOL CDlgWindowList::OnSize(WPARAM wParam, LPARAM lParam)
 {
 	CDialog::OnSize(wParam, lParam);
@@ -255,14 +246,12 @@ BOOL CDlgWindowList::OnSize(WPARAM wParam, LPARAM lParam)
 	return TRUE;
 }
 
-
 BOOL CDlgWindowList::OnMove(WPARAM wParam, LPARAM lParam)
 {
 	::GetWindowRect(GetHwnd(), &GetDllShareData().m_Common.m_sOthers.m_rcWindowListDialog);
 	
 	return CDialog::OnMove(wParam, lParam);
 }
-
 
 BOOL CDlgWindowList::OnMinMaxInfo(LPARAM lParam)
 {
@@ -276,7 +265,6 @@ BOOL CDlgWindowList::OnMinMaxInfo(LPARAM lParam)
 	lpmmi->ptMaxTrackSize.y = m_ptDefaultSize.y*3;
 	return 0;
 }
-
 
 BOOL CDlgWindowList::OnActivate(WPARAM wParam, LPARAM lParam)
 {

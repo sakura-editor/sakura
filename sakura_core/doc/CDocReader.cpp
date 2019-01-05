@@ -48,7 +48,6 @@ wchar_t* CDocReader::GetAllData(int* pnDataLen)
 	return pData;
 }
 
-
 const wchar_t* CDocReader::GetLineStr( CLogicInt nLine, CLogicInt* pnLineLen )
 {
 	const CDocLine* pDocLine;
@@ -60,7 +59,6 @@ const wchar_t* CDocReader::GetLineStr( CLogicInt nLine, CLogicInt* pnLineLen )
 	// 2002/2/10 aroka CMemory のメンバ変数に直接アクセスしない(inline化されているので速度的な問題はない)
 	return pDocLine->GetDocLineStrWithEOL( pnLineLen );
 }
-
 
 /*!
 	指定された行番号の文字列と改行コードを除く長さを取得
@@ -78,9 +76,6 @@ const wchar_t* CDocReader::GetLineStrWithoutEOL( CLogicInt nLine, int* pnLineLen
 	*pnLineLen = pDocLine->GetLengthWithoutEOL();
 	return pDocLine->GetPtr();
 }
-
-
-
 
 /*! 順アクセスモード：先頭行を得る
 
@@ -102,10 +97,6 @@ const wchar_t* CDocReader::GetFirstLinrStr( int* pnLineLen )
 	}
 	return pszLine;
 }
-
-
-
-
 
 /*!
 	順アクセスモード：次の行を得る

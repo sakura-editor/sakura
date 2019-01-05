@@ -23,7 +23,6 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 
-
 //@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {	//10400
 	IDC_EDIT_DFORM,						HIDC_EDIT_DFORM,		//日付書式
@@ -112,7 +111,6 @@ void CPropFormat::ChangeTimeExample( HWND hwndDlg )
 	return;
 }
 
-
 /* Format メッセージ処理 */
 INT_PTR CPropFormat::DispatchEvent(
 	HWND	hwndDlg,	// handle to dialog box
@@ -149,8 +147,6 @@ INT_PTR CPropFormat::DispatchEvent(
 
 		/* 時刻書式 */
 		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_TFORM ), _countof(m_Common.m_sFormat.m_szTimeFormat) - 1 );
-
-
 
 		return TRUE;
 	case WM_COMMAND:
@@ -189,10 +185,6 @@ INT_PTR CPropFormat::DispatchEvent(
 				EnableFormatPropInput( hwndDlg );
 			//	To Here Sept. 10, 2000
 				return 0;
-
-
-
-
 			}
 			break;	/* BN_CLICKED */
 		}
@@ -246,25 +238,18 @@ INT_PTR CPropFormat::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
-
 	}
 	return FALSE;
 }
 
-
-
-
-
 /* ダイアログデータの設定 Format */
 void CPropFormat::SetData( HWND hwndDlg )
 {
-
 	/* 見出し記号 */
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_MIDASHIKIGOU, m_Common.m_sFormat.m_szMidashiKigou );
 
 	/* 引用符 */
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_INYOUKIGOU, m_Common.m_sFormat.m_szInyouKigou );
-
 
 	//日付書式のタイプ
 	if( 0 == m_Common.m_sFormat.m_nDateFormatType ){
@@ -293,9 +278,6 @@ void CPropFormat::SetData( HWND hwndDlg )
 	return;
 }
 
-
-
-
 /* ダイアログデータの取得 Format */
 int CPropFormat::GetData( HWND hwndDlg )
 {
@@ -310,7 +292,6 @@ int CPropFormat::GetData( HWND hwndDlg )
 
 	/* 引用符 */
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_INYOUKIGOU, m_Common.m_sFormat.m_szInyouKigou, _countof(m_Common.m_sFormat.m_szInyouKigou) );
-
 
 	//日付書式のタイプ
 	if( BST_CHECKED == ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_DFORM_0 ) ){
@@ -333,10 +314,6 @@ int CPropFormat::GetData( HWND hwndDlg )
 
 	return TRUE;
 }
-
-
-
-
 
 //	From Here Sept. 10, 2000 JEPRO
 //	チェック状態に応じてダイアログボックス要素のEnable/Disableを
@@ -362,6 +339,4 @@ void CPropFormat::EnableFormatPropInput( HWND hwndDlg )
 	}
 }
 //	To Here Sept. 10, 2000
-
-
 

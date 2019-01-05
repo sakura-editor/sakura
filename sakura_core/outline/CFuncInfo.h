@@ -25,12 +25,14 @@ class CFuncInfo;
 //	2003.06.27 Moca
 #define FUNCINFO_NOCLIPTEXT 0x10000
 
-
 //! アウトライン解析  データ要素
 //@date 2002.04.01 YAZAKI 深さ導入
 class CFuncInfo {
 	public:
-		CFuncInfo( CLogicInt, CLogicInt, CLayoutInt, CLayoutInt, const TCHAR*, const TCHAR*, int );	/* CFuncInfoクラス構築 */
+		CFuncInfo( CLogicInt nFuncLineCRLF, CLogicInt nFuncColCRLF,
+				   CLayoutInt nFuncLineLAYOUT, CLayoutInt nFuncColLAYOUT,
+				   const TCHAR* pszFuncName, const TCHAR* pszFileName,
+				   int nInfo );	/* CFuncInfoクラス構築 */
 		~CFuncInfo();	/* CFuncInfoクラス消滅 */
 
 		//! クリップボードに追加する要素か？
@@ -50,10 +52,6 @@ class CFuncInfo {
 		int			m_nDepth;		/*!< 深さ */
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CFUNCINFO_H_ */
-
-
 

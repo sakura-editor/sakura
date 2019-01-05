@@ -19,8 +19,6 @@
 #include "charset/charcode.h"
 #include "CSearchAgent.h"
 
-
-
 /* 文字列置換 */
 void CLayoutMgr::ReplaceData_CLayoutMgr(
 	LayoutReplaceArg*	pArg
@@ -47,7 +45,6 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 		colorInfo = m_cLayoutExInfoBot.DetachColorInfo();
 	}
 
-
 	/*
 	||  カーソル位置変換
 	||  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置) →
@@ -73,7 +70,6 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	);
 	pArg->nInsSeq = DLRArg.nInsSeq;
 
-
 	/*--- 変更された行のレイアウト情報を再生成 ---*/
 	/* 論理行の指定範囲に該当するレイアウト情報を削除して */
 	/* 削除した範囲の直前のレイアウト情報のポインタを返す */
@@ -82,7 +78,6 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	CLayout* pLayoutPrev;
 	CLogicInt nWork;
 	nWork = t_max( DLRArg.nDeletedLineNum, DLRArg.nInsLineNum );
-
 
 	if( pLayoutWork ){
 		pLayoutPrev = DeleteLayoutAsLogical(
@@ -156,6 +151,4 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	//2007.10.18 kobake LayoutReplaceArg::ptLayoutNewはここで算出するのが正しい
 	LogicToLayout(DLRArg.ptNewPos, &pArg->ptLayoutNew); // 挿入された部分の次の位置
 }
-
-
 

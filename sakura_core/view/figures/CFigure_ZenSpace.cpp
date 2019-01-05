@@ -18,7 +18,6 @@ bool CFigure_ZenSpace::Match(const wchar_t* pText, int nTextLen) const
 	return false;
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         描画実装                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -82,7 +81,6 @@ void CFigure_ZenSpace::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pc
 			
 			// To Here 2003.08.17 ryoji 改行文字が欠けないように
 		}
-		
 	}
 
 	//位置進める

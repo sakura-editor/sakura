@@ -116,7 +116,6 @@ void CTextMetrics::Update(HDC hdc, HFONT hFont, int nLineSpace, int nColmSpace)
 	SetHankakuDy( std::max(1, nOrgHeight + nLineSpace) );
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           設定                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -131,7 +130,6 @@ void CTextMetrics::SetHankakuHeight(int nHankakuHeight)
 {
 	m_nCharHeight=nHankakuHeight;
 }
-
 
 //!文字間隔基準設定。nDxBasisは半角文字の基準ピクセル幅。SetHankakuDx
 void CTextMetrics::SetHankakuDx(int nDxBasis)
@@ -160,7 +158,6 @@ const int* CTextMetrics::GenerateDxArray(
 	int nCharSpacing				//!< [in]  文字隙間
 )
 {
-
 	vResultArray->resize(nLength);
 	if(!pText || nLength<=0)return NULL;
 

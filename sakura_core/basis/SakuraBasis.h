@@ -77,7 +77,6 @@ typedef int CPixelXInt;
 typedef CLayoutXInt CHabaXInt;
 typedef int         CKetaXInt;
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ２次元型の定義                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -102,8 +101,6 @@ typedef CStrictRect<CLayoutInt, CLayoutPoint>	CLayoutRect;
 #include "CMyPoint.h"
 typedef CRangeBase<CMyPoint>     SelectionRange;
 
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          ツール                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -122,7 +119,6 @@ inline void TwoPointToRange(
 	prangeDst->SetFrom(POINT_T(rc.UpperLeft()));
 	prangeDst->SetTo(POINT_T(rc.LowerRight()));
 }
-
 
 //! 2点を対角とする矩形を求める
 template <class T, class INT_TYPE>

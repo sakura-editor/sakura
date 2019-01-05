@@ -75,12 +75,10 @@ const DWORD p_helpids[] = {
 
 CDlgPluginOption::CDlgPluginOption()
 {
-
 }
 
 CDlgPluginOption::~CDlgPluginOption()
 {
-
 }
 
 /* モーダルダイアログの表示 */
@@ -383,8 +381,6 @@ BOOL CDlgPluginOption::OnNotify( WPARAM wParam, LPARAM lParam )
 	return CDialog::OnNotify( wParam, lParam );
 }
 
-
-
 BOOL CDlgPluginOption::OnBnClicked( int wID )
 {
 	switch( wID )
@@ -447,7 +443,6 @@ BOOL CDlgPluginOption::OnCbnSelChange( HWND hwndCtl, int wID )
 	return CDialog::OnCbnSelChange( hwndCtl, wID );
 }
 
-
 BOOL CDlgPluginOption::OnEnChange( HWND hwndCtl, int wID )
 {
 	switch( wID ){
@@ -463,7 +458,6 @@ BOOL CDlgPluginOption::OnEnChange( HWND hwndCtl, int wID )
 	/* 基底クラスメンバ */
 	return CDialog::OnEnChange( hwndCtl, wID );
 }
-
 
 BOOL CDlgPluginOption::OnActivate( WPARAM wParam, LPARAM lParam )
 {
@@ -483,12 +477,10 @@ BOOL CDlgPluginOption::OnActivate( WPARAM wParam, LPARAM lParam )
 	return CDialog::OnActivate( wParam, lParam );
 }
 
-
 LPVOID CDlgPluginOption::GetHelpIdTable( void )
 {
 	return (LPVOID)p_helpids;
 }
-
 
 void CDlgPluginOption::ChangeListPosition( void )
 {
@@ -558,7 +550,6 @@ void CDlgPluginOption::MoveFocusToEdit( void )
 		}
 	}
 }
-
 
 // 編集領域に書き込み
 void CDlgPluginOption::SetToEdit( int iLine )

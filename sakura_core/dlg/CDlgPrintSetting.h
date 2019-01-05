@@ -48,7 +48,8 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, int*, PRINTSETTING*, int );	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE hInstance, HWND hwndParent, int* pnCurrentPrintSetting,
+				 PRINTSETTING* pPrintSettingArr, int nLineNumberColumns );	/* モーダルダイアログの表示 */
 
 private:
 	int				m_nCurrentPrintSetting;
@@ -81,8 +82,6 @@ protected:
 	void UpdatePrintableLineAndColumn();	/* 行数と桁数の計算要求 */
 	void SetFontName( int idTxt, int idUse, LOGFONT& lf, int nPointSize );	// フォント名/使用ボタンの設定
 };
-
-
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* SAKURA_CDLGPRINTSETTING_9DF803C0_8BBB_41EC_B6A7_AFEBBDBC517D_H_ */

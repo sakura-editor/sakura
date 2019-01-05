@@ -29,7 +29,6 @@
 #include "StdAfx.h"
 #include "CCookieManager.h"
 
-
 SysString CCookieManager::GetCookie(LPCWSTR scope, LPCWSTR cookieName) const
 {
 	const std::map<wstring, wstring>* cookies = SelectCookieType(scope);

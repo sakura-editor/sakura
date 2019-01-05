@@ -25,7 +25,6 @@
 constexpr auto SPLITTER_FRAME_WIDTH = 3;
 constexpr auto SPLITTER_MARGIN = 2;
 
-
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CSplitterWnd::CSplitterWnd()
 : CWnd(_T("::CSplitterWnd"))
@@ -51,15 +50,9 @@ CSplitterWnd::CSplitterWnd()
 	return;
 }
 
-
-
-
 CSplitterWnd::~CSplitterWnd()
 {
 }
-
-
-
 
 /* 初期化 */
 HWND CSplitterWnd::Create( HINSTANCE hInstance, HWND hwndParent, void* pCEditWnd )
@@ -101,10 +94,6 @@ HWND CSplitterWnd::Create( HINSTANCE hInstance, HWND hwndParent, void* pCEditWnd
 	);
 }
 
-
-
-
-
 /* 子ウィンドウの設定
 	@param hwndEditViewArr [in] HWND配列 NULL終端
 */
@@ -127,9 +116,6 @@ void CSplitterWnd::SetChildWndArr( HWND* hwndEditViewArr )
 	return;
 }
 
-
-
-
 /* 分割フレーム描画 */
 void CSplitterWnd::DrawFrame( HDC hdc, RECT* prc )
 {
@@ -143,9 +129,6 @@ void CSplitterWnd::DrawFrame( HDC hdc, RECT* prc )
 	);
 	return;
 }
-
-
-
 
 /* 分割トラッカーの表示 */
 void CSplitterWnd::DrawSplitter( int xPos, int yPos, int bEraseOld )
@@ -203,9 +186,6 @@ void CSplitterWnd::DrawSplitter( int xPos, int yPos, int bEraseOld )
 	::ReleaseDC( GetHwnd(), hdc );
 	return;
 }
-
-
-
 
 /* 分割バーへのヒットテスト */
 int CSplitterWnd::HitTestSplitter( int xPos, int yPos )
@@ -610,7 +590,6 @@ void CSplitterWnd::SetActivePane( int nIndex )
 	return;
 }
 
-
 /* 縦分割ＯＮ／ＯＦＦ */
 void CSplitterWnd::VSplitOnOff( void )
 {
@@ -631,8 +610,6 @@ void CSplitterWnd::VSplitOnOff( void )
 	return;
 }
 
-
-
 /* 横分割ＯＮ／ＯＦＦ */
 void CSplitterWnd::HSplitOnOff( void )
 {
@@ -652,8 +629,6 @@ void CSplitterWnd::HSplitOnOff( void )
 	}
 	return;
 }
-
-
 
 /* 縦横分割ＯＮ／ＯＦＦ */
 void CSplitterWnd::VHSplitOnOff( void )
@@ -682,7 +657,6 @@ void CSplitterWnd::VHSplitOnOff( void )
 
 	return;
 }
-
 
 /* 前のペインを返す */
 int CSplitterWnd::GetPrevPane( void )
@@ -730,9 +704,6 @@ int CSplitterWnd::GetPrevPane( void )
 	return nPane;
 }
 
-
-
-
 /* 次のペインを返す */
 int CSplitterWnd::GetNextPane( void )
 {
@@ -779,14 +750,11 @@ int CSplitterWnd::GetNextPane( void )
 	return nPane;
 }
 
-
 /* 最初のペインを返す */
 int CSplitterWnd::GetFirstPane( void )
 {
 	return 0;
 }
-
-
 
 /* 最後のペインを返す */
 int CSplitterWnd::GetLastPane( void )
@@ -805,9 +773,6 @@ int CSplitterWnd::GetLastPane( void )
 	}
 	return nPane;
 }
-
-
-
 
 /* 描画処理 */
 LRESULT CSplitterWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
@@ -833,9 +798,6 @@ LRESULT CSplitterWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	::EndPaint(hwnd, &ps);
 	return 0L;
 }
-
-
-
 
 /* ウィンドウサイズの変更処理 */
 LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
@@ -939,12 +901,9 @@ LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	return 0L;
 }
 
-
-
 /* マウス移動時の処理 */
 LRESULT CSplitterWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-
 	int		nHit;
 	RECT	rc;
 	int		xPos;
@@ -988,8 +947,6 @@ LRESULT CSplitterWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 	return 0L;
 }
 
-
-
 /* マウス左ボタン押下時の処理 */
 LRESULT CSplitterWnd::OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
@@ -1013,13 +970,9 @@ LRESULT CSplitterWnd::OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 	return 0L;
 }
 
-
-
-
 /* マウス左ボタン解放時の処理 */
 LRESULT CSplitterWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-
 	int bDraggingOld;
 	int nX;
 	int nY;
@@ -1057,9 +1010,6 @@ LRESULT CSplitterWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 	return 0L;
 }
 
-
-
-
 /* マウス左ボタンダブルクリック時の処理 */
 LRESULT CSplitterWnd::OnLButtonDblClk( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
@@ -1096,9 +1046,6 @@ LRESULT CSplitterWnd::OnLButtonDblClk( HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 	return 0L;
 }
 
-
-
-
 /* アプリケーション定義のメッセージ(WM_APP <= msg <= 0xBFFF) */
 LRESULT CSplitterWnd::DispatchEvent_WM_APP( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
@@ -1125,6 +1072,4 @@ LRESULT CSplitterWnd::DispatchEvent_WM_APP( HWND hwnd, UINT uMsg, WPARAM wParam,
 	}
 	return 0L;
 }
-
-
 

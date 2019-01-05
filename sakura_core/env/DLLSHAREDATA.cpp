@@ -55,7 +55,6 @@ int CShareDataLockCounter::GetLockCounter(){
 	return GetDllShareData().m_nLockCount;
 }
 
-
 class CLockCancel: public CDlgCancel{
 public:
 	virtual BOOL OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam ){

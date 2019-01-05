@@ -70,7 +70,6 @@ private:
 	CPlugin::List m_plugins;
 	tstring m_sBaseDir;					//pluginsフォルダのパス
 	tstring m_sExePluginDir;			//Exeフォルダ配下pluginsフォルダのパス
-
 };
 
 #endif /* SAKURA_CPLUGINMANAGER_1015EF83_3B11_47FB_BAAF_63ACAFE32FCAD_H_ */

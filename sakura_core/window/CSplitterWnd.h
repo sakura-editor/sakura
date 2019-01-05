@@ -89,13 +89,8 @@ protected:
 	void DrawFrame(HDC hdc, RECT* prc);	/* 分割フレーム描画 */
 	int HitTestSplitter(int xPos, int yPos);	/* 分割バーへのヒットテスト */
 	void DrawSplitter(int xPos, int yPos, int bEraseOld);	/* 分割トラッカーの表示 */
-
 };
-
-
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* SAKURA_WINDOW_CSPLITTERWND_H_ */
-
-
 

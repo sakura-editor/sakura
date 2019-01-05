@@ -72,7 +72,6 @@ public:
 	//デバッグ
 	void DUMP();
 
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         実装補助                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -97,13 +96,9 @@ public:
 	mutable CLogicInt	m_nPrevReferLine;
 	mutable CDocLine*	m_pCodePrevRefer;
 
-private:
 	DISALLOW_COPY_AND_ASSIGN(CDocLineMgr);
 };
 
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CDOCLINEMGR_H_ */
-
-
 

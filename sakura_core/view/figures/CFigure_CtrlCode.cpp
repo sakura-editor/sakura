@@ -81,7 +81,6 @@ bool CFigure_HanBinary::Match(const wchar_t* pText, int nTextLen) const
 	return false;
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     CFigure_ZenBinary                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

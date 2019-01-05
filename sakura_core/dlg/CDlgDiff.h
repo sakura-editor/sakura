@@ -50,7 +50,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, LPARAM, const TCHAR* );	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam, const TCHAR* pszPath );	/* モーダルダイアログの表示 */
 
 protected:
 	/*
@@ -83,12 +83,8 @@ public:
 	bool		m_bBomDst;			// 相手ファイルのBOM
 	int			m_nDiffFlgOpt;		// DIFFオプション
 	HWND		m_hWnd_Dst;			// 相手ウインドウハンドル
-
 };
-
-
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CDLGDIFF_H_ */
-
 

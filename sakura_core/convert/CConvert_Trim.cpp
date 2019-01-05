@@ -94,4 +94,3 @@ bool CConvert_Trim::DoConvert(CNativeW* pcData)
 	return true;
 }
 
-

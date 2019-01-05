@@ -21,10 +21,8 @@
 #include "env/DLLSHAREDATA.h"
 #include "util/window.h"
 
-
 // ダミー文字列
 static constexpr TCHAR szDummy[] = { _T(" ") };
-
 
 /* CTipWndクラス デストラクタ */
 CTipWnd::CTipWnd()
@@ -36,8 +34,6 @@ CTipWnd::CTipWnd()
 	return;
 }
 
-
-
 /* CTipWndクラス デストラクタ */
 CTipWnd::~CTipWnd()
 {
@@ -47,8 +43,6 @@ CTipWnd::~CTipWnd()
 	}
 	return;
 }
-
-
 
 /* 初期化 */
 void CTipWnd::Create( HINSTANCE hInstance, HWND hwndParent )
@@ -138,7 +132,6 @@ void CTipWnd::Show( int nX, int nY, const TCHAR* szText, RECT* pRect )
 	::InvalidateRect( GetHwnd(), NULL, TRUE );
 	::ShowWindow( GetHwnd(), SW_SHOWNA );
 	return;
-
 }
 
 /* ウィンドウのサイズを決める */
@@ -221,10 +214,7 @@ void CTipWnd::ComputeWindowSize(
 	prcResult->bottom = nCurHeight + cy4;
 
 	return;
-
-
 }
-
 
 /* ウィンドウのテキストを表示 */
 void CTipWnd::DrawTipText(
@@ -293,11 +283,7 @@ void CTipWnd::DrawTipText(
 	::SetBkMode( hdc, nBkModeOld );
 
 	return;
-
-
 }
-
-
 
 /* Tipを消す */
 void CTipWnd::Hide( void )
@@ -306,9 +292,6 @@ void CTipWnd::Hide( void )
 //	::DestroyWindow( GetHwnd() );
 	return;
 }
-
-
-
 
 /* 描画処理 */
 LRESULT CTipWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l_Param )
@@ -322,7 +305,6 @@ LRESULT CTipWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l_Param )
 	::EndPaint(	hwnd, &ps );
 	return 0L;
 }
-
 
 // 2001/06/19 Start by asa-o: ウィンドウのサイズを得る
 void CTipWnd::GetWindowSize(LPRECT pRect)
@@ -342,6 +324,4 @@ void CTipWnd::GetWindowSize(LPRECT pRect)
 }
 
 // 2001/06/19 End
-
-
 

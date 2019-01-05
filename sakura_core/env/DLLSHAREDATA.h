@@ -79,10 +79,6 @@ inline void SetDllShareData(DLLSHAREDATA* pShareData)
 #include "print/CPrint.h" //PRINTSETTING
 #include "recent/SShare_History.h"	//SShare_History
 
-
-
-
-
 //! 共有フラグ
 struct SShare_Flags{
 	BOOL				m_bEditWndChanging;				// 編集ウィンドウ切替中	// 2007.04.03 ryoji
@@ -125,7 +121,6 @@ struct SShare_Version{
 	DWORD				m_dwProductVersionMS;
 	DWORD				m_dwProductVersionLS;
 };
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                   共有メモリ構造体本体                      //
@@ -178,7 +173,6 @@ struct DLLSHAREDATA{
 	TCHAR						m_szTagsCmdLine[_MAX_PATH];	/* TAGSコマンドラインオプション */	//@@@ 2003.05.12 MIK
 	int							m_nTagsOpt;					/* TAGSオプション(チェック) */	//@@@ 2003.05.12 MIK
 
-
 	// -- -- テンポラリ -- -- //
 	//指定行へジャンプダイアログのオプション
 	bool						m_bLineNumIsCRLF_ForJump;			/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
@@ -190,7 +184,7 @@ public:
 	~CShareDataLockCounter();
 
 	static int GetLockCounter();
-	static void WaitLock( HWND, CShareDataLockCounter** = NULL );
+	static void WaitLock( HWND hwndParent, CShareDataLockCounter** ppLock = NULL );
 private:
 };
 #endif /* SAKURA_DLLSHAREDATA_3A6DD7E0_90DC_4219_8570_F5C1B8B6A306_H_ */

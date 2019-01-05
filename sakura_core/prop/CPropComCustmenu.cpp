@@ -384,7 +384,6 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					}
 					List_SetCurSel( hwndLIST_RES, nIdx2 );
 
-
 					for( i = m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1]; i > nIdx2; i--){
 						m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][i] = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][i - 1];
 						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][i] = m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][i - 1];
@@ -429,7 +428,6 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					}else{
 					}
 					break;
-
 
 				case IDC_BUTTON_INSERT:
 					nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );
@@ -477,7 +475,6 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					List_SetCurSel( hwndLIST_RES, nIdx2 );
 
 					break;
-
 
 				case IDC_BUTTON_ADD:
 					nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );
@@ -627,13 +624,9 @@ INT_PTR CPropCustmenu::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
-
 	}
 	return FALSE;
 }
-
-
-
 
 /* ダイアログデータの設定 Custom menu */
 void CPropCustmenu::SetData( HWND hwndDlg )
@@ -704,17 +697,11 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 	return;
 }
 
-
-
 /* ダイアログデータの取得 Custom menu */
 int CPropCustmenu::GetData( HWND hwndDlg )
 {
 	return TRUE;
 }
-
-
-
-
 
 /* カスタムメニュー設定をインポートする */
 void CPropCustmenu::Import( HWND hwndDlg )

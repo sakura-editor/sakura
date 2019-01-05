@@ -66,9 +66,6 @@ private:
 	CSubject* m_pcSubjectRef;
 };
 
-
-
-
 template <class LISTENER> class CSubjectT : public CSubject{
 public:
 	LISTENER* GetListener(int nIndex) const

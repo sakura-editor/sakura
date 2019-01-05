@@ -65,9 +65,7 @@
 |[parse-buildlog.bat](parse-buildlog.bat)    | ビルドログを解析するバッチファイル |
 |[build-chm.bat](build-chm.bat)       | compiled HTML ファイルをビルドするバッチファイル |
 |[build-installer.bat](build-installer.bat) | インストーラをビルドするバッチファイル |
-|[externals\cppcheck\install-cppcheck.bat](externals/cppcheck/install-cppcheck.bat) | cppcheck をインストールするバッチファイル |
 |[run-cppcheck.bat](run-cppcheck.bat)       | cppcheck を実行するバッチファイル |
-|[externals\doxygen\install-doxygen.bat](externals/doxygen/install-doxygen.bat) | doxygen をインストールするバッチファイル |
 |[run-doxygen.bat](run-doxygen.bat)         | doxygen を実行するバッチファイル |
 |[zipArtifacts.bat](zipArtifacts.bat)       | 成果物を zip に固めるバッチファイル |
 |[calc-hash.bat](calc-hash.bat)             | 成果物の sha256 を計算するバッチファイル |
@@ -92,11 +90,8 @@
     - [build-gnu.bat](build-gnu.bat) : (Platform="MinGW"のみ) Makefileをビルドしてbuild-all.batの処理を終了する
     - [build-chm.bat](build-chm.bat) : HTML Help をビルドする
         - hhc.exe (Visual Studio 2017 に同梱)
-    - [externals\cppcheck\install-cppcheck.bat](externals/cppcheck/install-cppcheck.bat) : cppcheck をインストールする
-        - msiexec.exe
     - [run-cppcheck.bat](run-cppcheck.bat) : cppcheck を実行する
         - cppcheck.exe
-    - [externals\doxygen\install-doxygen.bat](externals/doxygen/install-doxygen.bat) : doxygen をインストールする
     - [run-doxygen.bat](run-doxygen.bat) : doxygen を実行する
         - doxygen.exe
     - [build-installer.bat](build-installer.bat) : Installer をビルドする
@@ -124,9 +119,7 @@
 |parse-buildlog.bat  | msbuild のビルドログパス | なし |
 |build-chm.bat       | なし | なし |
 |build-installer.bat | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
-|externals\cppcheck\install-cppcheck.bat | なし | なし |
 |run-cppcheck.bat                        | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
-|externals\doxygen\install-doxygen.bat   | なし | なし |
 |run-doxygen.bat                         | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
 |zipArtifacts.bat    | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
 |calc-hash.bat       | sha256 のハッシュ値の出力先ファイル | ハッシュ値を計算するフォルダパス |

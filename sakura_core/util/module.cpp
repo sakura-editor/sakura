@@ -111,8 +111,6 @@ DWORD GetDllVersion(LPCTSTR lpszDllName)
 	return dwVersion;
 }
 
-
-
 /*!
 	@brief アプリケーションアイコンの取得
 	
@@ -166,11 +164,6 @@ HICON GetAppIcon( HINSTANCE hInst, int nResource, const TCHAR* szFile, bool bSma
 	return hIcon;
 }
 
-
-
-
-
-
 struct VS_VERSION_INFO_HEAD {
 	WORD	wLength;
 	WORD	wValueLength;
@@ -216,5 +209,4 @@ void GetAppVersionInfo(
 		}
 	}
 	return;
-
 }

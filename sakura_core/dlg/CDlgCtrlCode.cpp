@@ -255,7 +255,6 @@ BOOL CDlgCtrlCode::OnBnClicked( int wID )
 	case IDCANCEL:
 		::EndDialog( GetHwnd(), FALSE );
 		return TRUE;
-
 	}
 
 	/* 基底クラスメンバ */
@@ -329,5 +328,4 @@ LPVOID CDlgCtrlCode::GetHelpIdTable( void )
 {
 	return (LPVOID)p_helpids;
 }
-
 

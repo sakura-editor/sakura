@@ -1082,6 +1082,12 @@
     <ClInclude Include="..\sakura_core\version.h">
       <Filter>Other Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\recent\CRecentExcludeFile.h">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\recent\CRecentExcludeFolder.h">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sakura_core\Funccode_x.hsrc">
@@ -2242,6 +2248,12 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\config\build_config.cpp">
       <Filter>Cpp Source Files\config</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\recent\CRecentExcludeFile.cpp">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\recent\CRecentExcludeFolder.cpp">
+      <Filter>Cpp Source Files\recent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

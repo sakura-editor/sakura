@@ -49,10 +49,8 @@
 #endif
 #endif
 
-
 //! USE_UNFIXED_FONT を定義すると、フォント選択ダイアログで等幅フォント以外も選べるようになる
 //#define USE_UNFIXED_FONT
-
 
 //UNICODE BOOL定数.
 #ifdef _UNICODE
@@ -61,16 +59,13 @@ static const bool UNICODE_BOOL=true;
 static const bool UNICODE_BOOL=false;
 #endif
 
-
 //DebugMonitorLib(仮)を使うかどうか
 //#define USE_DEBUGMON
-
 
 //newされた領域をわざと汚すかどうか (デバッグ用)
 #ifdef _DEBUG
 #define FILL_STRANGE_IN_NEW_MEMORY
 #endif
-
 
 //crtdbg.hによるメモリーリークチェックを使うかどうか (デバッグ用)
 #ifdef _DEBUG
@@ -82,10 +77,7 @@ static const bool UNICODE_BOOL=false;
 //全角スペース描画
 //#define NEW_ZENSPACE //新しい描画ルーチン (全角スペースを破線矩形で描画) を採用
 
-
-
 // -- -- -- -- ↑以上、ビルド設定完了 -- -- -- -- //
-
 
 //デバッグ検証用：newされた領域をわざと汚す。2007.11.27 kobake
 #ifdef FILL_STRANGE_IN_NEW_MEMORY
@@ -99,7 +91,6 @@ static const bool UNICODE_BOOL=false;
 	void operator delete(void* p) noexcept;
 	void operator delete[](void* p) noexcept;
 #endif
-
 
 //crtdbg.hによるメモリーリークチェックを使うかどうか (デバッグ用)
 #ifdef USE_LEAK_CHECK_WITH_CRTDBG

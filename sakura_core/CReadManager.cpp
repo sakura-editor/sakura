@@ -186,4 +186,3 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 	return eRet;
 }
 
-

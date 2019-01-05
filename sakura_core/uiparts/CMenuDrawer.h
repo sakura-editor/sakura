@@ -15,7 +15,6 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-
 #ifndef _CMENUDRAWER_H_
 #define _CMENUDRAWER_H_
 
@@ -51,8 +50,7 @@ public:
 	*/
 	CMenuDrawer();
 	~CMenuDrawer();
-	void Create( HINSTANCE, HWND, CImageListMgr* );
-
+	void Create( HINSTANCE hInstance, HWND hWndOwner, CImageListMgr* pcIcons );
 
 	/*
 	||  Attributes & Operations
@@ -68,7 +66,7 @@ public:
 	{
 		MyAppendMenu(hMenu,nFlag,nFuncId,pszLabel,_T(""),bAddKeyStr,nForceIconId);
 	}
-	int MeasureItem( int, int* );	/* メニューアイテムの描画サイズを計算 */
+	int MeasureItem( int nFuncID, int* pnItemHeight );	/* メニューアイテムの描画サイズを計算 */
 	void DrawItem( DRAWITEMSTRUCT* );	/* メニューアイテム描画 */
 	void EndDrawMenu();
 	LRESULT OnMenuChar( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam );
@@ -127,19 +125,13 @@ public:
 	CImageListMgr	*m_pcIcons;	//	Image List
 
 protected:
-	/*
-	||  実装ヘルパ関数
-	*/
-	int GetData( void );	/* ダイアログデータの取得 */
 
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-	void SetTBBUTTONVal( TBBUTTON*, int, int, BYTE, BYTE, DWORD_PTR, INT_PTR ) const;	/* TBBUTTON構造体にデータをセット */
+	void SetTBBUTTONVal( TBBUTTON* ptb, int iBitmap, int idCommand,
+						 BYTE fsState, BYTE fsStyle, DWORD_PTR dwData,
+						 INT_PTR iString ) const;	/* TBBUTTON構造体にデータをセット */
 };
-
-
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CMENUDRAWER_H_ */
-
-
 

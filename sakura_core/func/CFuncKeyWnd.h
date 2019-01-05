@@ -71,9 +71,6 @@ protected:
 	virtual LRESULT OnDestroy(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);// WM_DESTROY処理
 };
 
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* SAKURA_CFUNCKEYWND_H_ */
-
-
 

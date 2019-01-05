@@ -41,11 +41,9 @@ private:
 	static int _ExParam_Evaluate( const wchar_t* pCond );
 };
 
-
 //ウィンドウ管理
 /* 指定ウィンドウが、編集ウィンドウのフレームウィンドウかどうか調べる */
 BOOL IsSakuraMainWindow( HWND hWnd );
-
 
 #endif /* SAKURA_CSAKURAENVIRONMENT_95CFC65B_9C67_4ABF_A681_5A4652A3C5D3_H_ */
 /*[EOF]*/

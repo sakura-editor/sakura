@@ -46,8 +46,6 @@ public:
 	//セーブ前後
 	void OnAfterSave(const SSaveInfo& sSaveInfo);
 
-
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           状態                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -97,7 +95,6 @@ public:
 	bool			m_bInsMode;					//!< 挿入・上書きモード Oct. 2, 2005 genta
 	bool			m_bIsDocModified;
 };
-
 
 class CDocEditAgent{
 public:

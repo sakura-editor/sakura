@@ -37,8 +37,6 @@
 
 using namespace std; // 2002/2/3 aroka
 
-
-
 static void StringToOpeLineData(const wchar_t* pLineData, int nLineDataLen, COpeLineData& lineData, int opeSeq)
 {
 	int nBegin = 0;
@@ -65,7 +63,6 @@ static void StringToOpeLineData(const wchar_t* pLineData, int nLineDataLen, COpe
 		insertLine.nSeq = opeSeq;
 	}
 }
-
 
 /*!	現在位置にデータを挿入 Ver0
 
@@ -96,7 +93,6 @@ void CEditView::InsertData_CEditView(
 	}else{
 		opeSeq = 0;
 	}
-
 
 	pptNewPos->y = 0;			// 挿入された部分の次の位置のレイアウト行
 	pptNewPos->x = 0;			// 挿入された部分の次の位置のレイアウト位置
@@ -192,14 +188,12 @@ void CEditView::InsertData_CEditView(
 		nColumnFrom = 0;
 	}
 
-
 	if( !m_bDoing_UndoRedo && pcOpe ){	// アンドゥ・リドゥの実行中か
 		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 			CLayoutPoint(nColumnFrom, ptInsertPos.y),
 			&pcOpe->m_ptCaretPos_PHY_Before
 		);
 	}
-
 
 	// 文字列挿入
 	CLayoutInt	nModifyLayoutLinesOld=CLayoutInt(0);
@@ -350,7 +344,6 @@ void CEditView::InsertData_CEditView(
 	}
 }
 
-
 /*!	指定位置の指定長データ削除
 
 	@param _ptCaretPos [in]  削除データの位置
@@ -441,10 +434,6 @@ void CEditView::DeleteData2(
 		m_cCommander.GetOpeBlk()->AppendOpe( pcOpe );
 	}
 }
-
-
-
-
 
 /*!	カーソル位置または選択エリアを削除
 
@@ -632,7 +621,6 @@ void CEditView::DeleteData(
 			nNxtPos = LineIndexToColumn( pcLayout, nNxtIdx );
 		}
 
-
 		/* データ置換 削除&挿入にも使える */
 		CLayoutRange sDelRange;
 		sDelRange.SetFrom(GetCaret().GetCaretLayoutPos());
@@ -674,7 +662,6 @@ end_of_func:;
 	return;
 }
 
-
 void CEditView::ReplaceData_CEditView(
 	const CLayoutRange&	sDelRange,			//!< [in]  削除範囲レイアウト単位
 	const wchar_t*		pInsData,			//!< [in]  挿入するデータ
@@ -715,9 +702,6 @@ void CEditView::ReplaceData_CEditView2(
 	}
 	ReplaceData_CEditView(sDelRangeLayout,pInsData,nInsDataLen,bRedraw,pcOpeBlk,bFastMode,&sDelRange);
 }
-
-
-
 
 /* データ置換 削除&挿入にも使える */
 // Jun 23, 2000 genta 変数名を書き換え忘れていたのを修正
@@ -799,7 +783,6 @@ bool CEditView::ReplaceData_CEditView3(
 		);
 	}
 
-
 	CLogicPoint		ptCaretPos_PHY_Old;
 
 	ptCaretPos_PHY_Old = GetCaret().GetCaretLogicPos();
@@ -827,7 +810,6 @@ bool CEditView::ReplaceData_CEditView3(
 	if( pcOpeBlk || pcmemCopyOfDeleted ){
 		pcMemDeleted = &opeData;
 	}
-
 
 	/* 現在の選択範囲を非選択状態に戻す */
 	// 2009.07.18 ryoji 置換後→置換前に位置を変更（置換後だと反転が不正になって汚い Wiki BugReport/43）
@@ -976,9 +958,6 @@ bool CEditView::ReplaceData_CEditView3(
 	return  bUpdateAll;
 }
 
-
-
-
 // 2005.10.11 ryoji 前の行にある末尾の空白を削除
 void CEditView::RTrimPrevLine( void )
 {
@@ -1028,8 +1007,4 @@ void CEditView::RTrimPrevLine( void )
 		}
 	}
 }
-
-
-
-
 

@@ -15,7 +15,6 @@
 #include "COpe.h"
 #include "mem/CMemory.h"// 2002/2/10 aroka
 
-
 // COpeクラス構築
 COpe::COpe(EOpeCode eCode)
 {
@@ -24,11 +23,7 @@ COpe::COpe(EOpeCode eCode)
 
 	m_ptCaretPos_PHY_Before.Set(CLogicInt(-1),CLogicInt(-1));	//カーソル位置
 	m_ptCaretPos_PHY_After.Set(CLogicInt(-1),CLogicInt(-1));	//カーソル位置
-
 }
-
-
-
 
 /* COpeクラス消滅 */
 COpe::~COpe()
@@ -68,5 +63,4 @@ void CInsertOpe::DUMP( void )
 	}
 	return;
 }
-
 

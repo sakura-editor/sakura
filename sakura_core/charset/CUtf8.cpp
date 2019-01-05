@@ -16,8 +16,6 @@ void CUtf8::GetBom(CMemory* pcmemBom)
 	pcmemBom->SetRawData(UTF8_BOM, sizeof(UTF8_BOM));
 }
 
-
-
 void CUtf8::GetEol(CMemory* pcmemEol, EEolType eEolType){
 	static const struct{
 		const char* szData;
@@ -34,7 +32,6 @@ void CUtf8::GetEol(CMemory* pcmemEol, EEolType eEolType){
 	};
 	pcmemEol->SetRawData(aEolTable[eEolType].szData,aEolTable[eEolType].nLen);
 }
-
 
 /*!
 	UTF-8 → Unicode 実装
@@ -84,8 +81,6 @@ int CUtf8::Utf8ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool b
 	return pw - reinterpret_cast<unsigned short*>(pDst);
 }
 
-
-
 //! UTF-8→Unicodeコード変換
 // 2007.08.13 kobake 作成
 EConvertResult CUtf8::_UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDstMem, bool bCESU8Mode/*, bool decodeMime*/ )
@@ -133,13 +128,6 @@ EConvertResult CUtf8::_UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDstMem, bo
 		return RESULT_LOSESOME;
 	}
 }
-
-
-
-
-
-
-
 
 /*!
 	Unicode -> UTF-8 実装
@@ -191,7 +179,6 @@ int CUtf8::UniToUtf8( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* 
 	return pw - reinterpret_cast<unsigned char*>(pDst);
 }
 
-
 //! コード変換 Unicode→UTF-8
 EConvertResult CUtf8::_UnicodeToUTF8( const CNativeW& cSrc, CMemory* pDstMem, bool bCesu8Mode )
 {
@@ -201,7 +188,6 @@ EConvertResult CUtf8::_UnicodeToUTF8( const CNativeW& cSrc, CMemory* pDstMem, bo
 	// ソースを取得
 	const wchar_t* pSrc = cSrc.GetStringPtr();
 	int nSrcLen = cSrc.GetStringLength();
-
 
 	// 必要なバッファサイズを調べてメモリを確保
 	char* pDst = new (std::nothrow) char[nSrcLen * 3];

@@ -14,7 +14,6 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-
 #include "StdAfx.h"
 #include "CProcess.h"
 #include "util/module.h"
@@ -149,6 +148,5 @@ int CProcess::WriteDump( PEXCEPTION_POINTERS pExceptPtrs )
 */
 void CProcess::RefreshString()
 {
-
 	m_pcShareData->RefreshString();
 }

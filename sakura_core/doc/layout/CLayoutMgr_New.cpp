@@ -24,9 +24,6 @@
 #include "mem/CMemoryIterator.h"
 #include "util/window.h"
 
-
-
-
 /*!
 	行頭禁則文字に該当するかを調べる．
 
@@ -52,7 +49,6 @@ bool CLayoutMgr::IsKinsokuTail( wchar_t wc )
 {
 	return m_pszKinsokuTail_1.exist(wc);
 }
-
 
 /*!
 	禁則対象句読点に該当するかを調べる．
@@ -145,7 +141,6 @@ bool CLayoutMgr::IsKinsokuPosTail(
 	}
 	return false;
 }
-
 
 /*!
 	@brief 行の長さを計算する (2行目以降の字下げ無し)
@@ -406,8 +401,6 @@ void CLayoutMgr::ClearLayoutLineWidth( void )
 	while( pLayout ){
 		pLayout->m_nLayoutWidth = 0;			// レイアウト行長をクリア
 		pLayout = pLayout->GetNextLayout();		// 次のレイアウト行のデータ
-		
 	}
 }
-
 

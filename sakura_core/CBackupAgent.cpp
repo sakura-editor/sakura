@@ -71,10 +71,6 @@ ECallbackResult CBackupAgent::OnPreBeforeSave(SSaveInfo* pSaveInfo)
 	return CALLBACK_CONTINUE;
 }
 
-
-
-
-
 /*! バックアップの作成
 	@author genta
 	@date 2001.06.12 asa-o
@@ -286,9 +282,6 @@ int CBackupAgent::MakeBackUp(
 	return 1;
 }
 
-
-
-
 /*! バックアップパスの作成
 
 	@author aroka
@@ -340,8 +333,8 @@ bool CBackupAgent::FormatBackUpPath(
 
 	/* 相対フォルダを挿入 */
 	if( !bup_setting.m_bBackUpPathAdvanced ){
-		time_t	ltime;
-		struct	tm *today;
+		__time64_t 	ltime = 0;
+		struct	tm result = {0};
 		wchar_t	szTime[64];
 		wchar_t	szForm[64];
 
@@ -365,8 +358,8 @@ bool CBackupAgent::FormatBackUpPath(
 		case 2:	//	日付，時刻
 			_tzset();
 			_wstrdate( szTime );
-			time( &ltime );				/* システム時刻を得ます */
-			today = localtime( &ltime );/* 現地時間に変換する */
+			_time64( &ltime );				/* システム時刻を得ます */
+			_localtime64_s( &result, &ltime );/* 現地時間に変換する */
 
 			szForm[0] = L'\0';
 			if( bup_setting.GetBackupOpt(BKUP_YEAR) ){	/* バックアップファイル名：日付の年 */
@@ -388,7 +381,7 @@ bool CBackupAgent::FormatBackUpPath(
 				wcscat( szForm, L"%S" );
 			}
 			/* YYYYMMDD時分秒 形式に変換 */
-			wcsftime( szTime, _countof( szTime ) - 1, szForm, today );
+			wcsftime( szTime, _countof( szTime ) - 1, szForm, &result );
 			if( -1 == auto_snprintf_s( pBase, nBaseCount, _T("%ts_%ls%ts"), szFname, szTime, szExt ) ){
 				return false;
 			}
@@ -565,6 +558,4 @@ bool CBackupAgent::FormatBackUpPath(
 	}
 	return true;
 }
-
-
 

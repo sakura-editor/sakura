@@ -130,7 +130,6 @@ public:
 	//	memcpyをするのにポインタがとれないと面倒
 	const wchar_t* getCurrentPos(){	return m_pLine + m_nIndex;	}
 
-
 private:
 	//コンストラクタで受け取ったパラメータ (固定)
 	const wchar_t*		m_pLine;
@@ -148,12 +147,8 @@ private:
 	CLayoutInt	m_nColumn;       //レイアウト位置。桁(半角幅)単位。
 	CLogicInt	m_nIndex_Delta;  //index増分
 	CLayoutInt	m_nColumn_Delta; //column増分
-
 };
-
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CBLOCKCOMMENT_H_ */
-
-
 

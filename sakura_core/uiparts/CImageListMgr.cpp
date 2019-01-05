@@ -167,9 +167,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 	}
 
 	return nRetPos == 0;
-
 }
-
 
 /*! ビットマップの表示 灰色を透明描画
 
@@ -321,7 +319,6 @@ void CImageListMgr::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
 
 	DeleteObject( bmpMask );
 	return;
-
 }
 
 /*! @brief アイコンの描画

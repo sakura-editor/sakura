@@ -14,7 +14,6 @@
 #include <stdlib.h>
 #include "COpeBlk.h"
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -59,7 +58,6 @@ bool COpeBlk::AppendOpe( COpe* pcOpe )
 	return true;
 }
 
-
 /* 操作を返す */
 COpe* COpeBlk::GetOpe( int nIndex )
 {
@@ -85,6 +83,4 @@ void COpeBlk::DUMP( void )
 	}
 #endif
 }
-
-
 

@@ -83,7 +83,6 @@ public:
 	//	デストラクタのvirtualを忘れずに
 	virtual ~CMacroManagerBase();
 	
-
 protected:
 	//!	Load済みかどうかを表すフラグ true...Load済み、false...未Load。
 	bool m_nReady;
@@ -98,7 +97,6 @@ public:
 
 	// Constructor
 	CMacroManagerBase();
-
 };
 
 #endif

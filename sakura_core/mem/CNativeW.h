@@ -30,14 +30,12 @@
 #include "basis/SakuraBasis.h"
 #include "debug/Debug2.h" //assert
 
-
 //! 文字列への参照を取得するインターフェース
 class IStringRef{
 public:
 	virtual const wchar_t*	GetPtr()	const = 0;
 	virtual int				GetLength()	const = 0;
 };
-
 
 //! 文字列への参照を保持するクラス
 class CStringRef : public IStringRef{
@@ -54,7 +52,6 @@ private:
 	const wchar_t*	m_pData;
 	int				m_nDataLen;
 };
-
 
 //! UNICODE文字列管理クラス
 class CNativeW : public CNative{
@@ -86,7 +83,6 @@ public:
 	const CNativeW& operator+=(const CNativeW& rhs)		{ AppendNativeData(rhs); return *this; }
 	const CNativeW& operator=(const CNativeW& rhs)		{ SetNativeData(rhs);    return *this; }
 	CNativeW operator+(const CNativeW& rhs) const		{ CNativeW tmp=*this; return tmp+=rhs; }
-
 
 	//ネイティブ取得インターフェース
 	wchar_t operator[](int nIndex) const;                    //!< 任意位置の文字取得。nIndexは文字単位。
@@ -138,7 +134,6 @@ public:
 		return _GetMemory()->capacity() / sizeof(wchar_t);
 	}
 
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           判定                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -146,18 +141,15 @@ public:
 	//! 同一の文字列ならtrue
 	static bool IsEqual( const CNativeW& cmem1, const CNativeW& cmem2 );
 
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           変換                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
 
 	void Replace( const wchar_t* pszFrom, const wchar_t* pszTo );   //!< 文字列置換
 	void ReplaceT( const wchar_t* pszFrom, const wchar_t* pszTo ){
 		Replace( pszFrom, pszTo );
 	}
 	void Replace( const wchar_t* pszFrom, int nFromLen, const wchar_t* pszTo, int nToLen );   //!< 文字列置換
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                  型限定インターフェース                     //

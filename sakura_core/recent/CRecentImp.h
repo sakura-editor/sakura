@@ -30,7 +30,6 @@
 
 #include "recent/CRecent.h"
 
-
 template < class DATA_TYPE, class RECEIVE_TYPE = const DATA_TYPE* >
 class CRecentImp : public CRecent{
 private:
@@ -90,7 +89,6 @@ public:
 	int FindItem( ReceiveType pItemData ) const;
 	bool MoveItem( int nSrcIndex, int nDstIndex );	//アイテムを移動
 
-
 	//オーバーライド用インターフェース
 	virtual int  CompareItem( const DataType* p1, ReceiveType p2 ) const = 0;
 	virtual void CopyItem( DataType* dst, ReceiveType src ) const = 0;
@@ -126,6 +124,8 @@ protected:
 #include "CRecentReplace.h"
 #include "CRecentGrepFile.h"
 #include "CRecentGrepFolder.h"
+#include "CRecentExcludeFile.h"
+#include "CRecentExcludeFolder.h"
 #include "CRecentCmd.h"
 #include "CRecentCurDir.h"
 #include "CRecentEditNode.h"

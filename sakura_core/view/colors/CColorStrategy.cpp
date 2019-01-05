@@ -39,9 +39,6 @@
 #include "window/CEditWnd.h"
 #include "types/CTypeSupport.h"
 
-
-
-
 bool _IsPosKeywordHead(const CStringRef& cStr, int nPos)
 {
 	return (nPos==0 || !IS_KEYWORD_CHAR(cStr.At(nPos-1)));
@@ -188,7 +185,6 @@ void SColorStrategyInfo::DoChangeColor(CColor3Setting *pcColor)
 	*pcColor = m_cIndex;
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          プール                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -249,7 +245,6 @@ void CColorStrategyPool::NotifyOnStartScanLogic()
 		GetStrategy(i)->OnStartScanLogic();
 	}
 }
-
 
 // 2005.11.20 Mocaコメントの色分けがON/OFF関係なく行われていたバグを修正
 void CColorStrategyPool::CheckColorMODE(
@@ -370,9 +365,6 @@ bool CColorStrategyPool::IsSkipBeforeLayout()
 	return true;
 }
 
-
-
-
 /*!
   iniの色設定を番号でなく文字列で書き出す。(added by Stonee, 2001/01/12, 2001/01/15)
   配列の順番は共有メモリ中のデータの順番と一致している。
@@ -442,8 +434,6 @@ const SColorAttributeData g_ColorAttributeArr[] =
 	{_T("PGV"), COLOR_ATTRIB_NO_TEXT | COLOR_ATTRIB_NO_EFFECTS},
 	{_T("LAST"), 0}	// Not Used
 };
-
-
 
 /*
  * カラー名からインデックス番号に変換する

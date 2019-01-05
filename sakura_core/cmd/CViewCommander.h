@@ -59,8 +59,6 @@ public:
 	/* キーリピート状態 */
 	int				m_bPrevCommand;
 
-
-
 private:
 	enum EIndentType {
 		INDENT_NONE,
@@ -156,7 +154,6 @@ public:
 	void Command_Reconvert(void);			/* メニューからの再変換対応 minfu 2002.04.09 */
 	void Command_CtrlCode_Dialog(void);		/* コントロールコードの入力(ダイアログ) */	//@@@ 2002.06.02 MIK
 
-
 	/* カーソル移動系 */
 	//	Oct. 24, 2001 genta 機能拡張のため引数追加
 	void Command_MOVECURSOR(CLogicPoint pos, int option);
@@ -226,6 +223,7 @@ public:
 	void Command_ADDTAIL( const wchar_t* pszData, int nDataLen);	/* 最後にテキストを追加 */
 	void Command_COPYFILENAME( void );				/* このファイル名をクリップボードにコピー */ //2002/2/3 aroka
 	void Command_COPYPATH( void );					/* このファイルのパス名をクリップボードにコピー */
+	void Command_COPYDIRPATH( void );				/* このファイルのフォルダ名をクリップボードにコピー */
 	void Command_COPYTAG( void );					/* このファイルのパス名とカーソル位置をコピー */
 	void Command_COPYLINES( void );					/* 選択範囲内全行コピー */
 	void Command_COPYLINESASPASSAGE( void );		/* 選択範囲内全行引用符付きコピー */
@@ -234,7 +232,6 @@ public:
 	void Command_COPY_COLOR_HTML_LINENUMBER( void );		//選択範囲内色付きHTMLコピー
 	CColorStrategy* GetColorStrategyHTML(const CStringRef&	cStringLine, int iLogic, const CColorStrategyPool*	pool, CColorStrategy**	ppStrategy, CColorStrategy** pStrategyFound, bool& bChange);
 	void Command_CREATEKEYBINDLIST( void );			// キー割り当て一覧をコピー //Sept. 15, 2000 JEPRO	Command_の作り方がわからないので殺してある
-
 
 	/* 挿入系 */
 	void Command_INS_DATE( void );	//日付挿入
@@ -278,7 +275,6 @@ public:
 	void Command_SEARCH_CLEARMARK( void );				/* 検索マークのクリア */
 	void Command_JUMP_SRCHSTARTPOS( void );				/* 検索開始位置へ戻る */	// 02/06/26 ai
 
-
 	void Command_GREP_DIALOG( void );					/* Grepダイアログの表示 */
 	void Command_GREP( void );							/* Grep */
 	void Command_GREP_REPLACE_DLG( void );				/* Grep置換ダイアログの表示 */
@@ -312,8 +308,6 @@ public:
 	void Command_BOOKMARK_PATTERN( void );				// 2002.01.16 hor 指定パターンに一致する行をマーク
 	void Command_FUNCLIST_NEXT( void );					// 次の関数リストマーク	2014.01.05
 	void Command_FUNCLIST_PREV( void );					// 前の関数リストマーク	2014.01.05
-
-
 
 	/* モード切り替え系 */
 	void Command_CHGMOD_INS( void );	/* 挿入／上書きモード切り替え */
@@ -392,7 +386,6 @@ public:
 	void Command_TAB_CLOSELEFT( void );	/* 左をすべて閉じる */		// 2008.11.22 syat
 	void Command_TAB_CLOSERIGHT( void );/* 右をすべて閉じる */		// 2008.11.22 syat
 
-
 	void Command_ToggleKeySearch(int option);	/* キャレット位置の単語を辞書検索する機能ON-OFF */	// 2006.03.24 fon
 
 	void Command_HOKAN( void );			/* 入力補完 */
@@ -413,7 +406,6 @@ private:
 public:
 	CLogicInt ConvertEol(const wchar_t* pszText, CLogicInt nTextLen, wchar_t* pszConvertedText);
 	void Sub_BoxSelectLock( int flags );
-
 };
 
 #endif /* SAKURA_CVIEWCOMMANDER_5F4F7A80_2BEC_4B1D_A637_B922375FF14C9_H_ */

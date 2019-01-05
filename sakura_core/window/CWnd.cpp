@@ -17,9 +17,6 @@
 #include "CWnd.h"
 #include "util/os.h" //WM_MOUSEWHEEL
 
-
-
-
 /* CWndウィンドウメッセージのコールバック関数 */
 LRESULT CALLBACK CWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
@@ -81,7 +78,6 @@ next:
 	}
 } //namespace CWindowCreationHook
 
-
 CWnd::CWnd(const TCHAR* pszInheritanceAppend)
 {
 	m_hInstance = NULL;	/* アプリケーションインスタンスのハンドル */
@@ -104,7 +100,6 @@ CWnd::~CWnd()
 	m_hWnd = NULL;
 	return;
 }
-
 
 /* ウィンドウクラス作成 */
 ATOM CWnd::RegisterWC(
@@ -193,7 +188,6 @@ HWND CWnd::Create(
 	return m_hWnd;
 }
 
-
 /* メッセージ配送 */
 LRESULT CWnd::DispatchEvent( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
 {
@@ -249,7 +243,6 @@ LRESULT CWnd::CallDefWndProc( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
 	return ::DefWindowProc( hwnd, msg, wp, lp );
 }
 
-
 /* ウィンドウを破棄 */
 void CWnd::DestroyWindow()
 {
@@ -258,6 +251,4 @@ void CWnd::DestroyWindow()
 		m_hWnd = NULL;
 	}
 }
-
-
 

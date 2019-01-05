@@ -183,7 +183,6 @@ BOOL CDlgPrintSetting::OnDestroy( void )
 	return CDialog::OnDestroy();
 }
 
-
 BOOL CDlgPrintSetting::OnNotify( WPARAM wParam, LPARAM lParam )
 {
 	CDlgInput1		cDlgInput1;
@@ -230,7 +229,6 @@ BOOL CDlgPrintSetting::OnCbnSelChange( HWND hwndCtl, int wID )
 	}
 	return FALSE;
 }
-
 
 BOOL CDlgPrintSetting::OnBnClicked( int wID )
 {
@@ -369,7 +367,6 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 	return CDialog::OnBnClicked( wID );
 }
 
-
 BOOL CDlgPrintSetting::OnStnClicked( int wID )
 {
 	switch( wID ){
@@ -386,7 +383,6 @@ BOOL CDlgPrintSetting::OnStnClicked( int wID )
 	/* 基底クラスメンバ */
 	return CDialog::OnStnClicked( wID );
 }
-
 
 BOOL CDlgPrintSetting::OnEnChange( HWND hwndCtl, int wID )
 {
@@ -409,7 +405,6 @@ BOOL CDlgPrintSetting::OnEnChange( HWND hwndCtl, int wID )
 	/* 基底クラスメンバ */
 	return CDialog::OnEnChange( hwndCtl, wID );
 }
-
 
 BOOL CDlgPrintSetting::OnEnKillFocus( HWND hwndCtl, int wID )
 {
@@ -435,7 +430,6 @@ BOOL CDlgPrintSetting::OnEnKillFocus( HWND hwndCtl, int wID )
 	return CDialog::OnEnKillFocus( hwndCtl, wID );
 }
 
-
 /* ダイアログデータの設定 */
 void CDlgPrintSetting::SetData( void )
 {
@@ -446,7 +440,6 @@ void CDlgPrintSetting::SetData( void )
 	int	i;
 	int	nItemIdx;
 	int	nSelectIdx;
-
 
 	/* フォント一覧 */
 	hdc = ::GetDC( m_hwndParent );
@@ -471,7 +464,6 @@ void CDlgPrintSetting::SetData( void )
 		Combo_SetItemData( hwndComboPaper, nItemIdx, CPrint::m_paperInfoArr[i].m_nId );
 	}
 
-
 	/* 印刷設定名一覧 */
 	hwndComboSettingName = GetItemHwnd( IDC_COMBO_SETTINGNAME );
 	Combo_ResetContent( hwndComboSettingName );
@@ -490,9 +482,6 @@ void CDlgPrintSetting::SetData( void )
 
 	return;
 }
-
-
-
 
 /* ダイアログデータの取得 */
 /* TRUE==正常 FALSE==入力エラー */
@@ -626,7 +615,6 @@ int CDlgPrintSetting::GetData( void )
 	return TRUE;
 }
 
-
 /* 設定のタイプが変わった */
 void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 {
@@ -728,7 +716,6 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 	return;
 }
 
-
 const struct {
 	int ctrlid;
 	int minval;
@@ -775,7 +762,6 @@ void CDlgPrintSetting::OnSpin( int nCtrlId, BOOL bDown )
 	}
 }
 
-
 /* 入力値(数値)のエラーチェックをして正しい値を返す */
 int CDlgPrintSetting::DataCheckAndCorrect( int nCtrlId, int nData )
 {
@@ -800,7 +786,6 @@ int CDlgPrintSetting::DataCheckAndCorrect( int nCtrlId, int nData )
 	}
 	return nData;
 }
-
 
 /*!
 	印字可能行数と桁数を計算
@@ -859,7 +844,6 @@ BOOL CDlgPrintSetting::CalcPrintableLineAndColumn()
 	}
 }
 
-
 // 行数と桁数の更新を要求（メッセージキューにポストする）
 // ダイアログ初期化の途中で EN_CHANGE に反応すると計算がおかしくなるため、関数呼び出しではなくPostMessageで処理 2013.5.5 aroka
 void CDlgPrintSetting::UpdatePrintableLineAndColumn()
@@ -868,14 +852,12 @@ void CDlgPrintSetting::UpdatePrintableLineAndColumn()
 	::PostMessageA( GetHwnd(), WM_COMMAND, MAKELONG( IDC_STATIC_ENABLECOLUMNS, STN_CLICKED ), (LPARAM)GetItemHwnd( IDC_STATIC_ENABLECOLUMNS ) );
 }
 
-
 //@@@ 2002.01.18 add start
 LPVOID CDlgPrintSetting::GetHelpIdTable(void)
 {
 	return (LPVOID)p_helpids;
 }
 //@@@ 2002.01.18 add end
-
 
 // フォント名/使用ボタンの設定
 void CDlgPrintSetting::SetFontName( int idTxt, int idUse, LOGFONT& lf, int nPointSize )

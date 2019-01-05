@@ -31,7 +31,6 @@ static const DWORD p_helpids[] = {	//13000
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
 
-
 /* ダイアログプロシージャ */
 INT_PTR CALLBACK CDlgInput1Proc(
 	HWND hwndDlg,	// handle to dialog box
@@ -60,21 +59,15 @@ INT_PTR CALLBACK CDlgInput1Proc(
 	}
 }
 
-
-
 CDlgInput1::CDlgInput1()
 {
 	return;
 }
 
-
-
 CDlgInput1::~CDlgInput1()
 {
 	return;
 }
-
-
 
 /* モードレスダイアログの表示 */
 BOOL CDlgInput1::DoModal(
@@ -123,8 +116,6 @@ BOOL CDlgInput1::DoModal(
 	}
 	return ret;
 }
-
-
 
 /* ダイアログのメッセージ処理 */
 INT_PTR CDlgInput1::DispatchEvent(
@@ -184,6 +175,4 @@ INT_PTR CDlgInput1::DispatchEvent(
 	}
 	return FALSE;
 }
-
-
 

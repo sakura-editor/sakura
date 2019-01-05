@@ -82,8 +82,6 @@ private:
 	bool m_bVertLineDoNotOFF;
 };
 
-
-
 class CCaret{
 public:
 	CCaret(CEditView* pEditView, const CEditDoc* pEditDoc);
@@ -104,7 +102,6 @@ public:
 	//                         実装補助                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	POINT CalcCaretDrawPos(const CLayoutPoint& ptCaretPos) const;
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                   初期化・終了処理など                      //
@@ -151,13 +148,11 @@ public:
 	void SetCaretLayoutPos(const CLayoutPoint& pt){ m_ptCaretPos_Layout = pt; }	//!< キャレット位置(レイアウト)を設定
 	void SetCaretLogicPos(const CLogicPoint& pt){ m_ptCaretPos_Logic=pt; }		//!< キャレット位置(ロジック)を設定
 
-	
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        サイズ変更                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	void SetCaretSize(int nW, int nH){ m_sizeCaret.Set(nW,nH); }						//!< キャレットサイズを設定
 
-	
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           計算                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -178,7 +173,6 @@ public:
 	void ShowCaret_( HWND hwnd );
 	void HideCaret_( HWND hwnd );
 
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           取得                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -188,13 +182,10 @@ public:
 	bool ExistCaretFocus() const			{ return m_sizeCaret.cx>0; }	//!< キャレットのフォーカスがあるか。※横幅値で判定してるらしい。
 	CLogicPoint GetCaretLogicPos() const	{ return m_ptCaretPos_Logic; }	//!< キャレット位置(ロジック)を取得
 
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                  低頻度インターフェース                     //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	bool GetCaretShowFlag() const{ return m_bCaretShowFlag; }
-
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        メンバ変数                           //
@@ -224,7 +215,6 @@ public:
 	
 	bool			m_bClearStatus;
 };
-
 
 /*!	@brief CCaret::m_nCaretPosX_Prev
 	直前のX座標記憶用

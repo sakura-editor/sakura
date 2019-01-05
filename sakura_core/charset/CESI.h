@@ -37,7 +37,6 @@ struct SEncodingConfig;
 
 #include "_main/global.h"
 
-
 struct tagEncodingInfo {
 	ECodeType eCodeID;  // 文字コード識別番号
 	int nSpecific;	// 評価値1
@@ -66,7 +65,6 @@ static const DWORD ESI_MBC_DETECTED			= 1;
 static const DWORD ESI_WC_DETECTED			= 2;
 static const DWORD ESI_NODETECTED			= 4;
 
-
 // ワイド文字の２種類あるものの格納位置
 enum EStoreID4WCInfo {
 	ESI_WCIDX_UTF16LE,
@@ -79,8 +77,6 @@ enum EBOMType {
 	ESI_BOMTYPE_LE =0,
 	ESI_BOMTYPE_BE =1,
 };
-
-
 
 /*!
 	文字コードを調査する時に生じる情報格納クラス
@@ -147,7 +143,6 @@ protected:
 	void GetEncodingInfo_latin1( const char* pS, const int nLen );
 	void GetEncodingInfo_meta( const char* pS, const int nLen );
 
-
 	bool _CheckUtf16Eol( const char* pS, const int nLen, const bool bbig_endian );
 	inline bool _CheckUtf16EolLE( const char* p, const int n ){ return _CheckUtf16Eol( p, n, false ); }
 	inline bool _CheckUtf16EolBE( const char* p, const int n ){ return _CheckUtf16Eol( p, n, true ); }
@@ -212,7 +207,6 @@ protected:
 	ECodeType AutoDetectByXML( const char* pBuf, int nSize );
 	ECodeType AutoDetectByHTML( const char* pBuf, int nSize );
 	ECodeType AutoDetectByCoding( const char* pBuf, int nSize );
-
 
 public:
 	const SEncodingConfig* m_pEncodingConfig;

@@ -127,7 +127,6 @@ namespace WCODE
 	}
 #endif
 
-
 	/*!
 		UNICODE文字情報のキャッシュクラス。
 		1文字当たり2ビットで、値を保存しておく。
@@ -355,12 +354,10 @@ namespace WCODE
 		LocalCache m_localcache[3];
 		SCharWidthCache* m_parCache[3];
 		ECharWidthCacheMode m_eLastEditCacheMode;
-	private:
 		DISALLOW_COPY_AND_ASSIGN(LocalCacheSelector);
 	};
 
 	static LocalCacheSelector selector;
-
 
 	//文字幅の動的計算。ピクセル幅
 	int CalcPxWidthByFont(wchar_t c)

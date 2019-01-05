@@ -34,7 +34,6 @@
 		   distribution.
 */
 
-
 #ifndef SAKURA_WINDOW_CTABWND_H_
 #define SAKURA_WINDOW_CTABWND_H_
 
@@ -58,7 +57,7 @@ public:
 	/*
 	|| メンバ関数
 	*/
-	HWND Open( HINSTANCE, HWND );		/*!< ウィンドウ オープン */
+	HWND Open( HINSTANCE hInstance, HWND hwndParent );		/*!< ウィンドウ オープン */
 	void Close( void );					/*!< ウィンドウ クローズ */
 	void TabWindowNotify( WPARAM wParam, LPARAM lParam );
 	void Refresh( BOOL bEnsureVisible = TRUE, BOOL bRebuild = FALSE );			// 2006.02.06 ryoji 引数削除
@@ -100,19 +99,19 @@ protected:
 	virtual void AfterCreateWindow( void ){}	/*!< ウィンドウ作成後の処理 */	// 2007.03.13 ryoji 可視化しない
 
 	/* 仮想関数 メッセージ処理 */
-	virtual LRESULT OnSize( HWND, UINT, WPARAM, LPARAM );		/*!< WM_SIZE処理 */
-	virtual LRESULT OnDestroy( HWND, UINT, WPARAM, LPARAM );	/*!< WM_DSESTROY処理 */
-	virtual LRESULT OnNotify( HWND, UINT, WPARAM, LPARAM );		/*!< WM_NOTIFY処理 */
-	virtual LRESULT OnPaint( HWND, UINT, WPARAM, LPARAM );		/*!< WM_PAINT処理 */
-	virtual LRESULT OnCaptureChanged( HWND, UINT, WPARAM, LPARAM );	/*!< WM_CAPTURECHANGED 処理 */
-	virtual LRESULT OnLButtonDown( HWND, UINT, WPARAM, LPARAM );	/*!< WM_LBUTTONDOWN処理 */
-	virtual LRESULT OnLButtonUp( HWND, UINT, WPARAM, LPARAM );	/*!< WM_LBUTTONUP処理 */
-	virtual LRESULT OnRButtonDown( HWND, UINT, WPARAM, LPARAM );	/*!< WM_RBUTTONDOWN処理 */
-	virtual LRESULT OnLButtonDblClk( HWND, UINT, WPARAM, LPARAM );	/*!< WM_LBUTTONDBLCLK処理 */
-	virtual LRESULT OnMouseMove( HWND, UINT, WPARAM, LPARAM );	/*!< WM_MOUSEMOVE処理 */
-	virtual LRESULT OnTimer( HWND, UINT, WPARAM, LPARAM );		/*!< WM_TIMER処理 */
-	virtual LRESULT OnMeasureItem( HWND, UINT, WPARAM, LPARAM );	/*!< WM_MEASUREITEM処理 */
-	virtual LRESULT OnDrawItem( HWND, UINT, WPARAM, LPARAM );		/*!< WM_DRAWITEM処理 */
+	virtual LRESULT OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );		/*!< WM_SIZE処理 */
+	virtual LRESULT OnDestroy( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );	/*!< WM_DSESTROY処理 */
+	virtual LRESULT OnNotify( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );		/*!< WM_NOTIFY処理 */
+	virtual LRESULT OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );		/*!< WM_PAINT処理 */
+	virtual LRESULT OnCaptureChanged( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );	/*!< WM_CAPTURECHANGED 処理 */
+	virtual LRESULT OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );	/*!< WM_LBUTTONDOWN処理 */
+	virtual LRESULT OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );	/*!< WM_LBUTTONUP処理 */
+	virtual LRESULT OnRButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );	/*!< WM_RBUTTONDOWN処理 */
+	virtual LRESULT OnLButtonDblClk( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );	/*!< WM_LBUTTONDBLCLK処理 */
+	virtual LRESULT OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );	/*!< WM_MOUSEMOVE処理 */
+	virtual LRESULT OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );		/*!< WM_TIMER処理 */
+	virtual LRESULT OnMeasureItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );	/*!< WM_MEASUREITEM処理 */
+	virtual LRESULT OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );		/*!< WM_DRAWITEM処理 */
 
 	// 2005.09.01 ryoji ドラッグアンドドロップでタブの順序変更を可能に
 	/* サブクラス化した Tab でのメッセージ処理 */
@@ -204,11 +203,8 @@ private:
 	HWND		m_hwndSizeBox;
 	bool		m_bSizeBox;
 
-private:
 	DISALLOW_COPY_AND_ASSIGN(CTabWnd);
 };
 
 #endif /* SAKURA_WINDOW_CTABWND_H_ */
-
-
 

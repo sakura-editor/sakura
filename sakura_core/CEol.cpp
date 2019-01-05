@@ -42,7 +42,6 @@ const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
 	EOL_PS					// == 1
 };
 
-
 //-----------------------------------------------
 //	固定データ
 //-----------------------------------------------
@@ -66,8 +65,6 @@ static const SEolDefinition g_aEolTable[] = {
 	{ _T("PS"),		L"\u2029",		"",			1 },
 };
 
-
-
 struct SEolDefinitionForUniFile{
 	const char*	m_szDataW;
 	const char* m_szDataWB;
@@ -85,10 +82,6 @@ static const SEolDefinitionForUniFile g_aEolTable_uni_file[] = {
 	{ "\x28\x20",			"\x20\x28",				2 },
 	{ "\x29\x20",			"\x20\x29",				2 },
 };
-
-
-
-
 
 //-----------------------------------------------
 //	実装補助
@@ -109,7 +102,6 @@ EEolType GetEOLType( const T* pszData, int nDataLen )
 	}
 	return EOL_NONE;
 }
-
 
 /*
 	ファイルを読み込むときに使用するもの
@@ -136,7 +128,6 @@ EEolType _GetEOLType_unibe( const char* pszData, int nDataLen )
 //-----------------------------------------------
 //	実装部
 //-----------------------------------------------
-
 
 //! 現在のEOL長を取得。文字単位。
 CLogicInt CEol::GetLen() const
@@ -193,5 +184,4 @@ void CEol::SetTypeByStringForFile_unibe( const char* pszData, int nDataLen )
 {
 	SetType( _GetEOLType_unibe( pszData, nDataLen ) );
 }
-
 

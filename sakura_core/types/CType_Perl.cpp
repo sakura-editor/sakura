@@ -50,8 +50,6 @@ void CType_Perl::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_bStringLineOnly = true; // 文字列は行内のみ
 }
 
-
-
 //	From Here Sep 8, 2000 genta
 //
 //!	Perl用アウトライン解析機能（簡易版）
@@ -136,7 +134,6 @@ void CDocOutline::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 				}
 				else
 					break;
-
 			}
 			else if( 1 == nMode ){
 				if( L'_' == pLine[i] ||
@@ -181,9 +178,6 @@ void CDocOutline::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 	return;
 }
 //	To HERE Sep. 8, 2000 genta
-
-
-
 
 const wchar_t* g_ppszKeywordsPERL[] = {
 	//Jul. 10, 2001 JEPRO	変数を第２強調キーワードとして分離した
@@ -418,8 +412,6 @@ const wchar_t* g_ppszKeywordsPERL[] = {
 	L"write"
 };
 int g_nKeywordsPERL = _countof(g_ppszKeywordsPERL);
-
-
 
 //Jul. 10, 2001 JEPRO	変数を第２強調キーワードとして分離した
 // 2008/05/05 novice 重複文字列削除

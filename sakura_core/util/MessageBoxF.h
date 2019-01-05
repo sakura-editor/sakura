@@ -45,7 +45,6 @@ int Wrap_MessageBox(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType);
 int VMessageBoxF( HWND hwndOwner, UINT uType, LPCTSTR lpCaption, LPCTSTR lpText, va_list& v );
 int MessageBoxF ( HWND hwndOwner, UINT uType, LPCTSTR lpCaption, LPCTSTR lpText, ... );
 
-
 //                ユーザ用メッセージボックス                   //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
@@ -90,9 +89,6 @@ int TopCustomMessage(HWND hwnd, UINT uType, LPCTSTR format, ...);	//(TOPMOST)
 //作者に教えて欲しいエラー
 int PleaseReportToAuthor(HWND hwnd, LPCTSTR format, ...);
 
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* SAKURA_MESSAGEBOX_2D6EF6BC_3D8C_427B_8AFB_E8903838A1ED_H_ */
-
-
 

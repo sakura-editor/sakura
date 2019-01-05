@@ -35,8 +35,6 @@
 //#include "env/CShareData.h"
 #include "env/CommonSetting.h"
 
-
-
 //! 指定した位置の文字が何バイト文字かを返す
 /*!
 	@param[in] pData 位置を求めたい文字列の先頭
@@ -56,9 +54,6 @@ int CLatin1::GetSizeOfChar( const char* pData, int nDataLen, int nIdx )
 	}
 	return 1;
 }
-
-
-
 
 /*!
 	Latin1 → Unicode 変換
@@ -97,8 +92,6 @@ int CLatin1::Latin1ToUni( const char *pSrc, const int nSrcLen, wchar_t *pDst, bo
 	return pw - reinterpret_cast<unsigned short*>(pDst);
 }
 
-
-
 /* コード変換 Latin1→Unicode */
 EConvertResult CLatin1::Latin1ToUnicode( const CMemory& cSrc, CNativeW* pDstMem )
 {
@@ -130,12 +123,6 @@ EConvertResult CLatin1::Latin1ToUnicode( const CMemory& cSrc, CNativeW* pDstMem 
 		return RESULT_LOSESOME;
 	}
 }
-
-
-
-
-
-
 
 /*
 	Unicode -> Latin1
@@ -198,9 +185,6 @@ int CLatin1::UniToLatin1( const wchar_t* pSrc, const int nSrcLen, char* pDst, bo
 	return pw - reinterpret_cast<unsigned char*>(pDst);
 }
 
-
-
-
 /* コード変換 Unicode→Latin1 */
 EConvertResult CLatin1::UnicodeToLatin1( const CNativeW& cSrc, CMemory* pDstMem )
 {
@@ -233,7 +217,6 @@ EConvertResult CLatin1::UnicodeToLatin1( const CNativeW& cSrc, CMemory* pDstMem 
 		return RESULT_COMPLETE;
 	}
 }
-
 
 // 文字コード表示用	UNICODE → Hex 変換	2008/6/9 Uchi
 EConvertResult CLatin1::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)

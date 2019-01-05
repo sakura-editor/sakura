@@ -218,7 +218,6 @@ CDlgFuncList::CDlgFuncList() : CDialog(true)
 	m_bDummyLParamMode = false;
 }
 
-
 /*!
 	標準以外のメッセージを捕捉する
 
@@ -326,7 +325,6 @@ INT_PTR CDlgFuncList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 	return result;
 }
 
-
 /* モードレスダイアログの表示 */
 /*
  * @note 2011.06.25 syat nOutlineTypeを追加
@@ -425,7 +423,6 @@ void CDlgFuncList::SetData()
 	ListView_DeleteAllItems( hwndList );
 	TreeView_DeleteAllItems( hwndTree );
 	::ShowWindow( GetItemHwnd(IDC_BUTTON_SETTING), SW_HIDE );
-
 
 	SetDocLineFuncList();
 	if( OUTLINE_C_CPP == m_nListType || OUTLINE_CPP == m_nListType ){	/* C++メソッドリスト */
@@ -786,9 +783,6 @@ void CDlgFuncList::SetData()
 	}
 }
 
-
-
-
 bool CDlgFuncList::GetTreeFileFullName(HWND hwndTree, HTREEITEM target, std::tstring* pPath, int* pnItem)
 {
 	*pPath = _T("");
@@ -819,7 +813,6 @@ bool CDlgFuncList::GetTreeFileFullName(HWND hwndTree, HTREEITEM target, std::tst
 	return false;
 }
 
-
 /*! lParamからFuncInfoの番号を算出
 	vecにはダミーのlParam番号が入っているのでずれている数を数える
 */
@@ -841,8 +834,6 @@ static int TreeDummylParamToFuncInfoIndex(std::vector<int>& vec, LPARAM lParam)
 	}
 	return lParam - nDiff;
 }
-
-
 
 /* ダイアログデータの取得 */
 /* 0==条件未入力   0より大きい==正常   0より小さい==入力エラー */
@@ -1217,7 +1208,6 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 	return;
 }
 
-
 /*! リストビューコントロールの初期化：VisualBasic
 
   長くなったので独立させました。
@@ -1242,7 +1232,6 @@ void CDlgFuncList::SetListVB (void)
 
 	hwndList = GetItemHwnd( IDC_LIST_FL );
 
-	
 	m_cmemClipText.SetString( L"" );
 	{
 		const int nBuffLenTag = 17 + wcslen(to_wchar(m_pcFuncInfoArr->m_szFilePath));
@@ -1392,7 +1381,6 @@ void CDlgFuncList::SetListVB (void)
 
 			default:	// 未定義なのでクリア
 				nInfo	= 0;
-
 		}
 		if ( 2 == ((nInfo >> 8) & 0x02) ) {
 			// 宣言(Declareなど)
@@ -1637,8 +1625,6 @@ end_of_func:;
 	free( phParentStack );
 }
 
-
-
 void CDlgFuncList::SetDocLineFuncList()
 {
 	if( m_nOutlineType == OUTLINE_BOOKMARK ){
@@ -1663,8 +1649,6 @@ void CDlgFuncList::SetDocLineFuncList()
 		}
 	}
 }
-
-
 
 /*! ファイルツリー作成
 	@note m_pcFuncInfoArrにフルパス情報を書き込みつつツリーを作成
@@ -1748,7 +1732,6 @@ void CDlgFuncList::SetTreeFile()
 		}
 	}
 }
-
 
 void CDlgFuncList::SetTreeFileSub( HTREEITEM hParent, const TCHAR* pszFile )
 {
@@ -1933,7 +1916,6 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		ProfDockDisp() = TRUE;
 		if( bType ){
 			SetTypeConfig( CTypeConfig(m_nDocType), m_type );
-
 		}
 		// 他ウィンドウに変更を通知する
 		if( ProfDockSync() ){
@@ -2026,10 +2008,8 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		}
 	}
 
-
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 }
-
 
 BOOL CDlgFuncList::OnBnClicked( int wID )
 {
@@ -2478,7 +2458,6 @@ BOOL CDlgFuncList::OnDestroy( void )
 	return TRUE;
 }
 
-
 /*!
 	@date 2016.03.04 Moca OnCbnSelChange -> OnCbnSelEndOk マウスで一覧から選択中にソートされないように変更
 */
@@ -2501,7 +2480,6 @@ BOOL CDlgFuncList::OnCbnSelEndOk( HWND hwndCtl, int wID )
 		return TRUE;
 	}
 	return FALSE;
-
 }
 
 static void SortTree_Sub(HWND hWndTree,HTREEITEM htiParent, STreeViewSortData& data, int nSortType)
@@ -2551,8 +2529,6 @@ static void SortTree_Sub(HWND hWndTree,HTREEITEM htiParent, STreeViewSortData& d
 	}
 }
 
-
-
 void CDlgFuncList::SortTree(HWND hWndTree,HTREEITEM htiParent)
 {
 	STreeViewSortData data;
@@ -2565,8 +2541,6 @@ void CDlgFuncList::SortTree(HWND hWndTree,HTREEITEM htiParent)
 	SortTree_Sub(hWndTree, htiParent, data, m_nSortType);
 	::SendMessageAny(hWndTree, WM_SETREDRAW, (WPARAM)TRUE, 0);
 }
-
-
 
 bool CDlgFuncList::TagJumpTimer( const TCHAR* pFile, CMyPoint point, bool bCheckAutoClose )
 {
@@ -2595,7 +2569,6 @@ bool CDlgFuncList::TagJumpTimer( const TCHAR* pFile, CMyPoint point, bool bCheck
 	::SetTimer( GetHwnd(), 2, 200, NULL ); // id == 2
 	return false;
 }
-
 
 BOOL CDlgFuncList::OnJump( bool bCheckAutoClose, bool bFileJump )	//2002.02.08 hor 引数追加
 {
@@ -2662,14 +2635,12 @@ BOOL CDlgFuncList::OnJump( bool bCheckAutoClose, bool bFileJump )	//2002.02.08 h
 	return TRUE;
 }
 
-
 //@@@ 2002.01.18 add start
 LPVOID CDlgFuncList::GetHelpIdTable(void)
 {
 	return (LPVOID)p_helpids;
 }
 //@@@ 2002.01.18 add end
-
 
 /*!	キー操作をコマンドに変換するヘルパー関数
 	

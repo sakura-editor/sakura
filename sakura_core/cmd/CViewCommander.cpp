@@ -40,7 +40,6 @@ CViewCommander::CViewCommander(CEditView* pEditView) : m_pCommanderView(pEditVie
 	m_pcSMacroMgr = CEditApp::getInstance()->m_pcSMacroMgr;
 }
 
-
 /*!
 	コマンドコードによる処理振り分け
 
@@ -68,7 +67,6 @@ BOOL CViewCommander::HandleCommand(
 	//	Jul.  7, 2007 genta 定数と比較するためにシフトしないで使う
 	int nCommandFrom = nCommand & ~0xffff;
 	nCommand = (EFunctionCode)LOWORD( nCommand );
-
 
 	if( m_pCommanderView->m_nAutoScrollMode && F_AUTOSCROLL != nCommand ){
 		m_pCommanderView->AutoScrollExit();
@@ -377,6 +375,7 @@ BOOL CViewCommander::HandleCommand(
 	case F_ADDTAIL_W:				Command_ADDTAIL( (const wchar_t*)lparam1, (int)lparam2 );break;	/* 最後にテキストを追加 */
 	case F_COPYFNAME:				Command_COPYFILENAME();break;			//このファイル名をクリップボードにコピー / /2002/2/3 aroka
 	case F_COPYPATH:				Command_COPYPATH();break;				//このファイルのパス名をクリップボードにコピー
+	case F_COPYDIRPATH:				Command_COPYDIRPATH();break;				//このファイルのフォルダ名をクリップボードにコピー
 	case F_COPYTAG:					Command_COPYTAG();break;				//このファイルのパス名とカーソル位置をコピー	//Sept. 15, 2000 jepro 上と同じ説明になっていたのを修正
 	case F_COPYLINES:				Command_COPYLINES();break;				//選択範囲内全行コピー
 	case F_COPYLINESASPASSAGE:		Command_COPYLINESASPASSAGE();break;		//選択範囲内全行引用符付きコピー
@@ -471,7 +470,6 @@ BOOL CViewCommander::HandleCommand(
 	case F_JUMP_SRCHSTARTPOS:	Command_JUMP_SRCHSTARTPOS();break;			// 検索開始位置へ戻る 02/06/26 ai
 	case F_FUNCLIST_NEXT:	Command_FUNCLIST_NEXT();break;					// 次の関数リストマーク	2014.01.05
 	case F_FUNCLIST_PREV:	Command_FUNCLIST_PREV();break;					// 前の関数リストマーク	2014.01.05
-
 
 	/* モード切り替え系 */
 	case F_CHGMOD_INS:		Command_CHGMOD_INS();break;		//挿入／上書きモード切り替え
@@ -648,7 +646,6 @@ BOOL CViewCommander::HandleCommand(
 				return bRet;
 			}
 		}
-
 	}
 
 	/* アンドゥバッファの処理 */
@@ -656,8 +653,6 @@ BOOL CViewCommander::HandleCommand(
 
 	return bRet;
 }
-
-
 
 /*!
 	@date 2014.07.11 新規追加
@@ -676,7 +671,6 @@ void CViewCommander::Sub_BoxSelectLock( int flags )
 		this->Command_BEGIN_BOXSELECT( bSelLock );
 	}
 }
-
 
 CLogicInt CViewCommander::ConvertEol(const wchar_t* pszText, CLogicInt nTextLen, wchar_t* pszConvertedText)
 {
@@ -716,8 +710,6 @@ CLogicInt CViewCommander::ConvertEol(const wchar_t* pszText, CLogicInt nTextLen,
 	}
 	return nConvertedTextLen;
 }
-
-
 
 /*!
 	@brief 検索で見つからないときの警告（メッセージボックス／サウンド）

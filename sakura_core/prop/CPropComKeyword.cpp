@@ -30,7 +30,6 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 
-
 //@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {	//10800
 	IDC_BUTTON_ADDSET,				HIDC_BUTTON_ADDSET,			//キーワードセット追加
@@ -140,7 +139,6 @@ INT_PTR CPropKeyword::DispatchEvent(
 
 		lStyle = ::GetWindowLongPtr( hwndLIST_KEYWORD, GWL_STYLE );
 		::SetWindowLongPtr( hwndLIST_KEYWORD, GWL_STYLE, lStyle | LVS_SHOWSELALWAYS );
-
 
 		/* コントロール更新のタイミング用のタイマーを起動 */
 		::SetTimer( hwndDlg, 1, 300, NULL );
@@ -466,7 +464,6 @@ INT_PTR CPropKeyword::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
-
 	}
 	return FALSE;
 }
@@ -513,8 +510,6 @@ void CPropKeyword::Edit_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	return;
 }
 
-
-
 /* リスト中で選択されているキーワードを削除する */
 void CPropKeyword::Delete_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 {
@@ -541,7 +536,6 @@ void CPropKeyword::Delete_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	return;
 }
 
-
 /* リスト中のキーワードをインポートする */
 void CPropKeyword::Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 {
@@ -561,7 +555,6 @@ void CPropKeyword::Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	return;
 }
 
-
 /* リスト中のキーワードをエクスポートする */
 void CPropKeyword::Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 {
@@ -577,7 +570,6 @@ void CPropKeyword::Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 		return;
 	}
 }
-
 
 //! キーワードを整頓する
 void CPropKeyword::Clean_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
@@ -595,7 +587,6 @@ void CPropKeyword::SetData( HWND hwndDlg )
 {
 	int		i;
 	HWND	hwndWork;
-
 
 	/* セット名コンボボックスの値セット */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );
@@ -616,7 +607,6 @@ void CPropKeyword::SetData( HWND hwndDlg )
 
 	return;
 }
-
 
 /* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
 void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
@@ -677,7 +667,6 @@ void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
 		lvi.iSubItem = 0;
 		lvi.lParam	= i;
 		ListView_InsertItem( hwndList, &lvi );
-
 	}
 	m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx = nIdx;
 
@@ -689,8 +678,6 @@ void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
 
 	return;
 }
-
-
 
 /* ダイアログデータの取得 Keyword */
 int CPropKeyword::GetData( HWND hwndDlg )
@@ -722,5 +709,4 @@ void CPropKeyword::DispKeywordCount( HWND hwndDlg )
 	auto_sprintf( szCount, LS(STR_PROPCOMKEYWORD_INFO), MAX_KEYWORDLEN, n, nAlloc );
 	::SetWindowText( ::GetDlgItem( hwndDlg, IDC_STATIC_KEYWORD_COUNT ), szCount );
 }
-
 

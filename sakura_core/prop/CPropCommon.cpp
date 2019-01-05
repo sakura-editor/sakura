@@ -58,7 +58,6 @@ int	CPropCommon::SearchIntArr( int nKey, int* pnArr, int nArrNum )
 	return -1;
 }
 
-
 /*!
 	プロパティページごとのWindow Procedureを引数に取ることで
 	処理の共通化を狙った．
@@ -158,17 +157,9 @@ CPropCommon::CPropCommon()
 	return;
 }
 
-
-
-
-
 CPropCommon::~CPropCommon()
 {
 }
-
-
-
-
 
 /* 初期化 */
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
@@ -187,11 +178,6 @@ void CPropCommon::Create( HWND hwndParent, CImageListMgr* pcIcons, CMenuDrawer* 
 
 	return;
 }
-
-
-
-
-
 
 //	From Here Jun. 2, 2001 genta
 /*!
@@ -383,8 +369,6 @@ void CPropCommon::ApplyData( int* tempTypeKeywordSet )
 	}
 }
 
-
-
 /* ヘルプ */
 //Stonee, 2001/05/18 機能番号からヘルプトピック番号を調べるようにした
 void CPropCommon::OnHelp( HWND hwndParent, int nPageID )
@@ -464,8 +448,6 @@ void CPropCommon::OnHelp( HWND hwndParent, int nPageID )
 	return;
 }
 
-
-
 /*!	コントロールにフォント設定する
 	@date 2013.04.24 Uchi
 */
@@ -484,8 +466,6 @@ HFONT CPropCommon::SetCtrlFont( HWND hwndDlg, int idc_ctrl, const LOGFONT& lf )
 
 	return hFont;
 }
-
-
 
 /*!	フォントラベルにフォントとフォント名設定する
 	@date 2013.04.24 Uchi

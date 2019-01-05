@@ -27,7 +27,6 @@
 #include "plugin/COutlineIfObj.h"
 #include "sakura_rc.h"
 
-
 /*!	アウトライン解析
 
 	@date 2002/03/13 YAZAKI nOutlineTypeとnListTypeを統合。

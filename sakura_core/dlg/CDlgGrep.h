@@ -22,6 +22,9 @@ class CDlgGrep;
 #include "recent/CRecent.h"
 #include "util/window.h"
 
+#define DEFAULT_EXCLUDE_FILE_PATTERN    _T("*.msi;*.exe;*.obj;*.pdb;*.ilk;*.res;*.pch;*.iobj;*.ipdb")
+#define DEFAULT_EXCLUDE_FOLDER_PATTERN  _T(".git;.svn;.vs")
+
 //! GREPダイアログボックス
 class CDlgGrep : public CDialog
 {
@@ -37,7 +40,6 @@ public:
 	int DoModal( HINSTANCE, HWND, const TCHAR* );	/* モーダルダイアログの表示 */
 //	HWND DoModeless( HINSTANCE, HWND, const char* );	/* モードレスダイアログの表示 */
 
-
 	BOOL		m_bSubFolder;/*!< サブフォルダからも検索する */
 	BOOL		m_bFromThisText;/*!< この編集中のテキストから検索する */
 
@@ -50,19 +52,29 @@ public:
 	bool		m_bGrepOutputBaseFolder;	/*!< ベースフォルダ表示 */
 	bool		m_bGrepSeparateFolder;		/*!< フォルダ毎に表示 */
 
-
 	std::wstring	m_strText;				/*!< 検索文字列 */
 	bool			m_bSetText;				//!< 検索文字列を設定したか
 	SFilePathLong	m_szFile;				//!< 検索ファイル
 	SFilePathLong	m_szFolder;				//!< 検索フォルダ
+	SFilePathLong	m_szExcludeFile;		//!< 除外ファイル
+	SFilePathLong	m_szExcludeFolder;		//!< 除外フォルダ
 	SFilePath	m_szCurrentFilePath;
 protected:
 	SComboBoxItemDeleter	m_comboDelText;
 	CRecentSearch			m_cRecentSearch;
+
 	SComboBoxItemDeleter	m_comboDelFile;
 	CRecentGrepFile			m_cRecentGrepFile;
+
 	SComboBoxItemDeleter	m_comboDelFolder;
 	CRecentGrepFolder		m_cRecentGrepFolder;
+
+	SComboBoxItemDeleter	m_comboDelExcludeFile;
+	CRecentExcludeFile		m_cRecentExcludeFile;
+
+	SComboBoxItemDeleter	m_comboDelExcludeFolder;
+	CRecentExcludeFolder	m_cRecentExcludeFolder;
+
 	CFontAutoDeleter		m_cFontText;
 
 	/*
@@ -78,10 +90,6 @@ protected:
 	void SetDataFromThisText(bool bChecked);	/* 現在編集中ファイルから検索チェックでの設定 */
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CDLGGREP_H_ */
-
-
 

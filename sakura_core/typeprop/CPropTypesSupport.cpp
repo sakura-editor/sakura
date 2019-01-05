@@ -51,7 +51,6 @@ static const DWORD p_helpids3[] = {	//11500
 	0, 0
 };
 
-
 struct SHokanMethod{
 	int nMethod;
 	std::wstring name;
@@ -62,7 +61,6 @@ static std::vector<SHokanMethod>* GetHokanMethodList()
 	static std::vector<SHokanMethod> methodList;
 	return &methodList;
 }
-
 
 // 2001/06/13 Start By asa-o: タイプ別設定の支援タブに関する処理
 
@@ -161,7 +159,6 @@ INT_PTR CPropTypesSupport::DispatchEvent(
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids3 );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.11.17 add end MIK
-
 	}
 	return FALSE;
 }
@@ -238,7 +235,6 @@ int CPropTypesSupport::GetData( HWND hwndDlg )
 
 	// 保存時に改行コードの混在を警告する	2013/4/14 Uchi
 	m_Types.m_bChkEnterAtEnd = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_CHKENTERATEND ) != 0;
-
 
 	m_Types.m_bIndentCppStringIgnore =  IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_INDENTCPPSTR );
 	m_Types.m_bIndentCppCommentIgnore = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_INDENTCPPCMT );

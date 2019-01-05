@@ -42,7 +42,6 @@ void CMruListener::OnAfterSave(const SSaveInfo& sSaveInfo)
 	_HoldBookmarks_And_AddToMRU();
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        ロード前後                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -75,7 +74,6 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 			pLoadInfo->nType = CDocTypeManager().GetDocumentTypeOfPath( pLoadInfo->cFilePath );
 		}
 	}
-
 
 	// 指定のコード -> pLoadInfo->eCharCode
 	if( CODE_AUTODETECT == pLoadInfo->eCharCode ){
@@ -146,7 +144,6 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 	}
 }
 
-
 void CMruListener::OnAfterLoad(const SLoadInfo& sLoadInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
@@ -208,8 +205,6 @@ void CMruListener::OnAfterLoad(const SLoadInfo& sLoadInfo)
 	cMRU.Add( &eiNew );
 }
 
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       クローズ前後                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -221,7 +216,6 @@ ECallbackResult CMruListener::OnBeforeClose()
 
 	return CALLBACK_CONTINUE;
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          ヘルパ                             //

@@ -20,7 +20,6 @@ class CDlgCancel;
 
 #include "dlg/CDialog.h"
 
-
 /*!
 	@brief キャンセルボタンダイアログ
 */
@@ -60,10 +59,6 @@ protected:
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CDLGCANCEL_H_ */
-
-
 

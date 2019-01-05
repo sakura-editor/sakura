@@ -25,7 +25,6 @@
 #include "uiparts/CWaitCursor.h"
 #include "util/os.h"
 
-
 /** 切り取り(選択範囲をクリップボードにコピーして削除)
 
 	@date 2007.11.18 ryoji 「選択なしでコピーを可能にする」オプション処理追加
@@ -72,8 +71,6 @@ void CViewCommander::Command_CUT( void )
 	m_pCommanderView->DeleteData( true );
 	return;
 }
-
-
 
 /**	選択範囲をクリップボードにコピー
 
@@ -141,8 +138,6 @@ void CViewCommander::Command_COPY(
 	}
 	return;
 }
-
-
 
 /** 貼り付け(クリップボードから貼り付け)
 	@param [in] option 貼り付け時のオプション
@@ -232,8 +227,6 @@ void CViewCommander::Command_PASTE( int option )
 
 	return;
 }
-
-
 
 //<< 2002/03/28 Azumaiya
 // メモリデータを矩形貼り付け用のデータと解釈して処理する。
@@ -407,8 +400,6 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 	return;
 }
 
-
-
 /** 矩形貼り付け(クリップボードから矩形貼り付け)
 	@param [in] option 未使用
 
@@ -443,8 +434,6 @@ void CViewCommander::Command_PASTEBOX( int option )
 	m_pCommanderView->Redraw();			// 2002.01.25 hor
 }
 
-
-
 /*! 矩形文字列挿入
 */
 void CViewCommander::Command_INSBOXTEXT( const wchar_t *pszPaste, int nPasteSize )
@@ -464,8 +453,6 @@ void CViewCommander::Command_INSBOXTEXT( const wchar_t *pszPaste, int nPasteSize
 	m_pCommanderView->AdjustScrollBars(); // 2007.07.22 ryoji
 	m_pCommanderView->Redraw();			// 2002.01.25 hor
 }
-
-
 
 /*! テキストを貼り付け
 	@date 2004.05.14 Moca '\\0'を受け入れるように、引数に長さを追加
@@ -614,8 +601,6 @@ end_of_func:
 	return;
 }
 
-
-
 /* 最後にテキストを追加 */
 void CViewCommander::Command_ADDTAIL(
 	const wchar_t*	pszData,	//!< 追加するテキスト
@@ -646,8 +631,6 @@ void CViewCommander::Command_ADDTAIL(
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 }
 
-
-
 //選択範囲内全行コピー
 void CViewCommander::Command_COPYLINES( void )
 {
@@ -658,8 +641,6 @@ void CViewCommander::Command_COPYLINES( void )
 	);
 	return;
 }
-
-
 
 //選択範囲内全行引用符付きコピー
 void CViewCommander::Command_COPYLINESASPASSAGE( void )
@@ -672,8 +653,6 @@ void CViewCommander::Command_COPYLINESASPASSAGE( void )
 	return;
 }
 
-
-
 //選択範囲内全行行番号付きコピー
 void CViewCommander::Command_COPYLINESWITHLINENUMBER( void )
 {
@@ -684,8 +663,6 @@ void CViewCommander::Command_COPYLINESWITHLINENUMBER( void )
 	);
 	return;
 }
-
-
 
 static bool AppendHTMLColor(
 	const SColorAttr& sColorAttrLast, SColorAttr& sColorAttrLast2,
@@ -738,8 +715,6 @@ static bool AppendHTMLColor(
 	}
 	return false;
 }
-
-
 
 //!選択範囲内色付きHTMLコピー
 void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
@@ -1055,8 +1030,6 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 	cClipboard.SetText(cmemClip.GetStringPtr(), cmemClip.GetStringLength(), false, false);
 }
 
-
-
 /*!
 	@date 2014.12.30 Moca 同じCColorStrategyで違う色に切り替わったときに対応
 */
@@ -1117,8 +1090,6 @@ void CViewCommander::Command_COPY_COLOR_HTML_LINENUMBER()
 	Command_COPY_COLOR_HTML(true);
 }
 
-
-
 /*!	現在編集中のファイル名をクリップボードにコピー
 	2002/2/3 aroka
 */
@@ -1134,8 +1105,6 @@ void CViewCommander::Command_COPYFILENAME( void )
 	}
 }
 
-
-
 /* 現在編集中のファイルのパス名をクリップボードにコピー */
 void CViewCommander::Command_COPYPATH( void )
 {
@@ -1149,7 +1118,26 @@ void CViewCommander::Command_COPYPATH( void )
 	}
 }
 
-
+/* 現在編集中のファイルのフォルダ名をクリップボードにコピー */
+void CViewCommander::Command_COPYDIRPATH( void )
+{
+	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()) {
+		ErrorBeep();
+		return;
+	}
+	std::wstring strFolder(GetDocument()->m_cDocFile.GetFilePathClass().GetDirPath());
+	
+	/* 末尾にバックスラッシュがあれば取り除く */
+	auto itrClear = strFolder.end();
+	itrClear--;
+	if (*itrClear == L'\\')
+	{
+		strFolder.erase(itrClear);
+	}
+	
+	/* クリップボードにフォルダ名をコピー */
+	m_pCommanderView->MySetClipboardData( strFolder.c_str(), strFolder.size(), false );
+}
 
 //	May 9, 2000 genta
 /* 現在編集中のファイルのパス名とカーソル位置をクリップボードにコピー */
@@ -1171,8 +1159,6 @@ void CViewCommander::Command_COPYTAG( void )
 		ErrorBeep();
 	}
 }
-
-
 
 ////キー割り当て一覧をコピー
 	//Dec. 26, 2000 JEPRO //Jan. 24, 2001 JEPRO debug version (directed by genta)

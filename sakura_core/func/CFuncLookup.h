@@ -86,12 +86,10 @@ public:
 	
 	int GetItemCount(int category) const;
 
-
 private:
 	MacroRec* m_pMacroRec;	//!< マクロ情報	// 2007.11.02 ryoji メンバ変更（CSMacroMgr->MacroRec）
 	
 	CommonSetting* m_pCommon;	//! 共通設定データ領域へのポインタ
-
 };
 
 #endif

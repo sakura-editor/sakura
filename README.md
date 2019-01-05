@@ -2,6 +2,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/xlsp22h1q91mh96j/branch/master?svg=true)](https://ci.appveyor.com/project/sakuraeditor/sakura/branch/master)
 [![Github Releases All](https://img.shields.io/github/downloads/sakura-editor/sakura/total.svg)](https://github.com/sakura-editor/sakura/releases "All Releases")
 [![License: Zlib](https://img.shields.io/badge/License-Zlib-lightgrey.svg)](https://opensource.org/licenses/Zlib)
+[![CodeFactor](https://www.codefactor.io/repository/github/sakura-editor/sakura/badge)](https://www.codefactor.io/repository/github/sakura-editor/sakura)
 
 <!-- TOC -->
 
@@ -23,6 +24,8 @@
             - [master の 最新以外](#master-の-最新以外)
         - [単体テスト](#単体テスト)
         - [デバッグ方法](#デバッグ方法)
+    - [変更履歴](#変更履歴)
+    - [マクロのサンプル](#マクロのサンプル)
 
 <!-- /TOC -->
 
@@ -106,5 +109,23 @@ https://ci.appveyor.com/project/sakuraeditor/sakura/history
 
 ### デバッグ方法
 
-- [タスクトレイのメニュー項目のデバッグ方法](debug-tasktray-menu.md) を参照
+- [タスクトレイのメニュー項目をデバッグする方法](debug-tasktray-menu.md) を参照
 - [大きなファイルの作成方法](create-big-file.md)
+
+## 変更履歴
+
+変更履歴は [github-changelog-generator](https://github.com/github-changelog-generator/github-changelog-generator) というソフトを使用して
+[changelog-sakura](https://github.com/sakura-editor/changelog-sakura) のリポジトリで [appveyor](https://ci.appveyor.com/project/sakuraeditor/changelog-sakura) で自動的に生成します。 
+
+[生成した CHANGELOG.md は ここからダウンロードできます](https://ci.appveyor.com/project/sakuraeditor/changelog-sakura/branch/master/artifacts) 
+
+ダウンロードした `CHANGELOG.md` は
+[Markdown をローカルで確認する方法](https://github.com/sakura-editor/sakura/wiki/markdown-%E3%82%92%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E3%81%A7%E7%A2%BA%E8%AA%8D%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95)
+で説明している手順でローカルで確認できます。 
+
+[CHANGELOG.mdについて](https://github.com/sakura-editor/sakura/wiki/CHANGELOG.md%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6) のページに`CHANGELOG.md` に関する説明を記載しています。
+
+## マクロのサンプル
+
+[tools/macro](こちら)でマクロのサンプルを提供してます。  
+もしサンプルを作ってもいいよ～という方がおられましたら PR の作成お願いします。

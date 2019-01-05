@@ -18,7 +18,6 @@ class CSplitBoxWnd;
 
 #include "CWnd.h"
 
-
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -40,8 +39,6 @@ public:
 
 //	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* メッセージディスパッチャ */
 
-
-
 private:
 	int			m_bVertical;	/* 垂直分割ボックスか */
 	int			m_nDragPosY;
@@ -55,13 +52,8 @@ protected:
 	LRESULT OnMouseMove(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);// WM_MOUSEMOVE
 	LRESULT OnLButtonUp(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);//WM_LBUTTONUP
 	LRESULT OnLButtonDblClk(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);//WM_LBUTTONDBLCLK
-
-
 };
-
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CSPLITBOXWND_H_ */
-
-
 

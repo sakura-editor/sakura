@@ -33,7 +33,6 @@
 		   distribution.
 */
 
-
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
 #include "env/DLLSHAREDATA.h"
@@ -193,11 +192,9 @@ INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
-
 	}
 	return FALSE;
 }
-
 
 /*!
 	ダイアログ上のコントロールにデータを設定する
@@ -567,7 +564,6 @@ void CPropMacro::SelectBaseDir_Macro( HWND hwndDlg )
 	}
 }
 
-
 /*!
 	マクロファイル指定用コンボボックスのドロップダウンリストが開かれるときに，
 	指定ディレクトリのファイル一覧から候補を生成する．
@@ -694,6 +690,4 @@ void CPropMacro::CheckListPosition_Macro( HWND hwndDlg )
 			::CheckDlgButton( hwndDlg, IDC_CHECK_MacroOnSave, true );
 	}
 }
-
-
 

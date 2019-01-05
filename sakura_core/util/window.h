@@ -86,12 +86,9 @@ void ActivateFrameWindow(HWND hwnd);	/* アクティブにする */
 */
 BOOL BlockingHook( HWND hwndDlgCancel );
 
-
 #define GA_ROOTOWNER2	100
 
-
 HWND MyGetAncestor( HWND hWnd, UINT gaFlags );	// 指定したウィンドウの祖先のハンドルを取得する	// 2007.07.01 ryoji
-
 
 //チェックボックス
 inline void CheckDlgButtonBool(HWND hDlg, int nIDButton, bool bCheck)

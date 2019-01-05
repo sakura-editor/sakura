@@ -53,7 +53,6 @@
 #include "util/string_ex2.h"
 #include "sakura_rc.h"
 
-
 //#if(WINVER >= 0x0500)
 #ifndef	SPI_GETFOREGROUNDLOCKTIMEOUT
 #define SPI_GETFOREGROUNDLOCKTIMEOUT        0x2000
@@ -106,7 +105,6 @@ static int compTABMENU_DATA( const void *arg1, const void *arg2 )
 		ret = ((TABMENU_DATA*)arg1)->iItem - ((TABMENU_DATA*)arg2)->iItem;
 	return ret;
 }
-
 
 WNDPROC	gm_pOldWndProc = NULL;
 
@@ -2069,7 +2067,6 @@ void CTabWnd::Refresh( BOOL bEnsureVisible/* = TRUE*/, BOOL bRebuild/* = FALSE*/
 	return;
 }
 
-
 /*!	編集ウィンドウの位置合わせ
 
 	@author ryoji
@@ -2778,7 +2775,6 @@ void CTabWnd::GetTabCloseBtnRect( const LPRECT lprcTab, LPRECT lprc, bool select
 		(lprcTab->top + (selected ? -2: 0)) + DpiScaleY(2) );
 }
 
-
 /** タブ名取得処理
 
 	@param[in] EditNode 編集ウィンドウ情報
@@ -2833,8 +2829,6 @@ void CTabWnd::GetTabName( EditNode* pEditNode, BOOL bFull, BOOL bDupamp, LPTSTR 
 
 	delete []pszText;
 }
-
-
 
 /**	タブ一覧表示処理
 
@@ -3004,7 +2998,6 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FAL
 
 	return 0L;
 }
-
 
 /** 次のグループの先頭ウィンドウを探す
 	@date 2007.06.20 ryoji 新規作成
@@ -3253,7 +3246,6 @@ void CTabWnd::JoinPrev( void )
 		SeparateGroup( GetParentHwnd(), hWnd, ptSrc, ptDst );
 	}
 }
-
 
 /*! サイズボックスの表示／非表示切り替え */
 void CTabWnd::SizeBox_ONOFF( bool bSizeBox )

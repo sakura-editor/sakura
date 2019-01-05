@@ -13,7 +13,6 @@
 #include "io/CBinaryStream.h"
 #include "util/window.h"
 
-
 /*! バッファ内容をファイルに書き出す (テスト用)
 
 	@note Windows用にコーディングしてある
@@ -42,7 +41,6 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 			return nRetVal;
 		}
 	}
-
 
 	try
 	{

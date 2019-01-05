@@ -40,7 +40,6 @@
 // //! メニューのDISABLE/セパレータに影を落とす(旧仕様)
 // #define DRAW_MENU_3DSTYLE
 
-
 #if 0 // 未使用
 void FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORREF clr)
 {
@@ -53,7 +52,6 @@ void FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORREF clr)
 	::ExtTextOutW_AnyBuild( hdc, 0, 0, ETO_OPAQUE, &rect, NULL, 0, NULL );
 }
 #endif
-
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CMenuDrawer::CMenuDrawer()
@@ -195,9 +193,9 @@ CMenuDrawer::CMenuDrawer()
 /* 64 */		F_FILE_REOPEN_LATIN1			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//Latin1で開きなおす	// 2010/3/20 Uchi
 
 /* カーソル移動系(3段目32個: 65-96) */
-/* 65 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 66 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 67 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 65 */		F_OPEN_FOLDER_IN_EXPLORER		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ファイルの場所を開く
+/* 66 */		F_OPEN_COMMAND_PROMPT			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//コマンドプロンプトを開く
+/* 67 */		F_OPEN_POWERSHELL				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//PowerShellを開く
 /* 68 */		F_UP							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カーソル上移動
 /* 69 */		F_DOWN							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カーソル下移動
 /* 70 */		F_LEFT							/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カーソル左移動
@@ -212,8 +210,8 @@ CMenuDrawer::CMenuDrawer()
 /* 79 */		F_HalfPageDown					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//半ページダウン	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
 /* 80 */		F_1PageUp						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//１ページアップ	//Oct. 10, 2000 JEPRO 従来のページアップを半ページアップと名称変更し１ページアップを追加
 /* 81 */		F_1PageDown						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
-/* 82 */		F_DISABLE/*F_DISPLAYTOP*/		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//画面の先頭に移動(未実装)
-/* 83 */		F_DISABLE/*F_DISPLAYEND*/		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//画面の最後に移動(未実装)
+/* 82 */		F_OPEN_COMMAND_PROMPT_AS_ADMIN	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//管理者としてコマンドプロンプトを開く
+/* 83 */		F_OPEN_POWERSHELL_AS_ADMIN		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//管理者としてPowerShellを開く
 /* 84 */		F_GOFILETOP						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ファイルの先頭に移動
 /* 85 */		F_GOFILEEND						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ファイルの最後に移動
 /* 86 */		F_CURLINECENTER					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//カーソル行をウィンドウ中央へ
@@ -314,7 +312,7 @@ CMenuDrawer::CMenuDrawer()
 /* 175 */		F_COPY_ADDCRLF					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//折り返し位置に改行をつけてコピー
 /* 176 */		F_COPY_COLOR_HTML				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//選択範囲内色付きHTMLコピー
 /* 177 */		F_COPY_COLOR_HTML_LINENUMBER	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//選択範囲内行番号色付きHTMLコピー
-/* 178 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 178 */		F_COPYDIRPATH					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//このファイルのフォルダ名をクリップボードにコピー
 /* 179 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 180 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 181 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
@@ -648,7 +646,6 @@ CMenuDrawer::CMenuDrawer()
 /* 480 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 
 /* 481 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */	//最終行用ダミー(Jepro note: 最終行末にはカンマを付けないこと)
-
 	};
 	int tbd_num = _countof( tbd );
 
@@ -732,7 +729,6 @@ CMenuDrawer::CMenuDrawer()
 	return;
 }
 
-
 CMenuDrawer::~CMenuDrawer()
 {
 	if( NULL != m_hFontMenu ){
@@ -751,7 +747,6 @@ void CMenuDrawer::Create( HINSTANCE hInstance, HWND hWndOwner, CImageListMgr* pc
 
 	return;
 }
-
 
 void CMenuDrawer::ResetContents( void )
 {
@@ -794,9 +789,6 @@ void CMenuDrawer::ResetContents( void )
 //	m_nMaxTabLen = 0;
 	return;
 }
-
-
-
 
 /* メニュー項目を追加 */
 void CMenuDrawer::MyAppendMenu(
@@ -889,7 +881,6 @@ void CMenuDrawer::MyAppendMenu(
 	return;
 }
 
-
 /*
 	ツールバー番号をボタン配列のindexに変換する
 */
@@ -918,7 +909,6 @@ inline int CMenuDrawer::GetIconIdByFuncId( int nFuncID ) const
 	return m_tbMyButton[index].iBitmap;
 }
 
-
 /*! メニューアイテムの描画サイズを計算
 	@param pnItemHeight [out] 高さ。いつも高さを返す
 	@retval 0  機能がない場合
@@ -926,7 +916,6 @@ inline int CMenuDrawer::GetIconIdByFuncId( int nFuncID ) const
 */
 int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 {
-
 	const TCHAR* pszLabel;
 	CMyRect rc, rcSp;
 	HDC hdc;
@@ -949,7 +938,6 @@ int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 	::SelectObject( hdc, hFontOld );
 	::ReleaseDC( m_hWndOwner, hdc );
 
-
 //	*pnItemHeight = 20;
 //	*pnItemHeight = 2 + 15 + 1;
 	//@@@ 2002.2.2 YAZAKI Windowsの設定でメニューのフォントを大きくすると表示が崩れる問題に対処
@@ -963,7 +951,6 @@ int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 	}
 	return nMenuWidth;
 }
-
 
 /*! メニューアイテム描画
 	@date 2001.12.21 YAZAKI デバッグモードでもメニューを選択したらハイライト。
@@ -1256,7 +1243,6 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	::SelectObject( hdc, hFontOld  );
 	::SetBkMode( hdc, nBkModeOld );
 
-
 	// 16*16のアイコンを上下中央へ置いたときの上の座標
 	int nIconTop = lpdis->rcItem.top + (lpdis->rcItem.bottom - lpdis->rcItem.top) / 2 - (16/2);
 
@@ -1323,7 +1309,6 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		}
 #endif
 	}
-
 
 	/* 機能の画像が存在するならメニューアイコン?を描画する */
 	if( bMenuIconDraw && -1 != m_menuItems[nItemIndex].m_nBitmapIdx ){
@@ -1442,7 +1427,6 @@ void CMenuDrawer::EndDrawMenu()
 	DeleteCompDC();
 }
 
-
 void CMenuDrawer::DeleteCompDC()
 {
 	if( m_hCompDC ){
@@ -1530,7 +1514,6 @@ TBBUTTON CMenuDrawer::getButton( int nToolbarNo ) const
 	return tbb;
 }
 
-
 int CMenuDrawer::Find( int nFuncID )
 {
 	int i;
@@ -1546,7 +1529,6 @@ int CMenuDrawer::Find( int nFuncID )
 		return i;
 	}
 }
-
 
 const TCHAR* CMenuDrawer::GetLabel( int nFuncID )
 {
@@ -1572,8 +1554,6 @@ TCHAR CMenuDrawer::GetAccelCharFromLabel( const TCHAR* pszLabel )
 	}
 	return _T('\0');
 }
-
-
 
 struct WorkData{
 	int				idx;
@@ -1647,7 +1627,6 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 
 //	Jul. 21, 2003 genta
 //	コメントアウトされていた部分を削除 (CImageListで再利用)
-
 
 /* TBBUTTON構造体にデータをセット */
 void CMenuDrawer::SetTBBUTTONVal(

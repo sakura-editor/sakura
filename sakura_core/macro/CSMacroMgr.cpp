@@ -217,6 +217,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] =
 	{F_COPY_COLOR_HTML,			LTEXT("CopyColorHtml"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //選択範囲内色付きHTMLコピー
 	{F_COPY_COLOR_HTML_LINENUMBER,	LTEXT("CopyColorHtmlWithLineNumber"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //選択範囲内行番号色付きHTMLコピー
 	{F_COPYPATH,				LTEXT("CopyPath"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //このファイルのパス名をクリップボードにコピー
+	{F_COPYDIRPATH,				LTEXT("CopyDirPath"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //このファイルのフォルダ名をクリップボードにコピー
 	{F_COPYFNAME,				LTEXT("CopyFilename"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //このファイル名をクリップボードにコピー // 2002/2/3 aroka
 	{F_COPYTAG,					LTEXT("CopyTag"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //このファイルのパス名とカーソル位置をコピー	//Sept. 15, 2000 jepro 上と同じ説明になっていたのを修正
 	{F_CREATEKEYBINDLIST,		LTEXT("CopyKeyBindList"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //キー割り当て一覧をコピー	//Sept. 15, 2000 JEPRO 追加 //Dec. 25, 2000 復活
@@ -253,7 +254,6 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] =
 	{F_CODECNV_SJIS2UTF7,		LTEXT("SJIStoUTF7"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* SJIS→UTF-7コード変換 */
 	{F_BASE64DECODE,	 		LTEXT("Base64Decode"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //Base64デコードして保存
 	{F_UUDECODE,		 		LTEXT("Uudecode"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //uudecodeして保存	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
-
 
 	/* 検索系 */
 	{F_SEARCH_DIALOG,			LTEXT("SearchDialog"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //検索(単語検索ダイアログ)
@@ -559,7 +559,6 @@ int CSMacroMgr::Append(
 	return TRUE;
 }
 
-
 /*!	@brief キーボードマクロの実行
 
 	CShareDataからファイル名を取得し、実行する。
@@ -711,7 +710,6 @@ void CSMacroMgr::UnloadAll(void)
 		delete m_cSavedKeyMacro[idx];
 		m_cSavedKeyMacro[idx] = NULL;
 	}
-
 }
 
 /*! キーボードマクロの保存
@@ -735,7 +733,6 @@ BOOL CSMacroMgr::Save( int idx, HINSTANCE hInstance, const TCHAR* pszPath )
 		if( m_pKeyMacro == NULL ){
 			return TRUE;
 		}
-
 	}
 //	else if ( 0 <= idx && idx < MAX_CUSTMACRO ){
 //		return m_cSavedKeyMacro[idx]->SaveKeyMacro(hInstance, pszPath );
@@ -924,7 +921,6 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 //	case F_PUTFILE					://作業中ファイルの一時出力	2006.12.10 maru
 //	case F_INSFILE					://キャレット位置にファイル挿入	2006.12.10 maru
 
-
 	/* 編集系 */
 	case F_WCHAR					://文字入力
 	case F_IME_CHAR					://全角文字入力
@@ -1044,6 +1040,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	case F_COPY_COLOR_HTML			://選択範囲内色付きHTMLコピー
 	case F_COPY_COLOR_HTML_LINENUMBER://選択範囲内行番号色付きHTMLコピー
 	case F_COPYPATH					://このファイルのパス名をクリップボードにコピー
+	case F_COPYDIRPATH				://このファイルのフォルダ名をクリップボードにコピー
 	case F_COPYTAG					://このファイルのパス名とカーソル位置をコピー	//Sept. 15, 2000 jepro 上と同じ説明になっていたのを修正
 	case F_COPYFNAME				://このファイル名をクリップボードにコピー // 2002/2/3 aroka
 	case F_CREATEKEYBINDLIST		://キー割り当て一覧をコピー	//Sept. 15, 2000 JEPRO 追加	//Dec. 25, 2000 復活
@@ -1214,7 +1211,6 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 		return TRUE;
 	}
 	return FALSE;
-
 }
 
 /*!

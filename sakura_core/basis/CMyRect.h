@@ -76,7 +76,6 @@ public:
 		bottom = top  + h;
 	}
 
-
 	//計算
 	int Width() const
 	{
@@ -96,7 +95,6 @@ public:
 	{
 		return CMyPoint(right,bottom);
 	}
-
 };
 
 //!CRect合成。rc1,rc2を含む最小の矩形を生成する。

@@ -214,12 +214,9 @@ HINSTANCE CSelectLang::LoadLangRsrcLibrary( SSelLangInfo& lang )
 	return hInstance;
 }
 
-
-
 // 文字列リソース読み込み用グローバル
 CLoadString::CLoadStrBuffer CLoadString::m_acLoadStrBufferTemp[];	// 文字列読み込みバッファの配列（CLoadString::LoadStringSt() が使用する）
 int CLoadString::m_nDataTempArrayIndex = 0;							// 最後に使用したバッファのインデックス（CLoadString::LoadStringSt() が使用する）
-
 
 /*!
 	@brief 静的バッファに文字列リソースを読み込む（各国語メッセージリソース対応）
@@ -406,7 +403,5 @@ HINSTANCE CSelectLang::ChangeLang( UINT nIndex )
 
 	return m_psLangInfo->hInstance;
 }
-
-
 
 /*[EOF]*/

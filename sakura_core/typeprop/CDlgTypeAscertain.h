@@ -59,7 +59,7 @@ public:
 	//  Constructors
 	CDlgTypeAscertain();
 	// モーダルダイアログの表示
-	int DoModal( HINSTANCE, HWND, SAscertainInfo* );	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE hInstance, HWND hwndParent, SAscertainInfo* psAscertainInfo );	/* モーダルダイアログの表示 */
 
 protected:
 	// 実装ヘルパ関数
@@ -71,10 +71,6 @@ private:
 	SAscertainInfo* m_psi;			// インターフェイス
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CDLGTYPEASCERTAIN_H_ */
-
-
 

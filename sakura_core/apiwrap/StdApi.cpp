@@ -62,11 +62,7 @@ static void DestroyMbString(ACHAR* pMbString)
 }
 #endif	// ndef _UNICODE
 
-
-
 namespace ApiWrap{
-
-
 
 	/*!
 		MakeSureDirectoryPathExists の UNICODE 版。
@@ -113,9 +109,6 @@ namespace ApiWrap{
 		}
 		return TRUE;
 	}
-
-
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//              W系描画API (ANSI版でも利用可能)                //
@@ -197,7 +190,6 @@ namespace ApiWrap{
 	}
 #endif
 
-
 	LPWSTR CharNextW_AnyBuild(
 		LPCWSTR lpsz
 	)
@@ -265,7 +257,6 @@ namespace ApiWrap{
 		return ret2;
 	}
 #endif
-
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                    描画API 不具合ラップ                     //

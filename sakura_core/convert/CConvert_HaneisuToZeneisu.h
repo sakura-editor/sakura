@@ -27,7 +27,6 @@
 
 #include "CConvert.h"
 
-
 //!半角英数→全角英数
 class CConvert_HaneisuToZeneisu : public CConvert{
 public:

@@ -31,7 +31,6 @@
 // 要先行定義
 // #include "DLLSHAREDATA.h"
 
-
 //共有メモリ内構造体
 struct SShare_SearchKeywords{
 	// -- -- 検索キー -- -- //
@@ -39,6 +38,8 @@ struct SShare_SearchKeywords{
 	StaticVector< StaticString<WCHAR, _MAX_PATH>, MAX_REPLACEKEY, const WCHAR*>	m_aReplaceKeys;
 	StaticVector< StaticString<TCHAR, MAX_GREP_PATH>, MAX_GREPFILE,   const TCHAR*>	m_aGrepFiles;
 	StaticVector< StaticString<TCHAR, MAX_GREP_PATH>, MAX_GREPFOLDER, const TCHAR*>	m_aGrepFolders;
+	StaticVector< StaticString<TCHAR, MAX_EXCLUDE_PATH>, MAX_EXCLUDEFILE,   const TCHAR*>	m_aExcludeFiles;
+	StaticVector< StaticString<TCHAR, MAX_EXCLUDE_PATH>, MAX_EXCLUDEFOLDER, const TCHAR*>	m_aExcludeFolders;
 };
 
 //! 検索キーワード管理
@@ -53,6 +54,8 @@ public:
 	void		AddToReplaceKeyArr( const wchar_t* pszReplaceKey );	//	m_aReplaceKeysにpszReplaceKeyを追加する
 	void		AddToGrepFileArr( const TCHAR* pszGrepFile );		//	m_aGrepFilesにpszGrepFileを追加する
 	void		AddToGrepFolderArr( const TCHAR* pszGrepFolder );	//	m_aGrepFolders にpszGrepFolder を追加する
+	void		AddToExcludeFileArr( const TCHAR* pszExcludeFile );		//	m_aExcludeFiles に pszExcludeFile を追加する
+	void		AddToExcludeFolderArr( const TCHAR* pszExcludeFolder );	//	m_aExcludeFolders に pszExcludeFolder を追加する
 private:
 	DLLSHAREDATA* m_pShareData;
 };

@@ -119,7 +119,6 @@ INT_PTR CPropGrep::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 		MyWinHelp( hwndDlg, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
-
 	}
 	return FALSE;
 }
@@ -142,7 +141,6 @@ void CPropGrep::SetData( HWND hwndDlg )
 
 	/* Grep結果のリアルタイム表示 */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_GREPREALTIME, m_Common.m_sSearch.m_bGrepRealTimeView );	// 2006.08.08 ryoji ID修正
-
 
 	/* Grepモード: エンターキーでタグジャンプ */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_GTJW_RETURN, m_Common.m_sSearch.m_bGTJW_RETURN );
@@ -194,9 +192,6 @@ void CPropGrep::SetData( HWND hwndDlg )
 	return;
 }
 
-
-
-
 /* ダイアログデータの取得 */
 int CPropGrep::GetData( HWND hwndDlg )
 {
@@ -243,6 +238,4 @@ void CPropGrep::SetRegexpVersion( HWND hwndDlg )
 	}
 	::DlgItem_SetText( hwndDlg, IDC_LABEL_REGEXP_VER, breg.GetVersionT() );
 }
-
-
 

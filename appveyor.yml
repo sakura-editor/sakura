@@ -10,6 +10,16 @@ platform:
   - x64
   - MinGW
 
+install:
+- cmd: >-
+    pip install openpyxl --user
+
+    pip install chardet --user
+
+    msiexec /i externals\cppcheck\cppcheck-1.84-x64-Setup.msi /quiet /qn /norestart /log cppcheck-install.log
+
+    externals\doxygen\doxygen-1.8.14-setup.exe /silent /suppressmsgboxes
+
 build_script:
 - cmd: >-
     call checkEncoding.bat

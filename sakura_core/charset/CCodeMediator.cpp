@@ -6,8 +6,6 @@
 #include "io/CBinaryStream.h"
 #include "types/CType.h"
 
-
-
 /*!
 	文字列の先頭にUnicode系BOMが付いているか？
 
@@ -51,9 +49,6 @@ ECodeType CCodeMediator::DetectUnicodeBom( const char* pS, const int nLen )
 	return CODE_NONE;
 }
 
-
-
-
 /*!
 	SJIS, JIS, EUCJP, UTF-8, UTF-7 を判定 (改)
 
@@ -82,8 +77,6 @@ ECodeType CCodeMediator::DetectMBCode( CESI* pcesi )
 	pcesi->SetStatus( ESI_MBC_DETECTED );
 	return pcesi->m_apMbcInfo[0]->eCodeID;
 }
-
-
 
 /*!
 	UTF-16 LE/BE を判定.
@@ -118,9 +111,6 @@ ECodeType CCodeMediator::DetectUnicode( CESI* pcesi )
 	return pcesi->m_aWcInfo[ebom_type].eCodeID;
 }
 
-
-
-
 /*
 	日本語コードセット判定
 */
@@ -153,7 +143,6 @@ ECodeType CCodeMediator::CheckKanjiCode( CESI* pcesi )
 	return pcesi->m_pEncodingConfig->m_eDefaultCodetype;
 }
 
-
 /*
 	日本語コードセット判別
 
@@ -179,8 +168,6 @@ ECodeType CCodeMediator::CheckKanjiCode( const char* pBuf, int nBufLen )
 	cesi.SetInformation( pBuf, nBufLen/*, CODE_SJIS*/ );
 	return CheckKanjiCode( &cesi );
 }
-
-
 
 /*
 || ファイルの日本語コードセット判別

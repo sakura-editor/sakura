@@ -47,7 +47,7 @@ enum ECodeType {
 	CODE_AUTODETECT	= 99,			//!< 文字コード自動判別
 	CODE_ERROR      = -1,			//!< エラー
 	CODE_NONE       = -1,			//!< 未検出
-	CODE_DEFAULT    = CODE_SJIS,	//!< デフォルトの文字コード
+	CODE_DEFAULT    = CODE_UTF8,	//!< デフォルトの文字コード
 	/*
 		- MS-CP50220 
 			Unicode から cp50220 への変換時に、
@@ -63,7 +63,6 @@ enum ECodeType {
 		http://legacy-encoding.sourceforge.jp/wiki/
 	*/
 };
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           判定                              //
@@ -111,7 +110,6 @@ inline bool IsValidCodeOrCPTypeExceptSJIS(int code)
 	return IsValidCodeTypeExceptSJIS(code) || CODE_CPACP == code || CODE_CPOEM == code || (CODE_CODEMAX <= code && IsValidCodePageEx(code));
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           名前                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -130,7 +128,6 @@ public:
 private:
 	ECodeType m_eCodeType;
 };
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      コンボボックス                         //

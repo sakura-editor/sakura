@@ -85,7 +85,6 @@ const uint16_t nsFuncCode::ppszFuncKind[] = {
 };
 const int nsFuncCode::nFuncKindNum = _countof(nsFuncCode::ppszFuncKind);
 
-
 /* ファイル操作系 */
 const EFunctionCode pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List5→List_File)
 	F_FILENEW			,	//新規作成
@@ -131,7 +130,6 @@ const EFunctionCode pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(
 };
 const int nFincList_File_Num = _countof( pnFuncList_File );	//Oct. 16, 2000 JEPRO 配列名変更(FuncList5→FuncList_File)
 
-
 /* 編集系 */
 const EFunctionCode pnFuncList_Edit[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List3→List_Edit)
 	F_UNDO				,	//元に戻す(Undo)
@@ -162,7 +160,6 @@ const EFunctionCode pnFuncList_Edit[] = {	//Oct. 16, 2000 JEPRO 変数名変更(
 //		F_WORDSREFERENCE		//単語リファレンス
 };
 const int nFincList_Edit_Num = _countof( pnFuncList_Edit );	//Oct. 16, 2000 JEPRO 変数名変更(List3→List_Edit)
-
 
 /* カーソル移動系 */
 const EFunctionCode pnFuncList_Move[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
@@ -208,7 +205,6 @@ const EFunctionCode pnFuncList_Move[] = {	//Oct. 16, 2000 JEPRO 変数名変更(
 };
 const int nFincList_Move_Num = _countof( pnFuncList_Move );	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
 
-
 /* 選択系 */	//Oct. 15, 2000 JEPRO 「カーソル移動系」から(選択)を移動
 const EFunctionCode pnFuncList_Select[] = {
 	F_SELECTWORD			,	//現在位置の単語選択
@@ -240,7 +236,6 @@ const EFunctionCode pnFuncList_Select[] = {
 };
 const int nFincList_Select_Num = _countof( pnFuncList_Select );
 
-
 /* 矩形選択系 */	//Oct. 17, 2000 JEPRO (矩形選択)が新設され次第ここにおく
 const EFunctionCode pnFuncList_Box[] = {
 //	F_BOXSELALL			,	//矩形ですべて選択
@@ -265,7 +260,6 @@ const EFunctionCode pnFuncList_Box[] = {
 };
 const int nFincList_Box_Num = _countof( pnFuncList_Box );
 
-
 /* クリップボード系 */
 const EFunctionCode pnFuncList_Clip[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List2→List_Clip)
 	F_CUT						,	//切り取り(選択範囲をクリップボードにコピーして削除)
@@ -283,11 +277,11 @@ const EFunctionCode pnFuncList_Clip[] = {	//Oct. 16, 2000 JEPRO 変数名変更(
 	F_COPY_COLOR_HTML_LINENUMBER,	//選択範囲内行番号色付きHTMLコピー
 	F_COPYFNAME					,	//このファイル名をクリップボードにコピー //2002/2/3 aroka
 	F_COPYPATH					,	//このファイルのパス名をクリップボードにコピー
+	F_COPYDIRPATH				,	//このファイルのフォルダ名をクリップボードにコピー
 	F_COPYTAG					,	//このファイルのパス名とカーソル位置をコピー	//Sept. 14, 2000 JEPRO メニューに合わせて下に移動
 	F_CREATEKEYBINDLIST				//キー割り当て一覧をコピー	//Sept. 15, 2000 JEPRO IDM_TESTのままではうまくいかないのでFに変えて登録	//Dec. 25, 2000 復活
 };
 const int nFincList_Clip_Num = _countof( pnFuncList_Clip );	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
-
 
 /* 挿入系 */
 const EFunctionCode pnFuncList_Insert[] = {
@@ -296,7 +290,6 @@ const EFunctionCode pnFuncList_Insert[] = {
 	F_CTRL_CODE_DIALOG			//コントロールコードの入力
 };
 const int nFincList_Insert_Num = _countof( pnFuncList_Insert );
-
 
 /* 変換系 */
 const EFunctionCode pnFuncList_Convert[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List6→List_Convert)
@@ -331,7 +324,6 @@ const EFunctionCode pnFuncList_Convert[] = {	//Oct. 16, 2000 JEPRO 変数名変�
 	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
 };
 const int nFincList_Convert_Num = _countof( pnFuncList_Convert );	//Oct. 16, 2000 JEPRO 変数名変更(List6→List_Convert)
-
 
 /* 検索系 */
 const EFunctionCode pnFuncList_Search[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List4→List_Search)
@@ -376,7 +368,6 @@ const EFunctionCode pnFuncList_Search[] = {	//Oct. 16, 2000 JEPRO 変数名変�
 };
 const int nFincList_Search_Num = _countof( pnFuncList_Search );	//Oct. 16, 2000 JEPRO 変数名変更(List4→List_Search)
 
-
 /* モード切り替え系 */	//Oct. 16, 2000 JEPRO 変数名変更(List8→List_Mode)
 const EFunctionCode pnFuncList_Mode[] = {
 	F_CHGMOD_INS		,	//挿入／上書きモード切り替え
@@ -387,7 +378,6 @@ const EFunctionCode pnFuncList_Mode[] = {
 	F_CANCEL_MODE			//各種モードの取り消し
 };
 const int nFincList_Mode_Num = _countof( pnFuncList_Mode );	//Oct. 16, 2000 JEPRO 変数名変更(List8→List_Mode)
-
 
 /* 設定系 */
 const EFunctionCode pnFuncList_Set[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List9→List_Set)
@@ -412,7 +402,6 @@ const EFunctionCode pnFuncList_Set[] = {	//Oct. 16, 2000 JEPRO 変数名変更(L
 };
 int		nFincList_Set_Num = _countof( pnFuncList_Set );	//Oct. 16, 2000 JEPRO 変数名変更(List9→List_Set)
 
-
 /* マクロ系 */
 const EFunctionCode pnFuncList_Macro[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List10→List_Macro)
 	F_RECKEYMACRO	,	/* キーマクロの記録開始／終了 */
@@ -424,10 +413,8 @@ const EFunctionCode pnFuncList_Macro[] = {	//Oct. 16, 2000 JEPRO 変数名変更
 //	F_EXECCMMAND		/* 外部コマンド実行 */
 	F_EXECMD_DIALOG		/* 外部コマンド実行 */
 //	To Here Sept. 20, 2000
-
 };
 const int nFincList_Macro_Num = _countof( pnFuncList_Macro);	//Oct. 16, 2000 JEPRO 変数名変更(List10→List_Macro)
-
 
 /* カスタムメニュー */	//Oct. 21, 2000 JEPRO 「その他」から分離独立化
 #if 0
@@ -498,7 +485,6 @@ const EFunctionCode pnFuncList_Win[] = {	//Oct. 16, 2000 JEPRO 変数名変更(L
 };
 const int nFincList_Win_Num = _countof( pnFuncList_Win );	//Oct. 16, 2000 JEPRO 変数名変更(List7→List_Win)
 
-
 /* 支援 */
 const EFunctionCode pnFuncList_Support[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List11→List_Support)
 	F_HOKAN						,	/* 入力補完 */
@@ -512,7 +498,6 @@ const EFunctionCode pnFuncList_Support[] = {	//Oct. 16, 2000 JEPRO 変数名変�
 	F_ABOUT							/* バージョン情報 */	//Dec. 24, 2000 JEPRO 追加
 };
 const int nFincList_Support_Num = _countof( pnFuncList_Support );	//Oct. 16, 2000 JEPRO 変数名変更(List11→List_Support)
-
 
 /* その他 */	//Oct. 16, 2000 JEPRO 変数名変更(List12→List_Others)
 const EFunctionCode pnFuncList_Others[] = {
@@ -530,9 +515,6 @@ const EFunctionCode nsFuncCode::pnFuncList_Special[] = {
 	F_PLUGIN_LIST,
 };
 const int nsFuncCode::nFuncList_Special_Num = (int)_countof(nsFuncCode::pnFuncList_Special);
-
-
-
 
 const int nsFuncCode::pnFuncListNumArr[] = {
 //	nFincList_Undef_Num,	//Oct. 14, 2000 JEPRO 「--未定義--」を表示させないように変更	//Oct. 16, 2000 JEPRO 変数名変更(List0→List_Undef)
@@ -575,9 +557,6 @@ const EFunctionCode* nsFuncCode::ppnFuncListArr[] = {
 	pnFuncList_Others	/* その他 */			//Oct. 16, 2000 JEPRO 変数名変更(List12→List_Others)
 };
 const int nsFuncCode::nFincListNumArrNum = _countof( nsFuncCode::pnFuncListNumArr );
-
-
-
 
 //! 機能番号に応じてヘルプトピック番号を返す
 /*!
@@ -637,7 +616,6 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_EXITALLEDITORS:	return HLP000030;				//編集の全終了	// 2007.02.13 ryoji 追加
 	case F_EXITALL:			return HLP000028;				//サクラエディタの全終了	//Dec. 26, 2000 JEPRO F_に変更
 
-
 	/* 編集系 */
 	case F_UNDO:						return HLP000032;	//元に戻す(Undo)
 	case F_REDO:						return HLP000033;	//やり直し(Redo)
@@ -660,7 +638,6 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_UNINDENT_SPACE:				return HLP000114;	//逆SPACEインデント
 	case F_RECONVERT:					return HLP000218;	//再変換
 //	case ORDSREFERENCE:					return ;	//単語リファレンス
-
 
 	/* カーソル移動系 */
 	case F_UP:				return HLP000289;	//カーソル上移動	// 2006.10.11 ryoji
@@ -724,7 +701,6 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_MODIFYLINE_NEXT_SEL:	return HLP000369;	//(範囲選択)次の変更行へ移動
 	case F_MODIFYLINE_PREV_SEL:	return HLP000370;	//(範囲選択)前の変更行へ移動
 
-
 	/* 矩形選択系 */	//Oct. 17, 2000 JEPRO (矩形選択)が新設され次第ここにおく
 //	case F_BOXSELALL:		return ;	//矩形ですべて選択
 	case F_BEGIN_BOX:		return HLP000244;	//矩形範囲選択開始
@@ -769,17 +745,16 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_COPY_COLOR_HTML:			return HLP000342;	//選択範囲内色付きHTMLコピー
 	case F_COPY_COLOR_HTML_LINENUMBER:	return HLP000343;	//選択範囲内行番号色付きHTMLコピー
 	case F_COPYPATH:		return HLP000056;			//このファイルのパス名をクリップボードにコピー
+	case F_COPYDIRPATH:		return HLP000380;			//このファイルのフォルダ名をクリップボードにコピー
 	case F_COPYTAG:			return HLP000175;			//このファイルのパス名とカーソル位置をコピー	//Oct. 17, 2000 JEPRO 追加
 	case F_COPYFNAME:		return HLP000303;			//このファイル名をクリップボードにコピー // 2002/2/3 aroka
 //	case IDM_TEST_CREATEKEYBINDLIST:	return 57;	//キー割り当て一覧をクリップボードへコピー	//Sept. 15, 2000 jepro「リスト」を「一覧」に変更
 	case F_CREATEKEYBINDLIST:		return HLP000057;	//キー割り当て一覧をクリップボードへコピー	//Sept. 15, 2000 JEPRO 「リスト」を「一覧」に変更、IDM＿TESTをFに変更したがうまくいかないので殺してある	//Dec. 25, 2000 復活
 
-
 	/* 挿入系 */
 	case F_INS_DATE:				return HLP000164;	// 日付挿入
 	case F_INS_TIME:				return HLP000165;	// 時刻挿入
 	case F_CTRL_CODE_DIALOG:		return HLP000255;	/* コントロールコード入力 */
-
 
 	/* 変換系 */
 	case F_TOLOWER:					return HLP000047;	//小文字
@@ -807,7 +782,6 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_CODECNV_SJIS2UTF7:		return HLP000181;	/* SJIS→UTF-7コード変換 */
 	case F_BASE64DECODE:			return HLP000054;	//Base64デコードして保存
 	case F_UUDECODE:				return HLP000055;	//uudecodeして保存	//Oct. 17, 2000 jepro 説明を「選択部分をUUENCODEデコード」から変更
-
 
 	/* 検索系 */
 	case F_SEARCH_DIALOG:		return HLP000059;	//検索(単語検索ダイアログ)
@@ -857,7 +831,6 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_CHGMOD_EOL_CR:	return HLP000285;	//入力改行コード指定	// 2003.09.23 Moca
 	case F_CHGMOD_EOL_LF:	return HLP000285;	//入力改行コード指定	// 2003.09.23 Moca
 	case F_CANCEL_MODE:		return HLP000194;	//各種モードの取り消し
-
 
 	/* 設定系 */
 	case F_SHOWTOOLBAR:		return HLP000069;	/* ツールバーの表示 */
@@ -914,7 +887,6 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_EXECMD_DIALOG:	return HLP000103; /* 外部コマンド実行 */
 //	To Here Sept. 20, 2000
 
-
 	/* カスタムメニュー */
 	case F_MENU_RBUTTON:	return HLP000195;	/* 右クリックメニュー */
 	case F_CUSTMENU_1:	return HLP000186;	/* カスタムメニュー1 */
@@ -941,7 +913,6 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_CUSTMENU_22:	return HLP000186;	/* カスタムメニュー22 */
 	case F_CUSTMENU_23:	return HLP000186;	/* カスタムメニュー23 */
 	case F_CUSTMENU_24:	return HLP000186;	/* カスタムメニュー24 */
-
 
 	/* ウィンドウ系 */
 	case F_SPLIT_V:			return HLP000093;	//上下に分割	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更
@@ -975,7 +946,6 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_TAB_CLOSELEFT:	return HLP000334;	//左をすべて閉じる		// 2009.07.07 syat
 	case F_TAB_CLOSERIGHT:	return HLP000335;	//右をすべて閉じる		// 2009.07.07 syat
 
-
 	/* 支援 */
 	case F_HOKAN:			return HLP000111;	/* 入力補完機能 */
 	case F_TOGGLE_KEY_SEARCH:	return HLP000318;	//キャレット位置辞書検索機能ON/OFF	// 2006.10.11 ryoji
@@ -986,7 +956,6 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_EXTHELP1:		return HLP000190;	/* 外部ヘルプ１ */
 	case F_EXTHTMLHELP:		return HLP000191;	/* 外部HTMLヘルプ */
 	case F_ABOUT:			return HLP000102;	//バージョン情報	//Dec. 24, 2000 JEPRO F_に変更
-
 
 	/* その他 */
 
@@ -1005,10 +974,6 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 		return 0;
 	}
 }
-
-
-
-
 
 /* 機能が利用可能か調べる */
 bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EFunctionCode nId )
@@ -1210,6 +1175,7 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 	case F_REDO:		return pcEditDoc->m_cDocEditor.IsEnableRedo();	/* Redo(やり直し)可能な状態か？ */
 
 	case F_COPYPATH:
+	case F_COPYDIRPATH:
 	case F_COPYTAG:
 	case F_COPYFNAME:					// 2002/2/3 aroka
 	case F_OPEN_HfromtoC:				//同名のC/C++ヘッダ(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
@@ -1297,8 +1263,6 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 	}
 	return true;
 }
-
-
 
 /* 機能がチェック状態か調べる */
 bool IsFuncChecked( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EFunctionCode nId )

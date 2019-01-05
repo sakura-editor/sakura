@@ -89,7 +89,6 @@ protected:
 	int		nFlgFile12;
 };
 
-
 /*!	差分表示
 	@param	pszFile1	[in]	自ファイル名
 	@param	pszFile2	[in]	相手ファイル名
@@ -203,7 +202,6 @@ void CEditView::ViewDiffInfo(
 			InfoMessage( this->GetHwnd(), LS(STR_ERR_DLGEDITVWDIFF5) );
 		}
 	}
-
 
 	//分割したビューも更新
 	m_pcEditWnd->Views_Redraw();
@@ -508,8 +506,6 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd, ECodeType code, boo
 
 	return TRUE;
 }
-
-
 
 /*!	外部ファイルを指定でのファイルを表示
 */

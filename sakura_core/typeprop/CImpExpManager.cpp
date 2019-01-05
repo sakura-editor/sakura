@@ -259,7 +259,7 @@ bool CImpExpType::ImportAscertain( HINSTANCE hInstance, HWND hwndParent, const w
 		m_cProfile.IOProfileData( szSecInfo, szKeyVersion, MakeStringBufferW( szKeyVersion ) );
 		int nRet = ConfirmMessage( hwndParent,
 			LS(STR_IMPEXP_VER), 
-			_APP_NAME_(LTEXT), szKeyVersion, nStructureVersion );
+			GSTR_APPNAME, szKeyVersion, nStructureVersion );
 		if ( IDYES != nRet ) {
 			return false;
 		}
@@ -439,7 +439,6 @@ bool CImpExpType::Import( const wstring& sFileName, wstring& sErrMsg )
 	return true;
 }
 
-
 // エクスポート
 bool CImpExpType::Export( const wstring& sFileName, wstring& sErrMsg )
 {
@@ -541,7 +540,6 @@ bool CImpExpType::Export( const wstring& sFileName, wstring& sErrMsg )
 	return true;
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          カラー                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -601,7 +599,6 @@ bool CImpExpColors::Export( const wstring& sFileName, wstring& sErrMsg )
 
 	return true;
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                    正規表現キーワード                       //
@@ -675,7 +672,6 @@ bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 
 	in.Close();
 
-	
 	for(int i = 0; i < count; i++ ){
 		m_Types.m_RegexKeywordArr[i] = regexKeyArr[i];
 	}
@@ -713,7 +709,6 @@ bool CImpExpRegex::Export( const wstring& sFileName, wstring& sErrMsg )
 
 	return true;
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     キーワードヘルプ                        //
@@ -855,7 +850,6 @@ bool CImpExpKeyHelp::Export( const wstring& sFileName, wstring& sErrMsg )
 
 	return true;
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     キー割り当て                            //
@@ -1043,7 +1037,6 @@ bool CImpExpKeybind::Export( const wstring& sFileName, wstring& sErrMsg )
 	return true;
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     カスタムメニュー                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -1114,7 +1107,6 @@ bool CImpExpCustMenu::Export( const wstring& sFileName, wstring& sErrMsg )
 
 	return true;
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     強調キーワード                          //
@@ -1203,7 +1195,6 @@ bool CImpExpKeyWord::Export( const wstring& sFileName, wstring& sErrMsg )
 	return true;
 }
 
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     メインメニュー                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -1272,7 +1263,6 @@ bool CImpExpMainMenu::Export( const wstring& sFileName, wstring& sErrMsg )
 
 	return true;
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     ファイルツリー                          //

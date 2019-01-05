@@ -34,7 +34,6 @@
 #include "CViewCommander.h"
 #include "CViewCommander_inline.h"
 
-
 /*! 挿入／上書きモード切り替え
 
 	@date 2005.10.02 genta InsMode関数化
@@ -53,8 +52,6 @@ void CViewCommander::Command_CHGMOD_INS( void )
 	GetCaret().ShowCaretPosInfo();
 }
 
-
-
 //	from CViewCommander_New.cpp
 /*! 入力する改行コードを設定
 
@@ -69,8 +66,6 @@ void CViewCommander::Command_CHGMOD_EOL( EEolType e ){
 		GetCaret().ShowCaretPosInfo();
 	}
 }
-
-
 
 //! 文字コードセット指定
 void CViewCommander::Command_CHG_CHARSET(
@@ -96,8 +91,6 @@ void CViewCommander::Command_CHG_CHARSET(
 	// ステータス表示
 	GetCaret().ShowCaretPosInfo();
 }
-
-
 
 /** 各種モードの取り消し
 	@param whereCursorIs 選択をキャンセルした後、キャレットをどこに置くか。0=動かさない。1=左上。2=右下。

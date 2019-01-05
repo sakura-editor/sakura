@@ -6,7 +6,6 @@
 /*
 	Copyright (C) 2013, Uchi
 
-
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.
@@ -124,9 +123,7 @@ struct SExpList {
 	{".rc",		EXP_SRC	},
 };
 
-
 std::vector<std::string> file_list;  // filename_list
-
 
 // ファイルリストを作成する
 int makeFileList(std::string top_dir, std::string dir, SExpList sexp)
@@ -195,7 +192,6 @@ int makeFileListTop(const char* top_dir)
 	return 0;
 }
 
-
 // ファイルを一つずつ取り出す
 // 最後はNULLを返す
 const char* getFile()
@@ -213,14 +209,12 @@ const char* getFile()
 	return r_str.c_str();
 }
 
-
 // オブジェクト行1行作成
 const char* makeObjLine(char* mkline, size_t bf_sz, const char* fl_nm)
 {
 	sprintf_s( mkline, bf_sz, "%s.o \\\n", fl_nm);
 	return mkline;
 }
-
 
 // main関数
 int main(int argc, char* argv[])

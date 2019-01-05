@@ -39,7 +39,6 @@
 #include "util/window.h"
 #include "_main/CMutex.h"
 
-
 // GetOpenedWindowArr用静的変数／構造体
 static BOOL s_bSort;	// ソート指定
 static BOOL s_bGSort;	// グループ指定
@@ -129,7 +128,6 @@ EditNode* CAppNodeGroupHandle::GetEditNodeAt( int nIndex )
 	return NULL;
 }
 
-
 /** 編集ウィンドウリストへの登録
 
 	@param hWnd   [in] 登録する編集ウィンドウのハンドル
@@ -217,7 +215,6 @@ BOOL CAppNodeGroupHandle::AddEditWndList( HWND hWnd )
 
 	return TRUE;
 }
-
 
 /** 編集ウィンドウリストからの削除
 
@@ -343,7 +340,6 @@ BOOL CAppNodeGroupHandle::RequestCloseEditor( EditNode* pWndArr, int nArrCnt, BO
 	return TRUE;
 }
 
-
 /** 現在の編集ウィンドウの数を調べる
 
 	@param bExcludeClosing [in] 終了中の編集ウィンドウはカウントしない
@@ -369,9 +365,7 @@ int CAppNodeGroupHandle::GetEditorWindowsNum( bool bExcludeClosing/* = true */ )
 		}
 	}
 	return j;
-
 }
-
 
 /** 全編集ウィンドウへメッセージをポストする
 
@@ -519,8 +513,6 @@ EditNode* CAppNodeManager::GetEditNode( HWND hWnd )
 	return NULL;
 }
 
-
-
 //! 無題番号取得
 int CAppNodeManager::GetNoNameNumber( HWND hWnd )
 {
@@ -535,8 +527,6 @@ int CAppNodeManager::GetNoNameNumber( HWND hWnd )
 	}
 	return -1;
 }
-
-
 
 /** 現在開いている編集ウィンドウの配列を返す
 
@@ -785,10 +775,6 @@ HWND CAppNodeManager::SeparateGroup( HWND hwndSrc, HWND hwndDst, bool bSrcIsTop,
 	return hwndDst;
 }
 
-
-
-
-
 /** 同一グループかどうかを調べる
 
 	@param[in] hWnd1 比較するウィンドウ1
@@ -819,7 +805,6 @@ int CAppNodeManager::GetFreeGroupId( void )
 
 	return ++pShare->m_sNodes.m_nGroupSequences;	// 新規グループ
 }
-
 
 // Close した時の次のWindowを取得する
 //  (タブまとめ表示の場合)

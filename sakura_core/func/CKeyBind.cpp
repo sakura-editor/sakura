@@ -47,18 +47,13 @@ static void SetKeyNameArrVal(
 	const KEYDATAINIT*	pKeydata
 );
 
-
 CKeyBind::CKeyBind()
 {
 }
 
-
 CKeyBind::~CKeyBind()
 {
 }
-
-
-
 
 /*! Windows アクセラレータの作成
 	@date 2007.02.22 ryoji デフォルト機能割り当てに関する処理を追加
@@ -83,7 +78,6 @@ HACCEL CKeyBind::CreateAccerelator(
 			}
 		}
 	}
-
 
 	if( nAccelArrNum <= 0 ){
 		/* 機能割り当てがゼロ */
@@ -113,11 +107,6 @@ HACCEL CKeyBind::CreateAccerelator(
 	return hAccel;
 }
 
-
-
-
-
-
 /*! アクラセレータ識別子に対応するコマンド識別子を返す．
 	対応するアクラセレータ識別子がない場合または機能未割り当ての場合は0を返す．
 
@@ -145,11 +134,6 @@ EFunctionCode CKeyBind::GetFuncCode(
 	}
 	return F_DEFAULT;
 }
-
-
-
-
-
 
 /*!
 	@return 機能が割り当てられているキーストロークの数
@@ -180,7 +164,6 @@ int CKeyBind::CreateKeyBindList(
 	const WCHAR*	pszALT   = LTEXT("Alt+");
 	const WCHAR*	pszTAB   = LTEXT("\t");
 	const WCHAR*	pszCR    = LTEXT("\r\n");	//\r=0x0d=CRを追加
-
 
 	cMemList.AppendString( LSW(STR_ERR_DLGKEYBIND1) );
 	cMemList.AppendString( pszCR );
@@ -247,8 +230,6 @@ int CKeyBind::CreateKeyBindList(
 					cMemList.AppendString( LTEXT("×") );
 				}
 
-
-
 				cMemList.AppendString( pszCR );
 			}
 		}
@@ -308,7 +289,6 @@ bool CKeyBind::GetKeyStrSub(
 	return false;
 }
 
-
 /** 機能に対応するキー名の取得
 	@date 2007.02.22 ryoji デフォルト機能割り当てに関する処理を追加
 	@date 2007.11.04 genta マウスクリックよりキー割り当ての優先度を上げる
@@ -347,7 +327,6 @@ int CKeyBind::GetKeyStr(
 	return 0;
 }
 
-
 /** 機能に対応するキー名の取得(複数)
 	@date 2007.02.22 ryoji デフォルト機能割り当てに関する処理を追加
 	@date 2007.11.04 genta 共通機能のサブルーチン化
@@ -385,7 +364,6 @@ int CKeyBind::GetKeyStrList(
 	}
 	(*pppcMemList)[i] = NULL;
 
-
 	nAssignedKeysNum = 0;
 	for( j = 0; j < 8; ++j ){
 		for( i = 0; i < nKeyNameArrNum; /* 1を加えてはいけない */ ){
@@ -398,9 +376,6 @@ int CKeyBind::GetKeyStrList(
 	}
 	return nAssignedKeysNum;
 }
-
-
-
 
 /*! アクセスキー付きの文字列の作成
 	@param sName ラベル
@@ -468,7 +443,6 @@ TCHAR* CKeyBind::GetMenuLabel(
 {
 	const unsigned int LABEL_MAX = nLabelSize;
 
-
 	if( _T('\0') == pszLabel[0] ){
 		_tcsncpy( pszLabel, LS( nFuncId ), LABEL_MAX - 1 );
 		pszLabel[ LABEL_MAX - 1 ] = _T('\0');
@@ -495,7 +469,6 @@ TCHAR* CKeyBind::GetMenuLabel(
 	}
 	return pszLabel;
 }
-
 
 /*! キーのデフォルト機能を取得する
 
@@ -532,7 +505,6 @@ EFunctionCode CKeyBind::GetDefFuncCode( int nKeyCode, int nState )
 	return nDefFuncCode;
 }
 
-
 /*! 特定のキー情報から機能コードを取得する
 
 	@param KeyData [in] キー情報
@@ -551,20 +523,6 @@ EFunctionCode CKeyBind::GetFuncCodeAt( KEYDATA& KeyData, int nState, BOOL bGetDe
 		return GetDefFuncCode( KeyData.m_nKeyCode, nState );
 	return F_DEFAULT;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //	Sep. 14, 2000 JEPRO
 //	Shift+F1 に「コマンド一覧」, Alt+F1 に「ヘルプ目次」, Shift+Alt+F1 に「キーワード検索」を追加	//Nov. 25, 2000 JEPRO 殺していたのを修正・復活
@@ -879,10 +837,7 @@ void CShareData::RefreshKeyAssignString(DLLSHAREDATA* pShareData)
 			_tcscpy( pKeydata->m_szKeyName, LS( KeyDataInit[i].m_nKeyNameId ) );
 		}
 	}
-
 }
-
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         実装補助                            //

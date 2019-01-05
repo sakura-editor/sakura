@@ -40,7 +40,6 @@
 // SJISのコードページ(CP_ACP では無くこれを使えばおそらく英語版Winでも動くはず。)	2008/5/12 Uchi
 #define CP_SJIS		932
 
-
 //定数の素 (直接使用は控えてください)
 #define TAB_ 				'\t'
 #define SPACE_				' '
@@ -80,14 +79,11 @@ namespace WCODE{
 	//特殊 (BREGEXP)
 	//$$ UNICODE版の仮デリミタ。bregonigの仕様がよくわかんないので、とりあえずこんな値にしてます。
 	static const wchar_t BREGEXP_DELIMITER = (wchar_t)0xFFFF;
-
 }
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         判定関数                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
 
 /*! キーワードキャラクタ */
 extern const unsigned char gm_keyword_char[128];
@@ -103,7 +99,6 @@ inline bool IS_KEYWORD_CHAR(wchar_t wc)
 	else
 		return false;
 }
-
 
 //UNICODE判定関数群
 namespace WCODE
@@ -271,7 +266,6 @@ namespace WCODE
 	}
 */
 }
-
 
 //ANSI判定関数群
 namespace ACODE

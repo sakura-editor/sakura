@@ -59,8 +59,8 @@ public:
 	);
 
 	//操作
-	bool DoModal_GetOpenFileName( TCHAR*, EFilter eAddFileter = EFITER_TEXT );	/* 開くダイアログ モーダルダイアログの表示 */	//2002/08/21 moca	引数追加
-	bool DoModal_GetSaveFileName( TCHAR* );	/* 保存ダイアログ モーダルダイアログの表示 */	//2002/08/21 30,2002 moca	引数追加
+	bool DoModal_GetOpenFileName( TCHAR* pszPath, EFilter eAddFileter = EFITER_TEXT );	/* 開くダイアログ モーダルダイアログの表示 */	//2002/08/21 moca	引数追加
+	bool DoModal_GetSaveFileName( TCHAR* pszPath );	/* 保存ダイアログ モーダルダイアログの表示 */	//2002/08/21 30,2002 moca	引数追加
 	bool DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::tstring>*, bool bOptions = true );	/* 開くダイアグ モーダルダイアログの表示 */
 	bool DoModalSaveDlg( SSaveInfo*	pSaveInfo, bool bSimpleMode );	/* 保存ダイアログ モーダルダイアログの表示 */
 
@@ -75,7 +75,7 @@ protected:
 	void	DlgOpenFail(void);
 
 	// 2005.11.02 ryoji OS バージョン対応の OPENFILENAME 初期化用関数
-	void InitOfn( OPENFILENAME* );
+	void InitOfn( OPENFILENAME* ofn );
 
 	// 2005.11.02 ryoji 初期レイアウト設定処理
 	static void InitLayout( HWND hwndOpenDlg, HWND hwndDlg, HWND hwndBaseCtrl );
@@ -92,14 +92,9 @@ public:
 	// 設定フォルダ相対ファイル選択(共有データ,ini位置依存)
 	static BOOL SelectFile(HWND parent, HWND hwndCtl, const TCHAR* filter, bool resolvePath, EFilter eAddFilter = EFITER_TEXT);
 
-private:
 	DISALLOW_COPY_AND_ASSIGN(CDlgOpenFile);
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CDLGOPENFILE_H_ */
-
-
 
