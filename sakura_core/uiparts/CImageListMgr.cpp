@@ -463,6 +463,11 @@ void CImageListMgr::MyBitBlt(
 					auto L = std::get<HLS_L>( tonariH );
 					// 色相に応じて補正をかける
 					if ( std::isinf( H ) ) {
+						// モノクロは他の色より判別しやすいので背景と同色でないなら色替えしない
+						if ( 1 < tonariC ) {
+							fixtureMap[tonariColor] = std::make_tuple( tonariC, cTransparent );
+							continue;
+						}
 						// モノクロのコントラスト目標値は高くし、白か黒に貼り付かせる
 						C *= 2.;
 						// 背景色の輝度をやや明るくした色を初期値とする
