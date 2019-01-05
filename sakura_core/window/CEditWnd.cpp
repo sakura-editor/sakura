@@ -1610,19 +1610,10 @@ LRESULT CEditWnd::DispatchEvent(
 		if( FALSE != ( nRet = OnClose( (HWND)lParam,
 				PM_CLOSE_GREPNOCONFIRM == (PM_CLOSE_GREPNOCONFIRM & wParam) )) ){	// Jan. 23, 2002 genta 警告抑制
 			//プラグイン：DocumentCloseイベント実行
-			CPlug::Array plugs;
-			CWSHIfObj::List params;
-			CJackManager::getInstance()->GetUsablePlug( PP_DOCUMENT_CLOSE, 0, &plugs );
-			for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
-				(*it)->Invoke(&GetActiveView(), params);
-			}
+			CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_CLOSE, &GetActiveView() );
 
 			//プラグイン：EditorEndイベント実行
-			plugs.clear();
-			CJackManager::getInstance()->GetUsablePlug( PP_EDITOR_END, 0, &plugs );
-			for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
-				(*it)->Invoke(&GetActiveView(), params);
-			}
+			CJackManager::getInstance()->InvokePlugins( PP_EDITOR_END, &GetActiveView() );
 
 			// タブまとめ表示では閉じる動作はオプション指定に従う	// 2006.02.13 ryoji
 			if( PM_CLOSE_EXIT != (PM_CLOSE_EXIT & wParam) ){	// 全終了要求でない場合

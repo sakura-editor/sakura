@@ -248,12 +248,7 @@ void CViewCommander::Command_FILECLOSE_OPEN( LPCWSTR filename, ECodeType nCharCo
 	GetDocument()->m_cDocFileOperation.FileCloseOpen( SLoadInfo(to_tchar(filename), nCharCode, bViewMode) );
 
 	//プラグイン：DocumentOpenイベント実行
-	CPlug::Array plugs;
-	CWSHIfObj::List params;
-	CJackManager::getInstance()->GetUsablePlug( PP_DOCUMENT_OPEN, 0, &plugs );
-	for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
-		(*it)->Invoke(&GetEditWindow()->GetActiveView(), params);
-	}
+	CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_OPEN, &GetEditWindow()->GetActiveView() );
 }
 
 //! ファイルの再オープン

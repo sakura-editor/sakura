@@ -113,12 +113,7 @@ void CViewCommander::Command_GREP( void )
 		);
 
 		//プラグイン：DocumentOpenイベント実行
-		CPlug::Array plugs;
-		CWSHIfObj::List params;
-		CJackManager::getInstance()->GetUsablePlug( PP_DOCUMENT_OPEN, 0, &plugs );
-		for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
-			(*it)->Invoke(&GetEditWindow()->GetActiveView(), params);
-		}
+		CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_OPEN, &GetEditWindow()->GetActiveView() );
 	}
 	else{
 		// 編集ウィンドウの上限チェック
