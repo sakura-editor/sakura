@@ -269,6 +269,14 @@ COLORREF FromHLS( const _HlsTuple &hls )
 	auto S = std::get<HLS_S>( hls );
 	auto L = std::get<HLS_L>( hls );
 
+	// 彩度の範囲を補正する
+	if ( S < 0 ) S = 0;
+	if ( 1 < S ) S = 1;
+
+	// 輝度の範囲を補正する
+	if ( L < 0 ) L = 0;
+	if ( 1 < L ) L = 1;
+
 	// 色相が無効値（＝白黒）の場合
 	if ( std::isinf( H ) ) {
 		return RGB( L * 255, L * 255, L * 255 );
