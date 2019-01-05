@@ -501,15 +501,20 @@ void CImageListMgr::MyBitBlt(
 			// 隣接するピクセルがなければスキップ
 			if ( tonariColors.empty() ) continue;
 
-			// もっともコントラストの低い色を取得する
-			auto lowest = std::min_element( tonariColors.cbegin(), tonariColors.cend(),
+			// もっともコントラストの高い色を取得する
+			auto highest = std::max_element( tonariColors.cbegin(), tonariColors.cend(),
 				[fixtureMap]( const COLORREF& clr1, const COLORREF& clr2 ) {
 				const auto &c1 = std::get<CONTRUST_C>( fixtureMap.at( clr1 ) );
 				const auto &c2 = std::get<CONTRUST_C>( fixtureMap.at( clr2 ) );
-				return (c1 < c2);
+				return (c1 > c2);
 			} );
 
-			const auto &clr = std::get<CONTRUST_RGB>( fixtureMap[*lowest] );
+			const auto &fixture = fixtureMap[*highest];
+			// 最低コントラスト比を満たすなら色替えしない
+			if ( 4.5 < std::get<CONTRUST_C>( fixture ) ) {
+				continue;
+			}
+			const auto &clr = std::get<CONTRUST_RGB>( fixture );
 			lineBuf[m].rgbRed = GetRValue( clr );
 			lineBuf[m].rgbGreen = GetGValue( clr );
 			lineBuf[m].rgbBlue = GetBValue( clr );
