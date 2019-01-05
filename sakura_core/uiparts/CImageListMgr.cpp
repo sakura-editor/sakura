@@ -326,15 +326,6 @@ double GetRelativeLuminance( const COLORREF color )
 	return L;
 }
 
-//! コントラスト比を取得する
-double GetContrastRatio( const double l1, const double l2 )
-{
-	auto L1 = std::max( l1, l2 );
-	auto L2 = std::min( l1, l2 );
-	auto C = (L1 + 0.05) / (L2 + 0.05);
-	return C;
-}
-
 /*! ビットマップの表示 灰色を透明描画
 
 	@author Nakatani
@@ -357,196 +348,14 @@ void CImageListMgr::MyBitBlt(
 	HDC hdcSrc = ::CreateCompatibleDC( drawdc );
 	HGDIOBJ bmpSrcOld = ::SelectObject( hdcSrc, bmpSrc );
 
-	// 作業DCを作成
-	HDC hdcWork = ::CreateCompatibleDC( drawdc );
-	HBITMAP bmpWork = ::CreateCompatibleBitmap( drawdc, nWidth, nHeight );
-	HGDIOBJ bmpWorkOld = ::SelectObject( hdcWork, bmpWork );
-
-	// 作業DCに転送
-	::StretchBlt( hdcWork, 0, 0, nWidth, nHeight,
-		hdcSrc, nXSrc, nYSrc, cx(), cy(), SRCCOPY );
-
-	// ビットマップデータを取得するためのバッファを用意する
-	auto imageBuf = std::make_unique<MyRGBQUAD[]>( nWidth * nHeight );
-
-	// 色データ取得のためのヘッダ
-	BITMAPINFOHEADER bi = {
-		sizeof( BITMAPINFOHEADER ),
-		nWidth,
-		nHeight,
-		1,
-		32,								//bits per pixel
-		BI_RGB,							//無圧縮RGB
-		0,								//biSizeImage: 無視される
-										// 省略可能なので以下略
-	};
-
-	// ビットマップ全体のデータを取得する
-	for ( auto n = nHeight - 1; 0 <= n; --n ) {
-		MyRGBQUAD* lpbitmap = &(imageBuf.get()[n * nWidth]);
-
-		auto retGetDIBits = ::GetDIBits( hdcWork, bmpWork,
-			n,						//start
-			1,						//cLines
-			lpbitmap,
-			(BITMAPINFO *) &bi,
-			DIB_RGB_COLORS
-		);
-
-		if ( retGetDIBits == ERROR_INVALID_PARAMETER ) {
-			return; //TODO: ここに来たらマズい！
-		}
-	}
-
-	// 背景色を取得する
-	//TODO: 呼出元で背景色をセットするように変える
-	//COLORREF bkColor = ::GetBkColor( drawdc );
-	COLORREF bkColor = ::GetSysColor( COLOR_3DFACE );
-	auto bkColorL = GetRelativeLuminance( bkColor );
-	auto bkColorH = ToHLS( bkColor );
-
-	// コントラスト情報タプル
-	typedef std::tuple<double, COLORREF> _ContrustTuple;
-	enum { CONTRUST_C, CONTRUST_RGB, };
-
-	// RGB⇒コントラスト情報マップ
-	std::map<COLORREF, _ContrustTuple> fixtureMap;
-
 	// 透過色の変数名が分かりづらいので別名定義する
 	const COLORREF &cTransparent = m_cTrans;
 
-	// スキャンライン書込みのためのバッファを用意する
-	auto lineBuf = std::make_unique<MyRGBQUAD[]>( nWidth );
-
-	// 画像の上から順番に処理する
-	for ( auto n = nHeight - 1; 0 <= n; --n ) {
-		// スキャンラインをコピー
-		::memcpy_s( lineBuf.get(), nWidth * sizeof( MyRGBQUAD ),
-			&imageBuf[n*nWidth], nWidth * sizeof( MyRGBQUAD ) );
-
-		// スキャンラインを1ピクセルずつ処理する
-		for ( auto m = 0; m < nWidth; ++m ) {
-			const MyRGBQUAD& px = imageBuf[n*nWidth + m];
-
-			// 透過色以外はスキップする
-			if ( px != cTransparent ) continue;
-
-			// 隣接ピクセル色をコレクションに集めて一括処理する
-			std::list<COLORREF> tonariColors( {
-				(0 < m) ? imageBuf[n*nWidth + (m - 1)] : cTransparent,
-				(m < nWidth - 1) ? imageBuf[n*nWidth + (m + 1)] : cTransparent,
-				(0 < n) ? imageBuf[(n - 1)*nWidth + m] : cTransparent,
-				(n < nHeight - 1) ? imageBuf[(n + 1)*nWidth + m] : cTransparent,
-				} );
-			tonariColors.unique();
-			tonariColors.remove( cTransparent );
-
-			// 隣接するピクセルの情報を整理
-			for ( const auto &tonariColor : tonariColors ) {
-				// 未登録のカラーのみ処理する
-				if ( fixtureMap.find( tonariColor ) == fixtureMap.end() ) {
-					// 相対輝度を求める
-					auto tonariL = GetRelativeLuminance( tonariColor );
-					// 背景色に対するコントラスト比を求める
-					auto tonariC = GetContrastRatio( tonariL, bkColorL );
-					// 推奨コントラスト比 7.0:1
-					auto C = 7.;
-					// 推奨コントラスト比を満たすピクセルはスキップする
-					if ( C < tonariC ) {
-						fixtureMap[tonariColor] = std::make_tuple( tonariC, tonariColor );
-						continue;
-					}
-					// HLS変換する
-					auto tonariH = ToHLS( tonariColor );
-					auto H = std::get<HLS_H>( tonariH );
-					auto S = std::get<HLS_S>( tonariH );
-					auto L = std::get<HLS_L>( tonariH );
-					// 色相に応じて補正をかける
-					if ( std::isinf( H ) ) {
-						// モノクロは他の色より判別しやすいので背景と同色でないなら色替えしない
-						if ( 1 < tonariC ) {
-							fixtureMap[tonariColor] = std::make_tuple( tonariC, cTransparent );
-							continue;
-						}
-						// モノクロのコントラスト目標値は高くし、白か黒に貼り付かせる
-						C *= 2.;
-						// 背景色の輝度をやや明るくした色を初期値とする
-						L = std::get<HLS_L>( bkColorH ) + .1;
-					} else {
-						// 色相を180度反転させる
-						H += 180.;
-						if ( 360 <= H ) H -= 360;
-						S = 1 - S;			// 彩度反転
-						L = 1 - L;			// 輝度反転
-					}
-
-					// 反対色を探すための漸進処理を定義する
-					std::function<double( double )> advance;
-					if ( .5 <= bkColorL ) {
-						// 白背景はだんだん暗くしていく
-						advance = []( const double &v ) { return v * 0.9; };	//90%にする
-					}
-					else {
-						// 黒背景はだんだん明るくしていく
-						advance = []( const double &v ) { return v * 1.1; };	//110%にする
-					}
-					
-					// 反対色を探す
-					for ( double tempL = 0.1; tempL < 1 && 0.001 < tempL; ) {
-						auto tempClr = FromHLS( std::make_tuple( H, S, L ) );
-						tempL = GetRelativeLuminance( tempClr );
-						if ( C < GetContrastRatio( tempL, bkColorL ) ) break;
-						L = advance( L );
-					}
-					auto fixedClr = FromHLS( std::make_tuple( H, S, L ) );
-					fixtureMap[tonariColor] = std::make_tuple( tonariC, fixedClr );
-				}
-			}
-
-			// 隣接するピクセルがなければスキップ
-			if ( tonariColors.empty() ) continue;
-
-			// もっともコントラストの高い色を取得する
-			auto highest = std::max_element( tonariColors.cbegin(), tonariColors.cend(),
-				[fixtureMap]( const COLORREF& clr1, const COLORREF& clr2 ) {
-				const auto &c1 = std::get<CONTRUST_C>( fixtureMap.at( clr1 ) );
-				const auto &c2 = std::get<CONTRUST_C>( fixtureMap.at( clr2 ) );
-				return (c1 > c2);
-			} );
-
-			const auto &fixture = fixtureMap[*highest];
-			// 最低コントラスト比を満たすなら色替えしない
-			if ( 4.5 < std::get<CONTRUST_C>( fixture ) ) {
-				continue;
-			}
-			const auto &clr = std::get<CONTRUST_RGB>( fixture );
-			lineBuf[m].rgbRed = GetRValue( clr );
-			lineBuf[m].rgbGreen = GetGValue( clr );
-			lineBuf[m].rgbBlue = GetBValue( clr );
-		}
-
-		// 変更したスキャンラインを書き込む
-		auto retSetDIBits = ::SetDIBits( hdcWork, bmpWork,
-			n,						//start
-			1,						//cLines
-			lineBuf.get(),
-			(BITMAPINFO *) &bi,
-			DIB_RGB_COLORS
-		);
-
-		if ( retSetDIBits == ERROR_INVALID_PARAMETER ) {
-			return; //TODO: ここに来たらマズい！
-		}
-	}
-
 	// 透過色を考慮して転送
 	::TransparentBlt( drawdc, nXDest, nYDest, nWidth, nHeight,
-		hdcWork, 0, 0, nWidth, nHeight, cTransparent );
+		hdcSrc, nXSrc, nYSrc, cx(), cy(), cTransparent );
 
 	// 後始末
-	::SelectObject( hdcWork, bmpWorkOld );
-	::DeleteObject( bmpWork );
-	::DeleteDC( hdcWork );
 	::SelectObject( hdcSrc, bmpSrcOld );
 	::DeleteDC( hdcSrc );
 	return;
