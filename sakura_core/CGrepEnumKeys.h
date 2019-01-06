@@ -136,6 +136,49 @@ public:
 		return ParseAndAddException(lpKeys, m_vecExceptFolderKeys, m_vecExceptAbsFolderKeys);
 	}
 
+	typedef std::basic_string<TCHAR> tstring;
+
+	/*!
+		@brief ファイルパターンを解析して、要素ごとに分離して返す
+		@param[in]		lpKeys					ファイルパターン
+	*/
+	static std::vector< tstring > SplitPattern(LPCTSTR lpKeys)
+	{
+		std::vector< tstring > patterns;
+
+		const TCHAR* WILDCARD_DELIMITER = _T(" ;,");	//リストの区切り
+		int nWildCardLen = _tcslen(lpKeys);
+		TCHAR* pWildCard = new TCHAR[nWildCardLen + 1];
+		if (!pWildCard) {
+			return patterns;
+		}
+		_tcscpy(pWildCard, lpKeys);
+
+		int nPos = 0;
+		TCHAR*	token;
+		while (NULL != (token = my_strtok<TCHAR>(pWildCard, nWildCardLen, &nPos, WILDCARD_DELIMITER))) {	//トークン毎に繰り返す。
+			// "を取り除いて左に詰める
+			TCHAR* p;
+			TCHAR* q;
+			p = q = token;
+			while (*p) {
+				if (*p != _T('"')) {
+					if (p != q) {
+						*q = *p;
+					}
+					q++;
+				}
+				p++;
+			}
+			*q = _T('\0');
+
+			tstring element(token);
+			patterns.push_back(element);
+		}
+		delete[] pWildCard;
+		return patterns;
+	}
+
 private:
 	void ClearItems( void ){
 		ClearEnumKeys(m_vecExceptFileKeys);
@@ -183,49 +226,6 @@ private:
 			}
 		}
 		return 0;
-	}
-
-	typedef std::basic_string<TCHAR> tstring;
-
-	/*!
-		@brief ファイルパターンを解析して、要素ごとに分離して返す
-		@param[in]		lpKeys					ファイルパターン
-	*/
-	std::vector< tstring > SplitPattern(LPCTSTR lpKeys)
-	{
-		std::vector< tstring > patterns;
-
-		const TCHAR* WILDCARD_DELIMITER = _T(" ;,");	//リストの区切り
-		int nWildCardLen = _tcslen(lpKeys);
-		TCHAR* pWildCard = new TCHAR[nWildCardLen + 1];
-		if (!pWildCard) {
-			return patterns;
-		}
-		_tcscpy(pWildCard, lpKeys);
-
-		int nPos = 0;
-		TCHAR*	token;
-		while (NULL != (token = my_strtok<TCHAR>(pWildCard, nWildCardLen, &nPos, WILDCARD_DELIMITER))) {	//トークン毎に繰り返す。
-			// "を取り除いて左に詰める
-			TCHAR* p;
-			TCHAR* q;
-			p = q = token;
-			while (*p) {
-				if (*p != _T('"')) {
-					if (p != q) {
-						*q = *p;
-					}
-					q++;
-				}
-				p++;
-			}
-			*q = _T('\0');
-
-			tstring element(token);
-			patterns.push_back(element);
-		}
-		delete[] pWildCard;
-		return patterns;
 	}
 
 	/*!

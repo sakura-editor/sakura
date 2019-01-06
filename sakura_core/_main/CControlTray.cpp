@@ -104,19 +104,11 @@ void CControlTray::DoGrep()
 */
 static void AppendExcludeFolderPatterns(CNativeT& cFilePattern, const CNativeT& cmWorkExcludeFolder)
 {
-	if (cmWorkExcludeFolder.GetStringLength() == 0)
+	auto patterns = CGrepEnumKeys::SplitPattern(cmWorkExcludeFolder.GetStringPtr());
+	for (auto iter = patterns.begin(); iter != patterns.end(); ++iter)
 	{
-		/* 除外パターンが空のときは何もせずに抜ける */
-		return;
-	}
-	CGrepEnumKeys cGrepEnumKeysFolder;
-	int nErrorFolder = cGrepEnumKeysFolder.SetFileKeys(cmWorkExcludeFolder.GetStringPtr());
-	if (nErrorFolder == 0)
-	{
-		for (auto iter = cGrepEnumKeysFolder.m_vecSearchFileKeys.begin(); iter != cGrepEnumKeysFolder.m_vecSearchFileKeys.end(); ++iter)
-		{
-			cFilePattern.AppendStringF(_T("#%s;"), *iter);
-		}
+		const auto & pattern = (*iter);
+		cFilePattern.AppendStringF(_T("#%s;"), pattern.c_str());
 	}
 }
 
@@ -127,19 +119,11 @@ static void AppendExcludeFolderPatterns(CNativeT& cFilePattern, const CNativeT& 
 */
 static void AppendExcludeFilePatterns(CNativeT& cFilePattern, const CNativeT& cmWorkExcludeFile)
 {
-	if (cmWorkExcludeFile.GetStringLength() == 0)
+	auto patterns = CGrepEnumKeys::SplitPattern(cmWorkExcludeFile.GetStringPtr());
+	for (auto iter = patterns.begin(); iter != patterns.end(); ++iter)
 	{
-		/* 除外パターンが空のときは何もせずに抜ける */
-		return;
-	}
-	CGrepEnumKeys cGrepEnumKeysFile;
-	int nErrorFile = cGrepEnumKeysFile.SetFileKeys(cmWorkExcludeFile.GetStringPtr());
-	if (nErrorFile == 0)
-	{
-		for (auto iter = cGrepEnumKeysFile.m_vecSearchFileKeys.begin(); iter != cGrepEnumKeysFile.m_vecSearchFileKeys.end(); ++iter)
-		{
-			cFilePattern.AppendStringF(_T("!%s;"), *iter);
-		}
+		const auto & pattern = (*iter);
+		cFilePattern.AppendStringF(_T("!%s;"), pattern.c_str());
 	}
 }
 
