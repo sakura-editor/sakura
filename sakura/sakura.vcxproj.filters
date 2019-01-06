@@ -2255,6 +2255,12 @@
     <ClCompile Include="..\sakura_core\recent\CRecentExcludeFolder.cpp">
       <Filter>Cpp Source Files\recent</Filter>
     </ClCompile>
+    <ClCompile Include="..\sakura_core\dlg\CDlgOpenFile_CommonFileDialog.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\dlg\CDlgOpenFile_CommonItemDialog.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\resource\auto_scroll_center.bmp">

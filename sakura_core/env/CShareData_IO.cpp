@@ -489,6 +489,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("eOpenDialogDir")		, common.m_sEdit.m_eOpenDialogDir );
 	cProfile.IOProfileData( pszSecName, LTEXT("szOpenDialogSelDir")		, StringBufferT(common.m_sEdit.m_OpenDialogSelDir,_countof2(common.m_sEdit.m_OpenDialogSelDir)) );
 	cProfile.IOProfileData( pszSecName, LTEXT("bBoxSelectLock")	, common.m_sEdit.m_bBoxSelectLock );
+	cProfile.IOProfileData( pszSecName, LTEXT("bVistaStyleFileDialog")	, common.m_sEdit.m_bVistaStyleFileDialog );
 	cProfile.IOProfileData( pszSecName, LTEXT("nRepeatedScrollLineNum")	, common.m_sGeneral.m_nRepeatedScrollLineNum );
 	cProfile.IOProfileData( pszSecName, LTEXT("nRepeatedMoveCaretNum")	, common.m_sGeneral.m_nRepeatedMoveCaretNum );
 	cProfile.IOProfileData( pszSecName, LTEXT("nRepeatedScroll_Smooth")	, common.m_sGeneral.m_nRepeatedScroll_Smooth );

@@ -20,16 +20,11 @@
 #ifndef _CDLGOPENFILE_H_
 #define _CDLGOPENFILE_H_
 
-#include <CommDlg.h>
+#include <memory>
 #include <vector>
-#include "util/design_template.h"
-#include "CEol.h"
-#include "basis/CMyString.h"
-#include "dlg/CDialog.h"
 
 struct SLoadInfo;	// doc/CDocListener.h
 struct SSaveInfo;	// doc/CDocListener.h
-class CDlgOpenFileMem;
 
 /*! フィルタ設定 */
 enum EFilter {
@@ -39,16 +34,62 @@ enum EFilter {
 	EFITER_MAX,
 };
 
-/*!	ファイルオープンダイアログボックス
+class IDlgOpenFile
+{
+public:
+	virtual void Create(
+		HINSTANCE					hInstance,
+		HWND						hwndParent,
+		const TCHAR*				pszUserWildCard,
+		const TCHAR*				pszDefaultPath,
+		const std::vector<LPCTSTR>& vMRU			= std::vector<LPCTSTR>(),
+		const std::vector<LPCTSTR>& vOPENFOLDER		= std::vector<LPCTSTR>()
+	) = 0;
 
-	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+	// 操作
+
+	/*! 開くダイアログ モーダルダイアログの表示
+		@param[in,out] pszPath 初期ファイル名．選択されたファイル名の格納場所
+		@param[in] eAddFiler フィルタ設定
+		@retval true ユーザーがファイル名を選択してOKした
+		@retval false ダイアログをユーザーがキャンセル等で閉じたかもしくは開くのに失敗したか
+	*/
+	virtual bool DoModal_GetOpenFileName(
+		TCHAR* pszPath,
+		EFilter eAddFilter
+	) = 0;
+
+	/*! 保存ダイアログ モーダルダイアログの表示
+		@param pszPath [i/o] 初期ファイル名．選択されたファイル名の格納場所
+	*/
+	virtual bool DoModal_GetSaveFileName(
+		TCHAR* pszPath
+	) = 0;
+
+	/* 開くダイアログ モーダルダイアログの表示 */
+	virtual bool DoModalOpenDlg(
+		SLoadInfo* pLoadInfo,
+		std::vector<std::tstring>* pFilenames,
+		bool bOptions
+	) = 0;
+
+	/* 保存ダイアログ モーダルダイアログの表示 */
+	virtual bool DoModalSaveDlg(
+		SSaveInfo*	pSaveInfo,
+		bool bSimpleMode
+	) = 0;
+};
+
+
+/*!	ファイルオープンダイアログボックス
 */
-class CDlgOpenFile
+class CDlgOpenFile final : public IDlgOpenFile
 {
 public:
 	//コンストラクタ・デストラクタ
 	CDlgOpenFile();
-	~CDlgOpenFile();
+	~CDlgOpenFile() {}
+
 	void Create(
 		HINSTANCE					hInstance,
 		HWND						hwndParent,
@@ -56,43 +97,23 @@ public:
 		const TCHAR*				pszDefaultPath,
 		const std::vector<LPCTSTR>& vMRU			= std::vector<LPCTSTR>(),
 		const std::vector<LPCTSTR>& vOPENFOLDER		= std::vector<LPCTSTR>()
-	);
+	) override;
 
 	//操作
-	bool DoModal_GetOpenFileName( TCHAR* pszPath, EFilter eAddFileter = EFITER_TEXT );	/* 開くダイアログ モーダルダイアログの表示 */	//2002/08/21 moca	引数追加
-	bool DoModal_GetSaveFileName( TCHAR* pszPath );	/* 保存ダイアログ モーダルダイアログの表示 */	//2002/08/21 30,2002 moca	引数追加
-	bool DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::tstring>*, bool bOptions = true );	/* 開くダイアグ モーダルダイアログの表示 */
-	bool DoModalSaveDlg( SSaveInfo*	pSaveInfo, bool bSimpleMode );	/* 保存ダイアログ モーダルダイアログの表示 */
+	inline bool DoModal_GetOpenFileName(TCHAR* pszPath, EFilter eAddFileter = EFITER_TEXT) override;
+	inline bool DoModal_GetSaveFileName(TCHAR* pszPath) override;
+	inline bool DoModalOpenDlg(SLoadInfo* pLoadInfo,
+		std::vector<std::tstring>* pFilenames,
+		bool bOptions = true) override;
+	inline bool DoModalSaveDlg(SSaveInfo*	pSaveInfo, bool bSimpleMode) override;
 
-protected:
-	CDlgOpenFileMem*	m_mem;
-
-	/*
-	||  実装ヘルパ関数
-	*/
-
-	//	May 29, 2004 genta エラー処理をまとめる (advised by MIK)
-	void	DlgOpenFail(void);
-
-	// 2005.11.02 ryoji OS バージョン対応の OPENFILENAME 初期化用関数
-	void InitOfn( OPENFILENAME* ofn );
-
-	// 2005.11.02 ryoji 初期レイアウト設定処理
-	static void InitLayout( HWND hwndOpenDlg, HWND hwndDlg, HWND hwndBaseCtrl );
-
-	// 2006.09.03 Moca ファイルダイアログのエラー回避
-	//! リトライ機能付き GetOpenFileName
-	bool _GetOpenFileNameRecover( OPENFILENAME* ofn );
-	//! リトライ機能付き GetOpenFileName
-	bool GetSaveFileNameRecover( OPENFILENAME* ofn );
-
-	friend UINT_PTR CALLBACK OFNHookProc( HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam );
-
-public:
 	// 設定フォルダ相対ファイル選択(共有データ,ini位置依存)
-	static BOOL SelectFile(HWND parent, HWND hwndCtl, const TCHAR* filter, bool resolvePath, EFilter eAddFilter = EFITER_TEXT);
+	static BOOL SelectFile(HWND parent, HWND hwndCtl, const TCHAR* filter,
+						   bool resolvePath, EFilter eAddFilter = EFITER_TEXT);
 
 	DISALLOW_COPY_AND_ASSIGN(CDlgOpenFile);
+private:
+	std::shared_ptr<IDlgOpenFile> m_pImpl;
 };
 
 ///////////////////////////////////////////////////////////////////////

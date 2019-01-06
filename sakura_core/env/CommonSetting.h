@@ -236,6 +236,8 @@ struct CommonSetting_Edit
 	bool	m_bEnableExtEol;			//!< NEL,PS,LSを改行コードとして利用する
 	bool	m_bBoxSelectLock;			//!< (矩形選択)移動でロックする
 
+	bool	m_bVistaStyleFileDialog;	//!< Vistaスタイルのファイルダイアログ
+
 	// (ダイアログ項目無し)
 	BOOL	m_bAutoColumnPaste;			//!< 矩形コピーのテキストは常に矩形貼り付け
 };
