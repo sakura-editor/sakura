@@ -19,6 +19,7 @@
 #include "CImageListMgr.h"
 
 #include <cmath>
+#include <array>
 #include <list>
 #include <functional>
 
@@ -398,18 +399,20 @@ void CImageListMgr::MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
 		hdcSrc, nXSrc, nYSrc, cx(), cy(), SRCCOPY );
 
 	// ディザカラーを決める
-	COLORREF btnShadow = ::GetSysColor( COLOR_3DSHADOW );
+	// 淡色テキスト色が背景色と同じなら灰色に避ける、違うなら淡色テキストを使う。
+	COLORREF grayText = ::GetSysColor( COLOR_GRAYTEXT );
 	COLORREF btnFace = ::GetSysColor( COLOR_3DFACE );
-	COLORREF btnHighlight = ::GetSysColor( COLOR_BTNHILIGHT );
-	COLORREF textColor = btnShadow != btnFace ? btnShadow : btnHighlight;
-
-	// 相対輝度とHLS値を求める
+	COLORREF textColor = grayText == btnFace ? RGB( 0x80, 0x80, 0x80 ) : grayText;
 	auto textColorL = GetRelativeLuminance( textColor );
 	auto textColorH = ToHLS( textColor );
 
-	// RGB⇒ディザカラーRGB置換マップ
-	std::map<COLORREF, COLORREF> ditherMap;
-	ditherMap[textColor] = textColor;
+	// ディザカラー256諧調の配列を作る
+	std::array<COLORREF, 0x100> ditherColors;
+	for ( size_t i = 0; i < ditherColors.size(); ++i ) {
+		auto ditherColorH( textColorH );
+		std::get<HLS_L>( ditherColorH ) = textColorL + i * (1 - textColorL) / 255;
+		ditherColors[i] = FromHLS( ditherColorH );
+	}
 
 	// 透過色の変数名が分かりづらいので別名定義する
 	const COLORREF &cTransparent = m_cTrans;
@@ -450,25 +453,17 @@ void CImageListMgr::MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
 			// 透過色はスキップする
 			if ( px == cTransparent ) continue;
 
-			// マップに未登録の色ならマップに登録する
-			if ( ditherMap.find( px ) == ditherMap.end() ) {
-				// 相対輝度を求める
-				auto rl = GetRelativeLuminance( px );
-				// ディザカラーをベースにする
-				auto pxh = textColorH;
-				// ディザカラーの輝度を取得する
-				auto pxL = std::get<HLS_L>( pxh );
-				// ピクセルの相対輝度[0,1]がHLS輝度[pxL,1]に対応するように変換する
-				std::get<HLS_L>( pxh ) = pxL + rl * (1 - pxL);
-				// マップに登録する
-				ditherMap[px] = FromHLS( pxh );
-			}
+			// ピクセル色をディザカラーに変換する
+			auto r = px.rgbRed;
+			auto g = px.rgbGreen;
+			auto b = px.rgbBlue;
+			auto mono = (77 * r + 150 * g + 29 * b) >> 8; //[1,255]
 
 			// ディザカラーを書き込む
-			auto clr = ditherMap[px];
-			px.rgbRed = GetRValue( clr );
-			px.rgbGreen = GetGValue( clr );
-			px.rgbBlue = GetBValue( clr );
+			auto ditherColor = ditherColors[mono];
+			px.rgbRed = GetRValue( ditherColor );
+			px.rgbGreen = GetGValue( ditherColor );
+			px.rgbBlue = GetBValue( ditherColor );
 		}
 
 		// Getで取得したのビットデータを書き換える
