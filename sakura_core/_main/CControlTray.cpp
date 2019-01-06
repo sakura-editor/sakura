@@ -98,6 +98,26 @@ void CControlTray::DoGrep()
 }
 
 /*
+	@brief ファイル/フォルダの除外パターンをエスケープする必要があるか判断する
+	@param[in]     pattern チェックするパターン
+	@return        true  エスケープする必要がある
+	@return        false エスケープする必要がない
+*/
+static bool IsEscapeRequiredForExcludePattern(const tstring & pattern)
+{
+	const auto NotFound = std::string::npos;
+	if (pattern.find(_T('!')) != NotFound)
+	{
+		return true;
+	}
+	if (pattern.find(_T('#')) != NotFound)
+	{
+		return true;
+	}
+	return false;
+}
+
+/*
 	@brief フォルダの除外パターンを詰める
 	@param[in,out] cFilePattern        "-GFILE=" に指定する引数用のバッファ (このバッファの末尾に追加する)
 	@param[in]     cmWorkExcludeFolder Grep ダイアログで指定されたフォルダの除外パターン
@@ -108,7 +128,8 @@ static void AppendExcludeFolderPatterns(CNativeT& cFilePattern, const CNativeT& 
 	for (auto iter = patterns.begin(); iter != patterns.end(); ++iter)
 	{
 		const auto & pattern = (*iter);
-		cFilePattern.AppendStringF(_T("#%s;"), pattern.c_str());
+		LPCTSTR escapeStr  = IsEscapeRequiredForExcludePattern(pattern) ? _T("\"") : _T("");
+		cFilePattern.AppendStringF(_T("#%s%s%s;"), escapeStr, pattern.c_str(), escapeStr);
 	}
 }
 
@@ -123,7 +144,8 @@ static void AppendExcludeFilePatterns(CNativeT& cFilePattern, const CNativeT& cm
 	for (auto iter = patterns.begin(); iter != patterns.end(); ++iter)
 	{
 		const auto & pattern = (*iter);
-		cFilePattern.AppendStringF(_T("!%s;"), pattern.c_str());
+		LPCTSTR escapeStr  = IsEscapeRequiredForExcludePattern(pattern) ? _T("\"") : _T("");
+		cFilePattern.AppendStringF(_T("!%s%s%s;"), escapeStr, pattern.c_str(), escapeStr);
 	}
 }
 
