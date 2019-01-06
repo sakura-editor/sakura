@@ -102,6 +102,11 @@ void CControlTray::DoGrep()
 */
 static void AppendExcludeFolderPatterns(CNativeT& cFilePattern, const CNativeT& cmWorkExcludeFolder)
 {
+	if (cmWorkExcludeFolder.GetStringLength() == 0)
+	{
+		/* 除外パターンが空のときは何もせずに抜ける */
+		return;
+	}
 	CGrepEnumKeys cGrepEnumKeysFolder;
 	int nErrorFolder = cGrepEnumKeysFolder.SetFileKeys(cmWorkExcludeFolder.GetStringPtr());
 	if (nErrorFolder == 0)
@@ -118,6 +123,11 @@ static void AppendExcludeFolderPatterns(CNativeT& cFilePattern, const CNativeT& 
 */
 static void AppendExcludeFilePatterns(CNativeT& cFilePattern, const CNativeT& cmWorkExcludeFile)
 {
+	if (cmWorkExcludeFile.GetStringLength() == 0)
+	{
+		/* 除外パターンが空のときは何もせずに抜ける */
+		return;
+	}
 	CGrepEnumKeys cGrepEnumKeysFile;
 	int nErrorFile = cGrepEnumKeysFile.SetFileKeys(cmWorkExcludeFile.GetStringPtr());
 	if (nErrorFile == 0)
