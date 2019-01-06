@@ -99,6 +99,8 @@ void CControlTray::DoGrep()
 
 /*
 	@brief フォルダの除外パターンを詰める
+	@param[in,out] cFilePattern        "-GFILE=" に指定する引数用のバッファ (このバッファの末尾に追加する)
+	@param[in]     cmWorkExcludeFolder Grep ダイアログで指定されたフォルダの除外パターン
 */
 static void AppendExcludeFolderPatterns(CNativeT& cFilePattern, const CNativeT& cmWorkExcludeFolder)
 {
@@ -120,6 +122,8 @@ static void AppendExcludeFolderPatterns(CNativeT& cFilePattern, const CNativeT& 
 
 /*
 	@brief ファイルの除外パターンを詰める
+	@param[in,out] cFilePattern        "-GFILE=" に指定する引数用のバッファ (このバッファの末尾に追加する)
+	@param[in]     cmWorkExcludeFile Grep ダイアログで指定されたファイルの除外パターン
 */
 static void AppendExcludeFilePatterns(CNativeT& cFilePattern, const CNativeT& cmWorkExcludeFile)
 {
