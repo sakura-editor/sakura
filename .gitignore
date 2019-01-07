@@ -20,3 +20,5 @@ tags
 testData_*.txt
 html
 doxygen*.log
+/packages
+/TestResults
