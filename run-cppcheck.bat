@@ -21,7 +21,7 @@ if "%configuration%" == "Release" (
 	exit /b 1
 )
 
-call %~dp0find-tools.bat
+call %~dp0tools\find-tools.bat
 if not defined CMD_CPPCHECK (
 	echo cppcheck.exe was not found. so skip to run it.
 	exit /b 0
