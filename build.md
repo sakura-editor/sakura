@@ -157,3 +157,4 @@ cd sakura_core
 mingw32-make githash stdafx sakura_rc.o
 mingw32-make -j4
 ```
+
