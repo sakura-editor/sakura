@@ -143,12 +143,7 @@ bool CDocFileOperation::FileLoad(
 		m_pcDocRef->RunAutoMacro( GetDllShareData().m_Common.m_sMacro.m_nMacroOnOpened );
 
 		//プラグイン：DocumentOpenイベント実行
-		CPlug::Array plugs;
-		CWSHIfObj::List params;
-		CJackManager::getInstance()->GetUsablePlug( PP_DOCUMENT_OPEN, 0, &plugs );
-		for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
-			(*it)->Invoke(&m_pcDocRef->m_pcEditWnd->GetActiveView(), params);
-		}
+		CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_OPEN, &m_pcDocRef->m_pcEditWnd->GetActiveView() );
 	}
 	return bRet;
 }
@@ -168,12 +163,7 @@ void CDocFileOperation::ReloadCurrentFile(
 )
 {
 	//プラグイン：DocumentCloseイベント実行
-	CPlug::Array plugs;
-	CWSHIfObj::List params;
-	CJackManager::getInstance()->GetUsablePlug( PP_DOCUMENT_CLOSE, 0, &plugs );
-	for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
-		(*it)->Invoke(&m_pcDocRef->m_pcEditWnd->GetActiveView(), params);
-	}
+	CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_CLOSE, &m_pcDocRef->m_pcEditWnd->GetActiveView() );
 
 	if( !fexist(m_pcDocRef->m_cDocFile.GetFilePath()) ){
 		/* ファイルが存在しない */
@@ -212,12 +202,7 @@ void CDocFileOperation::ReloadCurrentFile(
 		m_pcDocRef->RunAutoMacro( GetDllShareData().m_Common.m_sMacro.m_nMacroOnOpened );
 
 		//プラグイン：DocumentOpenイベント実行
-		CPlug::Array plugs;
-		CWSHIfObj::List params;
-		CJackManager::getInstance()->GetUsablePlug( PP_DOCUMENT_OPEN, 0, &plugs );
-		for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
-			(*it)->Invoke(&m_pcDocRef->m_pcEditWnd->GetActiveView(), params);
-		}
+		CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_OPEN, &m_pcDocRef->m_pcEditWnd->GetActiveView() );
 	}
 }
 
@@ -350,20 +335,11 @@ bool CDocFileOperation::DoSaveFlow(SSaveInfo* pSaveInfo)
 		m_pcDocRef->RunAutoMacro( GetDllShareData().m_Common.m_sMacro.m_nMacroOnSave, pSaveInfo->cFilePath );
 
 		//プラグイン：DocumentBeforeSaveイベント実行
-		CPlug::Array plugs;
-		CWSHIfObj::List params;
-		CJackManager::getInstance()->GetUsablePlug( PP_DOCUMENT_BEFORE_SAVE, 0, &plugs );
-		for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
-			(*it)->Invoke(&m_pcDocRef->m_pcEditWnd->GetActiveView(), params);
-		}
+		CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_BEFORE_SAVE, &m_pcDocRef->m_pcEditWnd->GetActiveView() );
 
 		if(!pSaveInfo->bOverwriteMode){	//上書きでなければ前文書のクローズイベントを呼ぶ
 			//プラグイン：DocumentCloseイベント実行
-			plugs.clear();
-			CJackManager::getInstance()->GetUsablePlug( PP_DOCUMENT_CLOSE, 0, &plugs );
-			for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
-				(*it)->Invoke(&m_pcDocRef->m_pcEditWnd->GetActiveView(), params);
-			}
+			CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_CLOSE, &m_pcDocRef->m_pcEditWnd->GetActiveView() );
 		}
 
 		//セーブ処理
@@ -372,11 +348,7 @@ bool CDocFileOperation::DoSaveFlow(SSaveInfo* pSaveInfo)
 		m_pcDocRef->NotifyAfterSave(*pSaveInfo);	//後処理
 
 		//プラグイン：DocumentAfterSaveイベント実行
-		plugs.clear();
-		CJackManager::getInstance()->GetUsablePlug( PP_DOCUMENT_AFTER_SAVE, 0, &plugs );
-		for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
-			(*it)->Invoke(&m_pcDocRef->m_pcEditWnd->GetActiveView(), params);
-		}
+		CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_AFTER_SAVE, &m_pcDocRef->m_pcEditWnd->GetActiveView() );
 
 		//結果
 		eSaveResult = SAVED_OK; //###仮
@@ -459,12 +431,7 @@ bool CDocFileOperation::FileSaveAs( const WCHAR* filename,ECodeType eCodeType, E
 		m_pcDocRef->RunAutoMacro( GetDllShareData().m_Common.m_sMacro.m_nMacroOnOpened );
 
 		//プラグイン：DocumentOpenイベント実行
-		CPlug::Array plugs;
-		CWSHIfObj::List params;
-		CJackManager::getInstance()->GetUsablePlug( PP_DOCUMENT_OPEN, 0, &plugs );
-		for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
-			(*it)->Invoke(&m_pcDocRef->m_pcEditWnd->GetActiveView(), params);
-		}
+		CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_OPEN, &m_pcDocRef->m_pcEditWnd->GetActiveView() );
 
 		return true;
 	}
@@ -490,12 +457,7 @@ bool CDocFileOperation::FileClose()
 	}
 
 	//プラグイン：DocumentCloseイベント実行
-	CPlug::Array plugs;
-	CWSHIfObj::List params;
-	CJackManager::getInstance()->GetUsablePlug( PP_DOCUMENT_CLOSE, 0, &plugs );
-	for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
-		(*it)->Invoke(&m_pcDocRef->m_pcEditWnd->GetActiveView(), params);
-	}
+	CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_CLOSE, &m_pcDocRef->m_pcEditWnd->GetActiveView() );
 
 	/* 既存データのクリア */
 	m_pcDocRef->InitDoc();
@@ -532,12 +494,7 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 	}
 
 	//プラグイン：DocumentCloseイベント実行
-	CPlug::Array plugs;
-	CWSHIfObj::List params;
-	CJackManager::getInstance()->GetUsablePlug( PP_DOCUMENT_CLOSE, 0, &plugs );
-	for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
-		(*it)->Invoke(&m_pcDocRef->m_pcEditWnd->GetActiveView(), params);
-	}
+	CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_CLOSE, &m_pcDocRef->m_pcEditWnd->GetActiveView() );
 
 	//ファイル名指定が無い場合はダイアログで入力させる
 	SLoadInfo sLoadInfo = _sLoadInfo;
@@ -584,9 +541,5 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 	m_pcDocRef->RunAutoMacro( GetDllShareData().m_Common.m_sMacro.m_nMacroOnOpened );
 
 	//プラグイン：DocumentOpenイベント実行
-	plugs.clear();
-	CJackManager::getInstance()->GetUsablePlug( PP_DOCUMENT_OPEN, 0, &plugs );
-	for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
-		(*it)->Invoke(&m_pcDocRef->m_pcEditWnd->GetActiveView(), params);
-	}
+	CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_OPEN, &m_pcDocRef->m_pcEditWnd->GetActiveView() );
 }

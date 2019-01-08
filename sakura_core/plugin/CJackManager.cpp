@@ -190,6 +190,17 @@ bool CJackManager::GetUsablePlug(
 	return true;
 }
 
+//プラグインを列挙して呼び出し
+void CJackManager::InvokePlugins(EJack jack, CEditView* view)
+{
+	CPlug::Array plugs;
+	CWSHIfObj::List params;
+	GetUsablePlug( jack, 0, &plugs );
+	for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
+		(*it)->Invoke(view, params);
+	}
+}
+
 //プラグインコマンドの機能番号を返す
 EFunctionCode CJackManager::GetCommandCode( int index ) const
 {
