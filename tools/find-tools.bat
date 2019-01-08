@@ -56,7 +56,7 @@ exit /b
 :cppcheck
 set APPDIR=cppcheck
 set PATH2=%PATH%;%ProgramFiles%\%APPDIR%\;%ProgramFiles(x86)%\%APPDIR%\;%ProgramW6432%\%APPDIR%\;
-for /f "usebackq delims=" %%a in (`where $PATH2:cppecheck.exe`) do ( 
+for /f "usebackq delims=" %%a in (`where $PATH2:cppcheck.exe`) do ( 
     set "CMD_CPPCHECK=%%a"
     exit /b
 )
