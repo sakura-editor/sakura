@@ -118,6 +118,15 @@ static bool IsEscapeRequiredForExcludePattern(const tstring & pattern)
 }
 
 /*
+	@brief エスケープパターンを取得する
+	@param[in] pattern        エスケープ対象文字列
+*/
+static LPCTSTR GetEscapePattern(const tstring& pattern)
+{
+	return IsEscapeRequiredForExcludePattern(pattern) ? _T("\"") : _T("");
+}
+
+/*
 	@brief フォルダの除外パターンを詰める
 	@param[in,out] cFilePattern        "-GFILE=" に指定する引数用のバッファ (このバッファの末尾に追加する)
 	@param[in]     cmWorkExcludeFolder Grep ダイアログで指定されたフォルダの除外パターン
@@ -128,7 +137,7 @@ static void AppendExcludeFolderPatterns(CNativeT& cFilePattern, const CNativeT& 
 	for (auto iter = patterns.begin(); iter != patterns.end(); ++iter)
 	{
 		const auto & pattern = (*iter);
-		LPCTSTR escapeStr  = IsEscapeRequiredForExcludePattern(pattern) ? _T("\"") : _T("");
+		LPCTSTR escapeStr  = GetEscapePattern(pattern);
 		cFilePattern.AppendStringF(_T("#%s%s%s;"), escapeStr, pattern.c_str(), escapeStr);
 	}
 }
@@ -144,7 +153,7 @@ static void AppendExcludeFilePatterns(CNativeT& cFilePattern, const CNativeT& cm
 	for (auto iter = patterns.begin(); iter != patterns.end(); ++iter)
 	{
 		const auto & pattern = (*iter);
-		LPCTSTR escapeStr  = IsEscapeRequiredForExcludePattern(pattern) ? _T("\"") : _T("");
+		LPCTSTR escapeStr  = GetEscapePattern(pattern);
 		cFilePattern.AppendStringF(_T("!%s%s%s;"), escapeStr, pattern.c_str(), escapeStr);
 	}
 }
