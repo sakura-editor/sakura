@@ -123,7 +123,7 @@ static bool IsEscapeRequiredForExcludePattern(const tstring & pattern)
 */
 static LPCTSTR GetEscapePattern(const tstring& pattern)
 {
-	return IsEscapeRequiredForExcludePattern(pattern) ? _T("\"") : _T("");
+	return IsEscapeRequiredForExcludePattern(pattern) ? _T("\"\"") : _T("");
 }
 
 /*
