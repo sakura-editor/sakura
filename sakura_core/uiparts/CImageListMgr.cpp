@@ -396,15 +396,15 @@ void CImageListMgr::MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
 		auto r = GetRValue( textColor );
 		auto g = GetGValue( textColor );
 		auto b = GetBValue( textColor );
-		textColorL = (77 * r + 150 * g + 29 * b) >> 8; //[0,255]
+		textColorL = (0.299 * r + 0.587 * g + 0.114 * b) / 255.0; //[0,1]
 	}
-	double textColorR = 255 - textColorL;
+	double textColorR = (1.0 - textColorL) / 255.0;
 
 	// ディザカラー256諧調の配列を作る
 	std::array<COLORREF, 0x100> ditherColors;
 	for ( size_t i = 0; i < ditherColors.size(); ++i ) {
 		auto ditherColorH( textColorH );
-		std::get<HLS_L>(ditherColorH) = (textColorL + i * textColorR) / 255;
+		std::get<HLS_L>(ditherColorH) = textColorL + i * textColorR;
 		ditherColors[i] = FromHLS( ditherColorH );
 	}
 
