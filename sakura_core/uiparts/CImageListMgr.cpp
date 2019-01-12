@@ -398,7 +398,7 @@ void CImageListMgr::MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
 		auto b = GetBValue( textColor );
 		textColorL = (77 * r + 150 * g + 29 * b) >> 8; //[0,255]
 	}
-	double textColorR = 255 - textColorL / 255;
+	double textColorR = 255 - textColorL;
 
 	// ディザカラー256諧調の配列を作る
 	std::array<COLORREF, 0x100> ditherColors;
