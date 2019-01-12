@@ -62,17 +62,17 @@ public:
 	
 		指定されたDCの指定された座標にアイコンを描画する．
 	
-		@param index [in] 描画するアイコン番号
-		@param dc [in] 描画するDevice Context
-		@param x [in] 描画するX座標
-		@param y [in] 描画するY座標
-		@param fstyle [in] 描画スタイル
-		
-		@date 2003.09.06 genta 背景の透過処理に伴い背景色指定削除
+		@param [in] drawdc 描画するDevice Context
+		@param [in] x 描画するX座標
+		@param [in] y 描画するY座標
+		@param [in] imageNo 描画するアイコン番号
+		@param [in] fStyle 描画スタイル
+		@param [in] cx アイコン幅
+		@param [in] cy アイコン高さ
 	*/
-	bool Draw(int index, HDC dc, int x, int y, int fstyle ) const	//	描画
-	;
-	
+	bool DrawToolIcon( HDC drawdc, LONG x, LONG y,
+		int imageNo, DWORD fStyle, LONG cx, LONG cy ) const;
+
 	//! アイコン数を返す
 	int  Count(void) const;	//	アイコン数
 	
@@ -115,13 +115,14 @@ protected:
 
 	int m_nIconCount;	//!<	アイコンの個数
 
-	//	オリジナルテキストエディタからの描画関数
-	//	2003.08.27 Moca 背景を透過処理するので背景色の指定は不要に
-	void MyBitBlt( HDC drawdc, int nXDest, int nYDest, 
-					int nWidth, int nHeight, HBITMAP bmp,
-					int nXSrc, int nYSrc, COLORREF colToTransParent ) const;
-	void DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth, 
-                        int nHeight, HBITMAP bmp, int nXSrc, int nYSrc ) const;
+	// アイコン描画関数
+	void MyBitBlt( HDC drawdc, int nXDest, int nYDest,
+		int nWidth, int nHeight, int nXSrc, int nYSrc ) const;
+	void MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
+		int nWidth, int nHeight, int nXSrc, int nYSrc ) const;
+
+	//! ビットマップを一行拡張する
+	HBITMAP ResizeToolIcons(HDC hDC, HBITMAP &hRscbmp, int cols, int rows) const noexcept;
 
 	//! ビットマップを一行拡張する
 	void Extend(bool = true);

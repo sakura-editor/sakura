@@ -33,13 +33,6 @@
 // メニューの選択色を淡くする
 #define DRAW_MENU_SELECTION_LIGHT
 
-// //! メニューアイコンを3Dボタンにする(旧仕様)
-// //! 未定義なら、選択色との混合色とフラットな枠で選択を表現
-// #define DRAW_MENU_ICON_3DBUTTON
-
-// //! メニューのDISABLE/セパレータに影を落とす(旧仕様)
-// #define DRAW_MENU_3DSTYLE
-
 #if 0 // 未使用
 void FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORREF clr)
 {
@@ -916,6 +909,16 @@ inline int CMenuDrawer::GetIconIdByFuncId( int nFuncID ) const
 */
 int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 {
+	// pixel数をベタ書きするとHighDPI環境でずれるのでシステム値を取得して使う
+	const int cxBorder = ::GetSystemMetrics(SM_CXBORDER);
+	const int cyBorder = ::GetSystemMetrics(SM_CYBORDER);
+	const int cxEdge = ::GetSystemMetrics(SM_CXEDGE);
+	const int cyEdge = ::GetSystemMetrics(SM_CYEDGE);
+	const int cxFrame = ::GetSystemMetrics(SM_CXFRAME);
+	const int cyFrame = ::GetSystemMetrics(SM_CYFRAME);
+	const int cxSmIcon = ::GetSystemMetrics(SM_CXSMICON);
+	const int cySmIcon = ::GetSystemMetrics(SM_CYSMICON);
+
 	const TCHAR* pszLabel;
 	CMyRect rc, rcSp;
 	HDC hdc;
@@ -929,7 +932,7 @@ int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 		*pnItemHeight = m_nMenuHeight;
 		return 0;
 	}
-	*pnItemHeight = m_nMenuHeight;
+	//正常な高さは幅と一緒に決める
 
 	hdc = ::GetDC( m_hWndOwner );
 	hFontOld = (HFONT)::SelectObject( hdc, m_hFontMenu );
@@ -942,13 +945,19 @@ int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 //	*pnItemHeight = 2 + 15 + 1;
 	//@@@ 2002.2.2 YAZAKI Windowsの設定でメニューのフォントを大きくすると表示が崩れる問題に対処
 
-	int nMenuWidth = rc.Width() + 3;
+	// インデント + テキスト幅 + アクセスキー隙間
+	int nMenuWidth = cxSmIcon / 4 + rc.Width() + cxSmIcon / 2;
 	if( m_pShareData->m_Common.m_sWindow.m_bMenuIcon ){
-		nMenuWidth += 28+ DpiScaleX(8); // アイコンと枠 + アクセスキー隙間
+		// アイコンと枠 + 縦線隙間 + 縦線
+		// 2+[2+16+2]+2 + 2+2 + 1
+		nMenuWidth += cxSmIcon + cxEdge * 6 + cxBorder;
 	}else{
 		// WM_MEASUREITEMで報告するメニュー幅より実際の幅は1文字分相当位広いので、その分は加えない
 		nMenuWidth += ::GetSystemMetrics(SM_CXMENUCHECK) + 2 + 2;
 	}
+	// アイコンと枠 or フォント高さと太枠
+	// 2+[2+16+2]+2 or 2+9+2
+	*pnItemHeight = std::max(cySmIcon + cyEdge * 4, m_nMenuHeight + cyEdge * 2);
 	return nMenuWidth;
 }
 
@@ -960,26 +969,31 @@ int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 */
 void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 {
-	int			j;
-	int			nItemStrLen;
-	int			nIndentLeft;
-	int			nIndentRight;
+	// pixel数をベタ書きするとHighDPI環境でずれるのでシステム値を取得して使う
+	const int cxBorder = ::GetSystemMetrics(SM_CXBORDER);
+	const int cyBorder = ::GetSystemMetrics(SM_CYBORDER);
+	const int cxEdge = ::GetSystemMetrics(SM_CXEDGE);
+	const int cyEdge = ::GetSystemMetrics(SM_CYEDGE);
+	const int cxFrame = ::GetSystemMetrics(SM_CXFRAME);
+	const int cyFrame = ::GetSystemMetrics(SM_CYFRAME);
+	const int cxSmIcon = ::GetSystemMetrics(SM_CXSMICON);
+	const int cySmIcon = ::GetSystemMetrics(SM_CYSMICON);
+
 	HBRUSH		hBrush;
-	RECT		rcText;
-	int			nBkModeOld;
-	int			nTxSysColor;
+
+	CMyRect rcItem( lpdis->rcItem );
 
 	const bool bMenuIconDraw = !!m_pShareData->m_Common.m_sWindow.m_bMenuIcon;
 	const int nCxCheck = ::GetSystemMetrics(SM_CXMENUCHECK);
 	const int nCyCheck = ::GetSystemMetrics(SM_CYMENUCHECK);
 
-	if( bMenuIconDraw ){
-		nIndentLeft  = 29; // 2+[2+16+2]+2 +5
-	}else{
-		nIndentLeft = 2 + 2 + nCxCheck;
-	}
+	// アイコンとテキストの間の縦線の位置
+	const int nIndentLeft = bMenuIconDraw
+		? cxSmIcon + cxEdge * 6 + cxBorder
+		: cxEdge * 2 + nCxCheck;
+
 	// サブメニューの|＞の分は必要 最低8ぐらい
-	nIndentRight = t_max(m_nMenuFontHeight, 8);
+	const int nIndentRight = cxSmIcon / 2;
 
 	// 2010.07.24 Moca アイコンを描くときにチラつくので、バックサーフェスを使う
 	const bool bBackSurface = bMenuIconDraw;
@@ -1007,90 +1021,6 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	}
 
 	// 作画範囲を背景色で矩形塗りつぶし
-#ifdef DRAW_MENU_ICON_BACKGROUND_3DFACE
-	// アイコン部分の背景を灰色にする
-	if( bMenuIconDraw ){
-		const int nXIconMenu = lpdis->rcItem.left + nIndentLeft - 3 - 3;
-		hBrush = ::GetSysColorBrush( COLOR_MENU );
-		RECT rcFillMenuBack = lpdis->rcItem;
-		rcFillMenuBack.left = nXIconMenu;
-		::FillRect( hdc, &rcFillMenuBack, hBrush );
-
-//		hBrush = ::GetSysColorBrush( COLOR_3DFACE );
-		COLORREF colMenu   = ::GetSysColor( COLOR_MENU );
-		COLORREF colFace = ::GetSysColor( COLOR_3DFACE );
-		COLORREF colIconBack;
-		// 明度らしきもの
-		if( 64 < t_abs(t_max(t_max(GetRValue(colFace),GetGValue(colFace)),GetBValue(colFace))
-			         - t_max(t_max(GetRValue(colMenu),GetGValue(colMenu)),GetBValue(colMenu))) ){
-			colIconBack = colFace;
-		}else{
-			// 明るさが近いなら混色にして(XPテーマ等で)違和感を減らす
-			BYTE valR = ((GetRValue(colFace) * 7 + GetRValue(colMenu) * 3) / 10);
-			BYTE valG = ((GetGValue(colFace) * 7 + GetGValue(colMenu) * 3) / 10);
-			BYTE valB = ((GetBValue(colFace) * 7 + GetBValue(colMenu) * 3) / 10);
-			colIconBack = RGB(valR, valG, valB);
-		}
-		HBRUSH hbr = ::CreateSolidBrush( colIconBack );
-		
-		RECT rcIconBk = lpdis->rcItem;
-		rcIconBk.right = nXIconMenu;
-		::FillRect( hdc, &rcIconBk, hbr );
-		::DeleteObject( hbr );
-
-		// アイコンとテキストの間に縦線を描画する
-		int nSepColor = (::GetSysColor(COLOR_3DSHADOW) != ::GetSysColor(COLOR_MENU) ? COLOR_3DSHADOW : COLOR_3DHIGHLIGHT);
-		HPEN hPen = ::CreatePen( PS_SOLID, 1, ::GetSysColor(nSepColor) );
-		HPEN hPenOld = (HPEN)::SelectObject( hdc, hPen );
-		::MoveToEx( hdc, lpdis->rcItem.left + nIndentLeft - 3 - 3, lpdis->rcItem.top, NULL );
-		::LineTo(   hdc, lpdis->rcItem.left + nIndentLeft - 3 - 3, lpdis->rcItem.bottom );
-		::SelectObject( hdc, hPenOld );
-		::DeleteObject( hPen );
-
-	}else{
-		// アイテム矩形塗りつぶし
-		hBrush = ::GetSysColorBrush( COLOR_MENU );
-		::FillRect( hdc, &lpdis->rcItem, hBrush );
-	}
-	
-	if( lpdis->itemID == F_0 ){
-		// セパレータの作画(セパレータのFuncCodeはF_SEPARETORではなくF_0)
-		int y = lpdis->rcItem.top + (lpdis->rcItem.bottom - lpdis->rcItem.top) / 2;
-#ifdef DRAW_MENU_3DSTYLE
-		int nSepColor = COLOR_3DSHADOW;
-#else
-		int nSepColor = (::GetSysColor(COLOR_3DSHADOW) != ::GetSysColor(COLOR_MENU) ? COLOR_3DSHADOW : COLOR_3DHIGHLIGHT);
-#endif
-		HPEN hPen = ::CreatePen( PS_SOLID, 1, ::GetSysColor(nSepColor) );
-		HPEN hPenOld = (HPEN)::SelectObject( hdc, hPen );
-		::MoveToEx( hdc, lpdis->rcItem.left + (bMenuIconDraw ? nIndentLeft : 3), y, NULL );
-		::LineTo(   hdc, lpdis->rcItem.right - 2, y );
-#ifdef DRAW_MENU_3DSTYLE
-		HPEN hPen3d = ::CreatePen( PS_SOLID, 1, ::GetSysColor(COLOR_3DHIGHLIGHT) );
-		(void)::SelectObject( hdc, hPen3d );
-		::MoveToEx( hdc, lpdis->rcItem.left + (bMenuIconDraw ? nIndentLeft - 3: 3), y + 1, NULL );
-		::LineTo(   hdc, lpdis->rcItem.right - 2, y + 1 );
-#endif
-		::SelectObject( hdc, hPenOld );
-		::DeleteObject( hPen );
-		
-		if( bBackSurface ){
-			::BitBlt( hdcOrg, lpdis->rcItem.left, lpdis->rcItem.top, nTargetWidth, nTargetHeight,
-				hdc, lpdis->rcItem.left, lpdis->rcItem.top, SRCCOPY );
-		}
-		return; // セパレータ。作画終了
-	}
-
-#else // DRAW_MENU_ICON_BACKGROUND_3DFACE
-	hBrush = ::GetSysColorBrush( COLOR_MENU );
-	::FillRect( hdc, &lpdis->rcItem, hBrush );
-#endif
-
-	const int    nItemIndex = Find( (int)lpdis->itemID );
-	const TCHAR* pszItemStr = m_menuItems[nItemIndex].m_cmemLabel.GetStringPtr( &nItemStrLen );
-	HFONT hFontOld = (HFONT)::SelectObject( hdc, m_hFontMenu );
-
-	nBkModeOld = ::SetBkMode( hdc, TRANSPARENT );
 	if( lpdis->itemState & ODS_SELECTED ){
 		// アイテムが選択されている
 		RECT rc1 = lpdis->rcItem;
@@ -1122,156 +1052,168 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		/* 選択ハイライト矩形 */
 		::FillRect( hdc, &rc1, hBrush );
 #endif
+#ifdef DRAW_MENU_ICON_BACKGROUND_3DFACE
+	}else if( bMenuIconDraw ){
+		// アイコン部分の背景を灰色にする
+		hBrush = ::GetSysColorBrush( COLOR_MENU );
+		CMyRect rcFillMenuBack( rcItem );
+		rcFillMenuBack.left += nIndentLeft;
+		::FillRect( hdc, &rcFillMenuBack, hBrush );
 
-		if( lpdis->itemState & ODS_DISABLED ){
-			// アイテムが使用不可
-			nTxSysColor = COLOR_MENU;
+//		hBrush = ::GetSysColorBrush( COLOR_3DFACE );
+		COLORREF colMenu   = ::GetSysColor( COLOR_MENU );
+		COLORREF colFace = ::GetSysColor( COLOR_3DFACE );
+		COLORREF colIconBack;
+		// 明度らしきもの
+		if( 64 < t_abs(t_max(t_max(GetRValue(colFace),GetGValue(colFace)),GetBValue(colFace))
+			         - t_max(t_max(GetRValue(colMenu),GetGValue(colMenu)),GetBValue(colMenu))) ){
+			colIconBack = colFace;
 		}else{
-#ifdef DRAW_MENU_SELECTION_LIGHT
-			nTxSysColor = COLOR_MENUTEXT;
-#else
-			nTxSysColor = COLOR_HIGHLIGHTTEXT;
-#endif
+			// 明るさが近いなら混色にして(XPテーマ等で)違和感を減らす
+			BYTE valR = ((GetRValue(colFace) * 7 + GetRValue(colMenu) * 3) / 10);
+			BYTE valG = ((GetGValue(colFace) * 7 + GetGValue(colMenu) * 3) / 10);
+			BYTE valB = ((GetBValue(colFace) * 7 + GetBValue(colMenu) * 3) / 10);
+			colIconBack = RGB(valR, valG, valB);
 		}
+		HBRUSH hbr = ::CreateSolidBrush( colIconBack );
+		
+		CMyRect rcIconBk( rcItem );
+		rcIconBk.right = rcItem.left + nIndentLeft;
+		::FillRect( hdc, &rcIconBk, hbr );
+		::DeleteObject( hbr );
+
 	}else{
-		if( lpdis->itemState & ODS_DISABLED ){
-			// アイテムが使用不可
-			// 背景を黒にすると同じ色になることがある
-			// 2013.06.21 GRAYTEXTに変更
-			// nTxSysColor = (::GetSysColor(COLOR_3DSHADOW) != ::GetSysColor(COLOR_MENU) ? COLOR_3DSHADOW : COLOR_3DHIGHLIGHT);
-			nTxSysColor = COLOR_GRAYTEXT;
-		}else{
-			nTxSysColor = COLOR_MENUTEXT;
-		}
+		// アイテム矩形塗りつぶし
+		hBrush = ::GetSysColorBrush( COLOR_MENU );
+		::FillRect( hdc, &lpdis->rcItem, hBrush );
 	}
-	::SetTextColor( hdc, ::GetSysColor(nTxSysColor) );
+#else
+	}else{
+		hBrush = ::GetSysColorBrush( COLOR_MENU );
+		::FillRect( hdc, &lpdis->rcItem, hBrush );
+	}
+#endif
+
+	if( bMenuIconDraw ){
+		// アイコンとテキストの間に縦線を描画する
+		int nSepColor = (::GetSysColor(COLOR_3DSHADOW) != ::GetSysColor(COLOR_MENU) ? COLOR_3DSHADOW : COLOR_3DHIGHLIGHT);
+		HPEN hPen = ::CreatePen( PS_SOLID, cxBorder, ::GetSysColor(nSepColor) );
+		HPEN hPenOld = (HPEN)::SelectObject( hdc, hPen );
+		::MoveToEx( hdc, lpdis->rcItem.left + nIndentLeft, lpdis->rcItem.top, NULL );
+		::LineTo(   hdc, lpdis->rcItem.left + nIndentLeft, lpdis->rcItem.bottom );
+		::SelectObject( hdc, hPenOld );
+		::DeleteObject( hPen );
+
+	}
+	
+	if( lpdis->itemID == F_0 ){
+		// セパレータの作画(セパレータのFuncCodeはF_SEPARETORではなくF_0)
+		int y = lpdis->rcItem.top + (lpdis->rcItem.bottom - lpdis->rcItem.top) / 2;
+		int nSepColor = (::GetSysColor(COLOR_3DSHADOW) != ::GetSysColor(COLOR_MENU) ? COLOR_3DSHADOW : COLOR_3DHIGHLIGHT);
+		HPEN hPen = ::CreatePen( PS_SOLID, 1, ::GetSysColor(nSepColor) );
+		HPEN hPenOld = (HPEN)::SelectObject( hdc, hPen );
+		::MoveToEx( hdc, lpdis->rcItem.left + (bMenuIconDraw ? nIndentLeft : cxEdge + cxBorder) + cxEdge, y, NULL );
+		::LineTo(   hdc, lpdis->rcItem.right - cxEdge, y );
+		::SelectObject( hdc, hPenOld );
+		::DeleteObject( hPen );
+		
+		if( bBackSurface ){
+			::BitBlt( hdcOrg, lpdis->rcItem.left, lpdis->rcItem.top, nTargetWidth, nTargetHeight,
+				hdc, lpdis->rcItem.left, lpdis->rcItem.top, SRCCOPY );
+		}
+		return; // セパレータ。作画終了
+	}
+
+	// テキスト前景色を決定する
+	COLORREF textColor;
+	if( lpdis->itemState & ODS_DISABLED ){
+		// アイテムが使用不可(淡色表示にする)
+		textColor = ::GetSysColor( COLOR_GRAYTEXT );
+	}else if( lpdis->itemState & ODS_SELECTED ){
+#ifdef DRAW_MENU_SELECTION_LIGHT
+		textColor = ::GetSysColor( COLOR_MENUTEXT );
+#else
+		textColor = ::GetSysColor( COLOR_HIGHLIGHTTEXT );
+#endif
+	}else{
+		textColor = ::GetSysColor( COLOR_MENUTEXT );
+	}
 
 #ifdef _DEBUG
-	// デバッグ用：メニュー項目に対して、ヘルプがない場合に背景色を青くする
-	TCHAR	szText[1024];
+	// デバッグ用：メニュー項目に対して、ヘルプがない場合に前景色を青くする
 	// メニュー項目に関する情報を取得します。
 	MENUITEMINFO mii = { sizeof(MENUITEMINFO) };
-	mii.cbSize = sizeof(MENUITEMINFO);
-	mii.fMask = MIIM_CHECKMARKS | MIIM_DATA | MIIM_ID | MIIM_STATE | MIIM_SUBMENU | MIIM_TYPE;
-	mii.fType = MFT_STRING;
-	_tcscpy( szText, _T("--unknown--") );
-	mii.dwTypeData = szText;
-	mii.cch = _countof( szText ) - 1;
+	mii.fMask = MIIM_ID | MIIM_STATE | MIIM_SUBMENU;
 	if( 0 != ::GetMenuItemInfo( (HMENU)lpdis->hwndItem, lpdis->itemID, FALSE, &mii )
 	 && NULL == mii.hSubMenu
-	 && 0 == /* CEditWnd */::FuncID_To_HelpContextID( (EFunctionCode)lpdis->itemID ) 	/* 機能IDに対応するメニューコンテキスト番号を返す */
+	 && 0 == ::FuncID_To_HelpContextID( (EFunctionCode)lpdis->itemID ) 	/* 機能IDに対応するメニューコンテキスト番号を返す */
 	){
 		//@@@ 2001.12.21 YAZAKI
 		if( lpdis->itemState & ODS_SELECTED ){
-			::SetTextColor( hdc, ::GetSysColor( COLOR_HIGHLIGHTTEXT ) );	//	ハイライトカラー
+			textColor = ::GetSysColor( COLOR_HIGHLIGHTTEXT );	//	ハイライトカラー
 		}
 		else {
-			::SetTextColor( hdc, RGB( 0, 0, 255 ) );	//	青くしてる。
+			textColor = RGB( 0, 0, 255 );	//	青くしてる。
 		}
-//		::SetTextColor( hdc, RGB( 0, 0, 255 ) );
 	}
 #endif
 
-	rcText = lpdis->rcItem;
-	rcText.left += nIndentLeft + 1;
+	// テキスト矩形(インデント込み)
+	CMyRect rcText( lpdis->rcItem );
+	rcText.left += nIndentLeft + cxSmIcon / 4;
 	rcText.right -= nIndentRight;
 
+	const int nItemIndex = Find( (int)lpdis->itemID );
+	LPCTSTR pszItemStr = m_menuItems[nItemIndex].m_cmemLabel.GetStringPtr();
+	size_t nItemStrLen = m_menuItems[nItemIndex].m_cmemLabel.GetStringLength();
+
+	int nBkModeOld = ::SetBkMode( hdc, TRANSPARENT );
+	HFONT hFontOld = (HFONT)::SelectObject( hdc, m_hFontMenu );
+	COLORREF textColorOld = (COLORREF)::SetTextColor( hdc, textColor );
+
 	/* TAB文字の前と後ろに分割してテキストを描画する */
+	size_t j;
 	for( j = 0; j < nItemStrLen; ++j ){
 		if( pszItemStr[j] == _T('\t') ){
 			break;
 		}
 	}
-	/* TAB文字の後ろ側のテキストを描画する */
-	if( j < nItemStrLen ){
-#ifdef DRAW_MENU_3DSTYLE
-		/* アイテムが使用不可 */
-		if( lpdis->itemState & ODS_DISABLED && !(lpdis->itemState & ODS_SELECTED)  ){
-			COLORREF colOld = ::SetTextColor( hdc, ::GetSysColor( COLOR_3DHIGHLIGHT ) );
-				rcText.left++;
-				rcText.top++;
-				rcText.right++;
-				rcText.bottom++;
-				::DrawText(
-					hdc,
-					&pszItemStr[j + 1],
-					-1,
-					&rcText,
-					DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_RIGHT
-				);
-				rcText.left--;
-				rcText.top--;
-				rcText.right--;
-				rcText.bottom--;
-				::SetTextColor( hdc, colOld );
-		}
-#endif
-		::DrawText(
-			hdc,
-			&pszItemStr[j + 1],
-			-1,
-			&rcText,
-			DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_RIGHT
-		);
-	}
 	/* TAB文字の前側のテキストを描画する */
-#ifdef DRAW_MENU_3DSTYLE
-	/* アイテムが使用不可 */
-	if( lpdis->itemState & ODS_DISABLED && !(lpdis->itemState & ODS_SELECTED)  ){
-		COLORREF colOld = ::SetTextColor( hdc, ::GetSysColor( COLOR_3DHIGHLIGHT ) );
-
-		rcText.left++;
-		rcText.top++;
-		rcText.right++;
-		rcText.bottom++;
-		::DrawText( hdc, pszItemStr, j, &rcText, DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_LEFT );
-
-		rcText.left--;
-		rcText.top--;
-		rcText.right--;
-		rcText.bottom--;
-		::SetTextColor( hdc, colOld );
-	}
-#endif
 	::DrawText(
 		hdc,
 		pszItemStr,
 		j,
 		&rcText,
-		DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_LEFT
+		DT_LEFT | DT_VCENTER | DT_SINGLELINE
 	);
+	/* TAB文字の後ろ側のテキストを描画する */
+	if( j < nItemStrLen ){
+		::DrawText(
+			hdc,
+			&pszItemStr[j + 1],
+			nItemStrLen - ( j + 1 ),
+			&rcText,
+			DT_RIGHT | DT_VCENTER | DT_SINGLELINE
+		);
+	}
+	::SetTextColor( hdc, textColorOld );
 	::SelectObject( hdc, hFontOld  );
 	::SetBkMode( hdc, nBkModeOld );
 
-	// 16*16のアイコンを上下中央へ置いたときの上の座標
-	int nIconTop = lpdis->rcItem.top + (lpdis->rcItem.bottom - lpdis->rcItem.top) / 2 - (16/2);
+	// アイコン矩形
+	CMyRect rcIcon( rcItem );
+	rcIcon.left += ( rcItem.Height() - m_pcIcons->cy() ) / 2;
+	rcIcon.top += ( rcItem.Height() - m_pcIcons->cy() ) / 2;
+	rcIcon.SetSize( m_pcIcons->cx(), m_pcIcons->cy() );
 
 	// 枠は アイコン横幅xメニュー縦幅で表示し真ん中にアイコンを置く
-
 	if( bMenuIconDraw && (lpdis->itemState & ODS_CHECKED) ){
-		/* アイコンを囲む枠 */
-// 2010.07.12 Moca グレーの3D表示をやめる
-#ifdef DRAW_MENU_ICON_3DBUTTON
-		// チェック状態なら凹んだ3D枠を描画する
-		CSplitBoxWnd::Draw3dRect(
-			hdc, lpdis->rcItem.left + 1, lpdis->rcItem.top,
-			2 + 16 + 2, lpdis->rcItem.bottom - lpdis->rcItem.top,
-			::GetSysColor( COLOR_3DSHADOW ),
-			::GetSysColor( COLOR_3DHIGHLIGHT )
-		);
-#else
 		{
 			// フラットな枠 + 半透明の背景色
+			CMyRect rcFrame( rcIcon );
+			::InflateRect( &rcFrame, cxEdge * 2, cyEdge * 2 );
 			HBRUSH hBrush = ::GetSysColorBrush( COLOR_HIGHLIGHT );
-			const int MENUICO_PADDING = 0;
-			const int MENUICO_BORDER  = 1;
-			const int MENUICO_PB  = MENUICO_PADDING + MENUICO_BORDER;
-			const int MENUICO_SIZE = MENUICO_PB + 16 + MENUICO_PB;
-			const int left = lpdis->rcItem.left + 2 - MENUICO_PB;
-			const int top = nIconTop - MENUICO_PB;
-			RECT rc;
-			::SetRect( &rc, left-1, top-1, left + MENUICO_SIZE+2, top + MENUICO_SIZE+1 );
-			::FillRect( hdc, &rc, hBrush );
+			::FillRect( hdc, &rcFrame, hBrush );
 
 			COLORREF colHilight = ::GetSysColor( COLOR_HIGHLIGHT );
 			COLORREF colMenu = ::GetSysColor( COLOR_MENU );
@@ -1288,73 +1230,29 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 				valG = ((GetGValue(colHilight) * 2 + GetGValue(colMenu) * 8) / 10) | 0x18;
 				valB = ((GetBValue(colHilight) * 2 + GetBValue(colMenu) * 8) / 10) | 0x18;
 			}
+			CMyRect rcBkFrame( rcIcon );
+			::InflateRect( &rcBkFrame, cxEdge , cyEdge );
 			HBRUSH hbr = ::CreateSolidBrush( RGB(valR, valG, valB) );
-			::SetRect( &rc, left + MENUICO_BORDER-1, top + MENUICO_BORDER-1,
-				left + MENUICO_SIZE - MENUICO_BORDER+2, top + MENUICO_SIZE - MENUICO_BORDER+1 );
-			::FillRect( hdc, &rc, hbr );
+			::FillRect( hdc, &rcBkFrame, hbr );
 			::DeleteObject( hbr );
 		}
-#endif
-
-// 2010.07.12 Moca グレーの3D表示をやめる
-#ifdef DRAW_MENU_ICON_3DBUTTON
-		/* アイテムが選択されていない場合は3D枠の中を明るく塗りつぶす */
-		if( lpdis->itemState & ODS_SELECTED ){
-		}else{
-			HBRUSH hbr = ::GetSysColorBrush( COLOR_3DLIGHT );
-			RECT rc;
-			::SetRect( &rc, lpdis->rcItem.left + 2 + 1, lpdis->rcItem.top + 1,
-				lpdis->rcItem.left + 1 + 2 + 16 + 2 - 1, lpdis->rcItem.bottom - 1 );
-			::FillRect( hdc, &rc, hbr );
-		}
-#endif
 	}
 
 	/* 機能の画像が存在するならメニューアイコン?を描画する */
 	if( bMenuIconDraw && -1 != m_menuItems[nItemIndex].m_nBitmapIdx ){
-		/* 3D枠を描画する */
-		/* アイテムが選択されている */
-		if( lpdis->itemState & ODS_SELECTED ){
-			/* アイテムが使用不可 */
-			if( lpdis->itemState & ODS_DISABLED /*&& !(lpdis->itemState & ODS_SELECTED)*/  ){
-			}else{
-				if( lpdis->itemState & ODS_CHECKED ){
-				}else{
-// 2010.07.12 Moca グレーの3D表示をやめる
-#ifdef DRAW_MENU_ICON_3DBUTTON
-					// アイコンを囲む枠(メニューの高さいっぱい)
-					CSplitBoxWnd::Draw3dRect(
-						hdc, lpdis->rcItem.left + 1, lpdis->rcItem.top,
-						2 + 16 + 2, lpdis->rcItem.bottom - lpdis->rcItem.top,
-						::GetSysColor( COLOR_3DHIGHLIGHT ),
-						::GetSysColor( COLOR_3DSHADOW )
-					 );
-#endif
-				}
-			}
-		}
+		// アイコン番号
+		int nIconNo = m_menuItems[nItemIndex].m_nBitmapIdx;
 
-		/* アイテムが使用不可 */
-		if( lpdis->itemState & ODS_DISABLED ){
-			/* 淡色アイコン */
-			m_pcIcons->Draw( m_menuItems[nItemIndex].m_nBitmapIdx,
-				hdc,	//	Target DC
-				lpdis->rcItem.left + 2,	//	X
-				//@@@ 2002.1.29 YAZAKI Windowsの設定でメニューのフォントを大きくすると表示が崩れる問題に対処
-				nIconTop,	//	Y
-				ILD_MASK
-			);
-
-		}else{
-			/* 通常のアイコン */
-			m_pcIcons->Draw( m_menuItems[nItemIndex].m_nBitmapIdx,
-				hdc,	//	Target DC
-				lpdis->rcItem.left + 2,	//	X
-				//@@@ 2002.1.29 YAZAKI Windowsの設定でメニューのフォントを大きくすると表示が崩れる問題に対処
-				nIconTop,	//	Y
-				ILD_NORMAL
-			);
-		}
+		// メニューアイコン描画
+		m_pcIcons->DrawToolIcon(
+			hdc,
+			rcIcon.left,
+			rcIcon.top,
+			nIconNo,
+			( lpdis->itemState & ODS_DISABLED ) ? ILD_MASK : ILD_NORMAL,
+			cxSmIcon,
+			cySmIcon
+		);
 
 	}else{
 		// チェックボックスを表示
@@ -1362,8 +1260,8 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			/* チェックマークの表示 */
 			if( bMenuIconDraw ){
 				// だいたい中心座標
-				int nX = lpdis->rcItem.left + 16/2;
-				int nY = nIconTop + 16/2;
+				int nX = rcItem.left + rcIcon.Height() / 2;
+				int nY = rcIcon.top + rcIcon.Height() /2;
 				HPEN hPen   = NULL;
 				HPEN hPenOld = NULL;
 				// 2010.05.31 チェックの色を黒(未指定)からテキスト色に変更
@@ -1398,7 +1296,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 				COLORREF colTextOld = ::SetTextColor(hdc, RGB(0,0,0) );
 				COLORREF colBackOld = ::SetBkColor(hdc,   RGB(255,255,255) );
 				::BitBlt( hdc, lpdis->rcItem.left+2, lpdis->rcItem.top+2, nCxCheck, nCyCheck, hdcMem, 0, 0, SRCAND );
-				::SetTextColor( hdc, ::GetSysColor(nTxSysColor) );
+				::SetTextColor( hdc, textColor );
 				::SetBkColor( hdc, RGB(0,0,0) );
 				::BitBlt( hdc, lpdis->rcItem.left+2, lpdis->rcItem.top+2, nCxCheck, nCyCheck, hdcMem, 0, 0, SRCPAINT );
 				::SetTextColor( hdc, colTextOld );

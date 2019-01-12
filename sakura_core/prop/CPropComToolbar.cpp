@@ -125,7 +125,6 @@ int Listbox_ADDDATA(
 	return nIndex1;
 }
 
-static int nToolBarListBoxTopMargin = 0;
 
 static void SetDlgItemsEnableState(
 	HWND	hwndDlg,
@@ -199,11 +198,13 @@ INT_PTR CPropToolbar::DispatchEvent(
 		hwndResList = ::GetDlgItem( hwndDlg, IDC_LIST_RES );
 
 		{
+			// pixel数をベタ書きするとHighDPI環境でずれるのでシステム値を取得して使う
+			const int cyEdge = ::GetSystemMetrics(SM_CYEDGE);
+
 			// 2014.11.25 フォントの高さが正しくなかったバグを修正
 			CTextWidthCalc calc(hwndResList);
 			int nFontHeight = calc.GetTextHeight();
-			nListItemHeight = std::max(nFontHeight, GetSystemMetrics(SM_CYSMICON)) + DpiScaleY(2);
-			nToolBarListBoxTopMargin = (nListItemHeight - (nFontHeight + 1)) / 2;
+			nListItemHeight = std::max(nFontHeight, GetSystemMetrics(SM_CYSMICON)) + cyEdge;
 		}
 		/* ダイアログデータの設定 Toolbar */
 		SetData( hwndDlg );
@@ -462,6 +463,9 @@ INT_PTR CPropToolbar::DispatchEvent(
 /* ダイアログデータの設定 Toolbar */
 void CPropToolbar::SetData( HWND hwndDlg )
 {
+	// pixel数をベタ書きするとHighDPI環境でずれるのでシステム値を取得して使う
+	const int cyEdge = ::GetSystemMetrics(SM_CYEDGE);
+
 	HWND		hwndCombo;
 	HWND		hwndResList;
 	int			i;
@@ -482,7 +486,7 @@ void CPropToolbar::SetData( HWND hwndDlg )
 	// 2014.11.25 フォントの高さが正しくなかったバグを修正
 	int nFontHeight = CTextWidthCalc(hwndResList).GetTextHeight();
 
-	nListItemHeight = std::max(nFontHeight, GetSystemMetrics(SM_CYSMICON)) + DpiScaleY(2);
+	nListItemHeight = std::max(nFontHeight, GetSystemMetrics(SM_CYSMICON)) + cyEdge;
 
 	/* ツールバーボタンの情報をセット(リストボックス)*/
 	for( i = 0; i < m_Common.m_sToolBar.m_nToolBarButtonNum; ++i ){
@@ -539,6 +543,16 @@ int CPropToolbar::GetData( HWND hwndDlg )
 */
 void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 {
+	// pixel数をベタ書きするとHighDPI環境でずれるのでシステム値を取得して使う
+	const int cxBorder = ::GetSystemMetrics(SM_CXBORDER);
+	const int cyBorder = ::GetSystemMetrics(SM_CYBORDER);
+	const int cxEdge = ::GetSystemMetrics(SM_CXEDGE);
+	const int cyEdge = ::GetSystemMetrics(SM_CYEDGE);
+	const int cxFrame = ::GetSystemMetrics(SM_CXFRAME);
+	const int cyFrame = ::GetSystemMetrics(SM_CYFRAME);
+	const int cxSmIcon = ::GetSystemMetrics(SM_CXSMICON);
+	const int cySmIcon = ::GetSystemMetrics(SM_CYSMICON);
+
 	TBBUTTON	tbb;
 	HBRUSH		hBrush;
 	RECT		rc;
@@ -583,7 +597,15 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 		//	From Here Oct. 15, 2001 genta
 		}else{
 			// アイコンとテキストを表示する
-			m_pcIcons->Draw( tbb.iBitmap, pDis->hDC, rc.left + 2, rc.top + 2, ILD_NORMAL );
+			m_pcIcons->DrawToolIcon(
+				pDis->hDC,
+				rc.left + cxEdge,
+				rc.top + cyEdge + (rc.bottom - rc.top - cySmIcon) / 2,
+				tbb.iBitmap,
+				ILD_NORMAL,
+				cxSmIcon,
+				cySmIcon
+			);
 			m_cLookup.Funccode2Name( tbb.idCommand, szLabel, _countof( szLabel ) );
 		}
 		//	To Here Oct. 15, 2001 genta
@@ -598,16 +620,25 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 			hBrush = ::GetSysColorBrush( COLOR_WINDOW );
 			::SetTextColor( pDis->hDC, ::GetSysColor( COLOR_WINDOWTEXT ) );
 		}
-		rc1.left++;
-		rc1.top++;
-		rc1.right--;
-		rc1.bottom--;
+
+		::InflateRect( &rc1, -cxBorder, -cyBorder );
 		::FillRect( pDis->hDC, &rc1, hBrush );
 //		::DeleteObject( hBrush );
 
 		::SetBkMode( pDis->hDC, TRANSPARENT );
-		// 2014.11.25 topマージンが2固定だとフォントが大きい時に見切れるので変数に変更
-		TextOutW_AnyBuild( pDis->hDC, rc1.left + 4, rc1.top + nToolBarListBoxTopMargin, szLabel, wcslen( szLabel ) );
+
+		// 微調整 インデントと上余白
+		rc1.left += cxFrame;
+		rc1.top += cyBorder;
+
+		// 指定された矩形に左寄せ上下中央揃えで出力する
+		::DrawText(
+			pDis->hDC,
+			szLabel,
+			-1,
+			&rc1,
+			DT_LEFT | DT_VCENTER | DT_SINGLELINE
+		);
 	}
 
 	/* アイテムにフォーカスがある */
