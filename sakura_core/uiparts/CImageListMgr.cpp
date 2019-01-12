@@ -325,19 +325,6 @@ COLORREF FromHLS( const _HlsTuple &hls )
 	return RGB( R * 255, G * 255, B * 255 );
 }
 
-//! コントラスト算出のための相対輝度を取得する
-double GetRelativeLuminance( const COLORREF color )
-{
-	auto RsRGB = (double) GetRValue( color ) / 255.;
-	auto GsRGB = (double) GetGValue( color ) / 255.;
-	auto BsRGB = (double) GetBValue( color ) / 255.;
-	auto R = RsRGB <= 0.03928 ? RsRGB / 12.92 : std::pow( (RsRGB + 0.055) / 1.055, 2.4 );
-	auto G = BsRGB <= 0.03928 ? GsRGB / 12.92 : std::pow( (GsRGB + 0.055) / 1.055, 2.4 );
-	auto B = BsRGB <= 0.03928 ? BsRGB / 12.92 : std::pow( (BsRGB + 0.055) / 1.055, 2.4 );
-	auto L = 0.2126 * R + 0.7152 * G + 0.0722 * B;
-	return L;
-}
-
 /*! ビットマップの表示 灰色を透明描画
 
 	@author Nakatani
@@ -403,14 +390,21 @@ void CImageListMgr::MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
 	COLORREF grayText = ::GetSysColor( COLOR_GRAYTEXT );
 	COLORREF btnFace = ::GetSysColor( COLOR_3DFACE );
 	COLORREF textColor = grayText == btnFace ? RGB( 0x80, 0x80, 0x80 ) : grayText;
-	auto textColorL = GetRelativeLuminance( textColor );
 	auto textColorH = ToHLS( textColor );
+	BYTE textColorL;
+	{
+		auto r = GetRValue( textColor );
+		auto g = GetGValue( textColor );
+		auto b = GetBValue( textColor );
+		textColorL = (77 * r + 150 * g + 29 * b) >> 8; //[0,255]
+	}
+	double textColorR = 255 - textColorL / 255;
 
 	// ディザカラー256諧調の配列を作る
 	std::array<COLORREF, 0x100> ditherColors;
 	for ( size_t i = 0; i < ditherColors.size(); ++i ) {
 		auto ditherColorH( textColorH );
-		std::get<HLS_L>( ditherColorH ) = textColorL + i * (1 - textColorL) / 255;
+		std::get<HLS_L>(ditherColorH) = (textColorL + i * textColorR) / 255;
 		ditherColors[i] = FromHLS( ditherColorH );
 	}
 
@@ -432,8 +426,8 @@ void CImageListMgr::MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
 										// 省略可能なので以下略
 	};
 
-	// スキャンラインは下から上なので逆順にデータを取得する
-	for ( auto n = nHeight - 1; 0 <= n; --n ) {
+	// スキャンライン全行を順に取得して処理する
+	for (auto n = 0; n < nHeight; ++n) {
 		auto retGetDIBits = ::GetDIBits( hdcWork, bmpWork,
 			n,						//start
 			1,						//cLines
@@ -457,13 +451,12 @@ void CImageListMgr::MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
 			auto r = px.rgbRed;
 			auto g = px.rgbGreen;
 			auto b = px.rgbBlue;
-			auto mono = (77 * r + 150 * g + 29 * b) >> 8; //[1,255]
+			auto mono = (77 * r + 150 * g + 29 * b) >> 8; //[0,255]
 
 			// ディザカラーを書き込む
-			auto ditherColor = ditherColors[mono];
-			px.rgbRed = GetRValue( ditherColor );
-			px.rgbGreen = GetGValue( ditherColor );
-			px.rgbBlue = GetBValue( ditherColor );
+			px.rgbRed = GetRValue( ditherColors[mono] );
+			px.rgbGreen = GetGValue( ditherColors[mono] );
+			px.rgbBlue = GetBValue( ditherColors[mono] );
 		}
 
 		// Getで取得したのビットデータを書き換える
