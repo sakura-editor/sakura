@@ -391,7 +391,7 @@ void CImageListMgr::MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
 	COLORREF btnFace = ::GetSysColor( COLOR_3DFACE );
 	COLORREF textColor = grayText == btnFace ? RGB( 0x80, 0x80, 0x80 ) : grayText;
 	auto textColorH = ToHLS( textColor );
-	BYTE textColorL;
+	double textColorL;
 	{
 		auto r = GetRValue( textColor );
 		auto g = GetGValue( textColor );
