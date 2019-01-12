@@ -1086,8 +1086,7 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLength )
 
 	// IsMailAddressDomainがtrueを返したら、以下は必ず成立する
 	assert(pszEndOfMailBox != nullptr);
-	assert(pszEndOfMailBox > pszAtmark + 1);
-	assert(pszEndOfMailBox < pszBuf + MAX_MAILBOX + 1);
+	assert(pszAtmark < pszEndOfMailBox);
 
 	// メールアドレス全体の長さを再度チェックする
 	if (pszBuf + MAX_MAILBOX < pszEndOfMailBox) {
