@@ -479,15 +479,18 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		// 背景描画
 		if( pUrlWnd->m_bHilighted ){
 			// ハイライト時背景描画
-			SetBkColor( hdc, RGB( 0xff, 0xff, 0 ) );
-			::ExtTextOutW_AnyBuild( hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL );
+			HBRUSH brush = ::CreateSolidBrush( RGB( 0xff, 0xff, 0 ) );
+			HGDIOBJ brushOld = ::SelectObject( hdc, brush );
+			::PatBlt( hdc, rc.left, rc.top, rc.right, rc.bottom, PATCOPY );
+			::SelectObject( hdc, brushOld );
+			::DeleteObject( brush );
 		}else{
 			// 親にWM_CTLCOLORSTATICを送って背景ブラシを取得し、背景描画する
 			HBRUSH hbr;
 			HBRUSH hbrOld;
 			hbr = (HBRUSH)SendMessageAny( GetParent( hWnd ), WM_CTLCOLORSTATIC, wParam, (LPARAM)hWnd );
 			hbrOld = (HBRUSH)SelectObject( hdc, hbr );
-			FillRect( hdc, &rc, hbr );
+			::PatBlt( hdc, rc.left, rc.top, rc.right, rc.bottom, PATCOPY );
 			SelectObject( hdc, hbrOld );
 		}
 		return (LRESULT)1;
