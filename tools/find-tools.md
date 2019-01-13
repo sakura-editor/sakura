@@ -11,14 +11,14 @@
 外部ツールのインストール時にデフォルトパスにインストールしていない場合や別の実行ファイルを使いたい場合、実行前にパスを通しておくかCMD_7Zなどの対応する環境変数に絶対パスをセットしておいてください。
 
 ## 外部ツールの一覧
-|      ツール名      |   環境変数   | デフォルトパス |  ファイル名  |
-| ------------------ | ------------ | ---------------------- | ------------ |
-| 7-Zip              | CMD_7Z       | 7-Zip                  | 7z           |
-| HTML Help Workshop | CMD_HHC      | HTML Help Workshop     | hhc.exe      |
-| Inno Setup 5       | CMD_ISCC     | Inno Setup 5           | ISCC.exe     |
-| cppcheck           | CMD_CPPCHECK | cppcheck               | cppcheck.exe |
-| doxygen            | CMD_DOXYGEN  | doxygen\bin            | doxygen.exe  |
-| MSBuild            | CMD_MSBUILD  | 特殊                   | MSBuild.exe             |
+|      ツール名      |   環境変数   |   デフォルトパス   |  ファイル名  |
+| ------------------ | ------------ | ------------------ | ------------ |
+| 7-Zip              | CMD_7Z       | 7-Zip              | 7z           |
+| HTML Help Workshop | CMD_HHC      | HTML Help Workshop | hhc.exe      |
+| Inno Setup 5       | CMD_ISCC     | Inno Setup 5       | ISCC.exe     |
+| cppcheck           | CMD_CPPCHECK | cppcheck           | cppcheck.exe |
+| doxygen            | CMD_DOXYGEN  | doxygen\bin        | doxygen.exe  |
+| MSBuild            | CMD_MSBUILD  | 特殊               | MSBuild.exe  |
 
 ## MSBuild以外の探索手順
 MSBuild以外の探索手順は同一であり、7-Zipを例に説明する。
@@ -43,4 +43,4 @@ MSBuild以外の探索手順は同一であり、7-Zipを例に説明する。
 
 ## zipの処理に7zではなくPowerShellを強制する
 事前に環境変数の`FORCE_POWERSHELL_ZIP`を1にセットすることで、7zの検索をスキップできます。
-7z未インストールの環境で[PowerShellによるzipの処理](zip/readme.md)が正しく行われるかを検証する際に活用できます。[build.md](../build.md#powershell-によるzipファイルの圧縮解凍内容確認の強制)も参照してください。
+[PowerShellによるzipの処理](zip/readme.md)が正しく行われるかを7zがインストール済みの環境で検証する際に活用できます。[build.md](../build.md#powershell-によるzipファイルの圧縮解凍内容確認の強制)も参照してください。
