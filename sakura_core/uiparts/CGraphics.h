@@ -262,5 +262,62 @@ private:
 	bool				m_bDynamicBrush;	//m_hbrCurrentを動的に作成した場合はtrue
 };
 
+/*!
+ * @brief API関数FillRectの高速版(ブラシ用)
+ *
+ * @param [in] hDC デバイスコンテキスト
+ * @param [in] rc 塗りつぶし対象の矩形
+ * @param [in] hBrush 塗りつぶしに使うブラシハンドル
+ */
+inline bool MyFillRect( const HDC hDC, const RECT &rc, const HBRUSH hBrush ) noexcept
+{
+	assert( hDC );
+	assert( hBrush );
+	assert( !IS_INTRESOURCE( hBrush ) );
+
+	HGDIOBJ hBrushOld = ::SelectObject( hDC, hBrush );
+	int retPatBlt = ::PatBlt( hDC, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, PATCOPY );
+	::SelectObject( hDC, hBrushOld );
+
+	return retPatBlt != 0;
+}
+
+/*!
+ * @brief API関数FillRectの高速版(カラーインデックス用)
+ *
+ * @param [in] hDC デバイスコンテキスト
+ * @param [in] rc 塗りつぶし対象の矩形
+ * @param [in] sysColor システムカラーのインデックス
+ */
+inline bool MyFillRect( const HDC hDC, const RECT &rc, const int sysColor ) noexcept
+{
+	assert( hDC );
+	assert( sysColor );
+	assert( IS_INTRESOURCE( sysColor ) );
+
+	HBRUSH hBrush = ::GetSysColorBrush( sysColor );
+	bool retMyFillRect = MyFillRect( hDC, rc, hBrush );
+
+	return retMyFillRect;
+}
+
+/*!
+ * @brief API関数FillRectの高速版(色指定用)
+ *
+ * @param [in] hDC デバイスコンテキスト
+ * @param [in] rc 塗りつぶし対象の矩形
+ * @param [in] color 塗りつぶし色
+ */
+inline bool MyFillRect( const HDC hDC, const RECT &rc, const COLORREF color ) noexcept
+{
+	assert( hDC );
+
+	HBRUSH hBrush = ::CreateSolidBrush( color );
+	bool retMyFillRect = MyFillRect( hDC, rc, hBrush );
+	::DeleteObject( hBrush );
+
+	return retMyFillRect;
+}
+
 #endif /* SAKURA_CGRAPHICS_BA5156BF_99C6_4854_8131_CE8B091A5EFF9_H_ */
 /*[EOF]*/
