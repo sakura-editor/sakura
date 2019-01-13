@@ -1032,6 +1032,10 @@ inline static bool IsSubDomain(
 	_Out_ const wchar_t** ppszDotOrNotAlnum
 ) noexcept;
 
+inline static bool IsLetDig(
+	_In_ const wchar_t ch
+) noexcept;
+
 inline static bool IsAtomChar(
 	_In_ const wchar_t ch
 ) noexcept;
@@ -1321,8 +1325,7 @@ inline static bool IsDomain(
 
 	assert(ppszDotOrNotAlnum != nullptr);
 
-	if (pszScan == *ppszDotOrNotAlnum
-		|| (**ppszDotOrNotAlnum <= 0xFF && ::isalnum(**ppszDotOrNotAlnum))) {
+	if (IsLetDig(**ppszDotOrNotAlnum)) {
 		return false;
 	}
 
@@ -1365,7 +1368,7 @@ inline static bool IsSubDomain(
 	ParseState state = OTHER;
 
 	// 文字列がlet-digで始まっているかチェックする
-	if (!(*pszScan <= 0xFF && ::isalnum(*pszScan))) {
+	if (!IsLetDig(*pszScan)) {
 		return false;
 	}
 
@@ -1382,7 +1385,7 @@ inline static bool IsSubDomain(
 			state = DOT;
 			break;
 		default:
-			if (*pszScan <= 0xFF && ::isalnum(*pszScan)) {
+			if (IsLetDig(*pszScan)) {
 				state = ALNUM;
 			} else {
 				state = OTHER;
@@ -1407,7 +1410,17 @@ inline static bool IsSubDomain(
 	return true;
 }
 
-/*/*
+/*
+ * RFC5321 let-dig の要件を満たすかどうか判定する
+ */
+inline static bool IsLetDig(
+	_In_ const wchar_t ch
+) noexcept
+{
+	return ch <= 0xFF && ::isalnum( ch );
+}
+
+/*
  * RFC5322 atom の要件を満たすかどうか判定する
  *
  * 高速化目的で可読性を捨て、あえて冗長な switch 分岐にしている。
