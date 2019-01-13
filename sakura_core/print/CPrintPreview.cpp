@@ -43,6 +43,7 @@
 #include "dlg/CDlgCancel.h" /// 2002/2/3 aroka from here
 #include "dlg/CDlgInput1.h" /// 2007.02.11 Moca
 #include "CEditApp.h"
+#include "uiparts/CGraphics.h"
 #include "util/window.h"
 #include "util/shell.h"
 #include "env/CSakuraEnvironment.h"
@@ -145,7 +146,7 @@ LRESULT CPrintPreview::OnPaint(
 		::GetClientRect( hwnd, &bmpRc );
 		bmpRc.right  = (bmpRc.right  * m_nbmpCompatScale) / COMPAT_BMP_BASE;
 		bmpRc.bottom = (bmpRc.bottom * m_nbmpCompatScale) / COMPAT_BMP_BASE;
-		::FillRect( hdc, &bmpRc, (HBRUSH)::GetStockObject( GRAY_BRUSH ) );
+		::MyFillRect( hdc, bmpRc, (HBRUSH)::GetStockObject( GRAY_BRUSH ) );
 	}
 
 	// ツールバー高さ -> nToolBarHeight

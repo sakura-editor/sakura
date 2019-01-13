@@ -72,6 +72,9 @@ struct SFONT {
 	HFONT		m_hFont;      //!< フォントハンドル
 };
 
+// 先行定義
+inline bool MyFillRect( const HDC hDC, const RECT &rc, const HBRUSH hBrush ) noexcept;
+
 //! 描画管理
 //最新実装：ブラシ
 class CGraphics{
@@ -211,7 +214,7 @@ public:
 	//! 矩形塗り潰し
 	void FillMyRect(const RECT& rc)
 	{
-		::FillRect(m_hdc,&rc,GetCurrentBrush());
+		::MyFillRect( m_hdc, rc, GetCurrentBrush() );
 #ifdef _DEBUG
 		::SetPixel(m_hdc,-1,-1,0); //###########実験
 #endif

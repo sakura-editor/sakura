@@ -14,6 +14,7 @@
 */
 #include "StdAfx.h"
 #include "window/CSplitBoxWnd.h"
+#include "uiparts/CGraphics.h"
 
 CSplitBoxWnd::CSplitBoxWnd()
 : CWnd(_T("::CSplitBoxWnd"))
@@ -80,21 +81,16 @@ HWND CSplitBoxWnd::Create( HINSTANCE hInstance, HWND hwndParent, int bVertical )
 void CSplitBoxWnd::Draw3dRect( HDC hdc, int x, int y, int cx, int cy,
 	COLORREF clrTopLeft, COLORREF clrBottomRight )
 {
-	HBRUSH	hBrush;
 	RECT	rc;
-	hBrush = ::CreateSolidBrush( clrTopLeft );
 	::SetRect( &rc, x, y, x + cx - 1, y + 1 );
-	::FillRect( hdc, &rc, hBrush );
+	::MyFillRect( hdc, rc, clrTopLeft );
 	::SetRect( &rc, x, y, x + 1, y + cy - 1 );
-	::FillRect( hdc, &rc, hBrush );
-	::DeleteObject( hBrush );
+	::MyFillRect( hdc, rc, clrTopLeft );
 
-	hBrush = ::CreateSolidBrush( clrBottomRight );
 	::SetRect( &rc, x + cx - 1, y, x + cx, y + cy );
-	::FillRect( hdc, &rc, hBrush );
+	::MyFillRect( hdc, rc, clrBottomRight );
 	::SetRect( &rc, x, y + cy - 1, x + cx, y + cy );
-	::FillRect( hdc, &rc, hBrush );
-	::DeleteObject( hBrush );
+	::MyFillRect( hdc, rc, clrBottomRight );
 	return;
 }
 

@@ -3223,9 +3223,6 @@ INT_PTR CDlgFuncList::OnNcPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	rc = rcScr;
 	::OffsetRect( &rc, -rcScr.left, -rcScr.top );
 
-	// 背景を描画する
-	//::FillRect( gr, &rc, (HBRUSH)(COLOR_3DFACE + 1) );
-
 	// 分割線を描画する
 	rcWk = rc;
 	switch( eDockSide ){
@@ -3234,7 +3231,7 @@ INT_PTR CDlgFuncList::OnNcPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	case DOCKSIDE_RIGHT:	rcWk.right = rcWk.left + DOCK_SPLITTER_WIDTH; break;
 	case DOCKSIDE_BOTTOM:	rcWk.bottom = rcWk.top + DOCK_SPLITTER_WIDTH; break;
 	}
-	::FillRect( gr, &rcWk, (HBRUSH)(COLOR_3DFACE + 1) );
+	::MyFillRect( gr, rcWk, COLOR_3DFACE );
 	::DrawEdge( gr, &rcWk, EDGE_ETCHED, BF_TOPLEFT );
 
 	// タイトルを描画する
@@ -3259,7 +3256,7 @@ INT_PTR CDlgFuncList::OnNcPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		nClrCaption = ( bActive? COLOR_GRADIENTACTIVECAPTION: COLOR_GRADIENTINACTIVECAPTION );
 	else
 		nClrCaption = ( bActive? COLOR_ACTIVECAPTION: COLOR_INACTIVECAPTION );
-	::FillRect( gr, &rcWk, ::GetSysColorBrush( nClrCaption ) );
+	::MyFillRect( gr, rcWk, nClrCaption );
 	::DrawEdge( gr, &rcCaption, BDR_SUNKENOUTER, BF_TOP );
 
 	// タイトル上のボタンを描画する
@@ -3290,7 +3287,7 @@ INT_PTR CDlgFuncList::OnNcPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		int nClrCaptionText;
 		// マウスカーソルがボタン上にあればハイライト
 		if( ::PtInRect( &rcBtn, pt ) ){
-			::FillRect( gr, &rcBtn, ::GetSysColorBrush( (bGradient && !bActive)? COLOR_INACTIVECAPTION: COLOR_ACTIVECAPTION ) );
+			::MyFillRect( gr, rcBtn, (bGradient && !bActive)? COLOR_INACTIVECAPTION: COLOR_ACTIVECAPTION );
 			nClrCaptionText = ( (bGradient && !bActive)? COLOR_INACTIVECAPTIONTEXT: COLOR_CAPTIONTEXT );
 		}else{
 			nClrCaptionText = ( bActive? COLOR_CAPTIONTEXT: COLOR_INACTIVECAPTIONTEXT );
