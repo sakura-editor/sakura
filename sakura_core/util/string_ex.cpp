@@ -5,6 +5,7 @@
 #include "util/std_macro.h"
 #include <limits.h>
 #include <locale.h>
+#include <ctype.h>
 
 int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, unsigned int dcount, bool flag );
 
@@ -1019,13 +1020,11 @@ inline static bool IsQuotedString(
 	_Out_ const wchar_t** ppszAtmark
 ) noexcept;
 
-
 inline static bool IsDomain(
 	_In_z_ const wchar_t* pszStart,
 	_In_ const wchar_t* pszEnd,
 	_Out_ const wchar_t** ppszDotOrNotAlnum
 ) noexcept;
-
 
 inline static bool IsSubDomain(
 	_In_z_ const wchar_t* pszStart,
@@ -1033,14 +1032,9 @@ inline static bool IsSubDomain(
 	_Out_ const wchar_t** ppszDotOrNotAlnum
 ) noexcept;
 
-inline static bool IsLetDig(
-	_In_ const wchar_t ch
-) noexcept;
-
 inline static bool IsAtomChar(
 	_In_ const wchar_t ch
 ) noexcept;
-
 
 /* 現在位置がメールアドレスならば、NULL以外と、その長さを返す
 	@date 2016.04.27 記号類を許可
@@ -1328,7 +1322,7 @@ inline static bool IsDomain(
 	assert(ppszDotOrNotAlnum != nullptr);
 
 	if (pszScan == *ppszDotOrNotAlnum
-		|| IsLetDig(**ppszDotOrNotAlnum)) {
+		|| (**ppszDotOrNotAlnum <= 0xFF && ::isalnum(**ppszDotOrNotAlnum))) {
 		return false;
 	}
 
@@ -1371,7 +1365,7 @@ inline static bool IsSubDomain(
 	ParseState state = OTHER;
 
 	// 文字列がlet-digで始まっているかチェックする
-	if (!IsLetDig(*pszScan)) {
+	if (!(*pszScan <= 0xFF && ::isalnum(*pszScan))) {
 		return false;
 	}
 
@@ -1381,70 +1375,6 @@ inline static bool IsSubDomain(
 	for (; pszScan < pszScanEnd; pszScan++)
 	{
 		switch (*pszScan) {
-		case L'0':
-		case L'1':
-		case L'2':
-		case L'3':
-		case L'4':
-		case L'5':
-		case L'6':
-		case L'7':
-		case L'8':
-		case L'9':
-		case L'A':
-		case L'B':
-		case L'C':
-		case L'D':
-		case L'E':
-		case L'F':
-		case L'G':
-		case L'H':
-		case L'I':
-		case L'J':
-		case L'K':
-		case L'L':
-		case L'M':
-		case L'N':
-		case L'O':
-		case L'P':
-		case L'Q':
-		case L'R':
-		case L'S':
-		case L'T':
-		case L'U':
-		case L'V':
-		case L'W':
-		case L'X':
-		case L'Y':
-		case L'Z':
-		case L'a':
-		case L'b':
-		case L'c':
-		case L'd':
-		case L'e':
-		case L'f':
-		case L'g':
-		case L'h':
-		case L'i':
-		case L'j':
-		case L'k':
-		case L'l':
-		case L'm':
-		case L'n':
-		case L'o':
-		case L'p':
-		case L'q':
-		case L'r':
-		case L's':
-		case L't':
-		case L'u':
-		case L'v':
-		case L'w':
-		case L'x':
-		case L'y':
-		case L'z':
-			state = ALNUM;
-			break;
 		case L'-':
 			state = HYPHEN;
 			break;
@@ -1452,7 +1382,11 @@ inline static bool IsSubDomain(
 			state = DOT;
 			break;
 		default:
-			state = OTHER;
+			if (*pszScan <= 0xFF && ::isalnum(*pszScan)) {
+				state = ALNUM;
+			} else {
+				state = OTHER;
+			}
 			break;
 		}
 		if (state == DOT || state == OTHER) {
@@ -1473,91 +1407,15 @@ inline static bool IsSubDomain(
 	return true;
 }
 
-/*
- * RFC5321 let-dig の要件を満たすかどうか判定する
- * 
- * 高速化目的で可読性を捨て、あえて冗長な switch 分岐にしている。
- * 実質は CRT の iswalnum 関数と同等。
- */
-inline static bool IsLetDig(
-	_In_ const wchar_t ch
-) noexcept
-{
-	switch (ch) {
-	case L'0':
-	case L'1':
-	case L'2':
-	case L'3':
-	case L'4':
-	case L'5':
-	case L'6':
-	case L'7':
-	case L'8':
-	case L'9':
-	case L'A':
-	case L'B':
-	case L'C':
-	case L'D':
-	case L'E':
-	case L'F':
-	case L'G':
-	case L'H':
-	case L'I':
-	case L'J':
-	case L'K':
-	case L'L':
-	case L'M':
-	case L'N':
-	case L'O':
-	case L'P':
-	case L'Q':
-	case L'R':
-	case L'S':
-	case L'T':
-	case L'U':
-	case L'V':
-	case L'W':
-	case L'X':
-	case L'Y':
-	case L'Z':
-	case L'a':
-	case L'b':
-	case L'c':
-	case L'd':
-	case L'e':
-	case L'f':
-	case L'g':
-	case L'h':
-	case L'i':
-	case L'j':
-	case L'k':
-	case L'l':
-	case L'm':
-	case L'n':
-	case L'o':
-	case L'p':
-	case L'q':
-	case L'r':
-	case L's':
-	case L't':
-	case L'u':
-	case L'v':
-	case L'w':
-	case L'x':
-	case L'y':
-	case L'z':
-		return true;
-	default:
-		break;
-	}
-	return false;
-}
-
-/*
+/*/*
  * RFC5322 atom の要件を満たすかどうか判定する
  *
  * 高速化目的で可読性を捨て、あえて冗長な switch 分岐にしている。
- * atomChars[] = L"!#$%&'*+-/0123456789=?ABCDEFGHIJKLMNOPQRSTUVWXYZ^_`abcdefghijklmnopqrstuvwxyz{|}~";
+ *
+ * やっていることは以下の疑似コードと同じ。
+ * WCHAR atomChars[] = L"!#$%&'*+-/0123456789=?ABCDEFGHIJKLMNOPQRSTUVWXYZ^_`abcdefghijklmnopqrstuvwxyz{|}~";
+ * return wcschr(atomChars, ch) != NULL;
+ * ※ドキュメント内の全文字に対して呼び出されるのでwcschrを使うわけにはいかない。
  */
 inline static bool IsAtomChar(
 	_In_ const wchar_t ch
