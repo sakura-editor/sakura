@@ -1266,7 +1266,7 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 
 		// 状態に従ってテキストと背景色を決める
 		COLORREF clrText;
-		INT_PTR nSysClrBk;
+		int nSysClrBk;
 		if (lpdis->itemState & ODS_SELECTED)
 		{
 			clrText = ::GetSysColor( COLOR_HIGHLIGHTTEXT );
