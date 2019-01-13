@@ -332,6 +332,16 @@ void CMainToolBar::CreateToolBar( void )
 							m_comboDel = SComboBoxItemDeleter(); // 再表示用の初期化
 							m_comboDel.pRecent = &m_cRecentSearch;
 							CDialog::SetComboBoxDeleter(m_hwndSearchBox, &m_comboDel);
+
+							// コンボボックスの垂直位置を調整する
+							CMyRect rcCombo;
+							::GetWindowRect( m_hwndSearchBox, &rcCombo );
+							::SetWindowPos( m_hwndSearchBox, NULL,
+								rc.left,	//作ったときと同じ値を指定
+								(rc.bottom - rc.top - rcCombo.Height()) / 2,	//上下中央に配置する
+								0,			//rcCombo.Width()のまま変えない
+								0,			//rcCombo.Height()のまま変えない
+								SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOSENDCHANGING );
 						}
 						break;
 
