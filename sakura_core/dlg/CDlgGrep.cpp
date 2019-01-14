@@ -240,6 +240,9 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	HFONT hFont = SetMainFont( GetItemHwnd( IDC_COMBO_TEXT ) );
 	m_cFontText.SetFont( hFontOld, hFont, GetItemHwnd( IDC_COMBO_TEXT ) );
 
+	// -GFILE="" の仕様と整合性を取るためにここでパターンを分解・再構築する
+	MergeAndClassifyGFile();
+
 	/* 基底クラスメンバ */
 //	CreateSizeBox();
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
@@ -284,6 +287,15 @@ LRESULT CALLBACK OnFolderProc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 BOOL CDlgGrep::OnDestroy()
 {
 	m_cFontText.ReleaseOnDestroy();
+
+	// 除外ファイル、除外フォルダの設定を "-GFILE=" の設定に pack するためにデータを作る。
+	CGrepEnumKeys cGrepEnumKeys;
+	cGrepEnumKeys.SetFileKeys( m_szFile.GetBufferPointer(), m_szExcludeFile.GetBufferPointer(), m_szExcludeFolder.GetBufferPointer() );
+
+	m_szFile = cGrepEnumKeys.GetCmdOptionForGFile().c_str();
+	m_szExcludeFile = _T("");
+	m_szExcludeFolder = _T("");
+
 	return CDialog::OnDestroy();
 }
 
@@ -611,6 +623,18 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 	return;
 }
 
+/*!
+	@breif 対象ファイル、除外ファイル、除外フォルダの値を結合・再分配する
+*/
+inline void CDlgGrep::MergeAndClassifyGFile( void )
+{
+	CGrepEnumKeys cGrepEnumKeys;
+	cGrepEnumKeys.SetFileKeys( m_szFile.GetBufferPointer(), m_szExcludeFile.GetBufferPointer(), m_szExcludeFolder.GetBufferPointer() );
+	m_szFile = cGrepEnumKeys.GetTextForIncludeFiles().c_str();
+	m_szExcludeFile = cGrepEnumKeys.GetTextForExcludeFiles().c_str();
+	m_szExcludeFolder = cGrepEnumKeys.GetTextForExcludeDirs().c_str();
+}
+
 /*! ダイアログデータの取得
 	@retval TRUE  正常
 	@retval FALSE 入力エラー
@@ -691,8 +715,8 @@ int CDlgGrep::GetData( void )
 	m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder = m_bGrepSeparateFolder;
 
 	if( 0 != auto_strlen( m_szFile ) ){
-		CGrepEnumKeys enumKeys;
-		int nErrorNo = enumKeys.SetFileKeys( m_szFile );
+		CGrepEnumKeys cGrepEnumKeys;
+		int nErrorNo = cGrepEnumKeys.SetFileKeys( m_szFile.GetBufferPointer(), m_szExcludeFile.GetBufferPointer(), m_szExcludeFolder.GetBufferPointer() );
 		if( 1 == nErrorNo ){
 			WarningMessage(	GetHwnd(), LS(STR_DLGGREP2) );
 			return FALSE;
@@ -775,6 +799,9 @@ int CDlgGrep::GetData( void )
 	// この編集中のテキストから検索する場合、履歴に残さない	Uchi 2008/5/23
 	// 2016.03.08 Moca 「このファイルから検索」の場合はサブフォルダ共通設定を更新しない
 	if (!m_bFromThisText) {
+		// -GFILE="" の仕様と整合性を取るためにここでパターンを分解・再構築する
+		MergeAndClassifyGFile();
+
 		/* 検索ファイル */
 		CSearchKeywordManager().AddToGrepFileArr( m_szFile );
 

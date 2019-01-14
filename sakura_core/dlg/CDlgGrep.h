@@ -85,6 +85,7 @@ protected:
 	void SetData( void );	/* ダイアログデータの設定 */
 	int GetData( void );	/* ダイアログデータの取得 */
 	void SetDataFromThisText(bool bChecked);	/* 現在編集中ファイルから検索チェックでの設定 */
+	void MergeAndClassifyGFile( void );	/* 対象ファイル、除外ファイル、除外フォルダの値を結合・再分配する */
 };
 
 ///////////////////////////////////////////////////////////////////////

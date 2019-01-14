@@ -31,14 +31,28 @@
 */
 #pragma once
 
-#include <vector>
-#include <windows.h>
-#include <string.h>
 #include <tchar.h>
+#include <windows.h>
+
+#include <string>
+#include <vector>
+#include <list>
+#include <sstream>
+#include <iomanip>
+
 #include "util/string_ex.h"
 #include "util/file.h"
 
 typedef std::vector< LPCTSTR > VGrepEnumKeys;
+
+//! リストの区切りを示すリテラル
+constexpr const TCHAR GREP_WILDCARD_DELIMITERS[] = _T(", ;");
+
+//! サブフォルダ探索用パターンのリテラル
+constexpr const TCHAR GREP_WILDCARD_ANY[] = _T("*.*");
+
+//! 空の除外パターンを示すリテラル
+constexpr const TCHAR GREP_ACCEPT_EVERYTHING[] = _T("");
 
 class CGrepEnumKeys {
 public:
@@ -51,6 +65,8 @@ public:
 	VGrepEnumKeys m_vecExceptAbsFileKeys;
 	VGrepEnumKeys m_vecExceptAbsFolderKeys;
 
+	typedef std::basic_string<TCHAR> tstring;
+
 public:
 	CGrepEnumKeys(){
 	}
@@ -60,7 +76,6 @@ public:
 	}
 
 	int SetFileKeys( LPCTSTR lpKeys ){
-		const TCHAR* WILDCARD_ANY = _T("*.*");	//サブフォルダ探索用
 		ClearItems();
 		
 		std::vector< tstring > patterns = SplitPattern(lpKeys);
@@ -112,31 +127,98 @@ public:
 			}
 		}
 		if( m_vecSearchFileKeys.size() == 0 ){
-			push_back_unique( m_vecSearchFileKeys, WILDCARD_ANY );
+			push_back_unique( m_vecSearchFileKeys, GREP_WILDCARD_ANY );
 		}
 		if( m_vecSearchFolderKeys.size() == 0 ){
-			push_back_unique( m_vecSearchFolderKeys, WILDCARD_ANY );
+			push_back_unique( m_vecSearchFolderKeys, GREP_WILDCARD_ANY );
 		}
 		return 0;
 	}
 
-	/*!
-		@brief 除外ファイルパターンを追加する
-		@param[in]	lpKeys	除外ファイルパターン
+	/*
+		@brief パターンをエスケープする必要があるか判断する
+		@param[in]     pattern チェックするパターン
+		@return        true  エスケープする必要がある
+		@return        false エスケープする必要がない
 	*/
-	int AddExceptFile(LPCTSTR lpKeys) {
-		return ParseAndAddException(lpKeys, m_vecExceptFileKeys, m_vecExceptAbsFileKeys);
+	bool CheckMetaChars( const tstring & pattern ) const
+	{
+		// 先頭が!または#の場合、エスケープ要
+		if ( 1 <= pattern.length()
+			&& (pattern[0] == '!' || pattern[0] == '#') )
+		{
+			return true;
+		}
+		// 先頭と末尾が"(ダブルクォート)の場合、エスケープ不要
+		if ( 2 <= pattern.length()
+			&& pattern[0] == '"'
+			&& pattern[pattern.length() - 1] == '"' )
+		{
+			return false;
+		}
+		// 区切り記号(, ;)を含む場合、エスケープ要
+		if ( ::_tcscspn( pattern.c_str(), GREP_WILDCARD_DELIMITERS ) < pattern.length() )
+		{
+			return true;
+		}
+		// 上記以外はエスケープ不要
+		return false;
 	}
 
 	/*!
-		@brief 除外フォルダパターンを追加する
-		@param[in]	lpKeys	除外フォルダパターン
+		@brief ファイルパターン、除外ファイルパターンを追加する
+		@param[in]	includeFiles	ファイルパターン
+		@param[in]	excludeFiles	除外ファイルパターン
+		@param[in]	excludeDirs		除外フォルダパターン
 	*/
-	int AddExceptFolder(LPCTSTR lpKeys) {
-		return ParseAndAddException(lpKeys, m_vecExceptFolderKeys, m_vecExceptAbsFolderKeys);
+	int SetFileKeys(
+		const tstring &includeFiles,
+		const tstring &excludeFiles,
+		const tstring &excludeDirs )
+	{
+		int validationResult = SetFileKeys( includeFiles.c_str() );
+		if ( validationResult ) return validationResult;
+		validationResult = SplitAndClassify( excludeFiles.c_str(), m_vecExceptFileKeys, m_vecExceptAbsFileKeys );
+		if ( validationResult ) return validationResult;
+		validationResult = SplitAndClassify( excludeDirs.c_str(), m_vecExceptFolderKeys, m_vecExceptAbsFolderKeys );
+		return validationResult;
 	}
 
-	typedef std::basic_string<TCHAR> tstring;
+	tstring GetTextForIncludeFiles( void ) const
+	{
+		return rangeToString( m_vecSearchFileKeys.cbegin(), m_vecSearchFileKeys.cend(), _T(""), GREP_WILDCARD_ANY );
+	}
+
+	tstring GetTextForExcludeFiles( const tstring &prefixStr = _T("") ) const
+	{
+		std::list<VGrepEnumKeys::value_type> list;
+		std::copy( m_vecExceptFileKeys.cbegin(), m_vecExceptFileKeys.cend(), std::back_inserter( list ) );
+		std::copy( m_vecExceptAbsFileKeys.cbegin(), m_vecExceptAbsFileKeys.cend(), std::back_inserter( list ) );
+		return rangeToString( list.cbegin(), list.cend(), prefixStr, GREP_ACCEPT_EVERYTHING );
+	}
+
+	tstring GetTextForExcludeDirs( const tstring &prefixStr = _T("") ) const
+	{
+		std::list<VGrepEnumKeys::value_type> list;
+		std::copy( m_vecExceptFolderKeys.cbegin(), m_vecExceptFolderKeys.cend(), std::back_inserter( list ) );
+		std::copy( m_vecExceptAbsFolderKeys.cbegin(), m_vecExceptAbsFolderKeys.cend(), std::back_inserter( list ) );
+		return rangeToString( list.cbegin(), list.cend(), prefixStr, GREP_ACCEPT_EVERYTHING );
+	}
+
+	tstring GetCmdOptionForGFile( void ) const
+	{
+		std::basic_ostringstream<TCHAR> out;
+		if ( 0 < m_vecSearchFileKeys.size() ) {
+			out << GetTextForIncludeFiles() << _T(';');
+		}
+		if ( 0 < m_vecExceptFileKeys.size() + m_vecExceptAbsFileKeys.size() ) {
+			out << GetTextForExcludeFiles(_T("!")) << _T(';');
+		}
+		if ( 0 < m_vecExceptFolderKeys.size() + m_vecExceptAbsFolderKeys.size() ) {
+			out << GetTextForExcludeDirs(_T("#")) << _T(';');
+		}
+		return trimLastCharFromSStream( std::move( out ) );
+	}
 
 	/*!
 		@brief ファイルパターンを解析して、要素ごとに分離して返す
@@ -146,7 +228,6 @@ public:
 	{
 		std::vector< tstring > patterns;
 
-		const TCHAR* WILDCARD_DELIMITER = _T(" ;,");	//リストの区切り
 		int nWildCardLen = _tcslen(lpKeys);
 		TCHAR* pWildCard = new TCHAR[nWildCardLen + 1];
 		if (!pWildCard) {
@@ -156,7 +237,7 @@ public:
 
 		int nPos = 0;
 		TCHAR*	token;
-		while (NULL != (token = my_strtok<TCHAR>(pWildCard, nWildCardLen, &nPos, WILDCARD_DELIMITER))) {	//トークン毎に繰り返す。
+		while (NULL != (token = my_strtok<TCHAR>(pWildCard, nWildCardLen, &nPos, GREP_WILDCARD_DELIMITERS))) {	//トークン毎に繰り返す。
 			// "を取り除いて左に詰める
 			TCHAR* p;
 			TCHAR* q;
@@ -229,13 +310,13 @@ private:
 	}
 
 	/*!
-		@brief 除外ファイルパターンを追加する
-		@param[in]		lpKeys					除外ファイルパターン
-		@param[in,out]	exceptionKeys			除外ファイルパターンの解析結果を追加する
-		@param[in,out]	exceptionAbsoluteKeys	除外ファイルパターンの絶対パスの解析結果を追加する
+		@brief パターンを分割して仕訳する
+		@param[in]		pszPattern		パターン
+		@param[in,out]	outRelKeys		相対パスのパターンの解析結果を追加する
+		@param[in,out]	outAbsKeys		絶対パスのパターンの解析結果を追加する
 	*/
-	int ParseAndAddException(LPCTSTR lpKeys, VGrepEnumKeys& exceptionKeys, VGrepEnumKeys & exceptionAbsoluteKeys) {
-		std::vector< tstring > patterns = SplitPattern(lpKeys);
+	int SplitAndClassify( LPCTSTR pszPattern, VGrepEnumKeys &outRelKeys, VGrepEnumKeys &outAbsKeys) {
+		std::vector< tstring > patterns = SplitPattern(pszPattern);
 
 		for (size_t i = 0; i < patterns.size(); i++) {
 			const tstring& element = patterns[i];
@@ -247,13 +328,46 @@ private:
 				return nValidStatus;
 			}
 			if (bRelPath) {
-				push_back_unique(exceptionKeys, token);
+				push_back_unique(outRelKeys, token);
 			}
 			else {
-				push_back_unique(exceptionAbsoluteKeys, token);
+				push_back_unique(outAbsKeys, token);
 			}
 		}
 		return 0;
 	}
-};
 
+	/*
+		@brief コレクションを文字列化する
+	*/
+	template<typename Iter>
+	tstring rangeToString( Iter && _First, Iter && _Last,
+		const tstring &prefixStr, const tstring &valueForEmpty ) const
+	{
+		if ( _First == _Last ) return valueForEmpty;
+
+		std::basic_ostringstream<TCHAR> out;
+		for ( ; _First != _Last; ++_First ) {
+			tstring value( *_First );
+			if ( CheckMetaChars( value ) ) {
+				value.insert( value.cbegin(), _T('\"') );
+				value.insert( value.cend(), _T('\"') );
+			}
+			out << prefixStr << value << _T(';');
+		}
+
+		return trimLastCharFromSStream( std::move( out ) );
+	}
+
+	/*
+		@brief ostringstreamの末尾1文字を削って文字列化する
+	*/
+	inline tstring trimLastCharFromSStream( std::basic_ostringstream<TCHAR> &&out ) const
+	{
+		out.seekp( -1, std::ios_base::cur );
+		if ( !out.fail() ) {
+			out << _T('\0');
+		}
+		return tstring( out.str().c_str() );
+	}
+};

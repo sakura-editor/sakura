@@ -358,9 +358,7 @@ DWORD CGrepAgent::DoGrep(
 	CGrepEnumKeys cGrepEnumKeys;
 	{
 		int nErrorNo = cGrepEnumKeys.SetFileKeys( pcmGrepFile->GetStringPtr() );
-		int nErrorNo_ExcludeFile   = cGrepEnumKeys.AddExceptFile(pcmExcludeFile->GetStringPtr());
-		int nErrorNo_ExcludeFolder = cGrepEnumKeys.AddExceptFolder(pcmExcludeFolder->GetStringPtr());
-		if( nErrorNo != 0 || nErrorNo_ExcludeFile != 0 || nErrorNo_ExcludeFolder != 0){
+		if( nErrorNo != 0 ){
 			this->m_bGrepRunning = false;
 			pcViewDst->m_bDoing_UndoRedo = false;
 			pcViewDst->SetUndoBuffer();
@@ -370,18 +368,6 @@ DWORD CGrepAgent::DoGrep(
 				pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS1);
 			}
 			else if( nErrorNo == 2 ){
-				pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS2);
-			}
-			else if (nErrorNo_ExcludeFile == 1) {
-				pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS1);
-			}
-			else if (nErrorNo_ExcludeFile == 2) {
-				pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS2);
-			}
-			else if (nErrorNo_ExcludeFolder == 1) {
-				pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS1);
-			}
-			else if (nErrorNo_ExcludeFolder == 2) {
 				pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS2);
 			}
 			ErrorMessage( pcViewDst->m_hwndParent, _T("%ts"), pszErrorMessage );
@@ -451,10 +437,9 @@ DWORD CGrepAgent::DoGrep(
 	if( pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	}else{
 	}
-	cmemWork.SetStringT( pcmGrepFile->GetStringPtr() );
-	cmemMessage += cmemWork;
-
+	cmemMessage += cGrepEnumKeys.GetTextForIncludeFiles().c_str();
 	cmemMessage.AppendString( L"\r\n" );
+
 	cmemMessage.AppendString( LSW( STR_GREP_SEARCH_FOLDER ) );	//L"フォルダ   "
 	{
 		std::tstring grepFolder;
@@ -484,8 +469,7 @@ DWORD CGrepAgent::DoGrep(
 	}
 	else {
 	}
-	cmemWork.SetStringT(pcmExcludeFile->GetStringPtr());
-	cmemMessage += cmemWork;
+	cmemMessage += cGrepEnumKeys.GetTextForExcludeFiles().c_str();
 	cmemMessage.AppendString(L"\r\n");
 
 	cmemMessage.AppendString(LSW(STR_GREP_EXCLUDE_FOLDER));	//L"除外フォルダ   "
@@ -493,8 +477,7 @@ DWORD CGrepAgent::DoGrep(
 	}
 	else {
 	}
-	cmemWork.SetStringT(pcmExcludeFolder->GetStringPtr());
-	cmemMessage += cmemWork;
+	cmemMessage += cGrepEnumKeys.GetTextForExcludeDirs().c_str();
 	cmemMessage.AppendString(L"\r\n");
 
 	const wchar_t*	pszWork;
