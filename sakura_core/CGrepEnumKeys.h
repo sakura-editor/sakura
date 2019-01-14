@@ -146,7 +146,7 @@ public:
 	{
 		std::vector< tstring > patterns;
 
-		const TCHAR* WILDCARD_DELIMITER = _T(";,");	//リストの区切り
+		const TCHAR* WILDCARD_DELIMITER = _T(" ;,");	//リストの区切り
 		int nWildCardLen = _tcslen(lpKeys);
 		TCHAR* pWildCard = new TCHAR[nWildCardLen + 1];
 		if (!pWildCard) {
