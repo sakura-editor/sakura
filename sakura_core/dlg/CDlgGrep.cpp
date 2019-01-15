@@ -17,6 +17,7 @@
 */
 #include "StdAfx.h"
 #include <ShellAPI.h>
+#include <shlwapi.h>
 #include "dlg/CDlgGrep.h"
 #include "CGrepAgent.h"
 #include "CGrepEnumKeys.h"
@@ -370,6 +371,61 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 						wcscat_s( szFolder, nMaxPath, szFolderItem );
 					}
 					::SetWindowText( hwnd, szFolder );
+				}
+			}
+		}
+		return TRUE;
+
+	case IDC_BUTTON_TOPFOLDER:
+		{
+			HWND hwnd = GetItemHwnd( IDC_COMBO_FOLDER );
+			const int nMaxPath = MAX_GREP_PATH;
+			TCHAR szFolder[nMaxPath];
+			TCHAR szTmpFolder[nMaxPath];
+			CNativeT gitFolder;
+			::GetWindowText( hwnd, szFolder, _countof(szFolder) );
+			std::vector<std::tstring> vPaths;
+			CGrepAgent::CreateFolders( szFolder, vPaths );
+
+			if (!vPaths.empty())
+			{
+				// 最後のパスが操作対象
+				auto_strncpy(szTmpFolder, vPaths.rbegin()->c_str(), nMaxPath);
+
+				while(1)
+				{
+					// Git フォルダのパスを作成する
+					gitFolder.Clear();
+					gitFolder.AppendStringF(_T("%s\\%s"), szTmpFolder, _T(".git"));
+
+					// 作成したパスに .git フォルダが存在するか確認する
+					if (::PathIsDirectory(gitFolder.GetStringPtr()))
+					{
+						*(vPaths.rbegin()) = szTmpFolder;
+
+						// エディットボックスに設定するデータを作る
+						CNativeT folder;
+						size_t index = 0;
+						for( auto iter = vPaths.begin(); iter != vPaths.end(); iter++, index++)
+						{
+							// 先頭以外にセミコロンを挿入する
+							if (index != 0)
+							{
+								folder += _T(";");
+							}
+							folder += (*iter).c_str();
+						}
+
+						// エディットボックスに結果を設定する
+						::SetWindowText(hwnd, folder.GetStringPtr());
+						break;
+					}
+					
+					// 親ディレクトリを取得する
+					if (!DirectoryUp(szTmpFolder))
+					{
+						break;
+					}
 				}
 			}
 		}
