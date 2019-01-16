@@ -4,11 +4,9 @@ set OUTDIR=%2
 
 if exist "%OUTDIR%" rmdir /s /q "%OUTDIR%"
 
-call %~dp0find-7z.bat
-
 @echo extracting %SRCZIP%.
-@rem CMD_7Z contains double quotes.
-if "%CMD_7Z%" == "" (
+if not defined CMD_7Z call %~dp0..\find-tools.bat
+if not defined CMD_7Z (
 	@echo -------------------------------------------------------
 	@echo ---- you can make this faster by installing 7-zip. ----
 	@echo -------------------------------------------------------

@@ -1,5 +1,5 @@
-call %~dp0tools\hhc\find-hhc.bat
-if "%CMD_HHC%" == "" (
+if not defined CMD_HHC call %~dp0tools\find-tools.bat
+if not defined CMD_HHC (
 	echo hhc.exe was not found.
 	exit /b 1
 )

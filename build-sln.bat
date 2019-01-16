@@ -19,8 +19,8 @@ if "%configuration%" == "Release" (
 	call :showhelp %0
 	exit /b 1
 )
-call %~dp0tools\msbuild\find-msbuild.bat
-if "%CMD_MSBUILD%" == "" (
+if not defined CMD_MSBUILD call %~dp0tools\find-tools.bat
+if not defined CMD_MSBUILD (
 	echo msbuild.exe was not found.
 	exit /b 1
 )

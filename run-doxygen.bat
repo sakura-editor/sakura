@@ -1,6 +1,5 @@
 call sakura\githash.bat "%~dp0sakura_core"
-call tools\hhc\find-hhc.bat
-call tools\doxygen\find-doxygen.bat
+call tools\find-tools.bat
 
 if exist html rmdir /s /q html
 
