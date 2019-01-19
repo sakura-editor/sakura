@@ -1248,6 +1248,8 @@ void CShareData::InitToolButtons(DLLSHAREDATA* pShareData)
 		228,	//置換		// Oct. 7, 2000 JEPRO 追加
 		229,	//検索マークのクリア	//Sept. 16, 2000 JEPRO 41→25に変更(Oct. 7, 2000 25→26)	//Oct. 25, 2000 25→229
 		230,	//Grep		//Sept. 16, 2000 JEPRO 14→31に変更	//Oct. 25, 2000 31→230
+		0,
+
 		232,	//アウトライン解析	//Dec. 24, 2000 JEPRO 追加
 		0,
 
