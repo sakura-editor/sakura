@@ -50,6 +50,10 @@ struct ARRHEAD {
 
 const unsigned int uShareDataVersion = N_SHAREDATA_VERSION;
 
+constexpr const TCHAR GREP_DEFAULT_EXCLUDE_FILE[] = _T("*.msi;*.exe;*.obj;*.pdb;*.ilk;*.res;*.pch;*.iobj;*.ipdb");
+
+constexpr const TCHAR GREP_DEFAULT_EXCLUDE_FOLDER[] =  _T(".git;.svn;.vs");
+
 //	CShareData_new2.cppと統合
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動
 CShareData::CShareData()
@@ -688,6 +692,10 @@ bool CShareData::InitShareData()
 			m_pShareData->m_sSearchKeywords.m_aGrepFiles.clear();
 			m_pShareData->m_sSearchKeywords.m_aGrepFiles.push_back(_T("*.*"));
 			m_pShareData->m_sSearchKeywords.m_aGrepFolders.clear();
+			m_pShareData->m_sSearchKeywords.m_aExcludeFiles.clear();
+			m_pShareData->m_sSearchKeywords.m_aExcludeFiles.push_back( GREP_DEFAULT_EXCLUDE_FILE );
+			m_pShareData->m_sSearchKeywords.m_aExcludeFolders.clear();
+			m_pShareData->m_sSearchKeywords.m_aExcludeFolders.push_back( GREP_DEFAULT_EXCLUDE_FOLDER );
 
 			// 2004/06/21 novice タグジャンプ機能追加
 			m_pShareData->m_sTagJump.m_TagJumpNum = 0;
