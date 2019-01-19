@@ -210,8 +210,6 @@ bool CNormalProcess::InitializeProcess()
 				&gi.cmGrepRep,
 				&gi.cmGrepFile,
 				&gi.cmGrepFolder,
-				&gi.cmExcludeFile,
-				&gi.cmExcludeFolder,
 				gi.bGrepCurFolder,
 				gi.bGrepSubFolder,
 				gi.bGrepStdout,

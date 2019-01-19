@@ -59,13 +59,9 @@ void CViewCommander::Command_GREP( void )
 	CNativeT		cmWork2;
 	CNativeT		cmWork3;
 	CNativeW		cmWork4;
-	CNativeT		cmWorkExcludeFile;
-	CNativeT		cmWorkExcludeFolder;
 	cmWork1.SetString( GetEditWindow()->m_cDlgGrep.m_strText.c_str() );
 	cmWork2.SetString( GetEditWindow()->m_cDlgGrep.m_szFile );
 	cmWork3.SetString( GetEditWindow()->m_cDlgGrep.m_szFolder );
-	cmWorkExcludeFile.SetString(GetEditWindow()->m_cDlgGrep.m_szExcludeFile);
-	cmWorkExcludeFolder.SetString(GetEditWindow()->m_cDlgGrep.m_szExcludeFolder);
 
 	/*	今のEditViewにGrep結果を表示する。
 		Grepモードのとき、または未編集で無題かつアウトプットでない場合。
@@ -95,8 +91,6 @@ void CViewCommander::Command_GREP( void )
 			&cmWork4,
 			&cmWork2,
 			&cmWork3,
-			&cmWorkExcludeFile,
-			&cmWorkExcludeFolder,
 			false,
 			GetEditWindow()->m_cDlgGrep.m_bSubFolder,
 			false,
@@ -166,16 +160,12 @@ void CViewCommander::Command_GREP_REPLACE( void )
 	CNativeT		cmWork2;
 	CNativeT		cmWork3;
 	CNativeW		cmWork4;
-	CNativeT		cmWorkExcludeFile;
-	CNativeT		cmWorkExcludeFolder;
 
 	CDlgGrepReplace& cDlgGrepRep = GetEditWindow()->m_cDlgGrepReplace;
 	cmWork1.SetString( cDlgGrepRep.m_strText.c_str() );
 	cmWork2.SetString( cDlgGrepRep.m_szFile );
 	cmWork3.SetString( cDlgGrepRep.m_szFolder );
 	cmWork4.SetString( cDlgGrepRep.m_strText2.c_str() );
-	cmWorkExcludeFile.SetString(cDlgGrepRep.m_szExcludeFile);
-	cmWorkExcludeFolder.SetString(cDlgGrepRep.m_szExcludeFolder);
 
 	/*	今のEditViewにGrep結果を表示する。
 		Grepモードのとき、または未編集で無題かつアウトプットでない場合。
@@ -195,8 +185,6 @@ void CViewCommander::Command_GREP_REPLACE( void )
 			&cmWork4,
 			&cmWork2,
 			&cmWork3,
-			&cmWorkExcludeFile,
-			&cmWorkExcludeFolder,
 			false,
 			cDlgGrepRep.m_bSubFolder,
 			false, // Stdout
