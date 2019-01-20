@@ -67,7 +67,6 @@ inline bool MyFillRect( const HDC hDC, const RECT &rc, const HBRUSH hBrush ) noe
 inline bool MyFillRect( const HDC hDC, const RECT &rc, const int sysColor ) noexcept
 {
 	assert( hDC );
-	assert( sysColor );
 	assert( IS_INTRESOURCE( sysColor ) );
 
 	if ( !hDC || !IS_INTRESOURCE( sysColor ) ) return false;
