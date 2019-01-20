@@ -113,16 +113,14 @@ if "%SONAR_QUBE_PROJECT%" == "" (
 	exit /b 0
 )
 
+set URL_BUILDWRAPPER_ZIP=https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip
 set BUILDWRAPPER_ZIP=.\build-wrapper-win-x86.zip
 set BUILDWRAPPER_DIR=build-wrapper-win-x86
 set BUILDWRAPPER_EXE=%BUILDWRAPPER_DIR%\build-wrapper-win-x86\build-wrapper-win-x86-64.exe
-powershell.exe              ^
-	-NoProfile              ^
-	-InputFormat None       ^
-	-ExecutionPolicy Bypass ^
-	-Command "Invoke-WebRequest https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip -OutFile %BUILDWRAPPER_ZIP%"
+
+curl %URL_BUILDWRAPPER_ZIP% -o %BUILDWRAPPER_ZIP%
 if errorlevel 1 (
-	echo ERROR in download powershell
+	echo ERROR in download from %URL_BUILDWRAPPER_ZIP%
 	exit /b 1
 )
 call tools\zip\unzip.bat %BUILDWRAPPER_ZIP% %BUILDWRAPPER_DIR%
