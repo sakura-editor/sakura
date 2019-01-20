@@ -1,7 +1,6 @@
 @echo off
 set platform=%1
 set configuration=%2
-set SonarScanner_MSBUILD=C:\ProgramData\chocolatey\bin\SonarScanner.MSBuild.exe
 
 if "%platform%" == "Win32" (
 	@rem OK
@@ -117,6 +116,7 @@ set URL_BUILDWRAPPER_ZIP=https://sonarcloud.io/static/cpp/build-wrapper-win-x86.
 set BUILDWRAPPER_ZIP=.\build-wrapper-win-x86.zip
 set BUILDWRAPPER_DIR=build-wrapper-win-x86
 set BUILDWRAPPER_EXE=%BUILDWRAPPER_DIR%\build-wrapper-win-x86\build-wrapper-win-x86-64.exe
+set SonarScanner_MSBUILD=C:\ProgramData\chocolatey\bin\SonarScanner.MSBuild.exe
 
 curl %URL_BUILDWRAPPER_ZIP% -o %BUILDWRAPPER_ZIP%
 if errorlevel 1 (
