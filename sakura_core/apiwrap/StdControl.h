@@ -58,6 +58,41 @@ namespace ApiWrap{
 #endif
 	}
 
+	/*!
+		@brief Window テキストを設定する
+		@param[in]  hwnd	ウィンドウハンドル
+		@param[in]  str		ウィンドウテキスト
+	*/
+	inline BOOL Wnd_SetText(HWND hwnd, const CNativeT& str)
+	{
+		return SetWindowText(hwnd, str.GetStringPtr());
+	}
+
+	/*!
+		@brief Window テキストを取得する
+		@param[in]  hwnd	ウィンドウハンドル
+		@param[out] str		ウィンドウテキスト
+	*/
+	inline BOOL Wnd_GetText(HWND hwnd, CNativeT& str)
+	{
+		// バッファをクリアしておく
+		str.Clear();
+
+		const int length = ::GetWindowTextLength(hwnd);
+		const int bufsize = length + 1;
+		if (str.capacity() < bufsize)
+		{
+			str.AllocStringBuffer(bufsize);
+		}
+		BOOL ret = ::GetWindowText(hwnd, str.GetStringPtr(), str.capacity());
+		if (ret)
+		{
+			str._SetStringLength(length);
+			assert(str.GetStringLength() == length);
+		}
+		return ret;
+	}
+
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      コンボボックス                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
