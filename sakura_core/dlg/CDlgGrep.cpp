@@ -399,7 +399,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 		}
 		return TRUE;
 
-	case IDC_BUTTON_TOPFOLDER:
+	case IDC_BUTTON_GITROOT_FOLDER:
 		{
 			HWND hwnd = GetItemHwnd( IDC_COMBO_FOLDER );
 			const int nMaxPath = MAX_GREP_PATH;
