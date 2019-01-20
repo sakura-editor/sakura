@@ -44,9 +44,8 @@ inline bool MyFillRect( const HDC hDC, const RECT &rc, const HBRUSH hBrush ) noe
 {
 	assert( hDC );
 	assert( hBrush );
-	assert( !IS_INTRESOURCE( hBrush ) );
 
-	if ( !hDC || IS_INTRESOURCE( hBrush ) ) return false;
+	if ( !hDC || !hBrush ) return false;
 
 	HGDIOBJ hBrushOld = ::SelectObject( hDC, hBrush );
 	if ( hBrushOld == HGDI_ERROR ) return false;
@@ -67,9 +66,8 @@ inline bool MyFillRect( const HDC hDC, const RECT &rc, const HBRUSH hBrush ) noe
 inline bool MyFillRect( const HDC hDC, const RECT &rc, const int sysColor ) noexcept
 {
 	assert( hDC );
-	assert( IS_INTRESOURCE( sysColor ) );
 
-	if ( !hDC || !IS_INTRESOURCE( sysColor ) ) return false;
+	if ( !hDC ) return false;
 
 	HBRUSH hBrush = ::GetSysColorBrush( sysColor );
 	if ( hBrush == NULL ) return false;
