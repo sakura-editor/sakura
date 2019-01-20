@@ -311,6 +311,29 @@ BOOL CDlgGrep::OnDestroy()
 	return CDialog::OnDestroy();
 }
 
+/*!
+	@brief 指定したパスの一覧をセミコロンで連結する
+	@param [out] buffer 出力先バッファ
+	@param [in]  vPaths 連結するパスのリスト
+*/
+static void JoinPaths(CNativeT& buffer, const std::vector<std::tstring>& vPaths)
+{
+	buffer.Clear();
+	if (!vPaths.empty())
+	{
+		size_t index = 0;
+		for( auto iter = vPaths.begin(); iter != vPaths.end(); iter++, index++)
+		{
+			// 先頭以外にセミコロンを挿入する
+			if (index != 0)
+			{
+				buffer += _T(";");
+			}
+			buffer += (*iter).c_str();
+		}
+	}
+}
+
 BOOL CDlgGrep::OnBnClicked( int wID )
 {
 	switch( wID ){
@@ -405,16 +428,9 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 
 						// エディットボックスに設定するデータを作る
 						CNativeT folder;
-						size_t index = 0;
-						for( auto iter = vPaths.begin(); iter != vPaths.end(); iter++, index++)
-						{
-							// 先頭以外にセミコロンを挿入する
-							if (index != 0)
-							{
-								folder += _T(";");
-							}
-							folder += (*iter).c_str();
-						}
+						
+						// vPaths をセミコロンで連結する
+						JoinPaths(folder, vPaths);
 
 						// エディットボックスに結果を設定する
 						::SetWindowText(hwnd, folder.GetStringPtr());
