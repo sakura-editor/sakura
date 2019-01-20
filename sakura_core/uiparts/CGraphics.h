@@ -48,9 +48,9 @@ inline bool MyFillRect( const HDC hDC, const RECT &rc, const HBRUSH hBrush ) noe
 	if ( !hDC || !hBrush ) return false;
 
 	HGDIOBJ hBrushOld = ::SelectObject( hDC, hBrush );
-	if ( hBrushOld == HGDI_ERROR ) return false;
+	if ( !hBrushOld || hBrushOld == HGDI_ERROR ) return false;
 
-	int retPatBlt = ::PatBlt( hDC, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, PATCOPY );
+	auto retPatBlt = ::PatBlt( hDC, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, PATCOPY );
 	::SelectObject( hDC, hBrushOld );
 
 	return retPatBlt != 0;
