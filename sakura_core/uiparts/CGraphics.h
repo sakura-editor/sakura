@@ -30,7 +30,74 @@
 */
 
 #include <Windows.h>
+#include <cassert>
 #include <vector>
+
+/*!
+ * @brief API関数FillRectの高速版(ブラシ用)
+ *
+ * @param [in] hDC デバイスコンテキスト
+ * @param [in] rc 塗りつぶし対象の矩形
+ * @param [in] hBrush 塗りつぶしに使うブラシハンドル
+ */
+inline bool MyFillRect( const HDC hDC, const RECT &rc, const HBRUSH hBrush ) noexcept
+{
+	assert( hDC );
+	assert( hBrush );
+
+	if ( !hDC || !hBrush ) return false;
+
+	HGDIOBJ hBrushOld = ::SelectObject( hDC, hBrush );
+	if ( !hBrushOld || hBrushOld == HGDI_ERROR ) return false;
+
+	auto retPatBlt = ::PatBlt( hDC, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, PATCOPY );
+	::SelectObject( hDC, hBrushOld );
+
+	return retPatBlt != 0;
+}
+
+/*!
+ * @brief API関数FillRectの高速版(カラーインデックス用)
+ *
+ * @param [in] hDC デバイスコンテキスト
+ * @param [in] rc 塗りつぶし対象の矩形
+ * @param [in] sysColor システムカラーのインデックス
+ */
+inline bool MyFillRect( const HDC hDC, const RECT &rc, const int sysColor ) noexcept
+{
+	assert( hDC );
+
+	if ( !hDC ) return false;
+
+	HBRUSH hBrush = ::GetSysColorBrush( sysColor );
+	if ( hBrush == NULL ) return false;
+
+	bool retMyFillRect = MyFillRect( hDC, rc, hBrush );
+
+	return retMyFillRect;
+}
+
+/*!
+ * @brief API関数FillRectの高速版(色指定用)
+ *
+ * @param [in] hDC デバイスコンテキスト
+ * @param [in] rc 塗りつぶし対象の矩形
+ * @param [in] color 塗りつぶし色
+ */
+inline bool MyFillRect( const HDC hDC, const RECT &rc, const COLORREF color ) noexcept
+{
+	assert( hDC );
+
+	if ( !hDC ) return false;
+
+	HBRUSH hBrush = ::CreateSolidBrush( color );
+	if ( hBrush == NULL ) return false;
+
+	bool retMyFillRect = MyFillRect( hDC, rc, hBrush );
+	::DeleteObject( hBrush );
+
+	return retMyFillRect;
+}
 
 //! オリジナル値保存クラス
 template <class T>
@@ -211,7 +278,7 @@ public:
 	//! 矩形塗り潰し
 	void FillMyRect(const RECT& rc)
 	{
-		::FillRect(m_hdc,&rc,GetCurrentBrush());
+		::MyFillRect( m_hdc, rc, GetCurrentBrush() );
 #ifdef _DEBUG
 		::SetPixel(m_hdc,-1,-1,0); //###########実験
 #endif

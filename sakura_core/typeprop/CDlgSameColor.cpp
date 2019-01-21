@@ -284,13 +284,13 @@ BOOL CDlgSameColor::OnDrawItem( WPARAM wParam, LPARAM lParam )
 	rc = pDis->rcItem;
 
 	// アイテム矩形塗りつぶし
-	::FillRect( gr, &pDis->rcItem, ::GetSysColorBrush( COLOR_WINDOW ) );
+	::MyFillRect( gr, pDis->rcItem, COLOR_WINDOW );
 
 	// アイテムが選択状態
 	if( pDis->itemState & ODS_SELECTED ){
 		rc = pDis->rcItem;
 		rc.left += (rc.bottom - rc.top);
-		::FillRect( gr, &rc, ::GetSysColorBrush( COLOR_HIGHLIGHT ) );
+		::MyFillRect( gr, rc, COLOR_HIGHLIGHT );
 	}
 
 	// アイテムにフォーカスがある
@@ -415,9 +415,7 @@ LRESULT CALLBACK CDlgSameColor::ColorStatic_SubclassProc( HWND hwnd, UINT uMsg, 
 		// 親にWM_CTLCOLORSTATICを送って背景ブラシを取得し、背景描画する
 		{
 			HBRUSH	hBrush = (HBRUSH)::SendMessageAny( GetParent( hwnd ), WM_CTLCOLORSTATIC, wParam, (LPARAM)hwnd );
-			HBRUSH	hBrushOld = (HBRUSH)::SelectObject( hDC, hBrush );
-			::FillRect( hDC, &rc, hBrush );
-			::SelectObject( hDC, hBrushOld );
+			::MyFillRect( hDC, rc, hBrush );
 		}
 		return (LRESULT)1;
 

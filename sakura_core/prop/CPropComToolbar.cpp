@@ -18,8 +18,9 @@
 
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
-#include "uiparts/CMenuDrawer.h" // 2002/2/10 aroka
+#include "uiparts/CGraphics.h"
 #include "uiparts/CImageListMgr.h" // 2005/8/9 aroka
+#include "uiparts/CMenuDrawer.h" // 2002/2/10 aroka
 #include "util/shell.h"
 #include "util/window.h"
 #include "sakura_rc.h"
@@ -553,98 +554,93 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 	const int cxSmIcon = ::GetSystemMetrics(SM_CXSMICON);
 	const int cySmIcon = ::GetSystemMetrics(SM_CYSMICON);
 
-	TBBUTTON	tbb;
-	HBRUSH		hBrush;
-	RECT		rc;
-	RECT		rc0;
-	RECT		rc1;
-	RECT		rc2;
+	RECT rcItem = pDis->rcItem;
+	RECT rcText = rcItem;
+	rcText.left += GetSystemMetrics( SM_CXSMICON ) + DpiScaleX( 2 );
+	RECT rcFrame = rcText;
 
-//	hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_WINDOW ) );
-	hBrush = ::GetSysColorBrush( COLOR_WINDOW );
-	::FillRect( pDis->hDC, &pDis->rcItem, hBrush );
-//	::DeleteObject( hBrush );
+	// アイテム背景をウインドウ背景色で塗りつぶす
+	::MyFillRect( pDis->hDC, rcItem, COLOR_WINDOW );
 
-	rc  = pDis->rcItem;
-	rc0 = pDis->rcItem;
-	rc0.left += GetSystemMetrics(SM_CXSMICON) + DpiScaleX(2);
-	rc1 = rc0;
-	rc2 = rc0;
+	// 背景色と前景色
+	int bkColor;
+	int textColor;
 
-	if( (int)pDis->itemID < 0 ){
+	/* アイテムが選択されている */
+	if( pDis->itemState & ODS_SELECTED ){
+		bkColor = COLOR_HIGHLIGHT;
+		textColor = COLOR_HIGHLIGHTTEXT;
 	}else{
-
-//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-//		tbb = m_cShareData.m_tbMyButton[pDis->itemData];
-//		tbb = m_pcMenuDrawer->m_tbMyButton[pDis->itemData];
-		tbb = m_pcMenuDrawer->getButton(pDis->itemData);
-
-		// ボタンとセパレータとで処理を分ける	2007.11.02 ryoji
-		WCHAR	szLabel[256];
-		if( tbb.fsStyle & TBSTYLE_SEP ){
-			// テキストだけ表示する
-			if( tbb.idCommand == F_SEPARATOR ){
-				auto_strncpy( szLabel, LSW(STR_PROPCOMTOOL_ITEM1), _countof(szLabel) - 1 );	// nLength 未使用 2003/01/09 Moca
-				szLabel[_countof(szLabel) - 1] = L'\0';
-			}else if( tbb.idCommand == F_MENU_NOT_USED_FIRST ){
-				// ツールバー折返
-				auto_strncpy( szLabel, LSW(STR_PROPCOMTOOL_ITEM2), _countof(szLabel) - 1 );
-				szLabel[_countof(szLabel) - 1] = L'\0';
-			}else{
-				auto_strncpy( szLabel, LSW(STR_PROPCOMTOOL_ITEM3), _countof(szLabel) - 1 );
-				szLabel[_countof(szLabel) - 1] = L'\0';
-			}
-		//	From Here Oct. 15, 2001 genta
-		}else{
-			// アイコンとテキストを表示する
-			m_pcIcons->DrawToolIcon(
-				pDis->hDC,
-				rc.left + cxEdge,
-				rc.top + cyEdge + (rc.bottom - rc.top - cySmIcon) / 2,
-				tbb.iBitmap,
-				ILD_NORMAL,
-				cxSmIcon,
-				cySmIcon
-			);
-			m_cLookup.Funccode2Name( tbb.idCommand, szLabel, _countof( szLabel ) );
-		}
-		//	To Here Oct. 15, 2001 genta
-
-		/* アイテムが選択されている */
-		if( pDis->itemState & ODS_SELECTED ){
-//			hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_HIGHLIGHT ) );
-			hBrush = ::GetSysColorBrush( COLOR_HIGHLIGHT );
-			::SetTextColor( pDis->hDC, ::GetSysColor( COLOR_HIGHLIGHTTEXT ) );
-		}else{
-//			hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_WINDOW ) );
-			hBrush = ::GetSysColorBrush( COLOR_WINDOW );
-			::SetTextColor( pDis->hDC, ::GetSysColor( COLOR_WINDOWTEXT ) );
-		}
-
-		::InflateRect( &rc1, -cxBorder, -cyBorder );
-		::FillRect( pDis->hDC, &rc1, hBrush );
-//		::DeleteObject( hBrush );
-
-		::SetBkMode( pDis->hDC, TRANSPARENT );
-
-		// 微調整 インデントと上余白
-		rc1.left += cxFrame;
-		rc1.top += cyBorder;
-
-		// 指定された矩形に左寄せ上下中央揃えで出力する
-		::DrawText(
-			pDis->hDC,
-			szLabel,
-			-1,
-			&rc1,
-			DT_LEFT | DT_VCENTER | DT_SINGLELINE
-		);
+		bkColor = COLOR_WINDOW;
+		textColor = COLOR_WINDOWTEXT;
 	}
+
+	// デバイスコンテキストのオプションを設定する
+	int bkModeOld = ::SetBkMode( pDis->hDC, TRANSPARENT );
+	COLORREF bkColorOld = ::SetBkColor( pDis->hDC, ::GetSysColor( bkColor ) );
+	COLORREF textColorOld = ::SetTextColor( pDis->hDC, ::GetSysColor( textColor ) );
+
+	// itemDataに紐づくボタン情報を取得する
+	TBBUTTON tbb = m_pcMenuDrawer->getButton(pDis->itemData);
+
+	// ボタンとセパレータとで処理を分ける	2007.11.02 ryoji
+	WCHAR	szLabel[256];
+	if( tbb.fsStyle & TBSTYLE_SEP ){
+		// テキストだけ表示する
+		if( tbb.idCommand == F_SEPARATOR ){
+			auto_strncpy( szLabel, LSW(STR_PROPCOMTOOL_ITEM1), _countof(szLabel) - 1 );	// nLength 未使用 2003/01/09 Moca
+			szLabel[_countof(szLabel) - 1] = L'\0';
+		}else if( tbb.idCommand == F_MENU_NOT_USED_FIRST ){
+			// ツールバー折返
+			auto_strncpy( szLabel, LSW(STR_PROPCOMTOOL_ITEM2), _countof(szLabel) - 1 );
+			szLabel[_countof(szLabel) - 1] = L'\0';
+		}else{
+			auto_strncpy( szLabel, LSW(STR_PROPCOMTOOL_ITEM3), _countof(szLabel) - 1 );
+			szLabel[_countof(szLabel) - 1] = L'\0';
+		}
+	}else{
+		// アイコンとテキストを表示する
+		m_pcIcons->DrawToolIcon(
+			pDis->hDC,
+			rcItem.left + cxEdge,
+			rcItem.top + cyEdge + (rcItem.bottom - rcItem.top - cySmIcon) / 2,
+			tbb.iBitmap,
+			ILD_NORMAL,
+			cxSmIcon,
+			cySmIcon
+		);
+		m_cLookup.Funccode2Name( tbb.idCommand, szLabel, _countof( szLabel ) );
+	}
+
+	// 微調整 フォーカス枠の分へこませる
+	::InflateRect( &rcText, -cxBorder, -cyBorder );
+
+	// 選択アイテムの背景を描画
+	::ExtTextOut( pDis->hDC, 0, 0, ETO_OPAQUE, &rcText, (LPCTSTR) NULL, 0, NULL );
+
+	// 微調整 インデントと上余白
+	rcText.left += cxFrame;
+	rcText.top += cyBorder;
+
+	// 指定された矩形に左寄せ上下中央揃えで出力する
+	::DrawText(
+		pDis->hDC,
+		szLabel,
+		-1,
+		&rcText,
+		DT_LEFT | DT_VCENTER | DT_SINGLELINE
+	);
+
+	// デバイスコンテキストのオプションを元に戻す
+	::SetTextColor( pDis->hDC, textColorOld );
+	::SetBkColor( pDis->hDC, bkColorOld );
+	::SetBkMode( pDis->hDC, bkModeOld );
 
 	/* アイテムにフォーカスがある */
 	if( pDis->itemState & ODS_FOCUS ){
-		::DrawFocusRect( pDis->hDC, &rc2 );
+		::DrawFocusRect( pDis->hDC, &rcFrame );
 	}
+
 	return;
 }
 

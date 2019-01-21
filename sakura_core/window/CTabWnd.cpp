@@ -1266,7 +1266,7 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 
 		// 状態に従ってテキストと背景色を決める
 		COLORREF clrText;
-		INT_PTR nSysClrBk;
+		int nSysClrBk;
 		if (lpdis->itemState & ODS_SELECTED)
 		{
 			clrText = ::GetSysColor( COLOR_HIGHLIGHTTEXT );
@@ -1279,7 +1279,7 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 		}
 
 		// 背景描画
-		::FillRect( gr, &rcItem, (HBRUSH)(nSysClrBk + 1) );
+		::MyFillRect( gr, rcItem, nSysClrBk );
 
 		// アイコン描画
 		int cxIcon = CX_SMICON;
@@ -1341,7 +1341,7 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 
 		// 背景描画
 		if( !IsVisualStyle() ) {
-			::FillRect( gr, &rcItem, (HBRUSH)(COLOR_BTNFACE + 1) );
+			::MyFillRect( gr, rcItem, COLOR_BTNFACE );
 		}else{
 			CUxTheme& uxTheme = *CUxTheme::getInstance();
 			int iPartId = TABP_TABITEM;
@@ -1587,7 +1587,7 @@ LRESULT CTabWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 
 	// 背景を描画する
 	::GetClientRect( hwnd, &rc );
-	::FillRect( gr, &rc, (HBRUSH)(COLOR_3DFACE + 1) );
+	::MyFillRect( gr, rc, COLOR_3DFACE );
 
 	// ボタンを描画する
 	DrawListBtn( gr, &rc );
@@ -1634,9 +1634,7 @@ LRESULT CTabWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 
 			if( rcCurSel.left < rcCurSel.right )
 			{
-				HBRUSH hBr = ::CreateSolidBrush( RGB( 255, 128, 0 ) );
-				::FillRect( gr, &rcCurSel, hBr );
-				::DeleteObject( hBr );
+				::MyFillRect( gr, rcCurSel, RGB( 255, 128, 0 ) );
 			}
 		}
 	}

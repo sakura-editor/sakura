@@ -25,6 +25,7 @@
 #include "window/CSplitBoxWnd.h"
 #include "CImageListMgr.h"
 #include "func/CKeyBind.h"
+#include "uiparts/CGraphics.h"
 #include "util/window.h"
 
 // メニューアイコンの背景をボタンの色にする
@@ -979,8 +980,6 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	const int cxSmIcon = ::GetSystemMetrics(SM_CXSMICON);
 	const int cySmIcon = ::GetSystemMetrics(SM_CYSMICON);
 
-	HBRUSH		hBrush;
-
 	CMyRect rcItem( lpdis->rcItem );
 
 	const bool bMenuIconDraw = !!m_pShareData->m_Common.m_sWindow.m_bMenuIcon;
@@ -1040,7 +1039,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		BYTE valR = ((GetRValue(colHilight) * 4 + GetRValue(colMenu) * 6) / 10) | 0x18;
 		BYTE valG = ((GetGValue(colHilight) * 4 + GetGValue(colMenu) * 6) / 10) | 0x18;
 		BYTE valB = ((GetBValue(colHilight) * 4 + GetBValue(colMenu) * 6) / 10) | 0x18;
-		hBrush = ::CreateSolidBrush( RGB(valR, valG, valB) );
+		HBRUSH hBrush = ::CreateSolidBrush( RGB(valR, valG, valB) );
 		HBRUSH hOldBrush = (HBRUSH)::SelectObject( hdc, hBrush );
 		::Rectangle( hdc, rc1.left, rc1.top, rc1.right, rc1.bottom );
 		::SelectObject( hdc, hOldPen );
@@ -1048,17 +1047,15 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		::DeleteObject( hPenBorder );
 		::DeleteObject( hBrush );
 #else
-		hBrush = ::GetSysColorBrush( COLOR_HIGHLIGHT );
 		/* 選択ハイライト矩形 */
-		::FillRect( hdc, &rc1, hBrush );
+		::MyFillRect( hdc, rc1, COLOR_HIGHLIGHT );
 #endif
 #ifdef DRAW_MENU_ICON_BACKGROUND_3DFACE
 	}else if( bMenuIconDraw ){
 		// アイコン部分の背景を灰色にする
-		hBrush = ::GetSysColorBrush( COLOR_MENU );
 		CMyRect rcFillMenuBack( rcItem );
 		rcFillMenuBack.left += nIndentLeft;
-		::FillRect( hdc, &rcFillMenuBack, hBrush );
+		::MyFillRect( hdc, rcFillMenuBack, COLOR_MENU );
 
 //		hBrush = ::GetSysColorBrush( COLOR_3DFACE );
 		COLORREF colMenu   = ::GetSysColor( COLOR_MENU );
@@ -1075,22 +1072,18 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			BYTE valB = ((GetBValue(colFace) * 7 + GetBValue(colMenu) * 3) / 10);
 			colIconBack = RGB(valR, valG, valB);
 		}
-		HBRUSH hbr = ::CreateSolidBrush( colIconBack );
 		
 		CMyRect rcIconBk( rcItem );
 		rcIconBk.right = rcItem.left + nIndentLeft;
-		::FillRect( hdc, &rcIconBk, hbr );
-		::DeleteObject( hbr );
+		::MyFillRect( hdc, rcIconBk, colIconBack );
 
 	}else{
 		// アイテム矩形塗りつぶし
-		hBrush = ::GetSysColorBrush( COLOR_MENU );
-		::FillRect( hdc, &lpdis->rcItem, hBrush );
+		::MyFillRect( hdc, lpdis->rcItem, COLOR_MENU );
 	}
 #else
 	}else{
-		hBrush = ::GetSysColorBrush( COLOR_MENU );
-		::FillRect( hdc, &lpdis->rcItem, hBrush );
+		::MyFillRect( hdc, lpdis->rcItem, COLOR_MENU );
 	}
 #endif
 
@@ -1212,8 +1205,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			// フラットな枠 + 半透明の背景色
 			CMyRect rcFrame( rcIcon );
 			::InflateRect( &rcFrame, cxEdge * 2, cyEdge * 2 );
-			HBRUSH hBrush = ::GetSysColorBrush( COLOR_HIGHLIGHT );
-			::FillRect( hdc, &rcFrame, hBrush );
+			::MyFillRect( hdc, rcFrame, COLOR_HIGHLIGHT );
 
 			COLORREF colHilight = ::GetSysColor( COLOR_HIGHLIGHT );
 			COLORREF colMenu = ::GetSysColor( COLOR_MENU );
@@ -1232,9 +1224,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			}
 			CMyRect rcBkFrame( rcIcon );
 			::InflateRect( &rcBkFrame, cxEdge , cyEdge );
-			HBRUSH hbr = ::CreateSolidBrush( RGB(valR, valG, valB) );
-			::FillRect( hdc, &rcBkFrame, hbr );
-			::DeleteObject( hbr );
+			::MyFillRect( hdc, rcBkFrame, RGB( valR, valG, valB ) );
 		}
 	}
 

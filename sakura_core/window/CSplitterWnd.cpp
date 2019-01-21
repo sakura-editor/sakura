@@ -21,6 +21,7 @@
 #include "view/CEditView.h"
 #include "outline/CDlgFuncList.h"
 #include "env/DLLSHAREDATA.h"
+#include "uiparts/CGraphics.h"
 
 constexpr auto SPLITTER_FRAME_WIDTH = 3;
 constexpr auto SPLITTER_MARGIN = 2;
@@ -782,19 +783,16 @@ LRESULT CSplitterWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	RECT		rc;
 	RECT		rcFrame;
 	const int	nFrameWidth = DpiScaleX(SPLITTER_FRAME_WIDTH);
-	HBRUSH		hBrush;
 	hdc = ::BeginPaint( hwnd, &ps );
 	::GetClientRect( GetHwnd(), &rc );
-	hBrush = ::CreateSolidBrush( ::GetSysColor( COLOR_3DFACE ) );
 	if( m_nAllSplitRows > 1 ){
 		::SetRect( &rcFrame, rc.left, m_nVSplitPos, rc.right, m_nVSplitPos + nFrameWidth );
-		::FillRect( hdc, &rcFrame, hBrush );
+		::MyFillRect( hdc, rcFrame, COLOR_3DFACE );
 	}
 	if( m_nAllSplitCols > 1 ){
 		::SetRect( &rcFrame, m_nHSplitPos, rc.top, m_nHSplitPos + nFrameWidth, rc.bottom );
-		::FillRect( hdc, &rcFrame, hBrush );
+		::MyFillRect( hdc, rcFrame, COLOR_3DFACE );
 	}
-	::DeleteObject( hBrush );
 	::EndPaint(hwnd, &ps);
 	return 0L;
 }
