@@ -5,5 +5,5 @@
 //! 空っぽにする
 void CNative::Clear()
 {
-	this->SetRawData("",0);
+	this->_GetMemory()->_SetRawLength(0);
 }
