@@ -26,29 +26,67 @@
 #include "mem/CNativeW.h"
 #include "mem/CNativeA.h"
 
+/*!
+	CNativeW::Clear のデータサイズのクリアをテストする
+
+	1-1. 固定データを追加する
+	1-2. バッファの状態を取得する
+	1-3. バッファの状態をチェックする
+
+	2-1. CNativeW をクリアする
+	2-2. クリア後のバッファの状態を取得する
+	2-3. クリア後のバッファの状態をチェックする
+
+	3-1. 固定データを再追加する
+	3-2. バッファの状態を取得する
+	3-3. バッファの状態をチェックする
+*/
 TEST(CNativeW, Clear)
 {
-	CNativeW stringW;
-	stringW.AppendString(L"abc");
+	constexpr const WCHAR*	fixedPatternStr = L"abc";
+	constexpr const int		fixedPatternLen = 3;
 	
-	/* Clear() 前にバッファサイズを取得する */
-	auto orgCapacity = stringW.capacity();
+	CNativeW stringW;
 
-	/* Clear() 前にデータサイズを取得する */
-	auto orgLength   = stringW.GetStringLength();
-	EXPECT_EQ(orgLength, 3);
+	// 1-1. 固定データを追加する
 
-	stringW.Clear();
+	stringW.AppendString(fixedPatternStr);			// 固定データを追加する
 
-	/* Clear() 後にバッファサイズを取得する */
-	auto newCapacity = stringW.capacity();
+	// 1-2. バッファの状態を取得する
+	
+	auto orgCapacity = stringW.capacity();			// データ追加後にバッファサイズを取得する
+	auto orgLength   = stringW.GetStringLength();	// Clear() 前にデータサイズを取得する
 
-	/* Clear() 後にデータサイズを取得する */
-	auto newLength   = stringW.GetStringLength();
+	// 1-3. バッファの状態をチェックする
 
-	/* Clear() 後にバッファサイズが変わっていないのを確認する */
-	EXPECT_EQ(orgCapacity, newCapacity);
+	EXPECT_GT(orgCapacity, 0);						// データ追加後のバッファサイズを確認する
+	EXPECT_EQ(orgLength, fixedPatternLen);			// データ追加後のデータサイズを確認する
 
-	/* Clear() 後にデータが空なのを確認する */
-	EXPECT_EQ(newLength, 0);
+	// 2-1. CNativeW をクリアする
+	
+	stringW.Clear();								// CNativeW をクリアする
+
+	// 2-2. クリア後のバッファの状態を取得する
+
+	auto newCapacity = stringW.capacity();			// Clear() 後にバッファサイズを取得する
+	auto newLength   = stringW.GetStringLength();	// Clear() 後にデータサイズを取得する
+
+	// 2-3. クリア後のバッファの状態をチェックする
+	
+	EXPECT_EQ(orgCapacity, newCapacity);			// Clear() 後にバッファサイズが変わっていないのを確認する
+	EXPECT_EQ(newLength, 0);						// Clear() 後にデータが空なのを確認する
+
+	// 3-1. 固定データを再追加する
+
+	stringW.AppendString(fixedPatternStr);			// Clear() 後に固定データを再追加する
+
+	// 3-2. バッファの状態を取得する
+	
+	auto newCapacity2 = stringW.capacity();			// 再追加後にバッファサイズを取得する
+	auto newLength2   = stringW.GetStringLength();	// 再追加後にデータサイズを取得する
+
+	// 3-3. バッファの状態をチェックする
+	
+	EXPECT_EQ(orgCapacity, newCapacity2);			// 再追加後にバッファサイズが変わっていないのを確認する
+	EXPECT_EQ(newLength2, fixedPatternLen);			// 再追加後にデータサイズを確認する
 }
