@@ -58,6 +58,7 @@
 
 #else
 	// -- -- 通常のintで単位型を定義
+	#include "primitive.h"
 
 	//ロジック単位
 	typedef int CLogicInt;
