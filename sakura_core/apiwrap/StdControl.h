@@ -80,14 +80,21 @@ namespace ApiWrap{
 
 		const int length = ::GetWindowTextLength(hwnd);
 		const int bufsize = length + 1;
+		
+		// ウィンドウタイトルを設定するのに必要なバッファを確保する
 		if (str.capacity() < bufsize)
 		{
 			str.AllocStringBuffer(bufsize);
 		}
+
 		BOOL ret = ::GetWindowText(hwnd, str.GetStringPtr(), str.capacity());
 		if (ret)
 		{
+			// Win32 API の GetWindowText() を呼んだだけでは CNativeT 内部の
+			// データサイズが更新されないのでデータサイズを反映する
 			str._SetStringLength(length);
+
+			// 正しく設定されているはず
 			assert(str.GetStringLength() == length);
 		}
 		return ret;
