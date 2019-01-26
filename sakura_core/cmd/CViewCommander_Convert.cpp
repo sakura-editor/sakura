@@ -227,7 +227,7 @@ void CViewCommander::Command_BASE64DECODE( void )
 	if( !bret ){
 		return;
 	}
-	ctextBuf.Clear();
+	ctextBuf.shrink_to_empty();
 
 	/* 保存ダイアログ モーダルダイアログの表示 */
 	TCHAR		szPath[_MAX_PATH] = _T("");
@@ -276,7 +276,7 @@ void CViewCommander::Command_UUDECODE( void )
 		return;
 	}
 	decoder.CopyFilename( szPath );
-	ctextBuf.Clear();
+	ctextBuf.shrink_to_empty();
 
 	/* 保存ダイアログ モーダルダイアログの表示 */
 	if( !GetDocument()->m_cDocFileOperation.SaveFileDialog( szPath ) ){

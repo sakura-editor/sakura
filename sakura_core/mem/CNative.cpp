@@ -2,8 +2,10 @@
 #include "StdAfx.h"
 #include "CNative.h"
 
-//! 空っぽにする
-void CNative::Clear()
+/*
+	バッファサイズを縮小して空にする。
+*/
+void CNative::shrink_to_empty()
 {
 	this->SetRawData("",0);
 }

@@ -728,7 +728,7 @@ BOOL CViewCommander::Command_PUTFILE(
 				pcUtf16->GetBom(cmemBom._GetMemory());
 				cMem2.AppendNativeData(cmemBom);
 				cMem2.AppendNativeData(cMem);
-				cMem.Clear();
+				cMem.shrink_to_empty();
 				pConvBuffer = &cMem2;
 			}else{
 				pConvBuffer = &cMem;

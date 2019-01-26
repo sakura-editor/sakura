@@ -35,8 +35,14 @@ public:
 	const CMemory* _GetMemory() const{ return static_cast<const CMemory*>(this); }
 
 public:
-	//汎用
-	void Clear(); //!< 空っぽにする
+	/*!
+		バッファサイズを縮小して空にする。
+	
+		1. std::basic_string::shrink_to_fit() と同様にメモリサイズを縮小させる。
+		   (メモリサイズを縮小する際にメモリの再確保が行われる。)
+		2. それに加えてデータを空にする。
+	*/
+	void shrink_to_empty();
 };
 
 #include "mem/CNativeA.h"

@@ -65,7 +65,7 @@ void CViewCommander::Command_CUT( void )
 		ErrorBeep();
 		return;
 	}
-	cmemBuf.Clear();
+	cmemBuf.shrink_to_empty();
 
 	/* カーソル位置または選択エリアを削除 */
 	m_pCommanderView->DeleteData( true );
@@ -116,7 +116,7 @@ void CViewCommander::Command_COPY(
 			return;
 		}
 	}
-	cmemBuf.Clear();
+	cmemBuf.shrink_to_empty();
 
 	/* 選択範囲の後片付け */
 	if( !bIgnoreLockAndDisable ){

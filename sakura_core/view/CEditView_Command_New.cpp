@@ -160,7 +160,7 @@ void CEditView::InsertData_CEditView(
 				bHintNext = true;
 			}
 			StringToOpeLineData( cMem.GetStringPtr(), cMem.GetStringLength(), insData, opeSeq );
-			cMem.Clear();
+			cMem.shrink_to_empty();
 			nColumnFrom = LineIndexToColumn( pcLayout, nIdxFrom );
 		}
 		else{
@@ -181,7 +181,7 @@ void CEditView::InsertData_CEditView(
 			}
 			cMem.AppendString( pData, nDataLen );
 			StringToOpeLineData( cMem.GetStringPtr(), cMem.GetStringLength(), insData, opeSeq );
-			cMem.Clear();
+			cMem.shrink_to_empty();
 		}else{
 			StringToOpeLineData( pData, nDataLen, insData, opeSeq );
 		}
