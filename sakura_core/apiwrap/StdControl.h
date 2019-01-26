@@ -72,13 +72,19 @@ namespace ApiWrap{
 		@brief Window テキストを取得する
 		@param[in]  hwnd	ウィンドウハンドル
 		@param[out] str		ウィンドウテキスト
+		@return		文字数 (NULL文字含む)
 	*/
-	inline BOOL Wnd_GetText(HWND hwnd, CNativeT& str)
+	inline int Wnd_GetText(HWND hwnd, CNativeT& str)
 	{
 		// バッファをクリアしておく
 		str.Clear();
 
+		// GetWindowTextLength() はウィンドウテキスト取得に必要なバッファサイズを返す。
+		// 条件によっては必要なサイズより大きな値を返すことがある模様
+		// https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getwindowtextlengtha
 		const int length = ::GetWindowTextLength(hwnd);
+
+		// ドキュメントには NULL 文字に関して言及がないので念の為 +1 しておく
 		const int bufsize = length + 1;
 		
 		// ウィンドウタイトルを設定するのに必要なバッファを確保する
@@ -87,17 +93,19 @@ namespace ApiWrap{
 			str.AllocStringBuffer(bufsize);
 		}
 
-		BOOL ret = ::GetWindowText(hwnd, str.GetStringPtr(), str.capacity());
-		if (ret)
+		int actualCount = ::GetWindowText(hwnd, str.GetStringPtr(), str.capacity());
+		if (actualCount > 0)
 		{
+			assert(actualCount <= bufsize);
+
 			// Win32 API の GetWindowText() を呼んだだけでは CNativeT 内部の
 			// データサイズが更新されないのでデータサイズを反映する
-			str._SetStringLength(length);
+			str._SetStringLength(actualCount);
 
 			// 正しく設定されているはず
-			assert(str.GetStringLength() == length);
+			assert(str.GetStringLength() == actualCount);
 		}
-		return ret;
+		return actualCount;
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
