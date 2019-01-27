@@ -1417,7 +1417,8 @@ inline static bool IsLetDig(
 	_In_ const wchar_t ch
 ) noexcept
 {
-	return ch <= 0xFF && ::isalnum( ch );
+	// コードポイントがASCII範囲、かつ、isalnumがtrueを返す場合にtrue.
+	return ch <= 0x7F && ::isalnum( ch );
 }
 
 /*
