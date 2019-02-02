@@ -29,6 +29,8 @@
 /*!
 	CNativeW::Clear のデータサイズのクリアをテストする
 
+	0. バッファが空の状態でクリアする
+
 	1-1. 固定データを追加する
 	1-2. バッファの状態を取得する
 	1-3. バッファの状態をチェックする
@@ -47,6 +49,9 @@ TEST(CNativeW, Clear)
 	constexpr const int		fixedPatternLen = 3;
 	
 	CNativeW stringW;
+	
+	// 0. バッファが空の状態でクリアする
+	stringW.Clear();
 
 	// 1-1. 固定データを追加する
 
