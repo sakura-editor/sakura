@@ -31,6 +31,8 @@
 #ifndef SAKURA_CSTRICTINTEGER_6F202774_0F82_4BB7_B107_37DE5443309E_H_
 #define SAKURA_CSTRICTINTEGER_6F202774_0F82_4BB7_B107_37DE5443309E_H_
 
+#include "primitive.h" // for Int
+
 //int以外の整数型もintにキャストして扱う
 #define STRICTINT_OTHER_TYPE_AS_INT(TYPE) \
 	Me& operator += (TYPE rhs)			{ return operator += ((int)rhs); } \
