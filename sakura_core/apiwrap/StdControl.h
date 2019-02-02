@@ -37,6 +37,9 @@ UNICODE版では問題無いが、ANSI版では設定の前にコード変換す
 そういった意味でも、このファイル内のラップ関数を使うことを推奨する。
 */
 
+#include <windows.h>
+#include <Commctrl.h>
+#include "mem/CNativeW.h"
 #include "../util/tchar_convert.h"
 #include <vector>
 
