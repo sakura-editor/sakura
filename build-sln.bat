@@ -19,6 +19,21 @@ if "%configuration%" == "Release" (
 	call :showhelp %0
 	exit /b 1
 )
+
+@rem find a NuGet CLI.
+if not defined CMD_NUGET (
+	where nuget > NUL
+	if errorlevel 1 (
+		set CMD_NUGET=%~dp0externals\nuget\nuget.exe
+	) else (
+		set CMD_NUGET=nuget.exe
+	)
+)
+
+@rem restore NuGet packages.
+@echo "%CMD_NUGET%" restore -PackagesDirectory packages %~dp0tests\unittests\packages.config
+      "%CMD_NUGET%" restore -PackagesDirectory packages %~dp0tests\unittests\packages.config
+
 if not defined CMD_MSBUILD call %~dp0tools\find-tools.bat
 if not defined CMD_MSBUILD (
 	echo msbuild.exe was not found.
