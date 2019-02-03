@@ -1,4 +1,3 @@
-@echo off
 set SRCZIP=%1
 set OUTDIR=%2
 
@@ -14,4 +13,3 @@ if not defined CMD_7Z (
 ) else (
 	"%CMD_7Z%" x "%SRCZIP%"  -O"%OUTDIR%"
 )
-@echo on

@@ -1,4 +1,3 @@
-@echo off
 set OUTHASHFILE=%1
 set SRCDIR=%2
 
@@ -24,7 +23,6 @@ if errorlevel 1 (
 ) else (
 	python calc-hash.py %OUTHASHFILE% %SRCDIR%
 )
-@echo on
 exit /b 0
 
 @rem ------------------------------------------------------------------------------

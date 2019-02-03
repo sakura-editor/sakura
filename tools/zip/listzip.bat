@@ -1,4 +1,3 @@
-@echo off
 set SRCZIP=%1
 
 
@@ -13,4 +12,3 @@ if not defined CMD_7Z (
 ) else (
 	"%CMD_7Z%" l "%SRCZIP%"
 )
-@echo on

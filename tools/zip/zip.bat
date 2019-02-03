@@ -1,4 +1,3 @@
-@echo off
 set DSTZIP=%1
 set SRCDIR=%2
 
@@ -14,4 +13,3 @@ if not defined CMD_7Z (
 ) else (
 	"%CMD_7Z%" a "%DSTZIP%"  -r "%SRCDIR%"
 )
-@echo on
