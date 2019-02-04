@@ -33,12 +33,12 @@ for /F "usebackq delims=" %%L in (`FINDSTR /B "^"`) do (
 		) else if "%%A" == "OK" (
 			if not "!testName!,!fileName!" == "," (
 				rem `start` does not wait for `%AppVeyor%` to return, so the main loop goes immediately.
-				start "" "%AppVeyor%" AddTest !testName! -Framework xUnit -FileName !fileName! -Outcome Passed -Duration %%C -StdOut "!testMsg!"
+				if defined AppVeyor start "" "%AppVeyor%" AddTest !testName! -Framework xUnit -FileName !fileName! -Outcome Passed -Duration %%C -StdOut "!testMsg!"
 			)
 		) else if "%%A" == "FAILED" (
 			if not "!testName!,!fileName!" == "," (
 				rem `start` does not wait for `%AppVeyor%` to return, so the main loop goes immediately.
-				start "" "%AppVeyor%" AddTest !testName! -Framework xUnit -FileName !fileName! -Outcome Failed -Duration %%C -ErrorMessage "!testMsg!"
+				if defined AppVeyor start "" "%AppVeyor%" AddTest !testName! -Framework xUnit -FileName !fileName! -Outcome Failed -Duration %%C -ErrorMessage "!testMsg!"
 			)
 		) else if "%%A" == "PASSED" (
 			rem
