@@ -22,7 +22,6 @@ set testMsg=
 for /F "usebackq delims=" %%L in (`FINDSTR /B "^"`) do (
 	echo %%L
 
-	if not "%AppVeyor%" == "" (
 		for /F "tokens=1,2,3,5 delims=[]() " %%A in ("%%L") do (
 			if "%%A" == "----------" (
 				if not "%%D" == "" (
@@ -49,5 +48,4 @@ for /F "usebackq delims=" %%L in (`FINDSTR /B "^"`) do (
 				set testMsg=!testMsg!%%L!NL!
 			)
 		)
-	)
 )
