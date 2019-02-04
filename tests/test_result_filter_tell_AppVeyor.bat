@@ -15,6 +15,10 @@ if errorlevel 1 (
 	set AppVeyor=
 )
 
+::: Test result
+set PASSED=
+set FAILED=
+
 set fileName=
 set testName=
 set testMsg=
@@ -40,8 +44,9 @@ for /F "usebackq delims=" %%L in (`FINDSTR /B "^"`) do (
 				rem `start` does not wait for `%AppVeyor%` to return, so the main loop goes immediately.
 				if defined AppVeyor start "" "%AppVeyor%" AddTest !testName! -Framework xUnit -FileName !fileName! -Outcome Failed -Duration %%C -ErrorMessage "!testMsg!"
 			)
+			set FAILED=FAILED
 		) else if "%%A" == "PASSED" (
-			rem
+			set PASSED=PASSED
 		) else if "%%A" == "==========" (
 			rem
 		) else (
@@ -49,3 +54,7 @@ for /F "usebackq delims=" %%L in (`FINDSTR /B "^"`) do (
 		)
 	)
 )
+
+if     defined FAILED exit /b 1
+if not defined PASSED exit /b 1
+exit /b 0
