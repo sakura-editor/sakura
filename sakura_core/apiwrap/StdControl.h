@@ -118,11 +118,7 @@ namespace ApiWrap{
 				return false;
 			}
 		}
-		else if(actualCount < str.capacity())
-		{
-			assert(actualCount <= bufsize);
-		}
-		else
+		else if(actualCount >= str.capacity())
 		{
 			// 仕様上はありえないはず
 			return false;
