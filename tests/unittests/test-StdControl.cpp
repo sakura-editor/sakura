@@ -30,5 +30,5 @@
 TEST(StdControl, Wnd_GetText)
 {
 	CNativeT tempText;
-	EXPECT_EQ(Wnd_GetText(NULL, tempText), false);
+	ASSERT_FALSE(Wnd_GetText(NULL, tempText));
 }
