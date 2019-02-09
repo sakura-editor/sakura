@@ -175,6 +175,13 @@ if exist "%WORKDIR_ASM%" (
 	rmdir /s /q "%WORKDIR_ASM%"
 )
 
+call %ZIP_CMD% %~dp0\%OUTFILE_EXE% %~dp0\%platform%\%configuration%\ %~dp0\artifactsList_exe.txt
+call %ZIP_CMD% %~dp0\%OUTFILE_LOG% %~dp0\ %~dp0\artifactsList_log.txt
+call %ZIP_CMD% %~dp0\%OUTFILE_ASM% %~dp0\sakura\%platform%\%configuration%\*.asm
+exit /b 0
+
+
+
 mkdir %WORKDIR%
 mkdir %WORKDIR_LOG%
 mkdir %WORKDIR_EXE%

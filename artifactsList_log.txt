@@ -1,0 +1,7 @@
+*.log
+*.log.csv
+*.log.xlsx
+cppcheck-*.*
+doxygen-*.*
+set_appveyor_env.bat
+.\sakura_core\githash.h

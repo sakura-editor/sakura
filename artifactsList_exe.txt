@@ -1,0 +1,12 @@
+sakura.exe
+ctags.exe
+*.dll
+*.pdb
+License\*
+*.chm
+*.chi
+..\..\installer\warning*.txt
+..\..\help\macro\macro.chm
+..\..\help\sakura\sakura.chm
+..\..\help\plugin\plugin.chm
+..\..\html\sakura-doxygen.*
