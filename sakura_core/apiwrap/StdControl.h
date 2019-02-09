@@ -120,7 +120,7 @@ namespace ApiWrap{
 		}
 		else if(actualCount >= str.capacity())
 		{
-			// 仕様上はありえないはず
+			// GetWindowText() の仕様上はありえないはず
 			return false;
 		}
 
