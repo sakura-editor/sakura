@@ -36,6 +36,7 @@
 #else
 	#include <ImageHlp.h> //MakeSureDirectoryPathExists
 #endif
+#include "mem/CNativeT.h"
 
 //デバッグ用。
 //VistaだとExtTextOutの結果が即反映されない。この関数を用いると即反映されるので、

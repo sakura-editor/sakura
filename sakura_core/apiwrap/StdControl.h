@@ -37,6 +37,9 @@ UNICODE版では問題無いが、ANSI版では設定の前にコード変換す
 そういった意味でも、このファイル内のラップ関数を使うことを推奨する。
 */
 
+#include <windows.h>
+#include <Commctrl.h>
+#include "mem/CNativeW.h"
 #include "../util/tchar_convert.h"
 #include <vector>
 
@@ -56,6 +59,78 @@ namespace ApiWrap{
 #else
 		return SetWindowTextA(hwnd, to_achar(str));
 #endif
+	}
+
+	/*!
+		@brief Window テキストを設定する
+		@param[in]  hwnd	ウィンドウハンドル
+		@param[in]  str		ウィンドウテキスト
+	*/
+	inline BOOL Wnd_SetText(HWND hwnd, const CNativeT& str)
+	{
+		return SetWindowText(hwnd, str.GetStringPtr());
+	}
+
+	/*!
+		@brief Window テキストを取得する
+		@param[in]  hwnd	ウィンドウハンドル
+		@param[out] str		ウィンドウテキスト
+		@return		成功した場合 true
+		@return		失敗した場合 false
+	*/
+	inline bool Wnd_GetText(HWND hwnd, CNativeT& str)
+	{
+		// バッファをクリアしておく
+		str.Clear();
+
+		// GetWindowTextLength() はウィンドウテキスト取得に必要なバッファサイズを返す。
+		// 条件によっては必要なサイズより大きな値を返すことがある模様
+		// https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getwindowtextlengtha
+		const int length = ::GetWindowTextLength(hwnd);
+		if (length < 0)
+		{
+			// ドキュメントには失敗した場合、あるいはテキストが空の場合には 0 を返すとある。
+			// 0 の場合はエラーかどうか判断できないのでテキストの取得処理を続行する。
+			// 仕様上は負の場合はありえないが、念の為エラーチェックしておく。
+			return false;
+		}
+
+		// ドキュメントには NULL 文字に関して言及がないので念の為 +1 しておく
+		const int bufsize = length + 1;
+		
+		// ウィンドウタイトルを設定するのに必要なバッファを確保する
+		if (str.capacity() < bufsize)
+		{
+			str.AllocStringBuffer(bufsize);
+		}
+
+		int actualCount = ::GetWindowText(hwnd, str.GetStringPtr(), str.capacity());
+		if (actualCount < 0)
+		{
+			// 仕様上は負の場合はありえないが、念の為エラーチェックしておく。
+			return false;
+		}
+		else if (actualCount == 0)
+		{
+			// GetWindowText はエラーの場合、またはテキストが空の場合は 0 を返す
+			if (GetLastError() != 0)
+			{
+				return false;
+			}
+		}
+		else if(actualCount >= str.capacity())
+		{
+			// GetWindowText() の仕様上はありえないはず
+			return false;
+		}
+
+		// Win32 API の GetWindowText() を呼んだだけでは CNativeT 内部の
+		// データサイズが更新されないのでデータサイズを反映する
+		str._SetStringLength(actualCount);
+
+		// 正しく設定されているはず
+		assert(str.GetStringLength() == actualCount);
+		return true;
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
