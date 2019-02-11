@@ -78,31 +78,25 @@ Inno Setup の設定ファイルは拡張子が iss のファイルです。
 
 ## インストーラのビルドに必要なファイル
 
-事前に以下にファイルを配置する。(build-installer.bat を実行すると以下のファイルの配置～インストーラのビルドまで行う。)
+build-all.batの結果で配置される場所からファイルを取得する。
 
-- installer/
-    - sakura/
-        - sakura.exe
-        - sakura_lang_en_US.dll
-        - bregonig.dll
-        - bsd_license.txt
-        - sakura.exe.manifest.x
-        - sakura.exe.manifest.v
-        - sakura.chm
-        - macro.chm
-        - plugin.chm
-        - sakura.exe.ini
-        - keyword/
-            - *.col
-            - *.dic
-            - *.hkn
-            - *.khp
-            - *.kwd
-            - *.otl
-            - *.rkw
-            - *.rl
-            - *.rule
-            - *.txt
+- Win32\Release\
+    - sakura.exe
+    - sakura_lang_en_US.dll
+    - bregonig.dll
+    - ctags.exe
+    - license\*
+- installer\
+  - sinst_src\
+    - sakura.exe.manifest.x
+    - sakura.exe.manifest.v
+    - sakura.exe.ini
+    - keyword\*
+- help\
+  - sakura\sakura.chm
+  - macro\macro.chm
+  - plugin\plugin.chm
+- LICENSE
 
 ## インストーラのビルド
 
