@@ -5,7 +5,7 @@ ctags.exe
 License\*
 *.chm
 *.chi
-..\..\installer\warning*.txt
+..\..\installer\warning.txt
 ..\..\help\macro\macro.chm
 ..\..\help\sakura\sakura.chm
 ..\..\help\plugin\plugin.chm

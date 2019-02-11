@@ -141,11 +141,6 @@ if not "%RELEASE_PHASE%" == "" (
 @rem ----------------------------------------------------------------
 @rem build WORKDIR
 @rem ----------------------------------------------------------------
-set WORKDIR=%BASENAME%
-set WORKDIR_LOG=%WORKDIR%\Log
-set WORKDIR_EXE=%WORKDIR%\EXE
-set WORKDIR_INST=%WORKDIR%\Installer
-set WORKDIR_ASM=%BASENAME%-Asm
 set OUTFILE=%BASENAME%-All.zip
 set OUTFILE_LOG=%BASENAME%-Log.zip
 set OUTFILE_ASM=%BASENAME%-Asm.zip
@@ -168,119 +163,20 @@ if exist "%OUTFILE_INST%" (
 if exist "%OUTFILE_EXE%" (
 	del %OUTFILE_EXE%
 )
-if exist "%WORKDIR%" (
-	rmdir /s /q "%WORKDIR%"
-)
-if exist "%WORKDIR_ASM%" (
-	rmdir /s /q "%WORKDIR_ASM%"
-)
 
-call %ZIP_CMD% %~dp0\%OUTFILE_EXE% %~dp0\%platform%\%configuration%\ %~dp0\artifactsList_exe.txt
-call %ZIP_CMD% %~dp0\%OUTFILE_LOG% %~dp0\ %~dp0\artifactsList_log.txt
-call %ZIP_CMD% %~dp0\%OUTFILE_ASM% %~dp0\sakura\%platform%\%configuration%\*.asm
-exit /b 0
+setlocal
+cd %~dp0\%platform%\%configuration%\
+%CMD_7Z% a %~dp0\%OUTFILE_EXE% @%~dp0\artifactsList_exe.txt
+cd %~dp0\
+%CMD_7Z% a %~dp0\%OUTFILE_LOG% @%~dp0\artifactsList_log.txt
+endlocal
 
+%CMD_7Z% a %~dp0\%OUTFILE_ASM% %~dp0\sakura\%platform%\%configuration%\*.asm
+%CMD_7Z% a %~dp0\%OUTFILE_INST% .\installer\Output-%platform%\*.exe .\installer\warning.txt
 
-
-mkdir %WORKDIR%
-mkdir %WORKDIR_LOG%
-mkdir %WORKDIR_EXE%
-mkdir %WORKDIR_EXE%\license\
-mkdir %WORKDIR_EXE%\license\bregonig\
-mkdir %WORKDIR_EXE%\license\ctags\
-mkdir %WORKDIR_INST%
-copy /Y /B %platform%\%configuration%\sakura.exe %WORKDIR_EXE%\
-copy /Y /B %platform%\%configuration%\*.dll      %WORKDIR_EXE%\
-copy /Y /B %platform%\%configuration%\*.pdb      %WORKDIR_EXE%\
-
-: LICENSE
-copy /Y .\LICENSE                                   %WORKDIR_EXE%\license\ > NUL
-
-: bregonig
-set INSTALLER_RESOURCES_BRON=%~dp0installer\temp\bron
-copy /Y %INSTALLER_RESOURCES_BRON%\*.txt            %WORKDIR_EXE%\license\bregonig\
-
-: ctags.exe
-set INSTALLER_RESOURCES_CTAGS=%~dp0installer\temp\ctags
-copy /Y /B %INSTALLER_RESOURCES_CTAGS%\ctags.exe    %WORKDIR_EXE%\
-copy /Y /B %INSTALLER_RESOURCES_CTAGS%\README.md    %WORKDIR_EXE%\license\ctags\
-copy /Y /B %INSTALLER_RESOURCES_CTAGS%\license\*.*  %WORKDIR_EXE%\license\ctags\
-
-copy /Y /B help\macro\macro.chm    %WORKDIR_EXE%\
-copy /Y /B help\plugin\plugin.chm  %WORKDIR_EXE%\
-copy /Y /B help\sakura\sakura.chm  %WORKDIR_EXE%\
-copy /Y /B html\sakura-doxygen.chm %WORKDIR_EXE%\
-copy /Y /B html\sakura-doxygen.chi %WORKDIR_EXE%\
-
-copy /Y /B installer\Output-%platform%\*.exe       %WORKDIR_INST%\
-copy /Y msbuild-%platform%-%configuration%.log     %WORKDIR_LOG%\
-copy /Y msbuild-%platform%-%configuration%.log.csv %WORKDIR_LOG%\
-if exist "msbuild-%platform%-%configuration%.log.xlsx" (
-	copy /Y /B "msbuild-%platform%-%configuration%.log.xlsx" %WORKDIR_LOG%\
-)
-set ISS_LOG_FILE=iss-%platform%-%configuration%.log
-if exist "%ISS_LOG_FILE%" (
-	copy /Y /B "%ISS_LOG_FILE%" %WORKDIR_LOG%\
-)
-
-copy /Y sakura_core\githash.h                      %WORKDIR_LOG%\
-if exist "cppcheck-install.log" (
-	copy /Y "cppcheck-install.log" %WORKDIR_LOG%\
-)
-if exist "cppcheck-%platform%-%configuration%.xml" (
-	copy /Y "cppcheck-%platform%-%configuration%.xml" %WORKDIR_LOG%\
-)
-if exist "cppcheck-%platform%-%configuration%.log" (
-	copy /Y "cppcheck-%platform%-%configuration%.log" %WORKDIR_LOG%\
-)
-if exist "doxygen-%platform%-%configuration%.log" (
-	copy /Y "doxygen-%platform%-%configuration%.log" %WORKDIR_LOG%\
-)
-
-if exist "set_appveyor_env.bat" (
-	copy /Y "set_appveyor_env.bat" %WORKDIR_LOG%\
-)
-
-set HASHFILE=sha256.txt
-if exist "%HASHFILE%" (
-	del %HASHFILE%
-)
-call calc-hash.bat %HASHFILE% %WORKDIR%\
-if exist "%HASHFILE%" (
-	copy /Y %HASHFILE%           %WORKDIR%\
-)
-
-copy /Y installer\warning.txt   %WORKDIR%\
 if "%ALPHA%" == "1" (
-	copy /Y installer\warning-alpha.txt   %WORKDIR%\
-)
-@rem temporally disable to zip all files to a file to workaround #514.
-@rem call %ZIP_CMD%       %OUTFILE%      %WORKDIR%
-
-call %ZIP_CMD%       %OUTFILE_LOG%  %WORKDIR_LOG%
-
-@rem copy text files for warning after zipping %OUTFILE% because %WORKDIR% is the parent directory of %WORKDIR_EXE% and %WORKDIR_INST%.
-if "%ALPHA%" == "1" (
-	copy /Y installer\warning-alpha.txt   %WORKDIR_EXE%\
-	copy /Y installer\warning-alpha.txt   %WORKDIR_INST%\
-)
-copy /Y installer\warning.txt        %WORKDIR_EXE%\
-copy /Y installer\warning.txt        %WORKDIR_INST%\
-call %ZIP_CMD%       %OUTFILE_INST%  %WORKDIR_INST%
-call %ZIP_CMD%       %OUTFILE_EXE%   %WORKDIR_EXE%
-
-@echo start zip asm
-mkdir %WORKDIR_ASM%
-copy /Y sakura\%platform%\%configuration%\*.asm %WORKDIR_ASM%\ > NUL
-call %ZIP_CMD%       %OUTFILE_ASM%  %WORKDIR_ASM%
-
-@echo end   zip asm
-
-if exist "%WORKDIR%" (
-	rmdir /s /q "%WORKDIR%"
-)
-if exist "%WORKDIR_ASM%" (
-	rmdir /s /q "%WORKDIR_ASM%"
+	%CMD_7Z% %~dp0\%OUTFILE_EXE% .\installer\warning-alpha.txt 
+	%CMD_7Z% %~dp0\%OUTFILE_INST% .\installer\warning-alpha.txt 
 )
 
 exit /b 0
