@@ -5,6 +5,8 @@
 #endif
 #define MyAppVer GetFileVersion("sakura\sakura.exe")
 #define MyAppVerH StringChange(MyAppVer, ".", "-")
+#define Platform GetEnv('PLATFORM')
+#define Configuration GetEnv('CONFIGURATION')
 
 [Setup]
 #if MyArchitecture != "x86"
@@ -137,21 +139,21 @@ Name: sendto;      Description: "{cm:sendto}";                            Compon
 Name: sakuragrep;  Description: "{cm:sakuragrep}";                        Components: main; Flags: unchecked;
 
 [Files]
-Source: "sakura\sakura.exe";           DestDir: "{app}";                  Components: main; Flags: ignoreversion;
-Source: "sakura\sakura_lang_en_US.dll";DestDir: "{app}";                  Components: main; Flags: ignoreversion;
-Source: "sakura\license\LICENSE";      DestDir: "{app}\license";          Components: main
-Source: "sakura\bregonig.dll";         DestDir: "{app}";                  Components: main
-Source: "sakura\license\bregonig\*";   DestDir: "{app}\license\bregonig"; Components: main
-Source: "sakura\ctags.exe";            DestDir: "{app}";                  Components: main
-Source: "sakura\license\ctags\*";      DestDir: "{app}\license\ctags";    Components: main
-Source: "sakura\sakura.exe.manifest.x";DestDir: "{app}";                  Components: main; DestName: "sakura.exe.manifest"; Check: isMultiUserDisabled; Flags: onlyifdoesntexist;
-Source: "sakura\sakura.exe.manifest.v";DestDir: "{app}";                  Components: main; DestName: "sakura.exe.manifest"; Check: isMultiUserEnabled; Flags: onlyifdoesntexist;
-Source: "sakura\sakura.chm";           DestDir: "{app}";                  Components: help
-Source: "sakura\macro.chm";            DestDir: "{app}";                  Components: help
-Source: "sakura\plugin.chm";           DestDir: "{app}";                  Components: help
-Source: "sakura\sakura.exe.ini";       DestDir: "{app}";                  Components: main; Check: isMultiUserEnabled; Flags: onlyifdoesntexist;
+Source: "..\{#Platform}\{#Configuration}\sakura.exe";           DestDir: "{app}";                  Components: main; Flags: ignoreversion;
+Source: "..\{#Platform}\{#Configuration}\sakura_lang_en_US.dll";DestDir: "{app}";                  Components: main; Flags: ignoreversion;
+Source: "..\LICENSE";      DestDir: "{app}\license";          Components: main
+Source: "..\{#Platform}\{#Configuration}\bregonig.dll";         DestDir: "{app}";                  Components: main
+Source: "..\{#Platform}\{#Configuration}\license\bregonig\*";   DestDir: "{app}\license\bregonig"; Components: main
+Source: "..\{#Platform}\{#Configuration}\ctags.exe";            DestDir: "{app}";                  Components: main
+Source: "..\{#Platform}\{#Configuration}\license\ctags\*";      DestDir: "{app}\license\ctags";    Components: main
+Source: "sinst_src\sakura.exe.manifest.x";DestDir: "{app}";                  Components: main; DestName: "sakura.exe.manifest"; Check: isMultiUserDisabled; Flags: onlyifdoesntexist;
+Source: "sinst_src\sakura.exe.manifest.v";DestDir: "{app}";                  Components: main; DestName: "sakura.exe.manifest"; Check: isMultiUserEnabled; Flags: onlyifdoesntexist;
+Source: "..\help\sakura\sakura.chm";           DestDir: "{app}";                  Components: help
+Source: "..\help\macro\macro.chm";            DestDir: "{app}";                  Components: help
+Source: "..\help\plugin\plugin.chm";           DestDir: "{app}";                  Components: help
+Source: "sinst_src\sakura.exe.ini";       DestDir: "{app}";                  Components: main; Check: isMultiUserEnabled; Flags: onlyifdoesntexist;
 
-Source: "sakura\keyword\*";             DestDir: "{app}\keyword";         Components: keyword; Flags: recursesubdirs
+Source: "sinst_src\keyword\*";             DestDir: "{app}\keyword";         Components: keyword; Flags: recursesubdirs
 
 [Registry]
 ; registry for all user (Admin only)

@@ -33,14 +33,14 @@ set CTAGS32=ctags-2018-09-16_e522743d-x64
 if "%PLATFORM%" == "Win32" (
 	: for Win32
 	xcopy /Y /I %TEMP_DIR%\%BRON%\bregonig.dll %DEST_DIR%\
-	xcopy /Y /I %TEMP_DIR%\%BRON%\*.txt %DEST_DIR%\license\bron\
+	xcopy /Y /I %TEMP_DIR%\%BRON%\*.txt %DEST_DIR%\license\bregonig\
 
 	xcopy /Y /I %TEMP_DIR%\%CTAGS32%\ctags.exe %DEST_DIR%\
 	xcopy /Y /I %TEMP_DIR%\%CTAGS32%\license %DEST_DIR%\license\ctags\
 ) else (
 	: for x64
 	xcopy /Y /I %TEMP_DIR%\%BRON%\bregonig.dll %DEST_DIR%\
-	xcopy /Y /I %TEMP_DIR%\%BRON%\*.txt %DEST_DIR%\license\bron\
+	xcopy /Y /I %TEMP_DIR%\%BRON%\*.txt %DEST_DIR%\license\bregonig\
 
 	xcopy /Y /I %TEMP_DIR%\%CTAGS64%\ctags.exe %DEST_DIR%\
 	xcopy /Y /I %TEMP_DIR%\%CTAGS64%\license %DEST_DIR%\license\ctags\
