@@ -27,6 +27,7 @@ if "%platform%" == "x64" (
 	set ALPHA=0
 )
 
+call "tools\find-tools.bat"
 set ZIP_CMD=%~dp0tools\zip\zip.bat
 set LIST_ZIP_CMD=%~dp0tools\zip\listzip.bat
 
@@ -165,18 +166,18 @@ if exist "%OUTFILE_EXE%" (
 )
 
 setlocal
-cd %~dp0\%platform%\%configuration%\
-%CMD_7Z% a %~dp0\%OUTFILE_EXE% @%~dp0\artifactsList_exe.txt
-cd %~dp0\
-%CMD_7Z% a %~dp0\%OUTFILE_LOG% @%~dp0\artifactsList_log.txt
+cd /d "%~dp0%platform%\%configuration%\"
+"%CMD_7Z%" a "%~dp0%OUTFILE_EXE%" "@%~dp0artifactsList_exe.txt"
+cd /d "%~dp0"
+"%CMD_7Z%" a "%~dp0%OUTFILE_LOG%" "@%~dp0artifactsList_log.txt"
 endlocal
 
-%CMD_7Z% a %~dp0\%OUTFILE_ASM% %~dp0\sakura\%platform%\%configuration%\*.asm
-%CMD_7Z% a %~dp0\%OUTFILE_INST% .\installer\Output-%platform%\*.exe .\installer\warning.txt
+"%CMD_7Z%" a "%~dp0%OUTFILE_ASM%" "%~dp0sakura\%platform%\%configuration%\*.asm"
+"%CMD_7Z%" a "%~dp0%OUTFILE_INST%" .\installer\Output-%platform%\*.exe .\installer\warning.txt
 
 if "%ALPHA%" == "1" (
-	%CMD_7Z% %~dp0\%OUTFILE_EXE% .\installer\warning-alpha.txt 
-	%CMD_7Z% %~dp0\%OUTFILE_INST% .\installer\warning-alpha.txt 
+	"%CMD_7Z%" "%~dp0%OUTFILE_EXE%" .\installer\warning-alpha.txt 
+	"%CMD_7Z%" "%~dp0%OUTFILE_INST%" .\installer\warning-alpha.txt 
 )
 
 exit /b 0

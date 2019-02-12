@@ -21,7 +21,7 @@ if not defined CMD_7Z (
 		"%CMD_7Z%" a "%DSTZIP%"  -r "%SRCDIR%"
 	) else (
 		setlocal
-		cd %SRCDIR%
+		cd /d "%SRCDIR%"
 		"%CMD_7Z%" a "%DSTZIP%" @%LISTFILE%
 		endlocal
 	)
