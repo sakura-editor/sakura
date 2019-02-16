@@ -291,11 +291,10 @@ void CMainToolBar::CreateToolBar( void )
 						Toolbar_GetItemRect( m_hwndToolBar, count-1, &rc );
 
 						//コンボボックスを作る
-						//	Mar. 8, 2003 genta 検索ボックスを1ドット下にずらした
 						m_hwndSearchBox = CreateWindow( _T("COMBOBOX"), _T("Combo"),
 								WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWN
 								/*| CBS_SORT*/ | CBS_AUTOHSCROLL /*| CBS_DISABLENOSCROLL*/,
-								rc.left, rc.top + 1, rc.right - rc.left, (rc.bottom - rc.top) * 10,
+								rc.left, rc.top, rc.right - rc.left, (rc.bottom - rc.top) * 10,
 								m_hwndToolBar, (HMENU)(INT_PTR)tbb.idCommand, CEditApp::getInstance()->GetAppInstance(), NULL );
 						if( m_hwndSearchBox )
 						{
