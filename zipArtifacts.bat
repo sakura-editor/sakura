@@ -27,7 +27,7 @@ if "%platform%" == "x64" (
 	set ALPHA=0
 )
 
-call "tools\find-tools.bat"
+call "%~dp0tools\find-tools.bat"
 set ZIP_CMD=%~dp0tools\zip\zip.bat
 set LIST_ZIP_CMD=%~dp0tools\zip\listzip.bat
 
@@ -142,42 +142,30 @@ if not "%RELEASE_PHASE%" == "" (
 @rem ----------------------------------------------------------------
 @rem build WORKDIR
 @rem ----------------------------------------------------------------
-set OUTFILE=%BASENAME%-All.zip
-set OUTFILE_LOG=%BASENAME%-Log.zip
-set OUTFILE_ASM=%BASENAME%-Asm.zip
-set OUTFILE_INST=%BASENAME%-Installer.zip
-set OUTFILE_EXE=%BASENAME%-Exe.zip
+set OUTFILE_LOG=%~dp0%BASENAME%-Log.zip
+set OUTFILE_ASM=%~dp0%BASENAME%-Asm.zip
+set OUTFILE_INST=%~dp0%BASENAME%-Installer.zip
+set OUTFILE_EXE=%~dp0%BASENAME%-Exe.zip
 
 @rem cleanup for local testing
-if exist "%OUTFILE%" (
-	del %OUTFILE%
-)
-if exist "%OUTFILE_LOG%" (
-	del %OUTFILE_LOG%
-)
-if exist "%OUTFILE_ASM%" (
-	del %OUTFILE_ASM%
-)
-if exist "%OUTFILE_INST%" (
-	del %OUTFILE_INST%
-)
-if exist "%OUTFILE_EXE%" (
-	del %OUTFILE_EXE%
-)
+del %OUTFILE_LOG% 2> NUL
+del %OUTFILE_ASM% 2> NUL
+del %OUTFILE_INST% 2> NUL
+del %OUTFILE_EXE% 2> NUL
 
 setlocal
 cd /d "%~dp0%platform%\%configuration%\"
-"%CMD_7Z%" a "%~dp0%OUTFILE_EXE%" "@%~dp0artifactsList_exe.txt"
+"%CMD_7Z%" a "%OUTFILE_EXE%" "@%~dp0artifactsList_exe.txt"
 cd /d "%~dp0"
-"%CMD_7Z%" a "%~dp0%OUTFILE_LOG%" "@%~dp0artifactsList_log.txt"
+"%CMD_7Z%" a "%OUTFILE_LOG%" "@%~dp0artifactsList_log.txt"
 endlocal
 
-"%CMD_7Z%" a "%~dp0%OUTFILE_ASM%" "%~dp0sakura\%platform%\%configuration%\*.asm"
-"%CMD_7Z%" a "%~dp0%OUTFILE_INST%" .\installer\Output-%platform%\*.exe .\installer\warning.txt
+"%CMD_7Z%" a "%OUTFILE_ASM%" "%~dp0sakura\%platform%\%configuration%\*.asm"
+"%CMD_7Z%" a "%OUTFILE_INST%" .\installer\Output-%platform%\*.exe .\installer\warning.txt
 
 if "%ALPHA%" == "1" (
-	"%CMD_7Z%" "%~dp0%OUTFILE_EXE%" .\installer\warning-alpha.txt 
-	"%CMD_7Z%" "%~dp0%OUTFILE_INST%" .\installer\warning-alpha.txt 
+	"%CMD_7Z%" "%OUTFILE_EXE%" .\installer\warning-alpha.txt 
+	"%CMD_7Z%" "%OUTFILE_INST%" .\installer\warning-alpha.txt 
 )
 
 exit /b 0
