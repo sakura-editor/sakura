@@ -1,9 +1,8 @@
 set SRCZIP=%1
 
-
 @echo examining %SRCZIP%.
 @rem CMD_7Z contains double quotes.
-if not defined CMD_7Z call %~dp0..\find-tools.bat
+if not defined CMD_7Z call "%~dp0..\find-tools.bat" > NUL
 if not defined CMD_7Z (
 	@echo -------------------------------------------------------
 	@echo ---- you can make this faster by installing 7-zip. ----
