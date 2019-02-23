@@ -6,7 +6,6 @@
 #include "doc/CEditDoc.h"
 #include "doc/layout/CLayout.h"
 #include "types/CTypeSupport.h"
-#include "util/string_ex.h" // IsURL
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           URL                               //

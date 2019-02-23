@@ -328,11 +328,5 @@ inline int wcsncmp_auto(const wchar_t* strData1, const wchar_t* szData2)
 	#define _tcsncmp_literal strncmp_literal
 #endif
 
-/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
-BOOL IsURL(const wchar_t* pszLine, int nLineLen, int* pnMatchLen);
-
-/* 現在位置がメールアドレスならば、NULL以外と、その長さを返す */
-BOOL IsMailAddress(const wchar_t* pszBuf, int nBufLen, int* pnAddressLength);
-
 #endif /* SAKURA_STRING_EX_29EB1DD7_7259_4D6C_A651_B9174E5C3D3C9_H_ */
 /*[EOF]*/
