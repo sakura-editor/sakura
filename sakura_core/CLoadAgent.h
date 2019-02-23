@@ -1,5 +1,4 @@
 ﻿/*! @file */
-// この行は文字化け対策用です。
 /*
 	Copyright (C) 2008, kobake
 

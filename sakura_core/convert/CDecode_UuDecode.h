@@ -1,5 +1,4 @@
-﻿// この行は文字化け対策のものです
-/*!	@file
+﻿/*!	@file
 	@brief Unix-to-Unix Decode
 
 	@author 
