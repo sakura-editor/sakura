@@ -10,7 +10,7 @@
 	制限: ログを遡りすべてのファイルの最終コミット日時を取得することは１分以上かかることがあるため、このスクリプトでは１か月を上限としてログを遡ります。そのため最も古いタイムスタンプは実行日時を基準として前月同日の00:00:00になります。
 #>
 $TopDir = (git rev-parse --show-toplevel)
-$Oldest = [DateTime]::Today.AddMonths(-1) # Of course, this is incorrect for the oldest timestamp. That's what "Roughly" means.
+$Oldest = [DateTime]::Today.AddMonths(-1).ToString("yyyy-MM-dd HH:mm:ss") # Of course, this is incorrect for the oldest timestamp. That's what "Roughly" means.
 
 $waiting = @{}
 (git ls-files --full-name "$TopDir") | foreach {
@@ -18,8 +18,8 @@ $waiting = @{}
 }
 
 @(
-	(git log --format=format:?%ci --name-only --since="$($Oldest.ToString("yyyy-MM-dd HH:mm:ss"))")
-	, "?$($Oldest.ToString("yyyy-MM-dd HH:mm:ss"))"
+	(git log --format=format:?%ci --name-only --since="$Oldest")
+	, "?$Oldest"
 	, (git ls-files --full-name "$TopDir")
 ) | foreach { $_ | foreach {
 	if ($_ -eq "") {
