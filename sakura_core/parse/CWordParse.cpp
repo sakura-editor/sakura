@@ -343,8 +343,9 @@ uchar_t wc_to_c(wchar_t wc)
 */
 BOOL IsURL(
 	const wchar_t*	pszLine,	//!< [in]  文字列
+	int				offset,	//!< [in]  検査を開始する位置。
 	int				nLineLen,	//!< [in]  文字列の長さ
-	int*			pnMatchLen	//!< [out] URLの長さ
+	int*			pnMatchLen	//!< [out] URLの長さ。offset からの距離。
 )
 {
 	struct _url_table_t {
@@ -397,24 +398,24 @@ BOOL IsURL(
 		 */
 	};
 
-	const wchar_t *p = pszLine;
+	const wchar_t * const begin = pszLine + offset;
+	const wchar_t * const end   = pszLine + nLineLen;
 	const struct _url_table_t	*urlp;
 	int	i;
 
-	if( wc_to_c(*p)==0 ) return FALSE;	/* 2バイト文字 */
-	if( 0 < url_char[wc_to_c(*p)] ){	/* URL開始文字 */
-		for(urlp = &url_table[url_char[wc_to_c(*p)]-1]; urlp->name[0] == wc_to_c(*p); urlp++){	/* URLテーブルを探索 */
-			if( (urlp->length <= nLineLen) && (auto_memcmp(urlp->name, pszLine, urlp->length) == 0) ){	/* URLヘッダは一致した */
-				p += urlp->length;	/* URLヘッダ分をスキップする */
+	if( wc_to_c(*begin)==0 ) return FALSE;	/* 2バイト文字 */
+	if( 0 < url_char[wc_to_c(*begin)] ){	/* URL開始文字 */
+		for(urlp = &url_table[url_char[wc_to_c(*begin)]-1]; urlp->name[0] == wc_to_c(*begin); urlp++){	/* URLテーブルを探索 */
+			if( (urlp->length <= end - begin) && (auto_memcmp(urlp->name, begin, urlp->length) == 0) ){	/* URLヘッダは一致した */
 				if( urlp->is_mail ){	/* メール専用の解析へ */
-					if( IsMailAddress(p, nLineLen - urlp->length, pnMatchLen) ){
+					if( IsMailAddress(begin, urlp->length, end - begin - urlp->length, pnMatchLen) ){
 						*pnMatchLen = *pnMatchLen + urlp->length;
 						return TRUE;
 					}
 					return FALSE;
 				}
-				for(i = urlp->length; i < nLineLen; i++, p++){	/* 通常の解析へ */
-					if( wc_to_c(*p)==0 || (!(url_char[wc_to_c(*p)])) ) break;	/* 終端に達した */
+				for(i = urlp->length; i < end - begin; i++){	/* 通常の解析へ */
+					if( wc_to_c(begin[i])==0 || (!(url_char[wc_to_c(begin[i])])) ) break;	/* 終端に達した */
 				}
 				if( i == urlp->length ) return FALSE;	/* URLヘッダだけ */
 				*pnMatchLen = i;
@@ -422,38 +423,44 @@ BOOL IsURL(
 			}
 		}
 	}
-	return IsMailAddress(pszLine, nLineLen, pnMatchLen);
+	return IsMailAddress(pszLine, offset, nLineLen, pnMatchLen);
 }
 
 /* 現在位置がメールアドレスならば、NULL以外と、その長さを返す
 	@date 2016.04.27 記号類を許可
 */
-BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLenfth )
+BOOL IsMailAddress( const wchar_t* pszBuf, int offset, int nBufLen, int* pnAddressLenfth )
 {
+	struct {
+		bool operator()(const wchar_t ch)
+		{
+			return 0x21 <= ch && ch <= 0x7E && NULL == wcschr(L"\"(),:;<>@[\\]", ch);
+		}
+	} IsValidChar;
+
+/*
+	直前の文字を利用した境界判定
+*/
+	if (0 < offset && IsValidChar(pszBuf[offset-1])) {
+		return FALSE;
+	}
+
+	pszBuf  += offset;
+	nBufLen -= offset;
+	offset   = 0;
+
 	int		j;
 	int		nDotCount;
 	int		nBgn;
 
 
 	j = 0;
-	if( (pszBuf[j] >= L'a' && pszBuf[j] <= L'z')
-	 || (pszBuf[j] >= L'A' && pszBuf[j] <= L'Z')
-	 || (pszBuf[j] >= L'0' && pszBuf[j] <= L'9')
-	 || NULL != wcschr(L"!#$%&'*+-/=?^_`{|}~", pszBuf[j])
-	){
+	if(pszBuf[j] != L'.' && IsValidChar(pszBuf[j])){
 		j++;
 	}else{
 		return FALSE;
 	}
-	while( j < nBufLen - 2 &&
-		(
-		(pszBuf[j] >= L'a' && pszBuf[j] <= L'z')
-	 || (pszBuf[j] >= L'A' && pszBuf[j] <= L'Z')
-	 || (pszBuf[j] >= L'0' && pszBuf[j] <= L'9')
-	 || (pszBuf[j] == L'.')
-	 || NULL != wcschr(L"!#$%&'*+-/=?^_`{|}~", pszBuf[j])
-		)
-	){
+	while( j < nBufLen - 2 && IsValidChar(pszBuf[j]) ){
 		j++;
 	}
 	if( j == 0 || j >= nBufLen - 2  ){
