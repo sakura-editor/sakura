@@ -430,10 +430,17 @@ BOOL IsURL(
 */
 BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLenfth )
 {
+	// メールアドレス長の最大値
+	constexpr auto MAX_MAILADDRESS{ 255 };
+
+	// 判定対象の桁数が最大値を上回っていたらFALSEを返す。
+	if ( MAX_MAILADDRESS < nBufLen ) {
+		return FALSE;
+	}
+
 	int		j;
 	int		nDotCount;
 	int		nBgn;
-
 
 	j = 0;
 	if( (pszBuf[j] >= L'a' && pszBuf[j] <= L'z')
@@ -466,7 +473,6 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLenfth )
 	j++;
 	nDotCount = 0;
 //	nAlphaCount = 0;
-
 
 	for (;;) {
 		nBgn = j;
