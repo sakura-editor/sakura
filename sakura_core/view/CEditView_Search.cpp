@@ -472,7 +472,7 @@ int CEditView::IsSearchString(
 		const wchar_t *const pWordHead = cStr.GetPtr() + posWordHead;
 
 		// 比較関数
-		int (*const fcmp)( const wchar_t*, const wchar_t*, size_t ) = m_sCurSearchOption.bLoHiCase ? wcsncmp : wcsnicmp;
+		int (*const fcmp)( const wchar_t*, const wchar_t*, size_t ) = m_sCurSearchOption.bLoHiCase ? wcsncmp : _wcsnicmp;
 
 		// 検索語を単語に分割しながら指定位置の単語と照合する。
 		int wordIndex = 0;
