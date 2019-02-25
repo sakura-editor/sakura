@@ -847,7 +847,7 @@ void CDlgTagJumpList::SetKeyword( const wchar_t *pszKeyword )
 
 	if( m_pszKeyword ) free( m_pszKeyword );
 
-	m_pszKeyword = wcsdup( pszKeyword );
+	m_pszKeyword = _wcsdup( pszKeyword );
 
 	return;
 }

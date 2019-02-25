@@ -73,7 +73,7 @@ void CDocOutline::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 		if( pLine == NULL ) break;
 
 		//作業用にコピーを作成する。バイナリがあったらその後ろは知らない。
-		pTmpLine = wcsdup( pLine );
+		pTmpLine = _wcsdup( pLine );
 		if( pTmpLine == NULL ) break;
 		if( wcslen( pTmpLine ) >= (unsigned int)nLineLen ){	//バイナリを含んでいたら短くなるので...
 			pTmpLine[ nLineLen ] = L'\0';	//指定長で切り詰め
