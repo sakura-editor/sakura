@@ -541,9 +541,9 @@ CPlugin* CPluginManager::LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* psz
 	std::wstring sPlugType;
 	cProfDef.IOProfileData( PII_PLUGIN, PII_PLUGIN_PLUGTYPE, sPlugType );
 
-	if( wcsicmp( sPlugType.c_str(), L"wsh" ) == 0 ){
+	if( _wcsicmp( sPlugType.c_str(), L"wsh" ) == 0 ){
 		plugin = new CWSHPlugin( tstring(pszBasePath) );
-	}else if( wcsicmp( sPlugType.c_str(), L"dll" ) == 0 ){
+	}else if( _wcsicmp( sPlugType.c_str(), L"dll" ) == 0 ){
 		plugin = new CDllPlugin( tstring(pszBasePath) );
 	}else{
 		return NULL;

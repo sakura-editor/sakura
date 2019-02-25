@@ -112,11 +112,11 @@ void CDocOutline::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 				entry_token = token[ 0 ];
 			}
 			else if( token[ 1 ] != NULL ){	//トークンが2個以上ある
-				if( wcsicmp( token[ 1 ], L"proc" ) == 0 ){	//関数
+				if( _wcsicmp( token[ 1 ], L"proc" ) == 0 ){	//関数
 					nFuncId = 50;
 					entry_token = token[ 0 ];
 				}else
-				if( wcsicmp( token[ 1 ], L"endp" ) == 0 ){	//関数終了
+				if( _wcsicmp( token[ 1 ], L"endp" ) == 0 ){	//関数終了
 					nFuncId = 52;
 					entry_token = token[ 0 ];
 				//}else

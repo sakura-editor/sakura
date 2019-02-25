@@ -131,22 +131,22 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 					}
 				}
 				else{
-					if( 0 == nParseCnt && 0 == wcsicmp( szWord, L"FUNCTION" ) ){
+					if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"FUNCTION" ) ){
 						nFuncOrProc = 1;
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == wcsicmp( szWord, L"PROCEDURE" ) ){
+					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"PROCEDURE" ) ){
 						nFuncOrProc = 2;
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == wcsicmp( szWord, L"PACKAGE" ) ){
+					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"PACKAGE" ) ){
 						nFuncOrProc = 3;
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 1 == nParseCnt && 3 == nFuncOrProc && 0 == wcsicmp( szWord, L"BODY" ) ){
+					else if( 1 == nParseCnt && 3 == nFuncOrProc && 0 == _wcsicmp( szWord, L"BODY" ) ){
 						nFuncOrProc = 4;
 						nParseCnt = 1;
 					}
@@ -162,7 +162,7 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 						}
 					}else
 					if( 2 == nParseCnt ){
-						if( 0 == wcsicmp( szWord, L"IS" ) ){
+						if( 0 == _wcsicmp( szWord, L"IS" ) ){
 							if( 1 == nFuncOrProc ){
 								nFuncId = 11;	/* ファンクション本体 */
 							}else
@@ -190,7 +190,7 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 							pcFuncInfoArr->AppendData( nFuncLine, ptPos.GetY2() + CLayoutInt(1), szFuncName, nFuncId );
 							nParseCnt = 0;
 						}
-						if( 0 == wcsicmp( szWord, L"AS" ) ){
+						if( 0 == _wcsicmp( szWord, L"AS" ) ){
 							if( 3 == nFuncOrProc ){
 								nFuncId = 31;	/* パッケージ仕様部 */
 								++nFuncNum;

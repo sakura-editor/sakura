@@ -164,10 +164,10 @@ int CDocOutline::ReadRuleFile( const TCHAR* pszFilename, SOneRule* pcOneRule, in
 					}else{
 						cComment = strLine[13];
 					}
-				}else if( 11 == strLine.length() && 0 == wcsicmp( strLine.c_str() + 1, L"Mode=Regex" ) ){
+				}else if( 11 == strLine.length() && 0 == _wcsicmp( strLine.c_str() + 1, L"Mode=Regex" ) ){
 					bRegex = true;
 					bRegexReplace = false;
-				}else if( 18 == strLine.length() && 0 == wcsicmp( strLine.c_str() + 1, L"Mode=RegexReplace" ) ){
+				}else if( 18 == strLine.length() && 0 == _wcsicmp( strLine.c_str() + 1, L"Mode=RegexReplace" ) ){
 					bRegex = true;
 					bRegexReplace = true;
 				}else if( 7 <= strLine.length() && 0 == _wcsnicmp( strLine.c_str() + 1, L"Title=", 6 ) ){
