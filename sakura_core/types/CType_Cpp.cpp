@@ -1563,7 +1563,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 				nDataLen = CLogicInt(m);
 			}
 
-			nCharChars = (m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bInsSpace)? (Int)m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(): 1;
+			nCharChars = (m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bInsSpace)? (Int)m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(): Int(1);
 			pszData = new wchar_t[nDataLen + nCharChars + 1];
 			wmemcpy( pszData, pLine2, nDataLen );
 			if( WCODE::CR  == wcChar || L'{' == wcChar || L'(' == wcChar ){
