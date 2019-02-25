@@ -23,7 +23,7 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include <io.h>	// access
+#include <io.h>	// _access
 #include "CReadManager.h"
 #include "CEditApp.h"	// CAppExitException
 #include "window/CEditWnd.h"

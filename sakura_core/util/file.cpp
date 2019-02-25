@@ -787,7 +787,7 @@ void	GetExistPath( char *po , const char *pi )
 		( ACODE::IsAZ(*po) )
 	){	/* 先頭にドライブレターがある。そのドライブが有効かどうか判定する */
 		drv[0] = *po;
-		if( access(drv,0) == 0 )	dl = GetExistPath_AV_Drive;		/* 有効 */
+		if( _access(drv,0) == 0 )	dl = GetExistPath_AV_Drive;		/* 有効 */
 		else						dl = GetExistPath_IV_Drive;		/* 無効 */
 	}
 
@@ -808,7 +808,7 @@ void	GetExistPath( char *po , const char *pi )
 	}
 
 	for(;;){
-		if( access(po,0) == 0 )	break;	/* 有効なパス文字列が見つかった */
+		if( _access(po,0) == 0 )	break;	/* 有効なパス文字列が見つかった */
 		/* ↓文字列最後尾の \ または ' ' を探し出し、そこを文字列終端にする。*/
 
 		pw = sjis_strrchr2(ps,'\\',' ');	/* 最末尾の \ か ' ' を探す。 */
@@ -828,7 +828,7 @@ void	GetExistPath( char *po , const char *pi )
 		/* ↓ルートディレクトリを引っかけるための処理 */
 		if( ( *pw == '\\' )&&( *(pw-1) == ':' ) ){	/* C:\ とかの \ っぽい */
 			* (pw+1) = '\0';		/* \ の後ろの位置を文字列の終端にする。 */
-			if( access(po,0) == 0 )	break;	/* 有効なパス文字列が見つかった */
+			if( _access(po,0) == 0 )	break;	/* 有効なパス文字列が見つかった */
 		}
 		*pw = '\0';		/* \ か ' ' の位置を文字列の終端にする。 */
 		/* ↓末尾がスペースなら、スペースを全て削除する */
