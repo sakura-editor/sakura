@@ -416,7 +416,7 @@ bool CNormalProcess::InitializeProcess()
 	LPCWSTR pszMacro = CCommandLine::getInstance()->GetMacro();
 	if( pEditWnd->GetHwnd()  &&  pszMacro  &&  pszMacro[0] != L'\0' ){
 		LPCWSTR pszMacroType = CCommandLine::getInstance()->GetMacroType();
-		if( pszMacroType == NULL || pszMacroType[0] == L'\0' || wcsicmp(pszMacroType, L"file") == 0 ){
+		if( pszMacroType == NULL || pszMacroType[0] == L'\0' || _wcsicmp(pszMacroType, L"file") == 0 ){
 			pszMacroType = NULL;
 		}
 		CEditView& view = pEditWnd->GetActiveView();

@@ -140,29 +140,29 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 					// テキストの中は無視します。
 					nMode	= 3;
 				}else{
-					if ( 0 == nParseCnt && 0 == wcsicmp(szWord, L"Public") ) {
+					if ( 0 == nParseCnt && 0 == _wcsicmp(szWord, L"Public") ) {
 						// パブリック宣言を見つけた！
 						nFuncId |= 0x10;
 					}else
-					if ( 0 == nParseCnt && 0 == wcsicmp(szWord, L"Private") ) {
+					if ( 0 == nParseCnt && 0 == _wcsicmp(szWord, L"Private") ) {
 						// プライベート宣言を見つけた！
 						nFuncId |= 0x20;
 					}else
-					if ( 0 == nParseCnt && 0 == wcsicmp(szWord, L"Friend") ) {
+					if ( 0 == nParseCnt && 0 == _wcsicmp(szWord, L"Friend") ) {
 						// フレンド宣言を見つけた！
 						nFuncId |= 0x30;
 					}else
-					if ( 0 == nParseCnt && 0 == wcsicmp(szWord, L"Static") ) {
+					if ( 0 == nParseCnt && 0 == _wcsicmp(szWord, L"Static") ) {
 						// スタティック宣言を見つけた！
 						nFuncId |= 0x100;
 					}else
-					if( 0 == nParseCnt && 0 == wcsicmp( szWord, L"Function" ) ){
-						if ( 0 == wcsicmp( szWordPrev, L"End" ) ){
+					if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"Function" ) ){
+						if ( 0 == _wcsicmp( szWordPrev, L"End" ) ){
 							// プロシージャフラグをクリア
 							bProcedure	= false;
 						}else
-						if( 0 != wcsicmp( szWordPrev, L"Exit" ) ){
-							if( 0 == wcsicmp( szWordPrev, L"Declare" ) ){
+						if( 0 != _wcsicmp( szWordPrev, L"Exit" ) ){
+							if( 0 == _wcsicmp( szWordPrev, L"Declare" ) ){
 								nFuncId |= 0x200;	// DLL参照宣言
 							}else{
 								bProcedure	= true;	// プロシージャフラグをセット
@@ -172,13 +172,13 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 							nFuncLine = nLineCount + CLogicInt(1);
 						}
 					}
-					else if( 0 == nParseCnt && 0 == wcsicmp( szWord, L"Sub" ) ){
-						if ( 0 == wcsicmp( szWordPrev, L"End" ) ){
+					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"Sub" ) ){
+						if ( 0 == _wcsicmp( szWordPrev, L"End" ) ){
 							// プロシージャフラグをクリア
 							bProcedure	= false;
 						}else
-						if( 0 != wcsicmp( szWordPrev, L"Exit" ) ){
-							if( 0 == wcsicmp( szWordPrev, L"Declare" ) ){
+						if( 0 != _wcsicmp( szWordPrev, L"Exit" ) ){
+							if( 0 == _wcsicmp( szWordPrev, L"Declare" ) ){
 								nFuncId |= 0x200;	// DLL参照宣言
 							}else{
 								bProcedure	= true;	// プロシージャフラグをセット
@@ -188,32 +188,32 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 							nFuncLine = nLineCount + CLogicInt(1);
 						}
 					}
-					else if( 0 == nParseCnt && 0 == wcsicmp( szWord, L"Get" )
-					 && 0 == wcsicmp( szWordPrev, L"Property" )
+					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"Get" )
+					 && 0 == _wcsicmp( szWordPrev, L"Property" )
 					){
 						bProcedure	= true;	// プロシージャフラグをセット
 						nFuncId	|= 0x03;		// プロパティ取得
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == wcsicmp( szWord, L"Let" )
-					 && 0 == wcsicmp( szWordPrev, L"Property" )
+					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"Let" )
+					 && 0 == _wcsicmp( szWordPrev, L"Property" )
 					){
 						bProcedure	= true;	// プロシージャフラグをセット
 						nFuncId |= 0x04;		// プロパティ設定
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == wcsicmp( szWord, L"Set" )
-					 && 0 == wcsicmp( szWordPrev, L"Property" )
+					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"Set" )
+					 && 0 == _wcsicmp( szWordPrev, L"Property" )
 					){
 						bProcedure	= true;	// プロシージャフラグをセット
 						nFuncId |= 0x05;		// プロパティ参照
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == wcsicmp( szWord, L"Const" )
-					 && 0 != wcsicmp( szWordPrev, L"#" )
+					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"Const" )
+					 && 0 != _wcsicmp( szWordPrev, L"#" )
 					){
 						if ( bClass || bProcedure || 0 == ((nFuncId >> 4) & 0x0f) ) {
 							// クラスモジュールでは強制的にPrivate
@@ -226,13 +226,13 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == wcsicmp( szWord, L"Enum" )
+					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"Enum" )
 					){
 						nFuncId	|= 0x207;		// 列挙型宣言
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == wcsicmp( szWord, L"Type" )
+					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"Type" )
 					){
 						if ( bClass ) {
 							// クラスモジュールでは強制的にPrivate
@@ -243,14 +243,14 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == wcsicmp( szWord, L"Event" )
+					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"Event" )
 					){
 						nFuncId	|= 0x209;		// イベント宣言
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == wcsicmp( szWord, L"Property" )
-					 && 0 == wcsicmp( szWordPrev, L"End")
+					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"Property" )
+					 && 0 == _wcsicmp( szWordPrev, L"End")
 					){
 						bProcedure	= false;	// プロシージャフラグをクリア
 					}

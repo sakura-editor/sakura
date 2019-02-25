@@ -355,7 +355,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 							break;
 						}
 					}else{
-						if(!wcsicmp(pszStack[nDepth],szTitle)){
+						if(!_wcsicmp(pszStack[nDepth],szTitle)){
 							break;
 						}
 					}
@@ -368,7 +368,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 							nDepth = nDepthOrg;
 						}
 					}else{
-						if(wcsicmp(pszStack[nDepth],szTitle)){
+						if(_wcsicmp(pszStack[nDepth],szTitle)){
 							nDepth = nDepthOrg;
 						}
 					}
