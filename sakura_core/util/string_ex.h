@@ -55,7 +55,7 @@
 inline int amemcmp(const ACHAR* p1, const ACHAR* p2, size_t count){ return ::memcmp(p1,p2,count); }
 
 //大文字小文字を区別せずにメモリ比較
-inline int amemicmp(const ACHAR* p1, const ACHAR* p2, size_t count){ return ::memicmp(p1,p2,count); }
+inline int amemicmp(const ACHAR* p1, const ACHAR* p2, size_t count){ return ::_memicmp(p1,p2,count); }
        int wmemicmp(const WCHAR* p1, const WCHAR* p2, size_t count);
        int wmemicmp(const WCHAR* p1, const WCHAR* p2 );
        int wmemicmp_ascii(const WCHAR* p1, const WCHAR* p2, size_t count);

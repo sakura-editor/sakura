@@ -716,8 +716,8 @@ int my_mbisalpha2( int c )
 	@param s1   [in] 文字列１
 	@param s2   [in] 文字列２
 	@param n    [in] 文字長
-	@param dcount  [in] ステップ値 (1=strnicmp,memicmp, 0=stricmp)
-	@param flag [in] 文字列終端チェック (true=stricmp,strnicmp, false=memicmp)
+	@param dcount  [in] ステップ値 (1=strnicmp,_memicmp, 0=stricmp)
+	@param flag [in] 文字列終端チェック (true=stricmp,strnicmp, false=_memicmp)
 
 	@retval 0	一致
 	@date 2002.11.29 Moca 0以外の時の戻り値を，「元の値の差」から「大文字としたときの差」に変更
