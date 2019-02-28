@@ -1,5 +1,4 @@
 ﻿/*! @file */
-//	この行は文字化け対策用です．消さないでください
 
 #include "StdAfx.h"
 #include "CUnicodeBe.h"

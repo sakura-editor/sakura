@@ -1,5 +1,4 @@
 ﻿/*! @file */
-// この行は文字化け対策のためのものです。
 #include "StdAfx.h"
 #include "CCodeBase.h"
 #include "charcode.h"
