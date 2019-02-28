@@ -7,6 +7,8 @@
 
 	Git ワーキングツリー内で実行します。すべての階層のファイルが対象になります。
 
+	特記: マージコミットについて。ブランチで実際に修正を行ったコミットの日時に優先して、主たるブランチにマージした日時を最終更新日時として採用しています。(-m --first-parent オプション)
+
 	制限: ログを遡りすべてのファイルの最終コミット日時を取得することは１分以上かかることがあるため、このスクリプトでは１か月を上限としてログを遡ります。そのため最も古いタイムスタンプは実行日時を基準として前月同日の00:00:00になります。
 #>
 $TopDir = (git rev-parse --show-toplevel)
@@ -18,7 +20,7 @@ $waiting = @{}
 }
 
 @(
-	(git log --format=format:?%ci --name-only --since="$Oldest")
+	(git log -m --first-parent --format=format:?%ci --name-only --since="$Oldest")
 	, "?$Oldest"
 	, (git ls-files --full-name "$TopDir")
 ) | foreach { $_ | foreach {
