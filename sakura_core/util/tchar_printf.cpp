@@ -102,14 +102,14 @@ static inline int local_vsprintf_s(wchar_t* buf, size_t nBufCount, const wchar_t
 }
 
 //vsprintf API
-static inline int local_vsprintf(char* buf, const char* format, va_list& v)
+static inline int local_vsprintf(char* buf, size_t nBufCount, const char* format, va_list& v)
 {
-	return vsprintf(buf,format,v);
+	return vsprintf_s(buf,nBufCount,format,v);
 }
 
-static inline int local_vsprintf(wchar_t* buf, const wchar_t* format, va_list& v)
+static inline int local_vsprintf(wchar_t* buf, size_t nBufCount, const wchar_t* format, va_list& v)
 {
-	return vswprintf(buf,format,v);
+	return vswprintf_s(buf,nBufCount,format,v);
 }
 
 //vsnprintf_s API
@@ -286,7 +286,7 @@ int tchar_vsprintf_s_imp(T* buf, size_t nBufCount, const T* format, va_list& v, 
 					ret=local_vsprintf_s(dst,buf_end-dst,field,tmp_v);
 				}
 				else{
-					ret=local_vsprintf(dst,field,tmp_v);
+					ret=local_vsprintf(dst,buf_end-dst,field,tmp_v);
 				}
 
 				//vを進める。自信なっしんぐ
