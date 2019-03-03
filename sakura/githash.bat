@@ -1,4 +1,4 @@
-@echo off
+@rem echo off
 
 set OUT_DIR=%~1
 if "%OUT_DIR%" == "" (
@@ -16,28 +16,11 @@ pushd "%~dp0"
 
 : Git enabled checking
 set GIT_ENABLED=1
-if defined GIT_CMD goto :end_of_find_git
-where git 1>nul 2>&1
-if errorlevel 1 (
-	@echo no git in PATH
-) else (
-	set GIT_CMD=git
-	goto :end_of_find_git
-)
-where /R "%ProgramFiles%\Git\cmd" git.exe > NUL 2>&1
-if errorlevel 1 (
+if not defined CMD_GIT call "%~dp0..\tools\find-tools.bat"
+if not defined CMD_GIT (
 	set GIT_ENABLED=0
 	@echo NOTE: No git command
-	goto :end_of_find_git
 )
-set GIT_CMD=%ProgramFiles%\Git\cmd\git.exe
-if not exist "%GIT_CMD%" (
-	set GIT_ENABLED=0
-	@echo NOTE: No git command
-	goto :end_of_find_git
-)
-
-:end_of_find_git
 if not exist ..\.git (
 	set GIT_ENABLED=0
 	@echo NOTE: No .git directory
@@ -45,13 +28,13 @@ if not exist ..\.git (
 
 : Get git hash if git is enabled
 if "%GIT_ENABLED%" == "1" (
-	for /f "usebackq" %%s in (`"%GIT_CMD%" show -s --format^=%%h`) do (
+	for /f "usebackq" %%s in (`"%CMD_GIT%" show -s --format^=%%h`) do (
 		set GIT_SHORT_COMMIT_HASH=%%s
 	)
-	for /f "usebackq" %%s in (`"%GIT_CMD%" show -s --format^=%%H`) do (
+	for /f "usebackq" %%s in (`"%CMD_GIT%" show -s --format^=%%H`) do (
 		set GIT_COMMIT_HASH=%%s
 	)
-	for /f "usebackq" %%s in (`"%GIT_CMD%" config --get remote.origin.url`) do (
+	for /f "usebackq" %%s in (`"%CMD_GIT%" config --get remote.origin.url`) do (
 		set GIT_REMOTE_ORIGIN_URL=%%s
 	)
 ) else (
