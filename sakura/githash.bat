@@ -1,4 +1,4 @@
-@rem echo off
+@echo off
 
 set OUT_DIR=%~1
 if "%OUT_DIR%" == "" (
