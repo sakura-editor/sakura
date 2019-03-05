@@ -16,8 +16,8 @@ pushd "%~dp0"
 
 : Git enabled checking
 set GIT_ENABLED=1
-where git 1>nul 2>&1
-if errorlevel 1 (
+if not defined CMD_GIT call "%~dp0..\tools\find-tools.bat"
+if not defined CMD_GIT (
 	set GIT_ENABLED=0
 	@echo NOTE: No git command
 )
@@ -28,13 +28,13 @@ if not exist ..\.git (
 
 : Get git hash if git is enabled
 if "%GIT_ENABLED%" == "1" (
-	for /f "usebackq" %%s in (`git show -s --format^=%%h`) do (
+	for /f "usebackq" %%s in (`"%CMD_GIT%" show -s --format^=%%h`) do (
 		set GIT_SHORT_COMMIT_HASH=%%s
 	)
-	for /f "usebackq" %%s in (`git show -s --format^=%%H`) do (
+	for /f "usebackq" %%s in (`"%CMD_GIT%" show -s --format^=%%H`) do (
 		set GIT_COMMIT_HASH=%%s
 	)
-	for /f "usebackq" %%s in (`git config --get remote.origin.url`) do (
+	for /f "usebackq" %%s in (`"%CMD_GIT%" config --get remote.origin.url`) do (
 		set GIT_REMOTE_ORIGIN_URL=%%s
 	)
 ) else (

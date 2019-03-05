@@ -13,6 +13,7 @@
 ## 外部ツールの一覧
 |      ツール名      |   環境変数   |   デフォルトパス   |  ファイル名  |
 | ------------------ | ------------ | ------------------ | ------------ |
+| Git for Windows    | CMD_GIT      | Git\Cmd            | git.exe      |
 | 7-Zip              | CMD_7Z       | 7-Zip              | 7z           |
 | HTML Help Workshop | CMD_HHC      | HTML Help Workshop | hhc.exe      |
 | Inno Setup 5       | CMD_ISCC     | Inno Setup 5       | ISCC.exe     |
