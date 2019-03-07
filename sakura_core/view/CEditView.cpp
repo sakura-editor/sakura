@@ -55,7 +55,6 @@
 #include "types/CTypeSupport.h"
 #include "convert/CConvert.h"
 #include "util/RegKey.h"
-#include "util/string_ex.h" // IsURL
 #include "util/string_ex2.h"
 #include "util/os.h" //WM_MOUSEWHEEL,IMR_RECONVERTSTRING,WM_XBUTTON*,IMR_CONFIRMRECONVERTSTRING
 #include "util/module.h"

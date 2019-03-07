@@ -36,7 +36,6 @@
 #include "uiparts/CWaitCursor.h"
 #include "uiparts/HandCursor.h"
 #include "util/input.h"
-#include "util/string_ex.h" // IsMailAddress
 #include "util/os.h"
 #include "sakura_rc.h"
 
