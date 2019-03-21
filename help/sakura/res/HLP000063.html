@@ -1,62 +1,62 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML lang="ja">
 <HEAD>
-<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
 <link rel="shortcut icon" href="images/favicon.ico">
-<TITLE>�w��s�փW�����v</TITLE>
-<META NAME="MS-HKWD" CONTENT="�w��s�փW�����v">
+<TITLE>指定行へジャンプ</TITLE>
+<META NAME="MS-HKWD" CONTENT="指定行へジャンプ">
 <META NAME="MS-HKWD" CONTENT="Jump">
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
-<noscript>[<a href="HLP000001.html">�ڎ�</a>]<br></noscript>
-<h2>�w��s�փW�����v</h2>
-�s�ԍ����w�肷��Ƃ��̍s�փJ�[�\�����ړ������邱�Ƃ��ł��܂��B<br>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>指定行へジャンプ</h2>
+行番号を指定するとその行へカーソルを移動させることができます。<br>
 <br>
-<b>(�s�ԍ�)</b><br>
-�J�[�\�����ړ��������s�ԍ����w�肵�ĉ������B<br>
+<b>(行番号)</b><br>
+カーソルを移動したい行番号を指定して下さい。<br>
 <br>
-<b>���܂�Ԃ��P�ʂ̍s�ԍ�</b><br>
-���͂����s�ԍ����A�܂�Ԃ��P�ʂ̍s�ԍ��Ƃ��Ĉ����܂��B<br>
+<b>○折り返し単位の行番号</b><br>
+入力した行番号が、折り返し単位の行番号として扱われます。<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<br>
-<b>�����s�P�ʂ̍s�ԍ�</b><br>
-���͂����s�ԍ����A���s�P�ʒP�ʂ̍s�ԍ��Ƃ��Ĉ����܂��B<br>
+<b>○改行単位の行番号</b><br>
+入力した行番号が、改行単位単位の行番号として扱われます。<br>
 <br>
-<b>�uPL/SQL�R���p�C���G���[�s�v</b><br>
-���̋@�\�́AOracle��PL/SQL�p�b�P�[�W�̃\�[�X��SQL*Plus�ŃR���p�C��������A���s���G���[��������������ꍇ�Ɏg�p���܂��B<br>
-�R���p�C���G���[����s���G���[�����������ꍇ�ɏo�͂����G���[���b�Z�[�W������ƁA�G���[�s�ԍ��ƃ\�[�X���̎��ۂ̍s�ԍ����Ⴂ�܂����A���̋@�\�Ŏ����I�ɃG���[�s�ԍ�������ۂ̍s���Z�o����̂ŁA�\�[�X���̓K�؂Ȉʒu�փW�����v�ł��܂��B<br>
-�G���[��񂪎��ۂ̃\�[�X�̍s�ԍ��ƈقȂ�̂ŁA���̋@�\���Ȃ���PL/SQL�v���O���}�͎d���ɂȂ�܂���(1998�N����)�B<br>
+<b>「PL/SQLコンパイルエラー行」</b><br>
+この機能は、OracleのPL/SQLパッケージのソースをSQL*Plusでコンパイルしたり、実行時エラー情報を見たリする場合に使用します。<br>
+コンパイルエラーや実行時エラーが発生した場合に出力されるエラーメッセージを見ると、エラー行番号とソース中の実際の行番号が違いますが、この機能で自動的にエラー行番号から実際の行を算出するので、ソース中の適切な位置へジャンプできます。<br>
+エラー情報が実際のソースの行番号と異なるので、この機能がないとPL/SQLプログラマは仕事になりません(1998年当時)。<br>
 <br>
-<img src="images/note.png"><b>[����]</b><br>
-<div class=li200>�E�W�����v��̍s�ԍ��́A���s�P�ʂ̍s�ԍ��Ƃ݂Ȃ��܂��B<br>
-�E�u�u���b�N��1�s�ځv��A���o���ꂽ�u���b�N�̍s�ԍ��́A���݂̃^�C�v�ʐݒ�ɂ�����s�ԍ��\���̐ݒ�i�܂�Ԃ��P�ʂ̍s�ԍ������s�P�ʂ̍s�ԍ��j�ɍ��킹�܂��B<br>
-�E<a href="HLP000074.html">�^�C�v�ʐݒ� �w�X�N���[���x�v���p�e�B</a>�̃A�E�g���C����͕��@��PL/SQL�ɐݒ肳��Ă���ꍇ�A�p�b�P�[�W�d�l���ƃp�b�P�[�W�{�̕��������I�Ɍ��o���܂��B<br>
-�E�G���[�s�ԍ�������ۂ̍s���Z�o����@�\�́AOracle7��SQL*Plus�̑g�ݍ��킹�ł�������m�F�����Ă��܂���B<br>
+<img src="images/note.png"><b>[注意]</b><br>
+<div class=li200>・ジャンプ先の行番号は、改行単位の行番号とみなします。<br>
+・「ブロックの1行目」や、検出されたブロックの行番号は、現在のタイプ別設定における行番号表示の設定（折り返し単位の行番号か改行単位の行番号）に合わせます。<br>
+・<a href="HLP000074.html">タイプ別設定 『スクリーン』プロパティ</a>のアウトライン解析方法がPL/SQLに設定されている場合、パッケージ仕様部とパッケージ本体部を自動的に検出します。<br>
+・エラー行番号から実際の行を算出する機能は、Oracle7とSQL*Plusの組み合わせでしか動作確認をしていません。<br>
 </div><br>
 <img src="images/Jump.png"><br>
 <br>
 <img src="images/Jump_PLSQL.png"><br>
 <br>
-<a href="HLP000074.html">�^�C�v�ʐݒ� �w�X�N���[���x�v���p�e�B</a>�̃A�E�g���C����͕��@��PL/SQL�ɐݒ肳��Ă���ꍇ�A�p�b�P�[�W�d�l���ƃp�b�P�[�W�{�̕��������I�Ɍ��o���܂��B<br>
+<a href="HLP000074.html">タイプ別設定 『スクリーン』プロパティ</a>のアウトライン解析方法がPL/SQLに設定されている場合、パッケージ仕様部とパッケージ本体部を自動的に検出します。<br>
 <br>
-��<a href="HLP000204.html"><b>�}�N���\��</b></a><br>
-�E�\��: Jump( int1 :Integer, int2 :Integer );<br>
-&nbsp;&nbsp;&nbsp;&nbsp;int1&nbsp;&nbsp;&nbsp;&nbsp;�W�����v��s�ԍ�<br>
-&nbsp;&nbsp;&nbsp;&nbsp;int2&nbsp;&nbsp;&nbsp;&nbsp;�I�v�V�����i�ȗ��\�A������PPA�}�N���͏ȗ��s�j<br>
-�E�L�^:	��<br>
-�E���<br>
-�I�v�V�����ɂ͈ȉ��̒l�̑g�ݍ��킹���w��ł��܂��B<br>
-&nbsp;&nbsp;&nbsp;&nbsp;0x00&nbsp;&nbsp;&nbsp;&nbsp;�܂�Ԃ��P�ʂ̍s�ԍ�<br>
-&nbsp;&nbsp;&nbsp;&nbsp;0x01&nbsp;&nbsp;&nbsp;&nbsp;���s�P�ʂ̍s�ԍ��i�ȗ����K��l�j<br>
-&nbsp;&nbsp;&nbsp;&nbsp;0x02&nbsp;&nbsp;&nbsp;&nbsp;PL/SQL�R���p�C���G���[�s����������<br>
+■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+・構文: Jump( int1 :Integer, int2 :Integer );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int1&nbsp;&nbsp;&nbsp;&nbsp;ジャンプ先行番号<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int2&nbsp;&nbsp;&nbsp;&nbsp;オプション（省略可能、ただしPPAマクロは省略不可）<br>
+・記録:	○<br>
+・解説<br>
+オプションには以下の値の組み合わせを指定できます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x00&nbsp;&nbsp;&nbsp;&nbsp;折り返し単位の行番号<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x01&nbsp;&nbsp;&nbsp;&nbsp;改行単位の行番号（省略時規定値）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x02&nbsp;&nbsp;&nbsp;&nbsp;PL/SQLコンパイルエラー行を処理する<br>
 <br>
-<a href="HLP000289.html">MoveCursor / MoveCursorLayout</a> ������܂��B<br>
+<a href="HLP000289.html">MoveCursor / MoveCursorLayout</a> もあります。<br>
 <br>
-<img src="images/note.png"><b>����</b><br>
-�L�[�}�N�����ł� 10�i���̒萔�\�L�����󂯕t���܂���B<br>
-�I�v�V������10�i���ɒ����ċL�q���Ă��������B<br>
+<img src="images/note.png"><b>注意</b><br>
+キーマクロ中では 10進数の定数表記しか受け付けません。<br>
+オプションは10進数に直して記述してください。<br>
 <br>
-<img src="images/note.png"><b>����</b><br>
-�w��s�փW�����v�̃_�C�A���O���}�N���ŏo�����Ƃ͂ł��܂���B<br>
+<img src="images/note.png"><b>注意</b><br>
+指定行へジャンプのダイアログをマクロで出すことはできません。<br>
 </BODY></HTML>

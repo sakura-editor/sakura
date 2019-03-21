@@ -1,74 +1,74 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML lang="ja">
 <HEAD>
-<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
 <link rel="shortcut icon" href="images/favicon.ico">
-<TITLE>�_�C���N�g�^�O�W�����v�̎g����</TITLE>
-<META NAME="MS-HKWD" CONTENT="�_�C���N�g�^�O�W�����v�̎g����">
+<TITLE>ダイレクトタグジャンプの使い方</TITLE>
+<META NAME="MS-HKWD" CONTENT="ダイレクトタグジャンプの使い方">
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
-<noscript>[<a href="HLP000001.html">�ڎ�</a>]<br></noscript>
-<h2>�_�C���N�g�^�O�W�����v�̎g����</h2>
-<b>[�C���X�g�[��]</b><br>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>ダイレクトタグジャンプの使い方</h2>
+<b>[インストール]</b><br>
 
-<b>ver 2.4.0.0 �ȍ~�̏ꍇ</b><br>
+<b>ver 2.4.0.0 以降の場合</b><br>
 
-<div class=li200><a href="https://github.com/universal-ctags/ctags-win32/releases" target=_blank>Universal Ctags</a> ���C���X�g�[���p�b�P�[�W����� appveyor �̐��ʕ��ɓ�������Ă��܂��B<br>
-��������Ă���o�[�W�����ƈقȂ�o�[�W�������g�������ꍇ�ȊO��������K�v�͂���܂���B
+<div class=li200><a href="https://github.com/universal-ctags/ctags-win32/releases" target=_blank>Universal Ctags</a> がインストーラパッケージおよび appveyor の成果物に同梱されています。<br>
+同梱されているバージョンと異なるバージョンを使いたい場合以外何もする必要はありません。
 </div><br>
 
-<b>ver 2.4.0.0 �ȑO�̏ꍇ</b><br>
+<b>ver 2.4.0.0 以前の場合</b><br>
 
 <div class=li200>
-�ȉ��̂����ꂩ�� ctags ���_�E�����[�h���� ctags.exe�� sakura.exe �Ɠ���t�H���_�ɒu���܂��B<br>
+以下のいずれかの ctags をダウンロードして ctags.exeを sakura.exe と同一フォルダに置きます。<br>
 
 <ul>
-<li><a href="https://github.com/universal-ctags/ctags-win32/releases" target=_blank>Universal Ctags</a> (���ݐϋɓI�ɊJ������Ă���)</li>
-<li><a href="http://hp.vector.co.jp/authors/VA025040/" target=_blank>Exuberant Ctags ���{��Ή���</a> (���ݍX�V���~�܂��Ă���)</li>
+<li><a href="https://github.com/universal-ctags/ctags-win32/releases" target=_blank>Universal Ctags</a> (現在積極的に開発されている)</li>
+<li><a href="http://hp.vector.co.jp/authors/VA025040/" target=_blank>Exuberant Ctags 日本語対応版</a> (現在更新が止まっている)</li>
 </ul>
 
-Universal Ctags �ɂ� x86�� (32bit)�� x64��(64bit) ������܂��Bsakura.exe �Ɠ����^�C�v(x86�� or x64��)���_�E�����[�h���܂��B<br>
-Exuberant Ctags �̏ꍇ Win32�ł��_�E�����[�h���܂��B<br>
+Universal Ctags には x86版 (32bit)と x64版(64bit) があります。sakura.exe と同じタイプ(x86版 or x64版)をダウンロードします。<br>
+Exuberant Ctags の場合 Win32版をダウンロードします。<br>
 <br>
-�A�[�J�C�u�Ɋ܂܂�Ă��� ctags.exe �� sakura.exe�Ɠ���t�H���_�ɒu���܂��B<br>
+アーカイブに含まれている ctags.exe を sakura.exeと同一フォルダに置きます。<br>
 </div>
 <br>
 </div><br>
-<b>[����]</b><br>
-<div class=li200>���炩����ctags���g���ă^�O�t�@�C��"tags"�����K�v������܂��B<br>
-�T�N���G�f�B�^���N�����C���j���[�̌������^�O�t�@�C���̍쐬��I�����܂��B<br>
-�_�C�A���O�{�b�N�X�Ń^�O�t�@�C���̍쐬�ʒu�ƃI�v�V�������w�肵��OK��������tags�t�@�C������������܂��B<br>
+<b>[準備]</b><br>
+<div class=li200>あらかじめctagsを使ってタグファイル"tags"を作る必要があります。<br>
+サクラエディタを起動し，メニューの検索→タグファイルの作成を選択します。<br>
+ダイアログボックスでタグファイルの作成位置とオプションを指定してOKを押すとtagsファイルが生成されます。<br>
 <br>
-�T�u�f�B���N�g�����܂ރ_�C���N�g�^�O�W�����v���g���ꍇ�́C�ΏۂƂ���f�B���N�g�����ׂĂ�z���Ɋ܂ރf�B���N�g����tags�쐬��Ɏw�肵�Ă��������B<br>
-�܂��쐬���Ɂu�T�u�t�H���_���Ώۂɂ���v�I�v�V�����Ƀ`�F�b�N�����Ă��������B<br>
-���̃f�B���N�g���z���̃t�@�C���ԂŃ_�C���N�g�^�O�W�����v���ł���悤�ɂȂ�܂��B<br>
+サブディレクトリを含むダイレクトタグジャンプを使う場合は，対象とするディレクトリすべてを配下に含むディレクトリをtags作成先に指定してください。<br>
+また作成時に「サブフォルダも対象にする」オプションにチェックを入れてください。<br>
+そのディレクトリ配下のファイル間でダイレクトタグジャンプができるようになります。<br>
 <br>
-tags�t�@�C���ɂ̓L�[���[�h�ƍs�ԍ��̑Ή����ۑ�����Ă��܂��B<br>
-���̂��߃W�����v��t�@�C����ҏW�����ꍇ�ɂ�tags�t�@�C�����Đ������Ă��������B<br>
-�����Y���Ɛ������ӏ��ɃW�����v�ł��܂���B<br>
+tagsファイルにはキーワードと行番号の対応が保存されています。<br>
+そのためジャンプ先ファイルを編集した場合にはtagsファイルを再生成してください。<br>
+これを忘れると正しい箇所にジャンプできません。<br>
 <br>
-�_�C���N�g�^�O�W�����v�ł͑Ώۃt�@�C������f�B���N�g����1����ɏ��Ȃ���tags�t�@�C����T���C�ŏ��Ɍ��������t�@�C���𗘗p���܂��B<br>
-�ł��̂ŁC�T�u�f�B���N�g���S�̂�ΏۂƂ���ꍇ�ɂ̓T�u�f�B���N�g���̒��ɕ����I��tags�t�@�C����u���Ȃ��悤�ɂ��Ă��������B<br>
+ダイレクトタグジャンプでは対象ファイルからディレクトリを1つずつ上に上りながらtagsファイルを探し，最初に見つかったファイルを利用します。<br>
+ですので，サブディレクトリ全体を対象とする場合にはサブディレクトリの中に部分的なtagsファイルを置かないようにしてください。<br>
 </div><br>
-<b>[�W�����v]</b><br>
-<div class=li200>�^�O�W�����v�R�}���h(�f�t�H���g: F12)�����s����ƁC�^�O�W�����v�ł��Ȃ������ꍇ�Ɏ����I�Ƀ_�C���N�g�^�O�W�����v�����݂܂��B<br>
-�_�C���N�g�^�O�W�����v�݂̂��s�킹�����ꍇ�ɂ̓_�C���N�g�^�O�W�����v�R�}���h���g���Ă��������B<br>
+<b>[ジャンプ]</b><br>
+<div class=li200>タグジャンプコマンド(デフォルト: F12)を実行すると，タグジャンプできなかった場合に自動的にダイレクトタグジャンプを試みます。<br>
+ダイレクトタグジャンプのみを行わせたい場合にはダイレクトタグジャンプコマンドを使ってください。<br>
 </div><br>
-<img src="images/note.png"><b>����</b><br>
-<div class=li200>�_�C���N�g�^�O�W�����v�ł͕ҏW���t�@�C���̃p�X���N�_�Ƃ���tags�t�@�C����T���܂��B<br>
-���̂��ߕۑ�����Ă��Ȃ�(���O������ƂȂ��Ă���)�ꍇ�ɂ͗��p�ł��܂���B<br>
+<img src="images/note.png"><b>注意</b><br>
+<div class=li200>ダイレクトタグジャンプでは編集中ファイルのパスを起点としてtagsファイルを探します。<br>
+そのため保存されていない(名前が無題となっている)場合には利用できません。<br>
 <br>
-�T�u�f�B���N�g�����܂ރ_�C���N�g�^�O�W�����v���g���ꍇ�́C�ΏۂƂ���f�B���N�g�����ׂĂ�z���Ɋ܂ރf�B���N�g����tags�t�@�C���𐶐����Ă��������B<br>
-���̃f�B���N�g���z���̃t�@�C���ԂŃ_�C���N�g�^�O�W�����v���ł���悤�ɂȂ�܂��B<br>
-�_�C���N�g�^�O�W�����v�ł͑Ώۃt�@�C������f�B���N�g����1����ɏ��Ȃ���tags�t�@�C����T���C�ŏ��Ɍ��������t�@�C���𗘗p���܂��B<br>
-�ł��̂ŁC�T�u�f�B���N�g���S�̂�ΏۂƂ���ꍇ�ɂ̓T�u�f�B���N�g���̒��ɕ����I��tags�t�@�C����u���Ȃ��悤�ɂ��Ă��������B<br>
+サブディレクトリを含むダイレクトタグジャンプを使う場合は，対象とするディレクトリすべてを配下に含むディレクトリにtagsファイルを生成してください。<br>
+そのディレクトリ配下のファイル間でダイレクトタグジャンプができるようになります。<br>
+ダイレクトタグジャンプでは対象ファイルからディレクトリを1つずつ上に上りながらtagsファイルを探し，最初に見つかったファイルを利用します。<br>
+ですので，サブディレクトリ全体を対象とする場合にはサブディレクトリの中に部分的なtagsファイルを置かないようにしてください。<br>
 </div><br>
 <br>
-<b>�Q��</b><br>
-<a href="HLP000280.html">�^�O�t�@�C���̍쐬</a>	<a href="HLP000281.html">�_�C���N�g�^�O�W�����v</a><br>
+<b>参照</b><br>
+<a href="HLP000280.html">タグファイルの作成</a>	<a href="HLP000281.html">ダイレクトタグジャンプ</a><br>
 <br>
-(sakura:1.3.9.0�ȍ~)<br>
-(sakura:1.3.9.1���T�u�f�B���N�g���ɑΉ����܂���)<br>
+(sakura:1.3.9.0以降)<br>
+(sakura:1.3.9.1よりサブディレクトリに対応しました)<br>
 </BODY></HTML>
