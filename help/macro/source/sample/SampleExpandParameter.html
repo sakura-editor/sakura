@@ -1,31 +1,31 @@
-<html><head><title>S_ExpandParameter‚Ìg—p—á</title>
+ï»¿<html><head><title>S_ExpandParameterã®ä½¿ç”¨ä¾‹</title>
 <LINK REL="stylesheet" TYPE="text/css" HREF="../sakura.css">
-<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 </head>
 <body>
 <small>
 Sakura-Editor Macro Reference
 </small>
-<h2>S_ExpandParameter‚Ìg—p—á</h2>
+<h2>S_ExpandParameterã®ä½¿ç”¨ä¾‹</h2>
 
 <pre>
 <span style = "color:green;">//sample.js
-//“Áê•¶š‚Ì“WŠJ</span>
+//ç‰¹æ®Šæ–‡å­—ã®å±•é–‹</span>
 <span style = "color:blue;">var</span> oWsh = <span style = "color:blue;">new</span> ActiveXObject(<span style = "color:#800000;">"WScript.Shell"</span>);
 <span style = "color:blue;">var</span> sBuf;
 
-sBuf = <span style = "color:#800000;">"Œ»İŠJ‚¢‚Ä‚¢‚éƒtƒ@ƒCƒ‹‚Ìƒ^ƒCƒ€ƒXƒ^ƒ“ƒv‚Í\n"</span>;
-sBuf += <span style = "color:blue;">ExpandParameter</span>(<span style = "color:#800000;">"$D"</span>) + <span style = "color:#800000;">" "</span> + <span style = "color:blue;">ExpandParameter</span>(<span style = "color:#800000;">"$T"</span>) + <span style = "color:#800000;">"‚Å‚·B\n\n"</span>;
+sBuf = <span style = "color:#800000;">"ç¾åœ¨é–‹ã„ã¦ã„ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚¿ã‚¤ãƒ ã‚¹ã‚¿ãƒ³ãƒ—ã¯\n"</span>;
+sBuf += <span style = "color:blue;">ExpandParameter</span>(<span style = "color:#800000;">"$D"</span>) + <span style = "color:#800000;">" "</span> + <span style = "color:blue;">ExpandParameter</span>(<span style = "color:#800000;">"$T"</span>) + <span style = "color:#800000;">"ã§ã™ã€‚\n\n"</span>;
 
-sBuf += <span style = "color:blue;">ExpandParameter</span>(<span style = "color:#800000;">"${R?“Ç‚İæ‚èê—p‚Ì$:ã‘‚«‹Ö~‚Ì$:•ÒW‰Â”\‚È$}"</span>) + <span style = "color:#800000;">"ƒtƒ@ƒCƒ‹‚Å‚·B"</span>;
+sBuf += <span style = "color:blue;">ExpandParameter</span>(<span style = "color:#800000;">"${R?èª­ã¿å–ã‚Šå°‚ç”¨ã®$:ä¸Šæ›¸ãç¦æ­¢ã®$:ç·¨é›†å¯èƒ½ãª$}"</span>) + <span style = "color:#800000;">"ãƒ•ã‚¡ã‚¤ãƒ«ã§ã™ã€‚"</span>;
 
-oWsh.Popup(sBuf, <span style = "color:red;">0</span>, <span style = "color:#800000;">"ƒtƒ@ƒCƒ‹î•ñ"</span>, <span style = "color:red;">0</span>);
+oWsh.Popup(sBuf, <span style = "color:red;">0</span>, <span style = "color:#800000;">"ãƒ•ã‚¡ã‚¤ãƒ«æƒ…å ±"</span>, <span style = "color:red;">0</span>);
 <span style = "color:green;">//EOF</span>
 </pre>
 
 <pre>
 <span style = "color:green;">//sample.ppa</span>
-<span style = "color:blue;">MessageBox</span>(<span style = "color:blue;">S_ExpandParameter</span>(<span style = "color:#800000;">'$C'</span>), <span style = "color:#800000;">'‘I‘ğ’†•¶š—ñ‚Ü‚½‚ÍƒJ[ƒ\ƒ‹ˆÊ’u‚Ì’PŒê'</span>, <span style = "color:red;">0</span>);
+<span style = "color:blue;">MessageBox</span>(<span style = "color:blue;">S_ExpandParameter</span>(<span style = "color:#800000;">'$C'</span>), <span style = "color:#800000;">'é¸æŠä¸­æ–‡å­—åˆ—ã¾ãŸã¯ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã®å˜èª'</span>, <span style = "color:red;">0</span>);
 </pre>
 <hr>
 </body></html>
