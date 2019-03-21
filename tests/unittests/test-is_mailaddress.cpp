@@ -8,28 +8,18 @@
 //#include "util/string_ex.h" //依存関係が多いのでテスト対象の関数定義のみ抜き出し
 BOOL IsMailAddress(const wchar_t* pszBuf, int nBufLen, int* pnAddressLenfth);
 
-// 変更前実装の定義
-// ※関数定義は IsMailAddress_20160427.cpp を参照。
-BOOL IsMailAddress_20160427(const wchar_t* pszBuf, int nBufLen, int* pnAddressLenfth);
-
 //////////////////////////////////////////////////////////////////////
 // テストマクロ
 
 // 新旧動作比較用マクロ1(TRUE, FALSE向け)
 // ASSERT_SAME: 旧実装と新実装で動作が変わらないことを期待
 #define ASSERT_SAME(expected, szTarget, cchTarget, pchMatchedLen) \
-		EXPECT_##expected(_OLD_IMPL(szTarget, cchTarget, pchMatchedLen)); \
-		ASSERT_##expected(_NEW_IMPL(szTarget, cchTarget, pchMatchedLen));
+		EXPECT_##expected(IsMailAddress(szTarget, cchTarget, pchMatchedLen))
 
 // 新旧動作比較用マクロ2(TRUE, FALSE向け)
 // ASSERT_CHANGE: 旧実装と新実装で動作が変わることを期待
 #define ASSERT_CHANGE(expected, szTarget, cchTarget, pchMatchedLen) \
-		EXPECT_NE(expected, _OLD_IMPL(szTarget, cchTarget, pchMatchedLen)); \
-		ASSERT_##expected(_NEW_IMPL(szTarget, cchTarget, pchMatchedLen));
-
-// テスト対象の新旧関数をマクロに当てる
-#define _OLD_IMPL IsMailAddress_20160427
-#define _NEW_IMPL IsMailAddress
+		EXPECT_NE(expected, IsMailAddress(szTarget, cchTarget, pchMatchedLen))
 
 //////////////////////////////////////////////////////////////////////
 // テストコード
@@ -179,9 +169,6 @@ TEST(testIsMailAddress, CheckAwithAtmark)
 
 //////////////////////////////////////////////////////////////////////
 // テストマクロの後始末
-
-#undef _OLD_IMPL
-#undef _NEW_IMPL
 
 #undef ASSERT_SAME
 #undef ASSERT_CHANGE

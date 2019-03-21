@@ -125,6 +125,19 @@ protected:
 	static bool _match_charlist( const WCHAR c, const WCHAR *pszList );
 };
 
+BOOL IsURL( const wchar_t* psz, int offset, int length, int* outLength);/* offset 引数の追加により境界判定が行える高速版 */
+inline
+BOOL IsURL( const wchar_t* psz, int length, int* outLength) /* 指定アドレスがURLの先頭ならばTRUEとその長さを返す。高速版の追加により obsolete. */
+{
+	return IsURL(psz, 0, length, outLength);
+}
+BOOL IsMailAddress( const wchar_t* psz, int offset, int length, int* outLength); /* offset 引数の追加により境界判定が行える高速版 */
+inline
+BOOL IsMailAddress( const wchar_t* psz, int length, int* outLength) /* 現在位置がメールアドレスならば、NULL以外と、その長さを返す。高速版の追加により obsolete. */
+{
+	return IsMailAddress(psz, 0, length, outLength);
+}
+
 // ACHAR 版
 inline bool CWordParse::_match_charlist( const ACHAR c, const ACHAR *pszList )
 {
