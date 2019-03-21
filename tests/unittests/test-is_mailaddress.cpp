@@ -11,6 +11,13 @@ BOOL IsMailAddress(const wchar_t* pszBuf, int nBufLen, int* pnAddressLenfth);
 //////////////////////////////////////////////////////////////////////
 // テストマクロ
 
+// 新動作 = PR #421 導入によって変更されるはずだった IsMailAddress()
+// 旧動作 = PR #421 導入前、revert 後の IsMailAddress()
+//
+// PR #421 導入によって IsMailAddress() の単体テストが実装されたが、
+// PR #421 の revert によって消された単体テストを復活する。
+// 将来 IsMailAddress() の仕様を変更する場合はこの単体テストを必要に応じて修正すればよい。
+
 // 新旧動作比較用マクロ1(TRUE, FALSE向け)
 // ASSERT_SAME: 旧実装と新実装で動作が変わらないことを期待
 #define ASSERT_SAME(expected, szTarget, cchTarget, pchMatchedLen) \
