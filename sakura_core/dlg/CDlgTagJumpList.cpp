@@ -1099,7 +1099,6 @@ int CDlgTagJumpList::find_key_core(
 		return -1;
 	}
 	CSortedTagJumpList& cList = *m_pcList;
-	const int nCap = cList.GetCapacity();
 	STagFindState state;
 	state.m_nDepth    = 0;
 	state.m_nMatchAll = 0;
@@ -1128,9 +1127,6 @@ int CDlgTagJumpList::find_key_core(
 	
 	TCHAR	szTagFile[1024];		//タグファイル
 	TCHAR	szNextPath[1024];		//次検索フォルダ
-	ACHAR	szLineData[1024];		//行バッファ
-	ACHAR	s[4][1024];
-	int		n2;
 	szNextPath[0] = _T('\0');
 	vector_ex<std::tstring> seachDirs;
 
@@ -1166,161 +1162,23 @@ int CDlgTagJumpList::find_key_core(
 			bool bSorted = true;
 			bool bFoldcase = false;
 			int  nTagFormat = 2; // 2は1も読めるのでデフォルトは2
-			int  nLines = 0;
 			int  baseDirId = 0;
+			int  nRet;
 			if( state.m_bJumpPath ){
 				baseDirId = cList.AddBaseDir( state.m_szCurPath );
 			}
 			state.m_nNextMode = nDefaultNextMode;
 
-			// バッファの後ろから2文字目が\0かどうかで、行末まで読み込んだか確認する
-			const int nLINEDATA_LAST_CHAR = _countof( szLineData ) - 2;
-			szLineData[nLINEDATA_LAST_CHAR] = '\0';
-			while( fgets( szLineData, _countof( szLineData ), fp ) )
-			{
-				nLines++;
-				int  nRet;
-				// fgetsが行すべてを読み込めていない場合の考慮
-				if( '\0' != szLineData[nLINEDATA_LAST_CHAR]
-				    && '\n' != szLineData[nLINEDATA_LAST_CHAR] ){
-					// 改行コードまでを捨てる
-					int ch = fgetc( fp );
-					while( ch != '\n' && ch != EOF ){
-						ch = fgetc( fp );
-					}
+			// tagsファイルのパラメータを読みこみ
+			nRet = ReadTagsParameter(fp, bTagJumpICaseByTags, &state, cList, &nTagFormat, &bSorted, &bFoldcase, &bTagJumpICase, &szNextPath[0], &baseDirId);
+			if ( nRet ) {
+				if ( bSorted == 1 && !bFoldcase && !bTagJumpICase && ( bTagJumpExactMatch && !bTagJumpAnyWhere ) ) {
+					//二分探索が可能な場合は二分探索を行う
+					find_key_for_binarySearch(fp, paszKeyword, nTagFormat, baseDirId, &state, nTop);
+				} else {
+					//線形探索
+					find_key_for_LinearSearch(fp, paszKeyword, nTagFormat, baseDirId, &state, nTop, bTagJumpExactMatch, bTagJumpAnyWhere, bSorted, bFoldcase, bTagJumpICase, length );
 				}
-				if( 1 == nLines && szLineData[0] == '\x0c' ){
-					// etagsなので次のファイル
-					break;
-				}
-				if( '!' == szLineData[0] ){
-					if( 0 == strncmp_literal( szLineData + 1, "_TAG_" ) ){
-						s[0][0] = s[1][0] = s[2][0] = 0;
-						nRet = sscanf(
-							szLineData, 
-							TAG_FILE_INFO_A,	//tagsファイル情報
-							s[0], s[1], s[2]
-						);
-						if( nRet < 2 ) goto next_line;
-						const ACHAR* pTag = s[0] + 6;
-						if( 0 == strncmp_literal(pTag , "FILE_FORMAT" ) ){
-							n2 = atoi( s[1] );
-							if( 1 <=n2 && n2 <= 2 ){
-								nTagFormat = n2;
-							}
-						}else if( 0 == strncmp_literal( pTag, "FILE_SORTED" ) ){
-							n2 = atoi( s[1] );
-							bSorted   = (1 == n2);
-							bFoldcase = (2 == n2);
-							if( bTagJumpICaseByTags ){
-								bTagJumpICase = bFoldcase;
-							}
-						}else if( 0 == strncmp_literal( pTag, "S_SEARCH_NEXT" ) ){
-							// 独自拡張:次に検索するtagファイルの指定
-							if( '0' <= s[1][0] && s[1][0] <= '3' ){
-								n2 = atoi( s[1] );
-								if( 0 <= n2 && n2 <= 3 ){
-									state.m_nNextMode = n2;
-								}
-								if( 1 <= n2 && s[2][0] ){
-									// s[2] == 絶対パス(ディレクトリ)
-									TCHAR baseWork[1024];
-									CopyDirDir( baseWork, to_tchar(s[2]), state.m_szCurPath );
-									szNextPath[0] = 0;
-									if( !GetLongFileName( baseWork, szNextPath ) ){
-										// エラーなら変換前を適用
-										auto_strcpy( szNextPath, baseWork );
-									}
-								}
-							}
-						}else if( 0 == strncmp_literal( pTag, "S_FILE_BASEDIR" ) ){
-							TCHAR baseWork[1024];
-							// 独自拡張:ファイル名の基準ディレクトリ
-							if( state.m_bJumpPath ){
-								// パス親読み替え中は、相対パスだった場合に連結が必要
-								CopyDirDir( baseWork, to_tchar(s[1]), state.m_szCurPath );
-								baseDirId = cList.AddBaseDir( baseWork );
-							}else{
-								auto_strcpy( baseWork, to_tchar(s[1]) );
-								AddLastYenFromDirectoryPath( baseWork );
-								baseDirId = cList.AddBaseDir( baseWork );
-							}
-						}
-					}
-					goto next_line;	//コメントならスキップ
-				}
-				if( szLineData[0] < '!' ) goto next_line;
-				//chop( szLineData );
-
-				s[0][0] = s[1][0] = s[2][0] = s[3][0] = '\0';
-				n2 = 0;
-				//	@@ 2005.03.31 MIK TAG_FORMAT定数化
-				if( 2 == nTagFormat ){
-					nRet = sscanf(
-						szLineData, 
-						TAG_FORMAT_2_A,	//拡張tagsフォーマット
-						s[0], s[1], &n2, s[2], s[3]
-						);
-					// 2010.04.02 nRet < 4 を3に変更。標準フォーマットも読み込む
-					if( nRet < 3 ) goto next_line;
-					if( n2 <= 0 ) goto next_line;	//行番号不正(-excmd=nが指定されてないかも)
-				}else{
-					nRet = sscanf(
-						szLineData, 
-						TAG_FORMAT_1_A,	//tagsフォーマット
-						s[0], s[1], &n2
-						);
-					if( nRet < 2 ) goto next_line;
-					if( n2 <= 0 ) goto next_line;
-				}
-
-				int  cmp;
-				if( bTagJumpAnyWhere ){
-					if( bTagJumpICase ){
-						cmp = stristr_j( s[0], paszKeyword ) != NULL ? 0 : -1;
-					}else{
-						cmp = strstr_j( s[0], paszKeyword ) != NULL ? 0 : -1;
-					}
-				}else{
-					if( bTagJumpExactMatch ){
-						// 完全一致
-						if( bTagJumpICase ){
-							cmp = auto_stricmp( s[0], paszKeyword );
-						}else{
-							cmp = auto_strcmp( s[0], paszKeyword );
-						}
-					}else{
-						// 前方一致
-						if( bTagJumpICase ){
-							cmp = my_strnicmp( s[0], paszKeyword, length );
-						}else{
-							cmp = strncmp( s[0], paszKeyword, length );
-						}
-					}
-				}
-				if( 0 == cmp ){
-					state.m_nMatchAll++;
-					if( nTop < state.m_nMatchAll ){
-						if( cList.GetCount() < nCap ){
-							cList.AddParamA( s[0], s[1], n2, s[2][0], s[3], state.m_nDepth, baseDirId );
-						}else{
-							// 探索打ち切り(次ページでやり直し)
-							m_bNextItem = true;
-							break;
-						}
-					}
-				}
-				else if( 0 < cmp ){
-					//	tagsはソートされているので，先頭からのcase sensitiveな
-					//	比較結果によって検索の時は処理の打ち切りが可能
-					//	2005.04.05 MIK バグ修正
-					if( (!bTagJumpICase) && bSorted && (!bTagJumpAnyWhere) ) break;
-					// 2010.07.21 Foldcase時も打ち切る。ただしtagsとサクラ側のソート順が同じでなければならない
-					if( bTagJumpICase  && bFoldcase && (!bTagJumpAnyWhere) ) break;
-				}
-next_line:
-				;
-				szLineData[nLINEDATA_LAST_CHAR] = '\0';
 			}
 
 			//ファイルを閉じる。
@@ -1361,6 +1219,390 @@ next_line:
 		}
 	}
 	return state.m_nMatchAll;
+}
+
+/*
+	「!_TAG_」で始まるパラメータの読み込み処理
+*/
+int CDlgTagJumpList::ReadTagsParameter(
+	FILE* fp,
+	bool bTagJumpICaseByTags,
+	STagFindState* state,
+	CSortedTagJumpList& cList,
+	int* nTagFormat,
+	bool* bSorted,
+	bool* bFoldcase,
+	bool* bTagJumpICase,
+	PTCHAR szNextPath,
+	int* baseDirId
+)
+{
+	ACHAR	szLineData[1024];		//行バッファ
+	ACHAR	s[4][1024];
+	int nLines = 0;
+	int n2;
+	fpos_t old_offset;
+
+
+	// バッファの後ろから2文字目が\0かどうかで、行末まで読み込んだか確認する
+	const int nLINEDATA_LAST_CHAR = _countof( szLineData ) - 2;
+	szLineData[nLINEDATA_LAST_CHAR] = '\0';
+
+	while( fgets( szLineData, _countof( szLineData ), fp ) )
+	{
+		nLines++;
+		int  nRet;
+		// fgetsが行すべてを読み込めていない場合の考慮
+		if( '\0' != szLineData[nLINEDATA_LAST_CHAR]
+		    && '\n' != szLineData[nLINEDATA_LAST_CHAR] ){
+			// 改行コードまでを捨てる
+			int ch = fgetc( fp );
+			while( ch != '\n' && ch != EOF ){
+				ch = fgetc( fp );
+			}
+		}
+		if( 1 == nLines && szLineData[0] == '\x0c' ){
+			// etagsなので次のファイル
+			return false;
+		}
+		if ('!' == szLineData[0]) {
+			if (0 == strncmp_literal(szLineData + 1, "_TAG_")) {
+				s[0][0] = s[1][0] = s[2][0] = 0;
+				nRet = sscanf(
+					szLineData,
+					TAG_FILE_INFO_A,	//tagsファイル情報
+					s[0], s[1], s[2]
+				);
+				if (nRet < 2) {
+					szLineData[nLINEDATA_LAST_CHAR] = '\0';
+					continue;
+				}
+				const ACHAR* pTag = s[0] + 6;
+				if (0 == strncmp_literal(pTag, "FILE_FORMAT")) {
+					n2 = atoi(s[1]);
+					if (1 <= n2 && n2 <= 2) {
+						*nTagFormat = n2;
+					}
+				}
+				else if (0 == strncmp_literal(pTag, "FILE_SORTED")) {
+					n2 = atoi(s[1]);
+					*bSorted = (1 == n2);
+					*bFoldcase = (2 == n2);
+					if (bTagJumpICaseByTags) {
+						*bTagJumpICase = *bFoldcase;
+					}
+				}
+				else if (0 == strncmp_literal(pTag, "S_SEARCH_NEXT")) {
+					// 独自拡張:次に検索するtagファイルの指定
+					if ('0' <= s[1][0] && s[1][0] <= '3') {
+						n2 = atoi(s[1]);
+						if (0 <= n2 && n2 <= 3) {
+							state->m_nNextMode = n2;
+						}
+						if (1 <= n2 && s[2][0]) {
+							// s[2] == 絶対パス(ディレクトリ)
+							TCHAR baseWork[1024];
+							CopyDirDir(baseWork, to_tchar(s[2]), state->m_szCurPath);
+							szNextPath[0] = 0;
+							if (!GetLongFileName(baseWork, szNextPath)) {
+								// エラーなら変換前を適用
+								auto_strcpy(szNextPath, baseWork);
+							}
+						}
+					}
+				}
+				else if (0 == strncmp_literal(pTag, "S_FILE_BASEDIR")) {
+					TCHAR baseWork[1024];
+					// 独自拡張:ファイル名の基準ディレクトリ
+					if (state->m_bJumpPath) {
+						// パス親読み替え中は、相対パスだった場合に連結が必要
+						CopyDirDir(baseWork, to_tchar(s[1]), state->m_szCurPath);
+						*baseDirId = cList.AddBaseDir(baseWork);
+					}
+					else {
+						auto_strcpy(baseWork, to_tchar(s[1]));
+						AddLastYenFromDirectoryPath(baseWork);
+						*baseDirId = cList.AddBaseDir(baseWork);
+					}
+				}
+			}
+			szLineData[nLINEDATA_LAST_CHAR] = '\0';
+			continue;
+		}
+		else {
+			//巻き戻し
+			fsetpos(fp, &old_offset);
+			break;
+		}
+		//巻き戻し用に現在のオフセット位置を退避
+		old_offset = ftell(fp);
+	}
+	return true;
+}
+
+/*
+	キーをtagsファイルから二分探索
+	「!_TAG_」で始まるパラメータの読み込みは終わっている前提(最初のキー位置までシークされている前提)
+*/
+void CDlgTagJumpList::find_key_for_binarySearch(
+	FILE* fp,
+	const ACHAR* paszKeyword,
+	int nTagFormat,
+	int baseDirId,
+	STagFindState* state,
+	int nTop
+){
+	ACHAR	szLineData[1024];		//行バッファ
+	ACHAR	s[4][1024];
+	CSortedTagJumpList& cList = *m_pcList;
+	const int nCap = cList.GetCapacity();
+	int n2;
+	//int nSearchCnt = 0;
+
+	typedef enum {
+		STATE_START,
+		STATE_LINEAR,
+		STATE_BINALY,
+		STATE_SKIP_BACK,
+		STATE_STEP_FORWARD
+	} SearchState;
+	SearchState eSearchState = STATE_BINALY;
+	
+	// バッファの後ろから2文字目が\0かどうかで、行末まで読み込んだか確認する
+	const int nLINEDATA_LAST_CHAR = _countof( szLineData ) - 2;
+	szLineData[nLINEDATA_LAST_CHAR] = '\0';
+
+	// 初期設定 tagsファイルの中央のキーまでシーク
+	// 正確にはbyte数にてシークしているため中央のキーではない
+	fpos_t low_offset, high_offset, curr_offset;
+	low_offset = 0;
+	fseek(fp, 0, SEEK_END);
+	fgetpos(fp, &high_offset);
+	curr_offset = low_offset + ((high_offset - low_offset) / 2);
+	fsetpos(fp, &curr_offset);
+	// 改行コードまでを捨てる
+	fgets(szLineData, _countof(szLineData), fp);
+
+	while( fgets( szLineData, _countof( szLineData ), fp ) )
+	{
+		int  nRet;
+		// fgetsが行すべてを読み込めていない場合の考慮
+		if( '\0' != szLineData[nLINEDATA_LAST_CHAR]
+		    && '\n' != szLineData[nLINEDATA_LAST_CHAR] ){
+			// 改行コードまでを捨てる
+			int ch = fgetc( fp );
+			while( ch != '\n' && ch != EOF ){
+				ch = fgetc( fp );
+			}
+		}
+
+		s[0][0] = s[1][0] = s[2][0] = s[3][0] = '\0';
+		n2 = 0;
+		//	@@ 2005.03.31 MIK TAG_FORMAT定数化
+		if( 2 == nTagFormat ){
+			nRet = sscanf(
+				szLineData, 
+				TAG_FORMAT_2_A,	//拡張tagsフォーマット
+				s[0], s[1], &n2, s[2], s[3]
+				);
+			// 2010.04.02 nRet < 4 を3に変更。標準フォーマットも読み込む
+			if( nRet < 3 ) goto next_line;
+			if( n2 <= 0 ) goto next_line;	//行番号不正(-excmd=nが指定されてないかも)
+		}else{
+			nRet = sscanf(
+				szLineData, 
+				TAG_FORMAT_1_A,	//tagsフォーマット
+				s[0], s[1], &n2
+				);
+			if( nRet < 2 ) goto next_line;
+			if( n2 <= 0 ) goto next_line;
+		}
+
+		// 完全一致検索
+		int  cmp;
+		cmp = auto_strcmp( s[0], paszKeyword );
+
+		if( 0 == cmp ){
+			//一致
+			if (eSearchState == STATE_BINALY) {
+				eSearchState = STATE_SKIP_BACK;
+			}
+			else if (eSearchState == STATE_SKIP_BACK) {
+				// do nothing
+			}
+			else if (eSearchState == STATE_STEP_FORWARD) {
+				state->m_nMatchAll++;
+				if (nTop < state->m_nMatchAll) {
+					if (cList.GetCount() < nCap) {
+						cList.AddParamA(s[0], s[1], n2, s[2][0], s[3], state->m_nDepth, baseDirId);
+					}
+					else {
+						// 探索打ち切り(次ページでやり直し)
+						m_bNextItem = true;
+						break;
+					}
+				}
+			}
+		}
+		else if( 0 > cmp ) {
+			// paszKeyword > s[0]
+			if (eSearchState == STATE_BINALY) {
+				low_offset = curr_offset;
+			}
+			else if (eSearchState == STATE_SKIP_BACK) {
+				eSearchState = STATE_STEP_FORWARD;
+			}
+		}
+		else { // 0 < cmp
+			// paszKeyword < s[0]
+			if (eSearchState == STATE_BINALY) {
+				high_offset = curr_offset;
+			}
+			else if (eSearchState == STATE_STEP_FORWARD) {
+				//探索終了
+				break;
+			}
+		}
+
+		// 次に探索するoffset位置算出
+		if (eSearchState == STATE_BINALY) {
+			fpos_t temp;
+			temp = low_offset + ((high_offset - low_offset) / 2);
+			if (temp == curr_offset) {
+				// 一致無しのため探索終了
+				break;
+			}
+			curr_offset = temp;
+			fsetpos(fp, &curr_offset);
+			fgets(szLineData, _countof(szLineData), fp);
+		}
+		else if (eSearchState == STATE_SKIP_BACK) {
+			curr_offset -= 1024 * 2;
+			if (curr_offset < 0) {
+				curr_offset = 0;
+				eSearchState = STATE_STEP_FORWARD;
+			}
+			fsetpos(fp, &curr_offset);
+			fgets(szLineData, _countof(szLineData), fp);
+		}
+
+next_line:
+		;
+		szLineData[nLINEDATA_LAST_CHAR] = '\0';
+	}
+}
+
+/*
+	キーをtagsファイルから線形探索
+*/
+void CDlgTagJumpList::find_key_for_LinearSearch(
+	FILE* fp,
+	const ACHAR* paszKeyword,
+	int nTagFormat,
+	int baseDirId,
+	STagFindState* state,
+	int nTop,
+	bool bTagJumpExactMatch,
+	bool bTagJumpAnyWhere,
+	bool bSorted,
+	bool bFoldcase,
+	bool bTagJumpICase,
+	int length
+){
+	ACHAR	szLineData[1024];		//行バッファ
+	ACHAR	s[4][1024];
+	CSortedTagJumpList& cList = *m_pcList;
+	const int nCap = cList.GetCapacity();
+	int		n2;
+	
+	// バッファの後ろから2文字目が\0かどうかで、行末まで読み込んだか確認する
+	const int nLINEDATA_LAST_CHAR = _countof( szLineData ) - 2;
+	szLineData[nLINEDATA_LAST_CHAR] = '\0';
+
+	while( fgets( szLineData, _countof( szLineData ), fp ) )
+	{
+		int  nRet;
+		// fgetsが行すべてを読み込めていない場合の考慮
+		if( '\0' != szLineData[nLINEDATA_LAST_CHAR]
+		    && '\n' != szLineData[nLINEDATA_LAST_CHAR] ){
+			// 改行コードまでを捨てる
+			int ch = fgetc( fp );
+			while( ch != '\n' && ch != EOF ){
+				ch = fgetc( fp );
+			}
+		}
+		if( szLineData[0] < '!' ) goto next_line;
+
+		s[0][0] = s[1][0] = s[2][0] = s[3][0] = '\0';
+		n2 = 0;
+		//	@@ 2005.03.31 MIK TAG_FORMAT定数化
+		if( 2 == nTagFormat ){
+			nRet = sscanf(
+				szLineData, 
+				TAG_FORMAT_2_A,	//拡張tagsフォーマット
+				s[0], s[1], &n2, s[2], s[3]
+				);
+			// 2010.04.02 nRet < 4 を3に変更。標準フォーマットも読み込む
+			if( nRet < 3 ) goto next_line;
+			if( n2 <= 0 ) goto next_line;	//行番号不正(-excmd=nが指定されてないかも)
+		}else{
+			nRet = sscanf(
+				szLineData, 
+				TAG_FORMAT_1_A,	//tagsフォーマット
+				s[0], s[1], &n2
+				);
+			if( nRet < 2 ) goto next_line;
+			if( n2 <= 0 ) goto next_line;
+		}
+
+		int  cmp;
+		if( bTagJumpAnyWhere ){
+			if( bTagJumpICase ){
+				cmp = stristr_j( s[0], paszKeyword ) != NULL ? 0 : -1;
+			}else{
+				cmp = strstr_j( s[0], paszKeyword ) != NULL ? 0 : -1;
+			}
+		}else{
+			if( bTagJumpExactMatch ){
+				// 完全一致
+				if( bTagJumpICase ){
+					cmp = auto_stricmp( s[0], paszKeyword );
+				}else{
+					cmp = auto_strcmp( s[0], paszKeyword );
+				}
+			}else{
+				// 前方一致
+				if( bTagJumpICase ){
+					cmp = my_strnicmp( s[0], paszKeyword, length );
+				}else{
+					cmp = strncmp( s[0], paszKeyword, length );
+				}
+			}
+		}
+		if( 0 == cmp ){
+			state->m_nMatchAll++;
+			if( nTop < state->m_nMatchAll ){
+				if( cList.GetCount() < nCap ){
+					cList.AddParamA( s[0], s[1], n2, s[2][0], s[3], state->m_nDepth, baseDirId );
+				}else{
+					// 探索打ち切り(次ページでやり直し)
+					m_bNextItem = true;
+					break;
+				}
+			}
+		}
+		else if( 0 < cmp ){
+			//	tagsはソートされているので，先頭からのcase sensitiveな
+			//	比較結果によって検索の時は処理の打ち切りが可能
+			//	2005.04.05 MIK バグ修正
+			if( (!bTagJumpICase) && bSorted && (!bTagJumpAnyWhere) ) break;
+			// 2010.07.21 Foldcase時も打ち切る。ただしtagsとサクラ側のソート順が同じでなければならない
+			if( bTagJumpICase  && bFoldcase && (!bTagJumpAnyWhere) ) break;
+		}
+next_line:
+		;
+		szLineData[nLINEDATA_LAST_CHAR] = '\0';
+	}
 }
 
 /*!

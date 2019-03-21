@@ -89,6 +89,15 @@ protected:
 	LPVOID	GetHelpIdTable( void );
 
 private:
+	struct STagFindState {
+		int   m_nDepth;
+		int   m_nMatchAll;
+		int   m_nNextMode;
+		int   m_nLoop;
+		bool  m_bJumpPath;
+		TCHAR m_szCurPath[1024];
+	};
+
 	void	StopTimer( void );
 	void	StartTimer(int nDelay);
 
@@ -106,6 +115,22 @@ private:
 	void FindNext(bool bNewFind);
 	void find_key( const wchar_t* keyword );
 	int find_key_core(int  nTop, const wchar_t* keyword, bool bTagJumpAnyWhere, bool bTagJumpExactMatch, bool bTagJumpICase, bool bTagJumpICaseByTags, int  nDefaultNextMode);
+	int ReadTagsParameter(FILE* fp, bool bTagJumpICaseByTags, STagFindState* state, CSortedTagJumpList& cList, int* nTagFormat, bool* bSorted, bool* bFoldcase, bool* bTagJumpICase, PTCHAR szNextPath, int* baseDirId);
+	void find_key_for_binarySearch( FILE* fp, const ACHAR* paszKeyword, int nTagFormat, int baseDirId, STagFindState* state, int nTop );
+	void find_key_for_LinearSearch(
+		FILE* fp,
+		const ACHAR* paszKeyword,
+		int nTagFormat,
+		int baseDirId,
+		STagFindState* state,
+		int nTop,
+		bool bTagJumpExactMatch,
+		bool bTagJumpAnyWhere,
+		bool bSorted,
+		bool bFoldcase,
+		bool bTagJumpICase,
+		int length
+	);
 	
 	bool IsDirectTagJump();
 	
@@ -119,17 +144,7 @@ public:
 	static int CalcMaxUpDirectory(const TCHAR* p);
 	static TCHAR* DirUp( TCHAR* dir );
 
-private:
-
-	struct STagFindState{
-		int   m_nDepth;
-		int   m_nMatchAll;
-		int   m_nNextMode;
-		int   m_nLoop;
-		bool  m_bJumpPath;
-		TCHAR m_szCurPath[1024];
-	};
-	
+private:	
 	bool	m_bDirectTagJump;
 
 	int		m_nIndex;		//!< 選択された要素番号
