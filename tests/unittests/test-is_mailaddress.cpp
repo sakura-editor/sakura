@@ -27,6 +27,7 @@
 #define NOMINMAX
 #include <tchar.h>
 #include <Windows.h>
+#include "parse/CWordParse.h"
 
 // テスト対象関数のヘッダファイル
 //#include "util/string_ex.h" //依存関係が多いのでテスト対象の関数定義のみ抜き出し
