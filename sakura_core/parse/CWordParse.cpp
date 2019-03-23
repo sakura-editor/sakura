@@ -507,8 +507,3 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int offset, int nBufLen, int* pnAddre
 	}
 	return TRUE;
 }
-
-BOOL IsMailAddress( const wchar_t* psz, int length, int* outLength) /* 現在位置がメールアドレスならば、NULL以外と、その長さを返す。高速版の追加により obsolete. */
-{
-	return IsMailAddress(psz, 0, length, outLength);
-}
