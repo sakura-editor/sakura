@@ -1,8 +1,7 @@
 # Change Log
 
-## [v2.4.0.0 alpha1](https://github.com/sakura-editor/sakura/tree/HEAD)
-
-[Full Changelog](https://github.com/sakura-editor/sakura/compare/v2.3.2.0...HEAD)
+## [v2.4.0-alpha1](https://github.com/sakura-editor/sakura/tree/v2.4.0-alpha1) (2019-03-27)
+[Full Changelog](https://github.com/sakura-editor/sakura/compare/v2.3.2.0...v2.4.0-alpha1)
 
 ### 仕様変更
 
