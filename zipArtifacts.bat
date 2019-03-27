@@ -142,15 +142,22 @@ if not "%RELEASE_PHASE%" == "" (
 @rem build WORKDIR
 @rem ----------------------------------------------------------------
 set WORKDIR=%BASENAME%
-set WORKDIR_LOG=%WORKDIR%\Log
-set WORKDIR_EXE=%WORKDIR%\EXE
-set WORKDIR_INST=%WORKDIR%\Installer
-set WORKDIR_ASM=%BASENAME%-Asm
-set OUTFILE=%BASENAME%-All.zip
-set OUTFILE_LOG=%BASENAME%-Log.zip
-set OUTFILE_ASM=%BASENAME%-Asm.zip
-set OUTFILE_INST=%BASENAME%-Installer.zip
-set OUTFILE_EXE=%BASENAME%-Exe.zip
+
+set RELDIR_LOG=Log
+set RELDIR_EXE=EXE
+set RELDIR_INST=Installer
+set RELDIR_ASM=Asm
+
+set WORKDIR_LOG=%WORKDIR%\%RELDIR_LOG%
+set WORKDIR_EXE=%WORKDIR%\%RELDIR_EXE%
+set WORKDIR_INST=%WORKDIR%\%RELDIR_INST%
+set WORKDIR_ASM=%WORKDIR%\%RELDIR_ASM%
+
+set OUTFILE=%~dp0%BASENAME%-All.zip
+set OUTFILE_LOG=%~dp0%BASENAME%-Log.zip
+set OUTFILE_ASM=%~dp0%BASENAME%-Asm.zip
+set OUTFILE_INST=%~dp0%BASENAME%-Installer.zip
+set OUTFILE_EXE=%~dp0%BASENAME%-Exe.zip
 
 @rem cleanup for local testing
 if exist "%OUTFILE%" (
@@ -248,9 +255,9 @@ if "%ALPHA%" == "1" (
 	copy /Y installer\warning-alpha.txt   %WORKDIR%\
 )
 @rem temporally disable to zip all files to a file to workaround #514.
-@rem call %ZIP_CMD%       %OUTFILE%      %WORKDIR%
+@rem pushd %WORKDIR% && call %ZIP_CMD%       %OUTFILE%      .             && popd
 
-call %ZIP_CMD%       %OUTFILE_LOG%  %WORKDIR_LOG%
+pushd %WORKDIR% && call %ZIP_CMD%       %OUTFILE_LOG%  %RELDIR_LOG%  && popd
 
 @rem copy text files for warning after zipping %OUTFILE% because %WORKDIR% is the parent directory of %WORKDIR_EXE% and %WORKDIR_INST%.
 if "%ALPHA%" == "1" (
@@ -259,13 +266,14 @@ if "%ALPHA%" == "1" (
 )
 copy /Y installer\warning.txt        %WORKDIR_EXE%\
 copy /Y installer\warning.txt        %WORKDIR_INST%\
-call %ZIP_CMD%       %OUTFILE_INST%  %WORKDIR_INST%
-call %ZIP_CMD%       %OUTFILE_EXE%   %WORKDIR_EXE%
+
+pushd %WORKDIR% && call %ZIP_CMD%       %OUTFILE_INST% %RELDIR_INST% && popd
+pushd %WORKDIR% && call %ZIP_CMD%       %OUTFILE_EXE%  %RELDIR_EXE%  && popd
 
 @echo start zip asm
 mkdir %WORKDIR_ASM%
 copy /Y sakura\%platform%\%configuration%\*.asm %WORKDIR_ASM%\ > NUL
-call %ZIP_CMD%       %OUTFILE_ASM%  %WORKDIR_ASM%
+pushd %WORKDIR% && call %ZIP_CMD%       %OUTFILE_ASM%  %RELDIR_ASM%  && popd
 
 @echo end   zip asm
 
