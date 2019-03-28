@@ -257,7 +257,7 @@ if "%ALPHA%" == "1" (
 @rem temporally disable to zip all files to a file to workaround #514.
 @rem pushd %WORKDIR% && call %ZIP_CMD%       %OUTFILE%      .             && popd
 
-pushd %WORKDIR% && call %ZIP_CMD%       %OUTFILE_LOG%  %RELDIR_LOG%  && popd
+pushd %WORKDIR_LOG%  && call %ZIP_CMD%       %OUTFILE_LOG%  .  && popd
 
 @rem copy text files for warning after zipping %OUTFILE% because %WORKDIR% is the parent directory of %WORKDIR_EXE% and %WORKDIR_INST%.
 if "%ALPHA%" == "1" (
@@ -267,13 +267,13 @@ if "%ALPHA%" == "1" (
 copy /Y installer\warning.txt        %WORKDIR_EXE%\
 copy /Y installer\warning.txt        %WORKDIR_INST%\
 
-pushd %WORKDIR% && call %ZIP_CMD%       %OUTFILE_INST% %RELDIR_INST% && popd
-pushd %WORKDIR% && call %ZIP_CMD%       %OUTFILE_EXE%  %RELDIR_EXE%  && popd
+pushd %WORKDIR_INST% && call %ZIP_CMD%       %OUTFILE_INST% .  && popd
+pushd %WORKDIR_EXE%  && call %ZIP_CMD%       %OUTFILE_EXE%  .  && popd
 
 @echo start zip asm
 mkdir %WORKDIR_ASM%
 copy /Y sakura\%platform%\%configuration%\*.asm %WORKDIR_ASM%\ > NUL
-pushd %WORKDIR% && call %ZIP_CMD%       %OUTFILE_ASM%  %RELDIR_ASM%  && popd
+pushd %WORKDIR_ASM%  && call %ZIP_CMD%       %OUTFILE_ASM%  .  && popd
 
 @echo end   zip asm
 
