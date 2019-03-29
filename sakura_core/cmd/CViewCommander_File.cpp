@@ -309,7 +309,7 @@ BOOL CViewCommander::Command_OPEN_HfromtoC( BOOL bCheckOnly )
 {
 	if ( Command_OPEN_HHPP( bCheckOnly, FALSE ) )	return TRUE;
 	if ( Command_OPEN_CCPP( bCheckOnly, FALSE ) )	return TRUE;
-	ErrorBeep();
+	if (!bCheckOnly) ErrorBeep();
 	return FALSE;
 // 2002/03/24 YAZAKI コードの重複を削減
 // 2003.06.28 Moca コメントとして残っていたコードを削除

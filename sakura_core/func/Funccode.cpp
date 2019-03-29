@@ -1174,13 +1174,14 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 	case F_UNDO:		return pcEditDoc->m_cDocEditor.IsEnableUndo();	/* Undo(元に戻す)可能な状態か？ */
 	case F_REDO:		return pcEditDoc->m_cDocEditor.IsEnableRedo();	/* Redo(やり直し)可能な状態か？ */
 
+	case F_OPEN_HfromtoC:				//同名のC/C++ヘッダ(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
+//	case F_OPEN_HHPP:					//同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更		del 2008/6/23 Uchi
+//	case F_OPEN_CCPP:					//同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更	del 2008/6/23 Uchi
+		return pcEditDoc->m_cDocFile.GetFilePathClass().IsValidPath() && pcEditDoc->m_pcEditWnd->GetActiveView().GetCommander().Command_OPEN_HfromtoC(TRUE);
 	case F_COPYPATH:
 	case F_COPYDIRPATH:
 	case F_COPYTAG:
 	case F_COPYFNAME:					// 2002/2/3 aroka
-	case F_OPEN_HfromtoC:				//同名のC/C++ヘッダ(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
-//	case F_OPEN_HHPP:					//同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更		del 2008/6/23 Uchi
-//	case F_OPEN_CCPP:					//同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更	del 2008/6/23 Uchi
 	case F_PLSQL_COMPILE_ON_SQLPLUS:	/* Oracle SQL*Plusで実行 */
 	case F_BROWSE:						//ブラウズ
 	//case F_VIEWMODE:					//ビューモード	//	Sep. 10, 2002 genta 常に使えるように
