@@ -1,0 +1,54 @@
+trigger:
+  branches:
+    include:
+      - master
+      - develop
+      - feature/*
+  paths:
+    exclude:
+      - "*.md"
+      - docs/*
+      - .circleci/*
+      - .cirrus.yml
+      - .travis.yml
+      - appveyor.yml
+      - bitrise.yml
+      - buddy.yml
+      - codecov.yml
+      - codefresh.yml
+      - rocro.yml
+      - shippable.yml
+      - wercker.yml
+      - Jenkinsfile
+
+pr:
+  branches:
+    include:
+      - master
+      - develop
+      - feature/*
+
+jobs:
+- job: windows
+  displayName: 'Windows'
+  pool:
+    vmImage: 'VS2017-Win2016'
+
+  strategy:
+    maxParallel: 10
+    matrix:
+      Win32_Release:
+        BuildPlatform: 'Win32'
+        Configuration: 'Release'
+      Win32_Debug:
+        BuildPlatform: 'Win32'
+        Configuration: 'Debug'
+      Win64_Release:
+        BuildPlatform: 'x64'
+        Configuration: 'Release'
+      Win64_Debug:
+        BuildPlatform: 'x64'
+        Configuration: 'Debug'
+
+  steps:
+  - template: azure-pipelines-template.yml
