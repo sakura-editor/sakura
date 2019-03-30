@@ -7,19 +7,8 @@ trigger:
   paths:
     exclude:
       - "*.md"
-      - docs/*
-      - .circleci/*
-      - .cirrus.yml
       - .travis.yml
       - appveyor.yml
-      - bitrise.yml
-      - buddy.yml
-      - codecov.yml
-      - codefresh.yml
-      - rocro.yml
-      - shippable.yml
-      - wercker.yml
-      - Jenkinsfile
 
 pr:
   branches:
