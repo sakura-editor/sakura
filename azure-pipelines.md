@@ -7,7 +7,7 @@
         - [単にサクラエディタ用のプロジェクトに読み取りアクセスする場合](#単にサクラエディタ用のプロジェクトに読み取りアクセスする場合)
         - [Azure Pipelines にアカウントがない場合](#azure-pipelines-にアカウントがない場合)
         - [Azure Pipelines にアカウントがある場合](#azure-pipelines-にアカウントがある場合)
-        - [参考サイト](#参考サイト)
+    - [参考サイト](#参考サイト)
 
 <!-- /TOC -->
 
@@ -30,7 +30,7 @@ https://azure.microsoft.com/ja-jp/services/devops/pipelines/ にアクセスし�
 https://azure.microsoft.com/ja-jp/services/devops/pipelines/ にアクセスして `Azure DevOps にサイン` のリンクをクリックします。
 
 
-### 参考サイト
+## 参考サイト
 
 - [What is Azure Pipelines?](https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started/what-is-azure-pipelines?toc=/azure/devops/pipelines/toc.json&bc=/azure/devops/boards/pipelines/breadcrumb/toc.json&view=azure-devops)
 - [Key concepts for new Azure Pipelines users](https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started/key-pipelines-concepts?toc=/azure/devops/pipelines/toc.json&bc=/azure/devops/boards/pipelines/breadcrumb/toc.json&view=azure-devops)
