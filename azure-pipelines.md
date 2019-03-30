@@ -1,5 +1,16 @@
 ﻿# azure pipelines でのビルド (工事中)
 
+<!-- TOC -->
+
+- [azure pipelines でのビルド (工事中)](#azure-pipelines-でのビルド-工事中)
+    - [Azure Pipelines の利用開始方法](#azure-pipelines-の利用開始方法)
+        - [単にサクラエディタ用のプロジェクトに読み取りアクセスする場合](#単にサクラエディタ用のプロジェクトに読み取りアクセスする場合)
+        - [Azure Pipelines にアカウントがない場合](#azure-pipelines-にアカウントがない場合)
+        - [Azure Pipelines にアカウントがある場合](#azure-pipelines-にアカウントがある場合)
+        - [参考サイト](#参考サイト)
+
+<!-- /TOC -->
+
 ## Azure Pipelines の利用開始方法
 
 Azure Pipelines では Microsoft アカウントでログインします。
