@@ -10,6 +10,13 @@ platform:
   - x64
   - MinGW
 
+skip_commits:
+  files:
+    - '*.md'
+    - .gitignore
+    - .editorconfig
+    - 'azure-pipelines*.yml'
+
 install:
 - cmd: |
     pip install openpyxl --user
