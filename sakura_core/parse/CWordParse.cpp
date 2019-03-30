@@ -429,7 +429,7 @@ BOOL IsURL(
 /* 現在位置がメールアドレスならば、NULL以外と、その長さを返す
 	@date 2016.04.27 記号類を許可
 */
-BOOL IsMailAddress( const wchar_t* pszBuf, int offset, int nBufLen, int* pnAddressLenfth )
+BOOL IsMailAddress( const wchar_t* pszBuf, int offset, int nBufLen, int* pnAddressLength )
 {
 	struct {
 		bool operator()(const wchar_t ch)
@@ -502,8 +502,8 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int offset, int nBufLen, int* pnAddre
 			j++;
 		}
 	}
-	if( NULL != pnAddressLenfth ){
-		*pnAddressLenfth = j;
+	if( NULL != pnAddressLength){
+		*pnAddressLength = j;
 	}
 	return TRUE;
 }
