@@ -26,18 +26,18 @@ jobs:
   strategy:
     maxParallel: 10
     matrix:
-      Win32_Release:
-        BuildPlatform: 'Win32'
-        Configuration: 'Release'
       Win32_Debug:
         BuildPlatform: 'Win32'
         Configuration: 'Debug'
-      Win64_Release:
-        BuildPlatform: 'x64'
+      Win32_Release:
+        BuildPlatform: 'Win32'
         Configuration: 'Release'
       Win64_Debug:
         BuildPlatform: 'x64'
         Configuration: 'Debug'
+      Win64_Release:
+        BuildPlatform: 'x64'
+        Configuration: 'Release'
 
   steps:
   - template: azure-pipelines-template.yml
