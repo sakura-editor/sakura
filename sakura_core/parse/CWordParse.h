@@ -131,7 +131,7 @@ BOOL IsURL( const wchar_t* psz, int length, int* outLength) /* 指定アドレ�
 {
 	return IsURL(psz, 0, length, outLength);
 }
-BOOL IsMailAddress( const wchar_t* psz, int offset, int length, int* outLength); /* offset 引数の追加により境界判定が行える高速版 */
+BOOL IsMailAddress( const wchar_t* pszBuf, int offset, int nBufLen, int* pnAddressLength); /* offset 引数の追加により境界判定が行える高速版 */
 inline
 BOOL IsMailAddress( const wchar_t* psz, int length, int* outLength) /* 現在位置がメールアドレスならば、NULL以外と、その長さを返す。高速版の追加により obsolete. */
 {
