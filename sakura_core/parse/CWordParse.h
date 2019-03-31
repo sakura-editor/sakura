@@ -125,15 +125,40 @@ protected:
 	static bool _match_charlist( const WCHAR c, const WCHAR *pszList );
 };
 
-BOOL IsURL( const wchar_t* psz, int offset, int length, int* outLength);/* offset 引数の追加により境界判定が行える高速版 */
+/** 指定アドレスが URL の先頭ならば TRUE とその長さを返す。
+    @param[in]  pszLine    文字列バッファの先頭アドレス
+    @param[in]  offset     URL 判定開始文字を示す、pszLine からの相対位置。
+    @param[in]  nLineLen   URL 判定最終文字の次を示す、pszLine からの相対位置。
+    @param[out] pnMatchLen URL の長さを受け取る変数のアドレス。NULL可。長さとは pszLine + offset からの距離。
+
+    境界判定はメールアドレスの先頭でのみ行われ、URL の先頭ではこれまで通り行われません。
+*/
+BOOL IsURL( const wchar_t* pszLine, int offset, int nLineLen, int* pnMatchLen);
+
+/** @deprecated 互換性のために残されています。offset 引数が追加されたものを使用してください。
+*/
 inline
-BOOL IsURL( const wchar_t* psz, int length, int* outLength) /* 指定アドレスがURLの先頭ならばTRUEとその長さを返す。高速版の追加により obsolete. */
+BOOL IsURL( const wchar_t* pszLine, int nLineLen, int* pnMatchLen)
 {
-	return IsURL(psz, 0, length, outLength);
+	return IsURL(pszLine, 0, nLineLen, pnMatchLen);
 }
-BOOL IsMailAddress( const wchar_t* pszBuf, int offset, int nBufLen, int* pnAddressLength); /* offset 引数の追加により境界判定が行える高速版 */
+
+/** 指定アドレスがメールアドレスの先頭ならば TRUE とその長さを返す。
+    @param[in]  pszBuf          文字列バッファの先頭アドレス
+    @param[in]  offset          メールアドレス判定開始文字を示す、pszBuf からの相対位置。
+    @param[in]  nBufLen         メールアドレス判定最終文字の次を示す、pszBuf からの相対位置。
+    @param[out] pnAddressLength メールアドレスの長さを受け取る変数のアドレス。NULL可。長さとは pszBuf + offset からの距離。
+
+    正の offset が与えられた場合は判定開始位置直前の文字との間で境界判定を行います。
+    途中から切り出したメールアドレスの一部をメールアドレスであると誤って判定しないために
+    pszBuf を固定し offset を０以上の範囲で変化させるのが望ましい使用方法です。
+*/
+BOOL IsMailAddress( const wchar_t* pszBuf, int offset, int nBufLen, int* pnAddressLength);
+
+/** @deprecated 互換性のために残されています。offset 引数が追加されたものを使用してください。
+*/
 inline
-BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLength) /* 現在位置がメールアドレスならば、NULL以外と、その長さを返す。高速版の追加により obsolete. */
+BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLength)
 {
 	return IsMailAddress(pszBuf, 0, nBufLen, pnAddressLength);
 }
