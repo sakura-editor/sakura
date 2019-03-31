@@ -1,0 +1,43 @@
+trigger:
+  branches:
+    include:
+      - master
+      - develop
+      - feature/*
+  paths:
+    exclude:
+      - "*.md"
+      - .travis.yml
+      - appveyor.yml
+
+pr:
+  branches:
+    include:
+      - master
+      - develop
+      - feature/*
+
+jobs:
+- job: windows
+  displayName: 'Windows'
+  pool:
+    vmImage: 'VS2017-Win2016'
+
+  strategy:
+    maxParallel: 10
+    matrix:
+      Win32_Debug:
+        BuildPlatform: 'Win32'
+        Configuration: 'Debug'
+      Win32_Release:
+        BuildPlatform: 'Win32'
+        Configuration: 'Release'
+      Win64_Debug:
+        BuildPlatform: 'x64'
+        Configuration: 'Debug'
+      Win64_Release:
+        BuildPlatform: 'x64'
+        Configuration: 'Release'
+
+  steps:
+  - template: azure-pipelines-template.yml
