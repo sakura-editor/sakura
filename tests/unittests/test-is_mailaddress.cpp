@@ -26,6 +26,8 @@
 
 #define NOMINMAX
 #include <tchar.h>
+#include <wchar.h>
+#include <assert.h>
 #include <Windows.h>
 #include "parse/CWordParse.h"
 
@@ -197,6 +199,44 @@ TEST(testIsMailAddress, CheckAwithAtmark)
 {
 	wchar_t szTest[] = L"a@";
 	ASSERT_SAME(FALSE, szTest, _countof(szTest) - 1, NULL);
+}
+
+TEST(testIsMailAddress, OffsetParameter)
+{
+	/*
+	   Prepare test cases.
+	*/
+	const wchar_t* const Buffer = L" test@example.com";
+	const wchar_t* const BufferEnd = Buffer + wcslen(Buffer);
+	const struct {
+		          bool expected;
+		const wchar_t* address;         // to be tested by IsMailAddress.
+		           int offset;          // passed to IsMailAddress as 2nd param.
+		const wchar_t* buffer() const { // passed to IsMailAddress as 1st param.
+			return this->address - this->offset;
+		}
+	} testCases[] = {
+		{ true,  Buffer+1,  0 }, // true is OK. Buffer+1 is a mail address.
+		{ true,  Buffer+1,  1 }, // true is OK. Buffer+1 is a mail address.
+		{ true,  Buffer+1, -1 }, // true is OK. Buffer+1 is a mail address.
+		{ true,  Buffer+2,  0 }, // Limitation: Non positive offset prevents IsMailAddress from looking behind of a possible head of a mail address.
+		{ false, Buffer+2,  1 }, // false is OK. Buffer+2 is not a head of a mail adderss.
+		{ true,  Buffer+2, -1 }  // Limitation: Non positive offset prevents IsMailAddress from looking behind of a possible head of a mail address.
+	};
+	for (auto& aCase: testCases) {
+		assert(Buffer <= aCase.buffer());
+	}
+
+	/*
+	   Run tests.
+	*/
+	for (auto& aCase: testCases) {
+		EXPECT_EQ(
+			aCase.expected,
+			bool(IsMailAddress(aCase.buffer(), aCase.offset, BufferEnd - aCase.buffer(), NULL))
+		) << "1st param of IsMailAddress: pszBuf is \"" << aCase.buffer() << "\"\n"
+		  << "2nd param of IsMailAddress: offset is "   << aCase.offset;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////
