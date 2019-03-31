@@ -1,5 +1,13 @@
 # Change Log
 
+## [Unreleased](https://github.com/sakura-editor/sakura/tree/HEAD)
+
+[Full Changelog](https://github.com/sakura-editor/sakura/compare/v2.4.0-alpha1...HEAD)
+
+### 機能追加
+
+- 「同名のC/C++ヘッダ\(ソース\)を開く」機能が利用可能か調べる処理で拡張子の確認が行われるように記述追加 [\#812](https://github.com/sakura-editor/sakura/pull/812) ([beru](https://github.com/beru))
+
 ## [v2.4.0-alpha1](https://github.com/sakura-editor/sakura/tree/v2.4.0-alpha1) (2019-03-27)
 
 [Full Changelog](https://github.com/sakura-editor/sakura/compare/v2.3.2.0...v2.4.0-alpha1)
@@ -61,7 +69,7 @@
 
 - PR 421 によって導入されたけど revert された IsMailAddress の単体テストを復活する [\#808](https://github.com/sakura-editor/sakura/pull/808) ([m-tmatma](https://github.com/m-tmatma))
 - githash.batでgitを探すようにする [\#794](https://github.com/sakura-editor/sakura/pull/794) ([berryzplus](https://github.com/berryzplus))
-- Feature/workaround for issue398 \(特定のファイルで描画が遅くなる\) [\#792](https://github.com/sakura-editor/sakura/pull/792) ([berryzplus](https://github.com/berryzplus))
+- \#398 に対する回避策 \(特定のファイルで描画が遅くなる\) [\#792](https://github.com/sakura-editor/sakura/pull/792) ([berryzplus](https://github.com/berryzplus))
 - 文字化け対策コメントを除去 [\#791](https://github.com/sakura-editor/sakura/pull/791) ([berryzplus](https://github.com/berryzplus))
 - vs2017ビルド時のビルドログを整理する [\#790](https://github.com/sakura-editor/sakura/pull/790) ([berryzplus](https://github.com/berryzplus))
 - Fix \#781 issue「googletest でテストに失敗しても ビルド結果が失敗にならない」 [\#784](https://github.com/sakura-editor/sakura/pull/784) ([ds14050](https://github.com/ds14050))
