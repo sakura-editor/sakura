@@ -31,7 +31,7 @@
 
 // テスト対象関数のヘッダファイル
 //#include "util/string_ex.h" //依存関係が多いのでテスト対象の関数定義のみ抜き出し
-BOOL IsMailAddress(const wchar_t* pszBuf, int nBufLen, int* pnAddressLenfth);
+BOOL IsMailAddress(const wchar_t* pszBuf, int nBufLen, int* pnAddressLength);
 
 //////////////////////////////////////////////////////////////////////
 // テストマクロ
