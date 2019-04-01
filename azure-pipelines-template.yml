@@ -1,2 +1,18 @@
 steps:
-- script: build-sln.bat $(BuildPlatform) $(Configuration)
+# build all files with some limitaions.
+- script: build-all.bat $(BuildPlatform) $(Configuration)
+  displayName: Build all
+
+# see https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/copy-files?view=azure-devops&tabs=yaml
+- task: CopyFiles@1
+  displayName: Copy to ArtifactStagingDirectory
+  inputs:
+    contents: '**.zip'
+    targetFolder: $(Build.ArtifactStagingDirectory)
+
+# see https://docs.microsoft.com/en-us/azure/devops/pipelines/artifacts/build-artifacts?view=azure-devops&tabs=yaml
+- task: PublishBuildArtifacts@1
+  displayName: Publish ArtifactStagingDirectory
+  inputs:
+     pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+     artifactName: $(BuildPlatform)_$(Configuration)
