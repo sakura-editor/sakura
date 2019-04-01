@@ -2,6 +2,21 @@ steps:
 # show environmental variables for debug.
 - script: set
   displayName: Show environmental variables for debug
+  
+- script: pip install openpyxl --user
+  displayName: install openpyxl
+
+- script: pip install chardet --user
+  displayName: install chardet
+
+- script: msiexec /i externals\cppcheck\cppcheck-1.84-x64-Setup.msi /quiet /qn /norestart /log cppcheck-install.log
+  displayName: install cppcheck
+
+- script: externals\doxygen\doxygen-1.8.14-setup.exe /silent /suppressmsgboxes
+  displayName: install doxygen
+
+- script: checkEncoding.bat
+  displayName: check encoding
 
 # Build solution
 - script: build-sln.bat       $(BuildPlatform) $(Configuration)
@@ -26,6 +41,10 @@ steps:
 # zip files for artifacts
 - script: zipArtifacts.bat    $(BuildPlatform) $(Configuration)
   displayName: Zip files for artifacts
+
+# Unit tests
+- script: tests\build-and-test.bat $(BuildPlatform) $(Configuration)
+  displayName: Unit test
 
 # see https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/copy-files?view=azure-devops&tabs=yaml
 - task: CopyFiles@1
