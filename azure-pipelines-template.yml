@@ -1,7 +1,27 @@
 steps:
-# build all files with some limitaions.
-- script: build-all.bat $(BuildPlatform) $(Configuration)
-  displayName: Build all
+# Build solution
+- script: build-sln.bat       $(BuildPlatform) $(Configuration)
+  displayName: Build solution
+
+# Build HTML Help
+- script: build-chm.bat
+  displayName: Build HTML Help
+
+# Build instaler with Inno Setup
+- script: build-installer.bat $(BuildPlatform) $(Configuration)
+  displayName: Build instaler with Inno Setup
+
+# Run cppcheck
+- script: run-cppcheck.bat    $(BuildPlatform) $(Configuration)
+  displayName: Run cppcheck
+
+# Run doxygen
+- script: run-doxygen.bat     $(BuildPlatform) $(Configuration)
+  displayName: Run doxygen
+
+# zip files for artifacts
+- script: zipArtifacts.bat    $(BuildPlatform) $(Configuration)
+  displayName: Zip files for artifacts
 
 # see https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/copy-files?view=azure-devops&tabs=yaml
 - task: CopyFiles@1
