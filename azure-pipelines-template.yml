@@ -1,4 +1,8 @@
 steps:
+# show environmental variables for debug.
+- script: set
+  displayName: Show environmental variables for debug
+
 # Build solution
 - script: build-sln.bat       $(BuildPlatform) $(Configuration)
   displayName: Build solution
