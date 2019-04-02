@@ -3,20 +3,8 @@ steps:
 - script: set
   displayName: Show environmental variables for debug
 
-- script: pip install openpyxl --user
-  displayName: install openpyxl
-
-# Build solution
-- script: build-sln.bat       $(BuildPlatform) $(Configuration)
-  displayName: Build solution
-
-# Build HTML Help
-- script: build-chm.bat
-  displayName: Build HTML Help
-
-# Build instaler with Inno Setup
-- script: build-installer.bat $(BuildPlatform) $(Configuration)
-  displayName: Build instaler with Inno Setup
+- script: externals\doxygen\doxygen-1.8.14-setup.exe /silent /suppressmsgboxes
+  displayName: install doxygen
 
 # Run doxygen
 - script: run-doxygen.bat     $(BuildPlatform) $(Configuration)
@@ -25,10 +13,6 @@ steps:
 # zip files for artifacts
 - script: zipArtifacts.bat    $(BuildPlatform) $(Configuration)
   displayName: Zip files for artifacts
-
-# Unit tests
-- script: tests\build-and-test.bat $(BuildPlatform) $(Configuration)
-  displayName: Unit test
 
 # see https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/copy-files?view=azure-devops&tabs=yaml
 - task: CopyFiles@1
@@ -42,4 +26,4 @@ steps:
   displayName: Publish ArtifactStagingDirectory
   inputs:
      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-     artifactName: $(BuildPlatform)_$(Configuration)
+     artifactName: doxygen_$(BuildPlatform)_$(Configuration)
