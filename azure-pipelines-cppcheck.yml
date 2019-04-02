@@ -18,7 +18,7 @@ steps:
 - task: CopyFiles@1
   displayName: Copy to ArtifactStagingDirectory
   inputs:
-    contents: '**.zip'
+    contents: '**Log.zip'
     targetFolder: $(Build.ArtifactStagingDirectory)
 
 # see https://docs.microsoft.com/en-us/azure/devops/pipelines/artifacts/build-artifacts?view=azure-devops&tabs=yaml
