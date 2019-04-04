@@ -71,7 +71,7 @@ jobs:
   - task: PublishTestResults@2
     inputs:
       testResultsFormat: 'JUnit'
-      testResultsFiles: '**/*-googletest-*.xml' 
+      testResultsFiles: '**/*-googletest-*.xml'
       #searchFolder: '$(System.DefaultWorkingDirectory)' # Optional
       #mergeTestResults: false # Optional
       #failTaskOnFailedTests: false # Optional
