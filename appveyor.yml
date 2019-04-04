@@ -32,4 +32,6 @@ build_script:
     tests\build-and-test.bat %PLATFORM% %CONFIGURATION%
 
 artifacts:
-- path: 'sakura-*$(platform)-$(configuration)*.zip'
+  - path: 'sakura-*$(platform)-$(configuration)*.zip'
+  - path: 'sakura-*$(platform)-$(configuration)*.zip.md5'
+  - path: 'sha256.txt'

@@ -292,6 +292,13 @@ if exist "%WORKDIR_ASM%" (
 	rmdir /s /q "%WORKDIR_ASM%"
 )
 
+
+@echo start generate MD5 hash
+certutil -hashfile %OUTFILE_EXE% MD5  | find /v "MD5" | find /v "CertUtil" > %OUTFILE_EXE%.md5
+certutil -hashfile %OUTFILE_INST% MD5 | find /v "MD5" | find /v "CertUtil" > %OUTFILE_INST%.md5
+@echo end generate MD5 hash
+
+
 exit /b 0
 
 @rem ------------------------------------------------------------------------------
