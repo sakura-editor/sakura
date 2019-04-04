@@ -66,3 +66,16 @@ jobs:
     inputs:
        pathtoPublish: '$(Build.ArtifactStagingDirectory)'
        artifactName: $(BuildPlatform)_$(Configuration)
+
+  # see https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=yaml
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: '**/*-googletest-*.xml' 
+      #searchFolder: '$(System.DefaultWorkingDirectory)' # Optional
+      #mergeTestResults: false # Optional
+      #failTaskOnFailedTests: false # Optional
+      #testRunTitle: # Optional
+      #buildPlatform: # Optional
+      #buildConfiguration: # Optional
+      #publishRunAttachments: true # Optional
