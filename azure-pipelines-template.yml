@@ -18,10 +18,6 @@ steps:
 - script: build-installer.bat $(BuildPlatform) $(Configuration)
   displayName: Build instaler with Inno Setup
 
-# Run doxygen
-- script: run-doxygen.bat     $(BuildPlatform) $(Configuration)
-  displayName: Run doxygen
-
 # zip files for artifacts
 - script: zipArtifacts.bat    $(BuildPlatform) $(Configuration)
   displayName: Zip files for artifacts
