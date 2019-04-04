@@ -1,0 +1,29 @@
+steps:
+# show environmental variables for debug.
+- script: set
+  displayName: Show environmental variables for debug
+
+- script: msiexec /i externals\cppcheck\cppcheck-1.84-x64-Setup.msi /quiet /qn /norestart /log cppcheck-install.log
+  displayName: install cppcheck
+
+# Run cppcheck
+- script: run-cppcheck.bat    $(BuildPlatform) $(Configuration)
+  displayName: Run cppcheck
+
+# zip files for artifacts
+- script: zipArtifacts.bat    $(BuildPlatform) $(Configuration)
+  displayName: Zip files for artifacts
+
+# see https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/copy-files?view=azure-devops&tabs=yaml
+- task: CopyFiles@1
+  displayName: Copy to ArtifactStagingDirectory
+  inputs:
+    contents: '**Log.zip'
+    targetFolder: $(Build.ArtifactStagingDirectory)
+
+# see https://docs.microsoft.com/en-us/azure/devops/pipelines/artifacts/build-artifacts?view=azure-devops&tabs=yaml
+- task: PublishBuildArtifacts@1
+  displayName: Publish ArtifactStagingDirectory
+  inputs:
+     pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+     artifactName: cppcheck_$(BuildPlatform)_$(Configuration)

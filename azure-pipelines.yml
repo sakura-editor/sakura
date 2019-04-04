@@ -24,7 +24,7 @@ jobs:
     vmImage: 'VS2017-Win2016'
 
   strategy:
-    maxParallel: 10
+    maxParallel: 4
     matrix:
       Win32_Debug:
         BuildPlatform: 'Win32'
@@ -40,4 +40,48 @@ jobs:
         Configuration: 'Release'
 
   steps:
-  - template: azure-pipelines-template.yml
+  - template: ci/azure-pipelines/template-build-unittest.yml
+
+- job: cppcheck
+  displayName: 'Windows cppcheck'
+  pool:
+    vmImage: 'VS2017-Win2016'
+
+  strategy:
+    maxParallel: 2
+    matrix:
+      Win32_Release:
+        BuildPlatform: 'Win32'
+        Configuration: 'Release'
+      Win64_Release:
+        BuildPlatform: 'x64'
+        Configuration: 'Release'
+
+  steps:
+  - template: ci/azure-pipelines/template-cppcheck.yml
+
+- job: doxygen
+  displayName: 'Windows doxygen'
+  pool:
+    vmImage: 'VS2017-Win2016'
+
+  strategy:
+    maxParallel: 2
+    matrix:
+      Win32_Release:
+        BuildPlatform: 'Win32'
+        Configuration: 'Release'
+      Win64_Release:
+        BuildPlatform: 'x64'
+        Configuration: 'Release'
+
+  steps:
+  - template: ci/azure-pipelines/template-doxygen.yml
+
+- job: checkEncoding
+  displayName: 'Windows checkEncoding'
+  pool:
+    vmImage: 'VS2017-Win2016'
+
+  steps:
+  - template: ci/azure-pipelines/template-checkEncoding.yml

@@ -1,0 +1,29 @@
+steps:
+# show environmental variables for debug.
+- script: set
+  displayName: Show environmental variables for debug
+
+- script: externals\doxygen\doxygen-1.8.14-setup.exe /silent /suppressmsgboxes
+  displayName: install doxygen
+
+# Run doxygen
+- script: run-doxygen.bat     $(BuildPlatform) $(Configuration)
+  displayName: Run doxygen
+
+# zip files for artifacts
+- script: zipArtifacts.bat    $(BuildPlatform) $(Configuration)
+  displayName: Zip files for artifacts
+
+# see https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/copy-files?view=azure-devops&tabs=yaml
+- task: CopyFiles@1
+  displayName: Copy to ArtifactStagingDirectory
+  inputs:
+    contents: '**Dev.zip'
+    targetFolder: $(Build.ArtifactStagingDirectory)
+
+# see https://docs.microsoft.com/en-us/azure/devops/pipelines/artifacts/build-artifacts?view=azure-devops&tabs=yaml
+- task: PublishBuildArtifacts@1
+  displayName: Publish ArtifactStagingDirectory
+  inputs:
+     pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+     artifactName: doxygen_$(BuildPlatform)_$(Configuration)

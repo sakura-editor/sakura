@@ -17,6 +17,7 @@ skip_commits:
     - .gitignore
     - .editorconfig
     - 'azure-pipelines*.yml'
+    - 'ci/azure-pipelines/template*.yml'
 
 install:
 - cmd: |
