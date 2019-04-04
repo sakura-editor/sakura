@@ -40,7 +40,7 @@ jobs:
         Configuration: 'Release'
 
   steps:
-  - template: ci/azure-pipelines/azure-pipelines-template.yml
+  - template: ci/azure-pipelines/template-build-unittest.yml
 
 - job: cppcheck
   displayName: 'Windows cppcheck'
@@ -58,7 +58,7 @@ jobs:
         Configuration: 'Release'
 
   steps:
-  - template: ci/azure-pipelines/azure-pipelines-cppcheck.yml
+  - template: ci/azure-pipelines/template-cppcheck.yml
 
 - job: doxygen
   displayName: 'Windows doxygen'
@@ -76,7 +76,7 @@ jobs:
         Configuration: 'Release'
 
   steps:
-  - template: ci/azure-pipelines/azure-pipelines-doxygen.yml
+  - template: ci/azure-pipelines/template-doxygen.yml
 
 - job: checkEncoding
   displayName: 'Windows checkEncoding'
@@ -84,4 +84,4 @@ jobs:
     vmImage: 'VS2017-Win2016'
 
   steps:
-  - template: ci/azure-pipelines/azure-pipelines-checkEncoding.yml
+  - template: ci/azure-pipelines/template-checkEncoding.yml
