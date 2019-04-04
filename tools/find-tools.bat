@@ -92,9 +92,20 @@ for /f "usebackq delims=" %%a in (`where MSBuild.exe`) do (
 setlocal
 set APPDIR=Microsoft Visual Studio\Installer
 PATH=%PATH%;%ProgramFiles%\%APPDIR%\;%ProgramFiles(x86)%\%APPDIR%\;%ProgramW6432%\%APPDIR%\;
-for /f "usebackq tokens=*" %%i in (`vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe`) do (
-  endlocal && set "CMD_MSBUILD=%%i"
-  exit /b !errorlevel!
+for /f "usebackq tokens=*" %%i in (`vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath`) do (
+    set "DIR_MSBUILD=%%i"
+)
+if exist "%DIR_MSBUILD%\MSBuild\15.0\Bin\MSBuild.exe" (
+    endlocal && set "CMD_MSBUILD=%DIR_MSBUILD%\MSBuild\15.0\Bin\MSBuild.exe"
+    exit /b
+)
+if exist "%DIR_MSBUILD%\MSBuild\Current\Bin\amd64\MSBuild.exe" (
+    endlocal && set "CMD_MSBUILD=%DIR_MSBUILD%\MSBuild\Current\Bin\amd64\MSBuild.exe"
+    exit /b
+)
+if exist "%DIR_MSBUILD%\MSBuild\Current\Bin\MSBuild.exe" (
+    endlocal && set "CMD_MSBUILD=%DIR_MSBUILD%\MSBuild\Current\Bin\MSBuild.exe"
+    exit /b
 )
 endlocal
 exit /b
