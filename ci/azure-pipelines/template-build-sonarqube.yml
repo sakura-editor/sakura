@@ -1,8 +1,4 @@
 steps:
-# show environmental variables for debug.
-- script: set
-  displayName: Show environmental variables for debug
-  
 - script: choco install "msbuild-sonarqube-runner" -y
   displayName: install msbuild-sonarqube-runner
 
