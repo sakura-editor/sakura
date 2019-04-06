@@ -27,6 +27,15 @@ Appveyor のプロジェクトで Settings の Environment にアクセスして
 
 ## SonarQube の使用方法
 
+## 環境設定
+
+1. https://www.java.com/ja/download/ から JAVA のランタイムをダウンロードしてインストールする
+2. `JAVA_HOME` の環境変数を設定する
+
+	例
+
+	`set JAVA_HOME=C:\Program Files (x86)\Java\jre1.8.0_201`
+
 ### 準備
 
 1. https://chocolatey.org/install#install-with-cmdexe を参考に chocolatey をインストールする。(appveyor 上では不要)
