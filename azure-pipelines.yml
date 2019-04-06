@@ -77,11 +77,12 @@ jobs:
   # set condition    at https://docs.microsoft.com/ja-jp/azure/devops/pipelines/process/conditions?view=azure-devops&viewFallbackFrom=vsts&tabs=yaml
   # see Build.Reason at https://docs.microsoft.com/ja-jp/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml
   condition:
-    and
-    (
-      ne(variables['Build.Reason'], 'Schedule'),
-      ne(variables['Build.Reason'], 'PullRequest')
-    )
+    #and
+    #(
+    #  ne(variables['Build.Reason'], 'Schedule'),
+    #  ne(variables['Build.Reason'], 'PullRequest')
+    #)
+    eq(variables['Build.Reason'], 'Schedule')
 
   steps:
   - template: ci/azure-pipelines/template-build-sonarqube.yml
