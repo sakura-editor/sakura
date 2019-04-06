@@ -49,8 +49,8 @@ if "%BUILDWRAPPER_EXE%" == "" (
 	@echo "%CMD_MSBUILD%" %SLN_FILE% /p:Platform=%platform% /p:Configuration=%configuration%  /t:"Build" %EXTRA_CMD% %LOG_OPTION%
 	      "%CMD_MSBUILD%" %SLN_FILE% /p:Platform=%platform% /p:Configuration=%configuration%  /t:"Build" %EXTRA_CMD% %LOG_OPTION%
 ) else (
-    @echo "%BUILDWRAPPER_EXE%" --out-dir bw-output "%CMD_MSBUILD%"  %SLN_FILE% /p:Platform=%platform% /p:Configuration=%configuration%  /t:"Rebuild" %LOG_OPTION%
-          "%BUILDWRAPPER_EXE%" --out-dir bw-output "%CMD_MSBUILD%"  %SLN_FILE% /p:Platform=%platform% /p:Configuration=%configuration%  /t:"Rebuild" %LOG_OPTION%
+    @echo "%BUILDWRAPPER_EXE%" --out-dir %~dp0bw-output "%CMD_MSBUILD%"  %SLN_FILE% /p:Platform=%platform% /p:Configuration=%configuration%  /t:"Rebuild" %LOG_OPTION%
+          "%BUILDWRAPPER_EXE%" --out-dir %~dp0bw-output "%CMD_MSBUILD%"  %SLN_FILE% /p:Platform=%platform% /p:Configuration=%configuration%  /t:"Rebuild" %LOG_OPTION%
 )
 if errorlevel 1 (
 	echo ERROR in msbuild.exe errorlevel %errorlevel%
