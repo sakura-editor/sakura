@@ -3,39 +3,6 @@ steps:
 - script: set
   displayName: Show environmental variables for debug
 
-- script: pip install openpyxl --user
-  displayName: install openpyxl
-
 # Build solution
 - script: build-sln.bat       $(BuildPlatform) $(Configuration)
   displayName: Build solution
-
-# Build HTML Help
-- script: build-chm.bat
-  displayName: Build HTML Help
-
-# Build instaler with Inno Setup
-- script: build-installer.bat $(BuildPlatform) $(Configuration)
-  displayName: Build instaler with Inno Setup
-
-# zip files for artifacts
-- script: zipArtifacts.bat    $(BuildPlatform) $(Configuration)
-  displayName: Zip files for artifacts
-
-# Unit tests
-- script: tests\build-and-test.bat $(BuildPlatform) $(Configuration)
-  displayName: Unit test
-
-# see https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/copy-files?view=azure-devops&tabs=yaml
-- task: CopyFiles@1
-  displayName: Copy to ArtifactStagingDirectory
-  inputs:
-    contents: '**.zip'
-    targetFolder: $(Build.ArtifactStagingDirectory)
-
-# see https://docs.microsoft.com/en-us/azure/devops/pipelines/artifacts/build-artifacts?view=azure-devops&tabs=yaml
-- task: PublishBuildArtifacts@1
-  displayName: Publish ArtifactStagingDirectory
-  inputs:
-     pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-     artifactName: $(BuildPlatform)_$(Configuration)
