@@ -18,7 +18,7 @@ if exist .sonarqube rmdir /s /q .sonarqube
 @echo off
 "%SonarScanner_MSBUILD%" begin                      ^
 	/k:"%SONAR_QUBE_PROJECT%"                       ^
-	/d:sonar.organization="%SONAR_QUBE_ORG%"        ^
+	/o:"%SONAR_QUBE_ORG%"                           ^
 	/d:sonar.cfamily.build-wrapper-output=bw-output ^
 	/d:sonar.sourceEncoding=UTF-8                   ^
 	/d:sonar.host.url="https://sonarcloud.io"       ^
