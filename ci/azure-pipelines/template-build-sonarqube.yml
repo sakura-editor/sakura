@@ -6,3 +6,9 @@ steps:
 # Build solution
 - script: build-sln.bat       $(BuildPlatform) $(Configuration)
   displayName: Build solution
+  
+  # see https://docs.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch&viewFallbackFrom=vsts#secret-variables
+  env:
+    SONAR_QUBE_ORG: $(SONAR_QUBE_ORG)
+    SONAR_QUBE_PROJECT: $(SONAR_QUBE_PROJECT)
+    SONAR_QUBE_TOKEN: $(SONAR_QUBE_TOKEN)
