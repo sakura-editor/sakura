@@ -45,7 +45,7 @@ if errorlevel 1 (
 	exit /b 1
 )
 
-if "%BUILDWRAPPER_EXE%" == "" (
+if "%SONAR_QUBE_TOKEN%" == "" (
 	@echo "%CMD_MSBUILD%" %SLN_FILE% /p:Platform=%platform% /p:Configuration=%configuration%  /t:"Build" %EXTRA_CMD% %LOG_OPTION%
 	      "%CMD_MSBUILD%" %SLN_FILE% /p:Platform=%platform% /p:Configuration=%configuration%  /t:"Build" %EXTRA_CMD% %LOG_OPTION%
 ) else (

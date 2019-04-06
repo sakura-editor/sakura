@@ -4,6 +4,10 @@ if "%SonarScanner_MSBUILD%" == "" (
 	echo do nothing
 	exit /b 0
 )
+if "%SONAR_QUBE_TOKEN%" == "" (
+	echo do nothing
+	exit /b 0
+)
 
 curl %URL_BUILDWRAPPER_ZIP% -o %BUILDWRAPPER_ZIP%
 if errorlevel 1 (

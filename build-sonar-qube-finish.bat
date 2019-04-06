@@ -3,6 +3,10 @@ if "%SonarScanner_MSBUILD%" == "" (
 	echo do nothing
 	exit /b 0
 )
+if "%SONAR_QUBE_TOKEN%" == "" (
+	echo do nothing
+	exit /b 0
+)
 
 @rem to ensure hide variable SONAR_QUBE_TOKEN
 @echo off
