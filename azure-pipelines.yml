@@ -79,7 +79,7 @@ jobs:
   condition:
     and
     (
-      ne(variables['Build.Reason'], 'Schedule')
+      ne(variables['Build.Reason'], 'Schedule'),
       ne(variables['Build.Reason'], 'PullRequest')
     )
 
