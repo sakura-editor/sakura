@@ -11,6 +11,7 @@ msbuild-*.log
 msbuild-*.log.csv
 msbuild-*.log.xlsx
 sha256.txt
+*.bak
 *.pyc
 /tests/build
 /cppcheck-install.log
@@ -20,3 +21,7 @@ tags
 testData_*.txt
 html
 doxygen*.log
+.sonarqube
+build-wrapper-win-x86.zip
+build-wrapper-win-x86
+bw-output
