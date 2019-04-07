@@ -77,7 +77,7 @@ https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+MSB
 8. `SONAR_QUBE_TOKEN` を追加して値を設定し、 鍵のアイコンをクリックする (重要) 
 9. `Save & Queue` で `Save` を選ぶ
 
-![環境変数の設定画面](azure-SonarQube.png)
+	![環境変数の設定画面](azure-SonarQube.png)
 
 #### スケジュール設定
 
@@ -87,13 +87,15 @@ https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+MSB
 4. `Run` の右隣りのアイコンをクリックする
 5. `Triggers` のボタンを押す
 6. `Scheduled` の `Add` をクリックする
-![環境変数の設定画面](azure-SonarQube-schedule1.png)
+	![スケジュール設定1](azure-SonarQube-schedule1.png)
 7. 実行させたいスケジュールを設定して、実行させる対象ブランチを設定する
-![環境変数の設定画面](azure-SonarQube-schedule2.png)
+	![スケジュール設定2](azure-SonarQube-schedule2.png)
 8. 設定を保存する
-![環境変数の設定画面](azure-SonarQube-schedule3.png)
+	![スケジュール設定3](azure-SonarQube-schedule3.png)
 
 #### azure-pipelines.yml の設定
+
+##### Job の設定
 
 ```
 - job: SonarQube
@@ -113,7 +115,7 @@ https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+MSB
 
 4. [conditon](https://docs.microsoft.com/ja-jp/azure/devops/pipelines/process/conditions?view=azure-devops&viewFallbackFrom=vsts&tabs=yaml) でビルドトリガーの条件を設定する。条件指定では and や or の条件を指定することができる。
 
-`Build.Reason` としてどういう値を設定できるかは [variables](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch) の `Build.Reason` に説明がある。
+	`Build.Reason` としてどういう値を設定できるかは [variables](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch) の `Build.Reason` に説明がある。
 
 
 例: ビルドトリガーが定期実行のとき
@@ -134,6 +136,30 @@ https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+MSB
       ne(variables['Build.Reason'], 'PullRequest')
     )
 ```
+
+##### Steps の設定
+
+
+```
+steps:
+- script: choco install "msbuild-sonarqube-runner" -y
+  displayName: install msbuild-sonarqube-runner
+
+# Build solution with SonarQube
+- script: build-sln.bat       $(BuildPlatform) $(Configuration)
+  displayName: Build solution with SonarQube
+  
+  env:
+    SONAR_QUBE_ORG: $(SONAR_QUBE_ORG)
+    SONAR_QUBE_PROJECT: $(SONAR_QUBE_PROJECT)
+    SONAR_QUBE_TOKEN: $(SONAR_QUBE_TOKEN)
+```
+
+1. `choco install "msbuild-sonarqube-runner" -y` を実行して `SonarScanner.MSBuild.exe` をインストールする
+2. `script` で `build-sln.bat` を実行する
+3. `env` で `環境変数` のところで設定した環境変数が有効になるように設定する。
+
+	[Secrets](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch&viewFallbackFrom=vsts#secret-variables) の項目を参照
 
 ### Appveyor の設定
 
