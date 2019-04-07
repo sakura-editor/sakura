@@ -7,6 +7,7 @@
         - [単にサクラエディタ用のプロジェクトに読み取りアクセスする場合](#単にサクラエディタ用のプロジェクトに読み取りアクセスする場合)
         - [Azure Pipelines にアカウントがない場合](#azure-pipelines-にアカウントがない場合)
         - [Azure Pipelines にアカウントがある場合](#azure-pipelines-にアカウントがある場合)
+    - [参考情報](#参考情報)
     - [参考サイト](#参考サイト)
 
 <!-- /TOC -->
@@ -29,6 +30,9 @@ https://azure.microsoft.com/ja-jp/services/devops/pipelines/ にアクセスし�
 
 https://azure.microsoft.com/ja-jp/services/devops/pipelines/ にアクセスして `Azure DevOps にサイン` のリンクをクリックします。
 
+## 参考情報
+
+- [Wiki: azure pipelinesメモ](https://github.com/sakura-editor/sakura/wiki/azure-pipelines%E3%83%A1%E3%83%A2)
 
 ## 参考サイト
 
