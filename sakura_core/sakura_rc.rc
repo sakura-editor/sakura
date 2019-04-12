@@ -2876,7 +2876,7 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     IDS_AUTHOR_PAGE         "https://sakura-editor.github.io/"
-    IDS_ABOUT_DESCRIPTION   "このソフトウェアは「テキストエディタ(共同開発版)」を改称したものです．\r\n商用・非商用を問わず無償で利用できますが，ソースコードの著作権は各箇所を記述した人が留保しています．\r\nこのソフトウェアは無保証です．\r\n"
+    IDS_ABOUT_DESCRIPTION   "このソフトウェアは「テキストエディタ(共同開発版)」を改称したものです。\r\n商用・非商用を問わず無償で利用できますが、ソースコードの著作権は各箇所を記述した人が留保しています。\r\nこのソフトウェアは無保証です。\r\n"
 END
 
 STRINGTABLE DISCARDABLE 
