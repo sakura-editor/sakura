@@ -53,7 +53,7 @@ const DWORD p_helpids[] = {	//12900
 #endif
 
 #if defined(__BORLANDC__)
-// boarland c++
+// borland c++
 // http://docwiki.embarcadero.com/RADStudio/Rio/en/Predefined_Macros
 // http://docwiki.embarcadero.com/RADStudio/Rio/en/Predefined_Macros#C.2B.2B_Compiler_Versions_in_Predefined_Macros
 #  define COMPILER_TYPE "B"
