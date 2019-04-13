@@ -73,13 +73,18 @@ jobs:
   pool:
     vmImage: 'VS2017-Win2016'
 
+  strategy:
+    maxParallel: 2
+    matrix:
+      python_2.7:
+        versionSpec: '2.7'
+        architecture: 'x64'
+      python_3.7:
+        versionSpec: '3.7'
+        architecture: 'x64'
+
   steps:
   - template: ci/azure-pipelines/template.steps.python-check.yml
     parameters:
-      versionSpec: '2.7'
-      architecture: 'x64'
-
-  - template: ci/azure-pipelines/template.steps.python-check.yml
-    parameters:
-      versionSpec: '3.7'
-      architecture: 'x64'
+      versionSpec: $(versionSpec)
+      architecture: $(architecture)
