@@ -37,6 +37,9 @@ jobs:
 
   - template: /ci/azure-pipelines/template.steps.install-python-modules.yml
 
+  - script: pip install sphinx
+    displayName: install sphinx
+
   # Build solution
   - script: build-sln.bat       $(BuildPlatform) $(Configuration)
     displayName: Build solution
@@ -48,6 +51,11 @@ jobs:
 #  # Build HTML Help
 #  - script: build-chm.bat
 #    displayName: Build HTML Help
+
+  # Build sphinx
+  - script: sphinx\build-sphinx.bat
+    displayName: Build sphinx
+
 #
 #  # Build installer with Inno Setup
 #  - script: build-installer.bat $(BuildPlatform) $(Configuration)
