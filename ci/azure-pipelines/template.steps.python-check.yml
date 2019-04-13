@@ -12,7 +12,7 @@ steps:
        architecture: ${{ parameters.architecture }}
 
   - script: python --version
-    displayName: version check ${{ parameters.versionSpec }} ${{ parameters.architecture }} 
+    displayName: version check ${{ parameters.versionSpec }} ${{ parameters.architecture }}
 
   - script: python -m compileall -f .
     displayName: python compile check before install ${{ parameters.versionSpec }} ${{ parameters.architecture }}
