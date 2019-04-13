@@ -1,0 +1,3 @@
+steps:
+- script: pip install openpyxl --user
+  displayName: install openpyxl --user

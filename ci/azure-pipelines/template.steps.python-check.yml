@@ -15,3 +15,8 @@ steps:
 
   - script: python -m compileall -f .
     displayName: python compileall ${{ parameters.versionSpec }} ${{ parameters.architecture }} 
+
+  - template: /ci/azure-pipelines/template.steps.install-python-modules.yml
+
+  - script: python -m compileall -f .
+    displayName: python compileall ${{ parameters.versionSpec }} ${{ parameters.architecture }} after modules install

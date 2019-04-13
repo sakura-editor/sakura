@@ -31,8 +31,7 @@ jobs:
   - script: set
     displayName: Show environmental variables for debug
 
-  - script: pip install openpyxl --user
-    displayName: install openpyxl
+  - template: /ci/azure-pipelines/template.steps.install-python-modules.yml
 
   # Build solution
   - script: build-sln.bat       $(BuildPlatform) $(Configuration)
