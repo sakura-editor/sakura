@@ -717,6 +717,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlg(
 	}
 	m_bViewMode = pLoadInfo->bViewMode;
 	m_nCharCode = pLoadInfo->eCharCode;	/* 文字コード自動判別 */
+	m_customizeSetting.bCustomize = true;
 	m_customizeSetting.bShowReadOnly = true;
 	m_customizeSetting.bSkipAutoDetect = false;
 	m_customizeSetting.bUseCharCode = bOptions;
