@@ -53,21 +53,33 @@ const DWORD p_helpids[] = {	//12900
 #endif
 
 #if defined(__BORLANDC__)
+// borland c++
+// http://docwiki.embarcadero.com/RADStudio/Rio/en/Predefined_Macros
+// http://docwiki.embarcadero.com/RADStudio/Rio/en/Predefined_Macros#C.2B.2B_Compiler_Versions_in_Predefined_Macros
 #  define COMPILER_TYPE "B"
 #  define COMPILER_VER  __BORLANDC__ 
 #elif defined(__GNUG__)
+// __GNUG__ = (__GNUC__ && __cplusplus)
+// GNU C++
+// https://gcc.gnu.org/onlinedocs/cpp/Common-Predefined-Macros.html
 #  define COMPILER_TYPE "G"
 #  define COMPILER_VER (__GNUC__ * 10000 + __GNUC_MINOR__  * 100 + __GNUC_PATCHLEVEL__)
 #elif defined(__INTEL_COMPILER)
+// Intel Compiler
+// https://software.intel.com/en-us/fortran-compiler-developer-guide-and-reference-using-predefined-preprocessor-symbols
 #  define COMPILER_TYPE "I"
 #  define COMPILER_VER __INTEL_COMPILER
 #elif defined(__DMC__)
+// Digital Mars C/C++
+// https://digitalmars.com/ctg/predefined.html
 #  define COMPILER_TYPE "D"
 #  define COMPILER_VER __DMC__
 #elif defined(_MSC_VER)
+// https://docs.microsoft.com/en-us/cpp/preprocessor/predefined-macros?view=vs-2019
 #  define COMPILER_TYPE "V"
 #  define COMPILER_VER _MSC_VER
 #else
+// unknown
 #  define COMPILER_TYPE "U"
 #  define COMPILER_VER 0
 #endif
