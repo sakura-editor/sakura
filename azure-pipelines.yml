@@ -1,3 +1,8 @@
+###############################################################################################################################
+#	ビルドトリガー (branch)
+#
+#	https://docs.microsoft.com/en-us/azure/devops/pipelines/build/triggers?view=azure-devops&viewFallbackFrom=vsts&tabs=yaml
+###############################################################################################################################
 trigger:
   branches:
     include:
@@ -10,6 +15,11 @@ trigger:
       - .travis.yml
       - appveyor.yml
 
+###############################################################################################################################
+#	ビルドトリガー (Pull Request)
+#
+#	https://docs.microsoft.com/en-us/azure/devops/pipelines/build/triggers?view=azure-devops&tabs=yaml#pull-request-validation
+###############################################################################################################################
 pr:
   branches:
     include:
@@ -17,7 +27,18 @@ pr:
       - develop
       - feature/*
 
+###############################################################################################################################
+#	jobs/job 定義
+#
+#	https://docs.microsoft.com/en-us/azure/devops/pipelines/process/phases?view=azure-devops&tabs=yaml
+###############################################################################################################################
 jobs:
+
+# サクラエディタのビルドを行う JOB
+# * サクラエディタ本体
+# * HTML Help
+# * Installer
+# * 単体テスト
 - job: windows
   displayName: 'Windows'
   pool:
@@ -42,6 +63,7 @@ jobs:
   steps:
   - template: ci/azure-pipelines/template.steps.build-unittest.yml
 
+# Cppcheck を行う JOB
 - job: cppcheck
   displayName: 'Windows cppcheck'
   pool:
@@ -60,6 +82,7 @@ jobs:
   steps:
   - template: ci/azure-pipelines/template.steps.cppcheck.yml
 
+# doxygen を行う JOB
 - job: doxygen
   displayName: 'Windows doxygen'
   pool:
@@ -78,6 +101,7 @@ jobs:
   steps:
   - template: ci/azure-pipelines/template.steps.doxygen.yml
 
+# 文字コードのチェックを行う JOB
 - job: checkEncoding
   displayName: 'Windows checkEncoding'
   pool:
