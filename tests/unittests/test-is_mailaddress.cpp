@@ -210,9 +210,9 @@ TEST(testIsMailAddress, OffsetParameter)
 	const wchar_t* const Buffer = L" test@example.com";
 	const wchar_t* const BufferEnd = Buffer + wcslen(Buffer);
 	const struct {
-		          bool expected;
+		bool           expected;
 		const wchar_t* address;         // to be tested by IsMailAddress.
-		           int offset;          // passed to IsMailAddress as 2nd param.
+		int            offset;          // passed to IsMailAddress as 2nd param.
 		const wchar_t* buffer() const { // passed to IsMailAddress as 1st param.
 			return this->address - this->offset;
 		}
