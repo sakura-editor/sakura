@@ -70,7 +70,7 @@ jobs:
   pool:
     vmImage: 'VS2017-Win2016'
 
-  steps: 
+  steps:
   - template: ci/azure-pipelines/template.steps.python-check.yml
     parameters:
       versionSpec: '2.7'
