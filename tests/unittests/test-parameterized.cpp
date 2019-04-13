@@ -25,7 +25,7 @@
 
 /*!
 	Parameterized Test のサンプルコード
-	
+
 	参考:
 	http://d.hatena.ne.jp/nobu-q/20110103
 	http://tatsyblog.sakura.ne.jp/wordpress/ci/1190/
