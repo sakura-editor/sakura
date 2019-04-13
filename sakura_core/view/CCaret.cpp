@@ -79,10 +79,17 @@ inline int CCaret::GetHankakuDy() const
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /* カーソル行アンダーラインのON */
-void CCaretUnderLine::CaretUnderLineON( bool bDraw, bool bPaintDraw )
+void CCaretUnderLine::CaretUnderLineON(HDC hdc, bool bDraw, bool bPaintDraw )
 {
 	if( m_nLockCounter ) return;	//	ロックされていたら何もできない。
-	m_pcEditView->CaretUnderLineON( bDraw, bPaintDraw, m_nUnderLineLockCounter != 0 );
+	m_pcEditView->CaretUnderLineON(hdc, bDraw, bPaintDraw, m_nUnderLineLockCounter != 0 );
+}
+
+/* カーソル行アンダーラインのON */
+void CCaretUnderLine::CaretUnderLineON(bool bDraw, bool bPaintDraw )
+{
+	if( m_nLockCounter ) return;	//	ロックされていたら何もできない。
+	m_pcEditView->CaretUnderLineON(bDraw, bPaintDraw, m_nUnderLineLockCounter != 0 );
 }
 
 /* カーソル行アンダーラインのOFF */
@@ -353,13 +360,12 @@ CLayoutInt CCaret::MoveCursor(
 		/* キャレットの表示・更新 */
 		ShowEditCaret();
 
+		HDC hdc = m_pEditView->GetDC();
 		/* ルーラの再描画 */
-		HDC		hdc = m_pEditView->GetDC();
 		m_pEditView->GetRuler().DispRuler( hdc );
-		m_pEditView->ReleaseDC( hdc );
-
 		/* アンダーラインの再描画 */
-		m_cUnderLine.CaretUnderLineON(true, bDrawPaint);
+		m_cUnderLine.CaretUnderLineON(hdc, true, bDrawPaint);
+		m_pEditView->ReleaseDC( hdc );
 
 		/* キャレットの行桁位置を表示する */
 		ShowCaretPosInfo();

@@ -248,7 +248,7 @@ void CViewSelect::DrawSelectArea(bool bDrawBracketCursorLine)
 		DrawSelectArea2( hdc );
 		// 2011.12.02 選択解除状態での、カーソル位置ライン復帰
 		if( bDrawBracketCursorLine ){
-			pView->GetCaret().m_cUnderLine.CaretUnderLineON(true, false);
+			pView->GetCaret().m_cUnderLine.CaretUnderLineON(hdc, true, false);
 		}
 		pView->ReleaseDC( hdc );
 	}

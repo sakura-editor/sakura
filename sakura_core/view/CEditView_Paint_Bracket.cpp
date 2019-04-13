@@ -240,7 +240,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 
 				if( ( m_pcEditWnd->GetActivePane() == m_nMyIndex )
 					&& ( ( ptColLine.y == GetCaret().GetCaretLayoutPos().GetY() ) || ( ptColLine.y - 1 == GetCaret().GetCaretLayoutPos().GetY() ) ) ){	// 03/02/27 ai 行の間隔が"0"の時にアンダーラインが欠ける事がある為修正
-					GetCaret().m_cUnderLine.CaretUnderLineON( true, false );
+					GetCaret().m_cUnderLine.CaretUnderLineON(gr, true, false );
 				}
 			}
 		}

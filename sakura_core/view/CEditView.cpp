@@ -2359,7 +2359,7 @@ inline bool CEditView::IsDrawCursorVLinePos( int posX ){
 }
 
 /* カーソル行アンダーラインのON */
-void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint, bool DisalbeUnderLine )
+void CEditView::CaretUnderLineON(HDC hdc, bool bDraw, bool bDrawPaint, bool DisableUnderLine)
 {
 	bool bUnderLine = m_pTypeData->m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp;
 	bool bCursorVLine = m_pTypeData->m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bDisp;
@@ -2396,9 +2396,7 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint, bool DisalbeUnder
 			ps.rcPaint.bottom = ps.rcPaint.top + m_nOldUnderLineYHeight;
 
 			// 描画
-			HDC hdc = this->GetDC();
 			OnPaint( hdc, &ps, FALSE );
-			this->ReleaseDC( hdc );
 
 			GetCaret().m_cUnderLine.UnLock();
 		}
@@ -2417,12 +2415,11 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint, bool DisalbeUnder
 	 && IsDrawCursorVLinePos(nCursorVLineX)
 	 && m_bDoing_UndoRedo == false
 	 && !GetSelectionInfo().IsTextSelecting()
-	 && !DisalbeUnderLine
+	 && !DisableUnderLine
 	){
 		m_nOldCursorLineX = nCursorVLineX;
 		// カーソル位置縦線の描画
 		// アンダーラインと縦線の交点で、下線が上になるように先に縦線を引く。
-		HDC		hdc = ::GetDC( GetHwnd() );
 		{
 			CGraphics gr(hdc);
 			gr.SetPen( m_pTypeData->m_ColorInfoArr[COLORIDX_CURSORVLINE].m_sColorAttr.m_cTEXT );
@@ -2438,8 +2435,7 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint, bool DisalbeUnder
 			}else{
 				m_nOldCursorVLineWidth = 1;
 			}
-		}	// ReleaseDC の前に gr デストラクト
-		::ReleaseDC( GetHwnd(), hdc );
+		}
 	}
 	
 	int nUnderLineY = -1;
@@ -2454,7 +2450,7 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint, bool DisalbeUnder
 	 && nUnderLineY >= GetTextArea().GetAreaTop()
 	 && m_bDoing_UndoRedo == false	/* アンドゥ・リドゥの実行中か */
 	 && !GetSelectionInfo().IsTextSelecting()
-	 && !DisalbeUnderLine
+	 && !DisableUnderLine
 	){
 		if( false == bCursorLineBgDraw || -1 == m_nOldUnderLineY ){
 			m_nOldUnderLineY = GetCaret().GetCaretLayoutPos().GetY2();
@@ -2464,7 +2460,6 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint, bool DisalbeUnder
 		m_nOldUnderLineYHeightReal = 1;
 //		MYTRACE( _T("★カーソル行アンダーラインの描画\n") );
 		/* ★カーソル行アンダーラインの描画 */
-		HDC		hdc = ::GetDC( GetHwnd() );
 		{
 			CGraphics gr(hdc);
 			gr.SetPen( m_pTypeData->m_ColorInfoArr[COLORIDX_UNDERLINE].m_sColorAttr.m_cTEXT );
@@ -2479,13 +2474,24 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint, bool DisalbeUnder
 				GetTextArea().GetAreaRight(),
 				nUnderLineY
 			);
-		}	// ReleaseDC の前に gr デストラクト
-		::ReleaseDC( GetHwnd(), hdc );
+		}
+	}
+}
+
+/* カーソル行アンダーラインのON */
+void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint, bool DisableUnderLine )
+{
+	if( bDraw
+	 && GetDrawSwitch()
+	){
+		HDC hdc = this->GetDC();
+		CaretUnderLineON(hdc, bDraw, bDrawPaint, DisableUnderLine);
+		this->ReleaseDC( hdc );
 	}
 }
 
 /* カーソル行アンダーラインのOFF */
-void CEditView::CaretUnderLineOFF( bool bDraw, bool bDrawPaint, bool bResetFlag, bool DisalbeUnderLine )
+void CEditView::CaretUnderLineOFF( bool bDraw, bool bDrawPaint, bool bResetFlag, bool DisableUnderLine )
 {
 	if( !m_pTypeData->m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp &&
 			!m_pTypeData->m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bDisp &&
@@ -2559,7 +2565,7 @@ void CEditView::CaretUnderLineOFF( bool bDraw, bool bDrawPaint, bool bResetFlag,
 		 && IsDrawCursorVLinePos( m_nOldCursorLineX )
 		 && m_bDoing_UndoRedo == false
 		 && !GetCaret().m_cUnderLine.GetVertLineDoNotOFF()	// カーソル位置縦線を消去するか
-		 && !DisalbeUnderLine
+		 && !DisableUnderLine
 		){
 			PAINTSTRUCT ps;
 			ps.rcPaint.left = m_nOldCursorLineX - (m_nOldCursorVLineWidth - 1);

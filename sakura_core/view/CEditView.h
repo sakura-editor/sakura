@@ -267,8 +267,9 @@ public:
 	void RedrawAll();											/* フォーカス移動時の再描画 */
 	void Redraw();										// 2001/06/21 asa-o 再描画
 	void RedrawLines( CLayoutYInt top, CLayoutYInt bottom );
-	void CaretUnderLineON(bool bDraw, bool bDrawPaint, bool DisalbeUnderLine);						/* カーソル行アンダーラインのON */
-	void CaretUnderLineOFF(bool bDraw, bool bDrawPaint, bool bResetFlag, bool DisalbeUnderLine);				/* カーソル行アンダーラインのOFF */
+	void CaretUnderLineON(HDC hdc, bool bDraw, bool bDrawPaint, bool DisableUnderLine);		/* カーソル行アンダーラインのON */
+	void CaretUnderLineON(bool bDraw, bool bDrawPaint, bool DisableUnderLine);				/* カーソル行アンダーラインのON */
+	void CaretUnderLineOFF(bool bDraw, bool bDrawPaint, bool bResetFlag, bool DisableUnderLine);				/* カーソル行アンダーラインのOFF */
 	bool GetDrawSwitch() const
 	{
 		return m_bDrawSWITCH;

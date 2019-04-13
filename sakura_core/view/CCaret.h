@@ -67,6 +67,7 @@ public:
 			m_nUnderLineLockCounter = 0;
 		}
 	}
+	void CaretUnderLineON(HDC hdc, bool bDraw, bool bPaintDraw);	// カーソル行アンダーラインのON
 	void CaretUnderLineON(bool bDraw, bool bPaintDraw);	// カーソル行アンダーラインのON
 	void CaretUnderLineOFF(bool bDraw, bool bDrawPaint = true, bool bResetFlag = false );	// カーソル行アンダーラインのOFF
 	void SetUnderLineDoNotOFF( bool flag ){ if( !m_nLockCounter )m_bUnderLineDoNotOFF = flag; }
