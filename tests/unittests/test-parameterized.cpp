@@ -55,18 +55,12 @@ void PrintValue( int a, int b, int c )
 	パラメータが 2 つの Parameterized Test のクラス
 */
 class ParameterizedTestSampleWith2 : public ::testing::TestWithParam<Parameters2> {
-
-
-
 };
 
 /*!
 	パラメータが 3 つの Parameterized Test のクラス
 */
 class ParameterizedTestSampleWith3 : public ::testing::TestWithParam<Parameters3> {
-
-
-
 };
 
 /* テストデータ */
