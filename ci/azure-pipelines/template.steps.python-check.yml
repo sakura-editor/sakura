@@ -1,0 +1,17 @@
+parameters:
+  # defaults parameters
+  versionSpec: '2.7'
+  architecture: 'x64'
+
+steps:
+  # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/tool/use-python-version?view=azure-devops
+  - task: UsePythonVersion@0
+    inputs:
+       versionSpec:  ${{ parameters.versionSpec }}
+       architecture: ${{ parameters.architecture }}
+
+  - script: python --version
+    displayName: version check ${{ parameters.versionSpec }} ${{ parameters.architecture }} 
+
+  - script: python -m compileall -f .
+    displayName: python compileall ${{ parameters.versionSpec }} ${{ parameters.architecture }} 

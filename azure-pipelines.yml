@@ -64,4 +64,20 @@ jobs:
   parameters:
     name: checkEncoding
     vmImage: 'VS2017-Win2016'
-    displayName: checkEncoding
+
+- job: script_check
+  displayName: 'script_check'
+  pool:
+    vmImage: 'VS2017-Win2016'
+
+  steps: 
+  - template: ci/azure-pipelines/template.steps.python-check.yml
+    parameters:
+      versionSpec: '2.7'
+      architecture: 'x64'
+
+  - template: ci/azure-pipelines/template.steps.python-check.yml
+    parameters:
+      versionSpec: '3.7'
+      architecture: 'x64'
+>>>>>>> Python Script のコンパイル確認
