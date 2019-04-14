@@ -1058,6 +1058,14 @@ void CDlgTagJumpList::find_key( const wchar_t* keyword )
 	::UpdateWindow(GetItemHwnd(IDC_STATIC_KEYWORD));
 }
 
+inline void CDlgTagJumpList::SkipLine(FILE* fp) {
+	// 改行コードまでを捨てる
+	int ch = fgetc( fp );
+	while( ch != '\n' && ch != EOF ){
+		ch = fgetc( fp );
+	}
+}
+
 /*!
 	タグファイルからキーワードにマッチするデータを抽出し，m_cListに設定する
 
@@ -1258,15 +1266,9 @@ int CDlgTagJumpList::ReadTagsParameter(
 	while( fgets( szLineData, _countof( szLineData ), fp ) )
 	{
 		nLines++;
-		int  nRet;
 		// fgetsが行すべてを読み込めていない場合の考慮
-		if( '\0' != szLineData[nLINEDATA_LAST_CHAR]
-		    && '\n' != szLineData[nLINEDATA_LAST_CHAR] ){
-			// 改行コードまでを捨てる
-			int ch = fgetc( fp );
-			while( ch != '\n' && ch != EOF ){
-				ch = fgetc( fp );
-			}
+		if( '\0' != szLineData[nLINEDATA_LAST_CHAR] && '\n' != szLineData[nLINEDATA_LAST_CHAR] ){
+			SkipLine(fp);
 		}
 		if( 1 == nLines && szLineData[0] == '\x0c' ){
 			// etagsなので次のファイル
@@ -1274,6 +1276,7 @@ int CDlgTagJumpList::ReadTagsParameter(
 		}
 		if ('!' == szLineData[0]) {
 			if (0 == strncmp_literal(szLineData + 1, "_TAG_")) {
+				int  nRet;
 				s[0][0] = s[1][0] = s[2][0] = 0;
 				nRet = sscanf(
 					szLineData,
@@ -1421,15 +1424,9 @@ void CDlgTagJumpList::find_key_for_BinarySearch(
 	fgets(szLineData, _countof(szLineData), fp);
 
 	while( fgets( szLineData, _countof( szLineData ), fp ) ) {
-		int  nRet;
 		// fgetsが行すべてを読み込めていない場合の考慮
-		if( '\0' != szLineData[nLINEDATA_LAST_CHAR]
-		    && '\n' != szLineData[nLINEDATA_LAST_CHAR] ){
-			// 改行コードまでを捨てる
-			int ch = fgetc( fp );
-			while( ch != '\n' && ch != EOF ){
-				ch = fgetc( fp );
-			}
+		if( '\0' != szLineData[nLINEDATA_LAST_CHAR] && '\n' != szLineData[nLINEDATA_LAST_CHAR] ){
+			SkipLine(fp);
 		}
 
 		if ( !parseTagsLine(s, szLineData, &n2, nTagFormat) ) {
@@ -1534,15 +1531,9 @@ void CDlgTagJumpList::find_key_for_LinearSearch(
 	szLineData[nLINEDATA_LAST_CHAR] = '\0';
 
 	while( fgets( szLineData, _countof( szLineData ), fp ) ) {
-		int  nRet;
 		// fgetsが行すべてを読み込めていない場合の考慮
-		if( '\0' != szLineData[nLINEDATA_LAST_CHAR]
-		    && '\n' != szLineData[nLINEDATA_LAST_CHAR] ){
-			// 改行コードまでを捨てる
-			int ch = fgetc( fp );
-			while( ch != '\n' && ch != EOF ){
-				ch = fgetc( fp );
-			}
+		if( '\0' != szLineData[nLINEDATA_LAST_CHAR] && '\n' != szLineData[nLINEDATA_LAST_CHAR] ){
+			SkipLine(fp);
 		}
 		if( szLineData[0] < '!' ) goto next_line;
 

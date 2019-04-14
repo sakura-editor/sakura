@@ -122,6 +122,7 @@ private:
 	void SetTextDir();
 	void FindNext(bool bNewFind);
 	void find_key( const wchar_t* keyword );
+	void SkipLine(FILE* fp);
 	int find_key_core(int  nTop, const wchar_t* keyword, bool bTagJumpPartialMatch, bool bTagJumpExactMatch, bool bTagJumpICase, bool bTagJumpICaseByTags, int  nDefaultNextMode);
 	bool parseTagsLine(ACHAR s[][1024], ACHAR* szLineData, int* n2, int nTagFormat);
 	int ReadTagsParameter(FILE* fp, bool bTagJumpICaseByTags, STagFindState* state, CSortedTagJumpList& cList, int* nTagFormat, bool* bSorted, bool* bFoldcase, bool* bTagJumpICase, PTCHAR szNextPath, int* baseDirId);
