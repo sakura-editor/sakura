@@ -332,11 +332,11 @@ bool CEditView::SearchBracket(
 		const KAKKO_T* p;
 		for( p = g_aKakkos; p->sStr != NULL;  p++ )
 		{
-			if( wcsncmp(p->sStr, &cline[ptPos.x], 1) == 0 )
+			if( *(p->sStr) == cline[ptPos.x] )
 			{
 				return SearchBracketForward( ptPos, pptLayoutNew, p->sStr, p->eStr, mode );
 			}
-			else if( wcsncmp(p->eStr, &cline[ptPos.x], 1) == 0 )
+			else if( *(p->eStr) == cline[ptPos.x] )
 			{
 				return SearchBracketBackward( ptPos, pptLayoutNew, p->sStr, p->eStr, mode );
 			}
@@ -365,11 +365,11 @@ bool CEditView::SearchBracket(
 		ptPos.x = bPos - cline;
 		for( p = g_aKakkos; p->sStr != NULL; p++ )
 		{
-			if( wcsncmp(p->sStr, &cline[ptPos.x], 1) == 0 )
+			if( *(p->sStr) == cline[ptPos.x] )
 			{
 				return SearchBracketForward( ptPos, pptLayoutNew, p->sStr, p->eStr, mode );
 			}
-			else if( wcsncmp(p->eStr, &cline[ptPos.x], 1) == 0 )
+			else if( *(p->eStr) == cline[ptPos.x] )
 			{
 				return SearchBracketBackward( ptPos, pptLayoutNew, p->sStr, p->eStr, mode );
 			}
@@ -433,10 +433,10 @@ bool CEditView::SearchBracketForward(
 				continue;
 			}
 			// 03/01/08 ai Start
-			if( wcsncmp(upChar, cPos, 1) == 0 ){
+			if( *upChar == *cPos ){
 				++level;
 			}
-			else if( wcsncmp(dnChar, cPos, 1) == 0 ){
+			else if( *dnChar == *cPos ){
 				--level;
 			}// 03/01/08 ai End
 
@@ -524,10 +524,10 @@ bool CEditView::SearchBracketBackward(
 				continue;
 			}
 			// 03/01/08 ai Start
-			if( wcsncmp(upChar, pPos, 1) == 0 ){
+			if( *upChar == *pPos ){
 				++level;
 			}
-			else if( wcsncmp(dnChar, pPos, 1) == 0 ){
+			else if( *dnChar == *pPos ){
 				--level;
 			}// 03/01/08 ai End
 
@@ -582,11 +582,11 @@ bool CEditView::IsBracket( const wchar_t *pLine, CLogicInt x, CLogicInt size )
 		const KAKKO_T *p;
 		for( p = g_aKakkos; p->sStr != NULL; p++ )
 		{
-			if( wcsncmp( p->sStr, &pLine[x], 1 ) == 0 )
+			if( *(p->sStr) == pLine[x] )
 			{
 				return true;
 			}
-			else if( wcsncmp( p->eStr, &pLine[x], 1 ) == 0 )
+			else if( *(p->eStr) == pLine[x] )
 			{
 				return true;
 			}
