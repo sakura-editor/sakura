@@ -696,7 +696,7 @@ bool CShareData::InitShareData()
 			//From Here 2005.04.03 MIK キーワード指定タグジャンプのHistory保管
 			m_pShareData->m_sTagJump.m_aTagJumpKeywords.clear();
 			m_pShareData->m_sTagJump.m_bTagJumpICase = FALSE;
-			m_pShareData->m_sTagJump.m_bTagJumpAnyWhere = FALSE;
+			m_pShareData->m_sTagJump.m_bTagJumpPartialMatch = FALSE;
 			//To Here 2005.04.03 MIK 
 
 			m_pShareData->m_sHistory.m_aExceptMRU.clear();

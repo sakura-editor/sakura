@@ -141,7 +141,7 @@ CDlgTagJumpList::CDlgTagJumpList(bool bDirectTagJump)
 	  m_pcList( NULL ),
 	  m_nTimerId( 0 ),
 	  m_bTagJumpICase( FALSE ),
-	  m_bTagJumpAnyWhere( FALSE ),
+	  m_bTagJumpPartialMatch( FALSE ),
 	  m_nTop( 0 ),
 	  m_bNextItem( false ),
 	  m_psFindPrev( NULL ),
@@ -238,7 +238,7 @@ void CDlgTagJumpList::SetData( void )
 	if( IsDirectTagJump() ){
 		m_bTagJumpICase = FALSE;
 		::CheckDlgButton( GetHwnd(), IDC_CHECK_ICASE, BST_UNCHECKED );
-		m_bTagJumpAnyWhere = FALSE;
+		m_bTagJumpPartialMatch = FALSE;
 		::CheckDlgButton( GetHwnd(), IDC_CHECK_ANYWHERE, BST_UNCHECKED );
 		m_bTagJumpExactMatch = TRUE;
 
@@ -253,8 +253,8 @@ void CDlgTagJumpList::SetData( void )
 
 		m_bTagJumpICase = m_pShareData->m_sTagJump.m_bTagJumpICase;
 		::CheckDlgButton( GetHwnd(), IDC_CHECK_ICASE, m_bTagJumpICase ? BST_CHECKED : BST_UNCHECKED );
-		m_bTagJumpAnyWhere = m_pShareData->m_sTagJump.m_bTagJumpAnyWhere;
-		::CheckDlgButton( GetHwnd(), IDC_CHECK_ANYWHERE, m_bTagJumpAnyWhere ? BST_CHECKED : BST_UNCHECKED );
+		m_bTagJumpPartialMatch = m_pShareData->m_sTagJump.m_bTagJumpPartialMatch;
+		::CheckDlgButton( GetHwnd(), IDC_CHECK_ANYWHERE, m_bTagJumpPartialMatch ? BST_CHECKED : BST_UNCHECKED );
 		m_bTagJumpExactMatch = FALSE;
 		Combo_LimitText( hwndKey, _MAX_PATH-1 );
 		CRecentTagjumpKeyword cRecentTagJump;
@@ -393,7 +393,7 @@ int CDlgTagJumpList::GetData( void )
 	if( !IsDirectTagJump() )
 	{
 		m_pShareData->m_sTagJump.m_bTagJumpICase = m_bTagJumpICase;
-		m_pShareData->m_sTagJump.m_bTagJumpAnyWhere = m_bTagJumpAnyWhere;
+		m_pShareData->m_sTagJump.m_bTagJumpPartialMatch = m_bTagJumpPartialMatch;
 		// 2010.07.22 候補が空でもジャンプで閉じたときは、オプションを保存する
 		if( m_nIndex == -1 || m_nIndex >= m_pcList->GetCapacity() ){
 			return FALSE;
@@ -560,7 +560,7 @@ BOOL CDlgTagJumpList::OnBnClicked( int wID )
 		return TRUE;
 
 	case IDC_CHECK_ANYWHERE:
-		m_bTagJumpAnyWhere = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_ANYWHERE ) == BST_CHECKED;
+		m_bTagJumpPartialMatch = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_ANYWHERE ) == BST_CHECKED;
 		StartTimer( TAGJUMP_TIMER_DELAY_SHORT );
 		return TRUE;
 	// To Here 2005.04.03 MIK 検索条件設定
@@ -1010,7 +1010,7 @@ void CDlgTagJumpList::FindNext( bool bNewFind )
 	if( bNewFind ){
 		// 前回のキーワードからの絞込検索のときで、tagsをスキップできるときはスキップ
 		if( -1 < m_psFind0Match->m_nDepth
-			&& (m_bTagJumpAnyWhere == m_bOldTagJumpAnyWhere || FALSE == m_bTagJumpAnyWhere)
+			&& (m_bTagJumpPartialMatch == m_bOldTagJumpPartialMatch || FALSE == m_bTagJumpPartialMatch)
 			&& (m_bTagJumpICase    == m_bOldTagJumpICase    || FALSE == m_bTagJumpICase)
 			&& 0 == wcsncmp( m_strOldKeyword.GetStringPtr(), szKey, m_strOldKeyword.GetStringLength() ) ){
 			// 元のキーワードで１件もヒットしないtagsがあるので飛ばす
@@ -1048,7 +1048,7 @@ void CDlgTagJumpList::find_key( const wchar_t* keyword )
 	find_key_core(
 		m_nTop,
 		keyword,
-		FALSE != m_bTagJumpAnyWhere,
+		FALSE != m_bTagJumpPartialMatch,
 		FALSE != m_bTagJumpExactMatch,
 		FALSE != m_bTagJumpICase,
 		IsDirectTagJump(),
@@ -1069,13 +1069,13 @@ void CDlgTagJumpList::find_key( const wchar_t* keyword )
 int CDlgTagJumpList::find_key_core(
 	int  nTop,
 	const wchar_t* keyword,
-	bool bTagJumpAnyWhere, // 部分一致
+	bool bTagJumpPartialMatch, // 部分一致
 	bool bTagJumpExactMatch, // 完全一致
 	bool bTagJumpICase,
 	bool bTagJumpICaseByTags, // Tagファイル側のソートに従う
 	int  nDefaultNextMode
 ){
-	assert_warning( !(bTagJumpAnyWhere && bTagJumpExactMatch) );
+	assert_warning( !(bTagJumpPartialMatch && bTagJumpExactMatch) );
 
 	// to_acharは一時バッファで破壊される可能性があるのでコピー
 	CNativeA cmemKeyA = CNativeA(to_achar(keyword));
@@ -1085,7 +1085,7 @@ int CDlgTagJumpList::find_key_core(
 	Empty();
 
 	m_strOldKeyword.SetString( keyword );
-	m_bOldTagJumpAnyWhere = bTagJumpAnyWhere;
+	m_bOldTagJumpPartialMatch = bTagJumpPartialMatch;
 	m_bOldTagJumpICase    = bTagJumpICase;
 	m_bNextItem = false;
 
@@ -1171,7 +1171,7 @@ int CDlgTagJumpList::find_key_core(
 
 			STagSearchRule rule;
 			rule.bTagJumpExactMatch = bTagJumpExactMatch;
-			rule.bTagJumpAnyWhere = bTagJumpAnyWhere;
+			rule.bTagJumpPartialMatch = bTagJumpPartialMatch;
 			rule.bTagJumpICase = bTagJumpICase;
 			rule.baseDirId = baseDirId;
 			rule.nTop = nTop;
@@ -1179,7 +1179,7 @@ int CDlgTagJumpList::find_key_core(
 			// tagsファイルのパラメータを読みこみ
 			nRet = ReadTagsParameter(fp, bTagJumpICaseByTags, &state, cList, &nTagFormat, &bSorted, &bFoldcase, &bTagJumpICase, &szNextPath[0], &baseDirId);
 			if ( nRet ) {
-				if ( bSorted == 1 && !bFoldcase && !bTagJumpICase && ( bTagJumpExactMatch && !bTagJumpAnyWhere ) ) {
+				if ( bSorted == 1 && !bFoldcase && !bTagJumpICase && ( bTagJumpExactMatch && !bTagJumpPartialMatch ) ) {
 					//二分探索が可能な場合は二分探索を行う
 					find_key_for_BinarySearch(fp, paszKeyword, nTagFormat, &state, &rule );
 				} else {
@@ -1551,7 +1551,7 @@ void CDlgTagJumpList::find_key_for_LinearSearch(
 		}
 
 		int  cmp;
-		if( rule->bTagJumpAnyWhere ){
+		if( rule->bTagJumpPartialMatch ){
 			if( rule->bTagJumpICase ){
 				cmp = stristr_j( s[0], paszKeyword ) != NULL ? 0 : -1;
 			}else{
@@ -1590,9 +1590,9 @@ void CDlgTagJumpList::find_key_for_LinearSearch(
 			//	tagsはソートされているので，先頭からのcase sensitiveな
 			//	比較結果によって検索の時は処理の打ち切りが可能
 			//	2005.04.05 MIK バグ修正
-			if( (!rule->bTagJumpICase) && bSorted && (!rule->bTagJumpAnyWhere) ) break;
+			if( (!rule->bTagJumpICase) && bSorted && (!rule->bTagJumpPartialMatch) ) break;
 			// 2010.07.21 Foldcase時も打ち切る。ただしtagsとサクラ側のソート順が同じでなければならない
-			if( rule->bTagJumpICase  && bFoldcase && (!rule->bTagJumpAnyWhere) ) break;
+			if( rule->bTagJumpICase  && bFoldcase && (!rule->bTagJumpPartialMatch) ) break;
 		}
 next_line:
 		;
