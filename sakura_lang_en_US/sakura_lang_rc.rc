@@ -266,7 +266,7 @@ BEGIN
     CONTROL         "Paste from Clipboard(&Z)", IDC_CHK_PASTE, "Button", BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP, 5, 273, 116, 10
     CONTROL         "Bac&kup", IDC_CHK_BACKUP, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 5, 289, 164, 10
     
-    GROUPBOX        "Result Ouput", IDC_STATIC, 150, 94, 107, 33, WS_GROUP
+    GROUPBOX        "Result Output", IDC_STATIC, 150, 94, 107, 33, WS_GROUP
     CONTROL         "Complete &Line", IDC_RADIO_OUTPUTLINE, "Button", BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP, 155, 104, 83, 9
     CONTROL         "Matching &Part", IDC_RADIO_OUTPUTMARKED, "Button", BS_AUTORADIOBUTTON, 155, 115, 83, 10
 
@@ -312,7 +312,7 @@ BEGIN
     CONTROL         "&Case Sensitive", IDC_CHK_LOHICASE, "Button", BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP, 5, 63, 119, 10
     CONTROL         "R&egex", IDC_CHK_REGULAREXP, "Button", BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP, 5, 74, 55, 10
     LTEXT           "", IDC_STATIC_JRE32VER, 16, 85, 138, 8
-    CONTROL         "'Replace All' &Itteratively replaces", IDC_CHECK_CONSECUTIVEALL, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 5, 95, 118, 10
+    CONTROL         "'Replace All' &Iteratively replaces", IDC_CHECK_CONSECUTIVEALL, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 5, 95, 118, 10
     CONTROL         "Display a &message if not found", IDC_CHECK_NOTIFYNOTFOUND, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 5, 107, 140, 10
     CONTROL         "Automatica&lly close dialog", IDC_CHECK_bAutoCloseDlgReplace, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 5, 118, 128, 10
     CONTROL         "Re-start search from beginning(end)(&Z)", IDC_CHECK_SEARCHALL, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 5, 129, 146, 10
@@ -458,8 +458,8 @@ BEGIN
     CONTROL         "&Word Wrap", IDC_CHECK_WORDWRAP, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 150, 49, 78, 10
     CONTROL         "cant-start rule", IDC_CHECK_PS_KINSOKUHEAD, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 150, 63, 54, 10
     CONTROL         "cant-end rule", IDC_CHECK_PS_KINSOKUTAIL, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 150, 77, 54, 10
-    CONTROL         "Dont wrap new-line", IDC_CHECK_PS_KINSOKURET, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 205, 63, 86, 10
-    CONTROL         "Dont wrap punctuation", IDC_CHECK_PS_KINSOKUKUTO, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 205, 77, 86, 10
+    CONTROL         "Don't wrap new-line", IDC_CHECK_PS_KINSOKURET, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 205, 63, 86, 10
+    CONTROL         "Don't wrap punctuation", IDC_CHECK_PS_KINSOKUKUTO, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 205, 77, 86, 10
     LTEXT           "Char per Line :", IDC_STATIC, 150, 96, 65, 8
     LTEXT           "Nr Lines :", IDC_STATIC, 150, 110, 65, 8
     RTEXT           "0", IDC_STATIC_ENABLECOLUMNS, 215, 96, 20, 8
@@ -583,7 +583,7 @@ BEGIN
     DEFPUSHBUTTON   "&Close", IDC_BTN_CLOSE, 59, 63, 50, 14
     PUSHBUTTON      "Auto&load while not modified", IDC_BTN_AUTOLOAD, 114, 63, 102, 14
     PUSHBUTTON      "Notify &me later", IDC_BTN_NOTIFYONLY, 7, 81, 102, 14
-    PUSHBUTTON      "Dont &Notify me again", IDC_BTN_NOSUPERVISION, 114, 81, 102, 14
+    PUSHBUTTON      "Don't &Notify me again", IDC_BTN_NOSUPERVISION, 114, 81, 102, 14
     EDITTEXT        IDC_UPDATEDFILENAME, 7, 7, 209, 25, ES_READONLY | NOT WS_TABSTOP | ES_MULTILINE
     LTEXT           "This file has been altered by an external editor or other program.", IDC_FILEUPDATEMSG, 7, 36, 209, 8
     LTEXT           "", IDC_QUERYRELOADMSG, 7, 48, 209, 8
@@ -780,7 +780,7 @@ BEGIN
     EDITTEXT        IDC_EDIT_CHARSPACE, 70, 63, 40, 12
     CONTROL         "Spin1", IDC_SPIN_CHARSPACE, "msctls_updown32", UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS, 117, 63, 9, 12, WS_EX_TRANSPARENT
     LTEXT           "dot", IDC_STATIC, 114, 64, 18, 8
-    RTEXT           "&Line spaceing", IDC_STATIC, 8, 79, 56, 8, NOT WS_GROUP
+    RTEXT           "&Line spacing", IDC_STATIC, 8, 79, 56, 8, NOT WS_GROUP
     EDITTEXT        IDC_EDIT_LINESPACE, 70, 78, 40, 12, ES_AUTOHSCROLL
     CONTROL         "Spin3", IDC_SPIN_LINESPACE, "msctls_updown32", UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS, 117, 78, 9, 12
     LTEXT           "dot", IDC_STATIC, 114, 79, 18, 8
@@ -814,9 +814,9 @@ BEGIN
     PUSHBUTTON      "&Font...", IDC_BUTTON_TYPEFONT, 173, 121, 80, 14
     GROUPBOX        "Type Specific Font", IDC_STATIC, 153, 97, 145, 42
     CONTROL         "ASCII &Word Wrap", IDC_CHECK_WORDWRAP, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 162, 154, 78, 10
-    CONTROL         "Dont wrap new-line(&^)", IDC_CHECK_KINSOKURET, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 162, 168, 100, 10
-    CONTROL         "Dont show wrap margin(&-)", IDC_CHECK_KINSOKUHIDE, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 172, 182, 100, 10
-    CONTROL         "Dont wrap punctuation(&\\)", IDC_CHECK_KINSOKUKUTO, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 162, 196, 95, 10
+    CONTROL         "Don't wrap new-line(&^)", IDC_CHECK_KINSOKURET, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 162, 168, 100, 10
+    CONTROL         "Don't show wrap margin(&-)", IDC_CHECK_KINSOKUHIDE, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 172, 182, 100, 10
+    CONTROL         "Don't wrap punctuation(&\\)", IDC_CHECK_KINSOKUKUTO, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 162, 196, 95, 10
     EDITTEXT        IDC_EDIT_KINSOKUKUTO, 258, 195, 30, 12, ES_AUTOHSCROLL
     CONTROL         "Line cant-start with(&[)", IDC_CHECK_KINSOKUHEAD, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 162, 210, 54, 10
     EDITTEXT        IDC_EDIT_KINSOKUHEAD, 218, 209, 70, 12, ES_AUTOHSCROLL
@@ -831,7 +831,7 @@ FONT 9, "Tahoma"
 BEGIN
     GROUPBOX        "Co&lors", IDC_STATIC, 3, 6, 148, 204, WS_GROUP
     LISTBOX         IDC_LIST_COLORS, 6, 18, 142, 148, LBS_OWNERDRAWFIXED | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "Enable hilight(&D)", IDC_CHECK_DISP, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 6, 165, 65, 10
+    CONTROL         "Enable highlight(&D)", IDC_CHECK_DISP, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 6, 165, 65, 10
     CONTROL         "&Bold", IDC_CHECK_BOLD, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 72, 165, 36, 10
     CONTROL         "&Underline", IDC_CHECK_UNDERLINE, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 100, 165, 40, 10
     LTEXT           "Text(C)", IDC_STATIC_MOZI, 16, 181, 34, 8
@@ -903,7 +903,7 @@ BEGIN
     GROUPBOX        "External HTML Hel&p Setup", IDC_STATIC, 3, 95, 295, 45, WS_GROUP
     EDITTEXT        IDC_EDIT_TYPEEXTHTMLHELP, 8, 109, 264, 12, ES_AUTOHSCROLL | WS_GROUP
     PUSHBUTTON      "(&3)...", IDC_BUTTON_TYPEOPENEXTHTMLHELP, 275, 107, 19, 14
-    CONTROL         "Do&nt open multiple viewers", IDC_CHECK_TYPEHTMLHELPISSINGLE, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 8, 125, 109, 10
+    CONTROL         "Do&n't open multiple viewers", IDC_CHECK_TYPEHTMLHELPISSINGLE, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 8, 125, 109, 10
     CONTROL         "Ch&eck CR consistence when save", IDC_CHECK_CHKENTERATEND, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 8, 145, 146, 10
     CONTROL         "Ignore char in strings(&S)", IDC_CHECK_INDENTCPPSTR, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 8, 171, 146, 10
     CONTROL         "Ignore char in comments(&C)", IDC_CHECK_INDENTCPPCMT, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 158, 171, 130, 10
@@ -943,7 +943,7 @@ EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "Tahoma"
 BEGIN
     CONTROL         "Use &Keyword Help", IDC_CHECK_KEYHELP, "Button", BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP, 5, 6, 114, 10
-    GROUPBOX        "Dictonary File &List", IDC_FRAME_KEYHELP, 3, 21, 295, 174
+    GROUPBOX        "Dictionary File &List", IDC_FRAME_KEYHELP, 3, 21, 295, 174
     CONTROL         "List5", IDC_LIST_KEYHELP, "SysListView32", LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP, 8, 33, 238, 118
     LTEXT           "Dictionary desc.", IDC_LABEL_KEYHELP_TITLE, 8, 159, 50, 8, NOT WS_GROUP
     LTEXT           "Dict file desc.", IDC_LABEL_KEYHELP_ABOUT, 61, 159, 185, 8, NOT WS_GROUP, WS_EX_TRANSPARENT
@@ -1201,7 +1201,7 @@ BEGIN
     COMBOBOX        IDC_COMBO_TAB_POSITION, 124, 140, 46, 80, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "&Title", IDC_TextTabCaption, 15, 160, 40, 10
     EDITTEXT        IDC_TABWND_CAPTION, 56, 157, 226, 14, ES_AUTOHSCROLL
-    GROUPBOX        "Apperance of Tabs", IDC_STATIC, 7, 102, 280, 76, WS_GROUP
+    GROUPBOX        "Appearance of Tabs", IDC_STATIC, 7, 102, 280, 76, WS_GROUP
     CONTROL         "Change tabs using mouse &Wheel", IDC_CHECK_ChgWndByWheel, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 15, 196, 127, 10
     GROUPBOX        "Misc", IDC_STATIC, 7, 184, 280, 28, WS_GROUP
 END
@@ -1236,8 +1236,8 @@ BEGIN
     CONTROL         "&Drag'n'Drop editing", IDC_CHECK_DRAGDROP, "Button", BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP, 8, 104, 143, 10
     CONTROL         "Allow other tool&s to drop", IDC_CHECK_DROPSOURCE, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 8, 117, 143, 10
     GROUPBOX        "Drag'n'Drop", IDC_STATIC, 3, 91, 149, 43, WS_GROUP
-    CONTROL         "Do&nt overwrite existing line-breaks", IDC_CHECK_bNotOverWriteCRLF, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 8, 156, 143, 10
-    CONTROL         "&Fill Space when Overrite 2-bytes by 1-byte", IDC_CHECK_bOverWriteFixMode, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 8, 169, 143, 10
+    CONTROL         "Do&n't overwrite existing line-breaks", IDC_CHECK_bNotOverWriteCRLF, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 8, 156, 143, 10
+    CONTROL         "&Fill Space when Overwrite 2-bytes by 1-byte", IDC_CHECK_bOverWriteFixMode, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 8, 169, 143, 10
     CONTROL         "Delete selecting area while box selecting(&G)", IDC_CHECK_bOverWriteBoxDelete, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 8, 182, 143, 10
     GROUPBOX        "Overwrite Mode", IDC_STATIC, 3, 143, 149, 58, WS_GROUP
     CONTROL         "Clicking selects whole &URL", IDC_CHECK_bSelectClickedURL, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 161, 18, 120, 10
@@ -1278,12 +1278,12 @@ BEGIN
     CONTROL         "Display all &file types for saved file", IDC_CHECK_NoFilterSaveFile, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 142, 77, 142, 10
     GROUPBOX        "File List display filter for file-dialog", IDC_STATIC, 3, 65, 285, 28
     CONTROL         "C&lose existing file when drag'n'drop new one", IDC_CHECK_bDropFileAndClose, "Button", BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP, 8, 110, 149, 10
-    LTEXT           "Support upto &MAX", IDC_LABEL_AUTOSAVE3, 18, 126, 101, 8, NOT WS_GROUP
+    LTEXT           "Support up to &MAX", IDC_LABEL_AUTOSAVE3, 18, 126, 101, 8, NOT WS_GROUP
     EDITTEXT        IDC_EDIT_nDropFileNumMax, 123, 124, 25, 12, ES_AUTOHSCROLL
     CONTROL         "Spin1", IDC_SPIN_nDropFileNumMax, "msctls_updown32", UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS, 179, 124, 9, 12
     LTEXT           "files", IDC_LABEL_AUTOSAVE4, 151, 126, 41, 8, NOT WS_GROUP
     LTEXT           "NB: Only possible to drop 1 file", IDC_LANEL_NOTE, 161, 111, 106, 8
-    CONTROL         "Restor &cursor position on open file", IDC_CHECK_RestoreCurPosition, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 8, 140, 174, 10
+    CONTROL         "Restore &cursor position on open file", IDC_CHECK_RestoreCurPosition, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 8, 140, 174, 10
     CONTROL         "Restore &bookmarks on file open", IDC_CHECK_RestoreBookmarks, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 8, 155, 214, 10
     CONTROL         "&Decode MIME headers on file open", IDC_CHECK_AutoMIMEDecode, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 8, 169, 231, 10
     CONTROL         "Display a dialog if char. encoding changes(&Q)", IDC_CHECK_QueryIfCodeChange, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 8, 182, 223, 13
@@ -1347,7 +1347,7 @@ BEGIN
 
     LTEXT           "", IDC_STATIC, 12, 60, 271, 83, NOT WS_VISIBLE
     CONTROL         "Use date/time when saving file", IDC_RADIO_BACKUP_DATETYPE1A, "Button", BS_AUTORADIOBUTTON | WS_GROUP, 12, 104, 111, 10
-    CONTROL         "Use date/time from previous file udpate", IDC_RADIO_BACKUP_DATETYPE2A, "Button", BS_AUTORADIOBUTTON, 12, 118, 149, 10
+    CONTROL         "Use date/time from previous file update", IDC_RADIO_BACKUP_DATETYPE2A, "Button", BS_AUTORADIOBUTTON, 12, 118, 149, 10
     LTEXT           "$x : x-th folder above's name (x=0-9)\r* : Extension\r%Y/%m/%d : YMD %y (2 dig. year) \r%H:%M:%S: HMS   \r%% : '%' symbol\r", IDC_LABEL_BACKUP_HELP2, 165, 75, 115, 50, SS_SUNKEN
 
     CONTROL         "Create in folder(&P)", IDC_CHECK_BACKUPFOLDER, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 12, 148, 107, 10
@@ -1501,7 +1501,7 @@ BEGIN
     GROUPBOX        "External HTML Hel&p Setting", IDC_STATIC, 3, 73, 285, 45, WS_GROUP
     EDITTEXT        IDC_EDIT_EXTHTMLHELP, 8, 89, 253, 12, ES_AUTOHSCROLL | WS_GROUP
     PUSHBUTTON      "(&2)...", IDC_BUTTON_OPENEXTHTMLHELP, 264, 88, 19, 14
-    CONTROL         "Do&nt open multiple viewers", IDC_CHECK_HTMLHELPISSINGLE, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 8, 105, 108, 10
+    CONTROL         "Do&n't open multiple viewers", IDC_CHECK_HTMLHELPISSINGLE, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 8, 105, 108, 10
     GROUPBOX        "Keyword Help", IDC_STATIC, 3, 123, 285, 33, WS_GROUP
     RTEXT           "Font", IDC_STATIC_KEYWORDHELPFONT, 8, 136, 219, 17, SS_RIGHT
     PUSHBUTTON      "&Font...", IDC_BUTTON_KEYWORDHELPFONT, 232, 136, 51, 14
@@ -1651,7 +1651,7 @@ END
 IDD_PROFILEMGR DIALOGEX 0, 0, 191, 184
 STYLE DS_MODALFRAME | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-CAPTION "Profile Maneger"
+CAPTION "Profile Manager"
 FONT 9, "Tahoma"
 BEGIN
     LISTBOX         IDC_LIST_PROFILE, 9, 9, 109, 128, LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_HSCROLL | WS_TABSTOP
@@ -1673,7 +1673,7 @@ CAPTION "File Tree Setting"
 FONT 9, "Tahoma"
 BEGIN
     LTEXT           "Setting：Common", IDC_STATIC_SETTFING_FROM, 4, 4, 282, 10
-    CONTROL         "Load &Ini from foldres", IDC_CHECK_LOADINI, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 4, 16, 120, 9
+    CONTROL         "Load &Ini from folders", IDC_CHECK_LOADINI, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 4, 16, 120, 9
     LTEXT           "Default Setting File(&J)", IDC_STATIC, 4, 28, 110, 8
     EDITTEXT        IDC_EDIT_DEFINI, 13, 39, 124, 13, ES_AUTOHSCROLL
     PUSHBUTTON      "...(&1)", IDC_BUTTON_REF1, 137, 39, 17, 13
@@ -1700,7 +1700,7 @@ BEGIN
     PUSHBUTTON      "Ins Last(&B)", IDC_BUTTON_ADD, 156, 60, 36, 14
     PUSHBUTTON      "U&pdate", IDC_BUTTON_UPDATE, 156, 74, 36, 14
     PUSHBUTTON      "Files Ins(&C)...", IDC_BUTTON_FILEADD, 133, 88, 59, 14
-    PUSHBUTTON      "Paths Repalce(&N)...", IDC_BUTTON_REPLACE, 111, 102, 81, 14
+    PUSHBUTTON      "Paths Replace(&N)...", IDC_BUTTON_REPLACE, 111, 102, 81, 14
     PUSHBUTTON      "&Up", IDC_BUTTON_UP, 156, 140, 36, 14
     PUSHBUTTON      "&Down", IDC_BUTTON_DOWN, 156, 154, 36, 14
     PUSHBUTTON      "&Right", IDC_BUTTON_RIGHT, 156, 168, 36, 14
@@ -2288,9 +2288,9 @@ BEGIN
     F_BROWSE                "Browse"
     F_VIEWMODE              "View Mode"
     F_PROPERTY_FILE         "File Property"
-    F_PROFILEMGR            "Profile Maneger"
+    F_PROFILEMGR            "Profile Manager"
     F_OPEN_FOLDER_IN_EXPLORER "Open Containing Folder"
-    F_OPEN_COMMAND_PROMPT   "Open Command Propmt"
+    F_OPEN_COMMAND_PROMPT   "Open Command Prompt"
     F_OPEN_POWERSHELL           "Open PowerShell"
     F_OPEN_POWERSHELL_AS_ADMIN  "Open PowerShell As Admin"
 END
@@ -2344,7 +2344,7 @@ BEGIN
     F_LTRIM                 "Left trim whitespace"
     F_RTRIM                 "Right trim whitespace"
     F_SORT_ASC              "Ascending sort selected lines"
-    F_SORT_DESC             "Decending sort selected lines"
+    F_SORT_DESC             "Descending sort selected lines"
     F_MERGE                 "Merge selected lines, Unique only"
     F_RECONVERT             "Reconvert"
 END
@@ -2690,7 +2690,7 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_WRAPWINDOWWIDTH       "Line Wrap Width"
-    F_TMPWRAPNOWRAP         "Dont wrap"
+    F_TMPWRAPNOWRAP         "Don't wrap"
     F_TMPWRAPSETTING        "Wrap at set line"
     F_TMPWRAPWINDOW         "Wrap at right side of window"						// FIXME - &W
     F_SELECT_COUNT_MODE     "Count Byte Count"
@@ -2801,7 +2801,7 @@ BEGIN
     F_HOKAN                 "Supplemental Input"
     F_TOGGLE_KEY_SEARCH     "Auto-display keyword help"
 	F_TOGGLE_KEY_SEARCH_ON	"Automatically show Keyword help"
-	F_TOGGLE_KEY_SEARCH_OFF	"Dont show Keyword help"
+	F_TOGGLE_KEY_SEARCH_OFF	"Don't show Keyword help"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2915,7 +2915,7 @@ BEGIN
 	STR_ERR_DLGCTL7				"Start of Text" 
 	STR_ERR_DLGCTL8				"End of Text" 
 	STR_ERR_DLGCTL9				"End of Transmission"     
-	STR_ERR_DLGCTL10			"Enquirey"
+	STR_ERR_DLGCTL10			"Enquiry"
 	STR_ERR_DLGCTL11			"Acknowledge"       
 	STR_ERR_DLGCTL12			"Bell"   
 	STR_ERR_DLGCTL13			"Backspace"         
@@ -2923,7 +2923,7 @@ BEGIN
 	STR_ERR_DLGCTL15			"Linefeed"         	
 	STR_ERR_DLGCTL16			"Vertical Tab"     
 	STR_ERR_DLGCTL17			"Form feed"     	
-	STR_ERR_DLGCTL18			"Cariage Return"         
+	STR_ERR_DLGCTL18			"Carriage Return"         
 	STR_ERR_DLGCTL19			"Shift Out" 
 	STR_ERR_DLGCTL20			"Shift In"
 	STR_ERR_DLGCTL21			"Data Link Escape"
@@ -3029,7 +3029,7 @@ BEGIN
 	STR_DLGFNCLST_VB_PUBLIC		"public"
 	STR_DLGFNCLST_VB_FUNCTION	"function"
 	STR_DLGFNCLST_VB_PROC		"procedure"
-	STR_DLGFNCLST_VB_PROPGET	"property get"					// FIXME - sure? the comments dont match the names. (see CDlgFuncList.cpp)
+	STR_DLGFNCLST_VB_PROPGET	"property get"					// FIXME - sure? the comments don't match the names. (see CDlgFuncList.cpp)
 	STR_DLGFNCLST_VB_PROPLET	"property set"
 	STR_DLGFNCLST_VB_PROPSET	"property reference"
 	STR_DLGFNCLST_VB_CONST		"Constant"
@@ -3093,7 +3093,7 @@ BEGIN
 	STR_DLGOPNFL_EXTNAME1		"User setting"								// Used for most "eXport" buttons in the File dialog
 	STR_DLGOPNFL_EXTNAME2		"Text File"
 	STR_DLGOPNFL_EXTNAME3		"All Files"
-	STR_DLGOPNFL_ERR1			"Dialog didnt open.\n\nError:%ts"
+	STR_DLGOPNFL_ERR1			"Dialog didn't open.\n\nError:%ts"
 
 	// CDlgPluginOption.cpp
 	STR_DLGPLUGINOPT_LOAD		"Didn't load plugin."
@@ -3144,7 +3144,7 @@ BEGIN
 	// CDlgReplace.cpp
 	STR_DLGREPLC_CLIPBOARD		"There is no valid data in the clipboard!"
 	STR_DLGREPLC_STR			"No Selected Text to Replace"
-	STR_DLGREPLC_REPLACE		"Changed %d occurances"
+	STR_DLGREPLC_REPLACE		"Changed %d occurrences"
 	STR_DLGREPLC_REPSTR			"Please provide a replacement term first."
 
 	// CDlgSameColor.cpp
@@ -3166,7 +3166,7 @@ BEGIN
 	STR_DLGTAGMAK_SELECTDIR		"Select folder for tag creation"
 
 	// CDlgWinSize.cpp
-	STR_DLGWINSZ_NORMAL			"Normal"  // Window Settings &W indow to size
+	STR_DLGWINSZ_NORMAL			"Normal"  // Window Settings &Window to size
 	STR_DLGWINSZ_MAXIMIZE		"Maximize"
 	STR_DLGWINSZ_MINIMIZE		"(Minimize)"
 
@@ -3177,7 +3177,7 @@ BEGIN
 	STR_DLGPROFILE_ERR_INVALID_CHAR	"Contains is not available characters."
 	STR_DLGPROFILE_ERR_ALREADY		"Already there is a profile of the same name."
 	STR_DLGPROFILE_ERR_FILE			"You can not create because there is a file with the same name."
-	STR_DLGPROFILE_RENAME_TITLE		"Rename Proflie Name"
+	STR_DLGPROFILE_RENAME_TITLE		"Rename Profile Name"
 	STR_DLGPROFILE_RENAME_MSG		"Input Profile Name."
 	STR_DLGPROFILE_ERR_RENAME		"Failed to change the name.\nProfile there is a possibility of being used."
 
@@ -3185,10 +3185,10 @@ BEGIN
 	STR_DOCOUTLINE_REGEX		"Regex Rule\n%ls\nOn Error\n%ts"
 
 	// CDocLineMgr.cpp
-	STR_ERR_DLGDOCLM1			"%ls\n file couldnt be opened.\nFile is not valid."
-	STR_ERR_DLGDOCLM2			"'%ls'\n file could not be opened.\nCould not get acesses to the file."
+	STR_ERR_DLGDOCLM1			"%ls\n file couldn't be opened.\nFile is not valid."
+	STR_ERR_DLGDOCLM2			"'%ls'\n file could not be opened.\nCould not get access to the file."
 	STR_ERR_DLGDOCLM3			"'%ls'\n file could not be opened.\nIts possible another application is using the file."
-	STR_ERR_DLGDOCLM4			"'%ls' error occured whilst trying to read the file.\nWill stop attempting to read file."
+	STR_ERR_DLGDOCLM4			"'%ls' error occurred whilst trying to read the file.\nWill stop attempting to read file."
 	STR_ERR_DLGDOCLM5			"'%ls'\nCould not save file.\nIncorrect path or other application is using the file."
 	STR_ERR_DLGDOCLM6			"CDocLineMgr::GetAllData()\nFailure to reserve memory \n%d bytes"
 	STR_ERR_DLGDOCLM_TOOBIG		"'%ls'\n file could not be opened.\nIts size is too big."
@@ -3207,7 +3207,7 @@ BEGIN
 	STR_TRAY_CREATEPROC1		"'%ts'\nFailed to execute process.\n%ts"
 	STR_TRAY_CREATEPROC2		"'%ts'\nFailed to execute process."
 	STR_TRAY_EXITALL			"Close all open windows, and exit editor without saving?"					// When you exit editor
-	STR_TRAY_ACCELTABLE			"CControlTray::CreateAccelTbl()\nCoule not create accelerator table.\nInsufficient system resources."
+	STR_TRAY_ACCELTABLE			"CControlTray::CreateAccelTbl()\nCould not create accelerator table.\nInsufficient system resources."
 
 
 	// CEditDoc.cpp
@@ -3218,13 +3218,13 @@ BEGIN
 	STR_SAVEAGENT_OTHER			"'%ts'\nCannot save file.\nOther editor is opening this file."
 	STR_ERR_DLGEDITDOC5			"Character Encoding"														// Dialog title for below
 	STR_ERR_DLGEDITDOC6			"%ts\n\nOpening in %ts, but it has been opened in %ts last time.\nUse same character formatting as last time?\n\n\t[(Y)es]  =%ts\n\t[(N)o]=%ts\n"
-	STR_NOT_EXSIST_SAVE			"%ts\nThe above file doenst exist.\n\nWhen you save this document the file will be created on the disk."
+	STR_NOT_EXSIST_SAVE			"%ts\nThe above file doesn't exist.\n\nWhen you save this document the file will be created on the disk."
 	STR_BACKUP_ERR_TITLE		"File Save"
 	STR_BACKUP_ERR_MSG		"Failed to create backup..  Continue to overwrite the original file?"		// Continue with original file
-	STR_BACKUP_ERR_PATH_CRETE	"error in the path of creating the backup destination.\nPath is too long or invalid format.\nContinue to overwire teh original file?"
+	STR_BACKUP_ERR_PATH_CRETE	"error in the path of creating the backup destination.\nPath is too long or invalid format.\nContinue to overwrite the original file?"
 	STR_BACKUP_CONFORM_TITLE1		"Confirming creation of backup"												// Dialog Title for message below
 	STR_BACKUP_CONFORM_MSG1		"Creating a backup before updating.\nOK?  [(N)o] = No backup, just overwrite (or save as).\n\n%ts\n    ↓\n%ts\n\nBackup file will be sent to the Trashcan\n"
-	STR_BACKUP_CONFORM_TITLE2		"Confirming creation of backup"												// Dialog Title fo rmessage below
+	STR_BACKUP_CONFORM_TITLE2		"Confirming creation of backup"												// Dialog Title for message below
 	STR_BACKUP_CONFORM_MSG2		"Creating a backup before updating.\nOK?  [(N)o] = No backup, just overwrite (or save as).\n\n%ts\n    ↓\n%ts\n\n"
 	STR_BACKUP_ERR_DELETE		"failed to delete"
 	STR_BACKUP_ERR_MOVE			"failed to move"
@@ -3269,11 +3269,11 @@ BEGIN
 	STR_STATUS_ROW_COL			"%5d Ln %4d Col"
 	STR_INS_MODE_INS			"INS"													// Insert mode
 	STR_INS_MODE_OVR			"OVR"													// Overwrite mode
-	STR_GREP_SEARCH_CONDITION	"\r\n□ Search Conditions  "							// Output from GREP resuilts
+	STR_GREP_SEARCH_CONDITION	"\r\n□ Search Conditions  "							// Output from GREP results
 	STR_GREP_SEARCH_FILE		"<File Search>\r\n"
 	STR_GREP_SEARCH_TARGET		"Search Target   "
-	STR_GREP_REPLACE_TO			"Repalce To      "
-	STR_GREP_PASTE_CLIPBOAD		"(Paste From Clipborad)"
+	STR_GREP_REPLACE_TO			"Replace To      "
+	STR_GREP_PASTE_CLIPBOAD		"(Paste From Clipboard)"
 	STR_GREP_SEARCH_FOLDER		"Folder          "
 	STR_GREP_EXCLUDE_FILE		"Exclude File    "
 	STR_GREP_EXCLUDE_FOLDER		"Exclude Folder  "
@@ -3286,7 +3286,7 @@ BEGIN
 	STR_GREP_CHARSET_AUTODETECT	"    (Encoding = Auto-Detect)\r\n"
 	STR_GREP_CHARSET			"    (Encoding:"
 	STR_GREP_SHOW_MATCH_LINE	"    (Matching Line displayed)\r\n"
-	STR_GREP_SHOW_FIRST_LINE	"    (Matching line first postion only displayed)\r\n"
+	STR_GREP_SHOW_FIRST_LINE	"    (Matching line first position only displayed)\r\n"
 	STR_GREP_SHOW_MATCH_AREA	"    (Matching Area only displayed)\r\n"
 	STR_GREP_SHOW_MATCH_NOHITLINE	"    (Not Matching Line displayed)\r\n"
 	STR_GREP_SHOW_FIRST_MATCH	"    (First Matching Area only displayed for each file)\r\n"
@@ -3341,12 +3341,12 @@ BEGIN
 	STR_ERR_CEDITVIEW_CMD08		"Failed to open C/C++ header file."
 	STR_ERR_CEDITVIEW_CMD09		"Failed to open C/C++ source file."
 	STR_ERR_CEDITVIEW_CMD10		"No valid data on the clip board !"
-	STR_ERR_CEDITVIEW_CMD11		"Replaced all occurences to end of file."				// Comes up when you press replace individually until u reach end of file.
+	STR_ERR_CEDITVIEW_CMD11		"Replaced all occurrences to end of file."				// Comes up when you press replace individually until u reach end of file.
 	STR_ERR_CEDITVIEW_CMD14		"Failed to write to the file.\n\n%ts"
 	STR_ERR_CEDITVIEW_CMD16		"Failed to write to the file.\n\n%ts"
 	STR_ERR_CEDITVIEW_CMD18		"%ts\n has been changed. Save before passing to Oracle SQL*Plus?"
 	STR_ERR_CEDITVIEW_CMD20		"Oracle SQL*Plus did not respond.\nPlease wait a while and try again."
-	STR_ERR_CEDITVIEW_CMD21		"If the SQL isnt saved to a file then Oracle SQL*Plus can not run it.\n"
+	STR_ERR_CEDITVIEW_CMD21		"If the SQL isn't saved to a file then Oracle SQL*Plus can not run it.\n"
 	STR_ERR_CEDITVIEW_CMD22		"Did not find any differences."
 	STR_ERR_CEDITVIEW_CMD23		"Some differences were found."
 	STR_ERR_CEDITVIEW_CMD24		"Could not create the Macro File.\nFile name acquisition error (nRet=%d)"
@@ -3357,13 +3357,13 @@ BEGIN
 	STR_ERR_CEDITVIEW_CMD29		"%ts\n\nThis file has been updated.\nReloading will cause all changed to be *lost*, OK?"
 
 	// FIXME -- possibly some left over text in the form of square blocks in the TAGList
-	// inside funciton Command_EXTHELP1
+	// inside function Command_EXTHELP1
 
 	// CEditView_Command_New.cpp
-	STR_BOOKMARK_NEXT_NOT_FOUND	"Forward (↓) bookmark wasnt found."
-	STR_BOOKMARK_PREV_NOT_FOUND	"Previous (↑) bookmark wasnt found."
-	STR_FUCLIST_NEXT_NOT_FOUND	"Forward (↓) Function wasnt found."
-	STR_FUCLIST_PREV_NOT_FOUND	"Previous (↑) Function wasnt found."
+	STR_BOOKMARK_NEXT_NOT_FOUND	"Forward (↓) bookmark wasn't found."
+	STR_BOOKMARK_PREV_NOT_FOUND	"Previous (↑) bookmark wasn't found."
+	STR_FUCLIST_NEXT_NOT_FOUND	"Forward (↓) Function wasn't found."
+	STR_FUCLIST_PREV_NOT_FOUND	"Previous (↑) Function wasn't found."
 	STR_ERR_DLGEDITVWCMDNW7		"%d line was successfully merged."												// Edit Menu::Cosmtik::Merge lines option
 	STR_ERR_DLGEDITVWCMDNW8		"There were no lines of text that could be merged in your selection."			// Edit Menu::Cosmtik::Merge lines option
 	STR_SAVEAGENT_OTHER_APP		"'%ts'\nCould not save the file.\nPath may not be correct, or the file is in use by another application."
@@ -3371,18 +3371,18 @@ BEGIN
 	STR_ERR_DLGEDITVWCMDNW12	"An error occurred whilst trying to read the file."
 
 	// CEditView_Diff.cpp
-	STR_ERR_DLGEDITVWDIFF1		"DIFF command failed.\n\nFile to be used for comparison wasnt found."
-	STR_ERR_DLGEDITVWDIFF2		"DIFF command failed.\n\nDIFF.EXE wasnt found."
+	STR_ERR_DLGEDITVWDIFF1		"DIFF command failed.\n\nFile to be used for comparison wasn't found."
+	STR_ERR_DLGEDITVWDIFF2		"DIFF command failed.\n\nDIFF.EXE wasn't found."
 	STR_ERR_DLGEDITVWDIFF3		"DIFF command failed.\n\n%ls"
 	STR_ERR_DLGEDITVWDIFF4		"The file to be used for comparison appears to be a binary file."
 	STR_ERR_DLGEDITVWDIFF5		"No differences were found by DIFF"
-	STR_DIFF_NEXT_NOT_FOUND		"Forwards (↓) searching didnt find differences"
-	STR_DIFF_PREV_NOT_FOUND		"Backward (↑) searching didnt find differences"
+	STR_DIFF_NEXT_NOT_FOUND		"Forwards (↓) searching didn't find differences"
+	STR_DIFF_PREV_NOT_FOUND		"Backward (↑) searching didn't find differences"
 	STR_DIFF_FAILED				"DIFF command failed."
-	STR_DIFF_FAILED_TEMP		"DIFF command failed.\n\nCouldnt create temporary file."
+	STR_DIFF_FAILED_TEMP		"DIFF command failed.\n\nCouldn't create temporary file."
 	STR_DIFF_FAILED_LONG		"DIFF command failed.\n\nLine was too long."
-	STR_MODLINE_NEXT_NOT_FOUND	"Forward (↓) Modified Line wasnt found."
-	STR_MODLINE_PREV_NOT_FOUND	"Previous (↑) Modified Line wasnt found."
+	STR_MODLINE_NEXT_NOT_FOUND	"Forward (↓) Modified Line wasn't found."
+	STR_MODLINE_PREV_NOT_FOUND	"Previous (↑) Modified Line wasn't found."
 
 	// CEditView_New.cpp -- no words, going to ignore for now ( just block [], ... etc )
 
@@ -3398,7 +3398,7 @@ BEGIN
 	STR_VIEW_MOUSE_MENU_CANCEL	"Cancel"
 
 	// CEditWnd.cpp
-	STR_ERR_DLGEDITWND01		"CEditWnd::CreateAccelTbl()\nCould not create the accellerator table\nInsufficient system resources."
+	STR_ERR_DLGEDITWND01		"CEditWnd::CreateAccelTbl()\nCould not create the accelerator table\nInsufficient system resources."
 	STR_ERR_DLGEDITWND02		"Interaction between editors has failed.\nWindows OS UIPI security may be different between the editors."
 	STR_ERR_DLGEDITWND03		"CEditWnd::Create()\nTimer could not start up.\nPossible insufficiency of system resources."
 	STR_ERR_DLGEDITWND04		"Rebar creation failed."
@@ -3456,7 +3456,7 @@ BEGIN
 	// CFuncInfo.cpp
 
 	// CFuncInfoArr.cpp
-	STR_ERR_DLGFUNCKEYWN1		"CFuncKeyWnd::Open()\nCouldnt start timer.\nPossibly insufficient system resources."
+	STR_ERR_DLGFUNCKEYWN1		"CFuncKeyWnd::Open()\nCouldn't start timer.\nPossibly insufficient system resources."
 
 	// CFuncLookup.cpp
 	STR_ERR_DLGFUNCLKUP01		"External Macro"
@@ -3494,7 +3494,7 @@ BEGIN
 	STR_ERR_DLGKEYBIND2			"---Undefined Name-----"
 
 	// CKeyMacroMgr.cpp
-	STR_ERR_DLGKEYMACMGR1		"//Keyborad macro file\r\n"
+	STR_ERR_DLGKEYMACMGR1		"//Keyboard macro file\r\n"
 	STR_ERR_DLGKEYMACMGR2		"Error reading in Macro"
 	STR_ERR_DLGKEYMACMGR3		"Line %d: Column %d: Too many parameters\n"
 	STR_ERR_DLGKEYMACMGR4		"Line %d: Column %d\r\nFunction %ls parameter %d can not be a string."
@@ -3520,7 +3520,7 @@ BEGIN
 	// CMacro.cpp
 	STR_ERR_DLGMACRO01			"CMacro::GetFuncInfoByID() hit a bug, please report it\r\n"
 	STR_ERR_DLGMACRO02			"Macro Execution Error"
-	STR_ERR_DLGMACRO03			"End of line auto-insert char code hasnt been defined."	// Fixme: what code?
+	STR_ERR_DLGMACRO03			"End of line auto-insert char code hasn't been defined."	// Fixme: what code?
 	STR_ERR_DLGMACRO03_1		"Line Break Code is not defined."
 	STR_ERR_DLGMACRO04			"Parameter(string)is not defined."
 	STR_ERR_DLGMACRO05			"Jump To Line Numer is not defined."
@@ -3574,8 +3574,8 @@ BEGIN
 	// CPPAMacroMgr.cpp
 
 	// CPrint.cpp
-	STR_ERR_CPRINT01			"OpenPrinter() failed.\nPriter Device Name=[%ts]"
-	STR_ERR_CPRINT02			"StartDoc() error,\nPriter Device Name=[%ts]"
+	STR_ERR_CPRINT01			"OpenPrinter() failed.\nPrinter Device Name=[%ts]"
+	STR_ERR_CPRINT02			"StartDoc() error,\nPrinter Device Name=[%ts]"
 	STR_ERR_CPRINT03			"unknown"
 
 
@@ -3602,7 +3602,7 @@ BEGIN
 	// CProfile.cpp
 
 	// CPropComBackup.cpp
-	STR_PROPCOMBK_SEL_FOLDER	"Please choose the file to be created for backingup"
+	STR_PROPCOMBK_SEL_FOLDER	"Please choose the file to be created for backup"
 	STR_PROPCOMBK_DUSTBOX		"(Recycle Folder)"
 
 	// CPropComCustmenu.cpp
@@ -3612,7 +3612,7 @@ BEGIN
 	// Has a HEADER #define, should we also fix this?
 
 	// CPropComEdit.cpp
-	STR_PROPEDIT_SELECT_DIR		"Selecy file dialog path"
+	STR_PROPEDIT_SELECT_DIR		"Select file dialog path"
 
 	// CPropComFile.cpp
 	STR_PROPCOMFNM_LIST1		"Before Replacement"						// ComProp::Filename Display table headings
@@ -3664,7 +3664,7 @@ BEGIN
 	STR_PROPCOMMACR_LIST3		"File Name"
 	STR_PROPCOMMACR_LIST4		"Read at Exec time"
 	STR_PROPCOMMACR_LIST5		"Automatic"
-	STR_PROPCOMMACR_SEL_DIR		"Selecy Macro Directory"
+	STR_PROPCOMMACR_SEL_DIR		"Select Macro Directory"
 
 	// CPropComMainMenu.cpp
 	STR_SPECIAL_FUNC			"Special Function"
@@ -3676,7 +3676,7 @@ BEGIN
 	STR_PROPCOMMAINMENU_INIT	"Are you sure you want to load default menu settings?"
 	STR_PROPCOMMAINMENU_DEL		"Are you sure you want to delete selected item?"
 	STR_PROPCOMMAINMENU_OK		"No problems detected."
-	STR_PROPCOMMAINMENU_ERR1	"Faild to get menu setting"
+	STR_PROPCOMMAINMENU_ERR1	"Failed to get menu setting"
 	STR_PROPCOMMAINMENU_ERR2	"Not include [Common Settings]\n"
 	STR_PROPCOMMAINMENU_ERR3	"Too many top-level items\n"
 	STR_PROPCOMMAINMENU_ERR4	"Too many items\n"
@@ -3720,7 +3720,7 @@ BEGIN
 	STR_PROPCOMPLG_ERR3			"ReadMe file not found"
 	STR_PROPCOMPLG_STATE1		"Add"
 	STR_PROPCOMPLG_STATE2		"Update"
-	STR_PROPCOMPLG_STATE3		"Stoped"
+	STR_PROPCOMPLG_STATE3		"Stopped"
 	STR_PROPCOMPLG_STATE4		"Loaded"
 	STR_PROPCOMPLG_STATE5		"Delete"
 	STR_PROPCOMPLG_STATE6		"Undefined"
@@ -3835,13 +3835,13 @@ BEGIN
 	STR_IME_STATE_FULLHIRA			"Full Height Hiragana"
 	STR_IME_STATE_FULLKATA			"Full Height Katakana"
 	STR_IME_STATE_NO				"No Conversion"
-	STR_IME_SWITCH_DONTSET			"Dont Set"			// ime switch
+	STR_IME_SWITCH_DONTSET			"Don't Set"			// ime switch
 	STR_IME_SWITCH_ON				"Turn On" 
 	STR_IME_SWITCH_OFF				"Turn Off" 
 	STR_IMAGE_POS1					"Left top"
 	STR_IMAGE_POS2					"Right top"
 	STR_IMAGE_POS3					"Left bottom"
-	STR_IMAGE_POS4					"Rifht bottom"
+	STR_IMAGE_POS4					"Right bottom"
 	STR_IMAGE_POS5					"Center"
 	STR_IMAGE_POS6					"Center top"
 	STR_IMAGE_POS7					"Center bottom"
@@ -3868,13 +3868,13 @@ BEGIN
 	STR_IMPEXP_ERR_COLOR_OLD		"Is different format color settings file. Not support old version format.\n"
 	STR_IMPEXP_ERR_TYPE				"Invalid format.\nStop import."
 	STR_IMPEXP_VER					"Export %ls(%ls/%d) Different version.\n\nAre you sure you want to import?"
-	STR_IMPEXP_REGEX1				"keyword truncated becouse the number of keywords has reached the upper limit."
-	STR_IMPEXP_REGEX2				"keyword truncated becouse keyword are is full."
+	STR_IMPEXP_REGEX1				"keyword truncated because the number of keywords has reached the upper limit."
+	STR_IMPEXP_REGEX2				"keyword truncated because keyword are is full."
 	STR_IMPEXP_REGEX3				"Ignore invalid keyword."
 	STR_IMPEXP_DIC_NOTFOUND			"<Could not find dict file>"
 	STR_IMPEXP_DIC_LENGTH			"Dictionary file description should be a maximum of %d characters.\n"
-	STR_IMPEXP_DIC_RECORD			"A part of the data couldnt be read\nIncorrect line: %d"
-	STR_IMPEXP_KEY_FORMAT			"Key bindings file is the worng format.\n\n"
+	STR_IMPEXP_DIC_RECORD			"A part of the data couldn't be read\nIncorrect line: %d"
+	STR_IMPEXP_KEY_FORMAT			"Key bindings file is the wrong format.\n\n"
 	STR_IMPEXP_CUSTMENU_FORMAT		"Custom Menu setting file's format is wrong.\n\n"
 	STR_IMPEXP_KEYWORD				"Due to reaching the upper limit, several keywords could not be registered."
 	STR_IMPEXP_MEINMENU				"Is different format main menu setting file\n\n"
@@ -3899,7 +3899,7 @@ BEGIN
 	STR_ERR_CSHAREDATA16			"tthh'H'mm'M'ss'S'"
 	STR_ERR_CSHAREDATA17			"${w?$h$:Output$:${I?$f$:$N$}$}${U?(Changed)$} - sakura $V ${R?(Read Only)$:(Write Protected)$}${M?  【Recording Macro】$}"
 	STR_ERR_CSHAREDATA18			"${w?$h$:Output$:$f$}${U?(Changed)$} - sakura $V ${R?(Read Only)$:(Write Protected)$}${M?  【Recording Macro】$}"
-	STR_ERR_CSHAREDATA19			"Attempting to close multiple editor windows, sure you want to do this?"			// Displayed if you try to close edit whith many open windows
+	STR_ERR_CSHAREDATA19			"Attempting to close multiple editor windows, sure you want to do this?"			// Displayed if you try to close edit with many open windows
 	STR_ERR_CSHAREDATA20			"%ts\n\n\nIn the case you want to re-open a file with a different encoding\nsChoose「Re-Open with Encoding」from the file menu please.\n\nCurrent Character Encoding set=[%ts]\nNew Character Encoding=[%ts]" // See Resource F_FILE_REOPEN_SUBMENU
 	STR_ERR_CSHAREDATA21			"%ts\n\nUnclear character encoding found during opening multiple documents.\n\nCurrent Char Encoding=%d [%ts]\nNew Char Encoding=%d [%ts]"
 	STR_ERR_CSHAREDATA22			"unknown" // relates to above two [%s]
@@ -3918,7 +3918,7 @@ BEGIN
 	STR_KEY_BIND_WHEEL_RIGHT		"Wheel-Right"
 	STR_KEY_BIND_HAT_ENG_QT			"^(EN KBD ')"
 	STR_KEY_BIND_AT_ENG_BQ			"@(EN KBD `)"
-	STR_KEY_BIND_APLI				"Apli Key"
+	STR_KEY_BIND_APLI				"Application Key"
 
 	// Color Names in the Settings Color Box
 	STR_COLOR_TEXT					"Text"
@@ -3980,7 +3980,7 @@ BEGIN
 	STR_COLOR_BOOKMARK				"Bookmark"
 	STR_COLOR_PAGEVIEW				"View Range(Minimap)"
 
-	// ... could be many places left in this file I think, but couldnt decide if they should STAY as JPZ or not eg |*
+	// ... could be many places left in this file I think, but couldn't decide if they should STAY as JPZ or not eg |*
 
 	// CShareData_new.cpp
 	// CSMacroMgr.cpp
@@ -4007,9 +4007,9 @@ BEGIN
 
 	// CWSH.cpp
 	STR_ERR_CWSH01					"Could not find the nominated script-engine"
-	STR_ERR_CWSH02					"Couldnt create names script engine" // ?3
-	STR_ERR_CWSH03					"Couldnt register site"			// ?
-	STR_ERR_CWSH04					"Couldnt acquire parser"		// ?
+	STR_ERR_CWSH02					"Couldn't create names script engine" // ?3
+	STR_ERR_CWSH03					"Couldn't register site"			// ?
+	STR_ERR_CWSH04					"Couldn't acquire parser"		// ?
 	STR_ERR_CWSH05					"Unable to initialize"
 	STR_ERR_CWSH06					"Unable to pass object"
 	STR_ERR_CWSH07					"Status update error"
@@ -4029,7 +4029,7 @@ Continued execution of %ts will likely result in failure.\n\
 Suspending execution of any further new %ts.\n\
 \n\
 System Resource\tRemaining  %d%%\n\
-User Resrouce\tRemaining  %d%%\n\
+User Resource\tRemaining  %d%%\n\
 GDI Resource\tRemaining  %d%%\n\n"
 	STR_SHELL_HHCTRL				"HHCTRL.OCX could not be found\r\nHTML help requires HHCTRL.OCX.\r\n"
 	STR_SHELL_INFO					"Information"
@@ -4041,7 +4041,7 @@ GDI Resource\tRemaining  %d%%\n\n"
 	// Funccode.cpp
 	// CONTAINS one array with Japanese, ppszFuncKind.
 	//  - CPropCom* -- in code that is no longer used.
-	//  - CFuncLookup.cpp -- usedi in func CFuncLookup::Category2Name
+	//  - CFuncLookup.cpp -- used in func CFuncLookup::Category2Name
 	//  - CEditView_Command.cpp -- Command_MENU_ALLFUNC() uses CFuncLookup::Category2Name.
 
 	// global.cpp
@@ -4071,7 +4071,7 @@ GDI Resource\tRemaining  %d%%\n\n"
 
 	STR_DLGEXEC_SELECT_CURDIR		"Select current directory."
 
-	STR_MENU_UNKOWN					"%ts unkown"
+	STR_MENU_UNKOWN					"%ts unknown"
 	STR_MENU_GREP					"%ts [Grep]""%ts%ts"""
 	STR_MENU_OUTPUT					"%ts output"
 
@@ -4122,11 +4122,11 @@ GDI Resource\tRemaining  %d%%\n\n"
 
 	// CDllPlugin.cpp
 	STR_DLLPLG_TITLE				"DLL Plugin"
-	STR_DLLPLG_INIT_ERR1			"Faild to read DLL\n%ts\n%ls"
-	STR_DLLPLG_INIT_ERR2			"Faild to read DLL"
+	STR_DLLPLG_INIT_ERR1			"Failed to read DLL\n%ts\n%ls"
+	STR_DLLPLG_INIT_ERR2			"Failed to read DLL"
 
 	// CPluginManager.cpp
-	STR_PLGMGR_FOLDER				"Faild to create plugin folder"
+	STR_PLGMGR_FOLDER				"Failed to create plugin folder"
 	STR_PLGMGR_CANCEL				"Canceled"
 	STR_PLGMGR_NEWPLUGIN			"Not found new plugin"
 	STR_PLGMGR_INSTALL				"Are you sure you want to install %ts?"
@@ -4142,10 +4142,10 @@ GDI Resource\tRemaining  %d%%\n\n"
 	STR_PLGMGR_INST_ZIP_ERR			"Can't install plugin [%ts]\nReason: %ls"
 	STR_PLGMGR_INST_DEF				"Not found plugin Define file(plugin.def)"
 	STR_PLGMGR_INST_ID				"Not found Plugin.ID"
-	STR_PLGMGR_INST_RESERVE1		"Do'nt Use  """
+	STR_PLGMGR_INST_RESERVE1		"Don't Use  """
 	STR_PLGMGR_INST_RESERVE2		""" in Plugin.ID"
-	STR_PLGMGR_INST_IDNUM			"Plugin.ID of Head charcter not use numbers"
-	STR_PLGMGR_INST_NAME			"The same plugin has been installed under a different name. Are you sure Overwite?\n　Yes　->　Use new「%ts」\n　No→　Use installed「%ls」"
+	STR_PLGMGR_INST_IDNUM			"Plugin.ID of Head character not use numbers"
+	STR_PLGMGR_INST_NAME			"The same plugin has been installed under a different name. Are you sure Overwrite?\n　Yes　->　Use new「%ts」\n　No→　Use installed「%ls」"
 	STR_PLGMGR_INST_USERCANCEL		"User Cancel"
 	STR_PLGMGR_INST_MAX				"Plugin can not register any more"
 
