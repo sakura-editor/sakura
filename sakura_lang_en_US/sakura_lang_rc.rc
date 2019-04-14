@@ -3918,7 +3918,7 @@ BEGIN
 	STR_KEY_BIND_WHEEL_RIGHT		"Wheel-Right"
 	STR_KEY_BIND_HAT_ENG_QT			"^(EN KBD ')"
 	STR_KEY_BIND_AT_ENG_BQ			"@(EN KBD `)"
-	STR_KEY_BIND_APLI				"Appli Key"
+	STR_KEY_BIND_APLI				"Application Key"
 
 	// Color Names in the Settings Color Box
 	STR_COLOR_TEXT					"Text"
