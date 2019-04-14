@@ -66,7 +66,7 @@ const DWORD p_helpids[] = {	//12900
 #  define COMPILER_VER (__GNUC__ * 10000 + __GNUC_MINOR__  * 100 + __GNUC_PATCHLEVEL__)
 #elif defined(__INTEL_COMPILER)
 // Intel Compiler
-// https://software.intel.com/en-us/fortran-compiler-developer-guide-and-reference-using-predefined-preprocessor-symbols
+// https://software.intel.com/en-us/cpp-compiler-developer-guide-and-reference-additional-predefined-macros
 #  define COMPILER_TYPE "I"
 #  define COMPILER_VER __INTEL_COMPILER
 #elif defined(__DMC__)
