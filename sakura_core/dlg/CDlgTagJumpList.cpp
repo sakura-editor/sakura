@@ -1169,15 +1169,22 @@ int CDlgTagJumpList::find_key_core(
 			}
 			state.m_nNextMode = nDefaultNextMode;
 
+			STagSearchRule rule;
+			rule.bTagJumpExactMatch = bTagJumpExactMatch;
+			rule.bTagJumpAnyWhere = bTagJumpAnyWhere;
+			rule.bTagJumpICase = bTagJumpICase;
+			rule.baseDirId = baseDirId;
+			rule.nTop = nTop;
+
 			// tagsファイルのパラメータを読みこみ
 			nRet = ReadTagsParameter(fp, bTagJumpICaseByTags, &state, cList, &nTagFormat, &bSorted, &bFoldcase, &bTagJumpICase, &szNextPath[0], &baseDirId);
 			if ( nRet ) {
 				if ( bSorted == 1 && !bFoldcase && !bTagJumpICase && ( bTagJumpExactMatch && !bTagJumpAnyWhere ) ) {
 					//二分探索が可能な場合は二分探索を行う
-					find_key_for_binarySearch(fp, paszKeyword, nTagFormat, baseDirId, &state, nTop);
+					find_key_for_BinarySearch(fp, paszKeyword, nTagFormat, &state, &rule );
 				} else {
 					//線形探索
-					find_key_for_LinearSearch(fp, paszKeyword, nTagFormat, baseDirId, &state, nTop, bTagJumpExactMatch, bTagJumpAnyWhere, bSorted, bFoldcase, bTagJumpICase, length );
+					find_key_for_LinearSearch(fp, paszKeyword, nTagFormat, &state, &rule, bSorted, bFoldcase, length );
 				}
 			}
 
@@ -1340,17 +1347,47 @@ int CDlgTagJumpList::ReadTagsParameter(
 	return true;
 }
 
+bool CDlgTagJumpList::parseTagsLine(ACHAR s[][1024], ACHAR* szLineData, int* n2, int nTagFormat)
+{
+	bool bRet = true;
+
+	s[0][0] = s[1][0] = s[2][0] = s[3][0] = '\0';
+	*n2 = 0;
+	//	@@ 2005.03.31 MIK TAG_FORMAT定数化
+	int nRet;
+	if (2 == nTagFormat) {
+		nRet = sscanf(
+			szLineData,
+			TAG_FORMAT_2_A,	//拡張tagsフォーマット
+			s[0], s[1], n2, s[2], s[3]
+		);
+		// 2010.04.02 nRet < 4 を3に変更。標準フォーマットも読み込む
+		if (nRet < 3) bRet = false;
+		if (*n2 <= 0) bRet = false;	//行番号不正(-excmd=nが指定されてないかも)
+	}
+	else {
+		nRet = sscanf(
+			szLineData,
+			TAG_FORMAT_1_A,	//tagsフォーマット
+			s[0], s[1], n2
+		);
+		if (nRet < 2) bRet = false;
+		if (*n2 <= 0) bRet = false;
+	}
+
+	return bRet;
+}
+
 /*
 	キーをtagsファイルから二分探索
 	「!_TAG_」で始まるパラメータの読み込みは終わっている前提(最初のキー位置までシークされている前提)
 */
-void CDlgTagJumpList::find_key_for_binarySearch(
+void CDlgTagJumpList::find_key_for_BinarySearch(
 	FILE* fp,
 	const ACHAR* paszKeyword,
 	int nTagFormat,
-	int baseDirId,
 	STagFindState* state,
-	int nTop
+	STagSearchRule* rule
 ){
 	ACHAR	szLineData[1024];		//行バッファ
 	ACHAR	s[4][1024];
@@ -1362,11 +1399,11 @@ void CDlgTagJumpList::find_key_for_binarySearch(
 	typedef enum {
 		STATE_START,
 		STATE_LINEAR,
-		STATE_BINALY,
+		STATE_BINARY,
 		STATE_SKIP_BACK,
 		STATE_STEP_FORWARD
 	} SearchState;
-	SearchState eSearchState = STATE_BINALY;
+	SearchState eSearchState = STATE_BINARY;
 	
 	// バッファの後ろから2文字目が\0かどうかで、行末まで読み込んだか確認する
 	const int nLINEDATA_LAST_CHAR = _countof( szLineData ) - 2;
@@ -1383,8 +1420,7 @@ void CDlgTagJumpList::find_key_for_binarySearch(
 	// 改行コードまでを捨てる
 	fgets(szLineData, _countof(szLineData), fp);
 
-	while( fgets( szLineData, _countof( szLineData ), fp ) )
-	{
+	while( fgets( szLineData, _countof( szLineData ), fp ) ) {
 		int  nRet;
 		// fgetsが行すべてを読み込めていない場合の考慮
 		if( '\0' != szLineData[nLINEDATA_LAST_CHAR]
@@ -1396,26 +1432,8 @@ void CDlgTagJumpList::find_key_for_binarySearch(
 			}
 		}
 
-		s[0][0] = s[1][0] = s[2][0] = s[3][0] = '\0';
-		n2 = 0;
-		//	@@ 2005.03.31 MIK TAG_FORMAT定数化
-		if( 2 == nTagFormat ){
-			nRet = sscanf(
-				szLineData, 
-				TAG_FORMAT_2_A,	//拡張tagsフォーマット
-				s[0], s[1], &n2, s[2], s[3]
-				);
-			// 2010.04.02 nRet < 4 を3に変更。標準フォーマットも読み込む
-			if( nRet < 3 ) goto next_line;
-			if( n2 <= 0 ) goto next_line;	//行番号不正(-excmd=nが指定されてないかも)
-		}else{
-			nRet = sscanf(
-				szLineData, 
-				TAG_FORMAT_1_A,	//tagsフォーマット
-				s[0], s[1], &n2
-				);
-			if( nRet < 2 ) goto next_line;
-			if( n2 <= 0 ) goto next_line;
+		if ( !parseTagsLine(s, szLineData, &n2, nTagFormat) ) {
+			goto next_line;
 		}
 
 		// 完全一致検索
@@ -1424,7 +1442,7 @@ void CDlgTagJumpList::find_key_for_binarySearch(
 
 		if( 0 == cmp ){
 			//一致
-			if (eSearchState == STATE_BINALY) {
+			if (eSearchState == STATE_BINARY) {
 				eSearchState = STATE_SKIP_BACK;
 			}
 			else if (eSearchState == STATE_SKIP_BACK) {
@@ -1432,9 +1450,9 @@ void CDlgTagJumpList::find_key_for_binarySearch(
 			}
 			else if (eSearchState == STATE_STEP_FORWARD) {
 				state->m_nMatchAll++;
-				if (nTop < state->m_nMatchAll) {
+				if ( (rule->nTop) < (state->m_nMatchAll) ) {
 					if (cList.GetCount() < nCap) {
-						cList.AddParamA(s[0], s[1], n2, s[2][0], s[3], state->m_nDepth, baseDirId);
+						cList.AddParamA(s[0], s[1], n2, s[2][0], s[3], state->m_nDepth, rule->baseDirId);
 					}
 					else {
 						// 探索打ち切り(次ページでやり直し)
@@ -1446,7 +1464,7 @@ void CDlgTagJumpList::find_key_for_binarySearch(
 		}
 		else if( 0 > cmp ) {
 			// paszKeyword > s[0]
-			if (eSearchState == STATE_BINALY) {
+			if (eSearchState == STATE_BINARY) {
 				low_offset = curr_offset;
 			}
 			else if (eSearchState == STATE_SKIP_BACK) {
@@ -1455,7 +1473,7 @@ void CDlgTagJumpList::find_key_for_binarySearch(
 		}
 		else { // 0 < cmp
 			// paszKeyword < s[0]
-			if (eSearchState == STATE_BINALY) {
+			if (eSearchState == STATE_BINARY) {
 				high_offset = curr_offset;
 			}
 			else if (eSearchState == STATE_STEP_FORWARD) {
@@ -1465,7 +1483,7 @@ void CDlgTagJumpList::find_key_for_binarySearch(
 		}
 
 		// 次に探索するoffset位置算出
-		if (eSearchState == STATE_BINALY) {
+		if (eSearchState == STATE_BINARY) {
 			fpos_t temp;
 			temp = low_offset + ((high_offset - low_offset) / 2);
 			if (temp == curr_offset) {
@@ -1499,14 +1517,10 @@ void CDlgTagJumpList::find_key_for_LinearSearch(
 	FILE* fp,
 	const ACHAR* paszKeyword,
 	int nTagFormat,
-	int baseDirId,
 	STagFindState* state,
-	int nTop,
-	bool bTagJumpExactMatch,
-	bool bTagJumpAnyWhere,
+	STagSearchRule* rule,
 	bool bSorted,
 	bool bFoldcase,
-	bool bTagJumpICase,
 	int length
 ){
 	ACHAR	szLineData[1024];		//行バッファ
@@ -1519,8 +1533,7 @@ void CDlgTagJumpList::find_key_for_LinearSearch(
 	const int nLINEDATA_LAST_CHAR = _countof( szLineData ) - 2;
 	szLineData[nLINEDATA_LAST_CHAR] = '\0';
 
-	while( fgets( szLineData, _countof( szLineData ), fp ) )
-	{
+	while( fgets( szLineData, _countof( szLineData ), fp ) ) {
 		int  nRet;
 		// fgetsが行すべてを読み込めていない場合の考慮
 		if( '\0' != szLineData[nLINEDATA_LAST_CHAR]
@@ -1533,46 +1546,28 @@ void CDlgTagJumpList::find_key_for_LinearSearch(
 		}
 		if( szLineData[0] < '!' ) goto next_line;
 
-		s[0][0] = s[1][0] = s[2][0] = s[3][0] = '\0';
-		n2 = 0;
-		//	@@ 2005.03.31 MIK TAG_FORMAT定数化
-		if( 2 == nTagFormat ){
-			nRet = sscanf(
-				szLineData, 
-				TAG_FORMAT_2_A,	//拡張tagsフォーマット
-				s[0], s[1], &n2, s[2], s[3]
-				);
-			// 2010.04.02 nRet < 4 を3に変更。標準フォーマットも読み込む
-			if( nRet < 3 ) goto next_line;
-			if( n2 <= 0 ) goto next_line;	//行番号不正(-excmd=nが指定されてないかも)
-		}else{
-			nRet = sscanf(
-				szLineData, 
-				TAG_FORMAT_1_A,	//tagsフォーマット
-				s[0], s[1], &n2
-				);
-			if( nRet < 2 ) goto next_line;
-			if( n2 <= 0 ) goto next_line;
+		if ( !parseTagsLine(s, szLineData, &n2, nTagFormat) ) {
+			goto next_line;
 		}
 
 		int  cmp;
-		if( bTagJumpAnyWhere ){
-			if( bTagJumpICase ){
+		if( rule->bTagJumpAnyWhere ){
+			if( rule->bTagJumpICase ){
 				cmp = stristr_j( s[0], paszKeyword ) != NULL ? 0 : -1;
 			}else{
 				cmp = strstr_j( s[0], paszKeyword ) != NULL ? 0 : -1;
 			}
 		}else{
-			if( bTagJumpExactMatch ){
+			if( rule->bTagJumpExactMatch ){
 				// 完全一致
-				if( bTagJumpICase ){
+				if( rule->bTagJumpICase ){
 					cmp = auto_stricmp( s[0], paszKeyword );
 				}else{
 					cmp = auto_strcmp( s[0], paszKeyword );
 				}
 			}else{
 				// 前方一致
-				if( bTagJumpICase ){
+				if( rule->bTagJumpICase ){
 					cmp = my_strnicmp( s[0], paszKeyword, length );
 				}else{
 					cmp = strncmp( s[0], paszKeyword, length );
@@ -1581,9 +1576,9 @@ void CDlgTagJumpList::find_key_for_LinearSearch(
 		}
 		if( 0 == cmp ){
 			state->m_nMatchAll++;
-			if( nTop < state->m_nMatchAll ){
+			if( (rule->nTop) < (state->m_nMatchAll) ){
 				if( cList.GetCount() < nCap ){
-					cList.AddParamA( s[0], s[1], n2, s[2][0], s[3], state->m_nDepth, baseDirId );
+					cList.AddParamA( s[0], s[1], n2, s[2][0], s[3], state->m_nDepth, rule->baseDirId );
 				}else{
 					// 探索打ち切り(次ページでやり直し)
 					m_bNextItem = true;
@@ -1595,9 +1590,9 @@ void CDlgTagJumpList::find_key_for_LinearSearch(
 			//	tagsはソートされているので，先頭からのcase sensitiveな
 			//	比較結果によって検索の時は処理の打ち切りが可能
 			//	2005.04.05 MIK バグ修正
-			if( (!bTagJumpICase) && bSorted && (!bTagJumpAnyWhere) ) break;
+			if( (!rule->bTagJumpICase) && bSorted && (!rule->bTagJumpAnyWhere) ) break;
 			// 2010.07.21 Foldcase時も打ち切る。ただしtagsとサクラ側のソート順が同じでなければならない
-			if( bTagJumpICase  && bFoldcase && (!bTagJumpAnyWhere) ) break;
+			if( rule->bTagJumpICase  && bFoldcase && (!rule->bTagJumpAnyWhere) ) break;
 		}
 next_line:
 		;

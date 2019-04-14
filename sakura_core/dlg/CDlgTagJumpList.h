@@ -98,6 +98,14 @@ private:
 		TCHAR m_szCurPath[1024];
 	};
 
+	struct STagSearchRule {
+		bool bTagJumpExactMatch;
+		bool bTagJumpAnyWhere;
+		bool bTagJumpICase;
+		int baseDirId;
+		int nTop;
+	};
+
 	void	StopTimer( void );
 	void	StartTimer(int nDelay);
 
@@ -115,23 +123,11 @@ private:
 	void FindNext(bool bNewFind);
 	void find_key( const wchar_t* keyword );
 	int find_key_core(int  nTop, const wchar_t* keyword, bool bTagJumpAnyWhere, bool bTagJumpExactMatch, bool bTagJumpICase, bool bTagJumpICaseByTags, int  nDefaultNextMode);
+	bool parseTagsLine(ACHAR s[][1024], ACHAR* szLineData, int* n2, int nTagFormat);
 	int ReadTagsParameter(FILE* fp, bool bTagJumpICaseByTags, STagFindState* state, CSortedTagJumpList& cList, int* nTagFormat, bool* bSorted, bool* bFoldcase, bool* bTagJumpICase, PTCHAR szNextPath, int* baseDirId);
-	void find_key_for_binarySearch( FILE* fp, const ACHAR* paszKeyword, int nTagFormat, int baseDirId, STagFindState* state, int nTop );
-	void find_key_for_LinearSearch(
-		FILE* fp,
-		const ACHAR* paszKeyword,
-		int nTagFormat,
-		int baseDirId,
-		STagFindState* state,
-		int nTop,
-		bool bTagJumpExactMatch,
-		bool bTagJumpAnyWhere,
-		bool bSorted,
-		bool bFoldcase,
-		bool bTagJumpICase,
-		int length
-	);
-	
+	void find_key_for_BinarySearch( FILE* fp, const ACHAR* paszKeyword, int nTagFormat, STagFindState* state, STagSearchRule* rule );
+	void find_key_for_LinearSearch( FILE* fp, const ACHAR* paszKeyword, int nTagFormat, STagFindState* state, STagSearchRule* rule, bool bSorted, bool bFoldcase, int length );
+
 	bool IsDirectTagJump();
 	
 	void ClearPrevFindInfo();
