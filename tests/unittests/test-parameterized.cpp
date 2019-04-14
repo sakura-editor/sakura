@@ -25,21 +25,18 @@
 
 /*!
 	Parameterized Test のサンプルコード
+	(このサンプルでは std::tr1 は使用しない)
 
 	参考:
 	http://d.hatena.ne.jp/nobu-q/20110103
 	http://tatsyblog.sakura.ne.jp/wordpress/ci/1190/
 */
-
-// warning C4996: 'std::tr1' の警告を抑止する
-#define _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
-
 #include <gtest/gtest.h>
 #include <stdio.h>
 
 
-typedef std::tr1::tuple<int, int>                       Parameters2; /* Parameterized Test のパラメータ */
-typedef std::tr1::tuple<std::tr1::tuple<int, int>, int> Parameters3; /* Parameterized Test のパラメータ */
+typedef std::tuple<int, int>                  Parameters2; /* Parameterized Test のパラメータ */
+typedef std::tuple<std::tuple<int, int>, int> Parameters3; /* Parameterized Test のパラメータ */
 
 void PrintValue( int a, int b)
 {
@@ -92,8 +89,8 @@ INSTANTIATE_TEST_CASE_P(ParameterizedTestSampleWith3Instance,
 	パラメータが 2 つの Parameterized Test のクラスのテスト
 */
 TEST_P(ParameterizedTestSampleWith2, test) {
-	int a = std::tr1::get<0>(GetParam());
-	int b = std::tr1::get<1>(GetParam());
+	int a = std::get<0>(GetParam());
+	int b = std::get<1>(GetParam());
 	PrintValue(a, b);
 }
 
@@ -102,10 +99,10 @@ TEST_P(ParameterizedTestSampleWith2, test) {
 */
 TEST_P(ParameterizedTestSampleWith3, test) {
 	/* tupple を取得する */
-	auto pair = std::tr1::get<0>(GetParam());
+	auto pair = std::get<0>(GetParam());
 
-	int a = std::tr1::get<0>(pair);
-	int b = std::tr1::get<1>(pair);
-	int c = std::tr1::get<1>(GetParam());
+	int a = std::get<0>(pair);
+	int b = std::get<1>(pair);
+	int c = std::get<1>(GetParam());
 	PrintValue(a, b, c);
 }
