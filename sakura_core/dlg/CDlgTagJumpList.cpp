@@ -1058,7 +1058,7 @@ void CDlgTagJumpList::find_key( const wchar_t* keyword )
 	::UpdateWindow(GetItemHwnd(IDC_STATIC_KEYWORD));
 }
 
-inline void CDlgTagJumpList::SkipLine(FILE* fp) {
+inline void SkipLine(FILE* fp) {
 	// 改行コードまでを捨てる
 	int ch = fgetc( fp );
 	while( ch != '\n' && ch != EOF ){
@@ -1187,7 +1187,7 @@ int CDlgTagJumpList::find_key_core(
 			// tagsファイルのパラメータを読みこみ
 			nRet = ReadTagsParameter(fp, bTagJumpICaseByTags, &state, cList, &nTagFormat, &bSorted, &bFoldcase, &bTagJumpICase, &szNextPath[0], &baseDirId);
 			if ( nRet ) {
-				if ( bSorted == 1 && !bFoldcase && !bTagJumpICase && ( bTagJumpExactMatch && !bTagJumpPartialMatch ) ) {
+				if ( bSorted && !bFoldcase && !bTagJumpICase && ( bTagJumpExactMatch && !bTagJumpPartialMatch ) ) {
 					//二分探索が可能な場合は二分探索を行う
 					find_key_for_BinarySearch(fp, paszKeyword, nTagFormat, &state, &rule );
 				} else {
@@ -1390,7 +1390,7 @@ void CDlgTagJumpList::find_key_for_BinarySearch(
 	const ACHAR* paszKeyword,
 	int nTagFormat,
 	STagFindState* state,
-	STagSearchRule* rule
+	const STagSearchRule* rule
 ){
 	ACHAR	szLineData[1024];		//行バッファ
 	ACHAR	s[4][1024];
@@ -1515,7 +1515,7 @@ void CDlgTagJumpList::find_key_for_LinearSearch(
 	const ACHAR* paszKeyword,
 	int nTagFormat,
 	STagFindState* state,
-	STagSearchRule* rule,
+	const STagSearchRule* rule,
 	bool bSorted,
 	bool bFoldcase,
 	int length
