@@ -206,6 +206,10 @@ TEST(testIsMailAddress, OffsetParameter)
 {
 	/*
 	   Prepare test cases.
+
+	   ３つの offset値(-1, 0, 1)と、メールアドレスに見える２つの文字列
+	   (Buffer+1=メールアドレスの先頭, Buffer+2=メールアドレスの途中)
+	   の組み合わせにより定義する。
 	*/
 	const wchar_t* const Buffer = L" test@example.com";
 	const wchar_t* const BufferEnd = Buffer + wcslen(Buffer);
@@ -295,6 +299,10 @@ TEST(testIsMailAddress, OffsetParameter2)
 		return testing::AssertionSuccess();
 	};
 
+	/*
+	   Text...TextEnd の範囲の文字配列に対して、IsMailAddress の３つの
+	   引数(pszBuf, offset, nBufLen)がとりうるすべての値を総当たりで試す。
+	*/
 	for (const wchar_t* p1 = Text; p1 != TextEnd; ++p1)   // p1 is a pointer to buffer.
 	for (const wchar_t* p2 = Text; p2 != TextEnd; ++p2)   // p2 is a pointer to address.
 	for (const wchar_t* p3 = Text; p3 != TextEnd; ++p3) { // p3 is a pointer to the end of buffer.

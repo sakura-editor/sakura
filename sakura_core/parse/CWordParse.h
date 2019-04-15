@@ -149,7 +149,7 @@ BOOL IsURL( const wchar_t* pszLine, int nLineLen, int* pnMatchLen)
     @param[in]  nBufLen         メールアドレス判定最終文字の次を示す、pszBuf からの相対位置。
     @param[out] pnAddressLength メールアドレスの長さを受け取る変数のアドレス。NULL可。長さとは pszBuf + offset からの距離。
 
-    正の offset が与えられた場合は判定開始位置直前の文字との間で境界判定を行います。
+    正の offset が与えられた場合は、その場合に限り、判定開始位置直前の文字との間で境界判定を行います。
     途中から切り出したメールアドレスの一部をメールアドレスであると誤って判定しないために
     pszBuf を固定し offset を０以上の範囲で変化させるのが望ましい使用方法です。
 */
