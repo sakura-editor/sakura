@@ -1007,4 +1007,10 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <Target Name="MakeSakuraCoreLib" AfterTargets="Link" Inputs="@(ClCompile)" Outputs="$(IntDir)sakura_core.lib">
+    <ItemGroup>
+      <SakuraCore Include="$(IntDir)*.obj" />
+    </ItemGroup>
+    <LIB OutputFile="$(IntDir)sakura_core.lib" Sources="@(SakuraCore)" SubSystem="Windows" LinkTimeCodeGeneration="$(WholeProgramOptimization)" SuppressStartupBanner="true" />
+  </Target>
 </Project>
