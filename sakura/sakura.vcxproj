@@ -1016,6 +1016,9 @@
   <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
     <ItemGroup>
       <DeleteOnClean Include="$(IntDir)sakura_core.lib" />
+      <DeleteOnClean Include="$(OutDir)sakura.ini" />
+      <DeleteOnClean Include="$(OutDir)bregonig.dll" />
+      <DeleteOnClean Include="$(OutDir)ctags.exe" />
     </ItemGroup>
     <MakeDir Directories="$(IntermediateOutputPath)" Condition="!Exists('$(IntermediateOutputPath)')" /> 
     <WriteLinesToFile File="$(IntermediateOutputPath)$(CleanFile)" Lines="@(DeleteOnClean)" Overwrite="false" /> 
