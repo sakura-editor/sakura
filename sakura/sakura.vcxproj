@@ -1013,4 +1013,11 @@
     </ItemGroup>
     <LIB OutputFile="$(IntDir)sakura_core.lib" Sources="@(SakuraCore)" SubSystem="Windows" LinkTimeCodeGeneration="$(WholeProgramOptimization)" SuppressStartupBanner="true" />
   </Target>
+  <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
+    <ItemGroup>
+      <DeleteOnClean Include="$(IntDir)sakura_core.lib" />
+    </ItemGroup>
+    <MakeDir Directories="$(IntermediateOutputPath)" Condition="!Exists('$(IntermediateOutputPath)')" /> 
+    <WriteLinesToFile File="$(IntermediateOutputPath)$(CleanFile)" Lines="@(DeleteOnClean)" Overwrite="false" /> 
+  </Target>
 </Project>
