@@ -129,7 +129,7 @@ private:
 	void find_key_for_LinearSearch( FILE* fp, const ACHAR* paszKeyword, int nTagFormat, STagFindState* state, const STagSearchRule* rule, bool bSorted, bool bFoldcase, int length );
 
 	bool IsDirectTagJump();
-	
+
 	void ClearPrevFindInfo();
 	bool GetFullPathAndLine( int index, TCHAR *fullPath, int count, int *lineNum, int *depth );
 
@@ -140,7 +140,7 @@ public:
 	static int CalcMaxUpDirectory(const TCHAR* p);
 	static TCHAR* DirUp( TCHAR* dir );
 
-private:	
+private:
 	bool	m_bDirectTagJump;
 
 	int		m_nIndex;		//!< 選択された要素番号
@@ -166,7 +166,7 @@ private:
 
 	SComboBoxItemDeleter	m_comboDel;
 	CRecentTagjumpKeyword	m_cRecentKeyword;
-	
+
 	POINT	m_ptDefaultSize;
 	RECT	m_rcItems[11];
 

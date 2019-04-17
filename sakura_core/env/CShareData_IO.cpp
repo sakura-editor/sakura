@@ -2292,7 +2292,7 @@ void CShareData_IO::ShareData_IO_Other( CDataProfile& cProfile )
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sTagJump.m_aTagJumpKeywords[i] );
 	}
 	cProfile.IOProfileData( pszSecName, LTEXT("m_bTagJumpICase")		, pShare->m_sTagJump.m_bTagJumpICase );
-	cProfile.IOProfileData( pszSecName, LTEXT("m_bTagJumpPartialMatch")	, pShare->m_sTagJump.m_bTagJumpPartialMatch);
+	cProfile.IOProfileData( pszSecName, LTEXT("m_bTagJumpAnyWhere")	, pShare->m_sTagJump.m_bTagJumpPartialMatch);
 	//From Here 2005.04.03 MIK キーワード指定タグジャンプの
 
 	//	MIK バージョン情報（書き込みのみ）
