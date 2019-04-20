@@ -34,6 +34,12 @@ if not defined CMD_NUGET (
 @echo "%CMD_NUGET%" restore -PackagesDirectory packages %~dp0tests\unittests\packages.config
       "%CMD_NUGET%" restore -PackagesDirectory packages %~dp0tests\unittests\packages.config
 
+@rem check NuGet's restore results.
+if errorlevel 1 (
+   @echo NuGet.exe^(CMD_NUGET^) makes some error^(%errorlevel%^).
+   exit /b 1
+)
+
 if not defined CMD_MSBUILD call %~dp0tools\find-tools.bat
 if not defined CMD_MSBUILD (
 	echo msbuild.exe was not found.
