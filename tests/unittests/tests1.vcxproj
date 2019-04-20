@@ -106,6 +106,19 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Link Include="$(SolutionDir)sakura\$(Platform)\$(Configuration)\*.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="test-sample.cpp" />
+    <ClCompile Include="test-parameterized.cpp" />
+    <ClCompile Include="test-int2dec.cpp" />
+    <ClCompile Include="test-cnative.cpp" />
+    <ClCompile Include="test-cmemory.cpp" />
+    <ClCompile Include="test-StdControl.cpp" />
+    <ClCompile Include="test-is_mailaddress.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">
