@@ -1008,12 +1008,11 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
+    <!-- Add files to @Clean just before running CoreClean. -->
     <ItemGroup>
-      <DeleteOnClean Include="$(OutDir)sakura.ini" />
-      <DeleteOnClean Include="$(OutDir)bregonig.dll" />
-      <DeleteOnClean Include="$(OutDir)ctags.exe" />
+      <Clean Include="$(OutDir)sakura.ini" />
+      <Clean Include="$(OutDir)bregonig.dll" />
+      <Clean Include="$(OutDir)ctags.exe" />
     </ItemGroup>
-    <MakeDir Directories="$(IntermediateOutputPath)" Condition="!Exists('$(IntermediateOutputPath)')" /> 
-    <WriteLinesToFile File="$(IntermediateOutputPath)$(CleanFile)" Lines="@(DeleteOnClean)" Overwrite="false" /> 
   </Target>
 </Project>
