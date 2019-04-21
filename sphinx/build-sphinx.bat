@@ -18,7 +18,7 @@ if errorlevel 1 (
 	exit /b 1
 )
 
-call "%~dp0..\tools\hhc\find-hhc.bat"
+call "%~dp0..\tools\find-tools.bat"
 if "%CMD_HHC%" == "" (
 	echo hhc.exe was not found.
 	popd
