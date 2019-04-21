@@ -1169,9 +1169,9 @@ int CDlgTagJumpList::find_key_core(
 			DEBUG_TRACE( _T("open tags\n") );
 			bool bSorted = true;
 			bool bFoldcase = false;
+			bool  bRet;
 			int  nTagFormat = 2; // 2は1も読めるのでデフォルトは2
 			int  baseDirId = 0;
-			int  nRet;
 			if( state.m_bJumpPath ){
 				baseDirId = cList.AddBaseDir( state.m_szCurPath );
 			}
@@ -1185,8 +1185,8 @@ int CDlgTagJumpList::find_key_core(
 			rule.nTop = nTop;
 
 			// tagsファイルのパラメータを読みこみ
-			nRet = ReadTagsParameter(fp, bTagJumpICaseByTags, &state, cList, &nTagFormat, &bSorted, &bFoldcase, &bTagJumpICase, &szNextPath[0], &baseDirId);
-			if ( nRet ) {
+			bRet = ReadTagsParameter(fp, bTagJumpICaseByTags, &state, cList, &nTagFormat, &bSorted, &bFoldcase, &bTagJumpICase, &szNextPath[0], &baseDirId);
+			if ( bRet ) {
 				if ( bSorted && !bFoldcase && !bTagJumpICase && ( bTagJumpExactMatch && !bTagJumpPartialMatch ) ) {
 					//二分探索が可能な場合は二分探索を行う
 					find_key_for_BinarySearch(fp, paszKeyword, nTagFormat, &state, &rule );
@@ -1239,7 +1239,7 @@ int CDlgTagJumpList::find_key_core(
 /*
 	「!_TAG_」で始まるパラメータの読み込み処理
 */
-int CDlgTagJumpList::ReadTagsParameter(
+bool CDlgTagJumpList::ReadTagsParameter(
 	FILE* fp,
 	bool bTagJumpICaseByTags,
 	STagFindState* state,
@@ -1383,7 +1383,6 @@ bool CDlgTagJumpList::parseTagsLine(ACHAR s[][1024], ACHAR* szLineData, int* n2,
 
 /*
 	キーをtagsファイルから二分探索
-	「!_TAG_」で始まるパラメータの読み込みは終わっている前提(最初のキー位置までシークされている前提)
 */
 void CDlgTagJumpList::find_key_for_BinarySearch(
 	FILE* fp,
