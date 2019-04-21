@@ -4,7 +4,7 @@
 
 - [単体テスト](#単体テスト)
     - [googletest](#googletest)
-    - [Test Adapter for Google Test](#Test%20Adapter%20for%20Google%20Test)
+    - [Test Adapter for Google Test](#Test-Adapter-for-Google-Test)
     - [NuGet](#NuGet)
     - [cmake](#cmake)
     - [単体テストのディレクトリ構造](#単体テストのディレクトリ構造)
