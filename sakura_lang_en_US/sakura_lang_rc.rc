@@ -3867,7 +3867,7 @@ BEGIN
 	STR_IMPEXP_OK_IMPORT			"Imported to the file.\n\n"
 	STR_IMPEXP_ERR_COLOR_OLD		"Is different format color settings file. Not support old version format.\n"
 	STR_IMPEXP_ERR_TYPE				"Invalid format.\nStop import."
-	STR_IMPEXP_VER					"Export %ls(%ls/%d) Different version.\n\nAre you sure you want to import?"
+	STR_IMPEXP_VER					"Export %s(%s/%d) Different version.\n\nAre you sure you want to import?"
 	STR_IMPEXP_REGEX1				"keyword truncated because the number of keywords has reached the upper limit."
 	STR_IMPEXP_REGEX2				"keyword truncated because keyword are is full."
 	STR_IMPEXP_REGEX3				"Ignore invalid keyword."

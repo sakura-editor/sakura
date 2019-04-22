@@ -3859,7 +3859,7 @@ BEGIN
 	STR_IMPEXP_OK_IMPORT			"ファイルをインポートしました。\n\n"
 	STR_IMPEXP_ERR_COLOR_OLD		"色設定ファイルの形式が違います。古い形式はサポートされなくなりました。\n"
 	STR_IMPEXP_ERR_TYPE				"不正な形式です。\nインポートを中止します"
-	STR_IMPEXP_VER					"エクスポートした %ls(%ls/%d) とバージョンが異なります。\n\nインポートしてもよろしいですか？"
+	STR_IMPEXP_VER					"エクスポートした %s(%s/%d) とバージョンが異なります。\n\nインポートしてもよろしいですか？"
 	STR_IMPEXP_REGEX1				"キーワード数が上限に達したため切り捨てました。"
 	STR_IMPEXP_REGEX2				"キーワード領域がいっぱいなため切り捨てました。"
 	STR_IMPEXP_REGEX3				"不正なキーワードを無視しました。"
