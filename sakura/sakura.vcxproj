@@ -1007,4 +1007,12 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
+    <!-- Add files to @Clean just before running CoreClean. -->
+    <ItemGroup>
+      <Clean Include="$(OutDir)sakura.ini" />
+      <Clean Include="$(OutDir)bregonig.dll" />
+      <Clean Include="$(OutDir)ctags.exe" />
+    </ItemGroup>
+  </Target>
 </Project>
