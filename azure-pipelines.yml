@@ -1,7 +1,7 @@
 ###############################################################################################################################
-#	ビルドトリガー (branch)
+#   ビルドトリガー (branch)
 #
-#	https://docs.microsoft.com/en-us/azure/devops/pipelines/build/triggers?view=azure-devops&viewFallbackFrom=vsts&tabs=yaml
+#   https://docs.microsoft.com/en-us/azure/devops/pipelines/build/triggers?view=azure-devops&viewFallbackFrom=vsts&tabs=yaml
 ###############################################################################################################################
 trigger:
   branches:
@@ -16,9 +16,9 @@ trigger:
       - appveyor.yml
 
 ###############################################################################################################################
-#	ビルドトリガー (Pull Request)
+#   ビルドトリガー (Pull Request)
 #
-#	https://docs.microsoft.com/en-us/azure/devops/pipelines/build/triggers?view=azure-devops&tabs=yaml#pull-request-validation
+#   https://docs.microsoft.com/en-us/azure/devops/pipelines/build/triggers?view=azure-devops&tabs=yaml#pull-request-validation
 ###############################################################################################################################
 pr:
   branches:
@@ -28,9 +28,9 @@ pr:
       - feature/*
 
 ###############################################################################################################################
-#	jobs/job 定義
+#   jobs/job 定義
 #
-#	https://docs.microsoft.com/en-us/azure/devops/pipelines/process/phases?view=azure-devops&tabs=yaml
+#   https://docs.microsoft.com/en-us/azure/devops/pipelines/process/phases?view=azure-devops&tabs=yaml
 ###############################################################################################################################
 jobs:
 
