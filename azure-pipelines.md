@@ -60,6 +60,6 @@ https://azure.microsoft.com/ja-jp/services/devops/pipelines/ にアクセスし�
 | JOB 名 | 説明 | steps を定義する template |
 ----|----|----
 |windows              | サクラエディタのビルドを行う | [ci/azure-pipelines/template.steps.build-unittest.yml](ci/azure-pipelines/template.steps.build-unittest.yml) |
-|cppcheck             | Cppcheck を行う              | [ci/azure-pipelines/template.steps.cppcheck.yml](ci/azure-pipelines/template.steps.cppcheck.yml)             |
+|cppcheck             | cppcheck を行う              | [ci/azure-pipelines/template.steps.cppcheck.yml](ci/azure-pipelines/template.steps.cppcheck.yml)             |
 |doxygen              | doxygen  を行う              | [ci/azure-pipelines/template.steps.doxygen.yml](ci/azure-pipelines/template.steps.doxygen.yml)               |
 |checkEncoding        | 文字コードのチェックを行う   | [ci/azure-pipelines/template.steps.checkEncoding.yml](ci/azure-pipelines/template.steps.checkEncoding.yml)   |
