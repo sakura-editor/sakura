@@ -1,8 +1,8 @@
-﻿# azure pipelines でのビルド (工事中)
+﻿# azure pipelines でのビルド
 
 <!-- TOC -->
 
-- [azure pipelines でのビルド (工事中)](#azure-pipelines-でのビルド-工事中)
+- [azure pipelines でのビルド](#azure-pipelines-でのビルド)
     - [Azure Pipelines の利用開始方法](#azure-pipelines-の利用開始方法)
         - [単にサクラエディタ用のプロジェクトに読み取りアクセスする場合](#単にサクラエディタ用のプロジェクトに読み取りアクセスする場合)
         - [Azure Pipelines にアカウントがない場合](#azure-pipelines-にアカウントがない場合)
