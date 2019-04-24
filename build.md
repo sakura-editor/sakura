@@ -99,6 +99,10 @@ build-all.bat Win32 Release
 
 [こちら](appveyor.md) で appveyor 上でのビルドの仕組みを説明しています。
 
+### azure pipelines でのビルドの仕組み
+
+[こちら](azure-pipelines.md) で [azure pipelines](https://azure.microsoft.com/ja-jp/services/devops/pipelines/) 上でのビルドの仕組みを説明しています。
+
 ### インストーラの仕組み
 
 [こちら](installer/readme.md) でビルドの仕組みを説明しています。

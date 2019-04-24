@@ -17,8 +17,10 @@
     - [How to build](#how-to-build)
         - [詳細情報](#詳細情報)
     - [PR(Pull Request) を簡単にローカルに取得する方法](#prpull-request-を簡単にローカルに取得する方法)
+    - [CI Build (Azure Pipelines)](#ci-build-azure-pipelines)
+        - [ビルドの仕組み (Azure Pipelines)](#ビルドの仕組み-azure-pipelines)
     - [CI Build (AppVeyor)](#ci-build-appveyor)
-        - [ビルドの仕組み](#ビルドの仕組み)
+        - [ビルドの仕組み (AppVeyor)](#ビルドの仕組み-appveyor)
         - [ビルド成果物を利用する上での注意事項](#ビルド成果物を利用する上での注意事項)
         - [ビルド成果物のダウンロード(バイナリ、インストーラなど)](#ビルド成果物のダウンロードバイナリインストーラなど)
             - [master の 最新](#master-の-最新)
@@ -70,10 +72,15 @@ More information: https://github.com/sakura-editor/sakura/issues/6
 
 - [PR(Pull Request) を簡単にローカルに取得する方法](get-PR.md)
 
+## CI Build (Azure Pipelines)
+
+### ビルドの仕組み (Azure Pipelines)
+
+[azure-pipelines.md](azure-pipelines.md) でビルドの仕組みを説明しています。
 
 ## CI Build (AppVeyor)
 
-### ビルドの仕組み
+### ビルドの仕組み (AppVeyor)
 
 [appveyor.md](appveyor.md) でビルドの仕組みを説明しています。
 
