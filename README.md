@@ -25,6 +25,7 @@
         - [ビルド成果物のダウンロード(バイナリ、インストーラなど)](#ビルド成果物のダウンロードバイナリインストーラなど)
             - [master の 最新](#master-の-最新)
             - [master の 最新以外](#master-の-最新以外)
+    - [開発情報](#開発情報)
         - [単体テスト](#単体テスト)
         - [デバッグ方法](#デバッグ方法)
     - [変更履歴](#変更履歴)
@@ -110,6 +111,8 @@ More information: https://github.com/sakura-editor/sakura/issues/6
 
 以下から取得したいビルドを選択後、同様にしてダウンロードできます。  
 https://ci.appveyor.com/project/sakuraeditor/sakura/history
+
+## 開発情報
 
 ### 単体テスト
 
