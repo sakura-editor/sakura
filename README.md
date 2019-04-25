@@ -138,5 +138,5 @@ https://ci.appveyor.com/project/sakuraeditor/sakura/history
 
 ## マクロのサンプル
 
-[tools/macro](こちら)でマクロのサンプルを提供してます。  
+[こちら](tools/macro)でマクロのサンプルを提供してます。  
 もしサンプルを作ってもいいよ～という方がおられましたら PR の作成お願いします。
