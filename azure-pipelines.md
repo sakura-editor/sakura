@@ -50,16 +50,16 @@ https://azure.microsoft.com/ja-jp/services/devops/pipelines/ にアクセスし�
 ## Azure Pipelines の設定ファイルの構成
 
 - [azure-pipelines.yml](azure-pipelines.yml) 最上位の設定ファイル
-  - [ci/azure-pipelines/template.steps.build-unittest.yml](ci/azure-pipelines/template.steps.build-unittest.yml) sakura editor 本体のビルド、HTML ヘルプのビルド、インストーラのビルド、単体テストのビルド、実行
-  - [ci/azure-pipelines/template.steps.checkEncoding.yml](ci/azure-pipelines/template.steps.checkEncoding.yml) 文字コードの確認
-  - [ci/azure-pipelines/template.steps.cppcheck.yml](ci/azure-pipelines/template.steps.cppcheck.yml) cppcheck の実行
-  - [ci/azure-pipelines/template.steps.doxygen.yml](ci/azure-pipelines/template.steps.doxygen.yml) doxygen の実行
+  - [ci/azure-pipelines/template.job.build-unittest.yml](ci/azure-pipelines/template.job.build-unittest.yml) sakura editor 本体のビルド、HTML ヘルプのビルド、インストーラのビルド、単体テストのビルド、実行
+  - [ci/azure-pipelines/template.job.checkEncoding.yml](ci/azure-pipelines/template.job.checkEncoding.yml) 文字コードの確認
+  - [ci/azure-pipelines/template.job.cppcheck.yml](ci/azure-pipelines/template.job.cppcheck.yml) cppcheck の実行
+  - [ci/azure-pipelines/template.job.doxygen.yml](ci/azure-pipelines/template.job.doxygen.yml) doxygen の実行
 
 ## Azure Pipelines のJOB の構成
 
-| JOB 名 | 説明 | steps を定義する template |
+| JOB 名 | 説明 | job を定義する template |
 ----|----|----
-|windows              | サクラエディタのビルドを行う | [ci/azure-pipelines/template.steps.build-unittest.yml](ci/azure-pipelines/template.steps.build-unittest.yml) |
-|cppcheck             | cppcheck を行う              | [ci/azure-pipelines/template.steps.cppcheck.yml](ci/azure-pipelines/template.steps.cppcheck.yml)             |
-|doxygen              | doxygen  を行う              | [ci/azure-pipelines/template.steps.doxygen.yml](ci/azure-pipelines/template.steps.doxygen.yml)               |
-|checkEncoding        | 文字コードのチェックを行う   | [ci/azure-pipelines/template.steps.checkEncoding.yml](ci/azure-pipelines/template.steps.checkEncoding.yml)   |
+|windows              | サクラエディタのビルドを行う | [ci/azure-pipelines/template.job.build-unittest.yml](ci/azure-pipelines/template.job.build-unittest.yml) |
+|cppcheck             | cppcheck を行う              | [ci/azure-pipelines/template.job.cppcheck.yml](ci/azure-pipelines/template.job.cppcheck.yml)             |
+|doxygen              | doxygen  を行う              | [ci/azure-pipelines/template.job.doxygen.yml](ci/azure-pipelines/template.job.doxygen.yml)               |
+|checkEncoding        | 文字コードのチェックを行う   | [ci/azure-pipelines/template.job.checkEncoding.yml](ci/azure-pipelines/template.job.checkEncoding.yml)   |
