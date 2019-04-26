@@ -61,7 +61,7 @@ jobs:
         Configuration: 'Release'
 
   steps:
-  - template: ci/azure-pipelines/template.steps.cppcheck.yml
+  - template: ci/azure-pipelines/template.job.cppcheck.yml
 
 # doxygen を行う JOB
 - job: doxygen
@@ -80,7 +80,7 @@ jobs:
         Configuration: 'Release'
 
   steps:
-  - template: ci/azure-pipelines/template.steps.doxygen.yml
+  - template: ci/azure-pipelines/template.job.doxygen.yml
 
 # 文字コードのチェックを行う JOB
 - job: checkEncoding
@@ -89,4 +89,4 @@ jobs:
     vmImage: 'VS2017-Win2016'
 
   steps:
-  - template: ci/azure-pipelines/template.steps.checkEncoding.yml
+  - template: ci/azure-pipelines/template.job.checkEncoding.yml
