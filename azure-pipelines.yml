@@ -43,21 +43,25 @@ jobs:
   parameters:
     name: VS2017
     vmImage: 'VS2017-Win2016'
+    displayName: VS2017
 
 # Cppcheck を行う JOB
 - template: ci/azure-pipelines/template.job.cppcheck.yml
   parameters:
     name: cppcheck
     vmImage: 'VS2017-Win2016'
+    displayName: cppcheck
 
 # doxygen を行う JOB
 - template: ci/azure-pipelines/template.job.doxygen.yml
   parameters:
     name: doxygen
     vmImage: 'VS2017-Win2016'
+    displayName: doxygen
 
 # 文字コードのチェックを行う JOB
 - template: ci/azure-pipelines/template.job.checkEncoding.yml
   parameters:
     name: checkEncoding
     vmImage: 'VS2017-Win2016'
+    displayName: checkEncoding
