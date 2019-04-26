@@ -68,23 +68,8 @@ jobs:
 #############################################################################################################
 #   Python スクリプトのコンパイル確認を行う job
 #############################################################################################################
-- job: script_check
-  displayName: 'script_check'
-  pool:
+- template: ci/azure-pipelines/template.job.python-check.yml
+  parameters:
+    name: script_check
     vmImage: 'VS2017-Win2016'
-
-  strategy:
-    maxParallel: 2
-    matrix:
-      python_2.7:
-        versionSpec: '2.7'
-        architecture: 'x64'
-      python_3.7:
-        versionSpec: '3.7'
-        architecture: 'x64'
-
-  steps:
-  - template: ci/azure-pipelines/template.job.python-check.yml
-    parameters:
-      versionSpec: $(versionSpec)
-      architecture: $(architecture)
+    displayName: script_check

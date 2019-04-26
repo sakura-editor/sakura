@@ -6,26 +6,44 @@
 #       architecture : Python のアーキテクチャ
 #
 #############################################################################################################
+# see https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops&viewFallbackFrom=vsts#passing-parameters
 parameters:
   # defaults parameters
-  versionSpec: '2.7'
-  architecture: 'x64'
+  name: ''
+  vmImage: ''
+  displayName: ''
 
-steps:
-  # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/tool/use-python-version?view=azure-devops
-  - task: UsePythonVersion@0
-    displayName: UsePythonVersion ${{ parameters.versionSpec }} ${{ parameters.architecture }}
-    inputs:
-       versionSpec:  ${{ parameters.versionSpec }}
-       architecture: ${{ parameters.architecture }}
+jobs:
+- job: ${{ parameters.name }}
+  displayName: ${{ parameters.displayName }}
+  pool: 
+    vmImage: ${{ parameters.vmImage }}
 
-  - script: python --version
-    displayName: version check ${{ parameters.versionSpec }} ${{ parameters.architecture }}
+  strategy:
+    maxParallel: 2
+    matrix:
+      python_2.7:
+        versionSpec: '2.7'
+        architecture: 'x64'
+      python_3.7:
+        versionSpec: '3.7'
+        architecture: 'x64'
 
-  - script: python -m compileall -f .
-    displayName: python compile check before install ${{ parameters.versionSpec }} ${{ parameters.architecture }}
+  steps:
+    # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/tool/use-python-version?view=azure-devops
+    - task: UsePythonVersion@0
+      displayName: UsePythonVersion ${{ parameters.versionSpec }} ${{ parameters.architecture }}
+      inputs:
+         versionSpec:  ${{ parameters.versionSpec }}
+         architecture: ${{ parameters.architecture }}
 
-  - template: /ci/azure-pipelines/template.steps.install-python-modules.yml
+    - script: python --version
+      displayName: version check ${{ parameters.versionSpec }} ${{ parameters.architecture }}
 
-  - script: python -m compileall -f .
-    displayName: python compile check after install  ${{ parameters.versionSpec }} ${{ parameters.architecture }}
+    - script: python -m compileall -f .
+      displayName: python compile check before install ${{ parameters.versionSpec }} ${{ parameters.architecture }}
+
+    - template: /ci/azure-pipelines/template.steps.install-python-modules.yml
+
+    - script: python -m compileall -f .
+      displayName: python compile check after install  ${{ parameters.versionSpec }} ${{ parameters.architecture }}
