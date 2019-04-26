@@ -41,7 +41,7 @@ jobs:
 # * 単体テスト
 - template: ci/azure-pipelines/template.job.build-unittest.yml
   parameters:
-    name: windows
+    name: VS2017
     vmImage: 'VS2017-Win2016'
 
 # Cppcheck を行う JOB
