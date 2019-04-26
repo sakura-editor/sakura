@@ -1,10 +1,19 @@
-steps:
-# show environmental variables for debug.
-- script: set
-  displayName: Show environmental variables for debug
+# see https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops&viewFallbackFrom=vsts#passing-parameters
+parameters:
+  name: ''
+  vmImage: ''
 
-- script: pip install chardet --user
-  displayName: install chardet
+jobs:
+- job: ${{ parameters.name }}
+  pool: 
+    vmImage: ${{ parameters.vmImage }}
+  steps:
+  # show environmental variables for debug.
+  - script: set
+    displayName: Show environmental variables for debug
 
-- script: checkEncoding.bat
-  displayName: check encoding
+  - script: pip install chardet --user
+    displayName: install chardet
+
+  - script: checkEncoding.bat
+    displayName: check encoding

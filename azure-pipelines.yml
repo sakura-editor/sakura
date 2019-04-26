@@ -83,10 +83,7 @@ jobs:
   - template: ci/azure-pipelines/template.job.doxygen.yml
 
 # 文字コードのチェックを行う JOB
-- job: checkEncoding
-  displayName: 'Windows checkEncoding'
-  pool:
+- template: ci/azure-pipelines/template.job.checkEncoding.yml
+  parameters:
+    name: checkEncoding
     vmImage: 'VS2017-Win2016'
-
-  steps:
-  - template: ci/azure-pipelines/template.job.checkEncoding.yml
