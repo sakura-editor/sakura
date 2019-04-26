@@ -84,7 +84,7 @@ jobs:
         architecture: 'x64'
 
   steps:
-  - template: ci/azure-pipelines/template.steps.python-check.yml
+  - template: ci/azure-pipelines/template.job.python-check.yml
     parameters:
       versionSpec: $(versionSpec)
       architecture: $(architecture)
