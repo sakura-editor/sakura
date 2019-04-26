@@ -45,23 +45,10 @@ jobs:
     vmImage: 'VS2017-Win2016'
 
 # Cppcheck を行う JOB
-- job: cppcheck
-  displayName: 'Windows cppcheck'
-  pool:
+- template: ci/azure-pipelines/template.job.cppcheck.yml
+  parameters:
+    name: cppcheck
     vmImage: 'VS2017-Win2016'
-
-  strategy:
-    maxParallel: 2
-    matrix:
-      Win32_Release:
-        BuildPlatform: 'Win32'
-        Configuration: 'Release'
-      Win64_Release:
-        BuildPlatform: 'x64'
-        Configuration: 'Release'
-
-  steps:
-  - template: ci/azure-pipelines/template.job.cppcheck.yml
 
 # doxygen を行う JOB
 - job: doxygen
