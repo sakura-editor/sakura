@@ -16,7 +16,7 @@ parameters:
 jobs:
 - job: ${{ parameters.name }}
   displayName: ${{ parameters.displayName }}
-  pool: 
+  pool:
     vmImage: ${{ parameters.vmImage }}
 
   strategy:
