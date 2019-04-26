@@ -51,23 +51,10 @@ jobs:
     vmImage: 'VS2017-Win2016'
 
 # doxygen を行う JOB
-- job: doxygen
-  displayName: 'Windows doxygen'
-  pool:
+- template: ci/azure-pipelines/template.job.doxygen.yml
+  parameters:
+    name: doxygen
     vmImage: 'VS2017-Win2016'
-
-  strategy:
-    maxParallel: 2
-    matrix:
-      Win32_Release:
-        BuildPlatform: 'Win32'
-        Configuration: 'Release'
-      Win64_Release:
-        BuildPlatform: 'x64'
-        Configuration: 'Release'
-
-  steps:
-  - template: ci/azure-pipelines/template.job.doxygen.yml
 
 # 文字コードのチェックを行う JOB
 - template: ci/azure-pipelines/template.job.checkEncoding.yml
