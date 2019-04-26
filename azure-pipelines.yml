@@ -61,7 +61,7 @@ jobs:
         Configuration: 'Release'
 
   steps:
-  - template: ci/azure-pipelines/template.steps.build-unittest.yml
+  - template: ci/azure-pipelines/template.job.build-unittest.yml
 
 # Cppcheck を行う JOB
 - job: cppcheck
