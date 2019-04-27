@@ -14,6 +14,7 @@
     - [Build Requirements](#build-requirements)
         - [Visual Studio Community 2017](#visual-studio-community-2017)
             - [Visual Studio Install options required](#visual-studio-install-options-required)
+        - [Visual Studio Community 2019 に関しては対応を検討中です。](#visual-studio-community-2019-に関しては対応を検討中です)
     - [How to build](#how-to-build)
         - [詳細情報](#詳細情報)
     - [PR(Pull Request) を簡単にローカルに取得する方法](#prpull-request-を簡単にローカルに取得する方法)
@@ -50,7 +51,10 @@ https://github.com/sakura-editor/sakura/wiki
 
 ## Build Requirements
 ### Visual Studio Community 2017
-- [Visual Studio Community 2017](https://www.visualstudio.com/downloads/)
+
+現状では Visual Studio Community 2017 を使用しています。
+
+- [Visual Studio Community 2017](https://visualstudio.microsoft.com/vs/older-downloads/)
 
 #### Visual Studio Install options required
 - Windows SDK
@@ -59,6 +63,13 @@ https://github.com/sakura-editor/sakura/wiki
 - C++ に関する Windows XP サポート
 
 More information: https://github.com/sakura-editor/sakura/issues/6
+
+### Visual Studio Community 2019 に関しては対応を検討中です。
+
+- [Visual Studio Community 2019](https://www.visualstudio.com/downloads/)
+
+Visual Studio 2017/2019 の両対応に関しては  #866 で対処済みです。  
+[仕組みに関してはこちらを参照](vcx-props/project-PlatformToolset.md)
 
 ## How to build
 
