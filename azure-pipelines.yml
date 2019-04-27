@@ -85,7 +85,7 @@ jobs:
     eq(variables['Build.Reason'], 'Schedule')
 
   steps:
-  - template: ci/azure-pipelines/template-build-sonarqube.yml
+  - template: ci/azure-pipelines/template.job.SonarQube.yml
 
 # Cppcheck を行う JOB
 - template: ci/azure-pipelines/template.job.cppcheck.yml
