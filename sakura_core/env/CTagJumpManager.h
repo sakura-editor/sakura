@@ -54,7 +54,7 @@ struct SShare_TagJump{
 	TagJump				m_TagJump[MAX_TAGJUMPNUM];		//!< タグジャンプ情報
 	ATagJumpKeywords	m_aTagJumpKeywords;
 	BOOL				m_bTagJumpICase;				//!< 大文字小文字を同一視
-	BOOL				m_bTagJumpAnyWhere;				//!< 文字列の途中にマッチ
+	BOOL				m_bTagJumpPartialMatch;				//!< 文字列の途中にマッチ
 };
 
 class CTagJumpManager{
