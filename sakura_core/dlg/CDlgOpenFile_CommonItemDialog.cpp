@@ -67,9 +67,9 @@ struct CDlgOpenFile_CommonItemDialog final
 								 std::vector<std::tstring>* pFileNames,
 								 LPCWSTR fileName,
 								 const std::vector<COMDLG_FILTERSPEC>& specs );
-	bool DoModalSaveDlgImpl0( const TCHAR* pszPath );
+	bool DoModalSaveDlgImpl0( TCHAR* pszPath );
 	HRESULT DoModalSaveDlgImpl1( IFileSaveDialog* pFileSaveDialog,
-								 const TCHAR* pszPath );
+								 TCHAR* pszPath );
 
 	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
@@ -731,7 +731,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlg(
 
 HRESULT CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl1(
 	IFileSaveDialog* pFileSaveDialog,
-	const TCHAR* pszPath)
+	TCHAR* pszPath)
 {
 	//カレントディレクトリを保存。関数から抜けるときに自動でカレントディレクトリは復元される。
 	CCurrentDirectoryBackupPoint cCurDirBackup;
@@ -753,6 +753,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl1(
 	specs[2].pszName = strs[2].c_str();
 	specs[2].pszSpec = _T("*.*");
 #define RETURN_IF_FAILED if (FAILED(hr)) { /* __debugbreak(); */ return hr; }
+	hr = pFileSaveDialog->SetDefaultExtension(_T("txt")); RETURN_IF_FAILED
 	hr = pFileSaveDialog->SetFileTypes(specs.size(), &specs[0]); RETURN_IF_FAILED
 	ComPtr<IShellItem> psiFolder;
 	SHCreateItemFromParsingName(m_szInitialDir, NULL, IID_PPV_ARGS(&psiFolder));
@@ -765,12 +766,22 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl1(
 		hr = Customize(); RETURN_IF_FAILED
 	}
 	hr = pFileSaveDialog->Show(m_hwndParent); RETURN_IF_FAILED
+
+	if (SUCCEEDED(hr)) {
+		ComPtr<IShellItem> pShellItem;
+		hr = pFileSaveDialog->GetResult(&pShellItem); RETURN_IF_FAILED
+		PWSTR pszFilePath;
+		hr = pShellItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath); RETURN_IF_FAILED
+		_tcscpy(pszPath, pszFilePath);
+		CoTaskMemFree(pszFilePath);
+	}
+
 #undef RETURN_IF_FAILED
 
 	return S_OK;
 }
 
-bool CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl0( const TCHAR* pszPath )
+bool CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl0( TCHAR* pszPath )
 {
 	using namespace Microsoft::WRL;
 	ComPtr<IFileSaveDialog> pFileDialog;
