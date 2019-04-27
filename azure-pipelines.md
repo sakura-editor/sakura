@@ -51,9 +51,12 @@ https://azure.microsoft.com/ja-jp/services/devops/pipelines/ にアクセスし�
 
 - [azure-pipelines.yml](azure-pipelines.yml) 最上位の設定ファイル
   - [ci/azure-pipelines/template.job.build-unittest.yml](ci/azure-pipelines/template.job.build-unittest.yml) sakura editor 本体のビルド、HTML ヘルプのビルド、インストーラのビルド、単体テストのビルド、実行
+    - [ci/azure-pipelines/template.steps.install-python-modules.yml](ci/azure-pipelines/template.steps.install-python-modules.yml) 必要な python モジュールのインストール
   - [ci/azure-pipelines/template.job.checkEncoding.yml](ci/azure-pipelines/template.job.checkEncoding.yml) 文字コードの確認
   - [ci/azure-pipelines/template.job.cppcheck.yml](ci/azure-pipelines/template.job.cppcheck.yml) cppcheck の実行
   - [ci/azure-pipelines/template.job.doxygen.yml](ci/azure-pipelines/template.job.doxygen.yml) doxygen の実行
+    - [ci/azure-pipelines/template.steps.install-python-modules.yml](ci/azure-pipelines/template.steps.install-python-modules.yml) 必要な python モジュールのインストール
+
 
 ## Azure Pipelines のJOB の構成
 
@@ -63,3 +66,4 @@ https://azure.microsoft.com/ja-jp/services/devops/pipelines/ にアクセスし�
 |cppcheck             | cppcheck を行う              | [ci/azure-pipelines/template.job.cppcheck.yml](ci/azure-pipelines/template.job.cppcheck.yml)             |
 |doxygen              | doxygen  を行う              | [ci/azure-pipelines/template.job.doxygen.yml](ci/azure-pipelines/template.job.doxygen.yml)               |
 |checkEncoding        | 文字コードのチェックを行う   | [ci/azure-pipelines/template.job.checkEncoding.yml](ci/azure-pipelines/template.job.checkEncoding.yml)   |
+|script_check         | python のコンパイルのチェックを行う   | [ci/azure-pipelines/template.job.python-check.yml](ci/azure-pipelines/template.job.python-check.yml)   |
