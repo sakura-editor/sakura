@@ -49,7 +49,7 @@ jobs:
   # Build solution with SonarQube
   - script: build-sln.bat       $(BuildPlatform) $(Configuration)
     displayName: Build solution with SonarQube
-    
+
     # see https://docs.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch&viewFallbackFrom=vsts#secret-variables
     env:
       SONAR_QUBE_ORG: $(SONAR_QUBE_ORG)
