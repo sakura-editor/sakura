@@ -46,46 +46,11 @@ jobs:
     displayName: VS2017
 
 # SonarQube を行う JOB
-- job: SonarQube
-  displayName: 'SonarQube'
-  pool:
+- template: ci/azure-pipelines/template.job.SonarQube.yml
+  parameters:
+    name: SonarQube
     vmImage: 'VS2017-Win2016'
-
-  # see https://docs.microsoft.com/ja-jp/azure/devops/pipelines/process/phases?view=azure-devops&tabs=yaml#timeouts
-  timeoutInMinutes: 120
-
-  strategy:
-    maxParallel: 4
-    matrix:
-      Win32_Debug:
-        BuildPlatform: 'Win32'
-        Configuration: 'Debug'
-      Win32_Release:
-        BuildPlatform: 'Win32'
-        Configuration: 'Release'
-      Win64_Debug:
-        BuildPlatform: 'x64'
-        Configuration: 'Debug'
-      Win64_Release:
-        BuildPlatform: 'x64'
-        Configuration: 'Release'
-
-  # https://docs.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch
-  variables:
-    SONAR_QUBE: Yes
-
-  # set condition    at https://docs.microsoft.com/ja-jp/azure/devops/pipelines/process/conditions?view=azure-devops&viewFallbackFrom=vsts&tabs=yaml
-  # see Build.Reason at https://docs.microsoft.com/ja-jp/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml
-  condition:
-    #and
-    #(
-    #  ne(variables['Build.Reason'], 'Schedule'),
-    #  ne(variables['Build.Reason'], 'PullRequest')
-    #)
-    eq(variables['Build.Reason'], 'Schedule')
-
-  steps:
-  - template: ci/azure-pipelines/template.job.SonarQube.yml
+    displayName: SonarQube
 
 # Cppcheck を行う JOB
 - template: ci/azure-pipelines/template.job.cppcheck.yml
