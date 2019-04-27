@@ -37,9 +37,6 @@ jobs:
 
   - template: /ci/azure-pipelines/template.steps.install-python-modules.yml
 
-  - script: pip install sphinx
-    displayName: install sphinx
-
   # Build solution
   - script: build-sln.bat       $(BuildPlatform) $(Configuration)
     displayName: Build solution

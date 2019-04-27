@@ -10,3 +10,6 @@ steps:
 
 - script: pip install openpyxl --user
   displayName: install openpyxl --user
+
+- script: pip install sphinx
+  displayName: install sphinx
