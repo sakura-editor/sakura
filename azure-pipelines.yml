@@ -39,73 +39,29 @@ jobs:
 # * HTML Help
 # * Installer
 # * 単体テスト
-- job: windows
-  displayName: 'Windows'
-  pool:
+- template: ci/azure-pipelines/template.job.build-unittest.yml
+  parameters:
+    name: VS2017
     vmImage: 'VS2017-Win2016'
-
-  strategy:
-    maxParallel: 4
-    matrix:
-      Win32_Debug:
-        BuildPlatform: 'Win32'
-        Configuration: 'Debug'
-      Win32_Release:
-        BuildPlatform: 'Win32'
-        Configuration: 'Release'
-      Win64_Debug:
-        BuildPlatform: 'x64'
-        Configuration: 'Debug'
-      Win64_Release:
-        BuildPlatform: 'x64'
-        Configuration: 'Release'
-
-  steps:
-  - template: ci/azure-pipelines/template.steps.build-unittest.yml
+    displayName: VS2017
 
 # Cppcheck を行う JOB
-- job: cppcheck
-  displayName: 'Windows cppcheck'
-  pool:
+- template: ci/azure-pipelines/template.job.cppcheck.yml
+  parameters:
+    name: cppcheck
     vmImage: 'VS2017-Win2016'
-
-  strategy:
-    maxParallel: 2
-    matrix:
-      Win32_Release:
-        BuildPlatform: 'Win32'
-        Configuration: 'Release'
-      Win64_Release:
-        BuildPlatform: 'x64'
-        Configuration: 'Release'
-
-  steps:
-  - template: ci/azure-pipelines/template.steps.cppcheck.yml
+    displayName: cppcheck
 
 # doxygen を行う JOB
-- job: doxygen
-  displayName: 'Windows doxygen'
-  pool:
+- template: ci/azure-pipelines/template.job.doxygen.yml
+  parameters:
+    name: doxygen
     vmImage: 'VS2017-Win2016'
-
-  strategy:
-    maxParallel: 2
-    matrix:
-      Win32_Release:
-        BuildPlatform: 'Win32'
-        Configuration: 'Release'
-      Win64_Release:
-        BuildPlatform: 'x64'
-        Configuration: 'Release'
-
-  steps:
-  - template: ci/azure-pipelines/template.steps.doxygen.yml
+    displayName: doxygen
 
 # 文字コードのチェックを行う JOB
-- job: checkEncoding
-  displayName: 'Windows checkEncoding'
-  pool:
+- template: ci/azure-pipelines/template.job.checkEncoding.yml
+  parameters:
+    name: checkEncoding
     vmImage: 'VS2017-Win2016'
-
-  steps:
-  - template: ci/azure-pipelines/template.steps.checkEncoding.yml
+    displayName: checkEncoding
