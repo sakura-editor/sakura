@@ -31,8 +31,8 @@ Visual Studio 2017 で作成したソリューション/プロジェクトを Vi
 
 ## 解決策
 
-1.  `PlatformToolset` の設定を[外部のファイル](vcxcompat.props) にまとめます
-2.  そのファイルでは、 `Condition` の指定で開かれた Visaul Studio のバージョンによって、 `デフォルトで 使用する PlatformToolset` を指定します。
+1. `PlatformToolset` の設定を[外部のファイル](vcxcompat.props) にまとめます
+2. そのファイルでは、 `Condition` の指定で開かれた Visaul Studio のバージョンによって、 `デフォルトで 使用する PlatformToolset` を指定します。
 3. 各プロジェクトファイルで上記ファイルを [Import Project](https://docs.microsoft.com/ja-jp/visualstudio/msbuild/import-element-msbuild?view=vs-2019) でインクルードします。
 
 ### 参考情報
