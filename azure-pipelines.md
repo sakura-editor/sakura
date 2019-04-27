@@ -10,6 +10,7 @@
     - [参考情報](#参考情報)
     - [参考サイト](#参考サイト)
     - [Azure Pipelines の設定ファイルの構成](#azure-pipelines-の設定ファイルの構成)
+    - [Azure Pipelines の template ファイルの命名規則](#azure-pipelines-の-template-ファイルの命名規則)
     - [Azure Pipelines のJOB の構成](#azure-pipelines-のjob-の構成)
 
 <!-- /TOC -->
@@ -51,9 +52,18 @@ https://azure.microsoft.com/ja-jp/services/devops/pipelines/ にアクセスし�
 
 - [azure-pipelines.yml](azure-pipelines.yml) 最上位の設定ファイル
   - [ci/azure-pipelines/template.job.build-unittest.yml](ci/azure-pipelines/template.job.build-unittest.yml) sakura editor 本体のビルド、HTML ヘルプのビルド、インストーラのビルド、単体テストのビルド、実行
+    - [ci/azure-pipelines/template.steps.install-python-modules.yml](ci/azure-pipelines/template.steps.install-python-modules.yml) 必要な python モジュールのインストール
   - [ci/azure-pipelines/template.job.checkEncoding.yml](ci/azure-pipelines/template.job.checkEncoding.yml) 文字コードの確認
   - [ci/azure-pipelines/template.job.cppcheck.yml](ci/azure-pipelines/template.job.cppcheck.yml) cppcheck の実行
   - [ci/azure-pipelines/template.job.doxygen.yml](ci/azure-pipelines/template.job.doxygen.yml) doxygen の実行
+    - [ci/azure-pipelines/template.steps.install-python-modules.yml](ci/azure-pipelines/template.steps.install-python-modules.yml) 必要な python モジュールのインストール
+
+## Azure Pipelines の template ファイルの命名規則
+
+| JOB 名 | 説明 | job を定義する template |
+----|----|----
+|template.job.***.yml   | job を定義する template   | [Job reuse](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops#job-reuse) |
+|template.steps.***.yml | steps を定義する template | [Step re-use](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops#step-re-use) |
 
 ## Azure Pipelines のJOB の構成
 
@@ -63,3 +73,4 @@ https://azure.microsoft.com/ja-jp/services/devops/pipelines/ にアクセスし�
 |cppcheck             | cppcheck を行う              | [ci/azure-pipelines/template.job.cppcheck.yml](ci/azure-pipelines/template.job.cppcheck.yml)             |
 |doxygen              | doxygen  を行う              | [ci/azure-pipelines/template.job.doxygen.yml](ci/azure-pipelines/template.job.doxygen.yml)               |
 |checkEncoding        | 文字コードのチェックを行う   | [ci/azure-pipelines/template.job.checkEncoding.yml](ci/azure-pipelines/template.job.checkEncoding.yml)   |
+|script_check         | python のコンパイルのチェックを行う   | [ci/azure-pipelines/template.job.python-check.yml](ci/azure-pipelines/template.job.python-check.yml)   |

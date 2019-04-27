@@ -1,0 +1,46 @@
+#############################################################################################################
+#   Python のコンパイルチェックを行う 'steps' を定義するテンプレート
+#
+#   parameters
+#       versionSpec  : Python のバージョン
+#       architecture : Python のアーキテクチャ
+#
+#############################################################################################################
+# see https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops&viewFallbackFrom=vsts#passing-parameters
+parameters:
+  # defaults parameters
+  name: ''
+  vmImage: ''
+  displayName: ''
+
+jobs:
+- job: ${{ parameters.name }}
+  displayName: ${{ parameters.displayName }}
+  pool:
+    vmImage: ${{ parameters.vmImage }}
+
+  strategy:
+    maxParallel: 2
+    matrix:
+      python_2.7:
+        versionSpec: '2.7'
+      python_3.7:
+        versionSpec: '3.7'
+
+  steps:
+    # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/tool/use-python-version?view=azure-devops
+    - task: UsePythonVersion@0
+      displayName: UsePythonVersion $(versionSpec)
+      inputs:
+         versionSpec:  $(versionSpec)
+
+    - script: python --version
+      displayName: version check $(versionSpec)
+
+    - script: python -m compileall -f .
+      displayName: python compile check before install $(versionSpec)
+
+    - template: /ci/azure-pipelines/template.steps.install-python-modules.yml
+
+    - script: python -m compileall -f .
+      displayName: python compile check after install  $(versionSpec)

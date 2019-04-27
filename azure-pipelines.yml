@@ -64,4 +64,12 @@ jobs:
   parameters:
     name: checkEncoding
     vmImage: 'VS2017-Win2016'
-    displayName: checkEncoding
+
+#############################################################################################################
+#   Python スクリプトのコンパイル確認を行う job
+#############################################################################################################
+- template: ci/azure-pipelines/template.job.python-check.yml
+  parameters:
+    name: script_check
+    vmImage: 'VS2017-Win2016'
+    displayName: script_check
