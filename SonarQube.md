@@ -1,5 +1,20 @@
 # SonarQube
 
+## SonarQube および SonarCloud 
+
+### SonarQube
+
+[SonarQube](https://www.sonarsource.com/products/sonarqube/) は
+[sonarsource](https://www.sonarsource.com/) が提供する静的解析サービス。  
+
+
+### SonarCloud
+
+[SonarCloud](https://sonarcloud.io/about) は [SonarQube](https://www.sonarsource.com/products/sonarqube/) のクラウド版。  
+いつものごとく、オープンソースに対してはタダです。
+
+サクラエディタのソースコード解析には 1時間半ほどかかるので、並列実行が可能な Azure Pipelines のみで夜間の定期タスクのみで解析を実施します。
+
 ## SonarQube のローカルでの使用方法
 
 ### SonarQube のアカウント設定
@@ -15,26 +30,37 @@ https://sonarcloud.io/projects/create にアクセスしてプロジェクトを
 - Access Token をメモしておきます。 
 **この情報はパスワードと同じ意味を持つので漏れないように注意します。**
 
-### 環境設定
+### ローカルで実行する場合の環境設定 (事前準備)
 
 1. https://www.java.com/ja/download/ から JAVA のランタイムをダウンロードしてインストールする
-2. `JAVA_HOME` の環境変数を設定する
+1. `JAVA_HOME` の環境変数を設定する
 
 	例
 
 	`set JAVA_HOME=C:\Program Files (x86)\Java\jre1.8.0_201`
 
-3. https://chocolatey.org/install#install-with-cmdexe を参考に chocolatey をインストールする。
-4. `choco install "msbuild-sonarqube-runner" -y` を使用して必要なファイルをインストールする。
-5. https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip をダウンロードする。
-6. build-wrapper-win-x86.zip を解凍する。
+1. https://chocolatey.org/install#install-with-cmdexe を参考に chocolatey をインストールする。
 
 ### 解析手順の流れ (一般論)
 
-1. 必要なファイルをダウンロード、インストールする。
-2. `C:\ProgramData\chocolatey\bin\SonarScanner.MSBuild.exe begin` を呼ぶ。
-3. `build-wrapper-win-x86.zip` の中の `build-wrapper-win-x86-64.exe` を使って msbuild.exe を起動する。
-4. `C:\ProgramData\chocolatey\bin\SonarScanner.MSBuild.exe end` を呼ぶ。
+1. [chocolatey](https://chocolatey.org/) で [SonarScanner for MSBuild (SonarScanner.MSBuild.exe)](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+MSBuild) をダウンロードする
+1. curl で https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip をダウンロードして解凍する
+1. `C:\ProgramData\chocolatey\bin\SonarScanner.MSBuild.exe begin` を呼ぶ。
+1. `build-wrapper-win-x86.zip` の中の `build-wrapper-win-x86-64.exe` を使って msbuild.exe を起動する。
+1. `C:\ProgramData\chocolatey\bin\SonarScanner.MSBuild.exe end` を呼ぶ。
+
+### 解析手順の流れ (サクラエディタ)
+
+1. [chocolatey](https://chocolatey.org/) で [SonarScanner for MSBuild (SonarScanner.MSBuild.exe)](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+MSBuild) をダウンロードする
+    1. `choco install "msbuild-sonarqube-runner" -y`
+1. [build-sln.bat](build-sln.bat) でソリューションをビルドする
+    1. [build-sonar-qube-start.bat](build-sonar-qube-start.bat) で SonarQube の準備を行う。
+        1. [build-sonar-qube-env.bat](build-sonar-qube-env.bat) を呼び出し必要な環境変数の設定を行う。
+        1. curl で https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip をダウンロードして解凍する。
+        1. `C:\ProgramData\chocolatey\bin\SonarScanner.MSBuild.exe begin` を呼んで SonarQube の解析を開始する。
+    1. `build-wrapper-win-x86.zip` の中の `build-wrapper-win-x86-64.exe` 経由で `msbuild.exe` を起動する。
+    1. [build-sonar-qube-finish.bat](build-sonar-qube-finish.bat) で SonarQube の解析結果を [SonarCloud](https://sonarcloud.io/about) のサーバーに結果を送る。
+        1. `C:\ProgramData\chocolatey\bin\SonarScanner.MSBuild.exe end` を呼ぶ。
 
 ## サクラエディタを SonarQube でビルドする手順
 
