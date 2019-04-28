@@ -68,7 +68,7 @@ More information: https://github.com/sakura-editor/sakura/issues/6
 
 - [Visual Studio Community 2019](https://www.visualstudio.com/downloads/)
 
-Visual Studio 2017/2019 の両対応に関しては  #866 で対処済みです。  
+Visual Studio 2017/2019 の両対応に関しては  [#866](https://github.com/sakura-editor/sakura/issues/866) で対処済みです。  
 [仕組みに関してはこちらを参照](vcx-props/project-PlatformToolset.md)
 
 ## How to build
