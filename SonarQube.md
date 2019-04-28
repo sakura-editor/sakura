@@ -13,7 +13,8 @@
 [SonarCloud](https://sonarcloud.io/about) は [SonarQube](https://www.sonarsource.com/products/sonarqube/) のクラウド版。  
 いつものごとく、オープンソースに対してはタダです。
 
-サクラエディタのソースコード解析には 1時間半ほどかかるので、並列実行が可能な Azure Pipelines のみで夜間の定期タスクのみで解析を実施します。
+サクラエディタのソースコード解析には 1時間半ほどかかるので、並列実行が可能な Azure Pipelines で夜間の定期タスクのみで解析を実施します。  
+(Appveyor では実施しない。定期タスク以外でも実施しない。)
 
 ## SonarQube のローカルでの使用方法
 
