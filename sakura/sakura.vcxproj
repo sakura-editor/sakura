@@ -1007,6 +1007,9 @@
   <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
     <!-- Add files to @Clean just before running CoreClean. -->
     <ItemGroup>
+      <Clean Include="..\sakura_core\githash.h" />
+      <Clean Include="..\sakura_core\Funccode_enum.h" />
+      <Clean Include="..\sakura_core\Funccode_define.h" />
       <Clean Include="$(OutDir)sakura.ini" />
       <Clean Include="$(OutDir)bregonig.dll" />
       <Clean Include="$(OutDir)ctags.exe" />
