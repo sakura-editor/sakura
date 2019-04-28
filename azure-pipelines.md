@@ -71,7 +71,7 @@ https://azure.microsoft.com/ja-jp/services/devops/pipelines/ にアクセスし�
 | JOB 名 | 説明 | job を定義する template |
 ----|----|----
 |VS2017               | サクラエディタのビルドを行う | [ci/azure-pipelines/template.job.build-unittest.yml](ci/azure-pipelines/template.job.build-unittest.yml) |
-|SonarQube            | SonarQube を行う             | [ci/azure-pipelines/template.job.SonarQube.yml](ci/azure-pipelines/template.job.SonarQube.yml)           |
+|SonarQube            | SonarQube での解析を行う     | [ci/azure-pipelines/template.job.SonarQube.yml](ci/azure-pipelines/template.job.SonarQube.yml)           |
 |cppcheck             | cppcheck を行う              | [ci/azure-pipelines/template.job.cppcheck.yml](ci/azure-pipelines/template.job.cppcheck.yml)             |
 |doxygen              | doxygen  を行う              | [ci/azure-pipelines/template.job.doxygen.yml](ci/azure-pipelines/template.job.doxygen.yml)               |
 |checkEncoding        | 文字コードのチェックを行う   | [ci/azure-pipelines/template.job.checkEncoding.yml](ci/azure-pipelines/template.job.checkEncoding.yml)   |
