@@ -50,6 +50,8 @@ https://sonarcloud.io/projects/create にアクセスしてプロジェクトを
 1. `build-wrapper-win-x86.zip` の中の `build-wrapper-win-x86-64.exe` を使って msbuild.exe を起動する。
 1. `C:\ProgramData\chocolatey\bin\SonarScanner.MSBuild.exe end` を呼ぶ。
 
+メモ: [curl](https://curl.haxx.se/download.html) は [Git for Windows](https://gitforwindows.org/) をインストールすると `C:\Program Files\Git\mingw64\bin\curl.exe` にインストールされて、自動的にパスも通されます。
+
 ### 解析手順の流れ (サクラエディタ)
 
 1. [chocolatey](https://chocolatey.org/) で [SonarScanner for MSBuild (SonarScanner.MSBuild.exe)](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+MSBuild) をダウンロードする
