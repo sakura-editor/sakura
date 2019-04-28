@@ -22,6 +22,5 @@ testData_*.txt
 html
 doxygen*.log
 .sonarqube
-build-wrapper-win-x86.zip
-build-wrapper-win-x86
+build-wrapper-win-x86*
 bw-output
