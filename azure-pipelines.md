@@ -61,7 +61,7 @@ https://azure.microsoft.com/ja-jp/services/devops/pipelines/ にアクセスし�
 
 ## Azure Pipelines の template ファイルの命名規則
 
-| JOB 名 | 説明 | job を定義する template |
+| JOB 名 | 説明 | ドキュメント |
 ----|----|----
 |template.job.***.yml   | job を定義する template   | [Job reuse](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops#job-reuse) |
 |template.steps.***.yml | steps を定義する template | [Step re-use](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops#step-re-use) |
