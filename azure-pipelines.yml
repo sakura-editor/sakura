@@ -45,7 +45,7 @@ jobs:
     vmImage: 'VS2017-Win2016'
     displayName: VS2017
 
-# SonarQube を行う JOB
+# SonarQube で解析を行う JOB
 - template: ci/azure-pipelines/template.job.SonarQube.yml
   parameters:
     name: SonarQube
