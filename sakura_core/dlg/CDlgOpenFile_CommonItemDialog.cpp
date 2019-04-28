@@ -812,6 +812,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModalSaveDlg( SSaveInfo* pSaveInfo, bool b
 	else {
 		m_nCharCode = pSaveInfo->eCharCode;
 		m_bBom = pSaveInfo->bBomExist;
+		m_cEol = pSaveInfo->cEol;
 		m_customizeSetting.bCustomize = true;
 		m_customizeSetting.bUseCharCode = true;
 		m_customizeSetting.bUseEol = true;
@@ -857,6 +858,14 @@ HRESULT CDlgOpenFile_CommonItemDialog::OnItemSelected(
 			}
 			SetControlState(CtrlId::CHECK_BOM, state);
 			SetCheckButtonState(CtrlId::CHECK_BOM, bChecked ? TRUE : FALSE);
+			m_nCharCode = (ECodeType)dwIDItem;
+		}
+		break;
+	case CtrlId::COMBO_EOL:
+		switch (dwIDItem) {
+		case 1: m_cEol = EOL_CRLF; break;
+		case 2: m_cEol = EOL_LF; break;
+		case 3: m_cEol = EOL_CR; break;
 		}
 		break;
 	case CtrlId::COMBO_MRU:
@@ -888,6 +897,9 @@ HRESULT CDlgOpenFile_CommonItemDialog::OnCheckButtonToggled(
 	case CtrlId::CHECK_CP:
 		SetControlState(CtrlId::CHECK_CP, CDCS_VISIBLE);
 		AddComboCodePages(m_nCharCode);
+		break;
+	case CtrlId::CHECK_BOM:
+		m_bBom = bChecked ? true : false;
 		break;
 	}
 	return S_OK;
