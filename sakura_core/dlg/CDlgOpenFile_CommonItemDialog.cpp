@@ -567,10 +567,10 @@ HRESULT CDlgOpenFile_CommonItemDialog::Customize()
 	if (m_customizeSetting.bUseEol) {
 		hr = StartVisualGroup(CtrlId::LABEL_EOL, LS(STR_FILEDIALOG_EOL)); RETURN_IF_FAILED
 		hr = AddComboBox(CtrlId::COMBO_EOL); RETURN_IF_FAILED
-		hr = AddControlItem(CtrlId::COMBO_EOL, 0, LS(STR_DLGOPNFL1)); RETURN_IF_FAILED
-		hr = AddControlItem(CtrlId::COMBO_EOL, 1, L"CR+LF"); RETURN_IF_FAILED
-		hr = AddControlItem(CtrlId::COMBO_EOL, 2, L"LF (UNIX)"); RETURN_IF_FAILED
-		hr = AddControlItem(CtrlId::COMBO_EOL, 3, L"CR (Mac)"); RETURN_IF_FAILED
+		hr = AddControlItem(CtrlId::COMBO_EOL, EOL_NONE, LS(STR_DLGOPNFL1)); RETURN_IF_FAILED
+		hr = AddControlItem(CtrlId::COMBO_EOL, EOL_CRLF, L"CR+LF"); RETURN_IF_FAILED
+		hr = AddControlItem(CtrlId::COMBO_EOL, EOL_LF, L"LF (UNIX)"); RETURN_IF_FAILED
+		hr = AddControlItem(CtrlId::COMBO_EOL, EOL_CR, L"CR (Mac)"); RETURN_IF_FAILED
 		hr = SetSelectedControlItem(CtrlId::COMBO_EOL, 0); RETURN_IF_FAILED
 		hr = EndVisualGroup(); RETURN_IF_FAILED
 	}
@@ -862,11 +862,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::OnItemSelected(
 		}
 		break;
 	case CtrlId::COMBO_EOL:
-		switch (dwIDItem) {
-		case 1: m_cEol = EOL_CRLF; break;
-		case 2: m_cEol = EOL_LF; break;
-		case 3: m_cEol = EOL_CR; break;
-		}
+		m_cEol = (EEolType)dwIDItem;
 		break;
 	case CtrlId::COMBO_MRU:
 		if (dwIDItem != 0) {
