@@ -1,16 +1,42 @@
 # SonarQube
 
+<!-- 以下は Markdownの参照形式によるリンク の定義です。 -->
+<!-- 参照 https://hail2u.net/blog/coding/markdown-reference-style-links.html -->
+
+[sonarsource]: https://www.sonarsource.com/ "SonarSource"
+[SonarQube]: https://www.sonarsource.com/products/sonarqube/ "SonarQube"
+[SonarCloud]: https://sonarcloud.io/about "SonarCloud"
+[SonarScanner for MSBuild (SonarScanner.MSBuild.exe)]: https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+MSBuild "SonarScanner for MSBuild (SonarScanner.MSBuild.exe)"
+[chocolatey]: https://chocolatey.org/ "chocolatey"
+[build-wrapper-win-x86.zip]: https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip "https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip"
+[Git for Windows]: https://gitforwindows.org/ "Git for Windows"
+[curl]: https://curl.haxx.se/download.html "curl"
+[build-sln.bat]: build-sln.bat "build-sln.bat"
+[build-sonar-qube-env.bat]: build-sonar-qube-env.bat "build-sonar-qube-env.bat"
+[build-sonar-qube-start.bat]: build-sonar-qube-start.bat "build-sonar-qube-start.bat"
+[build-sonar-qube-finish.bat]: build-sonar-qube-finish.bat "build-sonar-qube-finish.bat"
+[azure pipelines の sakura editor のプロジェクト]: https://dev.azure.com/sakuraeditor/sakura "https://dev.azure.com/sakuraeditor/sakura"
+[Azure Pipelines の Secret Variable]: https://docs.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch&viewFallbackFrom=vsts#secret-variables
+[Azure Pipelines の variables]: https://docs.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch
+[Azure Pipelines の timeoutInMinutes]: https://docs.microsoft.com/ja-jp/azure/devops/pipelines/process/phases?view=azure-devops&tabs=yaml#timeouts
+[Azure Pipelines の Predefined build variables]: https://docs.microsoft.com/ja-jp/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml
+[Azure Pipelines の conditon]: https://docs.microsoft.com/ja-jp/azure/devops/pipelines/process/conditions?view=azure-devops&viewFallbackFrom=vsts&tabs=yaml
+[appveyor の Secure Variables]: https://www.appveyor.com/docs/build-configuration/#secure-variables
+
+
+<!-- Markdownの参照形式によるリンク の定義終わり -->
+
 ## SonarQube および SonarCloud 
 
 ### SonarQube
 
-[SonarQube](https://www.sonarsource.com/products/sonarqube/) は
-[sonarsource](https://www.sonarsource.com/) が提供する静的解析サービス。  
+[SonarQube][SonarQube] は
+[sonarsource][sonarsource] が提供する静的解析サービス。  
 
 
 ### SonarCloud
 
-[SonarCloud](https://sonarcloud.io/about) は [SonarQube](https://www.sonarsource.com/products/sonarqube/) のクラウド版。  
+[SonarCloud][SonarCloud] は [SonarQube][SonarQube] のクラウド版。  
 いつものごとく、オープンソースに対してはタダです。
 
 サクラエディタのソースコード解析には 1時間半ほどかかるので、並列実行が可能な Azure Pipelines で夜間の定期タスクのみで解析を実施します。  
@@ -44,25 +70,25 @@ https://sonarcloud.io/projects/create にアクセスしてプロジェクトを
 
 ### 解析手順の流れ (一般論)
 
-1. [chocolatey](https://chocolatey.org/) で [SonarScanner for MSBuild (SonarScanner.MSBuild.exe)](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+MSBuild) をダウンロードする
-1. curl で https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip をダウンロードして解凍する
+1. [chocolatey] で [SonarScanner for MSBuild (SonarScanner.MSBuild.exe)][SonarScanner for MSBuild (SonarScanner.MSBuild.exe)] をダウンロードする
+1. curl で [build-wrapper-win-x86.zip] をダウンロードして解凍する
 1. `C:\ProgramData\chocolatey\bin\SonarScanner.MSBuild.exe begin` を呼ぶ。
 1. `build-wrapper-win-x86.zip` の中の `build-wrapper-win-x86-64.exe` を使って msbuild.exe を起動する。
 1. `C:\ProgramData\chocolatey\bin\SonarScanner.MSBuild.exe end` を呼ぶ。
 
-メモ: [curl](https://curl.haxx.se/download.html) は [Git for Windows](https://gitforwindows.org/) をインストールすると `C:\Program Files\Git\mingw64\bin\curl.exe` にインストールされて、自動的にパスも通されます。
+メモ: [curl] は [Git for Windows] をインストールすると `C:\Program Files\Git\mingw64\bin\curl.exe` にインストールされて、自動的にパスも通されます。
 
 ### 解析手順の流れ (サクラエディタ)
 
-1. [chocolatey](https://chocolatey.org/) で [SonarScanner for MSBuild (SonarScanner.MSBuild.exe)](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+MSBuild) をダウンロードする
+1. [chocolatey] で [SonarScanner for MSBuild (SonarScanner.MSBuild.exe)] をダウンロードする
     1. `choco install "msbuild-sonarqube-runner" -y`
-1. [build-sln.bat](build-sln.bat) でソリューションをビルドする
-    1. [build-sonar-qube-start.bat](build-sonar-qube-start.bat) で SonarQube の準備を行う。
-        1. [build-sonar-qube-env.bat](build-sonar-qube-env.bat) を呼び出し必要な環境変数の設定を行う。
-        1. curl で https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip をダウンロードして解凍する。
+1. [build-sln.bat] でソリューションをビルドする
+    1. [build-sonar-qube-start.bat] で SonarQube の準備を行う。
+        1. [build-sonar-qube-env.bat] を呼び出し必要な環境変数の設定を行う。
+        1. curl で [build-wrapper-win-x86.zip] をダウンロードして解凍する。
         1. `C:\ProgramData\chocolatey\bin\SonarScanner.MSBuild.exe begin` を呼んで SonarQube の解析を開始する。
-    1. `build-wrapper-win-x86.zip` の中の `build-wrapper-win-x86-64.exe` 経由で `msbuild.exe` を起動する。
-    1. [build-sonar-qube-finish.bat](build-sonar-qube-finish.bat) で SonarQube の解析結果を [SonarCloud](https://sonarcloud.io/about) のサーバーに結果を送る。
+    1. [build-wrapper-win-x86.zip] の中の `build-wrapper-win-x86-64.exe` 経由で `msbuild.exe` を起動する。
+    1. [build-sonar-qube-finish.bat] で SonarQube の解析結果を [SonarCloud] のサーバーに結果を送る。
         1. `C:\ProgramData\chocolatey\bin\SonarScanner.MSBuild.exe end` を呼ぶ。
 
 ## サクラエディタを SonarQube でビルドする手順
@@ -96,7 +122,7 @@ https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+MSB
 
 #### 環境変数
 
-1. https://dev.azure.com/sakuraeditor/sakura にアクセスします。
+1. [azure pipelines の sakura editor のプロジェクト] にアクセスします。
 2. `Pipelines` を選ぶ
 3. `Edit` ボタンを押す
 4. `Run` の右隣りのアイコンをクリックする
@@ -110,7 +136,7 @@ https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+MSB
 
 #### スケジュール設定
 
-1. https://dev.azure.com/sakuraeditor/sakura にアクセスします。
+1. [azure pipelines の sakura editor のプロジェクト] にアクセスします。
 2. `Pipelines` を選ぶ
 3. `Edit` ボタンを押す
 4. `Run` の右隣りのアイコンをクリックする
@@ -135,14 +161,14 @@ https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+MSB
     eq(variables['Build.Reason'], 'Schedule')
 ```
 
-1. SonarQube の実行には時間がかかるので [timeoutInMinutes](https://docs.microsoft.com/ja-jp/azure/devops/pipelines/process/phases?view=azure-devops&tabs=yaml#timeouts) の設定を行いタイムアウト時間を延ばす
-1. [variables](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch) の設定で `SONAR_QUBE` の環境変数を定義して、[build-sln.bat](build-sln.bat) に [SonarQube](https://www.sonarqube.org/) を有効にしたビルドであると伝える
-1. [Predefined build variables](https://docs.microsoft.com/ja-jp/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml) のうち `Build.Reason` を参照して、どういうトリガーでビルドが行われたかを yaml の中からあるいはビルド用のバッチファイル等から参照することができる。
+1. SonarQube の実行には時間がかかるので [Azure Pipelines の timeoutInMinutes] の設定を行いタイムアウト時間を延ばす
+1. [Azure Pipelines の variables] の設定で `SONAR_QUBE` の環境変数を定義して、[build-sln.bat] に [SonarQube] を有効にしたビルドであると伝える
+1. [Azure Pipelines の Predefined build variables] のうち `Build.Reason` を参照して、どういうトリガーでビルドが行われたかを yaml の中からあるいはビルド用のバッチファイル等から参照することができる。
 	- `Build.Reason` を yaml の中で参照するとき `variables['Build.Reason']`
 	- `Build.Reason` を バッチファイル の中で参照するとき `BUILD_REASON`
-1. [conditon](https://docs.microsoft.com/ja-jp/azure/devops/pipelines/process/conditions?view=azure-devops&viewFallbackFrom=vsts&tabs=yaml) でビルドトリガーの条件を設定する。条件指定では and や or の条件を指定することができる。
+1. [Azure Pipelines の conditon] でビルドトリガーの条件を設定する。条件指定では and や or の条件を指定することができる。
 
-	`Build.Reason` としてどういう値を設定できるかは [variables](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch) の `Build.Reason` に説明がある。
+	`Build.Reason` としてどういう値を設定できるかは [Azure Pipelines の variables] の `Build.Reason` に説明がある。
 
 
 例: ビルドトリガーが定期実行のとき
@@ -186,7 +212,7 @@ steps:
 2. `script` で `build-sln.bat` を実行する
 3. `env` で `環境変数` のところで設定した環境変数が有効になるように設定する。
 
-	[Secrets](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch&viewFallbackFrom=vsts#secret-variables) の項目を参照
+	[Azure Pipelines の Secret Variable] の項目を参照
 
 ### Appveyor の設定
 
@@ -207,4 +233,4 @@ Appveyor のプロジェクトで Settings の Environment にアクセスして
 
 SonarQube で使用するアクセストークンを暗号化するために使用する
 
-https://www.appveyor.com/docs/build-configuration/#secure-variables
+[appveyor の Secure Variables]
