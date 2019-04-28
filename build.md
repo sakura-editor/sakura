@@ -17,11 +17,12 @@
                 - [具体例 (Win32 の Release)](#具体例-win32-の-release)
     - [ビルドの仕組み](#ビルドの仕組み)
         - [appveyor でのビルドの仕組み](#appveyor-でのビルドの仕組み)
+        - [Azure Pipelines でのビルドの仕組み](#azure-pipelines-でのビルドの仕組み)
         - [インストーラの仕組み](#インストーラの仕組み)
     - [開発者向けの情報](#開発者向けの情報)
         - [githash.h の更新のスキップ](#githashh-の更新のスキップ)
         - [Powershell によるZIPファイルの圧縮、解凍、内容確認の強制](#powershell-によるzipファイルの圧縮解凍内容確認の強制)
-        - [MinGW-w64 ビルド](#MinGW-w64-ビルド)
+        - [MinGW w64 ビルド](#mingw-w64-ビルド)
 
 <!-- /TOC -->
 
@@ -99,9 +100,9 @@ build-all.bat Win32 Release
 
 [こちら](appveyor.md) で appveyor 上でのビルドの仕組みを説明しています。
 
-### azure pipelines でのビルドの仕組み
+### Azure Pipelines でのビルドの仕組み
 
-[こちら](azure-pipelines.md) で [azure pipelines](https://azure.microsoft.com/ja-jp/services/devops/pipelines/) 上でのビルドの仕組みを説明しています。
+[こちら](azure-pipelines.md) で [Azure Pipelines](https://azure.microsoft.com/ja-jp/services/devops/pipelines/) 上でのビルドの仕組みを説明しています。
 
 ### インストーラの仕組み
 
