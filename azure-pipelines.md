@@ -1,8 +1,8 @@
-﻿# azure pipelines でのビルド
+﻿# Azure Pipelines でのビルド
 
 <!-- TOC -->
 
-- [azure pipelines でのビルド](#azure-pipelines-でのビルド)
+- [Azure Pipelines でのビルド](#azure-pipelines-でのビルド)
     - [Azure Pipelines の利用開始方法](#azure-pipelines-の利用開始方法)
         - [単にサクラエディタ用のプロジェクトに読み取りアクセスする場合](#単にサクラエディタ用のプロジェクトに読み取りアクセスする場合)
         - [Azure Pipelines にアカウントがない場合](#azure-pipelines-にアカウントがない場合)
@@ -35,7 +35,7 @@ https://azure.microsoft.com/ja-jp/services/devops/pipelines/ にアクセスし�
 
 ## 参考情報
 
-- [Wiki: azure pipelinesメモ](https://github.com/sakura-editor/sakura/wiki/azure-pipelines%E3%83%A1%E3%83%A2)
+- [Wiki: Azure Pipelinesメモ](https://github.com/sakura-editor/sakura/wiki/azure-pipelines%E3%83%A1%E3%83%A2)
 
 ## 参考サイト
 
