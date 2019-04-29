@@ -1,0 +1,57 @@
+parameters:
+  name: ''
+  vmImage: ''
+  displayName: ''
+
+jobs:
+- job: ${{ parameters.name }}
+  displayName: ${{ parameters.displayName }}
+  pool:
+    vmImage: ${{ parameters.vmImage }}
+
+  # see https://docs.microsoft.com/ja-jp/azure/devops/pipelines/process/phases?view=azure-devops&tabs=yaml#timeouts
+  timeoutInMinutes: 120
+
+  strategy:
+    maxParallel: 4
+    matrix:
+      Win32_Debug:
+        BuildPlatform: 'Win32'
+        Configuration: 'Debug'
+      Win32_Release:
+        BuildPlatform: 'Win32'
+        Configuration: 'Release'
+      Win64_Debug:
+        BuildPlatform: 'x64'
+        Configuration: 'Debug'
+      Win64_Release:
+        BuildPlatform: 'x64'
+        Configuration: 'Release'
+
+  # https://docs.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch
+  variables:
+    SONAR_QUBE: Yes
+
+  # set condition    at https://docs.microsoft.com/ja-jp/azure/devops/pipelines/process/conditions?view=azure-devops&viewFallbackFrom=vsts&tabs=yaml
+  # see Build.Reason at https://docs.microsoft.com/ja-jp/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml
+  condition:
+    #and
+    #(
+    #  ne(variables['Build.Reason'], 'Schedule'),
+    #  ne(variables['Build.Reason'], 'PullRequest')
+    #)
+    eq(variables['Build.Reason'], 'Schedule')
+
+  steps:
+  - script: choco install "msbuild-sonarqube-runner" -y
+    displayName: install msbuild-sonarqube-runner
+
+  # Build solution with SonarQube
+  - script: build-sln.bat       $(BuildPlatform) $(Configuration)
+    displayName: Build solution with SonarQube
+
+    # see https://docs.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch&viewFallbackFrom=vsts#secret-variables
+    env:
+      SONAR_QUBE_ORG: $(SONAR_QUBE_ORG)
+      SONAR_QUBE_PROJECT: $(SONAR_QUBE_PROJECT)
+      SONAR_QUBE_TOKEN: $(SONAR_QUBE_TOKEN)

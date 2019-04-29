@@ -9,6 +9,7 @@ jobs:
   displayName: ${{ parameters.displayName }}
   pool:
     vmImage: ${{ parameters.vmImage }}
+
   steps:
   # show environmental variables for debug.
   - script: set
