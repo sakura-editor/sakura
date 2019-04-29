@@ -772,7 +772,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl1(
 		hr = pFileSaveDialog->GetResult(&pShellItem); RETURN_IF_FAILED
 		PWSTR pszFilePath;
 		hr = pShellItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath); RETURN_IF_FAILED
-		_tcscpy(pszPath, pszFilePath);
+		wcscpy(pszPath, pszFilePath);
 		CoTaskMemFree(pszFilePath);
 	}
 
