@@ -1074,7 +1074,7 @@ void CPrintPreview::OnPrint( void )
 		}
 		return;
 	}
-	if( 0 != memcmp(&m_pPrintSettingOrg->m_mdmDevMode, &m_pPrintSetting->m_mdmDevMode, sizeof(m_pPrintSetting->m_mdmDevMode)) ){
+	if( m_pPrintSettingOrg->m_mdmDevMode != m_pPrintSetting->m_mdmDevMode ){
 		m_pPrintSettingOrg->m_mdmDevMode = m_pPrintSetting->m_mdmDevMode;
 		// 自分はLockで更新しない
 		CAppNodeGroupHandle(0).PostMessageToAllEditors(

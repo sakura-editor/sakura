@@ -61,6 +61,39 @@ struct	MYDEVMODE {
 	DWORD	dmPelsHeight;
 	DWORD	dmDisplayFlags;
 	DWORD	dmDisplayFrequency;
+
+	//! 等価比較演算子
+	bool operator == (MYDEVMODE& rhs) const noexcept {
+		return m_bPrinterNotFound == rhs.m_bPrinterNotFound
+			&& 0 == _tcscmp(m_szPrinterDriverName, rhs.m_szPrinterDriverName)
+			&& 0 == _tcscmp(m_szPrinterDeviceName, rhs.m_szPrinterDeviceName)
+			&& 0 == _tcscmp(m_szPrinterOutputName, rhs.m_szPrinterOutputName)
+			&& dmFields == rhs.dmFields
+			&& dmOrientation == rhs.dmOrientation
+			&& dmPaperSize == rhs.dmPaperSize
+			&& dmPaperLength == rhs.dmPaperLength
+			&& dmPaperWidth == rhs.dmPaperWidth
+			&& dmScale == rhs.dmScale
+			&& dmCopies == rhs.dmCopies
+			&& dmDefaultSource == rhs.dmDefaultSource
+			&& dmPrintQuality == rhs.dmPrintQuality
+			&& dmColor == rhs.dmColor
+			&& dmDuplex == rhs.dmDuplex
+			&& dmYResolution == rhs.dmYResolution
+			&& dmTTOption == rhs.dmTTOption
+			&& dmCollate == rhs.dmCollate
+			&& 0 == _tcscmp(dmFormName, rhs.dmFormName)
+			&& dmLogPixels == rhs.dmLogPixels
+			&& dmBitsPerPel == rhs.dmBitsPerPel
+			&& dmPelsWidth == rhs.dmPelsWidth
+			&& dmPelsHeight == rhs.dmPelsHeight
+			&& dmDisplayFlags == rhs.dmDisplayFlags
+			&& dmDisplayFrequency == rhs.dmDisplayFrequency;
+	}
+	//! 否定の等価比較演算子
+	bool operator != (MYDEVMODE& rhs) const noexcept {
+		return !(*this == rhs);
+	}
 };
 
 // 2006.08.14 Moca 用紙情報の統合 PAPER_INFO新設
