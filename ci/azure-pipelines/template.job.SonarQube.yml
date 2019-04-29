@@ -32,15 +32,15 @@ jobs:
   variables:
     SONAR_QUBE: Yes
 
-  ## set condition    at https://docs.microsoft.com/ja-jp/azure/devops/pipelines/process/conditions?view=azure-devops&viewFallbackFrom=vsts&tabs=yaml
-  ## see Build.Reason at https://docs.microsoft.com/ja-jp/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml
-  #condition:
-  #  #and
-  #  #(
-  #  #  ne(variables['Build.Reason'], 'Schedule'),
-  #  #  ne(variables['Build.Reason'], 'PullRequest')
-  #  #)
-  #  eq(variables['Build.Reason'], 'Schedule')
+  # set condition    at https://docs.microsoft.com/ja-jp/azure/devops/pipelines/process/conditions?view=azure-devops&viewFallbackFrom=vsts&tabs=yaml
+  # see Build.Reason at https://docs.microsoft.com/ja-jp/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml
+  condition:
+    #and
+    #(
+    #  ne(variables['Build.Reason'], 'Schedule'),
+    #  ne(variables['Build.Reason'], 'PullRequest')
+    #)
+    eq(variables['Build.Reason'], 'Schedule')
 
   steps:
   - script: choco install "msbuild-sonarqube-runner" -y
