@@ -15,9 +15,11 @@
             - [処理の流れ](#処理の流れ)
         - [postBuild.bat の構造](#postbuildbat-の構造)
             - [処理の流れ](#処理の流れ-1)
+        - [mingw32-del.bat の構造](#mingw32-delbat-の構造)
+            - [処理の流れ](#処理の流れ-2)
         - [zipArtifacts.bat の構造](#zipartifactsbat-の構造)
             - [生成する環境変数](#生成する環境変数-1)
-            - [処理の流れ](#処理の流れ-2)
+            - [処理の流れ](#処理の流れ-3)
 
 <!-- /TOC -->
 
@@ -40,7 +42,6 @@
 |APPVEYOR_ACCOUNT_NAME              | appveyor のアカウント名 (sakura editor の場合 "sakuraeditor") |
 |APPVEYOR_BUILD_NUMBER              | ビルド番号 |
 |APPVEYOR_REPO_COMMIT               | commit Hash |
-|APPVEYOR_REPO_TAG_NAME             | tag 名 |
 |APPVEYOR_URL                       | https://ci.appveyor.com |
 |APPVEYOR_BUILD_VERSION             | appveyor.yml の version フィールドの値 |
 |APPVEYOR_PROJECT_SLUG              | project slug (appveyor の URL 名) |
@@ -48,6 +49,8 @@
 |APPVEYOR_PULL_REQUEST_HEAD_COMMIT  | Pull Request の Head commit Hash |
 |APPVEYOR_REPO_NAME                 | リポジトリ名 (owner-name/repo-name) |
 |APPVEYOR_REPO_PROVIDER             | appveyor の参照するリポジトリ種別 (GitHub の場合 "gitHub") |
+
+APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使うようにしました。[#876](https://github.com/sakura-editor/sakura/pull/876)
 
 * 上記環境変数をローカル環境で set コマンドで設定することにより appveyor でビルドしなくてもローカルでテストできます。
 * 上記の環境変数がどんな値になるのかは、過去の appveyor ビルドでのログを見ることによって確認できます。
@@ -135,6 +138,7 @@
 | GIT_SHORT_COMMIT_HASH         | git の commit Hash の先頭8文字                      | git 環境が有効な場合              |
 | GIT_COMMIT_HASH               | git の commit Hash                                  | git 環境が有効な場合              |
 | GIT_REMOTE_ORIGIN_URL         | git remote origin URL                               | git 環境が有効な場合              |
+| GIT_TAG_NAME                  | git の tag                                        | git 環境が有効な場合              |
 | GITHUB_COMMIT_URL             | gitHub で対応する commit に対する URL               | appveyor でのビルドのみ有効       |
 | GITHUB_COMMIT_URL_PR_HEAD     | gitHub の Pull Request の commit に対応する URL     | appveyor での PR のビルドのみ有効 |
 | APPVEYOR_SHORTHASH            | commit hash の先頭8文字                             | appveyor でのビルドのみ有効       |
@@ -154,9 +158,9 @@
 | GIT_SHORT_COMMIT_HASH           | GIT_SHORT_COMMIT_HASH           | 文字列   |
 | GIT_COMMIT_HASH                 | GIT_COMMIT_HASH                 | 文字列   |
 | GIT_REMOTE_ORIGIN_URL           | GIT_REMOTE_ORIGIN_URL           | 文字列   |
+| GIT_TAG_NAME                    | GIT_TAG_NAME                    | 文字列   |
 | APPVEYOR_URL                    | APPVEYOR_URL                    | 文字列   |
 | APPVEYOR_REPO_NAME              | APPVEYOR_REPO_NAME              | 文字列   |
-| APPVEYOR_REPO_TAG_NAME          | APPVEYOR_REPO_TAG_NAME          | 文字列   |
 | APPVEYOR_ACCOUNT_NAME           | APPVEYOR_ACCOUNT_NAME           | 文字列   |
 | APPVEYOR_PROJECT_SLUG           | APPVEYOR_PROJECT_SLUG           | 文字列   |
 | APPVEYOR_BUILD_VERSION          | APPVEYOR_BUILD_VERSION          | 文字列   |

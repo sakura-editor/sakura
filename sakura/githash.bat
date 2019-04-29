@@ -26,6 +26,12 @@ if not exist ..\.git (
 	@echo NOTE: No .git directory
 )
 
+@rem clear variable in advance
+set GIT_SHORT_COMMIT_HASH=
+set GIT_COMMIT_HASH=
+set GIT_REMOTE_ORIGIN_URL=
+set GIT_TAG_NAME=
+
 : Get git hash if git is enabled
 if "%GIT_ENABLED%" == "1" (
 	for /f "usebackq" %%s in (`"%CMD_GIT%" show -s --format^=%%h`) do (
@@ -37,10 +43,18 @@ if "%GIT_ENABLED%" == "1" (
 	for /f "usebackq" %%s in (`"%CMD_GIT%" config --get remote.origin.url`) do (
 		set GIT_REMOTE_ORIGIN_URL=%%s
 	)
+	
+	@rem get tag of 'HEAD'
+	@rem Ignore errors when `HEAD` is not tagged.
+	@rem https://superuser.com/questions/743735/suppressing-errors-from-an-embedded-command-in-a-batch-file-for-loop
+	for /f "usebackq" %%s in (`"%CMD_GIT%" describe --tags --contains 2^>nul`) do (
+		set GIT_TAG_NAME=%%s
+	)
 ) else (
 	set GIT_SHORT_COMMIT_HASH=
 	set GIT_COMMIT_HASH=
 	set GIT_REMOTE_ORIGIN_URL=
+	set GIT_TAG_NAME=
 )
 
 @rem get back to the original directory
@@ -109,9 +123,9 @@ if not errorlevel 1 (
 	@echo GIT_SHORT_COMMIT_HASH : %GIT_SHORT_COMMIT_HASH%
 	@echo GIT_COMMIT_HASH       : %GIT_COMMIT_HASH%
 	@echo GIT_REMOTE_ORIGIN_URL : %GIT_REMOTE_ORIGIN_URL%
+	@echo GIT_TAG_NAME          : %GIT_TAG_NAME%
 	@echo APPVEYOR_URL          : %APPVEYOR_URL%
 	@echo APPVEYOR_REPO_NAME    : %APPVEYOR_REPO_NAME%
-	@echo APPVEYOR_REPO_TAG_NAME: %APPVEYOR_REPO_TAG_NAME%
 	@echo APPVEYOR_ACCOUNT_NAME : %APPVEYOR_ACCOUNT_NAME%
 	@echo APPVEYOR_PROJECT_SLUG : %APPVEYOR_PROJECT_SLUG%
 	@echo APPVEYOR_BUILD_VERSION: %APPVEYOR_BUILD_VERSION%
@@ -147,6 +161,11 @@ if "%GIT_REMOTE_ORIGIN_URL%" == "" (
 ) else (
 	echo #define GIT_REMOTE_ORIGIN_URL "%GIT_REMOTE_ORIGIN_URL%"
 )
+if "%GIT_TAG_NAME%" == "" (
+	echo // GIT_TAG_NAME is not defined
+) else (
+	echo #define GIT_TAG_NAME "%GIT_TAG_NAME%"
+)
 
 if "%APPVEYOR_URL%" == "" (
 	echo // APPVEYOR_URL is not defined
@@ -162,12 +181,6 @@ if "%APPVEYOR_REPO_NAME%" == "" (
 
 @rem enable 'dev version' macro which will be disabled on release branches
 echo #define APPVEYOR_DEV_VERSION
-
-if "%APPVEYOR_REPO_TAG_NAME%" == "" (
-	echo // APPVEYOR_REPO_TAG_NAME is not defined
-) else (
-	echo #define APPVEYOR_REPO_TAG_NAME "%APPVEYOR_REPO_TAG_NAME%"
-)
 
 if "%APPVEYOR_ACCOUNT_NAME%" == "" (
 	echo // APPVEYOR_ACCOUNT_NAME is not defined
