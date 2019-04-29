@@ -858,11 +858,11 @@ HRESULT CDlgOpenFile_CommonItemDialog::OnItemSelected(
 			}
 			SetControlState(CtrlId::CHECK_BOM, state);
 			SetCheckButtonState(CtrlId::CHECK_BOM, bChecked ? TRUE : FALSE);
-			m_nCharCode = (ECodeType)dwIDItem;
+			m_nCharCode = static_cast<ECodeType>(dwIDItem);
 		}
 		break;
 	case CtrlId::COMBO_EOL:
-		m_cEol = (EEolType)dwIDItem;
+		m_cEol = static_cast<EEolType>(dwIDItem);
 		break;
 	case CtrlId::COMBO_MRU:
 		if (dwIDItem != 0) {
