@@ -24,6 +24,7 @@ if exist .sonarqube rmdir /s /q .sonarqube
 	/k:"%SONAR_QUBE_PROJECT%"                       ^
 	/o:"%SONAR_QUBE_ORG%"                           ^
 	/d:sonar.cfamily.build-wrapper-output=%~dp0bw-output ^
+	/d:sonar.cfamily.threads=%NUMBER_OF_PROCESSORS% ^
 	/d:sonar.sourceEncoding=UTF-8                   ^
 	/d:sonar.host.url="https://sonarcloud.io"       ^
 	/d:sonar.login="%SONAR_QUBE_TOKEN%"
