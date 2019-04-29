@@ -63,7 +63,7 @@ struct	MYDEVMODE {
 	DWORD	dmDisplayFrequency;
 
 	//! 等価比較演算子
-	bool operator == (MYDEVMODE& rhs) const noexcept {
+	bool operator == (const MYDEVMODE& rhs) const noexcept {
 		if (this == &rhs) return true;
 		return m_bPrinterNotFound == rhs.m_bPrinterNotFound
 			&& 0 == _tcsncmp(m_szPrinterDriverName, rhs.m_szPrinterDriverName, _countof(m_szPrinterDriverName) - 1)
@@ -92,7 +92,7 @@ struct	MYDEVMODE {
 			&& dmDisplayFrequency == rhs.dmDisplayFrequency;
 	}
 	//! 否定の等価比較演算子
-	bool operator != (MYDEVMODE& rhs) const noexcept {
+	bool operator != (const MYDEVMODE& rhs) const noexcept {
 		return !(*this == rhs);
 	}
 };
