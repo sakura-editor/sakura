@@ -50,10 +50,10 @@ if not "%APPVEYOR_BUILD_NUMBER%" == "" (
 	set BUILD_NUMBER=buildLocal
 )
 
-@echo checking APPVEYOR_REPO_TAG_NAME %APPVEYOR_REPO_TAG_NAME%
-if not "%APPVEYOR_REPO_TAG_NAME%" == "" (
+@echo checking GIT_TAG_NAME %GIT_TAG_NAME%
+if not "%GIT_TAG_NAME%" == "" (
 	@rem replace '/' with '_'
-	set TEMP_NAME1=!APPVEYOR_REPO_TAG_NAME:/=_!
+	set TEMP_NAME1=!GIT_TAG_NAME:/=_!
 	@echo TEMP_NAME1 = !TEMP_NAME1!
 	
 	@rem replace ' ' with '_'

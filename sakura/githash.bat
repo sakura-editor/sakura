@@ -126,7 +126,7 @@ if not errorlevel 1 (
 	@echo GIT_TAG_NAME          : %GIT_TAG_NAME%
 	@echo APPVEYOR_URL          : %APPVEYOR_URL%
 	@echo APPVEYOR_REPO_NAME    : %APPVEYOR_REPO_NAME%
-	@echo APPVEYOR_REPO_TAG_NAME: %APPVEYOR_REPO_TAG_NAME%
+	@echo GIT_TAG_NAME: %GIT_TAG_NAME%
 	@echo APPVEYOR_ACCOUNT_NAME : %APPVEYOR_ACCOUNT_NAME%
 	@echo APPVEYOR_PROJECT_SLUG : %APPVEYOR_PROJECT_SLUG%
 	@echo APPVEYOR_BUILD_VERSION: %APPVEYOR_BUILD_VERSION%
@@ -183,10 +183,10 @@ if "%APPVEYOR_REPO_NAME%" == "" (
 @rem enable 'dev version' macro which will be disabled on release branches
 echo #define APPVEYOR_DEV_VERSION
 
-if "%APPVEYOR_REPO_TAG_NAME%" == "" (
-	echo // APPVEYOR_REPO_TAG_NAME is not defined
+if "%GIT_TAG_NAME%" == "" (
+	echo // GIT_TAG_NAME is not defined
 ) else (
-	echo #define APPVEYOR_REPO_TAG_NAME "%APPVEYOR_REPO_TAG_NAME%"
+	echo #define GIT_TAG_NAME "%GIT_TAG_NAME%"
 )
 
 if "%APPVEYOR_ACCOUNT_NAME%" == "" (
