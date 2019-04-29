@@ -18,6 +18,8 @@ call %~dp0tools\zip\unzip.bat %BUILDWRAPPER_ZIP% %BUILDWRAPPER_DIR%
 
 if exist .sonarqube rmdir /s /q .sonarqube
 
+@echo NUMBER_OF_PROCESSORS : %NUMBER_OF_PROCESSORS%
+
 @rem to ensure hide variable SONAR_QUBE_TOKEN
 @echo off
 "%SonarScanner_MSBUILD%" begin                      ^
