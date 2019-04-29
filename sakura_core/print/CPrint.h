@@ -64,6 +64,7 @@ struct	MYDEVMODE {
 
 	//! 等価比較演算子
 	bool operator == (MYDEVMODE& rhs) const noexcept {
+		if (this == &rhs) return true;
 		return m_bPrinterNotFound == rhs.m_bPrinterNotFound
 			&& 0 == _tcsncmp(m_szPrinterDriverName, rhs.m_szPrinterDriverName, _countof(m_szPrinterDriverName) - 1)
 			&& 0 == _tcsncmp(m_szPrinterDeviceName, rhs.m_szPrinterDeviceName, _countof(m_szPrinterDeviceName) - 1)
