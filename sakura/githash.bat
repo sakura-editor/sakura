@@ -37,7 +37,11 @@ if "%GIT_ENABLED%" == "1" (
 	for /f "usebackq" %%s in (`"%CMD_GIT%" config --get remote.origin.url`) do (
 		set GIT_REMOTE_ORIGIN_URL=%%s
 	)
-	for /f "usebackq" %%s in (`"%CMD_GIT%" describe --tags`) do (
+	
+	@rem get tag of 'HEAD'
+	@rem Ignore errors when `HEAD` is not tagged.
+	@rem https://superuser.com/questions/743735/suppressing-errors-from-an-embedded-command-in-a-batch-file-for-loop
+	for /f "usebackq" %%s in (`"%CMD_GIT%" describe --tags --contains 2^>nul`) do (
 		set GIT_TAG_NAME=%%s
 	)
 ) else (
