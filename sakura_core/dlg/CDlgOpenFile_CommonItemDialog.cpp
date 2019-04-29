@@ -567,10 +567,10 @@ HRESULT CDlgOpenFile_CommonItemDialog::Customize()
 	if (m_customizeSetting.bUseEol) {
 		hr = StartVisualGroup(CtrlId::LABEL_EOL, LS(STR_FILEDIALOG_EOL)); RETURN_IF_FAILED
 		hr = AddComboBox(CtrlId::COMBO_EOL); RETURN_IF_FAILED
-		hr = AddControlItem(CtrlId::COMBO_EOL, 0, LS(STR_DLGOPNFL1)); RETURN_IF_FAILED
-		hr = AddControlItem(CtrlId::COMBO_EOL, 1, L"CR+LF"); RETURN_IF_FAILED
-		hr = AddControlItem(CtrlId::COMBO_EOL, 2, L"LF (UNIX)"); RETURN_IF_FAILED
-		hr = AddControlItem(CtrlId::COMBO_EOL, 3, L"CR (Mac)"); RETURN_IF_FAILED
+		hr = AddControlItem(CtrlId::COMBO_EOL, EOL_NONE, LS(STR_DLGOPNFL1)); RETURN_IF_FAILED
+		hr = AddControlItem(CtrlId::COMBO_EOL, EOL_CRLF, L"CR+LF"); RETURN_IF_FAILED
+		hr = AddControlItem(CtrlId::COMBO_EOL, EOL_LF, L"LF (UNIX)"); RETURN_IF_FAILED
+		hr = AddControlItem(CtrlId::COMBO_EOL, EOL_CR, L"CR (Mac)"); RETURN_IF_FAILED
 		hr = SetSelectedControlItem(CtrlId::COMBO_EOL, 0); RETURN_IF_FAILED
 		hr = EndVisualGroup(); RETURN_IF_FAILED
 	}
@@ -812,6 +812,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModalSaveDlg( SSaveInfo* pSaveInfo, bool b
 	else {
 		m_nCharCode = pSaveInfo->eCharCode;
 		m_bBom = pSaveInfo->bBomExist;
+		m_cEol = pSaveInfo->cEol;
 		m_customizeSetting.bCustomize = true;
 		m_customizeSetting.bUseCharCode = true;
 		m_customizeSetting.bUseEol = true;
@@ -857,7 +858,11 @@ HRESULT CDlgOpenFile_CommonItemDialog::OnItemSelected(
 			}
 			SetControlState(CtrlId::CHECK_BOM, state);
 			SetCheckButtonState(CtrlId::CHECK_BOM, bChecked ? TRUE : FALSE);
+			m_nCharCode = static_cast<ECodeType>(dwIDItem);
 		}
+		break;
+	case CtrlId::COMBO_EOL:
+		m_cEol = static_cast<EEolType>(dwIDItem);
 		break;
 	case CtrlId::COMBO_MRU:
 		if (dwIDItem != 0) {
@@ -888,6 +893,9 @@ HRESULT CDlgOpenFile_CommonItemDialog::OnCheckButtonToggled(
 	case CtrlId::CHECK_CP:
 		SetControlState(CtrlId::CHECK_CP, CDCS_VISIBLE);
 		AddComboCodePages(m_nCharCode);
+		break;
+	case CtrlId::CHECK_BOM:
+		m_bBom = bChecked ? true : false;
 		break;
 	}
 	return S_OK;
