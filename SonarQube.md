@@ -65,12 +65,12 @@ https://sonarcloud.io/account/security/ のページでいつでも Access Token
 
 ### ローカルで実行する場合の環境設定 (事前準備)
 
-1. https://www.java.com/ja/download/ から JAVA のランタイムをダウンロードしてインストールする
+1. https://java.com/ja/download/manual.jsp から **64bit 版 の JAVA のランタイム** をダウンロードしてインストールする
 1. `JAVA_HOME` の環境変数を設定する
 
 	例
 
-	`set JAVA_HOME=C:\Program Files (x86)\Java\jre1.8.0_201`
+	`set JAVA_HOME=C:\Program Files\Java\jre1.8.0_211`
 
 1. https://chocolatey.org/install#install-with-cmdexe を参考に chocolatey をインストールする。
 
