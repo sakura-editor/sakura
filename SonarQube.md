@@ -57,6 +57,12 @@ https://sonarcloud.io/projects/create にアクセスしてプロジェクトを
 - Access Token をメモしておきます。 
 **この情報はパスワードと同じ意味を持つので漏れないように注意します。**
 
+### Access Token の作成
+
+https://sonarcloud.io/account/security/ のページでいつでも Access Token の作成、Revoke ができます。
+
+ヘルプ: https://sonarcloud.io/documentation/user-guide/user-token/
+
 ### ローカルで実行する場合の環境設定 (事前準備)
 
 1. https://www.java.com/ja/download/ から JAVA のランタイムをダウンロードしてインストールする
