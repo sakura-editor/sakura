@@ -26,6 +26,12 @@ if not exist ..\.git (
 	@echo NOTE: No .git directory
 )
 
+@rem clear variable in advance
+set GIT_SHORT_COMMIT_HASH=
+set GIT_COMMIT_HASH=
+set GIT_REMOTE_ORIGIN_URL=
+set GIT_TAG_NAME=
+
 : Get git hash if git is enabled
 if "%GIT_ENABLED%" == "1" (
 	for /f "usebackq" %%s in (`"%CMD_GIT%" show -s --format^=%%h`) do (
