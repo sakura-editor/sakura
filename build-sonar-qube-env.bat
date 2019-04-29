@@ -1,5 +1,13 @@
 @rem to ensure hide variable SONAR_QUBE_TOKEN
 @echo off
+
+if not "%SONAR_QUBE%" == "Yes" (
+	set SONAR_QUBE_TOKEN=
+	set SONAR_QUBE_ORG=
+	set SONAR_QUBE_PROJECT=
+	exit /b 0
+)
+
 if "%SONAR_QUBE_TOKEN%" == "" (
 	@echo SONAR_QUBE_TOKEN is not defined. Abort without building.
 	exit /b 0
