@@ -42,7 +42,6 @@
 |APPVEYOR_ACCOUNT_NAME              | appveyor のアカウント名 (sakura editor の場合 "sakuraeditor") |
 |APPVEYOR_BUILD_NUMBER              | ビルド番号 |
 |APPVEYOR_REPO_COMMIT               | commit Hash |
-|~~APPVEYOR_REPO_TAG_NAME~~ (代わりに GIT_TAG_NAME を使う)        | tag 名 |
 |APPVEYOR_URL                       | https://ci.appveyor.com |
 |APPVEYOR_BUILD_VERSION             | appveyor.yml の version フィールドの値 |
 |APPVEYOR_PROJECT_SLUG              | project slug (appveyor の URL 名) |
@@ -50,6 +49,8 @@
 |APPVEYOR_PULL_REQUEST_HEAD_COMMIT  | Pull Request の Head commit Hash |
 |APPVEYOR_REPO_NAME                 | リポジトリ名 (owner-name/repo-name) |
 |APPVEYOR_REPO_PROVIDER             | appveyor の参照するリポジトリ種別 (GitHub の場合 "gitHub") |
+
+APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使うようにしました。[#876](https://github.com/sakura-editor/sakura/pull/876)
 
 * 上記環境変数をローカル環境で set コマンドで設定することにより appveyor でビルドしなくてもローカルでテストできます。
 * 上記の環境変数がどんな値になるのかは、過去の appveyor ビルドでのログを見ることによって確認できます。
