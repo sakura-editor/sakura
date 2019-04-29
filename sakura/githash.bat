@@ -113,6 +113,7 @@ if not errorlevel 1 (
 	@echo GIT_SHORT_COMMIT_HASH : %GIT_SHORT_COMMIT_HASH%
 	@echo GIT_COMMIT_HASH       : %GIT_COMMIT_HASH%
 	@echo GIT_REMOTE_ORIGIN_URL : %GIT_REMOTE_ORIGIN_URL%
+	@echo GIT_TAG_NAME          : %GIT_TAG_NAME%
 	@echo APPVEYOR_URL          : %APPVEYOR_URL%
 	@echo APPVEYOR_REPO_NAME    : %APPVEYOR_REPO_NAME%
 	@echo APPVEYOR_REPO_TAG_NAME: %APPVEYOR_REPO_TAG_NAME%
@@ -150,6 +151,11 @@ if "%GIT_REMOTE_ORIGIN_URL%" == "" (
 	echo // GIT_REMOTE_ORIGIN_URL is not defined
 ) else (
 	echo #define GIT_REMOTE_ORIGIN_URL "%GIT_REMOTE_ORIGIN_URL%"
+)
+if "%GIT_TAG_NAME%" == "" (
+	echo // GIT_TAG_NAME is not defined
+) else (
+	echo #define GIT_TAG_NAME "%GIT_TAG_NAME%"
 )
 
 if "%APPVEYOR_URL%" == "" (
