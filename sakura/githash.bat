@@ -37,10 +37,14 @@ if "%GIT_ENABLED%" == "1" (
 	for /f "usebackq" %%s in (`"%CMD_GIT%" config --get remote.origin.url`) do (
 		set GIT_REMOTE_ORIGIN_URL=%%s
 	)
+	for /f "usebackq" %%s in (`"%CMD_GIT%" describe --tags`) do (
+		set GIT_TAG_NAME=%%s
+	)
 ) else (
 	set GIT_SHORT_COMMIT_HASH=
 	set GIT_COMMIT_HASH=
 	set GIT_REMOTE_ORIGIN_URL=
+	set GIT_TAG_NAME=
 )
 
 @rem get back to the original directory
