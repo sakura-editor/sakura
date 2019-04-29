@@ -161,7 +161,6 @@ APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使う
 | GIT_TAG_NAME                    | GIT_TAG_NAME                    | 文字列   |
 | APPVEYOR_URL                    | APPVEYOR_URL                    | 文字列   |
 | APPVEYOR_REPO_NAME              | APPVEYOR_REPO_NAME              | 文字列   |
-| APPVEYOR_REPO_TAG_NAME          | APPVEYOR_REPO_TAG_NAME          | 文字列   |
 | APPVEYOR_ACCOUNT_NAME           | APPVEYOR_ACCOUNT_NAME           | 文字列   |
 | APPVEYOR_PROJECT_SLUG           | APPVEYOR_PROJECT_SLUG           | 文字列   |
 | APPVEYOR_BUILD_VERSION          | APPVEYOR_BUILD_VERSION          | 文字列   |
