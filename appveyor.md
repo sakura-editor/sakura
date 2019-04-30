@@ -142,7 +142,6 @@ APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使う
 | GIT_TAG_NAME                  | git の tag                                        | git 環境が有効な場合              |
 | GITHUB_COMMIT_URL             | gitHub で対応する commit に対する URL               | appveyor でのビルドのみ有効       |
 | GITHUB_COMMIT_URL_PR_HEAD     | gitHub の Pull Request の commit に対応する URL     | appveyor での PR のビルドのみ有効 |
-| APPVEYOR_SHORTHASH            | commit hash の先頭8文字                             | appveyor でのビルドのみ有効       |
 | APPVEYOR_SHORTHASH_PR_HEAD    | Pull Request の commit hash の先頭8文字             | appveyor での PR のビルドのみ有効 |
 | APPVEYOR_BUILD_URL            | appveyor でのビルドに対応する URL                   | appveyor でのビルドのみ有効       |
 
@@ -173,7 +172,6 @@ APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使う
 | APPVEYOR_PR_NUMBER_LABEL        | APPVEYOR_PULL_REQUEST_NUMBER    | 文字列   |
 | GITHUB_COMMIT_URL               | GITHUB_COMMIT_URL               | 文字列   |
 | GITHUB_COMMIT_URL_PR_HEAD       | GITHUB_COMMIT_URL_PR_HEAD       | 文字列   |
-| APPVEYOR_SHORTHASH              | APPVEYOR_SHORTHASH              | 文字列   |
 | APPVEYOR_SHORTHASH_PR_HEAD      | APPVEYOR_SHORTHASH_PR_HEAD      | 文字列   |
 | APPVEYOR_BUILD_URL              | APPVEYOR_BUILD_URL              | 文字列   |
 
