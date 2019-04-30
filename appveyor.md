@@ -41,7 +41,6 @@
 ----|---- 
 |APPVEYOR_ACCOUNT_NAME              | appveyor のアカウント名 (sakura editor の場合 "sakuraeditor") |
 |APPVEYOR_BUILD_NUMBER              | ビルド番号 |
-|APPVEYOR_REPO_COMMIT               | commit Hash |
 |APPVEYOR_URL                       | https://ci.appveyor.com |
 |APPVEYOR_BUILD_VERSION             | appveyor.yml の version フィールドの値 |
 |APPVEYOR_PROJECT_SLUG              | project slug (appveyor の URL 名) |
