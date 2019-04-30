@@ -3,6 +3,7 @@
 set platform=%1
 set configuration=%2
 
+call "%~dp0sakura\githash.bat" "%~dp0sakura_core"
 if "%platform%" == "Win32" (
 	@rem OK
 ) else if "%platform%" == "x64" (
