@@ -54,7 +54,15 @@ jobs:
     displayName: Unit test
 
   # see https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/copy-files?view=azure-devops&tabs=yaml
+  #
+  # "condition:" に関しては以下を参照
+  #     https://docs.microsoft.com/en-us/azure/devops/pipelines/process/conditions?view=azure-devops&tabs=yaml
+  #
+  # "succeededOrFailed()" に関しては以下を参照
+  #     https://docs.microsoft.com/en-us/azure/devops/pipelines/process/conditions?view=azure-devops&tabs=yaml#job-status-functions
+  #
   - task: CopyFiles@1
+    condition: succeededOrFailed()
     displayName: Copy to ArtifactStagingDirectory
     inputs:
       contents: '**.zip'
@@ -62,6 +70,7 @@ jobs:
 
   # see https://docs.microsoft.com/en-us/azure/devops/pipelines/artifacts/build-artifacts?view=azure-devops&tabs=yaml
   - task: PublishBuildArtifacts@1
+    condition: succeededOrFailed()
     displayName: Publish ArtifactStagingDirectory
     inputs:
        pathtoPublish: '$(Build.ArtifactStagingDirectory)'
@@ -69,6 +78,7 @@ jobs:
 
   # see https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=yaml
   - task: PublishTestResults@2
+    condition: succeededOrFailed()
     inputs:
       testResultsFormat: 'JUnit'
       testResultsFiles: '**/*-googletest-*.xml'
