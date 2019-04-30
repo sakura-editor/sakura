@@ -89,7 +89,15 @@ set APPDIR=Inno Setup 5
 set PATH2=%PATH%;%ProgramFiles%\%APPDIR%\;%ProgramFiles(x86)%\%APPDIR%\;%ProgramW6432%\%APPDIR%\;
 for /f "usebackq delims=" %%a in (`where $PATH2:ISCC.exe`) do ( 
     set "CMD_ISCC=%%a"
-    exit /b
+)
+if not "%CMD_ISCC%" == "" (
+	exit /b
+)
+
+set APPDIR=Inno Setup 6
+set PATH2=%PATH%;%ProgramFiles%\%APPDIR%\;%ProgramFiles(x86)%\%APPDIR%\;%ProgramW6432%\%APPDIR%\;
+for /f "usebackq delims=" %%a in (`where $PATH2:ISCC.exe`) do ( 
+    set "CMD_ISCC=%%a"
 )
 exit /b
 
