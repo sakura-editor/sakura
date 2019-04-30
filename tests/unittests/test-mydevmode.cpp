@@ -37,6 +37,7 @@
 
 #include <cassert>
 #include <limits>
+#include <string>
 
 /*! テストのベースとなる値 */
 static constexpr MYDEVMODE myDevMode = {
@@ -255,4 +256,58 @@ TEST(MYDEVMODETest, operatorNotEqual)
 	EXPECT_NE(myDevMode, value);
 	value.dmDisplayFrequency = myDevMode.dmDisplayFrequency;
 	EXPECT_EQ(myDevMode, value);
+}
+
+/*!
+ * @brief 等価比較演算子が一般保護違反を犯さないことを保証する非機能要件テスト
+ *
+ *  通常、ここまでやる必要はないが、修正の理由が「安全のため」なので、
+ *  実際にどういうケースで一般保護例外違反となるか、コード的に発生させる方法の共有を兼ねて実装したもの。
+ */
+TEST(MYDEVMODETest, StrategyForSegmentationFault)
+{
+	// システムのページサイズを取得する
+	SYSTEM_INFO systemInfo = { 0 };
+	::GetSystemInfo(&systemInfo);
+
+	// システムページサイズ
+	const auto pageSize = systemInfo.dwPageSize;
+	// 確保領域サイズ(2ページ分)
+	const auto allocSize = pageSize * 2;
+
+	// 仮想メモリ範囲を予約する。予約時点では全体をNOACCESS指定にしておく。
+	LPVOID memBlock1 = ::VirtualAlloc(NULL, allocSize, MEM_RESERVE, PAGE_NOACCESS);
+	assert(memBlock1);
+
+	// 仮想メモリを1ページ分だけコミット(=確保)する。2ページ目はNOACCESSのまま。
+	wchar_t* buf1 = static_cast<wchar_t*>(::VirtualAlloc(memBlock1, pageSize, MEM_COMMIT, PAGE_READWRITE));
+	assert(buf1);
+
+	// 確保したメモリ領域をASCII文字'a'で埋める
+	::wmemset(buf1, L'a', pageSize / sizeof(wchar_t));
+
+	// メモリデータをテスト対象型にマップする。実態として配列のように扱えるポインタを取得している。
+	MYDEVMODE* pValues = reinterpret_cast<MYDEVMODE*>(buf1);
+
+	// 例外判定用の巨大な文字列を作る。これは2ページ分のサイズを持つ巨大データ。
+	std::wstring largeString(pageSize, L'a');
+	const auto pLargeStr = largeString.c_str();
+
+	/* DEATHテストで例外ケースの判定を行う。
+	 * pLargeStrには、コミットサイズの倍のデータが入っているので、
+	 * 単純にstrcmpするとreserveしただけの領域にアクセスしてしまい一般保護違反(access violation)が起きる。
+	 *
+	 * 想定結果：一般保護違反で落ちる
+	 * 備考：例外メッセージは無視する(例外が起きたことが検知できればよいから。)
+	 */
+	ASSERT_DEATH({ ::_tcscmp(pValues[0].m_szPrinterDeviceName, pLargeStr); }, ".*");
+
+	// 等価比較演算子を使った場合には落ちないことを確認する
+	EXPECT_TRUE(pValues[0] == pValues[1]);
+	EXPECT_FALSE(pValues[0] != pValues[1]);
+
+	// 仮想メモリをデコミット(=解放)する。
+	::VirtualFree((LPVOID)buf1, pageSize, MEM_DECOMMIT);
+	// 仮想メモリ範囲を解放する。
+	::VirtualFree(memBlock1, 0, MEM_RELEASE);
 }
