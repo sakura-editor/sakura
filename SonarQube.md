@@ -132,7 +132,7 @@ https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+MSB
 8. `SONAR_QUBE_TOKEN` を追加して値を設定し、 鍵のアイコンをクリックする (重要) 
 9. `Save & Queue` で `Save` を選ぶ
 
-	![環境変数の設定画面](azure-SonarQube.png)
+	![環境変数の設定画面](ci/azure-pipelines/azure-SonarQube.png)
 
 #### スケジュール設定
 
@@ -142,11 +142,11 @@ https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+MSB
 4. `Run` の右隣りのアイコンをクリックする
 5. `Triggers` のボタンを押す
 6. `Scheduled` の `Add` をクリックする
-	![スケジュール設定1](azure-SonarQube-schedule1.png)
+	![スケジュール設定1](ci/azure-pipelines/azure-SonarQube-schedule1.png)
 7. 実行させたいスケジュールを設定して、実行させる対象ブランチを設定する
-	![スケジュール設定2](azure-SonarQube-schedule2.png)
+	![スケジュール設定2](ci/azure-pipelines/azure-SonarQube-schedule2.png)
 8. 設定を保存する
-	![スケジュール設定3](azure-SonarQube-schedule3.png)
+	![スケジュール設定3](ci/azure-pipelines/azure-SonarQube-schedule3.png)
 
 #### azure-pipelines.yml の設定
 
@@ -226,7 +226,7 @@ Appveyor のプロジェクトで Settings の Environment にアクセスして
 |SONAR_QUBE_PROJECT|Sonar Qube のプロジェクト識別子||
 |SONAR_QUBE_TOKEN|Sonar Qube のアクセスキー (API キー)|追加するとき右の鍵マークを押して秘密の環境変数に設定する|
 
-![環境変数の設定画面](appveyor-SonarQube.png)
+![環境変数の設定画面](ci/appveyor/appveyor-SonarQube.png)
 
 
 #### Secure the GitHub Authentication token
