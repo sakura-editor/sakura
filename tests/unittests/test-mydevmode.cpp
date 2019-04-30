@@ -258,6 +258,10 @@ TEST(MYDEVMODETest, operatorNotEqual)
 	EXPECT_EQ(myDevMode, value);
 }
 
+/* アクセス不可のメモリ領域にアクセスしても、例外が発生しない事象があるので、
+ * 当面MSVCのリリース版では以下のテストを実行しない。
+ */
+#if defined(_DEBUG) || defined(__MINGW64__)
 /*!
  * @brief 等価比較演算子が一般保護違反を犯さないことを保証する非機能要件テスト
  *
@@ -311,3 +315,4 @@ TEST(MYDEVMODETest, StrategyForSegmentationFault)
 	// 仮想メモリ範囲を解放する。
 	::VirtualFree(memBlock1, 0, MEM_RELEASE);
 }
+#endif /* if defined(_DEBUG) || defined(__MINGW64__) */
