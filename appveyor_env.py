@@ -65,12 +65,6 @@ class AppveyorEnv():
 			if key in os.environ:
 				self.env[key] = os.environ[key]
 
-		#	set APPVEYOR_SHORTHASH=%APPVEYOR_REPO_COMMIT:~0,8%
-		if "APPVEYOR_REPO_COMMIT" in self.env:
-			commitHash = self.env["APPVEYOR_REPO_COMMIT"]
-			if len(commitHash) >= 8:
-				self.var["APPVEYOR_SHORTHASH"] = commitHash[0:8]
-
 		#	set APPVEYOR_SHORTHASH_PR_HEAD=%APPVEYOR_PULL_REQUEST_HEAD_COMMIT:~0,8%
 		if "APPVEYOR_PULL_REQUEST_HEAD_COMMIT" in self.env:
 			commitHashPRHead = self.env["APPVEYOR_PULL_REQUEST_HEAD_COMMIT"]
