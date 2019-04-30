@@ -70,11 +70,6 @@ if not "%APPVEYOR_PULL_REQUEST_NUMBER%" == "" (
 	set PR_NAME=PR%APPVEYOR_PULL_REQUEST_NUMBER%
 )
 
-@echo checking APPVEYOR_REPO_COMMIT %APPVEYOR_REPO_COMMIT%
-if not "%APPVEYOR_REPO_COMMIT%" == "" (
-	set SHORTHASH=%APPVEYOR_REPO_COMMIT:~0,8%
-)
-
 if "%ALPHA%" == "1" (
 	set RELEASE_PHASE=alpha
 ) else (
@@ -110,9 +105,9 @@ if not "%BUILD_NUMBER%" == "" (
 )
 @echo BASENAME = %BASENAME%
 
-@echo adding SHORTHASH
-if not "%SHORTHASH%" == "" (
-	set BASENAME=%BASENAME%-%SHORTHASH%
+@echo adding GIT_SHORT_COMMIT_HASH
+if not "%GIT_SHORT_COMMIT_HASH%" == "" (
+	set BASENAME=%BASENAME%-%GIT_SHORT_COMMIT_HASH%
 )
 @echo BASENAME = %BASENAME%
 
