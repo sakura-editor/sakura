@@ -19,6 +19,7 @@
 | Inno Setup 5       | CMD_ISCC     | Inno Setup 5       | ISCC.exe     |
 | cppcheck           | CMD_CPPCHECK | cppcheck           | cppcheck.exe |
 | doxygen            | CMD_DOXYGEN  | doxygen\bin        | doxygen.exe  |
+| vswhere            | CMD_VSWHERE  | Microsoft Visual Studio\Installer | vswhere.exe  |
 | MSBuild            | CMD_MSBUILD  | 特殊               | MSBuild.exe  |
 
 ## MSBuild以外の探索手順
@@ -34,9 +35,10 @@ MSBuild以外の探索手順は同一であり、7-Zipを例に説明する。
 
 ## MSBuild
 1. CMD_MSBUILDがセットされていればそれを使う
-2. パスが通っていればそれを使う
-3. Visual Studio 2017以降にあるMicrosoft Visual Studio\Installer\vswhere.exeを利用し、msbuild.exeを探す。
-4. 1～3で見つからなければCMD_MSBUILDには何もセットしない
+2. vswhere.exe(Visual Studio 2017に搭載されているバージョン)とwhereコマンド(windows標準)を利用し、Visual Studio 2017のmsbuild.exeを探す
+3. USE_LATEST_MSBUILDがセットされている場合、または、2.でmsbuild.exeが見つからない場合、vswhere.exe(Visual Studio 2019以降に搭載されたバージョン)を利用しmsbuild.exeを探す
+4. 2.および3.でmsbuild.exeが見つからない場合、whereコマンド(windows標準)を利用し、システム標準のmsbuild.exeを探す(MsBuild以外の探索手順にある「パスが通っている」と同じ意味)
+5. 2～4で見つからなければCMD_MSBUILDには何もセットしない
 
 ### 参照
 * https://github.com/Microsoft/vswhere
