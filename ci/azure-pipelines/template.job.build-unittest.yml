@@ -57,7 +57,9 @@ jobs:
   - task: CopyFiles@1
     displayName: Copy to ArtifactStagingDirectory
     inputs:
-      contents: '**.zip'
+      contents: |
+       **.zip
+       **.zip.md5
       targetFolder: $(Build.ArtifactStagingDirectory)
 
   # see https://docs.microsoft.com/en-us/azure/devops/pipelines/artifacts/build-artifacts?view=azure-devops&tabs=yaml
