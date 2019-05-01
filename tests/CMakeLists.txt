@@ -3,6 +3,7 @@ include(${CMAKE_SOURCE_DIR}/runtime.cmake)
 
 project (sakura-unittest)
 
+option(BUILD_GTEST "Build GoogleTest." ON)
 option(BUILD_SHARED_LIBS "Build shared libraries (DLLs)." OFF)
 
 # switch DLL or static libary by specifying by command line
@@ -16,17 +17,21 @@ endif (BUILD_SHARED_LIBS)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-add_subdirectory(googletest)
+if(BUILD_GTEST)
+	add_subdirectory(googletest)
+endif()
 add_subdirectory(unittests)
 
 # turn on solution folder
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # create solution folder
-set_target_properties(gmock       PROPERTIES FOLDER GoogleTest)
-set_target_properties(gmock_main  PROPERTIES FOLDER GoogleTest)
-set_target_properties(gtest       PROPERTIES FOLDER GoogleTest)
-set_target_properties(gtest_main  PROPERTIES FOLDER GoogleTest)
+if(BUILD_GTEST)
+	set_target_properties(gmock       PROPERTIES FOLDER GoogleTest)
+	set_target_properties(gmock_main  PROPERTIES FOLDER GoogleTest)
+	set_target_properties(gtest       PROPERTIES FOLDER GoogleTest)
+	set_target_properties(gtest_main  PROPERTIES FOLDER GoogleTest)
+endif()
 set_target_properties(tests1      PROPERTIES FOLDER Tests)
 
 # specify startup project
