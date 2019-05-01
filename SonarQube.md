@@ -94,7 +94,12 @@ https://sonarcloud.io/account/security/ のページでいつでも Access Token
 
 ### ローカルで実行する場合の環境設定 (事前準備)
 
-1. https://java.com/ja/download/manual.jsp から **64bit 版 の JAVA のランタイム** をダウンロードしてインストールする
+1. Oracle JRE8 の **64bit 版のランタイム** をダウンロードしてインストールする
+    1. Oracle JRE8 https://java.com/ja/download/manual.jsp (2019/05/02 現在)
+    1. Open JRE8 は Windows 版はダウンロードできなさそう。
+    1. 参考: [Prerequisites and Overview (Supported Platforms)](https://docs.sonarqube.org/latest/requirements/requirements/#header-3)
+    1. 参考: [SonarQubeの Java 11 対応状況](https://qiita.com/hayao_k/items/2cd81161f8dffd3a178b)
+
 1. `JAVA_HOME` の環境変数を設定する
 
 	例
