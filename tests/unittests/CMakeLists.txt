@@ -1,8 +1,10 @@
-cmake_minimum_required(VERSION 3.6)
+﻿cmake_minimum_required(VERSION 3.6)
 include(${CMAKE_SOURCE_DIR}/runtime.cmake)
 
 # define a variable of project name
 set(project_name tests1)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_LIST_DIR}/../../cmake)
 
 # define a variable SRC with file GLOB
 file(GLOB TEST_SRC ${CMAKE_CURRENT_LIST_DIR}/test*.cpp)
@@ -58,16 +60,9 @@ elseif(MSVC)
 	set(NUGET_ROOT ${CMAKE_CURRENT_LIST_DIR}/../../externals/nuget)
 	set(NUGET_PACKAGES_DIR ${CMAKE_CURRENT_LIST_DIR}/../../packages)
 
-	# find NuGet Command Line Interface.
-	find_program(NUGET nuget.exe HINTS ${NUGET_ROOT})
-	if(NUGET)
-		# restore NuGet packages directly in configure phase.
-		execute_process(COMMAND ${NUGET} restore
-			-PackagesDirectory ${NUGET_PACKAGES_DIR}
-			${CMAKE_CURRENT_LIST_DIR}/packages.config)
-	else()
-		message(FATAL "Cannot find nuget command line tool.")
-	endif()
+	#execute nuget restore.
+	find_package(NuGet REQUIRED)
+	NuGet_restore_package(${CMAKE_CURRENT_LIST_DIR}/packages.config)
 
 	# define variables for NuGet package of GoogleTest.
 	set(NuGet_GTest_Name		Microsoft.googletest)
