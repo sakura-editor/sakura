@@ -1,0 +1,5 @@
+NuGet Version: 4.9.2.5706
+
+NuGet Terms of use
+  see an official documentations
+  https://www.nuget.org/policies/Terms

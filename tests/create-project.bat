@@ -49,7 +49,7 @@ exit /b
 
 :setenv_Win32
 :setenv_x64
-	set CMAKE_GEN_OPT=-G "Visual Studio 15 2017" -A "%~1" -D BUILD_GTEST=ON
+	set CMAKE_GEN_OPT=-G "Visual Studio 15 2017" -A "%~1" -D BUILD_GTEST=OFF
 exit /b
 
 :setenv_MinGW

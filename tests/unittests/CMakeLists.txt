@@ -53,6 +53,34 @@ if(BUILD_GTEST)
 	# Build GoogleTest from source code.
 	target_link_libraries(${project_name} PRIVATE gtest)
 	target_link_libraries(${project_name} PRIVATE gtest_main)
+elseif(MSVC)
+	# Build without GoogleTest for MSVC(use NuGet package).
+	set(NUGET_ROOT ${CMAKE_CURRENT_LIST_DIR}/../../externals/nuget)
+	set(NUGET_PACKAGES_DIR ${CMAKE_CURRENT_LIST_DIR}/../../packages)
+
+	# find NuGet Command Line Interface.
+	find_program(NUGET nuget.exe HINTS ${NUGET_ROOT})
+	if(NUGET)
+		# restore NuGet packages directly in configure phase.
+		execute_process(COMMAND ${NUGET} restore
+			-PackagesDirectory ${NUGET_PACKAGES_DIR}
+			${CMAKE_CURRENT_LIST_DIR}/packages.config)
+	else()
+		message(FATAL "Cannot find nuget command line tool.")
+	endif()
+
+	# define variables for NuGet package of GoogleTest.
+	set(NuGet_GTest_Name		Microsoft.googletest)
+	set(NuGet_GTest_Id			Microsoft.googletest.v140.windesktop.msvcstl.static.rt-static)
+	set(NuGet_GTest_Version		1.8.0)
+	set(NuGet_GTest_Framework	native)
+	set(NuGet_GTest_Root		${NUGET_PACKAGES_DIR}/${NuGet_GTest_Id}.${NuGet_GTest_Version})
+
+	# add preprocessor symbol definitions required for GoogleTest in MSVC
+	target_compile_definitions(${project_name} PRIVATE _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
+
+	# add NuGet.targets as a library
+	target_link_libraries(${project_name} PRIVATE ${NuGet_GTest_Root}/build/${NuGet_GTest_Framework}/${NuGet_GTest_Id}.targets)
 else()
 	# Build without GoogleTest(use system library).
 	find_package(GTest REQUIRED)
