@@ -64,18 +64,9 @@ elseif(MSVC)
 	find_package(NuGet REQUIRED)
 	NuGet_restore_package(${CMAKE_CURRENT_LIST_DIR}/packages.config)
 
-	# define variables for NuGet package of GoogleTest.
-	set(NuGet_GTest_Name		Microsoft.googletest)
-	set(NuGet_GTest_Id			Microsoft.googletest.v140.windesktop.msvcstl.static.rt-static)
-	set(NuGet_GTest_Version		1.8.0)
-	set(NuGet_GTest_Framework	native)
-	set(NuGet_GTest_Root		${NUGET_PACKAGES_DIR}/${NuGet_GTest_Id}.${NuGet_GTest_Version})
-
-	# add preprocessor symbol definitions required for GoogleTest in MSVC
-	target_compile_definitions(${project_name} PRIVATE _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
-
-	# add NuGet.targets as a library
-	target_link_libraries(${project_name} PRIVATE ${NuGet_GTest_Root}/build/${NuGet_GTest_Framework}/${NuGet_GTest_Id}.targets)
+	#link with NuGet package of GoogleTest.
+	find_package(NuGetGTest)
+	NuGet_GTest_target_link_libraries(${project_name})
 else()
 	# Build without GoogleTest(use system library).
 	find_package(GTest REQUIRED)
