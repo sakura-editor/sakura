@@ -41,8 +41,8 @@ OutputBaseFilename=sakura_install{#MyAppVerH}-{#MyArchitecture}
 VersionInfoVersion={#MyAppVer}
 VersionInfoProductVersion={#MyAppVer}
 
-; OSバージョン制限
-MinVersion=0,5.0
+; OSバージョン制限(Windows 7 以降に対応)
+MinVersion=0,6.1
 
 [Languages]
 Name: "ja"; MessagesFile: "compiler:Languages\Japanese.isl"
