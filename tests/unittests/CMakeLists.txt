@@ -29,10 +29,6 @@ if (BUILD_SHARED_LIBS)
 	endif(MSVC)
 endif (BUILD_SHARED_LIBS)
 
-# link libraries
-target_link_libraries(${project_name} PRIVATE gtest)
-target_link_libraries(${project_name} PRIVATE gtest_main)
-
 # Hacks to reuse compiled editor objects.
 target_compile_definitions(${project_name} PRIVATE WIN32 _WIN32_WINNT=_WIN32_WINNT_WIN7)
 if (MSVC)
@@ -51,4 +47,18 @@ elseif (MINGW)
 	list (TRANSFORM ALL_O REPLACE "\\.(cpp|rc)$" ".o")
 	target_link_libraries (${project_name} PRIVATE ${ALL_O})
 endif ()
+
+# link with GoogleTest
+if(BUILD_GTEST)
+	# Build GoogleTest from source code.
+	target_link_libraries(${project_name} PRIVATE gtest)
+	target_link_libraries(${project_name} PRIVATE gtest_main)
+else()
+	# Build without GoogleTest(use system library).
+	find_package(GTest REQUIRED)
+	target_link_libraries(${project_name} PRIVATE GTest::GTest)
+	target_link_libraries(${project_name} PRIVATE GTest::Main)
+endif()
+
+# link libraries
 target_link_libraries (${project_name} PRIVATE winspool ole32 oleaut32 uuid comctl32 imm32 mpr imagehlp shlwapi winmm windowscodecs msimg32)
