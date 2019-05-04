@@ -17,8 +17,8 @@ for /r %%i in (tests*.exe) do (
 	@echo %%i --gtest_list_tests
 	%%i --gtest_list_tests || set ERROR_RESULT=1
 
-	@echo %%i | "%FILTER_BAT%"
-	%%i | "%FILTER_BAT%" || set ERROR_RESULT=1
+	@echo %%i --gtest_output=xml:%%i-googletest-%platform%-%configuration%.xml ^| "%FILTER_BAT%"
+	%%i --gtest_output=xml:%%i-googletest-%platform%-%configuration%.xml  | "%FILTER_BAT%" || set ERROR_RESULT=1
 )
 popd
 popd

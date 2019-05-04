@@ -12,6 +12,8 @@
     - [Azure Pipelines の設定ファイルの構成](#azure-pipelines-の設定ファイルの構成)
     - [Azure Pipelines の template ファイルの命名規則](#azure-pipelines-の-template-ファイルの命名規則)
     - [Azure Pipelines のJOB の構成](#azure-pipelines-のjob-の構成)
+    - [Azure Pipelines の TIPS](#azure-pipelines-の-tips)
+        - [step または JOB の実行条件](#step-または-job-の実行条件)
 
 <!-- /TOC -->
 
@@ -76,3 +78,26 @@ https://azure.microsoft.com/ja-jp/services/devops/pipelines/ にアクセスし�
 |doxygen              | doxygen  を行う              | [ci/azure-pipelines/template.job.doxygen.yml](ci/azure-pipelines/template.job.doxygen.yml)               |
 |checkEncoding        | 文字コードのチェックを行う   | [ci/azure-pipelines/template.job.checkEncoding.yml](ci/azure-pipelines/template.job.checkEncoding.yml)   |
 |script_check         | python のコンパイルのチェックを行う   | [ci/azure-pipelines/template.job.python-check.yml](ci/azure-pipelines/template.job.python-check.yml)   |
+
+## Azure Pipelines の TIPS
+
+### step または JOB の実行条件
+
+googletest でテストを実施するにあたって、googletest のテスト結果にかからわず、テスト結果の公開を行いたい。(参考: [#837](https://github.com/sakura-editor/sakura/pull/837) )
+
+[Specify conditions](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/conditions?view=azure-devops&tabs=yaml) で説明されているように
+[condition](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/conditions?view=azure-devops&tabs=yaml) を指定することで指定した JOB または step を
+実行する条件を指定することができる。
+
+以下の例では `succeededOrFailed()` を指定しているので、前段の step が成功しても、失敗しても実行される。(ただし JOB がキャンセルされたときには実行しない)
+
+```
+  - task: CopyFiles@1
+    condition: succeededOrFailed()
+    displayName: Copy to ArtifactStagingDirectory
+    inputs:
+      contents: '**.zip'
+      targetFolder: $(Build.ArtifactStagingDirectory)
+```
+
+
