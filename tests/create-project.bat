@@ -49,10 +49,10 @@ exit /b
 
 :setenv_Win32
 :setenv_x64
-	set CMAKE_GEN_OPT=-G "Visual Studio 15 2017" -A "%~1" -D BUILD_GTEST=ON
+	set CMAKE_GEN_OPT=-G "Visual Studio 15 2017" -A "%~1"
 exit /b
 
 :setenv_MinGW
-	set CMAKE_GEN_OPT=-G "MinGW Makefiles" -D CMAKE_BUILD_TYPE="%~2" -D BUILD_GTEST=OFF
+	set CMAKE_GEN_OPT=-G "MinGW Makefiles" -D CMAKE_BUILD_TYPE="%~2" -D GTEST_PACKAGE=ON
 	set PATH=C:\msys64\mingw64\bin;%PATH:C:\Program Files\Git\usr\bin;=%
 exit /b
