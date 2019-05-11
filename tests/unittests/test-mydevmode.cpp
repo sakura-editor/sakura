@@ -27,7 +27,7 @@
 
 #ifndef NOMINMAX
 #define NOMINMAX
-#endif NOMINMAX
+#endif /* #ifndef NOMINMAX */
 
 #include <tchar.h>
 #include <Windows.h>
