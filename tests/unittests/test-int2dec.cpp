@@ -1,7 +1,11 @@
 ﻿#include <gtest/gtest.h>
 
 #include <limits>
+
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif /* #ifndef NOMINMAX */
+
 #include <Windows.h>
 #include <tchar.h>
 #include "basis/primitive.h"
