@@ -42,7 +42,7 @@ VersionInfoVersion={#MyAppVer}
 VersionInfoProductVersion={#MyAppVer}
 
 ; OSバージョン制限(Windows 7 以降に対応)
-MinVersion=0,6.1
+MinVersion=6.1
 
 [Languages]
 Name: "ja"; MessagesFile: "compiler:Languages\Japanese.isl"
