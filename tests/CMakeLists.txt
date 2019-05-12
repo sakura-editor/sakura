@@ -19,6 +19,12 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 if(BUILD_GTEST)
 	add_subdirectory(googletest)
+	include(GoogleTest)
+	set(GTEST_FOUND TRUE)
+	add_library(GTest::GTest ALIAS gtest)
+	add_library(GTest::Main  ALIAS gtest_main)
+else()
+	find_package(GTest REQUIRED)
 endif()
 add_subdirectory(unittests)
 

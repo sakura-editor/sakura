@@ -49,16 +49,8 @@ elseif (MINGW)
 endif ()
 
 # link with GoogleTest
-if(BUILD_GTEST)
-	# Build GoogleTest from source code.
-	target_link_libraries(${project_name} PRIVATE gtest)
-	target_link_libraries(${project_name} PRIVATE gtest_main)
-else()
-	# Build without GoogleTest(use system library).
-	find_package(GTest REQUIRED)
-	target_link_libraries(${project_name} PRIVATE GTest::GTest)
-	target_link_libraries(${project_name} PRIVATE GTest::Main)
-endif()
+target_link_libraries(${project_name} PRIVATE GTest::GTest)
+target_link_libraries(${project_name} PRIVATE GTest::Main)
 
 # link libraries
 target_link_libraries (${project_name} PRIVATE winspool ole32 oleaut32 uuid comctl32 imm32 mpr imagehlp shlwapi winmm windowscodecs msimg32)
