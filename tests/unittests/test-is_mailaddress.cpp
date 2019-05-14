@@ -24,7 +24,10 @@
 */
 #include <gtest/gtest.h>
 
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif /* #ifndef NOMINMAX */
+
 #include <tchar.h>
 #include <wchar.h>
 #include <assert.h>
