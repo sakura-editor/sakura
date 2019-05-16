@@ -45,39 +45,3 @@ jobs:
     name: VS2017
     vmImage: 'VS2017-Win2016'
     displayName: VS2017
-
-# SonarQube で解析を行う JOB
-- template: ci/azure-pipelines/template.job.SonarQube.yml
-  parameters:
-    name: SonarQube
-    vmImage: 'VS2017-Win2016'
-    displayName: SonarQube
-
-# Cppcheck を行う JOB
-- template: ci/azure-pipelines/template.job.cppcheck.yml
-  parameters:
-    name: cppcheck
-    vmImage: 'VS2017-Win2016'
-    displayName: cppcheck
-
-# doxygen を行う JOB
-- template: ci/azure-pipelines/template.job.doxygen.yml
-  parameters:
-    name: doxygen
-    vmImage: 'VS2017-Win2016'
-    displayName: doxygen
-
-# 文字コードのチェックを行う JOB
-- template: ci/azure-pipelines/template.job.checkEncoding.yml
-  parameters:
-    name: checkEncoding
-    vmImage: 'VS2017-Win2016'
-
-#############################################################################################################
-#   Python スクリプトのコンパイル確認を行う job
-#############################################################################################################
-- template: ci/azure-pipelines/template.job.python-check.yml
-  parameters:
-    name: script_check
-    vmImage: 'VS2017-Win2016'
-    displayName: script_check
