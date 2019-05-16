@@ -101,24 +101,5 @@ for /f "usebackq delims=" %%d in (`"%CMD_VSWHERE%" -version [15^,16^) -requires 
 )
 if not defined Vs2017InstallRoot goto :msbuild_latest
 
-::find msbuild under vs2017 install directory
-for /f "usebackq delims=" %%a in (`where /R "%Vs2017InstallRoot%" msbuild.exe`) do (
-    set "CMD_MSBUILD=%%a"
-)
-if not defined USE_LATEST_MSBUILD (
-    if defined CMD_MSBUILD exit /b
-)
-
-:msbuild_latest
-::find msbuild bundled with latest visual studio(vs2019 or lator).
-for /f "usebackq delims=" %%a in (`"%CMD_VSWHERE%" -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe`) do (
-    set "CMD_MSBUILD=%%a"
-    exit /b
-)
-
-::find msbuild in $env[PATH].
-for /f "usebackq delims=" %%a in (`where msbuild.exe`) do ( 
-    set "CMD_MSBUILD=%%a"
-    exit /b
-)
+set "CMD_MSBUILD=%Vs2017InstallRoot%\MSBuild\15.0\Bin\amd64\MSBuild.exe"
 exit /b
