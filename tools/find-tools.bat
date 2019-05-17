@@ -103,11 +103,11 @@ if not defined Vs2017InstallRoot goto :msbuild_latest
 
 ::find msbuild under vs2017 install directory
 if exist "%Vs2017InstallRoot%\MSBuild\15.0\Bin\amd64\MSBuild.exe" (
-	set "CMD_MSBUILD=%Vs2017InstallRoot%\MSBuild\15.0\Bin\amd64\MSBuild.exe"
+    set "CMD_MSBUILD=%Vs2017InstallRoot%\MSBuild\15.0\Bin\amd64\MSBuild.exe"
     if defined CMD_MSBUILD exit /b
 )
 if exist "%Vs2017InstallRoot%\MSBuild\15.0\Bin\MSBuild.exe" (
-	set "CMD_MSBUILD=%Vs2017InstallRoot%\MSBuild\15.0\Bin\MSBuild.exe"
+    set "CMD_MSBUILD=%Vs2017InstallRoot%\MSBuild\15.0\Bin\MSBuild.exe"
     if defined CMD_MSBUILD exit /b
 )
 if not defined USE_LATEST_MSBUILD (
