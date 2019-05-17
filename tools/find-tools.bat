@@ -6,6 +6,7 @@ if defined FIND_TOOLS_CALLED (
     exit /b
 )
 
+echo test issue906-test2
 echo find-tools.bat
 if not defined CMD_GIT call :Git 2> nul
 if not defined CMD_7Z call :7z 2> nul
