@@ -260,6 +260,8 @@ TEST(MYDEVMODETest, operatorNotEqual)
 
 /* アクセス不可のメモリ領域にアクセスしても、例外が発生しない事象があるので、
  * 当面MSVCのリリース版では以下のテストを実行しない。
+ *
+ * 参考: https://github.com/google/googletest/blob/9d4cde44a4a3952cf21861f9370b3bed9265dfd7/googletest/docs/advanced.md#temporarily-disabling-tests
  */
 #if defined(_DEBUG) || defined(__MINGW64__)
 /*!
@@ -269,6 +271,9 @@ TEST(MYDEVMODETest, operatorNotEqual)
  *  実際にどういうケースで一般保護例外違反となるか、コード的に発生させる方法の共有を兼ねて実装したもの。
  */
 TEST(MYDEVMODETest, StrategyForSegmentationFault)
+#else
+TEST(MYDEVMODETest, DISABLED_StrategyForSegmentationFault)
+#endif /* if defined(_DEBUG) || defined(__MINGW64__) */
 {
 	// システムのページサイズを取得する
 	SYSTEM_INFO systemInfo = { 0 };
@@ -315,4 +320,3 @@ TEST(MYDEVMODETest, StrategyForSegmentationFault)
 	// 仮想メモリ範囲を解放する。
 	::VirtualFree(memBlock1, 0, MEM_RELEASE);
 }
-#endif /* if defined(_DEBUG) || defined(__MINGW64__) */
