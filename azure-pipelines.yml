@@ -12,6 +12,7 @@ trigger:
   paths:
     exclude:
       - "*.md"
+      - .github/ISSUE_TEMPLATE/*.md
       - .travis.yml
       - appveyor.yml
 
