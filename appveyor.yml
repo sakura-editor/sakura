@@ -18,6 +18,7 @@ skip_commits:
     - .editorconfig
     - 'azure-pipelines*.yml'
     - 'ci/azure-pipelines/template*.yml'
+    - '.github/*.md'
     - '.github/ISSUE_TEMPLATE/*.md'
 
 install:
