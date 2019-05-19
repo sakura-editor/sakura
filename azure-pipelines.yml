@@ -28,6 +28,13 @@ pr:
       - master
       - develop
       - feature/*
+  paths:
+    exclude:
+      - "*.md"
+      - .github/*.md
+      - .github/ISSUE_TEMPLATE/*.md
+      - .travis.yml
+      - appveyor.yml
 
 ###############################################################################################################################
 #   jobs/job 定義
