@@ -7,6 +7,7 @@ UpgradeLog.htm
 /x64
 /.vs
 sakura-*.zip
+sakura-*.zip.md5
 msbuild-*.log
 msbuild-*.log.csv
 msbuild-*.log.xlsx
