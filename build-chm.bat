@@ -12,9 +12,15 @@ set CHM_MACRO=help\macro\macro.chm
 set CHM_PLUGIN=help\plugin\plugin.chm
 set CHM_SAKURA=help\sakura\sakura.chm
 
+for /F "delims=: tokens=2" %%a IN ('chcp') DO set /A CODEPAGE=%%a
+chcp 932
+
 call :BuildChm %HHP_MACRO%  %CHM_MACRO%   || (echo error && exit /b 1)
 call :BuildChm %HHP_PLUGIN% %CHM_PLUGIN%  || (echo error && exit /b 1)
 call :BuildChm %HHP_SAKURA% %CHM_SAKURA%  || (echo error && exit /b 1)
+
+chcp %CODEPAGE%
+
 exit /b 0
 
 @rem ------------------------------------------------------------------------------
