@@ -25,3 +25,4 @@ doxygen*.log
 .sonarqube
 build-wrapper-win-x86*
 bw-output
+iss-*-*.log
