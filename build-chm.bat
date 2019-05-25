@@ -11,6 +11,12 @@ set HHP_SAKURA=help\sakura\sakura.hhp
 set CHM_MACRO=help\macro\macro.chm
 set CHM_PLUGIN=help\plugin\plugin.chm
 set CHM_SAKURA=help\sakura\sakura.chm
+set HH_SCRIPT=%~dp0help\remove-comment.py
+set HH_INPUT=sakura_core\sakura.hh
+set HH_OUTPUT=help\sakura\sakura.hh
+
+del /F "%HH_OUTPUT%"
+python "%HH_SCRIPT%" "%HH_INPUT%" "%HH_OUTPUT%"  || (echo error && exit /b 1)
 
 call :BuildChm %HHP_MACRO%  %CHM_MACRO%   || (echo error && exit /b 1)
 call :BuildChm %HHP_PLUGIN% %CHM_PLUGIN%  || (echo error && exit /b 1)
