@@ -2,6 +2,8 @@ set platform=%1
 set configuration=%2
 set ERROR_RESULT=0
 
+call %~dp0..\tools\find-tools.bat
+
 @rem produces header files necessary in creating the project.
 if "%platform%" == "MinGW" (
 	set BUILD_EDITOR_BAT=build-gnu.bat
@@ -32,6 +34,7 @@ if exist "%BUILDDIR%" (
 mkdir "%BUILDDIR%"
 
 call :setenv_%platform% %platform% %configuration%
+@echo cmake %CMAKE_GEN_OPT% -H. -B"%BUILDDIR%"
 cmake %CMAKE_GEN_OPT% -H. -B"%BUILDDIR%" || set ERROR_RESULT=1
 
 popd
@@ -49,7 +52,12 @@ exit /b
 
 :setenv_Win32
 :setenv_x64
-	set CMAKE_GEN_OPT=-G "Visual Studio 15 2017" -A "%~1" -D BUILD_GTEST=ON
+	if defined CMAKE_G_PARAM (
+		set CMAKE_G_OPTION=-G "%CMAKE_G_PARAM%"
+	) else (
+		set CMAKE_G_OPTION=
+	)
+	set CMAKE_GEN_OPT=%CMAKE_G_OPTION% -A "%~1" -D BUILD_GTEST=ON
 exit /b
 
 :setenv_MinGW
