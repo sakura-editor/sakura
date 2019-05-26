@@ -134,14 +134,14 @@ exit /b
 	)
 
 	if "%VSVERSION%" == "2017" (
-		set "CMAKE_GENERATER_VERSION=Visual Studio 15 2017"
+		set "CMAKE_G_PARAM=Visual Studio 15 2017"
 		call :msbuild_vs2017 2> nul
 	) else if "%VSVERSION%" == "2019" (
-		set "CMAKE_GENERATER_VERSION=Visual Studio 15 2019"
+		set "CMAKE_G_PARAM=Visual Studio 15 2019"
 		call :msbuild_vs2019 2> nul
 	)
 	if not defined CMD_MSBUILD (
-		set "CMAKE_GENERATER_VERSION="
+		set "CMAKE_G_PARAM="
 		call :msbuild_from_env_path 2> nul
 	)
 
