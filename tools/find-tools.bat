@@ -105,66 +105,72 @@ for /f "usebackq delims=" %%a in (`where $PATH2:vswhere.exe`) do (
 exit /b
 
 :: ---------------------------------------------------------------------------------------------------------------------
-:msbuild
-if "%SELECT_VSVERSION%" == "" (
-	set VSVERSION=2017
-) else if "%SELECT_VSVERSION%" == "2017" (
-	set VSVERSION=2017
-) else if "%SELECT_VSVERSION%" == "2019" (
-	set VSVERSION=2019
-)
-
-if "%VSVERSION%" == "2017" (
-	set "CMAKE_GENERATER_VERSION=Visual Studio 15 2017"
-	call :msbuild_vs2017 2> nul
-) else if "%VSVERSION%" == "2019" (
-	set "CMAKE_GENERATER_VERSION=Visual Studio 15 2019"
-	call :msbuild_vs2019 2> nul
-)
-if not defined CMD_MSBUILD (
-	set "CMAKE_GENERATER_VERSION="
-	call :msbuild_from_env_path 2> nul
-)
-
-exit /b
+:: sub routine for finding msbuild
 :: ---------------------------------------------------------------------------------------------------------------------
+:msbuild
+	if "%SELECT_VSVERSION%" == "" (
+		set VSVERSION=2017
+	) else if "%SELECT_VSVERSION%" == "2017" (
+		set VSVERSION=2017
+	) else if "%SELECT_VSVERSION%" == "2019" (
+		set VSVERSION=2019
+	)
 
+	if "%VSVERSION%" == "2017" (
+		set "CMAKE_GENERATER_VERSION=Visual Studio 15 2017"
+		call :msbuild_vs2017 2> nul
+	) else if "%VSVERSION%" == "2019" (
+		set "CMAKE_GENERATER_VERSION=Visual Studio 15 2019"
+		call :msbuild_vs2019 2> nul
+	)
+	if not defined CMD_MSBUILD (
+		set "CMAKE_GENERATER_VERSION="
+		call :msbuild_from_env_path 2> nul
+	)
+
+	exit /b
+
+:: ---------------------------------------------------------------------------------------------------------------------
+:: sub routine for finding msbuild of VS2017
 :: ---------------------------------------------------------------------------------------------------------------------
 :msbuild_vs2017
-::find vs2017 install directory
-for /f "usebackq delims=" %%d in (`"%CMD_VSWHERE%" -version [15^,16^) -requires Microsoft.Component.MSBuild -property installationPath`) do (
-    set "Vs2017InstallRoot=%%d"
-)
-if not defined Vs2017InstallRoot exit /b
+	::find vs2017 install directory
+	for /f "usebackq delims=" %%d in (`"%CMD_VSWHERE%" -version [15^,16^) -requires Microsoft.Component.MSBuild -property installationPath`) do (
+	    set "Vs2017InstallRoot=%%d"
+	)
+	if not defined Vs2017InstallRoot exit /b
 
-::find msbuild under vs2017 install directory
-if exist "%Vs2017InstallRoot%\MSBuild\15.0\Bin\amd64\MSBuild.exe" (
-    set "CMD_MSBUILD=%Vs2017InstallRoot%\MSBuild\15.0\Bin\amd64\MSBuild.exe"
-    if defined CMD_MSBUILD exit /b
-)
-if exist "%Vs2017InstallRoot%\MSBuild\15.0\Bin\MSBuild.exe" (
-    set "CMD_MSBUILD=%Vs2017InstallRoot%\MSBuild\15.0\Bin\MSBuild.exe"
-    if defined CMD_MSBUILD exit /b
-)
-exit /b
+	::find msbuild under vs2017 install directory
+	if exist "%Vs2017InstallRoot%\MSBuild\15.0\Bin\amd64\MSBuild.exe" (
+	    set "CMD_MSBUILD=%Vs2017InstallRoot%\MSBuild\15.0\Bin\amd64\MSBuild.exe"
+	    if defined CMD_MSBUILD exit /b
+	)
+	if exist "%Vs2017InstallRoot%\MSBuild\15.0\Bin\MSBuild.exe" (
+	    set "CMD_MSBUILD=%Vs2017InstallRoot%\MSBuild\15.0\Bin\MSBuild.exe"
+	    if defined CMD_MSBUILD exit /b
+	)
+	exit /b
+
 :: ---------------------------------------------------------------------------------------------------------------------
-
+:: sub routine for finding msbuild of VS2019
 :: ---------------------------------------------------------------------------------------------------------------------
 :msbuild_vs2019
-for /f "usebackq delims=" %%a in (`"%CMD_VSWHERE%" -version [16^,17^) -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe`) do (
-    set "CMD_MSBUILD=%%a"
-    exit /b
-)
-exit /b
+	for /f "usebackq delims=" %%a in (`"%CMD_VSWHERE%" -version [16^,17^) -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe`) do (
+	    set "CMD_MSBUILD=%%a"
+	    exit /b
+	)
+	exit /b
 :: ---------------------------------------------------------------------------------------------------------------------
 
 
+:: ---------------------------------------------------------------------------------------------------------------------
+:: sub routine for finding msbuild from PATH env
 :: ---------------------------------------------------------------------------------------------------------------------
 ::find msbuild in $env[PATH].
 :msbuild_from_env_path
-for /f "usebackq delims=" %%a in (`where msbuild.exe`) do ( 
-    set "CMD_MSBUILD=%%a"
-    exit /b
-)
-exit /b
+	for /f "usebackq delims=" %%a in (`where msbuild.exe`) do ( 
+	    set "CMD_MSBUILD=%%a"
+	    exit /b
+	)
+	exit /b
 :: ---------------------------------------------------------------------------------------------------------------------
