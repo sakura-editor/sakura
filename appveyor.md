@@ -92,6 +92,7 @@ APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使う
                 - [appveyor_env.py](appveyor_env.py)
     - [build-gnu.bat](build-gnu.bat) : (Platform="MinGW"のみ) Makefileをビルドしてbuild-all.batの処理を終了する
     - [build-chm.bat](build-chm.bat) : HTML Help をビルドする
+        - [remove-comment.py](help/remove-comment.py) : UTF-8 でのコンパイルエラーの回避のために日本語を削除するために [sakura.hh](sakura_core/sakura.hh) から一行コメントを削除する
         - hhc.exe (Visual Studio 2017 に同梱)
     - [run-cppcheck.bat](run-cppcheck.bat) : cppcheck を実行する
         - cppcheck.exe
