@@ -8,10 +8,11 @@ import codecs
 def clipEndOfLine(line):
 	return line.rstrip('\r\n')
 
+# 行からコメントを削除する
 def clipCommet(line):
 	return re.sub(r'//.*', r'', line)
 
-# コメントを削除する
+# ファイルからコメントを削除する
 def removeComment(inFile, outFile):
 	with codecs.open(inFile, "r", "utf_8_sig") as fin:
 		with codecs.open(outFile, "w", "utf_8_sig") as fout:
