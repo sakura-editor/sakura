@@ -7,6 +7,7 @@
 /.vs
 /cppcheck-*.xml
 /cppcheck-install.log
+/help/sakura/sakura.hh
 /tests/build
 /Win32
 /x64
