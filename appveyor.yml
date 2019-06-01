@@ -22,6 +22,7 @@ skip_commits:
     - '.github/ISSUE_TEMPLATE/*.md'
 
 install:
+- cup vswhere
 - cmd: |
     pip install openpyxl --user
     C:\msys64\usr\bin\bash --login -c "pacman -S --noconfirm mingw-w64-x86_64-gtest"
