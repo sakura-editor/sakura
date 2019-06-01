@@ -100,9 +100,10 @@ exit /b
 for /f "usebackq delims=" %%d in (`"%CMD_VSWHERE%" -version [15^,16^) -requires Microsoft.Component.MSBuild -property installationPath`) do (
     set "Vs2017InstallRoot=%%d"
 )
-if not defined Vs2017InstallRoot   goto :msbuild_latest
-if     defined USE_LATEST_MSBUILD  goto :msbuild_latest
+if     defined USE_LATEST_MSBUILD goto :msbuild_latest
+if not defined Vs2017InstallRoot  goto :msbuild_latest
 
+:msbuild_vs2017
 ::find msbuild under vs2017 install directory
 set PATH3=%Vs2017InstallRoot%\MSBuild\15.0\Bin\amd64;%Vs2017InstallRoot%\MSBuild\15.0\Bin
 for /f "usebackq delims=" %%a in (`where $PATH3:MSBuild.exe`) do ( 
@@ -110,7 +111,6 @@ for /f "usebackq delims=" %%a in (`where $PATH3:MSBuild.exe`) do (
     set /A NUM_VSVERSION=15
     exit /b
 )
-exit /b
 
 :msbuild_latest
 ::find msbuild bundled with latest visual studio(vs2019 or lator).
@@ -122,8 +122,5 @@ for /f "usebackq delims=" %%a in (`"%CMD_VSWHERE%" -latest -requires Microsoft.C
     exit /b
 )
 
-if not defined CMD_MSBUILD (
-    set USE_LATEST_MSBUILD=
-    goto :msbuild
-)
+if defined Vs2017InstallRoot goto :msbuild_vs2017
 exit /b
