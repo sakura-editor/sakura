@@ -23,7 +23,8 @@ echo ^|- CMD_CPPCHECK=%CMD_CPPCHECK%
 echo ^|- CMD_DOXYGEN=%CMD_DOXYGEN%
 echo ^|- CMD_VSWHERE=%CMD_VSWHERE%
 echo ^|- CMD_MSBUILD=%CMD_MSBUILD%
-endlocal && set "CMD_GIT=%CMD_GIT%" && set "CMD_7Z=%CMD_7Z%" && set "CMD_HHC=%CMD_HHC%" && set "CMD_ISCC=%CMD_ISCC%" && set "CMD_CPPCHECK=%CMD_CPPCHECK%" && set "CMD_DOXYGEN=%CMD_DOXYGEN%" && set "CMD_VSWHERE=%CMD_VSWHERE%" && set "CMD_MSBUILD=%CMD_MSBUILD%"
+echo ^|- NUM_VSVERSION=%NUM_VSVERSION%
+endlocal && set "CMD_GIT=%CMD_GIT%" && set "CMD_7Z=%CMD_7Z%" && set "CMD_HHC=%CMD_HHC%" && set "CMD_ISCC=%CMD_ISCC%" && set "CMD_CPPCHECK=%CMD_CPPCHECK%" && set "CMD_DOXYGEN=%CMD_DOXYGEN%" && set "CMD_VSWHERE=%CMD_VSWHERE%" && set "CMD_MSBUILD=%CMD_MSBUILD%" && set /A NUM_VSVERSION=%NUM_VSVERSION%
 set FIND_TOOLS_CALLED=1
 exit /b
 
@@ -106,6 +107,7 @@ if     defined USE_LATEST_MSBUILD  goto :msbuild_latest
 set PATH3=%Vs2017InstallRoot%\MSBuild\15.0\Bin\amd64;%Vs2017InstallRoot%\MSBuild\15.0\Bin
 for /f "usebackq delims=" %%a in (`where $PATH3:MSBuild.exe`) do ( 
     set "CMD_MSBUILD=%%a"
+    set /A NUM_VSVERSION=15
     exit /b
 )
 
@@ -113,12 +115,11 @@ for /f "usebackq delims=" %%a in (`where $PATH3:MSBuild.exe`) do (
 ::find msbuild bundled with latest visual studio(vs2019 or lator).
 for /f "usebackq delims=" %%a in (`"%CMD_VSWHERE%" -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe`) do (
     set "CMD_MSBUILD=%%a"
+    for /f "usebackq delims=. tokens=1" %%b in (`"%CMD_VSWHERE%" -latest -requires Microsoft.Component.MSBuild -property installationVersion`) do (
+        set /A NUM_VSVERSION=%%b
+    )
     exit /b
 )
 
-::find msbuild in $env[PATH].
-for /f "usebackq delims=" %%a in (`where msbuild.exe`) do ( 
-    set "CMD_MSBUILD=%%a"
-    exit /b
-)
+::we never supports msbuild, not bundled with visual studio.
 exit /b
