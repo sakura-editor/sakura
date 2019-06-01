@@ -24,6 +24,7 @@ skip_commits:
 install:
 - cmd: |
     pip install openpyxl --user
+    choco upgrade vswhere -y
     C:\msys64\usr\bin\bash --login -c "pacman -S --noconfirm mingw-w64-x86_64-gtest"
 
 build_script:
