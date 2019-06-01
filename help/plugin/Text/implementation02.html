@@ -1,111 +1,111 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML lang="ja">
 <HEAD>
-<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
 <link rel="shortcut icon" href="images/favicon.ico">
-<TITLE>インタフェースオブジェクト</TITLE>
-<META NAME="MS-HKWD" CONTENT="インタフェースオブジェクト">
-<META NAME="MS-HKWD" CONTENT="Editorオブジェクト">
-<META NAME="MS-HKWD" CONTENT="Pluginオブジェクト">
-<META NAME="MS-HKWD" CONTENT="Outlineオブジェクト">
-<META NAME="MS-HKWD" CONTENT="Indentオブジェクト">
-<META NAME="MS-HKWD" CONTENT="Complementオブジェクト">
+<TITLE>�C���^�t�F�[�X�I�u�W�F�N�g</TITLE>
+<META NAME="MS-HKWD" CONTENT="�C���^�t�F�[�X�I�u�W�F�N�g">
+<META NAME="MS-HKWD" CONTENT="Editor�I�u�W�F�N�g">
+<META NAME="MS-HKWD" CONTENT="Plugin�I�u�W�F�N�g">
+<META NAME="MS-HKWD" CONTENT="Outline�I�u�W�F�N�g">
+<META NAME="MS-HKWD" CONTENT="Indent�I�u�W�F�N�g">
+<META NAME="MS-HKWD" CONTENT="Complement�I�u�W�F�N�g">
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
-<noscript>[<a href="index.html">目次</a>] <br></noscript>
+<noscript>[<a href="index.html">�ڎ�</a>] <br></noscript>
 <!--
-<noscript>[<a href="index.html">目次</a>] [<a href="web_frame.html" target="_top">フレームで表示</a>] [<a href="web_search.html">検索</a>]<br></noscript>
+<noscript>[<a href="index.html">�ڎ�</a>] [<a href="web_frame.html" target="_top">�t���[���ŕ\��</a>] [<a href="web_search.html">����</a>]<br></noscript>
 -->
-<h3 id=c0304>インタフェースオブジェクト</h3>
+<h3 id=c0304>�C���^�t�F�[�X�I�u�W�F�N�g</h3>
 <div class=li100>
-JScriptやVBScript等から参照してエディタの情報取得・操作を行うオブジェクト。<br>
+JScript��VBScript������Q�Ƃ��ăG�f�B�^�̏��擾�E������s���I�u�W�F�N�g�B<br>
 </div>
-<h4 id=c030401>Editor ・・・ おなじみEditorオブジェクト。</h4>
+<h4 id=c030401>Editor �E�E�E ���Ȃ���Editor�I�u�W�F�N�g�B</h4>
 <div class=li200>
-利用可能： マクロ、プラグイン(プラグ、コマンド)<br>
+���p�\�F �}�N���A�v���O�C��(�v���O�A�R�}���h)<br>
 </div>
 
-<h4 id=c030402>Plugin ・・・ プラグインの共通機能を提供する。</h4>
+<h4 id=c030402>Plugin �E�E�E �v���O�C���̋��ʋ@�\��񋟂���B</h4>
 <div class=li200>
-利用可能： プラグイン(プラグ、コマンド)<br>
+���p�\�F �v���O�C��(�v���O�A�R�}���h)<br>
 <div class=li300>
 	<table class=f>
 	<tr><th></th><th width=300></th></tr>
-	<tr><td>GetPluginDir()</td><td>個別フォルダのパスを返す。</td></tr>
-	<tr><td>GetDef(section, key)</td>			<td>定義ファイルの値を取得する。</td></tr>
-	<tr><td>GetOption(section, key)</td>		<td>オプションファイルの値を取得する。</td></tr>
-	<tr><td>SetOption(section, key, value)</td>	<td>オプションファイルの値を設定する。</td></tr>
-	<tr><td>AddCommand(handler, label, icon)</td><td>コマンドを追加する。</td></tr>
-	<tr><td>GetCommandNo()</td>					<td>実行中のプラグ番号を取得する。</td></tr>
-	<tr><td>GetString(no)</td>					<td>(Ver 2.1.1.0以降)<br>
-言語設定の文字列定義を取得する。<br>
-0を指定すると、言語名が取得できる。</td></tr>
+	<tr><td>GetPluginDir()</td><td>�ʃt�H���_�̃p�X��Ԃ��B</td></tr>
+	<tr><td>GetDef(section, key)</td>			<td>��`�t�@�C���̒l���擾����B</td></tr>
+	<tr><td>GetOption(section, key)</td>		<td>�I�v�V�����t�@�C���̒l���擾����B</td></tr>
+	<tr><td>SetOption(section, key, value)</td>	<td>�I�v�V�����t�@�C���̒l��ݒ肷��B</td></tr>
+	<tr><td>AddCommand(handler, label, icon)</td><td>�R�}���h��ǉ�����B</td></tr>
+	<tr><td>GetCommandNo()</td>					<td>���s���̃v���O�ԍ����擾����B</td></tr>
+	<tr><td>GetString(no)</td>					<td>(Ver 2.1.1.0�ȍ~)<br>
+����ݒ�̕������`���擾����B<br>
+0���w�肷��ƁA���ꖼ���擾�ł���B</td></tr>
 	</table>
 </div>
 </div>
 
-<h4 id=c030403>Outline ・・・ アウトライン解析用の機能を提供する。</h4>
+<h4 id=c030403>Outline �E�E�E �A�E�g���C����͗p�̋@�\��񋟂���B</h4>
 <div class=li200>
-利用可能： プラグイン(Outlineのみ)<br>
+���p�\�F �v���O�C��(Outline�̂�)<br>
 <div class=li300>
 	<table class=f>
 	<tr><th></th><th></th></tr>
-	<tr><td>AddFuncInfo(論理行, 論理桁, 文字列, 付加情報)</td><td>アウトライン解析に1行追加(対象：リスト、クラスツリー)</td></tr>
-	<tr><td>AddFuncInfo2(論理行, 論理桁, 文字列, 深さ)</td>	<td>アウトライン解析に1行追加(対象：ツリー)</td></tr>
-	<tr><td>AddFuncInfo3(論理行, 論理桁, 文字列, 付加情報, ファイル名)</td><td>(sakura 2.2.0.0以降)アウトライン解析に1行追加(対象：リスト、クラスツリー)</td></tr>
-	<tr><td>AddFuncInfo4(論理行, 論理桁, 文字列, 深さ, ファイル名)</td>	<td>(sakura 2.2.0.0以降)アウトライン解析に1行追加(対象：ツリー)</td></tr>
-	<tr><td>SetTitle(文字列)</td>							<td>アウトライン解析ダイアログのタイトルを変える。</td></tr>
-	<tr><td>SetListType(整数)</td>							<td>リストの種別を設定。</td></tr>
+	<tr><td>AddFuncInfo(�_���s, �_����, ������, �t�����)</td><td>�A�E�g���C����͂�1�s�ǉ�(�ΏہF���X�g�A�N���X�c���[)</td></tr>
+	<tr><td>AddFuncInfo2(�_���s, �_����, ������, �[��)</td>	<td>�A�E�g���C����͂�1�s�ǉ�(�ΏہF�c���[)</td></tr>
+	<tr><td>AddFuncInfo3(�_���s, �_����, ������, �t�����, �t�@�C����)</td><td>(sakura 2.2.0.0�ȍ~)�A�E�g���C����͂�1�s�ǉ�(�ΏہF���X�g�A�N���X�c���[)</td></tr>
+	<tr><td>AddFuncInfo4(�_���s, �_����, ������, �[��, �t�@�C����)</td>	<td>(sakura 2.2.0.0�ȍ~)�A�E�g���C����͂�1�s�ǉ�(�ΏہF�c���[)</td></tr>
+	<tr><td>SetTitle(������)</td>							<td>�A�E�g���C����̓_�C�A���O�̃^�C�g����ς���B</td></tr>
+	<tr><td>SetListType(����)</td>							<td>���X�g�̎�ʂ�ݒ�B</td></tr>
 	<tr><td colspan=2><table class=f>
-		<tr><td></td><td align=right>100</td><td>: ツリー表示</td></tr>
-		<tr><td></td><td align=right>200</td><td>: オブジェクト指向言語のクラス・メソッドに適したツリー表示</td></tr>
-		<tr><td></td><td align=right>300</td><td>: リスト表示</td></tr>
-		<tr><td width=30 align=right>※</td><td colspan=3>以下の番号も使用できますが、推奨されません。100～300を使用してください。</td></tr>
-		<tr><td></td><td align=right>0</td><td>: 関数名と行番号のシンプルな一覧表</td></tr>
-		<tr><td></td><td align=right>1</td><td>: オブジェクト指向言語のクラスに適したツリー表示</td></tr>
-		<tr><td></td><td align=right>3</td><td>: 汎用のツリー表示</td></tr>
-		<tr><td></td><td align=right>8</td><td>: VisualBasic向けの関数一覧表</td></tr>
+		<tr><td></td><td align=right>100</td><td>: �c���[�\��</td></tr>
+		<tr><td></td><td align=right>200</td><td>: �I�u�W�F�N�g�w������̃N���X�E���\�b�h�ɓK�����c���[�\��</td></tr>
+		<tr><td></td><td align=right>300</td><td>: ���X�g�\��</td></tr>
+		<tr><td width=30 align=right>��</td><td colspan=3>�ȉ��̔ԍ����g�p�ł��܂����A��������܂���B100�`300���g�p���Ă��������B</td></tr>
+		<tr><td></td><td align=right>0</td><td>: �֐����ƍs�ԍ��̃V���v���Ȉꗗ�\</td></tr>
+		<tr><td></td><td align=right>1</td><td>: �I�u�W�F�N�g�w������̃N���X�ɓK�����c���[�\��</td></tr>
+		<tr><td></td><td align=right>3</td><td>: �ėp�̃c���[�\��</td></tr>
+		<tr><td></td><td align=right>8</td><td>: VisualBasic�����̊֐��ꗗ�\</td></tr>
 	</table></td></tr>
 	<tr><th></th><th></th></tr>
-	<tr><td>SetLabel( nInfo, sText )</td>					<td>タイプにの200ツリー表示の付加文字を変更する。 (Ver.2.0.9.0以降)</td></tr>
+	<tr><td>SetLabel( nInfo, sText )</td>					<td>�^�C�v�ɂ�200�c���[�\���̕t��������ύX����B (Ver.2.0.9.0�ȍ~)</td></tr>
 	<tr><td></td><td><table class=f>
-		<tr><td>nInfo</td><td>: 付加情報の数字</td></tr>
-		<tr><td>sText</td><td>: 文字列</td></tr>
+		<tr><td>nInfo</td><td>: �t�����̐���</td></tr>
+		<tr><td>sText</td><td>: ������</td></tr>
 	</table></td></tr>
-	<tr><td colspan=2>・付加情報の数字は、AddFuncInfoの第4引数に指定したものとリンク。</td></tr>
-	<tr><td colspan=2>・0～9までは組み込み解析で使われており、それらを変更するもよし。<br>　0以降に追加するもよし(最大30)</td></tr>
-	<tr><td colspan=2>・どの数字もだいたい同じですが、個性的な数字がいくつかあります ^^</td></tr>
-	<tr><td colspan=2>・<b>付加文字列の先頭に半角空白を入れること。</b>　←　すごく重要</td></tr>
+	<tr><td colspan=2>�E�t�����̐����́AAddFuncInfo�̑�4�����Ɏw�肵�����̂ƃ����N�B</td></tr>
+	<tr><td colspan=2>�E0�`9�܂ł͑g�ݍ��݉�͂Ŏg���Ă���A������ύX������悵�B<br>�@0�ȍ~�ɒǉ�������悵(�ő�30)</td></tr>
+	<tr><td colspan=2>�E�ǂ̐������������������ł����A���I�Ȑ���������������܂� ^^</td></tr>
+	<tr><td colspan=2>�E<b>�t��������̐擪�ɔ��p�󔒂����邱�ƁB</b>�@���@�������d�v</td></tr>
 	</table>
 </div>
 </div>
 
-<h4 id=c030404>Indent ・・・ スマートインデント用の機能を提供する。</h4>
+<h4 id=c030404>Indent �E�E�E �X�}�[�g�C���f���g�p�̋@�\��񋟂���B</h4>
 <div class=li200>
-利用可能： プラグイン(SmartIndentのみ)<br>
+���p�\�F �v���O�C��(SmartIndent�̂�)<br>
 <div class=li300>
 	<table class=f>
 	<tr><th></th><th></th></tr>
-	<tr><td>GetChar()</td><td>入力されたキーを取得する。Enterの場合 \r を返す。</td></tr>
+	<tr><td>GetChar()</td><td>���͂��ꂽ�L�[���擾����BEnter�̏ꍇ \r ��Ԃ��B</td></tr>
 	</table>
 </div>
 </div>
 
-<h4 id=c030405>Complement ・・・ 補完候補の機能を提供する。(Ver.2.0.6.0以降)</h4>
+<h4 id=c030405>Complement �E�E�E �⊮���̋@�\��񋟂���B(Ver.2.0.6.0�ȍ~)</h4>
 <div class=li200>
-利用可能： プラグイン(Complement, ComplementGlobalのみ)<br>
+���p�\�F �v���O�C��(Complement, ComplementGlobal�̂�)<br>
 <div class=li300>
 	<table class=f>
 	<tr><th></th><th></th></tr>
-	<tr><td>GetCurrentWord()</td><td>補完対象の文字列を取得する。</td></tr>
-	<tr><td>GetOption()</td><td>オプションを取得する。</td></tr>
-	<tr><td colspan=2>　　　オプション・・・1:大文字小文字を同一視、2:編集中ファイルから検索、のOR </td></tr>
-	<tr><td>AddList(文字列)</td><td>文字列を候補に追加する。候補の数を返却する。</td></tr>
+	<tr><td>GetCurrentWord()</td><td>�⊮�Ώۂ̕�������擾����B</td></tr>
+	<tr><td>GetOption()</td><td>�I�v�V�������擾����B</td></tr>
+	<tr><td colspan=2>�@�@�@�I�v�V�����E�E�E1:�啶���������𓯈ꎋ�A2:�ҏW���t�@�C�����猟���A��OR </td></tr>
+	<tr><td>AddList(������)</td><td>����������ɒǉ�����B���̐���ԋp����B</td></tr>
 	</table>
 </div>
 </div><br>
 
-<center><a href="implementation01.html">前へ＜</a>　　<a href="implementation03.html">＞次へ</a></center>
+<center><a href="implementation01.html">�O�ց�</a>�@�@<a href="implementation03.html">������</a></center>
 </BODY></HTML>

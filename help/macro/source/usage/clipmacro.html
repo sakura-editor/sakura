@@ -1,22 +1,22 @@
-ï»¿<html><head><title>ãƒã‚¯ãƒ­ã®éƒ¨åˆ†å®Ÿè¡Œ</title>
+<html><head><title>ƒ}ƒNƒ‚Ì•”•ªÀs</title>
 <LINK REL="stylesheet" TYPE="text/css" HREF="../sakura.css">
-<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
 </head>
 <small>
 Sakura-Editor Macro Reference
 </small>
-<h2>ãƒã‚¯ãƒ­ã®éƒ¨åˆ†å®Ÿè¡Œ</h2>
+<h2>ƒ}ƒNƒ‚Ì•”•ªÀs</h2>
 <dl>
-	<dt>æ©Ÿèƒ½</dt>
-		<dd>ãƒã‚¯ãƒ­ã‚’éƒ¨åˆ†å®Ÿè¡Œã™ã‚‹ãŸã‚ã®ã‚µãƒ³ãƒ—ãƒ«ã‚¹ã‚¯ãƒªãƒ—ãƒˆã§ã™ã€‚</dd>
-	<dt>èª¬æ˜</dt>
+	<dt>‹@”\</dt>
+		<dd>ƒ}ƒNƒ‚ğ•”•ªÀs‚·‚é‚½‚ß‚ÌƒTƒ“ƒvƒ‹ƒXƒNƒŠƒvƒg‚Å‚·B</dd>
+	<dt>à–¾</dt>
 		<dd>
-		å‹•ä½œã•ã›ãŸã„éƒ¨åˆ†ã‚’ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã«ã‚³ãƒ”ãƒ¼ã—ã€
-		å®Ÿè¡Œã—ãŸã„ç’°å¢ƒã§æœ¬ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚’å®Ÿè¡Œã—ã¾ã™ã€‚
+		“®ì‚³‚¹‚½‚¢•”•ª‚ğƒNƒŠƒbƒvƒ{[ƒh‚ÉƒRƒs[‚µA
+		Às‚µ‚½‚¢ŠÂ‹«‚Å–{ƒXƒNƒŠƒvƒg‚ğÀs‚µ‚Ü‚·B
 		</dd>
 </dl>
 
-<h3>JScriptç”¨</h3>
+<h3>JScript—p</h3>
 <pre>
 <span style = "color:green">//ClipMacro.js</span>
 <span style = "color:blue">var</span> oIE = <span style = "color:blue">new</span> ActiveXObject(<span style = "color:#800000">"InternetExplorer.Application"</span>);
@@ -25,7 +25,7 @@ oIE.Navigate(<span style = "color:#800000">"about:blank"</span>);
 <span style = "color:blue">eval</span>(sRet);
 </pre>
 
-<h3>VBScriptç”¨</h3>
+<h3>VBScript—p</h3>
 <pre>
 <span style = "color:green">&#39;ClipMacro.vbs</span>
 <span style = "color:blue">Set</span> oIE = CreateObject(<span style = "color:#800000">"InternetExplorer.Application"</span>)
@@ -35,7 +35,7 @@ sRet = oIE.Document.parentWindow.clipboardData.getData(<span style = "color:#800
 <span style = "color:blue">Execute</span> sRet
 </pre>
 
-<h3>PerlScriptç”¨</h3>
+<h3>PerlScript—p</h3>
 <pre>
 <span style = "color:green;">#ClipMacro.pls</span>
 <span style = "color:blue;">use</span> Win32::Clipboard;

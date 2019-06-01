@@ -1,208 +1,208 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML lang="ja">
 <HEAD>
-<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
 <link rel="shortcut icon" href="images/favicon.ico">
-<TITLE>利用可能な正規表現</TITLE>
-<META NAME="MS-HKWD" CONTENT="正規表現">
-<META NAME="MS-HKWD" CONTENT="パターン">
-<META NAME="MS-HKWD" CONTENT="エスケープシーケンス">
-<META NAME="MS-HKWD" CONTENT="メタキャラクタ">
-<META NAME="MS-HKWD" CONTENT="量指定子">
-<!-- .がみにくいのでMS ゴシックにする -->
+<TITLE>���p�\�Ȑ��K�\��</TITLE>
+<META NAME="MS-HKWD" CONTENT="���K�\��">
+<META NAME="MS-HKWD" CONTENT="�p�^�[��">
+<META NAME="MS-HKWD" CONTENT="�G�X�P�[�v�V�[�P���X">
+<META NAME="MS-HKWD" CONTENT="���^�L�����N�^">
+<META NAME="MS-HKWD" CONTENT="�ʎw��q">
+<!-- .���݂ɂ����̂�MS �S�V�b�N�ɂ��� -->
 <style type="text/css">
-	code {font-family: "ＭＳ ゴシック"; font-size:100%};
+	code {font-family: "�l�r �S�V�b�N"; font-size:100%};
 </style>
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
 <script type="text/javascript">HHCtrlPopup();</script>
-<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
-<h2>利用可能な正規表現</h2>
-使える(かも知れない)正規表現についての解説です。すべての動作を確認することは難しく、またライブラリの更新により動作が変更になることもあります。最終的にはご自分でご確認ください。<br>
+<noscript>[<a href="HLP000001.html">�ڎ�</a>]<br></noscript>
+<h2>���p�\�Ȑ��K�\��</h2>
+�g����(�����m��Ȃ�)���K�\���ɂ��Ẳ���ł��B���ׂĂ̓�����m�F���邱�Ƃ͓���A�܂����C�u�����̍X�V�ɂ�蓮�삪�ύX�ɂȂ邱�Ƃ�����܂��B�ŏI�I�ɂ͂������ł��m�F���������B<br>
 <br>
-<div class=li200>関連：<a href="HLP000006.html">正規表現ライブラリ</a>
+<div class=li200>�֘A�F<a href="HLP000006.html">���K�\�����C�u����</a>
 </div>
-<h4>基本要素</h4>
+<h4>��{�v�f</h4>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 <tr><td><code>\</code></td><td>
-				退避修飾（エスケープ）<br>
-				正規表現記号の有効/無効の制御<br>
-				<font size="-1" color="olive">\の次にある正規表現記号を普通の文字として扱います。またアルファベット文字と組み合わせて特殊な意味を持たせたりします。</font><br>
+				�ޔ��C���i�G�X�P�[�v�j<br>
+				���K�\���L���̗L��/�����̐���<br>
+				<font size="-1" color="olive">\�̎��ɂ��鐳�K�\���L���𕁒ʂ̕����Ƃ��Ĉ����܂��B�܂��A���t�@�x�b�g�����Ƒg�ݍ��킹�ē���ȈӖ������������肵�܂��B</font><br>
 			</td></tr>
-<tr><td><code>|</code></td><td>選択子<br><font size="-1" color="olive">パターンの論理和</font></td></tr>
-<tr><td><code>(<font color="blue">...</font>)</code></td><td>式集合（グループ）<br><font size="-1" color="olive">パターンをグループ化。</font></td></tr>
-<tr><td><code>[<font color="blue">...</font>]</code></td><td>文字集合（文字クラス）<br><font size="-1" color="olive">キャラクタクラス。</font></td></tr>
+<tr><td><code>|</code></td><td>�I���q<br><font size="-1" color="olive">�p�^�[���̘_���a</font></td></tr>
+<tr><td><code>(<font color="blue">...</font>)</code></td><td>���W���i�O���[�v�j<br><font size="-1" color="olive">�p�^�[�����O���[�v���B</font></td></tr>
+<tr><td><code>[<font color="blue">...</font>]</code></td><td>�����W���i�����N���X�j<br><font size="-1" color="olive">�L�����N�^�N���X�B</font></td></tr>
 </table>
 
-<h4>文字集合(キャラクタクラス)</h4>
-<code>[<font color="blue">...</font>]</code> の中に以下のものが指定可能です。<br>
+<h4>�����W��(�L�����N�^�N���X)</h4>
+<code>[<font color="blue">...</font>]</code> �̒��Ɉȉ��̂��̂��w��\�ł��B<br>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td><code><font color="blue">...</font></code></td><td><br><code>[ABC]</code>はAかBかCのどれかにマッチします。</td></tr>
-<tr><td><code>^<font color="blue">...</font></code></td><td>否定<br><code>[^ABC]</code>はAとBとC以外の任意の1文字にマッチします。</td></tr>
-<tr><td><code><font color="blue">x</font>-<font color="blue">y</font></code></td><td>範囲<br><code>[A-Z]</code>は、「A」から「Z」までの文字のどれか1つとマッチします。</td></tr>
-<tr><td><code>[<font color="blue">...</font>]</code></td><td><font color="green">(鬼)</font> 文字集合内文字集合</td></tr>
-<tr><td><code><font color="blue">..</font>&amp;&amp;<font color="blue">..</font></code></td><td><font color="green">(鬼)</font> 積演算</td></tr>
-<tr><td><code>[:<font color="blue">xxxxx</font>:]</code></td><td><font color="green">(鬼)</font> <a href="http://www.geocities.jp/kosako3/oniguruma/doc/RE.ja.txt" target=_blank>POSIXブラケット</a></td></tr>
-<tr><td><code>[:^<font color="blue">xxxxx</font>:]</code></td><td><font color="green">(鬼)</font> <a href="http://www.geocities.jp/kosako3/oniguruma/doc/RE.ja.txt" target=_blank>POSIXブラケット</a>（否定）</td></tr>
+<tr><td><code><font color="blue">...</font></code></td><td><br><code>[ABC]</code>��A��B��C�̂ǂꂩ�Ƀ}�b�`���܂��B</td></tr>
+<tr><td><code>^<font color="blue">...</font></code></td><td>�ے�<br><code>[^ABC]</code>��A��B��C�ȊO�̔C�ӂ�1�����Ƀ}�b�`���܂��B</td></tr>
+<tr><td><code><font color="blue">x</font>-<font color="blue">y</font></code></td><td>�͈�<br><code>[A-Z]</code>�́A�uA�v����uZ�v�܂ł̕����̂ǂꂩ1�ƃ}�b�`���܂��B</td></tr>
+<tr><td><code>[<font color="blue">...</font>]</code></td><td><font color="green">(�S)</font> �����W���������W��</td></tr>
+<tr><td><code><font color="blue">..</font>&amp;&amp;<font color="blue">..</font></code></td><td><font color="green">(�S)</font> �ω��Z</td></tr>
+<tr><td><code>[:<font color="blue">xxxxx</font>:]</code></td><td><font color="green">(�S)</font> <a href="http://www.geocities.jp/kosako3/oniguruma/doc/RE.ja.txt" target=_blank>POSIX�u���P�b�g</a></td></tr>
+<tr><td><code>[:^<font color="blue">xxxxx</font>:]</code></td><td><font color="green">(�S)</font> <a href="http://www.geocities.jp/kosako3/oniguruma/doc/RE.ja.txt" target=_blank>POSIX�u���P�b�g</a>�i�ے�j</td></tr>
 </table>
-<font color="green">(鬼)</font> はbregonig.dllのみ<br>
+<font color="green">(�S)</font> ��bregonig.dll�̂�<br>
 <br>
 
 
-<h4>量指定子(数量子)</h4>
+<h4>�ʎw��q(���ʎq)</h4>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td><small>最小一致<br>(無欲)</small></td><td><small>最大一致<br>(欲張り)</small></td><td> </td></tr>
-<tr><td><code>*?</code></td>     <td><code>*</code></td>      <td>直前のパターンの0回以上の繰り返し</td></tr>
-<tr><td><code>+?</code></td>     <td><code>+</code></td>      <td>直前のパターンの1回以上の繰り返し</td></tr>
-<tr><td><code>??</code></td>     <td><code>?</code></td>      <td>直前のパターンが0回または1回現われる</td></tr>
-<tr><td><code>{<font color="blue">n</font>}?</code></td>   <td><code>{<font color="blue">n</font>}</code></td>    <td>直前のパターンの n 回の繰り返し</td></tr>
-<tr><td><code>{<font color="blue">n</font>,}?</code></td>  <td><code>{<font color="blue">n</font>,}</code></td>   <td>直前のパターンの n 回以上の繰り返し</td></tr>
-<tr><td><code>{<font color="blue">n</font>,<font color="blue">m</font>}?</code></td> <td><code>{<font color="blue">n</font>,<font color="blue">m</font>}</code></td>  <td>直前のパターンが n 回以上、 m 回以下</td></tr>
+<tr><td><small>�ŏ���v<br>(���~)</small></td><td><small>�ő��v<br>(�~����)</small></td><td> </td></tr>
+<tr><td><code>*?</code></td>     <td><code>*</code></td>      <td>���O�̃p�^�[����0��ȏ�̌J��Ԃ�</td></tr>
+<tr><td><code>+?</code></td>     <td><code>+</code></td>      <td>���O�̃p�^�[����1��ȏ�̌J��Ԃ�</td></tr>
+<tr><td><code>??</code></td>     <td><code>?</code></td>      <td>���O�̃p�^�[����0��܂���1�񌻂���</td></tr>
+<tr><td><code>{<font color="blue">n</font>}?</code></td>   <td><code>{<font color="blue">n</font>}</code></td>    <td>���O�̃p�^�[���� n ��̌J��Ԃ�</td></tr>
+<tr><td><code>{<font color="blue">n</font>,}?</code></td>  <td><code>{<font color="blue">n</font>,}</code></td>   <td>���O�̃p�^�[���� n ��ȏ�̌J��Ԃ�</td></tr>
+<tr><td><code>{<font color="blue">n</font>,<font color="blue">m</font>}?</code></td> <td><code>{<font color="blue">n</font>,<font color="blue">m</font>}</code></td>  <td>���O�̃p�^�[���� n ��ȏ�A m ��ȉ�</td></tr>
 </table>
 <br>
-正規表現Aを<code><b>[A-Z_]*PROC</b></code> 、正規表現Bを<code><b>[A-Z_]*?PROC</b></code> とします。<br>
+���K�\��A��<code><b>[A-Z_]*PROC</b></code> �A���K�\��B��<code><b>[A-Z_]*?PROC</b></code> �Ƃ��܂��B<br>
 &nbsp;&nbsp;&nbsp;&nbsp; SAKURA_COLLBACKPROC_BREXP_PROC<br>
-という文字列中で、最初にマッチするのは以下のようになります。<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Aの場合: SAKURA_COLLBACKPROC_BREXP_PROC<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Bの場合: SAKURA_COLLBACKPROC<br>
+�Ƃ��������񒆂ŁA�ŏ��Ƀ}�b�`����͈̂ȉ��̂悤�ɂȂ�܂��B<br>
+&nbsp;&nbsp;&nbsp;&nbsp;A�̏ꍇ: SAKURA_COLLBACKPROC_BREXP_PROC<br>
+&nbsp;&nbsp;&nbsp;&nbsp;B�̏ꍇ: SAKURA_COLLBACKPROC<br>
 
-<h4>文字</h4>
+<h4>����</h4>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td><code>\t</code></td><td>水平タブコード（HT,TAB）</td></tr>
-<tr><td><code>\n</code></td><td>ラインフィード（LF）</td></tr>
-<tr><td><code>\r</code></td><td>キャリッジリターン（CR）</td></tr>
-<tr><td><code>\b</code></td><td>後退空白／バックスペース（BS）<br><font size="-1" color="olive">[ ]の中でのみ有効</font></td></tr>
-<tr><td><code>\f</code></td><td>フォームフィード／改ページ（FF）</td></tr>
-<tr><td><code>\a</code></td><td>鐘／アラーム（BEL）</td></tr>
-<tr><td><code>\e</code></td><td>退避修飾／エスケープコード（ESC）</td></tr>
-<tr><td><code>\<font color="blue">ooo</font></code></td>	<td><font color="blue">o</font>に8進数で文字コードを指定する (<font color="blue">o</font>は1～3桁)</td></tr>
-<tr><td><code>\x<font color="blue">HH</font></code></td>	<td><font color="blue">H</font>に16進数で文字コードを指定する (<font color="blue">H</font>は1～2桁)</td></tr>
-<tr><td><code>\x{<font color="blue">HHHH</font>}</code></td><td><font color="green">(鬼)</font> 拡張16進数表現(<font color="blue">H</font>は1～4桁)</td></tr>
-<tr><td><code>\c<font color="blue">[</font></code></td>	<td>コントロール文字(<font color="blue">[</font>はコントロール文字)</td></tr>
-<tr><td><code>\Q</code></td>	<td><font color="green">(鬼)</font> \Eに至るまで 正規表現演算子（正規表現記号）を抑制します</td></tr>
-<tr><td><code>\E</code></td>	<td><font color="green">(鬼)</font> 正規表現演算子（正規表現記号）の抑制状態を終端します</td></tr>
+<tr><td><code>\t</code></td><td>�����^�u�R�[�h�iHT,TAB�j</td></tr>
+<tr><td><code>\n</code></td><td>���C���t�B�[�h�iLF�j</td></tr>
+<tr><td><code>\r</code></td><td>�L�����b�W���^�[���iCR�j</td></tr>
+<tr><td><code>\b</code></td><td>��ދ󔒁^�o�b�N�X�y�[�X�iBS�j<br><font size="-1" color="olive">[ ]�̒��ł̂ݗL��</font></td></tr>
+<tr><td><code>\f</code></td><td>�t�H�[���t�B�[�h�^���y�[�W�iFF�j</td></tr>
+<tr><td><code>\a</code></td><td>���^�A���[���iBEL�j</td></tr>
+<tr><td><code>\e</code></td><td>�ޔ��C���^�G�X�P�[�v�R�[�h�iESC�j</td></tr>
+<tr><td><code>\<font color="blue">ooo</font></code></td>	<td><font color="blue">o</font>��8�i���ŕ����R�[�h���w�肷�� (<font color="blue">o</font>��1�`3��)</td></tr>
+<tr><td><code>\x<font color="blue">HH</font></code></td>	<td><font color="blue">H</font>��16�i���ŕ����R�[�h���w�肷�� (<font color="blue">H</font>��1�`2��)</td></tr>
+<tr><td><code>\x{<font color="blue">HHHH</font>}</code></td><td><font color="green">(�S)</font> �g��16�i���\��(<font color="blue">H</font>��1�`4��)</td></tr>
+<tr><td><code>\c<font color="blue">[</font></code></td>	<td>�R���g���[������(<font color="blue">[</font>�̓R���g���[������)</td></tr>
+<tr><td><code>\Q</code></td>	<td><font color="green">(�S)</font> \E�Ɏ���܂� ���K�\�����Z�q�i���K�\���L���j��}�����܂�</td></tr>
+<tr><td><code>\E</code></td>	<td><font color="green">(�S)</font> ���K�\�����Z�q�i���K�\���L���j�̗}����Ԃ��I�[���܂�</td></tr>
 </table>
-<font color="green">(鬼)</font> はbregonig.dllのみ
+<font color="green">(�S)</font> ��bregonig.dll�̂�
 
-<h4>文字種</h4>
+<h4>������</h4>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td><code>.</code></td><td>\nを除く任意の1文字 <b>[^\n]</b>と同じ<br><font color="green">(Unicode版)</font> 改行を除く任意の1文字。<b>[^\r\n]</b>と同じ
-<a href="javascript:id=hhctrl.TextPopup('この処理は正規表現DLLではなくsakura側が入力された.を[^\\r\\n]に置き換えています。','ＭＳゴシック,11',9,9,-1,-1)">*1</a>
+<tr><td><code>.</code></td><td>\n�������C�ӂ�1���� <b>[^\n]</b>�Ɠ���<br><font color="green">(Unicode��)</font> ���s�������C�ӂ�1�����B<b>[^\r\n]</b>�Ɠ���
+<a href="javascript:id=hhctrl.TextPopup('���̏����͐��K�\��DLL�ł͂Ȃ�sakura�������͂��ꂽ.��[^\\r\\n]�ɒu�������Ă��܂��B','�l�r�S�V�b�N,11',9,9,-1,-1)">*1</a>
 </td></tr>
-<tr><td><code>\w</code></td><td>単語の構成文字 <b>[0-9A-Za-z_]</b>と同じ<br><font color="green">(鬼)</font> 2バイト文字も含む</td></tr>
-<tr><td><code>\W</code></td><td>単語の構成文字以外</td></tr>
-<tr><td><code>\s</code></td><td>空白類文字 [ \t\v\x0a\x0d]と同じ<br><font color = "green">(鬼)</font> <code>[:space:]</code>と同じ</td></tr>
-<tr><td><code>\S</code></td><td>空白類文字以外</td></tr>
-<tr><td><code>\d</code></td><td>10進数字 <br><font color="green">(Unicode版)</font> 2バイト文字=全角数字も含む</td></tr>
-<tr><td><code>\D</code></td><td>10進数字以外</td></tr>
-<tr><td><code>\p{<font color="blue">property-name</font>}</code></td><td><font color="green">(鬼)</font> <a href="http://www.geocities.jp/kosako3/oniguruma/doc/RE.ja.txt" target=_blank>キャラクタプロパティ</a></td></tr>
-<tr><td><code>\p{^<font color="blue">property-name</font>}<br>\P{<font color="blue">property-name</font>}</code></td><td><font color="green">(鬼)</font> <a href="http://www.geocities.jp/kosako3/oniguruma/doc/RE.ja.txt" target=_blank>キャラクタプロパティ</a>（否定）</td></tr>
+<tr><td><code>\w</code></td><td>�P��̍\������ <b>[0-9A-Za-z_]</b>�Ɠ���<br><font color="green">(�S)</font> 2�o�C�g�������܂�</td></tr>
+<tr><td><code>\W</code></td><td>�P��̍\�������ȊO</td></tr>
+<tr><td><code>\s</code></td><td>�󔒗ޕ��� [ \t\v\x0a\x0d]�Ɠ���<br><font color = "green">(�S)</font> <code>[:space:]</code>�Ɠ���</td></tr>
+<tr><td><code>\S</code></td><td>�󔒗ޕ����ȊO</td></tr>
+<tr><td><code>\d</code></td><td>10�i���� <br><font color="green">(Unicode��)</font> 2�o�C�g����=�S�p�������܂�</td></tr>
+<tr><td><code>\D</code></td><td>10�i�����ȊO</td></tr>
+<tr><td><code>\p{<font color="blue">property-name</font>}</code></td><td><font color="green">(�S)</font> <a href="http://www.geocities.jp/kosako3/oniguruma/doc/RE.ja.txt" target=_blank>�L�����N�^�v���p�e�B</a></td></tr>
+<tr><td><code>\p{^<font color="blue">property-name</font>}<br>\P{<font color="blue">property-name</font>}</code></td><td><font color="green">(�S)</font> <a href="http://www.geocities.jp/kosako3/oniguruma/doc/RE.ja.txt" target=_blank>�L�����N�^�v���p�e�B</a>�i�ے�j</td></tr>
 </table>
-<font color="green">(鬼)</font> はbregonig.dllのみ<br>
-<font color="green">(Unicode版)</font> はUnicode版のサクラエディタ<br>
+<font color="green">(�S)</font> ��bregonig.dll�̂�<br>
+<font color="green">(Unicode��)</font> ��Unicode�ł̃T�N���G�f�B�^<br>
 
-<h4>位置(錨)</h4>
+<h4>�ʒu(�d)</h4>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td><code>^</code></td><td>行頭<!-- ライブラリやバージョンで意味が違う --></td></tr>
-<tr><td><code>$</code></td><td>行末<!-- ライブラリやバージョンで意味が違う --></td></tr>
-<tr><td><code>\b</code></td><td>単語の境界<br><font size="-1" color="olive">[ ]の中ではバックスペースの意味になります</font></td></tr>
-<tr><td><code>\B</code></td><td>単語の境界以外</td></tr>
-<tr><td><code>\A</code></td><td>文字列の最初</td></tr>
-<tr><td><code>\Z</code></td><td>文字列の最後(最後が改行ならば改行の直前)</td></tr>
-<tr><td><code>\z</code></td><td><font color="green">(鬼)</font> 文字列の最後</td></tr>
-<tr><td><code>\G</code></td><td>照合開始位置</td></tr>
+<tr><td><code>^</code></td><td>�s��<!-- ���C�u������o�[�W�����ňӖ����Ⴄ --></td></tr>
+<tr><td><code>$</code></td><td>�s��<!-- ���C�u������o�[�W�����ňӖ����Ⴄ --></td></tr>
+<tr><td><code>\b</code></td><td>�P��̋��E<br><font size="-1" color="olive">[ ]�̒��ł̓o�b�N�X�y�[�X�̈Ӗ��ɂȂ�܂�</font></td></tr>
+<tr><td><code>\B</code></td><td>�P��̋��E�ȊO</td></tr>
+<tr><td><code>\A</code></td><td>������̍ŏ�</td></tr>
+<tr><td><code>\Z</code></td><td>������̍Ō�(�Ōオ���s�Ȃ�Ή��s�̒��O)</td></tr>
+<tr><td><code>\z</code></td><td><font color="green">(�S)</font> ������̍Ō�</td></tr>
+<tr><td><code>\G</code></td><td>�ƍ��J�n�ʒu</td></tr>
 </table>
-<font color="green">(鬼)</font> はbregonig.dllのみ
+<font color="green">(�S)</font> ��bregonig.dll�̂�
 
-<h4>後方参照と部分式呼び出し</h4>
+<h4>����Q�Ƃƕ������Ăяo��</h4>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td><code>\<font color="blue">n</font></code></td><td>番号指定による後方参照<br>( )でグループ化した文字列を、<b>\<font color="blue">n</font></b>(<font color="blue">n</font>は1以上の整数)で参照します。</td></tr>
-<tr><td><code>\k&lt;<font color="blue">name</font>&gt;<br>\k'<font color="blue">name</font>'</code></td><td><font color="green">(鬼)</font> 名前指定による後方参照</td></tr>
+<tr><td><code>\<font color="blue">n</font></code></td><td>�ԍ��w��ɂ�����Q��<br>( )�ŃO���[�v��������������A<b>\<font color="blue">n</font></b>(<font color="blue">n</font>��1�ȏ�̐���)�ŎQ�Ƃ��܂��B</td></tr>
+<tr><td><code>\k&lt;<font color="blue">name</font>&gt;<br>\k'<font color="blue">name</font>'</code></td><td><font color="green">(�S)</font> ���O�w��ɂ�����Q��</td></tr>
 <tr><td><code>
 	\k&lt;<font color="blue">name</font>+<font color="blue">n</font>&gt;<br>
 	\k&lt;<font color="blue">name</font>-<font color="blue">n</font>&gt;<br>
 	\k'<font color="blue">name</font>+<font color="blue">n</font>'<br>
 	\k'<font color="blue">name</font>-<font color="blue">n</font>'
-		</code></td><td><font color="green">(鬼)</font> ネストレベル付き後方参照</td></tr>
-<tr><td><code>\g&lt;<font color="blue">name</font>&gt;<br>\g'<font color="blue">name</font>'</code></td><td><font color="green">(鬼)</font> 名前指定部分式呼出し</td></tr>
-<tr><td><code>\g&lt;<font color="blue">n</font>&gt;<br>\g'<font color="blue">n</font>'</code></td><td><font color="green">(鬼)</font> 番号指定部分式呼出し</td></tr>
+		</code></td><td><font color="green">(�S)</font> �l�X�g���x���t������Q��</td></tr>
+<tr><td><code>\g&lt;<font color="blue">name</font>&gt;<br>\g'<font color="blue">name</font>'</code></td><td><font color="green">(�S)</font> ���O�w�蕔�����ďo��</td></tr>
+<tr><td><code>\g&lt;<font color="blue">n</font>&gt;<br>\g'<font color="blue">n</font>'</code></td><td><font color="green">(�S)</font> �ԍ��w�蕔�����ďo��</td></tr>
 </table>
-<font color="green">(鬼)</font> はbregonig.dllのみ
+<font color="green">(�S)</font> ��bregonig.dll�̂�
 
-<h4>拡張式集合</h4>
+<h4>�g�����W��</h4>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td><code>(?#<font color="blue">...</font>)</code></td><td>注釈</td></tr>
-<tr><td><code>(<font color="blue">式</font>)</code></td><td>捕獲式集合</td></tr>
-<tr><td><code>(?:<font color="blue">式</font>)</code></td><td>非捕獲式集合 （グループ化のみ）</td></tr>
-<tr><td><code>(?&lt;<font color="blue">name</font>&gt;<font color="blue">式</font>)<br>(?'<font color="blue">name</font>'<font color="blue">式</font>)</code></td><td><font color="green">(鬼)</font> 名前付き捕獲式集合</td></tr>
-<tr><td><code>(?=<font color="blue">式</font>)</code></td><td>先読み</td></tr>
-<tr><td><code>(?!<font color="blue">式</font>)</code></td><td>否定先読み</td></tr>
-<tr><td><code>(?&lt;=<font color="blue">式</font>)</code></td><td><font color="green">(鬼)</font> 戻り読み</td></tr>
-<tr><td><code>(?&lt;!<font color="blue">式</font>)</code></td><td><font color="green">(鬼)</font> 否定戻り読み</td></tr>
-<tr><td><code>(?&gt;<font color="blue">式</font>)</code></td><td><font color="green">(鬼)</font> 原子的式集合</td></tr>
-<tr><td><code>(?imsx)</code></td><td>孤立オプション<br>i: 大文字小文字照合<br>m: 複数行（サクラエディタではデフォルトでon）<br>s: 単一行  （. が \n にもマッチ）<br>x: 拡張形式（空白を無視、# 以降を無視）</td></tr>
-<tr><td><code>(?imsx-imsx)</code></td><td><font color="green">(鬼)</font> 孤立オプション（bregonig.dllではオプションの否定が可能）</td></tr>
-<tr><td><code>(imsx-imsx:<font color="blue">式</font>)</code></td><td><font color="green">(鬼)</font> 式オプション</td></tr>
+<tr><td><code>(?#<font color="blue">...</font>)</code></td><td>����</td></tr>
+<tr><td><code>(<font color="blue">��</font>)</code></td><td>�ߊl���W��</td></tr>
+<tr><td><code>(?:<font color="blue">��</font>)</code></td><td>��ߊl���W�� �i�O���[�v���̂݁j</td></tr>
+<tr><td><code>(?&lt;<font color="blue">name</font>&gt;<font color="blue">��</font>)<br>(?'<font color="blue">name</font>'<font color="blue">��</font>)</code></td><td><font color="green">(�S)</font> ���O�t���ߊl���W��</td></tr>
+<tr><td><code>(?=<font color="blue">��</font>)</code></td><td>��ǂ�</td></tr>
+<tr><td><code>(?!<font color="blue">��</font>)</code></td><td>�ے��ǂ�</td></tr>
+<tr><td><code>(?&lt;=<font color="blue">��</font>)</code></td><td><font color="green">(�S)</font> �߂�ǂ�</td></tr>
+<tr><td><code>(?&lt;!<font color="blue">��</font>)</code></td><td><font color="green">(�S)</font> �ے�߂�ǂ�</td></tr>
+<tr><td><code>(?&gt;<font color="blue">��</font>)</code></td><td><font color="green">(�S)</font> ���q�I���W��</td></tr>
+<tr><td><code>(?imsx)</code></td><td>�Ǘ��I�v�V����<br>i: �啶���������ƍ�<br>m: �����s�i�T�N���G�f�B�^�ł̓f�t�H���g��on�j<br>s: �P��s  �i. �� \n �ɂ��}�b�`�j<br>x: �g���`���i�󔒂𖳎��A# �ȍ~�𖳎��j</td></tr>
+<tr><td><code>(?imsx-imsx)</code></td><td><font color="green">(�S)</font> �Ǘ��I�v�V�����ibregonig.dll�ł̓I�v�V�����̔ے肪�\�j</td></tr>
+<tr><td><code>(imsx-imsx:<font color="blue">��</font>)</code></td><td><font color="green">(�S)</font> ���I�v�V����</td></tr>
 </table>
-<font color="green">(鬼)</font> はbregonig.dll のみ
+<font color="green">(�S)</font> ��bregonig.dll �̂�
 
-<h4>置換で使える参照</h4>
-「置換後」に指定して使います。<br>
+<h4>�u���Ŏg����Q��</h4>
+�u�u����v�Ɏw�肵�Ďg���܂��B<br>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td><code>$<font color="blue">n</font></code></td><td>番号指定参照<br>( )でグループ化した文字列を、<b>$<font color="blue">n</font></b>(<font color="blue">n</font>は1以上の整数)で参照します。<br>サクラエディタでは<b>$<font color="blue">n</font></b>の代わりに<b>\<font color="blue">n</font></b>も使用できます。</td></tr>
-<tr><td><code>${<font color="blue">n</font>}</code></td><td><font color="green">(鬼)</font> （安全な）番号指定参照<br>後ろにそのまま続けて数字を書くことができます。</td></tr>
-<tr><td><code>$&amp;</code></td><td>マッチした文字列全体</td></tr>
-<tr><td><code>$+</code></td><td><font color="green">(鬼)</font> 最後にマッチした部分文字列</td></tr>
-<tr><td><code>$+{<font color="blue">name</font>}<br>$-{<font color="blue">name</font>}[<font color="blue">n</font>]</code></td><td><font color="green">(鬼)</font> 名前指定参照（Perl 5.10 互換、推奨）</td></tr>
-<tr><td><code>\k&lt;<font color="blue">name</font>&gt;<br>\k'<font color="blue">name</font>'</code></td><td><font color="green">(鬼)</font> 名前指定参照（鬼車準拠）</td></tr>
-<tr><td><code>${<font color="blue">name</font>}</code></td><td><font color="green">(鬼)</font> 名前指定参照（独自拡張、暫定仕様のため非推奨）</td></tr>
+<tr><td><code>$<font color="blue">n</font></code></td><td>�ԍ��w��Q��<br>( )�ŃO���[�v��������������A<b>$<font color="blue">n</font></b>(<font color="blue">n</font>��1�ȏ�̐���)�ŎQ�Ƃ��܂��B<br>�T�N���G�f�B�^�ł�<b>$<font color="blue">n</font></b>�̑����<b>\<font color="blue">n</font></b>���g�p�ł��܂��B</td></tr>
+<tr><td><code>${<font color="blue">n</font>}</code></td><td><font color="green">(�S)</font> �i���S�ȁj�ԍ��w��Q��<br>���ɂ��̂܂ܑ����Đ������������Ƃ��ł��܂��B</td></tr>
+<tr><td><code>$&amp;</code></td><td>�}�b�`����������S��</td></tr>
+<tr><td><code>$+</code></td><td><font color="green">(�S)</font> �Ō�Ƀ}�b�`��������������</td></tr>
+<tr><td><code>$+{<font color="blue">name</font>}<br>$-{<font color="blue">name</font>}[<font color="blue">n</font>]</code></td><td><font color="green">(�S)</font> ���O�w��Q�ƁiPerl 5.10 �݊��A�����j</td></tr>
+<tr><td><code>\k&lt;<font color="blue">name</font>&gt;<br>\k'<font color="blue">name</font>'</code></td><td><font color="green">(�S)</font> ���O�w��Q�Ɓi�S�ԏ����j</td></tr>
+<tr><td><code>${<font color="blue">name</font>}</code></td><td><font color="green">(�S)</font> ���O�w��Q�Ɓi�Ǝ��g���A�b��d�l�̂��ߔ񐄏��j</td></tr>
 </table>
-<font color="green">(鬼)</font> はbregonig.dllのみ
+<font color="green">(�S)</font> ��bregonig.dll�̂�
 
-<h4>bregonig.dllへの変更による違い</h4>
+<h4>bregonig.dll�ւ̕ύX�ɂ��Ⴂ</h4>
 <ul>
-	<li><b>\w は2バイト文字も含む。</b><br>
-		<small>\w は [A-Za-z0-9_] に加え、2バイト文字も含みます。これに応じて、\W, \b, \B の動作も変更になります。</small>
+	<li><b>\w ��2�o�C�g�������܂ށB</b><br>
+		<small>\w �� [A-Za-z0-9_] �ɉ����A2�o�C�g�������܂݂܂��B����ɉ����āA\W, \b, \B �̓�����ύX�ɂȂ�܂��B</small>
 	</li>
-	<li><b>[ ] の中に [ を書くときは必ずエスケープが必要。</b><br>
-		<small>文字集合の中で文字集合や積演算が使えるようになる代わりに、[ そのものを書くときは必ず \[ と書かなければならなくなりました。</small>
+	<li><b>[ ] �̒��� [ �������Ƃ��͕K���G�X�P�[�v���K�v�B</b><br>
+		<small>�����W���̒��ŕ����W����ω��Z���g����悤�ɂȂ����ɁA[ ���̂��̂������Ƃ��͕K�� \[ �Ə����Ȃ���΂Ȃ�Ȃ��Ȃ�܂����B</small>
 	</li>
-	<li><b>\c\ の動作が異なる。</b><br>
-		<small>Bregexp.dll では、\c\ は Ctrl+\ を意味していますが、bregonig.dll では、\c の次の \ はエスケープとして解釈されます。Ctrl+\ を指定するには \c\\とする必要があります。（Perl の仕様と異なるため、変更される可能性があります。）</small>
+	<li><b>\c\ �̓��삪�قȂ�B</b><br>
+		<small>Bregexp.dll �ł́A\c\ �� Ctrl+\ ���Ӗ����Ă��܂����Abregonig.dll �ł́A\c �̎��� \ �̓G�X�P�[�v�Ƃ��ĉ��߂���܂��BCtrl+\ ���w�肷��ɂ� \c\\�Ƃ���K�v������܂��B�iPerl �̎d�l�ƈقȂ邽�߁A�ύX�����\��������܂��B�j</small>
 	</li>
-	<li><b>置換で \<font color="blue">ooo</font> の動作が少し異なる。</b><br>
-		<small>Perl の動作に近づけてあります。</small>
+	<li><b>�u���� \<font color="blue">ooo</font> �̓��삪�����قȂ�B</b><br>
+		<small>Perl �̓���ɋ߂Â��Ă���܂��B</small>
 	</li>
-	<li><b>Unicode版は i オプションの動作が異なる。</b><br>
-		<small>大文字小文字を区別しないの動作が ASCII 範囲外にも影響します。<br>
-		Unicode版サクラエディタの通常検索・置換も ASCII 範囲外の大文字小文字の考慮をしますが、2つが同じかどうかは未チェックです。</small>
+	<li><b>Unicode�ł� i �I�v�V�����̓��삪�قȂ�B</b><br>
+		<small>�啶������������ʂ��Ȃ��̓��삪 ASCII �͈͊O�ɂ��e�����܂��B<br>
+		Unicode�ŃT�N���G�f�B�^�̒ʏ팟���E�u���� ASCII �͈͊O�̑啶���������̍l�������܂����A2���������ǂ����͖��`�F�b�N�ł��B</small>
 	</li>
 </ul>
 
-<h4>改行の検索</h4>
-サクラエディタで改行(CRLF)を検索する場合は、<br>
-<b>\r\n</b> で検索して下さい。<br>
-改行(CR,LF,CRLFのすべて)を検索する場合は、<br>
-<b>[\r\n]+</b> のように指定してください。<br>
-改行(CR,LF,CRLF)と、最終行の行末を検索する場合は、<br>
-<b>$</b> と指定してください。<br>
+<h4>���s�̌���</h4>
+�T�N���G�f�B�^�ŉ��s(CRLF)����������ꍇ�́A<br>
+<b>\r\n</b> �Ō������ĉ������B<br>
+���s(CR,LF,CRLF�̂��ׂ�)����������ꍇ�́A<br>
+<b>[\r\n]+</b> �̂悤�Ɏw�肵�Ă��������B<br>
+���s(CR,LF,CRLF)�ƁA�ŏI�s�̍s������������ꍇ�́A<br>
+<b>$</b> �Ǝw�肵�Ă��������B<br>
 
 <hr>
 
-<img src="images/hint.png">ヒント<br>
-正規表現を検索、置換、Grepで利用する場合、「/」をエスケープしたり、「/」で囲ったりする必要はありません。<br>
-正規表現キーワードで使う場合は、/text\/css/k のように「/」をエスケープするか m#text/css#k のように書く必要があります。<br>
+<img src="images/hint.png">�q���g<br>
+���K�\���������A�u���AGrep�ŗ��p����ꍇ�A�u/�v���G�X�P�[�v������A�u/�v�ň͂����肷��K�v�͂���܂���B<br>
+���K�\���L�[���[�h�Ŏg���ꍇ�́A/text\/css/k �̂悤�Ɂu/�v���G�X�P�[�v���邩 m#text/css#k �̂悤�ɏ����K�v������܂��B<br>
 
 <br>
-<img src="images/hint.png">追加情報<br>
-検索、置換、Grepでは、正規表現ライブラリに渡す文字列を以下のようにしています。[DELIMITER]は、0xffのバイナリ表記とします。<br>
-Unicode版では U+FFFF です。<br>
-検索時のオプションは「m[DELIMITER]Pattern[DELIMITER]km」です。<br>
-置換時のオプションは「s[DELIMITER]PatternBefore[DELIMITER]PatternAfter[DELIMITER]km」です。<br>
-デリミタ相当の文字を検索・置換するにはエスケープが必要です。<br>
-また大文字小文字を区別しない場合は最後に「i」が付加されます。<br>
-すべて置換で「すべて置換は置換の繰返し」がOFFの場合は「g」が付加されます。<br>
-(mオプションが付いていますが、改行をまたいだ検索はできません。)<br>
+<img src="images/hint.png">�ǉ����<br>
+�����A�u���AGrep�ł́A���K�\�����C�u�����ɓn����������ȉ��̂悤�ɂ��Ă��܂��B[DELIMITER]�́A0xff�̃o�C�i���\�L�Ƃ��܂��B<br>
+Unicode�łł� U+FFFF �ł��B<br>
+�������̃I�v�V�����́um[DELIMITER]Pattern[DELIMITER]km�v�ł��B<br>
+�u�����̃I�v�V�����́us[DELIMITER]PatternBefore[DELIMITER]PatternAfter[DELIMITER]km�v�ł��B<br>
+�f���~�^�����̕����������E�u������ɂ̓G�X�P�[�v���K�v�ł��B<br>
+�܂��啶������������ʂ��Ȃ��ꍇ�͍Ō�Ɂui�v���t������܂��B<br>
+���ׂĒu���Łu���ׂĒu���͒u���̌J�Ԃ��v��OFF�̏ꍇ�́ug�v���t������܂��B<br>
+(m�I�v�V�������t���Ă��܂����A���s���܂����������͂ł��܂���B)<br>
 </BODY></HTML>

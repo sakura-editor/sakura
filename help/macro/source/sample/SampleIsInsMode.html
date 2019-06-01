@@ -1,30 +1,30 @@
-ï»¿<html><head><title>S_IsInsModeã®ä½¿ç”¨ä¾‹</title>
+<html><head><title>S_IsInsMode‚Ìg—p—á</title>
 <LINK REL="stylesheet" TYPE="text/css" HREF="../sakura.css">
-<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
 </head>
 <body>
 <small>
 Sakura-Editor Macro Reference
 </small>
-<h2>S_IsInsModeã®ä½¿ç”¨ä¾‹</h2>
+<h2>S_IsInsMode‚Ìg—p—á</h2>
 
 <pre>
 <span style = "color:green;">//sample.js
-//æŒ¿å…¥ãƒ»ä¸Šæ›¸ããƒ¢ãƒ¼ãƒ‰ã‚’èª¿ã¹ã‚‹</span>
+//‘}“üEã‘‚«ƒ‚[ƒh‚ğ’²‚×‚é</span>
 <span style = "color:blue;">var</span> oWsh = <span style = "color:blue;">new</span> ActiveXObject(<span style = "color:#800000">"WScript.Shell"</span>);
 <span style = "color:blue;">if</span> (<span style = "color:blue;">IsInsMode</span>) {
-    oWsh.Popup(<span style = "color:#800000">"æŒ¿å…¥ãƒ¢ãƒ¼ãƒ‰ã§ã™"</span>, 0, <span style = "color:#800000">"Message"</span>, 0);
+    oWsh.Popup(<span style = "color:#800000">"‘}“üƒ‚[ƒh‚Å‚·"</span>, 0, <span style = "color:#800000">"Message"</span>, 0);
 } <span style = "color:blue;">else</span> {
-    oWsh.Popup(<span style = "color:#800000">"ä¸Šæ›¸ãƒ¢ãƒ¼ãƒ‰ã§ã™"</span>, 0, <span style = "color:#800000">"Message"</span>, 0);
+    oWsh.Popup(<span style = "color:#800000">"ã‘ƒ‚[ƒh‚Å‚·"</span>, 0, <span style = "color:#800000">"Message"</span>, 0);
 }
 </pre>
 
 <pre>
 <span style = "color:green;">//sample.ppa</span>
 <span style = "color:blue;">if S_IsInsMode then</span>
-    <span style = "color:blue;">MessageBox</span>(<span style = "color:#800000;">'æŒ¿å…¥ãƒ¢ãƒ¼ãƒ‰ã§ã™'</span>, <span style = "color:#800000;">'æŒ¿å…¥ï¼ä¸Šæ›¸ã'</span>, <span style = "color:red;">0</span>)
+    <span style = "color:blue;">MessageBox</span>(<span style = "color:#800000;">'‘}“üƒ‚[ƒh‚Å‚·'</span>, <span style = "color:#800000;">'‘}“ü^ã‘‚«'</span>, <span style = "color:red;">0</span>)
 <span style = "color:blue;">else</span>
-    <span style = "color:blue;">MessageBox</span>(<span style = "color:#800000;">'ä¸Šæ›¸ããƒ¢ãƒ¼ãƒ‰ã§ã™'</span>, <span style = "color:#800000;">'æŒ¿å…¥ï¼ä¸Šæ›¸ã'</span>, <span style = "color:red;">0</span>)
+    <span style = "color:blue;">MessageBox</span>(<span style = "color:#800000;">'ã‘‚«ƒ‚[ƒh‚Å‚·'</span>, <span style = "color:#800000;">'‘}“ü^ã‘‚«'</span>, <span style = "color:red;">0</span>)
 ;
 </pre>
 

@@ -1,13 +1,13 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML lang="ja">
 <HEAD>
-<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
 <link rel="shortcut icon" href="images/favicon.ico">
-<TITLE>プラグイン定義ファイル等</TITLE>
-<META NAME="MS-HKWD" CONTENT="プラグイン定義ファイル">
-<META NAME="MS-HKWD" CONTENT="ReadMeファイル">
-<META NAME="MS-HKWD" CONTENT="ZIPプラグイン">
+<TITLE>�v���O�C����`�t�@�C����</TITLE>
+<META NAME="MS-HKWD" CONTENT="�v���O�C����`�t�@�C��">
+<META NAME="MS-HKWD" CONTENT="ReadMe�t�@�C��">
+<META NAME="MS-HKWD" CONTENT="ZIP�v���O�C��">
 <style>
 table.box { width: 90%; }
 table.box th { text-align: left; }
@@ -16,137 +16,137 @@ table.box td { border: #666 1px solid; padding: 4px 10px 3px 10px; }
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
-<noscript>[<a href="index.html">目次</a>] <br></noscript>
+<noscript>[<a href="index.html">�ڎ�</a>] <br></noscript>
 <!--
-<noscript>[<a href="index.html">目次</a>] [<a href="web_frame.html" target="_top">フレームで表示</a>] [<a href="web_search.html">検索</a>]<br></noscript>
+<noscript>[<a href="index.html">�ڎ�</a>] [<a href="web_frame.html" target="_top">�t���[���ŕ\��</a>] [<a href="web_search.html">����</a>]<br></noscript>
 -->
-<h2>現時点の実装仕様</h2>
+<h2>�����_�̎����d�l</h2>
 
-<h3 id=c0301>プラグイン定義ファイル(plugin.def)</h3>
-プラグイン定義ファイルはINIファイル形式で、以下の内容を含む。<br>
-文字コードセットはShift_JISまたはBOM付きUTF-8。文字コードセットはBOMの有無で判断する。<br>
-=の前後に空白は付けない。<br>
+<h3 id=c0301>�v���O�C����`�t�@�C��(plugin.def)</h3>
+�v���O�C����`�t�@�C����INI�t�@�C���`���ŁA�ȉ��̓��e���܂ށB<br>
+�����R�[�h�Z�b�g��Shift_JIS�܂���BOM�t��UTF-8�B�����R�[�h�Z�b�g��BOM�̗L���Ŕ��f����B<br>
+=�̑O��ɋ󔒂͕t���Ȃ��B<br>
 <br>
-■全プラグイン共通<br>
+���S�v���O�C������<br>
 <div class=li200>
 	<table class=box>
 	<tr><th width=120>[Plugin]</th><th></th></tr>
-	<tr><td>Id</td>				<td>プラグイン識別子。最大UNICODE63文字の、世界でユニークな文字列。<br>
-									使用できる文字は、半角英数と「{}._-」のみとする。「,」と「/」は厳禁。<br>
-									例）{A8E7CC0A-032D-11DF-9E9A-333D56D89593}, jp.co.google.foo.BarPlugin, etc..</td></tr>
-	<tr><td>Name</td>			<td>プラグイン和名</td></tr>
-	<tr><td>Description</td>	<td>簡潔な説明</td></tr>
-	<tr><td>Type</td>			<td>wsh / dll / ...<br>現在はwshのみ</td></tr>
-	<tr><td>Author</td>			<td>作者名。Copyright等。</td></tr>
-	<tr><td>Version</td>		<td>バージョン。4個以内の数字を.でつなげたもの。</td></tr>
-	<tr><td>Url</td>			<td>配布元URL</td></tr>
+	<tr><td>Id</td>				<td>�v���O�C�����ʎq�B�ő�UNICODE63�����́A���E�Ń��j�[�N�ȕ�����B<br>
+									�g�p�ł��镶���́A���p�p���Ɓu{}._-�v�݂̂Ƃ���B�u,�v�Ɓu/�v�͌��ցB<br>
+									��j{A8E7CC0A-032D-11DF-9E9A-333D56D89593}, jp.co.google.foo.BarPlugin, etc..</td></tr>
+	<tr><td>Name</td>			<td>�v���O�C���a��</td></tr>
+	<tr><td>Description</td>	<td>�Ȍ��Ȑ���</td></tr>
+	<tr><td>Type</td>			<td>wsh / dll / ...<br>���݂�wsh�̂�</td></tr>
+	<tr><td>Author</td>			<td>��Җ��BCopyright���B</td></tr>
+	<tr><td>Version</td>		<td>�o�[�W�����B4�ȓ��̐�����.�łȂ������́B</td></tr>
+	<tr><td>Url</td>			<td>�z�z��URL</td></tr>
 	</table>
 <br>
 	<table class=box>
-	<tr><th width=120>[Plug]</th><th>ジャックと呼び出すハンドラの対応表</th></tr>
-	<tr><td><em>ジャック名</em></td>		<td>ハンドラ<br>
-												※一部のジャックには、Label属性を指定することができる。(Outline, SmartIndent等)</td></tr>
-	<tr><td><em>ジャック名</em>.Label</td>	<td>ラベル文字列</td></tr>
+	<tr><th width=120>[Plug]</th><th>�W���b�N�ƌĂяo���n���h���̑Ή��\</th></tr>
+	<tr><td><em>�W���b�N��</em></td>		<td>�n���h��<br>
+												���ꕔ�̃W���b�N�ɂ́ALabel�������w�肷�邱�Ƃ��ł���B(Outline, SmartIndent��)</td></tr>
+	<tr><td><em>�W���b�N��</em>.Label</td>	<td>���x��������</td></tr>
 	</table>
 	<br>
 	<div class=li200>
-	<a href="overview.html#c0205">ジャック一覧</a>参照<br>
-	例） Outline=xxxxx　　　　　 ←アウトライン解析時にxxxxxを実行する<br>
-	　　 Outline.Label=yyy　　　←タイプ別設定の選択肢にyyyが追加される<br>
+	<a href="overview.html#c0205">�W���b�N�ꗗ</a>�Q��<br>
+	��j Outline=xxxxx�@�@�@�@�@ ���A�E�g���C����͎���xxxxx�����s����<br>
+	�@�@ Outline.Label=yyy�@�@�@���^�C�v�ʐݒ�̑I������yyy���ǉ������<br>
 	</div>
 <br>
 	<table class=box>
-	<tr><th width=120>[Command]</th><th>本体に追加するプラグインコマンドの定義</th></tr>
-	<tr><td>C[n]</td>			<td>ハンドラ</td></tr>
-	<tr><td>C[n].Label</td>		<td>コマンド名</td></tr>
-	<tr><td>C[n].Icon</td>		<td>アイコンファイル(16x16のBMPファイル)<br>
-									指定されなかった場合は<img src="images/PluginCommand.png" alt="規定のアイコン" title="(mytool.bmpが無い場合)">で表示される</td></tr>
+	<tr><th width=120>[Command]</th><th>�{�̂ɒǉ�����v���O�C���R�}���h�̒�`</th></tr>
+	<tr><td>C[n]</td>			<td>�n���h��</td></tr>
+	<tr><td>C[n].Label</td>		<td>�R�}���h��</td></tr>
+	<tr><td>C[n].Icon</td>		<td>�A�C�R���t�@�C��(16x16��BMP�t�@�C��)<br>
+									�w�肳��Ȃ������ꍇ��<img src="images/PluginCommand.png" alt="�K��̃A�C�R��" title="(mytool.bmp�������ꍇ)">�ŕ\�������</td></tr>
 	</table>
-	　(n=1～49。欠番があるとその後は読み込まれない)<br>
+	�@(n=1�`49�B���Ԃ�����Ƃ��̌�͓ǂݍ��܂�Ȃ�)<br>
 <br>
 	<table class=box>
-	<tr><th width=120>[Option]</th>	<th>プラグインオプションの定義</th></tr>
-	<tr><td>O[n].Section</td>		<td>オプションファイル中のSection名(最初のみ必須)<br>
-										未指定の場合には、直前の値を使用する。</td></tr>
-	<tr><td>O[n].Key</td>			<td>オプションファイル中のKey名(必須)</td></tr>
-	<tr><td>O[n].Label</td>			<td>表示項目<br>
-										未指定の場合には、Keyを使用する。</td></tr>
-	<tr><td>O[n].Type</td>			<td>型、以下に定義する。<br>
-										未定義、未指定の場合には文字列型として処理する。<br><br>
+	<tr><th width=120>[Option]</th>	<th>�v���O�C���I�v�V�����̒�`</th></tr>
+	<tr><td>O[n].Section</td>		<td>�I�v�V�����t�@�C������Section��(�ŏ��̂ݕK�{)<br>
+										���w��̏ꍇ�ɂ́A���O�̒l���g�p����B</td></tr>
+	<tr><td>O[n].Key</td>			<td>�I�v�V�����t�@�C������Key��(�K�{)</td></tr>
+	<tr><td>O[n].Label</td>			<td>�\������<br>
+										���w��̏ꍇ�ɂ́AKey���g�p����B</td></tr>
+	<tr><td>O[n].Type</td>			<td>�^�A�ȉ��ɒ�`����B<br>
+										����`�A���w��̏ꍇ�ɂ͕�����^�Ƃ��ď�������B<br><br>
 			<table class=box>
-				<tr><td>Str</td>	<td>文字列型(1024文字まで)</td></tr>
-				<tr><td>Dir</td>	<td>ディレクトリ型(ボタンでディレクトリの指定が可能) (Ver.2.0.9.0以降)</td></tr>
-				<tr><td>Bool</td>	<td>ブール型 True で 1 False で 0 をプラグインオプションに設定する。</td></tr>
-				<tr><td>Int</td>	<td>整数型(-2147483647～2147483647、32bit符号付整数)</td></tr>
-				<tr><td>Sel</td>	<td>選択型(ドロップダウンリストで選択)<br>
-										選択項目は Select で指定する。</td></tr>
+				<tr><td>Str</td>	<td>������^(1024�����܂�)</td></tr>
+				<tr><td>Dir</td>	<td>�f�B���N�g���^(�{�^���Ńf�B���N�g���̎w�肪�\) (Ver.2.0.9.0�ȍ~)</td></tr>
+				<tr><td>Bool</td>	<td>�u�[���^ True �� 1 False �� 0 ���v���O�C���I�v�V�����ɐݒ肷��B</td></tr>
+				<tr><td>Int</td>	<td>�����^(-2147483647�`2147483647�A32bit�����t����)</td></tr>
+				<tr><td>Sel</td>	<td>�I���^(�h���b�v�_�E�����X�g�őI��)<br>
+										�I�����ڂ� Select �Ŏw�肷��B</td></tr>
 			</table><br>
 		</td></tr>
-	<tr><td>O[n].Default</td>		<td>デフォルト値を設定する。 (Ver.2.0.8.0以降)</td></tr>
-	<tr><td>O[n].Select </td>		<td>選択項目br>
-										各項目は <b>|</b> で区切り、項目の中で 表示 <b>:</b> 値 の様に設定する。<br>
-										項目内に <b>:</b> が無かった場合には、項目の値を表示、値の両方に使用する。<br>
-										例） O[3].Select=自動:0|XML固定:1|XML/XHTML検出:2|XHTML固定:3|HTML固定:6</td></tr>
+	<tr><td>O[n].Default</td>		<td>�f�t�H���g�l��ݒ肷��B (Ver.2.0.8.0�ȍ~)</td></tr>
+	<tr><td>O[n].Select </td>		<td>�I������br>
+										�e���ڂ� <b>|</b> �ŋ�؂�A���ڂ̒��� �\�� <b>:</b> �l �̗l�ɐݒ肷��B<br>
+										���ړ��� <b>:</b> �����������ꍇ�ɂ́A���ڂ̒l��\���A�l�̗����Ɏg�p����B<br>
+										��j O[3].Select=����:0|XML�Œ�:1|XML/XHTML���o:2|XHTML�Œ�:3|HTML�Œ�:6</td></tr>
 	</table>
-	　(n=1～99。欠番があっても読み込む)<br>
+	�@(n=1�`99�B���Ԃ������Ă��ǂݍ���)<br>
 <br>
 	<table class=box>
-	<tr><th width=120>[String]</th><th>文字列の定義(sakura 2.1.1.0以降)</th></tr>
-	<tr><td>S[n]</td>		<td>多言語化のための文字列の定義</td></tr>
+	<tr><th width=120>[String]</th><th>������̒�`(sakura 2.1.1.0�ȍ~)</th></tr>
+	<tr><td>S[n]</td>		<td>�����ꉻ�̂��߂̕�����̒�`</td></tr>
 	</table>
-	　(n=1～99。欠番があっても読み込む)<br>
+	�@(n=1�`99�B���Ԃ������Ă��ǂݍ���)<br>
 </div><br>
-	■WSHプラグイン固有<br>
+	��WSH�v���O�C���ŗL<br>
 <div class=li200>
-・<b>Plug</b>, <b>Command</b> セクションでのハンドラにはスクリプトファイル名を指定する。<br>
-　例）パスは個別フォルダ起点の相対パスとする。<br>
-　　Outline=outline.js
+�E<b>Plug</b>, <b>Command</b> �Z�N�V�����ł̃n���h���ɂ̓X�N���v�g�t�@�C�������w�肷��B<br>
+�@��j�p�X�͌ʃt�H���_�N�_�̑��΃p�X�Ƃ���B<br>
+�@�@Outline=outline.js
 	<table class=box>
 	<tr><th width=120>[Wsh]</th><th></th></tr>
-	<tr><td>UseCache</td>	<td>1：ディスクから読み込んだスクリプトをメモリ上にキャッシュする<br>
-								0：キャッシュしない</td></tr>
+	<tr><td>UseCache</td>	<td>1�F�f�B�X�N����ǂݍ��񂾃X�N���v�g����������ɃL���b�V������<br>
+								0�F�L���b�V�����Ȃ�</td></tr>
 	</table>
 </div><br>
-	■DLLプラグイン固有<br>
+	��DLL�v���O�C���ŗL<br>
 <div class=li200>
-・<b><em>現在未実装</em></b><br>
-・<b>Plug</b>, <b>Command</b> セクションでのハンドラにはDLLがエクスポートする関数名を指定する。
+�E<b><em>���ݖ�����</em></b><br>
+�E<b>Plug</b>, <b>Command</b> �Z�N�V�����ł̃n���h���ɂ�DLL���G�N�X�|�[�g����֐������w�肷��B
 	<table class=box>
 	<tr><th width=120>[DLL]</th><th></th></tr>
-	<tr><td>Name</td><td>DLLファイル名</td></tr>
+	<tr><td>Name</td><td>DLL�t�@�C����</td></tr>
 	</table>
 </div><br>
-	■localサブフォルダ内のplugin_&lt;言語名&gt;.def (sakura:2.1.1.0 以降)<br>
+	��local�T�u�t�H���_����plugin_&lt;���ꖼ&gt;.def (sakura:2.1.1.0 �ȍ~)<br>
 <div class=li200>
-・デフォルト言語は、「ja_JP」(local\plugin_ja_JP.def)です。<br>
-各定義を言語ごとに上書きすることができます。<br>
-　[Plugin]のName, Description, URL<br>
-　[Plug]のジャック名.Label<br>
-　[Command]のC[n].Label, C[n].Icon<br>
-　[Option]のO[n].Label, [n].Select<br>
-　[String]のS[n]<br>
-に適用されます。<br>
-適用する言語は、プロセスの起動時に決定されてエディタが終了するまでその言語のままになります。<br>
+�E�f�t�H���g����́A�uja_JP�v(local\plugin_ja_JP.def)�ł��B<br>
+�e��`�����ꂲ�Ƃɏ㏑�����邱�Ƃ��ł��܂��B<br>
+�@[Plugin]��Name, Description, URL<br>
+�@[Plug]�̃W���b�N��.Label<br>
+�@[Command]��C[n].Label, C[n].Icon<br>
+�@[Option]��O[n].Label, [n].Select<br>
+�@[String]��S[n]<br>
+�ɓK�p����܂��B<br>
+�K�p���錾��́A�v���Z�X�̋N�����Ɍ��肳��ăG�f�B�^���I������܂ł��̌���̂܂܂ɂȂ�܂��B<br>
 </div>
 
-<h3 id=c0302>ReadMeファイル(readme.txt等)</h3>
+<h3 id=c0302>ReadMe�t�@�C��(readme.txt��)</h3>
 <div class=li100>
-ファイル名は ReadMe.txt または 個別フォルダ名.txt とする。<br>
-プラグインに関する情報を記述する。<br>
-必須ではありません。<br>
-エディタの「共通設定」「プラグイン」で該当プラグインを選択し、[ReadMe]でこのファイルを表示する。<br>
+�t�@�C������ ReadMe.txt �܂��� �ʃt�H���_��.txt �Ƃ���B<br>
+�v���O�C���Ɋւ�������L�q����B<br>
+�K�{�ł͂���܂���B<br>
+�G�f�B�^�́u���ʐݒ�v�u�v���O�C���v�ŊY���v���O�C����I�����A[ReadMe]�ł��̃t�@�C����\������B<br>
 </div><br>
 
-<h3 id=c0303>ZIPプラグイン(XP以降)</h3>
+<h3 id=c0303>ZIP�v���O�C��(XP�ȍ~)</h3>
 <div class=li100>
-プラグイン開発後、plugins配下の個別フォルダを「圧縮(ZIP形式)フォルダー」へ「送る」を実行で配布形式が出来る(XP以降)。<br>
-拡張子はzipとする。<br>
-WindowsXP以降ではZIPファイルから導入できる。<br>
+�v���O�C���J����Aplugins�z���̌ʃt�H���_���u���k(ZIP�`��)�t�H���_�[�v�ցu����v�����s�Ŕz�z�`�����o����(XP�ȍ~)�B<br>
+�g���q��zip�Ƃ���B<br>
+WindowsXP�ȍ~�ł�ZIP�t�@�C�����瓱���ł���B<br>
 <div class=li200>
-導入はplugins配下にZIPファイルを置き「新規プラグインを追加」で行うか、<br>
-「ZIPプラグインを導入」でファイルを指定し行う。</div>
-Windows2000では plugins配下に解凍し導入する。<br>
+������plugins�z����ZIP�t�@�C����u���u�V�K�v���O�C����ǉ��v�ōs�����A<br>
+�uZIP�v���O�C���𓱓��v�Ńt�@�C�����w�肵�s���B</div>
+Windows2000�ł� plugins�z���ɉ𓀂���������B<br>
 </div><br>
 
-<center><a href="overview.html">前へ＜</a>　　<a href="implementation02.html">＞次へ</a></center>
+<center><a href="overview.html">�O�ց�</a>�@�@<a href="implementation02.html">������</a></center>
 </BODY></HTML>
