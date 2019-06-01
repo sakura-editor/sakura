@@ -1,55 +1,55 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML lang="ja">
 <HEAD>
-<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
 <link rel="shortcut icon" href="images/favicon.ico">
-<TITLE>�����R�[�h�Z�b�g�̃G���R�[�h�ɂ���</TITLE>
-<META NAME="MS-HKWD" CONTENT="�����R�[�h�Z�b�g�̃G���R�[�h�ɂ���">
+<TITLE>文字コードセットのエンコードについて</TITLE>
+<META NAME="MS-HKWD" CONTENT="文字コードセットのエンコードについて">
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
-<noscript>[<a href="HLP000001.html">�ڎ�</a>]<br></noscript>
-<h2>�����R�[�h�Z�b�g�̃G���R�[�h�ɂ���</h2>
-��SJIS/JIS/EUC<br>
-<div class=li200>�E����<br>
-JIS X 0213�y��JIS X 0212(SJIS�ŕ\���ł��Ȃ�)�ɂ͑Ή����Ă��܂���B<br>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>文字コードセットのエンコードについて</h2>
+■SJIS/JIS/EUC<br>
+<div class=li200>・制限<br>
+JIS X 0213及びJIS X 0212(SJISで表現できない)には対応していません。<br>
 <br>
-�E�ۑ��Ɋւ���<br>
-IBM�I��IBM�g��������NEC�I��IBM�g�������ɕύX����Ă���SJIS��JIS/EUC�ɕϊ�����܂��B<br>
-JIS�ŕۑ�����ꍇ�̃G�X�P�[�v�V�[�P���X�͎��̒ʂ�ł��B<br>
+・保存に関して<br>
+IBM選定IBM拡張文字はNEC選定IBM拡張文字に変更されてからSJIS→JIS/EUCに変換されます。<br>
+JISで保存する場合のエスケープシーケンスは次の通りです。<br>
 <div class=li400>
-���[�}��	ESC ( B<br>
-���p�J�^�J�i	ESC ( I<br>
-�����E�S�p����	ESC $ B<br>
+ローマ字	ESC ( B<br>
+半角カタカナ	ESC ( I<br>
+漢字・全角文字	ESC $ B<br>
 </div><br>
-<img src="images/note.png"><b>����</b><br>
-JIS�̔��p�J�^�J�i�͋K�i�ᔽ�ł��B�g�p���Ȃ��ł�������<br>
+<img src="images/note.png"><b>注意</b><br>
+JISの半角カタカナは規格違反です。使用しないでください<br>
 </div><br>
-��UTF-16/UTF-16BE/UTF-8/UTF-7/CESU-8<br>
-<div class=li200>�E����<br>
-(sakura:1.6.6.0�ȑO)<br>
-�T�N���G�f�B�^�̓����R�[�h��SJIS�̂��߁ASJIS�Ɋ܂܂�Ȃ������͕ςɂȂ�܂��B<br>
-�T���Q�[�g�y�A(UTF-16)�ɂ͖��Ή��ł��B<br>
-(sakura:2.0.0.0�ȍ~)<br>
-�T�N���G�f�B�^�̓����R�[�h��Unicode�̂��߁AUnicode�Ɋ܂܂�Ȃ������͕ςɂȂ�܂��B<br>
-�T���Q�[�g�y�A(UTF-16)�ɑΉ����Ă��܂��B<br>
+■UTF-16/UTF-16BE/UTF-8/UTF-7/CESU-8<br>
+<div class=li200>・制限<br>
+(sakura:1.6.6.0以前)<br>
+サクラエディタの内部コードがSJISのため、SJISに含まれない文字は変になります。<br>
+サロゲートペア(UTF-16)には未対応です。<br>
+(sakura:2.0.0.0以降)<br>
+サクラエディタの内部コードがUnicodeのため、Unicodeに含まれない文字は変になります。<br>
+サロゲートペア(UTF-16)に対応しています。<br>
 </div><br>
-��UTF-8<br>
-<div class=li200>�E����<br>
-3�o�C�g�R�[�h�܂ł����Ή����Ă��܂���B<br>
+■UTF-8<br>
+<div class=li200>・制限<br>
+3バイトコードまでしか対応していません。<br>
 </div><br>
-�������I��<br>
+■自動選択<br>
 <div class=li200>
-1. BOM���`�F�b�N���܂��BUTF-8,16LE,16BE,7��BOM���������ꍇ�A����BOM�̃R�[�h�Ɍ��肵�܂��B<br>
-2. �擪�t�߂�meta�����񂪂Ȃ����`�F�b�N���܂��B(sakura:2.2.0.0�ȍ~)<br>
-2-1. XML�錾�́u&lt;?xml encoding="utf-8"�v�̂悤�ȕ�����<br>
-2-2. HTML4.01�́u&lt;meta http-equiv="Content-Type" content="text/html; Charset=Shift_JIS&gt;�v�̂悤�ȕ�����<br>
-2-3. HTML5��&lt;meta charset="utf-8"&gt;�̂悤�ȕ�����<br>
-2-4. �u# coding: utf-8�v�u�u# coding=utf-8�v�v�̂悤�ȃG�f�B�^�p�G���R�[�f�B���O�w��<br>
-�����ꂼ�ꌟ�o����ƁA���̃R�[�h�Ɍ��肵�܂��B�Ή����Ă���G���R�[�h���ɂ̓R�[�h�y�[�W���܂݂܂��B<br>
-3. UTF-16��CRLF���o���UTF-16/UTF-16BE�𔻒肵�܂��B<br>
-4. Shift_JIS/EUC/JIS/UTF-8/UTF-7�ł̌ŗL�������(ASCII�ȊO�̕����̌��o)�����Ɍ��肵�܂��B<br>
-5. ���ׂ�ASCII�Ȃǂ̕����܂��͋�̃t�@�C���̏ꍇ�́A�^�C�v�ʐݒ�̃f�t�H���g�����R�[�h�𗘗p���܂��B<br>
+1. BOMをチェックします。UTF-8,16LE,16BE,7のBOMがあった場合、そのBOMのコードに決定します。<br>
+2. 先頭付近にmeta文字列がないかチェックします。(sakura:2.2.0.0以降)<br>
+2-1. XML宣言の「&lt;?xml encoding="utf-8"」のような文字列<br>
+2-2. HTML4.01の「&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8&gt;」のような文字列<br>
+2-3. HTML5の&lt;meta charset="utf-8"&gt;のような文字列<br>
+2-4. 「# coding: utf-8」「「# coding=utf-8」」のようなエディタ用エンコーディング指定<br>
+をそれぞれ検出すると、そのコードに決定します。対応しているエンコード名にはコードページも含みます。<br>
+3. UTF-16のCRLF検出器でUTF-16/UTF-16BEを判定します。<br>
+4. Shift_JIS/EUC/JIS/UTF-8/UTF-7での固有文字情報(ASCII以外の文字の検出)を元に決定します。<br>
+5. すべてASCIIなどの文字または空のファイルの場合は、タイプ別設定のデフォルト文字コードを利用します。<br>
 </div><br>
 </BODY></HTML>

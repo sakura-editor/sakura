@@ -1,37 +1,37 @@
-<html><head><title>S_GetLineStr</title>
+﻿<html><head><title>S_GetLineStr</title>
 <LINK REL="stylesheet" TYPE="text/css" HREF="../../sakura.css">
-<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 </head>
 <small>
 Sakura-Editor Macro Reference
 </small>
 <h2>S_GetLineStr</h2>
 <dl>
-	<dt>�@�\</dt>
-		<dd>�w��_���s�̎擾</dd>
-	<dt>�\��</dt>
-		<dd><i>string  S_GetLineStr ( i1 )</i>&nbsp;&nbsp;<a href = "../../sample/SampleGetLineStr.html">�g�p��</a>
+	<dt>機能</dt>
+		<dd>指定論理行の取得</dd>
+	<dt>構文</dt>
+		<dd><i>string  S_GetLineStr ( i1 )</i>&nbsp;&nbsp;<a href = "../../sample/SampleGetLineStr.html">使用例</a>
 		<br><br>
 		<table border = "1" cellspacing = "0" cellpadding = "3" width = "85%">
-			<tr><th><nobr>����</nobr></th><th>�^</th><th>���e</th></tr>
-			<tr><td>i1</td><td>�������l</td><td>�s�ԍ� </td></tr>
+			<tr><th><nobr>引数</nobr></th><th>型</th><th>内容</th></tr>
+			<tr><td>i1</td><td>整数数値</td><td>行番号 </td></tr>
 		</table>
 		</dd>
-	<dt>�ݒ�l</dt>
-		<dd>����&nbsp;<i>i1</i>&nbsp;�̐ݒ�l�͎��̂Ƃ���ł��B<br><br>
+	<dt>設定値</dt>
+		<dd>引数&nbsp;<i>i1</i>&nbsp;の設定値は次のとおりです。<br><br>
 		<table border = "1" cellspacing = "0" cellpadding = "3" width = "85%">
-			<tr><th>�l</th><th>���e</th></tr>
-			<tr><td>0</td><td>�J�[�\��������s���擾 </td></tr>
-			<tr><td>1</td><td>�擪�s���擾 </td></tr>
-			<tr><td>n</td><td>n�s�ڂ��擾 </td></tr>
-			<tr><td>�S�s�����傫���l</td><td>�󕶎��񂪕Ԃ� </td></tr>
+			<tr><th>値</th><th>内容</th></tr>
+			<tr><td>0</td><td>カーソルがある行を取得 </td></tr>
+			<tr><td>1</td><td>先頭行を取得 </td></tr>
+			<tr><td>n</td><td>n行目を取得 </td></tr>
+			<tr><td>全行数より大きい値</td><td>空文字列が返る </td></tr>
 		</table>
 		</dd>
-	<dt>�⑫</dt>
+	<dt>補足</dt>
 		<dd>
-		PPA�̃}�N�����ł� $41 �Ȃǂ� 16�i���\�L��ϐ��E�����E�֐��̎g�p���\�����AMAC�̃}�N�����ł� 65 �Ȃǂ� 10�i���̒萔�\�L�����󂯕t���Ȃ��B
+		PPAのマクロ中では $41 などの 16進数表記や変数・数式・関数の使用も可能だが、MACのマクロ中では 65 などの 10進数の定数表記しか受け付けない。
 		</dd>
-	<dt>�֘A����</dt>
+	<dt>関連項目</dt>
 		<dd>
 		<a href = "./S_GetSelectedString.html">S_GetSelectedString()</a>
 		</dd>

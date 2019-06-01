@@ -1,47 +1,47 @@
-<html><head><title>S_BracketPair</title>
+﻿<html><head><title>S_BracketPair</title>
 <LINK REL="stylesheet" TYPE="text/css" HREF="../../sakura.css">
-<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 </head>
 <small>
 Sakura-Editor Macro Reference
 </small>
 <h2>S_BracketPair</h2>
 <dl>
-	<dt>�@�\</dt>
-		<dd>�Ί��ʂ̌���</dd>
-	<dt>�\��</dt>
+	<dt>機能</dt>
+		<dd>対括弧の検索</dd>
+	<dt>構文</dt>
 		<dd><i>void  S_BracketPair ( )</i></dd>
-	<dt>�Ώ�</dt>
-		<dd>���́g�Ί��ʂ̌����h�̏����Ώۂ̊��ʂ͎͂��̂Ƃ���ł��B<br><br>
+	<dt>対象</dt>
+		<dd>この“対括弧の検索”の処理対象の括弧はは次のとおりです。<br><br>
 		<table border = "1" cellspacing = "0" cellpadding = "3" width = "50%">
-			<tr><th colspan = "2">���p�����̊���</th></tr>
+			<tr><th colspan = "2">半角文字の括弧</th></tr>
 			<tr><td>(</td><td>)</td></tr>
 			<tr><td>[</td><td>]</td></tr>
 			<tr><td>{</td><td>}</td></tr>
 			<tr><td>&lt;</td><td>&gt;</td></tr>
-			<tr><td>�</td><td>�</td></tr>
+			<tr><td>｢</td><td>｣</td></tr>
 		</table>
 		<table border = "1" cellspacing = "0" cellpadding = "3" width = "50%">
-			<tr><th colspan = "2">�S�p�����̊���</th></tr>
-			<tr><td>�y</td><td>�z</td></tr>
-			<tr><td>�w</td><td>�x</td></tr>
-			<tr><td>�u</td><td>�v</td></tr>
-			<tr><td>��</td><td>��</td></tr>
-			<tr><td>��</td><td>��</td></tr>
-			<tr><td>�s</td><td>�t</td></tr>
-			<tr><td>�i</td><td>�j</td></tr>
-			<tr><td>�q</td><td>�r</td></tr>
-			<tr><td>�o</td><td>�p</td></tr>
-			<tr><td>�k</td><td>�l</td></tr>
-			<tr><td>�m</td><td>�n</td></tr>
-			<tr><td>�g</td><td>�h</td></tr>
-			<tr><td>��</td><td>��</td></tr>
+			<tr><th colspan = "2">全角文字の括弧</th></tr>
+			<tr><td>【</td><td>】</td></tr>
+			<tr><td>『</td><td>』</td></tr>
+			<tr><td>「</td><td>」</td></tr>
+			<tr><td>＜</td><td>＞</td></tr>
+			<tr><td>≪</td><td>≫</td></tr>
+			<tr><td>《</td><td>》</td></tr>
+			<tr><td>（</td><td>）</td></tr>
+			<tr><td>〈</td><td>〉</td></tr>
+			<tr><td>｛</td><td>｝</td></tr>
+			<tr><td>〔</td><td>〕</td></tr>
+			<tr><td>［</td><td>］</td></tr>
+			<tr><td>“</td><td>”</td></tr>
+			<tr><td>〝</td><td>〟</td></tr>
 		</table>
 		</dd>
-	<dt>����</dt>
+	<dt>説明</dt>
 		<dd>
-		�J�[�\���̉E�̕��������ʂȂ�A���̉E�̊��ʂɑΉ����銇�ʂ֔�ԁB<br>
-		�J�[�\���̉E�̕��������ʂł͂Ȃ��ꍇ�́A�J�[�\���̍��̕��������ʂȂ�A���̍��̊��ʂɑΉ����銇�ʂ֔�ԁB
+		カーソルの右の文字が括弧なら、その右の括弧に対応する括弧へ飛ぶ。<br>
+		カーソルの右の文字が括弧ではない場合は、カーソルの左の文字が括弧なら、その左の括弧に対応する括弧へ飛ぶ。
 		</dd>
 </dl>
 <hr>

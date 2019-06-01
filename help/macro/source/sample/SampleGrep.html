@@ -1,27 +1,27 @@
-<html><head><title>S_Grep‚Ìg—p—á</title>
+ï»¿<html><head><title>S_Grepã®ä½¿ç”¨ä¾‹</title>
 <LINK REL="stylesheet" TYPE="text/css" HREF="../sakura.css">
-<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 </head>
 <body>
 <small>
 Sakura-Editor Macro Reference
 </small>
-<h2>S_Grep‚Ìg—p—á</h2>
+<h2>S_Grepã®ä½¿ç”¨ä¾‹</h2>
 
 <pre>
 <span style = "color:green;">&#39; sample.vbs</span>
-<span style = "color:green;">&#39; •ÒW’†‚Ìƒtƒ@ƒCƒ‹‚ğ‘ÎÛ‚É‘I‘ğ•¶š—ñ‚ÅGrepÀs</span>
+<span style = "color:green;">&#39; ç·¨é›†ä¸­ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å¯¾è±¡ã«é¸æŠæ–‡å­—åˆ—ã§Grepå®Ÿè¡Œ</span>
 sKey = <span style = "color:blue;">ExpandParameter</span>(<span style = "color:blue;">Cstr</span>(<span style = "color:#800000;">"$C"</span>))
 sFile = <span style = "color:blue;">ExpandParameter</span>(<span style = "color:blue;">Cstr</span>(<span style = "color:#800000;">"$f"</span>))
 sPath = <span style = "color:blue;">ExpandParameter</span>(<span style = "color:blue;">Cstr</span>(<span style = "color:#800000;">"$F"</span>))
 sDir = <span style = "color:blue;">Left</span>(<span style = "color:blue;">CStr</span>(sPath), <span style = "color:blue;">Len</span>(sPath) - <span style = "color:blue;">Len</span>(sFile) - <span style = "color:red;">1</span>)
 
-<span style = "color:green;">&#39; ƒTƒuƒtƒHƒ‹ƒ_‚©‚çŒŸõ‚µ‚È‚¢</span>
-<span style = "color:green;">&#39; ‘å•¶š¬•¶š‚ğ‹æ•Ê‚·‚é</span>
-<span style = "color:green;">&#39; ³‹K•\Œ»–³Œø</span>
-<span style = "color:green;">&#39; •¶šƒR[ƒhƒZƒbƒg©“®</span>
-<span style = "color:green;">&#39; Œ‹‰Êo—ÍFŠY“–s</span>
-<span style = "color:green;">&#39; o—ÍŒ`®Fƒm[ƒ}ƒ‹</span>
+<span style = "color:green;">&#39; ã‚µãƒ–ãƒ•ã‚©ãƒ«ãƒ€ã‹ã‚‰æ¤œç´¢ã—ãªã„</span>
+<span style = "color:green;">&#39; å¤§æ–‡å­—å°æ–‡å­—ã‚’åŒºåˆ¥ã™ã‚‹</span>
+<span style = "color:green;">&#39; æ­£è¦è¡¨ç¾ç„¡åŠ¹</span>
+<span style = "color:green;">&#39; æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚»ãƒƒãƒˆè‡ªå‹•</span>
+<span style = "color:green;">&#39; çµæœå‡ºåŠ›ï¼šè©²å½“è¡Œ</span>
+<span style = "color:green;">&#39; å‡ºåŠ›å½¢å¼ï¼šãƒãƒ¼ãƒãƒ«</span>
 <span style = "color:blue;">Grep CStr</span>(sKey), <span style = "color:blue;">CStr</span>(sFile), <span style = "color:blue;">CStr</span>(sDir), <span style = "color:blue;">CLng</span>(<span style = "color:red;">52</span>)
 </pre>
 
