@@ -72,6 +72,15 @@ if "%APPVEYOR_REPO_PROVIDER%" == "gitHub" (
 	)
 )
 
+@echo checking GIT_SHORT_COMMIT_HASH, GIT_COMMIT_HASH
+if not "%APPVEYOR%" == "" (
+	set TEMP_GIT_SHORT_COMMIT_HASH=%GIT_SHORT_COMMIT_HASH%
+	set TEMP_GIT_COMMIT_HASH=%GIT_COMMIT_HASH%
+) else (
+	set TEMP_GIT_SHORT_COMMIT_HASH=
+	set TEMP_GIT_COMMIT_HASH=
+)
+
 if not "%APPVEYOR_PULL_REQUEST_HEAD_COMMIT%" == "" (
 	set APPVEYOR_SHORTHASH_PR_HEAD=%APPVEYOR_PULL_REQUEST_HEAD_COMMIT:~0,8%
 ) else (
@@ -117,6 +126,8 @@ if not errorlevel 1 (
 ) else (
 	@echo GIT_SHORT_COMMIT_HASH : %GIT_SHORT_COMMIT_HASH%
 	@echo GIT_COMMIT_HASH       : %GIT_COMMIT_HASH%
+	@echo TEMP_GIT_SHORT_COMMIT_HASH : %TEMP_GIT_SHORT_COMMIT_HASH%
+	@echo TEMP_GIT_COMMIT_HASH       : %TEMP_GIT_COMMIT_HASH%
 	@echo GIT_REMOTE_ORIGIN_URL : %GIT_REMOTE_ORIGIN_URL%
 	@echo GIT_TAG_NAME          : %GIT_TAG_NAME%
 	@echo APPVEYOR_URL          : %APPVEYOR_URL%
@@ -150,6 +161,18 @@ if "%GIT_COMMIT_HASH%" == "" (
 ) else (
 	echo #define GIT_COMMIT_HASH "%GIT_COMMIT_HASH%"
 )
+
+if "%TEMP_GIT_SHORT_COMMIT_HASH%" == "" (
+	echo // TEMP_GIT_SHORT_COMMIT_HASH is not defined
+) else (
+	echo #define TEMP_GIT_SHORT_COMMIT_HASH "%TEMP_GIT_SHORT_COMMIT_HASH%"
+)
+if "%TEMP_GIT_COMMIT_HASH%" == "" (
+	echo // TEMP_GIT_COMMIT_HASH is not defined
+) else (
+	echo #define TEMP_GIT_COMMIT_HASH "%TEMP_GIT_COMMIT_HASH%"
+)
+
 if "%GIT_REMOTE_ORIGIN_URL%" == "" (
 	echo // GIT_REMOTE_ORIGIN_URL is not defined
 ) else (
