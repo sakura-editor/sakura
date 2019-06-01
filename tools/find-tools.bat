@@ -1,4 +1,4 @@
-@echo off
+@rem echo off
 setlocal
 
 if defined FIND_TOOLS_CALLED (
@@ -100,8 +100,15 @@ exit /b
 for /f "usebackq delims=" %%d in (`"%CMD_VSWHERE%" -version [15^,16^) -requires Microsoft.Component.MSBuild -property installationPath`) do (
     set "Vs2017InstallRoot=%%d"
 )
-if     defined USE_LATEST_MSBUILD goto :msbuild_latest
-if not defined Vs2017InstallRoot  goto :msbuild_latest
+if not defined Vs2017InstallRoot goto :msbuild_latest
+if defined USE_LATEST_MSBUILD (
+    for /f "usebackq delims=" %%d in (`"%CMD_VSWHERE%" -latest -requires Microsoft.Component.MSBuild -property installationPath`) do (
+        set "VsInstallRoot=%%d"
+    )
+    if "%VsInstallRoot%" neq "%Vs2017InstallRoot%" goto :msbuild_latest
+)
+goto :msbuild_vs2017
+exit /b
 
 :msbuild_vs2017
 ::find msbuild under vs2017 install directory
@@ -111,6 +118,7 @@ for /f "usebackq delims=" %%a in (`where $PATH3:MSBuild.exe`) do (
     set /A NUM_VSVERSION=15
     exit /b
 )
+exit /b
 
 :msbuild_latest
 ::find msbuild bundled with latest visual studio(vs2019 or lator).
@@ -121,6 +129,4 @@ for /f "usebackq delims=" %%a in (`"%CMD_VSWHERE%" -latest -requires Microsoft.C
     )
     exit /b
 )
-
-if defined Vs2017InstallRoot goto :msbuild_vs2017
 exit /b
