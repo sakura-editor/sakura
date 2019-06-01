@@ -99,19 +99,14 @@ exit /b
 for /f "usebackq delims=" %%d in (`"%CMD_VSWHERE%" -version [15^,16^) -requires Microsoft.Component.MSBuild -property installationPath`) do (
     set "Vs2017InstallRoot=%%d"
 )
-if not defined Vs2017InstallRoot goto :msbuild_latest
+if not defined Vs2017InstallRoot   goto :msbuild_latest
+if     defined USE_LATEST_MSBUILD  goto :msbuild_latest
 
 ::find msbuild under vs2017 install directory
-if exist "%Vs2017InstallRoot%\MSBuild\15.0\Bin\amd64\MSBuild.exe" (
-    set "CMD_MSBUILD=%Vs2017InstallRoot%\MSBuild\15.0\Bin\amd64\MSBuild.exe"
-    if defined CMD_MSBUILD exit /b
-)
-if exist "%Vs2017InstallRoot%\MSBuild\15.0\Bin\MSBuild.exe" (
-    set "CMD_MSBUILD=%Vs2017InstallRoot%\MSBuild\15.0\Bin\MSBuild.exe"
-    if defined CMD_MSBUILD exit /b
-)
-if not defined USE_LATEST_MSBUILD (
-    if defined CMD_MSBUILD exit /b
+set PATH3=%Vs2017InstallRoot%\MSBuild\15.0\Bin\amd64;%Vs2017InstallRoot%\MSBuild\15.0\Bin
+for /f "usebackq delims=" %%a in (`where $PATH3:MSBuild.exe`) do ( 
+    set "CMD_MSBUILD=%%a"
+    exit /b
 )
 
 :msbuild_latest
