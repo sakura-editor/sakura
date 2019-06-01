@@ -66,7 +66,6 @@ exit /b
 	echo productLineVersion is "%productLineVersion%"
 	echo productLineVersionCommand is `"%CMD_VSWHERE%" -version [%NUM_VSVERSION%^,%NUM_NEXTVSVERSION%^) -property catalog_productLineVersion`
 	echo CMAKE_GEN_OPT is "%CMAKE_GEN_OPT%"
-	"%cmd_vswhere%"
 exit /b
 
 :setenv_MinGW
