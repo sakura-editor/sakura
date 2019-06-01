@@ -66,6 +66,13 @@ if not "%GIT_TAG_NAME%" == "" (
 	@echo TAG_NAME = !TEMP_NAME2!
 )
 
+@echo checking GIT_SHORT_COMMIT_HASH
+if not "%APPVEYOR%" == "" (
+	set GIT_HASH_NAME=%GIT_SHORT_COMMIT_HASH%
+) else (
+	set GIT_HASH_NAME=
+)
+
 @echo checking APPVEYOR_PULL_REQUEST_NUMBER %APPVEYOR_PULL_REQUEST_NUMBER%
 if not "%APPVEYOR_PULL_REQUEST_NUMBER%" == "" (
 	set PR_NAME=PR%APPVEYOR_PULL_REQUEST_NUMBER%
@@ -106,9 +113,9 @@ if not "%BUILD_NUMBER%" == "" (
 )
 @echo BASENAME = %BASENAME%
 
-@echo adding GIT_SHORT_COMMIT_HASH
-if not "%GIT_SHORT_COMMIT_HASH%" == "" (
-	set BASENAME=%BASENAME%-%GIT_SHORT_COMMIT_HASH%
+@echo adding GIT_HASH_NAME
+if not "%GIT_HASH_NAME%" == "" (
+	set BASENAME=%BASENAME%-%GIT_HASH_NAME%
 )
 @echo BASENAME = %BASENAME%
 
