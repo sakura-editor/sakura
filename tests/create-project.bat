@@ -59,6 +59,13 @@ exit /b
 		set /A productLineVersion=%%b
 	)
 	set CMAKE_GEN_OPT=-G "Visual Studio %NUM_VSVERSION% %productLineVersion%" -A "%~1" -D BUILD_GTEST=ON
+	::debug
+	echo cmd_vswhere is "%cmd_vswhere%"
+	echo num_vsversion is "%num_vsversion%"
+	echo num_nextvsversion is "%num_nextvsversion%"
+	echo productLineVersion is "%productLineVersion%"
+	echo productLineVersionCommand is `"%CMD_VSWHERE%" -version [%NUM_VSVERSION%^,%NUM_NEXTVSVERSION%^) -property catalog_productLineVersion`
+	echo CMAKE_GEN_OPT is "%CMAKE_GEN_OPT%"
 exit /b
 
 :setenv_MinGW
