@@ -1,4 +1,4 @@
-@rem echo off
+@echo off
 setlocal
 
 if defined FIND_TOOLS_CALLED (
@@ -107,8 +107,6 @@ if defined USE_LATEST_MSBUILD (
     )
     if "%VsInstallRoot%" neq "%Vs2017InstallRoot%" goto :msbuild_latest
 )
-goto :msbuild_vs2017
-exit /b
 
 :msbuild_vs2017
 ::find msbuild under vs2017 install directory
