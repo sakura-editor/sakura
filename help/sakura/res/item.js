@@ -1,4 +1,4 @@
-// HHCtrls
+﻿// HHCtrls
 function HHCtrlClose()
 {
 	document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
@@ -26,6 +26,6 @@ function IsChm(){return (-1 !=(""+window.location.href).search(/\.chm::/i));}
 if(IsChm()){
 	HHCtrlClose();
 }else{
-	document.writeln('[<a href="HLP000001.html">�ڎ�</a>]');
+	document.writeln('[<a href="HLP000001.html">目次</a>]');
 }
 
