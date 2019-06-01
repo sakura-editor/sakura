@@ -49,7 +49,11 @@ exit /b
 
 :setenv_Win32
 :setenv_x64
-	set CMAKE_GEN_OPT=-G "Visual Studio 15 2017" -A "%~1" -D BUILD_GTEST=ON
+	set /A NUM_NEXTVSVERSION=%NUM_VSVERSION% + 1
+	for /f "usebackq" %%b in (`"%CMD_VSWHERE%" -version [%NUM_VSVERSION%^,%NUM_NEXTVSVERSION%^) -property catalog_productLineVersion`) do (
+		set /A productLineVersion=%%b
+	)
+	set CMAKE_GEN_OPT=-G "Visual Studio %NUM_VSVERSION% %productLineVersion%" -A "%~1" -D BUILD_GTEST=ON
 exit /b
 
 :setenv_MinGW
