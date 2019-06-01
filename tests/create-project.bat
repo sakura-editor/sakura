@@ -49,6 +49,11 @@ exit /b
 
 :setenv_Win32
 :setenv_x64
+	if not defined CMD_VSWHERE call %~dp0..\tools\find-tools.bat
+	if not defined CMD_VSWHERE (
+		echo msbuild.exe was not found.
+		exit /b 1
+	)
 	set /A NUM_NEXTVSVERSION=%NUM_VSVERSION% + 1
 	for /f "usebackq" %%b in (`"%CMD_VSWHERE%" -version [%NUM_VSVERSION%^,%NUM_NEXTVSVERSION%^) -property catalog_productLineVersion`) do (
 		set /A productLineVersion=%%b
