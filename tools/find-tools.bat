@@ -110,6 +110,7 @@ for /f "usebackq delims=" %%a in (`where $PATH3:MSBuild.exe`) do (
     set /A NUM_VSVERSION=15
     exit /b
 )
+exit /b
 
 :msbuild_latest
 ::find msbuild bundled with latest visual studio(vs2019 or lator).
@@ -121,5 +122,8 @@ for /f "usebackq delims=" %%a in (`"%CMD_VSWHERE%" -latest -requires Microsoft.C
     exit /b
 )
 
-::we never supports msbuild, not bundled with visual studio.
+if not defined CMD_MSBUILD (
+    set USE_LATEST_MSBUILD=
+    goto :msbuild
+)
 exit /b
