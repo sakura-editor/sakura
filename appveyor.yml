@@ -38,3 +38,10 @@ artifacts:
   - path: 'sakura-*$(platform)-$(configuration)*.zip'
   - path: 'sakura-*$(platform)-$(configuration)*.zip.md5'
   - path: 'sha256.txt'
+
+matrix:
+  exclude:
+    - image: Visual Studio 2017
+      platform: x64
+    - image: Visual Studio 2019 Preview
+      platform: MinGW
