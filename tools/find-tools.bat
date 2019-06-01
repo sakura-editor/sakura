@@ -88,7 +88,7 @@ exit /b
 :vswhere
 :: ref https://github.com/Microsoft/vswhere
 set APPDIR=Microsoft Visual Studio\Installer
-set PATH2=%PATH%;%ProgramFiles%\%APPDIR%\;%ProgramFiles(x86)%\%APPDIR%\;%ProgramW6432%\%APPDIR%\;
+set PATH2=%ProgramFiles(x86)%\%APPDIR%;%ProgramFiles%\%APPDIR%;%ProgramW6432%\%APPDIR%;%PATH%
 for /f "usebackq delims=" %%a in (`where $PATH2:vswhere.exe`) do ( 
     set "CMD_VSWHERE=%%a"
     exit /b
