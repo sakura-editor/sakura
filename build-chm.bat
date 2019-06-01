@@ -15,7 +15,7 @@ set HH_SCRIPT=%~dp0help\remove-comment.py
 set HH_INPUT=sakura_core\sakura.hh
 set HH_OUTPUT=help\sakura\sakura.hh
 
-del /F "%HH_OUTPUT%"
+if exist "%HH_OUTPUT%" del /F "%HH_OUTPUT%"
 python "%HH_SCRIPT%" "%HH_INPUT%" "%HH_OUTPUT%"  || (echo error && exit /b 1)
 
 call :BuildChm %HHP_MACRO%  %CHM_MACRO%   || (echo error && exit /b 1)
