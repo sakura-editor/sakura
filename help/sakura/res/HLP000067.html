@@ -1,7 +1,7 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML lang="ja">
 <HEAD>
-<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
 <link rel="shortcut icon" href="images/favicon.ico">
 <TITLE>Grep</TITLE>
@@ -9,90 +9,90 @@
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
-<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<noscript>[<a href="HLP000001.html">�ڎ�</a>]<br></noscript>
 <h2>Grep</h2>
 
 <img src="images/Grep.png"><br>
 
-ディスクにある複数のファイルから、指定した文字列を検索することができます。<br>
-指定したフォルダの下層のフォルダを全て検索することもできます。<br>
+�f�B�X�N�ɂ��镡���̃t�@�C������A�w�肵����������������邱�Ƃ��ł��܂��B<br>
+�w�肵���t�H���_�̉��w�̃t�H���_��S�Č������邱�Ƃ��ł��܂��B<br>
 
 <div class=li200>
-	・検索結果は、別のウィンドウが作成されて、そこに表示されます。<br>
-	・検索結果から、条件と一致した箇所に直接ジャンプ（<a href="HLP000065.html">タグジャンプ</a>）することができます。<br>
-	・<a href="HLP000148.html">共通設定 『検索』プロパティ</a> GREP の設定によっては、GREP結果から行をダブルクリック・Enterすることでも、該当する場所にジャンプします。<br>
+	�E�������ʂ́A�ʂ̃E�B���h�E���쐬����āA�����ɕ\������܂��B<br>
+	�E�������ʂ���A�����ƈ�v�����ӏ��ɒ��ڃW�����v�i<a href="HLP000065.html">�^�O�W�����v</a>�j���邱�Ƃ��ł��܂��B<br>
+	�E<a href="HLP000148.html">���ʐݒ� �w�����x�v���p�e�B</a> GREP �̐ݒ�ɂ���ẮAGREP���ʂ���s���_�u���N���b�N�EEnter���邱�Ƃł��A�Y������ꏊ�ɃW�����v���܂��B<br>
 </div>
 
 <div class=li200>
-	<b>(条件)</b> …… 検索条件を指定します。何も指定せずに実行すると、ファイル名検索ができます。ただし、フォルダ名検索はできません。<br>
-	<b>(ファイル)</b> … 検索対象となるファイル指定します。ワイルドカードが使えます。<br>
-	カンマ、スペース、セミコロン(, ;)のどれかで区切ると複数の条件を指定できます。<br>
-	ファイル名に(, ;)を含む場合は、ダブルクオーテーションで囲うことで、ひとつのファイル名として扱えます。<br>
-	ファイルパターンの先頭に!を付ける(例: !*.obj)と，そのパターンに当たるファイルをGrep対象から外します。<br>
-	ファイルパターンの先頭に#を付ける(例: #*.svn)と、そのパターンに当たるサブフォルダをGrep対象から外します。(sakura:2.1.0.0以降)<br>
-	  指定位置にかかわらず除外指定は検索指定より優先されます． <br>
-	何も指定しない場合は、「*.*」を指定したことになります。<br>
-	<b>(フォルダ)</b> … 検索対象ファイルのあるフォルダを指定します。エクスプローラなどからのフォルダのドロップも受け付けます。<br>
-	複数フォルダを;で区切って指定することができます。;を含むフォルダを指定する場合は""で囲ってください。(sakura:2.1.0.0以降)<br>
+	<b>(����)</b> �c�c �����������w�肵�܂��B�����w�肹���Ɏ��s����ƁA�t�@�C�����������ł��܂��B�������A�t�H���_�������͂ł��܂���B<br>
+	<b>(�t�@�C��)</b> �c �����ΏۂƂȂ�t�@�C���w�肵�܂��B���C���h�J�[�h���g���܂��B<br>
+	�J���}�A�X�y�[�X�A�Z�~�R����(, ;)�̂ǂꂩ�ŋ�؂�ƕ����̏������w��ł��܂��B<br>
+	�t�@�C������(, ;)���܂ޏꍇ�́A�_�u���N�I�[�e�[�V�����ň͂����ƂŁA�ЂƂ̃t�@�C�����Ƃ��Ĉ����܂��B<br>
+	�t�@�C���p�^�[���̐擪��!��t����(��: !*.obj)�ƁC���̃p�^�[���ɓ�����t�@�C����Grep�Ώۂ���O���܂��B<br>
+	�t�@�C���p�^�[���̐擪��#��t����(��: #*.svn)�ƁA���̃p�^�[���ɓ�����T�u�t�H���_��Grep�Ώۂ���O���܂��B(sakura:2.1.0.0�ȍ~)<br>
+	  �w��ʒu�ɂ�����炸���O�w��͌����w����D�悳��܂��D <br>
+	�����w�肵�Ȃ��ꍇ�́A�u*.*�v���w�肵�����ƂɂȂ�܂��B<br>
+	<b>(�t�H���_)</b> �c �����Ώۃt�@�C���̂���t�H���_���w�肵�܂��B�G�N�X�v���[���Ȃǂ���̃t�H���_�̃h���b�v���󂯕t���܂��B<br>
+	�����t�H���_��;�ŋ�؂��Ďw�肷�邱�Ƃ��ł��܂��B;���܂ރt�H���_���w�肷��ꍇ��""�ň͂��Ă��������B(sakura:2.1.0.0�ȍ~)<br>
 
-	<b>(除外ファイル)</b> … 検索対象から外すファイルパターンを指定します。<br>
-	<strong>(ファイル)</strong> で ファイルパターンの先頭に!を付ける ことにより除外ファイルを指定できるのを簡単に使えるようにするものです。<br>
-	ファイルパターンを;で区切って指定することができます。;を含むファイルパターンを指定する場合は""で囲ってください。(sakura:2.4.0.0以降)<br>
+	<b>(���O�t�@�C��)</b> �c �����Ώۂ���O���t�@�C���p�^�[�����w�肵�܂��B<br>
+	<strong>(�t�@�C��)</strong> �� �t�@�C���p�^�[���̐擪��!��t���� ���Ƃɂ�菜�O�t�@�C�����w��ł���̂��ȒP�Ɏg����悤�ɂ�����̂ł��B<br>
+	�t�@�C���p�^�[����;�ŋ�؂��Ďw�肷�邱�Ƃ��ł��܂��B;���܂ރt�@�C���p�^�[�����w�肷��ꍇ��""�ň͂��Ă��������B(sakura:2.4.0.0�ȍ~)<br>
 
-	<b>(除外フォルダ)</b> … 検索対象から外すフォルダパターンを指定します。<br>
-	<strong>(ファイル)</strong> で ファイルパターンの先頭に#を付ける ことにより除外フォルダを指定できるのを簡単に使えるようにするものです。<br>
-	フォルダパターンを;で区切って指定することができます。;を含むフォルダパターンを指定する場合は""で囲ってください。(sakura:2.4.0.0以降)<br>
+	<b>(���O�t�H���_)</b> �c �����Ώۂ���O���t�H���_�p�^�[�����w�肵�܂��B<br>
+	<strong>(�t�@�C��)</strong> �� �t�@�C���p�^�[���̐擪��#��t���� ���Ƃɂ�菜�O�t�H���_���w��ł���̂��ȒP�Ɏg����悤�ɂ�����̂ł��B<br>
+	�t�H���_�p�^�[����;�ŋ�؂��Ďw�肷�邱�Ƃ��ł��܂��B;���܂ރt�H���_�p�^�[�����w�肷��ꍇ��""�ň͂��Ă��������B(sakura:2.4.0.0�ȍ~)<br>
 
-	□<b>単語単位で探す</b><br>
-	&nbsp;&nbsp;&nbsp;&nbsp;単語として識別するもののみ検索します。<br>
-	&nbsp;&nbsp;&nbsp;&nbsp;スペースなどで区切ると複数単語検索が行えます。(2.0.6.0 以降)<br>
+	��<b>�P��P�ʂŒT��</b><br>
+	&nbsp;&nbsp;&nbsp;&nbsp;�P��Ƃ��Ď��ʂ�����̂̂݌������܂��B<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;�X�y�[�X�Ȃǂŋ�؂�ƕ����P�ꌟ�����s���܂��B(2.0.6.0 �ȍ~)<br>
 
-	■<b>サブフォルダからも検索する</b><br>
-	&nbsp;&nbsp;&nbsp;&nbsp;指定フォルダの下層フォルダからも検索するかどうかを指定します。<br>
+	��<b>�T�u�t�H���_�������������</b><br>
+	&nbsp;&nbsp;&nbsp;&nbsp;�w��t�H���_�̉��w�t�H���_������������邩�ǂ������w�肵�܂��B<br>
 
-	□<b>現在編集中のファイルから検索</b><br>
-	&nbsp;&nbsp;&nbsp;&nbsp;現在編集中のファイルのみを検索対象に指定します。<br>
-	&nbsp;&nbsp;&nbsp;&nbsp;編集中の内容ではなく、最後に保存されたファイル内容から検索して一覧を作成します。<a href="#hintmarksearch">※データから検索</a>
+	��<b>���ݕҏW���̃t�@�C�����猟��</b><br>
+	&nbsp;&nbsp;&nbsp;&nbsp;���ݕҏW���̃t�@�C���݂̂������ΏۂɎw�肵�܂��B<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;�ҏW���̓��e�ł͂Ȃ��A�Ō�ɕۑ����ꂽ�t�@�C�����e���猟�����Ĉꗗ���쐬���܂��B<a href="#hintmarksearch">���f�[�^���猟��</a>
 	<br>
 
-	□<b>英大文字と小文字を区別する</b><br>
-	&nbsp;&nbsp;&nbsp;&nbsp;半角英字の大文字と小文字を区別して検索するかどうかを指定します。<br>
+	��<b>�p�啶���Ə���������ʂ���</b><br>
+	&nbsp;&nbsp;&nbsp;&nbsp;���p�p���̑啶���Ə���������ʂ��Č������邩�ǂ������w�肵�܂��B<br>
 
-	□<b>ファイル毎最初のみ検索</b> … ファイル毎に1回だけ結果を出力します。<br>
+	��<b>�t�@�C�����ŏ��̂݌���</b> �c �t�@�C������1�񂾂����ʂ��o�͂��܂��B<br>
 
-	□<b>フォルダ毎に表示</b> … サブフォルダ毎にパスをまとめて相対パスで出力します。(sakura:2.1.0.0以降)<br>
+	��<b>�t�H���_���ɕ\��</b> �c �T�u�t�H���_���Ƀp�X���܂Ƃ߂đ��΃p�X�ŏo�͂��܂��B(sakura:2.1.0.0�ȍ~)<br>
 
-	□<b>ベースフォルダ表示</b> … ルートフォルダの表示とそこからの相対パスで出力します。(sakura:2.1.0.0以降)<br>
+	��<b>�x�[�X�t�H���_�\��</b> �c ���[�g�t�H���_�̕\���Ƃ�������̑��΃p�X�ŏo�͂��܂��B(sakura:2.1.0.0�ȍ~)<br>
 
-	□<b>文字コードセット</b><br>
-	&nbsp;&nbsp;&nbsp;&nbsp;検索対象となるファイルの<a href="HLP000271.html">文字コードセット</a>を選択します。<br>
-	&nbsp;&nbsp;&nbsp;&nbsp;<b>自動選択</b>、SJIS、JIS、EUC、Latin1(Windows-1252)、UTF-16、UTF-16BE、UTF-8、CESU-8、UTF-7、コードページから選択します。<br>
-	&nbsp;&nbsp;&nbsp;&nbsp;(sakura:1.x 以前)どの文字コードを選択しても、検索時には、SJISに変換してから検索します。<br>
+	��<b>�����R�[�h�Z�b�g</b><br>
+	&nbsp;&nbsp;&nbsp;&nbsp;�����ΏۂƂȂ�t�@�C����<a href="HLP000271.html">�����R�[�h�Z�b�g</a>��I�����܂��B<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;<b>�����I��</b>�ASJIS�AJIS�AEUC�ALatin1(Windows-1252)�AUTF-16�AUTF-16BE�AUTF-8�ACESU-8�AUTF-7�A�R�[�h�y�[�W����I�����܂��B<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;(sakura:1.x �ȑO)�ǂ̕����R�[�h��I�����Ă��A�������ɂ́ASJIS�ɕϊ����Ă��猟�����܂��B<br>
 
-	□<b>CP</b> … 文字コードセットでコードページを選択できるようにします。(sakura:2.2.0.0以降)<br>
+	��<b>CP</b> �c �����R�[�h�Z�b�g�ŃR�[�h�y�[�W��I���ł���悤�ɂ��܂��B(sakura:2.2.0.0�ȍ~)<br>
 
-	□<b>フォルダの初期値をカレントフォルダにする</b><br>
-	&nbsp;&nbsp;&nbsp;&nbsp;現在開いているファイルがあるフォルダを(フォルダ)の初期値にします。次回のダイアログ表示時に反映されます。<br>
+	��<b>�t�H���_�̏����l���J�����g�t�H���_�ɂ���</b><br>
+	&nbsp;&nbsp;&nbsp;&nbsp;���݊J���Ă���t�@�C��������t�H���_��(�t�H���_)�̏����l�ɂ��܂��B����̃_�C�A���O�\�����ɔ��f����܂��B<br>
 
-	<b>&lt;結果出力&gt;</b> … 検索条件に合致した箇所の出力方法を指定します。合致した箇所はその先頭の合致箇所の位置が示され、<a href="HLP000075.html">タイプ別設定 『カラー』プロパティ</a>で「検索文字列」に指定した色でハイライト表示されます。<br>
+	<b>&lt;���ʏo��&gt;</b> �c ���������ɍ��v�����ӏ��̏o�͕��@���w�肵�܂��B���v�����ӏ��͂��̐擪�̍��v�ӏ��̈ʒu��������A<a href="HLP000075.html">�^�C�v�ʐݒ� �w�J���[�x�v���p�e�B</a>�Łu����������v�Ɏw�肵���F�Ńn�C���C�g�\������܂��B<br>
 	<div class=li200>
-		◎<b>該当行</b>		… 合致した箇所のある行全体を表示します。<br>
-		○<b>該当部分</b>	… 合致した文字列だけを表示します。<br>
-		○<b>非該当行</b>	… 合致しなかった文字列だけを表示します。<br>
+		��<b>�Y���s</b>		�c ���v�����ӏ��̂���s�S�̂�\�����܂��B<br>
+		��<b>�Y������</b>	�c ���v���������񂾂���\�����܂��B<br>
+		��<b>��Y���s</b>	�c ���v���Ȃ����������񂾂���\�����܂��B<br>
 	</div>
 	<br>
-	<b>&lt;結果出力形式&gt;</b> … 検索条件の結果の出力形式を選べます。<br>
+	<b>&lt;���ʏo�͌`��&gt;</b> �c ���������̌��ʂ̏o�͌`����I�ׂ܂��B<br>
 	<div class=li200>
-		◎<b>ノーマル</b>  	… 一つづつ列挙して出力します。<br>
-		○<b>ファイル毎</b>	… ファイル毎にまとめて出力します。いわゆるWZ風の形式です。<br>
-		○<b>結果のみ</b>	… 結果部分のみ出力します。(sakura:2.1.0.0以降)<br>
+		��<b>�m�[�}��</b>  	�c ��Â񋓂��ďo�͂��܂��B<br>
+		��<b>�t�@�C����</b>	�c �t�@�C�����ɂ܂Ƃ߂ďo�͂��܂��B������WZ���̌`���ł��B<br>
+		��<b>���ʂ̂�</b>	�c ���ʕ����̂ݏo�͂��܂��B(sakura:2.1.0.0�ȍ~)<br>
 	</div>
 
-	<b>[上]ボタン</b><br>
-	&nbsp;&nbsp;&nbsp;&nbsp;フォルダを1階層上に設定します。(sakura:2.1.0.0以降)<br>
+	<b>[��]�{�^��</b><br>
+	&nbsp;&nbsp;&nbsp;&nbsp;�t�H���_��1�K�w��ɐݒ肵�܂��B(sakura:2.1.0.0�ȍ~)<br>
 
-	<b>[現フォルダ]ボタン</b><br>
-	&nbsp;&nbsp;&nbsp;&nbsp;このボタンを押すと現在開いているファイルを元に「フォルダ」を設定します。<br>
+	<b>[���t�H���_]�{�^��</b><br>
+	&nbsp;&nbsp;&nbsp;&nbsp;���̃{�^���������ƌ��݊J���Ă���t�@�C�������Ɂu�t�H���_�v��ݒ肵�܂��B<br>
 </div>
 
 <br>
@@ -100,38 +100,38 @@
 <br>
 
 <br>
-<font color="blue">※正規表現は、<a href="HLP000006.html">正規表現ライブラリ</a>によって実現しています。<br>
-sakura:2.4.0.0以降では配布物の中に含まれますが、それ以前のバージョンでは別途入手する必要があります。</font><br>
+<font color="blue">�����K�\���́A<a href="HLP000006.html">���K�\�����C�u����</a>�ɂ���Ď������Ă��܂��B<br>
+sakura:2.4.0.0�ȍ~�ł͔z�z���̒��Ɋ܂܂�܂����A����ȑO�̃o�[�W�����ł͕ʓr���肷��K�v������܂��B</font><br>
 <br>
 <span id="hintmarksearch"><br></span>
-<img src="images/hint.png">ヒント<br>
-編集中のドキュメント、Grep結果などの中から行を抽出したい場合は、「<a href="HLP000059.html">検索</a>」の[該当行マーク]と「<a href="HLP000209.html">ブックマーク一覧</a>」の[コピー]を組み合わせると便利です。<br>
+<img src="images/hint.png">�q���g<br>
+�ҏW���̃h�L�������g�AGrep���ʂȂǂ̒�����s�𒊏o�������ꍇ�́A�u<a href="HLP000059.html">����</a>�v��[�Y���s�}�[�N]�Ɓu<a href="HLP000209.html">�u�b�N�}�[�N�ꗗ</a>�v��[�R�s�[]��g�ݍ��킹��ƕ֗��ł��B<br>
 <br>
-■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
-・構文: Grep( str1 :String, str2 :String, str3 :String, int4 :Integer, int5 :Integer );<br>
-&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;検索文字列<br>
-&nbsp;&nbsp;&nbsp;&nbsp;str2&nbsp;&nbsp;&nbsp;&nbsp;検索対象にするファイル名<br>
-&nbsp;&nbsp;&nbsp;&nbsp;str3&nbsp;&nbsp;&nbsp;&nbsp;検索対象にするフォルダ名<br>
-&nbsp;&nbsp;&nbsp;&nbsp;int4&nbsp;&nbsp;&nbsp;&nbsp;オプション（省略可能、ただしPPAマクロは省略不可）<br>
-&nbsp;&nbsp;&nbsp;&nbsp;int5&nbsp;&nbsp;&nbsp;&nbsp;文字コードセット（省略可能、ただしPPAマクロは省略不可）(sakura:2.1.0.0以降)<br>
-・記録:	○<br>
-・解説<br>
-オプションには以下の値の組み合わせを指定できます。<br>
-&nbsp;&nbsp;&nbsp;&nbsp;0x01&nbsp;&nbsp;&nbsp;&nbsp;サブフォルダからも検索する（省略時規定値）<br>
-&nbsp;&nbsp;&nbsp;&nbsp;0x02&nbsp;&nbsp;&nbsp;&nbsp;<i>この編集中のテキストから検索する（未実装）</i><br>
-&nbsp;&nbsp;&nbsp;&nbsp;0x04&nbsp;&nbsp;&nbsp;&nbsp;英大文字と英小文字を区別する（省略時規定値）<br>
-&nbsp;&nbsp;&nbsp;&nbsp;0x08&nbsp;&nbsp;&nbsp;&nbsp;<a href="HLP000089.html">正規表現</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;0x10&nbsp;&nbsp;&nbsp;&nbsp;文字コード自動判別<br>
-「結果出力」<br>
-&nbsp;&nbsp;&nbsp;&nbsp;0x00&nbsp;&nbsp;&nbsp;&nbsp;該当行<br>
-&nbsp;&nbsp;&nbsp;&nbsp;0x20&nbsp;&nbsp;&nbsp;&nbsp;該当部分（省略時規定値）<br>
-&nbsp;0x400000&nbsp;&nbsp;&nbsp;&nbsp;非該当行(sakura;2.2.0.0以降)
-「出力形式」<br>
-&nbsp;&nbsp;&nbsp;&nbsp;0x00&nbsp;&nbsp;&nbsp;&nbsp;ノーマル（省略時規定値）<br>
-&nbsp;&nbsp;&nbsp;&nbsp;0x40&nbsp;&nbsp;&nbsp;&nbsp;ファイル毎<br>
-&nbsp;&nbsp;&nbsp;&nbsp;0x80&nbsp;&nbsp;&nbsp;&nbsp;結果のみ(sakura:2.1.0.0以降)<br>
-「<a href="HLP000271.html">文字コードセット</a>」<br>
-&nbsp;&nbsp;&nbsp;&nbsp;0x0000&nbsp;&nbsp;&nbsp;&nbsp;SJIS（省略時規定値）<br>
+��<a href="HLP000204.html"><b>�}�N���\��</b></a><br>
+�E�\��: Grep( str1 :String, str2 :String, str3 :String, int4 :Integer, int5 :Integer );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;����������<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str2&nbsp;&nbsp;&nbsp;&nbsp;�����Ώۂɂ���t�@�C����<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str3&nbsp;&nbsp;&nbsp;&nbsp;�����Ώۂɂ���t�H���_��<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int4&nbsp;&nbsp;&nbsp;&nbsp;�I�v�V�����i�ȗ��\�A������PPA�}�N���͏ȗ��s�j<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int5&nbsp;&nbsp;&nbsp;&nbsp;�����R�[�h�Z�b�g�i�ȗ��\�A������PPA�}�N���͏ȗ��s�j(sakura:2.1.0.0�ȍ~)<br>
+�E�L�^:	��<br>
+�E���<br>
+�I�v�V�����ɂ͈ȉ��̒l�̑g�ݍ��킹���w��ł��܂��B<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x01&nbsp;&nbsp;&nbsp;&nbsp;�T�u�t�H���_�������������i�ȗ����K��l�j<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x02&nbsp;&nbsp;&nbsp;&nbsp;<i>���̕ҏW���̃e�L�X�g���猟������i�������j</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x04&nbsp;&nbsp;&nbsp;&nbsp;�p�啶���Ɖp����������ʂ���i�ȗ����K��l�j<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x08&nbsp;&nbsp;&nbsp;&nbsp;<a href="HLP000089.html">���K�\��</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x10&nbsp;&nbsp;&nbsp;&nbsp;�����R�[�h��������<br>
+�u���ʏo�́v<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x00&nbsp;&nbsp;&nbsp;&nbsp;�Y���s<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x20&nbsp;&nbsp;&nbsp;&nbsp;�Y�������i�ȗ����K��l�j<br>
+&nbsp;0x400000&nbsp;&nbsp;&nbsp;&nbsp;��Y���s(sakura;2.2.0.0�ȍ~)
+�u�o�͌`���v<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x00&nbsp;&nbsp;&nbsp;&nbsp;�m�[�}���i�ȗ����K��l�j<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x40&nbsp;&nbsp;&nbsp;&nbsp;�t�@�C����<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x80&nbsp;&nbsp;&nbsp;&nbsp;���ʂ̂�(sakura:2.1.0.0�ȍ~)<br>
+�u<a href="HLP000271.html">�����R�[�h�Z�b�g</a>�v<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x0000&nbsp;&nbsp;&nbsp;&nbsp;SJIS�i�ȗ����K��l�j<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x0100&nbsp;&nbsp;&nbsp;&nbsp;JIS<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x0200&nbsp;&nbsp;&nbsp;&nbsp;EUC<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x0300&nbsp;&nbsp;&nbsp;&nbsp;UTF-16<br>
@@ -140,19 +140,19 @@ sakura:2.4.0.0以降では配布物の中に含まれますが、それ以前の
 &nbsp;&nbsp;&nbsp;&nbsp;0x0600&nbsp;&nbsp;&nbsp;&nbsp;UTF-16BE<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x0700&nbsp;&nbsp;&nbsp;&nbsp;CESU-8<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x0800&nbsp;&nbsp;&nbsp;&nbsp;Latin1(Windows-1252)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;0x6300&nbsp;&nbsp;&nbsp;&nbsp;自動選択<br>
-&nbsp;&nbsp;&nbsp;&nbsp;0x010000;&nbsp;&nbsp;単語単位で探す(sakura:2.1.0.0以降)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;0x020000;&nbsp;&nbsp;ファイル毎最初のみ検索(sakura:2.1.0.0以降)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;0x040000;&nbsp;&nbsp;ベースフォルダ表示(sakura:2.1.0.0以降)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;0x080000;&nbsp;&nbsp;フォルダ毎に表示(sakura:2.1.0.0以降)<br>
-文字コード自動判別を設定した場合と文字コードセットを 自動選択にした場合の動作は同じです。<br>
-int4の文字コードセットよりint5が優先されます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x6300&nbsp;&nbsp;&nbsp;&nbsp;�����I��<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x010000;&nbsp;&nbsp;�P��P�ʂŒT��(sakura:2.1.0.0�ȍ~)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x020000;&nbsp;&nbsp;�t�@�C�����ŏ��̂݌���(sakura:2.1.0.0�ȍ~)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x040000;&nbsp;&nbsp;�x�[�X�t�H���_�\��(sakura:2.1.0.0�ȍ~)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x080000;&nbsp;&nbsp;�t�H���_���ɕ\��(sakura:2.1.0.0�ȍ~)<br>
+�����R�[�h�������ʂ�ݒ肵���ꍇ�ƕ����R�[�h�Z�b�g�� �����I���ɂ����ꍇ�̓���͓����ł��B<br>
+int4�̕����R�[�h�Z�b�g���int5���D�悳��܂��B<br>
 <br>
-<img src="images/note.png"><b>注意</b><br>
-キーマクロ中では 10進数の定数表記しか受け付けません。<br>
-オプションは10進数に直して記述してください。<br>
+<img src="images/note.png"><b>����</b><br>
+�L�[�}�N�����ł� 10�i���̒萔�\�L�����󂯕t���܂���B<br>
+�I�v�V������10�i���ɒ����ċL�q���Ă��������B<br>
 <br>
-<img src="images/note.png"><b>注意</b><br>
-Grepのダイアログをマクロで出すことはできません。<br>
-マクロからは必ず新しいウィンドウを作成してGrepします。<br>
+<img src="images/note.png"><b>����</b><br>
+Grep�̃_�C�A���O���}�N���ŏo�����Ƃ͂ł��܂���B<br>
+�}�N������͕K���V�����E�B���h�E���쐬����Grep���܂��B<br>
 </BODY></HTML>

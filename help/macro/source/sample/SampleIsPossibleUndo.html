@@ -1,16 +1,16 @@
-ï»¿<html><head><title>S_IsPossibleUndoã®ä½¿ç”¨ä¾‹</title>
+<html><head><title>S_IsPossibleUndo‚Ìg—p—á</title>
 <LINK REL="stylesheet" TYPE="text/css" HREF="../sakura.css">
-<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
 </head>
 <body>
 <small>
 Sakura-Editor Macro Reference
 </small>
-<h2>S_IsPossibleUndoã®ä½¿ç”¨ä¾‹</h2>
+<h2>S_IsPossibleUndo‚Ìg—p—á</h2>
 
 <pre>
 <span style = "color:green;">//sample.js
-//æœ€å¤§ã¾ã§Undoã‚’å®Ÿè¡Œ</span>
+//Å‘å‚Ü‚ÅUndo‚ğÀs</span>
 <span style = "color:blue;">while</span> (<span style = "color:blue;">IsPossibleUndo</span>) {
     <span style = "color:blue;">Undo</span>;
 }
@@ -18,26 +18,26 @@ Sakura-Editor Macro Reference
 
 <pre>
 <span style = "color:green;">//sample.ppa
-//ãƒ•ã‚¡ã‚¤ãƒ«ã®ç·¨é›†çŠ¶æ…‹ã‚’èª¿ã¹ã‚‹</span>
+//ƒtƒ@ƒCƒ‹‚Ì•ÒWó‘Ô‚ğ’²‚×‚é</span>
 <span style = "color:blue;">var</span>
     sMes : String;
 
 <span style = "color:blue;">begin</span>
     <span style = "color:blue;">if S_IsPossibleUndo</span> = <span style = "color:red;">1</span> <span style = "color:blue;">then</span>
-        sMes := <span style = "color:#800000;">'ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã„ã¦ã‹ã‚‰ç·¨é›†ã•ã‚ŒãŸ'</span>
+        sMes := <span style = "color:#800000;">'ƒtƒ@ƒCƒ‹‚ğŠJ‚¢‚Ä‚©‚ç•ÒW‚³‚ê‚½'</span>
     <span style = "color:blue;">else</span>
-        sMes := <span style = "color:#800000;">'ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã„ã¦ã‹ã‚‰ç·¨é›†ã—ã¦ã„ãªã„'</span>
+        sMes := <span style = "color:#800000;">'ƒtƒ@ƒCƒ‹‚ğŠJ‚¢‚Ä‚©‚ç•ÒW‚µ‚Ä‚¢‚È‚¢'</span>
     ;
     
-    sMes := sMes + 'ï¼';
+    sMes := sMes + '^';
     
     <span style = "color:blue;">if S_ExpandParameter</span>(<span style = "color:#800000;">'${U?Y$:N$}'</span>) = <span style = "color:#800000;">'Y'</span> <span style = "color:blue;">then</span>
-        sMes := sMes + <span style = "color:#800000;">'ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä¿å­˜ã—ã¦ã‹ã‚‰ç·¨é›†ã•ã‚ŒãŸ'</span>
+        sMes := sMes + <span style = "color:#800000;">'ƒtƒ@ƒCƒ‹‚ğ•Û‘¶‚µ‚Ä‚©‚ç•ÒW‚³‚ê‚½'</span>
     <span style = "color:blue;">else</span>
-        sMes := sMes + <span style = "color:#800000;">'ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä¿å­˜ã—ã¦ã‹ã‚‰ç·¨é›†ã—ã¦ã„ãªã„'</span>
+        sMes := sMes + <span style = "color:#800000;">'ƒtƒ@ƒCƒ‹‚ğ•Û‘¶‚µ‚Ä‚©‚ç•ÒW‚µ‚Ä‚¢‚È‚¢'</span>
     ;
 
-    <span style = "color:blue;">MessageBox</span>(sMes, <span style = "color:#800000;">'ç·¨é›†çŠ¶æ…‹'</span>, <span style = "color:red;">0</span>);
+    <span style = "color:blue;">MessageBox</span>(sMes, <span style = "color:#800000;">'•ÒWó‘Ô'</span>, <span style = "color:red;">0</span>);
 <span style = "color:blue;">end</span>;
 </pre>
 

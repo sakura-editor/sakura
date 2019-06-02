@@ -1,147 +1,147 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML lang="ja">
 <HEAD>
-<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
 <link rel="shortcut icon" href="images/favicon.ico">
-<TITLE>改行コードについて</TITLE>
+<TITLE>���s�R�[�h�ɂ���</TITLE>
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
-<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
-<h2>改行コードについて</h2>
-<h3>取り扱える改行コード</h3>
-複数の改行コードが混在したファイルも取り扱えるようにする<br>
+<noscript>[<a href="HLP000001.html">�ڎ�</a>]<br></noscript>
+<h2>���s�R�[�h�ɂ���</h2>
+<h3>��舵������s�R�[�h</h3>
+�����̉��s�R�[�h�����݂����t�@�C������舵����悤�ɂ���<br>
 <div class=li200>
-<strike>CR00LF00	( 0d 00 0a 00 )</strike>	<img src="images/hint.png">廃止しました。(sakura:1.3.4.1)<br>
+<strike>CR00LF00	( 0d 00 0a 00 )</strike>	<img src="images/hint.png">�p�~���܂����B(sakura:1.3.4.1)<br>
 CRLF	( 0d 0a )<br>
-<strike>LFCR	( 0a 0d )</strike>	<img src="images/hint.png">廃止しました。(sakura:2.0.0.0)<br>
+<strike>LFCR	( 0a 0d )</strike>	<img src="images/hint.png">�p�~���܂����B(sakura:2.0.0.0)<br>
 CR	( 0d )<br>
 LF	( 0a )<br>
 <br>
-Unicode/UniocdeBEのみ以下の改行コードを読み書きできます。(sakura:2.1.0.0 以降)<br>
-UTF-8/UTF-7/一部コードページでも以下の改行コードで読み書きできます。(sakura:2.2.0.0以降)<br>
-また「改行コードNEL,PS,LSを有効にする」オプション(<a href="HLP000144.html">編集タブ</a>)で、改行コードとして利用しないようにすることもできます。(sakura: mocaskr_ver 004以降)<br>
+Unicode/UniocdeBE�݈̂ȉ��̉��s�R�[�h��ǂݏ����ł��܂��B(sakura:2.1.0.0 �ȍ~)<br>
+UTF-8/UTF-7/�ꕔ�R�[�h�y�[�W�ł��ȉ��̉��s�R�[�h�œǂݏ����ł��܂��B(sakura:2.2.0.0�ȍ~)<br>
+�܂��u���s�R�[�hNEL,PS,LS��L���ɂ���v�I�v�V����(<a href="HLP000144.html">�ҏW�^�u</a>)�ŁA���s�R�[�h�Ƃ��ė��p���Ȃ��悤�ɂ��邱�Ƃ��ł��܂��B(sakura: mocaskr_ver 004�ȍ~)<br>
 NEL	( 85 )<br>
 LS	( 2028 )<br>
 PS	( 2029 )<br>
 </div><br>
-<h3>ファイル読み込み時の処理</h3>
-ファイルを読み込む際は改行単位で行バッファに追加していく。<br>
+<h3>�t�@�C���ǂݍ��ݎ��̏���</h3>
+�t�@�C����ǂݍ��ލۂ͉��s�P�ʂōs�o�b�t�@�ɒǉ����Ă����B<br>
 <ul>
-<li>ファイルの先頭から1バイトずつサーチし、改行コードが出現するまでループする。</li>
-<li>取り扱える改行コードのどれに該当するのか調べる。</li>
-<li>行テキストと改行コードの情報を行バッファに格納する。</li>
-<li>ファイルの終わりまで繰り返す。</li>
-<li>ファイルの最後に改行なしの行がある場合も、行テキストと改行コードなしの情報を行バッファに格納する。</li>
-<li>改行コードの種類を判別する。これにより、編集時にEnter等で挿入される改行コードを決定する。</li>
+<li>�t�@�C���̐擪����1�o�C�g���T�[�`���A���s�R�[�h���o������܂Ń��[�v����B</li>
+<li>��舵������s�R�[�h�̂ǂ�ɊY������̂����ׂ�B</li>
+<li>�s�e�L�X�g�Ɖ��s�R�[�h�̏����s�o�b�t�@�Ɋi�[����B</li>
+<li>�t�@�C���̏I���܂ŌJ��Ԃ��B</li>
+<li>�t�@�C���̍Ō�ɉ��s�Ȃ��̍s������ꍇ���A�s�e�L�X�g�Ɖ��s�R�[�h�Ȃ��̏����s�o�b�t�@�Ɋi�[����B</li>
+<li>���s�R�[�h�̎�ނ𔻕ʂ���B����ɂ��A�ҏW����Enter���ő}���������s�R�[�h�����肷��B</li>
 </ul>
 <br>
 <!--
-<h3>ファイル書き込み時の処理</h3>
-特別に指定しない限り、保存時の改行コードは、編集中データの状態のままファイルに保存される。<br>
-名前を付けて保存ダイアログで指定した場合は、その改行コードで統一される。<br>
-(ANSI版)そのファイルを開きなおすまでは、上書き保存でも先ほど指定したコードで統一されて保存されるが、画面上は書き換わらない。<br>
-(Unicode版)編集データも含めて統一される。上書き保存では変換されない。<br>
+<h3>�t�@�C���������ݎ��̏���</h3>
+���ʂɎw�肵�Ȃ�����A�ۑ����̉��s�R�[�h�́A�ҏW���f�[�^�̏�Ԃ̂܂܃t�@�C���ɕۑ������B<br>
+���O��t���ĕۑ��_�C�A���O�Ŏw�肵���ꍇ�́A���̉��s�R�[�h�œ��ꂳ���B<br>
+(ANSI��)���̃t�@�C�����J���Ȃ����܂ł́A�㏑���ۑ��ł���قǎw�肵���R�[�h�œ��ꂳ��ĕۑ�����邪�A��ʏ�͏��������Ȃ��B<br>
+(Unicode��)�ҏW�f�[�^���܂߂ē��ꂳ���B�㏑���ۑ��ł͕ϊ�����Ȃ��B<br>
 <br>
 -->
 
-<h3>クリップボードへコピーする処理</h3>
-■<b><font color="blue">矩形選択時</font></b><br>
+<h3>�N���b�v�{�[�h�փR�s�[���鏈��</h3>
+��<b><font color="blue">��`�I����</font></b><br>
 <div class=li200>
-	"<font color="red">MSDEVColumnSelect</font>"形式のデータをクリップボードに格納<br>
+	"<font color="red">MSDEVColumnSelect</font>"�`���̃f�[�^���N���b�v�{�[�h�Ɋi�[<br>
 	<ul>
-		<li>データ内容不定</li>
+		<li>�f�[�^���e�s��</li>
 	</ul>
 
-	<font color="red">CF_UNICODETEXT</font>形式のデータをクリップボードに格納<br>
+	<font color="red">CF_UNICODETEXT</font>�`���̃f�[�^���N���b�v�{�[�h�Ɋi�[<br>
 	<ul>
-		<li>選択領域の各行が改行を含む場合はCRLFに変換、改行を含まない場合はCRLFを付加</li>
-		<li>すべての改行コードをCRLFに統一</li>
-		<li>末尾にnull文字を付加</li>
+		<li>�I��̈�̊e�s�����s���܂ޏꍇ��CRLF�ɕϊ��A���s���܂܂Ȃ��ꍇ��CRLF��t��</li>
+		<li>���ׂẲ��s�R�[�h��CRLF�ɓ���</li>
+		<li>������null������t��</li>
 	</ul>
 
-	"<font color="red">SAKURAClipW</font>"形式のデータをクリップボードに格納<br>
+	"<font color="red">SAKURAClipW</font>"�`���̃f�[�^���N���b�v�{�[�h�Ɋi�[<br>
 	<ul>
-		<li>先頭0～3の4バイトがint型のデータ長(n)</li>
-		<li>先頭4～4 + 2 * (n - 1) のバイトがUnicodeデータ(バイナリ含む)</li>
-		<li>選択領域の各行が改行を含む場合はCRLFに変換、改行を含まない場合はCRLFを付加</li>
-		<li>すべての改行コードをCRLFに統一</li>
+		<li>�擪0�`3��4�o�C�g��int�^�̃f�[�^��(n)</li>
+		<li>�擪4�`4 + 2 * (n - 1) �̃o�C�g��Unicode�f�[�^(�o�C�i���܂�)</li>
+		<li>�I��̈�̊e�s�����s���܂ޏꍇ��CRLF�ɕϊ��A���s���܂܂Ȃ��ꍇ��CRLF��t��</li>
+		<li>���ׂẲ��s�R�[�h��CRLF�ɓ���</li>
 	</ul>
 </div>
 
-■<b><font color="blue">線形選択時</font></b><br>
+��<b><font color="blue">���`�I����</font></b><br>
 <div class=li200>
-	<font color="red">CF_UNICODETEXT</font>形式のデータをクリップボードに格納
+	<font color="red">CF_UNICODETEXT</font>�`���̃f�[�^���N���b�v�{�[�h�Ɋi�[
 	<ul>
-		<li>改行コードは元テキストの状態を保持する。</li>
-		<li>末尾にnull文字を付加</li>
+		<li>���s�R�[�h�͌��e�L�X�g�̏�Ԃ�ێ�����B</li>
+		<li>������null������t��</li>
 	</ul>
-	"<font color="red">SAKURAClipW</font>"形式のデータをクリップボードに格納
+	"<font color="red">SAKURAClipW</font>"�`���̃f�[�^���N���b�v�{�[�h�Ɋi�[
 	<ul>
-		<li>先頭0～3の4バイトがint型のデータ長(n)</li>
-		<li>先頭4～4 + 2 * (n - 1) の2 * n バイトがUnicodeデータ(バイナリ含む)</li>
+		<li>�擪0�`3��4�o�C�g��int�^�̃f�[�^��(n)</li>
+		<li>�擪4�`4 + 2 * (n - 1) ��2 * n �o�C�g��Unicode�f�[�^(�o�C�i���܂�)</li>
 	</ul>
 </div>
-■<b><font color="blue">未選択時</font></b><br>
+��<b><font color="blue">���I����</font></b><br>
 <div class=li200>
-	カーソル位置のレイアウト行データを線形選択時の方法でコピーし、
-	加えて、<a href="HLP000144.html">共通設定</a>のランモード貼付設定が有効になっている場合、
-	"<font color="red">MSDEVLineSelect</font>"形式と
-	"<font color="red">VisualStudioEditorOperationsLineCutCopyClipboardTag</font>"形式のデータをクリップボードに格納
+	�J�[�\���ʒu�̃��C�A�E�g�s�f�[�^����`�I�����̕��@�ŃR�s�[���A
+	�����āA<a href="HLP000144.html">���ʐݒ�</a>�̃������[�h�\�t�ݒ肪�L���ɂȂ��Ă���ꍇ�A
+	"<font color="red">MSDEVLineSelect</font>"�`����
+	"<font color="red">VisualStudioEditorOperationsLineCutCopyClipboardTag</font>"�`���̃f�[�^���N���b�v�{�[�h�Ɋi�[
 </div>
 <br>
 
-<h3>クリップボードから貼り付ける処理</h3>
-<font color="green">クリップボードの形式を調べる</font><br>
+<h3>�N���b�v�{�[�h����\��t���鏈��</h3>
+<font color="green">�N���b�v�{�[�h�̌`���𒲂ׂ�</font><br>
 <div class=li200>
-	"<font color="red">MSDEVColumnSelect</font>"形式がある場合
+	"<font color="red">MSDEVColumnSelect</font>"�`��������ꍇ
 	<ul>
-		<li>矩形貼り付けとする</li>
+		<li>��`�\��t���Ƃ���</li>
 	</ul>
-	"<font color="red">MSDEVLineSelect</font>"形式または
-		"<font color="red">VisualStudioEditorOperationsLineCutCopyClipboardTag</font>"形式がある場合
+	"<font color="red">MSDEVLineSelect</font>"�`���܂���
+		"<font color="red">VisualStudioEditorOperationsLineCutCopyClipboardTag</font>"�`��������ꍇ
 	<ul>
-		<li><a href="HLP000144.html">共通設定</a>で有効の場合、ラインモード貼付とする</li>
+		<li><a href="HLP000144.html">���ʐݒ�</a>�ŗL���̏ꍇ�A���C�����[�h�\�t�Ƃ���</li>
 	</ul>
 	
-	"<font color="red">SAKURAClipW</font>"形式がある場合
+	"<font color="red">SAKURAClipW</font>"�`��������ꍇ
 	<ul>
-		<li>そのデータを取り出しそのまま貼り付けデータとする。</li>
-		<li><a href="HLP000144.html">共通設定</a>で「改行コードを変換して貼り付ける」が有効の場合、改行コードを変換する</li>
+		<li>���̃f�[�^�����o�����̂܂ܓ\��t���f�[�^�Ƃ���B</li>
+		<li><a href="HLP000144.html">���ʐݒ�</a>�Łu���s�R�[�h��ϊ����ē\��t����v���L���̏ꍇ�A���s�R�[�h��ϊ�����</li>
 	</ul>
-	<font color="red">CF_UNICODETEXT</font>形式のデータがある場合
+	<font color="red">CF_UNICODETEXT</font>�`���̃f�[�^������ꍇ
 	<ul>
-		<li>そのデータを取り出しそのまま貼り付けデータとする。</li>
-		<li><a href="HLP000144.html">共通設定</a>で「改行コードを変換して貼り付ける」が有効の場合、改行コードを変換する</li>
-		<li>null文字(0x00)以降切捨て</li>
+		<li>���̃f�[�^�����o�����̂܂ܓ\��t���f�[�^�Ƃ���B</li>
+		<li><a href="HLP000144.html">���ʐݒ�</a>�Łu���s�R�[�h��ϊ����ē\��t����v���L���̏ꍇ�A���s�R�[�h��ϊ�����</li>
+		<li>null����(0x00)�ȍ~�؎̂�</li>
 	</ul>
-	<font color="red">CF_OEMTEXT</font>形式のデータがある場合
+	<font color="red">CF_OEMTEXT</font>�`���̃f�[�^������ꍇ
 	<ul>
-		<li>そのデータを取り出しShift_JISをUnicodeに変換する。</li>
-		<li><a href="HLP000144.html">共通設定</a>で「改行コードを変換して貼り付ける」が有効の場合、改行コードを変換する</li>
-		<li>無効の場合、改行コードは元テキストの状態を保持する。</li>
-		<li>null文字(0x00)以降切捨て</li>
+		<li>���̃f�[�^�����o��Shift_JIS��Unicode�ɕϊ�����B</li>
+		<li><a href="HLP000144.html">���ʐݒ�</a>�Łu���s�R�[�h��ϊ����ē\��t����v���L���̏ꍇ�A���s�R�[�h��ϊ�����</li>
+		<li>�����̏ꍇ�A���s�R�[�h�͌��e�L�X�g�̏�Ԃ�ێ�����B</li>
+		<li>null����(0x00)�ȍ~�؎̂�</li>
 	</ul>
 </div><br>
-<h3>[Enter] キー入力時の処理</h3>
-<div class=li200>挿入される改行コードの種類はファイル読み込み時に決定する。<br>
-[Enter] キー入力時は、その改行コードに変換して格納する。<br>
+<h3>[Enter] �L�[���͎��̏���</h3>
+<div class=li200>�}���������s�R�[�h�̎�ނ̓t�@�C���ǂݍ��ݎ��Ɍ��肷��B<br>
+[Enter] �L�[���͎��́A���̉��s�R�[�h�ɕϊ����Ċi�[����B<br>
 </div><br>
 
-<h3>アンドゥ・リドゥバッファへの改行コード格納形式</h3>
+<h3>�A���h�D�E���h�D�o�b�t�@�ւ̉��s�R�[�h�i�[�`��</h3>
 <div class=li200>
-前バージョンは改行コードを\rで表現していた。<br>
-新バージョンはCRLF等をそのまま格納する。<br>
-バッファからの取り出し処理の際、複数種類の改行コードを判別する。<br>
+�O�o�[�W�����͉��s�R�[�h��\r�ŕ\�����Ă����B<br>
+�V�o�[�W������CRLF�������̂܂܊i�[����B<br>
+�o�b�t�@����̎��o�������̍ہA������ނ̉��s�R�[�h�𔻕ʂ���B<br>
 </div><br>
 
-<h3>編集画面での記号表記について</h3>
-1.6.0.0より改行コードの表記が変わりましたので、ご注意ください。
+<h3>�ҏW��ʂł̋L���\�L�ɂ���</h3>
+1.6.0.0�����s�R�[�h�̕\�L���ς��܂����̂ŁA�����ӂ��������B
 <ul>
-<li><b>1.5.17.0以前</b>：LF←，CR↓</li>
-<li><b>1.6.0.0以降</b>：LF↓，CR←</li>
+<li><b>1.5.17.0�ȑO</b>�FLF���CCR��</li>
+<li><b>1.6.0.0�ȍ~</b>�FLF���CCR��</li>
 </ul>
-なお、これは以前のバージョンが間違えていたわけではなく、過去の経緯によるものなので仕様変更と理解してください。<br>
+�Ȃ��A����͈ȑO�̃o�[�W�������ԈႦ�Ă����킯�ł͂Ȃ��A�ߋ��̌o�܂ɂ����̂Ȃ̂Ŏd�l�ύX�Ɨ������Ă��������B<br>
 
 </BODY></HTML>

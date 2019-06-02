@@ -1,104 +1,104 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML lang="ja">
 <HEAD>
-<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
 <link rel="shortcut icon" href="images/favicon.ico">
-<TITLE>開く</TITLE>
-<META NAME="MS-HKWD" CONTENT="開く">
+<TITLE>�J��</TITLE>
+<META NAME="MS-HKWD" CONTENT="�J��">
 <META NAME="MS-HKWD" CONTENT="FileOpen">
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
-<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
-<h2>開く</h2>
-ディスクにあるファイルを開くことができます。<br>
-(無題)で変更していないウィンドウの場合は、今のウィンドウでファイルを開きます。<br>
-それ以外の場合は、新しいウィンドウを作成して開きます。<br>
-フォルダの初期値はカレントディレクトリ/MRUの1番目/指定フォルダを<a href="HLP000144.html">共通設定 『編集』</a>で指定可能です。(2.0.6.0 以降)<br>
+<noscript>[<a href="HLP000001.html">�ڎ�</a>]<br></noscript>
+<h2>�J��</h2>
+�f�B�X�N�ɂ���t�@�C�����J�����Ƃ��ł��܂��B<br>
+(����)�ŕύX���Ă��Ȃ��E�B���h�E�̏ꍇ�́A���̃E�B���h�E�Ńt�@�C�����J���܂��B<br>
+����ȊO�̏ꍇ�́A�V�����E�B���h�E���쐬���ĊJ���܂��B<br>
+�t�H���_�̏����l�̓J�����g�f�B���N�g��/MRU��1�Ԗ�/�w��t�H���_��<a href="HLP000144.html">���ʐݒ� �w�ҏW�x</a>�Ŏw��\�ł��B(2.0.6.0 �ȍ~)<br>
 <br>
 <img src="images/OpenFile.png"><br>
 <br>
-・<b>[読み取り専用ファイルとして開く]</b><br>
-チェックすると、<a href="HLP000249.html">ビューモード</a>でファイルをオープンします。ファイルを編集することができなくなります。<br>
-ファイルを閲覧目的に使用している場合、大事なファイルをうっかり編集してしまわないようにチェックするといいでしょう。<br>
+�E<b>[�ǂݎ���p�t�@�C���Ƃ��ĊJ��]</b><br>
+�`�F�b�N����ƁA<a href="HLP000249.html">�r���[���[�h</a>�Ńt�@�C�����I�[�v�����܂��B�t�@�C����ҏW���邱�Ƃ��ł��Ȃ��Ȃ�܂��B<br>
+�t�@�C�����{���ړI�Ɏg�p���Ă���ꍇ�A�厖�ȃt�@�C������������ҏW���Ă��܂�Ȃ��悤�Ƀ`�F�b�N����Ƃ����ł��傤�B<br>
 <br>
-・<b>[文字コードセット]</b><br>
-<a href="HLP000271.html">文字コードセット</a>は、以下の中から選択できます。<br>
-開くときの文字コード指定は、開くファイルがどの文字コードセットで書かれているのかを指定します。<br>
+�E<b>[�����R�[�h�Z�b�g]</b><br>
+<a href="HLP000271.html">�����R�[�h�Z�b�g</a>�́A�ȉ��̒�����I���ł��܂��B<br>
+�J���Ƃ��̕����R�[�h�w��́A�J���t�@�C�����ǂ̕����R�[�h�Z�b�g�ŏ�����Ă���̂����w�肵�܂��B<br>
 <br>
-また自動判定機能を使えば、文字コードセットの違いを意識せずに、読み込みや編集・保存ができます。<br>
+�܂���������@�\���g���΁A�����R�[�h�Z�b�g�̈Ⴂ���ӎ������ɁA�ǂݍ��݂�ҏW�E�ۑ����ł��܂��B<br>
 <div class=li200>
-◆<b>自動選択</b><br>
-デフォルトです。<br>
-文字コードセットを自動的に認識します。<br>
-ファイルの先頭をある程度まで読み込み、各文字コードセット特有のデータの出現数を調べ、文字コードセットを判断します。<br>
-文字コードの認識を間違えることがあるかもしれません。<br>
-認識処理を行うため、読み込みに時間が掛かります。<br>
-最近のパソコンの動作速度ならば、十分な速度が得られると思います。<br>
-<b>Shift_JISのファイルでも、半角カタカナが含まれている場合、EUCと区別がつかないため、よく間違えます。<br>
-半角カタカナらしき箇所が文字化けしている場合、たぶんまず間違いなくほとんどがこのケースだと思います。<br>
-半角カタカナを使わなくしたりEUCを撲滅したりして下さい。</b><br>
+��<b>�����I��</b><br>
+�f�t�H���g�ł��B<br>
+�����R�[�h�Z�b�g�������I�ɔF�����܂��B<br>
+�t�@�C���̐擪��������x�܂œǂݍ��݁A�e�����R�[�h�Z�b�g���L�̃f�[�^�̏o�����𒲂ׁA�����R�[�h�Z�b�g�𔻒f���܂��B<br>
+�����R�[�h�̔F�����ԈႦ�邱�Ƃ����邩������܂���B<br>
+�F���������s�����߁A�ǂݍ��݂Ɏ��Ԃ��|����܂��B<br>
+�ŋ߂̃p�\�R���̓��쑬�x�Ȃ�΁A�\���ȑ��x��������Ǝv���܂��B<br>
+<b>Shift_JIS�̃t�@�C���ł��A���p�J�^�J�i���܂܂�Ă���ꍇ�AEUC�Ƌ�ʂ����Ȃ����߁A�悭�ԈႦ�܂��B<br>
+���p�J�^�J�i�炵���ӏ��������������Ă���ꍇ�A���Ԃ�܂��ԈႢ�Ȃ��قƂ�ǂ����̃P�[�X���Ǝv���܂��B<br>
+���p�J�^�J�i���g��Ȃ�������EUC��o�ł����肵�ĉ������B</b><br>
 <br>
-◆<b>SJIS</b><br>
-Shift_JISのファイルとして読み込みます。<br>
-ファイルを読み込んだら内部的にUnicodeに変換して管理します。<br>
+��<b>SJIS</b><br>
+Shift_JIS�̃t�@�C���Ƃ��ēǂݍ��݂܂��B<br>
+�t�@�C����ǂݍ��񂾂�����I��Unicode�ɕϊ����ĊǗ����܂��B<br>
 <br>
-◆<b>JIS</b><br>
-JISコードのファイルとして読み込みます。<br>
-ファイルを読み込んだら内部的にUnicodeに変換して管理します。<br>
+��<b>JIS</b><br>
+JIS�R�[�h�̃t�@�C���Ƃ��ēǂݍ��݂܂��B<br>
+�t�@�C����ǂݍ��񂾂�����I��Unicode�ɕϊ����ĊǗ����܂��B<br>
 <br>
-◆<b>EUC</b><br>
-EUCコードのファイルとして読み込みます。<br>
-ファイルを読み込んだら内部的にUnicodeに変換して管理します。<br>
+��<b>EUC</b><br>
+EUC�R�[�h�̃t�@�C���Ƃ��ēǂݍ��݂܂��B<br>
+�t�@�C����ǂݍ��񂾂�����I��Unicode�ɕϊ����ĊǗ����܂��B<br>
 <br>
-◆<b>Latin1</b><br>
-Latin1(Windows-1252)なコードのファイルとして読み込みます。<br>
+��<b>Latin1</b><br>
+Latin1(Windows-1252)�ȃR�[�h�̃t�@�C���Ƃ��ēǂݍ��݂܂��B<br>
 <br>
-◆<b>UTF-16</b><br>
-Unicode(UTF-16)なコードのファイルとして読み込みます。<br>
+��<b>UTF-16</b><br>
+Unicode(UTF-16)�ȃR�[�h�̃t�@�C���Ƃ��ēǂݍ��݂܂��B<br>
 <br>
-◆<b>UTF-16BE</b><br>
-Unicode(UTF-16BE)なコードのファイルとして読み込みます。<br>
+��<b>UTF-16BE</b><br>
+Unicode(UTF-16BE)�ȃR�[�h�̃t�@�C���Ƃ��ēǂݍ��݂܂��B<br>
 <br>
-◆<b>UTF-8</b><br>
-Unicode(UTF-8)なコードのファイルとして読み込みます。<br>
+��<b>UTF-8</b><br>
+Unicode(UTF-8)�ȃR�[�h�̃t�@�C���Ƃ��ēǂݍ��݂܂��B<br>
 <br>
-◆<b>CESU-8</b><br>
-Unicode(CESU-8)なコードのファイルとして読み込みます。<br>
+��<b>CESU-8</b><br>
+Unicode(CESU-8)�ȃR�[�h�̃t�@�C���Ƃ��ēǂݍ��݂܂��B<br>
 <br>
-◆<b>UTF-7</b><br>
-Unicode(UTF-7)なコードのファイルとして読み込みます。<br>
+��<b>UTF-7</b><br>
+Unicode(UTF-7)�ȃR�[�h�̃t�@�C���Ƃ��ēǂݍ��݂܂��B<br>
 </div><br>
-・<b>[CP]</b><br>
-文字コードセットでコードページを選択できるようにします。(sakura:2.2.0.0以降)<br>
+�E<b>[CP]</b><br>
+�����R�[�h�Z�b�g�ŃR�[�h�y�[�W��I���ł���悤�ɂ��܂��B(sakura:2.2.0.0�ȍ~)<br>
 <br>
-・<b>[最近のファイル]</b><br>
-最近使ったファイルの一覧を<b>アルファベット順</b>に見ることができます。<br>
+�E<b>[�ŋ߂̃t�@�C��]</b><br>
+�ŋߎg�����t�@�C���̈ꗗ��<b>�A���t�@�x�b�g��</b>�Ɍ��邱�Ƃ��ł��܂��B<br>
 <br>
-・<b>[最近のフォルダ]</b><br>
-最近使ったフォルダの一覧を<b>アルファベット順</b>に見ることができます。<br>
-フォルダを選択すると、現在のフォルダが変化します。<br>
+�E<b>[�ŋ߂̃t�H���_]</b><br>
+�ŋߎg�����t�H���_�̈ꗗ��<b>�A���t�@�x�b�g��</b>�Ɍ��邱�Ƃ��ł��܂��B<br>
+�t�H���_��I������ƁA���݂̃t�H���_���ω����܂��B<br>
 <br>
-・<b>[ファイルの種類]</b><br>
-ファイルの種類には、すべてのファイル、テキストファイル以外に、タイプ別設定で設定しているタイプ（拡張子）がセットされています。<br>
+�E<b>[�t�@�C���̎��]</b><br>
+�t�@�C���̎�ނɂ́A���ׂẴt�@�C���A�e�L�X�g�t�@�C���ȊO�ɁA�^�C�v�ʐݒ�Őݒ肵�Ă���^�C�v�i�g���q�j���Z�b�g����Ă��܂��B<br>
 <br>
-<img src="images/hint.png">ヒント<br>
-<a href="HLP000275.html">開く（ドロップダウン）</a>をツールバーに登録すると開くボタンの横に、最近使ったファイルのドロップダウンメニューが表示され直接選択できます。<br>
+<img src="images/hint.png">�q���g<br>
+<a href="HLP000275.html">�J���i�h���b�v�_�E���j</a>���c�[���o�[�ɓo�^����ƊJ���{�^���̉��ɁA�ŋߎg�����t�@�C���̃h���b�v�_�E�����j���[���\�����꒼�ڑI���ł��܂��B<br>
 <br>
-<img src="images/hint.png">ヒント<br>
-ダイアログ表示時にプレースバーを表示します。(sakura:1.5.8.0以降)<br>
+<img src="images/hint.png">�q���g<br>
+�_�C�A���O�\�����Ƀv���[�X�o�[��\�����܂��B(sakura:1.5.8.0�ȍ~)<br>
 <br>
-■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
-・構文:	FileOpen( str1 : String, int2 : Integer, int3 : Integer, str4 : String );<br>
-&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;ファイル名<br>
-&nbsp;&nbsp;&nbsp;&nbsp;int2&nbsp;&nbsp;&nbsp;&nbsp;文字コード（省略可能、ただしPPAマクロは省略不可）(2.1.0.0以降)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;int3&nbsp;&nbsp;&nbsp;&nbsp;ビューモード（省略可能、ただしPPAマクロは省略不可）(2.1.0.0以降)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;str4&nbsp;&nbsp;&nbsp;&nbsp;デフォルトフォルダ・ファイル名（省略可能、ただしPPAマクロは省略不可）(2.1.0.0以降)<br>
-・記録:	×<br>
-・解説<br>
-ファイル名に""(空文字列)を指定すると、ファイルダイアログを表示します。<br>
-文字コードは以下のいずれかを指定することができます。<br>
+��<a href="HLP000204.html"><b>�}�N���\��</b></a><br>
+�E�\��:	FileOpen( str1 : String, int2 : Integer, int3 : Integer, str4 : String );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;�t�@�C����<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int2&nbsp;&nbsp;&nbsp;&nbsp;�����R�[�h�i�ȗ��\�A������PPA�}�N���͏ȗ��s�j(2.1.0.0�ȍ~)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int3&nbsp;&nbsp;&nbsp;&nbsp;�r���[���[�h�i�ȗ��\�A������PPA�}�N���͏ȗ��s�j(2.1.0.0�ȍ~)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str4&nbsp;&nbsp;&nbsp;&nbsp;�f�t�H���g�t�H���_�E�t�@�C�����i�ȗ��\�A������PPA�}�N���͏ȗ��s�j(2.1.0.0�ȍ~)<br>
+�E�L�^:	�~<br>
+�E���<br>
+�t�@�C������""(�󕶎���)���w�肷��ƁA�t�@�C���_�C�A���O��\�����܂��B<br>
+�����R�[�h�͈ȉ��̂����ꂩ���w�肷�邱�Ƃ��ł��܂��B<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;SJIS<br>
 &nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;JIS<br>
 &nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;EUC<br>
@@ -108,14 +108,14 @@ Unicode(UTF-7)なコードのファイルとして読み込みます。<br>
 &nbsp;&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;&nbsp;&nbsp;UTF-16BE<br>
 &nbsp;&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;&nbsp;&nbsp;CESU-8<br>
 &nbsp;&nbsp;&nbsp;&nbsp;8&nbsp;&nbsp;&nbsp;&nbsp;Latin1(Windows-1252)<br>
-&nbsp;&nbsp;&nbsp;99&nbsp;&nbsp;&nbsp;&nbsp;自動認識（省略時規定値）<br>
-&nbsp;&nbsp;&nbsp;90&nbsp;&nbsp;&nbsp;&nbsp;CP_ACP (sakura:2.2.0.0以降)<br>
-&nbsp;&nbsp;&nbsp;91&nbsp;&nbsp;&nbsp;&nbsp;CP_OEM (sakura:2.2.0.0以降)<br>
-&nbsp;&nbsp;&nbsp;コードページ番号&nbsp;&nbsp;(sakura:2.2.0.0以降)<br>
-ビューモードは、0（false、省略時規定）、または1(true)を指定します。<br>
-デフォルトフォルダ・ファイル名は、ダイアログのデフォルトの表示位置と、デフォルトの名前を指定します。<br>
-省略時は、共通設定に従った表示位置になります。<br>
+&nbsp;&nbsp;&nbsp;99&nbsp;&nbsp;&nbsp;&nbsp;�����F���i�ȗ����K��l�j<br>
+&nbsp;&nbsp;&nbsp;90&nbsp;&nbsp;&nbsp;&nbsp;CP_ACP (sakura:2.2.0.0�ȍ~)<br>
+&nbsp;&nbsp;&nbsp;91&nbsp;&nbsp;&nbsp;&nbsp;CP_OEM (sakura:2.2.0.0�ȍ~)<br>
+&nbsp;&nbsp;&nbsp;�R�[�h�y�[�W�ԍ�&nbsp;&nbsp;(sakura:2.2.0.0�ȍ~)<br>
+�r���[���[�h�́A0�ifalse�A�ȗ����K��j�A�܂���1(true)���w�肵�܂��B<br>
+�f�t�H���g�t�H���_�E�t�@�C�����́A�_�C�A���O�̃f�t�H���g�̕\���ʒu�ƁA�f�t�H���g�̖��O���w�肵�܂��B<br>
+�ȗ����́A���ʐݒ�ɏ]�����\���ʒu�ɂȂ�܂��B<br>
 <br>
-<img src="images/note.png"><b>注意</b><br>
-開いた後の文字コードは、<a href="HLP000268.html#GetCharCode">GetCharCode</a>で取得できます。
+<img src="images/note.png"><b>����</b><br>
+�J������̕����R�[�h�́A<a href="HLP000268.html#GetCharCode">GetCharCode</a>�Ŏ擾�ł��܂��B
 </BODY></HTML>

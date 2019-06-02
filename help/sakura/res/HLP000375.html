@@ -1,35 +1,35 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML lang="ja">
 <HEAD>
-<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
 <link rel="shortcut icon" href="images/favicon.ico">
-<TITLE>Windows 10 でのファイル拡張子関連付けのための準備作業</TITLE>
-<META NAME="MS-HKWD" CONTENT="Windows 10 でのファイル拡張子関連付けのための準備作業">
+<TITLE>Windows 10 �ł̃t�@�C���g���q�֘A�t���̂��߂̏������</TITLE>
+<META NAME="MS-HKWD" CONTENT="Windows 10 �ł̃t�@�C���g���q�֘A�t���̂��߂̏������">
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
-<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
-<h2>Windows 10 でのファイル拡張子関連付けのための準備作業</h2>
+<noscript>[<a href="HLP000001.html">�ڎ�</a>]<br></noscript>
+<h2>Windows 10 �ł̃t�@�C���g���q�֘A�t���̂��߂̏������</h2>
 
-<h3 id="Condition">準備が必要な条件</h3>
+<h3 id="Condition">�������K�v�ȏ���</h3>
 
-ver 2.4.0.0 以降(正確には <a href="https://github.com/sakura-editor/sakura/pull/596" target=_blank>PR #596</a>) のサクラエディタのインストーラを使ってインストールした場合は不要です。<br>
-それ以前のインストーラを使ってインストールした場合またはインストーラを使わなかった場合にこのページの手順が必要になります。<br>
+ver 2.4.0.0 �ȍ~(���m�ɂ� <a href="https://github.com/sakura-editor/sakura/pull/596" target=_blank>PR #596</a>) �̃T�N���G�f�B�^�̃C���X�g�[�����g���ăC���X�g�[�������ꍇ�͕s�v�ł��B<br>
+����ȑO�̃C���X�g�[�����g���ăC���X�g�[�������ꍇ�܂��̓C���X�g�[�����g��Ȃ������ꍇ�ɂ��̃y�[�W�̎菇���K�v�ɂȂ�܂��B<br>
 <br>
-ただし ver 2.4.0.0 以降のインストーラを使った場合でも、サクラエディタが標準で対応しない拡張子への関連付けを行う場合には<br>
-<a href="#OpenWithProgids">OpenWithProgids (拡張子ごとに設定する)</a>
-の設定のみ必要です。
+������ ver 2.4.0.0 �ȍ~�̃C���X�g�[�����g�����ꍇ�ł��A�T�N���G�f�B�^���W���őΉ����Ȃ��g���q�ւ̊֘A�t�����s���ꍇ�ɂ�<br>
+<a href="#OpenWithProgids">OpenWithProgids (�g���q���Ƃɐݒ肷��)</a>
+�̐ݒ�̂ݕK�v�ł��B
 <br>
 <br>
-このページの手順を行った上で <a href="HLP000374.html">こちらの手順</a> で実際に拡張子の関連付けを変更できます。<br>
+���̃y�[�W�̎菇���s������� <a href="HLP000374.html">������̎菇</a> �Ŏ��ۂɊg���q�̊֘A�t����ύX�ł��܂��B<br>
 
 <h3 id="Applications">Applications</h3>
 
-このレジストリキーは ver 2.4.0.0 以前のインストーラでインストールした場合でも書き込み済みですが、<br>
-インストーラを使わなかった場合には書き込みが必要です。<br>
+���̃��W�X�g���L�[�� ver 2.4.0.0 �ȑO�̃C���X�g�[���ŃC���X�g�[�������ꍇ�ł��������ݍς݂ł����A<br>
+�C���X�g�[�����g��Ȃ������ꍇ�ɂ͏������݂��K�v�ł��B<br>
 <br>
-以下の内容で reg ファイルを作成してダブルクリックして適用します。<br>
+�ȉ��̓��e�� reg �t�@�C�����쐬���ă_�u���N���b�N���ēK�p���܂��B<br>
 
 <pre><div class="codesample">Windows Registry Editor Version 5.00
 
@@ -43,20 +43,20 @@ ver 2.4.0.0 以降(正確には <a href="https://github.com/sakura-editor/sakura
 @="\"<strong>C:\\Program Files (x86)\\sakura\\sakura.exe</strong>\" \"%1\""
 </div></pre>
 
-上記は 64bit PC に 32bit 版のサクラエディタをインストールする場合の例です。<br>
-sakura.exe のパスは実態に合わせて調整してください。<br>
+��L�� 64bit PC �� 32bit �ł̃T�N���G�f�B�^���C���X�g�[������ꍇ�̗�ł��B<br>
+sakura.exe �̃p�X�͎��Ԃɍ��킹�Ē������Ă��������B<br>
 
-<h4>参考サイト</h4>
+<h4>�Q�l�T�C�g</h4>
 
 <ul>
-<li><a href="https://docs.microsoft.com/en-us/windows/desktop/shell/app-registration" target=_blank>Application Registration (英語です)</a></li>
+<li><a href="https://docs.microsoft.com/en-us/windows/desktop/shell/app-registration" target=_blank>Application Registration (�p��ł�)</a></li>
 </ul>
 
 <h3 id="Verb">Verb</h3>
 
-コマンドを <a href="https://msdn.microsoft.com/ja-jp/library/cc422072.aspx" target=_blank>ShellExecute</a> を起動するときの <strong>Verb</strong> を登録します。<br>
+�R�}���h�� <a href="https://msdn.microsoft.com/ja-jp/library/cc422072.aspx" target=_blank>ShellExecute</a> ���N������Ƃ��� <strong>Verb</strong> ��o�^���܂��B<br>
 <br>
-以下の内容で reg ファイルを作成してダブルクリックして適用します。<br>
+�ȉ��̓��e�� reg �t�@�C�����쐬���ă_�u���N���b�N���ēK�p���܂��B<br>
 
 <pre><div class="codesample">Windows Registry Editor Version 5.00
 
@@ -73,22 +73,22 @@ sakura.exe のパスは実態に合わせて調整してください。<br>
 @="\"<strong>C:\\Program Files (x86)\\sakura\\sakura.exe</strong>\" \"%1\""
 </code></pre>
 
-<h4>参考サイト</h4>
+<h4>�Q�l�T�C�g</h4>
 
 <ul>
-<li><a href="https://docs.microsoft.com/en-us/windows/desktop/shell/fa-verbs" target=_blank>Verbs and File Associations (英語です)</a></li>
-<li><a href="https://docs.microsoft.com/en-us/visualstudio/extensibility/registering-verbs-for-file-name-extensions?view=vs-2017" target=_blank>Register verbs for file name extensions (英語です)</a></li>
+<li><a href="https://docs.microsoft.com/en-us/windows/desktop/shell/fa-verbs" target=_blank>Verbs and File Associations (�p��ł�)</a></li>
+<li><a href="https://docs.microsoft.com/en-us/visualstudio/extensibility/registering-verbs-for-file-name-extensions?view=vs-2017" target=_blank>Register verbs for file name extensions (�p��ł�)</a></li>
 </ul>
 
 
-<h3 id="OpenWithProgids">OpenWithProgids (拡張子ごとに設定する)</h3>
+<h3 id="OpenWithProgids">OpenWithProgids (�g���q���Ƃɐݒ肷��)</h3>
 
-上記で設定した Verb を拡張子ごとに関連付けます。
+��L�Őݒ肵�� Verb ���g���q���ƂɊ֘A�t���܂��B
 
 
 <br>
-以下の内容で reg ファイルを作成してダブルクリックして適用します。(以下は .txt に対する設定です)<br>
-関連付けたい拡張子が複数ある場合、拡張子ごとにレジストリ設定を追加します。<br>
+�ȉ��̓��e�� reg �t�@�C�����쐬���ă_�u���N���b�N���ēK�p���܂��B(�ȉ��� .txt �ɑ΂���ݒ�ł�)<br>
+�֘A�t�������g���q����������ꍇ�A�g���q���ƂɃ��W�X�g���ݒ��ǉ����܂��B<br>
 
 <pre><div class="codesample">Windows Registry Editor Version 5.00
 
@@ -96,20 +96,20 @@ sakura.exe のパスは実態に合わせて調整してください。<br>
 "SakuraEditor.Document"=""
 </code></pre>
 
-<h4>参考サイト</h4>
+<h4>�Q�l�T�C�g</h4>
 
 <ul>
-<li><a href="https://docs.microsoft.com/en-us/visualstudio/extensibility/specifying-file-handlers-for-file-name-extensions?view=vs-2017" target=_blank>Specifying File Handlers for File Name Extensions (英語です)</a></li>
+<li><a href="https://docs.microsoft.com/en-us/visualstudio/extensibility/specifying-file-handlers-for-file-name-extensions?view=vs-2017" target=_blank>Specifying File Handlers for File Name Extensions (�p��ł�)</a></li>
 </ul>
 
-<h2>リンク</h2>
+<h2>�����N</h2>
 
 <ul>
-<li><a href="https://www.glamenv-septzen.net/view/14#idf5215e" target=_blank>レジストリの直接編集によるファイルの拡張子と関連づけ</a></li>
-<li><a href="https://docs.microsoft.com/en-us/windows/desktop/shell/app-registration" target=_blank>Application Registration (英語です)</a></li>
-<li><a href="https://docs.microsoft.com/en-us/windows/desktop/shell/fa-verbs" target=_blank>Verbs and File Associations (英語です)</a></li>
-<li><a href="https://docs.microsoft.com/en-us/visualstudio/extensibility/registering-verbs-for-file-name-extensions?view=vs-2017" target=_blank>Register verbs for file name extensions (英語です)</a></li>
-<li><a href="https://docs.microsoft.com/en-us/visualstudio/extensibility/specifying-file-handlers-for-file-name-extensions?view=vs-2017" target=_blank>Specifying File Handlers for File Name Extensions (英語です)</a></li>
+<li><a href="https://www.glamenv-septzen.net/view/14#idf5215e" target=_blank>���W�X�g���̒��ڕҏW�ɂ��t�@�C���̊g���q�Ɗ֘A�Â�</a></li>
+<li><a href="https://docs.microsoft.com/en-us/windows/desktop/shell/app-registration" target=_blank>Application Registration (�p��ł�)</a></li>
+<li><a href="https://docs.microsoft.com/en-us/windows/desktop/shell/fa-verbs" target=_blank>Verbs and File Associations (�p��ł�)</a></li>
+<li><a href="https://docs.microsoft.com/en-us/visualstudio/extensibility/registering-verbs-for-file-name-extensions?view=vs-2017" target=_blank>Register verbs for file name extensions (�p��ł�)</a></li>
+<li><a href="https://docs.microsoft.com/en-us/visualstudio/extensibility/specifying-file-handlers-for-file-name-extensions?view=vs-2017" target=_blank>Specifying File Handlers for File Name Extensions (�p��ł�)</a></li>
 </ul>
 
 </BODY></HTML>

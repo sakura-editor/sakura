@@ -1,26 +1,26 @@
-﻿<html><head><title>PerlScriptについて</title>
+<html><head><title>PerlScript�ɂ���</title>
 <LINK REL="stylesheet" TYPE="text/css" HREF="../sakura.css">
-<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
 </head>
 <small>
 Sakura-Editor Macro Reference
 </small>
-<h2>PerlScriptについて</h2>
-<h3>日本語の使用</h3>
+<h2>PerlScript�ɂ���</h2>
+<h3>���{��̎g�p</h3>
 <p>
-日本語文字列を使用すると動作がおかしくなります。
-文字数とバイト数の区別があいまいなため、日本語を使用した文字分だけ
-スクリプトの最後が削られていきます。
+���{�ꕶ������g�p����Ɠ��삪���������Ȃ�܂��B
+�������ƃo�C�g���̋�ʂ������܂��Ȃ��߁A���{����g�p��������������
+�X�N���v�g�̍Ōオ����Ă����܂��B
 </p>
 <p>
-この問題を回避するには、スクリプトの末尾にコメントなど（または'__END__'の後ろに）余分な文字列を付加します。
+���̖����������ɂ́A�X�N���v�g�̖����ɃR�����g�Ȃǁi�܂���'__END__'�̌��Ɂj�]���ȕ������t�����܂��B
 </p>
 
 <pre>
-# 選択部分の文字列を取得
+# �I�𕔕��̕�������擾
 $sel = GetSelectedString();
 :
-:（何か一連の処理）
+:�i������A�̏����j
 :
 InsText($result);
 #padding
@@ -29,52 +29,52 @@ InsText($result);
 </pre>
 
 
-<a href = "http://miau.s9.xrea.com/blog/index.php?itemid=402" target = "_blank">この問題についての詳細</a>
+<a href = "http://miau.s9.xrea.com/blog/index.php?itemid=402" target = "_blank">���̖��ɂ��Ă̏ڍ�</a>
 
-<h3>MsgBox関数</h3>
-<p>Perlには非公式にMsgBox関数がありますので、WScript.ShellのPupupよりもお手軽です。
+<h3>MsgBox�֐�</h3>
+<p>Perl�ɂ͔������MsgBox�֐�������܂��̂ŁAWScript.Shell��Pupup��������y�ł��B
 <pre>MsgBox($Message [, $Buttons [, $Title]]);</pre>
 </p>
 
-<h3>Tk モジュールの使用</h3>
+<h3>Tk ���W���[���̎g�p</h3>
 <p>
-以下のように別プロセスで実行します。
+�ȉ��̂悤�ɕʃv���Z�X�Ŏ��s���܂��B
 <pre>system 'perl -e "use Tk; my $mw = MainWindow->new(); MainLoop();"'</pre>
 </p>
 
-<h3>マクロ関数の実行について</h3>
+<h3>�}�N���֐��̎��s�ɂ���</h3>
 <p>
-「use strict;」とすると「$Editor->マクロ関数名();」の書式では動作しません。
-Editorオブジェクトを省略するか、「our $Editor;」で回避できます。
+�uuse strict;�v�Ƃ���Ɓu$Editor->�}�N���֐���();�v�̏����ł͓��삵�܂���B
+Editor�I�u�W�F�N�g���ȗ����邩�A�uour $Editor;�v�ŉ���ł��܂��B
 </p>
 <pre>
 use strict;
 our $Editor;
 $Editor-&gt;<span style = "color:blue;">InsText</span>(<span style = "color:#800000;">'&lt;br /&gt;'</span>);
-<span style = "color:blue;">InsText</span>(<span style = "color:#800000;">'&lt;br /&gt;'</span>);             <span style = "color:green;"># Editorオブジェクトの省略</span>
+<span style = "color:blue;">InsText</span>(<span style = "color:#800000;">'&lt;br /&gt;'</span>);             <span style = "color:green;"># Editor�I�u�W�F�N�g�̏ȗ�</span>
 </pre>
 
 
-<h3>その他</h3>
+<h3>���̑�</h3>
 <p>
-ファイルパスを利用した変数（$0）、関数（）、モジュール（IPC::Open2）は使えません。ただし、open() や Cwd は問題なく使えます
+�t�@�C���p�X�𗘗p�����ϐ��i$0�j�A�֐��i�j�A���W���[���iIPC::Open2�j�͎g���܂���B�������Aopen() �� Cwd �͖��Ȃ��g���܂�
 </p>
 
 <p>
-ＣＯＭオブジェクトの使用や<a href = "./scriptcontrol.html">ScriptControl</a>および<a href = "wsc.html">WSC</a>の取り扱いは、他のWSHマクロと同様です。
+�b�n�l�I�u�W�F�N�g�̎g�p��<a href = "./scriptcontrol.html">ScriptControl</a>�����<a href = "wsc.html">WSC</a>�̎�舵���́A����WSH�}�N���Ɠ��l�ł��B
 </p>
 
-<h2>サンプルスクリプト</h2>
+<h2>�T���v���X�N���v�g</h2>
 <pre>
 # diet.pls
-SPACEToTAB();                   # スペースをタブに置き換え
-GoLineTop_Sel();                # 選択を崩さずにカーソルを行頭へ
-$str = GetSelectedString();     # 選択範囲を Perl 側に貰う
+SPACEToTAB();                   # �X�y�[�X���^�u�ɒu������
+GoLineTop_Sel();                # �I����������ɃJ�[�\�����s����
+$str = GetSelectedString();     # �I��͈͂� Perl ���ɖႤ
 if(! $str){exit;}
 foreach(split(/\r\n/,$str)){
     $wk = $_;
-    $wk =~ s/[\t 　]*$//;
-    $wk =~ s/^[\t 　]*//;
+    $wk =~ s/[\t �@]*$//;
+    $wk =~ s/^[\t �@]*//;
     if($wk ne $bk){
         $bk = $wk;
         $rtn = $rtn . $wk . "\r\n";
@@ -82,10 +82,10 @@ foreach(split(/\r\n/,$str)){
 }
 InsText($rtn);
 __END__
-選択範囲を貰って、その選択範囲を加工内容で置き換える
-連続したスペースはタブに置き換えると共に前後のスペース
-やタブを無視して、中身が同じ行が続いたら Uniq と
-同様にカットするバイト数のダイエットです。
+�I��͈͂����āA���̑I��͈͂����H���e�Œu��������
+�A�������X�y�[�X�̓^�u�ɒu��������Ƌ��ɑO��̃X�y�[�X
+��^�u�𖳎����āA���g�������s���������� Uniq ��
+���l�ɃJ�b�g����o�C�g���̃_�C�G�b�g�ł��B
 </pre>
 
 <pre>
@@ -97,7 +97,7 @@ system('C:\WINDOWS\notepad.exe');
 $WshShell-&gt;Sleep( 3000 );
 $WshShell-&gt;SendKeys("TEST");
 __END__
-プログラムを起動してキーを送って操作する
+�v���O�������N�����ăL�[�𑗂��đ��삷��
 </pre>
 
 <pre>
@@ -107,7 +107,7 @@ $FSO = Win32::OLE->CreateObject("Scripting.FileSystemObject");
 $FILE = $FSO->GetFile('C:\Program Files\sakura\sakura.exe');
 MsgBox ($FILE->Type, ,'', $FILE->Name);
 __END__
-FileSystemObjectを使用してファイルの種類を取得します。
+FileSystemObject���g�p���ăt�@�C���̎�ނ��擾���܂��B
 </pre>
 
 <pre>
@@ -138,10 +138,10 @@ $CLIP-&gt;Set( $outStr );
 
 Jump($orgLn, 0);
 __END__
-ファイル内のマークしてある行を全部集めて繋いで
-クリップボードに格納する。
-最初に、ExpandParameter('$y') は、現在のカーソル
-が何行目かを退避して最後に Jump() で戻してます。
+�t�@�C�����̃}�[�N���Ă���s��S���W�߂Čq����
+�N���b�v�{�[�h�Ɋi�[����B
+�ŏ��ɁAExpandParameter('$y') �́A���݂̃J�[�\��
+�����s�ڂ���ޔ����čŌ�� Jump() �Ŗ߂��Ă܂��B
 </pre>
 
 <hr>
