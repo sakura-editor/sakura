@@ -26,7 +26,7 @@
 
 /*!
 	DISABLED テストのサンプル1
-	
+
 	- このテスト fixture は通常実行されません
 	- `--gtest_also_run_disabled_tests` オプションを指定して実行することにより明示的に実行できます。
 
@@ -61,7 +61,7 @@ TEST_F(DISABLED_TestsImcomplte1, Test2)
 
 /*!
 	DISABLED テストのサンプル2
-	
+
 	- このテスト fixture は通常実行されません
 	- クラス名に DISABLED_ を含まない
 	- typedef した名前に DISABLED_ をつけて fixture にする
@@ -102,7 +102,7 @@ TEST_F(DISABLED_TestsImcomplte2, Test2)
 
 /*!
 	DISABLED テストのサンプル
-	
+
 	- このテストは通常実行されません
 	- `--gtest_also_run_disabled_tests` オプションを指定して実行することにより明示的に実行できます。
 
