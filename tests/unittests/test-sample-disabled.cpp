@@ -25,10 +25,10 @@
 #include <gtest/gtest.h>
 
 /*!
-	DISABLED テストのサンプル
+	DISABLED テストのサンプル1
 	
-	- このテストは通常実行されません
-	- --gtest_also_run_disabled_tests オプションを指定して実行することにより明示的に実行できます。
+	- このテスト fixture は通常実行されません
+	- `--gtest_also_run_disabled_tests` オプションを指定して実行することにより明示的に実行できます。
 
 	https://github.com/google/googletest/blob/9d4cde44a4a3952cf21861f9370b3bed9265dfd7/googletest/docs/advanced.md#temporarily-disabling-tests
 */
@@ -38,7 +38,9 @@ class DISABLED_TestsImcomplte1 : public ::testing::Test
 
 };
 
-
+/*!
+	DISABLED テストのサンプル
+*/
 TEST_F(DISABLED_TestsImcomplte1, Test1)
 {
 	/* 意図的に失敗させる */
@@ -46,6 +48,9 @@ TEST_F(DISABLED_TestsImcomplte1, Test1)
 }
 
 
+/*!
+	DISABLED テストのサンプル
+*/
 TEST_F(DISABLED_TestsImcomplte1, Test2)
 {
 	/* 意図的に失敗させる */
@@ -57,7 +62,7 @@ TEST_F(DISABLED_TestsImcomplte1, Test2)
 	DISABLED テストのサンプル
 	
 	- このテストは通常実行されません
-	- --gtest_also_run_disabled_tests オプションを指定して実行することにより明示的に実行できます。
+	- `--gtest_also_run_disabled_tests` オプションを指定して実行することにより明示的に実行できます。
 
 	https://github.com/google/googletest/blob/9d4cde44a4a3952cf21861f9370b3bed9265dfd7/googletest/docs/advanced.md#temporarily-disabling-tests
 */
