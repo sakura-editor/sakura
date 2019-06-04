@@ -58,6 +58,48 @@ TEST_F(DISABLED_TestsImcomplte1, Test2)
 }
 
 
+
+/*!
+	DISABLED テストのサンプル2
+	
+	- このテスト fixture は通常実行されません
+	- クラス名に DISABLED_ を含まない
+	- typedef した名前に DISABLED_ をつけて fixture にする
+	- `--gtest_also_run_disabled_tests` オプションを指定して実行することにより明示的に実行できます。
+
+	https://github.com/google/googletest/blob/9d4cde44a4a3952cf21861f9370b3bed9265dfd7/googletest/docs/advanced.md#temporarily-disabling-tests
+*/
+class TestsImcomplte2 : public ::testing::Test
+{
+
+
+};
+
+/*!
+	fixture 全体を無効化するたに、DISABLED_ をつけた名前を typedef する
+*/
+typedef TestsImcomplte2 DISABLED_TestsImcomplte2;
+
+/*!
+	DISABLED テストのサンプル
+*/
+TEST_F(DISABLED_TestsImcomplte2, Test1)
+{
+	/* 意図的に失敗させる */
+	EXPECT_EQ(1 + 2, 4);
+}
+
+/*!
+	DISABLED テストのサンプル
+*/
+TEST_F(DISABLED_TestsImcomplte2, Test2)
+{
+	/* 意図的に失敗させる */
+	EXPECT_EQ(1 + 2, 4);
+}
+
+
+
 /*!
 	DISABLED テストのサンプル
 	
