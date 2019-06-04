@@ -71,7 +71,7 @@ class TestsImcomplte2 : public ::testing::Test
 };
 
 /*!
-	fixture 全体を無効化するたに、DISABLED_ をつけた名前を typedef する
+	fixture 全体を無効化するために、DISABLED_ をつけた名前を typedef する
 */
 typedef TestsImcomplte2 DISABLED_TestsImcomplte2;
 
