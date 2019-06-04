@@ -35,7 +35,6 @@
 class DISABLED_TestsImcomplte1 : public ::testing::Test
 {
 
-
 };
 
 /*!
@@ -47,7 +46,6 @@ TEST_F(DISABLED_TestsImcomplte1, Test1)
 	EXPECT_EQ(1 + 2, 4);
 }
 
-
 /*!
 	DISABLED テストのサンプル
 */
@@ -56,8 +54,6 @@ TEST_F(DISABLED_TestsImcomplte1, Test2)
 	/* 意図的に失敗させる */
 	EXPECT_EQ(1 + 2, 4);
 }
-
-
 
 /*!
 	DISABLED テストのサンプル2
@@ -71,7 +67,6 @@ TEST_F(DISABLED_TestsImcomplte1, Test2)
 */
 class TestsImcomplte2 : public ::testing::Test
 {
-
 
 };
 
