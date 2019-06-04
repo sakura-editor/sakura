@@ -93,8 +93,6 @@ TEST_F(DISABLED_TestsImcomplte2, Test2)
 	EXPECT_EQ(1 + 2, 4);
 }
 
-
-
 /*!
 	DISABLED テストのサンプル
 
