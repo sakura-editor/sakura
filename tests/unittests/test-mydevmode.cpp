@@ -258,10 +258,6 @@ TEST(MYDEVMODETest, operatorNotEqual)
 	EXPECT_EQ(myDevMode, value);
 }
 
-/* アクセス不可のメモリ領域にアクセスしても、例外が発生しない事象があるので、
- * 当面MSVCのリリース版では以下のテストを実行しない。
- */
-#if defined(_DEBUG) || defined(__MINGW64__)
 /*!
  * @brief 等価比較演算子が一般保護違反を犯さないことを保証する非機能要件テスト
  *
@@ -283,12 +279,17 @@ TEST(MYDEVMODETest, StrategyForSegmentationFault)
 	LPVOID memBlock1 = ::VirtualAlloc(NULL, allocSize, MEM_RESERVE, PAGE_NOACCESS);
 	assert(memBlock1);
 
-	// 仮想メモリを1ページ分だけコミット(=確保)する。2ページ目はNOACCESSのまま。
-	wchar_t* buf1 = static_cast<wchar_t*>(::VirtualAlloc(memBlock1, pageSize, MEM_COMMIT, PAGE_READWRITE));
+	// 仮想メモリ全域をコミット(=確保)する。
+	wchar_t* buf1 = static_cast<wchar_t*>(::VirtualAlloc(memBlock1, allocSize, MEM_COMMIT, PAGE_READWRITE));
 	assert(buf1);
 
-	// 確保したメモリ領域をASCII文字'a'で埋める
-	::wmemset(buf1, L'a', pageSize / sizeof(wchar_t));
+	// 確保したメモリ全域をASCII文字'a'で埋める
+	::wmemset(buf1, L'a', pageSize);
+
+	// 2ページ目の保護モードをNOACCESSにする。
+	DWORD flOldProtect = 0;
+	volatile bool retVirtualProtect = ::VirtualProtect(&buf1[pageSize / sizeof(wchar_t)], pageSize, PAGE_NOACCESS, &flOldProtect);
+	assert(retVirtualProtect);
 
 	// メモリデータをテスト対象型にマップする。実態として配列のように扱えるポインタを取得している。
 	MYDEVMODE* pValues = reinterpret_cast<MYDEVMODE*>(buf1);
@@ -304,7 +305,9 @@ TEST(MYDEVMODETest, StrategyForSegmentationFault)
 	 * 想定結果：一般保護違反で落ちる
 	 * 備考：例外メッセージは無視する(例外が起きたことが検知できればよいから。)
 	 */
-	ASSERT_DEATH({ ::_tcscmp(pValues[0].m_szPrinterDeviceName, pLargeStr); }, ".*");
+	volatile int ret = 0;
+	ASSERT_DEATH({ ret = ::_tcscmp(pValues[0].m_szPrinterDeviceName, pLargeStr); }, ".*");
+	(void)ret;
 
 	// 等価比較演算子を使った場合には落ちないことを確認する
 	EXPECT_TRUE(pValues[0] == pValues[1]);
@@ -315,4 +318,3 @@ TEST(MYDEVMODETest, StrategyForSegmentationFault)
 	// 仮想メモリ範囲を解放する。
 	::VirtualFree(memBlock1, 0, MEM_RELEASE);
 }
-#endif /* if defined(_DEBUG) || defined(__MINGW64__) */
