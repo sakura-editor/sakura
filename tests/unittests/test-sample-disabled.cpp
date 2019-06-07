@@ -43,7 +43,7 @@ class DISABLED_TestsImcomplte1 : public ::testing::Test
 TEST_F(DISABLED_TestsImcomplte1, Test1)
 {
 	/* 意図的に失敗させる */
-	EXPECT_EQ(1 + 2, 4);
+	EXPECT_EQ(4, 1 + 2);
 }
 
 /*!
@@ -52,7 +52,7 @@ TEST_F(DISABLED_TestsImcomplte1, Test1)
 TEST_F(DISABLED_TestsImcomplte1, Test2)
 {
 	/* 意図的に失敗させる */
-	EXPECT_EQ(1 + 2, 4);
+	EXPECT_EQ(4, 1 + 2);
 }
 
 /*!
@@ -81,7 +81,7 @@ typedef TestsImcomplte2 DISABLED_TestsImcomplte2;
 TEST_F(DISABLED_TestsImcomplte2, Test1)
 {
 	/* 意図的に失敗させる */
-	EXPECT_EQ(1 + 2, 4);
+	EXPECT_EQ(4, 1 + 2);
 }
 
 /*!
@@ -90,7 +90,7 @@ TEST_F(DISABLED_TestsImcomplte2, Test1)
 TEST_F(DISABLED_TestsImcomplte2, Test2)
 {
 	/* 意図的に失敗させる */
-	EXPECT_EQ(1 + 2, 4);
+	EXPECT_EQ(4, 1 + 2);
 }
 
 /*!
@@ -104,5 +104,5 @@ TEST_F(DISABLED_TestsImcomplte2, Test2)
 TEST(test, DISABLED_IncomplteTest)
 {
 	/* 意図的に失敗させる */
-	EXPECT_EQ(1 + 2, 4);
+	EXPECT_EQ(4, 1 + 2);
 }
