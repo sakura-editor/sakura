@@ -36,6 +36,8 @@ protected:
 */
 TEST_F(FixtureSample, Test1)
 {
+	/* テストケース名を出力する */
+	printf("%s::%s\n", ::testing::UnitTest::GetInstance()->current_test_case()->name(), ::testing::UnitTest::GetInstance()->current_test_info()->name());
 }
 
 /*!
@@ -43,4 +45,6 @@ TEST_F(FixtureSample, Test1)
 */
 TEST_F(FixtureSample, Test2)
 {
+	/* テストケース名を出力する */
+	printf("%s::%s\n", ::testing::UnitTest::GetInstance()->current_test_case()->name(), ::testing::UnitTest::GetInstance()->current_test_info()->name());
 }
