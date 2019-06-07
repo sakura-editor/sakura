@@ -34,7 +34,20 @@
 */
 class DISABLED_TestsImcomplte1 : public ::testing::Test
 {
+protected:
+	/*!
+		テスト前の準備
+	*/
+	virtual void SetUp()
+	{
+	}
 
+	/*!
+		テスト後の後始末
+	*/
+	virtual void TearDown()
+	{
+	}
 };
 
 /*!
@@ -67,7 +80,20 @@ TEST_F(DISABLED_TestsImcomplte1, Test2)
 */
 class TestsImcomplte2 : public ::testing::Test
 {
+protected:
+	/*!
+		テスト前の準備
+	*/
+	virtual void SetUp()
+	{
+	}
 
+	/*!
+		テスト後の後始末
+	*/
+	virtual void TearDown()
+	{
+	}
 };
 
 /*!
