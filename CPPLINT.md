@@ -1,13 +1,13 @@
-# CppLint
+# cpplint.py
 
 <!-- TOC -->
 
-- [CppLint](#cpplint)
+- [cpplint.py](#cpplintpy)
 - [CodeFactor のスタイルチェック](#codefactor-のスタイルチェック)
 - [CodeFactor のデフォルトのCPPLINT.CFG](#codefactor-のデフォルトのcpplintcfg)
-- [cpplint のインストール](#cpplint-のインストール)
-- [cpplint の実行](#cpplint-の実行)
-    - [cpplint のインストール場所の例](#cpplint-のインストール場所の例)
+- [cpplint.py のインストール](#cpplintpy-のインストール)
+- [cpplint.py の実行](#cpplintpy-の実行)
+    - [cpplint.py のインストール場所の例](#cpplintpy-のインストール場所の例)
 
 <!-- /TOC -->
 
@@ -23,14 +23,14 @@
 
 CodeFactor のデフォルトの `CPPLINT.CFG` は https://github.com/codefactor-io/default-configs/blob/master/CPPLINT.cfg です。
 
-# cpplint のインストール
+# cpplint.py のインストール
 
 ```
 pip install cpplint
 ```
 
 
-# cpplint の実行
+# cpplint.py の実行
 
 
 ```
@@ -38,6 +38,6 @@ cd /d <sakura editor ソースのトップ>
 python <path-to-cpplint>\cpplint.py sakura_core
 ```
 
-## cpplint のインストール場所の例
+## cpplint.py のインストール場所の例
 
 `C:\Python27\Lib\site-packages\cpplint.py`
