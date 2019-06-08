@@ -35,7 +35,7 @@ pip install cpplint
 
 ```
 cd /d <sakura editor ソースのトップ>
-python <path-to-cpplint>\cpplint.py sakura_core
+python <path-to-cpplint>\cpplint.py --recursive sakura_core
 ```
 
 ## cpplint.py のインストール場所の例
