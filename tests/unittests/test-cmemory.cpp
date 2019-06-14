@@ -35,3 +35,14 @@ TEST(CMemory, SetRawLengthToZero)
 	// _SetRawLength(0) を呼び出して落ちないことを確認する
 	memory._SetRawLength(0);
 }
+
+/*!
+	CMemory を単にインスタンス化した状態ではバッファが確保されていないのを確認する。
+*/
+TEST(CMemory, CheckEmpty)
+{
+	CMemory memory;
+
+	EXPECT_EQ(0, memory.capacity());
+	EXPECT_EQ(0, memory.GetRawLength());
+}
