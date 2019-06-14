@@ -52,7 +52,6 @@ void CMemory::_init_members()
 CMemory::CMemory()
 {
 	_init_members();
-	SetRawData( NULL, 0 );
 }
 
 /*
