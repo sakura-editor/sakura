@@ -32,7 +32,7 @@
 
 	https://github.com/google/googletest/blob/9d4cde44a4a3952cf21861f9370b3bed9265dfd7/googletest/docs/advanced.md#temporarily-disabling-tests
 */
-class DISABLED_TestsImcomplte1 : public ::testing::Test
+class DISABLED_TestsIncomplte1 : public ::testing::Test
 {
 protected:
 	/*!
@@ -53,7 +53,7 @@ protected:
 /*!
 	DISABLED テストのサンプル
 */
-TEST_F(DISABLED_TestsImcomplte1, Test1)
+TEST_F(DISABLED_TestsIncomplte1, Test1)
 {
 	/* テストに問題があって失敗している例 */
 	EXPECT_EQ(4, 1 + 2);
@@ -62,7 +62,7 @@ TEST_F(DISABLED_TestsImcomplte1, Test1)
 /*!
 	DISABLED テストのサンプル
 */
-TEST_F(DISABLED_TestsImcomplte1, Test2)
+TEST_F(DISABLED_TestsIncomplte1, Test2)
 {
 	/* テストに問題があって失敗している例 */
 	EXPECT_EQ(4, 1 + 2);
@@ -78,7 +78,7 @@ TEST_F(DISABLED_TestsImcomplte1, Test2)
 
 	https://github.com/google/googletest/blob/9d4cde44a4a3952cf21861f9370b3bed9265dfd7/googletest/docs/advanced.md#temporarily-disabling-tests
 */
-class TestsImcomplte2 : public ::testing::Test
+class TestsIncomplte2 : public ::testing::Test
 {
 protected:
 	/*!
@@ -99,12 +99,12 @@ protected:
 /*!
 	fixture 全体を無効化するために、DISABLED_ をつけた名前を typedef する
 */
-typedef TestsImcomplte2 DISABLED_TestsImcomplte2;
+typedef TestsIncomplte2 DISABLED_TestsIncomplte2;
 
 /*!
 	DISABLED テストのサンプル
 */
-TEST_F(DISABLED_TestsImcomplte2, Test1)
+TEST_F(DISABLED_TestsIncomplte2, Test1)
 {
 	/* テストに問題があって失敗している例 */
 	EXPECT_EQ(4, 1 + 2);
@@ -113,7 +113,7 @@ TEST_F(DISABLED_TestsImcomplte2, Test1)
 /*!
 	DISABLED テストのサンプル
 */
-TEST_F(DISABLED_TestsImcomplte2, Test2)
+TEST_F(DISABLED_TestsIncomplte2, Test2)
 {
 	/* テストに問題があって失敗している例 */
 	EXPECT_EQ(4, 1 + 2);
