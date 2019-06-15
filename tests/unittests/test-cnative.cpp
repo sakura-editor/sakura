@@ -103,6 +103,9 @@ TEST(CNativeW, CheckEmpty)
 {
 	CNativeW stringW;
 
+	// インスタンス化しただけではバッファが確保されないことを確認する
 	EXPECT_EQ(NULL, stringW.GetStringPtr());
+
+	// インスタンス化しただけではバッファサイズが 0 であることを確認する。
 	EXPECT_EQ(0, stringW.capacity());
 }
