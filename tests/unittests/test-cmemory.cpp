@@ -44,6 +44,10 @@ TEST(CMemory, CheckEmpty)
 	CMemory memory;
 
 	// インスタンス化しただけ
+	// → バッファが確保されないことを確認する
+	EXPECT_EQ(NULL, memory.GetRawPtr());
+
+	// インスタンス化しただけ
 	// → バッファサイズが 0 であることを確認する。
 	EXPECT_EQ(0, memory.capacity());
 
