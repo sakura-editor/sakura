@@ -382,7 +382,7 @@ void CMemory::_AppendSz(const char* str)
 
 void CMemory::_SetRawLength(int nLength)
 {
-	if (m_nDataBufSize > 0)
+	if (m_pRawData != NULL && m_nDataBufSize > 0)
 	{
 		assert(m_nRawLen <= m_nDataBufSize-2);		// m_nRawLen を変更する前に必要な条件が成立しているか確認する
 		m_nRawLen = nLength;
