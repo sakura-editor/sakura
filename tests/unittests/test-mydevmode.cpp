@@ -277,19 +277,19 @@ TEST(MYDEVMODETest, StrategyForSegmentationFault)
 
 	// 仮想メモリ範囲を予約する。予約時点では全体をNOACCESS指定にしておく。
 	LPVOID memBlock1 = ::VirtualAlloc(NULL, allocSize, MEM_RESERVE, PAGE_NOACCESS);
-	assert(memBlock1);
+	EXPECT_TRUE(memBlock1 != NULL);
 
 	// 仮想メモリ全域をコミット(=確保)する。
 	wchar_t* buf1 = static_cast<wchar_t*>(::VirtualAlloc(memBlock1, allocSize, MEM_COMMIT, PAGE_READWRITE));
-	assert(buf1);
+	EXPECT_TRUE(buf1 != NULL);
 
 	// 確保したメモリ全域をASCII文字'a'で埋める
 	::wmemset(buf1, L'a', pageSize);
 
 	// 2ページ目の保護モードをNOACCESSにする。
 	DWORD flOldProtect = 0;
-	volatile bool retVirtualProtect = ::VirtualProtect(&buf1[pageSize / sizeof(wchar_t)], pageSize, PAGE_NOACCESS, &flOldProtect);
-	assert(retVirtualProtect);
+	volatile BOOL retVirtualProtect = ::VirtualProtect((char*)buf1 + pageSize, pageSize, PAGE_NOACCESS, &flOldProtect);
+	EXPECT_TRUE(retVirtualProtect);
 
 	// メモリデータをテスト対象型にマップする。実態として配列のように扱えるポインタを取得している。
 	MYDEVMODE* pValues = reinterpret_cast<MYDEVMODE*>(buf1);
