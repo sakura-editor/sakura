@@ -33,6 +33,10 @@ jobs:
 
   - template: /ci/azure-pipelines/template.steps.install-python-modules.yml
 
+  # Update vswhere
+  - script: choco update vswhere -y
+    displayName: update vswhere
+
   # Build solution
   - script: build-sln.bat       $(BuildPlatform) $(Configuration)
     displayName: Build solution
