@@ -10,6 +10,8 @@
 
 外部ツールのインストール時にデフォルトパスにインストールしていない場合や別の実行ファイルを使いたい場合、実行前にパスを通しておくかCMD_7Zなどの対応する環境変数に絶対パスをセットしておいてください。
 
+vswhereはv2.6.2以降をインストールしておいてください。
+
 ## 外部ツールの一覧
 |      ツール名      |   環境変数   |   デフォルトパス   |  ファイル名  |
 | ------------------ | ------------ | ------------------ | ------------ |
@@ -19,7 +21,6 @@
 | Inno Setup 5       | CMD_ISCC     | Inno Setup 5       | ISCC.exe     |
 | cppcheck           | CMD_CPPCHECK | cppcheck           | cppcheck.exe |
 | doxygen            | CMD_DOXYGEN  | doxygen\bin        | doxygen.exe  |
-| vswhere            | CMD_VSWHERE  | Microsoft Visual Studio\Installer | vswhere.exe  |
 | MSBuild            | CMD_MSBUILD  | 特殊               | MSBuild.exe  |
 
 ## MSBuild以外の探索手順
@@ -35,14 +36,14 @@ MSBuild以外の探索手順は同一であり、7-Zipを例に説明する。
 
 ## MSBuild
 1. CMD_MSBUILDがセットされていればそれを使う
-2. vswhere.exe(Visual Studio 2017に搭載されているバージョン)とwhereコマンド(windows標準)を利用し、Visual Studio 2017のmsbuild.exeを探す
-3. USE_LATEST_MSBUILDがセットされている場合、または、2.でmsbuild.exeが見つからない場合、vswhere.exe(Visual Studio 2019以降に搭載されたバージョン)を利用しmsbuild.exeを探す
-4. 2.および3.でmsbuild.exeが見つからない場合、whereコマンド(windows標準)を利用し、システム標準のmsbuild.exeを探す(MsBuild以外の探索手順にある「パスが通っている」と同じ意味)
-5. 2～4で見つからなければCMD_MSBUILDには何もセットしない
+2. NUM_VSVERSIONがセットされていない場合、最新verをセットする
+3  NUM_VSVERSIONに対応するmsbuild.exeをvswhereで探索し、見つかればそれを使う
+4. 1～3で見つからなければCMD_MSBUILDには何もセットしない
 
 ### 参照
 * https://github.com/Microsoft/vswhere
 * https://github.com/Microsoft/vswhere/wiki/Find-MSBuild
+* https://github.com/microsoft/vswhere/releases/tag/2.6.2%2Bf078b21784
 
 ## zipの処理に7zではなくPowerShellを強制する
 事前に環境変数の`FORCE_POWERSHELL_ZIP`を1にセットすることで、7zの検索をスキップできます。

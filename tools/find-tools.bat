@@ -13,7 +13,6 @@ if not defined CMD_HHC call :hhc 2> nul
 if not defined CMD_ISCC call :iscc 2> nul
 if not defined CMD_CPPCHECK call :cppcheck 2> nul
 if not defined CMD_DOXYGEN call :doxygen 2> nul
-if not defined CMD_VSWHERE call :vswhere 2> nul
 if not defined CMD_MSBUILD call :msbuild 2> nul
 echo ^|- CMD_GIT=%CMD_GIT%
 echo ^|- CMD_7Z=%CMD_7Z%
@@ -21,9 +20,9 @@ echo ^|- CMD_HHC=%CMD_HHC%
 echo ^|- CMD_ISCC=%CMD_ISCC%
 echo ^|- CMD_CPPCHECK=%CMD_CPPCHECK%
 echo ^|- CMD_DOXYGEN=%CMD_DOXYGEN%
-echo ^|- CMD_VSWHERE=%CMD_VSWHERE%
 echo ^|- CMD_MSBUILD=%CMD_MSBUILD%
-endlocal && set "CMD_GIT=%CMD_GIT%" && set "CMD_7Z=%CMD_7Z%" && set "CMD_HHC=%CMD_HHC%" && set "CMD_ISCC=%CMD_ISCC%" && set "CMD_CPPCHECK=%CMD_CPPCHECK%" && set "CMD_DOXYGEN=%CMD_DOXYGEN%" && set "CMD_VSWHERE=%CMD_VSWHERE%" && set "CMD_MSBUILD=%CMD_MSBUILD%"
+echo ^|- NUM_VSVERSION=%NUM_VSVERSION%
+endlocal && set "CMD_GIT=%CMD_GIT%" && set "CMD_7Z=%CMD_7Z%" && set "CMD_HHC=%CMD_HHC%" && set "CMD_ISCC=%CMD_ISCC%" && set "CMD_CPPCHECK=%CMD_CPPCHECK%" && set "CMD_DOXYGEN=%CMD_DOXYGEN%" && set "CMD_MSBUILD=%CMD_MSBUILD%" && set /A NUM_VSVERSION=%NUM_VSVERSION%
 set FIND_TOOLS_CALLED=1
 exit /b
 
@@ -84,45 +83,14 @@ for /f "usebackq delims=" %%a in (`where $PATH2:doxygen.exe`) do (
 )
 exit /b
 
-:vswhere
-:: ref https://github.com/Microsoft/vswhere
-set APPDIR=Microsoft Visual Studio\Installer
-set PATH2=%PATH%;%ProgramFiles%\%APPDIR%\;%ProgramFiles(x86)%\%APPDIR%\;%ProgramW6432%\%APPDIR%\;
-for /f "usebackq delims=" %%a in (`where $PATH2:vswhere.exe`) do ( 
-    set "CMD_VSWHERE=%%a"
-    exit /b
-)
-exit /b
-
 :msbuild
-::find vs2017 install directory
-for /f "usebackq delims=" %%d in (`"%CMD_VSWHERE%" -version [15^,16^) -requires Microsoft.Component.MSBuild -property installationPath`) do (
-    set "Vs2017InstallRoot=%%d"
+if not defined NUM_VSVERSION (
+    for /f "usebackq delims=. tokens=1" %%a in (`vswhere -latest -requires Microsoft.Component.MSBuild -property installationVersion`) do (
+        set /A NUM_VSVERSION=%%a
+    )
 )
-if not defined Vs2017InstallRoot goto :msbuild_latest
-
-::find msbuild under vs2017 install directory
-if exist "%Vs2017InstallRoot%\MSBuild\15.0\Bin\amd64\MSBuild.exe" (
-    set "CMD_MSBUILD=%Vs2017InstallRoot%\MSBuild\15.0\Bin\amd64\MSBuild.exe"
-    if defined CMD_MSBUILD exit /b
-)
-if exist "%Vs2017InstallRoot%\MSBuild\15.0\Bin\MSBuild.exe" (
-    set "CMD_MSBUILD=%Vs2017InstallRoot%\MSBuild\15.0\Bin\MSBuild.exe"
-    if defined CMD_MSBUILD exit /b
-)
-if not defined USE_LATEST_MSBUILD (
-    if defined CMD_MSBUILD exit /b
-)
-
-:msbuild_latest
-::find msbuild bundled with latest visual studio(vs2019 or lator).
-for /f "usebackq delims=" %%a in (`"%CMD_VSWHERE%" -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe`) do (
-    set "CMD_MSBUILD=%%a"
-    exit /b
-)
-
-::find msbuild in $env[PATH].
-for /f "usebackq delims=" %%a in (`where msbuild.exe`) do ( 
+set /A NUM_NEXTVSVERSION=%NUM_VSVERSION% + 1
+for /f "usebackq delims=" %%a in (`vswhere -version [%NUM_VSVERSION%^,%NUM_NEXTVSVERSION%^) -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe`) do (
     set "CMD_MSBUILD=%%a"
     exit /b
 )
