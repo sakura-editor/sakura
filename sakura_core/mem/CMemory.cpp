@@ -52,7 +52,6 @@ void CMemory::_init_members()
 CMemory::CMemory()
 {
 	_init_members();
-	SetRawData( NULL, 0 );
 }
 
 /*
@@ -383,9 +382,15 @@ void CMemory::_AppendSz(const char* str)
 
 void CMemory::_SetRawLength(int nLength)
 {
-	assert(m_nRawLen <= m_nDataBufSize-2);
+	if (m_pRawData == NULL || m_nDataBufSize <= 0)
+	{
+		// バッファが確保されていない状態の場合、有効データサイズを 0 にする要求しか来ないはず
+		assert(nLength == 0);
+		return;
+	}
+	assert(m_nRawLen <= m_nDataBufSize-2);		// m_nRawLen を変更する前に必要な条件が成立しているか確認する
 	m_nRawLen = nLength;
-	assert(m_nRawLen <= m_nDataBufSize-2);
+	assert(m_nRawLen <= m_nDataBufSize-2);		// m_nRawLen を変更した後も必要な条件が成立しているか確認する
 	m_pRawData[m_nRawLen  ]=0;
 	m_pRawData[m_nRawLen+1]=0; //終端'\0'を2つ付加する('\0''\0'==L'\0')。
 }

@@ -95,3 +95,17 @@ TEST(CNativeW, Clear)
 	EXPECT_EQ(orgCapacity, newCapacity2);			// 再追加後にバッファサイズが変わっていないのを確認する
 	EXPECT_EQ(newLength2, fixedPatternLen);			// 再追加後にデータサイズを確認する
 }
+
+/*!
+	CNativeW を単にインスタンス化した状態ではバッファが確保されていないのを確認する。
+*/
+TEST(CNativeW, CheckEmpty)
+{
+	CNativeW stringW;
+
+	// インスタンス化しただけではバッファが確保されないことを確認する
+	EXPECT_EQ(NULL, stringW.GetStringPtr());
+
+	// インスタンス化しただけではバッファサイズが 0 であることを確認する。
+	EXPECT_EQ(0, stringW.capacity());
+}
