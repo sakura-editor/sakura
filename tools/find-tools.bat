@@ -23,7 +23,16 @@ echo ^|- CMD_CPPCHECK=%CMD_CPPCHECK%
 echo ^|- CMD_DOXYGEN=%CMD_DOXYGEN%
 echo ^|- CMD_VSWHERE=%CMD_VSWHERE%
 echo ^|- CMD_MSBUILD=%CMD_MSBUILD%
-endlocal && set "CMD_GIT=%CMD_GIT%" && set "CMD_7Z=%CMD_7Z%" && set "CMD_HHC=%CMD_HHC%" && set "CMD_ISCC=%CMD_ISCC%" && set "CMD_CPPCHECK=%CMD_CPPCHECK%" && set "CMD_DOXYGEN=%CMD_DOXYGEN%" && set "CMD_VSWHERE=%CMD_VSWHERE%" && set "CMD_MSBUILD=%CMD_MSBUILD%"
+endlocal && ^
+set "CMD_GIT=%CMD_GIT%"                   && ^
+set "CMD_7Z=%CMD_7Z%"                     && ^
+set "CMD_HHC=%CMD_HHC%"                   && ^
+set "CMD_ISCC=%CMD_ISCC%"                 && ^
+set "CMD_CPPCHECK=%CMD_CPPCHECK%"         && ^
+set "CMD_DOXYGEN=%CMD_DOXYGEN%"           && ^
+set "CMD_VSWHERE=%CMD_VSWHERE%"           && ^
+set "CMD_MSBUILD=%CMD_MSBUILD%"
+
 set FIND_TOOLS_CALLED=1
 exit /b
 
