@@ -39,9 +39,9 @@ set XMLPATH=%2
 
 if defined FILTER_BAT (
 	@echo %EXEPATH% --gtest_output=xml:%XMLPATH% ^| "%FILTER_BAT%"
-	      %EXEPATH% --gtest_output=xml:%XMLPATH%  | "%FILTER_BAT%" || set ERROR_RESULT=1
+	      %EXEPATH% --gtest_output=xml:%XMLPATH%  | "%FILTER_BAT%" || set TEMP_RESULT=1
 ) else (
 	@echo %EXEPATH% --gtest_output=xml:%XMLPATH%
-	      %EXEPATH% --gtest_output=xml:%XMLPATH%                   || set ERROR_RESULT=1
+	      %EXEPATH% --gtest_output=xml:%XMLPATH%                   || set TEMP_RESULT=1
 )
-exit /b %ERROR_RESULT%
+exit /b %TEMP_RESULT%
