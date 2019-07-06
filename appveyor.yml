@@ -8,7 +8,6 @@ configuration:
 platform:
   - Win32
   - x64
-  - MinGW
 
 # see "Skip commits" at https://www.appveyor.com/docs/how-to/filtering-commits/#commit-files-github-and-bitbucket-only
 skip_commits:
@@ -22,14 +21,11 @@ skip_commits:
     - '.github/ISSUE_TEMPLATE/*.md'
 
 install:
-- cmd: |
-    pip install openpyxl --user
-    C:\msys64\usr\bin\bash --login -c "pacman -S --noconfirm mingw-w64-x86_64-gtest"
+- cup vswhere
 
 build_script:
 - cmd: |
-    build-all.bat %PLATFORM% %CONFIGURATION%
-    tests\build-and-test.bat %PLATFORM% %CONFIGURATION%
+    tests/create-project-test.bat %PLATFORM% %CONFIGURATION%
 
 artifacts:
   - path: 'sakura-*$(platform)-$(configuration)*.zip'
