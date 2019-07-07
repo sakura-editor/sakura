@@ -125,6 +125,7 @@ exit /b
 :: sub routine for finding msbuild
 ::
 :: NUM_VSVERSION
+::     latest => the latest version of installed Visual Studio
 ::     15   => Visual Studio 2017
 ::     16   => Visual Studio 2019
 ::     2017 => Visual Studio 2017
@@ -132,7 +133,10 @@ exit /b
 :: ---------------------------------------------------------------------------------------------------------------------
 :msbuild
 	:: convert productLineVersion to Internal Major Version
-	if "%NUM_VSVERSION%" == "" (
+	if "%NUM_VSVERSION%" == "latest" (
+		call :find_latest_version
+		echo %NUM_VSVERSION%
+	) else if "%NUM_VSVERSION%" == "" (
 		set NUM_VSVERSION=15
 	) else if "%NUM_VSVERSION%" == "2017" (
 		set NUM_VSVERSION=15
@@ -155,6 +159,17 @@ exit /b
 	)
 
 	exit /b
+
+:: ---------------------------------------------------------------------------------------------------------------------
+:: sub routine for get latest version
+:: ---------------------------------------------------------------------------------------------------------------------
+:find_latest_version
+	for /f "usebackq delims=. tokens=1" %%a in (`"%CMD_VSWHERE%" -latest -requires Microsoft.Component.MSBuild -property installationVersion`) do (
+		set /A NUM_VSVERSION=%%a
+		exit /b
+	)
+	exit /b
+:: ---------------------------------------------------------------------------------------------------------------------
 
 :: ---------------------------------------------------------------------------------------------------------------------
 :: sub routine for finding msbuild of VS2017
