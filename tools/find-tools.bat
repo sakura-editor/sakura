@@ -123,22 +123,31 @@ exit /b
 
 :: ---------------------------------------------------------------------------------------------------------------------
 :: sub routine for finding msbuild
+::
+:: NUM_VSVERSION
+::     15   => Visual Studio 2017
+::     16   => Visual Studio 2019
+::     2017 => Visual Studio 2017
+::     2019 => Visual Studio 2019
 :: ---------------------------------------------------------------------------------------------------------------------
 :msbuild
-	if "%SELECT_VSVERSION%" == "" (
-		set VSVERSION=2017
-	) else if "%SELECT_VSVERSION%" == "2017" (
-		set VSVERSION=2017
-	) else if "%SELECT_VSVERSION%" == "2019" (
-		set VSVERSION=2019
+	:: convert productLineVersion to Internal Major Version
+	if "%NUM_VSVERSION%" == "" (
+		set NUM_VSVERSION=15
+	) else if "%NUM_VSVERSION%" == "2017" (
+		set NUM_VSVERSION=15
+	) else if "%NUM_VSVERSION%" == "2019" (
+		set NUM_VSVERSION=16
 	)
+	
+	call :set_productLineVersion
 
-	if "%VSVERSION%" == "2017" (
-		set "CMAKE_G_PARAM=Visual Studio 15 2017"
+	if "%NUM_VSVERSION%" == "15" (
+		set "CMAKE_G_PARAM=Visual Studio %NUM_VSVERSION% %productLineVersion%"
 		call :msbuild_vs2017 2> nul
-	) else if "%VSVERSION%" == "2019" (
-		set "CMAKE_G_PARAM=Visual Studio 16 2019"
-		call :msbuild_vs2019 2> nul
+	) else (
+		set "CMAKE_G_PARAM=Visual Studio %NUM_VSVERSION% %productLineVersion%"
+		call :msbuild_vs2019_or_later 2> nul
 	)
 	if not defined CMD_MSBUILD (
 		set "CMAKE_G_PARAM="
@@ -169,10 +178,11 @@ exit /b
 	exit /b
 
 :: ---------------------------------------------------------------------------------------------------------------------
-:: sub routine for finding msbuild of VS2019
+:: sub routine for finding msbuild of VS2019 or later
 :: ---------------------------------------------------------------------------------------------------------------------
-:msbuild_vs2019
-	for /f "usebackq delims=" %%a in (`"%CMD_VSWHERE%" -version [16^,17^) -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe`) do (
+:msbuild_vs2019_or_later
+	set /A NUM_NEXTVSVERSION=%NUM_VSVERSION% + 1
+	for /f "usebackq delims=" %%a in (`"%CMD_VSWHERE%" -version [%NUM_VSVERSION%^,%NUM_NEXTVSVERSION%^) -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe`) do (
 	    set "CMD_MSBUILD=%%a"
 	    exit /b
 	)
@@ -201,4 +211,12 @@ for /f "usebackq delims=" %%a in (`where $PATH2:cmake`) do (
     exit /b
 )
 exit /b
+
 :: ---------------------------------------------------------------------------------------------------------------------
+:: sub routine for finding productLineVersion
+:: ---------------------------------------------------------------------------------------------------------------------
+:set_productLineVersion
+	set /A NUM_NEXTVSVERSION=%NUM_VSVERSION% + 1
+	for /f "usebackq" %%b in (`"%CMD_VSWHERE%" -version [%NUM_VSVERSION%^,%NUM_NEXTVSVERSION%^) -property catalog_productLineVersion`) do ( 
+		set /A productLineVersion=%%b
+	)
