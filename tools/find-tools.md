@@ -35,13 +35,20 @@ MSBuild以外の探索手順は同一であり、7-Zipを例に説明する。
 
 ## MSBuild
 1. CMD_MSBUILDがセットされていればそれを使う
-2. SELECT_VSVERSION の値によって以下を行う
-    1. `SELECT_VSVERSION` の値が未定義の場合 → `VS2017` を使う
-    2. `SELECT_VSVERSION` の値が `2017` の場合 → `VS2017` を使う
-    3. `SELECT_VSVERSION` の値が `2019` の場合 → `VS2019` を使う
+2. NUM_VSVERSION の値によって Visual Studio を選択する
+
+    | NUM_VSVERSION      | Visual Studio          |
+    | ------------------ | ------------           |
+    | 未定義             | VS2017                 |
+    | 15                 | VS2017                 |
+    | 16                 | VS2019                 |
+    | 17                 | VS2019 の次のバージョン  |
+    | 2017               | VS2017                 |
+    | 2019               | VS2019                 |
+
 3. 選択された Visual Studio のバージョンによって以下を行う
     1. `VS2017` が選択されていれば `CMAKE_G_PARAM` に `Visual Studio 15 2017` を設定する。
-    2. `VS2017` が選択されていれば `CMAKE_G_PARAM` に `Visual Studio 15 2019` を設定する。
+    2. `VS2019` が選択されていれば `CMAKE_G_PARAM` に `Visual Studio 16 2019` を設定する。
 3. msbuild.exeが見つからない場合、whereコマンド(windows標準)を利用し、システム標準のmsbuild.exeを探す(MsBuild以外の探索手順にある「パスが通っている」と同じ意味) `CMAKE_G_PARAM` は空にセットする。
 
 (`CMAKE_G_PARAM` は cmake の `-G' パラメータとして使用する)
