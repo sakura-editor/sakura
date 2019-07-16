@@ -6,6 +6,7 @@ configuration:
   - Release
 
 platform:
+  - BuildChm
   - Win32
   - x64
   - MinGW
@@ -31,7 +32,34 @@ build_script:
     build-all.bat %PLATFORM% %CONFIGURATION%
     tests\build-and-test.bat %PLATFORM% %CONFIGURATION%
 
+matrix:
+  exclude:
+    - platform: BuildChm
+      configuration: Debug
+
 for:
+-
+  matrix:
+    only:
+      - platform: BuildChm
+        configuration: Release
+
+  install:
+    - ps: Set-WinSystemLocale ja-JP
+    - ps: Start-Sleep -s 10
+    - ps: Restart-Computer
+    - ps: Start-Sleep -s 10
+
+  build_script:
+    - cmd: build-chm.bat
+    - cmd: help\make-artifacts.bat
+
+  test_script:
+    - cmd: echo This Platform has no tests.
+
+  artifacts:
+    - path: 'sakura-*-Chm.zip*'
+
 -
   matrix:
     only:
