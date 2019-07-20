@@ -37,6 +37,8 @@ call build-sln.bat       %PLATFORM% %CONFIGURATION% || (echo error build-sln.bat
 @echo ---- end   build-sln.bat ----
 @echo.
 
+if "%CONFIGURATION%" == "Debug" goto :make_artifacts
+
 @echo ---- start build-chm.bat ----
 call build-chm.bat                                  || (echo error build-chm.bat       && exit /b 1)
 @echo ---- end   build-chm.bat ----
@@ -47,6 +49,7 @@ call build-installer.bat %PLATFORM% %CONFIGURATION% || (echo error build-install
 @echo ---- end   build-installer.bat ----
 @echo.
 
+:make_artifacts
 @echo ---- start zipArtifacts.bat ----
 call zipArtifacts.bat    %PLATFORM% %CONFIGURATION% || (echo error zipArtifacts.bat    && exit /b 1)
 @echo ---- end   zipArtifacts.bat ----

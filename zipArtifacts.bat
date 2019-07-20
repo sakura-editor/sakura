@@ -274,8 +274,10 @@ if "%ALPHA%" == "1" (
 copy /Y installer\warning.txt        %WORKDIR_EXE%\
 copy /Y installer\warning.txt        %WORKDIR_INST%\
 
+if "%CONFIGURATION%" == "Release" (
 pushd %WORKDIR_INST% && call %ZIP_CMD%       %OUTFILE_INST% .  && popd
 pushd %WORKDIR_EXE%  && call %ZIP_CMD%       %OUTFILE_EXE%  .  && popd
+)
 pushd %WORKDIR_DEV%  && call %ZIP_CMD%       %OUTFILE_DEV%  .  && popd
 
 @echo start zip asm
@@ -292,6 +294,7 @@ if exist "%WORKDIR_ASM%" (
 	rmdir /s /q "%WORKDIR_ASM%"
 )
 
+if "%CONFIGURATION%" == "Debug" goto :after_hash_out
 
 @echo start generate MD5 hash
 set CMD_FIND=%SystemRoot%\System32\find.exe
@@ -299,6 +302,7 @@ certutil -hashfile %OUTFILE_EXE% MD5  | %CMD_FIND% /v "MD5" | %CMD_FIND% /v "Cer
 certutil -hashfile %OUTFILE_INST% MD5 | %CMD_FIND% /v "MD5" | %CMD_FIND% /v "CertUtil" > %OUTFILE_INST%.md5
 @echo end generate MD5 hash
 
+:after_hash_out
 
 exit /b 0
 
