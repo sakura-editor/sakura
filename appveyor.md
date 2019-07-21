@@ -173,7 +173,6 @@ APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使う
 | APPVEYOR_PR_NUMBER_LABEL        | APPVEYOR_PULL_REQUEST_NUMBER    | 文字列   |
 | GITHUB_COMMIT_URL               | GITHUB_COMMIT_URL               | 文字列   |
 | GITHUB_COMMIT_URL_PR_HEAD       | GITHUB_COMMIT_URL_PR_HEAD       | 文字列   |
-| APPVEYOR_SHORTHASH              | APPVEYOR_SHORTHASH              | 文字列   |
 | APPVEYOR_SHORTHASH_PR_HEAD      | APPVEYOR_SHORTHASH_PR_HEAD      | 文字列   |
 | APPVEYOR_BUILD_URL              | APPVEYOR_BUILD_URL              | 文字列   |
 | TEMP_GIT_SHORT_COMMIT_HASH      | TEMP_GIT_SHORT_COMMIT_HASH      | 文字列   |
