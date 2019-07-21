@@ -281,7 +281,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 #ifdef APPVEYOR_BUILD_NUMBER_LABEL
 	m_UrlBuildLinkWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_APPVEYOR_BUILD ) );
 #endif
-#ifdef APPVEYOR_SHORTHASH
+#ifdef TEMP_GIT_SHORT_COMMIT_HASH
 	m_UrlGitHubCommitWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GITHUB_COMMIT ) );
 #endif
 #ifdef APPVEYOR_PR_NUMBER_LABEL

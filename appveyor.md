@@ -41,7 +41,6 @@
 ----|---- 
 |APPVEYOR_ACCOUNT_NAME              | appveyor のアカウント名 (sakura editor の場合 "sakuraeditor") |
 |APPVEYOR_BUILD_NUMBER              | ビルド番号 |
-|APPVEYOR_REPO_COMMIT               | commit Hash |
 |APPVEYOR_URL                       | https://ci.appveyor.com |
 |APPVEYOR_BUILD_VERSION             | appveyor.yml の version フィールドの値 |
 |APPVEYOR_PROJECT_SLUG              | project slug (appveyor の URL 名) |
@@ -142,9 +141,10 @@ APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使う
 | GIT_TAG_NAME                  | git の tag                                        | git 環境が有効な場合              |
 | GITHUB_COMMIT_URL             | gitHub で対応する commit に対する URL               | appveyor でのビルドのみ有効       |
 | GITHUB_COMMIT_URL_PR_HEAD     | gitHub の Pull Request の commit に対応する URL     | appveyor での PR のビルドのみ有効 |
-| APPVEYOR_SHORTHASH            | commit hash の先頭8文字                             | appveyor でのビルドのみ有効       |
 | APPVEYOR_SHORTHASH_PR_HEAD    | Pull Request の commit hash の先頭8文字             | appveyor での PR のビルドのみ有効 |
 | APPVEYOR_BUILD_URL            | appveyor でのビルドに対応する URL                   | appveyor でのビルドのみ有効       |
+| TEMP_GIT_SHORT_COMMIT_HASH    | git の commit Hash の先頭8文字                      | appveyor でのビルドのみ有効 (暫定的な変数。将来整理予定) |
+| TEMP_GIT_COMMIT_HASH          | git の commit Hash                                  | appveyor でのビルドのみ有効 (暫定的な変数。将来整理予定) |
 
 #### 処理の流れ
 
@@ -173,9 +173,10 @@ APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使う
 | APPVEYOR_PR_NUMBER_LABEL        | APPVEYOR_PULL_REQUEST_NUMBER    | 文字列   |
 | GITHUB_COMMIT_URL               | GITHUB_COMMIT_URL               | 文字列   |
 | GITHUB_COMMIT_URL_PR_HEAD       | GITHUB_COMMIT_URL_PR_HEAD       | 文字列   |
-| APPVEYOR_SHORTHASH              | APPVEYOR_SHORTHASH              | 文字列   |
 | APPVEYOR_SHORTHASH_PR_HEAD      | APPVEYOR_SHORTHASH_PR_HEAD      | 文字列   |
 | APPVEYOR_BUILD_URL              | APPVEYOR_BUILD_URL              | 文字列   |
+| TEMP_GIT_SHORT_COMMIT_HASH      | TEMP_GIT_SHORT_COMMIT_HASH      | 文字列   |
+| TEMP_GIT_COMMIT_HASH            | TEMP_GIT_COMMIT_HASH            | 文字列   |
 
 
 ### postBuild.bat の構造
@@ -201,7 +202,7 @@ APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使う
 | TAG_NAME      | "tag_" + tag 名                                    | tag が有効な場合                       |
 | BUILD_NUMBER  | "build" + appveyor のビルド番号                    | appveyor ビルド以外の場合 "buildLocal" |
 | PR_NAME       | "PR" + PR番号                                      | appveyor での PR のビルドのみ有効      |
-| SHORTHASH     | commit hash の先頭8文字                            | appveyor ビルドのみ有効                |
+| SHORTHASH     | commit hash の先頭8文字                            | 実体は TEMP_GIT_SHORT_COMMIT_HASH      |
 | RELEASE_PHASE | "alpha" または 空                                  | x64 ビルドの場合のみ有効               |
 | BASENAME      | 成果物の zip ファイル名(拡張子含まない部分)        | 常に有効                               |
 | WORKDIR       | 作業用フォルダ                                     | 常に有効                               |
