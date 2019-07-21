@@ -27,10 +27,13 @@ install:
     pip install openpyxl --user
     C:\msys64\usr\bin\bash --login -c "pacman -S --noconfirm mingw-w64-x86_64-gtest"
 
+# to run our custom scripts instead of automatic MSBuild
 build_script:
-- cmd: |
-    build-all.bat %PLATFORM% %CONFIGURATION%
-    tests\build-and-test.bat %PLATFORM% %CONFIGURATION%
+  - cmd: build-all.bat %PLATFORM% %CONFIGURATION%
+
+# to run our custom scripts instead of automatic tests
+test_script:
+  - cmd: tests\build-and-test.bat %PLATFORM% %CONFIGURATION%
 
 matrix:
   exclude:
