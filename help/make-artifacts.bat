@@ -46,10 +46,8 @@ if not "%APPVEYOR_PULL_REQUEST_NUMBER%" == "" (
 	set PR_NAME=PR%APPVEYOR_PULL_REQUEST_NUMBER%
 )
 
-@echo checking APPVEYOR_REPO_COMMIT %APPVEYOR_REPO_COMMIT%
-if not "%APPVEYOR_REPO_COMMIT%" == "" (
-	set SHORTHASH=%APPVEYOR_REPO_COMMIT:~0,8%
-)
+@echo hash name
+set SHORTHASH=%TEMP_GIT_COMMIT_HASH%
 
 @rem ----------------------------------------------------------------
 @rem build BASENAME

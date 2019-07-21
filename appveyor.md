@@ -41,7 +41,6 @@
 ----|---- 
 |APPVEYOR_ACCOUNT_NAME              | appveyor のアカウント名 (sakura editor の場合 "sakuraeditor") |
 |APPVEYOR_BUILD_NUMBER              | ビルド番号 |
-|APPVEYOR_REPO_COMMIT               | commit Hash |
 |APPVEYOR_URL                       | https://ci.appveyor.com |
 |APPVEYOR_BUILD_VERSION             | appveyor.yml の version フィールドの値 |
 |APPVEYOR_PROJECT_SLUG              | project slug (appveyor の URL 名) |
@@ -142,7 +141,6 @@ APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使う
 | GIT_TAG_NAME                  | git の tag                                        | git 環境が有効な場合              |
 | GITHUB_COMMIT_URL             | gitHub で対応する commit に対する URL               | appveyor でのビルドのみ有効       |
 | GITHUB_COMMIT_URL_PR_HEAD     | gitHub の Pull Request の commit に対応する URL     | appveyor での PR のビルドのみ有効 |
-| APPVEYOR_SHORTHASH            | commit hash の先頭8文字                             | appveyor でのビルドのみ有効       |
 | APPVEYOR_SHORTHASH_PR_HEAD    | Pull Request の commit hash の先頭8文字             | appveyor での PR のビルドのみ有効 |
 | APPVEYOR_BUILD_URL            | appveyor でのビルドに対応する URL                   | appveyor でのビルドのみ有効       |
 | TEMP_GIT_SHORT_COMMIT_HASH    | git の commit Hash の先頭8文字                      | appveyor でのビルドのみ有効 (暫定的な変数。将来整理予定) |
