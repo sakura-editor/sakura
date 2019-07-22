@@ -15,9 +15,11 @@ set HH_SCRIPT=%~dp0help\remove-comment.py
 set HH_INPUT=sakura_core\sakura.hh
 set HH_OUTPUT=help\sakura\sakura.hh
 
-if "%PLATFORM%" neq "BuildChm" (
-	goto :download_archive
-	exit /b 0
+if defined APPVEYOR (
+	if "%PLATFORM%" neq "BuildChm" (
+		goto :download_archive
+		exit /b 0
+	)
 )
 
 if exist "%HH_OUTPUT%" del /F "%HH_OUTPUT%"
