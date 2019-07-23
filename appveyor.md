@@ -39,10 +39,12 @@
 
 | 環境変数 | 説明 |
 ----|---- 
+|APPVEYOR                           | バッチが appveyor で実行されているかどうか  |
 |APPVEYOR_ACCOUNT_NAME              | appveyor のアカウント名 (sakura editor の場合 "sakuraeditor") |
 |APPVEYOR_BUILD_NUMBER              | ビルド番号 |
 |APPVEYOR_URL                       | https://ci.appveyor.com |
 |APPVEYOR_BUILD_VERSION             | appveyor.yml の version フィールドの値 |
+|APPVEYOR_BUILD_ID                  | ビルドID (ビルド結果URLに含まれる数値です。`build-chm.bat`が実行中のビルドを識別するために使います。) |
 |APPVEYOR_PROJECT_SLUG              | project slug (appveyor の URL 名) |
 |APPVEYOR_PULL_REQUEST_NUMBER       | Pull Request 番号 |
 |APPVEYOR_PULL_REQUEST_HEAD_COMMIT  | Pull Request の Head commit Hash |
@@ -53,6 +55,7 @@ APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使う
 
 * 上記環境変数をローカル環境で set コマンドで設定することにより appveyor でビルドしなくてもローカルでテストできます。
 * 上記の環境変数がどんな値になるのかは、過去の appveyor ビルドでのログを見ることによって確認できます。
+* `build-chm.bat`をローカルでテストするには完了済みのビルドIDが必要です。ビルドIDは[history](https://ci.appveyor.com/project/sakuraeditor/sakura/history)から各ビルド結果を表示するとURL末尾に付いている数字です。
 
 ## ビルドに使用するバッチファイル
 
@@ -66,6 +69,8 @@ APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使う
 |[sakura\mingw32-del.bat](sakura/mingw32-del.bat)| MinGW の clean でファイルを削除するバッチファイル |
 |[parse-buildlog.bat](parse-buildlog.bat)    | ビルドログを解析するバッチファイル |
 |[build-chm.bat](build-chm.bat)       | compiled HTML ファイルをビルドするバッチファイル |
+|[help\make-artifacts.bat](help\make-artifacts.bat) | compiled HTML ファイルを zip に固めるバッチファイル |
+|[help\extract-chm-from-artifact.ps1](help\extract-chm-from-artifact.ps1) | ビルド済み compiled HTML ファイルをダウンロードして解凍するバッチファイル |
 |[build-installer.bat](build-installer.bat) | インストーラをビルドするバッチファイル |
 |[run-cppcheck.bat](run-cppcheck.bat)       | cppcheck を実行するバッチファイル |
 |[run-doxygen.bat](run-doxygen.bat)         | doxygen を実行するバッチファイル |
@@ -92,7 +97,9 @@ APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使う
     - [build-gnu.bat](build-gnu.bat) : (Platform="MinGW"のみ) Makefileをビルドしてbuild-all.batの処理を終了する
     - [build-chm.bat](build-chm.bat) : HTML Help をビルドする
         - [remove-comment.py](help/remove-comment.py) : UTF-8 でのコンパイルエラーの回避のために日本語を削除するために [sakura.hh](sakura_core/sakura.hh) から一行コメントを削除する
-        - hhc.exe (Visual Studio 2017 に同梱)
+        - hhc.exe (Visual Studio 2017 に同梱) : compiled HTML をビルドするコンパイラ。かなり古いツールであり、日本語HTMLをビルドするためにはWindowsのシステムロケールを日本語に変更する必要がある。
+        - [help\extract-chm-from-artifact.ps1](help\extract-chm-from-artifact.ps1) : compiled HTML が必要なタイミングで、あらかじめ作成したビルド済みCHMをダウンロード＆解凍してその場でビルドを行ったのと同じ状態にする。
+    - [help\make-artifacts.bat](help\make-artifacts.bat) : HTML Help を zip に固める
     - [run-cppcheck.bat](run-cppcheck.bat) : cppcheck を実行する
         - cppcheck.exe
     - [run-doxygen.bat](run-doxygen.bat) : doxygen を実行する
@@ -121,6 +128,8 @@ APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使う
 |sakura\mingw32-del.bat| 削除するファイルパス1 | 削除するファイルパス2(2つ目以降は省略可能)  |
 |parse-buildlog.bat  | msbuild のビルドログパス | なし |
 |build-chm.bat       | なし | なし |
+|help\make-artifacts.bat | なし | なし |
+|help\extract-chm-from-artifact.ps1 | なし | なし |
 |build-installer.bat | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
 |run-cppcheck.bat                        | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
 |run-doxygen.bat                         | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
