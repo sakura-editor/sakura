@@ -1,24 +1,20 @@
 # this script was designed to run only for appveyor.
 # https://www.appveyor.com/docs/api/samples/download-artifacts-ps/
-
+#
 $apiUrl = 'https://ci.appveyor.com/api'
-$token = ''
+$accountName = $env:APPVEYOR_ACCOUNT_NAME
+$projectSlug = $env:APPVEYOR_PROJECT_SLUG
+$buildId = $env:APPVEYOR_BUILD_ID
+$token = $env:READONLY_TOKEN
 $headers = @{
   "Authorization" = "Bearer $token"
   "Content-type" = "application/json"
 }
 
-if ($env:APPVEYOR_ACCOUNT_NAME -eq 'sakuraeditor') {
-	# get project with current build details
-	$getProjectApi = "$apiUrl/projects/sakuraeditor/sakura/build/$env:APPVEYOR_BUILD_VERSION"
-} else {
-	# get project with last build details
-	$getProjectApi = "$apiUrl/projects/sakuraeditor/sakura"
-}
-
 try {
-	# get project with build details
-	$project = Invoke-RestMethod -Method Get -Uri $getProjectApi -Headers $headers -ErrorAction Stop
+	# get project with current build details
+	Write-Output "checking $env:APPVEYOR_URL/projects/$accountName/$projectSlug/builds/$buildId"
+	$project = Invoke-RestMethod -Method Get -Uri "$apiUrl/projects/$accountName/$projectSlug/builds/$buildId" -Headers $headers -ErrorAction Stop
 
 	$chmJob = $project.build.jobs | Where-Object name -eq 'Configuration: Release; Platform: BuildChm'
 	$jobId = $chmJob.jobId
@@ -53,6 +49,8 @@ try {
 	if ($unzipResult -is [array]) {
 		throw "$unzipResult"
 	}
+
+	Remove-Item "$PSScriptRoot\unzip.err"
 
 } catch {
 	Write-Output 'caught an error.'
