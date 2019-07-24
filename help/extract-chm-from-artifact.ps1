@@ -39,18 +39,19 @@ try {
 		-OutFile $localArtifactPath -Headers @{ "Authorization" = "Bearer $token" } `
 		-ErrorAction Stop
 
+	$unzipErrorFile = "$PSScriptRoot\unzip.err"
 	Start-Process -FilePath $env:CMD_7Z -ArgumentList "x -y $localArtifactPath" `
 		-NoNewWindow `
 		-WorkingDirectory $PSScriptRoot `
-		-RedirectStandardError "$PSScriptRoot\unzip.err" `
+		-RedirectStandardError $unzipErrorFile `
 		-Wait
 
-	$unzipResult = Get-Content -Path "$PSScriptRoot\unzip.err" -TotalCount 3
+	$unzipResult = Get-Content -Path $unzipErrorFile -TotalCount 3
 	if ($unzipResult -is [array]) {
 		throw "$unzipResult"
 	}
 
-	Remove-Item "$PSScriptRoot\unzip.err"
+	Remove-Item $unzipErrorFile
 
 } catch {
 	Write-Output 'caught an error.'
