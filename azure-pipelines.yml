@@ -9,6 +9,7 @@ trigger:
       - master
       - develop
       - feature/*
+      - revert-*
   paths:
     exclude:
       - "*.md"
@@ -29,6 +30,7 @@ pr:
       - master
       - develop
       - feature/*
+      - revert-*
   paths:
     exclude:
       - "*.md"
