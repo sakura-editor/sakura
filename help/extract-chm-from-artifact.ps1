@@ -5,6 +5,11 @@ $apiUrl = 'https://ci.appveyor.com/api'
 $accountName = $env:APPVEYOR_ACCOUNT_NAME
 $projectSlug = $env:APPVEYOR_PROJECT_SLUG
 $buildId = $env:APPVEYOR_BUILD_ID
+
+# appveyor REST API requires Bearer token.
+# https://www.appveyor.com/docs/api/#Authentication
+# Because the Bearer token can be empty, we won't define the variable named `READONLY_TOKEN`.
+# To be ease of testing, you can define it from the outside of this script.
 $token = $env:READONLY_TOKEN
 $headers = @{
   "Authorization" = "Bearer $token"
