@@ -50,6 +50,7 @@
 |APPVEYOR_PULL_REQUEST_HEAD_COMMIT  | Pull Request の Head commit Hash |
 |APPVEYOR_REPO_NAME                 | リポジトリ名 (owner-name/repo-name) |
 |APPVEYOR_REPO_PROVIDER             | appveyor の参照するリポジトリ種別 (GitHub の場合 "gitHub") |
+|~~READONLY_TOKEN~~                 | デバッグ用です。 appveyor の REST API に渡す [Bearer Token](https://www.appveyor.com/docs/api/#Authentication) をスクリプト外から渡せるように定義しています。 appveyor では使いません。(未定義なので値は''になります。) |
 
 APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使うようにしました。[#876](https://github.com/sakura-editor/sakura/pull/876)
 
