@@ -15,6 +15,13 @@ set HH_SCRIPT=%~dp0help\remove-comment.py
 set HH_INPUT=sakura_core\sakura.hh
 set HH_OUTPUT=help\sakura\sakura.hh
 
+if defined APPVEYOR (
+	if "%PLATFORM%" neq "BuildChm" (
+		goto :download_archive
+		exit /b 0
+	)
+)
+
 if exist "%HH_OUTPUT%" del /F "%HH_OUTPUT%"
 python "%HH_SCRIPT%" "%HH_INPUT%" "%HH_OUTPUT%"  || (echo error && exit /b 1)
 
@@ -44,4 +51,9 @@ if not errorlevel 1 (
 	echo retry error %PROJECT_HHP% errorlevel %errorlevel%
 	exit /b 1
 )
+exit /b 0
+
+:download_archive
+powershell -ExecutionPolicy RemoteSigned -File %~dp0help\extract-chm-from-artifact.ps1
+if errorlevel 1 exit /b 1
 exit /b 0
