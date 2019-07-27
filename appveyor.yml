@@ -11,6 +11,9 @@ platform:
   - x64
   - MinGW
 
+# set clone depth
+clone_depth: 5
+
 # see "Skip commits" at https://www.appveyor.com/docs/how-to/filtering-commits/#commit-files-github-and-bitbucket-only
 skip_commits:
   files:
