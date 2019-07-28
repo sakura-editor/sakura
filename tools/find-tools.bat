@@ -1,6 +1,21 @@
 @echo off
 setlocal
 
+if "%1" equ "clear" (
+    if not defined FIND_TOOLS_CALLED echo nothing to do. && exit /b 0
+    endlocal
+    set CMD_GIT=
+    set CMD_7Z=
+    set CMD_HHC=
+    set CMD_ISCC=
+    set CMD_CPPCHECK=
+    set CMD_DOXYGEN=
+    set CMD_VSWHERE=
+    set CMD_MSBUILD=
+    set FIND_TOOLS_CALLED=
+    echo find-tools.bat has been cleared
+    exit /b
+)
 if defined FIND_TOOLS_CALLED (
     echo find-tools.bat already called
     exit /b
