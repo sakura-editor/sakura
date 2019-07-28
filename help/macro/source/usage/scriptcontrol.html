@@ -1,33 +1,33 @@
-<html><head><title>ScriptControl‚Ìg—p</title>
+ï»¿<html><head><title>ScriptControlã®ä½¿ç”¨</title>
 <LINK REL="stylesheet" TYPE="text/css" HREF="../sakura.css">
-<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 </head>
 <small>
 Sakura-Editor Macro Reference
 </small>
-<h2>ScriptControl‚Ìg—p</h2>
-<p>WSHƒ}ƒNƒ‚É‚¨‚¢‚ÄScriptControl‚ğg—p‚·‚é‚±‚Æ‚Å
-ŠeíƒXƒNƒŠƒvƒg‚ğ¬İ‚Å—˜—p‚Å‚«‚Ü‚·B
+<h2>ScriptControlã®ä½¿ç”¨</h2>
+<p>WSHãƒã‚¯ãƒ­ã«ãŠã„ã¦ScriptControlã‚’ä½¿ç”¨ã™ã‚‹ã“ã¨ã§
+å„ç¨®ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚’æ··åœ¨ã§åˆ©ç”¨ã§ãã¾ã™ã€‚
 </p>
 <a href = "http://www.microsoft.com/Japan/msdn/Scripting/navigation.htm?/japan/msdn/scripting/scriptcontrol/scoverview.htm" target = "_blank">Script Control - Microsoft Scripting Technologies</a>
 
-<h3>JScriptƒTƒ“ƒvƒ‹</h3>
+<h3>JScriptã‚µãƒ³ãƒ—ãƒ«</h3>
 <pre>
-<span style = "color:green;">//JScript‚©‚çVBS‚ÌInputBoxŠÖ”‚ğÀs</span>
+<span style = "color:green;">//JScriptã‹ã‚‰VBSã®InputBoxé–¢æ•°ã‚’å®Ÿè¡Œ</span>
 <span style = "color:blue;">var</span> oSC = <span style = "color:blue;">new</span> ActiveXObject(<span style = "color:#800000;">"ScriptControl"</span>);
 oSC.Language = <span style = "color:#800000;">"VBScript"</span>;
 <span style = "color:blue;">var</span> sFunc = <span style = "color:#800000;">'Function InBox(prompt, title, default)\n'</span>;
 sFunc += <span style = "color:#800000;">'    InBox = InputBox(prompt, title, default)\n'</span>;
 sFunc += <span style = "color:#800000;">'End Function\n'</span>;
 oSC.AddCode(sFunc);
-<span style = "color:blue;">var</span> Ret = oSC.Run (<span style = "color:#800000;">"InBox"</span>, <span style = "color:#800000;">"ƒƒbƒZ[ƒW"</span>, <span style = "color:#800000;">"ƒ^ƒCƒgƒ‹"</span>, <span style = "color:#800000;">"‰Šú’l"</span>);
+<span style = "color:blue;">var</span> Ret = oSC.Run (<span style = "color:#800000;">"InBox"</span>, <span style = "color:#800000;">"ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸"</span>, <span style = "color:#800000;">"ã‚¿ã‚¤ãƒˆãƒ«"</span>, <span style = "color:#800000;">"åˆæœŸå€¤"</span>);
 <span style = "color:blue;">InsText</span>(Ret);
 </pre>
 
 
-<h3>VBScriptƒTƒ“ƒvƒ‹</h3>
+<h3>VBScriptã‚µãƒ³ãƒ—ãƒ«</h3>
 <pre>
-<span style = "color:green;">&#39;VBScript‚©‚çJscript‚ÌsplitŠÖ”‚ğÀs</span>
+<span style = "color:green;">&#39;VBScriptã‹ã‚‰Jscriptã®splité–¢æ•°ã‚’å®Ÿè¡Œ</span>
 <span style = "color:blue;">Dim</span> sCode, oSC, sFileName
 
 sCode = <span style = "color:#800000;">"GetFileNameFromFulPath=function(sBuf) {aRet=sBuf.split('\\');return aRet[aRet.length-1];}"</span>
@@ -41,7 +41,7 @@ sFileName = oSC.Run(<span style = "color:#800000;">"GetFileNameFromFulPath"</spa
 <span style = "color:blue;">InsText</span>(sFileName)
 </pre>
 
-<h3>PerlScriptƒTƒ“ƒvƒ‹</h3>
+<h3>PerlScriptã‚µãƒ³ãƒ—ãƒ«</h3>
 <pre>
 <span style = "color:green;"># http://miau.s9.xrea.com/blog/index.php?itemid=397</span>
 <span style = "color:blue;">sub</span> InputBox

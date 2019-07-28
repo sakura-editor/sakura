@@ -1,40 +1,40 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML lang="ja">
 <HEAD>
-<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
 <link rel="shortcut icon" href="images/favicon.ico">
-<TITLE>�G�f�B�^�ł̎���</TITLE>
-<META NAME="MS-HKWD" CONTENT="�G�f�B�^�ł̎���">
+<TITLE>エディタでの実装</TITLE>
+<META NAME="MS-HKWD" CONTENT="エディタでの実装">
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
-<noscript>[<a href="index.html">�ڎ�</a>] <br></noscript>
+<noscript>[<a href="index.html">目次</a>] <br></noscript>
 <!--
-<noscript>[<a href="index.html">�ڎ�</a>] [<a href="web_frame.html" target="_top">�t���[���ŕ\��</a>] [<a href="web_search.html">����</a>]<br></noscript>
+<noscript>[<a href="index.html">目次</a>] [<a href="web_frame.html" target="_top">フレームで表示</a>] [<a href="web_search.html">検索</a>]<br></noscript>
 -->
-<h2>�G�f�B�^�ł̎���</h2>
+<h2>エディタでの実装</h2>
 
-<h3 id=c0401>�}�N���֘A�N���X�̉���</h3>
+<h3 id=c0401>マクロ関連クラスの改造</h3>
 <div class=li100>
-WSH�}�N���Ŏg�p�ł���C���^�t�F�[�X�I�u�W�F�N�g���AEditor�����ł͂Ȃ�����������悤�ɏC�������B<br>
+WSHマクロで使用できるインタフェースオブジェクトを、Editorだけではなく複数扱えるように修正した。<br>
 </div>
 <div class=li200>
 <pre>
-CWSHManager                   WSH�}�N�����s�̓�����B
-                              .ExecKeyMacro�֐��̒���CWSHClient���쐬����B
-CWSHClient                    WSH�Ăяo���̓�����B
-CIfObj                        �����ȃC���^�t�F�[�X�I�u�W�F�N�g
-  - CWSHIfObj                   WSH�}�N���ɓ��������C���^�t�F�[�X�I�u�W�F�N�g
-      - CEditorIfObj              ���܂ł�Editor�I�u�W�F�N�g
-      - plugin/CPluginIfObj       �v���O�C�����ʋ@�\��񋟂���Plugin�I�u�W�F�N�g
-      - plugin/COutlineIfObj      �A�E�g���C����͋@�\��񋟂���Outline�I�u�W�F�N�g
-      - plugin/CSmartIndentIfObj  �X�}�[�g�C���f���g�@�\��񋟂���Indent�I�u�W�F�N�g
-      - plugin/CComplementIfObj   �⊮��⌟���@�\��񋟂���Complement�I�u�W�F�N�g
+CWSHManager                   WSHマクロ実行の入り口。
+                              .ExecKeyMacro関数の中でCWSHClientを作成する。
+CWSHClient                    WSH呼び出しの入り口。
+CIfObj                        純粋なインタフェースオブジェクト
+  - CWSHIfObj                   WSHマクロに特化したインタフェースオブジェクト
+      - CEditorIfObj              今までのEditorオブジェクト
+      - plugin/CPluginIfObj       プラグイン共通機能を提供するPluginオブジェクト
+      - plugin/COutlineIfObj      アウトライン解析機能を提供するOutlineオブジェクト
+      - plugin/CSmartIndentIfObj  スマートインデント機能を提供するIndentオブジェクト
+      - plugin/CComplementIfObj   補完候補検索機能を提供するComplementオブジェクト
 </pre>
 </div>
 
-<h3 id=c0402>�v���O�C���֘A�N���X�\��</h3>
+<h3 id=c0402>プラグイン関連クラス構成</h3>
 <div class=li200>
 <pre>
 CPlug
@@ -48,29 +48,29 @@ CJackManager
 </pre>
 </div>
 
-<h3 id=c0403>�ۑ�</h3>
+<h3 id=c0403>課題</h3>
 <div class=li200>
-�E�t�@�C���^�C�v�̔���<br>
-�@�A�E�g���C����͂ƃX�}�[�g�C���f���g�̓^�C�v�ʐݒ��ʂ̑I�����ɒǉ����邱�Ƃ� �ǂ̃v���O�C����L���ɂ��邩�I���ł���B<br>
-�@���̑��̐V���ȋ@�\���v���O�C���ɂ���ꍇ�A�^�C�v�ʐݒ��ʂ̉������K�v�B<br>
-�@���邢�̓^�C�v�ʐݒ��ʂɊg���\�Ȑݒ�(�v���O�C���ʐݒ�̂悤��)�̃^�u��ǉ����邩�H<br>
-�EDLL�ł�WSH�Ɠ����悤��Editor�I�u�W�F�N�g�̋@�\���g����̂��H<br>
-�E<s>�R�}���h�𓮓I�ɒǉ��ł���̂��Hrealloc����H�ǉ������R�}���h���c�[���o�[�ɒǉ������ꍇ�A�ݒ�t�@�C���ɂǂ̂悤�ɋL�^����邩�B</s><br>
-�@���c�[���o�[�{�^���̃e�[�u����vector�������B<br>
-�@�@�ݒ�t�@�C���ւ͂Ƃ肠���������̎�Ԃ����Ȃ��悤�A2xxyy�̂悤�Ȕԍ��ŋL�^���Ă���B<br>
-�@�@xx�̓v���O�C�������ʂ���ԍ��ł���(���Ȃ��Ƃ����[�J��PC����)�Ayy�̓v���O�C�����Ńv���O�����ʂ���ԍ��ł���B<br>
-�@�@���̕��j���ƁA�����Ɏg�p�ł���v���O�C�����ő�99�ɐ��������B<br>
-�@�@<s>�܂��Axx���ǂ�����Ċ���U��̂�����B</s><br>
-�@�@���v���O�C���ԍ�xx�̊���U��́A�v���O�C���̃C���X�g�[�����Ƀv���O�C���e�[�u���̋󂫔ԍ������蓖�Ă邱�Ƃɂ����B<br>
-�E�v���O�C���̓ǂݍ��݂�NormalProcess�̋N�����Ƃɍs���͖̂��ʂȂ̂ŁAControlProcess�N�����ɂP�x�����ǂݍ���Ŏg���܂킵�������A�v���Z�X�܂�����Ȃ̂ŋ��L���������g��Ȃ���΂Ȃ�Ȃ��B<br>
-�@���̍���STL�Ƃ��g���܂���Ȃ̂ŋ��L�������ɂ��Â炢�B<br>
-�E<s>�c�[���o�[�̐ݒ�̓A�C�R��BMP�̔ԍ��ŋL�^����Ă��邽�߁A�v���O�C���R�}���h��o�^������v���O�C���̍폜�Ȃǂ��s���ƁA����N�����ɃA�C�R��������Ă��܂��B</s><br>
-���{�^���ԍ��ŋL�����Ă������������Ȃ����߁A�v���O�C���R�}���h�̂�INI��ł́u�v���O�C����/�v���O�ԍ��v�̌`���ŋL�^����悤�ɂ����B<br>
+・ファイルタイプの判定<br>
+　アウトライン解析とスマートインデントはタイプ別設定画面の選択肢に追加することで どのプラグインを有効にするか選択できる。<br>
+　その他の新たな機能をプラグインにする場合、タイプ別設定画面の改造が必要。<br>
+　あるいはタイプ別設定画面に拡張可能な設定(プラグイン個別設定のような)のタブを追加するか？<br>
+・DLLでもWSHと同じようにEditorオブジェクトの機能を使えるのか？<br>
+・<s>コマンドを動的に追加できるのか？reallocする？追加したコマンドをツールバーに追加した場合、設定ファイルにどのように記録されるか。</s><br>
+　→ツールバーボタンのテーブルはvector化した。<br>
+　　設定ファイルへはとりあえず改造の手間が少ないよう、2xxyyのような番号で記録している。<br>
+　　xxはプラグインを識別する番号であり(少なくともローカルPC内で)、yyはプラグイン中でプラグを識別する番号である。<br>
+　　この方針だと、同時に使用できるプラグインが最大99個に制限される。<br>
+　　<s>また、xxをどうやって割り振るのか未定。</s><br>
+　　→プラグイン番号xxの割り振りは、プラグインのインストール時にプラグインテーブルの空き番号を割り当てることにした。<br>
+・プラグインの読み込みをNormalProcessの起動ごとに行うのは無駄なので、ControlProcess起動時に１度だけ読み込んで使いまわしたいが、プロセスまたがりなので共有メモリを使わなければならない。<br>
+　今の作りはSTLとか使いまくりなので共有メモリにしづらい。<br>
+・<s>ツールバーの設定はアイコンBMPの番号で記録されているため、プラグインコマンドを登録した後プラグインの削除などを行うと、次回起動時にアイコンがずれてしまう。</s><br>
+→ボタン番号で記憶している限り解決しないため、プラグインコマンドのみINI上では「プラグイン名/プラグ番号」の形式で記録するようにした。<br>
 <br>
-�u�A�E�g���C���v���O�C������t��������ύX����v<br>
-�EVB��C�֐��ꗗ�Ȃǃ��X�g�n�̔��l���J�X�^�}�C�Y<s>(����Ȃ��C��)</s><br>
-�@��SetLabel�֐��őΉ�(Ver.2.0.9.0�ȍ~)<br>
+「アウトラインプラグインから付加文字を変更する」<br>
+・VBやC関数一覧などリスト系の備考欄カスタマイズ<s>(いらない気も)</s><br>
+　→SetLabel関数で対応(Ver.2.0.9.0以降)<br>
 </div><br>
 
-<center><a href="implementation03.html">�O�ց�</a>�@�@<a href="reference.html">������</a></center>
+<center><a href="implementation03.html">前へ＜</a>　　<a href="reference.html">＞次へ</a></center>
 </BODY></HTML>

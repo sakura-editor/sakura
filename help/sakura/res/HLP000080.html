@@ -1,7 +1,7 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML lang="ja">
 <HEAD>
-<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
 <link rel="shortcut icon" href="images/favicon.ico">
 <TITLE>Virtual Store</TITLE>
@@ -12,52 +12,52 @@
 <BODY>
 <script type="text/javascript" src="item.js"></script>
 <script type="text/javascript">HHCtrlPopup();</script>
-<noscript>[<a href="HLP000001.html">�ڎ�</a>]<br></noscript>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
 <h2>Virtual Store</h2>
-Vista�ȍ~��OS�ł́A���ɐݒ���s�킸�ɃT�N���G�f�B�^��P�i�ŋN��������ƁAVirtual Store���L���ɂȂ�܂��B
-<em>sakura.exe.manifest</em>��ݒu���邱�Ƃ�<a href="javascript:id=hhctrl.TextPopup('User Account Control\nVista�ȍ~�Ɏ������ꂽOS�ی�@�\','�l�r�S�V�b�N,11',9,9,-1,-1)">UAC</a>�ɑΉ���������ɂȂ�AVirtual Store�𖳌��ɂł��܂��B<br>
+Vista以降のOSでは、特に設定を行わずにサクラエディタを単品で起動させると、Virtual Storeが有効になります。
+<em>sakura.exe.manifest</em>を設置することで<a href="javascript:id=hhctrl.TextPopup('User Account Control\nVista以降に実装されたOS保護機能','ＭＳゴシック,11',9,9,-1,-1)">UAC</a>に対応した動作になり、Virtual Storeを無効にできます。<br>
 <br>
-<small>*sakura.exe.manifest�̓��e�͕Ŗ��Q��</small><br>
+<small>*sakura.exe.manifestの内容は頁末参照</small><br>
 
-<h3>Virtual Store�Ƃ�</h3>
-Program Files�t�H���_��Windows�t�H���_�z���ɐݒ��ۑ�����悤��Vista���Ή��̃A�v�����AVista��ł͋}�ɓ����Ȃ��Ȃ��Ă��܂����Ƃ������悤�ɐ݂���ꂽ�݊����ێ��@�\�ł��B
-Vista���Ή��A�v����Virtual Store�L���œ��삵�܂��BVirtual Store�L���̃A�v����Program Files�̂悤�ɕی십�����ꂽ�t�H���_�Ƀt�@�C����ۑ����悤�Ƃ���ƁA�ړI�̃t�H���_�ł͂Ȃ�Virtual Store�ƌĂ΂��ʂ̃t�H���_�Ƀt�@�C�����ۑ�����A
-�Ȍ�A�����t�@�C�����J�����Ƃ����Ƃ��ɂ�Virtual Store���ɂ���t�@�C�����J�����d�g�݂ɂȂ��Ă��܂��B
+<h3>Virtual Storeとは</h3>
+Program FilesフォルダやWindowsフォルダ配下に設定を保存するようなVista未対応のアプリが、Vista上では急に動かなくなってしまうことが無いように設けられた互換性維持機能です。
+Vista未対応アプリはVirtual Store有効で動作します。Virtual Store有効のアプリがProgram Filesのように保護強化されたフォルダにファイルを保存しようとすると、目的のフォルダではなくVirtual Storeと呼ばれる別のフォルダにファイルが保存され、
+以後、同じファイルを開こうとしたときにはVirtual Store側にあるファイルが開かれる仕組みになっています。
 
-<h3>Virtual Store�L�����̖��</h3>
-Virtual Store�L���̂܂܂ŃA�v�����g�p���Ă���ƁA���̃A�v���ŕی�t�H���_�̃t�@�C���𑀍삵���Ƃ��Ɏ��̂悤�ȍ������N���܂��B
+<h3>Virtual Store有効時の問題</h3>
+Virtual Store有効のままでアプリを使用していると、そのアプリで保護フォルダのファイルを操作したときに次のような混乱が起きます。
 <ul>
-<li>�V�K�ۑ������͂��Ȃ̂ɃG�N�X�v���[���Ō���ƃt�@�C����������Ȃ�</li>
-<li>�㏑���ۑ������̂Ƀ������Ō���Ɠ��e���X�V����Ă��Ȃ�</li>
-<li>�G�N�X�v���[���Ńt�@�C�����㏑�������̂ɊJ���Ă݂�ƍX�V����Ă��Ȃ�</li>
+<li>新規保存したはずなのにエクスプローラで見るとファイルが見つからない</li>
+<li>上書き保存したのにメモ帳で見ると内容が更新されていない</li>
+<li>エクスプローラでファイルを上書きしたのに開いてみると更新されていない</li>
 </ul>
 
-�A�v���ɓK�p�����Virtual Store�𖳌��ɂ���΁A�ی�t�H���_�ւ̏������݂͒ʏ�ʂ苑�ۂ���A�ی�t�H���_�̃t�@�C�����J�����Ƃ���Virtual Store���̃t�@�C�����J�����Ƃ��Ȃ��̂ŁA��L�̂悤�ȍ������N���Ȃ��Ȃ�܂��B
+アプリに適用されるVirtual Storeを無効にすれば、保護フォルダへの書き込みは通常通り拒否され、保護フォルダのファイルを開こうとしてVirtual Store側のファイルが開くこともないので、上記のような混乱も起きなくなります。
 
-<h3>Virtual Store�𖳌��ɂ���ꍇ�̒��ӎ���</h3>
-�K��<a href="HLP000078.html">���[�U�[�ʐݒ�</a>�̋@�\�𗘗p���A�ݒ�t�@�C��(sakura.ini)����ی�t�H���_�ɕۑ������悤�ɂ��Ă��������B
-���̍ہA���[�U�[�ʐݒ�\���t�@�C��<em>sakura.exe.ini</em>�̕ҏW�̓f�X�N�g�b�v�Ȃǂ̔�ی�t�H���_�ōs���A�ҏW��̃t�@�C�����G�N�X�v���[���ŃR�s�[���Ă��������B
+<h3>Virtual Storeを無効にする場合の注意事項</h3>
+必ず<a href="HLP000078.html">ユーザー別設定</a>の機能を利用し、設定ファイル(sakura.ini)が非保護フォルダに保存されるようにしてください。
+その際、ユーザー別設定構成ファイル<em>sakura.exe.ini</em>の編集はデスクトップなどの非保護フォルダで行い、編集後のファイルをエクスプローラでコピーしてください。
 <br>
-���ɁA<a href="HLP000078.html">���[�U�[�ʐݒ�</a>��K�p������Program Files�ɃC���X�g�[�����Ďg�p���Ă���ꍇ�̓C���X�g�[����t�H���_���̐ݒ�t�@�C���₻�̑��̃t�@�C����Virtual Store�ɓ]������Ă���\��������܂��B
-�G�N�X�v���[���Ŋm�F���ē]���t�@�C���̂ق���D��I��<a href = "HLP000077.html">�ݒ�t�H���_</a>�ɃR�s�[���Ă��������B
+既に、<a href="HLP000078.html">ユーザー別設定</a>を適用せずにProgram Filesにインストールして使用している場合はインストール先フォルダ下の設定ファイルやその他のファイルがVirtual Storeに転送されている可能性があります。
+エクスプローラで確認して転送ファイルのほうを優先的に<a href = "HLP000077.html">設定フォルダ</a>にコピーしてください。
 <br>
 <br>
-Program Files�ł͂Ȃ��A�ی�ΏۊO�̃t�H���_�ɃC���X�g�[�����Ďg�p����ꍇ��<a href="HLP000078.html">���[�U�[�ʐݒ�</a>�ɂ���K�v�͂���܂���B<br>
+Program Filesではなく、保護対象外のフォルダにインストールして使用する場合は<a href="HLP000078.html">ユーザー別設定</a>にする必要はありません。<br>
 <br>
 
-1.5.17.0�ȑO�̃o�[�W�����ł�<a href="HLP000078.html">���[�U�[�ʐݒ�</a>�ɑΉ����Ă��Ȃ����߁AVirtual Store�����ł̗��p���ł��܂���B
+1.5.17.0以前のバージョンでは<a href="HLP000078.html">ユーザー別設定</a>に対応していないため、Virtual Store無効での利用ができません。
 
-<h3>Virtual Store�ɓ]�����ꂽ�t�@�C���̊m�F���@</h3>
-�t�H���_�̉��z�����ꂽ�t�@�C���iVirtual Store�ɓ]�����ꂽ�t�@�C���j��\������ɂ̓G�N�X�v���[���̃c�[���o�[�ɕ\������� [�݊����t�@�C��]�{�^�����N���b�N���܂��B
-[�݊����t�@�C��]�{�^���́A���̃t�H���_�ɉ��z�����ꂽ�t�@�C��������ꍇ�ɂ̂ݕ\������܂��B<br>
+<h3>Virtual Storeに転送されたファイルの確認方法</h3>
+フォルダの仮想化されたファイル（Virtual Storeに転送されたファイル）を表示するにはエクスプローラのツールバーに表示される [互換性ファイル]ボタンをクリックします。
+[互換性ファイル]ボタンは、そのフォルダに仮想化されたファイルがある場合にのみ表示されます。<br>
 <br>
-���ۂ̃p�X�́A���Ƃ���Program Files\sakura�ɃC���X�g�[������Ă���Ƃ��A<em>C:\Users\&lt;username&gt;\AppData\Local\Virtual Store\Program Files\sakura</em> ���]����ɂȂ�܂��B
+実際のパスは、たとえばProgram Files\sakuraにインストールされているとき、<em>C:\Users\&lt;username&gt;\AppData\Local\Virtual Store\Program Files\sakura</em> が転送先になります。
 
-<h2>sakura.exe.manifest�̓��e</h2>
-�ȉ��̓��e�̃t�@�C����sakura.exe�Ɠ����ꏊ�ɕۑ����܂��B<em>sakura.exe.manifest</em>���g��Virtual Store�ɓ���Ȃ��悤�ɒ��ӂ��Ă��������B<br>
-<small>*�f�X�N�g�b�v�Ȃǂ̔�ی�t�H���_�ŕҏW���ς܂��ăG�N�X�v���[���ŃR�s�[�ȂǁB</small><br>
+<h2>sakura.exe.manifestの内容</h2>
+以下の内容のファイルをsakura.exeと同じ場所に保存します。<em>sakura.exe.manifest</em>自身がVirtual Storeに入らないように注意してください。<br>
+<small>*デスクトップなどの非保護フォルダで編集を済ませてエクスプローラでコピーなど。</small><br>
 <br>
-Visual Style��L���ɂ��AVirtual Store�𖳌�(UAC�Ή�)�ɂ����ł��B
+Visual Styleを有効にし、Virtual Storeを無効(UAC対応)にする例です。
 <pre style = "border:1px solid;">
 &lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
 &lt;assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"&gt;
