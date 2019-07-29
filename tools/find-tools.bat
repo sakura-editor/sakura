@@ -2,7 +2,6 @@
 setlocal
 
 if "%1" equ "clear" (
-    if not defined FIND_TOOLS_CALLED echo nothing to do. && exit /b 0
     endlocal
     set CMD_GIT=
     set CMD_7Z=
