@@ -54,6 +54,6 @@ if not errorlevel 1 (
 exit /b 0
 
 :download_archive
-powershell -ExecutionPolicy RemoteSigned -File %~dp0help\extract-chm-from-artifact.ps1
+pwsh.exe -ExecutionPolicy RemoteSigned -File %~dp0help\extract-chm-from-artifact.ps1
 if errorlevel 1 exit /b 1
 exit /b 0
