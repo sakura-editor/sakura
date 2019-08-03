@@ -25,8 +25,9 @@
 #include "basis/SakuraBasis.h"
 #include "util/design_template.h"
 #include "COpe.h"
+#include "CDocLine.h"
+#include "mem/CMemPool.h"
 
-class CDocLine; // 2002/2/10 aroka
 class CBregexp; // 2002/2/10 aroka
 
 struct DocLineReplaceArg {
@@ -89,6 +90,7 @@ private:
 	CDocLine*	m_pDocLineTop;		//!< 最初の行
 	CDocLine*	m_pDocLineBot;		//!< 最後の行(※1行しかない場合はm_pDocLineTopと等しくなる)
 	CLogicInt	m_nLines;			//!< 全行数
+	CMemPool<CDocLine> m_memPool;
 
 public:
 	//$$ kobake注: 以下、絶対に切り離したい（最低切り離せなくても、変数の意味をコメントで明確に記すべき）変数群

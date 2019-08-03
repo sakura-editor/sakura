@@ -430,6 +430,7 @@
     <ClInclude Include="..\sakura_core\macro\CWSHManager.h" />
     <ClInclude Include="..\sakura_core\mem\CMemory.h" />
     <ClInclude Include="..\sakura_core\mem\CMemoryIterator.h" />
+    <ClInclude Include="..\sakura_core\mem\CMemPool.h" />
     <ClInclude Include="..\sakura_core\mem\CNative.h" />
     <ClInclude Include="..\sakura_core\mem\CNativeA.h" />
     <ClInclude Include="..\sakura_core\mem\CNativeT.h" />

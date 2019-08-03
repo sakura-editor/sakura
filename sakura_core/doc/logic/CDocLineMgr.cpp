@@ -68,7 +68,7 @@ CDocLineMgr::~CDocLineMgr()
 //! pPosの直前に新しい行を挿入
 CDocLine* CDocLineMgr::InsertNewLine(CDocLine* pPos)
 {
-	CDocLine* pcDocLineNew = new CDocLine;
+	CDocLine* pcDocLineNew = m_memPool.Construct();
 	_InsertBeforePos(pcDocLineNew,pPos);
 	return pcDocLineNew;
 }
@@ -76,7 +76,7 @@ CDocLine* CDocLineMgr::InsertNewLine(CDocLine* pPos)
 //! 最下部に新しい行を挿入
 CDocLine* CDocLineMgr::AddNewLine()
 {
-	CDocLine* pcDocLineNew = new CDocLine;
+	CDocLine* pcDocLineNew = m_memPool.Construct();
 	_PushBottom(pcDocLineNew);
 	return pcDocLineNew;
 }
@@ -87,7 +87,7 @@ void CDocLineMgr::DeleteAllLine()
 	CDocLine* pDocLine = m_pDocLineTop;
 	while( pDocLine ){
 		CDocLine* pDocLineNext = pDocLine->GetNextLine();
-		delete pDocLine;
+		m_memPool.Destruct(pDocLine);
 		pDocLine = pDocLineNext;
 	}
 	_Init();
@@ -118,7 +118,7 @@ void CDocLineMgr::DeleteLine( CDocLine* pcDocLineDel )
 	}
 
 	//データ削除
-	delete pcDocLineDel;
+	m_memPool.Destruct(pcDocLineDel);
 
 	//行数減算
 	m_nLines--;
