@@ -71,6 +71,8 @@ private:
 		T element;
 		Node* next;
 	};
+	
+	static_assert(BlockSize >= 2 * sizeof(Node), "BlockSize too small.");
 
 	T* Allocate()
 	{
