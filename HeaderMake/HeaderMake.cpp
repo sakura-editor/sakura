@@ -47,13 +47,6 @@
 	usage() を参照
 */
 
-#ifdef __MINGW32__
-#include <_mingw.h>
-#ifdef MINGW_HAS_SECURE_API
-#undef MINGW_HAS_SECURE_API
-#endif  // MINGW_HAS_SECURE_API
-#endif  // __MINGW32__
-
 #include <stdio.h>
 #include <string>
 #include <vector>
@@ -64,38 +57,10 @@
 #include <errno.h>
 using namespace std;
 
-#define PREPROCESSOR "cl.exe /nologo /source-charset:utf-8 /execution-charset:shift_jis /EP %s"
-
-#ifdef __MINGW32__
-#include <windows.h>
-#ifndef _countof
-#define _countof(A) (sizeof(A)/sizeof(A[0]))
-#endif
-#define sprintf_s(A, B, C, ...) sprintf((A), (C), (__VA_ARGS__))
-#define strncpy_s(A, B, C, D) strncpy((A), (C), (D))
-
-#undef PREPROCESSOR
-#define PREPROCESSOR "gcc -x c++ -finput-charset=utf-8 -fexec-charset=cp932 -E %s"
-
-void fopen_s( 
-   FILE** pFile,
-   const char *filename,
-   const char *mode 
-)
-{
-	*pFile = fopen(filename, mode);
-}
-#endif	// __MINGW32__
-
 #ifdef _MSC_VER
-#if _MSC_VER < 1400	// VC2003
-#ifndef _countof
-#define _countof(A) (sizeof(A)/sizeof(A[0]))
-#endif
-#define sprintf_s(A, B, C, D) sprintf((A), (C), (D))
-#define strncpy_s(A, B, C, D) strncpy((A), (C), (D))
-#define fopen_s(A, B, C) ( *(A) = fopen((B), (C)) )
-#endif	// VC2003
+#define PREPROCESSOR "cl.exe /nologo /source-charset:utf-8 /execution-charset:shift_jis /EP %s"
+#elif defined(__GNUC__)
+#define PREPROCESSOR "gcc.exe -x c++ -finput-charset=utf-8 -fexec-charset=cp932 -E %s"
 #endif	// _MSC_VER
 
 enum EMode{
