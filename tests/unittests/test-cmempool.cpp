@@ -88,7 +88,7 @@ TEST(CMemPool, parameterized_constructor)
 	
 	p0 = pool.Construct(L"あいうえお");
 	p1 = pool.Construct(L"nullptr");
-	p2 = pool.Construct(12345, '\u4A3B');
+	p2 = pool.Construct(12345, '㌍');
 	std::wstring s{L"令和"};
 	p3 = pool.Construct(s);
 
