@@ -35,12 +35,13 @@
 template <typename T>
 void testPool(size_t sz)
 {
-	CMemPool<char> pool;
-	std::vector<char*> ptrs(sz);
+	CMemPool<T> pool;
+	std::vector<T*> ptrs(sz);
 	for (size_t i=0; i<sz; ++i) {
-		ptrs[i] = pool.Construct();
-		ASSERT_TRUE(ptrs[i] != nullptr);
-		ASSERT_TRUE(is_aligned(ptrs[i], alignof(T)));
+		T* p = pool.Construct();
+		ptrs[i] = p;
+		ASSERT_TRUE(p != nullptr);
+		ASSERT_TRUE(is_aligned(p, alignof(T)));
 	}
 	for (size_t i=0; i<sz; ++i) {
 		pool.Destruct(ptrs[i]);
