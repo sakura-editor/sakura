@@ -2,7 +2,11 @@ set platform=%1
 set configuration=%2
 set ERROR_RESULT=0
 
-call %~dp0..\tools\find-tools.bat
+if not defined CMD_CMAKE call "%~dp0..\tools\find-tools.bat"
+if not defined CMD_CMAKE (
+	echo cmake.exe was not found.
+	exit /b 1
+)
 
 pushd %~dp0
 if not exist googletest (
