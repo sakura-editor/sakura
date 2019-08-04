@@ -34,7 +34,9 @@
 template <typename T>
 class CMemPoolTest : public ::testing::Test{};
 
+// BlockSize テンプレート引数のバリエーション用意
 using test_types = ::testing::Types<
+	std::integral_constant<std::size_t, 511>,
 	std::integral_constant<std::size_t, 512>,
 	std::integral_constant<std::size_t, 1024>, 
 	std::integral_constant<std::size_t, 2048>,
@@ -47,28 +49,46 @@ using test_types = ::testing::Types<
 
 TYPED_TEST_CASE(CMemPoolTest, test_types);
 
+// ポインタのアライメントが取れているか確認
 #define is_aligned(POINTER, BYTE_COUNT) (((uintptr_t)(const void *)(POINTER)) % (BYTE_COUNT) == 0)
 
+// デフォルトコンストラクタを指定回数呼び出し
 template <typename T, size_t BlockSize>
 void testPool(size_t sz)
 {
 	CMemPool<T, BlockSize> pool;
 	std::vector<T*> ptrs(sz);
+	// 要素構築
 	for (size_t i=0; i<sz; ++i) {
 		T* p = pool.Construct();
 		ptrs[i] = p;
-		ASSERT_TRUE(p != nullptr);
-		ASSERT_TRUE(is_aligned(p, alignof(T)));
+		ASSERT_TRUE(p != nullptr); // 領域を確保できたか確認
+		ASSERT_TRUE(is_aligned(p, alignof(T))); // アライメントが取れているか確認
 	}
+	// 要素破棄
+	for (size_t i=0; i<sz; ++i) {
+		pool.Destruct(ptrs[i]);
+	}
+	// 要素破棄後に要素を再度構築
+	for (size_t i=0; i<sz; ++i) {
+		T* p = pool.Construct();
+		ptrs[i] = p;
+		ASSERT_TRUE(p != nullptr); // 領域を確保できたか確認
+		ASSERT_TRUE(is_aligned(p, alignof(T))); // アライメントが取れているか確認
+	}
+	// 再度要素を破棄
 	for (size_t i=0; i<sz; ++i) {
 		pool.Destruct(ptrs[i]);
 	}
 }
 
-// デフォルトコンストラクタ
+// 色々な型やBlockSizeでデフォルトコンストラクタをたくさん呼び出す
 TYPED_TEST(CMemPoolTest, default_constructor)
 {
+	// BlockSize を取得
 	constexpr size_t BlockSize = TypeParam::value;
+	
+	// ユーザー定義型の確認用
 	struct TestStruct
 	{
 		int* ptr;
@@ -78,7 +98,7 @@ TYPED_TEST(CMemPoolTest, default_constructor)
 	};
 		
 	/*!
-		指定回数呼び出して落ちない事を確認する
+		色々なケースの確認
 	*/
 	size_t sz = 1;
 	for (size_t i=0; i<10; ++i, sz*=2) {
@@ -105,36 +125,67 @@ TYPED_TEST(CMemPoolTest, parameterized_constructor)
 	std::wstring* p2 = nullptr;
 	std::wstring* p3 = nullptr;
 	
-	p0 = pool.Construct(L"あいうえお");
-	p1 = pool.Construct(L"nullptr");
-	p2 = pool.Construct(12345, '㌍');
-	std::wstring s{L"令和"};
-	p3 = pool.Construct(s);
+	std::wstring s0{L"あいうえお"};
+	std::wstring s1{L"nullptr"};
+	wchar_t c2{'㌍'};
+	size_t len2 = 12345;
+	std::wstring s2(len2, c2);
+	std::wstring s3{L"令和"};
+	
+	// 構築と破棄を繰り返して動作するか確認
+	for (size_t i=0; i<8; ++i) {
+		// 要素構築
+		p0 = pool.Construct(s0);
+		p1 = pool.Construct(s1);
+		p2 = pool.Construct(len2, c2);
+		p3 = pool.Construct(s3);
 
-	ASSERT_TRUE(p0 != nullptr);
-	ASSERT_TRUE(p1 != nullptr);
-	ASSERT_TRUE(p2 != nullptr);
-	ASSERT_TRUE(p3 != nullptr);
-	
-	ASSERT_TRUE(p0->size() == 5);
-	ASSERT_TRUE(p1->size() == 7);
-	ASSERT_TRUE(p2->size() == 12345);
-	ASSERT_TRUE(p3->size() == 2);
-	ASSERT_TRUE(*p3 == s);
-	
-	pool.Destruct(p0);
-	pool.Destruct(p1);
-	pool.Destruct(p2);
-	pool.Destruct(p3);
+		// 領域を構築できたか確認
+		ASSERT_TRUE(p0 != nullptr);
+		ASSERT_TRUE(p1 != nullptr);
+		ASSERT_TRUE(p2 != nullptr);
+		ASSERT_TRUE(p3 != nullptr);
+		
+		// コンストラクタに指定した値と同一か確認
+		ASSERT_TRUE(*p0 == s0);
+		ASSERT_TRUE(*p1 == s1);
+		ASSERT_TRUE(*p2 == s2);
+		ASSERT_TRUE(*p3 == s3);
+		
+		// 要素破棄
+		pool.Destruct(p0);
+		pool.Destruct(p1);
+		pool.Destruct(p2);
+		pool.Destruct(p3);
+	}
 }
 
 // ブロックサイズは要素が２つ以上入る大きさにする確認
 TEST(CMemPool, BlockSize)
 {
+	// ブロックサイズが要素が2つ以上入る大きさに指定した場合にコンパイルエラーが起きない事の確認
 	CMemPool<std::array<uint8_t, 1024>, 2048> pool0;
 	CMemPool<std::array<uint8_t, 1025>, 4096> pool1;
 	CMemPool<std::array<uint8_t, 2048>, 4096> pool2;
 	CMemPool<std::array<uint8_t, 2049>, 8192> pool3;
 	CMemPool<std::array<uint8_t, 4096>, 8192> pool4;
+	
+	// ブロックサイズを最小の大きさにした際に要素の構築と破棄が正常に動作するかを確認
+	{
+		CMemPool<char, sizeof(void*)*2> pool;
+		char* p;
+		p = pool.Construct();
+		pool.Destruct(p);
+		p = pool.Construct();
+		pool.Destruct(p);
+	}
+	{
+		CMemPool<double, 16> pool;
+		double* p;
+		p = pool.Construct();
+		pool.Destruct(p);
+		p = pool.Construct();
+		pool.Destruct(p);
+	}
 }
 
