@@ -2,6 +2,12 @@ set platform=%1
 set configuration=%2
 set ERROR_RESULT=0
 
+if not defined CMD_CMAKE call "%~dp0..\tools\find-tools.bat"
+if not defined CMD_CMAKE (
+	echo cmake.exe was not found.
+	exit /b 1
+)
+
 @rem produces header files necessary in creating the project.
 if "%platform%" == "MinGW" (
 	set BUILD_EDITOR_BAT=build-gnu.bat
@@ -32,7 +38,7 @@ if exist "%BUILDDIR%" (
 mkdir "%BUILDDIR%"
 
 call :setenv_%platform% %platform% %configuration%
-cmake %CMAKE_GEN_OPT% -H. -B"%BUILDDIR%" || set ERROR_RESULT=1
+"%CMD_CMAKE%" %CMAKE_GEN_OPT% -H. -B"%BUILDDIR%" || set ERROR_RESULT=1
 
 popd
 
