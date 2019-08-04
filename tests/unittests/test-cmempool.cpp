@@ -27,15 +27,32 @@
 #include <vector>
 #include <array>
 #include <string>
+#include <type_traits>
 #include <stdint.h>
 #include <Windows.h>
 
+template <typename T>
+class CMemPoolTest : public ::testing::Test{};
+
+using test_types = ::testing::Types<
+	std::integral_constant<std::size_t, 512>,
+	std::integral_constant<std::size_t, 1024>, 
+	std::integral_constant<std::size_t, 2048>,
+	std::integral_constant<std::size_t, 4096>,
+	std::integral_constant<std::size_t, 8192>,
+	std::integral_constant<std::size_t, 16384>,
+	std::integral_constant<std::size_t, 32768>,
+	std::integral_constant<std::size_t, 65536>
+>;
+
+TYPED_TEST_CASE(CMemPoolTest, test_types);
+
 #define is_aligned(POINTER, BYTE_COUNT) (((uintptr_t)(const void *)(POINTER)) % (BYTE_COUNT) == 0)
 
-template <typename T>
+template <typename T, size_t BlockSize>
 void testPool(size_t sz)
 {
-	CMemPool<T> pool;
+	CMemPool<T, BlockSize> pool;
 	std::vector<T*> ptrs(sz);
 	for (size_t i=0; i<sz; ++i) {
 		T* p = pool.Construct();
@@ -49,8 +66,9 @@ void testPool(size_t sz)
 }
 
 // デフォルトコンストラクタ
-TEST(CMemPool, default_constructor)
+TYPED_TEST(CMemPoolTest, default_constructor)
 {
+	constexpr size_t BlockSize = TypeParam::value;
 	struct TestStruct
 	{
 		int* ptr;
@@ -64,22 +82,23 @@ TEST(CMemPool, default_constructor)
 	*/
 	size_t sz = 1;
 	for (size_t i=0; i<10; ++i, sz*=2) {
-		testPool<int8_t>(sz);
-		testPool<int16_t>(sz);
-		testPool<int32_t>(sz);
-		testPool<int64_t>(sz);
-		testPool<float>(sz);
-		testPool<double>(sz);
-		testPool<FILETIME>(sz);
-		testPool<TestStruct>(sz);
-		testPool<std::wstring>(sz);
+		testPool<int8_t, BlockSize>(sz);
+		testPool<int16_t, BlockSize>(sz);
+		testPool<int32_t, BlockSize>(sz);
+		testPool<int64_t, BlockSize>(sz);
+		testPool<float, BlockSize>(sz);
+		testPool<double, BlockSize>(sz);
+		testPool<FILETIME, BlockSize>(sz);
+		testPool<TestStruct, BlockSize>(sz);
+		testPool<std::wstring, BlockSize>(sz);
 	}
 }
 
 // 引数付きコンストラクタ
-TEST(CMemPool, parameterized_constructor)
+TYPED_TEST(CMemPoolTest, parameterized_constructor)
 {
-	CMemPool<std::wstring> pool;
+	constexpr size_t BlockSize = TypeParam::value;
+	CMemPool<std::wstring, BlockSize> pool;
 	
 	std::wstring* p0 = nullptr;
 	std::wstring* p1 = nullptr;
@@ -109,10 +128,13 @@ TEST(CMemPool, parameterized_constructor)
 	pool.Destruct(p3);
 }
 
-// ブロックサイズ
+// ブロックサイズは要素が２つ以上入る大きさにする確認
 TEST(CMemPool, BlockSize)
 {
-	CMemPool<std::array<uint8_t, 2048>> pool;
-	CMemPool<std::array<uint8_t, 4096>, 8192> pool2;
+	CMemPool<std::array<uint8_t, 1024>, 2048> pool0;
+	CMemPool<std::array<uint8_t, 1025>, 4096> pool1;
+	CMemPool<std::array<uint8_t, 2048>, 4096> pool2;
+	CMemPool<std::array<uint8_t, 2047>, 8192> pool3;
+	CMemPool<std::array<uint8_t, 4096>, 8192> pool4;
 }
 
