@@ -1,0 +1,80 @@
+# see https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops&viewFallbackFrom=vsts#passing-parameters
+parameters:
+  name: ''
+  vmImage: ''
+  displayName: ''
+
+jobs:
+- job: ${{ parameters.name }}
+  displayName: ${{ parameters.displayName }}
+  dependsOn: script_check
+  pool:
+    vmImage: ${{ parameters.vmImage }}
+
+  strategy:
+    maxParallel: 2
+    matrix:
+      MinGW_Debug:
+        BuildPlatform: 'MinGW'
+        Configuration: 'Debug'
+      MinGW_Release:
+        BuildPlatform: 'MinGW'
+        Configuration: 'Release'
+
+  steps:
+  - checkout:   self       # self represents the repo where the initial Pipelines YAML file was found
+    clean:      all        # what to clean each time; if not mentioned, does not clean
+    fetchDepth: 5          # the depth of commits to ask Git to fetch; defaults to no limit
+
+  # show environmental variables for debug.
+  - script: set
+    displayName: Show environmental variables for debug
+
+  - template: /ci/azure-pipelines/template.steps.install-mingw-w64-gcc.yml
+
+  # Build GNU C++
+  - script: build-gnu.bat       $(BuildPlatform) $(Configuration)
+    displayName: Build with MinGW-w64-gcc
+
+  # Unit tests
+  - script: tests\build-and-test.bat $(BuildPlatform) $(Configuration)
+    displayName: Unit test
+
+  # see https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/copy-files?view=azure-devops&tabs=yaml
+  #
+  # "condition:" に関しては以下を参照
+  #     https://docs.microsoft.com/en-us/azure/devops/pipelines/process/conditions?view=azure-devops&tabs=yaml
+  #
+  # "succeededOrFailed()" に関しては以下を参照
+  #     https://docs.microsoft.com/en-us/azure/devops/pipelines/process/conditions?view=azure-devops&tabs=yaml#job-status-functions
+  #
+  - task: CopyFiles@1
+    condition: succeededOrFailed()
+    displayName: Copy to ArtifactStagingDirectory
+    inputs:
+      contents: |
+       **.zip
+       **.zip.md5
+      targetFolder: $(Build.ArtifactStagingDirectory)
+
+  # see https://docs.microsoft.com/en-us/azure/devops/pipelines/artifacts/build-artifacts?view=azure-devops&tabs=yaml
+  - task: PublishBuildArtifacts@1
+    condition: succeededOrFailed()
+    displayName: Publish ArtifactStagingDirectory
+    inputs:
+       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+       artifactName: $(BuildPlatform)_$(Configuration)
+
+  # see https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=yaml
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: '**/*-googletest-*.xml'
+      #searchFolder: '$(System.DefaultWorkingDirectory)' # Optional
+      #mergeTestResults: false # Optional
+      #failTaskOnFailedTests: false # Optional
+      #testRunTitle: # Optional
+      #buildPlatform: # Optional
+      #buildConfiguration: # Optional
+      #publishRunAttachments: true # Optional
