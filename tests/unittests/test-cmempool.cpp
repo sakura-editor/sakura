@@ -134,7 +134,7 @@ TEST(CMemPool, BlockSize)
 	CMemPool<std::array<uint8_t, 1024>, 2048> pool0;
 	CMemPool<std::array<uint8_t, 1025>, 4096> pool1;
 	CMemPool<std::array<uint8_t, 2048>, 4096> pool2;
-	CMemPool<std::array<uint8_t, 2047>, 8192> pool3;
+	CMemPool<std::array<uint8_t, 2049>, 8192> pool3;
 	CMemPool<std::array<uint8_t, 4096>, 8192> pool4;
 }
 
