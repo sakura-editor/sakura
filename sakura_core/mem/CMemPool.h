@@ -45,10 +45,10 @@ public:
 	~CMemPool()
 	{
 		// メモリ確保した領域の連結リストを辿って全てのブロック分のメモリ解放
-		Node* curr = m_currentBlock;
+		Block* curr = m_currentBlock;
 		while (curr) {
-			Node* next = curr->next;
-			operator delete(reinterpret_cast<void*>(curr));
+			Block* next = curr->next;
+			operator delete(curr);
 			curr = next;
 		}
 	}
@@ -72,36 +72,40 @@ public:
 	}
 
 private:
-	// 共用体を使う事で要素型と自己参照用のポインタを同じ領域に割り当てる
-	// 共用体のサイズは各メンバを格納できるサイズになる事を利用する
+
 	union Node {
 		~Node() {}
 		T element;	// 要素型
-		Node* next; // ブロックのヘッダの場合は、次のブロックに繋がる
-					// 解放後の未割当領域の場合は次の未割当領域に繋がる
+		Node* next; // 解放後の未割当領域の場合は次の未割当領域に繋がる
+	};
+
+	union Block {
+		~Block() {}
+		struct {
+			Block* next;
+			Node nodes[1];
+		};
+		uint8_t padding[BlockSize];
 	};
 	
-	// ブロックの大きさをNode2個分以上とする事で、最低限ブロック連結用のポインタとNode1つを記録出来る事を保証
-	static_assert(BlockSize >= 2 * sizeof(Node), "BlockSize too small.");
-
 	// 要素のメモリ確保処理、要素の領域のポインタを返す
 	T* Allocate()
 	{
 		// メモリ確保時には未割当領域から使用していく
 		if (m_unassignedNode) {
-			T* ret = reinterpret_cast<T*>(m_unassignedNode);
+			T* ret = &m_unassignedNode->element;
 			m_unassignedNode = m_unassignedNode->next;
 			return ret;
 		}
 		else {
-			// 未割当領域が無い場合は、ブロックの中から切り出す
-			// 現在のブロックにNodeサイズ分の領域が無い場合は新規のブロックを確保
-			Node* border = reinterpret_cast<Node*>(reinterpret_cast<char*>(m_currentBlock) + BlockSize - sizeof(Node) + 1);
-			if (m_currentNode >= border) {
+			// 未割当領域が無い場合は、ブロックの中のNode領域を使用する
+			if (reinterpret_cast<void*>(m_currentNode + 1) >= reinterpret_cast<void*>(m_currentBlock + 1)) {
+				// 現在のブロックに新規に割り当てるNode分の領域が残っていない場合は新規にブロックを確保
 				AllocateBlock();
 			}
-			// 要素の領域のポインタを返すと同時にポインタを次に進めて切り出す位置を更新する
-			return reinterpret_cast<T*>(m_currentNode++);
+			T* ret = &m_currentNode->element;
+			++m_currentNode;
+			return ret;
 		}
 	}
 
@@ -119,26 +123,20 @@ private:
 	}
 
 	// 呼び出しの度にメモリの動的確保を細かく行う事を避ける為に、一括でブロック領域を確保
-	// ブロックの先頭(head)にはブロックの連結用のポインタが配置され、残る領域（body）には要素が記録される
 	void AllocateBlock()
 	{
-		char* buff = reinterpret_cast<char*>(operator new (BlockSize));
-		Node* next = m_currentBlock;
-		// ブロック領域の先頭（head）はNodeのポインタとして扱い、以前に作成したブロックに連結する
-		m_currentBlock = reinterpret_cast<Node*>(buff);
+		Block* next = m_currentBlock;
+		// 以前に作成したブロックに連結する
+		m_currentBlock = reinterpret_cast<Block*>(operator new(sizeof(Block)));
 		m_currentBlock->next = next;
 
-		// ブロック領域の残る部分は要素の領域とするが、アライメントを取る
-		void* body = buff + sizeof(Node*);
-		size_t space = BlockSize - sizeof(Node*);
-		body = std::align(alignof(Node), sizeof(Node), body, space);
-		assert(body);
-		m_currentNode = reinterpret_cast<Node*>(body);
+		// 新規に作成したブロックの先頭のNodeから使用する
+		m_currentNode = &m_currentBlock->nodes[0];
 	}
 
+	Block* m_currentBlock = nullptr; // 現在のブロック
 	Node* m_unassignedNode = nullptr; // 未割当領域の先頭
-	Node* m_currentBlock = nullptr; // 現在のブロック
-	Node* m_currentNode = nullptr; // 要素確保処理時に現在のブロックの中から切り出すNodeを指すポインタ、メモリ確保時に未割当領域が無い場合はここを使う
+	Node* m_currentNode = nullptr; // 現在のブロックの中のNodeを指すポインタ、メモリ確保時に未割当領域が無い場合はここを使う
 };
 
 #endif /* SAKURA_CMEMPOOL_H_ */

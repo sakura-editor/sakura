@@ -36,7 +36,16 @@ class CMemPoolTest : public ::testing::Test{};
 
 // BlockSize テンプレート引数のバリエーション用意
 using test_types = ::testing::Types<
-	std::integral_constant<std::size_t, 511>,
+	std::integral_constant<std::size_t, 1>,
+	std::integral_constant<std::size_t, 2>,
+	std::integral_constant<std::size_t, 3>,
+	std::integral_constant<std::size_t, 4>,
+	std::integral_constant<std::size_t, 8>,
+	std::integral_constant<std::size_t, 16>,
+	std::integral_constant<std::size_t, 32>,
+	std::integral_constant<std::size_t, 64>,
+	std::integral_constant<std::size_t, 128>,
+	std::integral_constant<std::size_t, 256>,
 	std::integral_constant<std::size_t, 512>,
 	std::integral_constant<std::size_t, 1024>, 
 	std::integral_constant<std::size_t, 2048>,
@@ -157,35 +166,6 @@ TYPED_TEST(CMemPoolTest, parameterized_constructor)
 		pool.Destruct(p1);
 		pool.Destruct(p2);
 		pool.Destruct(p3);
-	}
-}
-
-// ブロックサイズは要素が２つ以上入る大きさにする確認
-TEST(CMemPool, BlockSize)
-{
-	// ブロックサイズが要素が2つ以上入る大きさに指定した場合にコンパイルエラーが起きない事の確認
-	CMemPool<std::array<uint8_t, 1024>, 2048> pool0;
-	CMemPool<std::array<uint8_t, 1025>, 4096> pool1;
-	CMemPool<std::array<uint8_t, 2048>, 4096> pool2;
-	CMemPool<std::array<uint8_t, 2049>, 8192> pool3;
-	CMemPool<std::array<uint8_t, 4096>, 8192> pool4;
-	
-	// ブロックサイズを最小の大きさにした際に要素の構築と破棄が正常に動作するかを確認
-	{
-		CMemPool<char, sizeof(void*)*2> pool;
-		char* p;
-		p = pool.Construct();
-		pool.Destruct(p);
-		p = pool.Construct();
-		pool.Destruct(p);
-	}
-	{
-		CMemPool<double, 16> pool;
-		double* p;
-		p = pool.Construct();
-		pool.Destruct(p);
-		p = pool.Construct();
-		pool.Destruct(p);
 	}
 }
 
