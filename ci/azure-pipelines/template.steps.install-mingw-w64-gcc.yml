@@ -1,0 +1,18 @@
+#############################################################################################################
+#   必要な mingw-w64-gcc をインストール手順の 'steps' を定義するテンプレート
+#
+#   parameters
+#       なし
+#############################################################################################################
+steps:
+  - script: cinst msys2 --params "/InstallDir=C:/msys64" --no-progress
+    displayName: install msys2
+
+  - script: C:\msys64\usr\bin\bash --login -c "pacman -S --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-gcc-libs"
+    displayName: install MinGW-w64-gcc
+
+  - script: C:\msys64\usr\bin\bash --login -c "pacman -S --noconfirm mingw-w64-x86_64-make"
+    displayName: install MinGW-w64-make
+
+  - script: C:\msys64\usr\bin\bash --login -c "pacman -S --noconfirm mingw-w64-x86_64-gtest"
+    displayName: install MinGW-w64-gtest
