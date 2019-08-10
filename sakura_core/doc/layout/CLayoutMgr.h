@@ -24,6 +24,7 @@
 
 #include <Windows.h>// 2002/2/10 aroka
 #include <vector>
+#include <memory_resource>
 #include "doc/CDocListener.h"
 #include "_main/global.h"// 2002/2/10 aroka
 #include "basis/SakuraBasis.h"
@@ -37,7 +38,6 @@
 #include "util/design_template.h"
 
 class CBregexp;// 2002/2/10 aroka
-class CLayout;// 2002/2/10 aroka
 class CDocLineMgr;// 2002/2/10 aroka
 class CDocLine;// 2002/2/10 aroka
 class CMemory;// 2002/2/10 aroka
@@ -399,6 +399,8 @@ protected:
 	//実データ
 	CLayout*				m_pLayoutTop;
 	CLayout*				m_pLayoutBot;
+	std::pmr::unsynchronized_pool_resource m_layoutPool;
+	std::pmr::polymorphic_allocator<CLayout> m_layoutAllocator;
 
 	//タイプ別設定
 	const STypeConfig*		m_pTypeConfig;

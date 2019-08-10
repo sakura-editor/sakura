@@ -36,7 +36,8 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CLayoutMgr::CLayoutMgr()
-: m_getIndentOffset( &CLayoutMgr::getIndentOffset_Normal )	//	Oct. 1, 2002 genta	//	Nov. 16, 2002 メンバー関数ポインタにはクラス名が必要
+: m_getIndentOffset( &CLayoutMgr::getIndentOffset_Normal ),	//	Oct. 1, 2002 genta	//	Nov. 16, 2002 メンバー関数ポインタにはクラス名が必要
+  m_layoutAllocator( &m_layoutPool )
 {
 	m_pcDocLineMgr = NULL;
 	m_pTypeConfig = NULL;
@@ -95,7 +96,8 @@ void CLayoutMgr::_Empty()
 	CLayout* pLayout = m_pLayoutTop;
 	while( pLayout ){
 		CLayout* pLayoutNext = pLayout->GetNextLayout();
-		delete pLayout;
+		pLayout->~CLayout();
+		m_layoutAllocator.deallocate(pLayout, 1);
 		pLayout = pLayoutNext;
 	}
 }
@@ -381,7 +383,8 @@ CLayout* CLayoutMgr::CreateLayout(
 	CLayoutColorInfo*	colorInfo
 )
 {
-	CLayout* pLayout = new CLayout(
+	CLayout* pLayout = m_layoutAllocator.allocate(1);
+	m_layoutAllocator.construct(pLayout,
 		pCDocLine,
 		ptLogicPos,
 		nLength,
@@ -589,7 +592,8 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 			DEBUG_TRACE( _T("バグバグ\n") );
 		}
 
-		delete pLayout;
+		pLayout->~CLayout();
+		m_layoutAllocator.deallocate(pLayout, 1);
 
 		m_nLines--;	/* 全物理行数 */
 		if( NULL == pLayoutNext ){
