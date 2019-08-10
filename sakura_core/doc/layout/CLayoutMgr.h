@@ -399,8 +399,7 @@ protected:
 	//実データ
 	CLayout*				m_pLayoutTop;
 	CLayout*				m_pLayoutBot;
-	std::pmr::unsynchronized_pool_resource m_layoutPool;
-	std::pmr::polymorphic_allocator<CLayout> m_layoutAllocator;
+	std::unique_ptr<std::pmr::memory_resource> m_layoutMemRes;
 
 	//タイプ別設定
 	const STypeConfig*		m_pTypeConfig;
