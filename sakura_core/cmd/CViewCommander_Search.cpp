@@ -975,7 +975,8 @@ void CViewCommander::Command_REPLACE_ALL()
 	/*CLogicInt*/int		linOldLen = (0);	//検査後の行の長さ
 
 	int nLoopCnt = -1;
-
+	constexpr DWORD wndRefreshInterval = 16;
+	DWORD prevTime = GetTickCount() + wndRefreshInterval;
 	/* テキストが選択されているか */
 	while( (!bFastMode && m_pCommanderView->GetSelectionInfo().IsTextSelected())
 		|| ( bFastMode && cSelectLogic.IsValid() ) )
@@ -999,31 +1000,37 @@ void CViewCommander::Command_REPLACE_ALL()
 		nLoopCnt++;
 		// 128 ごとに表示。
 		if( 0 == (nLoopCnt & 0x7F ) )
-		// 時間ごとに進歩状況描画だと時間取得分遅くなると思うが、そちらの方が自然だと思うので・・・。
-		// と思ったけど、逆にこちらの方が自然ではないので、やめる。
 		{
-			if( bFastMode ){
-				int nDiff = nAllLineNumOrg - (Int)GetDocument()->m_cDocLineMgr.GetLineCount();
-				if( 0 <= nDiff ){
-					nNewPos = (nDiff + (Int)cSelectLogic.GetFrom().GetY2()) >> nShiftCount;
+			DWORD currTime = GetTickCount();
+			DWORD diffTime = currTime - prevTime;
+			// 前回の表示更新時刻から一定時間以上経過していた場合のみ表示更新する
+			// 頻繁に表示更新すると表示更新処理自体の処理時間が目立ってしまう為
+			if (diffTime >= wndRefreshInterval)
+			{
+				prevTime = currTime;
+				if( bFastMode ){
+					int nDiff = nAllLineNumOrg - (Int)GetDocument()->m_cDocLineMgr.GetLineCount();
+					if( 0 <= nDiff ){
+						nNewPos = (nDiff + (Int)cSelectLogic.GetFrom().GetY2()) >> nShiftCount;
+					}else{
+						nNewPos = ::MulDiv((Int)cSelectLogic.GetFrom().GetY(), nAllLineNum, (Int)GetDocument()->m_cDocLineMgr.GetLineCount());
+					}
 				}else{
-					nNewPos = ::MulDiv((Int)cSelectLogic.GetFrom().GetY(), nAllLineNum, (Int)GetDocument()->m_cDocLineMgr.GetLineCount());
+					int nDiff = nAllLineNumOrg - (Int)GetDocument()->m_cLayoutMgr.GetLineCount();
+					if( 0 <= nDiff ){
+						nNewPos = (nDiff + (Int)GetSelect().GetFrom().GetY2()) >> nShiftCount;
+					}else{
+						nNewPos = ::MulDiv((Int)GetSelect().GetFrom().GetY(), nAllLineNum, (Int)GetDocument()->m_cLayoutMgr.GetLineCount());
+					}
 				}
-			}else{
-				int nDiff = nAllLineNumOrg - (Int)GetDocument()->m_cLayoutMgr.GetLineCount();
-				if( 0 <= nDiff ){
-					nNewPos = (nDiff + (Int)GetSelect().GetFrom().GetY2()) >> nShiftCount;
-				}else{
-					nNewPos = ::MulDiv((Int)GetSelect().GetFrom().GetY(), nAllLineNum, (Int)GetDocument()->m_cLayoutMgr.GetLineCount());
+				if( nOldPos != nNewPos ){
+					Progress_SetPos( hwndProgress, nNewPos +1 );
+					Progress_SetPos( hwndProgress, nNewPos );
+					nOldPos = nNewPos;
 				}
+				_itot( nReplaceNum, szLabel, 10 );
+				::SendMessage( hwndStatic, WM_SETTEXT, 0, (LPARAM)szLabel );
 			}
-			if( nOldPos != nNewPos ){
-				Progress_SetPos( hwndProgress, nNewPos +1 );
-				Progress_SetPos( hwndProgress, nNewPos );
-				nOldPos = nNewPos;
-			}
-			_itot( nReplaceNum, szLabel, 10 );
-			::SendMessage( hwndStatic, WM_SETTEXT, 0, (LPARAM)szLabel );
 		}
 
 		// From Here 2001.12.03 hor
