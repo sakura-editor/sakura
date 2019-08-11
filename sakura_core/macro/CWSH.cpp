@@ -79,11 +79,11 @@ public:
 	{
 	}
 
-	virtual ULONG _stdcall AddRef() {
+	virtual ULONG STDMETHODCALLTYPE AddRef() {
 		return ++m_RefCount;
 	}
 
-	virtual ULONG _stdcall Release() {
+	virtual ULONG STDMETHODCALLTYPE Release() {
 		if(--m_RefCount == 0)
 		{
 			delete this;
@@ -221,7 +221,7 @@ public:
 	}
 
 	//	Sep. 15, 2005 FILE IActiveScriptSiteWindow実装
-	virtual HRESULT __stdcall GetWindow(
+	virtual HRESULT STDMETHODCALLTYPE GetWindow(
 	    /* [out] */ HWND *phwnd)
 	{
 		*phwnd = CEditWnd::getInstance()->m_cSplitterWnd.GetHwnd();
@@ -229,7 +229,7 @@ public:
 	}
 
 	//	Sep. 15, 2005 FILE IActiveScriptSiteWindow実装
-	virtual HRESULT __stdcall EnableModeless(
+	virtual HRESULT STDMETHODCALLTYPE EnableModeless(
 	    /* [in] */ BOOL fEnable)
 	{
 		return S_OK;
