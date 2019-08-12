@@ -79,11 +79,11 @@ public:
 	{
 	}
 
-	virtual ULONG _stdcall AddRef() {
+	virtual ULONG STDMETHODCALLTYPE AddRef() {
 		return ++m_RefCount;
 	}
 
-	virtual ULONG _stdcall Release() {
+	virtual ULONG STDMETHODCALLTYPE Release() {
 		if(--m_RefCount == 0)
 		{
 			delete this;
