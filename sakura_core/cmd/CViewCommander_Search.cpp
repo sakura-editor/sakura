@@ -974,8 +974,8 @@ void CViewCommander::Command_REPLACE_ALL()
 	CLogicPoint boxRight;      // 矩形選択の現在の行の右端。sRangeA.GetTo().x ではなく boxRight.x + colDif を使う。
 	/*CLogicInt*/int		linOldLen = (0);	//検査後の行の長さ
 
-	int nLoopCnt = -1;
-
+	constexpr DWORD userInterfaceInterval = 16;
+	DWORD prevTime = GetTickCount() + userInterfaceInterval;
 	/* テキストが選択されているか */
 	while( (!bFastMode && m_pCommanderView->GetSelectionInfo().IsTextSelected())
 		|| ( bFastMode && cSelectLogic.IsValid() ) )
@@ -986,22 +986,22 @@ void CViewCommander::Command_REPLACE_ALL()
 			break;
 		}
 
-		/* 処理中のユーザー操作を可能にする */
-		if( !::BlockingHook( hwndCancel ) )
+		DWORD currTime = GetTickCount();
+		DWORD diffTime = currTime - prevTime;
+		// 前回の表示更新時刻から一定時間以上経過していた場合のみ処理する
+		// 頻繁に表示更新すると表示更新処理自体の処理時間が目立ってしまう為
+		if (diffTime >= userInterfaceInterval)
 		{
-			m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);
-			::EnableWindow( m_pCommanderView->GetHwnd(), TRUE );
-			::EnableWindow( ::GetParent( m_pCommanderView->GetHwnd() ), TRUE );
-			::EnableWindow( ::GetParent( ::GetParent( m_pCommanderView->GetHwnd() ) ), TRUE );
-			return;// -1;
-		}
-
-		nLoopCnt++;
-		// 128 ごとに表示。
-		if( 0 == (nLoopCnt & 0x7F ) )
-		// 時間ごとに進歩状況描画だと時間取得分遅くなると思うが、そちらの方が自然だと思うので・・・。
-		// と思ったけど、逆にこちらの方が自然ではないので、やめる。
-		{
+			prevTime = currTime;
+			/* 処理中のユーザー操作を可能にする */
+			if( !::BlockingHook( hwndCancel ) )
+			{
+				m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);
+				::EnableWindow( m_pCommanderView->GetHwnd(), TRUE );
+				::EnableWindow( ::GetParent( m_pCommanderView->GetHwnd() ), TRUE );
+				::EnableWindow( ::GetParent( ::GetParent( m_pCommanderView->GetHwnd() ) ), TRUE );
+				return;// -1;
+			}
 			if( bFastMode ){
 				int nDiff = nAllLineNumOrg - (Int)GetDocument()->m_cDocLineMgr.GetLineCount();
 				if( 0 <= nDiff ){
