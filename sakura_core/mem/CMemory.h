@@ -47,7 +47,9 @@ public:
 	CMemory();
 	CMemory(const CMemory& rhs);
 	CMemory(const void* pData, int nDataLenBytes);
-	virtual ~CMemory();
+	// デストラクタを仮想にすると仮想関数テーブルへのポインタを持つ為にインスタンスの容量が増えてしまうので仮想にしない
+	// 仮想デストラクタでは無いので派生クラスでメンバー変数を追加しない事
+	~CMemory();
 protected:
 	void _init_members();
 
