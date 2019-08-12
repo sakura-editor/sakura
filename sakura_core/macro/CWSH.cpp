@@ -293,7 +293,8 @@ typedef struct {
 } SAbortMacroParam;
 
 // WSHマクロ実行を中止するスレッド
-static unsigned __stdcall AbortMacroProc( LPVOID lpParameter )
+// @see https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms686736(v=vs.85)
+static DWORD WINAPI AbortMacroProc( LPVOID lpParameter )
 {
 	SAbortMacroParam* pParam = (SAbortMacroParam*) lpParameter;
 
