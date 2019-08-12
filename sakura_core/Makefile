@@ -33,7 +33,9 @@ CFLAGS= \
  -fexec-charset=cp932 \
  -I. \
  $(DEFINES) $(MYCFLAGS)
-CXXFLAGS= $(CFLAGS) $(MYCXXFLAGS)
+CXXFLAGS= $(CFLAGS) \
+ -std=c++17 \
+ $(MYCXXFLAGS)
 LIBS= \
  -static \
  -lwinspool \
