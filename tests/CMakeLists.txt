@@ -6,6 +6,10 @@ project (sakura-unittest)
 option(BUILD_GTEST "Build GoogleTest." ON)
 option(BUILD_SHARED_LIBS "Build shared libraries (DLLs)." OFF)
 
+enable_language(CXX)
+set(CMAKE_CXX_STANDARD 17)    # C++17...
+set(CMAKE_CXX_STANDARD_REQUIRED ON) #...is required...
+
 # switch DLL or static libary by specifying by command line
 set (LIB_TYPE STATIC)
 if (BUILD_SHARED_LIBS)
