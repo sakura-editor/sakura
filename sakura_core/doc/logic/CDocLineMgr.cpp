@@ -53,10 +53,8 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CDocLineMgr::CDocLineMgr()
-	:
-	m_docLineMemRes(new CPoolResource<CDocLine>())
-	//m_docLineMemRes(new std::pmr::unsynchronized_pool_resource()) // メモリ使用量が大きい為に使用しないで、CPoolResource を代わりに使う
-
+	: m_docLineMemRes(new CPoolResource<CDocLine>())
+	//: m_docLineMemRes(new std::pmr::unsynchronized_pool_resource()) // メモリ使用量が大きい為に使用しない
 {
 	_Init();
 }
