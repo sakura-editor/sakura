@@ -115,6 +115,7 @@ private:
 	void AllocateBlock()
 	{
 		char* buff = reinterpret_cast<char*>(VirtualAlloc(NULL, BlockSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE));
+		if (!buff) throw std::bad_alloc();
 		Node* next = m_currentBlock;
 		// ブロック領域の先頭（head）はNodeのポインタとして扱い、以前に作成したブロックに連結する
 		m_currentBlock = reinterpret_cast<Node*>(buff);
