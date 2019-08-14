@@ -438,7 +438,7 @@ HEADERMAKE= $(HEADERMAKETOOLDIR)/HeaderMake.exe
 
 all: $(exe)
 
-$(exe): githash $(OBJS)
+$(exe): $(OBJS)
 	$(CXX) -o $@ $(OBJS) $(LIBS)
 
 Funccode_define.h: $(HEADERMAKE) Funccode_x.hsrc
@@ -447,25 +447,22 @@ Funccode_define.h: $(HEADERMAKE) Funccode_x.hsrc
 Funccode_enum.h: $(HEADERMAKE) Funccode_x.hsrc
 	$(HEADERMAKE) -in=../sakura_core/Funccode_x.hsrc -out=../sakura_core/Funccode_enum.h -mode=enum -enum=EFunctionCode
 
-githash:
+githash.h:
 	"$(CURDIR)/../sakura/githash.bat" ../sakura_core
 
-stdafx: Funccode_enum.h StdAfx.h
-	$(CXX) $(CXXFLAGS) -c StdAfx.h
-
-.cpp.o: stdafx
+.cpp.o: githash.h Funccode_enum.h
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 $(HEADERMAKE): $(HEADERMAKETOOLDIR)/HeaderMake.cpp
 	$(CXX) $(CXXFLAGS) $(HEADERMAKETOOLDIR)/HeaderMake.cpp -o $@ -static-libgcc
 
-sakura_rc.o: Funccode_define.h githash sakura_rc.rc
+sakura_rc.o: githash.h Funccode_define.h sakura_rc.rc
 	$(RC) -c utf-8 --language=0411 $(DEFINES) sakura_rc.rc -o $@
 
 clean:
 	$(RM) $(exe) $(OBJS) $(HEADERMAKE) StdAfx.h.gch $(GENERATED_FILES) depend.mak
 
-depend: Funccode_enum.h githash
+depend: githash.h Funccode_enum.h
 	$(CXX) -E -MM -w $(DEFINES) $(CXXFLAGS) *.cpp > depend.mak
 
 .SUFFIXES: .cpp .o .rc
