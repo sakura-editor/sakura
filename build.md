@@ -182,8 +182,7 @@ x86_64 | posix | sjlj | pthreadのDLLが必要
 コマンド実行例
 
 ```
-path=D:\eclipse4.6\eclipse\mingw\bin;%path%
-cd sakura_core
-mingw32-make githash stdafx sakura_rc.o
-mingw32-make -j4
+path=C:\msys64\mingw64\bin;%path%
+mingw32-make -C sakura_core githash.h Funccode_enum.h Funccode_define.h
+mingw32-make -C sakura_core -j4
 ```
