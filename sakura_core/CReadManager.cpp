@@ -105,7 +105,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		CNativeW		cUnicodeBuffer;
 		EConvertResult	eRead;
 		constexpr DWORD timeInterval = 33;
-		DWORD nextTime = GetTickCount() + timeInterval;
+		ULONGLONG nextTime = GetTickCount64() + timeInterval;
 		while( RESULT_FAILURE != (eRead = cfl.ReadLine( &cUnicodeBuffer, &cEol )) ){
 			if(eRead==RESULT_LOSESOME){
 				eRet = RESULT_LOSESOME;
@@ -114,7 +114,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 			int		nLineLen = cUnicodeBuffer.GetStringLength();
 			CDocEditAgent(pcDocLineMgr).AddLineStrX( pLine, nLineLen );
 			//経過通知
-			DWORD currTime = GetTickCount();
+			ULONGLONG currTime = GetTickCount64();
 			if(currTime >= nextTime){
 				nextTime += timeInterval;
 				NotifyProgress(cfl.GetPercent());
