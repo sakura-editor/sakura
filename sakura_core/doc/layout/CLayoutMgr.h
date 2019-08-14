@@ -38,6 +38,7 @@
 #include "util/design_template.h"
 
 class CBregexp;// 2002/2/10 aroka
+class CLayout;// 2002/2/10 aroka
 class CDocLineMgr;// 2002/2/10 aroka
 class CDocLine;// 2002/2/10 aroka
 class CMemory;// 2002/2/10 aroka
