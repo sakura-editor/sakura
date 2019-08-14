@@ -48,6 +48,18 @@ enum EEolType {
 	EOL_UNKNOWN = -1	//
 };
 
+/* 行終端子の長さ */
+/* g_aEolTable といっしょに保守する事 */
+static const uint8_t g_aEolLengths[] = {
+	0,
+	2,
+	1,
+	1,
+	1,
+	1,
+	1,
+};
+
 #define EOL_TYPE_NUM	EOL_CODEMAX // 8
 
 /* 行終端子の配列 */
@@ -90,7 +102,7 @@ public:
 
 	//取得
 	EEolType		GetType()	const{ return m_eEolType; }		//!< 現在のTypeを取得
-	CLogicInt		GetLen()	const;	//!< 現在のEOL長を取得。文字単位。
+	CLogicInt		GetLen()	const { return CLogicInt(g_aEolLengths[ m_eEolType ]); }	//!< 現在のEOL長を取得。文字単位。
 	const TCHAR*	GetName()	const;	//!< 現在のEOLの名称取得
 	const wchar_t*	GetValue2()	const;	//!< 現在のEOL文字列先頭へのポインタを取得
 	//#####

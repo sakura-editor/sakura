@@ -673,9 +673,7 @@ void CViewSelect::PrintSelectionInfoMsg() const
 	else {
 		//	通常の選択では選択範囲の中身を数える
 		int select_sum = 0;	//	バイト数合計
-		const wchar_t *pLine;	//	データを受け取る
-		CLogicInt	nLineLen;		//	行の長さ
-		const CLayout*	pcLayout;
+		const CLayout* __restrict pcLayout;
 		CViewSelect* thiz = const_cast<CViewSelect*>( this );	// const外しthis
 
 		// 共通設定・選択文字数を文字単位ではなくバイト単位で表示する
@@ -685,8 +683,8 @@ void CViewSelect::PrintSelectionInfoMsg() const
 								pView->m_pcEditWnd->m_nSelectCountMode == SELECT_COUNT_BY_BYTE );
 
 		//	1行目
-		pLine = pView->m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_sSelect.GetFrom().GetY2(), &nLineLen, &pcLayout );
-		if( pLine ){
+		pcLayout = pView->m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY(m_sSelect.GetFrom().GetY2());
+		if( pcLayout ){
 			if( bCountByByte ){
 				//  バイト数でカウント
 				//  内部文字コードから現在の文字コードに変換し、バイト数を取得する。
@@ -701,8 +699,8 @@ void CViewSelect::PrintSelectionInfoMsg() const
 				bool bSelExtend;						// 選択領域拡大フラグ
 
 				// 最終行の処理
-				pLine = pView->m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_sSelect.GetTo().y, &nLineLen, &pcLayout );
-				if( pLine ){
+				pcLayout = pView->m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_sSelect.GetTo().y );
+				if( pcLayout ){
 					if( pView->LineColumnToIndex( pcLayout, m_sSelect.GetTo().GetX2() ) == 0 ){
 						//	最終行の先頭にキャレットがある場合は
 						//	その行を行数に含めない
@@ -781,19 +779,18 @@ void CViewSelect::PrintSelectionInfoMsg() const
 					//	GetSelectedDataと似ているが，先頭行と最終行は排除している
 					//	Aug. 16, 2005 aroka nLineNumはfor以降でも使われるのでforの前で宣言する
 					//	VC .NET以降でもMicrosoft拡張を有効にした標準動作はVC6と同じことに注意
-					CLayoutInt nLineNum;
-					for( nLineNum = m_sSelect.GetFrom().GetY2() + CLayoutInt(1);
-						nLineNum < m_sSelect.GetTo().GetY2(); ++nLineNum ){
-						pLine = pView->m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
+					CLayoutInt nLineNum = m_sSelect.GetFrom().GetY2() + CLayoutInt(1);
+					CLayoutInt nLineTo = m_sSelect.GetTo().GetY2();
+					pcLayout = pView->m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
+					for( ; nLineNum < nLineTo && pcLayout; ++nLineNum ){
 						//	2006.06.06 ryoji 指定行のデータが存在しない場合の対策
-						if( NULL == pLine )
-							break;
-						select_sum += pcLayout->GetLengthWithoutEOL() + pcLayout->GetLayoutEol().GetLen();
+						select_sum += pcLayout->GetLengthWithEOL() - 1 + pcLayout->GetLayoutEol().GetLen();
+						pcLayout = pcLayout->GetNextLayout();
 					}
 
 					//	最終行の処理
-					pLine = pView->m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
-					if( pLine ){
+					pcLayout = pView->m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
+					if( pcLayout ){
 						int last_line_chars = pView->LineColumnToIndex( pcLayout, m_sSelect.GetTo().GetX2() );
 						select_sum += last_line_chars;
 						if( last_line_chars == 0 ){
