@@ -101,20 +101,22 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 
 		// ReadLineはファイルから 文字コード変換された1行を読み出します
 		// エラー時はthrow CError_FileRead を投げます
-		int				nLineNum = 0;
 		CEol			cEol;
 		CNativeW		cUnicodeBuffer;
 		EConvertResult	eRead;
+		constexpr DWORD timeInterval = 33;
+		ULONGLONG nextTime = GetTickCount64() + timeInterval;
 		while( RESULT_FAILURE != (eRead = cfl.ReadLine( &cUnicodeBuffer, &cEol )) ){
 			if(eRead==RESULT_LOSESOME){
 				eRet = RESULT_LOSESOME;
 			}
 			const wchar_t*	pLine = cUnicodeBuffer.GetStringPtr();
 			int		nLineLen = cUnicodeBuffer.GetStringLength();
-			++nLineNum;
 			CDocEditAgent(pcDocLineMgr).AddLineStrX( pLine, nLineLen );
 			//経過通知
-			if(nLineNum%512==0){
+			ULONGLONG currTime = GetTickCount64();
+			if(currTime >= nextTime){
+				nextTime += timeInterval;
 				NotifyProgress(cfl.GetPercent());
 				// 処理中のユーザー操作を可能にする
 				if( !::BlockingHook( NULL ) ){
