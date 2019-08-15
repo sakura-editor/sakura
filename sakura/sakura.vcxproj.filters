@@ -1088,6 +1088,9 @@
     <ClInclude Include="..\sakura_core\recent\CRecentExcludeFolder.h">
       <Filter>Cpp Source Files\recent</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\mem\CPoolResource.h">
+      <Filter>Cpp Source Files\mem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\sakura_core\Funccode_x.hsrc">
