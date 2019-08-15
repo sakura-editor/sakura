@@ -34,7 +34,7 @@ PATH=%PATH:C:\Program Files\Git\bin;=%
 path=C:\msys64\mingw64\bin;%path%
 
 @echo mingw32-make -C sakura_core MYDEFINES="%MYDEFINES%" MYCFLAGS="%MYCFLAGS%" MYLIBS="%MYLIBS%"
-mingw32-make -C sakura_core MYDEFINES="%MYDEFINES%" MYCFLAGS="%MYCFLAGS%" MYLIBS="%MYLIBS%" githash stdafx Funccode_enum.h Funccode_define.h
+mingw32-make -C sakura_core MYDEFINES="%MYDEFINES%" MYCFLAGS="%MYCFLAGS%" MYLIBS="%MYLIBS%" githash.h Funccode_enum.h Funccode_define.h
 if errorlevel 1 (
 	echo error 1 errorlevel %errorlevel%
 	exit /b 1
