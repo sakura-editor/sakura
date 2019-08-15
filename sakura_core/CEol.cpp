@@ -46,18 +46,7 @@ const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
 //	固定データ
 //-----------------------------------------------
 
-struct SEolDefinition{
-	const TCHAR*	m_szName;
-	const WCHAR*	m_szDataW;
-	const ACHAR*	m_szDataA;
-	int				m_nLen;
-
-	bool StartsWith(const WCHAR* pData, int nLen) const{ return m_nLen<=nLen && 0==auto_memcmp(pData,m_szDataW,m_nLen); }
-	bool StartsWith(const ACHAR* pData, int nLen) const{ return m_nLen<=nLen && m_szDataA[0] != '\0' && 0==auto_memcmp(pData,m_szDataA,m_nLen); }
-};
-
-/* g_aEolLengths といっしょに保守する事 */
-static const SEolDefinition g_aEolTable[] = {
+const SEolDefinition g_aEolTable[] = {
 	{ _T("改行無"),	L"",			"",			0 },
 	{ _T("CRLF"),	L"\x0d\x0a",	"\x0d\x0a",	2 },
 	{ _T("LF"),		L"\x0a",		"\x0a",		1 },
