@@ -46,16 +46,7 @@ const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
 //	固定データ
 //-----------------------------------------------
 
-struct SEolDefinition{
-	const TCHAR*	m_szName;
-	const WCHAR*	m_szDataW;
-	const ACHAR*	m_szDataA;
-	int				m_nLen;
-
-	bool StartsWith(const WCHAR* pData, int nLen) const{ return m_nLen<=nLen && 0==auto_memcmp(pData,m_szDataW,m_nLen); }
-	bool StartsWith(const ACHAR* pData, int nLen) const{ return m_nLen<=nLen && m_szDataA[0] != '\0' && 0==auto_memcmp(pData,m_szDataA,m_nLen); }
-};
-static const SEolDefinition g_aEolTable[] = {
+const SEolDefinition g_aEolTable[] = {
 	{ _T("改行無"),	L"",			"",			0 },
 	{ _T("CRLF"),	L"\x0d\x0a",	"\x0d\x0a",	2 },
 	{ _T("LF"),		L"\x0a",		"\x0a",		1 },
@@ -128,12 +119,6 @@ EEolType _GetEOLType_unibe( const char* pszData, int nDataLen )
 //-----------------------------------------------
 //	実装部
 //-----------------------------------------------
-
-//! 現在のEOL長を取得。文字単位。
-CLogicInt CEol::GetLen() const
-{
-	return CLogicInt(g_aEolTable[ m_eEolType ].m_nLen);
-}
 
 //! 現在のEOLの名称取得
 const TCHAR* CEol::GetName() const

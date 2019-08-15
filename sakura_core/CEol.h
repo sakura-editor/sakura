@@ -48,6 +48,17 @@ enum EEolType {
 	EOL_UNKNOWN = -1	//
 };
 
+struct SEolDefinition{
+	const TCHAR*	m_szName;
+	const WCHAR*	m_szDataW;
+	const ACHAR*	m_szDataA;
+	int				m_nLen;
+
+	bool StartsWith(const WCHAR* pData, int nLen) const{ return m_nLen<=nLen && 0==auto_memcmp(pData,m_szDataW,m_nLen); }
+	bool StartsWith(const ACHAR* pData, int nLen) const{ return m_nLen<=nLen && m_szDataA[0] != '\0' && 0==auto_memcmp(pData,m_szDataA,m_nLen); }
+};
+extern const SEolDefinition g_aEolTable[];
+
 #define EOL_TYPE_NUM	EOL_CODEMAX // 8
 
 /* 行終端子の配列 */
@@ -90,7 +101,7 @@ public:
 
 	//取得
 	EEolType		GetType()	const{ return m_eEolType; }		//!< 現在のTypeを取得
-	CLogicInt		GetLen()	const;	//!< 現在のEOL長を取得。文字単位。
+	CLogicInt		GetLen()	const { return CLogicInt(g_aEolTable[ m_eEolType ].m_nLen); }	//!< 現在のEOL長を取得。文字単位。
 	const TCHAR*	GetName()	const;	//!< 現在のEOLの名称取得
 	const wchar_t*	GetValue2()	const;	//!< 現在のEOL文字列先頭へのポインタを取得
 	//#####
