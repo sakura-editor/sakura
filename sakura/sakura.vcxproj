@@ -438,6 +438,7 @@
     <ClInclude Include="..\sakura_core\mem\CNativeA.h" />
     <ClInclude Include="..\sakura_core\mem\CNativeT.h" />
     <ClInclude Include="..\sakura_core\mem\CNativeW.h" />
+    <ClInclude Include="..\sakura_core\mem\CPoolResource.h" />
     <ClInclude Include="..\sakura_core\mem\CRecycledBuffer.h" />
     <ClInclude Include="..\sakura_core\mfclike\CMyWnd.h" />
     <ClInclude Include="..\sakura_core\outline\CDlgFileTree.h" />
