@@ -779,6 +779,9 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 			sPos.ForwardLayoutLineRef(1);	//レイアウト行＋＋
 		}
 	}else{
+		SColorStrategyInfo sInfo(gr);
+		sInfo.m_pDispPos = &sPos;
+		sInfo.m_pcView = this;
 		while(sPos.GetLayoutLineRef() <= nLayoutLineTo)
 		{
 			//描画X位置リセット
@@ -786,8 +789,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 
 			//1行描画
 			bool bDispResult = DrawLogicLine(
-				gr,
-				&sPos,
+				&sInfo,
 				nLayoutLineTo
 			);
 
@@ -871,17 +873,12 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 	@date 2007.08.31 kobake 引数 bDispBkBitmap を削除
 */
 bool CEditView::DrawLogicLine(
-	HDC				_hdc,			//!< [in]     作画対象
-	DispPos*		_pDispPos,		//!< [in,out] 描画する箇所、描画元ソース
+	SColorStrategyInfo* pInfo,		//!< [in,out] 作画情報
 	CLayoutInt		nLineTo			//!< [in]     作画終了するレイアウト行番号
 )
 {
 //	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DrawLogicLine" );
 	bool bDispEOF = false;
-	SColorStrategyInfo _sInfo(_hdc);
-	SColorStrategyInfo* pInfo = &_sInfo;
-	pInfo->m_pDispPos = _pDispPos;
-	pInfo->m_pcView = this;
 
 	//CColorStrategyPool初期化
 	CColorStrategyPool* pool = CColorStrategyPool::getInstance();
