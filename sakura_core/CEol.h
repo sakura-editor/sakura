@@ -36,7 +36,7 @@
 
 // 2002/09/22 Moca EOL_CRLF_UNICODEを廃止
 /* 行終端子の種類 */
-enum EEolType {
+enum EEolType : char {
 	EOL_NONE,			//!< 
 	EOL_CRLF,			//!< 0d0a
 	EOL_LF,				//!< 0a

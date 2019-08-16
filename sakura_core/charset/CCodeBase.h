@@ -35,7 +35,7 @@ enum EConvertResult{
 class CMemory;
 class CNativeW;
 struct CommonSetting_Statusbar;
-enum EEolType;
+enum EEolType : char;
 
 /*!
 	文字コード基底クラス。

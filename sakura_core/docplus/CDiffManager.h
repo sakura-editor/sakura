@@ -35,7 +35,7 @@ class CDocLineMgr;
 class CGraphics;
 
 //! DIFF情報定数
-enum EDiffMark{
+enum EDiffMark : char {
 	MARK_DIFF_NONE		= 0,	//!< 無変更
 	MARK_DIFF_APPEND	= 1,	//!< 追加
 	MARK_DIFF_CHANGE	= 2,	//!< 変更

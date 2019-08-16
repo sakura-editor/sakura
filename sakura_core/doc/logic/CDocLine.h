@@ -30,6 +30,8 @@
 class CDocLine;
 class COpeBlk;
 
+#pragma pack(push,1)
+
 //!	文書データ1行
 class CDocLine{
 protected:
@@ -98,7 +100,6 @@ private: //####
 	CDocLine*	m_pNext;	//!< 一つ後の要素
 private:
 	CNativeW	m_cLine;	//!< データ  2007.10.11 kobake ポインタではなく、実体を持つように変更
-	CEol		m_cEol;		//!< 行末コード
 public:
 	//拡張情報 $$分離中
 	struct MarkType{
@@ -108,9 +109,13 @@ public:
 		CLineDiffed		m_cDiffmarked;	//DIFF差分情報
 	};
 	MarkType m_sMark;
+private:
+	CEol		m_cEol;		//!< 行末コード
 
 	DISALLOW_COPY_AND_ASSIGN(CDocLine);
 };
+
+#pragma pack(pop)
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CDOCLINE_H_ */
