@@ -1,53 +1,53 @@
-<html><head><title>�}�N���̊֐����ɂ���</title>
+﻿<html><head><title>マクロの関数名について</title>
 <LINK REL="stylesheet" TYPE="text/css" HREF="../sakura.css">
-<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 </head>
 <small>
 Sakura-Editor Macro Reference
 </small>
-<h2>�}�N���̊֐����ɂ���</h2>
+<h2>マクロの関数名について</h2>
 
-�g�p����}�N���̎�ނɂ��A
-�擪��'S_'������ꍇ�Ƃ��Ȃ��ꍇ������܂��B
-<h3>�L�[�}�N��</h3>
+使用するマクロの種類により、
+先頭の'S_'をつける場合とつけない場合があります。
+<h3>キーマクロ</h3>
 
 <pre>
-<span style = "color:green;">// �R�����g</span>
+<span style = "color:green;">// コメント</span>
 <span style = "color:blue;">S_InsText</span>( '&lt;br /&gt;' );
-<span style = "color:blue;">InsText</span>( "&lt;br /&gt;" ); <span style = "color:green;">// S_ �͂����Ă��Ȃ��Ă����삵�܂��B</span>
+<span style = "color:blue;">InsText</span>( "&lt;br /&gt;" ); <span style = "color:green;">// S_ はあってもなくても動作します。</span>
 </pre>
 
-<h3> PPA�}�N��</h3>
+<h3> PPAマクロ</h3>
 <pre>
-<span style = "color:green;">// �R�����g</span>
-<span style = "color:blue;">S_InsText</span>( '&lt;br /&gt;' ); <span style = "color:green;">// PPA�ł͕K�� S_�����Ă��������B</span>
+<span style = "color:green;">// コメント</span>
+<span style = "color:blue;">S_InsText</span>( '&lt;br /&gt;' ); <span style = "color:green;">// PPAでは必ず S_をつけてください。</span>
 </pre>
 <h3> WSH(JScript)</h3>
 <pre>
-<span style = "color:green;">// �R�����g</span>
-<span style = "color:blue;">Editor.InsText</span>('&lt;br /&gt;'); <span style = "color:green;">// WSH�ł�S_�����܂���B</span>
-<span style = "color:blue;">InsText</span>('&lt;br /&gt;'); <span style = "color:green;">// Editor�I�u�W�F�N�g�͏ȗ��\</span>
+<span style = "color:green;">// コメント</span>
+<span style = "color:blue;">Editor.InsText</span>('&lt;br /&gt;'); <span style = "color:green;">// WSHではS_がつきません。</span>
+<span style = "color:blue;">InsText</span>('&lt;br /&gt;'); <span style = "color:green;">// Editorオブジェクトは省略可能</span>
 </pre>
 
 <h3> WSH(VBScript)</h3>
 <pre>
-<span style = "color:green;">&#39; �R�����g</span>
-<span style = "color:blue;">Editor.InsText</span> "&lt;br /&gt;" <span style = "color:green;">&#39; WSH�ł�S_�����܂���B</span>
-<span style = "color:blue;">InsText</span> "&lt;br /&gt;" <span style = "color:green;">&#39; Editor�I�u�W�F�N�g�͏ȗ��\</span>
+<span style = "color:green;">&#39; コメント</span>
+<span style = "color:blue;">Editor.InsText</span> "&lt;br /&gt;" <span style = "color:green;">&#39; WSHではS_がつきません。</span>
+<span style = "color:blue;">InsText</span> "&lt;br /&gt;" <span style = "color:green;">&#39; Editorオブジェクトは省略可能</span>
 </pre>
 
 <h3>WSH(PerlScript)</h3>
 <pre>
-<span style = "color:green;"># �R�����g</span>
-$Editor-&gt;<span style = "color:blue;">InsText</span>(<span style = "color:#800000;">'&lt;br /&gt;'</span>);  <span style = "color:green;"># WSH�ł�S_�����܂���B</span>
-<span style = "color:blue;">InsText</span>(<span style = "color:#800000;">'&lt;br /&gt;'</span>);             <span style = "color:green;"># Editor�I�u�W�F�N�g�͏ȗ��\</span>
+<span style = "color:green;"># コメント</span>
+$Editor-&gt;<span style = "color:blue;">InsText</span>(<span style = "color:#800000;">'&lt;br /&gt;'</span>);  <span style = "color:green;"># WSHではS_がつきません。</span>
+<span style = "color:blue;">InsText</span>(<span style = "color:#800000;">'&lt;br /&gt;'</span>);             <span style = "color:green;"># Editorオブジェクトは省略可能</span>
 __END__
-�uuse strict;�v�Ƃ���Ɓu$Editor->�}�N���֐���();�v�̏����ł͓��삵�܂���B
-Editor�I�u�W�F�N�g���ȗ����邩�A�uour $Editor;�v�ŉ���ł��܂��B
+「use strict;」とすると「$Editor->マクロ関数名();」の書式では動作しません。
+Editorオブジェクトを省略するか、「our $Editor;」で回避できます。
 </pre>
 
 
-���ꂼ��̃}�N����񋟂��Ă��鑤�̃w���v��T�N���G�f�B�^�w���v�̃}�N���̍����A�����Ă������������B
+それぞれのマクロを提供している側のヘルプやサクラエディタヘルプのマクロの項も、併せてご覧ください。
 
 
 

@@ -1,16 +1,16 @@
-<html><head><title>S_GetSelectxxx‚Ìg—p—á</title>
+ï»¿<html><head><title>S_GetSelectxxxã®ä½¿ç”¨ä¾‹</title>
 <LINK REL="stylesheet" TYPE="text/css" HREF="../sakura.css">
-<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 </head>
 <body>
 <small>
 Sakura-Editor Macro Reference
 </small>
-<h2>S_GetSelectxxx‚Ìg—p—á</h2>
+<h2>S_GetSelectxxxã®ä½¿ç”¨ä¾‹</h2>
 
 <pre>
 <span style = "color:green;">//sample.js
-//ƒJ[ƒ\ƒ‹ˆÊ’u‚Ì’PŒê‚ÌƒoƒCƒg”</span>
+//ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã®å˜èªã®ãƒã‚¤ãƒˆæ•°</span>
 <span style = "color:blue;">SelectWord</span>;
 <span style = "color:blue;">var</span> iLen = <span style = "color:blue;">GetSelectColmTo</span> - <span style = "color:blue;">GetSelectColmFrom</span>;
 
@@ -20,21 +20,21 @@ oWsh.Popup(iLen + "byte", <span style = "color:red;">0</span>, <span style = "co
 
 <pre>
 <span style = "color:green;">//sample.ppa
-//‘I‘ğó‘Ô‚ğ’²‚×‚é</span>
+//é¸æŠçŠ¶æ…‹ã‚’èª¿ã¹ã‚‹</span>
 <span style = "color:blue;">if S_IsTextSelected</span> = <span style = "color:red;">0</span> <span style = "color:blue;">then</span>
-  <span style = "color:blue;">MessageBox</span>(<span style = "color:#800000;">'”ñ‘I‘ğó‘Ô‚Å‚·'</span>, <span style = "color:#800000;">'title'</span>, <span style = "color:red;">0</span>)
+  <span style = "color:blue;">MessageBox</span>(<span style = "color:#800000;">'éé¸æŠçŠ¶æ…‹ã§ã™'</span>, <span style = "color:#800000;">'title'</span>, <span style = "color:red;">0</span>)
 
 <span style = "color:blue;">else if S_IsTextSelected</span> &gt; <span style = "color:red;">1</span> <span style = "color:blue;">then</span>
-  <span style = "color:blue;">MessageBox</span>(<span style = "color:#800000;">'‹éŒ`‘I‘ğó‘Ô‚Å‚·'</span>, <span style = "color:#800000;">'title'</span>, <span style = "color:red;">0</span>)
+  <span style = "color:blue;">MessageBox</span>(<span style = "color:#800000;">'çŸ©å½¢é¸æŠçŠ¶æ…‹ã§ã™'</span>, <span style = "color:#800000;">'title'</span>, <span style = "color:red;">0</span>)
 
 <span style = "color:blue;">else if</span> (<span style = "color:blue;">S_GetSelectColmFrom</span> = <span style = "color:red;">1</span>) and (<span style = "color:blue;">S_GetSelectColmTo</span> = <span style = "color:red;">1</span>) <span style = "color:blue;">then</span>
-  <span style = "color:blue;">MessageBox</span>(<span style = "color:#800000;">'s‘I‘ğó‘Ô‚Å‚·'</span>, <span style = "color:#800000;">'title'</span>, <span style = "color:red;">0</span>)
+  <span style = "color:blue;">MessageBox</span>(<span style = "color:#800000;">'è¡Œé¸æŠçŠ¶æ…‹ã§ã™'</span>, <span style = "color:#800000;">'title'</span>, <span style = "color:red;">0</span>)
 
 <span style = "color:blue;">else if S_GetSelectLineFrom</span> = <span style = "color:blue;">S_GetSelectLineTo</span> <span style = "color:blue;">then</span>
-  <span style = "color:blue;">MessageBox</span>(<span style = "color:#800000;">'‚PsˆÈ“à‚Ì•”•ª‘I‘ğ‚Å‚·'</span>, <span style = "color:#800000;">'title'</span>, <span style = "color:red;">0</span>)
+  <span style = "color:blue;">MessageBox</span>(<span style = "color:#800000;">'ï¼‘è¡Œä»¥å†…ã®éƒ¨åˆ†é¸æŠã§ã™'</span>, <span style = "color:#800000;">'title'</span>, <span style = "color:red;">0</span>)
 
 <span style = "color:blue;">else</span>
-  <span style = "color:blue;">MessageBox</span>(<span style = "color:#800000;">'•¡”s‚É‚Ü‚½‚ª‚Á‚½•”•ª‘I‘ğ‚Å‚·'</span>, <span style = "color:#800000;">'title'</span>, <span style = "color:red;">0</span>)
+  <span style = "color:blue;">MessageBox</span>(<span style = "color:#800000;">'è¤‡æ•°è¡Œã«ã¾ãŸãŒã£ãŸéƒ¨åˆ†é¸æŠã§ã™'</span>, <span style = "color:#800000;">'title'</span>, <span style = "color:red;">0</span>)
 ;
 </pre>
 

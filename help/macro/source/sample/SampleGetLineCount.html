@@ -1,20 +1,20 @@
-<html><head><title>S_GetLineCount‚Ìg—p—á</title>
+ï»¿<html><head><title>S_GetLineCountã®ä½¿ç”¨ä¾‹</title>
 <LINK REL="stylesheet" TYPE="text/css" HREF="../sakura.css">
-<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 </head>
 <body>
 <small>
 Sakura-Editor Macro Reference
 </small>
-<h2>S_GetLineCount‚Ìg—p—á</h2>
+<h2>S_GetLineCountã®ä½¿ç”¨ä¾‹</h2>
 
 <pre>
 <span style = "color:green;">//sample.js</span>
-<span style = "color:green;">//‹ós‚ğƒJƒEƒ“ƒg‚·‚é</span>
+<span style = "color:green;">//ç©ºè¡Œã‚’ã‚«ã‚¦ãƒ³ãƒˆã™ã‚‹</span>
 <span style = "color:blue;">var</span> iLine = <span style = "color:red;">0</span>;
 <span style = "color:blue;">var</span> iCount = <span style = "color:red;">0</span>;
-<span style = "color:blue;">var</span> iMax = <span style = "color:blue;">GetLineCount</span>(<span style = "color:red;">0</span>);	<span style = "color:green;">//˜_—s”‚ğæ“¾</span>
-<span style = "color:blue;">while</span> (++iLine &lt;= iMax){	<span style = "color:green;">//‘Ss‚ğƒ‹[ƒv</span>
+<span style = "color:blue;">var</span> iMax = <span style = "color:blue;">GetLineCount</span>(<span style = "color:red;">0</span>);	<span style = "color:green;">//è«–ç†è¡Œæ•°ã‚’å–å¾—</span>
+<span style = "color:blue;">while</span> (++iLine &lt;= iMax){	<span style = "color:green;">//å…¨è¡Œã‚’ãƒ«ãƒ¼ãƒ—</span>
     <span style = "color:blue;">if</span> (<span style = "color:blue;">GetLineStr</span>(iLine).<span style = "color:blue;">match</span>(/[^\t ]+/) == <span style = "color:red;">0</span>){
         iCount++;
     }
@@ -26,22 +26,22 @@ oWsh.Popup(iCount, <span style = "color:red;">0</span>, <span style = "color:#80
 
 <pre>
 <span style = "color:green;">//sample.ppa
-//Å‘åŒ…”‚ğ’²‚×‚é</span>
+//æœ€å¤§æ¡æ•°ã‚’èª¿ã¹ã‚‹</span>
 <span style = "color:blue;">var</span>
     iCount : <span style = "color:blue;">integer</span>;
     iLen : <span style = "color:blue;">integer</span>;
     iMax : <span style = "color:blue;">integer</span>;
 
 <span style = "color:blue;">begin</span>
-    iCount := <span style = "color:blue;">S_GetLineCount</span>(<span style = "color:red;">0</span>);   <span style = "color:green;">//s”æ“¾</span>
+    iCount := <span style = "color:blue;">S_GetLineCount</span>(<span style = "color:red;">0</span>);   <span style = "color:green;">//è¡Œæ•°å–å¾—</span>
 
     <span style = "color:blue;">while</span> iCount <span style = "color:blue;">do</span>
-    <span style = "color:blue;">begin</span>                    <span style = "color:green;">//‘Ssƒ‹[ƒv</span>
+    <span style = "color:blue;">begin</span>                    <span style = "color:green;">//å…¨è¡Œãƒ«ãƒ¼ãƒ—</span>
         iLen := <span style = "color:blue;">Length</span>( <span style = "color:blue;">S_GetLineStr</span>(iCount) );
         <span style = "color:blue;">if</span> iMax &lt; iLen <span style = "color:blue;">then</span> iMax := iLen;
         iCount := iCount - <span style = "color:red;">1</span>;
     <span style = "color:blue;">end</span>;
-    <span style = "color:blue;">MessageBox</span>(<span style = "color:blue;">IntToStr</span>(iMax), <span style = "color:#800000;">'Å‘åŒ…”'</span>, <span style = "color:red;">0</span>);
+    <span style = "color:blue;">MessageBox</span>(<span style = "color:blue;">IntToStr</span>(iMax), <span style = "color:#800000;">'æœ€å¤§æ¡æ•°'</span>, <span style = "color:red;">0</span>);
 <span style = "color:blue;">end</span>;
 </pre>
 

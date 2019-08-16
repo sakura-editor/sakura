@@ -1,19 +1,19 @@
-<html><head><title>Windows Script Component‚Ìg—p</title>
+ï»¿<html><head><title>Windows Script Componentã®ä½¿ç”¨</title>
 <LINK REL="stylesheet" TYPE="text/css" HREF="../sakura.css">
-<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 </head>
 <small>
 Sakura-Editor Macro Reference
 </small>
-<h2>Windows Script Component‚Ìg—p</h2>
-<p>WSHƒ}ƒNƒ‚É‚¨‚¢‚ÄWindows Script Component(*.wsc)‚ğg—p‚·‚é‚±‚Æ‚Å
-ŠeíƒXƒNƒŠƒvƒg‚ğ¬İ‚Å—˜—p‚Å‚«‚Ü‚·B
+<h2>Windows Script Componentã®ä½¿ç”¨</h2>
+<p>WSHãƒã‚¯ãƒ­ã«ãŠã„ã¦Windows Script Component(*.wsc)ã‚’ä½¿ç”¨ã™ã‚‹ã“ã¨ã§
+å„ç¨®ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚’æ··åœ¨ã§åˆ©ç”¨ã§ãã¾ã™ã€‚
 </p>
-<p>wscƒtƒ@ƒCƒ‹“à‚Å‚ÍAEditorƒIƒuƒWƒFƒNƒg‚ªŒ©‚¦‚È‚¢‚Ì‚ÅA
-ŒÄ‚Ño‚µŒ³‚©‚çEditorƒIƒuƒWƒFƒNƒg‚ğ“n‚·•K—v‚ª‚ ‚è‚Ü‚·B
+<p>wscãƒ•ã‚¡ã‚¤ãƒ«å†…ã§ã¯ã€Editorã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒè¦‹ãˆãªã„ã®ã§ã€
+å‘¼ã³å‡ºã—å…ƒã‹ã‚‰Editorã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ¸¡ã™å¿…è¦ãŒã‚ã‚Šã¾ã™ã€‚
 </p>
 
-<h3>WSCƒTƒ“ƒvƒ‹iŒÄ‚Î‚ê‚é‘¤j</h3>
+<h3>WSCã‚µãƒ³ãƒ—ãƒ«ï¼ˆå‘¼ã°ã‚Œã‚‹å´ï¼‰</h3>
 <pre>
 &lt;?xml version=<span style = "color:#800000">"1.0"</span>?&gt;
 &lt;component&gt;
@@ -30,7 +30,7 @@ Sakura-Editor Macro Reference
 &lt;script language=<span style = "color:#800000">"VBScript"</span>&gt;
 &lt;![CDATA[
 <span style = "color:blue">Sub</span> InsTextVBS(Editor, sBuf)
-    <span style = "color:green;">&#39;VBSƒGƒ“ƒWƒ“‚É‚æ‚éˆ—</span>
+    <span style = "color:green;">&#39;VBSã‚¨ãƒ³ã‚¸ãƒ³ã«ã‚ˆã‚‹å‡¦ç†</span>
     Editor.InsText(Cstr(sBuf))
 End <span style = "color:blue">Sub</span>
 ]]&gt;
@@ -39,7 +39,7 @@ End <span style = "color:blue">Sub</span>
 &lt;![CDATA[
 <span style = "color:blue">function</span> InsTextJS(Editor, sBuf)
 {
-    <span style = "color:green;">//JSƒGƒ“ƒWƒ“‚É‚æ‚éˆ—</span>
+    <span style = "color:green;">//JSã‚¨ãƒ³ã‚¸ãƒ³ã«ã‚ˆã‚‹å‡¦ç†</span>
     Editor.InsText(sBuf + '');
 }
 ]]&gt;
@@ -47,7 +47,7 @@ End <span style = "color:blue">Sub</span>
 &lt;/component&gt;
 </pre>
 
-<h3>VBScript‚©‚çŒÄ‚Ño‚µ</h3>
+<h3>VBScriptã‹ã‚‰å‘¼ã³å‡ºã—</h3>
 <pre>
 WSC_PATH = <span style = "color:#800000">"L:\func.wsc"</span>
 <span style = "color:blue">Set</span> oFunc=GetObject(<span style = "color:#800000">"Script:"</span> & WSC_PATH)
@@ -55,7 +55,7 @@ WSC_PATH = <span style = "color:#800000">"L:\func.wsc"</span>
 <span style = "color:blue">Set</span> oFunc = <span style = "color:blue">Nothing</span>
 </pre>
 
-<h3>JScript‚©‚çŒÄ‚Ño‚µ</h3>
+<h3>JScriptã‹ã‚‰å‘¼ã³å‡ºã—</h3>
 <pre>
 <span style = "color:blue">var</span> WSC_PATH = <span style = "color:#800000">"L:\\func.wsc"</span>;
 <span style = "color:blue">var</span> oFunc = GetObject(<span style = "color:#800000">"Script:"</span> + WSC_PATH);

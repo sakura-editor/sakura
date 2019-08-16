@@ -1,0 +1,6 @@
+*.cs text
+*.config text
+*.settings text
+
+*.csproj binary
+*.sln binary

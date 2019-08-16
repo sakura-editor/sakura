@@ -1,258 +1,258 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML lang="ja">
 <HEAD>
-<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
 <link rel="shortcut icon" href="images/favicon.ico">
-<TITLE>�ύX����(2003/01/14�`)</TITLE>
-<META NAME="MS-HKWD" CONTENT="�ύX����">
+<TITLE>変更履歴(2003/01/14～)</TITLE>
+<META NAME="MS-HKWD" CONTENT="変更履歴">
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
-<noscript>[<a href="HLP000001.html">�ڎ�</a>]<br></noscript>
-<h2>�ύX����(2003/01/14�`)</h2>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>変更履歴(2003/01/14～)</h2>
 Jun. 26, 2003 (1.3.10.2)<br>
 <br>
-[�o�O�C��]<br>
+[バグ修正]<br>
 <div class=li200>
-�EWindows 95/98�ň�����ł��Ȃ���������(�p���������邪�����󎚂���Ȃ�)���C���D(by ����������C����Ƃ���) <br>
+・Windows 95/98で印刷ができなかった現象(用紙が送られるが何も印字されない)を修正．(by おきたさん，かろとさん) <br>
 </div><br>
 Jun. 22, 2003 (1.3.10.1)<br>
 <br>
-[�d�l�ύX]<br>
+[仕様変更]<br>
 <div class=li200>
-�EGrep�֘A�̕ύX(by ��������) <br>
-�E���ʏo�͂��Y�������̏ꍇ�̃q�b�g��̎��̌����J�n�ʒu��[�O�̃q�b�g�J�n�ʒu+1]��[�����Ƀq�b�g����������̎��̕���]�Ɍ��ʏo�͂��Y�������̏ꍇ�̕\���������[�����L�[]��[���ۂɃq�b�g����������]�Ƀq�b�g����������̕\��������������[���ʕ\�����Y���s�̏ꍇ1000�o�C�g�܂�/���ʕ\�����Y�������̏ꍇ2000�o�C�g�܂�]��[���ʏo�͌`�����m�[�}���\���̏ꍇ2000�o�C�g�܂�/���ʏo�͌`�����t�@�C�����̏ꍇ2500�o�C�g�܂�] <br>
-�E���֌W�ȃI�v�V������GREP�o�͂Ɋ܂߂Ȃ��悤�ɁD<br>
+・Grep関連の変更(by もかさん) <br>
+・結果出力が該当部分の場合のヒット後の次の検索開始位置を[前のヒット開始位置+1]→[検索にヒットした文字列の次の文字]に結果出力が該当部分の場合の表示文字列を[検索キー]→[実際にヒットした文字列]にヒットした文字列の表示文字数制限を[結果表示が該当行の場合1000バイトまで/結果表示が該当部分の場合2000バイトまで]→[結果出力形式がノーマル表示の場合2000バイトまで/結果出力形式がファイル毎の場合2500バイトまで] <br>
+・無関係なオプションをGREP出力に含めないように．<br>
 </div><br>
-[�o�O�C��]<br>
+[バグ修正]<br>
 <div class=li200>
-�EBCC�ŃR���p�C�������ꍇ��0�o�C�g�̃t�@�C�����J����悤�ɁD(by ��������) <br>
-�EGrep�E�B���h�E����t�@�C�����J����Grep��Ԃ̂܂܃t�@�C�����J�����Ƃ��������̂��C���D(by ��������) <br>
-�E�t�@�C���ǂݍ��ݎ���BOM�`�F�b�N���ς������̂��C���D(by ��������) <br>
+・BCCでコンパイルした場合も0バイトのファイルが開けるように．(by もかさん) <br>
+・Grepウィンドウからファイルを開くとGrep状態のままファイルを開くことがあったのを修正．(by もかさん) <br>
+・ファイル読み込み時のBOMチェックが変だったのを修正．(by もかさん) <br>
 </div><br>
-[���̑��ύX]<br>
+[その他変更]<br>
 <div class=li200>
-�EGrep�_�C�A���O�́u�t�@�C���v�����󗓂̏�ԂŌ���������u*.*�v���w�肳��Ă���Ƃ݂Ȃ��đS�t�@�C�������D(by ��������) <br>
-�E�����R�[�h�Z�b�g�������I���ɂ���Grep�Ńt�@�C�����ǂݍ��݃G���[�ɂȂ����ꍇ�ɂ��ǂݍ��߂Ȃ������t�@�C�����t�@�C�����ɃJ�E���g�����悤�ɁD(by ��������) <br>
-�ECShareData::GetMacroName()�̖߂�l�����[�J���ϐ��ւ̃|�C���^��Ԃ����Ƃ��������̂��C���D(by ��������) <br>
-�ECPPA�̃������[���[�N�̏C���ƃ������[�g�p�ʍ팸�D(by ��������) <br>
-�^�X�N�g���C����V�K�G�f�B�^���J�����Ƃ��̃J�����g�f�B���N�g�����Ō�Ɏg��ꂽ���݂���f�B���N�g���ɁD(by ����) <br>
-�E���s�R�[�h�ɂ�����炸(\r�����Ȃ��Ă�)���K�\���̍s���w��$���q�b�g����悤�ɁD(by ����Ƃ���) <br>
+・Grepダイアログの「ファイル」欄が空欄の状態で検索したら「*.*」が指定されているとみなして全ファイル検索．(by もかさん) <br>
+・文字コードセットを自動選択にしたGrepでファイルが読み込みエラーになった場合にも読み込めなかったファイルがファイル数にカウントされるように．(by もかさん) <br>
+・CShareData::GetMacroName()の戻り値がローカル変数へのポインタを返すことがあったのを修正．(by もかさん) <br>
+・CPPAのメモリーリークの修正とメモリー使用量削減．(by もかさん) <br>
+タスクトレイから新規エディタを開いたときのカレントディレクトリを最後に使われた存在するディレクトリに．(by げんた) <br>
+・改行コードにかかわらず(\rを入れなくても)正規表現の行末指定$がヒットするように．(by かろとさん) <br>
 </div><br>
 May 25, 2003 (1.3.10.0)<br>
 <br>
-[�@�\�ǉ�]<br>
+[機能追加]<br>
 <div class=li200>
-�E����_�C�A���O�{�b�N�X��Windows�W���̂��̂ɂ��āC�v�����^�ݒ肪�ł���悤�ɁD(by ����Ƃ���) <br>
-�E�K�w�t���e�L�X�g�CHTML�̃A�E�g���C����� (by (�S��)����) <br>
+・印刷ダイアログボックスをWindows標準のものにして，プリンタ設定ができるように．(by かろとさん) <br>
+・階層付きテキスト，HTMLのアウトライン解析 (by (全略)さん) <br>
 </div><br>
-[�o�O�C��]<br>
+[バグ修正]<br>
 <div class=li200>
-�E�����E�u���֌W (by ����Ƃ���) <br>
-�E���s�R�[�h���u���ׂĒu���v�������A�����ɒu�����s����s��C�� <br>
-�E���K�\���̍s������(^)����������ƌ�����Ȃ��ƌ�����s��C�� <br>
-�E���K�\���̍s������(^)����������ƑS���̕��������������̐F�ɂȂ�s��C�� <br>
-�E[EOF]�ʒu����s������($)����������ƁA�ŉ��ʍs�̍s���Ƀ}�b�`���Ȃ��s��C�� <br>
-�E�u�S�Ēu���v���Ɏn�_�}���A�I�_�ǉ��������悤�� <br>
-�E�v�����^�_�C�A���O�ŗp���T�C�Y��ŗL�̐ݒ��ύX�����ꍇ�Ɍ��ʂ��ۑ������悤�ɁD(by ����Ƃ���) <br>
-�E�t���[�J�[�\���łȂ����ɍs�폜�����ꍇ��EOL���L�����b�g���E�ɗ��Ȃ��悤�ɃL�����b�g�ʒu�𒲐��D(by ����Ƃ���) <br>
-�E�u�t�@�C�����J���v�_�C�A���O�{�b�N�X�Ń��������[�N���Ă����̂��C���D(by �݂�����) <br>
+・検索・置換関係 (by かろとさん) <br>
+・改行コードを「すべて置換」した時、無限に置換が行われる不具合修正 <br>
+・正規表現の行頭文字(^)を検索すると見つからないと言われる不具合修正 <br>
+・正規表現の行頭文字(^)を検索すると全部の文字が検索文字の色になる不具合修正 <br>
+・[EOF]位置から行末文字($)を検索すると、最下位行の行末にマッチしない不具合修正 <br>
+・「全て置換」時に始点挿入、終点追加が動くように <br>
+・プリンタダイアログで用紙サイズや固有の設定を変更した場合に結果が保存されるように．(by かろとさん) <br>
+・フリーカーソルでない時に行削除した場合にEOLよりキャレットが右に来ないようにキャレット位置を調整．(by かろとさん) <br>
+・「ファイルを開く」ダイアログボックスでメモリリークしていたのを修正．(by みくさん) <br>
 </div><br>
-[���̑��ύX]<br>
+[その他変更]<br>
 <div class=li200>
-�E�S�p�Ђ炪�ȁE�������ȁ����p�ϊ��ŁC�����C���_�C�����_�𒼑O�̕����ɉ����ĕϊ��ΏۂƂ���悤�ɁD(by ����Ƃ���) <br>
-�E�v�����^�̐ݒ���v���Z�X�I���܂ŋL������悤�ɁD(by ����Ƃ���) <br>
-�E���C�ɓ���_�C�A���O�{�b�N�X�ŁC�������X�V���ꂽ�Ƃ��̃��b�Z�[�W�̏o���������b�Z�[�W�{�b�N�X����_�C�A���O�{�b�N�X���̕�����ɁD(by �݂�����) <br>
-�Esakura.ini���̋����L�[���[�h��؂��\0����TAB�ɕύX�D�o�C�i���������Ȃ��G�f�B�^��sakura.ini���J�����Ƃ��ɂ��L�[���[�h�ݒ肪�j�󂳂�Ȃ��悤�ɁD(by ����) <br>
+・全角ひらがな・かたかな→半角変換で，長音，濁点，半濁点を直前の文字に応じて変換対象とするように．(by かろとさん) <br>
+・プリンタの設定をプロセス終了まで記憶するように．(by かろとさん) <br>
+・お気に入りダイアログボックスで，履歴が更新されたときのメッセージの出し方をメッセージボックスからダイアログボックス中の文字列に．(by みくさん) <br>
+・sakura.ini中の強調キーワード区切りを\0からTABに変更．バイナリを扱えないエディタでsakura.iniを開いたときにもキーワード設定が破壊されないように．(by げんた) <br>
 </div><br>
 May 17, 2003 (1.3.9.1)<br>
 <br>
-[�d�l�ύX]<br>
+[仕様変更]<br>
 <div class=li200>
-�E�ȉ��̐ݒ荀�ڂ̕ۑ��ӏ���sakura.ini��Other�Z�N�V�����Ɉړ��������ߐݒ肪�����p����܂��� (by �݂�����) <br>
+・以下の設定項目の保存箇所をsakura.iniのOtherセクションに移動したため設定が引き継がれません (by みくさん) <br>
 <div class=li400>
-�EDIFF�����\���_�C�A���O�̃I�v�V���� <br>
-�E�O���R�}���h���s�̃I�v�V�����i�W���o�͂𓾂�j <br>
-�E�w��s�փW�����v�́u���s�P�ʂ̍s�ԍ��v���u�܂�Ԃ��P�ʂ̍s�ԍ��v�� <br>
+・DIFF差分表示ダイアログのオプション <br>
+・外部コマンド実行のオプション（標準出力を得る） <br>
+・指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か <br>
 </div></div><br>
-[�@�\�ǉ�]<br>
+[機能追加]<br>
 <div class=li200>
-�E�_�C���N�g�^�O�W�����v�̃T�u�f�B���N�g���Ή� (by �݂�����/����) <br>
-�Etags�t�@�C���쐬���ɁC�쐬�ʒu�C�T�u�f�B���N�g����Ώۂɂ��邩�ǂ����C�I�v�V�����ݒ���w��ł���悤�� (by �݂�����) <br>
+・ダイレクトタグジャンプのサブディレクトリ対応 (by みくさん/げんた) <br>
+・tagsファイル作成時に，作成位置，サブディレクトリを対象にするかどうか，オプション設定を指定できるように (by みくさん) <br>
 <div class=li400>
-�T�u�f�B���N�g�����܂ރ_�C���N�g�^�O�W�����v���g���ꍇ�́C�ΏۂƂ���f�B���N�g�����ׂĂ�z���Ɋ܂ރf�B���N�g����tags�t�@�C���𐶐����Ă��������D���̃f�B���N�g���z���̃t�@�C���ԂŃ_�C���N�g�^�O�W�����v���ł���悤�ɂȂ�܂��D<br>
-�_�C���N�g�^�O�W�����v�ł͑Ώۃt�@�C������f�B���N�g����1����ɏ��Ȃ���tags�t�@�C����T���C�ŏ��Ɍ��������t�@�C���𗘗p���܂��D�ł��̂ŁC�T�u�f�B���N�g���S�̂�ΏۂƂ���ꍇ�ɂ̓T�u�f�B���N�g���̒��ɕ����I��tags�t�@�C����u���Ȃ��悤�ɂ��Ă��������D<br>
+サブディレクトリを含むダイレクトタグジャンプを使う場合は，対象とするディレクトリすべてを配下に含むディレクトリにtagsファイルを生成してください．そのディレクトリ配下のファイル間でダイレクトタグジャンプができるようになります．<br>
+ダイレクトタグジャンプでは対象ファイルからディレクトリを1つずつ上に上りながらtagsファイルを探し，最初に見つかったファイルを利用します．ですので，サブディレクトリ全体を対象とする場合にはサブディレクトリの中に部分的なtagsファイルを置かないようにしてください．<br>
 </div><br>
-�E�u�t�@�C�����J���v�_�C�A���O�{�b�N�X�Ńt�@�C���̎�ނƂ��ă^�C�v�ʐݒ�Ŏw�肳��Ă���g���q�����ɋ�����悤�� (by �݂�����) <br>
+・「ファイルを開く」ダイアログボックスでファイルの種類としてタイプ別設定で指定されている拡張子が候補に挙がるように (by みくさん) <br>
 </div><br>
-[�o�O�C��]<br>
+[バグ修正]<br>
 <div class=li200>
-�E�_�C���N�g�^�O�W�����v�œ���^�O��101�ȏ゠��Ƃ��̃��b�Z�[�W���s���Ȉʒu�ɓ����Ă����̂��C�� (by �݂�����) <br>
-�EBCC�ł̃R���p�C������CRecent.h�ŃG���[���o��̂��C�� (by �݂�����) <br>
-�E�^�C�v�ʐݒ�|���K�\���L�[���[�h�^�u�����\�����Ƀ��X�g�̓��e�����̕ҏW�{�b�N�X�ɔ��f����Ȃ����C�� (by �݂�����) <br>
-�E���ʐݒ�|�t�@�C�����\���^�u�����\�����Ƀ��X�g�̓��e�����̕ҏW�{�b�N�X�ɔ��f����Ȃ����C�� (by ��������) <br>
+・ダイレクトタグジャンプで同一タグが101個以上あるときのメッセージが不正な位置に入っていたのを修正 (by みくさん) <br>
+・BCCでのコンパイル時にCRecent.hでエラーが出るのを修正 (by みくさん) <br>
+・タイプ別設定－正規表現キーワードタブ初期表示時にリストの内容が下の編集ボックスに反映されない問題修正 (by みくさん) <br>
+・共通設定－ファイル名表示タブ初期表示時にリストの内容が下の編集ボックスに反映されない問題修正 (by もかさん) <br>
 </div><br>
-[���̑��ύX]<br>
+[その他変更]<br>
 <div class=li200>
-�EDIFF�����\���_�C�A���O�ŁC���̍����E�O�̍�����������Ȃ������Ƃ��̃I�v�V�������킩��Â炩�����̂��C��(by �݂�����) <br>
-�EDIFF�����ō������Ȃ������Ƃ��̃��b�Z�[�W�\����}������I�v�V������ǉ�(by �݂�����) <br>
+・DIFF差分表示ダイアログで，次の差分・前の差分が見つからなかったときのオプションがわかりづらかったのを修正(by みくさん) <br>
+・DIFF差分で差分がなかったときのメッセージ表示を抑制するオプションを追加(by みくさん) <br>
 </div><br>
 Apr. 24, 2003 (1.3.9.0)<br>
 <br>
-[�@�\�ǉ�]<br>
+[機能追加]<br>
 <div class=li200>
-�E�_�C���N�g�^�O�W�����v (by �݂�����) <br>
+・ダイレクトタグジャンプ (by みくさん) <br>
 <div class=li400>
-�_�C���N�g�^�O�W�����v�̎g����<br>
-���炩����ctags���g���ă^�O�t�@�C�������K�v������܂��D<br>
+ダイレクトタグジャンプの使い方<br>
+あらかじめctagsを使ってタグファイルを作る必要があります．<br>
 <br>
-<a href="http://hp.vector.co.jp/authors/VA025040/" target=_blank>Exuberant Ctags ���{��Ή���</a><br>
+<a href="http://hp.vector.co.jp/authors/VA025040/" target=_blank>Exuberant Ctags 日本語対応版</a><br>
 <br>
-��̃����N����ctags.exe���擾���C�����sakura.exe�Ɠ���t�H���_�ɒu���܂��D����ctags���쐬�������f�B���N�g�����J���C�������j���[���^�O�t�@�C���̍쐬�Ń^�O�t�@�C�����쐬���܂��D�J�����g�t�H���_�݂̂̃^�O�t�@�C�����쐬���܂��D�T�u�f�B���N�g���̃t�@�C�����܂񂾃^�O�t�@�C�����쐬�������ꍇ�̓R�}���h���C������ctags�𒼐ڎ��s���Ă��������D�蓮�ō쐬����Ƃ��́C ctags.exe --excmd=n -R * �̂悤�Ɏw�肵�Ă��������D�J�����g�f�B���N�g���ȊO��tags�͎Q�Ƃ���܂���D<br>
+上のリンクからctags.exeを取得し，それをsakura.exeと同一フォルダに置きます．次にctagsを作成したいディレクトリを開き，検索メニュー→タグファイルの作成でタグファイルを作成します．カレントフォルダのみのタグファイルを作成します．サブディレクトリのファイルも含んだタグファイルを作成したい場合はコマンドラインからctagsを直接実行してください．手動で作成するときは， ctags.exe --excmd=n -R * のように指定してください．カレントディレクトリ以外のtagsは参照されません．<br>
 <br>
-�L�[���[�h��Ń^�O�W�����v����ƒ�`�ʒu�փW�����v���܂��D�����̃W�����v�悪����ꍇ�̓_�C�A���O���o�܂��D�^�O�W�����v�Ɏ��s�����ꍇ�Ɏ����I�Ƀ_�C���N�g�^�O�W�����v���s���܂����C�_�C���N�g�^�O�W�����v�Ƃ����@�\���ǉ�����Ă��܂��D<br>
+キーワード上でタグジャンプすると定義位置へジャンプします．複数のジャンプ先がある場合はダイアログが出ます．タグジャンプに失敗した場合に自動的にダイレクトタグジャンプを行いますが，ダイレクトタグジャンプという機能も追加されています．<br>
 </div><br>
-�E�ҏW���t�@�C����DIFF (by �݂�����) <br>
-�E���ă^�u�W�����v��Ɨ������R�}���h�Ƃ��CCtrl�������̃^�O�W�����v�ŃW�����v���E�B���h�E�����@�\��}�~�D(by ����) ���������̃R�}���h�̓}�N���ɋL�^����܂���D <br>
-�E���C�ɓ���@�\�D�ŋߎg�����t�@�C���E�t�H���_���炨�C�ɓ�����w�肷�邱�ƂŐ擪�ɕ\�������邱�Ƃ��ł��܂��D (by �݂�����) <br>
-�E�����N���A�@�\ (by �݂�����) <br>
-�E���ꕶ�� $V(�G�f�B�^�̃o�[�W����)�C$h (Grep Key)�C$I (�A�C�R�����L��)��ǉ� (by ����) <br>
-�E�E�B���h�E�L���v�V�����̃J�X�^�}�C�Y (by �݂�����) <br>
+・編集中ファイルのDIFF (by みくさん) <br>
+・閉じてタブジャンプを独立したコマンドとし，Ctrl押下時のタグジャンプでジャンプ元ウィンドウを閉じる機能を抑止．(by げんた) ただしこのコマンドはマクロに記録されません． <br>
+・お気に入り機能．最近使ったファイル・フォルダからお気に入りを指定することで先頭に表示させることができます． (by みくさん) <br>
+・履歴クリア機能 (by みくさん) <br>
+・特殊文字 $V(エディタのバージョン)，$h (Grep Key)，$I (アイコン化有無)を追加 (by げんた) <br>
+・ウィンドウキャプションのカスタマイズ (by みくさん) <br>
 <br>
-�c�[���o�[�A�C�R�����ǉ�����Ă���̂ŁC�Ǝ��A�C�R�����g���Ă���l�̓A�C�R���t�@�C���̏C�����K�v�ł��D<br>
+ツールバーアイコンが追加されているので，独自アイコンを使っている人はアイコンファイルの修正が必要です．<br>
 </div><br>
-[�o�O�C��]<br>
+[バグ修正]<br>
 <div class=li200>
-�ECDocLineMgr.cpp:FileWrite()�̖߂�l�o�O�C�� (by �݂�����) <br>
-�ECShareData.cpp�̏������o�O�C�� (by �݂�����) <br>
-�E���K�\���̒u���őI���ʒu�}���𓮍삷��悤�� (by �݂�����) <br>
-�E�s�ԍ��̉�����}�E�X�Ŕ͈͑I������ƑI��͈͂��ςɂȂ�̂��C���D(by ����) <br>
+・CDocLineMgr.cpp:FileWrite()の戻り値バグ修正 (by みくさん) <br>
+・CShareData.cppの初期化バグ修正 (by みくさん) <br>
+・正規表現の置換で選択位置挿入を動作するように (by みくさん) <br>
+・行番号の下からマウスで範囲選択すると選択範囲が変になるのを修正．(by げんた) <br>
 </div><br>
-[���̑��ύX]<br>
+[その他変更]<br>
 <div class=li200>
-�E�\���ʂ���ꕶ���̔������(g)��(w)�ɕύX�D(by ����) <br>
+・予告通り特殊文字の判定条件(g)を(w)に変更．(by げんた) <br>
 </div><br>
 Apr. 01, 2003 (1.3.8.2)<br>
 <br>
-[�@�\�ǉ�]<br>
+[機能追加]<br>
 <div class=li200>
-�E�p�����[�^�W�J�L���̊g�� (by ����) <br>
+・パラメータ展開記号の拡張 (by げんた) <br>
 <div class=li400>
-�p�����[�^�W�J�L���̊g���ɂ���<br>
+パラメータ展開記号の拡張について<br>
 <br>
-�p�����[�^�W�J�L���Ƃ��āC�����ɂ���ĕ��򂷂邽�߂̋L����ǉ����܂����D<br>
+パラメータ展開記号として，条件によって分岐するための記号を追加しました．<br>
 <br>
-�\��<br>
+構文<br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;${����?������1$:������2$} <br>
+&nbsp;&nbsp;&nbsp;&nbsp;${条件?文字列1$:文字列2$} <br>
 <br>
-�����̌��ʂɂ���ĕ�����1�܂��͕�����2�̂����ꂩ���]������܂��D�����ɂ���Ă�3�ȏ�̃p�^�[���������̂�����܂��D<br>
+条件の結果によって文字列1または文字列2のいずれかが評価されます．条件によっては3つ以上のパターンを持つものもあります．<br>
 <br>
-����<br>
+条件<br>
 <br>
-�ȉ��̏������g���܂��D<br>
+以下の条件が使えます．<br>
 <div class=li600>
 R <br>
-&nbsp;&nbsp;&nbsp;&nbsp;�ǂ݂Ƃ��p$:�㏑���֎~$:������ł��Ȃ� <br>
+&nbsp;&nbsp;&nbsp;&nbsp;読みとり専用$:上書き禁止$:いずれでもない <br>
 U <br>
-&nbsp;&nbsp;&nbsp;&nbsp;�X�V���ꂽ�t�@�C��$:�X�V����Ă��Ȃ��t�@�C�� <br>
+&nbsp;&nbsp;&nbsp;&nbsp;更新されたファイル$:更新されていないファイル <br>
 M <br>
-&nbsp;&nbsp;&nbsp;&nbsp;�L�[�{�[�h�}�N���L�^��$:�L�^���łȂ� <br>
-g (�Y��Ȃ����w�ɕύX�\��) <br>
-&nbsp;&nbsp;&nbsp;&nbsp;Grep�E�B���h�E$:�A�E�g�v�b�g�E�B���h�E$:���ʂ̃E�B���h�E <br>
+&nbsp;&nbsp;&nbsp;&nbsp;キーボードマクロ記録中$:記録中でない <br>
+g (忘れなければwに変更予定) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;Grepウィンドウ$:アウトプットウィンドウ$:普通のウィンドウ <br>
 </div></div></div><br>
-[�o�O�C��]<br>
+[バグ修正]<br>
 <div class=li200>
-�E�ǂ݂Ƃ��p�t�@�C���ł�Drag &amp; Drop�ҏW���ł��Ȃ��悤�ɁD(by ����) <br>
-�E�^�u�̖��L���\���Ŗ�󂪍s�ԍ��ɏd�Ȃ��ĕ\�������̂��C���D(by �݂�����) <br>
+・読みとり専用ファイルではDrag &amp; Drop編集ができないように．(by げんた) <br>
+・タブの矢印記号表示で矢印が行番号に重なって表示されるのを修正．(by みくさん) <br>
 </div><br>
-[���̑��ύX]<br>
+[その他変更]<br>
 <div class=li200>
-�ETAB�ݒ��ʂŃ`�F�b�N��Ԃɉ����ă^�u�������͂�Enable/Disable����悤�ɁD(by ����) <br>
-�E�^�C�v�ʐݒ�ł̃���������팸 (by ����) <br>
+・TAB設定画面でチェック状態に応じてタブ文字入力をEnable/Disableするように．(by げんた) <br>
+・タイプ別設定でのメモリ消費削減 (by げんた) <br>
 </div><br>
 Mar. 30, 2003 (1.3.8.1)<br>
 <br>
-[�d�l�ύX]<br>
+[仕様変更]<br>
 <div class=li200>
-�E�t�@�C���������܂��Ă��Ȃ��Ƃ��́u�J���v�u�ۑ��v�_�C�A���O�̏����t�H���_���Ō�Ɏg�����t�H���_����G�f�B�^�N�����̃J�����g�t�H���_�ɕύX�D(by ����) <br>
+・ファイル名が決まっていないときの「開く」「保存」ダイアログの初期フォルダを最後に使ったフォルダからエディタ起動時のカレントフォルダに変更．(by げんた) <br>
 </div><br>
-[�@�\�ǉ�]<br>
+[機能追加]<br>
 <div class=li200>
-�E�^�u�\�����p�̖��L���ɂ���I�v�V�����̒ǉ��D(by �݂�����) <br>
+・タブ表示を専用の矢印記号にするオプションの追加．(by みくさん) <br>
 </div><br>
-[�o�O�C��]<br>
+[バグ修正]<br>
 <div class=li200>
-�E�Ί��ʂ̋����\���̍ĕ`��Ή��D(by ai����) <br>
-�E�Ί��ʂ̋����\�����s�̊Ԋu���0��̏ꍇ�ɏ������Ɏc����̑Ή��D(by ai����) <br>
-�E�Ί��ʂ̋����\����ON�C�s�̊Ԋu���0��̎��ɃA���_�[���C���������鎖��������̑Ή��D(by ai����) <br>
-�E�Ί��ʂ̋����\����ON�̎�����ׂĒu�������ׂĒu������Undo&amp;Redo���x�����̑Ή��D(by ai����) <br>
-�E�^�C�v�ʐݒ� �w���K�\���L�[���[�h�x�̍X�V�ŃR���{�{�b�N�X�̑I�������ɖ߂�̂��C���D(by �݂�����) <br>
-�E���s�̐^�񒆂ɃL�����b�g���\�������̂��C���D(by �݂�����) <br>
-�E�u�㏑���ۑ��v�u�J�������v�Ńu�b�N�}�[�N������Ȃ��悤�ɁD(by ����) <br>
-�E�B���������������݋֎~�̃t�@�C���̏㏑�����s�ŉB���������O�ꂽ�܂܂ɂȂ�̂��C���D(by ����) <br>
-�E�B���������������݋֎~�̃t�@�C���̏㏑�����s�Ń��������[�N����̂��C���D(by ����) <br>
+・対括弧の強調表示の再描画対応．(by aiさん) <br>
+・対括弧の強調表示が行の間隔が｢0｣の場合に消えずに残る問題の対応．(by aiさん) <br>
+・対括弧の強調表示がON，行の間隔が｢0｣の時にアンダーラインが欠ける事がある問題の対応．(by aiさん) <br>
+・対括弧の強調表示がONの時｢すべて置換｣｢すべて置換｣後のUndo&amp;Redoが遅い問題の対応．(by aiさん) <br>
+・タイプ別設定 『正規表現キーワード』の更新でコンボボックスの選択が元に戻るのを修正．(by みくさん) <br>
+・改行の真ん中にキャレットが表示されるのを修正．(by みくさん) <br>
+・「上書き保存」「開き直す」でブックマークを失わないように．(by げんた) <br>
+・隠し属性かつ書き込み禁止のファイルの上書き試行で隠し属性が外れたままになるのを修正．(by げんた) <br>
+・隠し属性かつ書き込み禁止のファイルの上書き試行でメモリリークするのを修正．(by げんた) <br>
 </div><br>
-[���̑��ύX]<br>
+[その他変更]<br>
 <div class=li200>
-�E�p��L�[�{�[�h�p�̃R�����g���L�[�J�X�^�}�C�Y�̃L�[�ɕt���D(by ����) <br>
-�E�u���ĊJ���v�ŃL�����Z�������ꍇ�ɑO�̃t�@�C���̕ҏW���p���\�ɁD(by ����) <br>
+・英語キーボード用のコメントをキーカスタマイズのキーに付加．(by げんた) <br>
+・「閉じて開く」でキャンセルした場合に前のファイルの編集を継続可能に．(by げんた) <br>
 </div><br>
 Mar. 09, 2003 (1.3.8.0)<br>
 <br>
-[�d�l�ύX]<br>
+[仕様変更]<br>
 <div class=li200>
-�E�}�N���R�}���hGetSelectedString�͑I�𕔕��S�̂�Ԃ��܂��D���I���̎��͋󕶎����Ԃ��܂��D(by �S����)<br>
-�]���̋@�\(�I�𕔕���1�s��/�J�[�\���ʒu�̒P��)���g�������Ƃ���ExpandParameter("$C")���g���Ă��������D <br>
+・マクロコマンドGetSelectedStringは選択部分全体を返します．未選択の時は空文字列を返します．(by 鬼さん)<br>
+従来の機能(選択部分の1行目/カーソル位置の単語)を使いたいときはExpandParameter("$C")を使ってください． <br>
 </div><br>
-[�@�\�ǉ�]<br>
+[機能追加]<br>
 <div class=li200>
-�E�}�N���R�}���hExpandParameter �ǉ��D(by ��������)<br>
-�E����L�����܂񂾕������^����ƁC����L��������W�J�����������Ԃ��܂��D�O���R�}���h���s�Ŏ󂯕t������̂Ɠ�������L�����g�p�ł��܂��D <br>
+・マクロコマンドExpandParameter 追加．(by もかさん)<br>
+・特殊記号を含んだ文字列を与えると，特殊記号部分を展開した文字列を返します．外部コマンド実行で受け付けられるのと同じ特殊記号が使用できます． <br>
 </div><br>
-[�o�O�C��]<br>
+[バグ修正]<br>
 <div class=li200>
-�E�s�ԍ����\���̂Ƃ��s�ԍ��̈�ƃe�L�X�g�̊Ԃ̌��Ԃ̕`�悳��Ȃ��̂��C���D (by ��������) <br>
-�E�R�}���h���C������Grep�_�C�A���O���J�����ꍇ�e�E�B���h�E���������w�肳��Ȃ��̂��C���D(by ��������) <br>
+・行番号を非表示のとき行番号領域とテキストの間の隙間の描画されないのを修正． (by もかさん) <br>
+・コマンドラインからGrepダイアログを開いた場合親ウィンドウが正しく指定されないのを修正．(by もかさん) <br>
 </div><br>
-[���̑��ύX]<br>
+[その他変更]<br>
 <div class=li200>
-�E�����{�b�N�X�̈ʒu��1�h�b�g���ɂ��炵���D (by ����) <br>
-�Estrictfp/assert��java keyword�ɒǉ��D (by ����)<br>
-�E�ύX�����̂͏������X�g�Ȃ̂ŁC���Ɏg�p���̕��͂������Œǉ����Ă��������D <br>
-�EProfile�̏����o���Ńo�b�t�@�����O�̂���fwrite���g���悤�ɁD(by Mr.Nak����) <br>
-�EPrintPreview��1�y�[�W���������Ƃ������ȃ{�^���Ƀt�H�[�J�X���ڂ��ăL�[�{�[�h���삪�����Ȃ��Ȃ�̂�h�����߁C�ŏI�y�[�W�ɒB������u�߂�v�Ƀt�H�[�J�X���ڂ��悤�ɕύX�D(by ����) <br>
+・検索ボックスの位置を1ドット下にずらした． (by げんた) <br>
+・strictfp/assertをjava keywordに追加． (by げんた)<br>
+・変更したのは初期リストなので，既に使用中の方はご自分で追加してください． <br>
+・Profileの書き出しでバッファリングのあるfwriteを使うように．(by Mr.Nakさん) <br>
+・PrintPreviewで1ページしか無いとき無効なボタンにフォーカスが移ってキーボード操作が効かなくなるのを防ぐため，最終ページに達したら「戻る」にフォーカスを移すように変更．(by げんた) <br>
 </div><br>
 Feb. 18, 2003 (1.3.7.0)<br>
 <br>
-[�@�\�ǉ�]<br>
+[機能追加]<br>
 <div class=li200>
-�E�p�X���̏ȗ��\�� (��������) <br>
-�E�E�B���h�E�ʒu�w��I�v�V�����ǉ��D-SX/SY�ŃT�C�Y�̎w��C-WX/WY�ŃE�B���h�E�ʒu�̎w�肪�ł��܂��D(���납����) <br>
+・パス名の省略表示 (もかさん) <br>
+・ウィンドウ位置指定オプション追加．-SX/SYでサイズの指定，-WX/WYでウィンドウ位置の指定ができます．(あろかさん) <br>
 </div><br>
-[�o�O�C��]<br>
+[バグ修正]<br>
 <div class=li200>
-�E���[�J���ϐ��ւ̃|�C���^��߂�l�ŕԂ��Ă���Ƃ��낪�������̂��C���D(�݂�����) <br>
+・ローカル変数へのポインタを戻り値で返しているところがあったのを修正．(みくさん) <br>
 </div><br>
-[���̑��ύX]<br>
+[その他変更]<br>
 <div class=li200>
-�E�s�Ԋu�C�����Ԋu�̍ő�l�����ꂼ��128, 64�Ɋg�� (����) <br>
-�Egcc�̃G���[���b�Z�[�W�Ń^�O�W�����v�\�� (�܂�����)�Djavac�������`���H <br>
+・行間隔，文字間隔の最大値をそれぞれ128, 64に拡大 (げんた) <br>
+・gccのエラーメッセージでタグジャンプ可能に (まつもさん)．javacも同じ形式？ <br>
 </div><br>
 Jan. 14, 2003 (1.3.6.3)<br>
 <br>
-[�o�O�C��]<br>
+[バグ修正]<br>
 <div class=li200>
-�E�z�b�g�L�[�Ń^�X�N�g���C���j���[���o�Ȃ��Ȃ��Ă����̂��C���D�i���납����j <br>
-�Ediff.exe�������Ƃ��ɍ����\�����s������G���[���b�Z�[�W���o���悤�ɁD�i�݂�����j <br>
-�E���s�R�[�h�\���������邱�Ƃ��������̂��C���D�iai����j <br>
-�E��`�I�𒆂Ɋ��ʂ������\�������ꍇ���������̂��C���D�iai����j <br>
+・ホットキーでタスクトレイメニューが出なくなっていたのを修正．（あろかさん） <br>
+・diff.exeが無いときに差分表示を行ったらエラーメッセージを出すように．（みくさん） <br>
+・改行コード表示が欠けることがあったのを修正．（aiさん） <br>
+・矩形選択中に括弧が強調表示される場合があったのを修正．（aiさん） <br>
 </div><br>
-[���̑��ύX]<br>
+[その他変更]<br>
 <div class=li200>
-�E�����{�b�N�X�̃t�H���g�T�C�Y�����������������i���񂽁j <br>
-�E�V�����w���v�t�@�C���ɂ��킹��sakura.hh�̓���ւ��inovice����j <br>
-�E�R�����g�A�E�g���ꂽinclude�s�̍폜�inovice����j <br>
+・検索ボックスのフォントサイズを少し小さくした（げんた） <br>
+・新しいヘルプファイルにあわせたsakura.hhの入れ替え（noviceさん） <br>
+・コメントアウトされたinclude行の削除（noviceさん） <br>
 </div><br>
 </BODY></HTML>

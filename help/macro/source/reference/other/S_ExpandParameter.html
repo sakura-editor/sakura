@@ -1,96 +1,96 @@
-<html><head><title>S_ExpandParameter</title>
+﻿<html><head><title>S_ExpandParameter</title>
 <LINK REL="stylesheet" TYPE="text/css" HREF="../../sakura.css">
-<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 </head>
 <small>
 Sakura-Editor Macro Reference
 </small>
 <h2>S_ExpandParameter</h2>
 <dl>
-	<dt>�@�\</dt>
-		<dd>���ꕶ���̓W�J</dd>
-	<dt>�\��</dt>
-		<dd><i>string  S_ExpandParameter ( S1 )</i>&nbsp;&nbsp;<a href = "../../sample/SampleExpandParameter.html">�g�p��</a>
+	<dt>機能</dt>
+		<dd>特殊文字の展開</dd>
+	<dt>構文</dt>
+		<dd><i>string  S_ExpandParameter ( S1 )</i>&nbsp;&nbsp;<a href = "../../sample/SampleExpandParameter.html">使用例</a>
 		<br><br>
 		<table border = "1" cellspacing = "0" cellpadding = "3" width = "85%">
-			<tr><th><nobr>����</nobr></th><th>�^</th><th>���e</th></tr>
-			<tr><td>S1</td><td>������</td><td>�t�H�[�}�b�g������ </td></tr>
+			<tr><th><nobr>引数</nobr></th><th>型</th><th>内容</th></tr>
+			<tr><td>S1</td><td>文字列</td><td>フォーマット文字列 </td></tr>
 		</table>
 		</dd>
-	<dt>�ݒ�l</dt>
-		<dd>����&nbsp;<i>S1</i>&nbsp;�̐ݒ�l�͎��̂Ƃ���ł��B<br><br>
+	<dt>設定値</dt>
+		<dd>引数&nbsp;<i>S1</i>&nbsp;の設定値は次のとおりです。<br><br>
 		<table border = "1" cellspacing = "0" cellpadding = "3" width = "85%">
-			<tr><th>�l</th><th>���e</th></tr>
-			<tr><td>$$ </td><td>���� $ ���g </td></tr>
-			<tr><td>$F </td><td>�J���Ă���t�@�C���̖��O�i�t���p�X�j </td></tr>
-			<tr><td>$f </td><td>�J���Ă���t�@�C���̖��O�i�t�@�C����+�g���q�̂݁j</td></tr>
-			<tr><td>$g </td><td>�J���Ă���t�@�C���̖��O�i�g���q�������t�@�C�����̂݁j </td></tr>
-			<tr><td>$/ </td><td>�J���Ă���t�@�C���̖��O�i�t���p�X�B�p�X�̋�؂肪 / �j </td></tr>
-			<tr><td>$N </td><td>�J���Ă���t�@�C���̖��O�i�u���ʐݒ�˃t�@�C�����\���v�̐ݒ�Œu�����ꂽ�\�L�j </td></tr>
-			<tr><td>$S </td><td>�T�N���G�f�B�^�{�̂̃t���p�X </td></tr>
-			<tr><td>$M </td><td>���s���̃}�N���t�@�C���̃t���p�X </td></tr>
-			<tr><td>$C </td><td>�I�𒆂̃e�L�X�g�܂��̓J�[�\���ʒu�̒P�� </td></tr>
-			<tr><td>$x </td><td>���݂̕������ʒu(�擪����̃o�C�g��)(1�J�n) </td></tr>
-			<tr><td>$y </td><td>���݂̕����s�ʒu(1�J�n) </td></tr>
-			<tr><td>$d </td><td>���݂̓��t(���ʐݒ�̓��t����) </td></tr>
-			<tr><td>$t </td><td>���݂̎���(���ʐݒ�̎�������) </td></tr>
-			<tr><td>$D </td><td>�J���Ă���t�@�C���̃^�C���X�^���v(���ʐݒ�̓��t����) </td></tr>
-			<tr><td>$T </td><td>�J���Ă���t�@�C���̃^�C���X�^���v(���ʐݒ�̎�������) </td></tr>
-			<tr><td>$V </td><td>�T�N���G�f�B�^�̃o�[�W���� </td></tr>
-			<tr><td>$h </td><td>Grep�����L�[�̐擪32byte�܂� </td></tr>
+			<tr><th>値</th><th>内容</th></tr>
+			<tr><td>$$ </td><td>文字 $ 自身 </td></tr>
+			<tr><td>$F </td><td>開いているファイルの名前（フルパス） </td></tr>
+			<tr><td>$f </td><td>開いているファイルの名前（ファイル名+拡張子のみ）</td></tr>
+			<tr><td>$g </td><td>開いているファイルの名前（拡張子を除くファイル名のみ） </td></tr>
+			<tr><td>$/ </td><td>開いているファイルの名前（フルパス。パスの区切りが / ） </td></tr>
+			<tr><td>$N </td><td>開いているファイルの名前（「共通設定⇒ファイル名表示」の設定で置換された表記） </td></tr>
+			<tr><td>$S </td><td>サクラエディタ本体のフルパス </td></tr>
+			<tr><td>$M </td><td>実行中のマクロファイルのフルパス </td></tr>
+			<tr><td>$C </td><td>選択中のテキストまたはカーソル位置の単語 </td></tr>
+			<tr><td>$x </td><td>現在の物理桁位置(先頭からのバイト数)(1開始) </td></tr>
+			<tr><td>$y </td><td>現在の物理行位置(1開始) </td></tr>
+			<tr><td>$d </td><td>現在の日付(共通設定の日付書式) </td></tr>
+			<tr><td>$t </td><td>現在の時刻(共通設定の時刻書式) </td></tr>
+			<tr><td>$D </td><td>開いているファイルのタイムスタンプ(共通設定の日付書式) </td></tr>
+			<tr><td>$T </td><td>開いているファイルのタイムスタンプ(共通設定の時刻書式) </td></tr>
+			<tr><td>$V </td><td>サクラエディタのバージョン </td></tr>
+			<tr><td>$h </td><td>Grep検索キーの先頭32byteまで </td></tr>
 		</table>
 		</dd>
-	<dt>����</dt>
+	<dt>説明</dt>
 		<dd>
-		�t�H�[�}�b�g������ɏ]������������擾����B�t�H�[�}�b�g�����񒆂� $ �Ŏn�܂镶��������̏�񕶎���ɒu�������B
+		フォーマット文字列に従った文字列を取得する。フォーマット文字列中の $ で始まる文字が特定の情報文字列に置き換わる。
 		</dd>
-	<dt>������</dt>
+	<dt>条件文</dt>
 		<dd>
-		�t�H�[�}�b�g�����񒆂ɏ��������L�q���邱�Ƃ��\�ł���B�������͓���q�ɋL�q���鎖���o����B<br><br>
-		�����������F$�o��?A0$�FA1$�FA2$�F�D�D�D$�p<br>
-		���� �� �ɑΉ����� A0�CA1�CA2 �D�D�D �̂����ꂩ�̕����񂪕Ԃ����B���� �� �Ƃ��ėp�ӂ���Ă��镨�͈ȉ��̒ʂ�B<br>
+		フォーマット文字列中に条件文を記述することも可能である。条件文は入れ子に記述する事も出来る。<br><br>
+		条件文書式：$｛ｃ?A0$：A1$：A2$：．．．$｝<br>
+		条件 ｃ に対応して A0，A1，A2 ．．． のいずれかの文字列が返される。条件 ｃ として用意されている物は以下の通り。<br>
 		<table border = "1" cellspacing = "0" cellpadding = "3" width = "85%">
-			<tr><th>����</th><th>����</th></tr>
-			<tr><td>R</td><td>�G�f�B�^��œǂݎ���p�ŊJ���Ă��� $�F �㏑���֎~�̃t�@�C�� $�F ������ł��Ȃ� </td></tr>
-			<tr><td>w</td><td>Grep�������ʃE�B���h�E $�F �A�E�g�v�b�g�E�B���h�E $�F ���ʂ̃E�B���h�E </td></tr>
-			<tr><td>M</td><td>�L�[�{�[�h�}�N���L�^�� $�F �L�^���ł͂Ȃ� </td></tr>
-			<tr><td>U</td><td>�X�V����Ă��� $�F �X�V����Ă��Ȃ� </td></tr>
-			<tr><td>I</td><td>�G�f�B�^�E�B���h�E���A�N�e�B�u�ł͂Ȃ� $�F �G�f�B�^�E�B���h�E���A�N�e�B�u </td></tr>
+			<tr><th>条件</th><th>動作</th></tr>
+			<tr><td>R</td><td>エディタ上で読み取り専用で開いている $： 上書き禁止のファイル $： いずれでもない </td></tr>
+			<tr><td>w</td><td>Grep検索結果ウィンドウ $： アウトプットウィンドウ $： 普通のウィンドウ </td></tr>
+			<tr><td>M</td><td>キーボードマクロ記録中 $： 記録中ではない </td></tr>
+			<tr><td>U</td><td>更新されている $： 更新されていない </td></tr>
+			<tr><td>I</td><td>エディタウィンドウがアクティブではない $： エディタウィンドウがアクティブ </td></tr>
 		</table>
 		</dd>
 		<dd>
 		<dl>
-			<dt>�ǂݎ���p
-			<dd>���j���[�� �t�@�C��(F) �� �t�@�C������(R) �� �ǂݎ���p(O) �̑���</dd>
-			<dt>�㏑���֎~</dt>
-			<dd>�t�@�C���̓ǂݎ���p������ON�C���̃A�v���P�[�V�������r���ŊJ���Ă���</dd>
+			<dt>読み取り専用
+			<dd>メニューで ファイル(F) → ファイル操作(R) → 読み取り専用(O) の操作</dd>
+			<dt>上書き禁止</dt>
+			<dd>ファイルの読み取り専用属性がON，他のアプリケーションが排他で開いている</dd>
 		</dl>
 		</dd>
-	<dt>�⑫</dt>
+	<dt>補足</dt>
 		<dd>
-		�V�K�t�@�C���CGrep�������ʃE�B���h�E�C�A�E�g�v�b�g�E�B���h�E�̏ꍇ�A$F�C$f�C$g�C$/ �́u(����)�v�ɁA$D�C$T �́u(�ۑ�����Ă��܂���)�v�ɂȂ�B
+		新規ファイル，Grep検索結果ウィンドウ，アウトプットウィンドウの場合、$F，$f，$g，$/ は「(無題)」に、$D，$T は「(保存されていません)」になる。
 		<hr>
-		���̂Q�͓������ʂɂȂ�<br>
+		次の２つは同じ結果になる<br>
 		<ul>
-			<li>str �F= S_ExpandParameter( '$F' )�G</li>
-			<li>str �F= S_GetFilename( )�G</li>
+			<li>str ：= S_ExpandParameter( '$F' )；</li>
+			<li>str ：= S_GetFilename( )；</li>
 		</ul>
 		<hr>
-		$C �́u�����_�C�A���O���o�������ɁA�����́g�����h���Ɏ�荞�܂�镶����v�Ɠ���������ɂȂ�B�܂莟�̂悤�Ȏd�l�ł���B<br>
+		$C は「検索ダイアログを出した時に、検索の“条件”欄に取り込まれる文字列」と同じ文字列になる。つまり次のような仕様である。<br>
 		<ul>
-			<li>�����񂪔͈͑I������Ă���ꍇ�A���̑I������Ă��镶���񂪎擾�����B</li>
-			<li>�����񂪔͈͑I������Ă��Ȃ��ꍇ�A�J�[�\���ʒu�̒P�ꂪ�擾�����B</li>
-			<li>�����s��I�����Ă����Ă��A�擾�����͈̂�ԏ�̂P�s�݂̂ł���A���s���܂܂Ȃ��B</li>
-			<li>�擾�ł��镶����� 259 �o�C�g�܂łł���B</li>
+			<li>文字列が範囲選択されている場合、その選択されている文字列が取得される。</li>
+			<li>文字列が範囲選択されていない場合、カーソル位置の単語が取得される。</li>
+			<li>複数行を選択してあっても、取得されるのは一番上の１行のみであり、改行を含まない。</li>
+			<li>取得できる文字列は 259 バイトまでである。</li>
 		</ul>
 		<br>
-		���̂Q�͓������ʂƂ͌���Ȃ�<br>
+		次の２つは同じ結果とは限らない<br>
 		<ul>
-			<li>str �F= S_ExpandParameter( '$C' )�G</li>
-			<li>str �F= S_GetSelectedString(0)�G</li>
+			<li>str ：= S_ExpandParameter( '$C' )；</li>
+			<li>str ：= S_GetSelectedString(0)；</li>
 		</ul>
 		</dd>
-	<dt>�֘A����</dt>
+	<dt>関連項目</dt>
 		<dd>
 		<a href = "./S_GetSelectedString.html">S_GetSelectedString()</a>
 		<a href = "./S_GetFilename.html">S_GetFilename()</a>

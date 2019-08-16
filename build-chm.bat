@@ -25,6 +25,14 @@ if defined APPVEYOR (
 if exist "%HH_OUTPUT%" del /F "%HH_OUTPUT%"
 python "%HH_SCRIPT%" "%HH_INPUT%" "%HH_OUTPUT%"  || (echo error && exit /b 1)
 
+set "TOOL_SLN_FILE=%~dp0tools\ChmSourceConverter\ChmSourceConverter.sln"
+@echo "%CMD_MSBUILD%" %TOOL_SLN_FILE% "/p:Platform=Any CPU" /p:Configuration=Release /t:"Build" /v:q
+      "%CMD_MSBUILD%" %TOOL_SLN_FILE% "/p:Platform=Any CPU" /p:Configuration=Release /t:"Build" /v:q
+if errorlevel 1 exit /b 1
+
+%~dp0tools\ChmSourceConverter\ChmSourceConverter\bin\Release\ChmSourceConverter.exe %~dp0help
+if errorlevel 1 exit /b 1
+
 call :BuildChm %HHP_MACRO%  %CHM_MACRO%   || (echo error && exit /b 1)
 call :BuildChm %HHP_PLUGIN% %CHM_PLUGIN%  || (echo error && exit /b 1)
 call :BuildChm %HHP_SAKURA% %CHM_SAKURA%  || (echo error && exit /b 1)

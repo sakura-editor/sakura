@@ -1,31 +1,31 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML lang="ja">
 <HEAD>
-<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
 <link rel="shortcut icon" href="images/favicon.ico">
-<TITLE>�X�}�[�g�C���f���g</TITLE>
-<META NAME="MS-HKWD" CONTENT="�X�}�[�g�C���f���g">
+<TITLE>スマートインデント</TITLE>
+<META NAME="MS-HKWD" CONTENT="スマートインデント">
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
-<noscript>[<a href="HLP000001.html">�ڎ�</a>]<br></noscript>
-<h2>�X�}�[�g�C���f���g</h2>
-�Ή����� �u�o, �p�ɍ��킹�ăC���f���g�܂��͋t�C���f���g���܂��B<br>
-���̂Ƃ���C/C++�p�����p�ӂ���Ă��܂���B<br>
-�v���O�C���Œǉ����邱�Ƃ��ł���悤�ɂȂ�܂����B(2.0.0.0 �ȍ~)<br>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
+<h2>スマートインデント</h2>
+対応する 「｛, ｝に合わせてインデントまたは逆インデントします。<br>
+今のところC/C++用しか用意されていません。<br>
+プラグインで追加することができるようになりました。(2.0.0.0 以降)<br>
 <br>
-�s�R�����g������уR�����g�u���b�N���ł́A�X�}�[�g�C���f���g�͖���<br>
+行コメント内およびコメントブロック内では、スマートインデントは無効<br>
 <div class=li200>
-} ���͎�     �c�c �Ή����� { �Ɠ��C���f���g�ɒ���<br>
-{ ���͎�     �c�c ���O�� { ����+1�C���f���g�A���O�� } �Ɠ��C���f���g<br>
+} 入力時     …… 対応する { と同インデントに調整<br>
+{ 入力時     …… 直前の { から+1インデント、直前の } と同インデント<br>
 <br>
-�F���͎�     �c�c ???????<br>
+：入力時     …… ???????<br>
 <br>
-CRLF ���͎� �c�c ���O�� ( ����+1�C���f���g�A���O�� { ����+1�C���f���g<br>
+CRLF 入力時 …… 直前の ( から+1インデント、直前の { から+1インデント<br>
 <br>
-#�Ŏn�܂�s(�v���v���Z�b�T)�̓X�}�[�g�C���f���g�̑ΏۊO�ɂȂ�܂��B<br>
+#で始まる行(プリプロセッサ)はスマートインデントの対象外になります。<br>
 <br>
-�\�t�gTAB(�^�u�̑���ɃX�y�[�X��}��)�̐ݒ�ɍ��킹�ē��삷��悤�ɂȂ�܂���(sakura:1.5.8.0�ȍ~)�B<br>
+ソフトTAB(タブの代わりにスペースを挿入)の設定に合わせて動作するようになりました(sakura:1.5.8.0以降)。<br>
 </div><br>
 </BODY></HTML>
