@@ -378,7 +378,25 @@ void CImageListMgr::MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
 
 	// 作業DCを作成
 	HDC hdcWork = ::CreateCompatibleDC( drawdc );
-	HBITMAP bmpWork = ::CreateCompatibleBitmap( drawdc, nWidth, nHeight );
+
+	// DIB作成
+	BITMAPINFO bmi;
+	char* pBits;
+	BITMAPINFOHEADER& bmih = bmi.bmiHeader;
+	bmih.biSize = sizeof(BITMAPINFOHEADER);
+	bmih.biWidth = nWidth;
+	assert(nHeight > 0);
+	bmih.biHeight = -nHeight; // top down
+	bmih.biPlanes = 1;
+	bmih.biBitCount = 32;
+	bmih.biCompression = BI_RGB;
+	const int lineStride = ((((bmih.biWidth * bmih.biBitCount) + 31) & ~31) / 8);
+	bmih.biSizeImage = lineStride * nHeight;
+	bmih.biXPelsPerMeter = 0;
+	bmih.biYPelsPerMeter = 0;
+	bmih.biClrUsed = 0;
+	bmih.biClrImportant = 0;
+	HBITMAP bmpWork = ::CreateDIBSection((HDC)0, &bmi, DIB_RGB_COLORS, (void**)&pBits, NULL, 0);
 	HGDIOBJ bmpWorkOld = ::SelectObject( hdcWork, bmpWork );
 
 	// 作業DCに転送
@@ -409,40 +427,15 @@ void CImageListMgr::MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
 	}
 
 	// 透過色の変数名が分かりづらいので別名定義する
-	const COLORREF &cTransparent = m_cTrans;
-
-	// ビットマップデータを取得するためのバッファを用意する
-	auto lineBuf = std::make_unique<MyRGBQUAD[]>( nWidth );
-
-	// 色データ取得のためのヘッダ
-	BITMAPINFOHEADER bi = {
-		sizeof( BITMAPINFOHEADER ),
-		nWidth,
-		nHeight,
-		1,
-		32,								//bits per pixel
-		BI_RGB,							//無圧縮RGB
-		0,								//biSizeImage: 無視される
-										// 省略可能なので以下略
-	};
+	const COLORREF cTransparent = m_cTrans;
 
 	// スキャンライン全行を順に取得して処理する
 	for (auto n = 0; n < nHeight; ++n) {
-		auto retGetDIBits = ::GetDIBits( hdcWork, bmpWork,
-			n,						//start
-			1,						//cLines
-			lineBuf.get(),
-			(BITMAPINFO *) &bi,
-			DIB_RGB_COLORS
-		);
-
-		if ( retGetDIBits == ERROR_INVALID_PARAMETER ) {
-			return; //TODO: ここに来たらマズい！
-		}
 
 		// スキャンラインを1ピクセルずつ処理する
+		auto pixels = reinterpret_cast<MyRGBQUAD*>(pBits);
 		for ( auto m = 0; m < nWidth; ++m ) {
-			MyRGBQUAD& px = lineBuf[m];
+			MyRGBQUAD& px = pixels[m];
 
 			// 透過色はスキップする
 			if ( px == cTransparent ) continue;
@@ -459,18 +452,7 @@ void CImageListMgr::MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
 			px.rgbBlue = GetBValue( ditherColors[mono] );
 		}
 
-		// Getで取得したのビットデータを書き換える
-		auto retSetDIBits = ::SetDIBits( hdcWork, bmpWork,
-			n,						//start
-			1,						//cLines
-			lineBuf.get(),
-			(BITMAPINFO *) &bi,
-			DIB_RGB_COLORS
-		);
-
-		if ( retSetDIBits == ERROR_INVALID_PARAMETER ) {
-			return; //TODO: ここに来たらマズい！
-		}
+		pBits += lineStride;
 	}
 
 	// 背景を透過させつつ転送
