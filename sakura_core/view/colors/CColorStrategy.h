@@ -86,7 +86,14 @@ struct CColor3Setting {
 };
 
 struct SColorStrategyInfo{
-	SColorStrategyInfo() : m_sDispPosBegin(0,0), m_pStrategy(NULL), m_pStrategyFound(NULL), m_pStrategySelect(NULL), m_colorIdxBackLine(COLORIDX_TEXT) {
+	SColorStrategyInfo(HDC hDC = NULL)
+		: m_sDispPosBegin(0,0)
+		, m_pStrategy(NULL)
+		, m_pStrategyFound(NULL)
+		, m_pStrategySelect(NULL)
+		, m_colorIdxBackLine(COLORIDX_TEXT)
+		, m_gr(hDC)
+	{
 		m_cIndex.eColorIndex = COLORIDX_TEXT;
 		m_cIndex.eColorIndex2 = COLORIDX_TEXT;
 		m_cIndex.eColorIndexBg = COLORIDX_TEXT;
