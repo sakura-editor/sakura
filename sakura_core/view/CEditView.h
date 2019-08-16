@@ -240,7 +240,7 @@ public:
 protected:
 	//! ロジック行を1行描画
 	bool DrawLogicLine(
-		SColorStrategyInfo* pInfo,		//!< [in,out] 作画対象
+		SColorStrategyInfo* pInfo,		//!< [in,out] 作画情報
 		CLayoutInt		nLineTo			//!< [in]     作画終了するレイアウト行番号
 	);
 
