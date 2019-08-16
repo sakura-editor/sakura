@@ -878,9 +878,8 @@ bool CEditView::DrawLogicLine(
 {
 //	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DrawLogicLine" );
 	bool bDispEOF = false;
-	SColorStrategyInfo _sInfo;
+	SColorStrategyInfo _sInfo(_hdc);
 	SColorStrategyInfo* pInfo = &_sInfo;
-	pInfo->m_gr.Init(_hdc);
 	pInfo->m_pDispPos = _pDispPos;
 	pInfo->m_pcView = this;
 

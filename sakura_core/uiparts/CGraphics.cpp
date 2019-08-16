@@ -35,10 +35,6 @@ static CGDIStock s_cGDIStock;	// 唯一の CGDIStock オブジェクト
 void CGraphics::Init(HDC hdc)
 {
 	m_hdc = hdc;
-	//ペン
-	m_hpnOrg = NULL;
-	//ブラシ
-	m_hbrOrg = NULL;
 	m_hbrCurrent = NULL;
 	m_bDynamicBrush = false;
 }
@@ -49,32 +45,17 @@ CGraphics::~CGraphics()
 	ClearMyFont();
 	ClearPen();
 	ClearBrush();
-	RestoreTextColors();
+	if (m_hdcOrg && m_dcState) {
+		::RestoreDC(m_hdcOrg, m_dcState);
+	}
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       クリッピング                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-void CGraphics::_InitClipping()
-{
-	if(m_vClippingRgns.empty()){
-		//元のクリッピング領域を取得
-		RECT rcDummy = {0,0,1,1};
-		HRGN hrgnOrg = ::CreateRectRgnIndirect(&rcDummy);
-		int nRet = ::GetClipRgn(m_hdc,hrgnOrg);
-		if(nRet!=1){
-			::DeleteObject(hrgnOrg);
-			hrgnOrg = NULL;
-		}
-		//保存
-		m_vClippingRgns.push_back(hrgnOrg);
-	}
-}
-
 void CGraphics::PushClipping(const RECT& rc)
 {
-	_InitClipping();
 	//新しく作成→HDCに設定→スタックに保存
 	HRGN hrgnNew = CreateRectRgnIndirect(&rc);
 	::SelectClipRgn(m_hdc,hrgnNew);
@@ -83,24 +64,24 @@ void CGraphics::PushClipping(const RECT& rc)
 
 void CGraphics::PopClipping()
 {
-	if(m_vClippingRgns.size()>=2){
+	if(m_vClippingRgns.size()){
 		//最後の要素を削除
 		::DeleteObject(m_vClippingRgns.back());
 		m_vClippingRgns.pop_back();
-		//この時点の最後の要素をHDCに設定
-		::SelectClipRgn(m_hdc,m_vClippingRgns.back());
+		if(m_vClippingRgns.size()){
+			//この時点の最後の要素をHDCに設定
+			::SelectClipRgn(m_hdc,m_vClippingRgns.back());
+		}else{
+			::SelectClipRgn(m_hdc, NULL);
+		}
 	}
 }
 
 void CGraphics::ClearClipping()
 {
-	//元のクリッピングに戻す
-	if(!m_vClippingRgns.empty()){
-		::SelectClipRgn(m_hdc,m_vClippingRgns[0]);
-	}
 	//領域をすべて削除
-	int nSize = (int)m_vClippingRgns.size();
-	for(int i=0;i<nSize;i++){
+	size_t nSize = m_vClippingRgns.size();
+	for(size_t i=0;i<nSize;i++){
 		::DeleteObject(m_vClippingRgns[i]);
 	}
 	m_vClippingRgns.clear();
@@ -171,19 +152,6 @@ void CGraphics::ClearTextBackColor()
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         テキスト                            //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-void CGraphics::RestoreTextColors()
-{
-	PopTextForeColor();
-	PopTextBackColor();
-	if(m_nTextModeOrg.HasData()){
-		::SetBkMode(m_hdc,m_nTextModeOrg.Get());
-		m_nTextModeOrg.Clear();
-	}
-}
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         フォント                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
@@ -191,30 +159,24 @@ void CGraphics::PushMyFont(const SFONT& sFont)
 {
 	//設定
 	HFONT hFontOld = (HFONT)SelectObject(m_hdc, sFont.m_hFont);
-
-	//記録
-	if(m_vFonts.empty()){
-		SFONT sFontOld = { { false, false }, hFontOld };
-		m_vFonts.push_back(sFontOld);
-	}
+	(void)hFontOld;
 	m_vFonts.push_back(sFont);
 }
 
 void CGraphics::PopMyFont()
 {
 	//戻す
-	if(m_vFonts.size()>=2){
+	if(m_vFonts.size()){
 		m_vFonts.pop_back();
-		SelectObject(m_hdc, m_vFonts.back().m_hFont);
+		if(m_vFonts.size()){
+			SelectObject(m_hdc, m_vFonts.back().m_hFont);
+		}
 	}
 }
 
 void CGraphics::ClearMyFont()
 {
-	if(!m_vFonts.empty()){
-		SelectObject(m_hdc, m_vFonts[0].m_hFont);
-		m_vFonts.clear();
-	}
+	m_vFonts.clear();
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -226,47 +188,23 @@ void CGraphics::PushPen(COLORREF color, int nPenWidth, int nStyle)
 	HPEN hpnNew = CreatePen(nStyle,nPenWidth,color);
 	HPEN hpnOld = (HPEN)SelectObject(m_hdc,hpnNew);
 	m_vPens.push_back(hpnNew);
-	if(!m_hpnOrg){
-		m_hpnOrg = hpnOld;
-	}
 }
 
 void CGraphics::PopPen()
 {
-	//選択する候補
-	HPEN hpnNew = NULL;
-	if(m_vPens.size()>=2){
-		hpnNew = m_vPens[m_vPens.size()-2];
-	}
-	else{
-		hpnNew = m_hpnOrg;
-	}
-
-	//選択
-	if(hpnNew){
-		SelectObject(m_hdc,hpnNew);
-	}
-
-	//削除
-	if(!m_vPens.empty()){
+	if(m_vPens.size()){
 		DeleteObject(m_vPens.back());
 		m_vPens.pop_back();
-	}
-
-	//オリジナル
-	if(m_vPens.empty()){
-		m_hpnOrg = NULL;
+		if(m_vPens.size()){
+			SelectObject(m_hdc,m_vPens.back());
+		}
 	}
 }
 
 void CGraphics::ClearPen()
 {
-	if(m_hpnOrg){
-		SelectObject(m_hdc,m_hpnOrg);
-		m_hpnOrg = NULL;
-	}
-	int nSize = (int)m_vPens.size();
-	for(int i=0;i<nSize;i++){
+	size_t nSize = m_vPens.size();
+	for(size_t i=0;i<nSize;i++){
 		DeleteObject(m_vPens[i]);
 	}
 	m_vPens.clear();
@@ -281,9 +219,6 @@ COLORREF CGraphics::GetPenColor() const
 			return logpen.lopnColor;
 		}
 	}
-	else{
-		return 0;
-	}
 	return 0;
 }
 
@@ -291,22 +226,8 @@ COLORREF CGraphics::GetPenColor() const
 //                          ブラシ                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-void CGraphics::_InitBrushColor()
-{
-	if(m_vBrushes.empty()){
-		//元のブラシを取得
-		HBRUSH hbrOrg = (HBRUSH)::SelectObject(m_hdc,::GetStockObject(NULL_BRUSH));
-		::SelectObject(m_hdc,hbrOrg); //元に戻す
-		//保存
-		m_vBrushes.push_back(hbrOrg);
-	}
-}
-
 void CGraphics::PushBrushColor(COLORREF color)
 {
-	//####ここで効率化できる
-
-	_InitBrushColor();
 	//新しく作成→HDCに設定→スタックに保存
 	HBRUSH hbrNew = (color!=(COLORREF)-1)?CreateSolidBrush(color):(HBRUSH)GetStockObject(NULL_BRUSH);
 	::SelectObject(m_hdc,hbrNew);
@@ -315,27 +236,24 @@ void CGraphics::PushBrushColor(COLORREF color)
 
 void CGraphics::PopBrushColor()
 {
-	if(m_vBrushes.size()>=2){
-		//最後から2番目の要素をHDCに設定
-		::SelectObject(m_hdc,m_vBrushes[m_vBrushes.size()-2]);
+	if(m_vBrushes.size()){
 		//最後の要素を削除
 		::DeleteObject(m_vBrushes.back());
 		m_vBrushes.pop_back();
+		if(m_vBrushes.size()){
+			::SelectObject(m_hdc,m_vBrushes.back());
+		}
 	}
 }
 
 void CGraphics::ClearBrush()
 {
-	//元のブラシに戻す
-	if(!m_vBrushes.empty()){
-		::SelectObject(m_hdc,m_vBrushes[0]);
-	}
-	//ブラシをすべて削除 (0番要素以外)
-	int nSize = (int)m_vBrushes.size();
-	for(int i=1;i<nSize;i++){
+	//ブラシをすべて削除
+	size_t nSize = (int)m_vBrushes.size();
+	for(size_t i=0;i<nSize;i++){
 		::DeleteObject(m_vBrushes[i]);
 	}
-	m_vBrushes.resize(t_min(1,(int)m_vBrushes.size()));
+	m_vBrushes.clear();
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
