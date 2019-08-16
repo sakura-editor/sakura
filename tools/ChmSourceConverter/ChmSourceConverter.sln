@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.757
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChmSourceConverter", "ChmSourceConverter\ChmSourceConverter.csproj", "{D954DAC9-5CB5-4F44-9F4A-FEE99243A62F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChmSourceConverter.Test", "ChmSourceConverter.Test\ChmSourceConverter.Test.csproj", "{86839038-E294-4845-97AE-48AD18DD4500}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D954DAC9-5CB5-4F44-9F4A-FEE99243A62F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D954DAC9-5CB5-4F44-9F4A-FEE99243A62F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D954DAC9-5CB5-4F44-9F4A-FEE99243A62F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D954DAC9-5CB5-4F44-9F4A-FEE99243A62F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86839038-E294-4845-97AE-48AD18DD4500}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86839038-E294-4845-97AE-48AD18DD4500}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86839038-E294-4845-97AE-48AD18DD4500}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D0C5958B-C394-42A2-9C69-8F0F6DD6108C}
+	EndGlobalSection
+EndGlobal
