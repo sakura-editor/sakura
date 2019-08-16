@@ -2296,4 +2296,7 @@
       <Filter>Cpp Source Files\util</Filter>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="sakura.natvis" />
+  </ItemGroup>
 </Project>

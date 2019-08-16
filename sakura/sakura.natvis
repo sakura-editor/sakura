@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <Type Name="CNativeW">
+    <DisplayString Condition="m_pRawData == 0">empty</DisplayString>
+    <DisplayString Condition="m_pRawData != 0">{m_pRawData,su}</DisplayString>
+    <Expand>
+      <Item Condition="m_pRawData != 0" Name="_Data">m_pRawData,su</Item>
+      <Item Name="_Length">m_nRawLen / 2</Item>
+      <Item Name="_Size">m_nDataBufSize / 2</Item>
+    </Expand>
+  </Type>
+</AutoVisualizer>
