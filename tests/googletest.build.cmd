@@ -29,9 +29,8 @@ if not errorlevel 1 (
 )
 
 @rem find cl.exe in the PATH
-for /f "usebackq delims=" %%a in (`where cl.exe`) do ( 
-    set CMD_CL=%%a
-)
+call :find_cl_exe
+
 if not defined CMD_CL (
 	echo cl.exe was not found.
 	endlocal && exit /b 1
@@ -50,3 +49,9 @@ cmake %GENERATOR% -DCMAKE_BUILD_TYPE=%CONFIGURATION% ^
 cmake --build . || endlocal && exit /b 1
 
 endlocal && exit /b 0
+
+:find_cl_exe
+for /f "usebackq delims=" %%a in (`where cl.exe`) do (
+    set CMD_CL=%%a
+    goto :EOF
+)
