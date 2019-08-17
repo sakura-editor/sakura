@@ -1,0 +1,53 @@
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="GoogleTest">
+    <GoogleTestSourceDir>$(MSBuildThisFileDirectory)googletest\</GoogleTestSourceDir>
+    <GoogleTestBuildDir>$(MSBuildThisFileDirectory)build\$(Platform)\$(Configuration)\googletest\</GoogleTestBuildDir>
+    <IncludePath>$(GoogleTestSourceDir)googletest\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(GoogleTestBuildDir)\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Label="GoogleTest.Requirements">
+    <ClCompile>
+      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Label="GoogleTest.Libs" Condition="'$(Configuration)' == 'Debug'">
+    <Link>
+      <AdditionalDependencies>gtestd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gtest_maind.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Label="GoogleTest.Libs" Condition="'$(Configuration)' == 'Release'">
+    <Link>
+      <AdditionalDependencies>gtest.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gtest_main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup Label="GoogleTest.Pdbs" Condition="'$(Configuration)' == 'Debug'">
+    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\gtestd.pdb" />
+    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\gtest_maind.pdb" />
+  </ItemGroup>
+  <ItemGroup Label="GoogleTest.Pdbs" Condition="'$(Configuration)' == 'Release'">
+    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\gtest.pdb" />
+    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\gtest_main.pdb" />
+  </ItemGroup>
+  <Target Name="BuildGoogleTest" BeforeTargets="ClCompile">
+    <PropertyGroup>
+      <VcVarsArchitecture Condition="'$(PROCESSOR_ARCHITECTURE)' == 'x86' And '$(PlatformTarget)' == 'x86'">x86</VcVarsArchitecture>
+      <VcVarsArchitecture Condition="'$(PROCESSOR_ARCHITECTURE)' == 'x86' And '$(PlatformTarget)' == 'x64'">x86_amd64</VcVarsArchitecture>
+      <VcVarsArchitecture Condition="'$(PROCESSOR_ARCHITECTURE)' == 'AMD64' And '$(PlatformTarget)' == 'x86'">amd64_x86</VcVarsArchitecture>
+      <VcVarsArchitecture Condition="'$(PROCESSOR_ARCHITECTURE)' == 'AMD64' And '$(PlatformTarget)' == 'x64'">amd64</VcVarsArchitecture>
+    </PropertyGroup>
+    <MakeDir Condition="!Exists('$(GoogleTestBuildDir)')" Directories="$(GoogleTestBuildDir)" />
+    <Exec Command="$(MSBuildThisFileDirectory)googletest.build.cmd $(GoogleTestSourceDir) $(Configuration) &quot;$(VCInstallDir)Auxiliary/Build/vcvarsall.bat&quot; $(VcVarsArchitecture)" WorkingDirectory="$(GoogleTestBuildDir)" />
+  </Target>
+  <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
+    <!-- Add files to @Clean just before running CoreClean. -->
+    <ItemGroup>
+      <Clean Include="$(OutDir)gtestd.pdb" />
+      <Clean Include="$(OutDir)gtest_maind.pdb" />
+      <Clean Include="$(OutDir)gtest.pdb" />
+      <Clean Include="$(OutDir)gtest_main.pdb" />
+    </ItemGroup>
+    <RemoveDir Directories="$(GoogleTestBuildDir)" />
+  </Target>
+</Project>

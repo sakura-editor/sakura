@@ -2,6 +2,8 @@
 *.iobj
 *.ipdb
 *.pyc
+**/packages
+**/TestResults
 .sonarqube
 /*.patch
 /.vs
