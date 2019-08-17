@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Test Files">
+      <UniqueIdentifier>{690c7184-b796-460a-8fed-595dfa1930f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Deprecated Codes">
+      <UniqueIdentifier>{594146a8-ae7c-401b-a064-af37dac4216e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other Files">
+      <UniqueIdentifier>{0eefa0df-ca7f-489c-9844-9a182e1dba18}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt">
+      <Filter>Other Files</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="test-cmemory.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-cnative.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-int2dec.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-is_mailaddress.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-mydevmode.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-parameterized.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-sample.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-sample-disabled.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-StdControl.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
