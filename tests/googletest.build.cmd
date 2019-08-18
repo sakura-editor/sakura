@@ -44,7 +44,7 @@ cmake -G "%GENERATOR%" -DCMAKE_BUILD_TYPE=%CONFIGURATION% ^
   %SOURCE_DIR%                                            ^
   || endlocal && exit /b 1
 
-cmake --build . || endlocal && exit /b 1
+cmake --build . --config %CONFIGURATION% || endlocal && exit /b 1
 
 endlocal && exit /b 0
 
