@@ -3,7 +3,7 @@
     <GoogleTestSourceDir>$(MSBuildThisFileDirectory)googletest\</GoogleTestSourceDir>
     <GoogleTestBuildDir>$(MSBuildThisFileDirectory)build\$(Platform)\$(Configuration)\googletest\</GoogleTestBuildDir>
     <IncludePath>$(GoogleTestSourceDir)googletest\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(GoogleTestBuildDir)\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(GoogleTestBuildDir)\lib;$(GoogleTestBuildDir)\lib\$(Configuration);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Label="GoogleTest.Requirements">
     <ClCompile>
@@ -23,12 +23,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup Label="GoogleTest.Pdbs" Condition="'$(Configuration)' == 'Debug'">
-    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\gtestd.pdb" />
-    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\gtest_maind.pdb" />
+    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\gtestd.pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\gtestd.pdb')" />
+    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\gtest_maind.pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\gtest_maind.pdb')" />
+    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\$(Configuration)\gtestd.pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\$(Configuration)\gtestd.pdb')" />
+    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\$(Configuration)\gtest_maind.pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\$(Configuration)\gtest_maind.pdb')" />
   </ItemGroup>
   <ItemGroup Label="GoogleTest.Pdbs" Condition="'$(Configuration)' == 'Release'">
-    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\gtest.pdb" />
-    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\gtest_main.pdb" />
+    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\gtest.pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\gtest.pdb')" />
+    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\gtest_main.pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\gtest_main.pdb')" />
+    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\$(Configuration)\gtest.pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\$(Configuration)\gtest.pdb')" />
+    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\$(Configuration)\gtest_main.pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\$(Configuration)\gtest_main.pdb')" />
   </ItemGroup>
   <Target Name="BuildGoogleTest" BeforeTargets="ClCompile">
     <PropertyGroup>
