@@ -34,7 +34,7 @@ build_script:
 
 # to run our custom scripts instead of automatic tests
 test_script:
-  - cmd: tests\build-and-test.bat %PLATFORM% %CONFIGURATION%
+  - cmd: tests\run-tests.bat %PLATFORM% %CONFIGURATION%
 
 matrix:
   exclude:

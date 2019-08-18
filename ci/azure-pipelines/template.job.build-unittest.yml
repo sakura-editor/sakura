@@ -50,7 +50,7 @@ jobs:
     displayName: Zip files for artifacts
 
   # Unit tests
-  - script: tests\build-and-test.bat $(BuildPlatform) $(Configuration)
+  - script: tests\run-tests.bat $(BuildPlatform) $(Configuration)
     displayName: Unit test
 
   # see https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/copy-files?view=azure-devops&tabs=yaml
