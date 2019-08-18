@@ -38,13 +38,15 @@
       <VcVarsArchitecture Condition="'$(PROCESSOR_ARCHITECTURE)' == 'AMD64' And '$(PlatformTarget)' == 'x64'">amd64</VcVarsArchitecture>
       <NumVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(VisualStudioVersion)', '^(\d+).*', '$1'))</NumVersion>
       <NextVersion>$([MSBuild]::Add($(NumVersion), 1))</NextVersion>
+      <GeneratorSurfix Condition="'$(PlatformTarget)' == 'x86'"></GeneratorSurfix>
+      <GeneratorSurfix Condition="'$(PlatformTarget)' == 'x64'"> Win64</GeneratorSurfix>
     </PropertyGroup>
     <MakeDir Condition="!Exists('$(GoogleTestBuildDir)')" Directories="$(GoogleTestBuildDir)" />
     <Message Text="Cheking product line version of the Visual Studio." Importance="high" />
     <Exec Command="&quot;$(VSInstallDir)..\..\Installer\vswhere.exe&quot; -version [$(NumVersion),$(NextVersion)] -property catalog_productLineVersion" ConsoleToMSBuild="true">
       <Output TaskParameter="ConsoleOutput" PropertyName="ProductLineVersion" />
     </Exec>
-    <Exec Command="$(MSBuildThisFileDirectory)googletest.build.cmd $(GoogleTestSourceDir) &quot;Visual Studio $(NumVersion) $(ProductLineVersion)&quot; $(Configuration) &quot;$(VCInstallDir)Auxiliary/Build/vcvarsall.bat&quot; $(VcVarsArchitecture)" WorkingDirectory="$(GoogleTestBuildDir)" />
+    <Exec Command="$(MSBuildThisFileDirectory)googletest.build.cmd $(GoogleTestSourceDir) &quot;Visual Studio $(NumVersion) $(ProductLineVersion)$(GeneratorSurfix)&quot; $(Configuration) &quot;$(VCInstallDir)Auxiliary/Build/vcvarsall.bat&quot; $(VcVarsArchitecture)" WorkingDirectory="$(GoogleTestBuildDir)" />
   </Target>
   <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
     <!-- Add files to @Clean just before running CoreClean. -->
