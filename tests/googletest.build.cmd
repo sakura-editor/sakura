@@ -1,10 +1,9 @@
-@rem echo off
 setlocal
 set SOURCE_DIR=%1
-set GENERATOR=%2
-set CONFIGURATION=%3
+set GENERATOR=%~2
+set CONFIGURATION=%~3
 set VCVARSALL_PATH=%4
-set VCVARS_ARCH=%5
+set VCVARS_ARCH=%~5
 
 if not defined CMD_GIT call %~dp0..\tools\find-tools.bat
 if not defined CMD_GIT (
@@ -37,12 +36,12 @@ if not defined CMD_CL (
 set CMD_CL=%CMD_CL:\=/%
 
 cmake -G "%GENERATOR%" -DCMAKE_BUILD_TYPE=%CONFIGURATION% ^
-  "-DCMAKE_C_COMPILER=%CMD_CL%"                      ^
-  "-DCMAKE_CXX_COMPILER=%CMD_CL%"                    ^
-  -DBUILD_GMOCK=OFF                                  ^
-  -Dgtest_build_tests=OFF                            ^
-  -Dgtest_build_samples=OFF                          ^
-  %SOURCE_DIR%                                       ^
+  "-DCMAKE_C_COMPILER=%CMD_CL%"                           ^
+  "-DCMAKE_CXX_COMPILER=%CMD_CL%"                         ^
+  -DBUILD_GMOCK=OFF                                       ^
+  -Dgtest_build_tests=OFF                                 ^
+  -Dgtest_build_samples=OFF                               ^
+  %SOURCE_DIR%                                            ^
   || endlocal && exit /b 1
 
 cmake --build . || endlocal && exit /b 1
