@@ -1,9 +1,10 @@
 @rem echo off
 setlocal
 set SOURCE_DIR=%1
-set CONFIGURATION=%2
-set VCVARSALL_PATH=%3
-set VCVARS_ARCH=%4
+set GENERATOR=%2
+set CONFIGURATION=%3
+set VCVARSALL_PATH=%4
+set VCVARS_ARCH=%5
 
 if not defined CMD_GIT call %~dp0..\tools\find-tools.bat
 if not defined CMD_GIT (
@@ -16,8 +17,6 @@ if not exist "%~dp0googletest\CMakeLists.txt" (
 	"%CMD_GIT%" submodule update %~dp0googletest || endlocal && exit /b 1
 )
 
-set GENERATOR=
-
 @rem call vcvasall.bat when we run in the Visual Studio IDE.
 if defined VCVARSALL_PATH (
 	call %VCVARSALL_PATH% %VCVARS_ARCH% || endlocal && exit /b 1
@@ -25,7 +24,7 @@ if defined VCVARSALL_PATH (
 
 where ninja.exe > NUL 2>&1
 if not errorlevel 1 (
-	set GENERATOR=-G "Ninja"
+	set GENERATOR=Ninja
 )
 
 @rem find cl.exe in the PATH
@@ -37,7 +36,7 @@ if not defined CMD_CL (
 )
 set CMD_CL=%CMD_CL:\=/%
 
-cmake %GENERATOR% -DCMAKE_BUILD_TYPE=%CONFIGURATION% ^
+cmake -G "%GENERATOR%" -DCMAKE_BUILD_TYPE=%CONFIGURATION% ^
   "-DCMAKE_C_COMPILER=%CMD_CL%"                      ^
   "-DCMAKE_CXX_COMPILER=%CMD_CL%"                    ^
   -DBUILD_GMOCK=OFF                                  ^
