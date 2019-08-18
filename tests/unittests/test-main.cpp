@@ -1,4 +1,4 @@
-﻿/*! @file */
+/*! @file */
 /*
 	Copyright (C) 2018-2019 Sakura Editor Organization
 
@@ -22,14 +22,29 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest.h"
-#include <algorithm>
-#include "apiwrap/StdControl.h"
 
-/*!
-*/
-TEST_CASE("Wnd_GetText")
-{
-	CNativeT tempText;
-	REQUIRE_FALSE(Wnd_GetText(NULL, tempText));
+int main(int argc, char** argv) {
+    doctest::Context context;
+
+    // !!! THIS IS JUST AN EXAMPLE SHOWING HOW DEFAULTS/OVERRIDES ARE SET !!!
+
+    context.applyCommandLine(argc, argv);
+
+    // defaults
+    context.addFilter("test-case-exclude", "DISABLED_*");
+
+    // overrides
+    context.setOption("no-breaks", true); // don't break in the debugger when assertions fail
+
+    int res = context.run(); // run queries, or run tests unless --no-run is specified
+
+    if(context.shouldExit()) // important - query flags (and --exit) rely on the user doing this
+        return res;          // propagate the result of the tests
+
+    context.clearFilters(); // removes all filters added up to this point
+
+    return res; // the result from doctest is propagated here as well
 }
+

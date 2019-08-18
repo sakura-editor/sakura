@@ -1,4 +1,4 @@
-﻿#include <gtest/gtest.h>
+﻿#include "doctest.h"
 #include <cstdio>
 #include <exception>
 
@@ -29,18 +29,18 @@ int Divide(int a, int b)
 	return a / b;
 }
 
-TEST(test, Append)
+TEST_CASE("Append")
 {
-	EXPECT_EQ(Add(1, 2), 3);
-	ASSERT_EQ(Add(2, 3), 5);
+	CHECK(Add(1, 2) == 3);
+	REQUIRE(Add(2, 3) == 5);
 }
 
-TEST(test, DivideByZero)
+TEST_CASE("DivideByZero")
 {
-	ASSERT_THROW(Divide(2, 0), DivideByZeroException);
+	REQUIRE_THROWS_AS(Divide(2, 0), DivideByZeroException);
 }
 
-TEST(test, PointerSize)
+TEST_CASE("PointerSize")
 {
 	int pointerSize = 0;
 #if defined(_WIN64)
@@ -50,5 +50,5 @@ TEST(test, PointerSize)
 #else
 #endif
 	printf("pointerSize = %d\n", pointerSize);
-	ASSERT_EQ(sizeof(void*), pointerSize);
+	REQUIRE(sizeof(void*) == pointerSize);
 }

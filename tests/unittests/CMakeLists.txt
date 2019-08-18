@@ -20,9 +20,6 @@ target_include_directories(${project_name} PRIVATE ${CMAKE_SOURCE_DIR}/../sakura
 # use shared library version
 # this is required when using parameterized test
 if (BUILD_SHARED_LIBS)
-	# fix linker error "class testing::internal::Mutex testing::internal::g_linked_ptr_mutex"
-	target_compile_definitions(${project_name} PUBLIC -DGTEST_LINKED_AS_SHARED_LIBRARY=1)
-
 	# suppress warning
 	if (MSVC)
 		target_compile_options(${project_name} PUBLIC /wd4251 PUBLIC /wd4275)
@@ -47,18 +44,6 @@ elseif (MINGW)
 	list (TRANSFORM ALL_O REPLACE "\\.(cpp|rc)$" ".o")
 	target_link_libraries (${project_name} PRIVATE ${ALL_O})
 endif ()
-
-# link with GoogleTest
-if(BUILD_GTEST)
-	# Build GoogleTest from source code.
-	target_link_libraries(${project_name} PRIVATE gtest)
-	target_link_libraries(${project_name} PRIVATE gtest_main)
-else()
-	# Build without GoogleTest(use system library).
-	find_package(GTest REQUIRED)
-	target_link_libraries(${project_name} PRIVATE GTest::GTest)
-	target_link_libraries(${project_name} PRIVATE GTest::Main)
-endif()
 
 # link libraries
 target_link_libraries (${project_name} PRIVATE winspool ole32 oleaut32 uuid comctl32 imm32 mpr imagehlp shlwapi winmm windowscodecs msimg32)

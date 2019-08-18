@@ -32,9 +32,6 @@
     <ClCompile Include="test-mydevmode.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
-    <ClCompile Include="test-parameterized.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
     <ClCompile Include="test-sample.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
@@ -42,6 +39,9 @@
       <Filter>Test Files</Filter>
     </ClCompile>
     <ClCompile Include="test-StdControl.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-main.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
   </ItemGroup>

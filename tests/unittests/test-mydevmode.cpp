@@ -23,7 +23,7 @@
 		   distribution.
 */
 
-#include <gtest/gtest.h>
+#include "doctest.h"
 
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -72,35 +72,35 @@ static constexpr MYDEVMODE myDevMode = {
  * @brief 等価演算子のテスト
  *  コピーコンストラクタ(trivial)でインスタンスを生成し、等価比較を行う
  */
-TEST(MYDEVMODETest, operatorEqualByCopy)
+TEST_CASE("operatorEqualByCopy")
 {
 	// コピーコンストラクタ経由で初期化
 	MYDEVMODE value = myDevMode;
 
-	EXPECT_TRUE(value == myDevMode);
-	EXPECT_FALSE(value != myDevMode);
-	ASSERT_EQ(myDevMode, value);
+	CHECK(value == myDevMode);
+	CHECK_FALSE(value != myDevMode);
+	REQUIRE(myDevMode == value);
 }
 
 /*!
  * @brief 等価演算子のテスト
  *  自分自身との等価比較を行う
  */
-TEST(MYDEVMODETest, operatorEqualBySelf)
+TEST_CASE("operatorEqualBySelf")
 {
 	// 初期値はなんでもよいが一応指定しておく
 	MYDEVMODE value = myDevMode;
 
-	EXPECT_TRUE(value == value);
-	EXPECT_FALSE(value != value);
-	ASSERT_EQ(value, value);
+	CHECK(value == value);
+	CHECK_FALSE(value != value);
+	REQUIRE(value == value);
 }
 
 /*!
  * @brief 等価演算子のテスト
  *  memcpyでメンバが割当たっていない領域を含めてコピーし、等価比較を行う
  */
-TEST(MYDEVMODETest, operatorEqualByMemCpy)
+TEST_CASE("operatorEqualByMemCpy")
 {
 	// デフォルトで初期化
 	MYDEVMODE value;
@@ -109,9 +109,9 @@ TEST(MYDEVMODETest, operatorEqualByMemCpy)
 	assert(sizeof(value) == sizeof(myDevMode));
 	::memcpy_s(&value, sizeof(value), &myDevMode, sizeof(myDevMode));
 
-	EXPECT_TRUE(value == myDevMode);
-	EXPECT_FALSE(value != myDevMode);
-	ASSERT_EQ(myDevMode, value);
+	CHECK(value == myDevMode);
+	CHECK_FALSE(value != myDevMode);
+	REQUIRE(myDevMode == value);
 }
 
 /*!
@@ -120,7 +120,7 @@ TEST(MYDEVMODETest, operatorEqualByMemCpy)
  *
  *  合格条件：メンバの値が1つでも違ったら不一致を検出できること。
  */
-TEST(MYDEVMODETest, operatorNotEqual)
+TEST_CASE("operatorNotEqual")
 {
 	// デフォルトで初期化
 	MYDEVMODE value;
@@ -129,133 +129,133 @@ TEST(MYDEVMODETest, operatorNotEqual)
 	assert(sizeof(value) == sizeof(myDevMode));
 	::memcpy_s(&value, sizeof(value), &myDevMode, sizeof(myDevMode));
 
-	EXPECT_TRUE(value == myDevMode);
-	EXPECT_EQ(myDevMode, value);
+	CHECK(value == myDevMode);
+	CHECK(myDevMode == value);
 
 	value.m_bPrinterNotFound = TRUE;
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	value.m_bPrinterNotFound = myDevMode.m_bPrinterNotFound;
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	::_tcscpy_s(value.m_szPrinterDriverName, _T("PrinterDriverName"));
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	::_tcscpy_s(value.m_szPrinterDriverName, myDevMode.m_szPrinterDriverName);
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	::_tcscpy_s(value.m_szPrinterDeviceName, _T("PrinterDeviceName"));
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	::_tcscpy_s(value.m_szPrinterDeviceName, myDevMode.m_szPrinterDeviceName);
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	::_tcscpy_s(value.m_szPrinterOutputName, _T("PrinterOutputName"));
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	::_tcscpy_s(value.m_szPrinterOutputName, myDevMode.m_szPrinterOutputName);
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	value.dmFields = std::numeric_limits<decltype(value.dmFields)>::max();
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	value.dmFields = myDevMode.dmFields;
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	value.dmOrientation = std::numeric_limits<decltype(value.dmOrientation)>::max();
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	value.dmOrientation = myDevMode.dmOrientation;
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	value.dmPaperSize = std::numeric_limits<decltype(value.dmPaperSize)>::max();
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	value.dmPaperSize = myDevMode.dmPaperSize;
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	value.dmPaperLength = std::numeric_limits<decltype(value.dmPaperLength)>::max();
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	value.dmPaperLength = myDevMode.dmPaperLength;
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	value.dmPaperWidth = std::numeric_limits<decltype(value.dmPaperWidth)>::max();
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	value.dmPaperWidth = myDevMode.dmPaperWidth;
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	value.dmScale = std::numeric_limits<decltype(value.dmScale)>::max();
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	value.dmScale = myDevMode.dmScale;
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	value.dmCopies = std::numeric_limits<decltype(value.dmCopies)>::max();
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	value.dmCopies = myDevMode.dmCopies;
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	value.dmDefaultSource = std::numeric_limits<decltype(value.dmDefaultSource)>::max();
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	value.dmDefaultSource = myDevMode.dmDefaultSource;
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	value.dmPrintQuality = std::numeric_limits<decltype(value.dmPrintQuality)>::max();
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	value.dmPrintQuality = myDevMode.dmPrintQuality;
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	value.dmColor = std::numeric_limits<decltype(value.dmColor)>::max();
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	value.dmColor = myDevMode.dmColor;
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	value.dmDuplex = std::numeric_limits<decltype(value.dmDuplex)>::max();
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	value.dmDuplex = myDevMode.dmDuplex;
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	value.dmYResolution = std::numeric_limits<decltype(value.dmYResolution)>::max();
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	value.dmYResolution = myDevMode.dmYResolution;
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	value.dmTTOption = std::numeric_limits<decltype(value.dmTTOption)>::max();
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	value.dmTTOption = myDevMode.dmTTOption;
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	value.dmCollate = std::numeric_limits<decltype(value.dmCollate)>::max();
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	value.dmCollate = myDevMode.dmCollate;
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	::_tcscpy_s(value.dmFormName, _T("FormName"));
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	::_tcscpy_s(value.dmFormName, myDevMode.dmFormName);
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	value.dmLogPixels = std::numeric_limits<decltype(value.dmLogPixels)>::max();
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	value.dmLogPixels = myDevMode.dmLogPixels;
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	value.dmBitsPerPel = std::numeric_limits<decltype(value.dmBitsPerPel)>::max();
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	value.dmBitsPerPel = myDevMode.dmBitsPerPel;
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	value.dmPelsWidth = std::numeric_limits<decltype(value.dmPelsWidth)>::max();
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	value.dmPelsWidth = myDevMode.dmPelsWidth;
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	value.dmPelsHeight = std::numeric_limits<decltype(value.dmPelsHeight)>::max();
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	value.dmPelsHeight = myDevMode.dmPelsHeight;
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	value.dmDisplayFlags = std::numeric_limits<decltype(value.dmDisplayFlags)>::max();
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	value.dmDisplayFlags = myDevMode.dmDisplayFlags;
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 
 	value.dmDisplayFrequency = std::numeric_limits<decltype(value.dmDisplayFrequency)>::max();
-	EXPECT_NE(myDevMode, value);
+	CHECK(myDevMode != value);
 	value.dmDisplayFrequency = myDevMode.dmDisplayFrequency;
-	EXPECT_EQ(myDevMode, value);
+	CHECK(myDevMode == value);
 }
 
 /*!
@@ -264,7 +264,7 @@ TEST(MYDEVMODETest, operatorNotEqual)
  *  通常、ここまでやる必要はないが、修正の理由が「安全のため」なので、
  *  実際にどういうケースで一般保護例外違反となるか、コード的に発生させる方法の共有を兼ねて実装したもの。
  */
-TEST(MYDEVMODETest, StrategyForSegmentationFault)
+TEST_CASE("StrategyForSegmentationFault")
 {
 	// システムのページサイズを取得する
 	SYSTEM_INFO systemInfo = { 0 };
@@ -277,11 +277,11 @@ TEST(MYDEVMODETest, StrategyForSegmentationFault)
 
 	// 仮想メモリ範囲を予約する。予約時点では全体をNOACCESS指定にしておく。
 	LPVOID memBlock1 = ::VirtualAlloc(NULL, allocSize, MEM_RESERVE, PAGE_NOACCESS);
-	EXPECT_TRUE(memBlock1 != NULL);
+	CHECK(memBlock1 != nullptr);
 
 	// 仮想メモリ全域をコミット(=確保)する。
 	wchar_t* buf1 = static_cast<wchar_t*>(::VirtualAlloc(memBlock1, allocSize, MEM_COMMIT, PAGE_READWRITE));
-	EXPECT_TRUE(buf1 != NULL);
+	CHECK(buf1 != nullptr);
 
 	// 確保したメモリ全域をASCII文字'a'で埋める
 	::wmemset(buf1, L'a', pageSize);
@@ -289,7 +289,7 @@ TEST(MYDEVMODETest, StrategyForSegmentationFault)
 	// 2ページ目の保護モードをNOACCESSにする。
 	DWORD flOldProtect = 0;
 	volatile BOOL retVirtualProtect = ::VirtualProtect((char*)buf1 + pageSize, pageSize, PAGE_NOACCESS, &flOldProtect);
-	EXPECT_TRUE(retVirtualProtect);
+	CHECK(retVirtualProtect != FALSE);
 
 	// メモリデータをテスト対象型にマップする。実態として配列のように扱えるポインタを取得している。
 	MYDEVMODE* pValues = reinterpret_cast<MYDEVMODE*>(buf1);
@@ -298,6 +298,8 @@ TEST(MYDEVMODETest, StrategyForSegmentationFault)
 	std::wstring largeString(pageSize, L'a');
 	const auto pLargeStr = largeString.c_str();
 
+	// doctest はまだ death tests に未対応な為コメントアウト
+#if 0
 	/* DEATHテストで例外ケースの判定を行う。
 	 * pLargeStrには、コミットサイズの倍のデータが入っているので、
 	 * 単純にstrcmpするとreserveしただけの領域にアクセスしてしまい一般保護違反(access violation)が起きる。
@@ -308,10 +310,11 @@ TEST(MYDEVMODETest, StrategyForSegmentationFault)
 	volatile int ret = 0;
 	ASSERT_DEATH({ ret = ::_tcscmp(pValues[0].m_szPrinterDeviceName, pLargeStr); }, ".*");
 	(void)ret;
+#endif
 
 	// 等価比較演算子を使った場合には落ちないことを確認する
-	EXPECT_TRUE(pValues[0] == pValues[1]);
-	EXPECT_FALSE(pValues[0] != pValues[1]);
+	CHECK(pValues[0] == pValues[1]);
+	CHECK_FALSE(pValues[0] != pValues[1]);
 
 	// 仮想メモリをデコミット(=解放)する。
 	::VirtualFree((LPVOID)buf1, pageSize, MEM_DECOMMIT);

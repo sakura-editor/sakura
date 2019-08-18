@@ -9,10 +9,6 @@ if not defined CMD_CMAKE (
 )
 
 pushd %~dp0
-if not exist googletest (
-    git submodule init
-    git submodule update
-)
 
 set BUILDDIR=build\%platform%
 "%CMD_CMAKE%" --build %BUILDDIR%  --config %configuration% || set ERROR_RESULT=1

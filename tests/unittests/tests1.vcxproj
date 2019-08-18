@@ -38,7 +38,6 @@
     <OutDir>(ProjectDir)..\..\..\build\$(Platform)\$(Configuration)\unittests\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
-  <Import Project="$(ProjectDir)..\googletest.targets" />
   <ItemDefinitionGroup Label="tests1.common">
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -106,8 +105,8 @@
     <ClCompile Include="test-cnative.cpp" />
     <ClCompile Include="test-int2dec.cpp" />
     <ClCompile Include="test-is_mailaddress.cpp" />
+    <ClCompile Include="test-main.cpp" />
     <ClCompile Include="test-mydevmode.cpp" />
-    <ClCompile Include="test-parameterized.cpp" />
     <ClCompile Include="test-sample-disabled.cpp" />
     <ClCompile Include="test-sample.cpp" />
     <ClCompile Include="test-StdControl.cpp" />

@@ -1,6 +1,8 @@
-﻿#include <gtest/gtest.h>
+﻿#include "doctest.h"
 
 #include <limits>
+#include <stdint.h>
+#include <string>
 
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -16,8 +18,8 @@ void test_int2dec(T value, ptrdiff_t lenExpected, const wchar_t* strExpected)
 {
 	wchar_t buff[int2dec_destBufferSufficientLength<T>()];
 	ptrdiff_t len = int2dec(value, buff);
-	EXPECT_EQ(len, lenExpected);
-	EXPECT_STREQ(buff, strExpected);
+	CHECK(len == lenExpected);
+	CHECK(wcscmp(buff, strExpected) == 0);
 }
 
 template <typename T>
@@ -34,13 +36,13 @@ void test_32_64_plus_minus(int value, ptrdiff_t lenExpected, const wchar_t* strE
 	test_plusminus<int64_t>(value, lenExpected, strExpected);
 }
 
-TEST(int2dec_test, zero)
+TEST_CASE("zero")
 {
 	test_int2dec<int32_t>(0, 1, L"0");
 	test_int2dec<int64_t>(0, 1, L"0");
 }
 
-TEST(int2dec_test, digits)
+TEST_CASE("digits")
 {
 	test_32_64_plus_minus(2, 1, L"2");
 	test_32_64_plus_minus(3, 1, L"3");
@@ -52,19 +54,19 @@ TEST(int2dec_test, digits)
 	test_32_64_plus_minus(9, 1, L"9");
 }
 
-TEST(int2dec_test, max)
+TEST_CASE("max")
 {
 	test_int2dec<int32_t>(std::numeric_limits<int32_t>::max(), 10, L"2147483647");
 	test_int2dec<int64_t>(std::numeric_limits<int64_t>::max(), 19, L"9223372036854775807");
 }
 
-TEST(int2dec_test, min)
+TEST_CASE("min")
 {
 	test_int2dec<int32_t>(std::numeric_limits<int32_t>::min(), 11, L"-2147483648");
 	test_int2dec<int64_t>(std::numeric_limits<int64_t>::min(), 20, L"-9223372036854775808");
 }
 
-TEST(int2dec_test, group_sequence)
+TEST_CASE("group_sequence")
 {
 	test_32_64_plus_minus(1, 1, L"1");
 	test_32_64_plus_minus(12, 2, L"12");

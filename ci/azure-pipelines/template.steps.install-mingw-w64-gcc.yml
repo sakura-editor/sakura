@@ -14,5 +14,3 @@ steps:
   - script: C:\msys64\usr\bin\bash --login -c "pacman -S --noconfirm mingw-w64-x86_64-make"
     displayName: install MinGW-w64-make
 
-  - script: C:\msys64\usr\bin\bash --login -c "pacman -S --noconfirm mingw-w64-x86_64-gtest"
-    displayName: install MinGW-w64-gtest

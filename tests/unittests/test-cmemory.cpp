@@ -22,13 +22,14 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include <gtest/gtest.h>
+#include "doctest.h"
+#include <algorithm>
 #include "mem/CMemory.h"
 
 /*!
 	_SetRawLength(0) を呼び出して落ちないことを確認する
 */
-TEST(CMemory, SetRawLengthToZero)
+TEST_CASE("SetRawLengthToZero")
 {
 	CMemory memory;
 
@@ -39,19 +40,19 @@ TEST(CMemory, SetRawLengthToZero)
 /*!
 	CMemory を単にインスタンス化した状態ではバッファが確保されていないのを確認する。
 */
-TEST(CMemory, CheckEmpty)
+TEST_CASE("CheckEmpty")
 {
 	CMemory memory;
 
 	// インスタンス化しただけ
 	// → バッファが確保されないことを確認する
-	EXPECT_EQ(NULL, memory.GetRawPtr());
+	CHECK(nullptr == memory.GetRawPtr());
 
 	// インスタンス化しただけ
 	// → バッファサイズが 0 であることを確認する。
-	EXPECT_EQ(0, memory.capacity());
+	CHECK(0 == memory.capacity());
 
 	// インスタンス化しただけ
 	// → データサイズが 0 であることを確認する。
-	EXPECT_EQ(0, memory.GetRawLength());
+	CHECK(0 == memory.GetRawLength());
 }

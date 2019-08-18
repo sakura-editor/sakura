@@ -22,7 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include <gtest/gtest.h>
+#include "doctest.h"
+#include <algorithm>
 #include "mem/CNativeW.h"
 #include "mem/CNativeA.h"
 
@@ -43,7 +44,7 @@
 	3-2. バッファの状態を取得する
 	3-3. バッファの状態をチェックする
 */
-TEST(CNativeW, Clear)
+TEST_CASE("Clear")
 {
 	constexpr const WCHAR*	fixedPatternStr = L"abc";
 	constexpr const int		fixedPatternLen = 3;
@@ -64,8 +65,8 @@ TEST(CNativeW, Clear)
 
 	// 1-3. バッファの状態をチェックする
 
-	EXPECT_GT(orgCapacity, 0);						// データ追加後のバッファサイズを確認する
-	EXPECT_EQ(orgLength, fixedPatternLen);			// データ追加後のデータサイズを確認する
+	CHECK(orgCapacity > 0);							// データ追加後のバッファサイズを確認する
+	CHECK(orgLength == fixedPatternLen);			// データ追加後のデータサイズを確認する
 
 	// 2-1. CNativeW をクリアする
 	
@@ -78,8 +79,8 @@ TEST(CNativeW, Clear)
 
 	// 2-3. クリア後のバッファの状態をチェックする
 	
-	EXPECT_EQ(orgCapacity, newCapacity);			// Clear() 後にバッファサイズが変わっていないのを確認する
-	EXPECT_EQ(newLength, 0);						// Clear() 後にデータが空なのを確認する
+	CHECK(orgCapacity == newCapacity);			// Clear() 後にバッファサイズが変わっていないのを確認する
+	CHECK(newLength == 0);						// Clear() 後にデータが空なのを確認する
 
 	// 3-1. 固定データを再追加する
 
@@ -92,20 +93,20 @@ TEST(CNativeW, Clear)
 
 	// 3-3. バッファの状態をチェックする
 	
-	EXPECT_EQ(orgCapacity, newCapacity2);			// 再追加後にバッファサイズが変わっていないのを確認する
-	EXPECT_EQ(newLength2, fixedPatternLen);			// 再追加後にデータサイズを確認する
+	CHECK(orgCapacity == newCapacity2);			// 再追加後にバッファサイズが変わっていないのを確認する
+	CHECK(newLength2 == fixedPatternLen);			// 再追加後にデータサイズを確認する
 }
 
 /*!
 	CNativeW を単にインスタンス化した状態ではバッファが確保されていないのを確認する。
 */
-TEST(CNativeW, CheckEmpty)
+TEST_CASE("CheckEmpty")
 {
 	CNativeW stringW;
 
 	// インスタンス化しただけではバッファが確保されないことを確認する
-	EXPECT_EQ(NULL, stringW.GetStringPtr());
+	CHECK(nullptr == stringW.GetStringPtr());
 
 	// インスタンス化しただけではバッファサイズが 0 であることを確認する。
-	EXPECT_EQ(0, stringW.capacity());
+	CHECK(0 == stringW.capacity());
 }
