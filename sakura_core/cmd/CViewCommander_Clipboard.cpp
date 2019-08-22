@@ -689,7 +689,7 @@ static bool AppendHTMLColor(
 					WCHAR szColor[60];
 					DWORD dwTEXTColor = (GetRValue(sColorAttrLast.m_cTEXT) << 16) + (GetGValue(sColorAttrLast.m_cTEXT) << 8) + GetBValue(sColorAttrLast.m_cTEXT);
 					DWORD dwBACKColor = (GetRValue(sColorAttrLast.m_cBACK) << 16) + (GetGValue(sColorAttrLast.m_cBACK) << 8) + GetBValue(sColorAttrLast.m_cBACK);
-					swprintf( szColor, L"<span style=\"color:#%06x;background-color:#%06x\">", dwTEXTColor, dwBACKColor);
+					_swprintf( szColor, L"<span style=\"color:#%06x;background-color:#%06x\">", dwTEXTColor, dwBACKColor);
 					cmemClip.AppendString( szColor );
 				}
 			}
@@ -820,7 +820,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 		}
 		nLineNumberMaxLen = i + 1; // "%d:"
 		cmemNullLine.AppendString(L":");
-		swprintf(szLineFormat, L"%%%dd:", i);
+		_swprintf(szLineFormat, L"%%%dd:", i);
 	}
 	if( bLineNumLayout ){
 		nBuffSize += (Int)(nLineNumberMaxLen * (rcSel.bottom - rcSel.top + 1));
@@ -833,7 +833,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 		COLORREF cBACK = type.m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK;
 		DWORD dwBACKColor = (GetRValue(cBACK) << 16) + (GetGValue(cBACK) << 8) + GetBValue(cBACK);
 		WCHAR szBuf[50];
-		swprintf(szBuf, L"<pre style=\"background-color:#%06x\">", dwBACKColor);
+		_swprintf(szBuf, L"<pre style=\"background-color:#%06x\">", dwBACKColor);
 		cmemClip.AppendString( szBuf );
 	}
 	CLayoutInt nLayoutLineNum = rcSel.top;
@@ -919,12 +919,12 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 							cmemClip.AppendNativeData(cmemNullLine);
 						}
 					}else{
-						int ret = swprintf(szLineNum, szLineFormat, nLineNum + 1);
+						int ret = _swprintf(szLineNum, szLineFormat, nLineNum + 1);
 						cmemClip.AppendString(szLineNum, ret);
 					}
 				}else{
 					if( bLineNumLayout || pcLayout->GetLogicOffset() == 0 ){
-						int ret = swprintf(szLineNum, szLineFormat, nLayoutLineNum + 1);
+						int ret = _swprintf(szLineNum, szLineFormat, nLayoutLineNum + 1);
 						cmemClip.AppendString(szLineNum, ret);
 					}
 				}

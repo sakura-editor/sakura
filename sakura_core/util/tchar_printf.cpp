@@ -109,7 +109,7 @@ static inline int local_vsprintf(char* buf, const char* format, va_list& v)
 
 static inline int local_vsprintf(wchar_t* buf, const wchar_t* format, va_list& v)
 {
-	return vswprintf(buf,format,v);
+	return _vswprintf(buf,format,v);
 }
 
 //vsnprintf_s API
