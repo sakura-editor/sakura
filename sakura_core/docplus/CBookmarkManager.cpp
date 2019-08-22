@@ -121,7 +121,7 @@ void CBookmarkManager::SetBookMarks( wchar_t* pMarkLines )
 		}
 	}else{
 		// 旧形式 行番号,区切り
-		while(wcstok(p, delim) != NULL) {
+		while(_wcstok(p, delim) != NULL) {
 			while(wcschr(delim, *p) != NULL)p++;
 			pCDocLine=m_pcDocLineMgr->GetLine( CLogicInt(_wtol(p)) );
 			if(pCDocLine)CBookmarkSetter(pCDocLine).SetBookmark(true);

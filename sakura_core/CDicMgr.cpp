@@ -84,7 +84,7 @@ BOOL CDicMgr::Search(
 			pszWork += wcslen( pszDelimit );
 
 			/* 最初のトークンを取得します。 */
-			pszToken = wcstok( szLine, pszKeySeps );
+			pszToken = _wcstok( szLine, pszKeySeps );
 			while( NULL != pszToken ){
 				nRes = _wcsnicmp( pszKey, pszToken, nCmpLen );	// 2006.04.10 fon
 				if( 0 == nRes ){
@@ -105,7 +105,7 @@ BOOL CDicMgr::Search(
 					*pLine = line;	// 2006.04.10 fon
 					return TRUE;
 				}
-				pszToken = wcstok( NULL, pszKeySeps );
+				pszToken = _wcstok( NULL, pszKeySeps );
 			}
 		}
 	}
