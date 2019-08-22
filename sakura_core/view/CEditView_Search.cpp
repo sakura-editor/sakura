@@ -30,7 +30,7 @@
 #include "parse/CWordParse.h"
 #include "util/string_ex2.h"
 
-const int STRNCMP_MAX = 100;	/* MAXキーワード長：strnicmp文字列比較最大値(CEditView::KeySearchCore) */	// 2006.04.10 fon
+const int STRNCMP_MAX = 100;	/* MAXキーワード長：_strnicmp文字列比較最大値(CEditView::KeySearchCore) */	// 2006.04.10 fon
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           検索                              //
