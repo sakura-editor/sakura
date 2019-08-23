@@ -128,7 +128,7 @@ int CDocOutline::ReadRuleFile( const TCHAR* pszFilename, SOneRule* pcOneRule, in
 					}
 				}
 			}else{
-				pszToken = _wcstok( szLine, pszKeySeps );
+				pszToken = wcstok( szLine, pszKeySeps );
 				if( nCount == 0 && pszToken == NULL ){
 					pszToken = szLine;
 					bTopDummy = true;
@@ -153,7 +153,7 @@ int CDocOutline::ReadRuleFile( const TCHAR* pszFilename, SOneRule* pcOneRule, in
 				if( bTopDummy || bRegex ){
 					pszToken = NULL;
 				}else{
-					pszToken = _wcstok( NULL, pszKeySeps );
+					pszToken = wcstok( NULL, pszKeySeps );
 				}
 			}
 		}else{
