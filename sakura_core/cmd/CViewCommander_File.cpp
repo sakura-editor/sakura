@@ -589,7 +589,7 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(BOOL isAdmin)
 		return;
 	}
 
-	LPWSTR pVerb = L"open";
+	LPCWSTR pVerb = L"open";
 	if (isAdmin)
 	{
 		pVerb = L"runas";
@@ -633,7 +633,7 @@ void CViewCommander::Command_OPEN_POWERSHELL(BOOL isAdmin)
 	cmdExeParam.AppendStringF(L"-NoExit -Command \"Set-Location -Path '%s'\"", strFolder.c_str());
 	LPCWSTR pszcmdExeParam = cmdExeParam.GetStringPtr();
 
-	LPWSTR pVerb = L"open";
+	LPCWSTR pVerb = L"open";
 	if (isAdmin)
 	{
 		pVerb = L"runas";
