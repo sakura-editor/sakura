@@ -68,11 +68,11 @@ bool CColor_Numeric::EndColor(const CStringRef& cStr, int nPos)
  */
 static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*, int length*/)
 {
-	register const wchar_t* p;
-	register const wchar_t* q;
-	register int i = 0;
-	register int d = 0;
-	register int f = 0;
+	const wchar_t* p;
+	const wchar_t* q;
+	int i = 0;
+	int d = 0;
+	int f = 0;
 
 	p = cStr.GetPtr() + offset;
 	q = cStr.GetPtr() + cStr.GetLength();

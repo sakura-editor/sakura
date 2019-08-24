@@ -554,7 +554,7 @@ void CESI::GetEncodingInfo_uni( const char* pS, const int nLen )
 	const char *pr1, *pr2, *pr_end;
 	int nillbytes1, nillbytes2;
 	int nnewlinew1, nnewlinew2;
-	register int nret1, nret2;
+	int nret1, nret2;
 	ECharSet echarset1, echarset2;
 
 	if( nLen < 1 || pS == NULL ){
