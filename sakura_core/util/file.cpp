@@ -660,21 +660,42 @@ bool GetLastWriteTimestamp(
 	CFileTime*		pcFileTime		//!< [out] 更新日時を返す場所
 )
 {
-	HANDLE hFindFile;
-	WIN32_FIND_DATA ffd;
+	pcFileTime->ClearFILETIME();
 
-	hFindFile = ::FindFirstFile( pszFileName, &ffd );
-	if( INVALID_HANDLE_VALUE != hFindFile )
+	WIN32_FIND_DATA ffd;
+	HANDLE hFindFile = ::FindFirstFile( pszFileName, &ffd );
+	if (hFindFile == INVALID_HANDLE_VALUE)
 	{
-		::FindClose( hFindFile );
-		pcFileTime->SetFILETIME(ffd.ftLastWriteTime);
-		return true;
-	}
-	else{
-		//	ファイルが見つからなかった
-		pcFileTime->ClearFILETIME();
+		// ファイルが見つからなかった
 		return false;
 	}
+	::FindClose( hFindFile );
+
+	// シンボリックリンクの判別方法
+	// https://devblogs.microsoft.com/oldnewthing/20100212-00/?p=14963
+	if ((ffd.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) && (ffd.dwReserved0 & IO_REPARSE_TAG_SYMLINK))
+	{
+		// この関数はFindFirstFileを使う事でファイルがロックされている場合でもタイムスタンプを取得できるようにしているが、
+		// シンボリックリンクの場合はFindFirstFileで取得できるタイムスタンプはシンボリックリンク自体のタイムスタンプのようだ。
+		// ターゲットのタイムスタンプを取得する為には普通にファイルを開くしか無いようだ。
+		HANDLE hFile = ::CreateFile(pszFileName, GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_WRITE|FILE_SHARE_DELETE, NULL, OPEN_EXISTING, 0, NULL);
+		if (hFile == INVALID_HANDLE_VALUE)
+		{
+			return false;
+		}
+		FILETIME ftLastWrite;
+		BOOL ret = ::GetFileTime(hFile, NULL, NULL, &ftLastWrite);
+		::CloseHandle(hFile);
+		if (ret == 0)
+		{
+			return false;
+		}
+		pcFileTime->SetFILETIME(ftLastWrite);
+	}
+	else{
+		pcFileTime->SetFILETIME(ffd.ftLastWriteTime);
+	}
+	return true;
 }
 
 // -----------------------------------------------------------------------------
