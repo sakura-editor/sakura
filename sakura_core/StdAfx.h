@@ -20,6 +20,9 @@
 // Windows SDKのmin/maxマクロは使いません
 #define NOMINMAX
 
+// MS Cランタイムの非セキュア関数の使用を容認します
+#define _CRT_SECURE_NO_WARNINGS
+
 #if defined(_MSC_VER) && _MSC_VER >= 1400
 
 //#pragma warning(disable: 4786)
