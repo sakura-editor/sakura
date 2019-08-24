@@ -97,6 +97,7 @@ int CDocOutline::ReadRuleFile( const TCHAR* pszFilename, SOneRule* pcOneRule, in
 			/* 最初のトークンを取得します。 */
 			const wchar_t* pszTextReplace = L"";
 			wchar_t* pszToken;
+			wchar_t* context{ nullptr };
 			bool bTopDummy = false;
 			bool bRegexRep2 = false;
 			if( bRegex ){
@@ -128,7 +129,7 @@ int CDocOutline::ReadRuleFile( const TCHAR* pszFilename, SOneRule* pcOneRule, in
 					}
 				}
 			}else{
-				pszToken = wcstok( szLine, pszKeySeps );
+				pszToken = wcstok_s( szLine, pszKeySeps, &context );
 				if( nCount == 0 && pszToken == NULL ){
 					pszToken = szLine;
 					bTopDummy = true;
@@ -153,7 +154,7 @@ int CDocOutline::ReadRuleFile( const TCHAR* pszFilename, SOneRule* pcOneRule, in
 				if( bTopDummy || bRegex ){
 					pszToken = NULL;
 				}else{
-					pszToken = wcstok( NULL, pszKeySeps );
+					pszToken = wcstok_s( NULL, pszKeySeps, &context );
 				}
 			}
 		}else{

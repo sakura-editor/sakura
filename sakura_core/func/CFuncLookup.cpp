@@ -302,7 +302,7 @@ const WCHAR* CFuncLookup::Custmenu2Name( int index, WCHAR buf[], int bufSize ) c
 		return buf;
 	}
 	else {
-		swprintf( buf, LSW( STR_CUSTMENU_CUSTOM ), index );
+		_swprintf( buf, LSW( STR_CUSTMENU_CUSTOM ), index );
 		return buf;
 	}
 
