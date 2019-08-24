@@ -917,7 +917,7 @@ ECodeType CESI::AutoDetectByXML( const char* pBuf, int nSize )
 					const int nLen = encodingNameToCode[k].nLen;
 					if( i + nLen < nSize - 1
 					  && pBuf[i + nLen] == quoteChar
-					  && 0 == memicmp( encodingNameToCode[k].name, pBuf + i, nLen ) ){
+					  && 0 == _memicmp( encodingNameToCode[k].name, pBuf + i, nLen ) ){
 						return static_cast<ECodeType>(encodingNameToCode[k].nCode);
 					}
 				}
@@ -961,7 +961,7 @@ ECodeType CESI::AutoDetectByHTML( const char* pBuf, int nSize )
 	for( int i = 0; i + 14 < nSize; i++ ){
 		// 「<meta http-equiv="Content-Type" content="text/html; Charset=Shift_JIS">」
 		// 「<meta charset="utf-8">」
-		if( pBuf[i] == '<' && 0 == memicmp(&pBuf[i+1], "meta", 4) && IsXMLWhiteSpace(pBuf[i+5]) ){
+		if( pBuf[i] == '<' && 0 == _memicmp(&pBuf[i+1], "meta", 4) && IsXMLWhiteSpace(pBuf[i+5]) ){
 			i += 5;
 			ECodeType encoding = CODE_NONE;
 			bool bContentType = false;
@@ -969,15 +969,15 @@ ECodeType CESI::AutoDetectByHTML( const char* pBuf, int nSize )
 				if( IsXMLWhiteSpace(pBuf[i]) && i + 1 < nSize && !IsXMLWhiteSpace(pBuf[i+1]) ){
 					int nAttType = 0;
 					i++;
-					if( i + 12 < nSize && 0 == memicmp(pBuf + i, "http-equiv", 10)
+					if( i + 12 < nSize && 0 == _memicmp(pBuf + i, "http-equiv", 10)
 						&& (IsXMLWhiteSpace(pBuf[i+10]) || '=' == pBuf[i+10]) ){
 						i += 10;
 						nAttType = 1; // http-equiv
-					}else if( i + 9 < nSize && 0 == memicmp(pBuf + i, "content", 7)
+					}else if( i + 9 < nSize && 0 == _memicmp(pBuf + i, "content", 7)
 						&& (IsXMLWhiteSpace(pBuf[i+7]) || '=' == pBuf[i+7]) ){
 						i += 7;
 						nAttType = 2; // content
-					}else if( i + 9 < nSize && 0 == memicmp(pBuf + i, "charset", 7)
+					}else if( i + 9 < nSize && 0 == _memicmp(pBuf + i, "charset", 7)
 						&& (IsXMLWhiteSpace(pBuf[i+7]) || '=' == pBuf[i+7]) ){
 						i += 7;
 						nAttType = 3; // charset
@@ -1018,7 +1018,7 @@ ECodeType CESI::AutoDetectByHTML( const char* pBuf, int nSize )
 					}
 					if( 1 == nAttType ){
 						// http-equiv
-						if( 12 == nEndAttVal - nBeginAttVal && 0 == memicmp(pBuf + nBeginAttVal, "content-type", 12) ){
+						if( 12 == nEndAttVal - nBeginAttVal && 0 == _memicmp(pBuf + nBeginAttVal, "content-type", 12) ){
 							bContentType = true;
 							if( encoding != CODE_NONE ){
 								return encoding;
@@ -1031,7 +1031,7 @@ ECodeType CESI::AutoDetectByHTML( const char* pBuf, int nSize )
 						i++; // Skip ';'
 						while( i < nEndAttVal && IsXMLWhiteSpace(pBuf[i]) ){ i++; }
 						if( nEndAttVal <= i ){ i = nNextPos; continue; }
-						if( i + 7 < nEndAttVal && 0 == memicmp(pBuf + i, "charset", 7) ){
+						if( i + 7 < nEndAttVal && 0 == _memicmp(pBuf + i, "charset", 7) ){
 							i += 7;
 							while( i < nEndAttVal && IsXMLWhiteSpace(pBuf[i]) ){ i++; }
 							if( nEndAttVal <= i ){ i = nNextPos; continue; }
@@ -1045,7 +1045,7 @@ ECodeType CESI::AutoDetectByHTML( const char* pBuf, int nSize )
 							for( k = 0; encodingNameToCode[k].name != NULL; k++ ){
 								const int nLen = encodingNameToCode[k].nLen;
 								if( i - nCharsetBegin == nLen
-								  && 0 == memicmp( encodingNameToCode[k].name, pBuf + nCharsetBegin, nLen ) ){
+								  && 0 == _memicmp( encodingNameToCode[k].name, pBuf + nCharsetBegin, nLen ) ){
 									if( bContentType ){
 										return static_cast<ECodeType>(encodingNameToCode[k].nCode);
 									}else{
@@ -1061,7 +1061,7 @@ ECodeType CESI::AutoDetectByHTML( const char* pBuf, int nSize )
 						for( k = 0; encodingNameToCode[k].name != NULL; k++ ){
 							const int nLen = encodingNameToCode[k].nLen;
 							if( nEndAttVal - nBeginAttVal == nLen
-							  && 0 == memicmp( encodingNameToCode[k].name, pBuf + nBeginAttVal, nLen ) ){
+							  && 0 == _memicmp( encodingNameToCode[k].name, pBuf + nBeginAttVal, nLen ) ){
 								return static_cast<ECodeType>(encodingNameToCode[k].nCode);
 							}
 						}
@@ -1114,7 +1114,7 @@ ECodeType CESI::AutoDetectByCoding( const char* pBuf, int nSize )
 			for( k = 0; encodingNameToCode[k].name != NULL; k++ ){
 				const int nLen = encodingNameToCode[k].nLen;
 				if( i - nBegin == nLen
-				  && 0 == memicmp( encodingNameToCode[k].name, pBuf + nBegin, nLen ) ){
+				  && 0 == _memicmp( encodingNameToCode[k].name, pBuf + nBegin, nLen ) ){
 					return static_cast<ECodeType>(encodingNameToCode[k].nCode);
 				}
 			}

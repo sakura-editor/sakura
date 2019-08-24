@@ -135,7 +135,7 @@ LPCTSTR CFileNameManager::GetFilePathFormat( LPCTSTR pszSrc, LPTSTR pszDest, int
 
 	for( i = 0, j = 0; i < nSrcLen && j < nDestLen; i++ ){
 #if defined(_MBCS)
-		if( 0 == strnicmp( &pszSrc[i], pszFrom, nFromLen ) )
+		if( 0 == _strnicmp( &pszSrc[i], pszFrom, nFromLen ) )
 #else
 		if( 0 == _tcsncicmp( &pszSrc[i], pszFrom, nFromLen ) )
 #endif

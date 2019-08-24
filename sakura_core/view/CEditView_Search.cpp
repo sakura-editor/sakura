@@ -30,7 +30,7 @@
 #include "parse/CWordParse.h"
 #include "util/string_ex2.h"
 
-const int STRNCMP_MAX = 100;	/* MAXキーワード長：strnicmp文字列比較最大値(CEditView::KeySearchCore) */	// 2006.04.10 fon
+const int STRNCMP_MAX = 100;	/* MAXキーワード長：_strnicmp文字列比較最大値(CEditView::KeySearchCore) */	// 2006.04.10 fon
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           検索                              //
@@ -472,7 +472,7 @@ int CEditView::IsSearchString(
 		const wchar_t *const pWordHead = cStr.GetPtr() + posWordHead;
 
 		// 比較関数
-		int (*const fcmp)( const wchar_t*, const wchar_t*, size_t ) = m_sCurSearchOption.bLoHiCase ? wcsncmp : wcsnicmp;
+		int (*const fcmp)( const wchar_t*, const wchar_t*, size_t ) = m_sCurSearchOption.bLoHiCase ? wcsncmp : _wcsnicmp;
 
 		// 検索語を単語に分割しながら指定位置の単語と照合する。
 		int wordIndex = 0;

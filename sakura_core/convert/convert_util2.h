@@ -617,9 +617,9 @@ int _DecodeMimeHeader( const CHAR_TYPE* pSrc, const int nSrcLen, CMemory* pcMem_
 	if( pSrc+14 < pSrc+nSrcLen ){
 		// JIS の場合
 		if( sizeof(CHAR_TYPE) == 2 ){
-			ncmpresult = wcsnicmp( reinterpret_cast<const wchar_t*>(&pSrc[0]), L"=?ISO-2022-JP?", 14 );
+			ncmpresult = _wcsnicmp( reinterpret_cast<const wchar_t*>(&pSrc[0]), L"=?ISO-2022-JP?", 14 );
 		}else{
-			ncmpresult = strnicmp( &pSrc[0], "=?ISO-2022-JP?", 14 );
+			ncmpresult = _strnicmp( &pSrc[0], "=?ISO-2022-JP?", 14 );
 		}
 		if( ncmpresult == 0 ){  // 
 			ecode = CODE_JIS;
@@ -630,9 +630,9 @@ int _DecodeMimeHeader( const CHAR_TYPE* pSrc, const int nSrcLen, CMemory* pcMem_
 	if( pSrc+8 < pSrc+nSrcLen ){
 		// UTF-8 の場合
 		if( sizeof(CHAR_TYPE) == 2 ){
-			ncmpresult = wcsnicmp( reinterpret_cast<const wchar_t*>(&pSrc[0]), L"=?UTF-8?", 8 );
+			ncmpresult = _wcsnicmp( reinterpret_cast<const wchar_t*>(&pSrc[0]), L"=?UTF-8?", 8 );
 		}else{
-			ncmpresult = strnicmp( &pSrc[0], "=?UTF-8?", 8 );
+			ncmpresult = _strnicmp( &pSrc[0], "=?UTF-8?", 8 );
 		}
 		if( ncmpresult == 0 ){
 			ecode = CODE_UTF8;
@@ -664,11 +664,11 @@ finish_first_detect:;
 		return 0;
 	}
 	if( sizeof(CHAR_TYPE) == 2 ){
-		ncmpresult1 = wcsnicmp( reinterpret_cast<const wchar_t*>(&pSrc[nLen_part1]), L"B?", 2 );
-		ncmpresult2 = wcsnicmp( reinterpret_cast<const wchar_t*>(&pSrc[nLen_part1]), L"Q?", 2 );
+		ncmpresult1 = _wcsnicmp( reinterpret_cast<const wchar_t*>(&pSrc[nLen_part1]), L"B?", 2 );
+		ncmpresult2 = _wcsnicmp( reinterpret_cast<const wchar_t*>(&pSrc[nLen_part1]), L"Q?", 2 );
 	}else{
-		ncmpresult1 = strnicmp( &pSrc[nLen_part1], "B?", 2 );
-		ncmpresult2 = strnicmp( &pSrc[nLen_part1], "Q?", 2 );
+		ncmpresult1 = _strnicmp( &pSrc[nLen_part1], "B?", 2 );
+		ncmpresult2 = _strnicmp( &pSrc[nLen_part1], "Q?", 2 );
 	}
 	if( ncmpresult1 == 0 ){
 		emethod = EM_BASE64;
