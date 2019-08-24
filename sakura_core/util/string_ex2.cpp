@@ -16,14 +16,6 @@ wchar_t *wcs_pushW(wchar_t *dst, size_t dst_count, const wchar_t* src)
 {
 	return wcs_pushW(dst,dst_count,src,wcslen(src));
 }
-wchar_t *wcs_pushA(wchar_t *dst, size_t dst_count, const char* src, size_t src_count)
-{
-	return wcs_pushW(dst,dst_count,to_wchar(src));
-}
-wchar_t *wcs_pushA(wchar_t *dst, size_t dst_count, const char* src)
-{
-	return wcs_pushA(dst,dst_count,src,strlen(src));
-}
 
 /*! 文字のエスケープ
 
@@ -223,41 +215,6 @@ const wchar_t* GetNextLineWB(
 }
 #endif
 
-/*! 指定長以下のテキストに切り分ける
-
-	@param pText     [in] 切り分け対象となる文字列へのポインタ
-	@param nTextLen  [in] 切り分け対象となる文字列全体の長さ
-	@param nLimitLen [in] 切り分ける長さ
-	@param pnLineLen [out] 実際に取り出された文字列の長さ
-	@param pnBgn     [i/o] 入力: 切り分け開始位置, 出力: 取り出された文字列の次の位置
-
-	@note 2003.05.25 未使用のようだ
-*/
-const char* GetNextLimitedLengthText( const char* pText, int nTextLen, int nLimitLen, int* pnLineLen, int* pnBgn )
-{
-	int		i;
-	int		nBgn;
-	int		nCharChars;
-	nBgn = *pnBgn;
-	if( nBgn >= nTextLen ){
-		return NULL;
-	}
-	for( i = nBgn; i + 1 < nTextLen; ++i ){
-		// 2005-09-02 D.S.Koba GetSizeOfChar
-		nCharChars = CNativeA::GetSizeOfChar( pText, nTextLen, i );
-		if( 0 == nCharChars ){
-			nCharChars = 1;
-		}
-		if( i + nCharChars - nBgn >= nLimitLen ){
-			break;
-		}
-		i += ( nCharChars - 1 );
-	}
-	*pnBgn = i;
-	*pnLineLen = i - nBgn;
-	return &pText[nBgn];
-}
-
 //! データを指定「文字数」以内に切り詰める。戻り値は結果の文字数。
 int LimitStringLengthW(
 	const wchar_t*	pszData,		//!< [in]
@@ -273,28 +230,6 @@ int LimitStringLengthW(
 		for(; i + charSize <= nLimitLength;){
 			i += charSize;
 			charSize = CNativeW::GetSizeOfChar(pszData, nDataLength, i);
-		}
-		n = i;
-	}
-	cmemDes.SetString(pszData,n);
-	return n;
-}
-
-//! データを指定「文字数」以内に切り詰める。戻り値は結果の文字数。
-int LimitStringLengthA(
-	const char*		pszData,		//!< [in]
-	int				nDataLength,	//!< [in]
-	int				nLimitLength,	//!< [in]
-	CNativeA&		cmemDes			//!< [out]
-)
-{
-	int n=nDataLength;
-	if(n>nLimitLength){
-		int i = 0;
-		int charSize = CNativeA::GetSizeOfChar(pszData, nDataLength, i);
-		for(; i + charSize <= nLimitLength;){
-			i += charSize;
-			charSize = CNativeA::GetSizeOfChar(pszData, nDataLength, i);
 		}
 		n = i;
 	}
