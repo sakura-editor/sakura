@@ -27,7 +27,7 @@
 
 //ランタイム情報ライブラリにアクセスするWindowsヘッダを参照する
 //c++規格への準拠が厳しくなったため、WindowsSDKが無名enumをtypedefするコードが怒られる。
-#if defined(_MSC_VER) && _MSC_VER >= 1900
+#ifdef _MSC_VER
 	//一時的に警告を無効にしてインクルードする
 	#pragma warning(push)
 	#pragma warning(disable:4091)

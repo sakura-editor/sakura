@@ -24,9 +24,7 @@ void* operator new(size_t nSize)
 }
 
 #ifdef _MSC_VER
-#if _MSC_VER == 1500
-_Ret_bytecap_(_Size)	// for VS2008 Debug mode
-#endif
+_Ret_bytecap_(nSize)
 #endif
 
 void* operator new[](size_t nSize)

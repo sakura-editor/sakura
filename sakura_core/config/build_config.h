@@ -43,7 +43,7 @@
 
 	@date 2007.10.18 kobake
 */
-#if defined(_MSC_VER) && _MSC_VER>=1400 //VS2005以降なら//
+#ifdef _MSC_VER
 #ifdef _DEBUG
 #define USE_STRICT_INT //←これをコメントアウトすると厳格なintが無効になります。リリースビルドでは常に無効.
 #endif
@@ -79,9 +79,7 @@ static const bool UNICODE_BOOL=true;
 #ifdef FILL_STRANGE_IN_NEW_MEMORY
 	void* operator new(size_t nSize);
 	#ifdef _MSC_VER
-		#if _MSC_VER == 1500
-			_Ret_bytecap_(_Size)	// for VS2008 Debug mode
-		#endif
+		_Ret_bytecap_(nSize)
 	#endif
 	void* operator new[](size_t nSize);
 	void operator delete(void* p) noexcept;

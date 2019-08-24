@@ -39,11 +39,8 @@ void DebugOutA( LPCSTR lpFmt, ...);
 //#ifdef _DEBUG～#endifで囲まなくても良い版
 #ifdef _DEBUG
 	#define DEBUG_TRACE DebugOutW
-#elif (defined(_MSC_VER) && 1400 <= _MSC_VER) || (defined(__GNUC__) && 3 <= __GNUC__ )
-	#define DEBUG_TRACE(...)
 #else
-	// Not support C99 variable macro
-	inline void DEBUG_TRACE( ... ){}
+	#define DEBUG_TRACE(...)
 #endif
 
 //RELEASE版でも出力する版 (RELEASEでのみ発生するバグを監視する目的)
