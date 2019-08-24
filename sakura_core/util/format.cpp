@@ -163,9 +163,7 @@ UINT32 ParseVersion( const TCHAR* sVer )
 		ret |= ( 128 << (24-8*i) );
 	}
 
-#ifdef _UNICODE
 	DEBUG_TRACE(_T("ParseVersion %ls -> %08x\n"), sVer, ret);
-#endif
 	return ret;
 }
 

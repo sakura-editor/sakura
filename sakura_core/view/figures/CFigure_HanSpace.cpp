@@ -33,7 +33,7 @@ void CFigure_HanSpace::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pc
 		//小文字"o"の下半分を出力
 		CMyRect rcClipBottom=rcClip;
 		rcClipBottom.top=rcClip.top+pcView->GetTextMetrics().GetHankakuHeight()/2;
-		::ExtTextOutW_AnyBuild(
+		::ExtTextOut(
 			gr,
 			pDispPos->GetDrawPos().x,
 			pDispPos->GetDrawPos().y,
@@ -48,7 +48,7 @@ void CFigure_HanSpace::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pc
 		//上半分は普通の空白で出力（"o"の上半分を消す）
 		CMyRect rcClipTop=rcClip;
 		rcClipTop.bottom=rcClip.top+pcView->GetTextMetrics().GetHankakuHeight()/2;
-		::ExtTextOutW_AnyBuild(
+		::ExtTextOut(
 			gr,
 			pDispPos->GetDrawPos().x,
 			pDispPos->GetDrawPos().y,

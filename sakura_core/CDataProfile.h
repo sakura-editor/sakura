@@ -57,11 +57,7 @@ struct StringBufferA_{
 };
 typedef const StringBufferA_ StringBufferA;
 typedef const StringBufferW_ StringBufferW;
-#ifdef _UNICODE
-	typedef StringBufferW StringBufferT;
-#else
-	typedef StringBufferA StringBufferT;
-#endif
+typedef StringBufferW StringBufferT;
 
 //文字列バッファ型インスタンスの生成マクロ
 #define MakeStringBufferW(S) StringBufferW(S,_countof(S))
@@ -76,9 +72,6 @@ class CDataProfile : public CProfile{
 private:
 	//専用型
 	typedef std::wstring wstring;
-#ifndef _UNICODE
-	typedef std::tstring tstring;
-#endif
 
 protected:
 	static const wchar_t* _work_itow(int n)

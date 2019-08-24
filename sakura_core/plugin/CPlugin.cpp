@@ -73,13 +73,11 @@ bool CPlugin::ReadPluginDefCommon( CDataProfile *cProfile, CDataProfile *cProfil
 		cProfileMlang->IOProfileData( PII_PLUGIN, PII_PLUGIN_URL, m_sUrl );
 	}
 
-#ifdef _UNICODE
 	DEBUG_TRACE(_T("    Name:%ls\n"), m_sName.c_str());
 	DEBUG_TRACE(_T("    Description:%ls\n"), m_sDescription.c_str());
 	DEBUG_TRACE(_T("    Author:%ls\n"), m_sAuthor.c_str());
 	DEBUG_TRACE(_T("    Version:%ls\n"), m_sVersion.c_str());
 	DEBUG_TRACE(_T("    Url:%ls\n"), m_sUrl.c_str());
-#endif
 
 	return true;
 }

@@ -1127,11 +1127,7 @@ static HTREEITEM TreeCopy( HWND hwndTree, HTREEITEM dst, HTREEITEM src, bool fCh
 	TV_INSERTSTRUCT	tvis;		// 挿入用
 	TV_ITEM			tvi;		// 取得用
 	int				n = 0;
-#ifdef _UNICODE
 	const int		MAX_LABEL_CCH = 256+10;
-#else
-	const int		MAX_LABEL_CCH = (256+10)*2;
-#endif
 	TCHAR			szLabel[MAX_LABEL_CCH];
 
 	for (s = src; s != NULL; s = fOnryOne ? NULL:TreeView_GetNextSibling( hwndTree, s )) {

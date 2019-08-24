@@ -38,13 +38,8 @@ const ACHAR* to_achar(const WCHAR* src);
 const ACHAR* to_achar(const WCHAR* pSrc, int nSrcLength);
 
 //TCHARに変換
-#ifdef _UNICODE
-	#define to_tchar     to_wchar
-	#define to_not_tchar to_achar
-#else
-	#define to_tchar     to_achar
-	#define to_not_tchar to_wchar
-#endif
+#define to_tchar     to_wchar
+#define to_not_tchar to_achar
 
 //その他
 const WCHAR* easy_format(const WCHAR* format, ...);

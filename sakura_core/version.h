@@ -28,11 +28,7 @@
 #define PR_VER_STR  MAKE_VERSION_STR_PERIOD(VER_A, VER_B, VER_C, VER_D)
 #define PR_VER      MAKE_VERSION_COMMA(VER_A, VER_B, VER_C, VER_D)
 
-#ifdef _UNICODE
 #define VER_CHARSET "UNICODE"
-#else
-#define VER_CHARSET "ANSI"
-#endif
 
 #ifdef _WIN64
 #define VER_PLATFORM "64bit"

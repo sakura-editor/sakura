@@ -30,11 +30,7 @@
 #include "version.h"
 
 // アプリ名。2007.09.21 kobake 整理
-#ifdef _UNICODE
 #define _APP_NAME_(TYPE) TYPE("sakura")
-#else
-#define _APP_NAME_(TYPE) TYPE("sakura")
-#endif
 
 #ifdef _DEBUG
 #define _APP_NAME_2_(TYPE) TYPE("(デバッグ版)")

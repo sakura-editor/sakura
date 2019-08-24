@@ -102,11 +102,7 @@ bool GetLastWriteTimestamp( const TCHAR* filename, CFileTime* pcFileTime ); //	O
 void my_splitpath ( const char *comln , char *drv,char *dir,char *fnm,char *ext );
 void my_splitpath_w ( const wchar_t *comln , wchar_t *drv,wchar_t *dir,wchar_t *fnm,wchar_t *ext );
 void my_splitpath_t ( const TCHAR *comln , TCHAR *drv,TCHAR *dir,TCHAR *fnm,TCHAR *ext );
-#ifdef _UNICODE
 #define my_splitpath_t my_splitpath_w
-#else
-#define my_splitpath_t my_splitpath
-#endif
 
 int FileMatchScoreSepExt( const TCHAR *file1, const TCHAR *file2 );
 

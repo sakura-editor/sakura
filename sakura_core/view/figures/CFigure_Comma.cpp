@@ -63,7 +63,7 @@ void CFigure_Comma::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcVie
 
 	if( pArea->IsRectIntersected(rcClip2) ){
 		if( cTabType.IsDisp() ){	//CSVモード
-			::ExtTextOutW_AnyBuild(
+			::ExtTextOut(
 				gr,
 				sPos.GetDrawPos().x,
 				sPos.GetDrawPos().y,

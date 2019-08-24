@@ -46,7 +46,6 @@ void Test()
 
 	引数で与えられた情報をDebugStringとして出力する．
 */
-#ifdef _UNICODE
 void DebugOutW( LPCWSTR lpFmt, ...)
 {
 	//整形
@@ -70,7 +69,6 @@ void DebugOutW( LPCWSTR lpFmt, ...)
 	va_end(argList);
 	return;
 }
-#endif
 
 void DebugOutA( LPCSTR lpFmt, ...)
 {

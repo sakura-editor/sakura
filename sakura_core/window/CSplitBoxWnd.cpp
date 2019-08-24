@@ -99,7 +99,7 @@ void CSplitBoxWnd::FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORRE
 	RECT	rc;
 	::SetBkColor( hdc, clr );
 	::SetRect( &rc, x, y, x + cx, y + cy );
-	::ExtTextOutW_AnyBuild( hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL );
+	::ExtTextOut( hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL );
 	return;
 }
 

@@ -31,22 +31,14 @@ void DebugOutA( LPCSTR lpFmt, ...);
 	MYTRACEを使う場合には必ず#ifdef _DEBUG ～ #endif で囲む必要がある．
 */
 #ifdef _DEBUG
-	#ifdef _UNICODE
 	#define MYTRACE DebugOutW
-	#else
-	#define MYTRACE DebugOutA
-	#endif
 #else
 	#define MYTRACE   Do_not_use_the_MYTRACE_function_if_release_mode
 #endif
 
 //#ifdef _DEBUG～#endifで囲まなくても良い版
 #ifdef _DEBUG
-	#ifdef _UNICODE
 	#define DEBUG_TRACE DebugOutW
-	#else
-	#define DEBUG_TRACE DebugOutA
-	#endif
 #elif (defined(_MSC_VER) && 1400 <= _MSC_VER) || (defined(__GNUC__) && 3 <= __GNUC__ )
 	#define DEBUG_TRACE(...)
 #else
@@ -56,11 +48,7 @@ void DebugOutA( LPCSTR lpFmt, ...);
 
 //RELEASE版でも出力する版 (RELEASEでのみ発生するバグを監視する目的)
 #ifdef USE_RELPRINT
-	#ifdef _UNICODE
 	#define RELPRINT DebugOutW
-	#else
-	#define RELPRINT DebugOutA
-	#endif
 #else
 	#define RELPRINT   Do_not_define_USE_RELPRINT
 #endif	// USE_RELPRINT

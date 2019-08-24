@@ -187,7 +187,7 @@ void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView, CLayou
 		int nDx[1] = {(Int)width};
 
 		//描画
-		::ExtTextOutW_AnyBuild(
+		::ExtTextOut(
 			gr,
 			pDispPos->GetDrawPos().x,
 			pDispPos->GetDrawPos().y + nHeightMargin,
@@ -266,7 +266,7 @@ void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcVi
 		int fontNo = WCODE::GetFontNo(' ');
 		int nHeightMargin = pcView->GetTextMetrics().GetCharHeightMarginByFontNo(fontNo);
 		// 2003.08.17 ryoji 改行文字が欠けないように
-		::ExtTextOutW_AnyBuild(
+		::ExtTextOut(
 			gr,
 			pDispPos->GetDrawPos().x,
 			pDispPos->GetDrawPos().y + nHeightMargin,

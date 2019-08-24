@@ -78,13 +78,8 @@ inline wchar_t my_towupper2( wchar_t c ){ return my_towupper(c); }
 inline wchar_t my_towlower2( wchar_t c ){ return my_towlower(c); }
 int skr_towupper( int c );
 int skr_towlower( int c );
-#ifdef _UNICODE
 #define _tcs_toupper skr_towupper
 #define _tcs_tolower skr_towlower
-#else
-#define _tcs_toupper my_toupper
-#define _tcs_tolower my_tolower
-#endif
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           拡張・独自実装                    //
@@ -101,11 +96,7 @@ const WCHAR* wcsistr( const WCHAR* s1, const WCHAR* s2 );
 const ACHAR* stristr( const ACHAR* s1, const ACHAR* s2 );
 inline WCHAR* wcsistr( WCHAR* s1, const WCHAR* s2 ){ return const_cast<WCHAR*>(wcsistr(static_cast<const WCHAR*>(s1),s2)); }
 inline ACHAR* stristr( ACHAR* s1, const ACHAR* s2 ){ return const_cast<ACHAR*>(stristr(static_cast<const ACHAR*>(s1),s2)); }
-#ifdef _UNICODE
 #define _tcsistr wcsistr
-#else
-#define _tcsistr stristr
-#endif
 
 //大文字小文字を区別せずに文字列を検索（日本語対応版）
 const char* strchr_j(const char* s1, char c);				//!< strchr の日本語対応版。
@@ -116,11 +107,7 @@ inline char* strchr_j ( char* s1, char c         ){ return const_cast<char*>(str
 inline char* strichr_j( char* s1, char c         ){ return const_cast<char*>(strichr_j((const char*)s1, c )); }
 inline char* strstr_j ( char* s1, const char* s2 ){ return const_cast<char*>(strstr_j ((const char*)s1, s2)); }
 inline char* stristr_j( char* s1, const char* s2 ){ return const_cast<char*>(stristr_j((const char*)s1, s2)); }
-#ifdef _UNICODE
 #define _tcsistr_j wcsistr
-#else
-#define _tcsistr_j stristr_j
-#endif
 
 template <class CHAR_TYPE>
 CHAR_TYPE* my_strtok(
@@ -159,7 +146,6 @@ int my_strnicmp( const char *s1, const char *s2, size_t n );
 
 	size_t strnlen(const char *str, size_t num);
 	size_t wcsnlen(const wchar_t *str, size_t num);
-#ifdef _UNICODE
 #define _tcscpy_s wcscpy_s
 #define _tcsncpy_s wcsncpy_s
 #define _tcscat_s wcscat_s
@@ -167,15 +153,6 @@ int my_strnicmp( const char *s1, const char *s2, size_t n );
 #define _tcsncicmp _wcsnicmp
 #define _ttempnam _wtempnam
 #define _tWinMain wWinMain
-#else
-#define _tcscpy_s strcpy_s
-#define _tcsncpy_s strncpy_s
-#define _tcscat_s strcat_s
-#define _tcsnlen strnlen
-#define _tcsncicmp _strnicmp
-#define _ttempnam tempnam
-#define _tWinMain WinMain
-#endif
 #endif
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -322,11 +299,7 @@ inline int wcsncmp_auto(const wchar_t* strData1, const wchar_t* szData2)
 	::strncmp(strData1, literalData2, _countof(literalData2) - 1 ) //※終端ヌルを含めないので、_countofからマイナス1する
 
 //TCHAR
-#ifdef _UNICODE
-	#define _tcsncmp_literal wcsncmp_literal
-#else
-	#define _tcsncmp_literal strncmp_literal
-#endif
+#define _tcsncmp_literal wcsncmp_literal
 
 #endif /* SAKURA_STRING_EX_29EB1DD7_7259_4D6C_A651_B9174E5C3D3C9_H_ */
 /*[EOF]*/

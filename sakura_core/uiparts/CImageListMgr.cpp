@@ -55,7 +55,7 @@ static void FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORREF clr)
 	RECT rect;
 	::SetBkColor( hdc, clr );
 	::SetRect( &rect, x, y, x + cx, y + cy );
-	::ExtTextOutW_AnyBuild( hdc, 0, 0, ETO_OPAQUE, &rect, NULL, 0, NULL );
+	::ExtTextOut( hdc, 0, 0, ETO_OPAQUE, &rect, NULL, 0, NULL );
 }
 
 //	Destructor

@@ -577,7 +577,7 @@ void CLayoutMgr::CalculateTextWidth_Range( const CalTextWidthArg* pctwArg )
 			bCalTextWidth = FALSE;		// テキスト最大幅の算出要求をOFF
 		}
 
-#if defined( _DEBUG ) && defined( _UNICODE )
+#if defined( _DEBUG )
 		static int testcount = 0;
 		testcount++;
 

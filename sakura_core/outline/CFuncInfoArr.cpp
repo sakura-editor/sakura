@@ -160,12 +160,6 @@ void CFuncInfoArr::SetAppendText( int info, std::wstring s, bool overwrite )
 		if( m_nAppendTextLenMax < (int)s.length() ){
 			m_nAppendTextLenMax = s.length();
 		}
-#ifndef	_UNICODE
-		std::tstring t = to_tchar(s.c_str());
-		if( m_nAppendTextLenMax < (int)t.length() ){
-			m_nAppendTextLenMax = t.length();
-		}
-#endif
 	}else{
 		// キーが存在する場合、値を書き換える
 		if( overwrite ){
