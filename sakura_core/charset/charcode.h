@@ -315,11 +315,7 @@ namespace ACODE
 //TCHAR判定関数群
 namespace TCODE
 {
-	#ifdef _UNICODE
-		using namespace WCODE;
-	#else
-		using namespace ACODE;
-	#endif
+	using namespace WCODE;
 }
 
 // 文字幅の動的計算用キャッシュ関連

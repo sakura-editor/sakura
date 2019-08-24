@@ -80,7 +80,7 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 			}
 			int nHeightMargin = pcView->GetTextMetrics().GetCharHeightMarginByFontNo(fontNo);
 			//@@@ 2001.03.16 by MIK
-			::ExtTextOutW_AnyBuild(
+			::ExtTextOut(
 				gr,
 				sPos.GetDrawPos().x,
 				sPos.GetDrawPos().y + nHeightMargin,
@@ -96,7 +96,7 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 			}
 		}else{
 			//背景
-			::ExtTextOutW_AnyBuild(
+			::ExtTextOut(
 				gr,
 				sPos.GetDrawPos().x,
 				sPos.GetDrawPos().y,

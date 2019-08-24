@@ -913,91 +913,6 @@ void GetExistPathW( wchar_t *po , const wchar_t *pi )
 	return;
 }
 
-#ifndef _UNICODE
-/* 与えられたコマンドライン文字列の先頭部分から実在するファイル・ディレクトリ
-　 のパス文字列を抽出し、そのパスを分解して drv dir fnm ext に書き込む。
-　 先頭部分に有効なパス名が存在しない場合、全てに空文字列が返る。 */
-void	my_splitpath ( const char *comln , char *drv,char *dir,char *fnm,char *ext )
-{
-	char	ppp[_MAX_PATH];		/* パス格納（作業用） */
-	char	*pd;
-	char	*pf;
-	char	*pe;
-	char	ch;
-	DWORD	attr;
-	int		a_dir;
-
-	if( drv != NULL )	*drv = '\0';
-	if( dir != NULL )	*dir = '\0';
-	if( fnm != NULL )	*fnm = '\0';
-	if( ext != NULL )	*ext = '\0';
-	if( *comln == '\0' )	return;
-
-	/* コマンドライン先頭部分の実在するパス名を ppp に書き出す。 */
-	GetExistPath( ppp , comln );
-
-	if( *ppp != '\0' ) {	/* ファイル・ディレクトリが存在する場合 */
-		/* 先頭文字がドライブレターかどうか判定し、
-		　 pd = ディレクトリ名の先頭位置に設定する。 */
-		pd = ppp;
-		if(
-			( *(pd+1)==':' )&&
-			( ACODE::IsAZ(*pd) )
-		){	/* 先頭にドライブレターがある。 */
-			pd += 2;	/* pd = ドライブレター部の後ろ         */
-		}				/*      ( = ディレクトリ名の先頭位置 ) */
-		/* ここまでで、pd = ディレクトリ名の先頭位置 */
-
-		attr =  GetFileAttributesA(ppp);
-		a_dir = ( attr & FILE_ATTRIBUTE_DIRECTORY ) ?  1 : 0;
-		if( ! a_dir ){	/* 見つけた物がファイルだった場合。 */
-			pf = sjis_strrchr2(ppp,'\\','\\');	/* 最末尾の \ を探す。 */
-			if(pf != NULL)	pf++;		/* 見つかった→  pf=\の次の文字の位置*/
-			else			pf = pd;	/* 見つからない→pf=パス名の先頭位置 */
-			/* ここまでで pf = ファイル名の先頭位置 */
-			pe = sjis_strrchr2(pf,'.','.');		/* 最末尾の '.' を探す。 */
-			if( pe != NULL ){					/* 見つかった(pe = '.'の位置)*/
-				if( ext != NULL ){	/* 拡張子を返値として書き込む。 */
-					strncpy(ext,pe,_MAX_EXT -1);
-					ext[_MAX_EXT -1] = '\0';
-				}
-				*pe = '\0';	/* 区切り位置を文字列終端にする。pe = 拡張子名の先頭位置。 */
-			}
-			if( fnm != NULL ){	/* ファイル名を返値として書き込む。 */
-				strncpy(fnm,pf,_MAX_FNAME -1);
-				fnm[_MAX_FNAME -1] = '\0';
-			}
-			*pf = '\0';	/* ファイル名の先頭位置を文字列終端にする。 */
-		}
-		/* ここまでで文字列 ppp はドライブレター＋ディレクトリ名のみになっている */
-		if( dir != NULL ){
-			/* ディレクトリ名の最後の文字が \ ではない場合、\ にする。 */
-
-			/* ↓最後の文字を ch に得る。(ディレクトリ文字列が空の場合 ch='\\' となる) */
-			for( ch = '\\' , pf = pd ; *pf != '\0' ; pf++ ){
-				ch = *pf;
-				if( _IS_SJIS_1(*pf) )	pf++;	/* Shift_JIS の1文字目なら次の1文字をスキップ */
-			}
-			/* 文字列が空でなく、かつ、最後の文字が \ でなかったならば \ を追加。 */
-			if( ( ch != '\\' ) && ( strlen(ppp) < _MAX_PATH -1 ) ){
-				*pf++ = '\\';	*pf = '\0';
-			}
-
-			/* ディレクトリ名を返値として書き込む。 */
-			strncpy(dir,pd,_MAX_DIR -1);
-			dir[_MAX_DIR -1] = '\0';
-		}
-		*pd = '\0';		/* ディレクトリ名の先頭位置を文字列終端にする。 */
-		if( drv != NULL ){	/* ドライブレターを返値として書き込む。 */
-			strncpy(drv,ppp,_MAX_DRIVE -1);
-			drv[_MAX_DRIVE -1] = '\0';
-		}
-	}
-	return;
-}
-
-#else
-
 /* 与えられたコマンドライン文字列の先頭部分から実在するファイル・ディレクトリ
 　 のパス文字列を抽出し、そのパスを分解して drv dir fnm ext に書き込む。
 　 先頭部分に有効なパス名が存在しない場合、全てに空文字列が返る。 */
@@ -1082,7 +997,6 @@ void my_splitpath_w (
 	}
 	return;
 }
-#endif
 
 //
 //

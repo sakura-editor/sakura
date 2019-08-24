@@ -108,11 +108,7 @@ private:
 	const wchar_t* m_p;
 };
 
-#ifdef _UNICODE
 typedef CharPointerW CharPointerT;
-#else
-typedef CharPointerA CharPointerT;
-#endif
 
 #endif /* SAKURA_CHARPOINTER_6EAF62A9_67F6_4CEF_80C2_B7C34014C253_H_ */
 /*[EOF]*/

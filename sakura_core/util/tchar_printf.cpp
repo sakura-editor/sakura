@@ -219,22 +219,14 @@ static void my_va_forward(va_list& v, const wchar_t* field, const wchar_t* prefi
 static void field_convert(char* src)
 {
 	if(strncmp(src,"%ts",3)==0 || strncmp(src,"%tc",3)==0){
-#ifdef _UNICODE
 		src[1]='l';
-#else
-		src[1]='h';
-#endif
 	}
 }
 
 static void field_convert(wchar_t* src)
 {
 	if(wcsncmp(src,L"%ts",3)==0 || wcsncmp(src,L"%tc",3)==0){
-#ifdef _UNICODE
 		src[1]=L'l';
-#else
-		src[1]=L'h';
-#endif
 	}
 }
 

@@ -37,7 +37,7 @@
 #include "macro/CIfObj.h"
 
 //トレースメッセージ有無
-#if defined( _DEBUG ) && defined( _UNICODE )
+#if defined( _DEBUG )
 #define TEST
 #endif
 

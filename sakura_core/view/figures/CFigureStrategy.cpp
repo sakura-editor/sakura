@@ -195,7 +195,7 @@ void CFigureSpace::DrawImp_DrawUnderline(SColorStrategyInfo* pInfo, DispPos& sPo
 		}
 		rcClip2.top = sPos.GetDrawPos().y;
 		rcClip2.bottom = sPos.GetDrawPos().y + sPos.GetCharHeight();
-		::ExtTextOutW_AnyBuild(
+		::ExtTextOut(
 			pInfo->m_gr,
 			sPos.GetDrawPos().x,
 			sPos.GetDrawPos().y + nHeightMargin,

@@ -61,11 +61,7 @@ public:
 	int alength() const{ return strlen(c_astr()); }
 
 	//TCHAR
-#ifdef _UNICODE
 	const TCHAR* c_tstr() const{ return c_wstr(); }
-#else
-	const TCHAR* c_tstr() const{ return c_astr(); }
-#endif
 
 private:
 	std::wstring m_wstr;
@@ -73,11 +69,7 @@ private:
 };
 
 //std::string の TCHAR 対応用マクロ定義
-#ifdef _UNICODE
 #define tstring wstring
-#else
-#define tstring string
-#endif
 #define astring string
 
 //共通マクロ

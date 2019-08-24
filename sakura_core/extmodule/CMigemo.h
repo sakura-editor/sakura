@@ -131,11 +131,7 @@ public:
 	void migemo_setproc_int2char(MIGEMO_PROC_INT2CHAR proc);
 	int migemo_load_a(int dict_id, const char* dict_file);
 	int migemo_load_w(int dict_id, const wchar_t* dict_file);
-#ifdef _UNICODE
 	#define migemo_load_t migemo_load_w
-#else
-	#define migemo_load_t migemo_load_a
-#endif
 	int migemo_is_enable();
 	int migemo_load_all();
 };

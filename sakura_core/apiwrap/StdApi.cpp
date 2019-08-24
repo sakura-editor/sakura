@@ -6,62 +6,6 @@
 
 using namespace std;
 
-#ifndef _UNICODE
-/*!
-	ワイド文字列からマルチバイト文字列を生成する。
-	マルチバイト文字列のために新しいメモリ領域が確保されるので、
-	使い終わったらDestroyMbStringを呼ぶこと！
-
-	@retval 変換されたACHAR文字列
-*/
-static ACHAR* CreateMbString(
-	const WCHAR*	pWideString,	//!< [in]  元のWCHAR文字列
-	int				nWideLength,	//!< [in]  元のWCHAR文字列の長さ。文字単位。
-	int*			pnMbLength		//!< [out] 変換されたACHAR文字列の長さの受け取り先。文字単位。
-)
-{
-	//必要な領域サイズを取得
-	int nNewLen=WideCharToMultiByte(
-		CP_SJIS,				// 2008/5/12 Uchi
-		0,
-		pWideString,
-		nWideLength,
-		NULL,
-		0,
-		NULL,
-		NULL
-	);
-
-	//領域を確保
-	ACHAR* buf=new ACHAR[nNewLen+1];
-
-	//変換
-	nNewLen = WideCharToMultiByte(
-		CP_SJIS,				// 2008/5/12 Uchi
-		0,
-		pWideString,
-		nWideLength,
-		buf,
-		nNewLen,
-		NULL,
-		NULL
-	);
-	buf[nNewLen]='\0';
-
-	//結果
-	if(pnMbLength)*pnMbLength=nNewLen;
-	return buf;
-}
-
-/*!
-	CreateMbString で確保したマルチバイト文字列を解放する
-*/
-static void DestroyMbString(ACHAR* pMbString)
-{
-	delete[] pMbString;
-}
-#endif	// ndef _UNICODE
-
 namespace ApiWrap{
 
 	/*!
@@ -111,84 +55,8 @@ namespace ApiWrap{
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//              W系描画API (ANSI版でも利用可能)                //
+	//              W系描画API                                     //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-	/*!
-		ANSI版でも使えるExtTextOutW_AnyBuild。
-		文字数制限1024半角文字。(文字間隔配列を1024半角文字分しか用意していないため)
-	*/
-#ifdef _UNICODE
-#else
-	BOOL ExtTextOutW_AnyBuild(
-		HDC				hdc,
-		int				x,
-		int				y,
-		UINT			fuOptions,
-		const RECT*		lprc,
-		LPCWSTR			lpwString,
-		UINT			cbCount,
-		const int*		lpDx
-	)
-	{
-		if(lpwString==NULL || *lpwString==L'\0')return FALSE;
-		if(cbCount>1024)return FALSE;
-
-		int nNewLength=0;
-		//ANSI文字列を生成
-		ACHAR* pNewString = CreateMbString(
-			lpwString,
-			cbCount==-1?wcslen(lpwString):cbCount,
-			&nNewLength
-		);
-
-		//文字間隔配列を生成
-		int nHankakuDx;
-		const int* lpDxNew=NULL;
-		if(lpDx){
-			if(WCODE::IsHankaku(lpwString[0]))nHankakuDx=lpDx[0];
-			else nHankakuDx=lpDx[0]/2;
-			static int aDx[1024]={0}; //1024半角文字まで
-			if(aDx[0]!=nHankakuDx){
-				for(int i=0;i<_countof(aDx);i++){
-					aDx[i]=nHankakuDx;
-				}
-			}
-			lpDxNew=aDx;
-		}
-
-		//APIコール
-		BOOL ret=::ExtTextOut(hdc,x,y,fuOptions,lprc,pNewString,nNewLength,lpDxNew);
-
-		//後始末
-		DestroyMbString(pNewString);
-		DEBUG_SETPIXEL(hdc);
-		return ret;
-	}
-#endif
-
-#ifdef _UNICODE
-#else
-	BOOL TextOutW_AnyBuild(
-		HDC		hdc,
-		int		nXStart,
-		int		nYStart,
-		LPCWSTR	lpwString,
-		int		cbString
-	)
-	{
-		int nNewLength=0;
-		ACHAR* pNewString = CreateMbString(
-			lpwString,
-			cbString==-1?wcslen(lpwString):cbString,
-			&nNewLength
-		);
-		BOOL ret=::TextOut(hdc,nXStart,nYStart,pNewString,nNewLength);
-		DestroyMbString(pNewString);
-		DEBUG_SETPIXEL(hdc);
-		return ret;
-	}
-#endif
 
 	LPWSTR CharNextW_AnyBuild(
 		LPCWSTR lpsz
@@ -229,34 +97,8 @@ namespace ApiWrap{
 #endif
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//             その他W系API (ANSI版でも利用可能)               //
+	//             その他W系API                                     //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-#ifdef _UNICODE
-#else
-	int LoadStringW_AnyBuild(
-		HINSTANCE	hInstance,
-		UINT		uID,
-		LPWSTR		lpBuffer,
-		int			nBufferCount	//!< バッファのサイズ。文字単位。
-	)
-	{
-		//まずはACHARでロード
-		int nTmpCnt = nBufferCount*2+2;
-		ACHAR* pTmp = new ACHAR[nTmpCnt];
-		int ret=LoadStringA(hInstance, uID, pTmp, nTmpCnt);
-
-		//WCHARに変換
-		mbstowcs2(lpBuffer, pTmp, nBufferCount);
-		int ret2=wcslen(lpBuffer);
-
-		//後始末
-		delete[] pTmp;
-
-		//結果
-		return ret2;
-	}
-#endif
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                    描画API 不具合ラップ                     //

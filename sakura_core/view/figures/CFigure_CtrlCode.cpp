@@ -55,7 +55,7 @@ void CFigure_CtrlCode::DispSpaceEx(CGraphics& gr, DispPos* pDispPos, CEditView* 
 		}
 		int nHeightMargin = pcView->GetTextMetrics().GetCharHeightMarginByFontNo(fontNo);
 		wchar_t wc[1] = {GetAlternateChar()};
-		ExtTextOutW_AnyBuild(
+		ExtTextOut(
 			gr,
 			pDispPos->GetDrawPos().x,
 			pDispPos->GetDrawPos().y + nHeightMargin,

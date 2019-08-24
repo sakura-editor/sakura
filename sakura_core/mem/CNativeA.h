@@ -100,13 +100,8 @@ public:
 	const wchar_t* GetStringW() const;
 
 	//TCHAR
-#ifdef _UNICODE
 	void SetStringT( const TCHAR* pszData )				{ return SetStringNew(pszData); }
 	void SetStringT( const TCHAR* pData, int nLength )	{ return SetStringNew(pData,nLength); }
-#else
-	void SetStringT( const TCHAR* pszData )				{ return SetString(pszData); }
-	void SetStringT( const TCHAR* pData, int nLength )	{ return SetString(pData,nLength); }
-#endif
 
 public:
 	// -- -- staticインターフェース -- -- //

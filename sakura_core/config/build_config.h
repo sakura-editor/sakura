@@ -53,11 +53,7 @@
 //#define USE_UNFIXED_FONT
 
 //UNICODE BOOL定数.
-#ifdef _UNICODE
 static const bool UNICODE_BOOL=true;
-#else
-static const bool UNICODE_BOOL=false;
-#endif
 
 //DebugMonitorLib(仮)を使うかどうか
 //#define USE_DEBUGMON

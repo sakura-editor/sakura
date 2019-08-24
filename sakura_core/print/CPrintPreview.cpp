@@ -1263,7 +1263,7 @@ void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader
 			bHeader ? m_pPrintSetting->m_szHeaderForm[POS_LEFT] : m_pPrintSetting->m_szFooterForm[POS_LEFT],
 			szWork, nWorkLen);
 		Tab2Space( szWork );
-		::ExtTextOutW_AnyBuild(
+		::ExtTextOut(
 			hdc,
 			rect.left,
 			nY,
@@ -1282,7 +1282,7 @@ void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader
 		SIZE	Size;
 		nLen = wcslen(szWork);
 		::GetTextExtentPoint32W( hdc, szWork, nLen, &Size);		//テキスト幅
-		::ExtTextOutW_AnyBuild(
+		::ExtTextOut(
 			hdc,
 			( rect.right + rect.left - Size.cx) / 2,
 			nY,
@@ -1300,7 +1300,7 @@ void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader
 		Tab2Space( szWork );
 		nLen = wcslen(szWork);
 		::GetTextExtentPoint32W( hdc, szWork, nLen, &Size);		//テキスト幅
-		::ExtTextOutW_AnyBuild(
+		::ExtTextOut(
 			hdc,
 			rect.right - Size.cx,
 			nY,
@@ -1515,7 +1515,7 @@ CColorStrategy* CPrintPreview::DrawPageText(
 				int spacing = 0;
 				const int* pDxArray = CTextMetrics::GenerateDxArray(&vDxArray, szLineNum, nLineCols, m_pPrintSetting->m_nPrintFontWidth, spacing);
 
-				ApiWrap::ExtTextOutW_AnyBuild(
+				::ExtTextOut(
 					hdc,
 					nBasePosX - nLineCols * charWidth,
 					nDirectY * ( nOffY + nLineHeight * i + ( m_pPrintSetting->m_nPrintFontHeight - m_nAscentHan ) ),
@@ -1834,7 +1834,7 @@ void CPrintPreview::Print_DrawBlock(
 	}
 	const int charWidth = 1;
 	::SelectObject( hdc, hFont );
-	::ExtTextOutW_AnyBuild(
+	::ExtTextOut(
 		hdc,
 		ptDraw.x + (Int)nLayoutX * charWidth,
 		ptDraw.y - ( m_pPrintSetting->m_nPrintFontHeight - (nKind == 1 ? m_nAscentZen : m_nAscentHan) ),

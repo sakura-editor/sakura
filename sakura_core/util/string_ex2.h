@@ -35,20 +35,12 @@ wchar_t *wcs_pushW(wchar_t *dst, size_t dst_count, const wchar_t* src, size_t sr
 wchar_t *wcs_pushW(wchar_t *dst, size_t dst_count, const wchar_t* src);
 wchar_t *wcs_pushA(wchar_t *dst, size_t dst_count, const char* src, size_t src_count);
 wchar_t *wcs_pushA(wchar_t *dst, size_t dst_count, const char* src);
-#ifdef _UNICODE
 #define wcs_pushT wcs_pushW
-#else
-#define wcs_pushT wcs_pushA
-#endif
 
 int AddLastChar( TCHAR* pszPath, int nMaxLen, TCHAR c );/* 2003.06.24 Moca 最後の文字が指定された文字でないときは付加する */
 int LimitStringLengthA( const ACHAR* pszData, int nDataLength, int nLimitLength, CNativeA& cmemDes );/* データを指定「文字数」以内に切り詰める */
 int LimitStringLengthW( const WCHAR* pszData, int nDataLength, int nLimitLength, CNativeW& cmemDes );/* データを指定「文字数」以内に切り詰める */
-#ifdef _UNICODE
 #define LimitStringLengthT LimitStringLengthW
-#else
-#define LimitStringLengthT LimitStringLengthA
-#endif
 
 const char* GetNextLimitedLengthText( const char* pText, int nTextLen, int nLimitLen, int* pnLineLen, int* pnBgn );/* 指定長以下のテキストに切り分ける */
 const char*    GetNextLine  ( const char* pData, int nDataLen, int* pnLineLen, int* pnBgn, CEol* pcEol); /* CR0LF0,CRLF,LF,CRで区切られる「行」を返す。改行コードは行長に加えない */

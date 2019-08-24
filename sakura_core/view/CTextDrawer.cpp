@@ -136,7 +136,7 @@ void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, int marginy, const wchar
 		}
 
 		//描画
-		::ExtTextOutW_AnyBuild(
+		::ExtTextOut(
 			hdc,
 			nDrawX,					//X
 			y + marginy,			//Y
@@ -507,7 +507,7 @@ void CTextDrawer::DispLineNumber(
 		int drawNumTop = (pView->GetTextArea().m_nViewAlignLeftCols - nLineNumCols - 1) * ( nCharWidth );
 		int fontNo = WCODE::GetFontNo('0');
 		int nHeightMargin = pView->GetTextMetrics().GetCharHeightMarginByFontNo(fontNo);
-		::ExtTextOutW_AnyBuild( gr,
+		::ExtTextOut( gr,
 			drawNumTop,
 			y + nHeightMargin,
 			ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),

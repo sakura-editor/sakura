@@ -32,11 +32,7 @@ typedef char ACHAR;
 
 //TCHAR追加機能
 //TCHARと逆の文字型をNOT_TCHARとして定義する
-#ifdef _UNICODE
 typedef char NOT_TCHAR;
-#else
-typedef wchar_t NOT_TCHAR;
-#endif
 
 //WIN_CHAR (WinAPIに渡すので、必ずTCHARでなければならないもの)
 typedef TCHAR WIN_CHAR;
