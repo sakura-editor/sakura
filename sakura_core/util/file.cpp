@@ -645,36 +645,33 @@ bool IsDirectory(LPCTSTR pszPath)
 
 /*!	ファイルの更新日時を取得
 
-	@return true: 成功, false: FindFirstFile失敗
-
-	@author genta by assitance with ryoji
-	@date 2005.10.22 new
-
-	@note 書き込み後にファイルを再オープンしてタイムスタンプを得ようとすると
-	ファイルがまだロックされていることがあり，上書き禁止と誤認されることがある．
-	FindFirstFileを使うことでファイルのロック状態に影響されずにタイムスタンプを
-	取得できる．(ryoji)
+	@return true: 成功, false: 失敗
 */
 bool GetLastWriteTimestamp(
 	const TCHAR*	pszFileName,	//!< [in]  ファイルのパス
 	CFileTime*		pcFileTime		//!< [out] 更新日時を返す場所
 )
 {
-	HANDLE hFindFile;
-	WIN32_FIND_DATA ffd;
-
-	hFindFile = ::FindFirstFile( pszFileName, &ffd );
-	if( INVALID_HANDLE_VALUE != hFindFile )
+	// dwDesiredAccess に 0 を指定する事で読み取りアクセスが拒否されてしまうような場合でも、
+	// ファイル自体にはアクセスせずにメタデータの読み取りが可能
+	// https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew
+	// If this parameter is zero, the application can query certain metadata such as file, directory, or device attributes without accessing that file or device, even if GENERIC_READ access would have been denied.
+	HANDLE hFile = ::CreateFile(pszFileName, 0, 0, NULL, OPEN_EXISTING, 0, NULL);
+	if (hFile == INVALID_HANDLE_VALUE)
 	{
-		::FindClose( hFindFile );
-		pcFileTime->SetFILETIME(ffd.ftLastWriteTime);
-		return true;
-	}
-	else{
-		//	ファイルが見つからなかった
 		pcFileTime->ClearFILETIME();
 		return false;
 	}
+	FILETIME ftLastWrite;
+	BOOL ret = ::GetFileTime(hFile, NULL, NULL, &ftLastWrite);
+	::CloseHandle(hFile);
+	if (ret == 0)
+	{
+		pcFileTime->ClearFILETIME();
+		return false;
+	}
+	pcFileTime->SetFILETIME(ftLastWrite);
+	return true;
 }
 
 // -----------------------------------------------------------------------------
