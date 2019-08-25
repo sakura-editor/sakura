@@ -29,6 +29,7 @@
 #include "dlg/CDlgCancel.h"
 #include "charset/CCodeFactory.h"
 #include "charset/CUtf8.h"
+#include "charset/CShiftJis.h"
 #include "util/window.h"
 #include "util/tchar_template.h"
 #include "sakura_rc.h" // IDD_EXECRUNNING
@@ -427,7 +428,7 @@ bool CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 						int		j;
 						for( j=0; j<(int)read_cnt - 1; j++ ) {
 							//	2007.09.10 ryoji
-							if( CNativeA::GetSizeOfChar(work, read_cnt, j) == 2 ) {
+							if( CShiftJis::GetSizeOfChar(work, read_cnt, j) == 2 ) {
 								j++;
 							} else {
 								if( work[j] == _T2(PIPE_CHAR,'\r') && work[j+1] == _T2(PIPE_CHAR,'\n') ) {
