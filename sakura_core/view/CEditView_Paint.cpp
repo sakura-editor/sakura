@@ -1325,7 +1325,7 @@ bool CEditView::CreateOrUpdateCompatibleBitmap( int cx, int cy )
 	// サイズを64の倍数で整列
 	int nBmpWidthNew  = ((cx + 63) & (0x7fffffff - 63));
 	int nBmpHeightNew = ((cy + 63) & (0x7fffffff - 63));
-	if( nBmpWidthNew != m_nCompatBMPWidth || nBmpHeightNew != m_nCompatBMPHeight ){
+	if( nBmpWidthNew > m_nCompatBMPWidth || nBmpHeightNew > m_nCompatBMPHeight ){
 #if 0
 	MYTRACE( _T("CEditView::CreateOrUpdateCompatibleBitmap( %d, %d ): resized\n"), cx, cy );
 #endif
