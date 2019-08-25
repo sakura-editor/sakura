@@ -511,7 +511,7 @@ void CPropBackup::UpdateBackupFile(HWND hwndDlg)	//	バックアップファイ�
 			auto_sprintf( temp, LTEXT("%ls\\"), LSW(STR_PROPCOMBK_DUSTBOX) );
 		}
 		else{
-			auto_sprintf( temp, LTEXT(".\\") );
+			wcsncpy_s( temp, LTEXT(".\\"), _TRUNCATE );
 		}
 
 		switch( m_Common.m_sBackup.GetBackupType() ){

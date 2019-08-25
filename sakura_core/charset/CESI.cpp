@@ -1202,13 +1202,13 @@ void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeT* pcmtxtOut )
 	pcmtxtOut->AppendString( LS(STR_ESI_BOM) );	// "\t\tBOM の推測結果　"
 	switch( cesi.m_eWcBomType ){
 	case ESI_BOMTYPE_LE:
-		auto_sprintf( szWork, _T("LE\r\n") );
+		wcsncpy_s( szWork, _T("LE\r\n"), _TRUNCATE );
 		break;
 	case ESI_BOMTYPE_BE:
-		auto_sprintf( szWork, _T("BE\r\n") );
+		wcsncpy_s( szWork, _T("BE\r\n"), _TRUNCATE );
 		break;
 	default:
-		auto_sprintf( szWork, LS(STR_ESI_BOM_UNKNOWN) );	// "不明\r\n"
+		wcsncpy_s( szWork, LS(STR_ESI_BOM_UNKNOWN), _TRUNCATE );	// "不明\r\n"
 	}
 	pcmtxtOut->AppendString( szWork );
 	pcmtxtOut->AppendString( LS(STR_ESI_MBC_OTHER_UNICODE) );
