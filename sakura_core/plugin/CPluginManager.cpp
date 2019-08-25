@@ -212,7 +212,7 @@ bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, const
 
 	// ZIPファイルが扱えるか
 	if (!cZipFile.IsOk()) {
-		auto_snprintf_s( msg, _countof(msg), LS(STR_PLGMGR_ERR_ZIP) );
+		wcsncpy_s( msg, _countof(msg), LS(STR_PLGMGR_ERR_ZIP), _TRUNCATE );
 		InfoMessage( hWndOwner, _T("%ts"), msg);
 		return false;
 	}

@@ -23,7 +23,7 @@
 // MS Cランタイムの非セキュア関数の使用を容認します
 #define _CRT_SECURE_NO_WARNINGS
 
-#if defined(_MSC_VER) && _MSC_VER >= 1400
+#ifdef _MSC_VER
 
 //#pragma warning(disable: 4786)
 #pragma warning(disable: 4345)	//warning C4345: 動作変更 : 形式 () の初期化子で構築される POD 型のオブジェクトは既定初期化されます。

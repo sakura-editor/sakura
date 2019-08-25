@@ -24,7 +24,7 @@
 */
 
 #include "StdAfx.h"
-#if defined(_MSC_VER) && _MSC_VER>=1400 //VS2005以降なら
+#ifdef _MSC_VER
 #ifdef _DEBUG
 #define USE_STRICT_INT //←これをコメントアウトすると厳格なintが無効になります。リリースビルドでは常に無効。
 #endif

@@ -142,18 +142,18 @@ void CDlgProperty::SetData( void )
 	if( INVALID_HANDLE_VALUE != ( nFind = ::FindFirstFile( pCEditDoc->m_cDocFile.GetFilePath(), &wfd ) ) ){
 		if( pCEditDoc->m_cDocFile.IsFileLocking() ){
 			if( m_pShareData->m_Common.m_sFile.m_nFileShareMode == SHAREMODE_DENY_WRITE ){
-				auto_sprintf( szWork, LS(STR_DLGFLPROP_W_LOCK) );
+				wcsncpy_s( szWork, LS(STR_DLGFLPROP_W_LOCK), _TRUNCATE );
 			}
 			else if( m_pShareData->m_Common.m_sFile.m_nFileShareMode == SHAREMODE_DENY_READWRITE ){
-				auto_sprintf( szWork, LS(STR_DLGFLPROP_RW_LOCK) );
+				wcsncpy_s( szWork, LS(STR_DLGFLPROP_RW_LOCK), _TRUNCATE );
 			}
 			else{
-				auto_sprintf( szWork, LS(STR_DLGFLPROP_LOCK) );
+				wcsncpy_s( szWork, LS(STR_DLGFLPROP_LOCK), _TRUNCATE );
 			}
 			cmemProp.AppendString( szWork );
 		}
 		else{
-			auto_sprintf( szWork, LS(STR_DLGFLPROP_NOT_LOCK) );
+			wcsncpy_s( szWork, LS(STR_DLGFLPROP_NOT_LOCK), _TRUNCATE );
 			cmemProp.AppendString( szWork );
 		}
 
