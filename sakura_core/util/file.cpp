@@ -252,31 +252,6 @@ void CutLastYenFromDirectoryPath( TCHAR* pszFolder )
 	return;
 }
 
-/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
-void AddLastYenFromDirectoryPath( CHAR* pszFolder )
-{
-	if( 3 == auto_strlen( pszFolder )
-	 && pszFolder[1] == ':'
-	 && pszFolder[2] == '\\'
-	){
-		/* ドライブ名:\ */
-	}else{
-		/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
-		int	nFolderLen;
-		int	nCharChars;
-		nFolderLen = auto_strlen( pszFolder );
-		if( 0 < nFolderLen ){
-			nCharChars = &pszFolder[nFolderLen] - CNativeA::GetCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] );
-			if( 1 == nCharChars && ('\\' == pszFolder[nFolderLen - 1] || '/' == pszFolder[nFolderLen - 1]) ){
-			}else{
-				pszFolder[nFolderLen] = '\\';
-				pszFolder[nFolderLen + 1] = '\0';
-			}
-		}
-	}
-	return;
-}
-
 void AddLastYenFromDirectoryPath( WCHAR* pszFolder )
 {
 	if( 3 == auto_strlen( pszFolder )

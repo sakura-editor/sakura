@@ -32,7 +32,6 @@ public:
 	CNativeA();
 	CNativeA(const CNativeA& rhs);
 	CNativeA(const char* szData);
-	CNativeA(const char* pData, int nLength);
 
 	//ネイティブ設定
 	void SetString( const char* pszData );                  //!< バッファの内容を置き換える
@@ -66,48 +65,8 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 	//ネイティブ変換
-	void Replace( const char* pszFrom, const char* pszTo );   //!< 文字列置換
 	void Replace_j( const char* pszFrom, const char* pszTo ); //!< 文字列置換（日本語考慮版）
-	void ReplaceT( const char* pszFrom, const char* pszTo ){
-		Replace_j( pszFrom, pszTo );
-	}
 
-	//一般関数
-	void ToLower(); // →小文字
-	void ToUpper(); // →大文字
-
-	void ToZenkaku(int bHiragana, int bHanKataOnly);  // 半角→全角
-
-	void TABToSPACE(int nTabSpace); // TAB→空白
-	void SPACEToTAB(int nTabSpace); // 空白→TAB  //---- Stonee, 2001/05/27
-
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                  型限定インターフェース                     //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	// 使用はできるだけ控えるのが望ましい。
-	// ひとつはオーバーヘッドを抑える意味で。
-	// ひとつは変換によるデータ喪失を抑える意味で。
-
-	//WCHAR
-	void SetStringNew(const wchar_t* wszData, int nDataLen);
-	void SetStringNew(const wchar_t* wszData);
-	void AppendStringNew( const wchar_t* pszData );               //!< バッファの最後にデータを追加する
-	void AppendStringNew( const wchar_t* pszData, int nDataLen ); //!< バッファの最後にデータを追加する。nDataLenは文字単位。
-	void SetStringW(const wchar_t* pszData)				{ return SetStringNew(pszData); }
-	void SetStringW(const wchar_t* pData, int nLength)		{ return SetStringNew(pData,nLength); }
-	void AppendStringW(const wchar_t* pszData)				{ return AppendStringNew(pszData); }
-	void AppendStringW(const wchar_t* pData, int nLength)	{ return AppendStringNew(pData,nLength); }
-	const wchar_t* GetStringW() const;
-
-	//TCHAR
-	void SetStringT( const TCHAR* pszData )				{ return SetStringNew(pszData); }
-	void SetStringT( const TCHAR* pData, int nLength )	{ return SetStringNew(pData,nLength); }
-
-public:
-	// -- -- staticインターフェース -- -- //
-	static int GetSizeOfChar( const char* pData, int nDataLen, int nIdx ); //!< 指定した位置の文字が何バイト文字かを返す
-	static const char* GetCharNext( const char* pData, int nDataLen, const char* pDataCurrent ); //!< ポインタで示した文字の次にある文字の位置を返します
-	static const char* GetCharPrev( const char* pData, int nDataLen, const char* pDataCurrent ); //!< ポインタで示した文字の直前にある文字の位置を返します
 };
 
 #endif /* SAKURA_CNATIVEA_B88E7301_8CD3_4DF8_8750_2FF92F357FA09_H_ */
