@@ -339,7 +339,7 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 		);
 	}else if( mode == 2 ){
 		// 自分だけ更新
-		GetDocument()->OnChangeSetting( true, false );
+		GetDocument()->OnChangeSetting( true, false, true );
 	}
 }
 

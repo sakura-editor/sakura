@@ -106,6 +106,7 @@ void CLayoutMgr::_Empty()
 
 /*! レイアウト情報の変更
 	@param bDoLayout [in] レイアウト情報の再作成
+	@param[in] bBlockingHook 処理中のユーザー操作を可能にする
 	@param refType [in] タイプ別設定
 */
 void CLayoutMgr::SetLayoutInfo(
