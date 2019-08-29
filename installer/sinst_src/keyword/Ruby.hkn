@@ -1,5 +1,5 @@
-// Ruby “ü—Í•âŠ®ƒtƒ@ƒCƒ‹
-// —\–ñŒê
+ï»¿// Ruby å…¥åŠ›è£œå®Œãƒ•ã‚¡ã‚¤ãƒ«
+// äºˆç´„èª
 
 BEGIN
 END
@@ -40,7 +40,7 @@ when
 while
 yield
 
-// ƒNƒ‰ƒX
+// ã‚¯ãƒ©ã‚¹
 Bignum
 Class
 Dir
@@ -61,7 +61,7 @@ Symbol
 Thread
 Time
 
-//ƒ‚ƒWƒ…[ƒ‹
+//ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«
 Comparable
 Enumerable
 Constants
@@ -73,7 +73,7 @@ ObjectSpace
 Precision
 Process
 
-// ŠÖ” (ƒgƒbƒvƒŒƒxƒ‹’è‹`ƒƒ\ƒbƒh)
+// é–¢æ•° (ãƒˆãƒƒãƒ—ãƒ¬ãƒ™ãƒ«å®šç¾©ãƒ¡ã‚½ãƒƒãƒ‰)
 Array
 Float
 Integer
@@ -106,7 +106,7 @@ test
 trace_var
 trap
 
-//ƒƒ\ƒbƒh
+//ãƒ¡ã‚½ãƒƒãƒ‰
 // p
 abort_on_exception
 abs
@@ -404,7 +404,7 @@ writable_real
 write
 zero
 
-// Ruby ƒL[ƒ[ƒh’è‹`ƒtƒ@ƒCƒ‹
+// Ruby ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«
 $_
 $1
 $2
@@ -416,12 +416,23 @@ $7
 $8
 $9
 $$
-$FILENAME$defout$stdin$stdout$stderrTRUEFALSESTDINSTDOUTSTDERRARGV
-ARGFENV
+$FILENAME
+$defout
+$stdin
+$stdout
+$stderr
+TRUE
+FALSE
+STDIN
+STDOUT
+STDERR
+ARGV
+ARGF
+ENV
 RUBY_VERSION
 RUBY_PLATFORM
 
-// ‹[—•Ï”
+// æ“¬ä¼¼å¤‰æ•°
 self
 nil
 true

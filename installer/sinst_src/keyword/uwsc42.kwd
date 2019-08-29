@@ -1,26 +1,26 @@
-// UWSC2  ƒL[ƒ[ƒh’è‹`ƒtƒ@ƒCƒ‹
-//  Ver 4.3c uwsc.chm‚æ‚è”²ˆ 2007”N8ŒŽ25“ú
-//@Excel‘€ìŠÖ˜A
-//@IE‘€ìŠÖ˜A
-//@INIƒtƒ@ƒCƒ‹
-//@ƒEƒBƒ“ƒhƒEŠÖ”’áƒŒƒxƒ‹
-//@ƒVƒXƒeƒ€ŠÖ”
-//@ƒtƒ@ƒCƒ‹
-//@ƒtƒH[ƒ€‰æ–Ê
-//@§ŒäŠÖ”
-//@’è”
-//@”z—ñ‘€ì
-//@‰¹º”FŽ¯E‡¬
-//@‚b‚n‚lƒIƒuƒWƒFƒNƒg
-//“ÁŽê•Ï”
+ï»¿// UWSC2  ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«
+//  Ver 4.3c uwsc.chmã‚ˆã‚ŠæŠœç²‹ 2007å¹´8æœˆ25æ—¥
+//ã€€Excelæ“ä½œé–¢é€£
+//ã€€IEæ“ä½œé–¢é€£
+//ã€€INIãƒ•ã‚¡ã‚¤ãƒ«
+//ã€€ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦é–¢æ•°ä½Žãƒ¬ãƒ™ãƒ«
+//ã€€ã‚·ã‚¹ãƒ†ãƒ é–¢æ•°
+//ã€€ãƒ•ã‚¡ã‚¤ãƒ«
+//ã€€ãƒ•ã‚©ãƒ¼ãƒ ç”»é¢
+//ã€€åˆ¶å¾¡é–¢æ•°
+//ã€€å®šæ•°
+//ã€€é…åˆ—æ“ä½œ
+//ã€€éŸ³å£°èªè­˜ãƒ»åˆæˆ
+//ã€€ï¼£ï¼¯ï¼­ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+//ç‰¹æ®Šå¤‰æ•°
 
 //ACC_*(POSACC)
 //BTN_*(MSGBOX)
-//CLK_*(CLKITEMŠÖ”)
+//CLK_*(CLKITEMé–¢æ•°)
 //CODE_*(ENCODE)
 //CUR_*(MUSCUR)
 //FOM_*(CREATEFORM)
-//G_TIME_*(GETTIMEŠÖ”)
+//G_TIME_*(GETTIMEé–¢æ•°)
 //GET_*(GETID)
 //ITM_*(GETTIME)
 //P_*(POFF)

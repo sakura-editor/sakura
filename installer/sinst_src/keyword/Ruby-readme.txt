@@ -1,65 +1,65 @@
-¡Ruby ’è‹`ƒtƒ@ƒCƒ‹
-  Ruby1.kwd  ƒL[ƒ[ƒh’è‹` —\–ñŒê
-  Ruby2.Kwd  ƒL[ƒ[ƒh’è‹` ‘gž‚Ý•Ï”^’è”
-  Ruby3.kwd  ƒL[ƒ[ƒh’è‹` ‘gž‚ÝƒNƒ‰ƒX^ƒ‚ƒWƒ…[ƒ‹
-  Ruby4.kwd  ƒL[ƒ[ƒh’è‹` ‘gž‚ÝŠÖ”^ƒƒ\ƒbƒh
+ï»¿â– Ruby å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«
+  Ruby1.kwd  ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰å®šç¾© äºˆç´„èªž
+  Ruby2.Kwd  ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰å®šç¾© çµ„è¾¼ã¿å¤‰æ•°ï¼å®šæ•°
+  Ruby3.kwd  ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰å®šç¾© çµ„è¾¼ã¿ã‚¯ãƒ©ã‚¹ï¼ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«
+  Ruby4.kwd  ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰å®šç¾© çµ„è¾¼ã¿é–¢æ•°ï¼ãƒ¡ã‚½ãƒƒãƒ‰
 
-  Ruby.col   FÝ’è
-  Ruby.hkn   “ü—Í•âŠ®
-  Ruby.rkw   ³‹K•\Œ»ƒL[ƒ[ƒh
-  Ruby.rule  ƒAƒEƒgƒ‰ƒCƒ“‰ðÍƒ‹[ƒ‹
+  Ruby.col   è‰²è¨­å®š
+  Ruby.hkn   å…¥åŠ›è£œå®Œ
+  Ruby.rkw   æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰
+  Ruby.rule  ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æžãƒ«ãƒ¼ãƒ«
 
-¡Žg‚¢•û
+â– ä½¿ã„æ–¹
 
-‹¤’ÊÝ’è w‹­’²ƒL[ƒ[ƒhxƒ^ƒu‚ÅARuby1‚©‚çRuby4‚ÌuƒZƒbƒg–¼v
-‚Å‹­’²ƒL[ƒ[ƒh‚ÌuƒZƒbƒg’Ç‰Áv‚ð‚µ‚Ä‚­‚¾‚³‚¢B
-‚»‚ê‚¼‚êARuby1.kwd‚©‚çRuby4.kwd‚Ì‘Î‰žƒtƒ@ƒCƒ‹‚ð[ƒCƒ“ƒ|[ƒg]
-‚µ‚Ü‚·B
+å…±é€šè¨­å®š ã€Žå¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã€ã‚¿ãƒ–ã§ã€Ruby1ã‹ã‚‰Ruby4ã®ã€Œã‚»ãƒƒãƒˆåã€
+ã§å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®ã€Œã‚»ãƒƒãƒˆè¿½åŠ ã€ã‚’ã—ã¦ãã ã•ã„ã€‚
+ãã‚Œãžã‚Œã€Ruby1.kwdã‹ã‚‰Ruby4.kwdã®å¯¾å¿œãƒ•ã‚¡ã‚¤ãƒ«ã‚’[ã‚¤ãƒ³ãƒãƒ¼ãƒˆ]
+ã—ã¾ã™ã€‚
 
-ƒ^ƒCƒv•ÊÝ’è wƒXƒNƒŠ[ƒ“xƒ^ƒu
+ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®š ã€Žã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã€ã‚¿ãƒ–
 
-Ý’è‚Ì–¼‘O	Ruby
-ƒtƒ@ƒCƒ‹Šg’£Žq  rb
-ƒŒƒCƒAƒEƒg TAB•  2  (Ruby‚Ì‹KŠiH)
-ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ•û–@‚Åƒ‹[ƒ‹ƒtƒ@ƒCƒ‹‚ð‘I‘ð‚µ“¯«‚ÌRuby.rule
-‚ðŽw’è‚µ‚Ü‚·
-
-
-ƒ^ƒCƒv•ÊÝ’è wƒJƒ‰[xƒ^ƒu
-
-“¯«‚ÌRuby.col‚ð[ƒCƒ“ƒ|[ƒg]‚µ‚Ä‚­‚¾‚³‚¢
-‹­’²ƒL[ƒ[ƒh1‚©‚ç4‚ÉA‚»‚ê‚¼‚ê Ruby1‚©‚çRuby4‚ðƒZƒbƒg
-<ƒRƒƒ“ƒgƒXƒ^ƒCƒ‹>‚ðŽŸ‚Ì‚æ‚¤‚É‚µ‚Ü‚·
-  ƒuƒƒbƒNŒ^  =begin ` =end
-
-  sŒ^  #
+è¨­å®šã®åå‰	Ruby
+ãƒ•ã‚¡ã‚¤ãƒ«æ‹¡å¼µå­  rb
+ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆ TABå¹…  2  (Rubyã®è¦æ ¼ï¼Ÿ)
+ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æžæ–¹æ³•ã§ãƒ«ãƒ¼ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é¸æŠžã—åŒæ¢±ã®Ruby.rule
+ã‚’æŒ‡å®šã—ã¾ã™
 
 
-ƒ^ƒCƒv•ÊÝ’è wŽx‰‡xƒ^ƒu
+ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®š ã€Žã‚«ãƒ©ãƒ¼ã€ã‚¿ãƒ–
 
-“ü—Í•âŠ®‹@”\  ’PŒêƒtƒ@ƒCƒ‹ ‚É“¯«‚ÌRuby.hkn‚ðŽw’è
-•ÒW’†‚Ìƒtƒ@ƒCƒ‹‚©‚çŒó•â‚ð’T‚·‚Ìƒ`ƒFƒbƒN‚ªƒIƒXƒXƒ
+åŒæ¢±ã®Ruby.colã‚’[ã‚¤ãƒ³ãƒãƒ¼ãƒˆ]ã—ã¦ãã ã•ã„
+å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰1ã‹ã‚‰4ã«ã€ãã‚Œãžã‚Œ Ruby1ã‹ã‚‰Ruby4ã‚’ã‚»ãƒƒãƒˆ
+<ã‚³ãƒ¡ãƒ³ãƒˆã‚¹ã‚¿ã‚¤ãƒ«>ã‚’æ¬¡ã®ã‚ˆã†ã«ã—ã¾ã™
+  ãƒ–ãƒ­ãƒƒã‚¯åž‹  =begin ï½ž =end
 
-ŠO•”HTMLƒwƒ‹ƒv‚ÌÝ’è‚Å‚ÍAˆÈ‰º‚ÌHTML Help‚ðŽg‚Á‚Ä‚Ü‚·
+  è¡Œåž‹  #
+
+
+ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®š ã€Žæ”¯æ´ã€ã‚¿ãƒ–
+
+å…¥åŠ›è£œå®Œæ©Ÿèƒ½  å˜èªžãƒ•ã‚¡ã‚¤ãƒ« ã«åŒæ¢±ã®Ruby.hknã‚’æŒ‡å®š
+ç·¨é›†ä¸­ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰å€™è£œã‚’æŽ¢ã™ã®ãƒã‚§ãƒƒã‚¯ãŒã‚ªã‚¹ã‚¹ãƒ¡
+
+å¤–éƒ¨HTMLãƒ˜ãƒ«ãƒ—ã®è¨­å®šã§ã¯ã€ä»¥ä¸‹ã®HTML Helpã‚’ä½¿ã£ã¦ã¾ã™
 http://elbereth-hp.hp.infoseek.co.jp/ruby.html
 
 
-ƒ^ƒCƒv•ÊÝ’è w³‹K•\Œ»ƒL[ƒ[ƒhxƒ^ƒu
+ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®š ã€Žæ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã€ã‚¿ãƒ–
 
-[³‹K•\Œ»ƒL[ƒ[ƒh‚ðŽg—p‚·‚é]‚ðƒ`ƒFƒbƒN‚µ‚Ä
-“¯«‚ÌRuby.rkw‚ðƒCƒ“ƒ|[ƒg‚µ‚Ä‚­‚¾‚³‚¢
+[æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’ä½¿ç”¨ã™ã‚‹]ã‚’ãƒã‚§ãƒƒã‚¯ã—ã¦
+åŒæ¢±ã®Ruby.rkwã‚’ã‚¤ãƒ³ãƒãƒ¼ãƒˆã—ã¦ãã ã•ã„
 
 
-¡‚»‚Ì‘¼
+â– ãã®ä»–
 
-‹­’²ƒL[ƒ[ƒh‚ð‚S‚Â‚àŽg‚¢‚½‚­–³‚¢‚ÆŽv‚í‚ê‚½‚çA1‚Æ2A3‚Æ4‚ð
-‚Ð‚Æ‚Â‚É•¹‚¹‚é‚È‚ÇA“K“–‚É’¼‚µ‚Ä‚­‚¾‚³‚¢B
-FÝ’è‚â³‹K•\Œ»ƒL[‚à“K“–‚ÉEEE
+å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’ï¼”ã¤ã‚‚ä½¿ã„ãŸãç„¡ã„ã¨æ€ã‚ã‚ŒãŸã‚‰ã€1ã¨2ã€3ã¨4ã‚’
+ã²ã¨ã¤ã«ä½µã›ã‚‹ãªã©ã€é©å½“ã«ç›´ã—ã¦ãã ã•ã„ã€‚
+è‰²è¨­å®šã‚„æ­£è¦è¡¨ç¾ã‚­ãƒ¼ã‚‚é©å½“ã«ãƒ»ãƒ»ãƒ»
 
-Žg‚¢•¨‚É‚Í‚È‚ñ‚Æ‚©‚È‚é‚©‚Æ‚¢‚¤Š®¬“xA‰ü‘PE‰ü—Ç‚Í‘åŠ½Œ}‚Å‚·B
-‚æ‚è—Ç‚¢‚à‚Ì‚ªo—ˆ‚Ü‚µ‚½‚çƒVƒFƒA‚³‚¹‚Ä‚­‚¾‚³‚¢B
+ä½¿ã„ç‰©ã«ã¯ãªã‚“ã¨ã‹ãªã‚‹ã‹ã¨ã„ã†å®Œæˆåº¦ã€æ”¹å–„ãƒ»æ”¹è‰¯ã¯å¤§æ­“è¿Žã§ã™ã€‚
+ã‚ˆã‚Šè‰¯ã„ã‚‚ã®ãŒå‡ºæ¥ã¾ã—ãŸã‚‰ã‚·ã‚§ã‚¢ã•ã›ã¦ãã ã•ã„ã€‚
 
 
 05/09/23
-‚±‚ÌƒeƒLƒXƒg‚ÆFÝ’èƒtƒ@ƒCƒ‹‚È‚ç‚Ñ‚É³‹K•\Œ»ƒL[ƒ[ƒhƒtƒ@ƒCƒ‹
-‚ðC³‚µ‚Ü‚µ‚½BiThor‚³‚ñ‚Ì‚²Žw“Ej
+ã“ã®ãƒ†ã‚­ã‚¹ãƒˆã¨è‰²è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ãªã‚‰ã³ã«æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ•ã‚¡ã‚¤ãƒ«
+ã‚’ä¿®æ­£ã—ã¾ã—ãŸã€‚ï¼ˆThorã•ã‚“ã®ã”æŒ‡æ‘˜ï¼‰

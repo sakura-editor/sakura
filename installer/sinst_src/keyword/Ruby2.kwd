@@ -1,4 +1,4 @@
-// Ruby ƒL[ƒ[ƒh’è‹`ƒtƒ@ƒCƒ‹ ‘g‚İ•Ï”^’è”
+ï»¿// Ruby ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ« çµ„è¾¼ã¿å¤‰æ•°ï¼å®šæ•°
 
 $_
 $1
@@ -11,12 +11,23 @@ $7
 $8
 $9
 $$
-$FILENAME$defout$stdin$stdout$stderrTRUEFALSESTDINSTDOUTSTDERRARGV
-ARGFENV
+$FILENAME
+$defout
+$stdin
+$stdout
+$stderr
+TRUE
+FALSE
+STDIN
+STDOUT
+STDERR
+ARGV
+ARGF
+ENV
 RUBY_VERSION
 RUBY_PLATFORM
 
-// ‹[—•Ï”
+// æ“¬ä¼¼å¤‰æ•°
 self
 nil
 true

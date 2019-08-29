@@ -1,13 +1,13 @@
-//==========================================================
+ï»¿//==========================================================
 //
-//		ƒTƒNƒ‰ƒGƒfƒBƒ^—p
-//		ƒXƒ^ƒCƒ‹ƒV[ƒg/CSS2/CSS2.1 ƒL[ƒ[ƒh’è‹`ƒtƒ@ƒCƒ‹
-//		(‹­’²•\¦—p)
+//		ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿ç”¨
+//		ã‚¹ã‚¿ã‚¤ãƒ«ã‚·ãƒ¼ãƒˆ/CSS2/CSS2.1 ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«
+//		(å¼·èª¿è¡¨ç¤ºç”¨)
 //		Rev1.00 2006/09/15
-//		(C) 2006 ‚©‚¦‚Å All rights reserved.
+//		(C) 2006 ã‹ãˆã§ All rights reserved.
 //
 //==========================================================
-//CSS2.1 ƒvƒƒpƒeƒB
+//CSS2.1 ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£
 azimuth
 background
 background-attachment
@@ -123,7 +123,7 @@ widows
 width
 word-spacing
 z-index
-//CSS 2.1 ’l
+//CSS 2.1 å€¤
 //Angles
 deg
 grid
@@ -146,7 +146,7 @@ silver
 teal
 white
 yellow
-//color(ƒVƒXƒeƒ€ƒJƒ‰[)
+//color(ã‚·ã‚¹ãƒ†ãƒ ã‚«ãƒ©ãƒ¼)
 ActiveBorder
 ActiveCaption
 AppWorkspace
@@ -175,7 +175,7 @@ ThreeDShadow
 Window
 WindowFrame
 WindowText
-//WebSafe Color (RGB6Œ…)
+//WebSafe Color (RGB6æ¡)
 #000000
 #0000FF
 #0033FF
@@ -392,7 +392,7 @@ WindowText
 #003300
 #330000
 #333300
-//WebSafe Color (RGB3Œ…)
+//WebSafe Color (RGB3æ¡)
 #000
 #00F
 #03F
@@ -610,11 +610,11 @@ WindowText
 #300
 #330
 //length
-//‘Š‘Î’l
+//ç›¸å¯¾å€¤
 em
 ex
 px
-//â‘Î’l
+//çµ¶å¯¾å€¤
 cm
 in
 mm
@@ -656,7 +656,7 @@ s
 //frequency
 Hz
 kHz
-//‚»‚Ì‘¼‚Ì’l
+//ãã®ä»–ã®å€¤
 100
 200
 300
@@ -811,7 +811,7 @@ x-loud
 x-low
 x-slow
 x-soft
-//ƒZƒŒƒNƒ^’Ç‰Á (06/09/14)
+//ã‚»ãƒ¬ã‚¯ã‚¿è¿½åŠ  (06/09/14)
 link
 visited
 active
@@ -819,13 +819,13 @@ hover
 focus
 first-child
 lang()
-//‹^—ƒZƒŒƒNƒ^’Ç‰Á (06/09/14)
+//ç–‘ä¼¼ã‚»ãƒ¬ã‚¯ã‚¿è¿½åŠ  (06/09/14)
 first-line
 first-letter
 before
 after
 
-//CSS2 ƒvƒƒpƒeƒB’Ç‰Á (06/09/14)
+//CSS2 ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£è¿½åŠ  (06/09/14)
 font-size-adjust
 font-stretch
 marker-offset
@@ -833,7 +833,7 @@ marks
 text-shadow
 white-space
 
-//CSS2 ’l’Ç‰Á
+//CSS2 å€¤è¿½åŠ 
 compact
 marker
 number
@@ -861,7 +861,7 @@ portarait
 landscape
 specific-voice
 
-//color’l(Not HTML Named Color)
+//colorå€¤(Not HTML Named Color)
 //Monocromatic
 whitesmoke
 gainsboro
@@ -992,7 +992,7 @@ plum
 violet
 magenta
 darkmagenta
-//Magenta`Red
+//Magentaï½Red
 orchid
 mediumvioletred
 deeppink
@@ -1003,7 +1003,7 @@ crimson
 pink
 lightpink
 
-//MSIE“Æ©À‘•
+//MSIEç‹¬è‡ªå®Ÿè£…
 _background-position-x
 _background-position-y
 _layout-flow
@@ -1038,7 +1038,7 @@ _ime-mode
 _zoom
 _filter:progid:DXImageTransform.Microsoft
 _filter
-//Ã“IƒtƒBƒ‹ƒ^
+//é™çš„ãƒ•ã‚£ãƒ«ã‚¿
 Alpha
 BasicImage
 Blur
@@ -1055,7 +1055,7 @@ Matrix
 MotionBlur
 Shadow
 Wave
-//“®“IƒtƒBƒ‹ƒ^
+//å‹•çš„ãƒ•ã‚£ãƒ«ã‚¿
 RevealTrans
 Barn
 Blinds
@@ -1074,7 +1074,7 @@ Stretch
 Strips
 Wheel
 Zigzag
-//“®“I‚ÈƒtƒBƒ‹ƒ^#2
+//å‹•çš„ãªãƒ•ã‚£ãƒ«ã‚¿#2
 FlipH
 FlipV
 Gray
@@ -1085,7 +1085,7 @@ Xray
 
 
 //----------------------------------------------------------
-//‹­’²•\¦—p
+//å¼·èª¿è¡¨ç¤ºç”¨
 //----------------------------------------------------------
 after
 align

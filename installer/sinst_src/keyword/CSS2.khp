@@ -1,134 +1,134 @@
-;//==========================================================
+ï»¿;//==========================================================
 ;//
-;//		ƒTƒNƒ‰ƒGƒfƒBƒ^—p
-;//		ƒXƒ^ƒCƒ‹ƒV[ƒg/CSS2/CSS2.1 ƒL[ƒ[ƒhƒwƒ‹ƒv’è‹`ƒtƒ@ƒCƒ‹
+;//		ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿ç”¨
+;//		ã‚¹ã‚¿ã‚¤ãƒ«ã‚·ãƒ¼ãƒˆ/CSS2/CSS2.1 ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ãƒ˜ãƒ«ãƒ—å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«
 ;//		Rev1.00 2006/09/15
-;//		(C) 2006 ‚©‚¦‚Å All rights reserved.
+;//		(C) 2006 ã‹ãˆã§ All rights reserved.
 ;//
 ;//==========================================================
-;//CSS2.1 ƒvƒƒpƒeƒB
-azimuth /// ‰¡•ûŒü‚Ì‰¹Œ¹‚Ì•ûŒü‚ğw’è\n azimuth: <degree> | [[ left-side | far-left | left | center-left | center |\n center-right | right | far-right | right-side] || behind ] |\n leftwards | rightwards | inherit
-background /// ”wŒi—v‘fˆêŠ‡w’è\nbackgtound: [<'background-color'> || <'background-image'> ||\n <'background-repeat'> || <'background-attachment'> <'background-position'>] | inherit
-background-attachment /// ”wŒi‰æ‘œ‚ÌƒXƒNƒ[ƒ‹•û–@‚ğw’è\nbackground-attachment: scroll | fixed | inherit
-background-color /// ”wŒiF‚Ìw’è\nbackground-color: <color> | transparent | inherit
-background-image /// ”wŒi‰æ‘œ‚Ìw’è\nbackground-image: <uri> | none | inherit
-background-position /// ”wŒi‰æ‘œ‚ÌˆÊ’u‚Ì‰Šú’l‚ğw’è\nbackground-position: [ [<percentage> | <length>]{1,2} | [ [top | center | bottom] ||\n [left | center | right] ] ] ] | inherit
-background-repeat /// ”wŒi‰æ‘œ‚ÌŒJ‚è•Ô‚µ•û–@‚ğw’è\nbackground-repeat: repeat | repeat-x | repeat-y | no-repeat | inherit
-border /// ƒ{[ƒ_[‚ÌˆêŠ‡w’è\n border [<'border-width'> || <'border-style'> || <color>] | inherit
-border-collapse /// ƒvƒƒpƒeƒB'display'‚Ì’l‚ªtable‚©inline-table‚Å‚ ‚é—v‘f‚Éw’è‰Â”\\nƒe[ƒuƒ‹‚Ìƒ{[ƒ_[‚ª—×ÚƒZƒ‹‚Æ•ª—£‚µ‚Ä‚¢‚é‚©ˆê’v‚µ‚Ä‚¢‚é‚©‚ğw’è\n border-collapse: collapse | separate | inherit
-border-color /// ƒ{[ƒ_[‚ÌF‚ÌˆêŠ‡w’è\n border-color: <color>{1,4} | transparent | inherit
-border-spacing /// ƒvƒƒpƒeƒB'display'‚Ì’l‚ªtable‚©inline-table‚Å‚ ‚é—v‘f‚Éw’è‰Â”\\n•ª—£ƒ‚ƒfƒ‹‚Ì—×ÚƒZƒ‹‚Ìƒ{[ƒ_[ŠÔ‚Ì‹——£‚ğw’è\n border-spacing: <length>{1,2} | inherit
-border-style /// ƒ{[ƒ_[‚Ìí—Ş‚ÌˆêŠ‡w’è\n border-style: <border-style>{1,4} | inherit
-border-top /// ã•”ƒ{[ƒ_[‚ÌˆêŠ‡w’è\n border-top: [<'border-width'> || <'border-style'> || <'color'>] | inherit
-border-right /// ‰E•”ƒ{[ƒ_[‚ÌˆêŠ‡w’è\n border-right: [<'border-width'> || <'border-style'> || <'color'>] | inherit
-border-bottom /// ‰º•”ƒ{[ƒ_[‚ÌˆêŠ‡w’è\n border-bottom: [<'border-width'> || <'border-style'> || <'color'>] | inherit
-border-left /// ¶•”ƒ{[ƒ_[‚ÌˆêŠ‡w’è\n border-left: [<'border-width'> || <'border-style'> || <'color'>] | inherit
-border-top-color /// ã•”ƒ{[ƒ_[‚ÌF‚Ìw’è\n border-top-color: <'color'> | inherit
-border-right-color /// ‰E•”ƒ{[ƒ_[‚ÌF‚Ìw’è\n border-right-color: <'color'> | inherit
-border-bottom-color /// ‰º•”ƒ{[ƒ_[‚ÌF‚Ìw’è\n border-bottom-color: <'color'> | inherit
-border-left-color /// ¶•”ƒ{[ƒ_[‚ÌF‚Ìw’è\n border-left-color: <'color'> | inherit
-border-top-style /// ã•”ƒ{[ƒ_[‚Ìüí‚Ìw’è\n border-top-style: <border-style> | inherit
-border-right-style /// ‰E•”ƒ{[ƒ_[‚Ìüí‚Ìw’è\n border-right-style: <border-style> | inherit
-border-bottom-style /// ‰º•”ƒ{[ƒ_[‚Ìüí‚Ìw’è\n border-bottom-style: <border-style> | inherit
-border-left-style /// ¶•”ƒ{[ƒ_[‚Ìüí‚Ìw’è\n border-left-style: <border-style> | inherit
-border-width /// ƒ{[ƒ_[‚Ì‘¾‚³‚ÌˆêŠ‡w’è\n border-width: <border-width>{1,4} | inherit
-border-top-width /// ã•”ƒ{[ƒ_[‚Ì‘¾‚³‚Ìw’è\n border-top-width: <border-width> | inherit
-border-right-width /// ‰E•”ƒ{[ƒ_[‚Ì‘¾‚³‚Ìw’è\n border-right-width: <border-width> | inherit
-border-bottom-width /// ‰º•”ƒ{[ƒ_[‚Ì‘¾‚³‚Ìw’è\n border-bottom-width: <border-width> | inherit
-border-left-width /// ¶•”ƒ{[ƒ_[‚Ì‘¾‚³‚Ìw’è\n border-left-width: <border-width> | inherit
-bottom /// 'position'‚Ì’l‚ªstaticˆÈŠO‚Ìê‡‚Éw’è‰Â”\\n ƒ{ƒbƒNƒX‚Ì•ïŠÜƒuƒƒbƒN‚É‘Î‚·‚éƒIƒtƒZƒbƒg’l‚ğw’è\n bottom: <length> | percentage | auto | inherit
-caption-side /// ƒvƒƒpƒeƒB'display'‚Ì’l‚ªtable-caption‚Ì—v‘f‚Éw’è‰Â”\\nƒe[ƒuƒ‹ƒLƒƒƒvƒVƒ‡ƒ“‚Ìƒf[ƒuƒ‹‚É‘Î‚·‚éˆÊ’u‚ğw’è\n caption-side top | bottom | left | right | inherit
-clear /// ƒuƒƒbƒNƒŒƒxƒ‹—v‘f‚Éw’è‰Â”\\n‘ÎÛ‚ª¶¬‚·‚éƒ{ƒbƒNƒX‚Ì‚Ç‚Ì‘¤‚ªæs‚·‚éƒ{ƒbƒNƒX‚É—×Ú‚µ‚È‚¢‚©‚ğw’è\n clear: none | left | right | both | inherit
-clip /// ƒuƒƒbƒNƒŒƒxƒ‹—v‘f‚Æ’uŠ·—v‘f(img, input, textarea, select, object)‚Éw’è‰Â”\\n‘ÎÛ‚ÌƒgƒŠƒ~ƒ“ƒO‚³‚ê‚é—Ìˆæ‚ğw’è\n clip <shape> | auto | inherit
-color /// ƒZƒŒƒNƒ^‚Éƒ}ƒbƒ`‚µ‚½‘ÎÛ‚Ì‘OŒiF‚ğw’è\n color: <color> | inherit
-content /// :before‹^——v‘f‚Æ:after‹^——v‘f‚Éw’è‰Â”\\n‘ÎÛ‚É‘}“ü‚·‚é“à—e‚ğw’è\n content: [ <string> | <uri> | <counter> | attr(X) |\n open-quote | close-quote | no-open-quote | no-close-quote ]+ | inherit
-counter-increment /// 'content'ƒvƒƒpƒeƒB‚Ì’l‚Éw’è‚³‚ê‚écounter()‚Æconters()‚Ì§Œä‚Ég—p\nƒJƒEƒ“ƒ^‚Ì‘‰Á‚ğw’è\n counter-increment: [ <identifier> <integer>? ]+ | none | inherit
-counter-reset /// 'content'ƒvƒƒpƒeƒB‚Ì’l‚Éw’è‚³‚ê‚écounter()‚Æconters()‚Ì§Œä‚Ég—p\nƒJƒEƒ“ƒ^‚Ì‰Šú‰»‚ğw’è\n counter-reset: [ <identifier> <integer>? ]+ | none | inherit
-cue-after /// —v‘f“¯m‚ğ‹æØ‚éˆ×‚ÉAw’è‚µ‚½—v‘f‚ÌŒã‚ÅÄ¶‚·‚é‰¹‚ğw’è\n cue-after: <uri> | none
-cue-before /// —v‘f“¯m‚ğ‹æØ‚éˆ×‚ÉAw’è‚µ‚½—v‘f‚Ì‘O‚ÅÄ¶‚·‚é‰¹‚ğw’è\n cue-before: <uri> | none
-cue /// —v‘f“¯m‚ğ‹æØ‚éˆ×‚ÉAw’è‚µ‚½—v‘f‚Ì‘OŒã‚ÅÄ¶‚·‚é‰¹‚ğw’è\n cue: <uri>{1,2} | none
-cursor /// ‘ÎÛ‚É‘Î‚·‚éƒ|ƒCƒ“ƒeƒBƒ“ƒOEƒfƒoƒCƒX‚ÌƒJ[ƒ\ƒ‹‚ÌŒ`ó‚ğw’è\n cursor: [ [<uri> ,]* [ auto | crosshair | default | pointer | move |\n e-resize | ne-resize | nw-resize | n-resize | se-resize | s-resize | w-resize |\n text | wait | help | progress] ] | inherit
-direction /// •¶š‚ÌŠî–{•ûŒü‚ğw’è\n direction: ltr | rtl | inherit
-display /// ‘ÎÛ‚ª¶¬‚·‚éƒ{ƒbƒNƒX‚Ìí—Ş‚ğw’è\n display: inline | block | list-item | run-in | compact | marker | table |\n inline-table | table-row-group | table-header-group | table-footer-group |\n table-row | table-column-group | table-column | table-cell | table-caption |\n none | inherit
-elevation /// ã‰º•ûŒü‚Ì‰¹Œ¹‚ÌˆÊ’u‚ğw’è\n elevation: <degree> | below | level | above | higher | lower | inherit
-empty-cells /// 'display'‚Ì’l‚ªtable-cell‚Å‚ ‚é—v‘f‚Éw’è‰Â”\\n•ª—£ƒ‚ƒfƒ‹‚Å‹ó‚ÌƒZƒ‹‚ÌüˆÍ‚Ìƒ{[ƒ_[‚ğ•\¦‚·‚é‚©‚Ç‚¤‚©‚ğw’è\n table-cell: show | hide | inherit
-float /// 'position'‚ªabsolute‚©fixed‚ÅˆÈŠO‚Ì—v‘f‚Éw’è‰Â”\\n‘ÎÛ‚ª¶¬‚·‚éƒ{ƒbƒNƒX‚Ì•‚“®‰»•û–@‚ğw’è\n float: left | right | none | inherit
-font-family /// ƒtƒHƒ“ƒg‚ÌƒfƒUƒCƒ“‚Ìí—Ş‚ğw’è\n font-family: [[ <family-name> | <generic-family ],]*\n [ <family-name> | <generic-family> ] | inherit
-font-size /// ƒtƒHƒ“ƒg‚Ì‘å‚«‚³‚ğw’è\n font-size: <absolute-size> | <relative-size> | <length> | <percentage> | inherit
-font-style /// ƒtƒHƒ“ƒg‚Ì‘‘Ì‚ğw’è\n font-style: normal | italic | oblique | inherit
-font-variant /// ‰p”•¶š‚Ìê‡‚É¬•¶š/Small Caps‚ğ‹æ•Ê‚µ‚Äw’è\n font-variant: normal | small-caps | inherit
-font-weight /// ƒtƒHƒ“ƒg‚Ì‘¾‚³‚ğw’è\n font-weight: normal | bold | bolder | lighter |\n 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | inherit
-font /// ƒtƒHƒ“ƒg‚ÌˆêŠ‡w’è('font-stretch'‚Æ'font-size-adjust'‚ğœ‚­)\nline-height‚ğw’è‚·‚éê‡‚Í’l‚Ì’¼‘O‚É/(ƒXƒ‰ƒbƒVƒ…)‚ª•K—v\n font: [ [<'font-style'> || <'font-variant'> || <'font-weight'> ]\n <'font-size'> [ /<'line-height'> ] <'font-family'> ]\n | caption | icon | menu | message-box | small-caption | status-bar | inherit
-height /// ƒuƒƒbƒNƒŒƒxƒ‹—v‘f‚Æ’uŠ·—v‘f(img, input, textarea, select, object)‚Éw’è‰Â”\\n ‘ÎÛ‚ÌƒuƒƒbƒN“à—e‚Ì‚‚³‚ğw’è\n height: <length> | <percentage> | auto | inherit
-left /// 'position'‚Ì’l‚ªstaticˆÈŠO‚Ìê‡‚Éw’è‰Â”\\n ƒ{ƒbƒNƒX‚Ì•ïŠÜƒuƒƒbƒN‚É‘Î‚·‚éƒIƒtƒZƒbƒg’l‚ğw’è\n left: <length> | percentage | auto | inherit
-letter-spacing /// ‘ÎÛ‚ÌƒeƒLƒXƒg‚Ì•¶šŠÔ‚ÌƒXƒy[ƒX‚ğw’è\n letter-spacing: normal | <length> | inherit
-line-height /// ‘ÎÛ‚ÌƒCƒ“ƒ‰ƒCƒ“ƒ{ƒbƒNƒX‚ÌÅ‰‚Ì‚‚³‚ğw’è\n line-height: normal | <number> | <length> | <percentage> | auto | inherit
-list-style-image /// 'display'‚Ì’l‚ªlist-item‚Ì—v‘f‚Éw’è‰Â”\\n ‘ÎÛ‚Ìƒ}[ƒJƒ{ƒbƒNƒX‚Ég—p‚·‚é‰æ‘œ‚ğw’è\n list-style-image: <uri> | none | inherit
-list-style-position /// 'display'‚Ì’l‚ªlist-item‚Ì—v‘f‚Éw’è‰Â”\\n ‘ÎÛ‚Ìƒ}[ƒJƒ{ƒbƒNƒX‚ÌŠî–{ƒ{ƒbƒNƒX‚É‘Î‚·‚éˆÊ’u‚ğw’è\n list-style-position: inside | outside | inherit
-list-style-type /// 'display'‚Ì’l‚ªlist-item‚Ì—v‘f‚Éw’è‰Â”\\n ‘ÎÛ‚Ìƒ}[ƒJƒ{ƒbƒNƒX‚ÆŠî–{ƒ{ƒbƒNƒX‚Ì‹——£‚ğw’è\n list-style-type: disc | circle | square | decimal | decimal-leading-zero |\n lower-roman | upper-roman | lower-greek | lower-alpha | lower-latin | upper-alpha | upper-latin |\n hebrew | armenian | georgian | cjk-ideographic | hiragana | katakana |\n hiragana-iroha | katakana-iroha | none | inherit
-list-style /// 'display'‚Ì’l‚ªlist-item‚Ì—v‘f‚Éw’è‰Â”\\n ‘ÎÛ‚ÌƒŠƒXƒgŠÖŒW‚Ì—v‘f‚ğˆêŠ‡w’è\n list-style: [ <'list-style-type'> || <'list-style-position'> || <'list-style-image'> ] | inherit
-margin-right /// —v‘f‚Æ‘¼‚Ì—v‘f‚Æ‚Ì‰E‘¤‚ÌƒXƒy[ƒX(—]”’)‚ğw’è\n margin-right: <margin-width> | inherit
-margin-left /// —v‘f‚Æ‘¼‚Ì—v‘f‚Æ‚Ì¶‘¤‚ÌƒXƒy[ƒX(—]”’)‚ğw’è\n margin-left: <margin-width> | inherit
-margin-top /// —v‘f‚Æ‘¼‚Ì—v‘f‚Æ‚Ìã‘¤‚ÌƒXƒy[ƒX(—]”’)‚ğw’è\n margin-top: <margin-width> | inherit
-margin-bottom /// —v‘f‚Æ‘¼‚Ì—v‘f‚Æ‚Ì‰º‘¤‚ÌƒXƒy[ƒX(—]”’)‚ğw’è\n margin-bottom: <margin-width> | inherit
-margin /// —v‘f‚Æ‘¼‚Ì—v‘f‚Æ‚ÌƒXƒy[ƒX(—]”’)‚ğw’è\n margin: <margin-width>{1,4} | inherit
-max-height /// ƒuƒƒbƒNƒŒƒxƒ‹—v‘f‚Æ’uŠ·—v‘f(img, input, textarea, select, object)‚Éw’è‰Â”\\n ‘ÎÛ‚ÌƒuƒƒbƒN“à—e‚Ì‚‚³‚ÌÅ‘å’l‚ğw’è\n max-height: <length> | <percentage> | none | inherit
-max-width /// ƒuƒƒbƒNƒŒƒxƒ‹—v‘f‚Æ’uŠ·—v‘f(img, input, textarea, select, object)‚Éw’è‰Â”\\n ‘ÎÛ‚ÌƒuƒƒbƒN“à—e‚Ì•‚ÌÅ‘å’l‚ğw’è\n max-width: <length> | <percentage> | none | inherit
-min-height /// ƒuƒƒbƒNƒŒƒxƒ‹—v‘f‚Æ’uŠ·—v‘f(img, input, textarea, select, object)‚Éw’è‰Â”\\n ‘ÎÛ‚ÌƒuƒƒbƒN“à—e‚Ì‚‚³‚ÌÅ¬’l‚ğw’è\n min-height: <length> | <percentage> | inherit
-min-width /// ƒuƒƒbƒNƒŒƒxƒ‹—v‘f‚Æ’uŠ·—v‘f(img, input, textarea, select, object)‚Éw’è‰Â”\\n ‘ÎÛ‚ÌƒuƒƒbƒN“à—e‚Ì•‚ÌÅ¬’l‚ğw’è\n max-width: <length> | <percentage> | inherit
-orphans /// 'page-break'‚ÌŠg’£\n ƒy[ƒW‚ÌÅŒã‚Éc‚³‚È‚¯‚ê‚Î‚È‚ç‚È‚¢Å¬s”‚ğw’è\n orphans: <integer> | inherit
-outline-color /// ‘ÎÛ‚É‘Î‚·‚éƒAƒEƒgƒ‰ƒCƒ“‚ÌF‚ğw’è\n outline-color: <border-color> | inherit
-outline-style /// ‘ÎÛ‚É‘Î‚·‚éƒAƒEƒgƒ‰ƒCƒ“‚ÌŒ`ó‚ğw’è\n outline-style: <border-style> | inherit
-outline-width /// ‘ÎÛ‚É‘Î‚·‚éƒAƒEƒgƒ‰ƒCƒ“‚Ì‘¾‚³‚ğw’è\n outline-width: <border-width> | inherit
-outline /// ‘ÎÛ‚É‘Î‚·‚éƒAƒEƒgƒ‰ƒCƒ“‚ÌŒ`ó‚ğˆêŠ‡w’è\n outline: [<'outline-color'> || <'outline-style'> || <'outline-width'>] | inherit
-overflow /// ƒuƒƒbƒNƒŒƒxƒ‹—v‘f‚Æ’uŠ·—v‘f(img, input, textarea, select, object)‚Éw’è‰Â”\\n ‘ÎÛ‚ÌƒuƒƒbƒN‚ª•ïŠÜƒuƒƒbƒN‚Ìƒ{ƒbƒNƒX‚©‚ç‚Í‚İo‚·ê‡‚Ì‹ŠoŒø‰Ê‚ğw’è\n overflow: visible | hidden | scroll | auto | inherit
-padding-top /// —v‘f‚Ìã‘¤ƒpƒfƒBƒ“ƒO‚ğw’è\n padding-top: <padding-width> | inherit
-padding-right /// —v‘f‚Ì‰E‘¤ƒpƒfƒBƒ“ƒO‚ğw’è\n padding-right: <padding-width> | inherit
-padding-bottom /// —v‘f‚Ì‰º‘¤ƒpƒfƒBƒ“ƒO‚ğw’è\n padding-bottom: <padding-width> | inherit
-padding-left /// —v‘f‚Ì¶‘¤ƒpƒfƒBƒ“ƒO‚ğw’è\n padding-left: <padding-width> | inherit
-padding /// —v‘f‚ÌƒpƒfƒBƒ“ƒO‚ÌˆêŠ‡w’è‚ğw’è\n padding: <padding-width>{1,4} | inherit
-page-break-after /// ƒuƒƒbƒNƒŒƒxƒ‹—v‘f‚Éw’è‰Â”\\n ‘ÎÛ‚Ì—v‘f‚ÌŒã‚Å‚Ì‰üƒy[ƒW‚Ì—L–³‚ğw’è\n page-break-after: auto | always | avoid | left | right |inherit
-page-break-before /// ƒuƒƒbƒNƒŒƒxƒ‹—v‘f‚Éw’è‰Â”\\n ‘ÎÛ‚Ì—v‘f‚Ì‘O‚Å‚Ì‰üƒy[ƒW‚Ì—L–³‚ğw’è\n page-break-before: auto | always | avoid | left | right |inherit
-page-break-inside /// ƒuƒƒbƒNƒŒƒxƒ‹—v‘f‚Éw’è‰Â”\\n ‘ÎÛ‚Ì—v‘f‚Ì’†‚Å‚Ì‰üƒy[ƒW‚Ì—L–³‚ğw’è\n page-break-inside: avoid | auto | inherit
-pause-after /// ‘ÎÛ‚ÌŒã‚Éw’è‚µ‚½‚¾‚¯–³‰¹‚ÌŠÔ‚ğ¶¬\n pause-after: <time> | <percentage> | inherit
-pause-before /// ‘ÎÛ‚Ì‘O‚Éw’è‚µ‚½‚¾‚¯–³‰¹‚ÌŠÔ‚ğ¶¬\n pause-before: <time> | <percentage> | inherit
-pause /// ‘ÎÛ‚Éw’è‚µ‚½‚¾‚¯–³‰¹‚ÌŠÔ‚ğ¶¬\n pause: [<time> | <percentage>]{1,2} | inherit
-pitch-range /// •½‹Ïƒsƒbƒ`('pitch')‚ğŠî€‚Æ‚µ‚½—}—g‚Ì”ÍˆÍ‚ğw’è\n pitch-range: <number> | inherit
-pitch /// ˜b‚µº‚Ì•½‹Ïƒsƒbƒ`(•½‹Ïü”g”)‚ğw’è\n pitch: <frequence> | x-low | low | medium | high | x-high | inherit
-play-during /// ”wŒi‰¹‚ğw’è\n play-during: <uri> | mix? | repeat? | auto | none | inherit
-position /// ‘ÎÛ‚ª¶¬‚·‚éƒ{ƒbƒNƒX‚ÌˆÊ’u‚ÌŒvZ•û–@‚ğw’è\n position: static | relative | absolute | fixed | inherit
-quotes /// ˆø—p•„‚ÌƒŒƒ“ƒ_ƒŠƒ“ƒO•û–@‚ğw’è\n ˆø—p•„‚ğ‘}“ü‚·‚é‚©‚Ç‚¤‚©‚Í'content'‚Åw’è\n quotes: [<string> <string>]+ | none | inherit
-richness /// ˜b‚µº‚Ì–L‚©‚³‚ğw’è\n richness: <number>(0`100) | inherit
-right /// 'position'‚Ì’l‚ªstaticˆÈŠO‚Ìê‡‚Éw’è‰Â”\\n ƒ{ƒbƒNƒX‚Ì•ïŠÜƒuƒƒbƒN‚É‘Î‚·‚éƒIƒtƒZƒbƒg’l‚ğw’è\n right: <length> | percentage | auto | inherit
-speak-header /// •\‚Ìƒwƒbƒ_‚Ì‰¹º“Ç‚İã‚°•û–@‚ğw’è\n speak-header: once | always | inherit
-speak-numeral /// ”š‚Ì“Ç‚İ•û‚ğw’è\n speak-numeral: digits | continuous | inherit
-speak-punctuation /// ‹æØ‚è•¶š‚Ì“Ç‚İ•û‚ğw’è\n speak-punctuation: code | none | inherit
-speak /// ƒeƒLƒXƒg‚ğ‰¹ºo—Í‚·‚é‚©A‚·‚é‚È‚ç‚Î‚Ç‚Ì‚æ‚¤‚È•û®‚©‚ğw’è\n speak: normal | none | spell-out | inherit
-speech-rate /// “Ç‚İã‚°ƒXƒs[ƒh‚ğw’è\n <number> | x-slow | slow | medium | fast | x-fast | faster | slower | inherit
-stress /// ƒAƒNƒZƒ“ƒg‚Ì‹­‚³‚ğw’è\n stress: <number> | inherit
-table-layout /// 'display'‚Ì’l‚ªtable‚©inline-table‚Å‚ ‚é—v‘f‚Éw’è‰Â”\\nƒe[ƒuƒ‹‚ÌƒŒƒ“ƒ_ƒŠƒ“ƒO•û–@‚ğw’è\n table-layout: auto | fixed | inherit
-text-align /// ƒuƒƒbƒNƒŒƒxƒ‹—v‘f‚Éw’è‰Â”\\n ‘ÎÛ‚Ì“à—e‚Ìs–ˆ‚ÌƒuƒƒbƒN“à‚Å‚Ì”z’u•û–@‚ğw’è\n text-align: left | right | center | justify | <string> | inherit
-text-decoration /// ‘ÎÛ‚Ì‘•ü•û–@‚ğw’è\n text-decoration: none | [underline || overline || line-through || blink ] | inherit
-text-indent /// ‘ÎÛ‚Ì“à—e‚Ìs–ˆ‚Ìæ“ª‚Ìš‰º‚°ƒTƒCƒY‚ğw’è\n text-indent: <length> | <percentage> | inherit
-text-transform /// ‘ÎÛ‚ÌƒeƒLƒXƒg‚Ì‘å•¶š‰»‚ğw’è\n text-transform: capitalize | uppercase | lowercase | none | inherit
-top /// 'position'‚Ì’l‚ªstaticˆÈŠO‚Ìê‡‚Éw’è‰Â”\\n ƒ{ƒbƒNƒX‚Ì•ïŠÜƒuƒƒbƒN‚É‘Î‚·‚éƒIƒtƒZƒbƒg’l‚ğw’è\n top: <length> | percentage | auto | inherit
-unicode-bidi /// ‘ÎÛ‚ª]‚¤Unicode‚Ì§Œä‘o•ûŒüƒAƒ‹ƒSƒŠƒYƒ€‚É‘Î‚·‚é§Œä‚ğ’ñ‹Ÿ\n unicode-bidi: normal | embed | bidi-override | inherit
-vertical-align /// ƒCƒ“ƒ‰ƒCƒ“ƒŒƒxƒ‹‚Ì—v‘f‚Æ'table-cell'—v‘f‚Éw’è‰Â”\\n ‘ÎÛ‚ÌƒCƒ“ƒ‰ƒCƒ“ƒ{ƒbƒNƒX‚Ìsƒ{ƒbƒNƒX“à•”‚Å‚Ìã‰º•ûŒü‚ÌˆÊ’u‚ğw’è\n vertical-align: baseline | sub | super | top |\n text-top | middle | bottom | text-bottom | <length> | <percentage> | inherit
-visibility /// ‘ÎÛ‚Ìƒ{ƒbƒNƒX‚Ì‰Â‹«‚ğw’è\n ”ñ‰Â‹‰»‚³‚ê‚Ä‚àƒ{ƒbƒNƒX‚Í¶¬‚³‚ê‚éˆ×AŒã‘±‚ÌƒŒƒ“ƒ_ƒŠƒ“ƒO‚É‰e‹¿‚µ‚Ü‚·\n visibility: visible | hidden | collapse | inherit
-voice-family /// ‰¹º‚Ìƒtƒ@ƒ~ƒŠ[‚ğw’è\n voice-family [ [<ŒÅ—L‰¹º> | <‘Ì‰¹º>],]* [<ŒÅ—L‰¹º> | <‘Ì‰¹º>] | inherit
-volume /// ‰¹‚Ì‘å‚«‚³‚ğw’è\n volume: <number> | <percentage> | silent | x-soft | soft | medium | loud | x-loud | inherit
-white-space /// ‹ó”’•¶š‚Ìæˆµ•û–@‚ğw’è\n white-space: normal | pre | nowrap | inherit
-widows /// 'page-break'‚ÌŠg’£\n ƒy[ƒW‚Ìã•”‚Éc‚³‚È‚¯‚ê‚Î‚È‚ç‚È‚¢Å¬s”‚ğw’è\n widows: <integer> | inherit
-width /// ƒuƒƒbƒNƒŒƒxƒ‹—v‘f‚Æ’uŠ·—v‘f(img, input, textarea, select, object)‚Éw’è‰Â”\\n ‘ÎÛ‚ÌƒuƒƒbƒN“à—e‚Ì•‚ğw’è\n width: <length> | <percentage> | auto | inherit
-word-spacing /// ‘ÎÛ‚ÌƒeƒLƒXƒg‚Ì”¼ŠpƒXƒy[ƒX‹æØ‚è‚Ì’PŒêŠÔ‚ÌƒXƒy[ƒX‚ğw’è\n word-spacing: normal | <length> | inherit
-z-index /// ‘ÎÛ‚ª¶¬‚·‚éƒ{ƒbƒNƒX‚Ìã‰ºŠÖŒW‚ğw’è\n z-index: auto | <integer> | inherit
-;//CSS2‚Å‚Ì‚İ‹K’è‚³‚ê‚Ä‚¢‚éƒvƒƒpƒeƒB
-font-size-adjust /// g—p‚³‚ê‚Ä‚¢‚éƒtƒHƒ“ƒg‚ÌƒAƒXƒyƒNƒg’l‚ğw’è\nW3CŠ©Œó•â‚ÌCSS2.1‚Å‚ÍŠO‚³‚ê‚Ü‚µ‚½\nfont-size-adjust: <number> | none | inherit
-font-stretch /// ƒtƒHƒ“ƒg‚ÌƒOƒŠƒt‚Ì•‚ğw’è\nW3CŠ©Œó•â‚ÌCSS2.1‚Å‚ÍŠO‚³‚ê‚Ü‚µ‚½\n font-stretch: normal | wider | nallower | ultra-condensed | extra-condensed |\n condensed | semi-condensed | semi-expanded | expanded |\n extra-expanded | ultra-expanded | inherit
-marker-offset /// 'display'‚Ì’l‚ªmarker‚Ì—v‘f‚Éw’è‰Â”\\n ‘ÎÛ‚Ìƒ}[ƒJ[ƒ{ƒbƒNƒX‚ÆŠî–{ƒ{ƒbƒNƒX‚Æ‚Ì‹——£‚ğw’è\n W3CŠ©Œó•â‚ÌCSS2.1‚Å‚ÍŠO‚³‚ê‚Ü‚µ‚½ \nmarker-offset: <length> | auto | inherit
-marks ///ˆóü‚É†‚ÌÙ’f‚ÆˆÊ’u’²®‚Ég—p‚·‚éƒgƒ“ƒ{‚ğƒy[ƒWƒ{ƒbƒNƒX‚Ì‚·‚®ŠO‘¤‚É•\¦‚·‚é‚©‚ğw’è\n W3CŠ©Œó•â‚ÌCSS2.1‚Å‚ÍŠO‚³‚ê‚Ü‚µ‚½\n marks: [crop || cross] | none | inherit
-text-shadow /// ‘ÎÛ‚Ì‰e‚ÌŒø‰Ê‚ğw’è\n W3CŠ©Œó•â‚ÌCSS2.1‚Å‚ÍŠO‚³‚ê‚Ü‚µ‚½\n text-shadow: none | [<color> || <length> <length> <length>? ,]*\n [<color> || <length> <length> <length>? ] | inherit
-;//MSIE“Æ©À‘•
+;//CSS2.1 ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£
+azimuth /// æ¨ªæ–¹å‘ã®éŸ³æºã®æ–¹å‘ã‚’æŒ‡å®š\n azimuth: <degree> | [[ left-side | far-left | left | center-left | center |\n center-right | right | far-right | right-side] || behind ] |\n leftwards | rightwards | inherit
+background /// èƒŒæ™¯è¦ç´ ä¸€æ‹¬æŒ‡å®š\nbackgtound: [<'background-color'> || <'background-image'> ||\n <'background-repeat'> || <'background-attachment'> <'background-position'>] | inherit
+background-attachment /// èƒŒæ™¯ç”»åƒã®ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«æ–¹æ³•ã‚’æŒ‡å®š\nbackground-attachment: scroll | fixed | inherit
+background-color /// èƒŒæ™¯è‰²ã®æŒ‡å®š\nbackground-color: <color> | transparent | inherit
+background-image /// èƒŒæ™¯ç”»åƒã®æŒ‡å®š\nbackground-image: <uri> | none | inherit
+background-position /// èƒŒæ™¯ç”»åƒã®ä½ç½®ã®åˆæœŸå€¤ã‚’æŒ‡å®š\nbackground-position: [ [<percentage> | <length>]{1,2} | [ [top | center | bottom] ||\n [left | center | right] ] ] ] | inherit
+background-repeat /// èƒŒæ™¯ç”»åƒã®ç¹°ã‚Šè¿”ã—æ–¹æ³•ã‚’æŒ‡å®š\nbackground-repeat: repeat | repeat-x | repeat-y | no-repeat | inherit
+border /// ãƒœãƒ¼ãƒ€ãƒ¼ã®ä¸€æ‹¬æŒ‡å®š\n border [<'border-width'> || <'border-style'> || <color>] | inherit
+border-collapse /// ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£'display'ã®å€¤ãŒtableã‹inline-tableã§ã‚ã‚‹è¦ç´ ã«æŒ‡å®šå¯èƒ½\nãƒ†ãƒ¼ãƒ–ãƒ«ã®ãƒœãƒ¼ãƒ€ãƒ¼ãŒéš£æ¥ã‚»ãƒ«ã¨åˆ†é›¢ã—ã¦ã„ã‚‹ã‹ä¸€è‡´ã—ã¦ã„ã‚‹ã‹ã‚’æŒ‡å®š\n border-collapse: collapse | separate | inherit
+border-color /// ãƒœãƒ¼ãƒ€ãƒ¼ã®è‰²ã®ä¸€æ‹¬æŒ‡å®š\n border-color: <color>{1,4} | transparent | inherit
+border-spacing /// ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£'display'ã®å€¤ãŒtableã‹inline-tableã§ã‚ã‚‹è¦ç´ ã«æŒ‡å®šå¯èƒ½\nåˆ†é›¢ãƒ¢ãƒ‡ãƒ«ã®éš£æ¥ã‚»ãƒ«ã®ãƒœãƒ¼ãƒ€ãƒ¼é–“ã®è·é›¢ã‚’æŒ‡å®š\n border-spacing: <length>{1,2} | inherit
+border-style /// ãƒœãƒ¼ãƒ€ãƒ¼ã®ç¨®é¡ã®ä¸€æ‹¬æŒ‡å®š\n border-style: <border-style>{1,4} | inherit
+border-top /// ä¸Šéƒ¨ãƒœãƒ¼ãƒ€ãƒ¼ã®ä¸€æ‹¬æŒ‡å®š\n border-top: [<'border-width'> || <'border-style'> || <'color'>] | inherit
+border-right /// å³éƒ¨ãƒœãƒ¼ãƒ€ãƒ¼ã®ä¸€æ‹¬æŒ‡å®š\n border-right: [<'border-width'> || <'border-style'> || <'color'>] | inherit
+border-bottom /// ä¸‹éƒ¨ãƒœãƒ¼ãƒ€ãƒ¼ã®ä¸€æ‹¬æŒ‡å®š\n border-bottom: [<'border-width'> || <'border-style'> || <'color'>] | inherit
+border-left /// å·¦éƒ¨ãƒœãƒ¼ãƒ€ãƒ¼ã®ä¸€æ‹¬æŒ‡å®š\n border-left: [<'border-width'> || <'border-style'> || <'color'>] | inherit
+border-top-color /// ä¸Šéƒ¨ãƒœãƒ¼ãƒ€ãƒ¼ã®è‰²ã®æŒ‡å®š\n border-top-color: <'color'> | inherit
+border-right-color /// å³éƒ¨ãƒœãƒ¼ãƒ€ãƒ¼ã®è‰²ã®æŒ‡å®š\n border-right-color: <'color'> | inherit
+border-bottom-color /// ä¸‹éƒ¨ãƒœãƒ¼ãƒ€ãƒ¼ã®è‰²ã®æŒ‡å®š\n border-bottom-color: <'color'> | inherit
+border-left-color /// å·¦éƒ¨ãƒœãƒ¼ãƒ€ãƒ¼ã®è‰²ã®æŒ‡å®š\n border-left-color: <'color'> | inherit
+border-top-style /// ä¸Šéƒ¨ãƒœãƒ¼ãƒ€ãƒ¼ã®ç·šç¨®ã®æŒ‡å®š\n border-top-style: <border-style> | inherit
+border-right-style /// å³éƒ¨ãƒœãƒ¼ãƒ€ãƒ¼ã®ç·šç¨®ã®æŒ‡å®š\n border-right-style: <border-style> | inherit
+border-bottom-style /// ä¸‹éƒ¨ãƒœãƒ¼ãƒ€ãƒ¼ã®ç·šç¨®ã®æŒ‡å®š\n border-bottom-style: <border-style> | inherit
+border-left-style /// å·¦éƒ¨ãƒœãƒ¼ãƒ€ãƒ¼ã®ç·šç¨®ã®æŒ‡å®š\n border-left-style: <border-style> | inherit
+border-width /// ãƒœãƒ¼ãƒ€ãƒ¼ã®å¤ªã•ã®ä¸€æ‹¬æŒ‡å®š\n border-width: <border-width>{1,4} | inherit
+border-top-width /// ä¸Šéƒ¨ãƒœãƒ¼ãƒ€ãƒ¼ã®å¤ªã•ã®æŒ‡å®š\n border-top-width: <border-width> | inherit
+border-right-width /// å³éƒ¨ãƒœãƒ¼ãƒ€ãƒ¼ã®å¤ªã•ã®æŒ‡å®š\n border-right-width: <border-width> | inherit
+border-bottom-width /// ä¸‹éƒ¨ãƒœãƒ¼ãƒ€ãƒ¼ã®å¤ªã•ã®æŒ‡å®š\n border-bottom-width: <border-width> | inherit
+border-left-width /// å·¦éƒ¨ãƒœãƒ¼ãƒ€ãƒ¼ã®å¤ªã•ã®æŒ‡å®š\n border-left-width: <border-width> | inherit
+bottom /// 'position'ã®å€¤ãŒstaticä»¥å¤–ã®å ´åˆã«æŒ‡å®šå¯èƒ½\n ãƒœãƒƒã‚¯ã‚¹ã®åŒ…å«ãƒ–ãƒ­ãƒƒã‚¯ã«å¯¾ã™ã‚‹ã‚ªãƒ•ã‚»ãƒƒãƒˆå€¤ã‚’æŒ‡å®š\n bottom: <length> | percentage | auto | inherit
+caption-side /// ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£'display'ã®å€¤ãŒtable-captionã®è¦ç´ ã«æŒ‡å®šå¯èƒ½\nãƒ†ãƒ¼ãƒ–ãƒ«ã‚­ãƒ£ãƒ—ã‚·ãƒ§ãƒ³ã®ãƒ‡ãƒ¼ãƒ–ãƒ«ã«å¯¾ã™ã‚‹ä½ç½®ã‚’æŒ‡å®š\n caption-side top | bottom | left | right | inherit
+clear /// ãƒ–ãƒ­ãƒƒã‚¯ãƒ¬ãƒ™ãƒ«è¦ç´ ã«æŒ‡å®šå¯èƒ½\nå¯¾è±¡ãŒç”Ÿæˆã™ã‚‹ãƒœãƒƒã‚¯ã‚¹ã®ã©ã®å´ãŒå…ˆè¡Œã™ã‚‹ãƒœãƒƒã‚¯ã‚¹ã«éš£æ¥ã—ãªã„ã‹ã‚’æŒ‡å®š\n clear: none | left | right | both | inherit
+clip /// ãƒ–ãƒ­ãƒƒã‚¯ãƒ¬ãƒ™ãƒ«è¦ç´ ã¨ç½®æ›è¦ç´ (img, input, textarea, select, object)ã«æŒ‡å®šå¯èƒ½\nå¯¾è±¡ã®ãƒˆãƒªãƒŸãƒ³ã‚°ã•ã‚Œã‚‹é ˜åŸŸã‚’æŒ‡å®š\n clip <shape> | auto | inherit
+color /// ã‚»ãƒ¬ã‚¯ã‚¿ã«ãƒãƒƒãƒã—ãŸå¯¾è±¡ã®å‰æ™¯è‰²ã‚’æŒ‡å®š\n color: <color> | inherit
+content /// :beforeç–‘ä¼¼è¦ç´ ã¨:afterç–‘ä¼¼è¦ç´ ã«æŒ‡å®šå¯èƒ½\nå¯¾è±¡ã«æŒ¿å…¥ã™ã‚‹å†…å®¹ã‚’æŒ‡å®š\n content: [ <string> | <uri> | <counter> | attr(X) |\n open-quote | close-quote | no-open-quote | no-close-quote ]+ | inherit
+counter-increment /// 'content'ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã®å€¤ã«æŒ‡å®šã•ã‚Œã‚‹counter()ã¨conters()ã®åˆ¶å¾¡ã«ä½¿ç”¨\nã‚«ã‚¦ãƒ³ã‚¿ã®å¢—åŠ ã‚’æŒ‡å®š\n counter-increment: [ <identifier> <integer>? ]+ | none | inherit
+counter-reset /// 'content'ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã®å€¤ã«æŒ‡å®šã•ã‚Œã‚‹counter()ã¨conters()ã®åˆ¶å¾¡ã«ä½¿ç”¨\nã‚«ã‚¦ãƒ³ã‚¿ã®åˆæœŸåŒ–ã‚’æŒ‡å®š\n counter-reset: [ <identifier> <integer>? ]+ | none | inherit
+cue-after /// è¦ç´ åŒå£«ã‚’åŒºåˆ‡ã‚‹ç‚ºã«ã€æŒ‡å®šã—ãŸè¦ç´ ã®å¾Œã§å†ç”Ÿã™ã‚‹éŸ³ã‚’æŒ‡å®š\n cue-after: <uri> | none
+cue-before /// è¦ç´ åŒå£«ã‚’åŒºåˆ‡ã‚‹ç‚ºã«ã€æŒ‡å®šã—ãŸè¦ç´ ã®å‰ã§å†ç”Ÿã™ã‚‹éŸ³ã‚’æŒ‡å®š\n cue-before: <uri> | none
+cue /// è¦ç´ åŒå£«ã‚’åŒºåˆ‡ã‚‹ç‚ºã«ã€æŒ‡å®šã—ãŸè¦ç´ ã®å‰å¾Œã§å†ç”Ÿã™ã‚‹éŸ³ã‚’æŒ‡å®š\n cue: <uri>{1,2} | none
+cursor /// å¯¾è±¡ã«å¯¾ã™ã‚‹ãƒã‚¤ãƒ³ãƒ†ã‚£ãƒ³ã‚°ãƒ»ãƒ‡ãƒã‚¤ã‚¹ã®ã‚«ãƒ¼ã‚½ãƒ«ã®å½¢çŠ¶ã‚’æŒ‡å®š\n cursor: [ [<uri> ,]* [ auto | crosshair | default | pointer | move |\n e-resize | ne-resize | nw-resize | n-resize | se-resize | s-resize | w-resize |\n text | wait | help | progress] ] | inherit
+direction /// æ–‡å­—ã®åŸºæœ¬æ–¹å‘ã‚’æŒ‡å®š\n direction: ltr | rtl | inherit
+display /// å¯¾è±¡ãŒç”Ÿæˆã™ã‚‹ãƒœãƒƒã‚¯ã‚¹ã®ç¨®é¡ã‚’æŒ‡å®š\n display: inline | block | list-item | run-in | compact | marker | table |\n inline-table | table-row-group | table-header-group | table-footer-group |\n table-row | table-column-group | table-column | table-cell | table-caption |\n none | inherit
+elevation /// ä¸Šä¸‹æ–¹å‘ã®éŸ³æºã®ä½ç½®ã‚’æŒ‡å®š\n elevation: <degree> | below | level | above | higher | lower | inherit
+empty-cells /// 'display'ã®å€¤ãŒtable-cellã§ã‚ã‚‹è¦ç´ ã«æŒ‡å®šå¯èƒ½\nåˆ†é›¢ãƒ¢ãƒ‡ãƒ«ã§ç©ºã®ã‚»ãƒ«ã®å‘¨å›²ã®ãƒœãƒ¼ãƒ€ãƒ¼ã‚’è¡¨ç¤ºã™ã‚‹ã‹ã©ã†ã‹ã‚’æŒ‡å®š\n table-cell: show | hide | inherit
+float /// 'position'ãŒabsoluteã‹fixedã§ä»¥å¤–ã®è¦ç´ ã«æŒ‡å®šå¯èƒ½\nå¯¾è±¡ãŒç”Ÿæˆã™ã‚‹ãƒœãƒƒã‚¯ã‚¹ã®æµ®å‹•åŒ–æ–¹æ³•ã‚’æŒ‡å®š\n float: left | right | none | inherit
+font-family /// ãƒ•ã‚©ãƒ³ãƒˆã®ãƒ‡ã‚¶ã‚¤ãƒ³ã®ç¨®é¡ã‚’æŒ‡å®š\n font-family: [[ <family-name> | <generic-family ],]*\n [ <family-name> | <generic-family> ] | inherit
+font-size /// ãƒ•ã‚©ãƒ³ãƒˆã®å¤§ãã•ã‚’æŒ‡å®š\n font-size: <absolute-size> | <relative-size> | <length> | <percentage> | inherit
+font-style /// ãƒ•ã‚©ãƒ³ãƒˆã®æ›¸ä½“ã‚’æŒ‡å®š\n font-style: normal | italic | oblique | inherit
+font-variant /// è‹±æ•°æ–‡å­—ã®å ´åˆã«å°æ–‡å­—/Small Capsã‚’åŒºåˆ¥ã—ã¦æŒ‡å®š\n font-variant: normal | small-caps | inherit
+font-weight /// ãƒ•ã‚©ãƒ³ãƒˆã®å¤ªã•ã‚’æŒ‡å®š\n font-weight: normal | bold | bolder | lighter |\n 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | inherit
+font /// ãƒ•ã‚©ãƒ³ãƒˆã®ä¸€æ‹¬æŒ‡å®š('font-stretch'ã¨'font-size-adjust'ã‚’é™¤ã)\nline-heightã‚’æŒ‡å®šã™ã‚‹å ´åˆã¯å€¤ã®ç›´å‰ã«/(ã‚¹ãƒ©ãƒƒã‚·ãƒ¥)ãŒå¿…è¦\n font: [ [<'font-style'> || <'font-variant'> || <'font-weight'> ]\n <'font-size'> [ /<'line-height'> ] <'font-family'> ]\n | caption | icon | menu | message-box | small-caption | status-bar | inherit
+height /// ãƒ–ãƒ­ãƒƒã‚¯ãƒ¬ãƒ™ãƒ«è¦ç´ ã¨ç½®æ›è¦ç´ (img, input, textarea, select, object)ã«æŒ‡å®šå¯èƒ½\n å¯¾è±¡ã®ãƒ–ãƒ­ãƒƒã‚¯å†…å®¹ã®é«˜ã•ã‚’æŒ‡å®š\n height: <length> | <percentage> | auto | inherit
+left /// 'position'ã®å€¤ãŒstaticä»¥å¤–ã®å ´åˆã«æŒ‡å®šå¯èƒ½\n ãƒœãƒƒã‚¯ã‚¹ã®åŒ…å«ãƒ–ãƒ­ãƒƒã‚¯ã«å¯¾ã™ã‚‹ã‚ªãƒ•ã‚»ãƒƒãƒˆå€¤ã‚’æŒ‡å®š\n left: <length> | percentage | auto | inherit
+letter-spacing /// å¯¾è±¡ã®ãƒ†ã‚­ã‚¹ãƒˆã®æ–‡å­—é–“ã®ã‚¹ãƒšãƒ¼ã‚¹ã‚’æŒ‡å®š\n letter-spacing: normal | <length> | inherit
+line-height /// å¯¾è±¡ã®ã‚¤ãƒ³ãƒ©ã‚¤ãƒ³ãƒœãƒƒã‚¯ã‚¹ã®æœ€åˆã®é«˜ã•ã‚’æŒ‡å®š\n line-height: normal | <number> | <length> | <percentage> | auto | inherit
+list-style-image /// 'display'ã®å€¤ãŒlist-itemã®è¦ç´ ã«æŒ‡å®šå¯èƒ½\n å¯¾è±¡ã®ãƒãƒ¼ã‚«ãƒœãƒƒã‚¯ã‚¹ã«ä½¿ç”¨ã™ã‚‹ç”»åƒã‚’æŒ‡å®š\n list-style-image: <uri> | none | inherit
+list-style-position /// 'display'ã®å€¤ãŒlist-itemã®è¦ç´ ã«æŒ‡å®šå¯èƒ½\n å¯¾è±¡ã®ãƒãƒ¼ã‚«ãƒœãƒƒã‚¯ã‚¹ã®åŸºæœ¬ãƒœãƒƒã‚¯ã‚¹ã«å¯¾ã™ã‚‹ä½ç½®ã‚’æŒ‡å®š\n list-style-position: inside | outside | inherit
+list-style-type /// 'display'ã®å€¤ãŒlist-itemã®è¦ç´ ã«æŒ‡å®šå¯èƒ½\n å¯¾è±¡ã®ãƒãƒ¼ã‚«ãƒœãƒƒã‚¯ã‚¹ã¨åŸºæœ¬ãƒœãƒƒã‚¯ã‚¹ã®è·é›¢ã‚’æŒ‡å®š\n list-style-type: disc | circle | square | decimal | decimal-leading-zero |\n lower-roman | upper-roman | lower-greek | lower-alpha | lower-latin | upper-alpha | upper-latin |\n hebrew | armenian | georgian | cjk-ideographic | hiragana | katakana |\n hiragana-iroha | katakana-iroha | none | inherit
+list-style /// 'display'ã®å€¤ãŒlist-itemã®è¦ç´ ã«æŒ‡å®šå¯èƒ½\n å¯¾è±¡ã®ãƒªã‚¹ãƒˆé–¢ä¿‚ã®è¦ç´ ã‚’ä¸€æ‹¬æŒ‡å®š\n list-style: [ <'list-style-type'> || <'list-style-position'> || <'list-style-image'> ] | inherit
+margin-right /// è¦ç´ ã¨ä»–ã®è¦ç´ ã¨ã®å³å´ã®ã‚¹ãƒšãƒ¼ã‚¹(ä½™ç™½)ã‚’æŒ‡å®š\n margin-right: <margin-width> | inherit
+margin-left /// è¦ç´ ã¨ä»–ã®è¦ç´ ã¨ã®å·¦å´ã®ã‚¹ãƒšãƒ¼ã‚¹(ä½™ç™½)ã‚’æŒ‡å®š\n margin-left: <margin-width> | inherit
+margin-top /// è¦ç´ ã¨ä»–ã®è¦ç´ ã¨ã®ä¸Šå´ã®ã‚¹ãƒšãƒ¼ã‚¹(ä½™ç™½)ã‚’æŒ‡å®š\n margin-top: <margin-width> | inherit
+margin-bottom /// è¦ç´ ã¨ä»–ã®è¦ç´ ã¨ã®ä¸‹å´ã®ã‚¹ãƒšãƒ¼ã‚¹(ä½™ç™½)ã‚’æŒ‡å®š\n margin-bottom: <margin-width> | inherit
+margin /// è¦ç´ ã¨ä»–ã®è¦ç´ ã¨ã®ã‚¹ãƒšãƒ¼ã‚¹(ä½™ç™½)ã‚’æŒ‡å®š\n margin: <margin-width>{1,4} | inherit
+max-height /// ãƒ–ãƒ­ãƒƒã‚¯ãƒ¬ãƒ™ãƒ«è¦ç´ ã¨ç½®æ›è¦ç´ (img, input, textarea, select, object)ã«æŒ‡å®šå¯èƒ½\n å¯¾è±¡ã®ãƒ–ãƒ­ãƒƒã‚¯å†…å®¹ã®é«˜ã•ã®æœ€å¤§å€¤ã‚’æŒ‡å®š\n max-height: <length> | <percentage> | none | inherit
+max-width /// ãƒ–ãƒ­ãƒƒã‚¯ãƒ¬ãƒ™ãƒ«è¦ç´ ã¨ç½®æ›è¦ç´ (img, input, textarea, select, object)ã«æŒ‡å®šå¯èƒ½\n å¯¾è±¡ã®ãƒ–ãƒ­ãƒƒã‚¯å†…å®¹ã®å¹…ã®æœ€å¤§å€¤ã‚’æŒ‡å®š\n max-width: <length> | <percentage> | none | inherit
+min-height /// ãƒ–ãƒ­ãƒƒã‚¯ãƒ¬ãƒ™ãƒ«è¦ç´ ã¨ç½®æ›è¦ç´ (img, input, textarea, select, object)ã«æŒ‡å®šå¯èƒ½\n å¯¾è±¡ã®ãƒ–ãƒ­ãƒƒã‚¯å†…å®¹ã®é«˜ã•ã®æœ€å°å€¤ã‚’æŒ‡å®š\n min-height: <length> | <percentage> | inherit
+min-width /// ãƒ–ãƒ­ãƒƒã‚¯ãƒ¬ãƒ™ãƒ«è¦ç´ ã¨ç½®æ›è¦ç´ (img, input, textarea, select, object)ã«æŒ‡å®šå¯èƒ½\n å¯¾è±¡ã®ãƒ–ãƒ­ãƒƒã‚¯å†…å®¹ã®å¹…ã®æœ€å°å€¤ã‚’æŒ‡å®š\n max-width: <length> | <percentage> | inherit
+orphans /// 'page-break'ã®æ‹¡å¼µ\n ãƒšãƒ¼ã‚¸ã®æœ€å¾Œã«æ®‹ã•ãªã‘ã‚Œã°ãªã‚‰ãªã„æœ€å°è¡Œæ•°ã‚’æŒ‡å®š\n orphans: <integer> | inherit
+outline-color /// å¯¾è±¡ã«å¯¾ã™ã‚‹ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³ã®è‰²ã‚’æŒ‡å®š\n outline-color: <border-color> | inherit
+outline-style /// å¯¾è±¡ã«å¯¾ã™ã‚‹ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³ã®å½¢çŠ¶ã‚’æŒ‡å®š\n outline-style: <border-style> | inherit
+outline-width /// å¯¾è±¡ã«å¯¾ã™ã‚‹ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³ã®å¤ªã•ã‚’æŒ‡å®š\n outline-width: <border-width> | inherit
+outline /// å¯¾è±¡ã«å¯¾ã™ã‚‹ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³ã®å½¢çŠ¶ã‚’ä¸€æ‹¬æŒ‡å®š\n outline: [<'outline-color'> || <'outline-style'> || <'outline-width'>] | inherit
+overflow /// ãƒ–ãƒ­ãƒƒã‚¯ãƒ¬ãƒ™ãƒ«è¦ç´ ã¨ç½®æ›è¦ç´ (img, input, textarea, select, object)ã«æŒ‡å®šå¯èƒ½\n å¯¾è±¡ã®ãƒ–ãƒ­ãƒƒã‚¯ãŒåŒ…å«ãƒ–ãƒ­ãƒƒã‚¯ã®ãƒœãƒƒã‚¯ã‚¹ã‹ã‚‰ã¯ã¿å‡ºã™å ´åˆã®è¦–è¦šåŠ¹æœã‚’æŒ‡å®š\n overflow: visible | hidden | scroll | auto | inherit
+padding-top /// è¦ç´ ã®ä¸Šå´ãƒ‘ãƒ‡ã‚£ãƒ³ã‚°ã‚’æŒ‡å®š\n padding-top: <padding-width> | inherit
+padding-right /// è¦ç´ ã®å³å´ãƒ‘ãƒ‡ã‚£ãƒ³ã‚°ã‚’æŒ‡å®š\n padding-right: <padding-width> | inherit
+padding-bottom /// è¦ç´ ã®ä¸‹å´ãƒ‘ãƒ‡ã‚£ãƒ³ã‚°ã‚’æŒ‡å®š\n padding-bottom: <padding-width> | inherit
+padding-left /// è¦ç´ ã®å·¦å´ãƒ‘ãƒ‡ã‚£ãƒ³ã‚°ã‚’æŒ‡å®š\n padding-left: <padding-width> | inherit
+padding /// è¦ç´ ã®ãƒ‘ãƒ‡ã‚£ãƒ³ã‚°ã®ä¸€æ‹¬æŒ‡å®šã‚’æŒ‡å®š\n padding: <padding-width>{1,4} | inherit
+page-break-after /// ãƒ–ãƒ­ãƒƒã‚¯ãƒ¬ãƒ™ãƒ«è¦ç´ ã«æŒ‡å®šå¯èƒ½\n å¯¾è±¡ã®è¦ç´ ã®å¾Œã§ã®æ”¹ãƒšãƒ¼ã‚¸ã®æœ‰ç„¡ã‚’æŒ‡å®š\n page-break-after: auto | always | avoid | left | right |inherit
+page-break-before /// ãƒ–ãƒ­ãƒƒã‚¯ãƒ¬ãƒ™ãƒ«è¦ç´ ã«æŒ‡å®šå¯èƒ½\n å¯¾è±¡ã®è¦ç´ ã®å‰ã§ã®æ”¹ãƒšãƒ¼ã‚¸ã®æœ‰ç„¡ã‚’æŒ‡å®š\n page-break-before: auto | always | avoid | left | right |inherit
+page-break-inside /// ãƒ–ãƒ­ãƒƒã‚¯ãƒ¬ãƒ™ãƒ«è¦ç´ ã«æŒ‡å®šå¯èƒ½\n å¯¾è±¡ã®è¦ç´ ã®ä¸­ã§ã®æ”¹ãƒšãƒ¼ã‚¸ã®æœ‰ç„¡ã‚’æŒ‡å®š\n page-break-inside: avoid | auto | inherit
+pause-after /// å¯¾è±¡ã®å¾Œã«æŒ‡å®šã—ãŸã ã‘ç„¡éŸ³ã®æ™‚é–“ã‚’ç”Ÿæˆ\n pause-after: <time> | <percentage> | inherit
+pause-before /// å¯¾è±¡ã®å‰ã«æŒ‡å®šã—ãŸã ã‘ç„¡éŸ³ã®æ™‚é–“ã‚’ç”Ÿæˆ\n pause-before: <time> | <percentage> | inherit
+pause /// å¯¾è±¡ã«æŒ‡å®šã—ãŸã ã‘ç„¡éŸ³ã®æ™‚é–“ã‚’ç”Ÿæˆ\n pause: [<time> | <percentage>]{1,2} | inherit
+pitch-range /// å¹³å‡ãƒ”ãƒƒãƒ('pitch')ã‚’åŸºæº–ã¨ã—ãŸæŠ‘æšã®ç¯„å›²ã‚’æŒ‡å®š\n pitch-range: <number> | inherit
+pitch /// è©±ã—å£°ã®å¹³å‡ãƒ”ãƒƒãƒ(å¹³å‡å‘¨æ³¢æ•°)ã‚’æŒ‡å®š\n pitch: <frequence> | x-low | low | medium | high | x-high | inherit
+play-during /// èƒŒæ™¯éŸ³ã‚’æŒ‡å®š\n play-during: <uri> | mix? | repeat? | auto | none | inherit
+position /// å¯¾è±¡ãŒç”Ÿæˆã™ã‚‹ãƒœãƒƒã‚¯ã‚¹ã®ä½ç½®ã®è¨ˆç®—æ–¹æ³•ã‚’æŒ‡å®š\n position: static | relative | absolute | fixed | inherit
+quotes /// å¼•ç”¨ç¬¦ã®ãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°æ–¹æ³•ã‚’æŒ‡å®š\n å¼•ç”¨ç¬¦ã‚’æŒ¿å…¥ã™ã‚‹ã‹ã©ã†ã‹ã¯'content'ã§æŒ‡å®š\n quotes: [<string> <string>]+ | none | inherit
+richness /// è©±ã—å£°ã®è±Šã‹ã•ã‚’æŒ‡å®š\n richness: <number>(0ï½100) | inherit
+right /// 'position'ã®å€¤ãŒstaticä»¥å¤–ã®å ´åˆã«æŒ‡å®šå¯èƒ½\n ãƒœãƒƒã‚¯ã‚¹ã®åŒ…å«ãƒ–ãƒ­ãƒƒã‚¯ã«å¯¾ã™ã‚‹ã‚ªãƒ•ã‚»ãƒƒãƒˆå€¤ã‚’æŒ‡å®š\n right: <length> | percentage | auto | inherit
+speak-header /// è¡¨ã®ãƒ˜ãƒƒãƒ€ã®éŸ³å£°èª­ã¿ä¸Šã’æ–¹æ³•ã‚’æŒ‡å®š\n speak-header: once | always | inherit
+speak-numeral /// æ•°å­—ã®èª­ã¿æ–¹ã‚’æŒ‡å®š\n speak-numeral: digits | continuous | inherit
+speak-punctuation /// åŒºåˆ‡ã‚Šæ–‡å­—ã®èª­ã¿æ–¹ã‚’æŒ‡å®š\n speak-punctuation: code | none | inherit
+speak /// ãƒ†ã‚­ã‚¹ãƒˆã‚’éŸ³å£°å‡ºåŠ›ã™ã‚‹ã‹ã€ã™ã‚‹ãªã‚‰ã°ã©ã®ã‚ˆã†ãªæ–¹å¼ã‹ã‚’æŒ‡å®š\n speak: normal | none | spell-out | inherit
+speech-rate /// èª­ã¿ä¸Šã’ã‚¹ãƒ”ãƒ¼ãƒ‰ã‚’æŒ‡å®š\n <number> | x-slow | slow | medium | fast | x-fast | faster | slower | inherit
+stress /// ã‚¢ã‚¯ã‚»ãƒ³ãƒˆã®å¼·ã•ã‚’æŒ‡å®š\n stress: <number> | inherit
+table-layout /// 'display'ã®å€¤ãŒtableã‹inline-tableã§ã‚ã‚‹è¦ç´ ã«æŒ‡å®šå¯èƒ½\nãƒ†ãƒ¼ãƒ–ãƒ«ã®ãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°æ–¹æ³•ã‚’æŒ‡å®š\n table-layout: auto | fixed | inherit
+text-align /// ãƒ–ãƒ­ãƒƒã‚¯ãƒ¬ãƒ™ãƒ«è¦ç´ ã«æŒ‡å®šå¯èƒ½\n å¯¾è±¡ã®å†…å®¹ã®è¡Œæ¯ã®ãƒ–ãƒ­ãƒƒã‚¯å†…ã§ã®é…ç½®æ–¹æ³•ã‚’æŒ‡å®š\n text-align: left | right | center | justify | <string> | inherit
+text-decoration /// å¯¾è±¡ã®è£…é£¾æ–¹æ³•ã‚’æŒ‡å®š\n text-decoration: none | [underline || overline || line-through || blink ] | inherit
+text-indent /// å¯¾è±¡ã®å†…å®¹ã®è¡Œæ¯ã®å…ˆé ­ã®å­—ä¸‹ã’ã‚µã‚¤ã‚ºã‚’æŒ‡å®š\n text-indent: <length> | <percentage> | inherit
+text-transform /// å¯¾è±¡ã®ãƒ†ã‚­ã‚¹ãƒˆã®å¤§æ–‡å­—åŒ–ã‚’æŒ‡å®š\n text-transform: capitalize | uppercase | lowercase | none | inherit
+top /// 'position'ã®å€¤ãŒstaticä»¥å¤–ã®å ´åˆã«æŒ‡å®šå¯èƒ½\n ãƒœãƒƒã‚¯ã‚¹ã®åŒ…å«ãƒ–ãƒ­ãƒƒã‚¯ã«å¯¾ã™ã‚‹ã‚ªãƒ•ã‚»ãƒƒãƒˆå€¤ã‚’æŒ‡å®š\n top: <length> | percentage | auto | inherit
+unicode-bidi /// å¯¾è±¡ãŒå¾“ã†Unicodeã®åˆ¶å¾¡åŒæ–¹å‘ã‚¢ãƒ«ã‚´ãƒªã‚ºãƒ ã«å¯¾ã™ã‚‹åˆ¶å¾¡ã‚’æä¾›\n unicode-bidi: normal | embed | bidi-override | inherit
+vertical-align /// ã‚¤ãƒ³ãƒ©ã‚¤ãƒ³ãƒ¬ãƒ™ãƒ«ã®è¦ç´ ã¨'table-cell'è¦ç´ ã«æŒ‡å®šå¯èƒ½\n å¯¾è±¡ã®ã‚¤ãƒ³ãƒ©ã‚¤ãƒ³ãƒœãƒƒã‚¯ã‚¹ã®è¡Œãƒœãƒƒã‚¯ã‚¹å†…éƒ¨ã§ã®ä¸Šä¸‹æ–¹å‘ã®ä½ç½®ã‚’æŒ‡å®š\n vertical-align: baseline | sub | super | top |\n text-top | middle | bottom | text-bottom | <length> | <percentage> | inherit
+visibility /// å¯¾è±¡ã®ãƒœãƒƒã‚¯ã‚¹ã®å¯è¦–æ€§ã‚’æŒ‡å®š\n éå¯è¦–åŒ–ã•ã‚Œã¦ã‚‚ãƒœãƒƒã‚¯ã‚¹ã¯ç”Ÿæˆã•ã‚Œã‚‹ç‚ºã€å¾Œç¶šã®ãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°ã«å½±éŸ¿ã—ã¾ã™\n visibility: visible | hidden | collapse | inherit
+voice-family /// éŸ³å£°ã®ãƒ•ã‚¡ãƒŸãƒªãƒ¼ã‚’æŒ‡å®š\n voice-family [ [<å›ºæœ‰éŸ³å£°> | <ç·ç§°éŸ³å£°>],]* [<å›ºæœ‰éŸ³å£°> | <ç·ç§°éŸ³å£°>] | inherit
+volume /// éŸ³ã®å¤§ãã•ã‚’æŒ‡å®š\n volume: <number> | <percentage> | silent | x-soft | soft | medium | loud | x-loud | inherit
+white-space /// ç©ºç™½æ–‡å­—ã®å–æ‰±æ–¹æ³•ã‚’æŒ‡å®š\n white-space: normal | pre | nowrap | inherit
+widows /// 'page-break'ã®æ‹¡å¼µ\n ãƒšãƒ¼ã‚¸ã®ä¸Šéƒ¨ã«æ®‹ã•ãªã‘ã‚Œã°ãªã‚‰ãªã„æœ€å°è¡Œæ•°ã‚’æŒ‡å®š\n widows: <integer> | inherit
+width /// ãƒ–ãƒ­ãƒƒã‚¯ãƒ¬ãƒ™ãƒ«è¦ç´ ã¨ç½®æ›è¦ç´ (img, input, textarea, select, object)ã«æŒ‡å®šå¯èƒ½\n å¯¾è±¡ã®ãƒ–ãƒ­ãƒƒã‚¯å†…å®¹ã®å¹…ã‚’æŒ‡å®š\n width: <length> | <percentage> | auto | inherit
+word-spacing /// å¯¾è±¡ã®ãƒ†ã‚­ã‚¹ãƒˆã®åŠè§’ã‚¹ãƒšãƒ¼ã‚¹åŒºåˆ‡ã‚Šã®å˜èªé–“ã®ã‚¹ãƒšãƒ¼ã‚¹ã‚’æŒ‡å®š\n word-spacing: normal | <length> | inherit
+z-index /// å¯¾è±¡ãŒç”Ÿæˆã™ã‚‹ãƒœãƒƒã‚¯ã‚¹ã®ä¸Šä¸‹é–¢ä¿‚ã‚’æŒ‡å®š\n z-index: auto | <integer> | inherit
+;//CSS2ã§ã®ã¿è¦å®šã•ã‚Œã¦ã„ã‚‹ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£
+font-size-adjust /// ä½¿ç”¨ã•ã‚Œã¦ã„ã‚‹ãƒ•ã‚©ãƒ³ãƒˆã®ã‚¢ã‚¹ãƒšã‚¯ãƒˆå€¤ã‚’æŒ‡å®š\nW3Cå‹§å‘Šå€™è£œã®CSS2.1ã§ã¯å¤–ã•ã‚Œã¾ã—ãŸ\nfont-size-adjust: <number> | none | inherit
+font-stretch /// ãƒ•ã‚©ãƒ³ãƒˆã®ã‚°ãƒªãƒ•ã®å¹…ã‚’æŒ‡å®š\nW3Cå‹§å‘Šå€™è£œã®CSS2.1ã§ã¯å¤–ã•ã‚Œã¾ã—ãŸ\n font-stretch: normal | wider | nallower | ultra-condensed | extra-condensed |\n condensed | semi-condensed | semi-expanded | expanded |\n extra-expanded | ultra-expanded | inherit
+marker-offset /// 'display'ã®å€¤ãŒmarkerã®è¦ç´ ã«æŒ‡å®šå¯èƒ½\n å¯¾è±¡ã®ãƒãƒ¼ã‚«ãƒ¼ãƒœãƒƒã‚¯ã‚¹ã¨åŸºæœ¬ãƒœãƒƒã‚¯ã‚¹ã¨ã®è·é›¢ã‚’æŒ‡å®š\n W3Cå‹§å‘Šå€™è£œã®CSS2.1ã§ã¯å¤–ã•ã‚Œã¾ã—ãŸ \nmarker-offset: <length> | auto | inherit
+marks ///å°åˆ·æ™‚ã«ç´™ã®è£æ–­ã¨ä½ç½®èª¿æ•´ã«ä½¿ç”¨ã™ã‚‹ãƒˆãƒ³ãƒœã‚’ãƒšãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ã®ã™ãå¤–å´ã«è¡¨ç¤ºã™ã‚‹ã‹ã‚’æŒ‡å®š\n W3Cå‹§å‘Šå€™è£œã®CSS2.1ã§ã¯å¤–ã•ã‚Œã¾ã—ãŸ\n marks: [crop || cross] | none | inherit
+text-shadow /// å¯¾è±¡ã®å½±ã®åŠ¹æœã‚’æŒ‡å®š\n W3Cå‹§å‘Šå€™è£œã®CSS2.1ã§ã¯å¤–ã•ã‚Œã¾ã—ãŸ\n text-shadow: none | [<color> || <length> <length> <length>? ,]*\n [<color> || <length> <length> <length>? ] | inherit
+;//MSIEç‹¬è‡ªå®Ÿè£…
 ;_background-position-x
 ;_background-position-y
 ;_layout-flow

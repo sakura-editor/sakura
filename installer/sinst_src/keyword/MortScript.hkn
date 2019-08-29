@@ -1,99 +1,99 @@
-// MortScript v4.2  “ü—Í•âŠ®ƒtƒ@ƒCƒ‹
+ï»¿// MortScript v4.2  å…¥åŠ›è£œå®Œãƒ•ã‚¡ã‚¤ãƒ«
 
 AND
 ActiveProcess(  )
-ActiveProcess( [ ƒtƒ‹ƒpƒXH ] ) # string =
+ActiveProcess( [ ãƒ•ãƒ«ãƒ‘ã‚¹ï¼Ÿ ] ) # string =
 ActiveWindow() # string =
 AppData
 Array(  )
-Array( ’l {, ’l } ) # array =
+Array( å€¤ {, å€¤ } ) # array =
 Backspace
 BackupBatteryPercentage() # int =
 BatteryPercentage() # int =
 BigMessage(  )
-BigMessage( ƒeƒLƒXƒg [, Titl ])
+BigMessage( ãƒ†ã‚­ã‚¹ãƒˆ [, Titl ])
 Blue(  )
-Blue( FƒR[ƒh ) # int =
+Blue( è‰²ã‚³ãƒ¼ãƒ‰ ) # int =
 BYTES
 KB
 MB
 GB
 CANCEL
 CR
-Call ƒTƒuƒ‹[ƒ`ƒ“–¼
+Call ã‚µãƒ–ãƒ«ãƒ¼ãƒãƒ³å
 Call(  )
-Call( ƒTƒuƒ‹[ƒ`ƒ“–¼ {, ˆø” } )
+Call( ã‚µãƒ–ãƒ«ãƒ¼ãƒãƒ³å {, å¼•æ•° } )
 CallFunction(  )
-CallFunction( ƒTƒuƒ‹[ƒ`ƒ“–¼, ’l {, ˆø” } )
+CallFunction( ã‚µãƒ–ãƒ«ãƒ¼ãƒãƒ³å, å€¤ {, å¼•æ•° } )
 CallScript(  )
-CallScript( MortScriptƒtƒ@ƒCƒ‹ {, ˆø” } )
+CallScript( MortScriptãƒ•ã‚¡ã‚¤ãƒ« {, å¼•æ•° } )
 CallScriptFunction(  )
-CallScriptFunction( MortScriptƒtƒ@ƒCƒ‹, ’l {, ˆø” })
+CallScriptFunction( MortScriptãƒ•ã‚¡ã‚¤ãƒ«, å€¤ {, å¼•æ•° })
 Case(  )
-Case( ’l {, ’l })
+Case( å€¤ {, å€¤ })
 Ceil(  )
-Ceil( ’l[, Œ…] ) # int/float =
+Ceil( å€¤[, æ¡] ) # int/float =
 ChDir(  )
-ChDir(ƒfƒBƒŒƒNƒgƒŠ) # PC version only!
+ChDir(ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª) # PC version only!
 CharAt(  )
-CharAt( •¶š—ñ, ˆÊ’u ) # string =
+CharAt( æ–‡å­—åˆ—, ä½ç½® ) # string =
 Choice(  )
-Choice( ƒ^ƒCƒgƒ‹, ƒvƒƒ“ƒvƒg, ƒfƒtƒHƒ‹ƒg, ƒ^ƒCƒ€ƒAƒEƒg, ’l, ’l {, ’l } ) # int =
-Choice( ƒ^ƒCƒgƒ‹, ƒvƒƒ“ƒvƒg, ƒfƒtƒHƒ‹ƒg, ƒ^ƒCƒ€ƒAƒEƒg, ”z—ñ ) # int =
+Choice( ã‚¿ã‚¤ãƒˆãƒ«, ãƒ—ãƒ­ãƒ³ãƒ—ãƒˆ, ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ, ã‚¿ã‚¤ãƒ ã‚¢ã‚¦ãƒˆ, å€¤, å€¤ {, å€¤ } ) # int =
+Choice( ã‚¿ã‚¤ãƒˆãƒ«, ãƒ—ãƒ­ãƒ³ãƒ—ãƒˆ, ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ, ã‚¿ã‚¤ãƒ ã‚¢ã‚¦ãƒˆ, é…åˆ— ) # int =
 ChoiceDefault(  )
-ChoiceDefault( ƒ^ƒCƒgƒ‹, ƒvƒƒ“ƒvƒg, ƒfƒtƒHƒ‹ƒg, ƒ^ƒCƒ€ƒAƒEƒg, ’l, ’l {, ’l } )
-ChoiceDefault( ƒ^ƒCƒgƒ‹, ƒvƒƒ“ƒvƒg, ƒfƒtƒHƒ‹ƒg, ƒ^ƒCƒ€ƒAƒEƒg, ”z—ñ )
+ChoiceDefault( ã‚¿ã‚¤ãƒˆãƒ«, ãƒ—ãƒ­ãƒ³ãƒ—ãƒˆ, ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ, ã‚¿ã‚¤ãƒ ã‚¢ã‚¦ãƒˆ, å€¤, å€¤ {, å€¤ } )
+ChoiceDefault( ã‚¿ã‚¤ãƒˆãƒ«, ãƒ—ãƒ­ãƒ³ãƒ—ãƒˆ, ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ, ã‚¿ã‚¤ãƒ ã‚¢ã‚¦ãƒˆ, é…åˆ— )
 Clear(  )
-Clear( •Ï” )
+Clear( å¤‰æ•° )
 ClipText() # string =
 Close(  )
-Close( ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹ )
+Close( ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ« )
 CloseConnection
 ColorAt(  )
 ColorAt( <x>,<y> ) # int =
 CompareFloat(  )
-CompareFloat( ’l1, ’l2, ¬”Œ… ) # int =
+CompareFloat( å€¤1, å€¤2, å°æ•°æ¡ ) # int =
 Connect
 Connect                        for default http connection
 Connect(  )
-Connect( ƒ^ƒCƒgƒ‹, ƒƒbƒZ[ƒW )
-Connect( Ú‘±–¼ )
+Connect( ã‚¿ã‚¤ãƒˆãƒ«, ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ )
+Connect( æ¥ç¶šå )
 Connected() # bool =
 Context
 Copy(  )
-Copy( Œ³ƒtƒ@ƒCƒ‹, æƒtƒ@ƒCƒ‹ [, ã‘‚«H])
+Copy( å…ƒãƒ•ã‚¡ã‚¤ãƒ«, å…ˆãƒ•ã‚¡ã‚¤ãƒ« [, ä¸Šæ›¸ãï¼Ÿ])
 Cos(  )
-Cos( ƒ‰ƒWƒAƒ“’l ) # float =
+Cos( ãƒ©ã‚¸ã‚¢ãƒ³å€¤ ) # float =
 CreateShortcut(  )
-CreateShortcut( ƒVƒ‡[ƒgƒJƒbƒgƒtƒ@ƒCƒ‹, ƒVƒ‡[ƒgƒJƒbƒgæƒtƒ@ƒCƒ‹ [, ã‘‚«H ])
+CreateShortcut( ã‚·ãƒ§ãƒ¼ãƒˆã‚«ãƒƒãƒˆãƒ•ã‚¡ã‚¤ãƒ«, ã‚·ãƒ§ãƒ¼ãƒˆã‚«ãƒƒãƒˆå…ˆãƒ•ã‚¡ã‚¤ãƒ« [, ä¸Šæ›¸ãï¼Ÿ ])
 Ctrl
 CurrentCursor(  )
-CurrentCursor( [ƒEƒBƒ“ƒhƒE–¼] ) # string =
+CurrentCursor( [ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦å] ) # string =
 DC_ALL
 DC_DIRS
 DC_FILES
 DelTree(  )
-DelTree( ƒtƒ@ƒCƒ‹ )
+DelTree( ãƒ•ã‚¡ã‚¤ãƒ« )
 Delete
 Delete(  )
-Delete( ƒtƒ@ƒCƒ‹ )
+Delete( ãƒ•ã‚¡ã‚¤ãƒ« )
 DirContents(  )
-DirContents( ƒtƒ@ƒCƒ‹, ƒ^ƒCƒv ) # Aarray =
+DirContents( ãƒ•ã‚¡ã‚¤ãƒ«, ã‚¿ã‚¤ãƒ— ) # Aarray =
 DirExists(  )
-DirExists( ƒfƒBƒŒƒNƒgƒŠ ) # bool =
+DirExists( ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª ) # bool =
 Disconnect
 Disconnect                     closes all connections (GPRS, ActiveSync, ...)
 Documents
 Down
 Download(  )
-Download( URL, æƒtƒ@ƒCƒ‹ )
+Download( URL, å…ˆãƒ•ã‚¡ã‚¤ãƒ« )
 ESC
 EULER
 ElementCount(  )
-ElementCount( ”z—ñ ) # int =
+ElementCount( é…åˆ— ) # int =
 Else
 ElseIf(  )
-ElseIf( ğŒ )
+ElseIf( æ¡ä»¶ )
 End
 EndChoice
 EndForEach
@@ -104,71 +104,71 @@ EndSwitch
 EndWhile
 ErrorLevel(  )
 ErrorLevel( "off"|"critical"|"syntax"|"error"|"warn" )
-ErrorLevel( ƒGƒ‰[ƒŒƒxƒ‹ )
+ErrorLevel( ã‚¨ãƒ©ãƒ¼ãƒ¬ãƒ™ãƒ« )
 Eval(  )
-Eval( •¶š—ñ ) # var =
+Eval( æ–‡å­—åˆ— ) # var =
 Exit
 ExternalPowered() # bool =
 FALSE
 FileAttribute(  )
-FileAttribute( ƒtƒ@ƒCƒ‹, ‘®« ) # bool =
+FileAttribute( ãƒ•ã‚¡ã‚¤ãƒ«, å±æ€§ ) # bool =
 FileBase(  )
-FileBase( ƒtƒ@ƒCƒ‹ƒpƒX ) # string =
+FileBase( ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ ) # string =
 FileCreateTime(  )
-FileCreateTime( ƒtƒ@ƒCƒ‹ ) # int =
+FileCreateTime( ãƒ•ã‚¡ã‚¤ãƒ« ) # int =
 FileExists(  )
-FileExists( ƒtƒ@ƒCƒ‹ ) # bool =
+FileExists( ãƒ•ã‚¡ã‚¤ãƒ« ) # bool =
 FileExt(  )
-FileExt( ƒtƒ@ƒCƒ‹ƒpƒX ) # string =
+FileExt( ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ ) # string =
 FileModifyTime(  )
-FileModifyTime( ƒtƒ@ƒCƒ‹ ) # int =
+FileModifyTime( ãƒ•ã‚¡ã‚¤ãƒ« ) # int =
 FilePath(  )
-FilePath( ƒtƒ@ƒCƒ‹ƒpƒX ) # string =
+FilePath( ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ ) # string =
 FileSize(  )
-FileSize( ƒtƒ@ƒCƒ‹[,  BYTES|KB|MB|GB (’PˆÊ) ] ) # int =
+FileSize( ãƒ•ã‚¡ã‚¤ãƒ«[,  BYTES|KB|MB|GB (å˜ä½) ] ) # int =
 FileVersion(  )
-FileVersion( ƒtƒ@ƒCƒ‹ ) # string =
+FileVersion( ãƒ•ã‚¡ã‚¤ãƒ« ) # string =
 Find(  )
-Find( ŒŸõ‘ÎÛ•¶š—ñ , ŒŸõ•¶š—ñ [, ŒŸõŠJnƒCƒ“ƒfƒbƒNƒX ]) # int =
+Find( æ¤œç´¢å¯¾è±¡æ–‡å­—åˆ— , æ¤œç´¢æ–‡å­—åˆ— [, æ¤œç´¢é–‹å§‹ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ ]) # int =
 Floor(  )
-Floor( ’l[, Œ…] ) # int/float =
+Floor( å€¤[, æ¡] ) # int/float =
 For
-For •Ï” = start to end [ step step ]
+For å¤‰æ•° = start to end [ step step ]
 ForEach
-ForEach key, value in array ( ”z—ñ )
-ForEach key, value in iniKeys ( INIƒtƒ@ƒCƒ‹ , ƒZƒNƒVƒ‡ƒ“ )
-ForEach value, data in regValues ( ƒ‹[ƒg, ƒL[ )
-ForEach •Ï” in array ( ”z—ñ )
-ForEach •Ï” in charsOf ( •¶š—ñ )
-ForEach •Ï” in files ( ŒŸõ® )
-ForEach •Ï” in iniSections ( INIƒtƒ@ƒCƒ‹ )
-ForEach •Ï” in regSubkeys ( ƒ‹[ƒg, ƒL[ )
-ForEach •Ï” in split ( ’l, ƒfƒŠƒ~ƒ^, ƒgƒŠƒ€H )
-ForEach •Ï” in values ( ’l {, ’l} )
+ForEach key, value in array ( é…åˆ— )
+ForEach key, value in iniKeys ( INIãƒ•ã‚¡ã‚¤ãƒ« , ã‚»ã‚¯ã‚·ãƒ§ãƒ³ )
+ForEach value, data in regValues ( ãƒ«ãƒ¼ãƒˆ, ã‚­ãƒ¼ )
+ForEach å¤‰æ•° in array ( é…åˆ— )
+ForEach å¤‰æ•° in charsOf ( æ–‡å­—åˆ— )
+ForEach å¤‰æ•° in files ( æ¤œç´¢å¼ )
+ForEach å¤‰æ•° in iniSections ( INIãƒ•ã‚¡ã‚¤ãƒ« )
+ForEach å¤‰æ•° in regSubkeys ( ãƒ«ãƒ¼ãƒˆ, ã‚­ãƒ¼ )
+ForEach å¤‰æ•° in split ( å€¤, ãƒ‡ãƒªãƒŸã‚¿, ãƒˆãƒªãƒ ï¼Ÿ )
+ForEach å¤‰æ•° in values ( å€¤ {, å€¤} )
 Format(  )
 Format( <number>, <digits after decimal point> [, <min. digits before decimal point> ] ) # string =
-Format( var, ¬”Œ… ) # string =
+Format( var, å°æ•°æ¡ ) # string =
 FormatTime(  )
-FormatTime( ƒtƒH[ƒ}ƒbƒg [, ƒ^ƒCƒ€ƒXƒ^ƒ“ƒv ]) # string =
+FormatTime( ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ [, ã‚¿ã‚¤ãƒ ã‚¹ã‚¿ãƒ³ãƒ— ]) # string =
 FreeDiskSpace(  )
 FreeDiskSpace( <directory> [, BYTES|KB|MB|GB] ) (max. 2147483647) # int =
-FreeDiskSpace( ƒfƒBƒŒƒNƒgƒŠ[, BYTES|KB|MB|GB (’PˆÊ) ] ) # int =
-FreeMemory( [ BYTES|KB|MB|GB (’PˆÊ) ] )  (max. 2147483647) # int =
+FreeDiskSpace( ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª[, BYTES|KB|MB|GB (å˜ä½) ] ) # int =
+FreeMemory( [ BYTES|KB|MB|GB (å˜ä½) ] )  (max. 2147483647) # int =
 FreeMemory() # int =
 GetClipText() # string =
 GetMortScriptVersion(  )
-GetMortScriptVersion( •Ï”, •Ï”, •Ï”, •Ï” )
+GetMortScriptVersion( å¤‰æ•°, å¤‰æ•°, å¤‰æ•°, å¤‰æ•° )
 GetTime(  )
-GetTime( , •ª, •b [ , “ú, Œ, ”N ] )
+GetTime( æ™‚, åˆ†, ç§’ [ , æ—¥, æœˆ, å¹´ ] )
 GetVersion(  )
-GetVersion( ƒtƒ@ƒCƒ‹, •Ï”, •Ï”, •Ï”, •Ï” )
+GetVersion( ãƒ•ã‚¡ã‚¤ãƒ«, å¤‰æ•°, å¤‰æ•°, å¤‰æ•°, å¤‰æ•° )
 GetWindowPos(  )
-GetWindowPos( ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹, left, top, right, bottom )
+GetWindowPos( ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ«, left, top, right, bottom )
 Global(  )
-Global( •Ï” {, •Ï” } ) 
+Global( å¤‰æ•° {, å¤‰æ•° } ) 
 Green(  )
 Green( <color> ) # int =
-Green( FƒR[ƒh ) # int =
+Green( è‰²ã‚³ãƒ¼ãƒ‰ ) # int =
 HKCR
 HKCR (HKEY_CLASSES_ROOT)
 HKCU
@@ -178,85 +178,85 @@ HKLM (HKEY_LOCAL_MACHINE)
 HKUS
 HKUS (HKEY_USERS)
 HexToNumber(  )
-HexToNumber( 16i•¶š—ñ ) # int =
+HexToNumber( 16é€²æ–‡å­—åˆ— ) # int =
 HexToNumber( <string with hex number> ) # int =
 HideWaitCursor
 Home
 IdleTimerReset
 IdleTimerReset (Windows Mobile only)
 If(  )
-If( ğŒ )
+If( æ¡ä»¶ )
 Include(  )
-Include( MortScriptƒtƒ@ƒCƒ‹ )
+Include( MortScriptãƒ•ã‚¡ã‚¤ãƒ« )
 IniRead(  )
-IniRead( INIƒtƒ@ƒCƒ‹, ƒZƒNƒVƒ‡ƒ“, ƒGƒ“ƒgƒŠ ) # string =
+IniRead( INIãƒ•ã‚¡ã‚¤ãƒ«, ã‚»ã‚¯ã‚·ãƒ§ãƒ³, ã‚¨ãƒ³ãƒˆãƒª ) # string =
 IniWrite(  )
-IniWrite( INIƒtƒ@ƒCƒ‹, ƒZƒNƒVƒ‡ƒ“, ƒGƒ“ƒgƒŠ, ’l )
+IniWrite( INIãƒ•ã‚¡ã‚¤ãƒ«, ã‚»ã‚¯ã‚·ãƒ§ãƒ³, ã‚¨ãƒ³ãƒˆãƒª, å€¤ )
 Input(  )
-Input( ƒƒbƒZ[ƒW [, ƒ^ƒCƒgƒ‹ [, ”’lH [, •¡”sH [, ƒfƒtƒHƒ‹ƒg ]]]] ) # string =
+Input( ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ [, ã‚¿ã‚¤ãƒˆãƒ« [, æ•°å€¤ï¼Ÿ [, è¤‡æ•°è¡Œï¼Ÿ [, ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ ]]]] ) # string =
 Insert
 InternetConnected(  )
 InternetConnected( [ URL ] ) # bool =
 IsEmpty(  )
-IsEmpty( •Ï” ) # bool =
+IsEmpty( å¤‰æ•° ) # bool =
 Kill(  )
-Kill(ƒvƒƒZƒX–¼)
+Kill(ãƒ—ãƒ­ã‚»ã‚¹å)
 KillScript(  )
-KillScript(ƒXƒNƒŠƒvƒg–¼)
+KillScript(ã‚¹ã‚¯ãƒªãƒ—ãƒˆå)
 Left
 LeftSoft
 Length(  )
-Length( •¶š—ñ ) # int =
+Length( æ–‡å­—åˆ— ) # int =
 Local(  )
-Local( [ •Ï” {, •Ï” } ] )
+Local( [ å¤‰æ•° {, å¤‰æ•° } ] )
 Log(  )
-Log( ’l ) # float =
+Log( å€¤ ) # float =
 Log10(  )
-Log10( ’l ) # float =
+Log10( å€¤ ) # float =
 MOD
 MakeTimeStamp(  )
-MakeTimeStamp( ”N,Œ, “ú [, [, •ª[, •b ]]] )
+MakeTimeStamp( å¹´,æœˆ, æ—¥ [, æ™‚[, åˆ†[, ç§’ ]]] )
 Map(  )
-Map( ƒCƒ“ƒfƒbƒNƒX, ’l {, ƒCƒ“ƒfƒbƒNƒX, ’l } ) # array =
+Map( ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹, å€¤ {, ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹, å€¤ } ) # array =
 Max(  )
-Max( ’l, ’l{, ’l } ) # value =
+Max( å€¤, å€¤{, å€¤ } ) # value =
 MaxIndex(  )
-MaxIndex( ”z—ñ ) # int =
+MaxIndex( é…åˆ— ) # int =
 Message(  )
-Message( ƒeƒLƒXƒg [, ƒ^ƒCƒgƒ‹ ] )
+Message( ãƒ†ã‚­ã‚¹ãƒˆ [, ã‚¿ã‚¤ãƒˆãƒ« ] )
 MiddleMouseClick(  )
-MiddleMouseClick( [ ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹, ] x, y )
+MiddleMouseClick( [ ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ«, ] x, y )
 MiddleMouseDblClick(  )
-MiddleMouseDblClick( [ ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹, ] x, y )
+MiddleMouseDblClick( [ ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ«, ] x, y )
 MiddleMouseDown(  )
-MiddleMouseDown( [ ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹, ] x, y )
+MiddleMouseDown( [ ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ«, ] x, y )
 MiddleMouseUp(  )
-MiddleMouseUp( [ ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹, ] x, y )
+MiddleMouseUp( [ ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ«, ] x, y )
 Min(  )
-Min( ’l, ’l{, ’l } ) # value =
+Min( å€¤, å€¤{, å€¤ } ) # value =
 Minimize(  )
-Minimize( ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹ )
+Minimize( ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ« )
 MkDir(  )
-MkDir( ƒfƒBƒŒƒNƒgƒŠ )
+MkDir( ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª )
 MortScriptType()
 MortScriptVersion() # (similar to FileVersion) # string =
 MouseClick(  )
-MouseClick( [ ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹, ] x, y )
+MouseClick( [ ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ«, ] x, y )
 MouseDblClick(  )
-MouseDblClick( [ ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹, ] x, y )
+MouseDblClick( [ ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ«, ] x, y )
 MouseDown(  )
-MouseDown( [ ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹, ] x, y )
+MouseDown( [ ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ«, ] x, y )
 MouseUp(  )
-MouseUp( [ ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹, ] x, y )
+MouseUp( [ ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ«, ] x, y )
 Move(  )
-Move( Œ³ƒtƒ@ƒCƒ‹, æƒfƒBƒŒƒNƒgƒŠ [, ã‘‚«H [, ƒTƒuƒfƒBƒŒƒNƒgƒŠH] ] )
+Move( å…ƒãƒ•ã‚¡ã‚¤ãƒ«, å…ˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª [, ä¸Šæ›¸ãï¼Ÿ [, ã‚µãƒ–ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªï¼Ÿ] ] )
 NO
 NOT
 New(  )
-New( ƒƒjƒ…[ƒGƒ“ƒgƒŠ[ ) (Windows Mobile only)
+New( ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚¨ãƒ³ãƒˆãƒªãƒ¼ ) (Windows Mobile only)
 Next
 NumberToHex(  )
-NumberToHex( ®” ) # string =
+NumberToHex( æ•´æ•° ) # string =
 OFF
 ON
 OR
@@ -269,90 +269,90 @@ PPC
 PageDown
 PageUp
 Part(  )
-Part( str  , ƒfƒŠƒ~ƒ^, ƒCƒ“ƒfƒbƒNƒX [, ƒgƒŠƒ€H ]) # string =
+Part( str  , ãƒ‡ãƒªãƒŸã‚¿, ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ [, ãƒˆãƒªãƒ ï¼Ÿ ]) # string =
 PlaySound(  )
-PlaySound(WAVƒtƒ@ƒCƒ‹)
+PlaySound(WAVãƒ•ã‚¡ã‚¤ãƒ«)
 PostMessage(  )
-PostMessage( [ ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹, ] ƒƒbƒZ[ƒWID, wParam, lParam )
+PostMessage( [ ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ«, ] ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ID, wParam, lParam )
 PowerOff
 ProcExists(  )
-ProcExists(ƒvƒƒZƒX–¼) # bool =
+ProcExists(ãƒ—ãƒ­ã‚»ã‚¹å) # bool =
 ProgramFiles
 ProgramsMenu
 Question(  )
-Question( ¿–â [, ƒ^ƒCƒgƒ‹ [, ƒ^ƒCƒv ] ] ) # int =
+Question( è³ªå• [, ã‚¿ã‚¤ãƒˆãƒ« [, ã‚¿ã‚¤ãƒ— ] ] ) # int =
 RGB(  )
 RGB( <red>,<green>,<blue> ) # int =
 Rand(  ) # float =
 Rand( max ) # int =
 ReadFile(  )
-ReadFile( ƒtƒ@ƒCƒ‹ [, ƒoƒCƒg” [, •¶šƒR[ƒh ] ] ) # string =
+ReadFile( ãƒ•ã‚¡ã‚¤ãƒ« [, ãƒã‚¤ãƒˆæ•° [, æ–‡å­—ã‚³ãƒ¼ãƒ‰ ] ] ) # string =
 ReadLine
-ReadLine( ƒtƒ@ƒCƒ‹ [, •¶šƒR[ƒh ] ) # string =
+ReadLine( ãƒ•ã‚¡ã‚¤ãƒ« [, æ–‡å­—ã‚³ãƒ¼ãƒ‰ ] ) # string =
 Red(  )
-Red( FƒR[ƒh ) # int =
+Red( è‰²ã‚³ãƒ¼ãƒ‰ ) # int =
 RedrawToday
 RegDelete(  )
-RegDelete( ƒ‹[ƒgƒL[, ƒTƒuƒL[, ’l–¼ )
+RegDelete( ãƒ«ãƒ¼ãƒˆã‚­ãƒ¼, ã‚µãƒ–ã‚­ãƒ¼, å€¤å )
 RegDeleteKey(  )
-RegDeleteKey( ƒ‹[ƒgƒL[, ƒTƒuƒL[, ’lH, ƒTƒuƒL[H )
+RegDeleteKey( ãƒ«ãƒ¼ãƒˆã‚­ãƒ¼, ã‚µãƒ–ã‚­ãƒ¼, å€¤ï¼Ÿ, ã‚µãƒ–ã‚­ãƒ¼ï¼Ÿ )
 RegKeyExists(  )
-RegKeyExists( ƒ‹[ƒgƒL[, ƒTƒuƒL[ ) # bool =
+RegKeyExists( ãƒ«ãƒ¼ãƒˆã‚­ãƒ¼, ã‚µãƒ–ã‚­ãƒ¼ ) # bool =
 RegRead(  )
-RegRead( ƒ‹[ƒgƒL[, ƒTƒuƒL[, ’l–¼ ) # var =
+RegRead( ãƒ«ãƒ¼ãƒˆã‚­ãƒ¼, ã‚µãƒ–ã‚­ãƒ¼, å€¤å ) # var =
 RegValueExists(  )
-RegValueExists( ƒ‹[ƒgƒL[, ƒTƒuƒL[, ’l–¼ ) # bool =
+RegValueExists( ãƒ«ãƒ¼ãƒˆã‚­ãƒ¼, ã‚µãƒ–ã‚­ãƒ¼, å€¤å ) # bool =
 RegWriteBinary(  )
-RegWriteBinary( ƒ‹[ƒgƒL[, ƒTƒuƒL[, ’l–¼, ’l )
+RegWriteBinary( ãƒ«ãƒ¼ãƒˆã‚­ãƒ¼, ã‚µãƒ–ã‚­ãƒ¼, å€¤å, å€¤ )
 RegWriteDWord(  )
-RegWriteDWord( ƒ‹[ƒgƒL[, ƒTƒuƒL[, ’l–¼, ’l )
+RegWriteDWord( ãƒ«ãƒ¼ãƒˆã‚­ãƒ¼, ã‚µãƒ–ã‚­ãƒ¼, å€¤å, å€¤ )
 RegWriteMultiString(  )
-RegWriteMultiString( ƒ‹[ƒgƒL[, ƒTƒuƒL[, ’l–¼, ”z—ñ )
+RegWriteMultiString( ãƒ«ãƒ¼ãƒˆã‚­ãƒ¼, ã‚µãƒ–ã‚­ãƒ¼, å€¤å, é…åˆ— )
 RegWriteString(  )
-RegWriteString( ƒ‹[ƒgƒL[, ƒTƒuƒL[, ’l–¼, ’l )
+RegWriteString( ãƒ«ãƒ¼ãƒˆã‚­ãƒ¼, ã‚µãƒ–ã‚­ãƒ¼, å€¤å, å€¤ )
 RemoveNotifications(  )
-RemoveNotifications( ƒAƒvƒŠƒP[ƒVƒ‡ƒ“[, ˆø”] )
+RemoveNotifications( ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³[, å¼•æ•°] )
 Rename(  )
-Rename(Œ³ƒtƒ@ƒCƒ‹, æƒtƒ@ƒCƒ‹ [, ã‘‚«H])
+Rename(å…ƒãƒ•ã‚¡ã‚¤ãƒ«, å…ˆãƒ•ã‚¡ã‚¤ãƒ« [, ä¸Šæ›¸ãï¼Ÿ])
 Repeat(  )
-Repeat( ƒJƒEƒ“ƒg” )
+Repeat( ã‚«ã‚¦ãƒ³ãƒˆæ•° )
 RepeatString(  )
-RepeatString( •¶š—ñ, ŒJ‚è•Ô‚µ‰ñ” ) # string =
-Replace( ‘ÎÛ•¶š—ñ, ŒŸõ•¶š—ñ, ’uŠ·•¶š—ñ ) # string =
+RepeatString( æ–‡å­—åˆ—, ç¹°ã‚Šè¿”ã—å›æ•° ) # string =
+Replace( å¯¾è±¡æ–‡å­—åˆ—, æ¤œç´¢æ–‡å­—åˆ—, ç½®æ›æ–‡å­—åˆ— ) # string =
 Reset
 Reset (Windows Mobile only)
 RetryCancel
 Return
-Return( ’l )
+Return( å€¤ )
 ReverseFind(  )
-ReverseFind( ŒŸõ‘ÎÛ•¶š—ñ , ŒŸõ•¶š ) # int =
+ReverseFind( æ¤œç´¢å¯¾è±¡æ–‡å­—åˆ— , æ¤œç´¢æ–‡å­— ) # int =
 Right
 RightMouseClick(  )
-RightMouseClick( [ ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹, ] x, y )
+RightMouseClick( [ ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ«, ] x, y )
 RightMouseDblClick(  )
-RightMouseDblClick( [ ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹, ] x, y )
+RightMouseDblClick( [ ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ«, ] x, y )
 RightMouseDown(  )
-RightMouseDown( [ ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹, ] x, y )
+RightMouseDown( [ ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ«, ] x, y )
 RightMouseUp(  )
-RightMouseUp( [ ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹, ] x, y )
+RightMouseUp( [ ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ«, ] x, y )
 RightSoft
 RmDir(  )
 RmDir( <directory> )
-RmDir( ƒfƒBƒŒƒNƒgƒŠ )
+RmDir( ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª )
 Rotate(  )
 Rotate( 0|90|180|270 ) (only Windows Mobile 2003 SE or higher)
-Rotate( •ûŒü )
+Rotate( æ–¹å‘ )
 Round(  )
-Round( ’l[, Œ…] ) # int/float =
+Round( å€¤[, æ¡] ) # int/float =
 Run(  )
-Run( ƒAƒvƒŠƒP[ƒVƒ‡ƒ“[, ˆø” ] )
+Run( ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³[, å¼•æ•° ] )
 RunAt(  )
-RunAt( Unix ƒ^ƒCƒ€ƒXƒ^ƒ“ƒv, ƒAƒvƒŠƒP[ƒVƒ‡ƒ“[, ˆø”] )
-RunAt( ”N, Œ, “ú, , •ª, ƒAƒvƒŠƒP[ƒVƒ‡ƒ“[, ˆø”] )
+RunAt( Unix ã‚¿ã‚¤ãƒ ã‚¹ã‚¿ãƒ³ãƒ—, ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³[, å¼•æ•°] )
+RunAt( å¹´, æœˆ, æ—¥, æ™‚, åˆ†, ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³[, å¼•æ•°] )
 RunOnPowerOn(  )
-RunOnPowerOn( ƒAƒvƒŠƒP[ƒVƒ‡ƒ“[, ˆø”] )
+RunOnPowerOn( ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³[, å¼•æ•°] )
 RunWait(  )
-RunWait( ƒAƒvƒŠƒP[ƒVƒ‡ƒ“[, ˆø” ] )
+RunWait( ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³[, å¼•æ•° ] )
 SP
 SQRT2
 ST_HIDDEN
@@ -360,34 +360,34 @@ ST_LIST
 ST_MESSAGE
 Screen(  )
 Screen( "landscape"|"portrait"|"square"|"vga"|"qvga" ) # bool =
-Screen( ƒ^ƒCƒv ) # bool =
+Screen( ã‚¿ã‚¤ãƒ— ) # bool =
 ScreenHeight() # int =
 ScreenToChars(  )
-ScreenToChars( x, y, •, ‚‚³, FƒR[ƒh[, ”wŒiF? [, ‘OŒi—p•¶š[, ”wŒi—p•¶š ]]] ) # array =
+ScreenToChars( x, y, å¹…, é«˜ã•, è‰²ã‚³ãƒ¼ãƒ‰[, èƒŒæ™¯è‰²? [, å‰æ™¯ç”¨æ–‡å­—[, èƒŒæ™¯ç”¨æ–‡å­— ]]] ) # array =
 ScreenWidth() # int =
 ScriptExe
 ScriptExt
 ScriptName
 ScriptPath
 ScriptProcExists(  )
-ScriptProcExists( ƒXƒNƒŠƒvƒg–¼ ) # bool =
+ScriptProcExists( ã‚¹ã‚¯ãƒªãƒ—ãƒˆå ) # bool =
 SelectDirectory(  )
-SelectDirectory( ƒ^ƒCƒgƒ‹, ƒƒbƒZ[ƒW [, ƒfƒtƒHƒ‹ƒg] ) # string =
+SelectDirectory( ã‚¿ã‚¤ãƒˆãƒ«, ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ [, ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ] ) # string =
 SelectFile(  )
-SelectFile( ƒ^ƒCƒgƒ‹, •Û‘¶H, [ƒtƒBƒ‹ƒ^[ [, ƒƒbƒZ[ƒW [, ƒfƒtƒHƒ‹ƒg]]] ) # string =
+SelectFile( ã‚¿ã‚¤ãƒˆãƒ«, ä¿å­˜ï¼Ÿ, [ãƒ•ã‚£ãƒ«ã‚¿ãƒ¼ [, ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ [, ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ]]] ) # string =
 SendBackspace [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendBackspace(  )
 SendCR [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendCR(  )
-SendCancel [ ( ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹ ) ]
+SendCancel [ ( ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ« ) ]
 SendCancel(  )
 SendCommand(  )
-SendCommand( [ ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹, ] ƒRƒ}ƒ“ƒhID )
+SendCommand( [ ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ«, ] ã‚³ãƒãƒ³ãƒ‰ID )
 SendContext [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendContext(  )
 SendContext( [<window title>,]<string> )
 SendCtrlKey(  )
-SendCtrlKey( [ ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹, ] ƒL[ )
+SendCtrlKey( [ ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ«, ] ã‚­ãƒ¼ )
 SendDelete [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendDelete(  )
 SendDown [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
@@ -407,10 +407,10 @@ SendLeft(  )
 SendLeftSoft [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendLeftSoft(  )
 SendMessage(  )
-SendMessage( [ ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹, ] ƒƒbƒZ[ƒWID, wParam, lParam )
-SendNo [ ( ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹ ) ]
+SendMessage( [ ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ«, ] ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ID, wParam, lParam )
+SendNo [ ( ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ« ) ]
 SendNo(  )
-SendOK [ ( ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹ ) ]
+SendOK [ ( ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ« ) ]
 SendOK(  )
 SendPageDown [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendPageDown(  )
@@ -423,7 +423,7 @@ SendRightSoft(  )
 SendSpace [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendSpace(  )
 SendSpecial(  )
-SendSpecial( ƒL[–¼ [ , ó‘Ô ] )
+SendSpecial( ã‚­ãƒ¼å [ , çŠ¶æ…‹ ] )
 SendTab [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendTab(  )
 SendUp [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
@@ -431,89 +431,89 @@ SendUp(  )
 SendWin [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendWin(  )
 SendYes [ ( <window title> ) ]
-SendYes [ ( ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹ ) ]
+SendYes [ ( ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ« ) ]
 SendYes(  )
 Set(  )
-Set( •Ï”, ® )
+Set( å¤‰æ•°, å¼ )
 SetBacklight(  )
-SetBacklight( ƒoƒbƒeƒŠ[, ACƒAƒ_ƒvƒ^ )
+SetBacklight( ãƒãƒƒãƒ†ãƒªãƒ¼, ACã‚¢ãƒ€ãƒ—ã‚¿ )
 SetChoiceEntryFormat(  )
-SetChoiceEntryFormat( ‘I‘ğˆƒTƒCƒY [, ƒtƒHƒ“ƒgƒTƒCƒY, ƒtƒHƒ“ƒg–¼ ] )
+SetChoiceEntryFormat( é¸æŠè‚¢ã‚µã‚¤ã‚º [, ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚º, ãƒ•ã‚©ãƒ³ãƒˆå ] )
 SetClipText(  )
-SetClipText( ƒeƒLƒXƒg )
+SetClipText( ãƒ†ã‚­ã‚¹ãƒˆ )
 SetComInfo(  )
-SetComInfo(ƒ|[ƒg, ƒ^ƒCƒ€ƒAƒEƒg [, ƒ{[ƒŒ[ƒg [, ƒpƒŠƒeƒB [, ƒrƒbƒg [, ƒXƒgƒbƒvƒrƒbƒg [, ƒRƒ“ƒgƒ[ƒ‹ ]]]]])
+SetComInfo(ãƒãƒ¼ãƒˆ, ã‚¿ã‚¤ãƒ ã‚¢ã‚¦ãƒˆ [, ãƒœãƒ¼ãƒ¬ãƒ¼ãƒˆ [, ãƒ‘ãƒªãƒ†ã‚£ [, ãƒ“ãƒƒãƒˆ [, ã‚¹ãƒˆãƒƒãƒ—ãƒ“ãƒƒãƒˆ [, ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ« ]]]]])
 SetDate(  )
-SetDate( “ú, Œ, ”N )
+SetDate( æ—¥, æœˆ, å¹´ )
 SetFileAttribs(  )
-SetFileAttribs( ƒtƒ@ƒCƒ‹, “Ç‚İæ‚èê—pH [, ‰B‚µƒtƒ@ƒCƒ‹H [, ƒA[ƒJƒCƒuH ]] )
+SetFileAttribs( ãƒ•ã‚¡ã‚¤ãƒ«, èª­ã¿å–ã‚Šå°‚ç”¨ï¼Ÿ [, éš ã—ãƒ•ã‚¡ã‚¤ãƒ«ï¼Ÿ [, ã‚¢ãƒ¼ã‚«ã‚¤ãƒ–ï¼Ÿ ]] )
 SetFileAttribute(  )
-SetFileAttribute( ƒtƒ@ƒCƒ‹, ‘®«, ƒZƒbƒgH )
+SetFileAttribute( ãƒ•ã‚¡ã‚¤ãƒ«, å±æ€§, ã‚»ãƒƒãƒˆï¼Ÿ )
 SetMessageFont(  )
-SetMessageFont( ƒtƒHƒ“ƒgƒTƒCƒY, ƒtƒHƒ“ƒg–¼ )
+SetMessageFont( ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚º, ãƒ•ã‚©ãƒ³ãƒˆå )
 SetProxy(  )
-SetProxy( ƒvƒƒNƒVƒT[ƒo[ )
+SetProxy( ãƒ—ãƒ­ã‚¯ã‚·ã‚µãƒ¼ãƒãƒ¼ )
 SetTime(  )
-SetTime( , •ª, •b, [“ú, Œ, ”N] )
+SetTime( æ™‚, åˆ†, ç§’, [æ—¥, æœˆ, å¹´] )
 SetVolume(  )
-SetVolume( ’l )
+SetVolume( å€¤ )
 Shift
 Show(  )
 Show( <window title> )
-Show( ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹ )
+Show( ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ« )
 ShowWaitCursor
 Sin(  )
-Sin( ƒ‰ƒWƒAƒ“’l ) # (radians = degree*PI/180) float =
+Sin( ãƒ©ã‚¸ã‚¢ãƒ³å€¤ ) # (radians = degree*PI/180) float =
 Sleep(  )
-Sleep( ƒ~ƒŠ•b )
+Sleep( ãƒŸãƒªç§’ )
 SleepMessage(  )
-SleepMessage( •b, ƒƒbƒZ[ƒW [ , Titl [ , OK‹–‰ÂH [ , ğŒ ] ] ])
+SleepMessage( ç§’, ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ [ , Titl [ , OKè¨±å¯ï¼Ÿ [ , æ¡ä»¶ ] ] ])
 Snapshot
-Snapshot [ ( ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹ ) ]
+Snapshot [ ( ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ« ) ]
 Snapshot(  )
 Space
 Split(  )
-Split( •¶š—ñ , ƒfƒŠƒ~ƒ^, ƒgƒŠƒ€H, •Ï”{, •Ï” })
-Split( •¶š—ñ, ƒfƒŠƒ~ƒ^ [, ƒgƒŠƒ€? ] ) # array =
+Split( æ–‡å­—åˆ— , ãƒ‡ãƒªãƒŸã‚¿, ãƒˆãƒªãƒ ï¼Ÿ, å¤‰æ•°{, å¤‰æ•° })
+Split( æ–‡å­—åˆ—, ãƒ‡ãƒªãƒŸã‚¿ [, ãƒˆãƒªãƒ ? ] ) # array =
 Sqrt(  )
-Sqrt( ’l )
+Sqrt( å€¤ )
 StartMenu
 Startup
 StatusClear()
 StatusClear() (removes all previous messages)
 StatusHistorySize(  )
-StatusHistorySize( •\¦” )
+StatusHistorySize( è¡¨ç¤ºæ•° )
 StatusInfo(  )
-StatusInfo( ƒ^ƒCƒgƒ‹ [, ’A‚µ‘‚« ] )
+StatusInfo( ã‚¿ã‚¤ãƒˆãƒ« [, ä½†ã—æ›¸ã ] )
 StatusListEntryFormat(  )
-StatusListEntryFormat( ‘I‘ğˆƒTƒCƒY [, ƒtƒHƒ“ƒgƒTƒCƒY, ƒtƒHƒ“ƒg–¼ ] )
+StatusListEntryFormat( é¸æŠè‚¢ã‚µã‚¤ã‚º [, ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚º, ãƒ•ã‚©ãƒ³ãƒˆå ] )
 StatusMessage(  )
-StatusMessage( ƒƒbƒZ[ƒW [, ƒXƒ^ƒCƒ‹ [, •\¦Œp‘±? [, ƒLƒƒƒ“ƒZƒ‹ƒ{ƒ^ƒ“? ]]] )
+StatusMessage( ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ [, ã‚¹ã‚¿ã‚¤ãƒ« [, è¡¨ç¤ºç¶™ç¶š? [, ã‚­ãƒ£ãƒ³ã‚»ãƒ«ãƒœã‚¿ãƒ³? ]]] )
 StatusMessageAppend(  )
-StatusMessageAppend( ƒeƒLƒXƒg )
+StatusMessageAppend( ãƒ†ã‚­ã‚¹ãƒˆ )
 StatusRemoveLastMessage()
 StatusShow(  )
 StatusShow() (bring status window to foreground)
 StatusType(  )
 StatusType( ST_HIDDEN|ST_LIST|ST_MESSAGE [, <keepOpen>] [, <allowCancel> ]] )
-StatusType( ƒXƒ^ƒCƒ‹ [, •\¦Œp‘±? [, ƒLƒƒƒ“ƒZƒ‹ƒ{ƒ^ƒ“? ] ] )
+StatusType( ã‚¹ã‚¿ã‚¤ãƒ« [, è¡¨ç¤ºç¶™ç¶š? [, ã‚­ãƒ£ãƒ³ã‚»ãƒ«ãƒœã‚¿ãƒ³? ] ] )
 Sub
-Sub ƒTƒuƒ‹[ƒ`ƒ“–¼
+Sub ã‚µãƒ–ãƒ«ãƒ¼ãƒãƒ³å
 SubStr(  )
-SubStr( •¶š—ñ , ŠJnƒCƒ“ƒfƒbƒNƒX [, ’·‚³ ] ) # string =
+SubStr( æ–‡å­—åˆ— , é–‹å§‹ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ [, é•·ã• ] ) # string =
 SupportsProcHandling(  ) # bool =
 SupportsProcHandling()  (For PNAs, check if ProcExists and Kill will work) # bool =
 Switch ( <value> )
 Switch(  )
-Switch( ğŒ )
+Switch( æ¡ä»¶ )
 SystemPath(  )
-SystemPath( ƒ^ƒCƒv ) # string =
+SystemPath( ã‚¿ã‚¤ãƒ— ) # string =
 SystemVersion(  )
-SystemVersion( [ —v‘f ] ) # val =
+SystemVersion( [ è¦ç´  ] ) # val =
 TRUE
 Tab
 Tan(  )
-Tan( ƒ‰ƒWƒAƒ“’l ) # float =
+Tan( ãƒ©ã‚¸ã‚¢ãƒ³å€¤ ) # float =
 TimeStamp()      (local time as Unix timestamp) # int =
 TimeStamp() # int =
 TimeStampUTC()
@@ -527,23 +527,23 @@ TimeZoneName() # (Name of current timezone) # string =
 ToLower(  )
 ToLower( <string> ) # string =
 ToUpper(  )
-ToUpper( •¶š—ñ ) # string =
+ToUpper( æ–‡å­—åˆ— ) # string =
 ToggleDisplay(  )
-ToggleDisplay(ƒIƒ“H)
+ToggleDisplay(ã‚ªãƒ³ï¼Ÿ)
 TotalDiskSpace(  )
-TotalDiskSpace( ƒfƒBƒŒƒNƒgƒŠ[, BYTES|KB|MB|GB (’PˆÊ) ] ) ) # int =
-TotalMemory( [BYTES|KB|MB|GB] (’PˆÊ) ) (max. 2147483647) # int =
+TotalDiskSpace( ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª[, BYTES|KB|MB|GB (å˜ä½) ] ) ) # int =
+TotalMemory( [BYTES|KB|MB|GB] (å˜ä½) ) (max. 2147483647) # int =
 TotalMemory() # int =
 UcChar(  )
-UcChar( ƒ†ƒjƒR[ƒh’l ) # string =
+UcChar( ãƒ¦ãƒ‹ã‚³ãƒ¼ãƒ‰å€¤ ) # string =
 UcValue(  )
-UcValue( •¶š ) # string =
+UcValue( æ–‡å­— ) # string =
 UnzipAll(  )
-UnzipAll(ZIPƒtƒ@ƒCƒ‹, ‰ğ“€æƒfƒBƒŒƒNƒgƒŠ)
+UnzipAll(ZIPãƒ•ã‚¡ã‚¤ãƒ«, è§£å‡å…ˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª)
 UnzipFile(  )
-UnzipFile(ZIPƒtƒ@ƒCƒ‹, ƒA[ƒJƒCƒu“à‚Ìƒtƒ@ƒCƒ‹–¼, ‰ğ“€æƒtƒ@ƒCƒ‹)
+UnzipFile(ZIPãƒ•ã‚¡ã‚¤ãƒ«, ã‚¢ãƒ¼ã‚«ã‚¤ãƒ–å†…ã®ãƒ•ã‚¡ã‚¤ãƒ«å, è§£å‡å…ˆãƒ•ã‚¡ã‚¤ãƒ«)
 UnzipPath(  )
-UnzipPath(ZIPƒtƒ@ƒCƒ‹, ƒA[ƒJƒCƒu“à‚ÌƒpƒX, ‰ğ“€æƒfƒBƒŒƒNƒgƒŠ)
+UnzipPath(ZIPãƒ•ã‚¡ã‚¤ãƒ«, ã‚¢ãƒ¼ã‚«ã‚¤ãƒ–å†…ã®ãƒ‘ã‚¹, è§£å‡å…ˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª)
 Up
 VAR_ARRAY
 VAR_EMPTY
@@ -552,48 +552,48 @@ VAR_INT
 VAR_STRING
 VarType(  )
 VarType( <variable> ) - returns VAR_EMPTY, VAR_INT, VAR_FLOAT, VAR_STRING, or VAR_ARRAY # int =
-VarType( •Ï” ) # int =
+VarType( å¤‰æ•° ) # int =
 Vibrate(  )
-Vibrate( ƒ~ƒŠ•b )
+Vibrate( ãƒŸãƒªç§’ )
 Volume
 Volume() # (Windows Mobile only)  int =
 WaitFor(  )
-WaitFor( ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹, •b )
+WaitFor( ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ«, ç§’ )
 WaitForActive(  )
-WaitForActive( ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹, •b )
+WaitForActive( ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ«, ç§’ )
 While ( <condition> )
 While(  )
-While( ğŒ )
+While( æ¡ä»¶ )
 Win
 WindowProcess(  )
-WindowProcess( ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹ [, ƒtƒ‹ƒpƒXH ] ) # string =
+WindowProcess( ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ« [, ãƒ•ãƒ«ãƒ‘ã‚¹ï¼Ÿ ] ) # string =
 WindowText(  )
 WindowText( <x>, <y> ) # string =
 WndActive(  )
-WndActive( ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹ ) # bool =
+WndActive( ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ« ) # bool =
 WndBottom(  )
-WndBottom( ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹ ) # int =
+WndBottom( ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ« ) # int =
 WndExists(  )
-WndExists( ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹ ) # bool =
+WndExists( ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ« ) # bool =
 WndLeft(  )
-WndLeft( ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹ ) # int =
+WndLeft( ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ« ) # int =
 WndRight(  )
-WndRight( ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹ ) # int =
+WndRight( ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ« ) # int =
 WndTop(  )
-WndTop( ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹ ) # int =
+WndTop( ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ« ) # int =
 WriteFile(  )
-WriteFile( ƒtƒ@ƒCƒ‹, “à—e[, ’Ç‹LH[, •¶šƒR[ƒh ] ] )
+WriteFile( ãƒ•ã‚¡ã‚¤ãƒ«, å†…å®¹[, è¿½è¨˜ï¼Ÿ[, æ–‡å­—ã‚³ãƒ¼ãƒ‰ ] ] )
 WriteStatusHistory(  )
-WriteStatusHistory( ƒtƒ@ƒCƒ‹ [, ’Ç‹L? [, •¶šƒR[ƒh ] ] )
+WriteStatusHistory( ãƒ•ã‚¡ã‚¤ãƒ« [, è¿½è¨˜? [, æ–‡å­—ã‚³ãƒ¼ãƒ‰ ] ] )
 XCopy(  )
-XCopy( Œ³ƒtƒ@ƒCƒ‹, æƒfƒBƒŒƒNƒgƒŠ [, ã‘‚«H [, ƒTƒuƒfƒBƒŒƒNƒgƒŠH] ] )
+XCopy( å…ƒãƒ•ã‚¡ã‚¤ãƒ«, å…ˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª [, ä¸Šæ›¸ãï¼Ÿ [, ã‚µãƒ–ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªï¼Ÿ] ] )
 YES
 YesNo
 YesNoCancel
 ZipFile(  )
-ZipFile( Œ³ƒtƒ@ƒCƒ‹, ZIPƒtƒ@ƒCƒ‹, ƒA[ƒJƒCƒu“à‚Ìƒtƒ@ƒCƒ‹–¼ [, ˆ³kƒŒ[ƒg ] )
+ZipFile( å…ƒãƒ•ã‚¡ã‚¤ãƒ«, ZIPãƒ•ã‚¡ã‚¤ãƒ«, ã‚¢ãƒ¼ã‚«ã‚¤ãƒ–å†…ã®ãƒ•ã‚¡ã‚¤ãƒ«å [, åœ§ç¸®ãƒ¬ãƒ¼ãƒˆ ] )
 ZipFiles(  )
-ZipFiles( Œ³ƒtƒ@ƒCƒ‹i•¡”j, ZIPƒtƒ@ƒCƒ‹ [, ƒTƒuƒfƒBƒŒƒNƒgƒŠH [, ƒA[ƒJƒCƒu“à‚ÌƒpƒX [, ˆ³kƒŒ[ƒg ] ] ] )
+ZipFiles( å…ƒãƒ•ã‚¡ã‚¤ãƒ«ï¼ˆè¤‡æ•°ï¼‰, ZIPãƒ•ã‚¡ã‚¤ãƒ« [, ã‚µãƒ–ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªï¼Ÿ [, ã‚¢ãƒ¼ã‚«ã‚¤ãƒ–å†…ã®ãƒ‘ã‚¹ [, åœ§ç¸®ãƒ¬ãƒ¼ãƒˆ ] ] ] )
 archive
 build
 chinesesimp

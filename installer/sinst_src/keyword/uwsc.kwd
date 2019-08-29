@@ -1,6 +1,6 @@
-//UWSC@Ver 3.0 uwsc.chm‚æ‚è”²ˆ 2005”N2ŒŽ26“ú
+ï»¿//UWSCã€€Ver 3.0 uwsc.chmã‚ˆã‚ŠæŠœç²‹ 2005å¹´2æœˆ26æ—¥
 
-//éŒ¾‚È‚Ç
+//å®£è¨€ãªã©
 OPTION EXPLICIT
 OPTION SAMESTR
 DEF_DLL
@@ -13,7 +13,7 @@ AND
 OR
 MOD
 
-//ƒtƒ[§Œä
+//ãƒ•ãƒ­ãƒ¼åˆ¶å¾¡
 IF
 IFB
 THEN

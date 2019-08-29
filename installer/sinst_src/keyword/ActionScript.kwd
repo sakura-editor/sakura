@@ -1,43 +1,43 @@
-// ActionScript ƒL[ƒ[ƒh’è‹`ƒtƒ@ƒCƒ‹
+ï»¿// ActionScript ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«
 // 06/12/14 ver0.1
 // 
-// ™š™š™š™š™š™š™š™š™š™š™š™š™š™š™š™š™š™š™š
+// â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…
 //
-// ActionScript‚Ìƒo[ƒWƒ‡ƒ“‚Í2.0B
+// ActionScriptã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã¯2.0ã€‚
 //
-// FLASH 8‚Ìƒwƒ‹ƒv‚©‚çƒRƒsƒy‚µ‚Ä1ŽžŠÔ‚Åì‚Á‚½‚à‚Ì‚È‚Ì‚ÅA
-// Œ —˜‚È‚ñ‚©Žå’£o—ˆ‚é‚æ‚¤‚È‚à‚Ì‚Å‚Í‚ ‚è‚Ü‚¹‚ñB
-// Ä”z•z‚È‚è‰ü‘¢‚È‚è‚²Ž©—R‚É‚Ç‚¤‚¼B
-// ‰ü—Ç‚µ‚½‚à‚Ì‚É‚Â‚¢‚ÄA˜A—‚ð‚¢‚½‚¾‚¯‚ê‚ÎA‚±‚¿‚ç‚ÅÄ”z•z‚à‚¢‚½‚µ‚Ü‚·B
+// FLASH 8ã®ãƒ˜ãƒ«ãƒ—ã‹ã‚‰ã‚³ãƒ”ãƒšã—ã¦1æ™‚é–“ã§ä½œã£ãŸã‚‚ã®ãªã®ã§ã€
+// æ¨©åˆ©ãªã‚“ã‹ä¸»å¼µå‡ºæ¥ã‚‹ã‚ˆã†ãªã‚‚ã®ã§ã¯ã‚ã‚Šã¾ã›ã‚“ã€‚
+// å†é…å¸ƒãªã‚Šæ”¹é€ ãªã‚Šã”è‡ªç”±ã«ã©ã†ãžã€‚
+// æ”¹è‰¯ã—ãŸã‚‚ã®ã«ã¤ã„ã¦ã€é€£çµ¡ã‚’ã„ãŸã ã‘ã‚Œã°ã€ã“ã¡ã‚‰ã§å†é…å¸ƒã‚‚ã„ãŸã—ã¾ã™ã€‚
 // http://homepage2.nifty.com/kunpuh/downloads/ActionScript.kwd
 // kunpuh@mbr.nifty.com
 //
-// ‚©‚µ‚±
-// ŒO•—ŠÙ ”q
+// ã‹ã—ã“
+// è–«é¢¨é¤¨ æ‹
 //
-// ™š™š™š™š™š™š™š™š™š™š™š™š™š™š™š™š™š™š™š
+// â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…
 //
-// ‚¨‚·‚·‚ßuƒ^ƒCƒv•ÊÝ’èv
+// ãŠã™ã™ã‚ã€Œã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šã€
 //
-// ¡Ý’è‚Ì–¼‘O			ActionScript
-// ¡ƒtƒ@ƒCƒ‹Šg’£Žq		as
+// â– è¨­å®šã®åå‰			ActionScript
+// â– ãƒ•ã‚¡ã‚¤ãƒ«æ‹¡å¼µå­		as
 //
-// ¡ƒuƒƒbƒNƒRƒƒ“ƒg	[/*]`[*/]
-// ¡ƒ‰ƒCƒ“ƒRƒƒ“ƒg		[//]
+// â– ãƒ–ãƒ­ãƒƒã‚¯ã‚³ãƒ¡ãƒ³ãƒˆ	[/*]ï½ž[*/]
+// â– ãƒ©ã‚¤ãƒ³ã‚³ãƒ¡ãƒ³ãƒˆ		[//]
 //
-// ¡ƒGƒXƒP[ƒv			CŒ¾Œê•—
+// â– ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—			Cè¨€èªžé¢¨
 //
-// ¡«ƒ`ƒFƒbƒN‚ð“ü‚ê‚é
-// @ƒVƒ“ƒOƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶Žš—ñ
-// @ƒ_ƒuƒ‹ƒNƒH[ƒe[ƒVƒ‡ƒ“•¶Žš—ñ
-// @”¼Šp”’l
-// @‘ÎŠ‡ŒÊ‚Ì‹­’²•\Ž¦
+// â– â†“ãƒã‚§ãƒƒã‚¯ã‚’å…¥ã‚Œã‚‹
+// ã€€ã‚·ãƒ³ã‚°ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—
+// ã€€ãƒ€ãƒ–ãƒ«ã‚¯ã‚©ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³æ–‡å­—åˆ—
+// ã€€åŠè§’æ•°å€¤
+// ã€€å¯¾æ‹¬å¼§ã®å¼·èª¿è¡¨ç¤º
 //
-// ‚ ‚Æ‚Í‚¨D‚Ý‚ÅB‹­’²ƒL[ƒ[ƒh‚ÌÝ’è‚ð–Y‚ê‚È‚¢‚æ‚¤‚ÉB
+// ã‚ã¨ã¯ãŠå¥½ã¿ã§ã€‚å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®è¨­å®šã‚’å¿˜ã‚Œãªã„ã‚ˆã†ã«ã€‚
 //
-// ™š™š™š™š™š™š™š™š™š™š™š™š™š™š™š™š™š™š™š
+// â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…â˜†â˜…
 
-// —\–ñŒê
+// äºˆç´„èªž
 add
 and
 break
@@ -90,7 +90,7 @@ void
 while
 with
 
-// ƒrƒ‹ƒgƒCƒ“ƒNƒ‰ƒX–¼AƒRƒ“ƒ|[ƒlƒ“ƒgƒNƒ‰ƒX–¼AƒCƒ“ƒ^[ƒtƒFƒCƒX–¼
+// ãƒ“ãƒ«ãƒˆã‚¤ãƒ³ã‚¯ãƒ©ã‚¹åã€ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã‚¯ãƒ©ã‚¹åã€ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹å
 Accessibility
 Accordion
 Alert
@@ -185,12 +185,12 @@ XML
 XMLConnector
 XUpdateResolver
 
-// ƒfƒBƒŒƒNƒeƒBƒu
+// ãƒ‡ã‚£ãƒ¬ã‚¯ãƒ†ã‚£ãƒ–
 #endinitclip
 #include
 #initclip
 
-// ƒXƒNƒŠƒvƒgƒŠƒtƒ@ƒŒƒ“ƒX‚Ìõˆø‚©‚çƒRƒsƒy‚µAŽáŠ±®—‚µ‚½‚à‚Ì
+// ã‚¹ã‚¯ãƒªãƒ—ãƒˆãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹ã®ç´¢å¼•ã‹ã‚‰ã‚³ãƒ”ãƒšã—ã€è‹¥å¹²æ•´ç†ã—ãŸã‚‚ã®
 _accProps
 _alpha
 _currentframe
@@ -906,7 +906,7 @@ XMLSocket
 XMLUI
 y
 
-// ’è”
+// å®šæ•°
 false
 Infinity
 -Infinity
@@ -916,12 +916,12 @@ null
 true
 undefined
 
-// ˆø”
+// å¼•æ•°
 callee
 caller
 length
 
-// ‰‰ŽZŽq
+// æ¼”ç®—å­
 <
 <=
 <<
@@ -967,7 +967,7 @@ length
 ||
 ~
 
-// uActionScript ‚Ü‚½‚Í ECMAScript (ECMA-262) Edition 4 ‚ÌŒ¾ŒêŽd—l‘ˆÄ‚Å«—ˆ‚ÉŽg—p‚·‚é‚½‚ß‚É—\–ñ‚³‚ê‚Ä‚¢‚éƒL[ƒ[ƒh‚ÌƒŠƒXƒgv
+// ã€ŒActionScript ã¾ãŸã¯ ECMAScript (ECMA-262) Edition 4 ã®è¨€èªžä»•æ§˜è‰æ¡ˆã§å°†æ¥ã«ä½¿ç”¨ã™ã‚‹ãŸã‚ã«äºˆç´„ã•ã‚Œã¦ã„ã‚‹ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã®ãƒªã‚¹ãƒˆã€
 abstract
 enum
 export

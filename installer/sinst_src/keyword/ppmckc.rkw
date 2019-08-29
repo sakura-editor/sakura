@@ -1,4 +1,4 @@
-// ê≥ãKï\åªÉLÅ[ÉèÅ[Éh Ver1
+Ôªø// Ê≠£Ë¶èË°®Áèæ„Ç≠„Éº„ÉØ„Éº„Éâ Ver1
 RxKey[000]=TXT,/^[\s]*#(INCLUDE|TITLE|PROGRAMER|COMPOSER|MAKER).*/ki
 RxKey[001]=TXT,/=/k
 RxKey[002]=TXT,/^[\s]*#(OCTAVE-REV|EX-(DISKFM|NAMCO106|VRC[67]|MMC5|FME7)|BANK-CHANGE|SETBANK|EFFECT-INCLUDE)\s*/k

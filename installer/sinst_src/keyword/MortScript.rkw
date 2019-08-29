@@ -1,23 +1,23 @@
-// MortScript ³‹K•\Œ»ƒL[ƒ[ƒh Ver 4.2
+ï»¿// MortScript æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ Ver 4.2
 
-// •¶Žš—ñ‚È‚Ì‚É‹­’²ƒL[ƒ[ƒh‚É‚È‚Á‚Ä‚µ‚Ü‚¤‚Ì‚ð‰ñ”ð
+// æ–‡å­—åˆ—ãªã®ã«å¼·èª¿ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã«ãªã£ã¦ã—ã¾ã†ã®ã‚’å›žé¿
 RxKey[000]=WQT,/\"(off|end)\"/ki
 
-// ForEach \•¶‚ÌŒã‘±•”•ª‚ð•â‘«
+// ForEach æ§‹æ–‡ã®å¾Œç¶šéƒ¨åˆ†ã‚’è£œè¶³
 RxKey[001]=KW1,/\bin\s+(values|array|split|charsOf|iniSections)\b/ki
 RxKey[002]=KW1,/\bin\s+(iniKeys|regSubkeys|regValues|files|directories)\b/ki
 
-// Choice ‚ªƒtƒ[§Œä‚Å‚È‚­ƒRƒ}ƒ“ƒh‚Æ‚µ‚ÄŽg‚í‚ê‚Ä‚¢‚é‚Æ‚±‚ë‚ð‹æ•Ê
+// Choice ãŒãƒ•ãƒ­ãƒ¼åˆ¶å¾¡ã§ãªãã‚³ãƒžãƒ³ãƒ‰ã¨ã—ã¦ä½¿ã‚ã‚Œã¦ã„ã‚‹ã¨ã“ã‚ã‚’åŒºåˆ¥
 RxKey[003]=KW2,/\s\=\s+Choice\b/ki
 
-// ‰‰ŽZŽq
+// æ¼”ç®—å­
 RxKey[004]=KW3,/(\-|\^|\=|\+|\*|\/|\\|\&|\>|\<|\,)/k
 RxKey[005]=KW3,/\b(NOT|MOD|AND|OR)\b/ki
 RxKey[006]=KW3,/\W(\?|\:)\W/k
 RxKey[007]=KW3,/\W(\&\&|\|\|)\W/k
 RxKey[008]=KW3,/\b(gt|ge|lt|le|eq|ne)\b/ki
 
-// ’è‹`Ï‚Ý•Ï”‚È‚Ç
+// å®šç¾©æ¸ˆã¿å¤‰æ•°ãªã©
 RxKey[009]=KW4,/\barg(c|v)\b/ki
 RxKey[010]=KW4,/\b(TRUE|FALSE|YES|NO|ON|OFF)\b/ki
 RxKey[011]=KW4,/\b(CANCEL|PI|SQRT2|PHI|EULER)\b/ki
@@ -28,7 +28,7 @@ RxKey[015]=KW4,/\bST_(HIDDEN|LIST|MESSAGE)\b/ki
 RxKey[016]=KW4,/\bVAR_(EMPTY|INT|FLOAT|STRING|ARRAY)\b/ki
 RxKey[017]=KW4,/%[a-zA-Z]\w+%/k
 
-// ŒÃ‚¢•\‹L‚ÅŽg‚¦‚é‚¯‚Ç„§‚³‚ê‚È‚¢ƒ‚ƒm
+// å¤ã„è¡¨è¨˜ã§ä½¿ãˆã‚‹ã‘ã©æŽ¨å¥¨ã•ã‚Œãªã„ãƒ¢ãƒŽ
 RxKey[018]=KW5,/\b(Eval|Input|SubStr|Find|ReverseFind)\s/ki
 RxKey[019]=KW5,/\b(IniRead|ReadFile|Input)\s/ki
 RxKey[020]=KW5,/\bGet(ActiveWindow|Part|RGB|ColorAt|ClipText)\s/ki
@@ -42,6 +42,6 @@ RxKey[027]=KW5,/\b(wndActive|question|screen|regKeyExists)\s/ki
 RxKey[028]=KW5,/\b(fileExists|dirExists|procExists|wndExists)\s/ki
 RxKey[029]=KW5,/\bRnd\b/ki
 
-// ƒ}ƒjƒ…ƒAƒ‹ã•\‹L‚ª‚È‚¢‚ªŽg‚¦‚éƒ‚ƒmiƒx[ƒ^”Å‹@”\‚È‚ÇHj
+// ãƒžãƒ‹ãƒ¥ã‚¢ãƒ«ä¸Šè¡¨è¨˜ãŒãªã„ãŒä½¿ãˆã‚‹ãƒ¢ãƒŽï¼ˆãƒ™ãƒ¼ã‚¿ç‰ˆæ©Ÿèƒ½ãªã©ï¼Ÿï¼‰
 RxKey[030]=KW6,/\b(RepeatString|VarType)\b/ki
 RxKey[031]=KW6,/\bTime(StampUTC|ZoneBias|ZoneDST|ZoneName)\b/ki

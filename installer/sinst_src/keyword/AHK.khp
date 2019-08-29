@@ -1,4 +1,4 @@
-#AllowSameLineComments /// #AllowSameLineComments
+﻿#AllowSameLineComments /// #AllowSameLineComments
 #ClipboardTimeout /// #ClipboardTimeout milliseconds
 #CommentFlag /// #CommentFlag NewString
 #ErrorStdOut /// #ErrorStdOut
