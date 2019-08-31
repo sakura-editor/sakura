@@ -21,6 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectName>sakura</ProjectName>
     <ProjectGuid>{AF03508C-515E-4A0E-87BE-67ED1E254BD0}</ProjectGuid>
+    <GenerateFuncCodeEnum>true</GenerateFuncCodeEnum>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="$(ProjectDir)..\vcx-props\vcxcompat.props" />
@@ -998,15 +999,6 @@
     <FuncCodeRes Include="..\sakura_core\Funccode_x.hsrc" />
   </ItemGroup>
   <ItemGroup>
-    <GitHashSource Include="..\.git\HEAD" Condition="Exists('..\.git\HEAD')" />
-    <GitHashSource Include="..\.git\index" Condition="Exists('..\.git\index')" />
-    <GitHashSource Include="..\.git\config" Condition="Exists('..\.git\config')" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\HeaderMake\HeaderMake.vcxproj">
-      <Project>{0f2918b0-23e3-42e8-a1a8-8739f726a23e}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="..\MakefileMake\MakefileMake.vcxproj">
       <Project>{40735439-b12b-40ac-92f7-f1183d8b6862}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
@@ -1015,33 +1007,11 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-  <PropertyGroup Label="PreBuild">
-    <HeaderMake>..\Win32\$(Configuration)\HeaderMake.exe</HeaderMake>
-    <FuncCodeEnum>..\sakura_core\Funccode_enum.h</FuncCodeEnum>
-    <FuncCodeDefine>..\sakura_core\Funccode_define.h</FuncCodeDefine>
-    <GitHash>..\sakura_core\githash.h</GitHash>
-  </PropertyGroup>
-  <Target Name="FuncCodeEnum" BeforeTargets="ClCompile"
-      Inputs="@(FuncCodeRes)"
-      Outputs="$(FuncCodeEnum)">
-    <Exec Command="$(HeaderMake) -in=@(FuncCodeRes) -out=$(FuncCodeEnum) -mode=enum -enum=EFunctionCode" />
-  </Target>
-  <Target Name="FuncCodeDefine" BeforeTargets="ResourceCompile"
-      Inputs="@(FuncCodeRes)"
-      Outputs="$(FuncCodeDefine)">
-    <Exec Command="$(HeaderMake) -in=@(FuncCodeRes) -out=$(FuncCodeDefine) -mode=define" />
-  </Target>
-  <Target Name="GitHash" BeforeTargets="GenerateSource"
-      Inputs="@(GitHashSource)"
-      Outputs="$(GitHash)">
-    <Exec Command="githash.bat ..\sakura_core" />
-  </Target>
+  <Import Project="..\sakura\githash.targets" />
+  <Import Project="..\sakura\funccode.targets" />
   <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
     <!-- Add files to @Clean just before running CoreClean. -->
     <ItemGroup>
-      <Clean Include="$(GitHash)" />
-      <Clean Include="$(FuncCodeEnum)" />
-      <Clean Include="$(FuncCodeDefine)" />
       <Clean Include="$(OutDir)sakura.ini" />
       <Clean Include="$(OutDir)bregonig.dll" />
       <Clean Include="$(OutDir)ctags.exe" />

@@ -124,9 +124,14 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
   </ItemDefinitionGroup>
   <ItemGroup>
+    <FuncCodeRes Include="..\sakura_core\Funccode_x.hsrc" />
+  </ItemGroup>
+  <ItemGroup>
     <ResourceCompile Include="sakura_lang_rc.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <Import Project="..\sakura\githash.targets" />
+  <Import Project="..\sakura\funccode.targets" />
 </Project>
