@@ -8,6 +8,11 @@ if "%OUT_DIR%" == "" (
 @rem replace '/' with '\'
 set OUT_DIR=%OUT_DIR:/=\%
 
+set GITHASH_H=%~2
+if "%GITHASH_H%" == "" (
+	set GITHASH_H=%OUT_DIR%\githash.h
+)
+
 @echo.
 @echo ---- Make githash.h ----
 
@@ -99,7 +104,6 @@ if "%APPVEYOR_BUILD_URL_VALID%" == "1" (
 @rem -- build APPVEYOR_BUILD_URL variable end   ----
 
 : Output githash.h
-set GITHASH_H=%OUT_DIR%\githash.h
 set GITHASH_H_TMP=%GITHASH_H%.tmp
 
 @rem set SKIP_CREATE_GITHASH=1 to disable creation of githash.h
