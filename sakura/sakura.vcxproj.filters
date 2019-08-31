@@ -2297,6 +2297,9 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
+    <FuncCodeRes Include="..\sakura_core\Funccode_x.hsrc" />
+  </ItemGroup>
+  <ItemGroup>
     <Natvis Include="sakura.natvis" />
   </ItemGroup>
 </Project>
