@@ -80,7 +80,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Label="Common Settings">
     <ResourceCompile>
-      <AdditionalIncludeDirectories>..\sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\sakura_core;$(OutDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Culture>0x0411</Culture>
       <AdditionalOptions>/c 65001</AdditionalOptions>
     </ResourceCompile>
@@ -124,9 +124,14 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
   </ItemDefinitionGroup>
   <ItemGroup>
+    <FuncCodeRes Include="..\sakura_core\Funccode_x.hsrc" />
+  </ItemGroup>
+  <ItemGroup>
     <ResourceCompile Include="sakura_lang_rc.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <Import Project="..\sakura\githash.targets" />
+  <Import Project="..\sakura\funccode.targets" />
 </Project>

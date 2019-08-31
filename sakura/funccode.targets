@@ -1,0 +1,31 @@
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="FuncCode">
+    <HeaderMake>..\Win32\$(Configuration)\HeaderMake.exe</HeaderMake>
+    <FuncCodeDefine>..\sakura_core\Funccode_define.h</FuncCodeDefine>
+    <FuncCodeEnum>..\sakura_core\Funccode_enum.h</FuncCodeEnum>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HeaderMake\HeaderMake.vcxproj">
+      <Project>{0f2918b0-23e3-42e8-a1a8-8739f726a23e}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Target Name="FuncCodeDefine" BeforeTargets="ResourceCompile" AfterTargets="GitHash"
+      Inputs="@(FuncCodeRes)"
+      Outputs="$(FuncCodeDefine)">
+    <Exec Command="$(HeaderMake) -in=@(FuncCodeRes) -out=$(FuncCodeDefine) -mode=define" />
+  </Target>
+  <Target Name="FuncCodeEnum" BeforeTargets="ClCompile"
+      Inputs="@(FuncCodeRes)"
+      Outputs="$(FuncCodeEnum)"
+      Condition="'$(GenerateFuncCodeEnum)'=='true'">
+    <Exec Command="$(HeaderMake) -in=@(FuncCodeRes) -out=$(FuncCodeEnum) -mode=enum -enum=EFunctionCode" />
+  </Target>
+  <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
+    <!-- Add files to @Clean just before running CoreClean. -->
+    <ItemGroup>
+      <Clean Include="$(FuncCodeDefine)" />
+      <Clean Include="$(FuncCodeEnum)" Condition="'$(GenerateFuncCodeEnum)'=='true'" />
+    </ItemGroup>
+  </Target>
+</Project>
