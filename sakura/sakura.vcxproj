@@ -415,8 +415,6 @@
     <ClInclude Include="..\sakura_core\extmodule\CHtmlHelp.h" />
     <ClInclude Include="..\sakura_core\extmodule\CMigemo.h" />
     <ClInclude Include="..\sakura_core\extmodule\CUxTheme.h" />
-    <ClInclude Include="..\sakura_core\Funccode_define.h" />
-    <ClInclude Include="..\sakura_core\Funccode_enum.h" />
     <ClInclude Include="..\sakura_core\func\CFuncKeyWnd.h" />
     <ClInclude Include="..\sakura_core\func\CFuncLookup.h" />
     <ClInclude Include="..\sakura_core\func\CKeyBind.h" />
@@ -489,7 +487,6 @@
     <ClInclude Include="..\sakura_core\sakura_rc.h" />
     <ClInclude Include="..\sakura_core\StdAfx.h" />
     <ClInclude Include="..\sakura_core\String_define.h" />
-    <ClInclude Include="..\sakura_core\githash.h" />
     <ClInclude Include="..\sakura_core\typeprop\CDlgKeywordSelect.h" />
     <ClInclude Include="..\sakura_core\typeprop\CDlgSameColor.h" />
     <ClInclude Include="..\sakura_core\typeprop\CDlgTypeAscertain.h" />
