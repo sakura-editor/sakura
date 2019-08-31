@@ -1,2 +1,5 @@
-*.bat text eol=crlf
+*.kwd text
+*.khp text
+*.hkn text
+*.bat text
 Makefile text eolf=lf

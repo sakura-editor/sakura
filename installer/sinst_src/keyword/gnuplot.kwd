@@ -1,6 +1,6 @@
-// gnuplot keyword
+ï»¿// gnuplot keyword
 
-//ƒRƒ}ƒ“ƒh
+//ã‚³ãƒãƒ³ãƒ‰
 cd
 call
 clear
@@ -34,7 +34,7 @@ undefine
 unset
 update
 
-//set ƒRƒ}ƒ“ƒh
+//set ã‚³ãƒãƒ³ãƒ‰
 angles
 arrow
 autoscale
@@ -168,7 +168,7 @@ cbmtics
 cbrange
 cbtics
 
-//F‚Ì–¼‘O
+//è‰²ã®åå‰
 white
 black
 dark-grey

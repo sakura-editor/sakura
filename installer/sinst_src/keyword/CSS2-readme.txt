@@ -1,94 +1,94 @@
-==========================================================
+﻿==========================================================
 
-	�T�N���G�f�B�^�p
-	�X�^�C���V�[�g/CSS2/CSS2.1
-	�L�[���[�h��`�E�L�[���[�h�w���v�����t�@�C��
+	サクラエディタ用
+	スタイルシート/CSS2/CSS2.1
+	キーワード定義・キーワードヘルプ辞書ファイル
 	Rev1.00 2006/09/15
-	(C) 2006 ������ All rights reserved.
+	(C) 2006 かえで All rights reserved.
 
 ==========================================================
-���T�v
-�T�N���G�f�B�^��CSS�L�[���[�h�̓��͕⊮�@�\�y��
-�����L�[���[�h�p�̒P��t�@�C���A�L�[���[�h�w���v�p�̎���
-�t�@�C���Ƃ��Ďg�p�ł��܂��B
+■概要
+サクラエディタでCSSキーワードの入力補完機能及び
+強調キーワード用の単語ファイル、キーワードヘルプ用の辞書
+ファイルとして使用できます。
 
-CSS�L�[���[�h�̓n�C�t��(-)������̃L�[���[�h�������ׁA
-���͕⊮�@�\�p�Ƌ����L�[���[�h�p�ɕ����܂����B
+CSSキーワードはハイフン(-)混じりのキーワードが多い為、
+入力補完機能用と強調キーワード用に分けました。
 
-���݂̂Ƃ���A
-�EW3C�������ł���CSS2.1�Ɋ܂܂��v���p�e�B��
-�EW3C�������ł���CSS2.1�Ɋ܂܂��v���p�e�B�̊ȈՃw���v (Rev1.00)
-�EW3C�������ł���CSS2.1�Ɋ܂܂��v���p�e�B�̒l
-�EW3C����CSS2�Ɋ܂܂��v���p�e�B�� (Rev0.92)
-�EW3C����CSS2�Ɋ܂܂��v���p�e�B�̊ȈՃw���v (Rev1.00)
-�EW3C����CSS2�Ɋ܂܂��v���p�e�B�̒l (Rev0.92)
-�EWeb Named Color�l (Rev0.92)
-�EMSIE�Ǝ������v���p�e�B�� (Rev0.92)
-�EMSIE CSS�n�b�N�p�v���p�e�B��(��:_border�Ȃ�) (Rev0.92)
-�̃L�[���[�h���o�^����Ă��܂��B
-
-
-���z�z�t�@�C��
-�ECSS2.kwd
-�����L�[���[�h�p�̒P��t�@�C���ł�
-
-�ECSS2.input.kwd
-���͕⊮�@�\�p�̒P��t�@�C���ł�
-
-�ECSS2.khp
-�L�[���[�h�w���v�p�̎����t�@�C���ł�
-
-�Ereadme.txt
-���̃t�@�C���ł�
-
-�EGPL.txt
-GPL���C�Z���X�̌����ł��B
-
-���g����
-�z�z�t�@�C�����𓀂��Ăł����t�@�C����
-���ꂼ��̋@�\�ɍ��킹�����@�Ŏw�肵�ĉ������B
-
-�ڂ������@�̓T�N���G�f�B�^�̃w���v���Q�Ƃ��ĉ������B
+現在のところ、
+・W3C勧告候補であるCSS2.1に含まれるプロパティ名
+・W3C勧告候補であるCSS2.1に含まれるプロパティの簡易ヘルプ (Rev1.00)
+・W3C勧告候補であるCSS2.1に含まれるプロパティの値
+・W3C勧告CSS2に含まれるプロパティ名 (Rev0.92)
+・W3C勧告CSS2に含まれるプロパティの簡易ヘルプ (Rev1.00)
+・W3C勧告CSS2に含まれるプロパティの値 (Rev0.92)
+・Web Named Color値 (Rev0.92)
+・MSIE独自実装プロパティ名 (Rev0.92)
+・MSIE CSSハック用プロパティ名(例:_borderなど) (Rev0.92)
+のキーワードが登録されています。
 
 
-���������
-���̃t�@�C���̒��쌠�͂����łɂ���܂��B
-GPL(GNU General Public Licence)���C�Z���X�ɏ]���܂��B
-���p�҂�GPL�ɏ]���ĉ��ρE�Ĕz�z�����s���܂��B
+■配布ファイル
+・CSS2.kwd
+強調キーワード用の単語ファイルです
+
+・CSS2.input.kwd
+入力補完機能用の単語ファイルです
+
+・CSS2.khp
+キーワードヘルプ用の辞書ファイルです
+
+・readme.txt
+このファイルです
+
+・GPL.txt
+GPLライセンスの原文です。
+
+■使い方
+配布ファイルを解凍してできたファイルを
+それぞれの機能に合わせた方法で指定して下さい。
+
+詳しい方法はサクラエディタのヘルプを参照して下さい。
 
 
-������
-GPL�Ȃ̂ł����ď����K�v�͂���܂��񂪁B
-
-�{�t�@�C�����g�p�������͎g�p�s�\�ɂ�萶���������Ȃ鑹�Q��
-�ւ��āA�����͂��������ӔC�𕉂��܂���B
-
-
-�����̑�
-���̃t�@�C����adiary�̃e�[�}���쐬����ۂ̕��Y���ł��B
-�ꉞW3C��������CSS2.1���{�������ɍ쐬���܂������A
-�L�[���[�h�����������ǂ����͖����؂ł��B
-
-MSIE�Ǝ������v���p�e�B��W3C�����̂��̂Ƌ�ʂ����
-_(�A���_�[�o�[)�Ŏn�߂Ă��܂��B
-
-�{�t�@�C���̃T�|�[�g�͈ȉ��ōs���܂��B
-http://kaede.blog.abk.nu ���̃J�e�S���u�\�t�g�E�F�A�v��
-�Y���L���ɃR�����g�Ȃ�g���b�N�o�b�N�Ȃ肵�ĉ������B
-
-���z��c�b�R�~�Ȃǂ����Ē�����Ί�т܂��B
+■難しいこと
+このファイルの著作権はかえでにあります。
+GPL(GNU General Public Licence)ライセンスに従います。
+利用者はGPLに従って改変・再配布等が行えます。
 
 
-��ToDo
-�E�L�[���[�h�w���v�ւ̑Ή�
+■お約束
+GPLなのであえて書く必要はありませんが。
 
-���X�V����
-2006/07/10 Rev0.80 �Ƃ肠�����쐬
-2006/07/11 Rev0.90 �����\���T�|�[�g
-2006/07/12 Rev0.91 Web�Z�[�t�J���[�������L�[���[�h�Ɋ܂߂�
-2006/07/20 Rev0.91a �⊮���͗p�L�[���[�h�t�@�C�����C��
-2006/09/15 Rev0.92 CSS2�AWeb Named Color�AMSIE�Ǝ������v���p�e�B���T�|�[�g
-2006/09/15 Rev1.00 CSS2/2.1�ŋK�肳��Ă���v���p�e�B�̃L�[���[�h�w���v������Y�t�B
+本ファイルを使用もしくは使用不能により生じたいかなる損害に
+関して、当方はいっさい責任を負いません。
 
-Copyright (C) 2006 ������ All rights reserved.
+
+■その他
+このファイルはadiaryのテーマを作成する際の副産物です。
+一応W3C勧告候補のCSS2.1日本語訳を元に作成しましたが、
+キーワードが正しいかどうかは未検証です。
+
+MSIE独自実装プロパティはW3C勧告のものと区別する為
+_(アンダーバー)で始めています。
+
+本ファイルのサポートは以下で行います。
+http://kaede.blog.abk.nu 内のカテゴリ「ソフトウェア」の
+該当記事にコメントなりトラックバックなりして下さい。
+
+感想やツッコミなどをして頂ければ喜びます。
+
+
+■ToDo
+・キーワードヘルプへの対応
+
+■更新履歴
+2006/07/10 Rev0.80 とりあえず作成
+2006/07/11 Rev0.90 強調表示サポート
+2006/07/12 Rev0.91 Webセーフカラーを強調キーワードに含める
+2006/07/20 Rev0.91a 補完入力用キーワードファイルを修正
+2006/09/15 Rev0.92 CSS2、Web Named Color、MSIE独自実装プロパティをサポート
+2006/09/15 Rev1.00 CSS2/2.1で規定されているプロパティのキーワードヘルプ辞書を添付。
+
+Copyright (C) 2006 かえで All rights reserved.
 ==========================================================

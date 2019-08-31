@@ -1,2 +1,2 @@
-Procedure /// ŠÖ”
-Function /// ŠÖ”
+ï»¿Procedure /// é–¢æ•°
+Function /// é–¢æ•°

@@ -1,8 +1,8 @@
-//1.5.2.0���狭���L�[���[�h�̐������ɘa���ꂽ�̂�
-//�l�ɂ���Ă͂�����g�������ł��B
-//UWSC�@Ver 3.0 uwsc.chm��蔲�� 2005�N2��26��
+﻿//1.5.2.0から強調キーワードの制限が緩和されたので
+//人によってはこれも使うかもです。
+//UWSC　Ver 3.0 uwsc.chmより抜粋 2005年2月26日
 
-// �E�C���h�E�֘A
+// ウインドウ関連
 GETID
 CLKITEM
 CHKBTN
@@ -25,7 +25,7 @@ SAVEIMG
 MUSCUR
 POSACC
 
-// ����֐��֘A
+// 制御関数関連
 EXEC
 SLEEP
 DOSCMD
@@ -39,18 +39,18 @@ LOCKHARD
 STOPFORM
 LOGPRINT
 
-// �V�X�e���֐��֘A
+// システム関数関連
 GETCTLHND
 IDTOHND
 HNDTOID
 
-// �E�B���h�E�֐��჌�x��
+// ウィンドウ関数低レベル
 MMV
 BTN
 KBD
 ACW
 
-// ��������֘A
+// 文字操作関連
 COPY
 POS
 LENGTH
@@ -63,30 +63,30 @@ CHR
 ASC
 BYTETYPE
 
-// �z�񑀍�֘A
+// 配列操作関連
 RESIZE
 SETCLEAR
 
-// �t�@�C���֘A
+// ファイル関連
 FOPEN
 FGET
 FPUT
 FCLOSE
 GETDIR
 
-// �b�n�l�I�u�W�F�N�g
+// ＣＯＭオブジェクト
 CREATEOLEOBJ
 GETACTIVEOLEOBJ
 GETOLEITEM
 COM_ERR_IGN
 COM_ERR_RET
 
-// �����F��/����
+// 音声認識/合成
 SPEAK
 RECOSTATE
 DICTATE
 
-// ���w�֐�
+// 数学関数
 RANDOM
 ABS
 ZCUT

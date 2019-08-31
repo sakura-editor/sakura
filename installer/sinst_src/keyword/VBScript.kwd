@@ -1,13 +1,13 @@
-//	VBScript for ASP
+﻿//	VBScript for ASP
 //	Copyright 2001.6.17 ichina (PublicDomain)
 //	mailto:ichina_tko@geocities.co.jp
 
-//	�t�@�C���g���q		asp,inc,vbs
-//	�s�w��R�����g1		�V���O���N�H�[�e�[�V����
-//	�啶������������ʂ��Ȃ�
+//	ファイル拡張子		asp,inc,vbs
+//	行指定コメント1		シングルクォーテーション
+//	大文字小文字を区別しない
 
-//	VBScript for ASP�ivbs_asp.kwd�j�������L�[���[�h2�ɐݒ肵�ĕ��p���Ă��������B
-//	�� VBScript for ASP ��HTML���p���l���A�P�Ƃł��@�\���܂����A�\���ƃ��\�b�h���Ƃ̋�ʂ͂��Ȃ��Ȃ�܂��B
+//	VBScript for ASP（vbs_asp.kwd）を強調キーワード2に設定して併用してください。
+//	※ VBScript for ASP はHTML併用を考え、単独でも機能しますが、予約語とメソッド等との区別はつかなくなります。
 
 
 And

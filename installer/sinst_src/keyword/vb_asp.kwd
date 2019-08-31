@@ -1,17 +1,17 @@
-//	VBScript for ASP
+﻿//	VBScript for ASP
 //	Copyright 2001.6.14 ichina (PublicDomain)
 //	mailto:ichina_tko@geocities.co.jp
 //  
-//	�t�@�C���g���q		asp,inc(,vbs)������������VBS�d�l�ɂ��Ă��������B�ڂ�����294�s�ȍ~��)
-//	�s�w��R�����g1		�V���O���N�H�[�e�[�V����
-//	�啶������������ʂ��Ȃ�
+//	ファイル拡張子		asp,inc(,vbs)ただし純正のVBS仕様にしてください。詳しくは294行以降へ)
+//	行指定コメント1		シングルクォーテーション
+//	大文字小文字を区別しない
 //
-//	VBScript�iVBScript.kwd�j�������L�[���[�h1�ɐݒ肵�ĕ��p���Ă��������B
-//	�� VBScript for ASP ��HTML���p���l���A�P�Ƃł��@�\���܂����A�\���ƃ��\�b�h���Ƃ̋�ʂ͂��Ȃ��Ȃ�܂��B
+//	VBScript（VBScript.kwd）を強調キーワード1に設定して併用してください。
+//	※ VBScript for ASP はHTML併用を考え、単独でも機能しますが、予約語とメソッド等との区別はつかなくなります。
 //
-//	HTML�L�[���[�h�Ƒg�ݍ��킹�Ďg���ۂ͈ȉ��̎d�l������܂��B
-//	HTML�D��d�l�E�E�EHTML�͈͎̔w��R�����g��ݒ肷��  &  HTML_VBScript�L�[���[�h��ǉ��i294�s�ցj
-//	SSI�D��d�l	�E�E�E          �V          ��ݒ肵�Ȃ�
+//	HTMLキーワードと組み合わせて使う際は以下の仕様があります。
+//	HTML優先仕様・・・HTMLの範囲指定コメントを設定する  &  HTML_VBScriptキーワードを追加（294行へ）
+//	SSI優先仕様	・・・          〃          を設定しない
 
 
 
@@ -299,7 +299,7 @@ EOF
 
 
 
-//	ASP�L�[���[�h�i������ASP�d�lVBScript���g�������ꍇ�͍폜���Ă��������B�j
+//	ASPキーワード（純正のASP仕様VBScriptを使いたい場合は削除してください。）
 Application
 ObjectContext
 Request
@@ -412,7 +412,7 @@ Fields
 
 
 
-//	SSI�L�[���[�h�i������ASP�d�lVBScript���g�������ꍇ�͍폜���Ă��������B�j
+//	SSIキーワード（純正のASP仕様VBScriptを使いたい場合は削除してください。）
 #config
 #echo
 #exec

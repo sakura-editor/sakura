@@ -1,4 +1,4 @@
-// AviSynth ƒL[ƒ[ƒh’è‹`ƒtƒ@ƒCƒ‹
+ï»¿// AviSynth ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«
 // http://niiyan.s8.xrea.com/blosxom/avisynth/tool/20060327-sakura-editor-keyword.htm
 
 AddBorders
@@ -171,7 +171,7 @@ WriteFile
 WriteFileIf
 WriteFileStart
 WriteFileEnd
-// ’Ç‰Á
+// è¿½åŠ 
 LoadPlugin
 loadvirtualdubplugin
 loadvfapiplugin

@@ -1,5 +1,5 @@
-// Perl ƒL[ƒ[ƒh’è‹`ƒtƒ@ƒCƒ‹
-// —\–ñŒê perlsyn
+ï»¿// Perl ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«
+// äºˆç´„èª perlsyn
 break
 continue
 do
@@ -18,8 +18,8 @@ unless
 until
 while
 
-// ŠÖ” perlfunc
-// m,q,s,y ‚Í‚Æ‚è‚ ‚¦‚¸ƒRƒƒ“ƒgƒAƒEƒg‚µ‚Ä‚ ‚è‚Ü‚·B
+// é–¢æ•° perlfunc
+// m,q,s,y ã¯ã¨ã‚Šã‚ãˆãšã‚³ãƒ¡ãƒ³ãƒˆã‚¢ã‚¦ãƒˆã—ã¦ã‚ã‚Šã¾ã™ã€‚
 
 abs
 accept

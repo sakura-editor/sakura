@@ -1,4 +1,4 @@
-apache_child_terminate
+﻿apache_child_terminate
 apache_lookup_uri
 apache_note
 apache_request_headers

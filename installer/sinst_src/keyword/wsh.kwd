@@ -1,6 +1,6 @@
-// Windows Script Host ƒL[ƒ[ƒh
+ï»¿// Windows Script Host ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰
 
-// Windows Script Host ‚ÌƒIƒuƒWƒFƒNƒg
+// Windows Script Host ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 WScript
 WshArguments
 WshController
@@ -17,7 +17,7 @@ WshUnnamed
 WshUrlShortcut
 
 
-// Windows Script Host ‚ÌƒvƒƒpƒeƒB
+// Windows Script Host ã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£
 Arguments
 AtEndOfLine
 AtEndOfStream
@@ -57,7 +57,7 @@ WindowStyle
 WorkingDirectory
 
 
-// Windows Script Host ‚Ìƒƒ\ƒbƒh
+// Windows Script Host ã®ãƒ¡ã‚½ãƒƒãƒ‰
 AddPrinterConnection
 AddWindowsPrinterConnection
 AppActivate
@@ -104,7 +104,7 @@ WriteBlankLines
 WriteLine
 
 
-// FileSystemObject ‚ÌƒvƒƒpƒeƒB
+// FileSystemObject ã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£
 AtEndOfLine
 AtEndOfStream
 Attributes
@@ -141,7 +141,7 @@ TotalSize
 Type
 VolumeName
 
-// FileSystemObject ‚Ìƒƒ\ƒbƒh
+// FileSystemObject ã®ãƒ¡ã‚½ãƒƒãƒ‰
 Add
 BuildPath
 Close

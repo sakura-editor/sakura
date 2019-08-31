@@ -1,5 +1,5 @@
-// ³‹K•\Œ»ƒL[ƒ[ƒh Ver1
-// ¦ –{İ’èƒtƒ@ƒCƒ‹‚ÌÅV”Å‚Í http://www.egroups.co.jp/files/sakura-editor/User/Data/ ‚É‚ ‚è‚Ü‚·B
+ï»¿// æ­£è¦è¡¨ç¾ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ Ver1
+// â€» æœ¬è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€æ–°ç‰ˆã¯ http://www.egroups.co.jp/files/sakura-editor/User/Data/ ã«ã‚ã‚Šã¾ã™ã€‚
 RxKey[000]=RK2,/\$#\$*\w([\w\d']|::)*/k
 RxKey[001]=RK2,/[\$\@\%]\$*\w([\w\d']|::)*/k
 RxKey[002]=RK3,/\&\$*\w([\w\d']|::)*/k

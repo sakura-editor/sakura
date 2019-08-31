@@ -1,9 +1,9 @@
-// ===============================================================================
-// ˆÈ‰º‚Í CSMacroMgr.cpp ‚©‚ç”²‚«o‚µ‚Ü‚µ‚½B
+ï»¿// ===============================================================================
+// ä»¥ä¸‹ã¯ CSMacroMgr.cpp ã‹ã‚‰æŠœãå‡ºã—ã¾ã—ãŸã€‚
 
 S_GetFilename
 
-// ƒtƒ@ƒCƒ‹‘€ìŒn
+// ãƒ•ã‚¡ã‚¤ãƒ«æ“ä½œç³»
 S_FileNew
 S_FileOpen
 S_FileSave
@@ -30,7 +30,7 @@ S_ReadOnly
 S_PropertyFile
 S_ExitAll
 
-// •ÒWŒn
+// ç·¨é›†ç³»
 S_Char
 S_CharIme
 S_Undo
@@ -58,7 +58,7 @@ S_SortAsc
 S_SortDesc
 S_Merge
 
-// ƒJ[ƒ\ƒ‹ˆÚ“®Œn
+// ã‚«ãƒ¼ã‚½ãƒ«ç§»å‹•ç³»
 S_Up
 S_Down
 S_Left
@@ -84,7 +84,7 @@ S_F_WndScrollUp
 S_GoNextParagraph
 S_GoPrevParagraph
 
-// ‘I‘ğŒn
+// é¸æŠç³»
 S_SelectWord
 S_SelectAll
 S_BeginSelect
@@ -107,10 +107,10 @@ S_GoFileEnd_Sel
 S_GoNextParagraph_Sel
 S_GoPrevParagraph_Sel
 
-// ‹éŒ`‘I‘ğŒn
+// çŸ©å½¢é¸æŠç³»
 S_BeginBoxSelect
 
-// ƒNƒŠƒbƒvƒ{[ƒhŒn
+// ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ç³»
 S_Cut
 S_Copy
 S_Paste
@@ -127,12 +127,12 @@ S_CopyFilename
 S_CopyTag
 S_CopyKeyBindList
 
-// ‘}“üŒn
+// æŒ¿å…¥ç³»
 S_InsertDate
 S_InsertTime
 S_CtrlCodeDialog
 
-// •ÏŠ·Œn
+// å¤‰æ›ç³»
 S_ToLower
 S_ToUpper
 S_ToHankaku
@@ -159,7 +159,7 @@ S_SJIStoUTF7
 S_Base64Decode
 S_Uudecode
 
-// ŒŸõŒn
+// æ¤œç´¢ç³»
 S_SearchDialog
 S_SearchNext
 S_SearchPrev
@@ -187,11 +187,11 @@ S_BookmarkReset
 S_BookmarkView
 S_BookmarkPattern
 
-// ƒ‚[ƒhØ‚è‘Ö‚¦Œn
+// ãƒ¢ãƒ¼ãƒ‰åˆ‡ã‚Šæ›¿ãˆç³»
 S_ChgmodINS
 S_CancelMode
 
-// İ’èŒn
+// è¨­å®šç³»
 S_ShowToolbar
 S_ShowFunckey
 S_ShowStatusbar
@@ -202,7 +202,7 @@ S_SelectFont
 S_WrapWindowWidth
 S_ExecCommand
 
-// ƒJƒXƒ^ƒ€ƒƒjƒ…[
+// ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼
 S_RMenu
 S_CustMenu1
 S_CustMenu2
@@ -229,7 +229,7 @@ S_CustMenu22
 S_CustMenu23
 S_CustMenu24
 
-// ƒEƒBƒ“ƒhƒEŒn
+// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ç³»
 S_SplitWinV
 S_SplitWinH
 S_SplitWinVH
@@ -246,7 +246,7 @@ S_MinimizeAll
 S_ReDraw
 S_ActivateWinOutput
 
-// x‰‡
+// æ”¯æ´
 S_Complete
 S_HelpContents
 S_HelpSearch

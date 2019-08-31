@@ -1,5 +1,5 @@
-// AviSynth ŠO•”ƒvƒ‰ƒOƒCƒ“ ƒL[ƒ[ƒh’è‹`ƒtƒ@ƒCƒ‹
-// ƒrƒfƒI“ü—Í
+ï»¿// AviSynth å¤–éƒ¨ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«
+// ãƒ“ãƒ‡ã‚ªå…¥åŠ›
 CoronaSequence
 ImageSequence
 LoadAviUtlInputPlugin
@@ -13,7 +13,7 @@ immareadanim
 immareadseq
 QTInput
 QTOutput
-// ƒCƒ“ƒ^[ƒŒ[ƒXƒrƒfƒIˆ—
+// ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ¬ãƒ¼ã‚¹ãƒ“ãƒ‡ã‚ªå‡¦ç†
 EEDI2
 FieldHint
 MSU_FieldShiftFixer
@@ -21,7 +21,7 @@ ReMatch
 ReverseFieldDominance
 Its
 NullSkip
-// ƒCƒ“ƒ^[ƒŒ[ƒX‰ğœ
+// ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ¬ãƒ¼ã‚¹è§£é™¤
 AlignFields
 AntiComb
 Area
@@ -43,7 +43,7 @@ TomsMoComp
 YV12InterlacedReduceBy2
 YV12InterlacedReduceBy2At60
 YV12InterlacedSelectTopFields
-// ‹tƒeƒŒƒVƒl
+// é€†ãƒ†ãƒ¬ã‚·ãƒ
 a60224
 Auto24FPS
 FDecimate
@@ -71,13 +71,13 @@ IsCombedTIVTC
 MergeHints
 TDecimate
 TFM
-// Bob(60fps‰»)
+// Bob(60fpsåŒ–)
 DGBob
 DoubleDeInterlace
 FrameDbl
 iBob
 LeakKernelBob
-// ƒmƒCƒYœ‹(2D)
+// ãƒã‚¤ã‚ºé™¤å»(2D)
 _2DCleanYUY2
 AdaptiveMedian
 ColourizeSmooth
@@ -119,7 +119,7 @@ Repair
 TemporalRepair
 Interleaved2Planar
 Planar2Interleaved
-// ƒmƒCƒYœ‹(ŠÔ²)
+// ãƒã‚¤ã‚ºé™¤å»(æ™‚é–“è»¸)
 atc
 CNR2
 ConditionalDenoise
@@ -139,7 +139,7 @@ RestoreMotionBlocks
 RemoveDirt
 ImproveSceneSwitch
 SCSelect
-// ƒmƒCƒYœ‹(2D+ŠÔ²)
+// ãƒã‚¤ã‚ºé™¤å»(2D+æ™‚é–“è»¸)
 Convolution3D
 Bilateral
 Deen
@@ -159,7 +159,7 @@ NoMoSmooth
 PeachSmoother
 PixieDust
 STMedianFilter
-// ƒmƒCƒY•t‰ÁEƒuƒƒbƒNƒmƒCƒYœ‹
+// ãƒã‚¤ã‚ºä»˜åŠ ãƒ»ãƒ–ãƒ­ãƒƒã‚¯ãƒã‚¤ã‚ºé™¤å»
 AddGrain
 BlindPP
 Blockbuster
@@ -171,7 +171,7 @@ MPlayerNoise
 NoiseGenerator
 SmoothD
 UniformNoise
-// ƒVƒƒ[ƒvE‚Ú‚©‚µ
+// ã‚·ãƒ£ãƒ¼ãƒ—ãƒ»ã¼ã‹ã—
 aSharp
 aWarpSharp
 FixVHSOversharp
@@ -195,7 +195,7 @@ averageblur
 binomialBlur
 gaussianblur
 unsharp
-// ƒhƒbƒg–WŠQ’áŒ¸EƒNƒƒXƒJƒ‰[œ‹
+// ãƒ‰ãƒƒãƒˆå¦¨å®³ä½æ¸›ãƒ»ã‚¯ãƒ­ã‚¹ã‚«ãƒ©ãƒ¼é™¤å»
 AntiBlink
 Bifrost
 cc
@@ -204,14 +204,14 @@ DeDot
 GuavaComb
 TComb
 UnDot
-// ƒS[ƒXƒgœ‹
+// ã‚´ãƒ¼ã‚¹ãƒˆé™¤å»
 EraseGhost
 EraseGhostV
 Ghostbuster
 LGhost
 SearchGhost
 SearchGhostV
-// ƒtƒŠƒbƒJ’áŒ¸
+// ãƒ•ãƒªãƒƒã‚«ä½æ¸›
 Antiflicker
 DeFlicker
 WDeflicker
@@ -220,7 +220,7 @@ FieldFade
 LockClense
 ReduceFlicker
 ReduceFluctuations
-// ƒNƒƒbƒvEƒŠƒTƒCƒY
+// ã‚¯ãƒ­ãƒƒãƒ—ãƒ»ãƒªã‚µã‚¤ã‚º
 AutoCrop
 BorderControl
 EDIUpsizer
@@ -239,7 +239,7 @@ SimpleResize
 WarpedResize
 InterlacedResize
 InterlacedWarpedResize
-// F
+// è‰²
 AdjustColor
 AdjustY
 ColorYUY2
@@ -282,7 +282,7 @@ GtoRGB
 BtoRGB
 Threshold
 Core
-// ƒƒS
+// ãƒ­ã‚´
 AddLogo
 AddWatermark
 EraseLogo
@@ -296,7 +296,7 @@ LogoMask
 NoLogo
 NoLogoAuto
 NoLogoM
-// ƒ}ƒXƒN
+// ãƒã‚¹ã‚¯
 CheckMask
 GraMaMa
 MADMask
@@ -346,7 +346,7 @@ TMaskedMerge
 TMaskedMerge3
 TFieldBlank
 TMaskBlank
-// ‰f‘œŒø‰Ê
+// æ˜ åƒåŠ¹æœ
 Convert3d
 freeframe
 Transition
@@ -434,7 +434,7 @@ TransWeave
 TransWipe
 TransBubbles
 TransPush
-// ‰¹º
+// éŸ³å£°
 AC3Source
 EvalMPASource
 MPASource
@@ -449,7 +449,7 @@ Befa
 CacheAudio
 CacheAudio
 SoxFilter
-// ƒfƒoƒbƒO
+// ãƒ‡ãƒãƒƒã‚°
 AVIInfo
 DVInfo
 DVAutoTimeStampEx
@@ -486,7 +486,7 @@ LogString
 SetCacheHints
 ScanClip
 CompareFiles
-// GPUƒvƒ‰ƒOƒCƒ“
+// GPUãƒ—ãƒ©ã‚°ã‚¤ãƒ³
 FFT3dGPU
 ML3DexGPU
 BlackAndWhite
@@ -510,13 +510,13 @@ GPU_TemporalSmoother
 GPU_ColorYUY2
 GPU_IT
 GPU_WNR
-// ƒXƒNƒŠƒvƒgŠÖ”
+// ã‚¹ã‚¯ãƒªãƒ—ãƒˆé–¢æ•°
 Min
 Max
 Clamp
 SelectByString
 SelectByStringEval
-// ğŒŠÖ”
+// æ¡ä»¶é–¢æ•°
 pop
 MCAnalyse
 MCShowFrame
@@ -537,7 +537,7 @@ PlaneYUAvg
 PlaneYVAvg
 PlaneUVAvg
 PlaneYUVAvg
-// ‚»‚Ì‘¼‚Ìƒvƒ‰ƒOƒCƒ“
+// ãã®ä»–ã®ãƒ—ãƒ©ã‚°ã‚¤ãƒ³
 CopyDuplicates
 Dup
 GetDups
@@ -608,7 +608,7 @@ Grid
 RemapFrames
 RemapFramesSimple
 ReplaceFramesSimple
-// 2005-05-10’Ç‰Á•ª
+// 2005-05-10è¿½åŠ åˆ†
 AlparySoftDeinterlace
 AlparySoftDenoise
 RawSequence

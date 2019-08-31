@@ -1,16 +1,16 @@
-//=========================================================
-// HTML �L�[���[�h��`�t�@�C��
+﻿//=========================================================
+// HTML キーワード定義ファイル
 //  1999/06/02 ver1.0   nakatani
-//  2001/12/27 ver1.1   Stonee    �L�[���[�h��ǉ�
-//  2002/11/17 ver1.2   Stonee    ���r�^�O��ǉ�
-//                                xhtml���ӎ����ă^�O�������������Ă݂�
-//  2009/09/20 ver1.3   syat      HTML4.01�Ή�
-//                                �Q�l�Fhttp://www.asahi-net.or.jp/~SD5A-UCD/rec-html401j/cover.html
-//  2012/06/09 ver1.4   syat      �T�N���G�f�B�^2.x������-���܂ރL�[���[�h��L����
+//  2001/12/27 ver1.1   Stonee    キーワードを追加
+//  2002/11/17 ver1.2   Stonee    ルビタグを追加
+//                                xhtmlを意識してタグを小文字化してみた
+//  2009/09/20 ver1.3   syat      HTML4.01対応
+//                                参考：http://www.asahi-net.or.jp/~SD5A-UCD/rec-html401j/cover.html
+//  2012/06/09 ver1.4   syat      サクラエディタ2.x向けに-を含むキーワードを有効化
 //
-//  ���K�\���L�[���[�h��  /&[a-z]+;/k  ���w�肵�Ă�����
-//  �u&nbsp;�v�u&yen;�v�u&alpha;�v�����F��������܂��B
-//  (netscape/IE/imode�Ŏg����\�L�ɍ�������悤�ł�)
+//  正規表現キーワードで  /&[a-z]+;/k  を指定しておくと
+//  「&nbsp;」「&yen;」「&alpha;」等が色分けされます。
+//  (netscape/IE/imodeで使える表記に差があるようです)
 //=========================================================
 _blank
 _parent
@@ -312,9 +312,9 @@ wrap
 xmp
 
 //=========================================================
-// ���r�^�O  IE5�ȏ�ɂđΉ��E�l�X�P�̍ŐV�ł͖��m�F
-// <ruby><rb>��</rb><rp>�i</rp><rt>�ꂢ</rt><rp>�j</rp></ruby>
-// <ruby><rbc><rb>��</rb><rb>�{</rb></rbc><rtc><rt>��</rt><rt>�ق�</rt></rtc></ruby>
+// ルビタグ  IE5以上にて対応・ネスケの最新版は未確認
+// <ruby><rb>例</rb><rp>（</rp><rt>れい</rt><rp>）</rp></ruby>
+// <ruby><rbc><rb>見</rb><rb>本</rb></rbc><rtc><rt>み</rt><rt>ほん</rt></rtc></ruby>
 //=========================================================
 rb
 rbc

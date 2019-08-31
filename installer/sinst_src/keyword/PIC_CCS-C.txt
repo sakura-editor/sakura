@@ -1,3 +1,3 @@
-PIC_CCS-C.txt		http://hide.maruo.co.jp/lib/hilight/pic_ccsc.html ‚ğƒSƒŠƒSƒŠ‚µ‚½‚à‚ÌB
-ccs_commands.kwd	CCS‚Ìƒ}ƒjƒ…ƒAƒ‹‚Ì–ÚŸ‚ğƒSƒŠƒSƒŠ‚µ‚½‚à‚ÌB
-2008”N8Œ19“ú
+ï»¿PIC_CCS-C.txt		http://hide.maruo.co.jp/lib/hilight/pic_ccsc.html ã‚’ã‚´ãƒªã‚´ãƒªã—ãŸã‚‚ã®ã€‚
+ccs_commands.kwd	CCSã®ãƒãƒ‹ãƒ¥ã‚¢ãƒ«ã®ç›®æ¬¡ã‚’ã‚´ãƒªã‚´ãƒªã—ãŸã‚‚ã®ã€‚
+2008å¹´8æœˆ19æ—¥

@@ -1,17 +1,17 @@
-// MathML 2.0 �L�[���[�h�t�@�C��
+﻿// MathML 2.0 キーワードファイル
 // 2002/07/11  Moca
 // 
-// Element �y�� Attribute �͑啶������������ʂ��܂�
-// Attribute value �͋�ʂ��Ȃ��ꍇ�Ƌ�ʂ���ꍇ�̗���������܂�
-// ���̃t�@�C���ɂ͗v�f�A�����A�����̒l(�ꕔ)���܂�ł��܂�
-// ���̎Q��(&pi;���̂���)�͊܂�ł��܂���
-// sakura����؂蕶���Ƃ��ĔF�����邽�ߋ����\���ł��Ȃ�����("-"�̂���)�� "//skr "��
-// �R�����g�A�E�g���Ă���܂��B����ȊO�̃R�����g��"// "�Ŏn�܂��Ă��܂�
+// Element 及び Attribute は大文字小文字を区別します
+// Attribute value は区別しない場合と区別する場合の両方があります
+// このファイルには要素、属性、属性の値(一部)を含んでいます
+// 実体参照(&pi;等のこと)は含んでいません
+// sakuraが区切り文字として認識するため強調表示できないもの("-"のこと)は "//skr "で
+// コメントアウトしてあります。それ以外のコメントは"// "で始まっています
 
-// MathML�pDOCTYPE
+// MathML用DOCTYPE
 // <!DOCTYPE math PUBLIC "-//W3C//DTD MathML 2.0//EN"
 //          "http://www.w3.org/TR/MathML2/dtd/mathml2.dtd">
-// html1.1 + mathml�pDOCTYPE
+// html1.1 + mathml用DOCTYPE
 // <!DOCTYPE html
 //     PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN"
 //            "http://www.w3.org/TR/MathML2/dtd/xhtml-math11-f.dtd" >
@@ -21,7 +21,7 @@
 //  application/mathml+xml
 // MathML 1.0 MIME type
 //  text/mathml
-// �g���q
+// 拡張子
 //  .mml
 
 // Element

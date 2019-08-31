@@ -1,10 +1,10 @@
-ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ ƒ‹[ƒ‹ƒtƒ@ƒCƒ‹ [Tera Term Pro]
-2002/07/24	‚·‚¢
-¦ ‚±‚Ìƒtƒ@ƒCƒ‹‚ÌŽg‚¢•û‚ÍA“¯«‚Ì TTL.KWD ‚ðŽQÆ‚µ‚Ä‰º‚³‚¢B
+ï»¿ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æž ãƒ«ãƒ¼ãƒ«ãƒ•ã‚¡ã‚¤ãƒ« [Tera Term Pro]
+2002/07/24	ã™ã„
+â€» ã“ã®ãƒ•ã‚¡ã‚¤ãƒ«ã®ä½¿ã„æ–¹ã¯ã€åŒæ¢±ã® TTL.KWD ã‚’å‚ç…§ã—ã¦ä¸‹ã•ã„ã€‚
 
-¦ Šg’£Žq‚ª .RL ‚É‚È‚Á‚Ä‚¢‚Ü‚·‚ªA‚±‚ê‚Í“K“–(‚Å‚½‚ç‚ß)‚Å‚·B
-@ sakura.exe –{‘Ì‘¤‚Åƒ‹[ƒ‹ƒtƒ@ƒCƒ‹‚ÌŠg’£Žq‚ªŒˆ’è‚³‚ê‚½‚çA
-@ ‚»‚ê‚É]‚Á‚ÄC³‚·‚é‚Â‚à‚è‚Å‚·B
+â€» æ‹¡å¼µå­ãŒ .RL ã«ãªã£ã¦ã„ã¾ã™ãŒã€ã“ã‚Œã¯é©å½“(ã§ãŸã‚‰ã‚)ã§ã™ã€‚
+ã€€ sakura.exe æœ¬ä½“å´ã§ãƒ«ãƒ¼ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®æ‹¡å¼µå­ãŒæ±ºå®šã•ã‚ŒãŸã‚‰ã€
+ã€€ ãã‚Œã«å¾“ã£ã¦ä¿®æ­£ã™ã‚‹ã¤ã‚‚ã‚Šã§ã™ã€‚
 
 INCLUDE /// Control
 include /// Control
