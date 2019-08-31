@@ -654,7 +654,7 @@ void CEditDoc::OnChangeType()
 void CEditDoc::OnChangeSetting(
 	bool	bDoLayout,
 	bool	bBlockingHook,
-	bool    bFromSetFontSize
+	bool	bFromSetFontSize
 )
 {
 	int			i;

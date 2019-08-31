@@ -286,10 +286,10 @@ void CLayoutMgr::_OnLine1(SLayoutWork* pWork)
 
 /*!
 	現在の折り返し文字数に合わせて全データのレイアウト情報を再生成します
+
 	@date 2004.04.03 Moca TABが使われると折り返し位置がずれるのを防ぐため，
 		nPosXがインデントを含む幅を保持するように変更．m_nMaxLineKetasは
 		固定値となったが，既存コードの置き換えは避けて最初に値を代入するようにした．
-	@param[in] bBlockingHook 処理中のユーザー操作を可能にする
 */
 void CLayoutMgr::_DoLayout(bool bBlockingHook)
 {
