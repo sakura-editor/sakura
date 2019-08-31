@@ -12,10 +12,4 @@
       Outputs="$(GitHash)">
     <Exec Command="..\sakura\githash.bat ..\sakura_core $(GitHash)" />
   </Target>
-  <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
-    <!-- Add files to @Clean just before running CoreClean. -->
-    <ItemGroup>
-      <Clean Include="$(GitHash)" />
-    </ItemGroup>
-  </Target>
 </Project>
