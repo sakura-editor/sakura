@@ -1,8 +1,8 @@
 <Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="FuncCode">
     <HeaderMake>..\Win32\$(Configuration)\HeaderMake.exe</HeaderMake>
-    <FuncCodeDefine>..\sakura_core\Funccode_define.h</FuncCodeDefine>
-    <FuncCodeEnum>..\sakura_core\Funccode_enum.h</FuncCodeEnum>
+    <FuncCodeDefine>$(OutDir)Funccode_define.h</FuncCodeDefine>
+    <FuncCodeEnum>$(OutDir)Funccode_enum.h</FuncCodeEnum>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\HeaderMake\HeaderMake.vcxproj">
@@ -15,7 +15,7 @@
       Outputs="$(FuncCodeDefine)">
     <Exec Command="$(HeaderMake) -in=@(FuncCodeRes) -out=$(FuncCodeDefine) -mode=define" />
   </Target>
-  <Target Name="FuncCodeEnum" BeforeTargets="ClCompile"
+  <Target Name="FuncCodeEnum" BeforeTargets="ClCompile" AfterTargets="GitHash"
       Inputs="@(FuncCodeRes)"
       Outputs="$(FuncCodeEnum)"
       Condition="'$(GenerateFuncCodeEnum)'=='true'">
