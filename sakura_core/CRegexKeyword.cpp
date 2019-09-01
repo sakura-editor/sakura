@@ -370,48 +370,49 @@ BOOL CRegexKeyword::RegexIsKeyword(
 
 	for(i = 0; i < m_nRegexKeyCount; i++)
 	{
-		if( m_sInfo[i].nMatch != RK_NOMATCH )  /* この行にキーワードがないと分かっていない */
+		auto &info = m_sInfo[i];
+		if( info.nMatch != RK_NOMATCH )  /* この行にキーワードがないと分かっていない */
 		{
-			if( m_sInfo[i].nOffset == nPos )  /* 以前検索した結果に一致する */
+			if( info.nOffset == nPos )  /* 以前検索した結果に一致する */
 			{
-				*nMatchLen   = m_sInfo[i].nLength;
+				*nMatchLen   = info.nLength;
 				*nMatchColor = m_pTypes->m_RegexKeywordArr[i].m_nColorIndex;
 				return TRUE;  /* マッチした */
 			}
 
 			/* 以前の結果はもう古いので再検索する */
-			if( m_sInfo[i].nOffset < nPos )
+			if( info.nOffset < nPos )
 			{
 				matched = ExistBMatchEx()
-					? BMatchEx(NULL, cStr.GetPtr(), cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &m_sInfo[i].pBregexp, m_szMsg)
-					: BMatch(NULL,                  cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &m_sInfo[i].pBregexp, m_szMsg);
+					? BMatchEx(NULL, cStr.GetPtr(), cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &info.pBregexp, m_szMsg)
+					: BMatch(NULL,                  cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &info.pBregexp, m_szMsg);
 				if( 0 < matched )
 				{
-					m_sInfo[i].nOffset = m_sInfo[i].pBregexp->startp[0] - cStr.GetPtr();
-					m_sInfo[i].nLength = m_sInfo[i].pBregexp->endp[0] - m_sInfo[i].pBregexp->startp[0];
-					m_sInfo[i].nMatch  = RK_MATCH;
+					info.nOffset = info.pBregexp->startp[0] - cStr.GetPtr();
+					info.nLength = info.pBregexp->endp[0] - info.pBregexp->startp[0];
+					info.nMatch  = RK_MATCH;
 				
 					/* 指定の開始位置でマッチした */
-					if( m_sInfo[i].nOffset == nPos )
+					if( info.nOffset == nPos )
 					{
-						if( m_sInfo[i].nHead != 1 || nPos == 0 )
+						if( info.nHead != 1 || nPos == 0 )
 						{
-							*nMatchLen   = m_sInfo[i].nLength;
+							*nMatchLen   = info.nLength;
 							*nMatchColor = m_pTypes->m_RegexKeywordArr[i].m_nColorIndex;
 							return TRUE;  /* マッチした */
 						}
 					}
 
 					/* 行先頭を要求する正規表現では次回から無視する */
-					if( m_sInfo[i].nHead == 1 )
+					if( info.nHead == 1 )
 					{
-						m_sInfo[i].nMatch = RK_NOMATCH;
+						info.nMatch = RK_NOMATCH;
 					}
 				}
 				else
 				{
 					/* この行にこのキーワードはない */
-					m_sInfo[i].nMatch = RK_NOMATCH;
+					info.nMatch = RK_NOMATCH;
 				}
 			}
 		}
