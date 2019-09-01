@@ -385,12 +385,13 @@ BOOL CRegexKeyword::RegexIsKeyword(
 			/* 以前の結果はもう古いので再検索する */
 			if( info.nOffset < nPos )
 			{
+				const auto begp = cStr.GetPtr();		//!< 行頭位置
 				matched = ExistBMatchEx()
-					? BMatchEx(NULL, cStr.GetPtr(), cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &pBregexp, m_szMsg)
-					: BMatch(NULL,                  cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &pBregexp, m_szMsg);
+					? BMatchEx(NULL, begp, begp+nPos, begp+cStr.GetLength(), &pBregexp, m_szMsg)
+					: BMatch(NULL,         begp+nPos, begp+cStr.GetLength(), &pBregexp, m_szMsg);
 				if( 0 < matched )
 				{
-					info.nOffset = pBregexp->startp[0] - cStr.GetPtr();
+					info.nOffset = pBregexp->startp[0] - begp;
 					info.nLength = pBregexp->endp[0] - pBregexp->startp[0];
 					info.nMatch  = RK_MATCH;
 				
