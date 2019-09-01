@@ -644,6 +644,8 @@ void CEditDoc::OnChangeType()
 
 /*! ビューに設定変更を反映させる
 	@param [in] bDoLayout レイアウト情報の再作成
+	@param [in] bBlockingHook 処理中のユーザー操作を可能にする
+	@param [in] bFromSetFontSize フォントサイズ設定から呼び出されたかどうか
 
 	@date 2004.06.09 Moca レイアウト再構築中にProgress Barを表示する．
 	@date 2008.05.30 nasukoji	テキストの折り返し方法の変更処理を追加
@@ -651,7 +653,8 @@ void CEditDoc::OnChangeType()
 */
 void CEditDoc::OnChangeSetting(
 	bool	bDoLayout,
-	bool	bBlockingHook
+	bool	bBlockingHook,
+	bool	bFromSetFontSize
 )
 {
 	int			i;
@@ -685,8 +688,10 @@ void CEditDoc::OnChangeSetting(
 		}
 	}
 
-	/* 共有データ構造体のアドレスを返す */
-	CFileNameManager::getInstance()->TransformFileName_MakeCache();
+	if(!bFromSetFontSize ){
+		/* 展開済みメタ文字列のキャッシュを作成・更新 */
+		CFileNameManager::getInstance()->TransformFileName_MakeCache();
+	}
 
 	CLogicPointEx* posSaveAry = NULL;
 
@@ -714,8 +719,10 @@ void CEditDoc::OnChangeSetting(
 	}
 	const CKetaXInt nTabSpaceOld = m_cDocType.GetDocumentAttribute().m_nTabSpace;
 
-	// 文書種別
-	m_cDocType.SetDocumentType( CDocTypeManager().GetDocumentTypeOfPath( m_cDocFile.GetFilePath() ), false );
+	if (!bFromSetFontSize) {
+		// 文書種別
+		m_cDocType.SetDocumentType( CDocTypeManager().GetDocumentTypeOfPath( m_cDocFile.GetFilePath() ), false );
+	}
 
 	const STypeConfig& ref = m_cDocType.GetDocumentAttribute();
 
@@ -832,8 +839,10 @@ void CEditDoc::OnChangeSetting(
 		SelectCharWidthCache( CWM_FONT_PRINT, CWM_CACHE_LOCAL );
 	}
 
-	// 親ウィンドウのタイトルを更新
-	m_pcEditWnd->UpdateCaption();
+	if(!bFromSetFontSize ){
+		// 親ウィンドウのタイトルを更新
+		m_pcEditWnd->UpdateCaption();
+	}
 }
 
 /*! ファイルを閉じるときのMRU登録 & 保存確認 ＆ 保存実行
