@@ -370,13 +370,14 @@ BOOL CRegexKeyword::RegexIsKeyword(
 
 	for(i = 0; i < m_nRegexKeyCount; i++)
 	{
+		const auto colorIndex = m_pTypes->m_RegexKeywordArr[i].m_nColorIndex;
 		auto &info = m_sInfo[i];
 		if( info.nMatch != RK_NOMATCH )  /* この行にキーワードがないと分かっていない */
 		{
 			if( info.nOffset == nPos )  /* 以前検索した結果に一致する */
 			{
 				*nMatchLen   = info.nLength;
-				*nMatchColor = m_pTypes->m_RegexKeywordArr[i].m_nColorIndex;
+				*nMatchColor = colorIndex;
 				return TRUE;  /* マッチした */
 			}
 
@@ -398,7 +399,7 @@ BOOL CRegexKeyword::RegexIsKeyword(
 						if( info.nHead != 1 || nPos == 0 )
 						{
 							*nMatchLen   = info.nLength;
-							*nMatchColor = m_pTypes->m_RegexKeywordArr[i].m_nColorIndex;
+							*nMatchColor = colorIndex;
 							return TRUE;  /* マッチした */
 						}
 					}
