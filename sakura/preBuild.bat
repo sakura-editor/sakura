@@ -9,6 +9,4 @@ set SRCDIR=..\sakura_core
 @echo preBuild
 @echo =======================
 
-call funccode.bat     %EXEDIR% %SRCDIR%
 call gen-makefile.bat %EXEDIR% %SRCDIR%
-call githash.bat %SRCDIR%

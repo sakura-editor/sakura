@@ -6,16 +6,7 @@
 // CodePage: 65001 (UTF-8)
 #pragma code_page(65001)
 
-//#define SAKURA_LANG_RESOURCE
-
-#ifndef SAKURA_LANG_RESOURCE
-	#include "sakura_rc.h"
-	#include "Funccode_define.h"
-	#include "String_define.h"
-#else
-	#include "sakura_lang.h"
-#endif
-#include "version.h"
+#include "sakura_rc.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -25,6 +16,10 @@
 #define APSTUDIO_HIDDEN_SYMBOLS
 #include <Windows.h>
 #undef APSTUDIO_HIDDEN_SYMBOLS
+
+#include "Funccode_define.h"
+#include "String_define.h"
+#include "version.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -47,21 +42,24 @@ LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE DISCARDABLE 
+1 TEXTINCLUDE 
 BEGIN
     "sakura_rc.h\0"
 END
 
-2 TEXTINCLUDE DISCARDABLE 
+2 TEXTINCLUDE 
 BEGIN
     "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
     "#include <Windows.h>\r\n"
     "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
-    "#include ""funccode_define.h""\r\n"
+    "\r\n"
+    "#include ""Funccode_define.h""\r\n"
+    "#include ""String_define.h""\r\n"
+    "#include ""version.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE DISCARDABLE 
+3 TEXTINCLUDE 
 BEGIN
     "\r\n"
     "\0"
