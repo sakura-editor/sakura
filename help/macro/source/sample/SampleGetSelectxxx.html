@@ -18,25 +18,5 @@ Sakura-Editor Macro Reference
 oWsh.Popup(iLen + "byte", <span style = "color:red;">0</span>, <span style = "color:#800000;">""</span>, <span style = "color:red;">0</span>);
 </pre>
 
-<pre>
-<span style = "color:green;">//sample.ppa
-//選択状態を調べる</span>
-<span style = "color:blue;">if S_IsTextSelected</span> = <span style = "color:red;">0</span> <span style = "color:blue;">then</span>
-  <span style = "color:blue;">MessageBox</span>(<span style = "color:#800000;">'非選択状態です'</span>, <span style = "color:#800000;">'title'</span>, <span style = "color:red;">0</span>)
-
-<span style = "color:blue;">else if S_IsTextSelected</span> &gt; <span style = "color:red;">1</span> <span style = "color:blue;">then</span>
-  <span style = "color:blue;">MessageBox</span>(<span style = "color:#800000;">'矩形選択状態です'</span>, <span style = "color:#800000;">'title'</span>, <span style = "color:red;">0</span>)
-
-<span style = "color:blue;">else if</span> (<span style = "color:blue;">S_GetSelectColmFrom</span> = <span style = "color:red;">1</span>) and (<span style = "color:blue;">S_GetSelectColmTo</span> = <span style = "color:red;">1</span>) <span style = "color:blue;">then</span>
-  <span style = "color:blue;">MessageBox</span>(<span style = "color:#800000;">'行選択状態です'</span>, <span style = "color:#800000;">'title'</span>, <span style = "color:red;">0</span>)
-
-<span style = "color:blue;">else if S_GetSelectLineFrom</span> = <span style = "color:blue;">S_GetSelectLineTo</span> <span style = "color:blue;">then</span>
-  <span style = "color:blue;">MessageBox</span>(<span style = "color:#800000;">'１行以内の部分選択です'</span>, <span style = "color:#800000;">'title'</span>, <span style = "color:red;">0</span>)
-
-<span style = "color:blue;">else</span>
-  <span style = "color:blue;">MessageBox</span>(<span style = "color:#800000;">'複数行にまたがった部分選択です'</span>, <span style = "color:#800000;">'title'</span>, <span style = "color:red;">0</span>)
-;
-</pre>
-
 <hr>
 </body></html>

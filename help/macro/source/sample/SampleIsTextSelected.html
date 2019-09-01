@@ -30,17 +30,5 @@ sBuf += <span style = "color:blue;">GetSelectedString</span>(<span style = "colo
 oWsh.Popup(sBuf, <span style = "color:red;">0</span>, <span style = "color:#800000;">""</span>, <span style = "color:red;">0</span>);
 </pre>
 
-<pre>
-<span style = "color:green;">//sample.ppa</span>
-<span style = "color:blue;">case S_IsTextSelected of</span>
-<span style = "color:red;">0</span>:
-    <span style = "color:blue;">MessageBox</span>(<span style = "color:#800000;">'非選択状態です'</span>, <span style = "color:#800000;">''</span>, <span style = "color:red;">0</span>);
-<span style = "color:red;">1</span>:
-    <span style = "color:blue;">MessageBox</span>(<span style = "color:blue;">S_GetSelectedString</span>(<span style = "color:red;">0</span>), <span style = "color:#800000;">'選択文字列'</span>, <span style = "color:red;">0</span>);
-<span style = "color:red;">2</span>:
-    <span style = "color:blue;">MessageBox</span>(<span style = "color:blue;">S_GetSelectedString</span>(<span style = "color:red;">0</span>), <span style = "color:#800000;">'矩形選択文字列'</span>, <span style = "color:red;">0</span>);
-<span style = "color:blue;">end</span>;
-</pre>
-
 <hr>
 </body></html>
