@@ -356,8 +356,6 @@ BOOL CRegexKeyword::RegexIsKeyword(
 	int*				nMatchColor	//!< [out] マッチした色番号
 )
 {
-	int	i, matched;
-
 	MYDBGMSG("RegexIsKeyword")
 
 	//動作に必要なチェックをする。
@@ -368,7 +366,7 @@ BOOL CRegexKeyword::RegexIsKeyword(
 		return FALSE;
 	}
 
-	for(i = 0; i < m_nRegexKeyCount; i++)
+	for( int i = 0; i < m_nRegexKeyCount; i++ )
 	{
 		const auto colorIndex = m_pTypes->m_RegexKeywordArr[i].m_nColorIndex;
 		auto &info = m_sInfo[i];
@@ -388,7 +386,7 @@ BOOL CRegexKeyword::RegexIsKeyword(
 				const auto begp = cStr.GetPtr();			//!< 行頭位置
 				const auto endp = begp + cStr.GetLength();	//!< 行末位置
 				const auto startp = begp + nPos;			//!< 検索開始位置
-				matched = ExistBMatchEx()
+				int matched = ExistBMatchEx()
 					? BMatchEx(NULL, begp, startp, endp, &pBregexp, m_szMsg)
 					: BMatch(NULL,         startp, endp, &pBregexp, m_szMsg);
 				if( 0 < matched )
