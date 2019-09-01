@@ -389,7 +389,8 @@ BOOL CRegexKeyword::RegexIsKeyword(
 				int matched = ExistBMatchEx()
 					? BMatchEx(NULL, begp, startp, endp, &pBregexp, m_szMsg)
 					: BMatch(NULL,         startp, endp, &pBregexp, m_szMsg);
-				if( 0 < matched )
+				if( 0 < matched
+					&& pBregexp->endp[0] - pBregexp->startp[0] > 0 )
 				{
 					info.nOffset = pBregexp->startp[0] - begp;
 					info.nLength = pBregexp->endp[0] - pBregexp->startp[0];
