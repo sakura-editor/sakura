@@ -372,6 +372,7 @@ BOOL CRegexKeyword::RegexIsKeyword(
 	{
 		const auto colorIndex = m_pTypes->m_RegexKeywordArr[i].m_nColorIndex;
 		auto &info = m_sInfo[i];
+		auto *pBregexp = info.pBregexp;
 		if( info.nMatch != RK_NOMATCH )  /* この行にキーワードがないと分かっていない */
 		{
 			if( info.nOffset == nPos )  /* 以前検索した結果に一致する */
@@ -385,12 +386,12 @@ BOOL CRegexKeyword::RegexIsKeyword(
 			if( info.nOffset < nPos )
 			{
 				matched = ExistBMatchEx()
-					? BMatchEx(NULL, cStr.GetPtr(), cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &info.pBregexp, m_szMsg)
-					: BMatch(NULL,                  cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &info.pBregexp, m_szMsg);
+					? BMatchEx(NULL, cStr.GetPtr(), cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &pBregexp, m_szMsg)
+					: BMatch(NULL,                  cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &pBregexp, m_szMsg);
 				if( 0 < matched )
 				{
-					info.nOffset = info.pBregexp->startp[0] - cStr.GetPtr();
-					info.nLength = info.pBregexp->endp[0] - info.pBregexp->startp[0];
+					info.nOffset = pBregexp->startp[0] - cStr.GetPtr();
+					info.nLength = pBregexp->endp[0] - pBregexp->startp[0];
 					info.nMatch  = RK_MATCH;
 				
 					/* 指定の開始位置でマッチした */
