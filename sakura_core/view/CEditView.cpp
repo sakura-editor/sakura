@@ -1253,7 +1253,7 @@ bool CEditView::IsCurrentPositionURL(
 						&& (i == 0 || !IS_KEYWORD_CHAR(pLine[i - 1]))	// 2009.05.22 ryoji CColor_Url::BeginColor()と同条件に
 						&& IsURL(&pLine[i], (Int)(nLineLen - i), &nUrlLen) );	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
 		}
-		if( bMatch ){
+		if( bMatch && nUrlLen > 0 ){
 			if( i <= ptXY.GetX2() && ptXY.GetX2() < i + CLogicInt(nUrlLen) ){
 				/* URLを返す場合 */
 				if( pwstrURL ){
