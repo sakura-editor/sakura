@@ -25,8 +25,6 @@
 
 struct STypeConfig;
 
-#define USE_PARENT	//親を使ってキーワード格納領域を削減する。
-
 //@@@ 2001.11.17 add start MIK
 struct RegexKeywordInfo {
 	int	m_nColorIndex;		//色指定番号
@@ -36,10 +34,6 @@ struct RegexKeywordInfo {
 //!	正規表現キーワード検索情報構造体
 typedef struct RegexInfo_t {
 	BREGEXP_W	*pBregexp;	//BREGEXP_W構造体
-#ifdef USE_PARENT
-#else
-	struct RegexKeywordInfo	sRegexKey;	//コンパイルパターンを保持
-#endif
 	int    nStatus;		//状態(EMPTY,CLOSE,OPEN,ACTIVE,ERROR)
 	int    nMatch;		//このキーワードのマッチ状態(EMPTY,MATCH,NOMATCH)
 	int    nOffset;		//マッチした位置
@@ -85,10 +79,6 @@ private:
 	DWORD			m_nCompiledMagicNumber;		//!< コンパイル済みか？
 	int				m_nRegexKeyCount;			//!< 現在のキーワード数
 	REGEX_INFO		m_sInfo[MAX_REGEX_KEYWORD];	//!< キーワード一覧(BREGEXPコンパイル対象)
-#ifdef USE_PARENT
-#else
-	wchar_t			m_keywordList[MAX_REGEX_KEYWORDLISTLEN];
-#endif
 	wchar_t			m_szMsg[256];				//!< BREGEXP_Wからのメッセージを保持する
 };
 
