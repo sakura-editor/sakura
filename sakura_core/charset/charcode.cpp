@@ -210,7 +210,7 @@ namespace WCODE
 				// KB145994
 				// tmAveCharWidth は不正確(半角か全角なのかも不明な値を返す)
 				SIZE sz;
-				GetTextExtentPoint32W_AnyBuild(hdcArr[i], L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 52, &sz);
+				GetTextExtentPoint32(hdcArr[i], L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 52, &sz);
 				sz.cx = (sz.cx / 26 + 1) / 2;
 				if( m_han_size.cx < sz.cx ){
 					m_han_size.cx = sz.cx;
@@ -255,7 +255,7 @@ namespace WCODE
 		bool CalcHankakuByFont(wchar_t c)
 		{
 			SIZE size={m_han_size.cx*2,0}; //関数が失敗したときのことを考え、全角幅で初期化しておく
-			GetTextExtentPoint32W_AnyBuild(SelectHDC(c),&c,1,&size);
+			GetTextExtentPoint32(SelectHDC(c),&c,1,&size);
 			return (size.cx<=m_han_size.cx);
 		}
 		bool IsHankakuByWidth(int width){
@@ -266,20 +266,20 @@ namespace WCODE
 			SIZE size={m_han_size.cx*2,0}; //関数が失敗したときのことを考え、全角幅で初期化しておく
 			// 2014.12.21 コントロールコードの表示・NULが1px幅になるのをスペース幅にする
 			if (WCODE::IsControlCode(c)) {
-				GetTextExtentPoint32W_AnyBuild(SelectHDC(c),&c,1,&size);
+				GetTextExtentPoint32(SelectHDC(c),&c,1,&size);
 				const int nCx = size.cx;
 				const wchar_t proxyChar = ((L'\0' == c) ? ' ' : L'･');
-				GetTextExtentPoint32W_AnyBuild(SelectHDC(proxyChar),&proxyChar,1,&size);
+				GetTextExtentPoint32(SelectHDC(proxyChar),&proxyChar,1,&size);
 				return t_max<int>(nCx, size.cx);
 			}
-			GetTextExtentPoint32W_AnyBuild(SelectHDC(c),&c,1,&size);
+			GetTextExtentPoint32(SelectHDC(c),&c,1,&size);
 			return t_max<int>(1,size.cx);
 		}
 		int CalcPxWidthByFont2(const wchar_t* pc2)
 		{
 			SIZE size={m_han_size.cx*2,0};
 			// サロゲートは全角フォント
-			GetTextExtentPoint32W_AnyBuild(m_hdcFull?m_hdcFull:m_hdc,pc2,2,&size);
+			GetTextExtentPoint32(m_hdcFull?m_hdcFull:m_hdc,pc2,2,&size);
 			return t_max<int>(1,size.cx);
 		}
 		bool GetMultiFont() const

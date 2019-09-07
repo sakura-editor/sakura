@@ -77,7 +77,7 @@ void CTextMetrics::Update(HDC hdc, HFONT hFont, int nLineSpace, int nColmSpace)
 			// KB145994
 			// tmAveCharWidth は不正確(半角か全角なのかも不明な値を返す)
 			// ただしこのコードはカーニングの影響を受ける
-			GetTextExtentPoint32W_AnyBuild(hdc, L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 52, &sz);
+			GetTextExtentPoint32(hdc, L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 52, &sz);
 			sz.cx = (sz.cx / 26 + 1) / 2;
 		}
 		TEXTMETRIC tm;

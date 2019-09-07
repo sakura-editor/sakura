@@ -69,8 +69,6 @@ namespace ApiWrap
 		LPCWSTR lpszCurrent
 	);
 
-	#define GetTextExtentPoint32W_AnyBuild GetTextExtentPoint32
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//             その他W系API                                     //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
