@@ -70,20 +70,6 @@ namespace ApiWrap
 	);
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//             その他W系API                                     //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-	inline int LoadStringW_AnyBuild(
-		HINSTANCE	hInstance,
-		UINT		uID,
-		LPWSTR		lpBuffer,
-		int			nBufferCount	//!< バッファのサイズ。文字単位。
-	)
-	{
-		return ::LoadStringW(hInstance, uID, lpBuffer, nBufferCount);
-	}
-
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                    描画API 不具合ラップ                     //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//VistaでSetPixelが動かないため、代替関数を用意。
