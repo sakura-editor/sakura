@@ -57,14 +57,6 @@ namespace ApiWrap
 	#define MakeSureDirectoryPathExistsT MakeSureDirectoryPathExistsW
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//              W系描画API                                      //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-	LPWSTR CharNextW_AnyBuild(
-		LPCWSTR lpsz
-	);
-
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                    描画API 不具合ラップ                     //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//VistaでSetPixelが動かないため、代替関数を用意。

@@ -232,7 +232,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode, b
 	// 選択開始位置より前後200(or 50)文字ずつを考慮文字列にする
 	const int nReconvMaxLen = (bDocumentFeed ? 50 : 200); //$$マジックナンバー注意
 	while (ptSelect.x - nReconvIndex > nReconvMaxLen) {
-		nReconvIndex = t_max<int>(nReconvIndex+1, ::CharNextW_AnyBuild(pLine+nReconvIndex)-pLine);
+		nReconvIndex = t_max<int>(nReconvIndex+1, ::CharNext(pLine+nReconvIndex)-pLine);
 	}
 	
 	//再変換考慮文字列終了  //行の中で再変換のAPIにわたすとする文字列の長さ
@@ -241,7 +241,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode, b
 		const wchar_t*       p = pLine + ptSelect.x;
 		const wchar_t* const q = pLine + ptSelect.x + nReconvMaxLen;
 		while (p <= q) {
-			p = t_max(p+1, const_cast<LPCWSTR>(::CharNextW_AnyBuild(p)));
+			p = t_max(p+1, const_cast<const wchar_t*>(::CharNext(p)));
 		}
 		nReconvLen = p - pLine - nReconvIndex;
 	}

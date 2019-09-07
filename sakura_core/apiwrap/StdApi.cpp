@@ -55,19 +55,6 @@ namespace ApiWrap{
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//              W系描画API                                     //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-	LPWSTR CharNextW_AnyBuild(
-		LPCWSTR lpsz
-	)
-	{
-		//$$ サロゲートペア無視
-		if(*lpsz)return const_cast<LPWSTR>(lpsz+1);
-		else return const_cast<LPWSTR>(lpsz);
-	}
-
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//             その他W系API                                     //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
