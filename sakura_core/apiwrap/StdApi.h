@@ -64,11 +64,6 @@ namespace ApiWrap
 		LPCWSTR lpsz
 	);
 
-	LPWSTR CharPrevW_AnyBuild(
-		LPCWSTR lpszStart,
-		LPCWSTR lpszCurrent
-	);
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                    描画API 不具合ラップ                     //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

@@ -321,7 +321,7 @@ const wchar_t* CNativeW::GetCharPrev( const wchar_t* pData, int nDataLen, const 
 	}
 
 	return pPrev;
-//	return ::CharPrevW_AnyBuild( pData, pDataCurrent );
+//	return ::CharPrev( pData, pDataCurrent );
 }
 
 //ShiftJISに変換して返す

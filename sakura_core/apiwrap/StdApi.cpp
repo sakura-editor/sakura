@@ -67,16 +67,6 @@ namespace ApiWrap{
 		else return const_cast<LPWSTR>(lpsz);
 	}
 
-	LPWSTR CharPrevW_AnyBuild(
-		LPCWSTR lpszStart,
-		LPCWSTR lpszCurrent
-	)
-	{
-		//$$ サロゲートペア無視
-		if(lpszCurrent>lpszStart)return const_cast<LPWSTR>(lpszCurrent-1);
-		else return const_cast<LPWSTR>(lpszStart);
-	}
-
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//             その他W系API                                     //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
