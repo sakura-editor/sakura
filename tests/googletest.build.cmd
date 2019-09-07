@@ -20,6 +20,15 @@ if defined VCVARSALL_PATH (
 	call %VCVARSALL_PATH% %VCVARS_ARCH% || endlocal && exit /b 1
 )
 
+if not exist CMakeCache.txt (
+	call :run_cmake_configure
+)
+
+cmake --build . --config %CONFIGURATION% || endlocal && exit /b 1
+
+endlocal && exit /b 0
+
+:run_cmake_configure
 where ninja.exe > NUL 2>&1
 if not errorlevel 1 (
 	set GENERATOR=Ninja
@@ -43,9 +52,8 @@ cmake -G "%GENERATOR%" -DCMAKE_BUILD_TYPE=%CONFIGURATION% ^
   %SOURCE_DIR%                                            ^
   || endlocal && exit /b 1
 
-cmake --build . --config %CONFIGURATION% || endlocal && exit /b 1
+goto :EOF
 
-endlocal && exit /b 0
 
 :find_cl_exe
 for /f "usebackq delims=" %%a in (`where cl.exe`) do (
