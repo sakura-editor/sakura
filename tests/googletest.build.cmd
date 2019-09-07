@@ -5,13 +5,12 @@ set CONFIGURATION=%~3
 set VCVARSALL_PATH=%4
 set VCVARS_ARCH=%~5
 
-if not defined CMD_GIT call %~dp0..\tools\find-tools.bat
-if not defined CMD_GIT (
-	echo git.exe was not found.
-	endlocal && exit /b 1
-)
-
 if not exist "%~dp0googletest\CMakeLists.txt" (
+	if not defined CMD_GIT call %~dp0..\tools\find-tools.bat
+	if not defined CMD_GIT (
+		echo git.exe was not found.
+		endlocal && exit /b 1
+	)
 	"%CMD_GIT%" submodule init   %~dp0googletest || endlocal && exit /b 1
 	"%CMD_GIT%" submodule update %~dp0googletest || endlocal && exit /b 1
 )
