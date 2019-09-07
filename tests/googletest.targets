@@ -1,7 +1,7 @@
 <Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="GoogleTest">
     <GoogleTestSourceDir>$(MSBuildThisFileDirectory)googletest\</GoogleTestSourceDir>
-    <GoogleTestBuildDir>$(MSBuildThisFileDirectory)build\$(Platform)\$(Configuration)\googletest\</GoogleTestBuildDir>
+    <GoogleTestBuildDir>$(MSBuildThisFileDirectory)build\$(Platform)\$(Configuration)\googletest</GoogleTestBuildDir>
     <IncludePath>$(GoogleTestSourceDir)googletest\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(GoogleTestBuildDir)\lib;$(GoogleTestBuildDir)\lib\$(Configuration);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
@@ -46,7 +46,7 @@
       <GeneratorSuffix Condition="'$(PlatformTarget)' == 'x64'"> Win64</GeneratorSuffix>
     </PropertyGroup>
     <MakeDir Condition="!Exists('$(GoogleTestBuildDir)')" Directories="$(GoogleTestBuildDir)" />
-    <Message Text="Cheking product line version of the Visual Studio." Importance="high" />
+    <Message Text="Checking product line version of the Visual Studio." Importance="high" />
     <Exec Command="&quot;$(VSInstallDir)..\..\Installer\vswhere.exe&quot; -version [$(NumVersion),$(NextVersion)] -property catalog_productLineVersion" ConsoleToMSBuild="true">
       <Output TaskParameter="ConsoleOutput" PropertyName="ProductLineVersion" />
     </Exec>
