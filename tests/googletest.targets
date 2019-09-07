@@ -1,64 +1,64 @@
 <Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="GoogleTest">
     <GoogleTestSourceDir>$(MSBuildThisFileDirectory)googletest\</GoogleTestSourceDir>
-    <GoogleTestBuildDir>$(MSBuildThisFileDirectory)build\$(Platform)\$(Configuration)\googletest\</GoogleTestBuildDir>
+    <GoogleTestBuildDir>$(MSBuildThisFileDirectory)build\$(Platform)\$(Configuration)\googletest</GoogleTestBuildDir>
     <IncludePath>$(GoogleTestSourceDir)googletest\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(GoogleTestBuildDir)\lib;$(GoogleTestBuildDir)\lib\$(Configuration);$(LibraryPath)</LibraryPath>
+    <NameSuffix Condition="'$(Configuration)' == 'Debug'">d</NameSuffix>
+    <NameSuffix Condition="'$(Configuration)' == 'Release'"></NameSuffix>
   </PropertyGroup>
   <ItemDefinitionGroup Label="GoogleTest.Requirements">
     <ClCompile>
       <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Label="GoogleTest.Libs" Condition="'$(Configuration)' == 'Debug'">
+  <ItemDefinitionGroup Label="GoogleTest.Libs">
     <Link>
-      <AdditionalDependencies>gtestd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalDependencies>gtest_maind.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gtest$(NameSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gtest_main$(NameSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Label="GoogleTest.Libs" Condition="'$(Configuration)' == 'Release'">
-    <Link>
-      <AdditionalDependencies>gtest.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalDependencies>gtest_main.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemGroup Label="GoogleTest.Pdbs" Condition="'$(Configuration)' == 'Debug'">
-    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\gtestd.pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\gtestd.pdb')" />
-    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\gtest_maind.pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\gtest_maind.pdb')" />
-    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\$(Configuration)\gtestd.pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\$(Configuration)\gtestd.pdb')" />
-    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\$(Configuration)\gtest_maind.pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\$(Configuration)\gtest_maind.pdb')" />
-  </ItemGroup>
-  <ItemGroup Label="GoogleTest.Pdbs" Condition="'$(Configuration)' == 'Release'">
-    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\gtest.pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\gtest.pdb')" />
-    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\gtest_main.pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\gtest_main.pdb')" />
-    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\$(Configuration)\gtest.pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\$(Configuration)\gtest.pdb')" />
-    <ReferenceCopyLocalPaths Include="$(GoogleTestBuildDir)\bin\$(Configuration)\gtest_main.pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\$(Configuration)\gtest_main.pdb')" />
-  </ItemGroup>
-  <Target Name="BuildGoogleTest" BeforeTargets="ClCompile">
+  <Target Name="FindGit" Condition="'$(GitCmd)' == ''">
+    <Message Text="Checking Git for Windows" Importance="high" />
+    <Exec Command="where &quot;$(PATH);$(ProgramW6432)\Git\Cmd;$(ProgramFiles)\Git\Cmd:git&quot;" ConsoleToMSBuild="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="GitCmd" />
+    </Exec>
+  </Target>
+  <Target Name="UpdateGoogleTest" DependsOnTargets="FindGit" Condition="!Exists('$(GoogleTestSourceDir)\CMakeLists.txt')">
+    <Exec Command="&quot;$(GitCmd)&quot; submodule init" WorkingDirectory="$(GoogleTestSourceDir)" />
+    <Exec Command="&quot;$(GitCmd)&quot; submodule update" WorkingDirectory="$(GoogleTestSourceDir)" />
+  </Target>
+  <Target Name="MakeGoogleTestBuildDir" Condition="!Exists('$(GoogleTestBuildDir)')">
+    <MakeDir Directories="$(GoogleTestBuildDir)" />
+  </Target>
+  <Target Name="BuildGoogleTest" DependsOnTargets="UpdateGoogleTest;MakeGoogleTestBuildDir" BeforeTargets="ClCompile">
     <PropertyGroup>
       <VcVarsArchitecture Condition="'$(PROCESSOR_ARCHITECTURE)' == 'x86' And '$(PlatformTarget)' == 'x86'">x86</VcVarsArchitecture>
       <VcVarsArchitecture Condition="'$(PROCESSOR_ARCHITECTURE)' == 'x86' And '$(PlatformTarget)' == 'x64'">x86_amd64</VcVarsArchitecture>
       <VcVarsArchitecture Condition="'$(PROCESSOR_ARCHITECTURE)' == 'AMD64' And '$(PlatformTarget)' == 'x86'">amd64_x86</VcVarsArchitecture>
       <VcVarsArchitecture Condition="'$(PROCESSOR_ARCHITECTURE)' == 'AMD64' And '$(PlatformTarget)' == 'x64'">amd64</VcVarsArchitecture>
       <NumVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(VisualStudioVersion)', '^(\d+).*', '$1'))</NumVersion>
-      <NextVersion>$([MSBuild]::Add($(NumVersion), 1))</NextVersion>
+      <ProductLineVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(VisualStudioEdition)', '^.* (\d+).*', '$1'))</ProductLineVersion>
       <GeneratorSuffix Condition="'$(PlatformTarget)' == 'x86'"></GeneratorSuffix>
       <GeneratorSuffix Condition="'$(PlatformTarget)' == 'x64'"> Win64</GeneratorSuffix>
+      <VsGeneratorName>Visual Studio $(NumVersion) $(ProductLineVersion)$(GeneratorSuffix)</VsGeneratorName>
     </PropertyGroup>
-    <MakeDir Condition="!Exists('$(GoogleTestBuildDir)')" Directories="$(GoogleTestBuildDir)" />
-    <Message Text="Cheking product line version of the Visual Studio." Importance="high" />
-    <Exec Command="&quot;$(VSInstallDir)..\..\Installer\vswhere.exe&quot; -version [$(NumVersion),$(NextVersion)] -property catalog_productLineVersion" ConsoleToMSBuild="true">
-      <Output TaskParameter="ConsoleOutput" PropertyName="ProductLineVersion" />
-    </Exec>
-    <Exec Command="$(MSBuildThisFileDirectory)googletest.build.cmd $(GoogleTestSourceDir) &quot;Visual Studio $(NumVersion) $(ProductLineVersion)$(GeneratorSuffix)&quot; $(Configuration) &quot;$(VSInstallRoot)/VC/Auxiliary/Build/vcvarsall.bat&quot; $(VcVarsArchitecture)" WorkingDirectory="$(GoogleTestBuildDir)" />
+    <Exec Command="$(MSBuildThisFileDirectory)googletest.build.cmd $(GoogleTestSourceDir) &quot;$(VsGeneratorName)&quot; $(Configuration) &quot;$(VSInstallRoot)/VC/Auxiliary/Build/vcvarsall.bat&quot; $(VcVarsArchitecture)" WorkingDirectory="$(GoogleTestBuildDir)" />
+  </Target>
+  <Target Name="CopyGoogleTestPdb" AfterTargets="BuildGoogleTest">
+    <ItemGroup>
+      <GoogleTestPdb Include="$(GoogleTestBuildDir)\bin\gtest$(NameSuffix).pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\gtest$(NameSuffix).pdb')" />
+      <GoogleTestPdb Include="$(GoogleTestBuildDir)\bin\gtest_main$(NameSuffix).pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\gtest_main$(NameSuffix).pdb')" />
+      <GoogleTestPdb Include="$(GoogleTestBuildDir)\bin\$(Configuration)\gtest$(NameSuffix).pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\$(Configuration)\gtest$(NameSuffix).pdb')" />
+      <GoogleTestPdb Include="$(GoogleTestBuildDir)\bin\$(Configuration)\gtest_main$(NameSuffix).pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\$(Configuration)\gtest_main$(NameSuffix).pdb')" />
+    </ItemGroup>
+    <Copy SourceFiles="@(GoogleTestPdbFound)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" UseHardlinksIfPossible="true" />
   </Target>
   <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
     <!-- Add files to @Clean just before running CoreClean. -->
     <ItemGroup>
-      <Clean Include="$(OutDir)gtestd.pdb" />
-      <Clean Include="$(OutDir)gtest_maind.pdb" />
-      <Clean Include="$(OutDir)gtest.pdb" />
-      <Clean Include="$(OutDir)gtest_main.pdb" />
+      <Clean Include="$(OutDir)gtest$(NameSuffix).pdb" />
+      <Clean Include="$(OutDir)gtest_main$(NameSuffix).pdb" />
     </ItemGroup>
     <RemoveDir Directories="$(GoogleTestBuildDir)" />
   </Target>
