@@ -79,7 +79,7 @@ namespace ApiWrap
 	//                      よく使う引数値                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	//! よく使うExtTextOutW_AnyBuildのオプション
+	//! よく使うExtTextOutのオプション
 	inline UINT ExtTextOutOption()
 	{
 		return ETO_CLIPPED | ETO_OPAQUE;

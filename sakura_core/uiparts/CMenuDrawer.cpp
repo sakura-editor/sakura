@@ -34,19 +34,6 @@
 // メニューの選択色を淡くする
 #define DRAW_MENU_SELECTION_LIGHT
 
-#if 0 // 未使用
-void FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORREF clr)
-{
-//	ASSERT_VALID(this);
-//	ASSERT(m_hDC != NULL);
-
-	RECT rect;
-	::SetBkColor( hdc, clr );
-	::SetRect( &rect, x, y, x + cx, y + cy );
-	::ExtTextOutW_AnyBuild( hdc, 0, 0, ETO_OPAQUE, &rect, NULL, 0, NULL );
-}
-#endif
-
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CMenuDrawer::CMenuDrawer()
 {
