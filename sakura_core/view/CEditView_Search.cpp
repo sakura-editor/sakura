@@ -114,7 +114,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 	/* 1行目にキーワード表示の場合 */
 	if(m_pTypeData->m_bUseKeyHelpKeyDisp){	/* キーワードも表示する */	// 2006.04.10 fon
 		m_cTipWnd.m_cInfo.AppendString( _T("[ ") );
-		m_cTipWnd.m_cInfo.AppendString( pcmemCurText->GetStringT() );
+		m_cTipWnd.m_cInfo.AppendString( pcmemCurText->GetStringPtr() );
 		m_cTipWnd.m_cInfo.AppendString( _T(" ]") );
 	}
 	/* 途中まで一致を使う場合 */
@@ -154,7 +154,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 					m_cTipWnd.m_cInfo.AppendString( _T("\n") );
 					/* 前方一致でヒットした単語を挿入 */
 					if(m_pTypeData->m_bUseKeyHelpPrefix){	/* 選択範囲で前方一致検索 */
-						m_cTipWnd.m_cInfo.AppendString( pcmemRefKey->GetStringT() );
+						m_cTipWnd.m_cInfo.AppendString( pcmemRefKey->GetStringPtr() );
 						m_cTipWnd.m_cInfo.AppendString( _T(" >>\n") );
 					}/* 調査した「意味」を挿入 */
 					m_cTipWnd.m_cInfo.AppendStringW( pszWork );
@@ -174,7 +174,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 					
 					/* 前方一致でヒットした単語を挿入 */
 					if(m_pTypeData->m_bUseKeyHelpPrefix){	/* 選択範囲で前方一致検索 */
-						m_cTipWnd.m_cInfo.AppendString( pcmemRefKey->GetStringT() );
+						m_cTipWnd.m_cInfo.AppendString( pcmemRefKey->GetStringPtr() );
 						m_cTipWnd.m_cInfo.AppendString( _T(" >>\n") );
 					}
 					
@@ -281,7 +281,7 @@ bool CEditView::MiniMapCursorLineTip( POINT* po, RECT* rc, bool* pbHide )
 		return false;
 	}
 	m_cTipWnd.m_cKey = cmemCurText;
-	m_cTipWnd.m_cInfo = cmemCurText.GetStringT();
+	m_cTipWnd.m_cInfo = cmemCurText.GetStringPtr();
 	m_cTipWnd.m_nSearchLine = (Int)ptNew.y;
 	m_dwTipTimer = 0;		// 辞書Tipを表示している */
 	m_poTipCurPos = *po;	// 現在のマウスカーソル位置 */

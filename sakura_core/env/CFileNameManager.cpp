@@ -411,10 +411,10 @@ bool CFileNameManager::GetMenuFullLabel(
 		const TCHAR* pszKey;
 		TCHAR szMenu2[GREPKEY_LIMIT_LEN*2*2+1]; // WCHAR=>ACHARで2倍、&で2倍
 		if( bEspaceAmp ){
-			dupamp( cmemDes.GetStringT(), szMenu2 );
+			dupamp( cmemDes.GetStringPtr(), szMenu2 );
 			pszKey = szMenu2;
 		}else{
-			pszKey = cmemDes.GetStringT();
+			pszKey = cmemDes.GetStringPtr();
 		}
 
 		//szMenuを作る

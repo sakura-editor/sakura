@@ -168,9 +168,6 @@ public:
 	void AppendStringW(const wchar_t* pData, int nLength)	{ return AppendString(pData,nLength); }
 	const wchar_t* GetStringW() const						{ return GetStringPtr(); }
 
-	//TCHAR
-	const TCHAR* GetStringT() const						{ return GetStringPtr(); }
-
 public:
 	// -- -- staticインターフェース -- -- //
 	static CLogicInt GetSizeOfChar( const wchar_t* pData, int nDataLen, int nIdx ); //!< 指定した位置の文字がwchar_t何個分かを返す
