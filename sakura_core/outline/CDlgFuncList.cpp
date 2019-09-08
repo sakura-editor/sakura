@@ -1073,11 +1073,11 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 						if( pcFuncInfo->m_nInfo == FL_OBJ_NAMESPACE )
 						{
 							//_tcscat( pClassName, _T(" 名前空間") );
-							strClassName += to_wchar(m_pcFuncInfoArr->GetAppendText(FL_OBJ_NAMESPACE).c_str());
+							strClassName += m_pcFuncInfoArr->GetAppendText(FL_OBJ_NAMESPACE);
 						}
 						else
 							//_tcscat( pClassName, _T(" クラス") );
-							strClassName += to_wchar(m_pcFuncInfoArr->GetAppendText(FL_OBJ_CLASS).c_str());
+							strClassName += m_pcFuncInfoArr->GetAppendText(FL_OBJ_CLASS);
 					}
 					tvis.hParent = htiParent;
 					tvis.hInsertAfter = TVI_LAST;
@@ -1139,7 +1139,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 		case FL_OBJ_GLOBAL:			//「グローバル」は別の場所で処理してるので除外
 			break;
 		default:
-			strFuncName += to_wchar(m_pcFuncInfoArr->GetAppendText(pcFuncInfo->m_nInfo).c_str());
+			strFuncName += m_pcFuncInfoArr->GetAppendText(pcFuncInfo->m_nInfo);
 		}
 
 /* 該当クラス名のアイテムの子として、メソッドのアイテムを登録 */

@@ -1593,7 +1593,7 @@ public:
 					if( FALSE == ::DeleteFile( oldFile.c_str() ) ){
 						std::wstring msg = LSW(STR_GREP_REP_ERR_DELETE);
 						msg += L"[";
-						msg += to_wchar(oldFile.c_str());
+						msg += oldFile;
 						msg += L"]\r\n";
 						memMessage.AppendString( msg.c_str() );
 						return;
@@ -1602,7 +1602,7 @@ public:
 				if( FALSE == ::MoveFile( fileName, oldFile.c_str() ) ){
 					std::wstring msg = LSW(STR_GREP_REP_ERR_REPLACE);
 					msg += L"[";
-					msg += to_wchar(oldFile.c_str());
+					msg += oldFile;
 					msg += L"]\r\n";
 					memMessage.AppendString( msg.c_str() );
 					return;
