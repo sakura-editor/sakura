@@ -229,9 +229,9 @@ void CViewCommander::Command_GREP_REPLACE( void )
 		CNativeW cCmdLine;
 		TCHAR szTemp[20];
 		cCmdLine.AppendString(_T("-GREPMODE -GKEY=\""));
-		cCmdLine.AppendStringW(cmWork1.GetStringPtr());
+		cCmdLine.AppendString(cmWork1.GetStringPtr());
 		cCmdLine.AppendString(_T("\" -GREPR=\""));
-		cCmdLine.AppendStringW(cmWork4.GetStringPtr());
+		cCmdLine.AppendString(cmWork4.GetStringPtr());
 		cCmdLine.AppendString(_T("\" -GFILE=\""));
 		cCmdLine.AppendString(cmWork2.GetStringPtr());
 		cCmdLine.AppendString(_T("\" -GFOLDER=\""));

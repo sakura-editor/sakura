@@ -192,7 +192,7 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 	cFilePattern.AppendString(cmWork2.GetStringPtr());
 
 	cCmdLine.AppendString(_T("-GREPMODE -GKEY=\""));
-	cCmdLine.AppendStringW(cmWork1.GetStringPtr());
+	cCmdLine.AppendString(cmWork1.GetStringPtr());
 	cCmdLine.AppendString(_T("\" -GFILE=\""));
 	cCmdLine.AppendString(cFilePattern.GetStringPtr());
 	cCmdLine.AppendString(_T("\" -GFOLDER=\""));

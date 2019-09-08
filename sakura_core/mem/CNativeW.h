@@ -162,10 +162,6 @@ public:
 	const char* GetStringPtrOld() const; //ShiftJISに変換して返す
 
 	//WCHAR
-	void SetStringW(const wchar_t* pszData)				{ return SetString(pszData); }
-	void SetStringW(const wchar_t* pData, int nLength)		{ return SetString(pData,nLength); }
-	void AppendStringW(const wchar_t* pszData)				{ return AppendString(pszData); }
-	void AppendStringW(const wchar_t* pData, int nLength)	{ return AppendString(pData,nLength); }
 	const wchar_t* GetStringW() const						{ return GetStringPtr(); }
 
 public:

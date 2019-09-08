@@ -157,7 +157,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 						m_cTipWnd.m_cInfo.AppendString( pcmemRefKey->GetStringPtr() );
 						m_cTipWnd.m_cInfo.AppendString( _T(" >>\n") );
 					}/* 調査した「意味」を挿入 */
-					m_cTipWnd.m_cInfo.AppendStringW( pszWork );
+					m_cTipWnd.m_cInfo.AppendString( pszWork );
 					delete pcmemRefText;
 					delete pcmemRefKey;	// 2006.07.02 genta
 					/* タグジャンプ用の情報を残す */
@@ -179,7 +179,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 					}
 					
 					/* 調査した「意味」を挿入 */
-					m_cTipWnd.m_cInfo.AppendStringW( pszWork );
+					m_cTipWnd.m_cInfo.AppendString( pszWork );
 					delete pcmemRefText;
 					delete pcmemRefKey;	// 2006.07.02 genta
 					/* タグジャンプ用の情報を残す */

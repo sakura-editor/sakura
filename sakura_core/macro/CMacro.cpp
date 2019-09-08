@@ -1082,8 +1082,8 @@ bool CMacro::HandleCommand(
 			if( bGrepReplace ){
 				cmWork4.SetString( Argument[1] );	cmWork4.Replace( L"\"", L"\"\"" );	//	置換後
 			}
-			CNativeW cmWork2;	cmWork2.SetStringW( Argument[ArgIndex+1] );	cmWork2.Replace( _T("\""), _T("\"\"") );	//	ファイル名
-			CNativeW cmWork3;	cmWork3.SetStringW( Argument[ArgIndex+2] );	cmWork3.Replace( _T("\""), _T("\"\"") );	//	フォルダ名
+			CNativeW cmWork2;	cmWork2.SetString( Argument[ArgIndex+1] );	cmWork2.Replace( _T("\""), _T("\"\"") );	//	ファイル名
+			CNativeW cmWork3;	cmWork3.SetString( Argument[ArgIndex+2] );	cmWork3.Replace( _T("\""), _T("\"\"") );	//	フォルダ名
 
 			LPARAM lFlag = wtoi_def(Argument[ArgIndex+3], 5);
 
@@ -1109,10 +1109,10 @@ bool CMacro::HandleCommand(
 			TCHAR	szTemp[20];
 			TCHAR	pOpt[64];
 			cCmdLine.AppendString(_T("-GREPMODE -GKEY=\""));
-			cCmdLine.AppendStringW(cmWork1.GetStringPtr());
+			cCmdLine.AppendString(cmWork1.GetStringPtr());
 			if( bGrepReplace ){
 				cCmdLine.AppendString(_T("\" -GREPR=\""));
-				cCmdLine.AppendStringW(cmWork4.GetStringPtr());
+				cCmdLine.AppendString(cmWork4.GetStringPtr());
 			}
 			cCmdLine.AppendString(_T("\" -GFILE=\""));
 			cCmdLine.AppendString(cmWork2.GetStringPtr());
