@@ -1052,6 +1052,14 @@ void CPropTypesColor::RearrangeKeywordSet( HWND hwndDlg )
 /* 色種別リスト オーナー描画 */
 void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 {
+	const int colorSampleWidth = DpiScaleX(12);
+	const int scaled1x = DpiScaleX(1);
+	const int scaled1y = DpiScaleY(1);
+	const int scaled2x = DpiScaleX(2);
+	const int scaled2y = DpiScaleY(2);
+	const int scaled3x = DpiScaleX(3);
+	const int scaled3y = DpiScaleY(3);
+
 	ColorInfo*	pColorInfo;
 //	RECT		rc0,rc1,rc2;
 	RECT		rc1;
@@ -1082,25 +1090,25 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 		gr.SetTextForeColor( ::GetSysColor( COLOR_WINDOWTEXT ) );
 	}
 
-	rc1.left+= (2 + 16);
-	rc1.top += 2;
-	rc1.right -= ( 2 + 27 );
-	rc1.bottom -= 2;
+	rc1.left+= (scaled2x + DpiScaleX(16));
+	rc1.top += scaled2y;
+	rc1.right -= (scaled2x + DpiScaleX(27));
+	rc1.bottom -= scaled2y;
 	/* 選択ハイライト矩形 */
 	gr.FillMyRect(rc1);
 	/* テキスト */
 	::SetBkMode( gr, TRANSPARENT );
 	::TextOut( gr, rc1.left, rc1.top, pColorInfo->m_szName, _tcslen( pColorInfo->m_szName ) );
 	if( pColorInfo->m_sFontAttr.m_bBoldFont ){	/* 太字か */
-		::TextOut( gr, rc1.left + 1, rc1.top, pColorInfo->m_szName, _tcslen( pColorInfo->m_szName ) );
+		::TextOut( gr, rc1.left + scaled1x, rc1.top, pColorInfo->m_szName, _tcslen( pColorInfo->m_szName ) );
 	}
 	if( pColorInfo->m_sFontAttr.m_bUnderLine ){	/* 下線か */
 		SIZE	sz;
 		::GetTextExtentPoint32( gr, pColorInfo->m_szName, _tcslen( pColorInfo->m_szName ), &sz );
-		::MoveToEx( gr, rc1.left,		rc1.bottom - 2, NULL );
-		::LineTo( gr, rc1.left + sz.cx,	rc1.bottom - 2 );
-		::MoveToEx( gr, rc1.left,		rc1.bottom - 1, NULL );
-		::LineTo( gr, rc1.left + sz.cx,	rc1.bottom - 1 );
+		::MoveToEx( gr, rc1.left,		rc1.bottom - scaled2y, NULL );
+		::LineTo( gr, rc1.left + sz.cx,	rc1.bottom - scaled2y);
+		::MoveToEx( gr, rc1.left,		rc1.bottom - scaled1y, NULL );
+		::LineTo( gr, rc1.left + sz.cx,	rc1.bottom - scaled1y);
 	}
 
 	/* アイテムにフォーカスがある */	// 2006.05.01 ryoji 描画条件の不正を修正
@@ -1110,34 +1118,29 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 
 	/* 「色分け/表示する」のチェック */
 	rc1 = pDis->rcItem;
-	rc1.left += 2;
-	rc1.top += 3;
-	rc1.right = rc1.left + 12;
-	rc1.bottom = rc1.top + 12;
+	rc1.left += scaled2x;
+	rc1.top += scaled3y;
+	rc1.right = rc1.left + colorSampleWidth;
+	rc1.bottom = rc1.top + DpiScaleY(12);
 	if( pColorInfo->m_bDisp ){	/* 色分け/表示する */
 		// 2006.04.26 ryoji テキスト色を使う（「ハイコントラスト黒」のような設定でも見えるように）
 		gr.SetPen( ::GetSysColor( COLOR_WINDOWTEXT ) );
 
-		::MoveToEx( gr,	rc1.left + 2, rc1.top + 6, NULL );
-		::LineTo( gr,	rc1.left + 5, rc1.bottom - 3 );
-		::LineTo( gr,	rc1.right - 2, rc1.top + 4 );
-		rc1.top -= 1;
-		rc1.bottom -= 1;
-		::MoveToEx( gr,	rc1.left + 2, rc1.top + 6, NULL );
-		::LineTo( gr,	rc1.left + 5, rc1.bottom - 3 );
-		::LineTo( gr,	rc1.right - 2, rc1.top + 4 );
-		rc1.top -= 1;
-		rc1.bottom -= 1;
-		::MoveToEx( gr,	rc1.left + 2, rc1.top + 6, NULL );
-		::LineTo( gr,	rc1.left + 5, rc1.bottom - 3 );
-		::LineTo( gr,	rc1.right - 2, rc1.top + 4 );
+		::MoveToEx( gr,	rc1.left + scaled2x, rc1.top + scaled3y * 2, NULL );
+		::LineTo( gr,	rc1.left + scaled2x + scaled3x, rc1.bottom - scaled3y );
+		::LineTo( gr,	rc1.right - scaled2x, rc1.top + scaled2y * 2 );
+		rc1.top -= scaled1y;
+		rc1.bottom -= scaled1y;
+		::MoveToEx( gr,	rc1.left + scaled2x, rc1.top + scaled3y * 2, NULL );
+		::LineTo( gr,	rc1.left + scaled2x + scaled3x, rc1.bottom - scaled3y );
+		::LineTo( gr,	rc1.right - scaled2x, rc1.top + scaled2y * 2 );
+		rc1.top -= scaled1y;
+		rc1.bottom -= scaled1y;
+		::MoveToEx( gr,	rc1.left + scaled2x, rc1.top + scaled3y * 2, NULL );
+		::LineTo( gr,	rc1.left + scaled2x + scaled3x, rc1.bottom - scaled3y );
+		::LineTo( gr,	rc1.right - scaled2x, rc1.top + scaled2y * 2 );
 	}
 //	return;
-
-	const int colorSampleWidth = DpiScaleX(12);
-	const int scaled1 = DpiScaleX(1);
-	const int scaled2 = DpiScaleX(2);
-	const int scaled3 = DpiScaleX(3);
 
 	// 2002/11/02 Moca 比較方法変更
 //	if( 0 != strcmp( "カーソル行アンダーライン", pColorInfo->m_szName ) )
@@ -1145,34 +1148,34 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 	{
 		/* 背景色 見本矩形 */
 		rc1 = pDis->rcItem;
-		rc1.left = rc1.right - (colorSampleWidth + scaled1);
-		rc1.top += scaled2;
+		rc1.left = rc1.right - (colorSampleWidth + scaled1x);
+		rc1.top += scaled2y;
 		rc1.right = rc1.left + colorSampleWidth;
-		rc1.bottom -= scaled2;
+		rc1.bottom -= scaled2y;
 
 		m_bgColorSampleLeft = rc1.left;
 		m_bgColorSampleRight = rc1.right;
 
 		gr.SetBrushColor( pColorInfo->m_sColorAttr.m_cBACK );
 		gr.SetPen( cRim );
-		::RoundRect( pDis->hDC, rc1.left, rc1.top, rc1.right, rc1.bottom , scaled3, scaled3 );
+		::RoundRect( pDis->hDC, rc1.left, rc1.top, rc1.right, rc1.bottom , scaled3x, scaled3y );
 	}
 
 	if( 0 == (g_ColorAttributeArr[pColorInfo->m_nColorIdx].fAttribute & COLOR_ATTRIB_NO_TEXT) )
 	{
 		/* 前景色 見本矩形 */
 		rc1 = pDis->rcItem;
-		rc1.left = rc1.right - (2 * colorSampleWidth + scaled3);
-		rc1.top += scaled2;
+		rc1.left = rc1.right - (2 * colorSampleWidth + scaled3x);
+		rc1.top += scaled2y;
 		rc1.right = rc1.left + colorSampleWidth;
-		rc1.bottom -= scaled2;
+		rc1.bottom -= scaled2y;
 
 		m_fgColorSampleLeft = rc1.left;
 		m_fgColorSampleRight = rc1.right;
 
 		gr.SetBrushColor( pColorInfo->m_sColorAttr.m_cTEXT );
 		gr.SetPen( cRim );
-		::RoundRect( pDis->hDC, rc1.left, rc1.top, rc1.right, rc1.bottom , scaled3, scaled3 );
+		::RoundRect( pDis->hDC, rc1.left, rc1.top, rc1.right, rc1.bottom , scaled3x, scaled3y );
 	}
 }
 
