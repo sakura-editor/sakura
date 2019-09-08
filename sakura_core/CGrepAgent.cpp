@@ -62,7 +62,7 @@ void CGrepAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
 /*!
 	@date 2014.03.09 novice 最後の\\を取り除くのをやめる(d:\\ -> d:になる)
 */
-void CGrepAgent::CreateFolders( const TCHAR* pszPath, std::vector<std::tstring>& vPaths )
+void CGrepAgent::CreateFolders( const TCHAR* pszPath, std::vector<std::wstring>& vPaths )
 {
 	const int nPathLen = auto_strlen( pszPath );
 	auto szPath = std::make_unique<TCHAR[]>(nPathLen + 1);
@@ -108,9 +108,9 @@ void CGrepAgent::CreateFolders( const TCHAR* pszPath, std::vector<std::tstring>&
 /*! 最後の\\を取り除く
 	@date 2014.03.09 novice 新規作成
 */
-std::tstring CGrepAgent::ChopYen( const std::tstring& str )
+std::wstring CGrepAgent::ChopYen( const std::wstring& str )
 {
-	std::tstring dst = str;
+	std::wstring dst = str;
 	size_t nPathLen = dst.length();
 
 	// 最後のフォルダ区切り記号を削除する
@@ -389,7 +389,7 @@ DWORD CGrepAgent::DoGrep(
 		}
 	}
 
-	std::vector<std::tstring> vPaths;
+	std::vector<std::wstring> vPaths;
 	CreateFolders( pcmGrepFolder->GetStringPtr(), vPaths );
 
 	nWork = pcmGrepKey->GetStringLength(); // 2003.06.10 Moca あらかじめ長さを計算しておく
@@ -457,12 +457,12 @@ DWORD CGrepAgent::DoGrep(
 	cmemMessage.AppendString( L"\r\n" );
 	cmemMessage.AppendString( LSW( STR_GREP_SEARCH_FOLDER ) );	//L"フォルダ   "
 	{
-		std::tstring grepFolder;
+		std::wstring grepFolder;
 		for( int i = 0; i < (int)vPaths.size(); i++ ){
 			if( i ){
 				grepFolder += _T(';');
 			}
-			std::tstring sPath = ChopYen( vPaths[i] );
+			std::wstring sPath = ChopYen( vPaths[i] );
 			if( auto_strchr( sPath.c_str(), _T(';') ) ){
 				grepFolder += _T('"');
 				grepFolder += sPath;
@@ -589,7 +589,7 @@ DWORD CGrepAgent::DoGrep(
 
 	for( int nPath = 0; nPath < (int)vPaths.size(); nPath++ ){
 		bool bOutputBaseFolder = false;
-		std::tstring sPath = ChopYen( vPaths[nPath] );
+		std::wstring sPath = ChopYen( vPaths[nPath] );
 		int nTreeRet = DoGrepTree(
 			pcViewDst,
 			&cDlgCancel,
@@ -747,7 +747,7 @@ int CGrepAgent::DoGrepTree(
 			::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, lpFileName );
 		}
 
-		std::tstring currentFile = pszPath;
+		std::wstring currentFile = pszPath;
 		currentFile += _T("\\");
 		currentFile += lpFileName;
 		int nBasePathLen2 = nBasePathLen + 1;
@@ -857,7 +857,7 @@ int CGrepAgent::DoGrepTree(
 
 			//フォルダ名を作成する。
 			// 2010.08.01 キャンセルでメモリーリークしてました
-			std::tstring currentPath  = pszPath;
+			std::wstring currentPath  = pszPath;
 			currentPath += _T("\\");
 			currentPath += lpFileName;
 
@@ -1308,7 +1308,7 @@ int CGrepAgent::DoGrepFile(
 						nOldPercent = nPercent;
 						TCHAR szWork[10];
 						::auto_sprintf( szWork, _T(" (%3d%%)"), nPercent );
-						std::tstring str;
+						std::wstring str;
 						str = str + pszFile + szWork;
 						::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, str.c_str() );
 					}
@@ -1554,7 +1554,7 @@ public:
 	void OutputHead()
 	{
 		if( !out ){
-			std::tstring name = fileName;
+			std::wstring name = fileName;
 			name += _T(".skrnew");
 			try{
 				out = new CBinaryOutputStream(name.c_str(), true);
@@ -1587,7 +1587,7 @@ public:
 			delete out;
 			out = NULL;
 			if( bOldSave ){
-				std::tstring oldFile = fileName;
+				std::wstring oldFile = fileName;
 				oldFile += _T(".skrold");
 				if( fexist(oldFile.c_str()) ){
 					if( FALSE == ::DeleteFile( oldFile.c_str() ) ){
@@ -1617,7 +1617,7 @@ public:
 					return;
 				}
 			}
-			std::tstring name = std::tstring(fileName);
+			std::wstring name = std::wstring(fileName);
 			name += _T(".skrnew");
 			if( FALSE == ::MoveFile( name.c_str(), fileName ) ){
 				std::wstring msg = LSW(STR_GREP_REP_ERR_REPLACE);
@@ -1636,7 +1636,7 @@ public:
 			out->Close();
 			delete out;
 			out = NULL;
-			std::tstring name = std::tstring(fileName);
+			std::wstring name = std::wstring(fileName);
 			name += _T(".skrnew");
 			::DeleteFile( name.c_str() );
 		}
@@ -1762,7 +1762,7 @@ int CGrepAgent::DoGrepReplaceFile(
 					nOldPercent = nPercent;
 					TCHAR szWork[10];
 					::auto_sprintf( szWork, _T(" (%3d%%)"), nPercent );
-					std::tstring str;
+					std::wstring str;
 					str = str + pszFile + szWork;
 					::DlgItem_SetText( pcDlgCancel->GetHwnd(), IDC_STATIC_CURFILE, str.c_str() );
 				}
@@ -1965,7 +1965,7 @@ int CGrepAgent::DoGrepReplaceFile(
 		cmemMessage.AppendNativeData( str );
 	}
 	catch( CError_WriteFileOpen ){
-		std::tstring file = pszFullPath;
+		std::wstring file = pszFullPath;
 		file += _T(".skrnew");
 		CNativeW str(LSW(STR_GREP_ERR_FILEWRITE));
 		str.Replace(L"%ts", to_wchar(file.c_str()));

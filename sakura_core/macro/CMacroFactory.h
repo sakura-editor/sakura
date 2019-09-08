@@ -69,7 +69,7 @@ public:
 	CMacroManagerBase* Create(const TCHAR* ext);
 
 private:
-	std::tstring Ext2Key(const TCHAR *ext);
+	std::wstring Ext2Key(const TCHAR *ext);
 
 	// Jan. 31, 2004 genta
 	// バイナリサイズ削減のため拡張子保持用mapを削除

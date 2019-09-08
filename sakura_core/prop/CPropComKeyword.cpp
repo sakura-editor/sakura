@@ -114,7 +114,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 			auto dlgWidth = rc.right - rc.left;
 			auto dlgHeight = btnRect.bottom - rc.top + DpiScaleY(15);
 			SetWindowPos( hwndDlg, NULL, 0, 0, dlgWidth, dlgHeight, SWP_NOZORDER|SWP_NOMOVE );
-			std::tstring title = LS(STR_PROPCOMMON);
+			std::wstring title = LS(STR_PROPCOMMON);
 			title += _T(" - ");
 			title += LS(STR_PROPCOMMON_KEYWORD);
 			SetWindowText( hwndDlg, title.c_str() );
@@ -293,13 +293,13 @@ INT_PTR CPropKeyword::DispatchEvent(
 							return TRUE;
 						}
 						/* 削除対象のセットを使用しているファイルタイプを列挙 */
-						std::tstring strLabel;
+						std::wstring strLabel;
 						for( size_t i = 0; i < m_Types_nKeyWordSetIdx.size() ; ++i ){
 							// 2002/04/25 YAZAKI STypeConfig全体を保持する必要はないし、m_pShareDataを直接見ても問題ない。
 							for( int k = 0; k < MAX_KEYWORDSET_PER_TYPE; k++ ){
 								if( nIndex1 == m_Types_nKeyWordSetIdx[i].index[k] ){
-									std::tstring name;
-									std::tstring exts;
+									std::wstring name;
+									std::wstring exts;
 									bool bAdd = false;
 									if( m_Types_nKeyWordSetIdx[i].typeId == -1 ){
 										// タイプ別一時表示

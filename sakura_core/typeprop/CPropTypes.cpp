@@ -146,7 +146,7 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	m_dwCustColors[0] = m_Types.m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
 	m_dwCustColors[1] = m_Types.m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK;
 
-	std::tstring		sTabname[_countof(TypePropSheetInfoList)];
+	std::wstring		sTabname[_countof(TypePropSheetInfoList)];
 	m_bChangeKeyWordSet = false;
 	PROPSHEETPAGE		psp[_countof(TypePropSheetInfoList)];
 	for( nIdx = 0; nIdx < _countof(TypePropSheetInfoList); nIdx++ ){

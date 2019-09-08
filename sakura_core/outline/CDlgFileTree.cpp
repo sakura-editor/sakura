@@ -372,7 +372,7 @@ void CDlgFileTree::SetDataInit()
 		}else{
 			id = STR_FILETREE_FROM_TYPE;
 		}
-		std::tstring str = LS(id);
+		std::wstring str = LS(id);
 		if( m_fileTreeSetting.m_szLoadProjectIni[0] != _T('\0') ){
 			str += _T("+");
 			str += LS(F_FILE_TOPMENU);
@@ -712,7 +712,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 		{
 			CDlgOpenFile dlg;
 			SLoadInfo sLoadInfo;
-			std::vector<std::tstring> aFileNames;
+			std::vector<std::wstring> aFileNames;
 			dlg.Create( G_AppInstance(), GetHwnd(), _T("*.*"), _T("."),
 				std::vector<LPCTSTR>(), std::vector<LPCTSTR>() );
 			if( dlg.DoModalOpenDlg(&sLoadInfo, &aFileNames, false) ){
@@ -771,8 +771,8 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 	case IDC_BUTTON_REPLACE:
 		{
 			CDlgInput1 dlgInput;
-			std::tstring strMsg = LS(STR_FILETREE_REPLACE_PATH_FROM);
-			std::tstring strTitle = LS(STR_DLGREPLC_STR);
+			std::wstring strMsg = LS(STR_FILETREE_REPLACE_PATH_FROM);
+			std::wstring strTitle = LS(STR_DLGREPLC_STR);
 			TCHAR szPathFrom[_MAX_PATH];
 			szPathFrom[0] = _T('\0');
 			if( dlgInput.DoModal(G_AppInstance(), GetHwnd(), strTitle.c_str(), strMsg.c_str(), _countof(szPathFrom), szPathFrom) ){

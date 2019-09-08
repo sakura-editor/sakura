@@ -478,7 +478,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			//	iniファイルのフルパス
 			{
 				TCHAR	szPath[_MAX_PATH + 1];
-				std::tstring strProfileName = to_wchar(CCommandLine::getInstance()->GetProfileName());
+				std::wstring strProfileName = to_wchar(CCommandLine::getInstance()->GetProfileName());
 				CFileNameManager::getInstance()->GetIniFileName( szPath, strProfileName.c_str() );
 				q = wcs_pushW( q, q_max - q, szPath );
 				++p;
@@ -711,7 +711,7 @@ wchar_t* ExParam_LongName( wchar_t* q, wchar_t* q_max, EExpParamName eLongParam 
 	@param bControlProcess [in] trueのときはOPENDIALOGDIR_CUR->OPENDIALOGDIR_MRUに変更
 	@return 初期フォルダ
 */
-std::tstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
+std::wstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
 {
 	CEditDoc* pcDoc = CEditDoc::GetInstance(0); //######
 	if( pcDoc && pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){

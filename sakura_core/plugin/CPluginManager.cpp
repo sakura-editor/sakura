@@ -112,7 +112,7 @@ bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 }
 
 //新規プラグインを追加する(下請け)
-bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, const tstring& sSearchDir, bool& bCancel )
+bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, const wstring& sSearchDir, bool& bCancel )
 {
 	DEBUG_TRACE(_T("Enter SearchNewPluginDir\n"));
 
@@ -170,7 +170,7 @@ bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, 
 }
 
 //新規プラグインを追加する(下請け)Zip File
-bool CPluginManager::SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, const tstring& sSearchDir, bool& bCancel )
+bool CPluginManager::SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, const wstring& sSearchDir, bool& bCancel )
 {
 	DEBUG_TRACE(_T("Enter SearchNewPluginZip\n"));
 
@@ -203,7 +203,7 @@ bool CPluginManager::SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, 
 }
 
 //Zipプラグインを導入する
-bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, const tstring& sZipFile, bool bInSearch )
+bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, const wstring& sZipFile, bool bInSearch )
 {
 	DEBUG_TRACE(_T("Entry InstZipPlugin\n"));
 
@@ -242,11 +242,11 @@ bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, const
 }
 
 //Zipプラグインを導入する(下請け)
-bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, const tstring& sZipFile, const tstring& sDispName, bool bInSearch, bool& bCancel )
+bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, const wstring& sZipFile, const wstring& sDispName, bool bInSearch, bool& bCancel )
 {
 	PluginRec*		plugin_table = common.m_sPlugin.m_PluginTable;
 	CZipFile		cZipFile;
-	std::tstring	sFolderName;
+	std::wstring	sFolderName;
 	TCHAR			msg[512];
 	std::wstring	errMsg;
 	bool			bOk = true;
@@ -438,9 +438,9 @@ bool CPluginManager::LoadAllPlugin(CommonSetting* common)
 
 	if( ! pluginSetting.m_bEnablePlugin ) return true;
 
-	std::tstring szLangName;
+	std::wstring szLangName;
 	{
-		std::tstring szDllName = GetDllShareData().m_Common.m_sWindow.m_szLanguageDll;
+		std::wstring szDllName = GetDllShareData().m_Common.m_sWindow.m_szLanguageDll;
 		if( szDllName == _T("") ){
 			szLangName = _T("ja_JP");
 		}else{
@@ -465,7 +465,7 @@ bool CPluginManager::LoadAllPlugin(CommonSetting* common)
 		// 2010.08.04 削除状態を見る(今のところ保険)
 		if( plugin_table[iNo].m_state == PLS_DELETED ) continue;
 		if( NULL != GetPlugin( iNo ) ) continue; // 2013.05.31 読み込み済み
-		std::tstring name = to_wchar(plugin_table[iNo].m_szName);
+		std::wstring name = to_wchar(plugin_table[iNo].m_szName);
 		CPlugin* plugin = LoadPlugin( m_sBaseDir.c_str(), name.c_str(), szLangName.c_str() );
 		if( !plugin ){
 			plugin = LoadPlugin( m_sExePluginDir.c_str(), name.c_str(), szLangName.c_str() );
@@ -491,7 +491,7 @@ CPlugin* CPluginManager::LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* psz
 {
 	TCHAR pszBasePath[_MAX_PATH];
 	TCHAR pszPath[_MAX_PATH];
-	std::tstring strMlang;
+	std::wstring strMlang;
 	CDataProfile cProfDef;				//プラグイン定義ファイル
 	CDataProfile cProfDefMLang;			//プラグイン定義ファイル(L10N)
 	CDataProfile* pcProfDefMLang = &cProfDefMLang; 
@@ -512,7 +512,7 @@ CPlugin* CPluginManager::LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* psz
 
 	//L10N定義ファイルを読む
 	//プラグイン定義ファイルを読み込む base\pluginname\local\plugin_en_us.def
-	strMlang = std::tstring(pszBasePath) + _T("\\") + PII_L10NDIR + _T("\\") + PII_L10NFILEBASE + pszLangName + PII_L10NFILEEXT;
+	strMlang = std::wstring(pszBasePath) + _T("\\") + PII_L10NDIR + _T("\\") + PII_L10NFILEBASE + pszLangName + PII_L10NFILEEXT;
 	cProfDefMLang.SetReadingMode();
 	if( !cProfDefMLang.ReadProfile( strMlang.c_str() ) ){
 		//プラグイン定義ファイルが存在しない
@@ -526,9 +526,9 @@ CPlugin* CPluginManager::LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* psz
 	cProfDef.IOProfileData( PII_PLUGIN, PII_PLUGIN_PLUGTYPE, sPlugType );
 
 	if( _wcsicmp( sPlugType.c_str(), L"wsh" ) == 0 ){
-		plugin = new CWSHPlugin( tstring(pszBasePath) );
+		plugin = new CWSHPlugin( wstring(pszBasePath) );
 	}else if( _wcsicmp( sPlugType.c_str(), L"dll" ) == 0 ){
-		plugin = new CDllPlugin( tstring(pszBasePath) );
+		plugin = new CDllPlugin( wstring(pszBasePath) );
 	}else{
 		return NULL;
 	}

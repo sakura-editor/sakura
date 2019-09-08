@@ -53,18 +53,18 @@ struct CDlgOpenFile_CommonItemDialog final
 	bool DoModal_GetOpenFileName( TCHAR* pszPath, EFilter eAddFileter ) override;
 	bool DoModal_GetSaveFileName( TCHAR* pszPath ) override;
 	bool DoModalOpenDlg( SLoadInfo* pLoadInfo,
-						 std::vector<std::tstring>* pFileNames,
+						 std::vector<std::wstring>* pFileNames,
 						 bool bOptions ) override;
 	bool DoModalSaveDlg( SSaveInfo*	pSaveInfo,
 						 bool bSimpleMode ) override;
 
 	bool DoModalOpenDlgImpl0( bool bAllowMultiSelect,
-							  std::vector<std::tstring>* pFileNames,
+							  std::vector<std::wstring>* pFileNames,
 							  LPCWSTR fileName,
 							  const std::vector<COMDLG_FILTERSPEC>& specs );
 	HRESULT DoModalOpenDlgImpl1( IFileOpenDialog* pFileOpenDialog,
 								 bool bAllowMultiSelect,
-								 std::vector<std::tstring>* pFileNames,
+								 std::vector<std::wstring>* pFileNames,
 								 LPCWSTR fileName,
 								 const std::vector<COMDLG_FILTERSPEC>& specs );
 	bool DoModalSaveDlgImpl0( TCHAR* pszPath );
@@ -594,7 +594,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::Customize()
 HRESULT CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl1(
 	IFileOpenDialog* pFileOpenDialog,
 	bool bAllowMultiSelect,
-	std::vector<std::tstring>* pFileNames,
+	std::vector<std::wstring>* pFileNames,
 	LPCWSTR fileName,
 	const std::vector<COMDLG_FILTERSPEC>& specs)
 {
@@ -653,7 +653,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl1(
 
 bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl0(
 	bool bAllowMultiSelect,
-	std::vector<std::tstring>* pFileNames,
+	std::vector<std::wstring>* pFileNames,
 	LPCWSTR fileName,
 	const std::vector<COMDLG_FILTERSPEC>& specs)
 {
@@ -688,7 +688,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl0(
 */
 bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlg(
 	SLoadInfo* pLoadInfo,
-	std::vector<std::tstring>* pFileNames,
+	std::vector<std::wstring>* pFileNames,
 	bool bOptions )
 {
 	// ファイルの種類	2003.05.12 MIK

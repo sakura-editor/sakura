@@ -1136,7 +1136,7 @@ int CDlgTagJumpList::find_key_core(
 	TCHAR	szTagFile[1024];		//タグファイル
 	TCHAR	szNextPath[1024];		//次検索フォルダ
 	szNextPath[0] = _T('\0');
-	vector_ex<std::tstring> seachDirs;
+	vector_ex<std::wstring> seachDirs;
 
 	// パスのJumpで循環している場合に最大値を規制する
 	for( ; state.m_nDepth <= state.m_nLoop && state.m_nDepth < (_MAX_PATH/2); state.m_nDepth++ )
@@ -1150,7 +1150,7 @@ int CDlgTagJumpList::find_key_core(
 		if( 2 == state.m_nNextMode && bTagJumpExactMatch && 0 < state.m_nMatchAll ) break; 
 
 		{
-			std::tstring curPath = state.m_szCurPath;
+			std::wstring curPath = state.m_szCurPath;
 			if( seachDirs.exist( curPath ) ){
 				// 検索済み =>終了
 				break;
@@ -1204,7 +1204,7 @@ int CDlgTagJumpList::find_key_core(
 		if( szNextPath[0] ){
 			state.m_bJumpPath = true;
 			auto_strcpy( state.m_szCurPath, szNextPath );
-			std::tstring path = state.m_szCurPath;
+			std::wstring path = state.m_szCurPath;
 			path += _T("\\dummy");
 			state.m_nLoop = CalcMaxUpDirectory( path.c_str() );
 			state.m_nDepth = 0;
@@ -1603,7 +1603,7 @@ void CDlgTagJumpList::SetTextDir()
 	if( GetHwnd() ){
 		DlgItem_SetText( GetHwnd(), IDC_STATIC_BASEDIR, _T("") );
 		if( GetFileName() ){
-			std::tstring strPath = GetFilePath();
+			std::wstring strPath = GetFilePath();
 			strPath[ GetFileName() - GetFilePath() ] = _T('\0');
 			DlgItem_SetText( GetHwnd(), IDC_STATIC_BASEDIR, strPath.c_str() );
 		}

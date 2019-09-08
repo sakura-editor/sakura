@@ -326,8 +326,8 @@ void CViewCommander::Command_EXECCOMMAND( LPCWSTR cmd_string, const int nFlgOpt,
 	CSakuraEnvironment::ExpandParameter(cmd_string, buf, bufmax);
 
 	// 子プロセスの標準出力をリダイレクトする
-	std::tstring buf2 = to_wchar(buf);
-	std::tstring buf3;
+	std::wstring buf2 = to_wchar(buf);
+	std::wstring buf3;
 	if( pszCurDir ){
 		buf3 = to_wchar(pszCurDir);
 	}

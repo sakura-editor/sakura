@@ -275,7 +275,7 @@ bool CProfile::WriteProfile(
 	@date 2004-01-29 genta stream使用をやめてCライブラリ使用に．
 */
 bool CProfile::_WriteFile(
-	const tstring&			strFilename,	//!< [in]  ファイル名
+	const wstring&			strFilename,	//!< [in]  ファイル名
 	const vector<wstring>&	vecLine			//!< [out] 文字列格納先
 )
 {

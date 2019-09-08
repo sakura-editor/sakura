@@ -2217,7 +2217,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			//「ファイルを開く」ダイアログ
 			SLoadInfo sLoadInfo(_T(""), CODE_AUTODETECT, false);
 			CDocFileOperation& cDocOp = GetDocument()->m_cDocFileOperation;
-			std::vector<std::tstring> files;
+			std::vector<std::wstring> files;
 			if( cDocOp.OpenFileDialog(GetHwnd(), pszFolderPath, &sLoadInfo, files) ){
 				sLoadInfo.cFilePath = files[0].c_str();
 				//開く

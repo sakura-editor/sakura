@@ -174,7 +174,7 @@ private:
 	*/
 	int m_CurrentIdx;
 
-	std::tstring	m_sMacroPath;	// Loadしたマクロ名
+	std::wstring	m_sMacroPath;	// Loadしたマクロ名
 
 public:
 	static MacroFuncInfo	m_MacroFuncInfoCommandArr[];	// コマンド情報(戻り値なし)

@@ -134,7 +134,7 @@ public:
 
 	// メンバ変数
 public:
-	tstring m_sOutlineTitle;
+	wstring m_sOutlineTitle;
 	EOutlineType m_nListType;
 private:
 	CFuncInfoArr& m_cFuncInfoArr;

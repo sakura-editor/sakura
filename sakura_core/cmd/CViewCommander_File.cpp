@@ -68,7 +68,7 @@ void CViewCommander::Command_FILENEW( void )
 	sLoadInfo.cFilePath = _T("");
 	sLoadInfo.eCharCode = CODE_NONE;
 	sLoadInfo.bViewMode = false;
-	std::tstring curDir = CSakuraEnvironment::GetDlgInitialDir();
+	std::wstring curDir = CSakuraEnvironment::GetDlgInitialDir();
 	CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, NULL, false, curDir.c_str(), false );
 	return;
 }
@@ -81,7 +81,7 @@ void CViewCommander::Command_FILENEW_NEWWINDOW( void )
 	sLoadInfo.cFilePath = _T("");
 	sLoadInfo.eCharCode = CODE_DEFAULT;
 	sLoadInfo.bViewMode = false;
-	std::tstring curDir = CSakuraEnvironment::GetDlgInitialDir();
+	std::wstring curDir = CSakuraEnvironment::GetDlgInitialDir();
 	CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo,
 		NULL,
 		false,
@@ -103,8 +103,8 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 	}
 	//ロード情報
 	SLoadInfo sLoadInfo(filename?to_wchar(filename):_T(""), nCharCode, bViewMode);
-	std::vector<std::tstring> files;
-	std::tstring defName = (defaultName?to_wchar(defaultName):_T(""));
+	std::vector<std::wstring> files;
+	std::wstring defName = (defaultName?to_wchar(defaultName):_T(""));
 
 	//必要であれば「ファイルを開く」ダイアログ
 	if(!sLoadInfo.cFilePath.IsValidPath()){

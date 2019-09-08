@@ -71,7 +71,7 @@ public:
 
 private:
 	TagJumpInfo*	m_pTagjump;	//!< タグジャンプ情報
-	std::vector<std::tstring> m_baseDirArr;	//!< ベースディレクトリ情報
+	std::vector<std::wstring> m_baseDirArr;	//!< ベースディレクトリ情報
 	int				m_nCount;	//!< 個数
 	bool			m_bOverflow;	//!< オーバーフロー
 	

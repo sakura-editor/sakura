@@ -415,7 +415,7 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	GetItemClientRect( m_aFavoriteInfo[0].m_nId, rc );
 
 	// リストビューのItem/SubItem幅を計算
-	std::tstring pszFavTest = LS( STR_DLGFAV_FAVORITE );
+	std::wstring pszFavTest = LS( STR_DLGFAV_FAVORITE );
 	TCHAR* pszFAVORITE_TEXT = const_cast<TCHAR*>(pszFavTest.c_str());
 	const int nListViewWidthClient = rc.right - rc.left
 		 - CTextWidthCalc::WIDTH_MARGIN_SCROLLBER - ::GetSystemMetrics(SM_CXVSCROLL);
@@ -934,8 +934,8 @@ void CDlgFavorite::AddItem()
 	szAddText[0] = _T('\0');
 
 	CDlgInput1	cDlgInput1;
-	std::tstring strTitle = LS( STR_DLGFAV_ADD );
-	std::tstring strMessage = LS( STR_DLGFAV_ADD_PROMPT );
+	std::wstring strTitle = LS( STR_DLGFAV_ADD );
+	std::wstring strMessage = LS( STR_DLGFAV_ADD_PROMPT );
 	if( !cDlgInput1.DoModal( G_AppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size, szAddText ) ){
 		return;
 	}
@@ -965,8 +965,8 @@ void CDlgFavorite::EditItem()
 			TCHAR* szText = &vecAddText[0];
 			_tcsncpy_s(szText, max_size, recent.GetItemText(nRecIndex), _TRUNCATE);
 			CDlgInput1	cDlgInput1;
-			std::tstring strTitle = LS( STR_DLGFAV_EDIT );
-			std::tstring strMessage = LS( STR_DLGFAV_EDIT_PROMPT );
+			std::wstring strTitle = LS( STR_DLGFAV_EDIT );
+			std::wstring strMessage = LS( STR_DLGFAV_EDIT_PROMPT );
 			if( !cDlgInput1.DoModal(G_AppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size, szText) ){
 				return;
 			}

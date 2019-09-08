@@ -171,7 +171,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 				break;
 			case IDC_PLUGIN_INST_ZIP:		// ZIPプラグインを追加
 				{
-					static std::tstring	sTrgDir;
+					static std::wstring	sTrgDir;
 					CDlgOpenFile	cDlgOpenFile;
 					TCHAR			szPath[_MAX_PATH + 1];
 					_tcscpy( szPath, (sTrgDir.empty() ? CPluginManager::getInstance()->GetBaseDir().c_str() : sTrgDir.c_str()));
@@ -232,7 +232,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 				break;
 			case IDC_PLUGIN_OpenFolder:			// フォルダを開く
 				{
-					std::tstring sBaseDir = CPluginManager::getInstance()->GetBaseDir() + _T(".");
+					std::wstring sBaseDir = CPluginManager::getInstance()->GetBaseDir() + _T(".");
 					if( ! IsDirectory(sBaseDir.c_str()) ){
 						if( ::CreateDirectory(sBaseDir.c_str(), NULL) == 0 ){
 							break;
@@ -245,8 +245,8 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 				{
 					HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
 					int sel = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
-					std::tstring sName = to_wchar(m_Common.m_sPlugin.m_PluginTable[sel].m_szName);	// 個別フォルダ名
-					std::tstring sReadMeName = GetReadMeFile(sName);
+					std::wstring sName = to_wchar(m_Common.m_sPlugin.m_PluginTable[sel].m_szName);	// 個別フォルダ名
+					std::wstring sReadMeName = GetReadMeFile(sName);
 					if (!sReadMeName.empty()) {
 						if (!BrowseReadMe(sReadMeName)) {
 							WarningMessage( hwndDlg, LS(STR_PROPCOMPLG_ERR2) );
@@ -514,9 +514,9 @@ void CPropPlugin::EnablePluginPropInput(HWND hwndDlg)
 }
 
 //	Readme ファイルの取得	2011/11/2 Uchi
-std::tstring CPropPlugin::GetReadMeFile(const std::tstring& sName)
+std::wstring CPropPlugin::GetReadMeFile(const std::wstring& sName)
 {
-	std::tstring sReadMeName = CPluginManager::getInstance()->GetBaseDir()
+	std::wstring sReadMeName = CPluginManager::getInstance()->GetBaseDir()
 		+ sName + _T("\\ReadMe.txt");
 	CFile* fl = new CFile(sReadMeName.c_str());
 	if (!fl->IsFileExist()) {
@@ -553,7 +553,7 @@ std::tstring CPropPlugin::GetReadMeFile(const std::tstring& sName)
 
 	@return true: 成功, false: 失敗
 */
-bool CPropPlugin::BrowseReadMe(const std::tstring& sReadMeName)
+bool CPropPlugin::BrowseReadMe(const std::wstring& sReadMeName)
 {
 	// -- -- -- -- コマンドライン文字列を生成 -- -- -- -- //
 	CCommandLineString cCmdLineBuf;

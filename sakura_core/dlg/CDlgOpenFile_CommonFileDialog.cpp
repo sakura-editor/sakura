@@ -73,7 +73,7 @@ struct CDlgOpenFile_CommonFileDialog final : public IDlgOpenFile
 
 	bool DoModal_GetOpenFileName( TCHAR* pszPath, EFilter eAddFileter ) override;
 	bool DoModal_GetSaveFileName( TCHAR* pszPath ) override;
-	bool DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::tstring>*, bool bOptions ) override;
+	bool DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::wstring>*, bool bOptions ) override;
 	bool DoModalSaveDlg( SSaveInfo*	pSaveInfo, bool bSimpleMode ) override;
 
 	void DlgOpenFail(void);
@@ -870,7 +870,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetSaveFileName( TCHAR* pszPath )
 */
 bool CDlgOpenFile_CommonFileDialog::DoModalOpenDlg(
 	SLoadInfo* pLoadInfo,
-	std::vector<std::tstring>* pFileNames,
+	std::vector<std::wstring>* pFileNames,
 	bool bOptions
 )
 {
@@ -934,9 +934,9 @@ bool CDlgOpenFile_CommonFileDialog::DoModalOpenDlg(
 		if( bMultiSelect ){
 			pLoadInfo->cFilePath = _T("");
 			if( pData->m_ofn.nFileOffset < _tcslen( pData->m_ofn.lpstrFile ) ){
-				pFileNames->push_back( std::tstring(pData->m_ofn.lpstrFile) );
+				pFileNames->push_back( std::wstring(pData->m_ofn.lpstrFile) );
 			}else{
-				std::tstring path;
+				std::wstring path;
 				TCHAR* pos = pData->m_ofn.lpstrFile;
 				pos += _tcslen(pos) + 1;
 				while( *pos != _T('\0') ){

@@ -94,7 +94,7 @@ private:
 	CPropPlugin*	m_cPropPlugin;
 	int 			m_ID;			// プラグイン番号（エディタがふる番号）
 	int				m_Line;			// 現在編集中のオプション行番号
-	std::tstring	m_sReadMeName;	// ReadMe ファイル名
+	std::wstring	m_sReadMeName;	// ReadMe ファイル名
 };
 
 #endif /* SAKURA_CDLGPLUGINOPTION_7BD4A901_BC40_4CA1_8311_85B8CAA783F08_H_ */

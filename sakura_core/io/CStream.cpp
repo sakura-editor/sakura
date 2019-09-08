@@ -46,7 +46,7 @@ public:
 		m_dwAttribute = 0;
 	}
 private:
-	std::tstring	m_strPath;
+	std::wstring	m_strPath;
 	bool			m_bAttributeChanged;
 	DWORD			m_dwAttribute;
 };

@@ -44,7 +44,7 @@ public:
 		HWND				hwndParent,
 		const TCHAR*		pszOpenFolder,	//!< [in]  NULL以外を指定すると初期フォルダを指定できる
 		SLoadInfo*			pLoadInfo,		//!< [in,out] ロード情報
-		std::vector<std::tstring>&	files
+		std::vector<std::wstring>&	files
 	);
 
 	//ロードフロー

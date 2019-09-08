@@ -47,7 +47,7 @@ public:
 	void UnloadAllPlugin();				//全プラグインを解放する
 	bool SearchNewPlugin( CommonSetting& common, HWND hWndOwner );		//新規プラグインを導入する
 	int InstallPlugin( CommonSetting& common, const TCHAR* pszPluginName, HWND hWndOwner, wstring& errorMsg, bool bUpdate = false );	//プラグインの初期導入をする
-	bool InstZipPlugin( CommonSetting& common, HWND hWndOwner, const tstring& sZipName, bool bInSearch=false );		//Zipプラグインを追加する
+	bool InstZipPlugin( CommonSetting& common, HWND hWndOwner, const wstring& sZipName, bool bInSearch=false );		//Zipプラグインを追加する
 	CPlugin* GetPlugin( int id );		//プラグインを取得する
 	void UninstallPlugin( CommonSetting& common, int id );		//プラグインを削除する
 
@@ -59,17 +59,17 @@ private:
 	//属性
 public:
 	//pluginsフォルダのパス
-	const tstring GetBaseDir() { return m_sBaseDir; }
-	const tstring GetExePluginDir() { return m_sExePluginDir; }
-	bool SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, const tstring& sSearchDir, bool& bCancel );		//新規プラグインを追加する(下請け)
-	bool SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, const tstring& sSearchDir, bool& bCancel );		//新規プラグインを追加する(下請け)Zip File
-	bool InstZipPluginSub( CommonSetting& common, HWND hWndOwner, const tstring& sZipName, const tstring& sDispName, bool bInSearch, bool& bCancel );		//Zipプラグインを導入する(下請け)
+	const wstring GetBaseDir() { return m_sBaseDir; }
+	const wstring GetExePluginDir() { return m_sExePluginDir; }
+	bool SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, const wstring& sSearchDir, bool& bCancel );		//新規プラグインを追加する(下請け)
+	bool SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, const wstring& sSearchDir, bool& bCancel );		//新規プラグインを追加する(下請け)Zip File
+	bool InstZipPluginSub( CommonSetting& common, HWND hWndOwner, const wstring& sZipName, const wstring& sDispName, bool bInSearch, bool& bCancel );		//Zipプラグインを導入する(下請け)
 
 	// メンバ変数
 private:
 	CPlugin::List m_plugins;
-	tstring m_sBaseDir;					//pluginsフォルダのパス
-	tstring m_sExePluginDir;			//Exeフォルダ配下pluginsフォルダのパス
+	wstring m_sBaseDir;					//pluginsフォルダのパス
+	wstring m_sExePluginDir;			//Exeフォルダ配下pluginsフォルダのパス
 };
 
 #endif /* SAKURA_CPLUGINMANAGER_1015EF83_3B11_47FB_BAAF_63ACAFE32FCAD_H_ */

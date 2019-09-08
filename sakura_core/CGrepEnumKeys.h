@@ -63,9 +63,9 @@ public:
 		const TCHAR* WILDCARD_ANY = _T("*.*");	//サブフォルダ探索用
 		ClearItems();
 		
-		std::vector< tstring > patterns = SplitPattern(lpKeys);
+		std::vector< wstring > patterns = SplitPattern(lpKeys);
 		for (size_t i = 0; i < patterns.size(); i++) {
-			const tstring& element = patterns[i];
+			const wstring& element = patterns[i];
 			const TCHAR* token = element.c_str();
 
 			//フィルタを種類ごとに振り分ける
@@ -136,15 +136,15 @@ public:
 		return ParseAndAddException(lpKeys, m_vecExceptFolderKeys, m_vecExceptAbsFolderKeys);
 	}
 
-	typedef std::basic_string<TCHAR> tstring;
+	typedef std::basic_string<TCHAR> wstring;
 
 	/*!
 		@brief ファイルパターンを解析して、要素ごとに分離して返す
 		@param[in]		lpKeys					ファイルパターン
 	*/
-	static std::vector< tstring > SplitPattern(LPCTSTR lpKeys)
+	static std::vector< wstring > SplitPattern(LPCTSTR lpKeys)
 	{
-		std::vector< tstring > patterns;
+		std::vector< wstring > patterns;
 
 		const TCHAR* WILDCARD_DELIMITER = _T(" ;,");	//リストの区切り
 		int nWildCardLen = _tcslen(lpKeys);
@@ -172,7 +172,7 @@ public:
 			}
 			*q = _T('\0');
 
-			tstring element(token);
+			wstring element(token);
 			patterns.push_back(element);
 		}
 		delete[] pWildCard;
@@ -235,10 +235,10 @@ private:
 		@param[in,out]	exceptionAbsoluteKeys	除外ファイルパターンの絶対パスの解析結果を追加する
 	*/
 	int ParseAndAddException(LPCTSTR lpKeys, VGrepEnumKeys& exceptionKeys, VGrepEnumKeys & exceptionAbsoluteKeys) {
-		std::vector< tstring > patterns = SplitPattern(lpKeys);
+		std::vector< wstring > patterns = SplitPattern(lpKeys);
 
 		for (size_t i = 0; i < patterns.size(); i++) {
-			const tstring& element = patterns[i];
+			const wstring& element = patterns[i];
 			const TCHAR* token = element.c_str();
 
 			bool bRelPath = _IS_REL_PATH(token);

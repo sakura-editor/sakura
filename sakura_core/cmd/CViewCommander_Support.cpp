@@ -246,7 +246,7 @@ retry:;
 */
 void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* kwd )
 {
-	std::tstring helpfile;
+	std::wstring helpfile;
 	if( _helpfile != NULL ){
 		helpfile = to_wchar(_helpfile);
 	}

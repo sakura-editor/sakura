@@ -104,7 +104,7 @@ const TCHAR *CFileExt::GetExt( int nIndex )
 const TCHAR *CFileExt::GetExtFilter( void )
 {
 	int		i;
-	std::tstring work;
+	std::wstring work;
 
 	/* 拡張子フィルタの作成 */
 	m_vstrFilter.resize(0);

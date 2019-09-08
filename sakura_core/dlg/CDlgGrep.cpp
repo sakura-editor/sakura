@@ -343,7 +343,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			const int nMaxPath = MAX_GREP_PATH;
 			TCHAR szFolder[nMaxPath];
 			::GetWindowText( hwnd, szFolder, _countof(szFolder) );
-			std::vector<std::tstring> vPaths;
+			std::vector<std::wstring> vPaths;
 			CGrepAgent::CreateFolders( szFolder, vPaths );
 			if( 0 < vPaths.size() ){
 				// 最後のパスが操作対象
@@ -741,7 +741,7 @@ int CDlgGrep::GetData( void )
 		CCurrentDirectoryBackupPoint cCurDirBackup;
 
 		// 2011.11.24 Moca 複数フォルダ指定
-		std::vector<std::tstring> vPaths;
+		std::vector<std::wstring> vPaths;
 		CGrepAgent::CreateFolders( m_szFolder, vPaths );
 		int nFolderLen = 0;
 		const int nMaxPath = MAX_GREP_PATH;

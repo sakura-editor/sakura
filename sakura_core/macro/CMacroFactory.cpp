@@ -47,13 +47,13 @@ CMacroFactory::CMacroFactory()
 	@li NULLは""にする。
 	@li アルファベットは小文字に統一
 */
-std::tstring CMacroFactory::Ext2Key(const TCHAR *ext)
+std::wstring CMacroFactory::Ext2Key(const TCHAR *ext)
 {
 	if( ext == NULL ){
 		ext = NULSTR;
 	}
 	
-	std::tstring key = ext;
+	std::wstring key = ext;
 	std::transform( key.begin(), key.end(), key.begin(), _totlower);
 
 	return key;
@@ -118,7 +118,7 @@ bool CMacroFactory::Unregister( Creator f )
 */
 CMacroManagerBase* CMacroFactory::Create(const TCHAR* ext)
 {
-	std::tstring key = Ext2Key( ext );
+	std::wstring key = Ext2Key( ext );
 
 	//	Creatorを順に試す
 	for( auto c_it = m_mMacroCreators.begin();

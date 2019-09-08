@@ -509,7 +509,7 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 		if( !input.Good() ){
 			return;
 		}
-		std::tstring responseData;
+		std::wstring responseData;
 		while(input){
 			responseData += to_wchar(input.ReadLineW().c_str());
 		}

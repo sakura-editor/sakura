@@ -49,8 +49,8 @@ int Wrap_MessageBox(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType)
 	// ※ 使い回しのバッファが使用されていてそれが裏で書き換えられた場合でも
 	//    メッセージボックス上の Ctrl+C が文字化けしないように
 	return ::MessageBoxEx(hWnd,
-		lpText ? std::tstring(lpText).c_str() : NULL,
-		lpCaption ? std::tstring(lpCaption).c_str() : NULL,
+		lpText ? std::wstring(lpText).c_str() : NULL,
+		lpCaption ? std::wstring(lpCaption).c_str() : NULL,
 		uType,
 		wLangId
 	);

@@ -211,7 +211,7 @@ int CDocOutline::ReadRuleFile( const TCHAR* pszFilename, SOneRule* pcOneRule, in
 		最大値以上は追加せずに無視する
 	@date 2007.11.29 kobake SOneRule test[1024] でスタックが溢れていたのを修正
 */
-void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstring& sTitleOverride )
+void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstring& sTitleOverride )
 {
 	/* ルールファイルの内容をバッファに読み込む */
 	auto test = std::make_unique<SOneRule[]>(1024);	// 1024個許可。 2007.11.29 kobake スタック使いすぎなので、ヒープに確保するように修正。

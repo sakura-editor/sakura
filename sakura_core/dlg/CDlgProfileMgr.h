@@ -38,7 +38,7 @@ struct SProfileSettings
 {
 	TCHAR m_szDllLanguage[_MAX_PATH];
 	int	m_nDefaultIndex;
-	std::vector<std::tstring> m_vProfList;
+	std::vector<std::wstring> m_vProfList;
 	bool m_bDefaultSelect;
 };
 
@@ -72,7 +72,7 @@ protected:
 	void	SetDefaultProf(int index);
 	void	ClearDefaultProf();
 public:
-	std::tstring m_strProfileName;
+	std::wstring m_strProfileName;
 
 	static bool ReadProfSettings(SProfileSettings& settings);
 	static bool WriteProfSettings(SProfileSettings& settings);

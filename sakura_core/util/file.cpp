@@ -487,7 +487,7 @@ void GetInidir(
 	if( pDir == NULL )
 		return;
 	
-	std::tstring strProfileName = to_wchar(CCommandLine::getInstance()->GetProfileName());
+	std::wstring strProfileName = to_wchar(CCommandLine::getInstance()->GetProfileName());
 	TCHAR	szPath[_MAX_PATH];
 
 	// sakura.ini のパスを取得
@@ -1079,12 +1079,12 @@ void GetStrTrancateWidth( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, in
 		_tcsncpy_s(dest, nSize, path, _TRUNCATE);
 		return;
 	}
-	std::tstring strTemp;
-	std::tstring strTempOld;
+	std::wstring strTemp;
+	std::wstring strTempOld;
 	int nPos = 0;
 	while( path[nPos] != _T('\0') ){
 		strTemp.assign(path, nPos);
-		std::tstring strTemp2 = strTemp;
+		std::wstring strTemp2 = strTemp;
 		strTemp2 += _T("...");
 		if( nPxWidth < calc.GetTextWidth(strTemp2.c_str()) ){
 			// 入りきらなかったので1文字前までをコピー
@@ -1165,7 +1165,7 @@ void GetShortViewPath( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int n
 		if( path[nNext] != _T('\0') ){
 			// サブフォルダ省略
 			// C:\...\dir\file.ext
-			std::tstring strTemp(path, nLeft + 1);
+			std::wstring strTemp(path, nLeft + 1);
 			if( nLeft + 1 < nRight ){
 				strTemp += _T("...");
 			}
@@ -1194,7 +1194,7 @@ void GetShortViewPath( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int n
 	if( nLeftLen && nLeftLen != nRight ){
 		nLeftLen++;
 	}
-	std::tstring strTemp(path, nLeftLen);
+	std::wstring strTemp(path, nLeftLen);
 	if( nLeft != nRight ){
 		strTemp += _T("...");
 	}
@@ -1217,7 +1217,7 @@ void GetShortViewPath( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int n
 			}
 		}
 		if( nExtPos != -1 ){
-			std::tstring strLeftFile(path, nLeftLen); // [C:\]  
+			std::wstring strLeftFile(path, nLeftLen); // [C:\]  
 			if( nLeft != nRight ){
 				strLeftFile += _T("..."); // C:\...
 			}
@@ -1226,7 +1226,7 @@ void GetShortViewPath( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int n
 			int nFileNameWidth = nPxWidth - nLeftWidth - nExtWidth;
 			if( 0 < nFileNameWidth ){
 				// 拡張子は省略しない(ファイルタイトルを省略)
-				std::tstring strFile(&path[nRight], nExtPos - nRight); // \longfilename
+				std::wstring strFile(&path[nRight], nExtPos - nRight); // \longfilename
 				strLeftFile += strFile; // C:\...\longfilename
 				int nExtLen = nPathLen - nExtPos;
 				GetStrTrancateWidth(dest, t_max(0, nSize - nExtLen), strLeftFile.c_str(), hDC, nPxWidth - nExtWidth);

@@ -58,7 +58,7 @@ inline bool CDlgOpenFile::DoModal_GetSaveFileName( TCHAR* pszPath )
 
 inline bool CDlgOpenFile::DoModalOpenDlg(
 	SLoadInfo* pLoadInfo,
-	std::vector<std::tstring>* pFilenames,
+	std::vector<std::wstring>* pFilenames,
 	bool bOptions)
 {
 	return m_pImpl->DoModalOpenDlg(pLoadInfo, pFilenames, bOptions);

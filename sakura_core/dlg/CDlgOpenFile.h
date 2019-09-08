@@ -69,7 +69,7 @@ public:
 	/* 開くダイアログ モーダルダイアログの表示 */
 	virtual bool DoModalOpenDlg(
 		SLoadInfo* pLoadInfo,
-		std::vector<std::tstring>* pFilenames,
+		std::vector<std::wstring>* pFilenames,
 		bool bOptions
 	) = 0;
 
@@ -103,7 +103,7 @@ public:
 	inline bool DoModal_GetOpenFileName(TCHAR* pszPath, EFilter eAddFileter = EFITER_TEXT) override;
 	inline bool DoModal_GetSaveFileName(TCHAR* pszPath) override;
 	inline bool DoModalOpenDlg(SLoadInfo* pLoadInfo,
-		std::vector<std::tstring>* pFilenames,
+		std::vector<std::wstring>* pFilenames,
 		bool bOptions = true) override;
 	inline bool DoModalSaveDlg(SSaveInfo*	pSaveInfo, bool bSimpleMode) override;
 

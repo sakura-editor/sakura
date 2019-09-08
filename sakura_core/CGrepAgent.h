@@ -73,8 +73,8 @@ public:
 	ECallbackResult OnBeforeClose();
 	void OnAfterSave(const SSaveInfo& sSaveInfo);
 
-	static void CreateFolders( const TCHAR* pszPath, std::vector<std::tstring>& vPaths );
-	static std::tstring ChopYen( const std::tstring& str );
+	static void CreateFolders( const TCHAR* pszPath, std::vector<std::wstring>& vPaths );
+	static std::wstring ChopYen( const std::wstring& str );
 	void AddTail( CEditView* pcEditView, const CNativeW& cmem, bool bAddStdout );
 
 	// Grep実行

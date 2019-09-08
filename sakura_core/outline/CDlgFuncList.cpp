@@ -783,7 +783,7 @@ void CDlgFuncList::SetData()
 	}
 }
 
-bool CDlgFuncList::GetTreeFileFullName(HWND hwndTree, HTREEITEM target, std::tstring* pPath, int* pnItem)
+bool CDlgFuncList::GetTreeFileFullName(HWND hwndTree, HTREEITEM target, std::wstring* pPath, int* pnItem)
 {
 	*pPath = _T("");
 	*pnItem = -1;
@@ -797,14 +797,14 @@ bool CDlgFuncList::GetTreeFileFullName(HWND hwndTree, HTREEITEM target, std::tst
 		TreeView_GetItem( hwndTree, &tvItem );
 		if( ((-tvItem.lParam) % 10) == 3 ){
 			*pnItem = (-tvItem.lParam) / 10;
-			*pPath = std::tstring(m_pcFuncInfoArr->GetAt(*pnItem)->m_cmemFileName.GetStringPtr()) + _T("\\") + *pPath;
+			*pPath = std::wstring(m_pcFuncInfoArr->GetAt(*pnItem)->m_cmemFileName.GetStringPtr()) + _T("\\") + *pPath;
 			return true;
 		}
 		if( tvItem.lParam != -1 && tvItem.lParam != -2 ){
 			return false;
 		}
 		if( *pPath != _T("") ){
-			*pPath = std::tstring(szFileName) + _T("\\") + *pPath;
+			*pPath = std::wstring(szFileName) + _T("\\") + *pPath;
 		}else{
 			*pPath = szFileName;
 		}
@@ -927,7 +927,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 	HTREEITEM		htiSelected = NULL;
 	TV_ITEM			tvi;
 	int				nClassNest;
-	std::vector<std::tstring> vStrClasses;
+	std::vector<std::wstring> vStrClasses;
 
 	::EnableWindow( GetItemHwnd( IDC_BUTTON_COPY ), TRUE );
 	m_bDummyLParamMode = true;
@@ -987,7 +987,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 					//	Jan. 04, 2001 genta
 					//	C++の統合のため、\に加えて::をクラス区切りとみなすように
 					if( k < nWorkLen - 1 && _T(':') == pWork[k+1] ){
-						std::tstring strClass(&pWork[m], k - m);
+						std::wstring strClass(&pWork[m], k - m);
 						vStrClasses.push_back(strClass);
 						++nClassNest;
 						m = k + 2;
@@ -1001,7 +1001,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 						break;
 				}
 				else if( 1 == nCharChars && _T('\\') == pWork[k] ){
-					std::tstring strClass(&pWork[m], k - m);
+					std::wstring strClass(&pWork[m], k - m);
 					vStrClasses.push_back(strClass);
 					++nClassNest;
 					m = k + 1;
@@ -1066,7 +1066,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 				/* クラス名のアイテムが登録されていないので登録 */
 				if( NULL == htiClass ){
 					// 2002/10/28 frozen 上からここへ移動
-					std::tstring strClassName = vStrClasses[k];
+					std::wstring strClassName = vStrClasses[k];
 					
 					if( bAddClass )
 					{
@@ -1113,7 +1113,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 			// 2002/10/27 frozen ここまで
 				if( htiGlobal == NULL ){
 					TV_INSERTSTRUCT	tvg;
-					std::tstring sGlobal = to_wchar(m_pcFuncInfoArr->GetAppendText( FL_OBJ_GLOBAL ).c_str());
+					std::wstring sGlobal = to_wchar(m_pcFuncInfoArr->GetAppendText( FL_OBJ_GLOBAL ).c_str());
 
 					::ZeroMemory( &tvg, sizeof(tvg));
 					tvg.hParent = TVI_ROOT;
@@ -1129,7 +1129,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 				htiClass = htiGlobal;
 			}
 		}
-		std::tstring strFuncName = pWork;
+		std::wstring strFuncName = pWork;
 
 		// 2002/10/27 frozen 追加文字列の種類を増やした
 		switch(pcFuncInfo->m_nInfo)
@@ -1743,7 +1743,7 @@ void CDlgFuncList::SetTreeFileSub( HTREEITEM hParent, const TCHAR* pszFile )
 
 	HTREEITEM hItemSelected = NULL;
 
-	std::tstring basePath;
+	std::wstring basePath;
 	int nItem = 0; // 設定Item番号
 	if( !GetTreeFileFullName( hwndTree, hParent, &basePath, &nItem ) ){
 		return; // error
@@ -2385,14 +2385,14 @@ static int CALLBACK Compare_by_ItemDataDesc(LPARAM lParam1, LPARAM lParam2, LPAR
 }
 
 struct STreeViewSortData{
-	std::vector<std::tstring> m_vecText;
+	std::vector<std::wstring> m_vecText;
 };
 
 static int CALLBACK Compare_by_ItemText(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 {
 	STreeViewSortData* pData = (STreeViewSortData*)lParamSort;
-	std::tstring* pText1 = &pData->m_vecText[lParam1];
-	std::tstring* pText2 = &pData->m_vecText[lParam2];
+	std::wstring* pText1 = &pData->m_vecText[lParam1];
+	std::wstring* pText2 = &pData->m_vecText[lParam2];
 	int result = ::lstrcmpi(pText1->c_str(), pText2->c_str());
 	if( result == 0 ){
 		// 同じ名前は登録順
@@ -3997,7 +3997,7 @@ void CDlgFuncList::LoadFileTreeSetting( CFileTreeSetting& data, SFilePath& IniDi
 		for( int i = 0; i <= maxDir; i++ ){
 			CDataProfile cProfile;
 			cProfile.SetReadingMode();
-			std::tstring strIniFileName;
+			std::wstring strIniFileName;
 			strIniFileName += szPath;
 			strIniFileName += CommonSet().m_sFileTreeDefIniName;
 			if( cProfile.ReadProfile(strIniFileName.c_str()) ){

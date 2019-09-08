@@ -543,7 +543,7 @@ bool CMacro::HandleCommand(
 	const int			ArgSize
 )
 {
-	std::tstring EXEC_ERROR_TITLE_string = LS(STR_ERR_DLGMACRO02);
+	std::wstring EXEC_ERROR_TITLE_string = LS(STR_ERR_DLGMACRO02);
 	const TCHAR* EXEC_ERROR_TITLE = EXEC_ERROR_TITLE_string.c_str();
 	int nOptions = 0;
 
@@ -1321,7 +1321,7 @@ bool CMacro::HandleCommand(
 					LS(STR_ERR_DLGMACRO07) );
 				return false;
 			}
-			std::tstring val0 = to_wchar(Argument[0]);
+			std::wstring val0 = to_wchar(Argument[0]);
 			int val1 = Argument[1] != NULL ? _wtoi(Argument[1]) : 0;
 			if( (val1 & 0x03) == 0 ){
 				pcEditView->SendStatusMessage( val0.c_str() );
@@ -1748,10 +1748,10 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 
 			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
-			std::tstring sMessage = Source;	// 表示メッセージ
+			std::wstring sMessage = Source;	// 表示メッセージ
 			delete[] Source;
 
-			std::tstring sDefaultValue = _T("");
+			std::wstring sDefaultValue = _T("");
 			if( ArgSize >= 2 ){
 				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 				Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
@@ -1797,7 +1797,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 
 			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
-			std::tstring sMessage = Source;	// 表示文字列
+			std::wstring sMessage = Source;	// 表示文字列
 			delete[] Source;
 
 			UINT uType = 0;		// メッセージボックス種別
@@ -1839,12 +1839,12 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 
 			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
-			std::tstring sVerA = Source;	// バージョンA
+			std::wstring sVerA = Source;	// バージョンA
 			delete[] Source;
 
 			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
-			std::tstring sVerB = Source;	// バージョンB
+			std::wstring sVerB = Source;	// バージョンB
 			delete[] Source;
 
 			Wrap( &Result )->Receive( CompareVersion( sVerA.c_str(), sVerB.c_str() ) );
@@ -1867,8 +1867,8 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		{
 			TCHAR *Source;
 			int SourceLength;
-			std::tstring sDefault;
-			std::tstring sFilter;
+			std::wstring sDefault;
+			std::wstring sFilter;
 
 			if( ArgSize >= 1 ){
 				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
@@ -1912,8 +1912,8 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		{
 			TCHAR *Source;
 			int SourceLength;
-			std::tstring sMessage;
-			std::tstring sDefault;
+			std::wstring sMessage;
+			std::wstring sDefault;
 
 			if( ArgSize >= 1 ){
 				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
@@ -1966,7 +1966,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 	case F_SETCLIPBOARD:
 		//	2011.03.18 syat クリップボードに文字列を設定
 		{
-			std::tstring sValue;
+			std::wstring sValue;
 			int nOpt = 0;
 
 			if( ArgSize >= 1 ){

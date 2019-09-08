@@ -202,7 +202,7 @@ protected:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 private:
 	HINSTANCE		m_hInstance;
-	std::tstring	m_strLoadedDllName;
+	std::wstring	m_strLoadedDllName;
 };
 
 #endif

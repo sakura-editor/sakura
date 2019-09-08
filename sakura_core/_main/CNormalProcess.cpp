@@ -477,8 +477,8 @@ HANDLE CNormalProcess::_GetInitializeMutex() const
 {
 	MY_RUNNINGTIMER( cRunningTimer, "NormalProcess::_GetInitializeMutex" );
 	HANDLE hMutex;
-	std::tstring strProfileName = to_wchar(CCommandLine::getInstance()->GetProfileName());
-	std::tstring strMutexInitName = GSTR_MUTEX_SAKURA_INIT;
+	std::wstring strProfileName = to_wchar(CCommandLine::getInstance()->GetProfileName());
+	std::wstring strMutexInitName = GSTR_MUTEX_SAKURA_INIT;
 	strMutexInitName += strProfileName;
 	hMutex = ::CreateMutex( NULL, TRUE, strMutexInitName.c_str() );
 	if( NULL == hMutex ){

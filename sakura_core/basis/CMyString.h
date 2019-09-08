@@ -30,8 +30,6 @@
 
 #define m_delete2(p) { if(p){ delete[] p; p=0; } }
 
-//std::string の TCHAR 対応用マクロ定義
-#define tstring wstring
 #define astring string
 
 //共通マクロ
@@ -49,7 +47,7 @@ public:
 	CFilePath(const TCHAR* rhs) : Super(rhs) { }
 
 	bool IsValidPath() const{ return At(0)!=_T('\0'); }
-	std::tstring GetDirPath() const
+	std::wstring GetDirPath() const
 	{
 		TCHAR	szDirPath[_MAX_PATH];
 		TCHAR	szDrive[_MAX_DRIVE];

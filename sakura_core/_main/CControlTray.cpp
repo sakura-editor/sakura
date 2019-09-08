@@ -103,7 +103,7 @@ void CControlTray::DoGrep()
 	@return        true  エスケープする必要がある
 	@return        false エスケープする必要がない
 */
-static bool IsEscapeRequiredForExcludePattern(const tstring & pattern)
+static bool IsEscapeRequiredForExcludePattern(const wstring & pattern)
 {
 	const auto NotFound = std::string::npos;
 	if (pattern.find(_T('!')) != NotFound)
@@ -121,7 +121,7 @@ static bool IsEscapeRequiredForExcludePattern(const tstring & pattern)
 	@brief エスケープパターンを取得する
 	@param[in] pattern        エスケープ対象文字列
 */
-static LPCTSTR GetEscapePattern(const tstring& pattern)
+static LPCTSTR GetEscapePattern(const wstring& pattern)
 {
 	return IsEscapeRequiredForExcludePattern(pattern) ? _T("\"\"") : _T("");
 }
@@ -295,8 +295,8 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 
 	//同名同クラスのウィンドウが既に存在していたら、失敗
 	m_hInstance = hInstance;
-	std::tstring strProfileName = to_wchar(CCommandLine::getInstance()->GetProfileName());
-	std::tstring strCEditAppName = GSTR_CEDITAPP;
+	std::wstring strProfileName = to_wchar(CCommandLine::getInstance()->GetProfileName());
+	std::wstring strCEditAppName = GSTR_CEDITAPP;
 	strCEditAppName += strProfileName;
 	HWND hwndWork = ::FindWindow( strCEditAppName.c_str(), strCEditAppName.c_str() );
 	if( NULL != hwndWork ){
@@ -943,7 +943,7 @@ LRESULT CControlTray::DispatchEvent(
 							CMRUFile().GetPathList(),
 							CMRUFolder().GetPathList()	// OPENFOLDERリストのファイルのリスト
 						);
-						std::vector<std::tstring> files;
+						std::vector<std::wstring> files;
 						if( !cDlgOpenFile.DoModalOpenDlg( &sLoadInfo, &files ) ){
 							break;
 						}
@@ -1038,7 +1038,7 @@ LRESULT CControlTray::DispatchEvent(
 							vOPENFOLDER
 						);
 						SLoadInfo sLoadInfo( _T(""), CODE_AUTODETECT, false);
-						std::vector<std::tstring> files;
+						std::vector<std::wstring> files;
 						if( !cDlgOpenFile.DoModalOpenDlg( &sLoadInfo, &files ) ){
 							break;
 						}
@@ -1150,7 +1150,7 @@ void CControlTray::OnNewEditor( bool bNewWindow )
 	sLoadInfo.cFilePath = _T("");
 	sLoadInfo.eCharCode = CODE_NONE;
 	sLoadInfo.bViewMode = false;
-	std::tstring tstrCurDir = CSakuraEnvironment::GetDlgInitialDir(true);
+	std::wstring tstrCurDir = CSakuraEnvironment::GetDlgInitialDir(true);
 	OpenNewEditor( m_hInstance, GetTrayHwnd(), sLoadInfo, NULL, false, tstrCurDir.c_str(), bNewWindow );
 }
 

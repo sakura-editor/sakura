@@ -63,7 +63,7 @@ int CDlgProfileMgr::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_PROFILEMGR, lParam );
 }
 
-static std::tstring GetProfileMgrFileName(LPCTSTR profName = NULL)
+static std::wstring GetProfileMgrFileName(LPCTSTR profName = NULL)
 {
 	static TCHAR szPath[_MAX_PATH];
 	static TCHAR szPath2[_MAX_PATH];
@@ -92,7 +92,7 @@ static std::tstring GetProfileMgrFileName(LPCTSTR profName = NULL)
 		auto_snprintf_s( szIniFile, _MAX_PATH - 1, _T("%ts\\%ts"), szDir, profName );
 	}
 
-	return std::tstring(szIniFile);
+	return std::wstring(szIniFile);
 }
 
 /*! ダイアログデータの設定 */
@@ -109,7 +109,7 @@ void CDlgProfileMgr::SetData( int nSelIndex )
 	List_ResetContent( hwndList );
 	SProfileSettings settings;
 	ReadProfSettings( settings );
-	std::tstring strdef = _T("(default)");
+	std::wstring strdef = _T("(default)");
 	if( settings.m_nDefaultIndex == 0 ){
 		strdef += _T("*");
 	}
@@ -118,7 +118,7 @@ void CDlgProfileMgr::SetData( int nSelIndex )
 	calc.SetDefaultExtend( CTextWidthCalc::WIDTH_MARGIN_SCROLLBER );
 	int count = (int)settings.m_vProfList.size();
 	for(int i = 0; i < count; i++){
-		std::tstring str = settings.m_vProfList[i];
+		std::wstring str = settings.m_vProfList[i];
 		if( settings.m_nDefaultIndex == i + 1 ){
 			str += _T("*");
 		}
@@ -274,7 +274,7 @@ void CDlgProfileMgr::UpdateIni()
 			settings.m_nDefaultIndex = i;
 		}
 		if( 0 < i ){
-			std::tstring str = szProfileName;
+			std::wstring str = szProfileName;
 			settings.m_vProfList.push_back( str );
 		}
 	}
@@ -306,8 +306,8 @@ void CDlgProfileMgr::CreateProf()
 	CDlgInput1 cDlgInput1;
 	int max_size = _MAX_PATH;
 	TCHAR szText[_MAX_PATH];
-	std::tstring strTitle = LS(STR_DLGPROFILE_NEW_PROF_TITLE);
-	std::tstring strMessage = LS(STR_DLGPROFILE_NEW_PROF_MSG);
+	std::wstring strTitle = LS(STR_DLGPROFILE_NEW_PROF_TITLE);
+	std::wstring strMessage = LS(STR_DLGPROFILE_NEW_PROF_MSG);
 	szText[0] = _T('\0');
 	if( !cDlgInput1.DoModal(::GetModuleHandle(NULL), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size, szText) ){
 		return;
@@ -332,7 +332,7 @@ void CDlgProfileMgr::CreateProf()
 		ErrorMessage( GetHwnd(), LS(STR_DLGPROFILE_ERR_ALREADY) );
 		return;
 	}
-	std::tstring strProfDir = GetProfileMgrFileName(szText);
+	std::wstring strProfDir = GetProfileMgrFileName(szText);
 	if( IsFileExists(strProfDir.c_str(), true) ){
 		ErrorMessage( GetHwnd(), LS(STR_DLGPROFILE_ERR_FILE) );
 		return;
@@ -365,8 +365,8 @@ void CDlgProfileMgr::RenameProf()
 	bool bDefault = MyList_GetText( hwndList, nCurIndex, szText );
 	TCHAR szTextOld[_MAX_PATH];
 	auto_strcpy( szTextOld, szText );
-	std::tstring strTitle = LS(STR_DLGPROFILE_RENAME_TITLE);
-	std::tstring strMessage = LS(STR_DLGPROFILE_RENAME_MSG);
+	std::wstring strTitle = LS(STR_DLGPROFILE_RENAME_TITLE);
+	std::wstring strMessage = LS(STR_DLGPROFILE_RENAME_MSG);
 	int max_size = _MAX_PATH;
 	if( !cDlgInput1.DoModal(::GetModuleHandle(NULL), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size, szText) ){
 		return;
@@ -393,8 +393,8 @@ void CDlgProfileMgr::RenameProf()
 		ErrorMessage( GetHwnd(), LS(STR_DLGPROFILE_ERR_ALREADY) );
 		return;
 	}
-	std::tstring strProfDirOld = GetProfileMgrFileName(szTextOld);
-	std::tstring strProfDir = GetProfileMgrFileName(szText);
+	std::wstring strProfDirOld = GetProfileMgrFileName(szTextOld);
+	std::wstring strProfDir = GetProfileMgrFileName(szText);
 	if( IsFileExists(strProfDirOld.c_str(), false) ){
 		if( !IsFileExists(strProfDirOld.c_str(), true) ){
 			// プロファイル名はディレクトリ
@@ -451,7 +451,7 @@ static bool IOProfSettings( SProfileSettings& settings, bool bWrite )
 	}else{
 		cProf.SetReadingMode();
 	}
-	std::tstring strIniName = GetProfileMgrFileName();
+	std::wstring strIniName = GetProfileMgrFileName();
 	if( !bWrite ){
 		if( !cProf.ReadProfile( strIniName.c_str() ) ){
 			return false;
@@ -462,7 +462,7 @@ static bool IOProfSettings( SProfileSettings& settings, bool bWrite )
 	cProf.IOProfileData(pSection , L"nCount", nCount );
 	for(int i = 0; i < nCount; i++){
 		wchar_t szKey[64];
-		std::tstring strProfName;
+		std::wstring strProfName;
 		_swprintf( szKey, L"P[%d]", i + 1 ); // 1開始
 		if( bWrite ){
 			strProfName = settings.m_vProfList[i];

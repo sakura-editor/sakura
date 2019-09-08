@@ -44,7 +44,7 @@ EFunctionCode CPlug::GetFunctionCode() const{
 // CPlugin メンバ関数
 
 //コンストラクタ
-CPlugin::CPlugin( const tstring& sBaseDir )
+CPlugin::CPlugin( const wstring& sBaseDir )
 	: m_sBaseDir( sBaseDir )
 {
 	m_nCommandCount = 0;
@@ -219,14 +219,14 @@ bool CPlugin::ReadPluginDefOption( CDataProfile *cProfile, CDataProfile *cProfil
 }
 
 //プラグインフォルダ基準の相対パスをフルパスに変換
-CPlugin::tstring CPlugin::GetFilePath( const tstring& sFileName ) const
+std::wstring CPlugin::GetFilePath( const wstring& sFileName ) const
 {
 	return m_sBaseDir + _T("\\") + to_wchar( sFileName.c_str() );
 }
 
-CPlugin::tstring CPlugin::GetFolderName() const
+std::wstring CPlugin::GetFolderName() const
 {
-	return tstring(GetFileTitlePointer(m_sBaseDir.c_str()));
+	return wstring(GetFileTitlePointer(m_sBaseDir.c_str()));
 }
 
 //コマンドを追加する

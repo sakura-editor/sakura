@@ -86,7 +86,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 		cProfile.SetWritingMode();
 	}
 
-	std::tstring strProfileName = to_wchar(CCommandLine::getInstance()->GetProfileName());
+	std::wstring strProfileName = to_wchar(CCommandLine::getInstance()->GetProfileName());
 	TCHAR	szIniFileName[_MAX_PATH + 1];
 	CFileNameManager::getInstance()->GetIniFileName( szIniFileName, strProfileName.c_str(), bRead );	// 2007.05.19 ryoji iniファイル名を取得する
 

@@ -241,7 +241,7 @@ public:
 
 	//コンストラクタ
 public:
-	CPlugin( const tstring& sBaseDir );
+	CPlugin( const wstring& sBaseDir );
 
 	//デストラクタ
 public:
@@ -269,10 +269,10 @@ protected:
 
 	//属性
 public:
-	tstring GetFilePath( const tstring& sFileName ) const;				//プラグインフォルダ基準の相対パスをフルパスに変換
-	tstring GetPluginDefPath() const{ return GetFilePath( PII_FILENAME ); }	//プラグイン定義ファイルのパス
-	tstring GetOptionPath() const{ return m_sOptionDir + PII_OPTFILEEXT; }	//オプションファイルのパス
-	tstring GetFolderName() const;	//プラグインのフォルダ名を取得
+	wstring GetFilePath( const wstring& sFileName ) const;				//プラグインフォルダ基準の相対パスをフルパスに変換
+	wstring GetPluginDefPath() const{ return GetFilePath( PII_FILENAME ); }	//プラグイン定義ファイルのパス
+	wstring GetOptionPath() const{ return m_sOptionDir + PII_OPTFILEEXT; }	//オプションファイルのパス
+	wstring GetFolderName() const;	//プラグインのフォルダ名を取得
 	virtual CPlug::Array GetPlugs() const = 0;								//プラグの一覧
 
 	//メンバ変数
@@ -284,9 +284,9 @@ public:
 	wstring m_sAuthor;			//!< 作者
 	wstring m_sVersion;			//!< バージョン
 	wstring m_sUrl;				//!< 配布URL
-	tstring m_sBaseDir;
-	tstring m_sOptionDir;
-	tstring m_sLangName;		//!< 言語名
+	wstring m_sBaseDir;
+	wstring m_sOptionDir;
+	wstring m_sLangName;		//!< 言語名
 	CPluginOption::Array m_options;		// オプション	// 2010/3/24 Uchi
 	std::vector<std::wstring> m_aStrings;	// 文字列
 private:

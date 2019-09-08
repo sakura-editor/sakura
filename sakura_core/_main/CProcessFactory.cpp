@@ -155,8 +155,8 @@ bool CProcessFactory::IsStartingControlProcess()
 */
 bool CProcessFactory::IsExistControlProcess()
 {
-	std::tstring strProfileName = to_wchar(CCommandLine::getInstance()->GetProfileName());
-	std::tstring strMutexSakuraCp = GSTR_MUTEX_SAKURA_CP;
+	std::wstring strProfileName = to_wchar(CCommandLine::getInstance()->GetProfileName());
+	std::wstring strMutexSakuraCp = GSTR_MUTEX_SAKURA_CP;
 	strMutexSakuraCp += strProfileName;
  	HANDLE hMutexCP;
 	hMutexCP = ::OpenMutex( MUTEX_ALL_ACCESS, FALSE, strMutexSakuraCp.c_str() );	// 2006.04.10 ryoji ::CreateMutex() を ::OpenMutex()に変更
@@ -281,8 +281,8 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 		return false;
 	}
 
-	std::tstring strProfileName = to_wchar(CCommandLine::getInstance()->GetProfileName());
-	std::tstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
+	std::wstring strProfileName = to_wchar(CCommandLine::getInstance()->GetProfileName());
+	std::wstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
 	strInitEvent += strProfileName;
 	HANDLE hEvent;
 	hEvent = ::OpenEvent( EVENT_ALL_ACCESS, FALSE, strInitEvent.c_str() );
