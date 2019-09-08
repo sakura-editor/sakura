@@ -6,24 +6,31 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-CNativeW::CNativeW()
+CNativeW::CNativeW() noexcept
+	: CNative()
 {
 }
 
 CNativeW::CNativeW(const CNativeW& rhs)
+	: CNative(rhs)
 {
-	SetNativeData(rhs);
+}
+
+CNativeW::CNativeW(CNativeW&& other) noexcept
+	: CNative(std::forward<CNativeW>(other))
+{
 }
 
 //! nDataLenは文字単位。
 CNativeW::CNativeW( const wchar_t* pData, int nDataLen )
+	: CNative()
 {
-	SetString(pData,nDataLen);
+	SetString(pData, nDataLen);
 }
 
 CNativeW::CNativeW( const wchar_t* pData)
+	: CNativeW(pData, wcslen(pData))
 {
-	SetString(pData,wcslen(pData));
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
