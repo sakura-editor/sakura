@@ -1711,7 +1711,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			int nType1 = View->m_pcEditDoc->m_cDocType.GetDocumentType().GetIndex();	// 現在のタイプ
 
 			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
-			Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
+			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 			int nType2 = CDocTypeManager().GetDocumentTypeOfExt(Source).GetIndex();	// 指定拡張子のタイプ
 			delete[] Source;
 
@@ -1727,12 +1727,12 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			int SourceLength;
 
 			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
-			Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
+			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 			int nType1 = CDocTypeManager().GetDocumentTypeOfExt(Source).GetIndex();	// 拡張子１のタイプ
 			delete[] Source;
 
 			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
-			Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
+			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 			int nType2 = CDocTypeManager().GetDocumentTypeOfExt(Source).GetIndex();	// 拡張子２のタイプ
 			delete[] Source;
 
@@ -1747,14 +1747,14 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			int SourceLength;
 
 			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
-			Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
+			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 			std::tstring sMessage = Source;	// 表示メッセージ
 			delete[] Source;
 
 			std::tstring sDefaultValue = _T("");
 			if( ArgSize >= 2 ){
 				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
-				Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
+				Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 				sDefaultValue = Source;	// デフォルト値
 				delete[] Source;
 			}
@@ -1796,7 +1796,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			int SourceLength;
 
 			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
-			Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
+			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 			std::tstring sMessage = Source;	// 表示文字列
 			delete[] Source;
 
@@ -1838,12 +1838,12 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			int SourceLength;
 
 			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
-			Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
+			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 			std::tstring sVerA = Source;	// バージョンA
 			delete[] Source;
 
 			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
-			Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
+			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 			std::tstring sVerB = Source;	// バージョンB
 			delete[] Source;
 
@@ -1872,14 +1872,14 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 
 			if( ArgSize >= 1 ){
 				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
-				Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
+				Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 				sDefault = Source;	// 既定のファイル名
 				delete[] Source;
 			}
 
 			if( ArgSize >= 2 ){
 				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
-				Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
+				Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 				sFilter = Source;	// フィルタ文字列
 				delete[] Source;
 			}
@@ -1917,14 +1917,14 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 
 			if( ArgSize >= 1 ){
 				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
-				Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
+				Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 				sMessage = Source;	// 表示メッセージ
 				delete[] Source;
 			}
 
 			if( ArgSize >= 2 ){
 				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
-				Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
+				Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 				sDefault = Source;	// 既定のファイル名
 				delete[] Source;
 			}
@@ -1976,7 +1976,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 
 			if( ArgSize >= 2 ){
 				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
-				Wrap(&varCopy.Data.bstrVal)->GetT(&sValue);
+				Wrap(&varCopy.Data.bstrVal)->GetW(&sValue);
 			}
 
 			// 2013.06.12 オプション設定

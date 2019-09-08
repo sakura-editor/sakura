@@ -66,8 +66,6 @@ struct SysString
 		int Len = ::SysStringLen(Data);
 		str->assign(Data, Len);
 	}
-	void GetT(TCHAR **S, int *L){GetW(S, L);}
-	void GetT(std::wstring* str){GetW(str);}
 };
 
 /*! VARIANTのWrapper class
