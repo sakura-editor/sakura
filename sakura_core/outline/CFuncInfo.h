@@ -46,8 +46,8 @@ class CFuncInfo {
 		CLayoutInt	m_nFuncLineLAYOUT;	/*!< 関数のある行(折り返し単位) */
 		CLogicInt	m_nFuncColCRLF;		/*!< 関数のある桁(CRLF単位) */
 		CLayoutInt	m_nFuncColLAYOUT;	/*!< 関数のある桁(折り返し単位) */
-		CNativeT	m_cmemFuncName;	/*!< 関数名 */
-		CNativeT	m_cmemFileName;	/*!< ファイル名 */
+		CNativeW	m_cmemFuncName;	/*!< 関数名 */
+		CNativeW	m_cmemFileName;	/*!< ファイル名 */
 		int			m_nInfo;		/*!< 付加情報 */
 		int			m_nDepth;		/*!< 深さ */
 };

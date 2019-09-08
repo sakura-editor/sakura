@@ -1167,10 +1167,10 @@ LRESULT CEditWnd::DispatchEvent(
 		uItem = (UINT) LOWORD(wParam);		// menu item or submenu index
 		{
 			/* メニュー機能のテキストをセット */
-			CNativeT	cmemWork;
+			CNativeW	cmemWork;
 
 			/* 機能に対応するキー名の取得(複数) */
-			CNativeT**	ppcAssignedKeyList;
+			CNativeW**	ppcAssignedKeyList;
 			int			nAssignedKeyNum;
 			int			j;
 			nAssignedKeyNum = CKeyBind::GetKeyStrList(
@@ -4223,7 +4223,7 @@ void CEditWnd::GetTooltipText(TCHAR* wszBuf, size_t nBufCount, int nID) const
 	nLen = _wcstotcs(wszBuf, tmp, nBufCount);
 
 	// 機能に対応するキー名の取得(複数)
-	CNativeT**	ppcAssignedKeyList;
+	CNativeW**	ppcAssignedKeyList;
 	int nAssignedKeyNum = CKeyBind::GetKeyStrList(
 		G_AppInstance(),
 		m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,

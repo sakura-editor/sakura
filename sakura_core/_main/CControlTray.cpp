@@ -131,7 +131,7 @@ static LPCTSTR GetEscapePattern(const tstring& pattern)
 	@param[in,out] cFilePattern        "-GFILE=" に指定する引数用のバッファ (このバッファの末尾に追加する)
 	@param[in]     cmWorkExcludeFolder Grep ダイアログで指定されたフォルダの除外パターン
 */
-static void AppendExcludeFolderPatterns(CNativeT& cFilePattern, const CNativeT& cmWorkExcludeFolder)
+static void AppendExcludeFolderPatterns(CNativeW& cFilePattern, const CNativeW& cmWorkExcludeFolder)
 {
 	auto patterns = CGrepEnumKeys::SplitPattern(cmWorkExcludeFolder.GetStringPtr());
 	for (auto iter = patterns.begin(); iter != patterns.end(); ++iter)
@@ -147,7 +147,7 @@ static void AppendExcludeFolderPatterns(CNativeT& cFilePattern, const CNativeT& 
 	@param[in,out] cFilePattern        "-GFILE=" に指定する引数用のバッファ (このバッファの末尾に追加する)
 	@param[in]     cmWorkExcludeFile Grep ダイアログで指定されたファイルの除外パターン
 */
-static void AppendExcludeFilePatterns(CNativeT& cFilePattern, const CNativeT& cmWorkExcludeFile)
+static void AppendExcludeFilePatterns(CNativeW& cFilePattern, const CNativeW& cmWorkExcludeFile)
 {
 	auto patterns = CGrepEnumKeys::SplitPattern(cmWorkExcludeFile.GetStringPtr());
 	for (auto iter = patterns.begin(); iter != patterns.end(); ++iter)
@@ -164,10 +164,10 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 	/* Grep結果ウィンドウの表示 */
 
 	CNativeW		cmWork1;
-	CNativeT		cmWork2;
-	CNativeT		cmWork3;
-	CNativeT		cmWorkExcludeFile;
-	CNativeT		cmWorkExcludeFolder;
+	CNativeW		cmWork2;
+	CNativeW		cmWork3;
+	CNativeW		cmWorkExcludeFile;
+	CNativeW		cmWorkExcludeFolder;
 	cmWork1.SetString( cDlgGrep.m_strText.c_str() );
 	cmWork2.SetString( cDlgGrep.m_szFile );
 	cmWork3.SetString( cDlgGrep.m_szFolder );
@@ -182,11 +182,11 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 	cmWorkExcludeFolder.Replace(_T("\""), _T("\"\""));
 
 	// -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
-	CNativeT cCmdLine;
+	CNativeW cCmdLine;
 	TCHAR szTemp[20];
 
 	// 除外ファイル、除外フォルダの設定を "-GFILE=" の設定に pack するためにデータを作る。
-	CNativeT cFilePattern;
+	CNativeW cFilePattern;
 	AppendExcludeFolderPatterns(cFilePattern, cmWorkExcludeFolder);
 	AppendExcludeFilePatterns(cFilePattern, cmWorkExcludeFile);
 	cFilePattern.AppendString(cmWork2.GetStringPtr());

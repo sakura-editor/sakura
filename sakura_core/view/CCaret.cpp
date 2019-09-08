@@ -665,7 +665,7 @@ void CCaret::ShowCaretPosInfo()
 
 	// -- -- -- -- 文字コード情報 -> pszCodeName -- -- -- -- //
 	const TCHAR* pszCodeName;
-	CNativeT cmemCodeName;
+	CNativeW cmemCodeName;
 	if (hwndStatusBar) {
 		TCHAR szCodeName[100];
 		CCodePage::GetNameNormal(szCodeName, m_pEditDoc->GetDocumentEncoding());

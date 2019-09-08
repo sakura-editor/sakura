@@ -89,7 +89,7 @@ void CGrepAgent::CreateFolders( const TCHAR* pszPath, std::vector<std::tstring>&
 		// 2011.12.25 仕様変更。最後の\\は取り除く
 		int	nFolderLen = q - &szTmp[0];
 		if( 0 < nFolderLen ){
-			int nCharChars = &szTmp[nFolderLen] - CNativeT::GetCharPrev( &szTmp[0], nFolderLen, &szTmp[nFolderLen] );
+			int nCharChars = &szTmp[nFolderLen] - CNativeW::GetCharPrev( &szTmp[0], nFolderLen, &szTmp[nFolderLen] );
 			if( 1 == nCharChars && (_T('\\') == szTmp[nFolderLen - 1] || _T('/') == szTmp[nFolderLen - 1]) ){
 				szTmp[nFolderLen - 1] = _T('\0');
 			}
@@ -167,10 +167,10 @@ DWORD CGrepAgent::DoGrep(
 	bool					bGrepReplace,
 	const CNativeW*			pcmGrepKey,
 	const CNativeW*			pcmGrepReplace,
-	const CNativeT*			pcmGrepFile,
-	const CNativeT*			pcmGrepFolder,
-	const CNativeT*			pcmExcludeFile,
-	const CNativeT*			pcmExcludeFolder,
+	const CNativeW*			pcmGrepFile,
+	const CNativeW*			pcmGrepFolder,
+	const CNativeW*			pcmExcludeFile,
+	const CNativeW*			pcmExcludeFolder,
 	bool					bGrepCurFolder,
 	BOOL					bGrepSubFolder,
 	bool					bGrepStdout,

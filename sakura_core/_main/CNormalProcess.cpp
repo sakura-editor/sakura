@@ -239,7 +239,7 @@ bool CNormalProcess::InitializeProcess()
 			if( gi.cmGrepFile.GetStringLength() < MAX_GREP_PATH ){
 				CSearchKeywordManager().AddToGrepFileArr( gi.cmGrepFile.GetStringPtr() );
 			}
-			CNativeT cmemGrepFolder = gi.cmGrepFolder;
+			CNativeW cmemGrepFolder = gi.cmGrepFolder;
 			if( gi.cmGrepFolder.GetStringLength() < MAX_GREP_PATH ){
 				CSearchKeywordManager().AddToGrepFolderArr( gi.cmGrepFolder.GetStringPtr() );
 				// 2013.05.21 指定なしの場合はカレントフォルダにする

@@ -26,7 +26,6 @@
 #define SAKURA_CNATIVEW_59D44E96_F966_471D_A399_73D86F939DDA9_H_
 
 #include "CNative.h"
-#include "mem/CNativeT.h"
 #include "basis/SakuraBasis.h"
 #include "debug/Debug2.h" //assert
 
@@ -174,7 +173,7 @@ public:
 	void SetStringT( const TCHAR* pszData )				{ return SetString(pszData); }
 	void AppendStringT(const TCHAR* pszData)			{ return AppendString(pszData); }
 	void AppendStringT(const TCHAR* pData, int nLength)	{ return AppendString(pData,nLength); }
-	void AppendNativeDataT(const CNativeT& rhs)			{ return AppendNativeData(rhs); }
+	void AppendNativeDataT(const CNativeW& rhs)			{ return AppendNativeData(rhs); }
 	const TCHAR* GetStringT() const						{ return GetStringPtr(); }
 
 public:

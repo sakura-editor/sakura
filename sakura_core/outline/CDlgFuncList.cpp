@@ -982,7 +982,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 					k = nWorkLen;
 					break;
 				}
-				nCharChars = CNativeT::GetSizeOfChar( pWork, nWorkLen, k );
+				nCharChars = CNativeW::GetSizeOfChar( pWork, nWorkLen, k );
 				if( 1 == nCharChars && 0 == nNestTemplate && _T(':') == pWork[k] ){
 					//	Jan. 04, 2001 genta
 					//	C++の統合のため、\に加えて::をクラス区切りとみなすように
@@ -1573,7 +1573,7 @@ void CDlgFuncList::SetTree(bool tagjump, bool nolabel)
 		/* クリップボードコピー用テキストを作成する */
 		//	2003.06.22 Moca dummy要素はツリーに入れるがTAGJUMPには加えない
 		if( pcFuncInfo->IsAddClipText() ){
-			CNativeT text;
+			CNativeW text;
 			if( tagjump ){
 				const TCHAR* pszFileName = pcFuncInfo->m_cmemFileName.GetStringPtr();
 				if( pszFileName == NULL ){
@@ -1675,7 +1675,7 @@ void CDlgFuncList::SetTreeFile()
 		// szPath => szPath2 <iniroot>展開
 		const TCHAR* pszFrom = szPath;
 		if( m_fileTreeSetting.m_szLoadProjectIni[0] != _T('\0')){
-			CNativeT strTemp(pszFrom);
+			CNativeW strTemp(pszFrom);
 			strTemp.Replace(_T("<iniroot>"), IniDirPath);
 			if( _countof(szPath2) <= strTemp.GetStringLength() ){
 				auto_strcpy_s(szPath2, _countof(szPath), _T("<Error:Long Path>"));

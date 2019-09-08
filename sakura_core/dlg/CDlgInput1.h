@@ -46,7 +46,7 @@ public:
 	const TCHAR*	m_pszMessage;	/* メッセージ */
 	int			m_nMaxTextLen;	/* 入力サイズ上限 */
 //	char*		m_pszText;		/* テキスト */
-	CNativeT	m_cmemText;		/* テキスト */
+	CNativeW	m_cmemText;		/* テキスト */
 protected:
 	/*
 	||  実装ヘルパ関数

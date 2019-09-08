@@ -477,7 +477,7 @@ private:
 	void ISearchExec(bool bNext);
 	void ISearchBack(void) ;
 	void ISearchWordMake(void);
-	void ISearchSetStatusMsg(CNativeT* msg) const;
+	void ISearchSetStatusMsg(CNativeW* msg) const;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           括弧                              //

@@ -251,7 +251,7 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 		nPos = 0;
 	}
 
-	CNativeT cmResponseFile = _T("");
+	CNativeW cmResponseFile = _T("");
 	LPTSTR pszCmdLineWork = new TCHAR[lstrlen( pszCmdLineSrc ) + 1];
 	_tcscpy( pszCmdLineWork, pszCmdLineSrc );
 	int nCmdLineWorkLen = lstrlen( pszCmdLineWork );
@@ -265,7 +265,7 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 			! (pszToken[0] == '-' || pszToken[0] == '"' && pszToken[1] == '-' ) )){
 
 			if( pszToken[0] == _T('\"') ){
-				CNativeT cmWork;
+				CNativeW cmWork;
 				//	Nov. 3, 2005 genta
 				//	末尾のクォーテーションが無い場合を考慮して，
 				//	最後がダブルクォートの場合のみ取り除く
@@ -308,7 +308,7 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 					szPath[0] = _T('\0');
 					break;
 				}
-				int nChars = t_max(1, int(CNativeT::GetCharNext( szPath, len, szPath + i ) - (szPath + i)));
+				int nChars = t_max(1, int(CNativeW::GetCharNext( szPath, len, szPath + i ) - (szPath + i)));
 				i += nChars;
 			}
 

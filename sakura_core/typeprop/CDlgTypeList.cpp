@@ -583,7 +583,7 @@ bool CDlgTypeList::CopyType()
 			TCHAR szTemp[_countof(type.m_szTypeName) + 12];
 			auto_strcpy( szTemp, type.m_szTypeName );
 			int nTempLen = auto_strlen( szTemp );
-			CNativeT cmem;
+			CNativeW cmem;
 			// バッファをはみ出さないように
 			LimitStringLengthW( szTemp, nTempLen, _countof(type.m_szTypeName) - nLen - 1, cmem );
 			auto_strcpy( type.m_szTypeName, cmem.GetStringPtr() );

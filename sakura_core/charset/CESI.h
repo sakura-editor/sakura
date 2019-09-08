@@ -213,7 +213,7 @@ public:
 
 #ifdef _DEBUG
 public:
-	static void GetDebugInfo( const char* pS, const int nLen, CNativeT* pcmtxtOut );
+	static void GetDebugInfo( const char* pS, const int nLen, CNativeW* pcmtxtOut );
 #endif
 };
 

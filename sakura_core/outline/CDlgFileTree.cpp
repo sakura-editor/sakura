@@ -548,7 +548,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 					std::vector<LPCTSTR>(), std::vector<LPCTSTR>() );
 				TCHAR szFile[_MAX_PATH];
 				if( dlg.DoModal_GetOpenFileName(szFile) ){
-					CNativeT cmemFile = szFile;
+					CNativeW cmemFile = szFile;
 					cmemFile.Replace(_T("%"), _T("%%"));
 					DlgItem_SetText( GetHwnd(), IDC_EDIT_PATH, cmemFile.GetStringPtr() );
 				}
@@ -748,7 +748,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 					}
 					HTREEITEM htiItemFirst = NULL;
 					for( int i = 0; i < (int)aFileNames.size(); i++ ){
-						CNativeT cmemFile = aFileNames[i].c_str();
+						CNativeW cmemFile = aFileNames[i].c_str();
 						cmemFile.Replace(_T("%"), _T("%%"));
 						SFileTreeItem item;
 						item.m_eFileTreeItemType = EFileTreeItemType_File;
@@ -783,7 +783,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 					int nItemsCount = (int)m_fileTreeSetting.m_aItems.size();
 					for( int i = 0; i < nItemsCount; i++ ){
 						SFileTreeItem& item =  m_fileTreeSetting.m_aItems[i];
-						CNativeT str(item.m_szTargetPath);
+						CNativeW str(item.m_szTargetPath);
 						str.Replace(szPathFrom, szPathTo);
 						if( str.GetStringLength() < (int)item.m_szTargetPath.GetBufferCount() ){
 							item.m_szTargetPath = str.GetStringPtr();

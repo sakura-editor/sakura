@@ -1141,7 +1141,7 @@ ECodeType CESI::AutoDetectByCoding( const char* pBuf, int nSize )
 
 	@param[out] pcmtxtOut 出力は、このポインタが指すオブジェクトに追加される。
 */
-void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeT* pcmtxtOut )
+void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeW* pcmtxtOut )
 {
 	TCHAR szWork[10240];
 	int v1, v2, v3, v4;

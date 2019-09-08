@@ -537,7 +537,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 		nDummy = _tcslen( common.m_sBackup.m_szBackUpFolder );
 		/* フォルダの最後が「半角かつ'\\'」でない場合は、付加する */
 		nCharChars = &common.m_sBackup.m_szBackUpFolder[nDummy]
-			- CNativeT::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] );
+			- CNativeW::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] );
 		if( 1 == nCharChars && common.m_sBackup.m_szBackUpFolder[nDummy - 1] == '\\' ){
 		}else{
 			_tcscat( common.m_sBackup.m_szBackUpFolder, _T("\\") );
@@ -550,7 +550,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 		nDummy = _tcslen( common.m_sBackup.m_szBackUpFolder );
 		/* フォルダの最後が「半角かつ'\\'」でない場合は、付加する */
 		nCharChars = &common.m_sBackup.m_szBackUpFolder[nDummy]
-			- CNativeT::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] );
+			- CNativeW::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] );
 		if( 1 == nCharChars && common.m_sBackup.m_szBackUpFolder[nDummy - 1] == '\\' ){
 		}else{
 			_tcscat( common.m_sBackup.m_szBackUpFolder, _T("\\") );

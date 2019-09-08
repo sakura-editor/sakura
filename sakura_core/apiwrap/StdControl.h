@@ -62,7 +62,7 @@ namespace ApiWrap{
 		@param[in]  hwnd	ウィンドウハンドル
 		@param[in]  str		ウィンドウテキスト
 	*/
-	inline BOOL Wnd_SetText(HWND hwnd, const CNativeT& str)
+	inline BOOL Wnd_SetText(HWND hwnd, const CNativeW& str)
 	{
 		return SetWindowText(hwnd, str.GetStringPtr());
 	}
@@ -74,7 +74,7 @@ namespace ApiWrap{
 		@return		成功した場合 true
 		@return		失敗した場合 false
 	*/
-	inline bool Wnd_GetText(HWND hwnd, CNativeT& str)
+	inline bool Wnd_GetText(HWND hwnd, CNativeW& str)
 	{
 		// バッファをクリアしておく
 		str.Clear();
@@ -120,7 +120,7 @@ namespace ApiWrap{
 			return false;
 		}
 
-		// Win32 API の GetWindowText() を呼んだだけでは CNativeT 内部の
+		// Win32 API の GetWindowText() を呼んだだけでは CNativeW 内部の
 		// データサイズが更新されないのでデータサイズを反映する
 		str._SetStringLength(actualCount);
 

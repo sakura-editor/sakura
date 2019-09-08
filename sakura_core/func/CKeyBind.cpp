@@ -259,7 +259,7 @@ bool CKeyBind::GetKeyStrSub(
 		int			nKeyNameArrEnd,
 		KEYDATA*	pKeyNameArr,
 		int			nShiftState,
-		CNativeT&	cMemList,
+		CNativeW&	cMemList,
 		int			nFuncId,
 		BOOL		bGetDefFuncCode /* = TRUE */
 )
@@ -298,7 +298,7 @@ int CKeyBind::GetKeyStr(
 		HINSTANCE	hInstance,
 		int			nKeyNameArrNum,
 		KEYDATA*	pKeyNameArr,
-		CNativeT&	cMemList,
+		CNativeW&	cMemList,
 		int			nFuncId,
 		BOOL		bGetDefFuncCode /* = TRUE */
 )
@@ -335,7 +335,7 @@ int CKeyBind::GetKeyStrList(
 	HINSTANCE	hInstance,
 	int			nKeyNameArrNum,
 	KEYDATA*	pKeyNameArr,
-	CNativeT***	pppcMemList,
+	CNativeW***	pppcMemList,
 	int			nFuncId,
 	BOOL		bGetDefFuncCode /* = TRUE */
 )
@@ -358,9 +358,9 @@ int CKeyBind::GetKeyStrList(
 	if( 0 == nAssignedKeysNum ){
 		return 0;
 	}
-	(*pppcMemList) = new CNativeT*[nAssignedKeysNum + 1];
+	(*pppcMemList) = new CNativeW*[nAssignedKeysNum + 1];
 	for( i = 0; i < nAssignedKeysNum; ++i ){
-		(*pppcMemList)[i] = new CNativeT;
+		(*pppcMemList)[i] = new CNativeW;
 	}
 	(*pppcMemList)[i] = NULL;
 
@@ -455,7 +455,7 @@ TCHAR* CKeyBind::GetMenuLabel(
 
 	/* 機能に対応するキー名を追加するか */
 	if( bKeyStr ){
-		CNativeT    cMemAccessKey;
+		CNativeW    cMemAccessKey;
 		// 2010.07.11 Moca メニューラベルの「\t」の付加条件変更
 		// [ファイル/フォルダ/ウィンドウ一覧以外]から[アクセスキーがあるときのみ]に付加するように変更
 		/* 機能に対応するキー名の取得 */

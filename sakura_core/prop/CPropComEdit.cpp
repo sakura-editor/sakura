@@ -118,7 +118,7 @@ INT_PTR CPropEdit::DispatchEvent(
 					::DlgItem_GetText( hwndDlg, IDC_EDIT_FILEOPENDIR, szMetaPath, _countof(szMetaPath) );
 					CFileNameManager::ExpandMetaToFolder( szMetaPath, szPath, _countof(szPath) );
 					if( SelectDir( hwndDlg, LS(STR_PROPEDIT_SELECT_DIR), szPath, szPath ) ){
-						CNativeT cmem(szPath);
+						CNativeW cmem(szPath);
 						cmem.Replace(_T("%"), _T("%%"));
 						::DlgItem_SetText( hwndDlg, IDC_EDIT_FILEOPENDIR, cmem.GetStringPtr() );
 					}

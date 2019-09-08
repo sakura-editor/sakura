@@ -227,7 +227,7 @@ void CEditView::ISearchEnter( ESearchMode mode, ESearchDirection direction)
 
 		Redraw();
 		
-		CNativeT msg;
+		CNativeW msg;
 		ISearchSetStatusMsg(&msg);
 		SendStatusMessage(msg.GetStringPtr());
 		
@@ -339,7 +339,7 @@ void CEditView::ISearchExec(bool bNext)
 
 	if ( (m_strCurSearchKey.size() == 0) || (m_nISearchMode == SEARCH_NONE)){
 		//ステータスの表示
-		CNativeT msg;
+		CNativeW msg;
 		ISearchSetStatusMsg(&msg);
 		SendStatusMessage(msg.GetStringPtr());
 		return ;
@@ -395,7 +395,7 @@ void CEditView::ISearchExec(bool bNext)
 
 	m_nISearchHistoryCount ++ ;
 
-	CNativeT msg;
+	CNativeW msg;
 	ISearchSetStatusMsg(&msg);
 
 	if (m_nISearchHistoryCount >= 256) {
@@ -490,7 +490,7 @@ void CEditView::ISearchBack(void) {
 	Redraw();
 
 	//ステータス表示
-	CNativeT msg;
+	CNativeW msg;
 	ISearchSetStatusMsg(&msg);
 	SendStatusMessage(msg.GetStringPtr());
 }
@@ -527,7 +527,7 @@ void CEditView::ISearchWordMake(void)
 	@date 2004/10/13
 	@date 2005.01.13 genta 文字列修正
 */
-void CEditView::ISearchSetStatusMsg(CNativeT* msg) const
+void CEditView::ISearchSetStatusMsg(CNativeW* msg) const
 {
 	switch ( m_nISearchMode){
 	case SEARCH_NORMAL:

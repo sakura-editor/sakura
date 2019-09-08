@@ -112,7 +112,6 @@
 //よく使うヘッダ
 #include "mem/CNativeW.h"
 #include "mem/CNativeA.h"
-#include "mem/CNativeT.h"
 
 #include "util/string_ex.h"
 #include "util/MessageBoxF.h"

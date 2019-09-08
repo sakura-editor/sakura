@@ -90,7 +90,7 @@ BOOL CDlgProperty::OnBnClicked( int wID )
 void CDlgProperty::SetData( void )
 {
 	CEditDoc*		pCEditDoc = (CEditDoc*)m_lParam;
-	CNativeT		cmemProp;
+	CNativeW		cmemProp;
 	TCHAR			szWork[500];
 
 	HANDLE			nFind;
@@ -240,7 +240,7 @@ void CDlgProperty::SetData( void )
 	HGLOBAL					hgData;
 	char*					pBuf;
 	int						nBufLen;
-	CNativeT				ctext;
+	CNativeW				ctext;
 	/* メモリ確保 & ファイル読み込み */
 	hgData = NULL;
 	CBinaryInputStream in(pCEditDoc->m_cDocFile.GetFilePath());

@@ -56,11 +56,11 @@ void CViewCommander::Command_GREP_DIALOG( void )
 void CViewCommander::Command_GREP( void )
 {
 	CNativeW		cmWork1;
-	CNativeT		cmWork2;
-	CNativeT		cmWork3;
+	CNativeW		cmWork2;
+	CNativeW		cmWork3;
 	CNativeW		cmWork4;
-	CNativeT		cmWorkExcludeFile;
-	CNativeT		cmWorkExcludeFolder;
+	CNativeW		cmWorkExcludeFile;
+	CNativeW		cmWorkExcludeFolder;
 	cmWork1.SetString( GetEditWindow()->m_cDlgGrep.m_strText.c_str() );
 	cmWork2.SetString( GetEditWindow()->m_cDlgGrep.m_szFile );
 	cmWork3.SetString( GetEditWindow()->m_cDlgGrep.m_szFolder );
@@ -163,11 +163,11 @@ void CViewCommander::Command_GREP_REPLACE_DLG( void )
 void CViewCommander::Command_GREP_REPLACE( void )
 {
 	CNativeW		cmWork1;
-	CNativeT		cmWork2;
-	CNativeT		cmWork3;
+	CNativeW		cmWork2;
+	CNativeW		cmWork3;
 	CNativeW		cmWork4;
-	CNativeT		cmWorkExcludeFile;
-	CNativeT		cmWorkExcludeFolder;
+	CNativeW		cmWorkExcludeFile;
+	CNativeW		cmWorkExcludeFolder;
 
 	CDlgGrepReplace& cDlgGrepRep = GetEditWindow()->m_cDlgGrepReplace;
 	cmWork1.SetString( cDlgGrepRep.m_strText.c_str() );
@@ -226,7 +226,7 @@ void CViewCommander::Command_GREP_REPLACE( void )
 		cmWork4.Replace( L"\"", L"\"\"" );
 
 		// -GREPMODE -GKEY="1" -GREPR="2" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
-		CNativeT cCmdLine;
+		CNativeW cCmdLine;
 		TCHAR szTemp[20];
 		cCmdLine.AppendString(_T("-GREPMODE -GKEY=\""));
 		cCmdLine.AppendStringW(cmWork1.GetStringPtr());
