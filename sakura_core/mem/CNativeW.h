@@ -146,9 +146,6 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 	void Replace( const wchar_t* pszFrom, const wchar_t* pszTo );   //!< 文字列置換
-	void ReplaceT( const wchar_t* pszFrom, const wchar_t* pszTo ){
-		Replace( pszFrom, pszTo );
-	}
 	void Replace( const wchar_t* pszFrom, int nFromLen, const wchar_t* pszTo, int nToLen );   //!< 文字列置換
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

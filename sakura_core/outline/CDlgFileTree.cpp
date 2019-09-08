@@ -549,7 +549,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 				TCHAR szFile[_MAX_PATH];
 				if( dlg.DoModal_GetOpenFileName(szFile) ){
 					CNativeT cmemFile = szFile;
-					cmemFile.ReplaceT(_T("%"), _T("%%"));
+					cmemFile.Replace(_T("%"), _T("%%"));
 					DlgItem_SetText( GetHwnd(), IDC_EDIT_PATH, cmemFile.GetStringPtr() );
 				}
 			}
@@ -749,7 +749,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 					HTREEITEM htiItemFirst = NULL;
 					for( int i = 0; i < (int)aFileNames.size(); i++ ){
 						CNativeT cmemFile = aFileNames[i].c_str();
-						cmemFile.ReplaceT(_T("%"), _T("%%"));
+						cmemFile.Replace(_T("%"), _T("%%"));
 						SFileTreeItem item;
 						item.m_eFileTreeItemType = EFileTreeItemType_File;
 						item.m_szTargetPath = cmemFile.GetStringPtr();
