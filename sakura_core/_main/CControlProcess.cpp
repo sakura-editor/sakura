@@ -49,7 +49,7 @@ bool CControlProcess::InitializeProcess()
 		return false;
 	}
 
-	std::wstring strProfileName = to_wchar(CCommandLine::getInstance()->GetProfileName());
+	const std::wstring strProfileName = CCommandLine::getInstance()->GetProfileName();
 
 	// 初期化完了イベントを作成する
 	std::wstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;

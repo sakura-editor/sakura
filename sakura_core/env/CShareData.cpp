@@ -111,7 +111,7 @@ bool CShareData::InitShareData()
 
 	/* ファイルマッピングオブジェクト */
 	{
-		std::wstring strProfileName = to_wchar(CCommandLine::getInstance()->GetProfileName());
+		const std::wstring strProfileName = CCommandLine::getInstance()->GetProfileName();
 		std::wstring strShareDataName = GSTR_SHAREDATA;
 		strShareDataName += strProfileName;
 		m_hFileMap = ::CreateFileMapping(
