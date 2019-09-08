@@ -32,8 +32,7 @@ public:
 	~CDlgInput1();
 	BOOL DoModal( HINSTANCE hInstApp, HWND hwndParent, const TCHAR* pszTitle,
 				  const TCHAR* pszMessage, int nMaxTextLen, TCHAR* pszText );	/* モードレスダイアログの表示 */
-	BOOL DoModal( HINSTANCE hInstApp, HWND hwndParent, const TCHAR* pszTitle,
-				  const TCHAR* pszMessage, int nMaxTextLen, NOT_TCHAR* pszText );	/* モードレスダイアログの表示 */
+
 	/*
 	||  Attributes & Operations
 	*/

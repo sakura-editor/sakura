@@ -96,21 +96,6 @@ void CFuncInfoArr::AppendData(
 }
 
 void CFuncInfoArr::AppendData(
-	CLogicInt			nFuncLineCRLF,		//!< 関数のある行(CRLF単位)
-	CLogicInt			nFuncColCRLF,		//!< 関数のある桁(CRLF単位)
-	CLayoutInt			nFuncLineLAYOUT,	//!< 関数のある行(折り返し単位)
-	CLayoutInt			nFuncColLAYOUT,		//!< 関数のある桁(折り返し単位)
-	const NOT_TCHAR*	pszFuncName,		//!< 関数名
-	const NOT_TCHAR*	pszFileName,		//!< ファイル名
-	int					nInfo,				//!< 付加情報
-	int					nDepth				//!< 深さ
-)
-{
-	AppendData(nFuncLineCRLF,nFuncColCRLF,nFuncLineLAYOUT,nFuncColLAYOUT,to_tchar(pszFuncName),
-		(pszFileName?to_tchar(pszFileName):NULL),nInfo,nDepth);
-}
-
-void CFuncInfoArr::AppendData(
 	CLogicInt		nFuncLineCRLF,		//!< 関数のある行(CRLF単位)
 	CLayoutInt		nFuncLineLAYOUT,	//!< 関数のある行(折り返し単位)
 	const TCHAR*	pszFuncName,		//!< 関数名
@@ -120,17 +105,6 @@ void CFuncInfoArr::AppendData(
 {
 	AppendData(nFuncLineCRLF,CLogicInt(1),nFuncLineLAYOUT,CLayoutInt(1),pszFuncName,NULL,nInfo,nDepth);
 	return;
-}
-
-void CFuncInfoArr::AppendData(
-	CLogicInt			nFuncLineCRLF,		//!< 関数のある行(CRLF単位)
-	CLayoutInt			nFuncLineLAYOUT,	//!< 関数のある行(折り返し単位)
-	const NOT_TCHAR*	pszFuncName,		//!< 関数名
-	int					nInfo,				//!< 付加情報
-	int					nDepth				//!< 深さ
-)
-{
-	AppendData(nFuncLineCRLF,nFuncLineLAYOUT,to_tchar(pszFuncName),nInfo,nDepth);
 }
 
 void CFuncInfoArr::DUMP( void )

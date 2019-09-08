@@ -42,10 +42,7 @@ public:
 	void AppendData( CFuncInfo* pcFuncInfo );	/* 配列の最後にデータを追加する */
 	void AppendData( CLogicInt nFuncLineCRLF, CLayoutInt nFuncLineLAYOUT, const TCHAR* pszFuncName,
 					 int nInfo, int nDepth = 0 );	/* 配列の最後にデータを追加する 2002.04.01 YAZAKI 深さ導入*/
-	void AppendData( CLogicInt nFuncLineCRLF, CLayoutInt nFuncLineLAYOUT, const NOT_TCHAR* pszFuncName,
-					 int nInfo, int nDepth = 0 );	/* 配列の最後にデータを追加する 2002.04.01 YAZAKI 深さ導入*/
 	void AppendData( CLogicInt nLogicLine, CLogicInt nLogicCol, CLayoutInt nLayoutLine, CLayoutInt nLayoutCol, const TCHAR*, const TCHAR*, int, int nDepth = 0 );	/* 配列の最後にデータを追加する 2010.03.01 syat 桁導入*/
-	void AppendData( CLogicInt nLogicLine, CLogicInt nLogicCol, CLayoutInt nLayoutLine, CLayoutInt nLayoutCol, const NOT_TCHAR*, const NOT_TCHAR*, int, int nDepth = 0 );	/* 配列の最後にデータを追加する 2010.03.01 syat 桁導入*/
 	int	GetNum( void ){	return m_nFuncInfoArrNum; }	/* 配列要素数を返す */
 	void Empty( void );
 	void DUMP( void );

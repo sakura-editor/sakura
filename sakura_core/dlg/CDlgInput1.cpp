@@ -98,25 +98,6 @@ BOOL CDlgInput1::DoModal(
 	return bRet;
 }
 
-BOOL CDlgInput1::DoModal(
-	HINSTANCE		hInstApp,
-	HWND			hwndParent,
-	const TCHAR*	pszTitle,
-	const TCHAR*	pszMessage,
-	int				nMaxTextLen,
-	NOT_TCHAR*		pszText
-)
-{
-	std::vector<TCHAR> buf(nMaxTextLen);
-	buf[0] = _T('\0');
-	BOOL ret=DoModal(hInstApp, hwndParent, pszTitle, pszMessage, nMaxTextLen, &buf[0]);
-	if(ret){
-		auto_strncpy(pszText,to_not_tchar(&buf[0]), nMaxTextLen);
-		pszText[nMaxTextLen-1] = 0;
-	}
-	return ret;
-}
-
 /* ダイアログのメッセージ処理 */
 INT_PTR CDlgInput1::DispatchEvent(
 	HWND hwndDlg,	// handle to dialog box

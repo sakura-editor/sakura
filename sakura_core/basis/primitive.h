@@ -30,10 +30,6 @@
 //char,wchar_t の変わりに、別名の ACHAR,WCHAR を使うと、ソース整形がしやすいケースがある。
 typedef char ACHAR;
 
-//TCHAR追加機能
-//TCHARと逆の文字型をNOT_TCHARとして定義する
-typedef char NOT_TCHAR;
-
 //WIN_CHAR (WinAPIに渡すので、必ずTCHARでなければならないもの)
 typedef TCHAR WIN_CHAR;
 #define _WINT(A) _T(A)
