@@ -49,7 +49,13 @@ void CMemory::_init_members()
 	m_nRawLen = 0;
 }
 
-CMemory::CMemory()
+/*!
+ * @brief デフォルトコンストラクタ
+ */
+CMemory::CMemory() noexcept
+	: m_pRawData(NULL)
+	, m_nRawLen(0)
+	, m_nDataBufSize(0)
 {
 	_init_members();
 }

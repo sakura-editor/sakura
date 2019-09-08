@@ -44,7 +44,7 @@ class CMemory
 {
 	//コンストラクタ・デストラクタ
 public:
-	CMemory();
+	CMemory() noexcept;
 	CMemory(const CMemory& rhs);
 	CMemory(const void* pData, int nDataLenBytes);
 	// デストラクタを仮想にすると仮想関数テーブルへのポインタを持つ為にインスタンスの容量が増えてしまうので仮想にしない
