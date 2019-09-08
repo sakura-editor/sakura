@@ -120,11 +120,11 @@ BOOL CSortedTagJumpList::AddParamA( const ACHAR* keyword, const ACHAR* filename,
 	//アイテムを作成する。
 	item = (TagJumpInfo*)malloc( sizeof( TagJumpInfo ) );
 	if( NULL == item ) return FALSE;
-	item->keyword  = _tcsdup( to_wchar(keyword) );
-	item->filename = _tcsdup( to_wchar(filename) );
+	item->keyword  = _wcsdup( to_wchar(keyword) );
+	item->filename = _wcsdup( to_wchar(filename) );
 	item->no       = no;
 	item->type     = to_wchar(typeStr)[0];
-	item->note     = _tcsdup( to_wchar(note) );
+	item->note     = _wcsdup( to_wchar(note) );
 	item->depth    = depth;
 	item->next     = NULL;
 	item->baseDirId = baseDirId;
