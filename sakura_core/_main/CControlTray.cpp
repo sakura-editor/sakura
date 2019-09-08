@@ -295,7 +295,7 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 
 	//同名同クラスのウィンドウが既に存在していたら、失敗
 	m_hInstance = hInstance;
-	std::tstring strProfileName = to_tchar(CCommandLine::getInstance()->GetProfileName());
+	std::tstring strProfileName = to_wchar(CCommandLine::getInstance()->GetProfileName());
 	std::tstring strCEditAppName = GSTR_CEDITAPP;
 	strCEditAppName += strProfileName;
 	HWND hwndWork = ::FindWindow( strCEditAppName.c_str(), strCEditAppName.c_str() );
@@ -570,7 +570,7 @@ LRESULT CControlTray::DispatchEvent(
 			HH_AKLINK	link;
 			link.cbStruct		= sizeof_raw(link);
 			link.fReserved		= FALSE;
-			link.pszKeywords	= to_tchar(&pWork[nLen+1]);
+			link.pszKeywords	= to_wchar(&pWork[nLen+1]);
 			link.pszUrl			= NULL;
 			link.pszMsgText		= NULL;
 			link.pszMsgTitle	= NULL;
@@ -878,7 +878,7 @@ LRESULT CControlTray::DispatchEvent(
 								const CPlug* plug = *it;
 								if( !plug->m_sIcon.empty() ){
 									iBitmap = m_cMenuDrawer.m_pcIcons->Add(
-										to_tchar(plug->m_cPlugin.GetFilePath( to_tchar(plug->m_sIcon.c_str()) ).c_str()) );
+										to_wchar(plug->m_cPlugin.GetFilePath( to_wchar(plug->m_sIcon.c_str()) ).c_str()) );
 								}
 								m_cMenuDrawer.AddToolButton( iBitmap, plug->GetFunctionCode() );
 							}

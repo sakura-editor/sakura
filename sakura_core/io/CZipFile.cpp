@@ -114,7 +114,7 @@ bool CZipFile::ChkPluginDef(const std::tstring& sDefFile, std::tstring& sFolderN
 			FolderItems*	pFileItems2;
 			Folder*			pFile;
 
-			sFolderName = to_tchar(bps);	// Install Follder Name
+			sFolderName = to_wchar(bps);	// Install Follder Name
 			hr = pFileItem->get_GetFolder((IDispatch **)&pFile);
 			if (hr != S_OK) { continue; }
 			hr = pFile->Items(&pFileItems2);
@@ -132,9 +132,9 @@ bool CZipFile::ChkPluginDef(const std::tstring& sDefFile, std::tstring& sFolderN
 
 				// 定義ファイルか
 				if (!vFolder && auto_strlen(bps) >= sDefFile.length()
-					&& (auto_stricmp(to_tchar(bps), to_tchar((sFolderName + _T("/") + sDefFile).c_str())) == 0
-					|| auto_stricmp(to_tchar(bps), to_tchar((sFolderName + _T("\\") + sDefFile).c_str())) == 0
-					|| auto_stricmp(to_tchar(bps), to_tchar((sZipName + _T("\\") + sFolderName + _T("\\") + sDefFile).c_str())) == 0)) {
+					&& (auto_stricmp(to_wchar(bps), to_wchar((sFolderName + _T("/") + sDefFile).c_str())) == 0
+					|| auto_stricmp(to_wchar(bps), to_wchar((sFolderName + _T("\\") + sDefFile).c_str())) == 0
+					|| auto_stricmp(to_wchar(bps), to_wchar((sZipName + _T("\\") + sFolderName + _T("\\") + sDefFile).c_str())) == 0)) {
 					bFoundDef = true;
 					break;
 				}

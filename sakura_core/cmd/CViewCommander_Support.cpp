@@ -248,7 +248,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 {
 	std::tstring helpfile;
 	if( _helpfile != NULL ){
-		helpfile = to_tchar(_helpfile);
+		helpfile = to_wchar(_helpfile);
 	}
 
 	HWND		hwndHtmlHelp;

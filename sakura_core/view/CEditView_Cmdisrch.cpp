@@ -551,7 +551,7 @@ void CEditView::ISearchSetStatusMsg(CNativeW* msg) const
 	}
 
 	if(m_nISearchHistoryCount > 0)
-		msg->AppendString(to_tchar(m_strCurSearchKey.c_str()));
+		msg->AppendString(to_wchar(m_strCurSearchKey.c_str()));
 }
 
 /*!

@@ -112,7 +112,7 @@ bool IsFilePath(
 			szJumpToFile[0] != L'\0'
 		){
 			//	ファイル存在確認
-			if( IsFileExists(to_tchar(szJumpToFile), bFileOnly)){
+			if( IsFileExists(to_wchar(szJumpToFile), bFileOnly)){
 				tmp_end = cur_pos;
 			}
 		}
@@ -132,7 +132,7 @@ bool IsFilePath(
 
 	//	Jan. 04, 2002 genta
 	//	ファイル存在確認方法変更
-	if( szJumpToFile[0] != L'\0' && IsFileExists(to_tchar(szJumpToFile), bFileOnly)){
+	if( szJumpToFile[0] != L'\0' && IsFileExists(to_wchar(szJumpToFile), bFileOnly)){
 		tmp_end = cur_pos;
 	}
 	if( tmp_end != 0 ){
@@ -487,7 +487,7 @@ void GetInidir(
 	if( pDir == NULL )
 		return;
 	
-	std::tstring strProfileName = to_tchar(CCommandLine::getInstance()->GetProfileName());
+	std::tstring strProfileName = to_wchar(CCommandLine::getInstance()->GetProfileName());
 	TCHAR	szPath[_MAX_PATH];
 
 	// sakura.ini のパスを取得

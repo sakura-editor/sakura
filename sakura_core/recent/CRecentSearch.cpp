@@ -56,7 +56,7 @@ CRecentSearch::CRecentSearch()
 */
 const TCHAR* CRecentSearch::GetItemText( int nIndex ) const
 {
-	return to_tchar(*GetItem(nIndex));
+	return to_wchar(*GetItem(nIndex));
 }
 
 bool CRecentSearch::DataToReceiveType( LPCWSTR* dst, const CSearchString* src ) const

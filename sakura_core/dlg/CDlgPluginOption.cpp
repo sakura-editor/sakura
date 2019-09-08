@@ -202,7 +202,7 @@ void CDlgPluginOption::SetData( void )
 	}
 
 	// ReadMe Button
-	m_sReadMeName = m_cPropPlugin->GetReadMeFile(to_tchar(m_pShareData->m_Common.m_sPlugin.m_PluginTable[m_ID].m_szName));
+	m_sReadMeName = m_cPropPlugin->GetReadMeFile(to_wchar(m_pShareData->m_Common.m_sPlugin.m_PluginTable[m_ID].m_szName));
 	::EnableWindow( GetItemHwnd( IDC_PLUGIN_README ), !m_sReadMeName.empty() );
 	return;
 }

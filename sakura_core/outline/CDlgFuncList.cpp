@@ -1073,11 +1073,11 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 						if( pcFuncInfo->m_nInfo == FL_OBJ_NAMESPACE )
 						{
 							//_tcscat( pClassName, _T(" 名前空間") );
-							strClassName += to_tchar(m_pcFuncInfoArr->GetAppendText(FL_OBJ_NAMESPACE).c_str());
+							strClassName += to_wchar(m_pcFuncInfoArr->GetAppendText(FL_OBJ_NAMESPACE).c_str());
 						}
 						else
 							//_tcscat( pClassName, _T(" クラス") );
-							strClassName += to_tchar(m_pcFuncInfoArr->GetAppendText(FL_OBJ_CLASS).c_str());
+							strClassName += to_wchar(m_pcFuncInfoArr->GetAppendText(FL_OBJ_CLASS).c_str());
 					}
 					tvis.hParent = htiParent;
 					tvis.hInsertAfter = TVI_LAST;
@@ -1113,7 +1113,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 			// 2002/10/27 frozen ここまで
 				if( htiGlobal == NULL ){
 					TV_INSERTSTRUCT	tvg;
-					std::tstring sGlobal = to_tchar(m_pcFuncInfoArr->GetAppendText( FL_OBJ_GLOBAL ).c_str());
+					std::tstring sGlobal = to_wchar(m_pcFuncInfoArr->GetAppendText( FL_OBJ_GLOBAL ).c_str());
 
 					::ZeroMemory( &tvg, sizeof(tvg));
 					tvg.hParent = TVI_ROOT;
@@ -1139,7 +1139,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 		case FL_OBJ_GLOBAL:			//「グローバル」は別の場所で処理してるので除外
 			break;
 		default:
-			strFuncName += to_tchar(m_pcFuncInfoArr->GetAppendText(pcFuncInfo->m_nInfo).c_str());
+			strFuncName += to_wchar(m_pcFuncInfoArr->GetAppendText(pcFuncInfo->m_nInfo).c_str());
 		}
 
 /* 該当クラス名のアイテムの子として、メソッドのアイテムを登録 */

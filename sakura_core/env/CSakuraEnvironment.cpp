@@ -264,7 +264,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				met.cbSize = CCSIZEOF_STRUCT(NONCLIENTMETRICS, lfMessageFont);
 				::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, met.cbSize, &met, 0);
 				CDCFont dcFont(met.lfCaptionFont, GetMainWindow()->GetHwnd());
-				CFileNameManager::getInstance()->GetTransformFileNameFast( to_tchar(buff), szText, _countof(szText)-1, dcFont.GetHDC(), true );
+				CFileNameManager::getInstance()->GetTransformFileNameFast( to_wchar(buff), szText, _countof(szText)-1, dcFont.GetHDC(), true );
 				q = wcs_pushW( q, q_max - q, szText);
 			}
 			++p;
@@ -478,7 +478,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			//	iniファイルのフルパス
 			{
 				TCHAR	szPath[_MAX_PATH + 1];
-				std::tstring strProfileName = to_tchar(CCommandLine::getInstance()->GetProfileName());
+				std::tstring strProfileName = to_wchar(CCommandLine::getInstance()->GetProfileName());
 				CFileNameManager::getInstance()->GetIniFileName( szPath, strProfileName.c_str() );
 				q = wcs_pushW( q, q_max - q, szPath );
 				++p;
@@ -715,7 +715,7 @@ std::tstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
 {
 	CEditDoc* pcDoc = CEditDoc::GetInstance(0); //######
 	if( pcDoc && pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
-		return to_tchar(pcDoc->m_cDocFile.GetFilePathClass().GetDirPath().c_str());
+		return to_wchar(pcDoc->m_cDocFile.GetFilePathClass().GetDirPath().c_str());
 	}
 
 	EOpenDialogDir eOpenDialogDir = GetDllShareData().m_Common.m_sEdit.m_eOpenDialogDir;

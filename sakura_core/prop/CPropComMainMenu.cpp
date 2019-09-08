@@ -317,7 +317,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 				HWND hEdit = TreeView_GetEditControl( hwndTreeRes );
 				if (msMenu[ptdi->item.lParam].m_bIsNode) {
 					// ノードのみ有効
-					SetWindowText( hEdit, to_tchar( msMenu[ptdi->item.lParam].m_sName.c_str() ) ) ;
+					SetWindowText( hEdit, to_wchar( msMenu[ptdi->item.lParam].m_sName.c_str() ) ) ;
 					EditCtl_LimitText( hEdit, MAX_MAIN_MENU_NAME_LEN );
 					// 編集時のメッセージ処理
 					m_wpEdit = (WNDPROC)SetWindowLongPtr( hEdit, GWLP_WNDPROC, (LONG_PTR)WindowProcEdit );
@@ -638,7 +638,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
 					tvis.hParent = htiParent;
 					tvis.hInsertAfter = htiTemp;
-					tvis.item.pszText = const_cast<TCHAR*>(to_tchar(szLabel));
+					tvis.item.pszText = const_cast<TCHAR*>(to_wchar(szLabel));
 					tvis.item.lParam = nMenuCnt++;
 					tvis.item.cChildren = ( wID == IDC_BUTTON_INSERT_NODE );
 					htiItem = TreeView_InsertItem( hwndTreeRes, &tvis );
@@ -771,7 +771,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 							InfoMessage( hwndDlg, LS(STR_PROPCOMMAINMENU_OK));
 						}
 						else {
-							WarningMessage( hwndDlg, to_tchar(sErrMsg.c_str()) );
+							WarningMessage( hwndDlg, to_wchar(sErrMsg.c_str()) );
 						}
 					}
 					break;
@@ -1187,7 +1187,7 @@ static const TCHAR* MakeDispLabel( SMainMenuWork* pFunc )
 			pFunc->m_sName.substr(0, MAX_MAIN_MENU_NAME_LEN).c_str() );
 	}
 
-	return to_tchar( szLabel );
+	return to_wchar( szLabel );
 }
 
 // メニューの検査

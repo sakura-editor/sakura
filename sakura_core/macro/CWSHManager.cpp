@@ -43,7 +43,7 @@
 static void MacroError(BSTR Description, BSTR Source, void *Data)
 {
 	CEditView *View = reinterpret_cast<CEditView*>(Data);
-	MessageBox(View->GetHwnd(), to_tchar(Description), to_tchar(Source), MB_ICONERROR);
+	MessageBox(View->GetHwnd(), to_wchar(Description), to_wchar(Source), MB_ICONERROR);
 }
 
 CWSHMacroManager::CWSHMacroManager(std::wstring const AEngineName) : m_EngineName(AEngineName)

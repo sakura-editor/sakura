@@ -107,9 +107,9 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					if( sel >= 0 ){
 						CPlugin* plugin = CPluginManager::getInstance()->GetPlugin(sel);
 						if( plugin != NULL ){
-							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Description ), to_tchar(plugin->m_sDescription.c_str()) );
-							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Author ), to_tchar(plugin->m_sAuthor.c_str()) );
-							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Version ), to_tchar(plugin->m_sVersion.c_str()) );
+							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Description ), to_wchar(plugin->m_sDescription.c_str()) );
+							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Author ), to_wchar(plugin->m_sAuthor.c_str()) );
+							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Version ), to_wchar(plugin->m_sVersion.c_str()) );
 						}else{
 							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Description ), _T("") );
 							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Author ), _T("") );
@@ -122,7 +122,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_OPTION ), state == PLS_LOADED && plugin && plugin->m_options.size() > 0 );
 						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_README ), 
 							(state == PLS_INSTALLED || state == PLS_UPDATED || state == PLS_LOADED || state == PLS_DELETED)
-							&& !GetReadMeFile(to_tchar(m_Common.m_sPlugin.m_PluginTable[sel].m_szName)).empty());
+							&& !GetReadMeFile(to_wchar(m_Common.m_sPlugin.m_PluginTable[sel].m_szName)).empty());
 						::EnableWindow(::GetDlgItem(hwndDlg, IDC_PLUGIN_URL), state == PLS_LOADED && plugin && plugin->m_sUrl.size() > 0);
 					}
 				}
@@ -245,7 +245,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 				{
 					HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
 					int sel = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
-					std::tstring sName = to_tchar(m_Common.m_sPlugin.m_PluginTable[sel].m_szName);	// 個別フォルダ名
+					std::tstring sName = to_wchar(m_Common.m_sPlugin.m_PluginTable[sel].m_szName);	// 個別フォルダ名
 					std::tstring sReadMeName = GetReadMeFile(sName);
 					if (!sReadMeName.empty()) {
 						if (!BrowseReadMe(sReadMeName)) {
@@ -263,7 +263,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					if (sel >= 0){
 						CPlugin* plugin = CPluginManager::getInstance()->GetPlugin(sel);
 						if (plugin != NULL){
-							::ShellExecute(NULL, _T("Open"), to_tchar(plugin->m_sUrl.c_str()), NULL, NULL, SW_SHOW);
+							::ShellExecute(NULL, _T("Open"), to_wchar(plugin->m_sUrl.c_str()), NULL, NULL, SW_SHOW);
 						}
 					}
 				}
@@ -365,7 +365,7 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 1;
 		if( plugin ){
-			sItem.pszText = const_cast<LPTSTR>( to_tchar(plugin->m_sName.c_str()) );
+			sItem.pszText = const_cast<LPTSTR>( to_wchar(plugin->m_sName.c_str()) );
 		}else{
 			sItem.pszText = const_cast<TCHAR*>(_T("-"));
 		}
@@ -412,7 +412,7 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 				sDirName = plugin->GetFolderName();
 				sItem.pszText = const_cast<LPTSTR>( sDirName.c_str() );
 			}else{
-				sItem.pszText = const_cast<LPTSTR>( to_tchar(plugin_table[index].m_szName) );
+				sItem.pszText = const_cast<LPTSTR>( to_wchar(plugin_table[index].m_szName) );
 			}
 			break;
 		default:
@@ -613,7 +613,7 @@ static void LoadPluginTemp(CommonSetting& common, CMenuDrawer& cMenuDrawer)
 			const CPlug* plug = *it;
 			if( !plug->m_sIcon.empty() ){
 				iBitmap = cMenuDrawer.m_pcIcons->Add(
-					to_tchar(plug->m_cPlugin.GetFilePath( to_tchar(plug->m_sIcon.c_str()) ).c_str()) );
+					to_wchar(plug->m_cPlugin.GetFilePath( to_wchar(plug->m_sIcon.c_str()) ).c_str()) );
 			}
 			cMenuDrawer.AddToolButton( iBitmap, plug->GetFunctionCode() );
 		}

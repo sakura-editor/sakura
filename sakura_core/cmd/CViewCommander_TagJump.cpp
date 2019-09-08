@@ -57,10 +57,10 @@ static bool IsFileExists2( const wchar_t* pszFile )
 			return false;
 		}
 	}
-	if( _IS_REL_PATH(to_tchar(pszFile)) ){
+	if( _IS_REL_PATH(to_wchar(pszFile)) ){
 		return false;
 	}
-	return IsFileExists(to_tchar(pszFile), true);
+	return IsFileExists(to_wchar(pszFile), true);
 }
 
 /*! タグジャンプ
@@ -168,7 +168,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 		} searchMode = TAGLIST_FILEPATH;
 		if( 0 == wmemcmp( pLine, L"■\"", 2 ) ){
 			/* WZ風のタグリストか */
-			if( IsFilePath( &pLine[2], &nBgn, &nPathLen ) && !_IS_REL_PATH( to_tchar(&pLine[2]) ) ){
+			if( IsFilePath( &pLine[2], &nBgn, &nPathLen ) && !_IS_REL_PATH( to_wchar(&pLine[2]) ) ){
 				wmemcpy( szJumpToFile, &pLine[2 + nBgn], nPathLen );
 				GetLineColumn( &pLine[2 + nPathLen], &nJumpToLine, &nJumpToColumn );
 				break;
@@ -263,7 +263,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 					continue;
 				}
 				// ファイル毎(WZ風)：フルパス
-				if( IsFilePath( &pLine[2], &nBgn, &nPathLen ) && !_IS_REL_PATH( to_tchar(&pLine[2]) ) ){
+				if( IsFilePath( &pLine[2], &nBgn, &nPathLen ) && !_IS_REL_PATH( to_wchar(&pLine[2]) ) ){
 					wmemcpy( szJumpToFile, &pLine[2 + nBgn], nPathLen );
 					break;
 				}
@@ -342,7 +342,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 
 	//	Apr. 21, 2003 genta bClose追加
 	if( szJumpToFile[0] ){
-		if( m_pCommanderView->TagJumpSub( to_tchar(szJumpToFile), CMyPoint(nJumpToColumn, nJumpToLine), bClose ) ){	//@@@ 2003.04.13
+		if( m_pCommanderView->TagJumpSub( to_wchar(szJumpToFile), CMyPoint(nJumpToColumn, nJumpToLine), bClose ) ){	//@@@ 2003.04.13
 			return true;
 		}
 	}

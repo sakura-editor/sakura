@@ -405,7 +405,7 @@ bool CDocFileOperation::FileSaveAs( const WCHAR* filename,ECodeType eCodeType, E
 	sSaveInfo.cEol = EOL_NONE; // 初期値は変換しない
 	if( filename ){
 		// ダイアログなし保存、またはマクロの引数あり
-		sSaveInfo.cFilePath = to_tchar(filename);
+		sSaveInfo.cFilePath = to_wchar(filename);
 		if( EOL_NONE <= eEolType && eEolType < EOL_CODEMAX ){
 			sSaveInfo.cEol = eEolType;
 		}

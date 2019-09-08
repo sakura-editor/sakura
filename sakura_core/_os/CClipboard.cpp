@@ -422,7 +422,7 @@ static CLIPFORMAT GetClipFormat(const wchar_t* pFormatName)
 		if( bNumber ){
 			uFormat = _wtoi(pFormatName);
 		}else{
-			uFormat = ::RegisterClipboardFormat( to_tchar(pFormatName) );
+			uFormat = ::RegisterClipboardFormat( to_wchar(pFormatName) );
 		}
 	}
 	return uFormat;

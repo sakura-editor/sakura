@@ -55,7 +55,7 @@ CRecentReplace::CRecentReplace()
 */
 const TCHAR* CRecentReplace::GetItemText( int nIndex ) const
 {
-	return to_tchar(*GetItem(nIndex));
+	return to_wchar(*GetItem(nIndex));
 }
 
 bool CRecentReplace::DataToReceiveType( LPCWSTR* dst, const CReplaceString* src ) const

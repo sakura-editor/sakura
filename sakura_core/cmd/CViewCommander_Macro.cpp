@@ -213,9 +213,9 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW, const WCHAR* p
 	HWND			hwndRecordingKeyMacro = NULL;
 
 	if ( pszPathW != NULL ) {
-		//to_tchar()で取得した文字列はdeleteしないこと。
-		pszPath = to_tchar( pszPathW );
-		pszType = to_tchar( pszTypeW );
+		//to_wchar()で取得した文字列はdeleteしないこと。
+		pszPath = to_wchar( pszPathW );
+		pszType = to_wchar( pszTypeW );
 
 	} else {
 		// ファイルが指定されていない場合、ダイアログを表示する
@@ -326,10 +326,10 @@ void CViewCommander::Command_EXECCOMMAND( LPCWSTR cmd_string, const int nFlgOpt,
 	CSakuraEnvironment::ExpandParameter(cmd_string, buf, bufmax);
 
 	// 子プロセスの標準出力をリダイレクトする
-	std::tstring buf2 = to_tchar(buf);
+	std::tstring buf2 = to_wchar(buf);
 	std::tstring buf3;
 	if( pszCurDir ){
-		buf3 = to_tchar(pszCurDir);
+		buf3 = to_wchar(pszCurDir);
 	}
 	m_pCommanderView->ExecCmd( buf2.c_str(), nFlgOpt, (pszCurDir ? buf3.c_str() : NULL) );
 	//	To Here Aug. 21, 2001 genta

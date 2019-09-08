@@ -155,7 +155,7 @@ bool CProcessFactory::IsStartingControlProcess()
 */
 bool CProcessFactory::IsExistControlProcess()
 {
-	std::tstring strProfileName = to_tchar(CCommandLine::getInstance()->GetProfileName());
+	std::tstring strProfileName = to_wchar(CCommandLine::getInstance()->GetProfileName());
 	std::tstring strMutexSakuraCp = GSTR_MUTEX_SAKURA_CP;
 	strMutexSakuraCp += strProfileName;
  	HANDLE hMutexCP;
@@ -281,7 +281,7 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 		return false;
 	}
 
-	std::tstring strProfileName = to_tchar(CCommandLine::getInstance()->GetProfileName());
+	std::tstring strProfileName = to_wchar(CCommandLine::getInstance()->GetProfileName());
 	std::tstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
 	strInitEvent += strProfileName;
 	HANDLE hEvent;

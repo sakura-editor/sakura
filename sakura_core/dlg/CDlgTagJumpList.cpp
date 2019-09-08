@@ -1312,7 +1312,7 @@ bool CDlgTagJumpList::ReadTagsParameter(
 						if (1 <= n2 && s[2][0]) {
 							// s[2] == 絶対パス(ディレクトリ)
 							TCHAR baseWork[1024];
-							CopyDirDir(baseWork, to_tchar(s[2]), state->m_szCurPath);
+							CopyDirDir(baseWork, to_wchar(s[2]), state->m_szCurPath);
 							szNextPath[0] = 0;
 							if (!GetLongFileName(baseWork, szNextPath)) {
 								// エラーなら変換前を適用
@@ -1326,11 +1326,11 @@ bool CDlgTagJumpList::ReadTagsParameter(
 					// 独自拡張:ファイル名の基準ディレクトリ
 					if (state->m_bJumpPath) {
 						// パス親読み替え中は、相対パスだった場合に連結が必要
-						CopyDirDir(baseWork, to_tchar(s[1]), state->m_szCurPath);
+						CopyDirDir(baseWork, to_wchar(s[1]), state->m_szCurPath);
 						*baseDirId = cList.AddBaseDir(baseWork);
 					}
 					else {
-						auto_strcpy(baseWork, to_tchar(s[1]));
+						auto_strcpy(baseWork, to_wchar(s[1]));
 						AddLastYenFromDirectoryPath(baseWork);
 						*baseDirId = cList.AddBaseDir(baseWork);
 					}

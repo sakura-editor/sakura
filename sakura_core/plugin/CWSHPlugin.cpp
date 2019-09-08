@@ -74,7 +74,7 @@ bool CWSHPlugin::InvokePlug( CEditView* view, CPlug& plug, CWSHIfObj::List& para
 	CWSHMacroManager* pWsh = NULL;
 
 	if( !m_bUseCache || wshPlug.m_Wsh == NULL ){
-		CFilePath path( plug.m_cPlugin.GetFilePath( to_tchar(plug.m_sHandler.c_str()) ).c_str() );
+		CFilePath path( plug.m_cPlugin.GetFilePath( to_wchar(plug.m_sHandler.c_str()) ).c_str() );
 
 		pWsh = (CWSHMacroManager*)CWSHMacroManager::Creator( path.GetExt( true ) );
 		if( pWsh == NULL ){ return false; }

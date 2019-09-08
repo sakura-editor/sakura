@@ -280,12 +280,12 @@ void CEditWnd::UpdateCaption()
 	);
 
 	//キャプション更新
-	::SetWindowText( this->GetHwnd(), to_tchar(pszCap) );
+	::SetWindowText( this->GetHwnd(), to_wchar(pszCap) );
 
 	//@@@ From Here 2003.06.13 MIK
 	//タブウインドウのファイル名を通知
 	CSakuraEnvironment::ExpandParameter( GetDllShareData().m_Common.m_sTabBar.m_szTabWndCaption, pszCap, _countof( pszCap ));
-	this->ChangeFileNameNotify( to_tchar(pszCap), GetListeningDoc()->m_cDocFile.GetFilePath(), CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode );	// 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
+	this->ChangeFileNameNotify( to_wchar(pszCap), GetListeningDoc()->m_cDocFile.GetFilePath(), CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode );	// 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
 	//@@@ To Here 2003.06.13 MIK
 }
 
@@ -837,9 +837,9 @@ void CEditWnd::LayoutMainMenu()
 		case T_NODE:
 			// ラベル未設定かつFunctionコードがありならストリングテーブルから取得 2012/10/18 syat 各国語対応
 			pszName = ( cMainMenu->m_sName[0] == L'\0' && cMainMenu->m_nFunc != F_NODE )
-								? LS( cMainMenu->m_nFunc ) : to_tchar(cMainMenu->m_sName);
+								? LS( cMainMenu->m_nFunc ) : to_wchar(cMainMenu->m_sName);
 			::AppendMenu( hMenu, MF_POPUP | MF_STRING | (nCount<=1 ? MF_GRAYED : 0), (UINT_PTR)CreatePopupMenu(), 
-				CKeyBind::MakeMenuLabel( pszName, to_tchar(cMainMenu->m_sKey) ) );
+				CKeyBind::MakeMenuLabel( pszName, to_wchar(cMainMenu->m_sKey) ) );
 			break;
 		case T_LEAF:
 			/* メニューラベルの作成 */
@@ -847,17 +847,17 @@ void CEditWnd::LayoutMainMenu()
 			{
 				WCHAR szLabelW[256];
 				GetDocument()->m_cFuncLookup.Funccode2Name( cMainMenu->m_nFunc, szLabelW, 256 );
-				auto_strncpy( szLabel, to_tchar(szLabelW), _countof(szLabel) - 1 );
+				auto_strncpy( szLabel, to_wchar(szLabelW), _countof(szLabel) - 1 );
 				szLabel[_countof(szLabel) - 1] = _T('\0');
 			}
-			auto_strcpy( szKey, to_tchar(cMainMenu->m_sKey));
+			auto_strcpy( szKey, to_wchar(cMainMenu->m_sKey));
 			if (CKeyBind::GetMenuLabel(
 				G_AppInstance(),
 				m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
 				m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr,
 				cMainMenu->m_nFunc,
 				szLabel,
-				to_tchar(cMainMenu->m_sKey),
+				to_wchar(cMainMenu->m_sKey),
 				FALSE,
 				_countof(szLabel)) == NULL) {
 				auto_strcpy( szLabel, _T("?") );
@@ -920,7 +920,7 @@ void CEditWnd::LayoutMainMenu()
 				break;
 			}
 			::AppendMenu( hMenu, MF_POPUP | MF_STRING | (nCount<=0 ? MF_GRAYED : 0), (UINT_PTR)CreatePopupMenu(), 
-				CKeyBind::MakeMenuLabel( LS(cMainMenu->m_nFunc), to_tchar(cMainMenu->m_sKey) ) );
+				CKeyBind::MakeMenuLabel( LS(cMainMenu->m_nFunc), to_wchar(cMainMenu->m_sKey) ) );
 			break;
 		}
 	}
@@ -2641,7 +2641,7 @@ bool CEditWnd::InitMenu_Special(HMENU hMenu, EFunctionCode eFunc)
 
 				//コマンドを登録
 				m_cMenuDrawer.MyAppendMenu( hMenuPlugin, MF_BYPOSITION | MF_STRING,
-					(*it)->GetFunctionCode(), to_tchar( (*it)->m_sLabel.c_str() ), _T(""),
+					(*it)->GetFunctionCode(), to_wchar( (*it)->m_sLabel.c_str() ), _T(""),
 					TRUE, (*it)->GetFunctionCode() );
 			}
 			bInList = (prevPlugin != NULL);
@@ -4831,7 +4831,7 @@ void CEditWnd::RegisterPluginCommand( CPlug* plug )
 {
 	int iBitmap = CMenuDrawer::TOOLBAR_ICON_PLUGCOMMAND_DEFAULT - 1;
 	if( !plug->m_sIcon.empty() ){
-		iBitmap = m_cMenuDrawer.m_pcIcons->Add( to_tchar(plug->m_cPlugin.GetFilePath( to_tchar(plug->m_sIcon.c_str()) ).c_str()) );
+		iBitmap = m_cMenuDrawer.m_pcIcons->Add( to_wchar(plug->m_cPlugin.GetFilePath( to_wchar(plug->m_sIcon.c_str()) ).c_str()) );
 	}
 
 	m_cMenuDrawer.AddToolButton( iBitmap, plug->GetFunctionCode() );

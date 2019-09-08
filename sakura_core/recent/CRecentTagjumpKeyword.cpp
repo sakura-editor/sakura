@@ -55,7 +55,7 @@ CRecentTagjumpKeyword::CRecentTagjumpKeyword()
 */
 const TCHAR* CRecentTagjumpKeyword::GetItemText( int nIndex ) const
 {
-	return to_tchar(*GetItem(nIndex));
+	return to_wchar(*GetItem(nIndex));
 }
 
 bool CRecentTagjumpKeyword::DataToReceiveType( LPCWSTR* dst, const CTagjumpKeywordString* src ) const

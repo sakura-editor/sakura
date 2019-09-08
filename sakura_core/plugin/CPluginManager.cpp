@@ -136,7 +136,7 @@ bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, 
 			// 2010.08.04 大文字小文字同一視にする
 			bool isNotInstalled = true;
 			for( int iNo=0; iNo < MAX_PLUGIN; iNo++ ){
-				if( auto_stricmp( wf.cFileName, to_tchar( plugin_table[iNo].m_szName ) ) == 0 ){
+				if( auto_stricmp( wf.cFileName, to_wchar( plugin_table[iNo].m_szName ) ) == 0 ){
 					isNotInstalled = false;
 					break;
 				}
@@ -294,8 +294,8 @@ bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, co
 	else {
 		// pluginsフォルダ検索中
 		// フォルダ チェック。すでに解凍されていたならインストールしない(前段でインストール済み或は可否を確認済み)
-		if (bOk && (fexist(to_tchar((m_sBaseDir + to_tchar(sFolderName.c_str())).c_str()))
-			|| fexist(to_tchar((m_sExePluginDir + to_tchar(sFolderName.c_str())).c_str()))) ) {
+		if (bOk && (fexist(to_wchar((m_sBaseDir + to_wchar(sFolderName.c_str())).c_str()))
+			|| fexist(to_wchar((m_sExePluginDir + to_wchar(sFolderName.c_str())).c_str()))) ) {
 			bOk = false;
 			bSkip = true;
 		}
@@ -321,7 +321,7 @@ bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, co
 		bOk = false;
 	}
 	if (bOk) {
-		int pluginNo = InstallPlugin( common, to_tchar(sFolderName.c_str()), hWndOwner, errMsg, true );
+		int pluginNo = InstallPlugin( common, to_wchar(sFolderName.c_str()), hWndOwner, errMsg, true );
 		if( pluginNo < 0 ){
 			auto_snprintf_s( msg, _countof(msg), LS(STR_PLGMGR_INST_ZIP_ERR), sDispName.c_str(), errMsg.c_str() );
 			bOk = false;
@@ -465,7 +465,7 @@ bool CPluginManager::LoadAllPlugin(CommonSetting* common)
 		// 2010.08.04 削除状態を見る(今のところ保険)
 		if( plugin_table[iNo].m_state == PLS_DELETED ) continue;
 		if( NULL != GetPlugin( iNo ) ) continue; // 2013.05.31 読み込み済み
-		std::tstring name = to_tchar(plugin_table[iNo].m_szName);
+		std::tstring name = to_wchar(plugin_table[iNo].m_szName);
 		CPlugin* plugin = LoadPlugin( m_sBaseDir.c_str(), name.c_str(), szLangName.c_str() );
 		if( !plugin ){
 			plugin = LoadPlugin( m_sExePluginDir.c_str(), name.c_str(), szLangName.c_str() );

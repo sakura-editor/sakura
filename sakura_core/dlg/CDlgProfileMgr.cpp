@@ -471,7 +471,7 @@ static bool IOProfSettings( SProfileSettings& settings, bool bWrite )
 		}else{
 			std::wstring wstrProfName;
 			cProf.IOProfileData( pSection, szKey, wstrProfName );
-			strProfName = to_tchar(wstrProfName.c_str());
+			strProfName = to_wchar(wstrProfName.c_str());
 			settings.m_vProfList.push_back( strProfName );
 		}
 	}

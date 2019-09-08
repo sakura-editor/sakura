@@ -659,7 +659,7 @@ void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
 
 	for( i = 0; i < nNum; ++i ){
 		/* ｎ番目のセットのｍ番目のキーワードを返す */
-		const TCHAR* pszKeyWord = to_tchar(m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( nIdx, i ));
+		const TCHAR* pszKeyWord = to_wchar(m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( nIdx, i ));
 
 		lvi.mask = LVIF_TEXT | LVIF_PARAM;
 		lvi.pszText = const_cast<TCHAR*>(pszKeyWord);

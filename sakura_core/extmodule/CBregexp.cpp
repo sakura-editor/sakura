@@ -570,7 +570,7 @@ int CBregexp::Replace(const wchar_t *szTarget, int nLen, int nStart)
 
 const TCHAR* CBregexp::GetLastMessage() const
 {
-	return to_tchar(m_szMsg);
+	return to_wchar(m_szMsg);
 }
 
 //	From Here Jun. 26, 2001 genta

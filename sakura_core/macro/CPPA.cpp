@@ -372,11 +372,11 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 				if( '\0' == Err_Mes[0] ){
 					pszErr = LS(STR_ERR_DLGPPA4);
 				}else{
-					pszErr = to_tchar(Err_Mes);
+					pszErr = to_wchar(Err_Mes);
 				}
 				break;
 			default:
-				auto_sprintf( szMes, LS(STR_ERR_DLGPPA5), Err_CD, to_tchar(Err_Mes) );
+				auto_sprintf( szMes, LS(STR_ERR_DLGPPA5), Err_CD, to_wchar(Err_Mes) );
 			}
 		}
 	}
