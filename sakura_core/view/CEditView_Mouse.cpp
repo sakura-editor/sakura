@@ -37,6 +37,8 @@
 #include "uiparts/HandCursor.h"
 #include "util/input.h"
 #include "util/os.h"
+#include "charset/CCodeBase.h"
+#include "charset/CCodeFactory.h"
 #include "sakura_rc.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -1836,7 +1838,10 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	}else if( cf == CF_UNICODETEXT ){
 		cmemBuf.SetString( (wchar_t*)pData, wcsnlen( (wchar_t*)pData, nSize / sizeof(wchar_t) ) );
 	}else{
-		cmemBuf.SetStringOld( (char*)pData, strnlen( (char*)pData, nSize / sizeof(char) ) );
+		CNativeA binary;
+		binary.SetString((char*)pData, nSize / sizeof(char));
+		auto pcCodeBase = std::unique_ptr<CCodeBase>(CCodeFactory::CreateCodeBase(ECodeType::CODE_SJIS, 0));
+		pcCodeBase->CodeToUnicode(*binary._GetMemory(), &cmemBuf);
 	}
 
 	// アンドゥバッファの準備

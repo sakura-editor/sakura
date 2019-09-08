@@ -147,20 +147,6 @@ public:
 	void Replace( const wchar_t* pszFrom, const wchar_t* pszTo );   //!< 文字列置換
 	void Replace( const wchar_t* pszFrom, int nFromLen, const wchar_t* pszTo, int nToLen );   //!< 文字列置換
 
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                  型限定インターフェース                     //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	// 使用はできるだけ控えるのが望ましい。
-	// ひとつはオーバーヘッドを抑える意味で。
-	// ひとつは変換によるデータ喪失を抑える意味で。
-
-	//ACHAR
-	void SetStringOld( const char* pData, int nDataLen );    //!< バッファの内容を置き換える。pDataはSJIS。nDataLenは文字単位。
-	void SetStringOld( const char* pszData );                //!< バッファの内容を置き換える。pszDataはSJIS。
-	void AppendStringOld( const char* pData, int nDataLen ); //!< バッファの最後にデータを追加する。pszDataはSJIS。
-	void AppendStringOld( const char* pszData );             //!< バッファの最後にデータを追加する。pszDataはSJIS。
-	const char* GetStringPtrOld() const; //ShiftJISに変換して返す
-
 public:
 	// -- -- staticインターフェース -- -- //
 	static CLogicInt GetSizeOfChar( const wchar_t* pData, int nDataLen, int nIdx ); //!< 指定した位置の文字がwchar_t何個分かを返す

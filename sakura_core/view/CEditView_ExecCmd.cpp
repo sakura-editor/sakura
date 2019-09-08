@@ -640,12 +640,15 @@ bool COutputAdapterDefault::OutputW(const WCHAR* pBuf, int size)
 */
 bool COutputAdapterDefault::OutputA(const ACHAR* pBuf, int size)
 {
+	CNativeA input;
 	CNativeW buf;
 	if( -1 == size ){
-		buf.SetStringOld(pBuf);
+		input.SetString(pBuf);
 	}else{
-		buf.SetStringOld(pBuf,size);
+		input.SetString(pBuf,size);
 	}
+	auto pcCodeBase = std::unique_ptr<CCodeBase>(CCodeFactory::CreateCodeBase(ECodeType::CODE_SJIS, 0));
+	pcCodeBase->CodeToUnicode(*input._GetMemory(), &buf);
 	OutputBuf( buf.GetStringPtr(), (int)buf.GetStringLength() );
 	return true;
 }

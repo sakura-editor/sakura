@@ -2,7 +2,6 @@
 #include "StdAfx.h"
 #include "mem/CNativeW.h"
 #include "CEol.h"
-#include "charset/CShiftJis.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
@@ -97,37 +96,6 @@ void CNativeW::AppendStringF(const wchar_t* pszData, ...)
 void CNativeW::AppendNativeData( const CNativeW& cmemData )
 {
 	CNative::AppendRawData(cmemData.GetStringPtr(), cmemData.GetRawLength());
-}
-
-// -- -- charからの移行用 -- -- //
-
-//! バッファの内容を置き換える。nDataLenは文字単位。
-void CNativeW::SetStringOld( const char* pData, int nDataLen )
-{
-	int nLen;
-	wchar_t* szTmp=mbstowcs_new(pData,nDataLen,&nLen);
-	SetString(szTmp,nLen);
-	delete[] szTmp;
-}
-
-//! バッファの内容を置き換える
-void CNativeW::SetStringOld( const char* pszData )
-{
-	SetStringOld(pszData,strlen(pszData));
-}
-
-void CNativeW::AppendStringOld( const char* pData, int nDataLen )
-{
-	int nLen;
-	wchar_t* szTmp=mbstowcs_new(pData,nDataLen,&nLen);
-	AppendString(szTmp,nLen);
-	delete[] szTmp;
-}
-
-//! バッファの最後にデータを追加する。pszDataはSJIS。
-void CNativeW::AppendStringOld( const char* pszData )
-{
-	AppendStringOld(pszData,strlen(pszData));
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -323,10 +291,3 @@ const wchar_t* CNativeW::GetCharPrev( const wchar_t* pData, int nDataLen, const 
 	return pPrev;
 //	return ::CharPrev( pData, pDataCurrent );
 }
-
-//ShiftJISに変換して返す
-const char* CNativeW::GetStringPtrOld() const
-{
-	return to_achar(GetStringPtr(),GetStringLength());
-}
-
