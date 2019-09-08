@@ -464,7 +464,7 @@ void CPropKeybind::ChangeKeyList( HWND hwndDlg){
 	List_ResetContent( hwndKeyList );
 	for( i = 0; i < m_Common.m_sKeyBind.m_nKeyNameArrNum; ++i ){
 		TCHAR	pszLabel[256];
-		auto_sprintf( pszLabel, _T("%ls%ts"), szKeyState, m_Common.m_sKeyBind.m_pKeyNameArr[i].m_szKeyName );
+		auto_sprintf( pszLabel, _T("%ls%s"), szKeyState, m_Common.m_sKeyBind.m_pKeyNameArr[i].m_szKeyName );
 		::List_AddString( hwndKeyList, pszLabel );
 	}
 	List_SetCurSel( hwndKeyList, nIndex );

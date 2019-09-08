@@ -475,7 +475,7 @@ bool CFileNameManager::GetMenuFullLabel(
 		pszCharset = szCodePageName;
 	}
 	
-	int ret = auto_snprintf_s( pszOutput, nBuffSize, _T("%ts%ts%ts %ts%ts"),
+	int ret = auto_snprintf_s( pszOutput, nBuffSize, _T("%s%s%s %s%s"),
 		szAccKey, (bFavorite ? _T("★ ") : _T("")), pszName,
 		(bModified ? _T("*"):_T(" ")), pszCharset
 	);
@@ -509,9 +509,9 @@ void CFileNameManager::GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR ps
 	_tsplitpath( szPath, szDrive, szDir, szFname, szExt );
 
 	if( pszProfName[0] == '\0' ){
-		auto_snprintf_s( pszIniFile, _MAX_PATH - 1, _T("%ts%ts%ts%ts"), szDrive, szDir, szFname, _T(".ini") );
+		auto_snprintf_s( pszIniFile, _MAX_PATH - 1, _T("%s%s%s%s"), szDrive, szDir, szFname, _T(".ini") );
 	}else{
-		auto_snprintf_s( pszIniFile, _MAX_PATH - 1, _T("%ts%ts%ts\\%ts%ts"), szDrive, szDir, pszProfName, szFname, _T(".ini") );
+		auto_snprintf_s( pszIniFile, _MAX_PATH - 1, _T("%s%s%s\\%s%s"), szDrive, szDir, pszProfName, szFname, _T(".ini") );
 	}
 
 	// マルチユーザ用のiniファイルパス
@@ -519,7 +519,7 @@ void CFileNameManager::GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR ps
 	//		に従ってマルチユーザ用のiniファイルパスを決める
 	pszPrivateIniFile[0] = _T('\0');
 	{
-		auto_snprintf_s( szPath, _MAX_PATH - 1, _T("%ts%ts%ts%ts"), szDrive, szDir, szFname, _T(".exe.ini") );
+		auto_snprintf_s( szPath, _MAX_PATH - 1, _T("%s%s%s%s"), szDrive, szDir, szFname, _T(".exe.ini") );
 		int nEnable = ::GetPrivateProfileInt(_T("Settings"), _T("MultiUser"), 0, szPath );
 		if( nEnable ){
 			int nFolder = ::GetPrivateProfileInt(_T("Settings"), _T("UserRootFolder"), 0, szPath );
@@ -542,9 +542,9 @@ void CFileNameManager::GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR ps
 				::lstrcpy( szDir, _T("sakura") );
 			if( GetSpecialFolderPath( nFolder, szPath ) ){
 				if( pszProfName[0] == '\0' ){
-					auto_snprintf_s( pszPrivateIniFile, _MAX_PATH - 1, _T("%ts\\%ts\\%ts%ts"), szPath, szDir, szFname, _T(".ini") );
+					auto_snprintf_s( pszPrivateIniFile, _MAX_PATH - 1, _T("%s\\%s\\%s%s"), szPath, szDir, szFname, _T(".ini") );
 				}else{
-					auto_snprintf_s( pszPrivateIniFile, _MAX_PATH - 1, _T("%ts\\%ts\\%ts\\%ts%ts"), szPath, szDir, pszProfName, szFname, _T(".ini") );
+					auto_snprintf_s( pszPrivateIniFile, _MAX_PATH - 1, _T("%s\\%s\\%s\\%s%s"), szPath, szDir, pszProfName, szFname, _T(".ini") );
 				}
 			}
 		}
@@ -583,7 +583,7 @@ void CFileNameManager::GetIniFileName( LPTSTR pszIniFileName, LPCTSTR pszProfNam
 				TCHAR szDrive[_MAX_DRIVE];
 				TCHAR szDir[_MAX_DIR];
 				_tsplitpath( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile, szDrive, szDir, NULL, NULL );
-				auto_snprintf_s( szPath, _MAX_PATH - 1, _T("%ts\\%ts"), szDrive, szDir );
+				auto_snprintf_s( szPath, _MAX_PATH - 1, _T("%s\\%s"), szDrive, szDir );
 				MakeSureDirectoryPathExistsW( szPath );
 			}
 		}else{
@@ -592,7 +592,7 @@ void CFileNameManager::GetIniFileName( LPTSTR pszIniFileName, LPCTSTR pszProfNam
 				TCHAR szDrive[_MAX_DRIVE];
 				TCHAR szDir[_MAX_DIR];
 				_tsplitpath( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szIniFile, szDrive, szDir, NULL, NULL );
-				auto_snprintf_s( szPath, _MAX_PATH - 1, _T("%ts\\%ts"), szDrive, szDir );
+				auto_snprintf_s( szPath, _MAX_PATH - 1, _T("%s\\%s"), szDrive, szDir );
 				MakeSureDirectoryPathExistsW( szPath );
 			}
 		}

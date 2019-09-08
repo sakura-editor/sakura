@@ -302,7 +302,7 @@ void CDlgFavorite::SetDataOne( int nIndex, int nLvItemIndex )
 
 		const TCHAR	*p;
 		p = pRecent->GetItemText( i );
-		auto_snprintf_s( tmp, _countof(tmp), _T("%ts"), p ? p : _T("") );
+		auto_snprintf_s( tmp, _countof(tmp), _T("%s"), p ? p : _T("") );
 		lvi.mask     = LVIF_TEXT;
 		lvi.iItem    = i;
 		lvi.iSubItem = 1;
@@ -511,7 +511,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 			CRecent	*pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
 			if( pRecent ){
 				const int nRet = ConfirmMessage( GetHwnd(), 
-					LS( STR_DLGFAV_CONF_DEL_FAV ),	// "最近使った%tsの履歴を削除します。\nよろしいですか？\n"
+					LS( STR_DLGFAV_CONF_DEL_FAV ),	// "最近使った%sの履歴を削除します。\nよろしいですか？\n"
 					m_aFavoriteInfo[m_nCurrentTab].m_pszCaption );
 				if( IDYES == nRet ){
 					pRecent->DeleteAllItem();
@@ -527,7 +527,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 			::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, _T("") );
 			if( m_aFavoriteInfo[m_nCurrentTab].m_bHaveFavorite ){
 				int const nRet = ConfirmMessage( GetHwnd(), 
-					LS( STR_DLGFAV_CONF_DEL_NOTFAV ),	// "最近使った%tsの履歴のお気に入り以外を削除します。\nよろしいですか？"
+					LS( STR_DLGFAV_CONF_DEL_NOTFAV ),	// "最近使った%sの履歴のお気に入り以外を削除します。\nよろしいですか？"
 					m_aFavoriteInfo[m_nCurrentTab].m_pszCaption );
 				CRecent * const pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
 				if( IDYES == nRet && pRecent ){
@@ -546,7 +546,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 			::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, _T("") );
 			if( m_aFavoriteInfo[m_nCurrentTab].m_bFilePath ){
 				const int nRet = ConfirmMessage( GetHwnd(), 
-					LS( STR_DLGFAV_CONF_DEL_PATH ),	// "最近使った%tsの存在しないパスを削除します。\nよろしいですか？"
+					LS( STR_DLGFAV_CONF_DEL_PATH ),	// "最近使った%sの存在しないパスを削除します。\nよろしいですか？"
 					m_aFavoriteInfo[m_nCurrentTab].m_pszCaption );
 				CRecent * const pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
 				if( IDYES == nRet && pRecent ){
@@ -758,7 +758,7 @@ bool CDlgFavorite::RefreshList( void )
 	if( ret_val )
 	{
 		auto_snprintf_s( m_szMsg, _countof(m_szMsg),
-			LS( STR_DLGFAV_FAV_REFRESH ),	// "履歴(%ts)が更新されたため編集中情報を破棄し再表示しました。"
+			LS( STR_DLGFAV_FAV_REFRESH ),	// "履歴(%s)が更新されたため編集中情報を破棄し再表示しました。"
 			msg );
 	}
 
@@ -1079,7 +1079,7 @@ int FormatFavoriteColumn(TCHAR* buf, int size, int index, bool view)
 	// 0 - 9 A - Z
 	const int mod = index % 36;
 	const TCHAR c = (TCHAR)(((mod) <= 9)?(_T('0') + mod):(_T('A') + mod - 10));
-	return auto_snprintf_s( buf, size, _T("%tc %ts"), c, (view ? _T("  ") : LS( STR_DLGFAV_HIDDEN )) );
+	return auto_snprintf_s( buf, size, _T("%c %s"), c, (view ? _T("  ") : LS( STR_DLGFAV_HIDDEN )) );
 }
 
 /*!

@@ -148,7 +148,7 @@ void CDlgCtrlCode::SetData( void )
 		ListView_InsertItem( hwndWork, &lvi );
 		
 		if( p_ctrl_list[i].code <= 0x1f )
-			auto_sprintf( tmp, _T("^%tc"), _T('@') + p_ctrl_list[i].code );
+			auto_sprintf( tmp, _T("^%c"), _T('@') + p_ctrl_list[i].code );
 		else if( p_ctrl_list[i].code == 0x7f )
 			_tcscpy( tmp, _T("^?") );
 		else

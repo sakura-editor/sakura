@@ -165,7 +165,7 @@ void CEditView::ViewDiffInfo(
 		//コマンドライン文字列作成(MAX:1024)
 		auto_sprintf(
 			cmdline,
-			_T("\"%ts\\%ts\" %ts \"%ts\" \"%ts\""),
+			_T("\"%s\\%s\" %s \"%s\" \"%s\""),
 			szExeFolder,	//sakura.exeパス
 			_T("diff.exe"),		//diff.exe
 			szOption,		//diffオプション

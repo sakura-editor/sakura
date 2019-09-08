@@ -238,7 +238,7 @@ int CBackupAgent::MakeBackUp(
 	TCHAR	szExt[_MAX_EXT];
 	_tsplitpath( szPath, szDrive, szDir, szFname, szExt );
 	TCHAR	szPath2[MAX_PATH];
-	auto_sprintf( szPath2, _T("%ts%ts"), szDrive, szDir );
+	auto_sprintf( szPath2, _T("%s%s"), szDrive, szDir );
 
 	HANDLE			hFind;
 	WIN32_FIND_DATA	fData;
@@ -328,7 +328,7 @@ bool CBackupAgent::FormatBackUpPath(
 		AddLastYenFromDirectoryPath( szNewPath );
 	}
 	else{
-		auto_sprintf( szNewPath, _T("%ts%ts"), szDrive, szDir );
+		auto_sprintf( szNewPath, _T("%s%s"), szDrive, szDir );
 	}
 
 	/* 相対フォルダを挿入 */
@@ -346,12 +346,12 @@ bool CBackupAgent::FormatBackUpPath(
 		/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
 		switch( bup_setting.GetBackupType() ){
 		case 1:
-			if( -1 == auto_snprintf_s( pBase, nBaseCount, _T("%ts.bak"), szFname ) ){
+			if( -1 == auto_snprintf_s( pBase, nBaseCount, _T("%s.bak"), szFname ) ){
 				return false;
 			}
 			break;
 		case 5: //	Jun.  5, 2005 genta 1の拡張子を残す版
-			if( -1 == auto_snprintf_s( pBase, nBaseCount, _T("%ts%ts.bak"), szFname, szExt ) ){
+			if( -1 == auto_snprintf_s( pBase, nBaseCount, _T("%s%s.bak"), szFname, szExt ) ){
 				return false;
 			}
 			break;
@@ -382,7 +382,7 @@ bool CBackupAgent::FormatBackUpPath(
 			}
 			/* YYYYMMDD時分秒 形式に変換 */
 			wcsftime( szTime, _countof( szTime ) - 1, szForm, &result );
-			if( -1 == auto_snprintf_s( pBase, nBaseCount, _T("%ts_%ls%ts"), szFname, szTime, szExt ) ){
+			if( -1 == auto_snprintf_s( pBase, nBaseCount, _T("%s_%ls%s"), szFname, szTime, szExt ) ){
 				return false;
 			}
 			break;
@@ -411,7 +411,7 @@ bool CBackupAgent::FormatBackUpPath(
 				if( bup_setting.GetBackupOpt(BKUP_SEC) ){	/* バックアップファイル名：日付の秒 */
 					auto_sprintf(szTime,L"%ls%02d",szTime,ctimeLastWrite->wSecond);
 				}
-				if( -1 == auto_sprintf_s( pBase, nBaseCount, _T("%ts_%ls%ts"), szFname, szTime, szExt ) ){
+				if( -1 == auto_sprintf_s( pBase, nBaseCount, _T("%s_%ls%s"), szFname, szTime, szExt ) ){
 					return false;
 				}
 			}
@@ -438,7 +438,7 @@ bool CBackupAgent::FormatBackUpPath(
 				*++ptr = _T('0');
 				*++ptr = _T('\0');
 			}
-			if( -1 == auto_snprintf_s( pBase, nBaseCount, _T("%ts%ts"), szFname, szExt ) ){
+			if( -1 == auto_snprintf_s( pBase, nBaseCount, _T("%s%s"), szFname, szExt ) ){
 				return false;
 			}
 			break;
@@ -544,7 +544,7 @@ bool CBackupAgent::FormatBackUpPath(
 				_tcscpy( temp, szNewPath );
 				cp = _tcschr( temp, _T('*') );
 				*cp = 0;
-				if( -1 == auto_snprintf_s( szNewPath, newPathCount, _T("%ts%ts%ts"), temp, ep, cp+1 ) ){
+				if( -1 == auto_snprintf_s( szNewPath, newPathCount, _T("%s%s%s"), temp, ep, cp+1 ) ){
 					return false;
 				}
 			}

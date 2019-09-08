@@ -471,7 +471,7 @@ bool CViewCommander::Command_TagsMake( void )
 		TCHAR szCmdDir[_MAX_PATH];
 		::GetSystemDirectory(szCmdDir, _countof(szCmdDir));
 		//	2006.08.04 genta add /D to disable autorun
-		auto_sprintf( cmdline, _T("\"%ts\\cmd.exe\" /D /C \"\"%ts\\%ts\" %ts\""),
+		auto_sprintf( cmdline, _T("\"%s\\cmd.exe\" /D /C \"\"%s\\%s\" %s\""),
 				szCmdDir,
 				szExeFolder,	//sakura.exeパス
 				CTAGS_COMMAND,	//ctags.exe

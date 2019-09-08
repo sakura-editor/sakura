@@ -82,7 +82,7 @@ bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 	if (hFind == INVALID_HANDLE_VALUE) {
 		//プラグインフォルダが存在しない
 		if (!CreateDirectory(m_sBaseDir.c_str(), NULL)) {
-			InfoMessage( hWndOwner, _T("%ts"), LS(STR_PLGMGR_FOLDER));
+			InfoMessage( hWndOwner, _T("%s"), LS(STR_PLGMGR_FOLDER));
 			return true;
 		}
 	}
@@ -102,10 +102,10 @@ bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 	}
 
 	if (bCancel) {
-		InfoMessage( hWndOwner, _T("%ts"), LS(STR_PLGMGR_CANCEL));
+		InfoMessage( hWndOwner, _T("%s"), LS(STR_PLGMGR_CANCEL));
 	}
 	else if (!bFindNewDir) {
-		InfoMessage( hWndOwner, _T("%ts"), LS(STR_PLGMGR_NEWPLUGIN));
+		InfoMessage( hWndOwner, _T("%s"), LS(STR_PLGMGR_NEWPLUGIN));
 	}
 
 	return true;
@@ -213,7 +213,7 @@ bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, const
 	// ZIPファイルが扱えるか
 	if (!cZipFile.IsOk()) {
 		wcsncpy_s( msg, _countof(msg), LS(STR_PLGMGR_ERR_ZIP), _TRUNCATE );
-		InfoMessage( hWndOwner, _T("%ts"), msg);
+		InfoMessage( hWndOwner, _T("%s"), msg);
 		return false;
 	}
 
@@ -455,7 +455,7 @@ bool CPluginManager::LoadAllPlugin(CommonSetting* common)
 			}
 			szLangName = szDllName.substr( nStartPos, nEndPos - nStartPos );
 		}
-		DEBUG_TRACE( _T("lang = %ts\n"), szLangName.c_str() );
+		DEBUG_TRACE( _T("lang = %s\n"), szLangName.c_str() );
 	}
 
 	//プラグインテーブルに登録されたプラグインを読み込む
@@ -498,7 +498,7 @@ CPlugin* CPluginManager::LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* psz
 	CDataProfile cProfOption;			//オプションファイル
 	CPlugin* plugin = NULL;
 
-	DEBUG_TRACE(_T("Load Plugin %ts\n"),  pszPluginName );
+	DEBUG_TRACE(_T("Load Plugin %s\n"),  pszPluginName );
 
 	//プラグイン定義ファイルを読み込む
 	Concat_FolderAndFile( pszPluginDir, pszPluginName, pszBasePath );
@@ -508,7 +508,7 @@ CPlugin* CPluginManager::LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* psz
 		//プラグイン定義ファイルが存在しない
 		return NULL;
 	}
-	DEBUG_TRACE(_T("  定義ファイル読込 %ts\n"),  pszPath );
+	DEBUG_TRACE(_T("  定義ファイル読込 %s\n"),  pszPath );
 
 	//L10N定義ファイルを読む
 	//プラグイン定義ファイルを読み込む base\pluginname\local\plugin_en_us.def
@@ -517,9 +517,9 @@ CPlugin* CPluginManager::LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* psz
 	if( !cProfDefMLang.ReadProfile( strMlang.c_str() ) ){
 		//プラグイン定義ファイルが存在しない
 		pcProfDefMLang = NULL;
-		DEBUG_TRACE(_T("  L10N定義ファイル読込 %ts Not Found\n"),  strMlang.c_str() );
+		DEBUG_TRACE(_T("  L10N定義ファイル読込 %s Not Found\n"),  strMlang.c_str() );
 	}else{
-		DEBUG_TRACE(_T("  L10N定義ファイル読込 %ts\n"),  strMlang.c_str() );
+		DEBUG_TRACE(_T("  L10N定義ファイル読込 %s\n"),  strMlang.c_str() );
 	}
 
 	std::wstring sPlugType;
@@ -543,7 +543,7 @@ CPlugin* CPluginManager::LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* psz
 		//オプションファイルが存在する場合、読み込む
 		plugin->ReadPluginOption( &cProfOption );
 	}
-	DEBUG_TRACE(_T("  オプションファイル読込 %ts\n"),  plugin->GetOptionPath().c_str() );
+	DEBUG_TRACE(_T("  オプションファイル読込 %s\n"),  plugin->GetOptionPath().c_str() );
 
 	return plugin;
 }

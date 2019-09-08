@@ -395,7 +395,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 							szKey)) {
 						return TRUE;
 					}
-					auto_sprintf( pFuncWk->m_sKey, L"%ts", szKey);
+					auto_sprintf( pFuncWk->m_sKey, L"%s", szKey);
 					pFuncWk->m_bDupErr = false;
 
 					tvi.mask = TVIF_HANDLE | TVIF_TEXT | TVIF_PARAM;

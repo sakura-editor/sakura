@@ -326,12 +326,12 @@ void CDlgTypeList::SetData( int selIdx )
 		const STypeConfigMini* type;
 		CDocTypeManager().GetTypeConfigMini(CTypeConfig(nIdx), &type);
 		if( type->m_szTypeExts[0] != _T('\0') ){		/* タイプ属性：拡張子リスト */
-			auto_sprintf( szText, _T("%ts ( %ts )"),
+			auto_sprintf( szText, _T("%s ( %s )"),
 				type->m_szTypeName,	/* タイプ属性：名称 */
 				type->m_szTypeExts	/* タイプ属性：拡張子リスト */
 			);
 		}else{
-			auto_sprintf( szText, _T("%ts"),
+			auto_sprintf( szText, _T("%s"),
 				type->m_szTypeName	/* タイプ属性：拡称 */
 			);
 		}

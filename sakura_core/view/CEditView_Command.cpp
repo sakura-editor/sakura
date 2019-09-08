@@ -246,7 +246,7 @@ open_c:;
 			// ファイルサイズが大きすぎて読むかどうか問い合わせているような場合でもエラー表示になるのは変
 			// OpenNewEditor()または起動された側のメッセージ表示で十分と思われる
 
-			//ErrorMessage( this->GetHwnd(), _T("%ts\n\n%ts\n\n"), errmes, szPath );
+			//ErrorMessage( this->GetHwnd(), _T("%s\n\n%s\n\n"), errmes, szPath );
 			return FALSE;
 		}
 	}

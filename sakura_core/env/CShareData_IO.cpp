@@ -1182,9 +1182,9 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 			}
 
 			if( 0x0100 <= keydata.m_nKeyCode ){
-				auto_sprintf(szWork, L",%ts", jpVKEXNames[ keydata.m_nKeyCode - 0x0100 ]);
+				auto_sprintf(szWork, L",%s", jpVKEXNames[ keydata.m_nKeyCode - 0x0100 ]);
 			}else{
-				auto_sprintf(szWork, L",%ts", keydata.m_szKeyName);
+				auto_sprintf(szWork, L",%s", keydata.m_szKeyName);
 			}
 			wcscat(szKeyData, szWork);
 			cProfile.IOProfileData( szSecName, szKeyName, MakeStringBufferW(szKeyData) );
@@ -1760,7 +1760,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 			}/* 書き込み */
 			else{
 				if(types.m_KeyHelpArr[j].m_szPath[0] != _T('\0')){
-					auto_sprintf( szKeyData, LTEXT("%d,%ts,%ts"),
+					auto_sprintf( szKeyData, LTEXT("%d,%s,%s"),
 						types.m_KeyHelpArr[j].m_bUse?1:0,
 						types.m_KeyHelpArr[j].m_szAbout,
 						types.m_KeyHelpArr[j].m_szPath.c_str()
@@ -2330,7 +2330,7 @@ void CShareData_IO::IO_ColorSet( CDataProfile* pcProfile, const WCHAR* pszSecNam
 	int		j;
 	for( j = 0; j < COLORIDX_LAST; ++j ){
 		static const WCHAR* pszForm = LTEXT("%d,%d,%06x,%06x,%d");
-		auto_sprintf( szKeyName, LTEXT("C[%ts]"), g_ColorAttributeArr[j].szName );	//Stonee, 2001/01/12, 2001/01/15
+		auto_sprintf( szKeyName, LTEXT("C[%s]"), g_ColorAttributeArr[j].szName );	//Stonee, 2001/01/12, 2001/01/15
 		if( pcProfile->IsReadingMode() ){
 			if( pcProfile->IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) ) ){
 				int buf[5];

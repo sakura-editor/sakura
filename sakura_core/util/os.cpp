@@ -343,9 +343,9 @@ BOOL CheckSystemResources( const TCHAR* pszAppName )
 			ErrorBeep();
 			ErrorBeep();
 			::MYMESSAGEBOX( NULL, MB_OK | /*MB_YESNO | */ MB_ICONSTOP | MB_APPLMODAL | MB_TOPMOST, pszAppName,
-				_T("%tsリソースが極端に不足しています。\n")
-				_T("このまま%tsを起動すると、正常に動作しない可能性があります。\n")
-				_T("新しい%tsの起動を中断します。\n")
+				_T("%sリソースが極端に不足しています。\n")
+				_T("このまま%sを起動すると、正常に動作しない可能性があります。\n")
+				_T("新しい%sの起動を中断します。\n")
 				_T("\n")
 				_T("システム リソース\t残り  %d%%\n")
 				_T("User リソース\t残り  %d%%\n")

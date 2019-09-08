@@ -405,9 +405,9 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 		/* ファイルパスに空白が含まれている場合はダブルクォーテーションで囲む */
 		//	2003.10.20 MIK コード簡略化
 		if( _tcschr( GetDocument()->m_cDocFile.GetFilePath(), TCODE::SPACE ) ? TRUE : FALSE ){
-			auto_sprintf( szPath, _T("@\"%ts\"\r\n"), GetDocument()->m_cDocFile.GetFilePath() );
+			auto_sprintf( szPath, _T("@\"%s\"\r\n"), GetDocument()->m_cDocFile.GetFilePath() );
 		}else{
-			auto_sprintf( szPath, _T("@%ts\r\n"), GetDocument()->m_cDocFile.GetFilePath() );
+			auto_sprintf( szPath, _T("@%s\r\n"), GetDocument()->m_cDocFile.GetFilePath() );
 		}
 		/* クリップボードにデータを設定 */
 		m_pCommanderView->MySetClipboardData( szPath, _tcslen( szPath ), false );
@@ -518,7 +518,7 @@ void CViewCommander::Command_PROFILEMGR( void )
 	CDlgProfileMgr profMgr;
 	if( profMgr.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 0 ) ){
 		TCHAR szOpt[MAX_PATH+10];
-		auto_sprintf( szOpt, _T("-PROF=\"%ts\""), profMgr.m_strProfileName.c_str() );
+		auto_sprintf( szOpt, _T("-PROF=\"%s\""), profMgr.m_strProfileName.c_str() );
 		SLoadInfo sLoadInfo;
 		sLoadInfo.cFilePath = _T("");
 		sLoadInfo.eCharCode = CODE_DEFAULT;

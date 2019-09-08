@@ -561,10 +561,10 @@ bool CPropPlugin::BrowseReadMe(const std::wstring& sReadMeName)
 	//アプリケーションパス
 	TCHAR szExePath[MAX_PATH + 1];
 	::GetModuleFileName( NULL, szExePath, _countof( szExePath ) );
-	cCmdLineBuf.AppendF( _T("\"%ts\""), szExePath );
+	cCmdLineBuf.AppendF( _T("\"%s\""), szExePath );
 
 	// ファイル名
-	cCmdLineBuf.AppendF( _T(" \"%ts\""), sReadMeName.c_str() );
+	cCmdLineBuf.AppendF( _T(" \"%s\""), sReadMeName.c_str() );
 
 	// コマンドラインオプション
 	cCmdLineBuf.AppendF(_T(" -R -CODE=99"));

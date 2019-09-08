@@ -1141,7 +1141,7 @@ bool CMacro::HandleCommand(
 				if( lFlag & 0x200000 )_tcscat( pOpt, _T("O") );
 			}
 			if( pOpt[0] != _T('\0') ){
-				auto_sprintf( szTemp, _T(" -GOPT=%ts"), pOpt );
+				auto_sprintf( szTemp, _T(" -GOPT=%s"), pOpt );
 				cCmdLine.AppendString(szTemp);
 			}
 
@@ -1329,7 +1329,7 @@ bool CMacro::HandleCommand(
 				if( NULL != pcEditView->m_pcEditWnd->m_cStatusBar.GetStatusHwnd() ){
 					pcEditView->SendStatusMessage( val0.c_str() );
 				}else{
-					InfoMessage( pcEditView->GetHwnd(), _T("%ts"), val0.c_str() );
+					InfoMessage( pcEditView->GetHwnd(), _T("%s"), val0.c_str() );
 				}
 			}else if( (val1 & 0x03) == 2 ){
 				pcEditView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( val0.c_str() );

@@ -201,10 +201,10 @@ bool CProcessFactory::StartControlProcess()
 
 	::GetModuleFileName( NULL, szEXE, _countof( szEXE ));
 	if( CCommandLine::getInstance()->IsSetProfile() ){
-		::auto_sprintf( szCmdLineBuf, _T("\"%ts\" -NOWIN -PROF=\"%ls\""),
+		::auto_sprintf( szCmdLineBuf, _T("\"%s\" -NOWIN -PROF=\"%ls\""),
 			szEXE, CCommandLine::getInstance()->GetProfileName() );
 	}else{
-		::auto_sprintf( szCmdLineBuf, _T("\"%ts\" -NOWIN"), szEXE ); // ""付加
+		::auto_sprintf( szCmdLineBuf, _T("\"%s\" -NOWIN"), szEXE ); // ""付加
 	}
 
 	//常駐プロセス起動
@@ -237,7 +237,7 @@ bool CProcessFactory::StartControlProcess()
 						0,
 						NULL
 		);
-		ErrorMessage( NULL, _T("\'%ts\'\nプロセスの起動に失敗しました。\n%ts"), szEXE, pMsg );
+		ErrorMessage( NULL, _T("\'%s\'\nプロセスの起動に失敗しました。\n%s"), szEXE, pMsg );
 		::LocalFree( (HLOCAL)pMsg );	//	エラーメッセージバッファを解放
 		return false;
 	}

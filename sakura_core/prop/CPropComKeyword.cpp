@@ -166,7 +166,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 												MYTRACE( _T("	plvi->iSubItem =[%d]\n"), plvi->iSubItem );
 				if (plvi->mask & LVIF_STATE)	MYTRACE( _T("	plvi->state =[%xf]\n"), plvi->state );
 												MYTRACE( _T("	plvi->stateMask =[%xh]\n"), plvi->stateMask );
-				if (plvi->mask & LVIF_TEXT)		MYTRACE( _T("	plvi->pszText =[%ts]\n"), plvi->pszText );
+				if (plvi->mask & LVIF_TEXT)		MYTRACE( _T("	plvi->pszText =[%s]\n"), plvi->pszText );
 												MYTRACE( _T("	plvi->cchTextMax=[%d]\n"), plvi->cchTextMax );
 				if (plvi->mask & LVIF_IMAGE)	MYTRACE( _T("	plvi->iImage=[%d]\n"), plvi->iImage );
 				if (plvi->mask & LVIF_PARAM)	MYTRACE( _T("	plvi->lParam=[%xh(%d)]\n"), plvi->lParam, plvi->lParam );
@@ -180,7 +180,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 												MYTRACE( _T("	plvi->iSubItem =[%d]\n"), plvi->iSubItem );
 				if (plvi->mask & LVIF_STATE)	MYTRACE( _T("	plvi->state =[%xf]\n"), plvi->state );
 												MYTRACE( _T("	plvi->stateMask =[%xh]\n"), plvi->stateMask );
-				if (plvi->mask & LVIF_TEXT)		MYTRACE( _T("	plvi->pszText =[%ts]\n"), plvi->pszText  );
+				if (plvi->mask & LVIF_TEXT)		MYTRACE( _T("	plvi->pszText =[%s]\n"), plvi->pszText  );
 												MYTRACE( _T("	plvi->cchTextMax=[%d]\n"), plvi->cchTextMax );
 				if (plvi->mask & LVIF_IMAGE)	MYTRACE( _T("	plvi->iImage=[%d]\n"), plvi->iImage );
 				if (plvi->mask & LVIF_PARAM)	MYTRACE( _T("	plvi->lParam=[%xh(%d)]\n"), plvi->lParam, plvi->lParam );

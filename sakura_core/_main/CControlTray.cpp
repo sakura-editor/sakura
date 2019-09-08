@@ -381,7 +381,7 @@ bool CControlTray::CreateTrayIcon( HWND hWnd )
 			profname = L" ";
 			profname += CCommandLine::getInstance()->GetProfileName();
 		}
-		auto_snprintf_s( pszTips, _countof(pszTips), _T("%ts %d.%d.%d.%d%ls"),		//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
+		auto_snprintf_s( pszTips, _countof(pszTips), _T("%s %d.%d.%d.%d%ls"),		//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
 			GSTR_APPNAME,
 			HIWORD( dwVersionMS ),
 			LOWORD( dwVersionMS ),
@@ -1189,10 +1189,10 @@ bool CControlTray::OpenNewEditor(
 	//アプリケーションパス
 	TCHAR szEXE[MAX_PATH + 1];
 	::GetModuleFileName( NULL, szEXE, _countof( szEXE ) );
-	cCmdLineBuf.AppendF( _T("\"%ts\""), szEXE );
+	cCmdLineBuf.AppendF( _T("\"%s\""), szEXE );
 
 	// ファイル名
-	if( sLoadInfo.cFilePath.c_str()[0] != _T('\0') )	cCmdLineBuf.AppendF( _T(" \"%ts\""), sLoadInfo.cFilePath.c_str() );
+	if( sLoadInfo.cFilePath.c_str()[0] != _T('\0') )	cCmdLineBuf.AppendF( _T(" \"%s\""), sLoadInfo.cFilePath.c_str() );
 
 	// コード指定
 	if( IsValidCodeOrCPType(sLoadInfo.eCharCode) )cCmdLineBuf.AppendF( _T(" -CODE=%d"), sLoadInfo.eCharCode );
@@ -1252,9 +1252,9 @@ bool CControlTray::OpenNewEditor(
 			output.WriteString(to_wchar(szCmdLineOption));
 			output.Close();
 			sync = true;
-			cCmdLineBuf.AppendF(_T(" -@=\"%ts\""), szResponseFile);
+			cCmdLineBuf.AppendF(_T(" -@=\"%s\""), szResponseFile);
 		}else{
-			cCmdLineBuf.AppendF(_T(" %ts"), szCmdLineOption);
+			cCmdLineBuf.AppendF(_T(" %s"), szCmdLineOption);
 		}
 	}
 	// -- -- -- -- プロセス生成 -- -- -- -- //

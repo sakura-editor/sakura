@@ -1182,7 +1182,7 @@ void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeW* pcmtxtOut )
 
 	TCHAR szCpName[100];
 	CCodePage::GetNameNormal(szCpName, doc.m_cDocType.GetDocumentAttribute().m_encoding.m_eDefaultCodetype);
-	auto_sprintf( szWork, _T("\t%ts\r\n"), szCpName );
+	auto_sprintf( szWork, _T("\t%s\r\n"), szCpName );
 	pcmtxtOut->AppendString( szWork );
 
 	pcmtxtOut->AppendString( LS(STR_ESI_SAMPLE_LEN) );	// "サンプルデータ長\r\n"
@@ -1217,7 +1217,7 @@ void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeW* pcmtxtOut )
 			cesi.m_apMbcInfo[i]->eCodeID = CODE_SJIS;
 		}
 		cesi.GetEvaluation( cesi.m_apMbcInfo[i]->eCodeID, &v1, &v2 );
-		auto_sprintf( szWork, LS(STR_ESI_OTHER_B_AND_P),	// "\t\t%d.%ts\t固有バイト数 %d\tポイント数 %d\r\n"
+		auto_sprintf( szWork, LS(STR_ESI_OTHER_B_AND_P),	// "\t\t%d.%s\t固有バイト数 %d\tポイント数 %d\r\n"
 			i+1, CCodeTypeName(cesi.m_apMbcInfo[i]->eCodeID).Normal(), v1, v2 );
 		pcmtxtOut->AppendString( szWork );
 	}
@@ -1226,7 +1226,7 @@ void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeW* pcmtxtOut )
 
 	pcmtxtOut->AppendString( LS(STR_ESI_RESULT) );	// "判定結果\r\n"
 
-	auto_sprintf( szWork, _T("\t%ts\r\n"), CCodeTypeName(ecode_result).Normal() );
+	auto_sprintf( szWork, _T("\t%s\r\n"), CCodeTypeName(ecode_result).Normal() );
 	pcmtxtOut->AppendString( szWork );
 
 	return;

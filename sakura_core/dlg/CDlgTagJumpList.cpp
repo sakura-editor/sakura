@@ -770,7 +770,7 @@ bool CDlgTagJumpList::GetFullPathAndLine( int index, TCHAR *fullPath, int count,
 	}
 	bool ret = NULL != GetFullPathFromDepth( fullPath, count, path, fileNamePath, tempDepth );
 	if(ret){
-		DEBUG_TRACE( _T("jump to: %ts\n"), static_cast<const TCHAR*>(fullPath) );
+		DEBUG_TRACE( _T("jump to: %s\n"), static_cast<const TCHAR*>(fullPath) );
 	}else{
 		DEBUG_TRACE( _T("jump to: error\n") );
 	}
@@ -1159,8 +1159,8 @@ int CDlgTagJumpList::find_key_core(
 		}
 
 		//タグファイル名を作成する。
-		auto_sprintf( szTagFile, _T("%ts%ts"), state.m_szCurPath, TAG_FILENAME_T );
-		DEBUG_TRACE( _T("tag: %ts\n"), szTagFile );
+		auto_sprintf( szTagFile, _T("%s%s"), state.m_szCurPath, TAG_FILENAME_T );
+		DEBUG_TRACE( _T("tag: %s\n"), szTagFile );
 		
 		//タグファイルを開く。
 		FILE* fp = _tfopen( szTagFile, _T("rb") );
@@ -1630,8 +1630,8 @@ int CDlgTagJumpList::CalcMaxUpDirectory( const TCHAR* p )
 TCHAR* CDlgTagJumpList::GetFullPathFromDepth( TCHAR* pszOutput, int count,
 	TCHAR* basePath, const TCHAR* fileName, int depth )
 {
-	DEBUG_TRACE( _T("base  %ts\n"), basePath );
-	DEBUG_TRACE( _T("file  %ts\n"), fileName );
+	DEBUG_TRACE( _T("base  %s\n"), basePath );
+	DEBUG_TRACE( _T("file  %s\n"), fileName );
 	DEBUG_TRACE( _T("depth %d\n"),  depth );
 	//完全パス名を作成する。
 	const TCHAR	*p = fileName;
@@ -1649,7 +1649,7 @@ TCHAR* CDlgTagJumpList::GetFullPathFromDepth( TCHAR* pszOutput, int count,
 			//_tcscat( basePath, _T("..\\") );
 			DirUp( basePath );
 		}
-		if( -1 == auto_snprintf_s( pszOutput, count, _T("%ts%ts"), basePath, p ) ){
+		if( -1 == auto_snprintf_s( pszOutput, count, _T("%s%s"), basePath, p ) ){
 			return NULL;
 		}
 	}

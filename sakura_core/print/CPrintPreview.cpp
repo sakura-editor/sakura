@@ -170,7 +170,7 @@ LRESULT CPrintPreview::OnPaint(
 	CPrint::GetPaperName( m_pPrintSetting->m_mdmDevMode.dmPaperSize , szPaperName );
 	auto_sprintf(
 		szText,
-		_T("%ts  %ts"),
+		_T("%s  %s"),
 		szPaperName,
 		(m_pPrintSetting->m_mdmDevMode.dmOrientation & DMORIENT_LANDSCAPE) ? LS(STR_ERR_DLGPRNPRVW1) : LS(STR_ERR_DLGPRNPRVW2)
 	);
@@ -1048,7 +1048,7 @@ void CPrintPreview::OnPrint( void )
 		TCHAR	szFileName[_MAX_FNAME];
 		TCHAR	szExt[_MAX_EXT];
 		_tsplitpath( m_pParentWnd->GetDocument()->m_cDocFile.GetFilePath(), NULL, NULL, szFileName, szExt );
-		auto_snprintf_s( szJobName, _countof(szJobName), _T("%ts%ts"), szFileName, szExt );
+		auto_snprintf_s( szJobName, _countof(szJobName), _T("%s%s"), szFileName, szExt );
 	}
 
 	/* 印刷範囲を指定できるプリンタダイアログを作成 */
@@ -1115,7 +1115,7 @@ void CPrintPreview::OnPrint( void )
 		&hdc,
 		szErrMsg						/* エラーメッセージ格納場所 */
 	) ){
-//		MYTRACE( _T("%ts\n"), szErrMsg );
+//		MYTRACE( _T("%s\n"), szErrMsg );
 	}
 
 	// 印刷用半角フォントと、印刷用全角フォントを作成

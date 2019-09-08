@@ -657,13 +657,13 @@ void CDlgFuncList::SetData()
 				// 検出結果の種類(関数,,,)があるとき
 				auto_sprintf(
 					szText,
-					_T("%ts(%d,%d): "),
+					_T("%s(%d,%d): "),
 					m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
 					pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
 					pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
 				);
 				m_cmemClipText.AppendString(szText);
-				// "%ts(%ts)\r\n"
+				// "%s(%s)\r\n"
 				m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
 				m_cmemClipText.AppendString(L"(");
 				m_cmemClipText.AppendString(item.pszText);
@@ -672,7 +672,7 @@ void CDlgFuncList::SetData()
 				// 検出結果の種類(関数,,,)がないとき
 				auto_sprintf(
 					szText,
-					_T("%ts(%d,%d): "),
+					_T("%s(%d,%d): "),
 					m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
 					pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
 					pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
@@ -1155,13 +1155,13 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 		WCHAR szText[2048];
 		auto_sprintf(
 			szText,
-			L"%ts(%d,%d): ",
+			L"%s(%d,%d): ",
 			m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
 			pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
 			pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
 		);
 		m_cmemClipText.AppendString( szText ); /* クリップボードコピー用テキスト */
-		// "%ts%ls\r\n"
+		// "%s%ls\r\n"
 		m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
 		m_cmemClipText.AppendString(FL_OBJ_DECLARE == pcFuncInfo->m_nInfo ? m_pcFuncInfoArr->GetAppendText( FL_OBJ_DECLARE ).c_str() : L"" ); 	//	Jan. 04, 2001 genta C++で使用
 		m_cmemClipText.AppendString(L"\r\n");
@@ -1392,9 +1392,9 @@ void CDlgFuncList::SetListVB (void)
 			szTypeOption[0] = _T('\0');	//	2006.12.17 genta 全体を0で埋める必要はない
 		} else
 		if ( szOption[0] == _T('\0') ) {
-			auto_sprintf(szTypeOption, _T("%ts"), szType);
+			auto_sprintf(szTypeOption, _T("%s"), szType);
 		} else {
-			auto_sprintf(szTypeOption, _T("%ts（%ts）"), szType, szOption);
+			auto_sprintf(szTypeOption, _T("%s（%s）"), szType, szOption);
 		}
 		item.pszText = szTypeOption;
 		item.iItem = i;
@@ -1407,13 +1407,13 @@ void CDlgFuncList::SetListVB (void)
 			// 2006.12.12 Moca szText を自分自身にコピーしていたバグを修正
 			auto_sprintf(
 				szText,
-				_T("%ts(%d,%d): "),
+				_T("%s(%d,%d): "),
 				m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
 				pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
 				pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
 			);
 			m_cmemClipText.AppendString(szText);
-			// "%ts(%ts)\r\n"
+			// "%s(%s)\r\n"
 			m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
 			m_cmemClipText.AppendString(L"(");
 			m_cmemClipText.AppendString(item.pszText);
@@ -1422,13 +1422,13 @@ void CDlgFuncList::SetListVB (void)
 			// 検出結果の種類(関数,,,)がないとき
 			auto_sprintf(
 				szText,
-				_T("%ts(%d,%d): "),
+				_T("%s(%d,%d): "),
 				m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
 				pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
 				pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
 			);
 			m_cmemClipText.AppendString(szText);
-			// "%ts\r\n"
+			// "%s\r\n"
 			m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
 			m_cmemClipText.AppendString(L"\r\n");
 		}

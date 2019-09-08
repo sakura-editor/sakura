@@ -384,7 +384,7 @@ DWORD CGrepAgent::DoGrep(
 			else if (nErrorNo_ExcludeFolder == 2) {
 				pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS2);
 			}
-			ErrorMessage( pcViewDst->m_hwndParent, _T("%ts"), pszErrorMessage );
+			ErrorMessage( pcViewDst->m_hwndParent, _T("%s"), pszErrorMessage );
 			return 0;
 		}
 	}
@@ -1172,22 +1172,22 @@ int CGrepAgent::DoGrepFile(
 			const wchar_t* pszFormatFilePath2 = L"";
 			if( 1 == sGrepOption.nGrepOutputStyle ){
 				// ノーマル
-				pszFormatFullPath   = L"%ts%ts\r\n";
-				pszFormatBasePath2  = L"■\"%ts\"\r\n";
-				pszFormatFilePath   = L"・\"%ts\"%ts\r\n";
-				pszFormatFilePath2  = L"・\"%ts\"%ts\r\n";
+				pszFormatFullPath   = L"%s%s\r\n";
+				pszFormatBasePath2  = L"■\"%s\"\r\n";
+				pszFormatFilePath   = L"・\"%s\"%s\r\n";
+				pszFormatFilePath2  = L"・\"%s\"%s\r\n";
 			}else if( 2 == sGrepOption.nGrepOutputStyle ){
 				/* WZ風 */
-				pszFormatFullPath   = L"■\"%ts\"%ts\r\n";
-				pszFormatBasePath2  = L"◎\"%ts\"\r\n";
-				pszFormatFilePath   = L"◆\"%ts\"%ts\r\n";
-				pszFormatFilePath2  = L"■\"%ts\"%ts\r\n";
+				pszFormatFullPath   = L"■\"%s\"%s\r\n";
+				pszFormatBasePath2  = L"◎\"%s\"\r\n";
+				pszFormatFilePath   = L"◆\"%s\"%s\r\n";
+				pszFormatFilePath2  = L"■\"%s\"%s\r\n";
 			}else if( 3 == sGrepOption.nGrepOutputStyle ){
 				// 結果のみ
-				pszFormatFullPath   = L"%ts%ts\r\n";
-				pszFormatBasePath2  = L"■\"%ts\"\r\n";
-				pszFormatFilePath   = L"%ts\r\n";
-				pszFormatFilePath2  = L"%ts\r\n";
+				pszFormatFullPath   = L"%s%s\r\n";
+				pszFormatBasePath2  = L"■\"%s\"\r\n";
+				pszFormatFilePath   = L"%s\r\n";
+				pszFormatFilePath2  = L"%s\r\n";
 			}
 /*
 			Base/Sep
@@ -1202,7 +1202,7 @@ int CGrepAgent::DoGrepFile(
 				if( !bOutputBaseFolder && sGrepOption.bGrepOutputBaseFolder ){
 					const wchar_t* pszFormatBasePath = L"";
 					if( sGrepOption.bGrepSeparateFolder ){
-						pszFormatBasePath = L"◎\"%ts\"\r\n";	// (A)
+						pszFormatBasePath = L"◎\"%s\"\r\n";	// (A)
 					}else{
 						pszFormatBasePath = pszFormatBasePath2;	// (B)
 					}
@@ -1212,7 +1212,7 @@ int CGrepAgent::DoGrepFile(
 				}
 				if( !bOutputFolderName && sGrepOption.bGrepSeparateFolder ){
 					if( pszFolder[0] ){
-						auto_sprintf( szWork0, L"■\"%ts\"\r\n", pszFolder );	// (C), (D)
+						auto_sprintf( szWork0, L"■\"%s\"\r\n", pszFolder );	// (C), (D)
 					}else{
 						auto_strcpy( szWork0, L"■\r\n" );
 					}
@@ -1506,13 +1506,13 @@ int CGrepAgent::DoGrepFile(
 	} // try
 	catch( CError_FileOpen ){
 		CNativeW str(LSW(STR_GREP_ERR_FILEOPEN));
-		str.Replace(L"%ts", to_wchar(pszFullPath));
+		str.Replace(L"%s", to_wchar(pszFullPath));
 		cmemMessage.AppendNativeData( str );
 		return 0;
 	}
 	catch( CError_FileRead ){
 		CNativeW str(LSW(STR_GREP_ERR_FILEREAD));
-		str.Replace(L"%ts", to_wchar(pszFullPath));
+		str.Replace(L"%s", to_wchar(pszFullPath));
 		cmemMessage.AppendNativeData( str );
 	} // 例外処理終わり
 
@@ -1955,20 +1955,20 @@ int CGrepAgent::DoGrepReplaceFile(
 	} // try
 	catch( CError_FileOpen ){
 		CNativeW str(LSW(STR_GREP_ERR_FILEOPEN));
-		str.Replace(L"%ts", to_wchar(pszFullPath));
+		str.Replace(L"%s", to_wchar(pszFullPath));
 		cmemMessage.AppendNativeData( str );
 		return 0;
 	}
 	catch( CError_FileRead ){
 		CNativeW str(LSW(STR_GREP_ERR_FILEREAD));
-		str.Replace(L"%ts", to_wchar(pszFullPath));
+		str.Replace(L"%s", to_wchar(pszFullPath));
 		cmemMessage.AppendNativeData( str );
 	}
 	catch( CError_WriteFileOpen ){
 		std::wstring file = pszFullPath;
 		file += _T(".skrnew");
 		CNativeW str(LSW(STR_GREP_ERR_FILEWRITE));
-		str.Replace(L"%ts", to_wchar(file.c_str()));
+		str.Replace(L"%s", to_wchar(file.c_str()));
 		cmemMessage.AppendNativeData( str );
 	} // 例外処理終わり
 

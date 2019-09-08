@@ -699,7 +699,7 @@ bool CImpExpRegex::Export( const wstring& sFileName, wstring& sErrMsg )
 		if( regex[0] == L'\0' ) break;
 		
 		const TCHAR* name  = GetColorNameByIndex(m_Types.m_RegexKeywordArr[i].m_nColorIndex);
-		out.WriteF( L"RxKey[%03d]=%ts,%ls\n", i, name, regex);
+		out.WriteF( L"RxKey[%03d]=%s,%ls\n", i, name, regex);
 
 		for(; *regex != '\0'; regex++ ){}
 		regex++;
@@ -839,7 +839,7 @@ bool CImpExpKeyHelp::Export( const wstring& sFileName, wstring& sErrMsg )
 
 	for (int i = 0; i < m_Types.m_nKeyHelpNum; i++) {
 		out.WriteF(
-			L"KDct[%02d]=%d,%ts,%ts\n",
+			L"KDct[%02d]=%d,%s,%s\n",
 			i,
 			m_Types.m_KeyHelpArr[i].m_bUse?1:0,
 			m_Types.m_KeyHelpArr[i].m_szAbout,

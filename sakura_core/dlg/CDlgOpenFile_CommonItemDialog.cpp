@@ -448,7 +448,7 @@ void CDlgOpenFile_CommonItemDialog::Create(
 		my_splitpath_t( pszDefaultPath, szDrive, szDir, NULL, NULL );
 		// 2010.08.28 相対パス解決
 		TCHAR szRelPath[_MAX_PATH];
-		auto_sprintf( szRelPath, _T("%ts%ts"), szDrive, szDir );
+		auto_sprintf( szRelPath, _T("%s%s"), szDrive, szDir );
 		const TCHAR* p = szRelPath;
 		if( ! ::GetLongFileName( p, m_szInitialDir ) ){
 			auto_strcpy(m_szInitialDir, p );

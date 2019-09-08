@@ -180,7 +180,7 @@ bool CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 
 		GetTempPath( MAX_PATH, szPathName );
 		GetTempFileName( szPathName, TEXT("skr_"), 0, szTempFileName );
-		DEBUG_TRACE( _T("CEditView::ExecCmd() TempFilename=[%ts]\n"), szTempFileName );
+		DEBUG_TRACE( _T("CEditView::ExecCmd() TempFilename=[%s]\n"), szTempFileName );
 
 		nFlgOpt = bBeforeTextSelected ? 0x01 : 0x00;		/* 選択範囲を出力 */
 
@@ -246,7 +246,7 @@ bool CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 		//コマンドライン文字列作成
 		auto_sprintf(
 			cmdline,
-			_T("\"%ts\\%ts\" %ts%ts%ts"),
+			_T("\"%s\\%s\" %s%s%s"),
 			szCmdDir,
 			_T("cmd.exe"),
 			( outputEncoding == CODE_UNICODE ? _T("/U") : _T("") ),		// Unicdeモードでコマンド実行	2008/6/17 Uchi
@@ -314,10 +314,10 @@ bool CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 			oa.OutputW( L"\r\n" );
 			oa.OutputW( L"#============================================================\r\n" );
 			int len = auto_snprintf_s( szOutTemp, _countof(szOutTemp),
-				L"#DateTime : %ts %ts\r\n", szTextDate, szTextTime );
+				L"#DateTime : %s %s\r\n", szTextDate, szTextTime );
 			oa.OutputW( szOutTemp, len );
 			len = auto_snprintf_s( szOutTemp, _countof(szOutTemp),
-				L"#CmdLine  : %ts\r\n", pszCmd );
+				L"#CmdLine  : %s\r\n", pszCmd );
 			oa.OutputW( szOutTemp, len );
 			oa.OutputW( L"#============================================================\r\n" );
 		}

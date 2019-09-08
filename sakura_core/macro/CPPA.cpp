@@ -381,10 +381,10 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 		}
 	}
 	if( 0 == m_CurInstance->m_cMemDebug.GetStringLength() ){
-		MYMESSAGEBOX( m_CurInstance->m_pcEditView->GetHwnd(), MB_OK, LS(STR_ERR_DLGPPA7), _T("%ts"), pszErr );
+		MYMESSAGEBOX( m_CurInstance->m_pcEditView->GetHwnd(), MB_OK, LS(STR_ERR_DLGPPA7), _T("%s"), pszErr );
 	}
 	else{
-		MYMESSAGEBOX( m_CurInstance->m_pcEditView->GetHwnd(), MB_OK, LS(STR_ERR_DLGPPA7), _T("%ts\n%hs"), pszErr, m_CurInstance->m_cMemDebug.GetStringPtr() );
+		MYMESSAGEBOX( m_CurInstance->m_pcEditView->GetHwnd(), MB_OK, LS(STR_ERR_DLGPPA7), _T("%s\n%hs"), pszErr, m_CurInstance->m_cMemDebug.GetStringPtr() );
 	}
 }
 

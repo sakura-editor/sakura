@@ -417,7 +417,7 @@ TCHAR*	CKeyBind::MakeMenuLabel(const TCHAR* sName, const TCHAR* sKey)
 			auto_strcat_s( sLabel, _countof(sLabel), _T(")...") );
 		}
 		else {
-			auto_sprintf_s( sLabel, _countof(sLabel), _T("%ts(&%ts)"), sName, sKey );
+			auto_sprintf_s( sLabel, _countof(sLabel), _T("%s(&%s)"), sName, sKey );
 		}
 
 		return sLabel;

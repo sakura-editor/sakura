@@ -118,13 +118,13 @@ void CDlgTypeAscertain::SetData( void )
 		const STypeConfigMini* type;
 		CDocTypeManager().GetTypeConfigMini(CTypeConfig(nIdx), &type);
 		if (type->m_szTypeExts[0] != _T('\0') ) {		/* タイプ属性：拡張子リスト */
-			auto_sprintf( szText, _T("%ts (%ts)"),
+			auto_sprintf( szText, _T("%s (%s)"),
 				type->m_szTypeName,	/* タイプ属性：名称 */
 				type->m_szTypeExts	/* タイプ属性：拡張子リスト */
 			);
 		}
 		else{
-			auto_sprintf( szText, _T("%ts"),
+			auto_sprintf( szText, _T("%s"),
 				type->m_szTypeName	/* タイプ属性：拡称 */
 			);
 		}
@@ -143,7 +143,7 @@ void CDlgTypeAscertain::SetData( void )
 		bFind = FindNextFile( hFind, &wf )) {
 		if ( (wf.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) {
 			// 読込色設定ファイル発見
-			auto_sprintf( szText, _T("File -- %ts"), wf.cFileName );
+			auto_sprintf( szText, _T("File -- %s"), wf.cFileName );
 			::Combo_AddString( hwndCombo, szText );
 		}
 	}

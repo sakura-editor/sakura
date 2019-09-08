@@ -87,9 +87,9 @@ static std::wstring GetProfileMgrFileName(LPCTSTR profName = NULL)
 		TCHAR szFname[_MAX_FNAME];
 		::GetModuleFileName( NULL, szExePath, _countof(szExePath) );
 		_tsplitpath( szExePath, NULL, NULL, szFname, NULL );
-		auto_snprintf_s( szIniFile, _MAX_PATH - 1, _T("%ts\\%ts_prof%ts"), szDir, szFname, _T(".ini") );
+		auto_snprintf_s( szIniFile, _MAX_PATH - 1, _T("%s\\%s_prof%s"), szDir, szFname, _T(".ini") );
 	}else{
-		auto_snprintf_s( szIniFile, _MAX_PATH - 1, _T("%ts\\%ts"), szDir, profName );
+		auto_snprintf_s( szIniFile, _MAX_PATH - 1, _T("%s\\%s"), szDir, profName );
 	}
 
 	return std::wstring(szIniFile);

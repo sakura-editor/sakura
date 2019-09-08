@@ -111,7 +111,7 @@ const TCHAR *CFileExt::GetExtFilter( void )
 
 	for( i = 0; i < m_nCount; i++ )
 	{
-		// "%ts (%ts)\0%ts\0"
+		// "%s (%s)\0%s\0"
 		work = m_puFileExtInfo[i].m_szName;
 		work.append(_T(" ("));
 		work.append(m_puFileExtInfo[i].m_szExt);
