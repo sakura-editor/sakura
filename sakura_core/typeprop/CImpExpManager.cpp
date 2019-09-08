@@ -237,7 +237,7 @@ void CImpExpManager::SetBaseName(const wstring& sBase)
 // インポート確認
 bool CImpExpType::ImportAscertain( HINSTANCE hInstance, HWND hwndParent, const wstring& sFileName, wstring& sErrMsg )
 {
-	const wstring	sPath = to_wchar( sFileName.c_str() );
+	const auto& sPath = sFileName;
 
 	m_cProfile.SetReadingMode();
 
@@ -546,7 +546,7 @@ bool CImpExpType::Export( const wstring& sFileName, wstring& sErrMsg )
 // インポート
 bool CImpExpColors::Import( const wstring& sFileName, wstring& sErrMsg )
 {
-	const wstring strPath = to_wchar( sFileName.c_str() );
+	const auto& strPath = sFileName;
 
 	// 開けるか
 	CTextInputStream in( strPath.c_str() );
@@ -857,7 +857,7 @@ bool CImpExpKeyHelp::Export( const wstring& sFileName, wstring& sErrMsg )
 // インポート
 bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 {
-	const wstring	strPath = to_wchar( sFileName.c_str() );
+	const auto& strPath = sFileName;
 	const int KEYNAME_SIZE = _countof(m_Common.m_sKeyBind.m_pKeyNameArr)-1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
 	CommonSetting_KeyBind sKeyBind = m_Common.m_sKeyBind;
 
@@ -1004,7 +1004,7 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 // エクスポート
 bool CImpExpKeybind::Export( const wstring& sFileName, wstring& sErrMsg )
 {
-	const wstring	strPath = to_wchar( sFileName.c_str() );
+	const auto& strPath = sFileName;
 
 	CTextOutputStream out( strPath.c_str() );
 	if (!out) {
@@ -1043,7 +1043,7 @@ bool CImpExpKeybind::Export( const wstring& sFileName, wstring& sErrMsg )
 // インポート
 bool CImpExpCustMenu::Import( const wstring& sFileName, wstring& sErrMsg )
 {
-	const wstring	strPath = to_wchar( sFileName.c_str() );
+	const auto& strPath = sFileName;
 
 	//ヘッダ確認
 	CTextInputStream in(strPath.c_str());
@@ -1072,7 +1072,7 @@ bool CImpExpCustMenu::Import( const wstring& sFileName, wstring& sErrMsg )
 // エクスポート
 bool CImpExpCustMenu::Export( const wstring& sFileName, wstring& sErrMsg )
 {
-	const wstring	strPath = to_wchar( sFileName.c_str() );
+	const auto& strPath = sFileName;
 
 	// オープン
 	CTextOutputStream out(strPath.c_str());
@@ -1202,7 +1202,7 @@ bool CImpExpKeyWord::Export( const wstring& sFileName, wstring& sErrMsg )
 // インポート
 bool CImpExpMainMenu::Import( const wstring& sFileName, wstring& sErrMsg )
 {
-	const wstring strPath = to_wchar( sFileName.c_str() );
+	const auto& strPath = sFileName;
 
 	//ヘッダ確認
 	CTextInputStream in(strPath.c_str());
@@ -1231,7 +1231,7 @@ bool CImpExpMainMenu::Import( const wstring& sFileName, wstring& sErrMsg )
 // エクスポート
 bool CImpExpMainMenu::Export( const wstring& sFileName, wstring& sErrMsg )
 {
-	const wstring strPath = to_wchar( sFileName.c_str() );
+	const auto& strPath = sFileName;
 
 	// オープン
 	CTextOutputStream out( strPath.c_str() );
@@ -1271,7 +1271,7 @@ bool CImpExpMainMenu::Export( const wstring& sFileName, wstring& sErrMsg )
 // インポート
 bool CImpExpFileTree::Import( const wstring& sFileName, wstring& sErrMsg )
 {
-	const wstring strPath = to_wchar( sFileName.c_str() );
+	const auto& strPath = sFileName;
 
 	CDataProfile cProfile;
 	cProfile.SetReadingMode();
@@ -1285,7 +1285,7 @@ bool CImpExpFileTree::Import( const wstring& sFileName, wstring& sErrMsg )
 // エクスポート
 bool CImpExpFileTree::Export( const wstring& sFileName, wstring& sErrMsg )
 {
-	const wstring strPath = to_wchar( sFileName.c_str() );
+	const auto& strPath = sFileName;
 
 	CDataProfile	cProfile;
 
