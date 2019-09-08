@@ -29,9 +29,11 @@
 
 class CNativeA : public CNative{
 public:
-	CNativeA();
-	CNativeA(const CNativeA& rhs);
-	CNativeA(const char* szData);
+	CNativeA() noexcept;
+	CNativeA( const CNativeA& rhs );
+	CNativeA( CNativeA&& other ) noexcept;
+	CNativeA( const char* szData, size_t cchData );
+	CNativeA( const char* szData);
 
 	//ネイティブ設定
 	void SetString( const char* pszData );                  //!< バッファの内容を置き換える
@@ -57,6 +59,8 @@ public:
 	const char* GetStringPtr(int* pnLength) const; //[out]pnLengthは文字単位。
 
 	//演算子
+	CNativeA& operator = (const CNativeA& rhs)			{ CNative::operator=(rhs); return *this; }
+	CNativeA& operator = (CNativeA&& rhs) noexcept		{ CNative::operator=(std::forward<CNativeA>(rhs)); return *this; }
 	const CNativeA& operator=( char );
 	const CNativeA& operator+=( char );
 
