@@ -584,7 +584,7 @@ void CFileNameManager::GetIniFileName( LPTSTR pszIniFileName, LPCTSTR pszProfNam
 				TCHAR szDir[_MAX_DIR];
 				_tsplitpath( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile, szDrive, szDir, NULL, NULL );
 				auto_snprintf_s( szPath, _MAX_PATH - 1, _T("%ts\\%ts"), szDrive, szDir );
-				MakeSureDirectoryPathExistsT( szPath );
+				MakeSureDirectoryPathExistsW( szPath );
 			}
 		}else{
 			if( pszProfName[0] != _T('\0') ){
@@ -593,7 +593,7 @@ void CFileNameManager::GetIniFileName( LPTSTR pszIniFileName, LPCTSTR pszProfNam
 				TCHAR szDir[_MAX_DIR];
 				_tsplitpath( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szIniFile, szDrive, szDir, NULL, NULL );
 				auto_snprintf_s( szPath, _MAX_PATH - 1, _T("%ts\\%ts"), szDrive, szDir );
-				MakeSureDirectoryPathExistsT( szPath );
+				MakeSureDirectoryPathExistsW( szPath );
 			}
 		}
 	}
