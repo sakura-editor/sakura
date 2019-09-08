@@ -76,17 +76,17 @@ bool CRecentCurDir::TextToDataType( CCurDirString* dst, LPCWSTR pszText ) const
 
 int CRecentCurDir::CompareItem( const CCurDirString* p1, LPCWSTR p2 ) const
 {
-	return _tcscmp(*p1,p2);
+	return wcscmp(*p1,p2);
 }
 
 void CRecentCurDir::CopyItem( CCurDirString* dst, LPCWSTR src ) const
 {
-	_tcscpy(*dst,src);
+	wcscpy(*dst,src);
 }
 
 bool CRecentCurDir::ValidateReceiveType( LPCWSTR p ) const
 {
-	if( GetTextMaxLength() <= _tcslen(p) ){
+	if( GetTextMaxLength() <= wcslen(p) ){
 		return false;
 	}
 	return true;

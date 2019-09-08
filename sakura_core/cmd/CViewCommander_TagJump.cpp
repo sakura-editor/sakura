@@ -391,8 +391,8 @@ bool CViewCommander::Command_TagsMake( void )
 	WCHAR	szTargetPath[1024 /*_MAX_PATH+1*/ ];
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() )
 	{
-		_tcscpy( szTargetPath, GetDocument()->m_cDocFile.GetFilePath() );
-		szTargetPath[ _tcslen( szTargetPath ) - _tcslen( GetDocument()->m_cDocFile.GetFileName() ) ] = L'\0';
+		wcscpy( szTargetPath, GetDocument()->m_cDocFile.GetFilePath() );
+		szTargetPath[ wcslen( szTargetPath ) - wcslen( GetDocument()->m_cDocFile.GetFileName() ) ] = L'\0';
 	}
 	else
 	{
@@ -456,14 +456,14 @@ bool CViewCommander::Command_TagsMake( void )
 	//	To Here Dec. 28, 2002 MIK
 
 	WCHAR	options[1024];
-	_tcscpy( options, L"--excmd=n" );	//デフォルトのオプション
-	if( cDlgTagsMake.m_nTagsOpt & 0x0001 ) _tcscat( options, L" -R" );	//サブフォルダも対象
+	wcscpy( options, L"--excmd=n" );	//デフォルトのオプション
+	if( cDlgTagsMake.m_nTagsOpt & 0x0001 ) wcscat( options, L" -R" );	//サブフォルダも対象
 	if( cDlgTagsMake.m_szTagsCmdLine[0] != L'\0' )	//個別指定のコマンドライン
 	{
-		_tcscat( options, L" " );
-		_tcscat( options, cDlgTagsMake.m_szTagsCmdLine );
+		wcscat( options, L" " );
+		wcscat( options, cDlgTagsMake.m_szTagsCmdLine );
 	}
-	_tcscat( options, L" *" );	//配下のすべてのファイル
+	wcscat( options, L" *" );	//配下のすべてのファイル
 
 	//コマンドライン文字列作成(MAX:1024)
 	{
@@ -712,10 +712,10 @@ bool CViewCommander::Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int cou
 		WCHAR szExts[MAX_TYPES_EXTS];
 		CDocTypeManager::GetFirstExt(m_pCommanderView->m_pTypeData->m_szTypeExts, szExts, _countof(szExts));
 		int nExtLen = auto_strlen( szExts );
-		_tcscat( szCurrentPath, L"\\dmy" );
+		wcscat( szCurrentPath, L"\\dmy" );
 		if( nExtLen ){
-			_tcscat( szCurrentPath, L"." );
-			_tcscat( szCurrentPath, szExts );
+			wcscat( szCurrentPath, L"." );
+			wcscat( szCurrentPath, szExts );
 		}
 	}
 	return true;

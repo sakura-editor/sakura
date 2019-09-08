@@ -74,17 +74,17 @@ bool CRecentExcludeFolder::TextToDataType( CExcludeFolderString* dst, LPCWSTR ps
 
 int CRecentExcludeFolder::CompareItem( const CExcludeFolderString* p1, LPCWSTR p2 ) const
 {
-	return _tcsicmp(*p1,p2);
+	return _wcsicmp(*p1,p2);
 }
 
 void CRecentExcludeFolder::CopyItem( CExcludeFolderString* dst, LPCWSTR src ) const
 {
-	_tcscpy(*dst,src);
+	wcscpy(*dst,src);
 }
 
 bool CRecentExcludeFolder::ValidateReceiveType( LPCWSTR p ) const
 {
-	if( GetTextMaxLength() <= _tcslen(p) ){
+	if( GetTextMaxLength() <= wcslen(p) ){
 		return false;
 	}
 	return true;

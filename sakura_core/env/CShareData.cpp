@@ -201,7 +201,7 @@ bool CShareData::InitShareData()
 		lf.lfClipPrecision		= 0x2;
 		lf.lfQuality			= 0x1;
 		lf.lfPitchAndFamily	= 0x31;
-		_tcscpy( lf.lfFaceName, L"ＭＳ ゴシック" );
+		wcscpy( lf.lfFaceName, L"ＭＳ ゴシック" );
 
 		// LoadShareDataでフォントが変わる可能性があるので、ここでは不要 // 2013.04.08 aroka
 		//InitCharWidthCacheCommon();								// 2008/5/17 Uchi
@@ -292,10 +292,10 @@ bool CShareData::InitShareData()
 
 			//	Apr. 05, 2003 genta ウィンドウキャプションの初期値
 			//	Aug. 16, 2003 genta $N(ファイル名省略表示)をデフォルトに変更
-			_tcscpy( sWindow.m_szWindowCaptionActive, 
+			wcscpy( sWindow.m_szWindowCaptionActive, 
 				L"${w?$h$:アウトプット$:${I?$f$n$:$N$n$}$}${U?(更新)$} -"
 				L" $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>" );
-			_tcscpy( sWindow.m_szWindowCaptionInactive, 
+			wcscpy( sWindow.m_szWindowCaptionInactive, 
 				L"${w?$h$:アウトプット$:$f$n$}${U?(更新)$} -"
 				L" $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>" );
 		}
@@ -418,9 +418,9 @@ bool CShareData::InitShareData()
 			*/
 
 			sFormat.m_nDateFormatType = 0;	//日付書式のタイプ
-			_tcscpy( sFormat.m_szDateFormat, L"yyyy\'年\'M\'月\'d\'日(\'dddd\')\'" );	//日付書式
+			wcscpy( sFormat.m_szDateFormat, L"yyyy\'年\'M\'月\'d\'日(\'dddd\')\'" );	//日付書式
 			sFormat.m_nTimeFormatType = 0;	//時刻書式のタイプ
-			_tcscpy( sFormat.m_szTimeFormat, L"tthh\'時\'mm\'分\'ss\'秒\'"  );			//時刻書式
+			wcscpy( sFormat.m_szTimeFormat, L"tthh\'時\'mm\'分\'ss\'秒\'"  );			//時刻書式
 		}
 
 		// [検索]タブ
@@ -572,7 +572,7 @@ bool CShareData::InitShareData()
 			}
 			//	To Here Sep. 14, 2001 genta
 
-			_tcscpy( sMacro.m_szMACROFOLDER, szIniFolder );	/* マクロ用フォルダ */
+			wcscpy( sMacro.m_szMACROFOLDER, szIniFolder );	/* マクロ用フォルダ */
 
 			sMacro.m_nMacroOnOpened = -1;	/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 			sMacro.m_nMacroOnTypeChanged = -1;	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
@@ -591,20 +591,20 @@ bool CShareData::InitShareData()
 				sFileName.m_szTransformFileNameFrom[i][0] = L'\0';
 				sFileName.m_szTransformFileNameTo[i][0] = L'\0';
 			}
-			_tcscpy( sFileName.m_szTransformFileNameFrom[0], L"%DeskTop%\\" );
-			_tcscpy( sFileName.m_szTransformFileNameTo[0],   L"デスクトップ\\" );
-			_tcscpy( sFileName.m_szTransformFileNameFrom[1], L"%Personal%\\" );
-			_tcscpy( sFileName.m_szTransformFileNameTo[1],   L"マイドキュメント\\" );
-			_tcscpy( sFileName.m_szTransformFileNameFrom[2], L"%Cache%\\Content.IE5\\" );
-			_tcscpy( sFileName.m_szTransformFileNameTo[2],   L"IEキャッシュ\\" );
-			_tcscpy( sFileName.m_szTransformFileNameFrom[3], L"%TEMP%\\" );
-			_tcscpy( sFileName.m_szTransformFileNameTo[3],   L"TEMP\\" );
-			_tcscpy( sFileName.m_szTransformFileNameFrom[4], L"%Common DeskTop%\\" );
-			_tcscpy( sFileName.m_szTransformFileNameTo[4],   L"共有デスクトップ\\" );
-			_tcscpy( sFileName.m_szTransformFileNameFrom[5], L"%Common Documents%\\" );
-			_tcscpy( sFileName.m_szTransformFileNameTo[5],   L"共有ドキュメント\\" );
-			_tcscpy( sFileName.m_szTransformFileNameFrom[6], L"%AppData%\\" );	// 2007.05.19 ryoji 追加
-			_tcscpy( sFileName.m_szTransformFileNameTo[6],   L"アプリデータ\\" );	// 2007.05.19 ryoji 追加
+			wcscpy( sFileName.m_szTransformFileNameFrom[0], L"%DeskTop%\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[0],   L"デスクトップ\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[1], L"%Personal%\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[1],   L"マイドキュメント\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[2], L"%Cache%\\Content.IE5\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[2],   L"IEキャッシュ\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[3], L"%TEMP%\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[3],   L"TEMP\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[4], L"%Common DeskTop%\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[4],   L"共有デスクトップ\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[5], L"%Common Documents%\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[5],   L"共有ドキュメント\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[6], L"%AppData%\\" );	// 2007.05.19 ryoji 追加
+			wcscpy( sFileName.m_szTransformFileNameTo[6],   L"アプリデータ\\" );	// 2007.05.19 ryoji 追加
 			sFileName.m_nTransformFileNameArrNum = 7;
 		}
 
@@ -701,7 +701,7 @@ bool CShareData::InitShareData()
 
 			m_pShareData->m_sHistory.m_aExceptMRU.clear();
 
-			_tcscpy( m_pShareData->m_sHistory.m_szIMPORTFOLDER, szIniFolder );	/* 設定インポート用フォルダ */
+			wcscpy( m_pShareData->m_sHistory.m_szIMPORTFOLDER, szIniFolder );	/* 設定インポート用フォルダ */
 
 			m_pShareData->m_sHistory.m_aCommands.clear();
 			m_pShareData->m_sHistory.m_aCurDirs.clear();
@@ -909,7 +909,7 @@ BOOL CShareData::IsPathOpened( const WCHAR* pszPath, HWND* phwndOwner )
 			pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
 			// 同一パスのファイルが既に開かれているか
-			if( 0 == _tcsicmp( pfi->m_szPath, pszPath ) ){
+			if( 0 == _wcsicmp( pfi->m_szPath, pszPath ) ){
 				*phwndOwner = m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd;
 				return TRUE;
 			}
@@ -1159,14 +1159,14 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 		return 0;
 	}
 	ptr = pszFile;
-	int nLen = _tcslen( ptr ); // Jul. 21, 2003 genta wcslen対象が誤っていたためマクロ実行ができない
+	int nLen = wcslen( ptr ); // Jul. 21, 2003 genta wcslen対象が誤っていたためマクロ実行ができない
 
 	if( !_IS_REL_PATH( pszFile )	// 絶対パス
 		|| m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER[0] == L'\0' ){	//	フォルダ指定なし
 		if( pszPath == NULL || nBufLen <= nLen ){
 			return -nLen;
 		}
-		_tcscpy( pszPath, pszFile );
+		wcscpy( pszPath, pszFile );
 		return nLen;
 	}
 	else {	//	フォルダ指定あり
@@ -1185,18 +1185,18 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 			pszDir = m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER;
 		}
 
-		int nDirLen = _tcslen( pszDir );
+		int nDirLen = wcslen( pszDir );
 		nAllLen = nDirLen + nLen + ( -1 == nFolderSep ? 1 : 0 );
 		if( pszPath == NULL || nBufLen <= nAllLen ){
 			return -nAllLen;
 		}
 
-		_tcscpy( pszPath, pszDir );
+		wcscpy( pszPath, pszDir );
 		WCHAR *ptr = pszPath + nDirLen;
 		if( -1 == nFolderSep ){
 			*ptr++ = L'\\';
 		}
-		_tcscpy( ptr, pszFile );
+		wcscpy( ptr, pszFile );
 		return nAllLen;
 	}
 }

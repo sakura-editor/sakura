@@ -75,17 +75,17 @@ bool CRecentGrepFile::TextToDataType( CGrepFileString* dst, LPCWSTR pszText ) co
 
 int CRecentGrepFile::CompareItem( const CGrepFileString* p1, LPCWSTR p2 ) const
 {
-	return _tcsicmp(*p1,p2);
+	return _wcsicmp(*p1,p2);
 }
 
 void CRecentGrepFile::CopyItem( CGrepFileString* dst, LPCWSTR src ) const
 {
-	_tcscpy(*dst,src);
+	wcscpy(*dst,src);
 }
 
 bool CRecentGrepFile::ValidateReceiveType( LPCWSTR p ) const
 {
-	if( GetTextMaxLength() <= _tcslen(p) ){
+	if( GetTextMaxLength() <= wcslen(p) ){
 		return false;
 	}
 	return true;

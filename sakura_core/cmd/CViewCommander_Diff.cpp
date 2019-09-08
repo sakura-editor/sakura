@@ -277,14 +277,14 @@ void CViewCommander::Command_Diff( const WCHAR* _szDiffFile2, int nFlgOpt )
 		}
 		bTmpFile1 = true;
 	}else{
-		_tcscpy( szTmpFile1, GetDocument()->m_cDocFile.GetFilePath() );
+		wcscpy( szTmpFile1, GetDocument()->m_cDocFile.GetFilePath() );
 	}
 
 	bool bTmpFile2 = false;
 	WCHAR	szTmpFile2[_MAX_PATH * 2];
 	bool bTmpFileMode = code2 != saveCode2;
 	if( !bTmpFileMode ){
-		_tcscpy(szTmpFile2, szDiffFile2);
+		wcscpy(szTmpFile2, szDiffFile2);
 	}else if( m_pCommanderView->MakeDiffTmpFile2( szTmpFile2, szDiffFile2, code2, saveCode2 ) ){
 		bTmpFile2 = true;
 	}else{
@@ -354,7 +354,7 @@ void CViewCommander::Command_Diff_Dialog( void )
 		if( !m_pCommanderView->MakeDiffTmpFile( szTmpFile1, NULL, saveCode, GetDocument()->GetDocumentBomExist() ) ){ return; }
 		bTmpFile1 = true;
 	}else{
-		_tcscpy( szTmpFile1, GetDocument()->m_cDocFile.GetFilePath() );
+		wcscpy( szTmpFile1, GetDocument()->m_cDocFile.GetFilePath() );
 	}
 		
 	//相手ファイル
@@ -364,7 +364,7 @@ void CViewCommander::Command_Diff_Dialog( void )
 	bool bTmpFileMode = cDlgDiff.m_bIsModifiedDst || code2 != saveCode2 || cDlgDiff.m_szFile2[0] == L'\0';
 	if( !bTmpFileMode ){
 		// 未変更でファイルありでASCII系コードの場合のみ,そのままファイルを利用する
-		_tcscpy( szTmpFile2, cDlgDiff.m_szFile2 );
+		wcscpy( szTmpFile2, cDlgDiff.m_szFile2 );
 	}else if( cDlgDiff.m_hWnd_Dst ){
 		// ファイル一覧から選択
 		if( m_pCommanderView->MakeDiffTmpFile( szTmpFile2, cDlgDiff.m_hWnd_Dst, saveCode2, cDlgDiff.m_bBomDst ) ){

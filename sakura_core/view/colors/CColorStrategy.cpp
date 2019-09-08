@@ -443,7 +443,7 @@ int GetColorIndexByName( const WCHAR *name )
 	int	i;
 	for( i = 0; i < COLORIDX_LAST; i++ )
 	{
-		if( _tcscmp( name, g_ColorAttributeArr[i].szName ) == 0 ) return i;
+		if( wcscmp( name, g_ColorAttributeArr[i].szName ) == 0 ) return i;
 	}
 	return -1;
 }

@@ -266,10 +266,10 @@ bool CNormalProcess::InitializeProcess()
 			pEditWnd->m_cDlgGrep.m_strText = gi.cmGrepKey.GetStringPtr();		/* 検索文字列 */
 			pEditWnd->m_cDlgGrep.m_bSetText = true;
 			int nSize = _countof2(pEditWnd->m_cDlgGrep.m_szFile);
-			_tcsncpy( pEditWnd->m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr(), nSize );	/* 検索ファイル */
+			wcsncpy( pEditWnd->m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr(), nSize );	/* 検索ファイル */
 			pEditWnd->m_cDlgGrep.m_szFile[nSize-1] = L'\0';
 			nSize = _countof2(pEditWnd->m_cDlgGrep.m_szFolder);
-			_tcsncpy( pEditWnd->m_cDlgGrep.m_szFolder, cmemGrepFolder.GetStringPtr(), nSize );	/* 検索フォルダ */
+			wcsncpy( pEditWnd->m_cDlgGrep.m_szFolder, cmemGrepFolder.GetStringPtr(), nSize );	/* 検索フォルダ */
 			pEditWnd->m_cDlgGrep.m_szFolder[nSize-1] = L'\0';
 
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
@@ -519,7 +519,7 @@ void CNormalProcess::OpenFiles( HWND hwnd )
 		int i;
 		for( i = 0; i < fileNum; i++ ){
 			// ファイル名差し替え
-			_tcscpy( fi.m_szPath, CCommandLine::getInstance()->GetFileName(i) );
+			wcscpy( fi.m_szPath, CCommandLine::getInstance()->GetFileName(i) );
 			bool ret = CControlTray::OpenNewEditor2( GetProcessInstance(), hwnd, &fi, bViewMode );
 			if( ret == false ){
 				break;

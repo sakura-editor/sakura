@@ -75,20 +75,20 @@ LPWSTR CFileNameManager::GetTransformFileNameFast( LPCWSTR pszSrc, LPWSTR pszDes
 			m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[m_nTransformFileNameOrgId[0]]
 		);
 		for( i = 1; i < m_nTransformFileNameCount; i++ ){
-			_tcscpy( szBuf, pszDest );
+			wcscpy( szBuf, pszDest );
 			GetFilePathFormat( szBuf, pszDest, nDestLen,
 				m_szTransformFileNameFromExp[i],
 				m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[m_nTransformFileNameOrgId[i]] );
 		}
 		if( nPxWidth != -1 ){
-			_tcscpy( szBuf, pszDest );
+			wcscpy( szBuf, pszDest );
 			GetShortViewPath( pszDest, nDestLen, szBuf, hDC, nPxWidth, bFitMode );
 		}
 	}else if( nPxWidth != -1 ){
 		GetShortViewPath( pszDest, nDestLen, pszSrc, hDC, nPxWidth, bFitMode );
 	}else{
 		// 変換する必要がない コピーだけする
-		_tcsncpy( pszDest, pszSrc, nDestLen - 1 );
+		wcsncpy( pszDest, pszSrc, nDestLen - 1 );
 		pszDest[nDestLen - 1] = '\0';
 	}
 	return pszDest;
@@ -127,9 +127,9 @@ LPCWSTR CFileNameManager::GetFilePathFormat( LPCWSTR pszSrc, LPWSTR pszDest, int
 	int nFromLen, nToLen;
 	int nCopy;
 
-	nSrcLen  = _tcslen( pszSrc );
-	nFromLen = _tcslen( pszFrom );
-	nToLen   = _tcslen( pszTo );
+	nSrcLen  = wcslen( pszSrc );
+	nFromLen = wcslen( pszFrom );
+	nToLen   = wcslen( pszTo );
 
 	nDestLen--;
 
@@ -137,7 +137,7 @@ LPCWSTR CFileNameManager::GetFilePathFormat( LPCWSTR pszSrc, LPWSTR pszDest, int
 #if defined(_MBCS)
 		if( 0 == _strnicmp( &pszSrc[i], pszFrom, nFromLen ) )
 #else
-		if( 0 == _tcsncicmp( &pszSrc[i], pszFrom, nFromLen ) )
+		if( 0 == _wcsnicmp( &pszSrc[i], pszFrom, nFromLen ) )
 #endif
 		{
 			nCopy = t_min( nToLen, nDestLen - j );
@@ -246,7 +246,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 				nMetaLen = 10;
 			}
 			// メタ文字列っぽい
-			else if( NULL != (pStr = _tcschr( ps, L'%' ) )){
+			else if( NULL != (pStr = wcschr( ps, L'%' ) )){
 				nMetaLen = pStr - ps;
 				if( nMetaLen < _MAX_PATH ){
 					auto_memcpy( szMeta, ps, nMetaLen );
@@ -263,7 +263,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 					; // 読み飛ばす
 				for( ; nMetaLen == pAlias->nLenth; pAlias++ ){
 					if( 0 == auto_stricmp( pAlias->szAlias, szMeta ) ){
-						_tcscpy( szMeta, pAlias->szOrig );
+						wcscpy( szMeta, pAlias->szOrig );
 						break;
 					}
 				}
@@ -282,9 +282,9 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 					pStr = _tgetenv( szMeta );
 					// 環境変数
 					if( NULL != pStr ){
-						nPathLen = _tcslen( pStr );
+						nPathLen = wcslen( pStr );
 						if( nPathLen < _MAX_PATH ){
-							_tcscpy( szPath, pStr );
+							wcscpy( szPath, pStr );
 						}else{
 							*pd = L'\0';
 							return false;
@@ -312,7 +312,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 			}
 
 			// ロングファイル名にする
-			nPathLen = _tcslen( szPath );
+			nPathLen = wcslen( szPath );
 			LPWSTR pStr2 = szPath;
 			if( nPathLen < _MAX_PATH && 0 != nPathLen ){
 				if( FALSE != GetLongFileName( szPath, szMeta ) ){

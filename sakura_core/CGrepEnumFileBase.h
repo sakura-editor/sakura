@@ -77,7 +77,7 @@ public:
 
 	BOOL IsExist( LPCWSTR lpFileName ){
 		for( int i = 0; i < GetCount(); i++ ){
-			if( _tcscmp( m_vpItems[ i ].first, lpFileName ) == 0 ){
+			if( wcscmp( m_vpItems[ i ].first, lpFileName ) == 0 ){
 				return TRUE;
 			}
 		}
@@ -109,15 +109,15 @@ public:
 		int found = 0;
 
 		for( int i = 0; i < (int)vecKeys.size(); i++ ){
-			int baseLen = _tcslen( lpBaseFolder );
-			LPWSTR lpPath = new WCHAR[ baseLen + _tcslen( vecKeys[ i ] ) + 2 ];
+			int baseLen = wcslen( lpBaseFolder );
+			LPWSTR lpPath = new WCHAR[ baseLen + wcslen( vecKeys[ i ] ) + 2 ];
 			if( NULL == lpPath ) break;
 			auto_strcpy( lpPath, lpBaseFolder );
 			auto_strcpy( lpPath + baseLen, L"\\" );
 			auto_strcpy( lpPath + baseLen + 1, vecKeys[ i ] );
 			// vecKeys[ i ] ==> "subdir\*.h" 等の場合に後で(ファイル|フォルダ)名に "subdir\" を連結する
-			const WCHAR* keyDirYen = _tcsrchr( vecKeys[ i ], L'\\' );
-			const WCHAR* keyDirSlash = _tcsrchr( vecKeys[ i ], L'/' );
+			const WCHAR* keyDirYen = wcsrchr( vecKeys[ i ], L'\\' );
+			const WCHAR* keyDirSlash = wcsrchr( vecKeys[ i ], L'/' );
 			const WCHAR* keyDir;
 			if( keyDirYen == NULL ){
 				keyDir = keyDirSlash;
@@ -146,10 +146,10 @@ public:
 					if( option.m_bIgnoreSystem && (w32fd.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM) ){
 						continue;
 					}
-					LPWSTR lpName = new WCHAR[ nKeyDirLen + _tcslen( w32fd.cFileName ) + 1 ];
-					_tcsncpy( lpName, vecKeys[ i ], nKeyDirLen );
-					_tcscpy( lpName + nKeyDirLen, w32fd.cFileName );
-					LPWSTR lpFullPath = new WCHAR[ baseLen + _tcslen(lpName) + 2 ];
+					LPWSTR lpName = new WCHAR[ nKeyDirLen + wcslen( w32fd.cFileName ) + 1 ];
+					wcsncpy( lpName, vecKeys[ i ], nKeyDirLen );
+					wcscpy( lpName + nKeyDirLen, w32fd.cFileName );
+					LPWSTR lpFullPath = new WCHAR[ baseLen + wcslen(lpName) + 2 ];
 					auto_strcpy( lpFullPath, lpBaseFolder );
 					auto_strcpy( lpFullPath + baseLen, L"\\" );
 					auto_strcpy( lpFullPath + baseLen + 1, lpName );

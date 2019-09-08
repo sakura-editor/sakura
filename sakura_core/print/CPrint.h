@@ -66,9 +66,9 @@ struct	MYDEVMODE {
 	bool operator == (const MYDEVMODE& rhs) const noexcept {
 		if (this == &rhs) return true;
 		return m_bPrinterNotFound == rhs.m_bPrinterNotFound
-			&& 0 == _tcsncmp(m_szPrinterDriverName, rhs.m_szPrinterDriverName, _countof(m_szPrinterDriverName) - 1)
-			&& 0 == _tcsncmp(m_szPrinterDeviceName, rhs.m_szPrinterDeviceName, _countof(m_szPrinterDeviceName) - 1)
-			&& 0 == _tcsncmp(m_szPrinterOutputName, rhs.m_szPrinterOutputName, _countof(m_szPrinterOutputName) - 1)
+			&& 0 == wcsncmp(m_szPrinterDriverName, rhs.m_szPrinterDriverName, _countof(m_szPrinterDriverName) - 1)
+			&& 0 == wcsncmp(m_szPrinterDeviceName, rhs.m_szPrinterDeviceName, _countof(m_szPrinterDeviceName) - 1)
+			&& 0 == wcsncmp(m_szPrinterOutputName, rhs.m_szPrinterOutputName, _countof(m_szPrinterOutputName) - 1)
 			&& dmFields == rhs.dmFields
 			&& dmOrientation == rhs.dmOrientation
 			&& dmPaperSize == rhs.dmPaperSize
@@ -83,7 +83,7 @@ struct	MYDEVMODE {
 			&& dmYResolution == rhs.dmYResolution
 			&& dmTTOption == rhs.dmTTOption
 			&& dmCollate == rhs.dmCollate
-			&& 0 == _tcsncmp(dmFormName, rhs.dmFormName, _countof(dmFormName) - 1)
+			&& 0 == wcsncmp(dmFormName, rhs.dmFormName, _countof(dmFormName) - 1)
 			&& dmLogPixels == rhs.dmLogPixels
 			&& dmBitsPerPel == rhs.dmBitsPerPel
 			&& dmPelsWidth == rhs.dmPelsWidth

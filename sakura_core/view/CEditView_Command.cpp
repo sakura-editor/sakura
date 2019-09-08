@@ -75,14 +75,14 @@ bool CEditView::TagJumpSub(
 		GetInidirOrExedir( szJumpToFile, pszFileName );
 	}
 	else {
-		_tcscpy( szJumpToFile, pszFileName );
+		wcscpy( szJumpToFile, pszFileName );
 	}
 
 	/* ロングファイル名を取得する */
 	WCHAR	szWork[1024];
 	if( FALSE != ::GetLongFileName( szJumpToFile, szWork ) )
 	{
-		_tcscpy( szJumpToFile, szWork );
+		wcscpy( szJumpToFile, szWork );
 	}
 
 // 2004/06/21 novice タグジャンプ機能追加
@@ -130,7 +130,7 @@ bool CEditView::TagJumpSub(
 		EditInfo	inf;
 		bool		bSuccess;
 
-		_tcscpy( inf.m_szPath, szJumpToFile );
+		wcscpy( inf.m_szPath, szJumpToFile );
 		inf.m_ptCursor.Set(CLogicInt(ptJumpTo.x - 1), CLogicInt(ptJumpTo.y - 1));
 		inf.m_nViewLeftCol = CLayoutInt(-1);
 		inf.m_nViewTopLine = CLayoutInt(-1);

@@ -252,8 +252,8 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	// 2011.06.01 nasukoji	各国語メッセージリソース対応
 	LPCWSTR pszDesc = LS( IDS_ABOUT_DESCRIPTION );
 	WCHAR szMsg[2048];
-	if( _tcslen(pszDesc) > 0 ){
-		_tcsncpy( szMsg, pszDesc, _countof(szMsg) - 1 );
+	if( wcslen(pszDesc) > 0 ){
+		wcsncpy( szMsg, pszDesc, _countof(szMsg) - 1 );
 		szMsg[_countof(szMsg) - 1] = 0;
 		::DlgItem_SetText( GetHwnd(), IDC_EDIT_ABOUT, szMsg );
 	}
@@ -471,7 +471,7 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		SetBkMode( hdc, TRANSPARENT );
 		SetTextColor( hdc, pUrlWnd->m_bHilighted? RGB( 0x84, 0, 0 ): RGB( 0, 0, 0xff ) );
 		hFontOld = (HFONT)SelectObject( hdc, (HGDIOBJ)hFont );
-		TextOut( hdc, ::DpiScaleX( 2 ), 0, szText, _tcslen( szText ) );
+		TextOut( hdc, ::DpiScaleX( 2 ), 0, szText, wcslen( szText ) );
 		SelectObject( hdc, (HGDIOBJ)hFontOld );
 
 		// フォーカス枠描画

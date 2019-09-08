@@ -654,10 +654,10 @@ BOOL CSMacroMgr::Load( int idx, HINSTANCE hInstance, const WCHAR* pszPath, const
 	const WCHAR *ext;
 	if( pszType == NULL ){				//ファイル指定
 		//ファイルの拡張子を取得する
-		ext = _tcsrchr( pszPath, L'.');
+		ext = wcsrchr( pszPath, L'.');
 		//	Feb. 02, 2004 genta .が無い場合にext==NULLとなるのでNULLチェック追加
 		if( ext != NULL ){
-			const WCHAR *chk = _tcsrchr( ext, L'\\' );
+			const WCHAR *chk = wcsrchr( ext, L'\\' );
 			if( chk != NULL ){	//	.のあとに\があったらそれは拡張子の区切りではない
 								//	\が漢字の2バイト目の場合も拡張子ではない。
 				ext = NULL;

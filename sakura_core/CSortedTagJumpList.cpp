@@ -130,15 +130,15 @@ BOOL CSortedTagJumpList::AddParamA( const ACHAR* keyword, const ACHAR* filename,
 	item->baseDirId = baseDirId;
 
 	//文字列長ガード
-	if( _tcslen( item->keyword  ) >= MAX_TAG_STRING_LENGTH ) item->keyword[  MAX_TAG_STRING_LENGTH-1 ] = 0;
-	if( _tcslen( item->filename ) >= MAX_TAG_STRING_LENGTH ) item->filename[ MAX_TAG_STRING_LENGTH-1 ] = 0;
-	if( _tcslen( item->note     ) >= MAX_TAG_STRING_LENGTH ) item->note[     MAX_TAG_STRING_LENGTH-1 ] = 0;
+	if( wcslen( item->keyword  ) >= MAX_TAG_STRING_LENGTH ) item->keyword[  MAX_TAG_STRING_LENGTH-1 ] = 0;
+	if( wcslen( item->filename ) >= MAX_TAG_STRING_LENGTH ) item->filename[ MAX_TAG_STRING_LENGTH-1 ] = 0;
+	if( wcslen( item->note     ) >= MAX_TAG_STRING_LENGTH ) item->note[     MAX_TAG_STRING_LENGTH-1 ] = 0;
 
 	//アイテムをリストの適当な位置に追加する。
 	prev = NULL;
 	for( p = m_pTagjump; p; p = p->next )
 	{
-		if( _tcscmp( p->keyword, item->keyword ) > 0 ) break;
+		if( wcscmp( p->keyword, item->keyword ) > 0 ) break;
 		prev = p;
 	}
 	item->next = p;
@@ -188,11 +188,11 @@ BOOL CSortedTagJumpList::GetParam( int index, WCHAR* keyword, WCHAR* filename, i
 	p = GetPtr( index );
 	if( NULL != p )
 	{
-		if( keyword  ) _tcscpy( keyword, p->keyword );
-		if( filename ) _tcscpy( filename, p->filename );
+		if( keyword  ) wcscpy( keyword, p->keyword );
+		if( filename ) wcscpy( filename, p->filename );
 		if( no       ) *no    = p->no;
 		if( type     ) *type  = p->type;
-		if( note     ) _tcscpy( note, p->note );
+		if( note     ) wcscpy( note, p->note );
 		if( depth    ) *depth = p->depth;
 		if( baseDir ){
 			if( 0 <= p->baseDirId && (size_t)p->baseDirId < m_baseDirArr.size() ){

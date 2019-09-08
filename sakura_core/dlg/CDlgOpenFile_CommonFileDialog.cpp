@@ -434,11 +434,11 @@ UINT_PTR CALLBACK OFNHookProc(
 										szDefExt[i++] = *pszCur++;
 								}
 								szDefExt[i] = L'\0';
-								if( ::_tcslen(szDefExt) < 2 || szDefExt[1] == L'*' )	// 無効な拡張子?
+								if( ::wcslen(szDefExt) < 2 || szDefExt[1] == L'*' )	// 無効な拡張子?
 									szDefExt[0] = L'\0';
 								break;
 							case 2:		// *.txt
-								::_tcscpy(szDefExt, L".txt");
+								::wcscpy(szDefExt, L".txt");
 								break;
 							case 3:		// *.*
 							default:	// 不明
@@ -446,7 +446,7 @@ UINT_PTR CALLBACK OFNHookProc(
 								break;
 							}
 							lstrcpyn(szBuf, pData->m_pOf->lpstrFile, _MAX_PATH + 1);
-							::_tcscat(szBuf, szDefExt);
+							::wcscat(szBuf, szDefExt);
 							lstrcpyn(pData->m_szPath, szBuf, _MAX_PATH);
 						}
 					}
@@ -455,7 +455,7 @@ UINT_PTR CALLBACK OFNHookProc(
 					if( IsFileExists(pData->m_szPath, true) ){
 						WCHAR szText[_MAX_PATH + 100];
 						lstrcpyn(szText, pData->m_szPath, _MAX_PATH);
-						::_tcscat(szText, LS(STR_DLGOPNFL2));
+						::wcscat(szText, LS(STR_DLGOPNFL2));
 						if( IDYES != ::MessageBox( pData->m_hwndOpenDlg, szText, LS(STR_DLGOPNFL3), MB_YESNO | MB_ICONEXCLAMATION) ){
 							::SetWindowLongPtr( hdlg, DWLP_MSGRESULT, TRUE );
 							return TRUE;
@@ -670,10 +670,10 @@ CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog()
 		szFile, _countof( szFile )
 	);
 	_tsplitpath( szFile, szDrive, szDir, NULL, NULL );
-	_tcscpy( m_szInitialDir, szDrive );
-	_tcscat( m_szInitialDir, szDir );
+	wcscpy( m_szInitialDir, szDrive );
+	wcscat( m_szInitialDir, szDir );
 
-	_tcscpy( m_szDefaultWildCard, L"*.*" );	/*「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
+	wcscpy( m_szDefaultWildCard, L"*.*" );	/*「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 
 	return;
 }
@@ -693,7 +693,7 @@ void CDlgOpenFile_CommonFileDialog::Create(
 
 	/* ユーザー定義ワイルドカード（保存時の拡張子補完でも使用される） */
 	if( NULL != pszUserWildCard ){
-		_tcscpy( m_szDefaultWildCard, pszUserWildCard );
+		wcscpy( m_szDefaultWildCard, pszUserWildCard );
 	}
 
 	/* 「開く」での初期フォルダ */
@@ -933,18 +933,18 @@ bool CDlgOpenFile_CommonFileDialog::DoModalOpenDlg(
 	if( bDlgResult ){
 		if( bMultiSelect ){
 			pLoadInfo->cFilePath = L"";
-			if( pData->m_ofn.nFileOffset < _tcslen( pData->m_ofn.lpstrFile ) ){
+			if( pData->m_ofn.nFileOffset < wcslen( pData->m_ofn.lpstrFile ) ){
 				pFileNames->push_back( std::wstring(pData->m_ofn.lpstrFile) );
 			}else{
 				std::wstring path;
 				WCHAR* pos = pData->m_ofn.lpstrFile;
-				pos += _tcslen(pos) + 1;
+				pos += wcslen(pos) + 1;
 				while( *pos != L'\0' ){
 					path = pData->m_ofn.lpstrFile;
 					path.append( L"\\" );
 					path.append( pos );
 					pFileNames->push_back( path );
-					pos += _tcslen(pos) + 1;
+					pos += wcslen(pos) + 1;
 				}
 			}
 		}else{

@@ -244,7 +244,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 	}
 	if( bFind ){
 		CSakuraEnvironment::ResolvePath(szPath);
-		_tcscpy( m_fi.m_szPath, szPath );	/* ファイル名 */
+		wcscpy( m_fi.m_szPath, szPath );	/* ファイル名 */
 		nPos = i + 1;
 	}else{
 		m_fi.m_szPath[0] = L'\0';
@@ -253,7 +253,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 
 	CNativeW cmResponseFile = L"";
 	LPWSTR pszCmdLineWork = new WCHAR[lstrlen( pszCmdLineSrc ) + 1];
-	_tcscpy( pszCmdLineWork, pszCmdLineSrc );
+	wcscpy( pszCmdLineWork, pszCmdLineSrc );
 	int nCmdLineWorkLen = lstrlen( pszCmdLineWork );
 	LPWSTR pszToken = my_strtok<WCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, L" " );
 	while( pszToken != NULL )
@@ -279,23 +279,23 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				if( len > 0 ){
 					cmWork.SetString( &pszToken[1], len - ( pszToken[len] == L'"' ? 1 : 0 ));
 					cmWork.Replace( L"\"\"", L"\"" );
-					_tcscpy_s( szPath, _countof(szPath), cmWork.GetStringPtr() );	/* ファイル名 */
+					wcscpy_s( szPath, _countof(szPath), cmWork.GetStringPtr() );	/* ファイル名 */
 				}
 				else {
 					szPath[0] = L'\0';
 				}
 			}
 			else{
-				_tcscpy_s( szPath, _countof(szPath), pszToken );		/* ファイル名 */
+				wcscpy_s( szPath, _countof(szPath), pszToken );		/* ファイル名 */
 			}
 
 			// Nov. 11, 2005 susu
 			// 不正なファイル名のままだとファイル保存時ダイアログが出なくなるので
 			// 簡単なファイルチェックを行うように修正
 			if (_tcsncmp_literal(szPath, L"file:///")==0) {
-				_tcscpy(szPath, &(szPath[8]));
+				wcscpy(szPath, &(szPath[8]));
 			}
-			int len = _tcslen(szPath);
+			int len = wcslen(szPath);
 			for (int i = 0; i < len ; ) {
 				if ( !TCODE::IsValidFilenameChar(szPath[i]) ){
 					WCHAR msg_str[_MAX_PATH + 1];
@@ -315,7 +315,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			if (szPath[0] != L'\0') {
 				CSakuraEnvironment::ResolvePath(szPath);
 				if (m_fi.m_szPath[0] == L'\0') {
-					_tcscpy(m_fi.m_szPath, szPath );
+					wcscpy(m_fi.m_szPath, szPath );
 				}
 				else {
 					m_vFiles.push_back( szPath );
@@ -325,7 +325,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 		else{
 			if( *pszToken == '"' ){
 				++pszToken;	// 2007.09.09 genta 先頭の"はスキップ
-				int tokenlen = _tcslen( pszToken );
+				int tokenlen = wcslen( pszToken );
 				if( pszToken[ tokenlen-1 ] == '"' ){	// 2009.06.14 syat 末尾の"を取り除く
 					pszToken[ tokenlen-1 ] = '\0';
 				}
@@ -368,7 +368,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				//	Mar. 7, 2002 genta
 				//	ファイルタイプの強制指定
 				{
-					_tcsncpy( m_fi.m_szDocType, arg, MAX_DOCTYPE_LEN );
+					wcsncpy( m_fi.m_szDocType, arg, MAX_DOCTYPE_LEN );
 					m_fi.m_szDocType[ nArgLen < MAX_DOCTYPE_LEN ? nArgLen : MAX_DOCTYPE_LEN ] = L'\0';
 				}
 				break;

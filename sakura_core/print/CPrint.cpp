@@ -155,19 +155,19 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 	pDEVNAMES = (DEVNAMES*)::GlobalLock( m_hDevNames );
 
 	// プリンタドライバ名
-	_tcscpy_s(
+	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDriverName,
 		_countof(pMYDEVMODE->m_szPrinterDriverName),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset
 	);
 	// プリンタデバイス名
-	_tcscpy_s(
+	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDeviceName,
 		_countof(pMYDEVMODE->m_szPrinterDeviceName),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset
 	);
 	// プリンタポート名
-	_tcscpy_s(
+	wcscpy_s(
 		pMYDEVMODE->m_szPrinterOutputName,
 		_countof(pMYDEVMODE->m_szPrinterOutputName),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset
@@ -236,19 +236,19 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 	pDEVNAMES = (DEVNAMES*)::GlobalLock( m_hDevNames );
 
 	// プリンタドライバ名
-	_tcscpy_s(
+	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDriverName,
 		_countof(pMYDEVMODE->m_szPrinterDriverName),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset
 	);
 	// プリンタデバイス名
-	_tcscpy_s(
+	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDeviceName,
 		_countof(pMYDEVMODE->m_szPrinterDeviceName),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset
 	);
 	// プリンタポート名
-	_tcscpy_s(
+	wcscpy_s(
 		pMYDEVMODE->m_szPrinterOutputName,
 		_countof(pMYDEVMODE->m_szPrinterOutputName),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset
@@ -529,9 +529,9 @@ WCHAR* CPrint::GetPaperName( int nPaperSize, WCHAR* pszPaperName )
 	// 2006.08.14 Moca 用紙情報の統合
 	const PAPER_INFO* paperInfo = FindPaperInfo( nPaperSize );
 	if( NULL != paperInfo ){
-		_tcscpy( pszPaperName, paperInfo->m_pszName );
+		wcscpy( pszPaperName, paperInfo->m_pszName );
 	}else{
-		_tcscpy( pszPaperName, LS(STR_ERR_CPRINT03) );
+		wcscpy( pszPaperName, LS(STR_ERR_CPRINT03) );
 	}
 	return pszPaperName;
 }
@@ -559,9 +559,9 @@ const PAPER_INFO* CPrint::FindPaperInfo( int id )
 */
 void CPrint::SettingInitialize( PRINTSETTING& pPrintSetting, const WCHAR* settingName )
 {
-	_tcscpy( pPrintSetting.m_szPrintSettingName, settingName );			/* 印刷設定の名前 */
-	_tcscpy( pPrintSetting.m_szPrintFontFaceHan, L"ＭＳ 明朝" );		/* 印刷フォント */
-	_tcscpy( pPrintSetting.m_szPrintFontFaceZen, L"ＭＳ 明朝" );		/* 印刷フォント */
+	wcscpy( pPrintSetting.m_szPrintSettingName, settingName );			/* 印刷設定の名前 */
+	wcscpy( pPrintSetting.m_szPrintFontFaceHan, L"ＭＳ 明朝" );		/* 印刷フォント */
+	wcscpy( pPrintSetting.m_szPrintFontFaceZen, L"ＭＳ 明朝" );		/* 印刷フォント */
 	pPrintSetting.m_bColorPrint = false;		// カラー印刷			// 2013/4/26 Uchi
 	pPrintSetting.m_nPrintFontWidth = 12;		// 印刷フォント幅(1/10mm単位)
 	pPrintSetting.m_nPrintFontHeight = pPrintSetting.m_nPrintFontWidth * 2;	/* 印刷フォント高さ(1/10mm単位単位) */

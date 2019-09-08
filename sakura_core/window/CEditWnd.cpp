@@ -1217,9 +1217,9 @@ LRESULT CEditWnd::DispatchEvent(
 				TEXTMETRIC tm;
 				::GetTextMetrics( lpdis->hDC, &tm );
 				int y = ( lpdis->rcItem.bottom - lpdis->rcItem.top - tm.tmHeight + 1 ) / 2 + lpdis->rcItem.top;
-				::TextOut( lpdis->hDC, lpdis->rcItem.left, y, L"REC", _tcslen( L"REC" ) );
+				::TextOut( lpdis->hDC, lpdis->rcItem.left, y, L"REC", wcslen( L"REC" ) );
 				if( COLOR_BTNTEXT == nColor ){
-					::TextOut( lpdis->hDC, lpdis->rcItem.left + 1, y, L"REC", _tcslen( L"REC" ) );
+					::TextOut( lpdis->hDC, lpdis->rcItem.left + 1, y, L"REC", wcslen( L"REC" ) );
 				}
 			}
 			return 0;
@@ -2052,8 +2052,8 @@ LRESULT CEditWnd::DispatchEvent(
 		// タイマーを使用してタイトルの変更を遅延する
 		if( m_pShareData->m_sFlags.m_bEditWndChanging ){
 			delete[] m_pszLastCaption;
-			m_pszLastCaption = new WCHAR[ ::_tcslen((LPCWSTR)lParam) + 1 ];
-			::_tcscpy( m_pszLastCaption, (LPCWSTR)lParam );	// 変更後のタイトルを記憶しておく
+			m_pszLastCaption = new WCHAR[ ::wcslen((LPCWSTR)lParam) + 1 ];
+			::wcscpy( m_pszLastCaption, (LPCWSTR)lParam );	// 変更後のタイトルを記憶しておく
 			::SetTimer( GetHwnd(), IDT_CAPTION, 50, NULL );
 			return 0L;
 		}
@@ -3124,7 +3124,7 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 			nStArr[nStArrNum - 1] -= nSbxWidth;
 		}
 		for( i = nStArrNum - 1; i > 0; i-- ){
-			::GetTextExtentPoint32( hdc, pszLabel[i], _tcslen( pszLabel[i] ), &sz );
+			::GetTextExtentPoint32( hdc, pszLabel[i], wcslen( pszLabel[i] ), &sz );
 			nStArr[i - 1] = nStArr[i] - ( sz.cx + nBdrWidth );
 		}
 
@@ -3866,7 +3866,7 @@ bool CEditWnd::GetRelatedIcon(const WCHAR* szFile, HICON* hIconBig, HICON* hIcon
 		_tsplitpath( szFile, NULL, NULL, NULL, szExt );
 		
 		if( ReadRegistry(HKEY_CLASSES_ROOT, szExt, NULL, FileType, _countof(FileType) - 13)){
-			_tcscat( FileType, L"\\DefaultIcon" );
+			wcscat( FileType, L"\\DefaultIcon" );
 			if( ReadRegistry(HKEY_CLASSES_ROOT, FileType, NULL, NULL, 0)){
 				// 関連づけられたアイコンを取得する
 				SHFILEINFO shfi;
@@ -3913,7 +3913,7 @@ void CEditWnd::InitMenubarMessageFont(void)
 	lf.lfClipPrecision	= 0x2;
 	lf.lfQuality		= 0x1;
 	lf.lfPitchAndFamily	= 0x31;
-	_tcscpy( lf.lfFaceName, L"ＭＳ ゴシック" );
+	wcscpy( lf.lfFaceName, L"ＭＳ ゴシック" );
 	m_hFontCaretPosInfo = ::CreateFontIndirect( &lf );
 
 	hdc = ::GetDC( ::GetDesktopWindow() );
@@ -3946,8 +3946,8 @@ void CEditWnd::PrintMenubarMessage( const WCHAR* msg )
 
 	// msg == NULL のときは以前の m_pszMenubarMessage で再描画
 	if( msg ){
-		int len = _tcslen( msg );
-		_tcsncpy( m_pszMenubarMessage, msg, MENUBAR_MESSAGE_MAX_LEN );
+		int len = wcslen( msg );
+		wcsncpy( m_pszMenubarMessage, msg, MENUBAR_MESSAGE_MAX_LEN );
 		if( len < MENUBAR_MESSAGE_MAX_LEN ){
 			auto_memset( m_pszMenubarMessage + len, L' ', MENUBAR_MESSAGE_MAX_LEN - len );	//  null終端は不要
 		}
@@ -4038,12 +4038,12 @@ void CEditWnd::ChangeFileNameNotify( const WCHAR* pszTabCaption, const WCHAR* _p
 		if( p )
 		{
 			int	size = _countof( p->m_szTabCaption ) - 1;
-			_tcsncpy( p->m_szTabCaption, pszTabCaption, size );
+			wcsncpy( p->m_szTabCaption, pszTabCaption, size );
 			p->m_szTabCaption[ size ] = L'\0';
 
 			// 2006.01.28 ryoji ファイル名、Grepモード追加
 			size = _countof2( p->m_szFilePath ) - 1;
-			_tcsncpy( p->m_szFilePath, pszFilePath, size );
+			wcsncpy( p->m_szFilePath, pszFilePath, size );
 			p->m_szFilePath[ size ] = L'\0';
 
 			p->m_bIsGrep = bIsGrep;
@@ -4236,10 +4236,10 @@ void CEditWnd::GetTooltipText(WCHAR* wszBuf, size_t nBufCount, int nID) const
 	if( 0 < nAssignedKeyNum ){
 		for( int j = 0; j < nAssignedKeyNum; ++j ){
 			const WCHAR* pszKey = ppcAssignedKeyList[j]->GetStringPtr();
-			int nKeyLen = _tcslen(pszKey);
+			int nKeyLen = wcslen(pszKey);
 			if ( nLen + 9 + nKeyLen < nBufCount ){
-				_tcscat_s( wszBuf, nBufCount, L"\n        " );
-				_tcscat_s( wszBuf, nBufCount, pszKey );
+				wcscat_s( wszBuf, nBufCount, L"\n        " );
+				wcscat_s( wszBuf, nBufCount, pszKey );
 				nLen += 9 + nKeyLen;
 			}
 			delete ppcAssignedKeyList[j];

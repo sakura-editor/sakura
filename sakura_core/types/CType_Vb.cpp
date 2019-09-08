@@ -37,8 +37,8 @@
 void CType_Vb::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	_tcscpy( pType->m_szTypeName, L"Visual Basic" );
-	_tcscpy( pType->m_szTypeExts, L"bas,frm,cls,ctl,pag,dob,dsr,vb" );
+	wcscpy( pType->m_szTypeName, L"Visual Basic" );
+	wcscpy( pType->m_szTypeExts, L"bas,frm,cls,ctl,pag,dob,dsr,vb" );
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L"'", -1 );				/* 行コメントデリミタ */
@@ -86,9 +86,9 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 
 	// 調べるファイルがクラスモジュールのときはType、Constの挙動が異なるのでフラグを立てる
 	bClass	= false;
-	int filelen = _tcslen(m_pcDocRef->m_cDocFile.GetFilePath());
+	int filelen = wcslen(m_pcDocRef->m_cDocFile.GetFilePath());
 	if ( 4 < filelen ) {
-		if ( 0 == _tcsicmp((m_pcDocRef->m_cDocFile.GetFilePath() + filelen - 4), _FT(".cls")) ) {
+		if ( 0 == _wcsicmp((m_pcDocRef->m_cDocFile.GetFilePath() + filelen - 4), _FT(".cls")) ) {
 			bClass	= true;
 		}
 	}

@@ -404,13 +404,13 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		/* ファイルパスに空白が含まれている場合はダブルクォーテーションで囲む */
 		//	2003.10.20 MIK コード簡略化
-		if( _tcschr( GetDocument()->m_cDocFile.GetFilePath(), TCODE::SPACE ) ? TRUE : FALSE ){
+		if( wcschr( GetDocument()->m_cDocFile.GetFilePath(), TCODE::SPACE ) ? TRUE : FALSE ){
 			auto_sprintf( szPath, L"@\"%s\"\r\n", GetDocument()->m_cDocFile.GetFilePath() );
 		}else{
 			auto_sprintf( szPath, L"@%s\r\n", GetDocument()->m_cDocFile.GetFilePath() );
 		}
 		/* クリップボードにデータを設定 */
-		m_pCommanderView->MySetClipboardData( szPath, _tcslen( szPath ), false );
+		m_pCommanderView->MySetClipboardData( szPath, wcslen( szPath ), false );
 
 		/* Oracle SQL*Plusをアクティブにする */
 		/* アクティブにする */

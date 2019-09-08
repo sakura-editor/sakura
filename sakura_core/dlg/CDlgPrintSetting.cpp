@@ -242,7 +242,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_PRINT_PAGESETUP) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 	case IDC_BUTTON_EDITSETTINGNAME:
-		_tcscpy( szWork, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName );
+		wcscpy( szWork, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName );
 		{
 			BOOL bDlgInputResult=cDlgInput1.DoModal(
 				m_hInstance,
@@ -258,7 +258,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 		}
 		if( szWork[0] != L'\0' ){
 			int		size = _countof(m_PrintSettingArr[0].m_szPrintSettingName) - 1;
-			_tcsncpy( m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName, szWork, size);
+			wcsncpy( m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName, szWork, size);
 			m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName[size] = L'\0';
 			/* 印刷設定名一覧 */
 			hwndComboSettingName = GetItemHwnd( IDC_COMBO_SETTINGNAME );

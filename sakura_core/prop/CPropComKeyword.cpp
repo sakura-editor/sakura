@@ -189,7 +189,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 					return TRUE;
 				}
 				if( plvi->pszText[0] != L'\0' ){
-					if( MAX_KEYWORDLEN < _tcslen( plvi->pszText ) ){
+					if( MAX_KEYWORDLEN < wcslen( plvi->pszText ) ){
 						InfoMessage( hwndDlg, LS(STR_PROPCOMKEYWORD_ERR_LEN), MAX_KEYWORDLEN );
 						return TRUE;
 					}

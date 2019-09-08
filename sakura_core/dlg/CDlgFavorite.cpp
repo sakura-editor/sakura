@@ -750,8 +750,8 @@ bool CDlgFavorite::RefreshList( void )
 		{
 			ret_val = true;
 		
-			if( msg[0] != L'\0' ) _tcscat( msg, LS( STR_DLGFAV_DELIMITER ) );
-			_tcscat( msg, m_aFavoriteInfo[nTab].m_pszCaption );
+			if( msg[0] != L'\0' ) wcscat( msg, LS( STR_DLGFAV_DELIMITER ) );
+			wcscat( msg, m_aFavoriteInfo[nTab].m_pszCaption );
 		}
 	}
 
@@ -963,7 +963,7 @@ void CDlgFavorite::EditItem()
 			size_t max_size = recent.GetTextMaxLength();
 			std::vector<WCHAR> vecAddText(max_size);
 			WCHAR* szText = &vecAddText[0];
-			_tcsncpy_s(szText, max_size, recent.GetItemText(nRecIndex), _TRUNCATE);
+			wcsncpy_s(szText, max_size, recent.GetItemText(nRecIndex), _TRUNCATE);
 			CDlgInput1	cDlgInput1;
 			std::wstring strTitle = LS( STR_DLGFAV_EDIT );
 			std::wstring strMessage = LS( STR_DLGFAV_EDIT_PROMPT );
@@ -1127,7 +1127,7 @@ void CDlgFavorite::ListViewSort(ListViewSortInfo& info, const CRecent* pRecent, 
 		col.cchTextMax = _countof(szHeader);
 		col.iSubItem = 0;
 		ListView_GetColumn( info.hListView, info.nSortColumn, &col );
-		int nLen = (int)_tcslen(szHeader) - _tcslen(L"▼");
+		int nLen = (int)wcslen(szHeader) - wcslen(L"▼");
 		if( 0 <= nLen ){
 			szHeader[nLen] = L'\0';
 		}
@@ -1142,7 +1142,7 @@ void CDlgFavorite::ListViewSort(ListViewSortInfo& info, const CRecent* pRecent, 
 	col.cchTextMax = _countof(szHeader) - 4;
 	col.iSubItem = 0;
 	ListView_GetColumn( info.hListView, column, &col );
-	_tcscat(szHeader, info.bSortAscending ? L"▼" : L"▲");
+	wcscat(szHeader, info.bSortAscending ? L"▼" : L"▲");
 	col.mask = LVCF_TEXT;
 	col.pszText = szHeader;
 	col.iSubItem = 0;

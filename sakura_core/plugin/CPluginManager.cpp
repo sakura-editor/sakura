@@ -129,7 +129,7 @@ bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, 
 	do {
 		if( (wf.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY &&
 			(wf.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) == 0 &&
-			_tcscmp(wf.cFileName, L".")!=0 && _tcscmp(wf.cFileName, L"..")!=0 &&
+			wcscmp(wf.cFileName, L".")!=0 && wcscmp(wf.cFileName, L"..")!=0 &&
 			auto_stricmp(wf.cFileName, L"unuse") !=0 )
 		{
 			//インストール済みチェック。フォルダ名＝プラグインテーブルの名前ならインストールしない

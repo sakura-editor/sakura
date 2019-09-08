@@ -505,7 +505,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 						if ( 0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_TEXT) &&
 							0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_BACK) )	// 2006.12.18 ryoji フラグ利用で簡素化
 						{
-							if(_tcscmp(m_Types.m_ColorInfoArr[i].m_szName, szColorIndex) == 0)
+							if(wcscmp(m_Types.m_ColorInfoArr[i].m_szName, szColorIndex) == 0)
 							{
 								Combo_SetCurSel(hwndCombo, j);
 								break;
@@ -647,7 +647,7 @@ int CPropTypesRegex::GetData( HWND hwndDlg )
 			m_Types.m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1;
 			for(j = 0; j < COLORIDX_LAST; j++)
 			{
-				if(_tcscmp(m_Types.m_ColorInfoArr[j].m_szName, szColorIndex) == 0)
+				if(wcscmp(m_Types.m_ColorInfoArr[j].m_szName, szColorIndex) == 0)
 				{
 					m_Types.m_RegexKeywordArr[i].m_nColorIndex = j;
 					break;
@@ -713,7 +713,7 @@ bool CPropTypesRegex::CheckKeywordList(HWND hwndDlg, const WCHAR* szNewKeyWord, 
 		if( i != nUpdateItem ){
 			szKeyWord[0] = L'\0';
 			ListView_GetItemText(hwndList, i, 0, &szKeyWord[0], nKeyWordSize);
-			if( _tcscmp(szNewKeyWord, &szKeyWord[0]) == 0 ) 
+			if( wcscmp(szNewKeyWord, &szKeyWord[0]) == 0 ) 
 			{
 				ErrorMessage( hwndDlg, LS(STR_PROPTYPEREGEX_ALREADY));
 				return false;

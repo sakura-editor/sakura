@@ -325,7 +325,7 @@ bool CImpExpType::Import( const wstring& sFileName, wstring& sErrMsg )
 	m_nIdx = m_Types.m_nIdx;
 	if (m_nIdx == 0) {
 		// 基本の場合の名前と拡張子を初期化
-		_tcscpy( m_Types.m_szTypeName, LS(STR_TYPE_NAME_BASIS) );
+		wcscpy( m_Types.m_szTypeName, LS(STR_TYPE_NAME_BASIS) );
 		m_Types.m_szTypeExts[0] = L'\0';
 		m_Types.m_id = 0;
 	}else{
@@ -801,8 +801,8 @@ bool CImpExpKeyHelp::Import( const wstring& sFileName, wstring& sErrMsg )
 
 		//良さそうなら
 		m_Types.m_KeyHelpArr[i].m_bUse = (b_enable_flag!=0);	// 2007.02.03 genta
-		_tcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, to_wchar(p4));
-		_tcscpy(m_Types.m_KeyHelpArr[i].m_szPath,  to_wchar(p3));
+		wcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, to_wchar(p4));
+		wcscpy(m_Types.m_KeyHelpArr[i].m_szPath,  to_wchar(p3));
 		i++;
 	}
 	in.Close();
@@ -973,7 +973,7 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 	for( int j=sKeyBind.m_nKeyNameArrNum-1; j>=0; j-- ){
 		if( (bVer2 || bVer3) && sKeyBind.m_pKeyNameArr[j].m_nKeyCode <= 0 ){ // マウスコードは先頭に固定されている KeyCodeが同じなのでKeyNameで判別
 			for( int im=0; im< MOUSEFUNCTION_KEYBEGIN; im++ ){
-				if( _tcscmp( sKeyBind.m_pKeyNameArr[j].m_szKeyName, m_Common.m_sKeyBind.m_pKeyNameArr[im].m_szKeyName ) == 0 ){
+				if( wcscmp( sKeyBind.m_pKeyNameArr[j].m_szKeyName, m_Common.m_sKeyBind.m_pKeyNameArr[im].m_szKeyName ) == 0 ){
 					m_Common.m_sKeyBind.m_pKeyNameArr[im] = sKeyBind.m_pKeyNameArr[j];
 				}
 			}

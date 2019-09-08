@@ -788,38 +788,38 @@ WCHAR *CDlgTagJumpList::GetNameByType( const WCHAR type, const WCHAR *name )
 	//	2005.03.31 MIK
 	WCHAR	tmp[MAX_TAG_STRING_LENGTH];
 
-	p = _tcsrchr( name, L'.' );
+	p = wcsrchr( name, L'.' );
 	if( ! p ) p = L".c";	//見つからないときは ".c" と想定する。
 	p++;
 
 	for( i = 0; p_extentions[i]; i += 2 )
 	{
-		_tcscpy( tmp, p_extentions[i] );
-		token = _tcstok( tmp, L"," );
+		wcscpy( tmp, p_extentions[i] );
+		token = _wcstok( tmp, L"," );
 		while( token )
 		{
-			if( _tcsicmp( p, token ) == 0 )
+			if( _wcsicmp( p, token ) == 0 )
 			{
-				_tcscpy( tmp, p_extentions[i+1] );
-				token = _tcstok( tmp, L"," );
+				wcscpy( tmp, p_extentions[i+1] );
+				token = _wcstok( tmp, L"," );
 				while( token )
 				{
 					if( token[0] == type )
 					{
-						return _tcsdup( &token[2] );
+						return _wcsdup( &token[2] );
 					}
 
-					token = _tcstok( NULL, L"," );
+					token = _wcstok( NULL, L"," );
 				}
 
-				return _tcsdup( L"" );
+				return _wcsdup( L"" );
 			}
 
-			token = _tcstok( NULL, L"," );
+			token = _wcstok( NULL, L"," );
 		}
 	}
 
-	return _tcsdup( L"" );
+	return _wcsdup( L"" );
 }
 
 /*!
@@ -832,7 +832,7 @@ void CDlgTagJumpList::SetFileName( const WCHAR *pszFileName )
 
 	if( m_pszFileName ) free( m_pszFileName );
 
-	m_pszFileName = _tcsdup( pszFileName );
+	m_pszFileName = _wcsdup( pszFileName );
 	
 	m_nLoop = CalcMaxUpDirectory( m_pszFileName );
 }
@@ -902,10 +902,10 @@ int CDlgTagJumpList::SearchBestTag( void )
 	lpPathInfo->szFileSrc[0] = L'\0';
 	lpPathInfo->szExtSrc[0] = L'\0';
 	_tsplitpath( m_pszFileName, lpPathInfo->szDriveSrc, lpPathInfo->szPathSrc, lpPathInfo->szFileSrc, lpPathInfo->szExtSrc );
-	lpPathInfo->nDriveSrc = _tcslen(lpPathInfo->szDriveSrc);
-	lpPathInfo->nPathSrc = _tcslen(lpPathInfo->szPathSrc);
-	lpPathInfo->nFileSrc = _tcslen(lpPathInfo->szFileSrc);
-	lpPathInfo->nExtSrc = _tcslen(lpPathInfo->szExtSrc);
+	lpPathInfo->nDriveSrc = wcslen(lpPathInfo->szDriveSrc);
+	lpPathInfo->nPathSrc = wcslen(lpPathInfo->szPathSrc);
+	lpPathInfo->nFileSrc = wcslen(lpPathInfo->szFileSrc);
+	lpPathInfo->nExtSrc = wcslen(lpPathInfo->szExtSrc);
 
 	count = m_pcList->GetCount();
 
@@ -917,7 +917,7 @@ int CDlgTagJumpList::SearchBestTag( void )
 			WCHAR szPath[_MAX_PATH];
 			GetFullPathAndLine( i, szPath, _countof(szPath), NULL, NULL );
 			if( FALSE == GetLongFileName( szPath, lpPathInfo->szFileNameDst ) ){
-				_tcscpy( lpPathInfo->szFileNameDst, szPath );
+				wcscpy( lpPathInfo->szFileNameDst, szPath );
 			}
 		}
 
@@ -926,63 +926,63 @@ int CDlgTagJumpList::SearchBestTag( void )
 		lpPathInfo->szFileDst[0] = L'\0';
 		lpPathInfo->szExtDst[0] = L'\0';
 		_tsplitpath( lpPathInfo->szFileNameDst, lpPathInfo->szDriveDst, lpPathInfo->szPathDst, lpPathInfo->szFileDst, lpPathInfo->szExtDst );
-		lpPathInfo->nDriveDst = _tcslen(lpPathInfo->szDriveDst);
-		lpPathInfo->nPathDst = _tcslen(lpPathInfo->szPathDst);
-		lpPathInfo->nFileDst = _tcslen(lpPathInfo->szFileDst);
-		lpPathInfo->nExtDst = _tcslen(lpPathInfo->szExtDst);
+		lpPathInfo->nDriveDst = wcslen(lpPathInfo->szDriveDst);
+		lpPathInfo->nPathDst = wcslen(lpPathInfo->szPathDst);
+		lpPathInfo->nFileDst = wcslen(lpPathInfo->szFileDst);
+		lpPathInfo->nExtDst = wcslen(lpPathInfo->szExtDst);
 		
-		if(_tcsicmp(m_pszFileName, lpPathInfo->szFileNameDst) == 0){
+		if(_wcsicmp(m_pszFileName, lpPathInfo->szFileNameDst) == 0){
 			return i;	//同一ファイルを見つけた
 		}
 
 		if((nMatch1 == -1)
-		&& (_tcsicmp(lpPathInfo->szDriveSrc, lpPathInfo->szDriveDst) == 0)
-		&& (_tcsicmp(lpPathInfo->szPathSrc, lpPathInfo->szPathDst) == 0)
-		&& (_tcsicmp(lpPathInfo->szFileSrc, lpPathInfo->szFileDst) == 0)){
+		&& (_wcsicmp(lpPathInfo->szDriveSrc, lpPathInfo->szDriveDst) == 0)
+		&& (_wcsicmp(lpPathInfo->szPathSrc, lpPathInfo->szPathDst) == 0)
+		&& (_wcsicmp(lpPathInfo->szFileSrc, lpPathInfo->szFileDst) == 0)){
 			//ファイル名まで一致
 			nMatch1 = i;
 		}
 
 		if((nMatch2 == -1)
-		&& (_tcsicmp(lpPathInfo->szDriveSrc, lpPathInfo->szDriveDst) == 0)
-		&& (_tcsicmp(lpPathInfo->szPathSrc, lpPathInfo->szPathDst) == 0)){
+		&& (_wcsicmp(lpPathInfo->szDriveSrc, lpPathInfo->szDriveDst) == 0)
+		&& (_wcsicmp(lpPathInfo->szPathSrc, lpPathInfo->szPathDst) == 0)){
 			//パス名まで一致
 			nMatch2 = i;
 		}
 
 		if((nMatch5 == -1)
-		&& (_tcsicmp(lpPathInfo->szPathSrc, lpPathInfo->szPathDst) == 0)
-		&& (_tcsicmp(lpPathInfo->szFileSrc, lpPathInfo->szFileDst) == 0)
-		&& (_tcsicmp(lpPathInfo->szExtSrc, lpPathInfo->szExtDst) == 0)){
+		&& (_wcsicmp(lpPathInfo->szPathSrc, lpPathInfo->szPathDst) == 0)
+		&& (_wcsicmp(lpPathInfo->szFileSrc, lpPathInfo->szFileDst) == 0)
+		&& (_wcsicmp(lpPathInfo->szExtSrc, lpPathInfo->szExtDst) == 0)){
 			nMatch5 = i;
 		}
 
 		if((nMatch6 == -1)
-		&& (_tcsicmp(lpPathInfo->szFileSrc, lpPathInfo->szFileDst) == 0)
-		&& (_tcsicmp(lpPathInfo->szExtSrc, lpPathInfo->szExtDst) == 0)){
+		&& (_wcsicmp(lpPathInfo->szFileSrc, lpPathInfo->szFileDst) == 0)
+		&& (_wcsicmp(lpPathInfo->szExtSrc, lpPathInfo->szExtDst) == 0)){
 			if((lpPathInfo->nPathSrc >= lpPathInfo->nPathDst)
-			&& (_tcsicmp(&lpPathInfo->szPathSrc[lpPathInfo->nPathSrc - lpPathInfo->nPathDst], lpPathInfo->szPathDst) == 0)){
+			&& (_wcsicmp(&lpPathInfo->szPathSrc[lpPathInfo->nPathSrc - lpPathInfo->nPathDst], lpPathInfo->szPathDst) == 0)){
 				nMatch6 = i;
 			}
 		}
 
 		if((nMatch7 == -1)
-		&& (_tcsicmp(lpPathInfo->szFileSrc, lpPathInfo->szFileDst) == 0)){
+		&& (_wcsicmp(lpPathInfo->szFileSrc, lpPathInfo->szFileDst) == 0)){
 			if((lpPathInfo->nPathSrc >= lpPathInfo->nPathDst)
-			&& (_tcsicmp(&lpPathInfo->szPathSrc[lpPathInfo->nPathSrc - lpPathInfo->nPathDst], lpPathInfo->szPathDst) == 0)){
+			&& (_wcsicmp(&lpPathInfo->szPathSrc[lpPathInfo->nPathSrc - lpPathInfo->nPathDst], lpPathInfo->szPathDst) == 0)){
 				nMatch7 = i;
 			}
 		}
 
 		if((nMatch3 == -1)
-		&& (_tcsicmp(lpPathInfo->szFileSrc, lpPathInfo->szFileDst) == 0)
-		&& (_tcsicmp(lpPathInfo->szExtSrc, lpPathInfo->szExtDst) == 0)){
+		&& (_wcsicmp(lpPathInfo->szFileSrc, lpPathInfo->szFileDst) == 0)
+		&& (_wcsicmp(lpPathInfo->szExtSrc, lpPathInfo->szExtDst) == 0)){
 			//ファイル名・拡張子が一致
 			nMatch3 = i;
 		}
 
 		if((nMatch4 == -1)
-		&& (_tcsicmp(lpPathInfo->szFileSrc, lpPathInfo->szFileDst) == 0)){
+		&& (_wcsicmp(lpPathInfo->szFileSrc, lpPathInfo->szFileDst) == 0)){
 			//ファイル名が一致
 			nMatch4 = i;
 		}
@@ -1128,7 +1128,7 @@ int CDlgTagJumpList::find_key_core(
 		// 初回or使えないときはクリア
 		ClearPrevFindInfo();
 		// ファイル名をコピーしたあと、ディレクトリ(最後\)のみにする
-		_tcscpy( state.m_szCurPath, GetFilePath() );
+		wcscpy( state.m_szCurPath, GetFilePath() );
 		state.m_szCurPath[ GetFileName() - GetFilePath() ] = L'\0';
 		state.m_nLoop = m_nLoop;
 	}
@@ -1210,7 +1210,7 @@ int CDlgTagJumpList::find_key_core(
 			state.m_nDepth = 0;
 			szNextPath[0] = 0;
 		}else{
-//			_tcscat( state.m_szCurPath, L"..\\" );
+//			wcscat( state.m_szCurPath, L"..\\" );
 			//カレントパスを1階層上へ。
 			DirUp( state.m_szCurPath );
 		}
@@ -1637,16 +1637,16 @@ WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 	const WCHAR	*p = fileName;
 	if( p[0] == L'\\' ){	//ドライブなし絶対パスか？
 		if( p[1] == L'\\' ){	//ネットワークパスか？
-			_tcscpy( pszOutput, p );	//何も加工しない。
+			wcscpy( pszOutput, p );	//何も加工しない。
 		}else{
 			//ドライブ加工したほうがよい？
-			_tcscpy( pszOutput, p );	//何も加工しない。
+			wcscpy( pszOutput, p );	//何も加工しない。
 		}
 	}else if( _istalpha( p[0] ) && p[1] == L':' ){	//絶対パスか？
-		_tcscpy( pszOutput, p );	//何も加工しない。
+		wcscpy( pszOutput, p );	//何も加工しない。
 	}else{
 		for( int i = 0; i < depth; i++ ){
-			//_tcscat( basePath, L"..\\" );
+			//wcscat( basePath, L"..\\" );
 			DirUp( basePath );
 		}
 		if( -1 == auto_snprintf_s( pszOutput, count, L"%s%s", basePath, p ) ){

@@ -76,17 +76,17 @@ bool CRecentCmd::TextToDataType( CCmdString* dst, LPCWSTR pszText ) const
 
 int CRecentCmd::CompareItem( const CCmdString* p1, LPCWSTR p2 ) const
 {
-	return _tcscmp(*p1,p2);
+	return wcscmp(*p1,p2);
 }
 
 void CRecentCmd::CopyItem( CCmdString* dst, LPCWSTR src ) const
 {
-	_tcscpy(*dst,src);
+	wcscpy(*dst,src);
 }
 
 bool CRecentCmd::ValidateReceiveType( LPCWSTR p ) const
 {
-	if( GetTextMaxLength() <= _tcslen(p) ){
+	if( GetTextMaxLength() <= wcslen(p) ){
 		return false;
 	}
 	return true;

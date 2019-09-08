@@ -61,7 +61,7 @@ public:
 	{
 		int n = GetItemCount();
 		for(int i=0;i<n;i++){
-			if(_tcscmp(GetItemText(i),pszText)==0)return i;
+			if(wcscmp(GetItemText(i),pszText)==0)return i;
 		}
 		return -1;
 	}

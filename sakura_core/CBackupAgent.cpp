@@ -165,7 +165,7 @@ int CBackupAgent::MakeBackUp(
 		HANDLE			hFind;
 		WIN32_FIND_DATA	fData;
 
-		WCHAR*	pBase = szPath + _tcslen( szPath ) - 2;	//	2: 拡張子の最後の2桁の意味
+		WCHAR*	pBase = szPath + wcslen( szPath ) - 2;	//	2: 拡張子の最後の2桁の意味
 
 		//------------------------------------------------------------------
 		//	1. 該当ディレクトリ中のbackupファイルを1つずつ探す
@@ -209,8 +209,8 @@ int CBackupAgent::MakeBackUp(
 		WCHAR szNewPath[MAX_PATH];
 		WCHAR *pNewNrBase;
 
-		_tcscpy( szNewPath, szPath );
-		pNewNrBase = szNewPath + _tcslen( szNewPath ) - 2;
+		wcscpy( szNewPath, szPath );
+		pNewNrBase = szNewPath + wcslen( szNewPath ) - 2;
 
 		for( ; i >= 0; --i ){
 			//	ファイル名をセット
@@ -255,8 +255,8 @@ int CBackupAgent::MakeBackUp(
 		//@@@ 2001.12.11 start MIK
 		if( bup_setting.m_bBackUpDustBox && !dustflag ){	//@@@ 2002.03.23 ネットワーク・リムーバブルドライブでない
 			WCHAR	szDustPath[_MAX_PATH+1];
-			_tcscpy(szDustPath, szPath);
-			szDustPath[_tcslen(szDustPath) + 1] = L'\0';
+			wcscpy(szDustPath, szPath);
+			szDustPath[wcslen(szDustPath) + 1] = L'\0';
 			SHFILEOPSTRUCT	fos;
 			fos.hwnd   = CEditWnd::getInstance()->GetHwnd();
 			fos.wFunc  = FO_DELETE;
@@ -322,7 +322,7 @@ bool CBackupAgent::FormatBackUpPath(
 		CFileNameManager::ExpandMetaToFolder( bup_setting.m_szBackUpFolder, selDir, _countof(selDir) );
 		if (GetFullPathName(selDir, _MAX_PATH, szNewPath, &psNext) == 0) {
 			// うまく取れなかった
-			_tcscpy( szNewPath, selDir );
+			wcscpy( szNewPath, selDir );
 		}
 		/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
 		AddLastYenFromDirectoryPath( szNewPath );
@@ -340,8 +340,8 @@ bool CBackupAgent::FormatBackUpPath(
 
 		WCHAR*	pBase;
 		int     nBaseCount;
-		pBase = szNewPath + _tcslen( szNewPath );
-		nBaseCount = newPathCount - _tcslen( szNewPath );
+		pBase = szNewPath + wcslen( szNewPath );
+		nBaseCount = newPathCount - wcslen( szNewPath );
 
 		/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
 		switch( bup_setting.GetBackupType() ){
@@ -430,7 +430,7 @@ bool CBackupAgent::FormatBackUpPath(
 					ptr = szExt;
 				}
 				else {
-					ptr = szExt + _tcslen( szExt );
+					ptr = szExt + wcslen( szExt );
 				}
 				*ptr   = L'.';
 				*++ptr = bup_setting.GetBackupExtChar();
@@ -477,7 +477,7 @@ bool CBackupAgent::FormatBackUpPath(
 			// make keys
 			// $0-$9に対応するフォルダ名を切り出し
 			WCHAR keybuff[1024];
-			_tcscpy( keybuff, szDir );
+			wcscpy( keybuff, szDir );
 			CutLastYenFromDirectoryPath( keybuff );
 
 			WCHAR *folders[10];
@@ -491,7 +491,7 @@ bool CBackupAgent::FormatBackUpPath(
 
 				for( idx=1; idx<10; ++idx ){
 					WCHAR *cp;
-					cp = _tcsrchr(keybuff, L'\\');
+					cp = wcsrchr(keybuff, L'\\');
 					if( cp != NULL ){
 						folders[idx] = cp+1;
 						*cp = L'\0';
@@ -511,12 +511,12 @@ bool CBackupAgent::FormatBackUpPath(
 						++q;
 						if( isdigit(*q) ){
 							q[-1] = L'\0';
-							_tcscat( szNewPath, q2 );
+							wcscat( szNewPath, q2 );
 //							if( newPathCount <  auto_strlcat( szNewPath, q2, newPathCount ) ){
 //								return false;
 //							}
 							if( folders[*q-L'0'] != 0 ){
-								_tcscat( szNewPath, folders[*q-L'0'] );
+								wcscat( szNewPath, folders[*q-L'0'] );
 //								if( newPathCount < auto_strlcat( szNewPath, folders[*q-L'0'], newPathCount ) ){
 //									return false;
 //								}
@@ -526,7 +526,7 @@ bool CBackupAgent::FormatBackUpPath(
 					}
 					++q;
 				}
-				_tcscat( szNewPath, q2 );
+				wcscat( szNewPath, q2 );
 //				if( newPathCount < auto_strlcat( szNewPath, q2, newPathCount ) ){
 //					return false;
 //				}
@@ -540,9 +540,9 @@ bool CBackupAgent::FormatBackUpPath(
 			assert( newPathCount <= _countof(temp) );
 
 			// * を拡張子にする
-			while( _tcschr( szNewPath, L'*' ) ){
-				_tcscpy( temp, szNewPath );
-				cp = _tcschr( temp, L'*' );
+			while( wcschr( szNewPath, L'*' ) ){
+				wcscpy( temp, szNewPath );
+				cp = wcschr( temp, L'*' );
 				*cp = 0;
 				if( -1 == auto_snprintf_s( szNewPath, newPathCount, L"%s%s%s", temp, ep, cp+1 ) ){
 					return false;
@@ -551,7 +551,7 @@ bool CBackupAgent::FormatBackUpPath(
 			//	??はバックアップ連番にしたいところではあるが，
 			//	連番処理は末尾の2桁にしか対応していないので
 			//	使用できない文字?を_に変換してお茶を濁す
-			while(( cp = _tcschr( szNewPath, L'?' ) ) != NULL){
+			while(( cp = wcschr( szNewPath, L'?' ) ) != NULL){
 				*cp = L'_';
 			}
 		}

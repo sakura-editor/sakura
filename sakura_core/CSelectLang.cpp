@@ -108,7 +108,7 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 		assert(nCount == _countof(szBuf) - 1);
 		szBuf[_countof(szBuf) - 1] = L'\0';
 
-		psLangInfo->wLangId = (WORD)_tcstoul(szBuf, NULL, 16);		// 言語IDを数値化
+		psLangInfo->wLangId = (WORD)wcstoul(szBuf, NULL, 16);		// 言語IDを数値化
 		assert(0 < psLangInfo->wLangId);
 
 		psLangInfo->bValid = TRUE;		// メッセージリソースDLLとして有効
@@ -137,7 +137,7 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 		if( ! (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ){		//フォルダでない
 			// バッファに登録する。
 			psLangInfo = new SSelLangInfo();
-			_tcscpy( psLangInfo->szDllName, w32fd.cFileName );
+			wcscpy( psLangInfo->szDllName, w32fd.cFileName );
 			psLangInfo->hInstance = CSelectLang::LoadLangRsrcLibrary( *psLangInfo );
 
 			if( psLangInfo->hInstance ){
@@ -203,7 +203,7 @@ HINSTANCE CSelectLang::LoadLangRsrcLibrary( SSelLangInfo& lang )
 			szBuf[_countof(szBuf) - 1] = L'\0';
 
 			if( nCount > 0 ){
-				lang.wLangId = (WORD)_tcstoul( szBuf, NULL, 16 );		// 言語IDを数値化
+				lang.wLangId = (WORD)wcstoul( szBuf, NULL, 16 );		// 言語IDを数値化
 
 				if( lang.wLangId > 0 )
 					lang.bValid = TRUE;		// メッセージリソースDLLとして有効
@@ -298,7 +298,7 @@ int CLoadString::CLoadStrBuffer::LoadString( UINT uid )
 		m_pszString = m_szString;					// 変数内に準備したバッファを接続
 		m_nBufferSize = _countof(m_szString);		// 配列個数
 		m_szString[m_nBufferSize - 1] = 0;
-		m_nLength = _tcslen(m_szString);			// 文字数
+		m_nLength = wcslen(m_szString);			// 文字数
 	}
 
 	HINSTANCE hRsrc = CSelectLang::getLangRsrcInstance();		// メッセージリソースDLLのインスタンスハンドル
@@ -348,7 +348,7 @@ int CLoadString::CLoadStrBuffer::LoadString( UINT uid )
 				m_nBufferSize = nTemp;
 			}else{
 				// メモリ取得に失敗した場合は直前の内容で諦める
-				nRet = _tcslen( m_pszString );
+				nRet = wcslen( m_pszString );
 				break;
 			}
 		}else{
@@ -367,7 +367,7 @@ void CSelectLang::ChangeLang( WCHAR* pszDllName )
 	UINT unIndex;
 	for ( unIndex = 0; unIndex < CSelectLang::m_psLangInfoList.size(); unIndex++ ) {
 		CSelectLang::SSelLangInfo* psLangInfo = CSelectLang::m_psLangInfoList.at( unIndex );
-		if ( _tcsncmp( pszDllName, psLangInfo->szDllName, MAX_PATH ) == 0 ) {
+		if ( wcsncmp( pszDllName, psLangInfo->szDllName, MAX_PATH ) == 0 ) {
 			CSelectLang::ChangeLang( unIndex );
 			break;
 		}

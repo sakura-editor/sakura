@@ -38,11 +38,11 @@
 
 bool SLoadInfo::IsSamePath(LPCWSTR pszPath) const
 {
-	return _tcsicmp(this->cFilePath,pszPath)==0;
+	return _wcsicmp(this->cFilePath,pszPath)==0;
 }
 bool SSaveInfo::IsSamePath(LPCWSTR pszPath) const
 {
-	return _tcsicmp(this->cFilePath,pszPath)==0;
+	return _wcsicmp(this->cFilePath,pszPath)==0;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

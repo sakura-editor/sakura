@@ -314,7 +314,7 @@ int CPropMacro::GetData( HWND hwndDlg )
 		sItem.pszText = buf;
 		sItem.cchTextMax = MAX_PATH;
 		ListView_GetItem( hListView, &sItem );
-		if ( _tcscmp(buf, L"on") == 0){
+		if ( wcscmp(buf, L"on") == 0){
 			m_Common.m_sMacro.m_MacroTable[index].m_bReloadWhenExecute = true;
 		}
 		else {
@@ -553,7 +553,7 @@ void CPropMacro::SelectBaseDir_Macro( HWND hwndDlg )
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	if( _IS_REL_PATH( szDir ) ){
 		WCHAR folder[_MAX_PATH];
-		_tcscpy( folder, szDir );
+		wcscpy( folder, szDir );
 		GetInidirOrExedir( szDir, folder );
 	}
 
@@ -582,10 +582,10 @@ void CPropMacro::OnFileDropdown_Macro( HWND hwndDlg )
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	if( _IS_REL_PATH( path ) ){
 		WCHAR folder[_MAX_PATH * 2];
-		_tcscpy( folder, path );
+		wcscpy( folder, path );
 		GetInidirOrExedir( path, folder );
 	}
-	_tcscat( path, L"*.*" );	//	2002/05/01 YAZAKI どんなファイルもどんと来い。
+	wcscat( path, L"*.*" );	//	2002/05/01 YAZAKI どんなファイルもどんと来い。
 
 	//	候補の初期化
 	Combo_ResetContent( hCombo );
@@ -601,7 +601,7 @@ void CPropMacro::OnFileDropdown_Macro( HWND hwndDlg )
 	do {
 		//	コンボボックスに設定
 		//	でも.と..は勘弁。
-		//if (_tcscmp( wf.cFileName, L"." ) != 0 && _tcscmp( wf.cFileName, L".." ) != 0){
+		//if (wcscmp( wf.cFileName, L"." ) != 0 && wcscmp( wf.cFileName, L".." ) != 0){
 		if( (wf.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0 ){	// 2009.02.12 ryoji フォルダを除外
 			int result = Combo_AddString( hCombo, wf.cFileName );
 			if( result == CB_ERR || result == CB_ERRSPACE )
@@ -658,7 +658,7 @@ void CPropMacro::CheckListPosition_Macro( HWND hwndDlg )
 	sItem.pszText = buf;
 	sItem.cchTextMax = MAX_PATH;
 	ListView_GetItem( hListView, &sItem );
-	if ( _tcscmp(buf, L"on") == 0){
+	if ( wcscmp(buf, L"on") == 0){
 		::CheckDlgButton( hwndDlg, IDC_CHECK_RELOADWHENEXECUTE, true );
 	}
 	else {

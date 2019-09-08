@@ -1124,21 +1124,21 @@ bool CMacro::HandleCommand(
 
 			//GOPTオプション
 			pOpt[0] = '\0';
-			if( lFlag & 0x01 )_tcscat( pOpt, L"S" );	/* サブフォルダからも検索する */
-			if( lFlag & 0x04 )_tcscat( pOpt, L"L" );	/* 英大文字と英小文字を区別する */
-			if( lFlag & 0x08 )_tcscat( pOpt, L"R" );	/* 正規表現 */
-			if(          0x20 == (lFlag & 0x400020) )_tcscat( pOpt, L"P" );	// 行を出力する
-			else if( 0x400000 == (lFlag & 0x400020) )_tcscat( pOpt, L"N" );	// 否ヒット行を出力する
-			if(      0x40 == (lFlag & 0xC0) )_tcscat( pOpt, L"2" );	/* Grep: 出力形式 */
-			else if( 0x80 == (lFlag & 0xC0) )_tcscat( pOpt, L"3" );
-			else _tcscat( pOpt, L"1" );
-			if( lFlag & 0x10000 )_tcscat( pOpt, L"W" );
-			if( lFlag & 0x20000 )_tcscat( pOpt, L"F" );
-			if( lFlag & 0x40000 )_tcscat( pOpt, L"B" );
-			if( lFlag & 0x80000 )_tcscat( pOpt, L"D" );
+			if( lFlag & 0x01 )wcscat( pOpt, L"S" );	/* サブフォルダからも検索する */
+			if( lFlag & 0x04 )wcscat( pOpt, L"L" );	/* 英大文字と英小文字を区別する */
+			if( lFlag & 0x08 )wcscat( pOpt, L"R" );	/* 正規表現 */
+			if(          0x20 == (lFlag & 0x400020) )wcscat( pOpt, L"P" );	// 行を出力する
+			else if( 0x400000 == (lFlag & 0x400020) )wcscat( pOpt, L"N" );	// 否ヒット行を出力する
+			if(      0x40 == (lFlag & 0xC0) )wcscat( pOpt, L"2" );	/* Grep: 出力形式 */
+			else if( 0x80 == (lFlag & 0xC0) )wcscat( pOpt, L"3" );
+			else wcscat( pOpt, L"1" );
+			if( lFlag & 0x10000 )wcscat( pOpt, L"W" );
+			if( lFlag & 0x20000 )wcscat( pOpt, L"F" );
+			if( lFlag & 0x40000 )wcscat( pOpt, L"B" );
+			if( lFlag & 0x80000 )wcscat( pOpt, L"D" );
 			if( bGrepReplace ){
-				if( lFlag & 0x100000 )_tcscat( pOpt, L"C" );
-				if( lFlag & 0x200000 )_tcscat( pOpt, L"O" );
+				if( lFlag & 0x100000 )wcscat( pOpt, L"C" );
+				if( lFlag & 0x200000 )wcscat( pOpt, L"O" );
 			}
 			if( pOpt[0] != L'\0' ){
 				auto_sprintf( szTemp, L" -GOPT=%s", pOpt );
@@ -1481,7 +1481,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 	case F_GETFILENAME:
 		{
 			const WCHAR* FileName = View->m_pcEditDoc->m_cDocFile.GetFilePath();
-			SysString S(FileName, _tcslen(FileName));
+			SysString S(FileName, wcslen(FileName));
 			Wrap(&Result)->Receive(S);
 		}
 		return true;
@@ -1774,7 +1774,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			Buffer[nLen] = L'\0';
 			CDlgInput1 cDlgInput1;
 			if( cDlgInput1.DoModal( G_AppInstance(), View->GetHwnd(), L"sakura macro", sMessage.c_str(), nMaxLen, Buffer ) ) {
-				SysString S( Buffer, _tcslen(Buffer) );
+				SysString S( Buffer, wcslen(Buffer) );
 				Wrap( &Result )->Receive( S );
 			}else{
 				Result.vt = VT_BSTR;
@@ -1892,14 +1892,14 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			);
 			bool bRet;
 			WCHAR szPath[ _MAX_PATH ];
-			_tcscpy( szPath, sDefault.c_str() );
+			wcscpy( szPath, sDefault.c_str() );
 			if( LOWORD(ID) == F_FILEOPENDIALOG ){
 				bRet = cDlgOpenFile.DoModal_GetOpenFileName( szPath );
 			}else{
 				bRet = cDlgOpenFile.DoModal_GetSaveFileName( szPath );
 			}
 			if( bRet ){
-				SysString S( szPath, _tcslen(szPath) );
+				SysString S( szPath, wcslen(szPath) );
 				Wrap( &Result )->Receive( S );
 			}else{
 				Result.vt = VT_BSTR;
@@ -1932,7 +1932,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			WCHAR szPath[ _MAX_PATH ];
 			int nRet = SelectDir( View->GetHwnd(), sMessage.c_str(), sDefault.c_str(), szPath );
 			if( nRet == IDOK ){
-				SysString S( szPath, _tcslen(szPath) );
+				SysString S( szPath, wcslen(szPath) );
 				Wrap( &Result )->Receive( S );
 			}else{
 				Result.vt = VT_BSTR;

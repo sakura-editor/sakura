@@ -134,7 +134,7 @@ void CDlgExec::SetData( void )
 	/*****************************
 	*         データ設定         *
 	*****************************/
-	_tcscpy( m_szCommand, m_pShareData->m_sHistory.m_aCommands[0] );
+	wcscpy( m_szCommand, m_pShareData->m_sHistory.m_aCommands[0] );
 	hwndCombo = GetItemHwnd( IDC_COMBO_m_szCommand );
 	Combo_ResetContent( hwndCombo );
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCommand );
@@ -144,7 +144,7 @@ void CDlgExec::SetData( void )
 	}
 	Combo_SetCurSel( hwndCombo, 0 );
 
-	_tcscpy( m_szCurDir, m_pShareData->m_sHistory.m_aCurDirs[0] );
+	wcscpy( m_szCurDir, m_pShareData->m_sHistory.m_aCurDirs[0] );
 	hwndCombo = GetItemHwnd( IDC_COMBO_CUR_DIR );
 	Combo_ResetContent( hwndCombo );
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCurDir );
@@ -239,7 +239,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 			CDlgOpenFile	cDlgOpenFile;
 			WCHAR			szPath[_MAX_PATH + 1];
 			int				size = _countof(szPath) - 1;
-			_tcsncpy( szPath, m_szCommand, size);
+			wcsncpy( szPath, m_szCommand, size);
 			szPath[size] = L'\0';
 			/* ファイルオープンダイアログの初期化 */
 			cDlgOpenFile.Create(
@@ -249,7 +249,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 				m_szCommand
 			);
 			if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-				_tcscpy( m_szCommand, szPath );
+				wcscpy( m_szCommand, szPath );
 				::DlgItem_SetText( GetHwnd(), IDC_COMBO_m_szCommand, m_szCommand );
 			}
 		}

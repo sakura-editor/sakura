@@ -239,12 +239,12 @@ bool CDocFileOperation::SaveFileDialog(
 			// 基本
 			if (szExt[0] == L'\0') { 
 				// ファイルパスが無いまたは拡張子なし
-				_tcscpy(szDefaultWildCard, L"*.txt");
+				wcscpy(szDefaultWildCard, L"*.txt");
 			}
 			else {
 				// 拡張子あり
-				_tcscpy(szDefaultWildCard, L"*");
-				_tcscat(szDefaultWildCard, szExt);
+				wcscpy(szDefaultWildCard, L"*");
+				wcscat(szDefaultWildCard, szExt);
 			}
 		}
 		else {
@@ -255,12 +255,12 @@ bool CDocFileOperation::SaveFileDialog(
 		if(!this->m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath()){
 			//「新規から保存時は全ファイル表示」オプション	// 2008/6/15 バグフィックス Uchi
 			if( GetDllShareData().m_Common.m_sFile.m_bNoFilterSaveNew )
-				_tcscat(szDefaultWildCard, L";*.*");	// 全ファイル表示
+				wcscat(szDefaultWildCard, L";*.*");	// 全ファイル表示
 		}
 		else {
 			//「新規以外から保存時は全ファイル表示」オプション
 			if( GetDllShareData().m_Common.m_sFile.m_bNoFilterSaveFile )
-				_tcscat(szDefaultWildCard, L";*.*");	// 全ファイル表示
+				wcscat(szDefaultWildCard, L";*.*");	// 全ファイル表示
 		}
 	}
 	// 無題に、無題番号を付ける
@@ -294,7 +294,7 @@ bool CDocFileOperation::SaveFileDialog(LPWSTR szPath)
 	sSaveInfo.cFilePath = szPath;
 	sSaveInfo.eCharCode = CODE_CODEMAX; //###トリッキー
 	bool bRet = SaveFileDialog(&sSaveInfo);
-	_tcscpy_s(szPath, _MAX_PATH, sSaveInfo.cFilePath);
+	wcscpy_s(szPath, _MAX_PATH, sSaveInfo.cFilePath);
 	return bRet;
 }
 

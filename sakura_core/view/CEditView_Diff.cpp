@@ -149,13 +149,13 @@ void CEditView::ViewDiffInfo(
 
 	//オプションを作成する
 	WCHAR	szOption[16];	// "-cwbBt"
-	_tcscpy( szOption, L"-" );
-	if( nFlgOpt & 0x0001 ) _tcscat( szOption, L"i" );	//-i ignore-case         大文字小文字同一視
-	if( nFlgOpt & 0x0002 ) _tcscat( szOption, L"w" );	//-w ignore-all-space    空白無視
-	if( nFlgOpt & 0x0004 ) _tcscat( szOption, L"b" );	//-b ignore-space-change 空白変更無視
-	if( nFlgOpt & 0x0008 ) _tcscat( szOption, L"B" );	//-B ignore-blank-lines  空行無視
-	if( nFlgOpt & 0x0010 ) _tcscat( szOption, L"t" );	//-t expand-tabs         TAB-SPACE変換
-	if( _tcscmp( szOption, L"-" ) == 0 ) szOption[0] = L'\0';	//オプションなし
+	wcscpy( szOption, L"-" );
+	if( nFlgOpt & 0x0001 ) wcscat( szOption, L"i" );	//-i ignore-case         大文字小文字同一視
+	if( nFlgOpt & 0x0002 ) wcscat( szOption, L"w" );	//-w ignore-all-space    空白無視
+	if( nFlgOpt & 0x0004 ) wcscat( szOption, L"b" );	//-b ignore-space-change 空白変更無視
+	if( nFlgOpt & 0x0008 ) wcscat( szOption, L"B" );	//-B ignore-blank-lines  空行無視
+	if( nFlgOpt & 0x0010 ) wcscat( szOption, L"t" );	//-t expand-tabs         TAB-SPACE変換
+	if( wcscmp( szOption, L"-" ) == 0 ) szOption[0] = L'\0';	//オプションなし
 	if( nFlgOpt & 0x0020 ) nFlgFile12 = 0;
 	else                   nFlgFile12 = 1;
 
@@ -465,7 +465,7 @@ BOOL CEditView::MakeDiffTmpFile( WCHAR* filename, HWND hWnd, ECodeType code, boo
 		return FALSE;
 	}
 
-	_tcscpy( filename, pszTmpName );
+	wcscpy( filename, pszTmpName );
 	free( pszTmpName );
 
 	//自分か？
@@ -518,7 +518,7 @@ BOOL CEditView::MakeDiffTmpFile2( WCHAR* tmpName, const WCHAR* orgName, ECodeTyp
 		return FALSE;
 	}
 
-	_tcscpy( tmpName, pszTmpName );
+	wcscpy( tmpName, pszTmpName );
 	free( pszTmpName );
 
 	bool bBom = false;

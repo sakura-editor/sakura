@@ -171,7 +171,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 			cmemChar.SetString(LSW(STR_ERR_CSHAREDATA22));
 		}else{
 			auto_sprintf( szLineNum, L"%d", (int)((Int)point.x) + 1 );
-			_tcscat( szLineNum, LS(STR_DLGFNCLST_LIST_COL) );
+			wcscat( szLineNum, LS(STR_DLGFNCLST_LIST_COL) );
 			CUnicode().UnicodeToHex( cmemChar.GetStringPtr(), cmemChar.GetStringLength(),
 				szCharCode, &GetDllShareData().m_Common.m_sStatusbar );
 		}

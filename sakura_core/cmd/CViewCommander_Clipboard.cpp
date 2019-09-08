@@ -1111,7 +1111,7 @@ void CViewCommander::Command_COPYPATH( void )
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		/* クリップボードにデータを設定 */
 		const WCHAR* szPath = GetDocument()->m_cDocFile.GetFilePath();
-		m_pCommanderView->MySetClipboardData( szPath, _tcslen(szPath), false );
+		m_pCommanderView->MySetClipboardData( szPath, wcslen(szPath), false );
 	}
 	else{
 		ErrorBeep();

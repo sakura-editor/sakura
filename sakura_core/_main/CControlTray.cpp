@@ -76,16 +76,16 @@ void CControlTray::DoGrep()
 		m_cDlgGrep.m_strText = m_pShareData->m_sSearchKeywords.m_aSearchKeys[0];
 	}
 	if( 0 < m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
-		_tcscpy( m_cDlgGrep.m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
+		wcscpy( m_cDlgGrep.m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
 	}
 	if( 0 < m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
-		_tcscpy( m_cDlgGrep.m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダ */
+		wcscpy( m_cDlgGrep.m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダ */
 	}
 	if (0 < m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
-		_tcscpy(m_cDlgGrep.m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);	/* 除外ファイル */
+		wcscpy(m_cDlgGrep.m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);	/* 除外ファイル */
 	}
 	if (0 < m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
-		_tcscpy(m_cDlgGrep.m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);	/* 除外フォルダ */
+		wcscpy(m_cDlgGrep.m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);	/* 除外フォルダ */
 	}
 
 	/* Grepダイアログの表示 */
@@ -203,18 +203,18 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 
 	//GOPTオプション
 	WCHAR pOpt[64] = L"";
-	if( cDlgGrep.m_bSubFolder					)_tcscat( pOpt, L"S" );	// サブフォルダからも検索する
-	if( cDlgGrep.m_sSearchOption.bLoHiCase		)_tcscat( pOpt, L"L" );	// 英大文字と英小文字を区別する
-	if( cDlgGrep.m_sSearchOption.bRegularExp	)_tcscat( pOpt, L"R" );	// 正規表現
-	if( cDlgGrep.m_nGrepOutputLineType == 1     )_tcscat( pOpt, L"P" );	// 行を出力する
-	if( cDlgGrep.m_nGrepOutputLineType == 2     )_tcscat( pOpt, L"N" );	// 否ヒット行を出力する 2014.09.23
-	if( cDlgGrep.m_sSearchOption.bWordOnly		)_tcscat( pOpt, L"W" );	// 単語単位で探す
-	if( 1 == cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, L"1" );	// Grep: 出力形式
-	if( 2 == cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, L"2" );	// Grep: 出力形式
-	if( 3 == cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, L"3" );
-	if( cDlgGrep.m_bGrepOutputFileOnly		)_tcscat( pOpt, L"F" );
-	if( cDlgGrep.m_bGrepOutputBaseFolder		)_tcscat( pOpt, L"B" );
-	if( cDlgGrep.m_bGrepSeparateFolder		)_tcscat( pOpt, L"D" );
+	if( cDlgGrep.m_bSubFolder					)wcscat( pOpt, L"S" );	// サブフォルダからも検索する
+	if( cDlgGrep.m_sSearchOption.bLoHiCase		)wcscat( pOpt, L"L" );	// 英大文字と英小文字を区別する
+	if( cDlgGrep.m_sSearchOption.bRegularExp	)wcscat( pOpt, L"R" );	// 正規表現
+	if( cDlgGrep.m_nGrepOutputLineType == 1     )wcscat( pOpt, L"P" );	// 行を出力する
+	if( cDlgGrep.m_nGrepOutputLineType == 2     )wcscat( pOpt, L"N" );	// 否ヒット行を出力する 2014.09.23
+	if( cDlgGrep.m_sSearchOption.bWordOnly		)wcscat( pOpt, L"W" );	// 単語単位で探す
+	if( 1 == cDlgGrep.m_nGrepOutputStyle		)wcscat( pOpt, L"1" );	// Grep: 出力形式
+	if( 2 == cDlgGrep.m_nGrepOutputStyle		)wcscat( pOpt, L"2" );	// Grep: 出力形式
+	if( 3 == cDlgGrep.m_nGrepOutputStyle		)wcscat( pOpt, L"3" );
+	if( cDlgGrep.m_bGrepOutputFileOnly		)wcscat( pOpt, L"F" );
+	if( cDlgGrep.m_bGrepOutputBaseFolder		)wcscat( pOpt, L"B" );
+	if( cDlgGrep.m_bGrepSeparateFolder		)wcscat( pOpt, L"D" );
 	if( pOpt[0] != L'\0' ){
 		cCmdLine.AppendString( L" -GOPT=" );
 		cCmdLine.AppendString( pOpt );
@@ -505,7 +505,7 @@ LRESULT CControlTray::DispatchEvent(
 			szClassName[0] = L'\0';
 			::GetClassName( hwndWork, szClassName, _countof( szClassName ) - 1 );
 			::GetWindowText( hwndWork, szText, _countof( szText ) - 1 );
-			if( 0 == _tcscmp( szText, LS(STR_PROPCOMMON) ) ){
+			if( 0 == wcscmp( szText, LS(STR_PROPCOMMON) ) ){
 				return -1;
 			}
 
@@ -555,8 +555,8 @@ LRESULT CControlTray::DispatchEvent(
 
 			//szHtmlFile取得
 			WCHAR	szHtmlHelpFile[1024];
-			_tcscpy( szHtmlHelpFile, pWork );
-			int		nLen = _tcslen( szHtmlHelpFile );
+			wcscpy( szHtmlHelpFile, pWork );
+			int		nLen = wcslen( szHtmlHelpFile );
 
 			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
 			hwndHtmlHelp = OpenHtmlHelp(
@@ -1287,7 +1287,7 @@ bool CControlTray::OpenNewEditor(
 #ifdef _DEBUG
 //	dwCreationFlag |= DEBUG_PROCESS; //2007.09.22 kobake デバッグ用フラグ
 #endif
-	WCHAR szCmdLine[1024]; _tcscpy_s(szCmdLine, _countof(szCmdLine), cCmdLineBuf.c_str());
+	WCHAR szCmdLine[1024]; wcscpy_s(szCmdLine, _countof(szCmdLine), cCmdLineBuf.c_str());
 	BOOL bCreateResult = CreateProcess(
 		szEXE,					// 実行可能モジュールの名前
 		szCmdLine,				// コマンドラインの文字列

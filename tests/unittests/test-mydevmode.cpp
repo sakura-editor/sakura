@@ -137,19 +137,19 @@ TEST(MYDEVMODETest, operatorNotEqual)
 	value.m_bPrinterNotFound = myDevMode.m_bPrinterNotFound;
 	EXPECT_EQ(myDevMode, value);
 
-	::_tcscpy_s(value.m_szPrinterDriverName, L"PrinterDriverName");
+	::wcscpy_s(value.m_szPrinterDriverName, L"PrinterDriverName");
 	EXPECT_NE(myDevMode, value);
-	::_tcscpy_s(value.m_szPrinterDriverName, myDevMode.m_szPrinterDriverName);
+	::wcscpy_s(value.m_szPrinterDriverName, myDevMode.m_szPrinterDriverName);
 	EXPECT_EQ(myDevMode, value);
 
-	::_tcscpy_s(value.m_szPrinterDeviceName, L"PrinterDeviceName");
+	::wcscpy_s(value.m_szPrinterDeviceName, L"PrinterDeviceName");
 	EXPECT_NE(myDevMode, value);
-	::_tcscpy_s(value.m_szPrinterDeviceName, myDevMode.m_szPrinterDeviceName);
+	::wcscpy_s(value.m_szPrinterDeviceName, myDevMode.m_szPrinterDeviceName);
 	EXPECT_EQ(myDevMode, value);
 
-	::_tcscpy_s(value.m_szPrinterOutputName, L"PrinterOutputName");
+	::wcscpy_s(value.m_szPrinterOutputName, L"PrinterOutputName");
 	EXPECT_NE(myDevMode, value);
-	::_tcscpy_s(value.m_szPrinterOutputName, myDevMode.m_szPrinterOutputName);
+	::wcscpy_s(value.m_szPrinterOutputName, myDevMode.m_szPrinterOutputName);
 	EXPECT_EQ(myDevMode, value);
 
 	value.dmFields = std::numeric_limits<decltype(value.dmFields)>::max();
@@ -222,9 +222,9 @@ TEST(MYDEVMODETest, operatorNotEqual)
 	value.dmCollate = myDevMode.dmCollate;
 	EXPECT_EQ(myDevMode, value);
 
-	::_tcscpy_s(value.dmFormName, L"FormName");
+	::wcscpy_s(value.dmFormName, L"FormName");
 	EXPECT_NE(myDevMode, value);
-	::_tcscpy_s(value.dmFormName, myDevMode.dmFormName);
+	::wcscpy_s(value.dmFormName, myDevMode.dmFormName);
 	EXPECT_EQ(myDevMode, value);
 
 	value.dmLogPixels = std::numeric_limits<decltype(value.dmLogPixels)>::max();
@@ -306,7 +306,7 @@ TEST(MYDEVMODETest, StrategyForSegmentationFault)
 	 * 備考：例外メッセージは無視する(例外が起きたことが検知できればよいから。)
 	 */
 	volatile int ret = 0;
-	ASSERT_DEATH({ ret = ::_tcscmp(pValues[0].m_szPrinterDeviceName, pLargeStr); }, ".*");
+	ASSERT_DEATH({ ret = ::wcscmp(pValues[0].m_szPrinterDeviceName, pLargeStr); }, ".*");
 	(void)ret;
 
 	// 等価比較演算子を使った場合には落ちないことを確認する

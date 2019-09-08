@@ -228,7 +228,7 @@ retry:;
 	// 2012.09.26 Moca HTMLHELP対応
 	WCHAR	szExt[_MAX_EXT];
 	_tsplitpath( path, NULL, NULL, NULL, szExt );
-	if( 0 == _tcsicmp(szExt, L".chi") || 0 == _tcsicmp(szExt, L".chm") || 0 == _tcsicmp(szExt, L".col") ){
+	if( 0 == _wcsicmp(szExt, L".chi") || 0 == _wcsicmp(szExt, L".chm") || 0 == _wcsicmp(szExt, L".col") ){
 		std::wstring pathw = to_wchar(path);
 		Command_EXTHTMLHELP( pathw.c_str(), cmemCurText.GetStringPtr() );
 	}else{
@@ -301,10 +301,10 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 		if( _IS_REL_PATH( filename ) ){
 			GetInidirOrExedir( pWork, filename );
 		}else{
-			_tcscpy( pWork, filename ); //	Jul. 5, 2002 genta
+			wcscpy( pWork, filename ); //	Jul. 5, 2002 genta
 		}
-		nLen = _tcslen( pWork );
-		_tcscpy( &pWork[nLen + 1], cmemCurText.GetStringPtr() );
+		nLen = wcslen( pWork );
+		wcscpy( &pWork[nLen + 1], cmemCurText.GetStringPtr() );
 		hwndHtmlHelp = (HWND)::SendMessageAny(
 			GetDllShareData().m_sHandles.m_hwndTray,
 			MYWM_HTMLHELP,

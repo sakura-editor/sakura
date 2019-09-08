@@ -109,7 +109,7 @@ bool CPropTypesColor::Import( HWND hwndDlg )
 	/* 色設定 I/O */
 	for( int i = 0; i < m_Types.m_nColorInfoArrNum; ++i ){
 		ColorInfoArr[i] = m_Types.m_ColorInfoArr[i];
-		_tcscpy( ColorInfoArr[i].m_szName, m_Types.m_ColorInfoArr[i].m_szName );
+		wcscpy( ColorInfoArr[i].m_szName, m_Types.m_ColorInfoArr[i].m_szName );
 	}
 
 	// インポート
@@ -122,7 +122,7 @@ bool CPropTypesColor::Import( HWND hwndDlg )
 	m_Types.m_nColorInfoArrNum = COLORIDX_LAST;
 	for( int i = 0; i < m_Types.m_nColorInfoArrNum; ++i ){
 		m_Types.m_ColorInfoArr[i] =  ColorInfoArr[i];
-		_tcscpy( m_Types.m_ColorInfoArr[i].m_szName, ColorInfoArr[i].m_szName );
+		wcscpy( m_Types.m_ColorInfoArr[i].m_szName, ColorInfoArr[i].m_szName );
 	}
 	/* ダイアログデータの設定 color */
 	SetData( hwndDlg );
@@ -1090,13 +1090,13 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 	gr.FillMyRect(rc1);
 	/* テキスト */
 	::SetBkMode( gr, TRANSPARENT );
-	::TextOut( gr, rc1.left, rc1.top, pColorInfo->m_szName, _tcslen( pColorInfo->m_szName ) );
+	::TextOut( gr, rc1.left, rc1.top, pColorInfo->m_szName, wcslen( pColorInfo->m_szName ) );
 	if( pColorInfo->m_sFontAttr.m_bBoldFont ){	/* 太字か */
-		::TextOut( gr, rc1.left + 1, rc1.top, pColorInfo->m_szName, _tcslen( pColorInfo->m_szName ) );
+		::TextOut( gr, rc1.left + 1, rc1.top, pColorInfo->m_szName, wcslen( pColorInfo->m_szName ) );
 	}
 	if( pColorInfo->m_sFontAttr.m_bUnderLine ){	/* 下線か */
 		SIZE	sz;
-		::GetTextExtentPoint32( gr, pColorInfo->m_szName, _tcslen( pColorInfo->m_szName ), &sz );
+		::GetTextExtentPoint32( gr, pColorInfo->m_szName, wcslen( pColorInfo->m_szName ), &sz );
 		::MoveToEx( gr, rc1.left,		rc1.bottom - 2, NULL );
 		::LineTo( gr, rc1.left + sz.cx,	rc1.bottom - 2 );
 		::MoveToEx( gr, rc1.left,		rc1.bottom - 1, NULL );

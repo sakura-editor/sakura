@@ -225,8 +225,8 @@ void CMRUFile::Add( EditInfo* pEditInfo )
 	//}
 
 	//	szFolder作成
-	_tcscpy( szFolder, szDrive );
-	_tcscat( szFolder, szDir );
+	wcscpy( szFolder, szDrive );
+	wcscat( szFolder, szDir );
 
 	//	Folderを、CMRUFolderに登録
 	CMRUFolder cMRUFolder;

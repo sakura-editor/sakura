@@ -79,7 +79,7 @@ EDllResult CDllImp::InitDll(LPCWSTR pszSpecifiedDllName)
 				break;
 			}
 			//GetDllNameImpから取得した名前が前回候補と同じならループを抜ける
-			if(pszLastName && _tcsicmp(pszLastName,pszName)==0){
+			if(pszLastName && _wcsicmp(pszLastName,pszName)==0){
 				break;
 			}
 		}

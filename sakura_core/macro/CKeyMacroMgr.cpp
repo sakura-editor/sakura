@@ -463,7 +463,7 @@ BOOL CKeyMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const WCHAR* pszCode )
 */
 CMacroManagerBase* CKeyMacroMgr::Creator(const WCHAR* ext)
 {
-	if( _tcscmp( ext, L"mac" ) == 0 ){
+	if( wcscmp( ext, L"mac" ) == 0 ){
 		return new CKeyMacroMgr;
 	}
 	return NULL;

@@ -61,7 +61,7 @@ BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WC
 	BOOL	bRes;
 	WCHAR	szInitFolder[MAX_PATH];
 
-	_tcscpy( szInitFolder, pszInitFolder );
+	wcscpy( szInitFolder, pszInitFolder );
 	/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
 	CutLastYenFromDirectoryPath( szInitFolder );
 
@@ -310,7 +310,7 @@ DWORD NetConnect ( const WCHAR strNetWorkPass[] )
 	WCHAR sDrive[] = L"";
     int i;
 
-	if (_tcslen(strNetWorkPass) < 3)	return ERROR_BAD_NET_NAME;  //UNCではない。
+	if (wcslen(strNetWorkPass) < 3)	return ERROR_BAD_NET_NAME;  //UNCではない。
 	if (strNetWorkPass[0] != L'\\' && strNetWorkPass[1] != L'\\')	return ERROR_BAD_NET_NAME;  //UNCではない。
 
 	//3文字目から数えて最初の\の直前までを切り出す
@@ -427,7 +427,7 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCWSTR lpszLinkFile, LPWSTR lpszPath )
 						if( SUCCEEDED(hRes = pIShellLink->GetDescription(szDescription, MAX_PATH ) ) ){
 							if( L'\0' != szGotPath[0] ){
 								/* 正常終了 */
-								_tcscpy_s( lpszPath, _MAX_PATH, szGotPath );
+								wcscpy_s( lpszPath, _MAX_PATH, szGotPath );
 								bRes = TRUE;
 							}
 						}

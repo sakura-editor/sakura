@@ -790,7 +790,7 @@ void CMenuDrawer::MyAppendMenu(
 
 	szLabel[0] = L'\0';
 	if( NULL != pszLabel ){
-		_tcsncpy( szLabel, pszLabel, _countof( szLabel ) - 1 );
+		wcsncpy( szLabel, pszLabel, _countof( szLabel ) - 1 );
 		szLabel[ _countof( szLabel ) - 1 ] = L'\0';
 	}
 	auto_strcpy( szKey, pszKey); 
@@ -1417,7 +1417,7 @@ const WCHAR* CMenuDrawer::GetLabel( int nFuncID )
 WCHAR CMenuDrawer::GetAccelCharFromLabel( const WCHAR* pszLabel )
 {
 	int i;
-	int nLen = (int)_tcslen( pszLabel );
+	int nLen = (int)wcslen( pszLabel );
 	for( i = 0; i + 1 < nLen; ++i ){
 		if( L'&' == pszLabel[i] ){
 			if( L'&' == pszLabel[i + 1]  ){
@@ -1463,7 +1463,7 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		mii.cbSize = sizeof(MENUITEMINFO);
 		mii.fMask = MIIM_CHECKMARKS | MIIM_DATA | MIIM_ID | MIIM_STATE | MIIM_SUBMENU | MIIM_TYPE;
 		mii.fType = MFT_STRING;
-		_tcscpy( szText, L"--unknown--" );
+		wcscpy( szText, L"--unknown--" );
 		mii.dwTypeData = szText;
 		mii.cch = _countof( szText ) - 1;
 		if( 0 == ::GetMenuItemInfo( hmenu, i, TRUE, &mii ) ){

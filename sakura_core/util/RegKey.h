@@ -114,7 +114,7 @@ public:
 	{
 		if(nMaxChar == -1)
 		{
-			nMaxChar = (DWORD)_tcslen(buffer) * sizeof(WCHAR);
+			nMaxChar = (DWORD)wcslen(buffer) * sizeof(WCHAR);
 		}
 		DWORD nError = 0;
 		if ((nError = RegSetValueEx(_key, valueName, 0, REG_SZ, (LPBYTE)buffer, nMaxChar)) != 0)

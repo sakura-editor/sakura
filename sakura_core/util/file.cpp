@@ -232,7 +232,7 @@ FILE* _tfopen_absini(LPCWSTR fname, LPCWSTR mode, BOOL bOrExedir/*=TRUE*/ )
 /* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない */
 void CutLastYenFromDirectoryPath( WCHAR* pszFolder )
 {
-	if( 3 == _tcslen( pszFolder )
+	if( 3 == wcslen( pszFolder )
 	 && pszFolder[1] == L':'
 	 && pszFolder[2] == L'\\'
 	){
@@ -241,7 +241,7 @@ void CutLastYenFromDirectoryPath( WCHAR* pszFolder )
 		/* フォルダの最後が半角かつ'\\'の場合は、取り除く */
 		int	nFolderLen;
 		int	nCharChars;
-		nFolderLen = _tcslen( pszFolder );
+		nFolderLen = wcslen( pszFolder );
 		if( 0 < nFolderLen ){
 			nCharChars = &pszFolder[nFolderLen] - CNativeW::GetCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] );
 			if( 1 == nCharChars && L'\\' == pszFolder[nFolderLen - 1] ){
@@ -286,10 +286,10 @@ void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR*
 	int		nCharChars;
 	_tsplitpath( pszFilePath, szDrive, szDir, szFname, szExt );
 	if( NULL != pszFolder ){
-		_tcscpy( pszFolder, szDrive );
-		_tcscat( pszFolder, szDir );
+		wcscpy( pszFolder, szDrive );
+		wcscat( pszFolder, szDir );
 		/* フォルダの最後が半角かつ'\\'の場合は、取り除く */
-		nFolderLen = _tcslen( pszFolder );
+		nFolderLen = wcslen( pszFolder );
 		if( 0 < nFolderLen ){
 			nCharChars = &pszFolder[nFolderLen] - CNativeW::GetCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] );
 			if( 1 == nCharChars && L'\\' == pszFolder[nFolderLen - 1] ){
@@ -298,8 +298,8 @@ void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR*
 		}
 	}
 	if( NULL != pszFile ){
-		_tcscpy( pszFile, szFname );
-		_tcscat( pszFile, szExt );
+		wcscpy( pszFile, szFname );
+		wcscat( pszFile, szExt );
 	}
 	return;
 }
@@ -357,7 +357,7 @@ BOOL GetLongFileName( const WCHAR* pszFilePathSrc, WCHAR* pszFilePathDes )
 	}
 	len = ::GetLongPathName( szBuf, pszFilePathDes, _MAX_PATH );
 	if( len <= 0 || _MAX_PATH < len ){
-		_tcscpy( pszFilePathDes, szBuf );
+		wcscpy( pszFilePathDes, szBuf );
 	}
 	return TRUE;
 }
@@ -372,7 +372,7 @@ BOOL CheckEXT( const WCHAR* pszPath, const WCHAR* pszExt )
 	if( pszWork[0] == L'.' ){
 		pszWork++;
 	}
-	if( 0 == _tcsicmp( pszExt, pszWork ) ){
+	if( 0 == _wcsicmp( pszExt, pszWork ) ){
 		return TRUE;
 	}else{
 		return FALSE;
@@ -1076,7 +1076,7 @@ void GetStrTrancateWidth( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, in
 	const int nPathLen = auto_strlen(path);
 	CTextWidthCalc calc(hDC);
 	if( calc.GetTextWidth(path) <= nPxWidth ){
-		_tcsncpy_s(dest, nSize, path, _TRUNCATE);
+		wcsncpy_s(dest, nSize, path, _TRUNCATE);
 		return;
 	}
 	std::wstring strTemp;
@@ -1088,15 +1088,15 @@ void GetStrTrancateWidth( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, in
 		strTemp2 += L"...";
 		if( nPxWidth < calc.GetTextWidth(strTemp2.c_str()) ){
 			// 入りきらなかったので1文字前までをコピー
-			_tcsncpy_s(dest, t_max(0, nSize - 3), strTempOld.c_str(), _TRUNCATE);
-			_tcscat_s(dest, nSize, L"...");
+			wcsncpy_s(dest, t_max(0, nSize - 3), strTempOld.c_str(), _TRUNCATE);
+			wcscat_s(dest, nSize, L"...");
 			return;
 		}
 		strTempOld = strTemp;
 		nPos += t_max(1, (int)(Int)CNativeW::GetSizeOfChar(path, nPathLen, nPos));
 	}
 	// 全部表示(ここには来ないはず)
-	_tcsncpy_s(dest, nSize, path, _TRUNCATE);
+	wcsncpy_s(dest, nSize, path, _TRUNCATE);
 }
 
 /*! パスの省略表示
@@ -1112,7 +1112,7 @@ void GetShortViewPath( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int n
 	CTextWidthCalc calc(hDC);
 	if( calc.GetTextWidth(path) <= nPxWidth ){
 		// 全部表示可能
-		_tcsncpy_s(dest, nSize, path, _TRUNCATE);
+		wcsncpy_s(dest, nSize, path, _TRUNCATE);
 		return;
 	}
 	if( path[0] == L'\\' && path[1] == L'\\' ){
@@ -1151,7 +1151,7 @@ void GetShortViewPath( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int n
 				return;
 			}
 			// ここで終端なら全部表示
-			_tcsncpy_s(dest, nSize, path, _TRUNCATE);
+			wcsncpy_s(dest, nSize, path, _TRUNCATE);
 			return;
 		}
 	}
@@ -1171,7 +1171,7 @@ void GetShortViewPath( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int n
 			}
 			strTemp += &path[nRight];
 			if( calc.GetTextWidth(strTemp.c_str()) <= nPxWidth ){
-				_tcsncpy_s(dest, nSize, strTemp.c_str(), _TRUNCATE);
+				wcsncpy_s(dest, nSize, strTemp.c_str(), _TRUNCATE);
 				return;
 			}
 			// C:\...\dir\   フォルダパスだった。最後のフォルダを表示
@@ -1180,7 +1180,7 @@ void GetShortViewPath( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int n
 					GetStrTrancateWidth(dest, nSize, strTemp.c_str(), hDC, nPxWidth);
 					return;
 				}
-				_tcsncpy_s(dest, nSize, strTemp.c_str(), _TRUNCATE);
+				wcsncpy_s(dest, nSize, strTemp.c_str(), _TRUNCATE);
 				return;
 			}
 			nRight = nNext;
@@ -1201,7 +1201,7 @@ void GetShortViewPath( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int n
 	strTemp += &path[nRight];
 	if( bFitMode ){
 		if( calc.GetTextWidth(strTemp.c_str()) <= nPxWidth ){
-			_tcsncpy_s(dest, nSize, strTemp.c_str(), _TRUNCATE);
+			wcsncpy_s(dest, nSize, strTemp.c_str(), _TRUNCATE);
 			return;
 		}
 		// ファイル名(か左側固定部)が長すぎてはいらない
@@ -1230,7 +1230,7 @@ void GetShortViewPath( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int n
 				strLeftFile += strFile; // C:\...\longfilename
 				int nExtLen = nPathLen - nExtPos;
 				GetStrTrancateWidth(dest, t_max(0, nSize - nExtLen), strLeftFile.c_str(), hDC, nPxWidth - nExtWidth);
-				_tcscat_s(dest, nSize, &path[nExtPos+1]); // 拡張子連結 C:\...\longf...ext
+				wcscat_s(dest, nSize, &path[nExtPos+1]); // 拡張子連結 C:\...\longf...ext
 			}else{
 				// ファイル名が置けないくらい拡張子か左側が長い。パスの左側を優先して残す
 				GetStrTrancateWidth(dest, nSize, strTemp.c_str(), hDC, nPxWidth);
@@ -1241,5 +1241,5 @@ void GetShortViewPath( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int n
 		}
 		return;
 	}
-	_tcsncpy_s(dest, nSize, strTemp.c_str(), _TRUNCATE);
+	wcsncpy_s(dest, nSize, strTemp.c_str(), _TRUNCATE);
 }

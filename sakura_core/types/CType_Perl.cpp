@@ -37,8 +37,8 @@
 void CType_Perl::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	_tcscpy( pType->m_szTypeName, L"Perl" );
-	_tcscpy( pType->m_szTypeExts, L"cgi,pl,pm" );
+	wcscpy( pType->m_szTypeName, L"Perl" );
+	wcscpy( pType->m_szTypeExts, L"cgi,pl,pm" );
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L"#", -1 );					/* 行コメントデリミタ */

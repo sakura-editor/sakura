@@ -217,7 +217,7 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 				for(i = 0; i < nIndex2; i++){
 					auto_memset(szPath2, 0, _countof(szPath2));
 					ListView_GetItemText(hwndList, i, 2, szPath2, _countof(szPath2));
-					if( _tcscmp(szPath, szPath2) == 0 ){
+					if( wcscmp(szPath, szPath2) == 0 ){
 						if( (wID ==IDC_BUTTON_KEYHELP_UPD) && (i == nIndex) ){	/* 更新時、変わっていなかったら何もしない */
 						}else{
 							ErrorMessage( hwndDlg, LS(STR_PROPTYPKEYHELP_ERR_REG2));
@@ -605,8 +605,8 @@ int CPropTypesKeyHelp::GetData( HWND hwndDlg )
 			ListView_GetItemText( hwndList, i, 1, szAbout, _countof(szAbout) );
 			ListView_GetItemText( hwndList, i, 2, szPath, _countof(szPath) );
 			m_Types.m_KeyHelpArr[i].m_bUse = bUse;
-			_tcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, szAbout);
-			_tcscpy(m_Types.m_KeyHelpArr[i].m_szPath, szPath);
+			wcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, szAbout);
+			wcscpy(m_Types.m_KeyHelpArr[i].m_szPath, szPath);
 		}else{	/* 未登録部分はクリアする */
 			m_Types.m_KeyHelpArr[i].m_szPath[0] = L'\0';
 		}
@@ -656,14 +656,14 @@ static WCHAR* strcnv(WCHAR *str)
 {
 	WCHAR* p=str;
 	/* 改行コードの削除 */
-	if( NULL != (p=_tcschr(p,L'\n')) )
+	if( NULL != (p=wcschr(p,L'\n')) )
 		*p=L'\0';
 	p=str;
-	if( NULL != (p=_tcschr(p,L'\r')) )
+	if( NULL != (p=wcschr(p,L'\r')) )
 		*p=L'\0';
 	/* カンマの置換 */
 	p=str;
-	for(; (p=_tcschr(p,L',')) != NULL; ){
+	for(; (p=wcschr(p,L',')) != NULL; ){
 		*p=L'.';
 	}
 	return str;

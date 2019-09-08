@@ -791,7 +791,7 @@ void CSakuraEnvironment::ResolvePath(WCHAR* pszPath)
 
 	// pSrc -> pszPath
 	if(pSrc != pszPath){
-		_tcscpy_s(pszPath, _MAX_PATH, pSrc);
+		wcscpy_s(pszPath, _MAX_PATH, pSrc);
 	}
 }
 
@@ -812,7 +812,7 @@ BOOL IsSakuraMainWindow( HWND hWnd )
 	if( 0 == ::GetClassName( hWnd, szClassName, _countof(szClassName) - 1 ) ){
 		return FALSE;
 	}
-	if(0 == _tcscmp( GSTR_EDITWINDOWNAME, szClassName ) ){
+	if(0 == wcscmp( GSTR_EDITWINDOWNAME, szClassName ) ){
 		return TRUE;
 	}else{
 		return FALSE;

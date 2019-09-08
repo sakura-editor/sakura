@@ -65,13 +65,13 @@ bool CRecentFile::TextToDataType( EditInfo* dst, LPCWSTR pszText ) const
 	if( _countof(dst->m_szPath) < auto_strlen(pszText) + 1 ){
 		return false;
 	}
-	_tcscpy(dst->m_szPath, pszText);
+	wcscpy(dst->m_szPath, pszText);
 	return true;
 }
 
 int CRecentFile::CompareItem( const EditInfo* p1, const EditInfo* p2 ) const
 {
-	return _tcsicmp(p1->m_szPath, p2->m_szPath);
+	return _wcsicmp(p1->m_szPath, p2->m_szPath);
 }
 
 void CRecentFile::CopyItem( EditInfo* dst, const EditInfo* src ) const
@@ -97,7 +97,7 @@ int CRecentFile::FindItemByPath(const WCHAR* pszPath) const
 {
 	int n = GetItemCount();
 	for(int i=0;i<n;i++){
-		if(_tcsicmp(GetItem(i)->m_szPath,pszPath)==0)return i;
+		if(_wcsicmp(GetItem(i)->m_szPath,pszPath)==0)return i;
 	}
 	return -1;
 }

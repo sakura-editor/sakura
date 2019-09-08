@@ -54,31 +54,31 @@ bool GetDateTimeFormat( WCHAR* szResult, int size, const WCHAR* format, const SY
 			switch(*p){
 			case L'Y':
 				len = wsprintf(szTime,L"%d",systime.wYear);
-				_tcscpy( q, szTime );
+				wcscpy( q, szTime );
 				break;
 			case L'y':
 				len = wsprintf(szTime,L"%02d",(systime.wYear%100));
-				_tcscpy( q, szTime );
+				wcscpy( q, szTime );
 				break;
 			case L'm':
 				len = wsprintf(szTime,L"%02d",systime.wMonth);
-				_tcscpy( q, szTime );
+				wcscpy( q, szTime );
 				break;
 			case L'd':
 				len = wsprintf(szTime,L"%02d",systime.wDay);
-				_tcscpy( q, szTime );
+				wcscpy( q, szTime );
 				break;
 			case L'H':
 				len = wsprintf(szTime,L"%02d",systime.wHour);
-				_tcscpy( q, szTime );
+				wcscpy( q, szTime );
 				break;
 			case L'M':
 				len = wsprintf(szTime,L"%02d",systime.wMinute);
-				_tcscpy( q, szTime );
+				wcscpy( q, szTime );
 				break;
 			case L'S':
 				len = wsprintf(szTime,L"%02d",systime.wSecond);
-				_tcscpy( q, szTime );
+				wcscpy( q, szTime );
 				break;
 				// A Z
 			case L'%':
@@ -122,22 +122,22 @@ UINT32 ParseVersion( const WCHAR* sVer )
 	for( i=0; *p && i<4; i++){
 		//特別な文字列の処理
 		if( *p == L'a' ){
-			if( _tcsncmp( L"alpha", p, 5 ) == 0 )p += 5;
+			if( wcsncmp( L"alpha", p, 5 ) == 0 )p += 5;
 			else p++;
 			nShift = -0x60;
 		}
 		else if( *p == L'b' ){
-			if( _tcsncmp( L"beta", p, 4 ) == 0 )p += 4;
+			if( wcsncmp( L"beta", p, 4 ) == 0 )p += 4;
 			else p++;
 			nShift = -0x40;
 		}
 		else if( *p == L'r' || *p == L'R' ){
-			if( _tcsnicmp( L"rc", p, 2 ) == 0 )p += 2;
+			if( _wcsnicmp( L"rc", p, 2 ) == 0 )p += 2;
 			else p++;
 			nShift = -0x20;
 		}
 		else if( *p == L'p' ){
-			if( _tcsncmp( L"pl", p, 2 ) == 0 )p += 2;
+			if( wcsncmp( L"pl", p, 2 ) == 0 )p += 2;
 			else p++;
 			nShift = 0x20;
 		}
@@ -154,7 +154,7 @@ UINT32 ParseVersion( const WCHAR* sVer )
 			nVer = nVer * 10 + *p - L'0';
 		}
 		//区切り文字の処理
-		while( *p && _tcschr( L".-_+", *p ) ){ p++; }
+		while( *p && wcschr( L".-_+", *p ) ){ p++; }
 
 		DEBUG_TRACE(L"  VersionPart%d: ver=%d,shift=%d\n", i, nVer, nShift);
 		ret |= ( (nShift + nVer + 128) << (24-8*i) );

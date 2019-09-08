@@ -758,7 +758,7 @@ void CCaret::ShowCaretPosInfo()
 				}
 			}
 			else{
-				_tcscpy_s(szCaretChar, _countof(szCaretChar), pcLayout->GetLayoutEol().GetName());
+				wcscpy_s(szCaretChar, _countof(szCaretChar), pcLayout->GetLayoutEol().GetName());
 			}
 		}
 	}
@@ -773,7 +773,7 @@ void CCaret::ShowCaretPosInfo()
 		WCHAR	szRight[64];
 		int		nLen;
 		{	// メッセージの左側文字列（「行:列」を除いた表示）
-			nLen = _tcslen(pszCodeName) + _tcslen(szEolMode) + _tcslen(szCaretChar);
+			nLen = wcslen(pszCodeName) + wcslen(szEolMode) + wcslen(szCaretChar);
 			// これは %s(%s)%6s%s%s 等になる。%6ts表記は使えないので注意
 			auto_sprintf(
 				szFormat,
@@ -791,7 +791,7 @@ void CCaret::ShowCaretPosInfo()
 			);
 		}
 		szRight[0] = L'\0';
-		nLen = MENUBAR_MESSAGE_MAX_LEN - _tcslen(szLeft);	// 右側に残っている文字長
+		nLen = MENUBAR_MESSAGE_MAX_LEN - wcslen(szLeft);	// 右側に残っている文字長
 		if( nLen > 0 ){	// メッセージの右側文字列（「行:列」表示）
 			WCHAR szRowCol[32];
 			auto_sprintf(
@@ -826,9 +826,9 @@ void CCaret::ShowCaretPosInfo()
 
 		WCHAR	szText_6[16];
 		if( m_pEditView->IsInsMode() /* Oct. 2, 2005 genta */ ){
-			_tcscpy( szText_6, LS( STR_INS_MODE_INS ) );	// "挿入"
+			wcscpy( szText_6, LS( STR_INS_MODE_INS ) );	// "挿入"
 		}else{
-			_tcscpy( szText_6, LS( STR_INS_MODE_OVR ) );	// "上書"
+			wcscpy( szText_6, LS( STR_INS_MODE_OVR ) );	// "上書"
 		}
 
 		auto& statusBar = m_pEditDoc->m_pcEditWnd->m_cStatusBar;

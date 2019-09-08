@@ -968,14 +968,14 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 		vStrClasses.clear();
 		nClassNest = 0;
 		/* クラス名::メソッドの場合 */
-		if( NULL != ( pPos = _tcsstr( pWork, L"::" ) )
+		if( NULL != ( pPos = wcsstr( pWork, L"::" ) )
 			&& auto_strncmp( L"operator ", pWork, 9) != 0 ){
 			/* インナークラスのネストレベルを調べる */
 			int	k;
 			int	nWorkLen;
 			int	nCharChars;
 			int	nNestTemplate = 0;
-			nWorkLen = _tcslen( pWork );
+			nWorkLen = wcslen( pWork );
 			for( k = 0; k < nWorkLen; ++k ){
 				//2009.9.21 syat ネストが深すぎる際のBOF対策
 				if( nClassNest == MAX_JAVA_TREE_NEST ){
@@ -1049,7 +1049,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 					std::vector<WCHAR> vecStr;
 					if( TreeView_GetItemTextVector(hwndTree, tvi, vecStr) ){
 						const WCHAR* pszLabel = &vecStr[0];
-						if( 0 == _tcsncmp(vStrClasses[k].c_str(), pszLabel, nClassNameLen) ){
+						if( 0 == wcsncmp(vStrClasses[k].c_str(), pszLabel, nClassNameLen) ){
 							if( bAddClass ){
 								if( pszLabel[nClassNameLen]==L' ' ){
 									break;
@@ -1072,11 +1072,11 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 					{
 						if( pcFuncInfo->m_nInfo == FL_OBJ_NAMESPACE )
 						{
-							//_tcscat( pClassName, L" 名前空間" );
+							//wcscat( pClassName, L" 名前空間" );
 							strClassName += m_pcFuncInfoArr->GetAppendText(FL_OBJ_NAMESPACE);
 						}
 						else
-							//_tcscat( pClassName, L" クラス" );
+							//wcscat( pClassName, L" クラス" );
 							strClassName += m_pcFuncInfoArr->GetAppendText(FL_OBJ_CLASS);
 					}
 					tvis.hParent = htiParent;
@@ -1326,57 +1326,57 @@ void CDlgFuncList::SetListVB (void)
 		if( 1 == ((pcFuncInfo->m_nInfo >> 8) & 0x01) ){
 			// スタティック宣言(Static)
 			// 2006.12.12 Moca 末尾にスペース追加
-			_tcscpy(szOption, LS(STR_DLGFNCLST_VB_STATIC));
+			wcscpy(szOption, LS(STR_DLGFNCLST_VB_STATIC));
 		}
 		switch ((pcFuncInfo->m_nInfo >> 4) & 0x0f) {
 			case 2  :	// プライベート(Private)
-				_tcsncat(szOption, LS(STR_DLGFNCLST_VB_PRIVATE), _countof(szOption) - _tcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
+				wcsncat(szOption, LS(STR_DLGFNCLST_VB_PRIVATE), _countof(szOption) - wcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
 				break;
 
 			case 3  :	// フレンド(Friend)
-				_tcsncat(szOption, LS(STR_DLGFNCLST_VB_FRIEND), _countof(szOption) - _tcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
+				wcsncat(szOption, LS(STR_DLGFNCLST_VB_FRIEND), _countof(szOption) - wcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
 				break;
 
 			default :	// パブリック(Public)
-				_tcsncat(szOption, LS(STR_DLGFNCLST_VB_PUBLIC), _countof(szOption) - _tcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
+				wcsncat(szOption, LS(STR_DLGFNCLST_VB_PUBLIC), _countof(szOption) - wcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
 		}
 		int nInfo = pcFuncInfo->m_nInfo;
 		switch (nInfo & 0x0f) {
 			case 1:		// 関数(Function)
-				_tcscpy(szType, LS(STR_DLGFNCLST_VB_FUNCTION));
+				wcscpy(szType, LS(STR_DLGFNCLST_VB_FUNCTION));
 				break;
 
 			// 2006.12.12 Moca ステータス→プロシージャに変更
 			case 2:		// プロシージャ(Sub)
-				_tcscpy(szType, LS(STR_DLGFNCLST_VB_PROC));
+				wcscpy(szType, LS(STR_DLGFNCLST_VB_PROC));
 				break;
 
 			case 3:		// プロパティ 取得(Property Get)
-				_tcscpy(szType, LS(STR_DLGFNCLST_VB_PROPGET));
+				wcscpy(szType, LS(STR_DLGFNCLST_VB_PROPGET));
 				break;
 
 			case 4:		// プロパティ 設定(Property Let)
-				_tcscpy(szType, LS(STR_DLGFNCLST_VB_PROPLET));
+				wcscpy(szType, LS(STR_DLGFNCLST_VB_PROPLET));
 				break;
 
 			case 5:		// プロパティ 参照(Property Set)
-				_tcscpy(szType, LS(STR_DLGFNCLST_VB_PROPSET));
+				wcscpy(szType, LS(STR_DLGFNCLST_VB_PROPSET));
 				break;
 
 			case 6:		// 定数(Const)
-				_tcscpy(szType, LS(STR_DLGFNCLST_VB_CONST));
+				wcscpy(szType, LS(STR_DLGFNCLST_VB_CONST));
 				break;
 
 			case 7:		// 列挙型(Enum)
-				_tcscpy(szType, LS(STR_DLGFNCLST_VB_ENUM));
+				wcscpy(szType, LS(STR_DLGFNCLST_VB_ENUM));
 				break;
 
 			case 8:		// ユーザ定義型(Type)
-				_tcscpy(szType, LS(STR_DLGFNCLST_VB_TYPE));
+				wcscpy(szType, LS(STR_DLGFNCLST_VB_TYPE));
 				break;
 
 			case 9:		// イベント(Event)
-				_tcscpy(szType, LS(STR_DLGFNCLST_VB_EVENT));
+				wcscpy(szType, LS(STR_DLGFNCLST_VB_EVENT));
 				break;
 
 			default:	// 未定義なのでクリア
@@ -1384,7 +1384,7 @@ void CDlgFuncList::SetListVB (void)
 		}
 		if ( 2 == ((nInfo >> 8) & 0x02) ) {
 			// 宣言(Declareなど)
-			_tcsncat(szType, LS(STR_DLGFNCLST_VB_DECL), _countof(szType) - _tcslen(szType));
+			wcsncat(szType, LS(STR_DLGFNCLST_VB_DECL), _countof(szType) - wcslen(szType));
 		}
 
 		WCHAR szTypeOption[256]; // 2006.12.12 Moca auto_sprintfの入出力で同一変数を使わないための作業領域追加
@@ -1582,7 +1582,7 @@ void CDlgFuncList::SetTree(bool tagjump, bool nolabel)
 				text.AllocStringBuffer(
 					  pcFuncInfo->m_cmemFuncName.GetStringLength()
 					+ nStackPointer * 2 + 1
-					+ _tcslen( pszFileName )
+					+ wcslen( pszFileName )
 					+ 20
 				);
 				//	2007.03.04 genta タグジャンプできる形式で書き込む

@@ -1580,8 +1580,8 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 
 				unsigned int nThreadId;
 				LPCWSTR szUrl = wstrOPEN.c_str();
-				LPWSTR szUrlDup = new WCHAR[_tcslen( szUrl ) + 1];
-				_tcscpy( szUrlDup, szUrl );
+				LPWSTR szUrlDup = new WCHAR[wcslen( szUrl ) + 1];
+				wcscpy( szUrlDup, szUrl );
 				HANDLE hThread = (HANDLE)_beginthreadex( NULL, 0, ShellExecuteProc, (LPVOID)szUrlDup, 0, &nThreadId );
 				if( hThread != INVALID_HANDLE_VALUE ){
 					// ユーザーのURL起動指示に反応した目印としてちょっとの時間だけ砂時計カーソルを表示しておく

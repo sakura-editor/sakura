@@ -155,7 +155,7 @@ void CDlgPluginOption::SetData( void )
 		}
 
 		if (cOpt->GetType() == OPTION_TYPE_BOOL) {
-			_tcscpy( buf, sValue == wstring( L"0") || sValue == wstring( L"") ? BOOL_DISP_FALSE : BOOL_DISP_TRUE );
+			wcscpy( buf, sValue == wstring( L"0") || sValue == wstring( L"") ? BOOL_DISP_FALSE : BOOL_DISP_TRUE );
 		}
 		else if (cOpt->GetType() == OPTION_TYPE_INT) {
 			// 数値へ正規化
@@ -239,11 +239,11 @@ int CDlgPluginOption::GetData( void )
 		ListView_GetItem( hwndList, &lvi );
 
 		if (cOpt->GetType() == OPTION_TYPE_BOOL) {
-			if (_tcscmp(buf,  BOOL_DISP_FALSE) == 0) {
-				_tcscpy (buf, L"0");
+			if (wcscmp(buf,  BOOL_DISP_FALSE) == 0) {
+				wcscpy (buf, L"0");
 			}
 			else {
-				_tcscpy (buf, L"1");
+				wcscpy (buf, L"1");
 			}
 		}
 		else if (cOpt->GetType() == OPTION_TYPE_SEL) {
@@ -568,7 +568,7 @@ void CDlgPluginOption::SetToEdit( int iLine )
 		sType = m_cPlugin->m_options[iLine]->GetType();
 		transform( sType.begin(), sType.end(), sType.begin(), my_towlower2 );
 		if (sType == OPTION_TYPE_BOOL) {
-			::CheckDlgButtonBool( GetHwnd(), IDC_CHECK_PLUGIN_OPTION, _tcscmp(buf,  BOOL_DISP_FALSE) != 0 );
+			::CheckDlgButtonBool( GetHwnd(), IDC_CHECK_PLUGIN_OPTION, wcscmp(buf,  BOOL_DISP_FALSE) != 0 );
 			::DlgItem_SetText( GetHwnd(), IDC_CHECK_PLUGIN_OPTION, m_cPlugin->m_options[iLine]->GetLabel().c_str() );
 
 			// 編集領域の切り替え
@@ -652,10 +652,10 @@ void CDlgPluginOption::SetFromEdit( int iLine )
 		transform(sType.begin (), sType.end (), sType.begin (), my_towlower2);
 		if (sType == OPTION_TYPE_BOOL) {
 			if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_PLUGIN_OPTION ) ) {
-				_tcscpy( buf, BOOL_DISP_TRUE );
+				wcscpy( buf, BOOL_DISP_TRUE );
 			}
 			else {
-				_tcscpy( buf, BOOL_DISP_FALSE );
+				wcscpy( buf, BOOL_DISP_FALSE );
 			}
 			lvi.mask     = LVIF_TEXT;
 			lvi.iItem    = iLine;
@@ -713,7 +713,7 @@ void CDlgPluginOption::SelectDirectory( int iLine )
 
 	if (_IS_REL_PATH( szDir )) {
 		WCHAR	folder[_MAX_PATH];
-		_tcscpy( folder, szDir );
+		wcscpy( folder, szDir );
 		GetInidirOrExedir( szDir, folder );
 	}
 
