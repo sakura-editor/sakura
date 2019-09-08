@@ -63,6 +63,9 @@ CMemory::CMemory(
 	SetRawData( pData, nDataLenBytes );
 }
 
+/*!
+ * @brief コピーコンストラクタ
+ */
 CMemory::CMemory(const CMemory& rhs)
 	: CMemory()
 {
@@ -72,18 +75,6 @@ CMemory::CMemory(const CMemory& rhs)
 CMemory::~CMemory()
 {
 	_Empty();
-}
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                          演算子                             //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-const CMemory& CMemory::operator = ( const CMemory& rhs )
-{
-	if( this != &rhs ){
-		SetRawData( rhs );
-	}
-	return *this;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

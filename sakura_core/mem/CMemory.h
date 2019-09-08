@@ -45,8 +45,8 @@ class CMemory
 	//コンストラクタ・デストラクタ
 public:
 	CMemory() noexcept;
-	CMemory(const CMemory& rhs);
 	CMemory(const void* pData, int nDataLenBytes);
+	CMemory(const CMemory& rhs);
 	// デストラクタを仮想にすると仮想関数テーブルへのポインタを持つ為にインスタンスの容量が増えてしまうので仮想にしない
 	// 仮想デストラクタでは無いので派生クラスでメンバー変数を追加しない事
 	~CMemory();
@@ -70,7 +70,13 @@ public:
 	int GetRawLength() const { return m_nRawLen; }                //!<データ長を返す。バイト単位。
 
 	// 演算子
-	const CMemory& operator=(const CMemory& rhs);
+	//! コピー代入演算子
+	CMemory& operator = (const CMemory& rhs) {
+		if (this != &rhs) {
+			SetRawData(rhs);
+		}
+		return *this;
+	}
 
 	// 比較
 	static int IsEqual(const CMemory& cmem1, const CMemory& cmem2);	/* 等しい内容か */
