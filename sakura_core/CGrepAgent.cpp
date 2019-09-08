@@ -1968,7 +1968,7 @@ int CGrepAgent::DoGrepReplaceFile(
 		std::wstring file = pszFullPath;
 		file += _T(".skrnew");
 		CNativeW str(LSW(STR_GREP_ERR_FILEWRITE));
-		str.Replace(L"%s", to_wchar(file.c_str()));
+		str.Replace(L"%s", file.c_str());
 		cmemMessage.AppendNativeData( str );
 	} // 例外処理終わり
 

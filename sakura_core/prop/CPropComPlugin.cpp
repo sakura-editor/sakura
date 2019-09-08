@@ -107,9 +107,9 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					if( sel >= 0 ){
 						CPlugin* plugin = CPluginManager::getInstance()->GetPlugin(sel);
 						if( plugin != NULL ){
-							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Description ), to_wchar(plugin->m_sDescription.c_str()) );
-							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Author ), to_wchar(plugin->m_sAuthor.c_str()) );
-							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Version ), to_wchar(plugin->m_sVersion.c_str()) );
+							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Description ), plugin->m_sDescription.c_str() );
+							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Author ), plugin->m_sAuthor.c_str() );
+							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Version ), plugin->m_sVersion.c_str() );
 						}else{
 							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Description ), _T("") );
 							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Author ), _T("") );
@@ -220,7 +220,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					if( sel >= 0 && m_Common.m_sPlugin.m_PluginTable[sel].m_state == PLS_LOADED ){
 						// 2010.08.21 プラグイン名(フォルダ名)の同一性の確認
 						CPlugin* plugin = CPluginManager::getInstance()->GetPlugin(sel);
-						wstring sDirName = to_wchar(plugin->GetFolderName().c_str());
+						wstring sDirName = plugin->GetFolderName().c_str();
 						if( plugin && 0 == auto_stricmp(sDirName.c_str(), m_Common.m_sPlugin.m_PluginTable[sel].m_szName ) ){
 							CDlgPluginOption cDlgPluginOption;
 							cDlgPluginOption.DoModal( ::GetModuleHandle(NULL), hwndDlg, this, sel );
@@ -263,7 +263,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					if (sel >= 0){
 						CPlugin* plugin = CPluginManager::getInstance()->GetPlugin(sel);
 						if (plugin != NULL){
-							::ShellExecute(NULL, _T("Open"), to_wchar(plugin->m_sUrl.c_str()), NULL, NULL, SW_SHOW);
+							::ShellExecute(NULL, _T("Open"), plugin->m_sUrl.c_str(), NULL, NULL, SW_SHOW);
 						}
 					}
 				}
@@ -365,7 +365,7 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 1;
 		if( plugin ){
-			sItem.pszText = const_cast<LPTSTR>( to_wchar(plugin->m_sName.c_str()) );
+			sItem.pszText = const_cast<LPTSTR>( plugin->m_sName.c_str() );
 		}else{
 			sItem.pszText = const_cast<TCHAR*>(_T("-"));
 		}
@@ -612,8 +612,7 @@ static void LoadPluginTemp(CommonSetting& common, CMenuDrawer& cMenuDrawer)
 			int iBitmap = CMenuDrawer::TOOLBAR_ICON_PLUGCOMMAND_DEFAULT - 1;
 			const CPlug* plug = *it;
 			if( !plug->m_sIcon.empty() ){
-				iBitmap = cMenuDrawer.m_pcIcons->Add(
-					to_wchar(plug->m_cPlugin.GetFilePath( to_wchar(plug->m_sIcon.c_str()) ).c_str()) );
+				iBitmap = cMenuDrawer.m_pcIcons->Add( plug->m_cPlugin.GetFilePath( plug->m_sIcon.c_str() ).c_str() );
 			}
 			cMenuDrawer.AddToolButton( iBitmap, plug->GetFunctionCode() );
 		}

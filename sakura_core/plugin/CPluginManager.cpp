@@ -274,7 +274,7 @@ bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, co
 		int		iNo;
 		if (bOk) {
 			for( iNo=0; iNo < MAX_PLUGIN; iNo++ ){
-				if( auto_stricmp( to_wchar( sFolderName.c_str()), to_wchar( plugin_table[iNo].m_szName ) ) == 0 ){
+				if( auto_stricmp( sFolderName.c_str(), to_wchar( plugin_table[iNo].m_szName ) ) == 0 ){
 					isNotInstalled = false;
 					break;
 				}
@@ -321,7 +321,7 @@ bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, co
 		bOk = false;
 	}
 	if (bOk) {
-		int pluginNo = InstallPlugin( common, to_wchar(sFolderName.c_str()), hWndOwner, errMsg, true );
+		int pluginNo = InstallPlugin( common, sFolderName.c_str(), hWndOwner, errMsg, true );
 		if( pluginNo < 0 ){
 			auto_snprintf_s( msg, _countof(msg), LS(STR_PLGMGR_INST_ZIP_ERR), sDispName.c_str(), errMsg.c_str() );
 			bOk = false;

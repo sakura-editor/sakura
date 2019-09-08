@@ -133,7 +133,7 @@ bool CImpExpManager::ImportUI( HINSTANCE hInstance, HWND hwndParent )
 	TCHAR	szPath[_MAX_PATH + 1];
 	szPath[0] = _T('\0');
 	if( !GetFileName().empty() ){
-		auto_strcpy( szPath, to_wchar( GetFullPath().c_str() ));
+		auto_strcpy( szPath, GetFullPath().c_str());
 	}
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 		return false;
@@ -180,7 +180,7 @@ bool CImpExpManager::ExportUI( HINSTANCE hInstance, HWND hwndParent )
 	TCHAR			szPath[_MAX_PATH + 1];
 	szPath[0] = _T('\0');
 	if( !GetFileName().empty() ){
-		auto_strcpy( szPath, to_wchar( GetFullPath().c_str() ));
+		auto_strcpy( szPath, GetFullPath().c_str());
 	}
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
 		return false;
@@ -530,7 +530,7 @@ bool CImpExpType::Export( const wstring& sFileName, wstring& sErrMsg )
 	cProfile.IOProfileData( szSecInfo, szKeyStructureVersion, nStructureVersion );
 
 	// 書き込み
-	if (!cProfile.WriteProfile( to_wchar(sFileName.c_str()), WSTR_TYPE_HEAD )) {
+	if (!cProfile.WriteProfile( sFileName.c_str(), WSTR_TYPE_HEAD )) {
 		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_EXPORT)) + sFileName;
 		return false;
 	}
@@ -592,7 +592,7 @@ bool CImpExpColors::Export( const wstring& sFileName, wstring& sErrMsg )
 	CDataProfile	cProfile;
 	cProfile.SetWritingMode();
 	CShareData_IO::IO_ColorSet( &cProfile, szSecColor, m_ColorInfoArr );
-	if (!cProfile.WriteProfile( to_wchar( sFileName.c_str() ), WSTR_COLORDATA_HEAD3 )) { //Jan. 15, 2001 Stonee
+	if (!cProfile.WriteProfile( sFileName.c_str(), WSTR_COLORDATA_HEAD3 )) { //Jan. 15, 2001 Stonee
 		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_EXPORT)) + sFileName;
 		return false;
 	}
@@ -606,7 +606,7 @@ bool CImpExpColors::Export( const wstring& sFileName, wstring& sErrMsg )
 // インポート
 bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 {
-	CTextInputStream	in( to_wchar( sFileName.c_str() ) );
+	CTextInputStream	in( sFileName.c_str() );
 	if (!in) {
 		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_FILEOPEN)) + sFileName;
 		return false;
@@ -685,7 +685,7 @@ bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 // エクスポート
 bool CImpExpRegex::Export( const wstring& sFileName, wstring& sErrMsg )
 {
-	CTextOutputStream out( to_wchar( sFileName.c_str() ) );
+	CTextOutputStream out( sFileName.c_str() );
 	if(!out){
 		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_FILEOPEN)) + sFileName;
 		return false;
@@ -720,7 +720,7 @@ bool CImpExpKeyHelp::Import( const wstring& sFileName, wstring& sErrMsg )
 {
 	wchar_t			msgBuff[_MAX_PATH + 1];
 
-	CTextInputStream in( to_wchar( sFileName.c_str() ));
+	CTextInputStream in( sFileName.c_str());
 	if (!in) {
 		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_FILEOPEN)) + sFileName;
 		return false;
@@ -829,7 +829,7 @@ bool CImpExpKeyHelp::Import( const wstring& sFileName, wstring& sErrMsg )
 */
 bool CImpExpKeyHelp::Export( const wstring& sFileName, wstring& sErrMsg )
 {
-	CTextOutputStream out( to_wchar( sFileName.c_str() ) );
+	CTextOutputStream out( sFileName.c_str() );
 	if (!out) {
 		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_FILEOPEN)) + sFileName;
 		return false;
@@ -864,7 +864,7 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 	//オープン
 	CDataProfile in;
 	in.SetReadingMode();
-	if (!in.ReadProfile( to_wchar( sFileName.c_str() ))) {
+	if (!in.ReadProfile( sFileName.c_str())) {
 		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_FILEOPEN)) + sFileName;
 		return false;
 	}
@@ -1116,7 +1116,7 @@ bool CImpExpKeyWord::Import( const wstring& sFileName, wstring& sErrMsg )
 {
 	bool			bAddError = false;
 
-	CTextInputStream in(to_wchar(sFileName.c_str()));
+	CTextInputStream in(sFileName.c_str());
 	if (!in) {
 		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_FILEOPEN)) + sFileName;
 		return false;
@@ -1166,7 +1166,7 @@ bool CImpExpKeyWord::Export( const wstring& sFileName, wstring& sErrMsg )
 	int 		nKeyWordNum;
 	int 		i;
 
-	CTextOutputStream out(to_wchar(sFileName.c_str()));
+	CTextOutputStream out(sFileName.c_str());
 	if (!out) {
 		sErrMsg = std::wstring(LSW(STR_IMPEXP_ERR_FILEOPEN)) + sFileName;
 		return false;

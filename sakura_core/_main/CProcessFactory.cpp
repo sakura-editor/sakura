@@ -102,8 +102,7 @@ bool CProcessFactory::ProfileSelect( HINSTANCE hInstance, LPCTSTR lpCmdLine )
 	}else{
 		assert( 0 <= settings.m_nDefaultIndex );
 		if( 0 < settings.m_nDefaultIndex ){
-			CCommandLine::getInstance()->SetProfileName( to_wchar(
-					settings.m_vProfList[settings.m_nDefaultIndex - 1].c_str()) );
+			CCommandLine::getInstance()->SetProfileName( settings.m_vProfList[settings.m_nDefaultIndex - 1].c_str() );
 		}else{
 			CCommandLine::getInstance()->SetProfileName( L"" );
 		}
@@ -111,7 +110,7 @@ bool CProcessFactory::ProfileSelect( HINSTANCE hInstance, LPCTSTR lpCmdLine )
 	}
 	if( bDialog ){
 		if( dlgProf.DoModal( hInstance, NULL, 0 ) ){
-			CCommandLine::getInstance()->SetProfileName( to_wchar(dlgProf.m_strProfileName.c_str()) );
+			CCommandLine::getInstance()->SetProfileName( dlgProf.m_strProfileName.c_str() );
 		}else{
 			return false; // プロファイルマネージャで「閉じる」を選んだ。プロセス終了
 		}

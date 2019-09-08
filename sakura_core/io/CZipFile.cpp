@@ -63,7 +63,7 @@ bool CZipFile::SetZip(const std::wstring& sZipPath)
 	// ZIP Folder設定
 	VariantInit(&var);
 	var.vt = VT_BSTR;
-	var.bstrVal = SysAllocString(to_wchar(sZipPath.c_str()));
+	var.bstrVal = SysAllocString(sZipPath.c_str());
 	hr = psd->NameSpace(var, &pZipFile);
 	if (hr != S_OK) {
 		pZipFile = NULL;
@@ -171,7 +171,7 @@ bool CZipFile::Unzip(const std::wstring sOutPath)
 	// 出力Folder設定
 	VariantInit(&var);
 	var.vt = VT_BSTR;
-	var.bstrVal = SysAllocString(to_wchar(sOutPath.c_str()));
+	var.bstrVal = SysAllocString(sOutPath.c_str());
 	hr = psd->NameSpace(var, &pOutFolder);
 	VariantClear(&var);
 	if (hr != S_OK) {

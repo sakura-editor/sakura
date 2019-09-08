@@ -317,7 +317,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 				HWND hEdit = TreeView_GetEditControl( hwndTreeRes );
 				if (msMenu[ptdi->item.lParam].m_bIsNode) {
 					// ノードのみ有効
-					SetWindowText( hEdit, to_wchar( msMenu[ptdi->item.lParam].m_sName.c_str() ) ) ;
+					SetWindowText( hEdit, msMenu[ptdi->item.lParam].m_sName.c_str() ) ;
 					EditCtl_LimitText( hEdit, MAX_MAIN_MENU_NAME_LEN );
 					// 編集時のメッセージ処理
 					m_wpEdit = (WNDPROC)SetWindowLongPtr( hEdit, GWLP_WNDPROC, (LONG_PTR)WindowProcEdit );
@@ -771,7 +771,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 							InfoMessage( hwndDlg, LS(STR_PROPCOMMAINMENU_OK));
 						}
 						else {
-							WarningMessage( hwndDlg, to_wchar(sErrMsg.c_str()) );
+							WarningMessage( hwndDlg, sErrMsg.c_str() );
 						}
 					}
 					break;

@@ -1579,7 +1579,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 				CWaitCursor cWaitCursor( GetHwnd() );	// カーソルを砂時計にする
 
 				unsigned int nThreadId;
-				LPCTSTR szUrl = to_wchar(wstrOPEN.c_str());
+				LPCTSTR szUrl = wstrOPEN.c_str();
 				LPTSTR szUrlDup = new TCHAR[_tcslen( szUrl ) + 1];
 				_tcscpy( szUrlDup, szUrl );
 				HANDLE hThread = (HANDLE)_beginthreadex( NULL, 0, ShellExecuteProc, (LPVOID)szUrlDup, 0, &nThreadId );

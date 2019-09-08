@@ -126,7 +126,7 @@ LPCTSTR CCodeTypeName::Bracket() const
 	static	std::wstring	sWork;
 	sWork = std::wstring(L"  [") + msCodeSet[m_eCodeType].m_sShort + L"]";	// 変数の定義と値の設定を一緒にやるとバグる様なので分離	// 2013/4/20 Uchi
 
-	return to_wchar( sWork.c_str() );
+	return sWork.c_str();
 }
 
 bool CCodeTypeName::UseBom()

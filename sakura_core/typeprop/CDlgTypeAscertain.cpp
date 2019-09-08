@@ -99,8 +99,8 @@ void CDlgTypeAscertain::SetData( void )
 {
 	// タイプ名設定
 	std::wstring typeNameTo = m_psi->sTypeNameTo + L"(&B)";
-	::SetWindowText( GetItemHwnd( IDC_RADIO_TYPE_TO    ), to_wchar(typeNameTo.c_str()) );
-	::SetWindowText( GetItemHwnd( IDC_STATIC_TYPE_FILE ), to_wchar(m_psi->sTypeNameFile.c_str()) );
+	::SetWindowText( GetItemHwnd( IDC_RADIO_TYPE_TO    ), typeNameTo.c_str() );
+	::SetWindowText( GetItemHwnd( IDC_STATIC_TYPE_FILE ), m_psi->sTypeNameFile.c_str() );
 
 	::CheckDlgButton( GetHwnd(), IDC_RADIO_TYPE_ADD, TRUE );
 

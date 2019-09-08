@@ -142,7 +142,7 @@ public:
 					Wrap(&Result)->Receive(S);
 					return true;
 				}else if( 0 == num ){
-					std::wstring str = to_wchar(m_cPlugin.m_sLangName.c_str());
+					std::wstring str = m_cPlugin.m_sLangName.c_str();
 					SysString S(str.c_str(), str.size());
 					Wrap(&Result)->Receive(S);
 					return true;

@@ -2641,7 +2641,7 @@ bool CEditWnd::InitMenu_Special(HMENU hMenu, EFunctionCode eFunc)
 
 				//コマンドを登録
 				m_cMenuDrawer.MyAppendMenu( hMenuPlugin, MF_BYPOSITION | MF_STRING,
-					(*it)->GetFunctionCode(), to_wchar( (*it)->m_sLabel.c_str() ), _T(""),
+					(*it)->GetFunctionCode(), (*it)->m_sLabel.c_str(), _T(""),
 					TRUE, (*it)->GetFunctionCode() );
 			}
 			bInList = (prevPlugin != NULL);
@@ -3422,7 +3422,7 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 					CNativeW cmemTitle;
 					CNativeW cmemDir;
 					cmemTitle = to_wchar(GetDocument()->m_cDocFile.GetFileName());
-					cmemDir   = to_wchar(GetDocument()->m_cDocFile.GetFilePathClass().GetDirPath().c_str());
+					cmemDir   = GetDocument()->m_cDocFile.GetFilePathClass().GetDirPath().c_str();
 
 					IDataObject *DataObject;
 					IMalloc *Malloc;
@@ -4831,7 +4831,7 @@ void CEditWnd::RegisterPluginCommand( CPlug* plug )
 {
 	int iBitmap = CMenuDrawer::TOOLBAR_ICON_PLUGCOMMAND_DEFAULT - 1;
 	if( !plug->m_sIcon.empty() ){
-		iBitmap = m_cMenuDrawer.m_pcIcons->Add( to_wchar(plug->m_cPlugin.GetFilePath( to_wchar(plug->m_sIcon.c_str()) ).c_str()) );
+		iBitmap = m_cMenuDrawer.m_pcIcons->Add( plug->m_cPlugin.GetFilePath( plug->m_sIcon.c_str() ).c_str() );
 	}
 
 	m_cMenuDrawer.AddToolButton( iBitmap, plug->GetFunctionCode() );
