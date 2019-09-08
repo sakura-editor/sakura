@@ -161,9 +161,6 @@ public:
 	void AppendStringOld( const char* pszData );             //!< バッファの最後にデータを追加する。pszDataはSJIS。
 	const char* GetStringPtrOld() const; //ShiftJISに変換して返す
 
-	//WCHAR
-	const wchar_t* GetStringW() const						{ return GetStringPtr(); }
-
 public:
 	// -- -- staticインターフェース -- -- //
 	static CLogicInt GetSizeOfChar( const wchar_t* pData, int nDataLen, int nIdx ); //!< 指定した位置の文字がwchar_t何個分かを返す
