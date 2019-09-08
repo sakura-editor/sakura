@@ -406,9 +406,6 @@
     <ClInclude Include="..\sakura_core\mem\CNativeA.h">
       <Filter>Cpp Source Files\mem</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\mem\CNativeT.h">
-      <Filter>Cpp Source Files\mem</Filter>
-    </ClInclude>
     <ClInclude Include="..\sakura_core\mem\CNativeW.h">
       <Filter>Cpp Source Files\mem</Filter>
     </ClInclude>
@@ -1093,9 +1090,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\sakura_core\Funccode_x.hsrc">
-      <Filter>Other Files</Filter>
-    </None>
     <None Include="..\resource\auto_scroll_center.cur">
       <Filter>Resource Files</Filter>
     </None>
