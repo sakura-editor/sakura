@@ -33,7 +33,7 @@ class CNativeW;
 wchar_t *wcsncpy_ex(wchar_t *dst, size_t dst_count, const wchar_t* src, size_t src_count);
 wchar_t *wcs_pushW(wchar_t *dst, size_t dst_count, const wchar_t* src, size_t src_count);
 wchar_t *wcs_pushW(wchar_t *dst, size_t dst_count, const wchar_t* src);
-#define wcs_pushT wcs_pushW
+#define wcs_pushW wcs_pushW
 
 int AddLastChar( TCHAR* pszPath, int nMaxLen, TCHAR c );/* 2003.06.24 Moca 最後の文字が指定された文字でないときは付加する */
 int LimitStringLengthW( const WCHAR* pszData, int nDataLength, int nLimitLength, CNativeW& cmemDes );/* データを指定「文字数」以内に切り詰める */

@@ -158,7 +158,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			else {
 				// 2002.10.13 Moca ファイル名(パスなし)を取得。日本語対応
 				//	万一\\が末尾にあってもその後ろには\0があるのでアクセス違反にはならない。
-				q = wcs_pushT( q, q_max - q, pcDoc->m_cDocFile.GetFileName());
+				q = wcs_pushW( q, q_max - q, pcDoc->m_cDocFile.GetFileName());
 				++p;
 			}
 			break;
@@ -217,7 +217,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, met.cbSize, &met, 0);
 				CDCFont dcFont(met.lfCaptionFont, GetMainWindow()->GetHwnd());
 				CFileNameManager::getInstance()->GetTransformFileNameFast( pcDoc->m_cDocFile.GetFilePath(), szText, 1023, dcFont.GetHDC(), true );
-				q = wcs_pushT( q, q_max - q, szText);
+				q = wcs_pushW( q, q_max - q, szText);
 				++p;
 			}
 			break;
@@ -265,7 +265,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, met.cbSize, &met, 0);
 				CDCFont dcFont(met.lfCaptionFont, GetMainWindow()->GetHwnd());
 				CFileNameManager::getInstance()->GetTransformFileNameFast( to_tchar(buff), szText, _countof(szText)-1, dcFont.GetHDC(), true );
-				q = wcs_pushT( q, q_max - q, szText);
+				q = wcs_pushW( q, q_max - q, szText);
 			}
 			++p;
 			break;
@@ -294,7 +294,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			{
 				const STypeConfig&	sTypeCongig = pcDoc->m_cDocType.GetDocumentAttribute();
 				if (sTypeCongig.m_nIdx > 0) {	// 基本は表示しない
-					q = wcs_pushT( q, q_max - q, sTypeCongig.m_szTypeName);
+					q = wcs_pushW( q, q_max - q, sTypeCongig.m_szTypeName);
 				}
 				++p;
 			}
@@ -319,7 +319,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			{
 				PRINTSETTING*	ps = &GetDllShareData().m_PrintSettingArr[
 					 pcDoc->m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting];
-				q = wcs_pushT( q, q_max - q, ps->m_szPrintSettingName);
+				q = wcs_pushW( q, q_max - q, ps->m_szPrintSettingName);
 				++p;
 			}
 			break;
@@ -357,7 +357,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				SYSTEMTIME systime;
 				::GetLocalTime( &systime );
 				CFormatManager().MyGetDateFormat( systime, szText, _countof( szText ) - 1 );
-				q = wcs_pushT( q, q_max - q, szText);
+				q = wcs_pushW( q, q_max - q, szText);
 				++p;
 			}
 			break;
@@ -367,7 +367,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				SYSTEMTIME systime;
 				::GetLocalTime( &systime );
 				CFormatManager().MyGetTimeFormat( systime, szText, _countof( szText ) - 1 );
-				q = wcs_pushT( q, q_max - q, szText);
+				q = wcs_pushW( q, q_max - q, szText);
 				++p;
 			}
 			break;
@@ -409,7 +409,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 					szText,
 					_countof( szText ) - 1
 				);
-				q = wcs_pushT( q, q_max - q, szText);
+				q = wcs_pushW( q, q_max - q, szText);
 				++p;
 			}
 			else {
@@ -425,7 +425,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 					szText,
 					_countof( szText ) - 1
 				);
-				q = wcs_pushT( q, q_max - q, szText);
+				q = wcs_pushW( q, q_max - q, szText);
 				++p;
 			}
 			else {
@@ -470,7 +470,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				SFilePath	szPath;
 
 				::GetModuleFileName( NULL, szPath, _countof2(szPath) );
-				q = wcs_pushT( q, q_max - q, szPath );
+				q = wcs_pushW( q, q_max - q, szPath );
 				++p;
 			}
 			break;
@@ -480,7 +480,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				TCHAR	szPath[_MAX_PATH + 1];
 				std::tstring strProfileName = to_tchar(CCommandLine::getInstance()->GetProfileName());
 				CFileNameManager::getInstance()->GetIniFileName( szPath, strProfileName.c_str() );
-				q = wcs_pushT( q, q_max - q, szPath );
+				q = wcs_pushW( q, q_max - q, szPath );
 				++p;
 			}
 			break;
@@ -493,12 +493,12 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				case INVALID_MACRO_IDX:
 					break;
 				case TEMP_KEYMACRO:
-					q = wcs_pushT( q, q_max - q, pcSMacroMgr->GetFile(TEMP_KEYMACRO) );
+					q = wcs_pushW( q, q_max - q, pcSMacroMgr->GetFile(TEMP_KEYMACRO) );
 					break;
 				case STAND_KEYMACRO:
 					{
 						TCHAR* pszMacroFilePath = GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName;
-						q = wcs_pushT( q, q_max - q, pszMacroFilePath );
+						q = wcs_pushW( q, q_max - q, pszMacroFilePath );
 					}
 					break;
 				default:
@@ -506,7 +506,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 						TCHAR szMacroFilePath[_MAX_PATH * 2];
 						int n = CShareData::getInstance()->GetMacroFilename( pcSMacroMgr->GetCurrentIdx(), szMacroFilePath, _countof(szMacroFilePath) );
 						if ( 0 < n ){
-							q = wcs_pushT( q, q_max - q, szMacroFilePath );
+							q = wcs_pushW( q, q_max - q, szMacroFilePath );
 						}
 					}
 					break;
