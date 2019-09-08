@@ -47,6 +47,7 @@ public:
 	CMemory() noexcept;
 	CMemory(const void* pData, int nDataLenBytes);
 	CMemory(const CMemory& rhs);
+	CMemory(CMemory&& other) noexcept;
 	// デストラクタを仮想にすると仮想関数テーブルへのポインタを持つ為にインスタンスの容量が増えてしまうので仮想にしない
 	// 仮想デストラクタでは無いので派生クラスでメンバー変数を追加しない事
 	~CMemory();
@@ -77,6 +78,13 @@ public:
 		}
 		return *this;
 	}
+	//! ムーブ代入演算子
+	CMemory& operator = (CMemory&& rhs) noexcept {
+		if (this != &rhs) {
+			swap(rhs);
+		}
+		return *this;
+	}
 
 	// 比較
 	static int IsEqual(const CMemory& cmem1, const CMemory& cmem2);	/* 等しい内容か */
@@ -95,7 +103,7 @@ protected:
 public:
 	void _AppendSz(const char* str);
 	void _SetRawLength(int nLength);
-	void swap( CMemory& left ){
+	void swap( CMemory& left ) noexcept {
 		std::swap( m_nDataBufSize, left.m_nDataBufSize );
 		std::swap( m_pRawData, left.m_pRawData );
 		std::swap( m_nRawLen, left.m_nRawLen );

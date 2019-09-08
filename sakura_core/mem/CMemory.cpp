@@ -72,6 +72,15 @@ CMemory::CMemory(const CMemory& rhs)
 	SetRawData(rhs);
 }
 
+/*!
+ * @brief ムーブコンストラクタ
+ */
+CMemory::CMemory(CMemory&& other) noexcept
+	: CMemory()
+{
+	swap(other);
+}
+
 CMemory::~CMemory()
 {
 	_Empty();
