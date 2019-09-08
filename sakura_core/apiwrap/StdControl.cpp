@@ -5,15 +5,7 @@
 
 namespace ApiWrap{
 
-	LRESULT List_GetText(HWND hwndList, int nIndex, ACHAR* str)
-	{
-		LRESULT nCount = SendMessage( hwndList, LB_GETTEXTLEN, (WPARAM)nIndex, (LPARAM)0);
-		if( nCount == LB_ERR )
-			return LB_ERR;
-		return SendMessage( hwndList, LB_GETTEXT, (WPARAM)nIndex, (LPARAM)(TCHAR*)TcharReceiver<ACHAR>(str,nCount+1) );	// +1: NULL 文字分
-	}
-
-	LRESULT List_GetText(HWND hwndList, int nIndex, WCHAR* str)
+	LRESULT List_GetText(HWND hwndList, int nIndex, LPTSTR str)
 	{
 		LRESULT nCount = SendMessage( hwndList, LB_GETTEXTLEN, (WPARAM)nIndex, (LPARAM)0);
 		if( nCount == LB_ERR )
@@ -21,14 +13,9 @@ namespace ApiWrap{
 		return SendMessage( hwndList, LB_GETTEXT, (WPARAM)nIndex, (LPARAM)(TCHAR*)TcharReceiver<WCHAR>(str,nCount+1) );	// +1: NULL 文字分
 	}
 
-	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, ACHAR* str, int nMaxCount)
+	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, LPTSTR str, int nMaxCount)
 	{
-		return GetDlgItemText(hwndDlg, nIDDlgItem, TcharReceiver<ACHAR>(str,nMaxCount), nMaxCount);
-	}
-
-	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, WCHAR* str, int nMaxCount)
-	{
-		return GetDlgItemText(hwndDlg, nIDDlgItem, TcharReceiver<WCHAR>(str,nMaxCount), nMaxCount);
+		return GetDlgItemText(hwndDlg, nIDDlgItem, TcharReceiver<TCHAR>(str,nMaxCount), nMaxCount);
 	}
 
 	bool TreeView_GetItemTextVector(HWND hwndTree, TVITEM& item, std::vector<TCHAR>& vecStr)
