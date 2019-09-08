@@ -53,18 +53,18 @@ CRecentGrepFile::CRecentGrepFile()
 
 	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
-const TCHAR* CRecentGrepFile::GetItemText( int nIndex ) const
+const WCHAR* CRecentGrepFile::GetItemText( int nIndex ) const
 {
 	return *GetItem(nIndex);
 }
 
-bool CRecentGrepFile::DataToReceiveType( LPCTSTR* dst, const CGrepFileString* src ) const
+bool CRecentGrepFile::DataToReceiveType( LPCWSTR* dst, const CGrepFileString* src ) const
 {
 	*dst = *src;
 	return true;
 }
 
-bool CRecentGrepFile::TextToDataType( CGrepFileString* dst, LPCTSTR pszText ) const
+bool CRecentGrepFile::TextToDataType( CGrepFileString* dst, LPCWSTR pszText ) const
 {
 	if( false == ValidateReceiveType(pszText) ){
 		return false;
@@ -73,17 +73,17 @@ bool CRecentGrepFile::TextToDataType( CGrepFileString* dst, LPCTSTR pszText ) co
 	return true;
 }
 
-int CRecentGrepFile::CompareItem( const CGrepFileString* p1, LPCTSTR p2 ) const
+int CRecentGrepFile::CompareItem( const CGrepFileString* p1, LPCWSTR p2 ) const
 {
 	return _tcsicmp(*p1,p2);
 }
 
-void CRecentGrepFile::CopyItem( CGrepFileString* dst, LPCTSTR src ) const
+void CRecentGrepFile::CopyItem( CGrepFileString* dst, LPCWSTR src ) const
 {
 	_tcscpy(*dst,src);
 }
 
-bool CRecentGrepFile::ValidateReceiveType( LPCTSTR p ) const
+bool CRecentGrepFile::ValidateReceiveType( LPCWSTR p ) const
 {
 	if( GetTextMaxLength() <= _tcslen(p) ){
 		return false;

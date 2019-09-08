@@ -39,7 +39,7 @@
 class CMutex
 {
 public:
-	CMutex( BOOL bInitialOwner, LPCTSTR pszName, LPSECURITY_ATTRIBUTES psa = NULL )
+	CMutex( BOOL bInitialOwner, LPCWSTR pszName, LPSECURITY_ATTRIBUTES psa = NULL )
 	{
 		m_hObj = ::CreateMutex( psa, bInitialOwner, pszName );
 	}

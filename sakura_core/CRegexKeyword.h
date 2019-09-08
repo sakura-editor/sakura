@@ -48,7 +48,7 @@ typedef struct RegexInfo_t {
 */
 class CRegexKeyword : public CBregexp {
 public:
-	CRegexKeyword(LPCTSTR);
+	CRegexKeyword(LPCWSTR);
 	~CRegexKeyword();
 
 	//! 行検索開始

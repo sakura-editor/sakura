@@ -39,7 +39,7 @@ void CViewCommander::Command_RECKEYMACRO( void )
 		GetDllShareData().m_sFlags.m_bRecordingKeyMacro = FALSE;
 		GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = NULL;							/* キーボードマクロを記録中のウィンドウ */
 		//@@@ 2002.1.24 YAZAKI キーマクロをマクロ用フォルダに「RecKey.mac」という名で保存
-		TCHAR szInitDir[MAX_PATH];
+		WCHAR szInitDir[MAX_PATH];
 		int nRet;
 		// 2003.06.23 Moca 記録用キーマクロのフルパスをCShareData経由で取得
 		nRet = CShareData::getInstance()->GetMacroFilename( -1, szInitDir, MAX_PATH ); 
@@ -88,9 +88,9 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	}
 
 	CDlgOpenFile	cDlgOpenFile;
-	TCHAR			szPath[_MAX_PATH + 1];
-	TCHAR			szInitDir[_MAX_PATH + 1];
-	szPath[0] = _T('\0');
+	WCHAR			szPath[_MAX_PATH + 1];
+	WCHAR			szInitDir[_MAX_PATH + 1];
+	szPath[0] = L'\0';
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	if( _IS_REL_PATH( GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER ) ){
@@ -102,7 +102,7 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	cDlgOpenFile.Create(
 		G_AppInstance(),
 		m_pCommanderView->GetHwnd(),
-		_T("*.mac"),
+		L"*.mac",
 		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
@@ -131,10 +131,10 @@ void CViewCommander::Command_LOADKEYMACRO( void )
 	GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
 	CDlgOpenFile	cDlgOpenFile;
-	TCHAR			szPath[_MAX_PATH + 1];
-	TCHAR			szInitDir[_MAX_PATH + 1];
-	const TCHAR*		pszFolder;
-	szPath[0] = _T('\0');
+	WCHAR			szPath[_MAX_PATH + 1];
+	WCHAR			szInitDir[_MAX_PATH + 1];
+	const WCHAR*		pszFolder;
+	szPath[0] = L'\0';
 	pszFolder = GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER;
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
@@ -149,7 +149,7 @@ void CViewCommander::Command_LOADKEYMACRO( void )
 		m_pCommanderView->GetHwnd(),
 // 2005/02/20 novice デフォルトの拡張子変更
 // 2005/07/13 novice 多様なマクロをサポートしているのでデフォルトは全て表示にする
-		_T("*.*"),
+		L"*.*",
 		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath, EFITER_MACRO ) ){
@@ -205,11 +205,11 @@ void CViewCommander::Command_EXECKEYMACRO( void )
 void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW, const WCHAR* pszTypeW )
 {
 	CDlgOpenFile	cDlgOpenFile;
-	TCHAR			szPath[_MAX_PATH + 1];
-	TCHAR			szInitDir[_MAX_PATH + 1];	//ファイル選択ダイアログの初期フォルダ
-	const TCHAR*	pszFolder;					//マクロフォルダ
-	const TCHAR*	pszPath = NULL;				//第1引数をTCHAR*に変換した文字列
-	const TCHAR*	pszType = NULL;				//第2引数をTCHAR*に変換した文字列
+	WCHAR			szPath[_MAX_PATH + 1];
+	WCHAR			szInitDir[_MAX_PATH + 1];	//ファイル選択ダイアログの初期フォルダ
+	const WCHAR*	pszFolder;					//マクロフォルダ
+	const WCHAR*	pszPath = NULL;				//第1引数をTCHAR*に変換した文字列
+	const WCHAR*	pszType = NULL;				//第2引数をTCHAR*に変換した文字列
 	HWND			hwndRecordingKeyMacro = NULL;
 
 	if ( pszPathW != NULL ) {
@@ -219,7 +219,7 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW, const WCHAR* p
 
 	} else {
 		// ファイルが指定されていない場合、ダイアログを表示する
-		szPath[0] = _T('\0');
+		szPath[0] = L'\0';
 		pszFolder = GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER;
 
 		if( _IS_REL_PATH( pszFolder ) ){
@@ -231,7 +231,7 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW, const WCHAR* p
 		cDlgOpenFile.Create(
 			G_AppInstance(),
 			m_pCommanderView->GetHwnd(),
-			_T("*.*"),
+			L"*.*",
 			szInitDir
 		);
 		if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath, EFITER_MACRO ) ){

@@ -568,7 +568,7 @@ int CBregexp::Replace(const wchar_t *szTarget, int nLen, int nStart)
 }
 //>> 2002/03/27 Azumaiya
 
-const TCHAR* CBregexp::GetLastMessage() const
+const WCHAR* CBregexp::GetLastMessage() const
 {
 	return to_wchar(m_szMsg);
 }
@@ -592,13 +592,13 @@ bool InitRegexp(
 	//	From Here 2007.08.12 genta
 	DLLSHAREDATA* pShareData = &GetDllShareData();
 
-	LPCTSTR RegexpDll = pShareData->m_Common.m_sSearch.m_szRegexpLib;
+	LPCWSTR RegexpDll = pShareData->m_Common.m_sSearch.m_szRegexpLib;
 	//	To Here 2007.08.12 genta
 
 	EDllResult eDllResult = rRegexp.InitDll(RegexpDll);
 	if( DLL_SUCCESS != eDllResult ){
 		if( bShowMessage ){
-			LPCTSTR pszMsg = _T("");
+			LPCWSTR pszMsg = L"";
 			if(eDllResult==DLL_LOADFAILURE){
 				pszMsg = LS(STR_BREGONIG_LOAD);
 			}
@@ -633,7 +633,7 @@ bool CheckRegexpVersion(
 
 	if( !InitRegexp( hWnd, cRegexp, bShowMessage ) ){
 		if( hWnd != NULL ){
-			::DlgItem_SetText( hWnd, nCmpId, _T(" "));
+			::DlgItem_SetText( hWnd, nCmpId, L" ");
 		}
 		return false;
 	}

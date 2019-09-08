@@ -53,9 +53,9 @@ CRecentEditNode::CRecentEditNode()
 
 	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
-const TCHAR* CRecentEditNode::GetItemText( int nIndex ) const
+const WCHAR* CRecentEditNode::GetItemText( int nIndex ) const
 {
-	return _T("WIN"); //※テキスト情報は無い (GetWindowTextしてあげても良いけど、この関数は実行されないので、意味は無い)
+	return L"WIN"; //※テキスト情報は無い (GetWindowTextしてあげても良いけど、この関数は実行されないので、意味は無い)
 }
 
 bool CRecentEditNode::DataToReceiveType( const EditNode** dst, const EditNode* src ) const
@@ -64,7 +64,7 @@ bool CRecentEditNode::DataToReceiveType( const EditNode** dst, const EditNode* s
 	return true;
 }
 
-bool CRecentEditNode::TextToDataType( EditNode* dst, LPCTSTR pszText ) const
+bool CRecentEditNode::TextToDataType( EditNode* dst, LPCWSTR pszText ) const
 {
 	return false;
 }
@@ -109,6 +109,6 @@ void CRecentEditNode::DeleteItemByHwnd(HWND hwnd)
 		DeleteItem(n);
 	}
 	else{
-		DEBUG_TRACE( _T("DeleteItemByHwnd失敗\n") );
+		DEBUG_TRACE( L"DeleteItemByHwnd失敗\n" );
 	}
 }

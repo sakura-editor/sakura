@@ -20,8 +20,8 @@ CFuncInfo::CFuncInfo(
 	CLogicInt		nFuncColCRLF,		//!< 関数のある桁(CRLF単位)
 	CLayoutInt		nFuncLineLAYOUT,	//!< 関数のある行(折り返し単位)
 	CLayoutInt		nFuncColLAYOUT,		//!< 関数のある桁(折り返し単位)
-	const TCHAR*	pszFuncName,		//!< 関数名
-	const TCHAR*	pszFileName,
+	const WCHAR*	pszFuncName,		//!< 関数名
+	const WCHAR*	pszFileName,
 	int				nInfo				//!< 付加情報
 )
 : m_nDepth(0) // 深さ

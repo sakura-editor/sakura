@@ -37,9 +37,9 @@
 
 struct	MYDEVMODE {
 	BOOL	m_bPrinterNotFound;	/* プリンタがなかったフラグ */
-	TCHAR	m_szPrinterDriverName[_MAX_PATH + 1];	// プリンタドライバ名
-	TCHAR	m_szPrinterDeviceName[_MAX_PATH + 1];	// プリンタデバイス名
-	TCHAR	m_szPrinterOutputName[_MAX_PATH + 1];	// プリンタポート名
+	WCHAR	m_szPrinterDriverName[_MAX_PATH + 1];	// プリンタドライバ名
+	WCHAR	m_szPrinterDeviceName[_MAX_PATH + 1];	// プリンタデバイス名
+	WCHAR	m_szPrinterOutputName[_MAX_PATH + 1];	// プリンタポート名
 	DWORD	dmFields;
 	short	dmOrientation;
 	short	dmPaperSize;
@@ -103,7 +103,7 @@ struct PAPER_INFO {
 	int				m_nId;			//!< 用紙ID
 	short			m_nAllWidth;	//!< 幅 (0.1mm単位)
 	short			m_nAllHeight;	//!< 高さ (0.1mm単位)
-	const TCHAR*	m_pszName;		//!< 用紙名称
+	const WCHAR*	m_pszName;		//!< 用紙名称
 };
 
 struct PRINTSETTING;
@@ -115,9 +115,9 @@ struct PRINTSETTING;
 #define HEADER_MAX	100
 #define FOOTER_MAX	HEADER_MAX
 struct PRINTSETTING {
-	TCHAR			m_szPrintSettingName[32 + 1];		/*!< 印刷設定の名前 */
-	TCHAR			m_szPrintFontFaceHan[LF_FACESIZE];	/*!< 印刷フォント */
-	TCHAR			m_szPrintFontFaceZen[LF_FACESIZE];	/*!< 印刷フォント */
+	WCHAR			m_szPrintSettingName[32 + 1];		/*!< 印刷設定の名前 */
+	WCHAR			m_szPrintFontFaceHan[LF_FACESIZE];	/*!< 印刷フォント */
+	WCHAR			m_szPrintFontFaceZen[LF_FACESIZE];	/*!< 印刷フォント */
 	int				m_nPrintFontWidth;					/*!< 印刷フォント幅(1/10mm単位単位) */
 	int				m_nPrintFontHeight;					/*!< 印刷フォント高さ(1/10mm単位単位) */
 	int				m_nPrintDansuu;						/*!< 段組の段数 */
@@ -167,9 +167,9 @@ public:
 	/*
 	||	static関数群
 	*/
-	static void SettingInitialize( PRINTSETTING&, const TCHAR* settingName );
+	static void SettingInitialize( PRINTSETTING&, const WCHAR* settingName );
 
-	static TCHAR* GetPaperName( int , TCHAR* );	/* 用紙の名前を取得 */
+	static WCHAR* GetPaperName( int , WCHAR* );	/* 用紙の名前を取得 */
 	/* 用紙の幅、高さ */
 	static BOOL GetPaperSize(
 		short*		pnPaperAllWidth,
@@ -204,15 +204,15 @@ public:
 		short*		pnPaperHeight,		/* 用紙印刷可能高さ */
 		short*		pnPaperOffsetLeft,	/* 用紙余白左端 */
 		short*		pnPaperOffsetTop,	/* 用紙余白上端 */
-		TCHAR*		pszErrMsg			/* エラーメッセージ格納場所 */
+		WCHAR*		pszErrMsg			/* エラーメッセージ格納場所 */
 	);
 
 	/* 印刷 ジョブ開始 */
 	BOOL PrintOpen(
-		TCHAR*		pszJobName,
+		WCHAR*		pszJobName,
 		MYDEVMODE*	pMYDEVMODE,
 		HDC*		phdc,
-		TCHAR*		pszErrMsg		/* エラーメッセージ格納場所 */
+		WCHAR*		pszErrMsg		/* エラーメッセージ格納場所 */
 	);
 	void PrintStartPage(HDC hdc);	/* 印刷 ページ開始 */
 	void PrintEndPage(HDC hdc);	/* 印刷 ページ終了 */
@@ -223,7 +223,7 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	// DC作成する(処理をまとめた) 2003.05.02 かろと
-	HDC CreateDC( MYDEVMODE *pMYDEVMODE, TCHAR *pszErrMsg);
+	HDC CreateDC( MYDEVMODE *pMYDEVMODE, WCHAR *pszErrMsg);
 	
 	static const PAPER_INFO* FindPaperInfo( int id );
 private:

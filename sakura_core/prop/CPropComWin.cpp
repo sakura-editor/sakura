@@ -113,7 +113,7 @@ INT_PTR CPropWin::DispatchEvent(
 				OnHelp( hwndDlg, IDD_PROP_WIN );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE( _T("Window PSN_KILLACTIVE\n") );
+//				MYTRACE( L"Window PSN_KILLACTIVE\n" );
 				/* ダイアログデータの取得 Window */
 				GetData( hwndDlg );
 				return TRUE;

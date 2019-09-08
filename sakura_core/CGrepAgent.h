@@ -73,7 +73,7 @@ public:
 	ECallbackResult OnBeforeClose();
 	void OnAfterSave(const SSaveInfo& sSaveInfo);
 
-	static void CreateFolders( const TCHAR* pszPath, std::vector<std::wstring>& vPaths );
+	static void CreateFolders( const WCHAR* pszPath, std::vector<std::wstring>& vPaths );
 	static std::wstring ChopYen( const std::wstring& str );
 	void AddTail( CEditView* pcEditView, const CNativeW& cmem, bool bAddStdout );
 
@@ -112,8 +112,8 @@ private:
 		CGrepEnumKeys&			cGrepEnumKeys,		//!< [in] 検索対象ファイルパターン(!で除外指定)
 		CGrepEnumFiles&			cGrepExceptAbsFiles,
 		CGrepEnumFolders&		cGrepExceptAbsFolders,
-		const TCHAR*			pszPath,			//!< [in] 検索対象パス
-		const TCHAR*			pszBasePath,		//!< [in] 検索対象パス(ベース)
+		const WCHAR*			pszPath,			//!< [in] 検索対象パス
+		const WCHAR*			pszBasePath,		//!< [in] 検索対象パス(ベース)
 		const SSearchOption&	sSearchOption,		//!< [in] 検索オプション
 		const SGrepOption&		sGrepOption,		//!< [in] Grepオプション
 		const CSearchStringPattern& pattern,		//!< [in] 検索パターン
@@ -130,16 +130,16 @@ private:
 		CEditView*				pcViewDst,
 		CDlgCancel*				pcDlgCancel,
 		const wchar_t*			pszKey,
-		const TCHAR*			pszFile,
+		const WCHAR*			pszFile,
 		const SSearchOption&	sSearchOption,
 		const SGrepOption&		sGrepOption,
 		const CSearchStringPattern& pattern,
 		CBregexp*				pRegexp,		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 		int*					pnHitCount,
-		const TCHAR*			pszFullPath,
-		const TCHAR*			pszBaseFolder,
-		const TCHAR*			pszFolder,
-		const TCHAR*			pszRelPath,
+		const WCHAR*			pszFullPath,
+		const WCHAR*			pszBaseFolder,
+		const WCHAR*			pszFolder,
+		const WCHAR*			pszRelPath,
 		bool&					bOutputBaseFolder,
 		bool&					bOutputFolderName,
 		CNativeW&				cmemMessage,
@@ -151,16 +151,16 @@ private:
 		CDlgCancel*				pcDlgCancel,
 		const wchar_t*			pszKey,
 		const CNativeW&			cmGrepReplace,
-		const TCHAR*			pszFile,
+		const WCHAR*			pszFile,
 		const SSearchOption&	sSearchOption,
 		const SGrepOption&		sGrepOption,
 		const CSearchStringPattern& pattern,
 		CBregexp*				pRegexp,
 		int*					pnHitCount,
-		const TCHAR*			pszFullPath,
-		const TCHAR*			pszBaseFolder,
-		const TCHAR*			pszFolder,
-		const TCHAR*			pszRelPath,
+		const WCHAR*			pszFullPath,
+		const WCHAR*			pszBaseFolder,
+		const WCHAR*			pszFolder,
+		const WCHAR*			pszRelPath,
 		bool&					bOutputBaseFolder,
 		bool&					bOutputFolderName,
 		CNativeW&				cmemMessage,
@@ -172,8 +172,8 @@ private:
 		// データ格納先
 		CNativeW&		cmemMessage,
 		// マッチしたファイルの情報
-		const TCHAR*	pszFilePath,	//	フルパス or 相対パス
-		const TCHAR*	pszCodeName,	//	文字コード情報"[SJIS]"とか
+		const WCHAR*	pszFilePath,	//	フルパス or 相対パス
+		const WCHAR*	pszCodeName,	//	文字コード情報"[SJIS]"とか
 		// マッチした行の情報
 		LONGLONG		nLine,			//	マッチした行番号
 		int				nColumn,		//	マッチした桁番号

@@ -115,7 +115,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 			auto dlgHeight = btnRect.bottom - rc.top + DpiScaleY(15);
 			SetWindowPos( hwndDlg, NULL, 0, 0, dlgWidth, dlgHeight, SWP_NOZORDER|SWP_NOMOVE );
 			std::wstring title = LS(STR_PROPCOMMON);
-			title += _T(" - ");
+			title += L" - ";
 			title += LS(STR_PROPCOMMON_KEYWORD);
 			SetWindowText( hwndDlg, title.c_str() );
 		}
@@ -133,7 +133,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 		lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		lvc.fmt = LVCFMT_LEFT;
 		lvc.cx = rc.right - rc.left;
-		lvc.pszText = const_cast<TCHAR*>(_T(""));
+		lvc.pszText = const_cast<WCHAR*>(L"");
 		lvc.iSubItem = 0;
 		ListView_InsertColumn( hwndLIST_KEYWORD, 0, &lvc );
 
@@ -154,41 +154,41 @@ INT_PTR CPropKeyword::DispatchEvent(
 		if( hwndLIST_KEYWORD == pNMHDR->hwndFrom ){
 			switch( pNMHDR->code ){
 			case NM_DBLCLK:
-//				MYTRACE( _T("NM_DBLCLK     \n") );
+//				MYTRACE( L"NM_DBLCLK     \n" );
 				/* リスト中で選択されているキーワードを編集する */
 				Edit_List_KeyWord( hwndDlg, hwndLIST_KEYWORD );
 				return TRUE;
 			case LVN_BEGINLABELEDIT:
 #ifdef _DEBUG
-				MYTRACE( _T("LVN_BEGINLABELEDIT\n") );
-												MYTRACE( _T("	plvi->mask =[%xh]\n"), plvi->mask );
-												MYTRACE( _T("	plvi->iItem =[%d]\n"), plvi->iItem );
-												MYTRACE( _T("	plvi->iSubItem =[%d]\n"), plvi->iSubItem );
-				if (plvi->mask & LVIF_STATE)	MYTRACE( _T("	plvi->state =[%xf]\n"), plvi->state );
-												MYTRACE( _T("	plvi->stateMask =[%xh]\n"), plvi->stateMask );
-				if (plvi->mask & LVIF_TEXT)		MYTRACE( _T("	plvi->pszText =[%s]\n"), plvi->pszText );
-												MYTRACE( _T("	plvi->cchTextMax=[%d]\n"), plvi->cchTextMax );
-				if (plvi->mask & LVIF_IMAGE)	MYTRACE( _T("	plvi->iImage=[%d]\n"), plvi->iImage );
-				if (plvi->mask & LVIF_PARAM)	MYTRACE( _T("	plvi->lParam=[%xh(%d)]\n"), plvi->lParam, plvi->lParam );
+				MYTRACE( L"LVN_BEGINLABELEDIT\n" );
+												MYTRACE( L"	plvi->mask =[%xh]\n", plvi->mask );
+												MYTRACE( L"	plvi->iItem =[%d]\n", plvi->iItem );
+												MYTRACE( L"	plvi->iSubItem =[%d]\n", plvi->iSubItem );
+				if (plvi->mask & LVIF_STATE)	MYTRACE( L"	plvi->state =[%xf]\n", plvi->state );
+												MYTRACE( L"	plvi->stateMask =[%xh]\n", plvi->stateMask );
+				if (plvi->mask & LVIF_TEXT)		MYTRACE( L"	plvi->pszText =[%s]\n", plvi->pszText );
+												MYTRACE( L"	plvi->cchTextMax=[%d]\n", plvi->cchTextMax );
+				if (plvi->mask & LVIF_IMAGE)	MYTRACE( L"	plvi->iImage=[%d]\n", plvi->iImage );
+				if (plvi->mask & LVIF_PARAM)	MYTRACE( L"	plvi->lParam=[%xh(%d)]\n", plvi->lParam, plvi->lParam );
 #endif
 				return TRUE;
 			case LVN_ENDLABELEDIT:
 #ifdef _DEBUG
-				MYTRACE( _T("LVN_ENDLABELEDIT\n") );
-												MYTRACE( _T("	plvi->mask =[%xh]\n"), plvi->mask );
-												MYTRACE( _T("	plvi->iItem =[%d]\n"), plvi->iItem );
-												MYTRACE( _T("	plvi->iSubItem =[%d]\n"), plvi->iSubItem );
-				if (plvi->mask & LVIF_STATE)	MYTRACE( _T("	plvi->state =[%xf]\n"), plvi->state );
-												MYTRACE( _T("	plvi->stateMask =[%xh]\n"), plvi->stateMask );
-				if (plvi->mask & LVIF_TEXT)		MYTRACE( _T("	plvi->pszText =[%s]\n"), plvi->pszText  );
-												MYTRACE( _T("	plvi->cchTextMax=[%d]\n"), plvi->cchTextMax );
-				if (plvi->mask & LVIF_IMAGE)	MYTRACE( _T("	plvi->iImage=[%d]\n"), plvi->iImage );
-				if (plvi->mask & LVIF_PARAM)	MYTRACE( _T("	plvi->lParam=[%xh(%d)]\n"), plvi->lParam, plvi->lParam );
+				MYTRACE( L"LVN_ENDLABELEDIT\n" );
+												MYTRACE( L"	plvi->mask =[%xh]\n", plvi->mask );
+												MYTRACE( L"	plvi->iItem =[%d]\n", plvi->iItem );
+												MYTRACE( L"	plvi->iSubItem =[%d]\n", plvi->iSubItem );
+				if (plvi->mask & LVIF_STATE)	MYTRACE( L"	plvi->state =[%xf]\n", plvi->state );
+												MYTRACE( L"	plvi->stateMask =[%xh]\n", plvi->stateMask );
+				if (plvi->mask & LVIF_TEXT)		MYTRACE( L"	plvi->pszText =[%s]\n", plvi->pszText  );
+												MYTRACE( L"	plvi->cchTextMax=[%d]\n", plvi->cchTextMax );
+				if (plvi->mask & LVIF_IMAGE)	MYTRACE( L"	plvi->iImage=[%d]\n", plvi->iImage );
+				if (plvi->mask & LVIF_PARAM)	MYTRACE( L"	plvi->lParam=[%xh(%d)]\n", plvi->lParam, plvi->lParam );
 #endif
 				if( NULL == plvi->pszText ){
 					return TRUE;
 				}
-				if( plvi->pszText[0] != _T('\0') ){
+				if( plvi->pszText[0] != L'\0' ){
 					if( MAX_KEYWORDLEN < _tcslen( plvi->pszText ) ){
 						InfoMessage( hwndDlg, LS(STR_PROPCOMKEYWORD_ERR_LEN), MAX_KEYWORDLEN );
 						return TRUE;
@@ -210,7 +210,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 
 				return TRUE;
 			case LVN_KEYDOWN:
-//				MYTRACE( _T("LVN_KEYDOWN\n") );
+//				MYTRACE( L"LVN_KEYDOWN\n" );
 				switch( pnkd->wVKey ){
 				case VK_DELETE:
 					/* リスト中で選択されているキーワードを削除する */
@@ -229,7 +229,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 				OnHelp( hwndDlg, IDD_PROP_KEYWORD );
 				return TRUE;
 			case PSN_KILLACTIVE:
-				DEBUG_TRACE( _T("Keyword PSN_KILLACTIVE\n") );
+				DEBUG_TRACE( L"Keyword PSN_KILLACTIVE\n" );
 				/* ダイアログデータの取得 Keyword */
 				GetData( hwndDlg );
 				return TRUE;
@@ -303,7 +303,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 									bool bAdd = false;
 									if( m_Types_nKeyWordSetIdx[i].typeId == -1 ){
 										// タイプ別一時表示
-										name = _T("(Temp)");
+										name = L"(Temp)";
 										name += m_tempTypeName;
 										exts = m_tempTypeExts;
 										bAdd = true;
@@ -317,11 +317,11 @@ INT_PTR CPropKeyword::DispatchEvent(
 										}
 									}
 									if( bAdd ){
-										strLabel += _T("・");
+										strLabel += L"・";
 										strLabel += name;
-										strLabel +=  _T("(");
+										strLabel +=  L"(";
 										strLabel += exts;
-										strLabel += _T(")\n");
+										strLabel += L")\n";
 									}
 									break;
 								}
@@ -659,10 +659,10 @@ void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
 
 	for( i = 0; i < nNum; ++i ){
 		/* ｎ番目のセットのｍ番目のキーワードを返す */
-		const TCHAR* pszKeyWord = to_wchar(m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( nIdx, i ));
+		const WCHAR* pszKeyWord = to_wchar(m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( nIdx, i ));
 
 		lvi.mask = LVIF_TEXT | LVIF_PARAM;
-		lvi.pszText = const_cast<TCHAR*>(pszKeyWord);
+		lvi.pszText = const_cast<WCHAR*>(pszKeyWord);
 		lvi.iItem = i;
 		lvi.iSubItem = 0;
 		lvi.lParam	= i;
@@ -695,7 +695,7 @@ void CPropKeyword::DispKeywordCount( HWND hwndDlg )
 {
 	HWND	hwndList;
 	int		n;
-	TCHAR szCount[ 256 ];
+	WCHAR szCount[ 256 ];
 
 	hwndList = ::GetDlgItem( hwndDlg, IDC_LIST_KEYWORD );
 	n = ListView_GetItemCount( hwndList );

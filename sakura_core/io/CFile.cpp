@@ -8,7 +8,7 @@
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CFile::CFile(LPCTSTR pszPath)
+CFile::CFile(LPCWSTR pszPath)
 : m_hLockedFile( INVALID_HANDLE_VALUE )
 , m_nFileShareModeOld( SHAREMODE_NOT_EXCLUSIVE )
 {
@@ -41,7 +41,7 @@ bool CFile::IsFileWritable() const
 	//書き込めるか検査
 	// Note. 他のプロセスが明示的に書き込み禁止しているかどうか
 	//       ⇒ GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE でチェックする
-	//          実際のファイル保存もこれと等価な _tfopen の _T("wb") を使用している
+	//          実際のファイル保存もこれと等価な _tfopen の L"wb" を使用している
 	HANDLE hFile = CreateFile(
 		this->GetFilePath(),			//ファイル名
 		GENERIC_WRITE,					//書きモード
@@ -127,7 +127,7 @@ bool CFile::FileLock( EShareMode eShareMode, bool bMsg )
 
 	//結果
 	if( INVALID_HANDLE_VALUE == m_hLockedFile && bMsg ){
-		const TCHAR*	pszMode;
+		const WCHAR*	pszMode;
 		switch( eShareMode ){
 		case SHAREMODE_DENY_READWRITE:	pszMode = LS(STR_EXCLU_DENY_READWRITE); break;
 		case SHAREMODE_DENY_WRITE:		pszMode = LS(STR_EXCLU_DENY_WRITE); break;

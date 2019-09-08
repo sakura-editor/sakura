@@ -31,7 +31,7 @@ class CFuncInfo {
 	public:
 		CFuncInfo( CLogicInt nFuncLineCRLF, CLogicInt nFuncColCRLF,
 				   CLayoutInt nFuncLineLAYOUT, CLayoutInt nFuncColLAYOUT,
-				   const TCHAR* pszFuncName, const TCHAR* pszFileName,
+				   const WCHAR* pszFuncName, const WCHAR* pszFileName,
 				   int nInfo );	/* CFuncInfoクラス構築 */
 		~CFuncInfo();	/* CFuncInfoクラス消滅 */
 

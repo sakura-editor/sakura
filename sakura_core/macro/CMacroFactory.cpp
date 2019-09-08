@@ -33,7 +33,7 @@
 #include <ctype.h>
 #include "CMacroFactory.h"
 
-static const TCHAR NULSTR[] = _T("");
+static const WCHAR NULSTR[] = L"";
 
 CMacroFactory::CMacroFactory()
 {}
@@ -47,7 +47,7 @@ CMacroFactory::CMacroFactory()
 	@li NULLは""にする。
 	@li アルファベットは小文字に統一
 */
-std::wstring CMacroFactory::Ext2Key(const TCHAR *ext)
+std::wstring CMacroFactory::Ext2Key(const WCHAR *ext)
 {
 	if( ext == NULL ){
 		ext = NULSTR;
@@ -116,7 +116,7 @@ bool CMacroFactory::Unregister( Creator f )
 	@pararm ext [in] 拡張子
 	@return Macroオブジェクト。適切なものが見つからなければNULL。
 */
-CMacroManagerBase* CMacroFactory::Create(const TCHAR* ext)
+CMacroManagerBase* CMacroFactory::Create(const WCHAR* ext)
 {
 	std::wstring key = Ext2Key( ext );
 
@@ -125,7 +125,7 @@ CMacroManagerBase* CMacroFactory::Create(const TCHAR* ext)
 		c_it != m_mMacroCreators.end(); ++ c_it ){
 		CMacroManagerBase* pobj = (*c_it)(key.c_str());
 		if( pobj != NULL ){
-			DEBUG_TRACE( _T("CMacroFactory::Create/ Answered for (%s)\n"), key.c_str() );
+			DEBUG_TRACE( L"CMacroFactory::Create/ Answered for (%s)\n", key.c_str() );
 			return pobj;
 		}
 	}

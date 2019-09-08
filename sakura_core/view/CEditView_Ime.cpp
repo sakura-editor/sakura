@@ -262,10 +262,10 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode, b
 			if( !hIMC ){
 				return 0;
 			}
-			auto_memset(m_szComposition, _T('\0'), _countof(m_szComposition));
+			auto_memset(m_szComposition, L'\0', _countof(m_szComposition));
 			LONG immRet = ::ImmGetCompositionString(hIMC, GCS_COMPSTR, m_szComposition, _countof(m_szComposition));
 			if( immRet == IMM_ERROR_NODATA || immRet == IMM_ERROR_GENERAL ){
-				m_szComposition[0] = _T('\0');
+				m_szComposition[0] = L'\0';
 			}
 			::ImmReleaseContext( hwnd, hIMC );
 			nInsertCompLen = auto_strlen(m_szComposition);
@@ -355,7 +355,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode, b
 		//     のはずなのに Win XP+IME2002+TSF では dwSizeが0で送られてくる
 		if( dwOrgSize != 0 && dwOrgSize < sizeof(*pReconv) + cbReconvLenWithNull ){
 			// バッファ不足
-			m_szComposition[0] = _T('\0');
+			m_szComposition[0] = L'\0';
 			return 0;
 		}
 		else if( 0 == dwOrgSize ){
@@ -420,7 +420,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode, b
 		m_nLastReconvLine  = ptSelect.y;
 	}
 	if( bDocumentFeed && pReconv ){
-		m_szComposition[0] = _T('\0');
+		m_szComposition[0] = L'\0';
 	}
 	return sizeof(RECONVERTSTRING) + cbReconvLenWithNull;
 }

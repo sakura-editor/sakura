@@ -40,7 +40,7 @@ public:
 	}
 	void GetBom(CMemory* pcmemBom);																			//!< BOMデータ取得
 // GetEolはCCodeBaseに移動	2010/6/13 Uchi
-	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar){			//!< UNICODE → Hex 変換
+	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar){			//!< UNICODE → Hex 変換
 		return CUtf8()._UnicodeToHex( cSrc, iSLen, pDst, psStatusbar, true );
 	}
 };

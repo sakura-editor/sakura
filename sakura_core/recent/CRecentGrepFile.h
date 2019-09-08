@@ -28,21 +28,21 @@
 #include "CRecentImp.h"
 #include "util/StaticType.h"
 
-typedef StaticString<TCHAR, MAX_GREP_PATH> CGrepFileString;
+typedef StaticString<WCHAR, MAX_GREP_PATH> CGrepFileString;
 
 //! GREPファイルの履歴を管理 (RECENT_FOR_GREP_FILE)
-class CRecentGrepFile : public CRecentImp<CGrepFileString, LPCTSTR>{
+class CRecentGrepFile : public CRecentImp<CGrepFileString, LPCWSTR>{
 public:
 	//生成
 	CRecentGrepFile();
 
 	//オーバーライド
-	int				CompareItem( const CGrepFileString* p1, LPCTSTR p2 ) const;
-	void			CopyItem( CGrepFileString* dst, LPCTSTR src ) const;
-	const TCHAR*	GetItemText( int nIndex ) const;
-	bool			DataToReceiveType( LPCTSTR* dst, const CGrepFileString* src ) const;
-	bool			TextToDataType( CGrepFileString* dst, LPCTSTR pszText ) const;
-	bool			ValidateReceiveType( LPCTSTR p ) const;
+	int				CompareItem( const CGrepFileString* p1, LPCWSTR p2 ) const;
+	void			CopyItem( CGrepFileString* dst, LPCWSTR src ) const;
+	const WCHAR*	GetItemText( int nIndex ) const;
+	bool			DataToReceiveType( LPCWSTR* dst, const CGrepFileString* src ) const;
+	bool			TextToDataType( CGrepFileString* dst, LPCWSTR pszText ) const;
+	bool			ValidateReceiveType( LPCWSTR p ) const;
 	size_t			GetTextMaxLength() const;
 };
 

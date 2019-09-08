@@ -387,7 +387,7 @@ int _DecodeUU_line( const CHAR_TYPE *pSrc, const int nSrcLen, char *pDest )
 	UUエンコードのヘッダー部分を解析
 */
 template< class CHAR_TYPE >
-bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, TCHAR *pszFilename )
+bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, WCHAR *pszFilename )
 {
 //	using namespace WCODE;
 

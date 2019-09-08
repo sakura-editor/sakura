@@ -53,18 +53,18 @@ CRecentExceptMRU::CRecentExceptMRU()
 
 	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
-const TCHAR* CRecentExceptMRU::GetItemText( int nIndex ) const
+const WCHAR* CRecentExceptMRU::GetItemText( int nIndex ) const
 {
 	return *GetItem(nIndex);
 }
 
-bool CRecentExceptMRU::DataToReceiveType( LPCTSTR* dst, const CMetaPath* src ) const
+bool CRecentExceptMRU::DataToReceiveType( LPCWSTR* dst, const CMetaPath* src ) const
 {
 	*dst = *src;
 	return true;
 }
 
-bool CRecentExceptMRU::TextToDataType( CMetaPath* dst, LPCTSTR pszText ) const
+bool CRecentExceptMRU::TextToDataType( CMetaPath* dst, LPCWSTR pszText ) const
 {
 	if( false == ValidateReceiveType(pszText) ){
 		return false;
@@ -73,17 +73,17 @@ bool CRecentExceptMRU::TextToDataType( CMetaPath* dst, LPCTSTR pszText ) const
 	return true;
 }
 
-int CRecentExceptMRU::CompareItem( const CMetaPath* p1, LPCTSTR p2 ) const
+int CRecentExceptMRU::CompareItem( const CMetaPath* p1, LPCWSTR p2 ) const
 {
 	return _tcsicmp(*p1,p2);
 }
 
-void CRecentExceptMRU::CopyItem( CMetaPath* dst, LPCTSTR src ) const
+void CRecentExceptMRU::CopyItem( CMetaPath* dst, LPCWSTR src ) const
 {
 	_tcscpy(*dst,src);
 }
 
-bool CRecentExceptMRU::ValidateReceiveType( LPCTSTR p ) const
+bool CRecentExceptMRU::ValidateReceiveType( LPCWSTR p ) const
 {
 	if( GetTextMaxLength() <= _tcslen(p) ){
 		return false;

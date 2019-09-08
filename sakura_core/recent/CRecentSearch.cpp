@@ -54,7 +54,7 @@ CRecentSearch::CRecentSearch()
 
 	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
-const TCHAR* CRecentSearch::GetItemText( int nIndex ) const
+const WCHAR* CRecentSearch::GetItemText( int nIndex ) const
 {
 	return to_wchar(*GetItem(nIndex));
 }
@@ -65,7 +65,7 @@ bool CRecentSearch::DataToReceiveType( LPCWSTR* dst, const CSearchString* src ) 
 	return true;
 }
 
-bool CRecentSearch::TextToDataType( CSearchString* dst, LPCTSTR pszText ) const
+bool CRecentSearch::TextToDataType( CSearchString* dst, LPCWSTR pszText ) const
 {
 	if( false == ValidateReceiveType(to_wchar(pszText)) ){
 		return false;

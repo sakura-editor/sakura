@@ -84,7 +84,7 @@ bool CZipFile::ChkPluginDef(const std::wstring& sDefFile, std::wstring& sFolderN
 	long			lCount;
 	bool			bFoundDef = false;
 
-	sFolderName = _T("");
+	sFolderName = L"";
 
 	// ZIP File List
 	hr = pZipFile->Items(&pZipFileItems);
@@ -132,9 +132,9 @@ bool CZipFile::ChkPluginDef(const std::wstring& sDefFile, std::wstring& sFolderN
 
 				// 定義ファイルか
 				if (!vFolder && auto_strlen(bps) >= sDefFile.length()
-					&& (auto_stricmp(to_wchar(bps), to_wchar((sFolderName + _T("/") + sDefFile).c_str())) == 0
-					|| auto_stricmp(to_wchar(bps), to_wchar((sFolderName + _T("\\") + sDefFile).c_str())) == 0
-					|| auto_stricmp(to_wchar(bps), to_wchar((sZipName + _T("\\") + sFolderName + _T("\\") + sDefFile).c_str())) == 0)) {
+					&& (auto_stricmp(to_wchar(bps), to_wchar((sFolderName + L"/" + sDefFile).c_str())) == 0
+					|| auto_stricmp(to_wchar(bps), to_wchar((sFolderName + L"\\" + sDefFile).c_str())) == 0
+					|| auto_stricmp(to_wchar(bps), to_wchar((sZipName + L"\\" + sFolderName + L"\\" + sDefFile).c_str())) == 0)) {
 					bFoundDef = true;
 					break;
 				}

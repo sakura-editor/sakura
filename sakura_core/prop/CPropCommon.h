@@ -101,7 +101,7 @@ public:
 	INT_PTR DoPropertySheet(int nPageNum, bool bTrayProc);	/* プロパティシートの作成 */
 
 	// 2002.12.11 Moca 追加
-	void InitData(const int* tempTypeKeywordSet = NULL, const TCHAR* name = NULL, const TCHAR* exts = NULL );	//!< DLLSHAREDATAから一時データ領域に設定を複製する
+	void InitData(const int* tempTypeKeywordSet = NULL, const WCHAR* name = NULL, const WCHAR* exts = NULL );	//!< DLLSHAREDATAから一時データ領域に設定を複製する
 	void ApplyData(int* tempTypeKeywordSet = NULL );	//!< 一時データ領域からにDLLSHAREDATA設定をコピーする
 	int GetPageNum(){ return m_nPageNum; }
 
@@ -137,8 +137,8 @@ public:
 		int index[MAX_KEYWORDSET_PER_TYPE];
 	};
 	std::vector<SKeywordSetIndex>	m_Types_nKeyWordSetIdx;
-	TCHAR			m_tempTypeName[MAX_TYPES_NAME];	//!< タイプ属性：名称
-	TCHAR			m_tempTypeExts[MAX_TYPES_EXTS];	//!< タイプ属性：拡張子リスト
+	WCHAR			m_tempTypeName[MAX_TYPES_NAME];	//!< タイプ属性：名称
+	WCHAR			m_tempTypeExts[MAX_TYPES_EXTS];	//!< タイプ属性：拡張子リスト
 	bool			m_bTrayProc;
 	HFONT			m_hKeywordHelpFont;		//!< キーワードヘルプ フォント ハンドル
 	HFONT			m_hTabFont;				//!< タブ フォント ハンドル
@@ -478,8 +478,8 @@ protected:
 	int  GetData(HWND hwndDlg);	//!< ダイアログデータの取得
 
 private:
-	static int SetListViewItem_FILENAME( HWND hListView, int, LPTSTR, LPTSTR, bool );//!<ListViewのアイテムを設定
-	static void GetListViewItem_FILENAME( HWND hListView, int, LPTSTR, LPTSTR );//!<ListViewのアイテムを取得
+	static int SetListViewItem_FILENAME( HWND hListView, int, LPWSTR, LPWSTR, bool );//!<ListViewのアイテムを設定
+	static void GetListViewItem_FILENAME( HWND hListView, int, LPWSTR, LPWSTR );//!<ListViewのアイテムを取得
 	static int MoveListViewItem_FILENAME( HWND hListView, int, int );//!<ListViewのアイテムを移動する
 };
 

@@ -143,7 +143,7 @@ void CDlgWindowList::SetData()
 			::SendMessageAny(pEditNode[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0);
 			const EditInfo* pEditInfo = &m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
-			TCHAR szName[_MAX_PATH];
+			WCHAR szName[_MAX_PATH];
 			CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape(szName, _countof(szName), pEditInfo, pEditNode[i].m_nId, i, calc.GetDC());
 
 			LV_ITEM lvi;
@@ -214,7 +214,7 @@ BOOL CDlgWindowList::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = rcListView.right - rcListView.left - ::GetSystemMetrics(SM_CXVSCROLL) - 10;
-	TCHAR szNull[] = _T("");
+	WCHAR szNull[] = L"";
 	col.pszText  = szNull;
 	col.iSubItem = 0;
 	ListView_InsertColumn(hwndList, 0, &col);

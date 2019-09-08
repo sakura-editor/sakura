@@ -65,7 +65,7 @@ void CViewCommander::Command_FILENEW( void )
 {
 	/* 新たな編集ウィンドウを起動 */
 	SLoadInfo sLoadInfo;
-	sLoadInfo.cFilePath = _T("");
+	sLoadInfo.cFilePath = L"";
 	sLoadInfo.eCharCode = CODE_NONE;
 	sLoadInfo.bViewMode = false;
 	std::wstring curDir = CSakuraEnvironment::GetDlgInitialDir();
@@ -78,7 +78,7 @@ void CViewCommander::Command_FILENEW_NEWWINDOW( void )
 {
 	/* 新たな編集ウィンドウを起動 */
 	SLoadInfo sLoadInfo;
-	sLoadInfo.cFilePath = _T("");
+	sLoadInfo.cFilePath = L"";
 	sLoadInfo.eCharCode = CODE_DEFAULT;
 	sLoadInfo.bViewMode = false;
 	std::wstring curDir = CSakuraEnvironment::GetDlgInitialDir();
@@ -102,17 +102,17 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 		nCharCode = CODE_AUTODETECT;
 	}
 	//ロード情報
-	SLoadInfo sLoadInfo(filename?to_wchar(filename):_T(""), nCharCode, bViewMode);
+	SLoadInfo sLoadInfo(filename?to_wchar(filename):L"", nCharCode, bViewMode);
 	std::vector<std::wstring> files;
-	std::wstring defName = (defaultName?to_wchar(defaultName):_T(""));
+	std::wstring defName = (defaultName?to_wchar(defaultName):L"");
 
 	//必要であれば「ファイルを開く」ダイアログ
 	if(!sLoadInfo.cFilePath.IsValidPath()){
 		if( !defName.empty() ){
-			TCHAR szPath[_MAX_PATH];
-			TCHAR szDir[_MAX_DIR];
-			TCHAR szName[_MAX_FNAME];
-			TCHAR szExt  [_MAX_EXT];
+			WCHAR szPath[_MAX_PATH];
+			WCHAR szDir[_MAX_DIR];
+			WCHAR szName[_MAX_FNAME];
+			WCHAR szExt  [_MAX_EXT];
 			my_splitpath_t(defName.c_str(), szPath, szDir, szName, szExt);
 			auto_strcat(szPath, szDir);
 			if( 0 == auto_stricmp(defName.c_str(), szPath) ){
@@ -320,8 +320,8 @@ BOOL CViewCommander::Command_OPEN_HfromtoC( BOOL bCheckOnly )
 BOOL CViewCommander::Command_OPEN_HHPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 {
 	// 2003.06.28 Moca ヘッダ・ソースのコードを統合＆削除
-	static const TCHAR* source_ext[] = { _T("c"), _T("cpp"), _T("cxx"), _T("cc"), _T("cp"), _T("c++") };
-	static const TCHAR* header_ext[] = { _T("h"), _T("hpp"), _T("hxx"), _T("hh"), _T("hp"), _T("h++") };
+	static const WCHAR* source_ext[] = { L"c", L"cpp", L"cxx", L"cc", L"cp", L"c++" };
+	static const WCHAR* header_ext[] = { L"h", L"hpp", L"hxx", L"hh", L"hp", L"h++" };
 	return m_pCommanderView->OPEN_ExtFromtoExt(
 		bCheckOnly, bBeepWhenMiss, source_ext, header_ext,
 		_countof(source_ext), _countof(header_ext),
@@ -333,8 +333,8 @@ BOOL CViewCommander::Command_OPEN_HHPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 BOOL CViewCommander::Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 {
 	// 2003.06.28 Moca ヘッダ・ソースのコードを統合＆削除
-	static const TCHAR* source_ext[] = { _T("c"), _T("cpp"), _T("cxx"), _T("cc"), _T("cp"), _T("c++") };
-	static const TCHAR* header_ext[] = { _T("h"), _T("hpp"), _T("hxx"), _T("hh"), _T("hp"), _T("h++") };
+	static const WCHAR* source_ext[] = { L"c", L"cpp", L"cxx", L"cc", L"cp", L"c++" };
+	static const WCHAR* header_ext[] = { L"h", L"hpp", L"hxx", L"hh", L"hp", L"h++" };
 	return m_pCommanderView->OPEN_ExtFromtoExt(
 		bCheckOnly, bBeepWhenMiss, header_ext, source_ext,
 		_countof(header_ext), _countof(source_ext),
@@ -345,7 +345,7 @@ BOOL CViewCommander::Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 void CViewCommander::Command_ACTIVATE_SQLPLUS( void )
 {
 	HWND		hwndSQLPLUS;
-	hwndSQLPLUS = ::FindWindow( _T("SqlplusWClass"), _T("Oracle SQL*Plus") );
+	hwndSQLPLUS = ::FindWindow( L"SqlplusWClass", L"Oracle SQL*Plus" );
 	if( NULL == hwndSQLPLUS ){
 		ErrorMessage( m_pCommanderView->GetHwnd(), LS( STR_SQLERR_ACTV_BUT_NOT_RUN ) );	//"Oracle SQL*Plusをアクティブ表示します。\n\n\nOracle SQL*Plusが起動されていません。\n"
 		return;
@@ -364,10 +364,10 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 	HWND		hwndSQLPLUS;
 	int			nRet;
 	BOOL		nBool;
-	TCHAR		szPath[MAX_PATH + 2];
+	WCHAR		szPath[MAX_PATH + 2];
 	BOOL		bResult;
 
-	hwndSQLPLUS = ::FindWindow( _T("SqlplusWClass"), _T("Oracle SQL*Plus") );
+	hwndSQLPLUS = ::FindWindow( L"SqlplusWClass", L"Oracle SQL*Plus" );
 	if( NULL == hwndSQLPLUS ){
 		ErrorMessage( m_pCommanderView->GetHwnd(), LS( STR_SQLERR_EXEC_BUT_NOT_RUN ) );	//"Oracle SQL*Plusで実行します。\n\n\nOracle SQL*Plusが起動されていません。\n"
 		return;
@@ -405,9 +405,9 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 		/* ファイルパスに空白が含まれている場合はダブルクォーテーションで囲む */
 		//	2003.10.20 MIK コード簡略化
 		if( _tcschr( GetDocument()->m_cDocFile.GetFilePath(), TCODE::SPACE ) ? TRUE : FALSE ){
-			auto_sprintf( szPath, _T("@\"%s\"\r\n"), GetDocument()->m_cDocFile.GetFilePath() );
+			auto_sprintf( szPath, L"@\"%s\"\r\n", GetDocument()->m_cDocFile.GetFilePath() );
 		}else{
-			auto_sprintf( szPath, _T("@%s\r\n"), GetDocument()->m_cDocFile.GetFilePath() );
+			auto_sprintf( szPath, L"@%s\r\n", GetDocument()->m_cDocFile.GetFilePath() );
 		}
 		/* クリップボードにデータを設定 */
 		m_pCommanderView->MySetClipboardData( szPath, _tcslen( szPath ), false );
@@ -500,10 +500,10 @@ void CViewCommander::Command_PROPERTY_FILE( void )
 		CRunningTimer cRunningTimer( "CViewCommander::Command_PROPERTY_FILE 全行データを返すテスト" );
 		cRunningTimer.Reset();
 		pDataAll = CDocReader(GetDocument()->m_cDocLineMgr).GetAllData( &nDataAllLen );
-//		MYTRACE( _T("全データ取得             (%dバイト) 所要時間(ミリ秒) = %d\n"), nDataAllLen, cRunningTimer.Read() );
+//		MYTRACE( L"全データ取得             (%dバイト) 所要時間(ミリ秒) = %d\n", nDataAllLen, cRunningTimer.Read() );
 		free( pDataAll );
 		pDataAll = NULL;
-//		MYTRACE( _T("全データ取得のメモリ解放 (%dバイト) 所要時間(ミリ秒) = %d\n"), nDataAllLen, cRunningTimer.Read() );
+//		MYTRACE( L"全データ取得のメモリ解放 (%dバイト) 所要時間(ミリ秒) = %d\n", nDataAllLen, cRunningTimer.Read() );
 	}
 #endif
 
@@ -517,10 +517,10 @@ void CViewCommander::Command_PROFILEMGR( void )
 {
 	CDlgProfileMgr profMgr;
 	if( profMgr.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 0 ) ){
-		TCHAR szOpt[MAX_PATH+10];
-		auto_sprintf( szOpt, _T("-PROF=\"%s\""), profMgr.m_strProfileName.c_str() );
+		WCHAR szOpt[MAX_PATH+10];
+		auto_sprintf( szOpt, L"-PROF=\"%s\"", profMgr.m_strProfileName.c_str() );
 		SLoadInfo sLoadInfo;
-		sLoadInfo.cFilePath = _T("");
+		sLoadInfo.cFilePath = L"";
 		sLoadInfo.eCharCode = CODE_DEFAULT;
 		sLoadInfo.bViewMode = false;
 		CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, szOpt, false, NULL, false );

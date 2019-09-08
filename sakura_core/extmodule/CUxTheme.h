@@ -50,9 +50,9 @@ class CUxTheme : public TSingleton<CUxTheme>, public CDllImp {
 protected:
 	bool m_bInitialized;
 
-	bool InitThemeDll( TCHAR* str = NULL );
+	bool InitThemeDll( WCHAR* str = NULL );
 	virtual bool InitDllImp();
-	virtual LPCTSTR GetDllNameImp(int nIndex);
+	virtual LPCWSTR GetDllNameImp(int nIndex);
 
 protected:
 	// UxTheme API Entry Points

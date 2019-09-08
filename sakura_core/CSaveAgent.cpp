@@ -60,7 +60,7 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 			ErrorMessage(
 				CEditWnd::getInstance()->GetHwnd(),
 				LS(STR_SAVEAGENT_OTHER),
-				(LPCTSTR)pSaveInfo->cFilePath
+				(LPCWSTR)pSaveInfo->cFilePath
 			);
 			return CALLBACK_INTERRUPT;
 		}
@@ -74,7 +74,7 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 		if( bLock ) pcDoc->m_cDocFileOperation.DoFileUnlock();
 		try{
 			bool bExist = fexist(pSaveInfo->cFilePath);
-			CStream out(pSaveInfo->cFilePath, _T("ab"), true);	// 実際の保存は "wb" だがここは "ab"（ファイル内容は破棄しない）でチェックする	// 2009.08.21 ryoji
+			CStream out(pSaveInfo->cFilePath, L"ab", true);	// 実際の保存は "wb" だがここは "ab"（ファイル内容は破棄しない）でチェックする	// 2009.08.21 ryoji
 			out.Close();
 			if(!bExist){
 				::DeleteFile(pSaveInfo->cFilePath);

@@ -63,8 +63,8 @@ class CCommandLine  : public TSingleton<CCommandLine> {
 	CCommandLine();
 
 	static int CheckCommandLine(
-		LPTSTR	str,		//!< [in] 検証する文字列（先頭の-は含まない）
-		TCHAR**	arg,		//!< [out] 引数がある場合はその先頭へのポインタ
+		LPWSTR	str,		//!< [in] 検証する文字列（先頭の-は含まない）
+		WCHAR**	arg,		//!< [out] 引数がある場合はその先頭へのポインタ
 		int*	arglen		//!< [out] 引数の長さ
 	);
 
@@ -72,8 +72,8 @@ class CCommandLine  : public TSingleton<CCommandLine> {
 		引用符で囲まれている数値を認識するようにする
 		@date 2002.12.05 genta
 	*/
-	static int AtoiOptionInt(const TCHAR* arg){
-		return ( arg[0] == _T('"') || arg[0] == _T('\'') ) ?
+	static int AtoiOptionInt(const WCHAR* arg){
+		return ( arg[0] == L'"' || arg[0] == L'\'' ) ?
 			_ttoi( arg + 1 ) : _ttoi( arg );
 	}
 
@@ -98,9 +98,9 @@ public:
 	}
 	bool IsProfileMgr() { return m_bProfileMgr; }
 	int GetFileNum(void) { return m_vFiles.size(); }
-	const TCHAR* GetFileName(int i) { return i < GetFileNum() ? m_vFiles[i].c_str() : NULL; }
+	const WCHAR* GetFileName(int i) { return i < GetFileNum() ? m_vFiles[i].c_str() : NULL; }
 	void ClearFile(void) { m_vFiles.clear(); }
-	void ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse = true );
+	void ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse = true );
 
 // member valiables
 private:

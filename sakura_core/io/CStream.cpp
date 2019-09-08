@@ -15,7 +15,7 @@
 
 class CFileAttribute{
 public:
-	CFileAttribute(const TCHAR* tszPath)
+	CFileAttribute(const WCHAR* tszPath)
 	: m_strPath(tszPath)
 	, m_bAttributeChanged(false)
 	, m_dwAttribute(0)
@@ -55,7 +55,7 @@ private:
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CStream::CStream(const TCHAR* tszPath, const TCHAR* tszMode, bool bExceptionMode)
+CStream::CStream(const WCHAR* tszPath, const WCHAR* tszMode, bool bExceptionMode)
 {
 	m_fp = NULL;
 	m_pcFileAttribute = NULL;
@@ -81,7 +81,7 @@ CStream::~CStream()
 //                    オープン・クローズ                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //
-void CStream::Open(const TCHAR* tszPath, const TCHAR* tszMode)
+void CStream::Open(const WCHAR* tszPath, const WCHAR* tszMode)
 {
 	Close(); //既に開いていたら、一度閉じる
 

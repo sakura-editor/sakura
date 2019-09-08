@@ -22,7 +22,7 @@
 void CViewCommander::Command_INS_DATE( void )
 {
 	// 日付をフォーマット
-	TCHAR szText[1024];
+	WCHAR szText[1024];
 	SYSTEMTIME systime;
 	::GetLocalTime( &systime );
 	CFormatManager().MyGetDateFormat( systime, szText, _countof( szText ) - 1 );
@@ -35,7 +35,7 @@ void CViewCommander::Command_INS_DATE( void )
 void CViewCommander::Command_INS_TIME( void )
 {
 	// 時刻をフォーマット
-	TCHAR szText[1024];
+	WCHAR szText[1024];
 	SYSTEMTIME systime;
 	::GetLocalTime( &systime );
 	CFormatManager().MyGetTimeFormat( systime, szText, _countof( szText ) - 1 );

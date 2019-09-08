@@ -47,7 +47,7 @@ ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 	//フォルダが指定された場合は「ファイルを開く」ダイアログを表示し、実際のファイル入力を促す
 	if( IsDirectory(pLoadInfo->cFilePath) ){
 		std::vector<std::wstring> files;
-		SLoadInfo sLoadInfo(_T(""), CODE_AUTODETECT, false);
+		SLoadInfo sLoadInfo(L"", CODE_AUTODETECT, false);
 		bool bDlgResult = pcDoc->m_cDocFileOperation.OpenFileDialog(
 			CEditWnd::getInstance()->GetHwnd(),
 			pLoadInfo->cFilePath,	//指定されたフォルダ
@@ -293,7 +293,7 @@ void CLoadAgent::OnFinalLoad(ELoadResult eLoadResult)
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	if(eLoadResult==LOADED_FAILURE){
-		pcDoc->SetFilePathAndIcon( _T("") );
+		pcDoc->SetFilePathAndIcon( L"" );
 		pcDoc->m_cDocFile.SetBomDefoult();
 	}
 	if(eLoadResult==LOADED_LOSESOME){

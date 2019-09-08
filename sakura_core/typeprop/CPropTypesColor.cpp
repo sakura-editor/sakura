@@ -38,7 +38,7 @@ using namespace std;
 
 namespace {
 //! カスタムカラー用の識別文字列
-const TCHAR* TSTR_PTRCUSTOMCOLORS = _T("ptrCustomColors");
+const WCHAR* TSTR_PTRCUSTOMCOLORS = L"ptrCustomColors";
 WNDPROC m_wpColorListProc;
 int m_bgColorSampleLeft;
 int m_bgColorSampleRight;
@@ -164,8 +164,8 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		for( i = 0; i < nItemNum; ++i ){
 			List_GetItemRect( hwnd, i, &rcItem );
 			if( ::PtInRect( &rcItem, poMouse ) ){
-//				MYTRACE( _T("hit at i==%d\n"), i );
-//				MYTRACE( _T("\n") );
+//				MYTRACE( L"hit at i==%d\n", i );
+//				MYTRACE( L"\n" );
 				nIndex = i;
 				break;
 			}
@@ -540,7 +540,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 				OnHelp( hwndDlg, IDD_PROP_COLOR );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE( _T("color PSN_KILLACTIVE\n") );
+//				MYTRACE( L"color PSN_KILLACTIVE\n" );
 				/* ダイアログデータの取得 color */
 				GetData( hwndDlg );
 				return TRUE;
@@ -869,7 +869,7 @@ int CPropTypesColor::GetData( HWND hwndDlg )
 /* 色ボタンの描画 */
 void CPropTypesColor::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 {
-//	MYTRACE( _T("pDis->itemAction = ") );
+//	MYTRACE( L"pDis->itemAction = " );
 
 	COLORREF	cBtnHiLight		= (COLORREF)::GetSysColor(COLOR_3DHILIGHT);
 	COLORREF	cBtnShadow		= (COLORREF)::GetSysColor(COLOR_3DSHADOW);

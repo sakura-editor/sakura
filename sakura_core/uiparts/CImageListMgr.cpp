@@ -94,7 +94,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 		//	From Here 2001.7.1 GAE
 		//	2001.7.1 GAE リソースをローカルファイル(sakuraディレクトリ) my_icons.bmp から読めるように
 		// 2007.05.19 ryoji 設定ファイル優先に変更
-		TCHAR szPath[_MAX_PATH];
+		WCHAR szPath[_MAX_PATH];
 		GetInidirOrExedir( szPath, FN_TOOL_BMP );
 		hRscbmp = (HBITMAP)::LoadImage( NULL, szPath, IMAGE_BITMAP, 0, 0,
 			LR_LOADFROMFILE | LR_CREATEDIBSECTION | LR_LOADMAP3DCOLORS );
@@ -518,7 +518,7 @@ int CImageListMgr::Count() const
 /*!
  * @brief アイコンを追加してそのIDを返す
  */
-int CImageListMgr::Add( const TCHAR* szPath )
+int CImageListMgr::Add( const WCHAR* szPath )
 {
 	if ( (m_nIconCount % MAX_X) == 0 ) {
 		Extend();
@@ -547,7 +547,7 @@ int CImageListMgr::Add( const TCHAR* szPath )
 		// DIBセクションを取得する
 		DIBSECTION di = {};
 		if ( !::GetObject( bmpSrc, sizeof( di ), &di ) ) {
-			DEBUG_TRACE( _T( "GetObject() failed." ) );
+			DEBUG_TRACE( L"GetObject() failed." );
 			::SelectObject( hdcSrc, bmpSrcOld );
 			::DeleteDC( hdcSrc );
 			::DeleteObject( bmpSrc );
@@ -557,7 +557,7 @@ int CImageListMgr::Add( const TCHAR* szPath )
 		nWidth = di.dsBm.bmWidth;
 		nHeight = di.dsBm.bmHeight;
 		if ( nWidth != nHeight ) {
-			DEBUG_TRACE( _T( "tool bitmap size is unexpected." ) );
+			DEBUG_TRACE( L"tool bitmap size is unexpected." );
 			::SelectObject( hdcSrc, bmpSrcOld );
 			::DeleteDC( hdcSrc );
 			::DeleteObject( bmpSrc );
@@ -593,7 +593,7 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 	// DIBセクションを取得する
 	DIBSECTION di = {};
 	if ( !::GetObject( bmpSrc, sizeof( di ), &di ) ) {
-		DEBUG_TRACE( _T( "GetObject() failed." ) );
+		DEBUG_TRACE( L"GetObject() failed." );
 		return NULL;
 	}
 
@@ -601,7 +601,7 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 	int cx = di.dsBm.bmWidth / cols;
 	int cy = di.dsBm.bmHeight / rows;
 	if ( cx != cy ) {
-		DEBUG_TRACE( _T( "tool bitmap size is unexpected." ) );
+		DEBUG_TRACE( L"tool bitmap size is unexpected." );
 		return NULL;
 	}
 

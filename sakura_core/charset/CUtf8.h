@@ -42,8 +42,8 @@ public:
 	}
 	void GetBom(CMemory* pcmemBom);																			//!< BOMデータ取得
 	void GetEol(CMemory* pcmemEol, EEolType eEolType);
-	EConvertResult _UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar, const bool CESU8Mode);			//!< UNICODE → Hex 変換
-	EConvertResult UnicodeToHex(const wchar_t* ps, const int nsl, TCHAR* pd, const CommonSetting_Statusbar* psStatusbar){ return _UnicodeToHex(ps, nsl, pd, psStatusbar, false); }
+	EConvertResult _UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar, const bool CESU8Mode);			//!< UNICODE → Hex 変換
+	EConvertResult UnicodeToHex(const wchar_t* ps, const int nsl, WCHAR* pd, const CommonSetting_Statusbar* psStatusbar){ return _UnicodeToHex(ps, nsl, pd, psStatusbar, false); }
 
 public:
 	// UTF-8 / CESU-8 <-> Unicodeコード変換

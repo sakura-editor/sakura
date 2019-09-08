@@ -88,7 +88,7 @@ enum EBarChangeNotifyType {
 #define COLOR_ATTRIB_NO_EFFECTS		0x00000F00
 
 struct SColorAttributeData{
-	const TCHAR*	szName;
+	const WCHAR*	szName;
 	unsigned int	fAttribute;
 };
 extern const SColorAttributeData g_ColorAttributeArr[];

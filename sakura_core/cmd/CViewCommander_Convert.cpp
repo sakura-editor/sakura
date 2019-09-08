@@ -230,7 +230,7 @@ void CViewCommander::Command_BASE64DECODE( void )
 	ctextBuf.Clear();
 
 	/* 保存ダイアログ モーダルダイアログの表示 */
-	TCHAR		szPath[_MAX_PATH] = _T("");
+	WCHAR		szPath[_MAX_PATH] = L"";
 	if( !GetDocument()->m_cDocFileOperation.SaveFileDialog( szPath ) ){
 		return;
 	}
@@ -270,7 +270,7 @@ void CViewCommander::Command_UUDECODE( void )
 
 	// uudecode(デコード)  ctextBuf -> cmemBin, szPath
 	CMemory cmemBin;
-	TCHAR szPath[_MAX_PATH]=_T("");
+	WCHAR szPath[_MAX_PATH]=L"";
 	CDecode_UuDecode decoder;
 	if( !decoder.CallDecode(ctextBuf, &cmemBin) ){
 		return;

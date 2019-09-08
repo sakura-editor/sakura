@@ -241,7 +241,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 			OnHelp( hwndDlg, IDD_PROP_TOOLBAR );
 			return TRUE;
 		case PSN_KILLACTIVE:
-//			MYTRACE( _T("PROP_TOOLBAR PSN_KILLACTIVE\n") );
+//			MYTRACE( L"PROP_TOOLBAR PSN_KILLACTIVE\n" );
 			/* ダイアログデータの取得 Toolbar */
 			GetData( hwndDlg );
 			return TRUE;
@@ -616,7 +616,7 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 	::InflateRect( &rcText, -cxBorder, -cyBorder );
 
 	// 選択アイテムの背景を描画
-	::ExtTextOut( pDis->hDC, 0, 0, ETO_OPAQUE, &rcText, (LPCTSTR) NULL, 0, NULL );
+	::ExtTextOut( pDis->hDC, 0, 0, ETO_OPAQUE, &rcText, (LPCWSTR) NULL, 0, NULL );
 
 	// 微調整 インデントと上余白
 	rcText.left += cxFrame;

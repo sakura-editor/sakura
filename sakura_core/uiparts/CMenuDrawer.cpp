@@ -776,22 +776,22 @@ void CMenuDrawer::MyAppendMenu(
 	HMENU			hMenu,
 	int				nFlag,
 	UINT_PTR		nFuncId,
-	const TCHAR*	pszLabel,
-	const TCHAR*	pszKey,			// 2010/5/18 Uchi
+	const WCHAR*	pszLabel,
+	const WCHAR*	pszKey,			// 2010/5/18 Uchi
 	BOOL			bAddKeyStr,
 	int				nForceIconId	//お気に入り	//@@@ 2003.04.08 MIK
 )
 {
-	TCHAR		szLabel[_MAX_PATH * 2+ 30];
-	TCHAR		szKey[10];
+	WCHAR		szLabel[_MAX_PATH * 2+ 30];
+	WCHAR		szKey[10];
 	int			nFlagAdd = 0;
 
 	if( nForceIconId == -1 ) nForceIconId = nFuncId;	//お気に入り	//@@@ 2003.04.08 MIK
 
-	szLabel[0] = _T('\0');
+	szLabel[0] = L'\0';
 	if( NULL != pszLabel ){
 		_tcsncpy( szLabel, pszLabel, _countof( szLabel ) - 1 );
-		szLabel[ _countof( szLabel ) - 1 ] = _T('\0');
+		szLabel[ _countof( szLabel ) - 1 ] = L'\0';
 	}
 	auto_strcpy( szKey, pszKey); 
 	if( nFuncId != 0 ){
@@ -907,7 +907,7 @@ int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 	const int cxSmIcon = ::GetSystemMetrics(SM_CXSMICON);
 	const int cySmIcon = ::GetSystemMetrics(SM_CYSMICON);
 
-	const TCHAR* pszLabel;
+	const WCHAR* pszLabel;
 	CMyRect rc, rcSp;
 	HDC hdc;
 	HFONT hFontOld;
@@ -1144,7 +1144,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	rcText.right -= nIndentRight;
 
 	const int nItemIndex = Find( (int)lpdis->itemID );
-	LPCTSTR pszItemStr = m_menuItems[nItemIndex].m_cmemLabel.GetStringPtr();
+	LPCWSTR pszItemStr = m_menuItems[nItemIndex].m_cmemLabel.GetStringPtr();
 	size_t nItemStrLen = m_menuItems[nItemIndex].m_cmemLabel.GetStringLength();
 
 	int nBkModeOld = ::SetBkMode( hdc, TRANSPARENT );
@@ -1154,7 +1154,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	/* TAB文字の前と後ろに分割してテキストを描画する */
 	size_t j;
 	for( j = 0; j < nItemStrLen; ++j ){
-		if( pszItemStr[j] == _T('\t') ){
+		if( pszItemStr[j] == L'\t' ){
 			break;
 		}
 	}
@@ -1308,7 +1308,7 @@ void CMenuDrawer::DeleteCompDC()
 		::SelectObject( m_hCompDC, m_hCompBitmapOld );
 		::DeleteObject( m_hCompBitmap );
 		::DeleteObject( m_hCompDC );
-//		DEBUG_TRACE( _T("CMenuDrawer::DeleteCompDC %x\n"), m_hCompDC );
+//		DEBUG_TRACE( L"CMenuDrawer::DeleteCompDC %x\n", m_hCompDC );
 		m_hCompDC = NULL;
 		m_hCompBitmap = NULL;
 		m_hCompBitmapOld = NULL;
@@ -1405,7 +1405,7 @@ int CMenuDrawer::Find( int nFuncID )
 	}
 }
 
-const TCHAR* CMenuDrawer::GetLabel( int nFuncID )
+const WCHAR* CMenuDrawer::GetLabel( int nFuncID )
 {
 	int i;
 	if( -1 == ( i = Find( nFuncID ) ) ){
@@ -1414,20 +1414,20 @@ const TCHAR* CMenuDrawer::GetLabel( int nFuncID )
 	return m_menuItems[i].m_cmemLabel.GetStringPtr();
 }
 
-TCHAR CMenuDrawer::GetAccelCharFromLabel( const TCHAR* pszLabel )
+WCHAR CMenuDrawer::GetAccelCharFromLabel( const WCHAR* pszLabel )
 {
 	int i;
 	int nLen = (int)_tcslen( pszLabel );
 	for( i = 0; i + 1 < nLen; ++i ){
-		if( _T('&') == pszLabel[i] ){
-			if( _T('&') == pszLabel[i + 1]  ){
+		if( L'&' == pszLabel[i] ){
+			if( L'&' == pszLabel[i + 1]  ){
 				i++;
 			}else{
-				return (TCHAR)_totupper( pszLabel[i + 1] );
+				return (WCHAR)_totupper( pszLabel[i + 1] );
 			}
 		}
 	}
-	return _T('\0');
+	return L'\0';
 }
 
 struct WorkData{
@@ -1438,38 +1438,38 @@ struct WorkData{
 /*! メニューアクセスキー押下時の処理(WM_MENUCHAR処理) */
 LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	TCHAR				chUser;
+	WCHAR				chUser;
 	HMENU				hmenu;
 	int i;
-	chUser = (TCHAR) LOWORD(wParam);	// character code
+	chUser = (WCHAR) LOWORD(wParam);	// character code
 	hmenu = (HMENU) lParam;				// handle to menu
-//	MYTRACE( _T("::GetMenuItemCount( %xh )==%d\n"), hmenu, ::GetMenuItemCount( hmenu ) );
+//	MYTRACE( L"::GetMenuItemCount( %xh )==%d\n", hmenu, ::GetMenuItemCount( hmenu ) );
 
 	//	Oct. 27, 2000 genta
 	if( 0 <= chUser && chUser < ' '){
 		chUser += '@';
 	}
 	else {
-		chUser = (TCHAR)_totupper( chUser );
+		chUser = (WCHAR)_totupper( chUser );
 	}
 
 	// 2011.11.18 vector化
 	std::vector<WorkData> vecAccel;
 	size_t nAccelSel = 99999;
 	for( i = 0; i < ::GetMenuItemCount( hmenu ); i++ ){
-		TCHAR	szText[1024];
+		WCHAR	szText[1024];
 		// メニュー項目に関する情報を取得します。
 		MENUITEMINFO mii = { sizeof(MENUITEMINFO) };
 		mii.cbSize = sizeof(MENUITEMINFO);
 		mii.fMask = MIIM_CHECKMARKS | MIIM_DATA | MIIM_ID | MIIM_STATE | MIIM_SUBMENU | MIIM_TYPE;
 		mii.fType = MFT_STRING;
-		_tcscpy( szText, _T("--unknown--") );
+		_tcscpy( szText, L"--unknown--" );
 		mii.dwTypeData = szText;
 		mii.cch = _countof( szText ) - 1;
 		if( 0 == ::GetMenuItemInfo( hmenu, i, TRUE, &mii ) ){
 			continue;
 		}
-		const TCHAR* pszLabel;
+		const WCHAR* pszLabel;
 		if( NULL == ( pszLabel = GetLabel( mii.wID ) ) ){
 			continue;
 		}
@@ -1483,19 +1483,19 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 			vecAccel.push_back( work );
 		}
 	}
-//	MYTRACE( _T("%d\n"), (int)mapAccel.size() );
+//	MYTRACE( L"%d\n", (int)mapAccel.size() );
 	if( 0 == vecAccel.size() ){
 		return  MAKELONG( 0, MNC_IGNORE );
 	}
 	if( 1 == vecAccel.size() ){
 		return  MAKELONG( vecAccel[0].idx, MNC_EXECUTE );
 	}
-//	MYTRACE( _T("nAccelSel=%d vecAccel.size()=%d\n"), nAccelSel, vecAccel.size() );
+//	MYTRACE( L"nAccelSel=%d vecAccel.size()=%d\n", nAccelSel, vecAccel.size() );
 	if( nAccelSel + 1 >= vecAccel.size() ){
-//		MYTRACE( _T("vecAccel[0].idx=%d\n"), vecAccel[0].idx );
+//		MYTRACE( L"vecAccel[0].idx=%d\n", vecAccel[0].idx );
 		return  MAKELONG( vecAccel[0].idx, MNC_SELECT );
 	}else{
-//		MYTRACE( _T("vecAccel[nAccelSel + 1].idx=%d\n"), vecAccel[nAccelSel + 1].idx );
+//		MYTRACE( L"vecAccel[nAccelSel + 1].idx=%d\n", vecAccel[nAccelSel + 1].idx );
 		return  MAKELONG( vecAccel[nAccelSel + 1].idx, MNC_SELECT );
 	}
 }

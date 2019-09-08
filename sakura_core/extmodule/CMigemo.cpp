@@ -102,16 +102,16 @@ bool CMigemo::DeinitDllImp(void)
 	return true;
 }
 
-LPCTSTR CMigemo::GetDllNameImp(int nIndex)
+LPCWSTR CMigemo::GetDllNameImp(int nIndex)
 {
 	if(nIndex==0){
-		TCHAR* szDll;
-		static TCHAR szDllName[_MAX_PATH];
+		WCHAR* szDll;
+		static WCHAR szDllName[_MAX_PATH];
 		szDll = GetDllShareData().m_Common.m_sHelper.m_szMigemoDll;
 
-		if(szDll[0] == _T('\0')){
-			GetInidir( szDllName, _T("migemo.dll") );
-			return fexist(szDllName) ? szDllName : _T("migemo.dll");
+		if(szDll[0] == L'\0'){
+			GetInidir( szDllName, L"migemo.dll" );
+			return fexist(szDllName) ? szDllName : L"migemo.dll";
 		}
 		else{
 			if(_IS_REL_PATH(szDll)){
@@ -278,13 +278,13 @@ int CMigemo::migemo_load_all()
 {
 	if( !migemo_is_enable()){
 		
-		TCHAR* szDict = GetDllShareData().m_Common.m_sHelper.m_szMigemoDict;
-		TCHAR path[MAX_PATH];
+		WCHAR* szDict = GetDllShareData().m_Common.m_sHelper.m_szMigemoDict;
+		WCHAR path[MAX_PATH];
 		//char path2[MAX_PATH];
-		TCHAR *ppath;
+		WCHAR *ppath;
 		
-		if (szDict[0] == _T('\0')){
-			GetInidirOrExedir(path,_T("dict"));	// 2007.05.20 ryoji 相対パスは設定ファイルからのパスを優先
+		if (szDict[0] == L'\0'){
+			GetInidirOrExedir(path,L"dict");	// 2007.05.20 ryoji 相対パスは設定ファイルからのパスを優先
 		}
 		else{
 			if (_IS_REL_PATH(szDict)){
@@ -294,31 +294,31 @@ int CMigemo::migemo_load_all()
 			}
 		}
 		ppath = &path[_tcslen(path)];
-		*(ppath++) = _T('\\');
+		*(ppath++) = L'\\';
 		// ver1.3 utf8対応
-		_tcscpy(ppath,_T("utf-8\\migemo-dict"));
+		_tcscpy(ppath,L"utf-8\\migemo-dict");
 		if(fexist(path)){
-			_tcscpy(ppath,_T("utf-8\\"));
+			_tcscpy(ppath,L"utf-8\\");
 			ppath = &path[_tcslen(path)];
 			m_bUtf8 = true;
 		}else{
-			_tcscpy(ppath,_T("cp932\\migemo-dict"));
+			_tcscpy(ppath,L"cp932\\migemo-dict");
 			if(fexist(path)){
-				_tcscpy(ppath,_T("cp932\\"));
+				_tcscpy(ppath,L"cp932\\");
 				ppath = &path[_tcslen(path)];
 			}
 			m_bUtf8 = false;
 		}
-		_tcscpy(ppath,_T("migemo-dict"));
+		_tcscpy(ppath,L"migemo-dict");
 
 		migemo_load_t(MIGEMO_DICTID_MIGEMO,path);
-		_tcscpy(ppath,_T("han2zen.dat"));
+		_tcscpy(ppath,L"han2zen.dat");
 		migemo_load_t(MIGEMO_DICTID_HAN2ZEN,path);
-		_tcscpy(ppath,_T("hira2kata.dat"));
+		_tcscpy(ppath,L"hira2kata.dat");
 		migemo_load_t(MIGEMO_DICTID_HIRA2KATA,path);
-		_tcscpy(ppath,_T("roma2hira.dat"));
+		_tcscpy(ppath,L"roma2hira.dat");
 		migemo_load_t(MIGEMO_DICTID_ROMA2HIRA,path);
-		_tcscpy(ppath,_T("zen2han.dat"));
+		_tcscpy(ppath,L"zen2han.dat");
 		migemo_load_t(MIGEMO_DICTID_ZEN2HAN,path);
 
 		// 2011.12.11 Moca 辞書登録後でないとmigemo内臓のものに変更されてしまう

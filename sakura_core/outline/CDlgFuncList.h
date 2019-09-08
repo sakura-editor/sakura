@@ -97,7 +97,7 @@ public:
 	bool ChangeLayout( int nId );
 	void OnOutlineNotify( WPARAM wParam, LPARAM lParam );
 	void SyncColor( void );
-	void SetWindowText( const TCHAR* szTitle );		//ダイアログタイトルの設定
+	void SetWindowText( const WCHAR* szTitle );		//ダイアログタイトルの設定
 	EFunctionCode GetFuncCodeRedraw(int outlineType);
 	void LoadFileTreeSetting( CFileTreeSetting& data, SFilePath& IniDirPath );
 
@@ -139,7 +139,7 @@ protected:
 	void SetListVB( void );			/* リストビューコントロールの初期化：VisualBasic */		// Jul 10, 2003  little YOSHI
 	void SetDocLineFuncList();
 
-	void SetTreeFileSub(HTREEITEM hParent, const TCHAR* pszFile);
+	void SetTreeFileSub(HTREEITEM hParent, const WCHAR* pszFile);
 	// 2002/11/1 frozen 
 	void SortTree(HWND hWndTree,HTREEITEM htiParent);//!< ツリービューの項目をソートする（ソート基準はm_nSortTypeを使用）
 #if 0
@@ -176,7 +176,7 @@ protected:
 	EDockSide GetDropRect( POINT ptDrag, POINT ptDrop, LPRECT pRect, bool bForceFloat );
 	BOOL Track( POINT ptDrag );
 	bool GetTreeFileFullName(HWND, HTREEITEM, std::wstring*, int*);
-	bool TagJumpTimer(const TCHAR*, CMyPoint, bool);
+	bool TagJumpTimer(const WCHAR*, CMyPoint, bool);
 
 private:
 	//	May 18, 2001 genta
@@ -200,7 +200,7 @@ private:
 	CFuncInfo* m_cFuncInfo;
 	std::wstring m_sJumpFile;
 
-	const TCHAR* m_pszTimerJumpFile;
+	const WCHAR* m_pszTimerJumpFile;
 	CMyPoint	m_pointTimerJump;
 	bool		m_bTimerJumpAutoClose;
 

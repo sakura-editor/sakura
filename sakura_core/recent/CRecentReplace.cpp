@@ -53,7 +53,7 @@ CRecentReplace::CRecentReplace()
 
 	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
-const TCHAR* CRecentReplace::GetItemText( int nIndex ) const
+const WCHAR* CRecentReplace::GetItemText( int nIndex ) const
 {
 	return to_wchar(*GetItem(nIndex));
 }
@@ -64,7 +64,7 @@ bool CRecentReplace::DataToReceiveType( LPCWSTR* dst, const CReplaceString* src 
 	return true;
 }
 
-bool CRecentReplace::TextToDataType( CReplaceString* dst, LPCTSTR pszText ) const
+bool CRecentReplace::TextToDataType( CReplaceString* dst, LPCWSTR pszText ) const
 {
 	if( false == ValidateReceiveType(to_wchar(pszText)) ){
 		return false;

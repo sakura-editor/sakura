@@ -28,23 +28,23 @@
 #include "CRecentImp.h"
 #include "util/StaticType.h"
 
-//StaticVector< StaticString<TCHAR, _MAX_PATH>, MAX_GREPFOLDER, const TCHAR*>
+//StaticVector< StaticString<WCHAR, _MAX_PATH>, MAX_GREPFOLDER, const WCHAR*>
 
-typedef StaticString<TCHAR, _MAX_PATH> CPathString;
+typedef StaticString<WCHAR, _MAX_PATH> CPathString;
 
 //! フォルダの履歴を管理 (RECENT_FOR_FOLDER)
-class CRecentFolder : public CRecentImp<CPathString, LPCTSTR>{
+class CRecentFolder : public CRecentImp<CPathString, LPCWSTR>{
 public:
 	//生成
 	CRecentFolder();
 
 	//オーバーライド
-	int				CompareItem( const CPathString* p1, LPCTSTR p2 ) const;
-	void			CopyItem( CPathString* dst, LPCTSTR src ) const;
-	const TCHAR*	GetItemText( int nIndex ) const;
-	bool			DataToReceiveType( LPCTSTR* dst, const CPathString* src ) const;
-	bool			TextToDataType( CPathString* dst, LPCTSTR pszText ) const;
-	bool			ValidateReceiveType( LPCTSTR p ) const;
+	int				CompareItem( const CPathString* p1, LPCWSTR p2 ) const;
+	void			CopyItem( CPathString* dst, LPCWSTR src ) const;
+	const WCHAR*	GetItemText( int nIndex ) const;
+	bool			DataToReceiveType( LPCWSTR* dst, const CPathString* src ) const;
+	bool			TextToDataType( CPathString* dst, LPCWSTR pszText ) const;
+	bool			ValidateReceiveType( LPCWSTR p ) const;
 	size_t			GetTextMaxLength() const;
 };
 

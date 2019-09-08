@@ -5,20 +5,20 @@
 
 namespace ApiWrap{
 
-	LRESULT List_GetText(HWND hwndList, int nIndex, LPTSTR str)
+	LRESULT List_GetText(HWND hwndList, int nIndex, LPWSTR str)
 	{
 		LRESULT nCount = SendMessage( hwndList, LB_GETTEXTLEN, (WPARAM)nIndex, (LPARAM)0);
 		if( nCount == LB_ERR )
 			return LB_ERR;
-		return SendMessage( hwndList, LB_GETTEXT, (WPARAM)nIndex, (LPARAM)(TCHAR*)TcharReceiver<WCHAR>(str,nCount+1) );	// +1: NULL 文字分
+		return SendMessage( hwndList, LB_GETTEXT, (WPARAM)nIndex, (LPARAM)(WCHAR*)TcharReceiver<WCHAR>(str,nCount+1) );	// +1: NULL 文字分
 	}
 
-	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, LPTSTR str, int nMaxCount)
+	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, LPWSTR str, int nMaxCount)
 	{
-		return GetDlgItemText(hwndDlg, nIDDlgItem, TcharReceiver<TCHAR>(str,nMaxCount), nMaxCount);
+		return GetDlgItemText(hwndDlg, nIDDlgItem, TcharReceiver<WCHAR>(str,nMaxCount), nMaxCount);
 	}
 
-	bool TreeView_GetItemTextVector(HWND hwndTree, TVITEM& item, std::vector<TCHAR>& vecStr)
+	bool TreeView_GetItemTextVector(HWND hwndTree, TVITEM& item, std::vector<WCHAR>& vecStr)
 	{
 		BOOL ret = FALSE;
 		int nBufferSize = 64;

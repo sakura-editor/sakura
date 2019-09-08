@@ -30,16 +30,16 @@
 BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData);	/* WinHelp のかわりに HtmlHelp を呼び出す */	// 2006.07.22 ryoji
 
 /* Shell Interface系(?) */
-BOOL SelectDir(HWND hWnd, const TCHAR* pszTitle, const TCHAR* pszInitFolder, TCHAR* strFolderName );	/* フォルダ選択ダイアログ */
-BOOL ResolveShortcutLink(HWND hwnd, LPCTSTR lpszLinkFile, LPTSTR lpszPath);/* ショートカット(.lnk)の解決 */
+BOOL SelectDir(HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR* strFolderName );	/* フォルダ選択ダイアログ */
+BOOL ResolveShortcutLink(HWND hwnd, LPCWSTR lpszLinkFile, LPWSTR lpszPath);/* ショートカット(.lnk)の解決 */
 
-HWND OpenHtmlHelp( HWND hWnd, LPCTSTR szFile, UINT uCmd, DWORD_PTR data,bool msgflag = true);
-DWORD NetConnect ( const TCHAR strNetWorkPass[] );
+HWND OpenHtmlHelp( HWND hWnd, LPCWSTR szFile, UINT uCmd, DWORD_PTR data,bool msgflag = true);
+DWORD NetConnect ( const WCHAR strNetWorkPass[] );
 
 /* ヘルプの目次を表示 */
 void ShowWinHelpContents( HWND hwnd );
 
-BOOL GetSpecialFolderPath( int nFolder, LPTSTR pszPath );	// 特殊フォルダのパスを取得する	// 2007.05.19 ryoji
+BOOL GetSpecialFolderPath( int nFolder, LPWSTR pszPath );	// 特殊フォルダのパスを取得する	// 2007.05.19 ryoji
 
 INT_PTR MyPropertySheet( LPPROPSHEETHEADER lppsph );	// 独自拡張プロパティシート	// 2007.05.24 ryoji
 

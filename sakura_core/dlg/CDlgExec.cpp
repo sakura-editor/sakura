@@ -49,7 +49,7 @@ const DWORD p_helpids[] = {	//12100
 
 CDlgExec::CDlgExec()
 {
-	m_szCommand[0] = _T('\0');	/* コマンドライン */
+	m_szCommand[0] = L'\0';	/* コマンドライン */
 	return;
 }
 
@@ -59,7 +59,7 @@ static const int codeTable2[] = { 0x00, 0x10, 0x100 };
 /* モーダルダイアログの表示 */
 int CDlgExec::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {
-	m_szCommand[0] = _T('\0');	/* コマンドライン */
+	m_szCommand[0] = L'\0';	/* コマンドライン */
 	m_bEditable = CEditDoc::GetInstance(0)->IsEditable();
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_EXEC, lParam );
 }
@@ -94,7 +94,7 @@ BOOL CDlgExec::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 /* ダイアログデータの設定 */
 void CDlgExec::SetData( void )
 {
-//	MYTRACE( _T("CDlgExec::SetData()") );
+//	MYTRACE( L"CDlgExec::SetData()" );
 	int		i;
 	HWND	hwndCombo;
 
@@ -180,7 +180,7 @@ int CDlgExec::GetData( void )
 	if( IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_CUR_DIR ) ){
 		DlgItem_GetText( GetHwnd(), IDC_COMBO_CUR_DIR, &m_szCurDir[0], _countof2( m_szCurDir ));
 	}else{
-		m_szCurDir[0] = _T('\0');
+		m_szCurDir[0] = L'\0';
 	}
 	{	//	From Here 2007.01.02 maru 引数を拡張のため
 		//	マクロからの呼び出しではShareDataに保存させないように，ShareDataとの受け渡しはExecCmdの外で
@@ -237,15 +237,15 @@ BOOL CDlgExec::OnBnClicked( int wID )
 	case IDC_BUTTON_REFERENCE:	/* ファイル名の「参照...」ボタン */
 		{
 			CDlgOpenFile	cDlgOpenFile;
-			TCHAR			szPath[_MAX_PATH + 1];
+			WCHAR			szPath[_MAX_PATH + 1];
 			int				size = _countof(szPath) - 1;
 			_tcsncpy( szPath, m_szCommand, size);
-			szPath[size] = _T('\0');
+			szPath[size] = L'\0';
 			/* ファイルオープンダイアログの初期化 */
 			cDlgOpenFile.Create(
 				m_hInstance,
 				GetHwnd(),
-				_T("*.com;*.exe;*.bat;*.cmd"),
+				L"*.com;*.exe;*.bat;*.cmd",
 				m_szCommand
 			);
 			if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){

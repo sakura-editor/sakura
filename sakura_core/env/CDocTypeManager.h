@@ -37,8 +37,8 @@ public:
 	{
 		m_pShareData = &GetDllShareData();
 	}
-	CTypeConfig GetDocumentTypeOfPath( const TCHAR* pszFilePath );	/* ファイルパスを渡して、ドキュメントタイプ（数値）を取得する */
-	CTypeConfig GetDocumentTypeOfExt( const TCHAR* pszExt );		/* 拡張子を渡して、ドキュメントタイプ（数値）を取得する */
+	CTypeConfig GetDocumentTypeOfPath( const WCHAR* pszFilePath );	/* ファイルパスを渡して、ドキュメントタイプ（数値）を取得する */
+	CTypeConfig GetDocumentTypeOfExt( const WCHAR* pszExt );		/* 拡張子を渡して、ドキュメントタイプ（数値）を取得する */
 	CTypeConfig GetDocumentTypeOfId( int id );
 
 	bool GetTypeConfig(CTypeConfig cDocumentType, STypeConfig& type);
@@ -47,12 +47,12 @@ public:
 	bool AddTypeConfig(CTypeConfig cDocumentType);
 	bool DelTypeConfig(CTypeConfig cDocumentType);
 
-	static bool IsFileNameMatch(const TCHAR* pszTypeExts, const TCHAR* pszFileName);	// タイプ別拡張子にファイル名がマッチするか
-	static void GetFirstExt(const TCHAR* pszTypeExts, TCHAR szFirstExt[], int nBuffSize);	// タイプ別拡張子の先頭拡張子を取得する
-	static bool ConvertTypesExtToDlgExt( const TCHAR *pszSrcExt, const TCHAR* szExt, TCHAR *pszDstExt );	// タイプ別設定の拡張子リストをダイアログ用リストに変換する
+	static bool IsFileNameMatch(const WCHAR* pszTypeExts, const WCHAR* pszFileName);	// タイプ別拡張子にファイル名がマッチするか
+	static void GetFirstExt(const WCHAR* pszTypeExts, WCHAR szFirstExt[], int nBuffSize);	// タイプ別拡張子の先頭拡張子を取得する
+	static bool ConvertTypesExtToDlgExt( const WCHAR *pszSrcExt, const WCHAR* szExt, WCHAR *pszDstExt );	// タイプ別設定の拡張子リストをダイアログ用リストに変換する
 
-	static const TCHAR* m_typeExtSeps;			// タイプ別拡張子の区切り文字
-	static const TCHAR* m_typeExtWildcards;		// タイプ別拡張子のワイルドカード
+	static const WCHAR* m_typeExtSeps;			// タイプ別拡張子の区切り文字
+	static const WCHAR* m_typeExtWildcards;		// タイプ別拡張子のワイルドカード
 
 private:
 	DLLSHAREDATA* m_pShareData;

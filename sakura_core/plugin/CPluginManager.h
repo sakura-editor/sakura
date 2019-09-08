@@ -46,13 +46,13 @@ public:
 	bool LoadAllPlugin(CommonSetting* common = NULL);				//全プラグインを読み込む
 	void UnloadAllPlugin();				//全プラグインを解放する
 	bool SearchNewPlugin( CommonSetting& common, HWND hWndOwner );		//新規プラグインを導入する
-	int InstallPlugin( CommonSetting& common, const TCHAR* pszPluginName, HWND hWndOwner, wstring& errorMsg, bool bUpdate = false );	//プラグインの初期導入をする
+	int InstallPlugin( CommonSetting& common, const WCHAR* pszPluginName, HWND hWndOwner, wstring& errorMsg, bool bUpdate = false );	//プラグインの初期導入をする
 	bool InstZipPlugin( CommonSetting& common, HWND hWndOwner, const wstring& sZipName, bool bInSearch=false );		//Zipプラグインを追加する
 	CPlugin* GetPlugin( int id );		//プラグインを取得する
 	void UninstallPlugin( CommonSetting& common, int id );		//プラグインを削除する
 
 private:
-	CPlugin* LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* pszPluginName, const TCHAR* pszLangName );	//プラグインを読み込む
+	CPlugin* LoadPlugin( const WCHAR* pszPluginDir, const WCHAR* pszPluginName, const WCHAR* pszLangName );	//プラグインを読み込む
 	bool RegisterPlugin( CPlugin* plugin );	//プラグインをCJackManagerに登録する
 	bool UnRegisterPlugin( CPlugin* plugin );	//プラグインのCJackManagerの登録を解除する
 

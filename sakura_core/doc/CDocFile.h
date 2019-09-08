@@ -70,9 +70,9 @@ public:
 	const SYSTEMTIME	GetFileSysTime() const	{ return m_sFileInfo.cFileTime.GetSYSTEMTIME(); }
 	void			SetFileTime( FILETIME& Time )	{ m_sFileInfo.cFileTime.SetFILETIME( Time ); }
 
-	const TCHAR*	GetFileName() const{ return GetFileTitlePointer(GetFilePath()); }	//!< ファイル名(パスなし)を取得
-	const TCHAR*	GetSaveFilePath(void) const;
-	void			SetSaveFilePath(LPCTSTR pszPath){ m_szSaveFilePath.Assign(pszPath); }
+	const WCHAR*	GetFileName() const{ return GetFileTitlePointer(GetFilePath()); }	//!< ファイル名(パスなし)を取得
+	const WCHAR*	GetSaveFilePath(void) const;
+	void			SetSaveFilePath(LPCWSTR pszPath){ m_szSaveFilePath.Assign(pszPath); }
 public: //####
 	CEditDoc*	m_pcDocRef;
 	SFileInfo	m_sFileInfo;

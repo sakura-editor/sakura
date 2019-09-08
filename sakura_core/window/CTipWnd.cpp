@@ -22,11 +22,11 @@
 #include "util/window.h"
 
 // ダミー文字列
-static constexpr TCHAR szDummy[] = { _T(" ") };
+static constexpr WCHAR szDummy[] = { L" " };
 
 /* CTipWndクラス デストラクタ */
 CTipWnd::CTipWnd()
-: CWnd(_T("::CTipWnd"))
+: CWnd(L"::CTipWnd")
 , m_bAlignLeft(false)
 {
 	m_hFont = NULL;
@@ -47,7 +47,7 @@ CTipWnd::~CTipWnd()
 /* 初期化 */
 void CTipWnd::Create( HINSTANCE hInstance, HWND hwndParent )
 {
-	LPCTSTR pszClassName = _T("CTipWnd");
+	LPCWSTR pszClassName = L"CTipWnd";
 
 	/* ウィンドウクラス作成 */
 	RegisterWC(
@@ -98,7 +98,7 @@ void CTipWnd::AfterCreateWindow( void )
 }
 
 /* Tipを表示 */
-void CTipWnd::Show( int nX, int nY, const TCHAR* szText, RECT* pRect )
+void CTipWnd::Show( int nX, int nY, const WCHAR* szText, RECT* pRect )
 {
 	HDC		hdc;
 	RECT	rc;
@@ -152,7 +152,7 @@ void CTipWnd::ComputeWindowSize(
 	const int cy4 = DpiScaleY( 4 );
 
 	// 計測対象をメンバ変数からローカル変数に取得
-	const TCHAR* pszText = m_cInfo.GetStringPtr();
+	const WCHAR* pszText = m_cInfo.GetStringPtr();
 	const size_t cchText = m_cInfo.GetStringLength();
 
 	// 計測結果を格納する変数
@@ -230,7 +230,7 @@ void CTipWnd::DrawTipText(
 	const int cy4 = DpiScaleY( 4 );
 
 	// 描画対象をメンバ変数からローカル変数に取得
-	const TCHAR* pszText = m_cInfo.GetStringPtr();
+	const WCHAR* pszText = m_cInfo.GetStringPtr();
 	const size_t cchText = m_cInfo.GetStringLength();
 
 	// 描画矩形

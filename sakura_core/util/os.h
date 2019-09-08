@@ -29,7 +29,7 @@
 
 //システム資源
 BOOL GetSystemResources( int* pnSystemResources, int* pnUserResources, int* pnGDIResources );	/* システムリソースを調べる */
-BOOL CheckSystemResources( const TCHAR* pszAppName );	/* システムリソースのチェック */
+BOOL CheckSystemResources( const WCHAR* pszAppName );	/* システムリソースのチェック */
 
 //クリップボード
 bool SetClipboardText( HWND hwnd, const ACHAR* pszText, int nLength );    //!< クリープボードにText形式でコピーする。ANSI版。nLengthは文字単位。
@@ -38,7 +38,7 @@ BOOL IsDataAvailable( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat );
 HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat );
 
 //	Sep. 10, 2002 genta CWSH.cppからの移動に伴う追加
-bool ReadRegistry(HKEY Hive, const TCHAR* Path, const TCHAR* Item, TCHAR* Buffer, unsigned BufferCount);
+bool ReadRegistry(HKEY Hive, const WCHAR* Path, const WCHAR* Item, WCHAR* Buffer, unsigned BufferCount);
 
 //	May 01, 2004 genta マルチモニタ対応のデスクトップ領域取得
 bool GetMonitorWorkRect(HWND     hWnd, LPRECT prcWork, LPRECT prcMonitor = NULL);	// 2006.04.21 ryoji パラメータ prcMonitor を追加
@@ -94,7 +94,7 @@ public:
 	CCurrentDirectoryBackupPoint();
 	~CCurrentDirectoryBackupPoint();
 private:
-	TCHAR m_szCurDir[_MAX_PATH];
+	WCHAR m_szCurDir[_MAX_PATH];
 };
 
 /*!

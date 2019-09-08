@@ -45,7 +45,7 @@ bool CControlProcess::InitializeProcess()
 	m_hMutex = ::CreateMutex( NULL, FALSE, GSTR_MUTEX_SAKURA );
 	if( NULL == m_hMutex ){
 		ErrorBeep();
-		TopErrorMessage( NULL, _T("CreateMutex()失敗。\n終了します。") );
+		TopErrorMessage( NULL, L"CreateMutex()失敗。\n終了します。" );
 		return false;
 	}
 
@@ -58,7 +58,7 @@ bool CControlProcess::InitializeProcess()
 	if( NULL == m_hEventCPInitialized )
 	{
 		ErrorBeep();
-		TopErrorMessage( NULL, _T("CreateEvent()失敗。\n終了します。") );
+		TopErrorMessage( NULL, L"CreateEvent()失敗。\n終了します。" );
 		return false;
 	}
 
@@ -68,7 +68,7 @@ bool CControlProcess::InitializeProcess()
 	m_hMutexCP = ::CreateMutex( NULL, TRUE, strCtrlProcEvent.c_str() );
 	if( NULL == m_hMutexCP ){
 		ErrorBeep();
-		TopErrorMessage( NULL, _T("CreateMutex()失敗。\n終了します。") );
+		TopErrorMessage( NULL, L"CreateMutex()失敗。\n終了します。" );
 		return false;
 	}
 	if( ERROR_ALREADY_EXISTS == ::GetLastError() ){
@@ -81,7 +81,7 @@ bool CControlProcess::InitializeProcess()
 	}
 
 	// コントロールプロセスのカレントディレクトリをシステムディレクトリに変更
-	TCHAR szDir[_MAX_PATH];
+	WCHAR szDir[_MAX_PATH];
 	::GetSystemDirectory( szDir, _countof(szDir) );
 	::SetCurrentDirectory( szDir );
 

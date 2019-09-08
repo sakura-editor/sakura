@@ -52,18 +52,18 @@ CRecentExcludeFile::CRecentExcludeFile()
 
 	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
-const TCHAR* CRecentExcludeFile::GetItemText( int nIndex ) const
+const WCHAR* CRecentExcludeFile::GetItemText( int nIndex ) const
 {
 	return *GetItem(nIndex);
 }
 
-bool CRecentExcludeFile::DataToReceiveType( LPCTSTR* dst, const CExcludeFileString* src ) const
+bool CRecentExcludeFile::DataToReceiveType( LPCWSTR* dst, const CExcludeFileString* src ) const
 {
 	*dst = *src;
 	return true;
 }
 
-bool CRecentExcludeFile::TextToDataType( CExcludeFileString* dst, LPCTSTR pszText ) const
+bool CRecentExcludeFile::TextToDataType( CExcludeFileString* dst, LPCWSTR pszText ) const
 {
 	if( false == ValidateReceiveType(pszText) ){
 		return false;
@@ -72,17 +72,17 @@ bool CRecentExcludeFile::TextToDataType( CExcludeFileString* dst, LPCTSTR pszTex
 	return true;
 }
 
-int CRecentExcludeFile::CompareItem( const CExcludeFileString* p1, LPCTSTR p2 ) const
+int CRecentExcludeFile::CompareItem( const CExcludeFileString* p1, LPCWSTR p2 ) const
 {
 	return _tcsicmp(*p1,p2);
 }
 
-void CRecentExcludeFile::CopyItem( CExcludeFileString* dst, LPCTSTR src ) const
+void CRecentExcludeFile::CopyItem( CExcludeFileString* dst, LPCWSTR src ) const
 {
 	_tcscpy(*dst,src);
 }
 
-bool CRecentExcludeFile::ValidateReceiveType( LPCTSTR p ) const
+bool CRecentExcludeFile::ValidateReceiveType( LPCWSTR p ) const
 {
 	if( GetTextMaxLength() <= _tcslen(p) ){
 		return false;

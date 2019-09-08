@@ -32,10 +32,10 @@ public:
 	||  Attributes & Operations
 	*/
 	int DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam,
-				 const TCHAR* pszPath, TCHAR* pszCompareLabel, HWND* phwndCompareWnd );	/* モーダルダイアログの表示 */
+				 const WCHAR* pszPath, WCHAR* pszCompareLabel, HWND* phwndCompareWnd );	/* モーダルダイアログの表示 */
 
-	const TCHAR*	m_pszPath;
-	TCHAR*			m_pszCompareLabel;
+	const WCHAR*	m_pszPath;
+	WCHAR*			m_pszCompareLabel;
 	HWND*			m_phwndCompareWnd;
 	BOOL			m_bCompareAndTileHorz;/* 左右に並べて表示 */
 

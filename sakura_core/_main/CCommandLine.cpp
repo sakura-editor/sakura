@@ -73,8 +73,8 @@
 	@date 2006.10.25 ryoji オプション文字列の大文字小文字を区別しない
 */
 int CCommandLine::CheckCommandLine(
-	LPTSTR	str,		//!< [in] 検証する文字列（先頭の-は含まない）
-	TCHAR** arg,		//!< [out] 引数がある場合はその先頭へのポインタ
+	LPWSTR	str,		//!< [in] 検証する文字列（先頭の-は含まない）
+	WCHAR** arg,		//!< [out] 引数がある場合はその先頭へのポインタ
 	int*	arglen		//!< [out] 引数の長さ
 )
 {
@@ -82,7 +82,7 @@ int CCommandLine::CheckCommandLine(
 		コマンドラインオプション解析用構造体配列
 	*/
 	struct _CmdLineOpt {
-		LPCTSTR opt;	//!< オプション文字列
+		LPCWSTR opt;	//!< オプション文字列
 		int len;		//!< オプションの文字列長（計算を省くため）
 		int value;		//!< 変換後の値
 		bool bLen0;
@@ -93,14 +93,14 @@ int CCommandLine::CheckCommandLine(
 		後ろに引数を取らないもの
 	*/
 	static const _CmdLineOpt _COptWoA[] = {
-		{_T("R"),			1,	CMDLINEOPT_R, false},
-		{_T("-"),			1,	CMDLINEOPT_NOMOREOPT, false},
-		{_T("NOWIN"),		5,	CMDLINEOPT_NOWIN, false},
-		{_T("WQ"),			2,	CMDLINEOPT_WRITEQUIT, false},	// 2007.05.19 ryoji sakuext用に追加
-		{_T("GREPMODE"),	8,	CMDLINEOPT_GREPMODE, false},
-		{_T("GREPDLG"),		7,	CMDLINEOPT_GREPDLG, false},
-		{_T("DEBUGMODE"),	9,	CMDLINEOPT_DEBUGMODE, false},
-		{_T("PROFMGR"),		7,	CMDLINEOPT_PROFMGR, false},
+		{L"R",			1,	CMDLINEOPT_R, false},
+		{L"-",			1,	CMDLINEOPT_NOMOREOPT, false},
+		{L"NOWIN",		5,	CMDLINEOPT_NOWIN, false},
+		{L"WQ",			2,	CMDLINEOPT_WRITEQUIT, false},	// 2007.05.19 ryoji sakuext用に追加
+		{L"GREPMODE",	8,	CMDLINEOPT_GREPMODE, false},
+		{L"GREPDLG",		7,	CMDLINEOPT_GREPDLG, false},
+		{L"DEBUGMODE",	9,	CMDLINEOPT_DEBUGMODE, false},
+		{L"PROFMGR",		7,	CMDLINEOPT_PROFMGR, false},
 		{NULL, 0, 0}
 	};
 
@@ -109,27 +109,27 @@ int CCommandLine::CheckCommandLine(
 		後ろに引数を取るもの
 	*/
 	static const _CmdLineOpt _COptWithA[] = {
-		{_T("@"),		1,			CMDLINEOPT_AT, false},
-		{_T("X"),		1,			CMDLINEOPT_X, false},
-		{_T("Y"),		1,			CMDLINEOPT_Y, false},
-		{_T("VX"),		2,			CMDLINEOPT_VX, false},
-		{_T("VY"),		2,			CMDLINEOPT_VY, false},
-		{_T("SX"),		2,			CMDLINEOPT_SX, false},
-		{_T("SY"),		2,			CMDLINEOPT_SY, false},
-		{_T("WX"),		2,			CMDLINEOPT_WX, false},
-		{_T("WY"),		2,			CMDLINEOPT_WY, false},
-		{_T("CODE"),	4,			CMDLINEOPT_CODE, false},	// 2002/09/20 Moca _COptWoAから移動
-		{_T("TYPE"),	4,			CMDLINEOPT_TYPE, false},	//!< タイプ別設定 Mar. 7, 2002 genta
-		{_T("GKEY"),	4,			CMDLINEOPT_GKEY, false},
-		{_T("GREPR"),	5,			CMDLINEOPT_GREPR, true},
-		{_T("GFILE"),	5,			CMDLINEOPT_GFILE, false},
-		{_T("GFOLDER"),	7,			CMDLINEOPT_GFOLDER, false},
-		{_T("GOPT"),	4,			CMDLINEOPT_GOPT, false},
-		{_T("GCODE"),	5,			CMDLINEOPT_GCODE, false},	// 2002/09/21 Moca 追加
-		{_T("GROUP"),	5,			CMDLINEOPT_GROUP, false},	// 2007.06.26 ryoji
-		{_T("M"),		1,			CMDLINEOPT_M, false},		// 2009.06.14 syat
-		{_T("MTYPE"),	5,			CMDLINEOPT_MTYPE, false},	// 2009.06.14 syat
-		{_T("PROF"),	4,			CMDLINEOPT_PROF, true},	// 2013.12.20 Moca
+		{L"@",		1,			CMDLINEOPT_AT, false},
+		{L"X",		1,			CMDLINEOPT_X, false},
+		{L"Y",		1,			CMDLINEOPT_Y, false},
+		{L"VX",		2,			CMDLINEOPT_VX, false},
+		{L"VY",		2,			CMDLINEOPT_VY, false},
+		{L"SX",		2,			CMDLINEOPT_SX, false},
+		{L"SY",		2,			CMDLINEOPT_SY, false},
+		{L"WX",		2,			CMDLINEOPT_WX, false},
+		{L"WY",		2,			CMDLINEOPT_WY, false},
+		{L"CODE",	4,			CMDLINEOPT_CODE, false},	// 2002/09/20 Moca _COptWoAから移動
+		{L"TYPE",	4,			CMDLINEOPT_TYPE, false},	//!< タイプ別設定 Mar. 7, 2002 genta
+		{L"GKEY",	4,			CMDLINEOPT_GKEY, false},
+		{L"GREPR",	5,			CMDLINEOPT_GREPR, true},
+		{L"GFILE",	5,			CMDLINEOPT_GFILE, false},
+		{L"GFOLDER",	7,			CMDLINEOPT_GFOLDER, false},
+		{L"GOPT",	4,			CMDLINEOPT_GOPT, false},
+		{L"GCODE",	5,			CMDLINEOPT_GCODE, false},	// 2002/09/21 Moca 追加
+		{L"GROUP",	5,			CMDLINEOPT_GROUP, false},	// 2007.06.26 ryoji
+		{L"M",		1,			CMDLINEOPT_M, false},		// 2009.06.14 syat
+		{L"MTYPE",	5,			CMDLINEOPT_MTYPE, false},	// 2009.06.14 syat
+		{L"PROF",	4,			CMDLINEOPT_PROF, true},	// 2013.12.20 Moca
 		{NULL, 0, 0}
 	};
 
@@ -188,14 +188,14 @@ int CCommandLine::CheckCommandLine(
 	これが呼び出された時点では共有メモリの初期化が完了していないため，
 	共有メモリにアクセスしてはならない．
 */
-void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
+void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CCommandLine::Parse" );
 
 	//	May 30, 2000 genta
 	//	実行ファイル名をもとに漢字コードを固定する．
 	{
-		TCHAR	exename[512];
+		WCHAR	exename[512];
 		::GetModuleFileName( NULL, exename, _countof(exename) );
 		WCHAR	wexename[512];
 		auto_strcpy( wexename, to_wchar(exename) );
@@ -221,21 +221,21 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 		}
 	}
 
-	TCHAR	szPath[_MAX_PATH];
+	WCHAR	szPath[_MAX_PATH];
 	bool	bFind = false;				// ファイル名発見フラグ
 	bool	bParseOptDisabled = false;	// 2007.09.09 genta オプション解析を行わなず，ファイル名として扱う
 	int		nPos;
 	int		i = 0;
-	if( pszCmdLineSrc[0] != _T('-') ){
+	if( pszCmdLineSrc[0] != L'-' ){
 		for( i = 0; i < _countof( szPath ); ++i ){
-			if( pszCmdLineSrc[i] == _T(' ') || pszCmdLineSrc[i] == _T('\0') ){
+			if( pszCmdLineSrc[i] == L' ' || pszCmdLineSrc[i] == L'\0' ){
 				/* ファイルの存在をチェック */
-				szPath[i] = _T('\0');	// 終端文字
+				szPath[i] = L'\0';	// 終端文字
 				if( fexist(szPath) ){
 					bFind = true;
 					break;
 				}
-				if( pszCmdLineSrc[i] == _T('\0') ){
+				if( pszCmdLineSrc[i] == L'\0' ){
 					break;
 				}
 			}
@@ -247,24 +247,24 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 		_tcscpy( m_fi.m_szPath, szPath );	/* ファイル名 */
 		nPos = i + 1;
 	}else{
-		m_fi.m_szPath[0] = _T('\0');
+		m_fi.m_szPath[0] = L'\0';
 		nPos = 0;
 	}
 
-	CNativeW cmResponseFile = _T("");
-	LPTSTR pszCmdLineWork = new TCHAR[lstrlen( pszCmdLineSrc ) + 1];
+	CNativeW cmResponseFile = L"";
+	LPWSTR pszCmdLineWork = new WCHAR[lstrlen( pszCmdLineSrc ) + 1];
 	_tcscpy( pszCmdLineWork, pszCmdLineSrc );
 	int nCmdLineWorkLen = lstrlen( pszCmdLineWork );
-	LPTSTR pszToken = my_strtok<TCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, _T(" ") );
+	LPWSTR pszToken = my_strtok<WCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, L" " );
 	while( pszToken != NULL )
 	{
-		DEBUG_TRACE( _T("OPT=[%s]\n"), pszToken );
+		DEBUG_TRACE( L"OPT=[%s]\n", pszToken );
 
 		//	2007.09.09 genta オプション判定ルール変更．オプション解析停止と""で囲まれたオプションを考慮
 		if( ( bParseOptDisabled ||
 			! (pszToken[0] == '-' || pszToken[0] == '"' && pszToken[1] == '-' ) )){
 
-			if( pszToken[0] == _T('\"') ){
+			if( pszToken[0] == L'\"' ){
 				CNativeW cmWork;
 				//	Nov. 3, 2005 genta
 				//	末尾のクォーテーションが無い場合を考慮して，
@@ -277,12 +277,12 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 				//	ファイル名の後ろにあるOptionを解析するため，ループは継続
 				int len = lstrlen( pszToken + 1 );
 				if( len > 0 ){
-					cmWork.SetString( &pszToken[1], len - ( pszToken[len] == _T('"') ? 1 : 0 ));
-					cmWork.Replace( _T("\"\""), _T("\"") );
+					cmWork.SetString( &pszToken[1], len - ( pszToken[len] == L'"' ? 1 : 0 ));
+					cmWork.Replace( L"\"\"", L"\"" );
 					_tcscpy_s( szPath, _countof(szPath), cmWork.GetStringPtr() );	/* ファイル名 */
 				}
 				else {
-					szPath[0] = _T('\0');
+					szPath[0] = L'\0';
 				}
 			}
 			else{
@@ -292,29 +292,29 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 			// Nov. 11, 2005 susu
 			// 不正なファイル名のままだとファイル保存時ダイアログが出なくなるので
 			// 簡単なファイルチェックを行うように修正
-			if (_tcsncmp_literal(szPath, _T("file:///"))==0) {
+			if (_tcsncmp_literal(szPath, L"file:///")==0) {
 				_tcscpy(szPath, &(szPath[8]));
 			}
 			int len = _tcslen(szPath);
 			for (int i = 0; i < len ; ) {
 				if ( !TCODE::IsValidFilenameChar(szPath[i]) ){
-					TCHAR msg_str[_MAX_PATH + 1];
+					WCHAR msg_str[_MAX_PATH + 1];
 					_stprintf(
 						msg_str,
 						LS(STR_CMDLINE_PARSECMD1),
 						szPath
 					);
-					MessageBox( NULL, msg_str, _T("FileNameError"), MB_OK);
-					szPath[0] = _T('\0');
+					MessageBox( NULL, msg_str, L"FileNameError", MB_OK);
+					szPath[0] = L'\0';
 					break;
 				}
 				int nChars = t_max(1, int(CNativeW::GetCharNext( szPath, len, szPath + i ) - (szPath + i)));
 				i += nChars;
 			}
 
-			if (szPath[0] != _T('\0')) {
+			if (szPath[0] != L'\0') {
 				CSakuraEnvironment::ResolvePath(szPath);
-				if (m_fi.m_szPath[0] == _T('\0')) {
+				if (m_fi.m_szPath[0] == L'\0') {
 					_tcscpy(m_fi.m_szPath, szPath );
 				}
 				else {
@@ -331,7 +331,7 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 				}
 			}
 			++pszToken;	//	先頭の'-'はskip
-			TCHAR *arg = NULL;
+			WCHAR *arg = NULL;
 			int nArgLen;
 			switch( CheckCommandLine( pszToken, &arg, &nArgLen ) ){
 			case CMDLINEOPT_AT:
@@ -387,8 +387,8 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 				break;
 			case CMDLINEOPT_GREPMODE:	//	GREPMODE
 				m_bGrepMode = true;
-				if( _T('\0') == m_fi.m_szDocType[0] ){
-					auto_strcpy( m_fi.m_szDocType , _T("grepout") );
+				if( L'\0' == m_fi.m_szDocType[0] ){
+					auto_strcpy( m_fi.m_szDocType , L"grepout" );
 				}
 				break;
 			case CMDLINEOPT_GREPDLG:	//	GREPDLG
@@ -408,11 +408,11 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 			case CMDLINEOPT_GFILE:	//	GFILE
 				//	前後の""を取り除く
 				m_gi.cmGrepFile.SetString( arg,  lstrlen( arg ) );
-				m_gi.cmGrepFile.Replace( _T("\"\""), _T("\"") );
+				m_gi.cmGrepFile.Replace( L"\"\"", L"\"" );
 				break;
 			case CMDLINEOPT_GFOLDER:	//	GFOLDER
 				m_gi.cmGrepFolder.SetString( arg,  lstrlen( arg ) );
-				m_gi.cmGrepFolder.Replace( _T("\"\""), _T("\"") );
+				m_gi.cmGrepFolder.Replace( L"\"\"", L"\"" );
 				break;
 			case CMDLINEOPT_GOPT:	//	GOPT
 				for( ; *arg != '\0' ; ++arg ){
@@ -476,8 +476,8 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 			case CMDLINEOPT_DEBUGMODE:
 				m_bDebugMode = true;
 				// 2010.06.16 Moca -TYPE=output 扱いとする
-				if( _T('\0') == m_fi.m_szDocType[0] ){
-					auto_strcpy( m_fi.m_szDocType , _T("output") );
+				if( L'\0' == m_fi.m_szDocType[0] ){
+					auto_strcpy( m_fi.m_szDocType , L"output" );
 				}
 				break;
 			case CMDLINEOPT_NOMOREOPT:	// 2007.09.09 genta これ以降引数無効
@@ -499,7 +499,7 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 				break;
 			}
 		}
-		pszToken = my_strtok<TCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, _T(" ") );
+		pszToken = my_strtok<WCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, L" " );
 	}
 	delete [] pszCmdLineWork;
 

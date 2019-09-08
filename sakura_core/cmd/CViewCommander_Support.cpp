@@ -51,7 +51,7 @@ retry:;
 	// 2003.06.22 Moca ファイル内から検索する場合には補完ファイルの設定は必須ではない
 	if( m_pCommanderView->m_pTypeData->m_bUseHokanByFile == FALSE &&
 		m_pCommanderView->m_pTypeData->m_bUseHokanByKeyword == false &&
-		_T('\0') == m_pCommanderView->m_pTypeData->m_szHokanFile[0]
+		L'\0' == m_pCommanderView->m_pTypeData->m_szHokanFile[0]
 	){
 		ConfirmBeep();
 		if( IDYES == ::ConfirmMessage( GetMainWindow(),
@@ -105,7 +105,7 @@ void CViewCommander::Command_HELP_CONTENTS( void )
 /* ヘルプキーワード検索 */
 void CViewCommander::Command_HELP_SEARCH( void )
 {
-	MyWinHelp( m_pCommanderView->GetHwnd(), HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+	MyWinHelp( m_pCommanderView->GetHwnd(), HELP_KEY, (ULONG_PTR)L"" );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	return;
 }
 
@@ -159,7 +159,7 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 			}
 		}
 		//	Oct. 3, 2001 genta
-		pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp , FuncLookup.Category2Name(i) , _T(""));
+		pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp , FuncLookup.Category2Name(i) , L"");
 //		pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , nsFuncCode::ppszFuncKind[i] );
 	}
 
@@ -213,11 +213,11 @@ retry:;
 	}
 
 	CNativeW		cmemCurText;
-	const TCHAR*	helpfile = CHelpManager().GetExtWinHelp( &(GetDocument()->m_cDocType.GetDocumentAttribute()) );
+	const WCHAR*	helpfile = CHelpManager().GetExtWinHelp( &(GetDocument()->m_cDocType.GetDocumentAttribute()) );
 
 	/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 	m_pCommanderView->GetCurrentTextForSearch( cmemCurText, false );
-	TCHAR path[_MAX_PATH];
+	WCHAR path[_MAX_PATH];
 	if( _IS_REL_PATH( helpfile ) ){
 		// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 		// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
@@ -226,9 +226,9 @@ retry:;
 		auto_strcpy( path, helpfile );
 	}
 	// 2012.09.26 Moca HTMLHELP対応
-	TCHAR	szExt[_MAX_EXT];
+	WCHAR	szExt[_MAX_EXT];
 	_tsplitpath( path, NULL, NULL, NULL, szExt );
-	if( 0 == _tcsicmp(szExt, _T(".chi")) || 0 == _tcsicmp(szExt, _T(".chm")) || 0 == _tcsicmp(szExt, _T(".col")) ){
+	if( 0 == _tcsicmp(szExt, L".chi") || 0 == _tcsicmp(szExt, L".chm") || 0 == _tcsicmp(szExt, L".col") ){
 		std::wstring pathw = to_wchar(path);
 		Command_EXTHTMLHELP( pathw.c_str(), cmemCurText.GetStringPtr() );
 	}else{
@@ -254,10 +254,10 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 	HWND		hwndHtmlHelp;
 	int			nLen;
 
-	DEBUG_TRACE( _T("helpfile=%s\n"), helpfile.c_str() );
+	DEBUG_TRACE( L"helpfile=%s\n", helpfile.c_str() );
 
 	//	From Here Jul. 5, 2002 genta
-	const TCHAR *filename = NULL;
+	const WCHAR *filename = NULL;
 	if ( 0 == helpfile.length() ){
 		while( !CHelpManager().ExtHTMLHelpIsSet( &(GetDocument()->m_cDocType.GetDocumentAttribute())) ){
 			ErrorBeep();
@@ -284,7 +284,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 	//	Jul. 5, 2002 genta
 	//	キーワードの外部指定を可能に
 	CNativeW	cmemCurText;
-	if( kwd != NULL && kwd[0] != _T('\0') ){
+	if( kwd != NULL && kwd[0] != L'\0' ){
 		cmemCurText.SetString( kwd );
 	}
 	else {
@@ -297,7 +297,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 		// タスクトレイのプロセスにHtmlHelpを起動させる
 		// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 		// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
-		TCHAR* pWork=GetDllShareData().m_sWorkBuffer.GetWorkBuffer<TCHAR>();
+		WCHAR* pWork=GetDllShareData().m_sWorkBuffer.GetWorkBuffer<WCHAR>();
 		if( _IS_REL_PATH( filename ) ){
 			GetInidirOrExedir( pWork, filename );
 		}else{
@@ -327,7 +327,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 		// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 		// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
 		if( _IS_REL_PATH( filename ) ){
-			TCHAR path[_MAX_PATH];
+			WCHAR path[_MAX_PATH];
 			GetInidirOrExedir( path, filename );
 			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
 			hwndHtmlHelp = OpenHtmlHelp(

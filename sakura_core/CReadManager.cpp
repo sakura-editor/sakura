@@ -46,7 +46,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 	SFileInfo*			pFileInfo		//!< [out]
 )
 {
-	LPCTSTR pszPath = sLoadInfo.cFilePath.c_str();
+	LPCWSTR pszPath = sLoadInfo.cFilePath.c_str();
 
 	// 文字コード種別
 	const STypeConfigMini* type;

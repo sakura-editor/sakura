@@ -152,7 +152,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	_SetHwnd( hwndDlg );
 
-	TCHAR			szFile[_MAX_PATH];
+	WCHAR			szFile[_MAX_PATH];
 
 	/* この実行ファイルの情報 */
 	::GetModuleFileName( NULL, szFile, _countof( szFile ) );
@@ -176,7 +176,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//      (あればSKR_PATCH_INFOの文字列がそのまま表示)
 	CNativeW cmemMsg;
 	cmemMsg.AppendString(LS(STR_DLGABOUT_APPNAME)); // e.g. "サクラエディタ", "Sakura Editor"
-	cmemMsg.AppendString(_T("   "));
+	cmemMsg.AppendString(L"   ");
 
 	// バージョン情報・コンフィグ情報 //
 #ifdef GIT_COMMIT_HASH
@@ -187,39 +187,39 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	
 	// 1行目
 	cmemMsg.AppendStringF(
-		_T("v%d.%d.%d.%d"),
+		L"v%d.%d.%d.%d",
 		HIWORD(dwVersionMS), LOWORD(dwVersionMS), HIWORD(dwVersionLS), LOWORD(dwVersionLS) // e.g. {2, 3, 2, 0}
 	);
-	cmemMsg.AppendString( _T(" ") _T(VER_PLATFORM) );
+	cmemMsg.AppendString( L" " _T(VER_PLATFORM) );
 	cmemMsg.AppendString( _T(SPACE_WHEN_DEBUG) _T(VER_CONFIG) );
 #ifdef APPVEYOR_DEV_VERSION
 	cmemMsg.AppendString( _T(APPVEYOR_DEV_VERSION_STR_WITH_SPACE) );
 #endif
 #ifdef ALPHA_VERSION
-	cmemMsg.AppendString( _T(" ") _T(ALPHA_VERSION_STR));
+	cmemMsg.AppendString( L" " _T(ALPHA_VERSION_STR));
 #endif
 #ifdef GIT_TAG_NAME
-	cmemMsg.AppendStringF(_T(" (tag %s)"), _T(GIT_TAG_NAME));
+	cmemMsg.AppendStringF(L" (tag %s)", _T(GIT_TAG_NAME));
 #endif
-	cmemMsg.AppendString( _T("\r\n") );
+	cmemMsg.AppendString( L"\r\n" );
 
 	// 2行目
 #ifdef VER_GITHASH
-	cmemMsg.AppendString( _T(VER_GITHASH) _T("\r\n"));
+	cmemMsg.AppendString( _T(VER_GITHASH) L"\r\n");
 #endif
 
 	// 3行目
 #ifdef GIT_REMOTE_ORIGIN_URL
-	cmemMsg.AppendString( _T("(GitURL ") _T(GIT_REMOTE_ORIGIN_URL) _T(")\r\n"));
+	cmemMsg.AppendString( L"(GitURL " _T(GIT_REMOTE_ORIGIN_URL) L")\r\n");
 #endif
 
 	// 段落区切り
-	cmemMsg.AppendString( _T("\r\n") );
+	cmemMsg.AppendString( L"\r\n" );
 
 	// コンパイル情報
-	cmemMsg.AppendString( _T("      Compile Info: ") );
+	cmemMsg.AppendString( L"      Compile Info: " );
 	cmemMsg.AppendStringF(
-		_T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) _T("%d ") TSTR_TARGET_MODE _T(" WIN%03x/I%03x/C%03x/N%03x\r\n"),
+		_T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) L"%d " TSTR_TARGET_MODE L" WIN%03x/I%03x/C%03x/N%03x\r\n",
 		COMPILER_VER, WINVER, _WIN32_IE, MY_WIN32_WINDOWS, MY_WIN32_WINNT
 	);
 
@@ -227,7 +227,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	CFileTime cFileTime;
 	GetLastWriteTimestamp( szFile, &cFileTime );
 	cmemMsg.AppendStringF(
-		_T("      Last Modified: %d/%d/%d %02d:%02d:%02d\r\n"),
+		L"      Last Modified: %d/%d/%d %02d:%02d:%02d\r\n",
 		cFileTime->wYear,
 		cFileTime->wMonth,
 		cFileTime->wDay,
@@ -238,20 +238,20 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	// パッチの情報をコンパイル時に渡せるようにする
 #ifdef SKR_PATCH_INFO
-	cmemMsg.AppendString( _T("      ") );
-	const TCHAR* ptszPatchInfo = to_wchar(SKR_PATCH_INFO);
+	cmemMsg.AppendString( L"      " );
+	const WCHAR* ptszPatchInfo = to_wchar(SKR_PATCH_INFO);
 	int patchInfoLen = auto_strlen(ptszPatchInfo);
 	cmemMsg.AppendString( ptszPatchInfo, t_min(80, patchInfoLen) );
 #endif
-	cmemMsg.AppendString( _T("\r\n"));
+	cmemMsg.AppendString( L"\r\n");
 
 	::DlgItem_SetText( GetHwnd(), IDC_EDIT_VER, cmemMsg.GetStringPtr() );
 
 	//	From Here Jun. 8, 2001 genta
 	//	Edit Boxにメッセージを追加する．
 	// 2011.06.01 nasukoji	各国語メッセージリソース対応
-	LPCTSTR pszDesc = LS( IDS_ABOUT_DESCRIPTION );
-	TCHAR szMsg[2048];
+	LPCWSTR pszDesc = LS( IDS_ABOUT_DESCRIPTION );
+	WCHAR szMsg[2048];
 	if( _tcslen(pszDesc) > 0 ){
 		_tcsncpy( szMsg, pszDesc, _countof(szMsg) - 1 );
 		szMsg[_countof(szMsg) - 1] = 0;
@@ -324,7 +324,7 @@ BOOL CDlgAbout::OnStnClicked( int wID )
 //	case IDC_STATIC_URL_ORG:	del 2008/7/4 Uchi
 		//	Web Browserの起動
 		{
-			TCHAR buf[512];
+			WCHAR buf[512];
 			::GetWindowText( GetItemHwnd( wID ), buf, _countof(buf) );
 			::ShellExecute( GetHwnd(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
 			return TRUE;
@@ -458,7 +458,7 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		PAINTSTRUCT ps;
 		HFONT hFont;
 		HFONT hFontOld;
-		TCHAR szText[512];
+		WCHAR szText[512];
 
 		hdc = BeginPaint( hWnd, &ps );
 
@@ -514,7 +514,7 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		pUrlWnd->m_pOldProc = NULL;
 		return (LRESULT)0;
 	case WM_SETTEXT:
-		return pUrlWnd->OnSetText( (LPCTSTR)lParam ) ? TRUE : FALSE;
+		return pUrlWnd->OnSetText( (LPCWSTR)lParam ) ? TRUE : FALSE;
 	}
 
 	return CallWindowProc( pUrlWnd->m_pOldProc, hWnd, msg, wParam, lParam );
@@ -523,7 +523,7 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 
 //WM_SETTEXTハンドラ
 //https://docs.microsoft.com/en-us/windows/desktop/winmsg/wm-settext
-bool CUrlWnd::OnSetText( _In_opt_z_ LPCTSTR pchText, _In_opt_ size_t cchText ) const
+bool CUrlWnd::OnSetText( _In_opt_z_ LPCWSTR pchText, _In_opt_ size_t cchText ) const
 {
 	// 標準のメッセージハンドラに処理させる
 	auto retSetText = ::CallWindowProc( m_pOldProc, GetHwnd(), WM_SETTEXT, 0, (LPARAM)pchText );

@@ -26,39 +26,39 @@
 #ifndef SAKURA_FILE_2813BD8E_F6B9_400F_AA27_A6DDC372D6B89_H_
 #define SAKURA_FILE_2813BD8E_F6B9_400F_AA27_A6DDC372D6B89_H_
 
-bool fexist(LPCTSTR pszPath); //!< ファイルまたはディレクトリが存在すればtrue
+bool fexist(LPCWSTR pszPath); //!< ファイルまたはディレクトリが存在すればtrue
 
 bool IsFilePath( const wchar_t* pLine, size_t* pnBgn, size_t* pnPathLen, bool bFileOnly = true );
-bool IsFileExists(const TCHAR* path, bool bFileOnly = false);
-bool IsDirectory(LPCTSTR pszPath);	// 2009.08.20 ryoji
+bool IsFileExists(const WCHAR* path, bool bFileOnly = false);
+bool IsDirectory(LPCWSTR pszPath);	// 2009.08.20 ryoji
 
 //	Apr. 30, 2003 genta
 //	ディレクトリの深さを調べる
-int CalcDirectoryDepth(const TCHAR* path);
+int CalcDirectoryDepth(const WCHAR* path);
 
 // 2005.11.26 aroka
-bool IsLocalDrive( const TCHAR* pszDrive );
+bool IsLocalDrive( const WCHAR* pszDrive );
 
 //※サクラ依存
-FILE *_tfopen_absexe(LPCTSTR fname, LPCTSTR mode); // 2003.06.23 Moca
-FILE *_tfopen_absini(LPCTSTR fname, LPCTSTR mode, BOOL bOrExedir = TRUE); // 2007.05.19 ryoji
+FILE *_tfopen_absexe(LPCWSTR fname, LPCWSTR mode); // 2003.06.23 Moca
+FILE *_tfopen_absini(LPCWSTR fname, LPCWSTR mode, BOOL bOrExedir = TRUE); // 2007.05.19 ryoji
 
 //パス文字列処理
-void CutLastYenFromDirectoryPath( TCHAR* pszFolder );			/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
+void CutLastYenFromDirectoryPath( WCHAR* pszFolder );			/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
 void AddLastYenFromDirectoryPath( WCHAR* pszFolder );			/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
-void SplitPath_FolderAndFile( const TCHAR* pszFilePath, TCHAR* pszFolder, TCHAR* pszFile );	/* ファイルのフルパスを、フォルダとファイル名に分割 */
-void Concat_FolderAndFile( const TCHAR* pszDir, const TCHAR* pszTitle, TCHAR* pszPath );/* フォルダ、ファイル名から、結合したパスを作成 */
-BOOL GetLongFileName( const TCHAR* pszFilePathSrc, TCHAR* pszFilePathDes );					/* ロングファイル名を取得する */
-BOOL CheckEXT( const TCHAR* pszPath, const TCHAR* pszExt );					/* 拡張子を調べる */
-const TCHAR* GetFileTitlePointer(const TCHAR* tszPath);							//!< ファイルフルパス内のファイル名を指すポインタを取得。2007.09.20 kobake 作成
-bool _IS_REL_PATH(const TCHAR* path);											//!< 相対パスか判定する。2003.06.23 Moca
+void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR* pszFile );	/* ファイルのフルパスを、フォルダとファイル名に分割 */
+void Concat_FolderAndFile( const WCHAR* pszDir, const WCHAR* pszTitle, WCHAR* pszPath );/* フォルダ、ファイル名から、結合したパスを作成 */
+BOOL GetLongFileName( const WCHAR* pszFilePathSrc, WCHAR* pszFilePathDes );					/* ロングファイル名を取得する */
+BOOL CheckEXT( const WCHAR* pszPath, const WCHAR* pszExt );					/* 拡張子を調べる */
+const WCHAR* GetFileTitlePointer(const WCHAR* tszPath);							//!< ファイルフルパス内のファイル名を指すポインタを取得。2007.09.20 kobake 作成
+bool _IS_REL_PATH(const WCHAR* path);											//!< 相対パスか判定する。2003.06.23 Moca
 
 //※サクラ依存
-void GetExedir( LPTSTR pDir, LPCTSTR szFile = NULL );
-void GetInidir( LPTSTR pDir, LPCTSTR szFile = NULL ); // 2007.05.19 ryoji
-void GetInidirOrExedir( LPTSTR pDir, LPCTSTR szFile = NULL, BOOL bRetExedirIfFileEmpty = FALSE ); // 2007.05.22 ryoji
+void GetExedir( LPWSTR pDir, LPCWSTR szFile = NULL );
+void GetInidir( LPWSTR pDir, LPCWSTR szFile = NULL ); // 2007.05.19 ryoji
+void GetInidirOrExedir( LPWSTR pDir, LPCWSTR szFile = NULL, BOOL bRetExedirIfFileEmpty = FALSE ); // 2007.05.22 ryoji
 
-LPCTSTR GetRelPath( LPCTSTR pszPath );
+LPCWSTR GetRelPath( LPCWSTR pszPath );
 
 //ファイル時刻
 class CFileTime{
@@ -95,18 +95,18 @@ private:
 	mutable SYSTEMTIME	m_systime;
 	mutable bool		m_bModified;
 };
-bool GetLastWriteTimestamp( const TCHAR* filename, CFileTime* pcFileTime ); //	Oct. 22, 2005 genta
+bool GetLastWriteTimestamp( const WCHAR* filename, CFileTime* pcFileTime ); //	Oct. 22, 2005 genta
 
 //文字列分割
 void my_splitpath ( const char *comln , char *drv,char *dir,char *fnm,char *ext );
 void my_splitpath_w ( const wchar_t *comln , wchar_t *drv,wchar_t *dir,wchar_t *fnm,wchar_t *ext );
-void my_splitpath_t ( const TCHAR *comln , TCHAR *drv,TCHAR *dir,TCHAR *fnm,TCHAR *ext );
+void my_splitpath_t ( const WCHAR *comln , WCHAR *drv,WCHAR *dir,WCHAR *fnm,WCHAR *ext );
 #define my_splitpath_t my_splitpath_w
 
-int FileMatchScoreSepExt( const TCHAR *file1, const TCHAR *file2 );
+int FileMatchScoreSepExt( const WCHAR *file1, const WCHAR *file2 );
 
-void GetStrTrancateWidth( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int nPxWidth );
-void GetShortViewPath(TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int nPxWidth, bool bFitMode );
+void GetStrTrancateWidth( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int nPxWidth );
+void GetShortViewPath(WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int nPxWidth, bool bFitMode );
 
 #endif /* SAKURA_FILE_2813BD8E_F6B9_400F_AA27_A6DDC372D6B89_H_ */
 /*[EOF]*/

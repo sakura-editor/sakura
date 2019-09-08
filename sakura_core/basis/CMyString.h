@@ -37,41 +37,41 @@
 #include "util/StaticType.h"
 
 //共通型
-typedef StaticString<TCHAR,_MAX_PATH> SFilePath;
-typedef StaticString<TCHAR, MAX_GREP_PATH> SFilePathLong;
-class CFilePath : public StaticString<TCHAR,_MAX_PATH>{
+typedef StaticString<WCHAR,_MAX_PATH> SFilePath;
+typedef StaticString<WCHAR, MAX_GREP_PATH> SFilePathLong;
+class CFilePath : public StaticString<WCHAR,_MAX_PATH>{
 private:
-	typedef StaticString<TCHAR,_MAX_PATH> Super;
+	typedef StaticString<WCHAR,_MAX_PATH> Super;
 public:
 	CFilePath() : Super() { }
-	CFilePath(const TCHAR* rhs) : Super(rhs) { }
+	CFilePath(const WCHAR* rhs) : Super(rhs) { }
 
-	bool IsValidPath() const{ return At(0)!=_T('\0'); }
+	bool IsValidPath() const{ return At(0)!=L'\0'; }
 	std::wstring GetDirPath() const
 	{
-		TCHAR	szDirPath[_MAX_PATH];
-		TCHAR	szDrive[_MAX_DRIVE];
-		TCHAR	szDir[_MAX_DIR];
+		WCHAR	szDirPath[_MAX_PATH];
+		WCHAR	szDrive[_MAX_DRIVE];
+		WCHAR	szDir[_MAX_DIR];
 		_tsplitpath( this->c_str(), szDrive, szDir, NULL, NULL );
 		_tcscpy( szDirPath, szDrive);
 		_tcscat( szDirPath, szDir );
 		return szDirPath;
 	}
 	//拡張子を取得する
-	LPCTSTR GetExt( bool bWithoutDot = false ) const
+	LPCWSTR GetExt( bool bWithoutDot = false ) const
 	{
-		const TCHAR* head = c_str();
-		const TCHAR* p = auto_strchr(head,_T('\0')) - 1;
+		const WCHAR* head = c_str();
+		const WCHAR* p = auto_strchr(head,L'\0') - 1;
 		while(p>=head){
-			if(*p==_T('.'))break;
-			if(*p==_T('\\'))break;
-			if(*p==_T('/'))break;
+			if(*p==L'.')break;
+			if(*p==L'\\')break;
+			if(*p==L'/')break;
 			p--;
 		}
-		if(p>=head && *p==_T('.')){
+		if(p>=head && *p==L'.'){
 			return bWithoutDot ? p+1 : p;	//bWithoutDot==trueならドットなしを返す
 		}else{
-			return auto_strchr(head,_T('\0'));
+			return auto_strchr(head,L'\0');
 		}
 	}
 };
@@ -81,17 +81,17 @@ class CCommandLineString{
 public:
 	CCommandLineString()
 	{
-		m_szCmdLine[0] = _T('\0');
+		m_szCmdLine[0] = L'\0';
 		m_pHead = m_szCmdLine;
 	}
-	void AppendF(const TCHAR* szFormat, ...)
+	void AppendF(const WCHAR* szFormat, ...)
 	{
 		va_list v;
 		va_start(v,szFormat);
 		m_pHead+=auto_vsprintf_s(m_pHead,_countof(m_szCmdLine)-(m_pHead-m_szCmdLine),szFormat,v);
 		va_end(v);
 	}
-	const TCHAR* c_str() const
+	const WCHAR* c_str() const
 	{
 		return m_szCmdLine;
 	}
@@ -104,8 +104,8 @@ public:
 		return _countof(m_szCmdLine) - 1;
 	}
 private:
-	TCHAR	m_szCmdLine[1024];
-	TCHAR*	m_pHead;
+	WCHAR	m_szCmdLine[1024];
+	WCHAR*	m_pHead;
 };
 
 #endif /* SAKURA_CMYSTRING_43EB58CF_8782_43AC_AC82_A22DFC99E063_H_ */

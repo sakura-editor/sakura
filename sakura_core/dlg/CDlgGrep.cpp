@@ -65,7 +65,7 @@ const DWORD p_helpids[] = {	//12000
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
 
-static void SetGrepFolder( HWND hwndCtrl, LPCTSTR folder );
+static void SetGrepFolder( HWND hwndCtrl, LPCWSTR folder );
 
 CDlgGrep::CDlgGrep()
 {
@@ -140,7 +140,7 @@ BOOL CDlgGrep::OnCbnDropDown( HWND hwndCtl, int wID )
 }
 
 /* モーダルダイアログの表示 */
-int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const TCHAR* pszCurrentFilePath )
+int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCurrentFilePath )
 {
 	m_bSubFolder = m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder;			// Grep: サブフォルダも検索
 	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;		// 検索オプション
@@ -153,15 +153,15 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const TCHAR* pszCur
 
 	// 2013.05.21 コンストラクタからDoModalに移動
 	// m_strText は呼び出し元で設定済み
-	if( m_szFile[0] == _T('\0') && m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
+	if( m_szFile[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
 		_tcscpy( m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
 	}
-	if( m_szFolder[0] == _T('\0') && m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
+	if( m_szFolder[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
 		_tcscpy( m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダ */
 	}
 	
 	/* 除外ファイル */
-	if (m_szExcludeFile[0] == _T('\0')) {
+	if (m_szExcludeFile[0] == L'\0') {
 		if (m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
 			_tcscpy(m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);
 		}
@@ -175,7 +175,7 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const TCHAR* pszCur
 	}
 
 	/* 除外フォルダ */
-	if (m_szExcludeFolder[0] == _T('\0')) {
+	if (m_szExcludeFolder[0] == L'\0') {
 		if (m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
 			_tcscpy(m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);
 		}
@@ -324,15 +324,15 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 		return TRUE;
 	case IDC_BUTTON_CURRENTFOLDER:	/* 現在編集中のファイルのフォルダ */
 		/* ファイルを開いているか */
-		if( m_szCurrentFilePath[0] != _T('\0') ){
-			TCHAR	szWorkFolder[MAX_PATH];
-			TCHAR	szWorkFile[MAX_PATH];
+		if( m_szCurrentFilePath[0] != L'\0' ){
+			WCHAR	szWorkFolder[MAX_PATH];
+			WCHAR	szWorkFile[MAX_PATH];
 			SplitPath_FolderAndFile( m_szCurrentFilePath, szWorkFolder, szWorkFile );
 			SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), szWorkFolder );
 		}
 		else{
 			/* 現在のプロセスのカレントディレクトリを取得します */
-			TCHAR	szWorkFolder[MAX_PATH];
+			WCHAR	szWorkFolder[MAX_PATH];
 			::GetCurrentDirectory( _countof( szWorkFolder ) - 1, szWorkFolder );
 			SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), szWorkFolder );
 		}
@@ -341,31 +341,31 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 		{
 			HWND hwnd = GetItemHwnd( IDC_COMBO_FOLDER );
 			const int nMaxPath = MAX_GREP_PATH;
-			TCHAR szFolder[nMaxPath];
+			WCHAR szFolder[nMaxPath];
 			::GetWindowText( hwnd, szFolder, _countof(szFolder) );
 			std::vector<std::wstring> vPaths;
 			CGrepAgent::CreateFolders( szFolder, vPaths );
 			if( 0 < vPaths.size() ){
 				// 最後のパスが操作対象
 				auto_strncpy( szFolder, vPaths.rbegin()->c_str(), nMaxPath );
-				szFolder[nMaxPath-1] = _T('\0');
+				szFolder[nMaxPath-1] = L'\0';
 				if( DirectoryUp( szFolder ) ){
 					*(vPaths.rbegin()) = szFolder;
-					szFolder[0] = _T('\0');
+					szFolder[0] = L'\0';
 					for( int i = 0 ; i < (int)vPaths.size(); i++ ){
-						TCHAR szFolderItem[nMaxPath];
+						WCHAR szFolderItem[nMaxPath];
 						auto_strncpy( szFolderItem, vPaths[i].c_str(), nMaxPath );
-						szFolderItem[nMaxPath-1] = _T('\0');
-						if( auto_strchr( szFolderItem, _T(';') ) ){
-							szFolderItem[0] = _T('"');
+						szFolderItem[nMaxPath-1] = L'\0';
+						if( auto_strchr( szFolderItem, L';' ) ){
+							szFolderItem[0] = L'"';
 							auto_strncpy( szFolderItem + 1, vPaths[i].c_str(), nMaxPath - 1 );
-							szFolderItem[nMaxPath-1] = _T('\0');
-							auto_strcat( szFolderItem, _T("\"") );
-							szFolderItem[nMaxPath-1] = _T('\0');
+							szFolderItem[nMaxPath-1] = L'\0';
+							auto_strcat( szFolderItem, L"\"" );
+							szFolderItem[nMaxPath-1] = L'\0';
 						}
 						if( i ){
-							auto_strcat( szFolder, _T(";") );
-							szFolder[nMaxPath-1] = _T('\0');
+							auto_strcat( szFolder, L";" );
+							szFolder[nMaxPath-1] = L'\0';
 						}
 						auto_strcat_s( szFolder, nMaxPath, szFolderItem );
 					}
@@ -376,10 +376,10 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 		return TRUE;
 
 //	case IDC_CHK_LOHICASE:	/* 英大文字と英小文字を区別する */
-//		MYTRACE( _T("IDC_CHK_LOHICASE\n") );
+//		MYTRACE( L"IDC_CHK_LOHICASE\n" );
 //		return TRUE;
 	case IDC_CHK_REGULAREXP:	/* 正規表現 */
-//		MYTRACE( _T("IDC_CHK_REGULAREXP ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) = %d\n"), ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) );
+//		MYTRACE( L"IDC_CHK_REGULAREXP ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) = %d\n", ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) );
 		if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) ){
 			// From Here Jun. 26, 2001 genta
 			//	正規表現ライブラリの差し替えに伴う処理の見直し
@@ -414,10 +414,10 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 		/* フォルダ参照ボタン */
 		{
 			const int nMaxPath = MAX_GREP_PATH;
-			TCHAR	szFolder[nMaxPath];
+			WCHAR	szFolder[nMaxPath];
 			/* 検索フォルダ */
 			::DlgItem_GetText( GetHwnd(), IDC_COMBO_FOLDER, szFolder, nMaxPath - 1 );
-			if( szFolder[0] == _T('\0') ){
+			if( szFolder[0] == L'\0' ){
 				::GetCurrentDirectory( nMaxPath, szFolder );
 			}
 			if( SelectDir( GetHwnd(), LS(STR_DLGGREP1), szFolder, szFolder ) ){
@@ -489,11 +489,11 @@ void CDlgGrep::SetData( void )
 	/* 除外フォルダ */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, m_szExcludeFolder);
 
-	if((m_szFolder[0] == _T('\0') || m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder) &&
-		m_szCurrentFilePath[0] != _T('\0')
+	if((m_szFolder[0] == L'\0' || m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder) &&
+		m_szCurrentFilePath[0] != L'\0'
 	){
-		TCHAR	szWorkFolder[MAX_PATH];
-		TCHAR	szWorkFile[MAX_PATH];
+		WCHAR	szWorkFolder[MAX_PATH];
+		WCHAR	szWorkFile[MAX_PATH];
 		SplitPath_FolderAndFile( m_szCurrentFilePath, szWorkFolder, szWorkFile );
 		SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), szWorkFolder );
 	}
@@ -591,7 +591,7 @@ void CDlgGrep::SetData( void )
 	}
 	// To Here Jun. 29, 2001 genta
 
-	if( m_szCurrentFilePath[0] != _T('\0') ){
+	if( m_szCurrentFilePath[0] != L'\0' ){
 		::EnableWindow( GetItemHwnd( IDC_CHK_FROMTHISTEXT ), TRUE );
 	}else{
 		::EnableWindow( GetItemHwnd( IDC_CHK_FROMTHISTEXT ), FALSE );
@@ -614,12 +614,12 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 {
 	BOOL bEnableControls = TRUE;
 	if( 0 != m_szCurrentFilePath[0] && bChecked ){
-		TCHAR	szWorkFolder[MAX_PATH];
-		TCHAR	szWorkFile[MAX_PATH];
+		WCHAR	szWorkFolder[MAX_PATH];
+		WCHAR	szWorkFile[MAX_PATH];
 		// 2003.08.01 Moca ファイル名はスペースなどは区切り記号になるので、""で囲い、エスケープする
-		szWorkFile[0] = _T('"');
+		szWorkFile[0] = L'"';
 		SplitPath_FolderAndFile( m_szCurrentFilePath, szWorkFolder, szWorkFile + 1 );
-		_tcscat( szWorkFile, _T("\"") ); // 2003.08.01 Moca
+		_tcscat( szWorkFile, L"\"" ); // 2003.08.01 Moca
 		::DlgItem_SetText( GetHwnd(), IDC_COMBO_FILE, szWorkFile );
 		
 		SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), szWorkFolder );
@@ -693,7 +693,7 @@ int CDlgGrep::GetData( void )
 
 	/* 検索文字列 */
 	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT) ) + 1;
-	std::vector<TCHAR> vText(nBufferSize);
+	std::vector<WCHAR> vText(nBufferSize);
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, &vText[0], nBufferSize);
 	m_strText = to_wchar(&vText[0]);
 	m_bSetText = true;
@@ -725,13 +725,13 @@ int CDlgGrep::GetData( void )
 		}
 	}
 	/* この編集中のテキストから検索する */
-	if( m_szFile[0] == _T('\0') ){
+	if( m_szFile[0] == L'\0' ){
 		//	Jun. 16, 2003 Moca
 		//	検索パターンが指定されていない場合のメッセージ表示をやめ、
 		//	「*.*」が指定されたものと見なす．
-		_tcscpy( m_szFile, _T("*.*") );
+		_tcscpy( m_szFile, L"*.*" );
 	}
-	if( m_szFolder[0] == _T('\0') ){
+	if( m_szFolder[0] == L'\0' ){
 		WarningMessage(	GetHwnd(), LS(STR_DLGGREP4) );
 		return FALSE;
 	}
@@ -745,21 +745,21 @@ int CDlgGrep::GetData( void )
 		CGrepAgent::CreateFolders( m_szFolder, vPaths );
 		int nFolderLen = 0;
 		const int nMaxPath = MAX_GREP_PATH;
-		TCHAR szFolder[nMaxPath];
-		szFolder[0] = _T('\0');
+		WCHAR szFolder[nMaxPath];
+		szFolder[0] = L'\0';
 		for( int i = 0 ; i < (int)vPaths.size(); i ++ ){
 			// 相対パス→絶対パス
 			if( !::SetCurrentDirectory( vPaths[i].c_str() ) ){
 				WarningMessage(	GetHwnd(), LS(STR_DLGGREP5) );
 				return FALSE;
 			}
-			TCHAR szFolderItem[nMaxPath];
+			WCHAR szFolderItem[nMaxPath];
 			::GetCurrentDirectory( nMaxPath, szFolderItem );
 			// ;がフォルダ名に含まれていたら""で囲う
-			if( auto_strchr( szFolderItem, _T(';') ) ){
-				szFolderItem[0] = _T('"');
+			if( auto_strchr( szFolderItem, L';' ) ){
+				szFolderItem[0] = L'"';
 				::GetCurrentDirectory( nMaxPath, szFolderItem + 1 );
-				auto_strcat(szFolderItem, _T("\""));
+				auto_strcat(szFolderItem, L"\"");
 			}
 			int nFolderItemLen = auto_strlen( szFolderItem );
 			if( nMaxPath < nFolderLen + nFolderItemLen + 1 ){
@@ -767,7 +767,7 @@ int CDlgGrep::GetData( void )
 				return FALSE;
 			}
 			if( i ){
-				auto_strcat( szFolder, _T(";") );
+				auto_strcat( szFolder, L";" );
 			}
 			auto_strcat( szFolder, szFolderItem );
 			nFolderLen = auto_strlen( szFolder );
@@ -824,13 +824,13 @@ LPVOID CDlgGrep::GetHelpIdTable(void)
 }
 //@@@ 2002.01.18 add end
 
-static void SetGrepFolder( HWND hwndCtrl, LPCTSTR folder )
+static void SetGrepFolder( HWND hwndCtrl, LPCWSTR folder )
 {
-	if( auto_strchr( folder, _T(';')) ){
-		TCHAR szQuoteFolder[MAX_PATH];
-		szQuoteFolder[0] = _T('"');
+	if( auto_strchr( folder, L';') ){
+		WCHAR szQuoteFolder[MAX_PATH];
+		szQuoteFolder[0] = L'"';
 		auto_strcpy( szQuoteFolder + 1, folder );
-		auto_strcat( szQuoteFolder, _T("\"") );
+		auto_strcat( szQuoteFolder, L"\"" );
 		::SetWindowText( hwndCtrl, szQuoteFolder );
 	}else{
 		::SetWindowText( hwndCtrl, folder );

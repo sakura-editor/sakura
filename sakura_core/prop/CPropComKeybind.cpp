@@ -24,9 +24,9 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 
-#define STR_SHIFT_PLUS        _T("Shift+")  //@@@ 2001.11.08 add MIK
-#define STR_CTRL_PLUS         _T("Ctrl+")  //@@@ 2001.11.08 add MIK
-#define STR_ALT_PLUS          _T("Alt+")  //@@@ 2001.11.08 add MIK
+#define STR_SHIFT_PLUS        L"Shift+"  //@@@ 2001.11.08 add MIK
+#define STR_CTRL_PLUS         L"Ctrl+"  //@@@ 2001.11.08 add MIK
+#define STR_ALT_PLUS          L"Alt+"  //@@@ 2001.11.08 add MIK
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {	//10700
@@ -152,7 +152,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 			OnHelp( hwndDlg, IDD_PROP_KEYBIND );
 			return TRUE;
 		case PSN_KILLACTIVE:
-//			MYTRACE( _T("Keybind PSN_KILLACTIVE\n") );
+//			MYTRACE( L"Keybind PSN_KILLACTIVE\n" );
 			/* ダイアログデータの取得 Keybind */
 			GetData( hwndDlg );
 			return TRUE;
@@ -296,7 +296,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 				if( 0 < nAssignedKeyNum){
 					for( j = 0; j < nAssignedKeyNum; ++j ){
 						/* デバッグモニタに出力 */
-						const TCHAR* cpszString = ppcAssignedKeyList[j]->GetStringPtr();
+						const WCHAR* cpszString = ppcAssignedKeyList[j]->GetStringPtr();
 						::List_AddString( hwndAssignedkeyList, cpszString );
 						delete ppcAssignedKeyList[j];
 					}
@@ -321,7 +321,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 			case LBN_SELCHANGE:
 			//case LBN_DBLCLK:
 				{
-					TCHAR	buff[1024], *p;
+					WCHAR	buff[1024], *p;
 					int	ret;
 
 					nIndex = List_GetCurSel( hwndAssignedkeyList );
@@ -463,8 +463,8 @@ void CPropKeybind::ChangeKeyList( HWND hwndDlg){
 	/* キー一覧に文字列をセット（リストボックス）*/
 	List_ResetContent( hwndKeyList );
 	for( i = 0; i < m_Common.m_sKeyBind.m_nKeyNameArrNum; ++i ){
-		TCHAR	pszLabel[256];
-		auto_sprintf( pszLabel, _T("%ls%s"), szKeyState, m_Common.m_sKeyBind.m_pKeyNameArr[i].m_szKeyName );
+		WCHAR	pszLabel[256];
+		auto_sprintf( pszLabel, L"%ls%s", szKeyState, m_Common.m_sKeyBind.m_pKeyNameArr[i].m_szKeyName );
 		::List_AddString( hwndKeyList, pszLabel );
 	}
 	List_SetCurSel( hwndKeyList, nIndex );

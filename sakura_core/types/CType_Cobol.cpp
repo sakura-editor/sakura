@@ -35,8 +35,8 @@
 void CType_Cobol::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	_tcscpy( pType->m_szTypeName, _T("COBOL") );
-	_tcscpy( pType->m_szTypeExts, _T("cbl,cpy,pco,cob") );	//Jun. 04, 2001 JEPRO KENCH氏の助言に従い追加
+	_tcscpy( pType->m_szTypeName, L"COBOL" );
+	_tcscpy( pType->m_szTypeExts, L"cbl,cpy,pco,cob" );	//Jun. 04, 2001 JEPRO KENCH氏の助言に従い追加
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L"*", 6 );			//Jun. 02, 2001 JEPRO 修正
@@ -101,7 +101,7 @@ void CDocOutline::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 				}
 			}
 			szLabel[k] = L'\0';
-//			MYTRACE( _T("szLabel=[%ls]\n"), szLabel );
+//			MYTRACE( L"szLabel=[%ls]\n", szLabel );
 
 			pszKeyWord = L"division";
 			nKeyWordLen = wcslen( pszKeyWord );

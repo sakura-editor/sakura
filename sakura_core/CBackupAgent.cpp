@@ -91,7 +91,7 @@ ECallbackResult CBackupAgent::OnPreBeforeSave(SSaveInfo* pSaveInfo)
 	@todo Advanced modeでの世代管理
 */
 int CBackupAgent::MakeBackUp(
-	const TCHAR* target_file
+	const WCHAR* target_file
 )
 {
 	int		nRet;
@@ -105,7 +105,7 @@ int CBackupAgent::MakeBackUp(
 
 	const CommonSetting_Backup& bup_setting = GetDllShareData().m_Common.m_sBackup;
 
-	TCHAR	szPath[_MAX_PATH]; // バックアップ先パス名
+	WCHAR	szPath[_MAX_PATH]; // バックアップ先パス名
 	if( !FormatBackUpPath( szPath, _countof(szPath), target_file ) ){
 		int nMsgResult = ::TopConfirmMessage(
 			CEditWnd::getInstance()->GetHwnd(),
@@ -165,13 +165,13 @@ int CBackupAgent::MakeBackUp(
 		HANDLE			hFind;
 		WIN32_FIND_DATA	fData;
 
-		TCHAR*	pBase = szPath + _tcslen( szPath ) - 2;	//	2: 拡張子の最後の2桁の意味
+		WCHAR*	pBase = szPath + _tcslen( szPath ) - 2;	//	2: 拡張子の最後の2桁の意味
 
 		//------------------------------------------------------------------
 		//	1. 該当ディレクトリ中のbackupファイルを1つずつ探す
 		for( i = 0; i <= 99; i++ ){	//	最大値に関わらず，99（2桁の最大値）まで探す
 			//	ファイル名をセット
-			auto_sprintf( pBase, _T("%02d"), i );
+			auto_sprintf( pBase, L"%02d", i );
 
 			hFind = ::FindFirstFile( szPath, &fData );
 			if( hFind == INVALID_HANDLE_VALUE ){
@@ -192,7 +192,7 @@ int CBackupAgent::MakeBackUp(
 
 		for( ; i >= boundary; --i ){
 			//	ファイル名をセット
-			auto_sprintf( pBase, _T("%02d"), i );
+			auto_sprintf( pBase, L"%02d", i );
 			if( ::DeleteFile( szPath ) == 0 ){
 				::MessageBox( CEditWnd::getInstance()->GetHwnd(), szPath, LS(STR_BACKUP_ERR_DELETE), MB_OK );
 				//	Jun.  5, 2005 genta 戻り値変更
@@ -206,16 +206,16 @@ int CBackupAgent::MakeBackUp(
 		//	この位置でiは存在するバックアップファイルの最大番号を表している．
 
 		//	3. そこから0番まではコピーしながら移動
-		TCHAR szNewPath[MAX_PATH];
-		TCHAR *pNewNrBase;
+		WCHAR szNewPath[MAX_PATH];
+		WCHAR *pNewNrBase;
 
 		_tcscpy( szNewPath, szPath );
 		pNewNrBase = szNewPath + _tcslen( szNewPath ) - 2;
 
 		for( ; i >= 0; --i ){
 			//	ファイル名をセット
-			auto_sprintf( pBase, _T("%02d"), i );
-			auto_sprintf( pNewNrBase, _T("%02d"), i + 1 );
+			auto_sprintf( pBase, L"%02d", i );
+			auto_sprintf( pNewNrBase, L"%02d", i + 1 );
 
 			//	ファイルの移動
 			if( ::MoveFile( szPath, szNewPath ) == 0 ){
@@ -232,13 +232,13 @@ int CBackupAgent::MakeBackUp(
 
 	/* バックアップの作成 */
 	//	Aug. 21, 2005 genta 現在のファイルではなくターゲットファイルをバックアップするように
-	TCHAR	szDrive[_MAX_DIR];
-	TCHAR	szDir[_MAX_DIR];
-	TCHAR	szFname[_MAX_FNAME];
-	TCHAR	szExt[_MAX_EXT];
+	WCHAR	szDrive[_MAX_DIR];
+	WCHAR	szDir[_MAX_DIR];
+	WCHAR	szFname[_MAX_FNAME];
+	WCHAR	szExt[_MAX_EXT];
 	_tsplitpath( szPath, szDrive, szDir, szFname, szExt );
-	TCHAR	szPath2[MAX_PATH];
-	auto_sprintf( szPath2, _T("%s%s"), szDrive, szDir );
+	WCHAR	szPath2[MAX_PATH];
+	auto_sprintf( szPath2, L"%s%s", szDrive, szDir );
 
 	HANDLE			hFind;
 	WIN32_FIND_DATA	fData;
@@ -254,9 +254,9 @@ int CBackupAgent::MakeBackUp(
 		/* 正常終了 */
 		//@@@ 2001.12.11 start MIK
 		if( bup_setting.m_bBackUpDustBox && !dustflag ){	//@@@ 2002.03.23 ネットワーク・リムーバブルドライブでない
-			TCHAR	szDustPath[_MAX_PATH+1];
+			WCHAR	szDustPath[_MAX_PATH+1];
 			_tcscpy(szDustPath, szPath);
-			szDustPath[_tcslen(szDustPath) + 1] = _T('\0');
+			szDustPath[_tcslen(szDustPath) + 1] = L'\0';
 			SHFILEOPSTRUCT	fos;
 			fos.hwnd   = CEditWnd::getInstance()->GetHwnd();
 			fos.wFunc  = FO_DELETE;
@@ -300,16 +300,16 @@ int CBackupAgent::MakeBackUp(
 	@todo Advanced modeでの世代管理
 */
 bool CBackupAgent::FormatBackUpPath(
-	TCHAR*			szNewPath,
+	WCHAR*			szNewPath,
 	size_t 			newPathCount,
-	const TCHAR*	target_file
+	const WCHAR*	target_file
 )
 {
-	TCHAR	szDrive[_MAX_DIR];
-	TCHAR	szDir[_MAX_DIR];
-	TCHAR	szFname[_MAX_FNAME];
-	TCHAR	szExt[_MAX_EXT];
-	TCHAR*	psNext;
+	WCHAR	szDrive[_MAX_DIR];
+	WCHAR	szDir[_MAX_DIR];
+	WCHAR	szFname[_MAX_FNAME];
+	WCHAR	szExt[_MAX_EXT];
+	WCHAR*	psNext;
 
 	const CommonSetting_Backup& bup_setting = GetDllShareData().m_Common.m_sBackup;
 
@@ -318,7 +318,7 @@ bool CBackupAgent::FormatBackUpPath(
 
 	if( bup_setting.m_bBackUpFolder
 	  && (!bup_setting.m_bBackUpFolderRM || !IsLocalDrive( target_file ))) {	/* 指定フォルダにバックアップを作成する */	// m_bBackUpFolderRM 追加	2010/5/27 Uchi
-		TCHAR selDir[_MAX_PATH];
+		WCHAR selDir[_MAX_PATH];
 		CFileNameManager::ExpandMetaToFolder( bup_setting.m_szBackUpFolder, selDir, _countof(selDir) );
 		if (GetFullPathName(selDir, _MAX_PATH, szNewPath, &psNext) == 0) {
 			// うまく取れなかった
@@ -328,7 +328,7 @@ bool CBackupAgent::FormatBackUpPath(
 		AddLastYenFromDirectoryPath( szNewPath );
 	}
 	else{
-		auto_sprintf( szNewPath, _T("%s%s"), szDrive, szDir );
+		auto_sprintf( szNewPath, L"%s%s", szDrive, szDir );
 	}
 
 	/* 相対フォルダを挿入 */
@@ -338,7 +338,7 @@ bool CBackupAgent::FormatBackUpPath(
 		wchar_t	szTime[64];
 		wchar_t	szForm[64];
 
-		TCHAR*	pBase;
+		WCHAR*	pBase;
 		int     nBaseCount;
 		pBase = szNewPath + _tcslen( szNewPath );
 		nBaseCount = newPathCount - _tcslen( szNewPath );
@@ -346,12 +346,12 @@ bool CBackupAgent::FormatBackUpPath(
 		/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
 		switch( bup_setting.GetBackupType() ){
 		case 1:
-			if( -1 == auto_snprintf_s( pBase, nBaseCount, _T("%s.bak"), szFname ) ){
+			if( -1 == auto_snprintf_s( pBase, nBaseCount, L"%s.bak", szFname ) ){
 				return false;
 			}
 			break;
 		case 5: //	Jun.  5, 2005 genta 1の拡張子を残す版
-			if( -1 == auto_snprintf_s( pBase, nBaseCount, _T("%s%s.bak"), szFname, szExt ) ){
+			if( -1 == auto_snprintf_s( pBase, nBaseCount, L"%s%s.bak", szFname, szExt ) ){
 				return false;
 			}
 			break;
@@ -382,7 +382,7 @@ bool CBackupAgent::FormatBackUpPath(
 			}
 			/* YYYYMMDD時分秒 形式に変換 */
 			wcsftime( szTime, _countof( szTime ) - 1, szForm, &result );
-			if( -1 == auto_snprintf_s( pBase, nBaseCount, _T("%s_%ls%s"), szFname, szTime, szExt ) ){
+			if( -1 == auto_snprintf_s( pBase, nBaseCount, L"%s_%ls%s", szFname, szTime, szExt ) ){
 				return false;
 			}
 			break;
@@ -411,7 +411,7 @@ bool CBackupAgent::FormatBackUpPath(
 				if( bup_setting.GetBackupOpt(BKUP_SEC) ){	/* バックアップファイル名：日付の秒 */
 					auto_sprintf(szTime,L"%ls%02d",szTime,ctimeLastWrite->wSecond);
 				}
-				if( -1 == auto_sprintf_s( pBase, nBaseCount, _T("%s_%ls%s"), szFname, szTime, szExt ) ){
+				if( -1 == auto_sprintf_s( pBase, nBaseCount, L"%s_%ls%s", szFname, szTime, szExt ) ){
 					return false;
 				}
 			}
@@ -425,27 +425,27 @@ bool CBackupAgent::FormatBackUpPath(
 			//	ファイル名のRotationは確認ダイアログの後で行う．
 			{
 				//	Jun.  5, 2005 genta 拡張子を残せるように処理起点を操作する
-				TCHAR* ptr;
+				WCHAR* ptr;
 				if( bup_setting.GetBackupType() == 3 ){
 					ptr = szExt;
 				}
 				else {
 					ptr = szExt + _tcslen( szExt );
 				}
-				*ptr   = _T('.');
+				*ptr   = L'.';
 				*++ptr = bup_setting.GetBackupExtChar();
-				*++ptr = _T('0');
-				*++ptr = _T('0');
-				*++ptr = _T('\0');
+				*++ptr = L'0';
+				*++ptr = L'0';
+				*++ptr = L'\0';
 			}
-			if( -1 == auto_snprintf_s( pBase, nBaseCount, _T("%s%s"), szFname, szExt ) ){
+			if( -1 == auto_snprintf_s( pBase, nBaseCount, L"%s%s", szFname, szExt ) ){
 				return false;
 			}
 			break;
 		}
 
 	}else{ // 詳細設定使用する
-		TCHAR szFormat[1024];
+		WCHAR szFormat[1024];
 
 		switch( bup_setting.GetBackupTypeAdv() ){
 		case 4:	//	ファイルの日付，時刻
@@ -476,11 +476,11 @@ bool CBackupAgent::FormatBackUpPath(
 		{
 			// make keys
 			// $0-$9に対応するフォルダ名を切り出し
-			TCHAR keybuff[1024];
+			WCHAR keybuff[1024];
 			_tcscpy( keybuff, szDir );
 			CutLastYenFromDirectoryPath( keybuff );
 
-			TCHAR *folders[10];
+			WCHAR *folders[10];
 			{
 				//	Jan. 9, 2006 genta VC6対策
 				int idx;
@@ -490,11 +490,11 @@ bool CBackupAgent::FormatBackUpPath(
 				folders[0] = szFname;
 
 				for( idx=1; idx<10; ++idx ){
-					TCHAR *cp;
-					cp = _tcsrchr(keybuff, _T('\\'));
+					WCHAR *cp;
+					cp = _tcsrchr(keybuff, L'\\');
 					if( cp != NULL ){
 						folders[idx] = cp+1;
-						*cp = _T('\0');
+						*cp = L'\0';
 					}
 					else{
 						break;
@@ -504,20 +504,20 @@ bool CBackupAgent::FormatBackUpPath(
 			{
 				// $0-$9を置換
 				//wcscpy( szNewPath, L"" );
-				TCHAR *q= szFormat;
-				TCHAR *q2 = szFormat;
+				WCHAR *q= szFormat;
+				WCHAR *q2 = szFormat;
 				while( *q ){
-					if( *q==_T('$') ){
+					if( *q==L'$' ){
 						++q;
 						if( isdigit(*q) ){
-							q[-1] = _T('\0');
+							q[-1] = L'\0';
 							_tcscat( szNewPath, q2 );
 //							if( newPathCount <  auto_strlcat( szNewPath, q2, newPathCount ) ){
 //								return false;
 //							}
-							if( folders[*q-_T('0')] != 0 ){
-								_tcscat( szNewPath, folders[*q-_T('0')] );
-//								if( newPathCount < auto_strlcat( szNewPath, folders[*q-_T('0')], newPathCount ) ){
+							if( folders[*q-L'0'] != 0 ){
+								_tcscat( szNewPath, folders[*q-L'0'] );
+//								if( newPathCount < auto_strlcat( szNewPath, folders[*q-L'0'], newPathCount ) ){
 //									return false;
 //								}
 							}
@@ -533,26 +533,26 @@ bool CBackupAgent::FormatBackUpPath(
 			}
 		}
 		{
-			TCHAR temp[1024];
-			TCHAR *cp;
+			WCHAR temp[1024];
+			WCHAR *cp;
 			//	2006.03.25 Aroka szExt[0] == '\0'のときのオーバラン問題を修正
-			TCHAR *ep = (szExt[0]!=0) ? &szExt[1] : &szExt[0];
+			WCHAR *ep = (szExt[0]!=0) ? &szExt[1] : &szExt[0];
 			assert( newPathCount <= _countof(temp) );
 
 			// * を拡張子にする
-			while( _tcschr( szNewPath, _T('*') ) ){
+			while( _tcschr( szNewPath, L'*' ) ){
 				_tcscpy( temp, szNewPath );
-				cp = _tcschr( temp, _T('*') );
+				cp = _tcschr( temp, L'*' );
 				*cp = 0;
-				if( -1 == auto_snprintf_s( szNewPath, newPathCount, _T("%s%s%s"), temp, ep, cp+1 ) ){
+				if( -1 == auto_snprintf_s( szNewPath, newPathCount, L"%s%s%s", temp, ep, cp+1 ) ){
 					return false;
 				}
 			}
 			//	??はバックアップ連番にしたいところではあるが，
 			//	連番処理は末尾の2桁にしか対応していないので
 			//	使用できない文字?を_に変換してお茶を濁す
-			while(( cp = _tcschr( szNewPath, _T('?') ) ) != NULL){
-				*cp = _T('_');
+			while(( cp = _tcschr( szNewPath, L'?' ) ) != NULL){
+				*cp = L'_';
 			}
 		}
 	}

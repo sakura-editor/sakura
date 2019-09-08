@@ -130,7 +130,7 @@ BOOL CDropTarget::Revoke_DropTarget( void )
 }
 STDMETHODIMP CDropTarget::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
-	DEBUG_TRACE( _T("CDropTarget::DragEnter()\n") );
+	DEBUG_TRACE( L"CDropTarget::DragEnter()\n" );
 	if( m_pcEditWnd ){	// 2008.06.20 ryoji
 		return m_pcEditWnd->DragEnter( pDataObject, dwKeyState, pt, pdwEffect );
 	}
@@ -218,7 +218,7 @@ void CDataObject::SetText( LPCWSTR lpszText, int nTextLen, BOOL bColumnSelect )
 
 		i++;
 		if( bColumnSelect ){
-			m_pData[i].cfFormat = (CLIPFORMAT)::RegisterClipboardFormat( _T("MSDEVColumnSelect") );
+			m_pData[i].cfFormat = (CLIPFORMAT)::RegisterClipboardFormat( L"MSDEVColumnSelect" );
 			m_pData[i].size = 1;
 			m_pData[i].data = new BYTE[1];
 			m_pData[i].data[0] = '\0';

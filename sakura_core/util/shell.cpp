@@ -56,10 +56,10 @@ int CALLBACK MYBrowseCallbackProc(
 }
 
 /* フォルダ選択ダイアログ */
-BOOL SelectDir( HWND hWnd, const TCHAR* pszTitle, const TCHAR* pszInitFolder, TCHAR* strFolderName )
+BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR* strFolderName )
 {
 	BOOL	bRes;
-	TCHAR	szInitFolder[MAX_PATH];
+	WCHAR	szInitFolder[MAX_PATH];
 
 	_tcscpy( szInitFolder, pszInitFolder );
 	/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
@@ -108,7 +108,7 @@ BOOL SelectDir( HWND hWnd, const TCHAR* pszTitle, const TCHAR* pszInitFolder, TC
 
 	@note SHGetFolderLocation()は、shell32.dll version 5.00以上が必要
 */
-BOOL GetSpecialFolderPath( int nFolder, LPTSTR pszPath )
+BOOL GetSpecialFolderPath( int nFolder, LPWSTR pszPath )
 {
 	BOOL bRet = FALSE;
 	HRESULT hres;
@@ -195,7 +195,7 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 			// 選択されたメニューの処理
 			switch( nId ){
 			case 100:	// 設定フォルダを開く
-				TCHAR szPath[_MAX_PATH];
+				WCHAR szPath[_MAX_PATH];
 				GetInidir( szPath );
 
 				// フォルダの ITEMIDLIST を取得して ShellExecuteEx() で開く
@@ -216,7 +216,7 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 							::ZeroMemory( &si, sizeof(si) );
 							si.cbSize   = sizeof(si);
 							si.fMask    = SEE_MASK_IDLIST;
-							si.lpVerb   = _T("open");
+							si.lpVerb   = L"open";
 							si.lpIDList = pIDL;
 							si.nShow    = SW_SHOWNORMAL;
 							::ShellExecuteEx( &si );	// フォルダを開く
@@ -238,7 +238,7 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 				{
 					DLLSHAREDATA *pShareData = &GetDllShareData();
 					GetInidir( pShareData->m_sHistory.m_szIMPORTFOLDER );
-					AddLastChar( pShareData->m_sHistory.m_szIMPORTFOLDER, _countof2(pShareData->m_sHistory.m_szIMPORTFOLDER), _T('\\') );
+					AddLastChar( pShareData->m_sHistory.m_szIMPORTFOLDER, _countof2(pShareData->m_sHistory.m_szIMPORTFOLDER), L'\\' );
 				}
 				break;
 			}
@@ -263,7 +263,7 @@ static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, LPARAM lParam )
 	if( uMsg == PSCB_INITIALIZED ){
 		s_pOldPropSheetWndProc = (WNDPROC)::SetWindowLongPtr( hwndDlg, GWLP_WNDPROC, (LONG_PTR)PropSheetWndProc );
 		HINSTANCE hInstance = (HINSTANCE)::GetModuleHandle( NULL );
-		HWND hwndBtn = ::CreateWindowEx( 0, _T("BUTTON"), LS(STR_SHELL_INIFOLDER), BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 0, 0, 140, 20, hwndDlg, (HMENU)0x02000, hInstance, NULL );
+		HWND hwndBtn = ::CreateWindowEx( 0, L"BUTTON", LS(STR_SHELL_INIFOLDER), BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 0, 0, 140, 20, hwndDlg, (HMENU)0x02000, hInstance, NULL );
 		::SendMessage( hwndBtn, WM_SETFONT, (WPARAM)::SendMessage( hwndDlg, WM_GETFONT, 0, 0 ), MAKELPARAM( FALSE, 0 ) );
 		::SetWindowPos( hwndBtn, ::GetDlgItem( hwndDlg, IDHELP), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
 	}
@@ -301,26 +301,26 @@ void ShowWinHelpContents( HWND hwnd )
 // NetWork上のリソースに接続するためのダイアログを出現させる
 // NO_ERROR:成功 ERROR_CANCELLED:キャンセル それ以外:失敗
 // プロジェクトの設定でリンクモジュールにMpr.libを追加のこと
-DWORD NetConnect ( const TCHAR strNetWorkPass[] )
+DWORD NetConnect ( const WCHAR strNetWorkPass[] )
 {
 	//char sPassWord[] = "\0";	//パスワード
 	//char sUser[] = "\0";		//ユーザー名
 	DWORD dwRet;				//戻り値　エラーコードはWINERROR.Hを参照
-	TCHAR sTemp[256];
-	TCHAR sDrive[] = _T("");
+	WCHAR sTemp[256];
+	WCHAR sDrive[] = L"";
     int i;
 
 	if (_tcslen(strNetWorkPass) < 3)	return ERROR_BAD_NET_NAME;  //UNCではない。
-	if (strNetWorkPass[0] != _T('\\') && strNetWorkPass[1] != _T('\\'))	return ERROR_BAD_NET_NAME;  //UNCではない。
+	if (strNetWorkPass[0] != L'\\' && strNetWorkPass[1] != L'\\')	return ERROR_BAD_NET_NAME;  //UNCではない。
 
 	//3文字目から数えて最初の\の直前までを切り出す
-	sTemp[0] = _T('\\');
-	sTemp[1] = _T('\\');
-	for (i = 2; strNetWorkPass[i] != _T('\0'); i++) {
-		if (strNetWorkPass[i] == _T('\\')) break;
+	sTemp[0] = L'\\';
+	sTemp[1] = L'\\';
+	for (i = 2; strNetWorkPass[i] != L'\0'; i++) {
+		if (strNetWorkPass[i] == L'\\') break;
 		sTemp[i] = strNetWorkPass[i];
 	}
-	sTemp[i] = _T('\0');	//終端
+	sTemp[i] = L'\0';	//終端
 
 	//NETRESOURCE作成
 	NETRESOURCE nr;
@@ -356,7 +356,7 @@ CHtmlHelp g_cHtmlHelp;
 
 HWND OpenHtmlHelp(
 	HWND		hWnd,	//!< [in] 呼び出し元ウィンドウのウィンドウハンドル
-	LPCTSTR		szFile,	//!< [in] HTML Helpのファイル名。不等号に続けてウィンドウタイプ名を指定可能。
+	LPCWSTR		szFile,	//!< [in] HTML Helpのファイル名。不等号に続けてウィンドウタイプ名を指定可能。
 	UINT		uCmd,	//!< [in] HTML Help に渡すコマンド
 	DWORD_PTR	data,	//!< [in] コマンドに応じたデータ
 	bool		msgflag	//!< [in] エラーメッセージを表示するか。省略時はtrue。
@@ -381,7 +381,7 @@ HWND OpenHtmlHelp(
 /*! ショートカット(.lnk)の解決
 	@date 2009.01.08 ryoji CoInitialize/CoUninitializeを削除（WinMainにOleInitialize/OleUninitializeを追加）
 */
-BOOL ResolveShortcutLink( HWND hwnd, LPCTSTR lpszLinkFile, LPTSTR lpszPath )
+BOOL ResolveShortcutLink( HWND hwnd, LPCWSTR lpszLinkFile, LPWSTR lpszPath )
 {
 	BOOL			bRes;
 	HRESULT			hRes;
@@ -398,7 +398,7 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCTSTR lpszLinkFile, LPTSTR lpszPath )
 
 	// Get a pointer to the IShellLink interface.
 //	hRes = 0;
-	TCHAR szAbsLongPath[_MAX_PATH];
+	WCHAR szAbsLongPath[_MAX_PATH];
 	if( ! ::GetLongFileName( lpszLinkFile, szAbsLongPath ) ){
 		return FALSE;
 	}
@@ -419,13 +419,13 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCTSTR lpszLinkFile, LPTSTR lpszPath )
 				// Resolve the link.
 				if( SUCCEEDED( hRes = pIShellLink->Resolve(hwnd, SLR_ANY_MATCH ) ) ){
 					// Get the path to the link target.
-					TCHAR szGotPath[MAX_PATH];
-					szGotPath[0] = _T('\0');
+					WCHAR szGotPath[MAX_PATH];
+					szGotPath[0] = L'\0';
 					if( SUCCEEDED( hRes = pIShellLink->GetPath(szGotPath, MAX_PATH, &wfd, SLGP_SHORTPATH ) ) ){
 						// Get the description of the target.
-						TCHAR szDescription[MAX_PATH];
+						WCHAR szDescription[MAX_PATH];
 						if( SUCCEEDED(hRes = pIShellLink->GetDescription(szDescription, MAX_PATH ) ) ){
-							if( _T('\0') != szGotPath[0] ){
+							if( L'\0' != szGotPath[0] ){
 								/* 正常終了 */
 								_tcscpy_s( lpszPath, _MAX_PATH, szGotPath );
 								bRes = TRUE;
@@ -462,11 +462,11 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCTSTR lpszLinkFile, LPTSTR lpszPath )
 	@date 2007/10/23 kobake CEditAppのメンバ関数に変更
 	@date 2007/10/23 kobake シグニチャ変更。constポインタを返すだけのインターフェースにしました。
 */
-static LPCTSTR GetHelpFilePath()
+static LPCWSTR GetHelpFilePath()
 {
-	static TCHAR szHelpFile[_MAX_PATH] = _T("");
-	if(szHelpFile[0]==_T('\0')){
-		GetExedir( szHelpFile, _T("sakura.chm") );
+	static WCHAR szHelpFile[_MAX_PATH] = L"";
+	if(szHelpFile[0]==L'\0'){
+		GetExedir( szHelpFile, L"sakura.chm" );
 	}
 	return szHelpFile;
 }
@@ -516,7 +516,7 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 
 			memset(&hp, 0, sizeof(hp));	// 構造体をゼロクリア
 			hp.cbStruct = sizeof(hp);
-			hp.pszFont = _T("ＭＳ Ｐゴシック, 9");
+			hp.pszFont = L"ＭＳ Ｐゴシック, 9";
 			hp.clrForeground = hp.clrBackground = -1;
 			hp.rcMargins.left = hp.rcMargins.top = hp.rcMargins.right = hp.rcMargins.bottom = -1;
 			if( uCommandOrg == HELP_CONTEXTMENU ){
@@ -555,7 +555,7 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 		return FALSE;
 	}
 
-	LPCTSTR lpszHelp = GetHelpFilePath();
+	LPCWSTR lpszHelp = GetHelpFilePath();
 	if( IsFileExists( lpszHelp, true ) ){
 		// HTML ヘルプを呼び出す
 		HWND hWnd = OpenHtmlHelp( hwndCaller, lpszHelp, uCommand, dwData );
@@ -571,8 +571,8 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 		if( uCommandOrg != HELP_CONTEXT )
 			dwData = 1;	// 目次ページ
 
-		TCHAR buf[256];
-		_stprintf( buf, _T("https://sakura-editor.github.io/help/HLP%06Iu.html"), dwData );
+		WCHAR buf[256];
+		_stprintf( buf, L"https://sakura-editor.github.io/help/HLP%06Iu.html", dwData );
 		ShellExecute( ::GetActiveWindow(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
 	}
 
@@ -606,19 +606,19 @@ BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool Fixed
 		DWORD nErr;
 		nErr = CommDlgExtendedError();
 		switch( nErr ){
-		case CDERR_FINDRESFAILURE:	MYTRACE( _T("CDERR_FINDRESFAILURE \n") );	break;
-		case CDERR_INITIALIZATION:	MYTRACE( _T("CDERR_INITIALIZATION \n") );	break;
-		case CDERR_LOCKRESFAILURE:	MYTRACE( _T("CDERR_LOCKRESFAILURE \n") );	break;
-		case CDERR_LOADRESFAILURE:	MYTRACE( _T("CDERR_LOADRESFAILURE \n") );	break;
-		case CDERR_LOADSTRFAILURE:	MYTRACE( _T("CDERR_LOADSTRFAILURE \n") );	break;
-		case CDERR_MEMALLOCFAILURE:	MYTRACE( _T("CDERR_MEMALLOCFAILURE\n") );	break;
-		case CDERR_MEMLOCKFAILURE:	MYTRACE( _T("CDERR_MEMLOCKFAILURE \n") );	break;
-		case CDERR_NOHINSTANCE:		MYTRACE( _T("CDERR_NOHINSTANCE \n") );		break;
-		case CDERR_NOHOOK:			MYTRACE( _T("CDERR_NOHOOK \n") );			break;
-		case CDERR_NOTEMPLATE:		MYTRACE( _T("CDERR_NOTEMPLATE \n") );		break;
-		case CDERR_STRUCTSIZE:		MYTRACE( _T("CDERR_STRUCTSIZE \n") );		break;
-		case CFERR_MAXLESSTHANMIN:	MYTRACE( _T("CFERR_MAXLESSTHANMIN \n") );	break;
-		case CFERR_NOFONTS:			MYTRACE( _T("CFERR_NOFONTS \n") );			break;
+		case CDERR_FINDRESFAILURE:	MYTRACE( L"CDERR_FINDRESFAILURE \n" );	break;
+		case CDERR_INITIALIZATION:	MYTRACE( L"CDERR_INITIALIZATION \n" );	break;
+		case CDERR_LOCKRESFAILURE:	MYTRACE( L"CDERR_LOCKRESFAILURE \n" );	break;
+		case CDERR_LOADRESFAILURE:	MYTRACE( L"CDERR_LOADRESFAILURE \n" );	break;
+		case CDERR_LOADSTRFAILURE:	MYTRACE( L"CDERR_LOADSTRFAILURE \n" );	break;
+		case CDERR_MEMALLOCFAILURE:	MYTRACE( L"CDERR_MEMALLOCFAILURE\n" );	break;
+		case CDERR_MEMLOCKFAILURE:	MYTRACE( L"CDERR_MEMLOCKFAILURE \n" );	break;
+		case CDERR_NOHINSTANCE:		MYTRACE( L"CDERR_NOHINSTANCE \n" );		break;
+		case CDERR_NOHOOK:			MYTRACE( L"CDERR_NOHOOK \n" );			break;
+		case CDERR_NOTEMPLATE:		MYTRACE( L"CDERR_NOTEMPLATE \n" );		break;
+		case CDERR_STRUCTSIZE:		MYTRACE( L"CDERR_STRUCTSIZE \n" );		break;
+		case CFERR_MAXLESSTHANMIN:	MYTRACE( L"CFERR_MAXLESSTHANMIN \n" );	break;
+		case CFERR_NOFONTS:			MYTRACE( L"CFERR_NOFONTS \n" );			break;
 		}
 #endif
 		return FALSE;

@@ -184,7 +184,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 			OnHelp( hwndDlg, IDD_PROP_CUSTMENU );
 			return TRUE;
 		case PSN_KILLACTIVE:
-//			MYTRACE( _T("Custom menu PSN_KILLACTIVE\n") );
+//			MYTRACE( L"Custom menu PSN_KILLACTIVE\n" );
 			/* ダイアログデータの取得 Custom menu */
 			GetData( hwndDlg );
 			return TRUE;
@@ -279,8 +279,8 @@ INT_PTR CPropCustmenu::DispatchEvent(
 
 //			idListBox = (int) LOWORD(wParam);	// identifier of list box
 //			hwndListBox = (HWND) lParam;		// handle of list box
-				TCHAR		szKey[2];
-				auto_sprintf( szKey, _T("%hc"), m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] );
+				WCHAR		szKey[2];
+				auto_sprintf( szKey, L"%hc", m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] );
 				{
 					BOOL bDlgInputResult = cDlgInput1.DoModal(
 						G_AppInstance(),

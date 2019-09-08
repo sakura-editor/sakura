@@ -121,14 +121,14 @@ INT_PTR CPropHelper::DispatchEvent(
 				{
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 					// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
-					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_EXTHELP1), _T("*.hlp;*.chm;*.col"), true, EFITER_NONE);
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_EXTHELP1), L"*.hlp;*.chm;*.col", true, EFITER_NONE);
 				}
 				return TRUE;
 			case IDC_BUTTON_OPENEXTHTMLHELP:	/* 外部HTMLヘルプの「参照...」ボタン */
 				{
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 					// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
-					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_EXTHTMLHELP), _T("*.chm;*.col"), true, EFITER_NONE);
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_EXTHTMLHELP), L"*.chm;*.col", true, EFITER_NONE);
 				}
 				return TRUE;
 			// ai 02/05/21 Add S
@@ -154,12 +154,12 @@ INT_PTR CPropHelper::DispatchEvent(
 				{
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 					// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
-					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_MIGEMO_DLL), _T("*.dll"), true, EFITER_NONE);
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_MIGEMO_DLL), L"*.dll", true, EFITER_NONE);
 				}
 				return TRUE;
 			case IDC_BUTTON_OPENMDICT:	/* MigemoDict場所指定「参照...」ボタン */
 				{
-					TCHAR	szPath[_MAX_PATH];
+					WCHAR	szPath[_MAX_PATH];
 					/* 検索フォルダ */
 					// 2007.05.27 ryoji 相対パスは設定ファイルからのパスを優先
 					if( _IS_REL_PATH( m_Common.m_sHelper.m_szMigemoDict ) ){
@@ -188,7 +188,7 @@ INT_PTR CPropHelper::DispatchEvent(
 				OnHelp( hwndDlg, IDD_PROP_HELPER );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE( _T("Helper PSN_KILLACTIVE\n") );
+//				MYTRACE( L"Helper PSN_KILLACTIVE\n" );
 				/* ダイアログデータの取得 Helper */
 				GetData( hwndDlg );
 				return TRUE;
@@ -200,11 +200,11 @@ INT_PTR CPropHelper::DispatchEvent(
 //			break;	/* default */
 //		}
 
-//		MYTRACE( _T("pNMHDR->hwndFrom=%xh\n"), pNMHDR->hwndFrom );
-//		MYTRACE( _T("pNMHDR->idFrom  =%xh\n"), pNMHDR->idFrom );
-//		MYTRACE( _T("pNMHDR->code    =%xh\n"), pNMHDR->code );
-//		MYTRACE( _T("pMNUD->iPos    =%d\n"), pMNUD->iPos );
-//		MYTRACE( _T("pMNUD->iDelta  =%d\n"), pMNUD->iDelta );
+//		MYTRACE( L"pNMHDR->hwndFrom=%xh\n", pNMHDR->hwndFrom );
+//		MYTRACE( L"pNMHDR->idFrom  =%xh\n", pNMHDR->idFrom );
+//		MYTRACE( L"pNMHDR->code    =%xh\n", pNMHDR->code );
+//		MYTRACE( L"pMNUD->iPos    =%d\n", pMNUD->iPos );
+//		MYTRACE( L"pMNUD->iDelta  =%d\n", pMNUD->iDelta );
 		break;	/* WM_NOTIFY */
 
 //@@@ 2001.02.04 Start by MIK: Popup Help

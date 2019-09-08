@@ -72,14 +72,14 @@ BOOL CDlgTypeAscertain::OnBnClicked( int wID )
 		MyWinHelp( GetHwnd(), HELP_CONTEXT, HLP000338 );
 		return TRUE;
 	case IDOK:
-		TCHAR	buff1[_MAX_PATH + 20];
+		WCHAR	buff1[_MAX_PATH + 20];
 		wchar_t	buff2[_MAX_PATH + 20];
 
 		m_psi->bAddType = IsDlgButtonCheckedBool( GetHwnd(), IDC_RADIO_TYPE_ADD );
 		m_psi->sColorFile = L"";
 		m_psi->nColorType = Combo_GetCurSel( GetItemHwnd( IDC_COMBO_COLORS ) ) - 1;
 		if (m_psi->nColorType >= MAX_TYPES && Combo_GetLBText( GetItemHwnd( IDC_COMBO_COLORS ), m_psi->nColorType + 1, buff1)) {
-			if (_stscanf( buff1, _T("File -- %ls"), buff2 ) > 0) {
+			if (_stscanf( buff1, L"File -- %ls", buff2 ) > 0) {
 				m_psi->sColorFile = buff2;
 				m_psi->nColorType = MAX_TYPES;
 			}
@@ -106,7 +106,7 @@ void CDlgTypeAscertain::SetData( void )
 
 	int		nIdx;
 	HWND	hwndCombo;
-	TCHAR	szText[_MAX_PATH + 10];
+	WCHAR	szText[_MAX_PATH + 10];
 	hwndCombo = GetItemHwnd( IDC_COMBO_COLORS );
 	/* コンボボックスを空にする */
 	Combo_ResetContent( hwndCombo );
@@ -117,14 +117,14 @@ void CDlgTypeAscertain::SetData( void )
 	for (nIdx = 0; nIdx < GetDllShareData().m_nTypesCount; ++nIdx) {
 		const STypeConfigMini* type;
 		CDocTypeManager().GetTypeConfigMini(CTypeConfig(nIdx), &type);
-		if (type->m_szTypeExts[0] != _T('\0') ) {		/* タイプ属性：拡張子リスト */
-			auto_sprintf( szText, _T("%s (%s)"),
+		if (type->m_szTypeExts[0] != L'\0' ) {		/* タイプ属性：拡張子リスト */
+			auto_sprintf( szText, L"%s (%s)",
 				type->m_szTypeName,	/* タイプ属性：名称 */
 				type->m_szTypeExts	/* タイプ属性：拡張子リスト */
 			);
 		}
 		else{
-			auto_sprintf( szText, _T("%s"),
+			auto_sprintf( szText, L"%s",
 				type->m_szTypeName	/* タイプ属性：拡称 */
 			);
 		}
@@ -134,16 +134,16 @@ void CDlgTypeAscertain::SetData( void )
 	HANDLE	hFind;
 	WIN32_FIND_DATA	wf;
 	BOOL	bFind;
-	TCHAR	sTrgCol[_MAX_PATH + 1];
+	WCHAR	sTrgCol[_MAX_PATH + 1];
 
 	::SplitPath_FolderAndFile( m_psi->sImportFile.c_str(), sTrgCol, NULL );
-	_tcscat( sTrgCol, _T("\\*.col") );
+	_tcscat( sTrgCol, L"\\*.col" );
 	for (bFind = ( ( hFind = FindFirstFile( sTrgCol, &wf ) ) != INVALID_HANDLE_VALUE );
 		bFind;
 		bFind = FindNextFile( hFind, &wf )) {
 		if ( (wf.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) {
 			// 読込色設定ファイル発見
-			auto_sprintf( szText, _T("File -- %s"), wf.cFileName );
+			auto_sprintf( szText, L"File -- %s", wf.cFileName );
 			::Combo_AddString( hwndCombo, szText );
 		}
 	}

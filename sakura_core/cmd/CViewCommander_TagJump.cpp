@@ -386,13 +386,13 @@ void CViewCommander::Command_TAGJUMPBACK( void )
 */
 bool CViewCommander::Command_TagsMake( void )
 {
-#define	CTAGS_COMMAND	_T("ctags.exe")
+#define	CTAGS_COMMAND	L"ctags.exe"
 
-	TCHAR	szTargetPath[1024 /*_MAX_PATH+1*/ ];
+	WCHAR	szTargetPath[1024 /*_MAX_PATH+1*/ ];
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() )
 	{
 		_tcscpy( szTargetPath, GetDocument()->m_cDocFile.GetFilePath() );
-		szTargetPath[ _tcslen( szTargetPath ) - _tcslen( GetDocument()->m_cDocFile.GetFileName() ) ] = _T('\0');
+		szTargetPath[ _tcslen( szTargetPath ) - _tcslen( GetDocument()->m_cDocFile.GetFileName() ) ] = L'\0';
 	}
 	else
 	{
@@ -404,9 +404,9 @@ bool CViewCommander::Command_TagsMake( void )
 	CDlgTagsMake	cDlgTagsMake;
 	if( !cDlgTagsMake.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 0, szTargetPath ) ) return false;
 
-	TCHAR	cmdline[1024];
+	WCHAR	cmdline[1024];
 	/* exeのあるフォルダ */
-	TCHAR	szExeFolder[_MAX_PATH + 1];
+	WCHAR	szExeFolder[_MAX_PATH + 1];
 
 	GetExedir( cmdline, CTAGS_COMMAND );
 	SplitPath_FolderAndFile( cmdline, szExeFolder, NULL );
@@ -455,23 +455,23 @@ bool CViewCommander::Command_TagsMake( void )
 
 	//	To Here Dec. 28, 2002 MIK
 
-	TCHAR	options[1024];
-	_tcscpy( options, _T("--excmd=n") );	//デフォルトのオプション
-	if( cDlgTagsMake.m_nTagsOpt & 0x0001 ) _tcscat( options, _T(" -R") );	//サブフォルダも対象
-	if( cDlgTagsMake.m_szTagsCmdLine[0] != _T('\0') )	//個別指定のコマンドライン
+	WCHAR	options[1024];
+	_tcscpy( options, L"--excmd=n" );	//デフォルトのオプション
+	if( cDlgTagsMake.m_nTagsOpt & 0x0001 ) _tcscat( options, L" -R" );	//サブフォルダも対象
+	if( cDlgTagsMake.m_szTagsCmdLine[0] != L'\0' )	//個別指定のコマンドライン
 	{
-		_tcscat( options, _T(" ") );
+		_tcscat( options, L" " );
 		_tcscat( options, cDlgTagsMake.m_szTagsCmdLine );
 	}
-	_tcscat( options, _T(" *") );	//配下のすべてのファイル
+	_tcscat( options, L" *" );	//配下のすべてのファイル
 
 	//コマンドライン文字列作成(MAX:1024)
 	{
 		// 2010.08.28 Moca システムディレクトリ付加
-		TCHAR szCmdDir[_MAX_PATH];
+		WCHAR szCmdDir[_MAX_PATH];
 		::GetSystemDirectory(szCmdDir, _countof(szCmdDir));
 		//	2006.08.04 genta add /D to disable autorun
-		auto_sprintf( cmdline, _T("\"%s\\cmd.exe\" /D /C \"\"%s\\%s\" %s\""),
+		auto_sprintf( cmdline, L"\"%s\\cmd.exe\" /D /C \"\"%s\\%s\" %s\"",
 				szCmdDir,
 				szExeFolder,	//sakura.exeパス
 				CTAGS_COMMAND,	//ctags.exe
@@ -613,7 +613,7 @@ bool CViewCommander::Command_TagJumpByTagsFile( bool bClose )
 		return false;
 	}
 	
-	TCHAR	szDirFile[1024];
+	WCHAR	szDirFile[1024];
 	if( false == Sub_PreProcTagJumpByTagsFile( szDirFile, _countof(szDirFile) ) ){
 		return false;
 	}
@@ -635,7 +635,7 @@ bool CViewCommander::Command_TagJumpByTagsFile( bool bClose )
 	//タグジャンプする。
 	if( 0 < nMatchAll ){
 		//	@@ 2005.03.31 MIK 階層パラメータ追加
-		TCHAR fileName[1024];
+		WCHAR fileName[1024];
 		int   fileLine;
 
 		if( false == cDlgTagJumpList.GetSelectedFullPathAndLine( fileName, _countof(fileName), &fileLine , NULL ) ){
@@ -657,9 +657,9 @@ bool CViewCommander::Command_TagJumpByTagsFile( bool bClose )
 bool CViewCommander::Command_TagJumpByTagsFileKeyword( const wchar_t* keyword )
 {
 	CDlgTagJumpList	cDlgTagJumpList(false);
-	TCHAR	fileName[1024];
+	WCHAR	fileName[1024];
 	int		fileLine;	// 行番号
-	TCHAR	szCurrentPath[1024];
+	WCHAR	szCurrentPath[1024];
 
 	if( false == Sub_PreProcTagJumpByTagsFile( szCurrentPath, _countof(szCurrentPath) ) ){
 		return false;
@@ -686,9 +686,9 @@ bool CViewCommander::Command_TagJumpByTagsFileKeyword( const wchar_t* keyword )
 	タグジャンプの前処理
 	実行可能確認と、基準ファイル名の設定
 */
-bool CViewCommander::Sub_PreProcTagJumpByTagsFile( TCHAR* szCurrentPath, int count )
+bool CViewCommander::Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int count )
 {
-	if( count ) szCurrentPath[0] = _T('\0');
+	if( count ) szCurrentPath[0] = L'\0';
 
 	// 実行可能確認
 	if( ! GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
@@ -704,17 +704,17 @@ bool CViewCommander::Sub_PreProcTagJumpByTagsFile( TCHAR* szCurrentPath, int cou
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		auto_strcpy( szCurrentPath, GetDocument()->m_cDocFile.GetFilePath() );
 	}else{
-		if( 0 == ::GetCurrentDirectory( count - _countof(_T("\\dmy")) - MAX_TYPES_EXTS, szCurrentPath ) ){
+		if( 0 == ::GetCurrentDirectory( count - _countof(L"\\dmy") - MAX_TYPES_EXTS, szCurrentPath ) ){
 			return false;
 		}
 		// (無題)でもファイル名を要求してくるのでダミーをつける
 		// 現在のタイプ別の1番目の拡張子を拝借
-		TCHAR szExts[MAX_TYPES_EXTS];
+		WCHAR szExts[MAX_TYPES_EXTS];
 		CDocTypeManager::GetFirstExt(m_pCommanderView->m_pTypeData->m_szTypeExts, szExts, _countof(szExts));
 		int nExtLen = auto_strlen( szExts );
-		_tcscat( szCurrentPath, _T("\\dmy") );
+		_tcscat( szCurrentPath, L"\\dmy" );
 		if( nExtLen ){
-			_tcscat( szCurrentPath, _T(".") );
+			_tcscat( szCurrentPath, L"." );
 			_tcscat( szCurrentPath, szExts );
 		}
 	}

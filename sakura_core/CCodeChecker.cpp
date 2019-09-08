@@ -161,16 +161,16 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 
 	//ユーザ問い合わせ
 	if(nTmpResult==RESULT_LOSESOME){
-		TCHAR szCpName[100];
-		TCHAR  szLineNum[60];  // 123桁
-		TCHAR  szCharCode[12]; // U+12ab or 1234abcd
+		WCHAR szCpName[100];
+		WCHAR  szLineNum[60];  // 123桁
+		WCHAR  szCharCode[12]; // U+12ab or 1234abcd
 		CCodePage::GetNameNormal(szCpName, pSaveInfo->eCharCode);
-		szCharCode[0] = _T('\0');
-		szLineNum[0] = _T('\0');
+		szCharCode[0] = L'\0';
+		szLineNum[0] = L'\0';
 		if( point.x == -1 ){
 			cmemChar.SetString(LSW(STR_ERR_CSHAREDATA22));
 		}else{
-			auto_sprintf( szLineNum, _T("%d"), (int)((Int)point.x) + 1 );
+			auto_sprintf( szLineNum, L"%d", (int)((Int)point.x) + 1 );
 			_tcscat( szLineNum, LS(STR_DLGFNCLST_LIST_COL) );
 			CUnicode().UnicodeToHex( cmemChar.GetStringPtr(), cmemChar.GetStringLength(),
 				szCharCode, &GetDllShareData().m_Common.m_sStatusbar );

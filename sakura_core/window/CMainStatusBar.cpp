@@ -20,7 +20,7 @@ void CMainStatusBar::CreateStatusBar()
 	/* ステータスバー */
 	m_hwndStatusBar = ::CreateStatusWindow(
 		WS_CHILD/* | WS_VISIBLE*/ | WS_EX_RIGHT | SBARS_SIZEGRIP,	// 2007.03.08 ryoji WS_VISIBLE 除去
-		_T(""),
+		L"",
 		m_pOwner->GetHwnd(),
 		IDW_STATUSBAR
 	);
@@ -92,7 +92,7 @@ void CMainStatusBar::DestroyStatusBar()
 	
 	@sa SendStatusMessage2IsEffective
 */
-void CMainStatusBar::SendStatusMessage2( const TCHAR* msg )
+void CMainStatusBar::SendStatusMessage2( const WCHAR* msg )
 {
 	if( NULL != m_hwndStatusBar ){
 		SetStatusText(0, SBT_NOBORDERS, msg);
@@ -107,7 +107,7 @@ void CMainStatusBar::SendStatusMessage2( const TCHAR* msg )
 	@param pszText [in] 表示テキスト
 	@param textLen [in] 表示テキストの文字数
 */
-void CMainStatusBar::SetStatusText(int nIndex, int nOption, const TCHAR* pszText, size_t textLen /* = SIZE_MAX */)
+void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText, size_t textLen /* = SIZE_MAX */)
 {
 	if( !m_hwndStatusBar ){
 		assert(m_hwndStatusBar != NULL);
@@ -136,7 +136,7 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const TCHAR* pszText
 			return true;
 		}
 		size_t prevTextLen = LOWORD(res);
-		TCHAR prev[1024];
+		WCHAR prev[1024];
 		// 設定済みの文字列長が長過ぎて取得できない場合は、SB_SETTEXT メッセージを発行
 		if( prevTextLen >= _countof(prev) ){
 			return true;

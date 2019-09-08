@@ -59,7 +59,7 @@ public:
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ return UnicodeToCP(cSrc, pDst, m_nCodePageEx); }	//!< UNICODE    → 特定コード 変換
 	void GetEol(CMemory* pcmemEol, EEolType eEolType);	//!< 改行データ取得
 	void GetBom(CMemory* pcmemBom);	//!< BOMデータ取得
-	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE → Hex 変換
+	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE → Hex 変換
 
 public:
 	//実装
@@ -70,10 +70,10 @@ public:
 	
 	//GUI用補助関数
 	static CCodePage::CodePageList& GetCodePageList();
-	static int GetNameNormal(LPTSTR outName, int charcodeEx);
-	static int GetNameShort(LPTSTR outName, int charcodeEx);
-	static int GetNameLong(LPTSTR outName, int charcodeEx);
-	static int GetNameBracket(LPTSTR outName, int charcodeEx);
+	static int GetNameNormal(LPWSTR outName, int charcodeEx);
+	static int GetNameShort(LPWSTR outName, int charcodeEx);
+	static int GetNameLong(LPWSTR outName, int charcodeEx);
+	static int GetNameBracket(LPWSTR outName, int charcodeEx);
 	static int AddComboCodePages(HWND hwnd, HWND combo, int nSelCode);
 	
 	//CP補助情報
@@ -86,7 +86,7 @@ protected:
 	
 	int m_nCodePageEx;
 	
-	static BOOL CALLBACK CallBackEnumCodePages( LPCTSTR );
+	static BOOL CALLBACK CallBackEnumCodePages( LPCWSTR );
 
 	static int MultiByteToWideChar2(UINT codepage, int flags, const char* pSrc, int nSrcLen, wchar_t* pDst, int nDstLen);
 	static int WideCharToMultiByte2(UINT codepage, int flags, const wchar_t* pSrc, int nSrcLen, char* pDst, int nDstLen);

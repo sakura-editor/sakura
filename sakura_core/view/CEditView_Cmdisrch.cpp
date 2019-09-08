@@ -169,7 +169,7 @@ void CEditView::ISearchEnter( ESearchMode mode, ESearchDirection direction)
 				m_sCurSearchOption.bRegularExp = false;
 				m_sCurSearchOption.bLoHiCase = false;
 				m_sCurSearchOption.bWordOnly = false;
-				//SendStatusMessage(_T("I-Search: "));
+				//SendStatusMessage(L"I-Search: ");
 				break;
 			case SEARCH_REGEXP: // 正規表現インクリメンタルサーチ
 				if (!m_CurRegexp.IsAvailable()){
@@ -179,7 +179,7 @@ void CEditView::ISearchEnter( ESearchMode mode, ESearchDirection direction)
 				}
 				m_sCurSearchOption.bRegularExp = true;
 				m_sCurSearchOption.bLoHiCase = false;
-				//SendStatusMessage(_T("[RegExp] I-Search: "));
+				//SendStatusMessage(L"[RegExp] I-Search: ");
 				break;
 			case SEARCH_MIGEMO: // MIGEMOインクリメンタルサーチ
 				if (!m_CurRegexp.IsAvailable()){
@@ -203,7 +203,7 @@ void CEditView::ISearchEnter( ESearchMode mode, ESearchDirection direction)
 				if (m_pcmigemo->migemo_is_enable()) {
 					m_sCurSearchOption.bRegularExp = true;
 					m_sCurSearchOption.bLoHiCase = false;
-					//SendStatusMessage(_T("[MIGEMO] I-Search: "));
+					//SendStatusMessage(L"[MIGEMO] I-Search: ");
 				}else{
 					WarningBeep();
 					SendStatusMessage(LS(STR_EDITVWISRCH_MIGEGO2));
@@ -266,7 +266,7 @@ void CEditView::ISearchExit()
 	OnMOUSEMOVE(0,point1.x,point1.y);
 
 	//ステータス表示エリアをクリア
-	SendStatusMessage(_T(""));
+	SendStatusMessage(L"");
 }
 
 /*!
@@ -531,23 +531,23 @@ void CEditView::ISearchSetStatusMsg(CNativeW* msg) const
 {
 	switch ( m_nISearchMode){
 	case SEARCH_NORMAL:
-		msg->SetString(_T("I-Search") );
+		msg->SetString(L"I-Search" );
 		break;
 	case SEARCH_REGEXP:
-		msg->SetString(_T("[RegExp] I-Search") );
+		msg->SetString(L"[RegExp] I-Search" );
 		break;
 	case SEARCH_MIGEMO:
-		msg->SetString(_T("[Migemo] I-Search") );
+		msg->SetString(L"[Migemo] I-Search" );
 		break;
 	default:
-		msg->SetString(_T(""));
+		msg->SetString(L"");
 		return;
 	}
 	if (m_nISearchDirection == SEARCH_BACKWARD){
-		msg->AppendString(_T(" Backward: "));
+		msg->AppendString(L" Backward: ");
 	}
 	else{
-		msg->AppendString(_T(": "));
+		msg->AppendString(L": ");
 	}
 
 	if(m_nISearchHistoryCount > 0)

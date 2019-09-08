@@ -66,8 +66,8 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 {
 	HWND	hListView;
 	int		nIndex;
-	TCHAR	szFrom[_MAX_PATH];
-	TCHAR	szTo[_MAX_PATH];
+	WCHAR	szFrom[_MAX_PATH];
+	WCHAR	szTo[_MAX_PATH];
 
 	switch( uMsg ){
 
@@ -83,13 +83,13 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 			col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 			col.fmt      = LVCFMT_LEFT;
 			col.cx       = ( rc.right - rc.left ) * 60 / 100;
-			col.pszText  = const_cast<TCHAR*>(LS(STR_PROPCOMFNM_LIST1));
+			col.pszText  = const_cast<WCHAR*>(LS(STR_PROPCOMFNM_LIST1));
 			col.iSubItem = 0;
 			ListView_InsertColumn( hListView, 0, &col );
 			col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 			col.fmt      = LVCFMT_LEFT;
 			col.cx       = ( rc.right - rc.left ) * 35 / 100;
-			col.pszText  = const_cast<TCHAR*>(LS(STR_PROPCOMFNM_LIST2));
+			col.pszText  = const_cast<WCHAR*>(LS(STR_PROPCOMFNM_LIST2));
 			col.iSubItem = 1;
 			ListView_InsertColumn( hListView, 1, &col );
 
@@ -120,8 +120,8 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 					nIndex = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
 					// 未選択
 					if( -1 == nIndex ){
-						::DlgItem_SetText( hwndDlg, IDC_EDIT_FNAME_FROM, _T("") );
-						::DlgItem_SetText( hwndDlg, IDC_EDIT_FNAME_TO, _T("") );
+						::DlgItem_SetText( hwndDlg, IDC_EDIT_FNAME_FROM, L"" );
+						::DlgItem_SetText( hwndDlg, IDC_EDIT_FNAME_TO, L"" );
 					}
 					else if( nIndex != m_nLastPos_FILENAME ){
 						GetListViewItem_FILENAME( hListView, nIndex, szFrom, szTo );
@@ -353,12 +353,12 @@ int CPropFileName::GetData( HWND hwndDlg )
 	return TRUE;
 }
 
-int CPropFileName::SetListViewItem_FILENAME( HWND hListView, int nIndex, LPTSTR szFrom, LPTSTR szTo, bool bInsMode )
+int CPropFileName::SetListViewItem_FILENAME( HWND hListView, int nIndex, LPWSTR szFrom, LPWSTR szTo, bool bInsMode )
 {
 	LV_ITEM	Item;
 	int nCount;
 
-	if( _T('\0') == szFrom[0] || -1 == nIndex ) return -1;
+	if( L'\0' == szFrom[0] || -1 == nIndex ) return -1;
 
 	nCount = ListView_GetItemCount( hListView );
 
@@ -390,7 +390,7 @@ int CPropFileName::SetListViewItem_FILENAME( HWND hListView, int nIndex, LPTSTR 
 	return nIndex;
 }
 
-void CPropFileName::GetListViewItem_FILENAME( HWND hListView, int nIndex, LPTSTR szFrom, LPTSTR szTo )
+void CPropFileName::GetListViewItem_FILENAME( HWND hListView, int nIndex, LPWSTR szFrom, LPWSTR szTo )
 {
 	ListView_GetItemText( hListView, nIndex, 0, szFrom, _MAX_PATH );
 	ListView_GetItemText( hListView, nIndex, 1, szTo, _MAX_PATH );
@@ -398,8 +398,8 @@ void CPropFileName::GetListViewItem_FILENAME( HWND hListView, int nIndex, LPTSTR
 
 int CPropFileName::MoveListViewItem_FILENAME( HWND hListView, int nIndex, int nIndex2 )
 {
-	TCHAR szFrom[_MAX_PATH];
-	TCHAR szTo[_MAX_PATH];
+	WCHAR szFrom[_MAX_PATH];
+	WCHAR szTo[_MAX_PATH];
 	int nCount = ListView_GetItemCount( hListView );
 
 	//	2004.03.24 dskoba

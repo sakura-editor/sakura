@@ -39,7 +39,7 @@
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CNormalProcess::CNormalProcess( HINSTANCE hInstance, LPCTSTR lpCmdLine )
+CNormalProcess::CNormalProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 : CProcess( hInstance, lpCmdLine )
 , m_pcEditApp( NULL )
 {
@@ -95,7 +95,7 @@ bool CNormalProcess::InitializeProcess()
 	/* コマンドラインで受け取ったファイルが開かれている場合は */
 	/* その編集ウィンドウをアクティブにする */
 	CCommandLine::getInstance()->GetEditInfo(&fi); // 2002/2/8 aroka ここに移動
-	if( fi.m_szPath[0] != _T('\0') ){
+	if( fi.m_szPath[0] != L'\0' ){
 		//	Oct. 27, 2000 genta
 		//	MRUからカーソル位置を復元する操作はCEditDoc::FileLoadで
 		//	行われるのでここでは必要なし．
@@ -244,7 +244,7 @@ bool CNormalProcess::InitializeProcess()
 				CSearchKeywordManager().AddToGrepFolderArr( gi.cmGrepFolder.GetStringPtr() );
 				// 2013.05.21 指定なしの場合はカレントフォルダにする
 				if( cmemGrepFolder.GetStringLength() == 0 ){
-					TCHAR szCurDir[_MAX_PATH];
+					WCHAR szCurDir[_MAX_PATH];
 					::GetCurrentDirectory( _countof(szCurDir), szCurDir );
 					cmemGrepFolder.SetString( szCurDir );
 				}
@@ -267,10 +267,10 @@ bool CNormalProcess::InitializeProcess()
 			pEditWnd->m_cDlgGrep.m_bSetText = true;
 			int nSize = _countof2(pEditWnd->m_cDlgGrep.m_szFile);
 			_tcsncpy( pEditWnd->m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr(), nSize );	/* 検索ファイル */
-			pEditWnd->m_cDlgGrep.m_szFile[nSize-1] = _T('\0');
+			pEditWnd->m_cDlgGrep.m_szFile[nSize-1] = L'\0';
 			nSize = _countof2(pEditWnd->m_cDlgGrep.m_szFolder);
 			_tcsncpy( pEditWnd->m_cDlgGrep.m_szFolder, cmemGrepFolder.GetStringPtr(), nSize );	/* 検索フォルダ */
-			pEditWnd->m_cDlgGrep.m_szFolder[nSize-1] = _T('\0');
+			pEditWnd->m_cDlgGrep.m_szFolder[nSize-1] = L'\0';
 
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
 			int nRet = pEditWnd->m_cDlgGrep.DoModal( GetProcessInstance(), pEditWnd->GetHwnd(),  NULL);
@@ -300,7 +300,7 @@ bool CNormalProcess::InitializeProcess()
 		// 2004.05.13 Moca さらにif分の中から前に移動
 		// ファイル名が与えられなくてもReadOnly指定を有効にするため．
 		bViewMode = CCommandLine::getInstance()->IsViewMode(); // 2002/2/8 aroka ここに移動
-		if( fi.m_szPath[0] != _T('\0') ){
+		if( fi.m_szPath[0] != L'\0' ){
 			//	Mar. 9, 2002 genta 文書タイプ指定
 			pEditWnd->OpenDocumentWhenStart(
 				SLoadInfo(
@@ -483,13 +483,13 @@ HANDLE CNormalProcess::_GetInitializeMutex() const
 	hMutex = ::CreateMutex( NULL, TRUE, strMutexInitName.c_str() );
 	if( NULL == hMutex ){
 		ErrorBeep();
-		TopErrorMessage( NULL, _T("CreateMutex()失敗。\n終了します。") );
+		TopErrorMessage( NULL, L"CreateMutex()失敗。\n終了します。" );
 		return NULL;
 	}
 	if( ::GetLastError() == ERROR_ALREADY_EXISTS ){
 		DWORD dwRet = ::WaitForSingleObject( hMutex, 15000 );	// 2002/2/8 aroka 少し長くした
 		if( WAIT_TIMEOUT == dwRet ){// 別の誰かが起動中
-			TopErrorMessage( NULL, _T("エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。") );
+			TopErrorMessage( NULL, L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。" );
 			::CloseHandle( hMutex );
 			return NULL;
 		}

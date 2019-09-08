@@ -29,7 +29,7 @@
 #include "sakura_rc.h"
 
 CAutoScrollWnd::CAutoScrollWnd()
-: CWnd(_T("::CAutoScrollWnd"))
+: CWnd(L"::CAutoScrollWnd")
 {
 	m_hCenterImg = NULL;
 	return;
@@ -41,7 +41,7 @@ CAutoScrollWnd::~CAutoScrollWnd()
 
 HWND CAutoScrollWnd::Create( HINSTANCE hInstance, HWND hwndParent, bool bVertical, bool bHorizontal, const CMyPoint& point, CEditView* view )
 {
-	LPCTSTR pszClassName;
+	LPCWSTR pszClassName;
 
 	m_cView = view;
 	int idb, idc;
@@ -49,16 +49,16 @@ HWND CAutoScrollWnd::Create( HINSTANCE hInstance, HWND hwndParent, bool bVertica
 		if( bHorizontal ){
 			idb = IDB_SCROLL_CENTER;
 			idc = IDC_CURSOR_AUTOSCROLL_CENTER;
-			pszClassName = _T("SakuraAutoScrollCWnd");
+			pszClassName = L"SakuraAutoScrollCWnd";
 		}else{
 			idb = IDB_SCROLL_VERTICAL;
 			idc = IDC_CURSOR_AUTOSCROLL_VERTICAL;
-			pszClassName = _T("SakuraAutoScrollVWnd");
+			pszClassName = L"SakuraAutoScrollVWnd";
 		}
 	}else{
 		idb = IDB_SCROLL_HORIZONTAL;
 		idc = IDC_CURSOR_AUTOSCROLL_HORIZONTAL;
-		pszClassName = _T("SakuraAutoScrollHWnd");
+		pszClassName = L"SakuraAutoScrollHWnd";
 	}
 	m_hCenterImg = (HBITMAP)::LoadImage(hInstance, MAKEINTRESOURCE(idb), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
 	HCURSOR hCursor = ::LoadCursor(GetModuleHandle(NULL), MAKEINTRESOURCE(idc));

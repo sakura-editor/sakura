@@ -1252,7 +1252,7 @@ LRESULT CEditView::OnMOUSEWHEEL2( WPARAM wParam, LPARAM lParam, bool bHorizontal
 	zDelta = (short) HIWORD(wParam);	// wheel rotation
 //	xPos = (short) LOWORD(lParam);		// horizontal position of pointer
 //	yPos = (short) HIWORD(lParam);		// vertical position of pointer
-//	MYTRACE( _T("CEditView::DispatchEvent() WM_MOUSEWHEEL fwKeys=%xh zDelta=%d xPos=%d yPos=%d \n"), fwKeys, zDelta, xPos, yPos );
+//	MYTRACE( L"CEditView::DispatchEvent() WM_MOUSEWHEEL fwKeys=%xh zDelta=%d xPos=%d yPos=%d \n", fwKeys, zDelta, xPos, yPos );
 
 	if( bHorizontalMsg ){
 		if( 0 < zDelta ){
@@ -1330,7 +1330,7 @@ LRESULT CEditView::OnMOUSEWHEEL2( WPARAM wParam, LPARAM lParam, bool bHorizontal
 		/* レジストリの存在チェック */
 		// 2006.06.03 Moca ReadRegistry に書き換え
 		unsigned int uDataLen;	// size of value data
-		TCHAR szValStr[256];
+		WCHAR szValStr[256];
 		uDataLen = _countof(szValStr) - 1;
 		if( !bExecCmd ){
 			bool bGetParam = false;
@@ -1345,7 +1345,7 @@ LRESULT CEditView::OnMOUSEWHEEL2( WPARAM wParam, LPARAM lParam, bool bHorizontal
 				}
 			}
 			if( !bGetParam ){
-				if( ReadRegistry( HKEY_CURRENT_USER, _T("Control Panel\\desktop"), _T("WheelScrollLines"), szValStr, uDataLen ) ){
+				if( ReadRegistry( HKEY_CURRENT_USER, L"Control Panel\\desktop", L"WheelScrollLines", szValStr, uDataLen ) ){
 					nRollLineNum = ::_ttoi( szValStr );
 					if( nRollLineNum != -1 && m_bMiniMap ){
 						nRollLineNum *= 10;
@@ -1499,7 +1499,7 @@ bool CEditView::IsSpecialScrollMode( int nSelect )
 /* マウス左ボタン開放のメッセージ処理 */
 void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 {
-//	MYTRACE( _T("OnLBUTTONUP()\n") );
+//	MYTRACE( L"OnLBUTTONUP()\n" );
 
 	/* 範囲選択終了 & マウスキャプチャーおわり */
 	if( GetSelectionInfo().IsMouseSelecting() ){	/* 範囲選択中 */
@@ -1529,8 +1529,8 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 /*   呼び出し前に lpParameter を new しておくこと */
 static unsigned __stdcall ShellExecuteProc( LPVOID lpParameter )
 {
-	LPTSTR pszFile = (LPTSTR)lpParameter;
-	::ShellExecute( NULL, _T("open"), pszFile, NULL, NULL, SW_SHOW );
+	LPWSTR pszFile = (LPWSTR)lpParameter;
+	::ShellExecute( NULL, L"open", pszFile, NULL, NULL, SW_SHOW );
 	delete []pszFile;
 	return 0;
 }
@@ -1579,8 +1579,8 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 				CWaitCursor cWaitCursor( GetHwnd() );	// カーソルを砂時計にする
 
 				unsigned int nThreadId;
-				LPCTSTR szUrl = wstrOPEN.c_str();
-				LPTSTR szUrlDup = new TCHAR[_tcslen( szUrl ) + 1];
+				LPCWSTR szUrl = wstrOPEN.c_str();
+				LPWSTR szUrlDup = new WCHAR[_tcslen( szUrl ) + 1];
 				_tcscpy( szUrlDup, szUrl );
 				HANDLE hThread = (HANDLE)_beginthreadex( NULL, 0, ShellExecuteProc, (LPVOID)szUrlDup, 0, &nThreadId );
 				if( hThread != INVALID_HANDLE_VALUE ){
@@ -1688,7 +1688,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 
 STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
-	DEBUG_TRACE( _T("CEditView::DragEnter()\n") );
+	DEBUG_TRACE( L"CEditView::DragEnter()\n" );
 	//「OLEによるドラッグ & ドロップを使う」オプションが無効の場合にはドロップを受け付けない
 	if(!GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DragDrop)return E_UNEXPECTED;
 
@@ -1715,7 +1715,7 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 	m_nCaretPosX_Prev_DragEnter = GetCaret().m_nCaretPosX_Prev;
 
 	// ドラッグデータは矩形か
-	m_bDragBoxData = IsDataAvailable( pDataObject, (CLIPFORMAT)::RegisterClipboardFormat( _T("MSDEVColumnSelect") ) );
+	m_bDragBoxData = IsDataAvailable( pDataObject, (CLIPFORMAT)::RegisterClipboardFormat( L"MSDEVColumnSelect" ) );
 
 	/* 選択テキストのドラッグ中か */
 	_SetDragMode( TRUE );
@@ -1726,7 +1726,7 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 
 STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
-	DEBUG_TRACE( _T("CEditView::DragOver()\n") );
+	DEBUG_TRACE( L"CEditView::DragOver()\n" );
 
 	/* マウス移動のメッセージ処理 */
 	::ScreenToClient( GetHwnd(), (LPPOINT)&pt );
@@ -1752,7 +1752,7 @@ STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect
 
 STDMETHODIMP CEditView::DragLeave( void )
 {
-	DEBUG_TRACE( _T("CEditView::DragLeave()\n") );
+	DEBUG_TRACE( L"CEditView::DragLeave()\n" );
 	/* 選択テキストのドラッグ中か */
 	_SetDragMode( FALSE );
 
@@ -1771,7 +1771,7 @@ STDMETHODIMP CEditView::DragLeave( void )
 
 STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
-	DEBUG_TRACE( _T("CEditView::Drop()\n") );
+	DEBUG_TRACE( L"CEditView::Drop()\n" );
 	BOOL		bBoxData;
 	BOOL		bMove;
 	BOOL		bMoveToPrev = FALSE;
@@ -2089,7 +2089,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 	if( nTid1 != nTid2 ) ::AttachThreadInput( nTid1, nTid2, TRUE );
 
 	// ダミーの STATIC を作ってフォーカスを当てる（エディタが前面に出ないように）
-	HWND hwnd = ::CreateWindow(_T("STATIC"), _T(""), 0, 0, 0, 0, 0, NULL, NULL, G_AppInstance(), NULL );
+	HWND hwnd = ::CreateWindow(L"STATIC", L"", 0, 0, 0, 0, 0, NULL, NULL, G_AppInstance(), NULL );
 	::SetFocus(hwnd);
 
 	// メニューを作成する
@@ -2126,13 +2126,13 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 	case 101:	// ファイル名を貼り付ける
 		CNativeW cmemBuf;
 		UINT nFiles;
-		TCHAR szPath[_MAX_PATH];
-		TCHAR szExt[_MAX_EXT];
-		TCHAR szWork[_MAX_PATH];
+		WCHAR szPath[_MAX_PATH];
+		WCHAR szExt[_MAX_EXT];
+		WCHAR szWork[_MAX_PATH];
 
 		nFiles = ::DragQueryFile( hDrop, 0xFFFFFFFF, NULL, 0 );
 		for( UINT i = 0; i < nFiles; i++ ){
-			::DragQueryFile( hDrop, i, szPath, sizeof(szPath)/sizeof(TCHAR) );
+			::DragQueryFile( hDrop, i, szPath, sizeof(szPath)/sizeof(WCHAR) );
 			if( !::GetLongFileName( szPath, szWork ) )
 				continue;
 			if( nId == 100 ){	// パス名

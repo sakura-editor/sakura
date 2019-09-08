@@ -73,10 +73,10 @@ CDlgInput1::~CDlgInput1()
 BOOL CDlgInput1::DoModal(
 	HINSTANCE		hInstApp,
 	HWND			hwndParent,
-	const TCHAR*	pszTitle,
-	const TCHAR*	pszMessage,
+	const WCHAR*	pszTitle,
+	const WCHAR*	pszMessage,
 	int				nMaxTextLen,
-	TCHAR*			pszText
+	WCHAR*			pszText
 )
 {
 	BOOL bRet;

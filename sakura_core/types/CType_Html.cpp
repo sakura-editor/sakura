@@ -38,8 +38,8 @@
 //2012.01.03 シングルクォートの色分けをする
 void CType_Html::InitTypeConfigImp(STypeConfig* pType)
 {
-	_tcscpy( pType->m_szTypeName, _T("HTML") );
-	_tcscpy( pType->m_szTypeExts, _T("html,htm,shtml,plg") );
+	_tcscpy( pType->m_szTypeName, L"HTML" );
+	_tcscpy( pType->m_szTypeExts, L"html,htm,shtml,plg" );
 
 	//設定
 	pType->m_cBlockComments[0].SetBlockCommentRule( L"<!--", L"-->" );	/* ブロックコメントデリミタ */

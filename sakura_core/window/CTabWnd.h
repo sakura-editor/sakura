@@ -93,7 +93,7 @@ protected:
 	void TabWnd_ActivateFrameWindow( HWND hwnd, bool bForce = true );	//2004.08.27 Kazika 引数追加
 	HWND GetNextGroupWnd( void );	/* 次のグループの先頭ウィンドウを探す */	// 2007.06.20 ryoji
 	HWND GetPrevGroupWnd( void );	/* 前のグループの先頭ウィンドウを探す */	// 2007.06.20 ryoji
-	void GetTabName( EditNode* pEditNode, BOOL bFull, BOOL bDupamp, LPTSTR pszName, int nLen );	/* タブ名取得処理 */	// 2007.06.28 ryoji 新規作成
+	void GetTabName( EditNode* pEditNode, BOOL bFull, BOOL bDupamp, LPWSTR pszName, int nLen );	/* タブ名取得処理 */	// 2007.06.28 ryoji 新規作成
 
 	/* 仮想関数 */
 	virtual void AfterCreateWindow( void ){}	/*!< ウィンドウ作成後の処理 */	// 2007.03.13 ryoji 可視化しない
@@ -170,7 +170,7 @@ public:
 	HFONT			m_hFont;		/*!< 表示用フォント */
 	HWND			m_hwndTab;		/*!< タブコントロール */
 	HWND			m_hwndToolTip;	/*!< ツールチップ（ボタン用） */
-	TCHAR			m_szTextTip[1024];	/*!< ツールチップのテキスト（タブ用） */
+	WCHAR			m_szTextTip[1024];	/*!< ツールチップのテキスト（タブ用） */
 	ETabPosition	m_eTabPosition;	//!< タブ表示位置
 
 private:

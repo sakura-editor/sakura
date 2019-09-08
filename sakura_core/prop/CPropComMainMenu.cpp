@@ -79,7 +79,7 @@ static	int		nMenuCnt = 0;					// 一時データ番号
 
 // ローカル関数定義
 static HTREEITEM TreeCopy( HWND, HTREEITEM, HTREEITEM, bool, bool );
-static const TCHAR * MakeDispLabel( SMainMenuWork* );
+static const WCHAR * MakeDispLabel( SMainMenuWork* );
 
 static	int 	nSpecialFuncsNum;		// 特別機能のコンボボックス内での番号
 
@@ -144,7 +144,7 @@ static LRESULT CALLBACK TreeViewProc(
 			pFuncWk->m_sKey[1] = L'\0';
 			pFuncWk->m_bDupErr = false;
 			tvi.mask = TVIF_HANDLE | TVIF_TEXT | TVIF_PARAM;
-			tvi.pszText = const_cast<TCHAR*>( MakeDispLabel( pFuncWk ) );
+			tvi.pszText = const_cast<WCHAR*>( MakeDispLabel( pFuncWk ) );
 			TreeView_SetItem( hwndTree , &tvi );		//	キー設定結果を反映
 			return 0;
 		}
@@ -246,7 +246,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 
 	EFunctionCode	eFuncCode;
 	SMainMenuWork*	pFuncWk;	// 機能
-	TCHAR			szKey[2];
+	WCHAR			szKey[2];
 
 	TV_INSERTSTRUCT	tvis;		// 挿入用
 	TV_ITEM			tvi;		// 取得用
@@ -338,7 +338,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					// Esc
 					//	何も設定しない（元のまま）
 				}
-				else if (auto_strcmp(ptdi->item.pszText, _T("")) == 0) {
+				else if (auto_strcmp(ptdi->item.pszText, L"") == 0) {
 					// 空
 					pFuncWk->m_sName = LSW(STR_PROPCOMMAINMENU_EDIT);
 				}
@@ -349,7 +349,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					// ラベルを編集したらリソースからの文字列取得をやめる 2012.10.14 syat 各国語対応
 					pFuncWk->m_nFunc = F_NODE;
 				}
-				ptdi->item.pszText = const_cast<TCHAR*>( MakeDispLabel( pFuncWk ) );
+				ptdi->item.pszText = const_cast<WCHAR*>( MakeDispLabel( pFuncWk ) );
 				TreeView_SetItem( hwndTreeRes , &ptdi->item );	//	編集結果を反映
 
 				// 編集時のメッセージ処理を戻す
@@ -384,7 +384,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 				}
 				pFuncWk = &msMenu[tvi.lParam];
 				if (pFuncWk->m_nFunc != F_SEPARATOR) {
-					auto_sprintf( szKey, _T("%ls"), pFuncWk->m_sKey);
+					auto_sprintf( szKey, L"%ls", pFuncWk->m_sKey);
 
 					if (!cDlgInput1.DoModal(
 							G_AppInstance(),
@@ -399,7 +399,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					pFuncWk->m_bDupErr = false;
 
 					tvi.mask = TVIF_HANDLE | TVIF_TEXT | TVIF_PARAM;
-					tvi.pszText = const_cast<TCHAR*>( MakeDispLabel( pFuncWk ) );
+					tvi.pszText = const_cast<WCHAR*>( MakeDispLabel( pFuncWk ) );
 					TreeView_SetItem( hwndTreeRes, &tvi );
 				}
 			}
@@ -638,7 +638,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
 					tvis.hParent = htiParent;
 					tvis.hInsertAfter = htiTemp;
-					tvis.item.pszText = const_cast<TCHAR*>(to_wchar(szLabel));
+					tvis.item.pszText = const_cast<WCHAR*>(to_wchar(szLabel));
 					tvis.item.lParam = nMenuCnt++;
 					tvis.item.cChildren = ( wID == IDC_BUTTON_INSERT_NODE );
 					htiItem = TreeView_InsertItem( hwndTreeRes, &tvis );
@@ -941,7 +941,7 @@ void CPropMainMenu::SetData( HWND hwndDlg )
 		tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
 		tvis.hParent = htiParent;
 		tvis.hInsertAfter = TVI_LAST;
-		tvis.item.pszText = const_cast<TCHAR*>( MakeDispLabel( pFuncWk ) );
+		tvis.item.pszText = const_cast<WCHAR*>( MakeDispLabel( pFuncWk ) );
 		tvis.item.lParam = nMenuCnt++;								// 内部データインデックスのインクリメント
 		tvis.item.cChildren = ( pcFunc->m_nType == T_NODE );
 		htiItem = TreeView_InsertItem( hwndTreeRes, &tvis );
@@ -1128,7 +1128,7 @@ static HTREEITEM TreeCopy( HWND hwndTree, HTREEITEM dst, HTREEITEM src, bool fCh
 	TV_ITEM			tvi;		// 取得用
 	int				n = 0;
 	const int		MAX_LABEL_CCH = 256+10;
-	TCHAR			szLabel[MAX_LABEL_CCH];
+	WCHAR			szLabel[MAX_LABEL_CCH];
 
 	for (s = src; s != NULL; s = fOnryOne ? NULL:TreeView_GetNextSibling( hwndTree, s )) {
 		tvi.mask = TVIF_HANDLE | TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
@@ -1172,7 +1172,7 @@ static HTREEITEM TreeCopy( HWND hwndTree, HTREEITEM dst, HTREEITEM src, bool fCh
 }
 
 // 表示用データの作成（アクセスキー付加）
-static const TCHAR* MakeDispLabel( SMainMenuWork* pFunc )
+static const WCHAR* MakeDispLabel( SMainMenuWork* pFunc )
 {
 	static	WCHAR	szLabel[MAX_MAIN_MENU_NAME_LEN + 10];
 
@@ -1293,7 +1293,7 @@ bool CPropMainMenu::Check_MainMenu_Sub(
 					// 目印クリア
 					pFuncWk->m_bDupErr = false;
 					tvi.mask = TVIF_HANDLE | TVIF_TEXT | TVIF_PARAM;
-					tvi.pszText =  const_cast<TCHAR*>( MakeDispLabel( pFuncWk ) );
+					tvi.pszText =  const_cast<WCHAR*>( MakeDispLabel( pFuncWk ) );
 					TreeView_SetItem( hwndTree , &tvi );		//	キー設定結果を反映
 				}
 			}
@@ -1311,7 +1311,7 @@ bool CPropMainMenu::Check_MainMenu_Sub(
 				// 目印設定
 				pFuncWk->m_bDupErr = true;
 				tvi.mask = TVIF_HANDLE | TVIF_TEXT | TVIF_PARAM;
-				tvi.pszText = const_cast<TCHAR*>( MakeDispLabel( pFuncWk ) );
+				tvi.pszText = const_cast<WCHAR*>( MakeDispLabel( pFuncWk ) );
 				TreeView_SetItem( hwndTree , &tvi );		//	キー設定結果を反映
 
 				// 目印設定（元分）
@@ -1325,7 +1325,7 @@ bool CPropMainMenu::Check_MainMenu_Sub(
 				if (!msMenu[tvi.lParam].m_bDupErr) {
 					msMenu[tvi.lParam].m_bDupErr = true;
 					tvi.mask = TVIF_HANDLE | TVIF_TEXT | TVIF_PARAM;
-					tvi.pszText = const_cast<TCHAR*>( MakeDispLabel( &msMenu[tvi.lParam] ) );
+					tvi.pszText = const_cast<WCHAR*>( MakeDispLabel( &msMenu[tvi.lParam] ) );
 					TreeView_SetItem( hwndTree , &tvi );		//	キー設定結果を反映
 				}
 			}

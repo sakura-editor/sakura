@@ -48,7 +48,7 @@
 	@date	2007.02.17 genta 相対パスの基準ディレクトリ指示を追加
 */
 bool CEditView::TagJumpSub(
-	const TCHAR*	pszFileName,
+	const WCHAR*	pszFileName,
 	CMyPoint		ptJumpTo,		//!< ジャンプ位置(1開始)
 	bool			bClose,			//!< [in] true: 元ウィンドウを閉じる / false: 元ウィンドウを閉じない
 	bool			bRelFromIni,
@@ -70,7 +70,7 @@ bool CEditView::TagJumpSub(
 	//	Feb. 17, 2007 genta 実行ファイルからの相対指定の場合は
 	//	予め絶対パスに変換する．(キーワードヘルプジャンプで用いる)
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
-	TCHAR	szJumpToFile[1024];
+	WCHAR	szJumpToFile[1024];
 	if( bRelFromIni && _IS_REL_PATH( pszFileName ) ){
 		GetInidirOrExedir( szJumpToFile, pszFileName );
 	}
@@ -79,7 +79,7 @@ bool CEditView::TagJumpSub(
 	}
 
 	/* ロングファイル名を取得する */
-	TCHAR	szWork[1024];
+	WCHAR	szWork[1024];
 	if( FALSE != ::GetLongFileName( szJumpToFile, szWork ) )
 	{
 		_tcscpy( szJumpToFile, szWork );
@@ -173,11 +173,11 @@ bool CEditView::TagJumpSub(
 BOOL CEditView::OPEN_ExtFromtoExt(
 	BOOL			bCheckOnly,		//!< [in] true: チェックのみ行ってファイルは開かない
 	BOOL			bBeepWhenMiss,	//!< [in] true: ファイルを開けなかった場合に警告音を出す
-	const TCHAR*	file_ext[],		//!< [in] 処理対象とする拡張子
-	const TCHAR*	open_ext[],		//!< [in] 開く対象とする拡張子
+	const WCHAR*	file_ext[],		//!< [in] 処理対象とする拡張子
+	const WCHAR*	open_ext[],		//!< [in] 開く対象とする拡張子
 	int				file_extno,		//!< [in] 処理対象拡張子リストの要素数
 	int				open_extno,		//!< [in] 開く対象拡張子リストの要素数
-	const TCHAR*	errmes			//!< [in] ファイルを開けなかった場合に表示するエラーメッセージ
+	const WCHAR*	errmes			//!< [in] ファイルを開けなかった場合に表示するエラーメッセージ
 )
 {
 //From Here Feb. 7, 2001 JEPRO 追加
@@ -197,11 +197,11 @@ BOOL CEditView::OPEN_ExtFromtoExt(
 
 open_c:;
 
-	TCHAR	szPath[_MAX_PATH];
-	TCHAR	szDrive[_MAX_DRIVE];
-	TCHAR	szDir[_MAX_DIR];
-	TCHAR	szFname[_MAX_FNAME];
-	TCHAR	szExt[_MAX_EXT];
+	WCHAR	szPath[_MAX_PATH];
+	WCHAR	szDrive[_MAX_DRIVE];
+	WCHAR	szDir[_MAX_DIR];
+	WCHAR	szFname[_MAX_FNAME];
+	WCHAR	szExt[_MAX_EXT];
 	HWND	hwndOwner;
 
 	_tsplitpath( GetDocument()->m_cDocFile.GetFilePath(), szDrive, szDir, szFname, szExt );
@@ -246,7 +246,7 @@ open_c:;
 			// ファイルサイズが大きすぎて読むかどうか問い合わせているような場合でもエラー表示になるのは変
 			// OpenNewEditor()または起動された側のメッセージ表示で十分と思われる
 
-			//ErrorMessage( this->GetHwnd(), _T("%s\n\n%s\n\n"), errmes, szPath );
+			//ErrorMessage( this->GetHwnd(), L"%s\n\n%s\n\n", errmes, szPath );
 			return FALSE;
 		}
 	}
@@ -355,7 +355,7 @@ CEditView::TOGGLE_WRAP_ACTION CEditView::GetWrapMode( CKetaXInt* _newKetas )
 	}
 }
 
-void CEditView::AddToCmdArr( const TCHAR* szCmd )
+void CEditView::AddToCmdArr( const WCHAR* szCmd )
 {
 	CRecentCmd	cRecentCmd;
 	cRecentCmd.AppendItem( szCmd );

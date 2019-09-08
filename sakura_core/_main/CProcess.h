@@ -31,7 +31,7 @@
 */
 class CProcess : public TSingleInstance<CProcess> {
 public:
-	CProcess( HINSTANCE hInstance, LPCTSTR lpCmdLine );
+	CProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine );
 	bool Run();
 	virtual ~CProcess(){}
 	virtual void RefreshString();

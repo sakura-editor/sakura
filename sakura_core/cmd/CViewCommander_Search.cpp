@@ -315,7 +315,7 @@ end_of_func:;
 			);
 		}
 		else{
-			AlertNotFound(hwndParent, bReplaceAll, _T("%ls"), pszNotFoundMessage);
+			AlertNotFound(hwndParent, bReplaceAll, L"%ls", pszNotFoundMessage);
 		}
 	}
 }
@@ -798,7 +798,7 @@ void CViewCommander::Command_REPLACE_ALL()
 	/* 置換個数初期化 */
 	int			nReplaceNum = 0;
 	HWND		hwndStatic = ::GetDlgItem( hwndCancel, IDC_STATIC_KENSUU );
-	TCHAR szLabel[64];
+	WCHAR szLabel[64];
 	_itot( nReplaceNum, szLabel, 10 );
 	::SendMessage( hwndStatic, WM_SETTEXT, 0, (LPARAM)szLabel );
 

@@ -87,10 +87,10 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 	}
 
 	const std::wstring strProfileName = CCommandLine::getInstance()->GetProfileName();
-	TCHAR	szIniFileName[_MAX_PATH + 1];
+	WCHAR	szIniFileName[_MAX_PATH + 1];
 	CFileNameManager::getInstance()->GetIniFileName( szIniFileName, strProfileName.c_str(), bRead );	// 2007.05.19 ryoji iniファイル名を取得する
 
-//	MYTRACE( _T("Iniファイル処理-1 所要時間(ミリ秒) = %d\n"), cRunningTimer.Read() );
+//	MYTRACE( L"Iniファイル処理-1 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
 
 	if( bRead ){
 		if( !cProfile.ReadProfile( szIniFileName ) ){
@@ -108,24 +108,24 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 		}
 
 		// バージョンアップ時はバックアップファイルを作成する	// 2011.01.28 ryoji
-		TCHAR iniVer[256];
+		WCHAR iniVer[256];
 		DWORD mH, mL, lH, lL;
 		mH = mL = lH = lL = 0;	// ※ 古～い ini だと "szVersion" は無い
 		if( cProfile.IOProfileData( LTEXT("Other"), LTEXT("szVersion"), MakeStringBufferW(iniVer) ) )
-			_stscanf( iniVer, _T("%u.%u.%u.%u"), &mH, &mL, &lH, &lL );
+			_stscanf( iniVer, L"%u.%u.%u.%u", &mH, &mL, &lH, &lL );
 		DWORD dwMS = (DWORD)MAKELONG(mL, mH);
 		DWORD dwLS = (DWORD)MAKELONG(lL, lH);
 		DLLSHAREDATA* pShareData = &GetDllShareData();
 		if( pShareData->m_sVersion.m_dwProductVersionMS > dwMS
 			|| (pShareData->m_sVersion.m_dwProductVersionMS == dwMS && pShareData->m_sVersion.m_dwProductVersionLS > dwLS) )
 		{
-			TCHAR szBkFileName[_countof(szIniFileName) + 4];
+			WCHAR szBkFileName[_countof(szIniFileName) + 4];
 			::lstrcpy(szBkFileName, szIniFileName);
-			::lstrcat(szBkFileName, _T(".bak"));
+			::lstrcat(szBkFileName, L".bak");
 			::CopyFile(szIniFileName, szBkFileName, FALSE);
 		}
 	}
-//	MYTRACE( _T("Iniファイル処理 0 所要時間(ミリ秒) = %d\n"), cRunningTimer.Read() );
+//	MYTRACE( L"Iniファイル処理 0 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
 
 	CMenuDrawer* pcMenuDrawer = new CMenuDrawer; // 2010/7/4 Uchi
 
@@ -167,8 +167,8 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 		}
 	}
 
-//	MYTRACE( _T("Iniファイル処理 8 所要時間(ミリ秒) = %d\n"), cRunningTimer.Read() );
-//	MYTRACE( _T("Iniファイル処理 所要時間(ミリ秒) = %d\n"), cRunningTimerStart.Read() );
+//	MYTRACE( L"Iniファイル処理 8 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
+//	MYTRACE( L"Iniファイル処理 所要時間(ミリ秒) = %d\n", cRunningTimerStart.Read() );
 
 	return true;
 }
@@ -230,7 +230,7 @@ void CShareData_IO::ShareData_IO_Mru( CDataProfile& cProfile )
 		fiInit.m_nViewLeftCol = CLayoutInt(0);
 		fiInit.m_nViewTopLine = CLayoutInt(0);
 		fiInit.m_ptCursor.Set(CLogicInt(0), CLogicInt(0));
-		fiInit.m_szPath[0] = _T('\0');
+		fiInit.m_szPath[0] = L'\0';
 		fiInit.m_szMarkLines[0] = L'\0';	// 2002.01.16 hor
 		for( ; i < MAX_MRU; ++i){
 			pShare->m_sHistory.m_fiMRUArr[i] = fiInit;
@@ -540,7 +540,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 			- CNativeW::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] );
 		if( 1 == nCharChars && common.m_sBackup.m_szBackUpFolder[nDummy - 1] == '\\' ){
 		}else{
-			_tcscat( common.m_sBackup.m_szBackUpFolder, _T("\\") );
+			_tcscat( common.m_sBackup.m_szBackUpFolder, L"\\" );
 		}
 	}
 	cProfile.IOProfileData( pszSecName, LTEXT("szBackUpFolder"), common.m_sBackup.m_szBackUpFolder );
@@ -553,7 +553,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 			- CNativeW::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] );
 		if( 1 == nCharChars && common.m_sBackup.m_szBackUpFolder[nDummy - 1] == '\\' ){
 		}else{
-			_tcscat( common.m_sBackup.m_szBackUpFolder, _T("\\") );
+			_tcscat( common.m_sBackup.m_szBackUpFolder, L"\\" );
 		}
 	}
 	
@@ -1738,8 +1738,8 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 			/* 読み出し */
 			if( cProfile.IsReadingMode() ){
 				types.m_KeyHelpArr[j].m_bUse = false;
-				types.m_KeyHelpArr[j].m_szAbout[0] = _T('\0');
-				types.m_KeyHelpArr[j].m_szPath[0] = _T('\0');
+				types.m_KeyHelpArr[j].m_szAbout[0] = L'\0';
+				types.m_KeyHelpArr[j].m_szPath[0] = L'\0';
 				if( cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData)) ){
 					pH = szKeyData;
 					if( NULL != (pT=wcschr(pH, L',')) ){
@@ -1759,7 +1759,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 				}
 			}/* 書き込み */
 			else{
-				if(types.m_KeyHelpArr[j].m_szPath[0] != _T('\0')){
+				if(types.m_KeyHelpArr[j].m_szPath[0] != L'\0'){
 					auto_sprintf( szKeyData, LTEXT("%d,%s,%s"),
 						types.m_KeyHelpArr[j].m_bUse?1:0,
 						types.m_KeyHelpArr[j].m_szAbout,
@@ -1887,7 +1887,7 @@ void CShareData_IO::ShareData_IO_Macro( CDataProfile& cProfile )
 		MacroRec& macrorec = pShare->m_Common.m_sMacro.m_MacroTable[i];
 		//	Oct. 4, 2001 genta あまり意味がなさそうなので削除：3行
 		// 2002.02.08 hor 未定義値を無視
-		if( !cProfile.IsReadingMode() && macrorec.m_szName[0] == _T('\0') && macrorec.m_szFile[0] == _T('\0') ) continue;
+		if( !cProfile.IsReadingMode() && macrorec.m_szName[0] == L'\0' && macrorec.m_szFile[0] == L'\0' ) continue;
 		auto_sprintf( szKeyName, LTEXT("Name[%03d]"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(macrorec.m_szName) );
 		auto_sprintf( szKeyName, LTEXT("File[%03d]"), i );
@@ -2297,8 +2297,8 @@ void CShareData_IO::ShareData_IO_Other( CDataProfile& cProfile )
 
 	//	MIK バージョン情報（書き込みのみ）
 	if( ! cProfile.IsReadingMode() ){
-		TCHAR	iniVer[256];
-		auto_sprintf( iniVer, _T("%d.%d.%d.%d"), 
+		WCHAR	iniVer[256];
+		auto_sprintf( iniVer, L"%d.%d.%d.%d", 
 					HIWORD( pShare->m_sVersion.m_dwProductVersionMS ),
 					LOWORD( pShare->m_sVersion.m_dwProductVersionMS ),
 					HIWORD( pShare->m_sVersion.m_dwProductVersionLS ),
@@ -2453,7 +2453,7 @@ void CShareData_IO::ShareData_IO_FileTreeItem(
 	}
 	if( cProfile.IsReadingMode()
 		|| ((item.m_eFileTreeItemType == EFileTreeItemType_Grep || item.m_eFileTreeItemType == EFileTreeItemType_File)
-			&& item.m_szLabelName[0] != _T('\0') )
+			&& item.m_szLabelName[0] != L'\0' )
 		|| item.m_eFileTreeItemType == EFileTreeItemType_Folder ){
 		auto_sprintf( szKey, L"FileTree(%d).szLabelName", i );
 		cProfile.IOProfileData( pszSecName, szKey, item.m_szLabelName );

@@ -25,7 +25,7 @@
 struct KEYDATAINIT {
 	short			m_nKeyCode;			//!< Key Code (0 for non-keybord button)
 	union {
-		const TCHAR*	m_pszKeyName;		//!< Key Name (for display)
+		const WCHAR*	m_pszKeyName;		//!< Key Name (for display)
 		UINT			m_nKeyNameId;		//!< String Resource Id ( 0x0000 - 0xFFFF )
 	};
 	EFunctionCode	m_nFuncCodeArr[8];	//!< Key Function Number
@@ -264,9 +264,9 @@ bool CKeyBind::GetKeyStrSub(
 		BOOL		bGetDefFuncCode /* = TRUE */
 )
 {
-	const TCHAR*	pszSHIFT = _T("Shift+");
-	const TCHAR*	pszCTRL  = _T("Ctrl+");
-	const TCHAR*	pszALT   = _T("Alt+");
+	const WCHAR*	pszSHIFT = L"Shift+";
+	const WCHAR*	pszCTRL  = L"Ctrl+";
+	const WCHAR*	pszALT   = L"Alt+";
 
 	int i;
 	for( i = nKeyNameArrBegin; i < nKeyNameArrEnd; ++i ){
@@ -305,7 +305,7 @@ int CKeyBind::GetKeyStr(
 {
 	int		i;
 	int		j;
-	cMemList.SetString(_T(""));
+	cMemList.SetString(L"");
 
 	//	先にキー部分を調査する
 	for( j = 0; j < 8; ++j ){
@@ -384,40 +384,40 @@ int CKeyBind::GetKeyStrList(
 	@data 2013.12.09 novice アクセスキーと文字列の比較で小文字も有効にする
 	@date 2014.05.04 sLabelのバッファ長を300 => _MAX_PATH*2 + 30
 */
-TCHAR*	CKeyBind::MakeMenuLabel(const TCHAR* sName, const TCHAR* sKey)
+WCHAR*	CKeyBind::MakeMenuLabel(const WCHAR* sName, const WCHAR* sKey)
 {
 	const int MAX_LABEL_CCH = _MAX_PATH*2 + 30;
-	static	TCHAR	sLabel[MAX_LABEL_CCH];
-	const	TCHAR*	p;
+	static	WCHAR	sLabel[MAX_LABEL_CCH];
+	const	WCHAR*	p;
 
 	if (sKey == NULL || sKey[0] == L'\0') {
-		return const_cast<TCHAR*>( sName );
+		return const_cast<WCHAR*>( sName );
 	}
 	else {
 		if( !GetDllShareData().m_Common.m_sMainMenu.m_bMainMenuKeyParentheses
 			  && (((p = auto_strchr( sName, sKey[0])) != NULL) || ((p = auto_strchr( sName, _totlower(sKey[0]))) != NULL)) ){
 			// 欧文風、使用している文字をアクセスキーに
 			auto_strcpy_s( sLabel, _countof(sLabel), sName );
-			sLabel[p-sName] = _T('&');
+			sLabel[p-sName] = L'&';
 			auto_strcpy_s( sLabel + (p-sName) + 1, _countof(sLabel), p );
 		}
-		else if( (p = auto_strchr( sName, _T('(') )) != NULL
+		else if( (p = auto_strchr( sName, L'(' )) != NULL
 			  && (p = auto_strchr( p, sKey[0] )) != NULL) {
 			// (付その後にアクセスキー
 			auto_strcpy_s( sLabel, _countof(sLabel), sName );
-			sLabel[p-sName] = _T('&');
+			sLabel[p-sName] = L'&';
 			auto_strcpy_s( sLabel + (p-sName) + 1, _countof(sLabel), p );
 		}
-		else if (_tcscmp( sName + _tcslen(sName) - 3, _T("...") ) == 0) {
+		else if (_tcscmp( sName + _tcslen(sName) - 3, L"..." ) == 0) {
 			// 末尾...
 			auto_strcpy_s( sLabel, _countof(sLabel), sName );
 			sLabel[_tcslen(sName) - 3] = '\0';						// 末尾の...を取る
-			auto_strcat_s( sLabel, _countof(sLabel), _T("(&") );
+			auto_strcat_s( sLabel, _countof(sLabel), L"(&" );
 			auto_strcat_s( sLabel, _countof(sLabel), sKey );
-			auto_strcat_s( sLabel, _countof(sLabel), _T(")...") );
+			auto_strcat_s( sLabel, _countof(sLabel), L")..." );
 		}
 		else {
-			auto_sprintf_s( sLabel, _countof(sLabel), _T("%s(&%s)"), sName, sKey );
+			auto_sprintf_s( sLabel, _countof(sLabel), L"%s(&%s)", sName, sKey );
 		}
 
 		return sLabel;
@@ -429,13 +429,13 @@ TCHAR*	CKeyBind::MakeMenuLabel(const TCHAR* sName, const TCHAR* sKey)
 	2010/5/17	アクセスキーの追加
 	@date 2014.05.04 Moca LABEL_MAX=256 => nLabelSize
 */
-TCHAR* CKeyBind::GetMenuLabel(
+WCHAR* CKeyBind::GetMenuLabel(
 		HINSTANCE	hInstance,
 		int			nKeyNameArrNum,
 		KEYDATA*	pKeyNameArr,
 		int			nFuncId,
-		TCHAR*      pszLabel,   //!< [in,out] バッファは256以上と仮定
-		const TCHAR*	pszKey,
+		WCHAR*      pszLabel,   //!< [in,out] バッファは256以上と仮定
+		const WCHAR*	pszKey,
 		BOOL		bKeyStr,
 		int			nLabelSize,
 		BOOL		bGetDefFuncCode /* = TRUE */
@@ -443,12 +443,12 @@ TCHAR* CKeyBind::GetMenuLabel(
 {
 	const unsigned int LABEL_MAX = nLabelSize;
 
-	if( _T('\0') == pszLabel[0] ){
+	if( L'\0' == pszLabel[0] ){
 		_tcsncpy( pszLabel, LS( nFuncId ), LABEL_MAX - 1 );
-		pszLabel[ LABEL_MAX - 1 ] = _T('\0');
+		pszLabel[ LABEL_MAX - 1 ] = L'\0';
 	}
-	if( _T('\0') == pszLabel[0] ){
-		_tcscpy( pszLabel, _T("-- undefined name --") );
+	if( L'\0' == pszLabel[0] ){
+		_tcscpy( pszLabel, L"-- undefined name --" );
 	}
 	// アクセスキーの追加	2010/5/17 Uchi
 	_tcsncpy_s( pszLabel, LABEL_MAX, MakeMenuLabel( pszLabel, pszKey ), _TRUNCATE );
@@ -462,7 +462,7 @@ TCHAR* CKeyBind::GetMenuLabel(
 		if( GetKeyStr( hInstance, nKeyNameArrNum, pKeyNameArr, cMemAccessKey, nFuncId, bGetDefFuncCode ) ){
 			// バッファが足りないときは入れない
 			if( _tcslen( pszLabel ) + (Int)cMemAccessKey.GetStringLength() + 1 < LABEL_MAX ){
-				_tcscat( pszLabel, _T("\t") );
+				_tcscat( pszLabel, L"\t" );
 				_tcscat( pszLabel, cMemAccessKey.GetStringPtr() );
 			}
 		}
@@ -649,135 +649,135 @@ static const KEYDATAINIT	KeyDataInit[] = {
 
 	/* マウスボタン */
 	//keycode,			keyname,							なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
-	{ VKEX_DBL_CLICK,	(LPCTSTR)STR_KEY_BIND_DBL_CLICK,	{ F_SELECTWORD,		F_SELECTWORD,		F_SELECTWORD,			F_SELECTWORD,		F_SELECTWORD,			F_SELECTWORD,		F_SELECTWORD,			F_SELECTWORD }, }, //Feb. 19, 2001 JEPRO Altと右クリックの組合せは効かないので右クリックメニューのキー割り当てをはずした
-	{ VKEX_R_CLICK,		(LPCTSTR)STR_KEY_BIND_R_CLICK,		{ F_MENU_RBUTTON,	F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_0,					F_0,				F_0,					F_0 }, },
-	{ VKEX_MDL_CLICK,	(LPCTSTR)STR_KEY_BIND_MID_CLICK,	{ F_AUTOSCROLL,		F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, }, // novice 2004/10/11 マウス中ボタン対応
-	{ VKEX_LSD_CLICK,	(LPCTSTR)STR_KEY_BIND_LSD_CLICK,	{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, }, // novice 2004/10/10 マウスサイドボタン対応
-	{ VKEX_RSD_CLICK,	(LPCTSTR)STR_KEY_BIND_RSD_CLICK,	{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ VKEX_TRI_CLICK,	(LPCTSTR)STR_KEY_BIND_TRI_CLICK,	{ F_SELECTLINE,		F_SELECTLINE,		F_SELECTLINE,			F_SELECTLINE,		F_SELECTLINE,			F_SELECTLINE,		F_SELECTLINE,			F_SELECTLINE }, },
-	{ VKEX_QUA_CLICK,	(LPCTSTR)STR_KEY_BIND_QUA_CLICK,	{ F_SELECTALL,		F_SELECTALL,		F_SELECTALL,			F_SELECTALL,		F_SELECTALL,			F_SELECTALL,		F_SELECTALL,			F_SELECTALL }, },
-	{ VKEX_WHEEL_UP,	(LPCTSTR)STR_KEY_BIND_WHEEL_UP,		{ F_WHEELUP,		F_WHEELUP,			F_SETFONTSIZEUP,		F_WHEELUP,			F_WHEELUP,				F_WHEELUP,			F_WHEELUP,				F_WHEELUP }, },
-	{ VKEX_WHEEL_DOWN,	(LPCTSTR)STR_KEY_BIND_WHEEL_DOWN,	{ F_WHEELDOWN,		F_WHEELDOWN,		F_SETFONTSIZEDOWN,		F_WHEELDOWN,		F_WHEELDOWN,			F_WHEELDOWN,		F_WHEELDOWN,			F_WHEELDOWN }, },
-	{ VKEX_WHEEL_LEFT,	(LPCTSTR)STR_KEY_BIND_WHEEL_LEFT,	{ F_WHEELLEFT,		F_WHEELLEFT,		F_WHEELLEFT,			F_WHEELLEFT,		F_WHEELLEFT,			F_WHEELLEFT,		F_WHEELLEFT,			F_WHEELLEFT }, },
-	{ VKEX_WHEEL_RIGHT,	(LPCTSTR)STR_KEY_BIND_WHEEL_RIGHT,	{ F_WHEELRIGHT,		F_WHEELRIGHT,		F_WHEELRIGHT,			F_WHEELRIGHT,		F_WHEELRIGHT,			F_WHEELRIGHT,		F_WHEELRIGHT,			F_WHEELRIGHT }, },
+	{ VKEX_DBL_CLICK,	(LPCWSTR)STR_KEY_BIND_DBL_CLICK,	{ F_SELECTWORD,		F_SELECTWORD,		F_SELECTWORD,			F_SELECTWORD,		F_SELECTWORD,			F_SELECTWORD,		F_SELECTWORD,			F_SELECTWORD }, }, //Feb. 19, 2001 JEPRO Altと右クリックの組合せは効かないので右クリックメニューのキー割り当てをはずした
+	{ VKEX_R_CLICK,		(LPCWSTR)STR_KEY_BIND_R_CLICK,		{ F_MENU_RBUTTON,	F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_0,					F_0,				F_0,					F_0 }, },
+	{ VKEX_MDL_CLICK,	(LPCWSTR)STR_KEY_BIND_MID_CLICK,	{ F_AUTOSCROLL,		F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, }, // novice 2004/10/11 マウス中ボタン対応
+	{ VKEX_LSD_CLICK,	(LPCWSTR)STR_KEY_BIND_LSD_CLICK,	{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, }, // novice 2004/10/10 マウスサイドボタン対応
+	{ VKEX_RSD_CLICK,	(LPCWSTR)STR_KEY_BIND_RSD_CLICK,	{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VKEX_TRI_CLICK,	(LPCWSTR)STR_KEY_BIND_TRI_CLICK,	{ F_SELECTLINE,		F_SELECTLINE,		F_SELECTLINE,			F_SELECTLINE,		F_SELECTLINE,			F_SELECTLINE,		F_SELECTLINE,			F_SELECTLINE }, },
+	{ VKEX_QUA_CLICK,	(LPCWSTR)STR_KEY_BIND_QUA_CLICK,	{ F_SELECTALL,		F_SELECTALL,		F_SELECTALL,			F_SELECTALL,		F_SELECTALL,			F_SELECTALL,		F_SELECTALL,			F_SELECTALL }, },
+	{ VKEX_WHEEL_UP,	(LPCWSTR)STR_KEY_BIND_WHEEL_UP,		{ F_WHEELUP,		F_WHEELUP,			F_SETFONTSIZEUP,		F_WHEELUP,			F_WHEELUP,				F_WHEELUP,			F_WHEELUP,				F_WHEELUP }, },
+	{ VKEX_WHEEL_DOWN,	(LPCWSTR)STR_KEY_BIND_WHEEL_DOWN,	{ F_WHEELDOWN,		F_WHEELDOWN,		F_SETFONTSIZEDOWN,		F_WHEELDOWN,		F_WHEELDOWN,			F_WHEELDOWN,		F_WHEELDOWN,			F_WHEELDOWN }, },
+	{ VKEX_WHEEL_LEFT,	(LPCWSTR)STR_KEY_BIND_WHEEL_LEFT,	{ F_WHEELLEFT,		F_WHEELLEFT,		F_WHEELLEFT,			F_WHEELLEFT,		F_WHEELLEFT,			F_WHEELLEFT,		F_WHEELLEFT,			F_WHEELLEFT }, },
+	{ VKEX_WHEEL_RIGHT,	(LPCWSTR)STR_KEY_BIND_WHEEL_RIGHT,	{ F_WHEELRIGHT,		F_WHEELRIGHT,		F_WHEELRIGHT,			F_WHEELRIGHT,		F_WHEELRIGHT,			F_WHEELRIGHT,		F_WHEELRIGHT,			F_WHEELRIGHT }, },
 
 	/* ファンクションキー */
 	//keycode,	keyname,			なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
-	{ VK_F1,	_T("F1" ),			{ F_EXTHTMLHELP,	F_MENU_ALLFUNC,		F_EXTHELP1,				F_ABOUT,			F_HELP_CONTENTS,		F_HELP_SEARCH,		F_0,					F_0 }, },
-	{ VK_F2,	_T("F2" ),			{ F_BOOKMARK_NEXT,	F_BOOKMARK_PREV,	F_BOOKMARK_SET,			F_BOOKMARK_RESET,	F_BOOKMARK_VIEW,		F_0,				F_0,					F_0 }, },
-	{ VK_F3,	_T("F3" ),			{ F_SEARCH_NEXT,	F_SEARCH_PREV,		F_SEARCH_CLEARMARK,		F_JUMP_SRCHSTARTPOS,F_0,					F_0,				F_0,					F_0 }, },
-	{ VK_F4,	_T("F4" ),			{ F_SPLIT_V,		F_SPLIT_H,			F_0,					F_FILECLOSE_OPEN,	F_0,					F_EXITALLEDITORS,	F_EXITALL,				F_0 }, },
-	{ VK_F5,	_T("F5" ),			{ F_REDRAW,			F_0,				F_EXECMD_DIALOG,		F_0,				F_UUDECODE,				F_0,				F_TABTOSPACE,			F_SPACETOTAB }, },
-	{ VK_F6,	_T("F6" ),			{ F_BEGIN_SEL,		F_BEGIN_BOX,		F_TOLOWER,				F_0,				F_BASE64DECODE,			F_0,				F_0,					F_0 }, },
-	{ VK_F7,	_T("F7" ),			{ F_CUT,			F_0,				F_TOUPPER,				F_0,				F_CODECNV_UTF72SJIS,	F_CODECNV_SJIS2UTF7,F_FILE_REOPEN_UTF7,		F_0 }, },
-	{ VK_F8,	_T("F8" ),			{ F_COPY,			F_COPY_CRLF,		F_TOHANKAKU,			F_0,				F_CODECNV_UTF82SJIS,	F_CODECNV_SJIS2UTF8,F_FILE_REOPEN_UTF8,		F_0 }, },
-	{ VK_F9,	_T("F9" ),			{ F_PASTE,			F_PASTEBOX,			F_TOZENKAKUKATA,		F_0,				F_CODECNV_UNICODE2SJIS,	F_0,				F_FILE_REOPEN_UNICODE,	F_0 }, },
-	{ VK_F10,	_T("F10"),			{ _SQL_RUN,			F_DUPLICATELINE,	F_TOZENKAKUHIRA,		F_0,				F_CODECNV_EUC2SJIS,		F_CODECNV_SJIS2EUC,	F_FILE_REOPEN_EUC,		F_0 }, },
-	{ VK_F11,	_T("F11"),			{ F_OUTLINE,		F_ACTIVATE_SQLPLUS,	F_HANKATATOZENKATA,		F_0,				F_CODECNV_EMAIL,		F_CODECNV_SJIS2JIS,	F_FILE_REOPEN_JIS,		F_0 }, },
-	{ VK_F12,	_T("F12"),			{ F_TAGJUMP,		F_TAGJUMPBACK,		F_HANKATATOZENHIRA,		F_0,				F_CODECNV_AUTO2SJIS,	F_0,				F_FILE_REOPEN_SJIS,		F_0 }, },
-	{ VK_F13,	_T("F13"),			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ VK_F14,	_T("F14"),			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ VK_F15,	_T("F15"),			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ VK_F16,	_T("F16"),			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ VK_F17,	_T("F17"),			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ VK_F18,	_T("F18"),			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ VK_F19,	_T("F19"),			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ VK_F20,	_T("F20"),			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ VK_F21,	_T("F21"),			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ VK_F22,	_T("F22"),			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ VK_F23,	_T("F23"),			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ VK_F24,	_T("F24"),			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_F1,	L"F1",			{ F_EXTHTMLHELP,	F_MENU_ALLFUNC,		F_EXTHELP1,				F_ABOUT,			F_HELP_CONTENTS,		F_HELP_SEARCH,		F_0,					F_0 }, },
+	{ VK_F2,	L"F2",			{ F_BOOKMARK_NEXT,	F_BOOKMARK_PREV,	F_BOOKMARK_SET,			F_BOOKMARK_RESET,	F_BOOKMARK_VIEW,		F_0,				F_0,					F_0 }, },
+	{ VK_F3,	L"F3",			{ F_SEARCH_NEXT,	F_SEARCH_PREV,		F_SEARCH_CLEARMARK,		F_JUMP_SRCHSTARTPOS,F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_F4,	L"F4",			{ F_SPLIT_V,		F_SPLIT_H,			F_0,					F_FILECLOSE_OPEN,	F_0,					F_EXITALLEDITORS,	F_EXITALL,				F_0 }, },
+	{ VK_F5,	L"F5",			{ F_REDRAW,			F_0,				F_EXECMD_DIALOG,		F_0,				F_UUDECODE,				F_0,				F_TABTOSPACE,			F_SPACETOTAB }, },
+	{ VK_F6,	L"F6",			{ F_BEGIN_SEL,		F_BEGIN_BOX,		F_TOLOWER,				F_0,				F_BASE64DECODE,			F_0,				F_0,					F_0 }, },
+	{ VK_F7,	L"F7",			{ F_CUT,			F_0,				F_TOUPPER,				F_0,				F_CODECNV_UTF72SJIS,	F_CODECNV_SJIS2UTF7,F_FILE_REOPEN_UTF7,		F_0 }, },
+	{ VK_F8,	L"F8",			{ F_COPY,			F_COPY_CRLF,		F_TOHANKAKU,			F_0,				F_CODECNV_UTF82SJIS,	F_CODECNV_SJIS2UTF8,F_FILE_REOPEN_UTF8,		F_0 }, },
+	{ VK_F9,	L"F9",			{ F_PASTE,			F_PASTEBOX,			F_TOZENKAKUKATA,		F_0,				F_CODECNV_UNICODE2SJIS,	F_0,				F_FILE_REOPEN_UNICODE,	F_0 }, },
+	{ VK_F10,	L"F10",			{ _SQL_RUN,			F_DUPLICATELINE,	F_TOZENKAKUHIRA,		F_0,				F_CODECNV_EUC2SJIS,		F_CODECNV_SJIS2EUC,	F_FILE_REOPEN_EUC,		F_0 }, },
+	{ VK_F11,	L"F11",			{ F_OUTLINE,		F_ACTIVATE_SQLPLUS,	F_HANKATATOZENKATA,		F_0,				F_CODECNV_EMAIL,		F_CODECNV_SJIS2JIS,	F_FILE_REOPEN_JIS,		F_0 }, },
+	{ VK_F12,	L"F12",			{ F_TAGJUMP,		F_TAGJUMPBACK,		F_HANKATATOZENHIRA,		F_0,				F_CODECNV_AUTO2SJIS,	F_0,				F_FILE_REOPEN_SJIS,		F_0 }, },
+	{ VK_F13,	L"F13",			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_F14,	L"F14",			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_F15,	L"F15",			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_F16,	L"F16",			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_F17,	L"F17",			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_F18,	L"F18",			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_F19,	L"F19",			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_F20,	L"F20",			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_F21,	L"F21",			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_F22,	L"F22",			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_F23,	L"F23",			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_F24,	L"F24",			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
 
 	/* 特殊キー */
 	//keycode,	keyname,			なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
-	{ VK_TAB,	_T("Tab"),			{ F_INDENT_TAB,		F_UNINDENT_TAB,		F_NEXTWINDOW,			F_PREVWINDOW,		F_0,					F_0,				F_0,					F_0 }, },
-	{ VK_RETURN,_T("Enter"),		{ F_0,				F_0,				F_COMPARE,				F_0,				F_PROPERTY_FILE,		F_0,				F_0,					F_0 }, },
-	{ VK_ESCAPE,_T("Esc"),			{ F_CANCEL_MODE,	F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ VK_BACK,	_T("BkSp"),			{ F_DELETE_BACK,	F_0,				F_WordDeleteToStart,	F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ VK_INSERT,_T("Ins"),			{ F_CHGMOD_INS,		F_PASTE,			F_COPY,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ VK_DELETE,_T("Del"),			{ F_DELETE,			F_CUT,				F_WordDeleteToEnd,		F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ VK_HOME,	_T("Home"),			{ F_GOLINETOP,		F_GOLINETOP_SEL,	F_GOFILETOP,			F_GOFILETOP_SEL,	F_GOLINETOP_BOX,		F_0,				F_GOFILETOP_BOX,		F_0 }, },
-	{ VK_END,	_T("End(Help)"),	{ F_GOLINEEND,		F_GOLINEEND_SEL,	F_GOFILEEND,			F_GOFILEEND_SEL,	F_GOLINEEND_BOX,		F_0,				F_GOFILEEND_BOX,		F_0 }, },
-	{ VK_LEFT,	_T("←"),			{ F_LEFT,			F_LEFT_SEL,			F_WORDLEFT,				F_WORDLEFT_SEL,		F_LEFT_BOX,				F_0,				F_WORDLEFT_BOX,			F_0 }, },
-	{ VK_UP,	_T("↑"),			{ F_UP,				F_UP_SEL,			F_WndScrollDown,		F_UP2_SEL,			F_UP_BOX,				F_0,				F_UP2_BOX,				F_MAXIMIZE_V },}, 
-	{ VK_RIGHT,	_T("→"),			{ F_RIGHT,			F_RIGHT_SEL,		F_WORDRIGHT,			F_WORDRIGHT_SEL,	F_RIGHT_BOX,			F_0,				F_WORDRIGHT_BOX,		F_MAXIMIZE_H },}, 
-	{ VK_DOWN,	_T("↓"),			{ F_DOWN,			F_DOWN_SEL,			F_WndScrollUp,			F_DOWN2_SEL,		F_DOWN_BOX,				F_0,				F_DOWN2_BOX,			F_MINIMIZE_ALL },}, 
-	{ VK_NEXT,	_T("PgDn(RollUp)"),	{ F_1PageDown,		F_1PageDown_Sel,	F_HalfPageDown,			F_HalfPageDown_Sel,	F_1PageDown_BOX,		F_0,				F_HalfPageDown_BOX,		F_0 }, },
-	{ VK_PRIOR,	_T("PgUp(RollDn)"),	{ F_1PageUp,		F_1PageUp_Sel,		F_HalfPageUp,			F_HalfPageUp_Sel,	F_1PageUp_BOX,			F_0,				F_HalfPageUp_BOX,		F_0 }, },
-	{ VK_SPACE,	_T("Space"),		{ F_INDENT_SPACE,	F_UNINDENT_SPACE,	F_HOKAN,				F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_TAB,	L"Tab",			{ F_INDENT_TAB,		F_UNINDENT_TAB,		F_NEXTWINDOW,			F_PREVWINDOW,		F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_RETURN,L"Enter",		{ F_0,				F_0,				F_COMPARE,				F_0,				F_PROPERTY_FILE,		F_0,				F_0,					F_0 }, },
+	{ VK_ESCAPE,L"Esc",			{ F_CANCEL_MODE,	F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_BACK,	L"BkSp",			{ F_DELETE_BACK,	F_0,				F_WordDeleteToStart,	F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_INSERT,L"Ins",			{ F_CHGMOD_INS,		F_PASTE,			F_COPY,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_DELETE,L"Del",			{ F_DELETE,			F_CUT,				F_WordDeleteToEnd,		F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_HOME,	L"Home",			{ F_GOLINETOP,		F_GOLINETOP_SEL,	F_GOFILETOP,			F_GOFILETOP_SEL,	F_GOLINETOP_BOX,		F_0,				F_GOFILETOP_BOX,		F_0 }, },
+	{ VK_END,	L"End(Help)",	{ F_GOLINEEND,		F_GOLINEEND_SEL,	F_GOFILEEND,			F_GOFILEEND_SEL,	F_GOLINEEND_BOX,		F_0,				F_GOFILEEND_BOX,		F_0 }, },
+	{ VK_LEFT,	L"←",			{ F_LEFT,			F_LEFT_SEL,			F_WORDLEFT,				F_WORDLEFT_SEL,		F_LEFT_BOX,				F_0,				F_WORDLEFT_BOX,			F_0 }, },
+	{ VK_UP,	L"↑",			{ F_UP,				F_UP_SEL,			F_WndScrollDown,		F_UP2_SEL,			F_UP_BOX,				F_0,				F_UP2_BOX,				F_MAXIMIZE_V },}, 
+	{ VK_RIGHT,	L"→",			{ F_RIGHT,			F_RIGHT_SEL,		F_WORDRIGHT,			F_WORDRIGHT_SEL,	F_RIGHT_BOX,			F_0,				F_WORDRIGHT_BOX,		F_MAXIMIZE_H },}, 
+	{ VK_DOWN,	L"↓",			{ F_DOWN,			F_DOWN_SEL,			F_WndScrollUp,			F_DOWN2_SEL,		F_DOWN_BOX,				F_0,				F_DOWN2_BOX,			F_MINIMIZE_ALL },}, 
+	{ VK_NEXT,	L"PgDn(RollUp)",	{ F_1PageDown,		F_1PageDown_Sel,	F_HalfPageDown,			F_HalfPageDown_Sel,	F_1PageDown_BOX,		F_0,				F_HalfPageDown_BOX,		F_0 }, },
+	{ VK_PRIOR,	L"PgUp(RollDn)",	{ F_1PageUp,		F_1PageUp_Sel,		F_HalfPageUp,			F_HalfPageUp_Sel,	F_1PageUp_BOX,			F_0,				F_HalfPageUp_BOX,		F_0 }, },
+	{ VK_SPACE,	L"Space",		{ F_INDENT_SPACE,	F_UNINDENT_SPACE,	F_HOKAN,				F_0,				F_0,					F_0,				F_0,					F_0 }, },
 
 	/* 数字 */
 	//keycode,	keyname,			なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
-	{ '0',		_T("0"),			{ F_0,				F_0,				F_0,					F_0,				F_CUSTMENU_10,			F_CUSTMENU_20,		F_0,					F_0 }, },
-	{ '1',		_T("1"),			{ F_0,				F_0,				F_SHOWTOOLBAR,			F_CUSTMENU_21,		F_CUSTMENU_1,			F_CUSTMENU_11,		F_0,					F_0 }, },
-	{ '2',		_T("2"),			{ F_0,				F_0,				F_SHOWFUNCKEY,			F_CUSTMENU_22,		F_CUSTMENU_2,			F_CUSTMENU_12,		F_0,					F_0 }, },
-	{ '3',		_T("3"),			{ F_0,				F_0,				F_SHOWSTATUSBAR,		F_CUSTMENU_23,		F_CUSTMENU_3,			F_CUSTMENU_13,		F_0,					F_0 }, },
-	{ '4',		_T("4"),			{ F_0,				F_0,				F_TYPE_LIST,			F_CUSTMENU_24,		F_CUSTMENU_4,			F_CUSTMENU_14,		F_0,					F_0 }, },
-	{ '5',		_T("5"),			{ F_0,				F_0,				F_OPTION_TYPE,			F_0,				F_CUSTMENU_5,			F_CUSTMENU_15,		F_0,					F_0 }, },
-	{ '6',		_T("6"),			{ F_0,				F_0,				F_OPTION,				F_0,				F_CUSTMENU_6,			F_CUSTMENU_16,		F_0,					F_0 }, },
-	{ '7',		_T("7"),			{ F_0,				F_0,				F_FONT,					F_0,				F_CUSTMENU_7,			F_CUSTMENU_17,		F_0,					F_0 }, },
-	{ '8',		_T("8"),			{ F_0,				F_0,				F_0,					F_0,				F_CUSTMENU_8,			F_CUSTMENU_18,		F_0,					F_0 }, },
-	{ '9',		_T("9"),			{ F_0,				F_0,				F_0,					F_0,				F_CUSTMENU_9,			F_CUSTMENU_19,		F_0,					F_0 }, },
+	{ '0',		L"0",			{ F_0,				F_0,				F_0,					F_0,				F_CUSTMENU_10,			F_CUSTMENU_20,		F_0,					F_0 }, },
+	{ '1',		L"1",			{ F_0,				F_0,				F_SHOWTOOLBAR,			F_CUSTMENU_21,		F_CUSTMENU_1,			F_CUSTMENU_11,		F_0,					F_0 }, },
+	{ '2',		L"2",			{ F_0,				F_0,				F_SHOWFUNCKEY,			F_CUSTMENU_22,		F_CUSTMENU_2,			F_CUSTMENU_12,		F_0,					F_0 }, },
+	{ '3',		L"3",			{ F_0,				F_0,				F_SHOWSTATUSBAR,		F_CUSTMENU_23,		F_CUSTMENU_3,			F_CUSTMENU_13,		F_0,					F_0 }, },
+	{ '4',		L"4",			{ F_0,				F_0,				F_TYPE_LIST,			F_CUSTMENU_24,		F_CUSTMENU_4,			F_CUSTMENU_14,		F_0,					F_0 }, },
+	{ '5',		L"5",			{ F_0,				F_0,				F_OPTION_TYPE,			F_0,				F_CUSTMENU_5,			F_CUSTMENU_15,		F_0,					F_0 }, },
+	{ '6',		L"6",			{ F_0,				F_0,				F_OPTION,				F_0,				F_CUSTMENU_6,			F_CUSTMENU_16,		F_0,					F_0 }, },
+	{ '7',		L"7",			{ F_0,				F_0,				F_FONT,					F_0,				F_CUSTMENU_7,			F_CUSTMENU_17,		F_0,					F_0 }, },
+	{ '8',		L"8",			{ F_0,				F_0,				F_0,					F_0,				F_CUSTMENU_8,			F_CUSTMENU_18,		F_0,					F_0 }, },
+	{ '9',		L"9",			{ F_0,				F_0,				F_0,					F_0,				F_CUSTMENU_9,			F_CUSTMENU_19,		F_0,					F_0 }, },
 
 	/* アルファベット */
 	//keycode,	keyname,			なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
-	{ 'A',		_T("A"),			{ F_0,				F_0,				F_SELECTALL,			F_0,				F_SORT_ASC,				F_0,				F_0,					F_0 }, },
-	{ 'B',		_T("B"),			{ F_0,				F_0,				F_BROWSE,				F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 'C',		_T("C"),			{ F_0,				F_0,				F_COPY,					F_OPEN_HfromtoC,	F_0,					F_0,				F_0,					F_0 }, },
-	{ 'D',		_T("D"),			{ F_0,				F_0,				F_WordCut,				F_WordDelete,		F_SORT_DESC,			F_0,				F_0,					F_0 }, },
-	{ 'E',		_T("E"),			{ F_0,				F_0,				F_CUT_LINE,				F_DELETE_LINE,		F_0,					F_0,				F_CASCADE,				F_0 }, },
-	{ 'F',		_T("F"),			{ F_0,				F_0,				F_SEARCH_DIALOG,		F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 'G',		_T("G"),			{ F_0,				F_0,				F_GREP_DIALOG,			F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 'H',		_T("H"),			{ F_0,				F_0,				F_CURLINECENTER,		F_OPEN_HfromtoC,	F_0,					F_0,				F_TILE_V,				F_0 }, },
-	{ 'I',		_T("I"),			{ F_0,				F_0,				F_DUPLICATELINE,		F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 'J',		_T("J"),			{ F_0,				F_0,				F_JUMP_DIALOG,			F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 'K',		_T("K"),			{ F_0,				F_0,				F_LineCutToEnd,			F_LineDeleteToEnd,	F_0,					F_0,				F_0,					F_0 }, },
-	{ 'L',		_T("L"),			{ F_0,				F_0,				F_LOADKEYMACRO,			F_EXECKEYMACRO,		F_LTRIM,				F_0,				F_TOLOWER,				F_TOUPPER }, },
-	{ 'M',		_T("M"),			{ F_0,				F_0,				F_SAVEKEYMACRO,			F_RECKEYMACRO,		F_MERGE,				F_0,				F_0,					F_0 }, },
-	{ 'N',		_T("N"),			{ F_0,				F_0,				F_FILENEW,				F_0,				F_JUMPHIST_NEXT,		F_0,				F_0,					F_0 }, },
-	{ 'O',		_T("O"),			{ F_0,				F_0,				F_FILEOPEN,				F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 'P',		_T("P"),			{ F_0,				F_0,				F_PRINT,				F_PRINT_PREVIEW,	F_JUMPHIST_PREV,		F_0,				F_PRINT_PAGESETUP,		F_0 }, },
-	{ 'Q',		_T("Q"),			{ F_0,				F_0,				F_CREATEKEYBINDLIST,	F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 'R',		_T("R"),			{ F_0,				F_0,				F_REPLACE_DIALOG,		F_0,				F_RTRIM,				F_0,				F_0,					F_0 }, },
-	{ 'S',		_T("S"),			{ F_0,				F_0,				F_FILESAVE,				F_FILESAVEAS_DIALOG,F_0,					F_0,				F_TMPWRAPSETTING,		F_0 }, },
-	{ 'T',		_T("T"),			{ F_0,				F_0,				F_TAGJUMP,				F_TAGJUMPBACK,		F_0,					F_0,				F_TILE_H,				F_0 }, },
-	{ 'U',		_T("U"),			{ F_0,				F_0,				F_LineCutToStart,		F_LineDeleteToStart,F_0,					F_0,				F_WRAPWINDOWWIDTH,		F_0 }, },
-	{ 'V',		_T("V"),			{ F_0,				F_0,				F_PASTE,				F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 'W',		_T("W"),			{ F_0,				F_0,				F_SELECTWORD,			F_0,				F_0,					F_0,				F_TMPWRAPWINDOW,		F_0 }, },
-	{ 'X',		_T("X"),			{ F_0,				F_0,				F_CUT,					F_0,				F_0,					F_0,				F_TMPWRAPNOWRAP,		F_0 }, },
-	{ 'Y',		_T("Y"),			{ F_0,				F_0,				F_REDO,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 'Z',		_T("Z"),			{ F_0,				F_0,				F_UNDO,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ 'A',		L"A",			{ F_0,				F_0,				F_SELECTALL,			F_0,				F_SORT_ASC,				F_0,				F_0,					F_0 }, },
+	{ 'B',		L"B",			{ F_0,				F_0,				F_BROWSE,				F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ 'C',		L"C",			{ F_0,				F_0,				F_COPY,					F_OPEN_HfromtoC,	F_0,					F_0,				F_0,					F_0 }, },
+	{ 'D',		L"D",			{ F_0,				F_0,				F_WordCut,				F_WordDelete,		F_SORT_DESC,			F_0,				F_0,					F_0 }, },
+	{ 'E',		L"E",			{ F_0,				F_0,				F_CUT_LINE,				F_DELETE_LINE,		F_0,					F_0,				F_CASCADE,				F_0 }, },
+	{ 'F',		L"F",			{ F_0,				F_0,				F_SEARCH_DIALOG,		F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ 'G',		L"G",			{ F_0,				F_0,				F_GREP_DIALOG,			F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ 'H',		L"H",			{ F_0,				F_0,				F_CURLINECENTER,		F_OPEN_HfromtoC,	F_0,					F_0,				F_TILE_V,				F_0 }, },
+	{ 'I',		L"I",			{ F_0,				F_0,				F_DUPLICATELINE,		F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ 'J',		L"J",			{ F_0,				F_0,				F_JUMP_DIALOG,			F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ 'K',		L"K",			{ F_0,				F_0,				F_LineCutToEnd,			F_LineDeleteToEnd,	F_0,					F_0,				F_0,					F_0 }, },
+	{ 'L',		L"L",			{ F_0,				F_0,				F_LOADKEYMACRO,			F_EXECKEYMACRO,		F_LTRIM,				F_0,				F_TOLOWER,				F_TOUPPER }, },
+	{ 'M',		L"M",			{ F_0,				F_0,				F_SAVEKEYMACRO,			F_RECKEYMACRO,		F_MERGE,				F_0,				F_0,					F_0 }, },
+	{ 'N',		L"N",			{ F_0,				F_0,				F_FILENEW,				F_0,				F_JUMPHIST_NEXT,		F_0,				F_0,					F_0 }, },
+	{ 'O',		L"O",			{ F_0,				F_0,				F_FILEOPEN,				F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ 'P',		L"P",			{ F_0,				F_0,				F_PRINT,				F_PRINT_PREVIEW,	F_JUMPHIST_PREV,		F_0,				F_PRINT_PAGESETUP,		F_0 }, },
+	{ 'Q',		L"Q",			{ F_0,				F_0,				F_CREATEKEYBINDLIST,	F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ 'R',		L"R",			{ F_0,				F_0,				F_REPLACE_DIALOG,		F_0,				F_RTRIM,				F_0,				F_0,					F_0 }, },
+	{ 'S',		L"S",			{ F_0,				F_0,				F_FILESAVE,				F_FILESAVEAS_DIALOG,F_0,					F_0,				F_TMPWRAPSETTING,		F_0 }, },
+	{ 'T',		L"T",			{ F_0,				F_0,				F_TAGJUMP,				F_TAGJUMPBACK,		F_0,					F_0,				F_TILE_H,				F_0 }, },
+	{ 'U',		L"U",			{ F_0,				F_0,				F_LineCutToStart,		F_LineDeleteToStart,F_0,					F_0,				F_WRAPWINDOWWIDTH,		F_0 }, },
+	{ 'V',		L"V",			{ F_0,				F_0,				F_PASTE,				F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ 'W',		L"W",			{ F_0,				F_0,				F_SELECTWORD,			F_0,				F_0,					F_0,				F_TMPWRAPWINDOW,		F_0 }, },
+	{ 'X',		L"X",			{ F_0,				F_0,				F_CUT,					F_0,				F_0,					F_0,				F_TMPWRAPNOWRAP,		F_0 }, },
+	{ 'Y',		L"Y",			{ F_0,				F_0,				F_REDO,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ 'Z',		L"Z",			{ F_0,				F_0,				F_UNDO,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
 
 	/* 記号 */
 	//keycode,	keyname,			なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
-	{ 0x00bd,	_T("-"),			{ F_0,				F_0,				F_COPYFNAME,			F_SPLIT_V,			F_0,					F_0,				F_0,					F_0 }, },
-	{ 0x00de,	(LPCTSTR)STR_KEY_BIND_HAT_ENG_QT,		{ F_0,				F_0,				F_COPYTAG,				F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 0x00dc,	_T("\\"),			{ F_0,				F_0,				F_COPYPATH,				F_SPLIT_H,			F_0,					F_0,				F_0,					F_0 }, },
-	{ 0x00c0,	(LPCTSTR)STR_KEY_BIND_AT_ENG_BQ,		{ F_0,				F_0,				F_COPYLINES,			F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 0x00db,	_T("["),			{ F_0,				F_0,				F_BRACKETPAIR,			F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 0x00bb,	_T(";"),			{ F_0,				F_0,				F_0,					F_SPLIT_VH,			F_INS_DATE,				F_0,				F_0,					F_0 }, },
-	{ 0x00ba,	_T(":"),			{ F_0,				F_0,				_COPYWITHLINENUM,		F_0,				F_INS_TIME,				F_0,				F_0,					F_0 }, },
-	{ 0x00dd,	_T("]"),			{ F_0,				F_0,				F_BRACKETPAIR,			F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 0x00bc,	_T(","),			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 0x00be,	_T("."),			{ F_0,				F_0,				F_COPYLINESASPASSAGE,	F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 0x00bf,	_T("/"),			{ F_0,				F_0,				F_HOKAN,				F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 0x00e2,	_T("_"),			{ F_0,				F_0,				F_UNDO,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 0x00df,	_T("_(PC-98)"),		{ F_0,				F_0,				F_UNDO,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ VK_APPS,	(LPCTSTR)STR_KEY_BIND_APLI,	{ F_MENU_RBUTTON,	F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON }, }
+	{ 0x00bd,	L"-",			{ F_0,				F_0,				F_COPYFNAME,			F_SPLIT_V,			F_0,					F_0,				F_0,					F_0 }, },
+	{ 0x00de,	(LPCWSTR)STR_KEY_BIND_HAT_ENG_QT,		{ F_0,				F_0,				F_COPYTAG,				F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ 0x00dc,	L"\\",			{ F_0,				F_0,				F_COPYPATH,				F_SPLIT_H,			F_0,					F_0,				F_0,					F_0 }, },
+	{ 0x00c0,	(LPCWSTR)STR_KEY_BIND_AT_ENG_BQ,		{ F_0,				F_0,				F_COPYLINES,			F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ 0x00db,	L"[",			{ F_0,				F_0,				F_BRACKETPAIR,			F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ 0x00bb,	L";",			{ F_0,				F_0,				F_0,					F_SPLIT_VH,			F_INS_DATE,				F_0,				F_0,					F_0 }, },
+	{ 0x00ba,	L":",			{ F_0,				F_0,				_COPYWITHLINENUM,		F_0,				F_INS_TIME,				F_0,				F_0,					F_0 }, },
+	{ 0x00dd,	L"]",			{ F_0,				F_0,				F_BRACKETPAIR,			F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ 0x00bc,	L",",			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ 0x00be,	L".",			{ F_0,				F_0,				F_COPYLINESASPASSAGE,	F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ 0x00bf,	L"/",			{ F_0,				F_0,				F_HOKAN,				F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ 0x00e2,	L"_",			{ F_0,				F_0,				F_UNDO,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ 0x00df,	L"_(PC-98)",		{ F_0,				F_0,				F_UNDO,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_APPS,	(LPCWSTR)STR_KEY_BIND_APLI,	{ F_MENU_RBUTTON,	F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON }, }
 };
 
-const TCHAR* jpVKEXNames[] = {
-	_T("ダブルクリック"),
-	_T("右クリック"),
-	_T("中クリック"),
-	_T("左サイドクリック"),
-	_T("右サイドクリック"),
-	_T("トリプルクリック"),
-	_T("クアドラプルクリック"),
-	_T("ホイールアップ"),
-	_T("ホイールダウン"),
-	_T("ホイール左"),
-	_T("ホイール右")
+const WCHAR* jpVKEXNames[] = {
+	L"ダブルクリック",
+	L"右クリック",
+	L"中クリック",
+	L"左サイドクリック",
+	L"右サイドクリック",
+	L"トリプルクリック",
+	L"クアドラプルクリック",
+	L"ホイールアップ",
+	L"ホイールダウン",
+	L"ホイール左",
+	L"ホイール右"
 };
 const int jpVKEXNamesLen = _countof( jpVKEXNames );
 
@@ -798,14 +798,14 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 	//	From Here 2007.11.04 genta バッファオーバーラン防止
 	assert( !(nKeyDataInitNum > KEYNAME_SIZE) );
 //	if( nKeyDataInitNum > KEYNAME_SIZE ) {
-//		PleaseReportToAuthor( NULL, _T("キー設定数に対してDLLSHARE::m_nKeyNameArr[]のサイズが不足しています") );
+//		PleaseReportToAuthor( NULL, L"キー設定数に対してDLLSHARE::m_nKeyNameArr[]のサイズが不足しています" );
 //		return false;
 //	}
 	//	To Here 2007.11.04 genta バッファオーバーラン防止
 
 	// マウスコードの固定と重複排除 2012.11.25 aroka
 	static const KEYDATAINIT	dummy[] = {
-		{ 0,		_T(""),				{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 } }
+		{ 0,		L"",				{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 } }
 	};
 
 	// インデックス用ダミー作成

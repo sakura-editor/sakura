@@ -73,11 +73,11 @@ bool CPlugin::ReadPluginDefCommon( CDataProfile *cProfile, CDataProfile *cProfil
 		cProfileMlang->IOProfileData( PII_PLUGIN, PII_PLUGIN_URL, m_sUrl );
 	}
 
-	DEBUG_TRACE(_T("    Name:%ls\n"), m_sName.c_str());
-	DEBUG_TRACE(_T("    Description:%ls\n"), m_sDescription.c_str());
-	DEBUG_TRACE(_T("    Author:%ls\n"), m_sAuthor.c_str());
-	DEBUG_TRACE(_T("    Version:%ls\n"), m_sVersion.c_str());
-	DEBUG_TRACE(_T("    Url:%ls\n"), m_sUrl.c_str());
+	DEBUG_TRACE(L"    Name:%ls\n", m_sName.c_str());
+	DEBUG_TRACE(L"    Description:%ls\n", m_sDescription.c_str());
+	DEBUG_TRACE(L"    Author:%ls\n", m_sAuthor.c_str());
+	DEBUG_TRACE(L"    Version:%ls\n", m_sVersion.c_str());
+	DEBUG_TRACE(L"    Url:%ls\n", m_sUrl.c_str());
 
 	return true;
 }
@@ -221,7 +221,7 @@ bool CPlugin::ReadPluginDefOption( CDataProfile *cProfile, CDataProfile *cProfil
 //プラグインフォルダ基準の相対パスをフルパスに変換
 std::wstring CPlugin::GetFilePath( const wstring& sFileName ) const
 {
-	return m_sBaseDir + _T("\\") + sFileName;
+	return m_sBaseDir + L"\\" + sFileName;
 }
 
 std::wstring CPlugin::GetFolderName() const

@@ -149,15 +149,15 @@ EConvertResult CCodePage::UniToCP(const wchar_t* pSrc, const int nSrcLen, char* 
 		DWORD errorCd = GetLastError();
 		switch(errorCd){
 		case ERROR_INSUFFICIENT_BUFFER:
-			DEBUG_TRACE(_T("UniToCP::ERROR_INSUFFICIENT_BUFFER\n")); break;
+			DEBUG_TRACE(L"UniToCP::ERROR_INSUFFICIENT_BUFFER\n"); break;
 		case ERROR_INVALID_FLAGS:
-			DEBUG_TRACE(_T("UniToCP::ERROR_INVALID_FLAGS\n")); break;
+			DEBUG_TRACE(L"UniToCP::ERROR_INVALID_FLAGS\n"); break;
 		case ERROR_INVALID_PARAMETER:
-			DEBUG_TRACE(_T("UniToCP::ERROR_INVALID_PARAMETER\n")); break;
+			DEBUG_TRACE(L"UniToCP::ERROR_INVALID_PARAMETER\n"); break;
 //		case ERROR_NO_UNICODE_TRANSLATION:
-//			DEBUG_TRACE(_T("ERROR_NO_UNICODE_TRANSLATION")); break;
+//			DEBUG_TRACE(L"ERROR_NO_UNICODE_TRANSLATION"); break;
 		default:
-			DEBUG_TRACE(_T("UniToCP %x\n"), errorCd); break;
+			DEBUG_TRACE(L"UniToCP %x\n", errorCd); break;
 		}
 #endif
 		return RESULT_FAILURE;
@@ -187,15 +187,15 @@ EConvertResult CCodePage::UnicodeToCP(const CNativeW& cSrc, CMemory* pDst, int c
 		DWORD errorCd = GetLastError();
 		switch(errorCd){
 		case ERROR_INSUFFICIENT_BUFFER:
-			DEBUG_TRACE(_T("UnicodeToCP::ERROR_INSUFFICIENT_BUFFER\n")); break;
+			DEBUG_TRACE(L"UnicodeToCP::ERROR_INSUFFICIENT_BUFFER\n"); break;
 		case ERROR_INVALID_FLAGS:
-			DEBUG_TRACE(_T("UnicodeToCP::ERROR_INVALID_FLAGS\n")); break;
+			DEBUG_TRACE(L"UnicodeToCP::ERROR_INVALID_FLAGS\n"); break;
 		case ERROR_INVALID_PARAMETER:
-			DEBUG_TRACE(_T("UnicodeToCP::ERROR_INVALID_PARAMETER\n")); break;
+			DEBUG_TRACE(L"UnicodeToCP::ERROR_INVALID_PARAMETER\n"); break;
 //		case ERROR_NO_UNICODE_TRANSLATION:
-//			DEBUG_TRACE(_T("ERROR_NO_UNICODE_TRANSLATION")); break;
+//			DEBUG_TRACE(L"ERROR_NO_UNICODE_TRANSLATION"); break;
 		default:
-			DEBUG_TRACE(_T("UnicodeToCP::UniToCP %x\n"), errorCd); break;
+			DEBUG_TRACE(L"UnicodeToCP::UniToCP %x\n", errorCd); break;
 		}
 #endif
 		return RESULT_FAILURE;
@@ -240,13 +240,13 @@ void CCodePage::GetBom(CMemory* pcmemBom)
 }
 
 // 文字コード表示用	UNICODE → Hex 変換
-EConvertResult CCodePage::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
+EConvertResult CCodePage::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
 {
 	// コードの特性がわからないので何もしない
 	return CCodeBase::UnicodeToHex(cSrc, iSLen, pDst, psStatusbar);
 }
 
-int CCodePage::GetNameNormal(LPTSTR outName, int charcodeEx)
+int CCodePage::GetNameNormal(LPWSTR outName, int charcodeEx)
 {
 	if( IsValidCodeType(charcodeEx) ){
 		auto_strcpy(outName, CCodeTypeName(static_cast<ECodeType>(charcodeEx)).Normal());
@@ -254,16 +254,16 @@ int CCodePage::GetNameNormal(LPTSTR outName, int charcodeEx)
 	}
 	UINT codepage = CodePageExToMSCP(charcodeEx);
 	if( codepage == CP_ACP ){
-		auto_strcpy(outName, _T("CP_ACP"));
+		auto_strcpy(outName, L"CP_ACP");
 	}else if( codepage == CP_OEMCP ){
-		auto_strcpy(outName, _T("CP_OEM"));
+		auto_strcpy(outName, L"CP_OEM");
 	}else{
-		auto_sprintf(outName, _T("CP%d"), codepage);
+		auto_sprintf(outName, L"CP%d", codepage);
 	}
 	return 2;
 }
 
-int CCodePage::GetNameShort(LPTSTR outName, int charcodeEx)
+int CCodePage::GetNameShort(LPWSTR outName, int charcodeEx)
 {
 	if( IsValidCodeType(charcodeEx) ){
 		auto_strcpy(outName, CCodeTypeName(static_cast<ECodeType>(charcodeEx)).Short());
@@ -271,16 +271,16 @@ int CCodePage::GetNameShort(LPTSTR outName, int charcodeEx)
 	}
 	UINT codepage = CodePageExToMSCP(charcodeEx);
 	if( codepage == CP_ACP ){
-		auto_strcpy(outName, _T("cp_acp"));
+		auto_strcpy(outName, L"cp_acp");
 	}else if( codepage == CP_OEMCP ){
-		auto_strcpy(outName, _T("cp_oem"));
+		auto_strcpy(outName, L"cp_oem");
 	}else{
-		auto_sprintf(outName, _T("cp%d"), codepage);
+		auto_sprintf(outName, L"cp%d", codepage);
 	}
 	return 2;
 }
 
-int CCodePage::GetNameLong(LPTSTR outName, int charcodeEx)
+int CCodePage::GetNameLong(LPWSTR outName, int charcodeEx)
 {
 	if( IsValidCodeType(charcodeEx) ){
 		auto_strcpy(outName, CCodeTypeName(static_cast<ECodeType>(charcodeEx)).Normal());
@@ -288,22 +288,22 @@ int CCodePage::GetNameLong(LPTSTR outName, int charcodeEx)
 	}
 	UINT codepage = CodePageExToMSCP(charcodeEx);
 	if( codepage == CP_ACP ){
-		auto_strcpy(outName, _T("CP_ACP"));
+		auto_strcpy(outName, L"CP_ACP");
 	}else if( codepage == CP_OEMCP ){
-		auto_strcpy(outName, _T("CP_OEMCP"));
+		auto_strcpy(outName, L"CP_OEMCP");
 	}else{
 		CPINFOEX cpInfo;
-		cpInfo.CodePageName[0] = _T('\0');
+		cpInfo.CodePageName[0] = L'\0';
 		if( ::GetCPInfoEx(codepage, 0, &cpInfo) ){
 			auto_strcpy(outName, cpInfo.CodePageName);
 		}else{
-			auto_sprintf(outName, _T("CP%d"), codepage);
+			auto_sprintf(outName, L"CP%d", codepage);
 		}
 	}
 	return 2;
 }
 
-int CCodePage::GetNameBracket(LPTSTR outName, int charcodeEx)
+int CCodePage::GetNameBracket(LPWSTR outName, int charcodeEx)
 {
 	if( IsValidCodeType(charcodeEx) ){
 		auto_strcpy(outName, CCodeTypeName(static_cast<ECodeType>(charcodeEx)).Bracket());
@@ -311,11 +311,11 @@ int CCodePage::GetNameBracket(LPTSTR outName, int charcodeEx)
 	}
 	UINT codepage = CodePageExToMSCP(charcodeEx);
 	if( codepage == CP_ACP ){
-		auto_strcpy(outName, _T("  [CP_ACP]"));
+		auto_strcpy(outName, L"  [CP_ACP]");
 	}else if( codepage == CP_OEMCP ){
-		auto_strcpy(outName, _T("  [CP_OEM]"));
+		auto_strcpy(outName, L"  [CP_OEM]");
 	}else{
-		auto_sprintf(outName, _T("  [CP%d]"), charcodeEx);
+		auto_sprintf(outName, L"  [CP%d]", charcodeEx);
 	}
 	return 2;
 }
@@ -407,7 +407,7 @@ CCodePage::CodePageList& CCodePage::GetCodePageList()
 	// 名前を取得
 	CPINFOEX cpInfo;
 	for( auto it = result.begin(); it != result.end(); ++it ){
-		cpInfo.CodePageName[0] = _T('\0');
+		cpInfo.CodePageName[0] = L'\0';
 		if( ::GetCPInfoEx(it->first, 0, &cpInfo) ){
 			it->second = to_wchar(cpInfo.CodePageName);
 		}else{
@@ -426,7 +426,7 @@ CCodePage::CodePageList& CCodePage::GetCodePageList()
 }
 
 //static
-BOOL CALLBACK CCodePage::CallBackEnumCodePages( LPCTSTR pCodePageString )
+BOOL CALLBACK CCodePage::CallBackEnumCodePages( LPCWSTR pCodePageString )
 {
 	// pCodePageString は文字列に格納された数字
 	CCodePage::CodePageList* pList = const_cast<CCodePage::CodePageList*>(s_list);
@@ -437,13 +437,13 @@ BOOL CALLBACK CCodePage::CallBackEnumCodePages( LPCTSTR pCodePageString )
 int CCodePage::AddComboCodePages(HWND hwnd, HWND combo, int nSelCode)
 {
 	int nSel = -1;
-	int nIdx = Combo_AddString( combo, _T("CP_ACP") );
+	int nIdx = Combo_AddString( combo, L"CP_ACP" );
 	Combo_SetItemData( combo, nIdx, CODE_CPACP );
 	if( nSelCode == CODE_CPACP ){
 		Combo_SetCurSel(combo, nIdx);
 		nSel = nIdx;
 	}
-	nIdx = Combo_AddString( combo, _T("CP_OEM") );
+	nIdx = Combo_AddString( combo, L"CP_OEM" );
 	if( nSelCode == CODE_CPOEM ){
 		Combo_SetCurSel(combo, nIdx);
 		nSel = nIdx;

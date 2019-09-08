@@ -89,7 +89,7 @@ void CControlTray::DoGrep()
 	}
 
 	/* Grepダイアログの表示 */
-	int nRet = m_cDlgGrep.DoModal( m_hInstance, NULL, _T("") );
+	int nRet = m_cDlgGrep.DoModal( m_hInstance, NULL, L"" );
 	if( !nRet || GetTrayHwnd() == NULL ){
 		return;
 	}
@@ -106,11 +106,11 @@ void CControlTray::DoGrep()
 static bool IsEscapeRequiredForExcludePattern(const wstring & pattern)
 {
 	const auto NotFound = std::string::npos;
-	if (pattern.find(_T('!')) != NotFound)
+	if (pattern.find(L'!') != NotFound)
 	{
 		return true;
 	}
-	if (pattern.find(_T('#')) != NotFound)
+	if (pattern.find(L'#') != NotFound)
 	{
 		return true;
 	}
@@ -121,9 +121,9 @@ static bool IsEscapeRequiredForExcludePattern(const wstring & pattern)
 	@brief エスケープパターンを取得する
 	@param[in] pattern        エスケープ対象文字列
 */
-static LPCTSTR GetEscapePattern(const wstring& pattern)
+static LPCWSTR GetEscapePattern(const wstring& pattern)
 {
-	return IsEscapeRequiredForExcludePattern(pattern) ? _T("\"\"") : _T("");
+	return IsEscapeRequiredForExcludePattern(pattern) ? L"\"\"" : L"";
 }
 
 /*
@@ -137,8 +137,8 @@ static void AppendExcludeFolderPatterns(CNativeW& cFilePattern, const CNativeW& 
 	for (auto iter = patterns.begin(); iter != patterns.end(); ++iter)
 	{
 		const auto & pattern = (*iter);
-		LPCTSTR escapeStr  = GetEscapePattern(pattern);
-		cFilePattern.AppendStringF(_T("#%s%s%s;"), escapeStr, pattern.c_str(), escapeStr);
+		LPCWSTR escapeStr  = GetEscapePattern(pattern);
+		cFilePattern.AppendStringF(L"#%s%s%s;", escapeStr, pattern.c_str(), escapeStr);
 	}
 }
 
@@ -153,8 +153,8 @@ static void AppendExcludeFilePatterns(CNativeW& cFilePattern, const CNativeW& cm
 	for (auto iter = patterns.begin(); iter != patterns.end(); ++iter)
 	{
 		const auto & pattern = (*iter);
-		LPCTSTR escapeStr  = GetEscapePattern(pattern);
-		cFilePattern.AppendStringF(_T("!%s%s%s;"), escapeStr, pattern.c_str(), escapeStr);
+		LPCWSTR escapeStr  = GetEscapePattern(pattern);
+		cFilePattern.AppendStringF(L"!%s%s%s;", escapeStr, pattern.c_str(), escapeStr);
 	}
 }
 
@@ -176,14 +176,14 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 	cmWorkExcludeFolder.SetString(cDlgGrep.m_szExcludeFolder);
 
 	cmWork1.Replace( L"\"", L"\"\"" );
-	cmWork2.Replace( _T("\""), _T("\"\"") );
-	cmWork3.Replace( _T("\""), _T("\"\"") );
-	cmWorkExcludeFile.Replace(  _T("\""), _T("\"\""));
-	cmWorkExcludeFolder.Replace(_T("\""), _T("\"\""));
+	cmWork2.Replace( L"\"", L"\"\"" );
+	cmWork3.Replace( L"\"", L"\"\"" );
+	cmWorkExcludeFile.Replace(  L"\"", L"\"\"");
+	cmWorkExcludeFolder.Replace(L"\"", L"\"\"");
 
 	// -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
 	CNativeW cCmdLine;
-	TCHAR szTemp[20];
+	WCHAR szTemp[20];
 
 	// 除外ファイル、除外フォルダの設定を "-GFILE=" の設定に pack するためにデータを作る。
 	CNativeW cFilePattern;
@@ -191,38 +191,38 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 	AppendExcludeFilePatterns(cFilePattern, cmWorkExcludeFile);
 	cFilePattern.AppendString(cmWork2.GetStringPtr());
 
-	cCmdLine.AppendString(_T("-GREPMODE -GKEY=\""));
+	cCmdLine.AppendString(L"-GREPMODE -GKEY=\"");
 	cCmdLine.AppendString(cmWork1.GetStringPtr());
-	cCmdLine.AppendString(_T("\" -GFILE=\""));
+	cCmdLine.AppendString(L"\" -GFILE=\"");
 	cCmdLine.AppendString(cFilePattern.GetStringPtr());
-	cCmdLine.AppendString(_T("\" -GFOLDER=\""));
+	cCmdLine.AppendString(L"\" -GFOLDER=\"");
 	cCmdLine.AppendString(cmWork3.GetStringPtr());
-	cCmdLine.AppendString(_T("\" -GCODE="));
-	auto_sprintf( szTemp, _T("%d"), cDlgGrep.m_nGrepCharSet );
+	cCmdLine.AppendString(L"\" -GCODE=");
+	auto_sprintf( szTemp, L"%d", cDlgGrep.m_nGrepCharSet );
 	cCmdLine.AppendString(szTemp);
 
 	//GOPTオプション
-	TCHAR pOpt[64] = _T("");
-	if( cDlgGrep.m_bSubFolder					)_tcscat( pOpt, _T("S") );	// サブフォルダからも検索する
-	if( cDlgGrep.m_sSearchOption.bLoHiCase		)_tcscat( pOpt, _T("L") );	// 英大文字と英小文字を区別する
-	if( cDlgGrep.m_sSearchOption.bRegularExp	)_tcscat( pOpt, _T("R") );	// 正規表現
-	if( cDlgGrep.m_nGrepOutputLineType == 1     )_tcscat( pOpt, _T("P") );	// 行を出力する
-	if( cDlgGrep.m_nGrepOutputLineType == 2     )_tcscat( pOpt, _T("N") );	// 否ヒット行を出力する 2014.09.23
-	if( cDlgGrep.m_sSearchOption.bWordOnly		)_tcscat( pOpt, _T("W") );	// 単語単位で探す
-	if( 1 == cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("1") );	// Grep: 出力形式
-	if( 2 == cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("2") );	// Grep: 出力形式
-	if( 3 == cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("3") );
-	if( cDlgGrep.m_bGrepOutputFileOnly		)_tcscat( pOpt, _T("F") );
-	if( cDlgGrep.m_bGrepOutputBaseFolder		)_tcscat( pOpt, _T("B") );
-	if( cDlgGrep.m_bGrepSeparateFolder		)_tcscat( pOpt, _T("D") );
-	if( pOpt[0] != _T('\0') ){
-		cCmdLine.AppendString( _T(" -GOPT=") );
+	WCHAR pOpt[64] = L"";
+	if( cDlgGrep.m_bSubFolder					)_tcscat( pOpt, L"S" );	// サブフォルダからも検索する
+	if( cDlgGrep.m_sSearchOption.bLoHiCase		)_tcscat( pOpt, L"L" );	// 英大文字と英小文字を区別する
+	if( cDlgGrep.m_sSearchOption.bRegularExp	)_tcscat( pOpt, L"R" );	// 正規表現
+	if( cDlgGrep.m_nGrepOutputLineType == 1     )_tcscat( pOpt, L"P" );	// 行を出力する
+	if( cDlgGrep.m_nGrepOutputLineType == 2     )_tcscat( pOpt, L"N" );	// 否ヒット行を出力する 2014.09.23
+	if( cDlgGrep.m_sSearchOption.bWordOnly		)_tcscat( pOpt, L"W" );	// 単語単位で探す
+	if( 1 == cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, L"1" );	// Grep: 出力形式
+	if( 2 == cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, L"2" );	// Grep: 出力形式
+	if( 3 == cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, L"3" );
+	if( cDlgGrep.m_bGrepOutputFileOnly		)_tcscat( pOpt, L"F" );
+	if( cDlgGrep.m_bGrepOutputBaseFolder		)_tcscat( pOpt, L"B" );
+	if( cDlgGrep.m_bGrepSeparateFolder		)_tcscat( pOpt, L"D" );
+	if( pOpt[0] != L'\0' ){
+		cCmdLine.AppendString( L" -GOPT=" );
 		cCmdLine.AppendString( pOpt );
 	}
 
 	/* 新規編集ウィンドウの追加 ver 0 */
 	SLoadInfo sLoadInfo;
-	sLoadInfo.cFilePath = _T("");
+	sLoadInfo.cFilePath = L"";
 	sLoadInfo.eCharCode = CODE_NONE;
 	sLoadInfo.bViewMode = false;
 	OpenNewEditor( hinst, msgParent, sLoadInfo, cCmdLine.GetStringPtr(),
@@ -247,7 +247,7 @@ static LRESULT CALLBACK CControlTrayWndProc(
 		return pSApp->DispatchEvent( hwnd, uMsg, wParam, lParam );
 	default:
 		// Modified by KEITA for WIN64 2003.9.6
-		//RELPRINT( _T("dispatch\n") );
+		//RELPRINT( L"dispatch\n" );
 		pSApp = ( CControlTray* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
 		if( NULL != pSApp ){
 			return pSApp->DispatchEvent( hwnd, uMsg, wParam, lParam );
@@ -370,7 +370,7 @@ bool CControlTray::CreateTrayIcon( HWND hWnd )
 //			TrayMessage( GetTrayHwnd(), NIM_ADD, 0,  hIcon, GSTR_APPNAME );
 		/* バージョン情報 */
 		//	UR version no.を設定 (cf. cDlgAbout.cpp)
-		TCHAR	pszTips[64 + _MAX_PATH];
+		WCHAR	pszTips[64 + _MAX_PATH];
 		//	2004.05.13 Moca バージョン番号は、プロセスごとに取得する
 		DWORD dwVersionMS, dwVersionLS;
 		GetAppVersionInfo( NULL, VS_VERSION_INFO,
@@ -381,7 +381,7 @@ bool CControlTray::CreateTrayIcon( HWND hWnd )
 			profname = L" ";
 			profname += CCommandLine::getInstance()->GetProfileName();
 		}
-		auto_snprintf_s( pszTips, _countof(pszTips), _T("%s %d.%d.%d.%d%ls"),		//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
+		auto_snprintf_s( pszTips, _countof(pszTips), L"%s %d.%d.%d.%d%ls",		//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
 			GSTR_APPNAME,
 			HIWORD( dwVersionMS ),
 			LOWORD( dwVersionMS ),
@@ -415,7 +415,7 @@ void CControlTray::MessageLoop( void )
 }
 
 /* タスクトレイのアイコンに関する処理 */
-BOOL CControlTray::TrayMessage( HWND hDlg, DWORD dwMessage, UINT uID, HICON hIcon, const TCHAR* pszTip )
+BOOL CControlTray::TrayMessage( HWND hDlg, DWORD dwMessage, UINT uID, HICON hIcon, const WCHAR* pszTip )
 {
 	BOOL			res;
 	NOTIFYICONDATA	tnd;
@@ -428,7 +428,7 @@ BOOL CControlTray::TrayMessage( HWND hDlg, DWORD dwMessage, UINT uID, HICON hIco
 	if( pszTip ){
 		lstrcpyn( tnd.szTip, pszTip, _countof( tnd.szTip ) );
 	}else{
-		tnd.szTip[0] = _T('\0');
+		tnd.szTip[0] = L'\0';
 	}
 	res = Shell_NotifyIcon( dwMessage, &tnd );
 	if( hIcon ){
@@ -498,8 +498,8 @@ LRESULT CControlTray::DispatchEvent(
 			int		idHotKey = (int) wParam;				// identifier of hot key
 			UINT	fuModifiers = (UINT) LOWORD(lParam);	// key-modifier flags
 			UINT	uVirtKey = (UINT) HIWORD(lParam);		// virtual-key code
-			TCHAR	szClassName[100];
-			TCHAR	szText[256];
+			WCHAR	szClassName[100];
+			WCHAR	szText[256];
 
 			hwndWork = ::GetForegroundWindow();
 			szClassName[0] = L'\0';
@@ -551,10 +551,10 @@ LRESULT CControlTray::DispatchEvent(
 
 	case MYWM_HTMLHELP:
 		{
-			TCHAR* pWork = m_pShareData->m_sWorkBuffer.GetWorkBuffer<TCHAR>();
+			WCHAR* pWork = m_pShareData->m_sWorkBuffer.GetWorkBuffer<WCHAR>();
 
 			//szHtmlFile取得
-			TCHAR	szHtmlHelpFile[1024];
+			WCHAR	szHtmlHelpFile[1024];
 			_tcscpy( szHtmlHelpFile, pWork );
 			int		nLen = _tcslen( szHtmlHelpFile );
 
@@ -768,7 +768,7 @@ LRESULT CControlTray::DispatchEvent(
 							k = 0;
 						}
 					}
-					type->m_szTypeExts[0] = _T('\0');
+					type->m_szTypeExts[0] = L'\0';
 					type->m_nRegexKeyMagicNumber = CRegexKeyword::GetNewMagicNumber();
 					types.resize( m_pShareData->m_nTypesCount + 1 );
 					int nTypeSizeOld = m_pShareData->m_nTypesCount;
@@ -802,8 +802,8 @@ LRESULT CControlTray::DispatchEvent(
 					}
 					types.resize( m_pShareData->m_nTypesCount - 1 );
 					m_pShareData->m_nTypesCount--;
-					m_pShareData->m_TypeMini[nTypeSizeOld-1].m_szTypeName[0] = _T('\0');
-					m_pShareData->m_TypeMini[nTypeSizeOld-1].m_szTypeExts[0] = _T('\0');
+					m_pShareData->m_TypeMini[nTypeSizeOld-1].m_szTypeName[0] = L'\0';
+					m_pShareData->m_TypeMini[nTypeSizeOld-1].m_szTypeExts[0] = L'\0';
 					m_pShareData->m_TypeMini[nTypeSizeOld-1].m_id = 0;
 				}else{
 					return FALSE;
@@ -812,7 +812,7 @@ LRESULT CControlTray::DispatchEvent(
 			return TRUE;
 
 		case MYWM_NOTIFYICON:
-//			MYTRACE( _T("MYWM_NOTIFYICON\n") );
+//			MYTRACE( L"MYWM_NOTIFYICON\n" );
 			switch (lParam){
 //キーワード：トレイ右クリックメニュー設定
 //	From Here Oct. 12, 2000 JEPRO 左右とも同一処理になっていたのを別々に処理するように変更
@@ -828,7 +828,7 @@ LRESULT CControlTray::DispatchEvent(
 					break;
 				case F_HELP_SEARCH:
 					/* ヘルプキーワード検索 */
-					MyWinHelp( GetTrayHwnd(), HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+					MyWinHelp( GetTrayHwnd(), HELP_KEY, (ULONG_PTR)L"" );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 					break;
 				case F_EXTHELP1:
 					/* 外部ヘルプ１ */
@@ -909,7 +909,7 @@ LRESULT CControlTray::DispatchEvent(
 				bLDClick = false;
 				return 0L;
 			case WM_LBUTTONUP:	// Dec. 24, 2002 towest UPに変更
-//				MYTRACE( _T("WM_LBUTTONDOWN\n") );
+//				MYTRACE( L"WM_LBUTTONDOWN\n" );
 				/* 03/02/20 左ダブルクリック後はメニューを表示しない ai Start */
 				if( bLDClick ){
 					bLDClick = false;
@@ -929,7 +929,7 @@ LRESULT CControlTray::DispatchEvent(
 					{
 						// ファイルオープンダイアログの初期化
 						SLoadInfo sLoadInfo;
-						sLoadInfo.cFilePath = _T("");
+						sLoadInfo.cFilePath = L"";
 						sLoadInfo.eCharCode = CODE_AUTODETECT;	// 文字コード自動判別
 						sLoadInfo.bViewMode = false;
 						// 2013.03.21 novice カレントディレクトリ変更(MRUは使用しない)
@@ -937,7 +937,7 @@ LRESULT CControlTray::DispatchEvent(
 						cDlgOpenFile.Create(
 							m_hInstance,
 							NULL,
-							_T("*.*"),
+							L"*.*",
 							CSakuraEnvironment::GetDlgInitialDir(true).c_str(),
 							CMRUFile().GetPathList(),
 							CMRUFolder().GetPathList()	// OPENFOLDERリストのファイルのリスト
@@ -1017,11 +1017,11 @@ LRESULT CControlTray::DispatchEvent(
 					else if( nId - IDM_SELOPENFOLDER  >= 0 && nId - IDM_SELOPENFOLDER  < 999 ){
 						/* MRUリストのファイルのリスト */
 						const CMRUFile cMRU;
-						std::vector<LPCTSTR> vMRU = cMRU.GetPathList();
+						std::vector<LPCWSTR> vMRU = cMRU.GetPathList();
 
 						/* OPENFOLDERリストのファイルのリスト */
 						const CMRUFolder cMRUFolder;
-						std::vector<LPCTSTR> vOPENFOLDER = cMRUFolder.GetPathList();
+						std::vector<LPCWSTR> vOPENFOLDER = cMRUFolder.GetPathList();
 
 						//Stonee, 2001/12/21 UNCであれば接続を試みる
 						NetConnect( cMRUFolder.GetPath( nId - IDM_SELOPENFOLDER ) );
@@ -1031,12 +1031,12 @@ LRESULT CControlTray::DispatchEvent(
 						cDlgOpenFile.Create(
 							m_hInstance,
 							NULL,
-							_T("*.*"),
+							L"*.*",
 							vOPENFOLDER[ nId - IDM_SELOPENFOLDER ],
 							vMRU,
 							vOPENFOLDER
 						);
-						SLoadInfo sLoadInfo( _T(""), CODE_AUTODETECT, false);
+						SLoadInfo sLoadInfo( L"", CODE_AUTODETECT, false);
 						std::vector<std::wstring> files;
 						if( !cDlgOpenFile.DoModalOpenDlg( &sLoadInfo, &files ) ){
 							break;
@@ -1146,7 +1146,7 @@ void CControlTray::OnNewEditor( bool bNewWindow )
 
 	// 編集ウインドウを開く
 	SLoadInfo sLoadInfo;
-	sLoadInfo.cFilePath = _T("");
+	sLoadInfo.cFilePath = L"";
 	sLoadInfo.eCharCode = CODE_NONE;
 	sLoadInfo.bViewMode = false;
 	std::wstring tstrCurDir = CSakuraEnvironment::GetDlgInitialDir(true);
@@ -1167,9 +1167,9 @@ bool CControlTray::OpenNewEditor(
 	HINSTANCE			hInstance,			//!< [in] インスタンスID (実は未使用)
 	HWND				hWndParent,			//!< [in] 親ウィンドウハンドル．エラーメッセージ表示用
 	const SLoadInfo&	sLoadInfo,			//!< [in]
-	const TCHAR*		szCmdLineOption,	//!< [in] 追加のコマンドラインオプション
+	const WCHAR*		szCmdLineOption,	//!< [in] 追加のコマンドラインオプション
 	bool				sync,				//!< [in] trueなら新規エディタの起動まで待機する
-	const TCHAR*		pszCurDir,			//!< [in] 新規エディタのカレントディレクトリ(NULL可)
+	const WCHAR*		pszCurDir,			//!< [in] 新規エディタのカレントディレクトリ(NULL可)
 	bool				bNewWindow			//!< [in] 新規エディタを新しいウインドウで開く
 )
 {
@@ -1186,18 +1186,18 @@ bool CControlTray::OpenNewEditor(
 	CCommandLineString cCmdLineBuf;
 
 	//アプリケーションパス
-	TCHAR szEXE[MAX_PATH + 1];
+	WCHAR szEXE[MAX_PATH + 1];
 	::GetModuleFileName( NULL, szEXE, _countof( szEXE ) );
-	cCmdLineBuf.AppendF( _T("\"%s\""), szEXE );
+	cCmdLineBuf.AppendF( L"\"%s\"", szEXE );
 
 	// ファイル名
-	if( sLoadInfo.cFilePath.c_str()[0] != _T('\0') )	cCmdLineBuf.AppendF( _T(" \"%s\""), sLoadInfo.cFilePath.c_str() );
+	if( sLoadInfo.cFilePath.c_str()[0] != L'\0' )	cCmdLineBuf.AppendF( L" \"%s\"", sLoadInfo.cFilePath.c_str() );
 
 	// コード指定
-	if( IsValidCodeOrCPType(sLoadInfo.eCharCode) )cCmdLineBuf.AppendF( _T(" -CODE=%d"), sLoadInfo.eCharCode );
+	if( IsValidCodeOrCPType(sLoadInfo.eCharCode) )cCmdLineBuf.AppendF( L" -CODE=%d", sLoadInfo.eCharCode );
 
 	// ビューモード指定
-	if( sLoadInfo.bViewMode )cCmdLineBuf.AppendF( _T(" -R") );
+	if( sLoadInfo.bViewMode )cCmdLineBuf.AppendF( L" -R" );
 
 	// グループID
 	if( false == bNewWindow ){	// 新規エディタをウインドウで開く
@@ -1205,21 +1205,21 @@ bool CControlTray::OpenNewEditor(
 		HWND hwndAncestor = MyGetAncestor( hWndParent, GA_ROOTOWNER2 );	// 2007.10.22 ryoji GA_ROOTOWNER -> GA_ROOTOWNER2
 		int nGroup = CAppNodeManager::getInstance()->GetEditNode( hwndAncestor )->GetGroup();
 		if( nGroup > 0 ){
-			cCmdLineBuf.AppendF( _T(" -GROUP=%d"), nGroup );
+			cCmdLineBuf.AppendF( L" -GROUP=%d", nGroup );
 		}
 	}else{
 		// 空いているグループIDを使用する
-		cCmdLineBuf.AppendF( _T(" -GROUP=%d"), CAppNodeManager::getInstance()->GetFreeGroupId() );
+		cCmdLineBuf.AppendF( L" -GROUP=%d", CAppNodeManager::getInstance()->GetFreeGroupId() );
 	}
 
 	if( CCommandLine::getInstance()->IsSetProfile() ){
-		cCmdLineBuf.AppendF( _T(" -PROF=\"%ls\""), CCommandLine::getInstance()->GetProfileName() );
+		cCmdLineBuf.AppendF( L" -PROF=\"%ls\"", CCommandLine::getInstance()->GetProfileName() );
 	}
 
 	// 追加のコマンドラインオプション
-	TCHAR szResponseFile[_MAX_PATH] = _T("");
+	WCHAR szResponseFile[_MAX_PATH] = L"";
 	struct CResponsefileDeleter{
-		LPCTSTR fileName;
+		LPCWSTR fileName;
 		CResponsefileDeleter(): fileName(NULL){}
 		~CResponsefileDeleter(){
 			if( fileName && fileName[0] ){
@@ -1232,9 +1232,9 @@ bool CControlTray::OpenNewEditor(
 	if( szCmdLineOption ){
 		// Grepなどで入りきらない場合はレスポンスファイルを利用する
 		if( cCmdLineBuf.max_size() < cCmdLineBuf.size() + auto_strlen(szCmdLineOption) ){
-			TCHAR szIniDir[_MAX_PATH];
+			WCHAR szIniDir[_MAX_PATH];
 			GetInidir(szIniDir);
-			LPTSTR pszTempFile = _ttempnam(szIniDir, _T("skr_resp"));
+			LPWSTR pszTempFile = _ttempnam(szIniDir, L"skr_resp");
 			if( !pszTempFile ){
 				ErrorMessage(hWndParent, LS(STR_TRAY_RESPONSEFILE));
 				return false;
@@ -1251,9 +1251,9 @@ bool CControlTray::OpenNewEditor(
 			output.WriteString(to_wchar(szCmdLineOption));
 			output.Close();
 			sync = true;
-			cCmdLineBuf.AppendF(_T(" -@=\"%s\""), szResponseFile);
+			cCmdLineBuf.AppendF(L" -@=\"%s\"", szResponseFile);
 		}else{
-			cCmdLineBuf.AppendF(_T(" %s"), szCmdLineOption);
+			cCmdLineBuf.AppendF(L" %s", szCmdLineOption);
 		}
 	}
 	// -- -- -- -- プロセス生成 -- -- -- -- //
@@ -1287,7 +1287,7 @@ bool CControlTray::OpenNewEditor(
 #ifdef _DEBUG
 //	dwCreationFlag |= DEBUG_PROCESS; //2007.09.22 kobake デバッグ用フラグ
 #endif
-	TCHAR szCmdLine[1024]; _tcscpy_s(szCmdLine, _countof(szCmdLine), cCmdLineBuf.c_str());
+	WCHAR szCmdLine[1024]; _tcscpy_s(szCmdLine, _countof(szCmdLine), cCmdLineBuf.c_str());
 	BOOL bCreateResult = CreateProcess(
 		szEXE,					// 実行可能モジュールの名前
 		szCmdLine,				// コマンドラインの文字列
@@ -1302,14 +1302,14 @@ bool CControlTray::OpenNewEditor(
 	);
 	if( !bCreateResult ){
 		//	失敗
-		TCHAR* pMsg;
+		WCHAR* pMsg;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER |
 						FORMAT_MESSAGE_IGNORE_INSERTS |
 						FORMAT_MESSAGE_FROM_SYSTEM,
 						NULL,
 						GetLastError(),
 						MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-						(LPTSTR)&pMsg,
+						(LPWSTR)&pMsg,
 						0,
 						NULL
 		);
@@ -1405,13 +1405,13 @@ bool CControlTray::OpenNewEditor2(
 	// 追加のコマンドラインオプション
 	CCommandLineString cCmdLine;
 	if( pfi != NULL ){
-		if( pfi->m_ptCursor.x >= 0					)cCmdLine.AppendF( _T(" -X=%d"), pfi->m_ptCursor.x +1 );
-		if( pfi->m_ptCursor.y >= 0					)cCmdLine.AppendF( _T(" -Y=%d"), pfi->m_ptCursor.y +1 );
-		if( pfi->m_nViewLeftCol >= CLayoutInt(0)	)cCmdLine.AppendF( _T(" -VX=%d"), (Int)pfi->m_nViewLeftCol + 1 );
-		if( pfi->m_nViewTopLine >= CLayoutInt(0)	)cCmdLine.AppendF( _T(" -VY=%d"), (Int)pfi->m_nViewTopLine + 1 );
+		if( pfi->m_ptCursor.x >= 0					)cCmdLine.AppendF( L" -X=%d", pfi->m_ptCursor.x +1 );
+		if( pfi->m_ptCursor.y >= 0					)cCmdLine.AppendF( L" -Y=%d", pfi->m_ptCursor.y +1 );
+		if( pfi->m_nViewLeftCol >= CLayoutInt(0)	)cCmdLine.AppendF( L" -VX=%d", (Int)pfi->m_nViewLeftCol + 1 );
+		if( pfi->m_nViewTopLine >= CLayoutInt(0)	)cCmdLine.AppendF( L" -VY=%d", (Int)pfi->m_nViewTopLine + 1 );
 	}
 	SLoadInfo sLoadInfo;
-	sLoadInfo.cFilePath = pfi ? pfi->m_szPath : _T("");
+	sLoadInfo.cFilePath = pfi ? pfi->m_szPath : L"";
 	sLoadInfo.eCharCode = pfi ? pfi->m_nCharCode : CODE_NONE;
 	sLoadInfo.bViewMode = bViewMode;
 	return OpenNewEditor( hInstance, hWndParent, sLoadInfo, cCmdLine.c_str(), sync, NULL, bNewWindow );
@@ -1565,7 +1565,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	HMENU		hMenuTop;
 	HMENU		hMenu;
 	HMENU		hMenuPopUp;
-	TCHAR		szMenu[100 + MAX_PATH * 2];	//	Jan. 19, 2001 genta
+	WCHAR		szMenu[100 + MAX_PATH * 2];	//	Jan. 19, 2001 genta
 	POINT		po;
 	RECT		rc;
 	EditInfo*	pfi;
@@ -1582,10 +1582,10 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	hMenu = ::CreatePopupMenu();
 	m_cMenuDrawer.MyAppendMenu( hMenuTop, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenu, L"TrayL", L"" );
 
-	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILENEW, _T(""), _T("N"), FALSE );
-	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILEOPEN, _T(""), _T("O"), FALSE );
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILENEW, L"", L"N", FALSE );
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILEOPEN, L"", L"O", FALSE );
 
-	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GREP_DIALOG, _T(""), _T("G"), FALSE );
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GREP_DIALOG, L"", L"G", FALSE );
 	m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 
 	/* MRUリストのファイルのリストをメニューにする */
@@ -1593,21 +1593,21 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	const CMRUFile cMRU;
 	hMenuPopUp = cMRU.CreateMenu( &m_cMenuDrawer );	//	ファイルメニュー
 	int nEnable = (cMRU.MenuLength() > 0 ? 0 : MF_GRAYED);
-	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | nEnable, (UINT_PTR)hMenuPopUp , LS( F_FILE_RCNTFILE_SUBMENU ), _T("F") );
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | nEnable, (UINT_PTR)hMenuPopUp , LS( F_FILE_RCNTFILE_SUBMENU ), L"F" );
 
 	/* 最近使ったフォルダのメニューを作成 */
 //@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
 	const CMRUFolder cMRUFolder;
 	hMenuPopUp = cMRUFolder.CreateMenu( &m_cMenuDrawer );
 	nEnable = (cMRUFolder.MenuLength() > 0 ? 0 : MF_GRAYED);
-	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP| nEnable, (UINT_PTR)hMenuPopUp, LS( F_FILE_RCNTFLDR_SUBMENU ), _T("D") );
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP| nEnable, (UINT_PTR)hMenuPopUp, LS( F_FILE_RCNTFLDR_SUBMENU ), L"D" );
 
 	/* 履歴の管理のメニューを作成 */
 	m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
-	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FAVORITE, _T(""), _T("M"), FALSE );
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FAVORITE, L"", L"M", FALSE );
 
 	m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
-	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILESAVEALL, _T(""), _T("Z"), FALSE );	// Jan. 24, 2005 genta
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILESAVEALL, L"", L"Z", FALSE );	// Jan. 24, 2005 genta
 
 	/* 現在開いている編集窓のリストをメニューにする */
 	j = 0;
@@ -1634,20 +1634,20 @@ int	CControlTray::CreatePopUpMenu_L( void )
 
 				// メニューラベル。1からアクセスキーを振る
 				CFileNameManager::getInstance()->GetMenuFullLabel_WinList( szMenu, _countof(szMenu), pfi, m_pShareData->m_sNodes.m_pEditArr[i].m_nId, i, dcFont.GetHDC() );
-				m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + i, szMenu, _T(""), FALSE );
+				m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + i, szMenu, L"", FALSE );
 				++j;
 			}
 		}
 	}
 	m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
-	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALLEDITORS, _T(""), _T("Q"), FALSE );	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	//Feb. 18, 2001 JEPRO アクセスキー変更(L→Q)	// 2006.10.21 ryoji 表示文字列変更	// 2007.02.13 ryoji →F_EXITALLEDITORS
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALLEDITORS, L"", L"Q", FALSE );	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	//Feb. 18, 2001 JEPRO アクセスキー変更(L→Q)	// 2006.10.21 ryoji 表示文字列変更	// 2007.02.13 ryoji →F_EXITALLEDITORS
 	if( j == 0 ){
 		::EnableMenuItem( hMenu, F_EXITALLEDITORS, MF_BYCOMMAND | MF_GRAYED );	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	// 2007.02.13 ryoji →F_EXITALLEDITORS
 		::EnableMenuItem( hMenu, F_FILESAVEALL, MF_BYCOMMAND | MF_GRAYED );	// Jan. 24, 2005 genta
 	}
 
 	//	Jun. 9, 2001 genta ソフトウェア名改称
-	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, _T(""), _T("X"), FALSE );	//Dec. 26, 2000 JEPRO F_に変更
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, L"", L"X", FALSE );	//Dec. 26, 2000 JEPRO F_に変更
 
 	po.x = 0;
 	po.y = 0;
@@ -1676,7 +1676,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	);
 	::PostMessageAny( GetTrayHwnd(), WM_USER + 1, 0, 0 );
 	::DestroyMenu( hMenuTop );
-//	MYTRACE( _T("nId=%d\n"), nId );
+//	MYTRACE( L"nId=%d\n", nId );
 
 	m_bUseTrayMenu = false;
 
@@ -1707,16 +1707,16 @@ int	CControlTray::CreatePopUpMenu_R( void )
 	m_cMenuDrawer.MyAppendMenu( hMenuTop, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenu, L"TrayR", L"" );
 
 	/* トレイ右クリックの「ヘルプ」メニュー */
-	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_CONTENTS , _T(""), _T("O"), FALSE );
-	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_SEARCH , _T(""), _T("S"), FALSE );	//Nov. 25, 2000 JEPRO 「トピックの」→「キーワード」に変更
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_CONTENTS , L"", L"O", FALSE );
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_SEARCH , L"", L"S", FALSE );	//Nov. 25, 2000 JEPRO 「トピックの」→「キーワード」に変更
 	m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
-	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TYPE_LIST, _T(""), _T("L"), FALSE );
-	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_OPTION, _T(""), _T("C"), FALSE );
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TYPE_LIST, L"", L"L", FALSE );
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_OPTION, L"", L"C", FALSE );
 	m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
-	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_ABOUT, _T(""), _T("A"), FALSE );	//Dec. 25, 2000 JEPRO F_に変更
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_ABOUT, L"", L"A", FALSE );	//Dec. 25, 2000 JEPRO F_に変更
 	m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 	//	Jun. 18, 2001 genta ソフトウェア名改称
-	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, _T(""), _T("X"), FALSE );
+	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, L"", L"X", FALSE );
 
 	po.x = 0;
 	po.y = 0;
@@ -1745,7 +1745,7 @@ int	CControlTray::CreatePopUpMenu_R( void )
 	);
 	::PostMessageAny( GetTrayHwnd(), WM_USER + 1, 0, 0 );
 	::DestroyMenu( hMenuTop );
-//	MYTRACE( _T("nId=%d\n"), nId );
+//	MYTRACE( L"nId=%d\n", nId );
 
 	m_bUseTrayMenu = false;
 

@@ -40,7 +40,7 @@ BOOL CEditView::CreateScrollBar()
 	/* スクロールバーの作成 */
 	m_hwndVScrollBar = ::CreateWindowEx(
 		0L,									/* no extended styles */
-		_T("SCROLLBAR"),					/* scroll bar control class */
+		L"SCROLLBAR",					/* scroll bar control class */
 		NULL,								/* text for window title bar */
 		WS_VISIBLE | WS_CHILD | SBS_VERT,	/* scroll bar styles */
 		0,									/* horizontal position */
@@ -67,7 +67,7 @@ BOOL CEditView::CreateScrollBar()
 	if( GetDllShareData().m_Common.m_sWindow.m_bScrollBarHorz && !m_bMiniMap ){	/* 水平スクロールバーを使う */
 		m_hwndHScrollBar = ::CreateWindowEx(
 			0L,									/* no extended styles */
-			_T("SCROLLBAR"),					/* scroll bar control class */
+			L"SCROLLBAR",					/* scroll bar control class */
 			NULL,								/* text for window title bar */
 			WS_VISIBLE | WS_CHILD | SBS_HORZ,	/* scroll bar styles */
 			0,									/* horizontal position */
@@ -226,11 +226,11 @@ CLayoutInt CEditView::OnHScroll( int nScrollCode, int nPos )
 		break;
 	case SB_THUMBPOSITION:
 		nScrollVal = ScrollAtH( CLayoutInt(nPos), FALSE );
-//		MYTRACE( _T("nPos=%d\n"), nPos );
+//		MYTRACE( L"nPos=%d\n", nPos );
 		break;
 	case SB_THUMBTRACK:
 		nScrollVal = ScrollAtH( CLayoutInt(nPos), FALSE );
-//		MYTRACE( _T("nPos=%d\n"), nPos );
+//		MYTRACE( L"nPos=%d\n", nPos );
 		break;
 	case SB_LEFT:
 		nScrollVal = ScrollAtH( CLayoutInt(0) );

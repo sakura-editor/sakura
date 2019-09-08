@@ -167,7 +167,7 @@ public:
 	/*! BREGEXPメッセージを取得する
 		@retval メッセージへのポインタ
 	*/
-	const TCHAR* GetLastMessage() const;// { return m_szMsg; }
+	const WCHAR* GetLastMessage() const;// { return m_szMsg; }
 
 	/*!	先読みパターンが存在するかを返す
 		この関数は、コンパイル後であることが前提なので、コンパイル前はfalse

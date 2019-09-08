@@ -42,9 +42,9 @@
 /*! テストのベースとなる値 */
 static constexpr MYDEVMODE myDevMode = {
 	FALSE, //BOOL	m_bPrinterNotFound;
-	{_T("m_szPrinterDriverName")}, //TCHAR	m_szPrinterDriverName[_MAX_PATH + 1];
-	{_T("m_szPrinterDeviceName")}, //TCHAR	m_szPrinterDeviceName[_MAX_PATH + 1];
-	{_T("m_szPrinterOutputName")}, //TCHAR	m_szPrinterOutputName[_MAX_PATH + 1];
+	{L"m_szPrinterDriverName"}, //WCHAR	m_szPrinterDriverName[_MAX_PATH + 1];
+	{L"m_szPrinterDeviceName"}, //WCHAR	m_szPrinterDeviceName[_MAX_PATH + 1];
+	{L"m_szPrinterOutputName"}, //WCHAR	m_szPrinterOutputName[_MAX_PATH + 1];
 	std::numeric_limits<DWORD>::min(), //DWORD	dmFields;
 	std::numeric_limits<short>::min(), //short	dmOrientation;
 	std::numeric_limits<short>::min(), //short	dmPaperSize;
@@ -59,7 +59,7 @@ static constexpr MYDEVMODE myDevMode = {
 	std::numeric_limits<short>::min(), //short	dmYResolution;
 	std::numeric_limits<short>::min(), //short	dmTTOption;
 	std::numeric_limits<short>::min(), //short	dmCollate;
-	{_T("dmFormName")}, //BCHAR	dmFormName[CCHFORMNAME];
+	{L"dmFormName"}, //BCHAR	dmFormName[CCHFORMNAME];
 	std::numeric_limits<WORD>::min(), //WORD	dmLogPixels;
 	std::numeric_limits<DWORD>::min(), //DWORD	dmBitsPerPel;
 	std::numeric_limits<DWORD>::min(), //DWORD	dmPelsWidth;
@@ -137,17 +137,17 @@ TEST(MYDEVMODETest, operatorNotEqual)
 	value.m_bPrinterNotFound = myDevMode.m_bPrinterNotFound;
 	EXPECT_EQ(myDevMode, value);
 
-	::_tcscpy_s(value.m_szPrinterDriverName, _T("PrinterDriverName"));
+	::_tcscpy_s(value.m_szPrinterDriverName, L"PrinterDriverName");
 	EXPECT_NE(myDevMode, value);
 	::_tcscpy_s(value.m_szPrinterDriverName, myDevMode.m_szPrinterDriverName);
 	EXPECT_EQ(myDevMode, value);
 
-	::_tcscpy_s(value.m_szPrinterDeviceName, _T("PrinterDeviceName"));
+	::_tcscpy_s(value.m_szPrinterDeviceName, L"PrinterDeviceName");
 	EXPECT_NE(myDevMode, value);
 	::_tcscpy_s(value.m_szPrinterDeviceName, myDevMode.m_szPrinterDeviceName);
 	EXPECT_EQ(myDevMode, value);
 
-	::_tcscpy_s(value.m_szPrinterOutputName, _T("PrinterOutputName"));
+	::_tcscpy_s(value.m_szPrinterOutputName, L"PrinterOutputName");
 	EXPECT_NE(myDevMode, value);
 	::_tcscpy_s(value.m_szPrinterOutputName, myDevMode.m_szPrinterOutputName);
 	EXPECT_EQ(myDevMode, value);
@@ -222,7 +222,7 @@ TEST(MYDEVMODETest, operatorNotEqual)
 	value.dmCollate = myDevMode.dmCollate;
 	EXPECT_EQ(myDevMode, value);
 
-	::_tcscpy_s(value.dmFormName, _T("FormName"));
+	::_tcscpy_s(value.dmFormName, L"FormName");
 	EXPECT_NE(myDevMode, value);
 	::_tcscpy_s(value.dmFormName, myDevMode.dmFormName);
 	EXPECT_EQ(myDevMode, value);

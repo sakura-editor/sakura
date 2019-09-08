@@ -57,7 +57,7 @@
 #include "CWriteManager.h"
 #include "sakura_rc.h"
 
-#define	SAKURA_DIFF_TEMP_PREFIX	_T("sakura_diff_")
+#define	SAKURA_DIFF_TEMP_PREFIX	L"sakura_diff_"
 
 class COutputAdapterDiff: public COutputAdapter
 {
@@ -109,8 +109,8 @@ protected:
 	@date	2013/06/21	ExecCmdを利用するように
 */
 void CEditView::ViewDiffInfo( 
-	const TCHAR*	pszFile1,
-	const TCHAR*	pszFile2,
+	const WCHAR*	pszFile1,
+	const WCHAR*	pszFile2,
 	int				nFlgOpt,
 	bool 			bUTF8
 )
@@ -127,10 +127,10 @@ void CEditView::ViewDiffInfo(
 	int		nFlgFile12 = 1;
 
 	/* exeのあるフォルダ */
-	TCHAR	szExeFolder[_MAX_PATH + 1];
+	WCHAR	szExeFolder[_MAX_PATH + 1];
 
-	TCHAR	cmdline[1024];
-	GetExedir( cmdline, _T("diff.exe") );
+	WCHAR	cmdline[1024];
+	GetExedir( cmdline, L"diff.exe" );
 	SplitPath_FolderAndFile( cmdline, szExeFolder, NULL );
 
 	//	From Here Dec. 28, 2002 MIK
@@ -140,7 +140,7 @@ void CEditView::ViewDiffInfo(
 		WarningMessage( GetHwnd(), LS(STR_ERR_DLGEDITVWDIFF2) );
 		return;
 	}
-	cmdline[0] = _T('\0');
+	cmdline[0] = L'\0';
 
 	//今あるDIFF差分を消去する。
 	if( CDiffManager::getInstance()->IsDiffUse() )
@@ -148,14 +148,14 @@ void CEditView::ViewDiffInfo(
 		//m_pcEditDoc->m_cDocLineMgr.ResetAllDiffMark();
 
 	//オプションを作成する
-	TCHAR	szOption[16];	// "-cwbBt"
-	_tcscpy( szOption, _T("-") );
-	if( nFlgOpt & 0x0001 ) _tcscat( szOption, _T("i") );	//-i ignore-case         大文字小文字同一視
-	if( nFlgOpt & 0x0002 ) _tcscat( szOption, _T("w") );	//-w ignore-all-space    空白無視
-	if( nFlgOpt & 0x0004 ) _tcscat( szOption, _T("b") );	//-b ignore-space-change 空白変更無視
-	if( nFlgOpt & 0x0008 ) _tcscat( szOption, _T("B") );	//-B ignore-blank-lines  空行無視
-	if( nFlgOpt & 0x0010 ) _tcscat( szOption, _T("t") );	//-t expand-tabs         TAB-SPACE変換
-	if( _tcscmp( szOption, _T("-") ) == 0 ) szOption[0] = _T('\0');	//オプションなし
+	WCHAR	szOption[16];	// "-cwbBt"
+	_tcscpy( szOption, L"-" );
+	if( nFlgOpt & 0x0001 ) _tcscat( szOption, L"i" );	//-i ignore-case         大文字小文字同一視
+	if( nFlgOpt & 0x0002 ) _tcscat( szOption, L"w" );	//-w ignore-all-space    空白無視
+	if( nFlgOpt & 0x0004 ) _tcscat( szOption, L"b" );	//-b ignore-space-change 空白変更無視
+	if( nFlgOpt & 0x0008 ) _tcscat( szOption, L"B" );	//-B ignore-blank-lines  空行無視
+	if( nFlgOpt & 0x0010 ) _tcscat( szOption, L"t" );	//-t expand-tabs         TAB-SPACE変換
+	if( _tcscmp( szOption, L"-" ) == 0 ) szOption[0] = L'\0';	//オプションなし
 	if( nFlgOpt & 0x0020 ) nFlgFile12 = 0;
 	else                   nFlgFile12 = 1;
 
@@ -165,9 +165,9 @@ void CEditView::ViewDiffInfo(
 		//コマンドライン文字列作成(MAX:1024)
 		auto_sprintf(
 			cmdline,
-			_T("\"%s\\%s\" %s \"%s\" \"%s\""),
+			L"\"%s\\%s\" %s \"%s\" \"%s\"",
 			szExeFolder,	//sakura.exeパス
-			_T("diff.exe"),		//diff.exe
+			L"diff.exe",		//diff.exe
 			szOption,		//diffオプション
 			( nFlgFile12 ? pszFile2 : pszFile1 ),
 			( nFlgFile12 ? pszFile1 : pszFile2 )
@@ -456,10 +456,10 @@ static bool MakeDiffTmpFile_core(CTextOutputStream& out, HWND hwnd, CEditView& v
 	@date	2008/01/26	kobake 出力形式修正
 	@date	2013/06/21 エンコードをASCII系にする(SJIS固定をやめる)
 */
-BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd, ECodeType code, bool bBom )
+BOOL CEditView::MakeDiffTmpFile( WCHAR* filename, HWND hWnd, ECodeType code, bool bBom )
 {
 	//一時
-	TCHAR* pszTmpName = _ttempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
+	WCHAR* pszTmpName = _ttempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
 	if( NULL == pszTmpName ){
 		WarningMessage( NULL, LS(STR_DIFF_FAILED) );
 		return FALSE;
@@ -509,10 +509,10 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd, ECodeType code, boo
 
 /*!	外部ファイルを指定でのファイルを表示
 */
-BOOL CEditView::MakeDiffTmpFile2( TCHAR* tmpName, const TCHAR* orgName, ECodeType code, ECodeType saveCode )
+BOOL CEditView::MakeDiffTmpFile2( WCHAR* tmpName, const WCHAR* orgName, ECodeType code, ECodeType saveCode )
 {
 	//一時
-	TCHAR* pszTmpName = _ttempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
+	WCHAR* pszTmpName = _ttempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
 	if( NULL == pszTmpName ){
 		WarningMessage( NULL, LS(STR_DIFF_FAILED) );
 		return FALSE;

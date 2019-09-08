@@ -126,8 +126,8 @@ bool CShareData::InitShareData()
 	if( NULL == m_hFileMap ){
 		::MessageBox(
 			NULL,
-			_T("CreateFileMapping()に失敗しました"),
-			_T("予期せぬエラー"),
+			L"CreateFileMapping()に失敗しました",
+			L"予期せぬエラー",
 			MB_OK | MB_APPLMODAL | MB_ICONSTOP
 		);
 		return false;
@@ -147,10 +147,10 @@ bool CShareData::InitShareData()
 		SetDllShareData( m_pShareData );
 
 		// 2007.05.19 ryoji 実行ファイルフォルダ->設定ファイルフォルダに変更
-		TCHAR	szIniFolder[_MAX_PATH];
+		WCHAR	szIniFolder[_MAX_PATH];
 		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bInit = false;
 		GetInidir( szIniFolder );
-		AddLastChar( szIniFolder, _MAX_PATH, _T('\\') );
+		AddLastChar( szIniFolder, _MAX_PATH, L'\\' );
 
 		m_pShareData->m_vStructureVersion = uShareDataVersion;
 		m_pShareData->m_nSize = sizeof(*m_pShareData);
@@ -201,7 +201,7 @@ bool CShareData::InitShareData()
 		lf.lfClipPrecision		= 0x2;
 		lf.lfQuality			= 0x1;
 		lf.lfPitchAndFamily	= 0x31;
-		_tcscpy( lf.lfFaceName, _T("ＭＳ ゴシック") );
+		_tcscpy( lf.lfFaceName, L"ＭＳ ゴシック" );
 
 		// LoadShareDataでフォントが変わる可能性があるので、ここでは不要 // 2013.04.08 aroka
 		//InitCharWidthCacheCommon();								// 2008/5/17 Uchi
@@ -293,11 +293,11 @@ bool CShareData::InitShareData()
 			//	Apr. 05, 2003 genta ウィンドウキャプションの初期値
 			//	Aug. 16, 2003 genta $N(ファイル名省略表示)をデフォルトに変更
 			_tcscpy( sWindow.m_szWindowCaptionActive, 
-				_T("${w?$h$:アウトプット$:${I?$f$n$:$N$n$}$}${U?(更新)$} -")
-				_T(" $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>") );
+				L"${w?$h$:アウトプット$:${I?$f$n$:$N$n$}$}${U?(更新)$} -"
+				L" $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>" );
 			_tcscpy( sWindow.m_szWindowCaptionInactive, 
-				_T("${w?$h$:アウトプット$:$f$n$}${U?(更新)$} -")
-				_T(" $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>") );
+				L"${w?$h$:アウトプット$:$f$n$}${U?(更新)$} -"
+				L" $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>" );
 		}
 
 		// [タブバー]タブ
@@ -351,7 +351,7 @@ bool CShareData::InitShareData()
 
 			sEdit.m_bOverWriteBoxDelete = false;
 			sEdit.m_eOpenDialogDir = OPENDIALOGDIR_CUR;
-			auto_strcpy(sEdit.m_OpenDialogSelDir, _T("%Personal%\\"));
+			auto_strcpy(sEdit.m_OpenDialogSelDir, L"%Personal%\\");
 			sEdit.m_bAutoColumnPaste = TRUE;			/* 矩形コピーのテキストは常に矩形貼り付け */
 		}
 
@@ -401,7 +401,7 @@ bool CShareData::InitShareData()
 			sBackup.m_nBackUpType_Opt6 = 0;									/* バックアップファイル名：Option6 */
 			sBackup.m_bBackUpDustBox = false;								/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
 			sBackup.m_bBackUpPathAdvanced = false;							/* 20051107 aroka バックアップ先フォルダを詳細設定する */
-			sBackup.m_szBackUpPathAdvanced[0] = _T('\0');					/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
+			sBackup.m_szBackUpPathAdvanced[0] = L'\0';					/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
 		}
 
 		// [書式]タブ
@@ -418,9 +418,9 @@ bool CShareData::InitShareData()
 			*/
 
 			sFormat.m_nDateFormatType = 0;	//日付書式のタイプ
-			_tcscpy( sFormat.m_szDateFormat, _T("yyyy\'年\'M\'月\'d\'日(\'dddd\')\'") );	//日付書式
+			_tcscpy( sFormat.m_szDateFormat, L"yyyy\'年\'M\'月\'d\'日(\'dddd\')\'" );	//日付書式
 			sFormat.m_nTimeFormatType = 0;	//時刻書式のタイプ
-			_tcscpy( sFormat.m_szTimeFormat, _T("tthh\'時\'mm\'分\'ss\'秒\'")  );			//時刻書式
+			_tcscpy( sFormat.m_szTimeFormat, L"tthh\'時\'mm\'分\'ss\'秒\'"  );			//時刻書式
 		}
 
 		// [検索]タブ
@@ -445,7 +445,7 @@ bool CShareData::InitShareData()
 			sSearch.m_bGrepRealTimeView = FALSE;		/* 2003.06.28 Moca Grep結果のリアルタイム表示 */
 			sSearch.m_bCaretTextForSearch = TRUE;		/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
 			sSearch.m_bInheritKeyOtherView = true;
-			sSearch.m_szRegexpLib[0] = _T('\0');		/* 2007.08.12 genta 正規表現DLL */
+			sSearch.m_szRegexpLib[0] = L'\0';		/* 2007.08.12 genta 正規表現DLL */
 			sSearch.m_bGTJW_RETURN = TRUE;				/* エンターキーでタグジャンプ */
 			sSearch.m_bGTJW_LDBLCLK = TRUE;			/* ダブルクリックでタグジャンプ */
 
@@ -536,7 +536,7 @@ bool CShareData::InitShareData()
 			sOutline.m_bFunclistSetFocusOnJump	=	FALSE;	//アウトラインダイアログでジャンプしたらフォーカスを移す	2002.02.08 hor
 
 			InitFileTree( &sOutline.m_sFileTree );
-			sOutline.m_sFileTreeDefIniName = _T("_sakurafiletree.ini");
+			sOutline.m_sFileTreeDefIniName = L"_sakurafiletree.ini";
 		}
 
 		// [ファイル内容比較]タブ
@@ -560,7 +560,7 @@ bool CShareData::InitShareData()
 		{
 			CommonSetting_Macro& sMacro = m_pShareData->m_Common.m_sMacro;
 
-			sMacro.m_szKeyMacroFileName[0] = _T('\0');	/* キーワードマクロのファイル名 */ //@@@ 2002.1.24 YAZAKI
+			sMacro.m_szKeyMacroFileName[0] = L'\0';	/* キーワードマクロのファイル名 */ //@@@ 2002.1.24 YAZAKI
 
 			//	From Here Sep. 14, 2001 genta
 			//	Macro登録の初期化
@@ -588,23 +588,23 @@ bool CShareData::InitShareData()
 			sFileName.m_nTransformShortMaxWidth = 100; // 100'x'幅
 
 			for( int i = 0; i < MAX_TRANSFORM_FILENAME; ++i ){
-				sFileName.m_szTransformFileNameFrom[i][0] = _T('\0');
-				sFileName.m_szTransformFileNameTo[i][0] = _T('\0');
+				sFileName.m_szTransformFileNameFrom[i][0] = L'\0';
+				sFileName.m_szTransformFileNameTo[i][0] = L'\0';
 			}
-			_tcscpy( sFileName.m_szTransformFileNameFrom[0], _T("%DeskTop%\\") );
-			_tcscpy( sFileName.m_szTransformFileNameTo[0],   _T("デスクトップ\\") );
-			_tcscpy( sFileName.m_szTransformFileNameFrom[1], _T("%Personal%\\") );
-			_tcscpy( sFileName.m_szTransformFileNameTo[1],   _T("マイドキュメント\\") );
-			_tcscpy( sFileName.m_szTransformFileNameFrom[2], _T("%Cache%\\Content.IE5\\") );
-			_tcscpy( sFileName.m_szTransformFileNameTo[2],   _T("IEキャッシュ\\") );
-			_tcscpy( sFileName.m_szTransformFileNameFrom[3], _T("%TEMP%\\") );
-			_tcscpy( sFileName.m_szTransformFileNameTo[3],   _T("TEMP\\") );
-			_tcscpy( sFileName.m_szTransformFileNameFrom[4], _T("%Common DeskTop%\\") );
-			_tcscpy( sFileName.m_szTransformFileNameTo[4],   _T("共有デスクトップ\\") );
-			_tcscpy( sFileName.m_szTransformFileNameFrom[5], _T("%Common Documents%\\") );
-			_tcscpy( sFileName.m_szTransformFileNameTo[5],   _T("共有ドキュメント\\") );
-			_tcscpy( sFileName.m_szTransformFileNameFrom[6], _T("%AppData%\\") );	// 2007.05.19 ryoji 追加
-			_tcscpy( sFileName.m_szTransformFileNameTo[6],   _T("アプリデータ\\") );	// 2007.05.19 ryoji 追加
+			_tcscpy( sFileName.m_szTransformFileNameFrom[0], L"%DeskTop%\\" );
+			_tcscpy( sFileName.m_szTransformFileNameTo[0],   L"デスクトップ\\" );
+			_tcscpy( sFileName.m_szTransformFileNameFrom[1], L"%Personal%\\" );
+			_tcscpy( sFileName.m_szTransformFileNameTo[1],   L"マイドキュメント\\" );
+			_tcscpy( sFileName.m_szTransformFileNameFrom[2], L"%Cache%\\Content.IE5\\" );
+			_tcscpy( sFileName.m_szTransformFileNameTo[2],   L"IEキャッシュ\\" );
+			_tcscpy( sFileName.m_szTransformFileNameFrom[3], L"%TEMP%\\" );
+			_tcscpy( sFileName.m_szTransformFileNameTo[3],   L"TEMP\\" );
+			_tcscpy( sFileName.m_szTransformFileNameFrom[4], L"%Common DeskTop%\\" );
+			_tcscpy( sFileName.m_szTransformFileNameTo[4],   L"共有デスクトップ\\" );
+			_tcscpy( sFileName.m_szTransformFileNameFrom[5], L"%Common Documents%\\" );
+			_tcscpy( sFileName.m_szTransformFileNameTo[5],   L"共有ドキュメント\\" );
+			_tcscpy( sFileName.m_szTransformFileNameFrom[6], L"%AppData%\\" );	// 2007.05.19 ryoji 追加
+			_tcscpy( sFileName.m_szTransformFileNameTo[6],   L"アプリデータ\\" );	// 2007.05.19 ryoji 追加
 			sFileName.m_nTransformFileNameArrNum = 7;
 		}
 
@@ -671,14 +671,14 @@ bool CShareData::InitShareData()
 				/*
 					2006.08.16 Moca 初期化単位を PRINTSETTINGに変更。CShareDataには依存しない。
 				*/
-				TCHAR szSettingName[64];
+				WCHAR szSettingName[64];
 				int i = 0;
-				auto_sprintf( szSettingName, _T("印刷設定 %d"), i + 1 );
+				auto_sprintf( szSettingName, L"印刷設定 %d", i + 1 );
 				CPrint::SettingInitialize( m_pShareData->m_PrintSettingArr[0], szSettingName );	//	初期化命令。
 			}
 			for( int i = 1; i < MAX_PRINTSETTINGARR; ++i ){
 				m_pShareData->m_PrintSettingArr[i] = m_pShareData->m_PrintSettingArr[0];
-				auto_sprintf( m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, _T("印刷設定 %d"), i + 1 );	/* 印刷設定の名前 */
+				auto_sprintf( m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, L"印刷設定 %d", i + 1 );	/* 印刷設定の名前 */
 			}
 		}
 
@@ -686,7 +686,7 @@ bool CShareData::InitShareData()
 			m_pShareData->m_sSearchKeywords.m_aSearchKeys.clear();
 			m_pShareData->m_sSearchKeywords.m_aReplaceKeys.clear();
 			m_pShareData->m_sSearchKeywords.m_aGrepFiles.clear();
-			m_pShareData->m_sSearchKeywords.m_aGrepFiles.push_back(_T("*.*"));
+			m_pShareData->m_sSearchKeywords.m_aGrepFiles.push_back(L"*.*");
 			m_pShareData->m_sSearchKeywords.m_aGrepFolders.clear();
 
 			// 2004/06/21 novice タグジャンプ機能追加
@@ -710,7 +710,7 @@ bool CShareData::InitShareData()
 
 			m_pShareData->m_nDiffFlgOpt = 0;	/* DIFF差分表示 */	//@@@ 2002.05.27 MIK
 
-			m_pShareData->m_szTagsCmdLine[0] = _T('\0');	/* CTAGS */	//@@@ 2003.05.12 MIK
+			m_pShareData->m_szTagsCmdLine[0] = L'\0';	/* CTAGS */	//@@@ 2003.05.12 MIK
 			m_pShareData->m_nTagsOpt = 0;	/* CTAGS */	//@@@ 2003.05.12 MIK
 
 			m_pShareData->m_bLineNumIsCRLF_ForJump = true;	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
@@ -884,7 +884,7 @@ void CShareData::ConvertLangValues(std::vector<std::wstring>& values, bool bSetV
 	@retval	TRUE すでに開いていた
 	@retval	FALSE 開いていなかった
 */
-BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner )
+BOOL CShareData::IsPathOpened( const WCHAR* pszPath, HWND* phwndOwner )
 {
 	EditInfo*	pfi;
 	*phwndOwner = NULL;
@@ -892,7 +892,7 @@ BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner )
 	//	2007.10.01 genta 相対パスを絶対パスに変換
 	//	変換しないとIsPathOpenedで正しい結果が得られず，
 	//	同一ファイルを複数開くことがある．
-	TCHAR	szBuf[_MAX_PATH];
+	WCHAR	szBuf[_MAX_PATH];
 	if( GetLongFileName( pszPath, szBuf )){
 		pszPath = szBuf;
 	}
@@ -936,7 +936,7 @@ BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner )
 
 	@date 2007.03.12 maru 新規作成
 */
-BOOL CShareData::ActiveAlreadyOpenedWindow( const TCHAR* pszPath, HWND* phwndOwner, ECodeType nCharCode )
+BOOL CShareData::ActiveAlreadyOpenedWindow( const WCHAR* pszPath, HWND* phwndOwner, ECodeType nCharCode )
 {
 	if( IsPathOpened( pszPath, phwndOwner ) ){
 		
@@ -945,9 +945,9 @@ BOOL CShareData::ActiveAlreadyOpenedWindow( const TCHAR* pszPath, HWND* phwndOwn
 		::SendMessageAny( *phwndOwner, MYWM_GETFILEINFO, 0, 0 );
 		pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 		if(nCharCode != CODE_AUTODETECT){
-			TCHAR szCpNameCur[100];
+			WCHAR szCpNameCur[100];
 			CCodePage::GetNameLong(szCpNameCur, pfi->m_nCharCode);
-			TCHAR szCpNameNew[100];
+			WCHAR szCpNameNew[100];
 			CCodePage::GetNameLong(szCpNameNew, pfi->m_nCharCode);
 			if(szCpNameCur[0] && szCpNameNew[0]){
 				if(nCharCode != pfi->m_nCharCode){
@@ -990,7 +990,7 @@ BOOL CShareData::ActiveAlreadyOpenedWindow( const TCHAR* pszPath, HWND* phwndOwn
 	@param lpFmt [in] 書式指定文字列(wchar_t版)
 	@date 2010.02.22 Moca auto_vsprintfから tchar_vsnprintf_s に変更.長すぎるときは切り詰められる
 */
-void CShareData::TraceOut( LPCTSTR lpFmt, ... )
+void CShareData::TraceOut( LPCWSTR lpFmt, ... )
 {
 	if( false == OpenDebugWindow( m_hwndTraceOutSource, false ) ){
 		return;
@@ -1090,12 +1090,12 @@ bool CShareData::OpenDebugWindow( HWND hwnd, bool bAllwaysActive )
 		// ちょっと不恰好だけど、TraceOut() の引数にいちいち起動元を指定するのも．．．
 		// 2010.05.11 Moca m_hwndTraceOutSourceは依然として使っていますが引数にしました
 		SLoadInfo sLoadInfo;
-		sLoadInfo.cFilePath = _T("");
+		sLoadInfo.cFilePath = L"";
 		// CODE_SJIS->CODE_UNICODE	2008/6/8 Uchi
 		// CODE_UNICODE->CODE_NONE	2010.05.11 Moca デフォルト文字コードで設定できるように無指定に変更
 		sLoadInfo.eCharCode = CODE_NONE;
 		sLoadInfo.bViewMode = false;
-		ret = CControlTray::OpenNewEditor( NULL, hwnd, sLoadInfo, _T("-DEBUGMODE"), true );
+		ret = CControlTray::OpenNewEditor( NULL, hwnd, sLoadInfo, L"-DEBUGMODE", true );
 		//	2001/06/23 N.Nakatani 窓が出るまでウエイトをかけるように修正
 		//アウトプットウインドウが出来るまで5秒ぐらい待つ。
 		//	Jun. 25, 2001 genta OpenNewEditorの同期機能を利用するように変更
@@ -1140,21 +1140,21 @@ BOOL CShareData::IsPrivateSettings( void ){
 	
 	@note idxは正確なものでなければならない。(内部で正当性チェックを行っていない)
 */
-int CShareData::GetMacroFilename( int idx, TCHAR *pszPath, int nBufLen )
+int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 {
 	if( -1 != idx && !m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].IsEnabled() )
 		return 0;
-	const TCHAR *ptr;
-	const TCHAR *pszFile;
+	const WCHAR *ptr;
+	const WCHAR *pszFile;
 
 	if( -1 == idx ){
-		pszFile = _T("RecKey.mac");
+		pszFile = L"RecKey.mac";
 	}else{
 		pszFile = m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].m_szFile;
 	}
-	if( pszFile[0] == _T('\0') ){	//	ファイル名が無い
+	if( pszFile[0] == L'\0' ){	//	ファイル名が無い
 		if( pszPath != NULL ){
-			pszPath[0] = _T('\0');
+			pszPath[0] = L'\0';
 		}
 		return 0;
 	}
@@ -1162,7 +1162,7 @@ int CShareData::GetMacroFilename( int idx, TCHAR *pszPath, int nBufLen )
 	int nLen = _tcslen( ptr ); // Jul. 21, 2003 genta wcslen対象が誤っていたためマクロ実行ができない
 
 	if( !_IS_REL_PATH( pszFile )	// 絶対パス
-		|| m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER[0] == _T('\0') ){	//	フォルダ指定なし
+		|| m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER[0] == L'\0' ){	//	フォルダ指定なし
 		if( pszPath == NULL || nBufLen <= nLen ){
 			return -nLen;
 		}
@@ -1171,10 +1171,10 @@ int CShareData::GetMacroFilename( int idx, TCHAR *pszPath, int nBufLen )
 	}
 	else {	//	フォルダ指定あり
 		//	相対パス→絶対パス
-		int nFolderSep = AddLastChar( m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER, _countof2(m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER), _T('\\') );
+		int nFolderSep = AddLastChar( m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER, _countof2(m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER), L'\\' );
 		int nAllLen;
-		TCHAR *pszDir;
-		TCHAR szDir[_MAX_PATH + _countof2( m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER )];
+		WCHAR *pszDir;
+		WCHAR szDir[_MAX_PATH + _countof2( m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER )];
 
 		 // 2003.06.24 Moca フォルダも相対パスなら実行ファイルからのパス
 		// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
@@ -1192,9 +1192,9 @@ int CShareData::GetMacroFilename( int idx, TCHAR *pszPath, int nBufLen )
 		}
 
 		_tcscpy( pszPath, pszDir );
-		TCHAR *ptr = pszPath + nDirLen;
+		WCHAR *ptr = pszPath + nDirLen;
 		if( -1 == nFolderSep ){
-			*ptr++ = _T('\\');
+			*ptr++ = L'\\';
 		}
 		_tcscpy( ptr, pszFile );
 		return nAllLen;
@@ -1510,16 +1510,16 @@ void CShareData::InitFileTree( SFileTree* setting )
 	for(int i = 0; i < (int)_countof(setting->m_aItems); i++){
 		SFileTreeItem& item = setting->m_aItems[i];
 		item.m_eFileTreeItemType = EFileTreeItemType_Grep;
-		item.m_szTargetPath = _T("");
-		item.m_szLabelName = _T("");
-		item.m_szTargetPath = _T("");
+		item.m_szTargetPath = L"";
+		item.m_szLabelName = L"";
+		item.m_szTargetPath = L"";
 		item.m_nDepth = 0;
-		item.m_szTargetFile = _T("");
+		item.m_szTargetFile = L"";
 		item.m_bIgnoreHidden = true;
 		item.m_bIgnoreReadOnly = false;
 		item.m_bIgnoreSystem = false;
 	}
 	setting->m_nItemCount = 1;
-	setting->m_aItems[0].m_szTargetPath = _T(".");
-	setting->m_aItems[0].m_szTargetFile = _T("*.*");
+	setting->m_aItems[0].m_szTargetPath = L".";
+	setting->m_aItems[0].m_szTargetFile = L"*.*";
 }

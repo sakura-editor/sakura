@@ -45,7 +45,7 @@ public:
 	virtual ~CGrepEnumFilterFiles(){
 	}
 
-	virtual BOOL IsValid( WIN32_FIND_DATA& w32fd, LPCTSTR pFile = NULL  ){
+	virtual BOOL IsValid( WIN32_FIND_DATA& w32fd, LPCWSTR pFile = NULL  ){
 		if( CGrepEnumFiles::IsValid( w32fd, pFile ) ){
 			if( m_cGrepEnumExceptFiles.IsValid( w32fd, pFile ) ){
 				return TRUE;
@@ -54,7 +54,7 @@ public:
 		return FALSE;
 	}
 
-	int Enumerates( LPCTSTR lpBaseFolder, CGrepEnumKeys& cGrepEnumKeys, CGrepEnumOptions option, CGrepEnumFiles& pExcept ){
+	int Enumerates( LPCWSTR lpBaseFolder, CGrepEnumKeys& cGrepEnumKeys, CGrepEnumOptions option, CGrepEnumFiles& pExcept ){
 		m_cGrepEnumExceptFiles.Enumerates( lpBaseFolder, cGrepEnumKeys.m_vecExceptFileKeys, option, NULL );
 		return CGrepEnumFiles::Enumerates( lpBaseFolder, cGrepEnumKeys.m_vecSearchFileKeys, option, &pExcept );
 	}

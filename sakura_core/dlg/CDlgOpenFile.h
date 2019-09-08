@@ -40,10 +40,10 @@ public:
 	virtual void Create(
 		HINSTANCE					hInstance,
 		HWND						hwndParent,
-		const TCHAR*				pszUserWildCard,
-		const TCHAR*				pszDefaultPath,
-		const std::vector<LPCTSTR>& vMRU			= std::vector<LPCTSTR>(),
-		const std::vector<LPCTSTR>& vOPENFOLDER		= std::vector<LPCTSTR>()
+		const WCHAR*				pszUserWildCard,
+		const WCHAR*				pszDefaultPath,
+		const std::vector<LPCWSTR>& vMRU			= std::vector<LPCWSTR>(),
+		const std::vector<LPCWSTR>& vOPENFOLDER		= std::vector<LPCWSTR>()
 	) = 0;
 
 	// 操作
@@ -55,7 +55,7 @@ public:
 		@retval false ダイアログをユーザーがキャンセル等で閉じたかもしくは開くのに失敗したか
 	*/
 	virtual bool DoModal_GetOpenFileName(
-		TCHAR* pszPath,
+		WCHAR* pszPath,
 		EFilter eAddFilter
 	) = 0;
 
@@ -63,7 +63,7 @@ public:
 		@param pszPath [i/o] 初期ファイル名．選択されたファイル名の格納場所
 	*/
 	virtual bool DoModal_GetSaveFileName(
-		TCHAR* pszPath
+		WCHAR* pszPath
 	) = 0;
 
 	/* 開くダイアログ モーダルダイアログの表示 */
@@ -93,22 +93,22 @@ public:
 	void Create(
 		HINSTANCE					hInstance,
 		HWND						hwndParent,
-		const TCHAR*				pszUserWildCard,
-		const TCHAR*				pszDefaultPath,
-		const std::vector<LPCTSTR>& vMRU			= std::vector<LPCTSTR>(),
-		const std::vector<LPCTSTR>& vOPENFOLDER		= std::vector<LPCTSTR>()
+		const WCHAR*				pszUserWildCard,
+		const WCHAR*				pszDefaultPath,
+		const std::vector<LPCWSTR>& vMRU			= std::vector<LPCWSTR>(),
+		const std::vector<LPCWSTR>& vOPENFOLDER		= std::vector<LPCWSTR>()
 	) override;
 
 	//操作
-	inline bool DoModal_GetOpenFileName(TCHAR* pszPath, EFilter eAddFileter = EFITER_TEXT) override;
-	inline bool DoModal_GetSaveFileName(TCHAR* pszPath) override;
+	inline bool DoModal_GetOpenFileName(WCHAR* pszPath, EFilter eAddFileter = EFITER_TEXT) override;
+	inline bool DoModal_GetSaveFileName(WCHAR* pszPath) override;
 	inline bool DoModalOpenDlg(SLoadInfo* pLoadInfo,
 		std::vector<std::wstring>* pFilenames,
 		bool bOptions = true) override;
 	inline bool DoModalSaveDlg(SSaveInfo*	pSaveInfo, bool bSimpleMode) override;
 
 	// 設定フォルダ相対ファイル選択(共有データ,ini位置依存)
-	static BOOL SelectFile(HWND parent, HWND hwndCtl, const TCHAR* filter,
+	static BOOL SelectFile(HWND parent, HWND hwndCtl, const WCHAR* filter,
 						   bool resolvePath, EFilter eAddFilter = EFITER_TEXT);
 
 	DISALLOW_COPY_AND_ASSIGN(CDlgOpenFile);

@@ -108,7 +108,7 @@ static bool Commander_COMPARE_core(CViewCommander& commander, bool& bDifferent, 
 void CViewCommander::Command_COMPARE( void )
 {
 	HWND		hwndCompareWnd = NULL;
-	TCHAR		szPath[_MAX_PATH + 1];
+	WCHAR		szPath[_MAX_PATH + 1];
 	CDlgCompare	cDlgCompare;
 	HWND		hwndMsgBox;	//@@@ 2003.06.12 MIK
 
@@ -221,7 +221,7 @@ void CViewCommander::Command_COMPARE( void )
 	return;
 }
 
-static ECodeType GetFileCharCode( LPCTSTR pszFile )
+static ECodeType GetFileCharCode( LPCWSTR pszFile )
 {
 	const STypeConfigMini* typeMini;
 	CDocTypeManager().GetTypeConfigMini( CDocTypeManager().GetDocumentTypeOfPath( pszFile ), &typeMini );
@@ -245,10 +245,10 @@ static ECodeType GetDiffCreateTempFileCode(ECodeType code)
 void CViewCommander::Command_Diff( const WCHAR* _szDiffFile2, int nFlgOpt )
 {
 	const std::wstring strDiffFile2 = to_wchar(_szDiffFile2);
-	const TCHAR* szDiffFile2 = strDiffFile2.c_str();
+	const WCHAR* szDiffFile2 = strDiffFile2.c_str();
 
 	bool	bTmpFile1 = false;
-	TCHAR	szTmpFile1[_MAX_PATH * 2];
+	WCHAR	szTmpFile1[_MAX_PATH * 2];
 
 	if( !IsFileExists( szDiffFile2, true ) )
 	{
@@ -281,7 +281,7 @@ void CViewCommander::Command_Diff( const WCHAR* _szDiffFile2, int nFlgOpt )
 	}
 
 	bool bTmpFile2 = false;
-	TCHAR	szTmpFile2[_MAX_PATH * 2];
+	WCHAR	szTmpFile2[_MAX_PATH * 2];
 	bool bTmpFileMode = code2 != saveCode2;
 	if( !bTmpFileMode ){
 		_tcscpy(szTmpFile2, szDiffFile2);
@@ -331,12 +331,12 @@ void CViewCommander::Command_Diff_Dialog( void )
 	}
 	
 	//自ファイル
-	TCHAR	szTmpFile1[_MAX_PATH * 2];
+	WCHAR	szTmpFile1[_MAX_PATH * 2];
 	ECodeType code = GetDocument()->GetDocumentEncoding();
 	ECodeType saveCode = GetDiffCreateTempFileCode(code);
 	ECodeType code2 = cDlgDiff.m_nCodeTypeDst;
 	if( CODE_ERROR == code2 ){
-		if( cDlgDiff.m_szFile2[0] != _T('\0') ){
+		if( cDlgDiff.m_szFile2[0] != L'\0' ){
 			// ファイル名指定
 			code2 = GetFileCharCode(cDlgDiff.m_szFile2);
 		}
@@ -359,9 +359,9 @@ void CViewCommander::Command_Diff_Dialog( void )
 		
 	//相手ファイル
 	// UNICODE,UNICODEBEの場合は常に一時ファイルでUTF-8にする
-	TCHAR	szTmpFile2[_MAX_PATH * 2];
+	WCHAR	szTmpFile2[_MAX_PATH * 2];
 	// 2014.06.25 ファイル名がない(=無題,Grep,アウトプット)もTmpFileModeにする
-	bool bTmpFileMode = cDlgDiff.m_bIsModifiedDst || code2 != saveCode2 || cDlgDiff.m_szFile2[0] == _T('\0');
+	bool bTmpFileMode = cDlgDiff.m_bIsModifiedDst || code2 != saveCode2 || cDlgDiff.m_szFile2[0] == L'\0';
 	if( !bTmpFileMode ){
 		// 未変更でファイルありでASCII系コードの場合のみ,そのままファイルを利用する
 		_tcscpy( szTmpFile2, cDlgDiff.m_szFile2 );

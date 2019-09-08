@@ -35,14 +35,14 @@
 */
 void ChangeCurrentDirectoryToExeDir()
 {
-	TCHAR szExeDir[_MAX_PATH];
-	szExeDir[0] = _T('\0');
+	WCHAR szExeDir[_MAX_PATH];
+	szExeDir[0] = L'\0';
 	GetExedir( szExeDir, NULL );
 	if( szExeDir[0] ){
 		::SetCurrentDirectory( szExeDir );
 	}else{
 		// 移動できないときはSYSTEM32(9xではSYSTEM)に移動
-		szExeDir[0] = _T('\0');
+		szExeDir[0] = L'\0';
 		int n = ::GetSystemDirectory( szExeDir, _MAX_PATH );
 		if( n && n < _MAX_PATH ){
 			::SetCurrentDirectory( szExeDir );
@@ -53,7 +53,7 @@ void ChangeCurrentDirectoryToExeDir()
 /*! 
 	@date 2010.08.28 Moca 新規作成
 */
-HMODULE LoadLibraryExedir(LPCTSTR pszDll)
+HMODULE LoadLibraryExedir(LPCWSTR pszDll)
 {
 	CCurrentDirectoryBackupPoint dirBack;
 	// DLL インジェクション対策としてEXEのフォルダに移動する
@@ -69,7 +69,7 @@ HMODULE LoadLibraryExedir(LPCTSTR pszDll)
 	@author ? (from MSDN Library document)
 	@date 2006.06.17 ryoji MSDNライブラリから引用
 */
-DWORD GetDllVersion(LPCTSTR lpszDllName)
+DWORD GetDllVersion(LPCWSTR lpszDllName)
 {
 	HINSTANCE hinstDll;
 	DWORD dwVersion = 0;
@@ -128,12 +128,12 @@ DWORD GetDllVersion(LPCTSTR lpszDllName)
 	@date 2007.05.20 ryoji iniファイルパスを優先
 	@author genta
 */
-HICON GetAppIcon( HINSTANCE hInst, int nResource, const TCHAR* szFile, bool bSmall )
+HICON GetAppIcon( HINSTANCE hInst, int nResource, const WCHAR* szFile, bool bSmall )
 {
 	// サイズの設定
 	int size = GetSystemMetrics( bSmall ? SM_CXSMICON : SM_CXICON );
 
-	TCHAR szPath[_MAX_PATH];
+	WCHAR szPath[_MAX_PATH];
 	HICON hIcon;
 
 	// ファイルからの読み込みをまず試みる

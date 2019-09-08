@@ -100,7 +100,7 @@ private:
 	struct FavoriteInfo {
 		CRecent*	m_pRecent;			//オブジェクトへのポインタ
 		std::wstring	m_strCaption;	//キャプション
-		const TCHAR*	m_pszCaption;	//キャプション
+		const WCHAR*	m_pszCaption;	//キャプション
 		int			m_nId;				//コントロールのID
 		bool		m_bHaveFavorite;	//お気に入りを持っているか？
 		bool		m_bHaveView;		//表示数変更機能をもっているか？
@@ -134,7 +134,7 @@ private:
 
 	int		m_nCurrentTab;
 	int		m_nExceptTab;
-	TCHAR	m_szMsg[1024];
+	WCHAR	m_szMsg[1024];
 
 	static void  ListViewSort(ListViewSortInfo& info, const CRecent* pRecent, int column, bool bReverse);
 };

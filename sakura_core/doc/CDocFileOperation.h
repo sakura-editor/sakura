@@ -42,7 +42,7 @@ public:
 	//ロードUI
 	bool OpenFileDialog(
 		HWND				hwndParent,
-		const TCHAR*		pszOpenFolder,	//!< [in]  NULL以外を指定すると初期フォルダを指定できる
+		const WCHAR*		pszOpenFolder,	//!< [in]  NULL以外を指定すると初期フォルダを指定できる
 		SLoadInfo*			pLoadInfo,		//!< [in,out] ロード情報
 		std::vector<std::wstring>&	files
 	);
@@ -61,7 +61,7 @@ public:
 
 	//セーブUI
 	bool SaveFileDialog(SSaveInfo* pSaveInfo);	//!<「ファイル名を付けて保存」ダイアログ
-	bool SaveFileDialog(LPTSTR szPath);			//!<「ファイル名を付けて保存」ダイアログ
+	bool SaveFileDialog(LPWSTR szPath);			//!<「ファイル名を付けて保存」ダイアログ
 
 	//セーブフロー
 	bool DoSaveFlow(SSaveInfo* pSaveInfo);
@@ -73,7 +73,7 @@ public:
 
 	//その他
 	void FileCloseOpen(				//!< 閉じて開く	// 2006.12.30 ryoji
-		const SLoadInfo& sLoadInfo = SLoadInfo(_T(""), CODE_AUTODETECT, false)
+		const SLoadInfo& sLoadInfo = SLoadInfo(L"", CODE_AUTODETECT, false)
 	);
 
 private:

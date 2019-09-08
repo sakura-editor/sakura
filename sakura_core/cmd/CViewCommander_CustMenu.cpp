@@ -35,17 +35,17 @@ void CViewCommander::Command_MENU_RBUTTON( void )
 	}
 	switch( nId ){
 	case IDM_COPYDICINFO:
-		const TCHAR*	pszStr;
+		const WCHAR*	pszStr;
 		pszStr = m_pCommanderView->m_cTipWnd.m_cInfo.GetStringPtr( &nLength );
 
-		TCHAR*		pszWork;
-		pszWork = new TCHAR[nLength + 1];
+		WCHAR*		pszWork;
+		pszWork = new WCHAR[nLength + 1];
 		auto_memcpy( pszWork, pszStr, nLength );
-		pszWork[nLength] = _T('\0');
+		pszWork[nLength] = L'\0';
 
 		// 見た目と同じように、\n を CR+LFへ変換する
 		for( i = 0; i < nLength ; ++i){
-			if( pszWork[i] == _T('\\') && pszWork[i + 1] == _T('n')){
+			if( pszWork[i] == L'\\' && pszWork[i + 1] == L'n'){
 				pszWork[i] =     WCODE::CR;
 				pszWork[i + 1] = WCODE::LF;
 			}

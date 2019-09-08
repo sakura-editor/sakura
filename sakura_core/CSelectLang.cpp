@@ -63,7 +63,7 @@ HINSTANCE CSelectLang::getLangRsrcInstance( void )
 
 	@date 2011.04.10 nasukoji	新規作成
 */
-LPCTSTR CSelectLang::getDefaultLangString( void )
+LPCWSTR CSelectLang::getDefaultLangString( void )
 {
 	return m_psLangInfo->szLangName;
 }
@@ -103,10 +103,10 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 		assert(0 < nCount);
 
 		// 言語IDを取得
-		TCHAR szBuf[7];		// "0x" + 4桁 + 番兵
+		WCHAR szBuf[7];		// "0x" + 4桁 + 番兵
 		nCount = ::LoadString( psLangInfo->hInstance, STR_SELLANG_LANGID, szBuf, _countof(szBuf));
 		assert(nCount == _countof(szBuf) - 1);
-		szBuf[_countof(szBuf) - 1] = _T('\0');
+		szBuf[_countof(szBuf) - 1] = L'\0';
 
 		psLangInfo->wLangId = (WORD)_tcstoul(szBuf, NULL, 16);		// 言語IDを数値化
 		assert(0 < psLangInfo->wLangId);
@@ -129,7 +129,7 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 // ★iniまたはexeフォルダとなるように改造が必要
 
 	WIN32_FIND_DATA w32fd;
-	TCHAR szPath[] = _T("sakura_lang_*.dll");			// サーチするメッセージリソースDLL
+	WCHAR szPath[] = L"sakura_lang_*.dll";			// サーチするメッセージリソースDLL
 	HANDLE handle = FindFirstFile( szPath, &w32fd );
 	BOOL result = (INVALID_HANDLE_VALUE != handle) ? TRUE : FALSE;
 
@@ -181,13 +181,13 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 */
 HINSTANCE CSelectLang::LoadLangRsrcLibrary( SSelLangInfo& lang )
 {
-	if( lang.szDllName[0] == _T('\0') )
+	if( lang.szDllName[0] == L'\0' )
 		return NULL;		// DLLが指定されていなければNULLを返す
 
 	int nCount;
 
 	lang.bValid  = FALSE;
-	lang.szLangName[0] = _T('\0');
+	lang.szLangName[0] = L'\0';
 	lang.wLangId = 0;
 
 	HINSTANCE hInstance = LoadLibraryExedir( lang.szDllName );
@@ -198,9 +198,9 @@ HINSTANCE CSelectLang::LoadLangRsrcLibrary( SSelLangInfo& lang )
 
 		if( nCount > 0 ){
 			// 言語IDを取得
-			TCHAR szBuf[7];		// "0x" + 4桁 + 番兵
+			WCHAR szBuf[7];		// "0x" + 4桁 + 番兵
 			nCount = ::LoadString( hInstance, STR_SELLANG_LANGID, szBuf, _countof(szBuf) );
-			szBuf[_countof(szBuf) - 1] = _T('\0');
+			szBuf[_countof(szBuf) - 1] = L'\0';
 
 			if( nCount > 0 ){
 				lang.wLangId = (WORD)_tcstoul( szBuf, NULL, 16 );		// 言語IDを数値化
@@ -237,7 +237,7 @@ int CLoadString::m_nDataTempArrayIndex = 0;							// 最後に使用したバッ
 
 	@date 2011.06.01 nasukoji	新規作成
 */
-LPCTSTR CLoadString::LoadStringSt( UINT uid )
+LPCWSTR CLoadString::LoadStringSt( UINT uid )
 {
 	// 使用するバッファの現在位置を進める
 	m_nDataTempArrayIndex = (m_nDataTempArrayIndex + 1) % _countof(m_acLoadStrBufferTemp);
@@ -266,7 +266,7 @@ LPCTSTR CLoadString::LoadStringSt( UINT uid )
 
 	@date 2011.06.01 nasukoji	新規作成
 */
-LPCTSTR CLoadString::LoadString( UINT uid )
+LPCWSTR CLoadString::LoadString( UINT uid )
 {
 	m_cLoadStrBuffer.LoadString( uid );
 
@@ -319,7 +319,7 @@ int CLoadString::CLoadStrBuffer::LoadString( UINT uid )
 				hRsrc = ::GetModuleHandle(NULL);	// 内部リソースを使う
 			}else{
 				// 内部リソースからも読めなかったら諦める（普通はあり得ない）
-				m_pszString[0] = _T('\0');
+				m_pszString[0] = L'\0';
 				break;
 			}
 #ifdef UNICODE
@@ -329,10 +329,10 @@ int CLoadString::CLoadStrBuffer::LoadString( UINT uid )
 #endif
 			// 読みきれなかった場合、バッファを拡張して読み直す
 			int nTemp = m_nBufferSize + LOADSTR_ADD_SIZE;		// 拡張したサイズ
-			LPTSTR pTemp;
+			LPWSTR pTemp;
 
 			try{
-				pTemp = new TCHAR[nTemp];
+				pTemp = new WCHAR[nTemp];
 			}
 			catch(std::bad_alloc){
 				// メモリ割り当て例外（例外の発生する環境の場合でも旧来の処理にする）
@@ -361,7 +361,7 @@ int CLoadString::CLoadStrBuffer::LoadString( UINT uid )
 	return nRet;
 }
 
-void CSelectLang::ChangeLang( TCHAR* pszDllName )
+void CSelectLang::ChangeLang( WCHAR* pszDllName )
 {
 	/* 言語を選択する */
 	UINT unIndex;

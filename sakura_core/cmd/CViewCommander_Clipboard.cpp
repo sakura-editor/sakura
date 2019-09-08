@@ -337,7 +337,7 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 
 			if( bAddLastCR )
 			{
-//				MYTRACE( _T(" カーソル行が最後の行かつ行末に改行が無く、\n挿入すべきデータがまだある場合は行末に改行を挿入。\n") );
+//				MYTRACE( L" カーソル行が最後の行かつ行末に改行が無く、\n挿入すべきデータがまだある場合は行末に改行を挿入。\n" );
 				nInsPosX = m_pCommanderView->LineIndexToColumn( pcLayout, nLineLen );
 
 				m_pCommanderView->InsertData_CEditView(
@@ -1110,7 +1110,7 @@ void CViewCommander::Command_COPYPATH( void )
 {
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		/* クリップボードにデータを設定 */
-		const TCHAR* szPath = GetDocument()->m_cDocFile.GetFilePath();
+		const WCHAR* szPath = GetDocument()->m_cDocFile.GetFilePath();
 		m_pCommanderView->MySetClipboardData( szPath, _tcslen(szPath), false );
 	}
 	else{

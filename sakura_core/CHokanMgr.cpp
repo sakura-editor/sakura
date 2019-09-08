@@ -109,7 +109,7 @@ int CHokanMgr::Search(
 	int				nWinHeight,
 	int				nColumnWidth,
 	const wchar_t*	pszCurWord,
-	const TCHAR*	pszHokanFile,
+	const WCHAR*	pszHokanFile,
 	bool			bHokanLoHiCase,	// 入力補完機能：英大文字小文字を同一視する 2001/06/19 asa-o
 	bool			bHokanByFile,	// 編集中データから候補を探す 2003.06.23 Moca
 	int				nHokanType,
@@ -532,7 +532,7 @@ BOOL CHokanMgr::OnLbnSelChange( HWND hwndCtl, int wID )
 /* 補完実行 */
 BOOL CHokanMgr::DoHokan( int nVKey )
 {
-	DEBUG_TRACE( _T("CHokanMgr::DoHokan( nVKey==%xh )\n"), nVKey );
+	DEBUG_TRACE( L"CHokanMgr::DoHokan( nVKey==%xh )\n", nVKey );
 
 	/* 補完候補決定キー */
 	if( VK_RETURN	== nVKey && !m_pShareData->m_Common.m_sHelper.m_bHokanKey_RETURN )	return FALSE;/* VK_RETURN 補完決定キーが有効/無効 */
@@ -604,7 +604,7 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 //	//	switch( vkey ){
 //	//	}
 //
-//		MYTRACE( _T("CHokanMgr::OnCharToItem vkey=%xh\n"), vkey );
+//		MYTRACE( L"CHokanMgr::OnCharToItem vkey=%xh\n", vkey );
 //		return -1;
 //	}
 
@@ -612,7 +612,7 @@ int CHokanMgr::KeyProc( WPARAM wParam, LPARAM lParam )
 {
 	WORD vkey;
 	vkey = LOWORD(wParam);		// virtual-key code
-//	MYTRACE( _T("CHokanMgr::OnVKeyToItem vkey=%xh\n"), vkey );
+//	MYTRACE( L"CHokanMgr::OnVKeyToItem vkey=%xh\n", vkey );
 	switch( vkey ){
 	case VK_HOME:
 	case VK_END:

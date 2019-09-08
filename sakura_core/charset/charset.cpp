@@ -100,7 +100,7 @@ extern bool IsValidCodeType(int code)
 //                           名前                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-LPCTSTR CCodeTypeName::Normal() const
+LPCWSTR CCodeTypeName::Normal() const
 {
 	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
 		return NULL;
@@ -108,7 +108,7 @@ LPCTSTR CCodeTypeName::Normal() const
 	return to_wchar( msCodeSet[m_eCodeType].m_sNormal );
 }
 
-LPCTSTR CCodeTypeName::Short() const
+LPCWSTR CCodeTypeName::Short() const
 {
 	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
 		return NULL;
@@ -116,7 +116,7 @@ LPCTSTR CCodeTypeName::Short() const
 	return to_wchar( msCodeSet[m_eCodeType].m_sShort );
 }
 
-LPCTSTR CCodeTypeName::Bracket() const
+LPCWSTR CCodeTypeName::Bracket() const
 {
 	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
 		return NULL;
@@ -179,7 +179,7 @@ ECodeType CCodeTypesForCombobox::GetCode(int nIndex) const
 	return vDispIdx[nIndex];
 }
 
-LPCTSTR CCodeTypesForCombobox::GetName(int nIndex) const
+LPCWSTR CCodeTypesForCombobox::GetName(int nIndex) const
 {
 	if (nIndex == 0) {
 		return LS(STR_ERR_GLOBAL01);

@@ -41,31 +41,31 @@ public:
 	CFileExt();
 	~CFileExt();
 
-	bool AppendExt( const TCHAR *pszName, const TCHAR *pszExt );
-	bool AppendExtRaw( const TCHAR *pszName, const TCHAR *pszExt );
-	const TCHAR *GetName( int nIndex );
-	const TCHAR *GetExt( int nIndex );
+	bool AppendExt( const WCHAR *pszName, const WCHAR *pszExt );
+	bool AppendExtRaw( const WCHAR *pszName, const WCHAR *pszExt );
+	const WCHAR *GetName( int nIndex );
+	const WCHAR *GetExt( int nIndex );
 
 	//ダイアログに渡す拡張子フィルタを取得する。(lpstrFilterに直接指定可能)
 	//2回呼び出すと古いバッファが無効になることがあるのに注意
-	const TCHAR *GetExtFilter( void );
+	const WCHAR *GetExtFilter( void );
 
 	int GetCount( void ) { return m_nCount; }
 
 protected:
 	// 2014.10.30 syat ConvertTypesExtToDlgExtをCDocTypeManagerに移動
-	//bool ConvertTypesExtToDlgExt( const TCHAR *pszSrcExt, TCHAR *pszDstExt );
+	//bool ConvertTypesExtToDlgExt( const WCHAR *pszSrcExt, WCHAR *pszDstExt );
 
 private:
 
 	typedef struct {
-		TCHAR	m_szName[64];		//名前(64文字以下のはず→m_szTypeName)
-		TCHAR	m_szExt[MAX_TYPES_EXTS*3+1];	//拡張子(64文字以下のはず→m_szTypeExts) なお "*." を追加するのでそれなりに必要
+		WCHAR	m_szName[64];		//名前(64文字以下のはず→m_szTypeName)
+		WCHAR	m_szExt[MAX_TYPES_EXTS*3+1];	//拡張子(64文字以下のはず→m_szTypeExts) なお "*." を追加するのでそれなりに必要
 	} FileExtInfoTag;
 
 	int				m_nCount;
 	FileExtInfoTag	*m_puFileExtInfo;
-	std::vector<TCHAR>	m_vstrFilter;
+	std::vector<WCHAR>	m_vstrFilter;
 
 	DISALLOW_COPY_AND_ASSIGN(CFileExt);
 };

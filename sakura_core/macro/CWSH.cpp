@@ -300,7 +300,7 @@ static unsigned __stdcall AbortMacroProc( LPVOID lpParameter )
 	//停止ダイアログ表示前に数秒待つ
 	if(::WaitForSingleObject(pParam->hEvent, pParam->nCancelTimer * 1000) == WAIT_TIMEOUT){
 		//停止ダイアログ表示
-		DEBUG_TRACE(_T("AbortMacro: Show Dialog\n"));
+		DEBUG_TRACE(L"AbortMacro: Show Dialog\n");
 
 		MSG msg;
 		CDlgCancel cDlgCancel;
@@ -328,22 +328,22 @@ static unsigned __stdcall AbortMacroProc( LPVOID lpParameter )
 				break;
 			}
 			if(!bCanceled && cDlgCancel.IsCanceled()){
-				DEBUG_TRACE(_T("Canceld\n"));
+				DEBUG_TRACE(L"Canceld\n");
 				bCanceled = true;
 				cDlgCancel.CloseDialog( 0 );
 			}
 			if(cDlgCancel.GetHwnd() == NULL){
-				DEBUG_TRACE(_T("Close\n"));
+				DEBUG_TRACE(L"Close\n");
 				break;
 			}
 		}
 
-		DEBUG_TRACE(_T("AbortMacro: Try Interrupt\n"));
+		DEBUG_TRACE(L"AbortMacro: Try Interrupt\n");
 		pParam->pEngine->InterruptScriptThread(SCRIPTTHREADID_BASE, NULL, 0);
-		DEBUG_TRACE(_T("AbortMacro: Done\n"));
+		DEBUG_TRACE(L"AbortMacro: Done\n");
 	}
 
-	DEBUG_TRACE(_T("AbortMacro: Exit\n"));
+	DEBUG_TRACE(L"AbortMacro: Exit\n");
 	return 0;
 }
 
@@ -387,7 +387,7 @@ bool CWSHClient::Execute(const wchar_t *AScript)
 				if( 0 < sThreadParam.nCancelTimer ){
 					sThreadParam.hEvent = ::CreateEvent(NULL, TRUE, FALSE, NULL);
 					hThread = (HANDLE)_beginthreadex( NULL, 0, AbortMacroProc, (LPVOID)&sThreadParam, 0, &nThreadId );
-					DEBUG_TRACE(_T("Start AbortMacroProc 0x%08x\n"), nThreadId);
+					DEBUG_TRACE(L"Start AbortMacroProc 0x%08x\n", nThreadId);
 				}
 
 				//マクロ実行
@@ -412,7 +412,7 @@ bool CWSHClient::Execute(const wchar_t *AScript)
 					::SetEvent(sThreadParam.hEvent);
 
 					//マクロ停止スレッドの終了待ち
-					DEBUG_TRACE(_T("Waiting for AbortMacroProc to finish\n"));
+					DEBUG_TRACE(L"Waiting for AbortMacroProc to finish\n");
 					::WaitForSingleObject(hThread, INFINITE); 
 					::CloseHandle(hThread);
 					::CloseHandle(sThreadParam.hEvent);

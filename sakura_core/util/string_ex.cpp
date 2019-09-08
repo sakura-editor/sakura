@@ -51,11 +51,11 @@ LPWSTR wcscpyn(LPWSTR lpString1,LPCWSTR lpString2,int iMaxLength)
 }
 
 /*
-	TCHAR と WCHAR または ACHAR の変換関数
+	WCHAR と WCHAR または ACHAR の変換関数
 */
 
-ACHAR* tcstostr( ACHAR* dest, const TCHAR* src, size_t count){
-	TCHAR* pr = const_cast<TCHAR*>(src);
+ACHAR* tcstostr( ACHAR* dest, const WCHAR* src, size_t count){
+	WCHAR* pr = const_cast<WCHAR*>(src);
 	ACHAR* pw = dest;
 	for( ; pr < src+count; ++pr ){
 		*pw = static_cast<ACHAR>(*pr);
@@ -63,8 +63,8 @@ ACHAR* tcstostr( ACHAR* dest, const TCHAR* src, size_t count){
 	}
 	return pw;
 }
-WCHAR* tcstostr( WCHAR* dest, const TCHAR* src, size_t count){
-	TCHAR* pr = const_cast<TCHAR*>(src);
+WCHAR* tcstostr( WCHAR* dest, const WCHAR* src, size_t count){
+	WCHAR* pr = const_cast<WCHAR*>(src);
 	WCHAR* pw = dest;
 	for( ; pr < src+count; ++pr ){
 		*pw = static_cast<WCHAR>(*pr);
@@ -73,22 +73,22 @@ WCHAR* tcstostr( WCHAR* dest, const TCHAR* src, size_t count){
 	return pw;
 }
 
-TCHAR* strtotcs( TCHAR* dest, const ACHAR* src, size_t count )
+WCHAR* strtotcs( WCHAR* dest, const ACHAR* src, size_t count )
 {
 	ACHAR* pr = const_cast<ACHAR*>(src);
-	TCHAR* pw = dest;
+	WCHAR* pw = dest;
 	for( ; pr < src+count; ++pr ){
-		*pw = static_cast<TCHAR>(*pr);
+		*pw = static_cast<WCHAR>(*pr);
 		++pw;
 	}
 	return pw;
 }
-TCHAR* strtotcs( TCHAR* dest, const WCHAR* src, size_t count )
+WCHAR* strtotcs( WCHAR* dest, const WCHAR* src, size_t count )
 {
 	WCHAR* pr = const_cast<WCHAR*>(src);
-	TCHAR* pw = dest;
+	WCHAR* pw = dest;
 	for( ; pr < src+count; ++pr ){
-		*pw = static_cast<TCHAR>(*pr);
+		*pw = static_cast<WCHAR>(*pr);
 		++pw;
 	}
 	return pw;
@@ -393,29 +393,29 @@ void wcstombs_vector(const wchar_t* pSrc, int nSrcLen, std::vector<char>* ret)
 	(*ret)[nNewLen]='\0';
 }
 
-size_t _tcstowcs(WCHAR* wszDst, const TCHAR* tszSrc, size_t nDstCount)
+size_t _tcstowcs(WCHAR* wszDst, const WCHAR* tszSrc, size_t nDstCount)
 {
 	wcsncpy_s(wszDst, nDstCount, tszSrc, _TRUNCATE);
 	return wcslen(wszDst);
 }
-size_t _tcstombs(CHAR*  szDst,  const TCHAR* tszSrc, size_t nDstCount)
+size_t _tcstombs(CHAR*  szDst,  const WCHAR* tszSrc, size_t nDstCount)
 {
 	return wcstombs2(szDst, tszSrc, nDstCount);
 }
-size_t _wcstotcs(TCHAR* tszDst, const WCHAR* wszSrc, size_t nDstCount)
+size_t _wcstotcs(WCHAR* tszDst, const WCHAR* wszSrc, size_t nDstCount)
 {
 	wcsncpy_s(tszDst, nDstCount, wszSrc, _TRUNCATE);
 	return wcslen(tszDst);
 }
-size_t _mbstotcs(TCHAR* tszDst, const CHAR*  szSrc,  size_t nDstCount)
+size_t _mbstotcs(WCHAR* tszDst, const CHAR*  szSrc,  size_t nDstCount)
 {
 	return mbstowcs2(tszDst, szSrc, nDstCount);
 }
-int _tctomb(const TCHAR* p,ACHAR* mb)
+int _tctomb(const WCHAR* p,ACHAR* mb)
 {
 	return wctomb(mb,*p);
 }
-int _tctowc(const TCHAR* p,WCHAR* wc)
+int _tctowc(const WCHAR* p,WCHAR* wc)
 {
 	*wc=*p;
 	return 1;
@@ -486,7 +486,7 @@ CHAR_TYPE* my_strtok(
 			{
 				if( auto_strchr( pDelimiter, pBuffer[i] ) )
 				{
-					pBuffer[i++] = _T('\0');
+					pBuffer[i++] = L'\0';
 					break;
 				}
 			}

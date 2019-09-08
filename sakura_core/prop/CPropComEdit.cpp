@@ -113,13 +113,13 @@ INT_PTR CPropEdit::DispatchEvent(
 				return TRUE;
 			case IDC_BUTTON_FILEOPENDIR:
 				{
-					TCHAR szMetaPath[_MAX_PATH];
-					TCHAR szPath[_MAX_PATH];
+					WCHAR szMetaPath[_MAX_PATH];
+					WCHAR szPath[_MAX_PATH];
 					::DlgItem_GetText( hwndDlg, IDC_EDIT_FILEOPENDIR, szMetaPath, _countof(szMetaPath) );
 					CFileNameManager::ExpandMetaToFolder( szMetaPath, szPath, _countof(szPath) );
 					if( SelectDir( hwndDlg, LS(STR_PROPEDIT_SELECT_DIR), szPath, szPath ) ){
 						CNativeW cmem(szPath);
-						cmem.Replace(_T("%"), _T("%%"));
+						cmem.Replace(L"%", L"%%");
 						::DlgItem_SetText( hwndDlg, IDC_EDIT_FILEOPENDIR, cmem.GetStringPtr() );
 					}
 				}
@@ -136,7 +136,7 @@ INT_PTR CPropEdit::DispatchEvent(
 			OnHelp( hwndDlg, IDD_PROP_EDIT );
 			return TRUE;
 		case PSN_KILLACTIVE:
-			DEBUG_TRACE( _T("Edit PSN_KILLACTIVE\n") );
+			DEBUG_TRACE( L"Edit PSN_KILLACTIVE\n" );
 
 			/* ダイアログデータの取得 Edit */
 			GetData( hwndDlg );

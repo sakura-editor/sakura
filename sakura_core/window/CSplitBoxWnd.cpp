@@ -17,7 +17,7 @@
 #include "uiparts/CGraphics.h"
 
 CSplitBoxWnd::CSplitBoxWnd()
-: CWnd(_T("::CSplitBoxWnd"))
+: CWnd(L"::CSplitBoxWnd")
 {
 	m_bVertical = TRUE;	/* 垂直分割ボックスか */
 	return;
@@ -33,15 +33,15 @@ HWND CSplitBoxWnd::Create( HINSTANCE hInstance, HWND hwndParent, int bVertical )
 	int			nCxVScroll;
 	RECT		rc;
 	HCURSOR		hCursor;
-	LPCTSTR		pszClassName;
+	LPCWSTR		pszClassName;
 
 	/* ウィンドウクラス作成 */
 	if( bVertical ){
-		pszClassName = _T("VSplitBoxWnd");
+		pszClassName = L"VSplitBoxWnd";
 		hCursor = ::LoadCursor( NULL, IDC_SIZENS );
 	}
 	else{
-		pszClassName = _T("HSplitBoxWnd");
+		pszClassName = L"HSplitBoxWnd";
 		hCursor = ::LoadCursor( NULL, IDC_SIZEWE );
 	}
 	RegisterWC(
@@ -245,7 +245,7 @@ LRESULT CSplitBoxWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 		yPos = po.y;
 
 		if( yPos != m_nDragPosY ){
-//			MYTRACE( _T("xPos=%d yPos=%d\n"), xPos, yPos );
+//			MYTRACE( L"xPos=%d yPos=%d\n", xPos, yPos );
 
 			hdc = ::GetDC( ::GetParent( GetParentHwnd() ) );
 			::SetBkColor( hdc, RGB(0, 0, 0) );
@@ -298,7 +298,7 @@ LRESULT CSplitBoxWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 		yPos = po.y;
 
 		if( xPos != m_nDragPosX ){
-//			MYTRACE( _T("xPos=%d yPos=%d\n"), xPos, yPos );
+//			MYTRACE( L"xPos=%d yPos=%d\n", xPos, yPos );
 
 			hdc = ::GetDC( ::GetParent( GetParentHwnd() ) );
 			::SetBkColor( hdc, RGB(0, 0, 0) );

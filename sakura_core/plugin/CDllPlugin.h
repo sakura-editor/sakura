@@ -75,8 +75,8 @@ public:
 	bool InitDllImp() {
 		return true;
 	}
-	LPCTSTR GetDllNameImp(int nIndex) {
-		return _T("");
+	LPCWSTR GetDllNameImp(int nIndex) {
+		return L"";
 	}
 
 	//メンバ変数

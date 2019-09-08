@@ -33,7 +33,7 @@ CRunningTimer::CRunningTimer( const char* pszText )
 	else
 		m_szText[0] = '\0';
 	m_nDeapth = m_nNestCount++;
-	MYTRACE( _T("%3d:\"%hs\" : Enter \n"), m_nDeapth, m_szText );
+	MYTRACE( L"%3d:\"%hs\" : Enter \n", m_nDeapth, m_szText );
 	return;
 }
 
@@ -59,7 +59,7 @@ DWORD CRunningTimer::Read()
 */
 void CRunningTimer::WriteTrace(const char* msg) const
 {
-	MYTRACE( _T("%3d:\"%hs\", %d㍉秒 : %hs\n"), m_nDeapth, m_szText, timeGetTime() - m_nStartTime, msg );
+	MYTRACE( L"%3d:\"%hs\", %d㍉秒 : %hs\n", m_nDeapth, m_szText, timeGetTime() - m_nStartTime, msg );
 }
 #endif
 

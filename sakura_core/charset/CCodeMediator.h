@@ -43,7 +43,7 @@ public:
 	/* 日本語コードセット判別 */
 	ECodeType CheckKanjiCode( const char* pBuf, int nBufLen );
 	/* ファイルの日本語コードセット判別 */
-	ECodeType CheckKanjiCodeOfFile( const TCHAR* pszFile );
+	ECodeType CheckKanjiCodeOfFile( const WCHAR* pszFile );
 
 	static ECodeType CheckKanjiCode( CESI* pcesi );  // CESI 構造体（？）を外部で構築した場合に使用
 

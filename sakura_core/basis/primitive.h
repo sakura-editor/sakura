@@ -31,7 +31,7 @@
 typedef char ACHAR;
 
 //WIN_CHAR (WinAPIに渡すので、必ずTCHARでなければならないもの)
-typedef TCHAR WIN_CHAR;
+typedef WCHAR WIN_CHAR;
 #define _WINT(A) _T(A)
 
 //EDIT_CHAR

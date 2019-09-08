@@ -195,7 +195,7 @@ void CDlgReplace::SetCombosList( void )
 		Combo_DeleteString( hwndCombo, 0);
 	}
 	int nBufferSize = ::GetWindowTextLength( hwndCombo ) + 1;
-	std::vector<TCHAR> vText;
+	std::vector<WCHAR> vText;
 	vText.resize( nBufferSize );
 	Combo_GetText( hwndCombo, &vText[0], nBufferSize );
 	if (auto_strcmp( to_wchar(&vText[0]), m_strText.c_str() ) != 0) {
@@ -242,7 +242,7 @@ int CDlgReplace::GetData( void )
 
 	/* 検索文字列 */
 	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT) ) + 1;
-	std::vector<TCHAR> vText(nBufferSize);
+	std::vector<WCHAR> vText(nBufferSize);
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, &vText[0], nBufferSize);
 	m_strText = to_wchar(&vText[0]);
 	/* 置換後文字列 */
@@ -439,13 +439,13 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_REPLACE_DIALOG) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //	case IDC_CHK_LOHICASE:	/* 大文字と小文字を区別する */
-//		MYTRACE( _T("IDC_CHK_LOHICASE\n") );
+//		MYTRACE( L"IDC_CHK_LOHICASE\n" );
 //		return TRUE;
 //	case IDC_CHK_WORDONLY:	/* 一致する単語のみ検索 */
-//		MYTRACE( _T("IDC_CHK_WORDONLY\n") );
+//		MYTRACE( L"IDC_CHK_WORDONLY\n" );
 //		break;
 	case IDC_CHK_REGULAREXP:	/* 正規表現 */
-//		MYTRACE( _T("IDC_CHK_REGULAREXP ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) = %d\n"), ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) );
+//		MYTRACE( L"IDC_CHK_REGULAREXP ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) = %d\n", ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) );
 		if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) ){
 			// From Here Jun. 26, 2001 genta
 			//	正規表現ライブラリの差し替えに伴う処理の見直し

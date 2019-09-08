@@ -78,13 +78,13 @@ next:
 	}
 } //namespace CWindowCreationHook
 
-CWnd::CWnd(const TCHAR* pszInheritanceAppend)
+CWnd::CWnd(const WCHAR* pszInheritanceAppend)
 {
 	m_hInstance = NULL;	/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
 	m_hWnd = NULL;			/* このウィンドウのハンドル */
 #ifdef _DEBUG
-	_tcscpy( m_szClassInheritances, _T("CWnd") );
+	_tcscpy( m_szClassInheritances, L"CWnd" );
 	_tcscat( m_szClassInheritances, pszInheritanceAppend );
 #endif
 }
@@ -109,8 +109,8 @@ ATOM CWnd::RegisterWC(
 	HICON		hIconSm,		// Handle to a small icon
 	HCURSOR		hCursor,		// Handle to the class cursor.
 	HBRUSH		hbrBackground,	// Handle to the class background brush.
-	LPCTSTR		lpszMenuName,	// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file.
-	LPCTSTR		lpszClassName	// Pointer to a null-terminated string or is an atom.
+	LPCWSTR		lpszMenuName,	// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file.
+	LPCWSTR		lpszClassName	// Pointer to a null-terminated string or is an atom.
 )
 {
 	m_hInstance = hInstance;
@@ -139,8 +139,8 @@ HWND CWnd::Create(
 	/* CreateWindowEx()用 */
 	HWND		hwndParent,
 	DWORD		dwExStyle,		// extended window style
-	LPCTSTR		lpszClassName,	// Pointer to a null-terminated string or is an atom.
-	LPCTSTR		lpWindowName,	// pointer to window name
+	LPCWSTR		lpszClassName,	// Pointer to a null-terminated string or is an atom.
+	LPCWSTR		lpWindowName,	// pointer to window name
 	DWORD		dwStyle,		// window style
 	int			x,				// horizontal position of window
 	int			y,				// vertical position of window
@@ -179,7 +179,7 @@ HWND CWnd::Create(
 	CWindowCreationHook::Unuse();
 
 	if( NULL == m_hWnd ){
-		::MessageBox( m_hwndParent, _T("CWnd::Create()\n\n::CreateWindowEx failed."), _T("error"), MB_OK );
+		::MessageBox( m_hwndParent, L"CWnd::Create()\n\n::CreateWindowEx failed.", L"error", MB_OK );
 		return NULL;
 	}
 

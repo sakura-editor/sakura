@@ -70,7 +70,7 @@ BOOL CEditView::KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc )
 		) )	goto end_of_search;
 		break;
 	default:
-		PleaseReportToAuthor( NULL, _T("CEditView::KeyWordHelpSearchDict\nnID=%d"), (int)nID );
+		PleaseReportToAuthor( NULL, L"CEditView::KeyWordHelpSearchDict\nnID=%d", (int)nID );
 	}
 	/* 選択範囲のデータを取得(複数行選択の場合は先頭の行のみ) */
 	if( GetSelectedDataOne( cmemCurText, STRNCMP_MAX + 1 ) ){
@@ -110,12 +110,12 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 	int			nCmpLen = STRNCMP_MAX; // 2006.04.10 fon
 	int			nLine; // 2006.04.10 fon
 
-	m_cTipWnd.m_cInfo.SetString( _T("") );	/* tooltipバッファ初期化 */
+	m_cTipWnd.m_cInfo.SetString( L"" );	/* tooltipバッファ初期化 */
 	/* 1行目にキーワード表示の場合 */
 	if(m_pTypeData->m_bUseKeyHelpKeyDisp){	/* キーワードも表示する */	// 2006.04.10 fon
-		m_cTipWnd.m_cInfo.AppendString( _T("[ ") );
+		m_cTipWnd.m_cInfo.AppendString( L"[ " );
 		m_cTipWnd.m_cInfo.AppendString( pcmemCurText->GetStringPtr() );
-		m_cTipWnd.m_cInfo.AppendString( _T(" ]") );
+		m_cTipWnd.m_cInfo.AppendString( L" ]" );
 	}
 	/* 途中まで一致を使う場合 */
 	if(m_pTypeData->m_bUseKeyHelpPrefix)
@@ -146,16 +146,16 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 						m_cTipWnd.m_cInfo.AppendString( LS(STR_ERR_DLGEDITVW6) );	/* 先頭の場合 */
 					/* 辞書のパス挿入 */
 					{
-						TCHAR szFile[MAX_PATH];
+						WCHAR szFile[MAX_PATH];
 						// 2013.05.08 表示するのはファイル名(拡張子なし)のみにする
 						_tsplitpath( m_pTypeData->m_KeyHelpArr[i].m_szPath, NULL, NULL, szFile, NULL );
 						m_cTipWnd.m_cInfo.AppendString( szFile );
 					}
-					m_cTipWnd.m_cInfo.AppendString( _T("\n") );
+					m_cTipWnd.m_cInfo.AppendString( L"\n" );
 					/* 前方一致でヒットした単語を挿入 */
 					if(m_pTypeData->m_bUseKeyHelpPrefix){	/* 選択範囲で前方一致検索 */
 						m_cTipWnd.m_cInfo.AppendString( pcmemRefKey->GetStringPtr() );
-						m_cTipWnd.m_cInfo.AppendString( _T(" >>\n") );
+						m_cTipWnd.m_cInfo.AppendString( L" >>\n" );
 					}/* 調査した「意味」を挿入 */
 					m_cTipWnd.m_cInfo.AppendString( pszWork );
 					delete pcmemRefText;
@@ -170,12 +170,12 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 				else{	/* 最初のヒット項目のみ返す場合 */
 					/* キーワードが入っていたらseparator挿入 */
 					if(m_cTipWnd.m_cInfo.GetStringLength() != 0)
-						m_cTipWnd.m_cInfo.AppendString( _T("\n--------------------\n") );
+						m_cTipWnd.m_cInfo.AppendString( L"\n--------------------\n" );
 					
 					/* 前方一致でヒットした単語を挿入 */
 					if(m_pTypeData->m_bUseKeyHelpPrefix){	/* 選択範囲で前方一致検索 */
 						m_cTipWnd.m_cInfo.AppendString( pcmemRefKey->GetStringPtr() );
-						m_cTipWnd.m_cInfo.AppendString( _T(" >>\n") );
+						m_cTipWnd.m_cInfo.AppendString( L" >>\n" );
 					}
 					
 					/* 調査した「意味」を挿入 */

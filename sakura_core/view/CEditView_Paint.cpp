@@ -177,7 +177,7 @@ void CEditView::RedrawLines( CLayoutYInt top, CLayoutYInt bottom )
 
 void MyFillRect(HDC hdc, RECT& re)
 {
-	::ExtTextOut(hdc, re.left, re.top, ETO_OPAQUE|ETO_CLIPPED, &re, _T(""), 0, NULL);
+	::ExtTextOut(hdc, re.left, re.top, ETO_OPAQUE|ETO_CLIPPED, &re, L"", 0, NULL);
 }
 
 void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
@@ -596,7 +596,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 	if( !GetDrawSwitch() )return;
 	//@@@
 #if 0
-	::MYTRACE( _T("OnPaint(%d,%d)-(%d,%d) : %d\n"),
+	::MYTRACE( L"OnPaint(%d,%d)-(%d,%d) : %d\n",
 		pPs->rcPaint.left,
 		pPs->rcPaint.top,
 		pPs->rcPaint.right,
@@ -1327,7 +1327,7 @@ bool CEditView::CreateOrUpdateCompatibleBitmap( int cx, int cy )
 	int nBmpHeightNew = ((cy + 63) & (0x7fffffff - 63));
 	if( nBmpWidthNew > m_nCompatBMPWidth || nBmpHeightNew > m_nCompatBMPHeight ){
 #if 0
-	MYTRACE( _T("CEditView::CreateOrUpdateCompatibleBitmap( %d, %d ): resized\n"), cx, cy );
+	MYTRACE( L"CEditView::CreateOrUpdateCompatibleBitmap( %d, %d ): resized\n", cx, cy );
 #endif
 		HDC	hdc = ::GetDC( GetHwnd() );
 		HBITMAP hBitmapNew = NULL;
@@ -1402,10 +1402,10 @@ void CEditView::UseCompatibleDC(BOOL fCache)
 			hdc = ::GetDC( GetHwnd() );
 			m_hdcCompatDC = ::CreateCompatibleDC( hdc );
 			::ReleaseDC( GetHwnd(), hdc );
-			DEBUG_TRACE(_T("CEditView::UseCompatibleDC: Created\n"), fCache);
+			DEBUG_TRACE(L"CEditView::UseCompatibleDC: Created\n", fCache);
 		}
 		else {
-			DEBUG_TRACE(_T("CEditView::UseCompatibleDC: Reused\n"), fCache);
+			DEBUG_TRACE(L"CEditView::UseCompatibleDC: Reused\n", fCache);
 		}
 	}
 	else {
@@ -1413,7 +1413,7 @@ void CEditView::UseCompatibleDC(BOOL fCache)
 		DeleteCompatibleBitmap();
 		if( m_hdcCompatDC != NULL ){
 			::DeleteDC( m_hdcCompatDC );
-			DEBUG_TRACE(_T("CEditView::UseCompatibleDC: Deleted.\n"));
+			DEBUG_TRACE(L"CEditView::UseCompatibleDC: Deleted.\n");
 			m_hdcCompatDC = NULL;
 		}
 	}

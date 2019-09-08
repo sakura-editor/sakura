@@ -39,12 +39,12 @@ typedef int PluginId;
 typedef int PlugId;
 
 //プラグイン定義ファイル名
-#define PII_FILENAME				_T("plugin.def")
-#define PII_L10NDIR					_T("local")
-#define PII_L10NFILEBASE			_T("plugin_")
-#define PII_L10NFILEEXT				_T(".def")
+#define PII_FILENAME				L"plugin.def"
+#define PII_L10NDIR					L"local"
+#define PII_L10NFILEBASE			L"plugin_"
+#define PII_L10NFILEEXT				L".def"
 //オプションファイル拡張子（オプションファイル＝個別フォルダ名＋拡張子）
-#define PII_OPTFILEEXT				_T(".ini")
+#define PII_OPTFILEEXT				L".ini"
 
 //プラグイン定義ファイル・キー文字列
 #define	PII_PLUGIN					L"Plugin"		//共通情報

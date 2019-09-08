@@ -48,7 +48,7 @@ using namespace std;
 */
 void CProfile::Init( void )
 {
-	m_strProfileName = _T("");
+	m_strProfileName = L"";
 	m_ProfileData.clear();
 	m_bRead = true;
 	return;
@@ -104,7 +104,7 @@ void CProfile::ReadOneline(
 	@date 2004-01-31 genta 行の解析の方を別関数にしてReadFileをReadProfileに
 		
 */
-bool CProfile::ReadProfile( const TCHAR* pszProfileName )
+bool CProfile::ReadProfile( const WCHAR* pszProfileName )
 {
 	m_strProfileName = pszProfileName;
 
@@ -141,7 +141,7 @@ bool CProfile::ReadProfile( const TCHAR* pszProfileName )
 
 	1行300文字までに制限
 */
-bool CProfile::ReadProfileRes( const TCHAR* pName, const TCHAR* pType, std::vector<std::wstring>* pData )
+bool CProfile::ReadProfileRes( const WCHAR* pName, const WCHAR* pType, std::vector<std::wstring>* pData )
 {
 	static const BYTE UTF8_BOM[]={0xEF,0xBB,0xBF};
 	HRSRC		hRsrc;
@@ -155,7 +155,7 @@ bool CProfile::ReadProfileRes( const TCHAR* pName, const TCHAR* pType, std::vect
 	wstring		line;
 	CMemory cmLine;
 	CNativeW cmLineW;
-	m_strProfileName = _T("-Res-");
+	m_strProfileName = L"-Res-";
 
 	if (( hRsrc = ::FindResource( 0, pName, pType )) != NULL
 	 && ( hGlobal = ::LoadResource( 0, hRsrc )) != NULL
@@ -211,7 +211,7 @@ bool CProfile::ReadProfileRes( const TCHAR* pName, const TCHAR* pType, std::vect
 	@date 2009.06.24 ryoji 別ファイルに書き込んでから置き換える処理を追加
 */
 bool CProfile::WriteProfile(
-	const TCHAR* pszProfileName,
+	const WCHAR* pszProfileName,
 	const WCHAR* pszComment
 )
 {
@@ -235,16 +235,16 @@ bool CProfile::WriteProfile(
 	}
 
 	// 別ファイルに書き込んでから置き換える（プロセス強制終了などへの安全対策）
-	TCHAR szMirrorFile[_MAX_PATH];
-	szMirrorFile[0] = _T('\0');
-	TCHAR szPath[_MAX_PATH];
-	LPTSTR lpszName;
+	WCHAR szMirrorFile[_MAX_PATH];
+	szMirrorFile[0] = L'\0';
+	WCHAR szPath[_MAX_PATH];
+	LPWSTR lpszName;
 	DWORD nLen = ::GetFullPathName(m_strProfileName.c_str(), _countof(szPath), szPath, &lpszName);
 	if( 0 < nLen && nLen < _countof(szPath)
 		&& (lpszName - szPath + 11) < _countof(szMirrorFile) )	// path\preuuuu.TMP
 	{
-		*lpszName = _T('\0');
-		::GetTempFileName(szPath, _T("sak"), 0, szMirrorFile);
+		*lpszName = L'\0';
+		::GetTempFileName(szPath, L"sak", 0, szMirrorFile);
 	}
 
 	if( !_WriteFile(szMirrorFile[0]? szMirrorFile: m_strProfileName, vecLine) )
@@ -369,14 +369,14 @@ void CProfile::DUMP( void )
 {
 #ifdef _DEBUG
 	//	2006.02.20 ryoji: MAP_STR_STR_ITER削除時の修正漏れによるコンパイルエラー修正
-	MYTRACE( _T("\n\nCProfile::DUMP()======================") );
+	MYTRACE( L"\n\nCProfile::DUMP()======================" );
 	for(auto iter = m_ProfileData.begin(); iter != m_ProfileData.end(); iter++ ) {
-		MYTRACE( _T("\n■strSectionName=%ls"), iter->strSectionName.c_str() );
+		MYTRACE( L"\n■strSectionName=%ls", iter->strSectionName.c_str() );
 		for(auto mapiter = iter->mapEntries.begin(); mapiter != iter->mapEntries.end(); mapiter++ ) {
-			MYTRACE( _T("\"%ls\" = \"%ls\"\n"), mapiter->first.c_str(), mapiter->second.c_str() );
+			MYTRACE( L"\"%ls\" = \"%ls\"\n", mapiter->first.c_str(), mapiter->second.c_str() );
 		}
 	}
-	MYTRACE( _T("========================================\n") );
+	MYTRACE( L"========================================\n" );
 #endif
 	return;
 }

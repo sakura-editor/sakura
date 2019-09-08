@@ -36,7 +36,7 @@
 
 struct SProfileSettings
 {
-	TCHAR m_szDllLanguage[_MAX_PATH];
+	WCHAR m_szDllLanguage[_MAX_PATH];
 	int	m_nDefaultIndex;
 	std::vector<std::wstring> m_vProfList;
 	bool m_bDefaultSelect;

@@ -716,7 +716,7 @@ CLogicInt CViewCommander::ConvertEol(const wchar_t* pszText, CLogicInt nTextLen,
 
 	@date 2010.04.21 ryoji	新規作成（数カ所で用いられていた類似コードの共通化）
 */
-void CViewCommander::AlertNotFound(HWND hwnd, bool bReplaceAll, LPCTSTR format, ...)
+void CViewCommander::AlertNotFound(HWND hwnd, bool bReplaceAll, LPCWSTR format, ...)
 {
 	if( GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND
 		&& !bReplaceAll

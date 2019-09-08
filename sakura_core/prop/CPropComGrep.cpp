@@ -228,7 +228,7 @@ int CPropGrep::GetData( HWND hwndDlg )
 
 void CPropGrep::SetRegexpVersion( HWND hwndDlg )
 {
-	TCHAR regexp_dll[_MAX_PATH];
+	WCHAR regexp_dll[_MAX_PATH];
 	
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEXPLIB, regexp_dll, _countof( regexp_dll ));
 	CBregexp breg;

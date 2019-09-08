@@ -291,7 +291,7 @@ void CMainToolBar::CreateToolBar( void )
 						Toolbar_GetItemRect( m_hwndToolBar, count-1, &rc );
 
 						//コンボボックスを作る
-						m_hwndSearchBox = CreateWindow( _T("COMBOBOX"), _T("Combo"),
+						m_hwndSearchBox = CreateWindow( L"COMBOBOX", L"Combo",
 								WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWN
 								/*| CBS_SORT*/ | CBS_AUTOHSCROLL /*| CBS_DISABLENOSCROLL*/,
 								rc.left, rc.top, rc.right - rc.left, (rc.bottom - rc.top) * 10,
@@ -598,7 +598,7 @@ int CMainToolBar::GetSearchKey(std::wstring& strText)
 {
 	if( m_hwndSearchBox ){
 		int nBufferSize = ::GetWindowTextLength( m_hwndSearchBox ) + 1;
-		std::vector<TCHAR> vText(nBufferSize);
+		std::vector<WCHAR> vText(nBufferSize);
 
 		::GetWindowText( m_hwndSearchBox, &vText[0], vText.size() );
 		strText = to_wchar(&vText[0]);

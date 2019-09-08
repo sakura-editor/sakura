@@ -64,7 +64,7 @@ public:
 
 protected:
 	virtual bool InitDllImp();
-	virtual LPCTSTR GetDllNameImp(int nIndex);
+	virtual LPCWSTR GetDllNameImp(int nIndex);
 };
 
 #endif

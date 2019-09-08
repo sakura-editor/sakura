@@ -82,7 +82,7 @@ public:
 	int  cy(void) const { return m_cy; }
 	
 	//! アイコンを追加する
-	int Add(const TCHAR* szPath);
+	int Add(const WCHAR* szPath);
 
 	//! アイコンの追加を元に戻す
 	void ResetExtend();

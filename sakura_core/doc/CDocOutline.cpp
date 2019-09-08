@@ -51,7 +51,7 @@ struct SOneRule {
 	@date 2013.06.02 _tfopen_absini,fgetwsをCTextInputStream_AbsIniに変更。UTF-8対応。Regex対応
 	@date 2014.06.20 RegexReplace 正規表現置換モード追加
 */
-int CDocOutline::ReadRuleFile( const TCHAR* pszFilename, SOneRule* pcOneRule, int nMaxCount, bool& bRegex, std::wstring& title )
+int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, int nMaxCount, bool& bRegex, std::wstring& title )
 {
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先

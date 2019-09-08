@@ -41,7 +41,7 @@ CSortedTagJumpList::CSortedTagJumpList(int max)
 	  m_MAX_TAGJUMPLIST( max )
 {
 	// id==0 を 空文字列にする
-	m_baseDirArr.push_back(_T(""));
+	m_baseDirArr.push_back(L"");
 }
 
 CSortedTagJumpList::~CSortedTagJumpList()
@@ -79,14 +79,14 @@ void CSortedTagJumpList::Empty( void )
 	m_nCount = 0;
 	m_bOverflow = false;
 	m_baseDirArr.clear();
-	m_baseDirArr.push_back(_T(""));
+	m_baseDirArr.push_back(L"");
 }
 
 /*
 	基準フォルダを登録し、基準フォルダIDを取得
 	@date 2010.07.23 Moca 新規追加
 */
-int CSortedTagJumpList::AddBaseDir( const TCHAR* baseDir )
+int CSortedTagJumpList::AddBaseDir( const WCHAR* baseDir )
 {
 	m_baseDirArr.push_back( baseDir );
 	return m_baseDirArr.size() -1;
@@ -174,15 +174,15 @@ BOOL CSortedTagJumpList::AddParamA( const ACHAR* keyword, const ACHAR* filename,
 
 	@note 不要な情報の場合は引数に NULL を指定する。
 */
-BOOL CSortedTagJumpList::GetParam( int index, TCHAR* keyword, TCHAR* filename, int* no, TCHAR* type, TCHAR* note, int* depth, TCHAR* baseDir )
+BOOL CSortedTagJumpList::GetParam( int index, WCHAR* keyword, WCHAR* filename, int* no, WCHAR* type, WCHAR* note, int* depth, WCHAR* baseDir )
 {
-	if( keyword  ) keyword[0] = _T('\0');
-	if( filename ) filename[0] = _T('\0');
+	if( keyword  ) keyword[0] = L'\0';
+	if( filename ) filename[0] = L'\0';
 	if( no       ) *no    = 0;
 	if( type     ) *type  = 0;
-	if( note     ) note[0] = _T('\0');
+	if( note     ) note[0] = L'\0';
 	if( depth    ) *depth = 0;
-	if( baseDir  ) baseDir[0] = _T('\0');
+	if( baseDir  ) baseDir[0] = L'\0';
 
 	CSortedTagJumpList::TagJumpInfo* p;
 	p = GetPtr( index );

@@ -110,7 +110,7 @@ BOOL CDlgFind::OnDestroy()
 /* ダイアログデータの設定 */
 void CDlgFind::SetData( void )
 {
-//	MYTRACE( _T("CDlgFind::SetData()") );
+//	MYTRACE( L"CDlgFind::SetData()" );
 
 	/*****************************
 	*           初期化           *
@@ -183,7 +183,7 @@ void CDlgFind::SetCombosList( void )
 		Combo_DeleteString( hwndCombo, 0);
 	}
 	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT) ) + 1;
-	std::vector<TCHAR> vText(nBufferSize);
+	std::vector<WCHAR> vText(nBufferSize);
 	Combo_GetText( hwndCombo, &vText[0], nBufferSize );
 	if (auto_strcmp( to_wchar(&vText[0]), m_strText.c_str() ) != 0) {
 		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
@@ -193,7 +193,7 @@ void CDlgFind::SetCombosList( void )
 /* ダイアログデータの取得 */
 int CDlgFind::GetData( void )
 {
-//	MYTRACE( _T("CDlgFind::GetData()") );
+//	MYTRACE( L"CDlgFind::GetData()" );
 
 	/* 英大文字と英小文字を区別する */
 	m_sSearchOption.bLoHiCase = (0!=IsDlgButtonChecked( GetHwnd(), IDC_CHK_LOHICASE ));
@@ -213,7 +213,7 @@ int CDlgFind::GetData( void )
 
 	/* 検索文字列 */
 	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT) ) + 1;
-	std::vector<TCHAR> vText(nBufferSize);
+	std::vector<WCHAR> vText(nBufferSize);
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, &vText[0], nBufferSize);
 	m_strText = to_wchar(&vText[0]);
 
@@ -270,7 +270,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_SEARCH_DIALOG) );	//Apr. 5, 2001 JEPRO 修正漏れを追加	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		break;
 	case IDC_CHK_REGULAREXP:	/* 正規表現 */
-//		MYTRACE( _T("IDC_CHK_REGULAREXP ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) = %d\n"), ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) );
+//		MYTRACE( L"IDC_CHK_REGULAREXP ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) = %d\n", ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) );
 		if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ) ){
 
 			// From Here Jun. 26, 2001 genta

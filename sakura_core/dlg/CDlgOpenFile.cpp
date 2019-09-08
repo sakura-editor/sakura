@@ -30,10 +30,10 @@ CDlgOpenFile::CDlgOpenFile()
 void CDlgOpenFile::Create(
 	HINSTANCE					hInstance,
 	HWND						hwndParent,
-	const TCHAR*				pszUserWildCard,
-	const TCHAR*				pszDefaultPath,
-	const std::vector<LPCTSTR>& vMRU,
-	const std::vector<LPCTSTR>& vOPENFOLDER
+	const WCHAR*				pszUserWildCard,
+	const WCHAR*				pszDefaultPath,
+	const std::vector<LPCWSTR>& vMRU,
+	const std::vector<LPCWSTR>& vOPENFOLDER
 ) {
 	if( GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog ){
 		m_pImpl = New_CDlgOpenFile_CommonItemDialog();
@@ -45,13 +45,13 @@ void CDlgOpenFile::Create(
 }
 
 inline bool CDlgOpenFile::DoModal_GetOpenFileName(
-	TCHAR* pszPath,
+	WCHAR* pszPath,
 	EFilter eAddFileter)
 {
 	return m_pImpl->DoModal_GetOpenFileName(pszPath, eAddFileter);
 }
 
-inline bool CDlgOpenFile::DoModal_GetSaveFileName( TCHAR* pszPath )
+inline bool CDlgOpenFile::DoModal_GetSaveFileName( WCHAR* pszPath )
 {
 	return m_pImpl->DoModal_GetSaveFileName(pszPath);
 }
@@ -78,13 +78,13 @@ inline bool CDlgOpenFile::DoModalSaveDlg(
 BOOL CDlgOpenFile::SelectFile(
 	HWND parent,
 	HWND hwndCtl,
-	const TCHAR* filter,
+	const WCHAR* filter,
 	bool resolvePath,
 	EFilter eAddFilter)
 {
 	CDlgOpenFile cDlgOpenFile;
-	TCHAR			szFilePath[_MAX_PATH + 1];
-	TCHAR			szPath[_MAX_PATH + 1];
+	WCHAR			szFilePath[_MAX_PATH + 1];
+	WCHAR			szPath[_MAX_PATH + 1];
 	::GetWindowText( hwndCtl, szFilePath, _countof(szFilePath) );
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
@@ -101,7 +101,7 @@ BOOL CDlgOpenFile::SelectFile(
 		szPath
 	);
 	if( cDlgOpenFile.DoModal_GetOpenFileName(szPath, eAddFilter) ){
-		const TCHAR* fileName;
+		const WCHAR* fileName;
 		if( resolvePath ){
 			fileName = GetRelPath( szPath );
 		}else{

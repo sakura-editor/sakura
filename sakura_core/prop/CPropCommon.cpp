@@ -253,7 +253,7 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum, bool bTrayProc )
 	psh.hwndParent = m_hwndParent;
 	psh.hInstance  = CSelectLang::getLangRsrcInstance();
 	psh.pszIcon    = NULL;
-	psh.pszCaption = LS( STR_PROPCOMMON );	//_T("共通設定");
+	psh.pszCaption = LS( STR_PROPCOMMON );	//L"共通設定";
 	psh.nPages     = nIdx;
 
 	//- 20020106 aroka # psh.nStartPage は unsigned なので負にならない
@@ -274,7 +274,7 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum, bool bTrayProc )
 
 	nRet = MyPropertySheet( &psh );	// 2007.05.24 ryoji 独自拡張プロパティシート
 	if( -1 == nRet ){
-		TCHAR*	pszMsgBuf;
+		WCHAR*	pszMsgBuf;
 		::FormatMessage(
 			FORMAT_MESSAGE_ALLOCATE_BUFFER |
 			FORMAT_MESSAGE_FROM_SYSTEM |
@@ -282,7 +282,7 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum, bool bTrayProc )
 			NULL,
 			::GetLastError(),
 			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),	// デフォルト言語
-			(LPTSTR)&pszMsgBuf,
+			(LPWSTR)&pszMsgBuf,
 			0,
 			NULL
 		);
@@ -305,11 +305,11 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum, bool bTrayProc )
 
 	@date 2002.12.11 Moca CEditDoc::OpenPropertySheetから移動
 */
-void CPropCommon::InitData( const int* tempTypeKeywordSet, const TCHAR* name, const TCHAR* exts )
+void CPropCommon::InitData( const int* tempTypeKeywordSet, const WCHAR* name, const WCHAR* exts )
 {
 	m_Common = m_pShareData->m_Common;
-	m_tempTypeName[0] = _T('\0');
-	m_tempTypeExts[0] = _T('\0');
+	m_tempTypeName[0] = L'\0';
+	m_tempTypeExts[0] = L'\0';
 
 	//2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
 	if( tempTypeKeywordSet ){
@@ -473,7 +473,7 @@ HFONT CPropCommon::SetCtrlFont( HWND hwndDlg, int idc_ctrl, const LOGFONT& lf )
 HFONT CPropCommon::SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf, int nps )
 {
 	HFONT	hFont;
-	TCHAR	szFontName[80];
+	WCHAR	szFontName[80];
 	LOGFONT lfTemp;
 	lfTemp = lf;
 
@@ -486,7 +486,7 @@ HFONT CPropCommon::SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf
 	hFont = SetCtrlFont( hwndDlg, idc_static, lfTemp );
 
 	// フォント名の設定
-	auto_sprintf( szFontName, nps % 10 ? _T("%s(%.1fpt)") : _T("%s(%.0fpt)"),
+	auto_sprintf( szFontName, nps % 10 ? L"%s(%.1fpt)" : L"%s(%.0fpt)",
 		lf.lfFaceName, double(nps)/10 );
 	::DlgItem_SetText( hwndDlg, idc_static, szFontName );
 

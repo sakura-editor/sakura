@@ -105,26 +105,26 @@ int CDlgFileTree::DoModal(
 }
 
 // LS()を使用しているのですぐ使うこと
-static TCHAR* GetFileTreeLabel( const SFileTreeItem& item )
+static WCHAR* GetFileTreeLabel( const SFileTreeItem& item )
 {
-	const TCHAR* pszLabel;
+	const WCHAR* pszLabel;
 	if( item.m_eFileTreeItemType != EFileTreeItemType_Folder ){
 		pszLabel = item.m_szLabelName;
-		if( item.m_szLabelName[0] == _T('\0') ){
+		if( item.m_szLabelName[0] == L'\0' ){
 			pszLabel = item.m_szTargetPath;
-			if( 0 == auto_strcmp(pszLabel, _T("."))
-			  || 0 == auto_strcmp(pszLabel, _T(".\\")) 
-			  || 0 == auto_strcmp(pszLabel, _T("./")) ){
+			if( 0 == auto_strcmp(pszLabel, L".")
+			  || 0 == auto_strcmp(pszLabel, L".\\") 
+			  || 0 == auto_strcmp(pszLabel, L"./") ){
 				pszLabel = LS(STR_FILETREE_CURDIR);
 			}
 		}
 	}else{
 		pszLabel = item.m_szLabelName;
-		if( pszLabel[0] == _T('\0') ){
-			pszLabel = _T("Folder");
+		if( pszLabel[0] == L'\0' ){
+			pszLabel = L"Folder";
 		}
 	}
-	return const_cast<TCHAR*>(pszLabel);
+	return const_cast<WCHAR*>(pszLabel);
 }
 
 /* ダイアログデータの設定 */
@@ -136,7 +136,7 @@ void CDlgFileTree::SetData()
 	HTREEITEM hSelect = NULL;
 	m_aItemRemoveList.clear();
 	TreeView_DeleteAllItems(hwndTree);
-	bool bSaveShareData = (m_fileTreeSetting.m_szLoadProjectIni[0] == _T('\0'));
+	bool bSaveShareData = (m_fileTreeSetting.m_szLoadProjectIni[0] == L'\0');
 	for( int i = 0; i < (int)m_fileTreeSetting.m_aItems.size(); i++ ){
 		int nMaxCount = _countof(GetDllShareData().m_Common.m_sOutline.m_sFileTree.m_aItems);
 		if( bSaveShareData && nMaxCount < i + 1 ){
@@ -178,7 +178,7 @@ void CDlgFileTree::SetDataItem(int nItemIndex)
 	}
 	SFileTreeItem itemDummy;
 	const SFileTreeItem& item = (bDummy ? itemDummy : m_fileTreeSetting.m_aItems[nItemIndex]);
-	itemDummy.m_szTargetFile = _T("*.*");
+	itemDummy.m_szTargetFile = L"*.*";
 	int nIDs[] ={IDC_RADIO_GREP, IDC_RADIO_FILE, IDC_RADIO_FOLDER};
 	int nID1;
 	int nID2, nID3;
@@ -224,7 +224,7 @@ void CDlgFileTree::ChangeEnableItemType()
 
 void CDlgFileTree::ChangeEnableAddInsert()
 {
-	bool bSaveShareData = (m_fileTreeSetting.m_szLoadProjectIni[0] == _T('\0'));
+	bool bSaveShareData = (m_fileTreeSetting.m_szLoadProjectIni[0] == L'\0');
 	if( bSaveShareData ){
 		int nCount = TreeView_GetCount(GetItemHwnd(IDC_TREE_FL));
 		bool bEnable = true;
@@ -256,7 +256,7 @@ int CDlgFileTree::GetData()
 			pFileTree = &type.m_sFileTree;
 		}
 	}
-	bool bSaveShareData = (m_fileTreeSetting.m_szLoadProjectIni[0] == _T('\0'));
+	bool bSaveShareData = (m_fileTreeSetting.m_szLoadProjectIni[0] == L'\0');
 	std::vector<SFileTreeItem> items;
 	if( !GetDataTree(items, TreeView_GetRoot(GetItemHwnd(IDC_TREE_FL)), 0, (bSaveShareData ? _countof(pFileTree->m_aItems) : 0) ) ){
 		InfoMessage(GetHwnd(), LS(STR_FILETREE_MAXCOUNT));
@@ -281,7 +281,7 @@ int CDlgFileTree::GetData()
 		std::wstring strIni = to_wchar(m_fileTreeSetting.m_szLoadProjectIni);
 		std::wstring strError;
 		if( false == cImpExp.Export(strIni, strError) ){
-			ErrorMessage(hwndDlg, _T("%ls"), strError.c_str());
+			ErrorMessage(hwndDlg, L"%ls", strError.c_str());
 		}
 	}
 	return TRUE;
@@ -373,19 +373,19 @@ void CDlgFileTree::SetDataInit()
 			id = STR_FILETREE_FROM_TYPE;
 		}
 		std::wstring str = LS(id);
-		if( m_fileTreeSetting.m_szLoadProjectIni[0] != _T('\0') ){
-			str += _T("+");
+		if( m_fileTreeSetting.m_szLoadProjectIni[0] != L'\0' ){
+			str += L"+";
 			str += LS(F_FILE_TOPMENU);
 		}
 		::SetWindowText(GetItemHwnd(IDC_STATIC_SETTFING_FROM), str.c_str() );
 	}else{
-		TCHAR szMsg[_MAX_PATH+200];
-		const TCHAR* pFile = m_fileTreeSetting.m_szLoadProjectIni;
-		TCHAR szFilePath[_MAX_PATH];
+		WCHAR szMsg[_MAX_PATH+200];
+		const WCHAR* pFile = m_fileTreeSetting.m_szLoadProjectIni;
+		WCHAR szFilePath[_MAX_PATH];
 		CTextWidthCalc calc(GetHwnd(), IDC_STATIC_SETTFING_FROM);
 		RECT rc;
 		GetWindowRect( GetItemHwnd(IDC_STATIC_SETTFING_FROM), &rc);
-		const int xWidth = calc.GetTextWidth(_T("x"));
+		const int xWidth = calc.GetTextWidth(L"x");
 		const int ctrlWidth = rc.right - rc.left;
 		int nMaxCch = ctrlWidth / xWidth;
 		CFileNameManager::getInstance()->GetTransformFileNameFast(pFile, szFilePath, _countof(szFilePath), calc.GetDC(), true, nMaxCch);
@@ -431,7 +431,7 @@ static HTREEITEM FileTreeCopy( HWND hwndTree, HTREEITEM dst, HTREEITEM src, bool
 	TV_INSERTSTRUCT	tvis;		// 挿入用
 	TV_ITEM			tvi;		// 取得用
 	int				n = 0;
-	TCHAR			szLabel[_MAX_PATH];
+	WCHAR			szLabel[_MAX_PATH];
 
 	for (s = src; s != NULL; s = fOnryOne ? NULL:TreeView_GetNextSibling( hwndTree, s )) {
 		tvi.mask = TVIF_HANDLE | TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
@@ -480,17 +480,17 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 	{
 	case IDC_BUTTON_REF1:
 		{
-			CDlgOpenFile::SelectFile( GetHwnd(), GetItemHwnd(IDC_EDIT_DEFINI), _T("*.ini"), true, EFITER_NONE );
+			CDlgOpenFile::SelectFile( GetHwnd(), GetItemHwnd(IDC_EDIT_DEFINI), L"*.ini", true, EFITER_NONE );
 		}
 		return TRUE;
 	case IDC_BUTTON_LOAD:
 		{
 			DlgItem_GetText( GetHwnd(), IDC_EDIT_DEFINI, m_fileTreeSetting.m_szDefaultProjectIni, m_fileTreeSetting.m_szDefaultProjectIni.GetBufferCount() );
-			if( m_fileTreeSetting.m_szDefaultProjectIni[0] != _T('\0') ){
+			if( m_fileTreeSetting.m_szDefaultProjectIni[0] != L'\0' ){
 				CDataProfile cProfile;
 				cProfile.SetReadingMode();
-				const TCHAR* pszIniFileName;
-				TCHAR szDir[_MAX_PATH * 2];
+				const WCHAR* pszIniFileName;
+				WCHAR szDir[_MAX_PATH * 2];
 				if( _IS_REL_PATH( m_fileTreeSetting.m_szDefaultProjectIni ) ){
 					// sakura.iniからの相対パス
 					GetInidirOrExedir( szDir, m_fileTreeSetting.m_szDefaultProjectIni );
@@ -534,7 +534,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 			HWND hwndDlg = GetHwnd();
 			if( IsDlgButtonCheckedBool(hwndDlg, IDC_RADIO_GREP) ){
 				// RADIO_GREP == folder
-				TCHAR szDir[MAX_PATH];
+				WCHAR szDir[MAX_PATH];
 				DlgItem_GetText(GetHwnd(), IDC_EDIT_PATH, szDir, _countof(szDir) );
 				if( SelectDir(hwndDlg, LS(STR_DLGGREP1), szDir, szDir) ){
 					DlgItem_SetText(GetHwnd(), IDC_EDIT_PATH, szDir );
@@ -542,14 +542,14 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 			}else{
 				// RADIO_FILE == file
 				CDlgOpenFile dlg;
-				TCHAR szDir[_MAX_PATH];
+				WCHAR szDir[_MAX_PATH];
 				GetInidir(szDir);
-				dlg.Create( G_AppInstance(), hwndDlg, _T("*.*"), szDir,
-					std::vector<LPCTSTR>(), std::vector<LPCTSTR>() );
-				TCHAR szFile[_MAX_PATH];
+				dlg.Create( G_AppInstance(), hwndDlg, L"*.*", szDir,
+					std::vector<LPCWSTR>(), std::vector<LPCWSTR>() );
+				WCHAR szFile[_MAX_PATH];
 				if( dlg.DoModal_GetOpenFileName(szFile) ){
 					CNativeW cmemFile = szFile;
-					cmemFile.Replace(_T("%"), _T("%%"));
+					cmemFile.Replace(L"%", L"%%");
 					DlgItem_SetText( GetHwnd(), IDC_EDIT_PATH, cmemFile.GetStringPtr() );
 				}
 			}
@@ -589,8 +589,8 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 			::DestroyMenu( hMenu );
 			if( nId != 0 ){
 				int index = nId - MENU_ROOT;
-				const TCHAR* pszPaths[] = { _T("<iniroot>"), _T("%MYDOC%"), _T("%MYMUSIC%"), _T("%MYVIDEO%"),
-					_T("%DESKTOP%"), _T("%TEMP%"), _T("%SAKURA%"), _T("%SAKURADATA%") };
+				const WCHAR* pszPaths[] = { L"<iniroot>", L"%MYDOC%", L"%MYMUSIC%", L"%MYVIDEO%",
+					L"%DESKTOP%", L"%TEMP%", L"%SAKURA%", L"%SAKURADATA%" };
 				EditCtl_ReplaceSel(GetItemHwnd(IDC_EDIT_PATH), pszPaths[index]);
 			}
 		}
@@ -713,8 +713,8 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 			CDlgOpenFile dlg;
 			SLoadInfo sLoadInfo;
 			std::vector<std::wstring> aFileNames;
-			dlg.Create( G_AppInstance(), GetHwnd(), _T("*.*"), _T("."),
-				std::vector<LPCTSTR>(), std::vector<LPCTSTR>() );
+			dlg.Create( G_AppInstance(), GetHwnd(), L"*.*", L".",
+				std::vector<LPCWSTR>(), std::vector<LPCWSTR>() );
 			if( dlg.DoModalOpenDlg(&sLoadInfo, &aFileNames, false) ){
 				if( 0 < aFileNames.size() ){
 					HWND hwndTree = GetItemHwnd(IDC_TREE_FL);
@@ -749,7 +749,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 					HTREEITEM htiItemFirst = NULL;
 					for( int i = 0; i < (int)aFileNames.size(); i++ ){
 						CNativeW cmemFile = aFileNames[i].c_str();
-						cmemFile.Replace(_T("%"), _T("%%"));
+						cmemFile.Replace(L"%", L"%%");
 						SFileTreeItem item;
 						item.m_eFileTreeItemType = EFileTreeItemType_File;
 						item.m_szTargetPath = cmemFile.GetStringPtr();
@@ -773,11 +773,11 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 			CDlgInput1 dlgInput;
 			std::wstring strMsg = LS(STR_FILETREE_REPLACE_PATH_FROM);
 			std::wstring strTitle = LS(STR_DLGREPLC_STR);
-			TCHAR szPathFrom[_MAX_PATH];
-			szPathFrom[0] = _T('\0');
+			WCHAR szPathFrom[_MAX_PATH];
+			szPathFrom[0] = L'\0';
 			if( dlgInput.DoModal(G_AppInstance(), GetHwnd(), strTitle.c_str(), strMsg.c_str(), _countof(szPathFrom), szPathFrom) ){
-				TCHAR szPathTo[_MAX_PATH];
-				szPathTo[0] = _T('\0');
+				WCHAR szPathTo[_MAX_PATH];
+				szPathTo[0] = L'\0';
 				strMsg = LS(STR_FILETREE_REPLACE_PATH_TO);
 				if( dlgInput.DoModal( G_AppInstance(), GetHwnd(), strTitle.c_str(), strMsg.c_str(), _countof(szPathTo), szPathTo) ){
 					int nItemsCount = (int)m_fileTreeSetting.m_aItems.size();

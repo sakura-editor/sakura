@@ -47,17 +47,17 @@ public:
 	virtual void	Terminate() = 0;
 
 	//アイテム
-	virtual const TCHAR*	GetItemText( int nIndex ) const = 0;
+	virtual const WCHAR*	GetItemText( int nIndex ) const = 0;
 	virtual int				GetArrayCount() const = 0;
 	virtual int				GetItemCount() const = 0;
 	virtual void			DeleteAllItem() = 0;
 	virtual bool			DeleteItemsNoFavorite() = 0;
 	virtual bool			DeleteItem( int nIndex ) = 0;	//!< アイテムをクリア
-	virtual bool			AppendItemText(const TCHAR* pszText) = 0;
-	virtual bool			EditItemText( int nIndex, const TCHAR* pszText) = 0;
+	virtual bool			AppendItemText(const WCHAR* pszText) = 0;
+	virtual bool			EditItemText( int nIndex, const WCHAR* pszText) = 0;
 	virtual size_t			GetTextMaxLength() const = 0;
 
-	int FindItemByText(const TCHAR* pszText) const
+	int FindItemByText(const WCHAR* pszText) const
 	{
 		int n = GetItemCount();
 		for(int i=0;i<n;i++){

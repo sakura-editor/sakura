@@ -55,7 +55,7 @@ CDllImp::~CDllImp()
 //                         DLLロード                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-EDllResult CDllImp::InitDll(LPCTSTR pszSpecifiedDllName)
+EDllResult CDllImp::InitDll(LPCWSTR pszSpecifiedDllName)
 {
 	if( IsAvailable() ){
 		//	既に利用可能で有れば何もしない．
@@ -63,12 +63,12 @@ EDllResult CDllImp::InitDll(LPCTSTR pszSpecifiedDllName)
 	}
 
 	//名前候補を順次検証し、有効なものを採用する
-	LPCTSTR pszLastName  = NULL;
+	LPCWSTR pszLastName  = NULL;
 	bool bInitImpFailure = false;
 	for(int i = -1; ;i++)
 	{
 		//名前候補
-		LPCTSTR pszName = NULL;
+		LPCWSTR pszName = NULL;
 		if(i==-1){ //まずは引数で指定された名前から。
 			pszName = pszSpecifiedDllName;
 		}
@@ -137,7 +137,7 @@ bool CDllImp::DeinitDll(bool force)
 	//DLL解放
 	if( ret || force ){
 		//DLL名を解放
-		m_strLoadedDllName = _T("");
+		m_strLoadedDllName = L"";
 
 		//DLL解放
 		::FreeLibrary( m_hInstance );
@@ -154,7 +154,7 @@ bool CDllImp::DeinitDll(bool force)
 //                           属性                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-LPCTSTR CDllImp::GetLoadedDllName() const
+LPCWSTR CDllImp::GetLoadedDllName() const
 {
 	return m_strLoadedDllName.c_str();
 }

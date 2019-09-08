@@ -116,7 +116,7 @@ public:
 
 	//! DLLロードと初期処理
 	EDllResult InitDll(
-		LPCTSTR pszSpecifiedDllName = NULL	//!< [in] クラスが定義しているDLL名以外のDLLを読み込みたいときに、そのDLL名を指定。
+		LPCWSTR pszSpecifiedDllName = NULL	//!< [in] クラスが定義しているDLL名以外のDLLを読み込みたいときに、そのDLL名を指定。
 	);
 
 	//! 終了処理とDLLアンロード
@@ -132,7 +132,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	//! ロード済みDLLファイル名の取得。ロードされていない (またはロードに失敗した) 場合は NULL を返す。
-	LPCTSTR GetLoadedDllName() const;
+	LPCWSTR GetLoadedDllName() const;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                  オーバーロード可能実装                     //
@@ -189,7 +189,7 @@ protected:
 		
 		@return 引数に応じてDLL名(LoadLibraryに渡す文字列)，またはNULL．
 	*/
-	virtual LPCTSTR GetDllNameImp(int nIndex) = 0;
+	virtual LPCWSTR GetDllNameImp(int nIndex) = 0;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         実装補助                            //

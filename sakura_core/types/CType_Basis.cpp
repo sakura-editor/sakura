@@ -31,8 +31,8 @@
 void CType_Basis::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	_tcscpy( pType->m_szTypeName, _T("基本") );
-	pType->m_szTypeExts[0] = _T('\0');
+	_tcscpy( pType->m_szTypeName, L"基本" );
+	pType->m_szTypeExts[0] = L'\0';
 
 	//設定
 	pType->m_nMaxLineKetas = CKetaXInt(MAXLINEKETAS);			// 折り返し桁数

@@ -288,7 +288,7 @@ void CViewSelect::DrawSelectArea2( HDC hdc ) const
 	}
 	// To Here 2007.09.09 Moca
 
-//	MYTRACE( _T("DrawSelectArea()  m_bBeginBoxSelect=%hs\n", m_bBeginBoxSelect?"true":"false") );
+//	MYTRACE( L"DrawSelectArea()  m_bBeginBoxSelect=%hs\n", m_bBeginBoxSelect?"true":"false" );
 	if( IsBoxSelecting() ){		// 矩形範囲選択中
 		// 2001.12.21 hor 矩形エリアにEOFがある場合、RGN_XORで結合すると
 		// EOF以降のエリアも反転してしまうので、この場合はRedrawを使う
@@ -639,16 +639,16 @@ void CViewSelect::PrintSelectionInfoMsg() const
 	if( ! IsTextSelected() || m_sSelect.GetFrom().y >= nLineCount ){ // 先頭行が実在しない
 		const_cast<CEditView*>(pView)->GetCaret().m_bClearStatus = false;
 		if( IsBoxSelecting() ){
-			pView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( _T("box selecting") );
+			pView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( L"box selecting" );
 		}else if( m_bSelectingLock ){
-			pView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( _T("selecting") );
+			pView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( L"selecting" );
 		}else{
-			pView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( _T("") );
+			pView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( L"" );
 		}
 		return;
 	}
 
-	TCHAR msg[128];
+	WCHAR msg[128];
 	//	From here 2006.06.06 ryoji 選択範囲の行が実在しない場合の対策
 
 	CLayoutInt select_line;
@@ -667,7 +667,7 @@ void CViewSelect::PrintSelectionInfoMsg() const
 			select_col = -select_col;
 		}
 		int select_col_keta = (Int)select_col / (Int)pView->GetTextMetrics().GetLayoutXDefault();
-		auto_sprintf( msg, _T("%d col (%dpx) * %d lines selected."),
+		auto_sprintf( msg, L"%d col (%dpx) * %d lines selected.",
 			select_col_keta, select_col, select_line );
 	}
 	else {
@@ -810,14 +810,14 @@ void CViewSelect::PrintSelectionInfoMsg() const
 		}
 
 #ifdef _DEBUG
-		auto_sprintf( msg, _T("%d %s (%d lines) selected. [%d:%d]-[%d:%d]"),
+		auto_sprintf( msg, L"%d %s (%d lines) selected. [%d:%d]-[%d:%d]",
 			select_sum,
-			( bCountByByte ? _T("bytes") : _T("chars") ),
+			( bCountByByte ? L"bytes" : L"chars" ),
 			select_line,
 			m_sSelect.GetFrom().x, m_sSelect.GetFrom().y,
 			m_sSelect.GetTo().x, m_sSelect.GetTo().y );
 #else
-		auto_sprintf( msg, _T("%d %s (%d lines) selected."), select_sum, ( bCountByByte ? _T("bytes") : _T("chars") ), select_line );
+		auto_sprintf( msg, L"%d %s (%d lines) selected.", select_sum, ( bCountByByte ? L"bytes" : L"chars" ), select_line );
 #endif
 	}
 	const_cast<CEditView*>(pView)->GetCaret().m_bClearStatus = false;

@@ -26,7 +26,7 @@ struct KEYDATA {
 	short			m_nKeyCode;
 	
 	/*!	キーの名前	*/
-	TCHAR			m_szKeyName[30];
+	WCHAR			m_szKeyName[30];
 	
 	/*!	対応する機能番号
 
@@ -51,7 +51,7 @@ struct KEYDATA {
 #define VKEX_WHEEL_LEFT		0x0109	// ホイール左
 #define VKEX_WHEEL_RIGHT	0x010A	// ホイール右
 
-extern const TCHAR* jpVKEXNames[];
+extern const WCHAR* jpVKEXNames[];
 extern const int jpVKEXNamesLen;
 
 /*-----------------------------------------------------------------------
@@ -83,9 +83,9 @@ public:
 	static int CreateKeyBindList( HINSTANCE hInstance, int nKeyNameArrNum, KEYDATA* pKeyNameArr, CNativeW& cMemList, CFuncLookup* pcFuncLookup, BOOL bGetDefFuncCode = TRUE );
 	static int GetKeyStr( HINSTANCE hInstance, int nKeyNameArrNum, KEYDATA* pKeyNameArr, CNativeW& cMemList, int nFuncId, BOOL bGetDefFuncCode = TRUE );	/* 機能に対応するキー名の取得 */
 	static int GetKeyStrList( HINSTANCE	hInstance, int nKeyNameArrNum,KEYDATA* pKeyNameArr, CNativeW*** pppcMemList, int nFuncId, BOOL bGetDefFuncCode = TRUE );	/* 機能に対応するキー名の取得(複数) */
-	static TCHAR* GetMenuLabel( HINSTANCE hInstance, int nKeyNameArrNum, KEYDATA* pKeyNameArr, int nFuncId, TCHAR* pszLabel, const TCHAR* pszKey, BOOL bKeyStr, int nLabelSize, BOOL bGetDefFuncCode = TRUE );	/* メニューラベルの作成 */	// add pszKey	2010/5/17 Uchi
+	static WCHAR* GetMenuLabel( HINSTANCE hInstance, int nKeyNameArrNum, KEYDATA* pKeyNameArr, int nFuncId, WCHAR* pszLabel, const WCHAR* pszKey, BOOL bKeyStr, int nLabelSize, BOOL bGetDefFuncCode = TRUE );	/* メニューラベルの作成 */	// add pszKey	2010/5/17 Uchi
 
-	static TCHAR* MakeMenuLabel(const TCHAR* sName, const TCHAR* sKey);
+	static WCHAR* MakeMenuLabel(const WCHAR* sName, const WCHAR* sKey);
 
 protected:
 	/*

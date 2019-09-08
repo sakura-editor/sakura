@@ -33,7 +33,7 @@
 
 	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
-const TCHAR* CRecentFile::GetItemText( int nIndex ) const
+const WCHAR* CRecentFile::GetItemText( int nIndex ) const
 {
 	return GetItem(nIndex)->m_szPath;
 }
@@ -60,7 +60,7 @@ bool CRecentFile::DataToReceiveType( const EditInfo** dst, const EditInfo* src )
 	return true;
 }
 
-bool CRecentFile::TextToDataType( EditInfo* dst, LPCTSTR pszText ) const
+bool CRecentFile::TextToDataType( EditInfo* dst, LPCWSTR pszText ) const
 {
 	if( _countof(dst->m_szPath) < auto_strlen(pszText) + 1 ){
 		return false;
@@ -93,7 +93,7 @@ size_t CRecentFile::GetTextMaxLength() const
 //                   固有インターフェース                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-int CRecentFile::FindItemByPath(const TCHAR* pszPath) const
+int CRecentFile::FindItemByPath(const WCHAR* pszPath) const
 {
 	int n = GetItemCount();
 	for(int i=0;i<n;i++){

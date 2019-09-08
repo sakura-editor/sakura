@@ -188,10 +188,10 @@ inline       WCHAR* auto_strchr(      WCHAR* str, WCHAR c){ return ::wcschr  (st
 //変換系
 inline long auto_atol(const ACHAR* str){ return atol(str);  }
 inline long auto_atol(const WCHAR* str){ return _wtol(str); }
-ACHAR* tcstostr( ACHAR* dest, const TCHAR* src, size_t count );
-WCHAR* tcstostr( WCHAR* dest, const TCHAR* src, size_t count );
-TCHAR* strtotcs( TCHAR* dest, const ACHAR* src, size_t count );
-TCHAR* strtotcs( TCHAR* dest, const WCHAR* src, size_t count );
+ACHAR* tcstostr( ACHAR* dest, const WCHAR* src, size_t count );
+WCHAR* tcstostr( WCHAR* dest, const WCHAR* src, size_t count );
+WCHAR* strtotcs( WCHAR* dest, const ACHAR* src, size_t count );
+WCHAR* strtotcs( WCHAR* dest, const WCHAR* src, size_t count );
 
 //印字系
 #define auto_snprintf_s(buf, count, format, ...) tchar_sprintf_s((buf), count, (format), __VA_ARGS__)
@@ -228,13 +228,13 @@ char*	wcstombs_new(const wchar_t* pSrc,int nSrcLen); //戻り値はnew[]で確�
 void	wcstombs_vector(const wchar_t* pSrc, std::vector<char>* ret); //戻り値はvectorとして返す。
 void	wcstombs_vector(const wchar_t* pSrc, int nSrcLen, std::vector<char>* ret); //戻り値はvectorとして返す。
 
-//TCHAR
-size_t _tcstowcs(WCHAR* wszDst, const TCHAR* tszSrc, size_t nDstCount);
-size_t _tcstombs(CHAR*  szDst,  const TCHAR* tszSrc, size_t nDstCount);
-size_t _wcstotcs(TCHAR* tszDst, const WCHAR* wszSrc, size_t nDstCount);
-size_t _mbstotcs(TCHAR* tszDst, const CHAR*  szSrc,  size_t nDstCount);
-int _tctomb(const TCHAR* p,ACHAR* mb);
-int _tctowc(const TCHAR* p,WCHAR* wc);
+//WCHAR
+size_t _tcstowcs(WCHAR* wszDst, const WCHAR* tszSrc, size_t nDstCount);
+size_t _tcstombs(CHAR*  szDst,  const WCHAR* tszSrc, size_t nDstCount);
+size_t _wcstotcs(WCHAR* tszDst, const WCHAR* wszSrc, size_t nDstCount);
+size_t _mbstotcs(WCHAR* tszDst, const CHAR*  szSrc,  size_t nDstCount);
+int _tctomb(const WCHAR* p,ACHAR* mb);
+int _tctowc(const WCHAR* p,WCHAR* wc);
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       リテラル比較                          //
@@ -257,7 +257,7 @@ inline int wcsncmp_auto(const wchar_t* strData1, const wchar_t* szData2)
 #define strncmp_literal(strData1, literalData2) \
 	::strncmp(strData1, literalData2, _countof(literalData2) - 1 ) //※終端ヌルを含めないので、_countofからマイナス1する
 
-//TCHAR
+//WCHAR
 #define _tcsncmp_literal wcsncmp_literal
 
 #endif /* SAKURA_STRING_EX_29EB1DD7_7259_4D6C_A651_B9174E5C3D3C9_H_ */

@@ -88,7 +88,7 @@ bool CWSHMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 	@param hInstance [in] インスタンスハンドル(未使用)
 	@param pszPath   [in] ファイルのパス
 */
-BOOL CWSHMacroManager::LoadKeyMacro(HINSTANCE hInstance, const TCHAR* pszPath)
+BOOL CWSHMacroManager::LoadKeyMacro(HINSTANCE hInstance, const WCHAR* pszPath)
 {
 	//ソース読み込み -> m_Source
 	m_Source=L"";
@@ -109,23 +109,23 @@ BOOL CWSHMacroManager::LoadKeyMacro(HINSTANCE hInstance, const TCHAR* pszPath)
 	@param hInstance [in] インスタンスハンドル(未使用)
 	@param pszCode   [in] マクロコード
 */
-BOOL CWSHMacroManager::LoadKeyMacroStr(HINSTANCE hInstance, const TCHAR* pszCode)
+BOOL CWSHMacroManager::LoadKeyMacroStr(HINSTANCE hInstance, const WCHAR* pszCode)
 {
 	//ソース読み込み -> m_Source
 	m_Source = to_wchar( pszCode );
 	return TRUE;
 }
 
-CMacroManagerBase* CWSHMacroManager::Creator(const TCHAR* FileExt)
+CMacroManagerBase* CWSHMacroManager::Creator(const WCHAR* FileExt)
 {
-	TCHAR FileExtWithDot[1024], FileType[1024], EngineName[1024]; //1024を超えたら後は知りません
+	WCHAR FileExtWithDot[1024], FileType[1024], EngineName[1024]; //1024を超えたら後は知りません
 	
-	_tcscpy( FileExtWithDot, _T(".") );
+	_tcscpy( FileExtWithDot, L"." );
 	_tcscat( FileExtWithDot, FileExt );
 
 	if(ReadRegistry(HKEY_CLASSES_ROOT, FileExtWithDot, NULL, FileType, 1024))
 	{
-		lstrcat(FileType, _T("\\ScriptEngine"));
+		lstrcat(FileType, L"\\ScriptEngine");
 		if(ReadRegistry(HKEY_CLASSES_ROOT, FileType, NULL, EngineName, 1024))
 		{
 			wchar_t EngineNameW[1024];
