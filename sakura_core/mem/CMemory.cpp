@@ -42,13 +42,6 @@
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-void CMemory::_init_members()
-{
-	m_nDataBufSize = 0;
-	m_pRawData = NULL;
-	m_nRawLen = 0;
-}
-
 /*!
  * @brief デフォルトコンストラクタ
  */
@@ -57,7 +50,6 @@ CMemory::CMemory() noexcept
 	, m_nRawLen(0)
 	, m_nDataBufSize(0)
 {
-	_init_members();
 }
 
 /*
@@ -66,15 +58,14 @@ CMemory::CMemory() noexcept
 CMemory::CMemory(
 	const void*	pData,			//!< 格納データアドレス
 	int			nDataLenBytes	//!< 格納データの有効長
-)
+)	: CMemory()
 {
-	_init_members();
 	SetRawData( pData, nDataLenBytes );
 }
 
 CMemory::CMemory(const CMemory& rhs)
+	: CMemory()
 {
-	_init_members();
 	SetRawData(rhs);
 }
 
