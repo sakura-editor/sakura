@@ -221,7 +221,7 @@ bool CPlugin::ReadPluginDefOption( CDataProfile *cProfile, CDataProfile *cProfil
 //プラグインフォルダ基準の相対パスをフルパスに変換
 std::wstring CPlugin::GetFilePath( const wstring& sFileName ) const
 {
-	return m_sBaseDir + _T("\\") + to_wchar( sFileName.c_str() );
+	return m_sBaseDir + _T("\\") + sFileName;
 }
 
 std::wstring CPlugin::GetFolderName() const

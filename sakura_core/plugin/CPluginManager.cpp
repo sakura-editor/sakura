@@ -294,8 +294,8 @@ bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, co
 	else {
 		// pluginsフォルダ検索中
 		// フォルダ チェック。すでに解凍されていたならインストールしない(前段でインストール済み或は可否を確認済み)
-		if (bOk && (fexist(to_wchar((m_sBaseDir + to_wchar(sFolderName.c_str())).c_str()))
-			|| fexist(to_wchar((m_sExePluginDir + to_wchar(sFolderName.c_str())).c_str()))) ) {
+		if (bOk && (fexist((m_sBaseDir + sFolderName).c_str())
+			|| fexist((m_sExePluginDir + sFolderName).c_str())) ) {
 			bOk = false;
 			bSkip = true;
 		}
