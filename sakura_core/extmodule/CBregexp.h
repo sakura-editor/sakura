@@ -90,7 +90,7 @@ public:
 	};
 
 	//! DLLのバージョン情報を取得
-	const TCHAR* GetVersionT(){ return IsAvailable() ? to_tchar(BRegexpVersion()) : _T(""); }
+	const WCHAR* GetVersionW() noexcept { return IsAvailable() ? BRegexpVersion() : L""; }
 
 	//	CJreエミュレーション関数
 	//!	検索パターンのコンパイル

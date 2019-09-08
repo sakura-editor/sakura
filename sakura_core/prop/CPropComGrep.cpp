@@ -236,6 +236,6 @@ void CPropGrep::SetRegexpVersion( HWND hwndDlg )
 		::DlgItem_SetText( hwndDlg, IDC_LABEL_REGEXP_VER, LS(STR_PROPCOMGREP_DLL) );
 		return;
 	}
-	::DlgItem_SetText( hwndDlg, IDC_LABEL_REGEXP_VER, breg.GetVersionT() );
+	::DlgItem_SetText( hwndDlg, IDC_LABEL_REGEXP_VER, breg.GetVersionW() );
 }
 

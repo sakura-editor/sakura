@@ -521,7 +521,7 @@ DWORD CGrepAgent::DoGrep(
 		if( sSearchOption.bRegularExp ){
 			//	2007.07.22 genta : 正規表現ライブラリのバージョンも出力する
 			cmemMessage.AppendString( LSW( STR_GREP_REGEX_DLL ) );	//L"    (正規表現:"
-			cmemMessage.AppendStringT( cRegexp.GetVersionT() );
+			cmemMessage.AppendStringT( cRegexp.GetVersionW() );
 			cmemMessage.AppendString( L")\r\n" );
 		}
 	}

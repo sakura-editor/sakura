@@ -638,7 +638,7 @@ bool CheckRegexpVersion(
 		return false;
 	}
 	if( hWnd != NULL ){
-		::DlgItem_SetText( hWnd, nCmpId, cRegexp.GetVersionT() );
+		::DlgItem_SetText( hWnd, nCmpId, cRegexp.GetVersionW() );
 	}
 	return true;
 }
