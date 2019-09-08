@@ -169,11 +169,6 @@ public:
 	const wchar_t* GetStringW() const						{ return GetStringPtr(); }
 
 	//TCHAR
-	void SetStringT( const TCHAR* pData, int nDataLen )	{ return SetString(pData,nDataLen); }
-	void SetStringT( const TCHAR* pszData )				{ return SetString(pszData); }
-	void AppendStringT(const TCHAR* pszData)			{ return AppendString(pszData); }
-	void AppendStringT(const TCHAR* pData, int nLength)	{ return AppendString(pData,nLength); }
-	void AppendNativeDataT(const CNativeW& rhs)			{ return AppendNativeData(rhs); }
 	const TCHAR* GetStringT() const						{ return GetStringPtr(); }
 
 public:

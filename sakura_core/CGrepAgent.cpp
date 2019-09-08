@@ -451,7 +451,7 @@ DWORD CGrepAgent::DoGrep(
 	if( pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	}else{
 	}
-	cmemWork.SetStringT( pcmGrepFile->GetStringPtr() );
+	cmemWork.SetString( pcmGrepFile->GetStringPtr() );
 	cmemMessage += cmemWork;
 
 	cmemMessage.AppendString( L"\r\n" );
@@ -471,7 +471,7 @@ DWORD CGrepAgent::DoGrep(
 				grepFolder += sPath;
 			}
 		}
-		cmemWork.SetStringT( grepFolder.c_str() );
+		cmemWork.SetString( grepFolder.c_str() );
 	}
 	if( pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	}else{
@@ -484,7 +484,7 @@ DWORD CGrepAgent::DoGrep(
 	}
 	else {
 	}
-	cmemWork.SetStringT(pcmExcludeFile->GetStringPtr());
+	cmemWork.SetString(pcmExcludeFile->GetStringPtr());
 	cmemMessage += cmemWork;
 	cmemMessage.AppendString(L"\r\n");
 
@@ -493,7 +493,7 @@ DWORD CGrepAgent::DoGrep(
 	}
 	else {
 	}
-	cmemWork.SetStringT(pcmExcludeFolder->GetStringPtr());
+	cmemWork.SetString(pcmExcludeFolder->GetStringPtr());
 	cmemMessage += cmemWork;
 	cmemMessage.AppendString(L"\r\n");
 
@@ -521,7 +521,7 @@ DWORD CGrepAgent::DoGrep(
 		if( sSearchOption.bRegularExp ){
 			//	2007.07.22 genta : 正規表現ライブラリのバージョンも出力する
 			cmemMessage.AppendString( LSW( STR_GREP_REGEX_DLL ) );	//L"    (正規表現:"
-			cmemMessage.AppendStringT( cRegexp.GetVersionW() );
+			cmemMessage.AppendString( cRegexp.GetVersionW() );
 			cmemMessage.AppendString( L")\r\n" );
 		}
 	}
@@ -532,7 +532,7 @@ DWORD CGrepAgent::DoGrep(
 		cmemMessage.AppendString( LSW( STR_GREP_CHARSET ) );	//L"    (文字コードセット："
 		TCHAR szCpName[100];
 		CCodePage::GetNameNormal(szCpName, sGrepOption.nGrepCharSet);
-		cmemMessage.AppendStringT( szCpName );
+		cmemMessage.AppendString( szCpName );
 		cmemMessage.AppendString( L")\r\n" );
 	}
 
@@ -979,9 +979,9 @@ void CGrepAgent::SetGrepResult(
 		if( sGrepOption.bGrepOutputBaseFolder || sGrepOption.bGrepSeparateFolder ){
 			cmemBuf.AppendString( L"・" );
 		}
-		cmemBuf.AppendStringT( pszFilePath );
+		cmemBuf.AppendString( pszFilePath );
 		cmemBuf.AppendString( lineColumnToString(strWork, nLine, nColumn) );
-		cmemBuf.AppendStringT( pszCodeName );
+		cmemBuf.AppendString( pszCodeName );
 		cmemBuf.AppendString( L": " );
 		nMaxOutStr = 2000; // 2003.06.10 Moca 最大長変更
 	}
@@ -1058,14 +1058,14 @@ static void OutputPathInfo(
 		}else{
 			cmemMessage.AppendString( L"◎\"" );
 		}
-		cmemMessage.AppendStringT( pszBaseFolder );
+		cmemMessage.AppendString( pszBaseFolder );
 		cmemMessage.AppendString( L"\"\r\n" );
 		bOutputBaseFolder = true;
 	}
 	if( !bOutputFolderName && sGrepOption.bGrepSeparateFolder ){
 		if( pszFolder[0] ){
 			cmemMessage.AppendString( L"■\"" );
-			cmemMessage.AppendStringT( pszFolder );
+			cmemMessage.AppendString( pszFolder );
 			cmemMessage.AppendString( L"\"\r\n" );
 		}else{
 			cmemMessage.AppendString( L"■\r\n" );
@@ -1080,9 +1080,9 @@ static void OutputPathInfo(
 			}else{
 				cmemMessage.AppendString( L"■\"" );
 			}
-			cmemMessage.AppendStringT( pszDispFilePath );
+			cmemMessage.AppendString( pszDispFilePath );
 			cmemMessage.AppendString( L"\"" );
-			cmemMessage.AppendStringT( pszCodeName );
+			cmemMessage.AppendString( pszCodeName );
 			cmemMessage.AppendString( L"\r\n" );
 			bOutFileName = TRUE;
 		}

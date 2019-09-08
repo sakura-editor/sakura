@@ -662,11 +662,11 @@ void CDlgFuncList::SetData()
 					pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
 					pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
 				);
-				m_cmemClipText.AppendStringT(szText);
+				m_cmemClipText.AppendString(szText);
 				// "%ts(%ts)\r\n"
-				m_cmemClipText.AppendNativeDataT(pcFuncInfo->m_cmemFuncName);
+				m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
 				m_cmemClipText.AppendString(L"(");
-				m_cmemClipText.AppendStringT(item.pszText);
+				m_cmemClipText.AppendString(item.pszText);
 				m_cmemClipText.AppendString(L")\r\n");
 			}else{
 				// 検出結果の種類(関数,,,)がないとき
@@ -677,8 +677,8 @@ void CDlgFuncList::SetData()
 					pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
 					pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
 				);
-				m_cmemClipText.AppendStringT(szText);
-				m_cmemClipText.AppendNativeDataT(pcFuncInfo->m_cmemFuncName);
+				m_cmemClipText.AppendString(szText);
+				m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
 				m_cmemClipText.AppendString(L"\r\n");
 			}
 		}
@@ -1162,7 +1162,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 		);
 		m_cmemClipText.AppendString( szText ); /* クリップボードコピー用テキスト */
 		// "%ts%ls\r\n"
-		m_cmemClipText.AppendNativeDataT(pcFuncInfo->m_cmemFuncName);
+		m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
 		m_cmemClipText.AppendString(FL_OBJ_DECLARE == pcFuncInfo->m_nInfo ? m_pcFuncInfoArr->GetAppendText( FL_OBJ_DECLARE ).c_str() : L"" ); 	//	Jan. 04, 2001 genta C++で使用
 		m_cmemClipText.AppendString(L"\r\n");
 
@@ -1412,11 +1412,11 @@ void CDlgFuncList::SetListVB (void)
 				pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
 				pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
 			);
-			m_cmemClipText.AppendStringT(szText);
+			m_cmemClipText.AppendString(szText);
 			// "%ts(%ts)\r\n"
-			m_cmemClipText.AppendNativeDataT(pcFuncInfo->m_cmemFuncName);
+			m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
 			m_cmemClipText.AppendString(L"(");
-			m_cmemClipText.AppendStringT(item.pszText);
+			m_cmemClipText.AppendString(item.pszText);
 			m_cmemClipText.AppendString(L")\r\n");
 		}else{
 			// 検出結果の種類(関数,,,)がないとき
@@ -1427,9 +1427,9 @@ void CDlgFuncList::SetListVB (void)
 				pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
 				pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
 			);
-			m_cmemClipText.AppendStringT(szText);
+			m_cmemClipText.AppendString(szText);
 			// "%ts\r\n"
-			m_cmemClipText.AppendNativeDataT(pcFuncInfo->m_cmemFuncName);
+			m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
 			m_cmemClipText.AppendString(L"\r\n");
 		}
 	}
@@ -1607,7 +1607,7 @@ void CDlgFuncList::SetTree(bool tagjump, bool nolabel)
 				text.AppendNativeData( pcFuncInfo->m_cmemFuncName );
 			}
 			text.AppendString( _T("\r\n") );
-			m_cmemClipText.AppendNativeDataT( text );	/* クリップボードコピー用テキスト */
+			m_cmemClipText.AppendNativeData( text );	/* クリップボードコピー用テキスト */
 		}
 	}
 

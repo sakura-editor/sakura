@@ -363,7 +363,7 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 			for(int nLoop = 0; nLoop < nMaxCnt; nLoop++){
 				DragQueryFile(hDrop, nLoop, sTmpPath, _countof(sTmpPath) - 1);
 				// 2012.10.05 Moca ANSI版に合わせて最終行にも改行コードをつける
-				cmemBuf->AppendStringT(sTmpPath);
+				cmemBuf->AppendString(sTmpPath);
 				if(nMaxCnt > 1){
 					cmemBuf->AppendString( cEol.GetValue2() );
 				}
