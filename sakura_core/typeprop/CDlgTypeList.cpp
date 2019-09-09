@@ -815,7 +815,7 @@ int RegistExt(LPCWSTR sExt, bool bDefProg)
 
 	//小文字化
 	WCHAR szLowerExt[MAX_PATH] = {0};
-	wcsncpy_s(szLowerExt, sizeof(szLowerExt) / sizeof(szLowerExt[0]), sExt, wcslen(sExt));
+	wcsncpy_s(szLowerExt, sExt, _TRUNCATE);
 	CharLower(szLowerExt);
 
 	wstring sDotExt = sBasePath + L"." + szLowerExt;
@@ -935,7 +935,7 @@ int UnregistExt(LPCWSTR sExt)
 
 	//小文字化
 	WCHAR szLowerExt[MAX_PATH] = {0};
-	wcsncpy_s(szLowerExt, sizeof(szLowerExt) / sizeof(szLowerExt[0]), sExt, wcslen(sExt));
+	wcsncpy_s(szLowerExt, sExt, _TRUNCATE);
 	CharLower(szLowerExt);
 
 	wstring sDotExt = sBasePath + L"." + szLowerExt;
@@ -1027,7 +1027,7 @@ int CheckExt(LPCWSTR sExt, bool *pbRMenu, bool *pbDblClick)
 
 	//小文字化
 	WCHAR szLowerExt[MAX_PATH] = {0};
-	wcsncpy_s(szLowerExt, sizeof(szLowerExt) / sizeof(szLowerExt[0]), sExt, wcslen(sExt));
+	wcsncpy_s(szLowerExt, sExt, _TRUNCATE);
 	CharLower(szLowerExt);
 
 	wstring sDotExt = sBasePath + L"." + szLowerExt;

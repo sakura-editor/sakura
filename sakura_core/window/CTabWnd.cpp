@@ -1328,7 +1328,7 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 
 		item.mask = TCIF_TEXT | TCIF_PARAM | TCIF_IMAGE;
 		item.pszText = szBuf;
-		item.cchTextMax = sizeof(szBuf) / sizeof(WCHAR);
+		item.cchTextMax = _countof(szBuf);
 		TabCtrl_GetItem(hwndItem, nTabIndex, &item);
 
 		//描画対象

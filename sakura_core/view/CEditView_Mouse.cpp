@@ -2132,7 +2132,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 
 		nFiles = ::DragQueryFile( hDrop, 0xFFFFFFFF, NULL, 0 );
 		for( UINT i = 0; i < nFiles; i++ ){
-			::DragQueryFile( hDrop, i, szPath, sizeof(szPath)/sizeof(WCHAR) );
+			::DragQueryFile( hDrop, i, szPath, _countof(szPath) );
 			if( !::GetLongFileName( szPath, szWork ) )
 				continue;
 			if( nId == 100 ){	// パス名
