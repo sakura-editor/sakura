@@ -92,7 +92,7 @@ static std::wstring GetProfileMgrFileName(LPCWSTR profName = NULL)
 		auto_snprintf_s( szIniFile, _MAX_PATH - 1, L"%s\\%s", szDir, profName );
 	}
 
-	return std::wstring(szIniFile);
+	return szIniFile;
 }
 
 /*! ダイアログデータの設定 */

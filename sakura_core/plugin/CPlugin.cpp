@@ -226,7 +226,7 @@ std::wstring CPlugin::GetFilePath( const wstring& sFileName ) const
 
 std::wstring CPlugin::GetFolderName() const
 {
-	return wstring(GetFileTitlePointer(m_sBaseDir.c_str()));
+	return GetFileTitlePointer(m_sBaseDir.c_str());
 }
 
 //コマンドを追加する

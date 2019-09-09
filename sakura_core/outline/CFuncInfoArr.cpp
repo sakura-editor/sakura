@@ -144,12 +144,11 @@ void CFuncInfoArr::SetAppendText( int info, std::wstring s, bool overwrite )
 
 std::wstring CFuncInfoArr::GetAppendText( int info )
 {
-	if( m_AppendTextArr.find( info ) == m_AppendTextArr.end() ){
-		// キーが存在しない場合、空文字列を返す
-		return std::wstring();
-	}else{
-		// キーが存在する場合、値を返す
-		return m_AppendTextArr[ info ];
+	// キーが存在する場合、値を返す
+	if( m_AppendTextArr.find( info ) != m_AppendTextArr.end() ){
+		return m_AppendTextArr[info];
 	}
+	// キーが存在しない場合、空文字列を返す
+	return {};
 }
 

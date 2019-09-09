@@ -74,7 +74,7 @@ wstring CTextInputStream::ReadLineW()
 		CShiftJis::SJISToUnicode(*(line._GetMemory()), &line);
 	}
 
-	return wstring().assign( line.GetStringPtr(), line.GetStringLength() );	// EOL まで NULL 文字も含める
+	return std::wstring(line.GetStringPtr(), line.GetStringLength());	// EOLまで。NUL文字も含める。
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
