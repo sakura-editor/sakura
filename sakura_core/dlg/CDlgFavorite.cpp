@@ -115,7 +115,7 @@ CDlgFavorite::CDlgFavorite()
 		i = 0;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentFile;
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_FILE );
-		m_aFavoriteInfo[i].m_pszCaption = const_cast<WCHAR*>(m_aFavoriteInfo[i].m_strCaption.c_str());
+		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_FILE;
 		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = true;
@@ -126,7 +126,7 @@ CDlgFavorite::CDlgFavorite()
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentFolder;
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_FOLDER );
-		m_aFavoriteInfo[i].m_pszCaption = const_cast<WCHAR*>(m_aFavoriteInfo[i].m_strCaption.c_str());
+		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_FOLDER;
 		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = true;
@@ -137,7 +137,7 @@ CDlgFavorite::CDlgFavorite()
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentExceptMRU;
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_FF_EXCLUDE );
-		m_aFavoriteInfo[i].m_pszCaption = const_cast<WCHAR*>(m_aFavoriteInfo[i].m_strCaption.c_str());
+		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_EXCEPTMRU;
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
@@ -149,7 +149,7 @@ CDlgFavorite::CDlgFavorite()
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentSearch;
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_SEARCH );
-		m_aFavoriteInfo[i].m_pszCaption = const_cast<WCHAR*>(m_aFavoriteInfo[i].m_strCaption.c_str());
+		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_SEARCH;
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
@@ -160,7 +160,7 @@ CDlgFavorite::CDlgFavorite()
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentReplace;
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_REPLACE );
-		m_aFavoriteInfo[i].m_pszCaption = const_cast<WCHAR*>(m_aFavoriteInfo[i].m_strCaption.c_str());
+		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_REPLACE;
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
@@ -171,7 +171,7 @@ CDlgFavorite::CDlgFavorite()
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentGrepFile;
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_GREP_FILE );
-		m_aFavoriteInfo[i].m_pszCaption = const_cast<WCHAR*>(m_aFavoriteInfo[i].m_strCaption.c_str());
+		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_GREP_FILE;
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
@@ -182,7 +182,7 @@ CDlgFavorite::CDlgFavorite()
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentGrepFolder;
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_GREP_FOLDER );
-		m_aFavoriteInfo[i].m_pszCaption = const_cast<WCHAR*>(m_aFavoriteInfo[i].m_strCaption.c_str());
+		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_GREP_FOLDER;
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
 		m_aFavoriteInfo[i].m_bFilePath  = true;
@@ -193,7 +193,7 @@ CDlgFavorite::CDlgFavorite()
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentCmd;
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_EXT_COMMAND );
-		m_aFavoriteInfo[i].m_pszCaption = const_cast<WCHAR*>(m_aFavoriteInfo[i].m_strCaption.c_str());
+		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_CMD;
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
@@ -204,7 +204,7 @@ CDlgFavorite::CDlgFavorite()
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentCurDir;
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_CURRENT_DIR );
-		m_aFavoriteInfo[i].m_pszCaption = const_cast<WCHAR*>(m_aFavoriteInfo[i].m_strCaption.c_str());
+		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_CUR_DIR;
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
 		m_aFavoriteInfo[i].m_bFilePath  = true;
