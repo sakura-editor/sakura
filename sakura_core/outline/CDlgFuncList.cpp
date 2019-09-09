@@ -962,8 +962,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 	bSelected = FALSE;
 	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
 		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
-		const WCHAR*		pWork;
-		pWork = pcFuncInfo->m_cmemFuncName.GetStringPtr();
+		const WCHAR* pWork = pcFuncInfo->m_cmemFuncName.GetStringPtr();
 		int m = 0;
 		vStrClasses.clear();
 		nClassNest = 0;

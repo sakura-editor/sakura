@@ -135,8 +135,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 			);
 			if(nSearchResult){
 				/* 該当するキーがある */
-				LPWSTR		pszWork;
-				pszWork = pcmemRefText->GetStringPtr();
+				LPWSTR pszWork = pcmemRefText->GetStringPtr();
 				/* 有効になっている辞書を全部なめて、ヒットの都度説明の継ぎ増し */
 				if(m_pTypeData->m_bUseKeyHelpAllSearch){	/* ヒットした次の辞書も検索 */	// 2006.04.10 fon
 					/* バッファに前のデータが詰まっていたらseparator挿入 */

@@ -554,8 +554,7 @@ LRESULT CEditView::DispatchEvent(
 //				 MyError( ERROR_GLOBALALLOC );
 			}
 
-			LPWSTR lptstr;
-			lptstr = (LPWSTR)GlobalLock( hstr );
+			LPWSTR lptstr = (LPWSTR)GlobalLock( hstr );
 			if( lptstr == NULL ){
 				return 0;
 //				 MyError( ERROR_GLOBALLOCK );

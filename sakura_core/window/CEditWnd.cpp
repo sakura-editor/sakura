@@ -2694,9 +2694,7 @@ void CEditWnd::CheckFreeSubMenuSub( HMENU hMenu, int nLv )
 void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sKey, bool flag )
 {
 	int				i;
-	const WCHAR*	sName;
-
-	sName = L"";
+	const WCHAR*	sName = L"";
 	for (i = 0; i < _countof(sFuncMenuName) ;i++) {
 		if (sFuncMenuName[i].eFunc == nFunc) {
 			sName = flag ? LSW( sFuncMenuName[i].nNameId[0] ) : LSW( sFuncMenuName[i].nNameId[1] );

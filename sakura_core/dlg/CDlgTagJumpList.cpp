@@ -321,8 +321,7 @@ void CDlgTagJumpList::UpdateData( bool bInit )
 		auto_sprintf( tmp, L"%d", item->no );
 		ListView_SetItemText( hwndList, nIndex, 2, tmp );
 
-		WCHAR	*p;
-		p = GetNameByType( item->type, item->filename );
+		WCHAR *p = GetNameByType( item->type, item->filename );
 		ListView_SetItemText( hwndList, nIndex, 3, p );
 		free( p );
 

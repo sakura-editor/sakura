@@ -502,12 +502,9 @@ BOOL CDialog::OnCbnSelEndOk( HWND hwndCtl, int wID )
 	//リストを非表示にすると前方一致する文字列を選んでしまうので、
 	//事前に文字列を退避し、リスト非表示後に復元する。
 
-	int nLength;
-	LPWSTR sBuf;
-
 	//文字列を退避
-	nLength = ::GetWindowTextLength( hwndCtl );
-	sBuf = new WCHAR[nLength + 1];
+	int nLength = ::GetWindowTextLength( hwndCtl );
+	LPWSTR sBuf = new WCHAR[nLength + 1];
 	::GetWindowText( hwndCtl, sBuf, nLength+1 );
 	sBuf[nLength] = L'\0';
 

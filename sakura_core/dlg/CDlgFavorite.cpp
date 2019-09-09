@@ -300,8 +300,7 @@ void CDlgFavorite::SetDataOne( int nIndex, int nLvItemIndex )
 		lvi.lParam   = i;
 		ListView_InsertItem( hwndList, &lvi );
 
-		const WCHAR	*p;
-		p = pRecent->GetItemText( i );
+		const WCHAR	*p = pRecent->GetItemText( i );
 		auto_snprintf_s( tmp, _countof(tmp), L"%s", p ? p : L"" );
 		lvi.mask     = LVIF_TEXT;
 		lvi.iItem    = i;

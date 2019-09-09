@@ -490,8 +490,7 @@ bool CBackupAgent::FormatBackUpPath(
 				folders[0] = szFname;
 
 				for( idx=1; idx<10; ++idx ){
-					WCHAR *cp;
-					cp = wcsrchr(keybuff, L'\\');
+					WCHAR *cp = wcsrchr(keybuff, L'\\');
 					if( cp != NULL ){
 						folders[idx] = cp+1;
 						*cp = L'\0';

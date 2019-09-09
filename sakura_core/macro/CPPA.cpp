@@ -335,8 +335,7 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 	m_CurInstance->m_bError = true; // 関数内で関数を呼ぶ場合等、2回表示されるのを防ぐ
 
 	WCHAR szMes[2048]; // 2048あれば足りるかと
-	const WCHAR* pszErr;
-	pszErr = szMes;
+	const WCHAR* pszErr = szMes;
 	if( 0 < Err_CD ){
 		int i, FuncID;
 		FuncID = Err_CD - 1;
