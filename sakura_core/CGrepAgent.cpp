@@ -1506,13 +1506,13 @@ int CGrepAgent::DoGrepFile(
 	} // try
 	catch( CError_FileOpen ){
 		CNativeW str(LSW(STR_GREP_ERR_FILEOPEN));
-		str.Replace(L"%s", to_wchar(pszFullPath));
+		str.Replace(L"%s", pszFullPath);
 		cmemMessage.AppendNativeData( str );
 		return 0;
 	}
 	catch( CError_FileRead ){
 		CNativeW str(LSW(STR_GREP_ERR_FILEREAD));
-		str.Replace(L"%s", to_wchar(pszFullPath));
+		str.Replace(L"%s", pszFullPath);
 		cmemMessage.AppendNativeData( str );
 	} // 例外処理終わり
 
@@ -1955,13 +1955,13 @@ int CGrepAgent::DoGrepReplaceFile(
 	} // try
 	catch( CError_FileOpen ){
 		CNativeW str(LSW(STR_GREP_ERR_FILEOPEN));
-		str.Replace(L"%s", to_wchar(pszFullPath));
+		str.Replace(L"%s", pszFullPath);
 		cmemMessage.AppendNativeData( str );
 		return 0;
 	}
 	catch( CError_FileRead ){
 		CNativeW str(LSW(STR_GREP_ERR_FILEREAD));
-		str.Replace(L"%s", to_wchar(pszFullPath));
+		str.Replace(L"%s", pszFullPath);
 		cmemMessage.AppendNativeData( str );
 	}
 	catch( CError_WriteFileOpen ){
