@@ -195,12 +195,8 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 	//	May 30, 2000 genta
 	//	実行ファイル名をもとに漢字コードを固定する．
 	{
-		WCHAR	exename[512];
-		::GetModuleFileName( NULL, exename, _countof(exename) );
-		WCHAR	wexename[512];
-		auto_strcpy( wexename, to_wchar(exename) );
-
-		int		len = wcslen( wexename );
+		WCHAR wexename[MAX_PATH];
+		const int len = ::GetModuleFileName( NULL, wexename, _countof( wexename ) );
 
 		for( int i = len - 1; 0 <= i; i-- ){
 			if(wexename[i] == L'.' ){
