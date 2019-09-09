@@ -136,7 +136,7 @@ void CDlgCtrlCode::SetData( void )
 		// 2011.06.01 nasukoji	元のjnameがNULLのものはそのまま残す
 		if( p_ctrl_list[i].jname ){
 			// LMP: Added, nasukoji changed
-			p_ctrl_list[i].jname = (LPWSTR)cLabel_jname[i].LoadString(STR_ERR_DLGCTL5 + i);
+			p_ctrl_list[i].jname = cLabel_jname[i].LoadString(STR_ERR_DLGCTL5 + i);
 		}
 
 		auto_sprintf( tmp, L"0x%02X", p_ctrl_list[i].code );
