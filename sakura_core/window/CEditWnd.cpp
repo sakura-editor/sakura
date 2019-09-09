@@ -267,26 +267,25 @@ void CEditWnd::UpdateCaption()
 {
 	if( !GetActiveView().GetDrawSwitch() )return;
 
-	//キャプション文字列の生成 -> pszCap
+	const  CommonSetting& Common = GetDllShareData().m_Common;
+
+	const auto pszWindowCaptionFormat = IsActiveApp()
+		? Common.m_sWindow.m_szWindowCaptionActive
+		: Common.m_sWindow.m_szWindowCaptionInactive;
+
+	const auto pszTabCaptionFormat = Common.m_sTabBar.m_szTabWndCaption;
+
 	wchar_t	pszCap[1024];
-	const CommonSetting_Window& setting = GetDllShareData().m_Common.m_sWindow;
-	const wchar_t* pszFormat = NULL;
-	if( !this->IsActiveApp() )	pszFormat = to_wchar(setting.m_szWindowCaptionInactive);
-	else						pszFormat = to_wchar(setting.m_szWindowCaptionActive);
-	CSakuraEnvironment::ExpandParameter(
-		pszFormat,
-		pszCap,
-		_countof( pszCap )
-	);
 
 	//キャプション更新
-	::SetWindowText( this->GetHwnd(), to_wchar(pszCap) );
+	CSakuraEnvironment::ExpandParameter( pszWindowCaptionFormat, pszCap, _countof( pszCap ) );
+	::SetWindowText( GetHwnd(), pszCap );
 
-	//@@@ From Here 2003.06.13 MIK
 	//タブウインドウのファイル名を通知
-	CSakuraEnvironment::ExpandParameter( GetDllShareData().m_Common.m_sTabBar.m_szTabWndCaption, pszCap, _countof( pszCap ));
-	this->ChangeFileNameNotify( to_wchar(pszCap), GetListeningDoc()->m_cDocFile.GetFilePath(), CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode );	// 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
-	//@@@ To Here 2003.06.13 MIK
+	CSakuraEnvironment::ExpandParameter( pszTabCaptionFormat, pszCap, _countof( pszCap ) );
+	ChangeFileNameNotify( pszCap,
+		GetListeningDoc()->m_cDocFile.GetFilePath(),
+		CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode ); // 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
 }
 
 //!< ウィンドウ生成用の矩形を取得
