@@ -49,11 +49,11 @@ bool CControlProcess::InitializeProcess()
 		return false;
 	}
 
-	const std::wstring strProfileName = CCommandLine::getInstance()->GetProfileName();
+	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
 
 	// 初期化完了イベントを作成する
 	std::wstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
-	strInitEvent += strProfileName;
+	strInitEvent += pszProfileName;
 	m_hEventCPInitialized = ::CreateEvent( NULL, TRUE, FALSE, strInitEvent.c_str() );
 	if( NULL == m_hEventCPInitialized )
 	{
@@ -64,7 +64,7 @@ bool CControlProcess::InitializeProcess()
 
 	/* コントロールプロセスの目印 */
 	std::wstring strCtrlProcEvent = GSTR_MUTEX_SAKURA_CP;
-	strCtrlProcEvent += strProfileName;
+	strCtrlProcEvent += pszProfileName;
 	m_hMutexCP = ::CreateMutex( NULL, TRUE, strCtrlProcEvent.c_str() );
 	if( NULL == m_hMutexCP ){
 		ErrorBeep();

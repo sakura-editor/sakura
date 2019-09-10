@@ -86,9 +86,9 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 		cProfile.SetWritingMode();
 	}
 
-	const std::wstring strProfileName = CCommandLine::getInstance()->GetProfileName();
+	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
 	WCHAR	szIniFileName[_MAX_PATH + 1];
-	CFileNameManager::getInstance()->GetIniFileName( szIniFileName, strProfileName.c_str(), bRead );	// 2007.05.19 ryoji iniファイル名を取得する
+	CFileNameManager::getInstance()->GetIniFileName( szIniFileName, pszProfileName, bRead );	// 2007.05.19 ryoji iniファイル名を取得する
 
 //	MYTRACE( L"Iniファイル処理-1 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
 

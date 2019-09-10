@@ -487,11 +487,11 @@ void GetInidir(
 	if( pDir == NULL )
 		return;
 	
-	const std::wstring strProfileName = CCommandLine::getInstance()->GetProfileName();
+	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
 	WCHAR	szPath[_MAX_PATH];
 
 	// sakura.ini のパスを取得
-	CFileNameManager::getInstance()->GetIniFileName( szPath, strProfileName.c_str() );
+	CFileNameManager::getInstance()->GetIniFileName( szPath, pszProfileName );
 	if( szFile == NULL ){
 		SplitPath_FolderAndFile( szPath, pDir, NULL );
 	}

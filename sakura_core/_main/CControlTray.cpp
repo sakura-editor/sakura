@@ -295,9 +295,9 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 
 	//同名同クラスのウィンドウが既に存在していたら、失敗
 	m_hInstance = hInstance;
-	const std::wstring strProfileName = CCommandLine::getInstance()->GetProfileName();
+	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
 	std::wstring strCEditAppName = GSTR_CEDITAPP;
-	strCEditAppName += strProfileName;
+	strCEditAppName += pszProfileName;
 	HWND hwndWork = ::FindWindow( strCEditAppName.c_str(), strCEditAppName.c_str() );
 	if( NULL != hwndWork ){
 		return NULL;
