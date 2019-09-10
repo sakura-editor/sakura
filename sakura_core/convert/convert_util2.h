@@ -410,7 +410,7 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, WCHAR *pszFilename )
 	
 	if( nLen < 1 ){
 		if( pszFilename ){
-			pszFilename[0] = _WINT('\0');
+			pszFilename[0] = L'\0';
 		}
 		return false;
 	}
@@ -500,7 +500,7 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, WCHAR *pszFilename )
 	// ファイル名を格納
 	if( pszFilename ){
 		strtotcs( pszFilename, pwstart, (size_t)nwlen );
-		pszFilename[nwlen] = _WINT('\0');
+		pszFilename[nwlen] = L'\0';
 	}
 
 	return true;

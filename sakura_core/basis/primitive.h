@@ -32,7 +32,6 @@ typedef char ACHAR;
 
 //WIN_CHAR (WinAPIに渡すので、必ずTCHARでなければならないもの)
 typedef WCHAR WIN_CHAR;
-#define _WINT(A) _T(A)
 
 //EDIT_CHAR
 typedef wchar_t WChar;      //エディタで用いるテキスト管理データ型
