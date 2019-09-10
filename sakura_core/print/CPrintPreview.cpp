@@ -943,7 +943,7 @@ void CPrintPreview::OnPreviewGoPage( int nPage )
 		::EnableWindow( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_PREVPAGE ), FALSE );
 	}
 	wchar_t	szEdit[1024];
-	auto_sprintf( szEdit, LSW(STR_ERR_DLGPRNPRVW6), m_nCurPageNum + 1, m_nAllPageNum );
+	auto_sprintf( szEdit, LS(STR_ERR_DLGPRNPRVW6), m_nCurPageNum + 1, m_nAllPageNum );
 	::DlgItem_SetText( m_hwndPrintPreviewBar, IDC_STATIC_PAGENUM, szEdit );
 
 	auto_sprintf( szEdit, L"%d %%", m_nPreview_Zoom );

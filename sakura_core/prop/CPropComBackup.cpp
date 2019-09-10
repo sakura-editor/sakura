@@ -508,7 +508,7 @@ void CPropBackup::UpdateBackupFile(HWND hwndDlg)	//	バックアップファイ�
 			temp[0] = LTEXT('\0');
 		}
 		else if( m_Common.m_sBackup.m_bBackUpDustBox  ){
-			auto_sprintf( temp, LTEXT("%ls\\"), LSW(STR_PROPCOMBK_DUSTBOX) );
+			auto_sprintf( temp, LTEXT("%ls\\"), LS(STR_PROPCOMBK_DUSTBOX) );
 		}
 		else{
 			wcsncpy_s( temp, LTEXT(".\\"), _TRUNCATE );

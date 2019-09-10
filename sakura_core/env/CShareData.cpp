@@ -768,11 +768,11 @@ static void ConvertLangValueImpl( wchar_t* pBuf, size_t chBufSize, int nStrId, s
 {
 	if( setValues ){
 		if( bUpdate ){
-			values.push_back( std::wstring(LSW(nStrId)) );
+			values.push_back( std::wstring(LS(nStrId)) );
 		}
 		return;
 	}
-	std::wstring to = LSW(nStrId);
+	std::wstring to = LS(nStrId);
 	ConvertLangString( pBuf, chBufSize, values[index], to );
 	index++;
 }
@@ -781,11 +781,11 @@ static void ConvertLangValueImpl( char* pBuf, size_t chBufSize, int nStrId, std:
 {
 	if( setValues ){
 		if( bUpdate ){
-			values.push_back( std::wstring(LSW(nStrId)) );
+			values.push_back( std::wstring(LS(nStrId)) );
 		}
 		return;
 	}
-	std::wstring to = LSW(nStrId);
+	std::wstring to = LS(nStrId);
 	ConvertLangString( pBuf, chBufSize, values[index], to );
 	index++;
 }

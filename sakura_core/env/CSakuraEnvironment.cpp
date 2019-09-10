@@ -113,11 +113,11 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0); //###
 
 	// Apr. 03, 2003 genta 固定文字列をまとめる
-	const wstring	PRINT_PREVIEW_ONLY		= LSW( STR_PREVIEW_ONLY );	//L"(印刷プレビューでのみ使用できます)";
+	const wstring	PRINT_PREVIEW_ONLY		= LS( STR_PREVIEW_ONLY );	//L"(印刷プレビューでのみ使用できます)";
 	const int		PRINT_PREVIEW_ONLY_LEN	= PRINT_PREVIEW_ONLY.length();
-	const wstring	NO_TITLE				= LSW( STR_NO_TITLE1 );	//L"(無題)";
+	const wstring	NO_TITLE				= LS( STR_NO_TITLE1 );	//L"(無題)";
 	const int		NO_TITLE_LEN			= NO_TITLE.length();
-	const wstring	NOT_SAVED				= LSW( STR_NOT_SAVED );	//L"(保存されていません)";
+	const wstring	NOT_SAVED				= LS( STR_NOT_SAVED );	//L"(保存されていません)";
 	const int		NOT_SAVED_LEN			= NOT_SAVED.length();
 
 	const wchar_t *p, *r;	//	p：目的のバッファ。r：作業用のポインタ。

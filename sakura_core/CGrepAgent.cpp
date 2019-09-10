@@ -396,7 +396,7 @@ DWORD CGrepAgent::DoGrep(
 
 	/* 最後にテキストを追加 */
 	CNativeW	cmemWork;
-	cmemMessage.AppendString( LSW( STR_GREP_SEARCH_CONDITION ) );	//L"\r\n□検索条件  "
+	cmemMessage.AppendString( LS( STR_GREP_SEARCH_CONDITION ) );	//L"\r\n□検索条件  "
 	if( 0 < nWork ){
 		CNativeW cmemWork2;
 		cmemWork2.SetNativeData( *pcmGrepKey );
@@ -417,14 +417,14 @@ DWORD CGrepAgent::DoGrep(
 		cmemWork.AppendNativeData( cmemWork2 );
 		cmemWork.AppendString( L"\"\r\n" );
 	}else{
-		cmemWork.AppendString( LSW( STR_GREP_SEARCH_FILE ) );	//L"「ファイル検索」\r\n"
+		cmemWork.AppendString( LS( STR_GREP_SEARCH_FILE ) );	//L"「ファイル検索」\r\n"
 	}
 	cmemMessage += cmemWork;
 
 	if( bGrepReplace ){
-		cmemMessage.AppendString( LSW(STR_GREP_REPLACE_TO) );
+		cmemMessage.AppendString( LS(STR_GREP_REPLACE_TO) );
 		if( bGrepPaste ){
-			cmemMessage.AppendString( LSW(STR_GREP_PASTE_CLIPBOAD) );
+			cmemMessage.AppendString( LS(STR_GREP_PASTE_CLIPBOAD) );
 		}else{
 			CNativeW cmemWork2;
 			cmemWork2.SetNativeData( cmemReplace );
@@ -447,7 +447,7 @@ DWORD CGrepAgent::DoGrep(
 		}
 	}
 
-	cmemMessage.AppendString( LSW( STR_GREP_SEARCH_TARGET ) );	//L"検索対象   "
+	cmemMessage.AppendString( LS( STR_GREP_SEARCH_TARGET ) );	//L"検索対象   "
 	if( pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	}else{
 	}
@@ -455,7 +455,7 @@ DWORD CGrepAgent::DoGrep(
 	cmemMessage += cmemWork;
 
 	cmemMessage.AppendString( L"\r\n" );
-	cmemMessage.AppendString( LSW( STR_GREP_SEARCH_FOLDER ) );	//L"フォルダ   "
+	cmemMessage.AppendString( LS( STR_GREP_SEARCH_FOLDER ) );	//L"フォルダ   "
 	{
 		std::wstring grepFolder;
 		for( int i = 0; i < (int)vPaths.size(); i++ ){
@@ -479,7 +479,7 @@ DWORD CGrepAgent::DoGrep(
 	cmemMessage += cmemWork;
 	cmemMessage.AppendString( L"\r\n" );
 
-	cmemMessage.AppendString(LSW(STR_GREP_EXCLUDE_FILE));	//L"除外ファイル   "
+	cmemMessage.AppendString(LS(STR_GREP_EXCLUDE_FILE));	//L"除外ファイル   "
 	if (pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0) {	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	}
 	else {
@@ -488,7 +488,7 @@ DWORD CGrepAgent::DoGrep(
 	cmemMessage += cmemWork;
 	cmemMessage.AppendString(L"\r\n");
 
-	cmemMessage.AppendString(LSW(STR_GREP_EXCLUDE_FOLDER));	//L"除外フォルダ   "
+	cmemMessage.AppendString(LS(STR_GREP_EXCLUDE_FOLDER));	//L"除外フォルダ   "
 	if (pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0) {	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	}
 	else {
@@ -499,37 +499,37 @@ DWORD CGrepAgent::DoGrep(
 
 	const wchar_t*	pszWork;
 	if( sGrepOption.bGrepSubFolder ){
-		pszWork = LSW( STR_GREP_SUBFOLDER_YES );	//L"    (サブフォルダも検索)\r\n"
+		pszWork = LS( STR_GREP_SUBFOLDER_YES );	//L"    (サブフォルダも検索)\r\n"
 	}else{
-		pszWork = LSW( STR_GREP_SUBFOLDER_NO );	//L"    (サブフォルダを検索しない)\r\n"
+		pszWork = LS( STR_GREP_SUBFOLDER_NO );	//L"    (サブフォルダを検索しない)\r\n"
 	}
 	cmemMessage.AppendString( pszWork );
 
 	if( 0 < nWork ){ // 2003.06.10 Moca ファイル検索の場合は表示しない // 2004.09.26 条件誤り修正
 		if( sSearchOption.bWordOnly ){
 		/* 単語単位で探す */
-			cmemMessage.AppendString( LSW( STR_GREP_COMPLETE_WORD ) );	//L"    (単語単位で探す)\r\n"
+			cmemMessage.AppendString( LS( STR_GREP_COMPLETE_WORD ) );	//L"    (単語単位で探す)\r\n"
 		}
 
 		if( sSearchOption.bLoHiCase ){
-			pszWork = LSW( STR_GREP_CASE_SENSITIVE );	//L"    (英大文字小文字を区別する)\r\n"
+			pszWork = LS( STR_GREP_CASE_SENSITIVE );	//L"    (英大文字小文字を区別する)\r\n"
 		}else{
-			pszWork = LSW( STR_GREP_IGNORE_CASE );	//L"    (英大文字小文字を区別しない)\r\n"
+			pszWork = LS( STR_GREP_IGNORE_CASE );	//L"    (英大文字小文字を区別しない)\r\n"
 		}
 		cmemMessage.AppendString( pszWork );
 
 		if( sSearchOption.bRegularExp ){
 			//	2007.07.22 genta : 正規表現ライブラリのバージョンも出力する
-			cmemMessage.AppendString( LSW( STR_GREP_REGEX_DLL ) );	//L"    (正規表現:"
+			cmemMessage.AppendString( LS( STR_GREP_REGEX_DLL ) );	//L"    (正規表現:"
 			cmemMessage.AppendString( cRegexp.GetVersionW() );
 			cmemMessage.AppendString( L")\r\n" );
 		}
 	}
 
 	if( CODE_AUTODETECT == sGrepOption.nGrepCharSet ){
-		cmemMessage.AppendString( LSW( STR_GREP_CHARSET_AUTODETECT ) );	//L"    (文字コードセットの自動判別)\r\n"
+		cmemMessage.AppendString( LS( STR_GREP_CHARSET_AUTODETECT ) );	//L"    (文字コードセットの自動判別)\r\n"
 	}else if(IsValidCodeOrCPType(sGrepOption.nGrepCharSet)){
-		cmemMessage.AppendString( LSW( STR_GREP_CHARSET ) );	//L"    (文字コードセット："
+		cmemMessage.AppendString( LS( STR_GREP_CHARSET ) );	//L"    (文字コードセット："
 		WCHAR szCpName[100];
 		CCodePage::GetNameNormal(szCpName, sGrepOption.nGrepCharSet);
 		cmemMessage.AppendString( szCpName );
@@ -539,21 +539,21 @@ DWORD CGrepAgent::DoGrep(
 	if( 0 < nWork ){ // 2003.06.10 Moca ファイル検索の場合は表示しない // 2004.09.26 条件誤り修正
 		if( sGrepOption.nGrepOutputLineType == 1 ){
 			/* 該当行 */
-			pszWork = LSW( STR_GREP_SHOW_MATCH_LINE );	//L"    (一致した行を出力)\r\n"
+			pszWork = LS( STR_GREP_SHOW_MATCH_LINE );	//L"    (一致した行を出力)\r\n"
 		}else if( sGrepOption.nGrepOutputLineType == 2 ){
 			// 否該当行
-			pszWork = LSW( STR_GREP_SHOW_MATCH_NOHITLINE );	//L"    (一致しなかった行を出力)\r\n"
+			pszWork = LS( STR_GREP_SHOW_MATCH_NOHITLINE );	//L"    (一致しなかった行を出力)\r\n"
 		}else{
 			if( bGrepReplace && sSearchOption.bRegularExp && !bGrepPaste ){
-				pszWork = LSW(STR_GREP_SHOW_FIRST_LINE);
+				pszWork = LS(STR_GREP_SHOW_FIRST_LINE);
 			}else{
-				pszWork = LSW( STR_GREP_SHOW_MATCH_AREA );
+				pszWork = LS( STR_GREP_SHOW_MATCH_AREA );
 			}
 		}
 		cmemMessage.AppendString( pszWork );
 
 		if( sGrepOption.bGrepOutputFileOnly ){
-			pszWork = LSW( STR_GREP_SHOW_FIRST_MATCH );	//L"    (ファイル毎最初のみ検索)\r\n"
+			pszWork = LS( STR_GREP_SHOW_FIRST_MATCH );	//L"    (ファイル毎最初のみ検索)\r\n"
 			cmemMessage.AppendString( pszWork );
 		}
 	}
@@ -621,7 +621,7 @@ DWORD CGrepAgent::DoGrep(
 		cmemMessage._SetStringLength(0);
 	}
 	if( -1 == nGrepTreeResult && sGrepOption.bGrepHeader ){
-		const wchar_t* p = LSW( STR_GREP_SUSPENDED );	//L"中断しました。\r\n"
+		const wchar_t* p = LS( STR_GREP_SUSPENDED );	//L"中断しました。\r\n"
 		CNativeW cmemSuspend;
 		cmemSuspend.SetString( p );
 		AddTail( pcViewDst, cmemSuspend, sGrepOption.bGrepStdout );
@@ -629,15 +629,15 @@ DWORD CGrepAgent::DoGrep(
 	if( sGrepOption.bGrepHeader ){
 		WCHAR szBuffer[128];
 		if( bGrepReplace ){
-			auto_sprintf( szBuffer, LSW(STR_GREP_REPLACE_COUNT), nHitCount );
+			auto_sprintf( szBuffer, LS(STR_GREP_REPLACE_COUNT), nHitCount );
 		}else{
-			auto_sprintf( szBuffer, LSW( STR_GREP_MATCH_COUNT ), nHitCount );
+			auto_sprintf( szBuffer, LS( STR_GREP_MATCH_COUNT ), nHitCount );
 		}
 		CNativeW cmemOutput;
 		cmemOutput.SetString( szBuffer );
 		AddTail( pcViewDst, cmemOutput, sGrepOption.bGrepStdout );
 #if defined(_DEBUG) && defined(TIME_MEASURE)
-		auto_sprintf( szBuffer, LSW(STR_GREP_TIMER), cRunningTimer.Read() );
+		auto_sprintf( szBuffer, LS(STR_GREP_TIMER), cRunningTimer.Read() );
 		cmemOutput.SetString( szBuffer );
 		AddTail( pcViewDst, cmemOutput, sGrepOption.bGrepStdout );
 #endif
@@ -1505,13 +1505,13 @@ int CGrepAgent::DoGrepFile(
 	cfl.FileClose();
 	} // try
 	catch( CError_FileOpen ){
-		CNativeW str(LSW(STR_GREP_ERR_FILEOPEN));
+		CNativeW str(LS(STR_GREP_ERR_FILEOPEN));
 		str.Replace(L"%s", pszFullPath);
 		cmemMessage.AppendNativeData( str );
 		return 0;
 	}
 	catch( CError_FileRead ){
-		CNativeW str(LSW(STR_GREP_ERR_FILEREAD));
+		CNativeW str(LS(STR_GREP_ERR_FILEREAD));
 		str.Replace(L"%s", pszFullPath);
 		cmemMessage.AppendNativeData( str );
 	} // 例外処理終わり
@@ -1591,7 +1591,7 @@ public:
 				oldFile += L".skrold";
 				if( fexist(oldFile.c_str()) ){
 					if( FALSE == ::DeleteFile( oldFile.c_str() ) ){
-						std::wstring msg = LSW(STR_GREP_REP_ERR_DELETE);
+						std::wstring msg = LS(STR_GREP_REP_ERR_DELETE);
 						msg += L"[";
 						msg += oldFile;
 						msg += L"]\r\n";
@@ -1600,7 +1600,7 @@ public:
 					}
 				}
 				if( FALSE == ::MoveFile( fileName, oldFile.c_str() ) ){
-					std::wstring msg = LSW(STR_GREP_REP_ERR_REPLACE);
+					std::wstring msg = LS(STR_GREP_REP_ERR_REPLACE);
 					msg += L"[";
 					msg += oldFile;
 					msg += L"]\r\n";
@@ -1609,7 +1609,7 @@ public:
 				}
 			}else{
 				if( FALSE == ::DeleteFile( fileName ) ){
-					std::wstring msg = LSW(STR_GREP_REP_ERR_DELETE);
+					std::wstring msg = LS(STR_GREP_REP_ERR_DELETE);
 					msg += L"[";
 					msg += to_wchar(fileName);
 					msg += L"]\r\n";
@@ -1620,7 +1620,7 @@ public:
 			std::wstring name = std::wstring(fileName);
 			name += L".skrnew";
 			if( FALSE == ::MoveFile( name.c_str(), fileName ) ){
-				std::wstring msg = LSW(STR_GREP_REP_ERR_REPLACE);
+				std::wstring msg = LS(STR_GREP_REP_ERR_REPLACE);
 				msg += L"[";
 				msg += to_wchar(fileName);
 				msg += L"]\r\n";
@@ -1954,20 +1954,20 @@ int CGrepAgent::DoGrepReplaceFile(
 	output.Close();
 	} // try
 	catch( CError_FileOpen ){
-		CNativeW str(LSW(STR_GREP_ERR_FILEOPEN));
+		CNativeW str(LS(STR_GREP_ERR_FILEOPEN));
 		str.Replace(L"%s", pszFullPath);
 		cmemMessage.AppendNativeData( str );
 		return 0;
 	}
 	catch( CError_FileRead ){
-		CNativeW str(LSW(STR_GREP_ERR_FILEREAD));
+		CNativeW str(LS(STR_GREP_ERR_FILEREAD));
 		str.Replace(L"%s", pszFullPath);
 		cmemMessage.AppendNativeData( str );
 	}
 	catch( CError_WriteFileOpen ){
 		std::wstring file = pszFullPath;
 		file += L".skrnew";
-		CNativeW str(LSW(STR_GREP_ERR_FILEWRITE));
+		CNativeW str(LS(STR_GREP_ERR_FILEWRITE));
 		str.Replace(L"%s", file.c_str());
 		cmemMessage.AppendNativeData( str );
 	} // 例外処理終わり

@@ -2322,7 +2322,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				hMenuPopUp = ::CreatePopupMenu();
 				if (cMainMenu->m_nFunc != 0 && cMainMenu->m_sName[0] == L'\0') {
 					// ストリングテーブルから読み込み
-					tmpMenuName = LSW( cMainMenu->m_nFunc );
+					tmpMenuName = LS( cMainMenu->m_nFunc );
 					if( MAX_MAIN_MENU_NAME_LEN < tmpMenuName.length() ){
 						tmpMenuName = tmpMenuName.substr( 0, MAX_MAIN_MENU_NAME_LEN );
 					}
@@ -2524,14 +2524,14 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 					if( mode == CEditView::TGWRAP_FULL ){
 						auto_sprintf(
 							szBuf,
-							LSW( STR_WRAP_WIDTH_FULL ),	//L"折り返し桁数: %d 桁（最大）",
+							LS( STR_WRAP_WIDTH_FULL ),	//L"折り返し桁数: %d 桁（最大）",
 							MAXLINEKETAS
 						);
 					}
 					else if( mode == CEditView::TGWRAP_WINDOW ){
 						auto_sprintf(
 							szBuf,
-							LSW( STR_WRAP_WIDTH_WINDOW ),	//L"折り返し桁数: %d 桁（右端）",
+							LS( STR_WRAP_WIDTH_WINDOW ),	//L"折り返し桁数: %d 桁（右端）",
 							int((Int)GetActiveView().ViewColNumToWrapColNum(
 								GetActiveView().GetTextArea().m_nViewColNum
 							))
@@ -2540,7 +2540,7 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 					else {
 						auto_sprintf(
 							szBuf,
-							LSW( STR_WRAP_WIDTH_FIXED ),	//L"折り返し桁数: %d 桁（指定）",
+							LS( STR_WRAP_WIDTH_FIXED ),	//L"折り返し桁数: %d 桁（指定）",
 							int((Int)GetDocument()->m_cDocType.GetDocumentAttribute().m_nMaxLineKetas)
 						);
 					}
@@ -2697,7 +2697,7 @@ void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sK
 	const WCHAR*	sName = L"";
 	for (i = 0; i < _countof(sFuncMenuName) ;i++) {
 		if (sFuncMenuName[i].eFunc == nFunc) {
-			sName = flag ? LSW( sFuncMenuName[i].nNameId[0] ) : LSW( sFuncMenuName[i].nNameId[1] );
+			sName = flag ? LS( sFuncMenuName[i].nNameId[0] ) : LS( sFuncMenuName[i].nNameId[1] );
 		}
 	}
 	assert( auto_strlen(sName) );

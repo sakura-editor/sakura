@@ -340,7 +340,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 				}
 				else if (auto_strcmp(ptdi->item.pszText, L"") == 0) {
 					// 空
-					pFuncWk->m_sName = LSW(STR_PROPCOMMAINMENU_EDIT);
+					pFuncWk->m_sName = LS(STR_PROPCOMMAINMENU_EDIT);
 				}
 				else {
 					pFuncWk->m_sName = to_wchar(ptdi->item.pszText);
@@ -507,12 +507,12 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					case IDC_BUTTON_INSERT_NODE:		// ノード挿入
 						eFuncCode = F_NODE;
 						bIsNode = true;
-						auto_strncpy( szLabel , LSW(STR_PROPCOMMAINMENU_EDIT), _countof(szLabel) - 1 );
+						auto_strncpy( szLabel , LS(STR_PROPCOMMAINMENU_EDIT), _countof(szLabel) - 1 );
 						szLabel[_countof(szLabel) - 1] = L'\0';
 						break;
 					case IDC_BUTTON_INSERTSEPARATOR:	// 区切線挿入
 						eFuncCode = F_SEPARATOR;
-						auto_strncpy( szLabel , LSW(STR_PROPCOMMAINMENU_SEP), _countof(szLabel) - 1 );
+						auto_strncpy( szLabel , LS(STR_PROPCOMMAINMENU_SEP), _countof(szLabel) - 1 );
 						szLabel[_countof(szLabel) - 1] = L'\0';
 						break;
 					case IDC_BUTTON_INSERT:				// 挿入
@@ -527,7 +527,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 						}
 						if (nIdxFIdx == nSpecialFuncsNum) {
 							// 特殊機能
-							auto_strcpy( szLabel, LSW(nsFuncCode::pnFuncList_Special[nIdxFunc]) );
+							auto_strcpy( szLabel, LS(nsFuncCode::pnFuncList_Special[nIdxFunc]) );
 							eFuncCode = nsFuncCode::pnFuncList_Special[nIdxFunc];
 						}
 						else if (m_cLookup.Pos2FuncCode( nIdxFIdx, nIdxFunc ) != 0) {
@@ -919,11 +919,11 @@ void CPropMainMenu::SetData( HWND hwndDlg )
 				pFuncWk->m_sName = szLabel;
 				break;
 			case T_SEPARATOR:
-				pFuncWk->m_sName = LSW(STR_PROPCOMMAINMENU_SEP);
+				pFuncWk->m_sName = LS(STR_PROPCOMMAINMENU_SEP);
 				break;
 			case T_SPECIAL:
 				// 2014.05.04 各国語対応
-				pFuncWk->m_sName = LSW(pcFunc->m_nFunc);
+				pFuncWk->m_sName = LS(pcFunc->m_nFunc);
 				break;
 			case T_NODE:
 				pFuncWk->m_bIsNode = true;
@@ -931,7 +931,7 @@ void CPropMainMenu::SetData( HWND hwndDlg )
 				if (pFuncWk->m_nFunc == F_NODE) {
 					pFuncWk->m_sName = RemoveAmpersand( pcFunc->m_sName );
 				} else {
-					pFuncWk->m_sName = LSW( pFuncWk->m_nFunc );
+					pFuncWk->m_sName = LS( pFuncWk->m_nFunc );
 				}
 				break;
 		}
@@ -1246,7 +1246,7 @@ bool CPropMainMenu::Check_MainMenu_Sub(
 		tvi.hItem = s;
 		if (!TreeView_GetItem( hwndTree, &tvi )) {
 			// Error
-			sErrMsg = LSW(STR_PROPCOMMAINMENU_ERR1);
+			sErrMsg = LS(STR_PROPCOMMAINMENU_ERR1);
 			return false;
 		}
 		pFuncWk = &msMenu[tvi.lParam];
@@ -1319,7 +1319,7 @@ bool CPropMainMenu::Check_MainMenu_Sub(
 				tvi.hItem = mKey[pFuncWk->m_sKey[0]];
 				if (!TreeView_GetItem( hwndTree, &tvi )) {
 					// Error
-					sErrMsg = LSW(STR_PROPCOMMAINMENU_ERR1);
+					sErrMsg = LS(STR_PROPCOMMAINMENU_ERR1);
 					return false;
 				}
 				if (!msMenu[tvi.lParam].m_bDupErr) {
@@ -1344,23 +1344,23 @@ bool CPropMainMenu::Check_MainMenu_Sub(
 	if (nLevel == 0) {
 		sErrMsg = L"";
 		if (!bOptionOk) {
-			sErrMsg += LSW(STR_PROPCOMMAINMENU_ERR2);
+			sErrMsg += LS(STR_PROPCOMMAINMENU_ERR2);
 			bRet = false;
 		}
 		if (nTopNum > MAX_MAINMENU_TOP) {
-			sErrMsg += LSW(STR_PROPCOMMAINMENU_ERR3);
+			sErrMsg += LS(STR_PROPCOMMAINMENU_ERR3);
 			bRet = false;
 		}
 		if (nMenuNum > MAX_MAINMENU) {
-			sErrMsg += LSW(STR_PROPCOMMAINMENU_ERR4);
+			sErrMsg += LS(STR_PROPCOMMAINMENU_ERR4);
 			bRet = false;
 		}
 		if (nDupErrNum > 0) {
-			sErrMsg += LSW(STR_PROPCOMMAINMENU_ERR5);
+			sErrMsg += LS(STR_PROPCOMMAINMENU_ERR5);
 			bRet = false;
 		}
 		if (nNoSetErrNum > 0) {
-			sErrMsg += LSW(STR_PROPCOMMAINMENU_ERR6);
+			sErrMsg += LS(STR_PROPCOMMAINMENU_ERR6);
 			bRet = false;
 		}
 		if (htiErr != NULL) {

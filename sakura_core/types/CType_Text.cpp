@@ -287,7 +287,7 @@ void CDocOutline::MakeTopicList_wztxt(CFuncInfoArr* pcFuncInfoArr)
 					pcFuncInfoArr->AppendData(
 						nLineCount+CLogicInt(1),
 						ptPos.GetY2()+CLayoutInt(1),
-						LSW(STR_NO_TITLE1),
+						LS(STR_NO_TITLE1),
 						FUNCINFO_NOCLIPTEXT,
 						dummyLevel - 1
 					);

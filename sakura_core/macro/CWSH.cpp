@@ -187,7 +187,7 @@ public:
 			ULONG Line;
 			LONG Pos;
 			if(Info.bstrDescription == NULL) {
-				Info.bstrDescription = SysAllocString(LSW(STR_ERR_CWSH09));
+				Info.bstrDescription = SysAllocString(LS(STR_ERR_CWSH09));
 			}
 			if(pscripterror->GetSourcePosition(&Context, &Line, &Pos) == S_OK)
 			{
@@ -247,7 +247,7 @@ CWSHClient::CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler,
 	
 	CLSID ClassID;
 	if(CLSIDFromProgID(AEngine, &ClassID) != S_OK)
-		Error(LSW(STR_ERR_CWSH01));
+		Error(LS(STR_ERR_CWSH01));
 	else
 	{
 #ifdef USE_JSCRIPT9
@@ -256,14 +256,14 @@ CWSHClient::CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler,
 		}
 #endif
 		if(CoCreateInstance(ClassID, 0, CLSCTX_INPROC_SERVER, IID_IActiveScript, reinterpret_cast<void **>(&m_Engine)) != S_OK)
-			Error(LSW(STR_ERR_CWSH02));
+			Error(LS(STR_ERR_CWSH02));
 		else
 		{
 			IActiveScriptSite *Site = new CWSHSite(this);
 			if(m_Engine->SetScriptSite(Site) != S_OK)
 			{
 				delete Site;
-				Error(LSW(STR_ERR_CWSH03));
+				Error(LS(STR_ERR_CWSH03));
 			}
 			else
 			{
@@ -352,11 +352,11 @@ bool CWSHClient::Execute(const wchar_t *AScript)
 	bool bRet = false;
 	IActiveScriptParse *Parser;
 	if(m_Engine->QueryInterface(IID_IActiveScriptParse, reinterpret_cast<void **>(&Parser)) != S_OK)
-		Error(LSW(STR_ERR_CWSH04));
+		Error(LS(STR_ERR_CWSH04));
 	else 
 	{
 		if(Parser->InitNew() != S_OK)
-			Error(LSW(STR_ERR_CWSH05));
+			Error(LS(STR_ERR_CWSH05));
 		else
 		{
 			bool bAddNamedItemError = false;
@@ -370,7 +370,7 @@ bool CWSHClient::Execute(const wchar_t *AScript)
 				if(m_Engine->AddNamedItem( (*it)->Name(), dwFlag ) != S_OK)
 				{
 					bAddNamedItemError = true;
-					Error(LSW(STR_ERR_CWSH06));
+					Error(LS(STR_ERR_CWSH06));
 					break;
 				}
 			}
@@ -392,7 +392,7 @@ bool CWSHClient::Execute(const wchar_t *AScript)
 
 				//マクロ実行
 				if(m_Engine->SetScriptState(SCRIPTSTATE_STARTED) != S_OK)
-					Error(LSW(STR_ERR_CWSH07));
+					Error(LS(STR_ERR_CWSH07));
 				else
 				{
 					HRESULT hr = Parser->ParseScriptText(AScript, 0, 0, 0, 0, 0, SCRIPTTEXT_ISVISIBLE, 0, 0);
@@ -402,7 +402,7 @@ bool CWSHClient::Execute(const wchar_t *AScript)
 						中断メッセージが既に表示されてるはず。
 					*/
 					} else if(hr != S_OK) {
-						Error(LSW(STR_ERR_CWSH08));
+						Error(LS(STR_ERR_CWSH08));
 					} else {
 						bRet = true;
 					}

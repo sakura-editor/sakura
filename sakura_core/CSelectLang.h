@@ -144,7 +144,6 @@ private:
 
 // 文字列ロード簡易化マクロ
 #define LS( id ) ( CLoadString::LoadStringSt( id ) )
-#define LSW( id ) to_wchar( CLoadString::LoadStringSt( id ) )
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CSELECTLANG_H_ */

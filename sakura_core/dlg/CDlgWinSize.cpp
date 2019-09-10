@@ -91,9 +91,9 @@ BOOL CDlgWinSize::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	_SetHwnd( hwndDlg );
 
-	Combo_AddString( GetItemHwnd( IDC_COMBO_WINTYPE ), LSW( STR_DLGWINSZ_NORMAL ) );	//L"普通"
-	Combo_AddString( GetItemHwnd( IDC_COMBO_WINTYPE ), LSW( STR_DLGWINSZ_MAXIMIZE ) );	//L"最大化"
-	Combo_AddString( GetItemHwnd( IDC_COMBO_WINTYPE ), LSW( STR_DLGWINSZ_MINIMIZE ) );	//L"(最小化)"
+	Combo_AddString( GetItemHwnd( IDC_COMBO_WINTYPE ), LS( STR_DLGWINSZ_NORMAL ) );	//L"普通"
+	Combo_AddString( GetItemHwnd( IDC_COMBO_WINTYPE ), LS( STR_DLGWINSZ_MAXIMIZE ) );	//L"最大化"
+	Combo_AddString( GetItemHwnd( IDC_COMBO_WINTYPE ), LS( STR_DLGWINSZ_MINIMIZE ) );	//L"(最小化)"
 
 	UpDown_SetRange( GetItemHwnd( IDC_SPIN_SX ), 30000, 0 );
 	UpDown_SetRange( GetItemHwnd( IDC_SPIN_SY ), 30000, 0 );

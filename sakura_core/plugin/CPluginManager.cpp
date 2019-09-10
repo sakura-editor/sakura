@@ -350,14 +350,14 @@ int CPluginManager::InstallPlugin( CommonSetting& common, const WCHAR* pszPlugin
 	cProfDef.SetReadingMode();
 	if( !cProfDef.ReadProfile( (m_sBaseDir + pszPluginName + L"\\" + PII_FILENAME).c_str() )
 		&& !cProfDef.ReadProfile( (m_sExePluginDir + pszPluginName + L"\\" + PII_FILENAME).c_str() ) ){
-		errorMsg = LSW(STR_PLGMGR_INST_DEF);
+		errorMsg = LS(STR_PLGMGR_INST_DEF);
 		return -1;
 	}
 
 	std::wstring sId;
 	cProfDef.IOProfileData( PII_PLUGIN, PII_PLUGIN_ID, sId );
 	if( sId.length() == 0 ){
-		errorMsg = LSW(STR_PLGMGR_INST_ID);
+		errorMsg = LS(STR_PLGMGR_INST_ID);
 		return -1;
 	}
 	//2010.08.04 ID使用不可の文字を確認
@@ -365,12 +365,12 @@ int CPluginManager::InstallPlugin( CommonSetting& common, const WCHAR* pszPlugin
 	static const WCHAR szReservedChars[] = L"/\\,[]*?<>&|;:=\" \t";
 	for( int x = 0; x < _countof(szReservedChars); ++x ){
 		if( sId.npos != sId.find(szReservedChars[x]) ){
-			errorMsg = std::wstring(LSW(STR_PLGMGR_INST_RESERVE1)) + szReservedChars + LSW(STR_PLGMGR_INST_RESERVE2);
+			errorMsg = std::wstring(LS(STR_PLGMGR_INST_RESERVE1)) + szReservedChars + LS(STR_PLGMGR_INST_RESERVE2);
 			return -1;
 		}
 	}
 	if( WCODE::Is09(sId[0]) ){
-		errorMsg = LSW(STR_PLGMGR_INST_IDNUM);
+		errorMsg = LS(STR_PLGMGR_INST_IDNUM);
 		return -1;
 	}
 
@@ -389,7 +389,7 @@ int CPluginManager::InstallPlugin( CommonSetting& common, const WCHAR* pszPlugin
 				// 2010.08.04 削除中のIDは元の位置へ追加(復活させる)
 				if( plugin_table[iNo].m_state != PLS_DELETED &&
 				  ConfirmMessage( hWndOwner, msg, static_cast<const WCHAR*>(pszPluginName), static_cast<const WCHAR*>(plugin_table[iNo].m_szName) ) != IDYES ){
-					errorMsg = LSW(STR_PLGMGR_INST_USERCANCEL);
+					errorMsg = LS(STR_PLGMGR_INST_USERCANCEL);
 					return -1;
 				}
 			}
@@ -400,7 +400,7 @@ int CPluginManager::InstallPlugin( CommonSetting& common, const WCHAR* pszPlugin
 	}
 
 	if( nEmpty == -1 ){
-		errorMsg = LSW(STR_PLGMGR_INST_MAX);
+		errorMsg = LS(STR_PLGMGR_INST_MAX);
 		return -1;
 	}
 

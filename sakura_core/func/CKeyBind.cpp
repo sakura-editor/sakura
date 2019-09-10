@@ -165,7 +165,7 @@ int CKeyBind::CreateKeyBindList(
 	const WCHAR*	pszTAB   = LTEXT("\t");
 	const WCHAR*	pszCR    = LTEXT("\r\n");	//\r=0x0d=CRを追加
 
-	cMemList.AppendString( LSW(STR_ERR_DLGKEYBIND1) );
+	cMemList.AppendString( LS(STR_ERR_DLGKEYBIND1) );
 	cMemList.AppendString( pszCR );
 	cMemList.AppendString( LTEXT("-----\t-----\t-----\t-----\t-----") );
 	cMemList.AppendString( pszCR );
@@ -190,7 +190,7 @@ int CKeyBind::CreateKeyBindList(
 				if( !pcFuncLookup->Funccode2Name(
 					iFunc,
 					szFuncNameJapanese, 255 )){
-					auto_strcpy( szFuncNameJapanese, LSW(STR_ERR_DLGKEYBIND2) );
+					auto_strcpy( szFuncNameJapanese, LS(STR_ERR_DLGKEYBIND2) );
 				}
 				szFuncName[0] = LTEXT('\0'); /*"---unknown()--"*/
 

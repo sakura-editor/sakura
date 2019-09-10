@@ -190,7 +190,7 @@ void CDlgPluginOption::SetData( void )
 
 	if( bLoadDefault ){
 		cProfile->SetWritingMode();
-		cProfile->WriteProfile( m_cPlugin->GetOptionPath().c_str() ,(m_cPlugin->m_sName + LSW(STR_DLGPLUGINOPT_INIHEAD)).c_str());
+		cProfile->WriteProfile( m_cPlugin->GetOptionPath().c_str() ,(m_cPlugin->m_sName + LS(STR_DLGPLUGINOPT_INIHEAD)).c_str());
 	}
 
 	if (i ==0) {
@@ -277,7 +277,7 @@ int CDlgPluginOption::GetData( void )
 		cProfile->IOProfileData( sSection.c_str(), sKey.c_str(), sValue );
 	}
 
-	cProfile->WriteProfile( m_cPlugin->GetOptionPath().c_str() ,(m_cPlugin->m_sName + LSW(STR_DLGPLUGINOPT_INIHEAD)).c_str());
+	cProfile->WriteProfile( m_cPlugin->GetOptionPath().c_str() ,(m_cPlugin->m_sName + LS(STR_DLGPLUGINOPT_INIHEAD)).c_str());
 
 	return TRUE;
 }

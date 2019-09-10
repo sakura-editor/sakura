@@ -586,7 +586,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 				}else{
 					// 2002/10/27 frozen　ここから
 					if( nMode2 == M2_NAMESPACE_SAVE ){
-						if( wcscmp(L"final", szWord) == 0 && wcscmp(LSW(STR_OUTLINE_CPP_NONAME), szItemName) != 0 ){
+						if( wcscmp(L"final", szWord) == 0 && wcscmp(LS(STR_OUTLINE_CPP_NONAME), szItemName) != 0 ){
 							// strcut name final のfinalはクラス名の一部ではない
 							// ただし struct finalは名前
 						}else{
@@ -630,7 +630,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						{
 							nMode2 = M2_NAMESPACE_SAVE;
 							nItemLine = nLineCount + CLogicInt(1);
-							wcscpy(szItemName,LSW(STR_OUTLINE_CPP_NONAME));
+							wcscpy(szItemName,LS(STR_OUTLINE_CPP_NONAME));
 						}
 					}
 					/*else*/ if( nMode2 == M2_FUNC_NAME_END )	// 2010.07.08 ryoji 上で条件変更したので行頭の else を除去
@@ -796,7 +796,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						bAddFunction = true;
 					}
 					int nItemNameLen = 0;
-					int nLenDefPos = wcslen(LSW(STR_OUTLINE_CPP_DEFPOS));
+					int nLenDefPos = wcslen(LS(STR_OUTLINE_CPP_DEFPOS));
 					if( nNestLevel_func !=0 || (szWordPrev[0] == L'=' && szWordPrev[1] == L'\0') || nMode2 == M2_AFTER_EQUAL )
 						++nNestLevel_func;
 					else if(
@@ -823,7 +823,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 							++ nNestLevel_global;
 							nNamespaceLen[nNestLevel_global] = nNamespaceLen[nNestLevel_global-1] + nItemNameLen;
 							if( nItemFuncId == FL_OBJ_NAMESPACE )
-								wcscpy(&szNamespace[nNamespaceLen[nNestLevel_global]], LSW(STR_OUTLINE_CPP_DEFPOS));
+								wcscpy(&szNamespace[nNamespaceLen[nNestLevel_global]], LS(STR_OUTLINE_CPP_DEFPOS));
 							else
 							{
 								szNamespace[nNamespaceLen[nNestLevel_global]] = L'\0';

@@ -111,7 +111,7 @@ void CDlgTypeAscertain::SetData( void )
 	/* コンボボックスを空にする */
 	Combo_ResetContent( hwndCombo );
 	/* 一行目はそのまま */
-	Combo_AddString( hwndCombo, LSW(STR_DLGTYPEASC_IMPORT) );
+	Combo_AddString( hwndCombo, LS(STR_DLGTYPEASC_IMPORT) );
 
 	// エディタ内の設定
 	for (nIdx = 0; nIdx < GetDllShareData().m_nTypesCount; ++nIdx) {

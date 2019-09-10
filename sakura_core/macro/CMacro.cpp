@@ -520,7 +520,7 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 		out.WriteF( L");\t// %ls\r\n", szFuncNameJapanese );
 		return;
 	}
-	out.WriteF( LSW(STR_ERR_DLGMACRO01) );
+	out.WriteF( LS(STR_ERR_DLGMACRO01) );
 }
 
 /**	マクロ引数変換

@@ -566,7 +566,7 @@ user_cancel:
 		if( bCancelEnd && bOutputExtInfo ){
 			//	2006.12.03 maru アウトプットウィンドウにのみ出力
 			//最後にテキストを追加
-			oa.OutputW( LSW(STR_EDITVIEW_EXECCMD_STOP) );
+			oa.OutputW( LS(STR_EDITVIEW_EXECCMD_STOP) );
 		}
 		
 		{
@@ -576,7 +576,7 @@ user_cancel:
 			::GetExitCodeProcess( pi.hProcess, &result );
 			if( bOutputExtInfo ){
 				WCHAR endCode[128];
-				auto_sprintf( endCode, LSW(STR_EDITVIEW_EXECCMD_RET), result );
+				auto_sprintf( endCode, LS(STR_EDITVIEW_EXECCMD_RET), result );
 				oa.OutputW( endCode );
 			}
 			// 2004.09.20 naoh 終了コードが1以上の時はアウトプットをアクティブにする

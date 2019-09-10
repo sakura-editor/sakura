@@ -700,7 +700,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 		m_pCommanderView->Redraw();
 
 		/* 次を検索 */
-		Command_SEARCH_NEXT( true, true, false, hwndParent, LSW(STR_ERR_CEDITVIEW_CMD11) );
+		Command_SEARCH_NEXT( true, true, false, hwndParent, LS(STR_ERR_CEDITVIEW_CMD11) );
 	}
 }
 

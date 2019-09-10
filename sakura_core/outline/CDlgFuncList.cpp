@@ -948,14 +948,14 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 		m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
 	}
 	// 追加文字列の初期化（プラグインで指定済みの場合は上書きしない）
-	m_pcFuncInfoArr->SetAppendText( FL_OBJ_DECLARE,		LSW(STR_DLGFNCLST_APND_DECLARE),	false );
-	m_pcFuncInfoArr->SetAppendText( FL_OBJ_CLASS,		LSW(STR_DLGFNCLST_APND_CLASS),		false );
-	m_pcFuncInfoArr->SetAppendText( FL_OBJ_STRUCT,		LSW(STR_DLGFNCLST_APND_STRUCT),		false );
-	m_pcFuncInfoArr->SetAppendText( FL_OBJ_ENUM,		LSW(STR_DLGFNCLST_APND_ENUM),		false );
-	m_pcFuncInfoArr->SetAppendText( FL_OBJ_UNION,		LSW(STR_DLGFNCLST_APND_UNION),		false );
-	m_pcFuncInfoArr->SetAppendText( FL_OBJ_NAMESPACE,	LSW(STR_DLGFNCLST_APND_NAMESPACE),	false );
-	m_pcFuncInfoArr->SetAppendText( FL_OBJ_INTERFACE,	LSW(STR_DLGFNCLST_APND_INTERFACE),	false );
-	m_pcFuncInfoArr->SetAppendText( FL_OBJ_GLOBAL,		LSW(STR_DLGFNCLST_APND_GLOBAL),		false );
+	m_pcFuncInfoArr->SetAppendText( FL_OBJ_DECLARE,		LS(STR_DLGFNCLST_APND_DECLARE),	false );
+	m_pcFuncInfoArr->SetAppendText( FL_OBJ_CLASS,		LS(STR_DLGFNCLST_APND_CLASS),		false );
+	m_pcFuncInfoArr->SetAppendText( FL_OBJ_STRUCT,		LS(STR_DLGFNCLST_APND_STRUCT),		false );
+	m_pcFuncInfoArr->SetAppendText( FL_OBJ_ENUM,		LS(STR_DLGFNCLST_APND_ENUM),		false );
+	m_pcFuncInfoArr->SetAppendText( FL_OBJ_UNION,		LS(STR_DLGFNCLST_APND_UNION),		false );
+	m_pcFuncInfoArr->SetAppendText( FL_OBJ_NAMESPACE,	LS(STR_DLGFNCLST_APND_NAMESPACE),	false );
+	m_pcFuncInfoArr->SetAppendText( FL_OBJ_INTERFACE,	LS(STR_DLGFNCLST_APND_INTERFACE),	false );
+	m_pcFuncInfoArr->SetAppendText( FL_OBJ_GLOBAL,		LS(STR_DLGFNCLST_APND_GLOBAL),		false );
 
 	nFuncLineOld = CLayoutInt(-1);
 	nFuncColOld = CLayoutInt(-1);

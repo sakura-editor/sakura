@@ -168,7 +168,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 		szCharCode[0] = L'\0';
 		szLineNum[0] = L'\0';
 		if( point.x == -1 ){
-			cmemChar.SetString(LSW(STR_ERR_CSHAREDATA22));
+			cmemChar.SetString(LS(STR_ERR_CSHAREDATA22));
 		}else{
 			auto_sprintf( szLineNum, L"%d", (int)((Int)point.x) + 1 );
 			wcscat( szLineNum, LS(STR_DLGFNCLST_LIST_COL) );
