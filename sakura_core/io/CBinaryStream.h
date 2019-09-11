@@ -29,7 +29,7 @@
 
 class CBinaryInputStream : public CStream{
 public:
-	CBinaryInputStream(LPCWSTR tszFilePath);
+	CBinaryInputStream(LPCWSTR pszFilePath);
 
 public:
 	//! ストリームの「残り」サイズを取得
@@ -41,7 +41,7 @@ public:
 
 class CBinaryOutputStream : public COutputStream{
 public:
-	CBinaryOutputStream(LPCWSTR tszFilePath, bool bExceptionMode = false);
+	CBinaryOutputStream(LPCWSTR pszFilePath, bool bExceptionMode = false);
 };
 
 #endif /* SAKURA_CBINARYSTREAM_F33600DB_8369_4FB2_B7B1_8B59249B7216_H_ */

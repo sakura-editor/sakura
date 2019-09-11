@@ -1152,8 +1152,8 @@ void CControlTray::OnNewEditor( bool bNewWindow )
 	sLoadInfo.cFilePath = L"";
 	sLoadInfo.eCharCode = CODE_NONE;
 	sLoadInfo.bViewMode = false;
-	std::wstring tstrCurDir = CSakuraEnvironment::GetDlgInitialDir(true);
-	OpenNewEditor( m_hInstance, GetTrayHwnd(), sLoadInfo, NULL, false, tstrCurDir.c_str(), bNewWindow );
+	std::wstring strCurDir = CSakuraEnvironment::GetDlgInitialDir(true);
+	OpenNewEditor( m_hInstance, GetTrayHwnd(), sLoadInfo, NULL, false, strCurDir.c_str(), bNewWindow );
 }
 
 /*!

@@ -1542,7 +1542,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 	CMyPoint ptMouse(_xPos,_yPos);
 
 	CLogicRange		cUrlRange;	// URL範囲
-	std::wstring	wstrURL;
+	std::wstring	strURL;
 	const wchar_t*	pszMailTo = L"mailto:";
 
 	// 2007.10.06 nasukoji	クアドラプルクリック時はチェックしない
@@ -1552,25 +1552,25 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 			IsCurrentPositionURL(
 				GetCaret().GetCaretLayoutPos(),	// カーソル位置
 				&cUrlRange,				// URL範囲
-				&wstrURL				// URL受け取り先
+				&strURL				// URL受け取り先
 			)
 		){
-			std::wstring wstrOPEN;
+			std::wstring strOPEN;
 
 			// URLを開く
 		 	// 現在位置がメールアドレスならば、NULL以外と、その長さを返す
-			if( IsMailAddress( wstrURL.c_str(), wstrURL.length(), NULL ) ){
-				wstrOPEN = pszMailTo + wstrURL;
+			if( IsMailAddress( strURL.c_str(), strURL.length(), NULL ) ){
+				strOPEN = pszMailTo + strURL;
 			}
 			else{
-				if( _wcsnicmp( wstrURL.c_str(), L"ttp://", 6 ) == 0 ){	//抑止URL
-					wstrOPEN = L"h" + wstrURL;
+				if( _wcsnicmp( strURL.c_str(), L"ttp://", 6 ) == 0 ){	//抑止URL
+					strOPEN = L"h" + strURL;
 				}
-				else if( _wcsnicmp( wstrURL.c_str(), L"tp://", 5 ) == 0 ){	//抑止URL
-					wstrOPEN = L"ht" + wstrURL;
+				else if( _wcsnicmp( strURL.c_str(), L"tp://", 5 ) == 0 ){	//抑止URL
+					strOPEN = L"ht" + strURL;
 				}
 				else{
-					wstrOPEN = wstrURL;
+					strOPEN = strURL;
 				}
 			}
 			{
@@ -1579,9 +1579,8 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 				CWaitCursor cWaitCursor( GetHwnd() );	// カーソルを砂時計にする
 
 				unsigned int nThreadId;
-				LPCWSTR szUrl = wstrOPEN.c_str();
-				LPWSTR szUrlDup = new WCHAR[wcslen( szUrl ) + 1];
-				wcscpy( szUrlDup, szUrl );
+				LPCWSTR szUrl = strOPEN.c_str();
+				LPWSTR szUrlDup = _wcsdup( szUrl );
 				HANDLE hThread = (HANDLE)_beginthreadex( NULL, 0, ShellExecuteProc, (LPVOID)szUrlDup, 0, &nThreadId );
 				if( hThread != INVALID_HANDLE_VALUE ){
 					// ユーザーのURL起動指示に反応した目印としてちょっとの時間だけ砂時計カーソルを表示しておく

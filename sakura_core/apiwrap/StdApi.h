@@ -53,7 +53,7 @@ namespace ApiWrap
 	//          W系が存在しないAPIのための、新しい関数定義         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//W版が無いので、自作
-	BOOL MakeSureDirectoryPathExistsW(LPCWSTR wszDirPath);
+	BOOL MakeSureDirectoryPathExistsW(LPCWSTR pszDirPath);
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                    描画API 不具合ラップ                     //

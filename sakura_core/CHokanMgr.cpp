@@ -548,17 +548,17 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 		return FALSE;
 	}
 	int nLabelLen = List_GetTextLen( hwndList, nItem );
-	auto wszLabel = std::make_unique<WCHAR[]>(nLabelLen + 1);
-	List_GetText( hwndList, nItem, &wszLabel[0] );
+	auto pszLabel = std::make_unique<WCHAR[]>(nLabelLen + 1);
+	List_GetText( hwndList, nItem, &pszLabel[0] );
 
  	/* テキストを貼り付け */
 	pcEditView = reinterpret_cast<CEditView*>(m_lParam);
 	//	Apr. 28, 2000 genta
 	pcEditView->GetCommander().HandleCommand( F_WordDeleteToStart, false, 0, 0, 0, 0 );
-	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)&wszLabel[0], wcslen(&wszLabel[0]), TRUE, 0 );
+	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)&pszLabel[0], wcslen(&pszLabel[0]), TRUE, 0 );
 
 	// Until here
-//	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)(wszLabel + m_cmemCurWord.GetLength()), TRUE, 0, 0 );
+//	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)(pszLabel + m_cmemCurWord.GetLength()), TRUE, 0, 0 );
 	Hide();
 
 	return TRUE;

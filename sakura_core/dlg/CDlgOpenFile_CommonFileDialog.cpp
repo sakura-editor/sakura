@@ -493,7 +493,7 @@ UINT_PTR CALLBACK OFNHookProc(
 				CDlgOpenFileData* pData = (CDlgOpenFileData*)::GetWindowLongPtr(hdlg, DWLP_USER);
 				lRes = CommDlg_OpenSave_GetFolderPath( pData->m_hwndOpenDlg, szFolder, _countof( szFolder ) );
 			}
-//			MYTRACE( L"\tlRes=%d\tszFolder=[%ls]\n", lRes, szFolder );
+//			MYTRACE( L"\tlRes=%d\pszFolder=[%ls]\n", lRes, szFolder );
 
 			break;
 		case CDN_SELCHANGE :

@@ -208,10 +208,10 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 					LPMALLOC pMalloc;
 					if( SUCCEEDED(::SHGetMalloc(&pMalloc)) ){
 						LPITEMIDLIST pIDL;
-						WCHAR pwszDisplayName[_MAX_PATH];
-						_tcstowcs(pwszDisplayName, szPath, _countof(pwszDisplayName));
-//						pwszDisplayName = szPath;
-						if( SUCCEEDED(pDesktopFolder->ParseDisplayName(NULL, NULL, pwszDisplayName, NULL, &pIDL, NULL)) ){
+						WCHAR pszDisplayName[_MAX_PATH];
+						_tcstowcs(pszDisplayName, szPath, _countof(pszDisplayName));
+//						pszDisplayName = szPath;
+						if( SUCCEEDED(pDesktopFolder->ParseDisplayName(NULL, NULL, pszDisplayName, NULL, &pIDL, NULL)) ){
 							SHELLEXECUTEINFO si;
 							::ZeroMemory( &si, sizeof(si) );
 							si.cbSize   = sizeof(si);
@@ -410,12 +410,8 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCWSTR lpszLinkFile, LPWSTR lpszPath )
 	if( SUCCEEDED( hRes = ::CoCreateInstance( CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID *)&pIShellLink ) ) ){
 		// Get a pointer to the IPersistFile interface.
 		if( SUCCEEDED(hRes = pIShellLink->QueryInterface( IID_IPersistFile, (void**)&pIPersistFile ) ) ){
-			// Ensure that the string is Unicode.
-			WCHAR wsz[MAX_PATH];
-			_tcstowcs(wsz, szAbsLongPath, _countof(wsz));
-//			MultiByteToWideChar( CP_ACP, 0, lpszLinkFile, -1, wsz, MAX_PATH );
 			// Load the shortcut.
-			if( SUCCEEDED(hRes = pIPersistFile->Load( wsz, STGM_READ ) ) ){
+			if( SUCCEEDED(hRes = pIPersistFile->Load( szAbsLongPath, STGM_READ ) ) ){
 				// Resolve the link.
 				if( SUCCEEDED( hRes = pIShellLink->Resolve(hwnd, SLR_ANY_MATCH ) ) ){
 					// Get the path to the link target.

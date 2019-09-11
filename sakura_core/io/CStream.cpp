@@ -15,8 +15,8 @@
 
 class CFileAttribute{
 public:
-	CFileAttribute(const WCHAR* tszPath)
-	: m_strPath(tszPath)
+	CFileAttribute(const WCHAR* pszPath)
+	: m_strPath(pszPath)
 	, m_bAttributeChanged(false)
 	, m_dwAttribute(0)
 	{
@@ -55,12 +55,12 @@ private:
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CStream::CStream(const WCHAR* tszPath, const WCHAR* tszMode, bool bExceptionMode)
+CStream::CStream(const WCHAR* pszPath, const WCHAR* pszMode, bool bExceptionMode)
 {
 	m_fp = NULL;
 	m_pcFileAttribute = NULL;
 	m_bExceptionMode = bExceptionMode;
-	Open(tszPath,tszMode);
+	Open(pszPath,pszMode);
 }
 
 /*
@@ -81,16 +81,16 @@ CStream::~CStream()
 //                    オープン・クローズ                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //
-void CStream::Open(const WCHAR* tszPath, const WCHAR* tszMode)
+void CStream::Open(const WCHAR* pszPath, const WCHAR* pszMode)
 {
 	Close(); //既に開いていたら、一度閉じる
 
 	//属性変更：隠しorシステムファイルはCの関数で読み書きできないので属性を変更する
-	m_pcFileAttribute = new CFileAttribute(tszPath);
+	m_pcFileAttribute = new CFileAttribute(pszPath);
 	m_pcFileAttribute->PopAttribute(FILE_ATTRIBUTE_HIDDEN | FILE_ATTRIBUTE_SYSTEM);
 
 	//オープン
-	m_fp = _tfopen(tszPath,tszMode);
+	m_fp = _tfopen(pszPath,pszMode);
 	if(!m_fp){
 		Close(); //属性復元
 	}

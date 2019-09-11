@@ -466,12 +466,9 @@ static bool IOProfSettings( SProfileSettings& settings, bool bWrite )
 		_swprintf( szKey, L"P[%d]", i + 1 ); // 1開始
 		if( bWrite ){
 			strProfName = settings.m_vProfList[i];
-			std::wstring wstrProfName = strProfName.c_str();
-			cProf.IOProfileData( pSection, szKey, wstrProfName );
+			cProf.IOProfileData( pSection, szKey, strProfName );
 		}else{
-			std::wstring wstrProfName;
-			cProf.IOProfileData( pSection, szKey, wstrProfName );
-			strProfName = wstrProfName.c_str();
+			cProf.IOProfileData( pSection, szKey, strProfName );
 			settings.m_vProfList.push_back( strProfName );
 		}
 	}

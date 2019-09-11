@@ -14,8 +14,8 @@ using namespace std;
 //                     CTextInputStream                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CTextInputStream::CTextInputStream(const WCHAR* tszPath)
-: CStream(tszPath,L"rb")
+CTextInputStream::CTextInputStream(const WCHAR* pszPath)
+: CStream(pszPath,L"rb")
 {
 	m_bIsUtf8=false;
 
@@ -81,8 +81,8 @@ wstring CTextInputStream::ReadLineW()
 //                     CTextOutputStream                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CTextOutputStream::CTextOutputStream(const WCHAR* tszPath, ECodeType eCodeType, bool bExceptionMode, bool bBom)
-: COutputStream(tszPath,L"wb",bExceptionMode)
+CTextOutputStream::CTextOutputStream(const WCHAR* pszPath, ECodeType eCodeType, bool bExceptionMode, bool bBom)
+: COutputStream(pszPath,L"wb",bExceptionMode)
 {
 	m_pcCodeBase = CCodeFactory::CreateCodeBase(eCodeType,0);
 	if(Good() && bBom){

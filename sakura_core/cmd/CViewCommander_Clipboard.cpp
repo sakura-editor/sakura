@@ -425,10 +425,10 @@ void CViewCommander::Command_PASTEBOX( int option )
 		return;
 	}
 	// 2004.07.13 Moca \0コピー対策
-	int nstrlen;
-	const wchar_t *lptstr = cmemClip.GetStringPtr( &nstrlen );
+	const size_t cchText = cmemClip.GetStringLength();
+	const wchar_t *pszText = cmemClip.GetStringPtr();
 
-	Command_PASTEBOX(lptstr, nstrlen);
+	Command_PASTEBOX(pszText, cchText);
 	m_pCommanderView->AdjustScrollBars(); // 2007.07.22 ryoji
 	m_pCommanderView->Redraw();			// 2002.01.25 hor
 }

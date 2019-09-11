@@ -179,11 +179,11 @@ bool IsLocalDrive( const WCHAR* pszDrive )
 	return true;
 }
 
-const WCHAR* GetFileTitlePointer(const WCHAR* tszPath)
+const WCHAR* GetFileTitlePointer(const WCHAR* pszPath)
 {
 	CharPointerT p;
 	const WCHAR* pszName;
-	p = pszName = tszPath;
+	p = pszName = pszPath;
 	while( *p )
 	{
 		if( *p == L'\\' ){

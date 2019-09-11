@@ -393,23 +393,23 @@ void wcstombs_vector(const wchar_t* pSrc, int nSrcLen, std::vector<char>* ret)
 	(*ret)[nNewLen]='\0';
 }
 
-size_t _tcstowcs(WCHAR* wszDst, const WCHAR* tszSrc, size_t nDstCount)
+size_t _tcstowcs(WCHAR* pszDst, const WCHAR* pszSrc, size_t nDstCount)
 {
-	wcsncpy_s(wszDst, nDstCount, tszSrc, _TRUNCATE);
-	return wcslen(wszDst);
+	wcsncpy_s(pszDst, nDstCount, pszSrc, _TRUNCATE);
+	return wcslen(pszDst);
 }
-size_t _tcstombs(CHAR*  szDst,  const WCHAR* tszSrc, size_t nDstCount)
+size_t _tcstombs(CHAR*  szDst,  const WCHAR* pszSrc, size_t nDstCount)
 {
-	return wcstombs2(szDst, tszSrc, nDstCount);
+	return wcstombs2(szDst, pszSrc, nDstCount);
 }
-size_t _wcstotcs(WCHAR* tszDst, const WCHAR* wszSrc, size_t nDstCount)
+size_t _wcstotcs(WCHAR* pszDst, const WCHAR* pszSrc, size_t nDstCount)
 {
-	wcsncpy_s(tszDst, nDstCount, wszSrc, _TRUNCATE);
-	return wcslen(tszDst);
+	wcsncpy_s(pszDst, nDstCount, pszSrc, _TRUNCATE);
+	return wcslen(pszDst);
 }
-size_t _mbstotcs(WCHAR* tszDst, const CHAR*  szSrc,  size_t nDstCount)
+size_t _mbstotcs(WCHAR* pszDst, const CHAR*  szSrc,  size_t nDstCount)
 {
-	return mbstowcs2(tszDst, szSrc, nDstCount);
+	return mbstowcs2(pszDst, szSrc, nDstCount);
 }
 int _tctomb(const WCHAR* p,ACHAR* mb)
 {

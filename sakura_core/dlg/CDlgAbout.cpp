@@ -239,9 +239,9 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	// パッチの情報をコンパイル時に渡せるようにする
 #ifdef SKR_PATCH_INFO
 	cmemMsg.AppendString( L"      " );
-	const WCHAR* ptszPatchInfo = to_wchar(SKR_PATCH_INFO);
-	int patchInfoLen = auto_strlen(ptszPatchInfo);
-	cmemMsg.AppendString( ptszPatchInfo, t_min(80, patchInfoLen) );
+	const WCHAR szPatchInfo[] = SKR_PATCH_INFO;
+	size_t patchInfoLen = _countof(szPatchInfo) - 1;
+	cmemMsg.AppendString( szPatchInfo, t_min(80, patchInfoLen) );
 #endif
 	cmemMsg.AppendString( L"\r\n");
 

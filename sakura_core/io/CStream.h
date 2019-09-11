@@ -49,7 +49,7 @@ class CError_FileRead{};	//!< 例外：ファイル読み込み失敗
 class CStream{
 public:
 	//コンストラクタ・デストラクタ
-	CStream(const WCHAR* tszPath, const WCHAR* tszMode, bool bExceptionMode = false);
+	CStream(const WCHAR* pszPath, const WCHAR* pszMode, bool bExceptionMode = false);
 //	CStream();
 	virtual ~CStream();
 
@@ -57,7 +57,7 @@ public:
 	operator bool() const{ return Good(); }
 
 	//オープン・クローズ
-	void Open(const WCHAR* tszPath, const WCHAR* tszMode);
+	void Open(const WCHAR* pszPath, const WCHAR* pszMode);
 	void Close();
 
 	//操作
@@ -85,8 +85,8 @@ private:
 
 class COutputStream : public CStream{
 public:
-	COutputStream(const WCHAR* tszPath, const WCHAR* tszMode, bool bExceptionMode = false)
-	: CStream(tszPath, tszMode, bExceptionMode)
+	COutputStream(const WCHAR* pszPath, const WCHAR* pszMode, bool bExceptionMode = false)
+	: CStream(pszPath, pszMode, bExceptionMode)
 	{
 	}
 

@@ -757,7 +757,7 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 }
 
 //アウトライン解析ルールの追加
-void CPropTypesScreen::AddOutlineMethod(int nMethod, const WCHAR* szName)
+void CPropTypesScreen::AddOutlineMethod(int nMethod, const WCHAR* pszName)
 {
 	if( m_OlmArr.empty() ){
 		InitTypeNameId2(m_OlmArr, OlmArr, _countof(OlmArr));	//アウトライン解析ルール
@@ -765,10 +765,7 @@ void CPropTypesScreen::AddOutlineMethod(int nMethod, const WCHAR* szName)
 	TYPE_NAME_ID2<EOutlineType> method;
 	method.nMethod = (EOutlineType)nMethod;
 	method.nNameId = 0;
-	const WCHAR* tszName = to_wchar( szName );
-	WCHAR* pszName = new WCHAR[ wcslen(tszName) + 1 ];
-	wcscpy( pszName, tszName );
-	method.pszName = pszName;
+	method.pszName = _wcsdup( pszName );
 	m_OlmArr.push_back(method);
 }
 
@@ -785,7 +782,7 @@ void CPropTypesScreen::RemoveOutlineMethod(int nMethod, const WCHAR* szName)
 }
 
 //スマートインデントルールの追加
-void CPropTypesScreen::AddSIndentMethod(int nMethod, const WCHAR* szName)
+void CPropTypesScreen::AddSIndentMethod(int nMethod, const WCHAR* pszName)
 {
 	if( m_SIndentArr.empty() ){
 		InitTypeNameId2(m_SIndentArr, SmartIndentArr, _countof(SmartIndentArr));	//スマートインデントルール
@@ -793,10 +790,7 @@ void CPropTypesScreen::AddSIndentMethod(int nMethod, const WCHAR* szName)
 	TYPE_NAME_ID2<ESmartIndentType> method;
 	method.nMethod = (ESmartIndentType)nMethod;
 	method.nNameId = 0;
-	const WCHAR* tszName = to_wchar( szName );
-	WCHAR* pszName = new WCHAR[ wcslen(tszName) + 1 ];
-	wcscpy( pszName, tszName );
-	method.pszName = pszName;
+	method.pszName = _wcsdup( pszName );
 	m_SIndentArr.push_back(method);
 }
 
