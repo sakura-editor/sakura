@@ -210,9 +210,8 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPath, const WCHAR* ps
 	const WCHAR*	pszFolder;					//マクロフォルダ
 	HWND			hwndRecordingKeyMacro = NULL;
 
-	if ( !pszPath != NULL ) {
+	if ( !pszPath ) {
 		// ファイルが指定されていない場合、ダイアログを表示する
-		szPath[0] = L'\0';
 		pszFolder = GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER;
 
 		if( _IS_REL_PATH( pszFolder ) ){
@@ -227,6 +226,7 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPath, const WCHAR* ps
 			L"*.*",
 			szInitDir
 		);
+		szPath[0] = L'\0';
 		if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath, EFITER_MACRO ) ){
 			return;
 		}
