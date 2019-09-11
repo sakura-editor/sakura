@@ -147,7 +147,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 					{
 						WCHAR szFile[MAX_PATH];
 						// 2013.05.08 表示するのはファイル名(拡張子なし)のみにする
-						_tsplitpath( m_pTypeData->m_KeyHelpArr[i].m_szPath, NULL, NULL, szFile, NULL );
+						_wsplitpath( m_pTypeData->m_KeyHelpArr[i].m_szPath, NULL, NULL, szFile, NULL );
 						m_cTipWnd.m_cInfo.AppendString( szFile );
 					}
 					m_cTipWnd.m_cInfo.AppendString( L"\n" );

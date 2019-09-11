@@ -40,8 +40,8 @@ int CalcDirectoryDepth(const WCHAR* path);
 bool IsLocalDrive( const WCHAR* pszDrive );
 
 //※サクラ依存
-FILE *_tfopen_absexe(LPCWSTR fname, LPCWSTR mode); // 2003.06.23 Moca
-FILE *_tfopen_absini(LPCWSTR fname, LPCWSTR mode, BOOL bOrExedir = TRUE); // 2007.05.19 ryoji
+FILE *_wfopen_absexe(LPCWSTR fname, LPCWSTR mode); // 2003.06.23 Moca
+FILE *_wfopen_absini(LPCWSTR fname, LPCWSTR mode, BOOL bOrExedir = TRUE); // 2007.05.19 ryoji
 
 //パス文字列処理
 void CutLastYenFromDirectoryPath( WCHAR* pszFolder );			/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/

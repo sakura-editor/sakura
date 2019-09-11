@@ -215,7 +215,7 @@ void CMRUFile::Add( EditInfo* pEditInfo )
 	WCHAR	szDir[_MAX_DIR];
 	WCHAR	szFolder[_MAX_PATH + 1];	//	ドライブ＋フォルダ
 
-	_tsplitpath( pEditInfo->m_szPath, szDrive, szDir, NULL, NULL );	//	ドライブとフォルダを取り出す。
+	_wsplitpath( pEditInfo->m_szPath, szDrive, szDir, NULL, NULL );	//	ドライブとフォルダを取り出す。
 
 	//	Jan.  10, 2006 genta USBメモリはRemovable mediaと認識されるようなので，
 	//	一応無効化する．

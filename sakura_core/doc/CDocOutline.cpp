@@ -48,7 +48,7 @@ struct SOneRule {
 
 	@date 2002.04.01 YAZAKI
 	@date 2002.11.03 Moca 引数nMaxCountを追加。バッファ長チェックをするように変更
-	@date 2013.06.02 _tfopen_absini,fgetwsをCTextInputStream_AbsIniに変更。UTF-8対応。Regex対応
+	@date 2013.06.02 _wfopen_absini,fgetwsをCTextInputStream_AbsIniに変更。UTF-8対応。Regex対応
 	@date 2014.06.20 RegexReplace 正規表現置換モード追加
 */
 int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, int nMaxCount, bool& bRegex, std::wstring& title )

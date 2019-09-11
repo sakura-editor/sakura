@@ -288,7 +288,7 @@ void CViewCommander::Command_Diff( const WCHAR* _szDiffFile2, int nFlgOpt )
 	}else if( m_pCommanderView->MakeDiffTmpFile2( szTmpFile2, szDiffFile2, code2, saveCode2 ) ){
 		bTmpFile2 = true;
 	}else{
-		if( bTmpFile1 ) _tunlink( szTmpFile1 );
+		if( bTmpFile1 ) _wunlink( szTmpFile1 );
 		return;
 	}
 
@@ -301,8 +301,8 @@ void CViewCommander::Command_Diff( const WCHAR* _szDiffFile2, int nFlgOpt )
 	m_pCommanderView->ViewDiffInfo(szTmpFile1, szTmpFile2, nFlgOpt, bUTF8io);
 
 	//一時ファイルを削除する
-	if( bTmpFile1 ) _tunlink( szTmpFile1 );
-	if( bTmpFile2 ) _tunlink( szTmpFile2 );
+	if( bTmpFile1 ) _wunlink( szTmpFile1 );
+	if( bTmpFile2 ) _wunlink( szTmpFile2 );
 
 	return;
 }
@@ -370,7 +370,7 @@ void CViewCommander::Command_Diff_Dialog( void )
 		if( m_pCommanderView->MakeDiffTmpFile( szTmpFile2, cDlgDiff.m_hWnd_Dst, saveCode2, cDlgDiff.m_bBomDst ) ){
 			bTmpFile2 = true;
 		}else {
-			if( bTmpFile1 ) _tunlink( szTmpFile1 );
+			if( bTmpFile1 ) _wunlink( szTmpFile1 );
 			return;
 		}
 	}else{
@@ -379,7 +379,7 @@ void CViewCommander::Command_Diff_Dialog( void )
 			bTmpFile2 = true;
 		}else{
 			// Error
-			if( bTmpFile1 ) _tunlink( szTmpFile1 );
+			if( bTmpFile1 ) _wunlink( szTmpFile1 );
 			return;
 		}
 	}
@@ -393,8 +393,8 @@ void CViewCommander::Command_Diff_Dialog( void )
 	m_pCommanderView->ViewDiffInfo(szTmpFile1, szTmpFile2, cDlgDiff.m_nDiffFlgOpt, bUTF8io);
 	
 	//一時ファイルを削除する
-	if( bTmpFile1 ) _tunlink( szTmpFile1 );
-	if( bTmpFile2 ) _tunlink( szTmpFile2 );
+	if( bTmpFile1 ) _wunlink( szTmpFile1 );
+	if( bTmpFile2 ) _wunlink( szTmpFile2 );
 
 	return;
 }

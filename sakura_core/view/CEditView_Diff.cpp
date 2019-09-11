@@ -459,7 +459,7 @@ static bool MakeDiffTmpFile_core(CTextOutputStream& out, HWND hwnd, CEditView& v
 BOOL CEditView::MakeDiffTmpFile( WCHAR* filename, HWND hWnd, ECodeType code, bool bBom )
 {
 	//一時
-	WCHAR* pszTmpName = _ttempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
+	WCHAR* pszTmpName = _wtempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
 	if( NULL == pszTmpName ){
 		WarningMessage( NULL, LS(STR_DIFF_FAILED) );
 		return FALSE;
@@ -500,7 +500,7 @@ BOOL CEditView::MakeDiffTmpFile( WCHAR* filename, HWND hWnd, ECodeType code, boo
 	}
 	if( bError ){
 		out.Close();
-		_tunlink( filename );	//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
+		_wunlink( filename );	//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
 		WarningMessage( NULL, LS(STR_DIFF_FAILED_TEMP) );
 	}
 
@@ -512,7 +512,7 @@ BOOL CEditView::MakeDiffTmpFile( WCHAR* filename, HWND hWnd, ECodeType code, boo
 BOOL CEditView::MakeDiffTmpFile2( WCHAR* tmpName, const WCHAR* orgName, ECodeType code, ECodeType saveCode )
 {
 	//一時
-	WCHAR* pszTmpName = _ttempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
+	WCHAR* pszTmpName = _wtempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
 	if( NULL == pszTmpName ){
 		WarningMessage( NULL, LS(STR_DIFF_FAILED) );
 		return FALSE;
@@ -560,7 +560,7 @@ BOOL CEditView::MakeDiffTmpFile2( WCHAR* tmpName, const WCHAR* orgName, ECodeTyp
 	}
 	catch(...){
 		out.Close();
-		_tunlink( tmpName );	//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。
+		_wunlink( tmpName );	//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。
 		WarningMessage( NULL, LS(STR_DIFF_FAILED_TEMP) );
 		return FALSE;
 	}

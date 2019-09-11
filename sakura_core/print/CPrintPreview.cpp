@@ -899,7 +899,7 @@ void CPrintPreview::OnPreviewGoDirectPage( void )
 				return;
 			}
 		}
-		int nPage = _ttoi( szPageNum );
+		int nPage = _wtoi( szPageNum );
 		OnPreviewGoPage( nPage - 1 );
 	}
 }
@@ -1047,7 +1047,7 @@ void CPrintPreview::OnPrint( void )
 	}else{
 		WCHAR	szFileName[_MAX_FNAME];
 		WCHAR	szExt[_MAX_EXT];
-		_tsplitpath( m_pParentWnd->GetDocument()->m_cDocFile.GetFilePath(), NULL, NULL, szFileName, szExt );
+		_wsplitpath( m_pParentWnd->GetDocument()->m_cDocFile.GetFilePath(), NULL, NULL, szFileName, szExt );
 		auto_snprintf_s( szJobName, _countof(szJobName), L"%s%s", szFileName, szExt );
 	}
 

@@ -1237,7 +1237,7 @@ bool CControlTray::OpenNewEditor(
 		if( cCmdLineBuf.max_size() < cCmdLineBuf.size() + auto_strlen(szCmdLineOption) ){
 			WCHAR szIniDir[_MAX_PATH];
 			GetInidir(szIniDir);
-			LPWSTR pszTempFile = _ttempnam(szIniDir, L"skr_resp");
+			LPWSTR pszTempFile = _wtempnam(szIniDir, L"skr_resp");
 			if( !pszTempFile ){
 				ErrorMessage(hWndParent, LS(STR_TRAY_RESPONSEFILE));
 				return false;

@@ -227,7 +227,7 @@ retry:;
 	}
 	// 2012.09.26 Moca HTMLHELP対応
 	WCHAR	szExt[_MAX_EXT];
-	_tsplitpath( path, NULL, NULL, NULL, szExt );
+	_wsplitpath( path, NULL, NULL, NULL, szExt );
 	if( 0 == _wcsicmp(szExt, L".chi") || 0 == _wcsicmp(szExt, L".chm") || 0 == _wcsicmp(szExt, L".col") ){
 		Command_EXTHTMLHELP( path, cmemCurText.GetStringPtr() );
 	}else{

@@ -3855,7 +3855,7 @@ bool CEditWnd::GetRelatedIcon(const WCHAR* szFile, HICON* hIconBig, HICON* hIcon
 		WCHAR FileType[1024];
 
 		// (.で始まる)拡張子の取得
-		_tsplitpath( szFile, NULL, NULL, NULL, szExt );
+		_wsplitpath( szFile, NULL, NULL, NULL, szExt );
 		
 		if( ReadRegistry(HKEY_CLASSES_ROOT, szExt, NULL, FileType, _countof(FileType) - 13)){
 			wcscat( FileType, L"\\DefaultIcon" );

@@ -1346,7 +1346,7 @@ LRESULT CEditView::OnMOUSEWHEEL2( WPARAM wParam, LPARAM lParam, bool bHorizontal
 			}
 			if( !bGetParam ){
 				if( ReadRegistry( HKEY_CURRENT_USER, L"Control Panel\\desktop", L"WheelScrollLines", szValStr, uDataLen ) ){
-					nRollLineNum = ::_ttoi( szValStr );
+					nRollLineNum = ::_wtoi( szValStr );
 					if( nRollLineNum != -1 && m_bMiniMap ){
 						nRollLineNum *= 10;
 					}
@@ -2137,7 +2137,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 			if( nId == 100 ){	// パス名
 				::lstrcpy( szPath, szWork );
 			}else if( nId == 101 ){	// ファイル名
-				_tsplitpath( szWork, NULL, NULL, szPath, szExt );
+				_wsplitpath( szWork, NULL, NULL, szPath, szExt );
 				::lstrcat( szPath, szExt );
 			}
 			cmemBuf.AppendString( szPath );

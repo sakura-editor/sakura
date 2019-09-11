@@ -506,7 +506,7 @@ void CFileNameManager::GetIniFileNameDirect( LPWSTR pszPrivateIniFile, LPWSTR ps
 		NULL,
 		szPath, _countof(szPath)
 	);
-	_tsplitpath( szPath, szDrive, szDir, szFname, szExt );
+	_wsplitpath( szPath, szDrive, szDir, szFname, szExt );
 
 	if( pszProfName[0] == '\0' ){
 		auto_snprintf_s( pszIniFile, _MAX_PATH - 1, L"%s%s%s%s", szDrive, szDir, szFname, L".ini" );
@@ -582,7 +582,7 @@ void CFileNameManager::GetIniFileName( LPWSTR pszIniFileName, LPCWSTR pszProfNam
 				WCHAR szPath[_MAX_PATH];
 				WCHAR szDrive[_MAX_DRIVE];
 				WCHAR szDir[_MAX_DIR];
-				_tsplitpath( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile, szDrive, szDir, NULL, NULL );
+				_wsplitpath( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile, szDrive, szDir, NULL, NULL );
 				auto_snprintf_s( szPath, _MAX_PATH - 1, L"%s\\%s", szDrive, szDir );
 				MakeSureDirectoryPathExistsW( szPath );
 			}
@@ -591,7 +591,7 @@ void CFileNameManager::GetIniFileName( LPWSTR pszIniFileName, LPCWSTR pszProfNam
 				WCHAR szPath[_MAX_PATH];
 				WCHAR szDrive[_MAX_DRIVE];
 				WCHAR szDir[_MAX_DIR];
-				_tsplitpath( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szIniFile, szDrive, szDir, NULL, NULL );
+				_wsplitpath( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szIniFile, szDrive, szDir, NULL, NULL );
 				auto_snprintf_s( szPath, _MAX_PATH - 1, L"%s\\%s", szDrive, szDir );
 				MakeSureDirectoryPathExistsW( szPath );
 			}

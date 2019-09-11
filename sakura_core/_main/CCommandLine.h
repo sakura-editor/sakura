@@ -74,7 +74,7 @@ class CCommandLine  : public TSingleton<CCommandLine> {
 	*/
 	static int AtoiOptionInt(const WCHAR* arg){
 		return ( arg[0] == L'"' || arg[0] == L'\'' ) ?
-			_ttoi( arg + 1 ) : _ttoi( arg );
+			_wtoi( arg + 1 ) : _wtoi( arg );
 	}
 
 // member accessor method

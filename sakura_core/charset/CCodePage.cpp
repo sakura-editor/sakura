@@ -430,7 +430,7 @@ BOOL CALLBACK CCodePage::CallBackEnumCodePages( LPCWSTR pCodePageString )
 {
 	// pCodePageString は文字列に格納された数字
 	CCodePage::CodePageList* pList = const_cast<CCodePage::CodePageList*>(s_list);
-	pList->push_back(CCodePage::CodePageList::value_type(_ttoi( pCodePageString ), pCodePageString));
+	pList->push_back(CCodePage::CodePageList::value_type(_wtoi( pCodePageString ), pCodePageString));
 	return TRUE;
 }
 

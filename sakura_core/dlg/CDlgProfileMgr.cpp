@@ -86,7 +86,7 @@ static std::wstring GetProfileMgrFileName(LPCWSTR profName = NULL)
 		WCHAR szExePath[_MAX_PATH];
 		WCHAR szFname[_MAX_FNAME];
 		::GetModuleFileName( NULL, szExePath, _countof(szExePath) );
-		_tsplitpath( szExePath, NULL, NULL, szFname, NULL );
+		_wsplitpath( szExePath, NULL, NULL, szFname, NULL );
 		auto_snprintf_s( szIniFile, _MAX_PATH - 1, L"%s\\%s_prof%s", szDir, szFname, L".ini" );
 	}else{
 		auto_snprintf_s( szIniFile, _MAX_PATH - 1, L"%s\\%s", szDir, profName );

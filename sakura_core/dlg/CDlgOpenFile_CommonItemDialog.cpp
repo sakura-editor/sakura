@@ -414,7 +414,7 @@ CDlgOpenFile_CommonItemDialog::CDlgOpenFile_CommonItemDialog()
 		NULL,
 		szFile, _countof( szFile )
 	);
-	_tsplitpath( szFile, szDrive, szDir, NULL, NULL );
+	_wsplitpath( szFile, szDrive, szDir, NULL, NULL );
 	wcscpy( m_szInitialDir, szDrive );
 	wcscat( m_szInitialDir, szDir );
 

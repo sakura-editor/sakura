@@ -150,7 +150,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 				pszPath
 			);
 		}
-		else if( -1 == _taccess( pszPath, 4 )){
+		else if( -1 == _waccess( pszPath, 4 )){
 			// 読み込みアクセス権がない
 			ErrorMessage(
 				CEditWnd::getInstance()->GetHwnd(),

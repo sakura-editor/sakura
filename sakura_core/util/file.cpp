@@ -37,7 +37,7 @@
 
 bool fexist(LPCWSTR pszPath)
 {
-	return _taccess(pszPath,0)!=-1;
+	return _waccess(pszPath,0)!=-1;
 }
 
 /*!	ファイル名の切り出し
@@ -202,21 +202,21 @@ const WCHAR* GetFileTitlePointer(const WCHAR* pszPath)
 	@date 2003.06.23
 	@date 2007.05.20 ryoji 関数名変更（旧：fopen_absexe）、汎用テキストマッピング化
 */
-FILE* _tfopen_absexe(LPCWSTR fname, LPCWSTR mode)
+FILE* _wfopen_absexe(LPCWSTR fname, LPCWSTR mode)
 {
 	if( _IS_REL_PATH( fname ) ){
 		WCHAR path[_MAX_PATH];
 		GetExedir( path, fname );
-		return _tfopen( path, mode );
+		return _wfopen( path, mode );
 	}
-	return _tfopen( fname, mode );
+	return _wfopen( fname, mode );
 }
 
 /*! fnameが相対パスの場合は、INIファイルのパスからの相対パスとして開く
 	@author ryoji
-	@date 2007.05.19 新規作成（_tfopen_absexeベース）
+	@date 2007.05.19 新規作成（_wfopen_absexeベース）
 */
-FILE* _tfopen_absini(LPCWSTR fname, LPCWSTR mode, BOOL bOrExedir/*=TRUE*/ )
+FILE* _wfopen_absini(LPCWSTR fname, LPCWSTR mode, BOOL bOrExedir/*=TRUE*/ )
 {
 	if( _IS_REL_PATH( fname ) ){
 		WCHAR path[_MAX_PATH];
@@ -224,9 +224,9 @@ FILE* _tfopen_absini(LPCWSTR fname, LPCWSTR mode, BOOL bOrExedir/*=TRUE*/ )
 			GetInidirOrExedir( path, fname );
 		else
 			GetInidir( path, fname );
-		return _tfopen( path, mode );
+		return _wfopen( path, mode );
 	}
-	return _tfopen( fname, mode );
+	return _wfopen( fname, mode );
 }
 
 /* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない */
@@ -284,7 +284,7 @@ void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR*
 	WCHAR	szExt[_MAX_EXT];
 	int		nFolderLen;
 	int		nCharChars;
-	_tsplitpath( pszFilePath, szDrive, szDir, szFname, szExt );
+	_wsplitpath( pszFilePath, szDrive, szDir, szFname, szExt );
 	if( NULL != pszFolder ){
 		wcscpy( pszFolder, szDrive );
 		wcscat( pszFolder, szDir );
@@ -367,7 +367,7 @@ BOOL CheckEXT( const WCHAR* pszPath, const WCHAR* pszExt )
 {
 	WCHAR	szExt[_MAX_EXT];
 	WCHAR*	pszWork;
-	_tsplitpath( pszPath, NULL, NULL, NULL, szExt );
+	_wsplitpath( pszPath, NULL, NULL, NULL, szExt );
 	pszWork = szExt;
 	if( pszWork[0] == L'.' ){
 		pszWork++;

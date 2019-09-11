@@ -572,7 +572,7 @@ bool CDlgTypeList::CopyType()
 				}
 			}
 			if( p ){
-				n = _ttoi(p) + 1;
+				n = _wtoi(p) + 1;
 				*p = L'\0';
 			}else{
 				n++;

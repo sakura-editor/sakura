@@ -68,7 +68,7 @@ const WCHAR g_szGStrAppNameW[] = (_GSTR_APPNAME_(LTEXT)); // この変数を直�
 		|無        |エディタプロセスとなる     |CNormalProcessクラス       |
 		+----------+---------------------------+---------------------------+
 */
-int WINAPI _tWinMain(
+int WINAPI wWinMain(
 	HINSTANCE	hInstance,		//!< handle to current instance
 	HINSTANCE	hPrevInstance,	//!< handle to previous instance
 	LPWSTR		lpCmdLine,		//!< pointer to command line

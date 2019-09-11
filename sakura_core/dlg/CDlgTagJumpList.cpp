@@ -900,7 +900,7 @@ int CDlgTagJumpList::SearchBestTag( void )
 	lpPathInfo->szPathSrc[0] = L'\0';
 	lpPathInfo->szFileSrc[0] = L'\0';
 	lpPathInfo->szExtSrc[0] = L'\0';
-	_tsplitpath( m_pszFileName, lpPathInfo->szDriveSrc, lpPathInfo->szPathSrc, lpPathInfo->szFileSrc, lpPathInfo->szExtSrc );
+	_wsplitpath( m_pszFileName, lpPathInfo->szDriveSrc, lpPathInfo->szPathSrc, lpPathInfo->szFileSrc, lpPathInfo->szExtSrc );
 	lpPathInfo->nDriveSrc = wcslen(lpPathInfo->szDriveSrc);
 	lpPathInfo->nPathSrc = wcslen(lpPathInfo->szPathSrc);
 	lpPathInfo->nFileSrc = wcslen(lpPathInfo->szFileSrc);
@@ -924,7 +924,7 @@ int CDlgTagJumpList::SearchBestTag( void )
 		lpPathInfo->szPathDst[0] = L'\0';
 		lpPathInfo->szFileDst[0] = L'\0';
 		lpPathInfo->szExtDst[0] = L'\0';
-		_tsplitpath( lpPathInfo->szFileNameDst, lpPathInfo->szDriveDst, lpPathInfo->szPathDst, lpPathInfo->szFileDst, lpPathInfo->szExtDst );
+		_wsplitpath( lpPathInfo->szFileNameDst, lpPathInfo->szDriveDst, lpPathInfo->szPathDst, lpPathInfo->szFileDst, lpPathInfo->szExtDst );
 		lpPathInfo->nDriveDst = wcslen(lpPathInfo->szDriveDst);
 		lpPathInfo->nPathDst = wcslen(lpPathInfo->szPathDst);
 		lpPathInfo->nFileDst = wcslen(lpPathInfo->szFileDst);
@@ -1162,7 +1162,7 @@ int CDlgTagJumpList::find_key_core(
 		DEBUG_TRACE( L"tag: %s\n", szTagFile );
 		
 		//タグファイルを開く。
-		FILE* fp = _tfopen( szTagFile, L"rb" );
+		FILE* fp = _wfopen( szTagFile, L"rb" );
 		if( fp )
 		{
 			DEBUG_TRACE( L"open tags\n" );

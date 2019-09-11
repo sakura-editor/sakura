@@ -63,7 +63,7 @@ struct SysString
 	}
 	void GetW(std::wstring* str)
 	{
-		int Len = ::SysStringLen(Data);
+		size_t Len = ::SysStringLen(Data);
 		str->assign(Data, Len);
 	}
 };
