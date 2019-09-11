@@ -551,17 +551,20 @@ LRESULT CControlTray::DispatchEvent(
 
 	case MYWM_HTMLHELP:
 		{
-			WCHAR* pWork = m_pShareData->m_sWorkBuffer.GetWorkBuffer<WCHAR>();
+			auto &sWorkBuffer = m_pShareData->m_sWorkBuffer;
+			WCHAR* pWork = sWorkBuffer.GetWorkBuffer<WCHAR>();
 
-			//szHtmlFile取得
-			WCHAR	szHtmlHelpFile[1024];
-			wcscpy( szHtmlHelpFile, pWork );
-			int		nLen = wcslen( szHtmlHelpFile );
+			// pszHelpFile取得
+			const WCHAR* pszHelpFile = pWork;
+			const size_t cchHelpFile = wcsnlen( pWork, sWorkBuffer.GetWorkBufferCount<WCHAR>() );
+
+			// pszKeywords取得
+			const WCHAR* pszKeywords = &pWork[cchHelpFile + 1];
 
 			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
 			hwndHtmlHelp = OpenHtmlHelp(
 				NULL,
-				szHtmlHelpFile,
+				pszHelpFile,
 				HH_DISPLAY_TOPIC,
 				(DWORD_PTR)0,
 				true
@@ -570,7 +573,7 @@ LRESULT CControlTray::DispatchEvent(
 			HH_AKLINK	link;
 			link.cbStruct		= sizeof_raw(link);
 			link.fReserved		= FALSE;
-			link.pszKeywords	= to_wchar(&pWork[nLen+1]);
+			link.pszKeywords	= pszKeywords;
 			link.pszUrl			= NULL;
 			link.pszMsgText		= NULL;
 			link.pszMsgTitle	= NULL;
@@ -580,7 +583,7 @@ LRESULT CControlTray::DispatchEvent(
 			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
 			hwndHtmlHelp = OpenHtmlHelp(
 				NULL,
-				szHtmlHelpFile,
+				pszHelpFile,
 				HH_KEYWORD_LOOKUP,
 				(DWORD_PTR)&link,
 				false
