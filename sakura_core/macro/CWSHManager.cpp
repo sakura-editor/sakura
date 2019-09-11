@@ -128,9 +128,7 @@ CMacroManagerBase* CWSHMacroManager::Creator(const WCHAR* FileExt)
 		lstrcat(FileType, L"\\ScriptEngine");
 		if(ReadRegistry(HKEY_CLASSES_ROOT, FileType, NULL, EngineName, 1024))
 		{
-			wchar_t EngineNameW[1024];
-			_tcstowcs(EngineNameW, EngineName, _countof(EngineNameW));
-			return new CWSHMacroManager(EngineNameW);
+			return new CWSHMacroManager(EngineName);
 		}
 	}
 	return NULL;

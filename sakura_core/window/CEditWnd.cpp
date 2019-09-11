@@ -4208,11 +4208,9 @@ LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum,
 //!ツールチップのテキストを取得
 void CEditWnd::GetTooltipText(WCHAR* pszBuf, size_t nBufCount, int nID) const
 {
-	// 機能文字列の取得 -> tmp -> pszBuf
-	WCHAR tmp[256];
-	size_t nLen;
-	GetDocument()->m_cFuncLookup.Funccode2Name( nID, tmp, _countof(tmp) );
-	nLen = _wcstotcs(pszBuf, tmp, nBufCount);
+	// 機能文字列の取得 -> pszBuf
+	GetDocument()->m_cFuncLookup.Funccode2Name( nID, pszBuf, nBufCount );
+	size_t nLen = wcsnlen( pszBuf, nBufCount );
 
 	// 機能に対応するキー名の取得(複数)
 	CNativeW**	ppcAssignedKeyList;

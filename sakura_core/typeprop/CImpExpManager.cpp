@@ -622,7 +622,7 @@ bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 	{
 		//1行読み込み
 		wstring line=in.ReadLineW();
-		_wcstotcs(buff,line.c_str(),_countof(buff));
+		line.copy( buff, line.length(), 0 );
 
 		if(count >= MAX_REGEX_KEYWORD){
 			sErrMsg = LS(STR_IMPEXP_REGEX1);
@@ -655,9 +655,9 @@ bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 				{
 					if( 0 < MAX_REGEX_KEYWORDLISTLEN - keywordPos - 1 ){
 						regexKeyArr[count].m_nColorIndex = k;
-						_tcstowcs(&pKeyword[keywordPos], p, t_min<int>(MAX_REGEX_KEYWORDLEN, MAX_REGEX_KEYWORDLISTLEN - keywordPos - 1));
+						wcsncpy_s( &pKeyword[keywordPos], MAX_REGEX_KEYWORDLISTLEN - keywordPos, p, _TRUNCATE );
 						count++;
-						keywordPos += auto_strlen(&pKeyword[keywordPos]) + 1;
+						keywordPos += wcsnlen( &pKeyword[keywordPos], MAX_REGEX_KEYWORDLISTLEN - keywordPos ) + 1;
 					}else{
 						sErrMsg = LS(STR_IMPEXP_REGEX2);
 					}

@@ -121,11 +121,9 @@ bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const
 		int position = funccode - F_USERMACRO_0;
 		if( m_pMacroRec[position].IsEnabled() ){
 			const WCHAR *p = m_pMacroRec[position].GetTitle();
-			_tcstowcs( ptr, p, bufsize - 1 );
-			ptr[ bufsize - 1 ] = LTEXT('\0');
+			wcsncpy_s( ptr, bufsize, p, _TRUNCATE );
 		}else{
-			_snwprintf( ptr, bufsize, LS(STR_ERR_DLGFUNCLKUP03), position );
-			ptr[ bufsize - 1 ] = LTEXT('\0');
+			_snwprintf_s( ptr, bufsize, _TRUNCATE, LS(STR_ERR_DLGFUNCLKUP03), position );
 		}
 		return true;
 	}

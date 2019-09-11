@@ -393,19 +393,9 @@ void wcstombs_vector(const wchar_t* pSrc, int nSrcLen, std::vector<char>* ret)
 	(*ret)[nNewLen]='\0';
 }
 
-size_t _tcstowcs(WCHAR* pszDst, const WCHAR* pszSrc, size_t nDstCount)
-{
-	wcsncpy_s(pszDst, nDstCount, pszSrc, _TRUNCATE);
-	return wcslen(pszDst);
-}
 size_t _tcstombs(CHAR*  szDst,  const WCHAR* pszSrc, size_t nDstCount)
 {
 	return wcstombs2(szDst, pszSrc, nDstCount);
-}
-size_t _wcstotcs(WCHAR* pszDst, const WCHAR* pszSrc, size_t nDstCount)
-{
-	wcsncpy_s(pszDst, nDstCount, pszSrc, _TRUNCATE);
-	return wcslen(pszDst);
 }
 size_t _mbstotcs(WCHAR* pszDst, const CHAR*  szSrc,  size_t nDstCount)
 {
@@ -414,11 +404,6 @@ size_t _mbstotcs(WCHAR* pszDst, const CHAR*  szSrc,  size_t nDstCount)
 int _tctomb(const WCHAR* p,ACHAR* mb)
 {
 	return wctomb(mb,*p);
-}
-int _tctowc(const WCHAR* p,WCHAR* wc)
-{
-	*wc=*p;
-	return 1;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

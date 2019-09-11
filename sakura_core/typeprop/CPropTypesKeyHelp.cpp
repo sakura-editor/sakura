@@ -235,7 +235,7 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 					}
 					// 開けたなら1行目を取得してから閉じる -> szAbout
 					std::wstring line=in.ReadLineW();
-					_wcstotcs(szAbout,line.c_str(),_countof(szAbout));
+					line.copy( szAbout, line.length(), 0 );
 					in.Close();
 				}
 				strcnv(szAbout);

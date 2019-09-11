@@ -641,7 +641,7 @@ int CPropTypesRegex::GetData( HWND hwndDlg )
 			ListView_GetItemText(hwndList, i, 0, &szKeyWord[0], szKeyWordSize );
 			ListView_GetItemText(hwndList, i, 1, szColorIndex, _countof(szColorIndex));
 			if( pKeyword < pKeywordLast - 1 ){
-				_tcstowcs(pKeyword, &szKeyWord[0], pKeywordLast - pKeyword);
+				wcsncpy_s( pKeyword, pKeywordLast - pKeyword, &szKeyWord[0], _TRUNCATE );
 			}
 			//色指定文字列を番号に変換する
 			m_Types.m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1;

@@ -1058,7 +1058,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 		if( cProfile.IsReadingMode() ){
 			if (bOldVer) {
 				KEYDATA& keydata = sKeyBind.m_pKeyNameArr[i];
-				_tcstowcs( szKeyName, keydata.m_szKeyName, _countof(szKeyName) );
+				wcscpy_s( szKeyName, keydata.m_szKeyName );
 				if( cProfile.IOProfileData( szSecName, szKeyName, MakeStringBufferW(szKeyData) ) ){
 					int buf[8];
 					scan_ints( szKeyData, LTEXT("%d,%d,%d,%d,%d,%d,%d,%d"), buf );
@@ -1748,10 +1748,10 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 						pH = pT+1;
 						if( NULL != (pT=wcschr(pH, L',')) ){
 							*pT = L'\0';
-							_wcstotcs( types.m_KeyHelpArr[j].m_szAbout, pH, _countof(types.m_KeyHelpArr[j].m_szAbout) );
+							wcsncpy_s( types.m_KeyHelpArr[j].m_szAbout, pH, _TRUNCATE );
 							pH = pT+1;
 							if( L'\0' != (*pH) ){
-								_wcstotcs( types.m_KeyHelpArr[j].m_szPath, pH, _countof2(types.m_KeyHelpArr[j].m_szPath) );
+								types.m_KeyHelpArr[j].m_szPath = pH;
 								types.m_nKeyHelpNum = j+1;	// iniに保存せずに、読み出せたファイル分を辞書数とする
 							}
 						}

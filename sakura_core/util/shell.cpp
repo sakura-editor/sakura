@@ -208,9 +208,7 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 					LPMALLOC pMalloc;
 					if( SUCCEEDED(::SHGetMalloc(&pMalloc)) ){
 						LPITEMIDLIST pIDL;
-						WCHAR pszDisplayName[_MAX_PATH];
-						_tcstowcs(pszDisplayName, szPath, _countof(pszDisplayName));
-//						pszDisplayName = szPath;
+						WCHAR* pszDisplayName = szPath;
 						if( SUCCEEDED(pDesktopFolder->ParseDisplayName(NULL, NULL, pszDisplayName, NULL, &pIDL, NULL)) ){
 							SHELLEXECUTEINFO si;
 							::ZeroMemory( &si, sizeof(si) );
