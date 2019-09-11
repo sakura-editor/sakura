@@ -598,10 +598,9 @@ int CMainToolBar::GetSearchKey(std::wstring& strText)
 {
 	if( m_hwndSearchBox ){
 		int nBufferSize = ::GetWindowTextLength( m_hwndSearchBox ) + 1;
-		std::vector<WCHAR> vText(nBufferSize);
-
-		::GetWindowText( m_hwndSearchBox, &vText[0], vText.size() );
-		strText = to_wchar(&vText[0]);
+		auto vText = std::make_unique<WCHAR[]>(nBufferSize);
+		::GetWindowText( m_hwndSearchBox, &vText[0], nBufferSize);
+		strText = &vText[0];
 	}else{
 		strText = L"";
 	}

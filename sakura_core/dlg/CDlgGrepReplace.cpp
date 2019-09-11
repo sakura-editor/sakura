@@ -193,9 +193,9 @@ int CDlgGrepReplace::GetData( void )
 
 	/* 置換後 */
 	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT2) ) + 1;
-	std::vector<WCHAR> vText(nBufferSize);
+	auto vText = std::make_unique<WCHAR[]>(nBufferSize);
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT2, &vText[0], nBufferSize);
-	m_strText2 = to_wchar(&vText[0]);
+	m_strText2 = &vText[0];
 
 	if( 0 == ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT) ) ){
 		WarningMessage(	GetHwnd(), LS(STR_DLGREPLC_REPSTR) );

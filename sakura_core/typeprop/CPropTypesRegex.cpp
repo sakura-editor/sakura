@@ -708,7 +708,7 @@ bool CPropTypesRegex::CheckKeywordList(HWND hwndDlg, const WCHAR* szNewKeyWord, 
 	HWND hwndList = GetDlgItem( hwndDlg, IDC_LIST_REGEX );
 	int  nIndex  = ListView_GetItemCount(hwndList);
 	auto szKeyWord = std::make_unique<WCHAR[]>(nKeyWordSize);
-	int nKeywordLen = auto_strlen(to_wchar(szNewKeyWord)) + 1;
+	int nKeywordLen = 0;
 	for(int i = 0; i < nIndex; i++){
 		if( i != nUpdateItem ){
 			szKeyWord[0] = L'\0';
@@ -719,7 +719,7 @@ bool CPropTypesRegex::CheckKeywordList(HWND hwndDlg, const WCHAR* szNewKeyWord, 
 				return false;
 			}
 			// 長さには\0も含む
-			nKeywordLen += auto_strlen(to_wchar(&szKeyWord[0])) + 1;
+			nKeywordLen += wcsnlen(&szKeyWord[0], nKeyWordSize) + 1;
 			if( _countof(m_Types.m_RegexKeywordList) - 1 < nKeywordLen ){
 				ErrorMessage( hwndDlg, LS(STR_PROPTYPEREGEX_FULL) );
 				return false;

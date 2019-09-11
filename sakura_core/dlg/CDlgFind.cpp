@@ -183,9 +183,9 @@ void CDlgFind::SetCombosList( void )
 		Combo_DeleteString( hwndCombo, 0);
 	}
 	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT) ) + 1;
-	std::vector<WCHAR> vText(nBufferSize);
+	auto vText = std::make_unique<WCHAR[]>(nBufferSize);
 	Combo_GetText( hwndCombo, &vText[0], nBufferSize );
-	if (auto_strcmp( to_wchar(&vText[0]), m_strText.c_str() ) != 0) {
+	if (m_strText.compare( &vText[0] ) != 0) {
 		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
 	}
 }
@@ -213,9 +213,9 @@ int CDlgFind::GetData( void )
 
 	/* 検索文字列 */
 	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT) ) + 1;
-	std::vector<WCHAR> vText(nBufferSize);
+	auto vText = std::make_unique<WCHAR[]>(nBufferSize);
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, &vText[0], nBufferSize);
-	m_strText = to_wchar(&vText[0]);
+	m_strText = &vText[0];
 
 	/* 検索ダイアログを自動的に閉じる */
 	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_bAutoCloseDlgFind );

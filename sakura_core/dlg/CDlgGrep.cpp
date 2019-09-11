@@ -693,9 +693,9 @@ int CDlgGrep::GetData( void )
 
 	/* 検索文字列 */
 	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT) ) + 1;
-	std::vector<WCHAR> vText(nBufferSize);
+	auto vText = std::make_unique<WCHAR[]>(nBufferSize);
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, &vText[0], nBufferSize);
-	m_strText = to_wchar(&vText[0]);
+	m_strText = &vText[0];
 	m_bSetText = true;
 	/* 検索ファイル */
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_FILE, m_szFile, _countof2(m_szFile) );
