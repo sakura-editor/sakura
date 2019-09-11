@@ -202,7 +202,7 @@ void CDlgPluginOption::SetData( void )
 	}
 
 	// ReadMe Button
-	m_sReadMeName = m_cPropPlugin->GetReadMeFile(to_wchar(m_pShareData->m_Common.m_sPlugin.m_PluginTable[m_ID].m_szName));
+	m_sReadMeName = m_cPropPlugin->GetReadMeFile( m_pShareData->m_Common.m_sPlugin.m_PluginTable[m_ID].m_szName );
 	::EnableWindow( GetItemHwnd( IDC_PLUGIN_README ), !m_sReadMeName.empty() );
 	return;
 }
@@ -252,7 +252,7 @@ int CDlgPluginOption::GetData( void )
 			wstring	sTrg;
 			std::vector<wstring>	selects;
 			selects = cOpt->GetSelects();
-			wstring sWbuf = to_wchar(buf);
+			wstring sWbuf = buf;
 
 			for (auto it = selects.begin(); it != selects.end(); it++) {
 				SepSelect(*it, &sView, &sTrg);
@@ -272,7 +272,7 @@ int CDlgPluginOption::GetData( void )
 			continue;
 		}
 
-		sValue = to_wchar(buf);
+		sValue = buf;
 
 		cProfile->IOProfileData( sSection.c_str(), sKey.c_str(), sValue );
 	}
@@ -594,7 +594,7 @@ void CDlgPluginOption::SetToEdit( int iLine )
 			int		nItemIdx;
 			wstring	sView;
 			wstring	sValue;
-			wstring	sWbuf = to_wchar(buf);
+			wstring	sWbuf = buf;
 			nSelIdx = -1;		// 選択
 			i = 0;
 			for (auto it = selects.begin(); it != selects.end(); it++) {

@@ -197,7 +197,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 					m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.UpdateKeyWord(
 						m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx,
 						plvi->lParam,
-						to_wchar(plvi->pszText)
+						plvi->pszText
 					);
 				}else{
 					/* ｎ番目のセットのｍ番目のキーワードを削除 */
@@ -659,7 +659,7 @@ void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
 
 	for( i = 0; i < nNum; ++i ){
 		/* ｎ番目のセットのｍ番目のキーワードを返す */
-		const WCHAR* pszKeyWord = to_wchar(m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( nIdx, i ));
+		const WCHAR* pszKeyWord = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( nIdx, i );
 
 		lvi.mask = LVIF_TEXT | LVIF_PARAM;
 		lvi.pszText = const_cast<WCHAR*>(pszKeyWord);

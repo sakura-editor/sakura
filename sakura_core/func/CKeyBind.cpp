@@ -185,7 +185,7 @@ int CKeyBind::CreateKeyBindList(
 				if( j & _ALT ){
 					cMemList.AppendString( pszALT );
 				}
-				cMemList.AppendString( to_wchar(pKeyNameArr[i].m_szKeyName) );
+				cMemList.AppendString( pKeyNameArr[i].m_szKeyName );
 				//	Oct. 31, 2001 genta 
 				if( !pcFuncLookup->Funccode2Name(
 					iFunc,

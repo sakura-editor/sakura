@@ -1251,7 +1251,7 @@ bool CControlTray::OpenNewEditor(
 			}
 			respDeleter.fileName = szResponseFile;
 			// 出力
-			output.WriteString(to_wchar(szCmdLineOption));
+			output.WriteString(szCmdLineOption);
 			output.Close();
 			sync = true;
 			cCmdLineBuf.AppendF(L" -@=\"%s\"", szResponseFile);

@@ -184,7 +184,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 
 		nFlgOpt = bBeforeTextSelected ? 0x01 : 0x00;		/* 選択範囲を出力 */
 
-		if( !GetCommander().Command_PUTFILE( to_wchar(szTempFileName), sendEncoding, nFlgOpt) ){	// 一時ファイル出力
+		if( !GetCommander().Command_PUTFILE( szTempFileName, sendEncoding, nFlgOpt) ){	// 一時ファイル出力
 			hStdIn = NULL;
 		} else {
 			// 子プロセスへの継承用にファイルを開く

@@ -49,12 +49,12 @@ public:
 	// フルパス名を取得
 	inline wstring GetFullPath()
 	{
-		return to_wchar( GetDllShareData().m_sHistory.m_szIMPORTFOLDER ) + m_sOriginName;
+		return { LPCWSTR(GetDllShareData().m_sHistory.m_szIMPORTFOLDER) + m_sOriginName };
 	}
 	// フルパス名を取得
 	inline wstring MakeFullPath( wstring sFileName )
 	{
-		return to_wchar( GetDllShareData().m_sHistory.m_szIMPORTFOLDER ) + sFileName;
+		return { LPCWSTR(GetDllShareData().m_sHistory.m_szIMPORTFOLDER) + sFileName };
 	}
 	// ファイル名を取得
 	inline wstring GetFileName()	{ return m_sOriginName; }

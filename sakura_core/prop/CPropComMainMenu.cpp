@@ -343,7 +343,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					pFuncWk->m_sName = LS(STR_PROPCOMMAINMENU_EDIT);
 				}
 				else {
-					pFuncWk->m_sName = to_wchar(ptdi->item.pszText);
+					pFuncWk->m_sName = ptdi->item.pszText;
 				}
 				if( strNameOld != pFuncWk->m_sName ){
 					// ラベルを編集したらリソースからの文字列取得をやめる 2012.10.14 syat 各国語対応
@@ -638,7 +638,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
 					tvis.hParent = htiParent;
 					tvis.hInsertAfter = htiTemp;
-					tvis.item.pszText = const_cast<WCHAR*>(to_wchar(szLabel));
+					tvis.item.pszText = const_cast<WCHAR*>(szLabel);
 					tvis.item.lParam = nMenuCnt++;
 					tvis.item.cChildren = ( wID == IDC_BUTTON_INSERT_NODE );
 					htiItem = TreeView_InsertItem( hwndTreeRes, &tvis );
@@ -1187,7 +1187,7 @@ static const WCHAR* MakeDispLabel( SMainMenuWork* pFunc )
 			pFunc->m_sName.substr(0, MAX_MAIN_MENU_NAME_LEN).c_str() );
 	}
 
-	return to_wchar( szLabel );
+	return szLabel;
 }
 
 // メニューの検査

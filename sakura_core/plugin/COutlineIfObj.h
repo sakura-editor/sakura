@@ -113,7 +113,7 @@ public:
 			break;
 		case F_OL_SETTITLE:				//アウトラインダイアログタイトルを指定
 			if( Arguments[0] == NULL )return false;
-			m_sOutlineTitle = to_wchar( Arguments[0] );
+			m_sOutlineTitle = Arguments[0];
 			break;
 		case F_OL_SETLISTTYPE:			//アウトラインリスト種別を指定
 			if( Arguments[0] == NULL )return false;

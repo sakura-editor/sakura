@@ -55,7 +55,7 @@ CRecentReplace::CRecentReplace()
 */
 const WCHAR* CRecentReplace::GetItemText( int nIndex ) const
 {
-	return to_wchar(*GetItem(nIndex));
+	return *GetItem(nIndex);
 }
 
 bool CRecentReplace::DataToReceiveType( LPCWSTR* dst, const CReplaceString* src ) const
@@ -66,10 +66,10 @@ bool CRecentReplace::DataToReceiveType( LPCWSTR* dst, const CReplaceString* src 
 
 bool CRecentReplace::TextToDataType( CReplaceString* dst, LPCWSTR pszText ) const
 {
-	if( false == ValidateReceiveType(to_wchar(pszText)) ){
+	if( false == ValidateReceiveType(pszText) ){
 		return false;
 	}
-	CopyItem(dst, to_wchar(pszText));
+	CopyItem(dst, pszText);
 	return true;
 }
 

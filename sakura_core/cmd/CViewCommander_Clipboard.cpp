@@ -1096,7 +1096,7 @@ void CViewCommander::Command_COPYFILENAME( void )
 {
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		/* クリップボードにデータを設定 */
-		const WCHAR* pszFile = to_wchar(GetDocument()->m_cDocFile.GetFileName());
+		const WCHAR* pszFile = GetDocument()->m_cDocFile.GetFileName();
 		m_pCommanderView->MySetClipboardData( pszFile , wcslen( pszFile ), false );
 	}
 	else{

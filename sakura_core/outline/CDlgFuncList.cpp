@@ -556,7 +556,7 @@ void CDlgFuncList::SetData()
 
 		m_cmemClipText.SetString(L"");	/* クリップボードコピー用テキスト */
 		{
-			const int nBuffLenTag = 13 + wcslen(to_wchar(m_pcFuncInfoArr->m_szFilePath));
+			const int nBuffLenTag = 13 + wcslen(m_pcFuncInfoArr->m_szFilePath);
 			const int nNum = m_pcFuncInfoArr->GetNum();
 			int nBuffLen = 0;
 			for(int i = 0; i < nNum; ++i ){
@@ -938,7 +938,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 
 	m_cmemClipText.SetString( L"" );
 	{
-		const int nBuffLenTag = 13 + wcslen(to_wchar(m_pcFuncInfoArr->m_szFilePath));
+		const int nBuffLenTag = 13 + wcslen(m_pcFuncInfoArr->m_szFilePath);
 		const int nNum = m_pcFuncInfoArr->GetNum();
 		int nBuffLen = 0;
 		for( int i = 0; i < nNum; i++ ){
@@ -1112,7 +1112,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 			// 2002/10/27 frozen ここまで
 				if( htiGlobal == NULL ){
 					TV_INSERTSTRUCT	tvg;
-					std::wstring sGlobal = to_wchar(m_pcFuncInfoArr->GetAppendText( FL_OBJ_GLOBAL ).c_str());
+					const auto& sGlobal = m_pcFuncInfoArr->GetAppendText( FL_OBJ_GLOBAL );
 
 					::ZeroMemory( &tvg, sizeof(tvg));
 					tvg.hParent = TVI_ROOT;
@@ -1233,7 +1233,7 @@ void CDlgFuncList::SetListVB (void)
 
 	m_cmemClipText.SetString( L"" );
 	{
-		const int nBuffLenTag = 17 + wcslen(to_wchar(m_pcFuncInfoArr->m_szFilePath));
+		const int nBuffLenTag = 17 + wcslen(m_pcFuncInfoArr->m_szFilePath);
 		const int nNum = m_pcFuncInfoArr->GetNum();
 		int nBuffLen = 0;
 		for( int i = 0; i < nNum; i++ ){
@@ -1488,7 +1488,7 @@ void CDlgFuncList::SetTree(bool tagjump, bool nolabel)
 		int nBuffLen = 0;
 		int nBuffLenTag = 3; // " \r\n"
 		if( tagjump ){
-			nBuffLenTag = 10 + wcslen(to_wchar(m_pcFuncInfoArr->m_szFilePath));
+			nBuffLenTag = 10 + wcslen(m_pcFuncInfoArr->m_szFilePath);
 		}
 		for( int i = 0; i < nFuncInfoArrNum; i++ ){
 			const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
@@ -2547,7 +2547,7 @@ bool CDlgFuncList::TagJumpTimer( const WCHAR* pFile, CMyPoint point, bool bCheck
 
 	// ファイルを開いていない場合は自分で開く
 	if( pcView->GetDocument()->IsAcceptLoad() ){
-		std::wstring strFile = to_wchar(pFile);
+		std::wstring strFile = pFile;
 		pcView->GetCommander().Command_FILEOPEN( strFile.c_str(), CODE_AUTODETECT, CAppMode::getInstance()->IsViewMode(), NULL );
 		if( point.y != -1 ){
 			if( pcView->GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){

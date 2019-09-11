@@ -244,7 +244,7 @@ static ECodeType GetDiffCreateTempFileCode(ECodeType code)
 */
 void CViewCommander::Command_Diff( const WCHAR* _szDiffFile2, int nFlgOpt )
 {
-	const std::wstring strDiffFile2 = to_wchar(_szDiffFile2);
+	const std::wstring strDiffFile2 = _szDiffFile2;
 	const WCHAR* szDiffFile2 = strDiffFile2.c_str();
 
 	bool	bTmpFile1 = false;

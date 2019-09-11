@@ -43,7 +43,7 @@
 static void MacroError(BSTR Description, BSTR Source, void *Data)
 {
 	CEditView *View = reinterpret_cast<CEditView*>(Data);
-	MessageBox(View->GetHwnd(), to_wchar(Description), to_wchar(Source), MB_ICONERROR);
+	MessageBox(View->GetHwnd(), Description, Source, MB_ICONERROR);
 }
 
 CWSHMacroManager::CWSHMacroManager(std::wstring const AEngineName) : m_EngineName(AEngineName)
@@ -112,7 +112,7 @@ BOOL CWSHMacroManager::LoadKeyMacro(HINSTANCE hInstance, const WCHAR* pszPath)
 BOOL CWSHMacroManager::LoadKeyMacroStr(HINSTANCE hInstance, const WCHAR* pszCode)
 {
 	//ソース読み込み -> m_Source
-	m_Source = to_wchar( pszCode );
+	m_Source = pszCode;
 	return TRUE;
 }
 

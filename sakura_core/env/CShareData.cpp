@@ -1000,8 +1000,7 @@ void CShareData::TraceOut( LPCWSTR lpFmt, ... )
 	va_list argList;
 	va_start( argList, lpFmt );
 	int ret = tchar_vsnprintf_s( m_pShareData->m_sWorkBuffer.GetWorkBuffer<WCHAR>(), 
-		m_pShareData->m_sWorkBuffer.GetWorkBufferCount<WCHAR>(),
-		to_wchar(lpFmt), argList );
+		m_pShareData->m_sWorkBuffer.GetWorkBufferCount<WCHAR>(), lpFmt, argList );
 	va_end( argList );
 	if( -1 == ret ){
 		// 切り詰められた

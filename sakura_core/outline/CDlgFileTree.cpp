@@ -278,7 +278,7 @@ int CDlgFileTree::GetData()
 	if( false == bSaveShareData ){
 		// 元のiniに保存
 		CImpExpFileTree cImpExp(items);
-		std::wstring strIni = to_wchar(m_fileTreeSetting.m_szLoadProjectIni);
+		std::wstring strIni = LPCWSTR(m_fileTreeSetting.m_szLoadProjectIni);
 		std::wstring strError;
 		if( false == cImpExp.Export(strIni, strError) ){
 			ErrorMessage(hwndDlg, L"%ls", strError.c_str());

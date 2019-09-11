@@ -315,7 +315,7 @@ void CDlgProfileMgr::CreateProf()
 	if( szText[0] == L'\0' ){
 		return;
 	}
-	std::wstring strText = to_wchar(szText);
+	std::wstring strText = szText;
 	static const WCHAR szReservedChars[] = L"/\\*?<>&|:\"'\t";
 	for( int x = 0; x < _countof(szReservedChars); ++x ){
 		if( strText.npos != strText.find(szReservedChars[x]) ){
@@ -377,7 +377,7 @@ void CDlgProfileMgr::RenameProf()
 	if( 0 == auto_strcmp( szTextOld, szText ) ){
 		return; // 未変更
 	}
-	std::wstring strText = to_wchar(szText);
+	std::wstring strText = szText;
 	static const WCHAR szReservedChars[] = L"/\\*?<>&|:\"'\t";
 	for( int x = 0; x < _countof(szReservedChars); ++x ){
 		if( strText.npos != strText.find(szReservedChars[x]) ){

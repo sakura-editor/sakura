@@ -409,7 +409,7 @@ CCodePage::CodePageList& CCodePage::GetCodePageList()
 	for( auto it = result.begin(); it != result.end(); ++it ){
 		cpInfo.CodePageName[0] = L'\0';
 		if( ::GetCPInfoEx(it->first, 0, &cpInfo) ){
-			it->second = to_wchar(cpInfo.CodePageName);
+			it->second = cpInfo.CodePageName;
 		}else{
 			std::wstring code = it->second;
 			it->second += L" CP(";
@@ -430,7 +430,7 @@ BOOL CALLBACK CCodePage::CallBackEnumCodePages( LPCWSTR pCodePageString )
 {
 	// pCodePageString は文字列に格納された数字
 	CCodePage::CodePageList* pList = const_cast<CCodePage::CodePageList*>(s_list);
-	pList->push_back(CCodePage::CodePageList::value_type(_ttoi( pCodePageString ), to_wchar(pCodePageString)));
+	pList->push_back(CCodePage::CodePageList::value_type(_ttoi( pCodePageString ), pCodePageString));
 	return TRUE;
 }
 

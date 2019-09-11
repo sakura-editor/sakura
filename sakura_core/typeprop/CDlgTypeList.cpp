@@ -418,7 +418,7 @@ bool CDlgTypeList::Import()
 	int id = typeMini->m_id;
 
 	// インポート
-	cImpExpType.SetBaseName( to_wchar( type.m_szTypeName ) );
+	cImpExpType.SetBaseName( type.m_szTypeName );
 	if (!cImpExpType.ImportUI( G_AppInstance(), GetHwnd() )) {
 		// インポートをしていない
 		return false;
@@ -461,7 +461,7 @@ bool CDlgTypeList::Export()
 	CImpExpType	cImpExpType( nIdx, types, hwndList );
 
 	// エクスポート
-	cImpExpType.SetBaseName( to_wchar( types.m_szTypeName) );
+	cImpExpType.SetBaseName( types.m_szTypeName );
 	if (!cImpExpType.ExportUI( G_AppInstance(), GetHwnd() )) {
 		// エクスポートをしていない
 		return false;

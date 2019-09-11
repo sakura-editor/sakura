@@ -1321,7 +1321,7 @@ bool CMacro::HandleCommand(
 					LS(STR_ERR_DLGMACRO07) );
 				return false;
 			}
-			std::wstring val0 = to_wchar(Argument[0]);
+			std::wstring val0 = Argument[0];
 			int val1 = Argument[1] != NULL ? _wtoi(Argument[1]) : 0;
 			if( (val1 & 0x03) == 0 ){
 				pcEditView->SendStatusMessage( val0.c_str() );
@@ -2405,14 +2405,14 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 
 					if( bSubMenu ){
 						nFlags |= nFlagBreak;
-						::InsertMenu( hMenuCurrent, -1, nFlags | MF_BYPOSITION | MF_POPUP, (UINT_PTR)vHmenu.back(), to_wchar(r) );
+						::InsertMenu( hMenuCurrent, -1, nFlags | MF_BYPOSITION | MF_POPUP, (UINT_PTR)vHmenu.back(), r );
 						hMenuCurrent = vHmenu.back();
 					}else if( bSpecial ){
 						nFlags |= nFlagBreak;
 						::InsertMenu( hMenuCurrent, -1, nFlags | MF_BYPOSITION, 0, NULL );
 					}else{
 						nFlags |= nFlagBreak;
-						::InsertMenu( hMenuCurrent, -1, nFlags | MF_BYPOSITION, i, to_wchar(r) );
+						::InsertMenu( hMenuCurrent, -1, nFlags | MF_BYPOSITION, i, r );
 						if( bRadio ){
 							::CheckMenuRadioItem( hMenuCurrent, i, i, i, MF_BYCOMMAND );
 						}

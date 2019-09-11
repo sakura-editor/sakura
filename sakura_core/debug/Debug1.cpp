@@ -60,7 +60,7 @@ void DebugOutW( LPCWSTR lpFmt, ...)
 		::OutputDebugStringW( L"(切り捨てました...)\n" );
 	}
 #ifdef USE_DEBUGMON
-	DebugMonitor_Output(NULL, to_wchar(szText));
+	DebugMonitor_Output(NULL, szText);
 #endif
 
 	//ウェイト
@@ -84,7 +84,7 @@ void DebugOutA( LPCSTR lpFmt, ...)
 		::OutputDebugStringA( "(切り捨てました...)\n" );
 	}
 #ifdef USE_DEBUGMON
-	DebugMonitor_Output(NULL, to_wchar(szText));
+	DebugMonitor_Output(NULL, szText);
 #endif
 
 	//ウェイト

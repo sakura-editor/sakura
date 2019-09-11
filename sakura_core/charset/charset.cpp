@@ -105,7 +105,7 @@ LPCWSTR CCodeTypeName::Normal() const
 	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
 		return NULL;
 	}
-	return to_wchar( msCodeSet[m_eCodeType].m_sNormal );
+	return msCodeSet[m_eCodeType].m_sNormal;
 }
 
 LPCWSTR CCodeTypeName::Short() const
@@ -113,7 +113,7 @@ LPCWSTR CCodeTypeName::Short() const
 	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
 		return NULL;
 	}
-	return to_wchar( msCodeSet[m_eCodeType].m_sShort );
+	return msCodeSet[m_eCodeType].m_sShort;
 }
 
 LPCWSTR CCodeTypeName::Bracket() const
@@ -184,5 +184,5 @@ LPCWSTR CCodeTypesForCombobox::GetName(int nIndex) const
 	if (nIndex == 0) {
 		return LS(STR_ERR_GLOBAL01);
 	}
-	return to_wchar( msCodeSet[vDispIdx[nIndex]].m_sLong );
+	return msCodeSet[vDispIdx[nIndex]].m_sLong;
 }

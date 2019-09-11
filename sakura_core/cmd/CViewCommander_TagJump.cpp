@@ -57,10 +57,10 @@ static bool IsFileExists2( const wchar_t* pszFile )
 			return false;
 		}
 	}
-	if( _IS_REL_PATH(to_wchar(pszFile)) ){
+	if( _IS_REL_PATH(pszFile) ){
 		return false;
 	}
-	return IsFileExists(to_wchar(pszFile), true);
+	return IsFileExists(pszFile, true);
 }
 
 /*! タグジャンプ
@@ -341,7 +341,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 
 	//	Apr. 21, 2003 genta bClose追加
 	if( szJumpToFile[0] ){
-		if( m_pCommanderView->TagJumpSub( to_wchar(szJumpToFile), CMyPoint(nJumpToColumn, nJumpToLine), bClose ) ){	//@@@ 2003.04.13
+		if( m_pCommanderView->TagJumpSub( szJumpToFile, CMyPoint(nJumpToColumn, nJumpToLine), bClose ) ){	//@@@ 2003.04.13
 			return true;
 		}
 	}

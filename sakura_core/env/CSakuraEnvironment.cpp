@@ -142,7 +142,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				++p;
 			} 
 			else {
-				r = to_wchar(pcDoc->m_cDocFile.GetFilePath());
+				r = pcDoc->m_cDocFile.GetFilePath();
 				q = wcs_pushW( q, q_max - q, r, wcslen( r ));
 				++p;
 			}
@@ -171,7 +171,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			else {
 				//	ポインタを末尾に
 				const wchar_t *dot_position, *end_of_path;
-				r = to_wchar(pcDoc->m_cDocFile.GetFileName()); // 2002.10.13 Moca ファイル名(パスなし)を取得。日本語対応
+				r = pcDoc->m_cDocFile.GetFileName(); // 2002.10.13 Moca ファイル名(パスなし)を取得。日本語対応
 				end_of_path = dot_position =
 					r + wcslen( r );
 				//	後ろから.を探す
@@ -195,7 +195,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			} 
 			else {
 				//	パスの区切りとして'/'を使うバージョン
-				for( r = to_wchar(pcDoc->m_cDocFile.GetFilePath()); *r != L'\0' && q < q_max; ++r, ++q ){
+				for( r = pcDoc->m_cDocFile.GetFilePath(); *r != L'\0' && q < q_max; ++r, ++q ){
 					if( *r == L'\\' )
 						*q = L'/';
 					else
@@ -246,7 +246,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				WCHAR*	pEnd;
 				WCHAR*	p;
 
-				wcscpy_s( buff, _MAX_PATH, to_wchar(pcDoc->m_cDocFile.GetFilePath()) );
+				wcscpy_s( buff, _MAX_PATH, pcDoc->m_cDocFile.GetFilePath() );
 				pEnd = NULL;
 				for ( p = buff; *p != '\0'; p++) {
 					if (*p == L'\\') {
@@ -264,7 +264,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				met.cbSize = CCSIZEOF_STRUCT(NONCLIENTMETRICS, lfMessageFont);
 				::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, met.cbSize, &met, 0);
 				CDCFont dcFont(met.lfCaptionFont, GetMainWindow()->GetHwnd());
-				CFileNameManager::getInstance()->GetTransformFileNameFast( to_wchar(buff), szText, _countof(szText)-1, dcFont.GetHDC(), true );
+				CFileNameManager::getInstance()->GetTransformFileNameFast( buff, szText, _countof(szText)-1, dcFont.GetHDC(), true );
 				q = wcs_pushW( q, q_max - q, szText);
 			}
 			++p;
@@ -278,7 +278,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				const WCHAR*	pEnd;
 				const WCHAR*	p;
 
-				pStr = to_wchar(pcDoc->m_cDocFile.GetFilePath());
+				pStr = pcDoc->m_cDocFile.GetFilePath();
 				pEnd = pStr - auto_strlen(pStr) - 1;
 				for ( p = pStr; *p != '\0'; p++) {
 					if (*p == L'\\') {
@@ -303,7 +303,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			if ( pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
 				//	ポインタを末尾に
 				const wchar_t	*dot_position, *end_of_path;
-				r = to_wchar(pcDoc->m_cDocFile.GetFileName());
+				r = pcDoc->m_cDocFile.GetFileName();
 				end_of_path = dot_position = r + wcslen( r );
 				//	後ろから.を探す
 				while (--dot_position >= r && *dot_position != L'.')

@@ -56,7 +56,7 @@ CRecentSearch::CRecentSearch()
 */
 const WCHAR* CRecentSearch::GetItemText( int nIndex ) const
 {
-	return to_wchar(*GetItem(nIndex));
+	return *GetItem(nIndex);
 }
 
 bool CRecentSearch::DataToReceiveType( LPCWSTR* dst, const CSearchString* src ) const
@@ -67,10 +67,10 @@ bool CRecentSearch::DataToReceiveType( LPCWSTR* dst, const CSearchString* src ) 
 
 bool CRecentSearch::TextToDataType( CSearchString* dst, LPCWSTR pszText ) const
 {
-	if( false == ValidateReceiveType(to_wchar(pszText)) ){
+	if( false == ValidateReceiveType(pszText) ){
 		return false;
 	}
-	CopyItem(dst, to_wchar(pszText));
+	CopyItem(dst, pszText);
 	return true;
 }
 

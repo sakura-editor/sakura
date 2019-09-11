@@ -836,27 +836,22 @@ void CEditWnd::LayoutMainMenu()
 		case T_NODE:
 			// ラベル未設定かつFunctionコードがありならストリングテーブルから取得 2012/10/18 syat 各国語対応
 			pszName = ( cMainMenu->m_sName[0] == L'\0' && cMainMenu->m_nFunc != F_NODE )
-								? LS( cMainMenu->m_nFunc ) : to_wchar(cMainMenu->m_sName);
+								? LS( cMainMenu->m_nFunc ) : cMainMenu->m_sName;
 			::AppendMenu( hMenu, MF_POPUP | MF_STRING | (nCount<=1 ? MF_GRAYED : 0), (UINT_PTR)CreatePopupMenu(), 
-				CKeyBind::MakeMenuLabel( pszName, to_wchar(cMainMenu->m_sKey) ) );
+				CKeyBind::MakeMenuLabel( pszName, cMainMenu->m_sKey ) );
 			break;
 		case T_LEAF:
 			/* メニューラベルの作成 */
 			// 2014.05.04 Moca プラグイン/マクロ等を置けるようにFunccode2Nameを使うように
-			{
-				WCHAR szLabelW[256];
-				GetDocument()->m_cFuncLookup.Funccode2Name( cMainMenu->m_nFunc, szLabelW, 256 );
-				auto_strncpy( szLabel, to_wchar(szLabelW), _countof(szLabel) - 1 );
-				szLabel[_countof(szLabel) - 1] = L'\0';
-			}
-			auto_strcpy( szKey, to_wchar(cMainMenu->m_sKey));
+			GetDocument()->m_cFuncLookup.Funccode2Name( cMainMenu->m_nFunc, szLabel, _countof(szLabel) );
+			auto_strcpy( szKey, cMainMenu->m_sKey );
 			if (CKeyBind::GetMenuLabel(
 				G_AppInstance(),
 				m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
 				m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr,
 				cMainMenu->m_nFunc,
 				szLabel,
-				to_wchar(cMainMenu->m_sKey),
+				cMainMenu->m_sKey,
 				FALSE,
 				_countof(szLabel)) == NULL) {
 				auto_strcpy( szLabel, L"?" );
@@ -919,7 +914,7 @@ void CEditWnd::LayoutMainMenu()
 				break;
 			}
 			::AppendMenu( hMenu, MF_POPUP | MF_STRING | (nCount<=0 ? MF_GRAYED : 0), (UINT_PTR)CreatePopupMenu(), 
-				CKeyBind::MakeMenuLabel( LS(cMainMenu->m_nFunc), to_wchar(cMainMenu->m_sKey) ) );
+				CKeyBind::MakeMenuLabel( LS(cMainMenu->m_nFunc), cMainMenu->m_sKey ) );
 			break;
 		}
 	}
@@ -2429,7 +2424,7 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 	else if (eFunc >= F_USERMACRO_0 && eFunc < F_USERMACRO_0+MAX_CUSTMACRO) {
 		MacroRec *mp = &m_pShareData->m_Common.m_sMacro.m_MacroTable[eFunc - F_USERMACRO_0];
 		if (mp->IsEnabled()) {
-			psName = to_wchar(mp->m_szName[0] ? mp->m_szName : mp->m_szFile);
+			psName = mp->m_szName[0] ? mp->m_szName : mp->m_szFile;
 			m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING,
 				eFunc, psName, pszKey );
 		}
@@ -3418,7 +3413,7 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 					// 2010.08.22 Moca C:\temp.txt などのtopのファイルがD&Dできないバグの修正
 					CNativeW cmemTitle;
 					CNativeW cmemDir;
-					cmemTitle = to_wchar(GetDocument()->m_cDocFile.GetFileName());
+					cmemTitle = GetDocument()->m_cDocFile.GetFileName();
 					cmemDir   = GetDocument()->m_cDocFile.GetFilePathClass().GetDirPath().c_str();
 
 					IDataObject *DataObject;
@@ -3450,7 +3445,7 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 								F.tymed    = TYMED_HGLOBAL;
 
 								STGMEDIUM M;
-								const wchar_t* pFilePath = to_wchar(GetDocument()->m_cDocFile.GetFilePath());
+								const wchar_t* pFilePath = GetDocument()->m_cDocFile.GetFilePath();
 								int Len = wcslen(pFilePath);
 								M.tymed          = TYMED_HGLOBAL;
 								M.pUnkForRelease = NULL;

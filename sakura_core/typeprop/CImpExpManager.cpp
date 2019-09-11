@@ -139,7 +139,7 @@ bool CImpExpManager::ImportUI( HINSTANCE hInstance, HWND hwndParent )
 		return false;
 	}
 
-	const wstring	sPath = to_wchar(szPath);
+	const wstring sPath = szPath;
 	wstring	sErrMsg;
 
 	// 確認
@@ -190,7 +190,7 @@ bool CImpExpManager::ExportUI( HINSTANCE hInstance, HWND hwndParent )
 	SetImportFolder( szPath );
 
 	// Export
-	const wstring	sPath = to_wchar(szPath);
+	const wstring sPath = szPath;
 	wstring	sErrMsg;
 
 	if (!Export( sPath, sErrMsg )) {
@@ -199,7 +199,7 @@ bool CImpExpManager::ExportUI( HINSTANCE hInstance, HWND hwndParent )
 	}
 
 	if (sErrMsg.length() == 0) {
-		sErrMsg = std::wstring(LS(STR_IMPEXP_OK_EXPORT)) + to_wchar( szPath );
+		sErrMsg = LS(STR_IMPEXP_OK_EXPORT) + sPath;
 	}
 	InfoMessage( hwndParent, L"%ls", sErrMsg.c_str() );
 
@@ -638,7 +638,7 @@ bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 		{
 			*p = L'\0';
 			p++;
-			if( p[0] && CRegexKeyword::RegexKeyCheckSyntax(to_wchar(p)) )	//囲みがある
+			if( p[0] && CRegexKeyword::RegexKeyCheckSyntax(p) )	//囲みがある
 			{
 				//色指定名に対応する番号を探す
 				int k = GetColorIndexByName( &buff[11] );	//@@@ 2002.04.30
@@ -782,7 +782,7 @@ bool CImpExpKeyHelp::Import( const wstring& sFileName, wstring& sErrMsg )
 		//Path
 		FILE* fp2;
 		const WCHAR* p4 = p2;
-		if( (fp2=_tfopen_absini(to_wchar(p3),L"r")) == NULL ){	// 2007.02.03 genta 相対パスはsakura.exe基準で開く	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
+		if( (fp2=_tfopen_absini(p3,L"r")) == NULL ){	// 2007.02.03 genta 相対パスはsakura.exe基準で開く	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 			// 2007.02.03 genta 辞書が見つからない場合の措置．警告を出すが取り込む
 			p4 = LS(STR_IMPEXP_DIC_NOTFOUND);
 			b_enable_flag = 0;
@@ -800,8 +800,8 @@ bool CImpExpKeyHelp::Import( const wstring& sFileName, wstring& sErrMsg )
 
 		//良さそうなら
 		m_Types.m_KeyHelpArr[i].m_bUse = (b_enable_flag!=0);	// 2007.02.03 genta
-		wcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, to_wchar(p4));
-		wcscpy(m_Types.m_KeyHelpArr[i].m_szPath,  to_wchar(p3));
+		wcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, p4);
+		wcscpy(m_Types.m_KeyHelpArr[i].m_szPath,  p3);
 		i++;
 	}
 	in.Close();
@@ -955,7 +955,7 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 					p = q + 1;
 				}
 
-				auto_strncpy(sKeyBind.m_pKeyNameArr[i].m_szKeyName, to_wchar(p), _countof(sKeyBind.m_pKeyNameArr[i].m_szKeyName)-1);
+				auto_strncpy(sKeyBind.m_pKeyNameArr[i].m_szKeyName, p, _countof(sKeyBind.m_pKeyNameArr[i].m_szKeyName)-1);
 				sKeyBind.m_pKeyNameArr[i].m_szKeyName[_countof(sKeyBind.m_pKeyNameArr[i].m_szKeyName)-1] = '\0';
 			}
 		}

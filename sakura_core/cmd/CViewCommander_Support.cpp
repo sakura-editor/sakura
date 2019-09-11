@@ -229,8 +229,7 @@ retry:;
 	WCHAR	szExt[_MAX_EXT];
 	_tsplitpath( path, NULL, NULL, NULL, szExt );
 	if( 0 == _wcsicmp(szExt, L".chi") || 0 == _wcsicmp(szExt, L".chm") || 0 == _wcsicmp(szExt, L".col") ){
-		std::wstring pathw = to_wchar(path);
-		Command_EXTHTMLHELP( pathw.c_str(), cmemCurText.GetStringPtr() );
+		Command_EXTHTMLHELP( path, cmemCurText.GetStringPtr() );
 	}else{
 		::WinHelp( m_pCommanderView->m_hwndParent, path, HELP_KEY, (ULONG_PTR)cmemCurText.GetStringPtr() );
 	}
@@ -248,7 +247,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 {
 	std::wstring helpfile;
 	if( _helpfile != NULL ){
-		helpfile = to_wchar(_helpfile);
+		helpfile = _helpfile;
 	}
 
 	HWND		hwndHtmlHelp;

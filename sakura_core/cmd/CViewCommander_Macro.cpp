@@ -202,22 +202,15 @@ void CViewCommander::Command_EXECKEYMACRO( void )
 	@date 2008.10.23 syat 新規作成
 	@date 2008.12.21 syat 引数「種別」を追加
  */
-void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW, const WCHAR* pszTypeW )
+void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPath, const WCHAR* pszType )
 {
 	CDlgOpenFile	cDlgOpenFile;
 	WCHAR			szPath[_MAX_PATH + 1];
 	WCHAR			szInitDir[_MAX_PATH + 1];	//ファイル選択ダイアログの初期フォルダ
 	const WCHAR*	pszFolder;					//マクロフォルダ
-	const WCHAR*	pszPath = NULL;				//第1引数をTCHAR*に変換した文字列
-	const WCHAR*	pszType = NULL;				//第2引数をTCHAR*に変換した文字列
 	HWND			hwndRecordingKeyMacro = NULL;
 
-	if ( pszPathW != NULL ) {
-		//to_wchar()で取得した文字列はdeleteしないこと。
-		pszPath = to_wchar( pszPathW );
-		pszType = to_wchar( pszTypeW );
-
-	} else {
+	if ( !pszPath != NULL ) {
 		// ファイルが指定されていない場合、ダイアログを表示する
 		szPath[0] = L'\0';
 		pszFolder = GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER;
@@ -297,8 +290,8 @@ void CViewCommander::Command_EXECCOMMAND_DIALOG( void )
 	}
 
 	m_pCommanderView->AddToCmdArr( cDlgExec.m_szCommand );
-	const WCHAR* cmd_string = to_wchar(cDlgExec.m_szCommand);
-	const WCHAR* curDir = to_wchar(cDlgExec.m_szCurDir);
+	const WCHAR* cmd_string = cDlgExec.m_szCommand;
+	const WCHAR* curDir = cDlgExec.m_szCurDir;
 	const WCHAR* pszDir = curDir;
 	if( curDir[0] == L'\0' ){
 		pszDir = NULL;
@@ -326,10 +319,10 @@ void CViewCommander::Command_EXECCOMMAND( LPCWSTR cmd_string, const int nFlgOpt,
 	CSakuraEnvironment::ExpandParameter(cmd_string, buf, bufmax);
 
 	// 子プロセスの標準出力をリダイレクトする
-	std::wstring buf2 = to_wchar(buf);
+	std::wstring buf2 = buf;
 	std::wstring buf3;
 	if( pszCurDir ){
-		buf3 = to_wchar(pszCurDir);
+		buf3 = pszCurDir;
 	}
 	m_pCommanderView->ExecCmd( buf2.c_str(), nFlgOpt, (pszCurDir ? buf3.c_str() : NULL) );
 	//	To Here Aug. 21, 2001 genta

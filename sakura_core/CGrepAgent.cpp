@@ -1591,40 +1591,28 @@ public:
 				oldFile += L".skrold";
 				if( fexist(oldFile.c_str()) ){
 					if( FALSE == ::DeleteFile( oldFile.c_str() ) ){
-						std::wstring msg = LS(STR_GREP_REP_ERR_DELETE);
-						msg += L"[";
-						msg += oldFile;
-						msg += L"]\r\n";
-						memMessage.AppendString( msg.c_str() );
+						memMessage.AppendString( LS(STR_GREP_REP_ERR_DELETE) );
+						memMessage.AppendStringF( L"[%s]\r\n", oldFile.c_str());
 						return;
 					}
 				}
 				if( FALSE == ::MoveFile( fileName, oldFile.c_str() ) ){
-					std::wstring msg = LS(STR_GREP_REP_ERR_REPLACE);
-					msg += L"[";
-					msg += oldFile;
-					msg += L"]\r\n";
-					memMessage.AppendString( msg.c_str() );
+					memMessage.AppendString( LS(STR_GREP_REP_ERR_REPLACE) );
+					memMessage.AppendStringF( L"[%s]\r\n", oldFile.c_str());
 					return;
 				}
 			}else{
 				if( FALSE == ::DeleteFile( fileName ) ){
-					std::wstring msg = LS(STR_GREP_REP_ERR_DELETE);
-					msg += L"[";
-					msg += to_wchar(fileName);
-					msg += L"]\r\n";
-					memMessage.AppendString( msg.c_str() );
+					memMessage.AppendString( LS(STR_GREP_REP_ERR_DELETE) );
+					memMessage.AppendStringF( L"[%s]\r\n", fileName );
 					return;
 				}
 			}
 			std::wstring name = std::wstring(fileName);
 			name += L".skrnew";
 			if( FALSE == ::MoveFile( name.c_str(), fileName ) ){
-				std::wstring msg = LS(STR_GREP_REP_ERR_REPLACE);
-				msg += L"[";
-				msg += to_wchar(fileName);
-				msg += L"]\r\n";
-				memMessage.AppendString( msg.c_str()  );
+				memMessage.AppendString( LS(STR_GREP_REP_ERR_REPLACE) );
+				memMessage.AppendStringF( L"[%s]\r\n", fileName );
 				return;
 			}
 		}

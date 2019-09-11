@@ -25,7 +25,7 @@ int DebugMonitor_Output(const wchar_t* szInstanceId, const wchar_t* szText)
 	}
 	if(!f)return -1;
 
-	return f(NULL,to_wchar(szText));
+	return f(NULL,szText);
 }
 
 typedef __declspec(dllexport) LPCWSTR (*FN_GetWindowsMessageName)(UINT msg);

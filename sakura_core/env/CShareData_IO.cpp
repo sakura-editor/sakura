@@ -1104,7 +1104,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 						p = pn+1;
 					}
 					// KeyName
-					auto_strncpy(tmpKeydata.m_szKeyName, to_wchar(p), _countof(tmpKeydata.m_szKeyName)-1);
+					auto_strncpy(tmpKeydata.m_szKeyName, p, _countof(tmpKeydata.m_szKeyName)-1);
 					tmpKeydata.m_szKeyName[_countof(tmpKeydata.m_szKeyName)-1] = '\0';
 
 					if( tmpKeydata.m_nKeyCode <= 0 ){ // マウスコードは先頭に固定されている KeyCodeが同じなのでKeyNameで判別
@@ -1676,7 +1676,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 					if( p )
 					{
 						*p = LTEXT('\0');
-						types.m_RegexKeywordArr[j].m_nColorIndex = GetColorIndexByName(to_wchar(szKeyData));	//@@@ 2002.04.30
+						types.m_RegexKeywordArr[j].m_nColorIndex = GetColorIndexByName( szKeyData );	//@@@ 2002.04.30
 						if( types.m_RegexKeywordArr[j].m_nColorIndex == -1 )	//名前でない
 							types.m_RegexKeywordArr[j].m_nColorIndex = _wtoi(szKeyData);
 						p++;

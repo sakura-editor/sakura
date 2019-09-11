@@ -28,8 +28,6 @@
 //WCHARに変換
 const WCHAR* to_wchar(const ACHAR* src);
 const WCHAR* to_wchar(const ACHAR* pSrcData, int nSrcLength);
-inline
-const WCHAR* to_wchar(const WCHAR* src){ return src; }
 
 //ACHARに変換
 inline

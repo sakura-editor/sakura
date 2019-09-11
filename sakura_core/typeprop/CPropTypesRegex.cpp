@@ -593,7 +593,7 @@ void CPropTypesRegex::SetDataKeywordList( HWND hwndDlg )
 		if( *pKeyword == L'\0' ) break;
 		
 		lvi.mask     = LVIF_TEXT | LVIF_PARAM;
-		lvi.pszText  = const_cast<WCHAR*>(to_wchar(pKeyword));
+		lvi.pszText  = const_cast<WCHAR*>(pKeyword);
 		lvi.iItem    = i;
 		lvi.iSubItem = 0;
 		lvi.lParam   = 0; //m_Types.m_RegexKeywordArr[i].m_nColorIndex;
@@ -685,7 +685,7 @@ bool CPropTypesRegex::CheckKeywordList(HWND hwndDlg, const WCHAR* szNewKeyWord, 
 {
 	int nRet;
 	//書式をチェックする。
-	if( !RegexKakomiCheck(to_wchar(szNewKeyWord)) )	//囲みをチェックする。
+	if( !RegexKakomiCheck(szNewKeyWord) )	//囲みをチェックする。
 	{
 		nRet = ::MYMESSAGEBOX(
 				hwndDlg,
@@ -694,7 +694,7 @@ bool CPropTypesRegex::CheckKeywordList(HWND hwndDlg, const WCHAR* szNewKeyWord, 
 				LS(STR_PROPTYPEREGEX_KAKOMI) );
 		return false;
 	}
-	if( !CheckRegexpSyntax( to_wchar(szNewKeyWord), hwndDlg, false, -1, true ) )
+	if( !CheckRegexpSyntax( szNewKeyWord, hwndDlg, false, -1, true ) )
 	{
 		nRet = ::MYMESSAGEBOX(
 				hwndDlg,

@@ -102,9 +102,9 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 		nCharCode = CODE_AUTODETECT;
 	}
 	//ロード情報
-	SLoadInfo sLoadInfo(filename?to_wchar(filename):L"", nCharCode, bViewMode);
+	SLoadInfo sLoadInfo(filename?filename:L"", nCharCode, bViewMode);
 	std::vector<std::wstring> files;
-	std::wstring defName = (defaultName?to_wchar(defaultName):L"");
+	std::wstring defName = (defaultName ? defaultName : L"");
 
 	//必要であれば「ファイルを開く」ダイアログ
 	if(!sLoadInfo.cFilePath.IsValidPath()){
@@ -245,7 +245,7 @@ void CViewCommander::Command_FILECLOSE( void )
 */
 void CViewCommander::Command_FILECLOSE_OPEN( LPCWSTR filename, ECodeType nCharCode, bool bViewMode )
 {
-	GetDocument()->m_cDocFileOperation.FileCloseOpen( SLoadInfo(to_wchar(filename), nCharCode, bViewMode) );
+	GetDocument()->m_cDocFileOperation.FileCloseOpen( SLoadInfo(filename, nCharCode, bViewMode) );
 
 	//プラグイン：DocumentOpenイベント実行
 	CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_OPEN, &GetEditWindow()->GetActiveView() );
@@ -713,7 +713,7 @@ BOOL CViewCommander::Command_PUTFILE(
 	{	/* 選択範囲を出力 */
 		try
 		{
-			CBinaryOutputStream out(to_wchar(filename),true);
+			CBinaryOutputStream out(filename,true);
 
 			// 選択範囲の取得 -> cMem
 			CNativeW cMem;
@@ -747,7 +747,7 @@ BOOL CViewCommander::Command_PUTFILE(
 			WarningMessage(
 				NULL,
 				LS(STR_SAVEAGENT_OTHER_APP),
-				to_wchar(filename)
+				filename
 			);
 			bResult = FALSE;
 		}
@@ -777,7 +777,7 @@ BOOL CViewCommander::Command_PUTFILE(
 		EConvertResult eRet = CWriteManager().WriteFile_From_CDocLineMgr(
 			GetDocument()->m_cDocLineMgr,
 			SSaveInfo(
-				to_wchar(filename),
+				filename,
 				nSaveCharCode,
 				EOL_NONE,
 				bBom
@@ -836,7 +836,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 	if(nSaveCharCode == CODE_AUTODETECT) {
 		EditInfo    fi;
 		const CMRUFile  cMRU;
-		if ( cMRU.GetEditInfo( to_wchar(filename), &fi ) ){
+		if ( cMRU.GetEditInfo( filename, &fi ) ){
 				nSaveCharCode = fi.m_nCharCode;
 		} else {
 			nSaveCharCode = GetDocument()->GetDocumentEncoding();
@@ -854,7 +854,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 		bBigFile = false;
 #endif
 		// ファイルを開く
-		cfl.FileOpen( to_wchar(filename), bBigFile, nSaveCharCode, 0 );
+		cfl.FileOpen( filename, bBigFile, nSaveCharCode, 0 );
 
 		/* ファイルサイズが65KBを越えたら進捗ダイアログ表示 */
 		if ( 0x10000 < cfl.GetFileSize() ) {
@@ -902,7 +902,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 		cfl.FileClose();
 	} // try
 	catch( CError_FileOpen ){
-		WarningMessage( NULL, LS(STR_GREP_ERR_FILEOPEN), to_wchar(filename) );
+		WarningMessage( NULL, LS(STR_GREP_ERR_FILEOPEN), filename );
 		bResult = FALSE;
 	}
 	catch( CError_FileRead ){

@@ -114,7 +114,7 @@ bool CZipFile::ChkPluginDef(const std::wstring& sDefFile, std::wstring& sFolderN
 			FolderItems*	pFileItems2;
 			Folder*			pFile;
 
-			sFolderName = to_wchar(bps);	// Install Follder Name
+			sFolderName = bps;	// Install Follder Name
 			hr = pFileItem->get_GetFolder((IDispatch **)&pFile);
 			if (hr != S_OK) { continue; }
 			hr = pFile->Items(&pFileItems2);
@@ -132,9 +132,9 @@ bool CZipFile::ChkPluginDef(const std::wstring& sDefFile, std::wstring& sFolderN
 
 				// 定義ファイルか
 				if (!vFolder && auto_strlen(bps) >= sDefFile.length()
-					&& (auto_stricmp(to_wchar(bps), to_wchar((sFolderName + L"/" + sDefFile).c_str())) == 0
-					|| auto_stricmp(to_wchar(bps), to_wchar((sFolderName + L"\\" + sDefFile).c_str())) == 0
-					|| auto_stricmp(to_wchar(bps), to_wchar((sZipName + L"\\" + sFolderName + L"\\" + sDefFile).c_str())) == 0)) {
+					&& (auto_stricmp(bps, ((sFolderName + L"/" + sDefFile).c_str())) == 0
+					|| auto_stricmp(bps, ((sFolderName + L"\\" + sDefFile).c_str())) == 0
+					|| auto_stricmp(bps, ((sZipName + L"\\" + sFolderName + L"\\" + sDefFile).c_str())) == 0)) {
 					bFoundDef = true;
 					break;
 				}

@@ -293,7 +293,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode, b
 		const WCHAR* pszCompInsStr = L"";
 		int nCompInsStr   = 0;
 		if( nInsertCompLen ){
-			pszCompInsStr = to_wchar( m_szComposition );
+			pszCompInsStr = m_szComposition;
 			nCompInsStr   = wcslen( pszCompInsStr );
 		}
 		dwInsByteCount      = nCompInsStr * sizeof(wchar_t);

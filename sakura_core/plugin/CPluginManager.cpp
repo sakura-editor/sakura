@@ -136,7 +136,7 @@ bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, 
 			// 2010.08.04 大文字小文字同一視にする
 			bool isNotInstalled = true;
 			for( int iNo=0; iNo < MAX_PLUGIN; iNo++ ){
-				if( auto_stricmp( wf.cFileName, to_wchar( plugin_table[iNo].m_szName ) ) == 0 ){
+				if( auto_stricmp( wf.cFileName, plugin_table[iNo].m_szName ) == 0 ){
 					isNotInstalled = false;
 					break;
 				}
@@ -274,7 +274,7 @@ bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, co
 		int		iNo;
 		if (bOk) {
 			for( iNo=0; iNo < MAX_PLUGIN; iNo++ ){
-				if( auto_stricmp( sFolderName.c_str(), to_wchar( plugin_table[iNo].m_szName ) ) == 0 ){
+				if( auto_stricmp( sFolderName.c_str(), plugin_table[iNo].m_szName ) == 0 ){
 					isNotInstalled = false;
 					break;
 				}
@@ -404,7 +404,7 @@ int CPluginManager::InstallPlugin( CommonSetting& common, const WCHAR* pszPlugin
 		return -1;
 	}
 
-	wcsncpy( plugin_table[nEmpty].m_szName, to_wchar(pszPluginName), MAX_PLUGIN_NAME );
+	wcsncpy( plugin_table[nEmpty].m_szName, pszPluginName, MAX_PLUGIN_NAME );
 	plugin_table[nEmpty].m_szName[ MAX_PLUGIN_NAME-1 ] = '\0';
 	wcsncpy( plugin_table[nEmpty].m_szId, sId.c_str(), MAX_PLUGIN_ID );
 	plugin_table[nEmpty].m_szId[ MAX_PLUGIN_ID-1 ] = '\0';
@@ -465,7 +465,7 @@ bool CPluginManager::LoadAllPlugin(CommonSetting* common)
 		// 2010.08.04 削除状態を見る(今のところ保険)
 		if( plugin_table[iNo].m_state == PLS_DELETED ) continue;
 		if( NULL != GetPlugin( iNo ) ) continue; // 2013.05.31 読み込み済み
-		std::wstring name = to_wchar(plugin_table[iNo].m_szName);
+		std::wstring name = plugin_table[iNo].m_szName;
 		CPlugin* plugin = LoadPlugin( m_sBaseDir.c_str(), name.c_str(), szLangName.c_str() );
 		if( !plugin ){
 			plugin = LoadPlugin( m_sExePluginDir.c_str(), name.c_str(), szLangName.c_str() );

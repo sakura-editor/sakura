@@ -441,7 +441,7 @@ BOOL CKeyMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const WCHAR* pszCode )
 	if( 0 == ::GetTempFileName( szTempDir, L"mac", 0, szTempFile ) )return FALSE;
 	// 一時ファイルに書き込む
 	CTextOutputStream out = CTextOutputStream( szTempFile );
-	out.WriteString( to_wchar( pszCode ) );
+	out.WriteString( pszCode );
 	out.Close();
 
 	// マクロ読み込み

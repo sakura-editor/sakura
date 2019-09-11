@@ -111,19 +111,13 @@ int CSortedTagJumpList::AddBaseDir( const WCHAR* baseDir )
 BOOL CSortedTagJumpList::AddParamA( const ACHAR* keyword, const ACHAR* filename, int no,
 	ACHAR type, const ACHAR* note, int depth, int baseDirId )
 {
-	TagJumpInfo*	p;
-	TagJumpInfo*	prev;
-	TagJumpInfo*	item;
-	// 3つめはSJIS用保険
-	ACHAR typeStr[] = {type, '\0', '\0'};
-
 	//アイテムを作成する。
-	item = (TagJumpInfo*)malloc( sizeof( TagJumpInfo ) );
+	TagJumpInfo* item = (TagJumpInfo*)malloc( sizeof( TagJumpInfo ) );
 	if( NULL == item ) return FALSE;
 	item->keyword  = _wcsdup( to_wchar(keyword) );
 	item->filename = _wcsdup( to_wchar(filename) );
 	item->no       = no;
-	item->type     = to_wchar(typeStr)[0];
+	item->type     = type;
 	item->note     = _wcsdup( to_wchar(note) );
 	item->depth    = depth;
 	item->next     = NULL;
@@ -134,8 +128,10 @@ BOOL CSortedTagJumpList::AddParamA( const ACHAR* keyword, const ACHAR* filename,
 	if( wcslen( item->filename ) >= MAX_TAG_STRING_LENGTH ) item->filename[ MAX_TAG_STRING_LENGTH-1 ] = 0;
 	if( wcslen( item->note     ) >= MAX_TAG_STRING_LENGTH ) item->note[     MAX_TAG_STRING_LENGTH-1 ] = 0;
 
+	TagJumpInfo* p;
+	TagJumpInfo* prev = NULL;
+
 	//アイテムをリストの適当な位置に追加する。
-	prev = NULL;
 	for( p = m_pTagjump; p; p = p->next )
 	{
 		if( wcscmp( p->keyword, item->keyword ) > 0 ) break;

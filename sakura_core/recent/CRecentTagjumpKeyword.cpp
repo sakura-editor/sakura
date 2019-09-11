@@ -55,7 +55,7 @@ CRecentTagjumpKeyword::CRecentTagjumpKeyword()
 */
 const WCHAR* CRecentTagjumpKeyword::GetItemText( int nIndex ) const
 {
-	return to_wchar(*GetItem(nIndex));
+	return *GetItem(nIndex);
 }
 
 bool CRecentTagjumpKeyword::DataToReceiveType( LPCWSTR* dst, const CTagjumpKeywordString* src ) const
@@ -66,10 +66,10 @@ bool CRecentTagjumpKeyword::DataToReceiveType( LPCWSTR* dst, const CTagjumpKeywo
 
 bool CRecentTagjumpKeyword::TextToDataType( CTagjumpKeywordString* dst, LPCWSTR pszText ) const
 {
-	if( false == ValidateReceiveType(to_wchar(pszText)) ){
+	if( false == ValidateReceiveType(pszText) ){
 		return false;
 	}
-	CopyItem(dst, to_wchar(pszText));
+	CopyItem(dst, pszText);
 	return true;
 }
 
