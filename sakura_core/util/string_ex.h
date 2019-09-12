@@ -228,11 +228,6 @@ char*	wcstombs_new(const wchar_t* pSrc,int nSrcLen); //戻り値はnew[]で確�
 void	wcstombs_vector(const wchar_t* pSrc, std::vector<char>* ret); //戻り値はvectorとして返す。
 void	wcstombs_vector(const wchar_t* pSrc, int nSrcLen, std::vector<char>* ret); //戻り値はvectorとして返す。
 
-//WCHAR
-size_t _tcstombs(CHAR*  szDst,  const WCHAR* pszSrc, size_t nDstCount);
-size_t _mbstotcs(WCHAR* pszDst, const CHAR*  szSrc,  size_t nDstCount);
-int _tctomb(const WCHAR* p,ACHAR* mb);
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       リテラル比較                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

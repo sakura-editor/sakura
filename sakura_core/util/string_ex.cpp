@@ -393,19 +393,6 @@ void wcstombs_vector(const wchar_t* pSrc, int nSrcLen, std::vector<char>* ret)
 	(*ret)[nNewLen]='\0';
 }
 
-size_t _tcstombs(CHAR*  szDst,  const WCHAR* pszSrc, size_t nDstCount)
-{
-	return wcstombs2(szDst, pszSrc, nDstCount);
-}
-size_t _mbstotcs(WCHAR* pszDst, const CHAR*  szSrc,  size_t nDstCount)
-{
-	return mbstowcs2(pszDst, szSrc, nDstCount);
-}
-int _tctomb(const WCHAR* p,ACHAR* mb)
-{
-	return wctomb(mb,*p);
-}
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          メモリ                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
