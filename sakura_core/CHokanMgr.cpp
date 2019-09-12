@@ -549,7 +549,7 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 	}
 	int nLabelLen = List_GetTextLen( hwndList, nItem );
 	auto pszLabel = std::make_unique<WCHAR[]>(nLabelLen + 1);
-	List_GetText( hwndList, nItem, &pszLabel[0] );
+	List_GetText( hwndList, nItem, &pszLabel[0], nLabelLen + 1 );
 
  	/* テキストを貼り付け */
 	pcEditView = reinterpret_cast<CEditView*>(m_lParam);
@@ -660,7 +660,7 @@ void CHokanMgr::ShowTip()
 
 	int nLabelLen = List_GetTextLen( hwndCtrl, nItem );
 	auto szLabel = std::make_unique<WCHAR[]>(nLabelLen + 1);
-	List_GetText( hwndCtrl, nItem, &szLabel[0] );	// 選択中の単語を取得
+	List_GetText( hwndCtrl, nItem, &szLabel[0], nLabelLen + 1 );	// 選択中の単語を取得
 
 	pcEditView = reinterpret_cast<CEditView*>(m_lParam);
 

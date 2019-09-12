@@ -140,7 +140,8 @@ void CDlgProfileMgr::SetData( int nSelIndex )
 	CheckDlgButtonBool( GetHwnd(), IDC_CHECK_PROF_DEFSTART, settings.m_bDefaultSelect );
 }
 
-static bool MyList_GetText(HWND hwndList, int index, WCHAR* szText)
+template <size_t cchText>
+static bool MyList_GetText(HWND hwndList, int index, WCHAR(&szText)[cchText])
 {
 	List_GetText( hwndList, index, szText );
 	WCHAR* pos = auto_strchr( szText, L'*' );

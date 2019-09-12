@@ -164,7 +164,11 @@ namespace ApiWrap{
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      リストボックス                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	LRESULT List_GetText(HWND hwndList, int nIndex, WCHAR* str);
+	LRESULT List_GetText(HWND hwndList, int nIndex, WCHAR* pszText, size_t cchText);
+	template <size_t cchText>
+	LRESULT List_GetText(HWND hwndList, int nIndex, WCHAR(&pszText)[cchText]) {
+		return List_GetText(hwndList, nIndex, pszText, cchText);
+	}
 	inline LRESULT List_AddString(HWND hwndList, const WCHAR* str)
 	{
 		return ::SendMessage( hwndList, LB_ADDSTRING, 0, LPARAM(str) );

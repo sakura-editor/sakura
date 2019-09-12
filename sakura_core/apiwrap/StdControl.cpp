@@ -1,16 +1,17 @@
 ﻿/*! @file */
 #include "StdAfx.h"
 #include "StdControl.h"
-#include "util/tchar_receive.h"
 
 namespace ApiWrap{
 
-	LRESULT List_GetText(HWND hwndList, int nIndex, LPWSTR str)
+	LRESULT List_GetText(HWND hwndList, int nIndex, WCHAR* pszText, size_t cchText)
 	{
 		LRESULT nCount = SendMessage( hwndList, LB_GETTEXTLEN, (WPARAM)nIndex, (LPARAM)0);
 		if( nCount == LB_ERR )
 			return LB_ERR;
-		return SendMessage( hwndList, LB_GETTEXT, (WPARAM)nIndex, (LPARAM)(WCHAR*)TcharReceiver<WCHAR>(str,nCount+1) );	// +1: NULL 文字分
+		if( cchText <= (size_t) nCount )
+			return LB_ERRSPACE;
+		return SendMessage( hwndList, LB_GETTEXT, (WPARAM)nIndex, LPARAM(pszText) );
 	}
 
 	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, WCHAR* pszText, int nMaxCount)
