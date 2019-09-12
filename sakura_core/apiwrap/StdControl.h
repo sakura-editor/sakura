@@ -235,7 +235,7 @@ namespace ApiWrap{
 		return SetDlgItemText(hwndDlg, nIDDlgItem, str);
 	}
 
-	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, WCHAR* str, int nMaxCount);
+	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, WCHAR* pszText, int nMaxCount);
 
 	bool TreeView_GetItemTextVector(HWND hwndTree, TVITEM& item, std::vector<WCHAR>& vecStr);
 	void TreeView_ExpandAll( HWND, bool, int nMaxDepth = 100 );

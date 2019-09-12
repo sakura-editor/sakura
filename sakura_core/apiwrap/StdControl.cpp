@@ -13,9 +13,9 @@ namespace ApiWrap{
 		return SendMessage( hwndList, LB_GETTEXT, (WPARAM)nIndex, (LPARAM)(WCHAR*)TcharReceiver<WCHAR>(str,nCount+1) );	// +1: NULL 文字分
 	}
 
-	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, LPWSTR str, int nMaxCount)
+	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, WCHAR* pszText, int nMaxCount)
 	{
-		return GetDlgItemText(hwndDlg, nIDDlgItem, TcharReceiver<WCHAR>(str,nMaxCount), nMaxCount);
+		return GetDlgItemText(hwndDlg, nIDDlgItem, pszText, nMaxCount);
 	}
 
 	bool TreeView_GetItemTextVector(HWND hwndTree, TVITEM& item, std::vector<WCHAR>& vecStr)
