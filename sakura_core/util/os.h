@@ -32,7 +32,6 @@ BOOL GetSystemResources( int* pnSystemResources, int* pnUserResources, int* pnGD
 BOOL CheckSystemResources( const WCHAR* pszAppName );	/* システムリソースのチェック */
 
 //クリップボード
-bool SetClipboardText( HWND hwnd, const ACHAR* pszText, int nLength );    //!< クリープボードにText形式でコピーする。ANSI版。nLengthは文字単位。
 bool SetClipboardText( HWND hwnd, const WCHAR* pszText, int nLength ); //!< クリープボードにText形式でコピーする。UNICODE版。nLengthは文字単位。
 BOOL IsDataAvailable( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat );
 HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat );

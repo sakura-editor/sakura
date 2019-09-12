@@ -206,11 +206,6 @@ bool SetClipboardTextImp( HWND hwnd, const T* pszText, int nLength )
 	return true;
 }
 
-bool SetClipboardText( HWND hwnd, const ACHAR* pszText, int nLength )
-{
-	return SetClipboardTextImp<ACHAR>(hwnd,pszText,nLength);
-}
-
 bool SetClipboardText( HWND hwnd, const WCHAR* pszText, int nLength )
 {
 	return SetClipboardTextImp<WCHAR>(hwnd,pszText,nLength);
