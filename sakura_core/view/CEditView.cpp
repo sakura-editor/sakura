@@ -2288,13 +2288,6 @@ bool CEditView::MyGetClipboardData( CNativeW& cmemBuf, bool* pbColumnSelect, boo
 /* クリップボードにデータを設定
 	@date 2004.02.17 Moca エラーチェックするように
  */
-bool CEditView::MySetClipboardData( const ACHAR* pszText, int nTextLen, bool bColumnSelect, bool bLineSelect /*= false*/ )
-{
-	//WCHARに変換
-	std::vector<wchar_t> buf;
-	mbstowcs_vector(pszText,nTextLen,&buf);
-	return MySetClipboardData(&buf[0],buf.size()-1,bColumnSelect,bLineSelect);
-}
 bool CEditView::MySetClipboardData( const WCHAR* pszText, int nTextLen, bool bColumnSelect, bool bLineSelect /*= false*/ )
 {
 	/* Windowsクリップボードにコピー */

@@ -184,7 +184,6 @@ public:
 	bool MyGetClipboardData( CNativeW& cmemBuf, bool* pbColumnSelect, bool* pbLineSelect = NULL );			/* クリップボードからデータを取得 */
 
 	//設定
-	bool MySetClipboardData( const ACHAR* pszText, int nTextLen, bool bColumnSelect, bool bLineSelect = false );	/* クリップボードにデータを設定 */
 	bool MySetClipboardData( const WCHAR* pszText, int nTextLen, bool bColumnSelect, bool bLineSelect = false );	/* クリップボードにデータを設定 */
 
 	//利用
