@@ -362,7 +362,6 @@ util/string_ex.o \
 util/string_ex2.o \
 util/tchar_convert.o \
 util/tchar_printf.o \
-util/tchar_receive.o \
 util/tchar_template.o \
 util/window.o \
 view/CCaret.o \

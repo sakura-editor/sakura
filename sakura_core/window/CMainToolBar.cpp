@@ -30,7 +30,6 @@
 #include "window/CEditWnd.h"
 #include "CEditApp.h"
 #include "util/os.h"
-#include "util/tchar_receive.h"
 #include "util/window.h"
 #include "uiparts/CImageListMgr.h"
 

@@ -518,7 +518,6 @@
     <ClInclude Include="..\sakura_core\util\string_ex2.h" />
     <ClInclude Include="..\sakura_core\util\tchar_convert.h" />
     <ClInclude Include="..\sakura_core\util\tchar_printf.h" />
-    <ClInclude Include="..\sakura_core\util\tchar_receive.h" />
     <ClInclude Include="..\sakura_core\util\tchar_template.h" />
     <ClInclude Include="..\sakura_core\util\window.h" />
     <ClInclude Include="..\sakura_core\version.h" />
@@ -913,7 +912,6 @@
     <ClCompile Include="..\sakura_core\util\string_ex2.cpp" />
     <ClCompile Include="..\sakura_core\util\tchar_convert.cpp" />
     <ClCompile Include="..\sakura_core\util\tchar_printf.cpp" />
-    <ClCompile Include="..\sakura_core\util\tchar_receive.cpp" />
     <ClCompile Include="..\sakura_core\util\tchar_template.cpp" />
     <ClCompile Include="..\sakura_core\util\window.cpp" />
     <ClCompile Include="..\sakura_core\view\CCaret.cpp" />
