@@ -49,9 +49,9 @@ bool CHelpManager::ExtWinHelpIsSet( const STypeConfig* type )
 	タイプ別設定にファイル名が設定されていれば、そのファイル名を返します。
 	そうでなければ、共通設定のファイル名を返します。
 */
-const TCHAR* CHelpManager::GetExtWinHelp( const STypeConfig* type )
+const WCHAR* CHelpManager::GetExtWinHelp( const STypeConfig* type )
 {
-	if (type && type->m_szExtHelp[0] != _T('\0')){
+	if (type && type->m_szExtHelp[0] != L'\0'){
 		return type->m_szExtHelp;
 	}
 	
@@ -75,9 +75,9 @@ bool CHelpManager::ExtHTMLHelpIsSet( const STypeConfig* type )
 	タイプ別設定にファイル名が設定されていれば、そのファイル名を返します。
 	そうでなければ、共通設定のファイル名を返します。
 */
-const TCHAR* CHelpManager::GetExtHTMLHelp( const STypeConfig* type )
+const WCHAR* CHelpManager::GetExtHTMLHelp( const STypeConfig* type )
 {
-	if (type && type->m_szExtHtmlHelp[0] != _T('\0')){
+	if (type && type->m_szExtHtmlHelp[0] != L'\0'){
 		return type->m_szExtHtmlHelp;
 	}
 	

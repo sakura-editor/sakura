@@ -38,7 +38,7 @@
 #include "util/string_ex.h"
 #include "util/file.h"
 
-typedef std::vector< LPCTSTR > VGrepEnumKeys;
+typedef std::vector< LPCWSTR > VGrepEnumKeys;
 
 class CGrepEnumKeys {
 public:
@@ -59,14 +59,14 @@ public:
 		ClearItems();
 	}
 
-	int SetFileKeys( LPCTSTR lpKeys ){
-		const TCHAR* WILDCARD_ANY = _T("*.*");	//サブフォルダ探索用
+	int SetFileKeys( LPCWSTR lpKeys ){
+		const WCHAR* WILDCARD_ANY = L"*.*";	//サブフォルダ探索用
 		ClearItems();
 		
-		std::vector< tstring > patterns = SplitPattern(lpKeys);
+		std::vector< wstring > patterns = SplitPattern(lpKeys);
 		for (size_t i = 0; i < patterns.size(); i++) {
-			const tstring& element = patterns[i];
-			const TCHAR* token = element.c_str();
+			const wstring& element = patterns[i];
+			const WCHAR* token = element.c_str();
 
 			//フィルタを種類ごとに振り分ける
 			enum KeyFilterType{
@@ -75,10 +75,10 @@ public:
 				FILTER_EXCEPT_FOLDER,
 			};
 			KeyFilterType keyType = FILTER_SEARCH;
-			if( token[0] == _T('!') ){
+			if( token[0] == L'!' ){
 				token++;
 				keyType = FILTER_EXCEPT_FILE;
-			}else if( token[0] == _T('#') ){
+			}else if( token[0] == L'#' ){
 				token++;
 				keyType = FILTER_EXCEPT_FOLDER;
 			}
@@ -124,7 +124,7 @@ public:
 		@brief 除外ファイルパターンを追加する
 		@param[in]	lpKeys	除外ファイルパターン
 	*/
-	int AddExceptFile(LPCTSTR lpKeys) {
+	int AddExceptFile(LPCWSTR lpKeys) {
 		return ParseAndAddException(lpKeys, m_vecExceptFileKeys, m_vecExceptAbsFileKeys);
 	}
 
@@ -132,37 +132,37 @@ public:
 		@brief 除外フォルダパターンを追加する
 		@param[in]	lpKeys	除外フォルダパターン
 	*/
-	int AddExceptFolder(LPCTSTR lpKeys) {
+	int AddExceptFolder(LPCWSTR lpKeys) {
 		return ParseAndAddException(lpKeys, m_vecExceptFolderKeys, m_vecExceptAbsFolderKeys);
 	}
 
-	typedef std::basic_string<TCHAR> tstring;
+	typedef std::basic_string<WCHAR> wstring;
 
 	/*!
 		@brief ファイルパターンを解析して、要素ごとに分離して返す
 		@param[in]		lpKeys					ファイルパターン
 	*/
-	static std::vector< tstring > SplitPattern(LPCTSTR lpKeys)
+	static std::vector< wstring > SplitPattern(LPCWSTR lpKeys)
 	{
-		std::vector< tstring > patterns;
+		std::vector< wstring > patterns;
 
-		const TCHAR* WILDCARD_DELIMITER = _T(" ;,");	//リストの区切り
-		int nWildCardLen = _tcslen(lpKeys);
-		TCHAR* pWildCard = new TCHAR[nWildCardLen + 1];
+		const WCHAR* WILDCARD_DELIMITER = L" ;,";	//リストの区切り
+		int nWildCardLen = wcslen(lpKeys);
+		WCHAR* pWildCard = new WCHAR[nWildCardLen + 1];
 		if (!pWildCard) {
 			return patterns;
 		}
-		_tcscpy(pWildCard, lpKeys);
+		wcscpy(pWildCard, lpKeys);
 
 		int nPos = 0;
-		TCHAR*	token;
-		while (NULL != (token = my_strtok<TCHAR>(pWildCard, nWildCardLen, &nPos, WILDCARD_DELIMITER))) {	//トークン毎に繰り返す。
+		WCHAR*	token;
+		while (NULL != (token = my_strtok<WCHAR>(pWildCard, nWildCardLen, &nPos, WILDCARD_DELIMITER))) {	//トークン毎に繰り返す。
 			// "を取り除いて左に詰める
-			TCHAR* p;
-			TCHAR* q;
+			WCHAR* p;
+			WCHAR* q;
 			p = q = token;
 			while (*p) {
-				if (*p != _T('"')) {
+				if (*p != L'"') {
 					if (p != q) {
 						*q = *p;
 					}
@@ -170,9 +170,9 @@ public:
 				}
 				p++;
 			}
-			*q = _T('\0');
+			*q = L'\0';
 
-			tstring element(token);
+			wstring element(token);
 			patterns.push_back(element);
 		}
 		delete[] pWildCard;
@@ -194,17 +194,17 @@ private:
 		keys.clear();
 	}
 
-	void push_back_unique( VGrepEnumKeys& keys, LPCTSTR addKey ){
+	void push_back_unique( VGrepEnumKeys& keys, LPCWSTR addKey ){
 		if( ! IsExist( keys, addKey) ){
-			TCHAR* newKey = new TCHAR[ _tcslen( addKey ) + 1 ];
-			_tcscpy( newKey, addKey );
+			WCHAR* newKey = new WCHAR[ wcslen( addKey ) + 1 ];
+			wcscpy( newKey, addKey );
 			keys.push_back( newKey );
 		}
 	}
 
-	BOOL IsExist( VGrepEnumKeys& keys, LPCTSTR addKey ){
+	BOOL IsExist( VGrepEnumKeys& keys, LPCWSTR addKey ){
 		for( int i = 0; i < (int)keys.size(); i++ ){
-			if( _tcscmp( keys[ i ], addKey ) == 0 ){
+			if( wcscmp( keys[ i ], addKey ) == 0 ){
 				return TRUE;
 			}
 		}
@@ -215,13 +215,13 @@ private:
 		@retval 0 正常終了
 		@retval 1 *\file.exe などのフォルダ部分でのワイルドカードはエラー
 	*/
-	int ValidateKey( LPCTSTR key ){
+	int ValidateKey( LPCWSTR key ){
 		// 
 		bool wildcard = false;
 		for( int i = 0; key[i]; i++ ){
-			if( !wildcard && (key[i] == _T('*') || key[i] == _T('?')) ){
+			if( !wildcard && (key[i] == L'*' || key[i] == L'?') ){
 				wildcard = true;
-			}else if( wildcard && (key[i] == _T('\\') || key[i] == _T('/')) ){
+			}else if( wildcard && (key[i] == L'\\' || key[i] == L'/') ){
 				return 1;
 			}
 		}
@@ -234,12 +234,12 @@ private:
 		@param[in,out]	exceptionKeys			除外ファイルパターンの解析結果を追加する
 		@param[in,out]	exceptionAbsoluteKeys	除外ファイルパターンの絶対パスの解析結果を追加する
 	*/
-	int ParseAndAddException(LPCTSTR lpKeys, VGrepEnumKeys& exceptionKeys, VGrepEnumKeys & exceptionAbsoluteKeys) {
-		std::vector< tstring > patterns = SplitPattern(lpKeys);
+	int ParseAndAddException(LPCWSTR lpKeys, VGrepEnumKeys& exceptionKeys, VGrepEnumKeys & exceptionAbsoluteKeys) {
+		std::vector< wstring > patterns = SplitPattern(lpKeys);
 
 		for (size_t i = 0; i < patterns.size(); i++) {
-			const tstring& element = patterns[i];
-			const TCHAR* token = element.c_str();
+			const wstring& element = patterns[i];
+			const WCHAR* token = element.c_str();
 
 			bool bRelPath = _IS_REL_PATH(token);
 			int nValidStatus = ValidateKey(token);

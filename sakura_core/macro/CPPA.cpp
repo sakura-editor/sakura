@@ -92,9 +92,9 @@ bool CPPA::Execute(CEditView* pcEditView, int flags )
 	return !info.m_bError;
 }
 
-LPCTSTR CPPA::GetDllNameImp(int nIndex)
+LPCWSTR CPPA::GetDllNameImp(int nIndex)
 {
-	return _T("PPA.DLL");
+	return L"PPA.DLL";
 }
 
 /*!
@@ -334,9 +334,8 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 	}
 	m_CurInstance->m_bError = true; // 関数内で関数を呼ぶ場合等、2回表示されるのを防ぐ
 
-	TCHAR szMes[2048]; // 2048あれば足りるかと
-	const TCHAR* pszErr;
-	pszErr = szMes;
+	WCHAR szMes[2048]; // 2048あれば足りるかと
+	const WCHAR* pszErr = szMes;
 	if( 0 < Err_CD ){
 		int i, FuncID;
 		FuncID = Err_CD - 1;
@@ -372,19 +371,19 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 				if( '\0' == Err_Mes[0] ){
 					pszErr = LS(STR_ERR_DLGPPA4);
 				}else{
-					pszErr = to_tchar(Err_Mes);
+					pszErr = to_wchar(Err_Mes);
 				}
 				break;
 			default:
-				auto_sprintf( szMes, LS(STR_ERR_DLGPPA5), Err_CD, to_tchar(Err_Mes) );
+				auto_sprintf( szMes, LS(STR_ERR_DLGPPA5), Err_CD, to_wchar(Err_Mes) );
 			}
 		}
 	}
 	if( 0 == m_CurInstance->m_cMemDebug.GetStringLength() ){
-		MYMESSAGEBOX( m_CurInstance->m_pcEditView->GetHwnd(), MB_OK, LS(STR_ERR_DLGPPA7), _T("%ts"), pszErr );
+		MYMESSAGEBOX( m_CurInstance->m_pcEditView->GetHwnd(), MB_OK, LS(STR_ERR_DLGPPA7), L"%s", pszErr );
 	}
 	else{
-		MYMESSAGEBOX( m_CurInstance->m_pcEditView->GetHwnd(), MB_OK, LS(STR_ERR_DLGPPA7), _T("%ts\n%hs"), pszErr, m_CurInstance->m_cMemDebug.GetStringPtr() );
+		MYMESSAGEBOX( m_CurInstance->m_pcEditView->GetHwnd(), MB_OK, LS(STR_ERR_DLGPPA7), L"%s\n%hs", pszErr, m_CurInstance->m_cMemDebug.GetStringPtr() );
 	}
 }
 

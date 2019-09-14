@@ -82,7 +82,6 @@ void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, int marginy, const wchar
 
 	if( pArea->IsRectIntersected(rcClip) && rcClip.top >= pArea->GetAreaTop() ){
 
-		//@@@	From Here 2002.01.30 YAZAKI ExtTextOutW_AnyBuildの制限回避
 		if( rcClip.Width() > pArea->GetAreaWidth() ){
 			rcClip.right = rcClip.left + pArea->GetAreaWidth();
 		}

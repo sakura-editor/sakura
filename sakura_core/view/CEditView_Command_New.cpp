@@ -600,7 +600,7 @@ void CEditView::DeleteData(
 
 		/* 指定された桁に対応する行のデータ内の位置を調べる */
 		nCurIdx = LineColumnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
-//		MYTRACE( _T("nLineLen=%d nCurIdx=%d \n"), nLineLen, nCurIdx);
+//		MYTRACE( L"nLineLen=%d nCurIdx=%d \n", nLineLen, nCurIdx);
 		if( nCurIdx == nLineLen && bLastLine ){	/* 全テキストの最後 */
 			goto end_of_func;
 //			return;

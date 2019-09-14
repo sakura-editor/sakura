@@ -90,7 +90,7 @@ public:
 	};
 
 	//! DLLのバージョン情報を取得
-	const TCHAR* GetVersionT(){ return IsAvailable() ? to_tchar(BRegexpVersion()) : _T(""); }
+	const WCHAR* GetVersionW() noexcept { return IsAvailable() ? BRegexpVersion() : L""; }
 
 	//	CJreエミュレーション関数
 	//!	検索パターンのコンパイル
@@ -167,7 +167,7 @@ public:
 	/*! BREGEXPメッセージを取得する
 		@retval メッセージへのポインタ
 	*/
-	const TCHAR* GetLastMessage() const;// { return m_szMsg; }
+	const WCHAR* GetLastMessage() const;// { return m_szMsg; }
 
 	/*!	先読みパターンが存在するかを返す
 		この関数は、コンパイル後であることが前提なので、コンパイル前はfalse

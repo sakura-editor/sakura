@@ -41,47 +41,47 @@
 	
 	@todo 出力バッファのサイズチェックを行う
 */
-bool GetDateTimeFormat( TCHAR* szResult, int size, const TCHAR* format, const SYSTEMTIME& systime )
+bool GetDateTimeFormat( WCHAR* szResult, int size, const WCHAR* format, const SYSTEMTIME& systime )
 {
-	TCHAR szTime[10];
-	const TCHAR *p = format;
-	TCHAR *q = szResult;
+	WCHAR szTime[10];
+	const WCHAR *p = format;
+	WCHAR *q = szResult;
 	int len;
 	
 	while( *p ){
-		if( *p == _T('%') ){
+		if( *p == L'%' ){
 			++p;
 			switch(*p){
-			case _T('Y'):
-				len = wsprintf(szTime,_T("%d"),systime.wYear);
-				_tcscpy( q, szTime );
+			case L'Y':
+				len = wsprintf(szTime,L"%d",systime.wYear);
+				wcscpy( q, szTime );
 				break;
-			case _T('y'):
-				len = wsprintf(szTime,_T("%02d"),(systime.wYear%100));
-				_tcscpy( q, szTime );
+			case L'y':
+				len = wsprintf(szTime,L"%02d",(systime.wYear%100));
+				wcscpy( q, szTime );
 				break;
-			case _T('m'):
-				len = wsprintf(szTime,_T("%02d"),systime.wMonth);
-				_tcscpy( q, szTime );
+			case L'm':
+				len = wsprintf(szTime,L"%02d",systime.wMonth);
+				wcscpy( q, szTime );
 				break;
-			case _T('d'):
-				len = wsprintf(szTime,_T("%02d"),systime.wDay);
-				_tcscpy( q, szTime );
+			case L'd':
+				len = wsprintf(szTime,L"%02d",systime.wDay);
+				wcscpy( q, szTime );
 				break;
-			case _T('H'):
-				len = wsprintf(szTime,_T("%02d"),systime.wHour);
-				_tcscpy( q, szTime );
+			case L'H':
+				len = wsprintf(szTime,L"%02d",systime.wHour);
+				wcscpy( q, szTime );
 				break;
-			case _T('M'):
-				len = wsprintf(szTime,_T("%02d"),systime.wMinute);
-				_tcscpy( q, szTime );
+			case L'M':
+				len = wsprintf(szTime,L"%02d",systime.wMinute);
+				wcscpy( q, szTime );
 				break;
-			case _T('S'):
-				len = wsprintf(szTime,_T("%02d"),systime.wSecond);
-				_tcscpy( q, szTime );
+			case L'S':
+				len = wsprintf(szTime,L"%02d",systime.wSecond);
+				wcscpy( q, szTime );
 				break;
 				// A Z
-			case _T('%'):
+			case L'%':
 			default:
 				*q = *p;
 				len = 1;
@@ -109,35 +109,35 @@ bool GetDateTimeFormat( TCHAR* szResult, int size, const TCHAR* format, const SY
 	@date 2011.03.18 新規
 	@note 参考 PHP version_compare http://php.s3.to/man/function.version-compare.html
 */
-UINT32 ParseVersion( const TCHAR* sVer )
+UINT32 ParseVersion( const WCHAR* sVer )
 {
 	int nVer;
 	int nShift = 0;	//特別な文字列による下駄
 	int nDigit = 0;	//連続する数字の数
 	UINT32 ret = 0;
 
-	const TCHAR *p = sVer;
+	const WCHAR *p = sVer;
 	int i;
 
 	for( i=0; *p && i<4; i++){
 		//特別な文字列の処理
-		if( *p == _T('a') ){
-			if( _tcsncmp( _T("alpha"), p, 5 ) == 0 )p += 5;
+		if( *p == L'a' ){
+			if( wcsncmp( L"alpha", p, 5 ) == 0 )p += 5;
 			else p++;
 			nShift = -0x60;
 		}
-		else if( *p == _T('b') ){
-			if( _tcsncmp( _T("beta"), p, 4 ) == 0 )p += 4;
+		else if( *p == L'b' ){
+			if( wcsncmp( L"beta", p, 4 ) == 0 )p += 4;
 			else p++;
 			nShift = -0x40;
 		}
-		else if( *p == _T('r') || *p == _T('R') ){
-			if( _tcsnicmp( _T("rc"), p, 2 ) == 0 )p += 2;
+		else if( *p == L'r' || *p == L'R' ){
+			if( _wcsnicmp( L"rc", p, 2 ) == 0 )p += 2;
 			else p++;
 			nShift = -0x20;
 		}
-		else if( *p == _T('p') ){
-			if( _tcsncmp( _T("pl"), p, 2 ) == 0 )p += 2;
+		else if( *p == L'p' ){
+			if( wcsncmp( L"pl", p, 2 ) == 0 )p += 2;
 			else p++;
 			nShift = 0x20;
 		}
@@ -151,19 +151,19 @@ UINT32 ParseVersion( const TCHAR* sVer )
 		//数値の抽出
 		for( nVer = 0, nDigit = 0; _istdigit(*p); p++ ){
 			if( ++nDigit > 2 )break;	//数字は2桁までで止める
-			nVer = nVer * 10 + *p - _T('0');
+			nVer = nVer * 10 + *p - L'0';
 		}
 		//区切り文字の処理
-		while( *p && _tcschr( _T(".-_+"), *p ) ){ p++; }
+		while( *p && wcschr( L".-_+", *p ) ){ p++; }
 
-		DEBUG_TRACE(_T("  VersionPart%d: ver=%d,shift=%d\n"), i, nVer, nShift);
+		DEBUG_TRACE(L"  VersionPart%d: ver=%d,shift=%d\n", i, nVer, nShift);
 		ret |= ( (nShift + nVer + 128) << (24-8*i) );
 	}
 	for( ; i<4; i++ ){	//残りの部分はsigned 0 (=0x80)を埋める
 		ret |= ( 128 << (24-8*i) );
 	}
 
-	DEBUG_TRACE(_T("ParseVersion %ls -> %08x\n"), sVer, ret);
+	DEBUG_TRACE(L"ParseVersion %ls -> %08x\n", sVer, ret);
 	return ret;
 }
 
@@ -176,7 +176,7 @@ UINT32 ParseVersion( const TCHAR* sVer )
 	@author syat
 	@date 2011.03.18 新規
 */
-int CompareVersion( const TCHAR* verA, const TCHAR* verB )
+int CompareVersion( const WCHAR* verA, const WCHAR* verB )
 {
 	UINT32 nVerA = ParseVersion(verA);
 	UINT32 nVerB = ParseVersion(verB);

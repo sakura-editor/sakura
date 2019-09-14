@@ -46,7 +46,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 	SFileInfo*			pFileInfo		//!< [out]
 )
 {
-	LPCTSTR pszPath = sLoadInfo.cFilePath.c_str();
+	LPCWSTR pszPath = sLoadInfo.cFilePath.c_str();
 
 	// 文字コード種別
 	const STypeConfigMini* type;
@@ -150,7 +150,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 				pszPath
 			);
 		}
-		else if( -1 == _taccess( pszPath, 4 )){
+		else if( -1 == _waccess( pszPath, 4 )){
 			// 読み込みアクセス権がない
 			ErrorMessage(
 				CEditWnd::getInstance()->GetHwnd(),

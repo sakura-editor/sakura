@@ -441,7 +441,6 @@
     <ClInclude Include="..\sakura_core\mem\CMemoryIterator.h" />
     <ClInclude Include="..\sakura_core\mem\CNative.h" />
     <ClInclude Include="..\sakura_core\mem\CNativeA.h" />
-    <ClInclude Include="..\sakura_core\mem\CNativeT.h" />
     <ClInclude Include="..\sakura_core\mem\CNativeW.h" />
     <ClInclude Include="..\sakura_core\mem\CPoolResource.h" />
     <ClInclude Include="..\sakura_core\mem\CRecycledBuffer.h" />
@@ -519,7 +518,6 @@
     <ClInclude Include="..\sakura_core\util\string_ex2.h" />
     <ClInclude Include="..\sakura_core\util\tchar_convert.h" />
     <ClInclude Include="..\sakura_core\util\tchar_printf.h" />
-    <ClInclude Include="..\sakura_core\util\tchar_receive.h" />
     <ClInclude Include="..\sakura_core\util\tchar_template.h" />
     <ClInclude Include="..\sakura_core\util\window.h" />
     <ClInclude Include="..\sakura_core\version.h" />
@@ -914,7 +912,6 @@
     <ClCompile Include="..\sakura_core\util\string_ex2.cpp" />
     <ClCompile Include="..\sakura_core\util\tchar_convert.cpp" />
     <ClCompile Include="..\sakura_core\util\tchar_printf.cpp" />
-    <ClCompile Include="..\sakura_core\util\tchar_receive.cpp" />
     <ClCompile Include="..\sakura_core\util\tchar_template.cpp" />
     <ClCompile Include="..\sakura_core\util\window.cpp" />
     <ClCompile Include="..\sakura_core\view\CCaret.cpp" />

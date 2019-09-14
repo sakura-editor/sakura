@@ -53,18 +53,18 @@ CRecentGrepFolder::CRecentGrepFolder()
 
 	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
-const TCHAR* CRecentGrepFolder::GetItemText( int nIndex ) const
+const WCHAR* CRecentGrepFolder::GetItemText( int nIndex ) const
 {
 	return *GetItem(nIndex);
 }
 
-bool CRecentGrepFolder::DataToReceiveType( LPCTSTR* dst, const CGrepFolderString* src ) const
+bool CRecentGrepFolder::DataToReceiveType( LPCWSTR* dst, const CGrepFolderString* src ) const
 {
 	*dst = *src;
 	return true;
 }
 
-bool CRecentGrepFolder::TextToDataType( CGrepFolderString* dst, LPCTSTR pszText ) const
+bool CRecentGrepFolder::TextToDataType( CGrepFolderString* dst, LPCWSTR pszText ) const
 {
 	if( false == ValidateReceiveType(pszText) ){
 		return false;
@@ -73,19 +73,19 @@ bool CRecentGrepFolder::TextToDataType( CGrepFolderString* dst, LPCTSTR pszText 
 	return true;
 }
 
-int CRecentGrepFolder::CompareItem( const CGrepFolderString* p1, LPCTSTR p2 ) const
+int CRecentGrepFolder::CompareItem( const CGrepFolderString* p1, LPCWSTR p2 ) const
 {
-	return _tcsicmp(*p1,p2);
+	return _wcsicmp(*p1,p2);
 }
 
-void CRecentGrepFolder::CopyItem( CGrepFolderString* dst, LPCTSTR src ) const
+void CRecentGrepFolder::CopyItem( CGrepFolderString* dst, LPCWSTR src ) const
 {
-	_tcscpy(*dst,src);
+	wcscpy(*dst,src);
 }
 
-bool CRecentGrepFolder::ValidateReceiveType( LPCTSTR p ) const
+bool CRecentGrepFolder::ValidateReceiveType( LPCWSTR p ) const
 {
-	if( GetTextMaxLength() <= _tcslen(p) ){
+	if( GetTextMaxLength() <= wcslen(p) ){
 		return false;
 	}
 	return true;

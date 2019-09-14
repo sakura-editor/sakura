@@ -38,13 +38,13 @@ enum EShareMode{
 class CFile{
 public:
 	//コンストラクタ・デストラクタ
-	CFile(LPCTSTR pszPath = NULL);
+	CFile(LPCWSTR pszPath = NULL);
 	virtual ~CFile();
 	//パス
 	const CFilePath& GetFilePathClass() const { return m_szFilePath; }
-	LPCTSTR GetFilePath() const { return m_szFilePath; }
+	LPCWSTR GetFilePath() const { return m_szFilePath; }
 	//設定
-	void SetFilePath(LPCTSTR pszPath){ m_szFilePath.Assign(pszPath); }
+	void SetFilePath(LPCWSTR pszPath){ m_szFilePath.Assign(pszPath); }
 	//各種判定
 	bool IsFileExist() const;
 	bool HasWritablePermission() const;

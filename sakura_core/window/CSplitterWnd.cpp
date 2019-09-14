@@ -28,7 +28,7 @@ constexpr auto SPLITTER_MARGIN = 2;
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CSplitterWnd::CSplitterWnd()
-: CWnd(_T("::CSplitterWnd"))
+: CWnd(L"::CSplitterWnd")
 , m_pcEditWnd(NULL)
 , m_nAllSplitRows(1)					/* 分割行数 */
 , m_nAllSplitCols(1)					/* 分割桁数 */
@@ -58,7 +58,7 @@ CSplitterWnd::~CSplitterWnd()
 /* 初期化 */
 HWND CSplitterWnd::Create( HINSTANCE hInstance, HWND hwndParent, void* pCEditWnd )
 {
-	LPCTSTR pszClassName = _T("SplitterWndClass");
+	LPCWSTR pszClassName = L"SplitterWndClass";
 
 	/* 初期化 */
 	m_pcEditWnd	= pCEditWnd;
@@ -940,7 +940,7 @@ LRESULT CSplitterWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 		}
 		/* 分割トラッカーの表示 */
 		DrawSplitter( xPos, yPos, TRUE );
-//		MYTRACE( _T("xPos=%d yPos=%d \n"), xPos, yPos );
+//		MYTRACE( L"xPos=%d yPos=%d \n", xPos, yPos );
 	}
 	return 0L;
 }
@@ -1053,7 +1053,7 @@ LRESULT CSplitterWnd::DispatchEvent_WM_APP( HWND hwnd, UINT uMsg, WPARAM wParam,
 	case MYWM_DOSPLIT:
 		nPosX = (int)wParam;
 		nPosY = (int)lParam;
-//		MYTRACE( _T("MYWM_DOSPLIT nPosX=%d nPosY=%d\n"), nPosX, nPosY );
+//		MYTRACE( L"MYWM_DOSPLIT nPosX=%d nPosY=%d\n", nPosX, nPosY );
 
 		/* ウィンドウの分割 */
 		if( 0 != m_nHSplitPos ){

@@ -120,12 +120,10 @@ bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const
 	if( F_USERMACRO_0 <= funccode && funccode < F_USERMACRO_0 + MAX_CUSTMACRO ){
 		int position = funccode - F_USERMACRO_0;
 		if( m_pMacroRec[position].IsEnabled() ){
-			const TCHAR *p = m_pMacroRec[position].GetTitle();
-			_tcstowcs( ptr, p, bufsize - 1 );
-			ptr[ bufsize - 1 ] = LTEXT('\0');
+			const WCHAR *p = m_pMacroRec[position].GetTitle();
+			wcsncpy_s( ptr, bufsize, p, _TRUNCATE );
 		}else{
-			_snwprintf( ptr, bufsize, LSW(STR_ERR_DLGFUNCLKUP03), position );
-			ptr[ bufsize - 1 ] = LTEXT('\0');
+			_snwprintf_s( ptr, bufsize, _TRUNCATE, LS(STR_ERR_DLGFUNCLKUP03), position );
 		}
 		return true;
 	}
@@ -140,7 +138,7 @@ bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const
 		return true;
 	}
 	else if( F_MENU_FIRST <= funccode && funccode < F_MENU_NOT_USED_FIRST ){
-		if( ( pszStr = LSW( funccode ) )[0] != L'\0' ){
+		if( ( pszStr = LS( funccode ) )[0] != L'\0' ){
 			wcsncpy( ptr, pszStr, bufsize );
 			ptr[bufsize-1] = LTEXT('\0');
 			return true;	// 定義されたコマンド
@@ -153,14 +151,14 @@ bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const
 	}
 
 	// 未定義コマンド(または現在のプロセスではロードされていないプラグインなど)
-	if( ( pszStr = LSW( funccode ) )[0] != L'\0' ){
+	if( ( pszStr = LS( funccode ) )[0] != L'\0' ){
 		wcsncpy( ptr, pszStr, bufsize );
 		ptr[bufsize-1] = LTEXT('\0');
 		return false;
 	}
 
 	// なにかコピーしないとループ処理などで一つ前の名前になることがあるので(-- 不明 --)をコピーしておく
-	if( ( pszStr = LSW( F_DISABLE ) )[0] != L'\0' ){
+	if( ( pszStr = LS( F_DISABLE ) )[0] != L'\0' ){
 		wcsncpy( ptr, pszStr, bufsize );
 		ptr[bufsize-1] = LTEXT('\0');
 		return false;
@@ -178,7 +176,7 @@ bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const
 	
 	@return NULL 分類名称．取得に失敗したらNULL．
 */
-const TCHAR* CFuncLookup::Category2Name( int category ) const
+const WCHAR* CFuncLookup::Category2Name( int category ) const
 {
 	if( category < 0 )
 		return NULL;
@@ -294,15 +292,15 @@ const WCHAR* CFuncLookup::Custmenu2Name( int index, WCHAR buf[], int bufSize ) c
 
 	// 共通設定で未設定の場合、リソースのデフォルト名を返す
 	if( index == 0 ){
-		wcscpyn( buf, LSW( STR_CUSTMENU_RIGHT_CLICK ), bufSize );
+		wcscpyn( buf, LS( STR_CUSTMENU_RIGHT_CLICK ), bufSize );
 		return buf;
 	}
 	else if( index == CUSTMENU_INDEX_FOR_TABWND ){
-		wcscpyn( buf, LSW( STR_CUSTMENU_TAB ), bufSize );
+		wcscpyn( buf, LS( STR_CUSTMENU_TAB ), bufSize );
 		return buf;
 	}
 	else {
-		_swprintf( buf, LSW( STR_CUSTMENU_CUSTOM ), index );
+		_swprintf( buf, LS( STR_CUSTMENU_CUSTOM ), index );
 		return buf;
 	}
 

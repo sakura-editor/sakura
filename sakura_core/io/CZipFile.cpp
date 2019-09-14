@@ -50,7 +50,7 @@ CZipFile::~CZipFile() {
 }
 
 // Zip File名 設定
-bool CZipFile::SetZip(const std::tstring& sZipPath)
+bool CZipFile::SetZip(const std::wstring& sZipPath)
 {
 	HRESULT			hr;
 	VARIANT			var;
@@ -63,7 +63,7 @@ bool CZipFile::SetZip(const std::tstring& sZipPath)
 	// ZIP Folder設定
 	VariantInit(&var);
 	var.vt = VT_BSTR;
-	var.bstrVal = SysAllocString(to_wchar(sZipPath.c_str()));
+	var.bstrVal = SysAllocString(sZipPath.c_str());
 	hr = psd->NameSpace(var, &pZipFile);
 	if (hr != S_OK) {
 		pZipFile = NULL;
@@ -76,7 +76,7 @@ bool CZipFile::SetZip(const std::tstring& sZipPath)
 }
 
 // ZIP File 内 フォルダ名取得と定義ファイル検査(Plugin用)
-bool CZipFile::ChkPluginDef(const std::tstring& sDefFile, std::tstring& sFolderName)
+bool CZipFile::ChkPluginDef(const std::wstring& sDefFile, std::wstring& sFolderName)
 {
 	HRESULT			hr;
 	VARIANT			vari;
@@ -84,7 +84,7 @@ bool CZipFile::ChkPluginDef(const std::tstring& sDefFile, std::tstring& sFolderN
 	long			lCount;
 	bool			bFoundDef = false;
 
-	sFolderName = _T("");
+	sFolderName = L"";
 
 	// ZIP File List
 	hr = pZipFile->Items(&pZipFileItems);
@@ -114,7 +114,7 @@ bool CZipFile::ChkPluginDef(const std::tstring& sDefFile, std::tstring& sFolderN
 			FolderItems*	pFileItems2;
 			Folder*			pFile;
 
-			sFolderName = to_tchar(bps);	// Install Follder Name
+			sFolderName = bps;	// Install Follder Name
 			hr = pFileItem->get_GetFolder((IDispatch **)&pFile);
 			if (hr != S_OK) { continue; }
 			hr = pFile->Items(&pFileItems2);
@@ -132,9 +132,9 @@ bool CZipFile::ChkPluginDef(const std::tstring& sDefFile, std::tstring& sFolderN
 
 				// 定義ファイルか
 				if (!vFolder && auto_strlen(bps) >= sDefFile.length()
-					&& (auto_stricmp(to_tchar(bps), to_tchar((sFolderName + _T("/") + sDefFile).c_str())) == 0
-					|| auto_stricmp(to_tchar(bps), to_tchar((sFolderName + _T("\\") + sDefFile).c_str())) == 0
-					|| auto_stricmp(to_tchar(bps), to_tchar((sZipName + _T("\\") + sFolderName + _T("\\") + sDefFile).c_str())) == 0)) {
+					&& (auto_stricmp(bps, ((sFolderName + L"/" + sDefFile).c_str())) == 0
+					|| auto_stricmp(bps, ((sFolderName + L"\\" + sDefFile).c_str())) == 0
+					|| auto_stricmp(bps, ((sZipName + L"\\" + sFolderName + L"\\" + sDefFile).c_str())) == 0)) {
 					bFoundDef = true;
 					break;
 				}
@@ -153,7 +153,7 @@ bool CZipFile::ChkPluginDef(const std::tstring& sDefFile, std::tstring& sFolderN
 }
 
 // ZIP File 解凍
-bool CZipFile::Unzip(const std::tstring sOutPath)
+bool CZipFile::Unzip(const std::wstring sOutPath)
 {
 	HRESULT			hr;
 	VARIANT			var;
@@ -171,7 +171,7 @@ bool CZipFile::Unzip(const std::tstring sOutPath)
 	// 出力Folder設定
 	VariantInit(&var);
 	var.vt = VT_BSTR;
-	var.bstrVal = SysAllocString(to_wchar(sOutPath.c_str()));
+	var.bstrVal = SysAllocString(sOutPath.c_str());
 	hr = psd->NameSpace(var, &pOutFolder);
 	VariantClear(&var);
 	if (hr != S_OK) {

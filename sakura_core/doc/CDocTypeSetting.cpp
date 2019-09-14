@@ -113,7 +113,7 @@ void GetDefaultColorInfoName( ColorInfo* pColorInfo, int nIndex )
 {
 	assert( nIndex < _countof(ColorInfo_DEFAULT) );
 
-	_tcscpy(pColorInfo->m_szName, LS( ColorInfo_DEFAULT[nIndex].m_nNameId ) );
+	wcscpy(pColorInfo->m_szName, LS( ColorInfo_DEFAULT[nIndex].m_nNameId ) );
 }
 
 int GetDefaultColorInfoCount()

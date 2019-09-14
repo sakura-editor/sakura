@@ -106,8 +106,8 @@ struct COutlinePython {
 void CType_Python::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	_tcscpy( pType->m_szTypeName, _T("Python") );
-	_tcscpy( pType->m_szTypeExts, _T("py") );
+	wcscpy( pType->m_szTypeName, L"Python" );
+	wcscpy( pType->m_szTypeExts, L"py" );
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L"#", -1 );					/* 行コメントデリミタ */
@@ -517,7 +517,7 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 				szWord[ len ] = L'\0';
 			}
 			else {
-				wcscpy( szWord, LSW(STR_OUTLINE_PYTHON_UNDEFINED) );
+				wcscpy( szWord, LS(STR_OUTLINE_PYTHON_UNDEFINED) );
 				len = 8;
 			}
 			if( nItemFuncId == 4  ){
@@ -526,7 +526,7 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 					len = _countof( szWord ) - 8;
 				}
 				// class
-				wcscpy( szWord + len, LSW(STR_OUTLINE_PYTHON_CLASS) );
+				wcscpy( szWord + len, LS(STR_OUTLINE_PYTHON_CLASS) );
 			}
 			
 			/*

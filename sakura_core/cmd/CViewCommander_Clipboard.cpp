@@ -317,8 +317,7 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 			bAddLastCR = FALSE;
 			const CLayout*	pcLayout;
 			CLogicInt		nLineLen = CLogicInt(0);
-			const wchar_t*	pLine;
-			pLine = GetDocument()->m_cLayoutMgr.GetLineStr( GetCaret().GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout );
+			const wchar_t*	pLine = GetDocument()->m_cLayoutMgr.GetLineStr( GetCaret().GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout );
 
 			if( NULL != pLine && 1 <= nLineLen )
 			{
@@ -337,7 +336,7 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 
 			if( bAddLastCR )
 			{
-//				MYTRACE( _T(" カーソル行が最後の行かつ行末に改行が無く、\n挿入すべきデータがまだある場合は行末に改行を挿入。\n") );
+//				MYTRACE( L" カーソル行が最後の行かつ行末に改行が無く、\n挿入すべきデータがまだある場合は行末に改行を挿入。\n" );
 				nInsPosX = m_pCommanderView->LineIndexToColumn( pcLayout, nLineLen );
 
 				m_pCommanderView->InsertData_CEditView(
@@ -426,10 +425,10 @@ void CViewCommander::Command_PASTEBOX( int option )
 		return;
 	}
 	// 2004.07.13 Moca \0コピー対策
-	int nstrlen;
-	const wchar_t *lptstr = cmemClip.GetStringPtr( &nstrlen );
+	const size_t cchText = cmemClip.GetStringLength();
+	const wchar_t *pszText = cmemClip.GetStringPtr();
 
-	Command_PASTEBOX(lptstr, nstrlen);
+	Command_PASTEBOX(pszText, cchText);
 	m_pCommanderView->AdjustScrollBars(); // 2007.07.22 ryoji
 	m_pCommanderView->Redraw();			// 2002.01.25 hor
 }
@@ -1097,7 +1096,7 @@ void CViewCommander::Command_COPYFILENAME( void )
 {
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		/* クリップボードにデータを設定 */
-		const WCHAR* pszFile = to_wchar(GetDocument()->m_cDocFile.GetFileName());
+		const WCHAR* pszFile = GetDocument()->m_cDocFile.GetFileName();
 		m_pCommanderView->MySetClipboardData( pszFile , wcslen( pszFile ), false );
 	}
 	else{
@@ -1110,8 +1109,8 @@ void CViewCommander::Command_COPYPATH( void )
 {
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		/* クリップボードにデータを設定 */
-		const TCHAR* szPath = GetDocument()->m_cDocFile.GetFilePath();
-		m_pCommanderView->MySetClipboardData( szPath, _tcslen(szPath), false );
+		const WCHAR* szPath = GetDocument()->m_cDocFile.GetFilePath();
+		m_pCommanderView->MySetClipboardData( szPath, wcslen(szPath), false );
 	}
 	else{
 		ErrorBeep();
@@ -1152,7 +1151,7 @@ void CViewCommander::Command_COPYTAG( void )
 		GetDocument()->m_cLayoutMgr.LayoutToLogic( GetCaret().GetCaretLayoutPos(), &ptColLine );
 
 		/* クリップボードにデータを設定 */
-		auto_sprintf( buf, L"%ts (%d,%d): ", GetDocument()->m_cDocFile.GetFilePath(), ptColLine.y+1, ptColLine.x+1 );
+		auto_sprintf( buf, L"%s (%d,%d): ", GetDocument()->m_cDocFile.GetFilePath(), ptColLine.y+1, ptColLine.x+1 );
 		m_pCommanderView->MySetClipboardData( buf, wcslen( buf ), false );
 	}
 	else{

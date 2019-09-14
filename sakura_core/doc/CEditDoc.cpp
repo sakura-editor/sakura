@@ -246,7 +246,7 @@ void CEditDoc::Clear()
 	m_cDocLineMgr.DeleteAllLine();
 
 	// ファイルパスとアイコンのクリア
-	SetFilePathAndIcon( _T("") );
+	SetFilePathAndIcon( L"" );
 
 	// ファイルのタイムスタンプのクリア
 	m_cDocFile.ClearFileTime();
@@ -443,9 +443,9 @@ BOOL CEditDoc::Create( CEditWnd* pcEditWnd )
 	@author genta
 	@date 2002.09.09
 */
-void CEditDoc::SetFilePathAndIcon(const TCHAR* szFile)
+void CEditDoc::SetFilePathAndIcon(const WCHAR* szFile)
 {
-	TCHAR szWork[MAX_PATH];
+	WCHAR szWork[MAX_PATH];
 	if( ::GetLongFileName( szFile, szWork ) ){
 		szFile = szWork;
 	}
@@ -492,7 +492,7 @@ void CEditDoc::GetEditInfo(
 ) const
 {
 	//ファイルパス
-	_tcscpy(pfi->m_szPath, m_cDocFile.GetFilePath());
+	wcscpy(pfi->m_szPath, m_cDocFile.GetFilePath());
 
 	//表示域
 	pfi->m_nViewTopLine = m_pcEditWnd->GetActiveView().GetTextArea().GetViewTopLine();	/* 表示域の一番上の行(0開始) */
@@ -878,8 +878,8 @@ BOOL CEditDoc::OnFileClose(bool bGrepNoConfirm)
 	}
 
 	// -- -- 保存確認 -- -- //
-	TCHAR szGrepTitle[90];
-	LPCTSTR pszTitle = m_cDocFile.GetFilePathClass().IsValidPath() ? m_cDocFile.GetFilePath() : NULL;
+	WCHAR szGrepTitle[90];
+	LPCWSTR pszTitle = m_cDocFile.GetFilePathClass().IsValidPath() ? m_cDocFile.GetFilePath() : NULL;
 	if( CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode ){
 		LPCWSTR		pszGrepKey = CAppMode::getInstance()->m_szGrepKey;
 		int			nLen = (int)wcslen( pszGrepKey );
@@ -887,13 +887,13 @@ BOOL CEditDoc::OnFileClose(bool bGrepNoConfirm)
 		LimitStringLengthW( pszGrepKey , nLen, 64, cmemDes );
 		auto_sprintf( szGrepTitle, LS(STR_TITLE_GREP),
 			cmemDes.GetStringPtr(),
-			( nLen > cmemDes.GetStringLength() ) ? _T("...") : _T("")
+			( nLen > cmemDes.GetStringLength() ) ? L"..." : L""
 		);
 		pszTitle = szGrepTitle;
 	}
 	if( NULL == pszTitle ){
 		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( CEditWnd::getInstance()->GetHwnd() );
-		auto_sprintf( szGrepTitle, _T("%s%d"), LS(STR_NO_TITLE1), node->m_nId );	//(無題)
+		auto_sprintf( szGrepTitle, L"%s%d", LS(STR_NO_TITLE1), node->m_nId );	//(無題)
 		pszTitle = szGrepTitle;
 	}
 	/* ウィンドウをアクティブにする */
@@ -970,7 +970,7 @@ BOOL CEditDoc::OnFileClose(bool bGrepNoConfirm)
 	@date 2007.07.20 genta HandleCommandに追加情報を渡す．
 		自動実行マクロで発行したコマンドはキーマクロに保存しない
 */
-void CEditDoc::RunAutoMacro( int idx, LPCTSTR pszSaveFilePath )
+void CEditDoc::RunAutoMacro( int idx, LPCWSTR pszSaveFilePath )
 {
 	// 開ファイル／タイプ変更時はアウトラインを再解析する
 	if( pszSaveFilePath == NULL ){
@@ -988,7 +988,7 @@ void CEditDoc::RunAutoMacro( int idx, LPCTSTR pszSaveFilePath )
 				m_cDocFile.SetSaveFilePath(pszSaveFilePath);
 			//	2007.07.20 genta 自動実行マクロで発行したコマンドはキーマクロに保存しない
 			HandleCommand((EFunctionCode)(( F_USERMACRO_0 + idx ) | FA_NONRECORD) );
-			m_cDocFile.SetSaveFilePath(_T(""));
+			m_cDocFile.SetSaveFilePath(L"");
 		}
 	}
 	bRunning = false;
@@ -1002,11 +1002,11 @@ void CEditDoc::SetCurDirNotitle()
 		return; // ファイルがあるときは何もしない
 	}
 	EOpenDialogDir eOpenDialogDir = GetDllShareData().m_Common.m_sEdit.m_eOpenDialogDir;
-	TCHAR szSelDir[_MAX_PATH];
-	const TCHAR* pszDir = NULL;
+	WCHAR szSelDir[_MAX_PATH];
+	const WCHAR* pszDir = NULL;
 	if( eOpenDialogDir == OPENDIALOGDIR_MRU ){
 		const CMRUFolder cMRU;
-		std::vector<LPCTSTR> vMRU = cMRU.GetPathList();
+		std::vector<LPCWSTR> vMRU = cMRU.GetPathList();
 		int nCount = cMRU.Length();
 		for( int i = 0; i < nCount ; i++ ){
 			DWORD attr = ::GetFileAttributes( vMRU[i] );

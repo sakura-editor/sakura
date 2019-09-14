@@ -32,11 +32,11 @@ namespace ApiWrap
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      ステータスバー                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	inline LRESULT StatusBar_SetText(HWND hwndStatus, WPARAM opt, const TCHAR* str)
+	inline LRESULT StatusBar_SetText(HWND hwndStatus, WPARAM opt, const WCHAR* str)
 	{
 		return ::SendMessage( hwndStatus, SB_SETTEXT, opt, (LPARAM)str );
 	}
-	inline LRESULT StatusBar_GetText(HWND hwndStatus, WPARAM opt, TCHAR* str)
+	inline LRESULT StatusBar_GetText(HWND hwndStatus, WPARAM opt, WCHAR* str)
 	{
 		return ::SendMessage( hwndStatus, SB_GETTEXT, opt, (LPARAM)str );
 	}

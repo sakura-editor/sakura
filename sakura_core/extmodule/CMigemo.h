@@ -115,7 +115,7 @@ protected:
 #endif
 	bool	m_bUtf8;
 
-	LPCTSTR GetDllNameImp(int nIndex);
+	LPCWSTR GetDllNameImp(int nIndex);
 	bool InitDllImp();
 	bool DeinitDllImp(void);
 

@@ -28,14 +28,14 @@
 void GetAppVersionInfo( HINSTANCE hInstance, int nVersionResourceID,
 					    DWORD* pdwProductVersionMS, DWORD* pdwProductVersionLS );	/* リソースから製品バージョンの取得 */
 
-HICON GetAppIcon( HINSTANCE hInst, int nResource, const TCHAR* szFile, bool bSmall = false);
+HICON GetAppIcon( HINSTANCE hInst, int nResource, const WCHAR* szFile, bool bSmall = false);
 
-DWORD GetDllVersion( LPCTSTR lpszDllName );	// シェルやコモンコントロール DLL のバージョン番号を取得	// 2006.06.17 ryoji
+DWORD GetDllVersion( LPCWSTR lpszDllName );	// シェルやコモンコントロール DLL のバージョン番号を取得	// 2006.06.17 ryoji
 
 void ChangeCurrentDirectoryToExeDir();
 
 //! カレントディレクトリ移動機能付LoadLibrary
-HMODULE LoadLibraryExedir( LPCTSTR pszDll);
+HMODULE LoadLibraryExedir( LPCWSTR pszDll);
 
 #endif /* SAKURA_MODULE_4F382EF5_EF52_47E1_A774_5CDFB545AB25_H_ */
 /*[EOF]*/

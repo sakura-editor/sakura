@@ -95,7 +95,7 @@ void CKeyMacroMgr::Append( CMacro* macro )
 /*! キーボードマクロの保存
 	エラーメッセージは出しません。呼び出し側でよきにはからってください。
 */
-BOOL CKeyMacroMgr::SaveKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath ) const
+BOOL CKeyMacroMgr::SaveKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath ) const
 {
 	CTextOutputStream out(pszPath);
 	if(!out){
@@ -103,7 +103,7 @@ BOOL CKeyMacroMgr::SaveKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath ) con
 	}
 
 	//最初のコメント
-	out.WriteF(LSW(STR_ERR_DLGKEYMACMGR1));
+	out.WriteF(LS(STR_ERR_DLGKEYMACMGR1));
 
 	//マクロ内容
 	CMacro* p = m_pTop;
@@ -140,7 +140,7 @@ bool CKeyMacroMgr::ExecKeyMacro( CEditView* pcEditView, int flags ) const
 /*! キーボードマクロの読み込み
 	エラーメッセージは出しません。呼び出し側でよきにはからってください。
 */
-BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
+BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 {
 	/* キーマクロのバッファをクリアする */
 	ClearAll();
@@ -160,8 +160,8 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 
 	//	Jun. 16, 2002 genta
 	m_nReady = true;	//	エラーがあればfalseになる
-	std::tstring MACRO_ERROR_TITLE_string = LS(STR_ERR_DLGKEYMACMGR2);
-	const TCHAR* MACRO_ERROR_TITLE = MACRO_ERROR_TITLE_string.c_str();
+	std::wstring MACRO_ERROR_TITLE_string = LS(STR_ERR_DLGKEYMACMGR2);
+	const WCHAR* MACRO_ERROR_TITLE = MACRO_ERROR_TITLE_string.c_str();
 
 	int line = 1;	//	エラー時に行番号を通知するため．1始まり．
 	for( ; in.Good() ; ++line ){
@@ -432,16 +432,16 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 }
 
 /*! キーボードマクロを文字列から読み込み */
-BOOL CKeyMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const TCHAR* pszCode )
+BOOL CKeyMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const WCHAR* pszCode )
 {
 	// 一時ファイル名を作成
-	TCHAR szTempDir[_MAX_PATH];
-	TCHAR szTempFile[_MAX_PATH];
+	WCHAR szTempDir[_MAX_PATH];
+	WCHAR szTempFile[_MAX_PATH];
 	if( 0 == ::GetTempPath( _MAX_PATH, szTempDir ) )return FALSE;
-	if( 0 == ::GetTempFileName( szTempDir, _T("mac"), 0, szTempFile ) )return FALSE;
+	if( 0 == ::GetTempFileName( szTempDir, L"mac", 0, szTempFile ) )return FALSE;
 	// 一時ファイルに書き込む
 	CTextOutputStream out = CTextOutputStream( szTempFile );
-	out.WriteString( to_wchar( pszCode ) );
+	out.WriteString( pszCode );
 	out.Close();
 
 	// マクロ読み込み
@@ -461,9 +461,9 @@ BOOL CKeyMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const TCHAR* pszCode )
 	@date 2004-01-31 genta RegisterExtの廃止のためRegisterCreatorに置き換え
 		そのため，過ったオブジェクト生成を行わないために拡張子チェックは必須．
 */
-CMacroManagerBase* CKeyMacroMgr::Creator(const TCHAR* ext)
+CMacroManagerBase* CKeyMacroMgr::Creator(const WCHAR* ext)
 {
-	if( _tcscmp( ext, _T("mac") ) == 0 ){
+	if( wcscmp( ext, L"mac" ) == 0 ){
 		return new CKeyMacroMgr;
 	}
 	return NULL;

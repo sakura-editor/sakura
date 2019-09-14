@@ -140,7 +140,7 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 			case IDC_BUTTON_BACKIMG_PATH_SEL:
 				{
 					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_PATH),
-						_T("*.bmp;*.jpg;*.jpeg;*.png"), true, EFITER_NONE );
+						L"*.bmp;*.jpg;*.jpeg;*.png", true, EFITER_NONE );
 				}
 				return TRUE;
 			//	From Here Sept. 10, 2000 JEPRO
@@ -180,7 +180,7 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 			OnHelp( hwndDlg, IDD_PROP_WINDOW );
 			return TRUE;
 		case PSN_KILLACTIVE:
-//			MYTRACE( _T("color PSN_KILLACTIVE\n") );
+//			MYTRACE( L"color PSN_KILLACTIVE\n" );
 			/* ダイアログデータの取得 window */
 			GetData( hwndDlg );
 			return TRUE;
@@ -195,7 +195,7 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 		switch( (int)wParam ) {
 		case IDC_SPIN_LINENUMWIDTH:
 			/* 行番号の最小桁数 */
-//			MYTRACE( _T("IDC_SPIN_LINENUMWIDTH\n") );
+//			MYTRACE( L"IDC_SPIN_LINENUMWIDTH\n" );
 			int nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINENUMWIDTH, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;

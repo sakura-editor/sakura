@@ -126,7 +126,7 @@ public:
 	static void SetComboBoxDeleter( HWND hwndCtl, SComboBoxItemDeleter* data );
 public:
 
-	static bool DirectoryUp(TCHAR* szDir);
+	static bool DirectoryUp(WCHAR* szDir);
 
 public:
 	HWND GetHwnd() const{ return m_hWnd; }

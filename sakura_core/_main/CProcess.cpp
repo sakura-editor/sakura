@@ -26,7 +26,7 @@
 */
 CProcess::CProcess(
 	HINSTANCE	hInstance,		//!< handle to process instance
-	LPCTSTR		lpCmdLine		//!< pointer to command line
+	LPCWSTR		lpCmdLine		//!< pointer to command line
 )
 : m_hInstance( hInstance )
 , m_hWnd( 0 )
@@ -48,7 +48,7 @@ bool CProcess::InitializeProcess()
 	if( !GetShareData().InitShareData() ){
 		//	適切なデータを得られなかった
 		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONERROR,
-			GSTR_APPNAME, _T("異なるバージョンのエディタを同時に起動することはできません。") );
+			GSTR_APPNAME, L"異なるバージョンのエディタを同時に起動することはできません。" );
 		return false;
 	}
 
@@ -70,7 +70,7 @@ bool CProcess::Run()
 	if( InitializeProcess() )
 	{
 #ifdef USE_CRASHDUMP
-		HMODULE hDllDbgHelp = LoadLibraryExedir( _T("dbghelp.dll") );
+		HMODULE hDllDbgHelp = LoadLibraryExedir( L"dbghelp.dll" );
 		m_pfnMiniDumpWriteDump = NULL;
 		if( hDllDbgHelp ){
 			*(FARPROC*)&m_pfnMiniDumpWriteDump = ::GetProcAddress( hDllDbgHelp, "MiniDumpWriteDump" );
@@ -107,10 +107,10 @@ int CProcess::WriteDump( PEXCEPTION_POINTERS pExceptPtrs )
 	if( !m_pfnMiniDumpWriteDump )
 		return EXCEPTION_CONTINUE_SEARCH;
 
-	static TCHAR szFile[MAX_PATH];
+	static WCHAR szFile[MAX_PATH];
 	// 出力先はiniと同じ（InitializeProcess()後に確定）
 	// Vista以降では C:\Users\(ユーザ名)\AppData\Local\CrashDumps に出力
-	GetInidirOrExedir( szFile, _APP_NAME_(_T) _T(".dmp") );
+	GetInidirOrExedir( szFile, _APP_NAME_(_T) L".dmp" );
 
 	HANDLE hFile = ::CreateFile(
 		szFile,

@@ -32,8 +32,8 @@ public:
 	ECallbackResult OnPreBeforeSave(SSaveInfo* pSaveInfo);
 
 protected:
-	int MakeBackUp( const TCHAR* target_file );								//!< バックアップの作成
-	bool FormatBackUpPath( TCHAR*, size_t, const TCHAR* );	//!< バックアップパスの作成 2005.11.21 aroka
+	int MakeBackUp( const WCHAR* target_file );								//!< バックアップの作成
+	bool FormatBackUpPath( WCHAR*, size_t, const WCHAR* );	//!< バックアップパスの作成 2005.11.21 aroka
 };
 
 #endif /* SAKURA_CBACKUPAGENT_54267C70_F49D_418B_B1EA_0F98DD5DE4B19_H_ */

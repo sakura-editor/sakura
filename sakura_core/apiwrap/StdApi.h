@@ -36,7 +36,7 @@
 #else
 	#include <ImageHlp.h> //MakeSureDirectoryPathExists
 #endif
-#include "mem/CNativeT.h"
+#include "mem/CNativeW.h"
 
 //デバッグ用。
 //VistaだとExtTextOutの結果が即反映されない。この関数を用いると即反映されるので、
@@ -53,37 +53,7 @@ namespace ApiWrap
 	//          W系が存在しないAPIのための、新しい関数定義         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//W版が無いので、自作
-	BOOL MakeSureDirectoryPathExistsW(LPCWSTR wszDirPath);
-	#define MakeSureDirectoryPathExistsT MakeSureDirectoryPathExistsW
-
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//              W系描画API                                      //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-	LPWSTR CharNextW_AnyBuild(
-		LPCWSTR lpsz
-	);
-
-	LPWSTR CharPrevW_AnyBuild(
-		LPCWSTR lpszStart,
-		LPCWSTR lpszCurrent
-	);
-
-	#define GetTextExtentPoint32W_AnyBuild GetTextExtentPoint32
-
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//             その他W系API                                     //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-	inline int LoadStringW_AnyBuild(
-		HINSTANCE	hInstance,
-		UINT		uID,
-		LPWSTR		lpBuffer,
-		int			nBufferCount	//!< バッファのサイズ。文字単位。
-	)
-	{
-		return ::LoadStringW(hInstance, uID, lpBuffer, nBufferCount);
-	}
+	BOOL MakeSureDirectoryPathExistsW(LPCWSTR pszDirPath);
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                    描画API 不具合ラップ                     //
@@ -95,7 +65,7 @@ namespace ApiWrap
 	//                      よく使う引数値                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	//! よく使うExtTextOutW_AnyBuildのオプション
+	//! よく使うExtTextOutのオプション
 	inline UINT ExtTextOutOption()
 	{
 		return ETO_CLIPPED | ETO_OPAQUE;

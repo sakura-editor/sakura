@@ -35,8 +35,8 @@
 void CType_Java::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	_tcscpy( pType->m_szTypeName, _T("Java") );
-	_tcscpy( pType->m_szTypeExts, _T("java,jav") );
+	wcscpy( pType->m_szTypeName, L"Java" );
+	wcscpy( pType->m_szTypeExts, L"java,jav" );
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L"//", -1 );					/* 行コメントデリミタ */
@@ -174,7 +174,7 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 							&ptPosXY_Layout
 						);
 						wchar_t szWork[256];
-						if( 0 < auto_snprintf_s( szWork, _countof(szWork), L"%ls::%ls", szClass, LSW(STR_OUTLINE_JAVA_DEFPOS) ) ){
+						if( 0 < auto_snprintf_s( szWork, _countof(szWork), L"%ls::%ls", szClass, LS(STR_OUTLINE_JAVA_DEFPOS) ) ){
 							pcFuncInfoArr->AppendData( ptPosXY_Logic.GetY2() + CLogicInt(1), ptPosXY_Layout.GetY2() + CLayoutInt(1), szWork, nFuncId ); //2007.10.09 kobake レイアウト・ロジックの混在バグ修正
 						}
 					}

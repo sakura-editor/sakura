@@ -95,7 +95,7 @@ struct SShare_WorkBuffer{
 	//2007.09.16 kobake char型だと、常に文字列であるという誤解を招くので、BYTE型に変更。変数名も変更。
 	//           UNICODE版では、余分に領域を使うことが予想されるため、ANSI版の2倍確保。
 private:
-	BYTE				m_pWork[32000*sizeof(TCHAR)];
+	BYTE				m_pWork[32000*sizeof(WCHAR)];
 public:
 	template <class T>
 	T* GetWorkBuffer(){ return reinterpret_cast<T*>(m_pWork); }
@@ -170,7 +170,7 @@ struct DLLSHAREDATA{
 	//DIFF差分表示ダイアログのオプション
 	int							m_nDiffFlgOpt;				/* DIFF差分表示 */	//@@@ 2002.05.27 MIK
 	//タグファイルの作成ダイアログのオプション
-	TCHAR						m_szTagsCmdLine[_MAX_PATH];	/* TAGSコマンドラインオプション */	//@@@ 2003.05.12 MIK
+	WCHAR						m_szTagsCmdLine[_MAX_PATH];	/* TAGSコマンドラインオプション */	//@@@ 2003.05.12 MIK
 	int							m_nTagsOpt;					/* TAGSオプション(チェック) */	//@@@ 2003.05.12 MIK
 
 	// -- -- テンポラリ -- -- //

@@ -43,8 +43,8 @@
 void CType_Text::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	_tcscpy( pType->m_szTypeName, _T("テキスト") );
-	_tcscpy( pType->m_szTypeExts, _T("txt,log,1st,err,ps") );
+	wcscpy( pType->m_szTypeName, L"テキスト" );
+	wcscpy( pType->m_szTypeExts, L"txt,log,1st,err,ps" );
 
 	//設定
 	pType->m_nMaxLineKetas = CKetaXInt(120);					/* 折り返し桁数 */
@@ -287,7 +287,7 @@ void CDocOutline::MakeTopicList_wztxt(CFuncInfoArr* pcFuncInfoArr)
 					pcFuncInfoArr->AppendData(
 						nLineCount+CLogicInt(1),
 						ptPos.GetY2()+CLayoutInt(1),
-						LSW(STR_NO_TITLE1),
+						LS(STR_NO_TITLE1),
 						FUNCINFO_NOCLIPTEXT,
 						dummyLevel - 1
 					);

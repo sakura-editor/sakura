@@ -50,7 +50,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam, const TCHAR* pszPath );	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam, const WCHAR* pszPath );	/* モーダルダイアログの表示 */
 
 protected:
 	/*

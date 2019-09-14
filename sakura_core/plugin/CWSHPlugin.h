@@ -57,7 +57,7 @@ class CWSHPlugin :
 {
 	//コンストラクタ
 public:
-	CWSHPlugin( const tstring& sBaseDir ) : CPlugin( sBaseDir ) {
+	CWSHPlugin( const wstring& sBaseDir ) : CPlugin( sBaseDir ) {
 		m_bUseCache = false;
 	}
 

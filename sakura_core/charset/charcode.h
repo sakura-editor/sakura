@@ -321,8 +321,8 @@ namespace TCODE
 // 文字幅の動的計算用キャッシュ関連
 struct SCharWidthCache {
 	// 文字半角全角キャッシュ
-	TCHAR		m_lfFaceName[LF_FACESIZE];
-	TCHAR		m_lfFaceName2[LF_FACESIZE];
+	WCHAR		m_lfFaceName[LF_FACESIZE];
+	WCHAR		m_lfFaceName2[LF_FACESIZE];
 	short		m_nCharPxWidthCache[0x10000];
 	int			m_nCharWidthCacheTest;				//cache溢れ検出
 };

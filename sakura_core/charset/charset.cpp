@@ -100,23 +100,23 @@ extern bool IsValidCodeType(int code)
 //                           名前                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-LPCTSTR CCodeTypeName::Normal() const
+LPCWSTR CCodeTypeName::Normal() const
 {
 	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
 		return NULL;
 	}
-	return to_tchar( msCodeSet[m_eCodeType].m_sNormal );
+	return msCodeSet[m_eCodeType].m_sNormal;
 }
 
-LPCTSTR CCodeTypeName::Short() const
+LPCWSTR CCodeTypeName::Short() const
 {
 	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
 		return NULL;
 	}
-	return to_tchar( msCodeSet[m_eCodeType].m_sShort );
+	return msCodeSet[m_eCodeType].m_sShort;
 }
 
-LPCTSTR CCodeTypeName::Bracket() const
+LPCWSTR CCodeTypeName::Bracket() const
 {
 	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
 		return NULL;
@@ -126,7 +126,7 @@ LPCTSTR CCodeTypeName::Bracket() const
 	static	std::wstring	sWork;
 	sWork = std::wstring(L"  [") + msCodeSet[m_eCodeType].m_sShort + L"]";	// 変数の定義と値の設定を一緒にやるとバグる様なので分離	// 2013/4/20 Uchi
 
-	return to_tchar( sWork.c_str() );
+	return sWork.c_str();
 }
 
 bool CCodeTypeName::UseBom()
@@ -179,10 +179,10 @@ ECodeType CCodeTypesForCombobox::GetCode(int nIndex) const
 	return vDispIdx[nIndex];
 }
 
-LPCTSTR CCodeTypesForCombobox::GetName(int nIndex) const
+LPCWSTR CCodeTypesForCombobox::GetName(int nIndex) const
 {
 	if (nIndex == 0) {
 		return LS(STR_ERR_GLOBAL01);
 	}
-	return to_tchar( msCodeSet[vDispIdx[nIndex]].m_sLong );
+	return msCodeSet[vDispIdx[nIndex]].m_sLong;
 }

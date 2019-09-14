@@ -608,7 +608,7 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 		//	CShareDataから、マクロファイル名を取得
 		//	Jun. 08, 2003 Moca 呼び出し側でパス名を用意
 		//	Jun. 16, 2003 genta 書式をちょっと変更
-		TCHAR ptr[_MAX_PATH * 2];
+		WCHAR ptr[_MAX_PATH * 2];
 		int n = CShareData::getInstance()->GetMacroFilename( idx, ptr, _countof(ptr) );
 		if ( n <= 0 ){
 			return FALSE;
@@ -639,25 +639,25 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 
 	@author Norio Nakatani, YAZAKI, genta
 */
-BOOL CSMacroMgr::Load( int idx, HINSTANCE hInstance, const TCHAR* pszPath, const TCHAR* pszType )
+BOOL CSMacroMgr::Load( int idx, HINSTANCE hInstance, const WCHAR* pszPath, const WCHAR* pszType )
 {
 	CMacroManagerBase** ppMacro = Idx2Ptr( idx );
 
 	if( ppMacro == NULL ){
-		DEBUG_TRACE( _T("CSMacroMgr::Load() Out of range: idx=%d Path=%ts\n"), idx, pszPath);
+		DEBUG_TRACE( L"CSMacroMgr::Load() Out of range: idx=%d Path=%s\n", idx, pszPath);
 	}
 
 	//	バッファクリア
 	delete *ppMacro;
 	*ppMacro = NULL;
 	
-	const TCHAR *ext;
+	const WCHAR *ext;
 	if( pszType == NULL ){				//ファイル指定
 		//ファイルの拡張子を取得する
-		ext = _tcsrchr( pszPath, _T('.'));
+		ext = wcsrchr( pszPath, L'.');
 		//	Feb. 02, 2004 genta .が無い場合にext==NULLとなるのでNULLチェック追加
 		if( ext != NULL ){
-			const TCHAR *chk = _tcsrchr( ext, _T('\\') );
+			const WCHAR *chk = wcsrchr( ext, L'\\' );
 			if( chk != NULL ){	//	.のあとに\があったらそれは拡張子の区切りではない
 								//	\が漢字の2バイト目の場合も拡張子ではない。
 				ext = NULL;
@@ -670,7 +670,7 @@ BOOL CSMacroMgr::Load( int idx, HINSTANCE hInstance, const TCHAR* pszPath, const
 		ext = pszType;
 	}
 
-	m_sMacroPath = _T("");
+	m_sMacroPath = L"";
 	*ppMacro = CMacroFactory::getInstance()->Create(ext);
 	if( *ppMacro == NULL )
 		return FALSE;
@@ -720,7 +720,7 @@ void CSMacroMgr::UnloadAll(void)
 
 	@author YAZAKI
 */
-BOOL CSMacroMgr::Save( int idx, HINSTANCE hInstance, const TCHAR* pszPath )
+BOOL CSMacroMgr::Save( int idx, HINSTANCE hInstance, const WCHAR* pszPath )
 {
 	assert( idx == STAND_KEYMACRO );
 	if ( idx == STAND_KEYMACRO ){
@@ -821,7 +821,7 @@ WCHAR* CSMacroMgr::GetFuncInfoByID(
 		}
 		//	Jun. 16, 2002 genta NULLのときは何もしない．
 		if( pszFuncNameJapanese != NULL ){
-			wcsncpy( pszFuncNameJapanese, LSW( nFuncID ), 255 );
+			wcsncpy( pszFuncNameJapanese, LS( nFuncID ), 255 );
 		}
 		return pszFuncName;
 	}
@@ -864,7 +864,7 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 		if( 0 == auto_strcmp( normalizedFuncName, m_MacroFuncInfoCommandArr[i].m_pszFuncName )){
 			EFunctionCode nFuncID = EFunctionCode(m_MacroFuncInfoCommandArr[i].m_nFuncID);
 			if( pszFuncNameJapanese != NULL ){
-				wcsncpy( pszFuncNameJapanese, LSW( nFuncID ), 255 );
+				wcsncpy( pszFuncNameJapanese, LS( nFuncID ), 255 );
 				pszFuncNameJapanese[255] = L'\0';
 			}
 			return nFuncID;
@@ -875,7 +875,7 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 		if( 0 == auto_strcmp( normalizedFuncName, m_MacroFuncInfoArr[i].m_pszFuncName )){
 			EFunctionCode nFuncID = EFunctionCode(m_MacroFuncInfoArr[i].m_nFuncID);
 			if( pszFuncNameJapanese != NULL ){
-				wcsncpy( pszFuncNameJapanese, LSW( nFuncID ), 255 );
+				wcsncpy( pszFuncNameJapanese, LS( nFuncID ), 255 );
 				pszFuncNameJapanese[255] = L'\0';
 			}
 			return nFuncID;
@@ -1233,7 +1233,7 @@ CMacroManagerBase** CSMacroMgr::Idx2Ptr(int idx)
 		return &m_cSavedKeyMacro[idx];
 	}
 
-	DEBUG_TRACE( _T("CSMacroMgr::Idx2Ptr() Out of range: idx=%d\n"), idx);
+	DEBUG_TRACE( L"CSMacroMgr::Idx2Ptr() Out of range: idx=%d\n", idx);
 
 	return NULL;
 }

@@ -16,23 +16,10 @@
 */
 
 #include "StdAfx.h"
-#include <stdarg.h>
-#include <tchar.h>
 #include "debug/Debug1.h"
-#include "debug/Debug3.h"
 
-#if 0
-//デバッグウォッチ用の型
-struct TestArrayA{ char    a[100]; };
-struct TestArrayW{ wchar_t a[100]; };
-struct TestArrayI{ int     a[100]; };
-void Test()
-{
-	TestArrayA a; a.a[0]=0;
-	TestArrayW w; w.a[0]=0;
-	TestArrayI i; i.a[0]=0;
-}
-#endif
+#include <stdio.h>
+#include <stdarg.h>
 
 #if defined(_DEBUG) || defined(USE_RELPRINT)
 
@@ -48,51 +35,35 @@ void Test()
 */
 void DebugOutW( LPCWSTR lpFmt, ...)
 {
-	//整形
 	static WCHAR szText[16000];
+
 	va_list argList;
 	va_start(argList, lpFmt);
-	int ret = tchar_vsnprintf_s( szText, _countof(szText), lpFmt, argList );
 
-	//出力
-	::OutputDebugStringW( szText );
-	if( -1 == ret ){
-		::OutputDebugStringW( L"(切り捨てました...)\n" );
-	}
-#ifdef USE_DEBUGMON
-	DebugMonitor_Output(NULL, to_wchar(szText));
-#endif
-
-	//ウェイト
-	::Sleep(1);	// Norio Nakatani, 2001/06/23 大量にトレースするときのために
-
-	va_end(argList);
-	return;
-}
-
-void DebugOutA( LPCSTR lpFmt, ...)
-{
 	//整形
-	static CHAR szText[16000];
-	va_list argList;
-	va_start(argList, lpFmt);
-	int ret = tchar_vsnprintf_s( szText, _countof(szText), lpFmt, argList );
+	int ret = _vsnwprintf_s( szText, _TRUNCATE, lpFmt, argList );
 
 	//出力
-	::OutputDebugStringA( szText );
-	if( -1 == ret ){
-		::OutputDebugStringA( "(切り捨てました...)\n" );
+	if( errno != EINVAL ){
+		::OutputDebugStringW( szText );
 	}
-#ifdef USE_DEBUGMON
-	DebugMonitor_Output(NULL, to_wchar(szText));
-#endif
+
+	//切り捨て対策
+	if( -1 == ret && errno != ERANGE ){
+		::OutputDebugStringW( L"(切り捨てました...)\n" );
+
+		::DebugBreak();
+
+		int count = _vscwprintf( lpFmt, argList );
+		auto pLargeBuf = std::make_unique<WCHAR[]>( count + 1 );
+		if( vswprintf( &pLargeBuf[0], count + 1, lpFmt, argList ) > 0 )
+			::OutputDebugStringW( &pLargeBuf[0] );
+	}
+
+	va_end(argList);
 
 	//ウェイト
 	::Sleep(1);	// Norio Nakatani, 2001/06/23 大量にトレースするときのために
-
-	va_end(argList);
-	return;
 }
 
 #endif	// _DEBUG || USE_RELPRINT
-

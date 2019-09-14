@@ -43,20 +43,20 @@ public:
 	CSortedTagJumpList(int max);
 	~CSortedTagJumpList();
 
-	int AddBaseDir( const TCHAR* baseDir );
+	int AddBaseDir( const WCHAR* baseDir );
 	BOOL AddParamA( const ACHAR* keyword, const ACHAR* filename, int no, ACHAR type, const ACHAR* note, int depth, const int baseDirId );
-	BOOL GetParam( int index, TCHAR* keyword, TCHAR* filename, int* no, TCHAR* type, TCHAR* note, int* depth, TCHAR* baseDir );
+	BOOL GetParam( int index, WCHAR* keyword, WCHAR* filename, int* no, WCHAR* type, WCHAR* note, int* depth, WCHAR* baseDir );
 	int GetCount( void ){ return m_nCount; }
 	void Empty( void );
 	bool IsOverflow( void ){ return m_bOverflow; }
 
 	typedef struct tagjump_info_t {
 		struct tagjump_info_t*	next;	//!< 次のリスト
-		TCHAR*	keyword;	//!< キーワード
-		TCHAR*	filename;	//!< ファイル名
+		WCHAR*	keyword;	//!< キーワード
+		WCHAR*	filename;	//!< ファイル名
 		int		no;			//!< 行番号
-		TCHAR	type;		//!< 種類
-		TCHAR*	note;		//!< 備考
+		WCHAR	type;		//!< 種類
+		WCHAR*	note;		//!< 備考
 		int		depth;		//!< (さかのぼる)階層
 		int		baseDirId;	//!< ファイル名のベースディレクトリ
 	} TagJumpInfo;
@@ -71,7 +71,7 @@ public:
 
 private:
 	TagJumpInfo*	m_pTagjump;	//!< タグジャンプ情報
-	std::vector<std::tstring> m_baseDirArr;	//!< ベースディレクトリ情報
+	std::vector<std::wstring> m_baseDirArr;	//!< ベースディレクトリ情報
 	int				m_nCount;	//!< 個数
 	bool			m_bOverflow;	//!< オーバーフロー
 	

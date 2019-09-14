@@ -2886,7 +2886,7 @@ STRINGTABLE DISCARDABLE
 BEGIN
     STR_SQLERR_EXEC_BUT_NOT_RUN	"Trying to execute in Oracle SQL*Plus\n\n\nOracle SQL*Plus is not running\n"
     STR_SQLERR_ACTV_BUT_NOT_RUN	"Trying to activate Oracle SQL*Plus\n\n\nOracle SQL*Plus is not running\n"
-	STR_ERR_CMPERR				"Comparison destination folder\n%ts\nhas a %d byte line \ncan not perform comparison."			// FIXME - ok?
+	STR_ERR_CMPERR				"Comparison destination folder\n%s\nhas a %d byte line \ncan not perform comparison."			// FIXME - ok?
 //	STR_ERR_CMPERR				"比較先のファイル\n%s\n%dバイトを超える行があります。\n比較できません。"
 
 	STR_NO_TITLE1				"(No Title)"
@@ -2955,11 +2955,11 @@ BEGIN
 	STR_DLGFAV_CURRENT_DIR		"Current Dir"
 	STR_DLGFAV_HIDDEN			"(hidden)"
 	STR_DLGFAV_FAVORITE			"Favorite"
-	STR_DLGFAV_CONF_DEL_FAV		"Delete recent %ts history.\nOK?"
-	STR_DLGFAV_CONF_DEL_NOTFAV	"Delete recent %ts history(except Favorites). \nOK?"
-	STR_DLGFAV_CONF_DEL_PATH	"Delete recent %ts history(Missing path) \nOK?"
+	STR_DLGFAV_CONF_DEL_FAV		"Delete recent %s history.\nOK?"
+	STR_DLGFAV_CONF_DEL_NOTFAV	"Delete recent %s history(except Favorites). \nOK?"
+	STR_DLGFAV_CONF_DEL_PATH	"Delete recent %s history(Missing path) \nOK?"
 	STR_DLGFAV_DELIMITER		", "
-	STR_DLGFAV_FAV_REFRESH		"History (%ts) has been updated, will discard edit information and redisplay."
+	STR_DLGFAV_FAV_REFRESH		"History (%s) has been updated, will discard edit information and redisplay."
 	STR_DLGFAV_ADD				"Add"
 	STR_DLGFAV_ADD_PROMPT		"Please enter a string to add."
 	STR_DLGFAV_EDIT				"Edit"
@@ -3083,7 +3083,7 @@ BEGIN
 
 	// CDlgJump.cpp
 	STR_DLGJUMP1				"Please input correct line number"
-	STR_DLGJUMP_PSLQL			"%d Ln  %ts  Package Specification"			// PL/SQL 
+	STR_DLGJUMP_PSLQL			"%d Ln  %s  Package Specification"			// PL/SQL 
 
 	// CDlgOpenFile.cpp
 	STR_DLGOPNFL1				"as is"										// Save dialog, CRLF encoding option (none, cr+lf, cr)
@@ -3092,7 +3092,7 @@ BEGIN
 	STR_DLGOPNFL_EXTNAME1		"User setting"								// Used for most "eXport" buttons in the File dialog
 	STR_DLGOPNFL_EXTNAME2		"Text File"
 	STR_DLGOPNFL_EXTNAME3		"All Files"
-	STR_DLGOPNFL_ERR1			"Dialog didn't open.\n\nError:%ts"
+	STR_DLGOPNFL_ERR1			"Dialog didn't open.\n\nError:%s"
 
 	// CDlgPluginOption.cpp
 	STR_DLGPLUGINOPT_LOAD		"Didn't load plugin."
@@ -3101,7 +3101,7 @@ BEGIN
 	STR_DLGPLUGINOPT_OPTION		"Option doesn't exist"
 	STR_DLGPLUGINOPT_LIST1		"Item"
 	STR_DLGPLUGINOPT_LIST2		"Value"
-	STR_DLGPLUGINOPT_SELECT		"Select %ts"
+	STR_DLGPLUGINOPT_SELECT		"Select %s"
 
 	// CDlgPrintSetting.cpp
 	STR_DLGPRNST1				"Page Setup Profile Name" 
@@ -3137,7 +3137,7 @@ BEGIN
 	STR_DLGFLPROP_YMDHMS		"%dY %dM %dD %02d:%02d:%02d"
 	STR_DLGFLPROP_UPDATE_DT		"Modify Date  "
 	STR_DLGFLPROP_ACCESS_DT		"Access Date  "
-	STR_DLGFLPROP_DOS_NAME		"MS-DOS Filename  %ts\r\n"
+	STR_DLGFLPROP_DOS_NAME		"MS-DOS Filename  %s\r\n"
 	STR_DLGFLPROP_FILE_SIZE		"File Size  %d Bytes\r\n"
 
 	// CDlgReplace.cpp
@@ -3181,7 +3181,7 @@ BEGIN
 	STR_DLGPROFILE_ERR_RENAME		"Failed to change the name.\nProfile there is a possibility of being used."
 
 	// CDocOutline.cpp
-	STR_DOCOUTLINE_REGEX		"Regex Rule\n%ls\nOn Error\n%ts"
+	STR_DOCOUTLINE_REGEX		"Regex Rule\n%ls\nOn Error\n%s"
 
 	// CDocLineMgr.cpp
 	STR_ERR_DLGDOCLM1			"%ls\n file couldn't be opened.\nFile is not valid."
@@ -3203,42 +3203,42 @@ BEGIN
 	STR_TRAY_TYPE_NAME			"Set %d"
 	STR_TRAY_EXTHELP1			"External Help 1 is unset.\nSet it now?"
 	STR_TRAY_RESPONSEFILE		"Create error response file."
-	STR_TRAY_CREATEPROC1		"'%ts'\nFailed to execute process.\n%ts"
-	STR_TRAY_CREATEPROC2		"'%ts'\nFailed to execute process."
+	STR_TRAY_CREATEPROC1		"'%s'\nFailed to execute process.\n%s"
+	STR_TRAY_CREATEPROC2		"'%s'\nFailed to execute process."
 	STR_TRAY_EXITALL			"Close all open windows, and exit editor without saving?"					// When you exit editor
 	STR_TRAY_ACCELTABLE			"CControlTray::CreateAccelTbl()\nCould not create accelerator table.\nInsufficient system resources."
 
 
 	// CEditDoc.cpp
-	STR_LOADAGENT_ERR_OPEN		"'%ts'\nCannot open file.\nYou do not have read access to this file."
-	STR_LOADAGENT_BIG_WARNING	"'%ts'\nFile size is %dMB or over. Do you want to open?"
-	STR_LOADAGENT_BIG_ERROR		"'%ts'\nCannot open file.\nIts size is too big.\n\nSpecified file size: %ts\n    File size limit: %ts"
+	STR_LOADAGENT_ERR_OPEN		"'%s'\nCannot open file.\nYou do not have read access to this file."
+	STR_LOADAGENT_BIG_WARNING	"'%s'\nFile size is %dMB or over. Do you want to open?"
+	STR_LOADAGENT_BIG_ERROR		"'%s'\nCannot open file.\nIts size is too big.\n\nSpecified file size: %s\n    File size limit: %s"
 	STR_SAVEAGENT_VIEW_FILE		"Cannot overwrite file in view-mode."
-	STR_SAVEAGENT_OTHER			"'%ts'\nCannot save file.\nOther editor is opening this file."
+	STR_SAVEAGENT_OTHER			"'%s'\nCannot save file.\nOther editor is opening this file."
 	STR_ERR_DLGEDITDOC5			"Character Encoding"														// Dialog title for below
-	STR_ERR_DLGEDITDOC6			"%ts\n\nOpening in %ts, but it has been opened in %ts last time.\nUse same character formatting as last time?\n\n\t[(Y)es]  =%ts\n\t[(N)o]=%ts\n"
-	STR_NOT_EXSIST_SAVE			"%ts\nThe above file doesn't exist.\n\nWhen you save this document the file will be created on the disk."
+	STR_ERR_DLGEDITDOC6			"%s\n\nOpening in %s, but it has been opened in %s last time.\nUse same character formatting as last time?\n\n\t[(Y)es]  =%s\n\t[(N)o]=%s\n"
+	STR_NOT_EXSIST_SAVE			"%s\nThe above file doesn't exist.\n\nWhen you save this document the file will be created on the disk."
 	STR_BACKUP_ERR_TITLE		"File Save"
 	STR_BACKUP_ERR_MSG		"Failed to create backup..  Continue to overwrite the original file?"		// Continue with original file
 	STR_BACKUP_ERR_PATH_CRETE	"error in the path of creating the backup destination.\nPath is too long or invalid format.\nContinue to overwrite the original file?"
 	STR_BACKUP_CONFORM_TITLE1		"Confirming creation of backup"												// Dialog Title for message below
-	STR_BACKUP_CONFORM_MSG1		"Creating a backup before updating.\nOK?  [(N)o] = No backup, just overwrite (or save as).\n\n%ts\n    ↓\n%ts\n\nBackup file will be sent to the Trashcan\n"
+	STR_BACKUP_CONFORM_MSG1		"Creating a backup before updating.\nOK?  [(N)o] = No backup, just overwrite (or save as).\n\n%s\n    ↓\n%s\n\nBackup file will be sent to the Trashcan\n"
 	STR_BACKUP_CONFORM_TITLE2		"Confirming creation of backup"												// Dialog Title for message below
-	STR_BACKUP_CONFORM_MSG2		"Creating a backup before updating.\nOK?  [(N)o] = No backup, just overwrite (or save as).\n\n%ts\n    ↓\n%ts\n\n"
+	STR_BACKUP_CONFORM_MSG2		"Creating a backup before updating.\nOK?  [(N)o] = No backup, just overwrite (or save as).\n\n%s\n    ↓\n%s\n\n"
 	STR_BACKUP_ERR_DELETE		"failed to delete"
 	STR_BACKUP_ERR_MOVE			"failed to move"
-	STR_ERR_DLGEDITDOC21		"%ts\nis currently prohibited from writing by another process."
+	STR_ERR_DLGEDITDOC21		"%s\nis currently prohibited from writing by another process."
 
 	STR_EXCLU_NO_EXCLUSIVE		"No Exclusive Mode"
 	STR_EXCLU_DENY_WRITE		"Deny Write Access Mode"
 	STR_EXCLU_DENY_READWRITE	"Deny Read-Write Access Mode"
 	STR_EXCLU_UNDEFINED			"Undefined mode (problem)"
-	STR_FILE_LOCK_ERR			"%ts\n [%ts] could not obtain lock\nThe exclusive lock on the current file is now invalid."
+	STR_FILE_LOCK_ERR			"%s\n [%s] could not obtain lock\nThe exclusive lock on the current file is now invalid."
 
-	STR_TITLE_GREP				"[Grep] %ls%ts"
-	STR_ERR_DLGEDITDOC30		"%ts\nhas been altered. Save before closing? \n\nDue to opening as view-mode it is suggested to save under a different name.\n"
-	STR_CHANGE_CHARSET			"%ts\nis no change.\nhowever change encoding.\nSave before closing?"
-	STR_ERR_DLGEDITDOC31		"%ts\nhas been altered. Save before closing?"
+	STR_TITLE_GREP				"[Grep] %ls%s"
+	STR_ERR_DLGEDITDOC30		"%s\nhas been altered. Save before closing? \n\nDue to opening as view-mode it is suggested to save under a different name.\n"
+	STR_CHANGE_CHARSET			"%s\nis no change.\nhowever change encoding.\nSave before closing?"
+	STR_ERR_DLGEDITDOC31		"%s\nhas been altered. Save before closing?"
 	STR_AUTORELOAD_NOFITY		"★File Updated at %02d:%02d:%02d"
 
 	// CType_Cpp.cpp
@@ -3297,9 +3297,9 @@ BEGIN
 	STR_GREP_ERR_ENUMKEYS1		"You can not use a wild card in the folder of the file specified."
 	STR_GREP_ERR_ENUMKEYS2		"You can not use the full path in the file specification."
 	STR_GREP_TIMER				"Processing time: %dms\r\n"
-	STR_GREP_ERR_FILEOPEN		"file open error [%ts]\r\n"
-	STR_GREP_ERR_FILEREAD		"file read error [%ts]\r\n"
-	STR_GREP_ERR_FILEWRITE		"file write error [%ts]\r\n"
+	STR_GREP_ERR_FILEOPEN		"file open error [%s]\r\n"
+	STR_GREP_ERR_FILEREAD		"file read error [%s]\r\n"
+	STR_GREP_ERR_FILEWRITE		"file write error [%s]\r\n"
 	STR_GREP_REP_ERR_DELETE		"failed file delete."
 	STR_GREP_REP_ERR_REPLACE	"failed file replace."
 
@@ -3319,7 +3319,7 @@ BEGIN
 	STR_EDITVWISRCH_NOMATCH		" (No Matches)"
 
 	// CEditView_Command.cpp
-	STR_ERR_MACRO1				"Macro %d (%ts) failed to execute."
+	STR_ERR_MACRO1				"Macro %d (%s) failed to execute."
 	STR_ERR_SRPREV1				"▲Restarted search from bottom"
 	STR_ERR_SRPREV2				"△Not Found"
 	STR_ERR_SRPREV3				"Reverse searching (↑) for '%ls' found no further instances."
@@ -3329,11 +3329,11 @@ BEGIN
 	STR_ERR_UNINDENT1			"★Reverse indent only works on selected text"
 	STR_ERR_TAGJMP1				"Cant Tag-Jump"
 	STR_ERR_TAGJMPBK1			"Cant Bookmark Tag-Jump"
-	STR_ERR_MACROERR1			"Failed to open Macro.\n\n%ts"
+	STR_ERR_MACROERR1			"Failed to open Macro.\n\n%s"
 	STR_ERR_CEDITVIEW_CMD01		"External Help-1 is not set.\nSet it now?"
 	STR_ERR_CEDITVIEW_CMD02		"External Help is not set.\nSet it now?"
 	STR_ERR_CEDITVIEW_CMD03		"Tag creation command failed to run.\n\nCTAGS.EXE could not be found."
-	STR_ERR_CEDITVIEW_CMD04		"Tag creation command failed to run.\n\n%ts"
+	STR_ERR_CEDITVIEW_CMD04		"Tag creation command failed to run.\n\n%s"
 	STR_ERR_CEDITVIEW_CMD05		"Creating Tag File ..."
 	STR_ERR_CEDITVIEW_CMD06		"Tag creation command failed to run.\n\n%hs"
 	STR_ERR_CEDITVIEW_CMD07		"Tag fille creation completed."
@@ -3341,19 +3341,19 @@ BEGIN
 	STR_ERR_CEDITVIEW_CMD09		"Failed to open C/C++ source file."
 	STR_ERR_CEDITVIEW_CMD10		"No valid data on the clip board !"
 	STR_ERR_CEDITVIEW_CMD11		"Replaced all occurrences to end of file."				// Comes up when you press replace individually until u reach end of file.
-	STR_ERR_CEDITVIEW_CMD14		"Failed to write to the file.\n\n%ts"
-	STR_ERR_CEDITVIEW_CMD16		"Failed to write to the file.\n\n%ts"
-	STR_ERR_CEDITVIEW_CMD18		"%ts\n has been changed. Save before passing to Oracle SQL*Plus?"
+	STR_ERR_CEDITVIEW_CMD14		"Failed to write to the file.\n\n%s"
+	STR_ERR_CEDITVIEW_CMD16		"Failed to write to the file.\n\n%s"
+	STR_ERR_CEDITVIEW_CMD18		"%s\n has been changed. Save before passing to Oracle SQL*Plus?"
 	STR_ERR_CEDITVIEW_CMD20		"Oracle SQL*Plus did not respond.\nPlease wait a while and try again."
 	STR_ERR_CEDITVIEW_CMD21		"If the SQL isn't saved to a file then Oracle SQL*Plus can not run it.\n"
 	STR_ERR_CEDITVIEW_CMD22		"Did not find any differences."
 	STR_ERR_CEDITVIEW_CMD23		"Some differences were found."
 	STR_ERR_CEDITVIEW_CMD24		"Could not create the Macro File.\nFile name acquisition error (nRet=%d)"
-	STR_ERR_CEDITVIEW_CMD25		"Could not create the Macro File.\n\n%ts"
+	STR_ERR_CEDITVIEW_CMD25		"Could not create the Macro File.\n\n%s"
 	STR_ERR_CEDITVIEW_CMD26		"Not a savable macro sequence. Can only save Keyboard Macros."
-	STR_ERR_CEDITVIEW_CMD27		"Could not create the Macro File.\n\n%ts"
-	STR_ERR_CEDITVIEW_CMD28		"Could not open the file.\n\n%ts"
-	STR_ERR_CEDITVIEW_CMD29		"%ts\n\nThis file has been updated.\nReloading will cause all changed to be *lost*, OK?"
+	STR_ERR_CEDITVIEW_CMD27		"Could not create the Macro File.\n\n%s"
+	STR_ERR_CEDITVIEW_CMD28		"Could not open the file.\n\n%s"
+	STR_ERR_CEDITVIEW_CMD29		"%s\n\nThis file has been updated.\nReloading will cause all changed to be *lost*, OK?"
 
 	// FIXME -- possibly some left over text in the form of square blocks in the TAGList
 	// inside function Command_EXTHELP1
@@ -3365,7 +3365,7 @@ BEGIN
 	STR_FUCLIST_PREV_NOT_FOUND	"Previous (↑) Function wasn't found."
 	STR_ERR_DLGEDITVWCMDNW7		"%d line was successfully merged."												// Edit Menu::Cosmtik::Merge lines option
 	STR_ERR_DLGEDITVWCMDNW8		"There were no lines of text that could be merged in your selection."			// Edit Menu::Cosmtik::Merge lines option
-	STR_SAVEAGENT_OTHER_APP		"'%ts'\nCould not save the file.\nPath may not be correct, or the file is in use by another application."
+	STR_SAVEAGENT_OTHER_APP		"'%s'\nCould not save the file.\nPath may not be correct, or the file is in use by another application."
 	STR_ERR_DLGEDITVWCMDNW11	"An error occurred whilst trying to write to the file."
 	STR_ERR_DLGEDITVWCMDNW12	"An error occurred whilst trying to read the file."
 
@@ -3406,7 +3406,7 @@ BEGIN
 	STR_EDITWND_MENU_LS			"End of line type (L&S)"
 	STR_EDITWND_MENU_PS			"End of line type (&PS)"
 
-	STR_ERR_DLGEDITWND13		"Character:\t\t%ls (%ts)\n\nSJIS:\t\t%ts\nJIS:\t\t%ts\nEUC:\t\t%ts\nLatin1:\t\t%ts\nUTF-16:\t\t%ts\nUTF-8:\t\t%ts\nCESU-8:\t\t%ts"
+	STR_ERR_DLGEDITWND13		"Character:\t\t%ls (%s)\n\nSJIS:\t\t%s\nJIS:\t\t%s\nEUC:\t\t%s\nLatin1:\t\t%s\nUTF-16:\t\t%s\nUTF-8:\t\t%s\nCESU-8:\t\t%s"
 
 	STR_ERR_DLGEDITWND14		"Before using Print Preview please install a printer driver.\n"
 
@@ -3442,7 +3442,7 @@ BEGIN
 	STR_ESI_BOM					"\t\tBOM Detection  "
 	STR_ESI_BOM_UNKNOWN			"Unknown\r\n"
 	STR_ESI_MBC_OTHER_UNICODE	"\tMBC and Other UNICODE Family\r\n"
-	STR_ESI_OTHER_B_AND_P		"\t\t%d.%ts\tSpecific Bytes %d\tPoint %d\r\n"
+	STR_ESI_OTHER_B_AND_P		"\t\t%d.%s\tSpecific Bytes %d\tPoint %d\r\n"
 	STR_ESI_EUC_ZENKAKU			"\t\tEUC Zenkaku Kana/EUC Zenkaku Kanji\t%6.3f\r\n"
 	STR_ESI_RESULT				"Detection Result\r\n"
 
@@ -3566,22 +3566,22 @@ BEGIN
 	STR_ERR_DLGPPA2				"Error executing function\n%hs"
 	STR_ERR_DLGPPA3				"Unknown type of error whilst executing a function (Bug?)\nFunc_ID=%d"
 	STR_ERR_DLGPPA4				"Detailed Unknown Error"
-	STR_ERR_DLGPPA5				"Undefined Error\nError_CD=%d\n%ts"
+	STR_ERR_DLGPPA5				"Undefined Error\nError_CD=%d\n%s"
 	STR_ERR_DLGPPA6				"Error report is not correct"
 	STR_ERR_DLGPPA7				"PPA Execution Error"
 
 	// CPPAMacroMgr.cpp
 
 	// CPrint.cpp
-	STR_ERR_CPRINT01			"OpenPrinter() failed.\nPrinter Device Name=[%ts]"
-	STR_ERR_CPRINT02			"StartDoc() error,\nPrinter Device Name=[%ts]"
+	STR_ERR_CPRINT01			"OpenPrinter() failed.\nPrinter Device Name=[%s]"
+	STR_ERR_CPRINT02			"StartDoc() error,\nPrinter Device Name=[%s]"
 	STR_ERR_CPRINT03			"unknown"
 
 
 	// CPrintPreview.cpp
 	STR_ERR_DLGPRNPRVW1			"Landscape"
 	STR_ERR_DLGPRNPRVW2			"Portrait"		// next to paper type
-	STR_ERR_DLGPRNPRVW3			"The printer %ts, \n cant use the selected %ts paper.\n Automatically choosing to use %ts paper."
+	STR_ERR_DLGPRNPRVW3			"The printer %s, \n cant use the selected %s paper.\n Automatically choosing to use %s paper."
 	STR_ERR_DLGPRNPRVW3_1		"Print Page Setting Error:There is no printable area"
 	STR_ERR_DLGPRNPRVW4			"Please choose the page number to display (1 - %d)"			//  Print dialog ".." button
 	STR_ERR_DLGPRNPRVW5			"Preview Page Settings"										//  Print dialog ".." button
@@ -3594,7 +3594,7 @@ BEGIN
 	// CProcessFactory.cpp
 	STR_ERR_DLGPROCFACT1		"This application expects to run on \nbetter than Windows95, or WindowsNT4.0 OS.\nApplication will now close."
 	STR_ERR_DLGPROCFACT2		"Could not determine OS Version.\nExiting Application."
-	STR_ERR_DLGPROCFACT3		"'%ts'\nProcess startup failed.\n%ts"
+	STR_ERR_DLGPROCFACT3		"'%s'\nProcess startup failed.\n%s"
 	STR_ERR_DLGPROCFACT4		"'%ls'\nControl Process startup failed."
 	STR_ERR_DLGPROCFACT5		"Editor or System is busy.\nPlease wait a while..."
 
@@ -3646,7 +3646,7 @@ BEGIN
 	STR_PROPCOMKEYWORD_SETMAX	"Maximum registration of %d sets is possible.\n"
 	STR_PROPCOMKEYWORD_SETNAME1	"Added Keyword Set"
 	STR_PROPCOMKEYWORD_SETNAME2	"Please input the Set's name"
-	STR_PROPCOMKEYWORD_SETDEL	"Delete the set [%ls]\nOK?\nThe set to be deleted is one of the below types\nDeleted set will become invalid.\n\n%ts"  // FIX
+	STR_PROPCOMKEYWORD_SETDEL	"Delete the set [%ls]\nOK?\nThe set to be deleted is one of the below types\nDeleted set will become invalid.\n\n%s"  // FIX
 	STR_PROPCOMKEYWORD_RENAME1	"Name for Set has been changed"
 	STR_PROPCOMKEYWORD_RENAME2	"Please input Set's name"
 	STR_PROPCOMKEYWORD_KEYMAX	"Reached the maximum number of registerable keywords.\n"
@@ -3711,7 +3711,7 @@ BEGIN
 	STR_SCROLL_WITH_CTRL_KEY	"Control Key"
 	STR_SCROLL_WITH_SHIFT_KEY	"Shift Key"
 
-	STR_ERR_DLGPROPCOMMON24		"CPropCommon::DoPropertySheet() failed.\npsh.nStartPage=[%d]\n::PropertySheet() failed\n\n%ts\n"
+	STR_ERR_DLGPROPCOMMON24		"CPropCommon::DoPropertySheet() failed.\npsh.nStartPage=[%d]\n::PropertySheet() failed\n\n%s\n"
 
 	// CPropCOmPlugin.cpp
 	STR_PROPCOMPLG_ERR1			"Do not loaded plugin this window or Folder is different for\nYou can't change the settings."
@@ -3787,7 +3787,7 @@ BEGIN
 	STR_PROPTYPE_REGEX_KEYWORD	"RegEx Keyword"
 	STR_PROPTYPE_KEYWORD_HELP	"Keyword Help"
 	STR_PROPTYPE_WINDOW			"Window"
-	STR_PROPTYPE_ERR			"CPropTypes::DoPropertySheet() failed.\npsh.nStartPage=[%d]\n::PropertySheet() failed.\n\n%ts\n"
+	STR_PROPTYPE_ERR			"CPropTypes::DoPropertySheet() failed.\npsh.nStartPage=[%d]\n::PropertySheet() failed.\n\n%s\n"
 
 	// CPropTypesScreen.cpp
 	STR_TSV_MODE_NONE			"Normal"
@@ -3810,7 +3810,7 @@ BEGIN
 	STR_PROPTYPKEYHELP_ERR_REG1		"Cannot register any more dictionaries."
 	STR_PROPTYPKEYHELP_SELECT		"Select dict to update from the list"
 	STR_PROPTYPKEYHELP_ERR_REG2		"You have already registered this dictionary."
-	STR_PROPTYPKEYHELP_ERR_OPEN		"Could not open the file.\n\n%ts"
+	STR_PROPTYPKEYHELP_ERR_OPEN		"Could not open the file.\n\n%s"
 
 	// CPropTypesRegex.cpp
 	STR_PROPTYPEREGEX_LIST1			"Keyword"
@@ -3853,10 +3853,10 @@ BEGIN
 	// CDlgTypeList.cpp
 	STR_DLGTYPELIST_ERR1			"Failed to set association settings.\n"
 	STR_DLGTYPELIST_ERR2			"Failed to reset association settings.\n"
-	STR_DLGTYPELIST_INIT1			"Are you sure you want to initialize %ts ?"
+	STR_DLGTYPELIST_INIT1			"Are you sure you want to initialize %s ?"
 	STR_DLGTYPELIST_SETNAME			"Set %d"
-	STR_DLGTYPELIST_INIT2			"%ts has been initialized"
-	STR_DLGTYPELIST_DEL				"Are you sure you want to remove %ts ?"
+	STR_DLGTYPELIST_INIT2			"%s has been initialized"
+	STR_DLGTYPELIST_DEL				"Are you sure you want to remove %s ?"
 	STR_DLGTYPELIST_ACC				"Are you sure you want to change Windows association settings?\nThis may affects other apps that use same settings."
 
 	// CImpExpManager.cpp
@@ -3899,8 +3899,8 @@ BEGIN
 	STR_ERR_CSHAREDATA17			"${w?$h$:Output$:${I?$f$:$N$}$}${U?(Changed)$} - sakura $V ${R?(Read Only)$:(Write Protected)$}${M?  【Recording Macro】$}"
 	STR_ERR_CSHAREDATA18			"${w?$h$:Output$:$f$}${U?(Changed)$} - sakura $V ${R?(Read Only)$:(Write Protected)$}${M?  【Recording Macro】$}"
 	STR_ERR_CSHAREDATA19			"Attempting to close multiple editor windows, sure you want to do this?"			// Displayed if you try to close edit with many open windows
-	STR_ERR_CSHAREDATA20			"%ts\n\n\nIn the case you want to re-open a file with a different encoding\nsChoose「Re-Open with Encoding」from the file menu please.\n\nCurrent Character Encoding set=[%ts]\nNew Character Encoding=[%ts]" // See Resource F_FILE_REOPEN_SUBMENU
-	STR_ERR_CSHAREDATA21			"%ts\n\nUnclear character encoding found during opening multiple documents.\n\nCurrent Char Encoding=%d [%ts]\nNew Char Encoding=%d [%ts]"
+	STR_ERR_CSHAREDATA20			"%s\n\n\nIn the case you want to re-open a file with a different encoding\nsChoose「Re-Open with Encoding」from the file menu please.\n\nCurrent Character Encoding set=[%s]\nNew Character Encoding=[%s]" // See Resource F_FILE_REOPEN_SUBMENU
+	STR_ERR_CSHAREDATA21			"%s\n\nUnclear character encoding found during opening multiple documents.\n\nCurrent Char Encoding=%d [%s]\nNew Char Encoding=%d [%s]"
 	STR_ERR_CSHAREDATA22			"unknown" // relates to above two [%s]
 
 	// Key settings dialog box ( loop so must be N items long in a row )
@@ -4023,9 +4023,9 @@ BEGIN
 	// CONTAINS a few STRINGS...
 	STR_ERR_ETCUTY01				"System "
 	STR_ERR_ETCUTY02				"User "
-	STR_ERR_ETCUTY03				"%ts resources are extremely low\n\
-Continued execution of %ts will likely result in failure.\n\
-Suspending execution of any further new %ts.\n\
+	STR_ERR_ETCUTY03				"%s resources are extremely low\n\
+Continued execution of %s will likely result in failure.\n\
+Suspending execution of any further new %s.\n\
 \n\
 System Resource\tRemaining  %d%%\n\
 User Resource\tRemaining  %d%%\n\
@@ -4060,8 +4060,8 @@ GDI Resource\tRemaining  %d%%\n\n"
 	// WinMain.cpp
 
 	// CCdoeChecker.cpp
-	STR_CODECHECKER_EOL_UNIFY		"CR Code is mixed.\r\n You want to unify the CR code (%ts)?"
-	STR_CODECHECKER_CONFORM_LOSESOME	"Saving encoding %ts...\r\nChar info is lost by the encoding conversion.\r\nDo you continue saving?\nFirst point %d Line %ts Char[%ls]%ts\nCancel=Move to lost point"
+	STR_CODECHECKER_EOL_UNIFY		"CR Code is mixed.\r\n You want to unify the CR code (%s)?"
+	STR_CODECHECKER_CONFORM_LOSESOME	"Saving encoding %s...\r\nChar info is lost by the encoding conversion.\r\nDo you continue saving?\nFirst point %d Line %s Char[%ls]%s\nCancel=Move to lost point"
 	STR_CODECHECKER_LOSESOME_SAVE	"lose some char info by saving encoding conversion."
 	STR_CODECHECKER_LOSESOME_ROAD	"lose some char info by loading encoding conversion."
 	STR_CONVERT_ERR					"Error on Convert."
@@ -4070,9 +4070,9 @@ GDI Resource\tRemaining  %d%%\n\n"
 
 	STR_DLGEXEC_SELECT_CURDIR		"Select current directory."
 
-	STR_MENU_UNKOWN					"%ts unknown"
-	STR_MENU_GREP					"%ts [Grep]""%ts%ts"""
-	STR_MENU_OUTPUT					"%ts output"
+	STR_MENU_UNKOWN					"%s unknown"
+	STR_MENU_GREP					"%s [Grep]""%s%s"""
+	STR_MENU_OUTPUT					"%s output"
 
 	STR_PRINT_WAITING				"Waiting for end of printing processing..."
 
@@ -4121,39 +4121,39 @@ GDI Resource\tRemaining  %d%%\n\n"
 
 	// CDllPlugin.cpp
 	STR_DLLPLG_TITLE				"DLL Plugin"
-	STR_DLLPLG_INIT_ERR1			"Failed to read DLL\n%ts\n%ls"
+	STR_DLLPLG_INIT_ERR1			"Failed to read DLL\n%s\n%ls"
 	STR_DLLPLG_INIT_ERR2			"Failed to read DLL"
 
 	// CPluginManager.cpp
 	STR_PLGMGR_FOLDER				"Failed to create plugin folder"
 	STR_PLGMGR_CANCEL				"Canceled"
 	STR_PLGMGR_NEWPLUGIN			"Not found new plugin"
-	STR_PLGMGR_INSTALL				"Are you sure you want to install %ts?"
-	STR_PLGMGR_INSTALL_ERR			"Failed to install %ts\nReason: %ls"
+	STR_PLGMGR_INSTALL				"Are you sure you want to install %s?"
+	STR_PLGMGR_INSTALL_ERR			"Failed to install %s\nReason: %ls"
 	STR_PLGMGR_ERR_ZIP				"Can't use ZIP file."
 	STR_PLGMGR_ERR_FOLDER			"Not found plugins folder"
 	STR_PLGMGR_ERR_CREATEDIR		"Can't create plugins folder."
-	STR_PLGMGR_INST_ZIP_ACCESS		"Can't access ZIP file [%ts]"
-	STR_PLGMGR_INST_ZIP_DEF			"Not found plugin Define file(plugin.def) in ZIP file [%ts]"
-	STR_PLGMGR_INST_ZIP_ALREADY		"Already install [%ts]\nDo you overwrite?"
-	STR_PLGMGR_INST_ZIP_INST		"Do you install ZIP plugin [%ts] for [%ts]?"
-	STR_PLGMGR_INST_ZIP_UNZIP		"Error unzip ZIP plugin [%ts]"
-	STR_PLGMGR_INST_ZIP_ERR			"Can't install plugin [%ts]\nReason: %ls"
+	STR_PLGMGR_INST_ZIP_ACCESS		"Can't access ZIP file [%s]"
+	STR_PLGMGR_INST_ZIP_DEF			"Not found plugin Define file(plugin.def) in ZIP file [%s]"
+	STR_PLGMGR_INST_ZIP_ALREADY		"Already install [%s]\nDo you overwrite?"
+	STR_PLGMGR_INST_ZIP_INST		"Do you install ZIP plugin [%s] for [%s]?"
+	STR_PLGMGR_INST_ZIP_UNZIP		"Error unzip ZIP plugin [%s]"
+	STR_PLGMGR_INST_ZIP_ERR			"Can't install plugin [%s]\nReason: %ls"
 	STR_PLGMGR_INST_DEF				"Not found plugin Define file(plugin.def)"
 	STR_PLGMGR_INST_ID				"Not found Plugin.ID"
 	STR_PLGMGR_INST_RESERVE1		"Don't Use  """
 	STR_PLGMGR_INST_RESERVE2		""" in Plugin.ID"
 	STR_PLGMGR_INST_IDNUM			"Plugin.ID of Head character not use numbers"
-	STR_PLGMGR_INST_NAME			"The same plugin has been installed under a different name. Are you sure Overwrite?\n　Yes　->　Use new「%ts」\n　No→　Use installed「%ls」"
+	STR_PLGMGR_INST_NAME			"The same plugin has been installed under a different name. Are you sure Overwrite?\n　Yes　->　Use new「%s」\n　No→　Use installed「%ls」"
 	STR_PLGMGR_INST_USERCANCEL		"User Cancel"
 	STR_PLGMGR_INST_MAX				"Plugin can not register any more"
 
-	STR_WSHPLUG_LOADMACRO			"Failed to read the macro.\n\n%ts"
-	STR_FILESAVE_CONVERT_ERROR		"'%ts'\nFailed File save\nConvert Error."
+	STR_WSHPLUG_LOADMACRO			"Failed to read the macro.\n\n%s"
+	STR_FILESAVE_CONVERT_ERROR		"'%s'\nFailed File save\nConvert Error."
 
 	STR_FILETREE_FROM_COMMON		"Setting: Common"
 	STR_FILETREE_FROM_TYPE			"Setting: Types"
-	STR_FILETREE_FROM_FILE			"Setting: %ts"
+	STR_FILETREE_FROM_FILE			"Setting: %s"
 	STR_FILETREE_CURDIR				"<Cur Folder>"
 	STR_FILETREE_MAXCOUNT			"最大数(%d)を超えたため切り捨てました"
 	STR_FILETREE_MENU_ROOT			"&Ini Root"
@@ -4167,7 +4167,7 @@ GDI Resource\tRemaining  %d%%\n\n"
 	STR_FILETREE_REPLACE_PATH_FROM	"Please Input Replace 'From' Path"
 	STR_FILETREE_REPLACE_PATH_TO	"Please Input Replace 'To' Path"
 
-	STR_ERR_FILEPATH_TOO_LONG		"'%ts'\nCannot open the file.\nThe filepath is too long."
+	STR_ERR_FILEPATH_TOO_LONG		"'%s'\nCannot open the file.\nThe filepath is too long."
 	STR_FILEDIALOG_READONLY			"Open as &read-only"
 	STR_FILEDIALOG_CODE				"En&coding:"
 	STR_FILEDIALOG_EOL				"CR Code(&E):"

@@ -31,10 +31,10 @@ class CMemory;
 struct GrepInfo {
 	CNativeW		cmGrepKey;			//!< 検索キー
 	CNativeW		cmGrepRep;			//!< 置換キー
-	CNativeT		cmGrepFile;			//!< 検索対象ファイル
-	CNativeT		cmGrepFolder;		//!< 検索対象フォルダ
-	CNativeT		cmExcludeFile;		//!< 除外対象ファイル
-	CNativeT		cmExcludeFolder;	//!< 除外対象フォルダ
+	CNativeW		cmGrepFile;			//!< 検索対象ファイル
+	CNativeW		cmGrepFolder;		//!< 検索対象フォルダ
+	CNativeW		cmExcludeFile;		//!< 除外対象ファイル
+	CNativeW		cmExcludeFolder;	//!< 除外対象フォルダ
 	SSearchOption	sGrepSearchOption;	//!< 検索オプション
 	bool			bGrepCurFolder;		//!< カレントディレクトリを維持
 	bool			bGrepStdout;		//!< 標準出力モード
@@ -63,8 +63,8 @@ class CCommandLine  : public TSingleton<CCommandLine> {
 	CCommandLine();
 
 	static int CheckCommandLine(
-		LPTSTR	str,		//!< [in] 検証する文字列（先頭の-は含まない）
-		TCHAR**	arg,		//!< [out] 引数がある場合はその先頭へのポインタ
+		LPWSTR	str,		//!< [in] 検証する文字列（先頭の-は含まない）
+		WCHAR**	arg,		//!< [out] 引数がある場合はその先頭へのポインタ
 		int*	arglen		//!< [out] 引数の長さ
 	);
 
@@ -72,9 +72,9 @@ class CCommandLine  : public TSingleton<CCommandLine> {
 		引用符で囲まれている数値を認識するようにする
 		@date 2002.12.05 genta
 	*/
-	static int AtoiOptionInt(const TCHAR* arg){
-		return ( arg[0] == _T('"') || arg[0] == _T('\'') ) ?
-			_ttoi( arg + 1 ) : _ttoi( arg );
+	static int AtoiOptionInt(const WCHAR* arg){
+		return ( arg[0] == L'"' || arg[0] == L'\'' ) ?
+			_wtoi( arg + 1 ) : _wtoi( arg );
 	}
 
 // member accessor method
@@ -98,9 +98,9 @@ public:
 	}
 	bool IsProfileMgr() { return m_bProfileMgr; }
 	int GetFileNum(void) { return m_vFiles.size(); }
-	const TCHAR* GetFileName(int i) { return i < GetFileNum() ? m_vFiles[i].c_str() : NULL; }
+	const WCHAR* GetFileName(int i) { return i < GetFileNum() ? m_vFiles[i].c_str() : NULL; }
 	void ClearFile(void) { m_vFiles.clear(); }
-	void ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse = true );
+	void ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse = true );
 
 // member valiables
 private:
@@ -118,7 +118,7 @@ private:
 	CNativeW	m_cmMacro;			//! [out] マクロファイル名／マクロ文
 	CNativeW	m_cmMacroType;		//! [out] マクロ種別
 	CNativeW	m_cmProfile;		//! プロファイル名
-	std::vector<std::tstring> m_vFiles;	//!< ファイル名(複数)
+	std::vector<std::wstring> m_vFiles;	//!< ファイル名(複数)
 };
 
 ///////////////////////////////////////////////////////////////////////

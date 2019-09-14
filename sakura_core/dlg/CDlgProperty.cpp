@@ -90,8 +90,8 @@ BOOL CDlgProperty::OnBnClicked( int wID )
 void CDlgProperty::SetData( void )
 {
 	CEditDoc*		pCEditDoc = (CEditDoc*)m_lParam;
-	CNativeT		cmemProp;
-	TCHAR			szWork[500];
+	CNativeW		cmemProp;
+	WCHAR			szWork[500];
 
 	HANDLE			nFind;
 	WIN32_FIND_DATA	wfd;
@@ -99,15 +99,15 @@ void CDlgProperty::SetData( void )
 	//	Aug. 16, 2000 genta	全角化
 	cmemProp.AppendString( LS(STR_DLGFLPROP_FILENAME) );
 	cmemProp.AppendString( pCEditDoc->m_cDocFile.GetFilePath() );
-	cmemProp.AppendString( _T("\r\n") );
+	cmemProp.AppendString( L"\r\n" );
 
 	cmemProp.AppendString( LS(STR_DLGFLPROP_FILETYPE) );
 	cmemProp.AppendString( pCEditDoc->m_cDocType.GetDocumentAttribute().m_szTypeName );
-	cmemProp.AppendString( _T("\r\n") );
+	cmemProp.AppendString( L"\r\n" );
 
 	cmemProp.AppendString( LS(STR_DLGFLPROP_ENCODING) );
 	{
-		TCHAR szCpName[100];
+		WCHAR szCpName[100];
 		CCodePage::GetNameNormal(szCpName, pCEditDoc->GetDocumentEncoding());
 		cmemProp.AppendString( szCpName );
 	}
@@ -116,7 +116,7 @@ void CDlgProperty::SetData( void )
 		cmemProp.AppendString( LS(STR_DLGFLPROP_WITH_BOM) );
 	}
 	//	To Here  2008/4/27 Uchi
-	cmemProp.AppendString( _T("\r\n") );
+	cmemProp.AppendString( L"\r\n" );
 
 	auto_sprintf( szWork, LS(STR_DLGFLPROP_LINE_COUNT), pCEditDoc->m_cDocLineMgr.GetLineCount() );
 	cmemProp.AppendString( szWork );
@@ -186,7 +186,7 @@ void CDlgProperty::SetData( void )
 		if( wfd.dwFileAttributes & FILE_ATTRIBUTE_TEMPORARY ){
 			cmemProp.AppendString( LS(STR_DLGFLPROP_AT_TEMP) );
 		}
-		cmemProp.AppendString( _T("\r\n") );
+		cmemProp.AppendString( L"\r\n" );
 
 		cmemProp.AppendString( LS(STR_DLGFLPROP_CREATE_DT) );
 		CFileTime ctimeCreation = wfd.ftCreationTime;
@@ -199,7 +199,7 @@ void CDlgProperty::SetData( void )
 			ctimeCreation->wSecond
 		);
 		cmemProp.AppendString( szWork );
-		cmemProp.AppendString( _T("\r\n") );
+		cmemProp.AppendString( L"\r\n" );
 
 		cmemProp.AppendString( LS(STR_DLGFLPROP_UPDATE_DT) );
 		CFileTime ctimeLastWrite = wfd.ftLastWriteTime;
@@ -212,7 +212,7 @@ void CDlgProperty::SetData( void )
 			ctimeLastWrite->wSecond
 		);
 		cmemProp.AppendString( szWork );
-		cmemProp.AppendString( _T("\r\n") );
+		cmemProp.AppendString( L"\r\n" );
 
 		cmemProp.AppendString( LS(STR_DLGFLPROP_ACCESS_DT) );
 		CFileTime ctimeLastAccess = wfd.ftLastAccessTime;
@@ -225,7 +225,7 @@ void CDlgProperty::SetData( void )
 			ctimeLastAccess->wSecond
 		);
 		cmemProp.AppendString( szWork );
-		cmemProp.AppendString( _T("\r\n") );
+		cmemProp.AppendString( L"\r\n" );
 
 		auto_sprintf( szWork, LS(STR_DLGFLPROP_DOS_NAME), wfd.cAlternateFileName );
 		cmemProp.AppendString( szWork );
@@ -240,7 +240,7 @@ void CDlgProperty::SetData( void )
 	HGLOBAL					hgData;
 	char*					pBuf;
 	int						nBufLen;
-	CNativeT				ctext;
+	CNativeW				ctext;
 	/* メモリ確保 & ファイル読み込み */
 	hgData = NULL;
 	CBinaryInputStream in(pCEditDoc->m_cDocFile.GetFilePath());

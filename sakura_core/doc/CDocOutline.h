@@ -34,7 +34,7 @@ public:
 	CDocOutline(CEditDoc* pcDoc) : m_pcDocRef(pcDoc) { }
 	void	MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr,
 							EOutlineType& nOutlineType,
-						    const TCHAR* pszFileName,
+						    const WCHAR* pszFileName,
 							bool bVisibleMemberFunc = true );					//!< C/C++関数リスト作成
 	void	MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr );					//!< PL/SQL関数リスト作成
 	void	MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr );					//!< テキスト・トピックリスト作成
@@ -49,8 +49,8 @@ public:
 	void	MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml);			//!< HTML アウトライン解析 // 2003.05.20 zenryaku
 	void	MakeTopicList_tex(CFuncInfoArr* pcFuncInfoArr);						//!< TeX アウトライン解析 // 2003.07.20 naoh
 	void	MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr,
-								   std::tstring& sTitleOverride );				//!< ルールファイルを使ってリスト作成 2002.04.01 YAZAKI
-	int		ReadRuleFile( const TCHAR* pszFilename, SOneRule* pcOneRule,
+								   std::wstring& sTitleOverride );				//!< ルールファイルを使ってリスト作成 2002.04.01 YAZAKI
+	int		ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule,
 						  int nMaxCount, bool& bRegex, std::wstring& title );	//!< ルールファイル読込 2002.04.01 YAZAKI
 	void	MakeFuncList_BookMark( CFuncInfoArr* );								//!< ブックマークリスト作成 //2001.12.03 hor
 private:

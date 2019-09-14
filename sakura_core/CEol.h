@@ -49,7 +49,7 @@ enum EEolType : char {
 };
 
 struct SEolDefinition{
-	const TCHAR*	m_szName;
+	const WCHAR*	m_szName;
 	const WCHAR*	m_szDataW;
 	const ACHAR*	m_szDataA;
 	int				m_nLen;
@@ -102,7 +102,7 @@ public:
 	//取得
 	EEolType		GetType()	const{ return m_eEolType; }		//!< 現在のTypeを取得
 	CLogicInt		GetLen()	const { return CLogicInt(g_aEolTable[ m_eEolType ].m_nLen); }	//!< 現在のEOL長を取得。文字単位。
-	const TCHAR*	GetName()	const;	//!< 現在のEOLの名称取得
+	const WCHAR*	GetName()	const;	//!< 現在のEOLの名称取得
 	const wchar_t*	GetValue2()	const;	//!< 現在のEOL文字列先頭へのポインタを取得
 	//#####
 

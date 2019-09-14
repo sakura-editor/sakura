@@ -400,9 +400,9 @@ public:
 	/* その他 */
 
 private:
-	void AlertNotFound(HWND hwnd, bool bReplaceAll, LPCTSTR format, ...);
+	void AlertNotFound(HWND hwnd, bool bReplaceAll, LPCWSTR format, ...);
 	void DelCharForOverwrite(const wchar_t* pszInput, int nLen);	// 上書き用の一文字削除	// 2009.04.11 ryoji
-	bool Sub_PreProcTagJumpByTagsFile( TCHAR* szCurrentPath, int count ); // タグジャンプの前処理
+	bool Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int count ); // タグジャンプの前処理
 public:
 	CLogicInt ConvertEol(const wchar_t* pszText, CLogicInt nTextLen, wchar_t* pszConvertedText);
 	void Sub_BoxSelectLock( int flags );

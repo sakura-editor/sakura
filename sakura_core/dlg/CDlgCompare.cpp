@@ -65,8 +65,8 @@ int CDlgCompare::DoModal(
 	HINSTANCE		hInstance,
 	HWND			hwndParent,
 	LPARAM			lParam,
-	const TCHAR*	pszPath,
-	TCHAR*			pszCompareLabel,
+	const WCHAR*	pszPath,
+	WCHAR*			pszCompareLabel,
 	HWND*			phwndCompareWnd
 )
 {
@@ -129,7 +129,7 @@ void CDlgCompare::SetData( void )
 	EditNode*		pEditNodeArr;
 	EditInfo*		pfi;
 	int				i;
-	TCHAR			szMenu[512];
+	WCHAR			szMenu[512];
 	int				nItem;
 	int				selIndex = 0;
 
@@ -145,7 +145,7 @@ void CDlgCompare::SetData( void )
 		// 水平スクロール幅は実際に表示する文字列の幅を計測して決める	// 2009.09.26 ryoji
 		CTextWidthCalc calc(hwndList);
 		int score = 0;
-		TCHAR		szFile1[_MAX_PATH];
+		WCHAR		szFile1[_MAX_PATH];
 		SplitPath_FolderAndFile(m_pszPath, NULL, szFile1);
 		for( i = 0; i < nRowNum; ++i ){
 			/* トレイからエディタへの編集ファイル名要求通知 */
@@ -169,7 +169,7 @@ void CDlgCompare::SetData( void )
 			calc.SetTextWidthIfMax(szMenu);
 
 			// ファイル名一致のスコアを計算する
-			TCHAR szFile2[_MAX_PATH];
+			WCHAR szFile2[_MAX_PATH];
 			SplitPath_FolderAndFile( pfi->m_szPath, NULL, szFile2 );
 			int scoreTemp = FileMatchScoreSepExt( szFile1, szFile2 );
 			if( score < scoreTemp ){

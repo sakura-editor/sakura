@@ -49,28 +49,28 @@ public:
 	// フルパス名を取得
 	inline wstring GetFullPath()
 	{
-		return to_wchar( GetDllShareData().m_sHistory.m_szIMPORTFOLDER ) + m_sOriginName;
+		return { LPCWSTR(GetDllShareData().m_sHistory.m_szIMPORTFOLDER) + m_sOriginName };
 	}
 	// フルパス名を取得
 	inline wstring MakeFullPath( wstring sFileName )
 	{
-		return to_wchar( GetDllShareData().m_sHistory.m_szIMPORTFOLDER ) + sFileName;
+		return { LPCWSTR(GetDllShareData().m_sHistory.m_szIMPORTFOLDER) + sFileName };
 	}
 	// ファイル名を取得
 	inline wstring GetFileName()	{ return m_sOriginName; }
 
 protected:
 	// Import Folderの設定
-	inline void SetImportFolder( const TCHAR* szPath ) 
+	inline void SetImportFolder( const WCHAR* szPath ) 
 	{
 		/* ファイルのフルパスをフォルダとファイル名に分割 */
 		/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
 		::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL );
-		_tcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, _T("\\") );
+		wcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, L"\\" );
 	}
 
 	// デフォルト拡張子の取得(「*.txt」形式)
-	virtual const TCHAR* GetDefaultExtension();
+	virtual const WCHAR* GetDefaultExtension();
 	// デフォルト拡張子の取得(「txt」形式)
 	virtual const wchar_t* GetOriginExtension();
 
@@ -102,7 +102,7 @@ public:
 
 public:
 	// デフォルト拡張子の取得
-	const TCHAR* GetDefaultExtension()	{ return _T("*.ini"); }
+	const WCHAR* GetDefaultExtension()	{ return L"*.ini"; }
 	const wchar_t* GetOriginExtension()	{ return L"ini"; }
 	bool IsAddType(){ return m_bAddType; }
 
@@ -138,7 +138,7 @@ public:
 
 public:
 	// デフォルト拡張子の取得
-	const TCHAR* GetDefaultExtension()	{ return _T("*.col"); }
+	const WCHAR* GetDefaultExtension()	{ return L"*.col"; }
 	const wchar_t* GetOriginExtension()	{ return L"col"; }
 
 private:
@@ -163,7 +163,7 @@ public:
 
 public:
 	// デフォルト拡張子の取得
-	const TCHAR* GetDefaultExtension()	{ return _T("*.rkw"); }
+	const WCHAR* GetDefaultExtension()	{ return L"*.rkw"; }
 	const wchar_t* GetOriginExtension()	{ return L"rkw"; }
 
 private:
@@ -188,7 +188,7 @@ public:
 
 public:
 	// デフォルト拡張子の取得
-	const TCHAR* GetDefaultExtension()	{ return _T("*.txt"); }
+	const WCHAR* GetDefaultExtension()	{ return L"*.txt"; }
 	const wchar_t* GetOriginExtension()	{ return L"txt"; }
 
 private:
@@ -213,7 +213,7 @@ public:
 
 public:
 	// デフォルト拡張子の取得
-	const TCHAR* GetDefaultExtension()	{ return _T("*.key"); }
+	const WCHAR* GetDefaultExtension()	{ return L"*.key"; }
 	const wchar_t* GetOriginExtension()	{ return L"key"; }
 
 private:
@@ -238,7 +238,7 @@ public:
 
 public:
 	// デフォルト拡張子の取得
-	const TCHAR* GetDefaultExtension()	{ return _T("*.mnu"); }
+	const WCHAR* GetDefaultExtension()	{ return L"*.mnu"; }
 	const wchar_t* GetOriginExtension()	{ return L"mnu"; }
 
 private:
@@ -265,7 +265,7 @@ public:
 
 public:
 	// デフォルト拡張子の取得
-	const TCHAR* GetDefaultExtension()	{ return _T("*.kwd"); }
+	const WCHAR* GetDefaultExtension()	{ return L"*.kwd"; }
 	const wchar_t* GetOriginExtension()	{ return L"kwd"; }
 
 private:
@@ -292,7 +292,7 @@ public:
 
 public:
 	// デフォルト拡張子の取得
-	const TCHAR* GetDefaultExtension()	{ return _T("*.ini"); }
+	const WCHAR* GetDefaultExtension()	{ return L"*.ini"; }
 	const wchar_t* GetOriginExtension()	{ return L"ini"; }
 
 private:
@@ -318,7 +318,7 @@ public:
 
 public:
 	// デフォルト拡張子の取得
-	const TCHAR* GetDefaultExtension()	{ return _T("*.ini"); }
+	const WCHAR* GetDefaultExtension()	{ return L"*.ini"; }
 	const wchar_t* GetOriginExtension()	{ return L"ini"; }
 
 private:

@@ -748,9 +748,9 @@ int CSearchAgent::SearchWord(
 end_of_func:;
 #ifdef MEASURE_SEARCH_TIME
 	clockEnd = clock();
-	TCHAR buf[100];
+	WCHAR buf[100];
 	memset(buf, 0x00, sizeof(buf));
-	wsprintf( buf, _T("%d"), clockEnd - clockStart);
+	wsprintf( buf, L"%d", clockEnd - clockStart);
 	::MessageBox( NULL, buf, GSTR_APPNAME, MB_OK );
 #endif
 

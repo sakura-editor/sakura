@@ -241,7 +241,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 			OnHelp( hwndDlg, IDD_PROP_TOOLBAR );
 			return TRUE;
 		case PSN_KILLACTIVE:
-//			MYTRACE( _T("PROP_TOOLBAR PSN_KILLACTIVE\n") );
+//			MYTRACE( L"PROP_TOOLBAR PSN_KILLACTIVE\n" );
 			/* ダイアログデータの取得 Toolbar */
 			GetData( hwndDlg );
 			return TRUE;
@@ -588,14 +588,14 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 	if( tbb.fsStyle & TBSTYLE_SEP ){
 		// テキストだけ表示する
 		if( tbb.idCommand == F_SEPARATOR ){
-			auto_strncpy( szLabel, LSW(STR_PROPCOMTOOL_ITEM1), _countof(szLabel) - 1 );	// nLength 未使用 2003/01/09 Moca
+			auto_strncpy( szLabel, LS(STR_PROPCOMTOOL_ITEM1), _countof(szLabel) - 1 );	// nLength 未使用 2003/01/09 Moca
 			szLabel[_countof(szLabel) - 1] = L'\0';
 		}else if( tbb.idCommand == F_MENU_NOT_USED_FIRST ){
 			// ツールバー折返
-			auto_strncpy( szLabel, LSW(STR_PROPCOMTOOL_ITEM2), _countof(szLabel) - 1 );
+			auto_strncpy( szLabel, LS(STR_PROPCOMTOOL_ITEM2), _countof(szLabel) - 1 );
 			szLabel[_countof(szLabel) - 1] = L'\0';
 		}else{
-			auto_strncpy( szLabel, LSW(STR_PROPCOMTOOL_ITEM3), _countof(szLabel) - 1 );
+			auto_strncpy( szLabel, LS(STR_PROPCOMTOOL_ITEM3), _countof(szLabel) - 1 );
 			szLabel[_countof(szLabel) - 1] = L'\0';
 		}
 	}else{
@@ -616,7 +616,7 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 	::InflateRect( &rcText, -cxBorder, -cyBorder );
 
 	// 選択アイテムの背景を描画
-	::ExtTextOut( pDis->hDC, 0, 0, ETO_OPAQUE, &rcText, (LPCTSTR) NULL, 0, NULL );
+	::ExtTextOut( pDis->hDC, 0, 0, ETO_OPAQUE, &rcText, (LPCWSTR) NULL, 0, NULL );
 
 	// 微調整 インデントと上余白
 	rcText.left += cxFrame;

@@ -26,7 +26,6 @@
 #define SAKURA_CNATIVEW_59D44E96_F966_471D_A399_73D86F939DDA9_H_
 
 #include "CNative.h"
-#include "mem/CNativeT.h"
 #include "basis/SakuraBasis.h"
 #include "debug/Debug2.h" //assert
 
@@ -146,39 +145,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 	void Replace( const wchar_t* pszFrom, const wchar_t* pszTo );   //!< 文字列置換
-	void ReplaceT( const wchar_t* pszFrom, const wchar_t* pszTo ){
-		Replace( pszFrom, pszTo );
-	}
 	void Replace( const wchar_t* pszFrom, int nFromLen, const wchar_t* pszTo, int nToLen );   //!< 文字列置換
-
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                  型限定インターフェース                     //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	// 使用はできるだけ控えるのが望ましい。
-	// ひとつはオーバーヘッドを抑える意味で。
-	// ひとつは変換によるデータ喪失を抑える意味で。
-
-	//ACHAR
-	void SetStringOld( const char* pData, int nDataLen );    //!< バッファの内容を置き換える。pDataはSJIS。nDataLenは文字単位。
-	void SetStringOld( const char* pszData );                //!< バッファの内容を置き換える。pszDataはSJIS。
-	void AppendStringOld( const char* pData, int nDataLen ); //!< バッファの最後にデータを追加する。pszDataはSJIS。
-	void AppendStringOld( const char* pszData );             //!< バッファの最後にデータを追加する。pszDataはSJIS。
-	const char* GetStringPtrOld() const; //ShiftJISに変換して返す
-
-	//WCHAR
-	void SetStringW(const wchar_t* pszData)				{ return SetString(pszData); }
-	void SetStringW(const wchar_t* pData, int nLength)		{ return SetString(pData,nLength); }
-	void AppendStringW(const wchar_t* pszData)				{ return AppendString(pszData); }
-	void AppendStringW(const wchar_t* pData, int nLength)	{ return AppendString(pData,nLength); }
-	const wchar_t* GetStringW() const						{ return GetStringPtr(); }
-
-	//TCHAR
-	void SetStringT( const TCHAR* pData, int nDataLen )	{ return SetString(pData,nDataLen); }
-	void SetStringT( const TCHAR* pszData )				{ return SetString(pszData); }
-	void AppendStringT(const TCHAR* pszData)			{ return AppendString(pszData); }
-	void AppendStringT(const TCHAR* pData, int nLength)	{ return AppendString(pData,nLength); }
-	void AppendNativeDataT(const CNativeT& rhs)			{ return AppendNativeData(rhs); }
-	const TCHAR* GetStringT() const						{ return GetStringPtr(); }
 
 public:
 	// -- -- staticインターフェース -- -- //

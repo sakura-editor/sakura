@@ -39,9 +39,9 @@ public:
 	//オーバーライド
 	int				CompareItem( const CReplaceString* p1, LPCWSTR p2 ) const;
 	void			CopyItem( CReplaceString* dst, LPCWSTR src ) const;
-	const TCHAR*	GetItemText( int nIndex ) const;
+	const WCHAR*	GetItemText( int nIndex ) const;
 	bool			DataToReceiveType( LPCWSTR* dst, const CReplaceString* src ) const;
-	bool			TextToDataType( CReplaceString* dst, LPCTSTR pszText ) const;
+	bool			TextToDataType( CReplaceString* dst, LPCWSTR pszText ) const;
 	bool			ValidateReceiveType( LPCWSTR p ) const;
 	size_t			GetTextMaxLength() const;
 };

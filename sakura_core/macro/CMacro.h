@@ -73,7 +73,6 @@ struct CMacroParam{
 		m_eType = EMacroParamTypeNull;
 	}
 	void SetStringParam( const WCHAR* szParam, int nLength = -1 );
-	void SetStringParam( const ACHAR* lParam ){ SetStringParam(to_wchar(lParam)); }
 	void SetIntParam( const int nParam );
 };
 
@@ -110,22 +109,16 @@ public:
 	
 	void AddLParam( const LPARAM* lParam, const CEditView* pcEditView  );	//@@@ 2002.2.2 YAZAKI pcEditViewも渡す
 	void AddStringParam( const WCHAR* szParam, int nLength = -1 );
-	void AddStringParam( const ACHAR* lParam ){ return AddStringParam(to_wchar(lParam)); }
 	void AddIntParam( const int nParam );
 	int GetParamCount() const;
 
 	static bool HandleCommand( CEditView *View, EFunctionCode ID, const WCHAR* Argument[], const int ArgLengths[], const int ArgSize );
 	static bool HandleFunction( CEditView *View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result);
 	//2009.10.29 syat HandleCommandとHandleFunctionの引数を少しそろえた
-#if 0
+
 	/*
 	||  Attributes & Operations
 	*/
-	static char* GetFuncInfoByID( HINSTANCE , int , char* , char* );	/* 機能ID→関数名，機能名日本語 */
-	static int GetFuncInfoByName( HINSTANCE , const char* , char* );	/* 関数名→機能ID，機能名日本語 */
-	static BOOL CanFuncIsKeyMacro( int );	/* キーマクロに記録可能な機能かどうかを調べる */
-#endif
-
 protected:
 	static WCHAR* GetParamAt(CMacroParam*, int);
 

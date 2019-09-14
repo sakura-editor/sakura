@@ -42,7 +42,7 @@ public:
 		Close();
 	}
 
-	static bool ExistsKey(HKEY root, const TCHAR* path, unsigned int access = KEY_READ)
+	static bool ExistsKey(HKEY root, const WCHAR* path, unsigned int access = KEY_READ)
 	{
 		CRegKey test;
 		return (test.Open(root, path, access) == 0);
@@ -51,7 +51,7 @@ public:
 	{
 		return (_key != NULL);
 	}
-	int Create(HKEY root, const TCHAR* path, unsigned int access = (KEY_READ | KEY_WRITE))
+	int Create(HKEY root, const WCHAR* path, unsigned int access = (KEY_READ | KEY_WRITE))
 	{
 		LONG error = RegCreateKeyEx(root, path, 0, NULL, 0, access, NULL, &_key, NULL);
 		if(error != ERROR_SUCCESS)
@@ -61,7 +61,7 @@ public:
 		_root = root;
 		return ERROR_SUCCESS;
 	}
-	int Open(HKEY root, const TCHAR* path, unsigned int access = KEY_READ)
+	int Open(HKEY root, const WCHAR* path, unsigned int access = KEY_READ)
 	{
 		LONG error = RegOpenKeyEx(root, path, 0, access, &_key);
 		if(error != ERROR_SUCCESS)
@@ -80,7 +80,7 @@ public:
 			_root = NULL;
 		}
 	}
-	int GetValue(const TCHAR* valueName, TCHAR* buffer, unsigned int nMaxChar, int* pGetChars = NULL) const
+	int GetValue(const WCHAR* valueName, WCHAR* buffer, unsigned int nMaxChar, int* pGetChars = NULL) const
 	{
 		DWORD dwType = REG_SZ;
 		DWORD nError = 0;
@@ -95,7 +95,7 @@ public:
 		}
 		return ERROR_SUCCESS;
 	}
-	int GetValueBINARY(const TCHAR* valueName, BYTE* buffer, unsigned int nMaxChar, int* pGetChars = NULL) const
+	int GetValueBINARY(const WCHAR* valueName, BYTE* buffer, unsigned int nMaxChar, int* pGetChars = NULL) const
 	{
 		DWORD dwType = REG_BINARY;
 		DWORD nError = 0;
@@ -110,11 +110,11 @@ public:
 		}
 		return ERROR_SUCCESS;
 	}
-	int SetValue(const TCHAR* valueName, const TCHAR* buffer, int nMaxChar = -1)
+	int SetValue(const WCHAR* valueName, const WCHAR* buffer, int nMaxChar = -1)
 	{
 		if(nMaxChar == -1)
 		{
-			nMaxChar = (DWORD)_tcslen(buffer) * sizeof(TCHAR);
+			nMaxChar = (DWORD)wcslen(buffer) * sizeof(WCHAR);
 		}
 		DWORD nError = 0;
 		if ((nError = RegSetValueEx(_key, valueName, 0, REG_SZ, (LPBYTE)buffer, nMaxChar)) != 0)
@@ -123,7 +123,7 @@ public:
 		}
 		return ERROR_SUCCESS;
 	}
-	int SetValue(const TCHAR* valueName, const BYTE* buffer, int nMaxChar, DWORD dwType)
+	int SetValue(const WCHAR* valueName, const BYTE* buffer, int nMaxChar, DWORD dwType)
 	{
 		DWORD nError = 0;
 		if ((nError = RegSetValueEx(_key, valueName, 0, dwType, (LPBYTE)buffer, nMaxChar)) != 0)
@@ -133,16 +133,16 @@ public:
 		return ERROR_SUCCESS;
 	}
 
-	int DeleteValue(const TCHAR* valueName)
+	int DeleteValue(const WCHAR* valueName)
 	{
 		return RegDeleteValue(_key, valueName);
 	}
-	int DeleteSubKey(const TCHAR* path)
+	int DeleteSubKey(const WCHAR* path)
 	{
 		return RegDeleteKey(_key, path);
 	}
 
-	int EnumKey(int &index, TCHAR* pNameBuffer, int nMaxChar, int* pGetChar = NULL) const
+	int EnumKey(int &index, WCHAR* pNameBuffer, int nMaxChar, int* pGetChar = NULL) const
 	{
 		if(index < 0)
 		{
@@ -162,7 +162,7 @@ public:
 		return nError;
 	}
 
-	int EnumValue(int &index, TCHAR* pNameBuffer, int nMaxChar, DWORD *lpType, BYTE *lpData, int nMaxData, DWORD* pDataLen) const
+	int EnumValue(int &index, WCHAR* pNameBuffer, int nMaxChar, DWORD *lpType, BYTE *lpData, int nMaxData, DWORD* pDataLen) const
 	{
 		if(index < 0)
 		{
@@ -183,7 +183,7 @@ public:
 		return nError;
 	}
 
-	static int DeleteKey(HKEY root, const TCHAR* path)
+	static int DeleteKey(HKEY root, const WCHAR* path)
 	{
 		return RegDeleteKey(root, path);
 	}

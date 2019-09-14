@@ -228,7 +228,7 @@ int CPropGrep::GetData( HWND hwndDlg )
 
 void CPropGrep::SetRegexpVersion( HWND hwndDlg )
 {
-	TCHAR regexp_dll[_MAX_PATH];
+	WCHAR regexp_dll[_MAX_PATH];
 	
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEXPLIB, regexp_dll, _countof( regexp_dll ));
 	CBregexp breg;
@@ -236,6 +236,6 @@ void CPropGrep::SetRegexpVersion( HWND hwndDlg )
 		::DlgItem_SetText( hwndDlg, IDC_LABEL_REGEXP_VER, LS(STR_PROPCOMGREP_DLL) );
 		return;
 	}
-	::DlgItem_SetText( hwndDlg, IDC_LABEL_REGEXP_VER, breg.GetVersionT() );
+	::DlgItem_SetText( hwndDlg, IDC_LABEL_REGEXP_VER, breg.GetVersionW() );
 }
 

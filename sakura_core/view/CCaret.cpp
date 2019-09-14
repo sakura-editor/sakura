@@ -664,10 +664,10 @@ void CCaret::ShowCaretPosInfo()
 	const wchar_t*	pLine = pLayoutMgr->GetLineStr( GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout );
 
 	// -- -- -- -- 文字コード情報 -> pszCodeName -- -- -- -- //
-	const TCHAR* pszCodeName;
-	CNativeT cmemCodeName;
+	const WCHAR* pszCodeName;
+	CNativeW cmemCodeName;
 	if (hwndStatusBar) {
-		TCHAR szCodeName[100];
+		WCHAR szCodeName[100];
 		CCodePage::GetNameNormal(szCodeName, m_pEditDoc->GetDocumentEncoding());
 		cmemCodeName.AppendString(szCodeName);
 		if (m_pEditDoc->GetDocumentBomExist()) {
@@ -675,11 +675,11 @@ void CCaret::ShowCaretPosInfo()
 		}
 	}
 	else {
-		TCHAR szCodeName[100];
+		WCHAR szCodeName[100];
 		CCodePage::GetNameShort(szCodeName, m_pEditDoc->GetDocumentEncoding());
 		cmemCodeName.AppendString(szCodeName);
 		if (m_pEditDoc->GetDocumentBomExist()) {
-			cmemCodeName.AppendString( _T("#") );		// BOM付(メニューバーなので小さく)	// 2013/4/17 Uchi
+			cmemCodeName.AppendString( L"#" );		// BOM付(メニューバーなので小さく)	// 2013/4/17 Uchi
 		}
 	}
 	pszCodeName = cmemCodeName.GetStringPtr();
@@ -688,7 +688,7 @@ void CCaret::ShowCaretPosInfo()
 	//	May 12, 2000 genta
 	//	改行コードの表示を追加
 	CEol cNlType = m_pEditDoc->m_cDocEditor.GetNewLineCode();
-	const TCHAR* szEolMode = cNlType.GetName();
+	const WCHAR* szEolMode = cNlType.GetName();
 
 	// -- -- -- -- キャレット位置 -> ptCaret -- -- -- -- //
 	//
@@ -738,13 +738,13 @@ void CCaret::ShowCaretPosInfo()
 
 	// -- -- -- -- キャレット位置の文字情報 -> szCaretChar -- -- -- -- //
 	//
-	TCHAR szCaretChar[32]=_T("");
+	WCHAR szCaretChar[32]=L"";
 	if( pLine ){
 		// 指定された桁に対応する行のデータ内の位置を調べる
 		CLogicInt nIdx = GetCaretLogicPos().GetX2() - pcLayout->GetLogicOffset();
 		if( nIdx < nLineLen ){
 			if( nIdx < nLineLen - (pcLayout->GetLayoutEol().GetLen()?1:0) ){
-				//auto_sprintf( szCaretChar, _T("%04x"), );
+				//auto_sprintf( szCaretChar, L"%04x", );
 				//任意の文字コードからUnicodeへ変換する		2008/6/9 Uchi
 				CCodeBase* pCode = CCodeFactory::CreateCodeBase(m_pEditDoc->GetDocumentEncoding(), false);
 				CommonSetting_Statusbar* psStatusbar = &GetDllShareData().m_Common.m_sStatusbar;
@@ -758,7 +758,7 @@ void CCaret::ShowCaretPosInfo()
 				}
 			}
 			else{
-				_tcscpy_s(szCaretChar, _countof(szCaretChar), pcLayout->GetLayoutEol().GetName());
+				wcscpy_s(szCaretChar, _countof(szCaretChar), pcLayout->GetLayoutEol().GetName());
 			}
 		}
 	}
@@ -767,17 +767,17 @@ void CCaret::ShowCaretPosInfo()
 	//
 	// ウィンドウ右上に書き出す
 	if( !hwndStatusBar ){
-		TCHAR	szText[64];
-		TCHAR	szFormat[64];
-		TCHAR	szLeft[64];
-		TCHAR	szRight[64];
+		WCHAR	szText[64];
+		WCHAR	szFormat[64];
+		WCHAR	szLeft[64];
+		WCHAR	szRight[64];
 		int		nLen;
 		{	// メッセージの左側文字列（「行:列」を除いた表示）
-			nLen = _tcslen(pszCodeName) + _tcslen(szEolMode) + _tcslen(szCaretChar);
+			nLen = wcslen(pszCodeName) + wcslen(szEolMode) + wcslen(szCaretChar);
 			// これは %s(%s)%6s%s%s 等になる。%6ts表記は使えないので注意
 			auto_sprintf(
 				szFormat,
-				_T("%%s(%%s)%%%ds%%s%%s"),	// 「キャレット位置の文字情報」を右詰で配置（足りないときは左詰になって右に伸びる）
+				L"%%s(%%s)%%%ds%%s%%s",	// 「キャレット位置の文字情報」を右詰で配置（足りないときは左詰になって右に伸びる）
 				(nLen < 15)? 15 - nLen: 1
 			);
 			auto_sprintf(
@@ -785,24 +785,24 @@ void CCaret::ShowCaretPosInfo()
 				szFormat,
 				pszCodeName,
 				szEolMode,
-				szCaretChar[0]? _T("["): _T(" "),	// 文字情報無しなら括弧も省略（EOFやフリーカーソル位置）
+				szCaretChar[0]? L"[": L" ",	// 文字情報無しなら括弧も省略（EOFやフリーカーソル位置）
 				szCaretChar,
-				szCaretChar[0]? _T("]"): _T(" ")	// 文字情報無しなら括弧も省略（EOFやフリーカーソル位置）
+				szCaretChar[0]? L"]": L" "	// 文字情報無しなら括弧も省略（EOFやフリーカーソル位置）
 			);
 		}
-		szRight[0] = _T('\0');
-		nLen = MENUBAR_MESSAGE_MAX_LEN - _tcslen(szLeft);	// 右側に残っている文字長
+		szRight[0] = L'\0';
+		nLen = MENUBAR_MESSAGE_MAX_LEN - wcslen(szLeft);	// 右側に残っている文字長
 		if( nLen > 0 ){	// メッセージの右側文字列（「行:列」表示）
-			TCHAR szRowCol[32];
+			WCHAR szRowCol[32];
 			auto_sprintf(
 				szRowCol,
-				_T("%d:%-4d"),	// 「列」は最小幅を指定して左寄せ（足りないときは右に伸びる）
+				L"%d:%-4d",	// 「列」は最小幅を指定して左寄せ（足りないときは右に伸びる）
 				ptCaret.y,
 				ptCaret.x
 			);
 			auto_sprintf(
 				szFormat,
-				_T("%%%ds"),	// 「行:列」を右詰で配置（足りないときは左詰になって右に伸びる）
+				L"%%%ds",	// 「行:列」を右詰で配置（足りないときは左詰になって右に伸びる）
 				nLen
 			);
 			auto_sprintf(
@@ -813,7 +813,7 @@ void CCaret::ShowCaretPosInfo()
 		}
 		auto_sprintf(
 			szText,
-			_T("%s%s"),
+			L"%s%s",
 			szLeft,
 			szRight
 		);
@@ -821,20 +821,20 @@ void CCaret::ShowCaretPosInfo()
 	}
 	// ステータスバーに状態を書き出す
 	else{
-		TCHAR	szText_1[64];
+		WCHAR	szText_1[64];
 		auto_sprintf( szText_1, LS( STR_STATUS_ROW_COL ), ptCaret.y, ptCaret.x );	//Oct. 30, 2000 JEPRO 千万行も要らん
 
-		TCHAR	szText_6[16];
+		WCHAR	szText_6[16];
 		if( m_pEditView->IsInsMode() /* Oct. 2, 2005 genta */ ){
-			_tcscpy( szText_6, LS( STR_INS_MODE_INS ) );	// "挿入"
+			wcscpy( szText_6, LS( STR_INS_MODE_INS ) );	// "挿入"
 		}else{
-			_tcscpy( szText_6, LS( STR_INS_MODE_OVR ) );	// "上書"
+			wcscpy( szText_6, LS( STR_INS_MODE_OVR ) );	// "上書"
 		}
 
 		auto& statusBar = m_pEditDoc->m_pcEditWnd->m_cStatusBar;
 
 		if( m_bClearStatus ){
-			statusBar.SetStatusText( 0, SBT_NOBORDERS, _T("") );
+			statusBar.SetStatusText( 0, SBT_NOBORDERS, L"" );
 		}
 		statusBar.SetStatusText( 1, 0,             szText_1 );
 		//	May 12, 2000 genta
@@ -844,7 +844,7 @@ void CCaret::ShowCaretPosInfo()
 		//	To Here
 		statusBar.SetStatusText( 3, 0,             szCaretChar );
 		statusBar.SetStatusText( 4, 0,             pszCodeName );
-		statusBar.SetStatusText( 5, SBT_OWNERDRAW, _T("") );
+		statusBar.SetStatusText( 5, SBT_OWNERDRAW, L"" );
 		statusBar.SetStatusText( 6, 0,             szText_6 );
 	}
 }

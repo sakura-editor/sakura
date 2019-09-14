@@ -59,7 +59,7 @@ void CSearchKeywordManager::AddToReplaceKeyArr( const wchar_t* pszReplaceKey )
 /*!	m_aGrepFilesにpszGrepFileを追加する
 	YAZAKI
 */
-void CSearchKeywordManager::AddToGrepFileArr( const TCHAR* pszGrepFile )
+void CSearchKeywordManager::AddToGrepFileArr( const WCHAR* pszGrepFile )
 {
 	CRecentGrepFile	cRecentGrepFile;
 	cRecentGrepFile.AppendItem( pszGrepFile );
@@ -69,7 +69,7 @@ void CSearchKeywordManager::AddToGrepFileArr( const TCHAR* pszGrepFile )
 /*!	m_aGrepFolders にpszGrepFolder を追加する
 	YAZAKI
 */
-void CSearchKeywordManager::AddToGrepFolderArr( const TCHAR* pszGrepFolder )
+void CSearchKeywordManager::AddToGrepFolderArr( const WCHAR* pszGrepFolder )
 {
 	CRecentGrepFolder	cRecentGrepFolder;
 	cRecentGrepFolder.AppendItem( pszGrepFolder );
@@ -78,7 +78,7 @@ void CSearchKeywordManager::AddToGrepFolderArr( const TCHAR* pszGrepFolder )
 
 /*!	m_aExcludeFilesにpszExcludeFileを追加する
 */
-void CSearchKeywordManager::AddToExcludeFileArr(const TCHAR* pszExcludeFile)
+void CSearchKeywordManager::AddToExcludeFileArr(const WCHAR* pszExcludeFile)
 {
 	CRecentExcludeFile	cRecentExcludeFile;
 	cRecentExcludeFile.AppendItem(pszExcludeFile);
@@ -87,7 +87,7 @@ void CSearchKeywordManager::AddToExcludeFileArr(const TCHAR* pszExcludeFile)
 
 /*!	m_aExcludeFolders.size()にpszExcludeFolderを追加する
 */
-void CSearchKeywordManager::AddToExcludeFolderArr(const TCHAR* pszExcludeFolder)
+void CSearchKeywordManager::AddToExcludeFolderArr(const WCHAR* pszExcludeFolder)
 {
 	CRecentExcludeFolder	cRecentExcludeFolder;
 	cRecentExcludeFolder.AppendItem(pszExcludeFolder);

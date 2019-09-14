@@ -44,7 +44,7 @@ BOOL CDicMgr::Search(
 	const int			nCmpLen,			//!< 検索キーワードの長さ
 	CNativeW**			ppcmemKey,			//!< 見つかったキーワード．呼び出し元の責任で解放する．
 	CNativeW**			ppcmemMean,			//!< 見つかったキーワードに対応する辞書内容．呼び出し元の責任で解放する．
-	const TCHAR*		pszKeyWordHelpFile,	//!< キーワードヘルプファイルのパス名
+	const WCHAR*		pszKeyWordHelpFile,	//!< キーワードヘルプファイルのパス名
 	int*				pLine				//!< 見つかったキーワードのキーワードヘルプファイル内での行番号
 )
 {
@@ -59,7 +59,7 @@ BOOL CDicMgr::Search(
 	const wchar_t*	pszKeySeps = L",\0";
 
 	/* 辞書ファイル */
-	if( pszKeyWordHelpFile[0] == _T('\0') ){
+	if( pszKeyWordHelpFile[0] == L'\0' ){
 		return FALSE;
 	}
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
@@ -125,12 +125,12 @@ int CDicMgr::HokanSearch(
 	bool			bHokanLoHiCase,	//!< 英大文字小文字を同一視する
 	vector_ex<std::wstring>&		vKouho,	//!< [out] 候補リスト
 	int				nMaxKouho,		//!< Max候補数(0==無制限)
-	const TCHAR*	pszKeyWordFile
+	const WCHAR*	pszKeyWordFile
 )
 {
 	int		nKeyLen;
 	int		nRet;
-	if( pszKeyWordFile[0] == _T('\0') ){
+	if( pszKeyWordFile[0] == L'\0' ){
 		return 0;
 	}
 

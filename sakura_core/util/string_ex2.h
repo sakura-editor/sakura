@@ -33,9 +33,9 @@ class CNativeW;
 wchar_t *wcsncpy_ex(wchar_t *dst, size_t dst_count, const wchar_t* src, size_t src_count);
 wchar_t *wcs_pushW(wchar_t *dst, size_t dst_count, const wchar_t* src, size_t src_count);
 wchar_t *wcs_pushW(wchar_t *dst, size_t dst_count, const wchar_t* src);
-#define wcs_pushT wcs_pushW
+#define wcs_pushW wcs_pushW
 
-int AddLastChar( TCHAR* pszPath, int nMaxLen, TCHAR c );/* 2003.06.24 Moca 最後の文字が指定された文字でないときは付加する */
+int AddLastChar( WCHAR* pszPath, int nMaxLen, WCHAR c );/* 2003.06.24 Moca 最後の文字が指定された文字でないときは付加する */
 int LimitStringLengthW( const WCHAR* pszData, int nDataLength, int nLimitLength, CNativeW& cmemDes );/* データを指定「文字数」以内に切り詰める */
 
 const char*    GetNextLine  ( const char* pData, int nDataLen, int* pnLineLen, int* pnBgn, CEol* pcEol); /* CR0LF0,CRLF,LF,CRで区切られる「行」を返す。改行コードは行長に加えない */
@@ -43,7 +43,7 @@ const wchar_t* GetNextLineW ( const wchar_t* pData, int nDataLen, int* pnLineLen
 //wchar_t* GetNextLineWB( const wchar_t*, int, int*, int*, CEol* ); // GetNextLineのwchar_t版(ビックエンディアン用)  // 未使用
 void GetLineColumn( const wchar_t* pLine, int* pnJumpToLine, int* pnJumpToColumn );
 
-int cescape(const TCHAR* org, TCHAR* buf, TCHAR cesc, TCHAR cwith);
+int cescape(const WCHAR* org, WCHAR* buf, WCHAR cesc, WCHAR cwith);
 
 /*!	&の二重化
 	メニューに含まれる&を&&に置き換える
@@ -51,8 +51,8 @@ int cescape(const TCHAR* org, TCHAR* buf, TCHAR cesc, TCHAR cwith);
 	@date 2002/01/30 cescapeに拡張し，
 	@date 2004/06/19 genta Generic mapping
 */
-inline void dupamp(const TCHAR* org, TCHAR* out)
-{	cescape( org, out, _T('&'), _T('&') ); }
+inline void dupamp(const WCHAR* org, WCHAR* out)
+{	cescape( org, out, L'&', L'&' ); }
 
 /*
 	scanf的安全スキャン

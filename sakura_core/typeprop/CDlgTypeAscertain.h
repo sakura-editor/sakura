@@ -33,7 +33,6 @@ class CDlgTypeAscertain;
 #ifndef _CDLGTYPEASCERTAIN_H_
 #define _CDLGTYPEASCERTAIN_H_
 using std::wstring;
-using std::tstring;
 
 #include "dlg/CDialog.h"
 /*-----------------------------------------------------------------------
@@ -47,7 +46,7 @@ class CDlgTypeAscertain : public CDialog
 public:
 	// 型
 	struct SAscertainInfo {
-		tstring	sImportFile;	//!< in インポートファイル名
+		wstring	sImportFile;	//!< in インポートファイル名
 		wstring	sTypeNameTo;	//!< in タイプ名（インポート先）
 		wstring	sTypeNameFile;	//!< in タイプ名（ファイルから）
 		int 	nColorType;		//!< out 文書種類(カラーコピー用)

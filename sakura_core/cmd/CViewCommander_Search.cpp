@@ -60,7 +60,7 @@ void CViewCommander::Command_SEARCH_DIALOG( void )
 	else{
 		/* アクティブにする */
 		ActivateFrameWindow( GetEditWindow()->m_cDlgFind.GetHwnd() );
-		::DlgItem_SetText( GetEditWindow()->m_cDlgFind.GetHwnd(), IDC_COMBO_TEXT, cmemCurText.GetStringT() );
+		::DlgItem_SetText( GetEditWindow()->m_cDlgFind.GetHwnd(), IDC_COMBO_TEXT, cmemCurText.GetStringPtr() );
 	}
 	return;
 }
@@ -315,7 +315,7 @@ end_of_func:;
 			);
 		}
 		else{
-			AlertNotFound(hwndParent, bReplaceAll, _T("%ls"), pszNotFoundMessage);
+			AlertNotFound(hwndParent, bReplaceAll, L"%ls", pszNotFoundMessage);
 		}
 	}
 }
@@ -511,7 +511,7 @@ void CViewCommander::Command_REPLACE_DIALOG( void )
 	else {
 		/* アクティブにする */
 		ActivateFrameWindow( GetEditWindow()->m_cDlgReplace.GetHwnd() );
-		::DlgItem_SetText( GetEditWindow()->m_cDlgReplace.GetHwnd(), IDC_COMBO_TEXT, cmemCurText.GetStringT() );
+		::DlgItem_SetText( GetEditWindow()->m_cDlgReplace.GetHwnd(), IDC_COMBO_TEXT, cmemCurText.GetStringPtr() );
 	}
 	//	To Here Jul. 2, 2001 genta 置換ウィンドウの2重開きを抑止
 	return;
@@ -700,7 +700,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 		m_pCommanderView->Redraw();
 
 		/* 次を検索 */
-		Command_SEARCH_NEXT( true, true, false, hwndParent, LSW(STR_ERR_CEDITVIEW_CMD11) );
+		Command_SEARCH_NEXT( true, true, false, hwndParent, LS(STR_ERR_CEDITVIEW_CMD11) );
 	}
 }
 
@@ -798,7 +798,7 @@ void CViewCommander::Command_REPLACE_ALL()
 	/* 置換個数初期化 */
 	int			nReplaceNum = 0;
 	HWND		hwndStatic = ::GetDlgItem( hwndCancel, IDC_STATIC_KENSUU );
-	TCHAR szLabel[64];
+	WCHAR szLabel[64];
 	_itot( nReplaceNum, szLabel, 10 );
 	::SendMessage( hwndStatic, WM_SETTEXT, 0, (LPARAM)szLabel );
 

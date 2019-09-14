@@ -52,18 +52,18 @@ CRecentExcludeFolder::CRecentExcludeFolder()
 
 	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
-const TCHAR* CRecentExcludeFolder::GetItemText( int nIndex ) const
+const WCHAR* CRecentExcludeFolder::GetItemText( int nIndex ) const
 {
 	return *GetItem(nIndex);
 }
 
-bool CRecentExcludeFolder::DataToReceiveType( LPCTSTR* dst, const CExcludeFolderString* src ) const
+bool CRecentExcludeFolder::DataToReceiveType( LPCWSTR* dst, const CExcludeFolderString* src ) const
 {
 	*dst = *src;
 	return true;
 }
 
-bool CRecentExcludeFolder::TextToDataType( CExcludeFolderString* dst, LPCTSTR pszText ) const
+bool CRecentExcludeFolder::TextToDataType( CExcludeFolderString* dst, LPCWSTR pszText ) const
 {
 	if( false == ValidateReceiveType(pszText) ){
 		return false;
@@ -72,19 +72,19 @@ bool CRecentExcludeFolder::TextToDataType( CExcludeFolderString* dst, LPCTSTR ps
 	return true;
 }
 
-int CRecentExcludeFolder::CompareItem( const CExcludeFolderString* p1, LPCTSTR p2 ) const
+int CRecentExcludeFolder::CompareItem( const CExcludeFolderString* p1, LPCWSTR p2 ) const
 {
-	return _tcsicmp(*p1,p2);
+	return _wcsicmp(*p1,p2);
 }
 
-void CRecentExcludeFolder::CopyItem( CExcludeFolderString* dst, LPCTSTR src ) const
+void CRecentExcludeFolder::CopyItem( CExcludeFolderString* dst, LPCWSTR src ) const
 {
-	_tcscpy(*dst,src);
+	wcscpy(*dst,src);
 }
 
-bool CRecentExcludeFolder::ValidateReceiveType( LPCTSTR p ) const
+bool CRecentExcludeFolder::ValidateReceiveType( LPCWSTR p ) const
 {
-	if( GetTextMaxLength() <= _tcslen(p) ){
+	if( GetTextMaxLength() <= wcslen(p) ){
 		return false;
 	}
 	return true;

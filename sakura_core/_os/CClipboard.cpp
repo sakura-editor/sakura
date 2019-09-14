@@ -153,7 +153,7 @@ bool CClipboard::SetText(
 	// 矩形選択を示すダミーデータ
 	HGLOBAL hgClipMSDEVColumn = NULL;
 	if( bColumnSelect ){
-		UINT uFormat = ::RegisterClipboardFormat( _T("MSDEVColumnSelect") );
+		UINT uFormat = ::RegisterClipboardFormat( L"MSDEVColumnSelect" );
 		if( 0 != uFormat ){
 			hgClipMSDEVColumn = ::GlobalAlloc(
 				GMEM_MOVEABLE | GMEM_DDESHARE,
@@ -171,7 +171,7 @@ bool CClipboard::SetText(
 	/* 行選択を示すダミーデータ */
 	HGLOBAL hgClipMSDEVLine = NULL;		// VS2008 以前の形式
 	if( bLineSelect ){
-		UINT uFormat = ::RegisterClipboardFormat( _T("MSDEVLineSelect") );
+		UINT uFormat = ::RegisterClipboardFormat( L"MSDEVLineSelect" );
 		if( 0 != uFormat ){
 			hgClipMSDEVLine = ::GlobalAlloc(
 				GMEM_MOVEABLE | GMEM_DDESHARE,
@@ -187,7 +187,7 @@ bool CClipboard::SetText(
 	}
 	HGLOBAL hgClipMSDEVLine2 = NULL;	// VS2010 形式
 	if( bLineSelect ){
-		UINT uFormat = ::RegisterClipboardFormat( _T("VisualStudioEditorOperationsLineCutCopyClipboardTag") );
+		UINT uFormat = ::RegisterClipboardFormat( L"VisualStudioEditorOperationsLineCutCopyClipboardTag" );
 		if( 0 != uFormat ){
 			hgClipMSDEVLine2 = ::GlobalAlloc(
 				GMEM_MOVEABLE | GMEM_DDESHARE,
@@ -255,7 +255,7 @@ bool CClipboard::SetHtmlText(const CNativeW& cmemBUf)
 	::GlobalUnlock( hgClipText );
 
 	//クリップボードに設定
-	UINT uFormat = ::RegisterClipboardFormat( _T("HTML Format") );
+	UINT uFormat = ::RegisterClipboardFormat( L"HTML Format" );
 	::SetClipboardData( uFormat, hgClipText );
 	return true;
 }
@@ -284,17 +284,17 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 		UINT uFormat = 0;
 		while( ( uFormat = ::EnumClipboardFormats( uFormat ) ) != 0 ){
 			// Jul. 2, 2005 genta : check return value of GetClipboardFormatName
-			TCHAR szFormatName[128];
+			WCHAR szFormatName[128];
 			if( ::GetClipboardFormatName( uFormat, szFormatName, _countof(szFormatName) - 1 ) ){
-				if( NULL != pbColumnSelect && 0 == lstrcmpi( _T("MSDEVColumnSelect"), szFormatName ) ){
+				if( NULL != pbColumnSelect && 0 == lstrcmpi( L"MSDEVColumnSelect", szFormatName ) ){
 					*pbColumnSelect = true;
 					break;
 				}
-				if( NULL != pbLineSelect && 0 == lstrcmpi( _T("MSDEVLineSelect"), szFormatName ) ){
+				if( NULL != pbLineSelect && 0 == lstrcmpi( L"MSDEVLineSelect", szFormatName ) ){
 					*pbLineSelect = true;
 					break;
 				}
-				if( NULL != pbLineSelect && 0 == lstrcmpi( _T("VisualStudioEditorOperationsLineCutCopyClipboardTag"), szFormatName ) ){
+				if( NULL != pbLineSelect && 0 == lstrcmpi( L"VisualStudioEditorOperationsLineCutCopyClipboardTag", szFormatName ) ){
 					*pbLineSelect = true;
 					break;
 				}
@@ -357,13 +357,13 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 		&& ::IsClipboardFormatAvailable(CF_HDROP) ){
 		HDROP hDrop = (HDROP)::GetClipboardData(CF_HDROP);
 		if(hDrop != NULL){
-			TCHAR sTmpPath[_MAX_PATH + 1] = {0};
+			WCHAR sTmpPath[_MAX_PATH + 1] = {0};
 			const int nMaxCnt = DragQueryFile(hDrop, 0xFFFFFFFF, NULL, 0);
 
 			for(int nLoop = 0; nLoop < nMaxCnt; nLoop++){
 				DragQueryFile(hDrop, nLoop, sTmpPath, _countof(sTmpPath) - 1);
 				// 2012.10.05 Moca ANSI版に合わせて最終行にも改行コードをつける
-				cmemBuf->AppendStringT(sTmpPath);
+				cmemBuf->AppendString(sTmpPath);
 				if(nMaxCnt > 1){
 					cmemBuf->AppendString( cEol.GetValue2() );
 				}
@@ -422,7 +422,7 @@ static CLIPFORMAT GetClipFormat(const wchar_t* pFormatName)
 		if( bNumber ){
 			uFormat = _wtoi(pFormatName);
 		}else{
-			uFormat = ::RegisterClipboardFormat( to_tchar(pFormatName) );
+			uFormat = ::RegisterClipboardFormat( pFormatName );
 		}
 	}
 	return uFormat;
@@ -669,7 +669,7 @@ CLIPFORMAT CClipboard::GetSakuraFormat()
 		以前のバージョンのクリップボードデータと競合しないように
 		フォーマット名を変更
 	*/
-	return (CLIPFORMAT)::RegisterClipboardFormat( _T("SAKURAClipW") );
+	return (CLIPFORMAT)::RegisterClipboardFormat( L"SAKURAClipW" );
 }
 
 //!< クリップボードデータ形式(CF_UNICODETEXT等)の取得

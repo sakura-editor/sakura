@@ -49,7 +49,7 @@ LRESULT CALLBACK CFuncKeyWndProc(
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CFuncKeyWnd::CFuncKeyWnd()
-: CWnd(_T("::CFuncKeyWnd"))
+: CWnd(L"::CFuncKeyWnd")
 {
 	int		i;
 	LOGFONT	lf;
@@ -83,7 +83,7 @@ CFuncKeyWnd::CFuncKeyWnd()
 	lf.lfClipPrecision	= 0x2;
 	lf.lfQuality		= 0x1;
 	lf.lfPitchAndFamily	= 0x31;
-	_tcscpy( lf.lfFaceName, _T("ＭＳ Ｐゴシック") );
+	wcscpy( lf.lfFaceName, L"ＭＳ Ｐゴシック" );
 	m_hFont = ::CreateFontIndirect( &lf );
 
 	m_bSizeBox = false;
@@ -103,7 +103,7 @@ CFuncKeyWnd::~CFuncKeyWnd()
 /* ウィンドウ オープン */
 HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDoc, bool bSizeBox )
 {
-	LPCTSTR pszClassName = _T("CFuncKeyWnd");
+	LPCWSTR pszClassName = L"CFuncKeyWnd";
 
 	m_pcEditDoc = pCEditDoc;
 	m_bSizeBox = bSizeBox;
@@ -145,7 +145,7 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 	if( m_bSizeBox ){
 		m_hwndSizeBox = ::CreateWindowEx(
 			0L, 						/* no extended styles			*/
-			_T("SCROLLBAR"),				/* scroll bar control class		*/
+			L"SCROLLBAR",				/* scroll bar control class		*/
 			NULL,						/* text for window title bar	*/
 			WS_VISIBLE | WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
 			0,							/* horizontal position			*/
@@ -406,8 +406,8 @@ void CFuncKeyWnd::CreateButtons( void )
 
 	for( i = 0; i < _countof( m_hwndButtonArr ); ++i ){
 		m_hwndButtonArr[i] = ::CreateWindow(
-			_T("BUTTON"),						// predefined class
-			_T(""),								// button text
+			L"BUTTON",						// predefined class
+			L"",								// button text
 			WS_VISIBLE | WS_CHILD | BS_LEFT,	// styles
 			// Size and position values are given explicitly, because
 			// the CW_USEDEFAULT constant gives zero values for buttons.
@@ -443,7 +443,7 @@ void CFuncKeyWnd::SizeBox_ONOFF( bool bSizeBox )
 	}else{
 		m_hwndSizeBox = ::CreateWindowEx(
 			0L, 						/* no extended styles			*/
-			_T("SCROLLBAR"),				/* scroll bar control class		*/
+			L"SCROLLBAR",				/* scroll bar control class		*/
 			NULL,						/* text for window title bar	*/
 			WS_VISIBLE | WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
 			0,							/* horizontal position			*/

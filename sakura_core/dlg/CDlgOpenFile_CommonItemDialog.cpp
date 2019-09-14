@@ -44,32 +44,32 @@ struct CDlgOpenFile_CommonItemDialog final
 	void Create(
 		HINSTANCE					hInstance,
 		HWND						hwndParent,
-		const TCHAR*				pszUserWildCard,
-		const TCHAR*				pszDefaultPath,
-		const std::vector<LPCTSTR>& vMRU,
-		const std::vector<LPCTSTR>& vOPENFOLDER
+		const WCHAR*				pszUserWildCard,
+		const WCHAR*				pszDefaultPath,
+		const std::vector<LPCWSTR>& vMRU,
+		const std::vector<LPCWSTR>& vOPENFOLDER
 	) override;
 
-	bool DoModal_GetOpenFileName( TCHAR* pszPath, EFilter eAddFileter ) override;
-	bool DoModal_GetSaveFileName( TCHAR* pszPath ) override;
+	bool DoModal_GetOpenFileName( WCHAR* pszPath, EFilter eAddFileter ) override;
+	bool DoModal_GetSaveFileName( WCHAR* pszPath ) override;
 	bool DoModalOpenDlg( SLoadInfo* pLoadInfo,
-						 std::vector<std::tstring>* pFileNames,
+						 std::vector<std::wstring>* pFileNames,
 						 bool bOptions ) override;
 	bool DoModalSaveDlg( SSaveInfo*	pSaveInfo,
 						 bool bSimpleMode ) override;
 
 	bool DoModalOpenDlgImpl0( bool bAllowMultiSelect,
-							  std::vector<std::tstring>* pFileNames,
+							  std::vector<std::wstring>* pFileNames,
 							  LPCWSTR fileName,
 							  const std::vector<COMDLG_FILTERSPEC>& specs );
 	HRESULT DoModalOpenDlgImpl1( IFileOpenDialog* pFileOpenDialog,
 								 bool bAllowMultiSelect,
-								 std::vector<std::tstring>* pFileNames,
+								 std::vector<std::wstring>* pFileNames,
 								 LPCWSTR fileName,
 								 const std::vector<COMDLG_FILTERSPEC>& specs );
-	bool DoModalSaveDlgImpl0( TCHAR* pszPath );
+	bool DoModalSaveDlgImpl0( WCHAR* pszPath );
 	HRESULT DoModalSaveDlgImpl1( IFileSaveDialog* pFileSaveDialog,
-								 TCHAR* pszPath );
+								 WCHAR* pszPath );
 
 	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
@@ -79,8 +79,8 @@ struct CDlgOpenFile_CommonItemDialog final
 	SFilePath		m_szDefaultWildCard;	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 	SFilePath		m_szInitialDir;			/* 「開く」での初期ディレクトリ */
 
-	std::vector<LPCTSTR>	m_vMRU;
-	std::vector<LPCTSTR>	m_vOPENFOLDER;
+	std::vector<LPCWSTR>	m_vMRU;
+	std::vector<LPCWSTR>	m_vOPENFOLDER;
 
 	struct CustomizeSetting {
 		bool bCustomize;
@@ -407,18 +407,18 @@ CDlgOpenFile_CommonItemDialog::CDlgOpenFile_CommonItemDialog()
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
 
-	TCHAR	szFile[_MAX_PATH + 1];
-	TCHAR	szDrive[_MAX_DRIVE];
-	TCHAR	szDir[_MAX_DIR];
+	WCHAR	szFile[_MAX_PATH + 1];
+	WCHAR	szDrive[_MAX_DRIVE];
+	WCHAR	szDir[_MAX_DIR];
 	::GetModuleFileName(
 		NULL,
 		szFile, _countof( szFile )
 	);
-	_tsplitpath( szFile, szDrive, szDir, NULL, NULL );
-	_tcscpy( m_szInitialDir, szDrive );
-	_tcscat( m_szInitialDir, szDir );
+	_wsplitpath( szFile, szDrive, szDir, NULL, NULL );
+	wcscpy( m_szInitialDir, szDrive );
+	wcscat( m_szInitialDir, szDir );
 
-	_tcscpy( m_szDefaultWildCard, _T("*.*") );	/*「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
+	wcscpy( m_szDefaultWildCard, L"*.*" );	/*「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 
 	return;
 }
@@ -427,29 +427,29 @@ CDlgOpenFile_CommonItemDialog::CDlgOpenFile_CommonItemDialog()
 void CDlgOpenFile_CommonItemDialog::Create(
 	HINSTANCE					hInstance,
 	HWND						hwndParent,
-	const TCHAR*				pszUserWildCard,
-	const TCHAR*				pszDefaultPath,
-	const std::vector<LPCTSTR>& vMRU,
-	const std::vector<LPCTSTR>& vOPENFOLDER)
+	const WCHAR*				pszUserWildCard,
+	const WCHAR*				pszDefaultPath,
+	const std::vector<LPCWSTR>& vMRU,
+	const std::vector<LPCWSTR>& vOPENFOLDER)
 {
 	m_hInstance = hInstance;
 	m_hwndParent = hwndParent;
 
 	/* ユーザー定義ワイルドカード（保存時の拡張子補完でも使用される） */
 	if( NULL != pszUserWildCard ){
-		_tcscpy( m_szDefaultWildCard, pszUserWildCard );
+		wcscpy( m_szDefaultWildCard, pszUserWildCard );
 	}
 
 	/* 「開く」での初期フォルダ */
-	if( pszDefaultPath && pszDefaultPath[0] != _T('\0') ){	//現在編集中のファイルのパス	//@@@ 2002.04.18
-		TCHAR szDrive[_MAX_DRIVE];
-		TCHAR szDir[_MAX_DIR];
+	if( pszDefaultPath && pszDefaultPath[0] != L'\0' ){	//現在編集中のファイルのパス	//@@@ 2002.04.18
+		WCHAR szDrive[_MAX_DRIVE];
+		WCHAR szDir[_MAX_DIR];
 		//	Jun. 23, 2002 genta
 		my_splitpath_t( pszDefaultPath, szDrive, szDir, NULL, NULL );
 		// 2010.08.28 相対パス解決
-		TCHAR szRelPath[_MAX_PATH];
-		auto_sprintf( szRelPath, _T("%ts%ts"), szDrive, szDir );
-		const TCHAR* p = szRelPath;
+		WCHAR szRelPath[_MAX_PATH];
+		auto_sprintf( szRelPath, L"%s%s", szDrive, szDir );
+		const WCHAR* p = szRelPath;
 		if( ! ::GetLongFileName( p, m_szInitialDir ) ){
 			auto_strcpy(m_szInitialDir, p );
 		}
@@ -459,7 +459,7 @@ void CDlgOpenFile_CommonItemDialog::Create(
 	return;
 }
 
-bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName( TCHAR* pszPath, EFilter eAddFilter )
+bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFilter eAddFilter )
 {
 	//	2003.05.12 MIK
 	std::vector<COMDLG_FILTERSPEC> specs;
@@ -486,7 +486,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName( TCHAR* pszPath, EFi
 		break;
 	}
 
-	if( 0 != auto_strcmp(m_szDefaultWildCard, _T("*.*")) ){
+	if( 0 != auto_strcmp(m_szDefaultWildCard, L"*.*") ){
 		strs.push_back(LS(STR_DLGOPNFL_EXTNAME3));
 		specs.push_back(COMDLG_FILTERSPEC{strs.back().c_str(), L"*.*"});
 	}
@@ -495,7 +495,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName( TCHAR* pszPath, EFi
 	std::vector<std::wstring> fileNames;
 	bool ret = DoModalOpenDlgImpl0(false, &fileNames, L"", specs);
 	if (ret) {
-		_tcscpy(pszPath, fileNames[0].c_str());
+		wcscpy(pszPath, fileNames[0].c_str());
 	}
 	return ret;
 }
@@ -503,12 +503,12 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName( TCHAR* pszPath, EFi
 /*! 保存ダイアログ モーダルダイアログの表示
 	@param pszPath [i/o] 初期ファイル名．選択されたファイル名の格納場所
 */
-bool CDlgOpenFile_CommonItemDialog::DoModal_GetSaveFileName( TCHAR* pszPath )
+bool CDlgOpenFile_CommonItemDialog::DoModal_GetSaveFileName( WCHAR* pszPath )
 {
 	// 2010.08.28 カレントディレクトリを移動するのでパス解決する
 	if( pszPath[0] ){
-		TCHAR szFullPath[_MAX_PATH];
-		const TCHAR* pOrg = pszPath;
+		WCHAR szFullPath[_MAX_PATH];
+		const WCHAR* pOrg = pszPath;
 		if( ::GetLongFileName( pOrg, szFullPath ) ){
 			// 成功。書き戻す
 			auto_strcpy( pszPath , szFullPath );
@@ -594,7 +594,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::Customize()
 HRESULT CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl1(
 	IFileOpenDialog* pFileOpenDialog,
 	bool bAllowMultiSelect,
-	std::vector<std::tstring>* pFileNames,
+	std::vector<std::wstring>* pFileNames,
 	LPCWSTR fileName,
 	const std::vector<COMDLG_FILTERSPEC>& specs)
 {
@@ -653,7 +653,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl1(
 
 bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl0(
 	bool bAllowMultiSelect,
-	std::vector<std::tstring>* pFileNames,
+	std::vector<std::wstring>* pFileNames,
 	LPCWSTR fileName,
 	const std::vector<COMDLG_FILTERSPEC>& specs)
 {
@@ -688,7 +688,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl0(
 */
 bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlg(
 	SLoadInfo* pLoadInfo,
-	std::vector<std::tstring>* pFileNames,
+	std::vector<std::wstring>* pFileNames,
 	bool bOptions )
 {
 	// ファイルの種類	2003.05.12 MIK
@@ -698,11 +698,11 @@ bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlg(
 	strs[0] = LS(STR_DLGOPNFL_EXTNAME3);
 	strs[1] = LS(STR_DLGOPNFL_EXTNAME2);
 	specs[0].pszName = strs[0].c_str();
-	specs[0].pszSpec = _T("*.*");
+	specs[0].pszSpec = L"*.*";
 	specs[1].pszName = strs[1].c_str();
-	specs[1].pszSpec = _T("*.txt");
+	specs[1].pszSpec = L"*.txt";
 	CDocTypeManager docTypeMgr;
-	TCHAR szWork[_countof(STypeConfigMini::m_szTypeExts) * 3];
+	WCHAR szWork[_countof(STypeConfigMini::m_szTypeExts) * 3];
 	for( int i = 0; i < nTypesCount; i++ ){
 		const STypeConfigMini* type;
 		docTypeMgr.GetTypeConfigMini(CTypeConfig(i), &type);
@@ -731,7 +731,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlg(
 
 HRESULT CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl1(
 	IFileSaveDialog* pFileSaveDialog,
-	TCHAR* pszPath)
+	WCHAR* pszPath)
 {
 	//カレントディレクトリを保存。関数から抜けるときに自動でカレントディレクトリは復元される。
 	CCurrentDirectoryBackupPoint cCurDirBackup;
@@ -749,16 +749,16 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl1(
 	specs[0].pszName = strs[0].c_str();
 	specs[0].pszSpec = m_szDefaultWildCard;
 	specs[1].pszName = strs[1].c_str();
-	specs[1].pszSpec = _T("*.txt");
+	specs[1].pszSpec = L"*.txt";
 	specs[2].pszName = strs[2].c_str();
-	specs[2].pszSpec = _T("*.*");
+	specs[2].pszSpec = L"*.*";
 #define RETURN_IF_FAILED if (FAILED(hr)) { /* __debugbreak(); */ return hr; }
-	hr = pFileSaveDialog->SetDefaultExtension(_T("txt")); RETURN_IF_FAILED
+	hr = pFileSaveDialog->SetDefaultExtension(L"txt"); RETURN_IF_FAILED
 	hr = pFileSaveDialog->SetFileTypes(specs.size(), &specs[0]); RETURN_IF_FAILED
 	ComPtr<IShellItem> psiFolder;
 	SHCreateItemFromParsingName(m_szInitialDir, NULL, IID_PPV_ARGS(&psiFolder));
 	hr = pFileSaveDialog->SetFolder(psiFolder.Get()); RETURN_IF_FAILED
-	TCHAR szFileName[_MAX_FNAME];
+	WCHAR szFileName[_MAX_FNAME];
 	SplitPath_FolderAndFile(pszPath, NULL, szFileName);
 	hr = pFileSaveDialog->SetFileName(szFileName); RETURN_IF_FAILED
 
@@ -781,7 +781,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl1(
 	return S_OK;
 }
 
-bool CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl0( TCHAR* pszPath )
+bool CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl0( WCHAR* pszPath )
 {
 	using namespace Microsoft::WRL;
 	ComPtr<IFileSaveDialog> pFileDialog;
@@ -916,12 +916,12 @@ int CDlgOpenFile_CommonItemDialog::AddComboCodePages( int nSelCode )
 {
 	HRESULT hr;
 	int nSel = -1;
-	hr = AddControlItem(CtrlId::COMBO_CODE, (DWORD)CODE_CPACP, _T("CP_ACP"));
+	hr = AddControlItem(CtrlId::COMBO_CODE, (DWORD)CODE_CPACP, L"CP_ACP");
 	if( nSelCode == CODE_CPACP ){
 		SetSelectedControlItem(CtrlId::COMBO_CODE, (DWORD)CODE_CPACP);
 		nSel = nSelCode;
 	}
-	hr = AddControlItem(CtrlId::COMBO_CODE, (DWORD)CODE_CPOEM, _T("CP_OEM"));
+	hr = AddControlItem(CtrlId::COMBO_CODE, (DWORD)CODE_CPOEM, L"CP_OEM");
 	if( nSelCode == CODE_CPOEM ){
 		SetSelectedControlItem(CtrlId::COMBO_CODE, (DWORD)CODE_CPOEM);
 		nSel = nSelCode;

@@ -859,7 +859,7 @@ void CViewCommander::Command_JUMPHIST_PREV( void )
 
 	if( m_pCommanderView->m_cHistory->CheckPrev() ){
 		if( ! m_pCommanderView->m_cHistory->PrevValid() ){
-			::MessageBox( NULL, _T("Inconsistent Implementation"), _T("PrevValid"), MB_OK );
+			::MessageBox( NULL, L"Inconsistent Implementation", L"PrevValid", MB_OK );
 		}
 		CLayoutPoint pt;
 		GetDocument()->m_cLayoutMgr.LogicToLayout(
@@ -876,7 +876,7 @@ void CViewCommander::Command_JUMPHIST_NEXT( void )
 {
 	if( m_pCommanderView->m_cHistory->CheckNext() ){
 		if( ! m_pCommanderView->m_cHistory->NextValid() ){
-			::MessageBox( NULL, _T("Inconsistent Implementation"), _T("NextValid"), MB_OK );
+			::MessageBox( NULL, L"Inconsistent Implementation", L"NextValid", MB_OK );
 		}
 		CLayoutPoint pt;
 		GetDocument()->m_cLayoutMgr.LogicToLayout(

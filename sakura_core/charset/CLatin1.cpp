@@ -219,13 +219,13 @@ EConvertResult CLatin1::UnicodeToLatin1( const CNativeW& cSrc, CMemory* pDstMem 
 }
 
 // 文字コード表示用	UNICODE → Hex 変換	2008/6/9 Uchi
-EConvertResult CLatin1::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
+EConvertResult CLatin1::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
 {
 	CNativeW		cCharBuffer;
 	EConvertResult	res;
 	int				i;
 	unsigned char*	ps;
-	TCHAR*			pd;
+	WCHAR*			pd;
 	bool			bbinary=false;
 
 	// 2008/6/21 Uchi
@@ -251,10 +251,10 @@ EConvertResult CLatin1::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR
 	pd = pDst;
 	if( bbinary == false ){
 		for (i = cCharBuffer._GetMemory()->GetRawLength(); i >0; i--, ps ++, pd += 2) {
-			auto_sprintf( pd, _T("%02x"), *ps);
+			auto_sprintf( pd, L"%02x", *ps);
 		}
 	}else{
-		auto_sprintf( pd, _T("?%02x"), *ps );
+		auto_sprintf( pd, L"?%02x", *ps );
 	}
 
 	return RESULT_COMPLETE;

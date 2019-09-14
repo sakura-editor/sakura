@@ -63,11 +63,9 @@ struct SysString
 	}
 	void GetW(std::wstring* str)
 	{
-		int Len = ::SysStringLen(Data);
+		size_t Len = ::SysStringLen(Data);
 		str->assign(Data, Len);
 	}
-	void GetT(TCHAR **S, int *L){GetW(S, L);}
-	void GetT(std::wstring* str){GetW(str);}
 };
 
 /*! VARIANTのWrapper class

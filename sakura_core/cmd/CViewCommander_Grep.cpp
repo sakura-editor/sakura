@@ -42,7 +42,7 @@ void CViewCommander::Command_GREP_DIALOG( void )
 
 	/* Grepダイアログの表示 */
 	int nRet = GetEditWindow()->m_cDlgGrep.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), GetDocument()->m_cDocFile.GetFilePath() );
-//	MYTRACE( _T("nRet=%d\n"), nRet );
+//	MYTRACE( L"nRet=%d\n", nRet );
 	if( !nRet ){
 		return;
 	}
@@ -56,11 +56,11 @@ void CViewCommander::Command_GREP_DIALOG( void )
 void CViewCommander::Command_GREP( void )
 {
 	CNativeW		cmWork1;
-	CNativeT		cmWork2;
-	CNativeT		cmWork3;
+	CNativeW		cmWork2;
+	CNativeW		cmWork3;
 	CNativeW		cmWork4;
-	CNativeT		cmWorkExcludeFile;
-	CNativeT		cmWorkExcludeFolder;
+	CNativeW		cmWorkExcludeFile;
+	CNativeW		cmWorkExcludeFolder;
 	cmWork1.SetString( GetEditWindow()->m_cDlgGrep.m_strText.c_str() );
 	cmWork2.SetString( GetEditWindow()->m_cDlgGrep.m_szFile );
 	cmWork3.SetString( GetEditWindow()->m_cDlgGrep.m_szFolder );
@@ -80,7 +80,7 @@ void CViewCommander::Command_GREP( void )
 	){
 		// 2011.01.23 Grepタイプ別適用
 		if( !GetDocument()->m_cDocEditor.IsModified() && GetDocument()->m_cDocLineMgr.GetLineCount() == 0 ){
-			CTypeConfig cTypeGrep = CDocTypeManager().GetDocumentTypeOfExt( _T("grepout") );
+			CTypeConfig cTypeGrep = CDocTypeManager().GetDocumentTypeOfExt( L"grepout" );
 			const STypeConfigMini* pConfig;
 			CDocTypeManager().GetTypeConfigMini( cTypeGrep, &pConfig );
 			GetDocument()->m_cDocType.SetDocumentTypeIdx( pConfig->m_id );
@@ -163,11 +163,11 @@ void CViewCommander::Command_GREP_REPLACE_DLG( void )
 void CViewCommander::Command_GREP_REPLACE( void )
 {
 	CNativeW		cmWork1;
-	CNativeT		cmWork2;
-	CNativeT		cmWork3;
+	CNativeW		cmWork2;
+	CNativeW		cmWork3;
 	CNativeW		cmWork4;
-	CNativeT		cmWorkExcludeFile;
-	CNativeT		cmWorkExcludeFolder;
+	CNativeW		cmWorkExcludeFile;
+	CNativeW		cmWorkExcludeFolder;
 
 	CDlgGrepReplace& cDlgGrepRep = GetEditWindow()->m_cDlgGrepReplace;
 	cmWork1.SetString( cDlgGrepRep.m_strText.c_str() );
@@ -215,55 +215,55 @@ void CViewCommander::Command_GREP_REPLACE( void )
 	else{
 		// 編集ウィンドウの上限チェック
 		if( GetDllShareData().m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-			OkMessage( m_pCommanderView->GetHwnd(), _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
+			OkMessage( m_pCommanderView->GetHwnd(), L"編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
 			return;
 		}
 		/*======= Grepの実行 =============*/
 		/* Grep結果ウィンドウの表示 */
 		cmWork1.Replace( L"\"", L"\"\"" );
-		cmWork2.Replace( _T("\""), _T("\"\"") );
-		cmWork3.Replace( _T("\""), _T("\"\"") );
+		cmWork2.Replace( L"\"", L"\"\"" );
+		cmWork3.Replace( L"\"", L"\"\"" );
 		cmWork4.Replace( L"\"", L"\"\"" );
 
 		// -GREPMODE -GKEY="1" -GREPR="2" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
-		CNativeT cCmdLine;
-		TCHAR szTemp[20];
-		cCmdLine.AppendString(_T("-GREPMODE -GKEY=\""));
-		cCmdLine.AppendStringW(cmWork1.GetStringPtr());
-		cCmdLine.AppendString(_T("\" -GREPR=\""));
-		cCmdLine.AppendStringW(cmWork4.GetStringPtr());
-		cCmdLine.AppendString(_T("\" -GFILE=\""));
+		CNativeW cCmdLine;
+		WCHAR szTemp[20];
+		cCmdLine.AppendString(L"-GREPMODE -GKEY=\"");
+		cCmdLine.AppendString(cmWork1.GetStringPtr());
+		cCmdLine.AppendString(L"\" -GREPR=\"");
+		cCmdLine.AppendString(cmWork4.GetStringPtr());
+		cCmdLine.AppendString(L"\" -GFILE=\"");
 		cCmdLine.AppendString(cmWork2.GetStringPtr());
-		cCmdLine.AppendString(_T("\" -GFOLDER=\""));
+		cCmdLine.AppendString(L"\" -GFOLDER=\"");
 		cCmdLine.AppendString(cmWork3.GetStringPtr());
-		cCmdLine.AppendString(_T("\" -GCODE="));
-		auto_sprintf( szTemp, _T("%d"), cDlgGrepRep.m_nGrepCharSet );
+		cCmdLine.AppendString(L"\" -GCODE=");
+		auto_sprintf( szTemp, L"%d", cDlgGrepRep.m_nGrepCharSet );
 		cCmdLine.AppendString(szTemp);
 
 		//GOPTオプション
-		TCHAR	pOpt[64];
-		pOpt[0] = _T('\0');
-		if( cDlgGrepRep.m_bSubFolder				)_tcscat( pOpt, _T("S") );	// サブフォルダからも検索する
-		if( cDlgGrepRep.m_sSearchOption.bWordOnly	)_tcscat( pOpt, _T("W") );	// 単語単位で探す
-		if( cDlgGrepRep.m_sSearchOption.bLoHiCase	)_tcscat( pOpt, _T("L") );	// 英大文字と英小文字を区別する
-		if( cDlgGrepRep.m_sSearchOption.bRegularExp	)_tcscat( pOpt, _T("R") );	// 正規表現
-		if( cDlgGrepRep.m_nGrepOutputLineType == 1     )_tcscat( pOpt, _T("P") );	// 行を出力する
-		// if( cDlgGrepRep.m_nGrepOutputLineType == 2     )_tcscat( pOpt, _T("N") );	// 否ヒット行を出力する 2014.09.23
-		if( 1 == cDlgGrepRep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("1") );	// Grep: 出力形式
-		if( 2 == cDlgGrepRep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("2") );	// Grep: 出力形式
-		if( 3 == cDlgGrepRep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("3") );
-		if( cDlgGrepRep.m_bGrepOutputFileOnly		)_tcscat( pOpt, _T("F") );
-		if( cDlgGrepRep.m_bGrepOutputBaseFolder		)_tcscat( pOpt, _T("B") );
-		if( cDlgGrepRep.m_bGrepSeparateFolder		)_tcscat( pOpt, _T("D") );
-		if( cDlgGrepRep.m_bPaste					)_tcscat( pOpt, _T("C") );	// クリップボードから貼り付け
-		if( cDlgGrepRep.m_bBackup					)_tcscat( pOpt, _T("O") );	// バックアップ作成
-		if( 0 < _tcslen( pOpt ) ){
-			cCmdLine.AppendString( _T(" -GOPT=") );
+		WCHAR	pOpt[64];
+		pOpt[0] = L'\0';
+		if( cDlgGrepRep.m_bSubFolder				)wcscat( pOpt, L"S" );	// サブフォルダからも検索する
+		if( cDlgGrepRep.m_sSearchOption.bWordOnly	)wcscat( pOpt, L"W" );	// 単語単位で探す
+		if( cDlgGrepRep.m_sSearchOption.bLoHiCase	)wcscat( pOpt, L"L" );	// 英大文字と英小文字を区別する
+		if( cDlgGrepRep.m_sSearchOption.bRegularExp	)wcscat( pOpt, L"R" );	// 正規表現
+		if( cDlgGrepRep.m_nGrepOutputLineType == 1     )wcscat( pOpt, L"P" );	// 行を出力する
+		// if( cDlgGrepRep.m_nGrepOutputLineType == 2     )wcscat( pOpt, L"N" );	// 否ヒット行を出力する 2014.09.23
+		if( 1 == cDlgGrepRep.m_nGrepOutputStyle		)wcscat( pOpt, L"1" );	// Grep: 出力形式
+		if( 2 == cDlgGrepRep.m_nGrepOutputStyle		)wcscat( pOpt, L"2" );	// Grep: 出力形式
+		if( 3 == cDlgGrepRep.m_nGrepOutputStyle		)wcscat( pOpt, L"3" );
+		if( cDlgGrepRep.m_bGrepOutputFileOnly		)wcscat( pOpt, L"F" );
+		if( cDlgGrepRep.m_bGrepOutputBaseFolder		)wcscat( pOpt, L"B" );
+		if( cDlgGrepRep.m_bGrepSeparateFolder		)wcscat( pOpt, L"D" );
+		if( cDlgGrepRep.m_bPaste					)wcscat( pOpt, L"C" );	// クリップボードから貼り付け
+		if( cDlgGrepRep.m_bBackup					)wcscat( pOpt, L"O" );	// バックアップ作成
+		if( 0 < wcslen( pOpt ) ){
+			cCmdLine.AppendString( L" -GOPT=" );
 			cCmdLine.AppendString( pOpt );
 		}
 
 		SLoadInfo sLoadInfo;
-		sLoadInfo.cFilePath = _T("");
+		sLoadInfo.cFilePath = L"";
 		sLoadInfo.eCharCode = CODE_NONE;
 		sLoadInfo.bViewMode = false;
 		CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, cCmdLine.GetStringPtr(),

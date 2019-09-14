@@ -52,8 +52,8 @@ inline bool IsHeadCppKeyword(const wchar_t* pData)
 void CType_Cpp::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	_tcscpy( pType->m_szTypeName, _T("C/C++") );
-	_tcscpy( pType->m_szTypeExts, _T("c,cpp,cxx,cc,cp,c++,h,hpp,hxx,hh,hp,h++,rc,hm") );
+	wcscpy( pType->m_szTypeName, L"C/C++" );
+	wcscpy( pType->m_szTypeExts, L"c,cpp,cxx,cc,cp,c++,h,hpp,hxx,hh,hp,h++,rc,hm" );
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L"//", -1 );							/* 行コメントデリミタ */
@@ -334,7 +334,7 @@ CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 	ここに関数のリストを登録する。
 */
 void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOutlineType,
-	const TCHAR* pszFileName, bool bVisibleMemberFunc
+	const WCHAR* pszFileName, bool bVisibleMemberFunc
 )
 {
 #ifdef _DEBUG
@@ -345,19 +345,19 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 	CLogicInt	i;
 	// 2015.11.14 C/C++のファイル名による判定
 	if( nOutlineType == OUTLINE_C_CPP ){
-		if( CheckEXT( pszFileName, _T("c") ) ){
+		if( CheckEXT( pszFileName, L"c" ) ){
 			nOutlineType = OUTLINE_C;
-		}else if( CheckEXT( pszFileName, _T("cpp") ) ){
+		}else if( CheckEXT( pszFileName, L"cpp" ) ){
 			nOutlineType = OUTLINE_CPP;
-		}else if( CheckEXT( pszFileName, _T("c++") ) ){
+		}else if( CheckEXT( pszFileName, L"c++" ) ){
 			nOutlineType = OUTLINE_CPP;
-		}else if( CheckEXT( pszFileName, _T("cxx") ) ){
+		}else if( CheckEXT( pszFileName, L"cxx" ) ){
 			nOutlineType = OUTLINE_CPP;
-		}else if( CheckEXT( pszFileName, _T("hpp") ) ){
+		}else if( CheckEXT( pszFileName, L"hpp" ) ){
 			nOutlineType = OUTLINE_CPP;
-		}else if( CheckEXT( pszFileName, _T("h++") ) ){
+		}else if( CheckEXT( pszFileName, L"h++" ) ){
 			nOutlineType = OUTLINE_CPP;
-		}else if( CheckEXT( pszFileName, _T("hxx") ) ){
+		}else if( CheckEXT( pszFileName, L"hxx" ) ){
 			nOutlineType = OUTLINE_CPP;
 		}
 	}
@@ -482,11 +482,11 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 		//	以下の解析処理はSKIPされる．
 		//	To Here Aug. 10, 2004 genta
 #ifdef TRACE_OUTLINE
-		DEBUG_TRACE(_T("line:%ls"), pLine);
+		DEBUG_TRACE(L"line:%ls", pLine);
 #endif
 		for( ; i < nLineLen; ++i ){
 #ifdef TRACE_OUTLINE
-			DEBUG_TRACE(_T("%2d [%lc] %d %x %d %d %d wd[%ls] pre[%ls] tmp[%ls] til[%ls] %d\n"), int((Int)i), pLine[i], nMode, nMode2,
+			DEBUG_TRACE(L"%2d [%lc] %d %x %d %d %d wd[%ls] pre[%ls] tmp[%ls] til[%ls] %d\n", int((Int)i), pLine[i], nMode, nMode2,
 				nNestLevel_global, nNestLevel_func, nNestLevel_fparam, szWord, szWordPrev, szTemplateName, szItemName, nWordIdx );
 #endif
 /* del start 2005/12/6 じゅうじ	*/
@@ -586,7 +586,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 				}else{
 					// 2002/10/27 frozen　ここから
 					if( nMode2 == M2_NAMESPACE_SAVE ){
-						if( wcscmp(L"final", szWord) == 0 && wcscmp(LSW(STR_OUTLINE_CPP_NONAME), szItemName) != 0 ){
+						if( wcscmp(L"final", szWord) == 0 && wcscmp(LS(STR_OUTLINE_CPP_NONAME), szItemName) != 0 ){
 							// strcut name final のfinalはクラス名の一部ではない
 							// ただし struct finalは名前
 						}else{
@@ -630,7 +630,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						{
 							nMode2 = M2_NAMESPACE_SAVE;
 							nItemLine = nLineCount + CLogicInt(1);
-							wcscpy(szItemName,LSW(STR_OUTLINE_CPP_NONAME));
+							wcscpy(szItemName,LS(STR_OUTLINE_CPP_NONAME));
 						}
 					}
 					/*else*/ if( nMode2 == M2_FUNC_NAME_END )	// 2010.07.08 ryoji 上で条件変更したので行頭の else を除去
@@ -796,7 +796,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						bAddFunction = true;
 					}
 					int nItemNameLen = 0;
-					int nLenDefPos = wcslen(LSW(STR_OUTLINE_CPP_DEFPOS));
+					int nLenDefPos = wcslen(LS(STR_OUTLINE_CPP_DEFPOS));
 					if( nNestLevel_func !=0 || (szWordPrev[0] == L'=' && szWordPrev[1] == L'\0') || nMode2 == M2_AFTER_EQUAL )
 						++nNestLevel_func;
 					else if(
@@ -823,7 +823,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 							++ nNestLevel_global;
 							nNamespaceLen[nNestLevel_global] = nNamespaceLen[nNestLevel_global-1] + nItemNameLen;
 							if( nItemFuncId == FL_OBJ_NAMESPACE )
-								wcscpy(&szNamespace[nNamespaceLen[nNestLevel_global]], LSW(STR_OUTLINE_CPP_DEFPOS));
+								wcscpy(&szNamespace[nNamespaceLen[nNestLevel_global]], LS(STR_OUTLINE_CPP_DEFPOS));
 							else
 							{
 								szNamespace[nNamespaceLen[nNestLevel_global]] = L'\0';
@@ -844,7 +844,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 							&ptPosXY
 						);
 #ifdef TRACE_OUTLINE
-						DEBUG_TRACE( _T("AppendData %d %ls\n"), nItemLine, szNamespace );
+						DEBUG_TRACE( L"AppendData %d %ls\n", nItemLine, szNamespace );
 #endif
 						pcFuncInfoArr->AppendData( nItemLine, ptPosXY.GetY2() + CLayoutInt(1) , szNamespace, nItemFuncId);
 						bDefinedTypedef = false;
@@ -1078,7 +1078,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 							&ptPosXY
 						);
 #ifdef TRACE_OUTLINE
-						DEBUG_TRACE( _T("AppendData %d %ls\n"), nItemLine, szNamespace );
+						DEBUG_TRACE( L"AppendData %d %ls\n", nItemLine, szNamespace );
 #endif
 						pcFuncInfoArr->AppendData( nItemLine, ptPosXY.GetY2() + CLayoutInt(1), szNamespace, nItemFuncId);
 					}
@@ -1500,7 +1500,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 					if( 0 < k && L'\'' == pLine2[k - 1]
 					 && nLineLen2 - 1 > k && L'\'' == pLine2[k + 1]
 					){
-//						MYTRACE( _T("▼[%ls]\n"), pLine2 );
+//						MYTRACE( L"▼[%ls]\n", pLine2 );
 					}else if( bCommentStringCheck && IsCommentBlock(arrCommentBlock, k) ){
 					}else{
 						//同じ行の場合
@@ -1523,7 +1523,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 					if( 0 < k && L'\'' == pLine2[k - 1]
 					 && nLineLen2 - 1 > k && L'\'' == pLine2[k + 1]
 					){
-//						MYTRACE( _T("▼[%ls]\n"), pLine2 );
+//						MYTRACE( L"▼[%ls]\n", pLine2 );
 					}else if( bCommentStringCheck && IsCommentBlock(arrCommentBlock, k) ){
 					}else{
 						//同じ行の場合

@@ -187,7 +187,7 @@ public:
 			ULONG Line;
 			LONG Pos;
 			if(Info.bstrDescription == NULL) {
-				Info.bstrDescription = SysAllocString(LSW(STR_ERR_CWSH09));
+				Info.bstrDescription = SysAllocString(LS(STR_ERR_CWSH09));
 			}
 			if(pscripterror->GetSourcePosition(&Context, &Line, &Pos) == S_OK)
 			{
@@ -247,7 +247,7 @@ CWSHClient::CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler,
 	
 	CLSID ClassID;
 	if(CLSIDFromProgID(AEngine, &ClassID) != S_OK)
-		Error(LSW(STR_ERR_CWSH01));
+		Error(LS(STR_ERR_CWSH01));
 	else
 	{
 #ifdef USE_JSCRIPT9
@@ -256,14 +256,14 @@ CWSHClient::CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler,
 		}
 #endif
 		if(CoCreateInstance(ClassID, 0, CLSCTX_INPROC_SERVER, IID_IActiveScript, reinterpret_cast<void **>(&m_Engine)) != S_OK)
-			Error(LSW(STR_ERR_CWSH02));
+			Error(LS(STR_ERR_CWSH02));
 		else
 		{
 			IActiveScriptSite *Site = new CWSHSite(this);
 			if(m_Engine->SetScriptSite(Site) != S_OK)
 			{
 				delete Site;
-				Error(LSW(STR_ERR_CWSH03));
+				Error(LS(STR_ERR_CWSH03));
 			}
 			else
 			{
@@ -300,7 +300,7 @@ static unsigned __stdcall AbortMacroProc( LPVOID lpParameter )
 	//停止ダイアログ表示前に数秒待つ
 	if(::WaitForSingleObject(pParam->hEvent, pParam->nCancelTimer * 1000) == WAIT_TIMEOUT){
 		//停止ダイアログ表示
-		DEBUG_TRACE(_T("AbortMacro: Show Dialog\n"));
+		DEBUG_TRACE(L"AbortMacro: Show Dialog\n");
 
 		MSG msg;
 		CDlgCancel cDlgCancel;
@@ -328,22 +328,22 @@ static unsigned __stdcall AbortMacroProc( LPVOID lpParameter )
 				break;
 			}
 			if(!bCanceled && cDlgCancel.IsCanceled()){
-				DEBUG_TRACE(_T("Canceld\n"));
+				DEBUG_TRACE(L"Canceld\n");
 				bCanceled = true;
 				cDlgCancel.CloseDialog( 0 );
 			}
 			if(cDlgCancel.GetHwnd() == NULL){
-				DEBUG_TRACE(_T("Close\n"));
+				DEBUG_TRACE(L"Close\n");
 				break;
 			}
 		}
 
-		DEBUG_TRACE(_T("AbortMacro: Try Interrupt\n"));
+		DEBUG_TRACE(L"AbortMacro: Try Interrupt\n");
 		pParam->pEngine->InterruptScriptThread(SCRIPTTHREADID_BASE, NULL, 0);
-		DEBUG_TRACE(_T("AbortMacro: Done\n"));
+		DEBUG_TRACE(L"AbortMacro: Done\n");
 	}
 
-	DEBUG_TRACE(_T("AbortMacro: Exit\n"));
+	DEBUG_TRACE(L"AbortMacro: Exit\n");
 	return 0;
 }
 
@@ -352,11 +352,11 @@ bool CWSHClient::Execute(const wchar_t *AScript)
 	bool bRet = false;
 	IActiveScriptParse *Parser;
 	if(m_Engine->QueryInterface(IID_IActiveScriptParse, reinterpret_cast<void **>(&Parser)) != S_OK)
-		Error(LSW(STR_ERR_CWSH04));
+		Error(LS(STR_ERR_CWSH04));
 	else 
 	{
 		if(Parser->InitNew() != S_OK)
-			Error(LSW(STR_ERR_CWSH05));
+			Error(LS(STR_ERR_CWSH05));
 		else
 		{
 			bool bAddNamedItemError = false;
@@ -370,7 +370,7 @@ bool CWSHClient::Execute(const wchar_t *AScript)
 				if(m_Engine->AddNamedItem( (*it)->Name(), dwFlag ) != S_OK)
 				{
 					bAddNamedItemError = true;
-					Error(LSW(STR_ERR_CWSH06));
+					Error(LS(STR_ERR_CWSH06));
 					break;
 				}
 			}
@@ -387,12 +387,12 @@ bool CWSHClient::Execute(const wchar_t *AScript)
 				if( 0 < sThreadParam.nCancelTimer ){
 					sThreadParam.hEvent = ::CreateEvent(NULL, TRUE, FALSE, NULL);
 					hThread = (HANDLE)_beginthreadex( NULL, 0, AbortMacroProc, (LPVOID)&sThreadParam, 0, &nThreadId );
-					DEBUG_TRACE(_T("Start AbortMacroProc 0x%08x\n"), nThreadId);
+					DEBUG_TRACE(L"Start AbortMacroProc 0x%08x\n", nThreadId);
 				}
 
 				//マクロ実行
 				if(m_Engine->SetScriptState(SCRIPTSTATE_STARTED) != S_OK)
-					Error(LSW(STR_ERR_CWSH07));
+					Error(LS(STR_ERR_CWSH07));
 				else
 				{
 					HRESULT hr = Parser->ParseScriptText(AScript, 0, 0, 0, 0, 0, SCRIPTTEXT_ISVISIBLE, 0, 0);
@@ -402,7 +402,7 @@ bool CWSHClient::Execute(const wchar_t *AScript)
 						中断メッセージが既に表示されてるはず。
 					*/
 					} else if(hr != S_OK) {
-						Error(LSW(STR_ERR_CWSH08));
+						Error(LS(STR_ERR_CWSH08));
 					} else {
 						bRet = true;
 					}
@@ -412,7 +412,7 @@ bool CWSHClient::Execute(const wchar_t *AScript)
 					::SetEvent(sThreadParam.hEvent);
 
 					//マクロ停止スレッドの終了待ち
-					DEBUG_TRACE(_T("Waiting for AbortMacroProc to finish\n"));
+					DEBUG_TRACE(L"Waiting for AbortMacroProc to finish\n");
 					::WaitForSingleObject(hThread, INFINITE); 
 					::CloseHandle(hThread);
 					::CloseHandle(sThreadParam.hEvent);

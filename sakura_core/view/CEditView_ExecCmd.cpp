@@ -107,7 +107,7 @@ protected:
 
 	TODO:	標準入力・標準エラーの取込選択。カレントディレクトリ。UTF-8等への対応
 */
-bool CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDir, COutputAdapter* customOa )
+bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDir, COutputAdapter* customOa )
 {
 	HANDLE				hStdOutWrite, hStdOutRead, hStdIn;
 	PROCESS_INFORMATION	pi;
@@ -174,17 +174,17 @@ bool CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 	// 一時ファイル属性でオープンすることに。
 	hStdIn = NULL;
 	if(bSendStdin){	/* 現在編集中のファイルを子プロセスの標準入力へ */
-		TCHAR		szPathName[MAX_PATH];
-		TCHAR		szTempFileName[MAX_PATH];
+		WCHAR		szPathName[MAX_PATH];
+		WCHAR		szTempFileName[MAX_PATH];
 		int			nFlgOpt;
 
 		GetTempPath( MAX_PATH, szPathName );
 		GetTempFileName( szPathName, TEXT("skr_"), 0, szTempFileName );
-		DEBUG_TRACE( _T("CEditView::ExecCmd() TempFilename=[%ts]\n"), szTempFileName );
+		DEBUG_TRACE( L"CEditView::ExecCmd() TempFilename=[%s]\n", szTempFileName );
 
 		nFlgOpt = bBeforeTextSelected ? 0x01 : 0x00;		/* 選択範囲を出力 */
 
-		if( !GetCommander().Command_PUTFILE( to_wchar(szTempFileName), sendEncoding, nFlgOpt) ){	// 一時ファイル出力
+		if( !GetCommander().Command_PUTFILE( szTempFileName, sendEncoding, nFlgOpt) ){	// 一時ファイル出力
 			hStdIn = NULL;
 		} else {
 			// 子プロセスへの継承用にファイルを開く
@@ -232,25 +232,25 @@ bool CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 	bool bRet = false;
 
 	//コマンドライン実行
-	TCHAR	cmdline[1024];
-	_tcscpy( cmdline, pszCmd );
+	WCHAR	cmdline[1024];
+	wcscpy( cmdline, pszCmd );
 	if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,
 				CREATE_NEW_CONSOLE, NULL, bCurDir ? pszCurDir : NULL, &sui, &pi ) == FALSE ) {
 		//実行に失敗した場合、コマンドラインベースのアプリケーションと判断して
 		// command(9x) か cmd(NT) を呼び出す
 
 		// 2010.08.27 Moca システムディレクトリ付加
-		TCHAR szCmdDir[_MAX_PATH];
+		WCHAR szCmdDir[_MAX_PATH];
 		::GetSystemDirectory(szCmdDir, _countof(szCmdDir));
 
 		//コマンドライン文字列作成
 		auto_sprintf(
 			cmdline,
-			_T("\"%ts\\%ts\" %ts%ts%ts"),
+			L"\"%s\\%s\" %s%s%s",
 			szCmdDir,
-			_T("cmd.exe"),
-			( outputEncoding == CODE_UNICODE ? _T("/U") : _T("") ),		// Unicdeモードでコマンド実行	2008/6/17 Uchi
-			( bGetStdout ? _T("/C ") : _T("/K ") ),
+			L"cmd.exe",
+			( outputEncoding == CODE_UNICODE ? L"/U" : L"" ),		// Unicdeモードでコマンド実行	2008/6/17 Uchi
+			( bGetStdout ? L"/C " : L"/K " ),
 			pszCmd
 		);
 		if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,
@@ -305,7 +305,7 @@ bool CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 		// 2006.12.03 maru アウトプットウィンドウにのみ出力
 		if (bOutputExtInfo)
 		{
-			TCHAR szTextDate[1024], szTextTime[1024];
+			WCHAR szTextDate[1024], szTextTime[1024];
 			SYSTEMTIME systime;
 			::GetLocalTime( &systime );
 			CFormatManager().MyGetDateFormat( systime, szTextDate, _countof( szTextDate ) - 1 );
@@ -314,10 +314,10 @@ bool CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 			oa.OutputW( L"\r\n" );
 			oa.OutputW( L"#============================================================\r\n" );
 			int len = auto_snprintf_s( szOutTemp, _countof(szOutTemp),
-				L"#DateTime : %ts %ts\r\n", szTextDate, szTextTime );
+				L"#DateTime : %s %s\r\n", szTextDate, szTextTime );
 			oa.OutputW( szOutTemp, len );
 			len = auto_snprintf_s( szOutTemp, _countof(szOutTemp),
-				L"#CmdLine  : %ts\r\n", pszCmd );
+				L"#CmdLine  : %s\r\n", pszCmd );
 			oa.OutputW( szOutTemp, len );
 			oa.OutputW( L"#============================================================\r\n" );
 		}
@@ -409,12 +409,12 @@ bool CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 							if (bCarry) {
 								workw[0] = L'\r'; // 2010.04.12 'r' -> '\r'
 								bufidx = sizeof(wchar_t);
-								DEBUG_TRACE( _T("ExecCmd: Carry last character [CR]\n") );
+								DEBUG_TRACE( L"ExecCmd: Carry last character [CR]\n" );
 							}
 						}
 						if( read_cnt % (int)sizeof(wchar_t) ){
 							// 高確率で0だと思うが1だと困る
-							DEBUG_TRACE( _T("ExecCmd: Carry Unicode 1byte [%x]\n"), byteCarry );
+							DEBUG_TRACE( L"ExecCmd: Carry Unicode 1byte [%x]\n", byteCarry );
 							work[bufidx] = byteCarry;
 							bufidx += 1;
 						}
@@ -467,7 +467,7 @@ bool CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 							}
 							work[0] = tmp;
 							bufidx = 1;
-							DEBUG_TRACE( _T("ExecCmd: Carry last character [%x]\n"), tmp );
+							DEBUG_TRACE( L"ExecCmd: Carry last character [%x]\n", tmp );
 						}
 					}
 					else if (outputEncoding == CODE_UTF8) {
@@ -495,7 +495,7 @@ bool CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 							bufidx = 0;
 						}
 						else {
-							DEBUG_TRACE(_T("read_cnt %d j %d\n"), read_cnt, j);
+							DEBUG_TRACE(L"read_cnt %d j %d\n", read_cnt, j);
 							char tmp[5];
 							int len = read_cnt - j;
 							memcpy(tmp, &work[j], len);
@@ -506,7 +506,7 @@ bool CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 							}
 							memcpy(work, tmp, len);
 							bufidx = len;
-							DEBUG_TRACE(_T("ExecCmd: Carry last character [%x]\n"), tmp[0]);
+							DEBUG_TRACE(L"ExecCmd: Carry last character [%x]\n", tmp[0]);
 						}
 					}
 					// Jan. 23, 2004 genta
@@ -545,7 +545,7 @@ user_cancel:
 		if( 0 < bufidx ){
 			if( outputEncoding == CODE_UNICODE ){
 				if( bufidx % (int)sizeof(wchar_t) ){
-					DEBUG_TRACE( _T("ExecCmd: Carry last Unicode byte [%x]\n"), work[bufidx-1] );
+					DEBUG_TRACE( L"ExecCmd: Carry last Unicode byte [%x]\n", work[bufidx-1] );
 					// UTF-16なのに奇数バイトだった
 					work[bufidx] = 0x00; // 上位バイトを0にしてごまかす
 					bufidx += 1;
@@ -566,7 +566,7 @@ user_cancel:
 		if( bCancelEnd && bOutputExtInfo ){
 			//	2006.12.03 maru アウトプットウィンドウにのみ出力
 			//最後にテキストを追加
-			oa.OutputW( LSW(STR_EDITVIEW_EXECCMD_STOP) );
+			oa.OutputW( LS(STR_EDITVIEW_EXECCMD_STOP) );
 		}
 		
 		{
@@ -576,7 +576,7 @@ user_cancel:
 			::GetExitCodeProcess( pi.hProcess, &result );
 			if( bOutputExtInfo ){
 				WCHAR endCode[128];
-				auto_sprintf( endCode, LSW(STR_EDITVIEW_EXECCMD_RET), result );
+				auto_sprintf( endCode, LS(STR_EDITVIEW_EXECCMD_RET), result );
 				oa.OutputW( endCode );
 			}
 			// 2004.09.20 naoh 終了コードが1以上の時はアウトプットをアクティブにする
@@ -640,12 +640,15 @@ bool COutputAdapterDefault::OutputW(const WCHAR* pBuf, int size)
 */
 bool COutputAdapterDefault::OutputA(const ACHAR* pBuf, int size)
 {
+	CNativeA input;
 	CNativeW buf;
 	if( -1 == size ){
-		buf.SetStringOld(pBuf);
+		input.SetString(pBuf);
 	}else{
-		buf.SetStringOld(pBuf,size);
+		input.SetString(pBuf,size);
 	}
+	auto pcCodeBase = std::unique_ptr<CCodeBase>(CCodeFactory::CreateCodeBase(ECodeType::CODE_SJIS, 0));
+	pcCodeBase->CodeToUnicode(*input._GetMemory(), &buf);
 	OutputBuf( buf.GetStringPtr(), (int)buf.GetStringLength() );
 	return true;
 }

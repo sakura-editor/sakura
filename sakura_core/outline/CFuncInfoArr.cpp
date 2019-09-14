@@ -82,8 +82,8 @@ void CFuncInfoArr::AppendData(
 	CLogicInt		nFuncColCRLF,		//!< 関数のある桁(CRLF単位)
 	CLayoutInt		nFuncLineLAYOUT,	//!< 関数のある行(折り返し単位)
 	CLayoutInt		nFuncColLAYOUT,		//!< 関数のある桁(折り返し単位)
-	const TCHAR*	pszFuncName,		//!< 関数名
-	const TCHAR*	pszFileName,		//!< ファイル名
+	const WCHAR*	pszFuncName,		//!< 関数名
+	const WCHAR*	pszFileName,		//!< ファイル名
 	int				nInfo,				//!< 付加情報
 	int				nDepth				//!< 深さ
 )
@@ -96,24 +96,9 @@ void CFuncInfoArr::AppendData(
 }
 
 void CFuncInfoArr::AppendData(
-	CLogicInt			nFuncLineCRLF,		//!< 関数のある行(CRLF単位)
-	CLogicInt			nFuncColCRLF,		//!< 関数のある桁(CRLF単位)
-	CLayoutInt			nFuncLineLAYOUT,	//!< 関数のある行(折り返し単位)
-	CLayoutInt			nFuncColLAYOUT,		//!< 関数のある桁(折り返し単位)
-	const NOT_TCHAR*	pszFuncName,		//!< 関数名
-	const NOT_TCHAR*	pszFileName,		//!< ファイル名
-	int					nInfo,				//!< 付加情報
-	int					nDepth				//!< 深さ
-)
-{
-	AppendData(nFuncLineCRLF,nFuncColCRLF,nFuncLineLAYOUT,nFuncColLAYOUT,to_tchar(pszFuncName),
-		(pszFileName?to_tchar(pszFileName):NULL),nInfo,nDepth);
-}
-
-void CFuncInfoArr::AppendData(
 	CLogicInt		nFuncLineCRLF,		//!< 関数のある行(CRLF単位)
 	CLayoutInt		nFuncLineLAYOUT,	//!< 関数のある行(折り返し単位)
-	const TCHAR*	pszFuncName,		//!< 関数名
+	const WCHAR*	pszFuncName,		//!< 関数名
 	int				nInfo,				//!< 付加情報
 	int				nDepth				//!< 深さ
 )
@@ -122,32 +107,21 @@ void CFuncInfoArr::AppendData(
 	return;
 }
 
-void CFuncInfoArr::AppendData(
-	CLogicInt			nFuncLineCRLF,		//!< 関数のある行(CRLF単位)
-	CLayoutInt			nFuncLineLAYOUT,	//!< 関数のある行(折り返し単位)
-	const NOT_TCHAR*	pszFuncName,		//!< 関数名
-	int					nInfo,				//!< 付加情報
-	int					nDepth				//!< 深さ
-)
-{
-	AppendData(nFuncLineCRLF,nFuncLineLAYOUT,to_tchar(pszFuncName),nInfo,nDepth);
-}
-
 void CFuncInfoArr::DUMP( void )
 {
 #ifdef _DEBUG
 	int i;
-	MYTRACE( _T("=============================\n") );
+	MYTRACE( L"=============================\n" );
 	for( i = 0; i < m_nFuncInfoArrNum; i++ ){
-		MYTRACE( _T("[%d]------------------\n"), i );
-		MYTRACE( _T("m_nFuncLineCRLF	=%d\n"), m_ppcFuncInfoArr[i]->m_nFuncLineCRLF );
-		MYTRACE( _T("m_nFuncLineLAYOUT	=%d\n"), m_ppcFuncInfoArr[i]->m_nFuncLineLAYOUT );
-		MYTRACE( _T("m_cmemFuncName	=[%ts]\n"), m_ppcFuncInfoArr[i]->m_cmemFuncName.GetStringPtr() );
-		MYTRACE( _T("m_cmemFileName	=[%ts]\n"),
-			(m_ppcFuncInfoArr[i]->m_cmemFileName.GetStringPtr() ? m_ppcFuncInfoArr[i]->m_cmemFileName.GetStringPtr() : _T("NULL")) );
-		MYTRACE( _T("m_nInfo			=%d\n"), m_ppcFuncInfoArr[i]->m_nInfo );
+		MYTRACE( L"[%d]------------------\n", i );
+		MYTRACE( L"m_nFuncLineCRLF	=%d\n", m_ppcFuncInfoArr[i]->m_nFuncLineCRLF );
+		MYTRACE( L"m_nFuncLineLAYOUT	=%d\n", m_ppcFuncInfoArr[i]->m_nFuncLineLAYOUT );
+		MYTRACE( L"m_cmemFuncName	=[%s]\n", m_ppcFuncInfoArr[i]->m_cmemFuncName.GetStringPtr() );
+		MYTRACE( L"m_cmemFileName	=[%s]\n",
+			(m_ppcFuncInfoArr[i]->m_cmemFileName.GetStringPtr() ? m_ppcFuncInfoArr[i]->m_cmemFileName.GetStringPtr() : L"NULL") );
+		MYTRACE( L"m_nInfo			=%d\n", m_ppcFuncInfoArr[i]->m_nInfo );
 	}
-	MYTRACE( _T("=============================\n") );
+	MYTRACE( L"=============================\n" );
 #endif
 }
 
@@ -170,12 +144,11 @@ void CFuncInfoArr::SetAppendText( int info, std::wstring s, bool overwrite )
 
 std::wstring CFuncInfoArr::GetAppendText( int info )
 {
-	if( m_AppendTextArr.find( info ) == m_AppendTextArr.end() ){
-		// キーが存在しない場合、空文字列を返す
-		return std::wstring();
-	}else{
-		// キーが存在する場合、値を返す
-		return m_AppendTextArr[ info ];
+	// キーが存在する場合、値を返す
+	if( m_AppendTextArr.find( info ) != m_AppendTextArr.end() ){
+		return m_AppendTextArr[info];
 	}
+	// キーが存在しない場合、空文字列を返す
+	return {};
 }
 

@@ -48,10 +48,10 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam, const TCHAR* pszPath );	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam, const WCHAR* pszPath );	/* モーダルダイアログの表示 */
 
-	TCHAR	m_szPath[_MAX_PATH+1];	/* フォルダ */
-	TCHAR	m_szTagsCmdLine[_MAX_PATH];	/* コマンドラインオプション(個別) */
+	WCHAR	m_szPath[_MAX_PATH+1];	/* フォルダ */
+	WCHAR	m_szTagsCmdLine[_MAX_PATH];	/* コマンドラインオプション(個別) */
 	int		m_nTagsOpt;				/* CTAGSオプション(チェック) */
 
 protected:

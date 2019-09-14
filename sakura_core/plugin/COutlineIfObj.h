@@ -113,7 +113,7 @@ public:
 			break;
 		case F_OL_SETTITLE:				//アウトラインダイアログタイトルを指定
 			if( Arguments[0] == NULL )return false;
-			m_sOutlineTitle = to_tchar( Arguments[0] );
+			m_sOutlineTitle = Arguments[0];
 			break;
 		case F_OL_SETLISTTYPE:			//アウトラインリスト種別を指定
 			if( Arguments[0] == NULL )return false;
@@ -134,7 +134,7 @@ public:
 
 	// メンバ変数
 public:
-	tstring m_sOutlineTitle;
+	wstring m_sOutlineTitle;
 	EOutlineType m_nListType;
 private:
 	CFuncInfoArr& m_cFuncInfoArr;

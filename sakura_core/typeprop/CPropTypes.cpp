@@ -146,7 +146,7 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	m_dwCustColors[0] = m_Types.m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
 	m_dwCustColors[1] = m_Types.m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK;
 
-	std::tstring		sTabname[_countof(TypePropSheetInfoList)];
+	std::wstring		sTabname[_countof(TypePropSheetInfoList)];
 	m_bChangeKeyWordSet = false;
 	PROPSHEETPAGE		psp[_countof(TypePropSheetInfoList)];
 	for( nIdx = 0; nIdx < _countof(TypePropSheetInfoList); nIdx++ ){
@@ -171,7 +171,7 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	psh.hwndParent = m_hwndParent;
 	psh.hInstance  = CSelectLang::getLangRsrcInstance();
 	psh.pszIcon    = NULL;
-	psh.pszCaption = LS( STR_PROPTYPE );	//_T("タイプ別設定");	// Sept. 8, 2000 jepro 単なる「設定」から変更
+	psh.pszCaption = LS( STR_PROPTYPE );	//L"タイプ別設定";	// Sept. 8, 2000 jepro 単なる「設定」から変更
 	psh.nPages     = nIdx;
 
 	//- 20020106 aroka # psh.nStartPage は unsigned なので負にならない
@@ -194,7 +194,7 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	nRet = MyPropertySheet( &psh );	// 2007.05.24 ryoji 独自拡張プロパティシート
 
 	if( -1 == nRet ){
-		TCHAR*	pszMsgBuf;
+		WCHAR*	pszMsgBuf;
 		::FormatMessage(
 			FORMAT_MESSAGE_ALLOCATE_BUFFER |
 			FORMAT_MESSAGE_FROM_SYSTEM |
@@ -202,7 +202,7 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 			NULL,
 			::GetLastError(),
 			MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ), // デフォルト言語
-			(LPTSTR)&pszMsgBuf,
+			(LPWSTR)&pszMsgBuf,
 			0,
 			NULL
 		);
@@ -271,7 +271,7 @@ HFONT CPropTypes::SetCtrlFont( HWND hwndDlg, int idc_ctrl, const LOGFONT& lf )
 HFONT CPropTypes::SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf, int nps, bool bUse)
 {
 	HFONT	hFont;
-	TCHAR	szFontName[80];
+	WCHAR	szFontName[80];
 	LOGFONT lfTemp;
 	lfTemp = lf;
 
@@ -285,13 +285,13 @@ HFONT CPropTypes::SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf,
 		hFont = SetCtrlFont( hwndDlg, idc_static, lfTemp );
 
 		// フォント名の設定
-		auto_sprintf( szFontName, nps % 10 ? _T("%s(%.1fpt)") : _T("%s(%.0fpt)"),
+		auto_sprintf( szFontName, nps % 10 ? L"%s(%.1fpt)" : L"%s(%.0fpt)",
 			lf.lfFaceName, double(nps)/10 );
 		::DlgItem_SetText( hwndDlg, idc_static, szFontName );
 	}
 	else {
 		hFont = NULL;
-		::DlgItem_SetText( hwndDlg, idc_static, _T("") );
+		::DlgItem_SetText( hwndDlg, idc_static, L"" );
 	}
 
 	return hFont;

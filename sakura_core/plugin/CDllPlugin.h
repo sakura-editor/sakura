@@ -53,7 +53,7 @@ class CDllPlugin
 {
 	//コンストラクタ
 public:
-	CDllPlugin( const tstring& sBaseDir ) : CPlugin( sBaseDir ), CDllImp() {
+	CDllPlugin( const wstring& sBaseDir ) : CPlugin( sBaseDir ), CDllImp() {
 	}
 
 	//デストラクタ
@@ -75,8 +75,8 @@ public:
 	bool InitDllImp() {
 		return true;
 	}
-	LPCTSTR GetDllNameImp(int nIndex) {
-		return _T("");
+	LPCWSTR GetDllNameImp(int nIndex) {
+		return L"";
 	}
 
 	//メンバ変数

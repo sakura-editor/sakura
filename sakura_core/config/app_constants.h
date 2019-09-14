@@ -31,7 +31,7 @@
 //                           名前                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-extern const TCHAR g_szGStrAppName[];
+extern const WCHAR g_szGStrAppName[];
 extern const CHAR  g_szGStrAppNameA[];
 extern const WCHAR g_szGStrAppNameW[];
 

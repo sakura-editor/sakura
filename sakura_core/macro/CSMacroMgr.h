@@ -107,14 +107,14 @@ public:
 	}
 	
 	//!	表示する名前の取得
-	const TCHAR* GetTitle(int idx) const
+	const WCHAR* GetTitle(int idx) const
 	{
 		return ( 0 <= idx && idx < MAX_CUSTMACRO ) ?
 		m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].GetTitle() : NULL;	// 2007.11.02 ryoji
 	}
 	
 	//!	表示名の取得
-	const TCHAR* GetName(int idx) const
+	const WCHAR* GetName(int idx) const
 	{
 		return ( 0 <= idx && idx < MAX_CUSTMACRO ) ?
 		m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].m_szName : NULL;
@@ -124,17 +124,17 @@ public:
 	
 		@param idx [in] マクロ番号
 	*/
-	const TCHAR* GetFile(int idx) const
+	const WCHAR* GetFile(int idx) const
 	{
 		return ( 0 <= idx && idx < MAX_CUSTMACRO ) ?
 		m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].m_szFile : 
-		( (idx == STAND_KEYMACRO || idx == TEMP_KEYMACRO) && m_sMacroPath != _T("") ) ?
+		( (idx == STAND_KEYMACRO || idx == TEMP_KEYMACRO) && m_sMacroPath != L"" ) ?
 		m_sMacroPath.c_str() : NULL;
 	}
 
 	/*! キーボードマクロの読み込み */
-	BOOL Load( int idx, HINSTANCE hInstance, const TCHAR* pszPath, const TCHAR* pszType );
-	BOOL Save( int idx, HINSTANCE hInstance, const TCHAR* pszPath );
+	BOOL Load( int idx, HINSTANCE hInstance, const WCHAR* pszPath, const WCHAR* pszType );
+	BOOL Save( int idx, HINSTANCE hInstance, const WCHAR* pszPath );
 	void UnloadAll(void);
 
 	/*! キーマクロのバッファにデータ追加 */
@@ -174,7 +174,7 @@ private:
 	*/
 	int m_CurrentIdx;
 
-	std::tstring	m_sMacroPath;	// Loadしたマクロ名
+	std::wstring	m_sMacroPath;	// Loadしたマクロ名
 
 public:
 	static MacroFuncInfo	m_MacroFuncInfoCommandArr[];	// コマンド情報(戻り値なし)

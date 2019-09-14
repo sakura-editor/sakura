@@ -35,17 +35,14 @@ void CViewCommander::Command_MENU_RBUTTON( void )
 	}
 	switch( nId ){
 	case IDM_COPYDICINFO:
-		const TCHAR*	pszStr;
-		pszStr = m_pCommanderView->m_cTipWnd.m_cInfo.GetStringPtr( &nLength );
-
-		TCHAR*		pszWork;
-		pszWork = new TCHAR[nLength + 1];
-		auto_memcpy( pszWork, pszStr, nLength );
-		pszWork[nLength] = _T('\0');
+	{
+		nLength = m_pCommanderView->m_cTipWnd.m_cInfo.GetStringLength();
+		const WCHAR* pszStr = m_pCommanderView->m_cTipWnd.m_cInfo.GetStringPtr();
+		WCHAR* pszWork = _wcsdup( pszStr );
 
 		// 見た目と同じように、\n を CR+LFへ変換する
 		for( i = 0; i < nLength ; ++i){
-			if( pszWork[i] == _T('\\') && pszWork[i + 1] == _T('n')){
+			if( pszWork[i] == L'\\' && pszWork[i + 1] == L'n'){
 				pszWork[i] =     WCODE::CR;
 				pszWork[i + 1] = WCODE::LF;
 			}
@@ -55,7 +52,7 @@ void CViewCommander::Command_MENU_RBUTTON( void )
 		delete[] pszWork;
 
 		break;
-
+	}
 	case IDM_JUMPDICT:
 		/* キーワード辞書ファイルを開く */
 		if(m_pCommanderView->m_pTypeData->m_bUseKeyWordHelp){		/* キーワード辞書セレクトを使用する */	// 2006.04.10 fon

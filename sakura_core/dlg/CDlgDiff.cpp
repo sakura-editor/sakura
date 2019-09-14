@@ -102,10 +102,10 @@ int CDlgDiff::DoModal(
 	HINSTANCE			hInstance,
 	HWND				hwndParent,
 	LPARAM				lParam,
-	const TCHAR*		pszPath		//自ファイル
+	const WCHAR*		pszPath		//自ファイル
 )
 {
-	_tcscpy(m_szFile1, pszPath);
+	wcscpy(m_szFile1, pszPath);
 
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_DIFF, lParam );
 }
@@ -122,18 +122,18 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 	case IDC_BUTTON_DIFF_DST:	/* 参照 */
 		{
 			CDlgOpenFile	cDlgOpenFile;
-			TCHAR			szPath[_MAX_PATH];
-			_tcscpy( szPath, m_szFile2 );
+			WCHAR			szPath[_MAX_PATH];
+			wcscpy( szPath, m_szFile2 );
 			/* ファイルオープンダイアログの初期化 */
 			cDlgOpenFile.Create(
 				m_hInstance,
 				GetHwnd(),
-				_T("*.*"),
+				L"*.*",
 				m_szFile1 /*m_szFile2*/
 			);
 			if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) )
 			{
-				_tcscpy( m_szFile2, szPath );
+				wcscpy( m_szFile2, szPath );
 				::DlgItem_SetText( GetHwnd(), IDC_EDIT_DIFF_DST, m_szFile2 );
 				//外部ファイルを選択状態に
 				::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST1, TRUE );
@@ -260,7 +260,7 @@ void CDlgDiff::SetData( void )
 			// 水平スクロール幅は実際に表示する文字列の幅を計測して決める	// 2009.09.26 ryoji
 			CTextWidthCalc calc(hwndList);
 			int score = 0;
-			TCHAR		szFile1[_MAX_PATH];
+			WCHAR		szFile1[_MAX_PATH];
 			SplitPath_FolderAndFile(m_szFile1, NULL, szFile1);
 			for( i = 0; i < nRowNum; i++ )
 			{
@@ -289,7 +289,7 @@ void CDlgDiff::SetData( void )
 				calc.SetTextWidthIfMax(szName);
 
 				// ファイル名一致のスコアを計算する
-				TCHAR szFile2[_MAX_PATH];
+				WCHAR szFile2[_MAX_PATH];
 				SplitPath_FolderAndFile( pFileInfo->m_szPath, NULL, szFile2 );
 				int scoreTemp = FileMatchScoreSepExt( szFile1, szFile2 );
 				if( score < scoreTemp ||
@@ -360,7 +360,7 @@ int CDlgDiff::GetData( void )
 	m_pShareData->m_nDiffFlgOpt = m_nDiffFlgOpt;
 
 	//相手ファイル名
-	m_szFile2[0] = _T('\0');
+	m_szFile2[0] = L'\0';
 	m_hWnd_Dst = NULL;
 	m_bIsModifiedDst = false;
 	if( ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_DIFF_DST1 ) == BST_CHECKED )
@@ -387,7 +387,7 @@ int CDlgDiff::GetData( void )
 			::SendMessageAny( m_hWnd_Dst, MYWM_GETFILEINFO, 0, 0 );
 			pFileInfo = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
-			_tcscpy( m_szFile2, pFileInfo->m_szPath );
+			wcscpy( m_szFile2, pFileInfo->m_szPath );
 			m_bIsModifiedDst = pFileInfo->m_bIsModified;
 			m_nCodeTypeDst = pFileInfo->m_nCharCode;
 			m_bBomDst = pFileInfo->m_bBom;

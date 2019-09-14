@@ -22,7 +22,7 @@ void debug_output(const char* str, ...)
 //!強制終了
 void debug_exit()
 {
-	MessageBox(NULL,_T("assertとかに引っ掛かったぽいです"),GSTR_APPNAME,MB_OK);
+	MessageBox(NULL,L"assertとかに引っ掛かったぽいです",GSTR_APPNAME,MB_OK);
 	exit(1);
 }
 

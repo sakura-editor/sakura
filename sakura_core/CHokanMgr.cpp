@@ -109,7 +109,7 @@ int CHokanMgr::Search(
 	int				nWinHeight,
 	int				nColumnWidth,
 	const wchar_t*	pszCurWord,
-	const TCHAR*	pszHokanFile,
+	const WCHAR*	pszHokanFile,
 	bool			bHokanLoHiCase,	// 入力補完機能：英大文字小文字を同一視する 2001/06/19 asa-o
 	bool			bHokanByFile,	// 編集中データから候補を探す 2003.06.23 Moca
 	int				nHokanType,
@@ -532,7 +532,7 @@ BOOL CHokanMgr::OnLbnSelChange( HWND hwndCtl, int wID )
 /* 補完実行 */
 BOOL CHokanMgr::DoHokan( int nVKey )
 {
-	DEBUG_TRACE( _T("CHokanMgr::DoHokan( nVKey==%xh )\n"), nVKey );
+	DEBUG_TRACE( L"CHokanMgr::DoHokan( nVKey==%xh )\n", nVKey );
 
 	/* 補完候補決定キー */
 	if( VK_RETURN	== nVKey && !m_pShareData->m_Common.m_sHelper.m_bHokanKey_RETURN )	return FALSE;/* VK_RETURN 補完決定キーが有効/無効 */
@@ -548,17 +548,17 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 		return FALSE;
 	}
 	int nLabelLen = List_GetTextLen( hwndList, nItem );
-	auto wszLabel = std::make_unique<WCHAR[]>(nLabelLen + 1);
-	List_GetText( hwndList, nItem, &wszLabel[0] );
+	auto pszLabel = std::make_unique<WCHAR[]>(nLabelLen + 1);
+	List_GetText( hwndList, nItem, &pszLabel[0], nLabelLen + 1 );
 
  	/* テキストを貼り付け */
 	pcEditView = reinterpret_cast<CEditView*>(m_lParam);
 	//	Apr. 28, 2000 genta
 	pcEditView->GetCommander().HandleCommand( F_WordDeleteToStart, false, 0, 0, 0, 0 );
-	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)&wszLabel[0], wcslen(&wszLabel[0]), TRUE, 0 );
+	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)&pszLabel[0], wcslen(&pszLabel[0]), TRUE, 0 );
 
 	// Until here
-//	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)(wszLabel + m_cmemCurWord.GetLength()), TRUE, 0, 0 );
+//	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)(pszLabel + m_cmemCurWord.GetLength()), TRUE, 0, 0 );
 	Hide();
 
 	return TRUE;
@@ -604,7 +604,7 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 //	//	switch( vkey ){
 //	//	}
 //
-//		MYTRACE( _T("CHokanMgr::OnCharToItem vkey=%xh\n"), vkey );
+//		MYTRACE( L"CHokanMgr::OnCharToItem vkey=%xh\n", vkey );
 //		return -1;
 //	}
 
@@ -612,7 +612,7 @@ int CHokanMgr::KeyProc( WPARAM wParam, LPARAM lParam )
 {
 	WORD vkey;
 	vkey = LOWORD(wParam);		// virtual-key code
-//	MYTRACE( _T("CHokanMgr::OnVKeyToItem vkey=%xh\n"), vkey );
+//	MYTRACE( L"CHokanMgr::OnVKeyToItem vkey=%xh\n", vkey );
 	switch( vkey ){
 	case VK_HOME:
 	case VK_END:
@@ -660,7 +660,7 @@ void CHokanMgr::ShowTip()
 
 	int nLabelLen = List_GetTextLen( hwndCtrl, nItem );
 	auto szLabel = std::make_unique<WCHAR[]>(nLabelLen + 1);
-	List_GetText( hwndCtrl, nItem, &szLabel[0] );	// 選択中の単語を取得
+	List_GetText( hwndCtrl, nItem, &szLabel[0], nLabelLen + 1 );	// 選択中の単語を取得
 
 	pcEditView = reinterpret_cast<CEditView*>(m_lParam);
 

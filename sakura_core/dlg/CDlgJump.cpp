@@ -201,7 +201,7 @@ void CDlgJump::SetData( void )
 //From Here Oct. 7, 2000 JEPRO 前回入力した行番号を保持するように下行を変更
 //	::DlgItem_SetText( GetHwnd(), IDC_EDIT_LINENUM, "" );	/* 行番号 */
 	if( 0 == m_nLineNum ){
-		::DlgItem_SetText( GetHwnd(), IDC_EDIT_LINENUM, _T("") );	/* 行番号 */
+		::DlgItem_SetText( GetHwnd(), IDC_EDIT_LINENUM, L"" );	/* 行番号 */
 	}else{
 		::SetDlgItemInt( GetHwnd(), IDC_EDIT_LINENUM, m_nLineNum, FALSE );	/* 前回の行番号 */
 	}
@@ -224,12 +224,12 @@ void CDlgJump::SetData( void )
 		}
 		if( 31 == cFuncInfoArr.GetAt( i )->m_nInfo ){
 			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* 行番号の表示 false=折り返し単位／true=改行単位 */
-				auto_sprintf( szText, LSW(STR_DLGJUMP_PSLQL),
+				auto_sprintf( szText, LS(STR_DLGJUMP_PSLQL),
 					cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF,
 					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
 				);
 			}else{
-				auto_sprintf( szText, LSW(STR_DLGJUMP_PSLQL),
+				auto_sprintf( szText, LS(STR_DLGJUMP_PSLQL),
 					cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT,
 					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
 				);
@@ -245,12 +245,12 @@ void CDlgJump::SetData( void )
 		}
 		if( 41 == cFuncInfoArr.GetAt( i )->m_nInfo ){
 			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* 行番号の表示 false=折り返し単位／true=改行単位 */
-				auto_sprintf( szText, LSW(STR_DLGJUMP_PSLQL),
+				auto_sprintf( szText, LS(STR_DLGJUMP_PSLQL),
 					cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF,
 					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
 				);
 			}else{
-				auto_sprintf( szText, LSW(STR_DLGJUMP_PSLQL),
+				auto_sprintf( szText, LS(STR_DLGJUMP_PSLQL),
 					cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT,
 					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
 				);

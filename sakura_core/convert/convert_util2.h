@@ -387,7 +387,7 @@ int _DecodeUU_line( const CHAR_TYPE *pSrc, const int nSrcLen, char *pDest )
 	UUエンコードのヘッダー部分を解析
 */
 template< class CHAR_TYPE >
-bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, TCHAR *pszFilename )
+bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, WCHAR *pszFilename )
 {
 //	using namespace WCODE;
 
@@ -410,7 +410,7 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, TCHAR *pszFilename )
 	
 	if( nLen < 1 ){
 		if( pszFilename ){
-			pszFilename[0] = _WINT('\0');
+			pszFilename[0] = L'\0';
 		}
 		return false;
 	}
@@ -500,7 +500,7 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, TCHAR *pszFilename )
 	// ファイル名を格納
 	if( pszFilename ){
 		strtotcs( pszFilename, pwstart, (size_t)nwlen );
-		pszFilename[nwlen] = _WINT('\0');
+		pszFilename[nwlen] = L'\0';
 	}
 
 	return true;

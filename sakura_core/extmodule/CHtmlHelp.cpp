@@ -41,9 +41,9 @@ CHtmlHelp::CHtmlHelp(void) noexcept
 /*!
 	HTML Help のファイル名を渡す
 */
-LPCTSTR CHtmlHelp::GetDllNameImp(int nIndex)
+LPCWSTR CHtmlHelp::GetDllNameImp(int nIndex)
 {
-	return _T("HHCTRL.OCX");
+	return L"HHCTRL.OCX";
 }
 
 bool CHtmlHelp::InitDllImp()

@@ -74,14 +74,14 @@ bool CWSHPlugin::InvokePlug( CEditView* view, CPlug& plug, CWSHIfObj::List& para
 	CWSHMacroManager* pWsh = NULL;
 
 	if( !m_bUseCache || wshPlug.m_Wsh == NULL ){
-		CFilePath path( plug.m_cPlugin.GetFilePath( to_tchar(plug.m_sHandler.c_str()) ).c_str() );
+		CFilePath path( plug.m_cPlugin.GetFilePath( plug.m_sHandler.c_str() ).c_str() );
 
 		pWsh = (CWSHMacroManager*)CWSHMacroManager::Creator( path.GetExt( true ) );
 		if( pWsh == NULL ){ return false; }
 
 		BOOL bLoadResult = pWsh->LoadKeyMacro( G_AppInstance(), path );
 		if ( !bLoadResult ){
-			ErrorMessage( NULL, LS(STR_WSHPLUG_LOADMACRO), static_cast<const TCHAR*>(path) );
+			ErrorMessage( NULL, LS(STR_WSHPLUG_LOADMACRO), static_cast<const WCHAR*>(path) );
 			delete pWsh;
 			return false;
 		}

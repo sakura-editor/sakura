@@ -64,8 +64,8 @@ static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
 	0, 0
 };
 
-static TCHAR* strcnv(TCHAR *str);
-static TCHAR* GetFileName(const TCHAR *fullpath);
+static WCHAR* strcnv(WCHAR *str);
+static WCHAR* GetFileName(const WCHAR *fullpath);
 
 static int nKeyHelpRMenuType[] = {
 	STR_KEYHELP_RMENU_NONE,
@@ -94,8 +94,8 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 	RECT		rc;
 
 	BOOL	bUse;						/* 辞書を 使用する/しない */
-	TCHAR	szAbout[DICT_ABOUT_LEN];	/* 辞書の説明(辞書ファイルの1行目から生成) */
-	TCHAR	szPath[_MAX_PATH];			/* ファイルパス */
+	WCHAR	szAbout[DICT_ABOUT_LEN];	/* 辞書の説明(辞書ファイルの1行目から生成) */
+	WCHAR	szPath[_MAX_PATH];			/* ファイルパス */
 	DWORD	dwStyle;
 
 	hwndList = GetDlgItem( hwndDlg, IDC_LIST_KEYHELP );
@@ -113,19 +113,19 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = (rc.right - rc.left) * 25 / 100;
-		col.pszText  = const_cast<TCHAR*>(LS(STR_PROPTYPKEYHELP_DIC));	/* 指定辞書ファイルの使用可否 */
+		col.pszText  = const_cast<WCHAR*>(LS(STR_PROPTYPKEYHELP_DIC));	/* 指定辞書ファイルの使用可否 */
 		col.iSubItem = 0;
 		ListView_InsertColumn( hwndList, 0, &col );
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = (rc.right - rc.left) * 55 / 100;
-		col.pszText  = const_cast<TCHAR*>(LS(STR_PROPTYPKEYHELP_INFO));		/* 指定辞書の１行目を取得 */
+		col.pszText  = const_cast<WCHAR*>(LS(STR_PROPTYPKEYHELP_INFO));		/* 指定辞書の１行目を取得 */
 		col.iSubItem = 1;
 		ListView_InsertColumn( hwndList, 1, &col );
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = (rc.right - rc.left) * 18 / 100;
-		col.pszText  = const_cast<TCHAR*>(LS(STR_PROPTYPKEYHELP_PATH));				/* 指定辞書ファイルパス */
+		col.pszText  = const_cast<WCHAR*>(LS(STR_PROPTYPKEYHELP_PATH));				/* 指定辞書ファイルパス */
 		col.iSubItem = 2;
 		ListView_InsertColumn( hwndList, 2, &col );
 		SetData( hwndDlg );	/* ダイアログデータの設定 辞書ファイル一覧 */
@@ -209,15 +209,15 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 				/* 更新するキー情報を取得する。 */
 				auto_memset(szPath, 0, _countof(szPath));
 				::DlgItem_GetText( hwndDlg, IDC_EDIT_KEYHELP, szPath, _countof(szPath) );
-				if( szPath[0] == _T('\0') ) return FALSE;
+				if( szPath[0] == L'\0' ) return FALSE;
 				/* 重複検査 */
 				nIndex2 = ListView_GetItemCount(hwndList);
-				TCHAR szPath2[_MAX_PATH];
+				WCHAR szPath2[_MAX_PATH];
 				int i;
 				for(i = 0; i < nIndex2; i++){
 					auto_memset(szPath2, 0, _countof(szPath2));
 					ListView_GetItemText(hwndList, i, 2, szPath2, _countof(szPath2));
-					if( _tcscmp(szPath, szPath2) == 0 ){
+					if( wcscmp(szPath, szPath2) == 0 ){
 						if( (wID ==IDC_BUTTON_KEYHELP_UPD) && (i == nIndex) ){	/* 更新時、変わっていなかったら何もしない */
 						}else{
 							ErrorMessage( hwndDlg, LS(STR_PROPTYPKEYHELP_ERR_REG2));
@@ -235,7 +235,7 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 					}
 					// 開けたなら1行目を取得してから閉じる -> szAbout
 					std::wstring line=in.ReadLineW();
-					_wcstotcs(szAbout,line.c_str(),_countof(szAbout));
+					line.copy( szAbout, line.length(), 0 );
 					in.Close();
 				}
 				strcnv(szAbout);
@@ -439,7 +439,7 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 				{
 					/* ファイルオープンダイアログの初期化 */
 					// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
-					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_KEYHELP), _T("*.khp"), true, EFITER_TEXT);
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_KEYHELP), L"*.khp", true, EFITER_TEXT);
 				}
 				return TRUE;
 
@@ -542,7 +542,7 @@ void CPropTypesKeyHelp::SetData( HWND hwndDlg )
 	ListView_SetExtendedListViewStyle( hwndWork, dwStyle );
 	/* データ表示 */
 	for(i = 0; i < MAX_KEYHELP_FILE; i++){
-		if( m_Types.m_KeyHelpArr[i].m_szPath[0] == _T('\0') ) break;
+		if( m_Types.m_KeyHelpArr[i].m_szPath[0] == L'\0' ) break;
 		/* ON-OFF */
 		lvi.mask     = LVIF_TEXT;
 		lvi.iItem    = i;
@@ -581,8 +581,8 @@ int CPropTypesKeyHelp::GetData( HWND hwndDlg )
 {
 	HWND	hwndList;
 	int	nIndex, i;
-	TCHAR	szAbout[DICT_ABOUT_LEN];	/* 辞書の説明(辞書ファイルの1行目から生成) */
-	TCHAR	szPath[_MAX_PATH];			/* ファイルパス */
+	WCHAR	szAbout[DICT_ABOUT_LEN];	/* 辞書の説明(辞書ファイルの1行目から生成) */
+	WCHAR	szPath[_MAX_PATH];			/* ファイルパス */
 
 	/* 使用する・使用しない */
 	m_Types.m_bUseKeyWordHelp      = ( BST_CHECKED == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP ) );
@@ -597,18 +597,18 @@ int CPropTypesKeyHelp::GetData( HWND hwndDlg )
 	for(i = 0; i < MAX_KEYHELP_FILE; i++){
 		if( i < nIndex ){
 			bool		bUse = false;						/* 辞書ON(1)/OFF(0) */
-			szAbout[0]	= _T('\0');
-			szPath[0]	= _T('\0');
+			szAbout[0]	= L'\0';
+			szPath[0]	= L'\0';
 			/* チェックボックス状態を取得してbUseにセット */
 			if(ListView_GetCheckState(hwndList, i))
 				bUse = true;
 			ListView_GetItemText( hwndList, i, 1, szAbout, _countof(szAbout) );
 			ListView_GetItemText( hwndList, i, 2, szPath, _countof(szPath) );
 			m_Types.m_KeyHelpArr[i].m_bUse = bUse;
-			_tcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, szAbout);
-			_tcscpy(m_Types.m_KeyHelpArr[i].m_szPath, szPath);
+			wcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, szAbout);
+			wcscpy(m_Types.m_KeyHelpArr[i].m_szPath, szPath);
 		}else{	/* 未登録部分はクリアする */
-			m_Types.m_KeyHelpArr[i].m_szPath[0] = _T('\0');
+			m_Types.m_KeyHelpArr[i].m_szPath[0] = L'\0';
 		}
 	}
 	/* 辞書の冊数を取得 */
@@ -652,19 +652,19 @@ bool CPropTypesKeyHelp::Export(HWND hwndDlg)
 
 	@date 2006.04.10 fon 新規作成
 */
-static TCHAR* strcnv(TCHAR *str)
+static WCHAR* strcnv(WCHAR *str)
 {
-	TCHAR* p=str;
+	WCHAR* p=str;
 	/* 改行コードの削除 */
-	if( NULL != (p=_tcschr(p,_T('\n'))) )
-		*p=_T('\0');
+	if( NULL != (p=wcschr(p,L'\n')) )
+		*p=L'\0';
 	p=str;
-	if( NULL != (p=_tcschr(p,_T('\r'))) )
-		*p=_T('\0');
+	if( NULL != (p=wcschr(p,L'\r')) )
+		*p=L'\0';
 	/* カンマの置換 */
 	p=str;
-	for(; (p=_tcschr(p,_T(','))) != NULL; ){
-		*p=_T('.');
+	for(; (p=wcschr(p,L',')) != NULL; ){
+		*p=L'.';
 	}
 	return str;
 }
@@ -674,18 +674,18 @@ static TCHAR* strcnv(TCHAR *str)
 	@date 2006.04.10 fon 新規作成
 	@date 2006.09.14 genta ディレクトリがない場合に最初の1文字が切れないように
 */
-static TCHAR* GetFileName(const TCHAR* fullpath)
+static WCHAR* GetFileName(const WCHAR* fullpath)
 {
-	const TCHAR* pszName = fullpath;
+	const WCHAR* pszName = fullpath;
 	CharPointerT p = fullpath;
-	while( *p != _T('\0')  ){
-		if( *p == _T('\\') ){
+	while( *p != L'\0'  ){
+		if( *p == L'\\' ){
 			pszName = p + 1;
 			p++;
 		}else{
 			p++;
 		}
 	}
-	return const_cast<TCHAR*>(pszName);
+	return const_cast<WCHAR*>(pszName);
 }
 

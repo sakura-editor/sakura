@@ -113,7 +113,7 @@ INT_PTR CPropWin::DispatchEvent(
 				OnHelp( hwndDlg, IDD_PROP_WIN );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE( _T("Window PSN_KILLACTIVE\n") );
+//				MYTRACE( L"Window PSN_KILLACTIVE\n" );
 				/* ダイアログデータの取得 Window */
 				GetData( hwndDlg );
 				return TRUE;
@@ -335,7 +335,7 @@ void CPropWin::SetData( HWND hwndDlg )
 	for( uiIndex = 0; uiIndex < CSelectLang::m_psLangInfoList.size(); uiIndex++ ){
 		CSelectLang::SSelLangInfo* psLangInfo = CSelectLang::m_psLangInfoList.at( uiIndex );
 		Combo_InsertString( hwndCombo, uiIndex, psLangInfo->szLangName );
-		if ( _tcscmp( m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName ) == 0 ) {
+		if ( wcscmp( m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName ) == 0 ) {
 			nSelPos = uiIndex;
 		}
 	}
@@ -432,8 +432,8 @@ int CPropWin::GetData( HWND hwndDlg )
 	HWND hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_LANGUAGE );
 	int nSelPos = Combo_GetCurSel( hwndCombo );
 	CSelectLang::SSelLangInfo *psLangInfo = CSelectLang::m_psLangInfoList.at( nSelPos );
-	if ( _tcscmp( m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName ) != 0 ) {
-		_tcsncpy( m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName, _countof(m_Common.m_sWindow.m_szLanguageDll) );
+	if ( wcscmp( m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName ) != 0 ) {
+		wcsncpy( m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName, _countof(m_Common.m_sWindow.m_szLanguageDll) );
 	}
 
 	return TRUE;

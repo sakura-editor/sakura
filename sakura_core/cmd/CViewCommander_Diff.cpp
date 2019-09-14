@@ -108,7 +108,7 @@ static bool Commander_COMPARE_core(CViewCommander& commander, bool& bDifferent, 
 void CViewCommander::Command_COMPARE( void )
 {
 	HWND		hwndCompareWnd = NULL;
-	TCHAR		szPath[_MAX_PATH + 1];
+	WCHAR		szPath[_MAX_PATH + 1];
 	CDlgCompare	cDlgCompare;
 	HWND		hwndMsgBox;	//@@@ 2003.06.12 MIK
 
@@ -221,7 +221,7 @@ void CViewCommander::Command_COMPARE( void )
 	return;
 }
 
-static ECodeType GetFileCharCode( LPCTSTR pszFile )
+static ECodeType GetFileCharCode( LPCWSTR pszFile )
 {
 	const STypeConfigMini* typeMini;
 	CDocTypeManager().GetTypeConfigMini( CDocTypeManager().GetDocumentTypeOfPath( pszFile ), &typeMini );
@@ -244,11 +244,11 @@ static ECodeType GetDiffCreateTempFileCode(ECodeType code)
 */
 void CViewCommander::Command_Diff( const WCHAR* _szDiffFile2, int nFlgOpt )
 {
-	const std::tstring strDiffFile2 = to_tchar(_szDiffFile2);
-	const TCHAR* szDiffFile2 = strDiffFile2.c_str();
+	const std::wstring strDiffFile2 = _szDiffFile2;
+	const WCHAR* szDiffFile2 = strDiffFile2.c_str();
 
 	bool	bTmpFile1 = false;
-	TCHAR	szTmpFile1[_MAX_PATH * 2];
+	WCHAR	szTmpFile1[_MAX_PATH * 2];
 
 	if( !IsFileExists( szDiffFile2, true ) )
 	{
@@ -277,18 +277,18 @@ void CViewCommander::Command_Diff( const WCHAR* _szDiffFile2, int nFlgOpt )
 		}
 		bTmpFile1 = true;
 	}else{
-		_tcscpy( szTmpFile1, GetDocument()->m_cDocFile.GetFilePath() );
+		wcscpy( szTmpFile1, GetDocument()->m_cDocFile.GetFilePath() );
 	}
 
 	bool bTmpFile2 = false;
-	TCHAR	szTmpFile2[_MAX_PATH * 2];
+	WCHAR	szTmpFile2[_MAX_PATH * 2];
 	bool bTmpFileMode = code2 != saveCode2;
 	if( !bTmpFileMode ){
-		_tcscpy(szTmpFile2, szDiffFile2);
+		wcscpy(szTmpFile2, szDiffFile2);
 	}else if( m_pCommanderView->MakeDiffTmpFile2( szTmpFile2, szDiffFile2, code2, saveCode2 ) ){
 		bTmpFile2 = true;
 	}else{
-		if( bTmpFile1 ) _tunlink( szTmpFile1 );
+		if( bTmpFile1 ) _wunlink( szTmpFile1 );
 		return;
 	}
 
@@ -301,8 +301,8 @@ void CViewCommander::Command_Diff( const WCHAR* _szDiffFile2, int nFlgOpt )
 	m_pCommanderView->ViewDiffInfo(szTmpFile1, szTmpFile2, nFlgOpt, bUTF8io);
 
 	//一時ファイルを削除する
-	if( bTmpFile1 ) _tunlink( szTmpFile1 );
-	if( bTmpFile2 ) _tunlink( szTmpFile2 );
+	if( bTmpFile1 ) _wunlink( szTmpFile1 );
+	if( bTmpFile2 ) _wunlink( szTmpFile2 );
 
 	return;
 }
@@ -331,12 +331,12 @@ void CViewCommander::Command_Diff_Dialog( void )
 	}
 	
 	//自ファイル
-	TCHAR	szTmpFile1[_MAX_PATH * 2];
+	WCHAR	szTmpFile1[_MAX_PATH * 2];
 	ECodeType code = GetDocument()->GetDocumentEncoding();
 	ECodeType saveCode = GetDiffCreateTempFileCode(code);
 	ECodeType code2 = cDlgDiff.m_nCodeTypeDst;
 	if( CODE_ERROR == code2 ){
-		if( cDlgDiff.m_szFile2[0] != _T('\0') ){
+		if( cDlgDiff.m_szFile2[0] != L'\0' ){
 			// ファイル名指定
 			code2 = GetFileCharCode(cDlgDiff.m_szFile2);
 		}
@@ -354,23 +354,23 @@ void CViewCommander::Command_Diff_Dialog( void )
 		if( !m_pCommanderView->MakeDiffTmpFile( szTmpFile1, NULL, saveCode, GetDocument()->GetDocumentBomExist() ) ){ return; }
 		bTmpFile1 = true;
 	}else{
-		_tcscpy( szTmpFile1, GetDocument()->m_cDocFile.GetFilePath() );
+		wcscpy( szTmpFile1, GetDocument()->m_cDocFile.GetFilePath() );
 	}
 		
 	//相手ファイル
 	// UNICODE,UNICODEBEの場合は常に一時ファイルでUTF-8にする
-	TCHAR	szTmpFile2[_MAX_PATH * 2];
+	WCHAR	szTmpFile2[_MAX_PATH * 2];
 	// 2014.06.25 ファイル名がない(=無題,Grep,アウトプット)もTmpFileModeにする
-	bool bTmpFileMode = cDlgDiff.m_bIsModifiedDst || code2 != saveCode2 || cDlgDiff.m_szFile2[0] == _T('\0');
+	bool bTmpFileMode = cDlgDiff.m_bIsModifiedDst || code2 != saveCode2 || cDlgDiff.m_szFile2[0] == L'\0';
 	if( !bTmpFileMode ){
 		// 未変更でファイルありでASCII系コードの場合のみ,そのままファイルを利用する
-		_tcscpy( szTmpFile2, cDlgDiff.m_szFile2 );
+		wcscpy( szTmpFile2, cDlgDiff.m_szFile2 );
 	}else if( cDlgDiff.m_hWnd_Dst ){
 		// ファイル一覧から選択
 		if( m_pCommanderView->MakeDiffTmpFile( szTmpFile2, cDlgDiff.m_hWnd_Dst, saveCode2, cDlgDiff.m_bBomDst ) ){
 			bTmpFile2 = true;
 		}else {
-			if( bTmpFile1 ) _tunlink( szTmpFile1 );
+			if( bTmpFile1 ) _wunlink( szTmpFile1 );
 			return;
 		}
 	}else{
@@ -379,7 +379,7 @@ void CViewCommander::Command_Diff_Dialog( void )
 			bTmpFile2 = true;
 		}else{
 			// Error
-			if( bTmpFile1 ) _tunlink( szTmpFile1 );
+			if( bTmpFile1 ) _wunlink( szTmpFile1 );
 			return;
 		}
 	}
@@ -393,8 +393,8 @@ void CViewCommander::Command_Diff_Dialog( void )
 	m_pCommanderView->ViewDiffInfo(szTmpFile1, szTmpFile2, cDlgDiff.m_nDiffFlgOpt, bUTF8io);
 	
 	//一時ファイルを削除する
-	if( bTmpFile1 ) _tunlink( szTmpFile1 );
-	if( bTmpFile2 ) _tunlink( szTmpFile2 );
+	if( bTmpFile1 ) _wunlink( szTmpFile1 );
+	if( bTmpFile2 ) _wunlink( szTmpFile2 );
 
 	return;
 }

@@ -39,10 +39,10 @@ public:
 
 	//	2007.07.20 genta : flags追加
 	virtual bool ExecKeyMacro(CEditView *EditView, int flags) const;
-	virtual BOOL LoadKeyMacro(HINSTANCE hInstance, const TCHAR* pszPath);
-	virtual BOOL LoadKeyMacroStr(HINSTANCE hInstance, const TCHAR* pszCode);
+	virtual BOOL LoadKeyMacro(HINSTANCE hInstance, const WCHAR* pszPath);
+	virtual BOOL LoadKeyMacroStr(HINSTANCE hInstance, const WCHAR* pszCode);
 
-	static CMacroManagerBase* Creator(const TCHAR* FileExt);
+	static CMacroManagerBase* Creator(const WCHAR* FileExt);
 	static void declare();
 
 	void AddParam( CWSHIfObj* param );				//インタフェースオブジェクトを追加する

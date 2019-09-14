@@ -53,18 +53,18 @@ CRecentFolder::CRecentFolder()
 
 	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
-const TCHAR* CRecentFolder::GetItemText( int nIndex ) const
+const WCHAR* CRecentFolder::GetItemText( int nIndex ) const
 {
 	return *GetItem(nIndex);
 }
 
-bool CRecentFolder::DataToReceiveType( LPCTSTR* dst, const CPathString* src ) const
+bool CRecentFolder::DataToReceiveType( LPCWSTR* dst, const CPathString* src ) const
 {
 	*dst = *src;
 	return true;
 }
 
-bool CRecentFolder::TextToDataType( CPathString* dst, LPCTSTR pszText ) const
+bool CRecentFolder::TextToDataType( CPathString* dst, LPCWSTR pszText ) const
 {
 	if( false == ValidateReceiveType(pszText) ){
 		return false;
@@ -73,19 +73,19 @@ bool CRecentFolder::TextToDataType( CPathString* dst, LPCTSTR pszText ) const
 	return true;
 }
 
-int CRecentFolder::CompareItem( const CPathString* p1, LPCTSTR p2 ) const
+int CRecentFolder::CompareItem( const CPathString* p1, LPCWSTR p2 ) const
 {
-	return _tcsicmp(*p1,p2);
+	return _wcsicmp(*p1,p2);
 }
 
-void CRecentFolder::CopyItem( CPathString* dst, LPCTSTR src ) const
+void CRecentFolder::CopyItem( CPathString* dst, LPCWSTR src ) const
 {
-	_tcscpy(*dst,src);
+	wcscpy(*dst,src);
 }
 
-bool CRecentFolder::ValidateReceiveType( LPCTSTR p ) const
+bool CRecentFolder::ValidateReceiveType( LPCWSTR p ) const
 {
-	if( GetTextMaxLength() <= _tcslen(p) ){
+	if( GetTextMaxLength() <= wcslen(p) ){
 		return false;
 	}
 	return true;

@@ -1,37 +1,25 @@
 ﻿/*! @file */
 #include "StdAfx.h"
 #include "StdControl.h"
-#include "util/tchar_receive.h"
 
 namespace ApiWrap{
 
-	LRESULT List_GetText(HWND hwndList, int nIndex, ACHAR* str)
+	LRESULT List_GetText(HWND hwndList, int nIndex, WCHAR* pszText, size_t cchText)
 	{
 		LRESULT nCount = SendMessage( hwndList, LB_GETTEXTLEN, (WPARAM)nIndex, (LPARAM)0);
 		if( nCount == LB_ERR )
 			return LB_ERR;
-		return SendMessage( hwndList, LB_GETTEXT, (WPARAM)nIndex, (LPARAM)(TCHAR*)TcharReceiver<ACHAR>(str,nCount+1) );	// +1: NULL 文字分
+		if( cchText <= (size_t) nCount )
+			return LB_ERRSPACE;
+		return SendMessage( hwndList, LB_GETTEXT, (WPARAM)nIndex, LPARAM(pszText) );
 	}
 
-	LRESULT List_GetText(HWND hwndList, int nIndex, WCHAR* str)
+	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, WCHAR* pszText, int nMaxCount)
 	{
-		LRESULT nCount = SendMessage( hwndList, LB_GETTEXTLEN, (WPARAM)nIndex, (LPARAM)0);
-		if( nCount == LB_ERR )
-			return LB_ERR;
-		return SendMessage( hwndList, LB_GETTEXT, (WPARAM)nIndex, (LPARAM)(TCHAR*)TcharReceiver<WCHAR>(str,nCount+1) );	// +1: NULL 文字分
+		return GetDlgItemText(hwndDlg, nIDDlgItem, pszText, nMaxCount);
 	}
 
-	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, ACHAR* str, int nMaxCount)
-	{
-		return GetDlgItemText(hwndDlg, nIDDlgItem, TcharReceiver<ACHAR>(str,nMaxCount), nMaxCount);
-	}
-
-	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, WCHAR* str, int nMaxCount)
-	{
-		return GetDlgItemText(hwndDlg, nIDDlgItem, TcharReceiver<WCHAR>(str,nMaxCount), nMaxCount);
-	}
-
-	bool TreeView_GetItemTextVector(HWND hwndTree, TVITEM& item, std::vector<TCHAR>& vecStr)
+	bool TreeView_GetItemTextVector(HWND hwndTree, TVITEM& item, std::vector<WCHAR>& vecStr)
 	{
 		BOOL ret = FALSE;
 		int nBufferSize = 64;

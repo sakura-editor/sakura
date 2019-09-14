@@ -22,12 +22,12 @@
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 TYPE_NAME_ID<int> SpecialScrollModeArr[] = {
-	{ 0,						STR_SCROLL_WITH_NO_KEY },		//_T("組み合わせなし") },
-	{ MOUSEFUNCTION_CENTER,		STR_SCROLL_WITH_MID_BTN },		//_T("マウス中ボタン") },
-	{ MOUSEFUNCTION_LEFTSIDE,	STR_SCROLL_WITH_SIDE_1_BTN },	//_T("マウスサイドボタン1") },
-	{ MOUSEFUNCTION_RIGHTSIDE,	STR_SCROLL_WITH_SIDE_2_BTN },	//_T("マウスサイドボタン2") },
-	{ VK_CONTROL,				STR_SCROLL_WITH_CTRL_KEY },	//_T("CONTROLキー") },
-	{ VK_SHIFT,					STR_SCROLL_WITH_SHIFT_KEY },	//_T("SHIFTキー") },
+	{ 0,						STR_SCROLL_WITH_NO_KEY },		//L"組み合わせなし" },
+	{ MOUSEFUNCTION_CENTER,		STR_SCROLL_WITH_MID_BTN },		//L"マウス中ボタン" },
+	{ MOUSEFUNCTION_LEFTSIDE,	STR_SCROLL_WITH_SIDE_1_BTN },	//L"マウスサイドボタン1" },
+	{ MOUSEFUNCTION_RIGHTSIDE,	STR_SCROLL_WITH_SIDE_2_BTN },	//L"マウスサイドボタン2" },
+	{ VK_CONTROL,				STR_SCROLL_WITH_CTRL_KEY },	//L"CONTROLキー" },
+	{ VK_SHIFT,					STR_SCROLL_WITH_SHIFT_KEY },	//L"SHIFTキー" },
 };
 
 static const DWORD p_helpids[] = {	//10900
@@ -190,7 +190,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 		switch( idCtrl ){
 		case IDC_SPIN_REPEATEDSCROLLLINENUM:
 			/* キーリピート時のスクロール行数 */
-//			MYTRACE( _T("IDC_SPIN_REPEATEDSCROLLLINENUM\n") );
+//			MYTRACE( L"IDC_SPIN_REPEATEDSCROLLLINENUM\n" );
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
@@ -208,7 +208,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 			return TRUE;
 		case IDC_SPIN_MAX_MRU_FILE:
 			/* ファイルの履歴MAX */
-//			MYTRACE( _T("IDC_SPIN_MAX_MRU_FILE\n") );
+//			MYTRACE( L"IDC_SPIN_MAX_MRU_FILE\n" );
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
@@ -226,7 +226,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 			return TRUE;
 		case IDC_SPIN_MAX_MRU_FOLDER:
 			/* フォルダの履歴MAX */
-//			MYTRACE( _T("IDC_SPIN_MAX_MRU_FOLDER\n") );
+//			MYTRACE( L"IDC_SPIN_MAX_MRU_FOLDER\n" );
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
@@ -248,7 +248,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 				OnHelp( hwndDlg, IDD_PROP_GENERAL );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE( _T("General PSN_KILLACTIVE\n") );
+//				MYTRACE( L"General PSN_KILLACTIVE\n" );
 				/* ダイアログデータの取得 General */
 				GetData( hwndDlg );
 				return TRUE;
@@ -260,11 +260,11 @@ INT_PTR CPropGeneral::DispatchEvent(
 			break;
 		}
 
-//		MYTRACE( _T("pNMHDR->hwndFrom=%xh\n"), pNMHDR->hwndFrom );
-//		MYTRACE( _T("pNMHDR->idFrom  =%xh\n"), pNMHDR->idFrom );
-//		MYTRACE( _T("pNMHDR->code    =%xh\n"), pNMHDR->code );
-//		MYTRACE( _T("pMNUD->iPos    =%d\n"), pMNUD->iPos );
-//		MYTRACE( _T("pMNUD->iDelta  =%d\n"), pMNUD->iDelta );
+//		MYTRACE( L"pNMHDR->hwndFrom=%xh\n", pNMHDR->hwndFrom );
+//		MYTRACE( L"pNMHDR->idFrom  =%xh\n", pNMHDR->idFrom );
+//		MYTRACE( L"pNMHDR->code    =%xh\n", pNMHDR->code );
+//		MYTRACE( L"pMNUD->iPos    =%d\n", pMNUD->iPos );
+//		MYTRACE( L"pMNUD->iDelta  =%d\n", pMNUD->iDelta );
 		break;
 
 //@@@ 2001.02.04 Start by MIK: Popup Help

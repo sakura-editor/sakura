@@ -34,7 +34,7 @@ class CKeyWordSetMgr;
 template <class TYPE>
 struct TYPE_NAME {
 	TYPE			nMethod;
-	const TCHAR*	pszName;
+	const WCHAR*	pszName;
 };
 
 template <class TYPE>
@@ -47,7 +47,7 @@ template <class TYPE>
 struct TYPE_NAME_ID2 {
 	TYPE			nMethod;
 	int				nNameId;
-	const TCHAR*	pszName;
+	const WCHAR*	pszName;
 };
 
 //!< プロパティシート番号
@@ -227,7 +227,7 @@ protected:
 private:
 	BOOL RegexKakomiCheck(const wchar_t *s);	//@@@ 2001.11.17 add MIK
 
-	bool CheckKeywordList(HWND hwndDlg, const TCHAR* szNewKeyWord, int nUpdateItem);
+	bool CheckKeywordList(HWND hwndDlg, const WCHAR* szNewKeyWord, int nUpdateItem);
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

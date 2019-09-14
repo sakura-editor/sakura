@@ -30,7 +30,6 @@
 #include "window/CEditWnd.h"
 #include "CEditApp.h"
 #include "util/os.h"
-#include "util/tchar_receive.h"
 #include "util/window.h"
 #include "uiparts/CImageListMgr.h"
 
@@ -291,7 +290,7 @@ void CMainToolBar::CreateToolBar( void )
 						Toolbar_GetItemRect( m_hwndToolBar, count-1, &rc );
 
 						//コンボボックスを作る
-						m_hwndSearchBox = CreateWindow( _T("COMBOBOX"), _T("Combo"),
+						m_hwndSearchBox = CreateWindow( L"COMBOBOX", L"Combo",
 								WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWN
 								/*| CBS_SORT*/ | CBS_AUTOHSCROLL /*| CBS_DISABLENOSCROLL*/,
 								rc.left, rc.top, rc.right - rc.left, (rc.bottom - rc.top) * 10,
@@ -315,7 +314,7 @@ void CMainToolBar::CreateToolBar( void )
 							//lf.lfClipPrecision	= GetDllShareData().m_Common.m_sView.m_lf.lfClipPrecision;
 							//lf.lfQuality		= GetDllShareData().m_Common.m_sView.m_lf.lfQuality;
 							//lf.lfPitchAndFamily	= GetDllShareData().m_Common.m_sView.m_lf.lfPitchAndFamily;
-							//_tcsncpy( lf.lfFaceName, GetDllShareData().m_Common.m_sView.m_lf.lfFaceName, _countof(lf.lfFaceName));	// 画面のフォントに設定	2012/11/27 Uchi
+							//wcsncpy( lf.lfFaceName, GetDllShareData().m_Common.m_sView.m_lf.lfFaceName, _countof(lf.lfFaceName));	// 画面のフォントに設定	2012/11/27 Uchi
 							m_hFontSearchBox = ::CreateFontIndirect( &lf );
 							if( m_hFontSearchBox )
 							{
@@ -588,8 +587,8 @@ void CMainToolBar::AcceptSharedSearchKey()
 		}
 		std::wstring strText;
 		GetSearchKey(strText);
-		if( 0 < nSize && 0 != wcscmp(strText.c_str(), pszText) ){
-			::SetWindowText(m_hwndSearchBox, to_tchar(pszText));
+		if( 0 < nSize && 0 != strText.compare(pszText) ){
+			::SetWindowText(m_hwndSearchBox, pszText);
 		}
 	}
 }
@@ -598,10 +597,9 @@ int CMainToolBar::GetSearchKey(std::wstring& strText)
 {
 	if( m_hwndSearchBox ){
 		int nBufferSize = ::GetWindowTextLength( m_hwndSearchBox ) + 1;
-		std::vector<TCHAR> vText(nBufferSize);
-
-		::GetWindowText( m_hwndSearchBox, &vText[0], vText.size() );
-		strText = to_wchar(&vText[0]);
+		auto vText = std::make_unique<WCHAR[]>(nBufferSize);
+		::GetWindowText( m_hwndSearchBox, &vText[0], nBufferSize);
+		strText = &vText[0];
 	}else{
 		strText = L"";
 	}

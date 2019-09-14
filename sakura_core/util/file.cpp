@@ -35,9 +35,9 @@
 #include "env/CFileNameManager.h"
 #include "_main/CCommandLine.h"
 
-bool fexist(LPCTSTR pszPath)
+bool fexist(LPCWSTR pszPath)
 {
-	return _taccess(pszPath,0)!=-1;
+	return _waccess(pszPath,0)!=-1;
 }
 
 /*!	ファイル名の切り出し
@@ -112,7 +112,7 @@ bool IsFilePath(
 			szJumpToFile[0] != L'\0'
 		){
 			//	ファイル存在確認
-			if( IsFileExists(to_tchar(szJumpToFile), bFileOnly)){
+			if( IsFileExists(szJumpToFile, bFileOnly)){
 				tmp_end = cur_pos;
 			}
 		}
@@ -132,7 +132,7 @@ bool IsFilePath(
 
 	//	Jan. 04, 2002 genta
 	//	ファイル存在確認方法変更
-	if( szJumpToFile[0] != L'\0' && IsFileExists(to_tchar(szJumpToFile), bFileOnly)){
+	if( szJumpToFile[0] != L'\0' && IsFileExists(szJumpToFile, bFileOnly)){
 		tmp_end = cur_pos;
 	}
 	if( tmp_end != 0 ){
@@ -159,34 +159,34 @@ bool IsFilePath(
 	@date 2006.01.08 genta CMRU::IsRemovableDriveとCEditDoc::IsLocalDriveが
 		実質的に同じものだった
 */
-bool IsLocalDrive( const TCHAR* pszDrive )
+bool IsLocalDrive( const WCHAR* pszDrive )
 {
-	TCHAR	szDriveType[_MAX_DRIVE+1];	// "A:\ "登録用
+	WCHAR	szDriveType[_MAX_DRIVE+1];	// "A:\ "登録用
 	long	lngRet;
 
 	if( iswalpha(pszDrive[0]) ){
-		auto_sprintf(szDriveType, _T("%tc:\\"), _totupper(pszDrive[0]));
+		auto_sprintf(szDriveType, L"%c:\\", _totupper(pszDrive[0]));
 		lngRet = GetDriveType( szDriveType );
 		if( lngRet == DRIVE_REMOVABLE || lngRet == DRIVE_CDROM || lngRet == DRIVE_REMOTE )
 		{
 			return false;
 		}
 	}
-	else if (pszDrive[0] == _T('\\') && pszDrive[1] == _T('\\')) {
+	else if (pszDrive[0] == L'\\' && pszDrive[1] == L'\\') {
 		// ネットワークパス	2010/5/27 Uchi
 		return false;
 	}
 	return true;
 }
 
-const TCHAR* GetFileTitlePointer(const TCHAR* tszPath)
+const WCHAR* GetFileTitlePointer(const WCHAR* pszPath)
 {
 	CharPointerT p;
-	const TCHAR* pszName;
-	p = pszName = tszPath;
+	const WCHAR* pszName;
+	p = pszName = pszPath;
 	while( *p )
 	{
-		if( *p == _T('\\') ){
+		if( *p == L'\\' ){
 			pszName = p + 1;
 			p++;
 		}
@@ -202,50 +202,50 @@ const TCHAR* GetFileTitlePointer(const TCHAR* tszPath)
 	@date 2003.06.23
 	@date 2007.05.20 ryoji 関数名変更（旧：fopen_absexe）、汎用テキストマッピング化
 */
-FILE* _tfopen_absexe(LPCTSTR fname, LPCTSTR mode)
+FILE* _wfopen_absexe(LPCWSTR fname, LPCWSTR mode)
 {
 	if( _IS_REL_PATH( fname ) ){
-		TCHAR path[_MAX_PATH];
+		WCHAR path[_MAX_PATH];
 		GetExedir( path, fname );
-		return _tfopen( path, mode );
+		return _wfopen( path, mode );
 	}
-	return _tfopen( fname, mode );
+	return _wfopen( fname, mode );
 }
 
 /*! fnameが相対パスの場合は、INIファイルのパスからの相対パスとして開く
 	@author ryoji
-	@date 2007.05.19 新規作成（_tfopen_absexeベース）
+	@date 2007.05.19 新規作成（_wfopen_absexeベース）
 */
-FILE* _tfopen_absini(LPCTSTR fname, LPCTSTR mode, BOOL bOrExedir/*=TRUE*/ )
+FILE* _wfopen_absini(LPCWSTR fname, LPCWSTR mode, BOOL bOrExedir/*=TRUE*/ )
 {
 	if( _IS_REL_PATH( fname ) ){
-		TCHAR path[_MAX_PATH];
+		WCHAR path[_MAX_PATH];
 		if( bOrExedir )
 			GetInidirOrExedir( path, fname );
 		else
 			GetInidir( path, fname );
-		return _tfopen( path, mode );
+		return _wfopen( path, mode );
 	}
-	return _tfopen( fname, mode );
+	return _wfopen( fname, mode );
 }
 
 /* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない */
-void CutLastYenFromDirectoryPath( TCHAR* pszFolder )
+void CutLastYenFromDirectoryPath( WCHAR* pszFolder )
 {
-	if( 3 == _tcslen( pszFolder )
-	 && pszFolder[1] == _T(':')
-	 && pszFolder[2] == _T('\\')
+	if( 3 == wcslen( pszFolder )
+	 && pszFolder[1] == L':'
+	 && pszFolder[2] == L'\\'
 	){
 		/* ドライブ名:\ */
 	}else{
 		/* フォルダの最後が半角かつ'\\'の場合は、取り除く */
 		int	nFolderLen;
 		int	nCharChars;
-		nFolderLen = _tcslen( pszFolder );
+		nFolderLen = wcslen( pszFolder );
 		if( 0 < nFolderLen ){
-			nCharChars = &pszFolder[nFolderLen] - CNativeT::GetCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] );
-			if( 1 == nCharChars && _T('\\') == pszFolder[nFolderLen - 1] ){
-				pszFolder[nFolderLen - 1] = _T('\0');
+			nCharChars = &pszFolder[nFolderLen] - CNativeW::GetCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] );
+			if( 1 == nCharChars && L'\\' == pszFolder[nFolderLen - 1] ){
+				pszFolder[nFolderLen - 1] = L'\0';
 			}
 		}
 	}
@@ -276,30 +276,30 @@ void AddLastYenFromDirectoryPath( WCHAR* pszFolder )
 
 /* ファイルのフルパスを、フォルダとファイル名に分割 */
 /* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-void SplitPath_FolderAndFile( const TCHAR* pszFilePath, TCHAR* pszFolder, TCHAR* pszFile )
+void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR* pszFile )
 {
-	TCHAR	szDrive[_MAX_DRIVE];
-	TCHAR	szDir[_MAX_DIR];
-	TCHAR	szFname[_MAX_FNAME];
-	TCHAR	szExt[_MAX_EXT];
+	WCHAR	szDrive[_MAX_DRIVE];
+	WCHAR	szDir[_MAX_DIR];
+	WCHAR	szFname[_MAX_FNAME];
+	WCHAR	szExt[_MAX_EXT];
 	int		nFolderLen;
 	int		nCharChars;
-	_tsplitpath( pszFilePath, szDrive, szDir, szFname, szExt );
+	_wsplitpath( pszFilePath, szDrive, szDir, szFname, szExt );
 	if( NULL != pszFolder ){
-		_tcscpy( pszFolder, szDrive );
-		_tcscat( pszFolder, szDir );
+		wcscpy( pszFolder, szDrive );
+		wcscat( pszFolder, szDir );
 		/* フォルダの最後が半角かつ'\\'の場合は、取り除く */
-		nFolderLen = _tcslen( pszFolder );
+		nFolderLen = wcslen( pszFolder );
 		if( 0 < nFolderLen ){
-			nCharChars = &pszFolder[nFolderLen] - CNativeT::GetCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] );
-			if( 1 == nCharChars && _T('\\') == pszFolder[nFolderLen - 1] ){
-				pszFolder[nFolderLen - 1] = _T('\0');
+			nCharChars = &pszFolder[nFolderLen] - CNativeW::GetCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] );
+			if( 1 == nCharChars && L'\\' == pszFolder[nFolderLen - 1] ){
+				pszFolder[nFolderLen - 1] = L'\0';
 			}
 		}
 	}
 	if( NULL != pszFile ){
-		_tcscpy( pszFile, szFname );
-		_tcscat( pszFile, szExt );
+		wcscpy( pszFile, szFname );
+		wcscat( pszFile, szExt );
 	}
 	return;
 }
@@ -308,10 +308,10 @@ void SplitPath_FolderAndFile( const TCHAR* pszFilePath, TCHAR* pszFolder, TCHAR*
  * [c:\work\test] + [aaa.txt] → [c:\work\test\aaa.txt]
  * フォルダ末尾に円記号があってもなくても良い。
  */
-void Concat_FolderAndFile( const TCHAR* pszDir, const TCHAR* pszTitle, TCHAR* pszPath )
+void Concat_FolderAndFile( const WCHAR* pszDir, const WCHAR* pszTitle, WCHAR* pszPath )
 {
-	TCHAR* out=pszPath;
-	const TCHAR* in;
+	WCHAR* out=pszPath;
+	const WCHAR* in;
 
 	//フォルダをコピー
 	for( in=pszDir ; *in != '\0'; ){
@@ -322,7 +322,7 @@ void Concat_FolderAndFile( const TCHAR* pszDir, const TCHAR* pszTitle, TCHAR* ps
 	if( *(out-1) != '\\' ){ *out++ = '\\'; }
 #else
 	if( *(out-1) != '\\' ||
-		(1 == out - CNativeT::GetCharPrev( pszDir, out - pszDir, out )) ){
+		(1 == out - CNativeW::GetCharPrev( pszDir, out - pszDir, out )) ){
 			*out++ = '\\';
 	}
 #endif
@@ -343,10 +343,10 @@ void Concat_FolderAndFile( const TCHAR* pszDir, const TCHAR* pszTitle, TCHAR* ps
 	@date Oct. 4, 2005 genta 相対パスが絶対パスに直されなかった
 	@date Oct. 5, 2005 Moca  相対パスを絶対パスに変換するように
 */
-BOOL GetLongFileName( const TCHAR* pszFilePathSrc, TCHAR* pszFilePathDes )
+BOOL GetLongFileName( const WCHAR* pszFilePathSrc, WCHAR* pszFilePathDes )
 {
-	TCHAR* name;
-	TCHAR szBuf[_MAX_PATH + 1];
+	WCHAR* name;
+	WCHAR szBuf[_MAX_PATH + 1];
 	int len = ::GetFullPathName( pszFilePathSrc, _MAX_PATH, szBuf, &name );
 	if( len <= 0 || _MAX_PATH <= len ){
 		len = ::GetLongPathName( pszFilePathSrc, pszFilePathDes, _MAX_PATH );
@@ -357,22 +357,22 @@ BOOL GetLongFileName( const TCHAR* pszFilePathSrc, TCHAR* pszFilePathDes )
 	}
 	len = ::GetLongPathName( szBuf, pszFilePathDes, _MAX_PATH );
 	if( len <= 0 || _MAX_PATH < len ){
-		_tcscpy( pszFilePathDes, szBuf );
+		wcscpy( pszFilePathDes, szBuf );
 	}
 	return TRUE;
 }
 
 /* 拡張子を調べる */
-BOOL CheckEXT( const TCHAR* pszPath, const TCHAR* pszExt )
+BOOL CheckEXT( const WCHAR* pszPath, const WCHAR* pszExt )
 {
-	TCHAR	szExt[_MAX_EXT];
-	TCHAR*	pszWork;
-	_tsplitpath( pszPath, NULL, NULL, NULL, szExt );
+	WCHAR	szExt[_MAX_EXT];
+	WCHAR*	pszWork;
+	_wsplitpath( pszPath, NULL, NULL, NULL, szExt );
 	pszWork = szExt;
-	if( pszWork[0] == _T('.') ){
+	if( pszWork[0] == L'.' ){
 		pszWork++;
 	}
-	if( 0 == _tcsicmp( pszExt, pszWork ) ){
+	if( 0 == _wcsicmp( pszExt, pszWork ) ){
 		return TRUE;
 	}else{
 		return FALSE;
@@ -383,12 +383,12 @@ BOOL CheckEXT( const TCHAR* pszPath, const TCHAR* pszExt )
 	@author Moca
 	@date 2003.06.23
 */
-bool _IS_REL_PATH(const TCHAR* path)
+bool _IS_REL_PATH(const WCHAR* path)
 {
 	bool ret = true;
-	if( ( _T('A') <= path[0] && path[0] <= _T('Z') || _T('a') <= path[0] && path[0] <= _T('z') )
-		&& path[1] == _T(':') && path[2] == _T('\\')
-		|| path[0] == _T('\\') && path[1] == _T('\\')
+	if( ( L'A' <= path[0] && path[0] <= L'Z' || L'a' <= path[0] && path[0] <= L'z' )
+		&& path[1] == L':' && path[2] == L'\\'
+		|| path[0] == L'\\' && path[1] == L'\\'
 		 ){
 		ret = false;
 	}
@@ -404,18 +404,18 @@ bool _IS_REL_PATH(const TCHAR* path)
 	@date 2003.04.30 genta 新規作成
 */
 int CalcDirectoryDepth(
-	const TCHAR* path	//!< [in] 深さを調べたいファイル/ディレクトリのフルパス
+	const WCHAR* path	//!< [in] 深さを調べたいファイル/ディレクトリのフルパス
 )
 {
 	int depth = 0;
  
 	//	とりあえず\の数を数える
-	for( CharPointerT p = path; *p != _T('\0'); ++p ){
-		if( *p == _T('\\') ){
+	for( CharPointerT p = path; *p != L'\0'; ++p ){
+		if( *p == L'\\' ){
 			++depth;
 			//	フルパスには入っていないはずだが念のため
 			//	.\はカレントディレクトリなので，深さに関係ない．
-			while( p[1] == _T('.') && p[2] == _T('\\') ){
+			while( p[1] == L'.' && p[2] == L'\\' ){
 				p += 2;
 			}
 		}
@@ -423,13 +423,13 @@ int CalcDirectoryDepth(
  
 	//	補正
 	//	ドライブ名はパスの深さに数えない
-	if( ((_T('A') <= path[0] && path[0] <= _T('Z')) || (_T('a') <= path[0] && path[0] <= _T('z')))
-		&& path[1] == _T(':') && path[2] == _T('\\') ){
+	if( ((L'A' <= path[0] && path[0] <= L'Z') || (L'a' <= path[0] && path[0] <= L'z'))
+		&& path[1] == L':' && path[2] == L'\\' ){
 		//フルパス
 		--depth; // C:\ の \ はルートの記号なので階層深さではない
 	}
-	else if( path[0] == _T('\\') ){
-		if( path[1] == _T('\\') ){
+	else if( path[0] == L'\\' ){
+		if( path[1] == L'\\' ){
 			//	ネットワークパス
 			//	先頭の2つはネットワークを表し，その次はホスト名なので
 			//	ディレクトリ階層とは無関係
@@ -453,23 +453,23 @@ int CalcDirectoryDepth(
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 */
 void GetExedir(
-	LPTSTR	pDir,	//!< [out] EXEファイルのあるディレクトリを返す場所．予め_MAX_PATHのバッファを用意しておくこと．
-	LPCTSTR	szFile	//!< [in]  ディレクトリ名に結合するファイル名．
+	LPWSTR	pDir,	//!< [out] EXEファイルのあるディレクトリを返す場所．予め_MAX_PATHのバッファを用意しておくこと．
+	LPCWSTR	szFile	//!< [in]  ディレクトリ名に結合するファイル名．
 )
 {
 	if( pDir == NULL )
 		return;
 	
-	TCHAR	szPath[_MAX_PATH];
+	WCHAR	szPath[_MAX_PATH];
 	// sakura.exe のパスを取得
 	::GetModuleFileName( NULL, szPath, _countof(szPath) );
 	if( szFile == NULL ){
 		SplitPath_FolderAndFile( szPath, pDir, NULL );
 	}
 	else {
-		TCHAR	szDir[_MAX_PATH];
+		WCHAR	szDir[_MAX_PATH];
 		SplitPath_FolderAndFile( szPath, szDir, NULL );
-		auto_snprintf_s( pDir, _MAX_PATH, _T("%ts\\%ts"), szDir, szFile );
+		auto_snprintf_s( pDir, _MAX_PATH, L"%s\\%s", szDir, szFile );
 	}
 }
 
@@ -480,25 +480,25 @@ void GetExedir(
 	@date 2007.05.19 新規作成（GetExedirベース）
 */
 void GetInidir(
-	LPTSTR	pDir,				//!< [out] INIファイルのあるディレクトリを返す場所．予め_MAX_PATHのバッファを用意しておくこと．
-	LPCTSTR szFile	/*=NULL*/	//!< [in] ディレクトリ名に結合するファイル名．
+	LPWSTR	pDir,				//!< [out] INIファイルのあるディレクトリを返す場所．予め_MAX_PATHのバッファを用意しておくこと．
+	LPCWSTR szFile	/*=NULL*/	//!< [in] ディレクトリ名に結合するファイル名．
 )
 {
 	if( pDir == NULL )
 		return;
 	
-	std::tstring strProfileName = to_tchar(CCommandLine::getInstance()->GetProfileName());
-	TCHAR	szPath[_MAX_PATH];
+	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
+	WCHAR	szPath[_MAX_PATH];
 
 	// sakura.ini のパスを取得
-	CFileNameManager::getInstance()->GetIniFileName( szPath, strProfileName.c_str() );
+	CFileNameManager::getInstance()->GetIniFileName( szPath, pszProfileName );
 	if( szFile == NULL ){
 		SplitPath_FolderAndFile( szPath, pDir, NULL );
 	}
 	else {
-		TCHAR	szDir[_MAX_PATH];
+		WCHAR	szDir[_MAX_PATH];
 		SplitPath_FolderAndFile( szPath, szDir, NULL );
-		auto_snprintf_s( pDir, _MAX_PATH, _T("%ts\\%ts"), szDir, szFile );
+		auto_snprintf_s( pDir, _MAX_PATH, L"%s\\%s", szDir, szFile );
 	}
 }
 
@@ -509,17 +509,17 @@ void GetInidir(
 	@date 2007.05.22 新規作成
 */
 void GetInidirOrExedir(
-	LPTSTR	pDir,								//!< [out] INIファイルまたはEXEファイルのあるディレクトリを返す場所．
+	LPWSTR	pDir,								//!< [out] INIファイルまたはEXEファイルのあるディレクトリを返す場所．
 												//         予め_MAX_PATHのバッファを用意しておくこと．
-	LPCTSTR	szFile					/*=NULL*/,	//!< [in] ディレクトリ名に結合するファイル名．
+	LPCWSTR	szFile					/*=NULL*/,	//!< [in] ディレクトリ名に結合するファイル名．
 	BOOL	bRetExedirIfFileEmpty	/*=FALSE*/	//!< [in] ファイル名の指定が空の場合はEXEファイルのフルパスを返す．
 )
 {
-	TCHAR	szInidir[_MAX_PATH];
-	TCHAR	szExedir[_MAX_PATH];
+	WCHAR	szInidir[_MAX_PATH];
+	WCHAR	szExedir[_MAX_PATH];
 
 	// ファイル名の指定が空の場合はEXEファイルのフルパスを返す（オプション）
-	if( bRetExedirIfFileEmpty && (szFile == NULL || szFile[0] == _T('\0')) ){
+	if( bRetExedirIfFileEmpty && (szFile == NULL || szFile[0] == L'\0') ){
 		GetExedir( szExedir, szFile );
 		::lstrcpy( pDir, szExedir );
 		return;
@@ -550,17 +550,17 @@ void GetInidirOrExedir(
 	@param pszPath [in] 対象パス
 	@date 2013.06.26 novice 新規作成
 */
-LPCTSTR GetRelPath( LPCTSTR pszPath )
+LPCWSTR GetRelPath( LPCWSTR pszPath )
 {
-	TCHAR szPath[_MAX_PATH + 1];
-	LPCTSTR pszFileName = pszPath;
+	WCHAR szPath[_MAX_PATH + 1];
+	LPCWSTR pszFileName = pszPath;
 
-	GetInidir( szPath, _T("") );
+	GetInidir( szPath, L"" );
 	int nLen = auto_strlen( szPath );
 	if( 0 == auto_strnicmp( szPath, pszPath, nLen ) ){
 		pszFileName = pszPath + nLen;
 	}else{
-		GetExedir( szPath, _T("") );
+		GetExedir( szPath, L"" );
 		nLen = auto_strlen( szPath );
 		if( 0 == auto_strnicmp( szPath, pszPath, nLen ) ){
 			pszFileName = pszPath + nLen;
@@ -583,7 +583,7 @@ LPCTSTR GetRelPath( LPCTSTR pszPath )
 	@author genta
 	@date 2002.01.04 新規作成
 */
-bool IsFileExists(const TCHAR* path, bool bFileOnly)
+bool IsFileExists(const WCHAR* path, bool bFileOnly)
 {
 	WIN32_FIND_DATA fd;
 	HANDLE hFind = ::FindFirstFile( path, &fd );
@@ -607,7 +607,7 @@ bool IsFileExists(const TCHAR* path, bool bFileOnly)
 	@author ryoji
 	@date 2009.08.20 新規作成
 */
-bool IsDirectory(LPCTSTR pszPath)
+bool IsDirectory(LPCWSTR pszPath)
 {
 	WIN32_FIND_DATA fd;
 	HANDLE hFind = ::FindFirstFile( pszPath, &fd );
@@ -623,7 +623,7 @@ bool IsDirectory(LPCTSTR pszPath)
 	@return true: 成功, false: 失敗
 */
 bool GetLastWriteTimestamp(
-	const TCHAR*	pszFileName,	//!< [in]  ファイルのパス
+	const WCHAR*	pszFileName,	//!< [in]  ファイルのパス
 	CFileTime*		pcFileTime		//!< [out] 更新日時を返す場所
 )
 {
@@ -976,38 +976,38 @@ void my_splitpath_w (
 //
 //
 // -----------------------------------------------------------------------------
-int FileMatchScore( const TCHAR *file1, const TCHAR *file2 );
+int FileMatchScore( const WCHAR *file1, const WCHAR *file2 );
 
 // フルパスからファイル名の.以降を分離する
 // 2014.06.15 フォルダ名に.が含まれた場合、フォルダが分離されたのを修正
-static void FileNameSepExt( const TCHAR *file, TCHAR* pszFile, TCHAR* pszExt )
+static void FileNameSepExt( const WCHAR *file, WCHAR* pszFile, WCHAR* pszExt )
 {
-	const TCHAR* folderPos = file;
-	const TCHAR* x = folderPos;
+	const WCHAR* folderPos = file;
+	const WCHAR* x = folderPos;
 	while( x ){
-		x = auto_strchr(folderPos, _T('\\'));
+		x = auto_strchr(folderPos, L'\\');
 		if( x ){
 			x++;
 			folderPos = x;
 		}
 	}
-	const TCHAR* p = auto_strchr(folderPos, _T('.'));
+	const WCHAR* p = auto_strchr(folderPos, L'.');
 	if( p ){
 		auto_memcpy(pszFile, file, p - file);
-		pszFile[p - file] = _T('\0');
+		pszFile[p - file] = L'\0';
 		auto_strcpy(pszExt, p);
 	}else{
 		auto_strcpy(pszFile, file);
-		pszExt[0] = _T('\0');
+		pszExt[0] = L'\0';
 	}
 }
 
-int FileMatchScoreSepExt( const TCHAR *file1, const TCHAR *file2 )
+int FileMatchScoreSepExt( const WCHAR *file1, const WCHAR *file2 )
 {
-	TCHAR szFile1[_MAX_PATH];
-	TCHAR szFile2[_MAX_PATH];
-	TCHAR szFileExt1[_MAX_PATH];
-	TCHAR szFileExt2[_MAX_PATH];
+	WCHAR szFile1[_MAX_PATH];
+	WCHAR szFile2[_MAX_PATH];
+	WCHAR szFileExt1[_MAX_PATH];
+	WCHAR szFileExt2[_MAX_PATH];
 	FileNameSepExt(file1, szFile1, szFileExt1);
 	FileNameSepExt(file2, szFile2, szFileExt2);
 	int score = FileMatchScore(szFile1, szFile2);
@@ -1017,13 +1017,13 @@ int FileMatchScoreSepExt( const TCHAR *file1, const TCHAR *file2 )
 
 /*!	2つのファイル名の最長一致部分の長さを返す
 */
-int FileMatchScore( const TCHAR *file1, const TCHAR *file2 )
+int FileMatchScore( const WCHAR *file1, const WCHAR *file2 )
 {
 	int score = 0;
 	int len1 = auto_strlen(file1);
 	int len2 = auto_strlen(file2);
 	if( len1 < len2 ){
-		const TCHAR * tmp = file1;
+		const WCHAR * tmp = file1;
 		file1 = file2;
 		file2 = tmp;
 		int tmpLen = len1;
@@ -1035,8 +1035,8 @@ int FileMatchScore( const TCHAR *file1, const TCHAR *file2 )
 			int tmpScore = 0;
 			for( int m = k; m < len2; ){
 				int pos1 = i + (m - k);
-				int chars1 = (Int)CNativeT::GetSizeOfChar(file1, len1, pos1);
-				int chars2 = (Int)CNativeT::GetSizeOfChar(file2, len2, m);
+				int chars1 = (Int)CNativeW::GetSizeOfChar(file1, len1, pos1);
+				int chars2 = (Int)CNativeW::GetSizeOfChar(file2, len2, m);
 				if( chars1 == chars2 ){
 					if( chars1 == 1 ){
 						if( _tcs_tolower(file1[pos1]) == _tcs_tolower(file2[m]) ){
@@ -1059,9 +1059,9 @@ int FileMatchScore( const TCHAR *file1, const TCHAR *file2 )
 			if( score < tmpScore ){
 				score = tmpScore;
 			}
-			k += t_max(1, (int)(Int)CNativeT::GetSizeOfChar(file2, len2, k));
+			k += t_max(1, (int)(Int)CNativeW::GetSizeOfChar(file2, len2, k));
 		}
-		i += t_max(1, (int)(Int)CNativeT::GetSizeOfChar(file1, len1, i));
+		i += t_max(1, (int)(Int)CNativeW::GetSizeOfChar(file1, len1, i));
 	}
 	return score;
 }
@@ -1069,34 +1069,34 @@ int FileMatchScore( const TCHAR *file1, const TCHAR *file2 )
 /*! 指定幅までに文字列を省略
 	@date 2014.06.12 新規作成 Moca
 */
-void GetStrTrancateWidth( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int nPxWidth )
+void GetStrTrancateWidth( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int nPxWidth )
 {
 	// できるだけ左側から表示
 	// \\server\dir...
 	const int nPathLen = auto_strlen(path);
 	CTextWidthCalc calc(hDC);
 	if( calc.GetTextWidth(path) <= nPxWidth ){
-		_tcsncpy_s(dest, nSize, path, _TRUNCATE);
+		wcsncpy_s(dest, nSize, path, _TRUNCATE);
 		return;
 	}
-	std::tstring strTemp;
-	std::tstring strTempOld;
+	std::wstring strTemp;
+	std::wstring strTempOld;
 	int nPos = 0;
-	while( path[nPos] != _T('\0') ){
+	while( path[nPos] != L'\0' ){
 		strTemp.assign(path, nPos);
-		std::tstring strTemp2 = strTemp;
-		strTemp2 += _T("...");
+		std::wstring strTemp2 = strTemp;
+		strTemp2 += L"...";
 		if( nPxWidth < calc.GetTextWidth(strTemp2.c_str()) ){
 			// 入りきらなかったので1文字前までをコピー
-			_tcsncpy_s(dest, t_max(0, nSize - 3), strTempOld.c_str(), _TRUNCATE);
-			_tcscat_s(dest, nSize, _T("..."));
+			wcsncpy_s(dest, t_max(0, nSize - 3), strTempOld.c_str(), _TRUNCATE);
+			wcscat_s(dest, nSize, L"...");
 			return;
 		}
 		strTempOld = strTemp;
-		nPos += t_max(1, (int)(Int)CNativeT::GetSizeOfChar(path, nPathLen, nPos));
+		nPos += t_max(1, (int)(Int)CNativeW::GetSizeOfChar(path, nPathLen, nPos));
 	}
 	// 全部表示(ここには来ないはず)
-	_tcsncpy_s(dest, nSize, path, _TRUNCATE);
+	wcsncpy_s(dest, nSize, path, _TRUNCATE);
 }
 
 /*! パスの省略表示
@@ -1104,7 +1104,7 @@ void GetStrTrancateWidth( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, in
 	out C:\...\sub3\file.ext
 	@date 2014.06.12 新規作成 Moca
 */
-void GetShortViewPath( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int nPxWidth, bool bFitMode )
+void GetShortViewPath( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int nPxWidth, bool bFitMode )
 {
 	int nLeft = 0; // 左側固定表示部分
 	int nSkipLevel = 1;
@@ -1112,11 +1112,11 @@ void GetShortViewPath( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int n
 	CTextWidthCalc calc(hDC);
 	if( calc.GetTextWidth(path) <= nPxWidth ){
 		// 全部表示可能
-		_tcsncpy_s(dest, nSize, path, _TRUNCATE);
+		wcsncpy_s(dest, nSize, path, _TRUNCATE);
 		return;
 	}
-	if( path[0] == _T('\\') && path[1] == _T('\\') ){
-		if( path[2] == _T('?') && path[4] == _T('\\') ){
+	if( path[0] == L'\\' && path[1] == L'\\' ){
+		if( path[2] == L'?' && path[4] == L'\\' ){
 			// [\\?\A:\]
 			nLeft = 4;
 		}else{
@@ -1126,22 +1126,22 @@ void GetShortViewPath( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int n
 	}else{
 		// http://server/ とか ftp://server/ とかを保持
 		int nTop = 0;
-		while( path[nTop] != _T('\0') && path[nTop] != _T('/') ){
-			nTop += t_max(1, (int)(Int)CNativeT::GetSizeOfChar(path, nPathLen, nTop));
+		while( path[nTop] != L'\0' && path[nTop] != L'/' ){
+			nTop += t_max(1, (int)(Int)CNativeW::GetSizeOfChar(path, nPathLen, nTop));
 		}
 		if( 0 < nTop && path[nTop - 1] == ':' ){
 			// 「ほにゃらら:/」だった /が続いてる間飛ばす
-			while( path[nTop] == _T('/') ){
-				nTop += t_max(1, (int)(Int)CNativeT::GetSizeOfChar(path, nPathLen, nTop));
+			while( path[nTop] == L'/' ){
+				nTop += t_max(1, (int)(Int)CNativeW::GetSizeOfChar(path, nPathLen, nTop));
 			}
 			nLeft = nTop;
 		}
 	}
 	for( int i = 0; i < nSkipLevel; i++ ){
-		while( path[nLeft] != _T('\0') && path[nLeft] != _T('\\') && path[nLeft] != _T('/') ){
-			nLeft += t_max(1, (int)(Int)CNativeT::GetSizeOfChar(path, nPathLen, nLeft));
+		while( path[nLeft] != L'\0' && path[nLeft] != L'\\' && path[nLeft] != L'/' ){
+			nLeft += t_max(1, (int)(Int)CNativeW::GetSizeOfChar(path, nPathLen, nLeft));
 		}
-		if( path[nLeft] != _T('\0') ){
+		if( path[nLeft] != L'\0' ){
 			if( i + 1 < nSkipLevel ){
 				nLeft++;
 			}
@@ -1151,36 +1151,36 @@ void GetShortViewPath( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int n
 				return;
 			}
 			// ここで終端なら全部表示
-			_tcsncpy_s(dest, nSize, path, _TRUNCATE);
+			wcsncpy_s(dest, nSize, path, _TRUNCATE);
 			return;
 		}
 	}
 	int nRight = nLeft; // 右側の表示開始位置(nRightは\を指している)
-	while( path[nRight] != _T('\0') ){
+	while( path[nRight] != L'\0' ){
 		int nNext = nRight;
 		nNext++;
-		while( path[nNext] != _T('\0') && path[nNext] != _T('\\') && path[nNext] != _T('/') ){
-			nNext += t_max(1, (int)(Int)CNativeT::GetSizeOfChar(path, nPathLen, nNext));
+		while( path[nNext] != L'\0' && path[nNext] != L'\\' && path[nNext] != L'/' ){
+			nNext += t_max(1, (int)(Int)CNativeW::GetSizeOfChar(path, nPathLen, nNext));
 		}
-		if( path[nNext] != _T('\0') ){
+		if( path[nNext] != L'\0' ){
 			// サブフォルダ省略
 			// C:\...\dir\file.ext
-			std::tstring strTemp(path, nLeft + 1);
+			std::wstring strTemp(path, nLeft + 1);
 			if( nLeft + 1 < nRight ){
-				strTemp += _T("...");
+				strTemp += L"...";
 			}
 			strTemp += &path[nRight];
 			if( calc.GetTextWidth(strTemp.c_str()) <= nPxWidth ){
-				_tcsncpy_s(dest, nSize, strTemp.c_str(), _TRUNCATE);
+				wcsncpy_s(dest, nSize, strTemp.c_str(), _TRUNCATE);
 				return;
 			}
 			// C:\...\dir\   フォルダパスだった。最後のフォルダを表示
-			if( path[nNext+1] == _T('\0') ){
+			if( path[nNext+1] == L'\0' ){
 				if( bFitMode ){
 					GetStrTrancateWidth(dest, nSize, strTemp.c_str(), hDC, nPxWidth);
 					return;
 				}
-				_tcsncpy_s(dest, nSize, strTemp.c_str(), _TRUNCATE);
+				wcsncpy_s(dest, nSize, strTemp.c_str(), _TRUNCATE);
 				return;
 			}
 			nRight = nNext;
@@ -1194,14 +1194,14 @@ void GetShortViewPath( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int n
 	if( nLeftLen && nLeftLen != nRight ){
 		nLeftLen++;
 	}
-	std::tstring strTemp(path, nLeftLen);
+	std::wstring strTemp(path, nLeftLen);
 	if( nLeft != nRight ){
-		strTemp += _T("...");
+		strTemp += L"...";
 	}
 	strTemp += &path[nRight];
 	if( bFitMode ){
 		if( calc.GetTextWidth(strTemp.c_str()) <= nPxWidth ){
-			_tcsncpy_s(dest, nSize, strTemp.c_str(), _TRUNCATE);
+			wcsncpy_s(dest, nSize, strTemp.c_str(), _TRUNCATE);
 			return;
 		}
 		// ファイル名(か左側固定部)が長すぎてはいらない
@@ -1209,28 +1209,28 @@ void GetShortViewPath( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int n
 		{
 			// 拡張子の.を探す
 			int nExt = nRight;
-			while( path[nExt] != _T('\0') ){
-				if( path[nExt] == _T('.') ){
+			while( path[nExt] != L'\0' ){
+				if( path[nExt] == L'.' ){
 					nExtPos = nExt;
 				}
-				nExt += t_max(1, (int)(Int)CNativeT::GetSizeOfChar(path, nPathLen, nExt));
+				nExt += t_max(1, (int)(Int)CNativeW::GetSizeOfChar(path, nPathLen, nExt));
 			}
 		}
 		if( nExtPos != -1 ){
-			std::tstring strLeftFile(path, nLeftLen); // [C:\]  
+			std::wstring strLeftFile(path, nLeftLen); // [C:\]  
 			if( nLeft != nRight ){
-				strLeftFile += _T("..."); // C:\...
+				strLeftFile += L"..."; // C:\...
 			}
 			int nExtWidth = calc.GetTextWidth(&path[nExtPos]);
 			int nLeftWidth = calc.GetTextWidth(strLeftFile.c_str());
 			int nFileNameWidth = nPxWidth - nLeftWidth - nExtWidth;
 			if( 0 < nFileNameWidth ){
 				// 拡張子は省略しない(ファイルタイトルを省略)
-				std::tstring strFile(&path[nRight], nExtPos - nRight); // \longfilename
+				std::wstring strFile(&path[nRight], nExtPos - nRight); // \longfilename
 				strLeftFile += strFile; // C:\...\longfilename
 				int nExtLen = nPathLen - nExtPos;
 				GetStrTrancateWidth(dest, t_max(0, nSize - nExtLen), strLeftFile.c_str(), hDC, nPxWidth - nExtWidth);
-				_tcscat_s(dest, nSize, &path[nExtPos+1]); // 拡張子連結 C:\...\longf...ext
+				wcscat_s(dest, nSize, &path[nExtPos+1]); // 拡張子連結 C:\...\longf...ext
 			}else{
 				// ファイル名が置けないくらい拡張子か左側が長い。パスの左側を優先して残す
 				GetStrTrancateWidth(dest, nSize, strTemp.c_str(), hDC, nPxWidth);
@@ -1241,5 +1241,5 @@ void GetShortViewPath( TCHAR* dest, int nSize, const TCHAR* path, HDC hDC, int n
 		}
 		return;
 	}
-	_tcsncpy_s(dest, nSize, strTemp.c_str(), _TRUNCATE);
+	wcsncpy_s(dest, nSize, strTemp.c_str(), _TRUNCATE);
 }

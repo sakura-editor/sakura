@@ -33,8 +33,8 @@
 void CType_Rich::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	_tcscpy( pType->m_szTypeName, _T("リッチテキスト") );
-	_tcscpy( pType->m_szTypeExts, _T("rtf") );
+	wcscpy( pType->m_szTypeName, L"リッチテキスト" );
+	wcscpy( pType->m_szTypeExts, L"rtf" );
 
 	//設定
 	pType->m_eDefaultOutline = OUTLINE_TEXT;					/* アウトライン解析方法 */

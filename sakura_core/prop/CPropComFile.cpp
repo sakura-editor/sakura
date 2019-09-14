@@ -48,9 +48,9 @@ static const DWORD p_helpids[] = {	//01310
 };
 
 TYPE_NAME_ID<EShareMode> ShareModeArr[] = {
-	{ SHAREMODE_NOT_EXCLUSIVE,	STR_EXCLU_NO_EXCLUSIVE },	//_T("しない") },
-	{ SHAREMODE_DENY_WRITE,		STR_EXCLU_DENY_WRITE },		//_T("上書きを禁止する") },
-	{ SHAREMODE_DENY_READWRITE,	STR_EXCLU_DENY_READWRITE },	//_T("読み書きを禁止する") },
+	{ SHAREMODE_NOT_EXCLUSIVE,	STR_EXCLU_NO_EXCLUSIVE },	//L"しない" },
+	{ SHAREMODE_DENY_WRITE,		STR_EXCLU_DENY_WRITE },		//L"上書きを禁止する" },
+	{ SHAREMODE_DENY_READWRITE,	STR_EXCLU_DENY_READWRITE },	//L"読み書きを禁止する" },
 };
 
 //	From Here Jun. 2, 2001 genta
@@ -103,7 +103,7 @@ INT_PTR CPropFile::DispatchEvent(
 //				OnHelp( hwndDlg, IDD_PROP_FILE );
 //				return TRUE;
 //			case PSN_KILLACTIVE:
-////				MYTRACE( _T("p2 PSN_KILLACTIVE\n") );
+////				MYTRACE( L"p2 PSN_KILLACTIVE\n" );
 //				/* ダイアログデータの取得 p2 */
 //				GetData_p2( hwndDlg );
 //				return TRUE;
@@ -122,7 +122,7 @@ INT_PTR CPropFile::DispatchEvent(
 				OnHelp( hwndDlg, IDD_PROP_FILE );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE( _T("File PSN_KILLACTIVE\n") );
+//				MYTRACE( L"File PSN_KILLACTIVE\n" );
 				/* ダイアログデータの取得 File */
 				GetData( hwndDlg );
 				return TRUE;
@@ -296,14 +296,14 @@ void CPropFile::SetData( HWND hwndDlg )
 	//	自動保存の有効・無効
 	::CheckDlgButton( hwndDlg, IDC_CHECK_AUTOSAVE, m_Common.m_sBackup.IsAutoBackupEnabled() );
 
-	TCHAR buf[6];
+	WCHAR buf[6];
 	int nN;
 
 	nN = m_Common.m_sBackup.GetAutoBackupInterval();
 	nN = nN < 1  ?  1 : nN;
 	nN = nN > 35791 ? 35791 : nN;
 
-	auto_sprintf( buf, _T("%d"), nN);
+	auto_sprintf( buf, L"%d", nN);
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, buf );
 	//	To Here Aug. 21, 2000 genta
 
@@ -373,15 +373,15 @@ int CPropFile::GetData( HWND hwndDlg )
 	m_Common.m_sBackup.EnableAutoBackup( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AUTOSAVE ) != FALSE );
 
 	//	自動保存間隔の取得
-	TCHAR szNumBuf[/*6*/ 7];	//@@@ 2001.03.21 by MIK
+	WCHAR szNumBuf[/*6*/ 7];	//@@@ 2001.03.21 by MIK
 	int	 nN;
-	TCHAR *pDigit;
+	WCHAR *pDigit;
 
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, szNumBuf, /*5*/ 6 );	//@@@ 2001.03.21 by MIK
 
-	for( nN = 0, pDigit = szNumBuf; *pDigit != _T('\0'); pDigit++ ){
-		if( _T('0') <= *pDigit && *pDigit <= _T('9') ){
-			nN = nN * 10 + *pDigit - _T('0');
+	for( nN = 0, pDigit = szNumBuf; *pDigit != L'\0'; pDigit++ ){
+		if( L'0' <= *pDigit && *pDigit <= L'9' ){
+			nN = nN * 10 + *pDigit - L'0';
 		}
 		else
 			break;

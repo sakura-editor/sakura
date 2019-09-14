@@ -69,9 +69,9 @@ public:
 		HINSTANCE			hInstance,					//!< [in] インスタンスID (実は未使用)
 		HWND				hWndParent,					//!< [in] 親ウィンドウハンドル．エラーメッセージ表示用
 		const SLoadInfo&	sLoadInfo,					//!< [in]
-		const TCHAR*		szCmdLineOption	= NULL,		//!< [in] 追加のコマンドラインオプション
+		const WCHAR*		szCmdLineOption	= NULL,		//!< [in] 追加のコマンドラインオプション
 		bool				sync			= false,	//!< [in] trueなら新規エディタの起動まで待機する
-		const TCHAR*		pszCurDir		= NULL,		//!< [in] 新規エディタのカレントディレクトリ
+		const WCHAR*		pszCurDir		= NULL,		//!< [in] 新規エディタのカレントディレクトリ
 		bool				bNewWindow		= false		//!< [in] 新規エディタをウインドウで開く
 	);
 	static bool OpenNewEditor2(						//!< 新規編集ウィンドウの追加 ver 1
@@ -97,7 +97,7 @@ public:
 	static void DoGrepCreateWindow(HINSTANCE hinst, HWND, CDlgGrep& cDlgGrep);
 protected:
 	void	DoGrep();	//Stonee, 2001/03/21
-	BOOL TrayMessage(HWND hDlg, DWORD dwMessage, UINT uID, HICON hIcon, const TCHAR* pszTip);	/*!< タスクトレイのアイコンに関する処理 */
+	BOOL TrayMessage(HWND hDlg, DWORD dwMessage, UINT uID, HICON hIcon, const WCHAR* pszTip);	/*!< タスクトレイのアイコンに関する処理 */
 	void OnCommand(WORD wNotifyCode, WORD wID, HWND hwndCtl);	/*!< WM_COMMANDメッセージ処理 */
 	void OnNewEditor(bool bNewWindow); //!< 2003.05.30 genta 新規ウィンドウ作成処理を切り出し
 
@@ -127,7 +127,7 @@ private:
 
 	UINT			m_uCreateTaskBarMsg;	//!< RegisterMessageで得られるMessage IDの保管場所。Apr. 24, 2001 genta
 
-	TCHAR			m_szLanguageDll[MAX_PATH];
+	WCHAR			m_szLanguageDll[MAX_PATH];
 };
 
 ///////////////////////////////////////////////////////////////////////

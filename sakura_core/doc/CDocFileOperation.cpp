@@ -79,9 +79,9 @@ void CDocFileOperation::DoFileUnlock()
 //	Mar. 30, 2003 genta	ファイル名未定時の初期ディレクトリをカレントフォルダに
 bool CDocFileOperation::OpenFileDialog(
 	HWND				hwndParent,		//!< [in]
-	const TCHAR*		pszOpenFolder,	//!< [in]     NULL以外を指定すると初期フォルダを指定できる
+	const WCHAR*		pszOpenFolder,	//!< [in]     NULL以外を指定すると初期フォルダを指定できる
 	SLoadInfo*			pLoadInfo,		//!< [in,out] ロード情報
-	std::vector<std::tstring>&	files
+	std::vector<std::wstring>&	files
 )
 {
 	/* アクティブにする */
@@ -92,7 +92,7 @@ bool CDocFileOperation::OpenFileDialog(
 	cDlgOpenFile.Create(
 		G_AppInstance(),
 		hwndParent,
-		_T("*.*"),
+		L"*.*",
 		pszOpenFolder ? pszOpenFolder : CSakuraEnvironment::GetDlgInitialDir().c_str(),	// 初期フォルダ
 		CMRUFile().GetPathList(),															// MRUリストのファイルのリスト
 		CMRUFolder().GetPathList()														// OPENFOLDERリストのファイルのリスト
@@ -223,52 +223,52 @@ bool CDocFileOperation::SaveFileDialog(
 	//拡張子指定
 	// 一時適用や拡張子なしの場合の拡張子をタイプ別設定から持ってくる
 	// 2008/6/14 大きく改造 Uchi
-	TCHAR	szDefaultWildCard[_MAX_PATH + 10];	// ユーザー指定拡張子
+	WCHAR	szDefaultWildCard[_MAX_PATH + 10];	// ユーザー指定拡張子
 	{
-		LPCTSTR	szExt;
+		LPCWSTR	szExt;
 
 		const STypeConfig& type = m_pcDocRef->m_cDocType.GetDocumentAttribute();
 		//ファイルパスが無い場合は *.txt とする
 		if(!this->m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath()){
-			szExt = _T("");
+			szExt = L"";
 		}
 		else {
 			szExt = this->m_pcDocRef->m_cDocFile.GetFilePathClass().GetExt();
 		}
 		if (type.m_nIdx == 0) {
 			// 基本
-			if (szExt[0] == _T('\0')) { 
+			if (szExt[0] == L'\0') { 
 				// ファイルパスが無いまたは拡張子なし
-				_tcscpy(szDefaultWildCard, _T("*.txt"));
+				wcscpy(szDefaultWildCard, L"*.txt");
 			}
 			else {
 				// 拡張子あり
-				_tcscpy(szDefaultWildCard, _T("*"));
-				_tcscat(szDefaultWildCard, szExt);
+				wcscpy(szDefaultWildCard, L"*");
+				wcscat(szDefaultWildCard, szExt);
 			}
 		}
 		else {
-			szDefaultWildCard[0] = _T('\0'); 
+			szDefaultWildCard[0] = L'\0'; 
 			CDocTypeManager::ConvertTypesExtToDlgExt(type.m_szTypeExts, szExt, szDefaultWildCard);
 		}
 
 		if(!this->m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath()){
 			//「新規から保存時は全ファイル表示」オプション	// 2008/6/15 バグフィックス Uchi
 			if( GetDllShareData().m_Common.m_sFile.m_bNoFilterSaveNew )
-				_tcscat(szDefaultWildCard, _T(";*.*"));	// 全ファイル表示
+				wcscat(szDefaultWildCard, L";*.*");	// 全ファイル表示
 		}
 		else {
 			//「新規以外から保存時は全ファイル表示」オプション
 			if( GetDllShareData().m_Common.m_sFile.m_bNoFilterSaveFile )
-				_tcscat(szDefaultWildCard, _T(";*.*"));	// 全ファイル表示
+				wcscat(szDefaultWildCard, L";*.*");	// 全ファイル表示
 		}
 	}
 	// 無題に、無題番号を付ける
-	if( pSaveInfo->cFilePath[0] == _T('\0') ){
+	if( pSaveInfo->cFilePath[0] == L'\0' ){
 		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( m_pcDocRef->m_pcEditWnd->GetHwnd() );
 		if( 0 < node->m_nId ){
-			TCHAR szText[16];
-			auto_sprintf(szText, _T("%d"), node->m_nId);
+			WCHAR szText[16];
+			auto_sprintf(szText, L"%d", node->m_nId);
 			auto_strcpy(pSaveInfo->cFilePath, LS(STR_NO_TITLE2));	// 無題
 			auto_strcat(pSaveInfo->cFilePath, szText);
 		}
@@ -288,13 +288,13 @@ bool CDocFileOperation::SaveFileDialog(
 }
 
 //!「ファイル名を付けて保存」ダイアログ
-bool CDocFileOperation::SaveFileDialog(LPTSTR szPath)
+bool CDocFileOperation::SaveFileDialog(LPWSTR szPath)
 {
 	SSaveInfo sSaveInfo;
 	sSaveInfo.cFilePath = szPath;
 	sSaveInfo.eCharCode = CODE_CODEMAX; //###トリッキー
 	bool bRet = SaveFileDialog(&sSaveInfo);
-	_tcscpy_s(szPath, _MAX_PATH, sSaveInfo.cFilePath);
+	wcscpy_s(szPath, _MAX_PATH, sSaveInfo.cFilePath);
 	return bRet;
 }
 
@@ -405,7 +405,7 @@ bool CDocFileOperation::FileSaveAs( const WCHAR* filename,ECodeType eCodeType, E
 	sSaveInfo.cEol = EOL_NONE; // 初期値は変換しない
 	if( filename ){
 		// ダイアログなし保存、またはマクロの引数あり
-		sSaveInfo.cFilePath = to_tchar(filename);
+		sSaveInfo.cFilePath = filename;
 		if( EOL_NONE <= eEolType && eEolType < EOL_CODEMAX ){
 			sSaveInfo.cEol = eEolType;
 		}
@@ -416,7 +416,7 @@ bool CDocFileOperation::FileSaveAs( const WCHAR* filename,ECodeType eCodeType, E
 	}
 	if( bDialog ){
 		if(!filename && CAppMode::getInstance()->IsViewMode()){
-			sSaveInfo.cFilePath = _T(""); //※読み込み専用モードのときはファイル名を指定しない
+			sSaveInfo.cFilePath = L""; //※読み込み専用モードのときはファイル名を指定しない
 		}
 
 		//ダイアログ表示
@@ -499,7 +499,7 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 	//ファイル名指定が無い場合はダイアログで入力させる
 	SLoadInfo sLoadInfo = _sLoadInfo;
 	if( sLoadInfo.cFilePath.Length()==0 ){
-		std::vector<std::tstring> files;
+		std::vector<std::wstring> files;
 		if( !OpenFileDialog( CEditWnd::getInstance()->GetHwnd(), NULL, &sLoadInfo, files ) ){
 			return;
 		}

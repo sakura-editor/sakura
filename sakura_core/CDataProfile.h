@@ -57,14 +57,11 @@ struct StringBufferA_{
 };
 typedef const StringBufferA_ StringBufferA;
 typedef const StringBufferW_ StringBufferW;
-typedef StringBufferW StringBufferT;
 
 //文字列バッファ型インスタンスの生成マクロ
 #define MakeStringBufferW(S) StringBufferW(S,_countof(S))
 #define MakeStringBufferA(S) StringBufferA(S,_countof(S))
-#define MakeStringBufferT(S) StringBufferT(S,_countof(S))
 #define MakeStringBufferW0(S) StringBufferW(S,0)
-#define MakeStringBufferT0(S) StringBufferT(S,0)
 
 //2007.09.24 kobake データ変換部を子クラスに分離
 //!各種データ変換付きCProfile

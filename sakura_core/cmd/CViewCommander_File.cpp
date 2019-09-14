@@ -65,10 +65,10 @@ void CViewCommander::Command_FILENEW( void )
 {
 	/* 新たな編集ウィンドウを起動 */
 	SLoadInfo sLoadInfo;
-	sLoadInfo.cFilePath = _T("");
+	sLoadInfo.cFilePath = L"";
 	sLoadInfo.eCharCode = CODE_NONE;
 	sLoadInfo.bViewMode = false;
-	std::tstring curDir = CSakuraEnvironment::GetDlgInitialDir();
+	std::wstring curDir = CSakuraEnvironment::GetDlgInitialDir();
 	CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, NULL, false, curDir.c_str(), false );
 	return;
 }
@@ -78,10 +78,10 @@ void CViewCommander::Command_FILENEW_NEWWINDOW( void )
 {
 	/* 新たな編集ウィンドウを起動 */
 	SLoadInfo sLoadInfo;
-	sLoadInfo.cFilePath = _T("");
+	sLoadInfo.cFilePath = L"";
 	sLoadInfo.eCharCode = CODE_DEFAULT;
 	sLoadInfo.bViewMode = false;
-	std::tstring curDir = CSakuraEnvironment::GetDlgInitialDir();
+	std::wstring curDir = CSakuraEnvironment::GetDlgInitialDir();
 	CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo,
 		NULL,
 		false,
@@ -102,17 +102,17 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 		nCharCode = CODE_AUTODETECT;
 	}
 	//ロード情報
-	SLoadInfo sLoadInfo(filename?to_tchar(filename):_T(""), nCharCode, bViewMode);
-	std::vector<std::tstring> files;
-	std::tstring defName = (defaultName?to_tchar(defaultName):_T(""));
+	SLoadInfo sLoadInfo(filename?filename:L"", nCharCode, bViewMode);
+	std::vector<std::wstring> files;
+	std::wstring defName = (defaultName ? defaultName : L"");
 
 	//必要であれば「ファイルを開く」ダイアログ
 	if(!sLoadInfo.cFilePath.IsValidPath()){
 		if( !defName.empty() ){
-			TCHAR szPath[_MAX_PATH];
-			TCHAR szDir[_MAX_DIR];
-			TCHAR szName[_MAX_FNAME];
-			TCHAR szExt  [_MAX_EXT];
+			WCHAR szPath[_MAX_PATH];
+			WCHAR szDir[_MAX_DIR];
+			WCHAR szName[_MAX_FNAME];
+			WCHAR szExt  [_MAX_EXT];
 			my_splitpath_t(defName.c_str(), szPath, szDir, szName, szExt);
 			auto_strcat(szPath, szDir);
 			if( 0 == auto_stricmp(defName.c_str(), szPath) ){
@@ -245,7 +245,7 @@ void CViewCommander::Command_FILECLOSE( void )
 */
 void CViewCommander::Command_FILECLOSE_OPEN( LPCWSTR filename, ECodeType nCharCode, bool bViewMode )
 {
-	GetDocument()->m_cDocFileOperation.FileCloseOpen( SLoadInfo(to_tchar(filename), nCharCode, bViewMode) );
+	GetDocument()->m_cDocFileOperation.FileCloseOpen( SLoadInfo(filename, nCharCode, bViewMode) );
 
 	//プラグイン：DocumentOpenイベント実行
 	CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_OPEN, &GetEditWindow()->GetActiveView() );
@@ -320,8 +320,8 @@ BOOL CViewCommander::Command_OPEN_HfromtoC( BOOL bCheckOnly )
 BOOL CViewCommander::Command_OPEN_HHPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 {
 	// 2003.06.28 Moca ヘッダ・ソースのコードを統合＆削除
-	static const TCHAR* source_ext[] = { _T("c"), _T("cpp"), _T("cxx"), _T("cc"), _T("cp"), _T("c++") };
-	static const TCHAR* header_ext[] = { _T("h"), _T("hpp"), _T("hxx"), _T("hh"), _T("hp"), _T("h++") };
+	static const WCHAR* source_ext[] = { L"c", L"cpp", L"cxx", L"cc", L"cp", L"c++" };
+	static const WCHAR* header_ext[] = { L"h", L"hpp", L"hxx", L"hh", L"hp", L"h++" };
 	return m_pCommanderView->OPEN_ExtFromtoExt(
 		bCheckOnly, bBeepWhenMiss, source_ext, header_ext,
 		_countof(source_ext), _countof(header_ext),
@@ -333,8 +333,8 @@ BOOL CViewCommander::Command_OPEN_HHPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 BOOL CViewCommander::Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 {
 	// 2003.06.28 Moca ヘッダ・ソースのコードを統合＆削除
-	static const TCHAR* source_ext[] = { _T("c"), _T("cpp"), _T("cxx"), _T("cc"), _T("cp"), _T("c++") };
-	static const TCHAR* header_ext[] = { _T("h"), _T("hpp"), _T("hxx"), _T("hh"), _T("hp"), _T("h++") };
+	static const WCHAR* source_ext[] = { L"c", L"cpp", L"cxx", L"cc", L"cp", L"c++" };
+	static const WCHAR* header_ext[] = { L"h", L"hpp", L"hxx", L"hh", L"hp", L"h++" };
 	return m_pCommanderView->OPEN_ExtFromtoExt(
 		bCheckOnly, bBeepWhenMiss, header_ext, source_ext,
 		_countof(header_ext), _countof(source_ext),
@@ -345,7 +345,7 @@ BOOL CViewCommander::Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 void CViewCommander::Command_ACTIVATE_SQLPLUS( void )
 {
 	HWND		hwndSQLPLUS;
-	hwndSQLPLUS = ::FindWindow( _T("SqlplusWClass"), _T("Oracle SQL*Plus") );
+	hwndSQLPLUS = ::FindWindow( L"SqlplusWClass", L"Oracle SQL*Plus" );
 	if( NULL == hwndSQLPLUS ){
 		ErrorMessage( m_pCommanderView->GetHwnd(), LS( STR_SQLERR_ACTV_BUT_NOT_RUN ) );	//"Oracle SQL*Plusをアクティブ表示します。\n\n\nOracle SQL*Plusが起動されていません。\n"
 		return;
@@ -364,10 +364,10 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 	HWND		hwndSQLPLUS;
 	int			nRet;
 	BOOL		nBool;
-	TCHAR		szPath[MAX_PATH + 2];
+	WCHAR		szPath[MAX_PATH + 2];
 	BOOL		bResult;
 
-	hwndSQLPLUS = ::FindWindow( _T("SqlplusWClass"), _T("Oracle SQL*Plus") );
+	hwndSQLPLUS = ::FindWindow( L"SqlplusWClass", L"Oracle SQL*Plus" );
 	if( NULL == hwndSQLPLUS ){
 		ErrorMessage( m_pCommanderView->GetHwnd(), LS( STR_SQLERR_EXEC_BUT_NOT_RUN ) );	//"Oracle SQL*Plusで実行します。\n\n\nOracle SQL*Plusが起動されていません。\n"
 		return;
@@ -404,13 +404,13 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		/* ファイルパスに空白が含まれている場合はダブルクォーテーションで囲む */
 		//	2003.10.20 MIK コード簡略化
-		if( _tcschr( GetDocument()->m_cDocFile.GetFilePath(), TCODE::SPACE ) ? TRUE : FALSE ){
-			auto_sprintf( szPath, _T("@\"%ts\"\r\n"), GetDocument()->m_cDocFile.GetFilePath() );
+		if( wcschr( GetDocument()->m_cDocFile.GetFilePath(), TCODE::SPACE ) ? TRUE : FALSE ){
+			auto_sprintf( szPath, L"@\"%s\"\r\n", GetDocument()->m_cDocFile.GetFilePath() );
 		}else{
-			auto_sprintf( szPath, _T("@%ts\r\n"), GetDocument()->m_cDocFile.GetFilePath() );
+			auto_sprintf( szPath, L"@%s\r\n", GetDocument()->m_cDocFile.GetFilePath() );
 		}
 		/* クリップボードにデータを設定 */
-		m_pCommanderView->MySetClipboardData( szPath, _tcslen( szPath ), false );
+		m_pCommanderView->MySetClipboardData( szPath, wcslen( szPath ), false );
 
 		/* Oracle SQL*Plusをアクティブにする */
 		/* アクティブにする */
@@ -500,10 +500,10 @@ void CViewCommander::Command_PROPERTY_FILE( void )
 		CRunningTimer cRunningTimer( "CViewCommander::Command_PROPERTY_FILE 全行データを返すテスト" );
 		cRunningTimer.Reset();
 		pDataAll = CDocReader(GetDocument()->m_cDocLineMgr).GetAllData( &nDataAllLen );
-//		MYTRACE( _T("全データ取得             (%dバイト) 所要時間(ミリ秒) = %d\n"), nDataAllLen, cRunningTimer.Read() );
+//		MYTRACE( L"全データ取得             (%dバイト) 所要時間(ミリ秒) = %d\n", nDataAllLen, cRunningTimer.Read() );
 		free( pDataAll );
 		pDataAll = NULL;
-//		MYTRACE( _T("全データ取得のメモリ解放 (%dバイト) 所要時間(ミリ秒) = %d\n"), nDataAllLen, cRunningTimer.Read() );
+//		MYTRACE( L"全データ取得のメモリ解放 (%dバイト) 所要時間(ミリ秒) = %d\n", nDataAllLen, cRunningTimer.Read() );
 	}
 #endif
 
@@ -517,10 +517,10 @@ void CViewCommander::Command_PROFILEMGR( void )
 {
 	CDlgProfileMgr profMgr;
 	if( profMgr.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 0 ) ){
-		TCHAR szOpt[MAX_PATH+10];
-		auto_sprintf( szOpt, _T("-PROF=\"%ts\""), profMgr.m_strProfileName.c_str() );
+		WCHAR szOpt[MAX_PATH+10];
+		auto_sprintf( szOpt, L"-PROF=\"%s\"", profMgr.m_strProfileName.c_str() );
 		SLoadInfo sLoadInfo;
-		sLoadInfo.cFilePath = _T("");
+		sLoadInfo.cFilePath = L"";
 		sLoadInfo.eCharCode = CODE_DEFAULT;
 		sLoadInfo.bViewMode = false;
 		CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, szOpt, false, NULL, false );
@@ -713,7 +713,7 @@ BOOL CViewCommander::Command_PUTFILE(
 	{	/* 選択範囲を出力 */
 		try
 		{
-			CBinaryOutputStream out(to_tchar(filename),true);
+			CBinaryOutputStream out(filename,true);
 
 			// 選択範囲の取得 -> cMem
 			CNativeW cMem;
@@ -747,7 +747,7 @@ BOOL CViewCommander::Command_PUTFILE(
 			WarningMessage(
 				NULL,
 				LS(STR_SAVEAGENT_OTHER_APP),
-				to_tchar(filename)
+				filename
 			);
 			bResult = FALSE;
 		}
@@ -777,7 +777,7 @@ BOOL CViewCommander::Command_PUTFILE(
 		EConvertResult eRet = CWriteManager().WriteFile_From_CDocLineMgr(
 			GetDocument()->m_cDocLineMgr,
 			SSaveInfo(
-				to_tchar(filename),
+				filename,
 				nSaveCharCode,
 				EOL_NONE,
 				bBom
@@ -836,7 +836,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 	if(nSaveCharCode == CODE_AUTODETECT) {
 		EditInfo    fi;
 		const CMRUFile  cMRU;
-		if ( cMRU.GetEditInfo( to_tchar(filename), &fi ) ){
+		if ( cMRU.GetEditInfo( filename, &fi ) ){
 				nSaveCharCode = fi.m_nCharCode;
 		} else {
 			nSaveCharCode = GetDocument()->GetDocumentEncoding();
@@ -854,7 +854,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 		bBigFile = false;
 #endif
 		// ファイルを開く
-		cfl.FileOpen( to_tchar(filename), bBigFile, nSaveCharCode, 0 );
+		cfl.FileOpen( filename, bBigFile, nSaveCharCode, 0 );
 
 		/* ファイルサイズが65KBを越えたら進捗ダイアログ表示 */
 		if ( 0x10000 < cfl.GetFileSize() ) {
@@ -902,7 +902,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 		cfl.FileClose();
 	} // try
 	catch( CError_FileOpen ){
-		WarningMessage( NULL, LS(STR_GREP_ERR_FILEOPEN), to_tchar(filename) );
+		WarningMessage( NULL, LS(STR_GREP_ERR_FILEOPEN), filename );
 		bResult = FALSE;
 	}
 	catch( CError_FileRead ){

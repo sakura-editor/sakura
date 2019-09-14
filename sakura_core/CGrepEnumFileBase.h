@@ -38,7 +38,7 @@
 #include "CGrepEnumKeys.h"
 #include "util/string_ex.h"
 
-typedef std::pair< LPTSTR, DWORD > PairGrepEnumItem;
+typedef std::pair< LPWSTR, DWORD > PairGrepEnumItem;
 typedef std::vector< PairGrepEnumItem > VPGrepEnumItem;
 
 class CGrepEnumOptions {
@@ -67,7 +67,7 @@ public:
 
 	void ClearItems( void ){
 		for( int i = 0; i < GetCount(); i++ ){
-			LPTSTR lp = m_vpItems[ i ].first;
+			LPWSTR lp = m_vpItems[ i ].first;
 			m_vpItems[ i ].first = NULL;
 			delete [] lp;
 		}
@@ -75,16 +75,16 @@ public:
 		return;
 	}
 
-	BOOL IsExist( LPCTSTR lpFileName ){
+	BOOL IsExist( LPCWSTR lpFileName ){
 		for( int i = 0; i < GetCount(); i++ ){
-			if( _tcscmp( m_vpItems[ i ].first, lpFileName ) == 0 ){
+			if( wcscmp( m_vpItems[ i ].first, lpFileName ) == 0 ){
 				return TRUE;
 			}
 		}
 		return FALSE;
 	}
 
-	virtual BOOL IsValid( WIN32_FIND_DATA& w32fd, LPCTSTR pFile = NULL ){
+	virtual BOOL IsValid( WIN32_FIND_DATA& w32fd, LPCWSTR pFile = NULL ){
 		if( ! IsExist( pFile ? pFile : w32fd.cFileName ) ){
 			return TRUE;
 		}
@@ -95,7 +95,7 @@ public:
 		return (int)m_vpItems.size();
 	}
 
-	LPCTSTR GetFileName( int i ){
+	LPCWSTR GetFileName( int i ){
 		if( i < 0 || i >= GetCount() ) return NULL;
 		return m_vpItems[ i ].first;
 	}
@@ -105,20 +105,20 @@ public:
 		return m_vpItems[ i ].second;
 	}
 
-	int Enumerates( LPCTSTR lpBaseFolder, VGrepEnumKeys& vecKeys, CGrepEnumOptions& option, CGrepEnumFileBase* pExceptItems = NULL ){
+	int Enumerates( LPCWSTR lpBaseFolder, VGrepEnumKeys& vecKeys, CGrepEnumOptions& option, CGrepEnumFileBase* pExceptItems = NULL ){
 		int found = 0;
 
 		for( int i = 0; i < (int)vecKeys.size(); i++ ){
-			int baseLen = _tcslen( lpBaseFolder );
-			LPTSTR lpPath = new TCHAR[ baseLen + _tcslen( vecKeys[ i ] ) + 2 ];
+			int baseLen = wcslen( lpBaseFolder );
+			LPWSTR lpPath = new WCHAR[ baseLen + wcslen( vecKeys[ i ] ) + 2 ];
 			if( NULL == lpPath ) break;
 			auto_strcpy( lpPath, lpBaseFolder );
-			auto_strcpy( lpPath + baseLen, _T("\\") );
+			auto_strcpy( lpPath + baseLen, L"\\" );
 			auto_strcpy( lpPath + baseLen + 1, vecKeys[ i ] );
 			// vecKeys[ i ] ==> "subdir\*.h" 等の場合に後で(ファイル|フォルダ)名に "subdir\" を連結する
-			const TCHAR* keyDirYen = _tcsrchr( vecKeys[ i ], _T('\\') );
-			const TCHAR* keyDirSlash = _tcsrchr( vecKeys[ i ], _T('/') );
-			const TCHAR* keyDir;
+			const WCHAR* keyDirYen = wcsrchr( vecKeys[ i ], L'\\' );
+			const WCHAR* keyDirSlash = wcsrchr( vecKeys[ i ], L'/' );
+			const WCHAR* keyDir;
 			if( keyDirYen == NULL ){
 				keyDir = keyDirSlash;
 			}else if( keyDirSlash == NULL ){
@@ -146,12 +146,12 @@ public:
 					if( option.m_bIgnoreSystem && (w32fd.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM) ){
 						continue;
 					}
-					LPTSTR lpName = new TCHAR[ nKeyDirLen + _tcslen( w32fd.cFileName ) + 1 ];
-					_tcsncpy( lpName, vecKeys[ i ], nKeyDirLen );
-					_tcscpy( lpName + nKeyDirLen, w32fd.cFileName );
-					LPTSTR lpFullPath = new TCHAR[ baseLen + _tcslen(lpName) + 2 ];
+					LPWSTR lpName = new WCHAR[ nKeyDirLen + wcslen( w32fd.cFileName ) + 1 ];
+					wcsncpy( lpName, vecKeys[ i ], nKeyDirLen );
+					wcscpy( lpName + nKeyDirLen, w32fd.cFileName );
+					LPWSTR lpFullPath = new WCHAR[ baseLen + wcslen(lpName) + 2 ];
 					auto_strcpy( lpFullPath, lpBaseFolder );
-					auto_strcpy( lpFullPath + baseLen, _T("\\") );
+					auto_strcpy( lpFullPath + baseLen, L"\\" );
 					auto_strcpy( lpFullPath + baseLen + 1, lpName );
 					if( IsValid( w32fd, lpName ) ){
 						if( pExceptItems && pExceptItems->IsExist( lpFullPath ) ){

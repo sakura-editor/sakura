@@ -84,10 +84,10 @@ enum eOutlineNativeNamesId{
 	STR2_OUTLINE_MAX
 };
 
-const TCHAR* pszOutlineNames[] = {
-	_T("XML"),
-	_T("C"),
-	_T("C++"),
+const WCHAR* pszOutlineNames[] = {
+	L"XML",
+	L"C",
+	L"C++",
 };
 
 //アウトライン解析方法・標準ルール
@@ -111,9 +111,9 @@ TYPE_NAME_ID<EOutlineType> OlmArr[] = {
 };
 
 TYPE_NAME_ID<ETabArrow> TabArrowArr[] = {
-	{ TABARROW_STRING,	STR_TAB_SYMBOL_CHARA },			//_T("文字指定")
-	{ TABARROW_SHORT,	STR_TAB_SYMBOL_SHORT_ARROW },	//_T("短い矢印")
-	{ TABARROW_LONG,	STR_TAB_SYMBOL_LONG_ARROW },	//_T("長い矢印")
+	{ TABARROW_STRING,	STR_TAB_SYMBOL_CHARA },			//L"文字指定"
+	{ TABARROW_SHORT,	STR_TAB_SYMBOL_SHORT_ARROW },	//L"短い矢印"
+	{ TABARROW_LONG,	STR_TAB_SYMBOL_LONG_ARROW },	//L"長い矢印"
 };
 
 TYPE_NAME_ID<ESmartIndentType> SmartIndentArr[] = {
@@ -127,23 +127,23 @@ TYPE_NAME_ID<ESmartIndentType> SmartIndentArr[] = {
 	@date Oct. 1, 2002 genta 
 */
 TYPE_NAME_ID<int> IndentTypeArr[] = {
-	{ 0, STR_WRAP_INDENT_NONE },	//_T("なし")
-	{ 1, STR_WRAP_INDENT_TX2X },	//_T("tx2x")
-	{ 2, STR_WRAP_INDENT_BOL },		//_T("論理行先頭")
+	{ 0, STR_WRAP_INDENT_NONE },	//L"なし"
+	{ 1, STR_WRAP_INDENT_TX2X },	//L"tx2x"
+	{ 2, STR_WRAP_INDENT_BOL },		//L"論理行先頭"
 };
 
 // 2008.05.30 nasukoji	テキストの折り返し方法
 TYPE_NAME_ID<int> WrapMethodArr[] = {
-	{ WRAP_NO_TEXT_WRAP,	STR_WRAP_METHOD_NO_WRAP },	//_T("折り返さない")
-	{ WRAP_SETTING_WIDTH,	STR_WRAP_METHOD_SPEC_WIDTH },	//_T("指定桁で折り返す")
-	{ WRAP_WINDOW_WIDTH,	STR_WRAP_METHOD_WIN_WIDTH },	//_T("右端で折り返す")
+	{ WRAP_NO_TEXT_WRAP,	STR_WRAP_METHOD_NO_WRAP },	//L"折り返さない"
+	{ WRAP_SETTING_WIDTH,	STR_WRAP_METHOD_SPEC_WIDTH },	//L"指定桁で折り返す"
+	{ WRAP_WINDOW_WIDTH,	STR_WRAP_METHOD_WIN_WIDTH },	//L"右端で折り返す"
 };
 
 // TSVモード
 TYPE_NAME_ID<int> TsvModeArr[] = {
-	{ TSV_MODE_NONE,		STR_TSV_MODE_NONE },	//_T("通常")
-	{ TSV_MODE_TSV,			STR_TSV_MODE_TSV },		//_T("TSV")
-	{ TSV_MODE_CSV,			STR_TSV_MODE_CSV },		//_T("CSV")
+	{ TSV_MODE_NONE,		STR_TSV_MODE_NONE },	//L"通常"
+	{ TSV_MODE_TSV,			STR_TSV_MODE_TSV },		//L"TSV"
+	{ TSV_MODE_CSV,			STR_TSV_MODE_CSV },		//L"CSV"
 };
 
 //静的メンバ
@@ -247,7 +247,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 				{
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
 					// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
-					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_OUTLINERULEFILE), _T("*.rul;*.rule;*.txt"), true, EFITER_NONE);
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_OUTLINERULEFILE), L"*.rul;*.rule;*.txt", true, EFITER_NONE);
 				}
 				return TRUE;
 
@@ -325,7 +325,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 			return TRUE;
 		case IDC_SPIN_CHARSPACE:
 			/* 文字の隙間 */
-//			MYTRACE( _T("IDC_SPIN_CHARSPACE\n") );
+//			MYTRACE( L"IDC_SPIN_CHARSPACE\n" );
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
@@ -343,7 +343,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 			return TRUE;
 		case IDC_SPIN_LINESPACE:
 			/* 行の隙間 */
-//			MYTRACE( _T("IDC_SPIN_LINESPACE\n") );
+//			MYTRACE( L"IDC_SPIN_LINESPACE\n" );
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, NULL, TRUE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
@@ -367,7 +367,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 		case IDC_SPIN_TABSPACE:
 			//	Sep. 22, 2002 genta
 			/* TAB幅 */
-//			MYTRACE( _T("IDC_SPIN_CHARSPACE\n") );
+//			MYTRACE( L"IDC_SPIN_CHARSPACE\n" );
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_TABSPACE, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
@@ -402,11 +402,11 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 			break;
 		}
 
-//		MYTRACE( _T("pNMHDR->hwndFrom	=%xh\n"),	pNMHDR->hwndFrom );
-//		MYTRACE( _T("pNMHDR->idFrom	=%xh\n"),	pNMHDR->idFrom );
-//		MYTRACE( _T("pNMHDR->code		=%xh\n"),	pNMHDR->code );
-//		MYTRACE( _T("pMNUD->iPos		=%d\n"),		pMNUD->iPos );
-//		MYTRACE( _T("pMNUD->iDelta		=%d\n"),		pMNUD->iDelta );
+//		MYTRACE( L"pNMHDR->hwndFrom	=%xh\n",	pNMHDR->hwndFrom );
+//		MYTRACE( L"pNMHDR->idFrom	=%xh\n",	pNMHDR->idFrom );
+//		MYTRACE( L"pNMHDR->code		=%xh\n",	pNMHDR->code );
+//		MYTRACE( L"pMNUD->iPos		=%d\n",		pMNUD->iPos );
+//		MYTRACE( L"pMNUD->iDelta		=%d\n",		pMNUD->iDelta );
 		break;
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
@@ -757,7 +757,7 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 }
 
 //アウトライン解析ルールの追加
-void CPropTypesScreen::AddOutlineMethod(int nMethod, const WCHAR* szName)
+void CPropTypesScreen::AddOutlineMethod(int nMethod, const WCHAR* pszName)
 {
 	if( m_OlmArr.empty() ){
 		InitTypeNameId2(m_OlmArr, OlmArr, _countof(OlmArr));	//アウトライン解析ルール
@@ -765,10 +765,7 @@ void CPropTypesScreen::AddOutlineMethod(int nMethod, const WCHAR* szName)
 	TYPE_NAME_ID2<EOutlineType> method;
 	method.nMethod = (EOutlineType)nMethod;
 	method.nNameId = 0;
-	const TCHAR* tszName = to_tchar( szName );
-	TCHAR* pszName = new TCHAR[ _tcslen(tszName) + 1 ];
-	_tcscpy( pszName, tszName );
-	method.pszName = pszName;
+	method.pszName = _wcsdup( pszName );
 	m_OlmArr.push_back(method);
 }
 
@@ -785,7 +782,7 @@ void CPropTypesScreen::RemoveOutlineMethod(int nMethod, const WCHAR* szName)
 }
 
 //スマートインデントルールの追加
-void CPropTypesScreen::AddSIndentMethod(int nMethod, const WCHAR* szName)
+void CPropTypesScreen::AddSIndentMethod(int nMethod, const WCHAR* pszName)
 {
 	if( m_SIndentArr.empty() ){
 		InitTypeNameId2(m_SIndentArr, SmartIndentArr, _countof(SmartIndentArr));	//スマートインデントルール
@@ -793,10 +790,7 @@ void CPropTypesScreen::AddSIndentMethod(int nMethod, const WCHAR* szName)
 	TYPE_NAME_ID2<ESmartIndentType> method;
 	method.nMethod = (ESmartIndentType)nMethod;
 	method.nNameId = 0;
-	const TCHAR* tszName = to_tchar( szName );
-	TCHAR* pszName = new TCHAR[ _tcslen(tszName) + 1 ];
-	_tcscpy( pszName, tszName );
-	method.pszName = pszName;
+	method.pszName = _wcsdup( pszName );
 	m_SIndentArr.push_back(method);
 }
 

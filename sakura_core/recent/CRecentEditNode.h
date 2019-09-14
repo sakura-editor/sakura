@@ -37,9 +37,9 @@ public:
 	//オーバーライド
 	int				CompareItem( const EditNode* p1, const EditNode* p2 ) const;
 	void			CopyItem( EditNode* dst, const EditNode* src ) const;
-	const TCHAR*	GetItemText( int nIndex ) const;
+	const WCHAR*	GetItemText( int nIndex ) const;
 	bool			DataToReceiveType( const EditNode** dst, const EditNode* src ) const;
-	bool			TextToDataType( EditNode* dst, LPCTSTR pszText ) const;
+	bool			TextToDataType( EditNode* dst, LPCWSTR pszText ) const;
 	bool			ValidateReceiveType( const EditNode* ) const;
 	size_t			GetTextMaxLength() const;
 	//固有インターフェース
