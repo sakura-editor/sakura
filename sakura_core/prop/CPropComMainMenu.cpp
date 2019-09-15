@@ -338,7 +338,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					// Esc
 					//	何も設定しない（元のまま）
 				}
-				else if (auto_strcmp(ptdi->item.pszText, L"") == 0) {
+				else if (wcscmp(ptdi->item.pszText, L"") == 0) {
 					// 空
 					pFuncWk->m_sName = LS(STR_PROPCOMMAINMENU_EDIT);
 				}
@@ -507,12 +507,12 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					case IDC_BUTTON_INSERT_NODE:		// ノード挿入
 						eFuncCode = F_NODE;
 						bIsNode = true;
-						auto_strncpy( szLabel , LS(STR_PROPCOMMAINMENU_EDIT), _countof(szLabel) - 1 );
+						wcsncpy( szLabel , LS(STR_PROPCOMMAINMENU_EDIT), _countof(szLabel) - 1 );
 						szLabel[_countof(szLabel) - 1] = L'\0';
 						break;
 					case IDC_BUTTON_INSERTSEPARATOR:	// 区切線挿入
 						eFuncCode = F_SEPARATOR;
-						auto_strncpy( szLabel , LS(STR_PROPCOMMAINMENU_SEP), _countof(szLabel) - 1 );
+						wcsncpy( szLabel , LS(STR_PROPCOMMAINMENU_SEP), _countof(szLabel) - 1 );
 						szLabel[_countof(szLabel) - 1] = L'\0';
 						break;
 					case IDC_BUTTON_INSERT:				// 挿入
@@ -527,7 +527,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 						}
 						if (nIdxFIdx == nSpecialFuncsNum) {
 							// 特殊機能
-							auto_strcpy( szLabel, LS(nsFuncCode::pnFuncList_Special[nIdxFunc]) );
+							wcscpy( szLabel, LS(nsFuncCode::pnFuncList_Special[nIdxFunc]) );
 							eFuncCode = nsFuncCode::pnFuncList_Special[nIdxFunc];
 						}
 						else if (m_cLookup.Pos2FuncCode( nIdxFIdx, nIdxFunc ) != 0) {
@@ -535,7 +535,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 							eFuncCode = m_cLookup.Pos2FuncCode( nIdxFIdx, nIdxFunc );
 						}
 						else {
-							auto_strcpy( szLabel, L"?" );
+							wcscpy( szLabel, L"?" );
 							eFuncCode = F_SEPARATOR;
 						}
 						break;
@@ -935,7 +935,7 @@ void CPropMainMenu::SetData( HWND hwndDlg )
 				}
 				break;
 		}
-		auto_strcpy(pFuncWk->m_sKey, pcFunc->m_sKey);
+		wcscpy(pFuncWk->m_sKey, pcFunc->m_sKey);
 		pFuncWk->m_bDupErr = false;
 		// TreeViewに挿入
 		tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
@@ -1013,7 +1013,7 @@ bool CPropMainMenu::GetDataTree( HWND hwndTree, HTREEITEM htiTrg, int nLevel )
 		switch(pFuncWk->m_nFunc) {
 		case F_NODE:
 			pcFunc->m_nType = T_NODE;
-			auto_strcpy_s( pcFunc->m_sName, MAX_MAIN_MENU_NAME_LEN+1, SupplementAmpersand( pFuncWk->m_sName ).c_str() );
+			wcscpy_s( pcFunc->m_sName, MAX_MAIN_MENU_NAME_LEN+1, SupplementAmpersand( pFuncWk->m_sName ).c_str() );
 			break;
 		case F_SEPARATOR:
 			pcFunc->m_nType = T_SEPARATOR;
@@ -1041,7 +1041,7 @@ bool CPropMainMenu::GetDataTree( HWND hwndTree, HTREEITEM htiTrg, int nLevel )
 			break;
 		}
 		pcFunc->m_nFunc = pFuncWk->m_nFunc;
-		auto_strcpy( pcFunc->m_sKey, pFuncWk->m_sKey );
+		wcscpy( pcFunc->m_sKey, pFuncWk->m_sKey );
 		pcFunc->m_nLevel = nLevel;
 
 		if (tvi.cChildren) {
@@ -1063,7 +1063,7 @@ bool CPropMainMenu::GetDataTree( HWND hwndTree, HTREEITEM htiTrg, int nLevel )
 			pcFunc = &pcMenuTBL[m_Common.m_sMainMenu.m_nMainMenuNum++];
 			pcFunc->m_nType = T_NODE;
 			pcFunc->m_nFunc = F_NODE;
-			auto_strcpy( pcFunc->m_sName, L"auto_add" );
+			wcscpy( pcFunc->m_sName, L"auto_add" );
 			pcFunc->m_sKey[0] = L'\0';
 			pcFunc->m_nLevel = nLevel++;
 		}

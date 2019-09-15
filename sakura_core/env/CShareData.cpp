@@ -351,7 +351,7 @@ bool CShareData::InitShareData()
 
 			sEdit.m_bOverWriteBoxDelete = false;
 			sEdit.m_eOpenDialogDir = OPENDIALOGDIR_CUR;
-			auto_strcpy(sEdit.m_OpenDialogSelDir, L"%Personal%\\");
+			wcscpy(sEdit.m_OpenDialogSelDir, L"%Personal%\\");
 			sEdit.m_bAutoColumnPaste = TRUE;			/* 矩形コピーのテキストは常に矩形貼り付け */
 		}
 
@@ -751,7 +751,7 @@ static void ConvertLangString( wchar_t* pBuf, size_t chBufSize, std::wstring& or
 	CNativeW mem;
 	mem.SetString(pBuf);
 	mem.Replace(org.c_str(), to.c_str());
-	auto_strncpy(pBuf, mem.GetStringPtr(), chBufSize);
+	wcsncpy(pBuf, mem.GetStringPtr(), chBufSize);
 	pBuf[chBufSize - 1] = L'\0';
 }
 
@@ -760,7 +760,7 @@ static void ConvertLangString( char* pBuf, size_t chBufSize, std::wstring& org, 
 	CNativeA mem;
 	mem.SetString(pBuf);
 	mem.Replace_j(to_achar(org.c_str()), to_achar(to.c_str()));
-	auto_strncpy(pBuf, mem.GetStringPtr(), chBufSize);
+	strncpy(pBuf, mem.GetStringPtr(), chBufSize);
 	pBuf[chBufSize - 1] = '\0';
 }
 
@@ -1004,7 +1004,7 @@ void CShareData::TraceOut( LPCWSTR lpFmt, ... )
 	va_end( argList );
 	if( -1 == ret ){
 		// 切り詰められた
-		ret = auto_strlen( m_pShareData->m_sWorkBuffer.GetWorkBuffer<WCHAR>() );
+		ret = wcslen( m_pShareData->m_sWorkBuffer.GetWorkBuffer<WCHAR>() );
 	}else if( ret < 0 ){
 		// 保護コード:受け側はwParam→size_tで符号なしのため
 		ret = 0;

@@ -144,7 +144,7 @@ template <size_t cchText>
 static bool MyList_GetText(HWND hwndList, int index, WCHAR(&szText)[cchText])
 {
 	List_GetText( hwndList, index, szText );
-	WCHAR* pos = auto_strchr( szText, L'*' );
+	WCHAR* pos = wcschr( szText, L'*' );
 	if( pos != NULL ){
 		*pos = L'\0';
 		return true;
@@ -295,7 +295,7 @@ static bool IsProfileDuplicate(HWND hwndList, LPCWSTR szProfName, int skipIndex)
 		}
 		WCHAR szProfileName[_MAX_PATH];
 		MyList_GetText( hwndList, i, szProfileName );
-		if( 0 == auto_stricmp( szProfName, szProfileName ) ){
+		if( 0 == wmemicmp( szProfName, szProfileName ) ){
 			return true;
 		}
 	}
@@ -324,7 +324,7 @@ void CDlgProfileMgr::CreateProf()
 			return;
 		}
 	}
-	if( 0 == auto_strcmp( szText, L".." ) ){
+	if( 0 == wcscmp( szText, L".." ) ){
 		ErrorMessage( GetHwnd(), LS(STR_DLGPROFILE_ERR_INVALID_CHAR) );
 		return;
 	}
@@ -365,7 +365,7 @@ void CDlgProfileMgr::RenameProf()
 	WCHAR szText[_MAX_PATH];
 	bool bDefault = MyList_GetText( hwndList, nCurIndex, szText );
 	WCHAR szTextOld[_MAX_PATH];
-	auto_strcpy( szTextOld, szText );
+	wcscpy( szTextOld, szText );
 	std::wstring strTitle = LS(STR_DLGPROFILE_RENAME_TITLE);
 	std::wstring strMessage = LS(STR_DLGPROFILE_RENAME_MSG);
 	int max_size = _MAX_PATH;
@@ -375,7 +375,7 @@ void CDlgProfileMgr::RenameProf()
 	if( szText[0] == L'\0' ){
 		return;
 	}
-	if( 0 == auto_strcmp( szTextOld, szText ) ){
+	if( 0 == wcscmp( szTextOld, szText ) ){
 		return; // 未変更
 	}
 	std::wstring strText = szText;
@@ -386,7 +386,7 @@ void CDlgProfileMgr::RenameProf()
 			return;
 		}
 	}
-	if( 0 == auto_strcmp( szText, L".." ) ){
+	if( 0 == wcscmp( szText, L".." ) ){
 		ErrorMessage( GetHwnd(), LS(STR_DLGPROFILE_ERR_INVALID_CHAR) );
 		return;
 	}
@@ -412,7 +412,7 @@ void CDlgProfileMgr::RenameProf()
 		}
 	}
 	if( bDefault ){
-		auto_strcat(szText, L"*");
+		wcscat(szText, L"*");
 	}
 	List_DeleteString( hwndList, nCurIndex );
 	List_InsertString( hwndList, nCurIndex, szText );
@@ -427,7 +427,7 @@ void CDlgProfileMgr::SetDefaultProf(int index)
 	WCHAR szProfileName[_MAX_PATH];
 	MyList_GetText( hwndList, index, szProfileName );
 	List_DeleteString( hwndList, index );
-	auto_strcat( szProfileName, L"*" );
+	wcscat( szProfileName, L"*" );
 	List_InsertString( hwndList, index, szProfileName );
 }
 

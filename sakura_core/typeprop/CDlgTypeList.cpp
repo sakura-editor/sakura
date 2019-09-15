@@ -523,7 +523,7 @@ bool CDlgTypeList::InitializeType( void )
 			}
 			const STypeConfigMini* typeMini2;
 			CDocTypeManager().GetTypeConfigMini(CTypeConfig(i), &typeMini2);
-			if( auto_strcmp(typeMini2->m_szTypeName, type->m_szTypeName) == 0 ){
+			if( wcscmp(typeMini2->m_szTypeName, type->m_szTypeName) == 0 ){
 				i = 0;
 				bUpdate = true;
 			}
@@ -564,7 +564,7 @@ bool CDlgTypeList::CopyType()
 	for(int i = 0; i < nNewTypeIndex; i++){
 		if( bUpdate ){
 			WCHAR* p = NULL;
-			for(int k = (int)auto_strlen(type.m_szTypeName) - 1; 0 <= k; k--){
+			for(int k = (int)wcslen(type.m_szTypeName) - 1; 0 <= k; k--){
 				if( WCODE::Is09(type.m_szTypeName[k]) ){
 					p = &type.m_szTypeName[k];
 				}else{
@@ -579,20 +579,20 @@ bool CDlgTypeList::CopyType()
 			}
 			WCHAR szNum[12];
 			auto_sprintf( szNum, L"%d", n );
-			int nLen = auto_strlen( szNum );
+			int nLen = wcslen( szNum );
 			WCHAR szTemp[_countof(type.m_szTypeName) + 12];
-			auto_strcpy( szTemp, type.m_szTypeName );
-			int nTempLen = auto_strlen( szTemp );
+			wcscpy( szTemp, type.m_szTypeName );
+			int nTempLen = wcslen( szTemp );
 			CNativeW cmem;
 			// バッファをはみ出さないように
 			LimitStringLengthW( szTemp, nTempLen, _countof(type.m_szTypeName) - nLen - 1, cmem );
-			auto_strcpy( type.m_szTypeName, cmem.GetStringPtr() );
-			auto_strcat( type.m_szTypeName, szNum );
+			wcscpy( type.m_szTypeName, cmem.GetStringPtr() );
+			wcscat( type.m_szTypeName, szNum );
 			bUpdate = false;
 		}
 		const STypeConfigMini* typeMini;
 		CDocTypeManager().GetTypeConfigMini(CTypeConfig(i), &typeMini);
-		if( auto_strcmp(typeMini->m_szTypeName, type.m_szTypeName) == 0 ){
+		if( wcscmp(typeMini->m_szTypeName, type.m_szTypeName) == 0 ){
 			i = -1;
 			bUpdate = true;
 		}

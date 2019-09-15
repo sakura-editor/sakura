@@ -576,7 +576,7 @@ BOOL CDialog::OnCbnDropDown( HWND hwndCtl, bool scrollBar )
 // static
 bool CDialog::DirectoryUp( WCHAR* szDir )
 {
-	size_t nLen = auto_strlen( szDir );
+	size_t nLen = wcslen( szDir );
 	if( 3 < nLen ){
 		// X:\ や\\. より長い
 		CutLastYenFromDirectoryPath( szDir );

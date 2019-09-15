@@ -141,7 +141,7 @@ int CCommandLine::CheckCommandLine(
 	{
 		if( len >= ptr->len &&	//	長さが足りているか
 			( str[ptr->len] == '=' || str[ptr->len] == ':' ) &&	//	オプション部分の長さチェック
-			auto_memicmp( str, ptr->opt, ptr->len ) == 0 )	//	文字列の比較	// 2006.10.25 ryoji memcmp() -> _memicmp()
+			wmemicmp( str, ptr->opt, ptr->len ) == 0 )	//	文字列の比較	// 2006.10.25 ryoji memcmp() -> _memicmp()
 		{
 			*arg = str + ptr->len + 1;				// 引数開始位置
 			*arglen = len - ptr->len - 1;
@@ -164,7 +164,7 @@ int CCommandLine::CheckCommandLine(
 	for( ptr = _COptWoA; ptr->opt != NULL; ptr++ )
 	{
 		if( len == ptr->len &&	//	長さチェック
-			auto_memicmp( str, ptr->opt, ptr->len ) == 0 )	//	文字列の比較
+			wmemicmp( str, ptr->opt, ptr->len ) == 0 )	//	文字列の比較
 		{
 			*arglen = 0;
 			return ptr->value;
@@ -288,7 +288,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			// Nov. 11, 2005 susu
 			// 不正なファイル名のままだとファイル保存時ダイアログが出なくなるので
 			// 簡単なファイルチェックを行うように修正
-			if (_tcsncmp_literal(szPath, L"file:///")==0) {
+			if (wcsncmp_literal(szPath, L"file:///")==0) {
 				wcscpy(szPath, &(szPath[8]));
 			}
 			int len = wcslen(szPath);
@@ -384,7 +384,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			case CMDLINEOPT_GREPMODE:	//	GREPMODE
 				m_bGrepMode = true;
 				if( L'\0' == m_fi.m_szDocType[0] ){
-					auto_strcpy( m_fi.m_szDocType , L"grepout" );
+					wcscpy( m_fi.m_szDocType , L"grepout" );
 				}
 				break;
 			case CMDLINEOPT_GREPDLG:	//	GREPDLG
@@ -473,7 +473,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				m_bDebugMode = true;
 				// 2010.06.16 Moca -TYPE=output 扱いとする
 				if( L'\0' == m_fi.m_szDocType[0] ){
-					auto_strcpy( m_fi.m_szDocType , L"output" );
+					wcscpy( m_fi.m_szDocType , L"output" );
 				}
 				break;
 			case CMDLINEOPT_NOMOREOPT:	// 2007.09.09 genta これ以降引数無効

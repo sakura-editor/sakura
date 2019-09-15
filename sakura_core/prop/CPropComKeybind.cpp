@@ -268,7 +268,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 				// Oct. 2, 2001 genta
 				// 2007.11.02 ryoji F_DISABLEなら未割付
 				if( nFuncCode == F_DISABLE ){
-					auto_strncpy( pszLabel, LS(STR_PROPCOMKEYBIND_UNASSIGN), _countof(pszLabel) - 1 );
+					wcsncpy( pszLabel, LS(STR_PROPCOMKEYBIND_UNASSIGN), _countof(pszLabel) - 1 );
 					pszLabel[_countof(pszLabel) - 1] = L'\0';
 				}else{
 					m_cLookup.Funccode2Name( nFuncCode, pszLabel, 255 );
@@ -325,24 +325,24 @@ INT_PTR CPropKeybind::DispatchEvent(
 					int	ret;
 
 					nIndex = List_GetCurSel( hwndAssignedkeyList );
-					auto_memset(buff, 0, _countof(buff));
+					wmemset(buff, 0, _countof(buff));
 					ret = List_GetText( hwndAssignedkeyList, nIndex, buff);
 					if( ret != LB_ERR )
 					{
 						i = 0;
 						p = buff;
 						//SHIFT
-						if( auto_memcmp(p, STR_SHIFT_PLUS, wcslen(STR_SHIFT_PLUS)) == 0 ){
+						if( wmemcmp(p, STR_SHIFT_PLUS, wcslen(STR_SHIFT_PLUS)) == 0 ){
 							p += wcslen(STR_SHIFT_PLUS);
 							i |= _SHIFT;
 						}
 						//CTRL
-						if( auto_memcmp(p, STR_CTRL_PLUS, wcslen(STR_CTRL_PLUS)) == 0 ){
+						if( wmemcmp(p, STR_CTRL_PLUS, wcslen(STR_CTRL_PLUS)) == 0 ){
 							p += wcslen(STR_CTRL_PLUS);
 							i |= _CTRL;
 						}
 						//ALT
-						if( auto_memcmp(p, STR_ALT_PLUS, wcslen(STR_ALT_PLUS)) == 0 ){
+						if( wmemcmp(p, STR_ALT_PLUS, wcslen(STR_ALT_PLUS)) == 0 ){
 							p += wcslen(STR_ALT_PLUS);
 							i |= _ALT;
 						}

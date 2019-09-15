@@ -241,7 +241,7 @@ bool CDocTypeManager::ConvertTypesExtToDlgExt( const WCHAR *pszSrcExt, const WCH
 	token = _wcstok(p, m_typeExtSeps);
 	while( token )
 	{
-		if (szExt == NULL || szExt[0] == L'\0' || auto_stricmp(token, szExt + 1) != 0) {
+		if (szExt == NULL || szExt[0] == L'\0' || wmemicmp(token, szExt + 1) != 0) {
 			if( pszDstExt[0] != '\0' ) wcscat( pszDstExt, L";" );
 			// 拡張子指定なし、またはマッチした拡張子でない
 			if (wcspbrk(token, m_typeExtWildcards) == NULL) {

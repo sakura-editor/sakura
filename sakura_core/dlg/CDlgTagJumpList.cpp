@@ -753,15 +753,15 @@ bool CDlgTagJumpList::GetFullPathAndLine( int index, WCHAR *fullPath, int count,
 		const WCHAR	*p = fileName;
 		if( p[0] == L'\\' ){
 			if( p[1] == L'\\' ){
-				auto_strcpy( dirFileName, p );
+				wcscpy( dirFileName, p );
 			}else{
-				auto_strcpy( dirFileName, p );
+				wcscpy( dirFileName, p );
 			}
 		}else if( _istalpha( p[0] ) && p[1] == L':' ){
-			auto_strcpy( dirFileName, p );
+			wcscpy( dirFileName, p );
 		}else{
 			// 相対パス：連結する
-			auto_strcat( dirFileName, p );
+			wcscat( dirFileName, p );
 		}
 		fileNamePath = dirFileName;
 	}else{
@@ -1202,7 +1202,7 @@ int CDlgTagJumpList::find_key_core(
 		
 		if( szNextPath[0] ){
 			state.m_bJumpPath = true;
-			auto_strcpy( state.m_szCurPath, szNextPath );
+			wcscpy( state.m_szCurPath, szNextPath );
 			std::wstring path = state.m_szCurPath;
 			path += L"\\dummy";
 			state.m_nLoop = CalcMaxUpDirectory( path.c_str() );
@@ -1315,7 +1315,7 @@ bool CDlgTagJumpList::ReadTagsParameter(
 							szNextPath[0] = 0;
 							if (!GetLongFileName(baseWork, szNextPath)) {
 								// エラーなら変換前を適用
-								auto_strcpy(szNextPath, baseWork);
+								wcscpy(szNextPath, baseWork);
 							}
 						}
 					}
@@ -1329,7 +1329,7 @@ bool CDlgTagJumpList::ReadTagsParameter(
 						*baseDirId = cList.AddBaseDir(baseWork);
 					}
 					else {
-						auto_strcpy(baseWork, to_wchar(s[1]));
+						wcscpy(baseWork, to_wchar(s[1]));
 						AddLastYenFromDirectoryPath(baseWork);
 						*baseDirId = cList.AddBaseDir(baseWork);
 					}
@@ -1433,7 +1433,7 @@ void CDlgTagJumpList::find_key_for_BinarySearch(
 
 		// 完全一致検索
 		int  cmp;
-		cmp = auto_strcmp( s[0], paszKeyword );
+		cmp = strcmp( s[0], paszKeyword );
 
 		if( 0 == cmp ){
 			//一致
@@ -1550,9 +1550,9 @@ void CDlgTagJumpList::find_key_for_LinearSearch(
 			if( rule->bTagJumpExactMatch ){
 				// 完全一致
 				if( rule->bTagJumpICase ){
-					cmp = auto_stricmp( s[0], paszKeyword );
+					cmp = my_stricmp( s[0], paszKeyword );
 				}else{
-					cmp = auto_strcmp( s[0], paszKeyword );
+					cmp = strcmp( s[0], paszKeyword );
 				}
 			}else{
 				// 前方一致
@@ -1661,11 +1661,11 @@ WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 WCHAR* CDlgTagJumpList::CopyDirDir( WCHAR* dest, const WCHAR* target, const WCHAR* base )
 {
 	if( _IS_REL_PATH( target ) ){
-		auto_strcpy( dest, base );
+		wcscpy( dest, base );
 		AddLastYenFromDirectoryPath( dest );
-		auto_strcat( dest, target );
+		wcscat( dest, target );
 	}else{
-		auto_strcpy( dest, target );
+		wcscpy( dest, target );
 	}
 	AddLastYenFromDirectoryPath( dest );
 	return dest;

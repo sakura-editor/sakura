@@ -212,7 +212,7 @@ void CEditView::ViewDiffInfo(
 bool COutputAdapterDiff::OutputA(const ACHAR* pBuf, int size)
 {
 	if( size == -1 ){
-		size = auto_strlen(pBuf);
+		size = strlen(pBuf);
 	}
 	//@@@ 2003.05.31 MIK
 	//	先頭がBinary filesならバイナリファイルのため意味のある差分が取られなかった

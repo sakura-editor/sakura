@@ -354,7 +354,7 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 	m_pcPropertyManager = new CPropertyManager();
 	m_pcPropertyManager->Create( GetTrayHwnd(), &m_hIcons, &m_cMenuDrawer );
 
-	auto_strcpy(m_szLanguageDll, GetDllShareData().m_Common.m_sWindow.m_szLanguageDll);
+	wcscpy(m_szLanguageDll, GetDllShareData().m_Common.m_sWindow.m_szLanguageDll);
 
 	return GetTrayHwnd();
 }
@@ -672,8 +672,8 @@ LRESULT CControlTray::DispatchEvent(
 			switch( (e_PM_CHANGESETTING_SELECT)lParam ){
 			case PM_CHANGESETTING_ALL:
 				{
-					bool bChangeLang = auto_strcmp( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll, m_szLanguageDll ) != 0;
-					auto_strcpy( m_szLanguageDll, GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );
+					bool bChangeLang = wcscmp( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll, m_szLanguageDll ) != 0;
+					wcscpy( m_szLanguageDll, GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );
 					std::vector<std::wstring> values;
 					if( bChangeLang ){
 						CShareData::getInstance()->ConvertLangValues(values, true);
@@ -732,8 +732,8 @@ LRESULT CControlTray::DispatchEvent(
 					}
 					*(CShareData::getInstance()->GetTypeSettings()[nIdx]) = type;
 					CShareData::getInstance()->GetTypeSettings()[nIdx]->m_nIdx = nIdx;
-					auto_strcpy(m_pShareData->m_TypeMini[nIdx].m_szTypeName, type.m_szTypeName);
-					auto_strcpy(m_pShareData->m_TypeMini[nIdx].m_szTypeExts, type.m_szTypeExts);
+					wcscpy(m_pShareData->m_TypeMini[nIdx].m_szTypeName, type.m_szTypeName);
+					wcscpy(m_pShareData->m_TypeMini[nIdx].m_szTypeExts, type.m_szTypeExts);
 					m_pShareData->m_TypeMini[nIdx].m_id = type.m_id;
 					m_pShareData->m_TypeMini[nIdx].m_encoding = type.m_encoding;
 				}else{
@@ -765,7 +765,7 @@ LRESULT CControlTray::DispatchEvent(
 					int nAddNameNum = nInsert + 1;
 					auto_sprintf( type->m_szTypeName, LS(STR_TRAY_TYPE_NAME), nAddNameNum ); 
 					for(int k = 1; k < m_pShareData->m_nTypesCount; k++){
-						if( auto_strcmp(types[k]->m_szTypeName, type->m_szTypeName) == 0 ){
+						if( wcscmp(types[k]->m_szTypeName, type->m_szTypeName) == 0 ){
 							nAddNameNum++;
 							auto_sprintf( type->m_szTypeName, LS(STR_TRAY_TYPE_NAME), nAddNameNum ); 
 							k = 0;
@@ -782,8 +782,8 @@ LRESULT CControlTray::DispatchEvent(
 						m_pShareData->m_TypeMini[i] = m_pShareData->m_TypeMini[i-1];
 					}
 					types[nInsert] = type;
-					auto_strcpy(m_pShareData->m_TypeMini[nInsert].m_szTypeName, type->m_szTypeName);
-					auto_strcpy(m_pShareData->m_TypeMini[nInsert].m_szTypeExts, type->m_szTypeExts);
+					wcscpy(m_pShareData->m_TypeMini[nInsert].m_szTypeName, type->m_szTypeName);
+					wcscpy(m_pShareData->m_TypeMini[nInsert].m_szTypeExts, type->m_szTypeExts);
 					m_pShareData->m_TypeMini[nInsert].m_id = type->m_id;
 					m_pShareData->m_TypeMini[nInsert].m_encoding = type->m_encoding;
 				}else{
@@ -1234,7 +1234,7 @@ bool CControlTray::OpenNewEditor(
 	CResponsefileDeleter respDeleter;
 	if( szCmdLineOption ){
 		// Grepなどで入りきらない場合はレスポンスファイルを利用する
-		if( cCmdLineBuf.max_size() < cCmdLineBuf.size() + auto_strlen(szCmdLineOption) ){
+		if( cCmdLineBuf.max_size() < cCmdLineBuf.size() + wcslen(szCmdLineOption) ){
 			WCHAR szIniDir[_MAX_PATH];
 			GetInidir(szIniDir);
 			LPWSTR pszTempFile = _wtempnam(szIniDir, L"skr_resp");
@@ -1242,7 +1242,7 @@ bool CControlTray::OpenNewEditor(
 				ErrorMessage(hWndParent, LS(STR_TRAY_RESPONSEFILE));
 				return false;
 			}
-			auto_strcpy(szResponseFile, pszTempFile);
+			wcscpy(szResponseFile, pszTempFile);
 			free(pszTempFile);
 			CTextOutputStream output(szResponseFile);
 			if( !output ){

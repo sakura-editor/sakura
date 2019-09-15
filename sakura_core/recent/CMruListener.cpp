@@ -199,7 +199,7 @@ void CMruListener::OnAfterLoad(const SLoadInfo& sLoadInfo)
 		if( GetDllShareData().m_Common.m_sFile.GetRestoreBookmarks() ){
 			// SetBookMarksでデータがNUL区切りに書き換わっているので再取得
 			cMRU.GetEditInfo(pcDoc->m_cDocFile.GetFilePath(),&eiOld);
-			auto_strcpy(eiNew.m_szMarkLines, eiOld.m_szMarkLines);
+			wcscpy(eiNew.m_szMarkLines, eiOld.m_szMarkLines);
 		}
 	}
 	cMRU.Add( &eiNew );

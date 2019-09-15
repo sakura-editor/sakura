@@ -254,7 +254,7 @@ void CutLastYenFromDirectoryPath( WCHAR* pszFolder )
 
 void AddLastYenFromDirectoryPath( WCHAR* pszFolder )
 {
-	if( 3 == auto_strlen( pszFolder )
+	if( 3 == wcslen( pszFolder )
 	 && pszFolder[1] == L':'
 	 && pszFolder[2] == L'\\'
 	){
@@ -262,7 +262,7 @@ void AddLastYenFromDirectoryPath( WCHAR* pszFolder )
 	}else{
 		/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
 		int	nFolderLen;
-		nFolderLen = auto_strlen( pszFolder );
+		nFolderLen = wcslen( pszFolder );
 		if( 0 < nFolderLen ){
 			if( L'\\' == pszFolder[nFolderLen - 1] || L'/' == pszFolder[nFolderLen - 1] ){
 			}else{
@@ -556,13 +556,13 @@ LPCWSTR GetRelPath( LPCWSTR pszPath )
 	LPCWSTR pszFileName = pszPath;
 
 	GetInidir( szPath, L"" );
-	int nLen = auto_strlen( szPath );
-	if( 0 == auto_strnicmp( szPath, pszPath, nLen ) ){
+	int nLen = wcslen( szPath );
+	if( 0 == wmemicmp( szPath, pszPath, nLen ) ){
 		pszFileName = pszPath + nLen;
 	}else{
 		GetExedir( szPath, L"" );
-		nLen = auto_strlen( szPath );
-		if( 0 == auto_strnicmp( szPath, pszPath, nLen ) ){
+		nLen = wcslen( szPath );
+		if( 0 == wmemicmp( szPath, pszPath, nLen ) ){
 			pszFileName = pszPath + nLen;
 		}
 	}
@@ -985,19 +985,19 @@ static void FileNameSepExt( const WCHAR *file, WCHAR* pszFile, WCHAR* pszExt )
 	const WCHAR* folderPos = file;
 	const WCHAR* x = folderPos;
 	while( x ){
-		x = auto_strchr(folderPos, L'\\');
+		x = wcschr(folderPos, L'\\');
 		if( x ){
 			x++;
 			folderPos = x;
 		}
 	}
-	const WCHAR* p = auto_strchr(folderPos, L'.');
+	const WCHAR* p = wcschr(folderPos, L'.');
 	if( p ){
-		auto_memcpy(pszFile, file, p - file);
+		wmemcpy(pszFile, file, p - file);
 		pszFile[p - file] = L'\0';
-		auto_strcpy(pszExt, p);
+		wcscpy(pszExt, p);
 	}else{
-		auto_strcpy(pszFile, file);
+		wcscpy(pszFile, file);
 		pszExt[0] = L'\0';
 	}
 }
@@ -1020,8 +1020,8 @@ int FileMatchScoreSepExt( const WCHAR *file1, const WCHAR *file2 )
 int FileMatchScore( const WCHAR *file1, const WCHAR *file2 )
 {
 	int score = 0;
-	int len1 = auto_strlen(file1);
-	int len2 = auto_strlen(file2);
+	int len1 = wcslen(file1);
+	int len2 = wcslen(file2);
 	if( len1 < len2 ){
 		const WCHAR * tmp = file1;
 		file1 = file2;
@@ -1039,13 +1039,13 @@ int FileMatchScore( const WCHAR *file1, const WCHAR *file2 )
 				int chars2 = (Int)CNativeW::GetSizeOfChar(file2, len2, m);
 				if( chars1 == chars2 ){
 					if( chars1 == 1 ){
-						if( _tcs_tolower(file1[pos1]) == _tcs_tolower(file2[m]) ){
+						if( skr_towlower(file1[pos1]) == skr_towlower(file2[m]) ){
 							tmpScore += chars1;
 						}else{
 							break;
 						}
 					}else{
-						if( 0 == auto_strnicmp(&file1[pos1], &file2[m], chars1) ){
+						if( 0 == wmemicmp(&file1[pos1], &file2[m], chars1) ){
 							tmpScore += chars1;
 						}else{
 							break;
@@ -1073,7 +1073,7 @@ void GetStrTrancateWidth( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, in
 {
 	// できるだけ左側から表示
 	// \\server\dir...
-	const int nPathLen = auto_strlen(path);
+	const int nPathLen = wcslen(path);
 	CTextWidthCalc calc(hDC);
 	if( calc.GetTextWidth(path) <= nPxWidth ){
 		wcsncpy_s(dest, nSize, path, _TRUNCATE);
@@ -1108,7 +1108,7 @@ void GetShortViewPath( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int n
 {
 	int nLeft = 0; // 左側固定表示部分
 	int nSkipLevel = 1;
-	const int nPathLen = auto_strlen(path);
+	const int nPathLen = wcslen(path);
 	CTextWidthCalc calc(hDC);
 	if( calc.GetTextWidth(path) <= nPxWidth ){
 		// 全部表示可能

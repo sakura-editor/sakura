@@ -254,7 +254,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode, b
 	
 	if( bDocumentFeed ){
 		// IMR_DOCUMENTFEEDでは、再変換対象はIMEから取得した入力中文字列
-		nInsertCompLen = auto_strlen(m_szComposition);
+		nInsertCompLen = wcslen(m_szComposition);
 		if( 0 == nInsertCompLen ){
 			// 2回呼ばれるので、m_szCompositionに覚えておく
 			HWND hwnd = GetHwnd();
@@ -262,13 +262,13 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode, b
 			if( !hIMC ){
 				return 0;
 			}
-			auto_memset(m_szComposition, L'\0', _countof(m_szComposition));
+			wmemset(m_szComposition, L'\0', _countof(m_szComposition));
 			LONG immRet = ::ImmGetCompositionString(hIMC, GCS_COMPSTR, m_szComposition, _countof(m_szComposition));
 			if( immRet == IMM_ERROR_NODATA || immRet == IMM_ERROR_GENERAL ){
 				m_szComposition[0] = L'\0';
 			}
 			::ImmReleaseContext( hwnd, hIMC );
-			nInsertCompLen = auto_strlen(m_szComposition);
+			nInsertCompLen = wcslen(m_szComposition);
 		}
 	}
 

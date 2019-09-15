@@ -347,27 +347,27 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			CGrepAgent::CreateFolders( szFolder, vPaths );
 			if( 0 < vPaths.size() ){
 				// 最後のパスが操作対象
-				auto_strncpy( szFolder, vPaths.rbegin()->c_str(), nMaxPath );
+				wcsncpy( szFolder, vPaths.rbegin()->c_str(), nMaxPath );
 				szFolder[nMaxPath-1] = L'\0';
 				if( DirectoryUp( szFolder ) ){
 					*(vPaths.rbegin()) = szFolder;
 					szFolder[0] = L'\0';
 					for( int i = 0 ; i < (int)vPaths.size(); i++ ){
 						WCHAR szFolderItem[nMaxPath];
-						auto_strncpy( szFolderItem, vPaths[i].c_str(), nMaxPath );
+						wcsncpy( szFolderItem, vPaths[i].c_str(), nMaxPath );
 						szFolderItem[nMaxPath-1] = L'\0';
-						if( auto_strchr( szFolderItem, L';' ) ){
+						if( wcschr( szFolderItem, L';' ) ){
 							szFolderItem[0] = L'"';
-							auto_strncpy( szFolderItem + 1, vPaths[i].c_str(), nMaxPath - 1 );
+							wcsncpy( szFolderItem + 1, vPaths[i].c_str(), nMaxPath - 1 );
 							szFolderItem[nMaxPath-1] = L'\0';
-							auto_strcat( szFolderItem, L"\"" );
+							wcscat( szFolderItem, L"\"" );
 							szFolderItem[nMaxPath-1] = L'\0';
 						}
 						if( i ){
-							auto_strcat( szFolder, L";" );
+							wcscat( szFolder, L";" );
 							szFolder[nMaxPath-1] = L'\0';
 						}
-						auto_strcat_s( szFolder, nMaxPath, szFolderItem );
+						wcscat_s( szFolder, nMaxPath, szFolderItem );
 					}
 					::SetWindowText( hwnd, szFolder );
 				}
@@ -713,7 +713,7 @@ int CDlgGrep::GetData( void )
 	m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder = m_bGrepOutputBaseFolder;
 	m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder = m_bGrepSeparateFolder;
 
-	if( 0 != auto_strlen( m_szFile ) ){
+	if( 0 != wcslen( m_szFile ) ){
 		CGrepEnumKeys enumKeys;
 		int nErrorNo = enumKeys.SetFileKeys( m_szFile );
 		if( 1 == nErrorNo ){
@@ -756,23 +756,23 @@ int CDlgGrep::GetData( void )
 			WCHAR szFolderItem[nMaxPath];
 			::GetCurrentDirectory( nMaxPath, szFolderItem );
 			// ;がフォルダ名に含まれていたら""で囲う
-			if( auto_strchr( szFolderItem, L';' ) ){
+			if( wcschr( szFolderItem, L';' ) ){
 				szFolderItem[0] = L'"';
 				::GetCurrentDirectory( nMaxPath, szFolderItem + 1 );
-				auto_strcat(szFolderItem, L"\"");
+				wcscat(szFolderItem, L"\"");
 			}
-			int nFolderItemLen = auto_strlen( szFolderItem );
+			int nFolderItemLen = wcslen( szFolderItem );
 			if( nMaxPath < nFolderLen + nFolderItemLen + 1 ){
 				WarningMessage(	GetHwnd(), LS(STR_DLGGREP6) );
 				return FALSE;
 			}
 			if( i ){
-				auto_strcat( szFolder, L";" );
+				wcscat( szFolder, L";" );
 			}
-			auto_strcat( szFolder, szFolderItem );
-			nFolderLen = auto_strlen( szFolder );
+			wcscat( szFolder, szFolderItem );
+			nFolderLen = wcslen( szFolder );
 		}
-		auto_strcpy( m_szFolder, szFolder );
+		wcscpy( m_szFolder, szFolder );
 	}
 
 //@@@ 2002.2.2 YAZAKI CShareData.AddToSearchKeyArr()追加に伴う変更
@@ -826,11 +826,11 @@ LPVOID CDlgGrep::GetHelpIdTable(void)
 
 static void SetGrepFolder( HWND hwndCtrl, LPCWSTR folder )
 {
-	if( auto_strchr( folder, L';') ){
+	if( wcschr( folder, L';') ){
 		WCHAR szQuoteFolder[MAX_PATH];
 		szQuoteFolder[0] = L'"';
-		auto_strcpy( szQuoteFolder + 1, folder );
-		auto_strcat( szQuoteFolder, L"\"" );
+		wcscpy( szQuoteFolder + 1, folder );
+		wcscat( szQuoteFolder, L"\"" );
 		::SetWindowText( hwndCtrl, szQuoteFolder );
 	}else{
 		::SetWindowText( hwndCtrl, folder );

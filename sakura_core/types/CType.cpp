@@ -91,8 +91,8 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData, std::vector<STypeConf
 		STypeConfig* type = new STypeConfig;
 		types.push_back(type);
 		table[i]->InitTypeConfig(i, *type);
-		auto_strcpy(pShareData->m_TypeMini[i].m_szTypeExts, type->m_szTypeExts);
-		auto_strcpy(pShareData->m_TypeMini[i].m_szTypeName, type->m_szTypeName);
+		wcscpy(pShareData->m_TypeMini[i].m_szTypeExts, type->m_szTypeExts);
+		wcscpy(pShareData->m_TypeMini[i].m_szTypeName, type->m_szTypeName);
 		pShareData->m_TypeMini[i].m_encoding = type->m_encoding;
 		pShareData->m_TypeMini[i].m_id = type->m_id;
 		SAFE_DELETE(table[i]);

@@ -324,12 +324,12 @@ void CMacroParam::SetStringParam( const WCHAR* szParam, int nLength )
 	Clear();
 	int nLen;
 	if( nLength == -1 ){
-		nLen = auto_strlen( szParam );
+		nLen = wcslen( szParam );
 	}else{
 		nLen = nLength;
 	}
 	m_pData = new WCHAR[nLen + 1];
-	auto_memcpy( m_pData, szParam, nLen );
+	wmemcpy( m_pData, szParam, nLen );
 	m_pData[nLen] = LTEXT('\0');
 	m_nDataLen = nLen;
 	m_eType = EMacroParamTypeStr;
@@ -340,7 +340,7 @@ void CMacroParam::SetIntParam( const int nParam )
 	Clear();
 	m_pData = new WCHAR[16];	//	数値格納（最大16桁）用
 	_itow(nParam, m_pData, 10);
-	m_nDataLen = auto_strlen(m_pData);
+	m_nDataLen = wcslen(m_pData);
 	m_eType = EMacroParamTypeInt;
 }
 
@@ -1770,7 +1770,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 
 			WCHAR *Buffer = new WCHAR[ nMaxLen+1 ];
 			size_t nLen = t_min( sDefaultValue.length(), (size_t)nMaxLen);
-			auto_memcpy( Buffer, sDefaultValue.c_str(), nLen );
+			wmemcpy( Buffer, sDefaultValue.c_str(), nLen );
 			Buffer[nLen] = L'\0';
 			CDlgInput1 cDlgInput1;
 			if( cDlgInput1.DoModal( G_AppInstance(), View->GetHwnd(), L"sakura macro", sMessage.c_str(), nMaxLen, Buffer ) ) {
@@ -2344,9 +2344,9 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 				if( !VariantToI4(varCopy, Arguments[0]) ) return false;
 				if( !VariantToBStr(varCopy2, Arguments[1]) ) return false;
 				std::vector<wchar_t> vStrMenu;
-				int nLen = (int)auto_strlen(varCopy2.Data.bstrVal);
+				int nLen = (int)wcslen(varCopy2.Data.bstrVal);
 				vStrMenu.assign( nLen + 1, L'\0' );
-				auto_strcpy(&vStrMenu[0], varCopy2.Data.bstrVal);
+				wcscpy(&vStrMenu[0], varCopy2.Data.bstrVal);
 				HMENU hMenu = ::CreatePopupMenu();
 				std::vector<HMENU> vHmenu;
 				vHmenu.push_back( hMenu );

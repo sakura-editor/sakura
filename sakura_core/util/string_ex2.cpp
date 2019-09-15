@@ -9,7 +9,7 @@ wchar_t *wcs_pushW(wchar_t *dst, size_t dst_count, const wchar_t* src, size_t sr
 	if( src_count >= dst_count ){
 		src_count = dst_count - 1;
 	}
-	auto_memcpy( dst, src, src_count );
+	wmemcpy( dst, src, src_count );
 	return dst + src_count;
 }
 wchar_t *wcs_pushW(wchar_t *dst, size_t dst_count, const wchar_t* src)
@@ -173,7 +173,7 @@ static EEolType GetEOLTypeUniBE( const wchar_t* pszData, int nDataLen )
 
 	for( int i = 1; i < EOL_TYPE_NUM; ++i ){
 		CEol cEol((EEolType)i);
-		if( cEol.GetLen()<=nDataLen && 0==auto_memcmp(pszData,aEolTable[i],cEol.GetLen()) ){
+		if( cEol.GetLen()<=nDataLen && 0==wmemcmp(pszData,aEolTable[i],cEol.GetLen()) ){
 			return gm_pnEolTypeArr[i];
 		}
 	}

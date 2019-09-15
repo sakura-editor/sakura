@@ -345,7 +345,7 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 		CShiftJis::SJISToUnicode(cmemSjis, &cmemUni);
 		cmemSjis.Clean();
 		// '\0'までを取得
-		cmemUni._SetStringLength(auto_strlen(cmemUni.GetStringPtr()));
+		cmemUni._SetStringLength(wcslen(cmemUni.GetStringPtr()));
 		cmemUni.swap(*cmemBuf);
 		::GlobalUnlock(hText);
 		return true;

@@ -130,13 +130,13 @@ bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, 
 		if( (wf.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY &&
 			(wf.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) == 0 &&
 			wcscmp(wf.cFileName, L".")!=0 && wcscmp(wf.cFileName, L"..")!=0 &&
-			auto_stricmp(wf.cFileName, L"unuse") !=0 )
+			wmemicmp(wf.cFileName, L"unuse") !=0 )
 		{
 			//インストール済みチェック。フォルダ名＝プラグインテーブルの名前ならインストールしない
 			// 2010.08.04 大文字小文字同一視にする
 			bool isNotInstalled = true;
 			for( int iNo=0; iNo < MAX_PLUGIN; iNo++ ){
-				if( auto_stricmp( wf.cFileName, plugin_table[iNo].m_szName ) == 0 ){
+				if( wmemicmp( wf.cFileName, plugin_table[iNo].m_szName ) == 0 ){
 					isNotInstalled = false;
 					break;
 				}
@@ -274,7 +274,7 @@ bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, co
 		int		iNo;
 		if (bOk) {
 			for( iNo=0; iNo < MAX_PLUGIN; iNo++ ){
-				if( auto_stricmp( sFolderName.c_str(), plugin_table[iNo].m_szName ) == 0 ){
+				if( wmemicmp( sFolderName.c_str(), plugin_table[iNo].m_szName ) == 0 ){
 					isNotInstalled = false;
 					break;
 				}
@@ -472,7 +472,7 @@ bool CPluginManager::LoadAllPlugin(CommonSetting* common)
 		}
 		if( plugin ){
 			// 要検討：plugin.defのidとsakuraw.iniのidの不一致処理
-			assert_warning( 0 == auto_strcmp( plugin_table[iNo].m_szId, plugin->m_sId.c_str() ) );
+			assert_warning( 0 == wcscmp( plugin_table[iNo].m_szId, plugin->m_sId.c_str() ) );
 			plugin->m_id = iNo;		//プラグインテーブルの行番号をIDとする
 			m_plugins.push_back( plugin );
 			plugin_table[iNo].m_state = PLS_LOADED;

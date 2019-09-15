@@ -269,8 +269,8 @@ bool CDocFileOperation::SaveFileDialog(
 		if( 0 < node->m_nId ){
 			WCHAR szText[16];
 			auto_sprintf(szText, L"%d", node->m_nId);
-			auto_strcpy(pSaveInfo->cFilePath, LS(STR_NO_TITLE2));	// 無題
-			auto_strcat(pSaveInfo->cFilePath, szText);
+			wcscpy(pSaveInfo->cFilePath, LS(STR_NO_TITLE2));	// 無題
+			wcscat(pSaveInfo->cFilePath, szText);
 		}
 	}
 

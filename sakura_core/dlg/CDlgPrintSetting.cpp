@@ -287,7 +287,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 
 			if (lf.lfFaceName[0] == L'\0') {
 				// 半角フォントを設定
-				auto_strcpy( lf.lfFaceName, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan );
+				wcscpy( lf.lfFaceName, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan );
 				// 1/10mm→画面ドット数
 				lf.lfHeight = -( m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight * 
 					::GetDeviceCaps ( ::GetDC( m_hwndParent ), LOGPIXELSY ) / 254 );
@@ -310,7 +310,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 
 			if (lf.lfFaceName[0] == L'\0') {
 				// 半角フォントを設定
-				auto_strcpy( lf.lfFaceName, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan );
+				wcscpy( lf.lfFaceName, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan );
 				// 1/10mm→画面ドット数
 				lf.lfHeight = -( m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight * 
 					::GetDeviceCaps ( ::GetDC( m_hwndParent ), LOGPIXELSY ) / 254 );

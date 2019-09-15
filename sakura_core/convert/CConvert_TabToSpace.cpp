@@ -54,7 +54,7 @@ bool CConvert_TabToSpace::DoConvert(CNativeW* pcData)
 			for( i = 0; i < nLineLen; ++i ){
 				if( TAB == pLine[i]	){
 					nWork = m_nTabWidth - ( nPosX % m_nTabWidth );
-					auto_memset( &pDes[nPosDes], L' ', nWork );
+					wmemset( &pDes[nPosDes], L' ', nWork );
 					nPosDes += nWork;
 					nPosX += nWork;
 				}else{
@@ -65,7 +65,7 @@ bool CConvert_TabToSpace::DoConvert(CNativeW* pcData)
 				}
 			}
 		}
-		auto_memcpy( &pDes[nPosDes], cEol.GetValue2(), cEol.GetLen() );
+		wmemcpy( &pDes[nPosDes], cEol.GetValue2(), cEol.GetLen() );
 		nPosDes += cEol.GetLen();
 	}
 	pDes[nPosDes] = L'\0';

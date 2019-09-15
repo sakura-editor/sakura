@@ -132,7 +132,7 @@ void CMRUFolder::Add( const WCHAR* pszFolder )
 		for( int i = 0 ; i < nSize; i++ ){
 			WCHAR szExceptMRU[_MAX_PATH];
 			CFileNameManager::ExpandMetaToFolder( m_pShareData->m_sHistory.m_aExceptMRU[i], szExceptMRU, _countof(szExceptMRU) );
-			if( NULL != _tcsistr( pszFolder, szExceptMRU ) ){
+			if( NULL != wcsistr( pszFolder, szExceptMRU ) ){
 				return;
 			}
 		}

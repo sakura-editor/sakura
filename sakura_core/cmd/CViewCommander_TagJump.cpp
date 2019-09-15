@@ -272,13 +272,13 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 					if( szFile[0] ){
 						AddLastYenFromDirectoryPath( szPath );
 					}
-					auto_strcat( szPath, szFile );
+					wcscat( szPath, szFile );
 					if( IsFileExists2( szPath ) ){
-						auto_strcpy( szJumpToFile, szPath );
+						wcscpy( szJumpToFile, szPath );
 						break;
 					}
 					// 相対パスだった→◎”を探す
-					auto_strcpy( szFile, szPath );
+					wcscpy( szFile, szPath );
 					searchMode = TAGLIST_ROOT;
 					continue;
 				}
@@ -286,7 +286,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 			}else if( 3 <= nLineLen && 0 == wmemcmp( pLine, L"◎\"", 2 ) ){
 				if( GetQuoteFilePath( &pLine[2], szJumpToFile, _countof(szJumpToFile) ) ){
 					AddLastYenFromDirectoryPath( szJumpToFile );
-					auto_strcat( szJumpToFile, szFile );
+					wcscat( szJumpToFile, szFile );
 					if( IsFileExists2( szJumpToFile ) ){
 						break;
 					}
@@ -701,7 +701,7 @@ bool CViewCommander::Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int cou
 	
 	// 基準ファイル名の設定
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
-		auto_strcpy( szCurrentPath, GetDocument()->m_cDocFile.GetFilePath() );
+		wcscpy( szCurrentPath, GetDocument()->m_cDocFile.GetFilePath() );
 	}else{
 		if( 0 == ::GetCurrentDirectory( count - _countof(L"\\dmy") - MAX_TYPES_EXTS, szCurrentPath ) ){
 			return false;
@@ -710,7 +710,7 @@ bool CViewCommander::Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int cou
 		// 現在のタイプ別の1番目の拡張子を拝借
 		WCHAR szExts[MAX_TYPES_EXTS];
 		CDocTypeManager::GetFirstExt(m_pCommanderView->m_pTypeData->m_szTypeExts, szExts, _countof(szExts));
-		int nExtLen = auto_strlen( szExts );
+		int nExtLen = wcslen( szExts );
 		wcscat( szCurrentPath, L"\\dmy" );
 		if( nExtLen ){
 			wcscat( szCurrentPath, L"." );

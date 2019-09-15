@@ -110,7 +110,7 @@ bool CConvert_SpaceToTab::DoConvert(CNativeW* pcData)
 		}
 
 		/* 行末の処理 */
-		auto_memcpy( &pDes[nPosDes], cEol.GetValue2(), cEol.GetLen() );
+		wmemcpy( &pDes[nPosDes], cEol.GetValue2(), cEol.GetLen() );
 		nPosDes += cEol.GetLen();
 	}
 	pDes[nPosDes] = L'\0';

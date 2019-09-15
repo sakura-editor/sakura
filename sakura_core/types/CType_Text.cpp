@@ -71,12 +71,12 @@ void CType_Text::InitTypeConfigImp(STypeConfig* pType)
 	wcscpyn( &pKeyword[keywordPos],			// 正規表現キーワード
 		L"/(?<=\")(\\b[a-zA-Z]:|\\B\\\\\\\\)[^\"\\r\\n]*/k",			//   ""で挟まれた C:\～, \\～ にマッチするパターン
 		_countof(pType->m_RegexKeywordList) - 1 );
-	keywordPos += auto_strlen(&pKeyword[keywordPos]) + 1;
+	keywordPos += wcslen(&pKeyword[keywordPos]) + 1;
 	pType->m_RegexKeywordArr[1].m_nColorIndex = COLORIDX_URL;	// 色指定番号
 	wcscpyn( &pKeyword[keywordPos],			// 正規表現キーワード
 		L"/(\\b[a-zA-Z]:\\\\|\\B\\\\\\\\)[\\w\\-_.\\\\\\/$%~]*/k",		//   C:\～, \\～ にマッチするパターン
 		_countof(pType->m_RegexKeywordList) - keywordPos - 1 );
-	keywordPos += auto_strlen(&pKeyword[keywordPos]) + 1;
+	keywordPos += wcslen(&pKeyword[keywordPos]) + 1;
 	pKeyword[keywordPos] = L'\0';
 }
 

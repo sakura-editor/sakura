@@ -120,7 +120,7 @@ int CALLBACK CDlgFuncList::CompareFunc_Asc( LPARAM lParam1, LPARAM lParam2, LPAR
 	}
 	//	Apr. 23, 2005 genta 行番号を左端へ
 	if( FL_COL_NAME == pcDlgFuncList->m_nSortCol){	/* 名前でソート */
-		return auto_stricmp( pcFuncInfo1->m_cmemFuncName.GetStringPtr(), pcFuncInfo2->m_cmemFuncName.GetStringPtr() );
+		return wmemicmp( pcFuncInfo1->m_cmemFuncName.GetStringPtr(), pcFuncInfo2->m_cmemFuncName.GetStringPtr() );
 	}
 	//	Apr. 23, 2005 genta 行番号を左端へ
 	if( FL_COL_ROW == pcDlgFuncList->m_nSortCol){	/* 行（＋桁）でソート */
@@ -968,7 +968,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 		nClassNest = 0;
 		/* クラス名::メソッドの場合 */
 		if( NULL != ( pPos = wcsstr( pWork, L"::" ) )
-			&& auto_strncmp( L"operator ", pWork, 9) != 0 ){
+			&& wcsncmp( L"operator ", pWork, 9) != 0 ){
 			/* インナークラスのネストレベルを調べる */
 			int	k;
 			int	nWorkLen;
@@ -992,7 +992,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 						m = k + 2;
 						++k;
 						// Klass::operator std::string
-						if( auto_strncmp( L"operator ", pWork + m, 9) == 0 ){
+						if( wcsncmp( L"operator ", pWork + m, 9) == 0 ){
 							break;
 						}
 					}
@@ -1319,9 +1319,9 @@ void CDlgFuncList::SetListVB (void)
 
 		// 2001/06/23 N.Nakatani for Visual Basic
 		//	Jun. 26, 2001 genta 半角かな→全角に
-		auto_memset(szText, L'\0', _countof(szText));
-		auto_memset(szType, L'\0', _countof(szType));
-		auto_memset(szOption, L'\0', _countof(szOption));
+		wmemset(szText, L'\0', _countof(szText));
+		wmemset(szType, L'\0', _countof(szType));
+		wmemset(szOption, L'\0', _countof(szOption));
 		if( 1 == ((pcFuncInfo->m_nInfo >> 8) & 0x01) ){
 			// スタティック宣言(Static)
 			// 2006.12.12 Moca 末尾にスペース追加
@@ -1543,7 +1543,7 @@ void CDlgFuncList::SetTree(bool tagjump, bool nolabel)
 		*/
 		bool bFileSelect = false;
 		if( pcFuncInfo->m_cmemFileName.GetStringPtr() && m_pcFuncInfoArr->m_szFilePath[0] ){
-			if( 0 == auto_stricmp( pcFuncInfo->m_cmemFileName.GetStringPtr(), m_pcFuncInfoArr->m_szFilePath.c_str() ) ){
+			if( 0 == wmemicmp( pcFuncInfo->m_cmemFileName.GetStringPtr(), m_pcFuncInfoArr->m_szFilePath.c_str() ) ){
 				bFileSelect = true;
 			}
 		}else{
@@ -1669,7 +1669,7 @@ void CDlgFuncList::SetTreeFile()
 		const SFileTreeItem& item = m_fileTreeSetting.m_aItems[i];
 		// item.m_szTargetPath => szPath メタ文字の展開
 		if( !CFileNameManager::ExpandMetaToFolder(item.m_szTargetPath, szPath, _countof(szPath)) ){
-			auto_strcpy_s(szPath, _countof(szPath), L"<Error:Long Path>");
+			wcscpy_s(szPath, _countof(szPath), L"<Error:Long Path>");
 		}
 		// szPath => szPath2 <iniroot>展開
 		const WCHAR* pszFrom = szPath;
@@ -1677,18 +1677,18 @@ void CDlgFuncList::SetTreeFile()
 			CNativeW strTemp(pszFrom);
 			strTemp.Replace(L"<iniroot>", IniDirPath);
 			if( _countof(szPath2) <= strTemp.GetStringLength() ){
-				auto_strcpy_s(szPath2, _countof(szPath), L"<Error:Long Path>");
+				wcscpy_s(szPath2, _countof(szPath), L"<Error:Long Path>");
 			}else{
-				auto_strcpy_s(szPath2, _countof(szPath), strTemp.GetStringPtr());
+				wcscpy_s(szPath2, _countof(szPath), strTemp.GetStringPtr());
 			}
 		}else{
-			auto_strcpy(szPath2, pszFrom);
+			wcscpy(szPath2, pszFrom);
 		}
 		// szPath2 => szPath 「.」やショートパス等の展開
 		pszFrom = szPath2;
 		if( ::GetLongFileName(pszFrom, szPath) ){
 		}else{
-			auto_strcpy(szPath, pszFrom);
+			wcscpy(szPath, pszFrom);
 		}
 		while( item.m_nDepth < (int)hParentTree.size() - 1 ){
 			hParentTree.resize(hParentTree.size() - 1);
@@ -1797,7 +1797,7 @@ void CDlgFuncList::SetTreeFileSub( HTREEITEM hParent, const WCHAR* pszFile )
 		tvis.item.pszText = const_cast<WCHAR*>(pFile);
 		tvis.item.lParam  = -1;
 		HTREEITEM hItem = TreeView_InsertItem(hwndTree, &tvis);
-		if( pszFile && auto_stricmp(pszFile, pFile) == 0 ){
+		if( pszFile && wmemicmp(pszFile, pFile) == 0 ){
 			hItemSelected = hItem;
 		}
 	}
@@ -3991,7 +3991,7 @@ void CDlgFuncList::LoadFileTreeSetting( CFileTreeSetting& data, SFilePath& IniDi
 		// 各フォルダのプロジェクトファイル読み込み
 		WCHAR szPath[_MAX_PATH];
 		::GetLongFileName( L".", szPath );
-		auto_strcat( szPath, L"\\" );
+		wcscat( szPath, L"\\" );
 		int maxDir = CDlgTagJumpList::CalcMaxUpDirectory( szPath );
 		for( int i = 0; i <= maxDir; i++ ){
 			CDataProfile cProfile;

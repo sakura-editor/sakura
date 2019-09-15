@@ -534,11 +534,11 @@ int CKeyWordSetMgr::CleanKeyWords( int nIdx )
 		unsigned int nKeyWordLen = wcslen( p );
 		if( nKeyWordLen == wcslen( r ) ){
 			if( m_bKEYWORDCASEArr[nIdx] ){
-				if( 0 == auto_memcmp( p, r, nKeyWordLen ) ){
+				if( 0 == wmemcmp( p, r, nKeyWordLen ) ){
 					bDelKey = true;
 				}
 			}else{
-				if( 0 == auto_memicmp( p, r, nKeyWordLen ) ){
+				if( 0 == wmemicmp( p, r, nKeyWordLen ) ){
 					bDelKey = true;
 				}
 			}

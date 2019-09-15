@@ -707,7 +707,7 @@ void CDlgOpenFile_CommonFileDialog::Create(
 		auto_sprintf( szRelPath, L"%s%s", szDrive, szDir );
 		const WCHAR* p = szRelPath;
 		if( ! ::GetLongFileName( p, m_szInitialDir ) ){
-			auto_strcpy(m_szInitialDir, p );
+			wcscpy(m_szInitialDir, p );
 		}
 	}
 	m_vMRU = vMRU;
@@ -746,7 +746,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 		break;
 	}
 
-	if( 0 != auto_strcmp(m_szDefaultWildCard, L"*.*") ){
+	if( 0 != wcscmp(m_szDefaultWildCard, L"*.*") ){
 		cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), L"*.*" );
 	}
 
@@ -782,7 +782,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 			auto_sprintf( szRelPath, L"%s%s%s%s", szDrive, szDir, szName, szExt );
 			const WCHAR* p = szRelPath;
 			if( ! ::GetLongFileName( p, pszPath ) ){
-				auto_strcpy( pszPath, p );
+				wcscpy( pszPath, p );
 			}
 		}
 	}
@@ -831,7 +831,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetSaveFileName( WCHAR* pszPath )
 		const WCHAR* pOrg = pszPath;
 		if( ::GetLongFileName( pOrg, szFullPath ) ){
 			// 成功。書き戻す
-			auto_strcpy( pszPath , szFullPath );
+			wcscpy( pszPath , szFullPath );
 		}
 	}
 
@@ -899,7 +899,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModalOpenDlg(
 
 	//ファイルパス受け取りバッファ
 	WCHAR* pszPathBuf = new WCHAR[2000];
-	auto_strcpy(pszPathBuf, pLoadInfo->cFilePath); // 2013.05.27 デフォルトファイル名を設定する
+	wcscpy(pszPathBuf, pLoadInfo->cFilePath); // 2013.05.27 デフォルトファイル名を設定する
 
 	//OPENFILENAME構造体の初期化
 	InitOfn( &pData->m_ofn );		// 2005.10.29 ryoji

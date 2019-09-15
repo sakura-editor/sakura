@@ -780,7 +780,7 @@ EFunctionCode GetPlugCmdInfoByName(
 	nId = -1;
 	for (i = 0; i < MAX_PLUGIN; i++) {
 		PluginRec& pluginrec = plugin.m_PluginTable[i];
-		if (auto_strcmp( pluginrec.m_szId, sPluginName ) == 0) {
+		if (wcscmp( pluginrec.m_szId, sPluginName ) == 0) {
 			nId = i;
 			break;
 		}
@@ -831,7 +831,7 @@ static EFunctionCode GetFunctionStrToFunctionCode(const WCHAR* pszFuncName)
 		n = GetPlugCmdInfoByName(pszFuncName);
 	}else if (WCODE::Is09(pszFuncName[0]) 
 	  && (pszFuncName[1] == L'\0' || WCODE::Is09(pszFuncName[1]))) {
-		n = (EFunctionCode)auto_atol(pszFuncName);
+		n = (EFunctionCode)_wtol(pszFuncName);
 	}else {
 		n = CSMacroMgr::GetFuncInfoByName(0, pszFuncName, NULL);
 	}
@@ -1083,7 +1083,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 					p = szKeyData;
 					// keycode取得
 					int keycode;
-					pn = auto_strchr(p,',');
+					pn = wcschr(p,',');
 					if (pn == NULL)	continue;
 					*pn = 0;
 					nRes = scan_ints(p, L"%04x", &keycode);
@@ -1096,7 +1096,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 						EFunctionCode n;
 						//機能名を数値に置き換える。(数値の機能名もあるかも)
 						//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-						pn = auto_strchr(p,',');
+						pn = wcschr(p,',');
 						if (pn == NULL)	break;
 						*pn = 0;
 						n = GetFunctionStrToFunctionCode(p);
@@ -1104,7 +1104,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 						p = pn+1;
 					}
 					// KeyName
-					auto_strncpy(tmpKeydata.m_szKeyName, p, _countof(tmpKeydata.m_szKeyName)-1);
+					wcsncpy(tmpKeydata.m_szKeyName, p, _countof(tmpKeydata.m_szKeyName)-1);
 					tmpKeydata.m_szKeyName[_countof(tmpKeydata.m_szKeyName)-1] = '\0';
 
 					if( tmpKeydata.m_nKeyCode <= 0 ){ // マウスコードは先頭に固定されている KeyCodeが同じなのでKeyNameで判別
@@ -1304,9 +1304,9 @@ void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 		if(0==wcscmp(printsetting.m_szHeaderForm[0],_EDITL("&f")) &&
 		   0==wcscmp(printsetting.m_szFooterForm[0],_EDITL("&C- &P -"))
 		){
-			auto_strcpy( printsetting.m_szHeaderForm[0], _EDITL("$f") );
-			auto_strcpy( printsetting.m_szFooterForm[0], _EDITL("") );
-			auto_strcpy( printsetting.m_szFooterForm[1], _EDITL("- $p -") );
+			wcscpy( printsetting.m_szHeaderForm[0], _EDITL("$f") );
+			wcscpy( printsetting.m_szFooterForm[0], _EDITL("") );
+			wcscpy( printsetting.m_szFooterForm[1], _EDITL("- $p -") );
 		}
 
 		//禁則	//@@@ 2002.04.09 MIK
@@ -1362,8 +1362,8 @@ void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 			if( i == 0 ){
 				pShare->m_TypeBasis = type;
 			}
-			auto_strcpy(pShare->m_TypeMini[i].m_szTypeExts, type.m_szTypeExts);
-			auto_strcpy(pShare->m_TypeMini[i].m_szTypeName, type.m_szTypeName);
+			wcscpy(pShare->m_TypeMini[i].m_szTypeExts, type.m_szTypeExts);
+			wcscpy(pShare->m_TypeMini[i].m_szTypeName, type.m_szTypeName);
 			pShare->m_TypeMini[i].m_id = type.m_id;
 			pShare->m_TypeMini[i].m_encoding = type.m_encoding;
 		}
@@ -1400,7 +1400,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 
 	// 2005.04.07 D.S.Koba
 	static const WCHAR* pszForm = LTEXT("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d");	//MIK
-	auto_strcpy( szKeyName, LTEXT("nInts") );
+	wcscpy( szKeyName, LTEXT("nInts") );
 	if( cProfile.IsReadingMode() ){
 		if( cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) ) ){
 			int buf[12];
@@ -1689,7 +1689,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 							types.m_RegexKeywordArr[j].m_nColorIndex = COLORIDX_REGEX1;
 						}
 						if( pKeyword[nPos] ){
-							nPos += auto_strlen(&pKeyword[nPos]) + 1;
+							nPos += wcslen(&pKeyword[nPos]) + 1;
 						}
 					}
 				}else{
@@ -1704,7 +1704,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 					GetColorNameByIndex( types.m_RegexKeywordArr[j].m_nColorIndex ),
 					&pKeyword[nPos]);
 				cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) );
-				nPos += auto_strlen(&pKeyword[nPos]) + 1;
+				nPos += wcslen(&pKeyword[nPos]) + 1;
 			}
 		}
 		if( cProfile.IsReadingMode() ){
@@ -1858,7 +1858,7 @@ void CShareData_IO::ShareData_IO_KeyWords( CDataProfile& cProfile )
 			for( j = 0; j < pCKeyWordSetMgr->m_nKeyWordNumArr[i]; ++j ){
 				//	May 25, 2003 genta 区切りをTABに変更
 				int kwlen = wcslen( pCKeyWordSetMgr->GetKeyWord( i, j ) );
-				auto_memcpy( pMem, pCKeyWordSetMgr->GetKeyWord( i, j ), kwlen );
+				wmemcpy( pMem, pCKeyWordSetMgr->GetKeyWord( i, j ), kwlen );
 				pMem += kwlen;
 				*pMem++ = L'\t';
 			}
@@ -2168,7 +2168,7 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 			p = szLine;
 			pn = wcschr( p, L',' );
 			if (pn != NULL)		*pn++ = L'\0';
-			pcMenu->m_nLevel = auto_atol( p );
+			pcMenu->m_nLevel = _wtol( p );
 			if (pn == NULL) {
 				continue;
 			}
@@ -2177,7 +2177,7 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 			p = pn;
 			pn = wcschr( p, L',' );
 			if (pn != NULL)		*pn++ = L'\0';
-			pcMenu->m_nType = (EMainMenuType)auto_atol( p );
+			pcMenu->m_nType = (EMainMenuType)_wtol( p );
 			if (pn == NULL) {
 				continue;
 			}
@@ -2210,7 +2210,7 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 
 			// 表示名
 			p++;
-			auto_strcpy_s( pcMenu->m_sName, MAX_MAIN_MENU_NAME_LEN+1, p );
+			wcscpy_s( pcMenu->m_sName, MAX_MAIN_MENU_NAME_LEN+1, p );
 		}
 		else {
 			if (GetPlugCmdInfoByFuncCode( pcMenu->m_nFunc, szFuncName )) {

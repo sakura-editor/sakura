@@ -234,13 +234,13 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 			LPCWSTR  pStr;
 			ps++;
 			// %SAKURA%
-			if( 0 == auto_strnicmp( L"SAKURA%", ps, 7 ) ){
+			if( 0 == wmemicmp( L"SAKURA%", ps, 7 ) ){
 				// exeのあるフォルダ
 				GetExedir( szPath );
 				nMetaLen = 6;
 			}
 			// %SAKURADATA%	// 2007.06.06 ryoji
-			else if( 0 == auto_strnicmp( L"SAKURADATA%", ps, 11 ) ){
+			else if( 0 == wmemicmp( L"SAKURADATA%", ps, 11 ) ){
 				// iniのあるフォルダ
 				GetInidir( szPath );
 				nMetaLen = 10;
@@ -249,7 +249,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 			else if( NULL != (pStr = wcschr( ps, L'%' ) )){
 				nMetaLen = pStr - ps;
 				if( nMetaLen < _MAX_PATH ){
-					auto_memcpy( szMeta, ps, nMetaLen );
+					wmemcpy( szMeta, ps, nMetaLen );
 					szMeta[nMetaLen] = L'\0';
 				}
 				else{
@@ -262,7 +262,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 				for( pAlias = &AliasList[0]; nMetaLen < pAlias->nLenth; pAlias++ )
 					; // 読み飛ばす
 				for( ; nMetaLen == pAlias->nLenth; pAlias++ ){
-					if( 0 == auto_stricmp( pAlias->szAlias, szMeta ) ){
+					if( 0 == wmemicmp( pAlias->szAlias, szMeta ) ){
 						wcscpy( szMeta, pAlias->szOrig );
 						break;
 					}
@@ -293,7 +293,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 					// 未定義のメタ文字列は 入力された%...%を，そのまま文字として処理する
 					else if(  pd + ( nMetaLen + 2 ) < pd_end ){
 						*pd = L'%';
-						auto_memcpy( &pd[1], ps, nMetaLen );
+						wmemcpy( &pd[1], ps, nMetaLen );
 						pd[nMetaLen + 1] = L'%';
 						pd += nMetaLen + 2;
 						ps += nMetaLen;
@@ -336,7 +336,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 			}
 
 			if( pd + nPathLen < pd_end && 0 != nPathLen ){
-				auto_memcpy( pd, pStr2, nPathLen );
+				wmemcpy( pd, pStr2, nPathLen );
 				pd += nPathLen;
 				ps += nMetaLen;
 			}else{

@@ -190,7 +190,7 @@ int CKeyBind::CreateKeyBindList(
 				if( !pcFuncLookup->Funccode2Name(
 					iFunc,
 					szFuncNameJapanese, 255 )){
-					auto_strcpy( szFuncNameJapanese, LS(STR_ERR_DLGKEYBIND2) );
+					wcscpy( szFuncNameJapanese, LS(STR_ERR_DLGKEYBIND2) );
 				}
 				szFuncName[0] = LTEXT('\0'); /*"---unknown()--"*/
 
@@ -395,26 +395,26 @@ WCHAR*	CKeyBind::MakeMenuLabel(const WCHAR* sName, const WCHAR* sKey)
 	}
 	else {
 		if( !GetDllShareData().m_Common.m_sMainMenu.m_bMainMenuKeyParentheses
-			  && (((p = auto_strchr( sName, sKey[0])) != NULL) || ((p = auto_strchr( sName, _totlower(sKey[0]))) != NULL)) ){
+			  && (((p = wcschr( sName, sKey[0])) != NULL) || ((p = wcschr( sName, _totlower(sKey[0]))) != NULL)) ){
 			// 欧文風、使用している文字をアクセスキーに
-			auto_strcpy_s( sLabel, _countof(sLabel), sName );
+			wcscpy_s( sLabel, _countof(sLabel), sName );
 			sLabel[p-sName] = L'&';
-			auto_strcpy_s( sLabel + (p-sName) + 1, _countof(sLabel), p );
+			wcscpy_s( sLabel + (p-sName) + 1, _countof(sLabel), p );
 		}
-		else if( (p = auto_strchr( sName, L'(' )) != NULL
-			  && (p = auto_strchr( p, sKey[0] )) != NULL) {
+		else if( (p = wcschr( sName, L'(' )) != NULL
+			  && (p = wcschr( p, sKey[0] )) != NULL) {
 			// (付その後にアクセスキー
-			auto_strcpy_s( sLabel, _countof(sLabel), sName );
+			wcscpy_s( sLabel, _countof(sLabel), sName );
 			sLabel[p-sName] = L'&';
-			auto_strcpy_s( sLabel + (p-sName) + 1, _countof(sLabel), p );
+			wcscpy_s( sLabel + (p-sName) + 1, _countof(sLabel), p );
 		}
 		else if (wcscmp( sName + wcslen(sName) - 3, L"..." ) == 0) {
 			// 末尾...
-			auto_strcpy_s( sLabel, _countof(sLabel), sName );
+			wcscpy_s( sLabel, _countof(sLabel), sName );
 			sLabel[wcslen(sName) - 3] = '\0';						// 末尾の...を取る
-			auto_strcat_s( sLabel, _countof(sLabel), L"(&" );
-			auto_strcat_s( sLabel, _countof(sLabel), sKey );
-			auto_strcat_s( sLabel, _countof(sLabel), L")..." );
+			wcscat_s( sLabel, L"(&" );
+			wcscat_s( sLabel, sKey );
+			wcscat_s( sLabel, L")..." );
 		}
 		else {
 			auto_sprintf_s( sLabel, _countof(sLabel), L"%s(&%s)", sName, sKey );

@@ -588,14 +588,14 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 	if( tbb.fsStyle & TBSTYLE_SEP ){
 		// テキストだけ表示する
 		if( tbb.idCommand == F_SEPARATOR ){
-			auto_strncpy( szLabel, LS(STR_PROPCOMTOOL_ITEM1), _countof(szLabel) - 1 );	// nLength 未使用 2003/01/09 Moca
+			wcsncpy( szLabel, LS(STR_PROPCOMTOOL_ITEM1), _countof(szLabel) - 1 );	// nLength 未使用 2003/01/09 Moca
 			szLabel[_countof(szLabel) - 1] = L'\0';
 		}else if( tbb.idCommand == F_MENU_NOT_USED_FIRST ){
 			// ツールバー折返
-			auto_strncpy( szLabel, LS(STR_PROPCOMTOOL_ITEM2), _countof(szLabel) - 1 );
+			wcsncpy( szLabel, LS(STR_PROPCOMTOOL_ITEM2), _countof(szLabel) - 1 );
 			szLabel[_countof(szLabel) - 1] = L'\0';
 		}else{
-			auto_strncpy( szLabel, LS(STR_PROPCOMTOOL_ITEM3), _countof(szLabel) - 1 );
+			wcsncpy( szLabel, LS(STR_PROPCOMTOOL_ITEM3), _countof(szLabel) - 1 );
 			szLabel[_countof(szLabel) - 1] = L'\0';
 		}
 	}else{

@@ -553,10 +553,10 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 
 					// 存在しないパスの削除
 					for( int i = pRecent->GetItemCount() - 1; i >= 0; i-- ){
-						size_t nLen = auto_strlen(pRecent->GetItemText(i));
+						size_t nLen = wcslen(pRecent->GetItemText(i));
 						std::vector<WCHAR> vecPath(nLen + 2);
 						WCHAR* szPath = &vecPath[0];
-						auto_strcpy( szPath, pRecent->GetItemText(i) );
+						wcscpy( szPath, pRecent->GetItemText(i) );
 						CutLastYenFromDirectoryPath(szPath);
 						if( false == IsFileExists(szPath, false ) ){
 							pRecent->DeleteItem(i);
@@ -792,7 +792,7 @@ bool CDlgFavorite::RefreshListOne( int nIndex )
 	for( i = 0; i < nCount; i++ )
 	{
 		WCHAR	szText[1024];
-		auto_memset( szText, 0, _countof( szText ) );
+		wmemset( szText, 0, _countof( szText ) );
 		memset_raw( &lvitem, 0, sizeof( lvitem ) );
 		lvitem.mask       = LVIF_TEXT | LVIF_PARAM;
 		lvitem.pszText    = szText;
@@ -1165,7 +1165,7 @@ static int CALLBACK CompareListViewFunc( LPARAM lParamItem1, LPARAM lParamItem2,
 		nRet = lParamItem1 - lParamItem2;
 	}else{
 		const CRecent* p = pCompInfo->pRecent;
-		nRet = auto_stricmp(p->GetItemText((int)lParamItem1), p->GetItemText((int)lParamItem2));
+		nRet = wmemicmp(p->GetItemText((int)lParamItem1), p->GetItemText((int)lParamItem2));
 	}
 	return pCompInfo->bAbsOrder ? nRet : -nRet;
 }
