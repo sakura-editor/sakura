@@ -268,7 +268,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 				// Oct. 2, 2001 genta
 				// 2007.11.02 ryoji F_DISABLEなら未割付
 				if( nFuncCode == F_DISABLE ){
-					auto_strncpy( pszLabel, LS(STR_PROPCOMKEYBIND_UNASSIGN), _countof(pszLabel) - 1 );
+					wcsncpy( pszLabel, LS(STR_PROPCOMKEYBIND_UNASSIGN), _countof(pszLabel) - 1 );
 					pszLabel[_countof(pszLabel) - 1] = L'\0';
 				}else{
 					m_cLookup.Funccode2Name( nFuncCode, pszLabel, 255 );

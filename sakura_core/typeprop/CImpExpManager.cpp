@@ -919,7 +919,7 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 				int n, kc, nc;
 				//値 -> szData
 				wchar_t szData[1024];
-				auto_strncpy(szData, in.ReadLineW().c_str(), _countof(szData) - 1);
+				wcsncpy(szData, in.ReadLineW().c_str(), _countof(szData) - 1);
 				szData[_countof(szData) - 1] = L'\0';
 
 				//解析開始
@@ -955,7 +955,7 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 					p = q + 1;
 				}
 
-				auto_strncpy(sKeyBind.m_pKeyNameArr[i].m_szKeyName, p, _countof(sKeyBind.m_pKeyNameArr[i].m_szKeyName)-1);
+				wcsncpy(sKeyBind.m_pKeyNameArr[i].m_szKeyName, p, _countof(sKeyBind.m_pKeyNameArr[i].m_szKeyName)-1);
 				sKeyBind.m_pKeyNameArr[i].m_szKeyName[_countof(sKeyBind.m_pKeyNameArr[i].m_szKeyName)-1] = '\0';
 			}
 		}

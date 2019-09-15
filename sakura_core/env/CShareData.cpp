@@ -751,7 +751,7 @@ static void ConvertLangString( wchar_t* pBuf, size_t chBufSize, std::wstring& or
 	CNativeW mem;
 	mem.SetString(pBuf);
 	mem.Replace(org.c_str(), to.c_str());
-	auto_strncpy(pBuf, mem.GetStringPtr(), chBufSize);
+	wcsncpy(pBuf, mem.GetStringPtr(), chBufSize);
 	pBuf[chBufSize - 1] = L'\0';
 }
 
@@ -760,7 +760,7 @@ static void ConvertLangString( char* pBuf, size_t chBufSize, std::wstring& org, 
 	CNativeA mem;
 	mem.SetString(pBuf);
 	mem.Replace_j(to_achar(org.c_str()), to_achar(to.c_str()));
-	auto_strncpy(pBuf, mem.GetStringPtr(), chBufSize);
+	strncpy(pBuf, mem.GetStringPtr(), chBufSize);
 	pBuf[chBufSize - 1] = '\0';
 }
 
