@@ -397,7 +397,7 @@ bool CImpExpType::Import( const wstring& sFileName, wstring& sErrMsg )
 		pSlashPos = wcschr( szKeyData, L'/' );
 		nIdx = -1;
 		for (i = 0; i < MAX_PLUGIN; i++) {
-			if (auto_strncmp(szKeyData, plugin.m_PluginTable[i].m_szId, pSlashPos ? pSlashPos-szKeyData : nDataLen) == 0) {
+			if (wcsncmp(szKeyData, plugin.m_PluginTable[i].m_szId, pSlashPos ? pSlashPos-szKeyData : nDataLen) == 0) {
 				nIdx = i;
 				if (pSlashPos) {	// スラッシュの後ろのプラグIDを取得
 					nPlug = _wtoi( pSlashPos + 1 );
@@ -418,7 +418,7 @@ bool CImpExpType::Import( const wstring& sFileName, wstring& sErrMsg )
 		pSlashPos = wcschr( szKeyData, L'/' );
 		nIdx = -1;
 		for (i = 0; i < MAX_PLUGIN; i++) {
-			if (auto_strncmp(szKeyData, plugin.m_PluginTable[i].m_szId, pSlashPos ? pSlashPos-szKeyData : nDataLen) == 0) {
+			if (wcsncmp(szKeyData, plugin.m_PluginTable[i].m_szId, pSlashPos ? pSlashPos-szKeyData : nDataLen) == 0) {
 				nIdx = i;
 				if (pSlashPos) {	// スラッシュの後ろのプラグIDを取得
 					nPlug = _wtoi( pSlashPos + 1 );
