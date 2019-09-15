@@ -274,11 +274,11 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 					}
 					auto_strcat( szPath, szFile );
 					if( IsFileExists2( szPath ) ){
-						auto_strcpy( szJumpToFile, szPath );
+						wcscpy( szJumpToFile, szPath );
 						break;
 					}
 					// 相対パスだった→◎”を探す
-					auto_strcpy( szFile, szPath );
+					wcscpy( szFile, szPath );
 					searchMode = TAGLIST_ROOT;
 					continue;
 				}
@@ -701,7 +701,7 @@ bool CViewCommander::Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int cou
 	
 	// 基準ファイル名の設定
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
-		auto_strcpy( szCurrentPath, GetDocument()->m_cDocFile.GetFilePath() );
+		wcscpy( szCurrentPath, GetDocument()->m_cDocFile.GetFilePath() );
 	}else{
 		if( 0 == ::GetCurrentDirectory( count - _countof(L"\\dmy") - MAX_TYPES_EXTS, szCurrentPath ) ){
 			return false;

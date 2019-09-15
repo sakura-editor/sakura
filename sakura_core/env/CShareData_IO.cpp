@@ -1304,9 +1304,9 @@ void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 		if(0==wcscmp(printsetting.m_szHeaderForm[0],_EDITL("&f")) &&
 		   0==wcscmp(printsetting.m_szFooterForm[0],_EDITL("&C- &P -"))
 		){
-			auto_strcpy( printsetting.m_szHeaderForm[0], _EDITL("$f") );
-			auto_strcpy( printsetting.m_szFooterForm[0], _EDITL("") );
-			auto_strcpy( printsetting.m_szFooterForm[1], _EDITL("- $p -") );
+			wcscpy( printsetting.m_szHeaderForm[0], _EDITL("$f") );
+			wcscpy( printsetting.m_szFooterForm[0], _EDITL("") );
+			wcscpy( printsetting.m_szFooterForm[1], _EDITL("- $p -") );
 		}
 
 		//禁則	//@@@ 2002.04.09 MIK
@@ -1362,8 +1362,8 @@ void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 			if( i == 0 ){
 				pShare->m_TypeBasis = type;
 			}
-			auto_strcpy(pShare->m_TypeMini[i].m_szTypeExts, type.m_szTypeExts);
-			auto_strcpy(pShare->m_TypeMini[i].m_szTypeName, type.m_szTypeName);
+			wcscpy(pShare->m_TypeMini[i].m_szTypeExts, type.m_szTypeExts);
+			wcscpy(pShare->m_TypeMini[i].m_szTypeName, type.m_szTypeName);
 			pShare->m_TypeMini[i].m_id = type.m_id;
 			pShare->m_TypeMini[i].m_encoding = type.m_encoding;
 		}
@@ -1400,7 +1400,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 
 	// 2005.04.07 D.S.Koba
 	static const WCHAR* pszForm = LTEXT("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d");	//MIK
-	auto_strcpy( szKeyName, LTEXT("nInts") );
+	wcscpy( szKeyName, LTEXT("nInts") );
 	if( cProfile.IsReadingMode() ){
 		if( cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) ) ){
 			int buf[12];

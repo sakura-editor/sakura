@@ -249,14 +249,14 @@ EConvertResult CCodePage::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCH
 int CCodePage::GetNameNormal(LPWSTR outName, int charcodeEx)
 {
 	if( IsValidCodeType(charcodeEx) ){
-		auto_strcpy(outName, CCodeTypeName(static_cast<ECodeType>(charcodeEx)).Normal());
+		wcscpy(outName, CCodeTypeName(static_cast<ECodeType>(charcodeEx)).Normal());
 		return 1;
 	}
 	UINT codepage = CodePageExToMSCP(charcodeEx);
 	if( codepage == CP_ACP ){
-		auto_strcpy(outName, L"CP_ACP");
+		wcscpy(outName, L"CP_ACP");
 	}else if( codepage == CP_OEMCP ){
-		auto_strcpy(outName, L"CP_OEM");
+		wcscpy(outName, L"CP_OEM");
 	}else{
 		auto_sprintf(outName, L"CP%d", codepage);
 	}
@@ -266,14 +266,14 @@ int CCodePage::GetNameNormal(LPWSTR outName, int charcodeEx)
 int CCodePage::GetNameShort(LPWSTR outName, int charcodeEx)
 {
 	if( IsValidCodeType(charcodeEx) ){
-		auto_strcpy(outName, CCodeTypeName(static_cast<ECodeType>(charcodeEx)).Short());
+		wcscpy(outName, CCodeTypeName(static_cast<ECodeType>(charcodeEx)).Short());
 		return 1;
 	}
 	UINT codepage = CodePageExToMSCP(charcodeEx);
 	if( codepage == CP_ACP ){
-		auto_strcpy(outName, L"cp_acp");
+		wcscpy(outName, L"cp_acp");
 	}else if( codepage == CP_OEMCP ){
-		auto_strcpy(outName, L"cp_oem");
+		wcscpy(outName, L"cp_oem");
 	}else{
 		auto_sprintf(outName, L"cp%d", codepage);
 	}
@@ -283,19 +283,19 @@ int CCodePage::GetNameShort(LPWSTR outName, int charcodeEx)
 int CCodePage::GetNameLong(LPWSTR outName, int charcodeEx)
 {
 	if( IsValidCodeType(charcodeEx) ){
-		auto_strcpy(outName, CCodeTypeName(static_cast<ECodeType>(charcodeEx)).Normal());
+		wcscpy(outName, CCodeTypeName(static_cast<ECodeType>(charcodeEx)).Normal());
 		return 1;
 	}
 	UINT codepage = CodePageExToMSCP(charcodeEx);
 	if( codepage == CP_ACP ){
-		auto_strcpy(outName, L"CP_ACP");
+		wcscpy(outName, L"CP_ACP");
 	}else if( codepage == CP_OEMCP ){
-		auto_strcpy(outName, L"CP_OEMCP");
+		wcscpy(outName, L"CP_OEMCP");
 	}else{
 		CPINFOEX cpInfo;
 		cpInfo.CodePageName[0] = L'\0';
 		if( ::GetCPInfoEx(codepage, 0, &cpInfo) ){
-			auto_strcpy(outName, cpInfo.CodePageName);
+			wcscpy(outName, cpInfo.CodePageName);
 		}else{
 			auto_sprintf(outName, L"CP%d", codepage);
 		}
@@ -306,14 +306,14 @@ int CCodePage::GetNameLong(LPWSTR outName, int charcodeEx)
 int CCodePage::GetNameBracket(LPWSTR outName, int charcodeEx)
 {
 	if( IsValidCodeType(charcodeEx) ){
-		auto_strcpy(outName, CCodeTypeName(static_cast<ECodeType>(charcodeEx)).Bracket());
+		wcscpy(outName, CCodeTypeName(static_cast<ECodeType>(charcodeEx)).Bracket());
 		return 1;
 	}
 	UINT codepage = CodePageExToMSCP(charcodeEx);
 	if( codepage == CP_ACP ){
-		auto_strcpy(outName, L"  [CP_ACP]");
+		wcscpy(outName, L"  [CP_ACP]");
 	}else if( codepage == CP_OEMCP ){
-		auto_strcpy(outName, L"  [CP_OEM]");
+		wcscpy(outName, L"  [CP_OEM]");
 	}else{
 		auto_sprintf(outName, L"  [CP%d]", charcodeEx);
 	}

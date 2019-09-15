@@ -190,7 +190,7 @@ int CKeyBind::CreateKeyBindList(
 				if( !pcFuncLookup->Funccode2Name(
 					iFunc,
 					szFuncNameJapanese, 255 )){
-					auto_strcpy( szFuncNameJapanese, LS(STR_ERR_DLGKEYBIND2) );
+					wcscpy( szFuncNameJapanese, LS(STR_ERR_DLGKEYBIND2) );
 				}
 				szFuncName[0] = LTEXT('\0'); /*"---unknown()--"*/
 

@@ -809,7 +809,7 @@ WCHAR* CSMacroMgr::GetFuncInfoByID(
 	const MacroFuncInfo* MacroInfo = GetFuncInfoByID( nFuncID );
 	if( MacroInfo != NULL ){
 		if( pszFuncName != NULL ){
-			auto_strcpy( pszFuncName, MacroInfo->m_pszFuncName );
+			wcscpy( pszFuncName, MacroInfo->m_pszFuncName );
 			WCHAR *p = pszFuncName;
 			while (*p){
 				if (*p == LTEXT('(')){

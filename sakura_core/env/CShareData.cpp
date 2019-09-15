@@ -351,7 +351,7 @@ bool CShareData::InitShareData()
 
 			sEdit.m_bOverWriteBoxDelete = false;
 			sEdit.m_eOpenDialogDir = OPENDIALOGDIR_CUR;
-			auto_strcpy(sEdit.m_OpenDialogSelDir, L"%Personal%\\");
+			wcscpy(sEdit.m_OpenDialogSelDir, L"%Personal%\\");
 			sEdit.m_bAutoColumnPaste = TRUE;			/* 矩形コピーのテキストは常に矩形貼り付け */
 		}
 

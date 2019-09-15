@@ -146,7 +146,7 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 						delete pCode;
 						if (ret != RESULT_COMPLETE) {
 							// うまくコードが取れなかった
-							auto_strcpy(szCode[i], L"-");
+							wcscpy(szCode[i], L"-");
 						}
 					}
 				}
@@ -158,7 +158,7 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 				delete pCode;
 				if (ret != RESULT_COMPLETE) {
 					// うまくコードが取れなかった
-					auto_strcpy(szCodeCP, L"-");
+					wcscpy(szCodeCP, L"-");
 				}
 
 				// メッセージボックス表示
@@ -844,7 +844,7 @@ void CEditWnd::LayoutMainMenu()
 			/* メニューラベルの作成 */
 			// 2014.05.04 Moca プラグイン/マクロ等を置けるようにFunccode2Nameを使うように
 			GetDocument()->m_cFuncLookup.Funccode2Name( cMainMenu->m_nFunc, szLabel, _countof(szLabel) );
-			auto_strcpy( szKey, cMainMenu->m_sKey );
+			wcscpy( szKey, cMainMenu->m_sKey );
 			if (CKeyBind::GetMenuLabel(
 				G_AppInstance(),
 				m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
@@ -854,7 +854,7 @@ void CEditWnd::LayoutMainMenu()
 				cMainMenu->m_sKey,
 				FALSE,
 				_countof(szLabel)) == NULL) {
-				auto_strcpy( szLabel, L"?" );
+				wcscpy( szLabel, L"?" );
 			}
 			::AppendMenu( hMenu, MF_STRING, cMainMenu->m_nFunc, szLabel );
 			break;

@@ -581,12 +581,12 @@ bool CDlgTypeList::CopyType()
 			auto_sprintf( szNum, L"%d", n );
 			int nLen = wcslen( szNum );
 			WCHAR szTemp[_countof(type.m_szTypeName) + 12];
-			auto_strcpy( szTemp, type.m_szTypeName );
+			wcscpy( szTemp, type.m_szTypeName );
 			int nTempLen = wcslen( szTemp );
 			CNativeW cmem;
 			// バッファをはみ出さないように
 			LimitStringLengthW( szTemp, nTempLen, _countof(type.m_szTypeName) - nLen - 1, cmem );
-			auto_strcpy( type.m_szTypeName, cmem.GetStringPtr() );
+			wcscpy( type.m_szTypeName, cmem.GetStringPtr() );
 			auto_strcat( type.m_szTypeName, szNum );
 			bUpdate = false;
 		}

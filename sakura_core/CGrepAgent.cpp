@@ -67,11 +67,11 @@ void CGrepAgent::CreateFolders( const WCHAR* pszPath, std::vector<std::wstring>&
 	const int nPathLen = wcslen( pszPath );
 	auto szPath = std::make_unique<WCHAR[]>(nPathLen + 1);
 	auto szTmp = std::make_unique<WCHAR[]>(nPathLen + 1);
-	auto_strcpy( &szPath[0], pszPath );
+	wcscpy( &szPath[0], pszPath );
 	WCHAR* token;
 	int nPathPos = 0;
 	while( NULL != (token = my_strtok<WCHAR>( &szPath[0], nPathLen, &nPathPos, L";")) ){
-		auto_strcpy( &szTmp[0], token );
+		wcscpy( &szTmp[0], token );
 		WCHAR* p;
 		WCHAR* q;
 		p = q = &szTmp[0];
@@ -1214,7 +1214,7 @@ int CGrepAgent::DoGrepFile(
 					if( pszFolder[0] ){
 						auto_sprintf( szWork0, L"■\"%s\"\r\n", pszFolder );	// (C), (D)
 					}else{
-						auto_strcpy( szWork0, L"■\r\n" );
+						wcscpy( szWork0, L"■\r\n" );
 					}
 					cmemMessage.AppendString( szWork0 );
 					bOutputFolderName = true;
@@ -1243,7 +1243,7 @@ int CGrepAgent::DoGrepFile(
 	{
 		if( CODE_AUTODETECT == sGrepOption.nGrepCharSet ){
 			if( IsValidCodeType(nCharCode) ){
-				auto_strcpy( szCpName, CCodeTypeName(nCharCode).Bracket() );
+				wcscpy( szCpName, CCodeTypeName(nCharCode).Bracket() );
 				pszCodeName = szCpName;
 			}else{
 				CCodePage::GetNameBracket(szCpName, nCharCode);
@@ -1694,7 +1694,7 @@ int CGrepAgent::DoGrepReplaceFile(
 	{
 		if( CODE_AUTODETECT == sGrepOption.nGrepCharSet ){
 			if( IsValidCodeType(nCharCode) ){
-				auto_strcpy( szCpName, CCodeTypeName(nCharCode).Bracket() );
+				wcscpy( szCpName, CCodeTypeName(nCharCode).Bracket() );
 				pszCodeName = szCpName;
 			}else{
 				CCodePage::GetNameBracket(szCpName, nCharCode);

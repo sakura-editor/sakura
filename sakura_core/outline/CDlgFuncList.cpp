@@ -1682,13 +1682,13 @@ void CDlgFuncList::SetTreeFile()
 				auto_strcpy_s(szPath2, _countof(szPath), strTemp.GetStringPtr());
 			}
 		}else{
-			auto_strcpy(szPath2, pszFrom);
+			wcscpy(szPath2, pszFrom);
 		}
 		// szPath2 => szPath 「.」やショートパス等の展開
 		pszFrom = szPath2;
 		if( ::GetLongFileName(pszFrom, szPath) ){
 		}else{
-			auto_strcpy(szPath, pszFrom);
+			wcscpy(szPath, pszFrom);
 		}
 		while( item.m_nDepth < (int)hParentTree.size() - 1 ){
 			hParentTree.resize(hParentTree.size() - 1);

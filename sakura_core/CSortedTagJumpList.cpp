@@ -192,7 +192,7 @@ BOOL CSortedTagJumpList::GetParam( int index, WCHAR* keyword, WCHAR* filename, i
 		if( depth    ) *depth = p->depth;
 		if( baseDir ){
 			if( 0 <= p->baseDirId && (size_t)p->baseDirId < m_baseDirArr.size() ){
-				auto_strcpy( baseDir, m_baseDirArr[p->baseDirId].c_str() );
+				wcscpy( baseDir, m_baseDirArr[p->baseDirId].c_str() );
 			}
 		}
 		return TRUE;

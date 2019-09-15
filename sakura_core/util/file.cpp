@@ -995,9 +995,9 @@ static void FileNameSepExt( const WCHAR *file, WCHAR* pszFile, WCHAR* pszExt )
 	if( p ){
 		auto_memcpy(pszFile, file, p - file);
 		pszFile[p - file] = L'\0';
-		auto_strcpy(pszExt, p);
+		wcscpy(pszExt, p);
 	}else{
-		auto_strcpy(pszFile, file);
+		wcscpy(pszFile, file);
 		pszExt[0] = L'\0';
 	}
 }

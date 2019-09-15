@@ -88,7 +88,7 @@ public:
 public:
 	//コンストラクタ・デストラクタ
 	StaticString(){ m_szData[0]=0; }
-	StaticString(const CHAR_TYPE* rhs){ if(!rhs) m_szData[0]=0; else auto_strcpy(m_szData,rhs); }
+	StaticString(const CHAR_TYPE* rhs){ if(!rhs) m_szData[0]=0; else wcscpy(m_szData,rhs); }
 
 	//クラス属性
 	size_t GetBufferCount() const{ return N_BUFFER_COUNT; }

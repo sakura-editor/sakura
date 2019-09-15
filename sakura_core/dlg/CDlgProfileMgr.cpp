@@ -365,7 +365,7 @@ void CDlgProfileMgr::RenameProf()
 	WCHAR szText[_MAX_PATH];
 	bool bDefault = MyList_GetText( hwndList, nCurIndex, szText );
 	WCHAR szTextOld[_MAX_PATH];
-	auto_strcpy( szTextOld, szText );
+	wcscpy( szTextOld, szText );
 	std::wstring strTitle = LS(STR_DLGPROFILE_RENAME_TITLE);
 	std::wstring strMessage = LS(STR_DLGPROFILE_RENAME_MSG);
 	int max_size = _MAX_PATH;

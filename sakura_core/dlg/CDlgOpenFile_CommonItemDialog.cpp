@@ -451,7 +451,7 @@ void CDlgOpenFile_CommonItemDialog::Create(
 		auto_sprintf( szRelPath, L"%s%s", szDrive, szDir );
 		const WCHAR* p = szRelPath;
 		if( ! ::GetLongFileName( p, m_szInitialDir ) ){
-			auto_strcpy(m_szInitialDir, p );
+			wcscpy(m_szInitialDir, p );
 		}
 	}
 	m_vMRU = vMRU;
@@ -511,7 +511,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetSaveFileName( WCHAR* pszPath )
 		const WCHAR* pOrg = pszPath;
 		if( ::GetLongFileName( pOrg, szFullPath ) ){
 			// 成功。書き戻す
-			auto_strcpy( pszPath , szFullPath );
+			wcscpy( pszPath , szFullPath );
 		}
 	}
 
