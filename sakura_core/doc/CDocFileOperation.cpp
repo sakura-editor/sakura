@@ -270,7 +270,7 @@ bool CDocFileOperation::SaveFileDialog(
 			WCHAR szText[16];
 			auto_sprintf(szText, L"%d", node->m_nId);
 			wcscpy(pSaveInfo->cFilePath, LS(STR_NO_TITLE2));	// 無題
-			auto_strcat(pSaveInfo->cFilePath, szText);
+			wcscat(pSaveInfo->cFilePath, szText);
 		}
 	}
 

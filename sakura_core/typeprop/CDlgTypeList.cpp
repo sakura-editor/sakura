@@ -587,7 +587,7 @@ bool CDlgTypeList::CopyType()
 			// バッファをはみ出さないように
 			LimitStringLengthW( szTemp, nTempLen, _countof(type.m_szTypeName) - nLen - 1, cmem );
 			wcscpy( type.m_szTypeName, cmem.GetStringPtr() );
-			auto_strcat( type.m_szTypeName, szNum );
+			wcscat( type.m_szTypeName, szNum );
 			bUpdate = false;
 		}
 		const STypeConfigMini* typeMini;

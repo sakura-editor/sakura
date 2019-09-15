@@ -272,7 +272,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 					if( szFile[0] ){
 						AddLastYenFromDirectoryPath( szPath );
 					}
-					auto_strcat( szPath, szFile );
+					wcscat( szPath, szFile );
 					if( IsFileExists2( szPath ) ){
 						wcscpy( szJumpToFile, szPath );
 						break;
@@ -286,7 +286,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 			}else if( 3 <= nLineLen && 0 == wmemcmp( pLine, L"◎\"", 2 ) ){
 				if( GetQuoteFilePath( &pLine[2], szJumpToFile, _countof(szJumpToFile) ) ){
 					AddLastYenFromDirectoryPath( szJumpToFile );
-					auto_strcat( szJumpToFile, szFile );
+					wcscat( szJumpToFile, szFile );
 					if( IsFileExists2( szJumpToFile ) ){
 						break;
 					}

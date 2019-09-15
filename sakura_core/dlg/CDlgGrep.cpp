@@ -360,11 +360,11 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 							szFolderItem[0] = L'"';
 							wcsncpy( szFolderItem + 1, vPaths[i].c_str(), nMaxPath - 1 );
 							szFolderItem[nMaxPath-1] = L'\0';
-							auto_strcat( szFolderItem, L"\"" );
+							wcscat( szFolderItem, L"\"" );
 							szFolderItem[nMaxPath-1] = L'\0';
 						}
 						if( i ){
-							auto_strcat( szFolder, L";" );
+							wcscat( szFolder, L";" );
 							szFolder[nMaxPath-1] = L'\0';
 						}
 						auto_strcat_s( szFolder, nMaxPath, szFolderItem );
@@ -759,7 +759,7 @@ int CDlgGrep::GetData( void )
 			if( auto_strchr( szFolderItem, L';' ) ){
 				szFolderItem[0] = L'"';
 				::GetCurrentDirectory( nMaxPath, szFolderItem + 1 );
-				auto_strcat(szFolderItem, L"\"");
+				wcscat(szFolderItem, L"\"");
 			}
 			int nFolderItemLen = wcslen( szFolderItem );
 			if( nMaxPath < nFolderLen + nFolderItemLen + 1 ){
@@ -767,9 +767,9 @@ int CDlgGrep::GetData( void )
 				return FALSE;
 			}
 			if( i ){
-				auto_strcat( szFolder, L";" );
+				wcscat( szFolder, L";" );
 			}
-			auto_strcat( szFolder, szFolderItem );
+			wcscat( szFolder, szFolderItem );
 			nFolderLen = wcslen( szFolder );
 		}
 		wcscpy( m_szFolder, szFolder );
@@ -830,7 +830,7 @@ static void SetGrepFolder( HWND hwndCtrl, LPCWSTR folder )
 		WCHAR szQuoteFolder[MAX_PATH];
 		szQuoteFolder[0] = L'"';
 		wcscpy( szQuoteFolder + 1, folder );
-		auto_strcat( szQuoteFolder, L"\"" );
+		wcscat( szQuoteFolder, L"\"" );
 		::SetWindowText( hwndCtrl, szQuoteFolder );
 	}else{
 		::SetWindowText( hwndCtrl, folder );

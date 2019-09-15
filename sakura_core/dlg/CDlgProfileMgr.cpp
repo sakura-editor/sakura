@@ -412,7 +412,7 @@ void CDlgProfileMgr::RenameProf()
 		}
 	}
 	if( bDefault ){
-		auto_strcat(szText, L"*");
+		wcscat(szText, L"*");
 	}
 	List_DeleteString( hwndList, nCurIndex );
 	List_InsertString( hwndList, nCurIndex, szText );
@@ -427,7 +427,7 @@ void CDlgProfileMgr::SetDefaultProf(int index)
 	WCHAR szProfileName[_MAX_PATH];
 	MyList_GetText( hwndList, index, szProfileName );
 	List_DeleteString( hwndList, index );
-	auto_strcat( szProfileName, L"*" );
+	wcscat( szProfileName, L"*" );
 	List_InsertString( hwndList, index, szProfileName );
 }
 

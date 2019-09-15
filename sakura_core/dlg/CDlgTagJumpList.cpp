@@ -761,7 +761,7 @@ bool CDlgTagJumpList::GetFullPathAndLine( int index, WCHAR *fullPath, int count,
 			wcscpy( dirFileName, p );
 		}else{
 			// 相対パス：連結する
-			auto_strcat( dirFileName, p );
+			wcscat( dirFileName, p );
 		}
 		fileNamePath = dirFileName;
 	}else{
@@ -1663,7 +1663,7 @@ WCHAR* CDlgTagJumpList::CopyDirDir( WCHAR* dest, const WCHAR* target, const WCHA
 	if( _IS_REL_PATH( target ) ){
 		wcscpy( dest, base );
 		AddLastYenFromDirectoryPath( dest );
-		auto_strcat( dest, target );
+		wcscat( dest, target );
 	}else{
 		wcscpy( dest, target );
 	}
