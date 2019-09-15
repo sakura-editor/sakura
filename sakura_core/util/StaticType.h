@@ -104,7 +104,7 @@ public:
 	CHAR_TYPE At(int nIndex) const{ return m_szData[nIndex]; }
 
 	//簡易コピー
-	void Assign(const CHAR_TYPE* src){ if(!src) m_szData[0]=0; else auto_strcpy_s(m_szData,_countof(m_szData),src); }
+	void Assign(const CHAR_TYPE* src){ if(!src) m_szData[0]=0; else wcscpy_s(m_szData,_countof(m_szData),src); }
 	Me& operator = (const CHAR_TYPE* src){ Assign(src); return *this; }
 
 	//各種メソッド

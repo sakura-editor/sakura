@@ -38,7 +38,7 @@ struct StringBufferW_{
 
 	StringBufferW_& operator = (const StringBufferW_& rhs)
 	{
-		auto_strcpy_s(pData,nDataCount,rhs.pData);
+		wcscpy_s(pData,nDataCount,rhs.pData);
 		return *this;
 	}
 };
@@ -51,7 +51,7 @@ struct StringBufferA_{
 
 	StringBufferA_& operator = (const StringBufferA_& rhs)
 	{
-		auto_strcpy_s(pData,nDataCount,rhs.pData);
+		strcpy_s(pData,nDataCount,rhs.pData);
 		return *this;
 	}
 };

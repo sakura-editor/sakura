@@ -397,20 +397,20 @@ WCHAR*	CKeyBind::MakeMenuLabel(const WCHAR* sName, const WCHAR* sKey)
 		if( !GetDllShareData().m_Common.m_sMainMenu.m_bMainMenuKeyParentheses
 			  && (((p = auto_strchr( sName, sKey[0])) != NULL) || ((p = auto_strchr( sName, _totlower(sKey[0]))) != NULL)) ){
 			// 欧文風、使用している文字をアクセスキーに
-			auto_strcpy_s( sLabel, _countof(sLabel), sName );
+			wcscpy_s( sLabel, _countof(sLabel), sName );
 			sLabel[p-sName] = L'&';
-			auto_strcpy_s( sLabel + (p-sName) + 1, _countof(sLabel), p );
+			wcscpy_s( sLabel + (p-sName) + 1, _countof(sLabel), p );
 		}
 		else if( (p = auto_strchr( sName, L'(' )) != NULL
 			  && (p = auto_strchr( p, sKey[0] )) != NULL) {
 			// (付その後にアクセスキー
-			auto_strcpy_s( sLabel, _countof(sLabel), sName );
+			wcscpy_s( sLabel, _countof(sLabel), sName );
 			sLabel[p-sName] = L'&';
-			auto_strcpy_s( sLabel + (p-sName) + 1, _countof(sLabel), p );
+			wcscpy_s( sLabel + (p-sName) + 1, _countof(sLabel), p );
 		}
 		else if (wcscmp( sName + wcslen(sName) - 3, L"..." ) == 0) {
 			// 末尾...
-			auto_strcpy_s( sLabel, _countof(sLabel), sName );
+			wcscpy_s( sLabel, _countof(sLabel), sName );
 			sLabel[wcslen(sName) - 3] = '\0';						// 末尾の...を取る
 			auto_strcat_s( sLabel, _countof(sLabel), L"(&" );
 			auto_strcat_s( sLabel, _countof(sLabel), sKey );
