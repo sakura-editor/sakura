@@ -1858,7 +1858,7 @@ void CShareData_IO::ShareData_IO_KeyWords( CDataProfile& cProfile )
 			for( j = 0; j < pCKeyWordSetMgr->m_nKeyWordNumArr[i]; ++j ){
 				//	May 25, 2003 genta 区切りをTABに変更
 				int kwlen = wcslen( pCKeyWordSetMgr->GetKeyWord( i, j ) );
-				auto_memcpy( pMem, pCKeyWordSetMgr->GetKeyWord( i, j ), kwlen );
+				wmemcpy( pMem, pCKeyWordSetMgr->GetKeyWord( i, j ), kwlen );
 				pMem += kwlen;
 				*pMem++ = L'\t';
 			}

@@ -131,7 +131,7 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						i += (nCharChars - 1);
 						continue;
 					}else{
-						auto_memcpy( &szWord[nWordIdx], &pLine[i], nCharChars );
+						wmemcpy( &szWord[nWordIdx], &pLine[i], nCharChars );
 						szWord[nWordIdx + nCharChars] = L'\0';
 						nWordIdx += (nCharChars);
 					}
@@ -360,14 +360,14 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 					){
 						nWordIdx = 0;
 
-						auto_memcpy( &szWord[nWordIdx], &pLine[i], nCharChars );
+						wmemcpy( &szWord[nWordIdx], &pLine[i], nCharChars );
 						szWord[nWordIdx + nCharChars] = L'\0';
 						nWordIdx += (nCharChars);
 
 						nMode = 1;
 					}else{
 						nWordIdx = 0;
-						auto_memcpy( &szWord[nWordIdx], &pLine[i], nCharChars );
+						wmemcpy( &szWord[nWordIdx], &pLine[i], nCharChars );
 						szWord[nWordIdx + nCharChars] = L'\0';
 						nWordIdx += (nCharChars);
 

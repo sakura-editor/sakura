@@ -1936,7 +1936,7 @@ LRESULT CEditWnd::DispatchEvent(
 		pLine += nLineOffset;
 		nLineLen -= nLineOffset;
 		size_t nEnd = t_min<size_t>(nLineLen, m_pShareData->m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>());
-		auto_memcpy( m_pShareData->m_sWorkBuffer.GetWorkBuffer<EDIT_CHAR>(), pLine, nEnd );
+		wmemcpy( m_pShareData->m_sWorkBuffer.GetWorkBuffer<EDIT_CHAR>(), pLine, nEnd );
 		return nLineLen;
 	}
 

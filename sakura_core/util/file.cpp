@@ -993,7 +993,7 @@ static void FileNameSepExt( const WCHAR *file, WCHAR* pszFile, WCHAR* pszExt )
 	}
 	const WCHAR* p = auto_strchr(folderPos, L'.');
 	if( p ){
-		auto_memcpy(pszFile, file, p - file);
+		wmemcpy(pszFile, file, p - file);
 		pszFile[p - file] = L'\0';
 		wcscpy(pszExt, p);
 	}else{

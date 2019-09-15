@@ -115,7 +115,7 @@ char *strncpy_ex(char *dst, size_t dst_count, const char* src, size_t src_count)
 	if( src_count >= dst_count ){
 		src_count = dst_count - 1;
 	}
-	auto_memcpy( dst, src, src_count );
+	memcpy( dst, src, src_count );
 	return dst + src_count;
 }
 

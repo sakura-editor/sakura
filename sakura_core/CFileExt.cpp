@@ -122,7 +122,7 @@ const WCHAR *CFileExt::GetExtFilter( void )
 
 		int i = (int)m_vstrFilter.size();
 		m_vstrFilter.resize( i + work.length() );
-		auto_memcpy( &m_vstrFilter[i], &work[0], work.length() );
+		wmemcpy( &m_vstrFilter[i], &work[0], work.length() );
 	}
 	if( 0 == m_nCount ){
 		m_vstrFilter.push_back( L'\0' );

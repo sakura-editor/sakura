@@ -192,7 +192,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 		for( ; i < nLineLen; ++i ){
 			//# バッファオーバーランチェック
 			if( szLine[i] == LTEXT('(') && (i - nBgn)< _countof(szFuncName) ){
-				auto_memcpy( szFuncName, &szLine[nBgn], i - nBgn );
+				wmemcpy( szFuncName, &szLine[nBgn], i - nBgn );
 				szFuncName[i - nBgn] = L'\0';
 				++i;
 				nBgn = i;

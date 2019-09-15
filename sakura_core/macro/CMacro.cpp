@@ -329,7 +329,7 @@ void CMacroParam::SetStringParam( const WCHAR* szParam, int nLength )
 		nLen = nLength;
 	}
 	m_pData = new WCHAR[nLen + 1];
-	auto_memcpy( m_pData, szParam, nLen );
+	wmemcpy( m_pData, szParam, nLen );
 	m_pData[nLen] = LTEXT('\0');
 	m_nDataLen = nLen;
 	m_eType = EMacroParamTypeStr;
@@ -1770,7 +1770,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 
 			WCHAR *Buffer = new WCHAR[ nMaxLen+1 ];
 			size_t nLen = t_min( sDefaultValue.length(), (size_t)nMaxLen);
-			auto_memcpy( Buffer, sDefaultValue.c_str(), nLen );
+			wmemcpy( Buffer, sDefaultValue.c_str(), nLen );
 			Buffer[nLen] = L'\0';
 			CDlgInput1 cDlgInput1;
 			if( cDlgInput1.DoModal( G_AppInstance(), View->GetHwnd(), L"sakura macro", sMessage.c_str(), nMaxLen, Buffer ) ) {
