@@ -412,9 +412,9 @@ WCHAR*	CKeyBind::MakeMenuLabel(const WCHAR* sName, const WCHAR* sKey)
 			// 末尾...
 			wcscpy_s( sLabel, _countof(sLabel), sName );
 			sLabel[wcslen(sName) - 3] = '\0';						// 末尾の...を取る
-			auto_strcat_s( sLabel, _countof(sLabel), L"(&" );
-			auto_strcat_s( sLabel, _countof(sLabel), sKey );
-			auto_strcat_s( sLabel, _countof(sLabel), L")..." );
+			wcscat_s( sLabel, _countof(sLabel), L"(&" );
+			wcscat_s( sLabel, _countof(sLabel), sKey );
+			wcscat_s( sLabel, _countof(sLabel), L")..." );
 		}
 		else {
 			auto_sprintf_s( sLabel, _countof(sLabel), L"%s(&%s)", sName, sKey );

@@ -367,7 +367,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 							wcscat( szFolder, L";" );
 							szFolder[nMaxPath-1] = L'\0';
 						}
-						auto_strcat_s( szFolder, nMaxPath, szFolderItem );
+						wcscat_s( szFolder, nMaxPath, szFolderItem );
 					}
 					::SetWindowText( hwnd, szFolder );
 				}
