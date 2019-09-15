@@ -96,7 +96,6 @@ const WCHAR* wcsistr( const WCHAR* s1, const WCHAR* s2 );
 const ACHAR* stristr( const ACHAR* s1, const ACHAR* s2 );
 inline WCHAR* wcsistr( WCHAR* s1, const WCHAR* s2 ){ return const_cast<WCHAR*>(wcsistr(static_cast<const WCHAR*>(s1),s2)); }
 inline ACHAR* stristr( ACHAR* s1, const ACHAR* s2 ){ return const_cast<ACHAR*>(stristr(static_cast<const ACHAR*>(s1),s2)); }
-#define _tcsistr wcsistr
 
 //大文字小文字を区別せずに文字列を検索（日本語対応版）
 const char* strchr_j(const char* s1, char c);				//!< strchr の日本語対応版。

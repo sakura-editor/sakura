@@ -203,7 +203,7 @@ void CMRUFile::Add( EditInfo* pEditInfo )
 		for( int i = 0 ; i < nSize; i++ ){
 			WCHAR szExceptMRU[_MAX_PATH];
 			CFileNameManager::ExpandMetaToFolder( m_pShareData->m_sHistory.m_aExceptMRU[i], szExceptMRU, _countof(szExceptMRU) );
-			if( NULL != _tcsistr( pEditInfo->m_szPath,  szExceptMRU) ){
+			if( NULL != wcsistr( pEditInfo->m_szPath,  szExceptMRU) ){
 				return;
 			}
 		}
