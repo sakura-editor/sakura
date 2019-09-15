@@ -279,7 +279,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				const WCHAR*	p;
 
 				pStr = pcDoc->m_cDocFile.GetFilePath();
-				pEnd = pStr - auto_strlen(pStr) - 1;
+				pEnd = pStr - wcslen(pStr) - 1;
 				for ( p = pStr; *p != '\0'; p++) {
 					if (*p == L'\\') {
 						pEnd = p;

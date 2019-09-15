@@ -630,7 +630,7 @@ bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 		}
 
 		//RxKey[999]=ColorName,RegexKeyword
-		if( auto_strlen(buff) < 12 ) continue;
+		if( wcslen(buff) < 12 ) continue;
 		if( auto_memcmp(buff, L"RxKey[", 6) != 0 ) continue;
 		if( auto_memcmp(&buff[9], L"]=", 2) != 0 ) continue;
 		WCHAR *p = auto_strstr(&buff[11], L",");

@@ -64,7 +64,7 @@ void CGrepAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
 */
 void CGrepAgent::CreateFolders( const WCHAR* pszPath, std::vector<std::wstring>& vPaths )
 {
-	const int nPathLen = auto_strlen( pszPath );
+	const int nPathLen = wcslen( pszPath );
 	auto szPath = std::make_unique<WCHAR[]>(nPathLen + 1);
 	auto szTmp = std::make_unique<WCHAR[]>(nPathLen + 1);
 	auto_strcpy( &szPath[0], pszPath );
@@ -711,7 +711,7 @@ int CGrepAgent::DoGrepTree(
 	int			nWork = 0;
 	int			nHitCountOld = -100;
 	bool		bOutputFolderName = false;
-	int			nBasePathLen = auto_strlen(pszBasePath);
+	int			nBasePathLen = wcslen(pszBasePath);
 	CGrepEnumOptions cGrepEnumOptions;
 	CGrepEnumFilterFiles cGrepEnumFilterFiles;
 	cGrepEnumFilterFiles.Enumerates( pszPath, cGrepEnumKeys, cGrepEnumOptions, cGrepExceptAbsFiles );
@@ -751,7 +751,7 @@ int CGrepAgent::DoGrepTree(
 		currentFile += L"\\";
 		currentFile += lpFileName;
 		int nBasePathLen2 = nBasePathLen + 1;
-		if( (int)auto_strlen(pszPath) < nBasePathLen2 ){
+		if( wcslen(pszPath) < nBasePathLen2 ){
 			nBasePathLen2 = nBasePathLen;
 		}
 
@@ -1196,7 +1196,7 @@ int CGrepAgent::DoGrepFile(
 			X / O  :                  (D)Folder(Abs) -> (G)RelPath(File)
 			X / X  : (H)FullPath
 */
-			auto pszWork = std::make_unique<wchar_t[]>(auto_strlen(pszFullPath) + auto_strlen(pszCodeName) + 10);
+			auto pszWork = std::make_unique<wchar_t[]>(wcslen(pszFullPath) + wcslen(pszCodeName) + 10);
 			wchar_t* szWork0 = &pszWork[0];
 			if( sGrepOption.bGrepOutputBaseFolder || sGrepOption.bGrepSeparateFolder ){
 				if( !bOutputBaseFolder && sGrepOption.bGrepOutputBaseFolder ){

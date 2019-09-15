@@ -553,7 +553,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 
 					// 存在しないパスの削除
 					for( int i = pRecent->GetItemCount() - 1; i >= 0; i-- ){
-						size_t nLen = auto_strlen(pRecent->GetItemText(i));
+						size_t nLen = wcslen(pRecent->GetItemText(i));
 						std::vector<WCHAR> vecPath(nLen + 2);
 						WCHAR* szPath = &vecPath[0];
 						auto_strcpy( szPath, pRecent->GetItemText(i) );

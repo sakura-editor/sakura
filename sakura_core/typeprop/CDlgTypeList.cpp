@@ -564,7 +564,7 @@ bool CDlgTypeList::CopyType()
 	for(int i = 0; i < nNewTypeIndex; i++){
 		if( bUpdate ){
 			WCHAR* p = NULL;
-			for(int k = (int)auto_strlen(type.m_szTypeName) - 1; 0 <= k; k--){
+			for(int k = (int)wcslen(type.m_szTypeName) - 1; 0 <= k; k--){
 				if( WCODE::Is09(type.m_szTypeName[k]) ){
 					p = &type.m_szTypeName[k];
 				}else{
@@ -579,10 +579,10 @@ bool CDlgTypeList::CopyType()
 			}
 			WCHAR szNum[12];
 			auto_sprintf( szNum, L"%d", n );
-			int nLen = auto_strlen( szNum );
+			int nLen = wcslen( szNum );
 			WCHAR szTemp[_countof(type.m_szTypeName) + 12];
 			auto_strcpy( szTemp, type.m_szTypeName );
-			int nTempLen = auto_strlen( szTemp );
+			int nTempLen = wcslen( szTemp );
 			CNativeW cmem;
 			// バッファをはみ出さないように
 			LimitStringLengthW( szTemp, nTempLen, _countof(type.m_szTypeName) - nLen - 1, cmem );

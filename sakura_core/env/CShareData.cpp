@@ -1004,7 +1004,7 @@ void CShareData::TraceOut( LPCWSTR lpFmt, ... )
 	va_end( argList );
 	if( -1 == ret ){
 		// 切り詰められた
-		ret = auto_strlen( m_pShareData->m_sWorkBuffer.GetWorkBuffer<WCHAR>() );
+		ret = wcslen( m_pShareData->m_sWorkBuffer.GetWorkBuffer<WCHAR>() );
 	}else if( ret < 0 ){
 		// 保護コード:受け側はwParam→size_tで符号なしのため
 		ret = 0;

@@ -62,7 +62,7 @@ bool CRecentFile::DataToReceiveType( const EditInfo** dst, const EditInfo* src )
 
 bool CRecentFile::TextToDataType( EditInfo* dst, LPCWSTR pszText ) const
 {
-	if( _countof(dst->m_szPath) < auto_strlen(pszText) + 1 ){
+	if( _countof(dst->m_szPath) < wcslen(pszText) + 1 ){
 		return false;
 	}
 	wcscpy(dst->m_szPath, pszText);

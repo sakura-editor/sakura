@@ -1234,7 +1234,7 @@ bool CControlTray::OpenNewEditor(
 	CResponsefileDeleter respDeleter;
 	if( szCmdLineOption ){
 		// Grepなどで入りきらない場合はレスポンスファイルを利用する
-		if( cCmdLineBuf.max_size() < cCmdLineBuf.size() + auto_strlen(szCmdLineOption) ){
+		if( cCmdLineBuf.max_size() < cCmdLineBuf.size() + wcslen(szCmdLineOption) ){
 			WCHAR szIniDir[_MAX_PATH];
 			GetInidir(szIniDir);
 			LPWSTR pszTempFile = _wtempnam(szIniDir, L"skr_resp");

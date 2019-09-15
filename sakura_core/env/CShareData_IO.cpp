@@ -1689,7 +1689,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 							types.m_RegexKeywordArr[j].m_nColorIndex = COLORIDX_REGEX1;
 						}
 						if( pKeyword[nPos] ){
-							nPos += auto_strlen(&pKeyword[nPos]) + 1;
+							nPos += wcslen(&pKeyword[nPos]) + 1;
 						}
 					}
 				}else{
@@ -1704,7 +1704,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 					GetColorNameByIndex( types.m_RegexKeywordArr[j].m_nColorIndex ),
 					&pKeyword[nPos]);
 				cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) );
-				nPos += auto_strlen(&pKeyword[nPos]) + 1;
+				nPos += wcslen(&pKeyword[nPos]) + 1;
 			}
 		}
 		if( cProfile.IsReadingMode() ){

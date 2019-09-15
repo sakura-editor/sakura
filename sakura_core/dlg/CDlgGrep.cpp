@@ -713,7 +713,7 @@ int CDlgGrep::GetData( void )
 	m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder = m_bGrepOutputBaseFolder;
 	m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder = m_bGrepSeparateFolder;
 
-	if( 0 != auto_strlen( m_szFile ) ){
+	if( 0 != wcslen( m_szFile ) ){
 		CGrepEnumKeys enumKeys;
 		int nErrorNo = enumKeys.SetFileKeys( m_szFile );
 		if( 1 == nErrorNo ){
@@ -761,7 +761,7 @@ int CDlgGrep::GetData( void )
 				::GetCurrentDirectory( nMaxPath, szFolderItem + 1 );
 				auto_strcat(szFolderItem, L"\"");
 			}
-			int nFolderItemLen = auto_strlen( szFolderItem );
+			int nFolderItemLen = wcslen( szFolderItem );
 			if( nMaxPath < nFolderLen + nFolderItemLen + 1 ){
 				WarningMessage(	GetHwnd(), LS(STR_DLGGREP6) );
 				return FALSE;
@@ -770,7 +770,7 @@ int CDlgGrep::GetData( void )
 				auto_strcat( szFolder, L";" );
 			}
 			auto_strcat( szFolder, szFolderItem );
-			nFolderLen = auto_strlen( szFolder );
+			nFolderLen = wcslen( szFolder );
 		}
 		auto_strcpy( m_szFolder, szFolder );
 	}
