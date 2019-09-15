@@ -23,6 +23,9 @@
     <Exec Command="where &quot;$(PATH);$(ProgramW6432)\Git\Cmd;$(ProgramFiles)\Git\Cmd:git&quot;" ConsoleToMSBuild="true">
       <Output TaskParameter="ConsoleOutput" PropertyName="GitCmd" />
     </Exec>
+    <PropertyGroup>
+      <GitCmd>$([System.Text.RegularExpressions.Regex]::Replace('$(GitCmd)', '^([^;]+);.*', '$1'))</GitCmd>
+    </PropertyGroup>
   </Target>
   <Target Name="UpdateGoogleTest" DependsOnTargets="FindGit" Condition="!Exists('$(GoogleTestSourceDir)\CMakeLists.txt')">
     <Exec Command="&quot;$(GitCmd)&quot; submodule init" WorkingDirectory="$(GoogleTestSourceDir)" />
