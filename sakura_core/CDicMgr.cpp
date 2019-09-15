@@ -155,7 +155,7 @@ int CDicMgr::HokanSearch(
 		if( bHokanLoHiCase ){	/* 英大文字小文字を同一視する */
 			nRet = auto_memicmp( pszKey, szLine.c_str(), nKeyLen );
 		}else{
-			nRet = auto_memcmp( pszKey, szLine.c_str(), nKeyLen );
+			nRet = wmemcmp( pszKey, szLine.c_str(), nKeyLen );
 		}
 		if( 0 == nRet ){
 			vKouho.push_back( szLine );

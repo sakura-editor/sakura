@@ -173,7 +173,7 @@ static EEolType GetEOLTypeUniBE( const wchar_t* pszData, int nDataLen )
 
 	for( int i = 1; i < EOL_TYPE_NUM; ++i ){
 		CEol cEol((EEolType)i);
-		if( cEol.GetLen()<=nDataLen && 0==auto_memcmp(pszData,aEolTable[i],cEol.GetLen()) ){
+		if( cEol.GetLen()<=nDataLen && 0==wmemcmp(pszData,aEolTable[i],cEol.GetLen()) ){
 			return gm_pnEolTypeArr[i];
 		}
 	}

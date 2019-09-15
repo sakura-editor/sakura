@@ -275,7 +275,7 @@ int CEditView::HokanSearchByFile(
 			if( bHokanLoHiCase ){
 				nRet = auto_memicmp( pszKey, word, nKeyLen );
 			}else{
-				nRet = auto_memcmp( pszKey, word, nKeyLen );
+				nRet = wmemcmp( pszKey, word, nKeyLen );
 			}
 			if( nRet!=0 )continue;
 

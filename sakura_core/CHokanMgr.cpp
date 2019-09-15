@@ -329,7 +329,7 @@ void CHokanMgr::HokanSearchByKeyword(
 			if( bHokanLoHiCase ){
 				nRet = auto_memicmp(pszCurWord, word, nKeyLen );
 			}else{
-				nRet = auto_memcmp(pszCurWord, word, nKeyLen );
+				nRet = wmemcmp(pszCurWord, word, nKeyLen );
 			}
 			if( nRet != 0 ){
 				continue;

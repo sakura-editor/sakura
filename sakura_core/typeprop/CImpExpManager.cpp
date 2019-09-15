@@ -631,8 +631,8 @@ bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 
 		//RxKey[999]=ColorName,RegexKeyword
 		if( wcslen(buff) < 12 ) continue;
-		if( auto_memcmp(buff, L"RxKey[", 6) != 0 ) continue;
-		if( auto_memcmp(&buff[9], L"]=", 2) != 0 ) continue;
+		if( wmemcmp(buff, L"RxKey[", 6) != 0 ) continue;
+		if( wmemcmp(&buff[9], L"]=", 2) != 0 ) continue;
 		WCHAR *p = auto_strstr(&buff[11], L",");
 		if( p )
 		{
@@ -744,8 +744,8 @@ bool CImpExpKeyHelp::Import( const wstring& sFileName, wstring& sErrMsg )
 
 		//KDct[99]=ON/OFF,DictAbout,KeyHelpPath
 		if( buff.length() < 10 ||
-			auto_memcmp(buff.c_str(), LTEXT("KDct["), 5) != 0 ||
-			auto_memcmp(&buff[7], LTEXT("]="), 2) != 0
+			wmemcmp(buff.c_str(), LTEXT("KDct["), 5) != 0 ||
+			wmemcmp(&buff[7], LTEXT("]="), 2) != 0
 			){
 			//	2007.02.03 genta 処理を継続
 			++invalid_record;
@@ -1127,7 +1127,7 @@ bool CImpExpKeyWord::Import( const wstring& sFileName, wstring& sErrMsg )
 		if (szLine.length() == 0) {
 			continue;
 		}
-		if (2 <= szLine.length() && 0 == auto_memcmp( szLine.c_str(), L"//", 2 )) {
+		if (2 <= szLine.length() && 0 == wmemcmp( szLine.c_str(), L"//", 2 )) {
 			if (szLine == WSTR_CASE_TRUE) {
 				m_bCase = true;
 			}

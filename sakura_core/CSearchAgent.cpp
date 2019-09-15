@@ -330,7 +330,7 @@ const wchar_t* CSearchAgent::SearchStringWord(
 			if( searchWords[iSW].second == nNextWordTo2 - nNextWordFrom2 ){
 				/* 1==大文字小文字の区別 */
 				if( (!bLoHiCase && 0 == auto_memicmp( &(pLine[nNextWordFrom2]) , searchWords[iSW].first, searchWords[iSW].second ) ) ||
-					(bLoHiCase && 0 == auto_memcmp( &(pLine[nNextWordFrom2]) , searchWords[iSW].first, searchWords[iSW].second ) )
+					(bLoHiCase && 0 == wmemcmp( &(pLine[nNextWordFrom2]) , searchWords[iSW].first, searchWords[iSW].second ) )
 				){
 					*pnMatchLen = searchWords[iSW].second;
 					return &pLine[nNextWordFrom2];
@@ -604,7 +604,7 @@ int CSearchAgent::SearchWord(
 								const wchar_t* pData = pDocLine->GetPtr();	// 2002/2/10 aroka CMemory変更
 								/* 1==大文字小文字の区別 */
 								if( (!sSearchOption.bLoHiCase && 0 == auto_memicmp( &(pData[nNextWordFrom2]) , searchWords[iSW].first, searchWords[iSW].second ) ) ||
-									(sSearchOption.bLoHiCase && 0 ==	 auto_memcmp( &(pData[nNextWordFrom2]) , searchWords[iSW].first, searchWords[iSW].second ) )
+									(sSearchOption.bLoHiCase && 0 ==	 wmemcmp( &(pData[nNextWordFrom2]) , searchWords[iSW].first, searchWords[iSW].second ) )
 								){
 									pMatchRange->SetFromY(nLinePos);	// マッチ行
 									pMatchRange->SetToY  (nLinePos);	// マッチ行

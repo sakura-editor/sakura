@@ -54,8 +54,8 @@ struct SEolDefinition{
 	const ACHAR*	m_szDataA;
 	int				m_nLen;
 
-	bool StartsWith(const WCHAR* pData, int nLen) const{ return m_nLen<=nLen && 0==auto_memcmp(pData,m_szDataW,m_nLen); }
-	bool StartsWith(const ACHAR* pData, int nLen) const{ return m_nLen<=nLen && m_szDataA[0] != '\0' && 0==auto_memcmp(pData,m_szDataA,m_nLen); }
+	bool StartsWith(const WCHAR* pData, int nLen) const{ return m_nLen<=nLen && 0==wmemcmp(pData,m_szDataW,m_nLen); }
+	bool StartsWith(const ACHAR* pData, int nLen) const{ return m_nLen<=nLen && m_szDataA[0] != '\0' && 0==amemcmp(pData,m_szDataA,m_nLen); }
 };
 extern const SEolDefinition g_aEolTable[];
 
