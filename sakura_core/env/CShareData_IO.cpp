@@ -831,7 +831,7 @@ static EFunctionCode GetFunctionStrToFunctionCode(const WCHAR* pszFuncName)
 		n = GetPlugCmdInfoByName(pszFuncName);
 	}else if (WCODE::Is09(pszFuncName[0]) 
 	  && (pszFuncName[1] == L'\0' || WCODE::Is09(pszFuncName[1]))) {
-		n = (EFunctionCode)auto_atol(pszFuncName);
+		n = (EFunctionCode)_wtol(pszFuncName);
 	}else {
 		n = CSMacroMgr::GetFuncInfoByName(0, pszFuncName, NULL);
 	}
@@ -2168,7 +2168,7 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 			p = szLine;
 			pn = wcschr( p, L',' );
 			if (pn != NULL)		*pn++ = L'\0';
-			pcMenu->m_nLevel = auto_atol( p );
+			pcMenu->m_nLevel = _wtol( p );
 			if (pn == NULL) {
 				continue;
 			}
@@ -2177,7 +2177,7 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 			p = pn;
 			pn = wcschr( p, L',' );
 			if (pn != NULL)		*pn++ = L'\0';
-			pcMenu->m_nType = (EMainMenuType)auto_atol( p );
+			pcMenu->m_nType = (EMainMenuType)_wtol( p );
 			if (pn == NULL) {
 				continue;
 			}

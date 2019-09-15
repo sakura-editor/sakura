@@ -944,7 +944,7 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 					{
 						if( WCODE::Is09(*p) )
 						{
-							n = (EFunctionCode)auto_atol(p);
+							n = (EFunctionCode)_wtol(p);
 						}
 						else
 						{
