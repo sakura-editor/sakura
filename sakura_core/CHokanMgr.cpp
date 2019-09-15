@@ -327,7 +327,7 @@ void CHokanMgr::HokanSearchByKeyword(
 			const wchar_t* word = keywordMgr.GetKeyWord(kwdset,i);
 			int nRet;
 			if( bHokanLoHiCase ){
-				nRet = auto_memicmp(pszCurWord, word, nKeyLen );
+				nRet = wmemicmp(pszCurWord, word, nKeyLen );
 			}else{
 				nRet = wmemcmp(pszCurWord, word, nKeyLen );
 			}

@@ -125,7 +125,7 @@ const wchar_t* wcsistr( const wchar_t* s1, const wchar_t* s2 )
 	const wchar_t* p=s1;
 	const wchar_t* q=wcschr(s1,L'\0')-len2;
 	while(p<=q){
-		if(auto_memicmp(p,s2,len2)==0)return p;
+		if(wmemicmp(p,s2,len2)==0)return p;
 		p++;
 	}
 	return NULL;
@@ -138,7 +138,7 @@ const char* stristr(const char* s1, const char* s2)
 	const char* p=s1;
 	const char* q=strchr(s1,L'\0')-len2;
 	while(p<=q){
-		if(auto_memicmp(p,s2,len2)==0)return p;
+		if(amemicmp(p,s2,len2)==0)return p;
 		p++;
 	}
 	return NULL;

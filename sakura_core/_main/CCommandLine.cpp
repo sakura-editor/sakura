@@ -141,7 +141,7 @@ int CCommandLine::CheckCommandLine(
 	{
 		if( len >= ptr->len &&	//	長さが足りているか
 			( str[ptr->len] == '=' || str[ptr->len] == ':' ) &&	//	オプション部分の長さチェック
-			auto_memicmp( str, ptr->opt, ptr->len ) == 0 )	//	文字列の比較	// 2006.10.25 ryoji memcmp() -> _memicmp()
+			wmemicmp( str, ptr->opt, ptr->len ) == 0 )	//	文字列の比較	// 2006.10.25 ryoji memcmp() -> _memicmp()
 		{
 			*arg = str + ptr->len + 1;				// 引数開始位置
 			*arglen = len - ptr->len - 1;
@@ -164,7 +164,7 @@ int CCommandLine::CheckCommandLine(
 	for( ptr = _COptWoA; ptr->opt != NULL; ptr++ )
 	{
 		if( len == ptr->len &&	//	長さチェック
-			auto_memicmp( str, ptr->opt, ptr->len ) == 0 )	//	文字列の比較
+			wmemicmp( str, ptr->opt, ptr->len ) == 0 )	//	文字列の比較
 		{
 			*arglen = 0;
 			return ptr->value;
