@@ -751,7 +751,7 @@ int CGrepAgent::DoGrepTree(
 		currentFile += L"\\";
 		currentFile += lpFileName;
 		int nBasePathLen2 = nBasePathLen + 1;
-		if( wcslen(pszPath) < nBasePathLen2 ){
+		if( (int)wcslen(pszPath) < nBasePathLen2 ){
 			nBasePathLen2 = nBasePathLen;
 		}
 

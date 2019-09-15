@@ -395,7 +395,7 @@ WCHAR*	CKeyBind::MakeMenuLabel(const WCHAR* sName, const WCHAR* sKey)
 	}
 	else {
 		if( !GetDllShareData().m_Common.m_sMainMenu.m_bMainMenuKeyParentheses
-			  && (((p = wcschr( sName, sKey[0])) != NULL) || ((p = auto_strchr( sName, _totlower(sKey[0]))) != NULL)) ){
+			  && (((p = wcschr( sName, sKey[0])) != NULL) || ((p = wcschr( sName, _totlower(sKey[0]))) != NULL)) ){
 			// 欧文風、使用している文字をアクセスキーに
 			wcscpy_s( sLabel, _countof(sLabel), sName );
 			sLabel[p-sName] = L'&';
@@ -412,9 +412,9 @@ WCHAR*	CKeyBind::MakeMenuLabel(const WCHAR* sName, const WCHAR* sKey)
 			// 末尾...
 			wcscpy_s( sLabel, _countof(sLabel), sName );
 			sLabel[wcslen(sName) - 3] = '\0';						// 末尾の...を取る
-			wcscat_s( sLabel, _countof(sLabel), L"(&" );
-			wcscat_s( sLabel, _countof(sLabel), sKey );
-			wcscat_s( sLabel, _countof(sLabel), L")..." );
+			wcscat_s( sLabel, L"(&" );
+			wcscat_s( sLabel, sKey );
+			wcscat_s( sLabel, L")..." );
 		}
 		else {
 			auto_sprintf_s( sLabel, _countof(sLabel), L"%s(&%s)", sName, sKey );
