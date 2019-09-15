@@ -61,7 +61,7 @@ public:
 	LPCWSTR GetExt( bool bWithoutDot = false ) const
 	{
 		const WCHAR* head = c_str();
-		const WCHAR* p = auto_strchr(head,L'\0') - 1;
+		const WCHAR* p = wcschr(head,L'\0') - 1;
 		while(p>=head){
 			if(*p==L'.')break;
 			if(*p==L'\\')break;
@@ -71,7 +71,7 @@ public:
 		if(p>=head && *p==L'.'){
 			return bWithoutDot ? p+1 : p;	//bWithoutDot==trueならドットなしを返す
 		}else{
-			return auto_strchr(head,L'\0');
+			return wcschr(head,L'\0');
 		}
 	}
 };

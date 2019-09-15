@@ -985,13 +985,13 @@ static void FileNameSepExt( const WCHAR *file, WCHAR* pszFile, WCHAR* pszExt )
 	const WCHAR* folderPos = file;
 	const WCHAR* x = folderPos;
 	while( x ){
-		x = auto_strchr(folderPos, L'\\');
+		x = wcschr(folderPos, L'\\');
 		if( x ){
 			x++;
 			folderPos = x;
 		}
 	}
-	const WCHAR* p = auto_strchr(folderPos, L'.');
+	const WCHAR* p = wcschr(folderPos, L'.');
 	if( p ){
 		wmemcpy(pszFile, file, p - file);
 		pszFile[p - file] = L'\0';

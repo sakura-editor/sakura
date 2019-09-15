@@ -1083,7 +1083,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 					p = szKeyData;
 					// keycode取得
 					int keycode;
-					pn = auto_strchr(p,',');
+					pn = wcschr(p,',');
 					if (pn == NULL)	continue;
 					*pn = 0;
 					nRes = scan_ints(p, L"%04x", &keycode);
@@ -1096,7 +1096,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 						EFunctionCode n;
 						//機能名を数値に置き換える。(数値の機能名もあるかも)
 						//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-						pn = auto_strchr(p,',');
+						pn = wcschr(p,',');
 						if (pn == NULL)	break;
 						*pn = 0;
 						n = GetFunctionStrToFunctionCode(p);

@@ -144,7 +144,7 @@ template <size_t cchText>
 static bool MyList_GetText(HWND hwndList, int index, WCHAR(&szText)[cchText])
 {
 	List_GetText( hwndList, index, szText );
-	WCHAR* pos = auto_strchr( szText, L'*' );
+	WCHAR* pos = wcschr( szText, L'*' );
 	if( pos != NULL ){
 		*pos = L'\0';
 		return true;

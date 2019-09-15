@@ -356,7 +356,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 						WCHAR szFolderItem[nMaxPath];
 						wcsncpy( szFolderItem, vPaths[i].c_str(), nMaxPath );
 						szFolderItem[nMaxPath-1] = L'\0';
-						if( auto_strchr( szFolderItem, L';' ) ){
+						if( wcschr( szFolderItem, L';' ) ){
 							szFolderItem[0] = L'"';
 							wcsncpy( szFolderItem + 1, vPaths[i].c_str(), nMaxPath - 1 );
 							szFolderItem[nMaxPath-1] = L'\0';
@@ -756,7 +756,7 @@ int CDlgGrep::GetData( void )
 			WCHAR szFolderItem[nMaxPath];
 			::GetCurrentDirectory( nMaxPath, szFolderItem );
 			// ;がフォルダ名に含まれていたら""で囲う
-			if( auto_strchr( szFolderItem, L';' ) ){
+			if( wcschr( szFolderItem, L';' ) ){
 				szFolderItem[0] = L'"';
 				::GetCurrentDirectory( nMaxPath, szFolderItem + 1 );
 				wcscat(szFolderItem, L"\"");
@@ -826,7 +826,7 @@ LPVOID CDlgGrep::GetHelpIdTable(void)
 
 static void SetGrepFolder( HWND hwndCtrl, LPCWSTR folder )
 {
-	if( auto_strchr( folder, L';') ){
+	if( wcschr( folder, L';') ){
 		WCHAR szQuoteFolder[MAX_PATH];
 		szQuoteFolder[0] = L'"';
 		wcscpy( szQuoteFolder + 1, folder );

@@ -933,7 +933,7 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 				//後に続くトークン
 				for(int j=0;j<8;j++)
 				{
-					wchar_t* q=auto_strchr(p,L',');
+					wchar_t* q=wcschr(p,L',');
 					if(!q)	{ bVer2= false; break;}
 					*q=L'\0';
 
