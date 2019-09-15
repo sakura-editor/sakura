@@ -1550,7 +1550,7 @@ void CDlgTagJumpList::find_key_for_LinearSearch(
 			if( rule->bTagJumpExactMatch ){
 				// 完全一致
 				if( rule->bTagJumpICase ){
-					cmp = auto_stricmp( s[0], paszKeyword );
+					cmp = my_stricmp( s[0], paszKeyword );
 				}else{
 					cmp = auto_strcmp( s[0], paszKeyword );
 				}

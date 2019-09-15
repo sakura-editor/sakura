@@ -262,7 +262,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 				for( pAlias = &AliasList[0]; nMetaLen < pAlias->nLenth; pAlias++ )
 					; // 読み飛ばす
 				for( ; nMetaLen == pAlias->nLenth; pAlias++ ){
-					if( 0 == auto_stricmp( pAlias->szAlias, szMeta ) ){
+					if( 0 == wmemicmp( pAlias->szAlias, szMeta ) ){
 						wcscpy( szMeta, pAlias->szOrig );
 						break;
 					}

@@ -120,7 +120,7 @@ int CALLBACK CDlgFuncList::CompareFunc_Asc( LPARAM lParam1, LPARAM lParam2, LPAR
 	}
 	//	Apr. 23, 2005 genta 行番号を左端へ
 	if( FL_COL_NAME == pcDlgFuncList->m_nSortCol){	/* 名前でソート */
-		return auto_stricmp( pcFuncInfo1->m_cmemFuncName.GetStringPtr(), pcFuncInfo2->m_cmemFuncName.GetStringPtr() );
+		return wmemicmp( pcFuncInfo1->m_cmemFuncName.GetStringPtr(), pcFuncInfo2->m_cmemFuncName.GetStringPtr() );
 	}
 	//	Apr. 23, 2005 genta 行番号を左端へ
 	if( FL_COL_ROW == pcDlgFuncList->m_nSortCol){	/* 行（＋桁）でソート */
@@ -1543,7 +1543,7 @@ void CDlgFuncList::SetTree(bool tagjump, bool nolabel)
 		*/
 		bool bFileSelect = false;
 		if( pcFuncInfo->m_cmemFileName.GetStringPtr() && m_pcFuncInfoArr->m_szFilePath[0] ){
-			if( 0 == auto_stricmp( pcFuncInfo->m_cmemFileName.GetStringPtr(), m_pcFuncInfoArr->m_szFilePath.c_str() ) ){
+			if( 0 == wmemicmp( pcFuncInfo->m_cmemFileName.GetStringPtr(), m_pcFuncInfoArr->m_szFilePath.c_str() ) ){
 				bFileSelect = true;
 			}
 		}else{
@@ -1797,7 +1797,7 @@ void CDlgFuncList::SetTreeFileSub( HTREEITEM hParent, const WCHAR* pszFile )
 		tvis.item.pszText = const_cast<WCHAR*>(pFile);
 		tvis.item.lParam  = -1;
 		HTREEITEM hItem = TreeView_InsertItem(hwndTree, &tvis);
-		if( pszFile && auto_stricmp(pszFile, pFile) == 0 ){
+		if( pszFile && wmemicmp(pszFile, pFile) == 0 ){
 			hItemSelected = hItem;
 		}
 	}

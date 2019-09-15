@@ -295,7 +295,7 @@ static bool IsProfileDuplicate(HWND hwndList, LPCWSTR szProfName, int skipIndex)
 		}
 		WCHAR szProfileName[_MAX_PATH];
 		MyList_GetText( hwndList, i, szProfileName );
-		if( 0 == auto_stricmp( szProfName, szProfileName ) ){
+		if( 0 == wmemicmp( szProfName, szProfileName ) ){
 			return true;
 		}
 	}

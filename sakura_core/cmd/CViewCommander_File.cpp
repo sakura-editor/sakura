@@ -115,11 +115,11 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 			WCHAR szExt  [_MAX_EXT];
 			my_splitpath_t(defName.c_str(), szPath, szDir, szName, szExt);
 			wcscat(szPath, szDir);
-			if( 0 == auto_stricmp(defName.c_str(), szPath) ){
+			if( 0 == wmemicmp(defName.c_str(), szPath) ){
 				// defNameはフォルダ名だった
 			}else{
 				CFilePath path = defName.c_str();
-				if( 0 == auto_stricmp(path.GetDirPath().c_str(), szPath) ){
+				if( 0 == wmemicmp(path.GetDirPath().c_str(), szPath) ){
 					// フォルダ名までは実在している
 					sLoadInfo.cFilePath = defName.c_str();
 				}

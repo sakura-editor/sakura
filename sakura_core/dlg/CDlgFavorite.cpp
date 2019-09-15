@@ -1165,7 +1165,7 @@ static int CALLBACK CompareListViewFunc( LPARAM lParamItem1, LPARAM lParamItem2,
 		nRet = lParamItem1 - lParamItem2;
 	}else{
 		const CRecent* p = pCompInfo->pRecent;
-		nRet = auto_stricmp(p->GetItemText((int)lParamItem1), p->GetItemText((int)lParamItem2));
+		nRet = wmemicmp(p->GetItemText((int)lParamItem1), p->GetItemText((int)lParamItem2));
 	}
 	return pCompInfo->bAbsOrder ? nRet : -nRet;
 }
