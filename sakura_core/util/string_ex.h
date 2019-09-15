@@ -78,8 +78,6 @@ inline wchar_t my_towupper2( wchar_t c ){ return my_towupper(c); }
 inline wchar_t my_towlower2( wchar_t c ){ return my_towlower(c); }
 int skr_towupper( int c );
 int skr_towlower( int c );
-#define _tcs_toupper skr_towupper
-#define _tcs_tolower skr_towlower
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           拡張・独自実装                    //
@@ -106,7 +104,6 @@ inline char* strchr_j ( char* s1, char c         ){ return const_cast<char*>(str
 inline char* strichr_j( char* s1, char c         ){ return const_cast<char*>(strichr_j((const char*)s1, c )); }
 inline char* strstr_j ( char* s1, const char* s2 ){ return const_cast<char*>(strstr_j ((const char*)s1, s2)); }
 inline char* stristr_j( char* s1, const char* s2 ){ return const_cast<char*>(stristr_j((const char*)s1, s2)); }
-#define _tcsistr_j wcsistr
 
 template <class CHAR_TYPE>
 CHAR_TYPE* my_strtok(
@@ -247,9 +244,6 @@ inline int wcsncmp_auto(const wchar_t* strData1, const wchar_t* szData2)
 //strncmpの文字数指定をliteralData2の大きさで取得してくれる版
 #define strncmp_literal(strData1, literalData2) \
 	::strncmp(strData1, literalData2, _countof(literalData2) - 1 ) //※終端ヌルを含めないので、_countofからマイナス1する
-
-//WCHAR
-#define _tcsncmp_literal wcsncmp_literal
 
 #endif /* SAKURA_STRING_EX_29EB1DD7_7259_4D6C_A651_B9174E5C3D3C9_H_ */
 /*[EOF]*/

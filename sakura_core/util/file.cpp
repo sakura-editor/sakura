@@ -1039,7 +1039,7 @@ int FileMatchScore( const WCHAR *file1, const WCHAR *file2 )
 				int chars2 = (Int)CNativeW::GetSizeOfChar(file2, len2, m);
 				if( chars1 == chars2 ){
 					if( chars1 == 1 ){
-						if( _tcs_tolower(file1[pos1]) == _tcs_tolower(file2[m]) ){
+						if( skr_towlower(file1[pos1]) == skr_towlower(file2[m]) ){
 							tmpScore += chars1;
 						}else{
 							break;
