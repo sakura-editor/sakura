@@ -1433,7 +1433,7 @@ void CDlgTagJumpList::find_key_for_BinarySearch(
 
 		// 完全一致検索
 		int  cmp;
-		cmp = auto_strcmp( s[0], paszKeyword );
+		cmp = strcmp( s[0], paszKeyword );
 
 		if( 0 == cmp ){
 			//一致
@@ -1552,7 +1552,7 @@ void CDlgTagJumpList::find_key_for_LinearSearch(
 				if( rule->bTagJumpICase ){
 					cmp = my_stricmp( s[0], paszKeyword );
 				}else{
-					cmp = auto_strcmp( s[0], paszKeyword );
+					cmp = strcmp( s[0], paszKeyword );
 				}
 			}else{
 				// 前方一致

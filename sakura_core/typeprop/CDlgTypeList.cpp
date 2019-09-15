@@ -523,7 +523,7 @@ bool CDlgTypeList::InitializeType( void )
 			}
 			const STypeConfigMini* typeMini2;
 			CDocTypeManager().GetTypeConfigMini(CTypeConfig(i), &typeMini2);
-			if( auto_strcmp(typeMini2->m_szTypeName, type->m_szTypeName) == 0 ){
+			if( wcscmp(typeMini2->m_szTypeName, type->m_szTypeName) == 0 ){
 				i = 0;
 				bUpdate = true;
 			}
@@ -592,7 +592,7 @@ bool CDlgTypeList::CopyType()
 		}
 		const STypeConfigMini* typeMini;
 		CDocTypeManager().GetTypeConfigMini(CTypeConfig(i), &typeMini);
-		if( auto_strcmp(typeMini->m_szTypeName, type.m_szTypeName) == 0 ){
+		if( wcscmp(typeMini->m_szTypeName, type.m_szTypeName) == 0 ){
 			i = -1;
 			bUpdate = true;
 		}

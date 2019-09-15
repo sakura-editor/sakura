@@ -672,7 +672,7 @@ LRESULT CControlTray::DispatchEvent(
 			switch( (e_PM_CHANGESETTING_SELECT)lParam ){
 			case PM_CHANGESETTING_ALL:
 				{
-					bool bChangeLang = auto_strcmp( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll, m_szLanguageDll ) != 0;
+					bool bChangeLang = wcscmp( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll, m_szLanguageDll ) != 0;
 					wcscpy( m_szLanguageDll, GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );
 					std::vector<std::wstring> values;
 					if( bChangeLang ){
@@ -765,7 +765,7 @@ LRESULT CControlTray::DispatchEvent(
 					int nAddNameNum = nInsert + 1;
 					auto_sprintf( type->m_szTypeName, LS(STR_TRAY_TYPE_NAME), nAddNameNum ); 
 					for(int k = 1; k < m_pShareData->m_nTypesCount; k++){
-						if( auto_strcmp(types[k]->m_szTypeName, type->m_szTypeName) == 0 ){
+						if( wcscmp(types[k]->m_szTypeName, type->m_szTypeName) == 0 ){
 							nAddNameNum++;
 							auto_sprintf( type->m_szTypeName, LS(STR_TRAY_TYPE_NAME), nAddNameNum ); 
 							k = 0;

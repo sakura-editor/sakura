@@ -324,7 +324,7 @@ void CDlgProfileMgr::CreateProf()
 			return;
 		}
 	}
-	if( 0 == auto_strcmp( szText, L".." ) ){
+	if( 0 == wcscmp( szText, L".." ) ){
 		ErrorMessage( GetHwnd(), LS(STR_DLGPROFILE_ERR_INVALID_CHAR) );
 		return;
 	}
@@ -375,7 +375,7 @@ void CDlgProfileMgr::RenameProf()
 	if( szText[0] == L'\0' ){
 		return;
 	}
-	if( 0 == auto_strcmp( szTextOld, szText ) ){
+	if( 0 == wcscmp( szTextOld, szText ) ){
 		return; // 未変更
 	}
 	std::wstring strText = szText;
@@ -386,7 +386,7 @@ void CDlgProfileMgr::RenameProf()
 			return;
 		}
 	}
-	if( 0 == auto_strcmp( szText, L".." ) ){
+	if( 0 == wcscmp( szText, L".." ) ){
 		ErrorMessage( GetHwnd(), LS(STR_DLGPROFILE_ERR_INVALID_CHAR) );
 		return;
 	}

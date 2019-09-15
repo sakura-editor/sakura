@@ -1823,7 +1823,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 			tcitem.pszText = szNameOld;
 			tcitem.cchTextMax = _countof(szNameOld);
 			TabCtrl_GetItem( m_hwndTab, nIndex, &tcitem );
-			if( 0 != auto_strcmp( szNameOld, szName )
+			if( 0 != wcscmp( szNameOld, szName )
 				|| tcitem.iImage != GetImageIndex( p ) ){
 
 				tcitem.mask    = TCIF_TEXT | TCIF_PARAM;

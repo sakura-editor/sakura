@@ -780,7 +780,7 @@ EFunctionCode GetPlugCmdInfoByName(
 	nId = -1;
 	for (i = 0; i < MAX_PLUGIN; i++) {
 		PluginRec& pluginrec = plugin.m_PluginTable[i];
-		if (auto_strcmp( pluginrec.m_szId, sPluginName ) == 0) {
+		if (wcscmp( pluginrec.m_szId, sPluginName ) == 0) {
 			nId = i;
 			break;
 		}

@@ -861,7 +861,7 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 
 	// コマンド関数を検索
 	for( int i = 0; m_MacroFuncInfoCommandArr[i].m_pszFuncName != NULL; ++i ){
-		if( 0 == auto_strcmp( normalizedFuncName, m_MacroFuncInfoCommandArr[i].m_pszFuncName )){
+		if( 0 == wcscmp( normalizedFuncName, m_MacroFuncInfoCommandArr[i].m_pszFuncName )){
 			EFunctionCode nFuncID = EFunctionCode(m_MacroFuncInfoCommandArr[i].m_nFuncID);
 			if( pszFuncNameJapanese != NULL ){
 				wcsncpy( pszFuncNameJapanese, LS( nFuncID ), 255 );
@@ -872,7 +872,7 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 	}
 	// 非コマンド関数を検索
 	for( int i = 0; m_MacroFuncInfoArr[i].m_pszFuncName != NULL; ++i ){
-		if( 0 == auto_strcmp( normalizedFuncName, m_MacroFuncInfoArr[i].m_pszFuncName )){
+		if( 0 == wcscmp( normalizedFuncName, m_MacroFuncInfoArr[i].m_pszFuncName )){
 			EFunctionCode nFuncID = EFunctionCode(m_MacroFuncInfoArr[i].m_nFuncID);
 			if( pszFuncNameJapanese != NULL ){
 				wcsncpy( pszFuncNameJapanese, LS( nFuncID ), 255 );

@@ -645,7 +645,7 @@ bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 				if( k == -1 ){
 					/* 日本語名からインデックス番号に変換する */
 					for(int m = 0; m < COLORIDX_LAST; m++){
-						if( auto_strcmp(m_Types.m_ColorInfoArr[m].m_szName, &buff[11]) == 0 ){
+						if( wcscmp(m_Types.m_ColorInfoArr[m].m_szName, &buff[11]) == 0 ){
 							k = m;
 							break;
 						}

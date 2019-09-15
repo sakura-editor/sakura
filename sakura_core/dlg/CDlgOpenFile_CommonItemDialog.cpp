@@ -486,7 +486,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 		break;
 	}
 
-	if( 0 != auto_strcmp(m_szDefaultWildCard, L"*.*") ){
+	if( 0 != wcscmp(m_szDefaultWildCard, L"*.*") ){
 		strs.push_back(LS(STR_DLGOPNFL_EXTNAME3));
 		specs.push_back(COMDLG_FILTERSPEC{strs.back().c_str(), L"*.*"});
 	}
