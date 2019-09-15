@@ -1319,9 +1319,9 @@ void CDlgFuncList::SetListVB (void)
 
 		// 2001/06/23 N.Nakatani for Visual Basic
 		//	Jun. 26, 2001 genta 半角かな→全角に
-		auto_memset(szText, L'\0', _countof(szText));
-		auto_memset(szType, L'\0', _countof(szType));
-		auto_memset(szOption, L'\0', _countof(szOption));
+		wmemset(szText, L'\0', _countof(szText));
+		wmemset(szType, L'\0', _countof(szType));
+		wmemset(szOption, L'\0', _countof(szOption));
 		if( 1 == ((pcFuncInfo->m_nInfo >> 8) & 0x01) ){
 			// スタティック宣言(Static)
 			// 2006.12.12 Moca 末尾にスペース追加

@@ -141,7 +141,7 @@ bool ReadRegistry(HKEY Hive, const WCHAR* Path, const WCHAR* Item, WCHAR* Buffer
 	HKEY Key;
 	if(RegOpenKeyEx(Hive, Path, 0, KEY_READ, &Key) == ERROR_SUCCESS)
 	{
-		auto_memset(Buffer, 0, BufferCount);
+		wmemset(Buffer, 0, BufferCount);
 
 		DWORD dwType = REG_SZ;
 		DWORD dwDataLen = (BufferCount - 1) * sizeof(WCHAR); //※バイト単位！

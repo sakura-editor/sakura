@@ -207,7 +207,7 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 					}
 				}
 				/* 更新するキー情報を取得する。 */
-				auto_memset(szPath, 0, _countof(szPath));
+				wmemset(szPath, 0, _countof(szPath));
 				::DlgItem_GetText( hwndDlg, IDC_EDIT_KEYHELP, szPath, _countof(szPath) );
 				if( szPath[0] == L'\0' ) return FALSE;
 				/* 重複検査 */
@@ -215,7 +215,7 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 				WCHAR szPath2[_MAX_PATH];
 				int i;
 				for(i = 0; i < nIndex2; i++){
-					auto_memset(szPath2, 0, _countof(szPath2));
+					wmemset(szPath2, 0, _countof(szPath2));
 					ListView_GetItemText(hwndList, i, 2, szPath2, _countof(szPath2));
 					if( wcscmp(szPath, szPath2) == 0 ){
 						if( (wID ==IDC_BUTTON_KEYHELP_UPD) && (i == nIndex) ){	/* 更新時、変わっていなかったら何もしない */

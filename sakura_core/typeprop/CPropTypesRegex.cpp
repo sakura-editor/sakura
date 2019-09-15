@@ -205,7 +205,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				}
 				
 				//挿入するキー情報を取得する。
-				auto_memset(szColorIndex, 0, _countof(szColorIndex));
+				wmemset(szColorIndex, 0, _countof(szColorIndex));
 				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
 				//キー情報を挿入する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
@@ -244,7 +244,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 					return FALSE;
 				}
 				//追加するキー情報を取得する。
-				auto_memset(szColorIndex, 0, _countof(szColorIndex));
+				wmemset(szColorIndex, 0, _countof(szColorIndex));
 				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
 				//キーを追加する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
@@ -282,7 +282,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 					return FALSE;
 				}
 				//追加するキー情報を取得する。
-				auto_memset(szColorIndex, 0, _countof(szColorIndex));
+				wmemset(szColorIndex, 0, _countof(szColorIndex));
 				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
 				//キーを更新する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;

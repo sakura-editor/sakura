@@ -792,7 +792,7 @@ bool CDlgFavorite::RefreshListOne( int nIndex )
 	for( i = 0; i < nCount; i++ )
 	{
 		WCHAR	szText[1024];
-		auto_memset( szText, 0, _countof( szText ) );
+		wmemset( szText, 0, _countof( szText ) );
 		memset_raw( &lvitem, 0, sizeof( lvitem ) );
 		lvitem.mask       = LVIF_TEXT | LVIF_PARAM;
 		lvitem.pszText    = szText;

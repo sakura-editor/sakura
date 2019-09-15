@@ -325,7 +325,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 					int	ret;
 
 					nIndex = List_GetCurSel( hwndAssignedkeyList );
-					auto_memset(buff, 0, _countof(buff));
+					wmemset(buff, 0, _countof(buff));
 					ret = List_GetText( hwndAssignedkeyList, nIndex, buff);
 					if( ret != LB_ERR )
 					{

@@ -603,7 +603,7 @@ HWND CEditWnd::Create(
 
 	m_pcViewFontMiniMap = new CViewFont(&GetLogfont(), true);
 
-	auto_memset( m_pszMenubarMessage, L' ', MENUBAR_MESSAGE_MAX_LEN );	// null終端は不要
+	wmemset( m_pszMenubarMessage, L' ', MENUBAR_MESSAGE_MAX_LEN );	// null終端は不要
 
 	//	Dec. 4, 2002 genta
 	InitMenubarMessageFont();
@@ -3941,7 +3941,7 @@ void CEditWnd::PrintMenubarMessage( const WCHAR* msg )
 		int len = wcslen( msg );
 		wcsncpy( m_pszMenubarMessage, msg, MENUBAR_MESSAGE_MAX_LEN );
 		if( len < MENUBAR_MESSAGE_MAX_LEN ){
-			auto_memset( m_pszMenubarMessage + len, L' ', MENUBAR_MESSAGE_MAX_LEN - len );	//  null終端は不要
+			wmemset( m_pszMenubarMessage + len, L' ', MENUBAR_MESSAGE_MAX_LEN - len );	//  null終端は不要
 		}
 	}
 
