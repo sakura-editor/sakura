@@ -557,12 +557,12 @@ LPCWSTR GetRelPath( LPCWSTR pszPath )
 
 	GetInidir( szPath, L"" );
 	int nLen = wcslen( szPath );
-	if( 0 == auto_strnicmp( szPath, pszPath, nLen ) ){
+	if( 0 == wmemicmp( szPath, pszPath, nLen ) ){
 		pszFileName = pszPath + nLen;
 	}else{
 		GetExedir( szPath, L"" );
 		nLen = wcslen( szPath );
-		if( 0 == auto_strnicmp( szPath, pszPath, nLen ) ){
+		if( 0 == wmemicmp( szPath, pszPath, nLen ) ){
 			pszFileName = pszPath + nLen;
 		}
 	}
@@ -1045,7 +1045,7 @@ int FileMatchScore( const WCHAR *file1, const WCHAR *file2 )
 							break;
 						}
 					}else{
-						if( 0 == auto_strnicmp(&file1[pos1], &file2[m], chars1) ){
+						if( 0 == wmemicmp(&file1[pos1], &file2[m], chars1) ){
 							tmpScore += chars1;
 						}else{
 							break;

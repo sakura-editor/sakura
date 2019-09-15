@@ -551,7 +551,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				int nParamNameIdx = EExpParamName_begin;
 				for(; nParamNameIdx != EExpParamName_end; nParamNameIdx++ ){
 					if( SExpParamNameTable[nParamNameIdx].m_nLen == p - pBegin &&
-						0 == auto_strnicmp(SExpParamNameTable[nParamNameIdx].m_szName,
+						0 == wmemicmp(SExpParamNameTable[nParamNameIdx].m_szName,
 							pBegin, p - pBegin) ){
 						q = ExParam_LongName( q, q_max, static_cast<EExpParamName>(nParamNameIdx) );
 						break;
