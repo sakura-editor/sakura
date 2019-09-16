@@ -33,6 +33,7 @@
 #include <Windows.h>
 
 #include "basis/primitive.h"
+#include "util/string_ex.h"
 #include "print/CPrint.h"
 
 #include <cassert>
