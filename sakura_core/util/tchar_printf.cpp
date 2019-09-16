@@ -218,14 +218,14 @@ static void my_va_forward(va_list& v, const wchar_t* field, const wchar_t* prefi
 
 static void field_convert(char* src)
 {
-	if(strncmp(src,"%ts")==0 || strncmp(src,"%tc")==0){
+	if(strcmp_literal(src,"%ts")==0 || strcmp_literal(src,"%tc")==0){
 		src[1]='l';
 	}
 }
 
 static void field_convert(wchar_t* src)
 {
-	if(wcsncmp(src,L"%ts")==0 || wcsncmp(src,L"%tc")==0){
+	if(wcscmp_literal(src,L"%ts")==0 || wcscmp_literal(src,L"%tc")==0){
 		src[1]=L'l';
 	}
 }

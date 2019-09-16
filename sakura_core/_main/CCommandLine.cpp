@@ -288,7 +288,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			// Nov. 11, 2005 susu
 			// 不正なファイル名のままだとファイル保存時ダイアログが出なくなるので
 			// 簡単なファイルチェックを行うように修正
-			if (wcsncmp(szPath, L"file:///")==0) {
+			if (wcscmp_literal(szPath, L"file:///")==0) {
 				wcscpy(szPath, &(szPath[8]));
 			}
 			int len = wcslen(szPath);
@@ -384,7 +384,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			case CMDLINEOPT_GREPMODE:	//	GREPMODE
 				m_bGrepMode = true;
 				if( L'\0' == m_fi.m_szDocType[0] ){
-					wcsncpy( m_fi.m_szDocType , L"grepout" );
+					wcscpy_literal( m_fi.m_szDocType , L"grepout" );
 				}
 				break;
 			case CMDLINEOPT_GREPDLG:	//	GREPDLG
@@ -473,7 +473,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				m_bDebugMode = true;
 				// 2010.06.16 Moca -TYPE=output 扱いとする
 				if( L'\0' == m_fi.m_szDocType[0] ){
-					wcsncpy( m_fi.m_szDocType , L"output" );
+					wcscpy_literal( m_fi.m_szDocType , L"output" );
 				}
 				break;
 			case CMDLINEOPT_NOMOREOPT:	// 2007.09.09 genta これ以降引数無効

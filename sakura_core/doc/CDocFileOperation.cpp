@@ -239,11 +239,11 @@ bool CDocFileOperation::SaveFileDialog(
 			// 基本
 			if (szExt[0] == L'\0') { 
 				// ファイルパスが無いまたは拡張子なし
-				wcsncpy(szDefaultWildCard, L"*.txt");
+				wcscpy_literal(szDefaultWildCard, L"*.txt");
 			}
 			else {
 				// 拡張子あり
-				wcsncpy(szDefaultWildCard, L"*");
+				wcscpy_literal(szDefaultWildCard, L"*");
 				wcscat(szDefaultWildCard, szExt);
 			}
 		}
@@ -255,12 +255,12 @@ bool CDocFileOperation::SaveFileDialog(
 		if(!this->m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath()){
 			//「新規から保存時は全ファイル表示」オプション	// 2008/6/15 バグフィックス Uchi
 			if( GetDllShareData().m_Common.m_sFile.m_bNoFilterSaveNew )
-				wcsncat(szDefaultWildCard, L";*.*");	// 全ファイル表示
+				wcscat_literal(szDefaultWildCard, L";*.*");	// 全ファイル表示
 		}
 		else {
 			//「新規以外から保存時は全ファイル表示」オプション
 			if( GetDllShareData().m_Common.m_sFile.m_bNoFilterSaveFile )
-				wcsncat(szDefaultWildCard, L";*.*");	// 全ファイル表示
+				wcscat_literal(szDefaultWildCard, L";*.*");	// 全ファイル表示
 		}
 	}
 	// 無題に、無題番号を付ける

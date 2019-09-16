@@ -105,7 +105,7 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 	lf.lfClipPrecision	= 2;
 	lf.lfQuality		= 1;
 	lf.lfPitchAndFamily	= 34;
-	wcsncpy( lf.lfFaceName, L"Arial" );
+	wcscpy_literal( lf.lfFaceName, L"Arial" );
 	hFont = ::CreateFontIndirect( &lf );
 	hFontOld = (HFONT)::SelectObject( gr, hFont );
 	::SetBkMode( gr, TRANSPARENT );

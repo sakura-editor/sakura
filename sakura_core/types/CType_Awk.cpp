@@ -30,8 +30,8 @@
 void CType_Awk::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	wcsncpy( pType->m_szTypeName, L"AWK" );
-	wcsncpy( pType->m_szTypeExts, L"awk" );
+	wcscpy_literal( pType->m_szTypeName, L"AWK" );
+	wcscpy_literal( pType->m_szTypeExts, L"awk" );
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L"#", -1 );		/* 行コメントデリミタ */

@@ -314,7 +314,7 @@ int CPropMacro::GetData( HWND hwndDlg )
 		sItem.pszText = buf;
 		sItem.cchTextMax = MAX_PATH;
 		ListView_GetItem( hListView, &sItem );
-		if ( wcsncmp(buf, L"on") == 0){
+		if ( wcscmp_literal(buf, L"on") == 0){
 			m_Common.m_sMacro.m_MacroTable[index].m_bReloadWhenExecute = true;
 		}
 		else {
@@ -585,7 +585,7 @@ void CPropMacro::OnFileDropdown_Macro( HWND hwndDlg )
 		wcscpy( folder, path );
 		GetInidirOrExedir( path, folder );
 	}
-	wcsncat( path, L"*.*" );	//	2002/05/01 YAZAKI どんなファイルもどんと来い。
+	wcscat_literal( path, L"*.*" );	//	2002/05/01 YAZAKI どんなファイルもどんと来い。
 
 	//	候補の初期化
 	Combo_ResetContent( hCombo );
@@ -658,7 +658,7 @@ void CPropMacro::CheckListPosition_Macro( HWND hwndDlg )
 	sItem.pszText = buf;
 	sItem.cchTextMax = MAX_PATH;
 	ListView_GetItem( hListView, &sItem );
-	if ( wcsncmp(buf, L"on") == 0){
+	if ( wcscmp_literal(buf, L"on") == 0){
 		::CheckDlgButton( hwndDlg, IDC_CHECK_RELOADWHENEXECUTE, true );
 	}
 	else {

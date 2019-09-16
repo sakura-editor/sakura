@@ -968,7 +968,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 		nClassNest = 0;
 		/* クラス名::メソッドの場合 */
 		if( NULL != ( pPos = wcsstr( pWork, L"::" ) )
-			&& wcsncmp(pWork, L"operator ") != 0 ){
+			&& wcscmp_literal(pWork, L"operator ") != 0 ){
 			/* インナークラスのネストレベルを調べる */
 			int	k;
 			int	nWorkLen;
@@ -992,7 +992,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 						m = k + 2;
 						++k;
 						// Klass::operator std::string
-						if( wcsncmp(pWork + m, L"operator ") == 0 ){
+						if( wcscmp_literal(pWork + m, L"operator ") == 0 ){
 							break;
 						}
 					}
@@ -1071,11 +1071,11 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 					{
 						if( pcFuncInfo->m_nInfo == FL_OBJ_NAMESPACE )
 						{
-							//wcsncat( pClassName, L" 名前空間" );
+							//wcscat_literal( pClassName, L" 名前空間" );
 							strClassName += m_pcFuncInfoArr->GetAppendText(FL_OBJ_NAMESPACE);
 						}
 						else
-							//wcsncat( pClassName, L" クラス" );
+							//wcscat_literal( pClassName, L" クラス" );
 							strClassName += m_pcFuncInfoArr->GetAppendText(FL_OBJ_CLASS);
 					}
 					tvis.hParent = htiParent;
@@ -3991,7 +3991,7 @@ void CDlgFuncList::LoadFileTreeSetting( CFileTreeSetting& data, SFilePath& IniDi
 		// 各フォルダのプロジェクトファイル読み込み
 		WCHAR szPath[_MAX_PATH];
 		::GetLongFileName( L".", szPath );
-		wcsncat( szPath, L"\\" );
+		wcscat_literal( szPath, L"\\" );
 		int maxDir = CDlgTagJumpList::CalcMaxUpDirectory( szPath );
 		for( int i = 0; i <= maxDir; i++ ){
 			CDataProfile cProfile;

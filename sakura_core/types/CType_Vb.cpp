@@ -37,8 +37,8 @@
 void CType_Vb::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	wcsncpy( pType->m_szTypeName, L"Visual Basic" );
-	wcsncpy( pType->m_szTypeExts, L"bas,frm,cls,ctl,pag,dob,dsr,vb" );
+	wcscpy_literal( pType->m_szTypeName, L"Visual Basic" );
+	wcscpy_literal( pType->m_szTypeExts, L"bas,frm,cls,ctl,pag,dob,dsr,vb" );
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L"'", -1 );				/* 行コメントデリミタ */
@@ -88,7 +88,7 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 	bClass	= false;
 	int filelen = wcslen(m_pcDocRef->m_cDocFile.GetFilePath());
 	if ( 4 < filelen ) {
-		if ( 0 == wcsnicmp((m_pcDocRef->m_cDocFile.GetFilePath() + filelen - 4), _FT(".cls")) ) {
+		if ( 0 == wcsicmp_literal((m_pcDocRef->m_cDocFile.GetFilePath() + filelen - 4), _FT(".cls")) ) {
 			bClass	= true;
 		}
 	}
@@ -140,29 +140,29 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 					// テキストの中は無視します。
 					nMode	= 3;
 				}else{
-					if ( 0 == nParseCnt && 0 == wcsnicmp(szWord, L"Public") ) {
+					if ( 0 == nParseCnt && 0 == wcsicmp_literal(szWord, L"Public") ) {
 						// パブリック宣言を見つけた！
 						nFuncId |= 0x10;
 					}else
-					if ( 0 == nParseCnt && 0 == wcsnicmp(szWord, L"Private") ) {
+					if ( 0 == nParseCnt && 0 == wcsicmp_literal(szWord, L"Private") ) {
 						// プライベート宣言を見つけた！
 						nFuncId |= 0x20;
 					}else
-					if ( 0 == nParseCnt && 0 == wcsnicmp(szWord, L"Friend") ) {
+					if ( 0 == nParseCnt && 0 == wcsicmp_literal(szWord, L"Friend") ) {
 						// フレンド宣言を見つけた！
 						nFuncId |= 0x30;
 					}else
-					if ( 0 == nParseCnt && 0 == wcsnicmp(szWord, L"Static") ) {
+					if ( 0 == nParseCnt && 0 == wcsicmp_literal(szWord, L"Static") ) {
 						// スタティック宣言を見つけた！
 						nFuncId |= 0x100;
 					}else
-					if( 0 == nParseCnt && 0 == wcsnicmp( szWord, L"Function" ) ){
-						if ( 0 == wcsnicmp( szWordPrev, L"End" ) ){
+					if( 0 == nParseCnt && 0 == wcsicmp_literal( szWord, L"Function" ) ){
+						if ( 0 == wcsicmp_literal( szWordPrev, L"End" ) ){
 							// プロシージャフラグをクリア
 							bProcedure	= false;
 						}else
-						if( 0 != wcsnicmp( szWordPrev, L"Exit" ) ){
-							if( 0 == wcsnicmp( szWordPrev, L"Declare" ) ){
+						if( 0 != wcsicmp_literal( szWordPrev, L"Exit" ) ){
+							if( 0 == wcsicmp_literal( szWordPrev, L"Declare" ) ){
 								nFuncId |= 0x200;	// DLL参照宣言
 							}else{
 								bProcedure	= true;	// プロシージャフラグをセット
@@ -172,13 +172,13 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 							nFuncLine = nLineCount + CLogicInt(1);
 						}
 					}
-					else if( 0 == nParseCnt && 0 == wcsnicmp( szWord, L"Sub" ) ){
-						if ( 0 == wcsnicmp( szWordPrev, L"End" ) ){
+					else if( 0 == nParseCnt && 0 == wcsicmp_literal( szWord, L"Sub" ) ){
+						if ( 0 == wcsicmp_literal( szWordPrev, L"End" ) ){
 							// プロシージャフラグをクリア
 							bProcedure	= false;
 						}else
-						if( 0 != wcsnicmp( szWordPrev, L"Exit" ) ){
-							if( 0 == wcsnicmp( szWordPrev, L"Declare" ) ){
+						if( 0 != wcsicmp_literal( szWordPrev, L"Exit" ) ){
+							if( 0 == wcsicmp_literal( szWordPrev, L"Declare" ) ){
 								nFuncId |= 0x200;	// DLL参照宣言
 							}else{
 								bProcedure	= true;	// プロシージャフラグをセット
@@ -188,32 +188,32 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 							nFuncLine = nLineCount + CLogicInt(1);
 						}
 					}
-					else if( 0 == nParseCnt && 0 == wcsnicmp( szWord, L"Get" )
-					 && 0 == wcsnicmp( szWordPrev, L"Property" )
+					else if( 0 == nParseCnt && 0 == wcsicmp_literal( szWord, L"Get" )
+					 && 0 == wcsicmp_literal( szWordPrev, L"Property" )
 					){
 						bProcedure	= true;	// プロシージャフラグをセット
 						nFuncId	|= 0x03;		// プロパティ取得
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == wcsnicmp( szWord, L"Let" )
-					 && 0 == wcsnicmp( szWordPrev, L"Property" )
+					else if( 0 == nParseCnt && 0 == wcsicmp_literal( szWord, L"Let" )
+					 && 0 == wcsicmp_literal( szWordPrev, L"Property" )
 					){
 						bProcedure	= true;	// プロシージャフラグをセット
 						nFuncId |= 0x04;		// プロパティ設定
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == wcsnicmp( szWord, L"Set" )
-					 && 0 == wcsnicmp( szWordPrev, L"Property" )
+					else if( 0 == nParseCnt && 0 == wcsicmp_literal( szWord, L"Set" )
+					 && 0 == wcsicmp_literal( szWordPrev, L"Property" )
 					){
 						bProcedure	= true;	// プロシージャフラグをセット
 						nFuncId |= 0x05;		// プロパティ参照
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == wcsnicmp( szWord, L"Const" )
-					 && 0 != wcsnicmp( szWordPrev, L"#" )
+					else if( 0 == nParseCnt && 0 == wcsicmp_literal( szWord, L"Const" )
+					 && 0 != wcsicmp_literal( szWordPrev, L"#" )
 					){
 						if ( bClass || bProcedure || 0 == ((nFuncId >> 4) & 0x0f) ) {
 							// クラスモジュールでは強制的にPrivate
@@ -226,13 +226,13 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == wcsnicmp( szWord, L"Enum" )
+					else if( 0 == nParseCnt && 0 == wcsicmp_literal( szWord, L"Enum" )
 					){
 						nFuncId	|= 0x207;		// 列挙型宣言
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == wcsnicmp( szWord, L"Type" )
+					else if( 0 == nParseCnt && 0 == wcsicmp_literal( szWord, L"Type" )
 					){
 						if ( bClass ) {
 							// クラスモジュールでは強制的にPrivate
@@ -243,14 +243,14 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == wcsnicmp( szWord, L"Event" )
+					else if( 0 == nParseCnt && 0 == wcsicmp_literal( szWord, L"Event" )
 					){
 						nFuncId	|= 0x209;		// イベント宣言
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == wcsnicmp( szWord, L"Property" )
-					 && 0 == wcsnicmp( szWordPrev, L"End")
+					else if( 0 == nParseCnt && 0 == wcsicmp_literal( szWord, L"Property" )
+					 && 0 == wcsicmp_literal( szWordPrev, L"End")
 					){
 						bProcedure	= false;	// プロシージャフラグをクリア
 					}

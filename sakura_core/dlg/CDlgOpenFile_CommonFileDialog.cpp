@@ -438,7 +438,7 @@ UINT_PTR CALLBACK OFNHookProc(
 									szDefExt[0] = L'\0';
 								break;
 							case 2:		// *.txt
-								::wcsncpy(szDefExt, L".txt");
+								::wcscpy_literal(szDefExt, L".txt");
 								break;
 							case 3:		// *.*
 							default:	// 不明
@@ -673,7 +673,7 @@ CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog()
 	wcscpy( m_szInitialDir, szDrive );
 	wcscat( m_szInitialDir, szDir );
 
-	wcsncpy( m_szDefaultWildCard, L"*.*" );	/*「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
+	wcscpy_literal( m_szDefaultWildCard, L"*.*" );	/*「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 
 	return;
 }
@@ -746,7 +746,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 		break;
 	}
 
-	if( 0 != wcsncmp(m_szDefaultWildCard, L"*.*") ){
+	if( 0 != wcscmp_literal(m_szDefaultWildCard, L"*.*") ){
 		cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), L"*.*" );
 	}
 

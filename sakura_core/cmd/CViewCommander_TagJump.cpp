@@ -165,7 +165,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 			TAGLIST_SUBPATH,
 			TAGLIST_ROOT,
 		} searchMode = TAGLIST_FILEPATH;
-		if( 0 == wcsncmp( pLine, L"■\"" ) ){
+		if( 0 == wcscmp_literal( pLine, L"■\"" ) ){
 			/* WZ風のタグリストか */
 			if( IsFilePath( &pLine[2], &nBgn, &nPathLen ) && !_IS_REL_PATH( &pLine[2] ) ){
 				wmemcpy( szJumpToFile, &pLine[2 + nBgn], nPathLen );
@@ -175,12 +175,12 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 				break;
 			}
 			searchMode = TAGLIST_ROOT;
-		}else if( 0 == wcsncmp( pLine, L"◆\"" ) ){
+		}else if( 0 == wcscmp_literal( pLine, L"◆\"" ) ){
 			if( !GetQuoteFilePath( &pLine[2], szFile, _countof(szFile) ) ){
 				break;
 			}
 			searchMode = TAGLIST_SUBPATH;
-		}else if( 0 == wcsncmp( pLine, L"・" ) ){
+		}else if( 0 == wcscmp_literal( pLine, L"・" ) ){
 			if( pLine[1] == L'"' ){
 				// ・"FileName.ext"
 				if( !GetQuoteFilePath( &pLine[2], szFile, _countof(szFile) ) ){
@@ -239,9 +239,9 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 			if( NULL == pLine ){
 				break;
 			}
-			if( 0 == wcsncmp( pLine, L"・" ) ){
+			if( 0 == wcscmp_literal( pLine, L"・" ) ){
 				continue;
-			}else if( 3 <= nLineLen && 0 == wcsncmp( pLine, L"◆\"" ) ){
+			}else if( 3 <= nLineLen && 0 == wcscmp_literal( pLine, L"◆\"" ) ){
 				if( searchMode == TAGLIST_SUBPATH || searchMode == TAGLIST_ROOT ){
 					continue;
 				}
@@ -257,7 +257,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 					continue;
 				}
 				searchMode = TAGLIST_ROOT;
-			}else if( 3 <= nLineLen && 0 == wcsncmp( pLine, L"■\"" ) ){
+			}else if( 3 <= nLineLen && 0 == wcscmp_literal( pLine, L"■\"" ) ){
 				if( searchMode == TAGLIST_ROOT ){
 					continue;
 				}
@@ -283,7 +283,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 					continue;
 				}
 				break;
-			}else if( 3 <= nLineLen && 0 == wcsncmp( pLine, L"◎\"" ) ){
+			}else if( 3 <= nLineLen && 0 == wcscmp_literal( pLine, L"◎\"" ) ){
 				if( GetQuoteFilePath( &pLine[2], szJumpToFile, _countof(szJumpToFile) ) ){
 					AddLastYenFromDirectoryPath( szJumpToFile );
 					wcscat( szJumpToFile, szFile );
@@ -455,14 +455,14 @@ bool CViewCommander::Command_TagsMake( void )
 	//	To Here Dec. 28, 2002 MIK
 
 	WCHAR	options[1024];
-	wcsncpy( options, L"--excmd=n" );	//デフォルトのオプション
-	if( cDlgTagsMake.m_nTagsOpt & 0x0001 ) wcsncat( options, L" -R" );	//サブフォルダも対象
+	wcscpy_literal( options, L"--excmd=n" );	//デフォルトのオプション
+	if( cDlgTagsMake.m_nTagsOpt & 0x0001 ) wcscat_literal( options, L" -R" );	//サブフォルダも対象
 	if( cDlgTagsMake.m_szTagsCmdLine[0] != L'\0' )	//個別指定のコマンドライン
 	{
-		wcsncat( options, L" " );
+		wcscat_literal( options, L" " );
 		wcscat( options, cDlgTagsMake.m_szTagsCmdLine );
 	}
-	wcsncat( options, L" *" );	//配下のすべてのファイル
+	wcscat_literal( options, L" *" );	//配下のすべてのファイル
 
 	//コマンドライン文字列作成(MAX:1024)
 	{
@@ -711,9 +711,9 @@ bool CViewCommander::Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int cou
 		WCHAR szExts[MAX_TYPES_EXTS];
 		CDocTypeManager::GetFirstExt(m_pCommanderView->m_pTypeData->m_szTypeExts, szExts, _countof(szExts));
 		int nExtLen = wcslen( szExts );
-		wcsncat( szCurrentPath, L"\\dmy" );
+		wcscat_literal( szCurrentPath, L"\\dmy" );
 		if( nExtLen ){
-			wcsncat( szCurrentPath, L"." );
+			wcscat_literal( szCurrentPath, L"." );
 			wcscat( szCurrentPath, szExts );
 		}
 	}

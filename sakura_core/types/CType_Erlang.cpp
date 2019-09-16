@@ -322,11 +322,11 @@ const wchar_t* COutlineErlang::EnterCond( const wchar_t* end, const wchar_t* p )
 	if( p >= end )
 		return end;
 
-	if( p + 1 < end && wcsncmp( p, L"->" ) == 0){
+	if( p + 1 < end && wcscmp_literal( p, L"->" ) == 0){
 		p += 2;
 		m_state = STATE_FUNC_FOUND;
 	}
-	else if( p + 3 < end && wcsncmp( p, L"when" ) == 0 ){
+	else if( p + 3 < end && wcscmp_literal( p, L"when" ) == 0 ){
 		m_state = STATE_FUNC_FOUND;
 		p += 4;
 	}

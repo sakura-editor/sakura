@@ -228,7 +228,7 @@ retry:;
 	// 2012.09.26 Moca HTMLHELP対応
 	WCHAR	szExt[_MAX_EXT];
 	_wsplitpath( path, NULL, NULL, NULL, szExt );
-	if( 0 == wcsnicmp(szExt, L".chi") || 0 == wcsnicmp(szExt, L".chm") || 0 == wcsnicmp(szExt, L".col") ){
+	if( 0 == wcsicmp_literal(szExt, L".chi") || 0 == wcsicmp_literal(szExt, L".chm") || 0 == wcsicmp_literal(szExt, L".col") ){
 		Command_EXTHTMLHELP( path, cmemCurText.GetStringPtr() );
 	}else{
 		::WinHelp( m_pCommanderView->m_hwndParent, path, HELP_KEY, (ULONG_PTR)cmemCurText.GetStringPtr() );

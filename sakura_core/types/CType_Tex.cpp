@@ -39,8 +39,8 @@
 void CType_Tex::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	wcsncpy( pType->m_szTypeName, L"TeX" );
-	wcsncpy( pType->m_szTypeExts, L"tex,ltx,sty,bib,log,blg,aux,bbl,toc,lof,lot,idx,ind,glo" );
+	wcscpy_literal( pType->m_szTypeName, L"TeX" );
+	wcscpy_literal( pType->m_szTypeExts, L"tex,ltx,sty,bib,log,blg,aux,bbl,toc,lof,lot,idx,ind,glo" );
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L"%", -1 );				/* 行コメントデリミタ */

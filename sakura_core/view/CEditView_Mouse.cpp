@@ -1563,10 +1563,10 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 				strOPEN = pszMailTo + strURL;
 			}
 			else{
-				if( wcsnicmp( strURL.c_str(), L"ttp://" ) == 0 ){	//抑止URL
+				if( wcsicmp_literal( strURL.c_str(), L"ttp://" ) == 0 ){	//抑止URL
 					strOPEN = L"h" + strURL;
 				}
-				else if( wcsnicmp( strURL.c_str(), L"tp://" ) == 0 ){	//抑止URL
+				else if( wcsicmp_literal( strURL.c_str(), L"tp://" ) == 0 ){	//抑止URL
 					strOPEN = L"ht" + strURL;
 				}
 				else{

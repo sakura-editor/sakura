@@ -112,9 +112,9 @@ static WCHAR* GetFileTreeLabel( const SFileTreeItem& item )
 		pszLabel = item.m_szLabelName;
 		if( item.m_szLabelName[0] == L'\0' ){
 			pszLabel = item.m_szTargetPath;
-			if( 0 == wcsncmp(pszLabel, L".")
-			  || 0 == wcsncmp(pszLabel, L".\\") 
-			  || 0 == wcsncmp(pszLabel, L"./") ){
+			if( 0 == wcscmp_literal(pszLabel, L".")
+			  || 0 == wcscmp_literal(pszLabel, L".\\") 
+			  || 0 == wcscmp_literal(pszLabel, L"./") ){
 				pszLabel = LS(STR_FILETREE_CURDIR);
 			}
 		}

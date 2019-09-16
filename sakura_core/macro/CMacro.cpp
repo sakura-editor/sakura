@@ -1124,21 +1124,21 @@ bool CMacro::HandleCommand(
 
 			//GOPTオプション
 			pOpt[0] = '\0';
-			if( lFlag & 0x01 )wcsncat( pOpt, L"S" );	/* サブフォルダからも検索する */
-			if( lFlag & 0x04 )wcsncat( pOpt, L"L" );	/* 英大文字と英小文字を区別する */
-			if( lFlag & 0x08 )wcsncat( pOpt, L"R" );	/* 正規表現 */
-			if(          0x20 == (lFlag & 0x400020) )wcsncat( pOpt, L"P" );	// 行を出力する
-			else if( 0x400000 == (lFlag & 0x400020) )wcsncat( pOpt, L"N" );	// 否ヒット行を出力する
-			if(      0x40 == (lFlag & 0xC0) )wcsncat( pOpt, L"2" );	/* Grep: 出力形式 */
-			else if( 0x80 == (lFlag & 0xC0) )wcsncat( pOpt, L"3" );
-			else wcscat( pOpt, L"1" );
-			if( lFlag & 0x10000 )wcsncat( pOpt, L"W" );
-			if( lFlag & 0x20000 )wcsncat( pOpt, L"F" );
-			if( lFlag & 0x40000 )wcsncat( pOpt, L"B" );
-			if( lFlag & 0x80000 )wcsncat( pOpt, L"D" );
+			if( lFlag & 0x01 )wcscat_literal( pOpt, L"S" );	/* サブフォルダからも検索する */
+			if( lFlag & 0x04 )wcscat_literal( pOpt, L"L" );	/* 英大文字と英小文字を区別する */
+			if( lFlag & 0x08 )wcscat_literal( pOpt, L"R" );	/* 正規表現 */
+			if(          0x20 == (lFlag & 0x400020) )wcscat_literal( pOpt, L"P" );	// 行を出力する
+			else if( 0x400000 == (lFlag & 0x400020) )wcscat_literal( pOpt, L"N" );	// 否ヒット行を出力する
+			if(      0x40 == (lFlag & 0xC0) )wcscat_literal( pOpt, L"2" );	/* Grep: 出力形式 */
+			else if( 0x80 == (lFlag & 0xC0) )wcscat_literal( pOpt, L"3" );
+			else wcscat_literal( pOpt, L"1" );
+			if( lFlag & 0x10000 )wcscat_literal( pOpt, L"W" );
+			if( lFlag & 0x20000 )wcscat_literal( pOpt, L"F" );
+			if( lFlag & 0x40000 )wcscat_literal( pOpt, L"B" );
+			if( lFlag & 0x80000 )wcscat_literal( pOpt, L"D" );
 			if( bGrepReplace ){
-				if( lFlag & 0x100000 )wcsncat( pOpt, L"C" );
-				if( lFlag & 0x200000 )wcsncat( pOpt, L"O" );
+				if( lFlag & 0x100000 )wcscat_literal( pOpt, L"C" );
+				if( lFlag & 0x200000 )wcscat_literal( pOpt, L"O" );
 			}
 			if( pOpt[0] != L'\0' ){
 				auto_sprintf( szTemp, L" -GOPT=%s", pOpt );
