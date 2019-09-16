@@ -631,9 +631,9 @@ bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 
 		//RxKey[999]=ColorName,RegexKeyword
 		if( wcslen(buff) < 12 ) continue;
-		if( wmemcmp(buff, L"RxKey[", 6) != 0 ) continue;
-		if( wmemcmp(&buff[9], L"]=", 2) != 0 ) continue;
-		WCHAR *p = wcsstr(&buff[11], L",");
+		if( wcsncmp(buff, L"RxKey[") != 0 ) continue;
+		if( wcsncmp(&buff[9], L"]=") != 0 ) continue;
+		WCHAR *p = wcschr(&buff[11], L',');
 		if( p )
 		{
 			*p = L'\0';
@@ -744,8 +744,8 @@ bool CImpExpKeyHelp::Import( const wstring& sFileName, wstring& sErrMsg )
 
 		//KDct[99]=ON/OFF,DictAbout,KeyHelpPath
 		if( buff.length() < 10 ||
-			wmemcmp(buff.c_str(), LTEXT("KDct["), 5) != 0 ||
-			wmemcmp(&buff[7], LTEXT("]="), 2) != 0
+			wcsncmp(buff.c_str(), LTEXT("KDct[")) != 0 ||
+			wcsncmp(&buff[7], LTEXT("]=")) != 0
 			){
 			//	2007.02.03 genta 処理を継続
 			++invalid_record;
@@ -877,8 +877,8 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 	bVer3 = false;
 	bVer2 = false;
 	in.IOProfileData(szSecInfo, L"KEYBIND_VERSION", MakeStringBufferW(szHeader));
-	if(wcscmp(szHeader,WSTR_KEYBIND_HEAD4)==0)	bVer4=true;
-	else if(wcscmp(szHeader,WSTR_KEYBIND_HEAD3)==0)	bVer3=true;
+	if(wcsncmp(szHeader,WSTR_KEYBIND_HEAD4)==0)	bVer4=true;
+	else if(wcsncmp(szHeader,WSTR_KEYBIND_HEAD3)==0)	bVer3=true;
 
 	//int	nKeyNameArrNum;			// キー割り当て表の有効データ数
 	if ( bVer3 || bVer4 ) {
@@ -899,7 +899,7 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 		// ヘッダチェック
 		wstring	szLine = in.ReadLineW();
 		bVer2 = true;
-		if ( wcscmp(szLine.c_str(), WSTR_KEYBIND_HEAD2) != 0)	bVer2 = false;
+		if ( wcsncmp(szLine.c_str(), WSTR_KEYBIND_HEAD2) != 0)	bVer2 = false;
 		// カウントチェック
 		int	i, cnt;
 		if ( bVer2 ) {
@@ -1127,7 +1127,7 @@ bool CImpExpKeyWord::Import( const wstring& sFileName, wstring& sErrMsg )
 		if (szLine.length() == 0) {
 			continue;
 		}
-		if (2 <= szLine.length() && 0 == wmemcmp( szLine.c_str(), L"//", 2 )) {
+		if (2 <= szLine.length() && 0 == wcsncmp( szLine.c_str(), L"//" )) {
 			if (szLine == WSTR_CASE_TRUE) {
 				m_bCase = true;
 			}

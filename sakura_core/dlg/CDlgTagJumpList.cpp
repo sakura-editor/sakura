@@ -1209,7 +1209,7 @@ int CDlgTagJumpList::find_key_core(
 			state.m_nDepth = 0;
 			szNextPath[0] = 0;
 		}else{
-//			wcscat( state.m_szCurPath, L"..\\" );
+//			wcsncat( state.m_szCurPath, L"..\\" );
 			//カレントパスを1階層上へ。
 			DirUp( state.m_szCurPath );
 		}
@@ -1274,7 +1274,7 @@ bool CDlgTagJumpList::ReadTagsParameter(
 			return false;
 		}
 		if ('!' == szLineData[0]) {
-			if (0 == strncmp_literal(szLineData + 1, "_TAG_")) {
+			if (0 == strncmp(szLineData + 1, "_TAG_")) {
 				int  nRet;
 				s[0][0] = s[1][0] = s[2][0] = 0;
 				nRet = sscanf(
@@ -1287,13 +1287,13 @@ bool CDlgTagJumpList::ReadTagsParameter(
 					continue;
 				}
 				const ACHAR* pTag = s[0] + 6;
-				if (0 == strncmp_literal(pTag, "FILE_FORMAT")) {
+				if (0 == strncmp(pTag, "FILE_FORMAT")) {
 					n2 = atoi(s[1]);
 					if (1 <= n2 && n2 <= 2) {
 						*nTagFormat = n2;
 					}
 				}
-				else if (0 == strncmp_literal(pTag, "FILE_SORTED")) {
+				else if (0 == strncmp(pTag, "FILE_SORTED")) {
 					n2 = atoi(s[1]);
 					*bSorted = (1 == n2);
 					*bFoldcase = (2 == n2);
@@ -1301,7 +1301,7 @@ bool CDlgTagJumpList::ReadTagsParameter(
 						*bTagJumpICase = *bFoldcase;
 					}
 				}
-				else if (0 == strncmp_literal(pTag, "S_SEARCH_NEXT")) {
+				else if (0 == strncmp(pTag, "S_SEARCH_NEXT")) {
 					// 独自拡張:次に検索するtagファイルの指定
 					if ('0' <= s[1][0] && s[1][0] <= '3') {
 						n2 = atoi(s[1]);
@@ -1320,7 +1320,7 @@ bool CDlgTagJumpList::ReadTagsParameter(
 						}
 					}
 				}
-				else if (0 == strncmp_literal(pTag, "S_FILE_BASEDIR")) {
+				else if (0 == strncmp(pTag, "S_FILE_BASEDIR")) {
 					WCHAR baseWork[1024];
 					// 独自拡張:ファイル名の基準ディレクトリ
 					if (state->m_bJumpPath) {
@@ -1645,7 +1645,7 @@ WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 		wcscpy( pszOutput, p );	//何も加工しない。
 	}else{
 		for( int i = 0; i < depth; i++ ){
-			//wcscat( basePath, L"..\\" );
+			//wcsncat( basePath, L"..\\" );
 			DirUp( basePath );
 		}
 		if( -1 == auto_snprintf_s( pszOutput, count, L"%s%s", basePath, p ) ){

@@ -332,18 +332,18 @@ INT_PTR CPropKeybind::DispatchEvent(
 						i = 0;
 						p = buff;
 						//SHIFT
-						if( wmemcmp(p, STR_SHIFT_PLUS, wcslen(STR_SHIFT_PLUS)) == 0 ){
-							p += wcslen(STR_SHIFT_PLUS);
+						if( wcsncmp(p, STR_SHIFT_PLUS) == 0 ){
+							p += _countof(STR_SHIFT_PLUS) - 1;
 							i |= _SHIFT;
 						}
 						//CTRL
-						if( wmemcmp(p, STR_CTRL_PLUS, wcslen(STR_CTRL_PLUS)) == 0 ){
-							p += wcslen(STR_CTRL_PLUS);
+						if( wcsncmp(p, STR_CTRL_PLUS) == 0 ){
+							p += _countof(STR_CTRL_PLUS) - 1;
 							i |= _CTRL;
 						}
 						//ALT
-						if( wmemcmp(p, STR_ALT_PLUS, wcslen(STR_ALT_PLUS)) == 0 ){
-							p += wcslen(STR_ALT_PLUS);
+						if( wcsncmp(p, STR_ALT_PLUS) == 0 ){
+							p += _countof(STR_ALT_PLUS) - 1;
 							i |= _ALT;
 						}
 						for(j = 0; j < m_Common.m_sKeyBind.m_nKeyNameArrNum; j++)
@@ -450,15 +450,15 @@ void CPropKeybind::ChangeKeyList( HWND hwndDlg){
 	i = 0;
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SHIFT ) ){
 		i |= _SHIFT;
-		wcscat( szKeyState, L"Shift+" );
+		wcsncat( szKeyState, L"Shift+" );
 	}
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_CTRL ) ){
 		i |= _CTRL;
-		wcscat( szKeyState, L"Ctrl+" );
+		wcsncat( szKeyState, L"Ctrl+" );
 	}
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ALT ) ){
 		i |= _ALT;
-		wcscat( szKeyState, L"Alt+" );
+		wcsncat( szKeyState, L"Alt+" );
 	}
 	/* キー一覧に文字列をセット（リストボックス）*/
 	List_ResetContent( hwndKeyList );

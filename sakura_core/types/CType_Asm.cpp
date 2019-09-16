@@ -37,8 +37,8 @@
 void CType_Asm::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	wcscpy( pType->m_szTypeName, L"アセンブラ" );
-	wcscpy( pType->m_szTypeExts, L"asm" );
+	wcsncpy( pType->m_szTypeName, L"アセンブラ" );
+	wcsncpy( pType->m_szTypeExts, L"asm" );
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L";", -1 );			/* 行コメントデリミタ */
@@ -112,11 +112,11 @@ void CDocOutline::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 				entry_token = token[ 0 ];
 			}
 			else if( token[ 1 ] != NULL ){	//トークンが2個以上ある
-				if( _wcsicmp( token[ 1 ], L"proc" ) == 0 ){	//関数
+				if( wcsnicmp( token[ 1 ], L"proc" ) == 0 ){	//関数
 					nFuncId = 50;
 					entry_token = token[ 0 ];
 				}else
-				if( _wcsicmp( token[ 1 ], L"endp" ) == 0 ){	//関数終了
+				if( wcsnicmp( token[ 1 ], L"endp" ) == 0 ){	//関数終了
 					nFuncId = 52;
 					entry_token = token[ 0 ];
 				//}else

@@ -38,8 +38,8 @@
 //2012.01.03 シングルクォートの色分けをする
 void CType_Html::InitTypeConfigImp(STypeConfig* pType)
 {
-	wcscpy( pType->m_szTypeName, L"HTML" );
-	wcscpy( pType->m_szTypeExts, L"html,htm,shtml,plg" );
+	wcsncpy( pType->m_szTypeName, L"HTML" );
+	wcsncpy( pType->m_szTypeExts, L"html,htm,shtml,plg" );
 
 	//設定
 	pType->m_cBlockComments[0].SetBlockCommentRule( L"<!--", L"-->" );	/* ブロックコメントデリミタ */
@@ -109,7 +109,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 			// 2004.04.20 Moca コメントを処理する
 			if( bCommentTag )
 			{
-				if( i < nLineLen - 3 && 0 == wmemcmp( L"-->", pLine, 3 ) )
+				if( i < nLineLen - 3 && 0 == wcsncmp( pLine, L"-->" ) )
 				{
 					bCommentTag = false;
 					i += 2;
@@ -119,7 +119,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 			}
 			// 2014.12.25 Moca CDATA
 			if( bCDATA ){
-				if( i < nLineLen - 3 && 0 == wmemcmp( L"]]>", pLine, 3 ) )
+				if( i < nLineLen - 3 && 0 == wcsncmp( pLine, L"]]>" ) )
 				{
 					bCDATA = false;
 					i += 2;
@@ -156,7 +156,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 			if(j==0)
 			{
 				// 2004.04.20 Moca From Here コメントを処理する
-				if( i < nLineLen - 3 && 0 == wmemcmp( L"!--", pLine, 3 ) )
+				if( i < nLineLen - 3 && 0 == wcsncmp( pLine, L"!--" ) )
 				{
 					bCommentTag = true;
 					i += 3;
@@ -164,7 +164,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 				}
 				// 2004.04.20 Moca To Here
 				// 2014.12.25 Moca CDATA
-				if( bXml && i < nLineLen - 8 && 0 == wmemcmp( L"![CDATA[", pLine, 8 )){
+				if( bXml && i < nLineLen - 8 && 0 == wcsncmp( pLine, L"![CDATA[" )){
 					bCDATA = true;
 					i += 8;
 					pLine += 8;
@@ -184,59 +184,59 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 			nLabelType = LT_DEFAULT;
 			if( !bXml ){
 				// 物理要素（見た目を変えるためのタグ）は構造解析しない。
-				if( !wcscmp(szTag,L"b") || !wcscmp(szTag,L"big") || !wcscmp(szTag,L"blink")
-				 || !wcscmp(szTag,L"font") || !wcscmp(szTag,L"i") || !wcscmp(szTag,L"marquee")
-				 || !wcscmp(szTag,L"nobr") || !wcscmp(szTag,L"s") || !wcscmp(szTag,L"small")
-				 || !wcscmp(szTag,L"strike") || !wcscmp(szTag,L"tt") || !wcscmp(szTag,L"u")
-				 || !wcscmp(szTag,L"bdo") || !wcscmp(szTag,L"sub") || !wcscmp(szTag,L"sup") )
+				if( !wcsncmp(szTag,L"b")		|| !wcsncmp(szTag,L"big")	|| !wcsncmp(szTag,L"blink")
+				 || !wcsncmp(szTag,L"font")		|| !wcsncmp(szTag,L"i")		|| !wcsncmp(szTag,L"marquee")
+				 || !wcsncmp(szTag,L"nobr")		|| !wcsncmp(szTag,L"s")		|| !wcsncmp(szTag,L"small")
+				 || !wcsncmp(szTag,L"strike")	|| !wcsncmp(szTag,L"tt")	|| !wcsncmp(szTag,L"u")
+				 || !wcsncmp(szTag,L"bdo")		|| !wcsncmp(szTag,L"sub")	|| !wcsncmp(szTag,L"sup") )
 	 			{
 					nLabelType = LT_INLINE;
 				}
 				// インラインテキスト要素（テキストを修飾するタグ）は構造解析しない?
-//				if( !wcscmp(szTag,L"abbr") || !wcscmp(szTag,L"acronym") || !wcscmp(szTag,L"dfn")
-//				 || !wcscmp(szTag,L"em") || !wcscmp(szTag,L"strong") || !wcscmp(szTag,L"span")
-//				 || !wcscmp(szTag,L"code") || !wcscmp(szTag,L"samp") || !wcscmp(szTag,L"kbd")
-//				 || !wcscmp(szTag,L"var") || !wcscmp(szTag,L"cite") || !wcscmp(szTag,L"q") )
+//				if( !wcsncmp(szTag,L"abbr")	|| !wcsncmp(szTag,L"acronym")	|| !wcsncmp(szTag,L"dfn")
+//				 || !wcsncmp(szTag,L"em")	|| !wcsncmp(szTag,L"strong")	|| !wcsncmp(szTag,L"span")
+//				 || !wcsncmp(szTag,L"code")	|| !wcsncmp(szTag,L"samp")		|| !wcsncmp(szTag,L"kbd")
+//				 || !wcsncmp(szTag,L"var")	|| !wcsncmp(szTag,L"cite")		|| !wcsncmp(szTag,L"q") )
 //				{
 //					nLabelType = LT_INLINE;
 //				}
 				// ルビ要素（XHTML1.1）は構造解析しない。
-				if( !wcscmp(szTag,L"rbc") || !wcscmp(szTag,L"rtc") || !wcscmp(szTag,L"ruby")
-				 || !wcscmp(szTag,L"rb") || !wcscmp(szTag,L"rt") || !wcscmp(szTag,L"rp") )
+				if( !wcsncmp(szTag,L"rbc")	|| !wcsncmp(szTag,L"rtc")	|| !wcsncmp(szTag,L"ruby")
+				 || !wcsncmp(szTag,L"rb")	|| !wcsncmp(szTag,L"rt")	|| !wcsncmp(szTag,L"rp") )
 				{
 					nLabelType = LT_INLINE;
 				}
 				// 空要素（内容を持たないタグ）のうち構造に関係ないものは構造解析しない。
-				if( !wcscmp(szTag,L"br") || !wcscmp(szTag,L"base") || !wcscmp(szTag,L"basefont")
-				 || !wcscmp(szTag,L"frame")
+				if( !wcsncmp(szTag,L"br") || !wcsncmp(szTag,L"base") || !wcsncmp(szTag,L"basefont")
+				 || !wcsncmp(szTag,L"frame")
 				 // 2014.12.26 Moca 以下の要素を追加
-				 || !wcscmp(szTag,L"wbr")
+				 || !wcsncmp(szTag,L"wbr")
 				 )
 				{
 					nLabelType = LT_IGNORE;
 				}
 				// 空要素（内容を持たないタグ）のうち構造に関係するもの。
-				if( !wcscmp(szTag,L"area") || !wcscmp(szTag,L"hr") || !wcscmp(szTag,L"img")
-				 || !wcscmp(szTag,L"input") || !wcscmp(szTag,L"link") || !wcscmp(szTag,L"meta")
-				 || !wcscmp(szTag,L"param")
+				if( !wcsncmp(szTag,L"area") || !wcsncmp(szTag,L"hr") || !wcsncmp(szTag,L"img")
+				 || !wcsncmp(szTag,L"input") || !wcsncmp(szTag,L"link") || !wcsncmp(szTag,L"meta")
+				 || !wcsncmp(szTag,L"param")
 				 // 2014.12.26 Moca 以下の要素を追加
-				 || !wcscmp(szTag,L"col") || !wcscmp(szTag,L"command") || !wcscmp(szTag,L"embed")
-				 || !wcscmp(szTag,L"keygen") || !wcscmp(szTag,L"source") || !wcscmp(szTag,L"track")
+				 || !wcsncmp(szTag,L"col") || !wcsncmp(szTag,L"command") || !wcsncmp(szTag,L"embed")
+				 || !wcsncmp(szTag,L"keygen") || !wcsncmp(szTag,L"source") || !wcsncmp(szTag,L"track")
 				 )
 				{
 					nLabelType = LT_EMPTY;
 				}
-				if( !wcscmp(szTag,L"div") || !wcscmp(szTag,L"center")
-				 || !wcscmp(szTag,L"address") || !wcscmp(szTag,L"blockquote")
-				 || !wcscmp(szTag,L"noscript") || !wcscmp(szTag,L"noframes")
-				 || !wcscmp(szTag,L"ol") || !wcscmp(szTag,L"ul") || !wcscmp(szTag,L"dl")
-				 || !wcscmp(szTag,L"dir") || !wcscmp(szTag,L"menu")
-				 || !wcscmp(szTag,L"pre") || !wcscmp(szTag,L"table")
-				 || !wcscmp(szTag,L"form") || !wcscmp(szTag,L"fieldset") || !wcscmp(szTag,L"isindex") )
+				if( !wcsncmp(szTag,L"div") || !wcsncmp(szTag,L"center")
+				 || !wcsncmp(szTag,L"address") || !wcsncmp(szTag,L"blockquote")
+				 || !wcsncmp(szTag,L"noscript") || !wcsncmp(szTag,L"noframes")
+				 || !wcsncmp(szTag,L"ol") || !wcsncmp(szTag,L"ul") || !wcsncmp(szTag,L"dl")
+				 || !wcsncmp(szTag,L"dir") || !wcsncmp(szTag,L"menu")
+				 || !wcsncmp(szTag,L"pre") || !wcsncmp(szTag,L"table")
+				 || !wcsncmp(szTag,L"form") || !wcsncmp(szTag,L"fieldset") || !wcsncmp(szTag,L"isindex") )
 				{
 					nLabelType = LT_BLOCK;
 				}
-				if( !wcscmp(szTag,L"p") )
+				if( !wcsncmp(szTag,L"p") )
 				{
 					nLabelType = LT_PARAGRAPH;
 				}

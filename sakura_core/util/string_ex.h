@@ -231,19 +231,48 @@ void	wcstombs_vector(const wchar_t* pSrc, int nSrcLen, std::vector<char>* ret); 
 // 手間が掛かる上に、保守性が損なわれるので、
 // カプセル化された関数やマクロに処理を任せるのが望ましい。
 
-//wcsncmpの文字数指定をszData2からwcslenで取得してくれる版
-inline int wcsncmp_auto(const wchar_t* strData1, const wchar_t* szData2)
+//wcsncmpの文字数指定をliteralData2の大きさで取得してくれる版
+template <size_t Size>
+inline int wcsncmp(const wchar_t* strData1, const wchar_t (&literalData2)[Size])
 {
-	return wcsncmp(strData1,szData2,wcslen(szData2));
+	return ::wcsncmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
 }
 
-//wcsncmpの文字数指定をliteralData2の大きさで取得してくれる版
-#define wcsncmp_literal(strData1, literalData2) \
-	::wcsncmp(strData1, literalData2, _countof(literalData2) - 1 ) //※終端ヌルを含めないので、_countofからマイナス1する
-
 //strncmpの文字数指定をliteralData2の大きさで取得してくれる版
-#define strncmp_literal(strData1, literalData2) \
-	::strncmp(strData1, literalData2, _countof(literalData2) - 1 ) //※終端ヌルを含めないので、_countofからマイナス1する
+template <size_t Size>
+inline int strncmp(const char* strData1, const char (&literalData2)[Size])
+{
+
+	return ::strncmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
+}
+
+//_wcsnicmpの文字数指定をliteralData2の大きさで取得してくれる版
+template <size_t Size>
+inline int wcsnicmp(const wchar_t* strData1, const wchar_t (&literalData2)[Size])
+{
+	return ::_wcsnicmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
+}
+
+//_strnicmpの文字数指定をliteralData2の大きさで取得してくれる版
+template <size_t Size>
+inline int strnicmp(const char* strData1, const char (&literalData2)[Size])
+{
+
+	return ::_strnicmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
+}
+
+template <size_t Size>
+char *strncat(char *strDest, const char (&strSource)[Size]) { return strncat(strDest, strSource, Size - 1); }
+
+template <size_t Size>
+wchar_t *wcsncat(wchar_t *strDest, const wchar_t (&strSource)[Size]) { return wcsncat(strDest, strSource, Size - 1); }
+
+template <size_t Size>
+char *strncpy(char *strDest, const char (&strSource)[Size]) { return strncpy(strDest, strSource, Size - 1); }
+
+template <size_t Size>
+wchar_t *wcsncpy(wchar_t *strDest, const wchar_t (&strSource)[Size]) { return wcsncpy(strDest, strSource, Size - 1); }
+
 
 #endif /* SAKURA_STRING_EX_29EB1DD7_7259_4D6C_A651_B9174E5C3D3C9_H_ */
 /*[EOF]*/

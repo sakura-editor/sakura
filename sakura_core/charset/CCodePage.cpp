@@ -254,9 +254,9 @@ int CCodePage::GetNameNormal(LPWSTR outName, int charcodeEx)
 	}
 	UINT codepage = CodePageExToMSCP(charcodeEx);
 	if( codepage == CP_ACP ){
-		wcscpy(outName, L"CP_ACP");
+		wcsncpy(outName, L"CP_ACP");
 	}else if( codepage == CP_OEMCP ){
-		wcscpy(outName, L"CP_OEM");
+		wcsncpy(outName, L"CP_OEM");
 	}else{
 		auto_sprintf(outName, L"CP%d", codepage);
 	}
@@ -271,9 +271,9 @@ int CCodePage::GetNameShort(LPWSTR outName, int charcodeEx)
 	}
 	UINT codepage = CodePageExToMSCP(charcodeEx);
 	if( codepage == CP_ACP ){
-		wcscpy(outName, L"cp_acp");
+		wcsncpy(outName, L"cp_acp");
 	}else if( codepage == CP_OEMCP ){
-		wcscpy(outName, L"cp_oem");
+		wcsncpy(outName, L"cp_oem");
 	}else{
 		auto_sprintf(outName, L"cp%d", codepage);
 	}
@@ -288,9 +288,9 @@ int CCodePage::GetNameLong(LPWSTR outName, int charcodeEx)
 	}
 	UINT codepage = CodePageExToMSCP(charcodeEx);
 	if( codepage == CP_ACP ){
-		wcscpy(outName, L"CP_ACP");
+		wcsncpy(outName, L"CP_ACP");
 	}else if( codepage == CP_OEMCP ){
-		wcscpy(outName, L"CP_OEMCP");
+		wcsncpy(outName, L"CP_OEMCP");
 	}else{
 		CPINFOEX cpInfo;
 		cpInfo.CodePageName[0] = L'\0';
@@ -311,9 +311,9 @@ int CCodePage::GetNameBracket(LPWSTR outName, int charcodeEx)
 	}
 	UINT codepage = CodePageExToMSCP(charcodeEx);
 	if( codepage == CP_ACP ){
-		wcscpy(outName, L"  [CP_ACP]");
+		wcsncpy(outName, L"  [CP_ACP]");
 	}else if( codepage == CP_OEMCP ){
-		wcscpy(outName, L"  [CP_OEM]");
+		wcsncpy(outName, L"  [CP_OEM]");
 	}else{
 		auto_sprintf(outName, L"  [CP%d]", charcodeEx);
 	}

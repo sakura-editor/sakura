@@ -32,8 +32,8 @@
 void CType_Pascal::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	wcscpy( pType->m_szTypeName, L"Pascal" );
-	wcscpy( pType->m_szTypeExts, L"dpr,pas" );
+	wcsncpy( pType->m_szTypeName, L"Pascal" );
+	wcsncpy( pType->m_szTypeExts, L"dpr,pas" );
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L"//", -1 );					/* 行コメントデリミタ */		//Nov. 5, 2000 JEPRO 追加

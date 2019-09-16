@@ -201,7 +201,7 @@ bool CShareData::InitShareData()
 		lf.lfClipPrecision		= 0x2;
 		lf.lfQuality			= 0x1;
 		lf.lfPitchAndFamily	= 0x31;
-		wcscpy( lf.lfFaceName, L"ＭＳ ゴシック" );
+		wcsncpy( lf.lfFaceName, L"ＭＳ ゴシック" );
 
 		// LoadShareDataでフォントが変わる可能性があるので、ここでは不要 // 2013.04.08 aroka
 		//InitCharWidthCacheCommon();								// 2008/5/17 Uchi
@@ -409,18 +409,18 @@ bool CShareData::InitShareData()
 			CommonSetting_Format& sFormat = m_pShareData->m_Common.m_sFormat;
 
 			/* 見出し記号 */
-			wcscpy( sFormat.m_szMidashiKigou, L"１２３４５６７８９０（(［[「『【■□▲△▼▽◆◇○◎●§・※☆★第①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ一二三四五六七八九十壱弐参伍" );
+			wcsncpy( sFormat.m_szMidashiKigou, L"１２３４５６７８９０（(［[「『【■□▲△▼▽◆◇○◎●§・※☆★第①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ一二三四五六七八九十壱弐参伍" );
 			/* 引用符 */
-			wcscpy( sFormat.m_szInyouKigou, L"> " );		/* 引用符 */
+			wcsncpy( sFormat.m_szInyouKigou, L"> " );		/* 引用符 */
 
 			/*
 				書式指定子の意味はWindows SDKのGetDateFormat(), GetTimeFormat()を参照のこと
 			*/
 
 			sFormat.m_nDateFormatType = 0;	//日付書式のタイプ
-			wcscpy( sFormat.m_szDateFormat, L"yyyy\'年\'M\'月\'d\'日(\'dddd\')\'" );	//日付書式
+			wcsncpy( sFormat.m_szDateFormat, L"yyyy\'年\'M\'月\'d\'日(\'dddd\')\'" );	//日付書式
 			sFormat.m_nTimeFormatType = 0;	//時刻書式のタイプ
-			wcscpy( sFormat.m_szTimeFormat, L"tthh\'時\'mm\'分\'ss\'秒\'"  );			//時刻書式
+			wcsncpy( sFormat.m_szTimeFormat, L"tthh\'時\'mm\'分\'ss\'秒\'"  );			//時刻書式
 		}
 
 		// [検索]タブ
@@ -591,20 +591,20 @@ bool CShareData::InitShareData()
 				sFileName.m_szTransformFileNameFrom[i][0] = L'\0';
 				sFileName.m_szTransformFileNameTo[i][0] = L'\0';
 			}
-			wcscpy( sFileName.m_szTransformFileNameFrom[0], L"%DeskTop%\\" );
-			wcscpy( sFileName.m_szTransformFileNameTo[0],   L"デスクトップ\\" );
-			wcscpy( sFileName.m_szTransformFileNameFrom[1], L"%Personal%\\" );
-			wcscpy( sFileName.m_szTransformFileNameTo[1],   L"マイドキュメント\\" );
-			wcscpy( sFileName.m_szTransformFileNameFrom[2], L"%Cache%\\Content.IE5\\" );
-			wcscpy( sFileName.m_szTransformFileNameTo[2],   L"IEキャッシュ\\" );
-			wcscpy( sFileName.m_szTransformFileNameFrom[3], L"%TEMP%\\" );
-			wcscpy( sFileName.m_szTransformFileNameTo[3],   L"TEMP\\" );
-			wcscpy( sFileName.m_szTransformFileNameFrom[4], L"%Common DeskTop%\\" );
-			wcscpy( sFileName.m_szTransformFileNameTo[4],   L"共有デスクトップ\\" );
-			wcscpy( sFileName.m_szTransformFileNameFrom[5], L"%Common Documents%\\" );
-			wcscpy( sFileName.m_szTransformFileNameTo[5],   L"共有ドキュメント\\" );
-			wcscpy( sFileName.m_szTransformFileNameFrom[6], L"%AppData%\\" );	// 2007.05.19 ryoji 追加
-			wcscpy( sFileName.m_szTransformFileNameTo[6],   L"アプリデータ\\" );	// 2007.05.19 ryoji 追加
+			wcsncpy( sFileName.m_szTransformFileNameFrom[0], L"%DeskTop%\\" );
+			wcsncpy( sFileName.m_szTransformFileNameTo[0],   L"デスクトップ\\" );
+			wcsncpy( sFileName.m_szTransformFileNameFrom[1], L"%Personal%\\" );
+			wcsncpy( sFileName.m_szTransformFileNameTo[1],   L"マイドキュメント\\" );
+			wcsncpy( sFileName.m_szTransformFileNameFrom[2], L"%Cache%\\Content.IE5\\" );
+			wcsncpy( sFileName.m_szTransformFileNameTo[2],   L"IEキャッシュ\\" );
+			wcsncpy( sFileName.m_szTransformFileNameFrom[3], L"%TEMP%\\" );
+			wcsncpy( sFileName.m_szTransformFileNameTo[3],   L"TEMP\\" );
+			wcsncpy( sFileName.m_szTransformFileNameFrom[4], L"%Common DeskTop%\\" );
+			wcsncpy( sFileName.m_szTransformFileNameTo[4],   L"共有デスクトップ\\" );
+			wcsncpy( sFileName.m_szTransformFileNameFrom[5], L"%Common Documents%\\" );
+			wcsncpy( sFileName.m_szTransformFileNameTo[5],   L"共有ドキュメント\\" );
+			wcsncpy( sFileName.m_szTransformFileNameFrom[6], L"%AppData%\\" );	// 2007.05.19 ryoji 追加
+			wcsncpy( sFileName.m_szTransformFileNameTo[6],   L"アプリデータ\\" );	// 2007.05.19 ryoji 追加
 			sFileName.m_nTransformFileNameArrNum = 7;
 		}
 

@@ -296,29 +296,29 @@ int CMigemo::migemo_load_all()
 		ppath = &path[wcslen(path)];
 		*(ppath++) = L'\\';
 		// ver1.3 utf8対応
-		wcscpy(ppath,L"utf-8\\migemo-dict");
+		wcsncpy(ppath,L"utf-8\\migemo-dict");
 		if(fexist(path)){
-			wcscpy(ppath,L"utf-8\\");
+			wcsncpy(ppath,L"utf-8\\");
 			ppath = &path[wcslen(path)];
 			m_bUtf8 = true;
 		}else{
-			wcscpy(ppath,L"cp932\\migemo-dict");
+			wcsncpy(ppath,L"cp932\\migemo-dict");
 			if(fexist(path)){
-				wcscpy(ppath,L"cp932\\");
+				wcsncpy(ppath,L"cp932\\");
 				ppath = &path[wcslen(path)];
 			}
 			m_bUtf8 = false;
 		}
-		wcscpy(ppath,L"migemo-dict");
+		wcsncpy(ppath,L"migemo-dict");
 
 		migemo_load_t(MIGEMO_DICTID_MIGEMO,path);
-		wcscpy(ppath,L"han2zen.dat");
+		wcsncpy(ppath,L"han2zen.dat");
 		migemo_load_t(MIGEMO_DICTID_HAN2ZEN,path);
-		wcscpy(ppath,L"hira2kata.dat");
+		wcsncpy(ppath,L"hira2kata.dat");
 		migemo_load_t(MIGEMO_DICTID_HIRA2KATA,path);
-		wcscpy(ppath,L"roma2hira.dat");
+		wcsncpy(ppath,L"roma2hira.dat");
 		migemo_load_t(MIGEMO_DICTID_ROMA2HIRA,path);
-		wcscpy(ppath,L"zen2han.dat");
+		wcsncpy(ppath,L"zen2han.dat");
 		migemo_load_t(MIGEMO_DICTID_ZEN2HAN,path);
 
 		// 2011.12.11 Moca 辞書登録後でないとmigemo内臓のものに変更されてしまう

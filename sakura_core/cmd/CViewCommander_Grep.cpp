@@ -243,20 +243,20 @@ void CViewCommander::Command_GREP_REPLACE( void )
 		//GOPTオプション
 		WCHAR	pOpt[64];
 		pOpt[0] = L'\0';
-		if( cDlgGrepRep.m_bSubFolder				)wcscat( pOpt, L"S" );	// サブフォルダからも検索する
-		if( cDlgGrepRep.m_sSearchOption.bWordOnly	)wcscat( pOpt, L"W" );	// 単語単位で探す
-		if( cDlgGrepRep.m_sSearchOption.bLoHiCase	)wcscat( pOpt, L"L" );	// 英大文字と英小文字を区別する
-		if( cDlgGrepRep.m_sSearchOption.bRegularExp	)wcscat( pOpt, L"R" );	// 正規表現
-		if( cDlgGrepRep.m_nGrepOutputLineType == 1     )wcscat( pOpt, L"P" );	// 行を出力する
-		// if( cDlgGrepRep.m_nGrepOutputLineType == 2     )wcscat( pOpt, L"N" );	// 否ヒット行を出力する 2014.09.23
-		if( 1 == cDlgGrepRep.m_nGrepOutputStyle		)wcscat( pOpt, L"1" );	// Grep: 出力形式
-		if( 2 == cDlgGrepRep.m_nGrepOutputStyle		)wcscat( pOpt, L"2" );	// Grep: 出力形式
-		if( 3 == cDlgGrepRep.m_nGrepOutputStyle		)wcscat( pOpt, L"3" );
-		if( cDlgGrepRep.m_bGrepOutputFileOnly		)wcscat( pOpt, L"F" );
-		if( cDlgGrepRep.m_bGrepOutputBaseFolder		)wcscat( pOpt, L"B" );
-		if( cDlgGrepRep.m_bGrepSeparateFolder		)wcscat( pOpt, L"D" );
-		if( cDlgGrepRep.m_bPaste					)wcscat( pOpt, L"C" );	// クリップボードから貼り付け
-		if( cDlgGrepRep.m_bBackup					)wcscat( pOpt, L"O" );	// バックアップ作成
+		if( cDlgGrepRep.m_bSubFolder				)wcsncat( pOpt, L"S" );	// サブフォルダからも検索する
+		if( cDlgGrepRep.m_sSearchOption.bWordOnly	)wcsncat( pOpt, L"W" );	// 単語単位で探す
+		if( cDlgGrepRep.m_sSearchOption.bLoHiCase	)wcsncat( pOpt, L"L" );	// 英大文字と英小文字を区別する
+		if( cDlgGrepRep.m_sSearchOption.bRegularExp	)wcsncat( pOpt, L"R" );	// 正規表現
+		if( cDlgGrepRep.m_nGrepOutputLineType == 1	)wcsncat( pOpt, L"P" );	// 行を出力する
+		// if( cDlgGrepRep.m_nGrepOutputLineType == 2     )wcsncat( pOpt, L"N" );	// 否ヒット行を出力する 2014.09.23
+		if( 1 == cDlgGrepRep.m_nGrepOutputStyle		)wcsncat( pOpt, L"1" );	// Grep: 出力形式
+		if( 2 == cDlgGrepRep.m_nGrepOutputStyle		)wcsncat( pOpt, L"2" );	// Grep: 出力形式
+		if( 3 == cDlgGrepRep.m_nGrepOutputStyle		)wcsncat( pOpt, L"3" );
+		if( cDlgGrepRep.m_bGrepOutputFileOnly		)wcsncat( pOpt, L"F" );
+		if( cDlgGrepRep.m_bGrepOutputBaseFolder		)wcsncat( pOpt, L"B" );
+		if( cDlgGrepRep.m_bGrepSeparateFolder		)wcsncat( pOpt, L"D" );
+		if( cDlgGrepRep.m_bPaste					)wcsncat( pOpt, L"C" );	// クリップボードから貼り付け
+		if( cDlgGrepRep.m_bBackup					)wcsncat( pOpt, L"O" );	// バックアップ作成
 		if( 0 < wcslen( pOpt ) ){
 			cCmdLine.AppendString( L" -GOPT=" );
 			cCmdLine.AppendString( pOpt );

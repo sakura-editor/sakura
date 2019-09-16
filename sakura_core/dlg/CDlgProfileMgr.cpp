@@ -324,7 +324,7 @@ void CDlgProfileMgr::CreateProf()
 			return;
 		}
 	}
-	if( 0 == wcscmp( szText, L".." ) ){
+	if( 0 == wcsncmp( szText, L".." ) ){
 		ErrorMessage( GetHwnd(), LS(STR_DLGPROFILE_ERR_INVALID_CHAR) );
 		return;
 	}
@@ -386,7 +386,7 @@ void CDlgProfileMgr::RenameProf()
 			return;
 		}
 	}
-	if( 0 == wcscmp( szText, L".." ) ){
+	if( 0 == wcsncmp( szText, L".." ) ){
 		ErrorMessage( GetHwnd(), LS(STR_DLGPROFILE_ERR_INVALID_CHAR) );
 		return;
 	}
@@ -412,7 +412,7 @@ void CDlgProfileMgr::RenameProf()
 		}
 	}
 	if( bDefault ){
-		wcscat(szText, L"*");
+		wcsncat(szText, L"*");
 	}
 	List_DeleteString( hwndList, nCurIndex );
 	List_InsertString( hwndList, nCurIndex, szText );
@@ -427,7 +427,7 @@ void CDlgProfileMgr::SetDefaultProf(int index)
 	WCHAR szProfileName[_MAX_PATH];
 	MyList_GetText( hwndList, index, szProfileName );
 	List_DeleteString( hwndList, index );
-	wcscat( szProfileName, L"*" );
+	wcsncat( szProfileName, L"*" );
 	List_InsertString( hwndList, index, szProfileName );
 }
 

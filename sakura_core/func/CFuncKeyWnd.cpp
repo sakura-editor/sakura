@@ -83,7 +83,7 @@ CFuncKeyWnd::CFuncKeyWnd()
 	lf.lfClipPrecision	= 0x2;
 	lf.lfQuality		= 0x1;
 	lf.lfPitchAndFamily	= 0x31;
-	wcscpy( lf.lfFaceName, L"ＭＳ Ｐゴシック" );
+	wcsncpy( lf.lfFaceName, L"ＭＳ Ｐゴシック" );
 	m_hFont = ::CreateFontIndirect( &lf );
 
 	m_bSizeBox = false;

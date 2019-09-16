@@ -113,7 +113,7 @@ public:
 			LPWSTR lpPath = new WCHAR[ baseLen + wcslen( vecKeys[ i ] ) + 2 ];
 			if( NULL == lpPath ) break;
 			wcscpy( lpPath, lpBaseFolder );
-			wcscpy( lpPath + baseLen, L"\\" );
+			wcsncpy( lpPath + baseLen, L"\\" );
 			wcscpy( lpPath + baseLen + 1, vecKeys[ i ] );
 			// vecKeys[ i ] ==> "subdir\*.h" 等の場合に後で(ファイル|フォルダ)名に "subdir\" を連結する
 			const WCHAR* keyDirYen = wcsrchr( vecKeys[ i ], L'\\' );
@@ -151,7 +151,7 @@ public:
 					wcscpy( lpName + nKeyDirLen, w32fd.cFileName );
 					LPWSTR lpFullPath = new WCHAR[ baseLen + wcslen(lpName) + 2 ];
 					wcscpy( lpFullPath, lpBaseFolder );
-					wcscpy( lpFullPath + baseLen, L"\\" );
+					wcsncpy( lpFullPath + baseLen, L"\\" );
 					wcscpy( lpFullPath + baseLen + 1, lpName );
 					if( IsValid( w32fd, lpName ) ){
 						if( pExceptItems && pExceptItems->IsExist( lpFullPath ) ){

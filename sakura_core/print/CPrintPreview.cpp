@@ -1486,7 +1486,7 @@ CColorStrategy* CPrintPreview::DrawPageText(
 				if( m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute().m_bLineNumIsCRLF ){
 					/* 論理行番号表示モード */
 					if( 0 != pcLayout->GetLogicOffset() ){ //折り返しレイアウト行
-						wcscpy( szLineNum, L" " );
+						wcsncpy( szLineNum, L" " );
 					}else{
 						_itow( pcLayout->GetLogicLineNo() + 1, szLineNum, 10 );	/* 対応する論理行番号 */
 					}
@@ -1504,7 +1504,7 @@ CColorStrategy* CPrintPreview::DrawPageText(
 					wcscat( szLineNum, szLineTerm );
 				}
 				else{
-					wcscat( szLineNum, L" " );
+					wcsncat( szLineNum, L" " );
 				}
 
 				//文字列長

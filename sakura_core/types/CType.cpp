@@ -162,7 +162,7 @@ void _DefaultConfig(STypeConfig* pType)
 	for( int i = 0; i < MAX_KEYWORDSET_PER_TYPE; i++ ){
 		pType->m_nKeyWordSetIdx[i] = -1;
 	}
-	wcscpy( pType->m_szTabViewString, _EDITL("^       ") );	/* TAB表示文字列 */
+	wcsncpy( pType->m_szTabViewString, _EDITL("^       ") );	/* TAB表示文字列 */
 	pType->m_bTabArrow = TABARROW_STRING;	/* タブ矢印表示 */	// 2001.12.03 hor	// default on 2013/4/11 Uchi
 	pType->m_bInsSpace = false;				/* スペースの挿入 */	// 2001.12.03 hor
 	
@@ -255,7 +255,7 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_bKinsokuKuto = false;					// 句読点をぶら下げる	//@@@ 2002.04.17 MIK
 	pType->m_szKinsokuHead[0] = L'\0';				// 行頭禁則				//@@@ 2002.04.08 MIK
 	pType->m_szKinsokuTail[0] = L'\0';				// 行末禁則				//@@@ 2002.04.08 MIK
-	wcscpy( pType->m_szKinsokuKuto, L"、。，．､｡,." );	// 句読点ぶら下げ文字	// 2009.08.07 ryoji
+	wcsncpy( pType->m_szKinsokuKuto, L"、。，．､｡,." );	// 句読点ぶら下げ文字	// 2009.08.07 ryoji
 
 	pType->m_bUseDocumentIcon = false;				// 文書に関連づけられたアイコンを使う
 

@@ -35,8 +35,8 @@
 void CType_Java::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	wcscpy( pType->m_szTypeName, L"Java" );
-	wcscpy( pType->m_szTypeExts, L"java,jav" );
+	wcsncpy( pType->m_szTypeName, L"Java" );
+	wcsncpy( pType->m_szTypeExts, L"java,jav" );
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L"//", -1 );					/* 行コメントデリミタ */
@@ -148,14 +148,14 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 				}else{
 					/* クラス宣言部分を見つけた */
 					//	Oct. 10, 2002 genta interfaceも対象に
-					if( 0 == wcscmp( L"class", szWordPrev ) ||
-						0 == wcscmp( L"interface", szWordPrev )
+					if( 0 == wcsncmp( szWordPrev, L"class" ) ||
+						0 == wcsncmp( szWordPrev, L"interface" )
 					 ){
 						nClassNestArr.push_back( nNestLevel );
 						nNestLevel2Arr.push_back( 0 );
 						++nClassNestArrNum;
 						if( 0 < nNestLevel	){
-							wcscat( szClass, L"\\" );
+							wcsncat( szClass, L"\\" );
 						}
 						wcscat( szClass, szWord );
 
@@ -253,14 +253,14 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						//	メソッド中でさらにメソッドを定義することはないので
 						//	ネストレベル判定追加 class/interfaceの直下の場合のみ判定する
 						if( nClassNestArr[nClassNestArrNum - 1] == nNestLevel - 1
-						 && 0 != wcscmp( L"sizeof", szFuncName )
-						 && 0 != wcscmp( L"if", szFuncName )
-						 && 0 != wcscmp( L"for", szFuncName )
-						 && 0 != wcscmp( L"do", szFuncName )
-						 && 0 != wcscmp( L"while", szFuncName )
-						 && 0 != wcscmp( L"catch", szFuncName )
-						 && 0 != wcscmp( L"switch", szFuncName )
-						 && 0 != wcscmp( L"return", szFuncName )
+						 && 0 != wcsncmp( szFuncName, L"sizeof" )
+						 && 0 != wcsncmp( szFuncName, L"if" )
+						 && 0 != wcsncmp( szFuncName, L"for" )
+						 && 0 != wcsncmp( szFuncName, L"do" )
+						 && 0 != wcsncmp( szFuncName, L"while" )
+						 && 0 != wcsncmp( szFuncName, L"catch" )
+						 && 0 != wcsncmp( szFuncName, L"switch" )
+						 && 0 != wcsncmp( szFuncName, L"return" )
 						){
 							nFuncId = FL_OBJ_FUNCTION;
 							++nFuncNum;
@@ -316,7 +316,7 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 				}else
 				if( L'(' == pLine[i] ){
 					if( 0 < nClassNestArrNum /*nNestLevel == 1*/ &&
-						0 != wcscmp( L"new", szWordPrev )
+						0 != wcsncmp( szWordPrev, L"new" )
 					){
 						wcscpy( szFuncName, szWord );
 						nFuncLine = nLineCount + CLogicInt(1);
@@ -394,14 +394,14 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						//	Oct. 10, 2002 genta
 						// 関数の中で別の関数の宣言部を使うことって，Javaであるの？
 						if( nClassNestArr[nClassNestArrNum - 1] == nNestLevel - 1
-						 && 0 != wcscmp( L"sizeof", szFuncName )
-						 && 0 != wcscmp( L"if", szFuncName )
-						 && 0 != wcscmp( L"for", szFuncName )
-						 && 0 != wcscmp( L"do", szFuncName )
-						 && 0 != wcscmp( L"while", szFuncName )
-						 && 0 != wcscmp( L"catch", szFuncName )
-						 && 0 != wcscmp( L"switch", szFuncName )
-						 && 0 != wcscmp( L"return", szFuncName )
+						 && 0 != wcsncmp( szFuncName, L"sizeof" )
+						 && 0 != wcsncmp( szFuncName, L"if" )
+						 && 0 != wcsncmp( szFuncName, L"for" )
+						 && 0 != wcsncmp( szFuncName, L"do" )
+						 && 0 != wcsncmp( szFuncName, L"while" )
+						 && 0 != wcsncmp( szFuncName, L"catch" )
+						 && 0 != wcsncmp( szFuncName, L"switch" )
+						 && 0 != wcsncmp( szFuncName, L"return" )
 						){
 							nFuncId = FL_OBJ_DECLARE;
 							++nFuncNum;

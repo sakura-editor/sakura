@@ -129,8 +129,8 @@ bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, 
 	do {
 		if( (wf.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY &&
 			(wf.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) == 0 &&
-			wcscmp(wf.cFileName, L".")!=0 && wcscmp(wf.cFileName, L"..")!=0 &&
-			wmemicmp(wf.cFileName, L"unuse") !=0 )
+			wcsncmp(wf.cFileName, L".")!=0 && wcsncmp(wf.cFileName, L"..")!=0 &&
+			wcsnicmp(wf.cFileName, L"unuse") !=0 )
 		{
 			//インストール済みチェック。フォルダ名＝プラグインテーブルの名前ならインストールしない
 			// 2010.08.04 大文字小文字同一視にする
@@ -525,9 +525,9 @@ CPlugin* CPluginManager::LoadPlugin( const WCHAR* pszPluginDir, const WCHAR* psz
 	std::wstring sPlugType;
 	cProfDef.IOProfileData( PII_PLUGIN, PII_PLUGIN_PLUGTYPE, sPlugType );
 
-	if( _wcsicmp( sPlugType.c_str(), L"wsh" ) == 0 ){
+	if( wcsnicmp( sPlugType.c_str(), L"wsh" ) == 0 ){
 		plugin = new CWSHPlugin( wstring(pszBasePath) );
-	}else if( _wcsicmp( sPlugType.c_str(), L"dll" ) == 0 ){
+	}else if( wcsnicmp( sPlugType.c_str(), L"dll" ) == 0 ){
 		plugin = new CDllPlugin( wstring(pszBasePath) );
 	}else{
 		return NULL;

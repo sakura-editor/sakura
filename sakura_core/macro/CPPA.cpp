@@ -220,16 +220,16 @@ char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer
 	char szType[20];			//	procedure/function用バッファ
 	char szReturn[20];			//	戻り値型用バッファ
 	if (cMacroFuncInfo.m_varResult == VT_EMPTY){
-		strcpy( szType, "procedure" );
+		strncpy( szType, "procedure" );
 		szReturn[0] = '\0';
 	}
 	else {
-		strcpy( szType, "function" );
+		strncpy( szType, "function" );
 		if (cMacroFuncInfo.m_varResult == VT_BSTR){
-			strcpy( szReturn, ": string" );
+			strncpy( szReturn, ": string" );
 		}
 		else if ( cMacroFuncInfo.m_varResult == VT_I4 ){
-			strcpy( szReturn, ": Integer" );
+			strncpy( szReturn, ": Integer" );
 		}
 		else {
 			szReturn[0] = '\0';
@@ -251,15 +251,15 @@ char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer
 			break;
 		}
 		if ( type == VT_BSTR ){
-			strcpy( szArguments[i], "s0: string" );
+			strncpy( szArguments[i], "s0: string" );
 			szArguments[i][1] = '0' + (char)i;
 		}
 		else if ( type == VT_I4 ){
-			strcpy( szArguments[i], "i0: Integer" );
+			strncpy( szArguments[i], "i0: Integer" );
 			szArguments[i][1] = '0' + (char)i;
 		}
 		else {
-			strcpy( szArguments[i], "u0: Unknown" );
+			strncpy( szArguments[i], "u0: Unknown" );
 		}
 	}
 	if ( i > 0 ){	//	引数があったとき
@@ -268,7 +268,7 @@ char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer
 		// 2002.12.06 Moca 原因不明だが，strcatがVC6Proでうまく動かなかったため，strcpyにしてみたら動いた
 		strcpy( szArgument, szArguments[0] );
 		for ( j=1; j<i; j++){
-			strcat( szArgument, "; " );
+			strncat( szArgument, "; " );
 			strcat( szArgument, szArguments[j] );
 		}
 		auto_sprintf( szBuffer, "%hs S_%ls(%hs)%hs; index %d;",

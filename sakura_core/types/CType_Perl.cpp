@@ -37,8 +37,8 @@
 void CType_Perl::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	wcscpy( pType->m_szTypeName, L"Perl" );
-	wcscpy( pType->m_szTypeExts, L"cgi,pl,pm" );
+	wcsncpy( pType->m_szTypeName, L"Perl" );
+	wcsncpy( pType->m_szTypeExts, L"cgi,pl,pm" );
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L"#", -1 );					/* 行コメントデリミタ */
@@ -103,7 +103,7 @@ void CDocOutline::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 				//	sub の一文字目かもしれない
 				if( nLineLen - i < 4 )
 					break;
-				if( wcsncmp_literal( pLine + i, L"sub" ) )
+				if( wcsncmp( pLine + i, L"sub" ) )
 					break;
 				int c = pLine[ i + 3 ];
 				if( c == L' ' || c == L'\t' ){

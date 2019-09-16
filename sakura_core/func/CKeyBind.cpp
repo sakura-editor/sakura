@@ -408,7 +408,7 @@ WCHAR*	CKeyBind::MakeMenuLabel(const WCHAR* sName, const WCHAR* sKey)
 			sLabel[p-sName] = L'&';
 			wcscpy_s( sLabel + (p-sName) + 1, _countof(sLabel), p );
 		}
-		else if (wcscmp( sName + wcslen(sName) - 3, L"..." ) == 0) {
+		else if (wcsncmp( sName + wcslen(sName) - 3, L"..." ) == 0) {
 			// 末尾...
 			wcscpy_s( sLabel, _countof(sLabel), sName );
 			sLabel[wcslen(sName) - 3] = '\0';						// 末尾の...を取る
@@ -448,7 +448,7 @@ WCHAR* CKeyBind::GetMenuLabel(
 		pszLabel[ LABEL_MAX - 1 ] = L'\0';
 	}
 	if( L'\0' == pszLabel[0] ){
-		wcscpy( pszLabel, L"-- undefined name --" );
+		wcsncpy( pszLabel, L"-- undefined name --" );
 	}
 	// アクセスキーの追加	2010/5/17 Uchi
 	wcsncpy_s( pszLabel, LABEL_MAX, MakeMenuLabel( pszLabel, pszKey ), _TRUNCATE );
@@ -462,7 +462,7 @@ WCHAR* CKeyBind::GetMenuLabel(
 		if( GetKeyStr( hInstance, nKeyNameArrNum, pKeyNameArr, cMemAccessKey, nFuncId, bGetDefFuncCode ) ){
 			// バッファが足りないときは入れない
 			if( wcslen( pszLabel ) + (Int)cMemAccessKey.GetStringLength() + 1 < LABEL_MAX ){
-				wcscat( pszLabel, L"\t" );
+				wcsncat( pszLabel, L"\t" );
 				wcscat( pszLabel, cMemAccessKey.GetStringPtr() );
 			}
 		}

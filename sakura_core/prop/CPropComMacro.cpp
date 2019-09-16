@@ -314,7 +314,7 @@ int CPropMacro::GetData( HWND hwndDlg )
 		sItem.pszText = buf;
 		sItem.cchTextMax = MAX_PATH;
 		ListView_GetItem( hListView, &sItem );
-		if ( wcscmp(buf, L"on") == 0){
+		if ( wcsncmp(buf, L"on") == 0){
 			m_Common.m_sMacro.m_MacroTable[index].m_bReloadWhenExecute = true;
 		}
 		else {
@@ -585,7 +585,7 @@ void CPropMacro::OnFileDropdown_Macro( HWND hwndDlg )
 		wcscpy( folder, path );
 		GetInidirOrExedir( path, folder );
 	}
-	wcscat( path, L"*.*" );	//	2002/05/01 YAZAKI どんなファイルもどんと来い。
+	wcsncat( path, L"*.*" );	//	2002/05/01 YAZAKI どんなファイルもどんと来い。
 
 	//	候補の初期化
 	Combo_ResetContent( hCombo );
@@ -601,7 +601,7 @@ void CPropMacro::OnFileDropdown_Macro( HWND hwndDlg )
 	do {
 		//	コンボボックスに設定
 		//	でも.と..は勘弁。
-		//if (wcscmp( wf.cFileName, L"." ) != 0 && wcscmp( wf.cFileName, L".." ) != 0){
+		//if (wcsncmp( wf.cFileName, L"." ) != 0 && wcsncmp( wf.cFileName, L".." ) != 0){
 		if( (wf.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0 ){	// 2009.02.12 ryoji フォルダを除外
 			int result = Combo_AddString( hCombo, wf.cFileName );
 			if( result == CB_ERR || result == CB_ERRSPACE )
@@ -658,7 +658,7 @@ void CPropMacro::CheckListPosition_Macro( HWND hwndDlg )
 	sItem.pszText = buf;
 	sItem.cchTextMax = MAX_PATH;
 	ListView_GetItem( hListView, &sItem );
-	if ( wcscmp(buf, L"on") == 0){
+	if ( wcsncmp(buf, L"on") == 0){
 		::CheckDlgButton( hwndDlg, IDC_CHECK_RELOADWHENEXECUTE, true );
 	}
 	else {

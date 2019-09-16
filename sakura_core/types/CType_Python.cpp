@@ -106,8 +106,8 @@ struct COutlinePython {
 void CType_Python::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	wcscpy( pType->m_szTypeName, L"Python" );
-	wcscpy( pType->m_szTypeExts, L"py" );
+	wcsncpy( pType->m_szTypeName, L"Python" );
+	wcsncpy( pType->m_szTypeExts, L"py" );
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L"#", -1 );					/* 行コメントデリミタ */
@@ -441,12 +441,12 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 			}
 			
 			int nItemFuncId = 0;	// topic type
-			if( nLineLen - col > CLogicInt(3 + 1) && wcsncmp_literal( pLine + col, L"def" ) == 0 ){
+			if( nLineLen - col > CLogicInt(3 + 1) && wcsncmp( pLine + col, L"def" ) == 0 ){
 				//	"def"
 				nItemFuncId = 1;
 				col += CLogicInt(3); // strlen( def )
 			}
-			else if( nLineLen - col > CLogicInt(5 + 1) && wcsncmp_literal( pLine + col, L"class" ) == 0 ){
+			else if( nLineLen - col > CLogicInt(5 + 1) && wcsncmp( pLine + col, L"class" ) == 0 ){
 				// class
 				nItemFuncId = 4;
 				col += CLogicInt(5); // strlen( class )

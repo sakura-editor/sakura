@@ -234,7 +234,7 @@ bool CDocTypeManager::ConvertTypesExtToDlgExt( const WCHAR *pszSrcExt, const WCH
 
 	if (szExt != NULL && szExt[0] != L'\0') {
 		// ファイルパスがあり、拡張子ありの場合、トップに指定
-		wcscpy(pszDstExt, L"*");
+		wcsncpy(pszDstExt, L"*");
 		wcscat(pszDstExt, szExt);
 	}
 
@@ -242,11 +242,11 @@ bool CDocTypeManager::ConvertTypesExtToDlgExt( const WCHAR *pszSrcExt, const WCH
 	while( token )
 	{
 		if (szExt == NULL || szExt[0] == L'\0' || wmemicmp(token, szExt + 1) != 0) {
-			if( pszDstExt[0] != '\0' ) wcscat( pszDstExt, L";" );
+			if( pszDstExt[0] != '\0' ) wcsncat( pszDstExt, L";" );
 			// 拡張子指定なし、またはマッチした拡張子でない
 			if (wcspbrk(token, m_typeExtWildcards) == NULL) {
-				if (L'.' == *token) wcscat(pszDstExt, L"*");
-				else                 wcscat(pszDstExt, L"*.");
+				if (L'.' == *token) wcsncat(pszDstExt, L"*");
+				else                 wcsncat(pszDstExt, L"*.");
 			}
 			wcscat(pszDstExt, token);
 		}
