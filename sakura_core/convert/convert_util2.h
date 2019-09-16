@@ -664,8 +664,8 @@ finish_first_detect:;
 		return 0;
 	}
 	if( sizeof(CHAR_TYPE) == 2 ){
-		ncmpresult1 = wcscmp_literal( reinterpret_cast<const wchar_t*>(&pSrc[nLen_part1]), L"B?" );
-		ncmpresult2 = wcscmp_literal( reinterpret_cast<const wchar_t*>(&pSrc[nLen_part1]), L"Q?" );
+		ncmpresult1 = wcsicmp_literal( reinterpret_cast<const wchar_t*>(&pSrc[nLen_part1]), L"B?" );
+		ncmpresult2 = wcsicmp_literal( reinterpret_cast<const wchar_t*>(&pSrc[nLen_part1]), L"Q?" );
 	}else{
 		ncmpresult1 = stricmp_literal( &pSrc[nLen_part1], "B?" );
 		ncmpresult2 = stricmp_literal( &pSrc[nLen_part1], "Q?" );
