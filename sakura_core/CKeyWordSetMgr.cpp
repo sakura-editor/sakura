@@ -390,11 +390,7 @@ int CKeyWordSetMgr::SearchKeyWord2( int nIdx, const wchar_t* pszKeyWord, int nKe
 	int pl = m_nStartIdx[nIdx];
 	int pr = m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx] - 1;
 	int pc = (pr + 1 - pl) / 2 + pl;
-	int (*cmp)(wchar_t const*, wchar_t const*, size_t);
-	if (m_bKEYWORDCASEArr[nIdx])
-		cmp = wcsncmp;
-	else
-		cmp = _wcsnicmp;
+	auto cmp = m_bKEYWORDCASEArr[nIdx] ? wcsncmp : _wcsnicmp;
 	while( pl <= pr ) {
 		const int ret = cmp( pszKeyWord, m_szKeyWordArr[pc], nKeyWordLen );
 		if( 0 < ret ) {
