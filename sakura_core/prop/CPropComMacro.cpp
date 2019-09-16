@@ -601,7 +601,7 @@ void CPropMacro::OnFileDropdown_Macro( HWND hwndDlg )
 	do {
 		//	コンボボックスに設定
 		//	でも.と..は勘弁。
-		//if (wcsncmp( wf.cFileName, L"." ) != 0 && wcsncmp( wf.cFileName, L".." ) != 0){
+		//if (wcscmp_literal( wf.cFileName, L"." ) != 0 && wcscmp_literal( wf.cFileName, L".." ) != 0){
 		if( (wf.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0 ){	// 2009.02.12 ryoji フォルダを除外
 			int result = Combo_AddString( hCombo, wf.cFileName );
 			if( result == CB_ERR || result == CB_ERRSPACE )

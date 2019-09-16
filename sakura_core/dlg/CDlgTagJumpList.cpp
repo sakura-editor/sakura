@@ -1645,7 +1645,7 @@ WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 		wcscpy( pszOutput, p );	//何も加工しない。
 	}else{
 		for( int i = 0; i < depth; i++ ){
-			//wcsncat( basePath, L"..\\" );
+			//wcscat_literal( basePath, L"..\\" );
 			DirUp( basePath );
 		}
 		if( -1 == auto_snprintf_s( pszOutput, count, L"%s%s", basePath, p ) ){
