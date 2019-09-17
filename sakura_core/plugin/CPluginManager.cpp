@@ -130,7 +130,7 @@ bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, 
 		if( (wf.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY &&
 			(wf.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) == 0 &&
 			wcscmp_literal(wf.cFileName, L".")!=0 && wcscmp_literal(wf.cFileName, L"..")!=0 &&
-			wcsicmp_literal(wf.cFileName, L"unuse") !=0 )
+			wcsnicmp_literal(wf.cFileName, L"unuse") !=0 )
 		{
 			//インストール済みチェック。フォルダ名＝プラグインテーブルの名前ならインストールしない
 			// 2010.08.04 大文字小文字同一視にする

@@ -165,7 +165,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 			TAGLIST_SUBPATH,
 			TAGLIST_ROOT,
 		} searchMode = TAGLIST_FILEPATH;
-		if( 0 == wcscmp_literal( pLine, L"■\"" ) ){
+		if( 0 == wcsncmp_literal( pLine, L"■\"" ) ){
 			/* WZ風のタグリストか */
 			if( IsFilePath( &pLine[2], &nBgn, &nPathLen ) && !_IS_REL_PATH( &pLine[2] ) ){
 				wmemcpy( szJumpToFile, &pLine[2 + nBgn], nPathLen );
@@ -175,12 +175,12 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 				break;
 			}
 			searchMode = TAGLIST_ROOT;
-		}else if( 0 == wcscmp_literal( pLine, L"◆\"" ) ){
+		}else if( 0 == wcsncmp_literal( pLine, L"◆\"" ) ){
 			if( !GetQuoteFilePath( &pLine[2], szFile, _countof(szFile) ) ){
 				break;
 			}
 			searchMode = TAGLIST_SUBPATH;
-		}else if( 0 == wcscmp_literal( pLine, L"・" ) ){
+		}else if( 0 == wcsncmp_literal( pLine, L"・" ) ){
 			if( pLine[1] == L'"' ){
 				// ・"FileName.ext"
 				if( !GetQuoteFilePath( &pLine[2], szFile, _countof(szFile) ) ){
@@ -239,9 +239,9 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 			if( NULL == pLine ){
 				break;
 			}
-			if( 0 == wcscmp_literal( pLine, L"・" ) ){
+			if( 0 == wcsncmp_literal( pLine, L"・" ) ){
 				continue;
-			}else if( 3 <= nLineLen && 0 == wcscmp_literal( pLine, L"◆\"" ) ){
+			}else if( 3 <= nLineLen && 0 == wcsncmp_literal( pLine, L"◆\"" ) ){
 				if( searchMode == TAGLIST_SUBPATH || searchMode == TAGLIST_ROOT ){
 					continue;
 				}
@@ -257,7 +257,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 					continue;
 				}
 				searchMode = TAGLIST_ROOT;
-			}else if( 3 <= nLineLen && 0 == wcscmp_literal( pLine, L"■\"" ) ){
+			}else if( 3 <= nLineLen && 0 == wcsncmp_literal( pLine, L"■\"" ) ){
 				if( searchMode == TAGLIST_ROOT ){
 					continue;
 				}
@@ -283,7 +283,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 					continue;
 				}
 				break;
-			}else if( 3 <= nLineLen && 0 == wcscmp_literal( pLine, L"◎\"" ) ){
+			}else if( 3 <= nLineLen && 0 == wcsncmp_literal( pLine, L"◎\"" ) ){
 				if( GetQuoteFilePath( &pLine[2], szJumpToFile, _countof(szJumpToFile) ) ){
 					AddLastYenFromDirectoryPath( szJumpToFile );
 					wcscat( szJumpToFile, szFile );

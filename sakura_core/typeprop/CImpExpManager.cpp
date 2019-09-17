@@ -631,8 +631,8 @@ bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 
 		//RxKey[999]=ColorName,RegexKeyword
 		if( wcslen(buff) < 12 ) continue;
-		if( wcscmp_literal(buff, L"RxKey[") != 0 ) continue;
-		if( wcscmp_literal(&buff[9], L"]=") != 0 ) continue;
+		if( wcsncmp_literal(buff, L"RxKey[") != 0 ) continue;
+		if( wcsncmp_literal(&buff[9], L"]=") != 0 ) continue;
 		WCHAR *p = wcsstr(&buff[11], L",");
 		if( p )
 		{
@@ -744,8 +744,8 @@ bool CImpExpKeyHelp::Import( const wstring& sFileName, wstring& sErrMsg )
 
 		//KDct[99]=ON/OFF,DictAbout,KeyHelpPath
 		if( buff.length() < 10 ||
-			wcscmp_literal(buff.c_str(), LTEXT("KDct[")) != 0 ||
-			wcscmp_literal(&buff[7], LTEXT("]=")) != 0
+			wcsncmp_literal(buff.c_str(), LTEXT("KDct[")) != 0 ||
+			wcsncmp_literal(&buff[7], LTEXT("]=")) != 0
 			){
 			//	2007.02.03 genta 処理を継続
 			++invalid_record;
@@ -1127,7 +1127,7 @@ bool CImpExpKeyWord::Import( const wstring& sFileName, wstring& sErrMsg )
 		if (szLine.length() == 0) {
 			continue;
 		}
-		if (2 <= szLine.length() && 0 == wcscmp_literal( szLine.c_str(), L"//" )) {
+		if (2 <= szLine.length() && 0 == wcsncmp_literal( szLine.c_str(), L"//" )) {
 			if (szLine == WSTR_CASE_TRUE) {
 				m_bCase = true;
 			}

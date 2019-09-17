@@ -219,7 +219,7 @@ bool COutputAdapterDiff::OutputA(const ACHAR* pBuf, int size)
 	if( bFirst )
 	{
 		bFirst = false;
-		if( strcmp_literal( pBuf, "Binary files " ) == 0 )
+		if( strncmp_literal( pBuf, "Binary files " ) == 0 )
 		{
 			WarningMessage( NULL, LS(STR_ERR_DLGEDITVWDIFF4) );
 			return false;

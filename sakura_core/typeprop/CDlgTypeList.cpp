@@ -983,7 +983,7 @@ int UnregistExt(LPCWSTR sExt)
 
 	keyBackup.Close();
 	keyShellAction.Close();
-	if( wcscmp_literal(szProgID, L"SakuraEditor_") == 0)
+	if( wcsncmp_literal(szProgID, L"SakuraEditor_") == 0)
 	{
 		if( (errorCode = DeleteRegistry(HKEY_CURRENT_USER, sProgIDPath)) != 0 ){ return errorCode; }
 

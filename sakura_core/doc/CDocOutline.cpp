@@ -159,7 +159,7 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 			}
 		}else{
 			if( 0 < strLine.length() && strLine[0] == cComment ){
-				if( 13 <= strLine.length() && strLine.length() <= 14 && 0 == wcsicmp_literal( strLine.c_str() + 1, L"CommentChar=" ) ){
+				if( 13 <= strLine.length() && strLine.length() <= 14 && 0 == wcsnicmp_literal( strLine.c_str() + 1, L"CommentChar=" ) ){
 					if( 13 == strLine.length() ){
 						cComment = L'\0';
 					}else{
@@ -171,9 +171,9 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 				}else if( 18 == strLine.length() && 0 == wcsicmp_literal( strLine.c_str() + 1, L"Mode=RegexReplace" ) ){
 					bRegex = true;
 					bRegexReplace = true;
-				}else if( 7 <= strLine.length() && 0 == wcsicmp_literal( strLine.c_str() + 1, L"Title=" ) ){
+				}else if( 7 <= strLine.length() && 0 == wcsnicmp_literal( strLine.c_str() + 1, L"Title=" ) ){
 					title = strLine.c_str() + 7;
-				}else if( 13 < strLine.length() && 0 == wcsicmp_literal( strLine.c_str() + 1, L"RegexOption=" ) ){
+				}else if( 13 < strLine.length() && 0 == wcsnicmp_literal( strLine.c_str() + 1, L"RegexOption=" ) ){
 					int nCaseFlag = CBregexp::optCaseSensitive;
 					regexOption = 0;
 					for( int i = 13; i < (int)strLine.length(); i++ ){

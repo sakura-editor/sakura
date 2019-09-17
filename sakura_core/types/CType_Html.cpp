@@ -109,7 +109,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 			// 2004.04.20 Moca コメントを処理する
 			if( bCommentTag )
 			{
-				if( i < nLineLen - 3 && 0 == wcscmp_literal( pLine, L"-->" ) )
+				if( i < nLineLen - 3 && 0 == wcsncmp_literal( pLine, L"-->" ) )
 				{
 					bCommentTag = false;
 					i += 2;
@@ -119,7 +119,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 			}
 			// 2014.12.25 Moca CDATA
 			if( bCDATA ){
-				if( i < nLineLen - 3 && 0 == wcscmp_literal( pLine, L"]]>" ) )
+				if( i < nLineLen - 3 && 0 == wcsncmp_literal( pLine, L"]]>" ) )
 				{
 					bCDATA = false;
 					i += 2;
@@ -156,7 +156,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 			if(j==0)
 			{
 				// 2004.04.20 Moca From Here コメントを処理する
-				if( i < nLineLen - 3 && 0 == wcscmp_literal( pLine, L"!--" ) )
+				if( i < nLineLen - 3 && 0 == wcsncmp_literal( pLine, L"!--" ) )
 				{
 					bCommentTag = true;
 					i += 3;
@@ -164,7 +164,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 				}
 				// 2004.04.20 Moca To Here
 				// 2014.12.25 Moca CDATA
-				if( bXml && i < nLineLen - 8 && 0 == wcscmp_literal( pLine, L"![CDATA[" )){
+				if( bXml && i < nLineLen - 8 && 0 == wcsncmp_literal( pLine, L"![CDATA[" )){
 					bCDATA = true;
 					i += 8;
 					pLine += 8;

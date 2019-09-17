@@ -332,17 +332,17 @@ INT_PTR CPropKeybind::DispatchEvent(
 						i = 0;
 						p = buff;
 						//SHIFT
-						if( wcscmp_literal(p, STR_SHIFT_PLUS) == 0 ){
+						if( wcsncmp_literal(p, STR_SHIFT_PLUS) == 0 ){
 							p += _countof(STR_SHIFT_PLUS) - 1;
 							i |= _SHIFT;
 						}
 						//CTRL
-						if( wcscmp_literal(p, STR_CTRL_PLUS) == 0 ){
+						if( wcsncmp_literal(p, STR_CTRL_PLUS) == 0 ){
 							p += _countof(STR_CTRL_PLUS) - 1;
 							i |= _CTRL;
 						}
 						//ALT
-						if( wcscmp_literal(p, STR_ALT_PLUS) == 0 ){
+						if( wcsncmp_literal(p, STR_ALT_PLUS) == 0 ){
 							p += _countof(STR_ALT_PLUS) - 1;
 							i |= _ALT;
 						}

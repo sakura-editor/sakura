@@ -443,12 +443,12 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, WCHAR *pszFilename )
 		return false;
 	}
 	if( sizeof(CHAR_TYPE) == 2 ){
-		if( wcscmp_literal(pwstart, L"begin") != 0 ){
+		if( wcsncmp_literal(pwstart, L"begin") != 0 ){
 			// error.
 			return false;
 		}
 	}else{
-		if( strcmp_literal(reinterpret_cast<const char*>(pwstart), "begin") != 0 ){
+		if( strncmp_literal(reinterpret_cast<const char*>(pwstart), "begin") != 0 ){
 			// error.
 			return false;
 		}
@@ -545,12 +545,12 @@ bool CheckUUFooter( const CHAR_TYPE *pS, const int nLen )
 		return false;
 	}
 	if( sizeof(CHAR_TYPE) == 2 ){
-		if( wcscmp_literal(&pS[nstartidx], L"end") != 0 ){
+		if( wcsncmp_literal(&pS[nstartidx], L"end") != 0 ){
 			// error.
 			return false;
 		}
 	}else{
-		if( strcmp_literal(reinterpret_cast<const char*>(&pS[nstartidx]), "end") != 0 ){
+		if( strncmp_literal(reinterpret_cast<const char*>(&pS[nstartidx]), "end") != 0 ){
 			// error.
 			return false;
 		}
@@ -617,9 +617,9 @@ int _DecodeMimeHeader( const CHAR_TYPE* pSrc, const int nSrcLen, CMemory* pcMem_
 	if( pSrc+14 < pSrc+nSrcLen ){
 		// JIS の場合
 		if( sizeof(CHAR_TYPE) == 2 ){
-			ncmpresult = wcscmp_literal( reinterpret_cast<const wchar_t*>(&pSrc[0]), L"=?ISO-2022-JP?" );
+			ncmpresult = wcsnicmp_literal( reinterpret_cast<const wchar_t*>(&pSrc[0]), L"=?ISO-2022-JP?" );
 		}else{
-			ncmpresult = stricmp_literal( &pSrc[0], "=?ISO-2022-JP?" );
+			ncmpresult = strnicmp_literal( &pSrc[0], "=?ISO-2022-JP?" );
 		}
 		if( ncmpresult == 0 ){  // 
 			ecode = CODE_JIS;
@@ -630,9 +630,9 @@ int _DecodeMimeHeader( const CHAR_TYPE* pSrc, const int nSrcLen, CMemory* pcMem_
 	if( pSrc+8 < pSrc+nSrcLen ){
 		// UTF-8 の場合
 		if( sizeof(CHAR_TYPE) == 2 ){
-			ncmpresult = wcscmp_literal( reinterpret_cast<const wchar_t*>(&pSrc[0]), L"=?UTF-8?" );
+			ncmpresult = wcsnicmp_literal( reinterpret_cast<const wchar_t*>(&pSrc[0]), L"=?UTF-8?" );
 		}else{
-			ncmpresult = stricmp_literal( &pSrc[0], "=?UTF-8?" );
+			ncmpresult = strnicmp_literal( &pSrc[0], "=?UTF-8?" );
 		}
 		if( ncmpresult == 0 ){
 			ecode = CODE_UTF8;
@@ -664,11 +664,11 @@ finish_first_detect:;
 		return 0;
 	}
 	if( sizeof(CHAR_TYPE) == 2 ){
-		ncmpresult1 = wcsicmp_literal( reinterpret_cast<const wchar_t*>(&pSrc[nLen_part1]), L"B?" );
-		ncmpresult2 = wcsicmp_literal( reinterpret_cast<const wchar_t*>(&pSrc[nLen_part1]), L"Q?" );
+		ncmpresult1 = wcsnicmp_literal( reinterpret_cast<const wchar_t*>(&pSrc[nLen_part1]), L"B?" );
+		ncmpresult2 = wcsnicmp_literal( reinterpret_cast<const wchar_t*>(&pSrc[nLen_part1]), L"Q?" );
 	}else{
-		ncmpresult1 = stricmp_literal( &pSrc[nLen_part1], "B?" );
-		ncmpresult2 = stricmp_literal( &pSrc[nLen_part1], "Q?" );
+		ncmpresult1 = strnicmp_literal( &pSrc[nLen_part1], "B?" );
+		ncmpresult2 = strnicmp_literal( &pSrc[nLen_part1], "Q?" );
 	}
 	if( ncmpresult1 == 0 ){
 		emethod = EM_BASE64;
@@ -688,9 +688,9 @@ finish_first_detect:;
 	pr = pSrc + nLen_part1 + nLen_part2;
 	for( ; pr < pSrc+nSrcLen-1; ++pr ){
 		if( sizeof(CHAR_TYPE) == 2 ){
-			ncmpresult = wcscmp_literal( reinterpret_cast<const wchar_t*>(pr), L"?=" );
+			ncmpresult = wcsncmp_literal( reinterpret_cast<const wchar_t*>(pr), L"?=" );
 		}else{
-			ncmpresult = strcmp_literal( pr, "?=" );
+			ncmpresult = strncmp_literal( pr, "?=" );
 		}
 		if( ncmpresult == 0 ){
 			break;

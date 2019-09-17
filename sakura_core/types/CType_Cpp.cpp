@@ -36,7 +36,7 @@
 //!CPPキーワードで始まっていれば true
 inline bool IsHeadCppKeyword(const wchar_t* pData)
 {
-	#define HEAD_EQ(DATA,LITERAL) (wcscmp_literal(DATA,LITERAL)==0)
+	#define HEAD_EQ(DATA,LITERAL) (wcsncmp_literal(DATA,LITERAL)==0)
 	if( HEAD_EQ(pData, L"case"      ) )return true;
 	if( HEAD_EQ(pData, L"default:"  ) )return true;
 	if( HEAD_EQ(pData, L"public:"   ) )return true;
@@ -248,7 +248,7 @@ CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 		;
 
 	//	ここからPreprocessor directive解析
-	if( p + 2 + 2 < lastptr && wcscmp_literal( p, L"if" ) == 0 ){
+	if( p + 2 + 2 < lastptr && wcsncmp_literal( p, L"if" ) == 0 ){
 		// if
 		p += 2;
 		
@@ -272,8 +272,8 @@ CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 			}
 		}
 		else if(
-			( p + 3 < lastptr && wcscmp_literal( p, L"def" ) == 0 ) ||
-			( p + 4 < lastptr && wcscmp_literal( p, L"ndef" ) == 0 )){
+			( p + 3 < lastptr && wcsncmp_literal( p, L"def" ) == 0 ) ||
+			( p + 4 < lastptr && wcsncmp_literal( p, L"ndef" ) == 0 )){
 			enable = 2;
 		}
 		
@@ -286,13 +286,13 @@ CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 			}
 		}
 	}
-	else if( p + 4 < lastptr && wcscmp_literal( p, L"else" ) == 0 ){
+	else if( p + 4 < lastptr && wcsncmp_literal( p, L"else" ) == 0 ){
 		//	2007.12.14 genta : #ifが無く#elseが出たときのガード追加
 		if( 0 < m_stackptr && m_stackptr < m_maxnestlevel ){
 			m_enablebuf ^= m_bitpattern;
 		}
 	}
-	else if( p + 5 < lastptr && wcscmp_literal( p, L"endif" ) == 0 ){
+	else if( p + 5 < lastptr && wcsncmp_literal( p, L"endif" ) == 0 ){
 		if( m_stackptr > 0 ){
 			--m_stackptr;
 			m_enablebuf &= ~m_bitpattern;
@@ -691,8 +691,8 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					}
 					if( nMode2 == M2_OPERATOR_WORD && L'<' == pLine[i] ){
 						const wchar_t* p = &szWord[nWordIdx-8];
-						if(  (8 <= nWordIdx && wcscmp_literal(p, L"operator<") == 0)
-						 || ((9 <= nWordIdx && wcscmp_literal(p-1, L"operator<<") == 0) && 0 < i && L'<' == pLine[i-1]) ){
+						if(  (8 <= nWordIdx && wcsncmp_literal(p, L"operator<") == 0)
+						 || ((9 <= nWordIdx && wcsncmp_literal(p-1, L"operator<<") == 0) && 0 < i && L'<' == pLine[i-1]) ){
 							// 違う：operator<<const() / operator<<()
 						}else{
 							// operator< <T>() / operator<<<T>() / operator+<T>()

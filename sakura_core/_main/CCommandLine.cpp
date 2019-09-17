@@ -288,7 +288,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			// Nov. 11, 2005 susu
 			// 不正なファイル名のままだとファイル保存時ダイアログが出なくなるので
 			// 簡単なファイルチェックを行うように修正
-			if (wcscmp_literal(szPath, L"file:///")==0) {
+			if (wcsncmp_literal(szPath, L"file:///")==0) {
 				wcscpy(szPath, &(szPath[8]));
 			}
 			int len = wcslen(szPath);

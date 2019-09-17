@@ -103,7 +103,7 @@ void CDocOutline::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 				//	sub の一文字目かもしれない
 				if( nLineLen - i < 4 )
 					break;
-				if( wcscmp_literal( pLine + i, L"sub" ) )
+				if( wcsncmp_literal( pLine + i, L"sub" ) )
 					break;
 				int c = pLine[ i + 3 ];
 				if( c == L' ' || c == L'\t' ){
