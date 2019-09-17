@@ -438,7 +438,7 @@ UINT_PTR CALLBACK OFNHookProc(
 									szDefExt[0] = L'\0';
 								break;
 							case 2:		// *.txt
-								::wcscpy_literal(szDefExt, L".txt");
+								::wcscpy(szDefExt, L".txt");
 								break;
 							case 3:		// *.*
 							default:	// 不明
@@ -673,7 +673,7 @@ CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog()
 	wcscpy( m_szInitialDir, szDrive );
 	wcscat( m_szInitialDir, szDir );
 
-	wcscpy_literal( m_szDefaultWildCard, L"*.*" );	/*「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
+	wcscpy( m_szDefaultWildCard, L"*.*" );	/*「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 
 	return;
 }

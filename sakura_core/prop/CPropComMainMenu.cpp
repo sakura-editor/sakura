@@ -535,7 +535,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 							eFuncCode = m_cLookup.Pos2FuncCode( nIdxFIdx, nIdxFunc );
 						}
 						else {
-							wcscpy_literal( szLabel, L"?" );
+							wcscpy( szLabel, L"?" );
 							eFuncCode = F_SEPARATOR;
 						}
 						break;
@@ -1063,7 +1063,7 @@ bool CPropMainMenu::GetDataTree( HWND hwndTree, HTREEITEM htiTrg, int nLevel )
 			pcFunc = &pcMenuTBL[m_Common.m_sMainMenu.m_nMainMenuNum++];
 			pcFunc->m_nType = T_NODE;
 			pcFunc->m_nFunc = F_NODE;
-			wcscpy_literal( pcFunc->m_sName, L"auto_add" );
+			wcscpy( pcFunc->m_sName, L"auto_add" );
 			pcFunc->m_sKey[0] = L'\0';
 			pcFunc->m_nLevel = nLevel++;
 		}

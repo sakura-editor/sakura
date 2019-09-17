@@ -472,7 +472,7 @@ int CEditView::IsSearchString(
 
 		// 比較関数
 		auto fcmp = m_sCurSearchOption.bLoHiCase ? wcsncmp : _wcsnicmp;
-				
+
 		// 検索語を単語に分割しながら指定位置の単語と照合する。
 		int wordIndex = 0;
 		const wchar_t* const searchKeyEnd = m_strCurSearchKey.data() + m_strCurSearchKey.size();

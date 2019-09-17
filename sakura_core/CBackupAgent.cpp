@@ -363,22 +363,22 @@ bool CBackupAgent::FormatBackUpPath(
 
 			szForm[0] = L'\0';
 			if( bup_setting.GetBackupOpt(BKUP_YEAR) ){	/* バックアップファイル名：日付の年 */
-				wcscat_literal( szForm, L"%Y" );
+				wcscat( szForm, L"%Y" );
 			}
 			if( bup_setting.GetBackupOpt(BKUP_MONTH) ){	/* バックアップファイル名：日付の月 */
-				wcscat_literal( szForm, L"%m" );
+				wcscat( szForm, L"%m" );
 			}
 			if( bup_setting.GetBackupOpt(BKUP_DAY) ){	/* バックアップファイル名：日付の日 */
-				wcscat_literal( szForm, L"%d" );
+				wcscat( szForm, L"%d" );
 			}
 			if( bup_setting.GetBackupOpt(BKUP_HOUR) ){	/* バックアップファイル名：日付の時 */
-				wcscat_literal( szForm, L"%H" );
+				wcscat( szForm, L"%H" );
 			}
 			if( bup_setting.GetBackupOpt(BKUP_MIN) ){	/* バックアップファイル名：日付の分 */
-				wcscat_literal( szForm, L"%M" );
+				wcscat( szForm, L"%M" );
 			}
 			if( bup_setting.GetBackupOpt(BKUP_SEC) ){	/* バックアップファイル名：日付の秒 */
-				wcscat_literal( szForm, L"%S" );
+				wcscat( szForm, L"%S" );
 			}
 			/* YYYYMMDD時分秒 形式に変換 */
 			wcsftime( szTime, _countof( szTime ) - 1, szForm, &result );
@@ -502,7 +502,7 @@ bool CBackupAgent::FormatBackUpPath(
 			}
 			{
 				// $0-$9を置換
-				//wcscpy_literal( szNewPath, L"" );
+				//wcscpy( szNewPath, L"" );
 				WCHAR *q= szFormat;
 				WCHAR *q2 = szFormat;
 				while( *q ){

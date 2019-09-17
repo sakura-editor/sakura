@@ -418,7 +418,7 @@ CDlgOpenFile_CommonItemDialog::CDlgOpenFile_CommonItemDialog()
 	wcscpy( m_szInitialDir, szDrive );
 	wcscat( m_szInitialDir, szDir );
 
-	wcscpy_literal( m_szDefaultWildCard, L"*.*" );	/*「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
+	wcscpy( m_szDefaultWildCard, L"*.*" );	/*「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 
 	return;
 }

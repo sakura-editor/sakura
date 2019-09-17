@@ -146,7 +146,7 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 						delete pCode;
 						if (ret != RESULT_COMPLETE) {
 							// うまくコードが取れなかった
-							wcscpy_literal(szCode[i], L"-");
+							wcscpy(szCode[i], L"-");
 						}
 					}
 				}
@@ -158,7 +158,7 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 				delete pCode;
 				if (ret != RESULT_COMPLETE) {
 					// うまくコードが取れなかった
-					wcscpy_literal(szCodeCP, L"-");
+					wcscpy(szCodeCP, L"-");
 				}
 
 				// メッセージボックス表示
@@ -854,7 +854,7 @@ void CEditWnd::LayoutMainMenu()
 				cMainMenu->m_sKey,
 				FALSE,
 				_countof(szLabel)) == NULL) {
-				wcscpy_literal( szLabel, L"?" );
+				wcscpy( szLabel, L"?" );
 			}
 			::AppendMenu( hMenu, MF_STRING, cMainMenu->m_nFunc, szLabel );
 			break;
@@ -3858,7 +3858,7 @@ bool CEditWnd::GetRelatedIcon(const WCHAR* szFile, HICON* hIconBig, HICON* hIcon
 		_wsplitpath( szFile, NULL, NULL, NULL, szExt );
 		
 		if( ReadRegistry(HKEY_CLASSES_ROOT, szExt, NULL, FileType, _countof(FileType) - 13)){
-			wcscat_literal( FileType, L"\\DefaultIcon" );
+			wcscat( FileType, L"\\DefaultIcon" );
 			if( ReadRegistry(HKEY_CLASSES_ROOT, FileType, NULL, NULL, 0)){
 				// 関連づけられたアイコンを取得する
 				SHFILEINFO shfi;
@@ -3905,7 +3905,7 @@ void CEditWnd::InitMenubarMessageFont(void)
 	lf.lfClipPrecision	= 0x2;
 	lf.lfQuality		= 0x1;
 	lf.lfPitchAndFamily	= 0x31;
-	wcscpy_literal( lf.lfFaceName, L"ＭＳ ゴシック" );
+	wcscpy( lf.lfFaceName, L"ＭＳ ゴシック" );
 	m_hFontCaretPosInfo = ::CreateFontIndirect( &lf );
 
 	hdc = ::GetDC( ::GetDesktopWindow() );

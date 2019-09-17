@@ -240,10 +240,10 @@ int CDlgPluginOption::GetData( void )
 
 		if (cOpt->GetType() == OPTION_TYPE_BOOL) {
 			if (wcscmp(buf,  BOOL_DISP_FALSE) == 0) {
-				wcscpy_literal (buf, L"0");
+				wcscpy (buf, L"0");
 			}
 			else {
-				wcscpy_literal (buf, L"1");
+				wcscpy (buf, L"1");
 			}
 		}
 		else if (cOpt->GetType() == OPTION_TYPE_SEL) {
@@ -652,10 +652,10 @@ void CDlgPluginOption::SetFromEdit( int iLine )
 		transform(sType.begin (), sType.end (), sType.begin (), my_towlower2);
 		if (sType == OPTION_TYPE_BOOL) {
 			if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_PLUGIN_OPTION ) ) {
-				wcscpy_literal( buf, BOOL_DISP_TRUE );
+				wcscpy( buf, BOOL_DISP_TRUE );
 			}
 			else {
-				wcscpy_literal( buf, BOOL_DISP_FALSE );
+				wcscpy( buf, BOOL_DISP_FALSE );
 			}
 			lvi.mask     = LVIF_TEXT;
 			lvi.iItem    = iLine;

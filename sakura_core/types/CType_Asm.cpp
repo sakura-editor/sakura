@@ -37,8 +37,8 @@
 void CType_Asm::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	wcscpy_literal( pType->m_szTypeName, L"アセンブラ" );
-	wcscpy_literal( pType->m_szTypeExts, L"asm" );
+	wcscpy( pType->m_szTypeName, L"アセンブラ" );
+	wcscpy( pType->m_szTypeExts, L"asm" );
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L";", -1 );			/* 行コメントデリミタ */

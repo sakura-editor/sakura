@@ -99,7 +99,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 			// Windowsの表示言語が日本語でない場合は言語設定を英語にする
 			if (langId != MAKELANGID( LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN )) {
 				DLLSHAREDATA* pShareData = &GetDllShareData();
-				wcscpy_literal(pShareData->m_Common.m_sWindow.m_szLanguageDll, L"sakura_lang_en_US.dll");
+				wcscpy(pShareData->m_Common.m_sWindow.m_szLanguageDll, L"sakura_lang_en_US.dll");
 				cProfile.IOProfileData( L"Common", L"szLanguageDll", MakeStringBufferW( pShareData->m_Common.m_sWindow.m_szLanguageDll ) );
 				CSelectLang::ChangeLang( pShareData->m_Common.m_sWindow.m_szLanguageDll );
 				pcShare->RefreshString();
@@ -245,7 +245,7 @@ void CShareData_IO::ShareData_IO_Mru( CDataProfile& cProfile )
 		auto_sprintf( szKeyName, LTEXT("MRUFOLDER[%02d]"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_szOPENFOLDERArr[i] );
 		//お気に入り	//@@@ 2003.04.08 MIK
-		wcscat_literal( szKeyName, LTEXT(".bFavorite") );
+		wcscat( szKeyName, LTEXT(".bFavorite") );
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_bOPENFOLDERArrFavorite[i] );
 	}
 	//読み込み時は残りを初期化
@@ -540,7 +540,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 			- CNativeW::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] );
 		if( 1 == nCharChars && common.m_sBackup.m_szBackUpFolder[nDummy - 1] == '\\' ){
 		}else{
-			wcscat_literal( common.m_sBackup.m_szBackUpFolder, L"\\" );
+			wcscat( common.m_sBackup.m_szBackUpFolder, L"\\" );
 		}
 	}
 	cProfile.IOProfileData( pszSecName, LTEXT("szBackUpFolder"), common.m_sBackup.m_szBackUpFolder );
@@ -553,7 +553,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 			- CNativeW::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] );
 		if( 1 == nCharChars && common.m_sBackup.m_szBackUpFolder[nDummy - 1] == '\\' ){
 		}else{
-			wcscat_literal( common.m_sBackup.m_szBackUpFolder, L"\\" );
+			wcscat( common.m_sBackup.m_szBackUpFolder, L"\\" );
 		}
 	}
 	
@@ -1304,9 +1304,9 @@ void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 		if(0==wcscmp_literal(printsetting.m_szHeaderForm[0],_EDITL("&f")) &&
 		   0==wcscmp_literal(printsetting.m_szFooterForm[0],_EDITL("&C- &P -"))
 		){
-			wcscpy_literal( printsetting.m_szHeaderForm[0], _EDITL("$f") );
-			wcscpy_literal( printsetting.m_szFooterForm[0], _EDITL("") );
-			wcscpy_literal( printsetting.m_szFooterForm[1], _EDITL("- $p -") );
+			wcscpy( printsetting.m_szHeaderForm[0], _EDITL("$f") );
+			wcscpy( printsetting.m_szFooterForm[0], _EDITL("") );
+			wcscpy( printsetting.m_szFooterForm[1], _EDITL("- $p -") );
 		}
 
 		//禁則	//@@@ 2002.04.09 MIK
@@ -1400,7 +1400,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 
 	// 2005.04.07 D.S.Koba
 	static const WCHAR* pszForm = LTEXT("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d");	//MIK
-	wcscpy_literal( szKeyName, LTEXT("nInts") );
+	wcscpy( szKeyName, LTEXT("nInts") );
 	if( cProfile.IsReadingMode() ){
 		if( cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) ) ){
 			int buf[12];

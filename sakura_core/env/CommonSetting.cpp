@@ -104,7 +104,7 @@ void sample()
 	strvalue.Regist("strvalue");
 
 	intvalue=3;
-	strcpy_literal(strvalue,"hage");
+	strcpy(strvalue,"hage");
 
 	CommonValue_AllSave();
 }

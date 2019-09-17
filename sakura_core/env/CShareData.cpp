@@ -201,7 +201,7 @@ bool CShareData::InitShareData()
 		lf.lfClipPrecision		= 0x2;
 		lf.lfQuality			= 0x1;
 		lf.lfPitchAndFamily	= 0x31;
-		wcscpy_literal( lf.lfFaceName, L"ＭＳ ゴシック" );
+		wcscpy( lf.lfFaceName, L"ＭＳ ゴシック" );
 
 		// LoadShareDataでフォントが変わる可能性があるので、ここでは不要 // 2013.04.08 aroka
 		//InitCharWidthCacheCommon();								// 2008/5/17 Uchi
@@ -292,10 +292,10 @@ bool CShareData::InitShareData()
 
 			//	Apr. 05, 2003 genta ウィンドウキャプションの初期値
 			//	Aug. 16, 2003 genta $N(ファイル名省略表示)をデフォルトに変更
-			wcscpy_literal( sWindow.m_szWindowCaptionActive, 
+			wcscpy( sWindow.m_szWindowCaptionActive, 
 				L"${w?$h$:アウトプット$:${I?$f$n$:$N$n$}$}${U?(更新)$} -"
 				L" $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>" );
-			wcscpy_literal( sWindow.m_szWindowCaptionInactive, 
+			wcscpy( sWindow.m_szWindowCaptionInactive, 
 				L"${w?$h$:アウトプット$:$f$n$}${U?(更新)$} -"
 				L" $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>" );
 		}
@@ -306,7 +306,7 @@ bool CShareData::InitShareData()
 
 			sTabBar.m_bDispTabWnd = FALSE;			//タブウインドウ表示	//@@@ 2003.05.31 MIK
 			sTabBar.m_bDispTabWndMultiWin = FALSE;	//タブウインドウ表示	//@@@ 2003.05.31 MIK
-			wcscpy_literal(	//@@@ 2003.06.13 MIK
+			wcscpy(	//@@@ 2003.06.13 MIK
 				sTabBar.m_szTabWndCaption,
 				L"${w?【Grep】$h$:【アウトプット】$:$f$n$}${U?(更新)$}${R?(ビューモード)$:(上書き禁止)$}${M?【キーマクロの記録中】$}"
 			);
@@ -351,7 +351,7 @@ bool CShareData::InitShareData()
 
 			sEdit.m_bOverWriteBoxDelete = false;
 			sEdit.m_eOpenDialogDir = OPENDIALOGDIR_CUR;
-			wcscpy_literal(sEdit.m_OpenDialogSelDir, L"%Personal%\\");
+			wcscpy(sEdit.m_OpenDialogSelDir, L"%Personal%\\");
 			sEdit.m_bAutoColumnPaste = TRUE;			/* 矩形コピーのテキストは常に矩形貼り付け */
 		}
 
@@ -409,18 +409,18 @@ bool CShareData::InitShareData()
 			CommonSetting_Format& sFormat = m_pShareData->m_Common.m_sFormat;
 
 			/* 見出し記号 */
-			wcscpy_literal( sFormat.m_szMidashiKigou, L"１２３４５６７８９０（(［[「『【■□▲△▼▽◆◇○◎●§・※☆★第①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ一二三四五六七八九十壱弐参伍" );
+			wcscpy( sFormat.m_szMidashiKigou, L"１２３４５６７８９０（(［[「『【■□▲△▼▽◆◇○◎●§・※☆★第①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ一二三四五六七八九十壱弐参伍" );
 			/* 引用符 */
-			wcscpy_literal( sFormat.m_szInyouKigou, L"> " );		/* 引用符 */
+			wcscpy( sFormat.m_szInyouKigou, L"> " );		/* 引用符 */
 
 			/*
 				書式指定子の意味はWindows SDKのGetDateFormat(), GetTimeFormat()を参照のこと
 			*/
 
 			sFormat.m_nDateFormatType = 0;	//日付書式のタイプ
-			wcscpy_literal( sFormat.m_szDateFormat, L"yyyy\'年\'M\'月\'d\'日(\'dddd\')\'" );	//日付書式
+			wcscpy( sFormat.m_szDateFormat, L"yyyy\'年\'M\'月\'d\'日(\'dddd\')\'" );	//日付書式
 			sFormat.m_nTimeFormatType = 0;	//時刻書式のタイプ
-			wcscpy_literal( sFormat.m_szTimeFormat, L"tthh\'時\'mm\'分\'ss\'秒\'"  );			//時刻書式
+			wcscpy( sFormat.m_szTimeFormat, L"tthh\'時\'mm\'分\'ss\'秒\'"  );			//時刻書式
 		}
 
 		// [検索]タブ
@@ -591,20 +591,20 @@ bool CShareData::InitShareData()
 				sFileName.m_szTransformFileNameFrom[i][0] = L'\0';
 				sFileName.m_szTransformFileNameTo[i][0] = L'\0';
 			}
-			wcscpy_literal( sFileName.m_szTransformFileNameFrom[0], L"%DeskTop%\\" );
-			wcscpy_literal( sFileName.m_szTransformFileNameTo[0],   L"デスクトップ\\" );
-			wcscpy_literal( sFileName.m_szTransformFileNameFrom[1], L"%Personal%\\" );
-			wcscpy_literal( sFileName.m_szTransformFileNameTo[1],   L"マイドキュメント\\" );
-			wcscpy_literal( sFileName.m_szTransformFileNameFrom[2], L"%Cache%\\Content.IE5\\" );
-			wcscpy_literal( sFileName.m_szTransformFileNameTo[2],   L"IEキャッシュ\\" );
-			wcscpy_literal( sFileName.m_szTransformFileNameFrom[3], L"%TEMP%\\" );
-			wcscpy_literal( sFileName.m_szTransformFileNameTo[3],   L"TEMP\\" );
-			wcscpy_literal( sFileName.m_szTransformFileNameFrom[4], L"%Common DeskTop%\\" );
-			wcscpy_literal( sFileName.m_szTransformFileNameTo[4],   L"共有デスクトップ\\" );
-			wcscpy_literal( sFileName.m_szTransformFileNameFrom[5], L"%Common Documents%\\" );
-			wcscpy_literal( sFileName.m_szTransformFileNameTo[5],   L"共有ドキュメント\\" );
-			wcscpy_literal( sFileName.m_szTransformFileNameFrom[6], L"%AppData%\\" );	// 2007.05.19 ryoji 追加
-			wcscpy_literal( sFileName.m_szTransformFileNameTo[6],   L"アプリデータ\\" );	// 2007.05.19 ryoji 追加
+			wcscpy( sFileName.m_szTransformFileNameFrom[0], L"%DeskTop%\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[0],   L"デスクトップ\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[1], L"%Personal%\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[1],   L"マイドキュメント\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[2], L"%Cache%\\Content.IE5\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[2],   L"IEキャッシュ\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[3], L"%TEMP%\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[3],   L"TEMP\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[4], L"%Common DeskTop%\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[4],   L"共有デスクトップ\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[5], L"%Common Documents%\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[5],   L"共有ドキュメント\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[6], L"%AppData%\\" );	// 2007.05.19 ryoji 追加
+			wcscpy( sFileName.m_szTransformFileNameTo[6],   L"アプリデータ\\" );	// 2007.05.19 ryoji 追加
 			sFileName.m_nTransformFileNameArrNum = 7;
 		}
 

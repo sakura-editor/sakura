@@ -300,7 +300,7 @@ int DetectJisEscseq( const char* pS, const int nLen, EMyJisEscseq* peEscType )
 			}
 		}else if( pr + 4 < pr_end ){
 			expected_esc_len += 5;
-			if( 0 == strcmp_literal( pr, "&@\x1b$B" ) ){
+			if( 0 == strncmp( pr, "&@\x1b$B", 5 ) ){
 				ejisesc = JISESC_JISX0208_1990;			// ESC & @ ESC $ B  -  JIS X 0208-1990
 			}
 		}

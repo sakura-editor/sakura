@@ -260,30 +260,6 @@ int stricmp_literal(const char* strData1, const char (&literalData2)[Size])
 	return ::_strnicmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
 }
 
-template <size_t Size>
-char *strcat_literal(char *strDest, const char (&strSource)[Size])
-{
-	return strncat(strDest, strSource, Size - 1);
-}
-
-template <size_t Size>
-wchar_t *wcscat_literal(wchar_t *strDest, const wchar_t (&strSource)[Size])
-{
-	return wcsncat(strDest, strSource, Size - 1);
-}
-
-template <size_t Size>
-char *strcpy_literal(char *strDest, const char (&strSource)[Size])
-{
-	return strncpy(strDest, strSource, Size - 1);
-}
-
-template <size_t Size>
-wchar_t *wcscpy_literal(wchar_t *strDest, const wchar_t (&strSource)[Size])
-{
-	return wcsncpy(strDest, strSource, Size - 1);
-}
-
 
 #endif /* SAKURA_STRING_EX_29EB1DD7_7259_4D6C_A651_B9174E5C3D3C9_H_ */
 /*[EOF]*/

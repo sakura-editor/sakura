@@ -43,8 +43,8 @@
 void CType_Text::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	wcscpy_literal( pType->m_szTypeName, L"テキスト" );
-	wcscpy_literal( pType->m_szTypeExts, L"txt,log,1st,err,ps" );
+	wcscpy( pType->m_szTypeName, L"テキスト" );
+	wcscpy( pType->m_szTypeExts, L"txt,log,1st,err,ps" );
 
 	//設定
 	pType->m_nMaxLineKetas = CKetaXInt(120);					/* 折り返し桁数 */
@@ -55,8 +55,8 @@ void CType_Text::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_bKinsokuTail = false;								// 行末禁則				//@@@ 2002.04.08 MIK
 	pType->m_bKinsokuRet  = false;								// 改行文字をぶら下げる	//@@@ 2002.04.13 MIK
 	pType->m_bKinsokuKuto = false;								// 句読点をぶら下げる	//@@@ 2002.04.17 MIK
-	wcscpy_literal( pType->m_szKinsokuHead, L"!%),.:;?]}\xa2°’”‰′″℃、。々〉》」』】〕゛゜ゝゞ・ヽヾ！％），．：；？］｝｡｣､･ﾞﾟ￠" );		/* 行頭禁則 */	//@@@ 2002.04.13 MIK 
-	wcscpy_literal( pType->m_szKinsokuTail, L"$([\\{\xa3\xa5‘“〈《「『【〔＄（［｛｢￡￥" );		/* 行末禁則 */	//@@@ 2002.04.08 MIK 
+	wcscpy( pType->m_szKinsokuHead, L"!%),.:;?]}\xa2°’”‰′″℃、。々〉》」』】〕゛゜ゝゞ・ヽヾ！％），．：；？］｝｡｣､･ﾞﾟ￠" );		/* 行頭禁則 */	//@@@ 2002.04.13 MIK 
+	wcscpy( pType->m_szKinsokuTail, L"$([\\{\xa3\xa5‘“〈《「『【〔＄（［｛｢￡￥" );		/* 行末禁則 */	//@@@ 2002.04.08 MIK 
 	// pType->m_szKinsokuKuto（句読点ぶら下げ文字）はここではなく全タイプにデフォルト設定	// 2009.08.07 ryoji 
 
 	//※小さな親切として、C:\～～ や \\～～ などのファイルパスをクリッカブルにする設定を「テキスト」に既定で仕込む
@@ -144,32 +144,32 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 
 		//見出し種類の判別 -> szTitle
 		if( pLine[i] == L'(' ){
-			     if ( IsInRange(pLine[i + 1], L'0', L'9') ) wcscpy_literal( szTitle, L"(0)" ); //数字
-			else if ( IsInRange(pLine[i + 1], L'A', L'Z') ) wcscpy_literal( szTitle, L"(A)" ); //英大文字
-			else if ( IsInRange(pLine[i + 1], L'a', L'z') ) wcscpy_literal( szTitle, L"(a)" ); //英小文字
+			     if ( IsInRange(pLine[i + 1], L'0', L'9') ) wcscpy( szTitle, L"(0)" ); //数字
+			else if ( IsInRange(pLine[i + 1], L'A', L'Z') ) wcscpy( szTitle, L"(A)" ); //英大文字
+			else if ( IsInRange(pLine[i + 1], L'a', L'z') ) wcscpy( szTitle, L"(a)" ); //英小文字
 			else continue; //※「(」の次が英数字で無い場合、見出しとみなさない
 		}
-		else if( IsInRange(pLine[i], L'０', L'９') ) wcscpy_literal( szTitle, L"０" ); // 全角数字
+		else if( IsInRange(pLine[i], L'０', L'９') ) wcscpy( szTitle, L"０" ); // 全角数字
 		else if( IsInRange(pLine[i], L'①', L'⑳') || pLine[i] == L'\u24ea'
-			|| IsInRange(pLine[i], L'\u3251', L'\u325f') || IsInRange(pLine[i], L'\u32b1', L'\u32bf') ) wcscpy_literal( szTitle, L"①" ); // ①～⑳ ○0　○21○35　○36○50
-		else if( IsInRange(pLine[i], L'Ⅰ', L'\u216f') ) wcscpy_literal( szTitle, L"Ⅰ" ); // Ⅰ～Ⅹ　XIXIILCDM
-		else if( IsInRange(pLine[i], L'ⅰ', L'\u217f') ) wcscpy_literal( szTitle, L"Ⅰ" ); // Ⅰ～Ⅹ　xixiilcdm
-		else if( IsInRange(pLine[i], L'\u2474', L'\u2487') ) wcscpy_literal( szTitle, L"\u2474" ); // (1)-(20)
-		else if( IsInRange(pLine[i], L'\u2488', L'\u249b') ) wcscpy_literal( szTitle, L"\u2488" ); // 1.-20.
-		else if( IsInRange(pLine[i], L'\u249c', L'\u24b5') ) wcscpy_literal( szTitle, L"\u249c" ); // (a)-(z)
-		else if( IsInRange(pLine[i], L'\u24b6', L'\u24cf') ) wcscpy_literal( szTitle, L"\u24b6" ); // ○A-○Z
-		else if( IsInRange(pLine[i], L'\u24d0', L'\u24e9') ) wcscpy_literal( szTitle, L"\u24d0" ); // ○a-○z
+			|| IsInRange(pLine[i], L'\u3251', L'\u325f') || IsInRange(pLine[i], L'\u32b1', L'\u32bf') ) wcscpy( szTitle, L"①" ); // ①～⑳ ○0　○21○35　○36○50
+		else if( IsInRange(pLine[i], L'Ⅰ', L'\u216f') ) wcscpy( szTitle, L"Ⅰ" ); // Ⅰ～Ⅹ　XIXIILCDM
+		else if( IsInRange(pLine[i], L'ⅰ', L'\u217f') ) wcscpy( szTitle, L"Ⅰ" ); // Ⅰ～Ⅹ　xixiilcdm
+		else if( IsInRange(pLine[i], L'\u2474', L'\u2487') ) wcscpy( szTitle, L"\u2474" ); // (1)-(20)
+		else if( IsInRange(pLine[i], L'\u2488', L'\u249b') ) wcscpy( szTitle, L"\u2488" ); // 1.-20.
+		else if( IsInRange(pLine[i], L'\u249c', L'\u24b5') ) wcscpy( szTitle, L"\u249c" ); // (a)-(z)
+		else if( IsInRange(pLine[i], L'\u24b6', L'\u24cf') ) wcscpy( szTitle, L"\u24b6" ); // ○A-○Z
+		else if( IsInRange(pLine[i], L'\u24d0', L'\u24e9') ) wcscpy( szTitle, L"\u24d0" ); // ○a-○z
 		else if( IsInRange(pLine[i], L'\u24eb', L'\u24f4') ){ // ●11-●20
-			if(b278a){ wcscpy_literal( szTitle, L"\u278a" ); }
-			else{ wcscpy_literal( szTitle, L"\u2776" ); } }
-		else if( IsInRange(pLine[i], L'\u24f5', L'\u24fe') ) wcscpy_literal( szTitle, L"\u24f5" ); // ◎1-◎10
-		else if( IsInRange(pLine[i], L'\u2776', L'\u277f') ) wcscpy_literal( szTitle, L"\u2776" ); // ●1-●10
-		else if( IsInRange(pLine[i], L'\u2780', L'\u2789') ) wcscpy_literal( szTitle, L"\u2780" ); // ○1-○10
-		else if( IsInRange(pLine[i], L'\u278a', L'\u2793') ){ wcscpy_literal( szTitle, L"\u278a" ); b278a = true; } // ●1-●10(SANS-SERIF)
-		else if( IsInRange(pLine[i], L'\u3220', L'\u3229') ) wcscpy_literal( szTitle, L"\ua3220" ); // (一)-(十)
-		else if( IsInRange(pLine[i], L'\u3280', L'\u3289') ) wcscpy_literal( szTitle, L"\u3220" ); // ○一-○十
-		else if( IsInRange(pLine[i], L'\u32d0', L'\u32fe') ) wcscpy_literal( szTitle, L"\u32d0" ); // ○ア-○ヲ
-		else if( wcschr(L"〇一二三四五六七八九十百零壱弐参伍", pLine[i]) ) wcscpy_literal( szTitle, L"一" ); //漢数字
+			if(b278a){ wcscpy( szTitle, L"\u278a" ); }
+			else{ wcscpy( szTitle, L"\u2776" ); } }
+		else if( IsInRange(pLine[i], L'\u24f5', L'\u24fe') ) wcscpy( szTitle, L"\u24f5" ); // ◎1-◎10
+		else if( IsInRange(pLine[i], L'\u2776', L'\u277f') ) wcscpy( szTitle, L"\u2776" ); // ●1-●10
+		else if( IsInRange(pLine[i], L'\u2780', L'\u2789') ) wcscpy( szTitle, L"\u2780" ); // ○1-○10
+		else if( IsInRange(pLine[i], L'\u278a', L'\u2793') ){ wcscpy( szTitle, L"\u278a" ); b278a = true; } // ●1-●10(SANS-SERIF)
+		else if( IsInRange(pLine[i], L'\u3220', L'\u3229') ) wcscpy( szTitle, L"\ua3220" ); // (一)-(十)
+		else if( IsInRange(pLine[i], L'\u3280', L'\u3289') ) wcscpy( szTitle, L"\u3220" ); // ○一-○十
+		else if( IsInRange(pLine[i], L'\u32d0', L'\u32fe') ) wcscpy( szTitle, L"\u32d0" ); // ○ア-○ヲ
+		else if( wcschr(L"〇一二三四五六七八九十百零壱弐参伍", pLine[i]) ) wcscpy( szTitle, L"一" ); //漢数字
 		else{
 			wcsncpy( szTitle, &pLine[i], nCharChars );	//	先頭文字をszTitleに保持。
 			szTitle[nCharChars] = L'\0';

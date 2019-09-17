@@ -341,13 +341,22 @@ typedef int (__cdecl *qsort_callback)(const void *, const void *);
 void CKeyWordSetMgr::SortKeyWord( int nIdx )
 {
 	//nIdxのセットをソートする。
-	auto callback = m_bKEYWORDCASEArr[nIdx] ? wcscmp : _wcsicmp;
-	qsort(
-		m_szKeyWordArr[m_nStartIdx[nIdx]],
-		m_nKeyWordNumArr[nIdx],
-		sizeof(m_szKeyWordArr[0]),
-		(qsort_callback)callback
-	);
+	if( m_bKEYWORDCASEArr[nIdx] ) {
+		qsort(
+			m_szKeyWordArr[m_nStartIdx[nIdx]],
+			m_nKeyWordNumArr[nIdx],
+			sizeof(m_szKeyWordArr[0]),
+			(qsort_callback)wcscmp
+		);
+	}
+	else {
+		qsort(
+			m_szKeyWordArr[m_nStartIdx[nIdx]],
+			m_nKeyWordNumArr[nIdx],
+			sizeof(m_szKeyWordArr[0]),
+			(qsort_callback)_wcsicmp
+		);
+	}
 	KeywordMaxLen(nIdx);
 	m_IsSorted[nIdx] = 1;
 	return;

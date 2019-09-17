@@ -35,8 +35,8 @@
 void CType_Java::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	wcscpy_literal( pType->m_szTypeName, L"Java" );
-	wcscpy_literal( pType->m_szTypeExts, L"java,jav" );
+	wcscpy( pType->m_szTypeName, L"Java" );
+	wcscpy( pType->m_szTypeExts, L"java,jav" );
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L"//", -1 );					/* 行コメントデリミタ */
@@ -155,7 +155,7 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						nNestLevel2Arr.push_back( 0 );
 						++nClassNestArrNum;
 						if( 0 < nNestLevel	){
-							wcscat_literal( szClass, L"\\" );
+							wcscat( szClass, L"\\" );
 						}
 						wcscat( szClass, szWord );
 

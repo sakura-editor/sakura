@@ -633,7 +633,7 @@ bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 		if( wcslen(buff) < 12 ) continue;
 		if( wcscmp_literal(buff, L"RxKey[") != 0 ) continue;
 		if( wcscmp_literal(&buff[9], L"]=") != 0 ) continue;
-		WCHAR *p = wcschr(&buff[11], L',');
+		WCHAR *p = wcsstr(&buff[11], L",");
 		if( p )
 		{
 			*p = L'\0';
