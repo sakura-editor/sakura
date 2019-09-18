@@ -105,8 +105,8 @@ static bool C_IsOperator( wchar_t* szStr, int nLen	)
 {
 	if( nLen >= 8 && szStr[ nLen - 1 ] == L'r' ){
 		if( nLen > 8 ?
-				wcscmp_literal( szStr + nLen - 9, L":operator" ) == 0 :	// メンバー関数による定義
-				wcscmp_literal( szStr, L"operator" ) == 0	// friend関数による定義
+				wcscmp( szStr + nLen - 9, L":operator" ) == 0 :	// メンバー関数による定義
+				wcscmp( szStr, L"operator" ) == 0	// friend関数による定義
 		 ){
 		 	return true;
 		}
@@ -144,14 +144,14 @@ static bool C_IsLineEsc(const wchar_t *s, int len)
 static bool CPP_IsFunctionAfterKeyword( const wchar_t* s )
 {
 	return
-		wcscmp_literal( s, L"const" ) == 0 ||
-		wcscmp_literal( s, L"volatile" ) == 0 ||
-		wcscmp_literal( s, L"throw" ) == 0 ||
-		wcscmp_literal( s, L"default" ) == 0 ||
-		wcscmp_literal( s, L"delete" ) == 0 ||
-		wcscmp_literal( s, L"override" ) == 0 ||
-		wcscmp_literal( s, L"final" ) == 0 ||
-		wcscmp_literal( s, L"noexcept" ) == 0
+		wcscmp( s, L"const" ) == 0 ||
+		wcscmp( s, L"volatile" ) == 0 ||
+		wcscmp( s, L"throw" ) == 0 ||
+		wcscmp( s, L"default" ) == 0 ||
+		wcscmp( s, L"delete" ) == 0 ||
+		wcscmp( s, L"override" ) == 0 ||
+		wcscmp( s, L"final" ) == 0 ||
+		wcscmp( s, L"noexcept" ) == 0
 		;
 }
 
@@ -586,7 +586,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 				}else{
 					// 2002/10/27 frozen　ここから
 					if( nMode2 == M2_NAMESPACE_SAVE ){
-						if( wcscmp_literal(szWord, L"final") == 0 && wcscmp_literal(LS(STR_OUTLINE_CPP_NONAME), szItemName) != 0 ){
+						if( wcscmp(L"final", szWord) == 0 && wcscmp(LS(STR_OUTLINE_CPP_NONAME), szItemName) != 0 ){
 							// strcut name final のfinalはクラス名の一部ではない
 							// ただし struct finalは名前
 						}else{
@@ -596,7 +596,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					}else if( nMode2 == M2_TEMPLATE_SAVE || nMode2 == M2_TEMPLATE_WORD ){
 						// strcut name<X> final のfinalはクラス名の一部ではない
 						// struct name<final> のfinalは一部
-						if( wcscmp_literal(szWord, L"final") != 0 || nNestLevel_template != 0 ){
+						if( wcscmp(L"final", szWord) != 0 || nNestLevel_template != 0 ){
 							int nLen = wcslen(szTemplateName);
 							if( 0 < nLen && C_IsWordChar(szTemplateName[nLen - 1]) && szTemplateName[nLen - 1] != L':' && szWord[nWordIdx] != L':' ){
 								// template func<const x>() のような場合にconstの後ろにスペースを挿入
@@ -612,19 +612,19 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					{
 						if( nMode2 == M2_NORMAL )
 							nItemFuncId = 0;
-						if( wcscmp_literal(szWord,L"class")==0 )
+						if( wcscmp(szWord,L"class")==0 )
 							nItemFuncId = FL_OBJ_CLASS;
-						else if( wcscmp_literal(szWord,L"struct")==0 )
+						else if( wcscmp(szWord,L"struct")==0 )
 							nItemFuncId = FL_OBJ_STRUCT;
-						else if( wcscmp_literal(szWord,L"namespace")==0 )
+						else if( wcscmp(szWord,L"namespace")==0 )
 							nItemFuncId = FL_OBJ_NAMESPACE;
-						else if( wcscmp_literal(szWord,L"enum")==0 )
+						else if( wcscmp(szWord,L"enum")==0 )
 							nItemFuncId = FL_OBJ_ENUM;
-						else if( wcscmp_literal(szWord,L"union")==0 )
+						else if( wcscmp(szWord,L"union")==0 )
 							nItemFuncId = FL_OBJ_UNION;
-						else if( wcscmp_literal(szWord,L"__interface")==0 ) // 2007.05.26 genta "__interface" をクラスに類する扱いにする
+						else if( wcscmp(szWord,L"__interface")==0 ) // 2007.05.26 genta "__interface" をクラスに類する扱いにする
 							nItemFuncId = FL_OBJ_INTERFACE;
-						else if( wcscmp_literal(szWord,L"typedef") == 0 )
+						else if( wcscmp(szWord,L"typedef") == 0 )
 							bDefinedTypedef = true;
 						if( nItemFuncId != 0 && nItemFuncId != FL_OBJ_FUNCTION )	//  2010.07.08 ryoji nMode2 == M2_FUNC_NAME_END のときは nItemFuncId == 2 のはず
 						{
@@ -645,7 +645,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 
 					//	To Here Mar. 31, 2001 genta
 					// 2004/03/12 zenryaku キーワードに _ と PARAMS を使わせない (GNUのコードが見にくくなるから)
-					if( !( wcscmp_literal(szWord,L"PARAMS") == 0 || wcscmp_literal(szWord,L"_") == 0 ) )
+					if( !( wcscmp(L"PARAMS",szWord) == 0 || wcscmp(L"_",szWord) == 0 ) )
 						wcscpy( szWordPrev, szWord );
 					nWordIdx = 0;
 					szWord[0] = L'\0';
@@ -762,11 +762,11 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						}
 						nMode2 = M2_OPERATOR_WORD;
 					}else{
-						if( wcscmp_literal( szWordPrev, L"R" ) == 0 ||
-							wcscmp_literal( szWordPrev, L"LR" ) == 0 ||
-							wcscmp_literal( szWordPrev, L"uR" ) == 0 ||
-							wcscmp_literal( szWordPrev, L"UR" ) == 0 ||
-							wcscmp_literal( szWordPrev, L"u8R" ) == 0
+						if( wcscmp( szWordPrev, L"R" ) == 0 ||
+							wcscmp( szWordPrev, L"LR" ) == 0 ||
+							wcscmp( szWordPrev, L"uR" ) == 0 ||
+							wcscmp( szWordPrev, L"UR" ) == 0 ||
+							wcscmp( szWordPrev, L"u8R" ) == 0
 						){
 							// C++11 raw string
 							// R"abc(string)abc"
@@ -934,11 +934,11 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						if(nNestLevel_fparam==0)
 						{
 							bool bAdd = true;
-							if( wcscmp_literal(szWordPrev, L"__declspec") == 0
-									|| wcscmp_literal(szWordPrev, L"alignas") == 0
-									|| wcscmp_literal(szWordPrev, L"decltype") == 0
-									|| wcscmp_literal(szWordPrev, L"_Alignas") == 0
-									|| wcscmp_literal(szWordPrev, L"__attribute__") == 0
+							if( wcscmp(szWordPrev, L"__declspec") == 0
+									|| wcscmp(szWordPrev, L"alignas") == 0
+									|| wcscmp(szWordPrev, L"decltype") == 0
+									|| wcscmp(szWordPrev, L"_Alignas") == 0
+									|| wcscmp(szWordPrev, L"__attribute__") == 0
 							){
 								bAdd = false;
 							}else{
@@ -1184,7 +1184,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						if( nMode2 == M2_NORMAL || nMode2 == M2_OPERATOR_WORD ){
 							if( pLine[i] == L'<' ){
 								int nLen = (int)wcslen(szWordPrev);
-								if( wcscmp_literal(szWordPrev, L"template") == 0 ){
+								if( wcscmp(szWordPrev, L"template") == 0 ){
 									nMode2 = M2_TEMPLATE;
 									szTemplateName[0] = L'\0';
 								}else if( C_IsOperator(szWordPrev, nLen) ){

@@ -238,23 +238,11 @@ int wcsncmp_literal(const wchar_t* strData1, const wchar_t (&literalData2)[Size]
 	return ::wcsncmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
 }
 
-template <size_t Size>
-int wcscmp_literal(const wchar_t* strData1, const wchar_t (&literalData2)[Size]) {
-	assert(literalData2[Size - 1] == 0);
-	return ::wcsncmp(strData1, literalData2, Size );
-}
-
 //strncmpの文字数指定をliteralData2の大きさで取得してくれる版
 template <size_t Size>
 int strncmp_literal(const char* strData1, const char (&literalData2)[Size]) {
 	assert(literalData2[Size - 1] == 0);
 	return ::strncmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
-}
-
-template <size_t Size>
-int strcmp_literal(const char* strData1, const char (&literalData2)[Size]) {
-	assert(literalData2[Size - 1] == 0);
-	return ::strncmp(strData1, literalData2, Size );
 }
 
 //_wcsnicmpの文字数指定をliteralData2の大きさで取得してくれる版
@@ -264,23 +252,11 @@ int wcsnicmp_literal(const wchar_t* strData1, const wchar_t (&literalData2)[Size
 	return ::_wcsnicmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
 }
 
-template <size_t Size>
-int wcsicmp_literal(const wchar_t* strData1, const wchar_t (&literalData2)[Size]) {
-	assert(literalData2[Size - 1] == 0);
-	return ::_wcsnicmp(strData1, literalData2, Size );
-}
-
 //_strnicmpの文字数指定をliteralData2の大きさで取得してくれる版
 template <size_t Size>
 int strnicmp_literal(const char* strData1, const char (&literalData2)[Size]) {
 	assert(literalData2[Size - 1] == 0);
 	return ::_strnicmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
-}
-
-template <size_t Size>
-int stricmp_literal(const char* strData1, const char (&literalData2)[Size]) {
-	assert(literalData2[Size - 1] == 0);
-	return ::_strnicmp(strData1, literalData2, Size );
 }
 
 #endif /* SAKURA_STRING_EX_29EB1DD7_7259_4D6C_A651_B9174E5C3D3C9_H_ */

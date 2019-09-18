@@ -812,7 +812,7 @@ BOOL IsSakuraMainWindow( HWND hWnd )
 	if( 0 == ::GetClassName( hWnd, szClassName, _countof(szClassName) - 1 ) ){
 		return FALSE;
 	}
-	if(0 == wcscmp_literal( szClassName, GSTR_EDITWINDOWNAME ) ){
+	if(0 == wcscmp( GSTR_EDITWINDOWNAME, szClassName ) ){
 		return TRUE;
 	}else{
 		return FALSE;

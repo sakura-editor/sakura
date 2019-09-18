@@ -408,7 +408,7 @@ WCHAR*	CKeyBind::MakeMenuLabel(const WCHAR* sName, const WCHAR* sKey)
 			sLabel[p-sName] = L'&';
 			wcscpy_s( sLabel + (p-sName) + 1, _countof(sLabel), p );
 		}
-		else if (wcscmp_literal( sName + wcslen(sName) - 3, L"..." ) == 0) {
+		else if (wcscmp( sName + wcslen(sName) - 3, L"..." ) == 0) {
 			// 末尾...
 			wcscpy_s( sLabel, _countof(sLabel), sName );
 			sLabel[wcslen(sName) - 3] = '\0';						// 末尾の...を取る

@@ -91,7 +91,7 @@ BOOL CPPAMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const WCHAR* pszCode )
 */
 CMacroManagerBase* CPPAMacroMgr::Creator(const WCHAR* ext)
 {
-	if( wcscmp_literal( ext, L"ppa" ) == 0 ){
+	if( wcscmp( ext, L"ppa" ) == 0 ){
 		return new CPPAMacroMgr;
 	}
 	return NULL;

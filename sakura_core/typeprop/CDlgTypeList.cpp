@@ -880,7 +880,7 @@ int RegistExt(LPCWSTR sExt, bool bDefProg)
 	keyShell.GetValue(NULL, szShellValue, _countof(szShellValue));
 	if(bDefProg)
 	{
-		if( wcscmp_literal(szShellValue, ACTION_NAME) != 0 )
+		if( wcscmp(szShellValue, ACTION_NAME) != 0 )
 		{
 			if( szShellValue[0] != '\0')
 			{
@@ -1059,7 +1059,7 @@ int CheckExt(LPCWSTR sExt, bool *pbRMenu, bool *pbDblClick)
 	if( (errorCode = keyShell.Open(HKEY_CURRENT_USER, sShellPath.c_str(), KEY_READ)) != 0 ){ return errorCode; }
 	WCHAR szShellValue[ BUFFER_SIZE ] = {0};
 	keyShell.GetValue(NULL, szShellValue, _countof(szShellValue));
-	if( wcscmp_literal( szShellValue, ACTION_NAME ) == 0 )
+	if( wcscmp( szShellValue, ACTION_NAME ) == 0 )
 	{
 		*pbDblClick = true;
 	}

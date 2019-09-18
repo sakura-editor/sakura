@@ -332,18 +332,18 @@ INT_PTR CPropKeybind::DispatchEvent(
 						i = 0;
 						p = buff;
 						//SHIFT
-						if( wcsncmp_literal(p, STR_SHIFT_PLUS) == 0 ){
-							p += _countof(STR_SHIFT_PLUS) - 1;
+						if( wmemcmp(p, STR_SHIFT_PLUS, wcslen(STR_SHIFT_PLUS)) == 0 ){
+							p += wcslen(STR_SHIFT_PLUS);
 							i |= _SHIFT;
 						}
 						//CTRL
-						if( wcsncmp_literal(p, STR_CTRL_PLUS) == 0 ){
-							p += _countof(STR_CTRL_PLUS) - 1;
+						if( wmemcmp(p, STR_CTRL_PLUS, wcslen(STR_CTRL_PLUS)) == 0 ){
+							p += wcslen(STR_CTRL_PLUS);
 							i |= _CTRL;
 						}
 						//ALT
-						if( wcsncmp_literal(p, STR_ALT_PLUS) == 0 ){
-							p += _countof(STR_ALT_PLUS) - 1;
+						if( wmemcmp(p, STR_ALT_PLUS, wcslen(STR_ALT_PLUS)) == 0 ){
+							p += wcslen(STR_ALT_PLUS);
 							i |= _ALT;
 						}
 						for(j = 0; j < m_Common.m_sKeyBind.m_nKeyNameArrNum; j++)

@@ -338,7 +338,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					// Esc
 					//	何も設定しない（元のまま）
 				}
-				else if (wcscmp_literal(ptdi->item.pszText, L"") == 0) {
+				else if (wcscmp(ptdi->item.pszText, L"") == 0) {
 					// 空
 					pFuncWk->m_sName = LS(STR_PROPCOMMAINMENU_EDIT);
 				}

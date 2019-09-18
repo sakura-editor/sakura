@@ -1301,8 +1301,8 @@ void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(printsetting.m_mdmDevMode.m_szPrinterOutputName) );
 
 		// 2002.02.16 hor とりあえず旧設定を変換しとく
-		if(0==wcscmp_literal(printsetting.m_szHeaderForm[0],_EDITL("&f")) &&
-		   0==wcscmp_literal(printsetting.m_szFooterForm[0],_EDITL("&C- &P -"))
+		if(0==wcscmp(printsetting.m_szHeaderForm[0],_EDITL("&f")) &&
+		   0==wcscmp(printsetting.m_szFooterForm[0],_EDITL("&C- &P -"))
 		){
 			wcscpy( printsetting.m_szHeaderForm[0], _EDITL("$f") );
 			wcscpy( printsetting.m_szFooterForm[0], _EDITL("") );

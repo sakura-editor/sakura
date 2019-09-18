@@ -165,10 +165,10 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 					}else{
 						cComment = strLine[13];
 					}
-				}else if( 11 == strLine.length() && 0 == wcsicmp_literal( strLine.c_str() + 1, L"Mode=Regex" ) ){
+				}else if( 11 == strLine.length() && 0 == _wcsicmp( strLine.c_str() + 1, L"Mode=Regex" ) ){
 					bRegex = true;
 					bRegexReplace = false;
-				}else if( 18 == strLine.length() && 0 == wcsicmp_literal( strLine.c_str() + 1, L"Mode=RegexReplace" ) ){
+				}else if( 18 == strLine.length() && 0 == _wcsicmp( strLine.c_str() + 1, L"Mode=RegexReplace" ) ){
 					bRegex = true;
 					bRegexReplace = true;
 				}else if( 7 <= strLine.length() && 0 == wcsnicmp_literal( strLine.c_str() + 1, L"Title=" ) ){
@@ -344,7 +344,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstri
 		if( j >= nCount ){
 			continue;
 		}
-		if( 0 == wcscmp_literal( szTitle, L"Except" ) ){
+		if( 0 == wcscmp( szTitle, L"Except" ) ){
 			continue;
 		}
 

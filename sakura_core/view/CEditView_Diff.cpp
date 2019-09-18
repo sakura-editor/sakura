@@ -155,7 +155,7 @@ void CEditView::ViewDiffInfo(
 	if( nFlgOpt & 0x0004 ) wcscat( szOption, L"b" );	//-b ignore-space-change 空白変更無視
 	if( nFlgOpt & 0x0008 ) wcscat( szOption, L"B" );	//-B ignore-blank-lines  空行無視
 	if( nFlgOpt & 0x0010 ) wcscat( szOption, L"t" );	//-t expand-tabs         TAB-SPACE変換
-	if( wcscmp_literal( szOption, L"-" ) == 0 ) szOption[0] = L'\0';	//オプションなし
+	if( wcscmp( szOption, L"-" ) == 0 ) szOption[0] = L'\0';	//オプションなし
 	if( nFlgOpt & 0x0020 ) nFlgFile12 = 0;
 	else                   nFlgFile12 = 1;
 
