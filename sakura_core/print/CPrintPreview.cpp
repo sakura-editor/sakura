@@ -1504,7 +1504,7 @@ CColorStrategy* CPrintPreview::DrawPageText(
 					wcscat( szLineNum, szLineTerm );
 				}
 				else{
-					wcscat_literal( szLineNum, L" " );
+					wcscat( szLineNum, L" " );
 				}
 
 				//文字列長

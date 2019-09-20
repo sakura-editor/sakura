@@ -462,7 +462,7 @@ WCHAR* CKeyBind::GetMenuLabel(
 		if( GetKeyStr( hInstance, nKeyNameArrNum, pKeyNameArr, cMemAccessKey, nFuncId, bGetDefFuncCode ) ){
 			// バッファが足りないときは入れない
 			if( wcslen( pszLabel ) + (Int)cMemAccessKey.GetStringLength() + 1 < LABEL_MAX ){
-				wcscat_literal( pszLabel, L"\t" );
+				wcscat( pszLabel, L"\t" );
 				wcscat( pszLabel, cMemAccessKey.GetStringPtr() );
 			}
 		}

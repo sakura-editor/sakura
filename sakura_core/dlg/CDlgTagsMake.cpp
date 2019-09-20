@@ -163,7 +163,7 @@ int CDlgTagsMake::GetData( void )
 	int length = wcslen( m_szPath );
 	if( length > 0 )
 	{
-		if( m_szPath[ length - 1 ] != L'\\' ) wcscat_literal( m_szPath, L"\\" );
+		if( m_szPath[ length - 1 ] != L'\\' ) wcscat( m_szPath, L"\\" );
 	}
 
 	//CTAGSオプション
