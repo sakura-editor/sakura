@@ -12,4 +12,9 @@
       Outputs="$(GitHash)">
     <Exec Command="..\sakura\githash.bat ..\sakura_core $(GitHash)" />
   </Target>
+  <Target Name="GitHashForZip" BeforeTargets="ClCompile" AfterTargets="GitHash"
+      Condition="!Exists('$(GitHash)')"
+      Outputs="$(GitHash)">
+    <Exec Command="..\sakura\githash.bat ..\sakura_core $(GitHash)" />
+  </Target>
 </Project>
