@@ -1209,7 +1209,7 @@ int CDlgTagJumpList::find_key_core(
 			state.m_nDepth = 0;
 			szNextPath[0] = 0;
 		}else{
-//			wcscat( state.m_szCurPath, L"..\\" );
+//			wcscat_literal( state.m_szCurPath, L"..\\" );
 			//カレントパスを1階層上へ。
 			DirUp( state.m_szCurPath );
 		}
@@ -1645,7 +1645,7 @@ WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 		wcscpy( pszOutput, p );	//何も加工しない。
 	}else{
 		for( int i = 0; i < depth; i++ ){
-			//wcscat( basePath, L"..\\" );
+			//wcscat_literal( basePath, L"..\\" );
 			DirUp( basePath );
 		}
 		if( -1 == auto_snprintf_s( pszOutput, count, L"%s%s", basePath, p ) ){

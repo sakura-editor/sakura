@@ -245,7 +245,7 @@ void CShareData_IO::ShareData_IO_Mru( CDataProfile& cProfile )
 		auto_sprintf( szKeyName, LTEXT("MRUFOLDER[%02d]"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_szOPENFOLDERArr[i] );
 		//お気に入り	//@@@ 2003.04.08 MIK
-		wcscat( szKeyName, LTEXT(".bFavorite") );
+		wcscat_literal( szKeyName, LTEXT(".bFavorite") );
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_bOPENFOLDERArrFavorite[i] );
 	}
 	//読み込み時は残りを初期化
@@ -540,7 +540,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 			- CNativeW::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] );
 		if( 1 == nCharChars && common.m_sBackup.m_szBackUpFolder[nDummy - 1] == '\\' ){
 		}else{
-			wcscat( common.m_sBackup.m_szBackUpFolder, L"\\" );
+			wcscat_literal( common.m_sBackup.m_szBackUpFolder, L"\\" );
 		}
 	}
 	cProfile.IOProfileData( pszSecName, LTEXT("szBackUpFolder"), common.m_sBackup.m_szBackUpFolder );
@@ -553,7 +553,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 			- CNativeW::GetCharPrev( common.m_sBackup.m_szBackUpFolder, nDummy, &common.m_sBackup.m_szBackUpFolder[nDummy] );
 		if( 1 == nCharChars && common.m_sBackup.m_szBackUpFolder[nDummy - 1] == '\\' ){
 		}else{
-			wcscat( common.m_sBackup.m_szBackUpFolder, L"\\" );
+			wcscat_literal( common.m_sBackup.m_szBackUpFolder, L"\\" );
 		}
 	}
 	

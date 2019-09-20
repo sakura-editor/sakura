@@ -456,13 +456,13 @@ bool CViewCommander::Command_TagsMake( void )
 
 	WCHAR	options[1024];
 	wcscpy( options, L"--excmd=n" );	//デフォルトのオプション
-	if( cDlgTagsMake.m_nTagsOpt & 0x0001 ) wcscat( options, L" -R" );	//サブフォルダも対象
+	if( cDlgTagsMake.m_nTagsOpt & 0x0001 ) wcscat_literal( options, L" -R" );	//サブフォルダも対象
 	if( cDlgTagsMake.m_szTagsCmdLine[0] != L'\0' )	//個別指定のコマンドライン
 	{
-		wcscat( options, L" " );
+		wcscat_literal( options, L" " );
 		wcscat( options, cDlgTagsMake.m_szTagsCmdLine );
 	}
-	wcscat( options, L" *" );	//配下のすべてのファイル
+	wcscat_literal( options, L" *" );	//配下のすべてのファイル
 
 	//コマンドライン文字列作成(MAX:1024)
 	{
@@ -711,9 +711,9 @@ bool CViewCommander::Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int cou
 		WCHAR szExts[MAX_TYPES_EXTS];
 		CDocTypeManager::GetFirstExt(m_pCommanderView->m_pTypeData->m_szTypeExts, szExts, _countof(szExts));
 		int nExtLen = wcslen( szExts );
-		wcscat( szCurrentPath, L"\\dmy" );
+		wcscat_literal( szCurrentPath, L"\\dmy" );
 		if( nExtLen ){
-			wcscat( szCurrentPath, L"." );
+			wcscat_literal( szCurrentPath, L"." );
 			wcscat( szCurrentPath, szExts );
 		}
 	}

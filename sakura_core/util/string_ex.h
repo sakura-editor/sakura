@@ -245,5 +245,51 @@ inline int wcsncmp_auto(const wchar_t* strData1, const wchar_t* szData2)
 #define strncmp_literal(strData1, literalData2) \
 	::strncmp(strData1, literalData2, _countof(literalData2) - 1 ) //※終端ヌルを含めないので、_countofからマイナス1する
 
+template <typename T, size_t SourceSize>
+char *strcat_literal(T& strDest, const char (&strSource)[SourceSize])
+{
+	assert(strSource[SourceSize - 1] == 0);
+	return strncat(strDest, strSource, SourceSize - 1);
+}
+
+template <size_t SourceSize>
+char *strcat_literal(char*& strDest, const char (&strSource)[SourceSize])
+{
+	assert(strSource[SourceSize - 1] == 0);
+	return strncat(strDest, strSource, SourceSize - 1);
+}
+
+template <size_t DestSize, size_t SourceSize>
+char *strcat_literal(char (&strDest)[DestSize], const char (&strSource)[SourceSize])
+{
+	assert(strSource[SourceSize - 1] == 0);
+	assert(strnlen_s(strDest, DestSize) + SourceSize <= DestSize);
+	strncat_s(strDest, strSource, SourceSize - 1);
+	return strDest;
+}
+
+template <typename T, size_t SourceSize>
+wchar_t *wcscat_literal(T& strDest, const wchar_t (&strSource)[SourceSize])
+{
+	assert(strSource[SourceSize - 1] == 0);
+	return wcsncat(strDest, strSource, SourceSize - 1);
+}
+
+template <size_t SourceSize>
+wchar_t *wcscat_literal(wchar_t*& strDest, const wchar_t (&strSource)[SourceSize])
+{
+	assert(strSource[SourceSize - 1] == 0);
+	return wcsncat(strDest, strSource, SourceSize - 1);
+}
+
+template <size_t DestSize, size_t SourceSize>
+wchar_t *wcscat_literal(wchar_t (&strDest)[DestSize], const wchar_t (&strSource)[SourceSize])
+{
+	assert(strSource[SourceSize - 1] == 0);
+	assert(wcsnlen_s(strDest, DestSize) + SourceSize <= DestSize);
+	wcsncat_s(strDest, strSource, SourceSize - 1);
+	return strDest;
+}
+
 #endif /* SAKURA_STRING_EX_29EB1DD7_7259_4D6C_A651_B9174E5C3D3C9_H_ */
 /*[EOF]*/

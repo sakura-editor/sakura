@@ -242,11 +242,11 @@ bool CDocTypeManager::ConvertTypesExtToDlgExt( const WCHAR *pszSrcExt, const WCH
 	while( token )
 	{
 		if (szExt == NULL || szExt[0] == L'\0' || wmemicmp(token, szExt + 1) != 0) {
-			if( pszDstExt[0] != '\0' ) wcscat( pszDstExt, L";" );
+			if( pszDstExt[0] != '\0' ) wcscat_literal( pszDstExt, L";" );
 			// 拡張子指定なし、またはマッチした拡張子でない
 			if (wcspbrk(token, m_typeExtWildcards) == NULL) {
-				if (L'.' == *token) wcscat(pszDstExt, L"*");
-				else                 wcscat(pszDstExt, L"*.");
+				if (L'.' == *token) wcscat_literal(pszDstExt, L"*");
+				else                 wcscat_literal(pszDstExt, L"*.");
 			}
 			wcscat(pszDstExt, token);
 		}

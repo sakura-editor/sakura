@@ -363,22 +363,22 @@ bool CBackupAgent::FormatBackUpPath(
 
 			szForm[0] = L'\0';
 			if( bup_setting.GetBackupOpt(BKUP_YEAR) ){	/* バックアップファイル名：日付の年 */
-				wcscat( szForm, L"%Y" );
+				wcscat_literal( szForm, L"%Y" );
 			}
 			if( bup_setting.GetBackupOpt(BKUP_MONTH) ){	/* バックアップファイル名：日付の月 */
-				wcscat( szForm, L"%m" );
+				wcscat_literal( szForm, L"%m" );
 			}
 			if( bup_setting.GetBackupOpt(BKUP_DAY) ){	/* バックアップファイル名：日付の日 */
-				wcscat( szForm, L"%d" );
+				wcscat_literal( szForm, L"%d" );
 			}
 			if( bup_setting.GetBackupOpt(BKUP_HOUR) ){	/* バックアップファイル名：日付の時 */
-				wcscat( szForm, L"%H" );
+				wcscat_literal( szForm, L"%H" );
 			}
 			if( bup_setting.GetBackupOpt(BKUP_MIN) ){	/* バックアップファイル名：日付の分 */
-				wcscat( szForm, L"%M" );
+				wcscat_literal( szForm, L"%M" );
 			}
 			if( bup_setting.GetBackupOpt(BKUP_SEC) ){	/* バックアップファイル名：日付の秒 */
-				wcscat( szForm, L"%S" );
+				wcscat_literal( szForm, L"%S" );
 			}
 			/* YYYYMMDD時分秒 形式に変換 */
 			wcsftime( szTime, _countof( szTime ) - 1, szForm, &result );
