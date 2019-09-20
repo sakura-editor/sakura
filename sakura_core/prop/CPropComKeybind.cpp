@@ -450,15 +450,15 @@ void CPropKeybind::ChangeKeyList( HWND hwndDlg){
 	i = 0;
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SHIFT ) ){
 		i |= _SHIFT;
-		wcsncat_s( szKeyState, _countof(szKeyState), L"Shift+", 6 );
+		wcscat_literal( szKeyState, L"Shift+" );
 	}
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_CTRL ) ){
 		i |= _CTRL;
-		wcsncat_s( szKeyState, _countof(szKeyState), L"Ctrl+", 5 );
+		wcscat_literal( szKeyState, L"Ctrl+" );
 	}
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ALT ) ){
 		i |= _ALT;
-		wcsncat_s( szKeyState, _countof(szKeyState), L"Alt+", 4 );
+		wcscat_literal( szKeyState, L"Alt+" );
 	}
 	/* キー一覧に文字列をセット（リストボックス）*/
 	List_ResetContent( hwndKeyList );

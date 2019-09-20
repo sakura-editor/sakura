@@ -243,20 +243,20 @@ void CViewCommander::Command_GREP_REPLACE( void )
 		//GOPTオプション
 		WCHAR	pOpt[64];
 		pOpt[0] = L'\0';
-		if( cDlgGrepRep.m_bSubFolder				)wcsncat_s( pOpt, _countof(pOpt), L"S", 1 );	// サブフォルダからも検索する
-		if( cDlgGrepRep.m_sSearchOption.bWordOnly	)wcsncat_s( pOpt, _countof(pOpt), L"W", 1 );	// 単語単位で探す
-		if( cDlgGrepRep.m_sSearchOption.bLoHiCase	)wcsncat_s( pOpt, _countof(pOpt), L"L", 1 );	// 英大文字と英小文字を区別する
-		if( cDlgGrepRep.m_sSearchOption.bRegularExp	)wcsncat_s( pOpt, _countof(pOpt), L"R", 1 );	// 正規表現
-		if( cDlgGrepRep.m_nGrepOutputLineType == 1  )wcsncat_s( pOpt, _countof(pOpt), L"P", 1 );	// 行を出力する
-		// if( cDlgGrepRep.m_nGrepOutputLineType == 2     )wcsncat_s( pOpt, _countof(pOpt), L"N", 1 );	// 否ヒット行を出力する 2014.09.23
-		if( 1 == cDlgGrepRep.m_nGrepOutputStyle		)wcsncat_s( pOpt, _countof(pOpt), L"1", 1 );	// Grep: 出力形式
-		if( 2 == cDlgGrepRep.m_nGrepOutputStyle		)wcsncat_s( pOpt, _countof(pOpt), L"2", 1 );	// Grep: 出力形式
-		if( 3 == cDlgGrepRep.m_nGrepOutputStyle		)wcsncat_s( pOpt, _countof(pOpt), L"3", 1 );
-		if( cDlgGrepRep.m_bGrepOutputFileOnly		)wcsncat_s( pOpt, _countof(pOpt), L"F", 1 );
-		if( cDlgGrepRep.m_bGrepOutputBaseFolder		)wcsncat_s( pOpt, _countof(pOpt), L"B", 1 );
-		if( cDlgGrepRep.m_bGrepSeparateFolder		)wcsncat_s( pOpt, _countof(pOpt), L"D", 1 );
-		if( cDlgGrepRep.m_bPaste					)wcsncat_s( pOpt, _countof(pOpt), L"C", 1 );	// クリップボードから貼り付け
-		if( cDlgGrepRep.m_bBackup					)wcsncat_s( pOpt, _countof(pOpt), L"O", 1 );	// バックアップ作成
+		if( cDlgGrepRep.m_bSubFolder				)wcscat_literal( pOpt, L"S" );	// サブフォルダからも検索する
+		if( cDlgGrepRep.m_sSearchOption.bWordOnly	)wcscat_literal( pOpt, L"W" );	// 単語単位で探す
+		if( cDlgGrepRep.m_sSearchOption.bLoHiCase	)wcscat_literal( pOpt, L"L" );	// 英大文字と英小文字を区別する
+		if( cDlgGrepRep.m_sSearchOption.bRegularExp	)wcscat_literal( pOpt, L"R" );	// 正規表現
+		if( cDlgGrepRep.m_nGrepOutputLineType == 1	)wcscat_literal( pOpt, L"P" );	// 行を出力する
+		// if( cDlgGrepRep.m_nGrepOutputLineType == 2     )wcscat_literal( pOpt, L"N" );	// 否ヒット行を出力する 2014.09.23
+		if( 1 == cDlgGrepRep.m_nGrepOutputStyle		)wcscat_literal( pOpt, L"1" );	// Grep: 出力形式
+		if( 2 == cDlgGrepRep.m_nGrepOutputStyle		)wcscat_literal( pOpt, L"2" );	// Grep: 出力形式
+		if( 3 == cDlgGrepRep.m_nGrepOutputStyle		)wcscat_literal( pOpt, L"3" );
+		if( cDlgGrepRep.m_bGrepOutputFileOnly		)wcscat_literal( pOpt, L"F" );
+		if( cDlgGrepRep.m_bGrepOutputBaseFolder		)wcscat_literal( pOpt, L"B" );
+		if( cDlgGrepRep.m_bGrepSeparateFolder		)wcscat_literal( pOpt, L"D" );
+		if( cDlgGrepRep.m_bPaste					)wcscat_literal( pOpt, L"C" );	// クリップボードから貼り付け
+		if( cDlgGrepRep.m_bBackup					)wcscat_literal( pOpt, L"O" );	// バックアップ作成
 		if( 0 < wcslen( pOpt ) ){
 			cCmdLine.AppendString( L" -GOPT=" );
 			cCmdLine.AppendString( pOpt );

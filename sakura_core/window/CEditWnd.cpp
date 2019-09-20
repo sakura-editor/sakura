@@ -3858,7 +3858,7 @@ bool CEditWnd::GetRelatedIcon(const WCHAR* szFile, HICON* hIconBig, HICON* hIcon
 		_wsplitpath( szFile, NULL, NULL, NULL, szExt );
 		
 		if( ReadRegistry(HKEY_CLASSES_ROOT, szExt, NULL, FileType, _countof(FileType) - 13)){
-			wcsncat_s( FileType, _countof(FileType), L"\\DefaultIcon", 12 );
+			wcscat_literal( FileType, L"\\DefaultIcon" );
 			if( ReadRegistry(HKEY_CLASSES_ROOT, FileType, NULL, NULL, 0)){
 				// 関連づけられたアイコンを取得する
 				SHFILEINFO shfi;
