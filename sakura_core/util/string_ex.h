@@ -264,7 +264,7 @@ char *strcat_literal(char (&strDest)[DestSize], const char (&strSource)[SourceSi
 {
 	assert(strSource[SourceSize - 1] == 0);
 	assert(strnlen_s(strDest, DestSize) + SourceSize <= DestSize);
-	strncat_s(strDest, strSource, SourceSize - 1);
+	strncat_s(strDest, DestSize, strSource, SourceSize - 1);
 	return strDest;
 }
 
@@ -287,7 +287,7 @@ wchar_t *wcscat_literal(wchar_t (&strDest)[DestSize], const wchar_t (&strSource)
 {
 	assert(strSource[SourceSize - 1] == 0);
 	assert(wcsnlen_s(strDest, DestSize) + SourceSize <= DestSize);
-	wcsncat_s(strDest, strSource, SourceSize - 1);
+	wcsncat_s(strDest, DestSize, strSource, SourceSize - 1);
 	return strDest;
 }
 
