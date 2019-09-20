@@ -36,12 +36,11 @@
 //!CPPキーワードで始まっていれば true
 inline bool IsHeadCppKeyword(const wchar_t* pData)
 {
-	#define HEAD_EQ(DATA,LITERAL) (wcsncmp_literal(DATA,LITERAL)==0)
-	if( HEAD_EQ(pData, L"case"      ) )return true;
-	if( HEAD_EQ(pData, L"default:"  ) )return true;
-	if( HEAD_EQ(pData, L"public:"   ) )return true;
-	if( HEAD_EQ(pData, L"private:"  ) )return true;
-	if( HEAD_EQ(pData, L"protected:") )return true;
+	if( wcsncmp_literal(pData, L"case"      )==0 )return true;
+	if( wcsncmp_literal(pData, L"default:"  )==0 )return true;
+	if( wcsncmp_literal(pData, L"public:"   )==0 )return true;
+	if( wcsncmp_literal(pData, L"private:"  )==0 )return true;
+	if( wcsncmp_literal(pData, L"protected:")==0 )return true;
 	return false;
 }
 

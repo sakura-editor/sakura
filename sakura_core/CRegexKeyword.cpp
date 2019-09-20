@@ -52,13 +52,9 @@
 
 //#define RK_HEAD_CHAR      '^'    //行先頭の正規表現
 #define RK_HEAD_STR1      L"/^"   //BREGEXP
-#define RK_HEAD_STR1_LEN  2
 #define RK_HEAD_STR2      L"m#^"  //BREGEXP
-#define RK_HEAD_STR2_LEN  3
 #define RK_HEAD_STR3      L"m/^"  //BREGEXP
-#define RK_HEAD_STR3_LEN  3
 //#define RK_HEAD_STR4      "#^"   //BREGEXP
-//#define RK_HEAD_STR4_LEN  2
 
 #define RK_KAKOMI_1_START "/"
 #define RK_KAKOMI_1_END   "/k"
