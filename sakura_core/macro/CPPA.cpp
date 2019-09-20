@@ -268,8 +268,8 @@ char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer
 		// 2002.12.06 Moca 原因不明だが，strcatがVC6Proでうまく動かなかったため，strcpyにしてみたら動いた
 		strcpy( szArgument, szArguments[0] );
 		for ( j=1; j<i; j++){
-			strcat( szArgument, "; " );
-			strcat( szArgument, szArguments[j] );
+			strncat_s( szArgument, _countof(szArgument), "; ", 2 );
+			strncat_s( szArgument, _countof(szArgument), szArguments[j], _countof(szArguments[j]) - 1 );
 		}
 		auto_sprintf( szBuffer, "%hs S_%ls(%hs)%hs; index %d;",
 			szType,

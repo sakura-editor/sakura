@@ -456,13 +456,13 @@ bool CViewCommander::Command_TagsMake( void )
 
 	WCHAR	options[1024];
 	wcscpy( options, L"--excmd=n" );	//デフォルトのオプション
-	if( cDlgTagsMake.m_nTagsOpt & 0x0001 ) wcscat( options, L" -R" );	//サブフォルダも対象
+	if( cDlgTagsMake.m_nTagsOpt & 0x0001 ) wcsncat_s( options, _countof(options), L" -R", 3 );	//サブフォルダも対象
 	if( cDlgTagsMake.m_szTagsCmdLine[0] != L'\0' )	//個別指定のコマンドライン
 	{
-		wcscat( options, L" " );
-		wcscat( options, cDlgTagsMake.m_szTagsCmdLine );
+		wcsncat_s( options, _countof(options), L" ", 1 );
+		wcsncat_s( options, _countof(options), cDlgTagsMake.m_szTagsCmdLine, _countof(cDlgTagsMake.m_szTagsCmdLine) - 1 );
 	}
-	wcscat( options, L" *" );	//配下のすべてのファイル
+	wcsncat_s( options, _countof(options), L" *", 2 );	//配下のすべてのファイル
 
 	//コマンドライン文字列作成(MAX:1024)
 	{

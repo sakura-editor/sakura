@@ -1501,10 +1501,10 @@ CColorStrategy* CPrintPreview::DrawPageText(
 					wchar_t szLineTerm[2];
 					szLineTerm[0] = m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute().m_cLineTermChar;	/* 行番号区切り文字 */
 					szLineTerm[1] = L'\0';
-					wcscat( szLineNum, szLineTerm );
+					wcsncat_s( szLineNum, _countof(szLineNum), szLineTerm, 1 );
 				}
 				else{
-					wcscat( szLineNum, L" " );
+					wcsncat_s( szLineNum, _countof(szLineNum), L" ", 1 );
 				}
 
 				//文字列長

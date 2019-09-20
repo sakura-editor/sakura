@@ -360,14 +360,14 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 							szFolderItem[0] = L'"';
 							wcsncpy( szFolderItem + 1, vPaths[i].c_str(), nMaxPath - 1 );
 							szFolderItem[nMaxPath-1] = L'\0';
-							wcscat( szFolderItem, L"\"" );
+							wcsncat_s( szFolderItem, _countof(szFolderItem), L"\"", 2 );
 							szFolderItem[nMaxPath-1] = L'\0';
 						}
 						if( i ){
-							wcscat( szFolder, L";" );
+							wcsncat_s( szFolder, _countof(szFolderItem), L";", 1 );
 							szFolder[nMaxPath-1] = L'\0';
 						}
-						wcscat_s( szFolder, nMaxPath, szFolderItem );
+						wcsncat_s( szFolder, _countof(szFolderItem), szFolderItem, _countof(szFolderItem) - 1 );
 					}
 					::SetWindowText( hwnd, szFolder );
 				}
@@ -619,7 +619,7 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 		// 2003.08.01 Moca ファイル名はスペースなどは区切り記号になるので、""で囲い、エスケープする
 		szWorkFile[0] = L'"';
 		SplitPath_FolderAndFile( m_szCurrentFilePath, szWorkFolder, szWorkFile + 1 );
-		wcscat( szWorkFile, L"\"" ); // 2003.08.01 Moca
+		wcsncat_s( szWorkFile, _countof(szWorkFile), L"\"", 2 ); // 2003.08.01 Moca
 		::DlgItem_SetText( GetHwnd(), IDC_COMBO_FILE, szWorkFile );
 		
 		SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), szWorkFolder );
@@ -759,7 +759,7 @@ int CDlgGrep::GetData( void )
 			if( wcschr( szFolderItem, L';' ) ){
 				szFolderItem[0] = L'"';
 				::GetCurrentDirectory( nMaxPath, szFolderItem + 1 );
-				wcscat(szFolderItem, L"\"");
+				wcsncat_s(szFolderItem, _countof(szFolderItem), L"\"", 1);
 			}
 			int nFolderItemLen = wcslen( szFolderItem );
 			if( nMaxPath < nFolderLen + nFolderItemLen + 1 ){
@@ -767,9 +767,9 @@ int CDlgGrep::GetData( void )
 				return FALSE;
 			}
 			if( i ){
-				wcscat( szFolder, L";" );
+				wcsncat_s( szFolder, _countof(szFolder), L";", 1 );
 			}
-			wcscat( szFolder, szFolderItem );
+			wcsncat_s( szFolder, _countof(szFolder), szFolderItem, _countof(szFolderItem) - 1 );
 			nFolderLen = wcslen( szFolder );
 		}
 		wcscpy( m_szFolder, szFolder );
@@ -830,7 +830,7 @@ static void SetGrepFolder( HWND hwndCtrl, LPCWSTR folder )
 		WCHAR szQuoteFolder[MAX_PATH];
 		szQuoteFolder[0] = L'"';
 		wcscpy( szQuoteFolder + 1, folder );
-		wcscat( szQuoteFolder, L"\"" );
+		wcsncat_s( szQuoteFolder, _countof(szQuoteFolder), L"\"", 1 );
 		::SetWindowText( hwndCtrl, szQuoteFolder );
 	}else{
 		::SetWindowText( hwndCtrl, folder );

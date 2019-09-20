@@ -585,7 +585,7 @@ void CPropMacro::OnFileDropdown_Macro( HWND hwndDlg )
 		wcscpy( folder, path );
 		GetInidirOrExedir( path, folder );
 	}
-	wcscat( path, L"*.*" );	//	2002/05/01 YAZAKI どんなファイルもどんと来い。
+	wcsncat_s( path, _countof(path), L"*.*", 3 );	//	2002/05/01 YAZAKI どんなファイルもどんと来い。
 
 	//	候補の初期化
 	Combo_ResetContent( hCombo );
