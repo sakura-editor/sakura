@@ -65,7 +65,7 @@ static const bool UNICODE_BOOL=true;
 
 //crtdbg.hによるメモリーリークチェックを使うかどうか (デバッグ用)
 #ifdef _DEBUG
-//#define USE_LEAK_CHECK_WITH_CRTDBG
+#define USE_LEAK_CHECK_WITH_CRTDBG
 #endif
 
 // -- -- 仕様変更 -- -- //
@@ -96,7 +96,6 @@ static const bool UNICODE_BOOL=true;
 	#include <xtree>
 
 	#include <crtdbg.h>
-	#define new DEBUG_NEW
 	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
 	//それと、WinMainの先頭で _CrtSetDbgFlag() を呼ぶ.
 #endif
