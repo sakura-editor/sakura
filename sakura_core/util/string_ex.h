@@ -277,7 +277,7 @@ template <size_t DestSize, size_t SourceSize>
 inline char *strcat_literal(char (&strDest)[DestSize], const char (&strSource)[SourceSize])
 {
 	assert(strSource[SourceSize - 1] == 0);
-	assert(strnlen_s(strDest, DestSize) + SourceSize <= DestSize);
+	assert(strnlen(strDest, DestSize - 1) + SourceSize <= DestSize);
 	char* dst = strDest;
 	return strcat_literal(dst, strSource);
 }
@@ -310,7 +310,7 @@ template <size_t DestSize, size_t SourceSize>
 inline wchar_t *wcscat_literal(wchar_t (&strDest)[DestSize], const wchar_t (&strSource)[SourceSize])
 {
 	assert(strSource[SourceSize - 1] == 0);
-	assert(wcsnlen_s(strDest, DestSize) + SourceSize <= DestSize);
+	assert(wcsnlen(strDest, DestSize - 1) + SourceSize <= DestSize);
 	wchar_t* dst = strDest;
 	return wcscat_literal(dst, strSource);
 }
