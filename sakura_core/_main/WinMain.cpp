@@ -109,6 +109,12 @@ int WINAPI wWinMain(
 	}
 
 	::OleUninitialize();	// 2009.01.07 ryoji 追加
+
+	// メモリリークチェック検証コード
+	auto leakCheck1 = new RECT;
+	auto leakCheck2 = new std::wstring(L"test");
+	auto leakCheck3 = new char[MAX_PATH];
+
 	return 0;
 }
 
