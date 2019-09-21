@@ -52,13 +52,9 @@
 
 //#define RK_HEAD_CHAR      '^'    //行先頭の正規表現
 #define RK_HEAD_STR1      L"/^"   //BREGEXP
-#define RK_HEAD_STR1_LEN  2
 #define RK_HEAD_STR2      L"m#^"  //BREGEXP
-#define RK_HEAD_STR2_LEN  3
 #define RK_HEAD_STR3      L"m/^"  //BREGEXP
-#define RK_HEAD_STR3_LEN  3
 //#define RK_HEAD_STR4      "#^"   //BREGEXP
-//#define RK_HEAD_STR4_LEN  2
 
 #define RK_KAKOMI_1_START "/"
 #define RK_KAKOMI_1_END   "/k"
@@ -249,9 +245,9 @@ BOOL CRegexKeyword::RegexKeyCompile( void )
 			if( m_szMsg[0] == '\0' )	//エラーがないかチェックする
 			{
 				//先頭以外は検索しなくてよい
-				if( wcsncmp( RK_HEAD_STR1, pKeyword, RK_HEAD_STR1_LEN ) == 0
-				 || wcsncmp( RK_HEAD_STR2, pKeyword, RK_HEAD_STR2_LEN ) == 0
-				 || wcsncmp( RK_HEAD_STR3, pKeyword, RK_HEAD_STR3_LEN ) == 0
+				if( wcsncmp_literal( pKeyword, RK_HEAD_STR1 ) == 0
+				 || wcsncmp_literal( pKeyword, RK_HEAD_STR2 ) == 0
+				 || wcsncmp_literal( pKeyword, RK_HEAD_STR3 ) == 0
 				)
 				{
 					m_sInfo[i].nHead = 1;

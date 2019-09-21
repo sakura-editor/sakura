@@ -122,22 +122,22 @@ UINT32 ParseVersion( const WCHAR* sVer )
 	for( i=0; *p && i<4; i++){
 		//特別な文字列の処理
 		if( *p == L'a' ){
-			if( wcsncmp( L"alpha", p, 5 ) == 0 )p += 5;
+			if( wcsncmp_literal( p, L"alpha" ) == 0 )p += 5;
 			else p++;
 			nShift = -0x60;
 		}
 		else if( *p == L'b' ){
-			if( wcsncmp( L"beta", p, 4 ) == 0 )p += 4;
+			if( wcsncmp_literal( p, L"beta" ) == 0 )p += 4;
 			else p++;
 			nShift = -0x40;
 		}
 		else if( *p == L'r' || *p == L'R' ){
-			if( _wcsnicmp( L"rc", p, 2 ) == 0 )p += 2;
+			if( wcsnicmp_literal( p, L"rc" ) == 0 )p += 2;
 			else p++;
 			nShift = -0x20;
 		}
 		else if( *p == L'p' ){
-			if( wcsncmp( L"pl", p, 2 ) == 0 )p += 2;
+			if( wcsncmp_literal( p, L"pl" ) == 0 )p += 2;
 			else p++;
 			nShift = 0x20;
 		}

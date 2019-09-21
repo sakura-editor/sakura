@@ -968,7 +968,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 		nClassNest = 0;
 		/* クラス名::メソッドの場合 */
 		if( NULL != ( pPos = wcsstr( pWork, L"::" ) )
-			&& wcsncmp( L"operator ", pWork, 9) != 0 ){
+			&& wcsncmp_literal(pWork, L"operator ") != 0 ){
 			/* インナークラスのネストレベルを調べる */
 			int	k;
 			int	nWorkLen;
@@ -992,7 +992,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 						m = k + 2;
 						++k;
 						// Klass::operator std::string
-						if( wcsncmp( L"operator ", pWork + m, 9) == 0 ){
+						if( wcsncmp_literal(pWork + m, L"operator ") == 0 ){
 							break;
 						}
 					}

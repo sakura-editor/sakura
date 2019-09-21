@@ -36,12 +36,11 @@
 //!CPPキーワードで始まっていれば true
 inline bool IsHeadCppKeyword(const wchar_t* pData)
 {
-	#define HEAD_EQ(DATA,LITERAL) (wcsncmp(DATA,LITERAL,_countof(LITERAL)-1)==0)
-	if( HEAD_EQ(pData, L"case"      ) )return true;
-	if( HEAD_EQ(pData, L"default:"  ) )return true;
-	if( HEAD_EQ(pData, L"public:"   ) )return true;
-	if( HEAD_EQ(pData, L"private:"  ) )return true;
-	if( HEAD_EQ(pData, L"protected:") )return true;
+	if( wcsncmp_literal(pData, L"case"      )==0 )return true;
+	if( wcsncmp_literal(pData, L"default:"  )==0 )return true;
+	if( wcsncmp_literal(pData, L"public:"   )==0 )return true;
+	if( wcsncmp_literal(pData, L"private:"  )==0 )return true;
+	if( wcsncmp_literal(pData, L"protected:")==0 )return true;
 	return false;
 }
 
@@ -691,8 +690,8 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					}
 					if( nMode2 == M2_OPERATOR_WORD && L'<' == pLine[i] ){
 						const wchar_t* p = &szWord[nWordIdx-8];
-						if(  (8 <= nWordIdx && wcsncmp(L"operator<", p, 9) == 0)
-						 || ((9 <= nWordIdx && wcsncmp(L"operator<<", p-1, 10) == 0) && 0 < i && L'<' == pLine[i-1]) ){
+						if(  (8 <= nWordIdx && wcsncmp_literal(p, L"operator<") == 0)
+						 || ((9 <= nWordIdx && wcsncmp_literal(p-1, L"operator<<") == 0) && 0 < i && L'<' == pLine[i-1]) ){
 							// 違う：operator<<const() / operator<<()
 						}else{
 							// operator< <T>() / operator<<<T>() / operator+<T>()
