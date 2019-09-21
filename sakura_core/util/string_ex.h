@@ -245,50 +245,70 @@ inline int wcsncmp_auto(const wchar_t* strData1, const wchar_t* szData2)
 #define strncmp_literal(strData1, literalData2) \
 	::strncmp(strData1, literalData2, _countof(literalData2) - 1 ) //※終端ヌルを含めないので、_countofからマイナス1する
 
-template <typename T, size_t SourceSize>
-char *strcat_literal(T& strDest, const char (&strSource)[SourceSize])
+template <size_t SourceSize>
+inline char *strcat_literal(char*& strDest, const char (&strSource)[SourceSize])
 {
 	assert(strSource[SourceSize - 1] == 0);
-	return strncat(strDest, strSource, SourceSize - 1);
+	char* dst = strDest;
+	// iterate to string terminator
+	while (*dst)
+		++dst;
+#if defined(_M_X64) || defined(_M_IX86)
+	__movsb((PBYTE)dst, (BYTE const*)strSource, SourceSize);
+#else
+	for (size_t i=0; i<SourceSize; ++i)
+		dst[i] = strSource[i];
+#endif
+	return strDest;
 }
 
-template <size_t SourceSize>
-char *strcat_literal(char*& strDest, const char (&strSource)[SourceSize])
+template <typename T, size_t SourceSize>
+inline char *strcat_literal(T& strDest, const char (&strSource)[SourceSize])
 {
-	assert(strSource[SourceSize - 1] == 0);
-	return strncat(strDest, strSource, SourceSize - 1);
+	char* dst = strDest;
+	return strcat_literal(dst, strSource);
 }
 
 template <size_t DestSize, size_t SourceSize>
-char *strcat_literal(char (&strDest)[DestSize], const char (&strSource)[SourceSize])
+inline char *strcat_literal(char (&strDest)[DestSize], const char (&strSource)[SourceSize])
 {
 	assert(strSource[SourceSize - 1] == 0);
 	assert(strnlen_s(strDest, DestSize) + SourceSize <= DestSize);
-	strncat_s(strDest, DestSize, strSource, SourceSize - 1);
+	char* dst = strDest;
+	return strcat_literal(dst, strSource);
+}
+
+template <size_t SourceSize>
+inline wchar_t *wcscat_literal(wchar_t*& strDest, const wchar_t (&strSource)[SourceSize])
+{
+	assert(strSource[SourceSize - 1] == 0);
+	wchar_t* dst = strDest;
+	// iterate to string terminator
+	while (*dst)
+		++dst;
+#if defined(_M_X64) || defined(_M_IX86)
+	__movsw((PWORD)dst, (WORD const*)strSource, SourceSize);
+#else
+	for (size_t i=0; i<SourceSize; ++i)
+		dst[i] = strSource[i];
+#endif
 	return strDest;
 }
 
 template <typename T, size_t SourceSize>
-wchar_t *wcscat_literal(T& strDest, const wchar_t (&strSource)[SourceSize])
+inline wchar_t *wcscat_literal(T& strDest, const wchar_t (&strSource)[SourceSize])
 {
-	assert(strSource[SourceSize - 1] == 0);
-	return wcsncat(strDest, strSource, SourceSize - 1);
-}
-
-template <size_t SourceSize>
-wchar_t *wcscat_literal(wchar_t*& strDest, const wchar_t (&strSource)[SourceSize])
-{
-	assert(strSource[SourceSize - 1] == 0);
-	return wcsncat(strDest, strSource, SourceSize - 1);
+	wchar_t* dst = strDest;
+	return wcscat_literal(dst, strSource);
 }
 
 template <size_t DestSize, size_t SourceSize>
-wchar_t *wcscat_literal(wchar_t (&strDest)[DestSize], const wchar_t (&strSource)[SourceSize])
+inline wchar_t *wcscat_literal(wchar_t (&strDest)[DestSize], const wchar_t (&strSource)[SourceSize])
 {
 	assert(strSource[SourceSize - 1] == 0);
 	assert(wcsnlen_s(strDest, DestSize) + SourceSize <= DestSize);
-	wcsncat_s(strDest, DestSize, strSource, SourceSize - 1);
-	return strDest;
+	wchar_t* dst = strDest;
+	return wcscat_literal(dst, strSource);
 }
 
 #endif /* SAKURA_STRING_EX_29EB1DD7_7259_4D6C_A651_B9174E5C3D3C9_H_ */
