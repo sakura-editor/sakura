@@ -16,32 +16,26 @@ inline void _fill_new_memory(void* p, size_t nSize, const char* pSrc, size_t nSr
 	}
 }
 
-void* operator new(size_t nSize)
+void* operator new(
+	size_t const size,
+	int const    block_use,
+	char const*  file_name,
+	int const    line_number
+	)
 {
-	void* p = ::malloc(nSize);
-	_fill_new_memory(p, nSize, "n_e_w_!_", 8); //確保されたばかりのメモリ状態は「n_e_w_!_....」となります
+	auto p = _malloc_dbg(size, block_use, file_name, line_number);
+	_fill_new_memory(p, size, "n_e_w_!_", 8); //確保されたばかりのメモリ状態は「n_e_w_!_....」となります
 	return p;
 }
 
-#ifdef _MSC_VER
-_Ret_bytecap_(nSize)
-#endif
-
-void* operator new[](size_t nSize)
+void* operator new[](size_t const size,
+	int const    block_use,
+	char const*  file_name,
+	int const    line_number
+	)
 {
-	void* p = ::malloc(nSize);
-	_fill_new_memory(p, nSize, "N_E_W_!_", 8); //確保されたばかりのメモリ状態は「N_E_W_!_N_E_W_!_N_E_W_!_....」となります
+	auto p = operator new(size, block_use, file_name, line_number);
+	_fill_new_memory(p, size, "N_E_W_!_", 8); //確保されたばかりのメモリ状態は「N_E_W_!_N_E_W_!_N_E_W_!_....」となります
 	return p;
 }
-
-void operator delete(void* p) noexcept
-{
-	::free(p);
-}
-
-void operator delete[](void* p) noexcept
-{
-	::free(p);
-}
-
 #endif

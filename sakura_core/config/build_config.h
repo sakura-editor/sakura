@@ -59,12 +59,12 @@ static const bool UNICODE_BOOL=true;
 //#define USE_DEBUGMON
 
 //newされた領域をわざと汚すかどうか (デバッグ用)
-#ifdef _DEBUG
+#if defined(_MSC_VER) &&  defined(_DEBUG)
 #define FILL_STRANGE_IN_NEW_MEMORY
 #endif
 
 //crtdbg.hによるメモリーリークチェックを使うかどうか (デバッグ用)
-#ifdef _DEBUG
+#if defined(_MSC_VER) &&  defined(_DEBUG)
 #define USE_LEAK_CHECK_WITH_CRTDBG
 #endif
 
@@ -77,13 +77,17 @@ static const bool UNICODE_BOOL=true;
 
 //デバッグ検証用：newされた領域をわざと汚す。2007.11.27 kobake
 #ifdef FILL_STRANGE_IN_NEW_MEMORY
-	void* operator new(size_t nSize);
-	#ifdef _MSC_VER
-		_Ret_bytecap_(nSize)
-	#endif
-	void* operator new[](size_t nSize);
-	void operator delete(void* p) noexcept;
-	void operator delete[](void* p) noexcept;
+	void* operator new(
+		size_t const size,
+		int const    block_use,
+		char const*  file_name,
+		int const    line_number
+		);
+	void* operator new[](size_t const size,
+		int const    block_use,
+		char const*  file_name,
+		int const    line_number
+		);
 #endif
 
 //crtdbg.hによるメモリーリークチェックを使うかどうか (デバッグ用)
