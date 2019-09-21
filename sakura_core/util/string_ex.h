@@ -39,6 +39,10 @@
 	auto_～:  引数の型により、自動で処理が決定される版 (例: auto_strcpy)
 */
 
+#if defined(_M_X64) || defined(_M_IX86)
+#include <intrin.h>
+#endif
+
 #include "util/tchar_printf.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
