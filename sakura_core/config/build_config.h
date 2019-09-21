@@ -88,16 +88,20 @@ static const bool UNICODE_BOOL=true;
 
 //crtdbg.hによるメモリーリークチェックを使うかどうか (デバッグ用)
 #ifdef USE_LEAK_CHECK_WITH_CRTDBG
-	//new演算子をオーバーライドするヘッダはcrtdbg.hの前にincludeしないとコンパイルエラーとなる	
-	//参考：http://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=99818
-	#include <xiosbase>
-	#include <xlocale>
-	#include <xmemory>
-	#include <xtree>
-
+	//Cランタイムの機能を使ってメモリリークを検出する
+	//  メモリリークチェックの結果出力を得るには
+	//    wWinMainの最後で_CrtDumpMemoryLeaks()を呼び出すか
+	//    wWinMainの最初で_CrtSetDbgFlag()を呼び出す必要がある。
+	//see https://docs.microsoft.com/en-us/visualstudio/debugger/finding-memory-leaks-using-the-crt-library
+	#define _CRTDBG_MAP_ALLOC
+	#include <stdlib.h>
 	#include <crtdbg.h>
-	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
-	//それと、WinMainの先頭で _CrtSetDbgFlag() を呼ぶ.
+
+    #define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+    // Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the
+    // allocations to be of _CLIENT_BLOCK type
+#else
+    #define DBG_NEW new
 #endif
 
 #if _WIN64
