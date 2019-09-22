@@ -6,42 +6,40 @@
 //デバッグ検証用：newされた領域をわざと汚す。2007.11.27 kobake
 #ifdef FILL_STRANGE_IN_NEW_MEMORY
 
-inline void _fill_new_memory(void* p, size_t nSize, const char* pSrc, size_t nSrcLen)
+template <size_t srcCount>
+inline void _fill_new_memory(void* ptr, size_t size, const char(&src)[srcCount])
 {
-	char* s = (char*)p;
-	size_t i;
-	for (i = 0; i < nSize; i++)
+	const size_t srcLength = srcCount - 1;
+	size_t rest = size;
+	for (auto dst = reinterpret_cast<char*>(ptr); rest;)
 	{
-		*s++ = pSrc[i%nSrcLen];
+		auto unit = std::min(srcLength, rest);
+		memcpy_s(dst, rest, src, unit);
+		dst += unit;
+		rest -= unit;
 	}
 }
 
-void* operator new(size_t nSize)
+void* operator new(
+	size_t const size,
+	int const    block_use,
+	char const*  file_name,
+	int const    line_number
+	)
 {
-	void* p = ::malloc(nSize);
-	_fill_new_memory(p, nSize, "n_e_w_!_", 8); //確保されたばかりのメモリ状態は「n_e_w_!_....」となります
+	auto p = _malloc_dbg(size, block_use, file_name, line_number);
+	_fill_new_memory(p, size, "n_e_w_!_"); //確保されたばかりのメモリ状態は「n_e_w_!_....」となります
 	return p;
 }
 
-#ifdef _MSC_VER
-_Ret_bytecap_(nSize)
-#endif
-
-void* operator new[](size_t nSize)
+void* operator new[](size_t const size,
+	int const    block_use,
+	char const*  file_name,
+	int const    line_number
+	)
 {
-	void* p = ::malloc(nSize);
-	_fill_new_memory(p, nSize, "N_E_W_!_", 8); //確保されたばかりのメモリ状態は「N_E_W_!_N_E_W_!_N_E_W_!_....」となります
+	auto p = operator new(size, block_use, file_name, line_number);
+	_fill_new_memory(p, size, "N_E_W_!_"); //確保されたばかりのメモリ状態は「N_E_W_!_N_E_W_!_N_E_W_!_....」となります
 	return p;
 }
-
-void operator delete(void* p) noexcept
-{
-	::free(p);
-}
-
-void operator delete[](void* p) noexcept
-{
-	::free(p);
-}
-
 #endif

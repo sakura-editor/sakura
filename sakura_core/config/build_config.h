@@ -59,13 +59,13 @@ static const bool UNICODE_BOOL=true;
 //#define USE_DEBUGMON
 
 //newされた領域をわざと汚すかどうか (デバッグ用)
-#ifdef _DEBUG
+#if defined(_MSC_VER) &&  defined(_DEBUG)
 #define FILL_STRANGE_IN_NEW_MEMORY
 #endif
 
 //crtdbg.hによるメモリーリークチェックを使うかどうか (デバッグ用)
-#ifdef _DEBUG
-//#define USE_LEAK_CHECK_WITH_CRTDBG
+#if defined(_MSC_VER) &&  defined(_DEBUG)
+#define USE_LEAK_CHECK_WITH_CRTDBG
 #endif
 
 // -- -- 仕様変更 -- -- //
@@ -77,28 +77,35 @@ static const bool UNICODE_BOOL=true;
 
 //デバッグ検証用：newされた領域をわざと汚す。2007.11.27 kobake
 #ifdef FILL_STRANGE_IN_NEW_MEMORY
-	void* operator new(size_t nSize);
-	#ifdef _MSC_VER
-		_Ret_bytecap_(nSize)
-	#endif
-	void* operator new[](size_t nSize);
-	void operator delete(void* p) noexcept;
-	void operator delete[](void* p) noexcept;
+	void* operator new(
+		size_t const size,
+		int const    block_use,
+		char const*  file_name,
+		int const    line_number
+		);
+	void* operator new[](size_t const size,
+		int const    block_use,
+		char const*  file_name,
+		int const    line_number
+		);
 #endif
 
 //crtdbg.hによるメモリーリークチェックを使うかどうか (デバッグ用)
 #ifdef USE_LEAK_CHECK_WITH_CRTDBG
-	//new演算子をオーバーライドするヘッダはcrtdbg.hの前にincludeしないとコンパイルエラーとなる	
-	//参考：http://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=99818
-	#include <xiosbase>
-	#include <xlocale>
-	#include <xmemory>
-	#include <xtree>
-
+	//Cランタイムの機能を使ってメモリリークを検出する
+	//  メモリリークチェックの結果出力を得るには
+	//    wWinMainの最後で_CrtDumpMemoryLeaks()を呼び出すか
+	//    wWinMainの最初で_CrtSetDbgFlag()を呼び出す必要がある。
+	//see https://docs.microsoft.com/en-us/visualstudio/debugger/finding-memory-leaks-using-the-crt-library
+	#define _CRTDBG_MAP_ALLOC
+	#include <stdlib.h>
 	#include <crtdbg.h>
-	#define new DEBUG_NEW
-	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
-	//それと、WinMainの先頭で _CrtSetDbgFlag() を呼ぶ.
+
+    #define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+    // Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the
+    // allocations to be of _CLIENT_BLOCK type
+#else
+    #define DBG_NEW new
 #endif
 
 #if _WIN64
