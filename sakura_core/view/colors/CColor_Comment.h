@@ -44,7 +44,7 @@ public:
 		// 行型コメントの始点記号が入力されているか
 		auto& lineComment = m_pTypeData->m_cLineComment;
 		for (int i = 0; i < COMMENT_DELIMITER_NUM; ++i) {
-			if (wcslen(lineComment.getLineComment(i)))
+			if (lineComment.getLineComment(i)[0])
 				return true;
 		}
 		return false;
@@ -73,7 +73,7 @@ public:
 		if (!m_pTypeData->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp)
 			return false;
 		// ブロック型の始点・終端記号が入力されているか
-		return m_pcBlockComment->getBlockFromLen() > 0 && m_pcBlockComment->getBlockToLen();
+		return m_pcBlockComment->getBlockFromLen() > 0 && m_pcBlockComment->getBlockToLen() > 0;
 	}
 private:
 	EColorIndexType m_nType;
