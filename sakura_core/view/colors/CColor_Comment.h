@@ -37,7 +37,18 @@ public:
 	virtual void InitStrategyStatus(){}
 	virtual bool BeginColor(const CStringRef& cStr, int nPos);
 	virtual bool EndColor(const CStringRef& cStr, int nPos);
-	virtual bool Disp() const { return m_pTypeData->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp; }
+	virtual bool Disp() const {
+		// タイプ別設定 『カラー』プロパティのコメントのリストアイテムのチェックが付いているか
+		if (!m_pTypeData->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp)
+			return false;
+		// 行型コメントの始点記号が入力されているか
+		auto& lineComment = m_pTypeData->m_cLineComment;
+		for (int i = 0; i < COMMENT_DELIMITER_NUM; ++i) {
+			if (wcslen(lineComment.getLineComment(i)))
+				return true;
+		}
+		return false;
+	}
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -57,7 +68,13 @@ public:
 	virtual void InitStrategyStatus(){ m_nCOMMENTEND = 0; }
 	virtual bool BeginColor(const CStringRef& cStr, int nPos);
 	virtual bool EndColor(const CStringRef& cStr, int nPos);
-	virtual bool Disp() const { return m_pTypeData->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp; }
+	virtual bool Disp() const {
+		// タイプ別設定 『カラー』プロパティのコメントのリストアイテムのチェックが付いているか
+		if (!m_pTypeData->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp)
+			return false;
+		// ブロック型の始点・終端記号が入力されているか
+		return m_pcBlockComment->getBlockFromLen() > 0 && m_pcBlockComment->getBlockToLen();
+	}
 private:
 	EColorIndexType m_nType;
 	const CBlockComment* m_pcBlockComment;
