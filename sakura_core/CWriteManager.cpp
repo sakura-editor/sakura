@@ -85,11 +85,16 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 			}
 		}
 		CMemory cmemOutputBuffer;
+		constexpr DWORD userInterfaceInterval = 33;
+		DWORD prevTime = GetTickCount() + userInterfaceInterval;
 		while( pcDocLine ){
 			++nLineNumber;
 
 			//経過通知
-			if(pcDocLineMgr.GetLineCount()>0 && nLineNumber%1024==0){
+			DWORD currTime = GetTickCount();
+			DWORD diffTime = currTime - prevTime;
+			if(diffTime >= userInterfaceInterval){
+				prevTime = currTime;
 				NotifyProgress(nLineNumber * 100 / pcDocLineMgr.GetLineCount());
 				// 処理中のユーザー操作を可能にする
 				if( !::BlockingHook( NULL ) ){

@@ -138,7 +138,11 @@ void CSaveAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
 	// 上書き（明示的な上書きや自動保存）では変更しない
 	// ---> 上書きの場合は一時的な折り返し桁変更やタブ幅変更を維持したままにする
 	if(!sSaveInfo.bOverwriteMode){
-		pcDoc->OnChangeSetting();
+		// 文書種別が変更になった場合にのみ設定変更を反映させる
+		int prevIndex = pcDoc->m_cDocType.GetDocumentType().GetIndex();
+		int newIndex = CDocTypeManager().GetDocumentTypeOfPath( sSaveInfo.cFilePath ).GetIndex();
+		if(newIndex != prevIndex)
+			pcDoc->OnChangeSetting();
 	}
 }
 
