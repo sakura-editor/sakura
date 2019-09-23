@@ -298,9 +298,10 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 	/*	表示上のX位置
 		2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
 	*/
-	int			nAllLineNum;
+	const int nAllLineNum = m_pcDocLineMgr->GetLineCount();
+	const int nListenerCount = GetListenerCount();
 
-	if( GetListenerCount() != 0 ){
+	if( nListenerCount != 0 ){
 		NotifyProgress(0);
 		/* 処理中のユーザー操作を可能にする */
 		if( bBlockingHook ){
@@ -319,8 +320,6 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 		m_nTabSpace = CKetaXInt(4);
 	}
 
-	nAllLineNum = m_pcDocLineMgr->GetLineCount();
-
 	SLayoutWork	_sWork;
 	SLayoutWork* pWork = &_sWork;
 	pWork->pcDocLine				= m_pcDocLineMgr->GetDocLineTop(); // 2002/2/10 aroka CDocLineMgr変更
@@ -328,6 +327,9 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 	pWork->pcColorStrategy			= NULL;
 	pWork->colorPrev				= COLORIDX_DEFAULT;
 	pWork->nCurLine					= CLogicInt(0);
+
+	constexpr DWORD userInterfaceInterval = 33;
+	DWORD prevTime = GetTickCount() + userInterfaceInterval;
 
 	while( NULL != pWork->pcDocLine ){
 		pWork->cLineStr		= pWork->pcDocLine->GetStringRefWithEOL();
@@ -353,10 +355,15 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 		pWork->pcDocLine = pWork->pcDocLine->GetNextLine();
 		
 		// 処理中のユーザー操作を可能にする
-		if( GetListenerCount()!=0 && 0 < nAllLineNum && 0 == ( pWork->nCurLine % 1024 ) ){
-			NotifyProgress(::MulDiv( pWork->nCurLine, 100 , nAllLineNum ) );
-			if( bBlockingHook ){
-				if( !::BlockingHook( NULL ) )return;
+		if( nListenerCount !=0 && 0 < nAllLineNum) {
+			DWORD currTime = GetTickCount();
+			DWORD diffTime = currTime - prevTime;
+			if( diffTime >= userInterfaceInterval ){
+				prevTime = currTime;
+				NotifyProgress(::MulDiv( pWork->nCurLine, 100 , nAllLineNum ) );
+				if( bBlockingHook ){
+					if( !::BlockingHook( NULL ) )return;
+				}
 			}
 		}
 
@@ -370,7 +377,7 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 	m_nPrevReferLine = CLayoutInt(0);
 	m_pLayoutPrevRefer = NULL;
 
-	if( GetListenerCount()!=0 ){
+	if( nListenerCount !=0 ){
 		NotifyProgress(0);
 		/* 処理中のユーザー操作を可能にする */
 		if( bBlockingHook ){
