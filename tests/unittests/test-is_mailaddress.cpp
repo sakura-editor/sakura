@@ -313,9 +313,9 @@ TEST(testIsMailAddress, OffsetParameter2)
 		actual.is_address = IsMailAddress(p1, p2 - p1, p3 - p1, &(actual.length));
 
 		EXPECT_TRUE(IsEqualResult(ExpectedResult(p1, p2, p3), actual))
-		<< "1st param of IsMailAddress: pszBuf is \"" << (p1 <= p3 ? std::string(p1, p3) : "") << "\"\n"
+		<< "1st param of IsMailAddress: pszBuf is \"" << (p1 <= p3 ? std::wstring(p1, p3) : L"") << "\"\n"
 		<< "2nd param of IsMailAddress: offset is "   << (p2 - p1) << "\n"
-		<< "pszBuf + offset is \"" << (p2 <= p3 ? std::string(p2, p3) : "") << "\"";
+		<< "pszBuf + offset is \"" << (p2 <= p3 ? std::wstring(p2, p3) : L"") << "\"";
 	}
 }
 
