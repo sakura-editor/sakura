@@ -26,16 +26,8 @@
 #define SAKURA_STDAPI_85471C2C_6AEE_410D_BD09_A59056A5BA68_H_
 
 //ランタイム情報ライブラリにアクセスするWindowsヘッダを参照する
-//c++規格への準拠が厳しくなったため、WindowsSDKが無名enumをtypedefするコードが怒られる。
-#ifdef _MSC_VER
-	//一時的に警告を無効にしてインクルードする
-	#pragma warning(push)
-	#pragma warning(disable:4091)
-	#include <ImageHlp.h> //MakeSureDirectoryPathExists
-	#pragma warning(pop)
-#else
-	#include <ImageHlp.h> //MakeSureDirectoryPathExists
-#endif
+#include <ImageHlp.h>
+
 #include "mem/CNativeW.h"
 
 //デバッグ用。
