@@ -106,15 +106,12 @@ struct CDlgOpenFile_CommonItemDialog final
 	int m_RefCount = 0;
 
 	HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void ** ppvObject) override {
-#pragma warning(push)
-#pragma warning(disable: 4838) // conversion from 'DWORD' to 'int' requires a narrowing conversion
 		static const QITAB qit[] = {
 			QITABENT(CDlgOpenFile_CommonItemDialog, IFileDialogEvents),
 			QITABENT(CDlgOpenFile_CommonItemDialog, IFileDialogControlEvents),
 			{ 0 },
 		};
 		return QISearch(this, qit, iid, ppvObject);
-#pragma warning(pop)
 	}
 
 	ULONG STDMETHODCALLTYPE AddRef() override {
