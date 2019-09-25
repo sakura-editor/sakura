@@ -81,6 +81,7 @@ public:
 	//! ムーブ代入演算子
 	CMemory& operator = (CMemory&& rhs) noexcept {
 		if (this != &rhs) {
+			_Empty();
 			swap(rhs);
 		}
 		return *this;
