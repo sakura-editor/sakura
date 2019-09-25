@@ -28,9 +28,10 @@ CNativeW::CNativeW( const wchar_t* pData, int nDataLen )
 	SetString(pData, nDataLen);
 }
 
-CNativeW::CNativeW( const wchar_t* pData)
-	: CNativeW(pData, wcslen(pData))
+CNativeW::CNativeW( const wchar_t* pData )
+	: CNative()
 {
+	SetString(pData);
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
