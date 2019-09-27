@@ -34,7 +34,6 @@ CDlgSetCharSet::CDlgSetCharSet()
 {
 	m_pnCharSet = NULL;			// 文字コードセット
 	m_pbBom = NULL;				// 文字コードセット
-	m_bCP = false;
 }
 
 /* モーダルダイアログの表示 */
@@ -73,11 +72,9 @@ BOOL CDlgSetCharSet::OnBnClicked( int wID )
 {
 	switch( wID ){
 	case IDC_CHECK_CP:
-		if( !m_bCP ){
-			m_bCP = true;
-			::EnableWindow( GetItemHwnd( IDC_CHECK_CP ), FALSE );
-			CCodePage::AddComboCodePages( GetHwnd(), m_hwndCharSet, -1 );
-		}
+		::CheckDlgButton( GetHwnd(), IDC_CHECK_CP, TRUE );
+		::EnableWindow( GetItemHwnd( IDC_CHECK_CP ), FALSE );
+		CCodePage::AddComboCodePages( GetHwnd(), m_hwndCharSet, -1 );
 		return TRUE;
 	case IDC_BUTTON_HELP:
 		/* 「文字コードセット設定」のヘルプ */
@@ -179,7 +176,6 @@ void CDlgSetCharSet::SetData( void )
 		}
 	}
 	if( -1 == nCurIdx ){
-		m_bCP = true;
 		::CheckDlgButton( GetHwnd(), IDC_CHECK_CP, TRUE );
 		::EnableWindow( GetItemHwnd( IDC_CHECK_CP ), FALSE );
 		nCurIdx = CCodePage::AddComboCodePages( GetHwnd(), m_hwndCharSet, *m_pnCharSet );
