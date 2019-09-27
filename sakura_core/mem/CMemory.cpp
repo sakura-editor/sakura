@@ -42,16 +42,14 @@
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-void CMemory::_init_members()
+/*!
+ * @brief デフォルトコンストラクタ
+ */
+CMemory::CMemory() noexcept
+	: m_pRawData(NULL)
+	, m_nRawLen(0)
+	, m_nDataBufSize(0)
 {
-	m_nDataBufSize = 0;
-	m_pRawData = NULL;
-	m_nRawLen = 0;
-}
-
-CMemory::CMemory()
-{
-	_init_members();
 }
 
 /*
@@ -60,33 +58,32 @@ CMemory::CMemory()
 CMemory::CMemory(
 	const void*	pData,			//!< 格納データアドレス
 	int			nDataLenBytes	//!< 格納データの有効長
-)
+)	: CMemory()
 {
-	_init_members();
 	SetRawData( pData, nDataLenBytes );
 }
 
+/*!
+ * @brief コピーコンストラクタ
+ */
 CMemory::CMemory(const CMemory& rhs)
+	: CMemory()
 {
-	_init_members();
 	SetRawData(rhs);
+}
+
+/*!
+ * @brief ムーブコンストラクタ
+ */
+CMemory::CMemory(CMemory&& other) noexcept
+	: CMemory()
+{
+	swap(other);
 }
 
 CMemory::~CMemory()
 {
 	_Empty();
-}
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                          演算子                             //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-const CMemory& CMemory::operator = ( const CMemory& rhs )
-{
-	if( this != &rhs ){
-		SetRawData( rhs );
-	}
-	return *this;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
