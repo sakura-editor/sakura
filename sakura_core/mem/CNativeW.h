@@ -99,20 +99,6 @@ public:
 	{
 		return reinterpret_cast<wchar_t*>(GetRawPtr());
 	}
-	const wchar_t* GetStringPtr(int* pnLength) const //[out]pnLengthは文字単位。
-	{
-		*pnLength=GetStringLength();
-		return reinterpret_cast<const wchar_t*>(GetRawPtr());
-	}
-#ifdef USE_STRICT_INT
-	const wchar_t* GetStringPtr(CLogicInt* pnLength) const //[out]pnLengthは文字単位。
-	{
-		int n;
-		const wchar_t* p=GetStringPtr(&n);
-		*pnLength=CLogicInt(n);
-		return p;
-	}
-#endif
 
 	//特殊
 	void _SetStringLength(int nLength)

@@ -691,7 +691,8 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 	for( CLogicInt i = sSelectOld.GetFrom().GetY2(); i < sSelectOld.GetTo().y; i++ ){
 		const CDocLine* pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( i );
 		const CNativeW& cmemLine = pcDocLine->_GetDocLineDataWithEOL();
-		pLine = cmemLine.GetStringPtr(&nLineLen);
+		nLineLen = cmemLine.GetStringLength();
+		pLine = cmemLine.GetStringPtr();
 		CLogicInt nLineLenWithoutEOL = pcDocLine->GetLengthWithoutEOL();
 		if( NULL == pLine ) continue;
 		SORTDATA* pst = new SORTDATA;

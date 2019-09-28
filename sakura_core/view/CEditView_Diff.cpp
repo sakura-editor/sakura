@@ -541,9 +541,8 @@ BOOL CEditView::MakeDiffTmpFile2( WCHAR* tmpName, const WCHAR* orgName, ECodeTyp
 		CNativeW cLine;
 		CEol cEol;
 		while( RESULT_FAILURE != cfl.ReadLine( &cLine, &cEol ) ) {
-			const wchar_t*	pLineData;
-			CLogicInt		nLineLen;
-			pLineData= cLine.GetStringPtr(&nLineLen);
+			const CLogicInt nLineLen = cLine.GetStringLength();
+			const wchar_t* pLineData= cLine.GetStringPtr();
 			if( 0 == nLineLen || NULL == pLineData ) break;
 			if( bBom ){
 				CNativeW cLine2(L"\ufeff");

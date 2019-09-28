@@ -559,7 +559,8 @@ DWORD CGrepAgent::DoGrep(
 	}
 
 	cmemMessage.AppendString( L"\r\n\r\n" );
-	pszWork = cmemMessage.GetStringPtr( &nWork );
+	nWork = cmemMessage.GetStringLength();
+	pszWork = cmemMessage.GetStringPtr();
 //@@@ 2002.01.03 YAZAKI Grep直後はカーソルをGrep直前の位置に動かす
 	CLayoutInt tmp_PosY_Layout = pcViewDst->m_pcEditDoc->m_cLayoutMgr.GetLineCount();
 	if( 0 < nWork && sGrepOption.bGrepHeader ){

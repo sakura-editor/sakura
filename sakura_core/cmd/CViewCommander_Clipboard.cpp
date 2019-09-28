@@ -172,8 +172,8 @@ void CViewCommander::Command_PASTE( int option )
 	}
 
 	// クリップボードデータ取得 -> pszText, nTextLen
-	CLogicInt		nTextLen;
-	const wchar_t*	pszText = cmemClip.GetStringPtr(&nTextLen);
+	CLogicInt nTextLen = cmemClip.GetStringLength();
+	const wchar_t*	pszText = cmemClip.GetStringPtr();
 
 	bool bConvertEol = 
 		((option & 0x01) == 0x01) ? true :
@@ -209,7 +209,8 @@ void CViewCommander::Command_PASTE( int option )
 	if( bLineSelect ){
 		if( !WCODE::IsLineDelimiter(pszText[nTextLen - 1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 			cmemClip.AppendString(GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2());
-			pszText = cmemClip.GetStringPtr( &nTextLen );
+			nTextLen = cmemClip.GetStringLength();
+			pszText = cmemClip.GetStringPtr();
 		}
 	}
 
