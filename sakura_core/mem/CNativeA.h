@@ -56,7 +56,6 @@ public:
 	{
 		return reinterpret_cast<char*>(GetRawPtr());
 	}
-	const char* GetStringPtr(int* pnLength) const; //[out]pnLengthは文字単位。
 
 	//演算子
 	CNativeA& operator = (const CNativeA& rhs)			{ CNative::operator=(rhs); return *this; }
