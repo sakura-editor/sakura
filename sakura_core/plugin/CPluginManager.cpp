@@ -365,7 +365,9 @@ int CPluginManager::InstallPlugin( CommonSetting& common, const WCHAR* pszPlugin
 	static const WCHAR szReservedChars[] = L"/\\,[]*?<>&|;:=\" \t";
 	for( int x = 0; x < _countof(szReservedChars); ++x ){
 		if( sId.npos != sId.find(szReservedChars[x]) ){
-			errorMsg = std::wstring(LS(STR_PLGMGR_INST_RESERVE1)) + szReservedChars + LS(STR_PLGMGR_INST_RESERVE2);
+			errorMsg = LS(STR_PLGMGR_INST_RESERVE1);
+			errorMsg += szReservedChars;
+			errorMsg += LS(STR_PLGMGR_INST_RESERVE2);
 			return -1;
 		}
 	}
@@ -512,7 +514,10 @@ CPlugin* CPluginManager::LoadPlugin( const WCHAR* pszPluginDir, const WCHAR* psz
 
 	//L10N定義ファイルを読む
 	//プラグイン定義ファイルを読み込む base\pluginname\local\plugin_en_us.def
-	strMlang = std::wstring(pszBasePath) + L"\\" + PII_L10NDIR + L"\\" + PII_L10NFILEBASE + pszLangName + PII_L10NFILEEXT;
+	strMlang = pszBasePath;
+	strMlang += L"\\" PII_L10NDIR L"\\" PII_L10NFILEBASE;
+	strMlang += pszLangName;
+	strMlang += PII_L10NFILEEXT;
 	cProfDefMLang.SetReadingMode();
 	if( !cProfDefMLang.ReadProfile( strMlang.c_str() ) ){
 		//プラグイン定義ファイルが存在しない

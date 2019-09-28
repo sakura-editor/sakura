@@ -334,7 +334,7 @@ void CHokanMgr::HokanSearchByKeyword(
 			if( nRet != 0 ){
 				continue;
 			}
-			std::wstring strWord = std::wstring(word);
+			std::wstring strWord(word);
 			AddKouhoUnique(vKouho, strWord);
 		}
 	}

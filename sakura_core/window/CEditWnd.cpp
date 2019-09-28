@@ -2279,7 +2279,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 		int			nIdxEnd;
 		int			nLv;
 		std::vector<HMENU>	hSubMenu;
-		std::wstring tmpMenuName;
+		wchar_t tmpMenuName[MAX_MAIN_MENU_NAME_LEN+1];
 		const wchar_t *pMenuName;
 
 		nIdxStr = pcMenu->m_nMenuTopIdx[uPos];
@@ -2317,11 +2317,8 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				hMenuPopUp = ::CreatePopupMenu();
 				if (cMainMenu->m_nFunc != 0 && cMainMenu->m_sName[0] == L'\0') {
 					// ストリングテーブルから読み込み
-					tmpMenuName = LS( cMainMenu->m_nFunc );
-					if( MAX_MAIN_MENU_NAME_LEN < tmpMenuName.length() ){
-						tmpMenuName = tmpMenuName.substr( 0, MAX_MAIN_MENU_NAME_LEN );
-					}
-					pMenuName = tmpMenuName.c_str();
+					wcsncpy_s(tmpMenuName, _countof(tmpMenuName), LS( cMainMenu->m_nFunc ), _TRUNCATE);
+					pMenuName = tmpMenuName;
 				}else{
 					pMenuName = cMainMenu->m_sName;
 				}

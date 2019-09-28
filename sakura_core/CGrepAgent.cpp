@@ -1608,7 +1608,7 @@ public:
 					return;
 				}
 			}
-			std::wstring name = std::wstring(fileName);
+			std::wstring name(fileName);
 			name += L".skrnew";
 			if( FALSE == ::MoveFile( name.c_str(), fileName ) ){
 				memMessage.AppendString( LS(STR_GREP_REP_ERR_REPLACE) );
@@ -1624,7 +1624,7 @@ public:
 			out->Close();
 			delete out;
 			out = NULL;
-			std::wstring name = std::wstring(fileName);
+			std::wstring name(fileName);
 			name += L".skrnew";
 			::DeleteFile( name.c_str() );
 		}

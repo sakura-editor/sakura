@@ -248,7 +248,7 @@ int CPropTypesSupport::GetData( HWND hwndDlg )
 /*/
 void CPropTypesSupport::AddHokanMethod(int nMethod, const WCHAR* szName)
 {
-	SHokanMethod item = { nMethod, std::wstring(szName) };
+	SHokanMethod item = { nMethod, szName };
 	GetHokanMethodList()->push_back(item);
 }
 
