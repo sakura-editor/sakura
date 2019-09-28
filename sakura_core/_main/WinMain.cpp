@@ -56,6 +56,31 @@ const WCHAR g_szGStrAppName[]  = (_GSTR_APPNAME_(_T)   ); // この変数を直�
 const CHAR  g_szGStrAppNameA[] = (_GSTR_APPNAME_(ATEXT)); // この変数を直接参照せずに GSTR_APPNAME_A を使うこと
 const WCHAR g_szGStrAppNameW[] = (_GSTR_APPNAME_(LTEXT)); // この変数を直接参照せずに GSTR_APPNAME_W を使うこと
 
+//! メモリ枯渇テスト用しきい値
+constexpr size_t memorySizeLimit = 2048;
+
+/*!
+ * @brief メモリ枯渇テスト用アロケーションフック関数
+ *
+ * @see https://docs.microsoft.com/en-us/visualstudio/debugger/allocation-hook-functions
+ * @note 大きなメモリの確保を失敗させるフック関数
+ */
+int DenyHugeAllocHook( int allocType, void *userData, size_t size,
+                   int blockType, long requestNumber,
+                   const unsigned char *filename, int lineNumber)
+{
+	// Cランタイムが確保するメモリには干渉しない
+	// see https://docs.microsoft.com/en-us/visualstudio/debugger/allocation-hooks-and-c-run-time-memory-allocations
+	if (blockType == _CRT_BLOCK)
+		return TRUE;
+
+	// ちいさなメモリの確保は許容する
+	if (size <= memorySizeLimit)
+		return TRUE;
+
+	return FALSE;
+}
+
 /*!
 	Windows Entry point
 
@@ -93,6 +118,44 @@ int WINAPI wWinMain(
 	//開発情報
 	DEBUG_TRACE(L"-- -- WinMain -- --\n");
 	DEBUG_TRACE(L"sizeof(DLLSHAREDATA) = %d\n",sizeof(DLLSHAREDATA));
+
+	//メモリ枯渇テスト
+	//1. アロケーションフックを仕掛ける
+	::_CrtSetAllocHook(DenyHugeAllocHook);
+
+	//2. CMemoryを構築する
+	CMemory mem;
+	assert(mem.GetRawPtr() == nullptr);
+	assert(mem.GetRawLength() == 0);
+	assert(mem.capacity() == 0);
+
+	//3. 大きなメモリの確保を試みる
+	mem.AllocBuffer(memorySizeLimit + 1);
+	assert(mem.GetRawPtr() == nullptr);
+	assert(mem.GetRawLength() == 0);
+	//assert(mem.capacity() == 0);
+
+	//4. 大きなメモリの設定を試みる
+	char hugeBuf[memorySizeLimit + 1] = { 0 };
+	mem.SetRawData(hugeBuf, sizeof(hugeBuf));
+	assert(mem.GetRawPtr() == nullptr);
+	assert(mem.GetRawLength() == 0);
+	//assert(mem.capacity() == 0);
+
+	//5. 小さなメモリの設定を試みる
+	char smallBuf[] = "test";
+	mem.SetRawData(smallBuf, sizeof(smallBuf));
+	assert(mem.GetRawPtr());
+	assert(mem.GetRawLength());
+	assert(mem.capacity());
+	assert(strcmp((char*)mem.GetRawPtr(), smallBuf) == 0);
+
+	//6. 小さなメモリに大きなメモリをくっ付けてみる
+	mem.SetRawData(smallBuf, sizeof(smallBuf));
+	mem.AppendRawData(hugeBuf, sizeof(hugeBuf));
+	assert(mem.GetRawPtr() == nullptr);
+	assert(mem.GetRawLength() == 0);
+	//assert(mem.capacity() == 0);
 
 	//プロセスの生成とメッセージループ
 	CProcessFactory aFactory;
