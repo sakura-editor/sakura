@@ -2509,6 +2509,8 @@ BEGIN
     F_INS_DATE              "Ins. Date"
     F_INS_TIME              "Ins. Time"
     F_CTRL_CODE_DIALOG      "Control Code Input"
+	F_INS_FILE_USED_RECENTLY	"Ins. Recently Used File"
+	F_INS_FOLDER_USED_RECENTLY	"Ins. Recently Used Folder"
 END
 
 STRINGTABLE DISCARDABLE 

@@ -152,7 +152,6 @@ public:
 	void Command_SORT(BOOL bAsc);				// 2001.12.06 hor
 	void Command_MERGE(void);				// 2001.12.06 hor
 	void Command_Reconvert(void);			/* メニューからの再変換対応 minfu 2002.04.09 */
-	void Command_CtrlCode_Dialog(void);		/* コントロールコードの入力(ダイアログ) */	//@@@ 2002.06.02 MIK
 
 	/* カーソル移動系 */
 	//	Oct. 24, 2001 genta 機能拡張のため引数追加
@@ -236,6 +235,9 @@ public:
 	/* 挿入系 */
 	void Command_INS_DATE( void );	//日付挿入
 	void Command_INS_TIME( void );	//時刻挿入
+	void Command_CtrlCode_Dialog(void);		/* コントロールコードの入力(ダイアログ) */	//@@@ 2002.06.02 MIK
+	void Command_INS_FILE_USED_RECENTLY( void );	//最近使ったファイル挿入
+	void Command_INS_FOLDER_USED_RECENTLY( void );	//最近使ったフォルダ挿入
 
 	/* 変換系 */
 	void Command_TOLOWER( void );				/* 小文字 */

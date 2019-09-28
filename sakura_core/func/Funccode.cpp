@@ -287,7 +287,9 @@ const int nFincList_Clip_Num = _countof( pnFuncList_Clip );	//Oct. 16, 2000 JEPR
 const EFunctionCode pnFuncList_Insert[] = {
 	F_INS_DATE				,	// 日付挿入
 	F_INS_TIME				,	// 時刻挿入
-	F_CTRL_CODE_DIALOG			//コントロールコードの入力
+	F_CTRL_CODE_DIALOG		,	// コントロールコードの入力
+	F_INS_FILE_USED_RECENTLY,	// 最近使ったファイル挿入
+	F_INS_FOLDER_USED_RECENTLY,	// 最近使ったフォルダ挿入
 };
 const int nFincList_Insert_Num = _countof( pnFuncList_Insert );
 
