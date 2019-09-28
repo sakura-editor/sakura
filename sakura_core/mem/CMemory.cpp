@@ -176,9 +176,8 @@ void CMemory::SwapHLByte( char* pData, const int nDataLen ){
 	@note	nBufLen が2の倍数でないときは、最後の1バイトは交換されない
 */
 void CMemory::SwapHLByte( void ){
-	char *pBuf;
-	int nBufLen;
-	pBuf = reinterpret_cast<char*>( GetRawPtr(&nBufLen) );
+	int nBufLen = GetRawLength();
+	char* pBuf = reinterpret_cast<char*>( GetRawPtr() );
 	SwapHLByte( pBuf, nBufLen );
 	return;
 /*
