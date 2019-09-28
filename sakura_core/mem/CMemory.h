@@ -64,7 +64,6 @@ public:
 	void Clean(){ _Empty(); }
 	void Clear(){ _Empty(); }
 
-	inline const void* GetRawPtr(int* pnLength) const;      //!< データへのポインタと長さ返す
 	inline const void* GetRawPtr() const{ return m_pRawData; } //!< データへのポインタを返す
 	inline void* GetRawPtr(){ return m_pRawData; }             //!< データへのポインタを返す
 	int GetRawLength() const { return m_nRawLen; }                //!<データ長を返す。バイト単位。
@@ -122,11 +121,6 @@ private: // 2002/2/10 aroka アクセス権変更
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     inline関数の実装                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-inline const void* CMemory::GetRawPtr(int* pnLength) const //!< データへのポインタと長さ返す
-{
-	if(pnLength) *pnLength = GetRawLength();
-	return m_pRawData;
-}
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CMEMORY_H_ */
