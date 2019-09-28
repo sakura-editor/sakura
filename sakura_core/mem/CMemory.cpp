@@ -261,7 +261,6 @@ void CMemory::AllocBuffer( int nNewDataLen )
 	if( m_nDataBufSize == 0 ){
 		/* 未確保の状態 */
 		pWork = malloc_char( nWorkLen );
-		m_nDataBufSize = nWorkLen;
 	}else{
 		/* 現在のバッファサイズより大きくなった場合のみ再確保する */
 		if( m_nDataBufSize < nWorkLen ){
@@ -273,7 +272,6 @@ void CMemory::AllocBuffer( int nNewDataLen )
 			}else{
 				pWork = (char*)realloc( m_pRawData, nWorkLen );
 			}
-			m_nDataBufSize = nWorkLen;
 		}else{
 			return;
 		}
@@ -290,6 +288,7 @@ void CMemory::AllocBuffer( int nNewDataLen )
 		return;
 	}
 	m_pRawData = pWork;
+	m_nDataBufSize = nWorkLen;
 	return;
 }
 
