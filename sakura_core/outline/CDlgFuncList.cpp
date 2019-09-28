@@ -797,14 +797,20 @@ bool CDlgFuncList::GetTreeFileFullName(HWND hwndTree, HTREEITEM target, std::wst
 		TreeView_GetItem( hwndTree, &tvItem );
 		if( ((-tvItem.lParam) % 10) == 3 ){
 			*pnItem = (-tvItem.lParam) / 10;
-			*pPath = std::wstring(m_pcFuncInfoArr->GetAt(*pnItem)->m_cmemFileName.GetStringPtr()) + L"\\" + *pPath;
+			std::wstring path = m_pcFuncInfoArr->GetAt(*pnItem)->m_cmemFileName.GetStringPtr();
+			path += L"\\";
+			path += *pPath;
+			*pPath = path;
 			return true;
 		}
 		if( tvItem.lParam != -1 && tvItem.lParam != -2 ){
 			return false;
 		}
 		if( *pPath != L"" ){
-			*pPath = std::wstring(szFileName) + L"\\" + *pPath;
+			std::wstring path = szFileName;
+			path += L"\\";
+			path += *pPath;
+			*pPath = path;
 		}else{
 			*pPath = szFileName;
 		}

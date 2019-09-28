@@ -124,7 +124,9 @@ LPCWSTR CCodeTypeName::Bracket() const
 
 //	static	std::wstring	sWork = L"  [" + msCodeSet[m_eCodeType].m_sShort + L"]";
 	static	std::wstring	sWork;
-	sWork = std::wstring(L"  [") + msCodeSet[m_eCodeType].m_sShort + L"]";	// 変数の定義と値の設定を一緒にやるとバグる様なので分離	// 2013/4/20 Uchi
+	sWork = L"  [";
+	sWork += msCodeSet[m_eCodeType].m_sShort;
+	sWork += L"]";	// 変数の定義と値の設定を一緒にやるとバグる様なので分離	// 2013/4/20 Uchi
 
 	return sWork.c_str();
 }

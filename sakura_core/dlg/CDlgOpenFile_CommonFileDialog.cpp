@@ -934,7 +934,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModalOpenDlg(
 		if( bMultiSelect ){
 			pLoadInfo->cFilePath = L"";
 			if( pData->m_ofn.nFileOffset < wcslen( pData->m_ofn.lpstrFile ) ){
-				pFileNames->push_back( std::wstring(pData->m_ofn.lpstrFile) );
+				pFileNames->push_back( pData->m_ofn.lpstrFile );
 			}else{
 				std::wstring path;
 				WCHAR* pos = pData->m_ofn.lpstrFile;
