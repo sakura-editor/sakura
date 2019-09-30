@@ -1128,7 +1128,8 @@ prev_line:;
 		// 2002/2/10 aroka 何度も GetPtr を呼ばない
 		if( !bInsertLineMode ){
 			cmemCurLine.swap(pCDocLine->_GetDocLineData());
-			pLine = cmemCurLine.GetStringPtr(&nLineLen);
+			nLineLen = cmemCurLine.GetStringLength();
+			pLine = cmemCurLine.GetStringPtr();
 			cPrevLine = CStringRef(pLine, pArg->sDelRange.GetFrom().x);
 			cNextLine = CStringRef(&pLine[pArg->sDelRange.GetFrom().x], nLineLen - pArg->sDelRange.GetFrom().x);
 			pArg->nInsSeq = CModifyVisitor().GetLineModifiedSeq(pCDocLine);

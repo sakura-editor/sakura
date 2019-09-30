@@ -125,14 +125,11 @@ bool CNativeW::IsEqual( const CNativeW& cmem1, const CNativeW& cmem2 )
 {
 	if(&cmem1==&cmem2)return true;
 
-	const wchar_t* psz1;
-	const wchar_t* psz2;
-	int nLen1;
-	int nLen2;
-
-	psz1 = cmem1.GetStringPtr( &nLen1 );
-	psz2 = cmem2.GetStringPtr( &nLen2 );
+	const int nLen1 = cmem1.GetStringLength();
+	const int nLen2 = cmem2.GetStringLength();
 	if( nLen1 == nLen2 ){
+		const wchar_t* psz1 = cmem1.GetStringPtr();
+		const wchar_t* psz2 = cmem2.GetStringPtr();
 		if( 0 == wmemcmp( psz1, psz2, nLen1 ) ){
 			return true;
 		}

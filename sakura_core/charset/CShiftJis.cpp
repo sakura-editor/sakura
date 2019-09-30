@@ -110,8 +110,8 @@ EConvertResult CShiftJis::SJISToUnicode( const CMemory& cSrc, CNativeW* pDstMem 
 	bool bError;
 
 	//ソース取得
-	int nSrcLen;
-	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr(&nSrcLen) );
+	int nSrcLen = cSrc.GetRawLength();
+	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr() );
 
 	if( &cSrc == pDstMem->_GetMemory() )
 	{

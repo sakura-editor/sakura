@@ -89,8 +89,8 @@ EConvertResult CUtf8::_UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDstMem, bo
 	bool bError = false;
 
 	// データ取得
-	int nSrcLen;
-	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr(&nSrcLen) );
+	int nSrcLen = cSrc.GetRawLength();
+	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr() );
 
 	if( &cSrc == pDstMem->_GetMemory() )
 	{

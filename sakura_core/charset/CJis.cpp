@@ -245,8 +245,8 @@ EConvertResult CJis::JISToUnicode(const CMemory& cSrc, CNativeW* pDstMem, bool b
 	bool berror;
 
 	// ソースを取得
-	int nSrcLen;
-	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr(&nSrcLen) );
+	int nSrcLen = cSrc.GetRawLength();
+	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr() );
 
 	// ソースバッファポインタとソースの長さ
 	const char* psrc = pSrc;

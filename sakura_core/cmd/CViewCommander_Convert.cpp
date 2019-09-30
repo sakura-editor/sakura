@@ -236,8 +236,8 @@ void CViewCommander::Command_BASE64DECODE( void )
 	}
 
 	//データ
-	int nDataLen;
-	const void* pData = cmemBuf.GetRawPtr(&nDataLen);
+	int nDataLen = cmemBuf.GetRawLength();
+	const void* pData = cmemBuf.GetRawPtr();
 
 	//カキコ
 	CBinaryOutputStream out(szPath);
@@ -284,8 +284,8 @@ void CViewCommander::Command_UUDECODE( void )
 	}
 
 	//データ
-	int nDataLen;
-	const void* pData = cmemBin.GetRawPtr(&nDataLen);
+	int nDataLen = cmemBin.GetRawLength();
+	const void* pData = cmemBin.GetRawPtr();
 
 	//カキコ
 	CBinaryOutputStream out(szPath);

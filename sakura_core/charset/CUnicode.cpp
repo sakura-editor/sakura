@@ -9,8 +9,8 @@
 EConvertResult CUnicode::_UnicodeToUnicode_in( const CMemory& cSrc, CNativeW* pDstMem, const bool bBigEndian )
 {
 	// ソース取得
-	int nSrcLen;
-	const unsigned char* pSrc = reinterpret_cast<const unsigned char*>( cSrc.GetRawPtr(&nSrcLen) );
+	int nSrcLen = cSrc.GetRawLength();
+	const unsigned char* pSrc = reinterpret_cast<const unsigned char*>( cSrc.GetRawPtr() );
 	CMemory* pDstMem2 = pDstMem->_GetMemory();
 
 	EConvertResult res = RESULT_COMPLETE;

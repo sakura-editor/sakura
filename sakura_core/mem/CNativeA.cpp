@@ -122,12 +122,6 @@ int CNativeA::GetStringLength() const
 	return CNative::GetRawLength() / sizeof(char);
 }
 
-const char* CNativeA::GetStringPtr(int* pnLength) const
-{
-	if(pnLength)*pnLength=GetStringLength();
-	return GetStringPtr();
-}
-
 // 任意位置の文字取得。nIndexは文字単位。
 char CNativeA::operator[](int nIndex) const
 {
