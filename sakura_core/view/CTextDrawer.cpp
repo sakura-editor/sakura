@@ -283,10 +283,10 @@ void CTextDrawer::DispVerticalLines(
 
 void CTextDrawer::DispNoteLines(
 	CGraphics&	gr,			//!< 作画するウィンドウのDC
-	LONG		top,		//!< ノート線を引く領域の上端のクライアント座標y
-	LONG		bottom,		//!< ノート線を引く領域の下端のクライアント座標y
 	LONG		left,		//!< ノート線を引く領域の左端のクライアント座標x
-	LONG		right		//!< ノート線を引く領域の右端のクライアント座標x
+	LONG		top,		//!< ノート線を引く領域の上端のクライアント座標y
+	LONG		right,		//!< ノート線を引く領域の右端のクライアント座標x
+	LONG		bottom		//!< ノート線を引く領域の下端のクライアント座標y
 ) const
 {
 	const CEditView* pView=m_pEditView;
@@ -567,11 +567,11 @@ void CTextDrawer::DispLineNumber(
 
 	// 行番号部分のノート線描画
 	if( !pView->m_bMiniMap ){
-		int left   = bDispLineNumTrans ? 0 : rcLineNum.right;
-		int right  = pView->GetTextArea().GetAreaLeft();
-		int top    = y;
-		int bottom = y + nLineHeight;
-		DispNoteLines( gr, top, bottom, left, right );
+		LONG left   = bDispLineNumTrans ? 0 : rcLineNum.right;
+		LONG top    = y;
+		LONG right  = pView->GetTextArea().GetAreaLeft();
+		LONG bottom = y + nLineHeight;
+		DispNoteLines( gr, left, top, right, bottom );
 	}
 }
 
