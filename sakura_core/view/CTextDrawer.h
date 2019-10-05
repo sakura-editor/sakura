@@ -55,7 +55,7 @@ public:
 	void DispText( HDC hdc, DispPos* pDispPos, int marginy, const wchar_t* pData, int nLength, bool bTransparent = false ) const; // テキスト表示
 
 	//!	ノート線描画
-	void DispNoteLines( CGraphics& gr, int nTop, int nBottom, int nLeft, int nRight ) const;
+	void DispNoteLines( CGraphics& gr, LONG top, LONG bottom, LONG left, LONG right ) const;
 
 	// -- -- 指定桁縦線描画 -- -- //
 	//!	指定桁縦線描画関数	// 2005.11.08 Moca
