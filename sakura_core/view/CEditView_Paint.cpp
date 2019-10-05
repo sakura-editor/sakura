@@ -779,6 +779,14 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 			sPos.ForwardLayoutLineRef(1);	//レイアウト行＋＋
 		}
 	}else{
+
+		SColorStrategyInfo _sInfo;
+		SColorStrategyInfo* pInfo = &_sInfo;
+		pInfo->m_gr = gr;
+		pInfo->m_pDispPos = &sPos;
+		pInfo->m_pcView = this;
+
+		auto y0 = pInfo->m_pDispPos->GetDrawPos().y;
 		while(sPos.GetLayoutLineRef() <= nLayoutLineTo)
 		{
 			//描画X位置リセット
@@ -786,8 +794,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 
 			//1行描画
 			bool bDispResult = DrawLogicLine(
-				gr,
-				&sPos,
+				pInfo,
 				nLayoutLineTo
 			);
 
@@ -810,6 +817,37 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 				}
 			}
 		}
+		auto y1 = pInfo->m_pDispPos->GetDrawPos().y;
+
+		// ノート線描画
+		if( !m_bMiniMap ){
+			GetTextDrawer().DispNoteLine(
+				pInfo->m_gr,
+				y0,
+				y1,
+				GetTextArea().GetAreaLeft(),
+				GetTextArea().GetAreaRight()
+			);
+		}
+	
+		// 指定桁縦線描画
+		GetTextDrawer().DispVerticalLines(
+			pInfo->m_gr,
+			y0,
+			y1,
+			CLayoutInt(0),
+			CLayoutInt(-1)
+		);
+
+		// 折り返し桁縦線描画
+		if( !m_bMiniMap ){
+			GetTextDrawer().DispWrapLine(
+				pInfo->m_gr,
+				y0,
+				y1
+			);
+		}
+
 	}
 
 	cTextType.RewindGraphicsState(gr);
@@ -871,18 +909,12 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 	@date 2007.08.31 kobake 引数 bDispBkBitmap を削除
 */
 bool CEditView::DrawLogicLine(
-	HDC				_hdc,			//!< [in]     作画対象
-	DispPos*		_pDispPos,		//!< [in,out] 描画する箇所、描画元ソース
+	SColorStrategyInfo* pInfo,		//!< [in,out] 
 	CLayoutInt		nLineTo			//!< [in]     作画終了するレイアウト行番号
 )
 {
 //	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DrawLogicLine" );
 	bool bDispEOF = false;
-	SColorStrategyInfo _sInfo;
-	SColorStrategyInfo* pInfo = &_sInfo;
-	pInfo->m_gr.Init(_hdc);
-	pInfo->m_pDispPos = _pDispPos;
-	pInfo->m_pcView = this;
 
 	//CColorStrategyPool初期化
 	CColorStrategyPool* pool = CColorStrategyPool::getInstance();
@@ -1144,35 +1176,6 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 				}
 			}
 		}
-	}
-
-	// ノート線描画
-	if( !m_bMiniMap ){
-		GetTextDrawer().DispNoteLine(
-			pInfo->m_gr,
-			pInfo->m_pDispPos->GetDrawPos().y,
-			pInfo->m_pDispPos->GetDrawPos().y + nLineHeight,
-			GetTextArea().GetAreaLeft(),
-			GetTextArea().GetAreaRight()
-		);
-	}
-
-	// 指定桁縦線描画
-	GetTextDrawer().DispVerticalLines(
-		pInfo->m_gr,
-		pInfo->m_pDispPos->GetDrawPos().y,
-		pInfo->m_pDispPos->GetDrawPos().y + nLineHeight,
-		CLayoutInt(0),
-		CLayoutInt(-1)
-	);
-
-	// 折り返し桁縦線描画
-	if( !m_bMiniMap ){
-		GetTextDrawer().DispWrapLine(
-			pInfo->m_gr,
-			pInfo->m_pDispPos->GetDrawPos().y,
-			pInfo->m_pDispPos->GetDrawPos().y + nLineHeight
-		);
 	}
 
 	// 反転描画
