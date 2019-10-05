@@ -300,14 +300,19 @@ void CTextDrawer::DispNoteLines(
 		while( offset < 0 ){
 			offset += nLineHeight;
 		}
+
+		std::vector<CMyPoint> vLineEnds;
 		LONG offsetMod = offset % nLineHeight;
 		LONG y = ((top - offset) / nLineHeight * nLineHeight) + offsetMod;
 		for( ; y < bottom; y += nLineHeight ){
 			if( top <= y ){
-				::MoveToEx( gr, left, y, NULL );
-				::LineTo( gr, right, y );
+				vLineEnds.push_back(CMyPoint(left, y));
+				vLineEnds.push_back(CMyPoint(right, y));
 			}
 		}
+
+		std::vector<DWORD> vNumPts(vLineEnds.size() / 2, 2);
+		::PolyPolyline(gr, vLineEnds.data(), vNumPts.data(), vNumPts.size());
 	}
 }
 
