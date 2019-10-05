@@ -821,7 +821,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 
 		// ノート線描画
 		if( !m_bMiniMap ){
-			GetTextDrawer().DispNoteLine(
+			GetTextDrawer().DispNoteLines(
 				pInfo->m_gr,
 				y0,
 				y1,

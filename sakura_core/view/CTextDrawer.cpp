@@ -281,7 +281,7 @@ void CTextDrawer::DispVerticalLines(
 	}
 }
 
-void CTextDrawer::DispNoteLine(
+void CTextDrawer::DispNoteLines(
 	CGraphics&	gr,			//!< 作画するウィンドウのDC
 	int			nTop,		//!< 線を引く上端のクライアント座標y
 	int			nBottom,	//!< 線を引く下端のクライアント座標y
@@ -573,7 +573,7 @@ void CTextDrawer::DispLineNumber(
 		int right  = pView->GetTextArea().GetAreaLeft();
 		int top    = y;
 		int bottom = y + nLineHeight;
-		DispNoteLine( gr, top, bottom, left, right );
+		DispNoteLines( gr, top, bottom, left, right );
 	}
 }
 
