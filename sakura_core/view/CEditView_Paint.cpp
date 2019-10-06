@@ -821,13 +821,11 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 
 		// ノート線描画
 		if( !m_bMiniMap ){
-			GetTextDrawer().DispNoteLine(
-				pInfo->m_gr,
-				y0,
-				y1,
-				GetTextArea().GetAreaLeft(),
-				GetTextArea().GetAreaRight()
-			);
+			LONG left = GetTextArea().GetAreaLeft();
+			LONG top = y0;
+			LONG right = GetTextArea().GetAreaRight();
+			LONG bottom = y1;
+			GetTextDrawer().DispNoteLines( pInfo->m_gr, left, top, right, bottom );
 		}
 	
 		// 指定桁縦線描画

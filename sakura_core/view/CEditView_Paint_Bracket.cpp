@@ -232,7 +232,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 					DispPos sPos(nWidth, nHeight);
 					sPos.InitDrawPos(CMyPoint(nLeft, nTop));
 					GetTextDrawer().DispText(gr, &sPos, 0, &pLine[OutputX], 1, bTrans);
-					GetTextDrawer().DispNoteLine(gr, nTop, nTop + nHeight, nLeft, nLeft + (Int)charsWidth * nWidth);
+					GetTextDrawer().DispNoteLines(gr, nLeft, nTop, nLeft + (Int)charsWidth * nWidth, nTop + nHeight);
 					// 2006.04.30 Moca 対括弧の縦線対応
 					GetTextDrawer().DispVerticalLines(gr, nTop, nTop + nHeight, ptColLine.x, ptColLine.x + charsWidth); //※括弧が全角幅である場合を考慮
 					cTextType.RewindGraphicsState(gr);

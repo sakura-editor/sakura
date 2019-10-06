@@ -281,12 +281,12 @@ void CTextDrawer::DispVerticalLines(
 	}
 }
 
-void CTextDrawer::DispNoteLine(
+void CTextDrawer::DispNoteLines(
 	CGraphics&	gr,			//!< 作画するウィンドウのDC
-	int			nTop,		//!< 線を引く上端のクライアント座標y
-	int			nBottom,	//!< 線を引く下端のクライアント座標y
-	int			nLeft,		//!< 線を引く左端
-	int			nRight		//!< 線を引く右端
+	LONG		left,		//!< ノート線を引く領域の左端のクライアント座標x
+	LONG		top,		//!< ノート線を引く領域の上端のクライアント座標y
+	LONG		right,		//!< ノート線を引く領域の右端のクライアント座標x
+	LONG		bottom		//!< ノート線を引く領域の下端のクライアント座標y
 ) const
 {
 	const CEditView* pView=m_pEditView;
@@ -294,22 +294,25 @@ void CTextDrawer::DispNoteLine(
 	CTypeSupport cNoteLine(pView, COLORIDX_NOTELINE);
 	if( cNoteLine.IsDisp() ){
 		gr.SetPen( cNoteLine.GetTextColor() );
-		const int nLineHeight = pView->GetTextMetrics().GetHankakuDy();
-		const int left = nLeft;
-		const int right = nRight;
-		int userOffset = pView->m_pTypeData->m_nNoteLineOffset;
-		int offset = pView->GetTextArea().GetAreaTop() + userOffset - 1;
+		const LONG nLineHeight = pView->GetTextMetrics().GetHankakuDy();
+		const LONG userOffset = pView->m_pTypeData->m_nNoteLineOffset;
+		LONG offset = pView->GetTextArea().GetAreaTop() + userOffset - 1;
 		while( offset < 0 ){
 			offset += nLineHeight;
 		}
-		int offsetMod = offset % nLineHeight;
-		int y = ((nTop - offset) / nLineHeight * nLineHeight) + offsetMod;
-		for( ; y < nBottom; y += nLineHeight ){
-			if( nTop <= y ){
-				::MoveToEx( gr, left, y, NULL );
-				::LineTo( gr, right, y );
+
+		std::vector<CMyPoint> vLineEnds;
+		LONG offsetMod = offset % nLineHeight;
+		LONG y = ((top - offset) / nLineHeight * nLineHeight) + offsetMod;
+		for( ; y < bottom; y += nLineHeight ){
+			if( top <= y ){
+				vLineEnds.push_back(CMyPoint(left, y));
+				vLineEnds.push_back(CMyPoint(right, y));
 			}
 		}
+
+		std::vector<DWORD> vNumPts(vLineEnds.size() / 2, 2);
+		::PolyPolyline(gr, vLineEnds.data(), vNumPts.data(), static_cast<DWORD>(vNumPts.size()));
 	}
 }
 
@@ -569,11 +572,11 @@ void CTextDrawer::DispLineNumber(
 
 	// 行番号部分のノート線描画
 	if( !pView->m_bMiniMap ){
-		int left   = bDispLineNumTrans ? 0 : rcLineNum.right;
-		int right  = pView->GetTextArea().GetAreaLeft();
-		int top    = y;
-		int bottom = y + nLineHeight;
-		DispNoteLine( gr, top, bottom, left, right );
+		LONG left   = bDispLineNumTrans ? 0 : rcLineNum.right;
+		LONG top    = y;
+		LONG right  = pView->GetTextArea().GetAreaLeft();
+		LONG bottom = y + nLineHeight;
+		DispNoteLines( gr, left, top, right, bottom );
 	}
 }
 
