@@ -312,7 +312,7 @@ void CTextDrawer::DispNoteLines(
 		}
 
 		std::vector<DWORD> vNumPts(vLineEnds.size() / 2, 2);
-		::PolyPolyline(gr, vLineEnds.data(), vNumPts.data(), vNumPts.size());
+		::PolyPolyline(gr, vLineEnds.data(), vNumPts.data(), static_cast<DWORD>(vNumPts.size()));
 	}
 }
 
