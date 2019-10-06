@@ -763,6 +763,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 
 	//必要な行を描画する	// 2009.03.26 ryoji 行番号のみ描画を通常の行描画と分離（効率化）
 	if(pPs->rcPaint.right <= GetTextArea().GetAreaLeft()){
+		auto y0 = sPos.GetDrawPos().y;
 		while(sPos.GetLayoutLineRef() <= nLayoutLineTo)
 		{
 			if(!sPos.GetLayoutRef())
@@ -778,6 +779,17 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 			sPos.ForwardDrawLine(1);		//描画Y座標＋＋
 			sPos.ForwardLayoutLineRef(1);	//レイアウト行＋＋
 		}
+		auto y1 = sPos.GetDrawPos().y;
+
+		// 行番号部分のノート線描画
+		if( !m_bMiniMap ){
+			LONG left   = std::max<LONG>(pPs->rcPaint.left, 0);
+			LONG top    = y0;
+			LONG right  = std::min<LONG>(pPs->rcPaint.right, GetTextArea().GetAreaLeft());
+			LONG bottom = y1;
+			GetTextDrawer().DispNoteLines( gr, left, top, right, bottom );
+		}
+
 	}else{
 
 		SColorStrategyInfo _sInfo;
@@ -821,7 +833,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 
 		// ノート線描画
 		if( !m_bMiniMap ){
-			LONG left = GetTextArea().GetAreaLeft();
+			LONG left = std::min<LONG>(pPs->rcPaint.left, GetTextArea().GetAreaLeft());
 			LONG top = y0;
 			LONG right = GetTextArea().GetAreaRight();
 			LONG bottom = y1;

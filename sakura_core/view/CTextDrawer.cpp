@@ -569,14 +569,5 @@ void CTextDrawer::DispLineNumber(
 		rcRest.bottom = y + nLineHeight;
 		cBackType.FillBack(gr,rcRest);
 	}
-
-	// 行番号部分のノート線描画
-	if( !pView->m_bMiniMap ){
-		LONG left   = bDispLineNumTrans ? 0 : rcLineNum.right;
-		LONG top    = y;
-		LONG right  = pView->GetTextArea().GetAreaLeft();
-		LONG bottom = y + nLineHeight;
-		DispNoteLines( gr, left, top, right, bottom );
-	}
 }
 
