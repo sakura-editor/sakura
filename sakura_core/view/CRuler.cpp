@@ -98,8 +98,7 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 		m_hFont = NULL;
 	}
 	if (m_hFont == NULL) {
-		LOGFONT	lf;
-		memset_raw( &lf, 0, sizeof(lf) );
+		LOGFONT	lf = {0};
 		lf.lfHeight			= 1 - pCommon->m_sWindow.m_nRulerHeight;	//	2002/05/13 ai
 		lf.lfWidth			= 0;
 		lf.lfEscapement		= 0;
@@ -113,7 +112,7 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 		lf.lfClipPrecision	= 2;
 		lf.lfQuality		= 1;
 		lf.lfPitchAndFamily	= 34;
-		wcscpy( lf.lfFaceName, L"Arial" );
+		wcscpy_s( lf.lfFaceName, L"Arial" );
 		m_hFont = ::CreateFontIndirect( &lf );
 		m_nRulerHeight = pCommon->m_sWindow.m_nRulerHeight;
 	}
