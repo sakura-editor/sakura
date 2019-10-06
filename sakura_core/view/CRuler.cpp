@@ -159,11 +159,7 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 	}
 
 	// 目盛り線を1本ずつ描画するのではなく後述する PolyPolyline でまとめて描画を行う
-#ifdef USE_STRICT_INT
-	const int nWidth = (m_pEditView->GetTextArea().GetRightCol() - i).GetValue();
-#else
-	const int nWidth = m_pEditView->GetTextArea().GetRightCol() - i;
-#endif
+	const int nWidth = (Int)(m_pEditView->GetTextArea().GetRightCol() - i);
 	const size_t nLinesToDraw = 1 + std::min<int>((nWidth + 1 + 1 + oneColumn - 1) / oneColumn, nMaxLineKetas - keta + 1);
 	auto& apt = m_apt;
 	auto& asz = m_asz;
