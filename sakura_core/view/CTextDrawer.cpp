@@ -355,7 +355,8 @@ void CTextDrawer::DispWrapLine(
 void CTextDrawer::DispLineNumber(
 	CGraphics&		gr,
 	CLayoutInt		nLineNum,
-	int				y
+	LONG			y,
+	bool&			bDispLineNumTrans
 ) const
 {
 	//$$ 高速化：SearchLineByLayoutYにキャッシュを持たせる
@@ -426,7 +427,6 @@ void CTextDrawer::DispLineNumber(
 	
 	bool bTrans = pView->IsBkBitmap() && cTextType.GetBackColor() == cColorType.GetBackColor();
 	bool bTransText = pView->IsBkBitmap() && cTextType.GetBackColor() == cBackType.GetBackColor();
-	bool bDispLineNumTrans = false;
 
 	COLORREF fgcolor = cColorType.GetTextColor();
 	COLORREF bgcolor = cColorType.GetBackColor();

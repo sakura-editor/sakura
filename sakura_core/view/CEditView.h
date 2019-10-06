@@ -239,12 +239,13 @@ public:
 protected:
 	//! ロジック行を1行描画
 	bool DrawLogicLine(
-		SColorStrategyInfo* pInfo,		//!< [in,out] 
-		CLayoutInt		nLineTo			//!< [in]     作画終了するレイアウト行番号
+		SColorStrategyInfo* pInfo,				//!< [in,out] 
+		const CLayoutInt	nLineTo,			//!< [in]     作画終了するレイアウト行番号
+		bool&				bDispLineNumTrans
 	);
 
 	//! レイアウト行を1行描画
-	bool DrawLayoutLine(SColorStrategyInfo* pInfo);
+	bool DrawLayoutLine(SColorStrategyInfo* pInfo, bool& bDispLineNumTrans);
 
 	//色分け
 public:

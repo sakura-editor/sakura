@@ -761,6 +761,8 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 	//                      全部の行を描画                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
+	bool bDispLineNumTrans = false;
+
 	//必要な行を描画する	// 2009.03.26 ryoji 行番号のみ描画を通常の行描画と分離（効率化）
 	if(pPs->rcPaint.right <= GetTextArea().GetAreaLeft()){
 		auto y0 = sPos.GetDrawPos().y;
@@ -773,7 +775,8 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 			GetTextDrawer().DispLineNumber(
 				gr,
 				sPos.GetLayoutLineRef(),
-				sPos.GetDrawPos().y
+				sPos.GetDrawPos().y,
+				bDispLineNumTrans
 			);
 			//行を進める
 			sPos.ForwardDrawLine(1);		//描画Y座標＋＋
@@ -783,9 +786,9 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 
 		// 行番号部分のノート線描画
 		if( !m_bMiniMap ){
-			LONG left   = std::max<LONG>(pPs->rcPaint.left, 0);
+			LONG left   = bDispLineNumTrans ? 0 : pPs->rcPaint.right;
 			LONG top    = y0;
-			LONG right  = std::min<LONG>(pPs->rcPaint.right, GetTextArea().GetAreaLeft());
+			LONG right  = GetTextArea().GetAreaLeft();
 			LONG bottom = y1;
 			GetTextDrawer().DispNoteLines( gr, left, top, right, bottom );
 		}
@@ -807,7 +810,8 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 			//1行描画
 			bool bDispResult = DrawLogicLine(
 				pInfo,
-				nLayoutLineTo
+				nLayoutLineTo,
+				bDispLineNumTrans
 			);
 
 			if(bDispResult){
@@ -833,7 +837,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 
 		// ノート線描画
 		if( !m_bMiniMap ){
-			LONG left = std::min<LONG>(pPs->rcPaint.left, GetTextArea().GetAreaLeft());
+			LONG left = bDispLineNumTrans ? 0 : GetTextArea().GetAreaLeft();
 			LONG top = y0;
 			LONG right = GetTextArea().GetAreaRight();
 			LONG bottom = y1;
@@ -919,8 +923,9 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 	@date 2007.08.31 kobake 引数 bDispBkBitmap を削除
 */
 bool CEditView::DrawLogicLine(
-	SColorStrategyInfo* pInfo,		//!< [in,out] 
-	CLayoutInt		nLineTo			//!< [in]     作画終了するレイアウト行番号
+	SColorStrategyInfo* pInfo,				//!< [in,out] 
+	const CLayoutInt	nLineTo,			//!< [in]     作画終了するレイアウト行番号
+	bool&				bDispLineNumTrans
 )
 {
 //	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DrawLogicLine" );
@@ -979,7 +984,7 @@ bool CEditView::DrawLogicLine(
 		}
 
 		//レイアウト行を1行描画
-		bDispEOF = DrawLayoutLine(pInfo);
+		bDispEOF = DrawLayoutLine(pInfo, bDispLineNumTrans);
 
 		//行を進める
 		CLogicInt nOldLogicLineNo = pInfo->m_pDispPos->GetLayoutRef()->GetLogicLineNo();
@@ -1004,7 +1009,7 @@ bool CEditView::DrawLogicLine(
 	レイアウト行を1行描画
 */
 //改行記号を描画した場合はtrueを返す？
-bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
+bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo, bool& bDispLineNumTrans)
 {
 	bool bDispEOF = false;
 	CTypeSupport cTextType(this,COLORIDX_TEXT);
@@ -1075,7 +1080,8 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	GetTextDrawer().DispLineNumber(
 		pInfo->m_gr,
 		pInfo->m_pDispPos->GetLayoutLineRef(),
-		pInfo->m_pDispPos->GetDrawPos().y
+		pInfo->m_pDispPos->GetDrawPos().y,
+		bDispLineNumTrans
 	);
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
