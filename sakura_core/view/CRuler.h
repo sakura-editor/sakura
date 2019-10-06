@@ -67,6 +67,11 @@ private:
 	bool	m_bRedrawRuler;		// ルーラー全体を描き直す時 = true      2002.02.25 Add By KK
 	int		m_nOldRulerDrawX;	// 前回描画したルーラーのキャレット位置 2002.02.25 Add By KK  2007.08.26 kobake 名前変更
 	int		m_nOldRulerWidth;	// 前回描画したルーラーのキャレット幅   2002.02.25 Add By KK  2007.08.26 kobake 名前変更
+
+	HFONT	m_hFont; // ルーラー上の数字用フォント
+	int		m_nRulerHeight;
+	std::vector<POINT> m_apt;
+	std::vector<DWORD> m_asz;
 };
 
 #endif /* SAKURA_CRULER_CF213704_1CF6_427E_AD78_D628D2D1F9029_H_ */

@@ -9,6 +9,8 @@
 CRuler::CRuler(const CEditView* pEditView, const CEditDoc* pEditDoc)
 : m_pEditView(pEditView)
 , m_pEditDoc(pEditDoc)
+, m_hFont(NULL)
+, m_nRulerHeight(0)
 {
 	m_nOldRulerDrawX = 0;	// 前回描画したルーラーのキャレット位置 2002.02.25 Add By KK
 	m_nOldRulerWidth = 0;	// 前回描画したルーラーのキャレット幅   2002.02.25 Add By KK
@@ -16,6 +18,9 @@ CRuler::CRuler(const CEditView* pEditView, const CEditDoc* pEditDoc)
 
 CRuler::~CRuler()
 {
+	if (m_hFont) {
+		::DeleteObject( m_hFont );
+	}
 }
 
 //2007.08.26 kobake UNICODE用にX位置を変更
@@ -88,26 +93,32 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 	CTypeSupport cRulerType(m_pEditView,COLORIDX_RULER);
 
 	// フォント設定 (ルーラー上の数字用)
-	LOGFONT	lf;
-	HFONT		hFont;
-	HFONT		hFontOld;
-	memset_raw( &lf, 0, sizeof(lf) );
-	lf.lfHeight			= 1 - pCommon->m_sWindow.m_nRulerHeight;	//	2002/05/13 ai
-	lf.lfWidth			= 0;
-	lf.lfEscapement		= 0;
-	lf.lfOrientation	= 0;
-	lf.lfWeight			= 400;
-	lf.lfItalic			= 0;
-	lf.lfUnderline		= 0;
-	lf.lfStrikeOut		= 0;
-	lf.lfCharSet		= 0;
-	lf.lfOutPrecision	= 3;
-	lf.lfClipPrecision	= 2;
-	lf.lfQuality		= 1;
-	lf.lfPitchAndFamily	= 34;
-	wcscpy( lf.lfFaceName, L"Arial" );
-	hFont = ::CreateFontIndirect( &lf );
-	hFontOld = (HFONT)::SelectObject( gr, hFont );
+	if (m_hFont && m_nRulerHeight != pCommon->m_sWindow.m_nRulerHeight) {
+		::DeleteObject( m_hFont );
+		m_hFont = NULL;
+	}
+	if (m_hFont == NULL) {
+		LOGFONT	lf;
+		memset_raw( &lf, 0, sizeof(lf) );
+		lf.lfHeight			= 1 - pCommon->m_sWindow.m_nRulerHeight;	//	2002/05/13 ai
+		lf.lfWidth			= 0;
+		lf.lfEscapement		= 0;
+		lf.lfOrientation	= 0;
+		lf.lfWeight			= 400;
+		lf.lfItalic			= 0;
+		lf.lfUnderline		= 0;
+		lf.lfStrikeOut		= 0;
+		lf.lfCharSet		= 0;
+		lf.lfOutPrecision	= 3;
+		lf.lfClipPrecision	= 2;
+		lf.lfQuality		= 1;
+		lf.lfPitchAndFamily	= 34;
+		wcscpy( lf.lfFaceName, L"Arial" );
+		m_hFont = ::CreateFontIndirect( &lf );
+		m_nRulerHeight = pCommon->m_sWindow.m_nRulerHeight;
+	}
+	assert(m_hFont != NULL);
+	HFONT hFontOld = (HFONT)::SelectObject( gr, m_hFont );
 	::SetBkMode( gr, TRANSPARENT );
 
 	//背景塗りつぶし
@@ -126,7 +137,6 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 	int nX = m_pEditView->GetTextArea().GetAreaLeft();
 	int nY = m_pEditView->GetTextArea().GetRulerHeight() - 2;
 
-	// 下線 (ルーラーと本文の境界)
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 	//	2005.11.10 Moca 1dot足りない
 	CLayoutXInt	nMaxLineColum = m_pEditDoc->m_cLayoutMgr.GetMaxLineLayout();
@@ -135,8 +145,6 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 	if( nToX > m_pEditView->GetTextArea().GetAreaRight() ){
 		nToX = m_pEditView->GetTextArea().GetAreaRight();
 	}
-	::MoveToEx( gr, m_pEditView->GetTextArea().GetAreaLeft(), nY + 1, NULL );
-	::LineTo( gr, nToX, nY + 1 );
 
 	//目盛を描画
 	const int oneColumn = (Int)m_pEditView->GetTextMetrics().GetLayoutXDefault();
@@ -150,36 +158,52 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 		i += CLayoutXInt(oneColumn - pxOffset); // CLayoutXInt == pixel
 		++keta;
 	}
+
+	// 目盛り線を1本ずつ描画するのではなく後述する PolyPolyline でまとめて描画を行う
+#ifdef USE_STRICT_INT
+	const int nWidth = (m_pEditView->GetTextArea().GetRightCol() - i).GetValue();
+#else
+	const int nWidth = m_pEditView->GetTextArea().GetRightCol() - i;
+#endif
+	const size_t nLinesToDraw = 1 + std::min<int>((nWidth + 1 + 1 + oneColumn - 1) / oneColumn, nMaxLineKetas - keta + 1);
+	auto& apt = m_apt;
+	auto& asz = m_asz;
+	apt.resize(nLinesToDraw * 2);
+	asz.resize(nLinesToDraw, 2);
+	// 下線 (ルーラーと本文の境界)
+	apt[0] = POINT{m_pEditView->GetTextArea().GetAreaLeft(), nY + 1};
+	apt[1] = POINT{nToX, nY + 1};
+	size_t idx = 1;
 	while(i <= m_pEditView->GetTextArea().GetRightCol() + 1 && keta <= nMaxLineKetas)
 	{
+		apt[idx * 2 + 0] = POINT{nX, nY};
 		//ルーラー終端の区切り(大)
 		if( keta == nMaxLineKetas ){
-			::MoveToEx( gr, nX, nY, NULL );
-			::LineTo( gr, nX, 0 );
+			apt[idx * 2 + 1] = POINT{nX, 0};
 		}
 		//10目盛おきの区切り(大)と数字
 		else if( 0 == keta % 10 ){
 			wchar_t szColumn[32];
-			::MoveToEx( gr, nX, nY, NULL );
-			::LineTo( gr, nX, 0 );
+			apt[idx * 2 + 1] = POINT{nX, 0};
 			_itow( ((Int)keta) / 10, szColumn, 10 );
 			::TextOut( gr, nX + 2 + 0, -1 + 0, szColumn, wcslen( szColumn ) );
 		}
 		//5目盛おきの区切り(中)
 		else if( 0 == keta % 5 ){
-			::MoveToEx( gr, nX, nY, NULL );
-			::LineTo( gr, nX, nY - 6 );
+			apt[idx * 2 + 1] = POINT{nX, nY - 6};
 		}
 		//毎目盛の区切り(小)
 		else{
-			::MoveToEx( gr, nX, nY, NULL );
-			::LineTo( gr, nX, nY - 3 );
+			apt[idx * 2 + 1] = POINT{nX, nY - 3};
 		}
+		++idx;
+		assert(idx <= nLinesToDraw);
 
 		nX += dx;
 		i  += oneColumn;
 		keta++;
 	}
+	::PolyPolyline(gr, &apt[0], &asz[0], (DWORD)nLinesToDraw);
 
 	//色戻す
 	gr.PopTextForeColor();
@@ -187,7 +211,6 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 
 	//フォント戻す
 	::SelectObject( gr, hFontOld );
-	::DeleteObject( hFont );
 }
 
 /*! ルーラー描画
