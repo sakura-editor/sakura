@@ -42,7 +42,8 @@ CFigureManager::CFigureManager()
 	m_vFigures.push_back(new CFigure_CtrlCode());
 	m_vFigures.push_back(new CFigure_HanBinary());
 	m_vFigures.push_back(new CFigure_ZenBinary());
-	m_vFigures.push_back(new CFigure_Text());
+	m_cFigureText = new CFigure_Text();
+	m_vFigures.push_back(m_cFigureText);
 
 	OnChangeSetting();
 }
