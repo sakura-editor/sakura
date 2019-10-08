@@ -610,7 +610,7 @@ bool CClipboard::GetClipboradByFormat(CNativeW& mem, const wchar_t* pFormatName,
 				if( nBomCode != CODE_NONE ){
 					eMode = nBomCode;
 				}else{
-					const STypeConfig& type = CEditDoc::GetInstance(0)->m_cDocType.GetDocumentAttribute();
+					const STypeConfig& type = CEditDoc::getInstance()->m_cDocType.GetDocumentAttribute();
 					CCodeMediator mediator(type.m_encoding);
 					eMode = mediator.CheckKanjiCode((const char*)pData, nLength);
 				}
