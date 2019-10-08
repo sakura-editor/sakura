@@ -70,7 +70,7 @@ class CEditApp;
 template <>
 class TSingleton<class CEditDoc> {
 public:
-	static CEditDoc* getInstance();
+	static const CEditDoc* getInstance();
 
 	TSingleton() = default;
 };

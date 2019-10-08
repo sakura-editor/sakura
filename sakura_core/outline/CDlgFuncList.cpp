@@ -3555,7 +3555,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 		bool* m_pbSwitch;
 	} SAutoSwitch( &m_bInChangeLayout );	// 処理中は m_bInChangeLayout フラグを ON にしておく
 
-	CEditDoc* pDoc = CEditDoc::getInstance();	// 今は非表示かもしれないので (CEditView*)m_lParam は使えない
+	const CEditDoc* pDoc = CEditDoc::getInstance();	// 今は非表示かもしれないので (CEditView*)m_lParam は使えない
 	m_nDocType = pDoc->m_cDocType.GetDocumentType().GetIndex();
 	CDocTypeManager().GetTypeConfig( CTypeConfig(m_nDocType), m_type );
 
@@ -3676,7 +3676,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 */
 void CDlgFuncList::OnOutlineNotify( WPARAM wParam, LPARAM lParam )
 {
-	CEditDoc* pDoc = CEditDoc::getInstance();	// 今は非表示かもしれないので (CEditView*)m_lParam は使えない
+	const CEditDoc* pDoc = CEditDoc::getInstance();	// 今は非表示かもしれないので (CEditView*)m_lParam は使えない
 	switch( wParam ){
 	case 0:	// 設定変更通知（ドッキングモード or サイズ）, lParam: 通知元の HWND
 		if( (HWND)lParam == pDoc->m_pcEditWnd->GetHwnd() )

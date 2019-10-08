@@ -156,7 +156,7 @@ static const EFunctionCode EIsModificationForbidden[] = {
  * @note CEditDocは、エディタのプロセス内に1つだけ存在する。
  * @note CEditDocは、コントロールプロセス内には存在しない。
  */
-CEditDoc* TSingleton<CEditDoc>::getInstance()
+const CEditDoc* TSingleton<CEditDoc>::getInstance()
 {
 	auto pEditApp = CEditApp::getInstance();
 	if (!pEditApp) return nullptr;

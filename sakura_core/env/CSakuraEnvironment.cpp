@@ -713,7 +713,7 @@ wchar_t* ExParam_LongName( wchar_t* q, wchar_t* q_max, EExpParamName eLongParam 
 */
 std::wstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
 {
-	CEditDoc* pcDoc = CEditDoc::getInstance(); //######
+	const CEditDoc* pcDoc = CEditDoc::getInstance(); //######
 	if( pcDoc && pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		return pcDoc->m_cDocFile.GetFilePathClass().GetDirPath().c_str();
 	}
