@@ -65,6 +65,17 @@ class CFuncInfoArr;
 class CEditApp;
 
 /*!
+ * @brief TSingletonの特殊化(CEditDoc向け)
+ */
+template <>
+class TSingleton<class CEditDoc> {
+public:
+	static const CEditDoc* getInstance();
+
+	TSingleton() = default;
+};
+
+/*!
 	文書関連情報の管理
 
 	@date 2002.02.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
@@ -73,12 +84,16 @@ class CEditApp;
 	@date 2007.12.13 kobake IsViewMode作成
 */
 class CEditDoc
-: public CDocSubject
-, public TInstanceHolder<CEditDoc>
+	: public TSingleton<CEditDoc>
+	, public CDocSubject
 {
+	using _Myt = CEditDoc;
+
 public:
 	//コンストラクタ・デストラクタ
 	CEditDoc(CEditApp* pcApp);
+	CEditDoc(const _Myt&) = delete;
+	CEditDoc(_Myt&&) = delete;
 	~CEditDoc();
 
 	//初期化
@@ -115,6 +130,9 @@ public:
 	void SetBackgroundImage();
 
 	void SetCurDirNotitle();
+
+	_Myt& operator=(const _Myt&) = delete;
+	_Myt& operator=(_Myt&&) = delete;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       メンバ変数群                          //

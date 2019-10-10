@@ -150,6 +150,19 @@ static const EFunctionCode EIsModificationForbidden[] = {
 	F_HOKAN,
 };
 
+/*!
+ * @brief CEditDocのインスタンスを取得する
+ * 
+ * @note CEditDocは、エディタのプロセス内に1つだけ存在する。
+ * @note CEditDocは、コントロールプロセス内には存在しない。
+ */
+const CEditDoc* TSingleton<CEditDoc>::getInstance()
+{
+	auto pEditApp = CEditApp::getInstance();
+	if (!pEditApp) return nullptr;
+	return pEditApp->GetDocument();
+}
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        生成と破棄                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

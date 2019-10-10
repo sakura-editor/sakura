@@ -3317,7 +3317,7 @@ INT_PTR CDlgFuncList::OnNcPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 {
 	// メニューを作成する
-	CEditView* pcEditView = &CEditDoc::GetInstance(0)->m_pcEditWnd->GetActiveView();
+	CEditView* pcEditView = &CEditWnd::getInstance()->GetActiveView();
 	CDocTypeManager().GetTypeConfig( CTypeConfig(m_nDocType), m_type );
 	EDockSide eDockSide = ProfDockSide();	// 設定上の配置
 	UINT uFlags = MF_BYPOSITION | MF_STRING;
@@ -3529,7 +3529,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 */
 void CDlgFuncList::Refresh( void )
 {
-	CEditWnd* pcEditWnd = CEditDoc::GetInstance(0)->m_pcEditWnd;
+	CEditWnd* pcEditWnd = CEditWnd::getInstance();
 	BOOL bReloaded = ChangeLayout( OUTLINE_LAYOUT_FILECHANGED );	// 現在設定に従ってアウトライン画面を再配置する
 	if( !bReloaded && pcEditWnd->m_cDlgFuncList.GetHwnd() ){
 		EOutlineType nOutlineType = GetOutlineTypeRedraw(m_nOutlineType);
@@ -3555,7 +3555,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 		bool* m_pbSwitch;
 	} SAutoSwitch( &m_bInChangeLayout );	// 処理中は m_bInChangeLayout フラグを ON にしておく
 
-	CEditDoc* pDoc = CEditDoc::GetInstance(0);	// 今は非表示かもしれないので (CEditView*)m_lParam は使えない
+	const CEditDoc* pDoc = CEditDoc::getInstance();	// 今は非表示かもしれないので (CEditView*)m_lParam は使えない
 	m_nDocType = pDoc->m_cDocType.GetDocumentType().GetIndex();
 	CDocTypeManager().GetTypeConfig( CTypeConfig(m_nDocType), m_type );
 
@@ -3676,10 +3676,11 @@ bool CDlgFuncList::ChangeLayout( int nId )
 */
 void CDlgFuncList::OnOutlineNotify( WPARAM wParam, LPARAM lParam )
 {
-	CEditDoc* pDoc = CEditDoc::GetInstance(0);	// 今は非表示かもしれないので (CEditView*)m_lParam は使えない
+	// 今は非表示かもしれないので (CEditView*)m_lParam は使えない
+	const CEditWnd* pcEditWnd = CEditWnd::getInstance();
 	switch( wParam ){
 	case 0:	// 設定変更通知（ドッキングモード or サイズ）, lParam: 通知元の HWND
-		if( (HWND)lParam == pDoc->m_pcEditWnd->GetHwnd() )
+		if( pcEditWnd && pcEditWnd->GetHwnd() == reinterpret_cast<HWND>(lParam) )
 			return;	// 自分からの通知は無視
 		ChangeLayout( OUTLINE_LAYOUT_BACKGROUND );	// アウトライン画面を再配置
 		break;

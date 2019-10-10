@@ -359,7 +359,7 @@ void CTextDrawer::DispLineNumber(
 ) const
 {
 	//$$ 高速化：SearchLineByLayoutYにキャッシュを持たせる
-	const CLayout*	pcLayout = CEditDoc::GetInstance(0)->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
+	const CLayout*	pcLayout = CEditDoc::getInstance()->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
 
 	const CEditView* pView=m_pEditView;
 	const STypeConfig* pTypes=&pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
