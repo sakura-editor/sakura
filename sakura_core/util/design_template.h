@@ -81,5 +81,37 @@ private:
 template <class T>
 T* TSingleInstance<T>::gm_instance = NULL;
 
+//記録もする
+#include <vector>
+template <class T> class TInstanceHolder{
+public:
+	TInstanceHolder()
+	{
+		gm_table.push_back(static_cast<T*>(this));
+	}
+	virtual ~TInstanceHolder()
+	{
+		for(size_t i=0;i<gm_table.size();i++){
+			if(gm_table[i]==static_cast<T*>(this)){
+				gm_table.erase(gm_table.begin()+i);
+				break;
+			}
+		}
+	}
+	static int GetInstanceCount(){ return (int)gm_table.size(); }
+	static T* GetInstance(int nIndex)
+	{
+		if(nIndex>=0 && nIndex<(int)gm_table.size()){
+			return gm_table[nIndex];
+		}else{
+			return 0;
+		}
+	}
+
+private:
+	static std::vector<T*> gm_table;
+};
+template <class T> std::vector<T*> TInstanceHolder<T>::gm_table;
+
 #endif /* SAKURA_DESIGN_TEMPLATE_8F7F7545_B66E_47C3_AE3A_0E406B3A0B0B_H_ */
 /*[EOF]*/

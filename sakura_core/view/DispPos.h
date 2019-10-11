@@ -41,7 +41,7 @@ public:
 		m_ptDrawLayout.y=CLayoutInt(0);
 		m_nLineRef=CLayoutInt(0);
 		//キャッシュ
-		m_pcLayoutRef = CEditDoc::getInstance()->m_cLayoutMgr.GetTopLayout();
+		m_pcLayoutRef = CEditDoc::GetInstance(0)->m_cLayoutMgr.GetTopLayout();
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -91,7 +91,7 @@ public:
 	{
 		m_nLineRef = nOffsetLine;
 		//キャッシュ更新
-		m_pcLayoutRef = CEditDoc::getInstance()->m_cLayoutMgr.SearchLineByLayoutY( m_nLineRef );
+		m_pcLayoutRef = CEditDoc::GetInstance(0)->m_cLayoutMgr.SearchLineByLayoutY( m_nLineRef );
 	}
 	void ForwardLayoutLineRef(int nOffsetLine);
 
