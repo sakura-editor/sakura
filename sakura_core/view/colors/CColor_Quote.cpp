@@ -24,7 +24,7 @@ public:
 
 void CColor_Quote::Update(void)
 {
-	const CEditDoc* pCEditDoc = CEditDoc::getInstance();
+	const CEditDoc* pCEditDoc = CEditDoc::GetInstance(0);
 	m_pTypeData = &pCEditDoc->m_cDocType.GetDocumentAttribute();
 	m_nStringType = m_pTypeData->m_nStringType;
 	int nEspaceTypeList[] = {
