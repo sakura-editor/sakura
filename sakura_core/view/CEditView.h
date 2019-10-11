@@ -239,7 +239,8 @@ public:
 protected:
 	//! ロジック行を1行描画
 	bool DrawLogicLine(
-		SColorStrategyInfo* pInfo,		//!< [in,out] 
+		HDC				hdc,			//!< [in]     作画対象
+		DispPos*		pDispPos,		//!< [in,out] 描画する箇所、描画元ソース
 		CLayoutInt		nLineTo			//!< [in]     作画終了するレイアウト行番号
 	);
 
