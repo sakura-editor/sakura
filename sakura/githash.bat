@@ -197,7 +197,7 @@ if "%APPVEYOR_REPO_NAME%" == "" (
 )
 
 @rem enable 'dev version' macro which will be disabled on release branches
-echo #define APPVEYOR_DEV_VERSION
+@rem echo #define APPVEYOR_DEV_VERSION
 
 if "%APPVEYOR_ACCOUNT_NAME%" == "" (
 	echo // APPVEYOR_ACCOUNT_NAME is not defined
