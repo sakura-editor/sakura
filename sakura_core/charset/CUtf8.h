@@ -79,7 +79,7 @@ inline int CUtf8::_Utf8ToUni_char( const unsigned char* pSrc, const int nSrcLen,
 {
 	int nret;
 
-	__assume(nSrcLen > 0);
+	ASSUME(nSrcLen > 0);
 
 	// UTF-8 の処理
 	if( nSrcLen < 4 ){
@@ -103,7 +103,7 @@ inline int CUtf8::_Utf8ToUni_char_CESUMode( const unsigned char* pSrc, const int
 {
 	int nret;
 
-	__assume(nSrcLen > 0);
+	ASSUME(nSrcLen > 0);
 
 	// CESU-8 の処理
 	if( nSrcLen < 4 ){

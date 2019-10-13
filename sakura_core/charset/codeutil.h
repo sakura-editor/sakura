@@ -26,6 +26,7 @@
 #define SAKURA_CODEUTIL_E12B274F_2A3B_47A0_AFCB_4BAD1B3308AB_H_
 
 #include <Windows.h>
+#include "debug/Debug2.h" //assert
 
 #if 0  // 未使用
 //	Oct. 3, 2002 genta
@@ -118,7 +119,7 @@ inline wchar32_t DecodeUtf8( const unsigned char* pSrc, const int nSrcLen )
 		wc32 |= static_cast<wchar32_t>(pSrc[3] & 0x3f);
 		break;
 	default:
-		NODEFAULT;
+		ASSUME(0);
 	}
 
 	return wc32;

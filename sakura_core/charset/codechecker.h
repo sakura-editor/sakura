@@ -451,7 +451,7 @@ inline int CheckUtf16beChar( const wchar_t* p, const int n, ECharSet* e, const i
 inline
 int CheckUtf8Char( const char *pS, const int nLen, ECharSet &echarset, const bool bAllow4byteCode )
 {
-	__assume( nLen >= 1 );
+	ASSUME( nLen >= 1 );
 	echarset = CHARSET_UNI_NORMAL;
 	unsigned char c0 = pS[0];
 	if( c0 < 0x80 ){	// 第１バイトが 0aaabbbb の場合

@@ -54,11 +54,16 @@
 			warning_point(); \
 		} \
 	}
-	#define NODEFAULT   assert(0)
+	#define ASSUME(exp) assert(exp)
 #else
 	#define assert(exp)
 	#define assert_warning(exp)
-	#define NODEFAULT __assume(0)
+
+	#ifdef __MINGW32__
+		#define ASSUME(exp)
+	#else
+		#define ASSUME(exp) __assume(exp)
+	#endif
 #endif
 
 #endif /* SAKURA_DEBUG2_69DB6343_0580_4F92_98D6_63216724B2D19_H_ */
