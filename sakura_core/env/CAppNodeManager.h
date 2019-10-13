@@ -27,6 +27,7 @@
 
 #include "util/design_template.h"
 #include "config/maxdata.h"
+#include "basis/CMyString.h"
 
 class CAppNodeGroupHandle;
 

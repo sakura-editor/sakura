@@ -27,6 +27,7 @@
 
 //2007.09.13 kobake 作成
 #include "parse/CWordParse.h"
+#include "util/std_macro.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         判定関数                            //
