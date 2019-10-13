@@ -32,6 +32,7 @@
 
 #include "parse/CWordParse.h"
 #include "mem/CMemory.h"
+#include "charset/charcode.h"
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
