@@ -35,7 +35,6 @@
 #include "charset/codechecker.h"
 #include "mem/CMemory.h"
 #include "convert/convert_util2.h"
-#include "charset/codeutil.h"
 #include "charset/charcode.h"
 #include <algorithm>
 
@@ -537,124 +536,6 @@ UTF-8のエンコーディング
 /*!
 	UTF-8 文字をチェック　(組み合わせ文字列考慮なし)
 
-	@sa CheckSjisChar()
-
-	@date 2008/11/01 syat UTF8ファイルで欧米の特殊文字が読み込めない不具合を修正
-*/
-int CheckUtf8Char( const char *pS, const int nLen, ECharSet *peCharset, const bool bAllow4byteCode, const int nOption )
-{
-	unsigned char c0, c1, c2, c3;
-	int ncwidth;
-	ECharSet echarset;
-
-	if( nLen < 1 ){
-		return 0;
-	}
-
-	echarset = CHARSET_UNI_NORMAL;
-	c0 = pS[0];
-
-	if( c0 < 0x80 ){	// 第１バイトが 0aaabbbb の場合
-		ncwidth = 1;	// １バイトコードである
-		goto EndFunc;
-	}else
-	if( 1 < nLen && (c0 & 0xe0) == 0xc0 ){	// 第１バイトが110aaabbの場合
-		c1 = pS[1];
-		// 第２バイトが10bbccccの場合
-		if( (c1 & 0xc0) == 0x80 ){
-			ncwidth = 2;	// ２バイトコードである
-			// 第１バイトがaaabb=0000xの場合（\u80未満に変換される）
-			if( (c0 & 0x1e) == 0 ){
-				// デコードできない.(往復変換不可領域)
-				echarset = CHARSET_BINARY;
-				ncwidth = 1;
-			}
-			goto EndFunc;
-		}
-	}else
-	if( 2 < nLen && (c0 & 0xf0) == 0xe0 ){	// 第１バイトが1110aaaaの場合
-		c1 = pS[1];
-		c2 = pS[2];
-		// 第２バイトが10bbbbcc、第３バイトが10ccddddの場合
-		if( (c1 & 0xc0) == 0x80 && (c2 & 0xc0) == 0x80 ){
-			ncwidth = 3;	// ３バイトコードである
-			// 第１バイトのaaaa=0000、第２バイトのbbbb=0xxxの場合(\u800未満に変換される)
-			if( (c0 & 0x0f) == 0 && (c1 & 0x20) == 0 ){
-				// デコードできない.(往復変換不可領域)
-				echarset = CHARSET_BINARY;
-				ncwidth = 1;
-			}
-			//if( (c0 & 0x0f) == 0x0f && (c1 & 0x3f) == 0x3f && (c2 & 0x3e) == 0x3e ){
-			//	// Unicode でない文字(U+FFFE, U+FFFF)
-			//	charset = CHARSET_BINARY;
-			//	ncwidth = 1;
-			//}
-			if( bAllow4byteCode == true && (c0 & 0x0f) == 0x0d && (c1 & 0x20) != 0 ){
-				// サロゲート領域 (U+D800 から U+DFFF)
-				echarset = CHARSET_BINARY;
-				ncwidth = 1;
-			}
-			goto EndFunc;
-		}
-	}else
-	if( 3 < nLen && (c0 & 0xf8) == 0xf0 ){	// 第１バイトが11110abbの場合
-		c1 = pS[1];
-		c2 = pS[2];
-		c3 = pS[3];
-		// 第2バイトが10bbcccc、第3バイトが10ddddee、第4バイトが10ddddeeの場合
-		if( (c1 & 0xc0) == 0x80 && (c2 & 0xc0) == 0x80 && (c3 & 0xc0) == 0x80 ){
-			ncwidth = 4;  // ４バイトコードである
-			echarset = CHARSET_UNI_SURROG;  // サロゲートペアの文字（初期化）
-			// 第1バイトのabb=000、第2バイトのbb=00の場合（\u10000未満に変換される）
-			if( (c0 & 0x07) == 0 && (c1 & 0x30) == 0 ){
-				// デコードできない.(往復変換不可領域)
-				echarset = CHARSET_BINARY;
-				ncwidth = 1;
-			}
-			// １バイト目が 11110xxx=11110100のとき、
-			// かつ、1111 01xx : 10xx oooo の x のところに値があるとき
-			if( (c0 & 0x04) != 0 && ((c0 & 0x03) != 0 || (c1 & 0x30) != 0) ){
-				// 値が大きすぎ（0x10ffffより大きい）
-				echarset = CHARSET_BINARY;
-				ncwidth = 1;
-			}
-			if( bAllow4byteCode == false ){
-				echarset = CHARSET_BINARY;
-				ncwidth = 1;
-			}
-			goto EndFunc;
-		}
-	}
-
-	// 規定外のフォーマット
-	echarset = CHARSET_BINARY;
-	ncwidth = 1;
-
-EndFunc:
-
-	// 非文字と予約コードポイントをチェック
-	if( nOption != 0 && echarset != CHARSET_BINARY ){
-		wchar32_t wc32;
-		wc32 = DecodeUtf8( reinterpret_cast<const unsigned char*>(pS), ncwidth );
-		if( (nOption & UC_NONCHARACTER) && IsUnicodeNoncharacter(wc32) ){
-			echarset = CHARSET_BINARY;
-			ncwidth = 1;
-		}else{
-			// 保護コード
-			echarset = CHARSET_BINARY;
-			ncwidth = 1;
-		}
-	}
-
-	if( peCharset ){
-		*peCharset = echarset;
-	}
-	return ncwidth;
-}
-
-/*!
-	UTF-8 文字をチェック　(組み合わせ文字列考慮なし)
-
 	@note 途中までUTF-8のエンコーディングが合っていれば、CHARSET_BINARY2を設定する
 
 	@date 2015.12.30 novice  第１バイトが11110abbのとき、nLenより大きい値を返すのを修正
@@ -669,7 +550,7 @@ int CheckUtf8Char2( const char *pS, const int nLen, ECharSet *peCharset, const b
 		return 0;
 	}
 
-	ncwidth = CheckUtf8Char( pS, nLen, &echarset, true, 0 );
+	ncwidth = CheckUtf8Char( pS, nLen, echarset, true );
 	c0 = pS[0];
 	if( echarset == CHARSET_BINARY ){
 		if( 1 == nLen && (c0 & 0xe0) == 0xc0 ){	// 第１バイトが110aaabbの場合
@@ -760,17 +641,15 @@ EndFunc:
 /*
 	CESU-8 文字のチェック　(組み合わせ文字列考慮なし)
 */
-int CheckCesu8Char( const char* pS, const int nLen, ECharSet* peCharset, const int nOption )
+int CheckCesu8Char( const char* pS, const int nLen, ECharSet& eret_charset )
 {
-	ECharSet echarset1, echarset2, eret_charset;
+	ECharSet echarset1, echarset2;
 	int nclen1, nclen2, nret_clen;
 
-	if( nLen < 1 ){
-		return 0;
-	}
+	assert(nLen > 0);
 
 	// １文字目のスキャン
-	nclen1 = CheckUtf8Char( &pS[0], nLen, &echarset1, false, 0 );
+	nclen1 = CheckUtf8Char( &pS[0], nLen, echarset1, false );
 
 	// 文字長が３未満の場合
 	if( nclen1 < 3 ){
@@ -783,8 +662,11 @@ int CheckCesu8Char( const char* pS, const int nLen, ECharSet* peCharset, const i
 		// 正常な３バイト文字があった。
 
 		// ２文字目のスキャン
-		nclen2 = CheckUtf8Char( &pS[3], nLen-3, &echarset2, false, 0 );
-
+		if (nLen > 3) {
+			nclen2 = CheckUtf8Char( &pS[3], nLen-3, echarset2, false );
+		}else {
+			nclen2 = 0;
+		}
 		// &pS[3]からの文字長が３でないか echarset2 が CHARSET_BINARY だった場合。
 		if( nclen2 != 3 || echarset2 == CHARSET_BINARY ){
 			// nclen1 と echarset1 を結果とする。
@@ -828,33 +710,6 @@ int CheckCesu8Char( const char* pS, const int nLen, ECharSet* peCharset, const i
 
 EndFunc:;
 
-	// 非文字と予約コードポイントを確認
-	if( nOption != 0 && eret_charset != CHARSET_BINARY ){
-		wchar32_t wc32;
-		if( nret_clen < 4 ){
-			wc32 = DecodeUtf8( reinterpret_cast<const unsigned char*>(pS), nret_clen );
-			if( (nOption & UC_NONCHARACTER) && IsUnicodeNoncharacter(wc32) ){
-				eret_charset = CHARSET_BINARY;
-				nret_clen = 1;
-			}
-		}else if( nret_clen == 6 ){
-			wc32 = DecodeUtf16Surrog(
-				static_cast<unsigned short>(DecodeUtf8(reinterpret_cast<const unsigned char*>(&pS[0]), 3) & 0x0000ffff),
-				static_cast<unsigned short>(DecodeUtf8(reinterpret_cast<const unsigned char*>(&pS[3]), 3) & 0x0000ffff) );
-			if( (nOption & UC_NONCHARACTER) && IsUnicodeNoncharacter(wc32) ){
-				eret_charset = CHARSET_BINARY;
-				nret_clen = 1;
-			}
-		}else{
-			// 保護コード
-			eret_charset = CHARSET_BINARY;
-			nret_clen = 1;
-		}
-	}
-
-	if( peCharset ){
-		*peCharset = eret_charset;
-	}
 	return nret_clen;
 }
 

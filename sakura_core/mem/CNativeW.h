@@ -27,6 +27,9 @@
 
 #include "CNative.h"
 #include "basis/SakuraBasis.h"
+#include "charset/codechecker.h"
+#include "charset/charcode.h"
+#include "env/DLLSHAREDATA.h"
 #include "debug/Debug2.h" //assert
 
 //! 文字列への参照を取得するインターフェース
@@ -137,8 +140,57 @@ public:
 
 public:
 	// -- -- staticインターフェース -- -- //
-	static CLogicInt GetSizeOfChar( const wchar_t* pData, int nDataLen, int nIdx ); //!< 指定した位置の文字がwchar_t何個分かを返す
-	static CHabaXInt GetHabaOfChar( const wchar_t* pData, int nDataLen, int nIdx );
+	static CLogicInt GetSizeOfChar( const wchar_t* pData, int nDataLen, int nIdx ) //!< 指定した位置の文字がwchar_t何個分かを返す
+	{
+		if( nIdx >= nDataLen )
+			return CLogicInt(0);
+
+		// サロゲートチェック					2008/7/5 Uchi
+		if (IsUTF16High(pData[nIdx])) {
+			if (nIdx + 1 < nDataLen && IsUTF16Low(pData[nIdx + 1])) {
+				// サロゲートペア 2個分
+				return CLogicInt(2);
+			}
+		}
+
+		return CLogicInt(1);
+	}
+	static CLogicInt GetSizeOfChar( wchar_t c, const wchar_t* pData, int nDataLen, int nIdx ) //!< 指定した位置の文字がwchar_t何個分かを返す
+	{
+		// サロゲートチェック					2008/7/5 Uchi
+		if (IsUTF16High(c)) {
+			if (nIdx + 1 < nDataLen && IsUTF16Low(pData[nIdx + 1])) {
+				// サロゲートペア 2個分
+				return CLogicInt(2);
+			}
+		}
+		return CLogicInt(1);
+	}
+
+	//! 指定した位置の文字の文字幅を返す
+	static __forceinline CHabaXInt GetHabaOfChar( const wchar_t* pData, int nDataLen, int nIdx )
+	{
+		//文字列範囲外なら 0
+		if( nIdx >= nDataLen ){
+			return CHabaXInt(0);
+		}
+		const wchar_t c = pData[nIdx];
+		// HACK:改行コードに対して1を返す
+		if( WCODE::IsLineDelimiter(c, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
+			return CHabaXInt(1);
+		}
+		// サロゲートチェック
+		if((static_cast<unsigned short>(c) & 0xf000) != 0xd000)
+			return CHabaXInt(WCODE::CalcPxWidthByFont(c));
+		else if(IsUTF16High(c) && nIdx + 1 < nDataLen && IsUTF16Low(pData[nIdx + 1])){
+			return CHabaXInt(WCODE::CalcPxWidthByFont2(pData + nIdx));
+		}else if(IsUTF16Low(c) && 0 < nIdx && IsUTF16High(pData[nIdx - 1])) {
+			// サロゲートペア（下位）
+			return CHabaXInt(0); // 不正位置
+		}
+		return CHabaXInt(WCODE::CalcPxWidthByFont(c));
+	}
+
 	static CKetaXInt GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx ); //!< 指定した位置の文字が半角何個分かを返す
 	static const wchar_t* GetCharNext( const wchar_t* pData, int nDataLen, const wchar_t* pDataCurrent ); //!< ポインタで示した文字の次にある文字の位置を返します
 	static const wchar_t* GetCharPrev( const wchar_t* pData, int nDataLen, const wchar_t* pDataCurrent ); //!< ポインタで示した文字の直前にある文字の位置を返します
@@ -147,7 +199,7 @@ public:
 	{
 		return GetKetaOfChar(cStr.GetPtr(), cStr.GetLength(), nIdx);
 	}
-	static CLayoutXInt GetColmOfChar( const wchar_t* pData, int nDataLen, int nIdx )
+	static __forceinline CLayoutXInt GetColmOfChar( const wchar_t* pData, int nDataLen, int nIdx )
 		{ return GetHabaOfChar(pData,nDataLen,nIdx);}
 	static CLayoutXInt GetColmOfChar( const CStringRef& cStr, int nIdx )
 		{ return GetHabaOfChar(cStr.GetPtr(), cStr.GetLength(), nIdx);}

@@ -36,6 +36,7 @@
 
 #include "_main/global.h"
 #include "convert/convert_util2.h"
+#include "charset/codeutil.h"
 
 /*!
 	認識する文字コード種別
@@ -440,9 +441,103 @@ int _CheckUtf16Char( const wchar_t*, const int, ECharSet*, const int nOption, co
 inline int CheckUtf16leChar( const wchar_t* p, const int n, ECharSet* e, const int o ) { return _CheckUtf16Char( p, n, e, o, false ); }
 inline int CheckUtf16beChar( const wchar_t* p, const int n, ECharSet* e, const int o ) { return _CheckUtf16Char( p, n, e, o, true ); }
 
-int CheckUtf8Char( const char*, const int, ECharSet*, const bool bAllow4byteCode, const int nOption );
+/*!
+	UTF-8 文字をチェック　(組み合わせ文字列考慮なし)
+
+	@sa CheckSjisChar()
+
+	@date 2008/11/01 syat UTF8ファイルで欧米の特殊文字が読み込めない不具合を修正
+*/
+inline
+int CheckUtf8Char( const char *pS, const int nLen, ECharSet &echarset, const bool bAllow4byteCode )
+{
+	__assume( nLen >= 1 );
+	echarset = CHARSET_UNI_NORMAL;
+	unsigned char c0 = pS[0];
+	if( c0 < 0x80 ){	// 第１バイトが 0aaabbbb の場合
+		return 1;	// １バイトコードである
+	}
+
+	int ncwidth = 1;
+	if( 1 < nLen && (c0 & 0xe0) == 0xc0 ){	// 第１バイトが110aaabbの場合
+		unsigned char c1 = pS[1];
+		// 第２バイトが10bbccccの場合
+		if( (c1 & 0xc0) == 0x80 ){
+			ncwidth = 2;	// ２バイトコードである
+			// 第１バイトがaaabb=0000xの場合（\u80未満に変換される）
+			if( (c0 & 0x1e) == 0 ){
+				// デコードできない.(往復変換不可領域)
+				echarset = CHARSET_BINARY;
+				ncwidth = 1;
+			}
+		}else {
+			// 規定外のフォーマット
+			echarset = CHARSET_BINARY;
+		}
+	}else
+	if( 2 < nLen && (c0 & 0xf0) == 0xe0 ){	// 第１バイトが1110aaaaの場合
+		unsigned char c1 = pS[1];
+		unsigned char c2 = pS[2];
+		// 第２バイトが10bbbbcc、第３バイトが10ccddddの場合
+		if( (c1 & 0xc0) == 0x80 && (c2 & 0xc0) == 0x80 ){
+			ncwidth = 3;	// ３バイトコードである
+			// 第１バイトのaaaa=0000、第２バイトのbbbb=0xxxの場合(\u800未満に変換される)
+			if( (c0 & 0x0f) == 0 && (c1 & 0x20) == 0 ){
+				// デコードできない.(往復変換不可領域)
+				echarset = CHARSET_BINARY;
+				ncwidth = 1;
+			}
+			//if( (c0 & 0x0f) == 0x0f && (c1 & 0x3f) == 0x3f && (c2 & 0x3e) == 0x3e ){
+			//	// Unicode でない文字(U+FFFE, U+FFFF)
+			//	charset = CHARSET_BINARY;
+			//	ncwidth = 1;
+			//}
+			if( bAllow4byteCode == true && (c0 & 0x0f) == 0x0d && (c1 & 0x20) != 0 ){
+				// サロゲート領域 (U+D800 から U+DFFF)
+				echarset = CHARSET_BINARY;
+				ncwidth = 1;
+			}
+		}else {
+			// 規定外のフォーマット
+			echarset = CHARSET_BINARY;
+		}
+	}else
+	if( 3 < nLen && (c0 & 0xf8) == 0xf0 ){	// 第１バイトが11110abbの場合
+		unsigned char c1 = pS[1];
+		unsigned char c2 = pS[2];
+		unsigned char c3 = pS[3];
+		// 第2バイトが10bbcccc、第3バイトが10ddddee、第4バイトが10ddddeeの場合
+		if( (c1 & 0xc0) == 0x80 && (c2 & 0xc0) == 0x80 && (c3 & 0xc0) == 0x80 ){
+			ncwidth = 4;  // ４バイトコードである
+			echarset = CHARSET_UNI_SURROG;  // サロゲートペアの文字（初期化）
+			// 第1バイトのabb=000、第2バイトのbb=00の場合（\u10000未満に変換される）
+			if( (c0 & 0x07) == 0 && (c1 & 0x30) == 0 ){
+				// デコードできない.(往復変換不可領域)
+				echarset = CHARSET_BINARY;
+				ncwidth = 1;
+			}
+			// １バイト目が 11110xxx=11110100のとき、
+			// かつ、1111 01xx : 10xx oooo の x のところに値があるとき
+			if( (c0 & 0x04) != 0 && ((c0 & 0x03) != 0 || (c1 & 0x30) != 0) ){
+				// 値が大きすぎ（0x10ffffより大きい）
+				echarset = CHARSET_BINARY;
+				ncwidth = 1;
+			}
+			if( bAllow4byteCode == false ){
+				echarset = CHARSET_BINARY;
+				ncwidth = 1;
+			}
+		}else {
+			// 規定外のフォーマット
+			echarset = CHARSET_BINARY;
+		}
+	}
+
+	return ncwidth;
+}
+
 int CheckUtf8Char2( const char*, const int, ECharSet*, const bool bAllow4byteCode, const int nOption );
-int CheckCesu8Char( const char*, const int, ECharSet*, const int nOption );
+int CheckCesu8Char( const char*, const int, ECharSet& );
 // UTF-7 フォーマットチェック
 int CheckUtf7DPart( const char*, const int, char **ppNextChar, bool *pbError );
 int CheckUtf7BPart( const char*, const int, char **ppNextChar, bool *pbError, const int nOption, bool *pbNoAddPoint = NULL );

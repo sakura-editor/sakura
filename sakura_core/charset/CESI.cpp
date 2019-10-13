@@ -429,7 +429,7 @@ void CESI::GetEncodingInfo_utf8( const char* pS, const int nLen )
 	pr = pS;
 	pr_end = pS + nLen;
 
-	for( ; 0 != (nret = CheckUtf8Char(pr, pr_end-pr, &echarset, true, 0)); pr += nret ){
+	for( ; (pr_end-pr > 0) && 0 != (nret = CheckUtf8Char(pr, pr_end-pr, echarset, true)); pr += nret ){
 		if( echarset != CHARSET_BINARY ){
 			if( 1 < nret ){
 				num_of_utf8_encoded_bytes += nret;
@@ -467,7 +467,7 @@ void CESI::GetEncodingInfo_cesu8( const char* pS, const int nLen )
 	pr = pS;
 	pr_end = pS + nLen;
 
-	for( ; 0 != (nret = CheckCesu8Char(pr, pr_end-pr, &echarset, 0)); pr += nret ){
+	for( ; (pr_end-pr > 0) && 0 != (nret = CheckCesu8Char(pr, pr_end-pr, echarset)); pr += nret ){
 		if( echarset != CHARSET_BINARY ){
 			if( 1 < nret ){
 				num_of_cesu8_encoded_bytes += nret;

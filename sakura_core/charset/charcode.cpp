@@ -360,19 +360,16 @@ namespace WCODE
 	static LocalCacheSelector selector;
 
 	//文字幅の動的計算。ピクセル幅
-	int CalcPxWidthByFont(wchar_t c)
+	inline int CalcPxWidthByFont(wchar_t c)
 	{
 		LocalCache* pcache = selector.GetCache();
 		// -- -- キャッシュが存在すれば、それをそのまま返す -- -- //
-		if(pcache->ExistCache(c))return pcache->GetCachePx(c);
-
-		int width;
+		int width = pcache->GetCachePx(c);
+		if (width) return width;
 		width = pcache->CalcPxWidthByFont(c);
-
 		// -- -- キャッシュ更新 -- -- //
-		pcache->SetCachePx(c,width);
-
-		return pcache->GetCachePx(c);
+		pcache->SetCachePx(c, width);
+		return width;
 	}
 
 	int CalcPxWidthByFont2(const wchar_t* pc){

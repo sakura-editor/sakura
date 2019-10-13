@@ -60,7 +60,8 @@ protected:
 
 	//変換の実装
 	// 2008.11.10 変換ロジックを書き直す
-	inline static int _Utf8ToUni_char( const unsigned char* pSrc, const int nSrcLen, unsigned short* pDst, bool bCESUMode );
+	inline static int _Utf8ToUni_char( const unsigned char* pSrc, const int nSrcLen, unsigned short* pDst );
+	inline static int _Utf8ToUni_char_CESUMode( const unsigned char* pSrc, const int nSrcLen, unsigned short* pDst );
 	static int Utf8ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool bCESU8Mode );
 	inline static int _UniToUtf8_char( const unsigned short* pSrc, const int nSrcLen, unsigned char* pDst, bool bCESU8Mode );
 	static int UniToUtf8( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pbError, bool bCESU8Mode );
@@ -74,44 +75,49 @@ protected:
 	高速化のため、インライン化
 
 */
-inline int CUtf8::_Utf8ToUni_char( const unsigned char* pSrc, const int nSrcLen, unsigned short* pDst, bool bCESUMode )
+inline int CUtf8::_Utf8ToUni_char( const unsigned char* pSrc, const int nSrcLen, unsigned short* pDst )
 {
 	int nret;
 
-	if( nSrcLen < 1 ){
-		return 0;
+	__assume(nSrcLen > 0);
+
+	// UTF-8 の処理
+	if( nSrcLen < 4 ){
+		pDst[0] = static_cast<unsigned short>(DecodeUtf8(pSrc, nSrcLen) & 0x0000ffff);
+		nret = 1;
+	}else if( nSrcLen == 4 ){
+		// UTF-8 サロゲート領域の処理
+		wchar32_t wc32 = DecodeUtf8( pSrc, 4 );
+		EncodeUtf16Surrog( wc32, pDst );
+		nret = 2;
+	}else{
+		// 保護コード
+		pDst[0] = L'?';
+		nret = 1;
 	}
 
-	if( bCESUMode != true ){
-		// UTF-8 の処理
-		if( nSrcLen < 4 ){
-			pDst[0] = static_cast<unsigned short>(DecodeUtf8(pSrc, nSrcLen) & 0x0000ffff);
-			nret = 1;
-		}else if( nSrcLen == 4 ){
-			// UTF-8 サロゲート領域の処理
-			wchar32_t wc32 = DecodeUtf8( pSrc, 4 );
-			EncodeUtf16Surrog( wc32, pDst );
-			nret = 2;
-		}else{
-			// 保護コード
-			pDst[0] = L'?';
-			nret = 1;
-		}
+	return nret;
+}
+
+inline int CUtf8::_Utf8ToUni_char_CESUMode( const unsigned char* pSrc, const int nSrcLen, unsigned short* pDst )
+{
+	int nret;
+
+	__assume(nSrcLen > 0);
+
+	// CESU-8 の処理
+	if( nSrcLen < 4 ){
+		pDst[0] = static_cast<unsigned short>(DecodeUtf8(pSrc, nSrcLen) & 0x0000ffff);
+		nret = 1;
+	}else if( nSrcLen == 6 ){
+		// CESU-8 サロゲート領域の処理
+		pDst[0] = static_cast<unsigned short>( DecodeUtf8(&pSrc[0], 3) & 0x0000ffff );
+		pDst[1] = static_cast<unsigned short>( DecodeUtf8(&pSrc[3], 3) & 0x0000ffff );
+		nret = 2;
 	}else{
-		// CESU-8 の処理
-		if( nSrcLen < 4 ){
-			pDst[0] = static_cast<unsigned short>(DecodeUtf8(pSrc, nSrcLen) & 0x0000ffff);
-			nret = 1;
-		}else if( nSrcLen == 6 ){
-			// CESU-8 サロゲート領域の処理
-			pDst[0] = static_cast<unsigned short>( DecodeUtf8(&pSrc[0], 3) & 0x0000ffff );
-			pDst[1] = static_cast<unsigned short>( DecodeUtf8(&pSrc[3], 3) & 0x0000ffff );
-			nret = 2;
-		}else{
-			// 保護コード
-			pDst[0] = L'?';
-			nret = 1;
-		}
+		// 保護コード
+		pDst[0] = L'?';
+		nret = 1;
 	}
 
 	return nret;

@@ -46,14 +46,28 @@ CLayoutInt CLayout::CalcLayoutWidth(const CLayoutMgr& cLayoutMgr) const
 	//計算
 	CLayoutInt nWidth = GetIndent();
 	CLogicInt nLen = GetLogicPos().x + m_nLength; //EOL=0,1
-	for(CLogicInt i=m_ptLogicPos.GetX2();i<nLen;){
-		if(pText[i]==WCODE::TAB || (pText[i] == L',' && cLayoutMgr.m_tsvInfo.m_nTsvMode == TSV_MODE_CSV)){
-			nWidth += cLayoutMgr.GetActualTsvSpace(nWidth, pText[i]);
+	if (cLayoutMgr.m_tsvInfo.m_nTsvMode == TSV_MODE_CSV) {
+		for(CLogicInt i=m_ptLogicPos.GetX2();i<nLen;){
+			wchar_t c = pText[i];
+			if(c==WCODE::TAB || pText[i] == L','){
+				nWidth += cLayoutMgr.GetActualTsvSpace(nWidth, c);
+			}
+			else{
+				nWidth += cLayoutMgr.GetLayoutXOfChar(pText, nTextLen, i);
+			}
+			i += t_max(CLogicInt(1), CNativeW::GetSizeOfChar(c, pText, nTextLen, i));
 		}
-		else{
-			nWidth += cLayoutMgr.GetLayoutXOfChar(pText, nTextLen, i);
+	}else {
+		for(CLogicInt i=m_ptLogicPos.GetX2();i<nLen;){
+			wchar_t c = pText[i];
+			if(c==WCODE::TAB){
+				nWidth += cLayoutMgr.GetActualTsvSpace(nWidth, c);
+			}
+			else{
+				nWidth += cLayoutMgr.GetLayoutXOfChar(pText, nTextLen, i);
+			}
+			i += t_max(CLogicInt(1), CNativeW::GetSizeOfChar(c, pText, nTextLen, i));
 		}
-		i += t_max(CLogicInt(1), CNativeW::GetSizeOfChar(pText, nTextLen, i));
 	}
 	return nWidth;
 }

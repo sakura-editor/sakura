@@ -99,6 +99,9 @@ inline wchar32_t DecodeUtf8( const unsigned char* pSrc, const int nSrcLen )
 	wchar32_t wc32 = 0;
 
 	switch( nSrcLen ){
+	case 1:
+		wc32 = pSrc[0];
+		break;
 	case 2:
 		wc32 |= static_cast<wchar32_t>(pSrc[0] & 0x1f) << 6;
 		wc32 |= static_cast<wchar32_t>(pSrc[1] & 0x3f);
@@ -114,8 +117,8 @@ inline wchar32_t DecodeUtf8( const unsigned char* pSrc, const int nSrcLen )
 		wc32 |= static_cast<wchar32_t>(pSrc[2] & 0x3f) << 6;
 		wc32 |= static_cast<wchar32_t>(pSrc[3] & 0x3f);
 		break;
-	default: // case 1:
-		wc32 = pSrc[0];
+	default:
+		NODEFAULT;
 	}
 
 	return wc32;

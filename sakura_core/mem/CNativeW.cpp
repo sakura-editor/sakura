@@ -185,23 +185,6 @@ void CNativeW::Replace( const wchar_t* pszFrom, int nFromLen, const wchar_t* psz
 //                  staticインターフェース                     //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//! 指定した位置の文字がwchar_t何個分かを返す
-CLogicInt CNativeW::GetSizeOfChar( const wchar_t* pData, int nDataLen, int nIdx )
-{
-	if( nIdx >= nDataLen )
-		return CLogicInt(0);
-
-	// サロゲートチェック					2008/7/5 Uchi
-	if (IsUTF16High(pData[nIdx])) {
-		if (nIdx + 1 < nDataLen && IsUTF16Low(pData[nIdx + 1])) {
-			// サロゲートペア 2個分
-			return CLogicInt(2);
-		}
-	}
-
-	return CLogicInt(1);
-}
-
 //! 指定した位置の文字が半角何個分かを返す
 CKetaXInt CNativeW::GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx )
 {
@@ -233,28 +216,6 @@ CKetaXInt CNativeW::GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx 
 	//全角文字なら 2
 	else
 		return CKetaXInt(2);
-}
-
-//! 指定した位置の文字の文字幅を返す
-CHabaXInt CNativeW::GetHabaOfChar( const wchar_t* pData, int nDataLen, int nIdx )
-{
-	//文字列範囲外なら 0
-	if( nIdx >= nDataLen ){
-		return CHabaXInt(0);
-	}
-	// HACK:改行コードに対して1を返す
-	if( WCODE::IsLineDelimiter(pData[nIdx], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
-		return CHabaXInt(1);
-	}
-
-	// サロゲートチェック
-	if(IsUTF16High(pData[nIdx]) && nIdx + 1 < nDataLen && IsUTF16Low(pData[nIdx + 1])){
-		return CHabaXInt(WCODE::CalcPxWidthByFont2(pData + nIdx));
-	}else if(IsUTF16Low(pData[nIdx]) && 0 < nIdx && IsUTF16High(pData[nIdx - 1])) {
-		// サロゲートペア（下位）
-		return CHabaXInt(0); // 不正位置
-	}
-	return CHabaXInt(WCODE::CalcPxWidthByFont(pData[nIdx]));
 }
 
 /* ポインタで示した文字の次にある文字の位置を返します */

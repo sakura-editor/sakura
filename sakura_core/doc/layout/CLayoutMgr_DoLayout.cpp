@@ -207,6 +207,11 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 	if(pWork->pcColorStrategy)pWork->pcColorStrategy->InitStrategyStatus();
 	CColorStrategyPool& color = *CColorStrategyPool::getInstance();
 
+	const bool bWordWrap = m_pTypeConfig->m_bWordWrap;
+	const bool bKinsokuKuto = m_pTypeConfig->m_bKinsokuKuto;
+	const bool bKinsokuHead = m_pTypeConfig->m_bKinsokuHead;
+	const bool bKinsokuTail = m_pTypeConfig->m_bKinsokuTail;
+	const bool bKinsokuRet = m_pTypeConfig->m_bKinsokuRet;
 	//1ロジック行を消化するまでループ
 	while( pWork->nPos < nLength ){
 		// インデント幅は_OnLineで計算済みなのでここからは削除
@@ -215,22 +220,22 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 		if(_DoKinsokuSkip(pWork, pfOnLine)){ }
 		else{
 			// 英文ワードラップをする
-			if( m_pTypeConfig->m_bWordWrap ){
+			if( bWordWrap ){
 				_DoWordWrap(pWork, pfOnLine);
 			}
 
 			// 句読点のぶらさげ
-			if( m_pTypeConfig->m_bKinsokuKuto ){
+			if( bKinsokuKuto ){
 				_DoKutoBurasage(pWork);
 			}
 
 			// 行頭禁則
-			if( m_pTypeConfig->m_bKinsokuHead ){
+			if( bKinsokuHead ){
 				_DoGyotoKinsoku(pWork, pfOnLine);
 			}
 
 			// 行末禁則
-			if( m_pTypeConfig->m_bKinsokuTail ){
+			if( bKinsokuTail ){
 				_DoGyomatsuKinsoku(pWork, pfOnLine);
 			}
 		}

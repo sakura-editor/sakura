@@ -23,6 +23,8 @@
 #define COMMENT_DELIMITER_NUM	3
 #define COMMENT_DELIMITER_BUFFERSIZE	16
 
+class CStringRef;
+
 /*! 行コメントデリミタを管理する
 
 	@note CLineCommentは、共有メモリSTypeConfigに含まれるので、メンバ変数は常に実体を持っていなければならない。

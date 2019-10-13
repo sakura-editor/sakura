@@ -54,10 +54,11 @@
 			warning_point(); \
 		} \
 	}
-
+	#define NODEFAULT   assert(0)
 #else
 	#define assert(exp)
 	#define assert_warning(exp)
+	#define NODEFAULT __assume(0)
 #endif
 
 #endif /* SAKURA_DEBUG2_69DB6343_0580_4F92_98D6_63216724B2D19_H_ */
