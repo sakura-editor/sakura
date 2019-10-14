@@ -575,10 +575,14 @@ const char* CFileLoad::GetNextLineCharCode(
 			}
 			else {
 				for( i = nbgn; i < nDataLen; ++i ){
-					if( pData[i] == '\r' || pData[i] == '\n' ){
+					char c = pData[i];
+					if( c != '\r' && c != '\n' ){
+						;
+					}
+					else {
 						pcEol->SetTypeByStringForFile( &pData[i], nDataLen - i );
 						neollen = pcEol->GetLen();
-						i = nDataLen;
+						break;
 					}
 				}
 			}
