@@ -68,6 +68,9 @@ public:
 		const CStringRef&	cLineStr
 	)
 	{
+		if (!m_bNeedToCheckColorMODE)
+			return;
+
 		//色終了
 		if(pcColorStrategy){
 			if(pcColorStrategy->EndColor(cLineStr,nPos)){
@@ -110,6 +113,7 @@ private:
 	CColor_SingleQuote*				m_pcSingleQuote;
 	CColor_DoubleQuote*				m_pcDoubleQuote;
 	CColor_Heredoc*					m_pcHeredoc;
+	bool	m_bNeedToCheckColorMODE;
 
 	CEditView*						m_pcView;
 

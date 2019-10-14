@@ -114,6 +114,8 @@ void CColorStrategyPool::OnChangeSetting(void)
 	m_pcSingleQuote = static_cast<CColor_SingleQuote*>(GetStrategyByColor(COLORIDX_SSTRING));	// シングルクォーテーション文字列
 	m_pcDoubleQuote = static_cast<CColor_DoubleQuote*>(GetStrategyByColor(COLORIDX_WSTRING));	// ダブルクォーテーション文字列
 
+	m_bNeedToCheckColorMODE = m_pcHeredoc || m_pcBlockComment1 || m_pcBlockComment2 || m_pcLineComment || m_pcSingleQuote || m_pcDoubleQuote;
+
 	// 色分けをしない場合に、処理をスキップできるように確認する
 	const STypeConfig& type = CEditDoc::GetInstance(0)->m_cDocType.GetDocumentAttribute();
 	EColorIndexType bSkipColorTypeTable[] = {

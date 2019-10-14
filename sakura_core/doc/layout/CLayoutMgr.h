@@ -338,28 +338,28 @@ protected:
 		CLayout* _CreateLayout(CLayoutMgr* mgr);
 	};
 	//関数ポインタ
-	typedef void (CLayoutMgr::*PF_OnLine)(SLayoutWork*);
+	typedef void (CLayoutMgr::*PF_OnLine)(SLayoutWork&);
 
 	//DoLayout用
-	bool _DoKinsokuSkip(SLayoutWork* pWork, PF_OnLine pfOnLine)
+	bool _DoKinsokuSkip(SLayoutWork& sWork, PF_OnLine pfOnLine)
 	{
-		if( KINSOKU_TYPE_NONE != pWork->eKinsokuType )
+		if( KINSOKU_TYPE_NONE != sWork.eKinsokuType )
 		{
 			//禁則処理の最後尾に達したら禁則処理中を解除する
-			if( pWork->nPos >= pWork->nWordBgn + pWork->nWordLen )
+			if( sWork.nPos >= sWork.nWordBgn + sWork.nWordLen )
 			{
-				if( pWork->eKinsokuType == KINSOKU_TYPE_KINSOKU_KUTO && pWork->nPos == pWork->nWordBgn + pWork->nWordLen )
+				if( sWork.eKinsokuType == KINSOKU_TYPE_KINSOKU_KUTO && sWork.nPos == sWork.nWordBgn + sWork.nWordLen )
 				{
-					int	nEol = pWork->pcDocLine->GetEol().GetLen();
+					int	nEol = sWork.pcDocLine->GetEol().GetLen();
 
-					if( ! (m_pTypeConfig->m_bKinsokuRet && (pWork->nPos == pWork->cLineStr.GetLength() - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
+					if( ! (m_pTypeConfig->m_bKinsokuRet && (sWork.nPos == sWork.cLineStr.GetLength() - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 					{
-						(this->*pfOnLine)(pWork);
+						(this->*pfOnLine)(sWork);
 					}
 				}
 
-				pWork->nWordLen = CLogicInt(0);
-				pWork->eKinsokuType = KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
+				sWork.nWordLen = CLogicInt(0);
+				sWork.eKinsokuType = KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
 			}
 			return true;
 		}
@@ -368,16 +368,16 @@ protected:
 		}
 	}
 
-	void _DoWordWrap(SLayoutWork* pWork, PF_OnLine pfOnLine);
-	void _DoKutoBurasage(SLayoutWork* pWork);
-	void _DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine);
-	void _DoGyomatsuKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine);
-	bool _DoTab(SLayoutWork* pWork, PF_OnLine pfOnLine);
-	void _MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine);
+	void _DoWordWrap(SLayoutWork& sWork, PF_OnLine pfOnLine);
+	void _DoKutoBurasage(SLayoutWork& sWork);
+	void _DoGyotoKinsoku(SLayoutWork& sWork, PF_OnLine pfOnLine);
+	void _DoGyomatsuKinsoku(SLayoutWork& sWork, PF_OnLine pfOnLine);
+	bool _DoTab(SLayoutWork& sWork, PF_OnLine pfOnLine);
+	void _MakeOneLine(SLayoutWork& sWork, PF_OnLine pfOnLine, const int flags);
 	//DoLayout用コア
-	void _OnLine1(SLayoutWork* pWork);
+	void _OnLine1(SLayoutWork& sWork);
 	//DoLayout_Range用コア
-	void _OnLine2(SLayoutWork* pWork);
+	void _OnLine2(SLayoutWork& sWork);
 
 private:
 	bool _ExistKinsokuKuto(wchar_t wc) const{ return m_pszKinsokuKuto_1.exist(wc); }

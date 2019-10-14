@@ -192,25 +192,26 @@ CKetaXInt CNativeW::GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx 
 	if( nIdx >= nDataLen )
 		return CKetaXInt(0);
 
+	const wchar_t c = pData[nIdx];
 	// サロゲートチェック BMP 以外は全角扱い		2008/7/5 Uchi
-	if (IsUTF16High(pData[nIdx])) {
+	if (IsUTF16High(c)) {
 		return CKetaXInt(2);	// 仮
 	}
-	if (IsUTF16Low(pData[nIdx])) {
+	if (IsUTF16Low(c)) {
 		if (nIdx > 0 && IsUTF16High(pData[nIdx - 1])) {
 			// サロゲートペア（下位）
 			return CKetaXInt(0);
 		}
 		// 単独（ブロークンペア）
 		// return CKetaXInt(2);
-		 if( IsBinaryOnSurrogate(pData[nIdx]) )
+		 if( IsBinaryOnSurrogate(c) )
 			return CKetaXInt(1);
 		else
 			return CKetaXInt(2);
 	}
 
 	//半角文字なら 1
-	if(WCODE::IsHankaku(pData[nIdx]) )
+	if(WCODE::IsHankaku(c) )
 		return CKetaXInt(1);
 
 	//全角文字なら 2
