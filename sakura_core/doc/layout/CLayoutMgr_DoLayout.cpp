@@ -176,6 +176,7 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 	if( 0 >	nEol_1 ){
 		nEol_1 = 0;
 	}
+	const wchar_t* pLineStr = pWork->cLineStr.GetPtr();
 	const int lineLength = pWork->cLineStr.GetLength();
 	CLogicInt nLength = lineLength - CLogicInt(nEol_1);
 
@@ -219,7 +220,7 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 		//@@@ 2002.09.22 YAZAKI
 		color.CheckColorMODE( pWork->pcColorStrategy, pWork->nPos, pWork->cLineStr );
 
-		if( pWork->cLineStr.At(pWork->nPos) == WCODE::TAB ){
+		if( pLineStr[pWork->nPos] == WCODE::TAB ){
 			if(_DoTab(pWork, pfOnLine)){
 				continue;
 			}
@@ -229,7 +230,7 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 				break;
 			}
 			// 2007.09.07 kobake   ロジック幅とレイアウト幅を区別
-			CLayoutInt nCharKetas = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
+			CLayoutInt nCharKetas = GetLayoutXOfChar( pLineStr, lineLength, pWork->nPos );
 //			if( 0 == nCharKetas ){				// 削除 サロゲートペア対策	2008/7/5 Uchi
 //				nCharKetas = CLayoutInt(1);
 //			}
