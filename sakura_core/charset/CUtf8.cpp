@@ -72,28 +72,30 @@ int CUtf8::Utf8ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool b
 			remainLen = pr_end - pr;
 		}
 	}else {
-		ptrdiff_t remainLen = pr_end - pr;
-		while (remainLen > 0){
-			// 文字をチェック
-			if (pr[0] < 0x80) { // 第１バイトが 0aaabbbb の場合、１バイトコード
-				*pw = pr[0];
+		while (pr < pr_end) {
+			wchar_t c = *pr;
+			if (c < 0x80) {
+				*pw++ = c;
 				++pr;
-				++pw;
-			}else {
-				nclen = CheckUtf8Char( reinterpret_cast<const char*>(pr), remainLen, echarset, true );
-				// 変換
-				if( echarset != CHARSET_BINARY ){
-					pw += _Utf8ToUni_char( pr, nclen, pw );
-					pr += nclen;
-				}else{
-					if( nclen != 1 ){	// 保護コード
-						nclen = 1;
-					}
-					pw += BinToText( pr, 1, pw );
-					++pr;
-				}
 			}
-			remainLen = pr_end - pr;
+			else {
+				break;
+			}
+		}
+		while (pr < pr_end) {
+			// 文字をチェック
+			nclen = CheckUtf8Char( reinterpret_cast<const char*>(pr), pr_end - pr, echarset, true );
+			// 変換
+			if( echarset != CHARSET_BINARY ){
+				pw += _Utf8ToUni_char( pr, nclen, pw );
+				pr += nclen;
+			}else{
+				if( nclen != 1 ){	// 保護コード
+					nclen = 1;
+				}
+				pw += BinToText( pr, 1, pw );
+				++pr;
+			}
 		}
 	}
 	return pw - reinterpret_cast<unsigned short*>(pDst);

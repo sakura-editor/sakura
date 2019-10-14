@@ -531,45 +531,56 @@ const char* CFileLoad::GetNextLineCharCode(
 				EOL_LS,
 				EOL_PS,
 			};
-			nLen = nDataLen;
-			for( i = nbgn; i < nDataLen; ++i ){
-				if( pData[i] == '\r' || pData[i] == '\n' ){
-					pcEol->SetTypeByStringForFile( &pData[i], nDataLen - i );
-					neollen = pcEol->GetLen();
-					break;
-				}
-				if( m_bEolEx ){
-					int k;
-					for( k = 0; k < (int)_countof(eEolEx); k++ ){
-						if( 0 != m_memEols[k].GetRawLength() && i + m_memEols[k].GetRawLength() - 1 < nDataLen
-								&& 0 == memcmp( m_memEols[k].GetRawPtr(), pData + i, m_memEols[k].GetRawLength()) ){
-							pcEol->SetType(eEolEx[k]);
-							neollen = m_memEols[k].GetRawLength();
+			if( m_bEolEx ){
+				for( i = nbgn; i < nDataLen; ++i ){
+					if( pData[i] == '\r' || pData[i] == '\n' ){
+						pcEol->SetTypeByStringForFile( &pData[i], nDataLen - i );
+						neollen = pcEol->GetLen();
+						break;
+					}
+					if( m_bEolEx ){
+						int k;
+						for( k = 0; k < (int)_countof(eEolEx); k++ ){
+							if( 0 != m_memEols[k].GetRawLength() && i + m_memEols[k].GetRawLength() - 1 < nDataLen
+									&& 0 == memcmp( m_memEols[k].GetRawPtr(), pData + i, m_memEols[k].GetRawLength()) ){
+								pcEol->SetType(eEolEx[k]);
+								neollen = m_memEols[k].GetRawLength();
+								break;
+							}
+						}
+						if( k != (int)_countof(eEolEx) ){
 							break;
 						}
 					}
-					if( k != (int)_countof(eEolEx) ){
-						break;
-					}
 				}
-			}
-			// UTF-8のNEL,PS,LS断片の検出
-			if( i == nDataLen && m_bEolEx ){
-				for( i = t_max(0, nDataLen - m_nMaxEolLen - 1); i < nDataLen; i++ ){
-					int k;
-					bool bSet = false;
-					for( k = 0; k < (int)_countof(eEolEx); k++ ){
-						int nCompLen = t_min(nDataLen - i, m_memEols[k].GetRawLength());
-						if( 0 != nCompLen && 0 == memcmp(m_memEols[k].GetRawPtr(), pData + i, nCompLen) ){
-							*pnBufferNext = t_max(*pnBufferNext, nCompLen);
-							bSet = true;
+				// UTF-8のNEL,PS,LS断片の検出
+				if( i == nDataLen ){
+					for( i = t_max(0, nDataLen - m_nMaxEolLen - 1); i < nDataLen; i++ ){
+						int k;
+						bool bSet = false;
+						for( k = 0; k < (int)_countof(eEolEx); k++ ){
+							int nCompLen = t_min(nDataLen - i, m_memEols[k].GetRawLength());
+							if( 0 != nCompLen && 0 == memcmp(m_memEols[k].GetRawPtr(), pData + i, nCompLen) ){
+								*pnBufferNext = t_max(*pnBufferNext, nCompLen);
+								bSet = true;
+							}
+						}
+						if( bSet ){
+							break;
 						}
 					}
-					if( bSet ){
-						break;
+					i = nDataLen;
+				}
+
+			}
+			else {
+				for( i = nbgn; i < nDataLen; ++i ){
+					if( pData[i] == '\r' || pData[i] == '\n' ){
+						pcEol->SetTypeByStringForFile( &pData[i], nDataLen - i );
+						neollen = pcEol->GetLen();
+						i = nDataLen;
 					}
 				}
-				i = nDataLen;
 			}
 		}
 		break;
