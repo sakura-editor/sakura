@@ -30,6 +30,7 @@
 #include "window/CEditWnd.h"
 #include "CGrepAgent.h"
 #include "view/colors/CColorStrategy.h"
+#include "view/colors/CColorStrategyPool.h"
 #include "view/figures/CFigureManager.h"
 #include "env/DllShareData.h"
 

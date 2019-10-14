@@ -1085,6 +1085,9 @@
     <ClInclude Include="..\sakura_core\mem\CPoolResource.h">
       <Filter>Cpp Source Files\mem</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\view\colors\CColorStrategyPool.h">
+      <Filter>Cpp Source Files\view\colors</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resource\auto_scroll_center.cur">
@@ -2251,6 +2254,9 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\dlg\CDlgOpenFile_CommonItemDialog.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\view\colors\CColorStrategyPool.cpp">
+      <Filter>Cpp Source Files\view\colors</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

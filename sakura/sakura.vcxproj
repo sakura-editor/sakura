@@ -529,6 +529,7 @@
     <ClInclude Include="..\sakura_core\view\CEditView.h" />
     <ClInclude Include="..\sakura_core\view\CEditView_Paint.h" />
     <ClInclude Include="..\sakura_core\view\colors\CColorStrategy.h" />
+    <ClInclude Include="..\sakura_core\view\colors\CColorStrategyPool.h" />
     <ClInclude Include="..\sakura_core\view\colors\CColor_Comment.h" />
     <ClInclude Include="..\sakura_core\view\colors\CColor_Found.h" />
     <ClInclude Include="..\sakura_core\view\colors\CColor_Heredoc.h" />
@@ -934,6 +935,7 @@
     <ClCompile Include="..\sakura_core\view\CEditView_Scroll.cpp" />
     <ClCompile Include="..\sakura_core\view\CEditView_Search.cpp" />
     <ClCompile Include="..\sakura_core\view\colors\CColorStrategy.cpp" />
+    <ClCompile Include="..\sakura_core\view\colors\CColorStrategyPool.cpp" />
     <ClCompile Include="..\sakura_core\view\colors\CColor_Comment.cpp" />
     <ClCompile Include="..\sakura_core\view\colors\CColor_Found.cpp" />
     <ClCompile Include="..\sakura_core\view\colors\CColor_Heredoc.cpp" />

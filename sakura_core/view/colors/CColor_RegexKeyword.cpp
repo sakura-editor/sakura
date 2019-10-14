@@ -26,6 +26,7 @@
 #include "StdAfx.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CColor_RegexKeyword.h"
+#include "CColorStrategyPool.h"
 
 bool CColor_RegexKeyword::BeginColor(const CStringRef& cStr, int nPos)
 {

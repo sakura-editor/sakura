@@ -8,6 +8,7 @@
 #include "charset/charcode.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"
+#include "view/colors/CColorStrategyPool.h"
 #include "util/window.h"
 #include "debug/CRunningTimer.h"
 
@@ -241,7 +242,7 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 		}
 
 		//@@@ 2002.09.22 YAZAKI
-		color.CheckColorMODE( &pWork->pcColorStrategy, pWork->nPos, pWork->cLineStr );
+		color.CheckColorMODE( pWork->pcColorStrategy, pWork->nPos, pWork->cLineStr );
 
 		if( pWork->cLineStr.At(pWork->nPos) == WCODE::TAB ){
 			if(_DoTab(pWork, pfOnLine)){

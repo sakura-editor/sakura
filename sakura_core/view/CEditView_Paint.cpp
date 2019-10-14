@@ -32,6 +32,7 @@
 #include "view/CViewFont.h"
 #include "view/CRuler.h"
 #include "view/colors/CColorStrategy.h"
+#include "view/colors/CColorStrategyPool.h"
 #include "view/colors/CColor_Found.h"
 #include "view/figures/CFigureManager.h"
 #include "types/CTypeSupport.h"

@@ -389,6 +389,7 @@ view/CViewParser.o \
 view/CViewSelect.o \
 view/DispPos.o \
 view/colors/CColorStrategy.o \
+view/colors/CColorStrategyPool.o \
 view/colors/CColor_Comment.o \
 view/colors/CColor_Found.o \
 view/colors/CColor_Heredoc.o \

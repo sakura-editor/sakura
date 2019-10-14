@@ -49,6 +49,7 @@
 #include "env/CSakuraEnvironment.h"
 // CColorStrategyは本来はCEditViewが必要だが、CEditWnd.hあたりでinclude済み
 #include "view/colors/CColorStrategy.h"
+#include "view/colors/CColorStrategyPool.h"
 #include "sakura_rc.h"
 
 using namespace std;

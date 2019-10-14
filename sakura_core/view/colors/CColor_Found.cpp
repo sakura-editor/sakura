@@ -2,6 +2,7 @@
 #include "StdAfx.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CColor_Found.h"
+#include "CColorStrategyPool.h"
 #include "types/CTypeSupport.h"
 #include "view/CViewSelect.h"
 #include <limits.h>

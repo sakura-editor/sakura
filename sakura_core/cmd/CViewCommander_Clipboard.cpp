@@ -21,6 +21,7 @@
 #include "CViewCommander.h"
 #include "CViewCommander_inline.h"
 #include "view/colors/CColorStrategy.h"
+#include "view/colors/CColorStrategyPool.h"
 #include "view/colors/CColor_Found.h"
 #include "uiparts/CWaitCursor.h"
 #include "util/os.h"
