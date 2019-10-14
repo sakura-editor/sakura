@@ -339,8 +339,35 @@ protected:
 	};
 	//関数ポインタ
 	typedef void (CLayoutMgr::*PF_OnLine)(SLayoutWork*);
+
 	//DoLayout用
-	bool _DoKinsokuSkip(SLayoutWork* pWork, PF_OnLine pfOnLine);
+	bool _DoKinsokuSkip(SLayoutWork* pWork, PF_OnLine pfOnLine)
+	{
+		if( KINSOKU_TYPE_NONE != pWork->eKinsokuType )
+		{
+			//禁則処理の最後尾に達したら禁則処理中を解除する
+			if( pWork->nPos >= pWork->nWordBgn + pWork->nWordLen )
+			{
+				if( pWork->eKinsokuType == KINSOKU_TYPE_KINSOKU_KUTO && pWork->nPos == pWork->nWordBgn + pWork->nWordLen )
+				{
+					int	nEol = pWork->pcDocLine->GetEol().GetLen();
+
+					if( ! (m_pTypeConfig->m_bKinsokuRet && (pWork->nPos == pWork->cLineStr.GetLength() - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
+					{
+						(this->*pfOnLine)(pWork);
+					}
+				}
+
+				pWork->nWordLen = CLogicInt(0);
+				pWork->eKinsokuType = KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
+			}
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
 	void _DoWordWrap(SLayoutWork* pWork, PF_OnLine pfOnLine);
 	void _DoKutoBurasage(SLayoutWork* pWork);
 	void _DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine);

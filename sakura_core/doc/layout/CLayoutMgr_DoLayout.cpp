@@ -67,33 +67,6 @@ CLayout* CLayoutMgr::SLayoutWork::_CreateLayout(CLayoutMgr* mgr)
 //                           部品                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-bool CLayoutMgr::_DoKinsokuSkip(SLayoutWork* pWork, PF_OnLine pfOnLine)
-{
-	if( KINSOKU_TYPE_NONE != pWork->eKinsokuType )
-	{
-		//禁則処理の最後尾に達したら禁則処理中を解除する
-		if( pWork->nPos >= pWork->nWordBgn + pWork->nWordLen )
-		{
-			if( pWork->eKinsokuType == KINSOKU_TYPE_KINSOKU_KUTO && pWork->nPos == pWork->nWordBgn + pWork->nWordLen )
-			{
-				int	nEol = pWork->pcDocLine->GetEol().GetLen();
-
-				if( ! (m_pTypeConfig->m_bKinsokuRet && (pWork->nPos == pWork->cLineStr.GetLength() - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
-				{
-					(this->*pfOnLine)(pWork);
-				}
-			}
-
-			pWork->nWordLen = CLogicInt(0);
-			pWork->eKinsokuType = KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
-		}
-		return true;
-	}
-	else{
-		return false;
-	}
-}
-
 void CLayoutMgr::_DoWordWrap(SLayoutWork* pWork, PF_OnLine pfOnLine)
 {
 	if( pWork->eKinsokuType == KINSOKU_TYPE_NONE )
@@ -203,11 +176,13 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 	if( 0 >	nEol_1 ){
 		nEol_1 = 0;
 	}
-	CLogicInt nLength = pWork->cLineStr.GetLength() - CLogicInt(nEol_1);
+	const int lineLength = pWork->cLineStr.GetLength();
+	CLogicInt nLength = lineLength - CLogicInt(nEol_1);
 
 	if(pWork->pcColorStrategy)pWork->pcColorStrategy->InitStrategyStatus();
 	CColorStrategyPool& color = *CColorStrategyPool::getInstance();
 
+	const auto maxLineLayout = GetMaxLineLayout();
 	const bool bWordWrap = m_pTypeConfig->m_bWordWrap;
 	const bool bKinsokuKuto = m_pTypeConfig->m_bKinsokuKuto;
 	const bool bKinsokuHead = m_pTypeConfig->m_bKinsokuHead;
@@ -250,7 +225,7 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 			}
 		}
 		else{
-			if( pWork->nPos >= pWork->cLineStr.GetLength() ){
+			if( pWork->nPos >= lineLength ){
 				break;
 			}
 			// 2007.09.07 kobake   ロジック幅とレイアウト幅を区別
@@ -259,10 +234,10 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 //				nCharKetas = CLayoutInt(1);
 //			}
 
-			if( pWork->nPosX + nCharKetas > GetMaxLineLayout() ){
+			if( pWork->nPosX + nCharKetas > maxLineLayout ){
 				if( pWork->eKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
 				{
-					if( ! (m_pTypeConfig->m_bKinsokuRet && (pWork->nPos == pWork->cLineStr.GetLength() - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
+					if( ! (bKinsokuRet && (pWork->nPos == lineLength - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 					{
 						(this->*pfOnLine)(pWork);
 						continue;
