@@ -175,76 +175,57 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork& sWork, PF_OnLine pfOnLine, const int 
 	CColorStrategyPool& color = *CColorStrategyPool::getInstance();
 
 	const auto maxLineLayout = GetMaxLineLayout();
-	if (!flags && !color.NeedToCheckColorMODE()) {
-		//1ロジック行を消化するまでループ
-		assert(sWork.nPos < nLength);
-		do {
-			if( pLineStr[sWork.nPos] != WCODE::TAB ){
-				CLayoutInt nCharKetas = GetLayoutXOfChar( pLineStr, lineLength, sWork.nPos );
-				if( sWork.nPosX + nCharKetas <= maxLineLayout ){
-					++sWork.nPos;
-					sWork.nPosX += nCharKetas;
-				}else {
-					(this->*pfOnLine)(sWork);
-				}
-			}else{
-				_DoTab(sWork, pfOnLine);
-			}
-		} while( sWork.nPos < nLength );
-	}
-	else {
-		//1ロジック行を消化するまでループ
-		while( sWork.nPos < nLength ){
-			// インデント幅は_OnLineで計算済みなのでここからは削除
-			if (flags) {
-				//禁則処理中ならスキップする	@@@ 2002.04.20 MIK
-				if(_DoKinsokuSkip(sWork, pfOnLine)){ }
-				else{
-					// 英文ワードラップをする
-					if(flags & ConfigFlag_WordWrap){
-						_DoWordWrap(sWork, pfOnLine);
-					}
-
-					// 句読点のぶらさげ
-					if(flags & ConfigFlag_KinsokuKuto){
-						_DoKutoBurasage(sWork);
-					}
-
-					// 行頭禁則
-					if(flags & ConfigFlag_KinsokuHead){
-						_DoGyotoKinsoku(sWork, pfOnLine);
-					}
-
-					// 行末禁則
-					if(flags & ConfigFlag_KinsokuTail){
-						_DoGyomatsuKinsoku(sWork, pfOnLine);
-					}
-				}
-			}
-			//@@@ 2002.09.22 YAZAKI
-			color.CheckColorMODE( sWork.pcColorStrategy, sWork.nPos, sWork.cLineStr );
-
-			if( pLineStr[sWork.nPos] == WCODE::TAB ){
-				_DoTab(sWork, pfOnLine);
-			}
+	//1ロジック行を消化するまでループ
+	while( sWork.nPos < nLength ){
+		// インデント幅は_OnLineで計算済みなのでここからは削除
+		if (flags) {
+			//禁則処理中ならスキップする	@@@ 2002.04.20 MIK
+			if(_DoKinsokuSkip(sWork, pfOnLine)){ }
 			else{
-				// 2007.09.07 kobake   ロジック幅とレイアウト幅を区別
-				CLayoutInt nCharKetas = GetLayoutXOfChar( pLineStr, lineLength, sWork.nPos );
-				if( sWork.nPosX + nCharKetas > maxLineLayout ){
-					if( sWork.eKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
+				// 英文ワードラップをする
+				if(flags & ConfigFlag_WordWrap){
+					_DoWordWrap(sWork, pfOnLine);
+				}
+
+				// 句読点のぶらさげ
+				if(flags & ConfigFlag_KinsokuKuto){
+					_DoKutoBurasage(sWork);
+				}
+
+				// 行頭禁則
+				if(flags & ConfigFlag_KinsokuHead){
+					_DoGyotoKinsoku(sWork, pfOnLine);
+				}
+
+				// 行末禁則
+				if(flags & ConfigFlag_KinsokuTail){
+					_DoGyomatsuKinsoku(sWork, pfOnLine);
+				}
+			}
+		}
+		//@@@ 2002.09.22 YAZAKI
+		color.CheckColorMODE( sWork.pcColorStrategy, sWork.nPos, sWork.cLineStr );
+
+		if( pLineStr[sWork.nPos] == WCODE::TAB ){
+			_DoTab(sWork, pfOnLine);
+		}
+		else{
+			// 2007.09.07 kobake   ロジック幅とレイアウト幅を区別
+			CLayoutInt nCharKetas = GetLayoutXOfChar( pLineStr, lineLength, sWork.nPos );
+			if( sWork.nPosX + nCharKetas > maxLineLayout ){
+				if( sWork.eKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
+				{
+					if( ! ((flags & ConfigFlag_KinsokuRet) && (sWork.nPos == lineLength - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 					{
-						if( ! ((flags & ConfigFlag_KinsokuRet) && (sWork.nPos == lineLength - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
-						{
-							(this->*pfOnLine)(sWork);
-							continue;
-						}
+						(this->*pfOnLine)(sWork);
+						continue;
 					}
 				}
-				sWork.nPos += 1;
-				sWork.nPosX += nCharKetas;
 			}
-		} // while
-	} // else
+			sWork.nPos += 1;
+			sWork.nPosX += nCharKetas;
+		}
+	} // while
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -315,44 +296,108 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 	if (m_pTypeConfig->m_bKinsokuTail) flags |= ConfigFlag_KinsokuTail;
 	if (m_pTypeConfig->m_bKinsokuRet) flags |= ConfigFlag_KinsokuRet;
 
-	while( NULL != sWork.pcDocLine ){
-		sWork.cLineStr		= sWork.pcDocLine->GetStringRefWithEOL();
+	CColorStrategyPool& color = *CColorStrategyPool::getInstance();
+	if (!flags && !color.NeedToCheckColorMODE()) {
 		sWork.eKinsokuType	= KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
-		sWork.nBgn			= CLogicInt(0);
-		sWork.nPos			= CLogicInt(0);
-		sWork.nWordBgn		= CLogicInt(0);
-		sWork.nWordLen		= CLogicInt(0);
-		sWork.nPosX			= CLayoutInt(0);	// 表示上のX位置
-		sWork.nIndent		= CLayoutInt(0);	// インデント幅
+		const auto maxLineLayout = GetMaxLineLayout();
+		while( NULL != sWork.pcDocLine ){
+			sWork.cLineStr		= sWork.pcDocLine->GetStringRefWithEOL();
+			sWork.nBgn			= CLogicInt(0);
+			sWork.nPos			= CLogicInt(0);
+			sWork.nWordBgn		= CLogicInt(0);
+			sWork.nWordLen		= CLogicInt(0);
+			sWork.nPosX			= CLayoutInt(0);	// 表示上のX位置
+			sWork.nIndent		= CLayoutInt(0);	// インデント幅
 
-		_MakeOneLine(sWork, &CLayoutMgr::_OnLine1, flags);
+			int	nEol = sWork.pcDocLine->GetEol().GetLen(); //########そのうち不要になる
+			int nEol_1 = nEol - 1;
+			if( 0 >	nEol_1 ){
+				nEol_1 = 0;
+			}
+			const wchar_t* pLineStr = sWork.cLineStr.GetPtr();
+			const int lineLength = sWork.cLineStr.GetLength();
+			CLogicInt nLength = lineLength - CLogicInt(nEol_1);
 
-		if( sWork.nPos - sWork.nBgn > 0 ){
-// 2002/03/13 novice
-			AddLineBottom( sWork._CreateLayout(this) );
-			sWork.colorPrev = sWork.pcColorStrategy->GetStrategyColorSafe();
-			sWork.exInfoPrev.SetColorInfo(sWork.pcColorStrategy->GetStrategyColorInfoSafe());
-		}
+			//1ロジック行を消化するまでループ
+			assert(sWork.nPos < nLength);
+			do {
+				if (pLineStr[sWork.nPos] != WCODE::TAB) {
+					CLayoutInt nCharKetas = GetLayoutXOfChar( pLineStr, lineLength, sWork.nPos );
+					if( sWork.nPosX + nCharKetas <= maxLineLayout ){
+						++sWork.nPos;
+						sWork.nPosX += nCharKetas;
+					}else {
+						// _OnLine1(sWork);
+						AddLineBottom( sWork._CreateLayout(this) );
+						sWork.pLayout = m_pLayoutBot;
+						sWork.colorPrev = COLORIDX_TEXT;
+						sWork.exInfoPrev.SetColorInfo(NULL);
+						sWork.nBgn = sWork.nPos;
+						sWork.nPosX = sWork.nIndent = (this->*m_getIndentOffset)( sWork.pLayout );
+					}
+				}
+				else {
+					_DoTab(sWork, &CLayoutMgr::_OnLine1);
+				}
+			} while( sWork.nPos < nLength );
 
-		// 次の行へ
-		sWork.nCurLine++;
-		sWork.pcDocLine = sWork.pcDocLine->GetNextLine();
-		
-		// 処理中のユーザー操作を可能にする
-		if( nListenerCount !=0 && 0 < nAllLineNum) {
-			DWORD currTime = GetTickCount();
-			DWORD diffTime = currTime - prevTime;
-			if( diffTime >= userInterfaceInterval ){
-				prevTime = currTime;
-				NotifyProgress(::MulDiv( sWork.nCurLine, 100 , nAllLineNum ) );
-				if( bBlockingHook ){
-					if( !::BlockingHook( NULL ) )return;
+			if( sWork.nPos - sWork.nBgn > 0 ){
+				AddLineBottom( sWork._CreateLayout(this) );
+				sWork.colorPrev = COLORIDX_TEXT;
+				sWork.exInfoPrev.SetColorInfo(NULL);
+			}
+			// 次の行へ
+			sWork.nCurLine++;
+			sWork.pcDocLine = sWork.pcDocLine->GetNextLine();
+
+			if( nListenerCount !=0 && 0 < nAllLineNum) {
+				DWORD currTime = GetTickCount();
+				DWORD diffTime = currTime - prevTime;
+				if( diffTime >= userInterfaceInterval ){
+					prevTime = currTime;
+					NotifyProgress(::MulDiv( sWork.nCurLine, 100 , nAllLineNum ) );
 				}
 			}
-		}
-
-// 2002/03/13 novice
+		} // while
 	}
+	else {
+		while( NULL != sWork.pcDocLine ){
+			sWork.cLineStr		= sWork.pcDocLine->GetStringRefWithEOL();
+			sWork.eKinsokuType	= KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
+			sWork.nBgn			= CLogicInt(0);
+			sWork.nPos			= CLogicInt(0);
+			sWork.nWordBgn		= CLogicInt(0);
+			sWork.nWordLen		= CLogicInt(0);
+			sWork.nPosX			= CLayoutInt(0);	// 表示上のX位置
+			sWork.nIndent		= CLayoutInt(0);	// インデント幅
+
+			_MakeOneLine(sWork, &CLayoutMgr::_OnLine1, flags);
+
+			if( sWork.nPos - sWork.nBgn > 0 ){
+				AddLineBottom( sWork._CreateLayout(this) );
+				sWork.colorPrev = sWork.pcColorStrategy->GetStrategyColorSafe();
+				sWork.exInfoPrev.SetColorInfo(sWork.pcColorStrategy->GetStrategyColorInfoSafe());
+			}
+
+			// 次の行へ
+			sWork.nCurLine++;
+			sWork.pcDocLine = sWork.pcDocLine->GetNextLine();
+		
+			// 処理中のユーザー操作を可能にする
+			if( nListenerCount !=0 && 0 < nAllLineNum) {
+				DWORD currTime = GetTickCount();
+				DWORD diffTime = currTime - prevTime;
+				if( diffTime >= userInterfaceInterval ){
+					prevTime = currTime;
+					NotifyProgress(::MulDiv( sWork.nCurLine, 100 , nAllLineNum ) );
+					if( bBlockingHook ){
+						if( !::BlockingHook( NULL ) )return;
+					}
+				}
+			}
+		} // while
+	} // else
+
 
 	// 2011.12.31 Botの色分け情報は最後に設定
 	m_nLineTypeBot = sWork.pcColorStrategy->GetStrategyColorSafe();
