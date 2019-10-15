@@ -360,8 +360,7 @@ namespace WCODE
 	static LocalCacheSelector selector;
 
 	//文字幅の動的計算。ピクセル幅
-	__forceinline
-	int CalcPxWidthByFont_(wchar_t c)
+	inline int CalcPxWidthByFont(wchar_t c)
 	{
 		LocalCache* pcache = selector.GetCache();
 		// -- -- キャッシュが存在すれば、それをそのまま返す -- -- //
@@ -372,12 +371,6 @@ namespace WCODE
 		pcache->SetCachePx(c, width);
 		return width;
 	}
-	//文字幅の動的計算。ピクセル幅
-	int CalcPxWidthByFont(wchar_t c)
-	{
-		return CalcPxWidthByFont_(c);
-	}
-
 
 	int CalcPxWidthByFont2(const wchar_t* pc){
 		LocalCache* pcache = selector.GetCache();
@@ -388,7 +381,7 @@ namespace WCODE
 	bool CalcHankakuByFont(wchar_t c)
 	{
 		LocalCache* pcache = selector.GetCache();
-		return pcache->IsHankakuByWidth(CalcPxWidthByFont_(c));
+		return pcache->IsHankakuByWidth(CalcPxWidthByFont(c));
 	}
 
 	// 文字の使用フォントを返す

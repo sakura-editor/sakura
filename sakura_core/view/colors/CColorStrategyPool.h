@@ -91,6 +91,7 @@ public:
 			if(m_pcDoubleQuote && m_pcDoubleQuote->BeginColor(cLineStr,nPos)){ pcColorStrategy = m_pcDoubleQuote; return; }
 		}
 	}
+	bool NeedToCheckColorMODE() const { return m_bNeedToCheckColorMODE; }
 
 	bool IsSkipBeforeLayout();	// レイアウトが行頭からチェックしなくていいか判定
 

@@ -47,23 +47,6 @@ static bool _GetKeywordLength(
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      部品ステータス                         //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-CLayout* CLayoutMgr::SLayoutWork::_CreateLayout(CLayoutMgr* mgr)
-{
-	return mgr->CreateLayout(
-		this->pcDocLine,
-		CLogicPoint(this->nBgn, this->nCurLine),
-		this->nPos - this->nBgn,
-		this->colorPrev,
-		this->nIndent,
-		this->nPosX,
-		this->exInfoPrev.DetachColorInfo()
-	);
-}
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           部品                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
@@ -192,65 +175,76 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork& sWork, PF_OnLine pfOnLine, const int 
 	CColorStrategyPool& color = *CColorStrategyPool::getInstance();
 
 	const auto maxLineLayout = GetMaxLineLayout();
-	//1ロジック行を消化するまでループ
-	while( sWork.nPos < nLength ){
-		// インデント幅は_OnLineで計算済みなのでここからは削除
-
-		if (flags) {
-			//禁則処理中ならスキップする	@@@ 2002.04.20 MIK
-			if(_DoKinsokuSkip(sWork, pfOnLine)){ }
-			else{
-				// 英文ワードラップをする
-				if(flags & ConfigFlag_WordWrap){
-					_DoWordWrap(sWork, pfOnLine);
+	if (!flags && !color.NeedToCheckColorMODE()) {
+		//1ロジック行を消化するまでループ
+		assert(sWork.nPos < nLength);
+		do {
+			if( pLineStr[sWork.nPos] != WCODE::TAB ){
+				CLayoutInt nCharKetas = GetLayoutXOfChar( pLineStr, lineLength, sWork.nPos );
+				if( sWork.nPosX + nCharKetas <= maxLineLayout ){
+					++sWork.nPos;
+					sWork.nPosX += nCharKetas;
+				}else {
+					(this->*pfOnLine)(sWork);
 				}
-
-				// 句読点のぶらさげ
-				if(flags & ConfigFlag_KinsokuKuto){
-					_DoKutoBurasage(sWork);
-				}
-
-				// 行頭禁則
-				if(flags & ConfigFlag_KinsokuHead){
-					_DoGyotoKinsoku(sWork, pfOnLine);
-				}
-
-				// 行末禁則
-				if(flags & ConfigFlag_KinsokuTail){
-					_DoGyomatsuKinsoku(sWork, pfOnLine);
-				}
+			}else{
+				_DoTab(sWork, pfOnLine);
 			}
-		}
+		} while( sWork.nPos < nLength );
+	}
+	else {
+		//1ロジック行を消化するまでループ
+		while( sWork.nPos < nLength ){
+			// インデント幅は_OnLineで計算済みなのでここからは削除
+			if (flags) {
+				//禁則処理中ならスキップする	@@@ 2002.04.20 MIK
+				if(_DoKinsokuSkip(sWork, pfOnLine)){ }
+				else{
+					// 英文ワードラップをする
+					if(flags & ConfigFlag_WordWrap){
+						_DoWordWrap(sWork, pfOnLine);
+					}
 
-		//@@@ 2002.09.22 YAZAKI
-		color.CheckColorMODE( sWork.pcColorStrategy, sWork.nPos, sWork.cLineStr );
+					// 句読点のぶらさげ
+					if(flags & ConfigFlag_KinsokuKuto){
+						_DoKutoBurasage(sWork);
+					}
 
-		if( pLineStr[sWork.nPos] == WCODE::TAB ){
-			if(_DoTab(sWork, pfOnLine)){
-				continue;
-			}
-		}
-		else{
-			// 2007.09.07 kobake   ロジック幅とレイアウト幅を区別
-			CLayoutInt nCharKetas = GetLayoutXOfChar( pLineStr, lineLength, sWork.nPos );
-//			if( 0 == nCharKetas ){				// 削除 サロゲートペア対策	2008/7/5 Uchi
-//				nCharKetas = CLayoutInt(1);
-//			}
+					// 行頭禁則
+					if(flags & ConfigFlag_KinsokuHead){
+						_DoGyotoKinsoku(sWork, pfOnLine);
+					}
 
-			if( sWork.nPosX + nCharKetas > maxLineLayout ){
-				if( sWork.eKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
-				{
-					if( ! ((flags & ConfigFlag_KinsokuRet) && (sWork.nPos == lineLength - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
-					{
-						(this->*pfOnLine)(sWork);
-						continue;
+					// 行末禁則
+					if(flags & ConfigFlag_KinsokuTail){
+						_DoGyomatsuKinsoku(sWork, pfOnLine);
 					}
 				}
 			}
-			sWork.nPos += 1;
-			sWork.nPosX += nCharKetas;
-		}
-	}
+			//@@@ 2002.09.22 YAZAKI
+			color.CheckColorMODE( sWork.pcColorStrategy, sWork.nPos, sWork.cLineStr );
+
+			if( pLineStr[sWork.nPos] == WCODE::TAB ){
+				_DoTab(sWork, pfOnLine);
+			}
+			else{
+				// 2007.09.07 kobake   ロジック幅とレイアウト幅を区別
+				CLayoutInt nCharKetas = GetLayoutXOfChar( pLineStr, lineLength, sWork.nPos );
+				if( sWork.nPosX + nCharKetas > maxLineLayout ){
+					if( sWork.eKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
+					{
+						if( ! ((flags & ConfigFlag_KinsokuRet) && (sWork.nPos == lineLength - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
+						{
+							(this->*pfOnLine)(sWork);
+							continue;
+						}
+					}
+				}
+				sWork.nPos += 1;
+				sWork.nPosX += nCharKetas;
+			}
+		} // while
+	} // else
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

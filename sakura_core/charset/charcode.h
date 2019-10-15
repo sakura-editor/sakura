@@ -248,7 +248,7 @@ namespace WCODE
 	//!文字が半角かどうかを取得(DLLSHARE/フォント依存)
 	bool CalcHankakuByFont(wchar_t c);
 	//!文字のpx幅を取得(DLLSHARE/フォント依存)
-	int CalcPxWidthByFont(wchar_t c);
+	inline int CalcPxWidthByFont(wchar_t c);
 	//!文字のpx幅を取得(DLLSHARE/フォント依存)
 	int  CalcPxWidthByFont2(const wchar_t* c);
 	//! 句読点か

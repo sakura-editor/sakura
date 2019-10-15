@@ -319,22 +319,6 @@ const CLayout* CLayoutMgr::SearchLineByLayoutY(
 	return NULL;
 }
 
-//@@@ 2002.09.23 YAZAKI CLayout*を作成するところは分離して、InsertLineNext()と共通化
-void CLayoutMgr::AddLineBottom( CLayout* pLayout )
-{
-	if(	CLayoutInt(0) == m_nLines ){
-		m_pLayoutBot = m_pLayoutTop = pLayout;
-		m_pLayoutTop->m_pPrev = NULL;
-	}else{
-		m_pLayoutBot->m_pNext = pLayout;
-		pLayout->m_pPrev = m_pLayoutBot;
-		m_pLayoutBot = pLayout;
-	}
-	pLayout->m_pNext = NULL;
-	m_nLines++;
-	return;
-}
-
 //@@@ 2002.09.23 YAZAKI CLayout*を作成するところは分離して、AddLineBottom()と共通化
 CLayout* CLayoutMgr::InsertLineNext( CLayout* pLayoutPrev, CLayout* pLayout )
 {

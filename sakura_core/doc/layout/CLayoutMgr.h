@@ -335,7 +335,7 @@ protected:
 		CLogicPoint		ptDelLogicalFrom;
 
 		//関数
-		CLayout* _CreateLayout(CLayoutMgr* mgr);
+		inline CLayout* _CreateLayout(CLayoutMgr* mgr);
 	};
 	//関数ポインタ
 	typedef void (CLayoutMgr::*PF_OnLine)(SLayoutWork&);
@@ -409,7 +409,7 @@ protected:
 	// 2009.08.28 nasukoji	nPosX引数追加
 	CLayout* CreateLayout( CDocLine* pCDocLine, CLogicPoint ptLogicPos, CLogicInt nLength, EColorIndexType nTypePrev, CLayoutInt nIndent, CLayoutInt nPosX, CLayoutColorInfo* );
 	CLayout* InsertLineNext( CLayout*, CLayout* );
-	void AddLineBottom( CLayout* );
+	inline void AddLineBottom( CLayout* );
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        メンバ変数                           //
@@ -460,6 +460,39 @@ protected:
 
 	DISALLOW_COPY_AND_ASSIGN(CLayoutMgr);
 };
+
+//@@@ 2002.09.23 YAZAKI CLayout*を作成するところは分離して、InsertLineNext()と共通化
+void CLayoutMgr::AddLineBottom( CLayout* pLayout )
+{
+	if(	CLayoutInt(0) == m_nLines ){
+		m_pLayoutBot = m_pLayoutTop = pLayout;
+		m_pLayoutTop->m_pPrev = NULL;
+	}else{
+		m_pLayoutBot->m_pNext = pLayout;
+		pLayout->m_pPrev = m_pLayoutBot;
+		m_pLayoutBot = pLayout;
+	}
+	pLayout->m_pNext = NULL;
+	m_nLines++;
+	return;
+}
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                      部品ステータス                         //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+CLayout* CLayoutMgr::SLayoutWork::_CreateLayout(CLayoutMgr* mgr)
+{
+	return mgr->CreateLayout(
+		this->pcDocLine,
+		CLogicPoint(this->nBgn, this->nCurLine),
+		this->nPos - this->nBgn,
+		this->colorPrev,
+		this->nIndent,
+		this->nPosX,
+		this->exInfoPrev.DetachColorInfo()
+	);
+}
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CLAYOUTMGR_H_ */

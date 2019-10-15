@@ -170,25 +170,28 @@ public:
 	//! 指定した位置の文字の文字幅を返す
 	static __forceinline CHabaXInt GetHabaOfChar( const wchar_t* pData, int nDataLen, int nIdx )
 	{
+		if( nIdx < nDataLen ){
+			const wchar_t c = pData[nIdx];
+			const CHabaXInt width = CHabaXInt(WCODE::CalcPxWidthByFont(c));
+			// HACK:改行コードに対して1を返す
+			if( WCODE::IsLineDelimiter(c, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
+				return CHabaXInt(1);
+			}
+			// サロゲートチェック
+			if((static_cast<unsigned short>(c) & 0xf000) != 0xd000)
+				return width;
+			else if(IsUTF16High(c) && nIdx + 1 < nDataLen && IsUTF16Low(pData[nIdx + 1])){
+				return CHabaXInt(WCODE::CalcPxWidthByFont2(pData + nIdx));
+			}else if(IsUTF16Low(c) && 0 < nIdx && IsUTF16High(pData[nIdx - 1])) {
+				// サロゲートペア（下位）
+				return CHabaXInt(0); // 不正位置
+			}
+			return width;
+		}
+		else {
 		//文字列範囲外なら 0
-		if( nIdx >= nDataLen ){
 			return CHabaXInt(0);
 		}
-		const wchar_t c = pData[nIdx];
-		// HACK:改行コードに対して1を返す
-		if( WCODE::IsLineDelimiter(c, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
-			return CHabaXInt(1);
-		}
-		// サロゲートチェック
-		if((static_cast<unsigned short>(c) & 0xf000) != 0xd000)
-			return CHabaXInt(WCODE::CalcPxWidthByFont(c));
-		else if(IsUTF16High(c) && nIdx + 1 < nDataLen && IsUTF16Low(pData[nIdx + 1])){
-			return CHabaXInt(WCODE::CalcPxWidthByFont2(pData + nIdx));
-		}else if(IsUTF16Low(c) && 0 < nIdx && IsUTF16High(pData[nIdx - 1])) {
-			// サロゲートペア（下位）
-			return CHabaXInt(0); // 不正位置
-		}
-		return CHabaXInt(WCODE::CalcPxWidthByFont(c));
 	}
 
 	static CKetaXInt GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx ); //!< 指定した位置の文字が半角何個分かを返す
