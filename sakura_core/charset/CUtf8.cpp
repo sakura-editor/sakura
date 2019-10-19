@@ -40,8 +40,8 @@ void CUtf8::GetEol(CMemory* pcmemEol, EEolType eEolType){
 */
 int CUtf8::Utf8ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool bCESU8Mode )
 {
-	const unsigned char *pr, *pr_end;
-	unsigned short *pw;
+	const unsigned char * __restrict pr, * __restrict pr_end;
+	unsigned short * __restrict pw;
 	int nclen;
 	ECharSet echarset;
 
@@ -72,16 +72,12 @@ int CUtf8::Utf8ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool b
 			remainLen = pr_end - pr;
 		}
 	}else {
-		while (pr < pr_end) {
-			wchar_t c = *pr;
-			if (c < 0x80) {
-				*pw++ = c;
-				++pr;
-			}
-			else {
-				break;
-			}
+		int i = 0;
+		while (i < nSrcLen && (pw[i] = pr[i]) < 0x80) {
+			++i;
 		}
+		pw += i;
+		pr += i;
 		while (pr < pr_end) {
 			// 文字をチェック
 			nclen = CheckUtf8Char( reinterpret_cast<const char*>(pr), pr_end - pr, echarset, true );

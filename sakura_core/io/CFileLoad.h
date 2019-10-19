@@ -68,7 +68,9 @@ public:
 	//! 1行データをロードする 順アクセス用
 	EConvertResult ReadLine(
 		CNativeW*	pUnicodeBuffer,	//!< [out] UNICODEデータ受け取りバッファ
-		CEol*		pcEol			//!< [i/o]
+		CEol*		pcEol,			//!< [i/o]
+		bool&		bHasNoTab,		//!< [out] タブ文字を含まない
+		bool&		bHalfwidthOnly	//!< [out] 半角文字のみ
 	);
 
 //	未実装関数郡
@@ -99,8 +101,23 @@ protected:
 	void ReadBufEmpty( void );	// バッファを空にする
 
 	// GetLextLine の 文字コード考慮版
-	const char* GetNextLineCharCode(const char*	pData, int nDataLen, int* pnLineLen, int* pnBgn, CEol* pcEol, int* pnEolLen, int* pnBufferNext);
-	EConvertResult ReadLine_core(CNativeW* pUnicodeBuffer, CEol* pcEol);
+	const char* GetNextLineCharCode(
+		const char*	pData,
+		int			nDataLen,
+		int*		pnLineLen,
+		int*		pnBgn,
+		CEol*		pcEol,
+		int*		pnEolLen,
+		int*		pnBufferNext,
+		bool&		bHasNoTab,
+		bool&		bHalfwidthOnly
+		);
+	EConvertResult ReadLine_core(
+		CNativeW*	pUnicodeBuffer,
+		CEol*		pcEol,
+		bool&		bHasNoTab,
+		bool&		bHalfwidthOnly
+		);
 
 	int Read(void* pBuf, size_t nSize); // inline
 	DWORD FilePointer(DWORD offset, DWORD origin); // inline

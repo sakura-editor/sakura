@@ -6,8 +6,8 @@
 #include "CSearchAgent.h"
 #include "extmodule/CBregexp.h"
 
-bool CBookmarkGetter::IsBookmarked() const{ return m_pcDocLine->m_sMark.m_cBookmarked; }
-void CBookmarkSetter::SetBookmark(bool bFlag){ m_pcDocLine->m_sMark.m_cBookmarked = bFlag; }
+bool CBookmarkGetter::IsBookmarked() const{ return m_pcDocLine->m_sMark.m_bBookmarked; }
+void CBookmarkSetter::SetBookmark(bool bFlag){ m_pcDocLine->m_sMark.m_bBookmarked = bFlag; }
 
 //!ブックマークの全解除
 /*

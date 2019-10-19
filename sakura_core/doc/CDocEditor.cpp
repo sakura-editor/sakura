@@ -163,22 +163,3 @@ void CDocEditor::SetImeMode( int mode )
 }
 //	To Here Nov. 20, 2000 genta
 
-/*!
-	末尾に行を追加
-
-	@version 1.5
-
-	@param pData    [in] 追加する文字列へのポインタ
-	@param nDataLen [in] 文字列の長さ。文字単位。
-	@param cEol     [in] 行末コード
-
-*/
-void CDocEditAgent::AddLineStrX( const wchar_t* pData, int nDataLen )
-{
-	//チェーン適用
-	CDocLine* pDocLine = m_pcDocLineMgr->AddNewLine();
-
-	//インスタンス設定
-	pDocLine->SetDocLineString(pData, nDataLen);
-}
-

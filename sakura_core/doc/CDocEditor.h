@@ -96,19 +96,5 @@ public:
 	bool			m_bIsDocModified;
 };
 
-class CDocEditAgent{
-public:
-	CDocEditAgent(CDocLineMgr* pcDocLineMgr) : m_pcDocLineMgr(pcDocLineMgr) { }
-
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           操作                              //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//	May 15, 2000 genta
-	void AddLineStrX( const wchar_t*, int );	/* 末尾に行を追加 Ver1.5 */
-
-private:
-	CDocLineMgr* m_pcDocLineMgr;
-};
-
 #endif /* SAKURA_CDOCEDITOR_1F90937C_B53A_490C_BCCF_74EFAEE628AC_H_ */
 /*[EOF]*/

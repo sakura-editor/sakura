@@ -90,21 +90,6 @@ CMemory::~CMemory()
 //                         実装補助                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/*
-|| バッファの最後にデータを追加する（protectメンバ
-*/
-void CMemory::_AddData( const void* pData, int nDataLen )
-{
-	if( NULL == m_pRawData ){
-		return;
-	}
-	memcpy( &m_pRawData[m_nRawLen], pData, nDataLen );
-	m_nRawLen += nDataLen;
-	m_pRawData[m_nRawLen]   = '\0';
-	m_pRawData[m_nRawLen+1] = '\0'; //終端'\0'を2つ付加する('\0''\0'==L'\0')。 2007.08.13 kobake 追加
-	return;
-}
-
 /* 等しい内容か */
 int CMemory::IsEqual(const CMemory& cmem1, const CMemory& cmem2)
 {
@@ -334,14 +319,6 @@ void CMemory::SetRawDataHoldBuffer( const CMemory& pcmemData )
 }
 
 /* バッファの最後にデータを追加する（publicメンバ）*/
-void CMemory::AppendRawData( const void* pData, int nDataLenBytes )
-{
-	if(nDataLenBytes<=0)return;
-	AllocBuffer( m_nRawLen + nDataLenBytes );
-	_AddData( pData, nDataLenBytes );
-}
-
-/* バッファの最後にデータを追加する（publicメンバ）*/
 void CMemory::AppendRawData( const CMemory* pcmemData )
 {
 	if( this == pcmemData ){
@@ -370,17 +347,3 @@ void CMemory::_AppendSz(const char* str)
 	_AddData(str,len);
 }
 
-void CMemory::_SetRawLength(int nLength)
-{
-	if (m_pRawData == NULL || m_nDataBufSize <= 0)
-	{
-		// バッファが確保されていない状態の場合、有効データサイズを 0 にする要求しか来ないはず
-		assert(nLength == 0);
-		return;
-	}
-	assert(m_nRawLen <= m_nDataBufSize-2);		// m_nRawLen を変更する前に必要な条件が成立しているか確認する
-	m_nRawLen = nLength;
-	assert(m_nRawLen <= m_nDataBufSize-2);		// m_nRawLen を変更した後も必要な条件が成立しているか確認する
-	m_pRawData[m_nRawLen  ]=0;
-	m_pRawData[m_nRawLen+1]=0; //終端'\0'を2つ付加する('\0''\0'==L'\0')。
-}

@@ -103,12 +103,22 @@ private:
 public:
 	//拡張情報 $$分離中
 	struct MarkType{
-		CLineModified	m_cModified;	//変更フラグ
-		CLineBookmarked	m_cBookmarked;	//ブックマーク
-		CLineFuncList	m_cFuncList;	//関数リストマーク
-		CLineDiffed		m_cDiffmarked;	//DIFF差分情報
-	};
-	MarkType m_sMark;
+		MarkType()
+			:
+			m_bBookmarked(false),
+			m_bFuncList(false),
+			m_bHasNoTab(false),
+			m_bHalfwidthOnly(false),
+			m_diffMark(MARK_DIFF_NONE)
+		{
+		}
+		CLineModified	m_cModified;	// 変更フラグ
+		bool m_bBookmarked : 1;			// ブックマーク
+		bool m_bFuncList : 1;			// 関数リストマーク
+		bool m_bHasNoTab : 1;			// タブ文字を含まない
+		bool m_bHalfwidthOnly : 1;		// 半角文字のみ
+		EDiffMark m_diffMark : 3;		// DIFF差分情報
+	} m_sMark;
 private:
 	CEol		m_cEol;		//!< 行末コード
 

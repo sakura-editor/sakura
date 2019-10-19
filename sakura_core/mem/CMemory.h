@@ -59,7 +59,7 @@ public:
 	void SetRawData(const CMemory& pcmemData);                     //!< バッファの内容を置き換える
 	void SetRawDataHoldBuffer( const void* pData, int nDataLen );    //!< バッファの内容を置き換える(バッファを保持)
 	void SetRawDataHoldBuffer(const CMemory& pcmemData);                     //!< バッファの内容を置き換える(バッファを保持)
-	void AppendRawData( const void* pData, int nDataLen ); //!< バッファの最後にデータを追加する
+	inline void AppendRawData( const void* pData, int nDataLen ); //!< バッファの最後にデータを追加する
 	void AppendRawData(const CMemory* pcmemData);                  //!< バッファの最後にデータを追加する
 	void Clean(){ _Empty(); }
 	void Clear(){ _Empty(); }
@@ -98,10 +98,10 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	void _Empty( void ); //!< 解放する。m_pRawDataはNULLになる。
-	void _AddData(const void* pData, int nDataLen);
+	inline void _AddData(const void* pData, int nDataLen);
 public:
 	void _AppendSz(const char* str);
-	void _SetRawLength(int nLength);
+	inline void _SetRawLength(int nLength);
 	void swap( CMemory& left ) noexcept {
 		std::swap( m_nDataBufSize, left.m_nDataBufSize );
 		std::swap( m_pRawData, left.m_pRawData );
@@ -121,6 +121,46 @@ private: // 2002/2/10 aroka アクセス権変更
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     inline関数の実装                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+/*
+|| バッファの最後にデータを追加する（protectメンバ
+*/
+void CMemory::_AddData( const void* pData, int nDataLen )
+{
+	assert(m_pRawData);
+	char* pDst = &m_pRawData[m_nRawLen];
+	__movsb((PBYTE)pDst, (const PBYTE)pData, nDataLen);
+	*(uint16_t*)(pDst + nDataLen) = 0;
+	m_nRawLen += nDataLen;
+	//memcpy(pDst, pData, nDataLen );
+	//m_pRawData[m_nRawLen]   = '\0';
+	//m_pRawData[m_nRawLen+1] = '\0'; //終端'\0'を2つ付加する('\0''\0'==L'\0')。 2007.08.13 kobake 追加
+	return;
+}
+
+void CMemory::_SetRawLength(int nLength)
+{
+	if (m_pRawData == NULL || m_nDataBufSize <= 0)
+	{
+		// バッファが確保されていない状態の場合、有効データサイズを 0 にする要求しか来ないはず
+		assert(nLength == 0);
+		return;
+	}
+	assert(m_nRawLen <= m_nDataBufSize-2);		// m_nRawLen を変更する前に必要な条件が成立しているか確認する
+	m_nRawLen = nLength;
+	assert(m_nRawLen <= m_nDataBufSize-2);		// m_nRawLen を変更した後も必要な条件が成立しているか確認する
+	*(uint16_t*)(&m_pRawData[m_nRawLen]) = 0;
+	//m_pRawData[m_nRawLen  ]=0;
+	//m_pRawData[m_nRawLen+1]=0; //終端'\0'を2つ付加する('\0''\0'==L'\0')。
+}
+
+/* バッファの最後にデータを追加する（publicメンバ）*/
+void CMemory::AppendRawData( const void* pData, int nDataLenBytes )
+{
+	if(nDataLenBytes<=0)return;
+	AllocBuffer( m_nRawLen + nDataLenBytes );
+	_AddData( pData, nDataLenBytes );
+}
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CMEMORY_H_ */

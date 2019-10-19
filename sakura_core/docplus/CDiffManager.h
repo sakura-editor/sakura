@@ -56,16 +56,6 @@ private:
 	bool	m_bIsDiffUse;		//!< DIFF差分表示実施中 @@@ 2002.05.25 MIK
 };
 
-//! 行に付加するDIFF情報
-class CLineDiffed{
-public:
-	CLineDiffed() : m_nDiffed(MARK_DIFF_NONE) { }
-	operator EDiffMark() const{ return m_nDiffed; }
-	CLineDiffed& operator = (EDiffMark e){ m_nDiffed = e; return *this; }
-private:
-	EDiffMark m_nDiffed;
-};
-
 //! 行のDIFF情報取得
 class CDiffLineGetter{
 public:

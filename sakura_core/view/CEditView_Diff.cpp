@@ -540,7 +540,9 @@ BOOL CEditView::MakeDiffTmpFile2( WCHAR* tmpName, const WCHAR* orgName, ECodeTyp
 		cfl.FileOpen( orgName, bBigFile, code, GetDllShareData().m_Common.m_sFile.GetAutoMIMEdecode(), &bBom );
 		CNativeW cLine;
 		CEol cEol;
-		while( RESULT_FAILURE != cfl.ReadLine( &cLine, &cEol ) ) {
+		bool bHasNoTab = false;
+		bool bHalfwidthOnly = false;
+		while( RESULT_FAILURE != cfl.ReadLine( &cLine, &cEol, bHasNoTab, bHalfwidthOnly ) ) {
 			const CLogicInt nLineLen = cLine.GetStringLength();
 			const wchar_t* pLineData= cLine.GetStringPtr();
 			if( 0 == nLineLen || NULL == pLineData ) break;

@@ -2298,13 +2298,13 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 				nRet = pcDocLine->m_sMark.m_cModified.GetSeq();
 				break;
 			case 2:
-				nRet = (pcDocLine->m_sMark.m_cBookmarked ? 1: 0);
+				nRet = (pcDocLine->m_sMark.m_bBookmarked ? 1: 0);
 				break;
 			case 3:
-				nRet = pcDocLine->m_sMark.m_cDiffmarked;
+				nRet = pcDocLine->m_sMark.m_diffMark;
 				break;
 			case 4:
-				nRet = (pcDocLine->m_sMark.m_cFuncList.GetFuncListMark() ? 1: 0 );
+				nRet = (pcDocLine->m_sMark.m_bFuncList ? 1: 0 );
 				break;
 			default:
 				return false;

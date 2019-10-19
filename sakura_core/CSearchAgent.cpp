@@ -1236,6 +1236,8 @@ prev_line:;
 				pCDocLine->m_sMark = markNext;
 			}
 			pCDocLine->SetDocLineStringMove(&tmp);
+			pCDocLine->m_sMark.m_bHasNoTab = false;
+			pCDocLine->m_sMark.m_bHalfwidthOnly = false;
 			if( !bLastEOLReplace || !bSetMark ){
 				CModifyVisitor().SetLineModified(pCDocLine, nSeq);
 			}

@@ -869,7 +869,9 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 		// ReadLineはファイルから 文字コード変換された1行を読み出します
 		// エラー時はthrow CError_FileRead を投げます
 		CNativeW cBuf;
-		while( RESULT_FAILURE != cfl.ReadLine( &cBuf, &cEol ) ){
+		bool bHasNoTab = false;
+		bool bHalfwidthOnly = false;
+		while( RESULT_FAILURE != cfl.ReadLine( &cBuf, &cEol, bHasNoTab, bHalfwidthOnly ) ){
 
 			const wchar_t*	pLine = cBuf.GetStringPtr();
 			int			nLineLen = cBuf.GetStringLength();

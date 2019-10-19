@@ -320,27 +320,45 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 
 			//1ロジック行を消化するまでループ
 			assert(sWork.nPos < nLength);
-			do {
-				if (pLineStr[sWork.nPos] != WCODE::TAB) {
-					CLayoutInt nCharKetas = GetLayoutXOfChar( pLineStr, lineLength, sWork.nPos );
-					if( sWork.nPosX + nCharKetas <= maxLineLayout ){
-						++sWork.nPos;
-						sWork.nPosX += nCharKetas;
+			if (sWork.pcDocLine->m_sMark.m_bHasNoTab && sWork.pcDocLine->m_sMark.m_bHalfwidthOnly) {
+				Int nCharKetas = GetLayoutXOfChar( pLineStr, lineLength, sWork.nPos );
+				sWork.colorPrev = COLORIDX_TEXT;
+				sWork.exInfoPrev.SetColorInfo(NULL);
+				while (CLogicInt nRemain = nLength - sWork.nPos) {
+					auto nchars = std::min<Int>((maxLineLayout - sWork.nPosX) / nCharKetas, nRemain);
+					if (nchars >= 1) {
+						sWork.nPos += nchars;
+						sWork.nPosX += nchars * nCharKetas;
 					}else {
 						// _OnLine1(sWork);
 						AddLineBottom( sWork._CreateLayout(this) );
 						sWork.pLayout = m_pLayoutBot;
-						sWork.colorPrev = COLORIDX_TEXT;
-						sWork.exInfoPrev.SetColorInfo(NULL);
 						sWork.nBgn = sWork.nPos;
 						sWork.nPosX = sWork.nIndent = (this->*m_getIndentOffset)( sWork.pLayout );
 					}
 				}
-				else {
-					_DoTab(sWork, &CLayoutMgr::_OnLine1);
-				}
-			} while( sWork.nPos < nLength );
-
+			}else {
+				do {
+					if (pLineStr[sWork.nPos] != WCODE::TAB) {
+						CLayoutInt nCharKetas = GetLayoutXOfChar( pLineStr, lineLength, sWork.nPos );
+						if( sWork.nPosX + nCharKetas <= maxLineLayout ){
+							++sWork.nPos;
+							sWork.nPosX += nCharKetas;
+						}else {
+							// _OnLine1(sWork);
+							AddLineBottom( sWork._CreateLayout(this) );
+							sWork.pLayout = m_pLayoutBot;
+							sWork.colorPrev = COLORIDX_TEXT;
+							sWork.exInfoPrev.SetColorInfo(NULL);
+							sWork.nBgn = sWork.nPos;
+							sWork.nPosX = sWork.nIndent = (this->*m_getIndentOffset)( sWork.pLayout );
+						}
+					}
+					else {
+						_DoTab(sWork, &CLayoutMgr::_OnLine1);
+					}
+				} while( sWork.nPos < nLength );
+			}
 			if( sWork.nPos - sWork.nBgn > 0 ){
 				AddLineBottom( sWork._CreateLayout(this) );
 				sWork.colorPrev = COLORIDX_TEXT;

@@ -106,13 +106,18 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		EConvertResult	eRead;
 		constexpr DWORD timeInterval = 33;
 		ULONGLONG nextTime = GetTickCount64() + timeInterval;
-		while( RESULT_FAILURE != (eRead = cfl.ReadLine( &cUnicodeBuffer, &cEol )) ){
+		bool bHasNoTab = false;
+		bool bHalfwidthOnly = false;
+		while( RESULT_FAILURE != (eRead = cfl.ReadLine( &cUnicodeBuffer, &cEol, bHasNoTab, bHalfwidthOnly )) ){
 			if(eRead==RESULT_LOSESOME){
 				eRet = RESULT_LOSESOME;
 			}
-			const wchar_t*	pLine = cUnicodeBuffer.GetStringPtr();
-			int		nLineLen = cUnicodeBuffer.GetStringLength();
-			CDocEditAgent(pcDocLineMgr).AddLineStrX( pLine, nLineLen );
+			const wchar_t* pLine = cUnicodeBuffer.GetStringPtr();
+			int nLineLen = cUnicodeBuffer.GetStringLength();
+			CDocLine* pDocLine = pcDocLineMgr->AddNewLine();
+			pDocLine->SetDocLineString(pLine, nLineLen);
+			pDocLine->m_sMark.m_bHasNoTab = bHasNoTab;
+			pDocLine->m_sMark.m_bHalfwidthOnly = bHalfwidthOnly;
 			//経過通知
 			ULONGLONG currTime = GetTickCount64();
 			if(currTime >= nextTime){

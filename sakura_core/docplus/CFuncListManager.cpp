@@ -30,15 +30,15 @@
 
 bool CFuncListManager::IsLineFuncList(const CDocLine* pcDocLine, bool bFlag) const
 {
-	return pcDocLine->m_sMark.m_cFuncList.GetFuncListMark() != bFlag;
+	return pcDocLine->m_sMark.m_bFuncList != bFlag;
 }
 bool CFuncListManager::GetLineFuncList(const CDocLine* pcDocLine) const
 {
-	return pcDocLine->m_sMark.m_cFuncList.GetFuncListMark();
+	return pcDocLine->m_sMark.m_bFuncList;
 }
 void CFuncListManager::SetLineFuncList(CDocLine* pcDocLine, bool bFlag)
 {
-	pcDocLine->m_sMark.m_cFuncList = bFlag;
+	pcDocLine->m_sMark.m_bFuncList = bFlag;
 }
 
 /*! 差分検索

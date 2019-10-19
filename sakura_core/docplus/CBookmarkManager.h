@@ -33,16 +33,6 @@ class CBregexp;
 
 #include "CSearchAgent.h"
 
-//! 行に付加するブックマーク情報
-class CLineBookmarked{
-public:
-	CLineBookmarked() : m_bBookmarked(false) { }
-	operator bool() const{ return m_bBookmarked; }
-	CLineBookmarked& operator=(bool b){ m_bBookmarked = b; return *this; }
-private:
-	bool m_bBookmarked;
-};
-
 //! 行のブックマーク情報の取得
 class CBookmarkGetter{
 public:

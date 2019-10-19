@@ -8,7 +8,7 @@
 //                     CDiffLineGetter                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-EDiffMark CDiffLineGetter::GetLineDiffMark() const{ return (EDiffMark)m_pcDocLine->m_sMark.m_cDiffmarked; }
+EDiffMark CDiffLineGetter::GetLineDiffMark() const{ return (EDiffMark)m_pcDocLine->m_sMark.m_diffMark; }
 
 /*! 行の差分マークに対応した色を返す -> pnColorIndex
 	
@@ -106,7 +106,7 @@ bool CDiffLineGetter::DrawDiffMark(CGraphics& gr, int y, int nLineHeight, COLORR
 //                     CDiffLineSetter                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-void CDiffLineSetter::SetLineDiffMark(EDiffMark mark){ m_pcDocLine->m_sMark.m_cDiffmarked = mark; }
+void CDiffLineSetter::SetLineDiffMark(EDiffMark mark){ m_pcDocLine->m_sMark.m_diffMark = mark; }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       CDiffLineMgr                          //
@@ -121,7 +121,7 @@ void CDiffLineMgr::ResetAllDiffMark()
 	CDocLine* pDocLine = m_pcDocLineMgr->GetDocLineTop();
 	while( pDocLine )
 	{
-		pDocLine->m_sMark.m_cDiffmarked = MARK_DIFF_NONE;
+		pDocLine->m_sMark.m_diffMark = MARK_DIFF_NONE;
 		pDocLine = pDocLine->GetNextLine();
 	}
 

@@ -29,20 +29,6 @@
 class CDocLine;
 class CDocLineMgr;
 
-//! 行に付加するModified情報
-class CLineFuncList{
-public:
-	CLineFuncList() : m_bFuncList(false) { }
-	bool GetFuncListMark() const { return m_bFuncList; }
-	CLineFuncList& operator = (bool bSet)
-	{
-		m_bFuncList = bSet;
-		return *this;
-	}
-private:
-	bool m_bFuncList;
-};
-
 //! 行全体のFuncList情報アクセサ
 class CFuncListManager{
 public:

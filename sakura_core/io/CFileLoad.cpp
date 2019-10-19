@@ -299,14 +299,19 @@ void CFileLoad::FileClose( void )
 /*! 1行読み込み
 	UTF-7場合、データ内のNEL,PS,LS等の改行までを1行として取り出す
 */
-EConvertResult CFileLoad::ReadLine( CNativeW* pUnicodeBuffer, CEol* pcEol )
+EConvertResult CFileLoad::ReadLine(
+	CNativeW*	pUnicodeBuffer,
+	CEol*		pcEol,
+	bool&		bHasNoTab,
+	bool&		bHalfwidthOnly
+	)
 {
 	if( m_CharCode != CODE_UTF7 && m_CharCode != CP_UTF7 ){
-		return ReadLine_core( pUnicodeBuffer, pcEol );
+		return ReadLine_core( pUnicodeBuffer, pcEol, bHasNoTab, bHalfwidthOnly );
 	}
 	if( m_nReadOffset2 == m_cLineTemp.GetStringLength() ){
 		CEol cEol;
-		EConvertResult e = ReadLine_core( &m_cLineTemp, &cEol );
+		EConvertResult e = ReadLine_core( &m_cLineTemp, &cEol, bHasNoTab, bHalfwidthOnly );
 		if( e == RESULT_FAILURE ){
 			pUnicodeBuffer->_GetMemory()->SetRawDataHoldBuffer( L"", 0 );
 			*pcEol = cEol;
@@ -345,7 +350,9 @@ EConvertResult CFileLoad::ReadLine( CNativeW* pUnicodeBuffer, CEol* pcEol )
 */
 EConvertResult CFileLoad::ReadLine_core(
 	CNativeW*	pUnicodeBuffer,	//!< [out] UNICODEデータ受け取りバッファ。改行も含めて読み取る。
-	CEol*		pcEol			//!< [i/o]
+	CEol*		pcEol,			//!< [i/o]
+	bool&		bHasNoTab,
+	bool&		bHalfwidthOnly
 )
 {
 	EConvertResult eRet = RESULT_COMPLETE;
@@ -372,7 +379,9 @@ EConvertResult CFileLoad::ReadLine_core(
 			&m_nReadBufOffSet, //[i/o]オフセット
 			pcEol,
 			&nEolLen,
-			&nBufferNext
+			&nBufferNext,
+			bHasNoTab,
+			bHalfwidthOnly
 		);
 		if(pLine==NULL)break;
 
@@ -505,7 +514,9 @@ const char* CFileLoad::GetNextLineCharCode(
 	int*		pnBgn,		//!< [i/o]	検索文字列のバイト単位のオフセット位置
 	CEol*		pcEol,		//!< [i/o]	EOL
 	int*		pnEolLen,	//!< [out]	EOLのバイト数 (Unicodeで困らないように)
-	int*		pnBufferNext	//!< [out]	次回持越しバッファ長(EOLの断片)
+	int*		pnBufferNext,	//!< [out]	次回持越しバッファ長(EOLの断片)
+	bool&		bHasNoTab,		//!< [out] タブ文字を含まない
+	bool&		bHalfwidthOnly	//!< [out] 半角文字のみ
 ){
 	int nbgn = *pnBgn;
 	int i;
@@ -574,17 +585,26 @@ const char* CFileLoad::GetNextLineCharCode(
 
 			}
 			else {
-				for( i = nbgn; i < nDataLen; ++i ){
+				bool bHasTab = false;
+				bool bOnlyASCII = true;
+				for(i = nbgn; i < nDataLen; ++i) {
 					char c = pData[i];
-					if( c != '\r' && c != '\n' ){
-						;
+					if (c >= 0) {
+						if (c == '\r' || c == '\n') {
+							pcEol->SetTypeByStringForFile( &pData[i], nDataLen - i );
+							neollen = pcEol->GetLen();
+							break;
+						}
+						else if (c == '\t') {
+							bHasTab = true;
+						}
 					}
 					else {
-						pcEol->SetTypeByStringForFile( &pData[i], nDataLen - i );
-						neollen = pcEol->GetLen();
-						break;
+						bOnlyASCII = false;
 					}
 				}
+				bHasNoTab = !bHasTab;
+				bHalfwidthOnly = bOnlyASCII;
 			}
 		}
 		break;
