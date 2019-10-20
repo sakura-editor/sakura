@@ -366,7 +366,6 @@ util/tchar_convert.o \
 util/tchar_printf.o \
 util/tchar_template.o \
 util/window.o \
-util/x86_x64_instruction_set.o \
 view/CCaret.o \
 view/CEditView.o \
 view/CEditView_Cmdgrep.o \

@@ -2267,9 +2267,6 @@
     <ClCompile Include="..\sakura_core\view\colors\CColorStrategyPool.cpp">
       <Filter>Cpp Source Files\view\colors</Filter>
     </ClCompile>
-    <ClCompile Include="..\sakura_core\util\x86_x64_instruction_set.cpp">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClCompile>
     <ClCompile Include="..\sakura_core\mem\rpmalloc\rpmalloc.c">
       <Filter>Cpp Source Files\mem\rpmalloc</Filter>
     </ClCompile>

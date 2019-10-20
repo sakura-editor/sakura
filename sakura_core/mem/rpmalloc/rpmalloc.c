@@ -38,11 +38,11 @@
 #endif
 #ifndef ENABLE_OVERRIDE
 //! Override standard library malloc/free and new/delete entry points
-#define ENABLE_OVERRIDE           1
+#define ENABLE_OVERRIDE           0
 #endif
 #ifndef ENABLE_PRELOAD
 //! Support preloading
-#define ENABLE_PRELOAD            1
+#define ENABLE_PRELOAD            0
 #endif
 #ifndef DISABLE_UNMAP
 //! Disable unmapping memory pages

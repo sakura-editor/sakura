@@ -36,11 +36,21 @@
 
 #include "StdAfx.h"
 #include "mem/CMemory.h"
+#include "mem/rpmalloc/rpmalloc.h"
 #include "_main/global.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+namespace {
+struct Initer {
+	Initer() {
+		rpmalloc_initialize();
+	}
+
+} initer_;
+}// namespace {
 
 /*!
  * @brief デフォルトコンストラクタ
@@ -241,17 +251,17 @@ void CMemory::AllocBuffer( int nNewDataLen )
 
 	if( m_nDataBufSize == 0 ){
 		/* 未確保の状態 */
-		pWork = malloc_char( nWorkLen );
+		pWork = (char*)rpmalloc( nWorkLen );
 	}else{
 		/* 現在のバッファサイズより大きくなった場合のみ再確保する */
 		if( m_nDataBufSize < nWorkLen ){
 			// 2014.06.25 有効データ長が0の場合はfree & malloc
 			if( m_nRawLen == 0 ){
-				free( m_pRawData );
+				rpfree( m_pRawData );
 				m_pRawData = NULL;
-				pWork = malloc_char( nWorkLen );
+				pWork = (char*)rpmalloc( nWorkLen );
 			}else{
-				pWork = (char*)realloc( m_pRawData, nWorkLen );
+				pWork = (char*)rprealloc( m_pRawData, nWorkLen );
 			}
 		}else{
 			return;
@@ -333,7 +343,7 @@ void CMemory::AppendRawData( const CMemory* pcmemData )
 
 void CMemory::_Empty( void )
 {
-	free( m_pRawData );
+	rpfree( m_pRawData );
 	m_pRawData = NULL;
 	m_nDataBufSize = 0;
 	m_nRawLen = 0;

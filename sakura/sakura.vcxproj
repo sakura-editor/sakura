@@ -927,7 +927,6 @@
     <ClCompile Include="..\sakura_core\util\tchar_printf.cpp" />
     <ClCompile Include="..\sakura_core\util\tchar_template.cpp" />
     <ClCompile Include="..\sakura_core\util\window.cpp" />
-    <ClCompile Include="..\sakura_core\util\x86_x64_instruction_set.cpp" />
     <ClCompile Include="..\sakura_core\view\CCaret.cpp" />
     <ClCompile Include="..\sakura_core\view\CEditView.cpp" />
     <ClCompile Include="..\sakura_core\view\CEditView_Cmdgrep.cpp" />

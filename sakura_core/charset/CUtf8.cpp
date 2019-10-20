@@ -63,7 +63,7 @@ int CUtf8::Utf8ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool b
 		int i = 0;
 #if defined(_M_X64) || defined(_M_IX86)
 		// 1文字ずつ処理すると時間が掛かるのでSIMD使用
-		if (InstructionSet::AVX2()) {
+		if (InstructionSet::getInstance()->AVX2()) {
 			int n16 = nSrcLen / 16;
 			for (; i < n16; ++i) {
 				__m128i r = _mm_loadu_si128((const __m128i*)pr); pr += 16;

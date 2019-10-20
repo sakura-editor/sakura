@@ -595,7 +595,7 @@ const char* CFileLoad::GetNextLineCharCode(
 				i = nbgn;
 #if defined(_M_X64) || defined(_M_IX86)
 				const int remain = nDataLen - i;
-				if (InstructionSet::AVX2()) {
+				if (InstructionSet::getInstance()->AVX2()) {
 					const int n32 = remain / 32;
 					const __m256i maskCR = _mm256_set1_epi8('\r');
 					const __m256i maskLF = _mm256_set1_epi8('\n');
