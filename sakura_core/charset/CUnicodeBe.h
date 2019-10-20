@@ -32,7 +32,7 @@
 class CUnicodeBe : public CCodeBase{
 public:
 	//CCodeBaseインターフェース
-	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst, bool bOnlyASCII = false){ return UnicodeBEToUnicode(cSrc, pDst); }	//!< 特定コード → UNICODE    変換
+	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ return UnicodeBEToUnicode(cSrc, pDst); }	//!< 特定コード → UNICODE    変換
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ return UnicodeToUnicodeBE(cSrc, pDst); }	//!< UNICODE    → 特定コード 変換
 	void GetBom(CMemory* pcmemBom);	//!< BOMデータ取得
 	void GetEol(CMemory* pcmemEol, EEolType eEolType);	//!< 改行データ取得

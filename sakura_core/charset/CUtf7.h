@@ -30,7 +30,7 @@
 class CUtf7 : public CCodeBase{
 public:
 	//CCodeBaseインターフェース
-	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst, bool bOnlyASCII = false){ return UTF7ToUnicode(cSrc, pDst); }	//!< 特定コード → UNICODE    変換
+	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ return UTF7ToUnicode(cSrc, pDst); }	//!< 特定コード → UNICODE    変換
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ return UnicodeToUTF7(cSrc, pDst); }	//!< UNICODE    → 特定コード 変換
 	void GetBom(CMemory* pcmemBom);	//!< BOMデータ取得
 	void GetEol(CMemory* pcmemEol, EEolType eEolType);

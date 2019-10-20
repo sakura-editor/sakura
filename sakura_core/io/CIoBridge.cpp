@@ -10,12 +10,11 @@ EConvertResult CIoBridge::FileToImpl(
 	const CMemory&		cSrc,		//!< [in]  変換元メモリ
 	CNativeW*			pDst,		//!< [out] 変換先メモリ(UNICODE)
 	CCodeBase*			pCode,		//!< [in]  変換元メモリの文字コード
-	int					nFlag,		//!< [in]  bit 0: MIME Encodeされたヘッダをdecodeするかどうか
-	bool				bOnlyASCII	//!< [in]  0x7F 以下の文字のみか
+	int					nFlag		//!< [in]  bit 0: MIME Encodeされたヘッダをdecodeするかどうか
 )
 {
 	//任意の文字コードからUnicodeへ変換する
-	EConvertResult ret = pCode->CodeToUnicode(cSrc,pDst,bOnlyASCII);
+	EConvertResult ret = pCode->CodeToUnicode(cSrc,pDst);
 
 	//結果
 	return ret;

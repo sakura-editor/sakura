@@ -346,6 +346,48 @@ EConvertResult CFileLoad::ReadLine(
 	return m_nTempResult;
 }
 
+// ASCII文字列をWIDE文字列化
+static
+size_t Ascii2Uni(const char* __restrict pSrc, const size_t nSrcLen, wchar_t* __restrict pDst)
+{
+	const char* __restrict pr = pSrc;
+	wchar_t* __restrict pw = pDst;
+
+	size_t i = 0;
+#if defined(_M_X64) || defined(_M_IX86)
+	// 1文字ずつ処理すると時間が掛かるのでSIMD使用
+	if (InstructionSet::getInstance()->AVX2()) {
+		size_t n16 = nSrcLen / 16;
+		for (; i < n16; ++i) {
+			__m128i r = _mm_loadu_si128((const __m128i*)pr); pr += 16;
+			__m256i w = _mm256_cvtepu8_epi16(r);
+			_mm256_storeu_si256((__m256i*)pw, w); pw += 16;
+		}
+		i = n16 * 16;
+#if defined(_M_X64)
+	}else {
+#else
+	}else if (InstructionSet::SSE2()) {
+#endif
+		size_t n16 = nSrcLen / 16;
+		__m128i zero = _mm_setzero_si128();
+		for (; i < n16; ++i) {
+			__m128i r = _mm_loadu_si128((const __m128i*)pr); pr += 16;
+			__m128i wl = _mm_unpacklo_epi8(r, zero);
+			__m128i wh = _mm_unpackhi_epi8(r, zero);
+			_mm_storeu_si128((__m128i*)pw, wl); pw += 8;
+			_mm_storeu_si128((__m128i*)pw, wh); pw += 8;
+		}
+		i = n16 * 16;
+	}
+#endif // #if defined(_M_X64) || defined(_M_IX86)
+	// 余りはスカラー処理
+	for (; i < nSrcLen; ++i) {
+		pw[i] = pr[i];
+	}
+	return nSrcLen;
+}
+
 /*!
 	次の論理行を文字コード変換してロードする
 	順次アクセス専用
@@ -414,9 +456,20 @@ EConvertResult CFileLoad::ReadLine_core(
 	m_nReadLength += m_cLineBuffer.GetRawLength();
 
 	// 文字コード変換 cLineBuffer -> pUnicodeBuffer
-	EConvertResult eConvertResult = CIoBridge::FileToImpl(m_cLineBuffer,pUnicodeBuffer,m_pCodeBase,m_nFlag, bOnlyASCII);
-	if(eConvertResult==RESULT_LOSESOME){
-		eRet = RESULT_LOSESOME;
+	EConvertResult eConvertResult;
+
+	if (bOnlyASCII) {
+		int nSrcLen = m_cLineBuffer.GetRawLength();
+		pUnicodeBuffer->AllocStringBuffer( nSrcLen + 1 );
+		size_t nDstLen = Ascii2Uni((const char*)m_cLineBuffer.GetRawPtr(), nSrcLen, pUnicodeBuffer->GetStringPtr());
+		pUnicodeBuffer->_SetStringLength( (int)nDstLen );
+		eConvertResult = RESULT_COMPLETE;
+	}
+	else {
+		eConvertResult = CIoBridge::FileToImpl(m_cLineBuffer,pUnicodeBuffer,m_pCodeBase,m_nFlag);
+		if(eConvertResult==RESULT_LOSESOME){
+			eRet = RESULT_LOSESOME;
+		}
 	}
 
 	m_nLineIndex++;
