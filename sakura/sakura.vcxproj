@@ -448,6 +448,7 @@
     <ClInclude Include="..\sakura_core\mem\CNativeW.h" />
     <ClInclude Include="..\sakura_core\mem\CPoolResource.h" />
     <ClInclude Include="..\sakura_core\mem\CRecycledBuffer.h" />
+    <ClInclude Include="..\sakura_core\mem\rpmalloc\rpmalloc.h" />
     <ClInclude Include="..\sakura_core\mfclike\CMyWnd.h" />
     <ClInclude Include="..\sakura_core\outline\CDlgFileTree.h" />
     <ClInclude Include="..\sakura_core\outline\CDlgFuncList.h" />
@@ -809,6 +810,12 @@
     <ClCompile Include="..\sakura_core\mem\CNativeA.cpp" />
     <ClCompile Include="..\sakura_core\mem\CNativeW.cpp" />
     <ClCompile Include="..\sakura_core\mem\CRecycledBuffer.cpp" />
+    <ClCompile Include="..\sakura_core\mem\rpmalloc\rpmalloc.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\sakura_core\mfclike\CMyWnd.cpp" />
     <ClCompile Include="..\sakura_core\outline\CDlgFileTree.cpp" />
     <ClCompile Include="..\sakura_core\outline\CDlgFuncList.cpp" />

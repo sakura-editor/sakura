@@ -259,6 +259,8 @@ mem/CNative.o \
 mem/CNativeA.o \
 mem/CNativeW.o \
 mem/CRecycledBuffer.o \
+mem/rpmalloc/malloc.o \
+mem/rpmalloc/rpmalloc.o \
 mfclike/CMyWnd.o \
 outline/CDlgFileTree.o \
 outline/CDlgFuncList.o \

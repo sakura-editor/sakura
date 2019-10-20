@@ -119,6 +119,9 @@
     <Filter Include="Cpp Source Files\uiparts">
       <UniqueIdentifier>{930f3f82-ab3f-49e3-af4a-d4f9c2d51f46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Cpp Source Files\mem\rpmalloc">
+      <UniqueIdentifier>{2ec746a3-904d-4e88-b687-be01ee0747c7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\sakura_core\Funccode_define.h">
@@ -1090,6 +1093,9 @@
     </ClInclude>
     <ClInclude Include="..\sakura_core\util\x86_x64_instruction_set.h">
       <Filter>Cpp Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\mem\rpmalloc\rpmalloc.h">
+      <Filter>Cpp Source Files\mem\rpmalloc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2263,6 +2269,9 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\util\x86_x64_instruction_set.cpp">
       <Filter>Cpp Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\mem\rpmalloc\rpmalloc.c">
+      <Filter>Cpp Source Files\mem\rpmalloc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
