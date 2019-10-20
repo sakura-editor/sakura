@@ -96,9 +96,9 @@ void CLayoutMgr::_Empty()
 	while( pLayout ){
 		CLayout* pLayoutNext = pLayout->GetNextLayout();
 		pLayout->~CLayout();
-		m_layoutMemRes.Deallocate(pLayout);
 		pLayout = pLayoutNext;
 	}
+	m_layoutMemRes.Initialize();
 }
 
 /*! レイアウト情報の変更

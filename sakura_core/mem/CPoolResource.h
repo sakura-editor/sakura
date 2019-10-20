@@ -50,6 +50,20 @@ public:
 		}
 	}
 
+	void Initialize()
+	{
+		// メモリ確保した領域の連結リストを辿って全てのブロック分のメモリ解放
+		Node* curr = m_currentBlock;
+		while (curr) {
+			Node* next = curr->next;
+			VirtualFree(curr, 0, MEM_RELEASE);
+			curr = next;
+		}
+		m_currentBlock = nullptr;
+		// 始めのブロックをメモリ確保
+		AllocateBlock();
+	}
+
 	// 要素のメモリ確保処理、要素の領域のポインタを返す
 	// bytes と alignment 引数は使用しない、template 引数の型で静的に決定する
  	void* Allocate()

@@ -88,9 +88,9 @@ void CDocLineMgr::DeleteAllLine()
 	while( pDocLine ){
 		CDocLine* pDocLineNext = pDocLine->GetNextLine();
 		pDocLine->~CDocLine();
-		m_docLineMemRes.Deallocate(pDocLine);
 		pDocLine = pDocLineNext;
 	}
+	m_docLineMemRes.Initialize();
 	_Init();
 }
 
