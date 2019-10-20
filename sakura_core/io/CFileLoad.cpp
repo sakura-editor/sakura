@@ -369,7 +369,7 @@ EConvertResult CFileLoad::ReadLine_core(
 	}
 #endif
 	//行データバッファ (文字コード変換無しの生のデータ)
-	m_cLineBuffer.SetRawDataHoldBuffer("",0);
+	m_cLineBuffer._SetRawLength(0);
 
 	// 1行取り出し ReadBuf -> m_memLine
 	//	Oct. 19, 2002 genta while条件を整理
