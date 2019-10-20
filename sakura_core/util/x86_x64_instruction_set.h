@@ -56,14 +56,23 @@ public:
     bool INVPCID(void) const { return f_7_EBX_[10]; }
     bool RTM(void) const { return isIntel_ && f_7_EBX_[11]; }
     bool AVX512F(void) const { return f_7_EBX_[16]; }
+    bool AVX512DQ(void) const { return f_7_EBX_[17]; }
     bool RDSEED(void) const { return f_7_EBX_[18]; }
     bool ADX(void) const { return f_7_EBX_[19]; }
+    bool AVX512IFMA(void) const { return f_7_EBX_[21]; }
     bool AVX512PF(void) const { return f_7_EBX_[26]; }
     bool AVX512ER(void) const { return f_7_EBX_[27]; }
     bool AVX512CD(void) const { return f_7_EBX_[28]; }
     bool SHA(void) const { return f_7_EBX_[29]; }
+    bool AVX512BW(void) const { return f_7_EBX_[30]; }
+    bool AVX512VL(void) const { return f_7_EBX_[31]; }
 
     bool PREFETCHWT1(void) const { return f_7_ECX_[0]; }
+	bool AVX512VBMI(void) const { return f_7_ECX_[1]; }
+	bool AVX512VBMI2(void) const { return f_7_ECX_[6]; }
+	bool AVX512VNNI(void) const { return f_7_ECX_[11]; }
+	bool AVX512BITALG(void) const { return f_7_ECX_[12]; }
+	bool AVX512VPOPCNTDQ(void) const { return f_7_ECX_[14]; }
 
     bool LAHF(void) const { return f_81_ECX_[0]; }
     bool LZCNT(void) const { return isIntel_ && f_81_ECX_[5]; }
