@@ -47,6 +47,11 @@
 #include "charset/CESI.h"
 #include "window/CEditWnd.h"
 
+#if defined(_M_X64) || defined(_M_IX86)
+#include <intrin.h>
+#include "util/x86_x64_instruction_set.h"
+#endif
+
 /*
 	@note Win32APIで実装
 		2GB以上のファイルは開けない
@@ -587,7 +592,52 @@ const char* CFileLoad::GetNextLineCharCode(
 			else {
 				bHasNoTab = true;
 				bOnlyASCII = true;
-				for(i = nbgn; i < nDataLen; ++i) {
+				i = nbgn;
+#if defined(_M_X64) || defined(_M_IX86)
+				const int remain = nDataLen - i;
+				if (InstructionSet::AVX2()) {
+					const int n32 = remain / 32;
+					const __m256i maskCR = _mm256_set1_epi8('\r');
+					const __m256i maskLF = _mm256_set1_epi8('\n');
+					const __m256i maskTAB = _mm256_set1_epi8('\t');
+					const __m256i* pc = (const __m256i*)(&pData[i]);
+					for (int j=0; j<n32; ++j) {
+						__m256i c = _mm256_loadu_si256(pc + j);
+						__m256i matchCR = _mm256_cmpeq_epi8(c, maskCR);
+						__m256i matchLF = _mm256_cmpeq_epi8(c, maskLF);
+						__m256i matchTAB = _mm256_cmpeq_epi8(c, maskTAB);
+						__m256i matchCRorLF = _mm256_or_si256(matchCR, matchLF);
+						if (_mm256_movemask_epi8(matchCRorLF))
+							break;
+						if (_mm256_movemask_epi8(matchTAB))
+							bHasNoTab = false;
+						i += 32;
+					}
+#if defined(_M_X64)
+				}else {
+#else
+				}else if (InstructionSet::SSE2()) {
+#endif
+					const int n16 = remain / 16;
+					const __m128i maskCR = _mm_set1_epi8('\r');
+					const __m128i maskLF = _mm_set1_epi8('\n');
+					const __m128i maskTAB = _mm_set1_epi8('\t');
+					const __m128i* pc = (const __m128i*)(&pData[i]);
+					for (int j=0; j<n16; ++j) {
+						__m128i c = _mm_loadu_si128(pc + j);
+						__m128i matchCR = _mm_cmpeq_epi8(c, maskCR);
+						__m128i matchLF = _mm_cmpeq_epi8(c, maskLF);
+						__m128i matchTAB = _mm_cmpeq_epi8(c, maskTAB);
+						__m128i matchCRorLF = _mm_or_si128(matchCR, matchLF);
+						if (_mm_movemask_epi8(matchCRorLF))
+							break;
+						if (_mm_movemask_epi8(matchTAB))
+							bHasNoTab = false;
+						i += 16;
+					}
+				}
+#endif // #if defined(_M_X64) || defined(_M_IX86)
+				for(; i < nDataLen; ++i) {
 					char c = pData[i];
 					if (c >= 0) {
 						if (c == '\r' || c == '\n') {

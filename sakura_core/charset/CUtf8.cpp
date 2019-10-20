@@ -60,8 +60,9 @@ int CUtf8::Utf8ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool b
 
 	if (bOnlyASCII) {
 		// ASCII文字列をWIDE文字列化
-		// 1文字ずつ処理すると時間が掛かるのでSIMD使用
 		int i = 0;
+#if defined(_M_X64) || defined(_M_IX86)
+		// 1文字ずつ処理すると時間が掛かるのでSIMD使用
 		if (InstructionSet::AVX2()) {
 			int n16 = nSrcLen / 16;
 			for (; i < n16; ++i) {
@@ -70,31 +71,29 @@ int CUtf8::Utf8ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool b
 				_mm256_storeu_si256((__m256i*)pw, w); pw += 16;
 			}
 			i = n16 * 16;
-		}
-		else {
 #if defined(_M_X64)
-			{
+		}else {
 #else
-			if (InstructionSet::SSE2()) {
+		}else if (InstructionSet::SSE2()) {
 #endif
-				int n16 = nSrcLen / 16;
-				__m128i zero = _mm_setzero_si128();
-				for (; i < n16; ++i) {
-					__m128i r = _mm_loadu_si128((const __m128i*)pr); pr += 16;
-					__m128i wl = _mm_unpacklo_epi8(r, zero);
-					__m128i wh = _mm_unpackhi_epi8(r, zero);
-					_mm_storeu_si128((__m128i*)pw, wl); pw += 8;
-					_mm_storeu_si128((__m128i*)pw, wh); pw += 8;
-				}
-				i = n16 * 16;
+			int n16 = nSrcLen / 16;
+			__m128i zero = _mm_setzero_si128();
+			for (; i < n16; ++i) {
+				__m128i r = _mm_loadu_si128((const __m128i*)pr); pr += 16;
+				__m128i wl = _mm_unpacklo_epi8(r, zero);
+				__m128i wh = _mm_unpackhi_epi8(r, zero);
+				_mm_storeu_si128((__m128i*)pw, wl); pw += 8;
+				_mm_storeu_si128((__m128i*)pw, wh); pw += 8;
 			}
+			i = n16 * 16;
 		}
+#endif // #if defined(_M_X64) || defined(_M_IX86)
 		// 余りはスカラー処理
 		for (; i < nSrcLen; ++i) {
 			pw[i] = pr[i];
 		}
 		return nSrcLen;
-	}
+	} // if (bOnlyASCII) 
 
 	if (bCESU8Mode) {
 		ptrdiff_t remainLen = pr_end - pr;
