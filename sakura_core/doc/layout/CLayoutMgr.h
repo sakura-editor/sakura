@@ -24,13 +24,13 @@
 
 #include <Windows.h>// 2002/2/10 aroka
 #include <vector>
-#include <memory_resource>
 #include "doc/CDocListener.h"
 #include "_main/global.h"// 2002/2/10 aroka
 #include "basis/SakuraBasis.h"
 #include "types/CType.h"
 #include "CLayoutExInfo.h"
 #include "mem/CMemoryIterator.h"
+#include "mem/CPoolResource.h"
 #include "CTsvModeInfo.h"
 #include "view/colors/EColorIndexType.h"
 #include "COpe.h"
@@ -429,7 +429,7 @@ protected:
 	//実データ
 	CLayout*				m_pLayoutTop;
 	CLayout*				m_pLayoutBot;
-	std::unique_ptr<std::pmr::memory_resource> m_layoutMemRes;
+	CPoolResource<CLayout>  m_layoutMemRes;
 
 	//タイプ別設定
 	const STypeConfig*		m_pTypeConfig;

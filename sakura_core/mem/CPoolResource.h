@@ -25,13 +25,12 @@
 #ifndef SAKURA_CPOOLRESOURCE_H_
 #define SAKURA_CPOOLRESOURCE_H_
 
-#include <memory_resource>
 #include <Windows.h>
 
 // std::pmr::unsynchronized_pool_resource だとメモリ使用量が大きい為、自前実装を用意
 // T : 要素型
 template <typename T>
-class CPoolResource : public std::pmr::memory_resource
+class CPoolResource
 {
 public:
 	CPoolResource()
@@ -51,11 +50,9 @@ public:
 		}
 	}
 
-protected:
 	// 要素のメモリ確保処理、要素の領域のポインタを返す
 	// bytes と alignment 引数は使用しない、template 引数の型で静的に決定する
- 	void* do_allocate([[maybe_unused]] std::size_t bytes,
- 					  [[maybe_unused]] std::size_t alignment) override
+ 	void* Allocate()
 	{
 		// メモリ確保時には未割当領域から使用していく
 		if (m_unassignedNode) {
@@ -78,9 +75,7 @@ protected:
 	// メモリ解放処理、要素の領域のポインタを受け取る
 	// 第1引数には、do_allocate メソッドで返したポインタを渡す事
 	// bytes と alignment 引数は使用しない、template 引数の型で静的に決定する
-	void do_deallocate(void* p,
-					   [[maybe_unused]] std::size_t bytes,
-					   [[maybe_unused]] std::size_t alignment) override
+	void Deallocate(void* p)
 	{
 		if (p) {
 			// メモリ解放した領域を未割当領域として自己参照共用体の片方向連結リストで繋げる
@@ -89,11 +84,6 @@ protected:
 			m_unassignedNode = reinterpret_cast<Node*>(p);
 			m_unassignedNode->next = next;
 		}
-	}
-
-	bool do_is_equal(const std::pmr::memory_resource& other) const noexcept override
-	{
-		return this == &other;
 	}
 
 private:

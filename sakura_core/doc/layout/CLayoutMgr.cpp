@@ -25,7 +25,6 @@
 #include "charset/charcode.h"
 #include "mem/CMemory.h"/// 2002/2/10 aroka
 #include "mem/CMemoryIterator.h" // 2006.07.29 genta
-#include "mem/CPoolResource.h"
 #include "view/CViewFont.h"
 #include "view/CTextMetrics.h"
 #include "basis/SakuraBasis.h"
@@ -38,8 +37,6 @@
 
 CLayoutMgr::CLayoutMgr()
 : m_getIndentOffset( &CLayoutMgr::getIndentOffset_Normal )	//	Oct. 1, 2002 genta	//	Nov. 16, 2002 メンバー関数ポインタにはクラス名が必要
-  , m_layoutMemRes(new CPoolResource<CLayout>())
-  //, m_layoutMemRes(new std::pmr::unsynchronized_pool_resource()) // メモリ使用量が大きい為に使用しない
 {
 	m_pcDocLineMgr = NULL;
 	m_pTypeConfig = NULL;
@@ -99,7 +96,7 @@ void CLayoutMgr::_Empty()
 	while( pLayout ){
 		CLayout* pLayoutNext = pLayout->GetNextLayout();
 		pLayout->~CLayout();
-		m_layoutMemRes->deallocate(pLayout, sizeof(CLayout), alignof(CLayout));
+		m_layoutMemRes.Deallocate(pLayout);
 		pLayout = pLayoutNext;
 	}
 }
@@ -369,7 +366,7 @@ CLayout* CLayoutMgr::CreateLayout(
 	CLayoutColorInfo*	colorInfo
 )
 {
-	CLayout* pLayout = new (m_layoutMemRes->allocate(sizeof(CLayout))) CLayout(
+	CLayout* pLayout = new (m_layoutMemRes.Allocate()) CLayout(
 		pCDocLine,
 		ptLogicPos,
 		nLength,
@@ -578,7 +575,7 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 		}
 
 		pLayout->~CLayout();
-		m_layoutMemRes->deallocate(pLayout, sizeof(CLayout), alignof(CLayout));
+		m_layoutMemRes.Deallocate(pLayout);
 
 		m_nLines--;	/* 全物理行数 */
 		if( NULL == pLayoutNext ){
