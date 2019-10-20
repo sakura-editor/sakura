@@ -350,14 +350,13 @@ EConvertResult CFileLoad::ReadLine(
 static
 size_t Ascii2Uni(const char* __restrict pSrc, const size_t nSrcLen, wchar_t* __restrict pDst)
 {
-	const char* __restrict pr = pSrc;
-	wchar_t* __restrict pw = pDst;
-
 	size_t i = 0;
 #if defined(_M_X64) || defined(_M_IX86)
 	// 1文字ずつ処理すると時間が掛かるのでSIMD使用
 	if (InstructionSet::getInstance()->AVX2()) {
 		size_t n16 = nSrcLen / 16;
+		const char* __restrict pr = pSrc;
+		wchar_t* __restrict pw = pDst;
 		for (; i < n16; ++i) {
 			__m128i r = _mm_loadu_si128((const __m128i*)pr); pr += 16;
 			__m256i w = _mm256_cvtepu8_epi16(r);
@@ -371,6 +370,8 @@ size_t Ascii2Uni(const char* __restrict pSrc, const size_t nSrcLen, wchar_t* __r
 #endif
 		size_t n16 = nSrcLen / 16;
 		__m128i zero = _mm_setzero_si128();
+		const char* __restrict pr = pSrc;
+		wchar_t* __restrict pw = pDst;
 		for (; i < n16; ++i) {
 			__m128i r = _mm_loadu_si128((const __m128i*)pr); pr += 16;
 			__m128i wl = _mm_unpacklo_epi8(r, zero);
@@ -383,7 +384,7 @@ size_t Ascii2Uni(const char* __restrict pSrc, const size_t nSrcLen, wchar_t* __r
 #endif // #if defined(_M_X64) || defined(_M_IX86)
 	// 余りはスカラー処理
 	for (; i < nSrcLen; ++i) {
-		pw[i] = pr[i];
+		pDst[i] = pSrc[i];
 	}
 	return nSrcLen;
 }
