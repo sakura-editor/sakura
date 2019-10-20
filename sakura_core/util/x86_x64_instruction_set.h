@@ -1,4 +1,4 @@
-// InstructionSet.cpp
+﻿// InstructionSet.cpp
 // Compile by using: cl /EHsc /W4 InstructionSet.cpp
 // processor: x86, x64
 // Uses the __cpuid intrinsic to get information about
