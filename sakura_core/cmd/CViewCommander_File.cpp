@@ -870,8 +870,8 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 		// エラー時はthrow CError_FileRead を投げます
 		CNativeW cBuf;
 		bool bHasNoTab = false;
-		bool bHalfwidthOnly = false;
-		while( RESULT_FAILURE != cfl.ReadLine( &cBuf, &cEol, bHasNoTab, bHalfwidthOnly ) ){
+		bool bOnlyASCII = false;
+		while( RESULT_FAILURE != cfl.ReadLine( &cBuf, &cEol, bHasNoTab, bOnlyASCII ) ){
 
 			const wchar_t*	pLine = cBuf.GetStringPtr();
 			int			nLineLen = cBuf.GetStringLength();

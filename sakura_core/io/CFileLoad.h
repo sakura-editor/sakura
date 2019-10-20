@@ -70,7 +70,7 @@ public:
 		CNativeW*	pUnicodeBuffer,	//!< [out] UNICODEデータ受け取りバッファ
 		CEol*		pcEol,			//!< [i/o]
 		bool&		bHasNoTab,		//!< [out] タブ文字を含まない
-		bool&		bHalfwidthOnly	//!< [out] 半角文字のみ
+		bool&		bOnlyASCII		//!< [out] ASCII字(<=0x7F)のみ
 	);
 
 //	未実装関数郡
@@ -110,13 +110,13 @@ protected:
 		int*		pnEolLen,
 		int*		pnBufferNext,
 		bool&		bHasNoTab,
-		bool&		bHalfwidthOnly
+		bool&		bOnlyASCII
 		);
 	EConvertResult ReadLine_core(
 		CNativeW*	pUnicodeBuffer,
 		CEol*		pcEol,
 		bool&		bHasNoTab,
-		bool&		bHalfwidthOnly
+		bool&		bOnlyASCII
 		);
 
 	int Read(void* pBuf, size_t nSize); // inline

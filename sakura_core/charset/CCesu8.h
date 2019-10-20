@@ -32,8 +32,8 @@ class CCesu8 : public CCodeBase {
 public:
 
 	//CCodeBaseインターフェース
-	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){	//!< 特定コード → UNICODE    変換
-		return CUtf8::CESU8ToUnicode(cSrc, pDst);
+	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst, bool bOnlyASCII = false){	//!< 特定コード → UNICODE    変換
+		return CUtf8::CESU8ToUnicode(cSrc, pDst, bOnlyASCII);
 	}
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){	//!< UNICODE    → 特定コード 変換
 		return CUtf8::UnicodeToCESU8(cSrc, pDst);

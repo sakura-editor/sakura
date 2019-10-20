@@ -1088,6 +1088,9 @@
     <ClInclude Include="..\sakura_core\view\colors\CColorStrategyPool.h">
       <Filter>Cpp Source Files\view\colors</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\util\x86_x64_instruction_set.h">
+      <Filter>Cpp Source Files\util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resource\auto_scroll_center.cur">
@@ -2257,6 +2260,9 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\view\colors\CColorStrategyPool.cpp">
       <Filter>Cpp Source Files\view\colors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\util\x86_x64_instruction_set.cpp">
+      <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

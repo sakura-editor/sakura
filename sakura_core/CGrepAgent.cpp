@@ -1276,9 +1276,9 @@ int CGrepAgent::DoGrepFile(
 	}
 
 	bool bHasNoTab = false;
-	bool bHalfwidthOnly = false;
+	bool bOnlyASCII = false;
 	// 注意 : cfl.ReadLine が throw する可能性がある
-	while( RESULT_FAILURE != cfl.ReadLine( &cUnicodeBuffer, &cEol, bHasNoTab, bHalfwidthOnly ) )
+	while( RESULT_FAILURE != cfl.ReadLine( &cUnicodeBuffer, &cEol, bHasNoTab, bOnlyASCII ) )
 	{
 		const wchar_t*	pLine = cUnicodeBuffer.GetStringPtr();
 		int		nLineLen = cUnicodeBuffer.GetStringLength();
@@ -1724,8 +1724,8 @@ int CGrepAgent::DoGrepReplaceFile(
 	// 注意 : cfl.ReadLine が throw する可能性がある
 	CNativeW cUnicodeBuffer;
 	bool bHasNoTab = false;
-	bool bHalfwidthOnly = false;
-	while( RESULT_FAILURE != cfl.ReadLine( &cUnicodeBuffer, &cEol, bHasNoTab, bHalfwidthOnly ) )
+	bool bOnlyASCII = false;
+	while( RESULT_FAILURE != cfl.ReadLine( &cUnicodeBuffer, &cEol, bHasNoTab, bOnlyASCII ) )
 	{
 		const wchar_t*	pLine = cUnicodeBuffer.GetStringPtr();
 		int		nLineLen = cUnicodeBuffer.GetStringLength();

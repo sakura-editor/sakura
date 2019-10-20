@@ -34,8 +34,8 @@ class CUtf8 : public CCodeBase{
 public:
 
 	//CCodeBaseインターフェース
-	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){	//!< 特定コード → UNICODE    変換
-		return UTF8ToUnicode(cSrc, pDst);
+	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst, bool bOnlyASCII = false){	//!< 特定コード → UNICODE    変換
+		return UTF8ToUnicode(cSrc, pDst, bOnlyASCII);
 	}
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){	//!< UNICODE    → 特定コード 変換
 		return UnicodeToUTF8(cSrc, pDst);
@@ -49,10 +49,10 @@ public:
 	// UTF-8 / CESU-8 <-> Unicodeコード変換
 	//2007.08.13 kobake 追加
 	//2009.01.08        CESU-8 に対応
-	static EConvertResult _UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDstMem, bool bCESU8Mode );
+	static EConvertResult _UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDstMem, bool bCESU8Mode, bool bOnlyASCII );
 	static EConvertResult _UnicodeToUTF8( const CNativeW& cSrc, CMemory* pDstMem, bool bCESU8Mode );
-	inline static EConvertResult UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDst ){ return _UTF8ToUnicode(cSrc, pDst, false); }	// UTF-8 -> Unicodeコード変換
-	inline static EConvertResult CESU8ToUnicode( const CMemory& cSrc, CNativeW* pDst ){ return _UTF8ToUnicode(cSrc, pDst, true); }	// CESU-8 -> Unicodeコード変換
+	inline static EConvertResult UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDst, bool bOnlyASCII = false ){ return _UTF8ToUnicode(cSrc, pDst, false, bOnlyASCII); }	// UTF-8 -> Unicodeコード変換
+	inline static EConvertResult CESU8ToUnicode( const CMemory& cSrc, CNativeW* pDst, bool bOnlyASCII = false ){ return _UTF8ToUnicode(cSrc, pDst, true, bOnlyASCII); }	// CESU-8 -> Unicodeコード変換
 	inline static EConvertResult UnicodeToUTF8( const CNativeW& cSrc, CMemory* pDst ){ return  _UnicodeToUTF8(cSrc, pDst, false); }	// Unicode → UTF-8コード変換
 	inline static EConvertResult UnicodeToCESU8( const CNativeW& cSrc, CMemory* pDst ){ return _UnicodeToUTF8(cSrc, pDst, true); }	// Unicode → CESU-8コード変換
 
@@ -62,7 +62,7 @@ protected:
 	// 2008.11.10 変換ロジックを書き直す
 	inline static int _Utf8ToUni_char( const unsigned char* pSrc, const int nSrcLen, unsigned short* pDst );
 	inline static int _Utf8ToUni_char_CESUMode( const unsigned char* pSrc, const int nSrcLen, unsigned short* pDst );
-	static int Utf8ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool bCESU8Mode );
+	static int Utf8ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool bCESU8Mode, bool bOnlyASCII );
 	inline static int _UniToUtf8_char( const unsigned short* pSrc, const int nSrcLen, unsigned char* pDst, bool bCESU8Mode );
 	static int UniToUtf8( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pbError, bool bCESU8Mode );
 };

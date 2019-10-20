@@ -303,15 +303,15 @@ EConvertResult CFileLoad::ReadLine(
 	CNativeW*	pUnicodeBuffer,
 	CEol*		pcEol,
 	bool&		bHasNoTab,
-	bool&		bHalfwidthOnly
+	bool&		bOnlyASCII
 	)
 {
 	if( m_CharCode != CODE_UTF7 && m_CharCode != CP_UTF7 ){
-		return ReadLine_core( pUnicodeBuffer, pcEol, bHasNoTab, bHalfwidthOnly );
+		return ReadLine_core( pUnicodeBuffer, pcEol, bHasNoTab, bOnlyASCII );
 	}
 	if( m_nReadOffset2 == m_cLineTemp.GetStringLength() ){
 		CEol cEol;
-		EConvertResult e = ReadLine_core( &m_cLineTemp, &cEol, bHasNoTab, bHalfwidthOnly );
+		EConvertResult e = ReadLine_core( &m_cLineTemp, &cEol, bHasNoTab, bOnlyASCII );
 		if( e == RESULT_FAILURE ){
 			pUnicodeBuffer->_GetMemory()->SetRawDataHoldBuffer( L"", 0 );
 			*pcEol = cEol;
@@ -352,7 +352,7 @@ EConvertResult CFileLoad::ReadLine_core(
 	CNativeW*	pUnicodeBuffer,	//!< [out] UNICODEデータ受け取りバッファ。改行も含めて読み取る。
 	CEol*		pcEol,			//!< [i/o]
 	bool&		bHasNoTab,
-	bool&		bHalfwidthOnly
+	bool&		bOnlyASCII
 )
 {
 	EConvertResult eRet = RESULT_COMPLETE;
@@ -381,7 +381,7 @@ EConvertResult CFileLoad::ReadLine_core(
 			&nEolLen,
 			&nBufferNext,
 			bHasNoTab,
-			bHalfwidthOnly
+			bOnlyASCII
 		);
 		if(pLine==NULL)break;
 
@@ -409,7 +409,7 @@ EConvertResult CFileLoad::ReadLine_core(
 	m_nReadLength += m_cLineBuffer.GetRawLength();
 
 	// 文字コード変換 cLineBuffer -> pUnicodeBuffer
-	EConvertResult eConvertResult = CIoBridge::FileToImpl(m_cLineBuffer,pUnicodeBuffer,m_pCodeBase,m_nFlag);
+	EConvertResult eConvertResult = CIoBridge::FileToImpl(m_cLineBuffer,pUnicodeBuffer,m_pCodeBase,m_nFlag, bOnlyASCII);
 	if(eConvertResult==RESULT_LOSESOME){
 		eRet = RESULT_LOSESOME;
 	}
@@ -516,7 +516,7 @@ const char* CFileLoad::GetNextLineCharCode(
 	int*		pnEolLen,	//!< [out]	EOLのバイト数 (Unicodeで困らないように)
 	int*		pnBufferNext,	//!< [out]	次回持越しバッファ長(EOLの断片)
 	bool&		bHasNoTab,		//!< [out] タブ文字を含まない
-	bool&		bHalfwidthOnly	//!< [out] 半角文字のみ
+	bool&		bOnlyASCII		//!< [out] ASCII文字(<=0x7F)のみ
 ){
 	int nbgn = *pnBgn;
 	int i;
@@ -585,8 +585,8 @@ const char* CFileLoad::GetNextLineCharCode(
 
 			}
 			else {
-				bool bHasTab = false;
-				bool bOnlyASCII = true;
+				bHasNoTab = true;
+				bOnlyASCII = true;
 				for(i = nbgn; i < nDataLen; ++i) {
 					char c = pData[i];
 					if (c >= 0) {
@@ -596,15 +596,13 @@ const char* CFileLoad::GetNextLineCharCode(
 							break;
 						}
 						else if (c == '\t') {
-							bHasTab = true;
+							bHasNoTab = false;
 						}
 					}
 					else {
 						bOnlyASCII = false;
 					}
 				}
-				bHasNoTab = !bHasTab;
-				bHalfwidthOnly = bOnlyASCII;
 			}
 		}
 		break;

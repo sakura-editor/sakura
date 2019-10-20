@@ -541,8 +541,8 @@ BOOL CEditView::MakeDiffTmpFile2( WCHAR* tmpName, const WCHAR* orgName, ECodeTyp
 		CNativeW cLine;
 		CEol cEol;
 		bool bHasNoTab = false;
-		bool bHalfwidthOnly = false;
-		while( RESULT_FAILURE != cfl.ReadLine( &cLine, &cEol, bHasNoTab, bHalfwidthOnly ) ) {
+		bool bOnlyASCII = false;
+		while( RESULT_FAILURE != cfl.ReadLine( &cLine, &cEol, bHasNoTab, bOnlyASCII ) ) {
 			const CLogicInt nLineLen = cLine.GetStringLength();
 			const wchar_t* pLineData= cLine.GetStringPtr();
 			if( 0 == nLineLen || NULL == pLineData ) break;

@@ -9,6 +9,11 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 
+#if defined(_M_X64) || defined(_M_IX86)
+#include <intrin.h>
+#include "util/x86_x64_instruction_set.h"
+#endif
+
 //! BOMデータ取得
 void CUtf8::GetBom(CMemory* pcmemBom)
 {
@@ -38,7 +43,7 @@ void CUtf8::GetEol(CMemory* pcmemEol, EEolType eEolType){
 
 	@param[in] bCESU8Mode CESU-8 を処理する場合 true
 */
-int CUtf8::Utf8ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool bCESU8Mode )
+int CUtf8::Utf8ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool bCESU8Mode, bool bOnlyASCII )
 {
 	const unsigned char * __restrict pr, * __restrict pr_end;
 	unsigned short * __restrict pw;
@@ -52,6 +57,44 @@ int CUtf8::Utf8ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool b
 	pr = reinterpret_cast<const unsigned char*>(pSrc);
 	pr_end = reinterpret_cast<const unsigned char*>(pSrc+nSrcLen);
 	pw = reinterpret_cast<unsigned short*>(pDst);
+
+	if (bOnlyASCII) {
+		// ASCII文字列をWIDE文字列化
+		// 1文字ずつ処理すると時間が掛かるのでSIMD使用
+		int i = 0;
+		if (InstructionSet::AVX2()) {
+			int n16 = nSrcLen / 16;
+			for (; i < n16; ++i) {
+				__m128i r = _mm_loadu_si128((const __m128i*)pr); pr += 16;
+				__m256i w = _mm256_cvtepu8_epi16(r);
+				_mm256_storeu_si256((__m256i*)pw, w); pw += 16;
+			}
+			i = n16 * 16;
+		}
+		else {
+#if defined(_M_X64)
+			{
+#else
+			if (InstructionSet::SSE2()) {
+#endif
+				int n16 = nSrcLen / 16;
+				__m128i zero = _mm_setzero_si128();
+				for (; i < n16; ++i) {
+					__m128i r = _mm_loadu_si128((const __m128i*)pr); pr += 16;
+					__m128i wl = _mm_unpacklo_epi8(r, zero);
+					__m128i wh = _mm_unpackhi_epi8(r, zero);
+					_mm_storeu_si128((__m128i*)pw, wl); pw += 8;
+					_mm_storeu_si128((__m128i*)pw, wh); pw += 8;
+				}
+				i = n16 * 16;
+			}
+		}
+		// 余りはスカラー処理
+		for (; i < nSrcLen; ++i) {
+			pw[i] = pr[i];
+		}
+		return nSrcLen;
+	}
 
 	if (bCESU8Mode) {
 		ptrdiff_t remainLen = pr_end - pr;
@@ -99,7 +142,7 @@ int CUtf8::Utf8ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool b
 
 //! UTF-8→Unicodeコード変換
 // 2007.08.13 kobake 作成
-EConvertResult CUtf8::_UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDstMem, bool bCESU8Mode/*, bool decodeMime*/ )
+EConvertResult CUtf8::_UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDstMem, bool bCESU8Mode, bool bOnlyASCII )
 {
 	// エラー状態
 	bool bError = false;
@@ -117,7 +160,7 @@ EConvertResult CUtf8::_UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDstMem, bo
 		}
 
 		// 変換
-		int nDstLen = Utf8ToUni( pSrc, nSrcLen, pDst, bCESU8Mode );
+		int nDstLen = Utf8ToUni( pSrc, nSrcLen, pDst, bCESU8Mode, bOnlyASCII );
 
 		// pDstMem を更新
 		pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, nDstLen*sizeof(wchar_t) );
@@ -132,7 +175,7 @@ EConvertResult CUtf8::_UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDstMem, bo
 		wchar_t* pDst = pDstMem->GetStringPtr();
 
 		// 変換
-		size_t nDstLen = Utf8ToUni(pSrc, nSrcLen, pDst, bCESU8Mode);
+		size_t nDstLen = Utf8ToUni(pSrc, nSrcLen, pDst, bCESU8Mode, bOnlyASCII);
 
 		// pDstMem を更新
 		pDstMem->_SetStringLength( nDstLen );

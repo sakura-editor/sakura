@@ -31,7 +31,7 @@
 
 class CUnicode : public CCodeBase{
 public:
-	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){	//!< 特定コード → UNICODE    変換
+	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst, bool bOnlyASCII = false){	//!< 特定コード → UNICODE    変換
 		return UnicodeToUnicode_in(cSrc, pDst);
 	}
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){	//!< UNICODE    → 特定コード 変換
