@@ -307,7 +307,7 @@ int CJis::_SjisToJis_char( const unsigned char* pSrc, unsigned char* pDst, EChar
 		ctemp_ = SjisFilter_ibm2nec( ctemp_ );
 		ctemp = _mbcjmstojis( ctemp_ );
 		if( ctemp != 0 ){
-			// 返還に成功。
+			// 変換に成功。
 			pDst[0] = static_cast<char>( (ctemp & 0x0000ff00) >> 8 );
 			pDst[1] = static_cast<char>( ctemp & 0x000000ff );
 			nret = 2;
