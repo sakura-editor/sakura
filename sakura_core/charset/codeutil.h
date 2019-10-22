@@ -179,7 +179,7 @@ inline int MyWideCharToMultiByte_JP( const unsigned short* pSrc, const int nSrcL
 /*!
 	MultiByteToWideChar のラッパー関数
 
-	@param[out] pbNonroundtrip 返還に成功したものの、相互変換性が失われた場合に true
+	@param[out] pbNonroundtrip 変換に成功したものの、相互変換性が失われた場合に true
 
 	nSrcLen は 1 か 2
 */

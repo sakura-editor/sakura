@@ -20,7 +20,7 @@ wchar_t *wcs_pushW(wchar_t *dst, size_t dst_count, const wchar_t* src)
 /*! 文字のエスケープ
 
 	@param org [in] 変換したい文字列
-	@param buf [out] 返還後の文字列を入れるバッファ
+	@param buf [out] 変換後の文字列を入れるバッファ
 	@param cesc  [in] エスケープしないといけない文字
 	@param cwith [in] エスケープに使う文字
 	
