@@ -53,7 +53,7 @@
 #endif
 
 /*! ロード用バッファサイズ */
-constexpr size_t g_nBufSize = 1204 * 64;
+constexpr size_t g_nBufSize = 1024 * 64;
 
 bool CFileLoad::IsLoadableSize(ULONGLONG size, bool ignoreLimit)
 {
