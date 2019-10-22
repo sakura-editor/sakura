@@ -16,15 +16,6 @@
 #include "CDocLine.h"
 #include "mem/CMemory.h"
 
-CDocLine::CDocLine()
-: m_pPrev( NULL ), m_pNext( NULL )
-{
-}
-
-CDocLine::~CDocLine()
-{
-}
-
 /* 空行（スペース、タブ、改行記号のみの行）かどうかを取得する
 	true：空行だ。
 	false：空行じゃないぞ。
@@ -50,7 +41,8 @@ void CDocLine::SetEol()
 	int nLength = m_cLine.GetStringLength();
 	//改行コード設定
 	const wchar_t* p = &pData[nLength] - 1;
-	while(p>=pData && WCODE::IsLineDelimiter(*p, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol))p--;
+	while (p>=pData && WCODE::IsLineDelimiter(*p, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol))
+		p--;
 	p++;
 	if(p>=pData){
 		m_cEol.SetTypeByString(p, &pData[nLength]-p);
@@ -64,6 +56,12 @@ void CDocLine::SetDocLineString(const wchar_t* pData, int nLength)
 {
 	m_cLine.SetString(pData, nLength);
 	SetEol();
+}
+
+void CDocLine::SetDocLineString(const wchar_t* pData, int nLength, CEol eol)
+{
+	m_cLine.SetString(pData, nLength);
+	m_cEol = eol;
 }
 
 void CDocLine::SetDocLineString(const CNativeW& cData)

@@ -6,10 +6,6 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-CNativeW::CNativeW() noexcept
-	: CNative()
-{
-}
 
 CNativeW::CNativeW(const CNativeW& rhs)
 	: CNative(rhs)

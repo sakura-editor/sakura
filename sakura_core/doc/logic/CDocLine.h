@@ -33,13 +33,18 @@ class COpeBlk;
 #pragma pack(push,1)
 
 //!	文書データ1行
-class CDocLine{
+class CDocLine final {
 protected:
 	friend class CDocLineMgr; //######仮
 public:
 	//コンストラクタ・デストラクタ
-	CDocLine();
-	~CDocLine();
+	CDocLine()
+		:
+		m_pPrev( NULL ),
+		m_pNext( NULL )
+	{
+	}
+	~CDocLine() = default;
 
 	//判定
 	bool			IsEmptyLine() const;		//	このCDocLineが空行（スペース、タブ、改行記号のみの行）かどうか。
@@ -84,6 +89,7 @@ public:
 
 	//データ設定
 	void SetDocLineString(const wchar_t* pData, int nLength);
+	void SetDocLineString(const wchar_t* pData, int nLength, CEol eol);
 	void SetDocLineString(const CNativeW& cData);
 	void SetDocLineStringMove(CNativeW* pcData);
 

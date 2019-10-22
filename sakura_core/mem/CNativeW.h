@@ -59,7 +59,10 @@ private:
 class CNativeW : public CNative{
 public:
 	//コンストラクタ・デストラクタ
-	CNativeW() noexcept;
+	CNativeW() noexcept
+		: CNative()
+	{
+	}
 	CNativeW( const CNativeW& rhs );
 	CNativeW( CNativeW&& other ) noexcept;
 	CNativeW( const wchar_t* pData, int nDataLen ); //!< nDataLenは文字単位。

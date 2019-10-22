@@ -115,7 +115,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 			const wchar_t* pLine = cUnicodeBuffer.GetStringPtr();
 			int nLineLen = cUnicodeBuffer.GetStringLength();
 			CDocLine* pDocLine = pcDocLineMgr->AddNewLine();
-			pDocLine->SetDocLineString(pLine, nLineLen);
+			pDocLine->SetDocLineString(pLine, nLineLen, cEol);
 			pDocLine->m_sMark.m_bHasNoTab = bHasNoTab;
 			pDocLine->m_sMark.m_bHalfwidthOnly = bOnlyASCII;
 			//経過通知

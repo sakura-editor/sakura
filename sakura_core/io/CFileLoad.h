@@ -96,18 +96,6 @@ protected:
 //	void SeekBegin( void );		// ファイルの先頭位置に移動する(BOMを考慮する)
 	void Buffering( void );		// バッファにデータをロードする
 
-	// GetLextLine の 文字コード考慮版
-	const char* GetNextLineCharCode(
-		const char*	pData,
-		int			nDataLen,
-		int*		pnLineLen,
-		int*		pnBgn,
-		CEol*		pcEol,
-		int*		pnEolLen,
-		int*		pnBufferNext,
-		bool&		bHasNoTab,
-		bool&		bOnlyASCII
-		);
 	EConvertResult ReadLine_core(
 		CNativeW*	pUnicodeBuffer,
 		CEol*		pcEol,
