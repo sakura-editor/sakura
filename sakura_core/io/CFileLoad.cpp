@@ -52,17 +52,8 @@
 #include "util/x86_x64_instruction_set.h"
 #endif
 
-/*
-	@note Win32APIで実装
-		2GB以上のファイルは開けない
-*/
-
-/*! ロード用バッファサイズの初期値 */
-const int CFileLoad::gm_nBufSizeDef = 32768;
-//(最適値がマシンによって違うのでとりあえず32KB確保する)
-
-// /*! ロード用バッファサイズの設定可能な最低値 */
-// const int gm_nBufSizeMin = 1024;
+/*! ロード用バッファサイズ */
+constexpr size_t g_nBufSize = 1204 * 64;
 
 bool CFileLoad::IsLoadableSize(ULONGLONG size, bool ignoreLimit)
 {
@@ -130,7 +121,6 @@ CFileLoad::CFileLoad( const SEncodingConfig& encode )
 
 	m_pReadBuf = NULL;
 	m_nReadDataLen    = 0;
-	m_nReadBufSize    = 0;
 	m_nReadBufOffSet  = 0;
 }
 
@@ -141,7 +131,7 @@ CFileLoad::~CFileLoad( void )
 		FileClose();
 	}
 	if( NULL != m_pReadBuf ){
-		free( m_pReadBuf );
+		VirtualFree( m_pReadBuf, 0, MEM_RELEASE );
 	}
 	if( NULL != m_pCodeBase ){
 		delete m_pCodeBase;
@@ -282,7 +272,12 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 */
 void CFileLoad::FileClose( void )
 {
-	ReadBufEmpty();
+	if ( NULL != m_pReadBuf ){
+		VirtualFree( m_pReadBuf, 0, MEM_RELEASE );
+		m_pReadBuf = NULL;
+	}
+	m_nReadDataLen    = 0;
+	m_nReadBufOffSet  = 0;
 	if( NULL != m_hFile ){
 		::CloseHandle( m_hFile );
 		m_hFile = NULL;
@@ -501,20 +496,12 @@ void CFileLoad::Buffering( void )
 
 	// メモリー確保
 	if( NULL == m_pReadBuf ){
-		int nBufSize;
-		nBufSize = ( m_nFileSize < gm_nBufSizeDef )?( static_cast<int>(m_nFileSize) ):( gm_nBufSizeDef );
-		//	Borland C++では0バイトのmallocを獲得失敗と見なすため
-		//	最低1バイトは取得することで0バイトのファイルを開けるようにする
-		if( 0 >= nBufSize ){
-			nBufSize = 1; // Jun. 08, 2003  BCCのmalloc(0)がNULLを返す仕様に対処
-		}
-
-		m_pReadBuf = (char *)malloc( nBufSize );
+		/*! ロード用バッファサイズ */
+		m_pReadBuf = (char *)::VirtualAlloc(NULL, g_nBufSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 		if( NULL == m_pReadBuf ){
 			throw CError_FileRead(); // メモリー確保に失敗
 		}
 		m_nReadDataLen = 0;
-		m_nReadBufSize = nBufSize;
 		m_nReadBufOffSet = 0;
 	}
 	// ReadBuf内にデータが残っている
@@ -528,25 +515,12 @@ void CFileLoad::Buffering( void )
 		m_nReadDataLen = 0;
 	}
 	// ファイルの読み込み
-	ReadSize = Read( &m_pReadBuf[m_nReadDataLen], m_nReadBufSize - m_nReadDataLen );
+	if( !::ReadFile( m_hFile, &m_pReadBuf[m_nReadDataLen], g_nBufSize - m_nReadDataLen, &ReadSize, NULL ) )
+		throw CError_FileRead();
 	if( 0 == ReadSize ){
 		m_eMode = FLMODE_READBUFEND;	// ファイルなどの終わりに達したらしい
 	}
 	m_nReadDataLen += ReadSize;
-}
-
-/*!
-	バッファクリア
-*/
-void CFileLoad::ReadBufEmpty( void )
-{
-	if ( NULL != m_pReadBuf ){
-		free( m_pReadBuf );
-		m_pReadBuf = NULL;
-	}
-	m_nReadDataLen    = 0;
-	m_nReadBufSize    = 0;
-	m_nReadBufOffSet  = 0;
 }
 
 /*!

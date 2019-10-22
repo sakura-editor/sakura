@@ -91,14 +91,10 @@ public:
 	//! ファイルサイズを取得する
 	inline LONGLONG GetFileSize( void ){ return m_nFileSize; }
 
-	static const int gm_nBufSizeDef; // ロード用バッファサイズの初期値
-//	static const int gm_nBufSizeMin; // ロード用バッファサイズの設定可能な最低値
-
 protected:
 	// Oct. 19, 2002 genta スペルミス修正
 //	void SeekBegin( void );		// ファイルの先頭位置に移動する(BOMを考慮する)
 	void Buffering( void );		// バッファにデータをロードする
-	void ReadBufEmpty( void );	// バッファを空にする
 
 	// GetLextLine の 文字コード考慮版
 	const char* GetNextLineCharCode(
@@ -119,7 +115,6 @@ protected:
 		bool&		bOnlyASCII
 		);
 
-	int Read(void* pBuf, size_t nSize); // inline
 	DWORD FilePointer(DWORD offset, DWORD origin); // inline
 
 	/* メンバオブジェクト */
@@ -151,7 +146,6 @@ protected:
 
 	// 読み込みバッファ系
 	char*	m_pReadBuf;			// 読み込みバッファへのポインタ
-	int		m_nReadBufSize;		// 読み込みバッファの実際に確保しているサイズ
 	int		m_nReadDataLen;		// 読み込みバッファの有効データサイズ
 	int		m_nReadBufOffSet;	// 読み込みバッファ中のオフセット(次の行頭位置)
 //	int		m_nReadBufSumSize;	// 今までにバッファに読み込んだデータの合計サイズ
@@ -168,15 +162,6 @@ protected:
 // public
 inline BOOL CFileLoad::GetFileTime( FILETIME* pftCreate, FILETIME* pftLastAccess, FILETIME* pftLastWrite ){
 	return ::GetFileTime( m_hFile, pftCreate, pftLastAccess, pftLastWrite );
-}
-
-// protected
-inline int CFileLoad::Read( void* pBuf, size_t nSize )
-{
-	DWORD ReadSize;
-	if( !::ReadFile( m_hFile, pBuf, nSize, &ReadSize, NULL ) )
-		throw CError_FileRead();
-	return (int)ReadSize;
 }
 
 // protected
