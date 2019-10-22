@@ -321,7 +321,7 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 			//1ロジック行を消化するまでループ
 			assert(sWork.nPos < nLength);
 			if (sWork.pcDocLine->m_sMark.m_bHasNoTab && sWork.pcDocLine->m_sMark.m_bHalfwidthOnly) {
-				Int nCharKetas = GetLayoutXOfChar( pLineStr, lineLength, sWork.nPos );
+				Int nCharKetas = WCODE::CalcPxWidthByFont('a') + GetCharSpacing();
 				sWork.colorPrev = COLORIDX_TEXT;
 				sWork.exInfoPrev.SetColorInfo(NULL);
 				while (CLogicInt nRemain = nLength - sWork.nPos) {
