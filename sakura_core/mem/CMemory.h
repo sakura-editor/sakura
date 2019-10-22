@@ -129,12 +129,12 @@ void CMemory::_AddData( const void* pData, int nDataLen )
 {
 	assert(m_pRawData);
 	char* pDst = &m_pRawData[m_nRawLen];
-	__movsb((PBYTE)pDst, (const PBYTE)pData, nDataLen);
+	memcpy(pDst, pData, nDataLen );
+	//__movsb((PBYTE)pDst, (const PBYTE)pData, nDataLen);
 	*(uint16_t*)(pDst + nDataLen) = 0;
-	m_nRawLen += nDataLen;
-	//memcpy(pDst, pData, nDataLen );
 	//m_pRawData[m_nRawLen]   = '\0';
 	//m_pRawData[m_nRawLen+1] = '\0'; //終端'\0'を2つ付加する('\0''\0'==L'\0')。 2007.08.13 kobake 追加
+	m_nRawLen += nDataLen;
 	return;
 }
 

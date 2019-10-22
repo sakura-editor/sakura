@@ -366,7 +366,7 @@ size_t Ascii2Uni(const char* __restrict pSrc, const size_t nSrcLen, wchar_t* __r
 #if defined(_M_X64)
 	}else {
 #else
-	}else if (InstructionSet::SSE2()) {
+	}else if (InstructionSet::getInstance()->SSE2()) {
 #endif
 		size_t n16 = nSrcLen / 16;
 		__m128i zero = _mm_setzero_si128();
@@ -670,7 +670,7 @@ const char* CFileLoad::GetNextLineCharCode(
 #if defined(_M_X64)
 				}else {
 #else
-				}else if (InstructionSet::SSE2()) {
+				}else if (InstructionSet::getInstance()->SSE2()) {
 #endif
 					const int n16 = remain / 16;
 					const __m128i maskCR = _mm_set1_epi8('\r');
