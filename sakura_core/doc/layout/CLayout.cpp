@@ -58,15 +58,21 @@ CLayoutInt CLayout::CalcLayoutWidth(const CLayoutMgr& cLayoutMgr) const
 			i += t_max(CLogicInt(1), CNativeW::GetSizeOfChar(c, pText, nTextLen, i));
 		}
 	}else {
-		for(CLogicInt i=m_ptLogicPos.GetX2();i<nLen;){
-			wchar_t c = pText[i];
-			if(c==WCODE::TAB){
-				nWidth += cLayoutMgr.GetActualTsvSpace(nWidth, c);
+		if (m_pCDocLine->m_sMark.m_bHasNoTab && m_pCDocLine->m_sMark.m_bHalfwidthOnly) {
+			auto len = nLen - m_ptLogicPos.GetX2();
+			nWidth += len * (cLayoutMgr.GetCharSpacing() + WCODE::CalcPxWidthByFont('a'));
+		}
+		else {
+			for(CLogicInt i=m_ptLogicPos.GetX2();i<nLen;){
+				wchar_t c = pText[i];
+				if(c==WCODE::TAB){
+					nWidth += cLayoutMgr.GetActualTsvSpace(nWidth, c);
+				}
+				else{
+					nWidth += cLayoutMgr.GetLayoutXOfChar(pText, nTextLen, i);
+				}
+				i += t_max(CLogicInt(1), CNativeW::GetSizeOfChar(c, pText, nTextLen, i));
 			}
-			else{
-				nWidth += cLayoutMgr.GetLayoutXOfChar(pText, nTextLen, i);
-			}
-			i += t_max(CLogicInt(1), CNativeW::GetSizeOfChar(c, pText, nTextLen, i));
 		}
 	}
 	return nWidth;
