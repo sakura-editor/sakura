@@ -27,6 +27,350 @@
 #include "mem/CNativeA.h"
 
 /*!
+ * @brief コンストラクタ(パラメータなし)の仕様
+ * @remark バッファは確保されない
+ * @remark 文字列長はゼロになる
+ * @remark バッファサイズはゼロになる
+ */
+TEST(CNativeW, ConstructWithoutParam)
+{
+	CNativeW value;
+	ASSERT_EQ(NULL, value.GetStringPtr());
+	EXPECT_EQ(0, value.GetStringLength());
+	EXPECT_EQ(0, value.capacity());
+}
+
+/*!
+ * @brief コンストラクタ(文字列と文字列長指定)の仕様
+ * @remark バッファが確保される
+ * @remark 文字列長は指定した文字列長になる
+ * @remark バッファサイズは指定した文字列長より大きくなる
+ */
+TEST(CNativeW, ConstructWithStringWithLength)
+{
+	constexpr const wchar_t sz[] = L"test";
+	constexpr const size_t cch = _countof(sz) - 1;
+	CNativeW value(sz, cch);
+	ASSERT_STREQ(sz, value.GetStringPtr());
+	EXPECT_EQ(cch, value.GetStringLength());
+	EXPECT_LT(cch + 1, value.capacity());
+}
+
+/*!
+ * @brief コンストラクタ(文字列指定)の仕様
+ * @remark バッファが確保される
+ * @remark 文字列長は指定した文字列の文字列長になる
+ * @remark バッファサイズは指定した文字列を格納できるサイズになる
+ */
+TEST(CNativeW, ConstructWithString)
+{
+	constexpr const wchar_t sz[] = L"test";
+	constexpr const size_t cch = _countof(sz) - 1;
+	CNativeW value(sz);
+	ASSERT_STREQ(sz, value.GetStringPtr());
+	EXPECT_EQ(cch, value.GetStringLength());
+	EXPECT_LT(cch + 1, value.capacity());
+}
+
+/*!
+ * @brief コンストラクタ(空文字列)の仕様
+ * @remark 普通の文字列指定と同じ挙動になる
+ */
+TEST(CNativeW, ConstructWithStringEmpty)
+{
+	constexpr const wchar_t sz[] = L"";
+	CNativeW value(sz);
+	ASSERT_STREQ(sz, value.GetStringPtr());
+	EXPECT_EQ(0, value.GetStringLength());
+	EXPECT_LT(1, value.capacity());
+}
+
+/*!
+ * @brief コンストラクタ(nullptr指定)の仕様
+ * @remark 構築できない(実行時エラーになる)
+ * @note バグですね(^^;
+ */
+TEST(CNativeW, ConstructWithStringNull)
+{
+	volatile int ret = 0;
+	ASSERT_DEATH({ CNativeW value(NULL); ret = value.capacity(); }, ".*");
+	(void)ret;
+}
+
+/*!
+ * @brief コピーコンストラクタの仕様
+ * @remark 新しいインスタンスの属性はコピー元と同じになる
+ * @remark コピー元バッファとは別に新しいバッファが確保される
+ */
+TEST(CNativeW, ConstructFromOtherByCopy)
+{
+	constexpr const wchar_t sz[] = L"test";
+	CNativeW other(sz);
+	CNativeW value(other);
+	ASSERT_STREQ(other.GetStringPtr(), value.GetStringPtr());
+	EXPECT_EQ(other.GetStringLength(), value.GetStringLength());
+	EXPECT_EQ(other.capacity(), value.capacity());
+
+	// コピー元バッファとは別に新しいバッファが確保される
+	ASSERT_NE(other.GetStringPtr(), value.GetStringPtr());
+}
+
+/*!
+ * @brief ムーブコンストラクタの仕様
+ * @remark 新しいインスタンスの属性はムーブ元と同じになる
+ * @remark ムーブ元は抜け殻になる
+ */
+TEST(CNativeW, ConstructFromOtherByMove)
+{
+	constexpr const wchar_t sz[] = L"test";
+	constexpr const size_t cch = _countof(sz) - 1;
+	CNativeW other(sz);
+	CNativeW value(std::move(other));
+	ASSERT_STREQ(sz, value.GetStringPtr());
+	EXPECT_EQ(cch, value.GetStringLength());
+	EXPECT_LT(cch + 1, value.capacity());
+
+	// ムーブ元は抜け殻になる
+	ASSERT_EQ(NULL, other.GetStringPtr());
+	EXPECT_EQ(0, other.GetStringLength());
+	EXPECT_EQ(0, other.capacity());
+}
+
+/*!
+ * @brief コピー代入演算子の仕様
+ * @remark バッファが確保される
+ * @remark 文字列長は指定した文字列の文字列長になる
+ * @remark バッファサイズは指定した文字列を格納できるサイズになる
+ * @remark コピー元バッファとは別に新しいバッファが確保される
+ */
+TEST(CNativeW, CopyFromOther)
+{
+	constexpr const wchar_t sz[] = L"test";
+	constexpr const size_t cch = _countof(sz) - 1;
+	CNativeW value;
+	CNativeW other(sz);
+	value = other;
+	ASSERT_STREQ(sz, value.GetStringPtr());
+	EXPECT_EQ(cch, value.GetStringLength());
+	EXPECT_LT(cch + 1, value.capacity());
+
+	// コピー元バッファとは別に新しいバッファが確保される
+	ASSERT_NE(other.GetStringPtr(), value.GetStringPtr());
+}
+
+/*!
+ * @brief ムーブ代入演算子の仕様
+ * @remark バッファが確保される
+ * @remark 文字列長は指定した文字列の文字列長になる
+ * @remark バッファサイズは指定した文字列を格納できるサイズになる
+ * @remark ムーブ元は抜け殻になる
+ */
+TEST(CNativeW, MoveFromOther)
+{
+	constexpr const wchar_t sz[] = L"test";
+	constexpr const size_t cch = _countof(sz) - 1;
+	CNativeW value;
+	CNativeW other(sz);
+	value = std::move(other);
+	ASSERT_STREQ(sz, value.GetStringPtr());
+	EXPECT_EQ(cch, value.GetStringLength());
+	EXPECT_LT(cch + 1, value.capacity());
+
+	// ムーブ元は抜け殻になる
+	ASSERT_EQ(NULL, other.GetStringPtr());
+	EXPECT_EQ(0, other.GetStringLength());
+	EXPECT_EQ(0, other.capacity());
+}
+
+/*!
+ * @brief 添字演算子の仕様
+ * @remark 指定した位置にあるwchar_tを返す
+ * @remark インデックス指定が範囲外の場合 NUL を返す
+ * @remark 確保領域を超える位置を指定してもエラーにならない
+ */
+TEST(CNativeW, GetCharAtIndex)
+{
+	constexpr const wchar_t sz[] = L"森鷗外";
+	constexpr const size_t cch = _countof(sz) - 1;
+	CNativeW value(sz, cch);
+	EXPECT_EQ(cch, value.GetStringLength());
+	for (size_t index = 0; index < cch; ++index) {
+		EXPECT_EQ(sz[index], value[index]);
+	}
+	ASSERT_EQ(0, value[cch]);
+	EXPECT_EQ(0, value[value.capacity() + 1]);
+}
+
+/*!
+ * @brief 代入演算子(文字指定)の仕様
+ * @remark バッファが確保される
+ * @remark 文字列長は1になる
+ * @remark バッファサイズは1+1以上になる
+ */
+TEST(CNativeW, AssignChar)
+{
+	constexpr const wchar_t sz[] = L"X";
+	CNativeW value;
+	value = sz[0];
+	ASSERT_STREQ(sz, value.GetStringPtr());
+	EXPECT_EQ(1, value.GetStringLength());
+	EXPECT_LT(1 + 1, value.capacity());
+}
+
+/*!
+ * @brief 代入演算子(文字列指定)の仕様
+ * @remark バッファが確保される
+ * @remark 文字列長は指定した文字列の文字列長になる
+ * @remark バッファサイズは指定した文字列を格納できるサイズになる
+ */
+TEST(CNativeW, AssignString)
+{
+	constexpr const wchar_t sz[] = L"test";
+	constexpr const size_t cch = _countof(sz) - 1;
+	CNativeW value;
+	value = sz;
+	ASSERT_STREQ(sz, value.GetStringPtr());
+	EXPECT_EQ(cch, value.GetStringLength());
+	EXPECT_LT(cch + 1, value.capacity());
+}
+
+/*!
+ * @brief 代入演算子(nullptr指定)の仕様
+ * @remark 代入できない(実行時エラーになる)
+ * @note バグですね(^^;
+ */
+TEST(CNativeW, AssignStringNullPointer)
+{
+	volatile int ret = 0;
+	ASSERT_DEATH({ CNativeW value; value = nullptr; ret = value.capacity(); }, ".*");
+	(void)ret;
+}
+
+/*!
+ * @brief 代入演算子(NULL指定)の仕様
+ * @remark バッファが確保される
+ * @remark 文字列長は1になる
+ * @remark バッファサイズは1+1以上になる
+ * @note バグですね(^^;
+ */
+TEST(CNativeW, AssignStringNullLiteral)
+{
+	CNativeW value;
+#ifdef _MSC_VER
+	value = NULL; // operator = (wchar_t) と解釈される
+#else
+	value = static_cast<wchar_t>(NULL);
+#endif
+	ASSERT_STREQ(L"", value.GetStringPtr());
+	EXPECT_EQ(1, value.GetStringLength());
+	EXPECT_LT(1 + 1, value.capacity());
+	EXPECT_EQ(0, value[0]); // 長さ=1なので1文字目を参照できるが、NULが返ってくる
+}
+
+/*!
+ * @brief 加算代入演算子(文字指定)の仕様
+ * @remark バッファが確保される
+ * @remark 文字列長は2になる
+ * @remark バッファサイズは2より大きくなる
+ */
+TEST(CNativeW, AppendChar)
+{
+	constexpr const wchar_t sz[] = L"X";
+	constexpr const size_t cch = _countof(sz) - 1;
+	CNativeW value;
+	value += sz[0];
+	ASSERT_STREQ(sz, value.GetStringPtr());
+	EXPECT_EQ(1, value.GetStringLength());
+	EXPECT_LT(1 + 1, value.capacity());
+}
+
+/*!
+ * @brief 加算代入演算子(文字列指定)の仕様
+ * @remark バッファが確保される
+ * @remark 文字列長は指定した文字列の文字列長になる
+ * @remark バッファサイズは指定した文字列を格納できるサイズになる
+ */
+TEST(CNativeW, AppendString)
+{
+	constexpr const wchar_t sz[] = L"test";
+	constexpr const size_t cch = _countof(sz) - 1;
+	CNativeW value;
+	value += sz;
+	ASSERT_STREQ(sz, value.GetStringPtr());
+	EXPECT_EQ(cch, value.GetStringLength());
+	EXPECT_LT(cch + 1, value.capacity());
+}
+
+/*!
+ * @brief 加算代入演算子(nullptr指定)の仕様
+ * @remark 加算代入できない(実行時エラーになる)
+ * @note バグですね(^^;
+ */
+TEST(CNativeW, AppendStringNullPointer)
+{
+	volatile int ret = 0;
+	ASSERT_DEATH({ CNativeW value; value += nullptr; ret = value.capacity(); }, ".*");
+	(void)ret;
+}
+
+/*!
+ * @brief 加算代入演算子(NULL指定)の仕様
+ * @remark バッファが確保される
+ * @remark 文字列長は1になる
+ * @remark バッファサイズは1+1以上になる
+ * @note バグですね(^^;
+ */
+TEST(CNativeW, AppendStringNullLiteral)
+{
+	CNativeW value;
+#ifdef _MSC_VER
+	value += NULL; // operator += (wchar_t) と解釈される
+#else
+	value += static_cast<wchar_t>(NULL);
+#endif
+	ASSERT_STREQ(L"", value.GetStringPtr());
+	EXPECT_EQ(1, value.GetStringLength());
+	EXPECT_LT(1 + 1, value.capacity());
+}
+
+/*!
+ * @brief 独自関数AppendStringFの仕様
+ * @remark 指定したフォーマットで、引数がフォーマットされる
+ */
+TEST(CNativeW, AppendStringWithFormatting)
+{
+	CNativeW value;
+	value.AppendStringF(L"いちご%d%%", 100);
+	ASSERT_STREQ(L"いちご100%", value.GetStringPtr());
+}
+
+/*!
+ * @brief 独自関数Replaceの仕様
+ * @remark バッファが確保される
+ * @remark 文字列長は0になる
+ * @remark バッファサイズは1以上になる
+ */
+TEST(CNativeW, ReplaceOfNullString)
+{
+	CNativeW value;
+	value.Replace(L"置換前", L"置換後");
+	ASSERT_STREQ(L"", value.GetStringPtr());
+	EXPECT_EQ(0, value.GetStringLength());
+	EXPECT_LT(1, value.capacity());
+}
+
+/*!
+ * @brief 独自関数Replaceの仕様
+ * @remark 文字列中の指定文字列が置換される
+ */
+TEST(CNativeW, ReplaceWithSomeChanges)
+{
+	CNativeW value(L"？とは違うのだよ、？とは！");
+	value.Replace(L"？", L"ザク");
+	ASSERT_STREQ(L"ザクとは違うのだよ、ザクとは！", value.GetStringPtr());
+}
+
+/*!
 	CNativeW::Clear のデータサイズのクリアをテストする
 
 	0. バッファが空の状態でクリアする
