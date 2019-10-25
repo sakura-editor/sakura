@@ -25,6 +25,7 @@ DefaultGroupName={cm:AppName}
 UninstallDisplayIcon={app}\sakura.exe
 InfoBeforeFile="instmaterials\info.txt"
 LanguageDetectionMethod=uilanguage 
+SolidCompression=yes
 
 WizardImageFile="instmaterials\SetupModern20.bmp"
 WizardSmallImageFile="instmaterials\SetupModernSmall20.bmp"
