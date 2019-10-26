@@ -19,11 +19,13 @@
 #ifndef _CCOMMANDLINE_H_
 #define _CCOMMANDLINE_H_
 
+#include <vector>
+
 #include "global.h"
+#include "charset/charcode.h"
+#include "mem/CNativeW.h"
 #include "EditInfo.h"
 #include "util/design_template.h"
-
-class CMemory;
 
 /*!	検索オプション
 	20020118 aroka
@@ -60,8 +62,10 @@ struct GrepInfo {
 */
 class CCommandLine  : public TSingleton<CCommandLine> {
 	friend class TSingleton<CCommandLine>;
+public:
 	CCommandLine();
 
+private:
 	static int CheckCommandLine(
 		LPWSTR	str,		//!< [in] 検証する文字列（先頭の-は含まない）
 		WCHAR**	arg,		//!< [out] 引数がある場合はその先頭へのポインタ

@@ -103,6 +103,7 @@
     <Link Include="$(SolutionDir)sakura\$(Platform)\$(Configuration)\*.obj" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="test-ccommandline.cpp" />
     <ClCompile Include="test-cmemory.cpp" />
     <ClCompile Include="test-cnative.cpp" />
     <ClCompile Include="test-int2dec.cpp" />
