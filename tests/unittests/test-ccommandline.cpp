@@ -52,11 +52,7 @@ TEST(CCommandLine, ConstructWithoutParam)
 
 	EXPECT_EQ(EditInfo(), cCommandLine.GetEditInfoRef());
 
-	//GetGrepInfo: テストしづらい上に戻り値true以外は返らない・・・仕様バグですね(^^;
-	GrepInfo gi;
-	EXPECT_TRUE(cCommandLine.GetGrepInfo(&gi));
-	//TODO: GrepInfoに等価比較演算子を実装する
-	//EXPECT_EQ(GrepInfo(), gi);
+	EXPECT_EQ(GrepInfo(), cCommandLine.GetGrepInfoRef());
 
 	EXPECT_EQ(-1, cCommandLine.GetGroupId());
 	EXPECT_EQ(NULL, cCommandLine.GetMacro());
@@ -426,6 +422,299 @@ TEST(CCommandLine, SetProfileName)
 	EXPECT_FALSE(cCommandLine.IsSetProfile());
 	cCommandLine.SetProfileName(L"");
 	ASSERT_TRUE(cCommandLine.IsSetProfile());
+}
+
+/*!
+ * @brief パラメータ解析(-GKEY)の仕様
+ * @remark -GKEYが指定されていなければNULL
+ * @remark -GKEYが指定されていたら指定された文字列
+ */
+TEST(CCommandLine, ParseGrepKey)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_EQ(NULL, cCommandLine.GetGrepInfoRef().cmGrepKey.GetStringPtr());
+#define TESTLOCAL_GREP_KEY L"\\w+"
+	cCommandLine.ParseCommandLine(L"-GKEY=" TESTLOCAL_GREP_KEY, false);
+	ASSERT_STREQ(TESTLOCAL_GREP_KEY, cCommandLine.GetGrepInfoRef().cmGrepKey.GetStringPtr());
+#undef TESTLOCAL_GREP_KEY
+}
+
+/*!
+ * @brief パラメータ解析(-GREPR)の仕様
+ * @remark -GREPRが指定されていなければNULL
+ * @remark -GREPRが指定されていたら指定された文字列
+ */
+TEST(CCommandLine, ParseGrepReplaceKey)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_EQ(NULL, cCommandLine.GetGrepInfoRef().cmGrepRep.GetStringPtr());
+#define TESTLOCAL_GREP_REPR L"$1。"
+	cCommandLine.ParseCommandLine(L"-GREPR=" TESTLOCAL_GREP_REPR, false);
+	ASSERT_STREQ(TESTLOCAL_GREP_REPR, cCommandLine.GetGrepInfoRef().cmGrepRep.GetStringPtr());
+#undef TESTLOCAL_GREP_REPR
+}
+
+/*!
+ * @brief パラメータ解析(-GFILE)の仕様
+ * @remark -GFILEが指定されていなければNULL
+ * @remark -GFILEが指定されていたら指定された文字列
+ */
+TEST(CCommandLine, ParseGrepFile)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_EQ(NULL, cCommandLine.GetGrepInfoRef().cmGrepFile.GetStringPtr());
+#define TESTLOCAL_GREP_FILE L"#.git"
+	cCommandLine.ParseCommandLine(L"-GFILE=" TESTLOCAL_GREP_FILE, false);
+	ASSERT_STREQ(TESTLOCAL_GREP_FILE, cCommandLine.GetGrepInfoRef().cmGrepFile.GetStringPtr());
+#undef TESTLOCAL_GREP_FILE
+}
+
+/*!
+ * @brief パラメータ解析(-GFOLDER)の仕様
+ * @remark -GFOLDERが指定されていなければNULL
+ * @remark -GFOLDERが指定されていたら指定された文字列
+ */
+TEST(CCommandLine, ParseGrepFolder)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_EQ(NULL, cCommandLine.GetGrepInfoRef().cmGrepFolder.GetStringPtr());
+#define TESTLOCAL_GREP_FOLDER L"C:\\work\\sakura"
+	cCommandLine.ParseCommandLine(L"-GFOLDER=" TESTLOCAL_GREP_FOLDER, false);
+	ASSERT_STREQ(TESTLOCAL_GREP_FOLDER, cCommandLine.GetGrepInfoRef().cmGrepFolder.GetStringPtr());
+#undef TESTLOCAL_GREP_FOLDER
+}
+
+/*!
+* @brief パラメータ解析(-GOPT)の仕様
+* @remark -GOPTが指定されていなければFALSE
+* @remark -GOPTが指定されていたらTRUE
+*/
+TEST(CCommandLine, ParseGrepCurFolder)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_FALSE(cCommandLine.GetGrepInfoRef().bGrepCurFolder);
+	cCommandLine.ParseCommandLine(L"-GOPT=X", false);
+	EXPECT_TRUE(cCommandLine.GetGrepInfoRef().bGrepCurFolder);
+}
+
+/*!
+* @brief パラメータ解析(-GOPT)の仕様
+* @remark -GOPTが指定されていなければFALSE
+* @remark -GOPTが指定されていたらTRUE
+*/
+TEST(CCommandLine, ParseGrepStdout)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_FALSE(cCommandLine.GetGrepInfoRef().bGrepStdout);
+	cCommandLine.ParseCommandLine(L"-GOPT=U", false);
+	EXPECT_TRUE(cCommandLine.GetGrepInfoRef().bGrepStdout);
+}
+
+/*!
+* @brief パラメータ解析(-GOPT)の仕様
+* @remark -GOPTが指定されていなければTRUE
+* @remark -GOPTが指定されていたらFALSE
+*/
+TEST(CCommandLine, ParseGrepHeader)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_FALSE(!cCommandLine.GetGrepInfoRef().bGrepHeader);
+	cCommandLine.ParseCommandLine(L"-GOPT=H", false);
+	EXPECT_TRUE(!cCommandLine.GetGrepInfoRef().bGrepHeader);
+}
+
+/*!
+* @brief パラメータ解析(-GOPT)の仕様
+* @remark -GOPTが指定されていなければFALSE
+* @remark -GOPTが指定されていたらTRUE
+*/
+TEST(CCommandLine, ParseGrepSubFolder)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_FALSE(cCommandLine.GetGrepInfoRef().bGrepSubFolder);
+	cCommandLine.ParseCommandLine(L"-GOPT=S", false);
+	EXPECT_TRUE(cCommandLine.GetGrepInfoRef().bGrepSubFolder);
+}
+
+/*!
+* @brief パラメータ解析(-GOPT)の仕様
+* @remark -GOPTが指定されていなければFALSE
+* @remark -GOPTが指定されていたらTRUE
+*/
+TEST(CCommandLine, ParseGrepCaseSensitive)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_FALSE(cCommandLine.GetGrepInfoRef().sGrepSearchOption.bLoHiCase);
+	cCommandLine.ParseCommandLine(L"-GOPT=L", false);
+	EXPECT_TRUE(cCommandLine.GetGrepInfoRef().sGrepSearchOption.bLoHiCase);
+}
+
+/*!
+* @brief パラメータ解析(-GOPT)の仕様
+* @remark -GOPTが指定されていなければFALSE
+* @remark -GOPTが指定されていたらTRUE
+*/
+TEST(CCommandLine, ParseGrepUseRegularExpressions)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_FALSE(cCommandLine.GetGrepInfoRef().sGrepSearchOption.bRegularExp);
+	cCommandLine.ParseCommandLine(L"-GOPT=R", false);
+	EXPECT_TRUE(cCommandLine.GetGrepInfoRef().sGrepSearchOption.bRegularExp);
+}
+
+/*!
+* @brief パラメータ解析(-GOPT)の仕様
+* @remark -GOPTが指定されていなければSJIS
+* @remark -GOPTが指定されていたら自動検知
+* @note このオプションは特殊
+*/
+TEST(CCommandLine, ParseGrepCodeAutoDetect)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_EQ(CODE_SJIS, cCommandLine.GetGrepInfoRef().nGrepCharSet);
+	cCommandLine.ParseCommandLine(L"-GOPT=K", false);
+	EXPECT_EQ(CODE_AUTODETECT, cCommandLine.GetGrepInfoRef().nGrepCharSet);
+}
+
+/*!
+* @brief パラメータ解析(-GOPT)の仕様
+* @note このオプションは特殊
+*/
+TEST(CCommandLine, ParseGrepOutputLineType)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_EQ(0, cCommandLine.GetGrepInfoRef().nGrepOutputLineType);
+	cCommandLine.ParseCommandLine(L"-GOPT=P", false); //Positive?
+	EXPECT_EQ(1, cCommandLine.GetGrepInfoRef().nGrepOutputLineType);
+	cCommandLine.ParseCommandLine(L"-GOPT=N", false); //Negative?
+	EXPECT_EQ(2, cCommandLine.GetGrepInfoRef().nGrepOutputLineType);
+}
+
+/*!
+* @brief パラメータ解析(-GOPT)の仕様
+* @remark -GOPTが指定されていなければFALSE
+* @remark -GOPTが指定されていたらTRUE
+*/
+TEST(CCommandLine, ParseGrepUseWordParse)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_FALSE(cCommandLine.GetGrepInfoRef().sGrepSearchOption.bWordOnly);
+	cCommandLine.ParseCommandLine(L"-GOPT=W", false);
+	EXPECT_TRUE(cCommandLine.GetGrepInfoRef().sGrepSearchOption.bWordOnly);
+}
+
+/*!
+* @brief パラメータ解析(-GOPT)の仕様
+* @note このオプションは特殊
+*/
+TEST(CCommandLine, ParseGrepOutputStyle)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_EQ(1, cCommandLine.GetGrepInfoRef().nGrepOutputStyle);
+	cCommandLine.ParseCommandLine(L"-GOPT=1", false);
+	EXPECT_EQ(1, cCommandLine.GetGrepInfoRef().nGrepOutputStyle);
+	cCommandLine.ParseCommandLine(L"-GOPT=2", false);
+	EXPECT_EQ(2, cCommandLine.GetGrepInfoRef().nGrepOutputStyle);
+	cCommandLine.ParseCommandLine(L"-GOPT=3", false);
+	EXPECT_EQ(3, cCommandLine.GetGrepInfoRef().nGrepOutputStyle);
+}
+
+/*!
+* @brief パラメータ解析(-GOPT)の仕様
+* @remark -GOPTが指定されていなければFALSE
+* @remark -GOPTが指定されていたらTRUE
+*/
+TEST(CCommandLine, ParseGrepListFileNameOnly)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_FALSE(cCommandLine.GetGrepInfoRef().bGrepOutputFileOnly);
+	cCommandLine.ParseCommandLine(L"-GOPT=F", false);
+	EXPECT_TRUE(cCommandLine.GetGrepInfoRef().bGrepOutputFileOnly);
+}
+
+/*!
+* @brief パラメータ解析(-GOPT)の仕様
+* @remark -GOPTが指定されていなければFALSE
+* @remark -GOPTが指定されていたらTRUE
+*/
+TEST(CCommandLine, ParseGrepDisplayRoot)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_FALSE(cCommandLine.GetGrepInfoRef().bGrepOutputBaseFolder);
+	cCommandLine.ParseCommandLine(L"-GOPT=B", false);
+	EXPECT_TRUE(cCommandLine.GetGrepInfoRef().bGrepOutputBaseFolder);
+}
+
+/*!
+* @brief パラメータ解析(-GOPT)の仕様
+* @remark -GOPTが指定されていなければFALSE
+* @remark -GOPTが指定されていたらTRUE
+*/
+TEST(CCommandLine, ParseGrepSplitResultPerFolder)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_FALSE(cCommandLine.GetGrepInfoRef().bGrepSeparateFolder);
+	cCommandLine.ParseCommandLine(L"-GOPT=D", false);
+	EXPECT_TRUE(cCommandLine.GetGrepInfoRef().bGrepSeparateFolder);
+}
+
+/*!
+* @brief パラメータ解析(-GOPT)の仕様
+* @remark -GOPTが指定されていなければFALSE
+* @remark -GOPTが指定されていたらTRUE
+*/
+TEST(CCommandLine, ParseGrepReplacePasteFromClipBoard)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_FALSE(cCommandLine.GetGrepInfoRef().bGrepPaste);
+	cCommandLine.ParseCommandLine(L"-GOPT=C", false);
+	EXPECT_TRUE(cCommandLine.GetGrepInfoRef().bGrepPaste);
+}
+
+/*!
+* @brief パラメータ解析(-GOPT)の仕様
+* @remark -GOPTが指定されていなければFALSE
+* @remark -GOPTが指定されていたらTRUE
+*/
+TEST(CCommandLine, ParseGrepReplaceCreateBackupFiles)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_FALSE(cCommandLine.GetGrepInfoRef().bGrepBackup);
+	cCommandLine.ParseCommandLine(L"-GOPT=O", false);
+	EXPECT_TRUE(cCommandLine.GetGrepInfoRef().bGrepBackup);
+}
+
+/*!
+ * @brief パラメータ解析(-GCODE)の仕様
+ * @remark -GCODEが指定されていなければSJIS
+ * @remark -GCODEが指定されていたら指定された数値
+ */
+TEST(CCommandLine, ParseGrepCode)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_EQ(CODE_SJIS, cCommandLine.GetGrepInfoRef().nGrepCharSet);
+	cCommandLine.ParseCommandLine(L"-GCODE=99", false);
+	EXPECT_EQ(CODE_AUTODETECT, cCommandLine.GetGrepInfoRef().nGrepCharSet);
 }
 
 /*!

@@ -141,6 +141,7 @@ public:
 	bool GetEditInfo(EditInfo* fi) const noexcept { *fi = m_fi; return true; }
 	const EditInfo& GetEditInfoRef() const noexcept { return m_fi; }
 	bool GetGrepInfo(GrepInfo* gi) const noexcept { *gi = m_gi; return true; }
+	const GrepInfo& GetGrepInfoRef() const noexcept { return m_gi; }
 	int GetGroupId() const noexcept { return m_nGroup; }	// 2007.06.26 ryoji
 	LPCWSTR GetMacro() const noexcept { return m_cmMacro.GetStringPtr(); }
 	LPCWSTR GetMacroType() const noexcept { return m_cmMacroType.GetStringPtr(); }
