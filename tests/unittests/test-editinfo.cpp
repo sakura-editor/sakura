@@ -34,7 +34,7 @@
 #include "EditInfo.h"
 
 /*!
- * @brief 等価演算子のテスト
+ * @brief 等価比較演算子のテスト
  *  初期値同士の等価比較を行う
  */
 TEST(EditInfo, operatorEqualSame)
@@ -47,7 +47,7 @@ TEST(EditInfo, operatorEqualSame)
 }
 
 /*!
- * @brief 等価演算子のテスト
+ * @brief 等価比較演算子のテスト
  *  自分自身との等価比較を行う
  */
 TEST(EditInfo, operatorEqualBySelf)
@@ -60,7 +60,7 @@ TEST(EditInfo, operatorEqualBySelf)
 }
 
 /*!
- * @brief 否定の等価演算子のテスト
+ * @brief 否定の等価比較演算子のテスト
  *  メンバの値を変えて、等価比較を行う
  *
  *  合格条件：メンバの値が1つでも違ったら不一致を検出できること。
