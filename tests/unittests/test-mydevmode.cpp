@@ -259,6 +259,35 @@ TEST(MYDEVMODETest, operatorNotEqual)
 }
 
 /*!
+ * @brief 否定の等価演算子のテスト
+ *  文字列メンバの末尾(通常はNUL文字)が異なるパターンを検出できるかチェックする
+ */
+TEST(MYDEVMODETest, operatorNotEqualAntiLazyCode)
+{
+	// デフォルトで初期化
+	MYDEVMODE value, other;
+
+	// スタック変数のアドレスをchar*にキャストしてデータを書き替える
+	char* buf1 = reinterpret_cast<char*>(&value);
+	::memset(buf1, 'a', sizeof(MYDEVMODE));
+	char* buf2 = reinterpret_cast<char*>(&other);
+	::memset(buf2, 'a', sizeof(MYDEVMODE));
+
+	// まったく同じなので等価になる
+	EXPECT_TRUE(value == other);
+	EXPECT_FALSE(value != other);
+	EXPECT_EQ(other, value);
+
+	// 文字列メンバをNUL終端する
+	value.m_szPrinterDriverName[_countof(value.m_szPrinterDriverName) - 1] = 0;
+
+	// NUL終端された文字列 != NUL終端されてない文字列、となるはず。
+	EXPECT_FALSE(value == other);
+	EXPECT_TRUE(value != other);
+	EXPECT_NE(other, value);
+}
+
+/*!
  * @brief 等価比較演算子が一般保護違反を犯さないことを保証する非機能要件テスト
  *
  *  通常、ここまでやる必要はないが、修正の理由が「安全のため」なので、
