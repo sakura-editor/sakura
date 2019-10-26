@@ -59,7 +59,7 @@ CLayoutInt CLayout::CalcLayoutWidth(const CLayoutMgr& cLayoutMgr) const
 		}
 	}else {
 		if (m_pCDocLine->m_sMark.m_bHasNoTab && m_pCDocLine->m_sMark.m_bHalfwidthOnly) {
-			auto len = nLen - m_ptLogicPos.GetX2();
+			Int len = nLen - m_ptLogicPos.GetX2();
 			nWidth += len * (cLayoutMgr.GetCharSpacing() + WCODE::CalcPxWidthByFont('a'));
 		}
 		else {
