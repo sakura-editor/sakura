@@ -55,8 +55,12 @@ CLayoutMgr::CLayoutMgr()
 
 CLayoutMgr::~CLayoutMgr()
 {
-	_Empty();
-
+	CLayout* pLayout = m_pLayoutTop;
+	while( pLayout ){
+		CLayout* pLayoutNext = pLayout->GetNextLayout();
+		pLayout->~CLayout();
+		pLayout = pLayoutNext;
+	}
 	m_pszKinsokuHead_1.clear();	/* 行頭禁則 */
 	m_pszKinsokuTail_1.clear();	/* 行末禁則 */	//@@@ 2002.04.08 MIK
 	m_pszKinsokuKuto_1.clear();	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
@@ -96,9 +100,9 @@ void CLayoutMgr::_Empty()
 	while( pLayout ){
 		CLayout* pLayoutNext = pLayout->GetNextLayout();
 		pLayout->~CLayout();
+		m_layoutMemRes.Deallocate(pLayout);
 		pLayout = pLayoutNext;
 	}
-	m_layoutMemRes.Initialize();
 }
 
 /*! レイアウト情報の変更

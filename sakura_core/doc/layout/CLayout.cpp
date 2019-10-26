@@ -17,11 +17,6 @@
 #include "charset/charcode.h"
 #include "extmodule/CBregexp.h" // CLayoutMgrの定義で必要
 
-CLayout::~CLayout()
-{
-	return;
-}
-
 void CLayout::DUMP( void )
 {
 	DEBUG_TRACE( L"\n\n■CLayout::DUMP()======================\n" );

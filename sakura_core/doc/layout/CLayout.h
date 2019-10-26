@@ -29,7 +29,7 @@ class CLayoutMgr;
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-class CLayout
+class CLayout final
 {
 protected:
 	friend class CLayoutMgr; //####仮
@@ -56,7 +56,7 @@ public:
 		m_nIndent		= nTypeIndent;	// このレイアウト行のインデント数 @@@ 2002.09.23 YAZAKI
 		m_cExInfo.SetColorInfo(pColorInfo);
 	}
-	~CLayout();
+	~CLayout() = default;
 	void DUMP( void );
 	
 	// m_ptLogicPos.xで補正したあとの文字列を得る
