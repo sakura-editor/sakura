@@ -50,10 +50,7 @@ TEST(CCommandLine, ConstructWithoutParam)
 	EXPECT_FALSE(cCommandLine.IsDebugMode());
 	EXPECT_FALSE(cCommandLine.IsViewMode());
 
-	//GetEditInfo: テストしづらい上に戻り値true以外は返らない・・・仕様バグですね(^^;
-	EditInfo fi;
-	EXPECT_TRUE(cCommandLine.GetEditInfo(&fi));
-	EXPECT_EQ(EditInfo(), fi);
+	EXPECT_EQ(EditInfo(), cCommandLine.GetEditInfoRef());
 
 	//GetGrepInfo: テストしづらい上に戻り値true以外は返らない・・・仕様バグですね(^^;
 	GrepInfo gi;
@@ -117,9 +114,8 @@ TEST(CCommandLine, ParseGrepMode)
 	cCommandLine.ParseCommandLine(L"-GREPMODE", false);
 	ASSERT_TRUE(cCommandLine.IsGrepMode());
 
-	//TODO: 現状のコードではテストを書きづらい...
 	//Grepモード時は文書タイプが"grepout"になる
-	//ASSERT_STREQ(L"grepout", cCommandLine.GetDocType());
+	ASSERT_STREQ(L"grepout", cCommandLine.GetDocType());
 }
 
 /*!
@@ -151,9 +147,8 @@ TEST(CCommandLine, ParseDebugMode)
 	cCommandLine.ParseCommandLine(L"-DEBUGMODE", false);
 	ASSERT_TRUE(cCommandLine.IsDebugMode());
 
-	//TODO: 現状のコードではテストを書きづらい...
 	//Debugモード時は文書タイプが"output"になる
-	//ASSERT_STREQ(L"output", cCommandLine.GetDocType());
+	ASSERT_STREQ(L"output", cCommandLine.GetDocType());
 }
 
 /*!
@@ -250,27 +245,173 @@ TEST(CCommandLine, ParseProfileManager)
 }
 
 /*!
+ * @brief パラメータ解析(-X)の仕様
+ * @remark -Xが指定されていなければ-1
+ * @remark -Xが指定されていたら指定された数値
+ */
+TEST(CCommandLine, ParseCaretLocationX)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	ASSERT_EQ(-1, cCommandLine.GetCaretLocation().x);
+	cCommandLine.ParseCommandLine(L"-X=123", false);
+	ASSERT_EQ(122, cCommandLine.GetCaretLocation().x);
+}
+
+/*!
+ * @brief パラメータ解析(-Y)の仕様
+ * @remark -Yが指定されていなければ-1
+ * @remark -Yが指定されていたら指定された数値
+ */
+TEST(CCommandLine, ParseCaretLocationY)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	ASSERT_EQ(-1, cCommandLine.GetCaretLocation().y);
+	cCommandLine.ParseCommandLine(L"-Y=123", false);
+	ASSERT_EQ(122, cCommandLine.GetCaretLocation().y);
+}
+
+/*!
+ * @brief パラメータ解析(-VX)の仕様
+ * @remark -VXが指定されていなければ-1
+ * @remark -VXが指定されていたら指定された数値
+ */
+TEST(CCommandLine, ParseViewLeftCol)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	ASSERT_EQ(-1, cCommandLine.GetViewLocation().x);
+	cCommandLine.ParseCommandLine(L"-VX=123", false);
+	ASSERT_EQ(122, cCommandLine.GetViewLocation().x);
+}
+
+/*!
+ * @brief パラメータ解析(-VY)の仕様
+ * @remark -VYが指定されていなければ-1
+ * @remark -VYが指定されていたら指定された数値
+ */
+TEST(CCommandLine, ParseViewTopLine)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	ASSERT_EQ(-1, cCommandLine.GetViewLocation().y);
+	cCommandLine.ParseCommandLine(L"-VY=123", false);
+	ASSERT_EQ(122, cCommandLine.GetViewLocation().y);
+}
+
+/*!
+ * @brief パラメータ解析(-SX)の仕様
+ * @remark -SXが指定されていなければ-1
+ * @remark -SXが指定されていたら指定された数値
+ */
+TEST(CCommandLine, ParseWindowSizeX)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	ASSERT_EQ(-1, cCommandLine.GetWindowSize().cx);
+	cCommandLine.ParseCommandLine(L"-SX=123", false);
+	ASSERT_EQ(122, cCommandLine.GetWindowSize().cx);
+}
+
+/*!
+ * @brief パラメータ解析(-SY)の仕様
+ * @remark -SYが指定されていなければ-1
+ * @remark -SYが指定されていたら指定された数値
+ */
+TEST(CCommandLine, ParseWindowSizeY)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	ASSERT_EQ(-1, cCommandLine.GetWindowSize().cy);
+	cCommandLine.ParseCommandLine(L"-SY=123", false);
+	ASSERT_EQ(122, cCommandLine.GetWindowSize().cy);
+}
+
+/*!
+ * @brief パラメータ解析(-WX)の仕様
+ * @remark -WXが指定されていなければCW_USEDEFAULT
+ * @remark -WXが指定されていたら指定された数値
+ */
+TEST(CCommandLine, ParseWindowOriginX)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	ASSERT_EQ(CW_USEDEFAULT, cCommandLine.GetWindowOrigin().x);
+	cCommandLine.ParseCommandLine(L"-WX=123", false);
+	ASSERT_EQ(123, cCommandLine.GetWindowOrigin().x);
+}
+
+/*!
+ * @brief パラメータ解析(-WY)の仕様
+ * @remark -WYが指定されていなければCW_USEDEFAULT
+ * @remark -WYが指定されていたら指定された数値
+ */
+TEST(CCommandLine, ParseWindowOriginY)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	ASSERT_EQ(CW_USEDEFAULT, cCommandLine.GetWindowOrigin().y);
+	cCommandLine.ParseCommandLine(L"-WY=123", false);
+	ASSERT_EQ(123, cCommandLine.GetWindowOrigin().y);
+}
+
+/*!
+ * @brief パラメータ解析(-TYPE)の仕様
+ * @remark -TYPEが指定されていなければNULL
+ * @remark -TYPEが指定されていたら指定された文字列
+ * @remark DocTypeには任意の文字列を指定できる
+ */
+TEST(CCommandLine, ParseDocType)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_STREQ(L"", cCommandLine.GetDocType());
+#define TESTLOCAL_DOC_TYPE L"C/C++"
+	cCommandLine.ParseCommandLine(L"-TYPE=" TESTLOCAL_DOC_TYPE, false);
+	ASSERT_STREQ(TESTLOCAL_DOC_TYPE, cCommandLine.GetDocType());
+#undef TESTLOCAL_DOC_TYPE
+}
+
+/*!
+ * @brief パラメータ解析(-CODE)の仕様
+ * @remark -CODEが指定されていなければJIS
+ * @remark -CODEが指定されていたら指定された数値
+ */
+TEST(CCommandLine, ParseDocCode)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_EQ(CODE_JIS, cCommandLine.GetDocCode());
+	cCommandLine.ParseCommandLine(L"-CODE=99", false);
+	EXPECT_EQ(CODE_AUTODETECT, cCommandLine.GetDocCode());
+}
+
+/*!
  * @brief パラメータ解析(ファイル名)の仕様
- * @remark GetFileNumで取得できるのは2つ目以降のファイル数
- * @remark GetFileName(0)で取得できるのは2つ目のファイル名
+ * @remark ファイルは複数指定できる
+ * @remark 1つ目のファイルは EditInfo(m_fi.m_szPath) に格納される
+ * @remark 2つ目以降のファイルは vector(m_vFiles) に格納される
+ * @remark 1つ目のファイルパスは、パス解決されてフルパスになる
+ * @remark 2つ目以降のファイルは、パス解決されない
  */
 TEST(CCommandLine, ParseOpenFilename)
 {
-	//TODO: 現状のコードではテストを書きづらい...
-	//・ファイルは複数指定できる
-	//・1つ目のファイルは EditInfo に格納される
-	//・2つ目以降のファイルは vector に格納される
-
 	CCommandLine cCommandLine;
 	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_STREQ(L"", cCommandLine.GetOpenFile());
 	EXPECT_EQ(0, cCommandLine.GetFileNum());
 	EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
-#define TESTLOCAL_OPEN_FILENAME L"test2.txt"
-	cCommandLine.ParseCommandLine(L"test1.txt " TESTLOCAL_OPEN_FILENAME, false);
+#define TESTLOCAL_OPEN_FILENAME1 L"test1.txt"
+#define TESTLOCAL_OPEN_FILENAME2 L"test2.txt"
+	cCommandLine.ParseCommandLine(TESTLOCAL_OPEN_FILENAME1 " " TESTLOCAL_OPEN_FILENAME2, false);
+	//EXPECT_STREQ(TESTLOCAL_OPEN_FILENAME1, cCommandLine.GetOpenFile());
+	EXPECT_STRNE(L"", cCommandLine.GetOpenFile());
 	EXPECT_EQ(1, cCommandLine.GetFileNum());
 	std::wstring additionalFile(cCommandLine.GetFileName(0));
-	ASSERT_NE(0, additionalFile.find(TESTLOCAL_OPEN_FILENAME));
-#undef TESTLOCAL_OPEN_FILENAME
+	ASSERT_NE(0, additionalFile.find(TESTLOCAL_OPEN_FILENAME2));
+#undef TESTLOCAL_OPEN_FILENAME2
+#undef TESTLOCAL_OPEN_FILENAME1
 	cCommandLine.ClearFile();
 	EXPECT_EQ(0, cCommandLine.GetFileNum());
 }

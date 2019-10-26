@@ -90,6 +90,7 @@ public:
 	bool IsDebugMode() const noexcept { return m_bDebugMode; }
 	bool IsViewMode() const noexcept { return m_bViewMode; }
 	bool GetEditInfo(EditInfo* fi) const noexcept { *fi = m_fi; return true; }
+	const EditInfo& GetEditInfoRef() const noexcept { return m_fi; }
 	bool GetGrepInfo(GrepInfo* gi) const noexcept { *gi = m_gi; return true; }
 	int GetGroupId() const noexcept { return m_nGroup; }	// 2007.06.26 ryoji
 	LPCWSTR GetMacro() const noexcept { return m_cmMacro.GetStringPtr(); }
@@ -101,9 +102,16 @@ public:
 		m_cmProfile.SetString(s);
 	}
 	bool IsProfileMgr() const noexcept { return m_bProfileMgr; }
+	const CLogicPoint& GetCaretLocation() const noexcept { return m_fi.m_ptCursor; }
+	CLayoutPoint GetViewLocation() const noexcept { return { m_fi.m_nViewLeftCol,  m_fi.m_nViewTopLine }; }
+	tagSIZE GetWindowSize() const noexcept { return { m_fi.m_nWindowSizeX, m_fi.m_nWindowSizeY }; }
+	tagPOINT GetWindowOrigin() const noexcept { return { m_fi.m_nWindowOriginX, m_fi.m_nWindowOriginY }; }
+	LPCWSTR GetOpenFile() const noexcept { return m_fi.m_szPath; }
 	int GetFileNum(void) const noexcept { return m_vFiles.size(); }
 	const WCHAR* GetFileName(int i) const noexcept { return i < GetFileNum() ? m_vFiles[i].c_str() : NULL; }
 	void ClearFile(void) noexcept { m_vFiles.clear(); }
+	LPCWSTR GetDocType() const noexcept { return m_fi.m_szDocType; }
+	ECodeType GetDocCode() const noexcept { return m_fi.m_nCharCode; }
 	void ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse = true );
 
 // member valiables
