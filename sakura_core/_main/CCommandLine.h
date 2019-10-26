@@ -51,6 +51,55 @@ struct GrepInfo {
 	bool			bGrepReplace;		//!< Grep置換
 	bool			bGrepPaste;			//!< クリップボードから貼り付け
 	bool			bGrepBackup;		//!< 置換でバックアップを保存
+
+	GrepInfo() noexcept
+		: cmGrepKey()
+		, cmGrepRep()
+		, cmGrepFile()
+		, cmGrepFolder()
+		, cmExcludeFile()
+		, cmExcludeFolder()
+		, sGrepSearchOption()
+		, bGrepCurFolder(false)
+		, bGrepStdout(false)
+		, bGrepHeader(true)
+		, bGrepSubFolder(false)
+		, nGrepCharSet(CODE_SJIS)
+		, nGrepOutputStyle(1)
+		, nGrepOutputLineType(0)
+		, bGrepOutputFileOnly(false)
+		, bGrepOutputBaseFolder(false)
+		, bGrepSeparateFolder(false)
+		, bGrepReplace(false)
+		, bGrepPaste(false)
+		, bGrepBackup(false)
+	{
+	}
+
+	bool operator == (const GrepInfo& rhs) const noexcept {
+		if (this == &rhs) return true;
+		return cmGrepKey == rhs.cmGrepKey
+			&& cmGrepRep == rhs.cmGrepRep
+			&& cmGrepFile == rhs.cmGrepFile
+			&& cmGrepFolder == rhs.cmGrepFolder
+			&& cmExcludeFile == rhs.cmExcludeFile
+			&& cmExcludeFolder == rhs.cmExcludeFolder
+			&& sGrepSearchOption == rhs.sGrepSearchOption
+			&& bGrepCurFolder == rhs.bGrepCurFolder
+			&& bGrepStdout == rhs.bGrepStdout
+			&& bGrepHeader == rhs.bGrepHeader
+			&& bGrepSubFolder == rhs.bGrepSubFolder
+			&& nGrepCharSet == rhs.nGrepCharSet
+			&& nGrepOutputStyle == rhs.nGrepOutputStyle
+			&& nGrepOutputLineType == rhs.nGrepOutputLineType
+			&& bGrepOutputFileOnly == rhs.bGrepOutputFileOnly
+			&& bGrepOutputBaseFolder == rhs.bGrepOutputBaseFolder
+			&& bGrepSeparateFolder == rhs.bGrepSeparateFolder
+			&& bGrepReplace == rhs.bGrepReplace
+			&& bGrepPaste == rhs.bGrepPaste
+			&& bGrepBackup == rhs.bGrepBackup;
+	}
+	bool operator != (const GrepInfo& rhs) const noexcept { return !(*this == rhs); }
 };
 
 /*-----------------------------------------------------------------------
