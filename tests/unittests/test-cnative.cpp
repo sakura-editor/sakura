@@ -345,6 +345,199 @@ TEST(CNativeW, AppendStringWithFormatting)
 }
 
 /*!
+ * @brief 等価比較演算子のテスト
+ *  初期値同士の等価比較を行う
+ */
+TEST(CNativeW, operatorEqualNull)
+{
+	CNativeW value, other;
+
+	EXPECT_TRUE(value == other);
+	EXPECT_FALSE(value != other);
+	ASSERT_EQ(value, other);
+}
+
+/*!
+ * @brief 等価比較演算子のテスト
+ *  nullptrとの等価比較を行う
+ */
+TEST(CNativeW, operatorEqualNullptr)
+{
+	CNativeW value;
+
+	EXPECT_TRUE(value == nullptr);
+	EXPECT_FALSE(value != nullptr);
+	ASSERT_EQ(value, nullptr);
+}
+
+/*!
+ * @brief 等価比較演算子のテスト
+ *  ポインタ(値がNULL)との等価比較を行う
+ */
+TEST(CNativeW, operatorEqualStringNull)
+{
+	CNativeW value;
+	LPCTSTR str = NULL;
+
+	EXPECT_TRUE(value == str);
+	EXPECT_FALSE(value != str);
+	ASSERT_EQ(value, str);
+}
+
+/*!
+ * @brief 等価比較演算子のテスト
+ *  値あり同士の等価比較を行う
+ */
+TEST(CNativeW, operatorEqualSame)
+{
+	CNativeW value(L"これはテストです。");
+	CNativeW other(L"これはテストです。");
+
+	EXPECT_TRUE(value == other);
+	EXPECT_FALSE(value != other);
+	ASSERT_EQ(value, other);
+}
+
+/*!
+ * @brief 等価比較演算子のテスト
+ *  自分自身との等価比較を行う
+ */
+TEST(CNativeW, operatorEqualBySelf)
+{
+	CNativeW value;
+
+	EXPECT_TRUE(value == value);
+	EXPECT_FALSE(value != value);
+	ASSERT_EQ(value, value);
+}
+
+/*!
+ * @brief 否定の等価比較演算子のテスト
+ *  メンバの値を変えて、等価比較を行う
+ *  重要なクラスなので、テスト条件ごとにケースを分ける
+ *
+ *  合格条件：値あり vs NULL の比較で不一致を検出できること
+ */
+TEST(CNativeW, operatorNotEqualSomeValueVsNull)
+{
+	// 値あり vs NULL
+	CNativeW value(L"これはテストです。");
+	CNativeW other;
+	EXPECT_FALSE(value == other);
+	EXPECT_TRUE(value != other);
+	ASSERT_NE(value, other);
+}
+
+/*!
+ * @brief 否定の等価比較演算子のテスト
+ *  メンバの値を変えて、等価比較を行う
+ *  重要なクラスなので、テスト条件ごとにケースを分ける
+ *
+ *  合格条件：NULL vs 値あり の比較で不一致を検出できること
+ */
+TEST(CNativeW, operatorNotEqualNullVsSomeValue)
+{
+	// NULL vs 値あり
+	CNativeW value;
+	CNativeW other(L"これはテストです。");
+	EXPECT_FALSE(value == other);
+	EXPECT_TRUE(value != other);
+	ASSERT_NE(value, other);
+}
+
+/*!
+ * @brief 否定の等価比較演算子のテスト
+ *  メンバの値を変えて、等価比較を行う
+ *  重要なクラスなので、テスト条件ごとにケースを分ける
+ *
+ *  合格条件：長さの異なる場合の比較で不一致を検出できること
+ */
+TEST(CNativeW, operatorNotEqualNotSameLength)
+{
+	// 値あり vs 値あり(文字列長が違う)
+	CNativeW value(L"これはテストです。");
+	CNativeW other(L"これはテスト？");
+	EXPECT_FALSE(value == other);
+	EXPECT_TRUE(value != other);
+	ASSERT_NE(value, other);
+}
+
+/*!
+ * @brief 否定の等価比較演算子のテスト
+ *  メンバの値を変えて、等価比較を行う
+ *  重要なクラスなので、テスト条件ごとにケースを分ける
+ *
+ *  合格条件：長さが等しく内容の異なる場合の比較で不一致を検出できること
+ */
+TEST(CNativeW, operatorNotEqualNotSameContent)
+{
+	// 値あり vs 値あり(値が違う)
+	CNativeW value(L"これはテストです。");
+	CNativeW other(L"これはテストです？");
+	EXPECT_FALSE(value == other);
+	EXPECT_TRUE(value != other);
+	ASSERT_NE(value, other);
+}
+
+/*!
+ * @brief 等価比較演算子のテスト
+ *  ポインタとの等価比較を行う
+ */
+TEST(CNativeW, operatorEqualSameString)
+{
+	constexpr const wchar_t text[] = L"おっす！オラ(ry";
+	CNativeW value(text);
+	LPCTSTR str = text;
+
+	EXPECT_TRUE(value == str);
+	EXPECT_FALSE(value != str);
+	ASSERT_EQ(value, str);
+}
+
+/*!
+ * @brief 否定の等価比較演算子のテスト
+ *  ポインタとの等価比較を行う
+ */
+TEST(CNativeW, operatorNotEqualAlmostSameString)
+{
+	CNativeW value(L"おっす！オラ(ry");
+	LPCTSTR str = L"おっと！オラ(ry";
+
+	EXPECT_FALSE(value == str);
+	EXPECT_TRUE(value != str);
+	ASSERT_NE(value, str);
+}
+
+/*!
+ * @brief 否定の等価比較演算子のテスト
+ *  nullptrとの等価比較を行う
+ */
+TEST(CNativeW, operatorNotEqualNullptr)
+{
+	constexpr const wchar_t text[] = L"おっす！オラ(ry";
+	CNativeW value(text);
+
+	EXPECT_FALSE(value == nullptr);
+	EXPECT_TRUE(value != nullptr);
+	ASSERT_NE(value, nullptr);
+}
+
+/*!
+ * @brief 否定の等価比較演算子のテスト
+ *  ポインタ(値がNULL)との等価比較を行う
+ */
+TEST(CNativeW, operatorNotEqualStringNull)
+{
+	constexpr const wchar_t text[] = L"おっす！オラ(ry";
+	CNativeW value(text);
+	LPCTSTR str = NULL;
+
+	EXPECT_FALSE(value == str);
+	EXPECT_TRUE(value != str);
+	ASSERT_NE(value, str);
+}
+
+/*!
  * @brief 独自関数Replaceの仕様
  * @remark バッファが確保される
  * @remark 文字列長は0になる

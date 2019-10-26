@@ -84,6 +84,20 @@ public:
 	const CNativeW& operator=(wchar_t wch)				{ SetString(&wch,1);      return *this; }
 	const CNativeW& operator+=(const CNativeW& rhs)		{ AppendNativeData(rhs); return *this; }
 	CNativeW operator+(const CNativeW& rhs) const		{ CNativeW tmp=*this; return tmp+=rhs; }
+	bool operator == (const CNativeW& rhs) const noexcept {
+		if (this == &rhs) return true;
+		if (!capacity() || !rhs.capacity()) return (capacity() == rhs.capacity());
+		return GetStringLength() == rhs.GetStringLength()
+			&& 0 == wmemcmp(GetStringPtr(), rhs.GetStringPtr(), GetStringLength() + 1);
+	}
+	bool operator != (const CNativeW& rhs) const noexcept { return !(*this == rhs); }
+	bool operator == (std::nullptr_t) const noexcept { return GetStringPtr() == nullptr; }
+	bool operator != (std::nullptr_t) const noexcept { return !(*this == nullptr); }
+	bool operator == (const wchar_t* rhs) const noexcept {
+		if (rhs == nullptr) return (*this == nullptr);
+		return 0 == wmemcmp(GetStringPtr(), rhs, GetStringLength() + 1);
+	}
+	bool operator != (const wchar_t* rhs) const noexcept { return !(*this == rhs); }
 
 	//ネイティブ取得インターフェース
 	wchar_t operator[](int nIndex) const;                    //!< 任意位置の文字取得。nIndexは文字単位。
@@ -117,7 +131,7 @@ public:
 	void swap( CNativeW& left ){
 		_GetMemory()->swap( *left._GetMemory() );
 	}
-	int capacity(){
+	int capacity() const {
 		return _GetMemory()->capacity() / sizeof(wchar_t);
 	}
 
