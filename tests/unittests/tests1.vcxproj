@@ -106,6 +106,7 @@
     <ClCompile Include="test-ccommandline.cpp" />
     <ClCompile Include="test-cmemory.cpp" />
     <ClCompile Include="test-cnative.cpp" />
+    <ClCompile Include="test-editinfo.cpp" />
     <ClCompile Include="test-int2dec.cpp" />
     <ClCompile Include="test-is_mailaddress.cpp" />
     <ClCompile Include="test-mydevmode.cpp" />

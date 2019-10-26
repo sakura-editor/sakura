@@ -27,6 +27,8 @@
 
 #include "basis/SakuraBasis.h"
 #include "config/maxdata.h"
+#include "charset/charcode.h"
+#include "mem/CNativeW.h"
 #include "types/CType.h"
 
 /*! ファイル情報
@@ -79,6 +81,7 @@ struct EditInfo {
 	, m_ptCursor(CLogicInt(-1), CLogicInt(-1))
 	, m_bIsModified( false )
 	, m_bIsGrep( false )
+	, m_szGrepKey{ 0 }
 	, m_bIsDebug( false )
 	, m_nWindowSizeX( -1 )
 	, m_nWindowSizeY( -1 )
@@ -89,6 +92,27 @@ struct EditInfo {
 		m_szMarkLines[0] = L'\0';
 		m_szDocType[0] = '\0';
 	}
+	bool operator == (const EditInfo& rhs) const noexcept {
+		if (this == &rhs) return true;
+		return 0 == wcsncmp(m_szPath, rhs.m_szPath, _countof(m_szPath))
+			&& m_nCharCode == rhs.m_nCharCode
+			&& m_bBom == rhs.m_bBom
+			&& 0 == wcsncmp(m_szDocType, rhs.m_szDocType, _countof(m_szDocType))
+			&& m_nTypeId == rhs.m_nTypeId
+			&& m_nViewTopLine == rhs.m_nViewTopLine
+			&& m_nViewLeftCol == rhs.m_nViewLeftCol
+			&& m_ptCursor == rhs.m_ptCursor
+			&& m_bIsModified == rhs.m_bIsModified
+			&& m_bIsGrep == rhs.m_bIsGrep
+			&& 0 == wcsncmp(m_szGrepKey, rhs.m_szGrepKey, _countof(m_szGrepKey))
+			&& m_bIsDebug == rhs.m_bIsDebug
+			&& 0 == wcsncmp(m_szMarkLines, rhs.m_szMarkLines, _countof(m_szMarkLines))
+			&& m_nWindowSizeX == rhs.m_nWindowSizeX
+			&& m_nWindowSizeY == rhs.m_nWindowSizeY
+			&& m_nWindowOriginX == rhs.m_nWindowOriginX
+			&& m_nWindowOriginY == rhs.m_nWindowOriginY;
+	}
+	bool operator != (const EditInfo& rhs) const noexcept { return !(*this == rhs); }
 };
 
 #endif /* SAKURA_EDITINFO_38A7E267_160D_4250_9012_AC3FC31993D69_H_ */

@@ -53,8 +53,7 @@ TEST(CCommandLine, ConstructWithoutParam)
 	//GetEditInfo: テストしづらい上に戻り値true以外は返らない・・・仕様バグですね(^^;
 	EditInfo fi;
 	EXPECT_TRUE(cCommandLine.GetEditInfo(&fi));
-	//TODO: EditInfoに等価比較演算子を実装する
-	//EXPECT_EQ(EditInfo(), fi);
+	EXPECT_EQ(EditInfo(), fi);
 
 	//GetGrepInfo: テストしづらい上に戻り値true以外は返らない・・・仕様バグですね(^^;
 	GrepInfo gi;

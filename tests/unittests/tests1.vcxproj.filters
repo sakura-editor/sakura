@@ -47,5 +47,8 @@
     <ClCompile Include="test-ccommandline.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-editinfo.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
