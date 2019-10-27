@@ -379,16 +379,12 @@ CLayout* CLayoutMgr::CreateLayout(
 		colorInfo
 	);
 
-	if( EOL_NONE == pCDocLine->GetEol() ){
-		pLayout->m_cEol.SetType( EOL_NONE );/* 改行コードの種類 */
+	const CEol& eol = pCDocLine->GetEol();
+	CEol& dst = pLayout->m_cEol;
+	if( EOL_NONE != eol && pLayout->GetLogicOffset() + pLayout->GetLengthWithEOL() > pCDocLine->GetLengthWithoutEOL()){
+		dst = eol;/* 改行コードの種類 */
 	}else{
-		if( pLayout->GetLogicOffset() + pLayout->GetLengthWithEOL() >
-			pCDocLine->GetLengthWithEOL() - pCDocLine->GetEol().GetLen()
-		){
-			pLayout->m_cEol = pCDocLine->GetEol();/* 改行コードの種類 */
-		}else{
-			pLayout->m_cEol = EOL_NONE;/* 改行コードの種類 */
-		}
+		dst = CEol(); //EOL_NONE;/* 改行コードの種類 */
 	}
 
 	// 2009.08.28 nasukoji	「折り返さない」選択時のみレイアウト長を記憶する
