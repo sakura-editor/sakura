@@ -80,6 +80,12 @@ public:
 	//演算子
 	CNativeW& operator = (const CNativeW& rhs)			{ CNative::operator=(rhs); return *this; }
 	CNativeW& operator = (CNativeW&& rhs) noexcept		{ CNative::operator=(std::forward<CNativeW>(rhs)); return *this; }
+	CNativeW& operator = (std::nullptr_t) noexcept		{ CNative::operator=(CNativeW()); return *this; }
+	CNativeW& operator = (const wchar_t* rhs) {
+		if (rhs == nullptr) return (*this = nullptr);
+		SetString(rhs);
+		return *this;
+	}
 	const CNativeW& operator+=(wchar_t wch)				{ AppendString(&wch,1);   return *this; }
 	const CNativeW& operator=(wchar_t wch)				{ SetString(&wch,1);      return *this; }
 	const CNativeW& operator+=(const CNativeW& rhs)		{ AppendNativeData(rhs); return *this; }

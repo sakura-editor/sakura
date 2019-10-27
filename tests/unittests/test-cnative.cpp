@@ -256,11 +256,8 @@ TEST(CNativeW, AssignStringNullPointer)
 TEST(CNativeW, AssignStringNullLiteral)
 {
 	CNativeW value;
-#ifdef _MSC_VER
-	value = NULL; // operator = (wchar_t) と解釈される
-#else
+	// operator = (wchar_t) と解釈させる
 	value = static_cast<wchar_t>(NULL);
-#endif
 	ASSERT_STREQ(L"", value.GetStringPtr());
 	EXPECT_EQ(1, value.GetStringLength());
 	EXPECT_LT(1 + 1, value.capacity());
@@ -323,11 +320,8 @@ TEST(CNativeW, AppendStringNullPointer)
 TEST(CNativeW, AppendStringNullLiteral)
 {
 	CNativeW value;
-#ifdef _MSC_VER
-	value += NULL; // operator += (wchar_t) と解釈される
-#else
+	// operator += (wchar_t) と解釈させる
 	value += static_cast<wchar_t>(NULL);
-#endif
 	ASSERT_STREQ(L"", value.GetStringPtr());
 	EXPECT_EQ(1, value.GetStringLength());
 	EXPECT_LT(1 + 1, value.capacity());

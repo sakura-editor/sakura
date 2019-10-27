@@ -31,7 +31,7 @@ CNativeW::CNativeW( const wchar_t* pData, int nDataLen )
 CNativeW::CNativeW( const wchar_t* pData )
 	: CNative()
 {
-	SetString(pData);
+	*this = pData;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
