@@ -66,6 +66,57 @@ int scan_ints(
 	int*			anBuf		//!< [out] 取得した数値 (要素数は最大32まで)
 );
 
+// インライン関数が内部で利用する名前空間
+namespace internals {
+	//! 数値の文字列化を行う関数で受け入れ可能な基数かどうかを判定する
+	constexpr inline bool IsAvailableRadix(size_t _Radix) noexcept {
+		constexpr size_t availableRadix[]{ 10, 16, 8 };
+		bool available = false;
+		for (auto radix : availableRadix) {
+			if (_Radix == radix) {
+				available = true;
+				break;
+			}
+		}
+		return available;
+	}
+}
+
+/*!
+ * @brief 指定された数値を指定された基数で文字列化するために必要な文字数を返します。
+ * @return 必要な文字数（終端NULを含まない）
+ */
+template<
+	size_t _Radix = 10,
+	typename _NumType = ptrdiff_t
+>
+constexpr size_t countDigits(
+	const _NumType value			//!< [in] 文字列化の素になる整数
+) noexcept
+{
+	// 符号無し整数型は対応外
+	static_assert(std::is_signed_v<_NumType>, "_NumType must be signed type.");
+
+	// 受け入れ可能な基数かチェックする
+	constexpr bool available = internals::IsAvailableRadix(_Radix);
+
+	// これを満たさない場合、コンパイルエラー
+	static_assert(available, "radix must be one of {8, 10, 16}");
+
+	// 指定された値を基数で割って文字数を求める
+	size_t digits = 0;
+	for (auto v = value; v != 0; ++digits) {
+		v /= _Radix;
+	}
+
+	// 負数なら、符号分の1文字を加える
+	if (value < 0) {
+		++digits;
+	}
+
+	return digits;
+}
+
 /*! @brief int2dec の第2引数の文字列出力先に必要十分なサイズ取得用
 	符号付き整数の最小値の場合に必要な長さを返す
 */
@@ -90,6 +141,75 @@ template <>
 constexpr size_t int2dec_destBufferSufficientLength<int64_t>()
 {
 	return _countof(L"-9223372036854775808");
+}
+
+/*!
+ * @brief 整数を文字列に変換
+ *
+ * @return 変換後の文字数（終端NULを含まない）
+ */
+template<
+	size_t _Radix = 10,
+	typename _NumType = ptrdiff_t,
+	typename _CharType = wchar_t,
+	typename = std::enable_if_t<std::is_signed_v<_NumType>>
+>
+size_t int2num(
+	const _NumType value,			//!< [in] 文字列化の素になる整数
+	_CharType* destBuf,				//!< [out] 文字列出力先バッファ
+	const size_t maxCount			//!< [in] 出力先バッファのサイズ
+) noexcept
+{
+	// 定数：文字列表現に使う文字
+	constexpr char numChars[] = "0123456789ABCDEF";
+
+	//数値を文字列化するのに必要な文字数を求める
+	size_t digits = countDigits<_Radix>(value);
+
+	// 格納可能な文字数を超える場合 0 を返却して終了する
+	if (maxCount <= digits) return 0;
+
+	// 符号を確認する
+	const bool negative = (value < 0);
+
+	// 下位桁から変換するのでリバースイテレータを使う
+	auto rbegin = std::reverse_iterator(destBuf + digits + 1);
+	auto it = rbegin;
+
+	*it++ = '\0'; // NUL終端する
+
+	// 文字列変換を始める前に絶対値をとって正数にしておく
+	for (auto v = std::abs(value); v != 0; ++it) {
+		auto w = v % _Radix;
+		*it = numChars[w];
+		v /= _Radix;
+	}
+
+	// 符号を処理する
+	if (negative) *it++ = '-';
+
+	// 文字数を返却する
+	return digits;
+}
+
+/*!
+ * @brief 整数を文字列に変換
+ *
+ * @return 変換後の文字数（終端NULを含まない）
+ */
+template<
+	size_t _Radix = 10,
+	typename _NumType = ptrdiff_t,
+	typename _CharType = wchar_t,
+	size_t _MaxCount,
+	typename = std::enable_if_t<std::is_signed_v<_NumType>>
+>
+size_t int2num(
+	const _NumType value,			//!< [in] 文字列化の素になる整数
+	_CharType(&destBuf)[_MaxCount]	//!< [out] 文字列出力先バッファ
+) noexcept
+{
+	return int2num<_Radix>(value, destBuf, _MaxCount);
 }
 
 /*! @brief 整数を10進数の文字列に変換

@@ -77,3 +77,57 @@ TEST(int2dec_test, group_sequence)
 	test_32_64_plus_minus(123456789, 9, L"123456789");
 	test_32_64_plus_minus(1234567890, 10, L"1234567890");
 }
+
+TEST(int2num, enoughSize32)
+{
+	constexpr int32_t value{ std::numeric_limits<int32_t>::min()};
+	wchar_t sz[countDigits(value) * 2]{ 0 };
+	auto ret = int2num(value, sz);
+	EXPECT_EQ(countDigits(value), ret);
+	ASSERT_STREQ(L"-2147483648", sz);
+}
+
+TEST(int2num, justSize32)
+{
+	constexpr int32_t value{ std::numeric_limits<int32_t>::min() };
+	wchar_t sz[countDigits(value) + 1]{ 0 };
+	auto ret = int2num(value, sz);
+	EXPECT_EQ(countDigits(value), ret);
+	ASSERT_STREQ(L"-2147483648", sz);
+}
+
+TEST(int2num, insufficientSize32)
+{
+	constexpr int32_t value{ std::numeric_limits<int32_t>::min() };
+	wchar_t sz[countDigits(value)]{ 0 };
+	auto ret = int2num(value, sz);
+	EXPECT_EQ(0, ret);
+	ASSERT_STREQ(L"", sz);
+}
+
+TEST(int2num, enoughSize64)
+{
+	constexpr int64_t value{ std::numeric_limits<int64_t>::min()};
+	wchar_t sz[countDigits(value) * 2]{ 0 };
+	auto ret = int2num(value, sz);
+	EXPECT_EQ(countDigits(value), ret);
+	ASSERT_STREQ(L"-9223372036854775808", sz);
+}
+
+TEST(int2num, justSize64)
+{
+	constexpr int64_t value{ std::numeric_limits<int64_t>::min() };
+	wchar_t sz[countDigits(value) + 1]{ 0 };
+	auto ret = int2num(value, sz);
+	EXPECT_EQ(countDigits(value), ret);
+	ASSERT_STREQ(L"-9223372036854775808", sz);
+}
+
+TEST(int2num, insufficientSize64)
+{
+	constexpr int64_t value{ std::numeric_limits<int64_t>::min() };
+	wchar_t sz[countDigits(value)]{ 0 };
+	auto ret = int2num(value, sz);
+	EXPECT_EQ(0, ret);
+	ASSERT_STREQ(L"", sz);
+}
