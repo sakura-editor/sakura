@@ -540,7 +540,7 @@ TEST(CNativeW, operatorNotEqualStringNull)
 /*!
  * @brief 否定の等価比較演算子のテスト
  *  文字列中のNULの位置によって一般保護違反になるかどうかの検証。
- *  このテストは成功したらNG!
+ *  このテストは成功したらNG!　⇒　分かりづらいので失敗したらNGに修正。
  */
 TEST(CNativeW, operatorNotEqualCNativeContainsNulVsBeginningWithPartial)
 {
@@ -581,21 +581,20 @@ TEST(CNativeW, operatorNotEqualCNativeContainsNulVsBeginningWithPartial)
 	volatile BOOL retVirtualProtect = ::VirtualProtect((char*)buf1 + pageSize, pageSize, PAGE_NOACCESS, &flOldProtect);
 	EXPECT_TRUE(retVirtualProtect);
 
-	/* DEATHテストで例外ケースの判定を行う。
-	 * pLargeStrには、コミットサイズの倍のデータが入っているので、
-	 * 単純にstrcmpするとreserveしただけの領域にアクセスしてしまい一般保護違反(access violation)が起きる。
-	 *
-	 * 想定結果：一般保護違反で落ちる
-	 * 備考：例外メッセージは無視する(例外が起きたことが検知できればよいから。)
-	 */
-	volatile bool ret = 0;
-	ASSERT_DEATH({ ret = (value == str); }, ".*");
-	(void)ret;
-
-	// 仮想メモリをデコミット(=解放)する。
-	::VirtualFree((LPVOID)buf1, pageSize, MEM_DECOMMIT);
-	// 仮想メモリ範囲を解放する。
-	::VirtualFree(memBlock1, 0, MEM_RELEASE);
+	try
+	{
+		bool ret = (value == str);
+		(void)ret;
+	}
+	catch(...)
+	{
+		// 仮想メモリをデコミット(=解放)する。
+		::VirtualFree((LPVOID)buf1, pageSize, MEM_DECOMMIT);
+		// 仮想メモリ範囲を解放する。
+		::VirtualFree(memBlock1, 0, MEM_RELEASE);
+		//
+		throw;
+	}
 }
 
 /*!
