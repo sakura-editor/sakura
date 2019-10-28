@@ -538,6 +538,67 @@ TEST(CNativeW, operatorNotEqualStringNull)
 }
 
 /*!
+ * @brief 否定の等価比較演算子のテスト
+ *  文字列中のNULの位置によって一般保護違反になるかどうかの検証。
+ *  このテストは成功したらNG!
+ */
+TEST(CNativeW, operatorNotEqualCNativeContainsNulVsBeginningWithPartial)
+{
+	// システムのページサイズを取得する
+	SYSTEM_INFO systemInfo = { 0 };
+	::GetSystemInfo(&systemInfo);
+
+	// システムページサイズ
+	const auto pageSize = systemInfo.dwPageSize;
+	// 確保領域サイズ(2ページ分)
+	const auto allocSize = pageSize * 2;
+
+	// 仮想メモリ範囲を予約する。予約時点では全体をNOACCESS指定にしておく。
+	LPVOID memBlock1 = ::VirtualAlloc(NULL, allocSize, MEM_RESERVE, PAGE_NOACCESS);
+	EXPECT_TRUE(memBlock1 != NULL);
+
+	// 仮想メモリ全域をコミット(=確保)する。
+	wchar_t* buf1 = static_cast<wchar_t*>(::VirtualAlloc(memBlock1, allocSize, MEM_COMMIT, PAGE_READWRITE));
+	EXPECT_TRUE(buf1 != NULL);
+
+	// 確保したメモリ全域をUNICODE文字 L'☑' で埋める
+	::wmemset(buf1, L'☑', pageSize);
+
+	// メモリデータをテスト対象型にマップする。実態として配列のように扱えるポインタを取得している。
+	auto str = reinterpret_cast<wchar_t*>(buf1);
+
+	// 領域の末尾をNUL終端する
+	str[pageSize - 1] = 0;
+
+	// 領域の途中にNUL記号を入れる
+	str[pageSize * 1 / 4] = 0;
+
+	// CNativeWのインスタンスを作る(メモリがコピーされる)
+	CNativeW value(str, pageSize);
+
+	// 2ページ目の保護モードをNOACCESSにする。
+	DWORD flOldProtect = 0;
+	volatile BOOL retVirtualProtect = ::VirtualProtect((char*)buf1 + pageSize, pageSize, PAGE_NOACCESS, &flOldProtect);
+	EXPECT_TRUE(retVirtualProtect);
+
+	/* DEATHテストで例外ケースの判定を行う。
+	 * pLargeStrには、コミットサイズの倍のデータが入っているので、
+	 * 単純にstrcmpするとreserveしただけの領域にアクセスしてしまい一般保護違反(access violation)が起きる。
+	 *
+	 * 想定結果：一般保護違反で落ちる
+	 * 備考：例外メッセージは無視する(例外が起きたことが検知できればよいから。)
+	 */
+	volatile bool ret = 0;
+	ASSERT_DEATH({ ret = (value == str); }, ".*");
+	(void)ret;
+
+	// 仮想メモリをデコミット(=解放)する。
+	::VirtualFree((LPVOID)buf1, pageSize, MEM_DECOMMIT);
+	// 仮想メモリ範囲を解放する。
+	::VirtualFree(memBlock1, 0, MEM_RELEASE);
+}
+
+/*!
  * @brief 独自関数Replaceの仕様
  * @remark バッファが確保される
  * @remark 文字列長は0になる
