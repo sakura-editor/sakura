@@ -377,7 +377,7 @@ TEST(CNativeW, operatorEqualNullptr)
 TEST(CNativeW, operatorEqualStringNull)
 {
 	CNativeW value;
-	LPCTSTR str = NULL;
+	LPCWSTR str = NULL;
 
 	EXPECT_TRUE(value == str);
 	EXPECT_FALSE(value != str);
@@ -487,7 +487,7 @@ TEST(CNativeW, operatorEqualSameString)
 {
 	constexpr const wchar_t text[] = L"おっす！オラ(ry";
 	CNativeW value(text);
-	LPCTSTR str = text;
+	LPCWSTR str = text;
 
 	EXPECT_TRUE(value == str);
 	EXPECT_FALSE(value != str);
@@ -501,7 +501,7 @@ TEST(CNativeW, operatorEqualSameString)
 TEST(CNativeW, operatorNotEqualAlmostSameString)
 {
 	CNativeW value(L"おっす！オラ(ry");
-	LPCTSTR str = L"おっと！オラ(ry";
+	LPCWSTR str = L"おっと！オラ(ry";
 
 	EXPECT_FALSE(value == str);
 	EXPECT_TRUE(value != str);
@@ -530,7 +530,7 @@ TEST(CNativeW, operatorNotEqualStringNull)
 {
 	constexpr const wchar_t text[] = L"おっす！オラ(ry";
 	CNativeW value(text);
-	LPCTSTR str = NULL;
+	LPCWSTR str = NULL;
 
 	EXPECT_FALSE(value == str);
 	EXPECT_TRUE(value != str);
