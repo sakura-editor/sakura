@@ -95,6 +95,7 @@ public:
 	bool operator != (std::nullptr_t) const noexcept { return !(*this == nullptr); }
 	bool operator == (const wchar_t* rhs) const noexcept {
 		if (rhs == nullptr) return (*this == nullptr);
+		if (!capacity()) return false;
 		return 0 == wmemcmp(GetStringPtr(), rhs, GetStringLength() + 1);
 	}
 	bool operator != (const wchar_t* rhs) const noexcept { return !(*this == rhs); }
