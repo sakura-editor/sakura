@@ -1,0 +1,226 @@
+/* src/config.h.in.  Generated from configure.ac by autoheader.  */
+
+/* Define if '0x5c' in BIG5 multi-byte character is safe. */
+#undef BIGFIVE_IS_ESCAPE_FREE
+
+/* Define the target compiler. */
+#undef COMPILER
+
+/* Define the type of size_t. */
+#undef COMPILER_SP1_VAL
+
+/* Define the type of ptrdiff_t. */
+#undef COMPILER_SP2_VAL
+
+/* Define the type of wchar_t. */
+#undef COMPILER_SP3_VAL
+
+/* Define the name of COMPILER-specific OLD-style predefined macro. */
+#undef COMPILER_SP_OLD
+
+/* Define the value of COMPILER-specific OLD-style predefined macro. */
+#undef COMPILER_SP_OLD_VAL
+
+/* Define the name of COMPILER-specific STD-style predefined macro. */
+#undef COMPILER_SP_STD
+
+/* Define the value of COMPILER-specific STD-style predefined macro. */
+#undef COMPILER_SP_STD_VAL
+
+/* Define compiler-specific C++ include directory 1. */
+#undef CPLUS_INCLUDE_DIR1
+
+/* Define compiler-specific C++ include directory 2. */
+#undef CPLUS_INCLUDE_DIR2
+
+/* Define compiler-specific C++ include directory 3. */
+#undef CPLUS_INCLUDE_DIR3
+
+/* Define compiler-specific C++ include directory 4. */
+#undef CPLUS_INCLUDE_DIR4
+
+/* Define the cpu-specific-macro. */
+#undef CPU
+
+/* Define the name of CPU-specific OLD-style predefined macro. */
+#undef CPU_SP_OLD
+
+/* Define the value of CPU-specific OLD-style predefined macro. */
+#undef CPU_SP_OLD_VAL
+
+/* Define the name of CPU-specific STD-style predefined macro. */
+#undef CPU_SP_STD
+
+/* Define the value of CPU-specific STD-style predefined macro. */
+#undef CPU_SP_STD_VAL
+
+/* Define root directory of CYGWIN. */
+#undef CYGWIN_ROOT_DIRECTORY
+
+/* Define compiler-specific C include directory 1. */
+#undef C_INCLUDE_DIR1
+
+/* Define compiler-specific C include directory 2. */
+#undef C_INCLUDE_DIR2
+
+/* Define compiler-specific C include directory 3. */
+#undef C_INCLUDE_DIR3
+
+/* Define if the argument of pragma is macro expanded. */
+#undef EXPAND_PRAGMA
+
+/* Define if the cases of file name are folded. */
+#undef FNAME_FOLD
+
+/* Define MacOS-specific framework directory 1. */
+#undef FRAMEWORK1
+
+/* Define MacOS-specific framework directory 2. */
+#undef FRAMEWORK2
+
+/* Define MacOS-specific framework directory 3. */
+#undef FRAMEWORK3
+
+/* Define gcc major version. */
+#undef GCC_MAJOR_VERSION
+
+/* Define gcc minor version. */
+#undef GCC_MINOR_VERSION
+
+/* Define if digraphs are available. */
+#undef HAVE_DIGRAPHS
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
+
+/* Define to 1 if the system has the type `intmax_t'. */
+#undef HAVE_INTMAX_T
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Define to 1 if the system has the type `long long'. */
+#undef HAVE_LONG_LONG
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdint.h,> header file. */
+#undef HAVE_STDINT_H_
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the `stpcpy' function. */
+#undef HAVE_STPCPY
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* Define to 1 if you have the <unistd.h,> header file. */
+#undef HAVE_UNISTD_H_
+
+/* Define the host compiler name. */
+#undef HOST_CMP_NAME
+
+/* Define the host compiler. */
+#undef HOST_COMPILER
+
+/* Define the host system. */
+#undef HOST_SYSTEM
+
+/* Define include directory to install mcpp_g*.h header files. */
+#undef INC_DIR
+
+/* Define if '0x5c' in ISO2022-JP multi-byte character is safe. */
+#undef ISO2022_JP_IS_ESCAPE_FREE
+
+/* Define output format of line directive. */
+#undef LINE_PREFIX
+
+/* Define printf length modifier for the longest integer. */
+#undef LL_FORM
+
+/* Define if build libmcpp */
+#undef MCPP_LIB
+
+/* Define /mingw directory. */
+#undef MINGW_DIRECTORY
+
+/* Define root directory of MSYS. */
+#undef MSYS_ROOT_DIRECTORY
+
+/* Define the suffix of object file. */
+#undef OBJEXT
+
+/* Name of package */
+#undef PACKAGE
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* Define include preference. */
+#undef SEARCH_INIT
+
+/* Define if '0x5c' in SJIS multi-byte character is safe. */
+#undef SJIS_IS_ESCAPE_FREE
+
+/* Define the default value of __STDC__. */
+#undef STDC
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* Define the default value of __STDC_VERSION__. */
+#undef STDC_VERSION
+
+/* Define whether output format of line directive is C source style. */
+#undef STD_LINE_PREFIX
+
+/* Define the target system. */
+#undef SYSTEM
+
+/* Define the version of FreeBSD. */
+#undef SYSTEM_EXT_VAL
+
+/* Define the name of SYSTEM-specific OLD-style predefined macro. */
+#undef SYSTEM_SP_OLD
+
+/* Define the value of SYSTEM-specific OLD-style predefined macro. */
+#undef SYSTEM_SP_OLD_VAL
+
+/* Define the name of SYSTEM-specific STD-style predefined macro. */
+#undef SYSTEM_SP_STD
+
+/* Define the value of SYSTEM-specific STD-style predefined macro. */
+#undef SYSTEM_SP_STD_VAL
+
+/* Version number of package */
+#undef VERSION

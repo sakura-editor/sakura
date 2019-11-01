@@ -174,10 +174,10 @@ protected:
 #include <vector>
 class CColor_LineComment;
 class CColor_BlockComment;
-class CColor_BlockComment;
 class CColor_SingleQuote;
 class CColor_DoubleQuote;
 class CColor_Heredoc;
+class CColor_CPreprocessor;
 
 class CColorStrategyPool : public TSingleton<CColorStrategyPool>{
 	friend class TSingleton<CColorStrategyPool>;
@@ -225,6 +225,7 @@ private:
 	CColor_SingleQuote*				m_pcSingleQuote;
 	CColor_DoubleQuote*				m_pcDoubleQuote;
 	CColor_Heredoc*					m_pcHeredoc;
+	CColor_CPreprocessor*			m_pcCPreprocessor;
 
 	CEditView*						m_pcView;
 

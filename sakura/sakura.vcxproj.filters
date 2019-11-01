@@ -119,6 +119,9 @@
     <Filter Include="Cpp Source Files\uiparts">
       <UniqueIdentifier>{930f3f82-ab3f-49e3-af4a-d4f9c2d51f46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Cpp Source Files\extmodule\mcpp">
+      <UniqueIdentifier>{0d2dad22-0595-40cd-9b26-b55856a5793a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\sakura_core\Funccode_define.h">
@@ -1084,6 +1087,27 @@
     </ClInclude>
     <ClInclude Include="..\sakura_core\mem\CPoolResource.h">
       <Filter>Cpp Source Files\mem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\view\colors\CColor_CPreprocessor.h">
+      <Filter>Cpp Source Files\view\colors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\extmodule\mcpp\system.H">
+      <Filter>Cpp Source Files\extmodule\mcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\extmodule\mcpp\configed.H">
+      <Filter>Cpp Source Files\extmodule\mcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\extmodule\mcpp\internal.H">
+      <Filter>Cpp Source Files\extmodule\mcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\extmodule\mcpp\mcpp_lib.h">
+      <Filter>Cpp Source Files\extmodule\mcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\extmodule\mcpp\mcpp_out.h">
+      <Filter>Cpp Source Files\extmodule\mcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\extmodule\mcpp\noconfig.H">
+      <Filter>Cpp Source Files\extmodule\mcpp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2251,6 +2275,33 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\dlg\CDlgOpenFile_CommonItemDialog.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\view\colors\CColor_CPreprocessor.cpp">
+      <Filter>Cpp Source Files\view\colors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\extmodule\mcpp\system.c">
+      <Filter>Cpp Source Files\extmodule\mcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\extmodule\mcpp\directive.c">
+      <Filter>Cpp Source Files\extmodule\mcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\extmodule\mcpp\eval.c">
+      <Filter>Cpp Source Files\extmodule\mcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\extmodule\mcpp\expand.c">
+      <Filter>Cpp Source Files\extmodule\mcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\extmodule\mcpp\main.c">
+      <Filter>Cpp Source Files\extmodule\mcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\extmodule\mcpp\mbchar.c">
+      <Filter>Cpp Source Files\extmodule\mcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\extmodule\mcpp\preproc.c">
+      <Filter>Cpp Source Files\extmodule\mcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\extmodule\mcpp\support.c">
+      <Filter>Cpp Source Files\extmodule\mcpp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

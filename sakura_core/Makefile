@@ -230,6 +230,16 @@ extmodule/CDllHandler.o \
 extmodule/CHtmlHelp.o \
 extmodule/CMigemo.o \
 extmodule/CUxTheme.o \
+extmodule/mcpp/cc1.o \
+extmodule/mcpp/directive.o \
+extmodule/mcpp/eval.o \
+extmodule/mcpp/expand.o \
+extmodule/mcpp/main.o \
+extmodule/mcpp/mbchar.o \
+extmodule/mcpp/preproc.o \
+extmodule/mcpp/support.o \
+extmodule/mcpp/system.o \
+extmodule/mcpp/testmain.o \
 func/CFuncKeyWnd.o \
 func/CFuncLookup.o \
 func/CKeyBind.o \
@@ -390,6 +400,7 @@ view/CViewSelect.o \
 view/DispPos.o \
 view/colors/CColorStrategy.o \
 view/colors/CColor_Comment.o \
+view/colors/CColor_CPreprocessor.o \
 view/colors/CColor_Found.o \
 view/colors/CColor_Heredoc.o \
 view/colors/CColor_KeywordSet.o \

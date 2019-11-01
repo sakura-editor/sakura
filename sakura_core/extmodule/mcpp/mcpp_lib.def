@@ -1,0 +1,7 @@
+LIBRARY mcpp0
+EXPORTS
+	mcpp_lib_main
+	mcpp_reset_def_out_func
+	mcpp_set_out_func
+	mcpp_use_mem_buffers
+	mcpp_get_mem_buffer

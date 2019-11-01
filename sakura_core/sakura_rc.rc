@@ -3971,6 +3971,7 @@ BEGIN
 	STR_COLOR_DIFF_DEL				"DIFF差分表示(削除)"
 	STR_COLOR_BOOKMARK				"ブックマーク"
 	STR_COLOR_PAGEVIEW				"表示範囲(ミニマップ)"
+	STR_COLOR_CPREPROCESSOR			"Cプリプロセッサ"
 
 	// ... could be many places left in this file I think, but couldnt decide if they should STAY as JPZ or not eg |*
 

@@ -35,6 +35,7 @@
 #include "CColor_KeywordSet.h"
 #include "CColor_Found.h"
 #include "CColor_Heredoc.h"
+#include "CColor_CPreprocessor.h"
 #include "doc/layout/CLayout.h"
 #include "window/CEditWnd.h"
 #include "types/CTypeSupport.h"
@@ -87,6 +88,8 @@ bool SColorStrategyInfo::CheckChangeColor(const CStringRef& cLineStr)
 		}
 	}
 
+	extern int g_CColorStrategy_nCurLine;
+	g_CColorStrategy_nCurLine = GetLayout()->GetLogicLineNo();
 	//色終了
 	if(m_pStrategy){
 		if(m_pStrategy->EndColor(cLineStr,this->GetPosInLogic())){
@@ -194,6 +197,7 @@ CColorStrategyPool::CColorStrategyPool()
 	m_pcView = &(CEditWnd::getInstance()->GetView(0));
 	m_pcSelectStrategy = new CColor_Select();
 	m_pcFoundStrategy = new CColor_Found();
+	m_vStrategies.push_back(new CColor_CPreprocessor);		// Cプリプロセッサ
 //	m_vStrategies.push_back(new CColor_Found);				// マッチ文字列
 	m_vStrategies.push_back(new CColor_RegexKeyword);		// 正規表現キーワード
 	m_vStrategies.push_back(new CColor_Heredoc);			// ヒアドキュメント
@@ -271,6 +275,7 @@ void CColorStrategyPool::CheckColorMODE(
 		if(m_pcLineComment && m_pcLineComment->BeginColor(cLineStr,nPos)){ *ppcColorStrategy = m_pcLineComment; return; }
 		if(m_pcSingleQuote && m_pcSingleQuote->BeginColor(cLineStr,nPos)){ *ppcColorStrategy = m_pcSingleQuote; return; }
 		if(m_pcDoubleQuote && m_pcDoubleQuote->BeginColor(cLineStr,nPos)){ *ppcColorStrategy = m_pcDoubleQuote; return; }
+		if(m_pcCPreprocessor && m_pcCPreprocessor->BeginColor(cLineStr,nPos)){ *ppcColorStrategy = m_pcCPreprocessor; return; }
 	}
 }
 
@@ -299,6 +304,7 @@ void CColorStrategyPool::OnChangeSetting(void)
 	m_pcLineComment = static_cast<CColor_LineComment*>(GetStrategyByColor(COLORIDX_COMMENT));	// 行コメント
 	m_pcSingleQuote = static_cast<CColor_SingleQuote*>(GetStrategyByColor(COLORIDX_SSTRING));	// シングルクォーテーション文字列
 	m_pcDoubleQuote = static_cast<CColor_DoubleQuote*>(GetStrategyByColor(COLORIDX_WSTRING));	// ダブルクォーテーション文字列
+	m_pcCPreprocessor = static_cast<CColor_CPreprocessor*>(GetStrategyByColor(COLORIDX_CPREPROCESSOR));	// Cプリプロセッサ
 
 	// 色分けをしない場合に、処理をスキップできるように確認する
 	const STypeConfig& type = CEditDoc::GetInstance(0)->m_cDocType.GetDocumentAttribute();
@@ -432,6 +438,7 @@ const SColorAttributeData g_ColorAttributeArr[] =
 	{L"DFD", 0},	//DIFF削除	//@@@ 2002.06.01 MIK
 	{L"MRK", 0},	//ブックマーク	// 02/10/16 ai Add
 	{L"PGV", COLOR_ATTRIB_NO_TEXT | COLOR_ATTRIB_NO_EFFECTS},
+	{L"CPP", 0},	// Cプリプロセッサ
 	{L"LAST", 0}	// Not Used
 };
 

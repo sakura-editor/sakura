@@ -3980,6 +3980,7 @@ BEGIN
 	STR_COLOR_DIFF_DEL				"DIFF area (deleted)"
 	STR_COLOR_BOOKMARK				"Bookmark"
 	STR_COLOR_PAGEVIEW				"View Range(Minimap)"
+	STR_COLOR_CPREPROCESSOR			"C preprocessor"
 
 	// ... could be many places left in this file I think, but couldn't decide if they should STAY as JPZ or not eg |*
 
