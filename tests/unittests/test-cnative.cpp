@@ -86,15 +86,17 @@ TEST(CNativeW, ConstructWithStringEmpty)
 }
 
 /*!
- * @brief コンストラクタ(nullptr指定)の仕様
- * @remark 構築できない(実行時エラーになる)
- * @note バグですね(^^;
+ * @brief コンストラクタ(NULL指定)の仕様
  */
 TEST(CNativeW, ConstructWithStringNull)
 {
-	volatile int ret = 0;
-	ASSERT_DEATH({ CNativeW value(NULL); ret = value.capacity(); }, ".*");
-	(void)ret;
+	CNativeW value(NULL);
+	EXPECT_EQ(value.GetStringLength(), 0);
+	EXPECT_EQ(value.GetStringPtr(), nullptr);
+
+	CNativeW value2(nullptr);
+	EXPECT_EQ(value2.GetStringLength(), 0);
+	EXPECT_EQ(value2.GetStringPtr(), nullptr);
 }
 
 /*!
@@ -236,14 +238,13 @@ TEST(CNativeW, AssignString)
 
 /*!
  * @brief 代入演算子(nullptr指定)の仕様
- * @remark 代入できない(実行時エラーになる)
- * @note バグですね(^^;
  */
 TEST(CNativeW, AssignStringNullPointer)
 {
-	volatile int ret = 0;
-	ASSERT_DEATH({ CNativeW value; value = nullptr; ret = value.capacity(); }, ".*");
-	(void)ret;
+	CNativeW value(L"test");
+	value = nullptr;
+	EXPECT_EQ(value.GetStringLength(), 0);
+	EXPECT_EQ(value.GetStringPtr(), nullptr);
 }
 
 /*!
@@ -303,14 +304,15 @@ TEST(CNativeW, AppendString)
 
 /*!
  * @brief 加算代入演算子(nullptr指定)の仕様
- * @remark 加算代入できない(実行時エラーになる)
- * @note バグですね(^^;
+ * @remark 加算代入しても内容に変化無し
  */
 TEST(CNativeW, AppendStringNullPointer)
 {
-	volatile int ret = 0;
-	ASSERT_DEATH({ CNativeW value; value += nullptr; ret = value.capacity(); }, ".*");
-	(void)ret;
+	CNativeW org(L"orz");
+	CNativeW value(org);
+	value += nullptr;
+	EXPECT_EQ(value.GetStringLength(), org.GetStringLength());
+	EXPECT_TRUE(CNativeW::IsEqual(value, org));
 }
 
 /*!
