@@ -87,14 +87,17 @@ TEST(CNativeW, ConstructWithStringEmpty)
 
 /*!
  * @brief コンストラクタ(nullptr指定)の仕様
- * @remark 構築できない(実行時エラーになる)
- * @note バグですね(^^;
+ * @remark バッファは確保されない
+ * @remark 文字列長はゼロになる
+ * @remark バッファサイズはゼロになる
  */
 TEST(CNativeW, ConstructWithStringNull)
 {
-	volatile int ret = 0;
-	ASSERT_DEATH({ CNativeW value(NULL); ret = value.capacity(); }, ".*");
-	(void)ret;
+	const wchar_t* str = NULL;
+	CNativeW value(str);
+	ASSERT_EQ(NULL, value.GetStringPtr());
+	EXPECT_EQ(0, value.GetStringLength());
+	EXPECT_EQ(0, value.capacity());
 }
 
 /*!
@@ -236,41 +239,41 @@ TEST(CNativeW, AssignString)
 
 /*!
  * @brief 代入演算子(nullptr指定)の仕様
- * @remark 代入できない(実行時エラーになる)
- * @note バグですね(^^;
+ * @remark バッファは解放される
+ * @remark 文字列長はゼロになる
+ * @remark バッファサイズはゼロになる
  */
 TEST(CNativeW, AssignStringNullPointer)
 {
-	volatile int ret = 0;
-	ASSERT_DEATH({ CNativeW value; value = nullptr; ret = value.capacity(); }, ".*");
-	(void)ret;
+	constexpr const wchar_t sz[] = L"test";
+	CNativeW value(sz);
+	value = nullptr;
+	ASSERT_EQ(NULL, value.GetStringPtr());
+	EXPECT_EQ(0, value.GetStringLength());
+	EXPECT_EQ(0, value.capacity());
 }
 
 /*!
  * @brief 代入演算子(NULL指定)の仕様
- * @remark バッファが確保される
- * @remark 文字列長は1になる
- * @remark バッファサイズは1+1以上になる
- * @note バグですね(^^;
+ * @remark バッファは解放される
+ * @remark 文字列長はゼロになる
+ * @remark バッファサイズはゼロになる
  */
 TEST(CNativeW, AssignStringNullLiteral)
 {
-	CNativeW value;
-#ifdef _MSC_VER
-	value = NULL; // operator = (wchar_t) と解釈される
-#else
+	constexpr const wchar_t sz[] = L"test";
+	CNativeW value(sz);
+	// operator = (wchar_t) と解釈させる
 	value = static_cast<wchar_t>(NULL);
-#endif
-	ASSERT_STREQ(L"", value.GetStringPtr());
-	EXPECT_EQ(1, value.GetStringLength());
-	EXPECT_LT(1 + 1, value.capacity());
-	EXPECT_EQ(0, value[0]); // 長さ=1なので1文字目を参照できるが、NULが返ってくる
+	ASSERT_EQ(NULL, value.GetStringPtr());
+	EXPECT_EQ(0, value.GetStringLength());
+	EXPECT_EQ(0, value.capacity());
 }
 
 /*!
  * @brief 加算代入演算子(文字指定)の仕様
  * @remark バッファが確保される
- * @remark 文字列長は2になる
+ * @remark 文字列長は+1になる
  * @remark バッファサイズは2より大きくなる
  */
 TEST(CNativeW, AppendChar)
@@ -303,34 +306,33 @@ TEST(CNativeW, AppendString)
 
 /*!
  * @brief 加算代入演算子(nullptr指定)の仕様
- * @remark 加算代入できない(実行時エラーになる)
- * @note バグですね(^^;
+ * @remark 空のCNativeWが加算される(何も起きない)
  */
 TEST(CNativeW, AppendStringNullPointer)
 {
-	volatile int ret = 0;
-	ASSERT_DEATH({ CNativeW value; value += nullptr; ret = value.capacity(); }, ".*");
-	(void)ret;
+	constexpr const wchar_t sz[] = L"test";
+	constexpr const size_t cch = _countof(sz) - 1;
+	CNativeW value(sz);
+	value += nullptr;
+	ASSERT_STREQ(sz, value.GetStringPtr());
+	EXPECT_EQ(cch, value.GetStringLength());
+	EXPECT_LT(cch + 1, value.capacity());
 }
 
 /*!
  * @brief 加算代入演算子(NULL指定)の仕様
- * @remark バッファが確保される
- * @remark 文字列長は1になる
- * @remark バッファサイズは1+1以上になる
- * @note バグですね(^^;
+ * @remark 空のCNativeWが加算される(何も起きない)
  */
 TEST(CNativeW, AppendStringNullLiteral)
 {
-	CNativeW value;
-#ifdef _MSC_VER
-	value += NULL; // operator += (wchar_t) と解釈される
-#else
+	constexpr const wchar_t sz[] = L"test";
+	constexpr const size_t cch = _countof(sz) - 1;
+	CNativeW value(sz);
+	// operator += (wchar_t) と解釈させる
 	value += static_cast<wchar_t>(NULL);
-#endif
-	ASSERT_STREQ(L"", value.GetStringPtr());
-	EXPECT_EQ(1, value.GetStringLength());
-	EXPECT_LT(1 + 1, value.capacity());
+	ASSERT_STREQ(sz, value.GetStringPtr());
+	EXPECT_EQ(cch, value.GetStringLength());
+	EXPECT_LT(cch + 1, value.capacity());
 }
 
 /*!
