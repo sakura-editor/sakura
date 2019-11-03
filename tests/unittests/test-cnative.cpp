@@ -275,7 +275,7 @@ TEST(CNativeW, AssignStringNullLiteral)
 /*!
  * @brief 加算代入演算子(文字指定)の仕様
  * @remark バッファが確保される
- * @remark 文字列長は2になる
+ * @remark 文字列長は+1になる
  * @remark バッファサイズは2より大きくなる
  */
 TEST(CNativeW, AppendChar)
