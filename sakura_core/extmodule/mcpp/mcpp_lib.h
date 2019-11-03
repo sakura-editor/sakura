@@ -28,4 +28,13 @@ extern DLL_DECL void    mcpp_set_out_func(
                     );
 extern DLL_DECL void    mcpp_use_mem_buffers( int tf);
 extern DLL_DECL char *  mcpp_get_mem_buffer( OUTDEST od);
+
+extern DLL_DECL void    mcpp_reset_def_in_func( void);
+extern DLL_DECL void    mcpp_set_in_func(
+                    FILE* (* func_fopen) ( char const* fileName,char const* mode),
+                    char* (* func_fgets) ( char * str, int num, FILE * stream ),
+                    int   (* func_fclose) ( FILE* stream),
+                    int   (* func_ferror) ( FILE * stream )
+                    );
+
 #endif  /* _MCPP_LIB_H  */

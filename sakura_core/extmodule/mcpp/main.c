@@ -295,6 +295,8 @@ static char *   esc_mbchar( char * str, char * str_end);
 #endif
 #endif
 
+extern FILE* (* mcpp_fopen) ( char const* fileName,char const* mode);
+extern int (* mcpp_fclose) ( FILE* stream);
 
 #if MCPP_LIB
 static void     init_main( void)
@@ -372,7 +374,7 @@ int     main
 
     /* Open input file, "-" means stdin.    */
     if (in_file != NULL && ! str_eq( in_file, "-")) {
-        if ((fp_in = fopen( in_file, "r")) == NULL) {
+        if ((fp_in = mcpp_fopen( in_file, "r")) == NULL) {
             mcpp_fprintf( ERR, "Can't open input file \"%s\".\n", in_file);
             errors++;
 #if MCPP_LIB
@@ -386,7 +388,7 @@ int     main
     }
     /* Open output file, "-" means stdout.  */
     if (out_file != NULL && ! str_eq( out_file, "-")) {
-        if ((fp_out = fopen( out_file, "w")) == NULL) {
+        if ((fp_out = mcpp_fopen( out_file, "w")) == NULL) {
             mcpp_fprintf( ERR, "Can't open output file \"%s\".\n", out_file);
             errors++;
 #if MCPP_LIB
@@ -398,7 +400,7 @@ int     main
         fp_debug = fp_out;
     }
     if (option_flags.q) {                   /* Redirect diagnostics */
-        if ((fp_err = fopen( "mcpp.err", "a")) == NULL) {
+        if ((fp_err = mcpp_fopen( "mcpp.err", "a")) == NULL) {
             errors++;
             mcpp_fprintf( OUT, "Can't open \"mcpp.err\"\n");
 #if MCPP_LIB
@@ -436,7 +438,7 @@ fatal_error_exit:
 #endif
 
     if (fp_in != stdin)
-        fclose( fp_in);
+        mcpp_fclose( fp_in);
     if (fp_out != stdout)
         fclose( fp_out);
     if (fp_err != stderr)
@@ -651,7 +653,7 @@ static void mcpp_main( void)
                 break;
             } else if (! compiling) {       /* #ifdef false?        */
                 if (!infile->parent) {
-                    extern int* mcpp_ifdef_false_lines;
+                    extern char* mcpp_ifdef_false_lines;
                     mcpp_ifdef_false_lines[src_line] = 1;
                 }
                 skip_nl();                  /* Skip to newline      */

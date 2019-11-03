@@ -344,6 +344,38 @@ int    mcpp_lib_fprintf(
 
 int (* mcpp_fprintf)( OUTDEST od, const char * format, ...) = mcpp_lib_fprintf;
 
+static FILE* mcpp_lib_fopen( char const* fileName,char const* mode)
+{
+	return fopen(fileName, mode);
+}
+
+FILE* (* mcpp_fopen) ( char const* fileName,char const* mode) = mcpp_lib_fopen;
+
+static char *   mcpp_lib_fgets(
+    char *  s,
+    int     size,
+    FILE *  stream
+)
+{
+    return fgets( s, size, stream);
+}
+
+char* (* mcpp_fgets) ( char * str, int num, FILE * stream ) = mcpp_lib_fgets;
+
+static int mcpp_lib_fclose( FILE* stream)
+{
+	return fclose(stream);
+}
+
+int (* mcpp_fclose) ( FILE* stream) = mcpp_lib_fclose;
+
+static int mcpp_lib_ferror( FILE* stream)
+{
+	return ferror(stream);
+}
+
+int (* mcpp_ferror) ( FILE* stream) = mcpp_lib_ferror;
+
 #if MCPP_LIB
 void    mcpp_reset_def_out_func( void)
 {
@@ -361,6 +393,26 @@ void    mcpp_set_out_func(
     mcpp_fputc = func_fputc;
     mcpp_fputs = func_fputs;
     mcpp_fprintf = func_fprintf;
+}
+void    mcpp_reset_def_in_func( void)
+{
+	mcpp_fopen = mcpp_lib_fopen;
+	mcpp_fgets = mcpp_lib_fgets;
+	mcpp_fclose = mcpp_lib_fclose;
+	mcpp_ferror = mcpp_lib_ferror;
+}
+
+void    mcpp_set_in_func(
+    FILE* (* func_fopen) ( char const* fileName,char const* mode),
+    char* (* func_fgets) ( char * str, int num, FILE * stream ),
+    int   (* func_fclose) ( FILE* stream),
+    int   (* func_ferror) ( FILE * stream )
+)
+{
+	mcpp_fopen = func_fopen;
+	mcpp_fgets = func_fgets;
+	mcpp_fclose = func_fclose;
+	mcpp_ferror = func_ferror;
 }
 #endif
 
@@ -1594,12 +1646,12 @@ int     get_ch( void)
     if (file->fp) {                         /* Source file included */
         free( file->filename);              /* Free filename        */
         free( file->src_dir);               /* Free src_dir         */
-        fclose( file->fp);                  /* Close finished file  */
+        mcpp_fclose( file->fp);             /* Close finished file  */
         /* Do not free file->real_fname and file->full_fname        */
         cur_fullname = infile->full_fname;
         cur_fname = infile->real_fname;     /* Restore current fname*/
         if (infile->pos != 0L) {            /* Includer was closed  */
-            infile->fp = fopen( cur_fullname, "r");
+            infile->fp = mcpp_fopen( cur_fullname, "r");
             fseek( infile->fp, infile->pos, SEEK_SET);
         }   /* Re-open the includer and restore the file-position   */
         len = (int) (infile->bptr - infile->buffer);
@@ -1896,15 +1948,6 @@ static char *   read_a_comment(
     return  sp;                             /* Never reach here     */
 }
 
-static char *   mcpp_fgets(
-    char *  s,
-    int     size,
-    FILE *  stream
-)
-{
-    return fgets( s, size, stream);
-}
-
 static char *   get_line(
     int     in_comment
 )
@@ -2010,7 +2053,7 @@ static char *   get_line(
     }
 
     /* End of a (possibly included) source file */
-    if (ferror( infile->fp))
+    if (mcpp_ferror( infile->fp))
         cfatal( "File read error", NULL, 0L, NULL);         /* _F_  */
     if ((ptr = at_eof( in_comment)) != NULL)        /* Check at end of file */
         return  ptr;                        /* Partial line supplemented    */
