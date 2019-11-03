@@ -80,10 +80,23 @@ public:
 	//演算子
 	CNativeW& operator = (const CNativeW& rhs)			{ CNative::operator=(rhs); return *this; }
 	CNativeW& operator = (CNativeW&& rhs) noexcept		{ CNative::operator=(std::forward<CNativeW>(rhs)); return *this; }
-	const CNativeW& operator+=(wchar_t wch)				{ AppendString(&wch,1);   return *this; }
-	const CNativeW& operator=(wchar_t wch)				{ SetString(&wch,1);      return *this; }
-	const CNativeW& operator+=(const CNativeW& rhs)		{ AppendNativeData(rhs); return *this; }
-	CNativeW operator+(const CNativeW& rhs) const		{ CNativeW tmp=*this; return tmp+=rhs; }
+	CNativeW& operator = (std::nullptr_t) noexcept		{ CNative::operator=(CNativeW()); return *this; }
+	CNativeW& operator = (const wchar_t* rhs) {
+		if (rhs == nullptr) return (*this = nullptr);
+		SetString(rhs);
+		return *this;
+	}
+	CNativeW& operator = (const wchar_t ch) {
+		if (ch == L'\0') return (*this = nullptr);
+		const wchar_t sz[]{ ch, 0 };
+		return (*this = sz);
+	}
+	CNativeW& operator += (const wchar_t ch) {
+		const wchar_t sz[]{ ch, 0 };
+		return (*this += sz);
+	}
+	CNativeW& operator += (const CNativeW& rhs)			{ AppendNativeData(rhs); return *this; }
+	CNativeW operator + (const CNativeW& rhs) const		{ CNativeW tmp(*this); return (tmp += rhs); }
 
 	//ネイティブ取得インターフェース
 	wchar_t operator[](int nIndex) const;                    //!< 任意位置の文字取得。nIndexは文字単位。
