@@ -91,12 +91,12 @@ TEST(CNativeW, ConstructWithStringEmpty)
 TEST(CNativeW, ConstructWithStringNull)
 {
 	CNativeW value(NULL);
-	EXPECT_EQ(value.GetStringLength(), 0);
-	EXPECT_EQ(value.GetStringPtr(), nullptr);
+	EXPECT_EQ(0, value.GetStringLength());
+	EXPECT_EQ(nullptr, value.GetStringPtr());
 
 	CNativeW value2(nullptr);
-	EXPECT_EQ(value2.GetStringLength(), 0);
-	EXPECT_EQ(value2.GetStringPtr(), nullptr);
+	EXPECT_EQ(0, value2.GetStringLength());
+	EXPECT_EQ(nullptr, value2.GetStringPtr());
 }
 
 /*!
@@ -243,8 +243,8 @@ TEST(CNativeW, AssignStringNullPointer)
 {
 	CNativeW value(L"test");
 	value = nullptr;
-	EXPECT_EQ(value.GetStringLength(), 0);
-	EXPECT_EQ(value.GetStringPtr(), nullptr);
+	EXPECT_EQ(0, value.GetStringLength());
+	EXPECT_EQ(nullptr, value.GetStringPtr());
 }
 
 /*!
