@@ -2,8 +2,6 @@
 #include "StdAfx.h"
 #include "CColor_CPreprocessor.h"
 
-#include <vld.h>
-
 extern "C" {
 char* mcpp_ifdef_false_lines;
 extern int mcpp_lib_main( int argc, char ** argv);
