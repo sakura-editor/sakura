@@ -87,6 +87,8 @@ TEST(CNativeW, ConstructWithStringEmpty)
 
 /*!
  * @brief コンストラクタ(NULL指定)の仕様
+ * @remark バッファは確保されない
+ * @remark 文字列長はゼロになる
  */
 TEST(CNativeW, ConstructWithStringNull)
 {
@@ -238,6 +240,8 @@ TEST(CNativeW, AssignString)
 
 /*!
  * @brief 代入演算子(nullptr指定)の仕様
+ * @remark バッファを確保している場合は解放される
+ * @remark 文字列長はゼロになる
  */
 TEST(CNativeW, AssignStringNullPointer)
 {
