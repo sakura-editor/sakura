@@ -47,7 +47,10 @@ void CNativeW::SetString( const wchar_t* pData, int nDataLen )
 // バッファの内容を置き換える
 void CNativeW::SetString( const wchar_t* pszData )
 {
-	CNative::SetRawData(pszData,wcslen(pszData) * sizeof(wchar_t));
+	if (pszData)
+		CNative::SetRawData(pszData,wcslen(pszData) * sizeof(wchar_t));
+	else
+		CMemory::Clear();
 }
 
 void CNativeW::SetStringHoldBuffer( const wchar_t* pData, int nDataLen )
