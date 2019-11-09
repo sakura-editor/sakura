@@ -191,8 +191,6 @@ bool CLayoutMgr::_DoTab(SLayoutWork* pWork, PF_OnLine pfOnLine)
 	return false;
 }
 
-int g_CColorStrategy_nCurLine; // 引数を追加するのが大変なので…
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          準処理                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -238,7 +236,6 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 		}
 
 		//@@@ 2002.09.22 YAZAKI
-		g_CColorStrategy_nCurLine = pWork->nCurLine;
 		color.CheckColorMODE( &pWork->pcColorStrategy, pWork->nPos, pWork->cLineStr );
 
 		if( pWork->cLineStr.At(pWork->nPos) == WCODE::TAB ){
@@ -477,11 +474,6 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 	if(pWork->pcColorStrategy){
 		pWork->pcColorStrategy->InitStrategyStatus();
 		pWork->pcColorStrategy->SetStrategyColorInfo(colorInfo);
-	}
-
-	if (CColorStrategy* p = CColorStrategyPool::getInstance()->GetStrategyByColor(COLORIDX_CPREPROCESSOR)) {
-		if (p->Disp())
-			p->Update();
 	}
 
 	while( NULL != pWork->pcDocLine ){

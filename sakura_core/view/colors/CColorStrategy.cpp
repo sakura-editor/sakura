@@ -88,8 +88,6 @@ bool SColorStrategyInfo::CheckChangeColor(const CStringRef& cLineStr)
 		}
 	}
 
-	extern int g_CColorStrategy_nCurLine;
-	g_CColorStrategy_nCurLine = GetLayout()->GetLogicLineNo();
 	//色終了
 	if(m_pStrategy){
 		if(m_pStrategy->EndColor(cLineStr,this->GetPosInLogic())){

@@ -2665,6 +2665,10 @@ static char *   norm_path(
                     , debug_buf, norm_name);
     }
 
+    if (fname && strcmp(norm_name, fname) == 0) {
+        free(norm_name);
+        norm_name = NULL;
+    }
     return  norm_name;
 }
 

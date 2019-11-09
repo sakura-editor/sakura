@@ -42,7 +42,7 @@ public:
 	virtual bool EndColor(const CStringRef& cStr, int nPos);
 	virtual bool Disp() const {
 		// タイプ別設定 『カラー』プロパティのCプリプロセッサのリストアイテムのチェックが付いているか
-		if (!m_pTypeData->m_ColorInfoArr[COLORIDX_CPREPROCESSOR].m_bDisp)
+		if (!m_pTypeData || !m_pTypeData->m_ColorInfoArr[COLORIDX_CPREPROCESSOR].m_bDisp)
 			return false;
 		return true;
 	}

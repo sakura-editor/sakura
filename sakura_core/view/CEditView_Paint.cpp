@@ -860,6 +860,8 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 	return;
 }
 
+const CDocLine* g_pDocLineDrawing;
+
 /*!
 	行のテキスト／選択状態の描画
 	1回で1ロジック行分を作画する。
@@ -895,6 +897,8 @@ bool CEditView::DrawLogicLine(
 
 	//処理する文字位置
 	pInfo->m_nPosInLogic = CLogicInt(0); //☆開始
+
+	g_pDocLineDrawing = pInfo->GetDocLine();
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//          論理行データの取得 -> pLine, pLineLen              //

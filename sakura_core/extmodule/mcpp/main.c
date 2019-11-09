@@ -429,10 +429,10 @@ int     main
 fatal_error_exit:
 #if MCPP_LIB
     /* Free malloced memory */
-    //if (mcpp_debug & MACRO_CALL) {
+    if (mcpp_debug & MACRO_CALL) {
         if (in_file != stdin_name)
             free( in_file);
-    //}
+    }
     clear_filelist();
     clear_symtable();
 #endif
@@ -653,8 +653,8 @@ static void mcpp_main( void)
                 break;
             } else if (! compiling) {       /* #ifdef false?        */
                 if (!infile->parent) {
-                    extern char* mcpp_ifdef_false_lines;
-                    mcpp_ifdef_false_lines[src_line] = 1;
+                    extern void skr_SetDocLineExcludedByCPreprocessor();
+                    skr_SetDocLineExcludedByCPreprocessor();
                 }
                 skip_nl();                  /* Skip to newline      */
                 newlines++;                 /* Count it, too.       */

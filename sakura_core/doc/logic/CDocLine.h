@@ -107,6 +107,7 @@ public:
 		CLineBookmarked	m_cBookmarked;	//ブックマーク
 		CLineFuncList	m_cFuncList;	//関数リストマーク
 		CLineDiffed		m_cDiffmarked;	//DIFF差分情報
+		bool			m_bExcludedByCPreprocessor; //Cプリプロセッサの条件付きコンパイルで除外されたかどうか
 	};
 	MarkType m_sMark;
 private:

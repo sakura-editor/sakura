@@ -2,8 +2,9 @@
 #include "StdAfx.h"
 #include "CColor_CPreprocessor.h"
 
+#include <vld.h>
+
 extern "C" {
-char* mcpp_ifdef_false_lines;
 extern int mcpp_lib_main( int argc, char ** argv);
 extern void mcpp_set_in_func( FILE* (* func_fopen) ( char const* fileName,char const* mode),
 							  char* (* func_fgets) ( char * str, int num, FILE * stream ),
@@ -11,7 +12,13 @@ extern void mcpp_set_in_func( FILE* (* func_fopen) ( char const* fileName,char c
                               int   (* func_ferror) ( FILE * stream )
 							 );
 
-static const CDocLine* g_pcDocLine;
+static CDocLine* g_pcDocLine;
+static CDocLine* g_pcDocLineNext;
+void skr_SetDocLineExcludedByCPreprocessor()
+{
+	g_pcDocLine->m_sMark.m_bExcludedByCPreprocessor = true;
+}
+
 static std::string g_mcpp_input_filename;
 static FILE* g_mcpp_input_file = (FILE*)0xdeadbeef;
 
@@ -30,11 +37,13 @@ static
 char* func_fgets(char * str, int num, FILE * stream)
 {
 	if (stream == g_mcpp_input_file) {
-		if (!g_pcDocLine)
+		if (!g_pcDocLineNext)
 			return NULL;
+		g_pcDocLine = g_pcDocLineNext;
 		int len;
+		g_pcDocLine->m_sMark.m_bExcludedByCPreprocessor = false;
 		const wchar_t* line = g_pcDocLine->GetDocLineStrWithEOL(&len);
-		g_pcDocLine = g_pcDocLine->GetNextLine();
+		g_pcDocLineNext = g_pcDocLine->GetNextLine();
 		return strncpy(str, to_achar(line), num);
 	}
 	else
@@ -67,16 +76,17 @@ int func_ferror(FILE* stream)
 
 CColor_CPreprocessor::~CColor_CPreprocessor()
 {
-	delete[] mcpp_ifdef_false_lines;
 }
 
 void CColor_CPreprocessor::Update(void)
 {
-	const CEditDoc* pCEditDoc = CEditDoc::GetInstance(0);
+	CEditDoc* pCEditDoc = CEditDoc::GetInstance(0);
 	m_pTypeData = &pCEditDoc->m_cDocType.GetDocumentAttribute();
+	if (pCEditDoc->m_cDocLineMgr.GetLineCount() == 0)
+		return;
 	if (!Disp())
 		return;
-	const auto& docFile = pCEditDoc->m_cDocFile;
+	auto& docFile = pCEditDoc->m_cDocFile;
 	const auto& filePath = docFile.GetFilePathClass();
 	const auto& dirPath = filePath.GetDirPath();
 	if (docFile.IsFileExist()) {
@@ -86,10 +96,8 @@ void CColor_CPreprocessor::Update(void)
 		g_mcpp_input_filename = to_achar((dirPath + L"tmp.c").c_str());
 	}
 	mcpp_set_in_func(func_fopen, func_fgets, func_fclose, func_ferror);
-	g_pcDocLine = pCEditDoc->m_cDocLineMgr.GetDocLineTop();
+	g_pcDocLine = g_pcDocLineNext = pCEditDoc->m_cDocLineMgr.GetDocLineTop();
 
-	delete[] mcpp_ifdef_false_lines;
-	mcpp_ifdef_false_lines = new char[pCEditDoc->m_cDocLineMgr.GetLineCount() + 3]();
 	const char* args[5];
 
 	int nArgs = 0;
@@ -106,15 +114,15 @@ void CColor_CPreprocessor::Update(void)
 	++ret;
 }
 
-extern int g_CColorStrategy_nCurLine;
+extern const CDocLine* g_pDocLineDrawing;
 
 bool CColor_CPreprocessor::BeginColor(const CStringRef& cStr, int nPos)
 {
-	return mcpp_ifdef_false_lines[g_CColorStrategy_nCurLine + 1] != 0;
+	return g_pDocLineDrawing && g_pDocLineDrawing->m_sMark.m_bExcludedByCPreprocessor;
 }
 
 bool CColor_CPreprocessor::EndColor(const CStringRef& cStr, int nPos)
 {
-	return mcpp_ifdef_false_lines[g_CColorStrategy_nCurLine + 1] == 0;;
+	return !g_pDocLineDrawing || !g_pDocLineDrawing->m_sMark.m_bExcludedByCPreprocessor;
 }
 
