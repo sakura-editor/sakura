@@ -429,6 +429,11 @@ int     main
 fatal_error_exit:
 #if MCPP_LIB
     /* Free malloced memory */
+    if (infile != NULL) {
+		free( infile->buffer);
+		free( infile->filename);
+        free( infile);
+    }
     if (mcpp_debug & MACRO_CALL) {
         if (in_file != stdin_name)
             free( in_file);
