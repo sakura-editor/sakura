@@ -775,8 +775,8 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 	}
 
 	CDocLine* pCDocLine;
-	CDocLine* pCDocLinePrev;
-	CDocLine* pCDocLineNext;
+	CDocLine* pCDocLinePrev = nullptr;
+	CDocLine* pCDocLineNext = nullptr;
 	int nWorkPos;
 	int nWorkLen;
 	const wchar_t* pLine;
@@ -1137,6 +1137,14 @@ prev_line:;
 			pArg->nInsSeq = 0;
 		}
 	}
+
+	bool bExcludedByCPreprocessor = false;
+	if (pCDocLinePrev != nullptr)
+		bExcludedByCPreprocessor |= pCDocLinePrev->m_sMark.m_bExcludedByCPreprocessor;
+	if (pCDocLineNext != nullptr)
+		bExcludedByCPreprocessor |= pCDocLineNext->m_sMark.m_bExcludedByCPreprocessor;
+	markNext.m_bExcludedByCPreprocessor = bExcludedByCPreprocessor;
+
 	int nCount;
 	for( nCount = 0; nCount < nInsSize; nCount++ ){
 		CNativeW& cmemLine = (*pArg->pInsData)[nCount].cmemLine;
@@ -1184,11 +1192,13 @@ prev_line:;
 						pCDocLine->SetDocLineStringMove(&tmp);
 					}
 					CModifyVisitor().SetLineModified(pCDocLine, (*pArg->pInsData)[nCount].nSeq);
+					pCDocLine->m_sMark.m_bExcludedByCPreprocessor = bExcludedByCPreprocessor;
 					pCDocLine = pCDocLine->GetNextLine();
 				}
 				else{
 					CDocLine* pCDocLineNew = m_pcDocLineMgr->InsertNewLine(pCDocLine);	//pCDocLineの前に挿入
 					pCDocLineNew->SetDocLineStringMove(&cmemLine);
+					pCDocLineNew->m_sMark.m_bExcludedByCPreprocessor = bExcludedByCPreprocessor;
 					CModifyVisitor().SetLineModified(pCDocLineNew, (*pArg->pInsData)[nCount].nSeq);
 				}
 			}

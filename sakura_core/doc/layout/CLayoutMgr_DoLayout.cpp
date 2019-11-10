@@ -197,6 +197,9 @@ bool CLayoutMgr::_DoTab(SLayoutWork* pWork, PF_OnLine pfOnLine)
 
 void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 {
+	extern const CDocLine* g_pDocLineDrawing;
+	g_pDocLineDrawing = pWork->pcDocLine;
+
 	int	nEol = pWork->pcDocLine->GetEol().GetLen(); //########そのうち不要になる
 	int nEol_1 = nEol - 1;
 	if( 0 >	nEol_1 ){

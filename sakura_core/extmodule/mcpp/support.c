@@ -1933,6 +1933,11 @@ static char *   read_a_comment(
                         = com_cat_line.len[ cat_line - 1]
                             + strlen( infile->buffer) - 1;
             }
+			if (!compiling) {
+                extern void skr_SetDocLineExcludedByCPreprocessor();
+                skr_SetDocLineExcludedByCPreprocessor();
+			}
+
             if ((saved_sp = sp = get_line( TRUE)) == NULL)
                 return  NULL;       /* End of file within comment   */
                 /* Never happen, because at_eof() supplement closing*/
