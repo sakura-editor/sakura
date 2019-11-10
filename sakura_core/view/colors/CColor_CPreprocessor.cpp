@@ -6,6 +6,14 @@
 
 extern "C" {
 extern int mcpp_lib_main( int argc, char ** argv);
+
+typedef enum OUTDEST;
+
+extern void mcpp_set_out_func( int (* func_fputc)  ( int c, OUTDEST od),
+							   int (* func_fputs)  ( const char * s, OUTDEST od),
+							   int (* func_fprintf)( OUTDEST od, const char * format, ...)
+							  );
+
 extern void mcpp_set_in_func( FILE* (* func_fopen) ( char const* fileName,char const* mode),
 							  char* (* func_fgets) ( char * str, int num, FILE * stream ),
 							  int   (* func_fclose) ( FILE* stream),
@@ -21,6 +29,21 @@ void skr_SetDocLineExcludedByCPreprocessor()
 
 static std::string g_mcpp_input_filename;
 static FILE* g_mcpp_input_file = (FILE*)0xdeadbeef;
+
+static int func_fputc(int c, OUTDEST od)
+{
+	return c;
+}
+
+static int func_fputs(const char * s, OUTDEST od)
+{
+	return 1;
+}
+
+static int func_fprintf(OUTDEST od, const char * format, ...)
+{
+	return 1;
+}
 
 static
 FILE* func_fopen(char const* fileName, char const* mode)
@@ -95,6 +118,7 @@ void CColor_CPreprocessor::Update(void)
 	else {
 		g_mcpp_input_filename = to_achar((dirPath + L"tmp.c").c_str());
 	}
+	mcpp_set_out_func(func_fputc, func_fputs, func_fprintf);
 	mcpp_set_in_func(func_fopen, func_fgets, func_fclose, func_ferror);
 	g_pcDocLine = g_pcDocLineNext = pCEditDoc->m_cDocLineMgr.GetDocLineTop();
 
