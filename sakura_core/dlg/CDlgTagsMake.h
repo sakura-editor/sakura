@@ -37,7 +37,7 @@ class CDlgTagsMake;
 /*!
 	@brief タグファイル作成ダイアログボックス
 */
-class CDlgTagsMake : public CDialog
+class CDlgTagsMake final : public CDialog
 {
 public:
 	/*
@@ -58,11 +58,11 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	BOOL	OnBnClicked(int wID);
-	LPVOID	GetHelpIdTable(void);
+	BOOL	OnBnClicked(int wID) override;
+	LPVOID	GetHelpIdTable(void) override;
 
-	void	SetData( void );	/* ダイアログデータの設定 */
-	int		GetData( void );	/* ダイアログデータの取得 */
+	void	SetData( void ) override;	/* ダイアログデータの設定 */
+	int		GetData( void ) override;	/* ダイアログデータの取得 */
 
 private:
 	void SelectFolder( HWND hwndDlg );

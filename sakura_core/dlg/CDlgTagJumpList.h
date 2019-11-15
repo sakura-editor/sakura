@@ -48,7 +48,7 @@ class CSortedTagJumpList;
 	ダイレクトタグジャンプで複数の候補がある場合及び
 	キーワード指定タグジャンプのためのダイアログボックス制御
 */
-class CDlgTagJumpList : public CDialog
+class CDlgTagJumpList final : public CDialog
 {
 public:
 	/*
@@ -74,19 +74,19 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
-	BOOL	OnBnClicked(int wID);
-	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );
-	BOOL	OnSize( WPARAM wParam, LPARAM lParam );
-	BOOL	OnMove( WPARAM wParam, LPARAM lParam );
+	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
+	BOOL	OnBnClicked(int wID) override;
+	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ) override;
+	BOOL	OnSize( WPARAM wParam, LPARAM lParam ) override;
+	BOOL	OnMove( WPARAM wParam, LPARAM lParam ) override;
 	BOOL	OnMinMaxInfo( LPARAM lParam );
-	BOOL	OnNotify( WPARAM wParam, LPARAM lParam );
+	BOOL	OnNotify( WPARAM wParam, LPARAM lParam ) override;
 	//	@@ 2005.03.31 MIK キーワード入力エリアのイベント処理
-	BOOL	OnCbnSelChange( HWND hwndCtl, int wID );
-	BOOL	OnCbnEditChange( HWND hwndCtl, int wID );
-	//BOOL	OnEnChange( HWND hwndCtl, int wID );
-	BOOL	OnTimer( WPARAM wParam );
-	LPVOID	GetHelpIdTable( void );
+	BOOL	OnCbnSelChange( HWND hwndCtl, int wID ) override;
+	BOOL	OnCbnEditChange( HWND hwndCtl, int wID ) override;
+	//BOOL	OnEnChange( HWND hwndCtl, int wID ) override;
+	BOOL	OnTimer( WPARAM wParam ) override;
+	LPVOID	GetHelpIdTable( void ) override;
 
 private:
 	struct STagFindState {
@@ -109,8 +109,8 @@ private:
 	void	StopTimer( void );
 	void	StartTimer(int nDelay);
 
-	void	SetData( void );	/* ダイアログデータの設定 */
-	int		GetData( void );	/* ダイアログデータの取得 */
+	void	SetData( void ) override;	/* ダイアログデータの設定 */
+	int		GetData( void ) override;	/* ダイアログデータの取得 */
 	void	UpdateData(bool bInit);	//	@@ 2005.03.31 MIK
 
 	WCHAR	*GetNameByType( const WCHAR type, const WCHAR *name );	//タイプを名前に変換する。

@@ -55,10 +55,10 @@ public:
 	CCodePage(int codepageEx) : m_nCodePageEx(codepageEx) { }
 	
 	//CCodeBaseインターフェース
-	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ return CPToUnicode(cSrc, pDst, m_nCodePageEx); }	//!< 特定コード → UNICODE    変換
-	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ return UnicodeToCP(cSrc, pDst, m_nCodePageEx); }	//!< UNICODE    → 特定コード 変換
-	void GetEol(CMemory* pcmemEol, EEolType eEolType);	//!< 改行データ取得
-	void GetBom(CMemory* pcmemBom);	//!< BOMデータ取得
+	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst) override{ return CPToUnicode(cSrc, pDst, m_nCodePageEx); }	//!< 特定コード → UNICODE    変換
+	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst) override{ return UnicodeToCP(cSrc, pDst, m_nCodePageEx); }	//!< UNICODE    → 特定コード 変換
+	void GetEol(CMemory* pcmemEol, EEolType eEolType) override;	//!< 改行データ取得
+	void GetBom(CMemory* pcmemBom) override;	//!< BOMデータ取得
 	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE → Hex 変換
 
 public:

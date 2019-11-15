@@ -58,7 +58,7 @@ public:
 };
 
 //!	アウトライン解析ダイアログボックス
-class CDlgFuncList : public CDialog
+class CDlgFuncList final : public CDialog
 {
 public:
 	/*
@@ -74,7 +74,7 @@ public:
 	EDockSide GetDockSide() { return m_eDockSide; }
 
 protected:
-	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );	// 2007.11.07 ryoji 標準以外のメッセージを捕捉する
+	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ) override;	// 2007.11.07 ryoji 標準以外のメッセージを捕捉する
 
 	CommonSetting_OutLine& CommonSet(void){ return m_pShareData->m_Common.m_sOutline; }
 	STypeConfig& TypeSet(void){ return m_type; }
@@ -118,16 +118,16 @@ public:
 	int				m_nOutlineType;		/* アウトライン解析の種別 */
 	bool			m_bEditWndReady;	/* エディタ画面の準備完了 */
 protected:
-	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
-	BOOL OnBnClicked(int wID);
-	BOOL OnNotify(WPARAM wParam, LPARAM lParam);
-	BOOL OnSize( WPARAM wParam, LPARAM lParam );
+	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
+	BOOL OnBnClicked(int wID) override;
+	BOOL OnNotify(WPARAM wParam, LPARAM lParam) override;
+	BOOL OnSize( WPARAM wParam, LPARAM lParam ) override;
 	BOOL OnMinMaxInfo( LPARAM lParam );
-	BOOL OnDestroy(void); // 20060201 aroka
+	BOOL OnDestroy(void) override; // 20060201 aroka
 	BOOL OnCbnSelEndOk( HWND hwndCtl, int wID );
-	BOOL OnContextMenu(WPARAM wParam, LPARAM lParam);
-	void SetData();	/* ダイアログデータの設定 */
-	int GetData( void );	/* ダイアログデータの取得 */
+	BOOL OnContextMenu(WPARAM wParam, LPARAM lParam) override;
+	void SetData() override;	/* ダイアログデータの設定 */
+	int GetData( void ) override;	/* ダイアログデータの取得 */
 
 	/*
 	||  実装ヘルパ関数
@@ -156,7 +156,7 @@ protected:
 
 	// 2001.12.03 hor
 //	void SetTreeBookMark( HWND );		/* ツリーコントロールの初期化：ブックマーク */
-	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
+	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
 	void Key2Command(WORD KeyCode);		//	キー操作→コマンド変換
 	bool HitTestSplitter( int xPos, int yPos );
 	int HitTestCaptionButton( int xPos, int yPos );

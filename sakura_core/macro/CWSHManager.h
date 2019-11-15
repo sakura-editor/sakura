@@ -31,16 +31,16 @@ class CEditView;
 
 typedef void (*EngineCallback)(wchar_t *Ext, char *EngineName);
 
-class CWSHMacroManager: public CMacroManagerBase
+class CWSHMacroManager final : public CMacroManagerBase
 {
 public:
 	CWSHMacroManager(std::wstring const AEngineName);
 	virtual ~CWSHMacroManager();
 
 	//	2007.07.20 genta : flags追加
-	virtual bool ExecKeyMacro(CEditView *EditView, int flags) const;
-	virtual BOOL LoadKeyMacro(HINSTANCE hInstance, const WCHAR* pszPath);
-	virtual BOOL LoadKeyMacroStr(HINSTANCE hInstance, const WCHAR* pszCode);
+	bool ExecKeyMacro(CEditView *EditView, int flags) const override;
+	BOOL LoadKeyMacro(HINSTANCE hInstance, const WCHAR* pszPath) override;
+	BOOL LoadKeyMacroStr(HINSTANCE hInstance, const WCHAR* pszCode) override;
 
 	static CMacroManagerBase* Creator(const WCHAR* FileExt);
 	static void declare();

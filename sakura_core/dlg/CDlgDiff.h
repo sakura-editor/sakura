@@ -39,7 +39,7 @@ class CDlgDiff;
 	@brief DIFF差分表示ダイアログボックス
 */
 //	Feb. 28, 2004 genta 最後に選択されていた番号を保存する
-class CDlgDiff : public CDialog
+class CDlgDiff final : public CDialog
 {
 public:
 	/*
@@ -56,19 +56,19 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	BOOL	OnBnClicked(int wID);
-	BOOL	OnLbnSelChange( HWND hwndCtl, int wID );
-	BOOL	OnLbnDblclk( int wID );
-	BOOL	OnEnChange( HWND hwndCtl, int wID );
-	LPVOID	GetHelpIdTable(void);
-	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );	// 標準以外のメッセージを捕捉する
-	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
-	BOOL OnSize( WPARAM wParam, LPARAM lParam );
-	BOOL OnMove( WPARAM wParam, LPARAM lParam );
+	BOOL	OnBnClicked(int wID) override;
+	BOOL	OnLbnSelChange( HWND hwndCtl, int wID ) override;
+	BOOL	OnLbnDblclk( int wID ) override;
+	BOOL	OnEnChange( HWND hwndCtl, int wID ) override;
+	LPVOID	GetHelpIdTable(void) override;
+	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ) override;	// 標準以外のメッセージを捕捉する
+	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
+	BOOL OnSize( WPARAM wParam, LPARAM lParam ) override;
+	BOOL OnMove( WPARAM wParam, LPARAM lParam ) override;
 	BOOL OnMinMaxInfo( LPARAM lParam );
 
-	void	SetData( void );	/* ダイアログデータの設定 */
-	int		GetData( void );	/* ダイアログデータの取得 */
+	void	SetData( void ) override;	/* ダイアログデータの設定 */
+	int		GetData( void ) override;	/* ダイアログデータの取得 */
 
 private:
 	int			m_nIndexSave;		// 最後に選択されていた番号

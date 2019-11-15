@@ -35,11 +35,11 @@ public:
 	void Clear(void) { m_bIsDocWritable = true; }
 
 	//ロード前後
-	void OnAfterLoad(const SLoadInfo& sLoadInfo);
+	void OnAfterLoad(const SLoadInfo& sLoadInfo) override;
 	
 	//セーブ前後
-	void OnBeforeSave(const SSaveInfo& sSaveInfo);
-	void OnAfterSave(const SSaveInfo& sSaveInfo);
+	void OnBeforeSave(const SSaveInfo& sSaveInfo) override;
+	void OnAfterSave(const SSaveInfo& sSaveInfo) override;
 
 	//状態
 	bool IsDocWritable() const{ return m_bIsDocWritable; }

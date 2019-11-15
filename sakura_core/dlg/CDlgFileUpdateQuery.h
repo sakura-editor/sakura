@@ -42,15 +42,15 @@ enum EFileUpdateQuery {
 	EFUQ_AUTOLOAD		= 4		//!< 以後未編集で再ロード
 };
 
-class CDlgFileUpdateQuery : public CDialog {
+class CDlgFileUpdateQuery final : public CDialog {
 public:
 	CDlgFileUpdateQuery(const WCHAR* filename, bool IsModified)
 	: m_pFilename( filename )
 	, m_bModified( IsModified )
 	{
 	}
-	virtual BOOL OnInitDialog( HWND hWnd, WPARAM wParam, LPARAM lParam );
-	virtual BOOL OnBnClicked( int id );
+	BOOL OnInitDialog( HWND hWnd, WPARAM wParam, LPARAM lParam ) override;
+	BOOL OnBnClicked( int id ) override;
 
 private:
 	const WCHAR* m_pFilename;

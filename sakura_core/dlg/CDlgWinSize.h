@@ -39,7 +39,7 @@
 	共通設定のウィンドウ設定で，ウィンドウ位置を指定するために補助的に
 	使用されるダイアログボックス
 */
-class CDlgWinSize : public CDialog
+class CDlgWinSize final : public CDialog
 {
 public:
 	CDlgWinSize();
@@ -49,11 +49,11 @@ public:
 
 protected:
 
-	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
-	BOOL OnBnClicked(int wID);
-	int  GetData( void );
-	void SetData( void );
-	LPVOID GetHelpIdTable( void );
+	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
+	BOOL OnBnClicked(int wID) override;
+	int  GetData( void ) override;
+	void SetData( void ) override;
+	LPVOID GetHelpIdTable( void ) override;
 
 	void RenewItemState( void );
 

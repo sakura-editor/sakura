@@ -24,7 +24,7 @@ class CSplitBoxWnd;
 /*!
 	@brief 分割ボックスウィンドウクラス
 */
-class CSplitBoxWnd : public CWnd
+class CSplitBoxWnd final : public CWnd
 {
 public:
 	/*
@@ -47,11 +47,11 @@ protected:
 	/* 仮想関数 */
 
 	/* 仮想関数 メッセージ処理 詳しくは実装を参照 */
-	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);/* 描画処理 */
-	LRESULT OnLButtonDown(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);// WM_LBUTTONDOWN
-	LRESULT OnMouseMove(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);// WM_MOUSEMOVE
-	LRESULT OnLButtonUp(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);//WM_LBUTTONUP
-	LRESULT OnLButtonDblClk(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);//WM_LBUTTONDBLCLK
+	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;/* 描画処理 */
+	LRESULT OnLButtonDown(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;// WM_LBUTTONDOWN
+	LRESULT OnMouseMove(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;// WM_MOUSEMOVE
+	LRESULT OnLButtonUp(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;//WM_LBUTTONUP
+	LRESULT OnLButtonDblClk(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;//WM_LBUTTONDBLCLK
 };
 
 ///////////////////////////////////////////////////////////////////////

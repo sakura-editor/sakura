@@ -40,7 +40,7 @@ struct STypeConfig;
 	タイプ別設定のカラー設定で，文字色／背景色統一の対象色を指定するために補助的に
 	使用されるダイアログボックス
 */
-class CDlgSameColor : public CDialog
+class CDlgSameColor final : public CDialog
 {
 public:
 	CDlgSameColor();
@@ -49,11 +49,11 @@ public:
 
 protected:
 
-	virtual LPVOID GetHelpIdTable( void );
-	virtual INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );	//! ダイアログのメッセージ処理
-	virtual BOOL OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam );			//!< WM_INITDIALOG 処理
-	virtual BOOL OnBnClicked( int wID );							//!< BN_CLICKED 処理
-	virtual BOOL OnDrawItem( WPARAM wParam, LPARAM lParam );	//!< WM_DRAWITEM 処理
+	LPVOID GetHelpIdTable( void ) override;
+	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ) override;	//! ダイアログのメッセージ処理
+	BOOL OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam ) override;			//!< WM_INITDIALOG 処理
+	BOOL OnBnClicked( int wID ) override;							//!< BN_CLICKED 処理
+	BOOL OnDrawItem( WPARAM wParam, LPARAM lParam ) override;	//!< WM_DRAWITEM 処理
 	BOOL OnSelChangeListColors( HWND hwndCtl );					//!< 色選択リストの LBN_SELCHANGE 処理
 
 	static LRESULT CALLBACK ColorStatic_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );	//!< サブクラス化された指定色スタティックのウィンドウプロシージャ

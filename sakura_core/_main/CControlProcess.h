@@ -30,7 +30,7 @@ class CControlTray;
 	
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class CControlProcess : public CProcess {
+class CControlProcess final : public CProcess {
 public:
 	CControlProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine ) : 
 		CProcess( hInstance, lpCmdLine ),
@@ -41,12 +41,12 @@ public:
 		m_pcTray( 0 )
 	{}
 
-	virtual ~CControlProcess();
+	~CControlProcess() override;
 protected:
 	CControlProcess();
-	virtual bool InitializeProcess();
-	virtual bool MainLoop();
-	virtual void OnExitProcess();
+	bool InitializeProcess() override;
+	bool MainLoop() override;
+	virtual void OnExitProcess() override;
 
 private:
 	HANDLE			m_hMutex;				//!< アプリケーション実行検出用ミューテックス

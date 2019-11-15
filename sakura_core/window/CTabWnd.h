@@ -45,7 +45,7 @@ struct EditNode;
 struct DLLSHAREDATA;
 
 //! タブバーウィンドウ
-class CTabWnd : public CWnd
+class CTabWnd final : public CWnd
 {
 public:
 	/*
@@ -96,22 +96,22 @@ protected:
 	void GetTabName( EditNode* pEditNode, BOOL bFull, BOOL bDupamp, LPWSTR pszName, int nLen );	/* タブ名取得処理 */	// 2007.06.28 ryoji 新規作成
 
 	/* 仮想関数 */
-	virtual void AfterCreateWindow( void ){}	/*!< ウィンドウ作成後の処理 */	// 2007.03.13 ryoji 可視化しない
+	void AfterCreateWindow( void ) override{}	/*!< ウィンドウ作成後の処理 */	// 2007.03.13 ryoji 可視化しない
 
 	/* 仮想関数 メッセージ処理 */
-	virtual LRESULT OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );		/*!< WM_SIZE処理 */
-	virtual LRESULT OnDestroy( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );	/*!< WM_DSESTROY処理 */
-	virtual LRESULT OnNotify( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );		/*!< WM_NOTIFY処理 */
-	virtual LRESULT OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );		/*!< WM_PAINT処理 */
-	virtual LRESULT OnCaptureChanged( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );	/*!< WM_CAPTURECHANGED 処理 */
-	virtual LRESULT OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );	/*!< WM_LBUTTONDOWN処理 */
-	virtual LRESULT OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );	/*!< WM_LBUTTONUP処理 */
-	virtual LRESULT OnRButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );	/*!< WM_RBUTTONDOWN処理 */
-	virtual LRESULT OnLButtonDblClk( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );	/*!< WM_LBUTTONDBLCLK処理 */
-	virtual LRESULT OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );	/*!< WM_MOUSEMOVE処理 */
-	virtual LRESULT OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );		/*!< WM_TIMER処理 */
-	virtual LRESULT OnMeasureItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );	/*!< WM_MEASUREITEM処理 */
-	virtual LRESULT OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );		/*!< WM_DRAWITEM処理 */
+	LRESULT OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) override;		/*!< WM_SIZE処理 */
+	LRESULT OnDestroy( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) override;	/*!< WM_DSESTROY処理 */
+	LRESULT OnNotify( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) override;		/*!< WM_NOTIFY処理 */
+	LRESULT OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) override;		/*!< WM_PAINT処理 */
+	LRESULT OnCaptureChanged( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) override;	/*!< WM_CAPTURECHANGED 処理 */
+	LRESULT OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) override;	/*!< WM_LBUTTONDOWN処理 */
+	LRESULT OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) override;	/*!< WM_LBUTTONUP処理 */
+	LRESULT OnRButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) override;	/*!< WM_RBUTTONDOWN処理 */
+	LRESULT OnLButtonDblClk( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) override;	/*!< WM_LBUTTONDBLCLK処理 */
+	LRESULT OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) override;	/*!< WM_MOUSEMOVE処理 */
+	LRESULT OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) override;		/*!< WM_TIMER処理 */
+	LRESULT OnMeasureItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) override;	/*!< WM_MEASUREITEM処理 */
+	LRESULT OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) override;		/*!< WM_DRAWITEM処理 */
 
 	// 2005.09.01 ryoji ドラッグアンドドロップでタブの順序変更を可能に
 	/* サブクラス化した Tab でのメッセージ処理 */

@@ -37,7 +37,7 @@ class CModifyManager : public TSingleton<CModifyManager>, public CDocListenerEx{
 	CModifyManager(){}
 
 public:
-	void OnAfterSave(const SSaveInfo& sSaveInfo);
+	void OnAfterSave(const SSaveInfo& sSaveInfo) override;
 };
 
 //! 行に付加するModified情報

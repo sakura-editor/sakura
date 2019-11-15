@@ -28,7 +28,7 @@
 /*!
 	@brief 置換ダイアログボックス
 */
-class CDlgReplace : public CDialog
+class CDlgReplace final : public CDialog
 {
 public:
 	/*
@@ -67,16 +67,16 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	BOOL OnCbnDropDown( HWND hwndCtl, int wID );
-	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
-	BOOL OnDestroy();
-	BOOL OnBnClicked(int wID);
-	BOOL OnActivate( WPARAM wParam, LPARAM lParam );	// 2009.11.29 ryoji
-	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
+	BOOL OnCbnDropDown( HWND hwndCtl, int wID ) override;
+	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
+	BOOL OnDestroy() override;
+	BOOL OnBnClicked(int wID) override;
+	BOOL OnActivate( WPARAM wParam, LPARAM lParam ) override;	// 2009.11.29 ryoji
+	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
 
-	void SetData( void );		/* ダイアログデータの設定 */
+	void SetData( void ) override;		/* ダイアログデータの設定 */
 	void SetCombosList( void );	/* 検索文字列/置換後文字列リストの設定 */
-	int GetData( void );		/* ダイアログデータの取得 */
+	int GetData( void ) override;		/* ダイアログデータの取得 */
 };
 
 ///////////////////////////////////////////////////////////////////////

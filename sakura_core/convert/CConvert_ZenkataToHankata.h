@@ -28,9 +28,9 @@
 #include "CConvert.h"
 
 //!全角カナ→半角カナ
-class CConvert_ZenkataToHankata : public CConvert{
+class CConvert_ZenkataToHankata final : public CConvert{
 public:
-	bool DoConvert(CNativeW* pcData);
+	bool DoConvert(CNativeW* pcData) override;
 };
 
 #endif /* SAKURA_CCONVERT_ZENKATATOHANKATA_28EBC9B6_53BD_41BA_8D20_140D90CAC3469_H_ */

@@ -29,7 +29,7 @@
 
 class CBackupAgent : public CDocListenerEx{
 public:
-	ECallbackResult OnPreBeforeSave(SSaveInfo* pSaveInfo);
+	ECallbackResult OnPreBeforeSave(SSaveInfo* pSaveInfo) override;
 
 protected:
 	int MakeBackUp( const WCHAR* target_file );								//!< バックアップの作成

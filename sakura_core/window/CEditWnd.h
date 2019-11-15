@@ -131,7 +131,7 @@ public:
 	//                         イベント                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//ドキュメントイベント
-	void OnAfterSave(const SSaveInfo& sSaveInfo);
+	void OnAfterSave(const SSaveInfo& sSaveInfo) override;
 
 	//管理
 	void MessageLoop( void );								/* メッセージループ */

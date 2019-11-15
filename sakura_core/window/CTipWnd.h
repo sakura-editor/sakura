@@ -24,7 +24,7 @@ class CTipWnd;
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-class CTipWnd : public CWnd
+class CTipWnd final : public CWnd
 {
 public:
 	/*
@@ -69,10 +69,10 @@ protected:
 
 	/* 仮想関数 */
 	//	Jan. 9, 2006 genta
-	virtual void AfterCreateWindow( void );
+	void AfterCreateWindow( void ) override;
 
 	/* 仮想関数 メッセージ処理 詳しくは実装を参照 */
-	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);/* 描画処理 */
+	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;/* 描画処理 */
 };
 
 ///////////////////////////////////////////////////////////////////////

@@ -22,7 +22,7 @@ class CDlgGrep;
 #include "dlg/CDlgGrep.h"
 
 //! GREP置換ダイアログボックス
-class CDlgGrepReplace : public CDlgGrep
+class CDlgGrepReplace final : public CDlgGrep
 {
 public:
 	/*
@@ -46,13 +46,13 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
-	BOOL OnDestroy();
-	BOOL OnBnClicked(int wID);
-	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
+	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
+	BOOL OnDestroy() override;
+	BOOL OnBnClicked(int wID) override;
+	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
 
-	void SetData( void );	/* ダイアログデータの設定 */
-	int GetData( void );	/* ダイアログデータの取得 */
+	void SetData( void ) override;	/* ダイアログデータの設定 */
+	int GetData( void ) override;	/* ダイアログデータの取得 */
 };
 
 ///////////////////////////////////////////////////////////////////////

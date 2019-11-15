@@ -40,11 +40,11 @@ public:
 	//                         イベント                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//ロード前後
-	void OnBeforeLoad(SLoadInfo* sLoadInfo);
-	void OnAfterLoad(const SLoadInfo& sLoadInfo);
+	void OnBeforeLoad(SLoadInfo* sLoadInfo) override;
+	void OnAfterLoad(const SLoadInfo& sLoadInfo) override;
 
 	//セーブ前後
-	void OnAfterSave(const SSaveInfo& sSaveInfo);
+	void OnAfterSave(const SSaveInfo& sSaveInfo) override;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           状態                              //

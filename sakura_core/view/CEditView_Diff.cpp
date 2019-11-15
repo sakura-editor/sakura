@@ -59,7 +59,7 @@
 
 #define	SAKURA_DIFF_TEMP_PREFIX	L"sakura_diff_"
 
-class COutputAdapterDiff: public COutputAdapter
+class COutputAdapterDiff final : public COutputAdapter
 {
 public:
 	COutputAdapterDiff(CEditView* view, int nFlgFile12_){
@@ -73,10 +73,10 @@ public:
 	}
 	~COutputAdapterDiff(){};
 
-	bool OutputW(const WCHAR* pBuf, int size = -1){ return true; };
-	bool OutputA(const ACHAR* pBuf, int size = -1);
-	bool IsEnableRunningDlg(){ return false; }
-	bool IsActiveDebugWindow(){ return false; }
+	bool OutputW(const WCHAR* pBuf, int size = -1) override{ return true; };
+	bool OutputA(const ACHAR* pBuf, int size = -1) override;
+	bool IsEnableRunningDlg() override{ return false; }
+	bool IsActiveDebugWindow() override{ return false; }
 
 public:
 	bool	bDiffInfo;	//DIFF情報か
