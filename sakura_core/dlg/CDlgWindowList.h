@@ -32,24 +32,24 @@
 #define SAKURA_CWINDOWLIST_H_
 
 #include "dlg/CDialog.h"
-class CDlgWindowList : public CDialog
+class CDlgWindowList final : public CDialog
 {
 public:
 	CDlgWindowList();
 
 	int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);
 protected:
-	BOOL	OnBnClicked(int wID);
-	LPVOID	GetHelpIdTable();
-	INT_PTR DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam);
-	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
-	BOOL OnSize(WPARAM wParam, LPARAM lParam);
-	BOOL OnMove(WPARAM wParam, LPARAM lParam);
+	BOOL	OnBnClicked(int wID) override;
+	LPVOID	GetHelpIdTable() override;
+	INT_PTR DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam) override;
+	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
+	BOOL OnSize(WPARAM wParam, LPARAM lParam) override;
+	BOOL OnMove(WPARAM wParam, LPARAM lParam) override;
 	BOOL OnMinMaxInfo(LPARAM lParam);
-	BOOL OnActivate(WPARAM wParam, LPARAM lParam);
+	BOOL OnActivate(WPARAM wParam, LPARAM lParam) override;
 
-	void SetData();
-	int  GetData();
+	void SetData() override;
+	int  GetData() override;
 
 	void GetDataListView(std::vector<HWND>& aHwndList);
 	void CommandClose();

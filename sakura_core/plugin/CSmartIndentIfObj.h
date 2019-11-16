@@ -32,7 +32,7 @@
 #include "macro/CWSHIfObj.h"
 
 // スマートインデント用WSHオブジェクト
-class CSmartIndentIfObj : public CWSHIfObj
+class CSmartIndentIfObj final : public CWSHIfObj
 {
 	// 型定義
 	enum FuncId {

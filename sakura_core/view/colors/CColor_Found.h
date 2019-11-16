@@ -27,19 +27,19 @@
 
 #include "view/colors/CColorStrategy.h"
 
-class CColor_Select : public CColorStrategy{
+class CColor_Select final : public CColorStrategy{
 public:
-	virtual EColorIndexType GetStrategyColor() const{ return COLORIDX_SELECT; }
+	EColorIndexType GetStrategyColor() const override{ return COLORIDX_SELECT; }
 	//色替え
-	virtual void InitStrategyStatus(){ }
-	virtual bool BeginColor(const CStringRef& cStr, int nPos);
-	virtual bool Disp() const { return true; }
-	virtual bool EndColor(const CStringRef& cStr, int nPos);
+	void InitStrategyStatus() override{ }
+	bool BeginColor(const CStringRef& cStr, int nPos) override;
+	bool Disp() const override{ return true; }
+	bool EndColor(const CStringRef& cStr, int nPos) override;
 
 	virtual bool BeginColorEx(const CStringRef& cStr, int nPos, CLayoutInt, const CLayout*);
 
 	//イベント
-	virtual void OnStartScanLogic();
+	void OnStartScanLogic() override;
 
 private:
 	CLayoutInt		m_nSelectLine;
@@ -47,18 +47,18 @@ private:
 	CLogicInt		m_nSelectEnd;
 };
 
-class CColor_Found : public CColorStrategy{
+class CColor_Found final : public CColorStrategy{
 public:
 	CColor_Found();
-	virtual EColorIndexType GetStrategyColor() const
+	EColorIndexType GetStrategyColor() const override
 	{ return this->validColorNum != 0 ? this->highlightColors[ (m_nSearchResult - 1) % this->validColorNum ] : COLORIDX_DEFAULT; }
 	//色替え
-	virtual void InitStrategyStatus(){ } //############要検証
-	virtual bool BeginColor(const CStringRef& cStr, int nPos);
-	virtual bool Disp() const { return true; }
-	virtual bool EndColor(const CStringRef& cStr, int nPos);
+	void InitStrategyStatus() override{ } //############要検証
+	bool BeginColor(const CStringRef& cStr, int nPos) override;
+	bool Disp() const override{ return true; }
+	bool EndColor(const CStringRef& cStr, int nPos) override;
 	//イベント
-	virtual void OnStartScanLogic();
+	void OnStartScanLogic() override;
 
 private:
 	int				m_nSearchResult;

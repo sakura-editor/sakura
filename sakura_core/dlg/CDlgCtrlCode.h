@@ -38,7 +38,7 @@ class CDlgCtrlCode;
 	@brief コントロールコード入力ダイアログボックス
 */
 //2007.10.18 kobake GetCharCode()を作成。
-class CDlgCtrlCode : public CDialog
+class CDlgCtrlCode final : public CDialog
 {
 public:
 	/*
@@ -57,13 +57,13 @@ private:
 	/*
 	||  実装ヘルパ関数
 	*/
-	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
-	BOOL	OnBnClicked(int wID);
-	BOOL	OnNotify( WPARAM wParam, LPARAM lParam );
-	LPVOID	GetHelpIdTable( void );
+	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
+	BOOL	OnBnClicked(int wID) override;
+	BOOL	OnNotify( WPARAM wParam, LPARAM lParam ) override;
+	LPVOID	GetHelpIdTable( void ) override;
 
-	void	SetData( void );	/* ダイアログデータの設定 */
-	int		GetData( void );	/* ダイアログデータの取得 */
+	void	SetData( void ) override;	/* ダイアログデータの設定 */
+	int		GetData( void ) override;	/* ダイアログデータの取得 */
 
 private:
 	/*

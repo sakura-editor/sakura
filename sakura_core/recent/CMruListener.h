@@ -30,15 +30,15 @@
 class CMruListener : public CDocListenerEx{
 public:
 	//ロード前後
-//	ECallbackResult OnCheckLoad(SLoadInfo* pLoadInfo);
-	void OnBeforeLoad(SLoadInfo* sLoadInfo);
-	void OnAfterLoad(const SLoadInfo& sLoadInfo);
+//	ECallbackResult OnCheckLoad(SLoadInfo* pLoadInfo) override;
+	void OnBeforeLoad(SLoadInfo* sLoadInfo) override;
+	void OnAfterLoad(const SLoadInfo& sLoadInfo) override;
 
 	//セーブ前後
-	void OnAfterSave(const SSaveInfo& sSaveInfo);
+	void OnAfterSave(const SSaveInfo& sSaveInfo) override;
 
 	//クローズ前後
-	ECallbackResult OnBeforeClose();
+	ECallbackResult OnBeforeClose() override;
 
 protected:
 	//ヘルパ

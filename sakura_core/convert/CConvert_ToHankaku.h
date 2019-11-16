@@ -28,9 +28,9 @@
 #include "CConvert.h"
 
 //!半角にできるものは全部半角に変換
-class CConvert_ToHankaku : public CConvert{
+class CConvert_ToHankaku final : public CConvert{
 public:
-	bool DoConvert(CNativeW* pcData);
+	bool DoConvert(CNativeW* pcData) override;
 };
 
 enum EToHankakuMode{

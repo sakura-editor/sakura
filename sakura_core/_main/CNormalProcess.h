@@ -29,17 +29,17 @@ class CEditWnd;
 	
 	エディタプロセスはCEditWndクラスのインスタンスを作る。
 */
-class CNormalProcess : public CProcess {
+class CNormalProcess final : public CProcess {
 public:
 	//コンストラクタ・デストラクタ
 	CNormalProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine );
-	virtual ~CNormalProcess();
+	~CNormalProcess();
 
 protected:
 	//プロセスハンドラ
-	virtual bool InitializeProcess();
-	virtual bool MainLoop();
-	virtual void OnExitProcess();
+	bool InitializeProcess() override;
+	bool MainLoop() override;
+	void OnExitProcess() override;
 
 protected:
 	//実装補助

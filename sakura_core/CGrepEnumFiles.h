@@ -42,7 +42,7 @@ public:
 	virtual ~CGrepEnumFiles(){
 	}
 
-	virtual BOOL IsValid( WIN32_FIND_DATA& w32fd, LPCWSTR pFile = NULL ){
+	BOOL IsValid( WIN32_FIND_DATA& w32fd, LPCWSTR pFile = NULL ) override {
 		if( ! ( w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) ){
 			if( CGrepEnumFileBase::IsValid( w32fd, pFile ) ){
 				return TRUE;

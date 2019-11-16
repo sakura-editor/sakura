@@ -46,7 +46,7 @@ public:
 	void	SetDebugModeOFF();	//!< デバッグモニタモード解除
 
 	//イベント
-	void OnAfterSave(const SSaveInfo& sSaveInfo);
+	void OnAfterSave(const SSaveInfo& sSaveInfo) override;
 
 protected:
 	void _SetDebugMode(bool bDebugMode){ m_bDebugMode = bDebugMode; }

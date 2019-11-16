@@ -27,15 +27,15 @@
 
 #include "view/colors/CColorStrategy.h"
 
-class CColor_RegexKeyword : public CColorStrategy{
+class CColor_RegexKeyword final : public CColorStrategy{
 public:
 	CColor_RegexKeyword() : m_nCOMMENTEND(0), m_nCOMMENTMODE(ToColorIndexType_RegularExpression(0)) { }
-	virtual EColorIndexType GetStrategyColor() const{ return m_nCOMMENTMODE; }
-	virtual void InitStrategyStatus(){ m_nCOMMENTEND = 0; m_nCOMMENTMODE = ToColorIndexType_RegularExpression(0); }
-	virtual bool BeginColor(const CStringRef& cStr, int nPos);
-	virtual bool EndColor(const CStringRef& cStr, int nPos);
-	virtual bool Disp() const { return m_pTypeData->m_bUseRegexKeyword; }
-	virtual void OnStartScanLogic();
+	EColorIndexType GetStrategyColor() const override{ return m_nCOMMENTMODE; }
+	void InitStrategyStatus() override{ m_nCOMMENTEND = 0; m_nCOMMENTMODE = ToColorIndexType_RegularExpression(0); }
+	bool BeginColor(const CStringRef& cStr, int nPos) override;
+	bool EndColor(const CStringRef& cStr, int nPos) override;
+	bool Disp() const override{ return m_pTypeData->m_bUseRegexKeyword; }
+	void OnStartScanLogic();
 private:
 	int m_nCOMMENTEND;
 	EColorIndexType m_nCOMMENTMODE;

@@ -23,7 +23,7 @@ class CEditDoc; // 2002/2/10 aroka
 
 //! ファンクションキーウィンドウ
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-class CFuncKeyWnd : public CWnd
+class CFuncKeyWnd final : public CWnd
 {
 public:
 	/*
@@ -62,13 +62,13 @@ protected:
 	int CalcButtonSize( void );	/* ボタンのサイズを計算 */
 
 	/* 仮想関数 */
-	virtual void AfterCreateWindow( void ){}	// ウィンドウ作成後の処理	// 2007.03.13 ryoji 可視化しない
+	void AfterCreateWindow( void ) override{}	// ウィンドウ作成後の処理	// 2007.03.13 ryoji 可視化しない
 
 	/* 仮想関数 メッセージ処理 詳しくは実装を参照 */
-	virtual LRESULT OnTimer(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);	// WM_TIMERタイマーの処理
-	virtual LRESULT OnCommand(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);	// WM_COMMAND処理
-	virtual LRESULT OnSize(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);// WM_SIZE処理
-	virtual LRESULT OnDestroy(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);// WM_DESTROY処理
+	LRESULT OnTimer(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;	// WM_TIMERタイマーの処理
+	LRESULT OnCommand(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) override;	// WM_COMMAND処理
+	LRESULT OnSize(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;// WM_SIZE処理
+	LRESULT OnDestroy(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;// WM_DESTROY処理
 };
 
 ///////////////////////////////////////////////////////////////////////

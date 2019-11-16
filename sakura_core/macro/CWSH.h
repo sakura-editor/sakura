@@ -31,7 +31,7 @@ class CInterfaceObject: public ImplementsIUnknown<IDispatch>
  */
 typedef void (*ScriptErrorHandler)(BSTR Description, BSTR Source, void *Data);
 
-class CWSHClient : IWSHClient
+class CWSHClient final : IWSHClient
 {
 public:
 	// 型定義
@@ -46,7 +46,7 @@ public:
 	ScriptErrorHandler m_OnError;
 	void *m_Data;
 	bool m_Valid; ///< trueの場合スクリプトエンジンが使用可能。falseになる場合は ScriptErrorHandlerにエラー内容が通知されている。
-	virtual /*override*/ void* GetData() const { return this->m_Data; }
+	void* GetData() const override{ return this->m_Data; }
 	const List& GetInterfaceObjects() {	return this->m_IfObjArr; }
 
 	// 操作

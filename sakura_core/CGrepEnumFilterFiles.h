@@ -32,7 +32,7 @@
 
 #include "CGrepEnumFiles.h"
 
-class CGrepEnumFilterFiles : public CGrepEnumFiles {
+class CGrepEnumFilterFiles final : public CGrepEnumFiles {
 private:
 
 public:
@@ -45,7 +45,7 @@ public:
 	virtual ~CGrepEnumFilterFiles(){
 	}
 
-	virtual BOOL IsValid( WIN32_FIND_DATA& w32fd, LPCWSTR pFile = NULL  ){
+	BOOL IsValid( WIN32_FIND_DATA& w32fd, LPCWSTR pFile = NULL  ) override {
 		if( CGrepEnumFiles::IsValid( w32fd, pFile ) ){
 			if( m_cGrepEnumExceptFiles.IsValid( w32fd, pFile ) ){
 				return TRUE;

@@ -195,7 +195,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	//ドキュメントイベント
-	void OnAfterLoad(const SLoadInfo& sLoadInfo);
+	void OnAfterLoad(const SLoadInfo& sLoadInfo) override;
 	/* メッセージディスパッチャ */
 	LRESULT DispatchEvent(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	//

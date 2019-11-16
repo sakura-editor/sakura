@@ -17,7 +17,7 @@
 #include "dlg/CDialog.h"
 
 //! 文字コードセット設定ダイアログボックス
-class CDlgSetCharSet : public CDialog
+class CDlgSetCharSet final : public CDialog
 {
 public:
 	/*
@@ -39,13 +39,13 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
-	BOOL	OnBnClicked(int wID);
-	BOOL	OnCbnSelChange(HWND hwndCtl, int wID);
-	LPVOID	GetHelpIdTable( void );
+	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
+	BOOL	OnBnClicked(int wID) override;
+	BOOL	OnCbnSelChange(HWND hwndCtl, int wID) override;
+	LPVOID	GetHelpIdTable( void ) override;
 
-	void	SetData( void );	/* ダイアログデータの設定 */
-	int 	GetData( void );	/* ダイアログデータの取得 */
+	void	SetData( void ) override;	/* ダイアログデータの設定 */
+	int 	GetData( void ) override;	/* ダイアログデータの取得 */
 
 	void	SetBOM( void );		// BOM の設定
 };

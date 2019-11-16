@@ -41,7 +41,7 @@ using std::wstring;
 /*!
 	@brief ファイルタイプ一覧ダイアログ
 */
-class CDlgTypeAscertain : public CDialog
+class CDlgTypeAscertain final : public CDialog
 {
 public:
 	// 型
@@ -62,9 +62,9 @@ public:
 
 protected:
 	// 実装ヘルパ関数
-	BOOL OnBnClicked(int wID);
-	void SetData();	/* ダイアログデータの設定 */
-	LPVOID GetHelpIdTable(void);
+	BOOL OnBnClicked(int wID) override;
+	void SetData() override;	/* ダイアログデータの設定 */
+	LPVOID GetHelpIdTable(void) override;
 
 private:
 	SAscertainInfo* m_psi;			// インターフェイス

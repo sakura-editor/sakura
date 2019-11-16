@@ -21,7 +21,7 @@
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-class CDlgFind : public CDialog
+class CDlgFind final : public CDialog
 {
 public:
 	/*
@@ -49,18 +49,17 @@ public:
 protected:
 //@@@ 2002.2.2 YAZAKI CShareDataに移動
 //	void AddToSearchKeyArr( const char* );
-	/* オーバーライド? */
-	BOOL OnCbnDropDown( HWND hwndCtl, int wID );
-	int GetData( void );		/* ダイアログデータの取得 */
+	BOOL OnCbnDropDown( HWND hwndCtl, int wID ) override;
+	int GetData( void ) override;		/* ダイアログデータの取得 */
 	void SetCombosList( void );	/* 検索文字列/置換後文字列リストの設定 */
-	void SetData( void );		/* ダイアログデータの設定 */
-	BOOL OnInitDialog(HWND hwnd, WPARAM wParam, LPARAM lParam);
-	BOOL OnDestroy();
-	BOOL OnBnClicked(int wID);
-	BOOL OnActivate( WPARAM wParam, LPARAM lParam );	// 2009.11.29 ryoji
+	void SetData( void ) override;		/* ダイアログデータの設定 */
+	BOOL OnInitDialog(HWND hwnd, WPARAM wParam, LPARAM lParam) override;
+	BOOL OnDestroy() override;
+	BOOL OnBnClicked(int wID) override;
+	BOOL OnActivate( WPARAM wParam, LPARAM lParam ) override;	// 2009.11.29 ryoji
 
-	// virtual BOOL OnKeyDown( WPARAM wParam, LPARAM lParam );
-	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
+	// BOOL OnKeyDown( WPARAM wParam, LPARAM lParam ) override;
+	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
 };
 
 ///////////////////////////////////////////////////////////////////////

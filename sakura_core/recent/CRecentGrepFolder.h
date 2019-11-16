@@ -31,18 +31,18 @@
 typedef StaticString<WCHAR, MAX_GREP_PATH> CGrepFolderString;
 
 //! GREPフォルダの履歴を管理 (RECENT_FOR_GREP_FOLDER)
-class CRecentGrepFolder : public CRecentImp<CGrepFolderString, LPCWSTR>{
+class CRecentGrepFolder final : public CRecentImp<CGrepFolderString, LPCWSTR>{
 public:
 	//生成
 	CRecentGrepFolder();
 
 	//オーバーライド
-	int				CompareItem( const CGrepFolderString* p1, LPCWSTR p2 ) const;
-	void			CopyItem( CGrepFolderString* dst, LPCWSTR src ) const;
+	int				CompareItem( const CGrepFolderString* p1, LPCWSTR p2 ) const override;
+	void			CopyItem( CGrepFolderString* dst, LPCWSTR src ) const override;
 	const WCHAR*	GetItemText( int nIndex ) const;
-	bool			DataToReceiveType( LPCWSTR* dst, const CGrepFolderString* src ) const;
-	bool			TextToDataType( CGrepFolderString* dst, LPCWSTR pszText ) const;
-	bool			ValidateReceiveType( LPCWSTR p ) const;
+	bool			DataToReceiveType( LPCWSTR* dst, const CGrepFolderString* src ) const override;
+	bool			TextToDataType( CGrepFolderString* dst, LPCWSTR pszText ) const override;
+	bool			ValidateReceiveType( LPCWSTR p ) const override;
 	size_t			GetTextMaxLength() const;
 };
 

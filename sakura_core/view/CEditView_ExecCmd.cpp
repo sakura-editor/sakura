@@ -37,7 +37,7 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       外部コマンド                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class COutputAdapterDefault: public COutputAdapter
+class COutputAdapterDefault : public COutputAdapter
 {
 public:
 	COutputAdapterDefault(CEditView* view, BOOL bToEditWindow) : m_bWindow(bToEditWindow), m_view(view)
@@ -47,8 +47,8 @@ public:
 	}
 	~COutputAdapterDefault(){};
 
-	bool OutputW(const WCHAR* pBuf, int size = -1);
-	bool OutputA(const ACHAR* pBuf, int size = -1);
+	bool OutputW(const WCHAR* pBuf, int size = -1) override;
+	bool OutputA(const ACHAR* pBuf, int size = -1) override;
 	bool IsActiveDebugWindow(){ return FALSE == m_bWindow; }
 
 protected:
@@ -60,7 +60,7 @@ protected:
 	CViewCommander* m_pCommander;
 };
 
-class COutputAdapterUTF8: public COutputAdapterDefault
+class COutputAdapterUTF8 final : public COutputAdapterDefault
 {
 public:
 	COutputAdapterUTF8(CEditView* view, BOOL bToEditWindow) : COutputAdapterDefault(view, bToEditWindow)
@@ -68,7 +68,7 @@ public:
 	{}
 	~COutputAdapterUTF8(){};
 
-	bool OutputA(const ACHAR* pBuf, int size = -1);
+	bool OutputA(const ACHAR* pBuf, int size = -1) override;
 
 protected:
 	std::unique_ptr<CCodeBase> pcCodeBase;

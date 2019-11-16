@@ -35,7 +35,7 @@
 
 typedef void (*DllPlugHandler)();
 
-class CDllPlug
+class CDllPlug final
 	: public CPlug
 {
 public:
@@ -48,7 +48,7 @@ public:
 	DllPlugHandler m_handler;
 };
 
-class CDllPlugin
+class CDllPlugin final
 	: public CPlugin, public CDllImp
 {
 	//コンストラクタ
@@ -62,15 +62,15 @@ public:
 
 	//実装
 public:
-	bool ReadPluginDef( CDataProfile *cProfile, CDataProfile *cProfileMlang );
-	bool ReadPluginOption( CDataProfile *cProfile ) {
+	bool ReadPluginDef( CDataProfile *cProfile, CDataProfile *cProfileMlang ) override;
+	bool ReadPluginOption( CDataProfile *cProfile ) override{
 		return true;
 	}
-	CPlug* CreatePlug( CPlugin& plugin, PlugId id, wstring sJack, wstring sHandler, wstring sLabel );
-	CPlug::Array GetPlugs() const{
+	CPlug* CreatePlug( CPlugin& plugin, PlugId id, wstring sJack, wstring sHandler, wstring sLabel ) override;
+	CPlug::Array GetPlugs() const override{
 		return m_plugs;
 	}
-	bool InvokePlug( CEditView* view, CPlug& plug, CWSHIfObj::List& params );
+	bool InvokePlug( CEditView* view, CPlug& plug, CWSHIfObj::List& params ) override;
 
 	bool InitDllImp() {
 		return true;

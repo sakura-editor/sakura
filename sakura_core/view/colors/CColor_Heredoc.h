@@ -27,15 +27,15 @@
 
 #include "view/colors/CColorStrategy.h"
 
-class CColor_Heredoc : public CColorStrategy{
+class CColor_Heredoc final : public CColorStrategy{
 public:
-	virtual EColorIndexType GetStrategyColor() const{ return COLORIDX_HEREDOC; }
-	virtual CLayoutColorInfo* GetStrategyColorInfo() const;
-	virtual void InitStrategyStatus(){ m_nCOMMENTEND = 0; }
-	virtual void SetStrategyColorInfo(const CLayoutColorInfo*);
-	virtual bool BeginColor(const CStringRef& cStr, int nPos);
-	virtual bool Disp() const { return m_pTypeData->m_ColorInfoArr[COLORIDX_HEREDOC].m_bDisp; }
-	virtual bool EndColor(const CStringRef& cStr, int nPos);
+	EColorIndexType GetStrategyColor() const override{ return COLORIDX_HEREDOC; }
+	CLayoutColorInfo* GetStrategyColorInfo() const override;
+	void InitStrategyStatus() override{ m_nCOMMENTEND = 0; }
+	void SetStrategyColorInfo(const CLayoutColorInfo*) override;
+	bool BeginColor(const CStringRef& cStr, int nPos) override;
+	bool Disp() const override{ return m_pTypeData->m_ColorInfoArr[COLORIDX_HEREDOC].m_bDisp; }
+	bool EndColor(const CStringRef& cStr, int nPos) override;
 private:
 	std::wstring m_id;
 	int	     m_nSize;

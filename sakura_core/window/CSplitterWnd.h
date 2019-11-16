@@ -31,7 +31,7 @@ struct DLLSHAREDATA;
 	
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class CSplitterWnd : public CWnd
+class CSplitterWnd final : public CWnd
 {
 public:
 	/*
@@ -74,15 +74,15 @@ public: // 2002/2/3 aroka
 	int GetAllSplitCols(){ return m_nAllSplitCols;} // 2002/2/3 aroka
 protected:
 	/* 仮想関数 */
-	virtual LRESULT DispatchEvent_WM_APP(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);/* アプリケーション定義のメッセージ(WM_APP <= msg <= 0xBFFF) */
+	LRESULT DispatchEvent_WM_APP(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;/* アプリケーション定義のメッセージ(WM_APP <= msg <= 0xBFFF) */
 
 	/* 仮想関数 メッセージ処理 詳しくは実装を参照 */
-	virtual LRESULT OnSize(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);	/* ウィンドウサイズの変更処理 */
-	virtual LRESULT OnPaint(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);	/* 描画処理 */
-	virtual LRESULT OnMouseMove(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam); /* マウス移動時の処理 */
-	virtual LRESULT OnLButtonDown(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);	/* マウス左ボタン押下時の処理 */
-	virtual LRESULT OnLButtonUp(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);	/* マウス左ボタン解放時の処理 */
-	virtual LRESULT OnLButtonDblClk(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);	/* マウス左ボタンダブルクリック時の処理 */
+	LRESULT OnSize(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;	/* ウィンドウサイズの変更処理 */
+	LRESULT OnPaint(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;	/* 描画処理 */
+	LRESULT OnMouseMove(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override; /* マウス移動時の処理 */
+	LRESULT OnLButtonDown(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;	/* マウス左ボタン押下時の処理 */
+	LRESULT OnLButtonUp(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;	/* マウス左ボタン解放時の処理 */
+	LRESULT OnLButtonDblClk(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;	/* マウス左ボタンダブルクリック時の処理 */
 	/*
 	||  実装ヘルパ関数
 	*/

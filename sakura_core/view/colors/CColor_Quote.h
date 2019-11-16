@@ -34,14 +34,14 @@ public:
 		m_szQuote[1] = cQuote;
 		m_szQuote[2] = cQuote;
 	}
-	virtual void Update(void);
+	void Update(void) override;
 	virtual EColorIndexType GetStrategyColor() const = 0;
-	virtual CLayoutColorInfo* GetStrategyColorInfo() const;
-	virtual void InitStrategyStatus(){ m_nCOMMENTEND = -1; }
-	virtual void SetStrategyColorInfo(const CLayoutColorInfo*);
-	virtual bool BeginColor(const CStringRef& cStr, int nPos);
-	virtual bool EndColor(const CStringRef& cStr, int nPos);
-	virtual bool Disp() const { return m_pTypeData->m_ColorInfoArr[this->GetStrategyColor()].m_bDisp; }
+	CLayoutColorInfo* GetStrategyColorInfo() const override;
+	void InitStrategyStatus() override{ m_nCOMMENTEND = -1; }
+	void SetStrategyColorInfo(const CLayoutColorInfo*) override;
+	bool BeginColor(const CStringRef& cStr, int nPos) override;
+	bool EndColor(const CStringRef& cStr, int nPos) override;
+	bool Disp() const override{ return m_pTypeData->m_ColorInfoArr[this->GetStrategyColor()].m_bDisp; }
 
 	static bool IsCppRawString(const CStringRef& cStr, int nPos);
 	static int Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLineStr, int escapeType, bool* pbEscapeEnd = NULL );
@@ -61,16 +61,16 @@ protected:
 	int m_nColorTypeIndex;
 };
 
-class CColor_SingleQuote : public CColor_Quote{
+class CColor_SingleQuote final : public CColor_Quote{
 public:
 	CColor_SingleQuote() : CColor_Quote(L'\'') { }
-	virtual EColorIndexType GetStrategyColor() const{ return COLORIDX_SSTRING; }
+	EColorIndexType GetStrategyColor() const override{ return COLORIDX_SSTRING; }
 };
 
-class CColor_DoubleQuote : public CColor_Quote{
+class CColor_DoubleQuote final : public CColor_Quote{
 public:
 	CColor_DoubleQuote() : CColor_Quote(L'"') { }
-	virtual EColorIndexType GetStrategyColor() const{ return COLORIDX_WSTRING; }
+	EColorIndexType GetStrategyColor() const override{ return COLORIDX_WSTRING; }
 };
 
 #endif /* SAKURA_CCOLOR_QUOTE_26330E31_5ADC_4753_92DD_7567B7BA4451_H_ */
