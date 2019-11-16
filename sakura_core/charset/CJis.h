@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CJIS_3DD8E095_FA6C_46BA_BDD8_00F658818D72_H_
-#define SAKURA_CJIS_3DD8E095_FA6C_46BA_BDD8_00F658818D72_H_
+#pragma once
 
 #include "CCodeBase.h"
 
@@ -106,5 +105,4 @@ enum EJisESCSeqType {
 
 #endif
 
-#endif /* SAKURA_CJIS_3DD8E095_FA6C_46BA_BDD8_00F658818D72_H_ */
 /*[EOF]*/

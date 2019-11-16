@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CHARSET_51A8CEE7_80CB_463F_975E_B30715B1C385_H_
-#define SAKURA_CHARSET_51A8CEE7_80CB_463F_975E_B30715B1C385_H_
+#pragma once
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           定数                              //
@@ -141,5 +140,4 @@ public:
 	LPCWSTR		GetName(int nIndex) const;
 };
 
-#endif /* SAKURA_CHARSET_51A8CEE7_80CB_463F_975E_B30715B1C385_H_ */
 /*[EOF]*/

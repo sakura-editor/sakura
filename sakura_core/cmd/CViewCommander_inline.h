@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CVIEWCOMMANDER_INLINE_265ADE2D_61EE_450A_9B9B_92C5762690A4_H_
-#define SAKURA_CVIEWCOMMANDER_INLINE_265ADE2D_61EE_450A_9B9B_92C5762690A4_H_
+#pragma once
 
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
@@ -61,5 +60,4 @@ inline CCaret& CViewCommander::GetCaret()
 	return m_pCommanderView->GetCaret();
 }
 
-#endif /* SAKURA_CVIEWCOMMANDER_INLINE_265ADE2D_61EE_450A_9B9B_92C5762690A4_H_ */
 /*[EOF]*/

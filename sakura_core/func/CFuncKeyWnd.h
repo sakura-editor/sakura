@@ -12,8 +12,7 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#ifndef SAKURA_CFUNCKEYWND_H_
-#define SAKURA_CFUNCKEYWND_H_
+#pragma once
 
 #include "window/CWnd.h"
 #include "env/DLLSHAREDATA.h"
@@ -72,5 +71,3 @@ protected:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* SAKURA_CFUNCKEYWND_H_ */
-

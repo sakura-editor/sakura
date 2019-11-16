@@ -25,8 +25,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CZIPFILE_5D06C90F_5043_418e_BA31_FB599CF6FD03_H_
-#define SAKURA_CZIPFILE_5D06C90F_5043_418e_BA31_FB599CF6FD03_H_
+#pragma once
 
 #include <ShlDisp.h>
 
@@ -46,4 +45,4 @@ public:
 	bool	ChkPluginDef(const std::wstring& sDefFile, std::wstring& sFolderName);	// ZIP File 内 フォルダ名取得と定義ファイル検査(Plugin用)
 	bool	Unzip(const std::wstring sOutPath);			// Zip File 解凍
 };
-#endif	// SAKURA_CZIPFILE_5D06C90F_5043_418e_BA31_FB599CF6FD03_H_
+

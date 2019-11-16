@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CEUC_13190B0A_A5F1_4CF2_AA8E_E58906DA05AD9_H_
-#define SAKURA_CEUC_13190B0A_A5F1_4CF2_AA8E_E58906DA05AD9_H_
+#pragma once
 
 #include <mbstring.h>
 #include "charset/CCodeBase.h"
@@ -188,5 +187,4 @@ inline int CEuc::_UniToEucjp_char( const unsigned short* pSrc, unsigned char* pD
 	return nret;
 }
 
-#endif /* SAKURA_CEUC_13190B0A_A5F1_4CF2_AA8E_E58906DA05AD9_H_ */
 /*[EOF]*/

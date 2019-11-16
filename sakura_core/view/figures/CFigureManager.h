@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CFIGUREMANAGER_470D38ED_45D5_4E64_8D29_FFEA361C59E4_H_
-#define SAKURA_CFIGUREMANAGER_470D38ED_45D5_4E64_8D29_FFEA361C59E4_H_
+#pragma once
 
 #include <vector>
 #include "util/design_template.h"
@@ -48,5 +47,4 @@ private:
 	std::vector<CFigure*>	m_vFiguresDisp;	//!< 色分け表示対象
 };
 
-#endif /* SAKURA_CFIGUREMANAGER_470D38ED_45D5_4E64_8D29_FFEA361C59E4_H_ */
 /*[EOF]*/

@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CTYPE_BF915633_AE38_4C73_8E5B_0411063A1AD89_H_
-#define SAKURA_CTYPE_BF915633_AE38_4C73_8E5B_0411063A1AD89_H_
+#pragma once
 
 #include "CEol.h"
 #include "env/CommonSetting.h"
@@ -353,5 +352,4 @@ inline bool C_IsSpace( wchar_t c, bool bExtEol )
 	);
 }
 
-#endif /* SAKURA_CTYPE_BF915633_AE38_4C73_8E5B_0411063A1AD89_H_ */
 /*[EOF]*/

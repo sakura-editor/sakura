@@ -11,8 +11,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef _CSELECTLANG_H_
-#define _CSELECTLANG_H_
+#pragma once
 
 #include <windows.h>
 #include <vector>
@@ -146,6 +145,4 @@ private:
 #define LS( id ) ( CLoadString::LoadStringSt( id ) )
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CSELECTLANG_H_ */
-
 /*[EOF]*/

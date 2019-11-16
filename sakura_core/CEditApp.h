@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CEDITAPP_935DB250_AEB5_40A5_BCFF_3B72F8E3D8339_H_
-#define SAKURA_CEDITAPP_935DB250_AEB5_40A5_BCFF_3B72F8E3D8339_H_
+#pragma once
 
 //2007.10.23 kobake 作成
 
@@ -95,5 +94,4 @@ public:
 	const char* what() const throw(){ return "CAppExitException"; }
 };
 
-#endif /* SAKURA_CEDITAPP_935DB250_AEB5_40A5_BCFF_3B72F8E3D8339_H_ */
 /*[EOF]*/

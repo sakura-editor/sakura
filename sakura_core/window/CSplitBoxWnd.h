@@ -11,10 +11,9 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CSplitBoxWnd;
+#pragma once
 
-#ifndef _CSPLITBOXWND_H_
-#define _CSPLITBOXWND_H_
+class CSplitBoxWnd;
 
 #include "CWnd.h"
 
@@ -55,5 +54,3 @@ protected:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CSPLITBOXWND_H_ */
-

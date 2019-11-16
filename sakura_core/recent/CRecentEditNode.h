@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CRECENTEDITNODE_D86DB1B5_3747_406B_93A6_D5CF59B26BB2_H_
-#define SAKURA_CRECENTEDITNODE_D86DB1B5_3747_406B_93A6_D5CF59B26BB2_H_
+#pragma once
 
 #include "CRecentImp.h"
 struct EditNode;
@@ -47,5 +46,4 @@ public:
 	void DeleteItemByHwnd(HWND hwnd);
 };
 
-#endif /* SAKURA_CRECENTEDITNODE_D86DB1B5_3747_406B_93A6_D5CF59B26BB2_H_ */
 /*[EOF]*/

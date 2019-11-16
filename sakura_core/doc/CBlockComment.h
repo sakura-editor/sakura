@@ -12,8 +12,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef _CBLOCKCOMMENT_H_
-#define _CBLOCKCOMMENT_H_
+#pragma once
 
 //	sakura
 #include "_main/global.h"
@@ -60,5 +59,3 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CBLOCKCOMMENT_H_ */
-

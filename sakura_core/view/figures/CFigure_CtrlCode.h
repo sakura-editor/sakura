@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CFIGURE_CTRLCODE_9CEA1624_5811_4A1D_8607_1FA8A8439D15_H_
-#define SAKURA_CFIGURE_CTRLCODE_9CEA1624_5811_4A1D_8607_1FA8A8439D15_H_
+#pragma once
 
 #include "view/figures/CFigureStrategy.h"
 
@@ -63,5 +62,4 @@ public:
 	EColorIndexType GetColorIdx(void) const{ return COLORIDX_CTRLCODE; }
 };
 
-#endif /* SAKURA_CFIGURE_CTRLCODE_9CEA1624_5811_4A1D_8607_1FA8A8439D15_H_ */
 /*[EOF]*/

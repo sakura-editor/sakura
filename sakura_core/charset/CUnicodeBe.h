@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CUNICODEBE_484B0FE6_3896_4E2E_83BA_CC8718999735_H_
-#define SAKURA_CUNICODEBE_484B0FE6_3896_4E2E_83BA_CC8718999735_H_
+#pragma once
 
 #include "CCodeBase.h"
 #include "CUnicode.h"
@@ -45,5 +44,4 @@ public:
 		{ return CUnicode::_UnicodeToUnicode_out(cSrc, pDst, true); }	// Unicode   → UnicodeBEコード変換
 };
 
-#endif /* SAKURA_CUNICODEBE_484B0FE6_3896_4E2E_83BA_CC8718999735_H_ */
 /*[EOF]*/

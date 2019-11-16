@@ -29,8 +29,7 @@
 		   distribution.
 */
 
-#ifndef SAKURA_CPRINT_12337831_217C_40E7_A646_C106350A3E91R_H_
-#define SAKURA_CPRINT_12337831_217C_40E7_A646_C106350A3E91R_H_
+#pragma once
 
 #include <WinSpool.h>
 #include <CommDlg.h> // PRINTDLG
@@ -235,4 +234,3 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* SAKURA_CPRINT_12337831_217C_40E7_A646_C106350A3E91R_H_ */

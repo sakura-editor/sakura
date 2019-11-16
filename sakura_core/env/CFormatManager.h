@@ -25,8 +25,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CFORMATMANAGER_7FC73E49_281C_4417_BBBC_DE176142E6BC9_H_
-#define SAKURA_CFORMATMANAGER_7FC73E49_281C_4417_BBBC_DE176142E6BC9_H_
+#pragma once
 
 // 要先行定義
 // #include "DLLSHAREDATA.h"
@@ -50,5 +49,4 @@ private:
 	DLLSHAREDATA* m_pShareData;
 };
 
-#endif /* SAKURA_CFORMATMANAGER_7FC73E49_281C_4417_BBBC_DE176142E6BC9_H_ */
 /*[EOF]*/

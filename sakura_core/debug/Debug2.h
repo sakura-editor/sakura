@@ -25,8 +25,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_DEBUG2_69DB6343_0580_4F92_98D6_63216724B2D19_H_
-#define SAKURA_DEBUG2_69DB6343_0580_4F92_98D6_63216724B2D19_H_
+#pragma once
 
 //2007.08.30 kobake 追加
 #ifdef assert
@@ -60,5 +59,4 @@
 	#define assert_warning(exp)
 #endif
 
-#endif /* SAKURA_DEBUG2_69DB6343_0580_4F92_98D6_63216724B2D19_H_ */
 /*[EOF]*/

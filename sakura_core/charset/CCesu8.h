@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CCESU8_5E82F67D_CFE7_4B3D_9BA2_22FD3F31086F_H_
-#define SAKURA_CCESU8_5E82F67D_CFE7_4B3D_9BA2_22FD3F31086F_H_
+#pragma once
 
 #include "CCodeBase.h"
 #include "CUtf8.h"
@@ -45,5 +44,4 @@ public:
 	}
 };
 
-#endif /* SAKURA_CCESU8_5E82F67D_CFE7_4B3D_9BA2_22FD3F31086F_H_ */
 /*[EOF]*/

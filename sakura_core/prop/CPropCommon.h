@@ -36,8 +36,7 @@
 		   distribution.
 */
 
-#ifndef SAKURA_CPROPCOMMON_8B67EE84_54E5_4541_A820_EE4FC61CCF0D_H_
-#define SAKURA_CPROPCOMMON_8B67EE84_54E5_4541_A820_EE4FC61CCF0D_H_
+#pragma once
 
 #include "func/CFuncLookup.h"
 #include "env/CommonSetting.h"
@@ -544,4 +543,3 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* SAKURA_CPROPCOMMON_8B67EE84_54E5_4541_A820_EE4FC61CCF0D_H_ */

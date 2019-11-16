@@ -16,8 +16,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef _CDIALOG_H_
-#define _CDIALOG_H_
+#pragma once
 
 class CDialog;
 
@@ -164,5 +163,3 @@ protected:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CDIALOG_H_ */
-

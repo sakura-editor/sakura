@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CBREGEXPDLL2_850005D4_6AA3_41D2_B541_1EE730935E6B_H_
-#define SAKURA_CBREGEXPDLL2_850005D4_6AA3_41D2_B541_1EE730935E6B_H_
+#pragma once
 
 #include "CDllHandler.h"
 
@@ -115,5 +114,4 @@ private:
 	BREGEXP_BSubstExW2       m_BSubstEx;
 };
 
-#endif /* SAKURA_CBREGEXPDLL2_850005D4_6AA3_41D2_B541_1EE730935E6B_H_ */
 /*[EOF]*/

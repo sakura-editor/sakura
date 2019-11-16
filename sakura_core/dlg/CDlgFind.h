@@ -12,11 +12,11 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
+#pragma once
+
 #include "dlg/CDialog.h"
 #include "recent/CRecentSearch.h"
 #include "util/window.h"
-#ifndef SAKURA_CDLGFIND_H_
-#define SAKURA_CDLGFIND_H_
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -63,5 +63,3 @@ protected:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* SAKURA_CDLGFIND_H_ */
-

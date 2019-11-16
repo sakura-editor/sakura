@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CCODEBASE_79FA6B92_246A_4427_89C9_92E1F1335EB9_H_
-#define SAKURA_CCODEBASE_79FA6B92_246A_4427_89C9_92E1F1335EB9_H_
+#pragma once
 
 //定数
 enum EConvertResult{
@@ -97,5 +96,4 @@ inline int CCodeBase::TextToBin( const unsigned short cSrc )
 	return static_cast<int>((cSrc - 0xdc00) & 0x00ff);
 }
 
-#endif /* SAKURA_CCODEBASE_79FA6B92_246A_4427_89C9_92E1F1335EB9_H_ */
 /*[EOF]*/

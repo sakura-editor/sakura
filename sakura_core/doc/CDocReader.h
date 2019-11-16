@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CDOCREADER_FFCD10C3_3BA9_4566_94EC_B8DCF7D8F5049_H_
-#define SAKURA_CDOCREADER_FFCD10C3_3BA9_4566_94EC_B8DCF7D8F5049_H_
+#pragma once
 
 class CDocLineMgr;
 
@@ -42,5 +41,4 @@ private:
 	const CDocLineMgr* m_pcDocLineMgr;
 };
 
-#endif /* SAKURA_CDOCREADER_FFCD10C3_3BA9_4566_94EC_B8DCF7D8F5049_H_ */
 /*[EOF]*/

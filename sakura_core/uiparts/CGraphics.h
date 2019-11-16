@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CGRAPHICS_BA5156BF_99C6_4854_8131_CE8B091A5EFF9_H_
-#define SAKURA_CGRAPHICS_BA5156BF_99C6_4854_8131_CE8B091A5EFF9_H_
+#pragma once
 
 /*
 2008.05.20 kobake 作成
@@ -329,5 +328,4 @@ private:
 	bool				m_bDynamicBrush;	//m_hbrCurrentを動的に作成した場合はtrue
 };
 
-#endif /* SAKURA_CGRAPHICS_BA5156BF_99C6_4854_8131_CE8B091A5EFF9_H_ */
 /*[EOF]*/

@@ -28,11 +28,9 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#pragma once
 
 class CDlgProperty;
-
-#ifndef _CDLGPROPERTY_H_
-#define _CDLGPROPERTY_H_
 
 #include "dlg/CDialog.h"
 /*-----------------------------------------------------------------------
@@ -51,5 +49,3 @@ protected:
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
 };
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CDLGPROPERTY_H_ */
-

@@ -23,8 +23,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_FILE_2813BD8E_F6B9_400F_AA27_A6DDC372D6B89_H_
-#define SAKURA_FILE_2813BD8E_F6B9_400F_AA27_A6DDC372D6B89_H_
+#pragma once
 
 bool fexist(LPCWSTR pszPath); //!< ファイルまたはディレクトリが存在すればtrue
 
@@ -108,5 +107,4 @@ int FileMatchScoreSepExt( const WCHAR *file1, const WCHAR *file2 );
 void GetStrTrancateWidth( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int nPxWidth );
 void GetShortViewPath(WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int nPxWidth, bool bFitMode );
 
-#endif /* SAKURA_FILE_2813BD8E_F6B9_400F_AA27_A6DDC372D6B89_H_ */
 /*[EOF]*/

@@ -10,8 +10,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 
 */
-#ifndef __OLE_TYPES_WRAP__
-#define __OLE_TYPES_WRAP__
+#pragma once
 
 #include <Windows.h>
 #include <OleAuto.h>
@@ -119,4 +118,4 @@ inline SysString* Wrap(BSTR *Value)
 {
 	return reinterpret_cast<SysString*>(Value);
 }
-#endif
+

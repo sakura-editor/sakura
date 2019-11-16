@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CFIGURE_ZENSPACE_DFBCDF91_0C96_4195_86C4_D0A3D480E1EB_H_
-#define SAKURA_CFIGURE_ZENSPACE_DFBCDF91_0C96_4195_86C4_D0A3D480E1EB_H_
+#pragma once
 
 #include "view/figures/CFigureStrategy.h"
 
@@ -38,5 +37,4 @@ public:
 	EColorIndexType GetColorIdx(void) const{ return COLORIDX_ZENSPACE; }
 };
 
-#endif /* SAKURA_CFIGURE_ZENSPACE_DFBCDF91_0C96_4195_86C4_D0A3D480E1EB_H_ */
 /*[EOF]*/

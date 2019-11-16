@@ -28,8 +28,7 @@
 		   distribution.
 */
 
-#ifndef SC_CDLGSAMECOLOR_H__
-#define SC_CDLGSAMECOLOR_H__
+#pragma once
 
 #include "dlg/CDialog.h"
 
@@ -66,6 +65,4 @@ protected:
 	STypeConfig* m_pTypes;	//!< タイプ別設定データ
 	COLORREF m_cr;		//!< 指定色
 };
-
-#endif
 

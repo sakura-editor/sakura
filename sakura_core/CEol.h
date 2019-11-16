@@ -29,8 +29,7 @@
 		   distribution.
 */
 
-#ifndef _CEOL_H_
-#define _CEOL_H_
+#pragma once
 
 #include "_main/global.h"
 
@@ -114,6 +113,4 @@ public:
 private:
 	EEolType	m_eEolType;	//!< 改行コードの種類
 };
-
-#endif
 

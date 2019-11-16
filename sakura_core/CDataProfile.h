@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CDATAPROFILE_2DFA1040_7EC7_4593_983E_093E988F7DCFR_H_
-#define SAKURA_CDATAPROFILE_2DFA1040_7EC7_4593_983E_093E988F7DCFR_H_
+#pragma once
 
 #include "util/StaticType.h"
 #include "CProfile.h"
@@ -239,5 +238,4 @@ public:
 	}
 };
 
-#endif /* SAKURA_CDATAPROFILE_2DFA1040_7EC7_4593_983E_093E988F7DCFR_H_ */
 /*[EOF]*/

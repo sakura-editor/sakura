@@ -30,8 +30,7 @@
 		   distribution.
 */
 
-#ifndef _SAKURA_UXTHEME_H_
-#define _SAKURA_UXTHEME_H_
+#pragma once
 
 #include <vsstyle.h>
 #include "CDllHandler.h"
@@ -72,6 +71,4 @@ public:
 	HRESULT DrawThemeParentBackground( HWND hwnd, HDC hdc, RECT* prc );
 	BOOL IsThemeBackgroundPartiallyTransparent( HTHEME htheme, int iPartId, int iStateId );
 };
-
-#endif
 

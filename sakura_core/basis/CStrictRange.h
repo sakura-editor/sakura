@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CSTRICTRANGE_01CCFDA1_93B9_4053_BF1E_0CFE0E5F55A1_H_
-#define SAKURA_CSTRICTRANGE_01CCFDA1_93B9_4053_BF1E_0CFE0E5F55A1_H_
+#pragma once
 
 template <class PointType>
 class CRangeBase{
@@ -155,5 +154,4 @@ private:
 	PointType m_ptTo;
 };
 
-#endif /* SAKURA_CSTRICTRANGE_01CCFDA1_93B9_4053_BF1E_0CFE0E5F55A1_H_ */
 /*[EOF]*/

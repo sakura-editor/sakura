@@ -11,11 +11,10 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
+#pragma once
+
 #include "dlg/CDialog.h"
 #include "recent/CRecentCmd.h"
-
-#ifndef _CDLGEXEC_H_
-#define _CDLGEXEC_H_
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -50,5 +49,3 @@ protected:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CDLGEXEC_H_ */
-

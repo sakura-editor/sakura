@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CFIGURE_COMMA_BE7B2FF5_E07E_4DEC_BE66_C90F628C1ED1_H_
-#define SAKURA_CFIGURE_COMMA_BE7B2FF5_E07E_4DEC_BE66_C90F628C1ED1_H_
+#pragma once
 
 #include "view/figures/CFigureStrategy.h"
 
@@ -42,5 +41,4 @@ public:
 	EColorIndexType GetColorIdx(void) const{ return COLORIDX_TAB; }
 };
 
-#endif /* SAKURA_CFigure_Comma_BE7B2FF5_E07E_4DEC_BE66_C90F628C1ED1_H_ */
 /*[EOF]*/

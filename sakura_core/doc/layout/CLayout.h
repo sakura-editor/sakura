@@ -13,8 +13,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef _CLAYOUT_H_
-#define _CLAYOUT_H_
+#pragma once
 
 #include "util/design_template.h"
 #include "CEol.h"// 2002/2/10 aroka
@@ -128,5 +127,3 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CLAYOUT_H_ */
-

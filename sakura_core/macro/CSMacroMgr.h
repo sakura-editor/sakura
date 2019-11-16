@@ -31,8 +31,7 @@
 		   distribution.
 */
 
-#ifndef _CSMACROMGR_H_
-#define _CSMACROMGR_H_
+#pragma once
 
 #include <Windows.h>
 #include <WTypes.h> //VARTYPE
@@ -184,5 +183,3 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CSMacroMGR_H_ */
-

@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CCLIPBOARD_25819BE6_8087_45F7_840E_161DE12E736AR_H_
-#define SAKURA_CCLIPBOARD_25819BE6_8087_45F7_840E_161DE12E736AR_H_
+#pragma once
 
 class CEol;
 
@@ -58,5 +57,4 @@ public:
 	static int GetDataType();      //!< クリップボードデータ形式(CF_UNICODETEXT等)の取得
 };
 
-#endif /* SAKURA_CCLIPBOARD_25819BE6_8087_45F7_840E_161DE12E736AR_H_ */
 /*[EOF]*/

@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CSAVEAGENT_441713C1_707B_4B6D_8DBE_D398BA4EBFA2_H_
-#define SAKURA_CSAVEAGENT_441713C1_707B_4B6D_8DBE_D398BA4EBFA2_H_
+#pragma once
 
 class CSaveAgent : public CDocListenerEx{
 public:
@@ -37,5 +36,4 @@ private:
 	SSaveInfo	m_sSaveInfoForRollback;
 };
 
-#endif /* SAKURA_CSAVEAGENT_441713C1_707B_4B6D_8DBE_D398BA4EBFA2_H_ */
 /*[EOF]*/

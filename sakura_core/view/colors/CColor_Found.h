@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CCOLOR_FOUND_60044D4E_3082_4A9D_98C5_2FE626D3DA1E_H_
-#define SAKURA_CCOLOR_FOUND_60044D4E_3082_4A9D_98C5_2FE626D3DA1E_H_
+#pragma once
 
 #include "view/colors/CColorStrategy.h"
 
@@ -68,5 +67,4 @@ private:
 	unsigned validColorNum; ///< highlightColorsの何番目の要素までが有効か。
 };
 
-#endif /* SAKURA_CCOLOR_FOUND_60044D4E_3082_4A9D_98C5_2FE626D3DA1E_H_ */
 /*[EOF]*/

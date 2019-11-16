@@ -29,8 +29,7 @@
 		   distribution.
 */
 
-#ifndef SAKURA_MESSAGEBOX_2D6EF6BC_3D8C_427B_8AFB_E8903838A1ED_H_
-#define SAKURA_MESSAGEBOX_2D6EF6BC_3D8C_427B_8AFB_E8903838A1ED_H_
+#pragma once
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                 メッセージボックス：実装                    //
@@ -90,5 +89,3 @@ int TopCustomMessage(HWND hwnd, UINT uType, LPCWSTR format, ...);	//(TOPMOST)
 int PleaseReportToAuthor(HWND hwnd, LPCWSTR format, ...);
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* SAKURA_MESSAGEBOX_2D6EF6BC_3D8C_427B_8AFB_E8903838A1ED_H_ */
-

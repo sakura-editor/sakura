@@ -13,8 +13,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef _CDLGABOUT_H_
-#define _CDLGABOUT_H_
+#pragma once
 
 #include "dlg/CDialog.h"
 /*!
@@ -65,5 +64,3 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CDLGABOUT_H_ */
-

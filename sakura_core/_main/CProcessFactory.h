@@ -12,8 +12,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef _CPROCESSFACTORY_H_
-#define _CPROCESSFACTORY_H_
+#pragma once
 
 #include "global.h"
 
@@ -46,5 +45,3 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CPROCESSFACTORY_H_ */
-

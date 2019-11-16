@@ -32,8 +32,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CDOCLISTENER_797F65F5_C90A_4055_944C_AB9256AD8B90_H_
-#define SAKURA_CDOCLISTENER_797F65F5_C90A_4055_944C_AB9256AD8B90_H_
+#pragma once
 
 class CDocListener;
 #include "basis/CMyString.h"
@@ -213,5 +212,4 @@ public:
 	const char* what() const throw(){ return "CFlowInterruption"; }
 };
 
-#endif /* SAKURA_CDOCLISTENER_797F65F5_C90A_4055_944C_AB9256AD8B90_H_ */
 /*[EOF]*/

@@ -12,8 +12,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef _CCONTROLPROCESS_H_
-#define _CCONTROLPROCESS_H_
+#pragma once
 
 #include "global.h"
 #include "CProcess.h"
@@ -56,5 +55,3 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CCONTROLPROCESS_H_ */
-

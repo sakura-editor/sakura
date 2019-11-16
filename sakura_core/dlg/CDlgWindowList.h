@@ -28,8 +28,7 @@
 		   distribution.
 */
 
-#ifndef SAKURA_CWINDOWLIST_H_
-#define SAKURA_CWINDOWLIST_H_
+#pragma once
 
 #include "dlg/CDialog.h"
 class CDlgWindowList final : public CDialog
@@ -59,4 +58,3 @@ private:
 	RECT		m_rcItems[5];
 };
 
-#endif /* SAKURA_CWINDOWLIST_H_ */

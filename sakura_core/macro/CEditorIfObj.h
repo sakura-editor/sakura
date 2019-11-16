@@ -25,8 +25,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CEDITORIFOBJ_87C246CB_1387_4893_A26F_190155191A96D_H_
-#define SAKURA_CEDITORIFOBJ_87C246CB_1387_4893_A26F_190155191A96D_H_
+#pragma once
 
 #include "_os/OleTypes.h"
 #include "macro/CWSHIfObj.h"
@@ -44,5 +43,4 @@ public:
 	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize);	//コマンドを処理する
 };
 
-#endif /* SAKURA_CEDITORIFOBJ_87C246CB_1387_4893_A26F_190155191A96D_H_ */
 /*[EOF]*/

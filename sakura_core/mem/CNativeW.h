@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CNATIVEW_59D44E96_F966_471D_A399_73D86F939DDA9_H_
-#define SAKURA_CNATIVEW_59D44E96_F966_471D_A399_73D86F939DDA9_H_
+#pragma once
 
 #include "CNative.h"
 #include "basis/SakuraBasis.h"
@@ -164,5 +163,4 @@ template <>
 	}
 }
 
-#endif /* SAKURA_CNATIVEW_59D44E96_F966_471D_A399_73D86F939DDA9_H_ */
 /*[EOF]*/

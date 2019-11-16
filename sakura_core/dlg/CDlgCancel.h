@@ -13,10 +13,9 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CDlgCancel;
+#pragma once
 
-#ifndef _CDLGCANCEL_H_
-#define _CDLGCANCEL_H_
+class CDlgCancel;
 
 #include "dlg/CDialog.h"
 
@@ -60,5 +59,3 @@ protected:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CDLGCANCEL_H_ */
-

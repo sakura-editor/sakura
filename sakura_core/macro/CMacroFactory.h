@@ -29,8 +29,7 @@
 		   distribution.
 */
 
-#ifndef __CMACROTYPEMGR_H_
-#define __CMACROTYPEMGR_H_
+#pragma once
 
 #include <map>
 #include <list>
@@ -85,4 +84,4 @@ private:
 	*/
 	MacroEngineRep m_mMacroCreators;
 };
-#endif
+

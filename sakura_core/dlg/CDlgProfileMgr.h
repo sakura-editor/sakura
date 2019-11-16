@@ -27,8 +27,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CDLGPROFILEMGR_H_
-#define SAKURA_CDLGPROFILEMGR_H_
+#pragma once
 
 #include "dlg/CDialog.h"
 #include <string>
@@ -79,5 +78,3 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* SAKURA_CDLGPROFILEMGR_H_ */
-

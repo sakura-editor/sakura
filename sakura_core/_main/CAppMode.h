@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CAPPMODE_22018B3D_FC0F_485B_A72E_DA3DA3B9DDAAR_H_
-#define SAKURA_CAPPMODE_22018B3D_FC0F_485B_A72E_DA3DA3B9DDAAR_H_
+#pragma once
 
 #include "util/design_template.h"
 #include "doc/CDocListener.h"
@@ -58,5 +57,4 @@ public:
 	wchar_t			m_szGrepKey[1024];			//!< Grepモードの場合、その検索キー
 };
 
-#endif /* SAKURA_CAPPMODE_22018B3D_FC0F_485B_A72E_DA3DA3B9DDAAR_H_ */
 /*[EOF]*/

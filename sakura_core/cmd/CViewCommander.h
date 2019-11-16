@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CVIEWCOMMANDER_5F4F7A80_2BEC_4B1D_A637_B922375FF14C9_H_
-#define SAKURA_CVIEWCOMMANDER_5F4F7A80_2BEC_4B1D_A637_B922375FF14C9_H_
+#pragma once
 
 class CEditView;
 enum EFunctionCode;
@@ -410,5 +409,4 @@ public:
 	void Sub_BoxSelectLock( int flags );
 };
 
-#endif /* SAKURA_CVIEWCOMMANDER_5F4F7A80_2BEC_4B1D_A637_B922375FF14C9_H_ */
 /*[EOF]*/

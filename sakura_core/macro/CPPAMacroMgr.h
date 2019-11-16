@@ -13,8 +13,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef _CPPAMACROMGR_H_
-#define _CPPAMACROMGR_H_
+#pragma once
 
 #include <Windows.h>
 #include "CKeyMacroMgr.h"
@@ -51,5 +50,3 @@ protected:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CPPAMACROMGR_H_ */
-

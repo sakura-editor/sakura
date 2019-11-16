@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CCODEMEDIATOR_653AC1CB_8935_4F2A_AF03_8FE669F6FA9F_H_
-#define SAKURA_CCODEMEDIATOR_653AC1CB_8935_4F2A_AF03_8FE669F6FA9F_H_
+#pragma once
 
 #include "charset/CESI.h"
 class CEditDoc;
@@ -51,5 +50,4 @@ private:
 	const SEncodingConfig* m_pEncodingConfig;
 };
 
-#endif /* SAKURA_CCODEMEDIATOR_653AC1CB_8935_4F2A_AF03_8FE669F6FA9F_H_ */
 /*[EOF]*/

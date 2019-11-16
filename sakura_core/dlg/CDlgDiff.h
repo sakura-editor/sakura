@@ -29,10 +29,9 @@
 		   distribution.
 */
 
-class CDlgDiff;
+#pragma once
 
-#ifndef _CDLGDIFF_H_
-#define _CDLGDIFF_H_
+class CDlgDiff;
 
 #include "dlg/CDialog.h"
 /*!
@@ -86,5 +85,3 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CDLGDIFF_H_ */
-

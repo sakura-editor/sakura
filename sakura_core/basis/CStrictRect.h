@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CSTRICTRECT_F3676246_1D72_4A04_9614_3881BBA67B16_H_
-#define SAKURA_CSTRICTRECT_F3676246_1D72_4A04_9614_3881BBA67B16_H_
+#pragma once
 
 template <class INT_TYPE, class POINT_TYPE> class CStrictRect{
 private:
@@ -66,5 +65,4 @@ public:
 	}
 };
 
-#endif /* SAKURA_CSTRICTRECT_F3676246_1D72_4A04_9614_3881BBA67B16_H_ */
 /*[EOF]*/

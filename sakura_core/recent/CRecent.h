@@ -33,8 +33,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CRECENT_E523D9BB_0DBF_4642_846A_990A2B5122CF9_H_
-#define SAKURA_CRECENT_E523D9BB_0DBF_4642_846A_990A2B5122CF9_H_
+#pragma once
 
 #include "_main/global.h"
 #include "env/DLLSHAREDATA.h"
@@ -83,5 +82,4 @@ public:
 
 #include "CRecentImp.h"
 
-#endif /* SAKURA_CRECENT_E523D9BB_0DBF_4642_846A_990A2B5122CF9_H_ */
 /*[EOF]*/

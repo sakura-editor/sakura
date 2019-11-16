@@ -28,10 +28,10 @@
 		   distribution.
 */
 
+#pragma once
+
 class CDlgTypeAscertain;
 
-#ifndef _CDLGTYPEASCERTAIN_H_
-#define _CDLGTYPEASCERTAIN_H_
 using std::wstring;
 
 #include "dlg/CDialog.h"
@@ -71,5 +71,3 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CDLGTYPEASCERTAIN_H_ */
-

@@ -16,8 +16,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef _CCOMMANDLINE_H_
-#define _CCOMMANDLINE_H_
+#pragma once
 
 #include "global.h"
 #include "EditInfo.h"
@@ -122,5 +121,3 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CCOMMANDLINE_H_ */
-

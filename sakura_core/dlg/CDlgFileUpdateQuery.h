@@ -29,8 +29,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef _DLG_FILE_UPDATE_QUERY_H_
-#define _DLG_FILE_UPDATE_QUERY_H_
+#pragma once
 
 #include "dlg/CDialog.h"
 
@@ -56,6 +55,4 @@ private:
 	const WCHAR* m_pFilename;
 	bool m_bModified;
 };
-
-#endif
 

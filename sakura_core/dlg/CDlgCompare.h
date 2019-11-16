@@ -11,10 +11,9 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CDlgCompare;
+#pragma once
 
-#ifndef _CDLGCOMPARE_H_
-#define _CDLGCOMPARE_H_
+class CDlgCompare;
 
 #include "dlg/CDialog.h"
 /*!
@@ -61,5 +60,3 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CDLGCOMPARE_H_ */
-

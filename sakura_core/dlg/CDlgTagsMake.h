@@ -28,10 +28,9 @@
 		   distribution.
 */
 
-class CDlgTagsMake;
+#pragma once
 
-#ifndef _CDLGTAGSMAKE_H_
-#define _CDLGTAGSMAKE_H_
+class CDlgTagsMake;
 
 #include "dlg/CDialog.h"
 /*!
@@ -69,5 +68,3 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CDLGTAGSMAKE_H_ */
-

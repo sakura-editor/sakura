@@ -29,8 +29,7 @@
 		   distribution.
 */
 
-#ifndef _LOAD_LIBRARY_H_
-#define _LOAD_LIBRARY_H_
+#pragma once
 
 #include <Windows.h>
 #include <string>
@@ -204,6 +203,4 @@ private:
 	HINSTANCE		m_hInstance;
 	std::wstring	m_strLoadedDllName;
 };
-
-#endif
 

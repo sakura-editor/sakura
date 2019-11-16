@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CFILE_4C6F2C6F_75E4_470C_8AB0_0A8567BF032E9_H_
-#define SAKURA_CFILE_4C6F2C6F_75E4_470C_8AB0_0A8567BF032E9_H_
+#pragma once
 
 #include "basis/CMyString.h" //CFilePath
 #include "util/file.h"
@@ -72,5 +71,4 @@ private:
 	FILE* m_fp;
 };
 
-#endif /* SAKURA_CFILE_4C6F2C6F_75E4_470C_8AB0_0A8567BF032E9_H_ */
 /*[EOF]*/

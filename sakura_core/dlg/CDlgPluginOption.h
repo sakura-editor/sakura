@@ -27,8 +27,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CDLGPLUGINOPTION_7BD4A901_BC40_4CA1_8311_85B8CAA783F08_H_
-#define SAKURA_CDLGPLUGINOPTION_7BD4A901_BC40_4CA1_8311_85B8CAA783F08_H_
+#pragma once
 
 #include "dlg/CDialog.h"
 #include "plugin/CPluginManager.h"
@@ -97,4 +96,3 @@ private:
 	std::wstring	m_sReadMeName;	// ReadMe ファイル名
 };
 
-#endif /* SAKURA_CDLGPLUGINOPTION_7BD4A901_BC40_4CA1_8311_85B8CAA783F08_H_ */

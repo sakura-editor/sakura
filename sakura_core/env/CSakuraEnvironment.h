@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CSAKURAENVIRONMENT_95CFC65B_9C67_4ABF_A681_5A4652A3C5D3_H_
-#define SAKURA_CSAKURAENVIRONMENT_95CFC65B_9C67_4ABF_A681_5A4652A3C5D3_H_
+#pragma once
 
 #include <string>
 
@@ -45,5 +44,4 @@ private:
 /* 指定ウィンドウが、編集ウィンドウのフレームウィンドウかどうか調べる */
 BOOL IsSakuraMainWindow( HWND hWnd );
 
-#endif /* SAKURA_CSAKURAENVIRONMENT_95CFC65B_9C67_4ABF_A681_5A4652A3C5D3_H_ */
 /*[EOF]*/

@@ -28,8 +28,7 @@
 		   distribution.
 */
 
-#ifndef SC_CDLGKEYWORDSELECT_H__
-#define SC_CDLGKEYWORDSELECT_H__
+#pragma once
 
 #include "dlg/CDialog.h"
 #include "config/maxdata.h" // MAX_KEYWORDSET_PER_TYPE
@@ -63,6 +62,4 @@ protected:
 	int m_nSet[ KEYWORD_SELECT_NUM ];
 	CKeyWordSetMgr*	m_pCKeyWordSetMgr;
 };
-
-#endif
 

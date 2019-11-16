@@ -32,8 +32,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_SYSTEM_CONSTANTS_608BC31D_86C2_4526_B749_70DBD090752A_H_
-#define SAKURA_SYSTEM_CONSTANTS_608BC31D_86C2_4526_B749_70DBD090752A_H_
+#pragma once
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       定数命名補助                          //
@@ -745,5 +744,4 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 //! ウィンドウ一覧表示
 #define MYWM_DLGWINLIST (WM_APP+225)
 
-#endif /* SAKURA_SYSTEM_CONSTANTS_608BC31D_86C2_4526_B749_70DBD090752A_H_ */
 /*[EOF]*/

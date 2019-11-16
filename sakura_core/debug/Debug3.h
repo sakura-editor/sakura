@@ -25,13 +25,11 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_DEBUG3_925353B7_B06C_4EA1_8E49_8305796D16DD9_H_
-#define SAKURA_DEBUG3_925353B7_B06C_4EA1_8E49_8305796D16DD9_H_
+#pragma once
 
 #ifdef USE_DEBUGMON
 int DebugMonitor_Output(const wchar_t* szInstanceId, const wchar_t* szText);
 LPCWSTR GetWindowsMessageName(UINT msg);
 #endif
 
-#endif /* SAKURA_DEBUG3_925353B7_B06C_4EA1_8E49_8305796D16DD9_H_ */
 /*[EOF]*/

@@ -12,10 +12,9 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CDlgTypeList;
+#pragma once
 
-#ifndef _CDLGTYPELIST_H_
-#define _CDLGTYPELIST_H_
+class CDlgTypeList;
 
 #include "dlg/CDialog.h"
 using std::wstring;
@@ -69,5 +68,3 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CDLGTYPELIST_H_ */
-

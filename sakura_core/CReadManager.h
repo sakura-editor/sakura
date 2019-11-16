@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CREADMANAGER_1361039A_EFBF_486E_B863_B6C5F9771544_H_
-#define SAKURA_CREADMANAGER_1361039A_EFBF_486E_B863_B6C5F9771544_H_
+#pragma once
 
 #include "doc/CDocListener.h" // CProgressSubject
 #include "charset/CCodeBase.h" // EConvertResult
@@ -42,5 +41,4 @@ public:
 	);
 };
 
-#endif /* SAKURA_CREADMANAGER_1361039A_EFBF_486E_B863_B6C5F9771544_H_ */
 /*[EOF]*/

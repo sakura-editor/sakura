@@ -26,8 +26,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CCODEPAGE_H_
-#define SAKURA_CCODEPAGE_H_
+#pragma once
 
 #include "CCodeBase.h"
 #include <vector>
@@ -96,4 +95,3 @@ protected:
 	static int S_UnicodeToUTF32BE(const wchar_t* pSrc, int nSrcLen, char* pDst, int nDstLen);
 };
 
-#endif // SAKURA_CCODEPAGE_H_

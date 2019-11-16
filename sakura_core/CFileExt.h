@@ -28,8 +28,7 @@
 		   distribution.
 */
 
-#ifndef SAKURA_CFILEEXT_H_
-#define SAKURA_CFILEEXT_H_
+#pragma once
 
 #include "_main/global.h"
 #include "config/maxdata.h"
@@ -69,6 +68,4 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(CFileExt);
 };
-
-#endif	//SAKURA_CFILEEXT_H_
 

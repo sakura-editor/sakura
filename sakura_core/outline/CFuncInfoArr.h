@@ -12,8 +12,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef _CFUNCINFOARR_H_
-#define _CFUNCINFOARR_H_
+#pragma once
 
 class CFuncInfo;
 #include <string>
@@ -62,5 +61,3 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CFUNCINFOARR_H_ */
-

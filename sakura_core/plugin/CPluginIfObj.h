@@ -25,8 +25,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CPLUGINIFOBJ_2205DDE8_330B_49AC_AC5E_4C02F07DDCD5D_H_
-#define SAKURA_CPLUGINIFOBJ_2205DDE8_330B_49AC_AC5E_4C02F07DDCD5D_H_
+#pragma once
 
 #include "macro/CWSHIfObj.h"
 #include "_os/OleTypes.h"
@@ -212,5 +211,4 @@ MacroFuncInfo CPluginIfObj::m_MacroFuncInfoArr[] =
 	{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
 
-#endif /* SAKURA_CPLUGINIFOBJ_2205DDE8_330B_49AC_AC5E_4C02F07DDCD5D_H_ */
 /*[EOF]*/

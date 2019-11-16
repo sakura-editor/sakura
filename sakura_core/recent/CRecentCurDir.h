@@ -23,8 +23,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CRECENTCURDIR_606E7B1E_F285_4232_92B8_C47260107806_H_
-#define SAKURA_CRECENTCURDIR_606E7B1E_F285_4232_92B8_C47260107806_H_
+#pragma once
 
 #include "CRecentImp.h"
 #include "util/StaticType.h"
@@ -47,5 +46,4 @@ public:
 	size_t			GetTextMaxLength() const;
 };
 
-#endif /* SAKURA_CRECENTCURDIR_606E7B1E_F285_4232_92B8_C47260107806_H_ */
 /*[EOF]*/

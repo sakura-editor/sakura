@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CVIEWCALC_F7EB84D2_C716_4183_AF9C_197AEEC5B7A9_H_
-#define SAKURA_CVIEWCALC_F7EB84D2_C716_4183_AF9C_197AEEC5B7A9_H_
+#pragma once
 
 #include "doc/layout/CTsvModeInfo.h"
 
@@ -59,5 +58,4 @@ private:
 	const CEditView* m_pOwner;
 };
 
-#endif /* SAKURA_CVIEWCALC_F7EB84D2_C716_4183_AF9C_197AEEC5B7A9_H_ */
 /*[EOF]*/

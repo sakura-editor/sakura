@@ -32,8 +32,7 @@
 		   distribution.
 */
 
-#ifndef _CMRUFILE_H_
-#define _CMRUFILE_H_
+#pragma once
 
 #include <Windows.h> /// BOOL,HMENU // 2002/2/10 aroka
 #include <vector>
@@ -73,4 +72,3 @@ private:
 	CRecentFile	m_cRecentFile;	//履歴	//@@@ 2003.04.08 MIK
 };
 
-#endif	// _CMRUFILE_H_

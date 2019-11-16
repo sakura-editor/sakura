@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CCONVERT_TABTOSPACE_186F357B_6A69_4B23_8ABF_887D2A02B287_H_
-#define SAKURA_CCONVERT_TABTOSPACE_186F357B_6A69_4B23_8ABF_887D2A02B287_H_
+#pragma once
 
 #include "CConvert.h"
 
@@ -42,5 +41,4 @@ private:
 	bool m_bExtEol;
 };
 
-#endif /* SAKURA_CCONVERT_TABTOSPACE_186F357B_6A69_4B23_8ABF_887D2A02B287_H_ */
 /*[EOF]*/

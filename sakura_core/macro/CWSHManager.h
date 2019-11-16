@@ -19,8 +19,7 @@
 
 */
 
-#ifndef __CWSH_Manager_H__
-#define __CWSH_Manager_H__
+#pragma once
 
 #include <Windows.h>
 #include <string>
@@ -56,4 +55,4 @@ protected:
 	////	2007.07.20 genta : flags追加
 	//static void ReadyCommands(CIfObj *Object, MacroFuncInfo *Info, int flags);
 };
-#endif
+

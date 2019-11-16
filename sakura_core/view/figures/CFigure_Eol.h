@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CFIGURE_EOL_F6A22B9F_DDED_4BE9_9A2C_62931DB224F6_H_
-#define SAKURA_CFIGURE_EOL_F6A22B9F_DDED_4BE9_9A2C_62931DB224F6_H_
+#pragma once
 
 #include "view/figures/CFigureStrategy.h"
 
@@ -43,5 +42,4 @@ public:
 	EColorIndexType GetColorIdx(void) const{ return COLORIDX_EOL; }
 };
 
-#endif /* SAKURA_CFIGURE_EOL_F6A22B9F_DDED_4BE9_9A2C_62931DB224F6_H_ */
 /*[EOF]*/

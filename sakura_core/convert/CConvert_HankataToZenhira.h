@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CCONVERT_HANKATATOZENHIRA_8F5785BC_BD5F_4034_8C71_A645A69FBE3B9_H_
-#define SAKURA_CCONVERT_HANKATATOZENHIRA_8F5785BC_BD5F_4034_8C71_A645A69FBE3B9_H_
+#pragma once
 
 #include "CConvert.h"
 
@@ -33,5 +32,4 @@ public:
 	bool DoConvert(CNativeW* pcData) override;
 };
 
-#endif /* SAKURA_CCONVERT_HANKATATOZENHIRA_8F5785BC_BD5F_4034_8C71_A645A69FBE3B9_H_ */
 /*[EOF]*/
