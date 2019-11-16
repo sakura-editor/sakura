@@ -33,7 +33,7 @@ class CNormalProcess final : public CProcess {
 public:
 	//コンストラクタ・デストラクタ
 	CNormalProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine );
-	~CNormalProcess() override;
+	~CNormalProcess();
 
 protected:
 	//プロセスハンドラ

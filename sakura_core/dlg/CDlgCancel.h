@@ -54,7 +54,7 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	virtual BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
+	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
 	BOOL OnBnClicked(int wID) override;
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
 };

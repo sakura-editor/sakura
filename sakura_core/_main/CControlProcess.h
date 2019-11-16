@@ -41,12 +41,12 @@ public:
 		m_pcTray( 0 )
 	{}
 
-	~CControlProcess() override;
+	~CControlProcess();
 protected:
 	CControlProcess();
 	bool InitializeProcess() override;
 	bool MainLoop() override;
-	virtual void OnExitProcess() override;
+	void OnExitProcess() override;
 
 private:
 	HANDLE			m_hMutex;				//!< アプリケーション実行検出用ミューテックス
