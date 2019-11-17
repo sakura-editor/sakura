@@ -29,8 +29,7 @@
 		   distribution.
 */
 
-#ifndef __CMARKMGR_H_
-#define __CMARKMGR_H_
+#pragma once
 
 #include <vector>
 
@@ -135,6 +134,4 @@ public:
 	void Add(const CMark& m) override;	//!<	要素の追加
 	void Expire(void) override;	//!<	要素数の調整
 };
-
-#endif
 

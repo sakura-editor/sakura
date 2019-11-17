@@ -31,8 +31,7 @@
 		   distribution.
 */
 
-#ifndef _CMRUFOLDER_H_
-#define _CMRUFOLDER_H_
+#pragma once
 
 #include <Windows.h> /// BOOL,HMENU // 2002/2/10 aroka
 #include "recent/CRecentFolder.h"
@@ -69,4 +68,3 @@ private:
 	CRecentFolder	m_cRecentFolder;	//履歴	//@@@ 2003.04.08 MIK
 };
 
-#endif

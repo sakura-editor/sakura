@@ -12,8 +12,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef _CKEYBIND_H_
-#define _CKEYBIND_H_
+#pragma once
 
 #include <Windows.h>
 #include "Funccode_enum.h"
@@ -96,5 +95,3 @@ protected:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CKEYBIND_H_ */
-

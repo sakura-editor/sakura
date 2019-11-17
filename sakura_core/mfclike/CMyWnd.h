@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CMYWND_2BBCE2D2_F4DC_4809_BFFE_476824F2E0ABR_H_
-#define SAKURA_CMYWND_2BBCE2D2_F4DC_4809_BFFE_476824F2E0ABR_H_
+#pragma once
 
 /*
 	MFCのCWnd的なクラス。
@@ -80,5 +79,4 @@ private:
 	HWND m_hWnd;
 };
 
-#endif /* SAKURA_CMYWND_2BBCE2D2_F4DC_4809_BFFE_476824F2E0ABR_H_ */
 /*[EOF]*/

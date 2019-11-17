@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CMAINTOOLBAR_F8D148A4_02B1_42E7_8B00_B51B3DB49E749_H_
-#define SAKURA_CMAINTOOLBAR_F8D148A4_02B1_42E7_8B00_B51B3DB49E749_H_
+#pragma once
 
 #include "recent/CRecent.h"
 #include "dlg/CDialog.h"
@@ -80,5 +79,4 @@ private:
 	CImageListMgr*			m_pcIcons;
 };
 
-#endif /* SAKURA_CMAINTOOLBAR_F8D148A4_02B1_42E7_8B00_B51B3DB49E749_H_ */
 /*[EOF]*/

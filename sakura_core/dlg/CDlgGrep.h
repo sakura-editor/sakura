@@ -12,11 +12,9 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
+#pragma once
 
 class CDlgGrep;
-
-#ifndef _CDLGGREP_H_
-#define _CDLGGREP_H_
 
 #include "dlg/CDialog.h"
 #include "recent/CRecent.h"
@@ -91,5 +89,3 @@ protected:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CDLGGREP_H_ */
-

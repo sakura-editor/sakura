@@ -13,8 +13,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef _CEDITDROPTARGET_H_
-#define _CEDITDROPTARGET_H_
+#pragma once
 
 #include <Unknwn.h>
 #include "util/design_template.h"
@@ -169,5 +168,3 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CEDITDROPTARGET_H_ */
-

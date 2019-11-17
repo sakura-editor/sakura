@@ -12,11 +12,9 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
+#pragma once
 
 class CDlgGrep;
-
-#ifndef SAKURA_CDLGGREP_REPLACE_H_
-#define SAKURA_CDLGGREP_REPLACE_H_
 
 #include "dlg/CDialog.h"
 #include "dlg/CDlgGrep.h"
@@ -56,5 +54,3 @@ protected:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* SAKURA_CDLGGREP_REPLACE_H_ */
-

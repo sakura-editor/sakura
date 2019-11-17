@@ -11,8 +11,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef _CDLGSETCHARSET_H_
-#define _CDLGSETCHARSET_H_
+#pragma once
 
 #include "dlg/CDialog.h"
 
@@ -51,4 +50,3 @@ protected:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CDLGSETCHARSET_H_ */

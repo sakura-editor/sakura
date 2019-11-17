@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CLAYOUTEXINFO_H_
-#define SAKURA_CLAYOUTEXINFO_H_
+#pragma once
 
 #include "util/design_template.h"
 
@@ -61,4 +60,3 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(CLayoutExInfo);
 };
 
-#endif

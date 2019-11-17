@@ -11,10 +11,9 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class COpeBuf;
+#pragma once
 
-#ifndef _COPEBUF_H_
-#define _COPEBUF_H_
+class COpeBuf;
 
 #include <vector>
 #include "_main/global.h"
@@ -58,5 +57,3 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _COPEBUF_H_ */
-

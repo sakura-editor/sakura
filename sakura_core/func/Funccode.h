@@ -35,8 +35,7 @@
 		   distribution.
 */
 
-#ifndef _FUNCCODE_H_
-#define _FUNCCODE_H_
+#pragma once
 
 //Oct. 17, 2000 jepro  F_FILECLOSE:「ファイルを閉じる」というキャプションを変更
 //Feb. 28, 2004 genta  F_FILESAVECLOSE
@@ -185,4 +184,3 @@ struct DLLSHAREDATA;
 bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EFunctionCode nId );	/* 機能が利用可能か調べる */
 bool IsFuncChecked( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EFunctionCode nId );	/* 機能がチェック状態か調べる */
 
-#endif // _FUNCCODE_H_

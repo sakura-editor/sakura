@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CUNICODE_95AC7095_F71E_458B_80B3_1AA4036E25109_H_
-#define SAKURA_CUNICODE_95AC7095_F71E_458B_80B3_1AA4036E25109_H_
+#pragma once
 
 // IsUtf16SurrogHi()、IsUtf16SurrogLow() 関数をcharset/codechecker.h に移動
 
@@ -48,5 +47,4 @@ public:
 	inline static EConvertResult UnicodeToUnicode_out(const CNativeW& cSrc, CMemory* pDst){ return _UnicodeToUnicode_out(cSrc, pDst, false); }
 };
 
-#endif /* SAKURA_CUNICODE_95AC7095_F71E_458B_80B3_1AA4036E25109_H_ */
 /*[EOF]*/

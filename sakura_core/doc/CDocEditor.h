@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CDOCEDITOR_1F90937C_B53A_490C_BCCF_74EFAEE628AC_H_
-#define SAKURA_CDOCEDITOR_1F90937C_B53A_490C_BCCF_74EFAEE628AC_H_
+#pragma once
 
 #include "doc/CDocListener.h"
 #include "_os/CClipboard.h"
@@ -110,5 +109,4 @@ private:
 	CDocLineMgr* m_pcDocLineMgr;
 };
 
-#endif /* SAKURA_CDOCEDITOR_1F90937C_B53A_490C_BCCF_74EFAEE628AC_H_ */
 /*[EOF]*/

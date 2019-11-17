@@ -38,8 +38,7 @@
 		   distribution.
 */
 
-#ifndef _CEDITVIEW_H_
-#define _CEDITVIEW_H_
+#pragma once
 
 #include <Windows.h>
 #include <ObjIdl.h>  // LPDATAOBJECT
@@ -747,5 +746,3 @@ public:
 	virtual bool IsActiveDebugWindow(){ return true; }
 };
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CEDITVIEW_H_ */
-

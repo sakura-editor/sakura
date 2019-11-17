@@ -11,10 +11,9 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class COpeBlk;
+#pragma once
 
-#ifndef _COPEBLK_H_
-#define _COPEBLK_H_
+class COpeBlk;
 
 #include "COpe.h"
 #include <vector>
@@ -58,5 +57,3 @@ private:
 };
 
 //////////////////////////////////////////////////////////////////////12
-#endif /* _COPEBLK_H_ */
-

@@ -27,8 +27,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CONVERT_UTIL2_0DBB4338_3B8D_4466_A20D_638B847EB6C9_H_
-#define SAKURA_CONVERT_UTIL2_0DBB4338_3B8D_4466_A20D_638B847EB6C9_H_
+#pragma once
 
 #include "parse/CWordParse.h"
 #include "mem/CMemory.h"
@@ -724,5 +723,4 @@ finish_first_detect:;
 	return nskipped_len;
 }
 
-#endif /* SAKURA_CONVERT_UTIL2_0DBB4338_3B8D_4466_A20D_638B847EB6C9_H_ */
 /*[EOF]*/

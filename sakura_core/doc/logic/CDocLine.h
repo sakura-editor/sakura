@@ -15,8 +15,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef _CDOCLINE_H_
-#define _CDOCLINE_H_
+#pragma once
 
 #include "util/design_template.h"
 #include "CEol.h"
@@ -118,5 +117,3 @@ private:
 #pragma pack(pop)
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CDOCLINE_H_ */
-

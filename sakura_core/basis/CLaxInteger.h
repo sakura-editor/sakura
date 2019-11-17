@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CLAXINTEGER_A4B639A5_3AD6_4C99_882B_4674CB0C155B9_H_
-#define SAKURA_CLAXINTEGER_A4B639A5_3AD6_4C99_882B_4674CB0C155B9_H_
+#pragma once
 
 //!型チェックの緩い整数型
 class CLaxInteger{
@@ -44,5 +43,4 @@ private:
 	int m_value;
 };
 
-#endif /* SAKURA_CLAXINTEGER_A4B639A5_3AD6_4C99_882B_4674CB0C155B9_H_ */
 /*[EOF]*/

@@ -15,8 +15,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef _CMENUDRAWER_H_
-#define _CMENUDRAWER_H_
+#pragma once
 
 #include "Funccode_enum.h"
 
@@ -128,5 +127,3 @@ protected:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CMENUDRAWER_H_ */
-

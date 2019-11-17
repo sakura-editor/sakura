@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_PRIMITIVE_0AE619F1_2A04_42A0_92F6_72C9B845799E_H_
-#define SAKURA_PRIMITIVE_0AE619F1_2A04_42A0_92F6_72C9B845799E_H_
+#pragma once
 
 // -- -- -- -- 文字 -- -- -- -- //
 
@@ -56,5 +55,4 @@ typedef char KEYCODE;
 	typedef int Int;
 #endif
 
-#endif /* SAKURA_PRIMITIVE_0AE619F1_2A04_42A0_92F6_72C9B845799E_H_ */
 /*[EOF]*/

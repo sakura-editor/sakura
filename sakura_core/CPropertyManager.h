@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CPROPERTYMANAGER_03C7D94F_54C6_4772_86BE_4A00A554FCAE_H_
-#define SAKURA_CPROPERTYMANAGER_03C7D94F_54C6_4772_86BE_4A00A554FCAE_H_
+#pragma once
 
 #include "prop/CPropCommon.h"
 #include "typeprop/CPropTypes.h"
@@ -50,5 +49,4 @@ private:
 	int				m_nPropTypePageNum;
 };
 
-#endif /* SAKURA_CPROPERTYMANAGER_03C7D94F_54C6_4772_86BE_4A00A554FCAE_H_ */
 /*[EOF]*/

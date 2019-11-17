@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_SAKURABASIS_DA3203FF_3FD7_4AD1_BC64_E85C8171335E9_H_
-#define SAKURA_SAKURABASIS_DA3203FF_3FD7_4AD1_BC64_E85C8171335E9_H_
+#pragma once
 
 #include <Windows.h> //POINT,LONG
 
@@ -145,5 +144,4 @@ inline void TwoPointToRect(
 	}
 }
 
-#endif /* SAKURA_SAKURABASIS_DA3203FF_3FD7_4AD1_BC64_E85C8171335E9_H_ */
 /*[EOF]*/

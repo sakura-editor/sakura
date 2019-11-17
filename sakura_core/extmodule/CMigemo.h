@@ -18,8 +18,7 @@
 Migemo はローマ字のまま日本語をインクリメンタル検索するためのツールです。
 */
 
-#ifndef _SAKURA_MIGEMO_H_
-#define _SAKURA_MIGEMO_H_
+#pragma once
 
 #define MIGEMO_VERSION "1.1"
 
@@ -135,6 +134,4 @@ public:
 	int migemo_is_enable();
 	int migemo_load_all();
 };
-
-#endif
 

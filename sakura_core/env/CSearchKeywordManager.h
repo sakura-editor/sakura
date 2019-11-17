@@ -25,8 +25,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CSEARCHKEYWORDMANAGER_6D883D8B_3076_423C_BADA_B4C5DCB3E6E5_H_
-#define SAKURA_CSEARCHKEYWORDMANAGER_6D883D8B_3076_423C_BADA_B4C5DCB3E6E5_H_
+#pragma once
 
 // 要先行定義
 // #include "DLLSHAREDATA.h"
@@ -60,5 +59,4 @@ private:
 	DLLSHAREDATA* m_pShareData;
 };
 
-#endif /* SAKURA_CSEARCHKEYWORDMANAGER_6D883D8B_3076_423C_BADA_B4C5DCB3E6E5_H_ */
 /*[EOF]*/

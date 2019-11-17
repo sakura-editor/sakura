@@ -28,8 +28,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CFILELOAD_H_
-#define SAKURA_CFILELOAD_H_
+#pragma once
 
 #include <Windows.h>
 #include "CStream.h" //CError_FileOpen
@@ -170,6 +169,4 @@ inline DWORD CFileLoad::FilePointer( DWORD offset, DWORD origin )
 		throw CError_FileRead();
 	return fp;
 }
-
-#endif /* SAKURA_CFILELOAD_H_ */
 

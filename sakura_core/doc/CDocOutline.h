@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CDOCOUTLINE_F40D43DF_FDBE_4758_B015_E9C369A17606_H_
-#define SAKURA_CDOCOUTLINE_F40D43DF_FDBE_4758_B015_E9C369A17606_H_
+#pragma once
 
 class CEditDoc;
 class CFuncInfoArr;
@@ -57,5 +56,4 @@ private:
 	CEditDoc* m_pcDocRef;
 };
 
-#endif /* SAKURA_CDOCOUTLINE_F40D43DF_FDBE_4758_B015_E9C369A17606_H_ */
 /*[EOF]*/

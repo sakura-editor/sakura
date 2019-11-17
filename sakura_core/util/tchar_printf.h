@@ -45,8 +45,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_TCHAR_PRINTF_DAD4722C_BE9A_420C_BB75_311B6B1EC14E9_H_
-#define SAKURA_TCHAR_PRINTF_DAD4722C_BE9A_420C_BB75_311B6B1EC14E9_H_
+#pragma once
 
 // vsprintf_sラップ
 int tchar_vsprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list& v);
@@ -72,5 +71,4 @@ int tchar_sprintf(WCHAR* buf, const WCHAR* format, ...);
 int tchar_snprintf_s(ACHAR* buf, size_t count, const ACHAR* format, ...);
 int tchar_snprintf_s(WCHAR* buf, size_t count, const WCHAR* format, ...);
 
-#endif /* SAKURA_TCHAR_PRINTF_DAD4722C_BE9A_420C_BB75_311B6B1EC14E9_H_ */
 /*[EOF]*/

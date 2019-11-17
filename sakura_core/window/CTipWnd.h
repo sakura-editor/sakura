@@ -14,10 +14,9 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CTipWnd;
+#pragma once
 
-#ifndef _CTIPWND_H_
-#define _CTIPWND_H_
+class CTipWnd;
 
 #include "CWnd.h"
 #include "mem/CMemory.h"
@@ -76,5 +75,3 @@ protected:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CTIPWND_H_ */
-

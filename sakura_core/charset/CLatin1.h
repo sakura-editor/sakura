@@ -27,8 +27,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CLATIN1_H_
-#define SAKURA_CLATIN1_H_
+#pragma once
 
 #include "CCodeBase.h"
 
@@ -100,4 +99,3 @@ inline int CLatin1::_UniToLatin1_char( const unsigned short* pSrc, unsigned char
 	return nret;
 }
 
-#endif /* SAKURA_CLATIN1_H_ */

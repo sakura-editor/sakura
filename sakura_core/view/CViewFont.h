@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CVIEWFONT_9E51373D_58BA_4A64_9930_5174F7BF9C929_H_
-#define SAKURA_CVIEWFONT_9E51373D_58BA_4A64_9930_5174F7BF9C929_H_
+#pragma once
 
 #include "doc/CDocTypeSetting.h" // ColorInfo !!
 
@@ -70,5 +69,4 @@ private:
 	bool	m_bMiniMap;
 };
 
-#endif /* SAKURA_CVIEWFONT_9E51373D_58BA_4A64_9930_5174F7BF9C929_H_ */
 /*[EOF]*/

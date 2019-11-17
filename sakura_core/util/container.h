@@ -27,8 +27,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CONTAINER_82819006_7BEE_4D84_82A0_B61B0E0BAFD79_H_
-#define SAKURA_CONTAINER_82819006_7BEE_4D84_82A0_B61B0E0BAFD79_H_
+#pragma once
 
 #include <vector>
 #include <algorithm> //find
@@ -60,5 +59,4 @@ public:
 	}
 };
 
-#endif /* SAKURA_CONTAINER_82819006_7BEE_4D84_82A0_B61B0E0BAFD79_H_ */
 /*[EOF]*/

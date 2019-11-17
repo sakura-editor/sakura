@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CNATIVEA_B88E7301_8CD3_4DF8_8750_2FF92F357FA09_H_
-#define SAKURA_CNATIVEA_B88E7301_8CD3_4DF8_8750_2FF92F357FA09_H_
+#pragma once
 
 #include "CNative.h"
 
@@ -72,5 +71,4 @@ public:
 
 };
 
-#endif /* SAKURA_CNATIVEA_B88E7301_8CD3_4DF8_8750_2FF92F357FA09_H_ */
 /*[EOF]*/

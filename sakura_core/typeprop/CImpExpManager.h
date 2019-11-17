@@ -28,8 +28,7 @@
 		   distribution.
 */
 
-#ifndef SAKURA_CIMPEXPMANAGER_H_
-#define SAKURA_CIMPEXPMANAGER_H_
+#pragma once
 
 #include "CDataProfile.h"
 #include "env/DLLSHAREDATA.h"
@@ -326,4 +325,3 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* SAKURA_CIMPEXPMANAGER_H_ */

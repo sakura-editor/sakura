@@ -28,8 +28,7 @@
 		   distribution.
 */
 
-#ifndef SC_CDLGWINPOSSIZE_H__
-#define SC_CDLGWINPOSSIZE_H__
+#pragma once
 
 #include "dlg/CDialog.h"
 #include "env/CommonSetting.h"
@@ -63,6 +62,4 @@ private:
 	int				m_nWinSizeType;	//!< ウィンドウ表示方法: 0/標準，1/最大化，2/最小化
 	RECT			m_rc;
 };
-
-#endif
 

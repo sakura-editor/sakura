@@ -31,8 +31,7 @@
 		   distribution.
 */
 
-#ifndef _CPROFILE_H_
-#define _CPROFILE_H_
+#pragma once
 
 #include <Windows.h>
 #include <string>
@@ -90,5 +89,3 @@ protected:
 #define _INI_T LTEXT
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CPROFILE_H_ */
-

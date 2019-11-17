@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CFIGURE_HANSPACE_5C46367B_9CE4_47DF_A1A1_7AF7BB1D5C92_H_
-#define SAKURA_CFIGURE_HANSPACE_5C46367B_9CE4_47DF_A1A1_7AF7BB1D5C92_H_
+#pragma once
 
 #include "view/figures/CFigureStrategy.h"
 
@@ -38,5 +37,4 @@ public:
 	EColorIndexType GetColorIdx(void) const{ return COLORIDX_SPACE; }
 };
 
-#endif /* SAKURA_CFIGURE_HANSPACE_5C46367B_9CE4_47DF_A1A1_7AF7BB1D5C92_H_ */
 /*[EOF]*/

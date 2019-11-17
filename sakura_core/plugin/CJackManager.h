@@ -25,8 +25,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CJACKMANAGER_6CC7B212_130B_46AF_9C88_05F554CDA34BO_H_
-#define SAKURA_CJACKMANAGER_6CC7B212_130B_46AF_9C88_05F554CDA34BO_H_
+#pragma once
 
 #include "plugin/CPlugin.h"
 #include <list>
@@ -102,5 +101,4 @@ private:
 	std::vector<JackDef> m_Jacks;	//ジャック定義の一覧
 };
 
-#endif /* SAKURA_CJACKMANAGER_6CC7B212_130B_46AF_9C88_05F554CDA34BO_H_ */
 /*[EOF]*/

@@ -25,8 +25,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CDOCTYPEMANAGER_48534203_AB9B_4C1A_AF78_B76CA88CA0019_H_
-#define SAKURA_CDOCTYPEMANAGER_48534203_AB9B_4C1A_AF78_B76CA88CA0019_H_
+#pragma once
 
 #include "DLLSHAREDATA.h"
 
@@ -58,5 +57,4 @@ private:
 	DLLSHAREDATA* m_pShareData;
 };
 
-#endif /* SAKURA_CDOCTYPEMANAGER_48534203_AB9B_4C1A_AF78_B76CA88CA0019_H_ */
 /*[EOF]*/

@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CCARET_EF835ACD_9DB2_4F5A_8513_35034F1894219_H_
-#define SAKURA_CCARET_EF835ACD_9DB2_4F5A_8513_35034F1894219_H_
+#pragma once
 
 #define _CARETMARGINRATE 20
 class CTextArea;
@@ -235,5 +234,4 @@ public:
 	@date 2004.04.09 genta 説明文追加
 */
 
-#endif /* SAKURA_CCARET_EF835ACD_9DB2_4F5A_8513_35034F1894219_H_ */
 /*[EOF]*/

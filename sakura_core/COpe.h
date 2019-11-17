@@ -11,8 +11,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef SAKURA_COPE_H_
-#define SAKURA_COPE_H_
+#pragma once
 
 //! アンドゥバッファ用 操作コード
 enum EOpeCode {
@@ -125,5 +124,3 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* SAKURA_COPE_H_ */
-

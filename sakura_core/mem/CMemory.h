@@ -31,8 +31,7 @@
 		   distribution.
 */
 
-#ifndef _CMEMORY_H_
-#define _CMEMORY_H_
+#pragma once
 
 /*! ファイル文字コードセット判別時の先読み最大サイズ */
 #define CheckKanjiCode_MAXREADLENGTH 16384
@@ -123,5 +122,3 @@ private: // 2002/2/10 aroka アクセス権変更
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CMEMORY_H_ */
-

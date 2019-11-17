@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CCONVERT_SPACETOTAB_E17CC2BE_1BD0_4838_ABFD_570B344B99AD_H_
-#define SAKURA_CCONVERT_SPACETOTAB_E17CC2BE_1BD0_4838_ABFD_570B344B99AD_H_
+#pragma once
 
 #include "CConvert.h"
 
@@ -42,5 +41,4 @@ private:
 	bool m_bExtEol;
 };
 
-#endif /* SAKURA_CCONVERT_SPACETOTAB_E17CC2BE_1BD0_4838_ABFD_570B344B99AD_H_ */
 /*[EOF]*/

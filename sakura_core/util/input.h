@@ -22,12 +22,10 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_INPUT_7F979711_2295_4A97_BF62_75F89729717D9_H_
-#define SAKURA_INPUT_7F979711_2295_4A97_BF62_75F89729717D9_H_
+#pragma once
 
 //キー入力
 // novice 2004/10/10
 int getCtrlKeyState();
 
-#endif /* SAKURA_INPUT_7F979711_2295_4A97_BF62_75F89729717D9_H_ */
 /*[EOF]*/

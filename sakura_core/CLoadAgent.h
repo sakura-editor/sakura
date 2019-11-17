@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CLOADAGENT_780AC971_71A8_4495_BE95_C8786311D1489_H_
-#define SAKURA_CLOADAGENT_780AC971_71A8_4495_BE95_C8786311D1489_H_
+#pragma once
 
 #include "doc/CDocListener.h"
 
@@ -36,5 +35,4 @@ public:
 	void OnFinalLoad(ELoadResult eLoadResult) override;
 };
 
-#endif /* SAKURA_CLOADAGENT_780AC971_71A8_4495_BE95_C8786311D1489_H_ */
 /*[EOF]*/

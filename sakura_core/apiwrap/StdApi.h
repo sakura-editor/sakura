@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_STDAPI_85471C2C_6AEE_410D_BD09_A59056A5BA68_H_
-#define SAKURA_STDAPI_85471C2C_6AEE_410D_BD09_A59056A5BA68_H_
+#pragma once
 
 //ランタイム情報ライブラリにアクセスするWindowsヘッダを参照する
 #include <ImageHlp.h>
@@ -105,5 +104,4 @@ namespace ApiWrap
 }
 using namespace ApiWrap;
 
-#endif /* SAKURA_STDAPI_85471C2C_6AEE_410D_BD09_A59056A5BA68_H_ */
 /*[EOF]*/

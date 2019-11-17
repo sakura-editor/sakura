@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_STDCONTROL_76CB2C84_679D_4A46_B9E3_5325EF85F8E7_H_
-#define SAKURA_STDCONTROL_76CB2C84_679D_4A46_B9E3_5325EF85F8E7_H_
+#pragma once
 
 /*
 2007.09.17 kobake
@@ -246,5 +245,4 @@ namespace ApiWrap{
 }
 using namespace ApiWrap;
 
-#endif /* SAKURA_STDCONTROL_76CB2C84_679D_4A46_B9E3_5325EF85F8E7_H_ */
 /*[EOF]*/

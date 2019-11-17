@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_OS_4EAF837F_94E1_4B90_BF99_5AC3DEC630E79_H_
-#define SAKURA_OS_4EAF837F_94E1_4B90_BF99_5AC3DEC630E79_H_
+#pragma once
 
 #include <ObjIdl.h> // LPDATAOBJECT
 
@@ -101,5 +100,4 @@ private:
 */
 BOOL IsPowerShellAvailable(void);
 
-#endif /* SAKURA_OS_4EAF837F_94E1_4B90_BF99_5AC3DEC630E79_H_ */
 /*[EOF]*/

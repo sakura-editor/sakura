@@ -16,8 +16,7 @@
 
 */
 
-#ifndef __WSH_H__
-#define __WSH_H__
+#pragma once
 
 #include <ActivScp.h>
 //↑Microsoft Platform SDK より
@@ -60,4 +59,3 @@ private:
 	List m_IfObjArr;
 };
 
-#endif

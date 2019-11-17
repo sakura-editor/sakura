@@ -23,13 +23,11 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_FORMAT_2E480672_88BC_482E_B204_52BB5D84F20C9_H_
-#define SAKURA_FORMAT_2E480672_88BC_482E_B204_52BB5D84F20C9_H_
+#pragma once
 
 // 20051121 aroka
 bool GetDateTimeFormat( WCHAR* szResult, int size, const WCHAR* format, const SYSTEMTIME& systime );
 UINT32 ParseVersion( const WCHAR* ver );	//バージョン番号の解析
 int CompareVersion( const WCHAR* verA, const WCHAR* verB );	//バージョン番号の比較
 
-#endif /* SAKURA_FORMAT_2E480672_88BC_482E_B204_52BB5D84F20C9_H_ */
 /*[EOF]*/

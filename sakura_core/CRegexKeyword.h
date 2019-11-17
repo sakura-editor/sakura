@@ -16,8 +16,7 @@
 
 //@@@ 2001.11.17 add start MIK
 
-#ifndef	_REGEX_KEYWORD_H_
-#define	_REGEX_KEYWORD_H_
+#pragma once
 
 #include "_main/global.h"
 #include "extmodule/CBregexp.h"
@@ -81,8 +80,6 @@ private:
 	REGEX_INFO		m_sInfo[MAX_REGEX_KEYWORD];	//!< キーワード一覧(BREGEXPコンパイル対象)
 	wchar_t			m_szMsg[256];				//!< BREGEXP_Wからのメッセージを保持する
 };
-
-#endif	//_REGEX_KEYWORD_H_
 
 //@@@ 2001.11.17 add end MIK
 

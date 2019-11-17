@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_STATICTYPE_4B044731_DE17_46D9_9183_9F2E53F55F36_H_
-#define SAKURA_STATICTYPE_4B044731_DE17_46D9_9183_9F2E53F55F36_H_
+#pragma once
 
 #include "util/string_ex.h"
 
@@ -116,5 +115,4 @@ private:
 
 #define _countof2(s) s.BUFFER_COUNT
 
-#endif /* SAKURA_STATICTYPE_4B044731_DE17_46D9_9183_9F2E53F55F36_H_ */
 /*[EOF]*/

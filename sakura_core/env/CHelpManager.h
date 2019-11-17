@@ -25,8 +25,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CHELPMANAGER_979D10EB_B07B_466F_BB28_AB5A7259E2EA9_H_
-#define SAKURA_CHELPMANAGER_979D10EB_B07B_466F_BB28_AB5A7259E2EA9_H_
+#pragma once
 
 // 要先行定義
 // #include "DLLSHAREDATA.h"
@@ -48,5 +47,4 @@ private:
 	DLLSHAREDATA* m_pShareData;
 };
 
-#endif /* SAKURA_CHELPMANAGER_979D10EB_B07B_466F_BB28_AB5A7259E2EA9_H_ */
 /*[EOF]*/

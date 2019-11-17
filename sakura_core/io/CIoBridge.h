@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CIOBRIDGE_E98C8096_06B2_41EF_AED2_8D9876BF25BA9_H_
-#define SAKURA_CIOBRIDGE_E98C8096_06B2_41EF_AED2_8D9876BF25BA9_H_
+#pragma once
 
 #include "mem/CMemory.h"
 #include "charset/CCodeBase.h"
@@ -46,5 +45,4 @@ public:
 	);
 };
 
-#endif /* SAKURA_CIOBRIDGE_E98C8096_06B2_41EF_AED2_8D9876BF25BA9_H_ */
 /*[EOF]*/

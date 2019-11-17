@@ -28,8 +28,7 @@
 		   distribution.
 */
 
-#ifndef __CMACROMGR_BASE_H_
-#define __CMACROMGR_BASE_H_
+#pragma once
 
 #include <Windows.h>
 class CEditView;
@@ -99,4 +98,3 @@ public:
 	CMacroManagerBase();
 };
 
-#endif

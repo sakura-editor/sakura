@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CDOCVISITOR_76607605_5054_45B9_97F2_87A730043C5F_H_
-#define SAKURA_CDOCVISITOR_76607605_5054_45B9_97F2_87A730043C5F_H_
+#pragma once
 
 #include "CEol.h"
 
@@ -38,5 +37,4 @@ private:
 	CEditDoc* m_pcDocRef;
 };
 
-#endif /* SAKURA_CDOCVISITOR_76607605_5054_45B9_97F2_87A730043C5F_H_ */
 /*[EOF]*/

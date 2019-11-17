@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CAUTOSCROLLWND_H_
-#define SAKURA_CAUTOSCROLLWND_H_
+#pragma once
 
 #include "CWnd.h"
 class CEditView;
@@ -49,4 +48,4 @@ protected:
 	LRESULT OnMButtonDown(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;
 	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;
 };
-#endif
+

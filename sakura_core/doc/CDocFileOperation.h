@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CDOCFILEOPERATION_A537A9E9_2400_4A59_9188_3CC3A3966862_H_
-#define SAKURA_CDOCFILEOPERATION_A537A9E9_2400_4A59_9188_3CC3A3966862_H_
+#pragma once
 
 #include "doc/CDocListener.h" // SLoadInfo
 #include "CEol.h"
@@ -80,5 +79,4 @@ private:
 	CEditDoc* m_pcDocRef;
 };
 
-#endif /* SAKURA_CDOCFILEOPERATION_A537A9E9_2400_4A59_9188_3CC3A3966862_H_ */
 /*[EOF]*/

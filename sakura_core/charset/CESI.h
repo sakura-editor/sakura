@@ -30,8 +30,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CESI_B70CADC4_E43F_40D7_B87C_0C7C14ABDF41_H_
-#define SAKURA_CESI_B70CADC4_E43F_40D7_B87C_0C7C14ABDF41_H_
+#pragma once
 
 struct SEncodingConfig;
 
@@ -217,5 +216,4 @@ public:
 #endif
 };
 
-#endif /* SAKURA_CESI_B70CADC4_E43F_40D7_B87C_0C7C14ABDF41_H_ */
 /*[EOF]*/

@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_MAXDATA_CEFC5993_30DF_4A7C_981A_512B8CE6FD979_H_
-#define SAKURA_MAXDATA_CEFC5993_30DF_4A7C_981A_512B8CE6FD979_H_
+#pragma once
 
 /*! 最大値定義
 	@date 2007.10.19 kobake 新規作成
@@ -89,5 +88,4 @@ enum maxdata{
 	MAX_MAIN_MENU_NAME_LEN		= 40,	// メインメニュー名文字列長
 };
 
-#endif /* SAKURA_MAXDATA_CEFC5993_30DF_4A7C_981A_512B8CE6FD979_H_ */
 /*[EOF]*/

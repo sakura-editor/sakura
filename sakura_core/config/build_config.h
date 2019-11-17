@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_BUILD_CONFIG_26C6FCD0_99D7_4AF6_89C1_F34581417333_H_
-#define SAKURA_BUILD_CONFIG_26C6FCD0_99D7_4AF6_89C1_F34581417333_H_
+#pragma once
 
 //ビルド(コンパイル)設定
 //2007.10.18 kobake 作成
@@ -112,5 +111,4 @@ static const bool UNICODE_BOOL=true;
 #define ALPHA_VERSION
 #endif
 
-#endif /* SAKURA_BUILD_CONFIG_26C6FCD0_99D7_4AF6_89C1_F34581417333_H_ */
 /*[EOF]*/

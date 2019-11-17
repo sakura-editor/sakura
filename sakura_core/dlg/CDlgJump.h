@@ -13,11 +13,9 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
+#pragma once
 
 class CDlgJump;
-
-#ifndef _CDLGJUMP_H_
-#define _CDLGJUMP_H_
 
 #include "dlg/CDialog.h"
 //! 指定行へのジャンプダイアログボックス
@@ -50,5 +48,3 @@ protected:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CDLGJUMP_H_ */
-

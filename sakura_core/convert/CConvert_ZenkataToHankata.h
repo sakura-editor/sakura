@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CCONVERT_ZENKATATOHANKATA_28EBC9B6_53BD_41BA_8D20_140D90CAC3469_H_
-#define SAKURA_CCONVERT_ZENKATATOHANKATA_28EBC9B6_53BD_41BA_8D20_140D90CAC3469_H_
+#pragma once
 
 #include "CConvert.h"
 
@@ -33,5 +32,4 @@ public:
 	bool DoConvert(CNativeW* pcData) override;
 };
 
-#endif /* SAKURA_CCONVERT_ZENKATATOHANKATA_28EBC9B6_53BD_41BA_8D20_140D90CAC3469_H_ */
 /*[EOF]*/

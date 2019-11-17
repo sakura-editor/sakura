@@ -13,10 +13,9 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CFuncInfo;
+#pragma once
 
-#ifndef _CFUNCINFO_H_
-#define _CFUNCINFO_H_
+class CFuncInfo;
 
 #include "mem/CMemory.h"
 
@@ -53,5 +52,3 @@ class CFuncInfo {
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CFUNCINFO_H_ */
-

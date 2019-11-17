@@ -28,10 +28,9 @@
 		   distribution.
 */
 
-class CDlgCtrlCode;
+#pragma once
 
-#ifndef _CDLGCTRLCODE_H_
-#define _CDLGCTRLCODE_H_
+class CDlgCtrlCode;
 
 #include "dlg/CDialog.h"
 /*!
@@ -73,5 +72,3 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CDLGCTRLCODE_H_ */
-

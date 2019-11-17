@@ -17,8 +17,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef _CDLGOPENFILE_H_
-#define _CDLGOPENFILE_H_
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -117,5 +116,3 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CDLGOPENFILE_H_ */
-

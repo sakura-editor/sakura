@@ -29,8 +29,7 @@
 		   distribution.
 */
 
-#ifndef _CIMAGELIST_MGR_H_
-#define _CIMAGELIST_MGR_H_
+#pragma once
 
 #include "_main/global.h"
 
@@ -127,6 +126,4 @@ protected:
 	//! ビットマップを一行拡張する
 	void Extend(bool = true);
 };
-
-#endif
 

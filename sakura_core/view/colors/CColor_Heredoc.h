@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CCOLOR_HEREDOC_H_
-#define SAKURA_CCOLOR_HEREDOC_H_
+#pragma once
 
 #include "view/colors/CColorStrategy.h"
 
@@ -43,4 +42,3 @@ private:
 	int m_nCOMMENTEND;
 };
 
-#endif

@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CUTF8_EDEFA3B8_A37B_4416_9EC5_0A16659C92059_H_
-#define SAKURA_CUTF8_EDEFA3B8_A37B_4416_9EC5_0A16659C92059_H_
+#pragma once
 
 #include "CCodeBase.h"
 #include "charset/codeutil.h"
@@ -158,5 +157,4 @@ inline int CUtf8::_UniToUtf8_char( const unsigned short* pSrc, const int nSrcLen
 	return nret;
 }
 
-#endif /* SAKURA_CUTF8_EDEFA3B8_A37B_4416_9EC5_0A16659C92059_H_ */
 /*[EOF]*/

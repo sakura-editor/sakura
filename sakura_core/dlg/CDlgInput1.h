@@ -10,11 +10,9 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
+#pragma once
 
 class CDlgInput1;
-
-#ifndef _CDLGINPUT1_H_
-#define _CDLGINPUT1_H_
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -54,5 +52,3 @@ protected:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CDLGINPUT1_H_ */
-

@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CMRULISTENER_7C175242_808A_48BB_A4C2_93FA71274B999_H_
-#define SAKURA_CMRULISTENER_7C175242_808A_48BB_A4C2_93FA71274B999_H_
+#pragma once
 
 #include "doc/CDocListener.h"
 
@@ -45,5 +44,4 @@ protected:
 	void _HoldBookmarks_And_AddToMRU(); // Mar. 30, 2003 genta
 };
 
-#endif /* SAKURA_CMRULISTENER_7C175242_808A_48BB_A4C2_93FA71274B999_H_ */
 /*[EOF]*/

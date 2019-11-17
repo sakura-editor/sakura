@@ -23,8 +23,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CWORDPARSE_6C07A5B6_49DE_430F_A56F_9F2B003214FC9_H_
-#define SAKURA_CWORDPARSE_6C07A5B6_49DE_430F_A56F_9F2B003214FC9_H_
+#pragma once
 
 #include "basis/SakuraBasis.h"
 class CNativeW;
@@ -231,5 +230,4 @@ end_func:
 	return pr - pS;
 }
 
-#endif /* SAKURA_CWORDPARSE_6C07A5B6_49DE_430F_A56F_9F2B003214FC9_H_ */
 /*[EOF]*/

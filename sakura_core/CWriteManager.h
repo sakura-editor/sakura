@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CWRITEMANAGER_2F063818_9A9D_4BEF_830F_987AEBBCBB07_H_
-#define SAKURA_CWRITEMANAGER_2F063818_9A9D_4BEF_830F_987AEBBCBB07_H_
+#pragma once
 
 #include "doc/CDocListener.h"
 #include "charset/CCodeBase.h"
@@ -41,5 +40,4 @@ public:
 	);
 };
 
-#endif /* SAKURA_CWRITEMANAGER_2F063818_9A9D_4BEF_830F_987AEBBCBB07_H_ */
 /*[EOF]*/

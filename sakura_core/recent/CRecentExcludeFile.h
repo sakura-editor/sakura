@@ -21,8 +21,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CRECENTExcludeFILE_6DFF8FB2_B7D0_4828_8191_744A9580C467_H_
-#define SAKURA_CRECENTExcludeFILE_6DFF8FB2_B7D0_4828_8191_744A9580C467_H_
+#pragma once
 
 #include "CRecentImp.h"
 #include "util/StaticType.h"
@@ -45,5 +44,4 @@ public:
 	size_t			GetTextMaxLength() const;
 };
 
-#endif /* SAKURA_CRECENTExcludeFILE_6DFF8FB2_B7D0_4828_8191_744A9580C467_H_ */
 /*[EOF]*/

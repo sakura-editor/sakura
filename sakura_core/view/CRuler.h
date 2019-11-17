@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CRULER_CF213704_1CF6_427E_AD78_D628D2D1F9029_H_
-#define SAKURA_CRULER_CF213704_1CF6_427E_AD78_D628D2D1F9029_H_
+#pragma once
 
 class CTextArea;
 class CEditView;
@@ -74,5 +73,4 @@ private:
 	std::vector<DWORD> m_asz;
 };
 
-#endif /* SAKURA_CRULER_CF213704_1CF6_427E_AD78_D628D2D1F9029_H_ */
 /*[EOF]*/

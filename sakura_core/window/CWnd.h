@@ -14,8 +14,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef _CWND_H_
-#define _CWND_H_
+#pragma once
 
 #include <Windows.h>
 #include "_main/global.h"
@@ -132,5 +131,3 @@ private: // 2002/2/10 aroka アクセス権変更
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CWND_H_ */
-

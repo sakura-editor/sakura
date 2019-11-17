@@ -28,8 +28,7 @@
 		   distribution.
 */
 
-#ifndef SAKURA_CSORTED_TAGJUMP_LIST_H_
-#define SAKURA_CSORTED_TAGJUMP_LIST_H_
+#pragma once
 
 #include "util/design_template.h"
 
@@ -83,4 +82,3 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(CSortedTagJumpList);
 };
 
-#endif	//SAKURA_CSORTED_TAGJUMP_LIST_H_

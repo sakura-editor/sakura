@@ -18,8 +18,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef SAKURA_CDLGFUNCLIST_H_
-#define SAKURA_CDLGFUNCLIST_H_
+#pragma once
 
 #include <Windows.h>
 #include "dlg/CDialog.h"
@@ -224,5 +223,3 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* SAKURA_CDLGFUNCLIST_H_ */
-

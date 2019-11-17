@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CMYSIZE_1885EC13_14C3_4F76_9907_6AEAA9D83A7B9_H_
-#define SAKURA_CMYSIZE_1885EC13_14C3_4F76_9907_6AEAA9D83A7B9_H_
+#pragma once
 
 #include <Windows.h> //SIZE
 
@@ -42,5 +41,4 @@ public:
 	bool operator != (const SIZE& rhs) const{ return !operator==(rhs); }
 };
 
-#endif /* SAKURA_CMYSIZE_1885EC13_14C3_4F76_9907_6AEAA9D83A7B9_H_ */
 /*[EOF]*/

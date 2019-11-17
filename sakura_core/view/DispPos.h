@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_DISPPOS_5705EE1C_0A31_419D_81A1_07DA95E57D879_H_
-#define SAKURA_DISPPOS_5705EE1C_0A31_419D_81A1_07DA95E57D879_H_
+#pragma once
 
 #include "doc/CEditDoc.h"
 #include "doc/layout/CLayoutMgr.h"
@@ -115,5 +114,4 @@ private:
 	const CLayout*		m_pcLayoutRef;
 };
 
-#endif /* SAKURA_DISPPOS_5705EE1C_0A31_419D_81A1_07DA95E57D879_H_ */
 /*[EOF]*/

@@ -15,8 +15,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef SAKURA_CDLGREPLACE_H_
-#define SAKURA_CDLGREPLACE_H_
+#pragma once
 
 #include "dlg/CDialog.h"
 #include "recent/CRecent.h"
@@ -80,5 +79,3 @@ protected:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* SAKURA_CDLGREPLACE_H_ */
-

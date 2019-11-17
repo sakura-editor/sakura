@@ -34,8 +34,7 @@
 		   distribution.
 */
 
-#ifndef SAKURA_WINDOW_CTABWND_H_
-#define SAKURA_WINDOW_CTABWND_H_
+#pragma once
 
 #include "CWnd.h"
 #include "util/design_template.h"
@@ -205,6 +204,4 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(CTabWnd);
 };
-
-#endif /* SAKURA_WINDOW_CTABWND_H_ */
 

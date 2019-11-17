@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CDOCLOCKER_5E410382_D36E_46CE_B212_07F2F346FD3C_H_
-#define SAKURA_CDOCLOCKER_5E410382_D36E_46CE_B212_07F2F346FD3C_H_
+#pragma once
 
 #include "doc/CDocListener.h"
 
@@ -51,5 +50,4 @@ private:
 	bool m_bIsDocWritable;
 };
 
-#endif /* SAKURA_CDOCLOCKER_5E410382_D36E_46CE_B212_07F2F346FD3C_H_ */
 /*[EOF]*/

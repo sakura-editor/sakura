@@ -24,8 +24,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CTSVMODEINFO_BC141F5B_325B_4C02_9CC7_633B39FE482E1_H_
-#define SAKURA_CTSVMODEINFO_BC141F5B_325B_4C02_9CC7_633B39FE482E1_H_
+#pragma once
 
 #include <vector>
 #include "basis/SakuraBasis.h"
@@ -51,5 +50,5 @@ public:
 private:
 	std::vector<int> m_tabLength;
 };
-#endif /* SAKURA_CTSVMODEINFO_BC141F5B_325B_4C02_9CC7_633B39FE482E1_H_ */
+
 /*[EOF]*/

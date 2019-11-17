@@ -28,8 +28,7 @@
 		   distribution.
 */
 
-#ifndef _CMUTEX_H_
-#define _CMUTEX_H_
+#pragma once
 
 #include <Windows.h>
 
@@ -104,6 +103,4 @@ public:
 		o_.Unlock();
 	}
 };
-
-#endif /* _CMUTEX_H_ */
 

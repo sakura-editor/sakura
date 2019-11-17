@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CFIGURESTRATEGY_ADBE415F_6FA5_4412_9679_B0045ACE4881_H_
-#define SAKURA_CFIGURESTRATEGY_ADBE415F_6FA5_4412_9679_B0045ACE4881_H_
+#pragma once
 
 #include <vector>
 #include "view/colors/CColorStrategy.h" //SColorStrategyInfo
@@ -102,5 +101,4 @@ protected:
 	EColorIndexType m_nDispColorIndex;
 };
 
-#endif /* SAKURA_CFIGURESTRATEGY_ADBE415F_6FA5_4412_9679_B0045ACE4881_H_ */
 /*[EOF]*/

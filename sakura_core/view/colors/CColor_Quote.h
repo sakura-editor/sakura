@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CCOLOR_QUOTE_26330E31_5ADC_4753_92DD_7567B7BA4451_H_
-#define SAKURA_CCOLOR_QUOTE_26330E31_5ADC_4753_92DD_7567B7BA4451_H_
+#pragma once
 
 #include "view/colors/CColorStrategy.h"
 
@@ -73,5 +72,4 @@ public:
 	EColorIndexType GetStrategyColor() const override{ return COLORIDX_WSTRING; }
 };
 
-#endif /* SAKURA_CCOLOR_QUOTE_26330E31_5ADC_4753_92DD_7567B7BA4451_H_ */
 /*[EOF]*/

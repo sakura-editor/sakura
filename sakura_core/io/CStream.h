@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CSTREAM_BB8B6415_7CBF_48F0_9454_2AC4D39C7CD1_H_
-#define SAKURA_CSTREAM_BB8B6415_7CBF_48F0_9454_2AC4D39C7CD1_H_
+#pragma once
 
 class CFileAttribute;
 
@@ -99,5 +98,4 @@ public:
 	}
 };
 
-#endif /* SAKURA_CSTREAM_BB8B6415_7CBF_48F0_9454_2AC4D39C7CD1_H_ */
 /*[EOF]*/

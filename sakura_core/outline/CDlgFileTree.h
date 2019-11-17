@@ -28,8 +28,7 @@
 		   distribution.
 */
 
-#ifndef SAKURA_CDLGFILETREE_H_
-#define SAKURA_CDLGFILETREE_H_
+#pragma once
 
 #include "dlg/CDialog.h"
 #include "outline/CDlgFuncList.h"
@@ -69,6 +68,4 @@ private:
 
 	int					m_bInMove;
 };
-
-#endif /* SAKURA_CDLGFILETREE_H_ */
 

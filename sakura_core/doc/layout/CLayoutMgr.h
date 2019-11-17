@@ -19,8 +19,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef _CLAYOUTMGR_H_
-#define _CLAYOUTMGR_H_
+#pragma once
 
 #include <Windows.h>// 2002/2/10 aroka
 #include <vector>
@@ -433,5 +432,3 @@ protected:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CLAYOUTMGR_H_ */
-

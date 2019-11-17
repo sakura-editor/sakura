@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CRECENTREPLACE_0597B923_7C40_4B6A_BCCE_C35E043E7577_H_
-#define SAKURA_CRECENTREPLACE_0597B923_7C40_4B6A_BCCE_C35E043E7577_H_
+#pragma once
 
 #include "CRecentImp.h"
 #include "util/StaticType.h"
@@ -46,5 +45,4 @@ public:
 	size_t			GetTextMaxLength() const;
 };
 
-#endif /* SAKURA_CRECENTREPLACE_0597B923_7C40_4B6A_BCCE_C35E043E7577_H_ */
 /*[EOF]*/

@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_APP_CONSTANTS_AD36E2CE_B62E_497D_806F_6B9738310127_H_
-#define SAKURA_APP_CONSTANTS_AD36E2CE_B62E_497D_806F_6B9738310127_H_
+#pragma once
 
 #include "build_config.h"
 
@@ -57,5 +56,4 @@ const int MINLINEKETAS		= 10;		//!< 1行の桁数の最小値
 const int LINENUMWIDTH_MIN = 2;
 const int LINENUMWIDTH_MAX = 11;
 
-#endif /* SAKURA_APP_CONSTANTS_AD36E2CE_B62E_497D_806F_6B9738310127_H_ */
 /*[EOF]*/

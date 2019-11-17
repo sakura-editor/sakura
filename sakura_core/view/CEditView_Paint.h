@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CEDITVIEW_PAINT_AFF20D5A_4CE7_4858_89DB_BBF1A21A6BF9_H_
-#define SAKURA_CEDITVIEW_PAINT_AFF20D5A_4CE7_4858_89DB_BBF1A21A6BF9_H_
+#pragma once
 
 class CEditView;
 
@@ -49,5 +48,4 @@ public:
 	);
 };
 
-#endif /* SAKURA_CEDITVIEW_PAINT_AFF20D5A_4CE7_4858_89DB_BBF1A21A6BF9_H_ */
 /*[EOF]*/

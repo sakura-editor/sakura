@@ -11,8 +11,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef _CLINECOMMENT_H_
-#define _CLINECOMMENT_H_
+#pragma once
 
 //	sakura
 #include "_main/global.h"
@@ -52,5 +51,3 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CLINECOMMENT_H_ */
-

@@ -22,8 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_STRING_EX2_AA243462_59E7_4F55_B206_FD9ED8836A09_H_
-#define SAKURA_STRING_EX2_AA243462_59E7_4F55_B206_FD9ED8836A09_H_
+#pragma once
 
 class CEol;
 class CNativeA;
@@ -154,5 +153,4 @@ ptrdiff_t int2dec(
 	return len;
 }
 
-#endif /* SAKURA_STRING_EX2_AA243462_59E7_4F55_B206_FD9ED8836A09_H_ */
 /*[EOF]*/

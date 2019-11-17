@@ -24,8 +24,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_SHELL_A129670C_6564_4E0D_AF52_E323B0C7CA099_H_
-#define SAKURA_SHELL_A129670C_6564_4E0D_AF52_E323B0C7CA099_H_
+#pragma once
 
 BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData);	/* WinHelp のかわりに HtmlHelp を呼び出す */	// 2006.07.22 ryoji
 
@@ -46,5 +45,4 @@ INT_PTR MyPropertySheet( LPPROPSHEETHEADER lppsph );	// 独自拡張プロパテ
 //!フォント選択ダイアログ
 BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool );	// 2009.10.01 ryoji ポイントサイズ（1/10ポイント単位）引数追加
 
-#endif /* SAKURA_SHELL_A129670C_6564_4E0D_AF52_E323B0C7CA099_H_ */
 /*[EOF]*/

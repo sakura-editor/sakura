@@ -22,8 +22,7 @@
 		   distribution.
 */
 
-#ifndef SAKURA_CPOOLRESOURCE_H_
-#define SAKURA_CPOOLRESOURCE_H_
+#pragma once
 
 #include <memory_resource>
 #include <Windows.h>
@@ -134,4 +133,3 @@ private:
 	Node* m_currentNode = nullptr; // 要素確保処理時に現在のブロックの中から切り出すNodeを指すポインタ、メモリ確保時に未割当領域が無い場合はここを使う
 };
 
-#endif /* SAKURA_CPOOLRESOURCE_H_ */
