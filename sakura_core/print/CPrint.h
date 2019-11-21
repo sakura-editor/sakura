@@ -65,9 +65,9 @@ struct	MYDEVMODE {
 	bool operator == (const MYDEVMODE& rhs) const noexcept {
 		if (this == &rhs) return true;
 		return m_bPrinterNotFound == rhs.m_bPrinterNotFound
-			&& std::wstring_view(m_szPrinterDriverName) == rhs.m_szPrinterDriverName
-			&& std::wstring_view(m_szPrinterDeviceName) == rhs.m_szPrinterDeviceName
-			&& std::wstring_view(m_szPrinterOutputName) == rhs.m_szPrinterOutputName
+			&& 0 == std::wstring_view(m_szPrinterDriverName).compare(rhs.m_szPrinterDriverName)
+			&& 0 == std::wstring_view(m_szPrinterDeviceName).compare(rhs.m_szPrinterDeviceName)
+			&& 0 == std::wstring_view(m_szPrinterOutputName).compare(rhs.m_szPrinterOutputName)
 			&& dmFields == rhs.dmFields
 			&& dmOrientation == rhs.dmOrientation
 			&& dmPaperSize == rhs.dmPaperSize
@@ -82,7 +82,7 @@ struct	MYDEVMODE {
 			&& dmYResolution == rhs.dmYResolution
 			&& dmTTOption == rhs.dmTTOption
 			&& dmCollate == rhs.dmCollate
-			&& std::wstring_view(dmFormName) == rhs.dmFormName
+			&& 0 == std::wstring_view(dmFormName).compare(rhs.dmFormName)
 			&& dmLogPixels == rhs.dmLogPixels
 			&& dmBitsPerPel == rhs.dmBitsPerPel
 			&& dmPelsWidth == rhs.dmPelsWidth

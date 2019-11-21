@@ -268,10 +268,13 @@ TEST(MYDEVMODETest, operatorNotEqualAntiLazyCode)
 	MYDEVMODE value, other;
 
 	// スタック変数のアドレスをchar*にキャストしてデータを書き替える
+	// 最終メンバはNULLにし、文字列比較関数がNUL終端を誤検出するように仕向ける。
 	char* buf1 = reinterpret_cast<char*>(&value);
 	::memset(buf1, 'a', sizeof(MYDEVMODE));
+	value.dmDisplayFrequency = 0;
 	char* buf2 = reinterpret_cast<char*>(&other);
 	::memset(buf2, 'a', sizeof(MYDEVMODE));
+	other.dmDisplayFrequency = 0;
 
 	// まったく同じなので等価になる
 	EXPECT_TRUE(value == other);
@@ -309,23 +312,24 @@ TEST(MYDEVMODETest, StrategyForSegmentationFault)
 	EXPECT_TRUE(memBlock1 != NULL);
 
 	// 仮想メモリ全域をコミット(=確保)する。
-	wchar_t* buf1 = static_cast<wchar_t*>(::VirtualAlloc(memBlock1, allocSize, MEM_COMMIT, PAGE_READWRITE));
+	char* buf1 = static_cast<char*>(::VirtualAlloc(memBlock1, allocSize, MEM_COMMIT, PAGE_READWRITE));
 	EXPECT_TRUE(buf1 != NULL);
 
 	// 確保したメモリ全域をASCII文字'a'で埋める
-	::wmemset(buf1, L'a', pageSize);
+	::memset(buf1, 'a', allocSize);
+	buf1[pageSize] = '\0';
 
 	// 2ページ目の保護モードをNOACCESSにする。
 	DWORD flOldProtect = 0;
-	volatile BOOL retVirtualProtect = ::VirtualProtect((char*)buf1 + pageSize, pageSize, PAGE_NOACCESS, &flOldProtect);
+	volatile BOOL retVirtualProtect = ::VirtualProtect(&buf1[pageSize], pageSize, PAGE_NOACCESS, &flOldProtect);
 	EXPECT_TRUE(retVirtualProtect);
 
 	// メモリデータをテスト対象型にマップする。実態として配列のように扱えるポインタを取得している。
-	MYDEVMODE* pValues = reinterpret_cast<MYDEVMODE*>(buf1);
+	MYDEVMODE& other = *reinterpret_cast<MYDEVMODE*>(buf1);
 
-	// 例外判定用の巨大な文字列を作る。これは2ページ分のサイズを持つ巨大データ。
-	std::wstring largeString(pageSize, L'a');
-	const auto pLargeStr = largeString.c_str();
+	// 比較用の左辺値を作成する
+	std::string largeString(pageSize, L'a');
+	const MYDEVMODE& value = *reinterpret_cast<const MYDEVMODE*>(largeString.c_str());
 
 	/* DEATHテストで例外ケースの判定を行う。
 	 * pLargeStrには、コミットサイズの倍のデータが入っているので、
@@ -335,12 +339,12 @@ TEST(MYDEVMODETest, StrategyForSegmentationFault)
 	 * 備考：例外メッセージは無視する(例外が起きたことが検知できればよいから。)
 	 */
 	volatile int ret = 0;
-	ASSERT_DEATH({ ret = ::wcscmp(pValues[0].m_szPrinterDeviceName, pLargeStr); }, ".*");
+	ASSERT_DEATH({ ret = ::wcscmp(value.m_szPrinterDeviceName, other.m_szPrinterDeviceName); }, ".*");
 	(void)ret;
 
 	// 等価比較演算子を使った場合には落ちないことを確認する
-	EXPECT_TRUE(pValues[0] == pValues[1]);
-	EXPECT_FALSE(pValues[0] != pValues[1]);
+	EXPECT_TRUE(value == other);
+	EXPECT_FALSE(value != other);
 
 	// 仮想メモリをデコミット(=解放)する。
 	::VirtualFree((LPVOID)buf1, pageSize, MEM_DECOMMIT);
