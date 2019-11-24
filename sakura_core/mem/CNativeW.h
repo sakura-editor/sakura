@@ -79,7 +79,7 @@ public:
 	//演算子
 	CNativeW& operator = (const CNativeW& rhs)			{ CNative::operator=(rhs); return *this; }
 	CNativeW& operator = (CNativeW&& rhs) noexcept		{ CNative::operator=(std::forward<CNativeW>(rhs)); return *this; }
-	CNativeW  operator + (const CNativeW& rhs) const	{ return std::move(CNativeW(*this) += rhs); }
+	CNativeW  operator + (const CNativeW& rhs) const	{ return (CNativeW(*this) += rhs); }
 	CNativeW& operator += (const CNativeW& rhs)			{ AppendNativeData(rhs); return *this; }
 	CNativeW& operator += (wchar_t ch)					{ return (*this += CNativeW(&ch, 1)); }
 
