@@ -52,6 +52,7 @@
 #include "util/module.h"
 #include "util/string_ex2.h"
 #include "sakura_rc.h"
+#include <windowsx.h>
 
 //#if(WINVER >= 0x0500)
 #ifndef	SPI_GETFOREGROUNDLOCKTIMEOUT
@@ -312,10 +313,21 @@ LRESULT CTabWnd::OnTabMouseMove( WPARAM wParam, LPARAM lParam )
 {
 	TCHITTESTINFO	hitinfo;
 	int i;
-	int nTabCount;
-	hitinfo.pt.x = LOWORD( (DWORD)lParam );
-	hitinfo.pt.y = HIWORD( (DWORD)lParam );
+	int nTabCount = TabCtrl_GetItemCount(m_hwndTab);
+	hitinfo.pt.x = GET_X_LPARAM( lParam );
+	hitinfo.pt.y = GET_Y_LPARAM( lParam );
 	int nDstTab = TabCtrl_HitTest( m_hwndTab, (LPARAM)&hitinfo );
+
+	// 最後のタブより右の位置にドラッグした場合に最後のタブの位置にする
+	if (nDstTab == -1 && m_nTabBorderArray) {
+		if (hitinfo.pt.x >= m_nTabBorderArray[nTabCount - 1]) {
+			RECT rc;
+			GetClientRect(m_hwndTab, &rc);
+			if (hitinfo.pt.y >= rc.top && hitinfo.pt.y < rc.bottom) {
+				nDstTab = nTabCount - 1;
+			}
+		}
+	}
 
 	// 各タブの閉じるボタン描画用処理
 	EDispTabClose bDispTabClose = m_pShareData->m_Common.m_sTabBar.m_bDispTabClose;
@@ -393,8 +405,8 @@ LRESULT CTabWnd::OnTabMouseMove( WPARAM wParam, LPARAM lParam )
 		if( m_nTabBorderArray ){
 			delete[] m_nTabBorderArray;
 		}
-		m_nTabBorderArray = new LONG[nTabCount];
-		for (i = 0 ; i < nTabCount-1; i++) {
+		m_nTabBorderArray = new LONG[nTabCount + 1];
+		for (i = 0 ; i < nTabCount; i++) {
 			RECT rc;
 			TabCtrl_GetItemRect(m_hwndTab, i, &rc);
 			m_nTabBorderArray[ i ] = rc.right;
@@ -418,6 +430,8 @@ LRESULT CTabWnd::OnTabMouseMove( WPARAM wParam, LPARAM lParam )
 					break;
 				}
 			}
+			if (nDstTab >= nTabCount)
+				nDstTab = nTabCount - 1;
 
 			// ドラッグ中に即時移動
 			if( m_nSrcTab != nDstTab )
