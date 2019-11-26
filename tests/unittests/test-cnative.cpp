@@ -206,22 +206,6 @@ TEST(CNativeW, GetCharAtIndex)
 }
 
 /*!
- * @brief 代入演算子(文字指定)の仕様
- * @remark バッファが確保される
- * @remark 文字列長は1になる
- * @remark バッファサイズは1+1以上になる
- */
-TEST(CNativeW, AssignChar)
-{
-	constexpr const wchar_t sz[] = L"X";
-	CNativeW value;
-	value = sz[0];
-	ASSERT_STREQ(sz, value.GetStringPtr());
-	EXPECT_EQ(1, value.GetStringLength());
-	EXPECT_LT(1 + 1, value.capacity());
-}
-
-/*!
  * @brief 代入演算子(文字列指定)の仕様
  * @remark バッファが確保される
  * @remark 文字列長は指定した文字列の文字列長になる
@@ -253,23 +237,15 @@ TEST(CNativeW, AssignStringNullPointer)
 
 /*!
  * @brief 代入演算子(NULL指定)の仕様
- * @remark バッファが確保される
- * @remark 文字列長は1になる
- * @remark バッファサイズは1+1以上になる
- * @note バグですね(^^;
+ * @remark バッファを確保している場合は解放される
+ * @remark 文字列長はゼロになる
  */
 TEST(CNativeW, AssignStringNullLiteral)
 {
-	CNativeW value;
-#ifdef _MSC_VER
-	value = NULL; // operator = (wchar_t) と解釈される
-#else
-	value = static_cast<wchar_t>(NULL);
-#endif
-	ASSERT_STREQ(L"", value.GetStringPtr());
-	EXPECT_EQ(1, value.GetStringLength());
-	EXPECT_LT(1 + 1, value.capacity());
-	EXPECT_EQ(0, value[0]); // 長さ=1なので1文字目を参照できるが、NULが返ってくる
+	CNativeW value(L"test");
+	value = NULL;
+	ASSERT_EQ(NULL, value.GetStringPtr());
+	EXPECT_EQ(0, value.GetStringLength());
 }
 
 /*!
@@ -322,9 +298,7 @@ TEST(CNativeW, AppendStringNullPointer)
 /*!
  * @brief 加算代入演算子(NULL指定)の仕様
  * @remark バッファが確保される
- * @remark 文字列長は1になる
- * @remark バッファサイズは1+1以上になる
- * @note バグですね(^^;
+ * @remark 文字列長は演算子呼出前の文字列長+1になる
  */
 TEST(CNativeW, AppendStringNullLiteral)
 {
@@ -336,7 +310,6 @@ TEST(CNativeW, AppendStringNullLiteral)
 #endif
 	ASSERT_STREQ(L"", value.GetStringPtr());
 	EXPECT_EQ(1, value.GetStringLength());
-	EXPECT_LT(1 + 1, value.capacity());
 }
 
 /*!

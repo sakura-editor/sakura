@@ -46,8 +46,7 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar, bool bConvertEOL )
 	}
 
 	/* 現在位置にデータを挿入 */
-	CNativeW cmemDataW2;
-	cmemDataW2 = wcChar;
+	CNativeW cmemDataW2(&wcChar, 1);
 	if( WCODE::IsLineDelimiter(wcChar, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){ 
 		/* 現在、Enterなどで挿入する改行コードの種類を取得 */
 		if( bConvertEOL ){
