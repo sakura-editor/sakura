@@ -294,6 +294,8 @@ BOOL CViewCommander::HandleCommand(
 	case F_GOFILETOP:		Command_GOFILETOP( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ); break;				//ファイルの先頭に移動
 	case F_GOFILEEND:		Command_GOFILEEND( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ); break;				//ファイルの最後に移動
 	case F_CURLINECENTER:	Command_CURLINECENTER(); break;								/* カーソル行をウィンドウ中央へ */
+	case F_CURLINETOP:		Command_CURLINETOP(); break;								/* カーソル行をウィンドウ上部へ */
+	case F_CURLINEBOTTOM:	Command_CURLINEBOTTOM(); break;								/* カーソル行をウィンドウ下部へ */
 	case F_JUMPHIST_PREV:	Command_JUMPHIST_PREV(); break;								//移動履歴: 前へ
 	case F_JUMPHIST_NEXT:	Command_JUMPHIST_NEXT(); break;								//移動履歴: 次へ
 	case F_JUMPHIST_SET:	Command_JUMPHIST_SET(); break;								//現在位置を移動履歴に登録

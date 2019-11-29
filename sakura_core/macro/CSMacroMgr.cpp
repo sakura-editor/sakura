@@ -131,6 +131,8 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] =
 	{F_GOFILETOP,			LTEXT("GoFileTop"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ファイルの先頭に移動
 	{F_GOFILEEND,			LTEXT("GoFileEnd"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ファイルの最後に移動
 	{F_CURLINECENTER,		LTEXT("CurLineCenter"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル行をウィンドウ中央へ
+	{F_CURLINETOP,			LTEXT("CurLineTop"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル行をウィンドウ上部へ
+	{F_CURLINEBOTTOM,		LTEXT("CurLineBottom"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル行をウィンドウ下部へ
 	{F_JUMPHIST_PREV,		LTEXT("MoveHistPrev"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //移動履歴: 前へ
 	{F_JUMPHIST_NEXT,		LTEXT("MoveHistNext"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //移動履歴: 次へ
 	{F_JUMPHIST_SET,		LTEXT("MoveHistSet"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //現在位置を移動履歴に登録
@@ -972,6 +974,8 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	case F_WORDLEFT					://単語の左端に移動
 	case F_WORDRIGHT				://単語の右端に移動
 	case F_CURLINECENTER			://カーソル行をウィンドウ中央へ
+	case F_CURLINETOP				://カーソル行をウィンドウ上部へ
+	case F_CURLINEBOTTOM			://カーソル行をウィンドウ下部へ
 	case F_JUMPHIST_PREV			://移動履歴: 前へ
 	case F_JUMPHIST_NEXT			://移動履歴: 次へ
 	case F_JUMPHIST_SET				://現在位置を移動履歴に登録

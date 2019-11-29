@@ -176,6 +176,8 @@ public:
 	void Command_GOFILETOP( bool bSelect );			/* ファイルの先頭に移動 */
 	void Command_GOFILEEND( bool bSelect );			/* ファイルの最後に移動 */
 	void Command_CURLINECENTER( void );		/* カーソル行をウィンドウ中央へ */
+	void Command_CURLINETOP( void );		/* カーソル行をウィンドウ上部へ */
+	void Command_CURLINEBOTTOM( void );		/* カーソル行をウィンドウ下部へ */
 	void Command_JUMPHIST_PREV(void);		// 移動履歴: 前へ
 	void Command_JUMPHIST_NEXT(void);		// 移動履歴: 次へ
 	void Command_JUMPHIST_SET(void);		// 現在位置を移動履歴に登録

@@ -2374,6 +2374,8 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_CURLINECENTER         "カーソル行をウィンドウ中央へ"
+    F_CURLINETOP            "カーソル行をウィンドウ上部へ"
+    F_CURLINEBOTTOM         "カーソル行をウィンドウ下部へ"
 END
 
 STRINGTABLE DISCARDABLE 
