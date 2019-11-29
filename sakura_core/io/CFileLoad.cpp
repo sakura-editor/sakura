@@ -157,7 +157,6 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 {
 	HANDLE	hFile;
 	ULARGE_INTEGER	fileSize;
-	ECodeType	nBomCode;
 
 	// FileCloseを呼んでからにしてください
 	if( NULL != m_hFile ){
@@ -203,14 +202,9 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	// データ読み込み
 	Buffering();
 
-	nBomCode = CCodeMediator::DetectUnicodeBom( m_pReadBuf, m_nReadDataLen );
 	if( CharCode == CODE_AUTODETECT ){
-		if( nBomCode != CODE_NONE ){
-			CharCode = nBomCode;
-		}else{
-			CCodeMediator mediator(*m_pEencoding);
-			CharCode = mediator.CheckKanjiCode( m_pReadBuf, m_nReadDataLen );
-		}
+		CCodeMediator mediator(*m_pEencoding);
+		CharCode = mediator.CheckKanjiCode(m_pReadBuf, m_nReadDataLen);
 	}
 	// To Here Jun. 08, 2003
 	// 不正な文字コードのときはデフォルト(SJIS:無変換)を設定

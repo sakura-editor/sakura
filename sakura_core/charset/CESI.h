@@ -91,10 +91,14 @@ public:
 		m_eMetaName = CODE_NONE;
 	}
 
-	//! 調査結果の情報を格納
-	void SetInformation( const char *pS, const int nLen );
+	//! 日本語コードセット判定
+	ECodeType CheckKanjiCode(const char* buff, size_t size) noexcept;
 
 protected:
+	ECodeType DetectUnicodeBom(const char* pS, size_t nLen) noexcept;
+
+	//! 調査結果の情報を格納
+	void SetInformation( const char *pS, const int nLen );
 
 	//! 添え字に使われる優先順位表を作成
 	void InitPriorityTable( void );
@@ -215,5 +219,40 @@ public:
 	static void GetDebugInfo( const char* pS, const int nLen, CNativeW* pcmtxtOut );
 #endif
 };
+
+/*!
+	文字列の先頭にUnicode系BOMが付いているか？
+
+	@retval CODE_UNICODE   UTF-16 LE
+	@retval CODE_UTF8      UTF-8
+	@retval CODE_UNICODEBE UTF-16 BE
+	@retval CODE_NONE      未検出
+
+	@date 2007.08.11 charcode.cpp から移動
+	@date 2015.03.05 Moca UTF-7 BOMは無効に変更
+ */
+inline
+ECodeType CESI::DetectUnicodeBom(const char* buff, size_t size) noexcept
+{
+	if (!buff) return CODE_NONE;
+
+	constexpr const unsigned char szUtf8BOM[]{ 0xef, 0xbb, 0xbf };
+	constexpr const unsigned char szUtf16BeBOM[]{ 0xff, 0xfe };
+	constexpr const unsigned char szUtf16LeBOM[]{ 0xfe, 0xff };
+
+	if (size >= _countof(szUtf8BOM) - 1
+		&& 0 == ::memcmp(buff, szUtf8BOM, _countof(szUtf8BOM) - 1)) {
+		return CODE_UTF8;
+	}
+	if (size >= _countof(szUtf16BeBOM) - 1
+		&& 0 == ::memcmp(buff, szUtf16BeBOM, _countof(szUtf16BeBOM) - 1)) {
+		return CODE_UNICODEBE;
+	}
+	if (size >= _countof(szUtf16LeBOM) - 1
+		&& 0 == ::memcmp(buff, szUtf16LeBOM, _countof(szUtf16LeBOM) - 1)) {
+		return CODE_UNICODE;
+	}
+	return CODE_NONE;
+}
 
 /*[EOF]*/

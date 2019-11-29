@@ -24,30 +24,27 @@
 */
 #pragma once
 
-#include "charset/CESI.h"
-class CEditDoc;
+#include "types/CType.h" //SEncodingConfig
 
-class CCodeMediator{
-protected:
-	// CESI.cpp の判定関数をここに移す
-	static ECodeType DetectMBCode( CESI* pcesi );
-	static ECodeType DetectUnicode( CESI* pcesi );
-
+/*!
+ * @brief CCodeMediator クラス
+ * 
+ * 日本語コードセット判別の詳細を隠ぺいするための仲介クラスです。
+ */
+class CCodeMediator final {
 public:
-
-	explicit CCodeMediator( const SEncodingConfig &ref ) : m_pEncodingConfig(&ref) { }
-
-	static ECodeType DetectUnicodeBom( const char* pS, const int nLen );
+	explicit CCodeMediator(const SEncodingConfig &encodingConfig) noexcept
+		: m_sEncodingConfig(encodingConfig)
+	{
+	}
 
 	/* 日本語コードセット判別 */
-	ECodeType CheckKanjiCode( const char* pBuf, int nBufLen );
+	ECodeType CheckKanjiCode(const char* buff, size_t size) noexcept;
 	/* ファイルの日本語コードセット判別 */
-	ECodeType CheckKanjiCodeOfFile( const WCHAR* pszFile );
-
-	static ECodeType CheckKanjiCode( CESI* pcesi );  // CESI 構造体（？）を外部で構築した場合に使用
+	ECodeType CheckKanjiCodeOfFile(const WCHAR* pszFile);
 
 private:
-	const SEncodingConfig* m_pEncodingConfig;
+	const SEncodingConfig& m_sEncodingConfig;
 };
 
 /*[EOF]*/
