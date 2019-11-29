@@ -38,6 +38,42 @@
 #include "CPrint.h"
 #include "_main/global.h"
 
+/*
+	MYDEVMODE の比較演算子。
+*/
+#define LHS_EQ_RHS(MEMBER) ((lhs.MEMBER)==(rhs.MEMBER))
+#define L_WCSEQL_R(ARYMBR) (0==wcsncmp(lhs.ARYMBR, rhs.ARYMBR, _countof(lhs.ARYMBR)-1))
+bool operator == (const MYDEVMODE& lhs, const MYDEVMODE& rhs)
+{
+	return LHS_EQ_RHS(m_bPrinterNotFound)
+		&& L_WCSEQL_R(m_szPrinterDriverName)
+		&& L_WCSEQL_R(m_szPrinterDeviceName)
+		&& L_WCSEQL_R(m_szPrinterOutputName)
+		&& LHS_EQ_RHS(dmFields)
+		&& LHS_EQ_RHS(dmOrientation)
+		&& LHS_EQ_RHS(dmPaperSize)
+		&& LHS_EQ_RHS(dmPaperLength)
+		&& LHS_EQ_RHS(dmPaperWidth)
+		&& LHS_EQ_RHS(dmScale)
+		&& LHS_EQ_RHS(dmCopies)
+		&& LHS_EQ_RHS(dmDefaultSource)
+		&& LHS_EQ_RHS(dmPrintQuality)
+		&& LHS_EQ_RHS(dmColor)
+		&& LHS_EQ_RHS(dmDuplex)
+		&& LHS_EQ_RHS(dmYResolution)
+		&& LHS_EQ_RHS(dmTTOption)
+		&& LHS_EQ_RHS(dmCollate)
+		&& L_WCSEQL_R(dmFormName)
+		&& LHS_EQ_RHS(dmLogPixels)
+		&& LHS_EQ_RHS(dmBitsPerPel)
+		&& LHS_EQ_RHS(dmPelsWidth)
+		&& LHS_EQ_RHS(dmPelsHeight)
+		&& LHS_EQ_RHS(dmDisplayFlags)
+		&& LHS_EQ_RHS(dmDisplayFrequency);
+}
+#undef LHS_EQ_RHS
+#undef L_WCSEQL_R
+
 // 2006.08.14 Moca 用紙名一覧の重複削除・情報の統合
 const PAPER_INFO CPrint::m_paperInfoArr[] = {
 	// 	用紙ID, 幅
