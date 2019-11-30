@@ -826,23 +826,29 @@ void CViewCommander::Command_GOFILEEND( bool bSelect )
 	}
 }
 
+/* nViewTopLineをウィンドウの上部へ */
+void CViewCommander::MoveViewTopLine(CLayoutInt nViewTopLine)
+{
+	// sui 02/08/09
+	if (0 > nViewTopLine)	nViewTopLine = CLayoutInt(0);
+
+	CLayoutInt nScrollLines = nViewTopLine - m_pCommanderView->GetTextArea().GetViewTopLine();	//Sep. 11, 2004 genta 同期用に行数を記憶
+	m_pCommanderView->GetTextArea().SetViewTopLine(nViewTopLine);
+	/* フォーカス移動時の再描画 */
+	m_pCommanderView->RedrawAll();
+	// sui 02/08/09
+
+	//	Sep. 11, 2004 genta 同期スクロールの関数化
+	m_pCommanderView->SyncScrollV(nScrollLines);
+}
+
 /* カーソル行をウィンドウ中央へ */
 void CViewCommander::Command_CURLINECENTER( void )
 {
 	CLayoutInt		nViewTopLine;
 	nViewTopLine = GetCaret().GetCaretLayoutPos().GetY2() - ( m_pCommanderView->GetTextArea().m_nViewRowNum / 2 );
 
-	// sui 02/08/09
-	if( 0 > nViewTopLine )	nViewTopLine = CLayoutInt(0);
-	
-	CLayoutInt nScrollLines = nViewTopLine - m_pCommanderView->GetTextArea().GetViewTopLine();	//Sep. 11, 2004 genta 同期用に行数を記憶
-	m_pCommanderView->GetTextArea().SetViewTopLine( nViewTopLine );
-	/* フォーカス移動時の再描画 */
-	m_pCommanderView->RedrawAll();
-	// sui 02/08/09
-
-	//	Sep. 11, 2004 genta 同期スクロールの関数化
-	m_pCommanderView->SyncScrollV( nScrollLines );
+	MoveViewTopLine(nViewTopLine);
 }
 
 /* カーソル行をウィンドウ上部へ */
@@ -851,17 +857,7 @@ void CViewCommander::Command_CURLINETOP(void)
 	CLayoutInt		nViewTopLine;
 	nViewTopLine = GetCaret().GetCaretLayoutPos().GetY2();
 
-	// sui 02/08/09
-	if (0 > nViewTopLine)	nViewTopLine = CLayoutInt(0);
-
-	CLayoutInt nScrollLines = nViewTopLine - m_pCommanderView->GetTextArea().GetViewTopLine();	//Sep. 11, 2004 genta 同期用に行数を記憶
-	m_pCommanderView->GetTextArea().SetViewTopLine(nViewTopLine);
-	/* フォーカス移動時の再描画 */
-	m_pCommanderView->RedrawAll();
-	// sui 02/08/09
-
-	//	Sep. 11, 2004 genta 同期スクロールの関数化
-	m_pCommanderView->SyncScrollV(nScrollLines);
+	MoveViewTopLine(nViewTopLine);
 }
 
 /* カーソル行をウィンドウ下部へ */
@@ -870,17 +866,7 @@ void CViewCommander::Command_CURLINEBOTTOM(void)
 	CLayoutInt		nViewTopLine;
 	nViewTopLine = GetCaret().GetCaretLayoutPos().GetY2() - (m_pCommanderView->GetTextArea().m_nViewRowNum);
 
-	// sui 02/08/09
-	if (0 > nViewTopLine)	nViewTopLine = CLayoutInt(0);
-
-	CLayoutInt nScrollLines = nViewTopLine - m_pCommanderView->GetTextArea().GetViewTopLine();	//Sep. 11, 2004 genta 同期用に行数を記憶
-	m_pCommanderView->GetTextArea().SetViewTopLine(nViewTopLine);
-	/* フォーカス移動時の再描画 */
-	m_pCommanderView->RedrawAll();
-	// sui 02/08/09
-
-	//	Sep. 11, 2004 genta 同期スクロールの関数化
-	m_pCommanderView->SyncScrollV(nScrollLines);
+	MoveViewTopLine(nViewTopLine);
 }
 
 //	移動履歴を前へたどる
