@@ -13,6 +13,10 @@
 
 #pragma once
 
+#include <vector>
+
+#include "mem/CNativeW.h"
+
 //! アンドゥバッファ用 操作コード
 enum EOpeCode {
 	OPE_UNKNOWN		= 0, //!< 不明(未使用)
@@ -22,23 +26,25 @@ enum EOpeCode {
 	OPE_MOVECARET	= 4, //!< キャレット移動
 };
 
-class CLineData {
+class CLineData final {
 public:
 	CNativeW cmemLine;
 	int nSeq;
-	void swap(CLineData& o){
+	CLineData() = default;
+	CLineData(const CLineData& source) = default;
+	CLineData(CLineData&& other) noexcept {
+		swap(other);
+	}
+	void swap(CLineData& o) noexcept {
 		std::swap(cmemLine, o.cmemLine);
 		std::swap(nSeq, o.nSeq);
 	}
-};
-
-namespace std {
-template <>
-	inline void swap(CLineData& n1, CLineData& n2)
-	{
-		n1.swap(n2);
+	CLineData& operator = (const CLineData& rhs) = default;
+	CLineData& operator = (CLineData&& rhs) noexcept {
+		swap(rhs);
+		return *this;
 	}
-}
+};
 
 typedef std::vector<CLineData> COpeLineData;
 
