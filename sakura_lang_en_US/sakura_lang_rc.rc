@@ -2379,6 +2379,8 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_CURLINECENTER         "Center Current Line"
+    F_CURLINETOP            "Top Current Line"
+    F_CURLINEBOTTOM         "Bottom Current Line"
 END
 
 STRINGTABLE DISCARDABLE 
