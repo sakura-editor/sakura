@@ -1,6 +1,7 @@
 ﻿/*! @file */
 #include "StdAfx.h"
 #include "charset/CCodeMediator.h"
+#include "charset/icu4c/CharsetDetector.h"
 #include "charset/CESI.h"
 #include "io/CBinaryStream.h"
 
@@ -21,6 +22,13 @@ ECodeType CCodeMediator::CheckKanjiCode(const char* buff, size_t size) noexcept
 	// 0バイトならタイプ別のデフォルト設定
 	if (size == 0) {
 		return m_sEncodingConfig.m_eDefaultCodetype;
+	}
+
+	// ICU4CのDLL群が利用できる場合、ICU4Cによる判定を試みる
+	CharsetDetector csd;
+	if (csd.IsAvailable()) {
+		auto code = csd.Detect(std::string_view(buff, size));
+		if (code != CODE_ERROR) return code;
 	}
 
 	CESI cesi(m_sEncodingConfig);

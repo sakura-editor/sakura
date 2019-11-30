@@ -119,6 +119,9 @@
     <Filter Include="Cpp Source Files\uiparts">
       <UniqueIdentifier>{930f3f82-ab3f-49e3-af4a-d4f9c2d51f46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Cpp Source Files\charset\icu4c">
+      <UniqueIdentifier>{e4629f85-3be8-4dda-80db-1be310929433}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\sakura_core\Funccode_define.h">
@@ -1084,6 +1087,12 @@
     </ClInclude>
     <ClInclude Include="..\sakura_core\mem\CPoolResource.h">
       <Filter>Cpp Source Files\mem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\extmodule\CIcu4cI18n.h">
+      <Filter>Cpp Source Files\extmodule</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\charset\icu4c\CharsetDetector.h">
+      <Filter>Cpp Source Files\charset\icu4c</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2251,6 +2260,12 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\dlg\CDlgOpenFile_CommonItemDialog.cpp">
       <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\extmodule\CIcu4cI18n.cpp">
+      <Filter>Cpp Source Files\extmodule</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\charset\icu4c\CharsetDetector.cpp">
+      <Filter>Cpp Source Files\charset\icu4c</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
