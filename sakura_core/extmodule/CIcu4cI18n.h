@@ -40,11 +40,11 @@ typedef enum UErrorCode {
 class CIcu4cI18n final : public CDllImp
 {
 	// DLL関数型定義
-	typedef UCharsetDetector*		(_cdecl *ucsdet_open_t)(UErrorCode *status);
-	typedef void					(_cdecl *ucsdet_setText_t)(UCharsetDetector *ucsd, const char *textIn, int32_t len, UErrorCode *status);
-	typedef const UCharsetMatch *	(_cdecl *ucsdet_detect_t)(UCharsetDetector *ucsd, UErrorCode *status);
-	typedef const char*				(_cdecl *ucsdet_getName_t)(const UCharsetMatch *ucsm, UErrorCode *status);
-	typedef void					(_cdecl *ucsdet_close_t)(UCharsetDetector *ucsd);
+	typedef UCharsetDetector*		(__cdecl *ucsdet_open_t)(UErrorCode *status);
+	typedef void					(__cdecl *ucsdet_setText_t)(UCharsetDetector *ucsd, const char *textIn, int32_t len, UErrorCode *status);
+	typedef const UCharsetMatch *	(__cdecl *ucsdet_detect_t)(UCharsetDetector *ucsd, UErrorCode *status);
+	typedef const char*				(__cdecl *ucsdet_getName_t)(const UCharsetMatch *ucsm, UErrorCode *status);
+	typedef void					(__cdecl *ucsdet_close_t)(UCharsetDetector *ucsd);
 
 	// メンバ定義
 	ucsdet_open_t		_ucsdet_open;
