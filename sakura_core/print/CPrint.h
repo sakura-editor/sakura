@@ -44,22 +44,6 @@ struct	MYDEVMODE {
 	short	dmPaperSize;
 	short	dmPaperLength;
 	short	dmPaperWidth;
-	short	dmScale;
-	short	dmCopies;
-	short	dmDefaultSource;
-	short	dmPrintQuality;
-	short	dmColor;
-	short	dmDuplex;
-	short	dmYResolution;
-	short	dmTTOption;
-	short	dmCollate;
-	BCHAR	dmFormName[CCHFORMNAME];
-	WORD	dmLogPixels;
-	DWORD	dmBitsPerPel;
-	DWORD	dmPelsWidth;
-	DWORD	dmPelsHeight;
-	DWORD	dmDisplayFlags;
-	DWORD	dmDisplayFrequency;
 
 	//! 等価比較演算子
 	bool operator == (const MYDEVMODE& rhs) const noexcept {
@@ -73,22 +57,7 @@ struct	MYDEVMODE {
 			&& dmPaperSize == rhs.dmPaperSize
 			&& dmPaperLength == rhs.dmPaperLength
 			&& dmPaperWidth == rhs.dmPaperWidth
-			&& dmScale == rhs.dmScale
-			&& dmCopies == rhs.dmCopies
-			&& dmDefaultSource == rhs.dmDefaultSource
-			&& dmPrintQuality == rhs.dmPrintQuality
-			&& dmColor == rhs.dmColor
-			&& dmDuplex == rhs.dmDuplex
-			&& dmYResolution == rhs.dmYResolution
-			&& dmTTOption == rhs.dmTTOption
-			&& dmCollate == rhs.dmCollate
-			&& 0 == wcsncmp(dmFormName, rhs.dmFormName, _countof(dmFormName))
-			&& dmLogPixels == rhs.dmLogPixels
-			&& dmBitsPerPel == rhs.dmBitsPerPel
-			&& dmPelsWidth == rhs.dmPelsWidth
-			&& dmPelsHeight == rhs.dmPelsHeight
-			&& dmDisplayFlags == rhs.dmDisplayFlags
-			&& dmDisplayFrequency == rhs.dmDisplayFrequency;
+			;
 	}
 	//! 否定の等価比較演算子
 	bool operator != (const MYDEVMODE& rhs) const noexcept {

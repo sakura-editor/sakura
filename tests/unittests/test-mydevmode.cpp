@@ -50,22 +50,6 @@ static constexpr MYDEVMODE myDevMode = {
 	std::numeric_limits<short>::min(), //short	dmPaperSize;
 	std::numeric_limits<short>::min(), //short	dmPaperLength;
 	std::numeric_limits<short>::min(), //short	dmPaperWidth;
-	std::numeric_limits<short>::min(), //short	dmScale;
-	std::numeric_limits<short>::min(), //short	dmCopies;
-	std::numeric_limits<short>::min(), //short	dmDefaultSource;
-	std::numeric_limits<short>::min(), //short	dmPrintQuality;
-	std::numeric_limits<short>::min(), //short	dmColor;
-	std::numeric_limits<short>::min(), //short	dmDuplex;
-	std::numeric_limits<short>::min(), //short	dmYResolution;
-	std::numeric_limits<short>::min(), //short	dmTTOption;
-	std::numeric_limits<short>::min(), //short	dmCollate;
-	{L"dmFormName"}, //BCHAR	dmFormName[CCHFORMNAME];
-	std::numeric_limits<WORD>::min(), //WORD	dmLogPixels;
-	std::numeric_limits<DWORD>::min(), //DWORD	dmBitsPerPel;
-	std::numeric_limits<DWORD>::min(), //DWORD	dmPelsWidth;
-	std::numeric_limits<DWORD>::min(), //DWORD	dmPelsHeight;
-	std::numeric_limits<DWORD>::min(), //DWORD	dmDisplayFlags;
-	std::numeric_limits<DWORD>::min(), //DWORD	dmDisplayFrequency;
 };
 
 /*!
@@ -175,86 +159,6 @@ TEST(MYDEVMODETest, operatorNotEqual)
 	value.dmPaperWidth = std::numeric_limits<decltype(value.dmPaperWidth)>::max();
 	EXPECT_NE(myDevMode, value);
 	value.dmPaperWidth = myDevMode.dmPaperWidth;
-	EXPECT_EQ(myDevMode, value);
-
-	value.dmScale = std::numeric_limits<decltype(value.dmScale)>::max();
-	EXPECT_NE(myDevMode, value);
-	value.dmScale = myDevMode.dmScale;
-	EXPECT_EQ(myDevMode, value);
-
-	value.dmCopies = std::numeric_limits<decltype(value.dmCopies)>::max();
-	EXPECT_NE(myDevMode, value);
-	value.dmCopies = myDevMode.dmCopies;
-	EXPECT_EQ(myDevMode, value);
-
-	value.dmDefaultSource = std::numeric_limits<decltype(value.dmDefaultSource)>::max();
-	EXPECT_NE(myDevMode, value);
-	value.dmDefaultSource = myDevMode.dmDefaultSource;
-	EXPECT_EQ(myDevMode, value);
-
-	value.dmPrintQuality = std::numeric_limits<decltype(value.dmPrintQuality)>::max();
-	EXPECT_NE(myDevMode, value);
-	value.dmPrintQuality = myDevMode.dmPrintQuality;
-	EXPECT_EQ(myDevMode, value);
-
-	value.dmColor = std::numeric_limits<decltype(value.dmColor)>::max();
-	EXPECT_NE(myDevMode, value);
-	value.dmColor = myDevMode.dmColor;
-	EXPECT_EQ(myDevMode, value);
-
-	value.dmDuplex = std::numeric_limits<decltype(value.dmDuplex)>::max();
-	EXPECT_NE(myDevMode, value);
-	value.dmDuplex = myDevMode.dmDuplex;
-	EXPECT_EQ(myDevMode, value);
-
-	value.dmYResolution = std::numeric_limits<decltype(value.dmYResolution)>::max();
-	EXPECT_NE(myDevMode, value);
-	value.dmYResolution = myDevMode.dmYResolution;
-	EXPECT_EQ(myDevMode, value);
-
-	value.dmTTOption = std::numeric_limits<decltype(value.dmTTOption)>::max();
-	EXPECT_NE(myDevMode, value);
-	value.dmTTOption = myDevMode.dmTTOption;
-	EXPECT_EQ(myDevMode, value);
-
-	value.dmCollate = std::numeric_limits<decltype(value.dmCollate)>::max();
-	EXPECT_NE(myDevMode, value);
-	value.dmCollate = myDevMode.dmCollate;
-	EXPECT_EQ(myDevMode, value);
-
-	::wcscpy_s(value.dmFormName, L"FormName");
-	EXPECT_NE(myDevMode, value);
-	::wcscpy_s(value.dmFormName, myDevMode.dmFormName);
-	EXPECT_EQ(myDevMode, value);
-
-	value.dmLogPixels = std::numeric_limits<decltype(value.dmLogPixels)>::max();
-	EXPECT_NE(myDevMode, value);
-	value.dmLogPixels = myDevMode.dmLogPixels;
-	EXPECT_EQ(myDevMode, value);
-
-	value.dmBitsPerPel = std::numeric_limits<decltype(value.dmBitsPerPel)>::max();
-	EXPECT_NE(myDevMode, value);
-	value.dmBitsPerPel = myDevMode.dmBitsPerPel;
-	EXPECT_EQ(myDevMode, value);
-
-	value.dmPelsWidth = std::numeric_limits<decltype(value.dmPelsWidth)>::max();
-	EXPECT_NE(myDevMode, value);
-	value.dmPelsWidth = myDevMode.dmPelsWidth;
-	EXPECT_EQ(myDevMode, value);
-
-	value.dmPelsHeight = std::numeric_limits<decltype(value.dmPelsHeight)>::max();
-	EXPECT_NE(myDevMode, value);
-	value.dmPelsHeight = myDevMode.dmPelsHeight;
-	EXPECT_EQ(myDevMode, value);
-
-	value.dmDisplayFlags = std::numeric_limits<decltype(value.dmDisplayFlags)>::max();
-	EXPECT_NE(myDevMode, value);
-	value.dmDisplayFlags = myDevMode.dmDisplayFlags;
-	EXPECT_EQ(myDevMode, value);
-
-	value.dmDisplayFrequency = std::numeric_limits<decltype(value.dmDisplayFrequency)>::max();
-	EXPECT_NE(myDevMode, value);
-	value.dmDisplayFrequency = myDevMode.dmDisplayFrequency;
 	EXPECT_EQ(myDevMode, value);
 }
 
