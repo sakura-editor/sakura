@@ -35,10 +35,14 @@ public:
 	CLineData(CLineData&& other) noexcept {
 		swap(other);
 	}
+
+private:
 	void swap(CLineData& o) noexcept {
 		std::swap(cmemLine, o.cmemLine);
 		std::swap(nSeq, o.nSeq);
 	}
+
+public:
 	CLineData& operator = (const CLineData& rhs) = default;
 	CLineData& operator = (CLineData&& rhs) noexcept {
 		swap(rhs);
