@@ -234,24 +234,34 @@ public:
 inline
 ECodeType CESI::DetectUnicodeBom(const char* buff, size_t size) noexcept
 {
-	if (!buff) return CODE_NONE;
+	// バイト列がない、または、BOM表現を格納できるサイズに満たない場合、判定をスキップ
+	if (!buff || size < 2) return CODE_NONE;
 
-	constexpr const unsigned char szUtf8BOM[]{ 0xef, 0xbb, 0xbf };
-	constexpr const unsigned char szUtf16BeBOM[]{ 0xff, 0xfe };
-	constexpr const unsigned char szUtf16LeBOM[]{ 0xfe, 0xff };
-
-	if (size >= _countof(szUtf8BOM) - 1
-		&& 0 == ::memcmp(buff, szUtf8BOM, _countof(szUtf8BOM) - 1)) {
+	// バイト列の先頭が \ufeff の utf8 表現と一致するか判定
+	constexpr const BYTE utf8BOM[]{ 0xef, 0xbb, 0xbf };
+	if (size >= _countof(utf8BOM) && 0 == ::memcmp(buff, utf8BOM, _countof(utf8BOM))) {
 		return CODE_UTF8;
 	}
-	if (size >= _countof(szUtf16BeBOM) - 1
-		&& 0 == ::memcmp(buff, szUtf16BeBOM, _countof(szUtf16BeBOM) - 1)) {
+
+	// バイト列の先頭が \ufeff の utf16BE 表現と一致するか判定
+	constexpr const BYTE utf16BeBOM[]{ 0xfe, 0xff };
+	if (size >= _countof(utf16BeBOM) && 0 == ::memcmp(buff, utf16BeBOM, _countof(utf16BeBOM))) {
 		return CODE_UNICODEBE;
 	}
-	if (size >= _countof(szUtf16LeBOM) - 1
-		&& 0 == ::memcmp(buff, szUtf16LeBOM, _countof(szUtf16LeBOM) - 1)) {
+
+	// バイト列の先頭が \ufeff の utf16LE 表現と一致するか判定
+	constexpr const BYTE utf16LeBOM[]{ 0xff, 0xfe };
+	if (size >= _countof(utf16LeBOM) && 0 == ::memcmp(buff, utf16LeBOM, _countof(utf16LeBOM))) {
 		return CODE_UNICODE;
 	}
+
+	// UTF-7 は ASCII 7bit 文字 でない文字を UTF-16BE で符号化してから 修正BASE64 で 符号化する。
+	// Base64 の符号化は 6bit単位 なので BOM に続く文字が非7bit文字な場合、4バイト目がブレる。
+	// このため、 UTF-7 については BOM による判別ロジック省略の対象から外している。
+	// 
+	// (BOM)abc ⇒ (UTF-7変換) ⇒ +/v8-abc
+	// (BOM)ｱｲｳ ⇒ (UTF-7変換) ⇒ +/v//cf9y/3M-
+
 	return CODE_NONE;
 }
 
