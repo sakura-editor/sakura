@@ -900,8 +900,7 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 			++(pArg->nDeletedLineNum);
 			/* 行オブジェクトの削除、リスト変更、行数-- */
 			if( pArg->pcmemDeleted ){
-				pArg->pcmemDeleted->emplace_back(CLineData());
-				CLineData& delLine = pArg->pcmemDeleted->back();
+				CLineData& delLine = pArg->pcmemDeleted->emplace_back(CLineData());
 				delLine.cmemLine.swap(pCDocLine->_GetDocLineData()); // CDocLine書き換え
 				delLine.nSeq = CModifyVisitor().GetLineModifiedSeq(pCDocLine);
 			}
@@ -915,14 +914,12 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 					// 1行以内の行末削除のときだけ、次の行のseqが保存されないので必要
 					// 2014.01.07 最後が改行の範囲を最後が改行のデータで置換した場合を変更
 					if( !bLastEOLReplace ){
-						pArg->pcmemDeleted->emplace_back(CLineData());
-						CLineData& delLine =  pArg->pcmemDeleted->back();
+						CLineData& delLine = pArg->pcmemDeleted->emplace_back(CLineData());
 						delLine.cmemLine.SetString(L"");
 						delLine.nSeq = CModifyVisitor().GetLineModifiedSeq(pCDocLineNext);
 					}
 				}
-				pArg->pcmemDeleted->emplace_back(CLineData());
-				CLineData& delLine = pArg->pcmemDeleted->back();
+				CLineData& delLine = pArg->pcmemDeleted->emplace_back(CLineData());
 				delLine.cmemLine.SetString(&pLine[nWorkPos], nWorkLen);
 				delLine.nSeq = CModifyVisitor().GetLineModifiedSeq(pCDocLine);
 			}
@@ -999,8 +996,7 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 		else{
 			/* 行内だけの削除 */
 			if( pArg->pcmemDeleted ){
-				pArg->pcmemDeleted->emplace_back(CLineData());
-				CLineData& delLine =  pArg->pcmemDeleted->back();
+				CLineData& delLine = pArg->pcmemDeleted->emplace_back(CLineData());
 				delLine.cmemLine.SetString(&pLine[nWorkPos], nWorkLen);
 				delLine.nSeq = CModifyVisitor().GetLineModifiedSeq(pCDocLine);
 			}

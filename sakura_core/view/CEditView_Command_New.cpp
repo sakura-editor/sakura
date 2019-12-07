@@ -47,16 +47,14 @@ static void StringToOpeLineData(const wchar_t* pLineData, int nLineDataLen, COpe
 			if( i + 1 < nLineDataLen && WCODE::CR == pLineData[i] && WCODE::LF == pLineData[i + 1] ){
 				i++;
 			}
-			lineData.emplace_back(CLineData());
-			CLineData& insertLine = lineData[lineData.size()-1];
+			CLineData& insertLine = lineData.emplace_back(CLineData());
 			insertLine.cmemLine.SetString(&pLineData[nBegin], i - nBegin + 1);
 			insertLine.nSeq = opeSeq;
 			nBegin = i + 1;
 		}
 	}
 	if( nBegin < i ){
-		lineData.emplace_back(CLineData());
-		CLineData& insertLine = lineData[lineData.size()-1];
+		CLineData& insertLine = lineData.emplace_back(CLineData());
 		insertLine.cmemLine.SetString(&pLineData[nBegin], nLineDataLen - nBegin);
 		insertLine.nSeq = opeSeq;
 	}
