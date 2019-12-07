@@ -82,6 +82,21 @@ public:
 	CNativeW  operator + (const CNativeW& rhs) const	{ return (CNativeW(*this) += rhs); }
 	CNativeW& operator += (const CNativeW& rhs)			{ AppendNativeData(rhs); return *this; }
 	CNativeW& operator += (wchar_t ch)					{ return (*this += CNativeW(&ch, 1)); }
+	bool operator == (const CNativeW& rhs) const noexcept {
+		if (this == &rhs) return true;
+		if (!capacity() || !rhs.capacity()) return (capacity() == rhs.capacity());
+		return GetStringLength() == rhs.GetStringLength()
+			&& 0 == wmemcmp(GetStringPtr(), rhs.GetStringPtr(), GetStringLength());
+	}
+	bool operator != (const CNativeW& rhs) const noexcept { return !(*this == rhs); }
+	bool operator == (const wchar_t* rhs) const noexcept {
+		if (rhs == nullptr) return !capacity();
+		if (!capacity()) return false;
+		auto rhsLen = wcsnlen(rhs, GetStringLength() + 1);
+		return GetStringLength() == rhsLen
+			&& 0 == wcsncmp(GetStringPtr(), rhs, GetStringLength());
+	}
+	bool operator != (const wchar_t* rhs) const noexcept { return !(*this == rhs); }
 
 	//ネイティブ取得インターフェース
 	wchar_t operator[](int nIndex) const;                    //!< 任意位置の文字取得。nIndexは文字単位。
@@ -101,7 +116,7 @@ public:
 	//特殊
 	void _SetStringLength(int nLength)
 	{
-		_GetMemory()->_SetRawLength(nLength*sizeof(wchar_t));
+		CNative::_SetRawLength(nLength*sizeof(wchar_t));
 	}
 	//末尾を1文字削る
 	void Chop()
@@ -113,10 +128,10 @@ public:
 		}
 	}
 	void swap( CNativeW& left ){
-		_GetMemory()->swap( *left._GetMemory() );
+		CNative::swap(left);
 	}
-	int capacity(){
-		return _GetMemory()->capacity() / sizeof(wchar_t);
+	int capacity() const noexcept {
+		return CNative::capacity() / sizeof(wchar_t);
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

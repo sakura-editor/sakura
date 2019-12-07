@@ -292,7 +292,7 @@ TEST(CNativeW, AppendStringNullPointer)
 	CNativeW value(org);
 	value += nullptr;
 	EXPECT_EQ(value.GetStringLength(), org.GetStringLength());
-	EXPECT_TRUE(CNativeW::IsEqual(value, org));
+	EXPECT_EQ(org, value);
 }
 
 /*!
@@ -321,6 +321,229 @@ TEST(CNativeW, AppendStringWithFormatting)
 	CNativeW value;
 	value.AppendStringF(L"いちご%d%%", 100);
 	ASSERT_STREQ(L"いちご100%", value.GetStringPtr());
+}
+
+/*!
+ * @brief 等価比較演算子のテスト
+ *  初期値同士の等価比較を行う
+ */
+TEST(CNativeW, operatorEqualNull)
+{
+	CNativeW value, other;
+	ASSERT_EQ(value, other);
+}
+
+/*!
+ * @brief 等価比較演算子のテスト
+ *  nullptrとの等価比較を行う
+ */
+TEST(CNativeW, operatorEqualNullptr)
+{
+	CNativeW value;
+	ASSERT_EQ(value, nullptr);
+}
+
+/*!
+ * @brief 等価比較演算子のテスト
+ *  ポインタ(値がNULL)との等価比較を行う
+ */
+TEST(CNativeW, operatorEqualStringNull)
+{
+	CNativeW value;
+	LPCWSTR str = NULL;
+	ASSERT_EQ(value, str);
+}
+
+/*!
+ * @brief 等価比較演算子のテスト
+ *  値あり同士の等価比較を行う
+ */
+TEST(CNativeW, operatorEqualSame)
+{
+	CNativeW value(L"これはテストです。");
+	CNativeW other(L"これはテストです。");
+	ASSERT_EQ(value, other);
+}
+
+/*!
+ * @brief 等価比較演算子のテスト
+ *  自分自身との等価比較を行う
+ */
+TEST(CNativeW, operatorEqualBySelf)
+{
+	CNativeW value;
+	ASSERT_EQ(value, value);
+}
+
+/*!
+ * @brief 否定の等価比較演算子のテスト
+ *  メンバの値を変えて、等価比較を行う
+ *  重要なクラスなので、テスト条件ごとにケースを分ける
+ *
+ *  合格条件：値あり vs NULL の比較で不一致を検出できること
+ */
+TEST(CNativeW, operatorNotEqualSomeValueVsNull)
+{
+	// 値あり vs NULL
+	CNativeW value(L"これはテストです。");
+	CNativeW other;
+	ASSERT_NE(value, other);
+}
+
+/*!
+ * @brief 否定の等価比較演算子のテスト
+ *  メンバの値を変えて、等価比較を行う
+ *  重要なクラスなので、テスト条件ごとにケースを分ける
+ *
+ *  合格条件：NULL vs 値あり の比較で不一致を検出できること
+ */
+TEST(CNativeW, operatorNotEqualNullVsSomeValue)
+{
+	// NULL vs 値あり
+	CNativeW value;
+	CNativeW other(L"これはテストです。");
+	ASSERT_NE(value, other);
+}
+
+/*!
+ * @brief 否定の等価比較演算子のテスト
+ *  メンバの値を変えて、等価比較を行う
+ *  重要なクラスなので、テスト条件ごとにケースを分ける
+ *
+ *  合格条件：長さの異なる場合の比較で不一致を検出できること
+ */
+TEST(CNativeW, operatorNotEqualNotSameLength)
+{
+	// 値あり vs 値あり(文字列長が違う)
+	CNativeW value(L"これはテストです。");
+	CNativeW other(L"これはテスト？");
+	ASSERT_NE(value, other);
+}
+
+/*!
+ * @brief 否定の等価比較演算子のテスト
+ *  メンバの値を変えて、等価比較を行う
+ *  重要なクラスなので、テスト条件ごとにケースを分ける
+ *
+ *  合格条件：長さが等しく内容の異なる場合の比較で不一致を検出できること
+ */
+TEST(CNativeW, operatorNotEqualNotSameContent)
+{
+	// 値あり vs 値あり(値が違う)
+	CNativeW value(L"これはテストです。");
+	CNativeW other(L"これはテストです？");
+	ASSERT_NE(value, other);
+}
+
+/*!
+ * @brief 等価比較演算子のテスト
+ *  ポインタとの等価比較を行う
+ */
+TEST(CNativeW, operatorEqualSameString)
+{
+	constexpr const wchar_t text[] = L"おっす！オラ(ry";
+	CNativeW value(text);
+	LPCWSTR str = text;
+	ASSERT_EQ(value, str);
+}
+
+/*!
+ * @brief 否定の等価比較演算子のテスト
+ *  ポインタとの等価比較を行う
+ */
+TEST(CNativeW, operatorNotEqualAlmostSameString)
+{
+	CNativeW value(L"おっす！オラ(ry");
+	LPCWSTR str = L"おっと！オラ(ry";
+	ASSERT_NE(value, str);
+}
+
+/*!
+ * @brief 否定の等価比較演算子のテスト
+ *  nullptrとの等価比較を行う
+ */
+TEST(CNativeW, operatorNotEqualNullptr)
+{
+	constexpr const wchar_t text[] = L"おっす！オラ(ry";
+	CNativeW value(text);
+	ASSERT_NE(value, nullptr);
+}
+
+/*!
+ * @brief 否定の等価比較演算子のテスト
+ *  ポインタ(値がNULL)との等価比較を行う
+ */
+TEST(CNativeW, operatorNotEqualStringNull)
+{
+	constexpr const wchar_t text[] = L"おっす！オラ(ry";
+	CNativeW value(text);
+	LPCWSTR str = NULL;
+	ASSERT_NE(value, str);
+}
+
+/*!
+ * @brief 否定の等価比較演算子のテスト
+ *  文字列中のNULの位置によって一般保護違反になるかどうかの検証。
+ *  このテストは成功したらNG!　⇒　分かりづらいので失敗したらNGに修正。
+ */
+TEST(CNativeW, operatorNotEqualCNativeContainsNulVsBeginningWithPartial)
+{
+	// システムのページサイズを取得する
+	SYSTEM_INFO systemInfo = { 0 };
+	::GetSystemInfo(&systemInfo);
+
+	// システムページサイズ
+	const auto pageSize = systemInfo.dwPageSize;
+	// 確保領域サイズ(2ページ分)
+	const auto allocSize = pageSize * 2;
+
+	// 仮想メモリ範囲を予約する。予約時点では全体をNOACCESS指定にしておく。
+	LPVOID memBlock1 = ::VirtualAlloc(NULL, allocSize, MEM_RESERVE, PAGE_NOACCESS);
+	EXPECT_TRUE(memBlock1 != NULL);
+
+	// 仮想メモリ全域をコミット(=確保)する。
+	wchar_t* buf1 = static_cast<wchar_t*>(::VirtualAlloc(memBlock1, allocSize, MEM_COMMIT, PAGE_READWRITE));
+	EXPECT_TRUE(buf1 != NULL);
+
+	// 確保したメモリ全域をUNICODE文字 L'☑' で埋める
+	::wmemset(buf1, L'☑', pageSize);
+
+	// メモリデータをテスト対象型にマップする。実態として配列のように扱えるポインタを取得している。
+	auto str = reinterpret_cast<wchar_t*>(buf1);
+
+	// 領域の末尾をNUL終端する
+	str[pageSize - 1] = 0;
+
+	// 領域の途中にNUL記号を入れる
+	str[pageSize * 1 / 4] = 0;
+
+	// CNativeWのインスタンスを作る(メモリがコピーされる)
+	CNativeW value(str, pageSize);
+
+	// 2ページ目の保護モードをNOACCESSにする。
+	DWORD flOldProtect = 0;
+	volatile BOOL retVirtualProtect = ::VirtualProtect((char*)buf1 + pageSize, pageSize, PAGE_NOACCESS, &flOldProtect);
+	EXPECT_TRUE(retVirtualProtect);
+
+	try
+	{
+		bool ret = (value == str);
+		(void)ret;
+
+		// 仮想メモリをデコミット(=解放)する。
+		::VirtualFree((LPVOID)buf1, pageSize, MEM_DECOMMIT);
+		// 仮想メモリ範囲を解放する。
+		::VirtualFree(memBlock1, 0, MEM_RELEASE);
+	}
+	catch(...)
+	{
+		// 仮想メモリをデコミット(=解放)する。
+		::VirtualFree((LPVOID)buf1, pageSize, MEM_DECOMMIT);
+		// 仮想メモリ範囲を解放する。
+		::VirtualFree(memBlock1, 0, MEM_RELEASE);
+		//
+		throw;
+	}
 }
 
 /*!
