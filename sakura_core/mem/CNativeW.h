@@ -61,6 +61,9 @@ public:
 	CNativeW( const wchar_t* pData, int nDataLen ); //!< nDataLenは文字単位。
 	CNativeW( const wchar_t* pData);
 
+	/*! メモリ確保済みかどうか */
+	bool IsAllocated() const noexcept { return GetStringPtr() != nullptr; }
+
 	//管理
 	void AllocStringBuffer( int nDataLen );                    //!< (重要：nDataLenは文字単位) バッファサイズの調整。必要に応じて拡大する。
 
@@ -83,16 +86,23 @@ public:
 	CNativeW& operator += (const CNativeW& rhs)			{ AppendNativeData(rhs); return *this; }
 	CNativeW& operator += (wchar_t ch)					{ return (*this += CNativeW(&ch, 1)); }
 	bool operator == (const CNativeW& rhs) const noexcept {
+		// 自分自身との比較はtrue
 		if (this == &rhs) return true;
-		if (!capacity() || !rhs.capacity()) return (capacity() == rhs.capacity());
+		// いずれかがメモリ未確保の場合、メモリ確保状態が同じかどうか(両方未確保の場合true)を返す
+		if (!IsAllocated() || !rhs.IsAllocated()) return (IsAllocated() == rhs.IsAllocated());
+		// 文字列長が一致している、かつ、文字列長の範囲でデータが一致している場合にtrue
 		return GetStringLength() == rhs.GetStringLength()
 			&& 0 == wmemcmp(GetStringPtr(), rhs.GetStringPtr(), GetStringLength());
 	}
 	bool operator != (const CNativeW& rhs) const noexcept { return !(*this == rhs); }
 	bool operator == (const wchar_t* rhs) const noexcept {
-		if (rhs == nullptr) return !capacity();
-		if (!capacity()) return false;
+		// 右辺がnullptrの場合、メモリ未確保かどうかを返す
+		if (rhs == nullptr) return !IsAllocated();
+		// メモリ未確保の場合、右辺がnullptr以外ならfalse
+		if (!IsAllocated()) return false;
+		// 右辺の文字列長を取得(自身の文字列長+1を指定して、NUL終端されてない場合文字列長が一致しないよう調整)
 		auto rhsLen = wcsnlen(rhs, GetStringLength() + 1);
+		// 文字列長が一致している、かつ、文字列長の範囲で文字列が一致している場合にtrue
 		return GetStringLength() == rhsLen
 			&& 0 == wcsncmp(GetStringPtr(), rhs, GetStringLength());
 	}
