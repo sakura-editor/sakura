@@ -79,34 +79,48 @@ public:
 	void SetNativeData( const CNativeW& pcNative );            //!< バッファの内容を置き換える
 	void AppendNativeData( const CNativeW& );                  //!< バッファの最後にデータを追加する
 
-	/*! 同型との比較 */
+	/*!
+	 * 同型との比較
+	 *
+	 * @param rhs 比較対象
+	 * @retval < 0 自身がメモリ未確保、かつ、比較対象はメモリ確保済み
+	 * @retval < 0 自身のデータ長が比較対象より小さい
+	 * @retval < 0 自身のデータ長が比較対象と等しい、かつ、データ値が比較対象より小さい
+	 * @retval == 0 比較対象が自分自身の参照
+	 * @retval == 0 自身がメモリ未確保、かつ、比較対象がメモリ未確保
+	 * @retval > 0 自身が確保済み、かつ、比較対象がメモリ未確保
+	 * @retval > 0 自身のデータ長が比較対象より大きい
+	 * @retval < 0 自身のデータ長が比較対象と等しい、かつ、データ値が比較対象より大きい
+	 */
 	int compare (const CNativeW& rhs) const noexcept {
-		// 自分自身との比較は常に一致
 		if (this == &rhs) return 0;
-		// 相手がメモリ未確保の場合、自身も未確保なら一致、確保済みなら自身が大きい
 		if (!rhs.IsAllocated()) return !IsAllocated() ? 0 : 1;
-		// 自身がメモリ未確保の場合、相手はメモリ確保済みなので自身が小さい
 		if (!IsAllocated()) return -1;
-		// 自身の文字列長が相手より小さい場合、自身が小さい
 		if (GetStringLength() < rhs.GetStringLength()) return -1;
-		// 自身の文字列長が相手より大きい場合、自身が大きい
 		if (GetStringLength() > rhs.GetStringLength()) return 1;
-		// 文字列長の範囲でデータを比較した結果を返す
+		// データ長の範囲で文字列を比較した結果を返す
 		return wmemcmp(GetStringPtr(), rhs.GetStringPtr(), GetStringLength());
 	}
-	/*! 文字列ポインタ型との比較 */
+	/*!
+	 * 文字列ポインタ型との比較
+	 *
+	 * @param rhs 比較対象
+	 * @retval < 0 自身がメモリ未確保、かつ、比較対象がnullptr以外
+	 * @retval < 0 自身のデータ長が比較対象の文字列長より小さい
+	 * @retval < 0 自身のデータ長が比較対象の文字列長と等しい、かつ、文字列値が比較対象より小さい
+	 * @retval == 0 自身がメモリ未確保、かつ、比較対象がnullptr
+	 * @retval > 0 自身がメモリ確保済み、かつ、比較対象がnullptr
+	 * @retval > 0 自身のデータ長が比較対象の文字列長より大きい
+	 * @retval > 0 自身のデータ長が比較対象の文字列長と等しい、かつ、文字列値が比較対象より大きい
+	 */
 	int compare (const wchar_t* rhs) const noexcept {
-		// 右辺がnullptrの場合、自身がメモリ未確保なら一致、確保済みなら自身が大きい
 		if (rhs == nullptr) return !IsAllocated() ? 0 : 1;
-		// 自身がメモリ未確保の場合、右辺はnullptr以外なので自身が小さい
 		if (!IsAllocated()) return -1;
-		// 右辺の文字列長を取得(右辺がNUL終端されてない場合に文字列長が一致しないよう調整して取得)
+		// 比較対象の文字列長を取得(比較対象がNUL終端されてない場合に文字列長が一致しないよう調整して取得)
 		auto rhsLen = wcsnlen(rhs, GetStringLength() + 1);
-		// 自身の文字列長が右辺より小さい場合、自身が小さい
 		if (GetStringLength() < rhsLen) return -1;
-		// 自身の文字列長が右辺より大きい場合、自身が大きい
 		if (GetStringLength() > rhsLen) return 1;
-		// 文字列長の範囲で文字列を比較した結果を返す
+		// データ長の範囲で文字列を比較した結果を返す
 		return wcsncmp(GetStringPtr(), rhs, GetStringLength());
 	}
 
