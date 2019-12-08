@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2019 Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -24,27 +24,25 @@
 */
 #pragma once
 
-#include "types/CType.h" //SEncodingConfig
+#include <string_view>
+
+#include "extmodule/CIcu4cI18n.h"
 
 /*!
- * @brief CCodeMediator クラス
- * 
- * 日本語コードセット判別の詳細を隠ぺいするための仲介クラスです。
+ * @brief 文字コード検出クラス
  */
-class CCodeMediator final {
+class CharsetDetector final
+{
+	CIcu4cI18n _icuin;
+	UCharsetDetector* _csd;
+
 public:
-	explicit CCodeMediator(const SEncodingConfig &encodingConfig) noexcept
-		: m_sEncodingConfig(encodingConfig)
-	{
+	CharsetDetector() noexcept;
+	~CharsetDetector() noexcept;
+
+	bool IsAvailable() const noexcept {
+		return _icuin.IsAvailable();
 	}
 
-	/* 日本語コードセット判別 */
-	ECodeType CheckKanjiCode(const char* buff, size_t size) noexcept;
-	/* ファイルの日本語コードセット判別 */
-	ECodeType CheckKanjiCodeOfFile(const WCHAR* pszFile);
-
-private:
-	const SEncodingConfig& m_sEncodingConfig;
+	ECodeType Detect(const std::string_view& bytes);
 };
-
-/*[EOF]*/

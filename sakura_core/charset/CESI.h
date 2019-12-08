@@ -91,10 +91,14 @@ public:
 		m_eMetaName = CODE_NONE;
 	}
 
-	//! 調査結果の情報を格納
-	void SetInformation( const char *pS, const int nLen );
+	//! 日本語コードセット判定
+	ECodeType CheckKanjiCode(const char* buff, size_t size) noexcept;
 
 protected:
+	ECodeType DetectUnicodeBom(const char* pS, size_t nLen) noexcept;
+
+	//! 調査結果の情報を格納
+	void SetInformation( const char *pS, const int nLen );
 
 	//! 添え字に使われる優先順位表を作成
 	void InitPriorityTable( void );
@@ -215,5 +219,50 @@ public:
 	static void GetDebugInfo( const char* pS, const int nLen, CNativeW* pcmtxtOut );
 #endif
 };
+
+/*!
+	文字列の先頭にUnicode系BOMが付いているか？
+
+	@retval CODE_UNICODE   UTF-16 LE
+	@retval CODE_UTF8      UTF-8
+	@retval CODE_UNICODEBE UTF-16 BE
+	@retval CODE_NONE      未検出
+
+	@date 2007.08.11 charcode.cpp から移動
+	@date 2015.03.05 Moca UTF-7 BOMは無効に変更
+ */
+inline
+ECodeType CESI::DetectUnicodeBom(const char* buff, size_t size) noexcept
+{
+	// バイト列がない、または、BOM表現を格納できるサイズに満たない場合、判定をスキップ
+	if (!buff || size < 2) return CODE_NONE;
+
+	// バイト列の先頭が \ufeff の utf8 表現と一致するか判定
+	constexpr const BYTE utf8BOM[]{ 0xef, 0xbb, 0xbf };
+	if (size >= _countof(utf8BOM) && 0 == ::memcmp(buff, utf8BOM, _countof(utf8BOM))) {
+		return CODE_UTF8;
+	}
+
+	// バイト列の先頭が \ufeff の utf16BE 表現と一致するか判定
+	constexpr const BYTE utf16BeBOM[]{ 0xfe, 0xff };
+	if (size >= _countof(utf16BeBOM) && 0 == ::memcmp(buff, utf16BeBOM, _countof(utf16BeBOM))) {
+		return CODE_UNICODEBE;
+	}
+
+	// バイト列の先頭が \ufeff の utf16LE 表現と一致するか判定
+	constexpr const BYTE utf16LeBOM[]{ 0xff, 0xfe };
+	if (size >= _countof(utf16LeBOM) && 0 == ::memcmp(buff, utf16LeBOM, _countof(utf16LeBOM))) {
+		return CODE_UNICODE;
+	}
+
+	// UTF-7 は ASCII 7bit 文字 でない文字を UTF-16BE で符号化してから 修正BASE64 で 符号化する。
+	// Base64 の符号化は 6bit単位 なので BOM に続く文字が非7bit文字な場合、4バイト目がブレる。
+	// このため、 UTF-7 については BOM による判別ロジック省略の対象から外している。
+	// 
+	// (BOM)abc ⇒ (UTF-7変換) ⇒ +/v8-abc
+	// (BOM)ｱｲｳ ⇒ (UTF-7変換) ⇒ +/v//cf9y/3M-
+
+	return CODE_NONE;
+}
 
 /*[EOF]*/
