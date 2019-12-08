@@ -1272,9 +1272,7 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 /* 機能がチェック状態か調べる */
 bool IsFuncChecked( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EFunctionCode nId )
 {
-	CEditWnd* pCEditWnd;
-	// Modified by KEITA for WIN64 2003.9.6
-	pCEditWnd = ( CEditWnd* )::GetWindowLongPtr( CEditWnd::getInstance()->GetHwnd(), GWLP_USERDATA );
+	auto* pCEditWnd = CEditWnd::getInstance();
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことにより、プレビュー判定削除
 	ECodeType eDocCode = pcEditDoc->GetDocumentEncoding();
 	switch( nId ){
