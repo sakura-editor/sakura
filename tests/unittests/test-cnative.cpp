@@ -590,3 +590,69 @@ TEST(CNativeW, CheckEmpty)
 	// インスタンス化しただけではバッファサイズが 0 であることを確認する。
 	EXPECT_EQ(0, stringW.capacity());
 }
+
+/*!
+ * 同型との比較のテスト
+ *
+ * @remark < 0 自身がメモリ未確保、かつ、比較対象はメモリ確保済み
+ * @remark < 0 データ値が比較対象より小さい
+ * @remark < 0 データが比較対象の先頭部分と一致する、かつ、データ長が比較対象より小さい
+ * @remark == 0 比較対象が自分自身の参照
+ * @remark == 0 自身がメモリ未確保、かつ、比較対象がメモリ未確保
+ * @remark > 0 自身が確保済み、かつ、比較対象がメモリ未確保
+ * @remark > 0 データ値が比較対象より大きい
+ * @remark > 0 データの先頭部分が比較対象と一致する、かつ、データ長が比較対象より大きい
+ */
+TEST(CNativeW, CompareWithCNativeW)
+{
+	constexpr const wchar_t aSmall[]	= L"a\0b\0c";
+	constexpr const wchar_t aMidLes[]	= L"a\0a\0c\0";
+	constexpr const wchar_t aMidium[]	= L"a\0b\0c\0";
+	constexpr const wchar_t aMidGra[]	= L"a\0c\0c\0";
+	constexpr const wchar_t aLarge[]	= L"a\0b\0c\0d";
+
+	CNativeW nullVal, nullTwo
+		, sma1(aSmall, _countof(aSmall) - 1)
+		, mid1(aMidLes, _countof(aMidLes) - 1)
+		, mid2(aMidium, _countof(aMidium) - 1)
+		, mid3(aMidGra, _countof(aMidGra) - 1)
+		, lar1(aLarge, _countof(aLarge) - 1);
+
+	ASSERT_GT(0, nullVal.compare(sma1));
+	ASSERT_GT(0, mid2.compare(mid3));
+	ASSERT_GT(0, mid2.compare(lar1));
+	ASSERT_EQ(0, nullVal.compare(nullVal));
+	ASSERT_EQ(0, sma1.compare(sma1));
+	ASSERT_EQ(0, nullVal.compare(nullTwo));
+	ASSERT_LT(0, sma1.compare(nullVal));
+	ASSERT_LT(0, mid2.compare(mid1));
+	ASSERT_LT(0, mid2.compare(sma1));
+}
+
+/*!
+ * 文字列ポインタ型との比較のテスト
+ *
+ * @remark < 0 自身がメモリ未確保、かつ、比較対象がnullptr以外
+ * @remark < 0 文字列値が比較対象より小さい
+ * @remark == 0 自身がメモリ未確保、かつ、比較対象がnullptr
+ * @remark > 0 自身がメモリ確保済み、かつ、比較対象がnullptr
+ * @remark > 0 文字列値が比較対象より大きい
+ */
+TEST(CNativeW, CompareWithStringPtr)
+{
+	constexpr const wchar_t szSmall[]  = L"ab";
+	constexpr const wchar_t szMidLes[] = L"aac";
+	constexpr const wchar_t szMidium[] = L"abc";
+	constexpr const wchar_t szMidGra[] = L"acc";
+	constexpr const wchar_t szLarge[]  = L"abcd";
+
+	CNativeW nullVal, mid2(szMidium);
+
+	ASSERT_GT(0, nullVal.compare(szSmall));
+	ASSERT_GT(0, mid2.compare(szMidGra));
+	ASSERT_GT(0, mid2.compare(szLarge));
+	ASSERT_EQ(0, nullVal.compare(nullptr));
+	ASSERT_LT(0, mid2.compare(nullptr));
+	ASSERT_LT(0, mid2.compare(szMidLes));
+	ASSERT_LT(0, mid2.compare(szSmall));
+}

@@ -84,44 +84,44 @@ public:
 	 *
 	 * @param rhs 比較対象
 	 * @retval < 0 自身がメモリ未確保、かつ、比較対象はメモリ確保済み
-	 * @retval < 0 自身のデータ長が比較対象より小さい
-	 * @retval < 0 自身のデータ長が比較対象と等しい、かつ、データ値が比較対象より小さい
+	 * @retval < 0 データ値が比較対象より小さい
+	 * @retval < 0 データが比較対象の先頭部分と一致する、かつ、データ長が比較対象より小さい
 	 * @retval == 0 比較対象が自分自身の参照
 	 * @retval == 0 自身がメモリ未確保、かつ、比較対象がメモリ未確保
 	 * @retval > 0 自身が確保済み、かつ、比較対象がメモリ未確保
-	 * @retval > 0 自身のデータ長が比較対象より大きい
-	 * @retval < 0 自身のデータ長が比較対象と等しい、かつ、データ値が比較対象より大きい
+	 * @retval > 0 データ値が比較対象より大きい
+	 * @retval > 0 データの先頭部分が比較対象と一致する、かつ、データ長が比較対象より大きい
 	 */
 	int compare (const CNativeW& rhs) const noexcept {
 		if (this == &rhs) return 0;
 		if (!rhs.IsAllocated()) return !IsAllocated() ? 0 : 1;
 		if (!IsAllocated()) return -1;
-		if (GetStringLength() < rhs.GetStringLength()) return -1;
-		if (GetStringLength() > rhs.GetStringLength()) return 1;
-		// データ長の範囲で文字列を比較した結果を返す
-		return wmemcmp(GetStringPtr(), rhs.GetStringPtr(), GetStringLength());
+		// データ長が短い方を基準に比較を行う
+		if (GetStringLength() > rhs.GetStringLength()) {
+			auto cmp = wmemcmp(GetStringPtr(), rhs.GetStringPtr(), rhs.GetStringLength());
+			if (!cmp) return 1; //一致したら比較対象より大きいということ。
+			return cmp;
+		}
+		// データ長の範囲で文字列を比較する
+		auto cmp = wmemcmp(GetStringPtr(), rhs.GetStringPtr(), GetStringLength());
+		if (!cmp) return GetStringLength() < rhs.GetStringLength() ? -1 : 0;
+		return cmp;
 	}
 	/*!
 	 * 文字列ポインタ型との比較
 	 *
 	 * @param rhs 比較対象
 	 * @retval < 0 自身がメモリ未確保、かつ、比較対象がnullptr以外
-	 * @retval < 0 自身のデータ長が比較対象の文字列長より小さい
-	 * @retval < 0 自身のデータ長が比較対象の文字列長と等しい、かつ、文字列値が比較対象より小さい
+	 * @retval < 0 文字列値が比較対象より小さい
 	 * @retval == 0 自身がメモリ未確保、かつ、比較対象がnullptr
 	 * @retval > 0 自身がメモリ確保済み、かつ、比較対象がnullptr
-	 * @retval > 0 自身のデータ長が比較対象の文字列長より大きい
-	 * @retval > 0 自身のデータ長が比較対象の文字列長と等しい、かつ、文字列値が比較対象より大きい
+	 * @retval > 0 文字列値が比較対象より大きい
 	 */
-	int compare (const wchar_t* rhs) const noexcept {
+	int compare (const wchar_t* rhs) const {
 		if (rhs == nullptr) return !IsAllocated() ? 0 : 1;
 		if (!IsAllocated()) return -1;
-		// 比較対象の文字列長を取得(比較対象がNUL終端されてない場合に文字列長が一致しないよう調整して取得)
-		auto rhsLen = wcsnlen(rhs, GetStringLength() + 1);
-		if (GetStringLength() < rhsLen) return -1;
-		if (GetStringLength() > rhsLen) return 1;
-		// データ長の範囲で文字列を比較した結果を返す
-		return wcsncmp(GetStringPtr(), rhs, GetStringLength());
+		// データ長の範囲で文字列を比較した結果を返す(CRTに丸投げする)
+		return wcsncmp(GetStringPtr(), rhs, GetStringLength() + 1);
 	}
 
 	//演算子
@@ -132,8 +132,8 @@ public:
 	CNativeW& operator += (wchar_t ch)					{ return (*this += CNativeW(&ch, 1)); }
 	bool operator == (const CNativeW& rhs) const noexcept { return 0 == compare(rhs); }
 	bool operator != (const CNativeW& rhs) const noexcept { return !(*this == rhs); }
-	bool operator == (const wchar_t* rhs) const noexcept { return 0 == compare(rhs); }
-	bool operator != (const wchar_t* rhs) const noexcept { return !(*this == rhs); }
+	bool operator == (const wchar_t* rhs) const { return 0 == compare(rhs); }
+	bool operator != (const wchar_t* rhs) const { return !(*this == rhs); }
 
 	//ネイティブ取得インターフェース
 	wchar_t operator[](int nIndex) const;                    //!< 任意位置の文字取得。nIndexは文字単位。
