@@ -184,6 +184,9 @@ void CNativeW::Replace( const wchar_t* pszFrom, int nFromLen, const wchar_t* psz
 	}
 }
 
+bool operator == (const CNativeW& lhs, const wchar_t* rhs) { return 0 == lhs.compare(rhs); }
+bool operator != (const CNativeW& lhs, const wchar_t* rhs) { return !(lhs == rhs); }
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                  staticインターフェース                     //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

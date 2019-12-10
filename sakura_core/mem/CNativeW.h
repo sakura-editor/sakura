@@ -51,8 +51,15 @@ private:
 	int				m_nDataLen;
 };
 
+// グローバル演算子の前方宣言
+class CNativeW;
+bool operator == (const CNativeW& lhs, const wchar_t* rhs);
+bool operator != (const CNativeW& lhs, const wchar_t* rhs);
+
 //! UNICODE文字列管理クラス
 class CNativeW final : public CNative{
+	friend bool operator == (const CNativeW& lhs, const wchar_t* rhs);
+
 public:
 	//コンストラクタ・デストラクタ
 	CNativeW() noexcept;
@@ -107,6 +114,7 @@ public:
 		if (!cmp) return GetStringLength() < rhs.GetStringLength() ? -1 : 0;
 		return cmp;
 	}
+
 	/*!
 	 * 文字列ポインタ型との比較
 	 *
@@ -132,8 +140,6 @@ public:
 	CNativeW& operator += (wchar_t ch)					{ return (*this += CNativeW(&ch, 1)); }
 	bool operator == (const CNativeW& rhs) const noexcept { return 0 == compare(rhs); }
 	bool operator != (const CNativeW& rhs) const noexcept { return !(*this == rhs); }
-	bool operator == (const wchar_t* rhs) const { return 0 == compare(rhs); }
-	bool operator != (const wchar_t* rhs) const { return !(*this == rhs); }
 
 	//ネイティブ取得インターフェース
 	wchar_t operator[](int nIndex) const;                    //!< 任意位置の文字取得。nIndexは文字単位。
