@@ -53,12 +53,12 @@ private:
 
 // グローバル演算子の前方宣言
 class CNativeW;
-bool operator == (const CNativeW& lhs, const wchar_t* rhs);
-bool operator != (const CNativeW& lhs, const wchar_t* rhs);
+bool operator == (const CNativeW& lhs, const wchar_t* rhs) noexcept;
+bool operator != (const CNativeW& lhs, const wchar_t* rhs) noexcept;
 
 //! UNICODE文字列管理クラス
 class CNativeW final : public CNative{
-	friend bool operator == (const CNativeW& lhs, const wchar_t* rhs);
+	friend bool operator == (const CNativeW& lhs, const wchar_t* rhs) noexcept;
 
 public:
 	//コンストラクタ・デストラクタ
@@ -69,7 +69,7 @@ public:
 	CNativeW( const wchar_t* pData);
 
 	/*! メモリ確保済みかどうか */
-	bool IsAllocated() const noexcept { return GetStringPtr() != nullptr; }
+	bool IsValid() const noexcept { return GetStringPtr() != nullptr; }
 
 	//管理
 	void AllocStringBuffer( int nDataLen );                    //!< (重要：nDataLenは文字単位) バッファサイズの調整。必要に応じて拡大する。
@@ -86,59 +86,13 @@ public:
 	void SetNativeData( const CNativeW& pcNative );            //!< バッファの内容を置き換える
 	void AppendNativeData( const CNativeW& );                  //!< バッファの最後にデータを追加する
 
-	/*!
-	 * 同型との比較
-	 *
-	 * @param rhs 比較対象
-	 * @retval < 0 自身がメモリ未確保、かつ、比較対象はメモリ確保済み
-	 * @retval < 0 データ値が比較対象より小さい
-	 * @retval < 0 データが比較対象の先頭部分と一致する、かつ、データ長が比較対象より小さい
-	 * @retval == 0 比較対象が自分自身の参照
-	 * @retval == 0 自身がメモリ未確保、かつ、比較対象がメモリ未確保
-	 * @retval > 0 自身が確保済み、かつ、比較対象がメモリ未確保
-	 * @retval > 0 データ値が比較対象より大きい
-	 * @retval > 0 データの先頭部分が比較対象と一致する、かつ、データ長が比較対象より大きい
-	 */
-	int compare (const CNativeW& rhs) const noexcept {
-		if (this == &rhs) return 0;
-		if (!rhs.IsAllocated()) return !IsAllocated() ? 0 : 1;
-		if (!IsAllocated()) return -1;
-		// データ長が短い方を基準に比較を行う
-		if (GetStringLength() > rhs.GetStringLength()) {
-			auto cmp = wmemcmp(GetStringPtr(), rhs.GetStringPtr(), rhs.GetStringLength());
-			if (!cmp) return 1; //一致したら比較対象より大きいということ。
-			return cmp;
-		}
-		// データ長の範囲で文字列を比較する
-		auto cmp = wmemcmp(GetStringPtr(), rhs.GetStringPtr(), GetStringLength());
-		if (!cmp) return GetStringLength() < rhs.GetStringLength() ? -1 : 0;
-		return cmp;
-	}
-
-	/*!
-	 * 文字列ポインタ型との比較
-	 *
-	 * @param rhs 比較対象
-	 * @retval < 0 自身がメモリ未確保、かつ、比較対象がnullptr以外
-	 * @retval < 0 文字列値が比較対象より小さい
-	 * @retval == 0 自身がメモリ未確保、かつ、比較対象がnullptr
-	 * @retval > 0 自身がメモリ確保済み、かつ、比較対象がnullptr
-	 * @retval > 0 文字列値が比較対象より大きい
-	 */
-	int compare (const wchar_t* rhs) const {
-		if (rhs == nullptr) return !IsAllocated() ? 0 : 1;
-		if (!IsAllocated()) return -1;
-		// データ長の範囲で文字列を比較した結果を返す(CRTに丸投げする)
-		return wcsncmp(GetStringPtr(), rhs, GetStringLength() + 1);
-	}
-
 	//演算子
 	CNativeW& operator = (const CNativeW& rhs)			{ CNative::operator=(rhs); return *this; }
 	CNativeW& operator = (CNativeW&& rhs) noexcept		{ CNative::operator=(std::forward<CNativeW>(rhs)); return *this; }
 	CNativeW  operator + (const CNativeW& rhs) const	{ return (CNativeW(*this) += rhs); }
 	CNativeW& operator += (const CNativeW& rhs)			{ AppendNativeData(rhs); return *this; }
 	CNativeW& operator += (wchar_t ch)					{ return (*this += CNativeW(&ch, 1)); }
-	bool operator == (const CNativeW& rhs) const noexcept { return 0 == compare(rhs); }
+	bool operator == (const CNativeW& rhs) const noexcept { return 0 == Compare(rhs); }
 	bool operator != (const CNativeW& rhs) const noexcept { return !(*this == rhs); }
 
 	//ネイティブ取得インターフェース
@@ -181,6 +135,11 @@ public:
 	//                           判定                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	
+	int Compare(const CNativeW& rhs) const noexcept;
+	int Compare(const wchar_t* rhs) const noexcept;
+	bool Equals(const CNativeW& rhs) const noexcept { return 0 == Compare(rhs); }
+	bool Equals(const wchar_t* rhs) const noexcept { return 0 == Compare(rhs); }
+
 	//! 同一の文字列ならtrue
 	static bool IsEqual( const CNativeW& cmem1, const CNativeW& cmem2 );
 

@@ -376,6 +376,23 @@ TEST(CNativeW, operatorEqualBySelf)
 }
 
 /*!
+ * @brief 等価比較演算子のテスト
+ *  等価演算子がfalseを返すパターンのテスト
+ */
+TEST(CNativeW, operatorEqualAndNotEqual)
+{
+	CNativeW value;
+	EXPECT_TRUE(value == value);
+	EXPECT_FALSE(value != value);
+	ASSERT_EQ(value, value);
+
+	CNativeW other(L"値あり");
+	EXPECT_FALSE(value == other);
+	EXPECT_TRUE(value != other);
+	ASSERT_NE(value, other);
+}
+
+/*!
  * @brief 否定の等価比較演算子のテスト
  *  メンバの値を変えて、等価比較を行う
  *  重要なクラスなので、テスト条件ごとにケースを分ける
@@ -605,28 +622,34 @@ TEST(CNativeW, CheckEmpty)
  */
 TEST(CNativeW, CompareWithCNativeW)
 {
-	constexpr const wchar_t aSmall[]	= L"a\0b\0c";
-	constexpr const wchar_t aMidLes[]	= L"a\0a\0c\0";
-	constexpr const wchar_t aMidium[]	= L"a\0b\0c\0";
-	constexpr const wchar_t aMidGra[]	= L"a\0c\0c\0";
-	constexpr const wchar_t aLarge[]	= L"a\0b\0c\0d";
+	//互いに値の異なる文字列定数を定義する
+	constexpr const wchar_t szS0[]	= L"a\0b\0c";
+	constexpr const wchar_t szM0[]	= L"a\0a\0c\0";
+	constexpr const wchar_t szM1[]	= L"a\0b\0c\0";
+	constexpr const wchar_t szM2[]	= L"a\0c\0c\0";
+	constexpr const wchar_t szL0[]	= L"a\0b\0c\0d";
 
-	CNativeW nullVal, nullTwo
-		, sma1(aSmall, _countof(aSmall) - 1)
-		, mid1(aMidLes, _countof(aMidLes) - 1)
-		, mid2(aMidium, _countof(aMidium) - 1)
-		, mid3(aMidGra, _countof(aMidGra) - 1)
-		, lar1(aLarge, _countof(aLarge) - 1);
+	// 値なしの変数と文字列定数に対応するCNativeWのインスタンスを用意する
+	CNativeW cN0, cN1
+		, cS0(szS0, _countof(szS0))
+		, cM0(szM0, _countof(szM0))
+		, cM1(szM1, _countof(szM1))
+		, cM2(szM2, _countof(szM2))
+		, cL0(szL0, _countof(szL0));
 
-	ASSERT_GT(0, nullVal.compare(sma1));
-	ASSERT_GT(0, mid2.compare(mid3));
-	ASSERT_GT(0, mid2.compare(lar1));
-	ASSERT_EQ(0, nullVal.compare(nullVal));
-	ASSERT_EQ(0, sma1.compare(sma1));
-	ASSERT_EQ(0, nullVal.compare(nullTwo));
-	ASSERT_LT(0, sma1.compare(nullVal));
-	ASSERT_LT(0, mid2.compare(mid1));
-	ASSERT_LT(0, mid2.compare(sma1));
+	// 比較
+	// ASSERT_GTの判定仕様は v1 > v2
+	// ASSERT_EQの判定仕様は v1 == v2(expected, actual)
+	// ASSERT_LTの判定仕様は v1 < v2
+	ASSERT_GT(0, cN0.Compare(cS0));
+	ASSERT_GT(0, cM1.Compare(cM2));
+	ASSERT_GT(0, cM1.Compare(cL0));
+	ASSERT_EQ(0, cN0.Compare(cN0));
+	ASSERT_EQ(0, cS0.Compare(cS0));
+	ASSERT_EQ(0, cN0.Compare(cN1));
+	ASSERT_LT(0, cS0.Compare(cN0));
+	ASSERT_LT(0, cM1.Compare(cM0));
+	ASSERT_LT(0, cM1.Compare(cS0));
 }
 
 /*!
@@ -640,19 +663,27 @@ TEST(CNativeW, CompareWithCNativeW)
  */
 TEST(CNativeW, CompareWithStringPtr)
 {
-	constexpr const wchar_t szSmall[]  = L"ab";
-	constexpr const wchar_t szMidLes[] = L"aac";
-	constexpr const wchar_t szMidium[] = L"abc";
-	constexpr const wchar_t szMidGra[] = L"acc";
-	constexpr const wchar_t szLarge[]  = L"abcd";
+	//互いに値の異なる文字列定数を定義する
+	constexpr const wchar_t* pcN0 = nullptr;
+	constexpr const wchar_t szS0[] = L"ab";
+	constexpr const wchar_t szM0[] = L"aac";
+	constexpr const wchar_t szM1[] = L"abc";
+	constexpr const wchar_t szM2[] = L"acc";
+	constexpr const wchar_t szL0[] = L"abcd";
 
-	CNativeW nullVal, mid2(szMidium);
+	// 定数に対応するCNativeWのインスタンスを用意する
+	CNativeW cN0(pcN0), cM1(szM1);
 
-	ASSERT_GT(0, nullVal.compare(szSmall));
-	ASSERT_GT(0, mid2.compare(szMidGra));
-	ASSERT_GT(0, mid2.compare(szLarge));
-	ASSERT_EQ(0, nullVal.compare(nullptr));
-	ASSERT_LT(0, mid2.compare(nullptr));
-	ASSERT_LT(0, mid2.compare(szMidLes));
-	ASSERT_LT(0, mid2.compare(szSmall));
+	// 比較
+	// ASSERT_GTの判定仕様は v1 > v2
+	// ASSERT_EQの判定仕様は v1 == v2(expected, actual)
+	// ASSERT_LTの判定仕様は v1 < v2
+	ASSERT_GT(0, cN0.Compare(szM1));
+	ASSERT_GT(0, cM1.Compare(szM2));
+	ASSERT_GT(0, cM1.Compare(szL0));
+	ASSERT_EQ(0, cN0.Compare(pcN0));
+	ASSERT_EQ(0, cM1.Compare(szM1));
+	ASSERT_LT(0, cM1.Compare(pcN0));
+	ASSERT_LT(0, cM1.Compare(szM0));
+	ASSERT_LT(0, cM1.Compare(szS0));
 }
