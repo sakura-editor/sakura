@@ -687,3 +687,19 @@ TEST(CNativeW, CompareWithStringPtr)
 	ASSERT_LT(0, cM1.Compare(szM0));
 	ASSERT_LT(0, cM1.Compare(szS0));
 }
+
+/*!
+ * @brief グローバル加算演算子のテスト
+ * @remark 1つ目の引数の末尾に2つ目の引数を連結する
+ * @remark 順序逆転版も同仕様。
+ */
+TEST(CNativeW, globalOperatorAdd)
+{
+	CNativeW v1(L"前半");
+	constexpr const wchar_t v2[] = L"後半";
+	EXPECT_STREQ(L"前半後半", (v1 + v2).GetStringPtr());
+
+	constexpr const wchar_t v3[] = L"前半";
+	CNativeW v4(L"後半");
+	EXPECT_STREQ(L"前半後半", (v3 + v4).GetStringPtr());
+}

@@ -134,9 +134,8 @@ CNativeW operator + (const CNativeW& lhs, const wchar_t* rhs) noexcept(false)
  */
 CNativeW operator + (const wchar_t* lhs, const CNativeW& rhs) noexcept(false)
 {
-	CNativeW tmp(rhs);
-	tmp.AppendString(lhs);
-	return tmp;
+	CNativeW tmp(lhs);
+	return tmp + rhs;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
