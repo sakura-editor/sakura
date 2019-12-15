@@ -30,3 +30,60 @@ HINSTANCE G_AppInstance()
 {
 	return CProcess::getInstance()->GetProcessInstance();
 }
+
+/*!
+ * コンストラクタ
+ */
+SSearchOption::SSearchOption() noexcept
+	: SSearchOption(false, false, false)
+{
+}
+
+/*!
+ * コンストラクタ(値指定)
+ */
+SSearchOption::SSearchOption(
+	bool _bRegularExp,
+	bool _bLoHiCase,
+	bool _bWordOnly
+) noexcept
+	: bRegularExp(_bRegularExp)
+	, bLoHiCase(_bLoHiCase)
+	, bWordOnly(_bWordOnly)
+{
+}
+
+//! リセットする(全部falseにする)
+void SSearchOption::Reset()
+{
+	bRegularExp = false;
+	bLoHiCase = false;
+	bWordOnly = false;
+}
+
+/*!
+ * 同型との等価比較
+ *
+ * @param rhs 比較対象
+ * @retval true 等しい
+ * @retval false 等しくない
+ */
+bool SSearchOption::operator == (const SSearchOption& rhs) const noexcept
+{
+	if (this == &rhs) return true;
+	return bRegularExp == rhs.bRegularExp
+		&& bLoHiCase == rhs.bLoHiCase
+		&& bWordOnly == rhs.bWordOnly;
+}
+
+/*!
+ * 同型との否定の等価比較
+ *
+ * @param rhs 比較対象
+ * @retval true 等しくない
+ * @retval false 等しい
+ */
+bool SSearchOption::operator != (const SSearchOption& rhs) const noexcept
+{
+	return !(*this == rhs);
+}
