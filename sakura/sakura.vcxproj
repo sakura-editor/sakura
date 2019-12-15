@@ -763,6 +763,7 @@
     <ClCompile Include="..\sakura_core\doc\layout\CTsvModeInfo.cpp" />
     <ClCompile Include="..\sakura_core\doc\logic\CDocLine.cpp" />
     <ClCompile Include="..\sakura_core\doc\logic\CDocLineMgr.cpp" />
+    <ClCompile Include="..\sakura_core\EditInfo.cpp" />
     <ClCompile Include="..\sakura_core\env\CAppNodeManager.cpp" />
     <ClCompile Include="..\sakura_core\env\CDocTypeManager.cpp" />
     <ClCompile Include="..\sakura_core\env\CFileNameManager.cpp" />

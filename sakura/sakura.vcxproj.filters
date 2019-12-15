@@ -2267,6 +2267,9 @@
     <ClCompile Include="..\sakura_core\charset\icu4c\CharsetDetector.cpp">
       <Filter>Cpp Source Files\charset\icu4c</Filter>
     </ClCompile>
+    <ClCompile Include="..\sakura_core\EditInfo.cpp">
+      <Filter>Cpp Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\resource\auto_scroll_center.bmp">

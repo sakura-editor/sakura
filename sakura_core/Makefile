@@ -84,6 +84,7 @@ CSearchAgent.o \
 CSelectLang.o \
 CSortedTagJumpList.o \
 CWriteManager.o \
+EditInfo.o \
 StdAfx.o \
 apiwrap/StdApi.o \
 apiwrap/StdControl.o \
