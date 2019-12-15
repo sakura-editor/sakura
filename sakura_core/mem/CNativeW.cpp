@@ -109,6 +109,35 @@ void CNativeW::AppendNativeData( const CNativeW& cmemData )
 	CNative::AppendRawData(cmemData.GetStringPtr(), cmemData.GetRawLength());
 }
 
+/*!
+ * 指定した文字列を連結した文字列バッファを作成する
+ *
+ * @param lhs 文字列バッファ(CNativeW)
+ * @param rhs 文字列ポインタ(C string)
+ * @return 新しい文字列バッファ
+ * @throws std::bad_alloc メモリ確保に失敗した
+ */
+CNativeW operator + (const CNativeW& lhs, const wchar_t* rhs) noexcept(false)
+{
+	CNativeW tmp(lhs);
+	tmp.AppendString(rhs);
+	return tmp;
+}
+
+/*!
+ * 指定した文字列を連結した文字列バッファを作成する
+ *
+ * @param lhs 文字列ポインタ(C string)
+ * @param rhs 文字列バッファ(CNativeW)
+ * @return 新しい文字列バッファ
+ * @throws std::bad_alloc メモリ確保に失敗した
+ */
+CNativeW operator + (const wchar_t* lhs, const CNativeW& rhs) noexcept(false)
+{
+	CNativeW tmp(lhs);
+	return tmp + rhs;
+}
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //              ネイティブ取得インターフェース                 //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -121,6 +150,58 @@ wchar_t CNativeW::operator[](int nIndex) const
 	}else{
 		return 0;
 	}
+}
+
+/*!
+ * 同型との比較
+ *
+ * @param rhs 比較対象
+ * @retval < 0 自身がメモリ未確保、かつ、比較対象はメモリ確保済み
+ * @retval < 0 データ値が比較対象より小さい
+ * @retval < 0 データが比較対象の先頭部分と一致する、かつ、データ長が比較対象より小さい
+ * @retval == 0 比較対象が自分自身の参照
+ * @retval == 0 比較対象と等しい
+ * @retval == 0 自身がメモリ未確保、かつ、比較対象がメモリ未確保
+ * @retval > 0 自身が確保済み、かつ、比較対象がメモリ未確保
+ * @retval > 0 データ値が比較対象より大きい
+ * @retval > 0 データの先頭部分が比較対象と一致する、かつ、データ長が比較対象より大きい
+ */
+int CNativeW::Compare(const CNativeW& rhs) const noexcept
+{
+	if (this == &rhs) return 0;
+	const int lhsIsValid = static_cast<int>(IsValid());
+	const int rhsIsValid = static_cast<int>(rhs.IsValid());
+	if (!rhsIsValid || !lhsIsValid) return lhsIsValid - rhsIsValid;
+	// データ長が短い方を基準に比較を行う
+	const int lhsLength = static_cast<int>(GetStringLength());
+	const int rhsLength = static_cast<int>(rhs.GetStringLength());
+	const int minLength = std::min(lhsLength, rhsLength);
+	// データ長の範囲で文字列を比較する
+	auto cmp = wmemcmp(GetStringPtr(), rhs.GetStringPtr(), minLength);
+	if (!cmp) cmp = lhsLength - rhsLength;
+	return cmp;
+}
+
+/*!
+ * 文字列ポインタ型との比較
+ *
+ * @param rhs 比較対象(C string)
+ * @retval < 0 自身がメモリ未確保、かつ、比較対象がnullptr以外
+ * @retval < 0 文字列値が比較対象より小さい
+ * @retval == 0 比較対象と等しい
+ * @retval == 0 自身がメモリ未確保、かつ、比較対象がnullptr
+ * @retval > 0 自身がメモリ確保済み、かつ、比較対象がnullptr
+ * @retval > 0 文字列値が比較対象より大きい
+ */
+int CNativeW::Compare(const wchar_t* rhs) const noexcept
+{
+	const int lhsIsValid = static_cast<int>(IsValid());
+	const int rhsIsValid = rhs ? 1 : 0;
+	if (!rhsIsValid || !lhsIsValid) return lhsIsValid - rhsIsValid;
+	const wchar_t* lhs = GetStringPtr();
+	const int lhsLength = GetStringLength();
+	// NUL終端考慮のために終端を拡張し、比較自体はCRTに丸投げする
+	return wcsncmp(lhs, rhs, lhsLength + 1);
 }
 
 /* 等しい内容か */
@@ -138,6 +219,58 @@ bool CNativeW::IsEqual( const CNativeW& cmem1, const CNativeW& cmem2 )
 		}
 	}
 	return false;
+}
+
+/*!
+ * 文字列ポインタ型との等価比較
+ *
+ * @param lhs 比較対象(CNativeW)
+ * @param rhs 比較対象(C string)
+ * @retval true 等しい
+ * @retval false 等しくない
+ */
+bool operator == (const CNativeW& lhs, const wchar_t* rhs) noexcept
+{
+	return lhs.Equals(rhs);
+}
+
+/*!
+ * 文字列ポインタ型との否定の等価比較
+ *
+ * @param lhs 比較対象(CNativeW)
+ * @param rhs 比較対象(C string)
+ * @retval true 等しくない
+ * @retval false 等しい
+ */
+bool operator != (const CNativeW& lhs, const wchar_t* rhs) noexcept
+{
+	return !(lhs == rhs);
+}
+
+/*!
+ * 文字列ポインタ型との等価比較(引数逆転版)
+ *
+ * @param lhs 比較対象(C string)
+ * @param rhs 比較対象(CNativeW)
+ * @retval true 等しい
+ * @retval false 等しくない
+ */
+bool operator == (const wchar_t* lhs, const CNativeW& rhs) noexcept
+{
+	return rhs.Equals(lhs);
+}
+
+/*!
+ * 文字列ポインタ型との否定の等価比較(引数逆転版)
+ *
+ * @param lhs 比較対象(C string)
+ * @param rhs 比較対象(CNativeW)
+ * @retval true 等しくない
+ * @retval false 等しい
+ */
+bool operator != (const wchar_t* lhs, const CNativeW& rhs) noexcept
+{
+	return !(lhs == rhs);
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

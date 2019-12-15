@@ -292,7 +292,7 @@ TEST(CNativeW, AppendStringNullPointer)
 	CNativeW value(org);
 	value += nullptr;
 	EXPECT_EQ(value.GetStringLength(), org.GetStringLength());
-	EXPECT_TRUE(CNativeW::IsEqual(value, org));
+	EXPECT_EQ(org, value);
 }
 
 /*!
@@ -321,6 +321,181 @@ TEST(CNativeW, AppendStringWithFormatting)
 	CNativeW value;
 	value.AppendStringF(L"いちご%d%%", 100);
 	ASSERT_STREQ(L"いちご100%", value.GetStringPtr());
+}
+
+/*!
+ * @brief 等価比較演算子のテスト
+ *  初期値同士の等価比較を行う
+ */
+TEST(CNativeW, operatorEqualNull)
+{
+	CNativeW value, other;
+	ASSERT_EQ(value, other);
+}
+
+/*!
+ * @brief 等価比較演算子のテスト
+ *  nullptrとの等価比較を行う
+ */
+TEST(CNativeW, operatorEqualNullptr)
+{
+	CNativeW value;
+	ASSERT_EQ(value, nullptr);
+}
+
+/*!
+ * @brief 等価比較演算子のテスト
+ *  ポインタ(値がNULL)との等価比較を行う
+ */
+TEST(CNativeW, operatorEqualStringNull)
+{
+	CNativeW value;
+	LPCWSTR str = NULL;
+	ASSERT_EQ(value, str);
+}
+
+/*!
+ * @brief 等価比較演算子のテスト
+ *  値あり同士の等価比較を行う
+ */
+TEST(CNativeW, operatorEqualSame)
+{
+	CNativeW value(L"これはテストです。");
+	CNativeW other(L"これはテストです。");
+	ASSERT_EQ(value, other);
+}
+
+/*!
+ * @brief 等価比較演算子のテスト
+ *  自分自身との等価比較を行う
+ */
+TEST(CNativeW, operatorEqualBySelf)
+{
+	CNativeW value;
+	ASSERT_EQ(value, value);
+}
+
+/*!
+ * @brief 等価比較演算子のテスト
+ *  等価演算子がfalseを返すパターンのテスト
+ */
+TEST(CNativeW, operatorEqualAndNotEqual)
+{
+	CNativeW value;
+	EXPECT_TRUE(value == value);
+	EXPECT_FALSE(value != value);
+	ASSERT_EQ(value, value);
+
+	CNativeW other(L"値あり");
+	EXPECT_FALSE(value == other);
+	EXPECT_TRUE(value != other);
+	ASSERT_NE(value, other);
+}
+
+/*!
+ * @brief 否定の等価比較演算子のテスト
+ *  メンバの値を変えて、等価比較を行う
+ *  重要なクラスなので、テスト条件ごとにケースを分ける
+ *
+ *  合格条件：値あり vs NULL の比較で不一致を検出できること
+ */
+TEST(CNativeW, operatorNotEqualSomeValueVsNull)
+{
+	// 値あり vs NULL
+	CNativeW value(L"これはテストです。");
+	CNativeW other;
+	ASSERT_NE(value, other);
+}
+
+/*!
+ * @brief 否定の等価比較演算子のテスト
+ *  メンバの値を変えて、等価比較を行う
+ *  重要なクラスなので、テスト条件ごとにケースを分ける
+ *
+ *  合格条件：NULL vs 値あり の比較で不一致を検出できること
+ */
+TEST(CNativeW, operatorNotEqualNullVsSomeValue)
+{
+	// NULL vs 値あり
+	CNativeW value;
+	CNativeW other(L"これはテストです。");
+	ASSERT_NE(value, other);
+}
+
+/*!
+ * @brief 否定の等価比較演算子のテスト
+ *  メンバの値を変えて、等価比較を行う
+ *  重要なクラスなので、テスト条件ごとにケースを分ける
+ *
+ *  合格条件：長さの異なる場合の比較で不一致を検出できること
+ */
+TEST(CNativeW, operatorNotEqualNotSameLength)
+{
+	// 値あり vs 値あり(文字列長が違う)
+	CNativeW value(L"これはテストです。");
+	CNativeW other(L"これはテスト？");
+	ASSERT_NE(value, other);
+}
+
+/*!
+ * @brief 否定の等価比較演算子のテスト
+ *  メンバの値を変えて、等価比較を行う
+ *  重要なクラスなので、テスト条件ごとにケースを分ける
+ *
+ *  合格条件：長さが等しく内容の異なる場合の比較で不一致を検出できること
+ */
+TEST(CNativeW, operatorNotEqualNotSameContent)
+{
+	// 値あり vs 値あり(値が違う)
+	CNativeW value(L"これはテストです。");
+	CNativeW other(L"これはテストです？");
+	ASSERT_NE(value, other);
+}
+
+/*!
+ * @brief 等価比較演算子のテスト
+ *  ポインタとの等価比較を行う
+ */
+TEST(CNativeW, operatorEqualSameString)
+{
+	constexpr const wchar_t text[] = L"おっす！オラ(ry";
+	CNativeW value(text);
+	LPCWSTR str = text;
+	ASSERT_EQ(value, str);
+}
+
+/*!
+ * @brief 否定の等価比較演算子のテスト
+ *  ポインタとの等価比較を行う
+ */
+TEST(CNativeW, operatorNotEqualAlmostSameString)
+{
+	CNativeW value(L"おっす！オラ(ry");
+	LPCWSTR str = L"おっと！オラ(ry";
+	ASSERT_NE(value, str);
+}
+
+/*!
+ * @brief 否定の等価比較演算子のテスト
+ *  nullptrとの等価比較を行う
+ */
+TEST(CNativeW, operatorNotEqualNullptr)
+{
+	constexpr const wchar_t text[] = L"おっす！オラ(ry";
+	CNativeW value(text);
+	ASSERT_NE(value, nullptr);
+}
+
+/*!
+ * @brief 否定の等価比較演算子のテスト
+ *  ポインタ(値がNULL)との等価比較を行う
+ */
+TEST(CNativeW, operatorNotEqualStringNull)
+{
+	constexpr const wchar_t text[] = L"おっす！オラ(ry";
+	CNativeW value(text);
+	LPCWSTR str = NULL;
+	ASSERT_NE(value, str);
 }
 
 /*!
@@ -431,4 +606,100 @@ TEST(CNativeW, CheckEmpty)
 
 	// インスタンス化しただけではバッファサイズが 0 であることを確認する。
 	EXPECT_EQ(0, stringW.capacity());
+}
+
+/*!
+ * 同型との比較のテスト
+ *
+ * @remark < 0 自身がメモリ未確保、かつ、比較対象はメモリ確保済み
+ * @remark < 0 データ値が比較対象より小さい
+ * @remark < 0 データが比較対象の先頭部分と一致する、かつ、データ長が比較対象より小さい
+ * @remark == 0 比較対象が自分自身の参照
+ * @remark == 0 自身がメモリ未確保、かつ、比較対象がメモリ未確保
+ * @remark > 0 自身が確保済み、かつ、比較対象がメモリ未確保
+ * @remark > 0 データ値が比較対象より大きい
+ * @remark > 0 データの先頭部分が比較対象と一致する、かつ、データ長が比較対象より大きい
+ */
+TEST(CNativeW, CompareWithCNativeW)
+{
+	//互いに値の異なる文字列定数を定義する
+	constexpr const wchar_t szS0[]	= L"a\0b\0c";
+	constexpr const wchar_t szM0[]	= L"a\0a\0c\0";
+	constexpr const wchar_t szM1[]	= L"a\0b\0c\0";
+	constexpr const wchar_t szM2[]	= L"a\0c\0c\0";
+	constexpr const wchar_t szL0[]	= L"a\0b\0c\0d";
+
+	// 値なしの変数と文字列定数に対応するCNativeWのインスタンスを用意する
+	CNativeW cN0, cN1
+		, cS0(szS0, _countof(szS0))
+		, cM0(szM0, _countof(szM0))
+		, cM1(szM1, _countof(szM1))
+		, cM2(szM2, _countof(szM2))
+		, cL0(szL0, _countof(szL0));
+
+	// 比較
+	// ASSERT_GTの判定仕様は v1 > v2
+	// ASSERT_EQの判定仕様は v1 == v2(expected, actual)
+	// ASSERT_LTの判定仕様は v1 < v2
+	ASSERT_GT(0, cN0.Compare(cS0));
+	ASSERT_GT(0, cM1.Compare(cM2));
+	ASSERT_GT(0, cM1.Compare(cL0));
+	ASSERT_EQ(0, cN0.Compare(cN0));
+	ASSERT_EQ(0, cS0.Compare(cS0));
+	ASSERT_EQ(0, cN0.Compare(cN1));
+	ASSERT_LT(0, cS0.Compare(cN0));
+	ASSERT_LT(0, cM1.Compare(cM0));
+	ASSERT_LT(0, cM1.Compare(cS0));
+}
+
+/*!
+ * 文字列ポインタ型との比較のテスト
+ *
+ * @remark < 0 自身がメモリ未確保、かつ、比較対象がnullptr以外
+ * @remark < 0 文字列値が比較対象より小さい
+ * @remark == 0 自身がメモリ未確保、かつ、比較対象がnullptr
+ * @remark > 0 自身がメモリ確保済み、かつ、比較対象がnullptr
+ * @remark > 0 文字列値が比較対象より大きい
+ */
+TEST(CNativeW, CompareWithStringPtr)
+{
+	//互いに値の異なる文字列定数を定義する
+	constexpr const wchar_t* pcN0 = nullptr;
+	constexpr const wchar_t szS0[] = L"ab";
+	constexpr const wchar_t szM0[] = L"aac";
+	constexpr const wchar_t szM1[] = L"abc";
+	constexpr const wchar_t szM2[] = L"acc";
+	constexpr const wchar_t szL0[] = L"abcd";
+
+	// 定数に対応するCNativeWのインスタンスを用意する
+	CNativeW cN0(pcN0), cM1(szM1);
+
+	// 比較
+	// ASSERT_GTの判定仕様は v1 > v2
+	// ASSERT_EQの判定仕様は v1 == v2(expected, actual)
+	// ASSERT_LTの判定仕様は v1 < v2
+	ASSERT_GT(0, cN0.Compare(szM1));
+	ASSERT_GT(0, cM1.Compare(szM2));
+	ASSERT_GT(0, cM1.Compare(szL0));
+	ASSERT_EQ(0, cN0.Compare(pcN0));
+	ASSERT_EQ(0, cM1.Compare(szM1));
+	ASSERT_LT(0, cM1.Compare(pcN0));
+	ASSERT_LT(0, cM1.Compare(szM0));
+	ASSERT_LT(0, cM1.Compare(szS0));
+}
+
+/*!
+ * @brief グローバル加算演算子のテスト
+ * @remark 1つ目の引数の末尾に2つ目の引数を連結する
+ * @remark 順序逆転版も同仕様。
+ */
+TEST(CNativeW, globalOperatorAdd)
+{
+	CNativeW v1(L"前半");
+	constexpr const wchar_t v2[] = L"後半";
+	EXPECT_STREQ(L"前半後半", (v1 + v2).GetStringPtr());
+
+	constexpr const wchar_t v3[] = L"前半";
+	CNativeW v4(L"後半");
+	EXPECT_STREQ(L"前半後半", (v3 + v4).GetStringPtr());
 }

@@ -51,8 +51,19 @@ private:
 	int				m_nDataLen;
 };
 
+// グローバル演算子の前方宣言
+class CNativeW;
+bool operator == (const CNativeW& lhs, const wchar_t* rhs) noexcept;
+bool operator != (const CNativeW& lhs, const wchar_t* rhs) noexcept;
+bool operator == (const wchar_t* lhs, const CNativeW& rhs) noexcept;
+bool operator != (const wchar_t* lhs, const CNativeW& rhs) noexcept;
+CNativeW operator + (const CNativeW& lhs, const wchar_t* rhs) noexcept(false);
+CNativeW operator + (const wchar_t* lhs, const CNativeW& rhs) noexcept(false);
+
 //! UNICODE文字列管理クラス
 class CNativeW final : public CNative{
+	friend bool operator == (const CNativeW& lhs, const wchar_t* rhs) noexcept;
+
 public:
 	//コンストラクタ・デストラクタ
 	CNativeW() noexcept;
@@ -60,6 +71,9 @@ public:
 	CNativeW( CNativeW&& other ) noexcept;
 	CNativeW( const wchar_t* pData, int nDataLen ); //!< nDataLenは文字単位。
 	CNativeW( const wchar_t* pData);
+
+	/*! メモリ確保済みかどうか */
+	bool IsValid() const noexcept { return GetStringPtr() != nullptr; }
 
 	//管理
 	void AllocStringBuffer( int nDataLen );                    //!< (重要：nDataLenは文字単位) バッファサイズの調整。必要に応じて拡大する。
@@ -82,6 +96,8 @@ public:
 	CNativeW  operator + (const CNativeW& rhs) const	{ return (CNativeW(*this) += rhs); }
 	CNativeW& operator += (const CNativeW& rhs)			{ AppendNativeData(rhs); return *this; }
 	CNativeW& operator += (wchar_t ch)					{ return (*this += CNativeW(&ch, 1)); }
+	bool operator == (const CNativeW& rhs) const noexcept { return 0 == Compare(rhs); }
+	bool operator != (const CNativeW& rhs) const noexcept { return !(*this == rhs); }
 
 	//ネイティブ取得インターフェース
 	wchar_t operator[](int nIndex) const;                    //!< 任意位置の文字取得。nIndexは文字単位。
@@ -101,7 +117,7 @@ public:
 	//特殊
 	void _SetStringLength(int nLength)
 	{
-		_GetMemory()->_SetRawLength(nLength*sizeof(wchar_t));
+		CNative::_SetRawLength(nLength*sizeof(wchar_t));
 	}
 	//末尾を1文字削る
 	void Chop()
@@ -113,16 +129,21 @@ public:
 		}
 	}
 	void swap( CNativeW& left ){
-		_GetMemory()->swap( *left._GetMemory() );
+		CNative::swap(left);
 	}
-	int capacity(){
-		return _GetMemory()->capacity() / sizeof(wchar_t);
+	int capacity() const noexcept {
+		return CNative::capacity() / sizeof(wchar_t);
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           判定                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	
+	int Compare(const CNativeW& rhs) const noexcept;
+	int Compare(const wchar_t* rhs) const noexcept;
+	bool Equals(const CNativeW& rhs) const noexcept { return 0 == Compare(rhs); }
+	bool Equals(const wchar_t* rhs) const noexcept { return 0 == Compare(rhs); }
+
 	//! 同一の文字列ならtrue
 	static bool IsEqual( const CNativeW& cmem1, const CNativeW& cmem2 );
 
