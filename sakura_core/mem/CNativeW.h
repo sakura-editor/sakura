@@ -55,6 +55,10 @@ private:
 class CNativeW;
 bool operator == (const CNativeW& lhs, const wchar_t* rhs) noexcept;
 bool operator != (const CNativeW& lhs, const wchar_t* rhs) noexcept;
+bool operator == (const wchar_t* lhs, const CNativeW& rhs) noexcept;
+bool operator != (const wchar_t* lhs, const CNativeW& rhs) noexcept;
+CNativeW operator + (const CNativeW& lhs, const wchar_t* rhs) noexcept(false);
+CNativeW operator + (const wchar_t* lhs, const CNativeW& rhs) noexcept(false);
 
 //! UNICODE文字列管理クラス
 class CNativeW final : public CNative{
