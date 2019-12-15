@@ -116,6 +116,9 @@
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
   </ItemGroup>
+  <ItemGroup Condition="Exists('$(VCInstallDir)\Auxiliary\VS\include\CodeCoverage\CodeCoverage.h')">
+    <ClCompile Include="coverage.cpp" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(ProjectDir)..\..\sakura\sakura.vcxproj">
       <Project>{af03508c-515e-4a0e-87be-67ed1e254bd0}</Project>
