@@ -1094,6 +1094,9 @@
     <ClInclude Include="..\sakura_core\charset\icu4c\CharsetDetector.h">
       <Filter>Cpp Source Files\charset\icu4c</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\GrepInfo.h">
+      <Filter>Cpp Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resource\auto_scroll_center.cur">
@@ -2268,6 +2271,9 @@
       <Filter>Cpp Source Files\charset\icu4c</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\EditInfo.cpp">
+      <Filter>Cpp Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\GrepInfo.cpp">
       <Filter>Cpp Source Files</Filter>
     </ClCompile>
   </ItemGroup>

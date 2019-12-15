@@ -529,20 +529,6 @@ CCommandLine::CCommandLine()
 	m_bWriteQuit			= false;
 	m_bProfileMgr			= false;
 	m_bSetProfile			= false;
-	m_gi.bGrepSubFolder		= false;
-	m_gi.sGrepSearchOption.Reset();
-	m_gi.bGrepCurFolder		= false;
-	m_gi.bGrepStdout		= false;
-	m_gi.bGrepHeader		= true;
-	m_gi.nGrepCharSet		= CODE_SJIS;
-	m_gi.nGrepOutputLineType	= 0;
-	m_gi.nGrepOutputStyle	= 1;
-	m_gi.bGrepOutputFileOnly = false;
-	m_gi.bGrepOutputBaseFolder = false;
-	m_gi.bGrepSeparateFolder = false;
-	m_gi.bGrepReplace		= false;
-	m_gi.bGrepPaste			= false;
-	m_gi.bGrepBackup		= false;
 	m_bViewMode			= false;
 	m_nGroup				= -1;		// 2007.06.26 ryoji
 	m_cmProfile.SetString(L"");
