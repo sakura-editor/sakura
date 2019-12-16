@@ -44,5 +44,8 @@
     <ClCompile Include="test-StdControl.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="coverage.cpp">
+      <Filter>Other Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
