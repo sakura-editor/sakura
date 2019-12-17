@@ -56,5 +56,8 @@
     <ClCompile Include="test-grepinfo.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="coverage.cpp">
+      <Filter>Other Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
