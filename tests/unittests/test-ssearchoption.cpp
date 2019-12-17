@@ -95,3 +95,17 @@ TEST(SSearchOption, operatorEqualAndNotEqual)
 	EXPECT_FALSE(v1 == v2);
 	EXPECT_TRUE(v1 != v2);
 }
+
+/*!
+ * @brief リセットのテスト
+ *  値を初期値（＝全部false）に戻す。
+ */
+TEST(SSearchOption, Reset)
+{
+	SSearchOption value{ true,true,true }, other;
+	EXPECT_NE(value, other);
+	value.Reset();
+	ASSERT_EQ(value, other);
+
+}
+

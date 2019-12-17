@@ -75,10 +75,6 @@ struct EditInfo {
 
 	// コンストラクタ
 	EditInfo() noexcept;
-
-	// 演算子
-	bool operator == (const EditInfo& rhs) const noexcept;
-	bool operator != (const EditInfo& rhs) const noexcept;
 };
 
 /*[EOF]*/

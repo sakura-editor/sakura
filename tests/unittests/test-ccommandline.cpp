@@ -36,6 +36,12 @@
 #include <cstdlib>
 #include <fstream>
 
+bool operator == (const EditInfo& lhs, const EditInfo& rhs) noexcept;
+bool operator != (const EditInfo& lhs, const EditInfo& rhs) noexcept;
+
+bool operator == (const GrepInfo& lhs, const GrepInfo& rhs) noexcept;
+bool operator != (const GrepInfo& lhs, const GrepInfo& rhs) noexcept;
+
 /*!
  * テスト用の極薄ラッパークラス
  */
@@ -406,46 +412,6 @@ TEST(CCommandLine, ParseDocCode)
 	// オプション指定で上書きされる
 	cCommandLine.ParseCommandLine(L"-CODE=2", false);
 	EXPECT_EQ(CODE_EUC, cCommandLine.GetDocCode());
-}
-
-/*!
- * @brief パラメータ解析(ファイル名)の仕様
- * @remark ファイルは複数指定できる
- * @remark 1つ目のファイルは EditInfo(m_fi.m_szPath) に格納される
- * @remark 2つ目以降のファイルは vector(m_vFiles) に格納される
- * @remark 1つ目のファイルパスは、パス解決されてフルパスになる
- * @remark 2つ目以降のファイルは、パス解決されない
- */
-TEST(CCommandLine, ParseOpenFilename)
-{
-	// テスト内容が具体的に何かを検証できているかどうか微妙。
-	CCommandLineWrapper cCommandLine;
-	cCommandLine.ParseCommandLine(L"", false);
-	EXPECT_STREQ(L"", cCommandLine.GetOpenFile());
-	EXPECT_EQ(0, cCommandLine.GetFileNum());
-	EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
-#define TESTLOCAL_OPEN_FILENAME1 L"test1.txt"
-#define TESTLOCAL_OPEN_FILENAME2 L"test2.txt"
-	cCommandLine.ParseCommandLine(TESTLOCAL_OPEN_FILENAME1 " " TESTLOCAL_OPEN_FILENAME2, false);
-	//EXPECT_STREQ(TESTLOCAL_OPEN_FILENAME1, cCommandLine.GetOpenFile());
-	EXPECT_STRNE(L"", cCommandLine.GetOpenFile());
-	EXPECT_EQ(1, cCommandLine.GetFileNum());
-	std::wstring additionalFile(cCommandLine.GetFileName(0));
-	ASSERT_NE(0, additionalFile.find(TESTLOCAL_OPEN_FILENAME2));
-#undef TESTLOCAL_OPEN_FILENAME2
-#undef TESTLOCAL_OPEN_FILENAME1
-	cCommandLine.ClearFile();
-	EXPECT_EQ(0, cCommandLine.GetFileNum());
-}
-
-/*!
- * @brief パラメータ解析(ファイル名)の謎仕様
- */
-TEST(CCommandLine, ParseQuotedOpenFilename)
-{
-	CCommandLineWrapper cCommandLine;
-	// 引用符で括られたファイル名に何かする処理がある。
-	cCommandLine.ParseCommandLine(L"\"test1.txt\"", false);
 }
 
 /*!

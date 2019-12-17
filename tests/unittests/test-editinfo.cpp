@@ -34,6 +34,46 @@
 #include "EditInfo.h"
 
 /*!
+ * 同型との等価比較
+ *
+ * @param rhs 比較対象
+ * @retval true 等しい
+ * @retval false 等しくない
+ */
+bool operator == (const EditInfo& lhs, const EditInfo& rhs) noexcept {
+	if (&lhs == &rhs) return true;
+	return 0 == wcsncmp(lhs.m_szPath, rhs.m_szPath, _countof(lhs.m_szPath))
+		&& lhs.m_nCharCode == rhs.m_nCharCode
+		&& lhs.m_bBom == rhs.m_bBom
+		&& 0 == wcsncmp(lhs.m_szDocType, rhs.m_szDocType, _countof(lhs.m_szDocType))
+		&& lhs.m_nTypeId == rhs.m_nTypeId
+		&& lhs.m_nViewTopLine == rhs.m_nViewTopLine
+		&& lhs.m_nViewLeftCol == rhs.m_nViewLeftCol
+		&& lhs.m_ptCursor == rhs.m_ptCursor
+		&& lhs.m_bIsModified == rhs.m_bIsModified
+		&& lhs.m_bIsGrep == rhs.m_bIsGrep
+		&& 0 == wcsncmp(lhs.m_szGrepKey, rhs.m_szGrepKey, _countof(lhs.m_szGrepKey))
+		&& lhs.m_bIsDebug == rhs.m_bIsDebug
+		&& 0 == wcsncmp(lhs.m_szMarkLines, rhs.m_szMarkLines, _countof(lhs.m_szMarkLines))
+		&& lhs.m_nWindowSizeX == rhs.m_nWindowSizeX
+		&& lhs.m_nWindowSizeY == rhs.m_nWindowSizeY
+		&& lhs.m_nWindowOriginX == rhs.m_nWindowOriginX
+		&& lhs.m_nWindowOriginY == rhs.m_nWindowOriginY;
+}
+
+/*!
+ * 同型との否定の等価比較
+ *
+ * @param rhs 比較対象
+ * @retval true 等しくない
+ * @retval false 等しい
+ */
+bool operator != (const EditInfo& lhs, const EditInfo& rhs) noexcept
+{
+	return !(lhs == rhs);
+}
+
+/*!
  * @brief 等価比較演算子のテスト
  *  初期値同士の等価比較を行う
  */

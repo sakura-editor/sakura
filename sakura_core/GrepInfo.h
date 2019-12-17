@@ -32,6 +32,9 @@
  * Grep 検索オプション
  *
  * @date 2002/01/18 aroka
+ *
+ * @note この構造体は CNativeW をメンバに含むため、
+ *   memcmp による比較を行ってはならない。
  */
 struct GrepInfo {
 	CNativeW		cmGrepKey;				//!< 検索キー
@@ -57,8 +60,4 @@ struct GrepInfo {
 
 	// コンストラクタ
 	GrepInfo() noexcept;
-
-	// 演算子
-	bool operator == (const GrepInfo& rhs) const noexcept;
-	bool operator != (const GrepInfo& rhs) const noexcept;
 };
