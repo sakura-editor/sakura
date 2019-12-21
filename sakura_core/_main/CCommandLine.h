@@ -18,49 +18,28 @@
 
 #pragma once
 
+#include <vector>
+
 #include "global.h"
+#include "charset/charcode.h"
+#include "mem/CNativeW.h"
 #include "EditInfo.h"
+#include "GrepInfo.h"
 #include "util/design_template.h"
-
-class CMemory;
-
-/*!	検索オプション
-	20020118 aroka
-*/
-struct GrepInfo {
-	CNativeW		cmGrepKey;			//!< 検索キー
-	CNativeW		cmGrepRep;			//!< 置換キー
-	CNativeW		cmGrepFile;			//!< 検索対象ファイル
-	CNativeW		cmGrepFolder;		//!< 検索対象フォルダ
-	CNativeW		cmExcludeFile;		//!< 除外対象ファイル
-	CNativeW		cmExcludeFolder;	//!< 除外対象フォルダ
-	SSearchOption	sGrepSearchOption;	//!< 検索オプション
-	bool			bGrepCurFolder;		//!< カレントディレクトリを維持
-	bool			bGrepStdout;		//!< 標準出力モード
-	bool			bGrepHeader;		//!< ヘッダ情報表示
-	bool			bGrepSubFolder;		//!< サブフォルダを検索する
-	ECodeType		nGrepCharSet;		//!< 文字コードセット
-	int				nGrepOutputStyle;	//!< 結果出力形式
-	int				nGrepOutputLineType;	//!< 結果出力：行を出力/該当部分/否マッチ行
-	bool			bGrepOutputFileOnly;	//!< ファイル毎最初のみ検索
-	bool			bGrepOutputBaseFolder;	//!< ベースフォルダ表示
-	bool			bGrepSeparateFolder;	//!< フォルダ毎に表示
-	bool			bGrepReplace;		//!< Grep置換
-	bool			bGrepPaste;			//!< クリップボードから貼り付け
-	bool			bGrepBackup;		//!< 置換でバックアップを保存
-};
 
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
 
 /*!
-	@brief コマンドラインパーサ クラス
-*/
-class CCommandLine  : public TSingleton<CCommandLine> {
+ * @brief コマンドラインパーサ クラス
+ */
+class CCommandLine : public TSingleton<CCommandLine> {
 	friend class TSingleton<CCommandLine>;
-	CCommandLine();
+protected:
+	CCommandLine() noexcept;
 
+private:
 	static int CheckCommandLine(
 		LPWSTR	str,		//!< [in] 検証する文字列（先頭の-は含まない）
 		WCHAR**	arg,		//!< [out] 引数がある場合はその先頭へのポインタ
@@ -78,27 +57,37 @@ class CCommandLine  : public TSingleton<CCommandLine> {
 
 // member accessor method
 public:
-	bool IsNoWindow() const {return m_bNoWindow;}
-	bool IsWriteQuit() const {return m_bWriteQuit;}	// 2007.05.19 ryoji sakuext用に追加
-	bool IsGrepMode() const {return m_bGrepMode;}
-	bool IsGrepDlg() const {return m_bGrepDlg;}
-	bool IsDebugMode() const {return m_bDebugMode;}
-	bool IsViewMode() const {return m_bViewMode;}
-	bool GetEditInfo(EditInfo* fi) const { *fi = m_fi; return true; }
-	bool GetGrepInfo(GrepInfo* gi) const { *gi = m_gi; return true; }
-	int GetGroupId() const {return m_nGroup;}	// 2007.06.26 ryoji
-	LPCWSTR GetMacro() const{ return m_cmMacro.GetStringPtr(); }
-	LPCWSTR GetMacroType() const{ return m_cmMacroType.GetStringPtr(); }
-	LPCWSTR GetProfileName() const{ return m_cmProfile.GetStringPtr(); }
-	bool IsSetProfile() const{ return m_bSetProfile; }
+	bool IsNoWindow() const noexcept { return m_bNoWindow; }
+	bool IsWriteQuit() const noexcept { return m_bWriteQuit; }	// 2007.05.19 ryoji sakuext用に追加
+	bool IsGrepMode() const noexcept { return m_bGrepMode; }
+	bool IsGrepDlg() const noexcept { return m_bGrepDlg; }
+	bool IsDebugMode() const noexcept { return m_bDebugMode; }
+	bool IsViewMode() const noexcept { return m_bViewMode; }
+	bool GetEditInfo(EditInfo* fi) const noexcept { *fi = m_fi; return true; }
+	const EditInfo& GetEditInfoRef() const noexcept { return m_fi; }
+	bool GetGrepInfo(GrepInfo* gi) const noexcept { *gi = m_gi; return true; }
+	const GrepInfo& GetGrepInfoRef() const noexcept { return m_gi; }
+	int GetGroupId() const noexcept { return m_nGroup; }	// 2007.06.26 ryoji
+	LPCWSTR GetMacro() const noexcept { return m_cmMacro.GetStringPtr(); }
+	LPCWSTR GetMacroType() const noexcept { return m_cmMacroType.GetStringPtr(); }
+	LPCWSTR GetProfileName() const noexcept { return m_cmProfile.GetStringPtr(); }
+	bool IsSetProfile() const noexcept { return m_bSetProfile; }
 	void SetProfileName(LPCWSTR s){
 		m_bSetProfile = true;
 		m_cmProfile.SetString(s);
 	}
-	bool IsProfileMgr() { return m_bProfileMgr; }
-	int GetFileNum(void) { return m_vFiles.size(); }
-	const WCHAR* GetFileName(int i) { return i < GetFileNum() ? m_vFiles[i].c_str() : NULL; }
-	void ClearFile(void) { m_vFiles.clear(); }
+	bool IsProfileMgr() const noexcept { return m_bProfileMgr; }
+	const CLogicPoint& GetCaretLocation() const noexcept { return m_fi.m_ptCursor; }
+	CLayoutPoint GetViewLocation() const noexcept { return { m_fi.m_nViewLeftCol,  m_fi.m_nViewTopLine }; }
+	tagSIZE GetWindowSize() const noexcept { return { m_fi.m_nWindowSizeX, m_fi.m_nWindowSizeY }; }
+	tagPOINT GetWindowOrigin() const noexcept { return { m_fi.m_nWindowOriginX, m_fi.m_nWindowOriginY }; }
+	LPCWSTR GetOpenFile() const noexcept { return m_fi.m_szPath; }
+	int GetFileNum(void) const noexcept { return m_vFiles.size(); }
+	const WCHAR* GetFileName(int i) const noexcept { return i < GetFileNum() ? m_vFiles[i].c_str() : NULL; }
+	void ClearFile(void) noexcept { m_vFiles.clear(); }
+	LPCWSTR GetDocType() const noexcept { return m_fi.m_szDocType; }
+	ECodeType GetDocCode() const noexcept { return m_fi.m_nCharCode; }
+	void ParseKanjiCodeFromFileName( LPWSTR pszExeFileName, int cchExeFileName );
 	void ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse = true );
 
 // member valiables

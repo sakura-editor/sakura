@@ -90,6 +90,12 @@ bool CProcessFactory::ProfileSelect( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 	CSelectLang::InitializeLanguageEnvironment();
 	CSelectLang::ChangeLang( settings.m_szDllLanguage );
 
+	//	May 30, 2000 genta
+	//	実行ファイル名をもとに漢字コードを固定する．
+	WCHAR szExeFileName[MAX_PATH];
+	const int cchExeFileName = ::GetModuleFileName(NULL, szExeFileName, _countof(szExeFileName));
+	CCommandLine::getInstance()->ParseKanjiCodeFromFileName(szExeFileName, cchExeFileName);
+
 	CCommandLine::getInstance()->ParseCommandLine(lpCmdLine);
 
 	bool bDialog;

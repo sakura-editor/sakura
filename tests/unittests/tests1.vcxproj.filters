@@ -44,6 +44,18 @@
     <ClCompile Include="test-StdControl.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-ccommandline.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-editinfo.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-ssearchoption.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-grepinfo.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
     <ClCompile Include="coverage.cpp">
       <Filter>Other Files</Filter>
     </ClCompile>

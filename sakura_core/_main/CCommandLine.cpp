@@ -173,6 +173,58 @@ int CCommandLine::CheckCommandLine(
 	return 0;	//	該当無し
 }
 
+/*! 
+ * コンストラクタ
+ *
+ * @date 2005/08/24 D.S.Koba ParseCommandLine()変更によりメンバ変数に初期値代入
+ * @date 2007/06/26 ryoji m_nGroupの初期値に -1 を指定
+ */
+CCommandLine::CCommandLine() noexcept
+	: m_bGrepMode(false)
+	, m_bGrepDlg(false)
+	, m_bDebugMode(false)
+	, m_bNoWindow(false)
+	, m_bWriteQuit(false)
+	, m_bProfileMgr(false)
+	, m_bSetProfile(false)
+	, m_fi()
+	, m_gi()
+	, m_bViewMode(false)
+	, m_nGroup(-1)
+	, m_cmMacro()
+	, m_cmMacroType()
+	, m_cmProfile(L"")
+	, m_vFiles()
+{
+}
+
+/*!
+ * 実行ファイル名に含まれる数値により文字コードを決定する．
+ *
+ * @param pszExeFileName 実行ファイル名
+ * @param cchExeFileName 実行ファイル名の長さ
+ */
+void CCommandLine::ParseKanjiCodeFromFileName(LPWSTR pszExeFileName, int cchExeFileName)
+{
+	for (int i = cchExeFileName - 1; 0 <= i; i--) {
+		if (pszExeFileName[i] == L'.') {
+			pszExeFileName[i] = L'\0';
+			int k = i - 1;
+			for (; 0 < k && WCODE::Is09(pszExeFileName[k]); k--) {}
+			if (k < 0 || !WCODE::Is09(pszExeFileName[k])) {
+				k++;
+			}
+			if (WCODE::Is09(pszExeFileName[k])) {
+				ECodeType n = (ECodeType)_wtoi(&pszExeFileName[k]);
+				if (IsValidCodeOrCPType(n)) {
+					m_fi.m_nCharCode = n;
+				}
+			}
+			break;
+		}
+	}
+}
+
 /*! コマンドラインの解析
 
 	WinMain()から呼び出される。
@@ -191,31 +243,6 @@ int CCommandLine::CheckCommandLine(
 void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CCommandLine::Parse" );
-
-	//	May 30, 2000 genta
-	//	実行ファイル名をもとに漢字コードを固定する．
-	{
-		WCHAR wexename[MAX_PATH];
-		const int len = ::GetModuleFileName( NULL, wexename, _countof( wexename ) );
-
-		for( int i = len - 1; 0 <= i; i-- ){
-			if(wexename[i] == L'.' ){
-				wexename[i] = L'\0';
-				int k = i - 1;
-				for(; 0 < k && WCODE::Is09(wexename[k]); k-- ){}
-				if( k < 0 || !WCODE::Is09(wexename[k])){
-					k++;
-				}
-				if( WCODE::Is09(wexename[k]) ){
-					ECodeType n = (ECodeType)_wtoi(&wexename[k]);
-					if(IsValidCodeOrCPType(n)){
-						m_fi.m_nCharCode = n;
-					}
-				}
-				break;
-			}
-		}
-	}
 
 	WCHAR	szPath[_MAX_PATH];
 	bool	bFind = false;				// ファイル名発見フラグ
@@ -514,37 +541,3 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 
 	return;
 }
-
-/*! 
-	コンストラクタ
-	
-	@date 2005-08-24 D.S.Koba ParseCommandLine()変更によりメンバ変数に初期値代入
-*/
-CCommandLine::CCommandLine()
-{
-	m_bGrepMode				= false;
-	m_bGrepDlg				= false;
-	m_bDebugMode			= false;
-	m_bNoWindow				= false;
-	m_bWriteQuit			= false;
-	m_bProfileMgr			= false;
-	m_bSetProfile			= false;
-	m_gi.bGrepSubFolder		= false;
-	m_gi.sGrepSearchOption.Reset();
-	m_gi.bGrepCurFolder		= false;
-	m_gi.bGrepStdout		= false;
-	m_gi.bGrepHeader		= true;
-	m_gi.nGrepCharSet		= CODE_SJIS;
-	m_gi.nGrepOutputLineType	= 0;
-	m_gi.nGrepOutputStyle	= 1;
-	m_gi.bGrepOutputFileOnly = false;
-	m_gi.bGrepOutputBaseFolder = false;
-	m_gi.bGrepSeparateFolder = false;
-	m_gi.bGrepReplace		= false;
-	m_gi.bGrepPaste			= false;
-	m_gi.bGrepBackup		= false;
-	m_bViewMode			= false;
-	m_nGroup				= -1;		// 2007.06.26 ryoji
-	m_cmProfile.SetString(L"");
-}
-

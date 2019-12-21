@@ -155,34 +155,20 @@ struct SSearchOption{
 	bool	bLoHiCase;		//!< true==英大文字小文字の区別
 	bool	bWordOnly;		//!< true==単語のみ検索
 
-	SSearchOption() : bRegularExp(false), bLoHiCase(false), bWordOnly(false) { }
+	// コンストラクタ
+	SSearchOption() noexcept;
 	SSearchOption(
 		bool _bRegularExp,
 		bool _bLoHiCase,
 		bool _bWordOnly
-	)
-	: bRegularExp(_bRegularExp)
-	, bLoHiCase(_bLoHiCase)
-	, bWordOnly(_bWordOnly)
-	{
-	}
-	void Reset()
-	{
-		bRegularExp = false;
-		bLoHiCase   = false;
-		bWordOnly   = false;
-	}
+	) noexcept;
+
+	// 操作
+	void Reset();
 
 	//演算子
-	bool operator == (const SSearchOption& rhs) const
-	{
-		//とりあえずmemcmpでいいや
-		return memcmp(this,&rhs,sizeof(*this))==0;
-	}
-	bool operator != (const SSearchOption& rhs) const
-	{
-		return !operator==(rhs);
-	}
+	bool operator == (const SSearchOption& rhs) const noexcept;
+	bool operator != (const SSearchOption& rhs) const noexcept;
 };
 
 //2007.10.02 kobake CEditWndのインスタンスへのポインタをここに保存しておく
