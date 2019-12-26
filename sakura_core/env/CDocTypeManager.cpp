@@ -35,7 +35,7 @@
 const WCHAR* CDocTypeManager::m_typeExtSeps = L" ;,";	// タイプ別拡張子 区切り文字
 const WCHAR* CDocTypeManager::m_typeExtWildcards = L"*?";	// タイプ別拡張子 ワイルドカード
 
-static CMutex g_cDocTypeMutex( FALSE, GSTR_MUTEX_SAKURA_DOCTYPE );
+static CMutex g_cDocTypeMutex( GSTR_MUTEX_SAKURA_DOCTYPE );
 
 /*!
 	ファイル名から、ドキュメントタイプ（数値）を取得する

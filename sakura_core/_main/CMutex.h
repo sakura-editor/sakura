@@ -31,40 +31,101 @@
 #pragma once
 
 #include <Windows.h>
+#include <string>
+#include <string_view>
 
-/** ミューテックスを扱うクラス
-	@date 2007.07.05 ryoji 新規作成
-*/
+/*!
+ * ミューテックスを扱うクラス
+ * 
+ * @date 2007/07/05 ryoji 新規作成
+ */
 class CMutex
 {
 public:
-	CMutex( BOOL bInitialOwner, LPCWSTR pszName, LPSECURITY_ATTRIBUTES psa = NULL )
+	/*!
+	 * コンストラクタ
+	 *
+	 * @param [in] name mutexの名前
+	 */
+	CMutex( std::wstring_view name ) noexcept
+		: m_strName( name )
+		, m_hObj( NULL )
+		, m_bOwnership( false )
 	{
-		m_hObj = ::CreateMutex( psa, bInitialOwner, pszName );
 	}
-	~CMutex()
+
+	/*!
+	 * デストラクタ
+	 * 
+	 * 確保済みのすべてのリソースを開放する
+	 */
+	~CMutex() noexcept
 	{
-		if( NULL != m_hObj )
+		Unlock();
+		if( m_hObj )
 		{
 			::CloseHandle( m_hObj );
 			m_hObj = NULL;
 		}
 	}
-	BOOL Lock( DWORD dwTimeout = INFINITE )
+
+	/*!
+	 * mutexの所有権を獲得する
+	 *
+	 * @param [in] dwTimeout タイムアウトまでの時間。単位はミリ秒。
+	 */
+	BOOL Lock( DWORD dwTimeout = INFINITE ) noexcept
 	{
-		DWORD dwRet = ::WaitForSingleObject( m_hObj, dwTimeout );
-		if( dwRet == WAIT_OBJECT_0 || dwRet == WAIT_ABANDONED )
+		// 所有権獲得済みなら直ちに抜ける
+		if( owning() ){
 			return TRUE;
-		else
-			return FALSE;
+		}
+
+		// mutex未作成なら作成する
+		if( !m_hObj ){
+			// 引数は、handleを継承しない、初期所有権を要求しない、NULLでない名前。
+			m_hObj = ::CreateMutex( NULL, FALSE, GetName() );
+		}
+
+		// mutexが取得できるまで待機。
+		BOOL bRet = FALSE;
+		if( m_hObj ){
+			DWORD dwRet = ::WaitForSingleObject( m_hObj, dwTimeout );
+			if( dwRet == WAIT_OBJECT_0 || dwRet == WAIT_ABANDONED ){
+				bRet = TRUE;
+				m_bOwnership = true;
+			}
+		}
+		return bRet;
 	}
-	BOOL Unlock()
+
+	/*!
+	 * mutexの所有権を手放す
+	 */
+	BOOL Unlock() noexcept
 	{
-		return ::ReleaseMutex( m_hObj );
+		BOOL bRet = FALSE;
+		if( m_hObj && owning() ){
+			bRet = ::ReleaseMutex( m_hObj );
+			m_bOwnership = false;
+		}
+		return bRet;
 	}
-	operator HANDLE() const { return m_hObj; }
+
+	//! mutexの名前を取得する
+	std::wstring_view name() const noexcept { return m_strName.data(); }
+	//! mutexのハンドルがあるか判定する
+	bool valid() const noexcept { return (m_hObj != NULL); }
+	//! mutexの所有権があるか判定する
+	bool owning() const noexcept { return m_bOwnership; }
+
+	//! mutexの名前を取得する(C-Style)
+	const wchar_t* GetName() const noexcept { return name().data(); }
+
 protected:
-	HANDLE m_hObj;
+	std::wstring	m_strName;		//!< mutexの名前
+	HANDLE			m_hObj;			//!< mutexのhandle
+	bool			m_bOwnership;	//!< mutexの所有権を持っているかどうか
 };
 
 /**	スコープから抜けると同時にロックを解除する．

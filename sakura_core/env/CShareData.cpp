@@ -84,7 +84,7 @@ CShareData::~CShareData()
 	}
 }
 
-static CMutex g_cMutexShareWork( FALSE, GSTR_MUTEX_SAKURA_SHAREWORK );
+static CMutex g_cMutexShareWork( GSTR_MUTEX_SAKURA_SHAREWORK );
  
 CMutex& CShareData::GetMutexShareWork(){
 	return g_cMutexShareWork;

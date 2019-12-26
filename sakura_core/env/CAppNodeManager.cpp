@@ -64,7 +64,7 @@ static BOOL s_bGSort;	// グループ指定
 	@date 2007.07.05 ryoji 新規導入
 	@date 2007.07.07 genta CShareDataのメンバへ移動
 */
-static CMutex g_cEditArrMutex( FALSE, GSTR_MUTEX_SAKURA_EDITARR );
+static CMutex g_cEditArrMutex( GSTR_MUTEX_SAKURA_EDITARR );
 
 // GetOpenedWindowArr用ソート関数
 static int __cdecl cmpGetOpenedWindowArr(const void *e1, const void *e2)

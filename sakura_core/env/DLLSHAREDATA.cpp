@@ -35,7 +35,7 @@
 //GetDllShareData用グローバル変数
 DLLSHAREDATA* g_theDLLSHAREDATA = NULL;
 
-static CMutex g_cKeywordMutex( FALSE, GSTR_MUTEX_SAKURA_KEYWORD );
+static CMutex g_cKeywordMutex( GSTR_MUTEX_SAKURA_KEYWORD );
 
 CShareDataLockCounter::CShareDataLockCounter(){
 	LockGuard<CMutex> guard( g_cKeywordMutex );
