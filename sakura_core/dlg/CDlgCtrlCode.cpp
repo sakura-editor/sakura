@@ -261,16 +261,6 @@ BOOL CDlgCtrlCode::OnBnClicked( int wID )
 	return CDialog::OnBnClicked( wID );
 }
 
-#ifdef __MINGW32__
-#ifndef BUILD_OPT_NEW_HEADERS
-typedef struct tagNMKEY {
-  NMHDR hdr;
-  UINT  nVKey;
-  UINT  uFlags;
-} NMKEY, *LPNMKEY;
-#endif
-#endif
-
 BOOL CDlgCtrlCode::OnNotify( WPARAM wParam, LPARAM lParam )
 {
 	NMHDR*	pNMHDR;

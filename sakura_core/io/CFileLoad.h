@@ -36,11 +36,6 @@
 #include "charset/CCodePage.h"
 #include "util/design_template.h"
 
-// VC6添付のヘッダで定義されてません
-#ifndef INVALID_SET_FILE_POINTER
- #define INVALID_SET_FILE_POINTER 0xFFFFFFFF
-#endif // INVALID_SET_FILE_POINTER
-
 struct SEncodingConfig;
 class CCodeBase;
 
