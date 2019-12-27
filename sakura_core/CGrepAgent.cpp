@@ -1130,8 +1130,10 @@ int CGrepAgent::DoGrepFile(
 	bOutFileName = FALSE;
 	CEol	cEol;
 	int		nEolCodeLen;
-	const STypeConfigMini* type;
-	CDocTypeManager().GetTypeConfigMini( CDocTypeManager().GetDocumentTypeOfPath( pszFile ), &type );
+	const STypeConfigMini* type = NULL;
+	if( !CDocTypeManager().GetTypeConfigMini( CDocTypeManager().GetDocumentTypeOfPath( pszFile ), &type ) ){
+		return -1;
+	}
 	CFileLoad	cfl( type->m_encoding );	// 2012/12/18 Uchi 検査するファイルのデフォルトの文字コードを取得する様に
 	int		nOldPercent = 0;
 
@@ -1678,8 +1680,10 @@ int CGrepAgent::DoGrepReplaceFile(
 	int	nKeyLen = wcslen( pszKey );
 	const WCHAR*	pszCodeName = L"";
 
-	const STypeConfigMini* type;
-	CDocTypeManager().GetTypeConfigMini( CDocTypeManager().GetDocumentTypeOfPath( pszFile ), &type );
+	const STypeConfigMini* type = NULL;
+	if( !CDocTypeManager().GetTypeConfigMini( CDocTypeManager().GetDocumentTypeOfPath( pszFile ), &type ) ){
+		return -1;
+	}
 	CFileLoad	cfl( type->m_encoding );	// 2012/12/18 Uchi 検査するファイルのデフォルトの文字コードを取得する様に
 	bool bBom;
 	// ファイル名表示

@@ -175,8 +175,10 @@ void CViewCommander::Command_CHANGETYPE( int nTypePlusOne )
 		type = GetDocument()->m_cDocType.GetDocumentType();
 	}
 	if( type.IsValidType() && type.GetIndex() < GetDllShareData().m_nTypesCount ){
-		const STypeConfigMini* pConfig;
-		CDocTypeManager().GetTypeConfigMini(type, &pConfig);
+		const STypeConfigMini* pConfig = NULL;
+		if( !CDocTypeManager().GetTypeConfigMini( type, &pConfig ) ){
+			return;
+		}
 		GetDocument()->m_cDocType.SetDocumentTypeIdx(pConfig->m_id, true);
 		GetDocument()->m_cDocType.LockDocumentType();
 		GetDocument()->OnChangeType();

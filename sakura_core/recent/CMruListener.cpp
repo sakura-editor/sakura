@@ -77,21 +77,18 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 
 	// 指定のコード -> pLoadInfo->eCharCode
 	if( CODE_AUTODETECT == pLoadInfo->eCharCode ){
-		if( fexist(pLoadInfo->cFilePath) ){
-			// デフォルト文字コード認識のために一時的に読み込み対象ファイルのファイルタイプを適用する
-			const STypeConfigMini* type;
-			CDocTypeManager().GetTypeConfigMini(pLoadInfo->nType, &type);
+		pLoadInfo->eCharCode = ePrevCode;
+		// デフォルト文字コード認識のために一時的に読み込み対象ファイルのファイルタイプを適用する
+		const STypeConfigMini* type = NULL;
+		if( CDocTypeManager().GetTypeConfigMini( pLoadInfo->nType, &type ) && fexist( pLoadInfo->cFilePath ) ){
 			CCodeMediator cmediator( type->m_encoding );
 			pLoadInfo->eCharCode = cmediator.CheckKanjiCodeOfFile( pLoadInfo->cFilePath );
-		}
-		else{
-			pLoadInfo->eCharCode = ePrevCode;
 		}
 	}
 	else if( CODE_NONE == pLoadInfo->eCharCode ){
 		pLoadInfo->eCharCode = ePrevCode;
 	}
-	if(CODE_NONE==pLoadInfo->eCharCode){
+	if( CODE_NONE == pLoadInfo->eCharCode ){
 		const STypeConfigMini* type;
 		if( CDocTypeManager().GetTypeConfigMini(pLoadInfo->nType, &type) ){
 			pLoadInfo->eCharCode = type->m_encoding.m_eDefaultCodetype;	//無効値の回避	// 2011.01.24 ryoji CODE_DEFAULT -> m_eDefaultCodetype

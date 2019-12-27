@@ -884,8 +884,10 @@ bool CDlgOpenFile_CommonFileDialog::DoModalOpenDlg(
 	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), L"*.*" );
 	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), L"*.txt" );
 	for( int i = 0; i < GetDllShareData().m_nTypesCount; i++ ){
-		const STypeConfigMini* type;
-		CDocTypeManager().GetTypeConfigMini(CTypeConfig(i), &type);
+		const STypeConfigMini* type = NULL;
+		if( !CDocTypeManager().GetTypeConfigMini( CTypeConfig( i ), &type ) ){
+			continue;
+		}
 		cFileExt.AppendExt( type->m_szTypeName, type->m_szTypeExts );
 	}
 
