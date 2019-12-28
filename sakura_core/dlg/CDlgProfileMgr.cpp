@@ -480,7 +480,7 @@ static bool IOProfSettings( SProfileSettings& settings, bool bWrite )
 	if( settings.m_nDefaultIndex < -1 ){
 		settings.m_nDefaultIndex = -1;
 	}
-	cProf.IOProfileData( pSection, L"szDllLanguage", StringBufferW(settings.m_szDllLanguage, _countof(settings.m_szDllLanguage)) );
+	cProf.IOProfileData( pSection, L"szDllLanguage", StringBufferW( settings.m_szDllLanguage ) );
 	cProf.IOProfileData( pSection, L"bDefaultSelect", settings.m_bDefaultSelect );
 
 	if( bWrite ){

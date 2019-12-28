@@ -61,6 +61,19 @@ public:
 		}
 	}
 
+	/*!
+	 * テンプレートコンストラクタ
+	 *
+	 * StringBufferWのインスタンスを構築する
+	 *
+	 * @param [in] szData 固定長文字配列への参照
+	 */
+	template <uint32_t cchDataCount>
+	StringBufferW( wchar_t( &szData )[cchDataCount] ) noexcept
+		: StringBufferW( szData, cchDataCount )
+	{
+	}
+
 	// このクラスはコピー禁止
 	StringBufferW( const StringBufferW& ) = delete;
 	StringBufferW& operator = ( const StringBufferW& ) = delete;
@@ -107,9 +120,6 @@ public:
 
 	StringBufferW& operator = ( const wchar_t* rhs ) { assign( rhs ); return *this; }
 };
-
-//文字列バッファ型インスタンスの生成マクロ
-#define MakeStringBufferW(S) StringBufferW(S,_countof(S))
 
 //2007.09.24 kobake データ変換部を子クラスに分離
 //!各種データ変換付きCProfile

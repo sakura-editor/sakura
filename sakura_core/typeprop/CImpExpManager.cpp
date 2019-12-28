@@ -257,7 +257,7 @@ bool CImpExpType::ImportAscertain( HINSTANCE hInstance, HWND hwndParent, const w
 	}
 	if ((unsigned int)nStructureVersion != m_pShareData->m_vStructureVersion) {
 		wcscpy( szKeyVersion, L"?" );
-		m_cProfile.IOProfileData( szSecInfo, szKeyVersion, MakeStringBufferW( szKeyVersion ) );
+		m_cProfile.IOProfileData( szSecInfo, szKeyVersion, StringBufferW( szKeyVersion ) );
 		int nRet = ConfirmMessage( hwndParent,
 			LS(STR_IMPEXP_VER), 
 			GSTR_APPNAME, szKeyVersion, nStructureVersion );
@@ -277,7 +277,7 @@ bool CImpExpType::ImportAscertain( HINSTANCE hInstance, HWND hwndParent, const w
 	List_GetText( m_hwndList, m_nIdx, szLabel );
 	sAscertainInfo.sTypeNameTo = szLabel;
 	szLabel[0] = L'\0';
-	m_cProfile.IOProfileData( szSecTypes, L"szTypeName", MakeStringBufferW( szLabel ));
+	m_cProfile.IOProfileData( szSecTypes, L"szTypeName", StringBufferW( szLabel ) );
 	sAscertainInfo.sTypeNameFile = szLabel;
 
 	// 確認
@@ -361,7 +361,7 @@ bool CImpExpType::Import( const wstring& sFileName, wstring& sErrMsg )
 	for (i=0; i < MAX_KEYWORDSET_PER_TYPE; i++) {
 		//types.m_nKeyWordSetIdx[i] = -1;
 		auto_sprintf( szKeyName, szKeyKeywordTemp, i+1 );
-		if (m_cProfile.IOProfileData( szSecTypeEx, szKeyName, MakeStringBufferW( szKeyData ))) {
+		if (m_cProfile.IOProfileData( szSecTypeEx, szKeyName, StringBufferW( szKeyData ) )) {
 			nIdx = cKeyWordSetMgr.SearchKeyWordSet( szKeyData );
 			if (nIdx < 0) {
 				// エントリ作成
@@ -378,7 +378,7 @@ bool CImpExpType::Import( const wstring& sFileName, wstring& sErrMsg )
 
 				auto_sprintf( szKeyName, szKeyKeywordFileTemp, i+1 );
 				szFileName[0] = L'\0';
-				if (m_cProfile.IOProfileData( szSecTypeEx, szKeyName, MakeStringBufferW( szFileName ))) {
+				if (m_cProfile.IOProfileData( szSecTypeEx, szKeyName, StringBufferW( szFileName ) )) {
 					if( cImpExpKeyWord.Import( cImpExpKeyWord.MakeFullPath( szFileName ), TmpMsg )) {
 						files += wstring(L"\n") + szFileName;
 					} else {
@@ -393,7 +393,7 @@ bool CImpExpType::Import( const wstring& sFileName, wstring& sErrMsg )
 	// Plugin
 	//  アウトライン解析方法
 	CommonSetting_Plugin& plugin = common.m_sPlugin;
-	if (m_cProfile.IOProfileData( szSecTypeEx, szKeyPluginOutlineId, MakeStringBufferW( szKeyData ))) {
+	if (m_cProfile.IOProfileData( szSecTypeEx, szKeyPluginOutlineId, StringBufferW( szKeyData ) )) {
 		nDataLen = wcslen( szKeyData );
 		pSlashPos = wcschr( szKeyData, L'/' );
 		nIdx = -1;
@@ -414,7 +414,7 @@ bool CImpExpType::Import( const wstring& sFileName, wstring& sErrMsg )
 		}
 	}
 	//  スマートインデント
-	if (m_cProfile.IOProfileData( szSecTypeEx, szKeyPluginSmartIndentId, MakeStringBufferW( szKeyData ))) {
+	if (m_cProfile.IOProfileData( szSecTypeEx, szKeyPluginSmartIndentId, StringBufferW( szKeyData ) )) {
 		nDataLen = wcslen( szKeyData );
 		pSlashPos = wcschr( szKeyData, L'/' );
 		nIdx = -1;
@@ -468,7 +468,7 @@ bool CImpExpType::Export( const wstring& sFileName, wstring& sErrMsg )
 			nIdx = m_Types.m_nKeyWordSetIdx[i];
 			auto_sprintf( szKeyName, szKeyKeywordTemp, i+1 );
 			wcscpy( buff, cKeyWordSetMgr.GetTypeName( nIdx ));
-			cProfile.IOProfileData( szSecTypeEx, szKeyName, MakeStringBufferW( buff ));
+			cProfile.IOProfileData( szSecTypeEx, szKeyName, StringBufferW( buff ) );
 
 			// 大文字小文字区別
 			bCase = common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWordCase( nIdx );
@@ -480,7 +480,7 @@ bool CImpExpType::Export( const wstring& sFileName, wstring& sErrMsg )
 			if ( cImpExpKeyWord.Export( cImpExpKeyWord.GetFullPath(), sTmpMsg ) ) {
 				wcscpy( szFileName, cImpExpKeyWord.GetFileName().c_str());
 				auto_sprintf( szKeyName, szKeyKeywordFileTemp, i+1 );
-				if (cProfile.IOProfileData( szSecTypeEx, szKeyName, MakeStringBufferW( szFileName ))) {
+				if (cProfile.IOProfileData( szSecTypeEx, szKeyName, StringBufferW( szFileName ) )) {
 					files += wstring( L"\n" ) + cImpExpKeyWord.GetFileName();
 				}
 			}
@@ -497,25 +497,25 @@ bool CImpExpType::Export( const wstring& sFileName, wstring& sErrMsg )
 	int		nPlug;
 	wchar_t szId[ MAX_PLUGIN_ID + 1 + 2 ];
 	if ((nPIdx = CPlug::GetPluginId( static_cast<EFunctionCode>( m_Types.m_eDefaultOutline ))) >= 0) {
-		cProfile.IOProfileData( szSecTypeEx, szKeyPluginOutlineName, MakeStringBufferW(plugin.m_PluginTable[nPIdx].m_szName));
+		cProfile.IOProfileData( szSecTypeEx, szKeyPluginOutlineName, StringBufferW( plugin.m_PluginTable[nPIdx].m_szName ));
 		wcscpyn( szId, plugin.m_PluginTable[nPIdx].m_szId, _countof(szId) );
 		if( (nPlug = CPlug::GetPlugId( static_cast<EFunctionCode>( m_Types.m_eDefaultOutline ))) != 0 ){
 			wchar_t szPlug[8];
 			_swprintf( szPlug, L"/%d", nPlug );
 			wcscat( szId, szPlug );
 		}
-		cProfile.IOProfileData( szSecTypeEx, szKeyPluginOutlineId,   MakeStringBufferW(szId) );
+		cProfile.IOProfileData( szSecTypeEx, szKeyPluginOutlineId,   StringBufferW( szId ) );
 	}
 	//  スマートインデント
 	if ((nPIdx = CPlug::GetPluginId( static_cast<EFunctionCode>( m_Types.m_eSmartIndent ))) >= 0) {
-		cProfile.IOProfileData( szSecTypeEx, szKeyPluginSmartIndentName, MakeStringBufferW(plugin.m_PluginTable[nPIdx].m_szName));
+		cProfile.IOProfileData( szSecTypeEx, szKeyPluginSmartIndentName, StringBufferW( plugin.m_PluginTable[nPIdx].m_szName ));
 		wcscpyn( szId, plugin.m_PluginTable[nPIdx].m_szId, _countof(szId) );
 		if( (nPlug = CPlug::GetPlugId( static_cast<EFunctionCode>( m_Types.m_eSmartIndent ))) != 0 ){
 			wchar_t szPlug[8];
 			_swprintf( szPlug, L"/%d", nPlug );
 			wcscat( szId, szPlug );
 		}
-		cProfile.IOProfileData( szSecTypeEx, szKeyPluginSmartIndentId,   MakeStringBufferW(szId) );
+		cProfile.IOProfileData( szSecTypeEx, szKeyPluginSmartIndentId,   StringBufferW( szId ) );
 	}
 
 	// Version
@@ -527,7 +527,7 @@ bool CImpExpType::Export( const wstring& sFileName, wstring& sErrMsg )
 				LOWORD( pShare->m_sVersion.m_dwProductVersionMS ),
 				HIWORD( pShare->m_sVersion.m_dwProductVersionLS ),
 				LOWORD( pShare->m_sVersion.m_dwProductVersionLS ) );
-	cProfile.IOProfileData( szSecInfo, szKeyVersion, MakeStringBufferW(wbuff) );
+	cProfile.IOProfileData( szSecInfo, szKeyVersion, StringBufferW( wbuff ) );
 	nStructureVersion = int(pShare->m_vStructureVersion);
 	cProfile.IOProfileData( szSecInfo, szKeyStructureVersion, nStructureVersion );
 
@@ -888,7 +888,7 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 	bVer4 = false;
 	bVer3 = false;
 	bVer2 = false;
-	in.IOProfileData(szSecInfo, L"KEYBIND_VERSION", MakeStringBufferW(szHeader));
+	in.IOProfileData(szSecInfo, L"KEYBIND_VERSION", StringBufferW( szHeader ) );
 	if(wcscmp(szHeader,WSTR_KEYBIND_HEAD4)==0)	bVer4=true;
 	else if(wcscmp(szHeader,WSTR_KEYBIND_HEAD3)==0)	bVer3=true;
 
@@ -1073,7 +1073,7 @@ bool CImpExpCustMenu::Import( const wstring& sFileName, wstring& sErrMsg )
 
 	//バージョン確認
 	WCHAR szHeader[256];
-	cProfile.IOProfileData(szSecInfo, L"MENU_VERSION", MakeStringBufferW(szHeader));
+	cProfile.IOProfileData(szSecInfo, L"MENU_VERSION", StringBufferW( szHeader ) );
 	if(wcscmp(szHeader, WSTR_CUSTMENU_HEAD_V2)!=0) {
 		sErrMsg = wstring(LS(STR_IMPEXP_CUSTMENU_FORMAT)) + sFileName;
 		return false;
@@ -1108,7 +1108,7 @@ bool CImpExpCustMenu::Export( const wstring& sFileName, wstring& sErrMsg )
 	cProfile.SetWritingMode();
 
 	//ヘッダ
-	cProfile.IOProfileData( szSecInfo, L"MENU_VERSION", MakeStringBufferW(WSTR_CUSTMENU_HEAD_V2) );
+	cProfile.IOProfileData( szSecInfo, L"MENU_VERSION", StringBufferW( WSTR_CUSTMENU_HEAD_V2 ) );
 	int iWork = MAX_CUSTOM_MENU;
 	cProfile.IOProfileData_WrapInt( szSecInfo, L"MAX_CUSTOM_MENU", iWork );
 	
@@ -1237,7 +1237,7 @@ bool CImpExpMainMenu::Import( const wstring& sFileName, wstring& sErrMsg )
 
 	//バージョン確認
 	WCHAR szHeader[256];
-	cProfile.IOProfileData(szSecInfo, L"MENU_VERSION", MakeStringBufferW(szHeader));
+	cProfile.IOProfileData(szSecInfo, L"MENU_VERSION", StringBufferW( szHeader ) );
 	if(wcscmp(szHeader, WSTR_MAINMENU_HEAD_V1)!=0) {
 		sErrMsg = wstring(LS(STR_IMPEXP_MEINMENU)) + sFileName;
 		return false;
@@ -1271,7 +1271,7 @@ bool CImpExpMainMenu::Export( const wstring& sFileName, wstring& sErrMsg )
 	cProfile.SetWritingMode();
 
 	//ヘッダ
-	cProfile.IOProfileData( szSecInfo, L"MENU_VERSION", MakeStringBufferW(WSTR_MAINMENU_HEAD_V1) );
+	cProfile.IOProfileData( szSecInfo, L"MENU_VERSION", StringBufferW( WSTR_MAINMENU_HEAD_V1 ) );
 	
 	//内容
 	CShareData_IO::IO_MainMenu(cProfile, *menu, true);
