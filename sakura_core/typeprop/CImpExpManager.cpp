@@ -1036,7 +1036,7 @@ bool CImpExpKeybind::Export( const wstring& sFileName, wstring& sErrMsg )
 	// ヘッダ
 	StaticString<wchar_t,256> szKeydataHead = WSTR_KEYBIND_HEAD4;
 	cProfile.IOProfileData( szSecInfo, L"KEYBIND_VERSION", szKeydataHead );
-	cProfile.IOProfileData_WrapInt( szSecInfo, L"KEYBIND_COUNT", m_Common.m_sKeyBind.m_nKeyNameArrNum );
+	cProfile.IOProfileData( szSecInfo, L"KEYBIND_COUNT", m_Common.m_sKeyBind.m_nKeyNameArrNum );
 
 	//内容
 	CShareData_IO::IO_KeyBind(cProfile, m_Common.m_sKeyBind, true);
@@ -1110,7 +1110,7 @@ bool CImpExpCustMenu::Export( const wstring& sFileName, wstring& sErrMsg )
 	//ヘッダ
 	cProfile.IOProfileData( szSecInfo, L"MENU_VERSION", StringBufferW( WSTR_CUSTMENU_HEAD_V2 ) );
 	int iWork = MAX_CUSTOM_MENU;
-	cProfile.IOProfileData_WrapInt( szSecInfo, L"MAX_CUSTOM_MENU", iWork );
+	cProfile.IOProfileData( szSecInfo, L"MAX_CUSTOM_MENU", iWork );
 	
 	//内容
 	CShareData_IO::IO_CustMenu(cProfile, *menu, true);
