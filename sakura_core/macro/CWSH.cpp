@@ -48,9 +48,6 @@
 #include "util/window.h"	// BlockingHook
 #include "dlg/CDlgCancel.h"
 #include "sakura_rc.h"
-#ifndef SCRIPT_E_REPORTED
-#define	SCRIPT_E_REPORTED	0x80020101L	// ActivScp.h(VS2012)と同じ様な形に変更
-#endif
 
 #ifdef USE_JSCRIPT9
 const GUID CLSID_JSScript9 =

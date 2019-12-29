@@ -54,15 +54,6 @@
 #include "sakura_rc.h"
 #include <windowsx.h>
 
-//#if(WINVER >= 0x0500)
-#ifndef	SPI_GETFOREGROUNDLOCKTIMEOUT
-#define SPI_GETFOREGROUNDLOCKTIMEOUT        0x2000
-#endif
-#ifndef	SPI_SETFOREGROUNDLOCKTIMEOUT
-#define SPI_SETFOREGROUNDLOCKTIMEOUT        0x2001
-#endif
-//#endif
-
 // 2006.01.30 ryoji タブのサイズ／位置に関する定義
 // 2009.10.01 ryoji 高DPI対応スケーリング
 #define TAB_MARGIN_TOP		DpiScaleY(3)

@@ -79,10 +79,6 @@
 #include <memory>
 #endif // ifndef SAKURA_PCH_MODE_MIN
 
-#if defined(__MINGW32__) && defined(_countof)
-#define BUILD_OPT_NEW_HEADERS
-#endif
-
 //デバッグ
 #include "debug/Debug1.h"
 #include "debug/Debug2.h"
