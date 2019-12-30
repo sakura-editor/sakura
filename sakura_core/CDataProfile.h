@@ -44,7 +44,6 @@ typedef const StringBufferW_ StringBufferW;
 
 //文字列バッファ型インスタンスの生成マクロ
 #define MakeStringBufferW(S) StringBufferW(S,_countof(S))
-#define MakeStringBufferW0(S) StringBufferW(S,0)
 
 //2007.09.24 kobake データ変換部を子クラスに分離
 //!各種データ変換付きCProfile

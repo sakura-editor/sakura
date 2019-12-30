@@ -1384,6 +1384,81 @@ void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 }
 
 /*!
+ * ブロックコメントデータの入出力
+ *
+ * @date 2004/10/02 Moca 対になるコメント設定がともに読み込まれたときだけ有効な設定と見なす．
+ * @date 2020/01/01 berryzplus ShareData_IO_Type_Oneから分離
+ */
+static bool ShareData_IO_BlockComment( CDataProfile& cProfile,
+	const WCHAR* pszSectionName,
+	const WCHAR* pszEntryKeyFrom,
+	const WCHAR* pszEntryKeyTo,
+	CBlockComment& cBlockComment
+) noexcept
+{
+	WCHAR szFrom[BLOCKCOMMENT_BUFFERSIZE]{ 0 };
+	WCHAR szTo[BLOCKCOMMENT_BUFFERSIZE]{ 0 };
+
+	// 書き込み準備
+	if( !cProfile.IsReadingMode() ){
+		::wcscpy_s( szFrom, cBlockComment.getBlockCommentFrom() );
+		::wcscpy_s( szTo, cBlockComment.getBlockCommentTo() );
+	}
+
+	bool ret = false;
+	if( cProfile.IOProfileData( pszSectionName, pszEntryKeyFrom, MakeStringBufferW( szFrom ) )
+		&& cProfile.IOProfileData( pszSectionName, pszEntryKeyTo, MakeStringBufferW( szTo ) ) ){
+		//対になる設定が揃った場合のみ有効
+		ret = true;
+	}
+
+	// 読み込み後処理
+	if( cProfile.IsReadingMode() && ret ){
+		cBlockComment.SetBlockCommentRule( szFrom, szTo );
+	}
+
+	return true;
+}
+
+/*!
+ * 行コメントデータの入出力
+ *
+ * @date 2004/10/02 Moca 対になるコメント設定がともに読み込まれたときだけ有効な設定と見なす．
+ * @date 2020/01/01 berryzplus ShareData_IO_Type_Oneから分離
+ */
+static bool ShareData_IO_LineComment( CDataProfile& cProfile,
+	const WCHAR* pszSectionName,
+	const WCHAR* pszEntryKeyComment,
+	const WCHAR* pszEntryKeyColumn,
+	CLineComment& cLineComment,
+	const int nDataIndex
+) noexcept
+{
+	WCHAR lbuf[COMMENT_DELIMITER_BUFFERSIZE]{ 0 };
+	int pos = -1;
+
+	// 書き込み準備
+	if( !cProfile.IsReadingMode() ){
+		::wcscpy_s( lbuf, cLineComment.getLineComment( nDataIndex ) );
+		pos = cLineComment.getLineCommentPos( nDataIndex );
+	}
+
+	bool ret = false;
+	if( cProfile.IOProfileData( pszSectionName, pszEntryKeyComment, MakeStringBufferW( lbuf ) )
+		&& cProfile.IOProfileData( pszSectionName, pszEntryKeyColumn, pos ) ){
+		//対になる設定が揃った場合のみ有効
+		ret = true;
+	}
+
+	// 読み込み後処理
+	if( cProfile.IsReadingMode() && ret ){
+		cLineComment.CopyTo( nDataIndex, lbuf, pos );
+	}
+
+	return true;
+}
+
+/*!
 @brief 共有データのSTypeConfigセクションの入出力(１個分)
 	@param[in,out]	cProfile	INIファイル入出力クラス
 	@param[in]		type		タイプ別
@@ -1490,75 +1565,14 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	cProfile.IOProfileData( pszSecName, LTEXT("bStringLineOnly"), types.m_bStringLineOnly );
 	cProfile.IOProfileData( pszSecName, LTEXT("bStringEndLine"), types.m_bStringEndLine );
 
-	// From Here Sep. 28, 2002 genta / YAZAKI
-	if( cProfile.IsReadingMode() ){
-		//	Block Comment
-		wchar_t buffer[2][ BLOCKCOMMENT_BUFFERSIZE ];
-		//	2004.10.02 Moca 対になるコメント設定がともに読み込まれたときだけ有効な設定と見なす．
-		//	ブロックコメントの始まりと終わり．行コメントの記号と桁位置
-		bool bRet1, bRet2;
-		buffer[0][0] = buffer[1][0] = L'\0';
-		bRet1 = cProfile.IOProfileData( pszSecName, LTEXT("szBlockCommentFrom"), MakeStringBufferW(buffer[0]) );			
-		bRet2 = cProfile.IOProfileData( pszSecName, LTEXT("szBlockCommentTo"), MakeStringBufferW(buffer[1]) );
-		if( bRet1 && bRet2 ) types.m_cBlockComments[0].SetBlockCommentRule( buffer[0], buffer[1] );
+	// Block Comment
+	ShareData_IO_BlockComment( cProfile, pszSecName, L"szBlockCommentFrom", L"szBlockCommentTo", types.m_cBlockComments[0] );
+	ShareData_IO_BlockComment( cProfile, pszSecName, L"szBlockCommentFrom2", L"szBlockCommentTo2", types.m_cBlockComments[1] );
 
-		//@@@ 2001.03.10 by MIK
-		buffer[0][0] = buffer[1][0] = L'\0';
-		bRet1 = cProfile.IOProfileData( pszSecName, LTEXT("szBlockCommentFrom2"), MakeStringBufferW(buffer[0]) );
-		bRet2 = cProfile.IOProfileData( pszSecName, LTEXT("szBlockCommentTo2")	, MakeStringBufferW(buffer[1]) );
-		if( bRet1 && bRet2 ) types.m_cBlockComments[1].SetBlockCommentRule( buffer[0], buffer[1] );
-		
-		//	Line Comment
-		wchar_t lbuf[ COMMENT_DELIMITER_BUFFERSIZE ];
-		int  pos;
-
-		lbuf[0] = L'\0'; pos = -1;
-		bRet1 = cProfile.IOProfileData( pszSecName, LTEXT("szLineComment")		, MakeStringBufferW(lbuf) );
-		bRet2 = cProfile.IOProfileData( pszSecName, LTEXT("nLineCommentColumn")	, pos );
-		if( bRet1 && bRet2 ) types.m_cLineComment.CopyTo( 0, lbuf, pos );
-
-		lbuf[0] = L'\0'; pos = -1;
-		bRet1 = cProfile.IOProfileData( pszSecName, LTEXT("szLineComment2")		, MakeStringBufferW(lbuf) );
-		bRet2 = cProfile.IOProfileData( pszSecName, LTEXT("nLineCommentColumn2"), pos );
-		if( bRet1 && bRet2 ) types.m_cLineComment.CopyTo( 1, lbuf, pos );
-
-		lbuf[0] = L'\0'; pos = -1;
-		bRet1 = cProfile.IOProfileData( pszSecName, LTEXT("szLineComment3")		, MakeStringBufferW(lbuf) );	//Jun. 01, 2001 JEPRO 追加
-		bRet2 = cProfile.IOProfileData( pszSecName, LTEXT("nLineCommentColumn3"), pos );	//Jun. 01, 2001 JEPRO 追加
-		if( bRet1 && bRet2 ) types.m_cLineComment.CopyTo( 2, lbuf, pos );
-	}
-	else { // write
-		//	Block Comment
-		cProfile.IOProfileData( pszSecName, LTEXT("szBlockCommentFrom")	,
-			MakeStringBufferW0(const_cast<wchar_t*>(types.m_cBlockComments[0].getBlockCommentFrom())) );
-		cProfile.IOProfileData( pszSecName, LTEXT("szBlockCommentTo")	,
-			MakeStringBufferW0(const_cast<wchar_t*>(types.m_cBlockComments[0].getBlockCommentTo())) );
-
-		//@@@ 2001.03.10 by MIK
-		cProfile.IOProfileData( pszSecName, LTEXT("szBlockCommentFrom2"),
-			MakeStringBufferW0(const_cast<wchar_t*>(types.m_cBlockComments[1].getBlockCommentFrom())) );
-		cProfile.IOProfileData( pszSecName, LTEXT("szBlockCommentTo2")	,
-			MakeStringBufferW0(const_cast<wchar_t*>(types.m_cBlockComments[1].getBlockCommentTo())) );
-
-		//	Line Comment
-		cProfile.IOProfileData( pszSecName, LTEXT("szLineComment")		,
-			MakeStringBufferW0(const_cast<wchar_t*>(types.m_cLineComment.getLineComment(0))) );
-		cProfile.IOProfileData( pszSecName, LTEXT("szLineComment2")		,
-			MakeStringBufferW0(const_cast<wchar_t*>(types.m_cLineComment.getLineComment(1))) );
-		cProfile.IOProfileData( pszSecName, LTEXT("szLineComment3")		,
-			MakeStringBufferW0(const_cast<wchar_t*>(types.m_cLineComment.getLineComment(2))) );	//Jun. 01, 2001 JEPRO 追加
-
-		//	From here May 12, 2001 genta
-		int pos;
-		pos = types.m_cLineComment.getLineCommentPos( 0 );
-		cProfile.IOProfileData( pszSecName, LTEXT("nLineCommentColumn")	, pos );
-		pos = types.m_cLineComment.getLineCommentPos( 1 );
-		cProfile.IOProfileData( pszSecName, LTEXT("nLineCommentColumn2"), pos );
-		pos = types.m_cLineComment.getLineCommentPos( 2 );
-		cProfile.IOProfileData( pszSecName, LTEXT("nLineCommentColumn3"), pos );	//Jun. 01, 2001 JEPRO 追加
-		//	To here May 12, 2001 genta
-	}
-	// To Here Sep. 28, 2002 genta / YAZAKI
+	// Line Comment
+	ShareData_IO_LineComment( cProfile, pszSecName, L"szLineComment", L"nLineCommentColumn", types.m_cLineComment, 0 );
+	ShareData_IO_LineComment( cProfile, pszSecName, L"szLineComment2", L"nLineCommentColumn2", types.m_cLineComment, 1 );
+	ShareData_IO_LineComment( cProfile, pszSecName, L"szLineComment3", L"nLineCommentColumn3", types.m_cLineComment, 2 );
 
 	cProfile.IOProfileData( pszSecName, LTEXT("szIndentChars")		, MakeStringBufferW(types.m_szIndentChars) );
 	cProfile.IOProfileData( pszSecName, LTEXT("cLineTermChar")		, types.m_cLineTermChar );
