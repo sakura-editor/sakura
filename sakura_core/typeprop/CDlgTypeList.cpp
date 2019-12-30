@@ -186,7 +186,9 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 		HWND hwndList = GetItemHwnd( IDC_LIST_TYPES );
 		int nIdx = List_GetCurSel( hwndList );
 		const STypeConfigMini* type = NULL;
-		CDocTypeManager().GetTypeConfigMini(CTypeConfig(nIdx), &type);
+		if( !CDocTypeManager().GetTypeConfigMini( CTypeConfig(nIdx), &type ) ){
+			return TRUE; // 何もできないので処理済みとして抜ける。
+		}
 		if( LOWORD(wParam) == IDC_LIST_TYPES )
 		{
 			switch( HIWORD(wParam) )
@@ -323,8 +325,10 @@ void CDlgTypeList::SetData( int selIdx )
 	}
 	List_ResetContent( hwndList );	/* リストを空にする */
 	for( nIdx = 0; nIdx < GetDllShareData().m_nTypesCount; ++nIdx ){
-		const STypeConfigMini* type;
-		CDocTypeManager().GetTypeConfigMini(CTypeConfig(nIdx), &type);
+		const STypeConfigMini* type = NULL;
+		if( !CDocTypeManager().GetTypeConfigMini( CTypeConfig(nIdx), &type ) ){
+			continue;
+		}
 		if( type->m_szTypeExts[0] != L'\0' ){		/* タイプ属性：拡張子リスト */
 			auto_sprintf( szText, L"%s ( %s )",
 				type->m_szTypeName,	/* タイプ属性：名称 */
@@ -413,8 +417,10 @@ bool CDlgTypeList::Import()
 	CDocTypeManager().GetTypeConfig(CTypeConfig(0), type);
 
 	CImpExpType	cImpExpType( nIdx, type, hwndList );
-	const STypeConfigMini* typeMini;
-	CDocTypeManager().GetTypeConfigMini(CTypeConfig(nIdx), &typeMini);
+	const STypeConfigMini* typeMini = NULL;
+	if( !CDocTypeManager().GetTypeConfigMini( CTypeConfig(nIdx), &typeMini ) ){
+		return false;
+	}
 	int id = typeMini->m_id;
 
 	// インポート
@@ -521,8 +527,10 @@ bool CDlgTypeList::InitializeType( void )
 			if( iDocType == i ){
 				continue;
 			}
-			const STypeConfigMini* typeMini2;
-			CDocTypeManager().GetTypeConfigMini(CTypeConfig(i), &typeMini2);
+			const STypeConfigMini* typeMini2 = NULL;
+			if( !CDocTypeManager().GetTypeConfigMini( CTypeConfig(i), &typeMini2 ) ){
+				continue;
+			}
 			if( wcscmp(typeMini2->m_szTypeName, type->m_szTypeName) == 0 ){
 				i = 0;
 				bUpdate = true;
@@ -590,8 +598,10 @@ bool CDlgTypeList::CopyType()
 			wcscat( type.m_szTypeName, szNum );
 			bUpdate = false;
 		}
-		const STypeConfigMini* typeMini;
-		CDocTypeManager().GetTypeConfigMini(CTypeConfig(i), &typeMini);
+		const STypeConfigMini* typeMini = NULL;
+		if( !CDocTypeManager().GetTypeConfigMini( CTypeConfig(i), &typeMini ) ){
+			continue;
+		}
 		if( wcscmp(typeMini->m_szTypeName, type.m_szTypeName) == 0 ){
 			i = -1;
 			bUpdate = true;

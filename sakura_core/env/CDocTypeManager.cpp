@@ -57,9 +57,9 @@ CTypeConfig CDocTypeManager::GetDocumentTypeOfPath( const WCHAR* pszFilePath )
 	}
 
 	for (i = 0; i < m_pShareData->m_nTypesCount; ++i){
-		const STypeConfigMini* mini;
-		GetTypeConfigMini(CTypeConfig(i), &mini);
-		if (IsFileNameMatch(mini->m_szTypeExts, pszFileName)) {
+		const STypeConfigMini* mini = NULL;
+		if( GetTypeConfigMini( CTypeConfig(i), &mini )
+			&& IsFileNameMatch(mini->m_szTypeExts, pszFileName)) {
 			return CTypeConfig(i);	//	番号
 		}
 	}
@@ -87,9 +87,9 @@ CTypeConfig CDocTypeManager::GetDocumentTypeOfId( int id )
 	int		i;
 
 	for( i = 0; i < m_pShareData->m_nTypesCount; ++i ){
-		const STypeConfigMini* mini;
-		GetTypeConfigMini( CTypeConfig(i), &mini );
-		if( mini->m_id == id ){
+		const STypeConfigMini* mini = NULL;
+		if( GetTypeConfigMini( CTypeConfig(i), &mini )
+			&& mini->m_id == id ){
 			return CTypeConfig(i);
 		}
 	}
@@ -134,7 +134,7 @@ bool CDocTypeManager::SetTypeConfig(CTypeConfig cDocumentType, const STypeConfig
 	@retval true  正常
 	@retval false 異常
 */
-bool CDocTypeManager::GetTypeConfigMini(CTypeConfig cDocumentType, const STypeConfigMini** type)
+[[nodiscard]] bool CDocTypeManager::GetTypeConfigMini(CTypeConfig cDocumentType, const STypeConfigMini** type)
 {
 	int n = cDocumentType.GetIndex();
 	if( 0 <= n && n < m_pShareData->m_nTypesCount ){
