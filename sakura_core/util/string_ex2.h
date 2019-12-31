@@ -69,11 +69,11 @@ int scan_ints(
 // インライン関数が内部で利用する名前空間
 namespace internals {
 	//! 数値の文字列化を行う関数で受け入れ可能な基数かどうかを判定する
-	constexpr inline bool IsAvailableRadix(size_t _Radix) noexcept {
+	constexpr inline bool IsAvailableRadix(size_t nRadix) noexcept {
 		constexpr size_t availableRadix[]{ 10, 16, 8 };
 		bool available = false;
 		for (auto radix : availableRadix) {
-			if (_Radix == radix) {
+			if (nRadix == radix) {
 				available = true;
 				break;
 			}
@@ -87,18 +87,18 @@ namespace internals {
  * @return 必要な文字数（終端NULを含まない）
  */
 template<
-	size_t _Radix = 10,
-	typename _NumType = ptrdiff_t
+	size_t nRadix = 10,
+	typename NumType = ptrdiff_t
 >
 constexpr size_t countDigits(
-	const _NumType value			//!< [in] 文字列化の素になる整数
+	const NumType value			//!< [in] 文字列化の素になる整数
 ) noexcept
 {
 	// 符号無し整数型は対応外
-	static_assert(std::is_signed_v<_NumType>, "_NumType must be signed type.");
+	static_assert(std::is_signed_v<NumType>, "NumType must be signed type.");
 
 	// 受け入れ可能な基数かチェックする
-	constexpr bool available = internals::IsAvailableRadix(_Radix);
+	constexpr bool available = internals::IsAvailableRadix(nRadix);
 
 	// これを満たさない場合、コンパイルエラー
 	static_assert(available, "radix must be one of {8, 10, 16}");
@@ -106,7 +106,7 @@ constexpr size_t countDigits(
 	// 指定された値を基数で割って文字数を求める
 	size_t digits = 0;
 	for (auto v = value; v != 0; ++digits) {
-		v /= _Radix;
+		v /= nRadix;
 	}
 
 	// 負数なら、符号分の1文字を加える
@@ -149,14 +149,14 @@ constexpr size_t int2dec_destBufferSufficientLength<int64_t>()
  * @return 変換後の文字数（終端NULを含まない）
  */
 template<
-	size_t _Radix = 10,
-	typename _NumType = ptrdiff_t,
-	typename _CharType = wchar_t,
-	typename = std::enable_if_t<std::is_signed_v<_NumType>>
+	size_t nRadix = 10,
+	typename NumType = ptrdiff_t,
+	typename CharType = wchar_t,
+	typename = std::enable_if_t<std::is_signed_v<NumType>>
 >
 size_t int2num(
-	const _NumType value,			//!< [in] 文字列化の素になる整数
-	_CharType* destBuf,				//!< [out] 文字列出力先バッファ
+	const NumType value,			//!< [in] 文字列化の素になる整数
+	CharType* destBuf,				//!< [out] 文字列出力先バッファ
 	const size_t maxCount			//!< [in] 出力先バッファのサイズ
 ) noexcept
 {
@@ -164,7 +164,7 @@ size_t int2num(
 	constexpr char numChars[] = "0123456789ABCDEF";
 
 	//数値を文字列化するのに必要な文字数を求める
-	size_t digits = countDigits<_Radix>(value);
+	size_t digits = countDigits<nRadix>(value);
 
 	// 格納可能な文字数を超える場合 0 を返却して終了する
 	if (maxCount <= digits) return 0;
@@ -180,9 +180,9 @@ size_t int2num(
 
 	// 文字列変換を始める前に絶対値をとって正数にしておく
 	for (auto v = std::abs(value); v != 0; ++it) {
-		auto w = v % _Radix;
+		auto w = v % nRadix;
 		*it = numChars[w];
-		v /= _Radix;
+		v /= nRadix;
 	}
 
 	// 符号を処理する
@@ -198,18 +198,18 @@ size_t int2num(
  * @return 変換後の文字数（終端NULを含まない）
  */
 template<
-	size_t _Radix = 10,
-	typename _NumType = ptrdiff_t,
-	typename _CharType = wchar_t,
-	size_t _MaxCount,
-	typename = std::enable_if_t<std::is_signed_v<_NumType>>
+	size_t nRadix = 10,
+	typename NumType = ptrdiff_t,
+	typename CharType = wchar_t,
+	size_t cchMaxCount,
+	typename = std::enable_if_t<std::is_signed_v<NumType>>
 >
 size_t int2num(
-	const _NumType value,			//!< [in] 文字列化の素になる整数
-	_CharType(&destBuf)[_MaxCount]	//!< [out] 文字列出力先バッファ
+	const NumType value,				//!< [in] 文字列化の素になる整数
+	CharType(&destBuf)[cchMaxCount]	//!< [out] 文字列出力先バッファ
 ) noexcept
 {
-	return int2num<_Radix>(value, destBuf, _MaxCount);
+	return int2num<nRadix>(value, destBuf, cchMaxCount);
 }
 
 /*! @brief 整数を10進数の文字列に変換
