@@ -163,21 +163,9 @@ size_t int2num(
 	// 定数：文字列表現に使う文字
 	constexpr char numChars[] = "0123456789ABCDEF";
 
-	size_t digits = maxCount;
-
-//デバッグ時のみ、バッファ容量が足りているかチェックする
-#ifdef _DEBUG
-
-	//数値を文字列化するのに必要な文字数を求める
-	digits = countDigits<nRadix>(value);
-
-	// 格納可能な文字数を超える場合 0 を返却して終了する
-	if (maxCount <= digits) return 0;
-
-#endif //ifdef _DEBUG
-
 	// 下位桁から変換するのでリバースイテレータを使う
-	auto rbegin = std::reverse_iterator(destBuf + digits + 1);
+	auto rbegin = std::reverse_iterator( destBuf + maxCount );
+	auto rend = std::reverse_iterator( destBuf );
 	auto it = rbegin;
 
 	*it++ = '\0'; // NUL終端する
@@ -189,17 +177,38 @@ size_t int2num(
 		++it;
 	}
 
-	// 2桁目を処理する前に絶対値に変換し、あとは順番に変換していく
-	for (auto v = std::abs(value / static_cast<NumType>(nRadix)); v != 0; ++it) {
+	// 2桁目を処理する前に絶対値に変換する
+	auto v = std::abs( value / static_cast<NumType>(nRadix) );
+
+	//あとは順番に変換していく
+	for (; v != 0 && it != rend; ++it) {
 		*it = numChars[v % nRadix];
 		v /= nRadix;
 	}
 
+	// 変換し切れなかった場合 0 を返却して終了する
+	if (v != 0) return 0;
+
 	// 符号を処理する
-	if (value < 0) *it++ = '-';
+	if (value < 0) {
+		// 符号を処理する領域がない場合 0 を返却して終了する
+		if (it == rend) return 0;
+		*it++ = '-';
+	}
+
+	// 変換した文字数(NUL文字を含む数)
+	size_t nCount = it - rbegin;
+
+	// 変換開始位置
+	CharType* bufBegin = (&*it) + 1;
+
+	// 開始位置がずれている場合、調整する
+	if (destBuf < bufBegin) {
+		std::copy( bufBegin, bufBegin + nCount, destBuf );
+	}
 
 	// 文字数を返却する
-	return digits;
+	return nCount - 1;
 }
 
 /*!

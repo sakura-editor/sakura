@@ -102,7 +102,6 @@ TEST(int2num, insufficientSize32)
 	wchar_t sz[countDigits(value)]{ 0 };
 	auto ret = int2num(value, sz);
 	EXPECT_EQ(0, ret);
-	ASSERT_STREQ(L"", sz);
 }
 
 TEST(int2num, enoughSize64)
@@ -129,5 +128,4 @@ TEST(int2num, insufficientSize64)
 	wchar_t sz[countDigits(value)]{ 0 };
 	auto ret = int2num(value, sz);
 	EXPECT_EQ(0, ret);
-	ASSERT_STREQ(L"", sz);
 }
