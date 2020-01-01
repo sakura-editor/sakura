@@ -121,90 +121,53 @@ public:
 	StringBufferW& operator = ( const wchar_t* rhs ) { assign( rhs ); return *this; }
 };
 
-//2007.09.24 kobake データ変換部を子クラスに分離
-//!各種データ変換付きCProfile
+/*!
+ * 各種データ変換付きCProfile
+ *
+ * @date 2007/09/24 kobake データ変換部を子クラスに分離
+ */
 class CDataProfile : public CProfile{
-private:
-	//専用型
-	typedef std::wstring wstring;
-
-protected:
-	static const wchar_t* _work_itow(int n)
-	{
-		static wchar_t buf[32];
-		_itow(n,buf,10);
-		return buf;
-	}
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       データ変換部                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-protected:
-	//bool
-	void profile_to_value(const wstring& profile, bool* value)
+public:
+	/*!
+	 * 文字列(標準string)から設定値を読み取る
+	 *
+	 * テンプレート定義は、32bit以下の符号付き整数型とenum型に対応している。
+	 * それ以外の型で利用したい場合は、特殊化定義を書いて使う。
+	 * 既存コードにあった32bit以下の符号なし整数型, bool, CLayoutInt, CLogicInt, wchar_t, KEYCODE は特殊化済み。
+	 */
+	template<typename NumType, typename = std::enable_if_t<sizeof(NumType) <= sizeof(int32_t)>>
+	static bool TryParse( const std::wstring& profile, NumType& value ) noexcept
 	{
-		if(profile != L"0")*value=true;
-		else *value=false;
-	}
-	void value_to_profile(const bool& value, wstring* profile)
-	{
-		*profile = _work_itow(value?1:0);
-	}
-	//int
-	void profile_to_value(const wstring& profile, int* value)
-	{
-		*value = _wtoi(profile.c_str());
-	}
-	void value_to_profile(const int& value, wstring* profile)
-	{
-		*profile = _work_itow(value);
-	}
-
-	//int式入出力実装マクロ
-	#define AS_INT(TYPE) \
-		void profile_to_value(const wstring& profile, TYPE* value){ *value = (TYPE)_wtoi(profile.c_str()); } \
-		void value_to_profile(const TYPE& value, wstring* profile){ *profile = _work_itow(value);    }
-
-	//int式
-// CType.hをincludeしないといけないから廃止
-//	AS_INT(EOutlineType) 
-	AS_INT(WORD)
-
-#ifdef USE_STRICT_INT
-	//CLayoutInt
-	void profile_to_value(const wstring& profile, CLayoutInt* value){ *value = (CLayoutInt)_wtoi(profile.c_str()); }
-	void value_to_profile(const CLayoutInt& value, wstring* profile){ *profile = _work_itow((Int)value);    }
-	//CLogicInt
-	void profile_to_value(const wstring& profile, CLogicInt* value){ *value = (CLogicInt)_wtoi(profile.c_str()); }
-	void value_to_profile(const CLogicInt& value, wstring* profile){ *profile = _work_itow((Int)value);    }
-#endif
-	//ACHAR
-	void profile_to_value(const wstring& profile, ACHAR* value)
-	{
-		if(profile.length()>0){
-			ACHAR buf[2]={0};
-			int ret=wctomb(buf,profile[0]);
-			assert_warning(ret==1);
-			(void)ret;
-			*value = buf[0];
+		if( profile.empty() ) return false;
+		bool ret = false;
+		const wchar_t* pStart = profile.data();
+		wchar_t* pEnd = NULL;
+		auto parsed = ::wcstol( pStart, &pEnd, 10 );
+		if( pStart != pEnd ){
+			value = static_cast<NumType>(parsed);
+			ret = true;
 		}
-		else{
-			*value = '\0';
+		return ret;
+	}
+
+	/*!
+	 * 設定値を文字列(標準string)に変換する
+	 *
+	 * テンプレート定義は、組込の整数型とenum型に対応している。
+	 * 整数以外の型で利用したい場合は、特殊化定義を書いて使う。
+	 * 既存コードにあった型 bool, CLayoutInt, CLogicInt, wchar_t, char は特殊化済み。
+	 */
+	template<typename NumType>
+	static std::wstring ConvertToString( const NumType value ) noexcept
+	{
+		if constexpr (std::is_enum_v<NumType>) {
+			return std::to_wstring( static_cast<int32_t>(value) );
+		}else{
+			return std::to_wstring( value );
 		}
-	}
-	void value_to_profile(const ACHAR& value, wstring* profile)
-	{
-		WCHAR buf[2]={0};
-		mbtowc(buf,&value,1);
-		profile->assign(1,buf[0]);
-	}
-	//WCHAR
-	void profile_to_value(const wstring& profile, WCHAR* value)
-	{
-		*value = profile[0];
-	}
-	void value_to_profile(const WCHAR& value, wstring* profile)
-	{
-		profile->assign(1,value);
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -216,7 +179,7 @@ public:
 	 *
 	 * 標準stringを介して設定値の入出力を行う。
 	 */
-	template <class T> //T=={bool, int, WORD, wchar_t, char}
+	template <class T> //T=={整数型, enum型, bool, wchar_t, char}
 	bool IOProfileData(
 		const WCHAR*			pszSectionName,	//!< [in] セクション名
 		const WCHAR*			pszEntryKey,	//!< [in] エントリ名
@@ -231,12 +194,11 @@ public:
 			//文字列読み込み
 			if( GetProfileDataImp( pszSectionName, pszEntryKey, buf ) ){
 				//Tに変換
-				profile_to_value(buf, &tEntryValue);
-				ret = true;
+				ret = TryParse( buf, tEntryValue );
 			}
 		}else{
 			//文字列に変換
-			value_to_profile(tEntryValue, &buf);
+			buf = ConvertToString( tEntryValue );
 			//文字列書き込み
 			ret = SetProfileDataImp( pszSectionName, pszEntryKey, buf );
 		}
@@ -343,6 +305,155 @@ bool CDataProfile::IOProfileData<std::wstring>(
 		ret = SetProfileDataImp( pszSectionName, pszEntryKey, strEntryValue );
 	}
 	return ret;
+}
+
+/*!
+ * 文字列(標準string)から設定値を読み取る
+ *
+ * 既存コードにあった32bit以下の符号なし整数型(WORD,DWORD等)を読み取るための特殊化。
+ */
+template<> inline
+bool CDataProfile::TryParse<uint32_t>( const std::wstring& profile, uint32_t& value ) noexcept
+{
+	if (profile.empty()) return false;
+	bool ret = false;
+	const wchar_t* pStart = profile.data();
+	wchar_t* pEnd = NULL;
+	auto parsed = ::wcstoul( pStart, &pEnd, 10 );
+	if( pStart != pEnd ){
+		value = parsed;
+		ret = true;
+	}
+	return ret;
+}
+
+#ifdef USE_STRICT_INT
+
+//! 文字列(標準string)から設定値を読み取る
+template<> inline
+bool CDataProfile::TryParse<CLayoutInt>( const std::wstring& profile, CLayoutInt& value ) noexcept
+{
+	bool ret = false;
+	int32_t nValue = -1;
+	if( TryParse( profile, nValue ) ){
+		value = CLayoutInt( nValue );
+		ret = true;
+	}
+	return ret;
+}
+
+//! 設定値を文字列(標準string)に変換する
+template<> inline
+std::wstring CDataProfile::ConvertToString<CLayoutInt>( const CLayoutInt value ) noexcept
+{
+	return std::to_wstring( value.GetValue() );
+}
+
+//! 文字列(標準string)から設定値を読み取る
+template<> inline
+bool CDataProfile::TryParse<CLogicInt>( const std::wstring& profile, CLogicInt& value ) noexcept
+{
+	bool ret = false;
+	int nValue = -1;
+	if (TryParse( profile, nValue )) {
+		value = CLogicInt( nValue );
+		ret = true;
+	}
+	return ret;
+}
+
+//! 設定値を文字列(標準string)に変換する
+template<> inline
+std::wstring CDataProfile::ConvertToString<CLogicInt>( const CLogicInt value ) noexcept
+{
+	return std::to_wstring( value.GetValue() );
+}
+#endif //ifdef USE_STRICT_INT
+
+
+//! 文字列(標準string)から設定値を読み取る
+template<> inline
+bool CDataProfile::TryParse<bool>( const std::wstring& profile, bool& value ) noexcept
+{
+	bool ret = false;
+	int nValue = -1;
+	if( TryParse( profile, nValue ) ) {
+		value = (nValue != 0);
+		ret = true;
+	}
+	return ret;
+}
+
+//! 設定値を文字列(標準string)に変換する
+template<> inline
+std::wstring CDataProfile::ConvertToString<bool>( const bool value ) noexcept
+{
+	return ConvertToString( value ? 1 : 0 );
+}
+
+/*!
+ * 文字列(標準string)から設定値を読み取る
+ *
+ * 行番号エリアとテキストエリアを区切るのに使う文字の設定で使われている。
+ *
+ * @sa STypeConfig::m_cLineTermChar
+ */
+template<> inline
+bool CDataProfile::TryParse<WCHAR>( const std::wstring& profile, WCHAR& value ) noexcept
+{
+	bool ret = false;
+	if( profile.length() > 0 ){
+		value = profile[0];
+		ret = true;
+	}
+	return ret;
+}
+
+//! 設定値を文字列(標準string)に変換する
+template<> inline
+std::wstring CDataProfile::ConvertToString<WCHAR>( const WCHAR value ) noexcept
+{
+	return std::wstring( 1, value );
+}
+
+/*!
+ * 文字列(標準string)から設定値を読み取る
+ *
+ * 元々ACHAR型の変換メソッドになっていたものを再定義。
+ * カスタムメニューのニーモニック設定に使われている。
+ *
+ * ニーモニックとは、「ファイル(F)」の F のこと。
+ * 
+ * @sa CommonSetting_CustomMenu::m_nCustMenuItemKeyArr
+ */
+template<>
+static inline
+bool CDataProfile::TryParse<KEYCODE>( const std::wstring& profile, KEYCODE& value ) noexcept
+{
+	bool ret = false;
+	if( profile.length() > 0 ){
+		// ニーモニックなので基本的に印字可能文字だが、
+		// 「なし」を意味する \0 を読み書きしている関係で、
+		// sakura.iniが「バイナリ」になってしまっている。
+		KEYCODE buf[2] = { 0 };
+		int ret = wctomb( buf, profile[0] );
+		assert_warning( ret == 1 );
+		if ( ret == 1 ){
+			value = buf[0];
+			ret = true;
+		}
+	}
+	return ret;
+}
+
+//! 設定値を文字列(標準string)に変換する
+template<>
+static inline
+std::wstring CDataProfile::ConvertToString<KEYCODE>( const ACHAR value ) noexcept
+{
+	WCHAR buf[2] = { 0 };
+	mbtowc( buf, &value, 1 );
+	return std::wstring( buf, 1 );
 }
 
 /*[EOF]*/
