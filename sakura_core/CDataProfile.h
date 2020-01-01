@@ -27,20 +27,86 @@
 #include "util/StaticType.h"
 #include "CProfile.h"
 
-//文字列バッファの型
-struct StringBufferW_{
-	WCHAR*    pData;
-	const int nDataCount;
+/*!
+ * 独自バッファ参照型
+ *
+ * 固定長の文字配列を標準stringのように扱うためのクラス
+ */
+class StringBufferW {
+	wchar_t*	m_pData;			//!< 文字列バッファを指すポインタ
+	uint32_t	m_cchDataLength;	//!< 有効文字列長
+	uint32_t	m_cchDataCount;		//!< 文字列バッファのサイズ
 
-	StringBufferW_(WCHAR* _pData, int _nDataCount) : pData(_pData), nDataCount(_nDataCount) { }
-
-	StringBufferW_& operator = (const StringBufferW_& rhs)
+public:
+	/*!
+	 * コンストラクタ
+	 *
+	 * StringBufferWのインスタンスを構築する
+	 *
+	 * @param [in] pszData 文字列バッファを指すポインタ
+	 * @param [in] cchDataCount 文字列バッファの確保サイズ
+	 */
+	StringBufferW( wchar_t* pszData, size_t cchDataCount ) noexcept
+		: m_pData( pszData )
+		, m_cchDataLength( 0 )
+		, m_cchDataCount( cchDataCount )
 	{
-		wcscpy_s(pData,nDataCount,rhs.pData);
+		// 文字列ポインタとサイズが有効な場合、有効文字列長を求める
+		if( m_pData != NULL && m_cchDataCount > 0 ) {
+			m_cchDataLength = ::wcsnlen( m_pData, m_cchDataCount );
+			// NUL終端がなかったら、強制的にNUL終端する
+			if( m_cchDataLength == m_cchDataCount ){
+				m_pData[--m_cchDataLength] = L'\0';
+			}
+		}
+	}
+
+	// このクラスはコピー禁止
+	StringBufferW( const StringBufferW& ) = delete;
+	StringBufferW& operator = ( const StringBufferW& ) = delete;
+
+	/*!
+	 * ムーブコンストラクタ
+	 *
+	 * 空のStringBufferWインスタンスを構築し、
+	 * 引数で指定されたインスタンスとデータを入れ替える
+	 */
+	StringBufferW( StringBufferW&& other ) noexcept
+		: StringBufferW( NULL, 0 )
+	{
+		*this = std::forward<StringBufferW>( other );
+	}
+
+	/*!
+	 * ムーブ代入演算子
+	 *
+	 * 引数で指定されたインスタンスとデータを入れ替える
+	 */
+	StringBufferW& operator = ( StringBufferW&& rhs ) noexcept
+	{
+		std::swap( m_pData, rhs.m_pData );
+		std::swap( m_cchDataLength, rhs.m_cchDataLength );
+		std::swap( m_cchDataCount, rhs.m_cchDataCount );
 		return *this;
 	}
+
+	const wchar_t* c_str() const noexcept { return m_pData; }		//!< 文字列ポインタ(C-Style)
+	size_t length() const noexcept { return m_cchDataLength; }		//!< 有効文字列長
+	size_t capacity() const noexcept { return m_cchDataCount; }		//!< 文字列バッファのサイズ
+
+	/*!
+	 * バッファの内容を指定した文字列で置き替える
+	 *
+	 * @param [in] pSrc 文字列(NULL指定不可)
+	 */
+	void assign( const wchar_t* pSrc )
+	{
+		::wcsncpy_s( m_pData, capacity(), pSrc, _TRUNCATE );
+		m_cchDataLength = ::wcsnlen( c_str(), capacity() );
+	}
+
+	StringBufferW& operator = ( const wchar_t* rhs ) { assign( rhs ); return *this; }
 };
-typedef const StringBufferW_ StringBufferW;
 
 //文字列バッファ型インスタンスの生成マクロ
 #define MakeStringBufferW(S) StringBufferW(S,_countof(S))
@@ -130,15 +196,6 @@ protected:
 	{
 		profile->assign(1,value);
 	}
-	//StringBufferW
-	void profile_to_value(const wstring& profile, StringBufferW* value)
-	{
-		wcscpy_s(value->pData,value->nDataCount,profile.c_str());
-	}
-	void value_to_profile(const StringBufferW& value, wstring* profile)
-	{
-		*profile = value.pData;
-	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         入出力部                            //
@@ -149,7 +206,7 @@ public:
 	 *
 	 * 標準stringを介して設定値の入出力を行う。
 	 */
-	template <class T> //T=={bool, int, WORD, wchar_t, char, StringBufferW}
+	template <class T> //T=={bool, int, WORD, wchar_t, char}
 	bool IOProfileData(
 		const WCHAR*			pszSectionName,	//!< [in] セクション名
 		const WCHAR*			pszEntryKey,	//!< [in] エントリ名
@@ -171,6 +228,40 @@ public:
 			//文字列に変換
 			value_to_profile(tEntryValue, &buf);
 			//文字列書き込み
+			ret = SetProfileDataImp( pszSectionName, pszEntryKey, buf );
+		}
+		return ret;
+	}
+
+	/*!
+	 * 独自バッファ参照型の入出力(標準stringを介して入出力)
+	 *
+	 * 引数型を右辺値参照(StringBufferW&&)としたいために通常入出力と分離。
+	 * @retval true	設定値を正しく読み書きできた
+	 * @retval false 設定値を読み込めたが長すぎて切り捨てられた
+	 * @retval false 設定値が存在しなかったため読込できなかった
+	 */
+	bool IOProfileData(
+		const WCHAR*			pszSectionName,	//!< [in] セクション名
+		const WCHAR*			pszEntryKey,	//!< [in] エントリ名
+		StringBufferW&&			refEntryValue	//!< [in,out] エントリ値
+	) noexcept
+	{
+		// 標準stringに変換して入出力する
+		std::wstring buf;
+
+		bool ret = false;
+		if( IsReadingMode() ){
+			// 文字列読み込み
+			if( GetProfileDataImp( pszSectionName, pszEntryKey, buf ) ){
+				//StringBufferWに変換
+				refEntryValue = buf.c_str();
+				ret = buf.length() < refEntryValue.capacity();
+			}
+		}else{
+			// 文字列に変換
+			buf = refEntryValue.c_str();
+			// 文字列書き込み
 			ret = SetProfileDataImp( pszSectionName, pszEntryKey, buf );
 		}
 		return ret;
