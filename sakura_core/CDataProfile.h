@@ -140,17 +140,6 @@ protected:
 	{
 		*profile = value.pData;
 	}
-	//StaticString<WCHAR,N>
-	template <int N>
-	void profile_to_value(const wstring& profile, StaticString<WCHAR, N>* value)
-	{
-		wcscpy_s(value->GetBufferPointer(),value->GetBufferCount(),profile.c_str());
-	}
-	template <int N>
-	void value_to_profile(const StaticString<WCHAR, N>& value, wstring* profile)
-	{
-		*profile = value.GetBufferPointer();
-	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         入出力部                            //
@@ -161,7 +150,7 @@ public:
 	 *
 	 * 標準stringを介して設定値の入出力を行う。
 	 */
-	template <class T> //T=={bool, int, WORD, wchar_t, char, StringBufferW, StaticString}
+	template <class T> //T=={bool, int, WORD, wchar_t, char, StringBufferW}
 	bool IOProfileData(
 		const WCHAR*			pszSectionName,	//!< [in] セクション名
 		const WCHAR*			pszEntryKey,	//!< [in] エントリ名
@@ -184,6 +173,41 @@ public:
 			value_to_profile(tEntryValue, &buf);
 			//文字列書き込み
 			ret = SetProfileDataImp( pszSectionName, pszEntryKey, buf );
+		}
+		return ret;
+	}
+
+	/*!
+	 * 独自定義文字配列拡張型(StaticString)の入出力(標準stringを介して入出力)
+	 *
+	 * 型引数が合わないために通常入出力と分離。
+	 * @retval true	設定値を正しく読み書きできた
+	 * @retval false 設定値を読み込めたが長すぎて切り捨てられた
+	 * @retval false 設定値が存在しなかったため読込できなかった
+	 */
+	template <int N>
+	bool IOProfileData(
+		const WCHAR*			pszSectionName,	//!< [in] セクション名
+		const WCHAR*			pszEntryKey,	//!< [in] エントリ名
+		StaticString<WCHAR, N>&	szEntryValue	//!< [in,out] エントリ値
+	) noexcept
+	{
+		// 標準stringに変換して入出力する
+		std::wstring buf;
+
+		bool ret = false;
+		if( IsReadingMode() ){
+			//文字列読み込み
+			if( IOProfileData( pszSectionName, pszEntryKey, buf ) ){
+				//StaticString<WCHAR, N>に変換
+				szEntryValue = buf.c_str();
+				ret = buf.length() < _countof2(szEntryValue);
+			}
+		}else{
+			//文字列に変換
+			buf = szEntryValue.GetBufferPointer();
+			//文字列書き込み
+			ret = IOProfileData( pszSectionName, pszEntryKey, buf );
 		}
 		return ret;
 	}
