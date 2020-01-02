@@ -136,7 +136,7 @@ public:
 	 *
 	 * テンプレート定義は、32bit以下の符号付き整数型とenum型に対応している。
 	 * それ以外の型で利用したい場合は、特殊化定義を書いて使う。
-	 * 既存コードにあった32bit以下の符号なし整数型, bool, CLayoutInt, CLogicInt, wchar_t, KEYCODE は特殊化済み。
+	 * 既存コードにあった32bit以下の符号なし整数型, bool, CLayoutInt, CLogicInt, wchar_t は特殊化済み。
 	 */
 	template<typename NumType, typename = std::enable_if_t<sizeof(NumType) <= sizeof(int32_t)>>
 	static bool TryParse( const std::wstring& profile, NumType& value ) noexcept
@@ -158,7 +158,7 @@ public:
 	 *
 	 * テンプレート定義は、組込の整数型とenum型に対応している。
 	 * 整数以外の型で利用したい場合は、特殊化定義を書いて使う。
-	 * 既存コードにあった型 bool, CLayoutInt, CLogicInt, wchar_t, char は特殊化済み。
+	 * 既存コードにあった型 bool, CLayoutInt, CLogicInt, wchar_t は特殊化済み。
 	 */
 	template<typename NumType>
 	static std::wstring ConvertToString( const NumType value ) noexcept
@@ -179,7 +179,7 @@ public:
 	 *
 	 * 標準stringを介して設定値の入出力を行う。
 	 */
-	template <class T> //T=={整数型, enum型, bool, wchar_t, char}
+	template <class T> //T=={整数型, enum型, bool, wchar_t}
 	bool IOProfileData(
 		const WCHAR*			pszSectionName,	//!< [in] セクション名
 		const WCHAR*			pszEntryKey,	//!< [in] エントリ名
@@ -403,46 +403,6 @@ template<> inline
 std::wstring CDataProfile::ConvertToString<WCHAR>( const WCHAR value ) noexcept
 {
 	return std::wstring( 1, value );
-}
-
-/*!
- * 文字列(標準string)から設定値を読み取る
- *
- * 元々ACHAR型の変換メソッドになっていたものを再定義。
- * カスタムメニューのニーモニック設定に使われている。
- *
- * ニーモニックとは、「ファイル(F)」の F のこと。
- * 
- * @sa CommonSetting_CustomMenu::m_nCustMenuItemKeyArr
- */
-template<>
-static inline
-bool CDataProfile::TryParse<KEYCODE>( const std::wstring& profile, KEYCODE& value ) noexcept
-{
-	bool ret = false;
-	if( profile.length() > 0 ){
-		// ニーモニックなので基本的に印字可能文字だが、
-		// 「なし」を意味する \0 を読み書きしている関係で、
-		// sakura.iniが「バイナリ」になってしまっている。
-		KEYCODE buf[2] = { 0 };
-		int ret = wctomb( buf, profile[0] );
-		assert_warning( ret == 1 );
-		if ( ret == 1 ){
-			value = buf[0];
-			ret = true;
-		}
-	}
-	return ret;
-}
-
-//! 設定値を文字列(標準string)に変換する
-template<>
-static inline
-std::wstring CDataProfile::ConvertToString<KEYCODE>( const ACHAR value ) noexcept
-{
-	WCHAR buf[2] = { 0 };
-	mbtowc( buf, &value, 1 );
-	return std::wstring( buf, 1 );
 }
 
 /*[EOF]*/

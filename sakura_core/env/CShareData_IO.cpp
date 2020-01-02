@@ -916,6 +916,62 @@ void CShareData_IO::ShareData_IO_Toolbar( CDataProfile& cProfile, CMenuDrawer* p
 }
 
 /*!
+ * キーコードの入出力
+ *
+ * @date 2020/01/01 berryzplus IO_CustMenuから分離
+ */
+bool ShareData_IO_KEYCODE( CDataProfile& cProfile,
+	const WCHAR*		pszSectionName,
+	const WCHAR*		pszEntryKey,
+	KEYCODE&			chKeycode
+) noexcept
+{
+	// キーコードバッファは \xFF形式 を読み書きできるサイズを確保
+	WCHAR szKeycode[5]{ 0 };
+
+	// 書き込み準備
+	if( !cProfile.IsReadingMode() ){
+		// キーコードを設定値に変換する
+		switch (chKeycode) {
+		case '\0':	::wcscpy_s( szKeycode, L"" ); break;		//設定ファイルにバイナリを出さないため置換
+		case ' ':	::wcscpy_s( szKeycode, L"\\x20" ); break;	//半角スペースは視認性に問題があるので置換
+		default:
+			if( ::isprint( chKeycode ) ){
+				// 印字可能文字はそのまま出力する
+				::swprintf_s( szKeycode, L"%c", chKeycode );
+			}else{
+				// 印字不能文字は \xFF形式 で出力する
+				::swprintf_s( szKeycode, L"\\x%02x", static_cast<uint8_t>(chKeycode) );
+			}
+			break;
+		}
+	}
+
+	bool ret = false;
+	if( cProfile.IOProfileData( pszSectionName, pszEntryKey, StringBufferW( szKeycode ) ) ){
+		ret = true;
+	}
+
+	// 読み込み後処理
+	if( cProfile.IsReadingMode() && ret ){
+		// 設定値からキーコードを読み取る
+		if( szKeycode[0] != '\\' ){
+			// 印字可能文字として読み込む('\0'もここで取得)
+			chKeycode = static_cast<KEYCODE>(szKeycode[0]);
+		}else{
+			// 印字不能文字として読み込む
+			auto count = ::swscanf_s( szKeycode, L"\\x%hhx", &chKeycode );
+			if( !count ){
+				// 読み込めない == \単独 と解釈する
+				chKeycode = '\\';
+			}
+		}
+	}
+
+	return true;
+}
+
+/*!
 	@brief 共有データのCustMenuセクションの入出力
 	@param[in,out]	cProfile	INIファイル入出力クラス
 
@@ -985,7 +1041,7 @@ void CShareData_IO::IO_CustMenu( CDataProfile& cProfile, CommonSetting_CustomMen
 			// end
 
 			auto_sprintf( szKeyName, LTEXT("nCMIK[%02d][%02d]"), i, j );
-			cProfile.IOProfileData( pszSecName, szKeyName, menu.m_nCustMenuItemKeyArr[i][j] );
+			ShareData_IO_KEYCODE( cProfile, pszSecName, szKeyName, menu.m_nCustMenuItemKeyArr[i][j] );
 		}
 	}
 }
