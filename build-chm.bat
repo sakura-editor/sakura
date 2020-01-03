@@ -78,6 +78,6 @@ if not errorlevel 1 (
 exit /b 0
 
 :download_archive
-pwsh.exe -ExecutionPolicy RemoteSigned -File %TMP_HELP%\extract-chm-from-artifact.ps1
+pwsh.exe -ExecutionPolicy RemoteSigned -File %SRC_HELP%\extract-chm-from-artifact.ps1
 if errorlevel 1 exit /b 1
 exit /b 0
