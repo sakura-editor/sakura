@@ -47,7 +47,7 @@ if not "%APPVEYOR_PULL_REQUEST_NUMBER%" == "" (
 )
 
 @echo hash name
-set SHORTHASH=%TEMP_GIT_COMMIT_HASH%
+set SHORTHASH=%TEMP_GIT_SHORT_COMMIT_HASH%
 
 @rem ----------------------------------------------------------------
 @rem build BASENAME
