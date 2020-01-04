@@ -35,10 +35,16 @@ if exist %DST_DIR2% rmdir /s /q %DST_DIR2%
 
 @rem split input bmp
 %SPLITTER% %SRC_BMP1% %DST_DIR1%
-if errorlevel 1 (echo error && exit /b 1)
+if errorlevel 1 (
+	echo fail %SPLITTER% %SRC_BMP1% %DST_DIR1%
+	exit /b 1
+)
 
 %SPLITTER% %SRC_BMP2% %DST_DIR2%
-if errorlevel 1 (echo error && exit /b 1)
+if errorlevel 1 (
+	echo fail %SPLITTER% %SRC_BMP2% %DST_DIR2%
+	exit /b 1
+)
 
 @rem these steps are for tests.
 set OUT1_BMP1=%~dp0resource\out1-mytool.bmp
@@ -51,29 +57,54 @@ set OUT_DIR2=%~dp0resource\my_icons
 
 @rem merge multiple bmp to one bmp
 %MUXER% %DST_DIR1% %OUT1_BMP1%
-if errorlevel 1 (echo error && exit /b 1)
+if errorlevel 1 (
+	echo fail %MUXER% %DST_DIR1% %OUT1_BMP1%
+	exit /b 1
+)
 
 %MUXER% %DST_DIR2% %OUT1_BMP2%
-if errorlevel 1 (echo error && exit /b 1)
+if errorlevel 1 (
+	echo fail %MUXER% %DST_DIR2% %OUT1_BMP2%
+	exit /b 1
+)
 
 %SPLITTER% %OUT1_BMP1% %OUT_DIR1%
-if errorlevel 1 (echo error && exit /b 1)
+if errorlevel 1 (
+	echo fail %SPLITTER% %OUT1_BMP1% %OUT_DIR1%
+	exit /b 1
+)
 
 %SPLITTER% %OUT1_BMP2% %OUT_DIR2%
-if errorlevel 1 (echo error && exit /b 1)
+if errorlevel 1 (
+	echo fail %SPLITTER% %OUT1_BMP2% %OUT_DIR2%
+	exit /b 1
+)
 
 %MUXER% %OUT_DIR1% %OUT2_BMP1%
-if errorlevel 1 (echo error && exit /b 1)
+if errorlevel 1 (
+	echo fail %MUXER% %OUT_DIR1% %OUT2_BMP1%
+	exit /b 1
+)
 
 %MUXER% %OUT_DIR2% %OUT2_BMP2%
-if errorlevel 1 (echo error && exit /b 1)
+if errorlevel 1 (
+	echo fail %MUXER% %OUT_DIR2% %OUT2_BMP2%
+	exit /b 1
+)
 
 fc /a /b %OUT1_BMP1% %OUT2_BMP1% >NUL
-if errorlevel 1 (echo error && exit /b 1)
+if errorlevel 1 (
+	echo fail fc /a /b %OUT1_BMP1% %OUT2_BMP1%
+	exit /b 1
+)
 
 fc /a /b %OUT1_BMP2% %OUT2_BMP2% >NUL
-if errorlevel 1 (echo error && exit /b 1)
+if errorlevel 1 (
+	echo fail fc /a /b %OUT1_BMP2% %OUT2_BMP2%
+	exit /b 1
+)
 
+echo Success
 exit /b 0
 
 @rem ------------------------------------------------------------------------------
