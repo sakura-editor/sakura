@@ -29,7 +29,7 @@ namespace ToolBarImageSplitter
                 for (var x = 0; x < width; x += sx)
                 {
                     var cloneRect = new RectangleF(x, y, sx, sy);
-                    using (var cloneBitmap = bmp.Clone(cloneRect, System.Drawing.Imaging.PixelFormat.Format4bppIndexed))
+                    using (var cloneBitmap = bmp.Clone(cloneRect, bmp.PixelFormat))
                     {
                         var outfile = Path.Combine(outDir, index.ToString() + ".bmp");
                         cloneBitmap.Save(outfile, System.Drawing.Imaging.ImageFormat.Bmp);
