@@ -37,6 +37,10 @@ jobs:
   - script: build-sln.bat       $(BuildPlatform) $(Configuration)
     displayName: Build solution
 
+  # Toolbar Bitmap Split/Mux
+  - script: build-bmp-tools.bat $(Configuration)
+    displayName: Bitmap Split/Mux
+
 #  # Build HTML Help
 #  - script: build-chm.bat
 #    displayName: Build HTML Help
