@@ -30,6 +30,8 @@ set DST_DIR2=%~dp0resource\my_icons
 
 if exist %DST_DIR1% rmdir /s /q %DST_DIR1%
 if exist %DST_DIR2% rmdir /s /q %DST_DIR2%
+if exist %DST_DIR1% rmdir /s /q %DST_DIR1%
+if exist %DST_DIR2% rmdir /s /q %DST_DIR2%
 
 @rem split input bmp
 %SPLITTER% %SRC_BMP1% %DST_DIR1%
