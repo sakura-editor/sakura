@@ -10,7 +10,7 @@ namespace ToolBarImageMuxer
 {
     public class BmpFileComparer : IComparer<string>
     {
-        static Regex regex = new Regex(@"(\d+)\.bmp", RegexOptions.Compiled);
+        static Regex regex = new Regex(@"(\d+)(\D*)\.bmp", RegexOptions.Compiled);
     
         public int Compare(string x, string y)
         {
@@ -22,7 +22,13 @@ namespace ToolBarImageMuxer
                 var indexX = int.Parse(matchX.Groups[1].Value);
                 var indexY = int.Parse(matchY.Groups[1].Value);
 
-                return indexX.CompareTo(indexY);
+				// 数値だけのファイルの場合、数値として比較する
+                if (indexX != indexY)
+                {
+                    return indexX - indexY;
+                }
+                
+                // 数値の部分が同じ場合、文字列として比較する。
             }
             return x.CompareTo(y);
         }

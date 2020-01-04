@@ -22,7 +22,8 @@ namespace ToolBarImageMuxer
             var compare = new BmpFileComparer();
             Array.Sort<string>(files, compare);
 
-            BmpMuxer.Mux(files, outfile, 33);
+            var countPerLine = 32 + 1;
+            BmpMuxer.Mux(files, outfile, countPerLine);
         }
     }
 }
