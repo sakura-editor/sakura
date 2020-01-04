@@ -7,7 +7,7 @@ if not defined CMD_HHC (
 set SRC_HELP=%~dp0help
 set TMP_HELP=%~dp0temphelp
 
-rmdir /s /q    "%TMP_HELP%"
+if exist "%TMP_HELP%" rmdir /s /q    "%TMP_HELP%"
 xcopy /i /k /s "%SRC_HELP%" "%TMP_HELP%"
 
 set HHP_MACRO=%TMP_HELP%\macro\macro.HHP
