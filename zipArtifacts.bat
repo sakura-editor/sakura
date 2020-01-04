@@ -30,6 +30,9 @@ if "%platform%" == "x64" (
 set ZIP_CMD=%~dp0tools\zip\zip.bat
 set LIST_ZIP_CMD=%~dp0tools\zip\listzip.bat
 
+@rem for GIT_TAG_NAME
+call %~dp0sakura\githash.bat %~dp0sakura_core
+
 @rem ----------------------------------------------------------------
 @rem prepare environment variable
 @rem ----------------------------------------------------------------
