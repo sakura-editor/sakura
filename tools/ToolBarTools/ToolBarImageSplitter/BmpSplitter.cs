@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace ToolBarImageSplitter
 {
@@ -44,9 +45,16 @@ namespace ToolBarImageSplitter
                     var cloneRect = new RectangleF(x, y, sx, sy);
                     using (var cloneBitmap = bmp.Clone(cloneRect, bmp.PixelFormat))
                     {
+                        cloneBitmap.Palette = bmp.Palette;
                         cloneBitmap.Save(outfile, System.Drawing.Imaging.ImageFormat.Bmp);
                         Console.WriteLine("wrote {0} x={1} y={2}", outfile, x, y);
                     }
+#if DEBUG
+                    using (var bmpDebug = (Bitmap)Image.FromFile(outfile))
+                    {
+                        Debug.Assert(bmpDebug.Palette.Entries.SequenceEqual(bmp.Palette.Entries));
+                    }
+#endif
                 }
             }
         }
