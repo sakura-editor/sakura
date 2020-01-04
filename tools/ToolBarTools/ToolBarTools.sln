@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.960
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolBarImageSplitter", "ToolBarImageSplitter\ToolBarImageSplitter.csproj", "{4F23CE26-8A95-44AD-BE88-45DFE08FE0F7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolBarImageMuxer", "ToolBarImageMuxer\ToolBarImageMuxer.csproj", "{ABF37460-F080-4F1A-9F7A-F166154072FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{4F23CE26-8A95-44AD-BE88-45DFE08FE0F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F23CE26-8A95-44AD-BE88-45DFE08FE0F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F23CE26-8A95-44AD-BE88-45DFE08FE0F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABF37460-F080-4F1A-9F7A-F166154072FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABF37460-F080-4F1A-9F7A-F166154072FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABF37460-F080-4F1A-9F7A-F166154072FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABF37460-F080-4F1A-9F7A-F166154072FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
