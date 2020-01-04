@@ -17,7 +17,7 @@ if not defined CMD_MSBUILD (
 set "TOOL_SLN_FILE=%~dp0tools\ToolBarTools\ToolBarTools.sln"
 @echo "%CMD_MSBUILD%" %TOOL_SLN_FILE% "/p:Platform=Any CPU" /p:Configuration=%configuration% /t:"Build" /v:q
       "%CMD_MSBUILD%" %TOOL_SLN_FILE% "/p:Platform=Any CPU" /p:Configuration=%configuration% /t:"Build" /v:q
-if errorlevel 1 exit /b 1
+if errorlevel 1 (echo error && exit /b 1)
 
 set MUXER=%~dp0tools\ToolBarTools\ToolBarImageMuxer\bin\%configuration%\ToolBarImageMuxer.exe
 set SPLITTER=%~dp0tools\ToolBarTools\ToolBarImageSplitter\bin\%configuration%\ToolBarImageSplitter.exe
@@ -35,10 +35,10 @@ if exist %DST_DIR2% rmdir /s /q %DST_DIR2%
 
 @rem split input bmp
 %SPLITTER% %SRC_BMP1% %DST_DIR1%
-if errorlevel 1 exit /b 1
+if errorlevel 1 (echo error && exit /b 1)
 
 %SPLITTER% %SRC_BMP2% %DST_DIR2%
-if errorlevel 1 exit /b 1
+if errorlevel 1 (echo error && exit /b 1)
 
 @rem these steps are for tests.
 set OUT1_BMP1=%~dp0resource\out1-mytool.bmp
@@ -51,28 +51,28 @@ set OUT_DIR2=%~dp0resource\my_icons
 
 @rem merge multiple bmp to one bmp
 %MUXER% %DST_DIR1% %OUT1_BMP1%
-if errorlevel 1 exit /b 1
+if errorlevel 1 (echo error && exit /b 1)
 
 %MUXER% %DST_DIR2% %OUT1_BMP2%
-if errorlevel 1 exit /b 1
+if errorlevel 1 (echo error && exit /b 1)
 
 %SPLITTER% %OUT1_BMP1% %OUT_DIR1%
-if errorlevel 1 exit /b 1
+if errorlevel 1 (echo error && exit /b 1)
 
 %SPLITTER% %OUT1_BMP2% %OUT_DIR2%
-if errorlevel 1 exit /b 1
+if errorlevel 1 (echo error && exit /b 1)
 
 %MUXER% %OUT_DIR1% %OUT2_BMP1%
-if errorlevel 1 exit /b 1
+if errorlevel 1 (echo error && exit /b 1)
 
 %MUXER% %OUT_DIR2% %OUT2_BMP2%
-if errorlevel 1 exit /b 1
+if errorlevel 1 (echo error && exit /b 1)
 
 fc /a /b %OUT1_BMP1% %OUT2_BMP1% >NUL
-if errorlevel 1 exit /b 1
+if errorlevel 1 (echo error && exit /b 1)
 
 fc /a /b %OUT1_BMP2% %OUT2_BMP2% >NUL
-if errorlevel 1 exit /b 1
+if errorlevel 1 (echo error && exit /b 1)
 
 exit /b 0
 
