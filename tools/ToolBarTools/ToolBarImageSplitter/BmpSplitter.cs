@@ -33,6 +33,7 @@ namespace ToolBarImageSplitter
                     {
                         var outfile = Path.Combine(outDir, index.ToString() + ".bmp");
                         cloneBitmap.Save(outfile, System.Drawing.Imaging.ImageFormat.Bmp);
+                        Console.WriteLine("{0} {1} {2}", x, y, index);
                     }
                     index++;
                 }
