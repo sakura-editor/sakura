@@ -29,12 +29,11 @@
 #define UIFILENAME_INTERVAL_MILLISEC 15	// Cancelダイアログのファイル名表示更新間隔
 
 /*!
- * 指定された文字列を出力対象ビューのタイプ別設定に従ってエスケープする
+ * 指定された文字列をタイプ別設定に従ってエスケープする
  */
-inline CNativeW EscapeStringLiteral( const CEditView* pcViewDst, const CNativeW& cmemString )
+inline CNativeW EscapeStringLiteral( const STypeConfig& type, const CNativeW& cmemString )
 {
 	CNativeW cmemWork2( cmemString );
-	const STypeConfig& type = pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 	if( FALSE == type.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp ){
 		// 2011.11.28 色指定が無効ならエスケープしない
 	}else
@@ -411,6 +410,9 @@ DWORD CGrepAgent::DoGrep(
 		}
 	}
 
+	// 出力対象ビューのタイプ別設定(grepout固定)
+	const STypeConfig& type = pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
+
 	std::vector<std::wstring> vPaths;
 	CreateFolders( pcmGrepFolder->GetStringPtr(), vPaths );
 
@@ -420,7 +422,7 @@ DWORD CGrepAgent::DoGrep(
 	CNativeW	cmemWork;
 	cmemMessage.AppendString( LS( STR_GREP_SEARCH_CONDITION ) );	//L"\r\n□検索条件  "
 	if( 0 < nWork ){
-		cmemWork = EscapeStringLiteral( pcViewDst, *pcmGrepKey );
+		cmemWork = EscapeStringLiteral( type, *pcmGrepKey );
 		cmemMessage.AppendStringF( L"\"%s\"\r\n", cmemWork.GetStringPtr() );
 	}else{
 		cmemMessage.AppendString( LS( STR_GREP_SEARCH_FILE ) );	//L"「ファイル検索」\r\n"
@@ -431,7 +433,7 @@ DWORD CGrepAgent::DoGrep(
 		if( bGrepPaste ){
 			cmemMessage.AppendString( LS(STR_GREP_PASTE_CLIPBOAD) );
 		}else{
-			cmemWork = EscapeStringLiteral( pcViewDst, cmemReplace );
+			cmemWork = EscapeStringLiteral( type, cmemReplace );
 			cmemMessage.AppendStringF( L"\"%s\"\r\n", cmemWork.GetStringPtr() );
 		}
 	}
