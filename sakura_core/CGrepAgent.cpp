@@ -445,6 +445,10 @@ DWORD CGrepAgent::DoGrep(
 	{
 		std::wstring grepFolder;
 		for( int i = 0; i < (int)vPaths.size(); i++ ){
+			// パスリストは ':' で区切る(2つ目以降の前に付加する)
+			if( i ){
+				grepFolder += L';';
+			}
 			// 末尾のバックスラッシュを削る
 			std::wstring sPath = ChopYen( vPaths[i] );
 
@@ -456,13 +460,8 @@ DWORD CGrepAgent::DoGrep(
 			}else{
 				grepFolder += sPath;
 			}
-
-			// パスリストは ':' で区切る
-			grepFolder += L';';
 		}
-
-		// 最後のリスト区切りは要らないので length() - 1 を出力する
-		cmemMessage.AppendStringF( L"%.*s\r\n", grepFolder.length() - 1, grepFolder.c_str() );
+		cmemMessage.AppendStringF( L"%s\r\n", grepFolder.c_str() );
 	}
 
 	cmemMessage.AppendString(LS(STR_GREP_EXCLUDE_FILE));	//L"除外ファイル   "
