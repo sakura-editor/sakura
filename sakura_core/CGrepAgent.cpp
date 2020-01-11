@@ -422,8 +422,9 @@ DWORD CGrepAgent::DoGrep(
 	CNativeW	cmemWork;
 	cmemMessage.AppendString( LS( STR_GREP_SEARCH_CONDITION ) );	//L"\r\n□検索条件  "
 	if( 0 < nWork ){
-		cmemWork = EscapeStringLiteral( type, *pcmGrepKey );
-		cmemMessage.AppendStringF( L"\"%s\"\r\n", cmemWork.GetStringPtr() );
+		cmemMessage.AppendString( L"\"" );
+		cmemMessage += EscapeStringLiteral(type, *pcmGrepKey);
+		cmemMessage.AppendString( L"\"\r\n" );
 	}else{
 		cmemMessage.AppendString( LS( STR_GREP_SEARCH_FILE ) );	//L"「ファイル検索」\r\n"
 	}
@@ -433,8 +434,9 @@ DWORD CGrepAgent::DoGrep(
 		if( bGrepPaste ){
 			cmemMessage.AppendString( LS(STR_GREP_PASTE_CLIPBOAD) );
 		}else{
-			cmemWork = EscapeStringLiteral( type, cmemReplace );
-			cmemMessage.AppendStringF( L"\"%s\"\r\n", cmemWork.GetStringPtr() );
+			cmemMessage.AppendString( L"\"" );
+			cmemMessage += EscapeStringLiteral(type, cmemReplace);
+			cmemMessage.AppendString( L"\"\r\n" );
 		}
 	}
 
