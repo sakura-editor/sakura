@@ -28,6 +28,27 @@
 #define ADDTAIL_INTERVAL_MILLISEC 50	// 結果出力の時間間隔
 #define UIFILENAME_INTERVAL_MILLISEC 15	// Cancelダイアログのファイル名表示更新間隔
 
+/*!
+ * 指定された文字列をタイプ別設定に従ってエスケープする
+ */
+inline CNativeW EscapeStringLiteral( const STypeConfig& type, const CNativeW& cmemString )
+{
+	CNativeW cmemWork2( cmemString );
+	if( FALSE == type.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp ){
+		// 2011.11.28 色指定が無効ならエスケープしない
+	}else
+	if( type.m_nStringType == STRING_LITERAL_CPP || type.m_nStringType == STRING_LITERAL_CSHARP
+		|| type.m_nStringType == STRING_LITERAL_PYTHON ){	/* 文字列区切り記号エスケープ方法 */
+		cmemWork2.Replace( L"\\", L"\\\\" );
+		cmemWork2.Replace( L"\'", L"\\\'" );
+		cmemWork2.Replace( L"\"", L"\\\"" );
+	}else if( type.m_nStringType == STRING_LITERAL_PLSQL ){
+		cmemWork2.Replace( L"\'", L"\'\'" );
+		cmemWork2.Replace( L"\"", L"\"\"" );
+	}
+	return cmemWork2;
+}
+
 CGrepAgent::CGrepAgent()
 : m_bGrepMode( false )			/* Grepモードか */
 , m_bGrepRunning( false )		/* Grep処理中 */
@@ -389,6 +410,9 @@ DWORD CGrepAgent::DoGrep(
 		}
 	}
 
+	// 出力対象ビューのタイプ別設定(grepout固定)
+	const STypeConfig& type = pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
+
 	std::vector<std::wstring> vPaths;
 	CreateFolders( pcmGrepFolder->GetStringPtr(), vPaths );
 
@@ -398,52 +422,19 @@ DWORD CGrepAgent::DoGrep(
 	CNativeW	cmemWork;
 	cmemMessage.AppendString( LS( STR_GREP_SEARCH_CONDITION ) );	//L"\r\n□検索条件  "
 	if( 0 < nWork ){
-		CNativeW cmemWork2;
-		cmemWork2.SetNativeData( *pcmGrepKey );
-		const STypeConfig& type = pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
-		if( FALSE == type.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp ){
-			// 2011.11.28 色指定が無効ならエスケープしない
-		}else
-		if( type.m_nStringType == STRING_LITERAL_CPP || type.m_nStringType == STRING_LITERAL_CSHARP
-			|| type.m_nStringType == STRING_LITERAL_PYTHON ){	/* 文字列区切り記号エスケープ方法 */
-			cmemWork2.Replace( L"\\", L"\\\\" );
-			cmemWork2.Replace( L"\'", L"\\\'" );
-			cmemWork2.Replace( L"\"", L"\\\"" );
-		}else if( type.m_nStringType == STRING_LITERAL_PLSQL ){
-			cmemWork2.Replace( L"\'", L"\'\'" );
-			cmemWork2.Replace( L"\"", L"\"\"" );
-		}
-		cmemWork.AppendString( L"\"" );
-		cmemWork.AppendNativeData( cmemWork2 );
-		cmemWork.AppendString( L"\"\r\n" );
+		cmemWork = EscapeStringLiteral( type, *pcmGrepKey );
+		cmemMessage.AppendStringF( L"\"%s\"\r\n", cmemWork.GetStringPtr() );
 	}else{
-		cmemWork.AppendString( LS( STR_GREP_SEARCH_FILE ) );	//L"「ファイル検索」\r\n"
+		cmemMessage.AppendString( LS( STR_GREP_SEARCH_FILE ) );	//L"「ファイル検索」\r\n"
 	}
-	cmemMessage += cmemWork;
 
 	if( bGrepReplace ){
 		cmemMessage.AppendString( LS(STR_GREP_REPLACE_TO) );
 		if( bGrepPaste ){
 			cmemMessage.AppendString( LS(STR_GREP_PASTE_CLIPBOAD) );
 		}else{
-			CNativeW cmemWork2;
-			cmemWork2.SetNativeData( cmemReplace );
-			const STypeConfig& type = pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
-			if( FALSE == type.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp ){
-				// 2011.11.28 色指定が無効ならエスケープしない
-			}else
-			if( type.m_nStringType == STRING_LITERAL_CPP || type.m_nStringType == STRING_LITERAL_CSHARP
-				|| type.m_nStringType == STRING_LITERAL_PYTHON ){	/* 文字列区切り記号エスケープ方法 */
-				cmemWork2.Replace( L"\\", L"\\\\" );
-				cmemWork2.Replace( L"\'", L"\\\'" );
-				cmemWork2.Replace( L"\"", L"\\\"" );
-			}else if( type.m_nStringType == STRING_LITERAL_PLSQL ){
-				cmemWork2.Replace( L"\'", L"\'\'" );
-				cmemWork2.Replace( L"\"", L"\"\"" );
-			}
-			cmemMessage.AppendString( L"\"" );
-			cmemMessage.AppendNativeData( cmemWork2 );
-			cmemMessage.AppendString( L"\"\r\n" );
+			cmemWork = EscapeStringLiteral( type, cmemReplace );
+			cmemMessage.AppendStringF( L"\"%s\"\r\n", cmemWork.GetStringPtr() );
 		}
 	}
 
