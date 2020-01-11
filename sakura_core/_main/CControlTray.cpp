@@ -138,7 +138,11 @@ static void AppendExcludeFolderPatterns(CNativeW& cFilePattern, const CNativeW& 
 	{
 		const auto & pattern = (*iter);
 		LPCWSTR escapeStr  = GetEscapePattern(pattern);
-		cFilePattern.AppendStringF(L"#%s%s%s;", escapeStr, pattern.c_str(), escapeStr);
+		cFilePattern.AppendString(L"#", 1);
+		cFilePattern.AppendString(escapeStr);
+		cFilePattern.AppendString(pattern.c_str(), pattern.length());
+		cFilePattern.AppendString(escapeStr);
+		cFilePattern.AppendString(L";", 1);
 	}
 }
 
@@ -154,7 +158,11 @@ static void AppendExcludeFilePatterns(CNativeW& cFilePattern, const CNativeW& cm
 	{
 		const auto & pattern = (*iter);
 		LPCWSTR escapeStr  = GetEscapePattern(pattern);
-		cFilePattern.AppendStringF(L"!%s%s%s;", escapeStr, pattern.c_str(), escapeStr);
+		cFilePattern.AppendString(L"!", 1);
+		cFilePattern.AppendString(escapeStr);
+		cFilePattern.AppendString(pattern.c_str(), pattern.length());
+		cFilePattern.AppendString(escapeStr);
+		cFilePattern.AppendString(L";", 1);
 	}
 }
 

@@ -540,7 +540,9 @@ void CViewCommander::Command_OPEN_FOLDER_IN_EXPLORER(void)
 
 	// Windows Explorerの引数を作る
 	CNativeW explorerCommand;
-	explorerCommand.AppendStringF(L"/select,\"%s\"", pszDocPath);
+	explorerCommand.AppendString(L"/select,\"", 9);
+	explorerCommand.AppendString(pszDocPath);
+	explorerCommand.AppendString(L"\"", 1);
 	LPCWSTR pszExplorerCommand = explorerCommand.GetStringPtr();
 
 	auto hInstance = ::ShellExecute(GetMainWindow(), L"open", L"explorer.exe", pszExplorerCommand, NULL, SW_SHOWNORMAL);
@@ -579,7 +581,9 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(BOOL isAdmin)
 		/k で cd コマンドを実行する方法なら、管理者用のコマンドプロンプトでも動作する
 	*/
 	CNativeW cmdExeParam;
-	cmdExeParam.AppendStringF(L"/k cd /d \"%s\"", strFolder.c_str());
+	cmdExeParam.AppendString(L"/k cd /d \"", 10);
+	cmdExeParam.AppendString(strFolder.c_str(), strFolder.size());
+	cmdExeParam.AppendString(L"\"", 1);
 	LPCWSTR pszcmdExeParam = cmdExeParam.GetStringPtr();
 
 	/* 環境変数 COMSPEC から cmd.exe のパスを取得する */
@@ -630,7 +634,9 @@ void CViewCommander::Command_OPEN_POWERSHELL(BOOL isAdmin)
 		(-NoExit がない場合は -Command で指定したコマンドレットが終了すると PowerShellも終了する)
 	*/
 	CNativeW cmdExeParam;
-	cmdExeParam.AppendStringF(L"-NoExit -Command \"Set-Location -Path '%s'\"", strFolder.c_str());
+	cmdExeParam.AppendString(L"-NoExit -Command \"Set-Location -Path '", 38);
+	cmdExeParam.AppendString(strFolder.c_str(), strFolder.length());
+	cmdExeParam.AppendString(L"'\"", 2);
 	LPCWSTR pszcmdExeParam = cmdExeParam.GetStringPtr();
 
 	LPCWSTR pVerb = L"open";

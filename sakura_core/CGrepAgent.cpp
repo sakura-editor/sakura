@@ -1586,19 +1586,25 @@ public:
 				if( fexist(oldFile.c_str()) ){
 					if( FALSE == ::DeleteFile( oldFile.c_str() ) ){
 						memMessage.AppendString( LS(STR_GREP_REP_ERR_DELETE) );
-						memMessage.AppendStringF( L"[%s]\r\n", oldFile.c_str());
+						memMessage.AppendString( L"[", 1 );
+						memMessage.AppendString( oldFile.c_str(), oldFile.length() );
+						memMessage.AppendString( L"]\r\n", 3 );
 						return;
 					}
 				}
 				if( FALSE == ::MoveFile( fileName, oldFile.c_str() ) ){
 					memMessage.AppendString( LS(STR_GREP_REP_ERR_REPLACE) );
-					memMessage.AppendStringF( L"[%s]\r\n", oldFile.c_str());
+					memMessage.AppendString( L"[", 1 );
+					memMessage.AppendString( oldFile.c_str(), oldFile.length() );
+					memMessage.AppendString( L"]\r\n", 3 );
 					return;
 				}
 			}else{
 				if( FALSE == ::DeleteFile( fileName ) ){
 					memMessage.AppendString( LS(STR_GREP_REP_ERR_DELETE) );
-					memMessage.AppendStringF( L"[%s]\r\n", fileName );
+					memMessage.AppendString( L"[", 1 );
+					memMessage.AppendString( fileName );
+					memMessage.AppendString( L"]\r\n", 3 );
 					return;
 				}
 			}
@@ -1606,7 +1612,9 @@ public:
 			name += L".skrnew";
 			if( FALSE == ::MoveFile( name.c_str(), fileName ) ){
 				memMessage.AppendString( LS(STR_GREP_REP_ERR_REPLACE) );
-				memMessage.AppendStringF( L"[%s]\r\n", fileName );
+				memMessage.AppendString( L"[", 1 );
+				memMessage.AppendString( fileName );
+				memMessage.AppendString( L"]\r\n", 3 );
 				return;
 			}
 		}
