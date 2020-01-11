@@ -439,21 +439,16 @@ DWORD CGrepAgent::DoGrep(
 	}
 
 	cmemMessage.AppendString( LS( STR_GREP_SEARCH_TARGET ) );	//L"検索対象   "
-	if( pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	}else{
-	}
-	cmemWork.SetString( pcmGrepFile->GetStringPtr() );
-	cmemMessage += cmemWork;
+	cmemMessage.AppendStringF( L"%s\r\n", pcmGrepFile->GetStringPtr() );
 
-	cmemMessage.AppendString( L"\r\n" );
 	cmemMessage.AppendString( LS( STR_GREP_SEARCH_FOLDER ) );	//L"フォルダ   "
 	{
 		std::wstring grepFolder;
 		for( int i = 0; i < (int)vPaths.size(); i++ ){
-			if( i ){
-				grepFolder += L';';
-			}
+			// 末尾のバックスラッシュを削る
 			std::wstring sPath = ChopYen( vPaths[i] );
+
+			// ';' を含むパス名は引用符で囲む
 			if( auto_strchr( sPath.c_str(), L';' ) ){
 				grepFolder += L'"';
 				grepFolder += sPath;
@@ -461,32 +456,20 @@ DWORD CGrepAgent::DoGrep(
 			}else{
 				grepFolder += sPath;
 			}
+
+			// パスリストは ':' で区切る
+			grepFolder += L';';
 		}
-		cmemWork.SetString( grepFolder.c_str() );
+
+		// 最後のリスト区切りは要らないので length() - 1 を出力する
+		cmemMessage.AppendStringF( L"%.*s\r\n", grepFolder.length() - 1, grepFolder.c_str() );
 	}
-	if( pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	}else{
-	}
-	cmemMessage += cmemWork;
-	cmemMessage.AppendString( L"\r\n" );
 
 	cmemMessage.AppendString(LS(STR_GREP_EXCLUDE_FILE));	//L"除外ファイル   "
-	if (pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0) {	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	}
-	else {
-	}
-	cmemWork.SetString(pcmExcludeFile->GetStringPtr());
-	cmemMessage += cmemWork;
-	cmemMessage.AppendString(L"\r\n");
+	cmemMessage.AppendStringF( L"%s\r\n", pcmExcludeFile->GetStringPtr() );
 
 	cmemMessage.AppendString(LS(STR_GREP_EXCLUDE_FOLDER));	//L"除外フォルダ   "
-	if (pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0) {	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	}
-	else {
-	}
-	cmemWork.SetString(pcmExcludeFolder->GetStringPtr());
-	cmemMessage += cmemWork;
-	cmemMessage.AppendString(L"\r\n");
+	cmemMessage.AppendStringF( L"%s\r\n", pcmExcludeFolder->GetStringPtr() );
 
 	const wchar_t*	pszWork;
 	if( sGrepOption.bGrepSubFolder ){
