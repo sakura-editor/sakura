@@ -329,13 +329,35 @@ TEST(CNativeW, AppendStringWithFormatting)
 	ASSERT_THROW(value.AppendStringF(NULL), std::invalid_argument);
 
 	// 文字列長を0にして、追加確保が行われないケースをテストする
+	value = L"いちご100%"; //テスト前の初期値(念のため再代入しておく
 	value._SetStringLength(0);
-	value.AppendStringF(L"いちご%d%%", 25);
+	value.AppendStringF(L"いちご%d%%", 25); //1文字短くなるような指定をしている
 	ASSERT_EQ(L"いちご25%", value);
 
 	// 追加フォーマットが空文字列となるケースをテストする
 	value.AppendStringF(L"%s", L"");
 	ASSERT_EQ(L"いちご25%", value);
+
+	// 未確保状態からの書式化をテストする
+	value = NULL; //テスト前の初期値(未確保
+	value.AppendStringF( L"KEY[%03d]", 12 );
+	ASSERT_EQ( L"KEY[012]", value );
+
+	// 文字列連結(書式でmax長指定)をテストする
+	value.AppendStringF( L"%.3s", L"abcdef" );
+	ASSERT_EQ( L"KEY[012]abc", value );
+
+	// 文字列連結(書式で出力長指定)をテストする
+	value.AppendStringF( L"%6s", L"abc" );
+	ASSERT_EQ( L"KEY[012]abc   abc", value );
+
+	// フォーマット出力長2047字を超える条件をテストする
+	{
+		std::wstring longText( 2048, L'=' );
+		value = NULL; //テスト前の初期値(未確保
+		value.AppendStringF( L"%s", longText.c_str() );
+		ASSERT_EQ( longText.c_str(), value );
+	}
 }
 
 /*!
