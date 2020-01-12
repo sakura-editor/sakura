@@ -7,8 +7,8 @@
     <ProjectGuid>{84E29976-DFDC-4661-9316-F434B42F75C7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ToolBarCommon</RootNamespace>
-    <AssemblyName>ToolBarCommon</AssemblyName>
+    <RootNamespace>ToolBarImageCommon</RootNamespace>
+    <AssemblyName>ToolBarImageCommon</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bmp.cs" />
+    <Compile Include="ReadWriteStructWithAllocGCHandle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
