@@ -161,13 +161,13 @@ namespace ToolBarImageMuxer
 	                            case PixelFormat.Format1bppIndexed:
 	                            case PixelFormat.Format4bppIndexed:
 	                            case PixelFormat.Format8bppIndexed:
+                                    palettes.Add(bmpTmp.Palette);
 	                                break;
 	                            default:
 	                                // インデックスカラー画像でなくても使われている色数を調べて判断する手もあるが、実装が手間なので行わない
 	                                palettable = false;
 	                                break;
 	                        }
-                            palettes.Add(bmpTmp.Palette);
                         }
                         var cloneRect = new RectangleF(x, y, sx, sy);
                         g.DrawImage(bmpTmp, cloneRect);
