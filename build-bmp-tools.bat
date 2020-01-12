@@ -55,49 +55,70 @@ set OUT2_BMP2=%~dp0resource\out2-my_icons.bmp
 set OUT_DIR1=%~dp0resource\mytool
 set OUT_DIR2=%~dp0resource\my_icons
 
-@rem merge multiple bmp to one bmp
+@rem merge multiple bmp files to one bmp file
 %MUXER% %DST_DIR1% %OUT1_BMP1%
 if errorlevel 1 (
 	echo fail %MUXER% %DST_DIR1% %OUT1_BMP1%
 	exit /b 1
 )
 
+@rem merge multiple bmp files to one bmp file
 %MUXER% %DST_DIR2% %OUT1_BMP2%
 if errorlevel 1 (
 	echo fail %MUXER% %DST_DIR2% %OUT1_BMP2%
 	exit /b 1
 )
 
+@rem split one bmp file into multiple bmp files
 %SPLITTER% %OUT1_BMP1% %OUT_DIR1%
 if errorlevel 1 (
 	echo fail %SPLITTER% %OUT1_BMP1% %OUT_DIR1%
 	exit /b 1
 )
 
+@rem split one bmp file into multiple bmp files
 %SPLITTER% %OUT1_BMP2% %OUT_DIR2%
 if errorlevel 1 (
 	echo fail %SPLITTER% %OUT1_BMP2% %OUT_DIR2%
 	exit /b 1
 )
 
+@rem merge multiple bmp files to one bmp file
 %MUXER% %OUT_DIR1% %OUT2_BMP1%
 if errorlevel 1 (
 	echo fail %MUXER% %OUT_DIR1% %OUT2_BMP1%
 	exit /b 1
 )
 
+@rem merge multiple bmp files to one bmp file
 %MUXER% %OUT_DIR2% %OUT2_BMP2%
 if errorlevel 1 (
 	echo fail %MUXER% %OUT_DIR2% %OUT2_BMP2%
 	exit /b 1
 )
 
+@rem verify contents of merged bmp file is as same as source bitmap file
+fc /a /b %SRC_BMP1% %OUT1_BMP1% >NUL
+if errorlevel 1 (
+	echo fail fc /a /b %SRC_BMP1% %OUT1_BMP1%
+	exit /b 1
+)
+
+@rem verify contents of merged bmp file is as same as source bitmap file
+fc /a /b %SRC_BMP2% %OUT1_BMP2% >NUL
+if errorlevel 1 (
+	echo fail fc /a /b %SRC_BMP2% %OUT1_BMP2%
+	exit /b 1
+)
+
+@rem verify contents of merged bmp file is as same as source bitmap file
 fc /a /b %OUT1_BMP1% %OUT2_BMP1% >NUL
 if errorlevel 1 (
 	echo fail fc /a /b %OUT1_BMP1% %OUT2_BMP1%
 	exit /b 1
 )
 
+@rem verify contents of merged bmp file is as same as source bitmap file
 fc /a /b %OUT1_BMP2% %OUT2_BMP2% >NUL
 if errorlevel 1 (
 	echo fail fc /a /b %OUT1_BMP2% %OUT2_BMP2%
