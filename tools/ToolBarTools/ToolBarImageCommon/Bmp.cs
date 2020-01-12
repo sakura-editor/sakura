@@ -198,74 +198,93 @@ namespace ToolBarImageCommon
             return ret;
         }
 
-        public void Paste(int x, int y, Bmp src)
+        private void Paste_4BitCount(int x, int y, Bmp src)
         {
-            int sbc = src.bmih.biBitCount;
             int sw = src.bmih.biWidth;
             int sh = src.bmih.biHeight;
-            int dbc = bmih.biBitCount;
             int dw = bmih.biWidth;
             int dh = bmih.biHeight;
-            if (sbc > dbc || x < 0 || y < 0 || x + sw > dw || y + sh > dh || (x & 1) == 1 || (sw & 1) == 1)
+            if (x < 0 || y < 0 || x + sw > dw || y + sh > dh || (x & 1) == 1 || (sw & 1) == 1)
             {
                 throw new NotImplementedException();
             }
             int sLineStride = src.GetLineStride();
             int dLineStride = GetLineStride();
+            int sidx = src.GetByteOffset(0, 0);
+            int didx = GetByteOffset(x, y);
+            int sw2 = sw / 2;
+            for (int i = 0; i < sh; ++i)
+            {
+                for (int j = 0; j < sw2; ++j)
+                {
+                    byte scidx = src.bitmap[sidx + j];
+                    RGBQUAD sc0 = src.colorTable[scidx >> 4];
+                    RGBQUAD sc1 = src.colorTable[scidx & 0xF];
+                    int dcidx0 = 0;
+                    int dcidx1 = 0;
+                    for (int k = 0; k < colorTable.Count(); ++k)
+                    {
+                        RGBQUAD dc = colorTable[k];
+                        if (sc0.Equals(dc))
+                        {
+                            dcidx0 = k;
+                        }
+                        if (sc1.Equals(dc))
+                        {
+                            dcidx1 = k;
+                        }
+                    }
+                    bitmap[didx + j] = (byte)((dcidx0 << 4) | dcidx1);
+                }
+                sidx += sLineStride;
+                didx += dLineStride;
+            }
+        }
+
+        private void Paste_8BitCount(int x, int y, Bmp src)
+        {
+            int sw = src.bmih.biWidth;
+            int sh = src.bmih.biHeight;
+            int dw = bmih.biWidth;
+            int dh = bmih.biHeight;
+            if (x < 0 || y < 0 || x + sw > dw || y + sh > dh || (x & 1) == 1 || (sw & 1) == 1)
+            {
+                throw new NotImplementedException();
+            }
+            int sLineStride = src.GetLineStride();
+            int dLineStride = GetLineStride();
+            int sidx = src.GetByteOffset(0, 0);
+            int didx = GetByteOffset(x, y);
+            for (int i = 0; i < sh; ++i)
+            {
+                for (int j = 0; j < sw; ++j)
+                {
+                    RGBQUAD sc = src.colorTable[src.bitmap[sidx + j]];
+                    for (int k = 0; k < colorTable.Count(); ++k)
+                    {
+                        if (sc.Equals(colorTable[k]))
+                        {
+                            bitmap[didx + j] = (byte)k;
+                            break;
+                        }
+                    }
+                }
+                sidx += sLineStride;
+                didx += dLineStride;
+            }
+        }
+
+        public void Paste(int x, int y, Bmp src)
+        {
+            int sbc = src.bmih.biBitCount;
+            int dbc = bmih.biBitCount;
             if (sbc == 4 && dbc == 4)
             {
-                int sidx = Math.Abs(sLineStride) * (sh - 1);
-                int didx = Math.Abs(dLineStride) * (dh - 1 - y) + (x / 2);
-                int sw2 = sw / 2;
-                for (int i = 0; i < sh; ++i)
-                {
-                    for (int j = 0; j < sw2; ++j)
-                    {
-                        byte scidx = src.bitmap[sidx + j];
-                        RGBQUAD sc0 = src.colorTable[scidx >> 4];
-                        RGBQUAD sc1 = src.colorTable[scidx & 0xF];
-                        int dcidx0 = 0;
-                        int dcidx1 = 0;
-                        for (int k = 0; k < colorTable.Count(); ++k)
-                        {
-                            RGBQUAD dc = colorTable[k];
-                            if (sc0.Equals(dc))
-                            {
-                                dcidx0 = k;
-                            }
-                            if (sc1.Equals(dc))
-                            {
-                                dcidx1 = k;
-                            }
-                        }
-                        bitmap[didx + j] = (byte)((dcidx0 << 4) | dcidx1);
-                    }
-                    sidx += sLineStride;
-                    didx += dLineStride;
-                }
+                Paste_4BitCount(x, y, src);
             }
             else if (sbc == 8 && dbc == 8)
             {
-                int sidx = Math.Abs(sLineStride) * (sh - 1);
-                int didx = Math.Abs(dLineStride) * (dh - 1 - y) + x;
-                for (int i = 0; i < sh; ++i)
-                {
-                    for (int j = 0; j < sw; ++j)
-                    {
-                        RGBQUAD sc = src.colorTable[src.bitmap[sidx + j]];
-                        for (int k = 0; k < colorTable.Count(); ++k)
-                        {
-                            if (sc.Equals(colorTable[k]))
-                            {
-                                bitmap[didx + j] = (byte)k;
-                                break;
-                            }
-                        }
-
-                    }
-                    sidx += sLineStride;
-                    didx += dLineStride;
-                }
+                Paste_8BitCount(x, y, src);
             }
             else
             {
@@ -357,6 +376,4 @@ namespace ToolBarImageCommon
             return bmp;
         } // FromFile
     } // class Bmp
-
-
 }
