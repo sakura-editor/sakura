@@ -41,6 +41,29 @@ namespace ToolBarImageMuxer
             return colors;
         }
 
+        static protected bool IsPalettable(List<Bmp> bmps)
+        {
+            var width = bmps[0].bmih.biWidth;
+            var height = Math.Abs(bmps[0].bmih.biHeight);
+            for (var i = 1; i < bmps.Count; ++i)
+            {
+                var bmp = bmps[i];
+                var width2 = bmp.bmih.biWidth;
+                var height2 = Math.Abs(bmp.bmih.biHeight);
+                if (width != width2 || height != height2)
+                {
+                    throw new Exception();
+                }
+                var biBitCount = bmp.bmih.biBitCount;
+                if (biBitCount != 1 && biBitCount != 4 && biBitCount != 8)
+                {
+                    // インデックスカラー画像でなくても使われている色数を調べて判断する手もあるが、実装が手間なので行わない
+                    return false;
+                }
+            }
+            return true;
+        }
+
         static public void Mux(string[] fileNames, string outFile, int countPerLine)
         {
             List<Bmp> bmps = new List<Bmp>();
@@ -54,28 +77,7 @@ namespace ToolBarImageMuxer
                     index++;
                 }
             }
-            var width = bmps[0].bmih.biWidth;
-            var height = Math.Abs(bmps[0].bmih.biHeight);
-            bool palettable = true;
-            for (var i=1; i<bmps.Count; ++i)
-            {
-                var bmp = bmps[i];
-                var width2 = bmp.bmih.biWidth;
-                var height2 = Math.Abs(bmp.bmih.biHeight);
-                if (width != width2 || height != height2)
-                {
-                    throw new Exception();
-                }
-                if (palettable)
-                {
-                    var biBitCount = bmp.bmih.biBitCount;
-                    if (biBitCount != 1 && biBitCount != 4 && biBitCount != 8)
-                    {
-                        // インデックスカラー画像でなくても使われている色数を調べて判断する手もあるが、実装が手間なので行わない
-                        palettable = false;
-                    }
-                }
-            }
+            bool palettable = IsPalettable(bmps);
             List<RGBQUAD> colors = null;
             if (palettable)
             {
@@ -103,6 +105,8 @@ namespace ToolBarImageMuxer
                 }
                 Bmp bmp = new Bmp();
                 bmp.bmih = bmps[0].bmih;
+                var width = bmps[0].bmih.biWidth;
+                var height = Math.Abs(bmps[0].bmih.biHeight);
                 bmp.bmih.biWidth = width * countPerLine;
                 bmp.bmih.biHeight = height * lines;
                 bmp.bmih.biBitCount = biBitCount;
