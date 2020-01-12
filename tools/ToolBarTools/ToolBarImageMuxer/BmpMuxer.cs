@@ -5,279 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
+using ToolBarImageCommon;
 
 namespace ToolBarImageMuxer
 {
-
-    // https://www.pinvoke.net/default.aspx/Enums/BitmapCompressionMode.html
-    public enum BitmapCompressionMode : uint
-    {
-        BI_RGB = 0,
-        BI_RLE8 = 1,
-        BI_RLE4 = 2,
-        BI_BITFIELDS = 3,
-        BI_JPEG = 4,
-        BI_PNG = 5
-    }
-
-    // https://www.pinvoke.net/default.aspx/Structures.BITMAPFILEHEADER
-    [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct BITMAPFILEHEADER
-    {
-        public ushort bfType;
-        public uint bfSize;
-        public ushort bfReserved1;
-        public ushort bfReserved2;
-        public uint bfOffBits;
-    }
-
-    // https://www.pinvoke.net/default.aspx/Structures.BITMAPINFOHEADER
-    [StructLayout(LayoutKind.Sequential)]
-    public struct BITMAPINFOHEADER
-    {
-        public uint biSize;
-        public int biWidth;
-        public int biHeight;
-        public ushort biPlanes;
-        public ushort biBitCount;
-        public BitmapCompressionMode biCompression;
-        public uint biSizeImage;
-        public int biXPelsPerMeter;
-        public int biYPelsPerMeter;
-        public uint biClrUsed;
-        public uint biClrImportant;
-
-        public void Init()
-        {
-            biSize = (uint)Marshal.SizeOf(this);
-        }
-    }
-
-    // https://www.pinvoke.net/default.aspx/Structures.RGBQUAD
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct RGBQUAD
-    {
-        public byte rgbBlue;
-        public byte rgbGreen;
-        public byte rgbRed;
-        public byte rgbReserved;
-    }
-
-    // https://smdn.jp/programming/netfx/tips/convert_struct_and_bytearray/
-    /// <summary>
-    /// ポインタを得るためにGCHandle.Allocでバイト配列のピニングを行い、
-    /// Marshal.PtrToStructure・Marshal.StructureToPtrで変換して構造体の読み書きを行う
-    /// </summary>
-    /// <remarks>参照型のフィールドを持つ構造体は読み書きできない</remarks>
-    static class ReadWriteStructWithAllocGCHandle
-    {
-        public static void WriteTo<TStruct>(BinaryWriter writer, TStruct s) where TStruct : struct
-        {
-            var buffer = new byte[Marshal.SizeOf(typeof(TStruct))];
-            var handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
-
-            try
-            {
-                Marshal.StructureToPtr(s, handle.AddrOfPinnedObject(), false);
-            }
-            finally
-            {
-                handle.Free();
-            }
-
-            writer.Write(buffer);
-        }
-
-        public static TStruct ReadFrom<TStruct>(BinaryReader reader) where TStruct : struct
-        {
-            var buffer = reader.ReadBytes(Marshal.SizeOf(typeof(TStruct)));
-            var handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
-
-            try
-            {
-                return (TStruct)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(TStruct));
-            }
-            finally
-            {
-                handle.Free();
-            }
-        }
-    }
-
-    public class Bmp
-    {
-        public BITMAPINFOHEADER bmih;
-        public RGBQUAD[] colorTable;
-        public byte[] bitmap;
-
-        public int GetLineStride()
-        {
-            int bytesPerLine = ((bmih.biWidth * bmih.biBitCount + 31) & (~31)) >> 3;
-            if (bmih.biHeight > 0)
-                bytesPerLine = -bytesPerLine;
-            return bytesPerLine;
-        }
-
-        public void Paste(int x, int y, Bmp src)
-        {
-            int sbc = src.bmih.biBitCount;
-            int sw = src.bmih.biWidth;
-            int sh = src.bmih.biHeight;
-            int dbc = bmih.biBitCount;
-            int dw = bmih.biWidth;
-            int dh = bmih.biHeight;
-            if (sbc > dbc || x < 0 || y < 0 || x + sw > dw || y + sh > dh  || (x & 1) == 1 || (sw & 1) == 1)
-            {
-                throw new OutOfMemoryException();
-            }
-            int sLineStride = src.GetLineStride();
-            int dLineStride = GetLineStride();
-            if (sbc == 4 && dbc == 4)
-            {
-                int sidx = Math.Abs(sLineStride) * (sh - 1);
-                int didx = Math.Abs(dLineStride) * (dh - 1 - y) + (x / 2);
-                int sw2 = sw / 2;
-                for (int i = 0; i < sh; ++i)
-                {
-                    for (int j = 0; j < sw2; ++j)
-                    {
-                        byte scidx = src.bitmap[sidx + j];
-                        RGBQUAD sc0 = src.colorTable[scidx >> 4];
-                        RGBQUAD sc1 = src.colorTable[scidx & 0xF];
-                        int dcidx0 = 0;
-                        int dcidx1 = 0;
-                        for (int k = 0; k < colorTable.Count(); ++k)
-                        {
-                            RGBQUAD dc = colorTable[k];
-                            if (sc0.Equals(dc))
-                            {
-                                dcidx0 = k;
-                            }
-                            if (sc1.Equals(dc))
-                            {
-                                dcidx1 = k;
-                            }
-                        }
-                        bitmap[didx + j] = (byte)((dcidx0 << 4) | dcidx1);
-                    }
-                    sidx += sLineStride;
-                    didx += dLineStride;
-                }
-            }
-            else if (sbc == 8 && dbc == 8)
-            {
-                int sidx = Math.Abs(sLineStride) * (sh - 1);
-                int didx = Math.Abs(dLineStride) * (dh - 1 - y) + x;
-                for (int i=0; i<sh; ++i)
-                {
-                    for (int j=0; j<sw; ++j)
-                    {
-                        RGBQUAD sc = src.colorTable[src.bitmap[sidx + j]];
-                        for (int k=0; k<colorTable.Count(); ++k)
-                        {
-                            if (sc.Equals(colorTable[k]))
-                            {
-                                bitmap[didx + j] = (byte)k;
-                                break;
-                            }
-                        }
-
-                    }
-                    sidx += sLineStride;
-                    didx += dLineStride;
-                }
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public void ToFile(string fileName)
-        {
-            BITMAPFILEHEADER bmfh;
-            bmfh.bfType = 0x4D42;
-            int fileSize = Marshal.SizeOf(typeof(BITMAPFILEHEADER));
-            fileSize += Marshal.SizeOf(typeof(BITMAPINFOHEADER));
-            fileSize += Marshal.SizeOf(typeof(RGBQUAD)) * colorTable.Count();
-            bmfh.bfOffBits = (uint)fileSize;
-            fileSize += bitmap.Count();
-            bmfh.bfSize = (uint)fileSize;
-            bmfh.bfReserved1 = 0;
-            bmfh.bfReserved2 = 0;
-            using (var writer = new BinaryWriter(File.OpenWrite(fileName)))
-            {
-                ReadWriteStructWithAllocGCHandle.WriteTo<BITMAPFILEHEADER>(writer, bmfh);
-                ReadWriteStructWithAllocGCHandle.WriteTo<BITMAPINFOHEADER>(writer, bmih);
-                foreach (var c in colorTable)
-                {
-                    ReadWriteStructWithAllocGCHandle.WriteTo<RGBQUAD>(writer, c);
-                }
-                writer.BaseStream.Write(bitmap, 0, bitmap.Count());
-            }
-        }
-
-        public static Bmp FromFile(string fileName)
-        {
-            Bmp bmp = new Bmp();
-            using (BinaryReader reader = new BinaryReader(File.Open(fileName, FileMode.Open)))
-            {
-                BITMAPFILEHEADER bmfh;
-                bmfh = ReadWriteStructWithAllocGCHandle.ReadFrom<BITMAPFILEHEADER>(reader);
-                if (bmfh.bfType != 0x4D42)
-                {
-                    throw new OutOfMemoryException();
-                }
-                bmp.bmih = ReadWriteStructWithAllocGCHandle.ReadFrom<BITMAPINFOHEADER>(reader);
-                uint numQuads;
-                if (bmp.bmih.biClrUsed == 0)
-                {
-                    switch (bmp.bmih.biBitCount)
-                    {
-                        case 1:
-                            numQuads = 2;
-                            break;
-                        case 4:
-                            numQuads = 16;
-                            break;
-                        case 8:
-                            numQuads = 256;
-                            break;
-                        default:
-                            throw new OutOfMemoryException();
-                    }
-                }
-                else
-                {
-                    numQuads = bmp.bmih.biClrUsed;
-                }
-
-                if (bmp.bmih.biHeight < 0)
-                {
-                    // TODO: TopDown 形式のサポート
-                    throw new NotImplementedException();
-                }
-
-                bmp.colorTable = new RGBQUAD[numQuads];
-                for (int i=0; i<numQuads; ++i)
-                {
-                    bmp.colorTable[i] = ReadWriteStructWithAllocGCHandle.ReadFrom<RGBQUAD>(reader);
-                }
-                if (reader.BaseStream.Position != bmfh.bfOffBits)
-                {
-                    throw new OutOfMemoryException();
-                }
-                // https://stackoverflow.com/a/10038017/4699324
-                using (var ms = new MemoryStream())
-                {
-                    reader.BaseStream.CopyTo(ms);
-                    bmp.bitmap = ms.ToArray();
-                }
-            }
-            return bmp;
-        }
-    }
-
     public class BmpMuxer
     {
         static private List<RGBQUAD> CombinePalettes(List<Bmp> bmps)
@@ -285,10 +16,7 @@ namespace ToolBarImageMuxer
             List<RGBQUAD> colors = new List<RGBQUAD>();
             foreach (var entry in bmps[0].colorTable)
             {
-                foreach (var color in colors)
-                {
-                    colors.Add(entry);
-                }
+                colors.Add(entry);
             }
             for (var i=1; i<bmps.Count; ++i)
             {
@@ -380,12 +108,11 @@ namespace ToolBarImageMuxer
                 bmp.bmih.biBitCount = biBitCount;
                 if (bmp.bmih.biClrUsed == 0)
                 {
-                    bmp.colorTable = new RGBQUAD[2 << biBitCount];
+                    bmp.colorTable = new RGBQUAD[1 << biBitCount];
                 }
                 else
                 {
                     bmp.bmih.biClrUsed = (uint)(colors.Count);
-                    bmp.bmih.biClrImportant = bmp.bmih.biClrUsed;
                     bmp.colorTable = new RGBQUAD[bmp.bmih.biClrUsed];
                 }
                 for (int i=0; i<colors.Count; ++i)
