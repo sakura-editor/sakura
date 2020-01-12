@@ -13,11 +13,7 @@ namespace ToolBarImageMuxer
     {
         static private List<RGBQUAD> CombinePalettes(List<Bmp> bmps)
         {
-            List<RGBQUAD> colors = new List<RGBQUAD>();
-            foreach (var entry in bmps[0].colorTable)
-            {
-                colors.Add(entry);
-            }
+            List<RGBQUAD> colors = new List<RGBQUAD>(bmps[0].colorTable);
             for (var i=1; i<bmps.Count; ++i)
             {
                 var bmp = bmps[i];
