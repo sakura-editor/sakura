@@ -439,7 +439,8 @@ DWORD CGrepAgent::DoGrep(
 	}
 
 	cmemMessage.AppendString( LS( STR_GREP_SEARCH_TARGET ) );	//L"検索対象   "
-	cmemMessage.AppendStringF( L"%s\r\n", pcmGrepFile->GetStringPtr() );
+	cmemMessage.AppendString( pcmGrepFile->GetStringPtr() );
+	cmemMessage.AppendString( L"\r\n" );
 
 	cmemMessage.AppendString( LS( STR_GREP_SEARCH_FOLDER ) );	//L"フォルダ   "
 	{
@@ -461,14 +462,17 @@ DWORD CGrepAgent::DoGrep(
 				grepFolder += sPath;
 			}
 		}
-		cmemMessage.AppendStringF( L"%s\r\n", grepFolder.c_str() );
+		cmemMessage.AppendString( grepFolder.c_str() );
 	}
+	cmemMessage.AppendString( L"\r\n" );
 
 	cmemMessage.AppendString(LS(STR_GREP_EXCLUDE_FILE));	//L"除外ファイル   "
-	cmemMessage.AppendStringF( L"%s\r\n", pcmExcludeFile->GetStringPtr() );
+	cmemMessage.AppendString( pcmExcludeFile->GetStringPtr() );
+	cmemMessage.AppendString(L"\r\n");
 
 	cmemMessage.AppendString(LS(STR_GREP_EXCLUDE_FOLDER));	//L"除外フォルダ   "
-	cmemMessage.AppendStringF( L"%s\r\n", pcmExcludeFolder->GetStringPtr() );
+	cmemMessage.AppendString( pcmExcludeFolder->GetStringPtr() );
+	cmemMessage.AppendString(L"\r\n");
 
 	const wchar_t*	pszWork;
 	if( sGrepOption.bGrepSubFolder ){
