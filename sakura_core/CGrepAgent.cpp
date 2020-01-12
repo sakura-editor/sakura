@@ -441,21 +441,21 @@ DWORD CGrepAgent::DoGrep(
 	}
 
 	cmemMessage.AppendString( LS( STR_GREP_SEARCH_TARGET ) );	//L"検索対象   "
-	if( pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	}else{
-	}
-	cmemWork.SetString( pcmGrepFile->GetStringPtr() );
-	cmemMessage += cmemWork;
-
+	cmemMessage.AppendString( pcmGrepFile->GetStringPtr() );
 	cmemMessage.AppendString( L"\r\n" );
+
 	cmemMessage.AppendString( LS( STR_GREP_SEARCH_FOLDER ) );	//L"フォルダ   "
 	{
 		std::wstring grepFolder;
 		for( int i = 0; i < (int)vPaths.size(); i++ ){
+			// パスリストは ':' で区切る(2つ目以降の前に付加する)
 			if( i ){
 				grepFolder += L';';
 			}
+			// 末尾のバックスラッシュを削る
 			std::wstring sPath = ChopYen( vPaths[i] );
+
+			// ';' を含むパス名は引用符で囲む
 			if( auto_strchr( sPath.c_str(), L';' ) ){
 				grepFolder += L'"';
 				grepFolder += sPath;
@@ -464,30 +464,16 @@ DWORD CGrepAgent::DoGrep(
 				grepFolder += sPath;
 			}
 		}
-		cmemWork.SetString( grepFolder.c_str() );
+		cmemMessage.AppendString( grepFolder.c_str() );
 	}
-	if( pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	}else{
-	}
-	cmemMessage += cmemWork;
 	cmemMessage.AppendString( L"\r\n" );
 
 	cmemMessage.AppendString(LS(STR_GREP_EXCLUDE_FILE));	//L"除外ファイル   "
-	if (pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0) {	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	}
-	else {
-	}
-	cmemWork.SetString(pcmExcludeFile->GetStringPtr());
-	cmemMessage += cmemWork;
+	cmemMessage.AppendString( pcmExcludeFile->GetStringPtr() );
 	cmemMessage.AppendString(L"\r\n");
 
 	cmemMessage.AppendString(LS(STR_GREP_EXCLUDE_FOLDER));	//L"除外フォルダ   "
-	if (pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0) {	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	}
-	else {
-	}
-	cmemWork.SetString(pcmExcludeFolder->GetStringPtr());
-	cmemMessage += cmemWork;
+	cmemMessage.AppendString( pcmExcludeFolder->GetStringPtr() );
 	cmemMessage.AppendString(L"\r\n");
 
 	const wchar_t*	pszWork;
