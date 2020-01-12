@@ -126,13 +126,45 @@ namespace ToolBarImageMuxer
             int dbc = bmih.biBitCount;
             int dw = bmih.biWidth;
             int dh = bmih.biHeight;
-            if (sbc > dbc || x < 0 || y < 0 || x + sw > dw || y + sh > dh)
+            if (sbc > dbc || x < 0 || y < 0 || x + sw > dw || y + sh > dh  || (x & 1) == 1 || (sw & 1) == 1)
             {
                 throw new OutOfMemoryException();
             }
             int sLineStride = src.GetLineStride();
             int dLineStride = GetLineStride();
-            if (sbc == 8 && dbc == 8)
+            if (sbc == 4 && dbc == 4)
+            {
+                int sidx = Math.Abs(sLineStride) * (sh - 1);
+                int didx = Math.Abs(dLineStride) * (dh - 1 - y) + (x / 2);
+                int sw2 = sw / 2;
+                for (int i = 0; i < sh; ++i)
+                {
+                    for (int j = 0; j < sw2; ++j)
+                    {
+                        byte scidx = src.bitmap[sidx + j];
+                        RGBQUAD sc0 = src.colorTable[scidx >> 4];
+                        RGBQUAD sc1 = src.colorTable[scidx & 0xF];
+                        int dcidx0 = 0;
+                        int dcidx1 = 0;
+                        for (int k = 0; k < colorTable.Count(); ++k)
+                        {
+                            RGBQUAD dc = colorTable[k];
+                            if (sc0.Equals(dc))
+                            {
+                                dcidx0 = k;
+                            }
+                            if (sc1.Equals(dc))
+                            {
+                                dcidx1 = k;
+                            }
+                        }
+                        bitmap[didx + j] = (byte)((dcidx0 << 4) | dcidx1);
+                    }
+                    sidx += sLineStride;
+                    didx += dLineStride;
+                }
+            }
+            else if (sbc == 8 && dbc == 8)
             {
                 int sidx = Math.Abs(sLineStride) * (sh - 1);
                 int didx = Math.Abs(dLineStride) * (dh - 1 - y) + x;
@@ -154,6 +186,10 @@ namespace ToolBarImageMuxer
                     sidx += sLineStride;
                     didx += dLineStride;
                 }
+            }
+            else
+            {
+                throw new NotImplementedException();
             }
         }
 
@@ -219,7 +255,7 @@ namespace ToolBarImageMuxer
                 if (bmp.bmih.biHeight < 0)
                 {
                     // TODO: TopDown 形式のサポート
-                    throw new OutOfMemoryException();
+                    throw new NotImplementedException();
                 }
 
                 bmp.colorTable = new RGBQUAD[numQuads];
