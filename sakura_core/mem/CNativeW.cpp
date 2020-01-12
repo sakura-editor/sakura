@@ -115,8 +115,7 @@ void CNativeW::AppendStringF( const wchar_t* pszFormat, ... )
 	int added = 0;
 	if( additional > 0 ){
 		// 追加処理の実体はCRTに委譲。この関数は無効な書式を与えると即死する。
-		// CNativeW::capacity()は確保量を正確に返さないので確保要求した値 + 1を書き込み上限とする。
-		added = ::_vsnwprintf_s( &GetStringPtr()[currentLength], newCapacity + 1, _TRUNCATE, pszFormat, v );
+		added = ::_vsnwprintf_s( &GetStringPtr()[currentLength], additional + 1, _TRUNCATE, pszFormat, v );
 	}
 
 	// 可変長引数のポインタを解放
