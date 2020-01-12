@@ -163,12 +163,6 @@ namespace ToolBarImageCommon
         {
             int sw = src.bmih.biWidth;
             int sh = src.bmih.biHeight;
-            int dw = bmih.biWidth;
-            int dh = bmih.biHeight;
-            if (x < 0 || y < 0 || x + sw > dw || y + sh > dh || (x & 1) == 1 || (sw & 1) == 1)
-            {
-                throw new NotImplementedException();
-            }
             int sLineStride = src.GetLineStride();
             int dLineStride = GetLineStride();
             int sidx = src.GetByteOffset(0, 0);
@@ -206,12 +200,6 @@ namespace ToolBarImageCommon
         {
             int sw = src.bmih.biWidth;
             int sh = src.bmih.biHeight;
-            int dw = bmih.biWidth;
-            int dh = bmih.biHeight;
-            if (x < 0 || y < 0 || x + sw > dw || y + sh > dh || (x & 1) == 1 || (sw & 1) == 1)
-            {
-                throw new NotImplementedException();
-            }
             int sLineStride = src.GetLineStride();
             int dLineStride = GetLineStride();
             int sidx = src.GetByteOffset(0, 0);
@@ -237,6 +225,15 @@ namespace ToolBarImageCommon
 
         public void Paste(int x, int y, Bmp src)
         {
+            int sw = src.bmih.biWidth;
+            int sh = src.bmih.biHeight;
+            int dw = bmih.biWidth;
+            int dh = bmih.biHeight;
+            if (x < 0 || y < 0 || x + sw > dw || y + sh > dh || (x & 1) == 1 || (sw & 1) == 1)
+            {
+                throw new NotImplementedException();
+            }
+
             int sbc = src.bmih.biBitCount;
             int dbc = bmih.biBitCount;
             if (sbc == 4 && dbc == 4)
