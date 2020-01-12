@@ -315,12 +315,27 @@ TEST(CNativeW, AppendStringNullLiteral)
 /*!
  * @brief 独自関数AppendStringFの仕様
  * @remark 指定したフォーマットで、引数がフォーマットされる
+ * @remark 指定したフォーマットがNULLの場合、例外を投げる
+ * @remark 確保済みメモリが十分な場合、追加確保を行わない
+ * @remark 追加される文字列が空文字列の場合、追加自体を行わない
  */
 TEST(CNativeW, AppendStringWithFormatting)
 {
 	CNativeW value;
 	value.AppendStringF(L"いちご%d%%", 100);
 	ASSERT_STREQ(L"いちご100%", value.GetStringPtr());
+
+	// フォーマットに NULL を渡したケースをテストする
+	ASSERT_THROW(value.AppendStringF(NULL), std::invalid_argument);
+
+	// 文字列長を0にして、追加確保が行われないケースをテストする
+	value._SetStringLength(0);
+	value.AppendStringF(L"いちご%d%%", 25);
+	ASSERT_EQ(L"いちご25%", value);
+
+	// 追加フォーマットが空文字列となるケースをテストする
+	value.AppendStringF(L"%s", L"");
+	ASSERT_EQ(L"いちご25%", value);
 }
 
 /*!

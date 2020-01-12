@@ -82,25 +82,48 @@ void CNativeW::AppendString( const wchar_t* pszData, int nLength )
 	CNative::AppendRawData(pszData, nLength * sizeof(wchar_t));
 }
 
-//! バッファの最後にデータを追加する (フォーマット機能付き)
-void CNativeW::AppendStringF(const wchar_t* pszData, ...)
+/*!
+ * バッファの最後にデータを追加する (フォーマット機能付き)
+ *
+ * @param pszFormat フォーマット書式文字列
+ * @param va_args C-style の可変長引数
+ * @throws std::invalid_argument pszFormatがNULL
+ * @throws std::bad_alloc メモリ確保に失敗
+ * @remark 不正なフォーマットを指定すると無効なパラメータ例外で即死します。
+ */
+void CNativeW::AppendStringF( const wchar_t* pszFormat, ... )
 {
-	wchar_t buf[2048];
-
-	// 整形
-	va_list v;
-	va_start(v, pszData);
-	int len = _vsnwprintf_s(buf, _countof(buf), _TRUNCATE, pszData, v);
-	int e = errno;
-	va_end(v);
-
-	if (len == -1) {
-		DEBUG_TRACE(L"AppendStringF error. errno = %d", e);
-		throw std::exception();
+	// _vscwprintf に NULL を渡してはならないので除外する
+	if( !pszFormat ){
+		throw std::invalid_argument( "pszFormat can't be nullptr" );
 	}
 
-	// 追加
-	this->AppendString(buf, len);
+	// 可変長引数のポインタを取得
+	va_list v;
+	va_start( v, pszFormat );
+
+	// 整形によって追加される文字数をカウント
+	const int additional = ::_vscwprintf( pszFormat, v );
+
+	// 現在の文字列長を取得
+	const auto currentLength = GetStringLength();
+
+	// 現在の文字数 + 追加文字数が収まるようにバッファを拡張する
+	const auto newCapacity = currentLength + additional;
+	AllocStringBuffer( newCapacity );
+
+	int added = 0;
+	if( additional > 0 ){
+		// 追加処理の実体はCRTに委譲。この関数は無効な書式を与えると即死する。
+		// CNativeW::capacity()は確保量を正確に返さないので確保要求した値 + 1を書き込み上限とする。
+		added = ::_vsnwprintf_s( &GetStringPtr()[currentLength], newCapacity + 1, _TRUNCATE, pszFormat, v );
+	}
+
+	// 可変長引数のポインタを解放
+	va_end( v );
+
+	// 文字列終端を再設定する
+	_SetStringLength( currentLength + added );
 }
 
 //! バッファの最後にデータを追加する
