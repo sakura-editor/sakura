@@ -55,7 +55,12 @@ exit /b
 
 :setenv_Win32
 :setenv_x64
-	set CMAKE_GEN_OPT=-G "Visual Studio 15 2017" -A "%~1" -D BUILD_GTEST=ON
+	if defined CMAKE_G_PARAM (
+		set CMAKE_G_OPTION=-G "%CMAKE_G_PARAM%"
+	) else (
+		set CMAKE_G_OPTION=
+	)
+	set CMAKE_GEN_OPT=%CMAKE_G_OPTION% -A "%~1" -D BUILD_GTEST=ON
 exit /b
 
 :setenv_MinGW
