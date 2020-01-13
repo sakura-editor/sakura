@@ -32,7 +32,6 @@ struct StringBufferW_{
 	WCHAR*    pData;
 	const int nDataCount;
 
-//	StringBufferW_() : pData(L""), nDataCount(0) { }
 	StringBufferW_(WCHAR* _pData, int _nDataCount) : pData(_pData), nDataCount(_nDataCount) { }
 
 	StringBufferW_& operator = (const StringBufferW_& rhs)
@@ -41,25 +40,10 @@ struct StringBufferW_{
 		return *this;
 	}
 };
-struct StringBufferA_{
-	ACHAR* pData;
-	int    nDataCount;
-
-//	StringBufferA_() : pData(""), nDataCount(0) { }
-	StringBufferA_(ACHAR* _pData, int _nDataCount) : pData(_pData), nDataCount(_nDataCount) { }
-
-	StringBufferA_& operator = (const StringBufferA_& rhs)
-	{
-		strcpy_s(pData,nDataCount,rhs.pData);
-		return *this;
-	}
-};
-typedef const StringBufferA_ StringBufferA;
 typedef const StringBufferW_ StringBufferW;
 
 //文字列バッファ型インスタンスの生成マクロ
 #define MakeStringBufferW(S) StringBufferW(S,_countof(S))
-#define MakeStringBufferA(S) StringBufferA(S,_countof(S))
 #define MakeStringBufferW0(S) StringBufferW(S,0)
 
 //2007.09.24 kobake データ変換部を子クラスに分離
@@ -156,15 +140,6 @@ protected:
 	{
 		*profile = value.pData;
 	}
-	//StringBufferA
-	void profile_to_value(const wstring& profile, StringBufferA* value)
-	{
-		strcpy_s(value->pData,value->nDataCount,to_achar(profile.c_str()));
-	}
-	void value_to_profile(const StringBufferA& value, wstring* profile)
-	{
-		*profile = to_wchar(value.pData);
-	}
 	//StaticString<WCHAR,N>
 	template <int N>
 	void profile_to_value(const wstring& profile, StaticString<WCHAR, N>* value)
@@ -175,17 +150,6 @@ protected:
 	void value_to_profile(const StaticString<WCHAR, N>& value, wstring* profile)
 	{
 		*profile = value.GetBufferPointer();
-	}
-	//StaticString<ACHAR,N>
-	template <int N>
-	void profile_to_value(const wstring& profile, StaticString<ACHAR, N>* value)
-	{
-		strcpy_s(value->GetBufferPointer(),value->GetBufferCount(),to_achar(profile.c_str()));
-	}
-	template <int N>
-	void value_to_profile(const StaticString<ACHAR, N>& value, wstring* profile)
-	{
-		*profile = to_wchar(value.GetBufferPointer());
 	}
 	//wstring
 	void profile_to_value(const wstring& profile, wstring* value)
@@ -202,7 +166,7 @@ protected:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	// 注意：StringBuffer系はバッファが足りないとabortします
-	template <class T> //T=={bool, int, WORD, wchar_t, char, wstring, StringBufferA, StringBufferW, StaticString}
+	template <class T> //T=={bool, int, WORD, wchar_t, char, wstring, StringBufferW, StaticString}
 	bool IOProfileData( const WCHAR* pszSectionName, const WCHAR* pszEntryKey, T& tEntryValue )
 	{
 		//読み込み
