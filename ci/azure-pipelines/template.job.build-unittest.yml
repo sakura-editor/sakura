@@ -28,7 +28,7 @@ jobs:
 
   # https://docs.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch
   variables:
-    SELECT_VSVERSION: ${{ parameters.SELECT_VSVERSION }}
+    ARG_VSVERSION: ${{ parameters.ARG_VSVERSION }}
 
   steps:
   # show environmental variables for debug.
