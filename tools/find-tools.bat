@@ -13,6 +13,8 @@ if "%1" equ "clear" (
     set CMD_MSBUILD=
     set FIND_TOOLS_CALLED=
     set NUM_VSVERSION=
+    set PARAM_VSVERSION=
+    set CMAKE_G_PARAM=
     echo find-tools.bat has been cleared
     exit /b
 )
