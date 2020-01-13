@@ -47,7 +47,7 @@ pr:
 ###############################################################################################################################
 jobs:
 
-# サクラエディタのビルドを行う JOB
+# サクラエディタのビルドを行う JOB (VS2017)
 # * サクラエディタ本体
 # * HTML Help
 # * Installer
@@ -57,6 +57,21 @@ jobs:
     name: VS2017
     vmImage: 'VS2017-Win2016'
     displayName: VS2017
+    ARG_VSVERSION: 15
+
+# サクラエディタのビルドを行う JOB (VS2019)
+# * サクラエディタ本体
+# * HTML Help
+# * Installer
+# * 単体テスト
+# https://devblogs.microsoft.com/devops/hosted-pipelines-announcements-vs-2019-mojave-and-more/
+#
+- template: ci/azure-pipelines/template.job.build-unittest.yml
+  parameters:
+    name: VS2019
+    vmImage: 'windows-2019'
+    displayName: VS2019
+    ARG_VSVERSION: 16
 
 # サクラエディタのビルドを行う JOB(MinGW)
 # * サクラエディタ本体

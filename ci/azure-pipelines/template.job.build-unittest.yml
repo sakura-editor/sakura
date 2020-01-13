@@ -26,6 +26,10 @@ jobs:
         BuildPlatform: 'x64'
         Configuration: 'Release'
 
+  # https://docs.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch
+  variables:
+    ARG_VSVERSION: ${{ parameters.ARG_VSVERSION }}
+
   steps:
   # show environmental variables for debug.
   - script: set
