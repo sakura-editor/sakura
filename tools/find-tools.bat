@@ -49,6 +49,9 @@ endlocal ^
     && set "CMD_VSWHERE=%CMD_VSWHERE%"          ^
     && set "CMD_MSBUILD=%CMD_MSBUILD%"          ^
     && set "CMD_CMAKE=%CMD_CMAKE%"              ^
+    && set "NUM_VSVERSION=%NUM_VSVERSION%"      ^
+    && set "PARAM_VSVERSION=%PARAM_VSVERSION%"  ^
+    && set "CMAKE_G_PARAM=%CMAKE_G_PARAM%"      ^
     && echo end
 
 set FIND_TOOLS_CALLED=1
@@ -161,7 +164,8 @@ exit /b
 
 	) else if "%NUM_VSVERSION%" == "" (
 		set NUM_VSVERSION=15
-		
+		set CMAKE_G_PARAM=Visual Studio 15 2017
+
 	) else if "%NUM_VSVERSION%" == "15" (
 		set PARAM_VSVERSION=/p:VisualStudioVersion=15.0
 		set CMAKE_G_PARAM=Visual Studio 15 2017
