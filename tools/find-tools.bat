@@ -127,8 +127,12 @@ exit /b
 :find_msbuild
 	for /f "usebackq delims=" %%a in (`"%CMD_VSWHERE%" -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe`) do (
 	    set "CMD_MSBUILD=%%a"
-	    exit /b
 	)
+	if exist "%CMD_MSBUILD%" (
+		exit /b
+	)
+	set CMD_MSBUILD=
+
 	for /f "usebackq delims=" %%d in (`"%CMD_VSWHERE%" -version [15^,16^) -requires Microsoft.Component.MSBuild -property installationPath`) do (
 	    set "Vs2017InstallRoot=%%d"
 	)
