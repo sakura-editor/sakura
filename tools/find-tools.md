@@ -52,7 +52,7 @@ MSBuild以外の探索手順は同一であり、7-Zipを例に説明する。
 1. ```vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe``` で MSBuild.exe を検索する
 2. VS2019 以降の vswhere の場合
   2.1 MSBuild.exe が見つかる。→ 検索終了
-3. VS2019 の vswhere の場合
+3. VS2017 の vswhere の場合
   3.1 ```vswhere -version [15^,16^) -requires Microsoft.Component.MSBuild -property installationPath``` で VS2017 のインストールパスを検索する
   3.2 ```%Vs2017InstallRoot%\MSBuild\15.0\Bin\amd64\MSBuild.exe``` が存在する場合そのパスを MSBuild.exe のパスとする
   3.3 ```%Vs2017InstallRoot%\MSBuild\15.0\Bin\MSBuild.exe``` が存在する場合そのパスを MSBuild.exe のパスとする
