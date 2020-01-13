@@ -34,11 +34,33 @@ MSBuild以外の探索手順は同一であり、7-Zipを例に説明する。
 4. 1～3で見つからなければCMD_7Zには何もセットしない
 
 ## MSBuild
-1. CMD_MSBUILDがセットされていればそれを使う
-2. vswhere.exe(Visual Studio 2017に搭載されているバージョン)とwhereコマンド(windows標準)を利用し、Visual Studio 2017のmsbuild.exeを探す
-3. USE_LATEST_MSBUILDがセットされている場合、または、2.でmsbuild.exeが見つからない場合、vswhere.exe(Visual Studio 2019以降に搭載されたバージョン)を利用しmsbuild.exeを探す
-4. 2.および3.でmsbuild.exeが見つからない場合、whereコマンド(windows標準)を利用し、システム標準のmsbuild.exeを探す(MsBuild以外の探索手順にある「パスが通っている」と同じ意味)
-5. 2～4で見つからなければCMD_MSBUILDには何もセットしない
+
+### ユーザーがビルドに使用する Visual Studio のバージョンを切り替える方法
+
+環境変数 ```ARG_VSVERSION``` の値でビルドに使用するバージョンを切り替えられる。
+
+| ARG_VSVERSION  | 使用される Visual Studio のバージョン  |
+| -------------- | ------------------------------------- |
+| 空             | インストールされている Visual Studio の最新   |
+| 15             | Visual Studio 2017                           |
+| 16             | Visual Studio 2019                           |
+| 2017           | Visual Studio 2017                           |
+| 2019           | Visual Studio 2019                           |
+
+### 検索ロジック
+
+1. ```vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe``` で MSBuild.exe を検索する
+2. VS2019 以降の vswhere の場合
+  2.1 MSBuild.exe が見つかる。→ 検索終了
+3. VS2019 の vswhere の場合
+  3.1 ```vswhere -version [15^,16^) -requires Microsoft.Component.MSBuild -property installationPath``` で VS2017 のインストールパスを検索する
+  3.2 ```%Vs2017InstallRoot%\MSBuild\15.0\Bin\amd64\MSBuild.exe``` が存在する場合そのパスを MSBuild.exe のパスとする
+  3.3 ```%Vs2017InstallRoot%\MSBuild\15.0\Bin\MSBuild.exe``` が存在する場合そのパスを MSBuild.exe のパスとする
+
+### MSBuild.exe の引数
+
+```PARAM_VSVERSION``` の環境変数に ```/p:VisualStudioVersion=XXX``` をセットして MSBuild.exe に渡すことにより
+実際にビルドに使用する Visual Studio のバージョンを切り替える。
 
 ### 参照
 * https://github.com/Microsoft/vswhere

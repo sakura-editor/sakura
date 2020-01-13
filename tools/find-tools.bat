@@ -12,6 +12,9 @@ if "%1" equ "clear" (
     set CMD_VSWHERE=
     set CMD_MSBUILD=
     set FIND_TOOLS_CALLED=
+    set NUM_VSVERSION=
+    set PARAM_VSVERSION=
+    set CMAKE_G_PARAM=
     echo find-tools.bat has been cleared
     exit /b
 )
@@ -49,6 +52,9 @@ endlocal ^
     && set "CMD_VSWHERE=%CMD_VSWHERE%"          ^
     && set "CMD_MSBUILD=%CMD_MSBUILD%"          ^
     && set "CMD_CMAKE=%CMD_CMAKE%"              ^
+    && set "NUM_VSVERSION=%NUM_VSVERSION%"      ^
+    && set "PARAM_VSVERSION=%PARAM_VSVERSION%"  ^
+    && set "CMAKE_G_PARAM=%CMAKE_G_PARAM%"      ^
     && echo end
 
 set FIND_TOOLS_CALLED=1
@@ -121,40 +127,77 @@ for /f "usebackq delims=" %%a in (`where $PATH2:vswhere.exe`) do (
 )
 exit /b
 
+:: ---------------------------------------------------------------------------------------------------------------------
+:: sub routine for get latest version
+:: ---------------------------------------------------------------------------------------------------------------------
+:find_msbuild
+	for /f "usebackq delims=" %%a in (`"%CMD_VSWHERE%" -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe`) do (
+	    set "CMD_MSBUILD=%%a"
+	)
+	if exist "%CMD_MSBUILD%" (
+		exit /b
+	)
+	set CMD_MSBUILD=
+
+	for /f "usebackq delims=" %%d in (`"%CMD_VSWHERE%" -version [15^,16^) -requires Microsoft.Component.MSBuild -property installationPath`) do (
+	    set "Vs2017InstallRoot=%%d"
+	)
+	if exist "%Vs2017InstallRoot%\MSBuild\15.0\Bin\amd64\MSBuild.exe" (
+	    set "CMD_MSBUILD=%Vs2017InstallRoot%\MSBuild\15.0\Bin\amd64\MSBuild.exe"
+	    if defined CMD_MSBUILD exit /b
+	)
+	if exist "%Vs2017InstallRoot%\MSBuild\15.0\Bin\MSBuild.exe" (
+	    set "CMD_MSBUILD=%Vs2017InstallRoot%\MSBuild\15.0\Bin\MSBuild.exe"
+	    if defined CMD_MSBUILD exit /b
+	)
+	exit /b
+
+:: ---------------------------------------------------------------------------------------------------------------------
+:: sub routine for finding msbuild
+::
+:: ARG_VSVERSION
+::     latest => the latest version of installed Visual Studio
+::     15   => Visual Studio 2017
+::     16   => Visual Studio 2019
+::     2017 => Visual Studio 2017
+::     2019 => Visual Studio 2019
+:: ---------------------------------------------------------------------------------------------------------------------
 :msbuild
-::find vs2017 install directory
-for /f "usebackq delims=" %%d in (`"%CMD_VSWHERE%" -version [15^,16^) -requires Microsoft.Component.MSBuild -property installationPath`) do (
-    set "Vs2017InstallRoot=%%d"
-)
-if not defined Vs2017InstallRoot goto :msbuild_latest
+	:: convert productLineVersion to Internal Major Version
+	if "%ARG_VSVERSION%" == "latest" (
+		set NUM_VSVERSION=
+		set CMAKE_G_PARAM=
+		set PARAM_VSVERSION=
 
-::find msbuild under vs2017 install directory
-if exist "%Vs2017InstallRoot%\MSBuild\15.0\Bin\amd64\MSBuild.exe" (
-    set "CMD_MSBUILD=%Vs2017InstallRoot%\MSBuild\15.0\Bin\amd64\MSBuild.exe"
-    if defined CMD_MSBUILD exit /b
-)
-if exist "%Vs2017InstallRoot%\MSBuild\15.0\Bin\MSBuild.exe" (
-    set "CMD_MSBUILD=%Vs2017InstallRoot%\MSBuild\15.0\Bin\MSBuild.exe"
-    if defined CMD_MSBUILD exit /b
-)
-if not defined USE_LATEST_MSBUILD (
-    if defined CMD_MSBUILD exit /b
-)
+	) else if "%ARG_VSVERSION%" == "" (
+		set NUM_VSVERSION=15
+		set PARAM_VSVERSION=/p:VisualStudioVersion=15.0
+		set CMAKE_G_PARAM=Visual Studio 15 2017
 
-:msbuild_latest
-::find msbuild bundled with latest visual studio(vs2019 or lator).
-for /f "usebackq delims=" %%a in (`"%CMD_VSWHERE%" -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe`) do (
-    set "CMD_MSBUILD=%%a"
-    exit /b
-)
-
-::find msbuild in $env[PATH].
-for /f "usebackq delims=" %%a in (`where msbuild.exe`) do ( 
-    set "CMD_MSBUILD=%%a"
-    exit /b
-)
-exit /b
-
+	) else if "%ARG_VSVERSION%" == "15" (
+		set NUM_VSVERSION=15
+		set PARAM_VSVERSION=/p:VisualStudioVersion=15.0
+		set CMAKE_G_PARAM=Visual Studio 15 2017
+		
+	) else if "%ARG_VSVERSION%" == "16" (
+		set NUM_VSVERSION=16
+		set PARAM_VSVERSION=/p:VisualStudioVersion=16.0
+		set CMAKE_G_PARAM=Visual Studio 16 2019
+		
+	) else if "%ARG_VSVERSION%" == "2017" (
+		set NUM_VSVERSION=15
+		set PARAM_VSVERSION=/p:VisualStudioVersion=15.0
+		set CMAKE_G_PARAM=Visual Studio 15 2017
+		
+	) else if "%ARG_VSVERSION%" == "2019" (
+		set NUM_VSVERSION=16
+		set PARAM_VSVERSION=/p:VisualStudioVersion=16.0
+		set CMAKE_G_PARAM=Visual Studio 16 2019
+		
+	)
+	echo NUM_VSVERSION %NUM_VSVERSION%
+	call :find_msbuild
+	exit /b
 
 :cmake
 set APPDIR=CMake\bin
