@@ -22,6 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#include <stdexcept>
 #include <gtest/gtest.h>
 #include "mem/CNativeW.h"
 #include "mem/CNativeA.h"

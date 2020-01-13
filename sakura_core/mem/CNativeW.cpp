@@ -1,5 +1,6 @@
 ﻿/*! @file */
 #include "StdAfx.h"
+#include <stdexcept>
 #include "mem/CNativeW.h"
 #include "CEol.h"
 
