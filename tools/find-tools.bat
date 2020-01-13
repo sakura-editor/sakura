@@ -12,6 +12,7 @@ if "%1" equ "clear" (
     set CMD_VSWHERE=
     set CMD_MSBUILD=
     set FIND_TOOLS_CALLED=
+    set NUM_VSVERSION=
     echo find-tools.bat has been cleared
     exit /b
 )
@@ -152,34 +153,37 @@ exit /b
 :: ---------------------------------------------------------------------------------------------------------------------
 :: sub routine for finding msbuild
 ::
-:: NUM_VSVERSION
+:: ARG_VSVERSION
 ::     latest => the latest version of installed Visual Studio
 ::     15   => Visual Studio 2017
 ::     16   => Visual Studio 2019
+::     2017 => Visual Studio 2017
+::     2019 => Visual Studio 2019
 :: ---------------------------------------------------------------------------------------------------------------------
 :msbuild
 	:: convert productLineVersion to Internal Major Version
-	if "%NUM_VSVERSION%" == "latest" (
+	if "%ARG_VSVERSION%" == "latest" (
 		echo %NUM_VSVERSION%
+		set NUM_VSVERSION=
 
-	) else if "%NUM_VSVERSION%" == "" (
+	) else if "%ARG_VSVERSION%" == "" (
 		set NUM_VSVERSION=15
 		set CMAKE_G_PARAM=Visual Studio 15 2017
 
-	) else if "%NUM_VSVERSION%" == "15" (
+	) else if "%ARG_VSVERSION%" == "15" (
 		set PARAM_VSVERSION=/p:VisualStudioVersion=15.0
 		set CMAKE_G_PARAM=Visual Studio 15 2017
 		
-	) else if "%NUM_VSVERSION%" == "16" (
+	) else if "%ARG_VSVERSION%" == "16" (
 		set PARAM_VSVERSION=/p:VisualStudioVersion=16.0
 		set CMAKE_G_PARAM=Visual Studio 16 2019
 		
-	) else if "%NUM_VSVERSION%" == "2017" (
+	) else if "%ARG_VSVERSION%" == "2017" (
 		set NUM_VSVERSION=15
 		set PARAM_VSVERSION=/p:VisualStudioVersion=15.0
 		set CMAKE_G_PARAM=Visual Studio 15 2017
 		
-	) else if "%NUM_VSVERSION%" == "2019" (
+	) else if "%ARG_VSVERSION%" == "2019" (
 		set NUM_VSVERSION=16
 		set PARAM_VSVERSION=/p:VisualStudioVersion=16.0
 		set CMAKE_G_PARAM=Visual Studio 16 2019
