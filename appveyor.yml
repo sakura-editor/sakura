@@ -28,10 +28,9 @@ install:
 - cmd: |
     pip install openpyxl --user
 
-    cup vswhere
-
 # to run our custom scripts instead of automatic MSBuild
 build_script:
+  - cmd: cup vswhere
   - cmd: build-all.bat %PLATFORM% %CONFIGURATION%
 
 # to run our custom scripts instead of automatic tests
@@ -57,6 +56,7 @@ for:
     - ps: Start-Sleep -s 10
 
   build_script:
+    - cmd: cup vswhere
     - cmd: build-chm.bat
     - cmd: help\make-artifacts.bat
 
