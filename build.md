@@ -94,6 +94,18 @@ build-all.bat <Platform> <Configuration>
 build-all.bat Win32 Release
 ```
 
+#### Visual Studio 2019 を使用してコマンドラインでビルド
+
+```
+set ARG_VSVERSION=16
+build-all.bat Win32 Release
+```
+
+参考
+
+[こちら](tools/find-tools.md#MSBuild) で ```ARG_VSVERSION``` に関して説明しています。
+
+
 ## ビルドの仕組み
 
 ### appveyor でのビルドの仕組み
