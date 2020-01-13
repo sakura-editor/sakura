@@ -151,43 +151,41 @@ protected:
 	{
 		*profile = value.GetBufferPointer();
 	}
-	//wstring
-	void profile_to_value(const wstring& profile, wstring* value)
-	{
-		*value = profile;
-	}
-	void value_to_profile(const wstring& value, wstring* profile)
-	{
-		*profile = value;
-	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         入出力部                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
-	// 注意：StringBuffer系はバッファが足りないとabortします
-	template <class T> //T=={bool, int, WORD, wchar_t, char, wstring, StringBufferW, StaticString}
-	bool IOProfileData( const WCHAR* pszSectionName, const WCHAR* pszEntryKey, T& tEntryValue )
+	/*!
+	 * 設定値の入出力テンプレート
+	 *
+	 * 標準stringを介して設定値の入出力を行う。
+	 */
+	template <class T> //T=={bool, int, WORD, wchar_t, char, StringBufferW, StaticString}
+	bool IOProfileData(
+		const WCHAR*			pszSectionName,	//!< [in] セクション名
+		const WCHAR*			pszEntryKey,	//!< [in] エントリ名
+		T&						tEntryValue		//!< [in,out] エントリ値
+	) noexcept
 	{
-		//読み込み
-		if(m_bRead){
+		// 標準stringに変換して入出力する
+		std::wstring buf;
+
+		bool ret = false;
+		if( IsReadingMode() ){
 			//文字列読み込み
-			wstring buf;
-			bool ret=GetProfileDataImp( pszSectionName, pszEntryKey, buf);
-			if(ret){
+			if( GetProfileDataImp( pszSectionName, pszEntryKey, buf ) ){
 				//Tに変換
 				profile_to_value(buf, &tEntryValue);
+				ret = true;
 			}
-			return ret;
-		}
-		//書き込み
-		else{
+		}else{
 			//文字列に変換
-			wstring buf;
 			value_to_profile(tEntryValue, &buf);
 			//文字列書き込み
-			return SetProfileDataImp( pszSectionName, pszEntryKey, buf);
+			ret = SetProfileDataImp( pszSectionName, pszEntryKey, buf );
 		}
+		return ret;
 	}
 
 	//2007.08.14 kobake 追加
@@ -201,5 +199,26 @@ public:
 		return ret;
 	}
 };
+
+/*!
+ * 文字列型(標準string)の入出力(無変換)
+ */
+template <> inline
+bool CDataProfile::IOProfileData<std::wstring>(
+	const WCHAR*			pszSectionName,	//!< [in] セクション名
+	const WCHAR*			pszEntryKey,	//!< [in] エントリ名
+	std::wstring&			strEntryValue	//!< [in,out] エントリ値
+) noexcept
+{
+	bool ret = false;
+	if( IsReadingMode() ){
+		//文字列読み込み
+		ret = GetProfileDataImp( pszSectionName, pszEntryKey, strEntryValue );
+	}else{
+		//文字列書き込み
+		ret = SetProfileDataImp( pszSectionName, pszEntryKey, strEntryValue );
+	}
+	return ret;
+}
 
 /*[EOF]*/
