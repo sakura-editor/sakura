@@ -163,18 +163,22 @@ exit /b
 :msbuild
 	:: convert productLineVersion to Internal Major Version
 	if "%ARG_VSVERSION%" == "latest" (
-		echo %NUM_VSVERSION%
 		set NUM_VSVERSION=
+		set CMAKE_G_PARAM=
+		set PARAM_VSVERSION=
 
 	) else if "%ARG_VSVERSION%" == "" (
 		set NUM_VSVERSION=15
+		set PARAM_VSVERSION=/p:VisualStudioVersion=15.0
 		set CMAKE_G_PARAM=Visual Studio 15 2017
 
 	) else if "%ARG_VSVERSION%" == "15" (
+		set NUM_VSVERSION=15
 		set PARAM_VSVERSION=/p:VisualStudioVersion=15.0
 		set CMAKE_G_PARAM=Visual Studio 15 2017
 		
 	) else if "%ARG_VSVERSION%" == "16" (
+		set NUM_VSVERSION=16
 		set PARAM_VSVERSION=/p:VisualStudioVersion=16.0
 		set CMAKE_G_PARAM=Visual Studio 16 2019
 		
