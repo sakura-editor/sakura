@@ -182,8 +182,9 @@ public:
 	 *
 	 * 型引数が合わないために通常入出力と分離。
 	 * @retval true	設定値を正しく読み書きできた
-	 * @retval false 設定値を読み込めたが長すぎて切り捨てられた
 	 * @retval false 設定値が存在しなかったため読込できなかった
+	 * @retval false 設定値が長すぎて読込できなかった
+	 * @remark 実際の書込みはWriteProfileで行うため、書込みモードでは失敗しない。
 	 */
 	template <int N>
 	bool IOProfileData(
@@ -200,8 +201,10 @@ public:
 			//文字列読み込み
 			if( IOProfileData( pszSectionName, pszEntryKey, buf ) ){
 				//StaticString<WCHAR, N>に変換
-				szEntryValue = buf.c_str();
-				ret = buf.length() < _countof2(szEntryValue);
+				if ( buf.length() < _countof2(szEntryValue) ){
+					szEntryValue = buf.c_str();
+					ret = true;
+				}
 			}
 		}else{
 			//文字列に変換
