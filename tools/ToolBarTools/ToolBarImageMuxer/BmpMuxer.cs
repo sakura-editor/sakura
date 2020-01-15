@@ -19,16 +19,7 @@ namespace ToolBarImageMuxer
                 var bmp = bmps[i];
                 foreach (var entry in bmp.colorTable)
                 {
-                    bool bFound = false;
-                    foreach (var color in colors)
-                    {
-                        if (entry.Equals(color))
-                        {
-                            bFound = true;
-                            break;
-                        }
-                    }
-                    if (!bFound)
+                    if (!colors.Contains(entry))
                     {
                         colors.Add(entry);
                     }
