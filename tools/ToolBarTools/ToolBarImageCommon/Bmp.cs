@@ -70,8 +70,7 @@ namespace ToolBarImageCommon
 
         public int GetLineStride()
         {
-            int bitsPerLine = (bmih.biWidth * bmih.biBitCount) + 31;
-            bitsPerLine &= ~31;
+            int bitsPerLine = ((bmih.biWidth * bmih.biBitCount) + 31) & (~31);
             int bytesPerLine = bitsPerLine / 8;
             if (bmih.biHeight > 0)
                 bytesPerLine = -bytesPerLine;
