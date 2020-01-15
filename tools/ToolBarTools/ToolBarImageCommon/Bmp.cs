@@ -274,7 +274,7 @@ namespace ToolBarImageCommon
                         case 1:
                         case 4:
                         case 8:
-                            numQuads = (uint)(2 << bmp.bmih.biBitCount);
+                            numQuads = (uint)(1 << bmp.bmih.biBitCount);
                             break;
                         default:
                             throw new FileFormatException();
