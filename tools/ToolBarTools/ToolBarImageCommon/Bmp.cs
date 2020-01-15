@@ -174,20 +174,8 @@ namespace ToolBarImageCommon
                     byte scidx = src.bitmap[sidx + j];
                     RGBQUAD sc0 = src.colorTable[scidx >> 4];
                     RGBQUAD sc1 = src.colorTable[scidx & 0xF];
-                    int dcidx0 = 0;
-                    int dcidx1 = 0;
-                    for (int k = 0; k < colorTable.Count(); ++k)
-                    {
-                        RGBQUAD dc = colorTable[k];
-                        if (sc0.Equals(dc))
-                        {
-                            dcidx0 = k;
-                        }
-                        if (sc1.Equals(dc))
-                        {
-                            dcidx1 = k;
-                        }
-                    }
+                    int dcidx0 = Array.IndexOf(colorTable, sc0);
+                    int dcidx1 = Array.IndexOf(colorTable, sc1);
                     bitmap[didx + j] = (byte)((dcidx0 << 4) | dcidx1);
                 }
                 sidx += sLineStride;
@@ -208,14 +196,7 @@ namespace ToolBarImageCommon
                 for (int j = 0; j < sw; ++j)
                 {
                     RGBQUAD sc = src.colorTable[src.bitmap[sidx + j]];
-                    for (int k = 0; k < colorTable.Count(); ++k)
-                    {
-                        if (sc.Equals(colorTable[k]))
-                        {
-                            bitmap[didx + j] = (byte)k;
-                            break;
-                        }
-                    }
+                    bitmap[didx + j] = (byte)Array.IndexOf(colorTable, sc);
                 }
                 sidx += sLineStride;
                 didx += dLineStride;
