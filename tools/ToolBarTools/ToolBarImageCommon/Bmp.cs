@@ -72,8 +72,8 @@ namespace ToolBarImageCommon
         {
             int bitsPerLine = ((bmih.biWidth * bmih.biBitCount) + 31) & (~31);
             int bytesPerLine = bitsPerLine / 8;
-            if (bmih.biHeight > 0)
-                bytesPerLine = -bytesPerLine;
+            if (IsBottomUp())
+                bytesPerLine = -bytesPerLine; // ボトムアップ形式の場合は行ストライドは負の値になる
             return bytesPerLine;
         }
 
