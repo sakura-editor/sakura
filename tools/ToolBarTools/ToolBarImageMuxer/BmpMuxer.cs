@@ -112,7 +112,7 @@ namespace ToolBarImageMuxer
                 }
 
                 int lineStride = bmp.GetLineStride();
-                bmp.bitmap = new byte[Math.Abs(lineStride * bmp.bmih.biHeight)];
+                bmp.imageData = new byte[Math.Abs(lineStride * bmp.bmih.biHeight)];
                 index = 0;
                 for (var y = 0; y < lines; ++y)
                 {

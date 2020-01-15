@@ -66,7 +66,7 @@ namespace ToolBarImageCommon
     {
         public BITMAPINFOHEADER bmih;
         public RGBQUAD[] colorTable;
-        public byte[] bitmap;
+        public byte[] imageData;
 
         public int GetLineStride()
         {
@@ -141,7 +141,7 @@ namespace ToolBarImageCommon
                     throw new NotImplementedException();
                 }
             }
-            ret.bitmap = new byte[Math.Abs(dLineStride * h)];
+            ret.imageData = new byte[Math.Abs(dLineStride * h)];
             int sidx = GetByteOffset(x, y);
             int didx = ret.GetByteOffset(0, 0);
             int sidx2 = GetByteOffset(x + w, y);
@@ -150,7 +150,7 @@ namespace ToolBarImageCommon
             {
                 for (int j=0; j< copyLen; ++j)
                 {
-                    ret.bitmap[didx + j] = bitmap[sidx + j];
+                    ret.imageData[didx + j] = imageData[sidx + j];
                 }
                 sidx += sLineStride;
                 didx += dLineStride;
@@ -171,12 +171,12 @@ namespace ToolBarImageCommon
             {
                 for (int j = 0; j < sw2; ++j)
                 {
-                    byte scidx = src.bitmap[sidx + j];
+                    byte scidx = src.imageData[sidx + j];
                     RGBQUAD sc0 = src.colorTable[scidx >> 4];
                     RGBQUAD sc1 = src.colorTable[scidx & 0xF];
                     int dcidx0 = Array.IndexOf(colorTable, sc0);
                     int dcidx1 = Array.IndexOf(colorTable, sc1);
-                    bitmap[didx + j] = (byte)((dcidx0 << 4) | dcidx1);
+                    imageData[didx + j] = (byte)((dcidx0 << 4) | dcidx1);
                 }
                 sidx += sLineStride;
                 didx += dLineStride;
@@ -195,8 +195,8 @@ namespace ToolBarImageCommon
             {
                 for (int j = 0; j < sw; ++j)
                 {
-                    RGBQUAD sc = src.colorTable[src.bitmap[sidx + j]];
-                    bitmap[didx + j] = (byte)Array.IndexOf(colorTable, sc);
+                    RGBQUAD sc = src.colorTable[src.imageData[sidx + j]];
+                    imageData[didx + j] = (byte)Array.IndexOf(colorTable, sc);
                 }
                 sidx += sLineStride;
                 didx += dLineStride;
@@ -238,7 +238,7 @@ namespace ToolBarImageCommon
             fileSize += Marshal.SizeOf(typeof(BITMAPINFOHEADER));
             fileSize += Marshal.SizeOf(typeof(RGBQUAD)) * colorTable.Count();
             bmfh.bfOffBits = (uint)fileSize;
-            fileSize += bitmap.Count();
+            fileSize += imageData.Count();
             bmfh.bfSize = (uint)fileSize;
             bmfh.bfReserved1 = 0;
             bmfh.bfReserved2 = 0;
@@ -250,7 +250,7 @@ namespace ToolBarImageCommon
                 {
                     ReadWriteStructWithAllocGCHandle.WriteTo<RGBQUAD>(writer, c);
                 }
-                writer.Write(bitmap);
+                writer.Write(imageData);
             }
         }
 
@@ -308,7 +308,7 @@ namespace ToolBarImageCommon
                 using (var ms = new MemoryStream())
                 {
                     reader.BaseStream.CopyTo(ms);
-                    bmp.bitmap = ms.ToArray();
+                    bmp.imageData = ms.ToArray();
                 }
             }
             return bmp;
