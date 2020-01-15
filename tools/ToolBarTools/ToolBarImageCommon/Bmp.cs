@@ -250,7 +250,7 @@ namespace ToolBarImageCommon
                 {
                     ReadWriteStructWithAllocGCHandle.WriteTo<RGBQUAD>(writer, c);
                 }
-                writer.BaseStream.Write(bitmap, 0, bitmap.Count());
+                writer.Write(bitmap);
             }
         }
 
