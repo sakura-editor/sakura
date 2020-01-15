@@ -95,7 +95,7 @@ namespace ToolBarImageCommon
             int h = Math.Abs(bmih.biHeight);
             if (x < 0 || y < 0 || x > w || y > h)
             {
-                throw new OutOfMemoryException();
+                throw new ArgumentOutOfRangeException();
             }
             int bitCount = bmih.biBitCount;
             int idx = IsBottomUp() ? ((h - 1 - y) * Math.Abs(lineStride)) : (y * lineStride);
@@ -107,7 +107,7 @@ namespace ToolBarImageCommon
             {
                 if ((x & 1) == 1)
                 {
-                    throw new OutOfMemoryException();
+                    throw new ArgumentOutOfRangeException();
                 }
                 idx += x / 2;
             }
@@ -263,7 +263,7 @@ namespace ToolBarImageCommon
                 bmfh = ReadWriteStructWithAllocGCHandle.ReadFrom<BITMAPFILEHEADER>(reader);
                 if (bmfh.bfType != 0x4D42)
                 {
-                    throw new OutOfMemoryException();
+                    throw new FileFormatException();
                 }
                 bmp.bmih = ReadWriteStructWithAllocGCHandle.ReadFrom<BITMAPINFOHEADER>(reader);
                 uint numQuads;
@@ -272,16 +272,12 @@ namespace ToolBarImageCommon
                     switch (bmp.bmih.biBitCount)
                     {
                         case 1:
-                            numQuads = 2;
-                            break;
                         case 4:
-                            numQuads = 16;
-                            break;
                         case 8:
-                            numQuads = 256;
+                            numQuads = (uint)(2 << bmp.bmih.biBitCount);
                             break;
                         default:
-                            throw new OutOfMemoryException();
+                            throw new FileFormatException();
                     }
                 }
                 else
@@ -302,7 +298,7 @@ namespace ToolBarImageCommon
                 }
                 if (reader.BaseStream.Position != bmfh.bfOffBits)
                 {
-                    throw new OutOfMemoryException();
+                    throw new FileFormatException();
                 }
                 // https://stackoverflow.com/a/10038017/4699324
                 using (var ms = new MemoryStream())
