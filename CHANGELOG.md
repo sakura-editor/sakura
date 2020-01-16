@@ -52,10 +52,7 @@
 
 ### その他変更
 
-- プログラム内からドキュメントにアクセスする方法を分かりやすくする変更を revert [\#1074](https://github.com/sakura-editor/sakura/pull/1074) ([beru](https://github.com/beru))
-- 行毎ではなく一括で線を描く変更によって引き起こされた表示の不具合を起こさないように元に戻す [\#1072](https://github.com/sakura-editor/sakura/pull/1072) ([beru](https://github.com/beru))
 - ルーラー描画の高速化 [\#1067](https://github.com/sakura-editor/sakura/pull/1067) ([beru](https://github.com/beru))
-- ノート線描画、指定桁縦線描画、折り返し桁縦線描画、を行毎ではなく一括で行うように変更 [\#1065](https://github.com/sakura-editor/sakura/pull/1065) ([beru](https://github.com/beru))
 - 確保済みメモリサイズの更新タイミングを訂正する [\#1061](https://github.com/sakura-editor/sakura/pull/1061) ([berryzplus](https://github.com/berryzplus))
 - 文字コードの指定ダイアログのCPチェックの仕様を修正する [\#1059](https://github.com/sakura-editor/sakura/pull/1059) ([berryzplus](https://github.com/berryzplus))
 - レイアウト情報の作成処理をわずかに高速化 [\#1056](https://github.com/sakura-editor/sakura/pull/1056) ([beru](https://github.com/beru))
