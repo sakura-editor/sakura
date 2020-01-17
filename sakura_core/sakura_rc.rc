@@ -32,7 +32,7 @@
 LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
 #endif //_WIN32
 
-#define	S_COPYRIGHT	"Copyright (C) 1998-2019  by Norio Nakatani & Collaborators"
+#define	S_COPYRIGHT	"Copyright (C) 1998-2020  by Norio Nakatani & Collaborators"
 #define FL_VER		PR_VER
 #define FL_VER_STR	PR_VER_STR
 
