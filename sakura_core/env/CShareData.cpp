@@ -1329,6 +1329,15 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rMenu.m_nCustMenuItemKeyArr [0][n] = 'A';
 	n++;
 
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_CUSTMENU_1;
+	rMenu.m_nCustMenuItemKeyArr[0][n]  = 'A';
+	rMenu.m_bCustMenuPopupArr[n]  = true;
+	n++;
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_CUSTMENU_2;
+	rMenu.m_nCustMenuItemKeyArr[0][n]  = 'A';
+	rMenu.m_bCustMenuPopupArr[n]  = true;
+	n++;
+
 	rMenu.m_nCustMenuItemFuncArr[0][n] = F_0;		//Oct. 3, 2000 JEPRO 以下に「タグジャンプ」と「タグジャンプバック」を追加
 	rMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
@@ -1398,6 +1407,28 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rMenu.m_nCustMenuItemKeyArr [1][5] = '\0';
 	rMenu.m_nCustMenuItemFuncArr[1][6] = F_WINCLOSE;
 	rMenu.m_nCustMenuItemKeyArr [1][6] = 'C';
+
+	/* カスタムメニュー2 */
+	int menuitem  = 2;
+	n  = 0;
+	wcscpyn(rMenu.m_szCustMenuNameArr[menuitem], L"テストメニュー", MAX_CUSTOM_MENU_NAME_LEN + 1); // メニュー名の日本語/英語対応必要
+
+	rMenu.m_nCustMenuItemFuncArr[menuitem][n] = F_OPEN_FOLDER_IN_EXPLORER;
+	rMenu.m_nCustMenuItemKeyArr[menuitem][n]  = 'F';
+	n++;
+	rMenu.m_nCustMenuItemFuncArr[menuitem][n] = F_OPEN_COMMAND_PROMPT;
+	rMenu.m_nCustMenuItemKeyArr[menuitem][n]  = 'W';
+	n++;
+	rMenu.m_nCustMenuItemFuncArr[menuitem][n] = F_OPEN_COMMAND_PROMPT_AS_ADMIN;
+	rMenu.m_nCustMenuItemKeyArr[menuitem][n]  = 'w';
+	n++;
+	rMenu.m_nCustMenuItemFuncArr[menuitem][n] = F_OPEN_POWERSHELL;
+	rMenu.m_nCustMenuItemKeyArr[menuitem][n]  = 'P';
+	n++;
+	rMenu.m_nCustMenuItemFuncArr[menuitem][n] = F_OPEN_POWERSHELL_AS_ADMIN;
+	rMenu.m_nCustMenuItemKeyArr[menuitem][n]  = 'p';
+	n++;
+	rMenu.m_nCustMenuItemNumArr[menuitem] = n;
 
 	/* タブメニュー */	//@@@ 2003.06.14 MIK
 	n = 0;
