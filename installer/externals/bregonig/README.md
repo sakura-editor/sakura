@@ -13,5 +13,5 @@
 
 ## 展開ファイル
 - bron420.zip … 上述サイトから入手したZIPアーカイブ
-- Win32/bregonig.dll … bron420.zip から取り出した 32bit版 bregonig.dll
-- x64/bregonig.dll … bron420.zip から取り出した 64bit版 bregonig.dll
+- Win32/bregonig.dll … zipから取り出した 32bit版 bregonig.dll
+- x64/bregonig.dll   … zipから取り出した 64bit版 bregonig.dll
