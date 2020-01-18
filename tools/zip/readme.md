@@ -37,7 +37,7 @@ zip.bat <圧縮先Zipファイル> <圧縮するフォルダパス>
 例
 
 ```
-zip.bat bron412-2.zip temp
+zip.bat bron420-2.zip temp
 ```
 
 
@@ -51,7 +51,7 @@ unzip.bat <解凍するZipファイル> <展開先フォルダパス>
 例
 
 ```
-unzip.bat bron412.zip temp
+unzip.bat bron420.zip temp
 ```
 
 
@@ -64,5 +64,5 @@ listzip.bat <内容確認するZipファイル>
 例
 
 ```
-listzip.bat bron412.zip
+listzip.bat bron420.zip
 ```
