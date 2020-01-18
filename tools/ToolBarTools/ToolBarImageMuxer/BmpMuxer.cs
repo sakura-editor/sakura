@@ -1,47 +1,133 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Drawing;
+using System.Runtime.InteropServices;
+using ToolBarImageCommon;
 
 namespace ToolBarImageMuxer
 {
     public class BmpMuxer
     {
+        static private List<RGBQUAD> CombinePalettes(List<Bmp> bmps)
+        {
+            List<RGBQUAD> colors = new List<RGBQUAD>(bmps[0].colorTable);
+            for (var i=1; i<bmps.Count; ++i)
+            {
+                var bmp = bmps[i];
+                foreach (var entry in bmp.colorTable)
+                {
+                    if (!colors.Contains(entry))
+                    {
+                        colors.Add(entry);
+                    }
+                }
+            }
+            return colors;
+        }
+
+        static protected bool IsPalettable(List<Bmp> bmps)
+        {
+            var width = bmps[0].bmih.biWidth;
+            var height = Math.Abs(bmps[0].bmih.biHeight);
+            for (var i = 1; i < bmps.Count; ++i)
+            {
+                var bmp = bmps[i];
+                var width2 = bmp.bmih.biWidth;
+                var height2 = Math.Abs(bmp.bmih.biHeight);
+                if (width != width2 || height != height2)
+                {
+                    throw new Exception();
+                }
+                var biBitCount = bmp.bmih.biBitCount;
+                if (biBitCount != 1 && biBitCount != 4 && biBitCount != 8)
+                {
+                    // インデックスカラー画像でなくても使われている色数を調べて判断する手もあるが、実装が手間なので行わない
+                    return false;
+                }
+            }
+            return true;
+        }
+
         static public void Mux(string[] fileNames, string outFile, int countPerLine)
         {
-        	// 一番最初の BMP の情報を取得する
-            var bmp = (Bitmap)Image.FromFile(fileNames[0]);
-            var sx = bmp.Size.Width;
-            var sy = bmp.Size.Height;
-
+            List<Bmp> bmps = new List<Bmp>();
             var lines = (fileNames.Length + countPerLine - 1) / countPerLine;
-            var width = sx * countPerLine;
-            var height = sy * lines;
-
-            // フルカラーのビットマップを作成する (Graphics がフルカラーを必要とする)
-            var imgMerge = new Bitmap(width, height);
-            Graphics g = Graphics.FromImage(imgMerge);
-
             var index = 0;
-            for (var y = 0; y < height; y += sy)
+            for (var y = 0; y < lines; ++y)
             {
-                for (var x = 0; x < width; x += sx)
+                for (var x = 0; x < countPerLine; ++x)
                 {
-                    using (var bmpTmp = (Bitmap)Image.FromFile(fileNames[index]))
-                    {
-                        var cloneRect = new RectangleF(x, y, sx, sy);
-                        g.DrawImage(bmpTmp, cloneRect);
-                    }
+                    bmps.Add(Bmp.FromFile(fileNames[index]));
                     index++;
                 }
             }
+            bool palettable = IsPalettable(bmps);
+            List<RGBQUAD> colors = null;
+            if (palettable)
+            {
+                // パレット統合
+                colors = CombinePalettes(bmps);
+                if (colors.Count > 256)
+                {
+                    palettable = false;
+                }
+            }
+            if (palettable)
+            {
+                ushort biBitCount = 8;
+                if (colors.Count <= 2)
+                {
+                    biBitCount = 1;
+                }
+                if (colors.Count <= 16)
+                {
+                    biBitCount = 4;
+                }
+                else
+                {
+                    biBitCount = 8;
+                }
+                Bmp bmp = new Bmp();
+                bmp.bmih = bmps[0].bmih;
+                var width = bmps[0].bmih.biWidth;
+                var height = Math.Abs(bmps[0].bmih.biHeight);
+                bmp.bmih.biWidth = width * countPerLine;
+                bmp.bmih.biHeight = height * lines;
+                bmp.bmih.biBitCount = biBitCount;
+                if (bmp.bmih.biClrUsed == 0)
+                {
+                    bmp.colorTable = new RGBQUAD[1 << biBitCount];
+                }
+                else
+                {
+                    bmp.bmih.biClrUsed = (uint)(colors.Count);
+                    bmp.colorTable = new RGBQUAD[bmp.bmih.biClrUsed];
+                }
+                for (int i=0; i<colors.Count; ++i)
+                {
+                    bmp.colorTable[i] = colors[i];
+                }
 
-            // 入力のビットマップと同じ形式で保存する (減色処理含む)
-            var outRect = new RectangleF(0, 0, width, height);
-            var imgSave = imgMerge.Clone(outRect, bmp.PixelFormat);
-            imgSave.Save(outFile, System.Drawing.Imaging.ImageFormat.Bmp);
+                int lineStride = bmp.GetLineStride();
+                bmp.imageData = new byte[Math.Abs(lineStride * bmp.bmih.biHeight)];
+                index = 0;
+                for (var y = 0; y < lines; ++y)
+                {
+                    for (var x = 0; x < countPerLine; ++x)
+                    {
+                        bmp.Paste(x * width, y * height, bmps[index]);
+                        index++;
+                    }
+                }
+                bmp.ToFile(outFile);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

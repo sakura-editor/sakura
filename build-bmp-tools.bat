@@ -28,79 +28,51 @@ set SRC_BMP2=%~dp0resource\my_icons.bmp
 set DST_DIR1=%~dp0resource\mytool
 set DST_DIR2=%~dp0resource\my_icons
 
-if exist %DST_DIR1% rmdir /s /q %DST_DIR1%
-if exist %DST_DIR2% rmdir /s /q %DST_DIR2%
+set OUT_BMP1=%~dp0resource\out-mytool.bmp
+set OUT_BMP2=%~dp0resource\out-my_icons.bmp
+
 if exist %DST_DIR1% rmdir /s /q %DST_DIR1%
 if exist %DST_DIR2% rmdir /s /q %DST_DIR2%
 
-@rem split input bmp
+@rem split input bmp file No.1
 %SPLITTER% %SRC_BMP1% %DST_DIR1%
 if errorlevel 1 (
 	echo fail %SPLITTER% %SRC_BMP1% %DST_DIR1%
 	exit /b 1
 )
 
+@rem split input bmp file No.2
 %SPLITTER% %SRC_BMP2% %DST_DIR2%
 if errorlevel 1 (
 	echo fail %SPLITTER% %SRC_BMP2% %DST_DIR2%
 	exit /b 1
 )
 
-@rem these steps are for tests.
-set OUT1_BMP1=%~dp0resource\out1-mytool.bmp
-set OUT1_BMP2=%~dp0resource\out1-my_icons.bmp
-set OUT2_BMP1=%~dp0resource\out2-mytool.bmp
-set OUT2_BMP2=%~dp0resource\out2-my_icons.bmp
-
-set OUT_DIR1=%~dp0resource\mytool
-set OUT_DIR2=%~dp0resource\my_icons
-
-@rem merge multiple bmp to one bmp
-%MUXER% %DST_DIR1% %OUT1_BMP1%
+@rem merge separated bmp files into single bmp file
+%MUXER% %DST_DIR1% %OUT_BMP1%
 if errorlevel 1 (
-	echo fail %MUXER% %DST_DIR1% %OUT1_BMP1%
+	echo fail %MUXER% %DST_DIR1% %OUT_BMP1%
 	exit /b 1
 )
 
-%MUXER% %DST_DIR2% %OUT1_BMP2%
+@rem merge separated bmp files into single bmp file
+%MUXER% %DST_DIR2% %OUT_BMP2%
 if errorlevel 1 (
-	echo fail %MUXER% %DST_DIR2% %OUT1_BMP2%
+	echo fail %MUXER% %DST_DIR2% %OUT_BMP2%
 	exit /b 1
 )
 
-%SPLITTER% %OUT1_BMP1% %OUT_DIR1%
+@rem verify contents of merged bmp file is as same as source bitmap file
+fc /a /b %SRC_BMP1% %OUT_BMP1% >NUL
 if errorlevel 1 (
-	echo fail %SPLITTER% %OUT1_BMP1% %OUT_DIR1%
+	echo fail fc /a /b %SRC_BMP1% %OUT_BMP1%
 	exit /b 1
 )
 
-%SPLITTER% %OUT1_BMP2% %OUT_DIR2%
+@rem verify contents of merged bmp file is as same as source bitmap file
+fc /a /b %SRC_BMP2% %OUT_BMP2% >NUL
 if errorlevel 1 (
-	echo fail %SPLITTER% %OUT1_BMP2% %OUT_DIR2%
-	exit /b 1
-)
-
-%MUXER% %OUT_DIR1% %OUT2_BMP1%
-if errorlevel 1 (
-	echo fail %MUXER% %OUT_DIR1% %OUT2_BMP1%
-	exit /b 1
-)
-
-%MUXER% %OUT_DIR2% %OUT2_BMP2%
-if errorlevel 1 (
-	echo fail %MUXER% %OUT_DIR2% %OUT2_BMP2%
-	exit /b 1
-)
-
-fc /a /b %OUT1_BMP1% %OUT2_BMP1% >NUL
-if errorlevel 1 (
-	echo fail fc /a /b %OUT1_BMP1% %OUT2_BMP1%
-	exit /b 1
-)
-
-fc /a /b %OUT1_BMP2% %OUT2_BMP2% >NUL
-if errorlevel 1 (
-	echo fail fc /a /b %OUT1_BMP2% %OUT2_BMP2%
+	echo fail fc /a /b %SRC_BMP2% %OUT_BMP2%
 	exit /b 1
 )
 

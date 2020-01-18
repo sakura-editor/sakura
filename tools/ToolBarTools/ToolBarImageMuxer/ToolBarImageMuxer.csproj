@@ -52,5 +52,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ToolBarImageCommon\ToolBarImageCommon.csproj">
+      <Project>{84e29976-dfdc-4661-9316-f434b42f75c7}</Project>
+      <Name>ToolBarImageCommon</Name>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
