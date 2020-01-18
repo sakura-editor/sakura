@@ -1480,6 +1480,14 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_OPEN_POWERSHELL_AS_ADMIN;
 	rMenu.m_nCustMenuItemKeyArr[CUSTMENU_INDEX_FOR_TABWND][n]  = 'p';
 	n++;
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_CUSTMENU_1;
+	rMenu.m_nCustMenuItemKeyArr[CUSTMENU_INDEX_FOR_TABWND][n]  = 'A';
+	rMenu.m_bCustMenuPopupArr[CUSTMENU_INDEX_FOR_TABWND]       = true;
+	n++;
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_CUSTMENU_2;
+    rMenu.m_nCustMenuItemKeyArr[CUSTMENU_INDEX_FOR_TABWND][n]  = 'A';
+    rMenu.m_bCustMenuPopupArr[CUSTMENU_INDEX_FOR_TABWND]       = true;
+    n++;
 	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_0;
 	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '\0';
 	n++;
