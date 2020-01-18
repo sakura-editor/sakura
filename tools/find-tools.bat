@@ -203,7 +203,6 @@ exit /b
 		set CMAKE_G_PARAM=Visual Studio 16 2019
 		
 	)
-	echo NUM_VSVERSION %NUM_VSVERSION%
 	call :find_msbuild
 	exit /b
 
