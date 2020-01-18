@@ -47,7 +47,7 @@ if "%PLATFORM%" == "Win32" (
 	echo unknown PLATFORM %PLATFORM%
 	exit /b 1
 )
-set CTAGS_ZIP=..\installer\externals\universal-ctags\ctags-2018-09-16_e522743d-%CTAGS_PREFIX%.zip
+set CTAGS_ZIP=..\installer\externals\universal-ctags\ctags-2020-01-12_feffe43a-%CTAGS_PREFIX%.zip
 set CTAGS_TMP=..\installer\temp\ctags
 set CTAGS_DIR=%~dp0%CTAGS_TMP%
 if not exist "%CTAGS_DIR%\%CTAGS_EXE%" (
