@@ -11,6 +11,8 @@
 /cppcheck-install.log
 /help/sakura/sakura.hh
 /tests/build
+/tests/unittests/Win32
+/tests/unittests/x64
 /Win32
 /x64
 Backup
