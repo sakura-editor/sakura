@@ -160,6 +160,8 @@ public:
 	 * 設定値の入出力テンプレート
 	 *
 	 * 標準stringを介して設定値の入出力を行う。
+	 * @remark StringBufferWはバッファが足りないとabortします。
+	 * @remark StaticStringはバッファが足りないとabortします。
 	 */
 	template <class T> //T=={bool, int, WORD, wchar_t, char, StringBufferW, StaticString}
 	bool IOProfileData(
