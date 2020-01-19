@@ -103,6 +103,8 @@ protected:
 	void RefreshKeyAssignString(DLLSHAREDATA* pShareData);
 	void InitToolButtons(DLLSHAREDATA* pShareData);
 	void InitTypeConfigs(DLLSHAREDATA* pShareData, std::vector<STypeConfig*>& types);
+	void InitCustomMenuCopyInfo(DLLSHAREDATA* pShareData, int index);
+	void InitCustomMenuOpenTools(DLLSHAREDATA* pShareData, int index);
 	void InitPopupMenu(DLLSHAREDATA* pShareData);
 
 public:

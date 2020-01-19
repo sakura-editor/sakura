@@ -1275,6 +1275,46 @@ void CShareData::InitToolButtons(DLLSHAREDATA* pShareData)
 	pShareData->m_Common.m_sToolBar.m_bToolBarIsFlat = !IsVisualStyle();			/* フラットツールバーにする／しない */	// 2006.06.23 ryoji ビジュアルスタイルでは初期値をノーマルにする
 }
 
+void CShareData::InitCustomMenuCopyInfo(DLLSHAREDATA* pShareData, int index)
+{
+	int n = 0;
+	CommonSetting_CustomMenu& rMenu = m_pShareData->m_Common.m_sCustomMenu;
+	wcscpyn(rMenu.m_szCustMenuNameArr[index], L"情報をコピー", MAX_CUSTOM_MENU_NAME_LEN + 1); // メニュー名の日本語/英語対応必要
+
+	rMenu.m_nCustMenuItemFuncArr[index][n] = F_COPYFNAME;
+	rMenu.m_nCustMenuItemKeyArr [index][n] = 'F';
+	n++;
+	rMenu.m_nCustMenuItemFuncArr[index][n] = F_COPYDIRPATH;
+	rMenu.m_nCustMenuItemKeyArr [index][n] = 'O';
+	n++;
+	rMenu.m_nCustMenuItemNumArr[index] = n;
+}
+
+void CShareData::InitCustomMenuOpenTools(DLLSHAREDATA* pShareData, int index)
+{
+	int n = 0;
+	CommonSetting_CustomMenu& rMenu = m_pShareData->m_Common.m_sCustomMenu;
+	wcscpyn(rMenu.m_szCustMenuNameArr[index], L"ツールを開く", MAX_CUSTOM_MENU_NAME_LEN + 1); // メニュー名の日本語/英語対応必要
+
+	rMenu.m_nCustMenuItemFuncArr[index][n] = F_OPEN_FOLDER_IN_EXPLORER;
+	rMenu.m_nCustMenuItemKeyArr[index][n] = 'E';
+	n++;
+	rMenu.m_nCustMenuItemFuncArr[index][n] = F_OPEN_COMMAND_PROMPT;
+	rMenu.m_nCustMenuItemKeyArr[index][n] = 'W';
+	n++;
+	rMenu.m_nCustMenuItemFuncArr[index][n] = F_OPEN_COMMAND_PROMPT_AS_ADMIN;
+	rMenu.m_nCustMenuItemKeyArr[index][n] = 'w';
+	n++;
+	rMenu.m_nCustMenuItemFuncArr[index][n] = F_OPEN_POWERSHELL;
+	rMenu.m_nCustMenuItemKeyArr[index][n] = 'P';
+	n++;
+	rMenu.m_nCustMenuItemFuncArr[index][n] = F_OPEN_POWERSHELL_AS_ADMIN;
+	rMenu.m_nCustMenuItemKeyArr[index][n] = 'p';
+	n++;
+
+	rMenu.m_nCustMenuItemNumArr[index] = n;
+}
+
 /*!	@brief 共有メモリ初期化/ポップアップメニュー
 
 	ポップアップメニューの初期化処理
@@ -1329,11 +1369,11 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rMenu.m_nCustMenuItemKeyArr [0][n] = 'A';
 	n++;
 
-	rMenu.m_nCustMenuItemFuncArr[0][n] = F_CUSTMENU_1;
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_CUSTMENU_2;
 	rMenu.m_nCustMenuItemKeyArr[0][n]  = 'A';
 	rMenu.m_bCustMenuPopupArr[n]  = true;
 	n++;
-	rMenu.m_nCustMenuItemFuncArr[0][n] = F_CUSTMENU_2;
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_CUSTMENU_3;
 	rMenu.m_nCustMenuItemKeyArr[0][n]  = 'A';
 	rMenu.m_bCustMenuPopupArr[n]  = true;
 	n++;
@@ -1359,32 +1399,8 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rMenu.m_nCustMenuItemFuncArr[0][n] = F_0;
 	rMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
-	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPYFNAME;
-	rMenu.m_nCustMenuItemKeyArr [0][n] = 'F';
-	n++;
 	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPYPATH;
 	rMenu.m_nCustMenuItemKeyArr [0][n] = '\\';
-	n++;
-	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPYDIRPATH;
-	rMenu.m_nCustMenuItemKeyArr [0][n] = 'O';
-	n++;
-	rMenu.m_nCustMenuItemFuncArr[0][n] = F_0;
-	rMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
-	n++;
-	rMenu.m_nCustMenuItemFuncArr[0][n] = F_OPEN_FOLDER_IN_EXPLORER;
-	rMenu.m_nCustMenuItemKeyArr[0][n] = 'E';
-	n++;
-	rMenu.m_nCustMenuItemFuncArr[0][n] = F_OPEN_COMMAND_PROMPT;
-	rMenu.m_nCustMenuItemKeyArr[0][n] = 'W';
-	n++;
-	rMenu.m_nCustMenuItemFuncArr[0][n] = F_OPEN_COMMAND_PROMPT_AS_ADMIN;
-	rMenu.m_nCustMenuItemKeyArr[0][n] = 'w';
-	n++;
-	rMenu.m_nCustMenuItemFuncArr[0][n] = F_OPEN_POWERSHELL;
-	rMenu.m_nCustMenuItemKeyArr[0][n] = 'P';
-	n++;
-	rMenu.m_nCustMenuItemFuncArr[0][n] = F_OPEN_POWERSHELL_AS_ADMIN;
-	rMenu.m_nCustMenuItemKeyArr[0][n] = 'p';
 	n++;
 	rMenu.m_nCustMenuItemFuncArr[0][n] = F_PROPERTY_FILE;
 	rMenu.m_nCustMenuItemKeyArr [0][n] = 'F';		//Nov. 9, 2000 JEPRO 「やり直し」とバッティングしていたアクセスキーを変更(R→F)
@@ -1409,26 +1425,10 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rMenu.m_nCustMenuItemKeyArr [1][6] = 'C';
 
 	/* カスタムメニュー2 */
-	int menuitem  = 2;
-	n  = 0;
-	wcscpyn(rMenu.m_szCustMenuNameArr[menuitem], L"テストメニュー", MAX_CUSTOM_MENU_NAME_LEN + 1); // メニュー名の日本語/英語対応必要
+	InitCustomMenuCopyInfo(pShareData, 2);
 
-	rMenu.m_nCustMenuItemFuncArr[menuitem][n] = F_OPEN_FOLDER_IN_EXPLORER;
-	rMenu.m_nCustMenuItemKeyArr[menuitem][n]  = 'F';
-	n++;
-	rMenu.m_nCustMenuItemFuncArr[menuitem][n] = F_OPEN_COMMAND_PROMPT;
-	rMenu.m_nCustMenuItemKeyArr[menuitem][n]  = 'W';
-	n++;
-	rMenu.m_nCustMenuItemFuncArr[menuitem][n] = F_OPEN_COMMAND_PROMPT_AS_ADMIN;
-	rMenu.m_nCustMenuItemKeyArr[menuitem][n]  = 'w';
-	n++;
-	rMenu.m_nCustMenuItemFuncArr[menuitem][n] = F_OPEN_POWERSHELL;
-	rMenu.m_nCustMenuItemKeyArr[menuitem][n]  = 'P';
-	n++;
-	rMenu.m_nCustMenuItemFuncArr[menuitem][n] = F_OPEN_POWERSHELL_AS_ADMIN;
-	rMenu.m_nCustMenuItemKeyArr[menuitem][n]  = 'p';
-	n++;
-	rMenu.m_nCustMenuItemNumArr[menuitem] = n;
+	/* カスタムメニュー3 */
+	InitCustomMenuOpenTools(pShareData, 3);
 
 	/* タブメニュー */	//@@@ 2003.06.14 MIK
 	n = 0;
@@ -1453,41 +1453,14 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_0;
 	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '\0';
 	n++;
-	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_COPYFNAME;
-	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'F';
-	n++;
-	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_COPYPATH;
-	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '\0';
-	n++;
-	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_COPYDIRPATH;
-	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '\0';
-	n++;
-	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_0;
-	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '\0';
-	n++;
-	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_OPEN_FOLDER_IN_EXPLORER; 
-	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'F';
-	n++;
-	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_OPEN_COMMAND_PROMPT;
-	rMenu.m_nCustMenuItemKeyArr[CUSTMENU_INDEX_FOR_TABWND][n]  = 'W';
-	n++;
-	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_OPEN_COMMAND_PROMPT_AS_ADMIN;
-	rMenu.m_nCustMenuItemKeyArr[CUSTMENU_INDEX_FOR_TABWND][n]  = 'w';
-	n++;
-	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_OPEN_POWERSHELL;
-	rMenu.m_nCustMenuItemKeyArr[CUSTMENU_INDEX_FOR_TABWND][n]  = 'P';
-	n++;
-	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_OPEN_POWERSHELL_AS_ADMIN;
-	rMenu.m_nCustMenuItemKeyArr[CUSTMENU_INDEX_FOR_TABWND][n]  = 'p';
-	n++;
-	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_CUSTMENU_1;
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_CUSTMENU_2;
 	rMenu.m_nCustMenuItemKeyArr[CUSTMENU_INDEX_FOR_TABWND][n]  = 'A';
 	rMenu.m_bCustMenuPopupArr[CUSTMENU_INDEX_FOR_TABWND]       = true;
 	n++;
-	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_CUSTMENU_2;
-    rMenu.m_nCustMenuItemKeyArr[CUSTMENU_INDEX_FOR_TABWND][n]  = 'A';
-    rMenu.m_bCustMenuPopupArr[CUSTMENU_INDEX_FOR_TABWND]       = true;
-    n++;
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_CUSTMENU_3;
+	rMenu.m_nCustMenuItemKeyArr[CUSTMENU_INDEX_FOR_TABWND][n]  = 'A';
+	rMenu.m_bCustMenuPopupArr[CUSTMENU_INDEX_FOR_TABWND]       = true;
+	n++;
 	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_0;
 	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '\0';
 	n++;
