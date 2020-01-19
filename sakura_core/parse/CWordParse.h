@@ -230,4 +230,3 @@ end_func:
 	return pr - pS;
 }
 
-/*[EOF]*/

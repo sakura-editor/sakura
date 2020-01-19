@@ -130,4 +130,3 @@ protected:
 #include "CRecentEditNode.h"
 #include "CRecentTagjumpKeyword.h"
 
-/*[EOF]*/

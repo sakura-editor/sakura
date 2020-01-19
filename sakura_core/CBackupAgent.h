@@ -35,4 +35,3 @@ protected:
 	bool FormatBackUpPath( WCHAR*, size_t, const WCHAR* );	//!< バックアップパスの作成 2005.11.21 aroka
 };
 
-/*[EOF]*/

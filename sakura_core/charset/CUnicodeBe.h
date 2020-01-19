@@ -44,4 +44,3 @@ public:
 		{ return CUnicode::_UnicodeToUnicode_out(cSrc, pDst, true); }	// Unicode   → UnicodeBEコード変換
 };
 
-/*[EOF]*/

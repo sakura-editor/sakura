@@ -62,4 +62,3 @@ public:
 	EColorIndexType GetColorIdx(void) const{ return COLORIDX_CTRLCODE; }
 };
 
-/*[EOF]*/

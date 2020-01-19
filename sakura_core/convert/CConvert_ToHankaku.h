@@ -38,4 +38,3 @@ enum EToHankakuMode{
 	TO_EISU		= 0x04, //!< 英数字に影響アリ
 };
 
-/*[EOF]*/

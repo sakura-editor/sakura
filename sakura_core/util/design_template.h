@@ -112,4 +112,3 @@ private:
 };
 template <class T> std::vector<T*> TInstanceHolder<T>::gm_table;
 
-/*[EOF]*/

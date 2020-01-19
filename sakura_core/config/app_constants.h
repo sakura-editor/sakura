@@ -56,4 +56,3 @@ const int MINLINEKETAS		= 10;		//!< 1行の桁数の最小値
 const int LINENUMWIDTH_MIN = 2;
 const int LINENUMWIDTH_MAX = 11;
 
-/*[EOF]*/

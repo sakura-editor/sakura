@@ -107,4 +107,3 @@ private:
 	WCHAR*	m_pHead;
 };
 
-/*[EOF]*/

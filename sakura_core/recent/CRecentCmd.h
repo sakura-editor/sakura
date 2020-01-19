@@ -46,4 +46,3 @@ public:
 	size_t			GetTextMaxLength() const;
 };
 
-/*[EOF]*/

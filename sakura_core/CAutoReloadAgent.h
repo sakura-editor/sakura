@@ -59,4 +59,3 @@ private:
 	int m_nDelayCount;	//未編集で再ロード時の遅延カウンタ
 };
 
-/*[EOF]*/

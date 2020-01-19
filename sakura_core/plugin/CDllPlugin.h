@@ -83,4 +83,3 @@ private:
 	wstring m_sDllName;
 };
 
-/*[EOF]*/

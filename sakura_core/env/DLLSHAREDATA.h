@@ -187,4 +187,3 @@ public:
 private:
 };
 
-/*[EOF]*/

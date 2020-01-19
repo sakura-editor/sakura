@@ -99,4 +99,3 @@ private:
 	int		m_nTransformFileNameOrgId[MAX_TRANSFORM_FILENAME];
 };
 
-/*[EOF]*/

@@ -36,4 +36,3 @@ public:
 	bool DoDecode(const CNativeW& cData, CMemory* pcDst) override;
 };
 
-/*[EOF]*/

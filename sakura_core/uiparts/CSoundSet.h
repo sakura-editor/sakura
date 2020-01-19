@@ -34,4 +34,3 @@ private:
 	int	m_nMuteCount;
 };
 
-/*[EOF]*/

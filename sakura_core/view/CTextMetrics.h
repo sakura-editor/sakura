@@ -129,4 +129,3 @@ private:
 	std::vector<int> m_aFontHeightMargin;
 };
 
-/*[EOF]*/

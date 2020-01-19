@@ -39,4 +39,3 @@ public:
 	void CopyFilename( WCHAR *pcDst ) const { wcscpy( pcDst, m_aFilename ); }
 };
 
-/*[EOF]*/

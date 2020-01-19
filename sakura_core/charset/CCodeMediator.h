@@ -47,4 +47,3 @@ private:
 	const SEncodingConfig& m_sEncodingConfig;
 };
 
-/*[EOF]*/

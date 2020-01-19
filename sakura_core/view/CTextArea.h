@@ -245,4 +245,3 @@ public:
 	int		m_nViewAlignLeftCols;	/* 行番号域の桁数 */
 };
 
-/*[EOF]*/

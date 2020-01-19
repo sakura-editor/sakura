@@ -37,4 +37,3 @@ const ACHAR* to_achar(const WCHAR* pSrc, int nSrcLength);
 //その他
 const WCHAR* easy_format(const WCHAR* format, ...);
 
-/*[EOF]*/

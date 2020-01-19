@@ -114,4 +114,3 @@ private:
 	const CLayout*		m_pcLayoutRef;
 };
 
-/*[EOF]*/

@@ -43,4 +43,3 @@ public:
 	CBinaryOutputStream(LPCWSTR pszFilePath, bool bExceptionMode = false);
 };
 
-/*[EOF]*/

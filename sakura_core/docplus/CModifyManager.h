@@ -65,4 +65,3 @@ public:
 	void ResetAllModifyFlag(CDocLineMgr* pcDocLineMgr, int nSeq);	// 行変更状態をすべてリセット
 };
 
-/*[EOF]*/

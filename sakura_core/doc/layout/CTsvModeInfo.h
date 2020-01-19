@@ -51,4 +51,3 @@ private:
 	std::vector<int> m_tabLength;
 };
 
-/*[EOF]*/

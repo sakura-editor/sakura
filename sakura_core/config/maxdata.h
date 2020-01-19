@@ -88,4 +88,3 @@ enum maxdata{
 	MAX_MAIN_MENU_NAME_LEN		= 40,	// メインメニュー名文字列長
 };
 
-/*[EOF]*/

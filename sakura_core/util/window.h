@@ -190,4 +190,3 @@ private:
 	HFONT m_hFont;
 };
 
-/*[EOF]*/

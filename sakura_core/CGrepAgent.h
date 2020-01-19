@@ -195,4 +195,3 @@ public: //$$ 仮
 	bool	m_bGrepRunning;		//!< Grep処理中
 };
 
-/*[EOF]*/

@@ -328,4 +328,3 @@ private:
 	bool				m_bDynamicBrush;	//m_hbrCurrentを動的に作成した場合はtrue
 };
 
-/*[EOF]*/

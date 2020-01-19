@@ -30,4 +30,3 @@ bool GetDateTimeFormat( WCHAR* szResult, int size, const WCHAR* format, const SY
 UINT32 ParseVersion( const WCHAR* ver );	//バージョン番号の解析
 int CompareVersion( const WCHAR* verA, const WCHAR* verB );	//バージョン番号の比較
 
-/*[EOF]*/

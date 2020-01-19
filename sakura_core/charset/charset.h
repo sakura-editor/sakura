@@ -140,4 +140,3 @@ public:
 	LPCWSTR		GetName(int nIndex) const;
 };
 
-/*[EOF]*/

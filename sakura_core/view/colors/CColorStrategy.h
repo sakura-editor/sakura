@@ -231,4 +231,3 @@ private:
 	bool	m_bSkipBeforeLayoutFound;
 };
 
-/*[EOF]*/

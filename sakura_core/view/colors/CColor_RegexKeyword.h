@@ -40,4 +40,3 @@ private:
 	EColorIndexType m_nCOMMENTMODE;
 };
 
-/*[EOF]*/

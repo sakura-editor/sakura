@@ -77,4 +77,3 @@ struct EditInfo {
 	EditInfo() noexcept;
 };
 
-/*[EOF]*/

@@ -100,4 +100,3 @@ private:
 */
 BOOL IsPowerShellAvailable(void);
 
-/*[EOF]*/

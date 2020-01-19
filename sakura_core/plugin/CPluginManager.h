@@ -71,4 +71,3 @@ private:
 	wstring m_sExePluginDir;			//Exeフォルダ配下pluginsフォルダのパス
 };
 
-/*[EOF]*/

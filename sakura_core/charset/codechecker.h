@@ -446,4 +446,3 @@ int CheckCesu8Char( const char*, const int, ECharSet*, const int nOption );
 int CheckUtf7DPart( const char*, const int, char **ppNextChar, bool *pbError );
 int CheckUtf7BPart( const char*, const int, char **ppNextChar, bool *pbError, const int nOption, bool *pbNoAddPoint = NULL );
 
-/*[EOF]*/

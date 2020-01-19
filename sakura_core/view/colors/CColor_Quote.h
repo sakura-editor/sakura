@@ -72,4 +72,3 @@ public:
 	EColorIndexType GetStrategyColor() const override{ return COLORIDX_WSTRING; }
 };
 
-/*[EOF]*/

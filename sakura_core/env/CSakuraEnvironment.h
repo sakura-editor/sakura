@@ -44,4 +44,3 @@ private:
 /* 指定ウィンドウが、編集ウィンドウのフレームウィンドウかどうか調べる */
 BOOL IsSakuraMainWindow( HWND hWnd );
 
-/*[EOF]*/

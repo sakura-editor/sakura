@@ -69,4 +69,3 @@ private:
 	bool	m_bMiniMap;
 };
 
-/*[EOF]*/

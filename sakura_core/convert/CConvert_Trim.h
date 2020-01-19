@@ -38,4 +38,3 @@ private:
 	bool m_bExtEol;
 };
 
-/*[EOF]*/

@@ -41,4 +41,3 @@ private:
 	const CDocLineMgr* m_pcDocLineMgr;
 };
 
-/*[EOF]*/

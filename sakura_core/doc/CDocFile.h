@@ -78,4 +78,3 @@ public: //####
 	CFilePath	m_szSaveFilePath;	/* 保存時のファイルのパス（マクロ用） */	// 2006.09.04 ryoji
 };
 
-/*[EOF]*/

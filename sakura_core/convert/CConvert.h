@@ -54,4 +54,3 @@ public:
 	virtual bool DoConvert( CNativeW* pcData )=0;
 };
 
-/*[EOF]*/

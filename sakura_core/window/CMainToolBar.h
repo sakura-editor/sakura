@@ -79,4 +79,3 @@ private:
 	CImageListMgr*			m_pcIcons;
 };
 
-/*[EOF]*/

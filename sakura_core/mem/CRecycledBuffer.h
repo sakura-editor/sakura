@@ -111,4 +111,3 @@ private:
 	int   m_current;
 };
 
-/*[EOF]*/

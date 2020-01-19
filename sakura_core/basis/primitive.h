@@ -55,4 +55,3 @@ typedef char KEYCODE;
 	typedef int Int;
 #endif
 
-/*[EOF]*/

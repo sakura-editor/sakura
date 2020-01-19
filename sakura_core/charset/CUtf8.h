@@ -157,4 +157,3 @@ inline int CUtf8::_UniToUtf8_char( const unsigned short* pSrc, const int nSrcLen
 	return nret;
 }
 
-/*[EOF]*/

@@ -79,4 +79,3 @@ private:
 	int m_nCOMMENTEND;
 };
 
-/*[EOF]*/

@@ -96,4 +96,3 @@ private:
 	CDocLineMgr* m_pcDocLineMgr;
 };
 
-/*[EOF]*/
