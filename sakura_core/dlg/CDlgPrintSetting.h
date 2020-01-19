@@ -82,4 +82,3 @@ protected:
 	void SetFontName( int idTxt, int idUse, LOGFONT& lf, int nPointSize );	// フォント名/使用ボタンの設定
 };
 
-///////////////////////////////////////////////////////////////////////

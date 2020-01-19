@@ -70,4 +70,3 @@ protected:
 	LRESULT OnDestroy(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;// WM_DESTROY処理
 };
 
-///////////////////////////////////////////////////////////////////////

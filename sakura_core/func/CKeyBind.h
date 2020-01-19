@@ -94,4 +94,3 @@ protected:
 			int nShiftState, CNativeW& cMemList, int nFuncId, BOOL bGetDefFuncCode );
 };
 
-///////////////////////////////////////////////////////////////////////

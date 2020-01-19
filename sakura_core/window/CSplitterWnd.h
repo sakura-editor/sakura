@@ -90,4 +90,3 @@ protected:
 	void DrawSplitter(int xPos, int yPos, int bEraseOld);	/* 分割トラッカーの表示 */
 };
 
-///////////////////////////////////////////////////////////////////////
