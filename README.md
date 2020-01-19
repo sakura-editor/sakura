@@ -92,9 +92,9 @@ Visual Studio 2017/2019 の両対応に関しては  [#866](https://github.com/s
 
 ### .vsconfig に関して
 
-Sakura Editor のコンパイルに必要なコンポーネントを Visual Studio 2017/2019 にインストールするために .vsconfig という設定ファイルを用意しています。
+Sakura Editor のコンパイルに必要なコンポーネントを Visual Studio 2017/2019 にインストールするために [.vsconfig](.vsconfig) という設定ファイルを用意しています。
 
-[#1162](https://github.com/sakura-editor/sakura/pull/1162) で .vsconfig というファイルを sakura.sln と同じディレクトリに配置しています。
+[#1162](https://github.com/sakura-editor/sakura/pull/1162) で [.vsconfig](.vsconfig) というファイルを sakura.sln と同じディレクトリに配置しています。
 
 #### Visaul Studio 2017/2019 共通
 
@@ -114,7 +114,7 @@ vs_community__XXXXX.exe --config <.vsconfig のファイルパス>
 
 #### Visaul Studio 2019 のみ
 
-`sakura.sln` と同じディレクトリに `.vsconfig` が存在するので、
+`sakura.sln` と同じディレクトリに [.vsconfig](.vsconfig) が存在するので、
 Visaul Studio 2019 で `sakura.sln` を開くと必要なコンポーネントが足りない場合、インストールを促す表示が出るので、インストールをクリックすると自動的にインストールする。
 
 ##### 参照
