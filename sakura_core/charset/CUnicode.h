@@ -47,4 +47,3 @@ public:
 	inline static EConvertResult UnicodeToUnicode_out(const CNativeW& cSrc, CMemory* pDst){ return _UnicodeToUnicode_out(cSrc, pDst, false); }
 };
 
-/*[EOF]*/

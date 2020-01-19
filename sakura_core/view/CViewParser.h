@@ -43,4 +43,3 @@ private:
 	const CEditView* m_pEditView;
 };
 
-/*[EOF]*/

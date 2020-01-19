@@ -77,4 +77,3 @@ protected:
 	CEditView* m_pView;
 };
 
-/*[EOF]*/

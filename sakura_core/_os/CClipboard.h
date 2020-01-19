@@ -57,4 +57,3 @@ public:
 	static int GetDataType();      //!< クリップボードデータ形式(CF_UNICODETEXT等)の取得
 };
 
-/*[EOF]*/

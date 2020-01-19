@@ -187,4 +187,3 @@ inline int CEuc::_UniToEucjp_char( const unsigned short* pSrc, unsigned char* pD
 	return nret;
 }
 
-/*[EOF]*/

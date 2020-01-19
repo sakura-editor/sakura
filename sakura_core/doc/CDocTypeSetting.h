@@ -70,4 +70,3 @@ struct KeyHelpInfo {
 };
 //@@@ 2006.04.10 fon ADD-end
 
-/*[EOF]*/

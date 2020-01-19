@@ -31,4 +31,3 @@ public:
 	bool DoConvert(CNativeW* pcData) override;
 };
 
-/*[EOF]*/

@@ -111,4 +111,3 @@ static const bool UNICODE_BOOL=true;
 #define ALPHA_VERSION
 #endif
 
-/*[EOF]*/

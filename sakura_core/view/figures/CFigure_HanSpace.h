@@ -37,4 +37,3 @@ public:
 	EColorIndexType GetColorIdx(void) const{ return COLORIDX_SPACE; }
 };
 
-/*[EOF]*/

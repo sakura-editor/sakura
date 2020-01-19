@@ -46,4 +46,3 @@ public:
 	void DeleteItemByHwnd(HWND hwnd);
 };
 
-/*[EOF]*/

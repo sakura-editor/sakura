@@ -67,4 +67,3 @@ private:
 	unsigned validColorNum; ///< highlightColorsの何番目の要素までが有効か。
 };
 
-/*[EOF]*/

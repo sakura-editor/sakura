@@ -56,4 +56,3 @@ public:
 	void ResetAllFucListMark(CDocLineMgr* pcDocLineMgr, bool bFlag);	// 関数リストマークをすべてリセット
 };
 
-/*[EOF]*/

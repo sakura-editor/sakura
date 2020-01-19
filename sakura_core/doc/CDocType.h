@@ -68,4 +68,3 @@ private:
 	bool					m_nSettingTypeLocked;		//!< 文書種別の一時設定状態
 };
 
-/*[EOF]*/

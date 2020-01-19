@@ -412,4 +412,3 @@ public:
 	void Sub_BoxSelectLock( int flags );
 };
 
-/*[EOF]*/

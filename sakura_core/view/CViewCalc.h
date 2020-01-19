@@ -58,4 +58,3 @@ private:
 	const CEditView* m_pOwner;
 };
 
-/*[EOF]*/

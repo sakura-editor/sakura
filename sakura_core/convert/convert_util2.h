@@ -723,4 +723,3 @@ finish_first_detect:;
 	return nskipped_len;
 }
 
-/*[EOF]*/

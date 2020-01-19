@@ -115,4 +115,3 @@ private:
 
 #define _countof2(s) s.BUFFER_COUNT
 
-/*[EOF]*/

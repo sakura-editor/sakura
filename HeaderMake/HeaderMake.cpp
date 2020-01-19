@@ -293,14 +293,12 @@ next:
 		fprintf(out,
 			"\n"
 			"#endif /* SAKURA_HEADERMAKE_98B26AB2_D5C9_4884_8D15_D1F3A2936253_H_ */\n"
-			"/*[EOF]*/\n"
 		);	// インクルードガード終了（define 用）
 	}else if(mode==MODE_ENUM){
 		fprintf(out,
 			"};\n"
 			"\n"
 			"#endif /* SAKURA_HEADERMAKE_2034D8F5_AE65_408D_9F53_D3DEA240C67BI_H_ */\n"
-			"/*[EOF]*/\n"
 		);	// インクルードガード終了（enum 用）
 	}else{
 		; // 何も出力しない

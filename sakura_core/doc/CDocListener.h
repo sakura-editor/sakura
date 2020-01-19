@@ -212,4 +212,3 @@ public:
 	const char* what() const throw(){ return "CFlowInterruption"; }
 };
 
-/*[EOF]*/

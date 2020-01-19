@@ -154,4 +154,3 @@ private:
 	PointType m_ptTo;
 };
 
-/*[EOF]*/

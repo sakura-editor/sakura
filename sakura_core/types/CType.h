@@ -352,4 +352,3 @@ inline bool C_IsSpace( wchar_t c, bool bExtEol )
 	);
 }
 
-/*[EOF]*/

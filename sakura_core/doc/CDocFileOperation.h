@@ -79,4 +79,3 @@ private:
 	CEditDoc* m_pcDocRef;
 };
 
-/*[EOF]*/

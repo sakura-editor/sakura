@@ -35,4 +35,3 @@ public:
 	void OnFinalLoad(ELoadResult eLoadResult) override;
 };
 
-/*[EOF]*/

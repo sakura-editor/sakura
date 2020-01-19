@@ -101,4 +101,3 @@ private:
 	std::vector<JackDef> m_Jacks;	//ジャック定義の一覧
 };
 
-/*[EOF]*/

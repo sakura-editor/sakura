@@ -43,4 +43,3 @@ public:
 	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize);	//コマンドを処理する
 };
 
-/*[EOF]*/

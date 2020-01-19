@@ -745,4 +745,3 @@ struct CommonSetting
 	CommonSetting_MainMenu			m_sMainMenu;		//!< メインメニュー		// 2010/5/15 Uchi
 };
 
-/*[EOF]*/

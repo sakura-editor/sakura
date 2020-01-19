@@ -114,4 +114,3 @@ private:
 	BREGEXP_BSubstExW2       m_BSubstEx;
 };
 
-/*[EOF]*/

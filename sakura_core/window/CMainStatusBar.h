@@ -59,4 +59,3 @@ private:
 	HWND		m_hwndProgressBar;
 };
 
-/*[EOF]*/

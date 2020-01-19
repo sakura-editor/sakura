@@ -52,4 +52,3 @@ protected:
 	static int UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst );
 };
 
-/*[EOF]*/

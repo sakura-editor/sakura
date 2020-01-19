@@ -41,4 +41,3 @@ public:
 	bool operator != (const SIZE& rhs) const{ return !operator==(rhs); }
 };
 
-/*[EOF]*/

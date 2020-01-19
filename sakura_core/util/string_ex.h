@@ -258,4 +258,3 @@ int strnicmp_literal(const char* strData1, const char (&literalData2)[Size]) {
 	return ::_strnicmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
 }
 
-/*[EOF]*/

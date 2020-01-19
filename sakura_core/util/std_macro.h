@@ -81,4 +81,3 @@ T t_unit(T t)
 //ビルド種に関係なく、ANSI。
 #define ATEXT(A) A
 
-/*[EOF]*/

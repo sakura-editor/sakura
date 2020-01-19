@@ -45,4 +45,3 @@ public:
 	int FindItemByPath(const WCHAR* pszPath) const;
 };
 
-/*[EOF]*/

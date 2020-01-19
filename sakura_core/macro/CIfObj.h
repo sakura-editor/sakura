@@ -138,4 +138,3 @@ private:
 	ITypeInfo* m_TypeInfo;
 };
 
-/*[EOF]*/

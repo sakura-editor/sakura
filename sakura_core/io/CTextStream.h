@@ -76,4 +76,3 @@ public:
 	CTextInputStream_AbsIni(const WCHAR* pszPath, bool bOrExedir = true);
 };
 
-/*[EOF]*/

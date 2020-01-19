@@ -94,4 +94,3 @@ public:
 	const char* what() const throw(){ return "CAppExitException"; }
 };
 
-/*[EOF]*/

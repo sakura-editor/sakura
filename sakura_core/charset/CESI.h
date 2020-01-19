@@ -265,4 +265,3 @@ ECodeType CESI::DetectUnicodeBom(const char* buff, size_t size) noexcept
 	return CODE_NONE;
 }
 
-/*[EOF]*/

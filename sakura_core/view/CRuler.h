@@ -73,4 +73,3 @@ private:
 	std::vector<DWORD> m_asz;
 };
 
-/*[EOF]*/

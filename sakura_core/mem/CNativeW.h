@@ -175,4 +175,3 @@ public:
 // 派生クラスでメンバー追加禁止
 static_assert(sizeof(CNativeW) == sizeof(CNative), "size check");
 
-/*[EOF]*/

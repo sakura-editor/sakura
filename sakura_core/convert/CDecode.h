@@ -48,4 +48,3 @@ public:
 	virtual bool DoDecode( const CNativeW& pcData, CMemory* pDest )=0;
 };
 
-/*[EOF]*/

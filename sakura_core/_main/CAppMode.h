@@ -57,4 +57,3 @@ public:
 	wchar_t			m_szGrepKey[1024];			//!< Grepモードの場合、その検索キー
 };
 
-/*[EOF]*/

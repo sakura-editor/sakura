@@ -206,4 +206,3 @@ inline int MyMultiByteToWideChar_JP( const unsigned char* pSrc, const int nSrcLe
 	return nret;
 }
 
-/*[EOF]*/

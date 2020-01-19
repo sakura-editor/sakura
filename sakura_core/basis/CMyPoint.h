@@ -117,4 +117,3 @@ inline void TwoPointToRect(
 	}
 }
 
-/*[EOF]*/

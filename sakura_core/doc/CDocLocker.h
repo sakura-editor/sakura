@@ -50,4 +50,3 @@ private:
 	bool m_bIsDocWritable;
 };
 
-/*[EOF]*/

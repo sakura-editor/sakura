@@ -36,4 +36,3 @@ void ChangeCurrentDirectoryToExeDir();
 //! カレントディレクトリ移動機能付LoadLibrary
 HMODULE LoadLibraryExedir( LPCWSTR pszDll);
 
-/*[EOF]*/
