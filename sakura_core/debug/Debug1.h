@@ -48,4 +48,3 @@ void DebugOutW( LPCWSTR lpFmt, ...);
 	#define RELPRINT   Do_not_define_USE_RELPRINT
 #endif	// USE_RELPRINT
 
-///////////////////////////////////////////////////////////////////////

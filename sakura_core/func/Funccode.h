@@ -172,7 +172,6 @@ namespace nsFuncCode{
 	extern const EFunctionCode	pnFuncList_Special[];
 	extern const int			nFuncList_Special_Num;
 };
-///////////////////////////////////////////////////////////////////////
 
 /*機能番号に対応したヘルプトピックIDを返す*/
 int FuncID_To_HelpContextID( EFunctionCode nFuncID );	//Stonee, 2001/02/23

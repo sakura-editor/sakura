@@ -53,4 +53,3 @@ protected:
 	LRESULT OnLButtonDblClk(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;//WM_LBUTTONDBLCLK
 };
 
-///////////////////////////////////////////////////////////////////////

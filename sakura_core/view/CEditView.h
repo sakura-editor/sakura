@@ -745,4 +745,3 @@ public:
 	virtual bool IsEnableRunningDlg(){ return true; }
 	virtual bool IsActiveDebugWindow(){ return true; }
 };
-///////////////////////////////////////////////////////////////////////

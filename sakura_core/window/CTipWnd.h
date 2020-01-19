@@ -74,4 +74,3 @@ protected:
 	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;/* 描画処理 */
 };
 
-///////////////////////////////////////////////////////////////////////
