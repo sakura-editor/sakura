@@ -31,9 +31,8 @@ https://docs.microsoft.com/ja-jp/visualstudio/install/import-export-installation
         - [Visual Studio Community 2019 対応に関して](#visual-studio-community-2019-対応に関して)
         - [vsconfig に関して](#vsconfig-に関して)
             - [Visaul Studio 2017/2019 共通](#visaul-studio-20172019-共通)
-                - [参照](#参照)
             - [Visaul Studio 2019 のみ](#visaul-studio-2019-のみ)
-                - [参照](#参照)
+            - [参照](#参照)
     - [How to build](#how-to-build)
         - [詳細情報](#詳細情報)
     - [PR(Pull Request) を簡単にローカルに取得する方法](#prpull-request-を簡単にローカルに取得する方法)
@@ -105,20 +104,17 @@ Sakura Editor のコンパイルに必要なコンポーネントを Visual Stud
 vs_community__XXXXX.exe --config <.vsconfig のファイルパス>
 ```
 
-##### 参照
-
-- [How to extract currently installed Visual Studio component IDs?][How to extract currently installed Visual Studio component IDs?]
-- [Configure Visual Studio across your organization with .vsconfig][Configure Visual Studio across your organization with .vsconfig]
-- [インストール構成をインポートまたはエクスポートする][インストール構成をインポートまたはエクスポートする]
-- [コマンド ライン パラメーターを使用して Visual Studio をインストールする][コマンド ライン パラメーターを使用して Visual Studio をインストールする]
-
 #### Visaul Studio 2019 のみ
 
 `sakura.sln` と同じディレクトリに [.vsconfig](.vsconfig) が存在するので、
 Visaul Studio 2019 で `sakura.sln` を開くと必要なコンポーネントが足りない場合、インストールを促す表示が出るので、インストールをクリックすると自動的にインストールする。
 
-##### 参照
+#### 参照
 
+- [How to extract currently installed Visual Studio component IDs?][How to extract currently installed Visual Studio component IDs?]
+- [Configure Visual Studio across your organization with .vsconfig][Configure Visual Studio across your organization with .vsconfig]
+- [インストール構成をインポートまたはエクスポートする][インストール構成をインポートまたはエクスポートする]
+- [コマンド ライン パラメーターを使用して Visual Studio をインストールする][コマンド ライン パラメーターを使用して Visual Studio をインストールする]
 - [不足しているコンポーネントを自動的にインストールする][不足しているコンポーネントを自動的にインストールする]
 
 ## How to build
