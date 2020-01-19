@@ -20,7 +20,7 @@ set CONFIGURATION=%2
 set DEST_DIR=%PLATFORM%\%CONFIGURATION%
 set OUT_DIR=%~dp0..\%DEST_DIR%
 
-: ---- bron420 ---- :
+: ---- bregonig.dll ---- :
 set BREGONIG_DLL=bregonig.dll
 set BRON_ZIP=..\installer\externals\bregonig\bron420.zip
 set BRON_TMP=..\installer\temp\bron
