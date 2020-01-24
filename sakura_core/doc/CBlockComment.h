@@ -57,4 +57,3 @@ private:
 	int		m_nBlockFromLen;
 	int		m_nBlockToLen;
 };
-

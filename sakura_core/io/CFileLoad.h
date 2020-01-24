@@ -164,4 +164,3 @@ inline DWORD CFileLoad::FilePointer( DWORD offset, DWORD origin )
 		throw CError_FileRead();
 	return fp;
 }
-

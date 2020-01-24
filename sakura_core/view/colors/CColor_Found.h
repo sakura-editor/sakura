@@ -66,4 +66,3 @@ private:
 	EColorIndexType highlightColors[ COLORIDX_SEARCHTAIL - COLORIDX_SEARCH + 1 ]; ///< チェックが付いている検索文字列色の配列。
 	unsigned validColorNum; ///< highlightColorsの何番目の要素までが有効か。
 };
-

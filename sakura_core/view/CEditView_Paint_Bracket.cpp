@@ -596,4 +596,3 @@ bool CEditView::IsBracket( const wchar_t *pLine, CLogicInt x, CLogicInt size )
 	return false;
 }
 //@@@ 2003.01.09 End
-

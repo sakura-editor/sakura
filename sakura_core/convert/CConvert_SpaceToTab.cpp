@@ -120,4 +120,3 @@ bool CConvert_SpaceToTab::DoConvert(CNativeW* pcData)
 	pDes = NULL;
 	return true;
 }
-

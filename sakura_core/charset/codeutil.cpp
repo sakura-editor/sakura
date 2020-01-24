@@ -324,4 +324,3 @@ unsigned int __fastcall SjisFilter_nec2ibm( const unsigned int uCode )
 
 	return code;
 }
-

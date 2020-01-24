@@ -203,4 +203,3 @@ private:
 	HINSTANCE		m_hInstance;
 	std::wstring	m_strLoadedDllName;
 };
-

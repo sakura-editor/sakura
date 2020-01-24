@@ -113,4 +113,3 @@ public:
 private:
 	EEolType	m_eEolType;	//!< 改行コードの種類
 };
-

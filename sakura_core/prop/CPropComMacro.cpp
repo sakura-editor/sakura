@@ -690,4 +690,3 @@ void CPropMacro::CheckListPosition_Macro( HWND hwndDlg )
 			::CheckDlgButton( hwndDlg, IDC_CHECK_MacroOnSave, true );
 	}
 }
-

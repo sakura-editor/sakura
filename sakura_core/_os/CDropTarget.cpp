@@ -427,4 +427,3 @@ STDMETHODIMP CEnumFORMATETC::Clone(IEnumFORMATETC** ppenum)
 {
 	return E_NOTIMPL;
 }
-

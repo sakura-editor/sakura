@@ -167,4 +167,3 @@ MacroFuncInfo COutlineIfObj::m_MacroFuncInfoArr[] =
 	//	終端
 	{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
-

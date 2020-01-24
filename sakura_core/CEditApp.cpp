@@ -113,4 +113,3 @@ bool CEditApp::OpenPropertySheetTypes( int nPageNum, CTypeConfig nSettingType )
 
 	return bRet;
 }
-

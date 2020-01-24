@@ -153,4 +153,3 @@ private:
 	PointType m_ptFrom;
 	PointType m_ptTo;
 };
-

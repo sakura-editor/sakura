@@ -157,4 +157,3 @@ void CProgressSubject::NotifyProgress(int nPer)
 		GetListener(i)->OnProgress(nPer);
 	}
 }
-

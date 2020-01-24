@@ -87,4 +87,3 @@ int TopCustomMessage(HWND hwnd, UINT uType, LPCWSTR format, ...);	//(TOPMOST)
 
 //作者に教えて欲しいエラー
 int PleaseReportToAuthor(HWND hwnd, LPCWSTR format, ...);
-

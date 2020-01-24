@@ -746,4 +746,3 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 
 //! ウィンドウ一覧表示
 #define MYWM_DLGWINLIST (WM_APP+225)
-

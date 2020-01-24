@@ -62,4 +62,3 @@ void CRunningTimer::WriteTrace(const char* msg) const
 	MYTRACE( L"%3d:\"%hs\", %d㍉秒 : %hs\n", m_nDeapth, m_szText, timeGetTime() - m_nStartTime, msg );
 }
 #endif
-

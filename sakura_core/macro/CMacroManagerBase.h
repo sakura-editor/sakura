@@ -97,4 +97,3 @@ public:
 	// Constructor
 	CMacroManagerBase();
 };
-

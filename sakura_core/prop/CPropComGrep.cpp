@@ -238,4 +238,3 @@ void CPropGrep::SetRegexpVersion( HWND hwndDlg )
 	}
 	::DlgItem_SetText( hwndDlg, IDC_LABEL_REGEXP_VER, breg.GetVersionW() );
 }
-

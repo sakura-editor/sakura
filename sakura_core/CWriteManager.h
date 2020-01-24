@@ -39,4 +39,3 @@ public:
 		const SSaveInfo&	sSaveInfo		//!< [in]
 	);
 };
-

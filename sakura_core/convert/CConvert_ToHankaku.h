@@ -37,4 +37,3 @@ enum EToHankakuMode{
 	TO_HIRAGANA	= 0x02, //!< ひらがなに影響アリ
 	TO_EISU		= 0x04, //!< 英数字に影響アリ
 };
-

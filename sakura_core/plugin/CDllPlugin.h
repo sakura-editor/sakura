@@ -82,4 +82,3 @@ public:
 private:
 	wstring m_sDllName;
 };
-

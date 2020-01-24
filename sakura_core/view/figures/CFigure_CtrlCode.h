@@ -61,4 +61,3 @@ public:
 	virtual wchar_t GetAlternateChar() const{ return L'〓'; }
 	EColorIndexType GetColorIdx(void) const{ return COLORIDX_CTRLCODE; }
 };
-

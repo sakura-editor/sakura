@@ -61,4 +61,3 @@ protected:
 	CMacro*	m_pTop;	//	先頭と終端を保持
 	CMacro*	m_pBot;
 };
-

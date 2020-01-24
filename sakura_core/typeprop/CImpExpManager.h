@@ -323,4 +323,3 @@ public:
 private:
 	std::vector<SFileTreeItem>&		m_aFileTreeItems;
 };
-

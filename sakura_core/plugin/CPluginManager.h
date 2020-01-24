@@ -70,4 +70,3 @@ private:
 	wstring m_sBaseDir;					//pluginsフォルダのパス
 	wstring m_sExePluginDir;			//Exeフォルダ配下pluginsフォルダのパス
 };
-

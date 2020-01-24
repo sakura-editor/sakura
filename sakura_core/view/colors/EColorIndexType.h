@@ -112,4 +112,3 @@ enum EColorIndexType {
 	COLORIDX_DEFAULT		= COLORIDX_TEXT,							//!< デフォルト
 	COLORIDX_SEARCHTAIL		= COLORIDX_SEARCH5,
 };
-

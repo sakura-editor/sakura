@@ -33,4 +33,3 @@ bool CColor_Url::EndColor(const CStringRef& cStr, int nPos)
 	}
 	return false;
 }
-

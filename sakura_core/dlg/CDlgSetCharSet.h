@@ -48,4 +48,3 @@ protected:
 
 	void	SetBOM( void );		// BOM の設定
 };
-

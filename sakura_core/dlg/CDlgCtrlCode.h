@@ -70,4 +70,3 @@ private:
 	*/
 	wchar_t		m_nCode;	// コード
 };
-

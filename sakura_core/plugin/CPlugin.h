@@ -300,4 +300,3 @@ public:
 	virtual bool ReadPluginDef( CDataProfile *cProfile, CDataProfile *cProfileMlang ) =0;		//プラグイン定義ファイルを読み込む
 	virtual bool ReadPluginOption( CDataProfile *cProfile ) =0;		//オプションファイルを読み込む
 };
-

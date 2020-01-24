@@ -31,4 +31,3 @@ class CConvert_ZenkataToHankata final : public CConvert{
 public:
 	bool DoConvert(CNativeW* pcData) override;
 };
-

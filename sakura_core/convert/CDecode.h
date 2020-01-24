@@ -47,4 +47,3 @@ public:
 	//実装
 	virtual bool DoDecode( const CNativeW& pcData, CMemory* pDest )=0;
 };
-

@@ -143,4 +143,3 @@ private:
 
 // 文字列ロード簡易化マクロ
 #define LS( id ) ( CLoadString::LoadStringSt( id ) )
-

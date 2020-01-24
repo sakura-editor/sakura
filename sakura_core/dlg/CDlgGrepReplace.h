@@ -52,4 +52,3 @@ protected:
 	void SetData( void ) override;	/* ダイアログデータの設定 */
 	int GetData( void ) override;	/* ダイアログデータの取得 */
 };
-

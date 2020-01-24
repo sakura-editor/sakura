@@ -110,4 +110,3 @@ void CPPAMacroMgr::declare (void)
 	}
 }
 //	To Here Apr. 29, 2002 genta
-

@@ -418,4 +418,3 @@ private:
 public:
 	ESelectCountMode	m_nSelectCountMode; // 選択文字カウント方法
 };
-

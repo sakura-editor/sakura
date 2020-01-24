@@ -83,4 +83,3 @@ public:
 	int			m_nDiffFlgOpt;		// DIFFオプション
 	HWND		m_hWnd_Dst;			// 相手ウインドウハンドル
 };
-

@@ -87,4 +87,3 @@ protected:
 	int GetData( void ) override;	/* ダイアログデータの取得 */
 	void SetDataFromThisText(bool bChecked);	/* 現在編集中ファイルから検索チェックでの設定 */
 };
-

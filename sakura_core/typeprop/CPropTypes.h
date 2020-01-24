@@ -251,4 +251,3 @@ void InitTypeNameId2( std::vector<TYPE_NAME_ID2<T> >& vec, TYPE_NAME_ID<T>* arr,
 		vec.push_back( item );
 	}
 }
-

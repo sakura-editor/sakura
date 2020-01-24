@@ -1195,4 +1195,3 @@ BOOL CPropTypesColor::SelectColor( HWND hwndParent, COLORREF* pColor, DWORD* pCu
 	*pColor = cc.rgbResult;
 	return TRUE;
 }
-

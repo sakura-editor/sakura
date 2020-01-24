@@ -69,4 +69,3 @@ public:
 private:
 	const CEditView* m_pEditView;
 };
-

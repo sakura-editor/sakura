@@ -1946,4 +1946,3 @@ int CGrepAgent::DoGrepReplaceFile(
 
 	return nHitCount;
 }
-

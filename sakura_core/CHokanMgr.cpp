@@ -702,4 +702,3 @@ LPVOID CHokanMgr::GetHelpIdTable(void)
 	return (LPVOID)p_helpids;
 }
 //@@@ 2002.01.18 add end
-

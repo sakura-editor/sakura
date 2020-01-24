@@ -58,4 +58,3 @@ private:
 	int m_nPauseCount;	//これが1以上の場合は監視をしない
 	int m_nDelayCount;	//未編集で再ロード時の遅延カウンタ
 };
-

@@ -339,4 +339,3 @@ void CPropFormat::EnableFormatPropInput( HWND hwndDlg )
 	}
 }
 //	To Here Sept. 10, 2000
-

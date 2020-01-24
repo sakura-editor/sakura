@@ -87,4 +87,3 @@ protected:
 };
 
 #define _INI_T LTEXT
-

@@ -94,4 +94,3 @@ protected:
 	static int S_UnicodeToUTF32LE(const wchar_t* pSrc, int nSrcLen, char* pDst, int nDstLen);
 	static int S_UnicodeToUTF32BE(const wchar_t* pSrc, int nSrcLen, char* pDst, int nDstLen);
 };
-

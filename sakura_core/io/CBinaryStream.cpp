@@ -27,4 +27,3 @@ CBinaryOutputStream::CBinaryOutputStream(LPCWSTR pszFilePath, bool bExceptionMod
 : COutputStream(pszFilePath,L"wb",bExceptionMode)
 {
 }
-

@@ -479,4 +479,3 @@ void CKeyMacroMgr::declare (void)
 	CMacroFactory::getInstance()->RegisterCreator( Creator );
 }
 //	To Here Apr. 29, 2002 genta
-

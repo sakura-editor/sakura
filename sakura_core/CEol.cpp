@@ -169,4 +169,3 @@ void CEol::SetTypeByStringForFile_unibe( const char* pszData, int nDataLen )
 {
 	SetType( _GetEOLType_unibe( pszData, nDataLen ) );
 }
-

@@ -62,4 +62,3 @@ protected:
 	int m_nSet[ KEYWORD_SELECT_NUM ];
 	CKeyWordSetMgr*	m_pCKeyWordSetMgr;
 };
-

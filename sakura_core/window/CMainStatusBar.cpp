@@ -159,4 +159,3 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText
 		}
 	}() ? StatusBar_SetText( m_hwndStatusBar, nIndex | nOption, pszText ) : 0;
 }
-

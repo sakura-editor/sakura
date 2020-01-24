@@ -186,4 +186,3 @@ m_sSelectOldについて
 	現在の選択範囲をOldへコピーした上で新しい選択範囲をSelectに設定して
 	DrawSelectArea()を呼びだすことで新しい範囲が描かれる．
 */
-

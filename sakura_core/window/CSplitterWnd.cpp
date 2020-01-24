@@ -1070,4 +1070,3 @@ LRESULT CSplitterWnd::DispatchEvent_WM_APP( HWND hwnd, UINT uMsg, WPARAM wParam,
 	}
 	return 0L;
 }
-

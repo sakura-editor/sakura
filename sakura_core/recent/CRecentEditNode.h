@@ -45,4 +45,3 @@ public:
 	int FindItemByHwnd(HWND hwnd) const;
 	void DeleteItemByHwnd(HWND hwnd);
 };
-

@@ -115,4 +115,3 @@ HFONT CViewFont::ChooseFontHandle( int fontNo, SFontAttr sFontAttr ) const
 		}
 	}
 }
-

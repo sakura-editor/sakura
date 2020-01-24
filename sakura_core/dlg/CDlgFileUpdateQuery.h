@@ -55,4 +55,3 @@ private:
 	const WCHAR* m_pFilename;
 	bool m_bModified;
 };
-

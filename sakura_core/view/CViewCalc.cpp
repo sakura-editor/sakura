@@ -128,4 +128,3 @@ CLayoutInt CViewCalc::LineIndexToColumn( const CDocLine* pcDocLine, CLogicInt nI
 	nPosX2 += it.getColumn();
 	return nPosX2;
 }
-

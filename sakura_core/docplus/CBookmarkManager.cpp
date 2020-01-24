@@ -265,4 +265,3 @@ void CBookmarkManager::MarkSearchWord(
 		}
 	}
 }
-

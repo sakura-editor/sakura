@@ -57,4 +57,3 @@ protected:
 	BOOL OnBnClicked(int wID) override;
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
 };
-

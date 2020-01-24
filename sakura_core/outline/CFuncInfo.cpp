@@ -43,4 +43,3 @@ CFuncInfo::CFuncInfo(
 CFuncInfo::~CFuncInfo()
 {
 }
-

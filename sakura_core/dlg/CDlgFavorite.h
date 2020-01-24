@@ -137,4 +137,3 @@ private:
 
 	static void  ListViewSort(ListViewSortInfo& info, const CRecent* pRecent, int column, bool bReverse);
 };
-

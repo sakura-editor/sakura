@@ -688,4 +688,3 @@ static WCHAR* GetFileName(const WCHAR* fullpath)
 	}
 	return const_cast<WCHAR*>(pszName);
 }
-

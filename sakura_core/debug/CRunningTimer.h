@@ -85,5 +85,3 @@ protected:
   #define MY_TRACETIME(c,m)
   #define MY_RUNNINGTIMER(c,m)
 #endif
-
-

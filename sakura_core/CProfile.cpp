@@ -380,4 +380,3 @@ void CProfile::DUMP( void )
 #endif
 	return;
 }
-

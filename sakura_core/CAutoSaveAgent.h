@@ -76,4 +76,3 @@ public:
 private:
 	CPassiveTimer m_cPassiveTimer;
 };
-

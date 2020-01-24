@@ -132,4 +132,3 @@ public:
 		m_ptCaretPos_PHY_After = ptCaretPos;
 	}
 };
-

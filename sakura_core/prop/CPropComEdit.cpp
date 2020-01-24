@@ -307,4 +307,3 @@ void CPropEdit::EnableEditPropInput( HWND hwndDlg )
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_FILEOPENDIR ), FALSE );
 	}
 }
-

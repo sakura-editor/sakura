@@ -568,4 +568,3 @@ BOOL CEditView::MakeDiffTmpFile2( WCHAR* tmpName, const WCHAR* orgName, ECodeTyp
 
 	return TRUE;
 }
-

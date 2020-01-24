@@ -186,4 +186,3 @@ public:
 	static void WaitLock( HWND hwndParent, CShareDataLockCounter** ppLock = NULL );
 private:
 };
-

@@ -70,4 +70,3 @@ public:
 	void Replace_j( const char* pszFrom, const char* pszTo ); //!< 文字列置換（日本語考慮版）
 
 };
-

@@ -189,4 +189,3 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 //	CModifyVisitor().ResetAllModifyFlag(pcDocLineMgr, 0);
 	return eRet;
 }
-

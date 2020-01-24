@@ -97,4 +97,3 @@ public:
 		return nRet;
 	}
 };
-

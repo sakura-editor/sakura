@@ -106,4 +106,3 @@ private:
 	WCHAR	m_szCmdLine[1024];
 	WCHAR*	m_pHead;
 };
-

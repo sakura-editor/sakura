@@ -256,4 +256,3 @@ private:
 		return 0;
 	}
 };
-

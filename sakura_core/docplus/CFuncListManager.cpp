@@ -92,4 +92,3 @@ void CFuncListManager::ResetAllFucListMark(CDocLineMgr* pcDocLineMgr, bool bFlag
 		pDocLine = pDocLineNext;
 	}
 }
-

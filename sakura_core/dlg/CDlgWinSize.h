@@ -62,4 +62,3 @@ private:
 	int				m_nWinSizeType;	//!< ウィンドウ表示方法: 0/標準，1/最大化，2/最小化
 	RECT			m_rc;
 };
-

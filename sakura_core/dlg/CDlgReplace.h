@@ -77,4 +77,3 @@ protected:
 	void SetCombosList( void );	/* 検索文字列/置換後文字列リストの設定 */
 	int GetData( void ) override;		/* ダイアログデータの取得 */
 };
-

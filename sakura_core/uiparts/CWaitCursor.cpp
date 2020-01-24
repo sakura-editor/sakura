@@ -36,4 +36,3 @@ CWaitCursor::~CWaitCursor()
 		::SetCursor( m_hCursorOld );
 	}
 }
-

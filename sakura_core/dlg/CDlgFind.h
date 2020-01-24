@@ -61,4 +61,3 @@ protected:
 	// BOOL OnKeyDown( WPARAM wParam, LPARAM lParam ) override;
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
 };
-

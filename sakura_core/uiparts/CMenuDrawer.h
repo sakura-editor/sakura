@@ -125,4 +125,3 @@ protected:
 						 BYTE fsState, BYTE fsStyle, DWORD_PTR dwData,
 						 INT_PTR iString ) const;	/* TBBUTTON構造体にデータをセット */
 };
-

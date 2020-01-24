@@ -148,4 +148,3 @@ void COpeBuf::DUMP()
 	MYTRACE( L"COpeBuf.m_nCurrentPointer=[%d]----\n", m_nCurrentPointer );
 #endif
 }
-

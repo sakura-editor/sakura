@@ -50,4 +50,3 @@ class CFuncInfo {
 		int			m_nInfo;		/*!< 付加情報 */
 		int			m_nDepth;		/*!< 深さ */
 };
-

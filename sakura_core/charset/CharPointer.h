@@ -108,4 +108,3 @@ private:
 };
 
 typedef CharPointerW CharPointerT;
-

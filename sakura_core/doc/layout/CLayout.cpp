@@ -77,4 +77,3 @@ CLayoutInt CLayout::CalcLayoutOffset(const CLayoutMgr& cLayoutMgr, CLogicInt nSt
 	}
 	return nRet;
 }
-

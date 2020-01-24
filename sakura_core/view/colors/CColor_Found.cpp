@@ -122,4 +122,3 @@ bool CColor_Found::EndColor(const CStringRef& cStr, int nPos)
 
 	return false;
 }
-

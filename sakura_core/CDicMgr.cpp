@@ -167,4 +167,3 @@ int CDicMgr::HokanSearch(
 	in.Close();
 	return (int)vKouho.size();
 }
-

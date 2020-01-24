@@ -744,4 +744,3 @@ struct CommonSetting
 	CommonSetting_Plugin			m_sPlugin;			//!< プラグイン 2009/11/30 syat
 	CommonSetting_MainMenu			m_sMainMenu;		//!< メインメニュー		// 2010/5/15 Uchi
 };
-

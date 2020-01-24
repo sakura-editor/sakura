@@ -244,4 +244,3 @@ namespace ApiWrap{
 	void TreeView_ExpandAll( HWND, bool, int nMaxDepth = 100 );
 }
 using namespace ApiWrap;
-

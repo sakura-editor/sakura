@@ -53,4 +53,3 @@ private:
 	HANDLE			m_hEventCPInitialized;	//!< コントロールプロセス初期化完了イベント 2006.04.10 ryoji
 	CControlTray*	m_pcTray;
 };
-

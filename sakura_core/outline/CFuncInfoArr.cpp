@@ -151,4 +151,3 @@ std::wstring CFuncInfoArr::GetAppendText( int info )
 	// キーが存在しない場合、空文字列を返す
 	return {};
 }
-

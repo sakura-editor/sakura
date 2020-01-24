@@ -34,4 +34,3 @@ public:
 		int			nFlag			//!< bit 0: MIME Encodeされたヘッダをdecodeするかどうか
 	);
 };
-

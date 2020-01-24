@@ -89,4 +89,3 @@ void CFigureManager::OnChangeSetting(void)
 		}
 	}
 }
-

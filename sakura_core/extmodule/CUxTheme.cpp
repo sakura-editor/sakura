@@ -133,4 +133,3 @@ BOOL CUxTheme::IsThemeBackgroundPartiallyTransparent( HTHEME htheme, int iPartId
 		return FALSE;
 	return m_pfnIsThemeBackgroundPartiallyTransparent( htheme, iPartId, iStateId );
 }
-

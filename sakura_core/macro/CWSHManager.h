@@ -55,4 +55,3 @@ protected:
 	////	2007.07.20 genta : flags追加
 	//static void ReadyCommands(CIfObj *Object, MacroFuncInfo *Info, int flags);
 };
-

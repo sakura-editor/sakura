@@ -296,4 +296,3 @@ int CEditView::HokanSearchByFile(
 	}
 	return vKouho.size();
 }
-

@@ -49,4 +49,3 @@ public:
 private:
 	bool m_bIsDocWritable;
 };
-

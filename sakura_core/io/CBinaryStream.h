@@ -42,4 +42,3 @@ class CBinaryOutputStream final : public COutputStream{
 public:
 	CBinaryOutputStream(LPCWSTR pszFilePath, bool bExceptionMode = false);
 };
-

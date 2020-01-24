@@ -103,4 +103,3 @@ void CVisualProgress::_End()
 	//砂時計
 	SAFE_DELETE(m_pcWaitCursor);
 }
-

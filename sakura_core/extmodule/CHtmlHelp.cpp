@@ -60,4 +60,3 @@ bool CHtmlHelp::InitDllImp()
 
 	return true;
 }
-

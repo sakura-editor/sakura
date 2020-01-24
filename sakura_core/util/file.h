@@ -106,4 +106,3 @@ int FileMatchScoreSepExt( const WCHAR *file1, const WCHAR *file2 );
 
 void GetStrTrancateWidth( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int nPxWidth );
 void GetShortViewPath(WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int nPxWidth, bool bFitMode );
-

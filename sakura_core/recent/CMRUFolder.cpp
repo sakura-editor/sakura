@@ -145,4 +145,3 @@ const WCHAR* CMRUFolder::GetPath(int num) const
 {
 	return m_cRecentFolder.GetItemText( num );
 }
-

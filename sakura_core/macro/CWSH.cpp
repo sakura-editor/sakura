@@ -452,4 +452,3 @@ void CWSHClient::AddInterfaceObject( CIfObj* obj )
 	CWSHMacroManager →　CWSHManager.cppへ移動
 
 */
-

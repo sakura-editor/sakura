@@ -43,4 +43,3 @@ public:
 		return CUtf8()._UnicodeToHex( cSrc, iSLen, pDst, psStatusbar, true );
 	}
 };
-

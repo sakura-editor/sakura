@@ -49,4 +49,3 @@ void CModifyVisitor::ResetAllModifyFlag(CDocLineMgr* pcDocLineMgr, int seq)
 		pDocLine = pDocLineNext;
 	}
 }
-

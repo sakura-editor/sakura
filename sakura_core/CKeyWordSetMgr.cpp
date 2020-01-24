@@ -682,4 +682,3 @@ int  CKeyWordSetMgr::SearchKeyWordSet( const wchar_t* pszKeyWord )
 	}
 	return nIdx;
 }
-

@@ -93,4 +93,3 @@ class CAppExitException : public std::exception{
 public:
 	const char* what() const throw(){ return "CAppExitException"; }
 };
-

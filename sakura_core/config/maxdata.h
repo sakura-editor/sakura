@@ -87,4 +87,3 @@ enum maxdata{
 	MAX_MAINMENU_TOP			= 20,	// 登録できるメインメニューの数
 	MAX_MAIN_MENU_NAME_LEN		= 40,	// メインメニュー名文字列長
 };
-

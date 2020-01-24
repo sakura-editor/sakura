@@ -113,4 +113,3 @@ private:
 	BREGEXP_BMatchExW2       m_BMatchEx;
 	BREGEXP_BSubstExW2       m_BSubstEx;
 };
-

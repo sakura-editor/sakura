@@ -60,4 +60,3 @@ bool CLineComment::Match( int nPos, const CStringRef& cStr ) const
 	}
 	return false;
 }
-

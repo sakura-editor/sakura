@@ -55,4 +55,3 @@ public:
 private:
 	CEditDoc* m_pcDocRef;
 };
-

@@ -58,4 +58,3 @@ private:
 	IActiveScript *m_Engine;
 	List m_IfObjArr;
 };
-

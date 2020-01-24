@@ -78,4 +78,3 @@ public:
 private:
 	HWND m_hWnd;
 };
-

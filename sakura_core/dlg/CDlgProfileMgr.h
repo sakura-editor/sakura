@@ -76,4 +76,3 @@ public:
 	static bool ReadProfSettings(SProfileSettings& settings);
 	static bool WriteProfSettings(SProfileSettings& settings);
 };
-

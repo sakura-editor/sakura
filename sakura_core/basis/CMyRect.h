@@ -98,4 +98,3 @@ public:
 
 //!CRect合成。rc1,rc2を含む最小の矩形を生成する。
 CMyRect MergeRect(const CMyRect& rc1, const CMyRect& rc2);
-

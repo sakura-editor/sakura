@@ -100,4 +100,3 @@ public:
 public:
 	wchar_t m_wcChar;
 };
-

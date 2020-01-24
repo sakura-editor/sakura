@@ -47,4 +47,3 @@ public:
 		bool bUseMemoryDC //!< メモリDCを使用する
 	);
 };
-

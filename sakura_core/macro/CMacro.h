@@ -129,4 +129,3 @@ protected:
 	CMacroParam*	m_pParamBot;
 	CMacro*			m_pNext;		//	次のマクロへのポインタ
 };
-

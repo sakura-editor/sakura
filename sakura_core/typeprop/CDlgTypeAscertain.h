@@ -69,4 +69,3 @@ protected:
 private:
 	SAscertainInfo* m_psi;			// インターフェイス
 };
-

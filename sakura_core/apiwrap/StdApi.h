@@ -103,4 +103,3 @@ namespace ApiWrap
 	#define PostMessageCmd PostMessage
 }
 using namespace ApiWrap;
-

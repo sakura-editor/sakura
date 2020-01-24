@@ -414,4 +414,3 @@ int tchar_snprintf_s(WCHAR* buf, size_t count, const WCHAR* format, ...)
 	va_end(v);
 	return ret;
 }
-

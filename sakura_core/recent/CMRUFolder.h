@@ -67,4 +67,3 @@ protected:
 private:
 	CRecentFolder	m_cRecentFolder;	//履歴	//@@@ 2003.04.08 MIK
 };
-

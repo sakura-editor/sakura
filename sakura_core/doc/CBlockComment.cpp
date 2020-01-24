@@ -101,4 +101,3 @@ int CBlockComment::Match_CommentTo(
 	}
 	return cStr.GetLength();
 }
-

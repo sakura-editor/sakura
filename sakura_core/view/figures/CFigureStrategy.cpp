@@ -209,4 +209,3 @@ void CFigureSpace::DrawImp_DrawUnderline(SColorStrategyInfo* pInfo, DispPos& sPo
 		pInfo->m_gr.PopMyFont();
 	}
 }
-

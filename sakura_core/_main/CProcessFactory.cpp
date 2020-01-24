@@ -342,4 +342,3 @@ bool CProcessFactory::TestWriteQuit()
 	}
 	return false;
 }
-

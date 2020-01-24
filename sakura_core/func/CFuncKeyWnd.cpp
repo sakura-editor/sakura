@@ -482,4 +482,3 @@ void CFuncKeyWnd::Timer_ONOFF( bool bStart )
 	}
 	return;
 }
-

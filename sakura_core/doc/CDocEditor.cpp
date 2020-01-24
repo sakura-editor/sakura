@@ -181,4 +181,3 @@ void CDocEditAgent::AddLineStrX( const wchar_t* pData, int nDataLen )
 	//インスタンス設定
 	pDocLine->SetDocLineString(pData, nDataLen);
 }
-

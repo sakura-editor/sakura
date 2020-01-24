@@ -65,4 +65,3 @@ void Convert_HankataToZenkata(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst
 	pDstにはあらかじめ十分なメモリを確保しておくこと。
 */
 void Convert_HankataToZenhira(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst, int* nDstLength);
-

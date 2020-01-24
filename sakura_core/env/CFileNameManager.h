@@ -98,4 +98,3 @@ private:
 	WCHAR	m_szTransformFileNameFromExp[MAX_TRANSFORM_FILENAME][_MAX_PATH];
 	int		m_nTransformFileNameOrgId[MAX_TRANSFORM_FILENAME];
 };
-

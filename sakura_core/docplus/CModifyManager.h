@@ -64,4 +64,3 @@ public:
 	//一括操作
 	void ResetAllModifyFlag(CDocLineMgr* pcDocLineMgr, int nSeq);	// 行変更状態をすべてリセット
 };
-
