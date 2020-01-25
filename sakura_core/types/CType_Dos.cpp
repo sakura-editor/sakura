@@ -111,6 +111,8 @@ const wchar_t* g_ppszKeywordsBAT[] = {
 	L"LPT3",
 	L"CLOCK",
 	L"CLOCK$",
-	L"CONFIG$"
+	L"CONFIG$",
+	L"SETLOCAL",
+	L"ENDLOCAL"
 };
 int g_nKeywordsBAT = _countof(g_ppszKeywordsBAT);
