@@ -40,28 +40,11 @@
  * @retval true 等しい
  * @retval false 等しくない
  */
-bool operator == (const GrepInfo& lhs, const GrepInfo& rhs) noexcept {
-	if (&lhs == &rhs) return true;
-	return lhs.cmGrepKey == rhs.cmGrepKey
-		&& lhs.cmGrepRep == rhs.cmGrepRep
-		&& lhs.cmGrepFile == rhs.cmGrepFile
-		&& lhs.cmGrepFolder == rhs.cmGrepFolder
-		&& lhs.cmExcludeFile == rhs.cmExcludeFile
-		&& lhs.cmExcludeFolder == rhs.cmExcludeFolder
-		&& lhs.sGrepSearchOption == rhs.sGrepSearchOption
-		&& lhs.bGrepCurFolder == rhs.bGrepCurFolder
-		&& lhs.bGrepStdout == rhs.bGrepStdout
-		&& lhs.bGrepHeader == rhs.bGrepHeader
-		&& lhs.bGrepSubFolder == rhs.bGrepSubFolder
-		&& lhs.nGrepCharSet == rhs.nGrepCharSet
-		&& lhs.nGrepOutputStyle == rhs.nGrepOutputStyle
-		&& lhs.nGrepOutputLineType == rhs.nGrepOutputLineType
-		&& lhs.bGrepOutputFileOnly == rhs.bGrepOutputFileOnly
-		&& lhs.bGrepOutputBaseFolder == rhs.bGrepOutputBaseFolder
-		&& lhs.bGrepSeparateFolder == rhs.bGrepSeparateFolder
-		&& lhs.bGrepReplace == rhs.bGrepReplace
-		&& lhs.bGrepPaste == rhs.bGrepPaste
-		&& lhs.bGrepBackup == rhs.bGrepBackup;
+bool operator==(const GrepInfo &lhs, const GrepInfo &rhs) noexcept
+{
+    if (&lhs == &rhs)
+        return true;
+    return lhs.cmGrepKey == rhs.cmGrepKey && lhs.cmGrepRep == rhs.cmGrepRep && lhs.cmGrepFile == rhs.cmGrepFile && lhs.cmGrepFolder == rhs.cmGrepFolder && lhs.cmExcludeFile == rhs.cmExcludeFile && lhs.cmExcludeFolder == rhs.cmExcludeFolder && lhs.sGrepSearchOption == rhs.sGrepSearchOption && lhs.bGrepCurFolder == rhs.bGrepCurFolder && lhs.bGrepStdout == rhs.bGrepStdout && lhs.bGrepHeader == rhs.bGrepHeader && lhs.bGrepSubFolder == rhs.bGrepSubFolder && lhs.nGrepCharSet == rhs.nGrepCharSet && lhs.nGrepOutputStyle == rhs.nGrepOutputStyle && lhs.nGrepOutputLineType == rhs.nGrepOutputLineType && lhs.bGrepOutputFileOnly == rhs.bGrepOutputFileOnly && lhs.bGrepOutputBaseFolder == rhs.bGrepOutputBaseFolder && lhs.bGrepSeparateFolder == rhs.bGrepSeparateFolder && lhs.bGrepReplace == rhs.bGrepReplace && lhs.bGrepPaste == rhs.bGrepPaste && lhs.bGrepBackup == rhs.bGrepBackup;
 }
 
 /*!
@@ -71,9 +54,9 @@ bool operator == (const GrepInfo& lhs, const GrepInfo& rhs) noexcept {
  * @retval true 等しくない
  * @retval false 等しい
  */
-bool operator != (const GrepInfo& lhs, const GrepInfo& rhs) noexcept
+bool operator!=(const GrepInfo &lhs, const GrepInfo &rhs) noexcept
 {
-	return !(lhs == rhs);
+    return !(lhs == rhs);
 }
 
 /*!
@@ -82,8 +65,8 @@ bool operator != (const GrepInfo& lhs, const GrepInfo& rhs) noexcept
  */
 TEST(GrepInfo, operatorEqualSame)
 {
-	GrepInfo value, other;
-	ASSERT_EQ(value, other);
+    GrepInfo value, other;
+    ASSERT_EQ(value, other);
 }
 
 /*!
@@ -92,8 +75,8 @@ TEST(GrepInfo, operatorEqualSame)
  */
 TEST(GrepInfo, operatorEqualBySelf)
 {
-	GrepInfo value;
-	ASSERT_EQ(value, value);
+    GrepInfo value;
+    ASSERT_EQ(value, value);
 }
 
 /*!
@@ -104,95 +87,95 @@ TEST(GrepInfo, operatorEqualBySelf)
  */
 TEST(GrepInfo, operatorNotEqual)
 {
-	GrepInfo value, other;
+    GrepInfo value, other;
 
-	value.cmGrepKey = L"ぐれっぷ";
-	ASSERT_NE(value, other);
-	value.cmGrepKey = other.cmGrepKey;
+    value.cmGrepKey = L"ぐれっぷ";
+    ASSERT_NE(value, other);
+    value.cmGrepKey = other.cmGrepKey;
 
-	value.cmGrepRep = L"ちかん";
-	ASSERT_NE(value, other);
-	value.cmGrepRep = other.cmGrepRep;
+    value.cmGrepRep = L"ちかん";
+    ASSERT_NE(value, other);
+    value.cmGrepRep = other.cmGrepRep;
 
-	value.cmGrepFile = L"#.git;*.*";
-	ASSERT_NE(value, other);
-	value.cmGrepFile = other.cmGrepFile;
+    value.cmGrepFile = L"#.git;*.*";
+    ASSERT_NE(value, other);
+    value.cmGrepFile = other.cmGrepFile;
 
-	value.cmGrepFolder = L"C:\\work\\sakura";
-	ASSERT_NE(value, other);
-	value.cmGrepFolder = other.cmGrepFolder;
+    value.cmGrepFolder = L"C:\\work\\sakura";
+    ASSERT_NE(value, other);
+    value.cmGrepFolder = other.cmGrepFolder;
 
-	value.cmExcludeFile = L"除外ファイルの仕様がなんでここに残ってんだっけ？";
-	ASSERT_NE(value, other);
-	value.cmExcludeFile = other.cmExcludeFile;
+    value.cmExcludeFile = L"除外ファイルの仕様がなんでここに残ってんだっけ？";
+    ASSERT_NE(value, other);
+    value.cmExcludeFile = other.cmExcludeFile;
 
-	value.cmExcludeFolder = L"除外フォルダの仕様がなんで(ry";
-	ASSERT_NE(value, other);
-	value.cmExcludeFolder = other.cmExcludeFolder;
+    value.cmExcludeFolder = L"除外フォルダの仕様がなんで(ry";
+    ASSERT_NE(value, other);
+    value.cmExcludeFolder = other.cmExcludeFolder;
 
-	value.sGrepSearchOption.bRegularExp = true;
-	ASSERT_NE(value, other);
-	value.sGrepSearchOption = other.sGrepSearchOption;
+    value.sGrepSearchOption.bRegularExp = true;
+    ASSERT_NE(value, other);
+    value.sGrepSearchOption = other.sGrepSearchOption;
 
-	value.sGrepSearchOption.bLoHiCase = true;
-	ASSERT_NE(value, other);
-	value.sGrepSearchOption = other.sGrepSearchOption;
+    value.sGrepSearchOption.bLoHiCase = true;
+    ASSERT_NE(value, other);
+    value.sGrepSearchOption = other.sGrepSearchOption;
 
-	value.sGrepSearchOption.bWordOnly = true;
-	ASSERT_NE(value, other);
-	value.sGrepSearchOption = other.sGrepSearchOption;
+    value.sGrepSearchOption.bWordOnly = true;
+    ASSERT_NE(value, other);
+    value.sGrepSearchOption = other.sGrepSearchOption;
 
-	value.bGrepCurFolder = true;
-	ASSERT_NE(value, other);
-	value.bGrepCurFolder = other.bGrepCurFolder;
+    value.bGrepCurFolder = true;
+    ASSERT_NE(value, other);
+    value.bGrepCurFolder = other.bGrepCurFolder;
 
-	value.bGrepStdout = true;
-	ASSERT_NE(value, other);
-	value.bGrepStdout = other.bGrepStdout;
+    value.bGrepStdout = true;
+    ASSERT_NE(value, other);
+    value.bGrepStdout = other.bGrepStdout;
 
-	value.bGrepHeader = false;
-	ASSERT_NE(value, other);
-	value.bGrepHeader = other.bGrepHeader;
+    value.bGrepHeader = false;
+    ASSERT_NE(value, other);
+    value.bGrepHeader = other.bGrepHeader;
 
-	value.bGrepSubFolder = true;
-	ASSERT_NE(value, other);
-	value.bGrepSubFolder = other.bGrepSubFolder;
+    value.bGrepSubFolder = true;
+    ASSERT_NE(value, other);
+    value.bGrepSubFolder = other.bGrepSubFolder;
 
-	value.nGrepCharSet = CODE_EUC;
-	ASSERT_NE(value, other);
-	value.nGrepCharSet = other.nGrepCharSet;
+    value.nGrepCharSet = CODE_EUC;
+    ASSERT_NE(value, other);
+    value.nGrepCharSet = other.nGrepCharSet;
 
-	value.nGrepOutputStyle = 2;
-	ASSERT_NE(value, other);
-	value.nGrepOutputStyle = other.nGrepOutputStyle;
+    value.nGrepOutputStyle = 2;
+    ASSERT_NE(value, other);
+    value.nGrepOutputStyle = other.nGrepOutputStyle;
 
-	value.nGrepOutputLineType = 2;
-	ASSERT_NE(value, other);
-	value.nGrepOutputLineType = other.nGrepOutputLineType;
+    value.nGrepOutputLineType = 2;
+    ASSERT_NE(value, other);
+    value.nGrepOutputLineType = other.nGrepOutputLineType;
 
-	value.bGrepOutputFileOnly = true;
-	ASSERT_NE(value, other);
-	value.bGrepOutputFileOnly = other.bGrepOutputFileOnly;
+    value.bGrepOutputFileOnly = true;
+    ASSERT_NE(value, other);
+    value.bGrepOutputFileOnly = other.bGrepOutputFileOnly;
 
-	value.bGrepOutputBaseFolder = true;
-	ASSERT_NE(value, other);
-	value.bGrepOutputBaseFolder = other.bGrepOutputBaseFolder;
+    value.bGrepOutputBaseFolder = true;
+    ASSERT_NE(value, other);
+    value.bGrepOutputBaseFolder = other.bGrepOutputBaseFolder;
 
-	value.bGrepSeparateFolder = true;
-	ASSERT_NE(value, other);
-	value.bGrepSeparateFolder = other.bGrepSeparateFolder;
+    value.bGrepSeparateFolder = true;
+    ASSERT_NE(value, other);
+    value.bGrepSeparateFolder = other.bGrepSeparateFolder;
 
-	value.bGrepReplace = true;
-	ASSERT_NE(value, other);
-	value.bGrepReplace = other.bGrepReplace;
+    value.bGrepReplace = true;
+    ASSERT_NE(value, other);
+    value.bGrepReplace = other.bGrepReplace;
 
-	value.bGrepPaste = true;
-	ASSERT_NE(value, other);
-	value.bGrepPaste = other.bGrepPaste;
+    value.bGrepPaste = true;
+    ASSERT_NE(value, other);
+    value.bGrepPaste = other.bGrepPaste;
 
-	value.bGrepBackup = true;
-	ASSERT_NE(value, other);
-	value.bGrepBackup = other.bGrepBackup;
+    value.bGrepBackup = true;
+    ASSERT_NE(value, other);
+    value.bGrepBackup = other.bGrepBackup;
 }
 
 /*!
@@ -201,14 +184,14 @@ TEST(GrepInfo, operatorNotEqual)
  */
 TEST(GrepInfo, operatorEqualAndNotEqual)
 {
-	// 初期値同士の比較(等価になる)
-	GrepInfo v1, v2;
+    // 初期値同士の比較(等価になる)
+    GrepInfo v1, v2;
 
-	EXPECT_TRUE(v1 == v2);
-	EXPECT_FALSE(v1 != v2);
+    EXPECT_TRUE(v1 == v2);
+    EXPECT_FALSE(v1 != v2);
 
-	// 初期値と値を変えた値の比較(不一致になる)
-	v2.bGrepBackup = true;
-	EXPECT_FALSE(v1 == v2);
-	EXPECT_TRUE(v1 != v2);
+    // 初期値と値を変えた値の比較(不一致になる)
+    v2.bGrepBackup = true;
+    EXPECT_FALSE(v1 == v2);
+    EXPECT_TRUE(v1 != v2);
 }

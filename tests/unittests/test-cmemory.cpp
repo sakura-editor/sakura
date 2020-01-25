@@ -30,10 +30,10 @@
 */
 TEST(CMemory, SetRawLengthToZero)
 {
-	CMemory memory;
+    CMemory memory;
 
-	// _SetRawLength(0) を呼び出して落ちないことを確認する
-	memory._SetRawLength(0);
+    // _SetRawLength(0) を呼び出して落ちないことを確認する
+    memory._SetRawLength(0);
 }
 
 /*!
@@ -41,17 +41,17 @@ TEST(CMemory, SetRawLengthToZero)
 */
 TEST(CMemory, CheckEmpty)
 {
-	CMemory memory;
+    CMemory memory;
 
-	// インスタンス化しただけ
-	// → バッファが確保されないことを確認する
-	EXPECT_EQ(NULL, memory.GetRawPtr());
+    // インスタンス化しただけ
+    // → バッファが確保されないことを確認する
+    EXPECT_EQ(NULL, memory.GetRawPtr());
 
-	// インスタンス化しただけ
-	// → バッファサイズが 0 であることを確認する。
-	EXPECT_EQ(0, memory.capacity());
+    // インスタンス化しただけ
+    // → バッファサイズが 0 であることを確認する。
+    EXPECT_EQ(0, memory.capacity());
 
-	// インスタンス化しただけ
-	// → データサイズが 0 であることを確認する。
-	EXPECT_EQ(0, memory.GetRawLength());
+    // インスタンス化しただけ
+    // → データサイズが 0 であることを確認する。
+    EXPECT_EQ(0, memory.GetRawLength());
 }

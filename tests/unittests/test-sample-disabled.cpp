@@ -34,20 +34,20 @@
 */
 class DISABLED_TestsIncomplte1 : public ::testing::Test
 {
-protected:
-	/*!
+  protected:
+    /*!
 		テスト前の準備
 	*/
-	virtual void SetUp()
-	{
-	}
+    virtual void SetUp()
+    {
+    }
 
-	/*!
+    /*!
 		テスト後の後始末
 	*/
-	virtual void TearDown()
-	{
-	}
+    virtual void TearDown()
+    {
+    }
 };
 
 /*!
@@ -55,8 +55,8 @@ protected:
 */
 TEST_F(DISABLED_TestsIncomplte1, Test1)
 {
-	/* テストに問題があって失敗している例 */
-	EXPECT_EQ(4, 1 + 2);
+    /* テストに問題があって失敗している例 */
+    EXPECT_EQ(4, 1 + 2);
 }
 
 /*!
@@ -64,8 +64,8 @@ TEST_F(DISABLED_TestsIncomplte1, Test1)
 */
 TEST_F(DISABLED_TestsIncomplte1, Test2)
 {
-	/* テストに問題があって失敗している例 */
-	EXPECT_EQ(4, 1 + 2);
+    /* テストに問題があって失敗している例 */
+    EXPECT_EQ(4, 1 + 2);
 }
 
 /*!
@@ -80,20 +80,20 @@ TEST_F(DISABLED_TestsIncomplte1, Test2)
 */
 class TestsIncomplte2 : public ::testing::Test
 {
-protected:
-	/*!
+  protected:
+    /*!
 		テスト前の準備
 	*/
-	virtual void SetUp()
-	{
-	}
+    virtual void SetUp()
+    {
+    }
 
-	/*!
+    /*!
 		テスト後の後始末
 	*/
-	virtual void TearDown()
-	{
-	}
+    virtual void TearDown()
+    {
+    }
 };
 
 /*!
@@ -106,8 +106,8 @@ typedef TestsIncomplte2 DISABLED_TestsIncomplte2;
 */
 TEST_F(DISABLED_TestsIncomplte2, Test1)
 {
-	/* テストに問題があって失敗している例 */
-	EXPECT_EQ(4, 1 + 2);
+    /* テストに問題があって失敗している例 */
+    EXPECT_EQ(4, 1 + 2);
 }
 
 /*!
@@ -115,8 +115,8 @@ TEST_F(DISABLED_TestsIncomplte2, Test1)
 */
 TEST_F(DISABLED_TestsIncomplte2, Test2)
 {
-	/* テストに問題があって失敗している例 */
-	EXPECT_EQ(4, 1 + 2);
+    /* テストに問題があって失敗している例 */
+    EXPECT_EQ(4, 1 + 2);
 }
 
 /*!
@@ -129,6 +129,6 @@ TEST_F(DISABLED_TestsIncomplte2, Test2)
 */
 TEST(test, DISABLED_IncomplteTest)
 {
-	/* テストに問題があって失敗している例 */
-	EXPECT_EQ(4, 1 + 2);
+    /* テストに問題があって失敗している例 */
+    EXPECT_EQ(4, 1 + 2);
 }

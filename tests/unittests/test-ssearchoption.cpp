@@ -39,8 +39,8 @@
  */
 TEST(SSearchOption, operatorEqualSame)
 {
-	SSearchOption value, other;
-	ASSERT_EQ(value, other);
+    SSearchOption value, other;
+    ASSERT_EQ(value, other);
 }
 
 /*!
@@ -49,8 +49,8 @@ TEST(SSearchOption, operatorEqualSame)
  */
 TEST(SSearchOption, operatorEqualBySelf)
 {
-	SSearchOption value;
-	ASSERT_EQ(value, value);
+    SSearchOption value;
+    ASSERT_EQ(value, value);
 }
 
 /*!
@@ -61,21 +61,21 @@ TEST(SSearchOption, operatorEqualBySelf)
  */
 TEST(SSearchOption, operatorNotEqual)
 {
-	SSearchOption value, other;
+    SSearchOption value, other;
 
-	value.bRegularExp = true;
-	ASSERT_NE(value, other);
-	value.bRegularExp = false;
+    value.bRegularExp = true;
+    ASSERT_NE(value, other);
+    value.bRegularExp = false;
 
-	value.bLoHiCase = true;
-	ASSERT_NE(value, other);
-	value.bLoHiCase = false;
+    value.bLoHiCase = true;
+    ASSERT_NE(value, other);
+    value.bLoHiCase = false;
 
-	value.bWordOnly = true;
-	ASSERT_NE(value, other);
-	value.bWordOnly = false;
+    value.bWordOnly = true;
+    ASSERT_NE(value, other);
+    value.bWordOnly = false;
 
-	ASSERT_EQ(value, other);
+    ASSERT_EQ(value, other);
 }
 
 /*!
@@ -84,16 +84,16 @@ TEST(SSearchOption, operatorNotEqual)
  */
 TEST(SSearchOption, operatorEqualAndNotEqual)
 {
-	// 初期値同士の比較(等価になる)
-	SSearchOption v1, v2;
+    // 初期値同士の比較(等価になる)
+    SSearchOption v1, v2;
 
-	EXPECT_TRUE(v1 == v2);
-	EXPECT_FALSE(v1 != v2);
+    EXPECT_TRUE(v1 == v2);
+    EXPECT_FALSE(v1 != v2);
 
-	// 初期値と値を変えた値の比較(不一致になる)
-	v2.bWordOnly = true;
-	EXPECT_FALSE(v1 == v2);
-	EXPECT_TRUE(v1 != v2);
+    // 初期値と値を変えた値の比較(不一致になる)
+    v2.bWordOnly = true;
+    EXPECT_FALSE(v1 == v2);
+    EXPECT_TRUE(v1 != v2);
 }
 
 /*!
@@ -102,10 +102,8 @@ TEST(SSearchOption, operatorEqualAndNotEqual)
  */
 TEST(SSearchOption, Reset)
 {
-	SSearchOption value{ true,true,true }, other;
-	EXPECT_NE(value, other);
-	value.Reset();
-	ASSERT_EQ(value, other);
-
+    SSearchOption value{true, true, true}, other;
+    EXPECT_NE(value, other);
+    value.Reset();
+    ASSERT_EQ(value, other);
 }
-

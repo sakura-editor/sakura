@@ -29,6 +29,6 @@
 */
 TEST(StdControl, Wnd_GetText)
 {
-	CNativeW tempText;
-	ASSERT_FALSE(Wnd_GetText(NULL, tempText));
+    CNativeW tempText;
+    ASSERT_FALSE(Wnd_GetText(NULL, tempText));
 }
