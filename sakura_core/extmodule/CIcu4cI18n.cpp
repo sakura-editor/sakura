@@ -40,9 +40,8 @@ CIcu4cI18n::~CIcu4cI18n() noexcept
 /*!
  * @brief DLLの名前を返す
  */
-LPCWSTR CIcu4cI18n::GetDllNameImp(int index)
+LPCWSTR CIcu4cI18n::GetDllNameImp( [[maybe_unused]] int index )
 {
-	(void*)index;
 	return L"icuin66.dll"; //バージョンは固定
 }
 
