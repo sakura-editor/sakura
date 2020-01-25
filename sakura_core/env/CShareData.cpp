@@ -1284,6 +1284,9 @@ void CShareData::InitCustomMenuCopyInfo(DLLSHAREDATA* pShareData, int index)
 	rMenu.m_nCustMenuItemFuncArr[index][n] = F_COPYFNAME;
 	rMenu.m_nCustMenuItemKeyArr [index][n] = 'F';
 	n++;
+	rMenu.m_nCustMenuItemFuncArr[index][n] = F_COPYPATH;
+	rMenu.m_nCustMenuItemKeyArr [index][n] = '\\';
+	n++;
 	rMenu.m_nCustMenuItemFuncArr[index][n] = F_COPYDIRPATH;
 	rMenu.m_nCustMenuItemKeyArr [index][n] = 'O';
 	n++;
@@ -1398,9 +1401,6 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	n++;
 	rMenu.m_nCustMenuItemFuncArr[0][n] = F_0;
 	rMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
-	n++;
-	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPYPATH;
-	rMenu.m_nCustMenuItemKeyArr [0][n] = '\\';
 	n++;
 	rMenu.m_nCustMenuItemFuncArr[0][n] = F_PROPERTY_FILE;
 	rMenu.m_nCustMenuItemKeyArr [0][n] = 'F';		//Nov. 9, 2000 JEPRO 「やり直し」とバッティングしていたアクセスキーを変更(R→F)
