@@ -328,4 +328,3 @@ int scan_ints(
 
 	return nRet;
 }
-

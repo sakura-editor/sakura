@@ -111,4 +111,3 @@ int WINAPI wWinMain(
 	::OleUninitialize();	// 2009.01.07 ryoji 追加
 	return 0;
 }
-

@@ -66,4 +66,3 @@ protected:
 private:
 	void SelectFolder( HWND hwndDlg );
 };
-

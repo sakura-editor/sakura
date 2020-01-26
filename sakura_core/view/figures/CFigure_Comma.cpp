@@ -79,4 +79,3 @@ void CFigure_Comma::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcVie
 	//Xを進める
 	sPos.ForwardDrawCol(tabDispWidthLayout);
 }
-

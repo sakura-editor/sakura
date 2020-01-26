@@ -251,4 +251,3 @@ void CWnd::DestroyWindow()
 		m_hWnd = NULL;
 	}
 }
-

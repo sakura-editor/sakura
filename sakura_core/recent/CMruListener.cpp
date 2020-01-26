@@ -239,4 +239,3 @@ void CMruListener::_HoldBookmarks_And_AddToMRU()
 	CMRUFile	cMRU;
 	cMRU.Add( &fi );
 }
-

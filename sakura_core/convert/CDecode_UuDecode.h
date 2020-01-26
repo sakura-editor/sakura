@@ -38,4 +38,3 @@ public:
 	bool DoDecode(const CNativeW& cData, CMemory* pDst) override;
 	void CopyFilename( WCHAR *pcDst ) const { wcscpy( pcDst, m_aFilename ); }
 };
-

@@ -82,4 +82,3 @@ void CDocVisitor::SetAllEol(CEol cEol)
 		pcView->SetUndoBuffer();
 	}
 }
-

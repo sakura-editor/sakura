@@ -137,4 +137,3 @@ private:
 	CMethodInfoList m_Methods;			//メソッド情報リスト
 	ITypeInfo* m_TypeInfo;
 };
-

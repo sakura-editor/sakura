@@ -43,4 +43,3 @@ static_assert(sizeof(CNative) == sizeof(CMemory), "size check");
 
 #include "mem/CNativeA.h"
 #include "mem/CNativeW.h"
-

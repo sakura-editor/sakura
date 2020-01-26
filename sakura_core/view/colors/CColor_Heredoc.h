@@ -41,4 +41,3 @@ private:
 	const wchar_t* m_pszId;
 	int m_nCOMMENTEND;
 };
-

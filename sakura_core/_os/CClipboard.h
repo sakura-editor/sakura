@@ -56,4 +56,3 @@ public:
 	static CLIPFORMAT GetSakuraFormat(); //!< サクラエディタ独自のクリップボードデータ形式
 	static int GetDataType();      //!< クリップボードデータ形式(CF_UNICODETEXT等)の取得
 };
-

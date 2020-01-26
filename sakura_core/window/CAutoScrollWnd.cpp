@@ -136,4 +136,3 @@ LRESULT CAutoScrollWnd::OnPaint( HWND hwnd, UINT, WPARAM, LPARAM )
 	::EndPaint(hwnd, &ps);
 	return 0;
 }
-

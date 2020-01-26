@@ -59,4 +59,3 @@ inline CCaret& CViewCommander::GetCaret()
 {
 	return m_pCommanderView->GetCaret();
 }
-

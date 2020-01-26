@@ -291,4 +291,3 @@ private:
 	static int					m_nFuncNum;	//	SAKURAエディタ用関数の数
 */
 };
-

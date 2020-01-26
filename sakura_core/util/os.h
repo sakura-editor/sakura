@@ -99,4 +99,3 @@ private:
 	@brief PowerShell が利用可能か判定する
 */
 BOOL IsPowerShellAvailable(void);
-

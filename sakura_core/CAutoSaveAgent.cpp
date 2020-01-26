@@ -123,4 +123,3 @@ bool CPassiveTimer::CheckAction(void)
 	Reset();
 	return true;
 }
-

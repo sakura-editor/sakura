@@ -82,4 +82,3 @@ void CMacroManagerBase::ExecKeyMacro2( class CEditView* pcEditView, int flags )
 	bool b = ExecKeyMacro(pcEditView, flags);
 	ExecKeyMacroAfter(pcEditView, flags, b);
 }
-

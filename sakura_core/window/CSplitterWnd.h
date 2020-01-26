@@ -89,4 +89,3 @@ protected:
 	int HitTestSplitter(int xPos, int yPos);	/* 分割バーへのヒットテスト */
 	void DrawSplitter(int xPos, int yPos, int bEraseOld);	/* 分割トラッカーの表示 */
 };
-

@@ -1424,4 +1424,3 @@ void CViewCommander::Command_MODIFYLINE_PREV( bool bSelect )
 	m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRPREV2));
 	AlertNotFound( m_pCommanderView->GetHwnd(), false, LS(STR_MODLINE_PREV_NOT_FOUND) );
 }
-

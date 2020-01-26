@@ -160,4 +160,3 @@ bool CPropertyManager::OpenPropertySheetTypes( HWND hWnd, int nPageNum, CTypeCon
 
 	return bRet;
 }
-

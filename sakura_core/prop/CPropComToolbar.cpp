@@ -643,4 +643,3 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 
 	return;
 }
-

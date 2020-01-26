@@ -709,4 +709,3 @@ void CPropKeyword::DispKeywordCount( HWND hwndDlg )
 	auto_sprintf( szCount, LS(STR_PROPCOMKEYWORD_INFO), MAX_KEYWORDLEN, n, nAlloc );
 	::SetWindowText( ::GetDlgItem( hwndDlg, IDC_STATIC_KEYWORD_COUNT ), szCount );
 }
-

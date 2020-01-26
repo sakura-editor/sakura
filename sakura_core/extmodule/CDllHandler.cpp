@@ -198,4 +198,3 @@ bool CDllImp::RegisterEntries(const ImportTable table[])
 	}
 	return true;
 }
-

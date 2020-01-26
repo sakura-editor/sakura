@@ -1003,4 +1003,3 @@ void CEditView::RTrimPrevLine( void )
 		}
 	}
 }
-

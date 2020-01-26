@@ -37,4 +37,3 @@ public:
 private:
 	int m_nCOMMENTEND;
 };
-

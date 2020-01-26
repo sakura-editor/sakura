@@ -161,4 +161,3 @@ protected:
 	// コントロールに画面のフォントを設定	2012/11/27 Uchi
 	HFONT SetMainFont( HWND hTarget );
 };
-

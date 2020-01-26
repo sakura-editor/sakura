@@ -413,4 +413,3 @@ void CDocLineMgr::DUMP()
 #endif // _DEBUG
 	return;
 }
-

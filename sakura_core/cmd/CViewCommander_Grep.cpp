@@ -273,4 +273,3 @@ void CViewCommander::Command_GREP_REPLACE( void )
 	}
 	return;
 }
-

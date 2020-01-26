@@ -71,4 +71,3 @@ public:
 	HRESULT DrawThemeParentBackground( HWND hwnd, HDC hdc, RECT* prc );
 	BOOL IsThemeBackgroundPartiallyTransparent( HTHEME htheme, int iPartId, int iStateId );
 };
-

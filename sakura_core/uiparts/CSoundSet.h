@@ -33,4 +33,3 @@ public:
 private:
 	int	m_nMuteCount;
 };
-

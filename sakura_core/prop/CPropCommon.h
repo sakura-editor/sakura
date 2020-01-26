@@ -541,4 +541,3 @@ private:
 	bool Check_MainMenu(HWND hwndTree, std::wstring& sErrMsg);						// メニューの検査
 	bool Check_MainMenu_Sub(HWND hwndTree, HTREEITEM htiTrg, int nLevel, std::wstring& sErrMsg);	// メニューの検査
 };
-

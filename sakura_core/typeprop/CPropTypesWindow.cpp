@@ -560,4 +560,3 @@ void CPropTypesWindow::EnableTypesPropInput( HWND hwndDlg )
 	}
 }
 //	To Here Sept. 10, 2000
-

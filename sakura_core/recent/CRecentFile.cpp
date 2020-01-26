@@ -101,4 +101,3 @@ int CRecentFile::FindItemByPath(const WCHAR* pszPath) const
 	}
 	return -1;
 }
-

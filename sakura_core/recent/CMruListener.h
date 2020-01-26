@@ -43,4 +43,3 @@ protected:
 	//ヘルパ
 	void _HoldBookmarks_And_AddToMRU(); // Mar. 30, 2003 genta
 };
-

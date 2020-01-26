@@ -103,4 +103,3 @@ public:
 		o_.Unlock();
 	}
 };
-

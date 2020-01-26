@@ -48,4 +48,3 @@ public:
 protected:
 	CNativeW m_cBuffer;
 };
-

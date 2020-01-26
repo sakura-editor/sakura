@@ -249,4 +249,3 @@ void CRuler::DispRuler( HDC hdc )
 	m_nOldRulerDrawX = m_pEditView->GetCaret().CalcCaretDrawPos(m_pEditView->GetCaret().GetCaretLayoutPos()).x;
 	m_nOldRulerWidth = m_pEditView->GetCaret().GetCaretSize().cx ;
 }
-

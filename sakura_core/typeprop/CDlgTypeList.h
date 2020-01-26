@@ -66,4 +66,3 @@ private:
 	bool m_bAlertFileAssociation;			//関連付け警告の表示フラグ
 	bool m_bEnableTempChange;				//一時適用の有効化
 };
-

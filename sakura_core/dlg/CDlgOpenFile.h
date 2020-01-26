@@ -114,4 +114,3 @@ public:
 private:
 	std::shared_ptr<IDlgOpenFile> m_pImpl;
 };
-

@@ -81,4 +81,3 @@ public:
 };
 
 #include "CRecentImp.h"
-

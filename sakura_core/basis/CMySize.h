@@ -40,4 +40,3 @@ public:
 	bool operator == (const SIZE& rhs) const{ return cx==rhs.cx && cy==rhs.cy; }
 	bool operator != (const SIZE& rhs) const{ return !operator==(rhs); }
 };
-

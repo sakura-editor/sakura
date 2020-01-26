@@ -68,4 +68,3 @@ private:
 
 	int					m_bInMove;
 };
-

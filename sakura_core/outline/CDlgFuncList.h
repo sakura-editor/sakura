@@ -221,4 +221,3 @@ private:
 	POINT				m_ptDefaultSizeClient;
 	RECT				m_rcItems[12];
 };
-

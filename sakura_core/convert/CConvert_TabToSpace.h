@@ -40,4 +40,3 @@ private:
 	int m_nStartColumn;
 	bool m_bExtEol;
 };
-

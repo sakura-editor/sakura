@@ -44,4 +44,3 @@ public:
 		CCodeBase*			pCodeBase	//!< [in]  変換先メモリの文字コードクラス
 	);
 };
-

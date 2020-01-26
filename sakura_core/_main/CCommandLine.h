@@ -108,4 +108,3 @@ private:
 	CNativeW	m_cmProfile;		//! プロファイル名
 	std::vector<std::wstring> m_vFiles;	//!< ファイル名(複数)
 };
-

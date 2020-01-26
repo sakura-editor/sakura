@@ -95,4 +95,3 @@ inline int CCodeBase::TextToBin( const unsigned short cSrc )
 {
 	return static_cast<int>((cSrc - 0xdc00) & 0x00ff);
 }
-

@@ -583,4 +583,3 @@ bool CEditView::IsISearchEnabled(int nCommand) const
 	}
 	return false;
 }
-

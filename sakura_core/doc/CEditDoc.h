@@ -164,4 +164,3 @@ public:
 	int				m_nBackImgWidth;
 	int				m_nBackImgHeight;
 };
-

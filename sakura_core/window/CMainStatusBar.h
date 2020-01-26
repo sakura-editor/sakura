@@ -58,4 +58,3 @@ private:
 	HWND		m_hwndStatusBar;
 	HWND		m_hwndProgressBar;
 };
-

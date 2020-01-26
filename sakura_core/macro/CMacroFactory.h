@@ -84,4 +84,3 @@ private:
 	*/
 	MacroEngineRep m_mMacroCreators;
 };
-

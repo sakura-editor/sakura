@@ -38,4 +38,3 @@ private: // 2002/2/10 aroka
 	HCURSOR	m_hCursorOld;
 	bool	m_bEnable;
 };
-

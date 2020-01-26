@@ -557,4 +557,3 @@ bool CBackupAgent::FormatBackUpPath(
 	}
 	return true;
 }
-

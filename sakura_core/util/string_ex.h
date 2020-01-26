@@ -257,4 +257,3 @@ int strnicmp_literal(const char* strData1, const char (&literalData2)[Size]) {
 	assert(literalData2[Size - 1] == 0);
 	return ::_strnicmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
 }
-

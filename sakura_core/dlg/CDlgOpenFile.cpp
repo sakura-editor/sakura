@@ -112,4 +112,3 @@ BOOL CDlgOpenFile::SelectFile(
 	}
 	return FALSE;
 }
-

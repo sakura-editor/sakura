@@ -456,4 +456,3 @@ void CPropWin::EnableWinPropInput( HWND hwndDlg )
 	}
 }
 //	To Here Sept. 9, 2000
-

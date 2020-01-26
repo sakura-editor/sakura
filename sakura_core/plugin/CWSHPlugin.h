@@ -84,4 +84,3 @@ public:
 private:
 	bool m_bUseCache;
 };
-

@@ -44,4 +44,3 @@ public:
 	//固有インターフェース
 	int FindItemByPath(const WCHAR* pszPath) const;
 };
-

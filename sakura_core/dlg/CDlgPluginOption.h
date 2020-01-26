@@ -95,4 +95,3 @@ private:
 	int				m_Line;			// 現在編集中のオプション行番号
 	std::wstring	m_sReadMeName;	// ReadMe ファイル名
 };
-

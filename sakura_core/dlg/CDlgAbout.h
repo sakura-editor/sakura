@@ -62,4 +62,3 @@ private:
 	CUrlWnd m_UrlGitHubPRWnd;
 	CUrlWnd m_UrlOrgWnd;
 };
-

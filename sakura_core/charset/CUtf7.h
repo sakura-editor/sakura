@@ -51,4 +51,3 @@ protected:
 	static int _UniToUtf7SetB_block( const wchar_t* pSrc, const int nSrcLen, char* pDst );
 	static int UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst );
 };
-

@@ -818,4 +818,3 @@ BOOL IsSakuraMainWindow( HWND hWnd )
 		return FALSE;
 	}
 }
-

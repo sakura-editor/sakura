@@ -45,4 +45,3 @@ public:
 	bool	ChkPluginDef(const std::wstring& sDefFile, std::wstring& sFolderName);	// ZIP File 内 フォルダ名取得と定義ファイル検査(Plugin用)
 	bool	Unzip(const std::wstring sOutPath);			// Zip File 解凍
 };
-

@@ -128,4 +128,3 @@ private:
 
 	WCHAR			m_szLanguageDll[MAX_PATH];
 };
-

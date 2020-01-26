@@ -127,4 +127,3 @@ int TopCustomMessage(HWND hwnd, UINT uType, LPCWSTR format, ...){   va_list p;va
 
 //作者に教えて欲しいエラー
 int PleaseReportToAuthor(HWND hwnd, LPCWSTR format, ...){ va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_ICONSTOP | MB_TOPMOST, LS(STR_ERR_DLGDOCLMN1), format, p);va_end(p);return n;}
-

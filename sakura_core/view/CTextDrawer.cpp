@@ -576,4 +576,3 @@ void CTextDrawer::DispLineNumber(
 		DispNoteLine( gr, top, bottom, left, right );
 	}
 }
-

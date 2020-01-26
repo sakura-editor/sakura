@@ -117,4 +117,3 @@ bool CViewParser::GetCurrentWord(
 
 	return bResult;
 }
-

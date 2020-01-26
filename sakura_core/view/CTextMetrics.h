@@ -128,4 +128,3 @@ private:
 	int m_anZenkakuDx[64]; //!< 全角用文字間隔配列
 	std::vector<int> m_aFontHeightMargin;
 };
-

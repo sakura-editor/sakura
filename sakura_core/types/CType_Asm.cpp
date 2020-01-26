@@ -151,4 +151,3 @@ void CDocOutline::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 
 	return;
 }
-

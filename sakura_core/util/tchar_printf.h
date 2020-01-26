@@ -70,4 +70,3 @@ int tchar_sprintf(WCHAR* buf, const WCHAR* format, ...);
 // _snprintf_sラップ
 int tchar_snprintf_s(ACHAR* buf, size_t count, const ACHAR* format, ...);
 int tchar_snprintf_s(WCHAR* buf, size_t count, const WCHAR* format, ...);
-

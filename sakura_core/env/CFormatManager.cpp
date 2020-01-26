@@ -105,4 +105,3 @@ const WCHAR* CFormatManager::MyGetTimeFormat(
 	::GetTimeFormat(CSelectLang::getDefaultLangId(), dwFlags, &systime, pszForm, pszDest, nDestLen);
 	return pszDest;
 }
-

@@ -137,4 +137,3 @@ inline CAppNodeHandle::CAppNodeHandle(HWND hwnd)
 {
 	m_pNodeRef = CAppNodeManager::getInstance()->GetEditNode(hwnd);
 }
-

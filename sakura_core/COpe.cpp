@@ -63,4 +63,3 @@ void CInsertOpe::DUMP( void )
 	}
 	return;
 }
-

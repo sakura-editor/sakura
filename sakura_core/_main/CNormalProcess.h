@@ -48,4 +48,3 @@ protected:
 private:
 	CEditApp*	m_pcEditApp;	//2007.10.23 kobake
 };
-

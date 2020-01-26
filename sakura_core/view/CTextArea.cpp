@@ -355,4 +355,3 @@ int CTextArea::GenerateYPx(CLayoutYInt nLineNum) const
 	}
 	return ret;
 }
-

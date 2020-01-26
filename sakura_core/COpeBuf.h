@@ -55,4 +55,3 @@ private:
 	int						m_nCurrentPointer;	//!< 現在位置
 	int						m_nNoModifiedIndex;	//!< 無変更な状態になった位置
 };
-

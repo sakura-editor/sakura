@@ -119,4 +119,3 @@ const wchar_t* CDocReader::GetNextLinrStr( int* pnLineLen )
 	}
 	return pszLine;
 }
-

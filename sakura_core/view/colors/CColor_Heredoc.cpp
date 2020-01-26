@@ -148,4 +148,3 @@ bool CColor_Heredoc::EndColor(const CStringRef& cStr, int nPos)
 	}
 	return false;
 }
-

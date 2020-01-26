@@ -403,4 +403,3 @@ void CLayoutMgr::ClearLayoutLineWidth( void )
 		pLayout = pLayout->GetNextLayout();		// 次のレイアウト行のデータ
 	}
 }
-

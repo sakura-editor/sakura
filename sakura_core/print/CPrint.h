@@ -201,4 +201,3 @@ private:
 	HGLOBAL	m_hDevMode;							//!< 現在プリンタのDEVMODEへのメモリハンドル
 	HGLOBAL	m_hDevNames;						//!< 現在プリンタのDEVNAMESへのメモリハンドル
 };
-

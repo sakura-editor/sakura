@@ -65,4 +65,3 @@ protected:
 	STypeConfig* m_pTypes;	//!< タイプ別設定データ
 	COLORREF m_cr;		//!< 指定色
 };
-

@@ -85,4 +85,3 @@ protected:
 	*/
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
 };
-

@@ -100,4 +100,3 @@ private:
 	DLLSHAREDATA* m_pShareData;
 	std::vector<JackDef> m_Jacks;	//ジャック定義の一覧
 };
-

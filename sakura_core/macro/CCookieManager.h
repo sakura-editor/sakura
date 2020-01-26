@@ -51,4 +51,3 @@ private:
 	std::map<wstring, wstring> m_cookieWindow;
 	std::map<wstring, wstring> m_cookieDocument;
 };
-

@@ -48,4 +48,3 @@ protected:
 	LRESULT OnMButtonDown(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;
 	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;
 };
-

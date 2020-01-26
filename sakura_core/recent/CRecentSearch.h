@@ -44,4 +44,3 @@ public:
 	bool			ValidateReceiveType( LPCWSTR p ) const override;
 	size_t			GetTextMaxLength() const;
 };
-

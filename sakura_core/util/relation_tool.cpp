@@ -74,4 +74,3 @@ CSubject* CListener::Listen(CSubject* pcSubject)
 
 	return pOld;
 }
-

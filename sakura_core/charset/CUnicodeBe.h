@@ -43,4 +43,3 @@ public:
 	inline static EConvertResult UnicodeToUnicodeBE(const CNativeW& cSrc, CMemory* pDst)
 		{ return CUnicode::_UnicodeToUnicode_out(cSrc, pDst, true); }	// Unicode   → UnicodeBEコード変換
 };
-

@@ -71,4 +71,3 @@ bool CColor_BlockComment::EndColor(const CStringRef& cStr, int nPos)
 	}
 	return false;
 }
-

@@ -4047,4 +4047,3 @@ void CDlgFuncList::LoadFileTreeSetting( CFileTreeSetting& data, SFilePath& IniDi
 		}
 	}
 }
-

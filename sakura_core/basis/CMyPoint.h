@@ -116,4 +116,3 @@ inline void TwoPointToRect(
 		prcRect->right	= (Int)pt1.x;
 	}
 }
-

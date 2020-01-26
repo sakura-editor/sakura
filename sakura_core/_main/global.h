@@ -175,4 +175,3 @@ class CEditWnd;
 extern CEditWnd* g_pcEditWnd;
 
 HINSTANCE G_AppInstance();
-

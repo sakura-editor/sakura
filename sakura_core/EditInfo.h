@@ -76,4 +76,3 @@ struct EditInfo {
 	// コンストラクタ
 	EditInfo() noexcept;
 };
-

@@ -279,4 +279,3 @@ BOOL CDlgWindowList::OnActivate(WPARAM wParam, LPARAM lParam)
 	}
 	return CDialog::OnActivate(wParam, lParam);
 }
-

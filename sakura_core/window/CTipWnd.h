@@ -73,4 +73,3 @@ protected:
 	/* 仮想関数 メッセージ処理 詳しくは実装を参照 */
 	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;/* 描画処理 */
 };
-

@@ -315,4 +315,3 @@ void CDocOutline::MakeTopicList_wztxt(CFuncInfoArr* pcFuncInfoArr)
 		}
 	}
 }
-

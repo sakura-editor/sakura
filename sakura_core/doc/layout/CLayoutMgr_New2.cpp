@@ -151,4 +151,3 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	//2007.10.18 kobake LayoutReplaceArg::ptLayoutNewはここで算出するのが正しい
 	LogicToLayout(DLRArg.ptNewPos, &pArg->ptLayoutNew); // 挿入された部分の次の位置
 }
-

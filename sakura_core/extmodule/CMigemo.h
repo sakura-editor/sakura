@@ -134,4 +134,3 @@ public:
 	int migemo_is_enable();
 	int migemo_load_all();
 };
-

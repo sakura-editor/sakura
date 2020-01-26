@@ -187,4 +187,3 @@ public:
 		return RegDeleteKey(root, path);
 	}
 };
-

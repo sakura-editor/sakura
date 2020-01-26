@@ -110,4 +110,3 @@ static const bool UNICODE_BOOL=true;
 #if _WIN64
 #define ALPHA_VERSION
 #endif
-

@@ -27,4 +27,3 @@ template<> WCHAR _TextTemplate<WCHAR,CHAR_VALUE>(){ return LTEXT(CHAR_VALUE); }
 
 //使用マクロ
 #define _T2(CHAR_TYPE,CHAR_VALUE) _TextTemplate<CHAR_TYPE,CHAR_VALUE>()
-

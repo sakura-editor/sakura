@@ -421,4 +421,3 @@ LRESULT CSplitBoxWnd::OnLButtonDblClk( HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 	}
 	return 0L;
 }
-

@@ -81,4 +81,3 @@ protected:
 	void UpdatePrintableLineAndColumn();	/* 行数と桁数の計算要求 */
 	void SetFontName( int idTxt, int idUse, LOGFONT& lf, int nPointSize );	// フォント名/使用ボタンの設定
 };
-

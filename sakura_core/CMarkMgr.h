@@ -134,4 +134,3 @@ public:
 	void Add(const CMark& m) override;	//!<	要素の追加
 	void Expire(void) override;	//!<	要素数の調整
 };
-

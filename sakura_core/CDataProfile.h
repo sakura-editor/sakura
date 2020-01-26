@@ -222,4 +222,3 @@ bool CDataProfile::IOProfileData<std::wstring>(
 	}
 	return ret;
 }
-

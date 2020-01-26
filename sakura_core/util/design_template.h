@@ -111,4 +111,3 @@ private:
 	static std::vector<T*> gm_table;
 };
 template <class T> std::vector<T*> TInstanceHolder<T>::gm_table;
-

@@ -44,4 +44,3 @@ LPCWSTR GetWindowsMessageName(UINT msg)
 }
 
 #endif
-

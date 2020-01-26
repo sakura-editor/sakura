@@ -562,4 +562,3 @@ void CPropBackup::UpdateBackupFile(HWND hwndDlg)	//	バックアップファイ�
 	}
 	return;
 }
-

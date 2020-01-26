@@ -98,4 +98,3 @@ inline int CLatin1::_UniToLatin1_char( const unsigned short* pSrc, unsigned char
 
 	return nret;
 }
-

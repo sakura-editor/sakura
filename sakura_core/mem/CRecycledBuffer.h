@@ -110,4 +110,3 @@ private:
 	BYTE* m_buf[CHAIN_COUNT];
 	int   m_current;
 };
-

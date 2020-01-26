@@ -84,4 +84,3 @@ public:
 		return static_cast<SUBJECT*>(CListener::GetListeningSubject());
 	}
 };
-

@@ -182,4 +182,3 @@ void CAutoMarkMgr::Expire(void)
 	if( m_nCurpos < 0 )
 		m_nCurpos = 0;
 }
-

@@ -324,4 +324,3 @@ void CTipWnd::GetWindowSize(LPRECT pRect)
 }
 
 // 2001/06/19 End
-

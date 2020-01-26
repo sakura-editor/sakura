@@ -46,4 +46,3 @@ public:
 private:
 	DLLSHAREDATA* m_pShareData;
 };
-

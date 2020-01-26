@@ -37,4 +37,3 @@ private:
 	bool m_bLeft;
 	bool m_bExtEol;
 };
-

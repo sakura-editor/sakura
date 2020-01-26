@@ -39,4 +39,3 @@ public:
 	//ロード時チェック
 	void OnFinalLoad(ELoadResult eLoadResult) override;
 };
-

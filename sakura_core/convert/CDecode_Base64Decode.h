@@ -35,4 +35,3 @@ class CDecode_Base64Decode final : public CDecode{
 public:
 	bool DoDecode(const CNativeW& cData, CMemory* pcDst) override;
 };
-

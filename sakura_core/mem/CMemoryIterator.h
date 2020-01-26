@@ -147,4 +147,3 @@ private:
 	CLogicInt	m_nIndex_Delta;  //index増分
 	CLayoutInt	m_nColumn_Delta; //column増分
 };
-

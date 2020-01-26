@@ -108,4 +108,3 @@ public:
 private:
 	CDocLineMgr* m_pcDocLineMgr;
 };
-
