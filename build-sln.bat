@@ -2,6 +2,7 @@
 set platform=%1
 set configuration=%2
 
+set SKIP_CREATE_GITHASH=1
 if "%platform%" == "Win32" (
 	@rem OK
 ) else if "%platform%" == "x64" (
