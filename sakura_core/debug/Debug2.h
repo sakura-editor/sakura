@@ -42,22 +42,9 @@
 	void debug_exit();
 	void warning_point();
 
-	#define assert(exp) \
-	{ \
-		if(!(exp)){ \
-			TRACE( "!assert: " #exp, NULL ); \
-			ErrorMessage( NULL, L"!assert\n%hs(%d):\n%hs", __FILE__, __LINE__, #exp ); \
-			debug_exit(); \
-		} \
-	}
+	#define assert(exp)
 
-	#define assert_warning(exp) \
-	{ \
-		if(!(exp)){ \
-			TRACE( "!warning: " #exp, NULL ); \
-			warning_point(); \
-		} \
-	}
+	#define assert_warning(exp)
 
 #else
 	#define assert(exp)
