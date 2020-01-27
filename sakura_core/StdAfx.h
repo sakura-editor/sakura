@@ -4,7 +4,9 @@
 //				プロジェクト専用のインクルード ファイルを記述します。
 //
 
+#if defined(_MSC_VER) && _MSC_VER > 1000
 #pragma once
+#endif // _MSC_VER > 1000
 
 // この位置にヘッダーを挿入してください
 // #define WIN32_LEAN_AND_MEAN		// Windows ヘッダーから殆ど使用されないスタッフを除外します
