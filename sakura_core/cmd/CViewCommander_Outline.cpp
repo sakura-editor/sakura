@@ -61,6 +61,11 @@ BOOL CViewCommander::Command_FUNCLIST(
 	if( nOutlineType == OUTLINE_DEFAULT ){
 		/* タイプ別に設定されたアウトライン解析方法 */
 		nOutlineType = m_pCommanderView->m_pTypeData->m_eDefaultOutline;
+		// C/C++はファイル名により判定する
+		if( nOutlineType == OUTLINE_C_CPP
+			&& GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
+			nOutlineType = CheckCppType( GetDocument()->m_cDocFile.GetFilePath() );
+		}
 	}
 
 	if( NULL != GetEditWindow()->m_cDlgFuncList.GetHwnd() && nAction != SHOW_RELOAD ){

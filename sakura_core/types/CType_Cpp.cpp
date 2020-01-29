@@ -33,6 +33,22 @@
 #include "view/CEditView.h"
 #include "view/colors/EColorIndexType.h"
 
+// 2015.11.14 C/C++のファイル名による判定
+EOutlineType CheckCppType( const wchar_t* pszFileName )
+{
+	auto nOutlineType = OUTLINE_C;
+	if( CheckEXT( pszFileName, L"cpp" )
+		|| CheckEXT( pszFileName, L"c++" )
+		|| CheckEXT( pszFileName, L"cxx" )
+		|| CheckEXT( pszFileName, L"hpp" )
+		|| CheckEXT( pszFileName, L"h++" )
+		|| CheckEXT( pszFileName, L"hxx" ) )
+	{
+		nOutlineType = OUTLINE_CPP;
+	}
+	return nOutlineType;
+}
+
 //!CPPキーワードで始まっていれば true
 inline bool IsHeadCppKeyword(const wchar_t* pData)
 {
@@ -342,23 +358,9 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 	const wchar_t*	pLine;
 	CLogicInt	nLineLen;
 	CLogicInt	i;
-	// 2015.11.14 C/C++のファイル名による判定
 	if( nOutlineType == OUTLINE_C_CPP ){
-		if( CheckEXT( pszFileName, L"c" ) ){
-			nOutlineType = OUTLINE_C;
-		}else if( CheckEXT( pszFileName, L"cpp" ) ){
-			nOutlineType = OUTLINE_CPP;
-		}else if( CheckEXT( pszFileName, L"c++" ) ){
-			nOutlineType = OUTLINE_CPP;
-		}else if( CheckEXT( pszFileName, L"cxx" ) ){
-			nOutlineType = OUTLINE_CPP;
-		}else if( CheckEXT( pszFileName, L"hpp" ) ){
-			nOutlineType = OUTLINE_CPP;
-		}else if( CheckEXT( pszFileName, L"h++" ) ){
-			nOutlineType = OUTLINE_CPP;
-		}else if( CheckEXT( pszFileName, L"hxx" ) ){
-			nOutlineType = OUTLINE_CPP;
-		}
+		// 2015.11.14 C/C++のファイル名による判定
+		nOutlineType = CheckCppType( pszFileName );
 	}
 
 	// 2002/10/27 frozen　ここから
