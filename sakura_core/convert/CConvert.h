@@ -26,30 +26,35 @@
 
 //2007.10.02 kobake CEditViewから分離
 
-#include "Funccode_enum.h"	// EFunctionCode
+#include "Funccode_enum.h" // EFunctionCode
 
-class CConvertMediator{
-public:
-	//! 機能種別によるバッファの変換
-	static void ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, CKetaXInt nTabWidth, int nStartColumn );
+class CConvertMediator
+{
+  public:
+    //! 機能種別によるバッファの変換
+    static void ConvMemory(CNativeW *pCMemory, EFunctionCode nFuncCode, CKetaXInt nTabWidth, int nStartColumn);
 
-protected:
-	static void Command_TRIM2( CNativeW* pCMemory , BOOL bLeft );
+  protected:
+    static void Command_TRIM2(CNativeW *pCMemory, BOOL bLeft);
 };
 
-class CConvert{
-public:
-	virtual ~CConvert(){}
+class CConvert
+{
+  public:
+    virtual ~CConvert()
+    {
+    }
 
-	//インターフェース
-	void CallConvert( CNativeW* pcData )
-	{
-		bool bRet=DoConvert(pcData);
-		if(!bRet){
-			ErrorMessage(NULL,LS(STR_CONVERT_ERR));
-		}
-	}
+    //インターフェース
+    void CallConvert(CNativeW *pcData)
+    {
+        bool bRet = DoConvert(pcData);
+        if (!bRet)
+        {
+            ErrorMessage(NULL, LS(STR_CONVERT_ERR));
+        }
+    }
 
-	//実装
-	virtual bool DoConvert( CNativeW* pcData )=0;
+    //実装
+    virtual bool DoConvert(CNativeW *pcData) = 0;
 };

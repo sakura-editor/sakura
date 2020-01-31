@@ -31,10 +31,15 @@
 
 #include "convert/CDecode.h"
 
-class CDecode_UuDecode final : public CDecode{
+class CDecode_UuDecode final : public CDecode
+{
 
-	WCHAR m_aFilename[_MAX_PATH];
-public:
-	bool DoDecode(const CNativeW& cData, CMemory* pDst) override;
-	void CopyFilename( WCHAR *pcDst ) const { wcscpy( pcDst, m_aFilename ); }
+    WCHAR m_aFilename[_MAX_PATH];
+
+  public:
+    bool DoDecode(const CNativeW &cData, CMemory *pDst) override;
+    void CopyFilename(WCHAR *pcDst) const
+    {
+        wcscpy(pcDst, m_aFilename);
+    }
 };

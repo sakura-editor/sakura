@@ -28,22 +28,26 @@
 */
 #pragma once
 
-class CDecode {
-public:
-	virtual ~CDecode() { }
+class CDecode
+{
+  public:
+    virtual ~CDecode()
+    {
+    }
 
-	//インターフェース
-	bool CallDecode( const CNativeW& pcData, CMemory* pDest )
-	{
-		bool bRet=DoDecode(pcData, pDest);
-		if(!bRet){
-			ErrorMessage(NULL,LS(STR_CONVERT_ERR));
-			pDest->SetRawData( "", 0 );
-			return false;
-		}
-		return true;
-	}
+    //インターフェース
+    bool CallDecode(const CNativeW &pcData, CMemory *pDest)
+    {
+        bool bRet = DoDecode(pcData, pDest);
+        if (!bRet)
+        {
+            ErrorMessage(NULL, LS(STR_CONVERT_ERR));
+            pDest->SetRawData("", 0);
+            return false;
+        }
+        return true;
+    }
 
-	//実装
-	virtual bool DoDecode( const CNativeW& pcData, CMemory* pDest )=0;
+    //実装
+    virtual bool DoDecode(const CNativeW &pcData, CMemory *pDest) = 0;
 };

@@ -27,7 +27,8 @@
 #include "CConvert.h"
 
 //!できる限り全角ひらがなにする
-class CConvert_ToZenhira final : public CConvert{
-public:
-	bool DoConvert(CNativeW* pcData) override;
+class CConvert_ToZenhira final : public CConvert
+{
+  public:
+    bool DoConvert(CNativeW *pcData) override;
 };
