@@ -48,16 +48,16 @@
 		初期Win95でイメージの表示ができなかった．それらを回避するためにImageListの使用をやめて
 		当初の独自描画に戻した．
 */
-class CImageListMgr {
-public:
+class CImageListMgr
+{
+  public:
+    //	constructor
+    CImageListMgr();
+    ~CImageListMgr();
 
-	//	constructor
-	CImageListMgr();
-	~CImageListMgr();
+    bool Create(HINSTANCE hInstance); //	生成
 
-	bool Create(HINSTANCE hInstance);	//	生成
-	
-	/*! @brief アイコンの描画
+    /*! @brief アイコンの描画
 	
 		指定されたDCの指定された座標にアイコンを描画する．
 	
@@ -69,24 +69,29 @@ public:
 		@param [in] cx アイコン幅
 		@param [in] cy アイコン高さ
 	*/
-	bool DrawToolIcon( HDC drawdc, LONG x, LONG y,
-		int imageNo, DWORD fStyle, LONG cx, LONG cy ) const;
+    bool DrawToolIcon(HDC drawdc, LONG x, LONG y, int imageNo, DWORD fStyle, LONG cx, LONG cy) const;
 
-	//! アイコン数を返す
-	int  Count(void) const;	//	アイコン数
-	
-	//! アイコンの幅
-	int  cx(void) const { return m_cx; }
-	//! アイコンの高さ
-	int  cy(void) const { return m_cy; }
-	
-	//! アイコンを追加する
-	int Add(const WCHAR* szPath);
+    //! アイコン数を返す
+    int Count(void) const; //	アイコン数
 
-	//! アイコンの追加を元に戻す
-	void ResetExtend();
+    //! アイコンの幅
+    int cx(void) const
+    {
+        return m_cx;
+    }
+    //! アイコンの高さ
+    int cy(void) const
+    {
+        return m_cy;
+    }
 
-	/*!
+    //! アイコンを追加する
+    int Add(const WCHAR *szPath);
+
+    //! アイコンの追加を元に戻す
+    void ResetExtend();
+
+    /*!
 		イメージのToolBarへの登録
 	
 		@param hToolBar [in] 登録するToolBar
@@ -95,34 +100,34 @@ public:
 		@date 2003.07.21 genta ここでは何も行わないが，受け皿だけ残しておく
 		@date 2003.07.21 genta 戻り型をvoidに変更
 	*/
-	void  SetToolBarImages(HWND hToolBar, int id = 0) const {}
+    void SetToolBarImages(HWND hToolBar, int id = 0) const
+    {
+    }
 
-protected:
-	int m_cx;			//!<	width of icon
-	int m_cy;			//!<	height of icon
-	/*!	@brief 透過色
+  protected:
+    int m_cx; //!<	width of icon
+    int m_cy; //!<	height of icon
+    /*!	@brief 透過色
 	
 		描画を自前で行うため，透過色を覚えておく必要がある．
 		@date 2003.07.21 genta
 	*/
-	COLORREF m_cTrans;
-	
-	/*! アイコン用ビットマップを保持する
+    COLORREF m_cTrans;
+
+    /*! アイコン用ビットマップを保持する
 		@date 2003.07.21 genta
 	*/
-	HBITMAP m_hIconBitmap;
+    HBITMAP m_hIconBitmap;
 
-	int m_nIconCount;	//!<	アイコンの個数
+    int m_nIconCount; //!<	アイコンの個数
 
-	// アイコン描画関数
-	void MyBitBlt( HDC drawdc, int nXDest, int nYDest,
-		int nWidth, int nHeight, int nXSrc, int nYSrc ) const;
-	void MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
-		int nWidth, int nHeight, int nXSrc, int nYSrc ) const;
+    // アイコン描画関数
+    void MyBitBlt(HDC drawdc, int nXDest, int nYDest, int nWidth, int nHeight, int nXSrc, int nYSrc) const;
+    void MyDitherBlt(HDC drawdc, int nXDest, int nYDest, int nWidth, int nHeight, int nXSrc, int nYSrc) const;
 
-	//! ビットマップを一行拡張する
-	HBITMAP ResizeToolIcons(HDC hDC, HBITMAP &hRscbmp, int cols, int rows) const noexcept;
+    //! ビットマップを一行拡張する
+    HBITMAP ResizeToolIcons(HDC hDC, HBITMAP &hRscbmp, int cols, int rows) const noexcept;
 
-	//! ビットマップを一行拡張する
-	void Extend(bool = true);
+    //! ビットマップを一行拡張する
+    void Extend(bool = true);
 };
