@@ -52,35 +52,36 @@ class CMacroManagerBase;
 
 	Singleton
 */
-class CMacroFactory : public TSingleton<CMacroFactory> {
-	friend class TSingleton<CMacroFactory>;
-	CMacroFactory();
+class CMacroFactory : public TSingleton<CMacroFactory>
+{
+    friend class TSingleton<CMacroFactory>;
+    CMacroFactory();
 
-public:
-	typedef CMacroManagerBase* (*Creator)(const WCHAR*);
+  public:
+    typedef CMacroManagerBase *(*Creator)(const WCHAR *);
 
-	bool RegisterCreator(Creator f);
-	// Jan. 31, 2004 genta
-	// バイナリサイズ削減のためm_mMacroExtsを削除
-	//bool RegisterExt( const char*, Creator );
-	bool Unregister(Creator f);
+    bool RegisterCreator(Creator f);
+    // Jan. 31, 2004 genta
+    // バイナリサイズ削減のためm_mMacroExtsを削除
+    //bool RegisterExt( const char*, Creator );
+    bool Unregister(Creator f);
 
-	CMacroManagerBase* Create(const WCHAR* ext);
+    CMacroManagerBase *Create(const WCHAR *ext);
 
-private:
-	std::wstring Ext2Key(const WCHAR *ext);
+  private:
+    std::wstring Ext2Key(const WCHAR *ext);
 
-	// Jan. 31, 2004 genta
-	// バイナリサイズ削減のため拡張子保持用mapを削除
-	//	typedef std::map<std::string, Creator> MacroTypeRep;
-	typedef std::list<Creator> MacroEngineRep;
+    // Jan. 31, 2004 genta
+    // バイナリサイズ削減のため拡張子保持用mapを削除
+    //	typedef std::map<std::string, Creator> MacroTypeRep;
+    typedef std::list<Creator> MacroEngineRep;
 
-	// Jan. 31, 2004 genta
-	// バイナリサイズ削減のため
-	//MacroTypeRep m_mMacroExts;	/*!< 拡張子対応表 */
-	/*!
+    // Jan. 31, 2004 genta
+    // バイナリサイズ削減のため
+    //MacroTypeRep m_mMacroExts;	/*!< 拡張子対応表 */
+    /*!
 		Creatorリスト
 		@date 2002.08.25 genta 追加
 	*/
-	MacroEngineRep m_mMacroCreators;
+    MacroEngineRep m_mMacroCreators;
 };

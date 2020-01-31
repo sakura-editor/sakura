@@ -25,26 +25,26 @@
 //! PPAマクロ
 class CPPAMacroMgr final : public CMacroManagerBase
 {
-public:
-	/*
+  public:
+    /*
 	||  Constructors
 	*/
-	CPPAMacroMgr();
-	~CPPAMacroMgr();
+    CPPAMacroMgr();
+    ~CPPAMacroMgr();
 
-	/*
+    /*
 	||	PPA.DLLに委譲する部分
 	*/
-	bool ExecKeyMacro( class CEditView* pcEditView, int flags ) const override;	/* PPAマクロの実行 */
-	BOOL LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath) override;		/* キーボードマクロをファイルから読み込み、CMacroの列に変換 */
-	BOOL LoadKeyMacroStr( HINSTANCE hInstance, const WCHAR* pszCode) override;	/* キーボードマクロを文字列から読み込み、CMacroの列に変換 */
+    bool ExecKeyMacro(class CEditView *pcEditView, int flags) const override; /* PPAマクロの実行 */
+    BOOL LoadKeyMacro(HINSTANCE hInstance, const WCHAR *pszPath) override; /* キーボードマクロをファイルから読み込み、CMacroの列に変換 */
+    BOOL LoadKeyMacroStr(HINSTANCE hInstance, const WCHAR *pszCode) override; /* キーボードマクロを文字列から読み込み、CMacroの列に変換 */
 
-	static class CPPA m_cPPA;
+    static class CPPA m_cPPA;
 
-	// Apr. 29, 2002 genta
-	static CMacroManagerBase* Creator(const WCHAR* ext);
-	static void declare(void);
+    // Apr. 29, 2002 genta
+    static CMacroManagerBase *Creator(const WCHAR *ext);
+    static void declare(void);
 
-protected:
-	CNativeW m_cBuffer;
+  protected:
+    CNativeW m_cBuffer;
 };

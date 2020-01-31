@@ -34,20 +34,20 @@
 
 class CCookieManager
 {
-	typedef std::wstring wstring;
+    typedef std::wstring wstring;
 
-public:
-	SysString GetCookie(LPCWSTR scope, LPCWSTR cookieName) const;
-	SysString GetCookieDefault(LPCWSTR scope, LPCWSTR cookieName, LPCWSTR defVal, int len) const;
-	int SetCookie(LPCWSTR scope, LPCWSTR cookieName, LPCWSTR val, int len);
-	int DeleteCookie(LPCWSTR scope, LPCWSTR cookieName);
-	SysString GetCookieNames(LPCWSTR scope) const;
-	int DeleteAll(LPCWSTR scope);
+  public:
+    SysString GetCookie(LPCWSTR scope, LPCWSTR cookieName) const;
+    SysString GetCookieDefault(LPCWSTR scope, LPCWSTR cookieName, LPCWSTR defVal, int len) const;
+    int SetCookie(LPCWSTR scope, LPCWSTR cookieName, LPCWSTR val, int len);
+    int DeleteCookie(LPCWSTR scope, LPCWSTR cookieName);
+    SysString GetCookieNames(LPCWSTR scope) const;
+    int DeleteAll(LPCWSTR scope);
 
-private:
-	std::map<wstring, wstring>* SelectCookieType(LPCWSTR scope) const;
-	bool ValidateCookieName(LPCWSTR cookieName) const;
+  private:
+    std::map<wstring, wstring> *SelectCookieType(LPCWSTR scope) const;
+    bool ValidateCookieName(LPCWSTR cookieName) const;
 
-	std::map<wstring, wstring> m_cookieWindow;
-	std::map<wstring, wstring> m_cookieDocument;
+    std::map<wstring, wstring> m_cookieWindow;
+    std::map<wstring, wstring> m_cookieDocument;
 };

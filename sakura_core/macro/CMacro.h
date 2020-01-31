@@ -34,45 +34,59 @@
 #pragma once
 
 #include <Windows.h>
-#include <ObjIdl.h>  // VARIANT等
+#include <ObjIdl.h> // VARIANT等
 #include "func/Funccode.h"
 
 class CTextOutputStream;
 class CEditView;
 
-enum EMacroParamType{
-	EMacroParamTypeNull,
-	EMacroParamTypeInt,
-	EMacroParamTypeStr,
+enum EMacroParamType
+{
+    EMacroParamTypeNull,
+    EMacroParamTypeInt,
+    EMacroParamTypeStr,
 };
-struct CMacroParam{
-	WCHAR*			m_pData;
-	CMacroParam*	m_pNext;
-	int				m_nDataLen;
-	EMacroParamType m_eType;
+struct CMacroParam
+{
+    WCHAR *m_pData;
+    CMacroParam *m_pNext;
+    int m_nDataLen;
+    EMacroParamType m_eType;
 
-	CMacroParam():m_pData(NULL), m_pNext(NULL), m_nDataLen(0), m_eType(EMacroParamTypeNull){}
-	CMacroParam( const CMacroParam& obj ){
-		if( obj.m_pData ){
-			m_pData = new WCHAR[obj.m_nDataLen + 1];
-		}else{
-			m_pData = NULL;
-		}
-		m_pNext = NULL;
-		m_nDataLen = obj.m_nDataLen;
-		m_eType = obj.m_eType;
-	}
-	~CMacroParam(){
-		Clear();
-	}
-	void Clear(){
-		delete[] m_pData;
-		m_pData = NULL;
-		m_nDataLen = 0;
-		m_eType = EMacroParamTypeNull;
-	}
-	void SetStringParam( const WCHAR* szParam, int nLength = -1 );
-	void SetIntParam( const int nParam );
+    CMacroParam()
+        : m_pData(NULL)
+        , m_pNext(NULL)
+        , m_nDataLen(0)
+        , m_eType(EMacroParamTypeNull)
+    {
+    }
+    CMacroParam(const CMacroParam &obj)
+    {
+        if (obj.m_pData)
+        {
+            m_pData = new WCHAR[obj.m_nDataLen + 1];
+        }
+        else
+        {
+            m_pData = NULL;
+        }
+        m_pNext    = NULL;
+        m_nDataLen = obj.m_nDataLen;
+        m_eType    = obj.m_eType;
+    }
+    ~CMacroParam()
+    {
+        Clear();
+    }
+    void Clear()
+    {
+        delete[] m_pData;
+        m_pData    = NULL;
+        m_nDataLen = 0;
+        m_eType    = EMacroParamTypeNull;
+    }
+    void SetStringParam(const WCHAR *szParam, int nLength = -1);
+    void SetIntParam(const int nParam);
 };
 
 /*! @brief キーボードマクロの1コマンド
@@ -92,40 +106,46 @@ struct CMacroParam{
 */
 class CMacro
 {
-public:
-	/*
+  public:
+    /*
 	||  Constructors
 	*/
-	CMacro( EFunctionCode nFuncID );	//	機能IDを指定して初期化
-	~CMacro();
-	void ClearMacroParam();
+    CMacro(EFunctionCode nFuncID); //	機能IDを指定して初期化
+    ~CMacro();
+    void ClearMacroParam();
 
-	void SetNext(CMacro* pNext){ m_pNext = pNext; }
-	CMacro* GetNext(){ return m_pNext; }
-	// 2007.07.20 genta : flags追加
-	bool Exec( CEditView* pcEditView, int flags ) const; //2007.09.30 kobake const追加
-	void Save( HINSTANCE hInstance, CTextOutputStream& out ) const; //2007.09.30 kobake const追加
-	
-	void AddLParam( const LPARAM* lParam, const CEditView* pcEditView  );	//@@@ 2002.2.2 YAZAKI pcEditViewも渡す
-	void AddStringParam( const WCHAR* szParam, int nLength = -1 );
-	void AddIntParam( const int nParam );
-	int GetParamCount() const;
+    void SetNext(CMacro *pNext)
+    {
+        m_pNext = pNext;
+    }
+    CMacro *GetNext()
+    {
+        return m_pNext;
+    }
+    // 2007.07.20 genta : flags追加
+    bool Exec(CEditView *pcEditView, int flags) const; //2007.09.30 kobake const追加
+    void Save(HINSTANCE hInstance, CTextOutputStream &out) const; //2007.09.30 kobake const追加
 
-	static bool HandleCommand( CEditView *View, EFunctionCode ID, const WCHAR* Argument[], const int ArgLengths[], const int ArgSize );
-	static bool HandleFunction( CEditView *View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result);
-	//2009.10.29 syat HandleCommandとHandleFunctionの引数を少しそろえた
+    void AddLParam(const LPARAM *lParam, const CEditView *pcEditView); //@@@ 2002.2.2 YAZAKI pcEditViewも渡す
+    void AddStringParam(const WCHAR *szParam, int nLength = -1);
+    void AddIntParam(const int nParam);
+    int GetParamCount() const;
 
-	/*
+    static bool HandleCommand(CEditView *View, EFunctionCode ID, const WCHAR *Argument[], const int ArgLengths[], const int ArgSize);
+    static bool HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result);
+    //2009.10.29 syat HandleCommandとHandleFunctionの引数を少しそろえた
+
+    /*
 	||  Attributes & Operations
 	*/
-protected:
-	static WCHAR* GetParamAt(CMacroParam*, int);
+  protected:
+    static WCHAR *GetParamAt(CMacroParam *, int);
 
-	/*
+    /*
 	||  実装ヘルパ関数
 	*/
-	EFunctionCode	m_nFuncID;		//	機能ID
-	CMacroParam*	m_pParamTop;	//	パラメータ
-	CMacroParam*	m_pParamBot;
-	CMacro*			m_pNext;		//	次のマクロへのポインタ
+    EFunctionCode m_nFuncID; //	機能ID
+    CMacroParam *m_pParamTop; //	パラメータ
+    CMacroParam *m_pParamBot;
+    CMacro *m_pNext; //	次のマクロへのポインタ
 };

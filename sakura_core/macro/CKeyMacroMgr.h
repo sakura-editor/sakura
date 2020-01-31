@@ -31,33 +31,33 @@ class CMacro;
 */
 class CKeyMacroMgr : public CMacroManagerBase
 {
-public:
-	/*
+  public:
+    /*
 	||  Constructors
 	*/
-	CKeyMacroMgr();
-	~CKeyMacroMgr();
+    CKeyMacroMgr();
+    ~CKeyMacroMgr();
 
-	/*
+    /*
 	||  Attributes & Operations
 	*/
-	void ClearAll( void );				/* キーマクロのバッファをクリアする */
-	void Append( EFunctionCode nFuncID, const LPARAM* lParams, class CEditView* pcEditView );		/* キーマクロのバッファにデータ追加 */
-	void Append( class CMacro* macro );		/* キーマクロのバッファにデータ追加 */
-	
-	/* キーボードマクロをまとめて取り扱う */
-	BOOL SaveKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath) const;	/* CMacroの列を、キーボードマクロに保存 */
-	//@@@2002.2.2 YAZAKI PPA.DLLアリ/ナシ共存のためvirtualに。
-	//	2007.07.20 genta flags追加
-	bool ExecKeyMacro( class CEditView* pcEditView, int flags ) const override;	/* キーボードマクロの実行 */
-	BOOL LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath) override;		/* キーボードマクロをファイルから読み込む */
-	BOOL LoadKeyMacroStr( HINSTANCE hInstance, const WCHAR* pszCode) override;	/* キーボードマクロを文字列から読み込む */
-	
-	// Apr. 29, 2002 genta
-	static CMacroManagerBase* Creator(const WCHAR* ext);
-	static void declare(void);
+    void ClearAll(void); /* キーマクロのバッファをクリアする */
+    void Append(EFunctionCode nFuncID, const LPARAM *lParams, class CEditView *pcEditView); /* キーマクロのバッファにデータ追加 */
+    void Append(class CMacro *macro); /* キーマクロのバッファにデータ追加 */
 
-protected:
-	CMacro*	m_pTop;	//	先頭と終端を保持
-	CMacro*	m_pBot;
+    /* キーボードマクロをまとめて取り扱う */
+    BOOL SaveKeyMacro(HINSTANCE hInstance, const WCHAR *pszPath) const; /* CMacroの列を、キーボードマクロに保存 */
+    //@@@2002.2.2 YAZAKI PPA.DLLアリ/ナシ共存のためvirtualに。
+    //	2007.07.20 genta flags追加
+    bool ExecKeyMacro(class CEditView *pcEditView, int flags) const override; /* キーボードマクロの実行 */
+    BOOL LoadKeyMacro(HINSTANCE hInstance, const WCHAR *pszPath) override; /* キーボードマクロをファイルから読み込む */
+    BOOL LoadKeyMacroStr(HINSTANCE hInstance, const WCHAR *pszCode) override; /* キーボードマクロを文字列から読み込む */
+
+    // Apr. 29, 2002 genta
+    static CMacroManagerBase *Creator(const WCHAR *ext);
+    static void declare(void);
+
+  protected:
+    CMacro *m_pTop; //	先頭と終端を保持
+    CMacro *m_pBot;
 };

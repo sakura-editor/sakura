@@ -32,26 +32,26 @@ typedef void (*EngineCallback)(wchar_t *Ext, char *EngineName);
 
 class CWSHMacroManager final : public CMacroManagerBase
 {
-public:
-	CWSHMacroManager(std::wstring const AEngineName);
-	virtual ~CWSHMacroManager();
+  public:
+    CWSHMacroManager(std::wstring const AEngineName);
+    virtual ~CWSHMacroManager();
 
-	//	2007.07.20 genta : flags追加
-	bool ExecKeyMacro(CEditView *EditView, int flags) const override;
-	BOOL LoadKeyMacro(HINSTANCE hInstance, const WCHAR* pszPath) override;
-	BOOL LoadKeyMacroStr(HINSTANCE hInstance, const WCHAR* pszCode) override;
+    //	2007.07.20 genta : flags追加
+    bool ExecKeyMacro(CEditView *EditView, int flags) const override;
+    BOOL LoadKeyMacro(HINSTANCE hInstance, const WCHAR *pszPath) override;
+    BOOL LoadKeyMacroStr(HINSTANCE hInstance, const WCHAR *pszCode) override;
 
-	static CMacroManagerBase* Creator(const WCHAR* FileExt);
-	static void declare();
+    static CMacroManagerBase *Creator(const WCHAR *FileExt);
+    static void declare();
 
-	void AddParam( CWSHIfObj* param );				//インタフェースオブジェクトを追加する
-	void AddParam( CWSHIfObj::List& params );		//インタフェースオブジェクト達を追加する
-	void ClearParam();								//インタフェースオブジェクトを削除する
-protected:
-	std::wstring m_Source;
-	std::wstring m_EngineName;
-	CWSHIfObj::List m_Params;
-	//2009.10.29 syat CWSHIfObjへ移動
-	////	2007.07.20 genta : flags追加
-	//static void ReadyCommands(CIfObj *Object, MacroFuncInfo *Info, int flags);
+    void AddParam(CWSHIfObj *param); //インタフェースオブジェクトを追加する
+    void AddParam(CWSHIfObj::List &params); //インタフェースオブジェクト達を追加する
+    void ClearParam(); //インタフェースオブジェクトを削除する
+  protected:
+    std::wstring m_Source;
+    std::wstring m_EngineName;
+    CWSHIfObj::List m_Params;
+    //2009.10.29 syat CWSHIfObjへ移動
+    ////	2007.07.20 genta : flags追加
+    //static void ReadyCommands(CIfObj *Object, MacroFuncInfo *Info, int flags);
 };
