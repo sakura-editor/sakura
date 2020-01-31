@@ -39,23 +39,24 @@
 //
 void CAutoSaveAgent::CheckAutoSave()
 {
-	if( m_cPassiveTimer.CheckAction() ){
-		CEditDoc* pcDoc = GetListeningDoc();
+    if (m_cPassiveTimer.CheckAction())
+    {
+        CEditDoc *pcDoc = GetListeningDoc();
 
-		//	上書き保存
+        //	上書き保存
 
-		if( !pcDoc->m_cDocEditor.IsModified() )	//	変更無しなら何もしない
-			return;				//	ここでは，「無変更でも保存」は無視する
+        if (!pcDoc->m_cDocEditor.IsModified()) //	変更無しなら何もしない
+            return; //	ここでは，「無変更でも保存」は無視する
 
-		//	2003.10.09 zenryaku 保存失敗エラーの抑制
-		if( !pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() )	//	まだファイル名が設定されていなければ保存しない
-			return;
+        //	2003.10.09 zenryaku 保存失敗エラーの抑制
+        if (!pcDoc->m_cDocFile.GetFilePathClass().IsValidPath()) //	まだファイル名が設定されていなければ保存しない
+            return;
 
-		bool en = m_cPassiveTimer.IsEnabled();
-		m_cPassiveTimer.Enable(false);	//	2重呼び出しを防ぐため
-		pcDoc->m_cDocFileOperation.FileSave();	//	保存
-		m_cPassiveTimer.Enable(en);
-	}
+        bool en = m_cPassiveTimer.IsEnabled();
+        m_cPassiveTimer.Enable(false); //	2重呼び出しを防ぐため
+        pcDoc->m_cDocFileOperation.FileSave(); //	保存
+        m_cPassiveTimer.Enable(en);
+    }
 }
 
 //
@@ -63,8 +64,8 @@ void CAutoSaveAgent::CheckAutoSave()
 //
 void CAutoSaveAgent::ReloadAutoSaveParam()
 {
-	m_cPassiveTimer.SetInterval( GetDllShareData().m_Common.m_sBackup.GetAutoBackupInterval() );
-	m_cPassiveTimer.Enable( GetDllShareData().m_Common.m_sBackup.IsAutoBackupEnabled() );
+    m_cPassiveTimer.SetInterval(GetDllShareData().m_Common.m_sBackup.GetAutoBackupInterval());
+    m_cPassiveTimer.Enable(GetDllShareData().m_Common.m_sBackup.IsAutoBackupEnabled());
 }
 
 //----------------------------------------------------------
@@ -78,12 +79,12 @@ void CAutoSaveAgent::ReloadAutoSaveParam()
 */
 void CPassiveTimer::SetInterval(int m)
 {
-	if( m <= 0 )
-		m = 1;
-	else if( m >= 35792 )	//	35792分以上だと int で表現できなくなる
-		m = 35792;
+    if (m <= 0)
+        m = 1;
+    else if (m >= 35792) //	35792分以上だと int で表現できなくなる
+        m = 35792;
 
-	nInterval = m * MSec2Min;
+    nInterval = m * MSec2Min;
 }
 /*!
 	タイマーの有効・無効の切り替え
@@ -92,12 +93,14 @@ void CPassiveTimer::SetInterval(int m)
 */
 void CPassiveTimer::Enable(bool flag)
 {
-	if( bEnabled != flag ){	//	変更があるとき
-		bEnabled = flag;
-		if( flag ){	//	enabled
-			Reset();
-		}
-	}
+    if (bEnabled != flag)
+    { //	変更があるとき
+        bEnabled = flag;
+        if (flag)
+        { //	enabled
+            Reset();
+        }
+    }
 }
 /*!
 	外部で定期に実行されるところから呼び出される関数。
@@ -108,18 +111,18 @@ void CPassiveTimer::Enable(bool flag)
 */
 bool CPassiveTimer::CheckAction(void)
 {
-	if( !IsEnabled() )	//	有効でなければ何もしない
-		return false;
+    if (!IsEnabled()) //	有効でなければ何もしない
+        return false;
 
-	//	時刻比較
-	DWORD now = ::GetTickCount();
-	int diff;
+    //	時刻比較
+    DWORD now = ::GetTickCount();
+    int diff;
 
-	diff = now - nLastTick;	//	TickCountが一回りしてもこれでうまくいくはず...
+    diff = now - nLastTick; //	TickCountが一回りしてもこれでうまくいくはず...
 
-	if( diff < nInterval )	//	規定時間に達していない
-		return false;
+    if (diff < nInterval) //	規定時間に達していない
+        return false;
 
-	Reset();
-	return true;
+    Reset();
+    return true;
 }

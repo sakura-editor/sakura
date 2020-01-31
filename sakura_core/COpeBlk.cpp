@@ -20,17 +20,18 @@
 
 COpeBlk::COpeBlk()
 {
-	m_refCount = 0;
+    m_refCount = 0;
 }
 
 COpeBlk::~COpeBlk()
 {
-	/* 操作の配列を削除する */
-	int size = (int)m_ppCOpeArr.size();
-	for( int i = 0; i < size; ++i ){
-		SAFE_DELETE(m_ppCOpeArr[i]);
-	}
-	m_ppCOpeArr.clear();
+    /* 操作の配列を削除する */
+    int size = (int)m_ppCOpeArr.size();
+    for (int i = 0; i < size; ++i)
+    {
+        SAFE_DELETE(m_ppCOpeArr[i]);
+    }
+    m_ppCOpeArr.clear();
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -38,33 +39,34 @@ COpeBlk::~COpeBlk()
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /* 操作の追加 */
-bool COpeBlk::AppendOpe( COpe* pcOpe )
+bool COpeBlk::AppendOpe(COpe *pcOpe)
 {
-	if(pcOpe->m_ptCaretPos_PHY_Before.HasNegative() || pcOpe->m_ptCaretPos_PHY_After.HasNegative()){
-		TopErrorMessage( NULL,
-			L"COpeBlk::AppendOpe() error.\n"
-			L"Bug.\n"
-			L"pcOpe->m_ptCaretPos_PHY_Before = %d,%d\n"
-			L"pcOpe->m_ptCaretPos_PHY_After = %d,%d\n",
-			pcOpe->m_ptCaretPos_PHY_Before.x,
-			pcOpe->m_ptCaretPos_PHY_Before.y,
-			pcOpe->m_ptCaretPos_PHY_After.x,
-			pcOpe->m_ptCaretPos_PHY_After.y
-		);
-	}
+    if (pcOpe->m_ptCaretPos_PHY_Before.HasNegative() || pcOpe->m_ptCaretPos_PHY_After.HasNegative())
+    {
+        TopErrorMessage(NULL,
+                        L"COpeBlk::AppendOpe() error.\n"
+                        L"Bug.\n"
+                        L"pcOpe->m_ptCaretPos_PHY_Before = %d,%d\n"
+                        L"pcOpe->m_ptCaretPos_PHY_After = %d,%d\n",
+                        pcOpe->m_ptCaretPos_PHY_Before.x,
+                        pcOpe->m_ptCaretPos_PHY_Before.y,
+                        pcOpe->m_ptCaretPos_PHY_After.x,
+                        pcOpe->m_ptCaretPos_PHY_After.y);
+    }
 
-	/* 配列のメモリサイズを調整 */
-	m_ppCOpeArr.push_back(pcOpe);
-	return true;
+    /* 配列のメモリサイズを調整 */
+    m_ppCOpeArr.push_back(pcOpe);
+    return true;
 }
 
 /* 操作を返す */
-COpe* COpeBlk::GetOpe( int nIndex )
+COpe *COpeBlk::GetOpe(int nIndex)
 {
-	if( GetNum() <= nIndex ){
-		return NULL;
-	}
-	return m_ppCOpeArr[nIndex];
+    if (GetNum() <= nIndex)
+    {
+        return NULL;
+    }
+    return m_ppCOpeArr[nIndex];
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -72,14 +74,15 @@ COpe* COpeBlk::GetOpe( int nIndex )
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /* 編集操作要素ブロックのダンプ */
-void COpeBlk::DUMP( void )
+void COpeBlk::DUMP(void)
 {
 #ifdef _DEBUG
-	int i;
-	int size = GetNum();
-	for( i = 0; i < size; ++i ){
-		MYTRACE( L"\tCOpeBlk.m_ppCOpeArr[%d]----\n", i );
-		m_ppCOpeArr[i]->DUMP();
-	}
+    int i;
+    int size = GetNum();
+    for (i = 0; i < size; ++i)
+    {
+        MYTRACE(L"\tCOpeBlk.m_ppCOpeArr[%d]----\n", i);
+        m_ppCOpeArr[i]->DUMP();
+    }
 #endif
 }
