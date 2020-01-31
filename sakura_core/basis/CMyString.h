@@ -27,7 +27,14 @@
 #include <string>
 #include "util/string_ex.h"
 
-#define m_delete2(p) { if(p){ delete[] p; p=0; } }
+#define m_delete2(p)    \
+    {                   \
+        if (p)          \
+        {               \
+            delete[] p; \
+            p = 0;      \
+        }               \
+    }
 
 #define astring string
 
@@ -36,73 +43,93 @@
 #include "util/StaticType.h"
 
 //共通型
-typedef StaticString<WCHAR,_MAX_PATH> SFilePath;
+typedef StaticString<WCHAR, _MAX_PATH> SFilePath;
 typedef StaticString<WCHAR, MAX_GREP_PATH> SFilePathLong;
-class CFilePath : public StaticString<WCHAR,_MAX_PATH>{
-private:
-	typedef StaticString<WCHAR,_MAX_PATH> Super;
-public:
-	CFilePath() : Super() { }
-	CFilePath(const WCHAR* rhs) : Super(rhs) { }
+class CFilePath : public StaticString<WCHAR, _MAX_PATH>
+{
+  private:
+    typedef StaticString<WCHAR, _MAX_PATH> Super;
 
-	bool IsValidPath() const{ return At(0)!=L'\0'; }
-	std::wstring GetDirPath() const
-	{
-		WCHAR	szDirPath[_MAX_PATH];
-		WCHAR	szDrive[_MAX_DRIVE];
-		WCHAR	szDir[_MAX_DIR];
-		_wsplitpath( this->c_str(), szDrive, szDir, NULL, NULL );
-		wcscpy( szDirPath, szDrive);
-		wcscat( szDirPath, szDir );
-		return szDirPath;
-	}
-	//拡張子を取得する
-	LPCWSTR GetExt( bool bWithoutDot = false ) const
-	{
-		const WCHAR* head = c_str();
-		const WCHAR* p = wcschr(head,L'\0') - 1;
-		while(p>=head){
-			if(*p==L'.')break;
-			if(*p==L'\\')break;
-			if(*p==L'/')break;
-			p--;
-		}
-		if(p>=head && *p==L'.'){
-			return bWithoutDot ? p+1 : p;	//bWithoutDot==trueならドットなしを返す
-		}else{
-			return wcschr(head,L'\0');
-		}
-	}
+  public:
+    CFilePath()
+        : Super()
+    {
+    }
+    CFilePath(const WCHAR *rhs)
+        : Super(rhs)
+    {
+    }
+
+    bool IsValidPath() const
+    {
+        return At(0) != L'\0';
+    }
+    std::wstring GetDirPath() const
+    {
+        WCHAR szDirPath[_MAX_PATH];
+        WCHAR szDrive[_MAX_DRIVE];
+        WCHAR szDir[_MAX_DIR];
+        _wsplitpath(this->c_str(), szDrive, szDir, NULL, NULL);
+        wcscpy(szDirPath, szDrive);
+        wcscat(szDirPath, szDir);
+        return szDirPath;
+    }
+    //拡張子を取得する
+    LPCWSTR GetExt(bool bWithoutDot = false) const
+    {
+        const WCHAR *head = c_str();
+        const WCHAR *p    = wcschr(head, L'\0') - 1;
+        while (p >= head)
+        {
+            if (*p == L'.')
+                break;
+            if (*p == L'\\')
+                break;
+            if (*p == L'/')
+                break;
+            p--;
+        }
+        if (p >= head && *p == L'.')
+        {
+            return bWithoutDot ? p + 1 : p; //bWithoutDot==trueならドットなしを返す
+        }
+        else
+        {
+            return wcschr(head, L'\0');
+        }
+    }
 };
 
 //$$ 仮
-class CCommandLineString{
-public:
-	CCommandLineString()
-	{
-		m_szCmdLine[0] = L'\0';
-		m_pHead = m_szCmdLine;
-	}
-	void AppendF(const WCHAR* szFormat, ...)
-	{
-		va_list v;
-		va_start(v,szFormat);
-		m_pHead+=auto_vsprintf_s(m_pHead,_countof(m_szCmdLine)-(m_pHead-m_szCmdLine),szFormat,v);
-		va_end(v);
-	}
-	const WCHAR* c_str() const
-	{
-		return m_szCmdLine;
-	}
-	size_t size() const
-	{
-		return m_pHead - m_szCmdLine;
-	}
-	size_t max_size() const
-	{
-		return _countof(m_szCmdLine) - 1;
-	}
-private:
-	WCHAR	m_szCmdLine[1024];
-	WCHAR*	m_pHead;
+class CCommandLineString
+{
+  public:
+    CCommandLineString()
+    {
+        m_szCmdLine[0] = L'\0';
+        m_pHead        = m_szCmdLine;
+    }
+    void AppendF(const WCHAR *szFormat, ...)
+    {
+        va_list v;
+        va_start(v, szFormat);
+        m_pHead += auto_vsprintf_s(m_pHead, _countof(m_szCmdLine) - (m_pHead - m_szCmdLine), szFormat, v);
+        va_end(v);
+    }
+    const WCHAR *c_str() const
+    {
+        return m_szCmdLine;
+    }
+    size_t size() const
+    {
+        return m_pHead - m_szCmdLine;
+    }
+    size_t max_size() const
+    {
+        return _countof(m_szCmdLine) - 1;
+    }
+
+  private:
+    WCHAR m_szCmdLine[1024];
+    WCHAR *m_pHead;
 };
