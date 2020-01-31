@@ -40,68 +40,70 @@
 	pszDateFormat：
 		カスタムのときのフォーマット
 */
-const WCHAR* CFormatManager::MyGetDateFormat( const SYSTEMTIME& systime, WCHAR* pszDest, int nDestLen )
+const WCHAR *CFormatManager::MyGetDateFormat(const SYSTEMTIME &systime, WCHAR *pszDest, int nDestLen)
 {
-	return MyGetDateFormat(
-		systime,
-		pszDest,
-		nDestLen,
-		m_pShareData->m_Common.m_sFormat.m_nDateFormatType,
-		m_pShareData->m_Common.m_sFormat.m_szDateFormat
-	);
+    return MyGetDateFormat(
+        systime,
+        pszDest,
+        nDestLen,
+        m_pShareData->m_Common.m_sFormat.m_nDateFormatType,
+        m_pShareData->m_Common.m_sFormat.m_szDateFormat);
 }
 
-const WCHAR* CFormatManager::MyGetDateFormat(
-	const SYSTEMTIME&		systime,
-	WCHAR*		pszDest,
-	int				nDestLen,
-	int				nDateFormatType,
-	const WCHAR*	szDateFormat
-)
+const WCHAR *CFormatManager::MyGetDateFormat(
+    const SYSTEMTIME &systime,
+    WCHAR *pszDest,
+    int nDestLen,
+    int nDateFormatType,
+    const WCHAR *szDateFormat)
 {
-	const WCHAR* pszForm;
-	DWORD dwFlags;
-	if( 0 == nDateFormatType ){
-		dwFlags = DATE_LONGDATE;
-		pszForm = NULL;
-	}else{
-		dwFlags = 0;
-		pszForm = szDateFormat;
-	}
-	::GetDateFormat( CSelectLang::getDefaultLangId(), dwFlags, &systime, pszForm, pszDest, nDestLen );
-	return pszDest;
-}
-
-/* 時刻をフォーマット */
-const WCHAR* CFormatManager::MyGetTimeFormat( const SYSTEMTIME& systime, WCHAR* pszDest, int nDestLen )
-{
-	return MyGetTimeFormat(
-		systime,
-		pszDest,
-		nDestLen,
-		m_pShareData->m_Common.m_sFormat.m_nTimeFormatType,
-		m_pShareData->m_Common.m_sFormat.m_szTimeFormat
-	);
+    const WCHAR *pszForm;
+    DWORD dwFlags;
+    if (0 == nDateFormatType)
+    {
+        dwFlags = DATE_LONGDATE;
+        pszForm = NULL;
+    }
+    else
+    {
+        dwFlags = 0;
+        pszForm = szDateFormat;
+    }
+    ::GetDateFormat(CSelectLang::getDefaultLangId(), dwFlags, &systime, pszForm, pszDest, nDestLen);
+    return pszDest;
 }
 
 /* 時刻をフォーマット */
-const WCHAR* CFormatManager::MyGetTimeFormat(
-	const SYSTEMTIME&	systime,
-	WCHAR*			pszDest,
-	int					nDestLen,
-	int					nTimeFormatType,
-	const WCHAR*		szTimeFormat
-)
+const WCHAR *CFormatManager::MyGetTimeFormat(const SYSTEMTIME &systime, WCHAR *pszDest, int nDestLen)
 {
-	const WCHAR* pszForm;
-	DWORD dwFlags;
-	if( 0 == nTimeFormatType ){
-		dwFlags = 0;
-		pszForm = NULL;
-	}else{
-		dwFlags = 0;
-		pszForm = szTimeFormat;
-	}
-	::GetTimeFormat(CSelectLang::getDefaultLangId(), dwFlags, &systime, pszForm, pszDest, nDestLen);
-	return pszDest;
+    return MyGetTimeFormat(
+        systime,
+        pszDest,
+        nDestLen,
+        m_pShareData->m_Common.m_sFormat.m_nTimeFormatType,
+        m_pShareData->m_Common.m_sFormat.m_szTimeFormat);
+}
+
+/* 時刻をフォーマット */
+const WCHAR *CFormatManager::MyGetTimeFormat(
+    const SYSTEMTIME &systime,
+    WCHAR *pszDest,
+    int nDestLen,
+    int nTimeFormatType,
+    const WCHAR *szTimeFormat)
+{
+    const WCHAR *pszForm;
+    DWORD dwFlags;
+    if (0 == nTimeFormatType)
+    {
+        dwFlags = 0;
+        pszForm = NULL;
+    }
+    else
+    {
+        dwFlags = 0;
+        pszForm = szTimeFormat;
+    }
+    ::GetTimeFormat(CSelectLang::getDefaultLangId(), dwFlags, &systime, pszForm, pszDest, nDestLen);
+    return pszDest;
 }
