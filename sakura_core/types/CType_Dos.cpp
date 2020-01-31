@@ -27,16 +27,16 @@
 #include "types/CType.h"
 
 /* MS-DOSバッチファイル */
-void CType_Dos::InitTypeConfigImp(STypeConfig* pType)
+void CType_Dos::InitTypeConfigImp(STypeConfig *pType)
 {
 	//名前と拡張子
-	wcscpy( pType->m_szTypeName, L"MS-DOSバッチファイル" );
-	wcscpy( pType->m_szTypeExts, L"bat" );
+	wcscpy(pType->m_szTypeName, L"MS-DOSバッチファイル");
+	wcscpy(pType->m_szTypeExts, L"bat");
 
 	//設定
-	pType->m_cLineComment.CopyTo( 0, L"REM ", -1 );	/* 行コメントデリミタ */
-	pType->m_eDefaultOutline = OUTLINE_TEXT;		/* アウトライン解析方法 */
-	pType->m_nKeyWordSetIdx[0] = 7;					/* キーワードセット */
+	pType->m_cLineComment.CopyTo(0, L"REM ", -1); /* 行コメントデリミタ */
+	pType->m_eDefaultOutline = OUTLINE_TEXT; /* アウトライン解析方法 */
+	pType->m_nKeyWordSetIdx[0] = 7; /* キーワードセット */
 }
 
 const wchar_t* g_ppszKeywordsBAT[] = {
