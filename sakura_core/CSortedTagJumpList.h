@@ -32,52 +32,63 @@
 
 #include "util/design_template.h"
 
-#define MAX_TAG_STRING_LENGTH _MAX_PATH	//管理する文字列の最大長
+#define MAX_TAG_STRING_LENGTH _MAX_PATH //管理する文字列の最大長
 
 /*!	@brief ダイレクトタグジャンプ用検索結果をソートして保持する．
 	@author MIK
 */
-class CSortedTagJumpList {
-public:
-	CSortedTagJumpList(int max);
-	~CSortedTagJumpList();
+class CSortedTagJumpList
+{
+  public:
+    CSortedTagJumpList(int max);
+    ~CSortedTagJumpList();
 
-	int AddBaseDir( const WCHAR* baseDir );
-	BOOL AddParamA( const ACHAR* keyword, const ACHAR* filename, int no, ACHAR type, const ACHAR* note, int depth, const int baseDirId );
-	BOOL GetParam( int index, WCHAR* keyword, WCHAR* filename, int* no, WCHAR* type, WCHAR* note, int* depth, WCHAR* baseDir );
-	int GetCount( void ){ return m_nCount; }
-	void Empty( void );
-	bool IsOverflow( void ){ return m_bOverflow; }
+    int AddBaseDir(const WCHAR *baseDir);
+    BOOL AddParamA(const ACHAR *keyword, const ACHAR *filename, int no, ACHAR type, const ACHAR *note, int depth, const int baseDirId);
+    BOOL GetParam(int index, WCHAR *keyword, WCHAR *filename, int *no, WCHAR *type, WCHAR *note, int *depth, WCHAR *baseDir);
+    int GetCount(void)
+    {
+        return m_nCount;
+    }
+    void Empty(void);
+    bool IsOverflow(void)
+    {
+        return m_bOverflow;
+    }
 
-	typedef struct tagjump_info_t {
-		struct tagjump_info_t*	next;	//!< 次のリスト
-		WCHAR*	keyword;	//!< キーワード
-		WCHAR*	filename;	//!< ファイル名
-		int		no;			//!< 行番号
-		WCHAR	type;		//!< 種類
-		WCHAR*	note;		//!< 備考
-		int		depth;		//!< (さかのぼる)階層
-		int		baseDirId;	//!< ファイル名のベースディレクトリ
-	} TagJumpInfo;
+    typedef struct tagjump_info_t
+    {
+        struct tagjump_info_t *next; //!< 次のリスト
+        WCHAR *keyword; //!< キーワード
+        WCHAR *filename; //!< ファイル名
+        int no; //!< 行番号
+        WCHAR type; //!< 種類
+        WCHAR *note; //!< 備考
+        int depth; //!< (さかのぼる)階層
+        int baseDirId; //!< ファイル名のベースディレクトリ
+    } TagJumpInfo;
 
-	TagJumpInfo* GetPtr( int index );
+    TagJumpInfo *GetPtr(int index);
 
-	/*!	@brief 管理数の最大値を取得する
+    /*!	@brief 管理数の最大値を取得する
 
 		@date 2005.04.22 genta 最大値を可変に
 	*/
-	int GetCapacity(void) const { return m_MAX_TAGJUMPLIST; }
+    int GetCapacity(void) const
+    {
+        return m_MAX_TAGJUMPLIST;
+    }
 
-private:
-	TagJumpInfo*	m_pTagjump;	//!< タグジャンプ情報
-	std::vector<std::wstring> m_baseDirArr;	//!< ベースディレクトリ情報
-	int				m_nCount;	//!< 個数
-	bool			m_bOverflow;	//!< オーバーフロー
-	
-	//	2005.04.22 genta 最大値を可変に
-	const int		m_MAX_TAGJUMPLIST;	//!< 管理する情報の最大数
+  private:
+    TagJumpInfo *m_pTagjump; //!< タグジャンプ情報
+    std::vector<std::wstring> m_baseDirArr; //!< ベースディレクトリ情報
+    int m_nCount; //!< 個数
+    bool m_bOverflow; //!< オーバーフロー
 
-	void Free( TagJumpInfo* item );
+    //	2005.04.22 genta 最大値を可変に
+    const int m_MAX_TAGJUMPLIST; //!< 管理する情報の最大数
 
-	DISALLOW_COPY_AND_ASSIGN(CSortedTagJumpList);
+    void Free(TagJumpInfo *item);
+
+    DISALLOW_COPY_AND_ASSIGN(CSortedTagJumpList);
 };

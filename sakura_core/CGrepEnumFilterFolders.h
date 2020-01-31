@@ -32,30 +32,36 @@
 
 #include "CGrepEnumFolders.h"
 
-class CGrepEnumFilterFolders final : public CGrepEnumFolders {
-private:
+class CGrepEnumFilterFolders final : public CGrepEnumFolders
+{
+  private:
+  public:
+    CGrepEnumFolders m_cGrepEnumExceptFolders;
 
-public:
-	CGrepEnumFolders m_cGrepEnumExceptFolders;
+  public:
+    CGrepEnumFilterFolders()
+    {
+    }
 
-public:
-	CGrepEnumFilterFolders(){
-	}
+    virtual ~CGrepEnumFilterFolders()
+    {
+    }
 
-	virtual ~CGrepEnumFilterFolders(){
-	}
+    BOOL IsValid(WIN32_FIND_DATA &w32fd, LPCWSTR pFile = NULL) override
+    {
+        if (CGrepEnumFolders::IsValid(w32fd, pFile))
+        {
+            if (m_cGrepEnumExceptFolders.IsValid(w32fd, pFile))
+            {
+                return TRUE;
+            }
+        }
+        return FALSE;
+    }
 
-	BOOL IsValid( WIN32_FIND_DATA& w32fd, LPCWSTR pFile = NULL ) override{
-		if( CGrepEnumFolders::IsValid( w32fd, pFile ) ){
-			if( m_cGrepEnumExceptFolders.IsValid( w32fd, pFile ) ){
-				return TRUE;
-			}
-		}
-		return FALSE;
-	}
-
-	int Enumerates( LPCWSTR lpBaseFolder, CGrepEnumKeys& cGrepEnumKeys, CGrepEnumOptions option, CGrepEnumFolders& except ){
-		m_cGrepEnumExceptFolders.Enumerates( lpBaseFolder, cGrepEnumKeys.m_vecExceptFolderKeys, option, NULL );
-		return CGrepEnumFolders::Enumerates( lpBaseFolder, cGrepEnumKeys.m_vecSearchFolderKeys, option, &except );
-	}
+    int Enumerates(LPCWSTR lpBaseFolder, CGrepEnumKeys &cGrepEnumKeys, CGrepEnumOptions option, CGrepEnumFolders &except)
+    {
+        m_cGrepEnumExceptFolders.Enumerates(lpBaseFolder, cGrepEnumKeys.m_vecExceptFolderKeys, option, NULL);
+        return CGrepEnumFolders::Enumerates(lpBaseFolder, cGrepEnumKeys.m_vecSearchFolderKeys, option, &except);
+    }
 };

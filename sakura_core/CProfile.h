@@ -46,44 +46,57 @@
 */
 class CProfile
 {
-	//文字列型
-	typedef std::wstring wstring;
-	typedef std::string string;
+    //文字列型
+    typedef std::wstring wstring;
+    typedef std::string string;
 
-	typedef std::pair< wstring, wstring > PAIR_STR_STR;
-	typedef std::map< wstring, wstring > MAP_STR_STR;
-	struct Section
-	{
-		wstring     strSectionName;
-		MAP_STR_STR mapEntries;
-	};
+    typedef std::pair<wstring, wstring> PAIR_STR_STR;
+    typedef std::map<wstring, wstring> MAP_STR_STR;
+    struct Section
+    {
+        wstring strSectionName;
+        MAP_STR_STR mapEntries;
+    };
 
-public:
-	CProfile() {}
-	~CProfile() {}
-	void Init( void );
-	bool IsReadingMode( void ) { return m_bRead; }
-	void SetReadingMode( void ) { m_bRead = true; }
-	void SetWritingMode( void ) { m_bRead = false; }
-	bool ReadProfile( const WCHAR* );
-	bool ReadProfileRes( const WCHAR*, const WCHAR*, std::vector<std::wstring>* = NULL );				// 200/5/19 Uchi
-	bool WriteProfile( const WCHAR*, const WCHAR* pszComment);
+  public:
+    CProfile()
+    {
+    }
+    ~CProfile()
+    {
+    }
+    void Init(void);
+    bool IsReadingMode(void)
+    {
+        return m_bRead;
+    }
+    void SetReadingMode(void)
+    {
+        m_bRead = true;
+    }
+    void SetWritingMode(void)
+    {
+        m_bRead = false;
+    }
+    bool ReadProfile(const WCHAR *);
+    bool ReadProfileRes(const WCHAR *, const WCHAR *, std::vector<std::wstring> * = NULL); // 200/5/19 Uchi
+    bool WriteProfile(const WCHAR *, const WCHAR *pszComment);
 
-	void DUMP( void );
+    void DUMP(void);
 
-protected:
-	void ReadOneline( const wstring& line );
-	bool _WriteFile( const wstring& strFilename, const std::vector< wstring >& vecLine);
+  protected:
+    void ReadOneline(const wstring &line);
+    bool _WriteFile(const wstring &strFilename, const std::vector<wstring> &vecLine);
 
-	bool GetProfileDataImp( const wstring& strSectionName, const wstring& strEntryKey, wstring& strEntryValue);
+    bool GetProfileDataImp(const wstring &strSectionName, const wstring &strEntryKey, wstring &strEntryValue);
 
-	bool SetProfileDataImp( const wstring& strSectionName, const wstring& strEntryKey, const wstring& strEntryValue );
+    bool SetProfileDataImp(const wstring &strSectionName, const wstring &strEntryKey, const wstring &strEntryValue);
 
-protected:
-	// メンバ変数
-	wstring					m_strProfileName;	//!< 最後に読み書きしたファイル名
-	std::vector< Section >	m_ProfileData;
-	bool					m_bRead;			//!< モード(true=読み込み/false=書き出し)
+  protected:
+    // メンバ変数
+    wstring m_strProfileName; //!< 最後に読み書きしたファイル名
+    std::vector<Section> m_ProfileData;
+    bool m_bRead; //!< モード(true=読み込み/false=書き出し)
 };
 
 #define _INI_T LTEXT

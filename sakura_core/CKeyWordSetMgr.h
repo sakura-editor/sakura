@@ -37,14 +37,14 @@
 #pragma once
 
 #include <Windows.h>
-#include "_main/global.h"// 2002/2/10 aroka
+#include "_main/global.h" // 2002/2/10 aroka
 
-#define		MAX_SETNUM		100	//2007.12.01 genta 最大値増加
-#define		MAX_SETNAMELEN	32
+#define MAX_SETNUM 100 //2007.12.01 genta 最大値増加
+#define MAX_SETNAMELEN 32
 
 //! キーワード総数 (2005.01.27 1セットあたりの数→セット全体の総数へ意味変更)
-#define		MAX_KEYWORDNUM	15000
-#define		MAX_KEYWORDLEN	63
+#define MAX_KEYWORDNUM 15000
+#define MAX_KEYWORDLEN 63
 
 /*! @brief 強調キーワード管理
 
@@ -66,98 +66,98 @@
 */
 class CKeyWordSetMgr
 {
-public:
-	/*
+  public:
+    /*
 	||  Constructors
 	*/
-	CKeyWordSetMgr();
-	~CKeyWordSetMgr();
-	
-	///	@name キーワードセット操作
-	bool AddKeyWordSet(							//!< セットの追加
-		const wchar_t*	pszSetName,				//!< [in] セット名
-		bool			bKEYWORDCASE,			//!< [in] 大文字小文字の区別．true:あり, false:無し
-		int				nSize			= -1	//!< [in] 最初に領域を確保するサイズ．
-	);
-	bool DelKeyWordSet(int nIdx);	/* ｎ番目のセットを削除 */
-	const wchar_t* GetTypeName(int nIdx);	/* ｎ番目のセット名を返す */
-	const wchar_t* SetTypeName(int nIdx, const wchar_t* name);	//!< ｎ番目のセット名を設定する // 2005.01.26 Moca
-	void SetKeyWordCase(int nIdx, int nCase);				/* ｎ番目のセットの大文字小文字判断をセットする */	//MIK
-	bool GetKeyWordCase(int nIdx);						/* ｎ番目のセットの大文字小文字判断を取得する */			//MIK
-	void SortKeyWord( int nIdx ); /* ｎ番目のセットのキーワードをソートする */  //MIK
+    CKeyWordSetMgr();
+    ~CKeyWordSetMgr();
 
-	// From Here 2004.07.29 Moca 追加 可変長記憶
-	int SetKeyWordArr( int nIdx, int nSize, const wchar_t* pszKeyWordArr );			//!< iniからキーワードを設定する
-	int SetKeyWordArr(						//!< キーワードの配列から設定する
-		int				nIdx,				//!< [in] キーワードセット番号
-		int				nSize,				//!< [in] ppszKeyWordArrの要素数
-		const wchar_t*	ppszKeyWordArr[]	//!< [in] キーワードの配列(重複・長さ制限等、考慮済みであること)
-	);
-	// To Here 2004.07.29 Moca
-	//@}
+    ///	@name キーワードセット操作
+    bool AddKeyWordSet( //!< セットの追加
+        const wchar_t *pszSetName, //!< [in] セット名
+        bool bKEYWORDCASE, //!< [in] 大文字小文字の区別．true:あり, false:無し
+        int nSize = -1 //!< [in] 最初に領域を確保するサイズ．
+    );
+    bool DelKeyWordSet(int nIdx); /* ｎ番目のセットを削除 */
+    const wchar_t *GetTypeName(int nIdx); /* ｎ番目のセット名を返す */
+    const wchar_t *SetTypeName(int nIdx, const wchar_t *name); //!< ｎ番目のセット名を設定する // 2005.01.26 Moca
+    void SetKeyWordCase(int nIdx, int nCase); /* ｎ番目のセットの大文字小文字判断をセットする */ //MIK
+    bool GetKeyWordCase(int nIdx); /* ｎ番目のセットの大文字小文字判断を取得する */ //MIK
+    void SortKeyWord(int nIdx); /* ｎ番目のセットのキーワードをソートする */ //MIK
 
-	//@{
-	///	@name キーワード操作
-	int GetKeyWordNum(int nIdx);	/* ｎ番目のセットのキーワードの数を返す */
-	const wchar_t* GetKeyWord(int nIdx, int nIdx2);	/* ｎ番目のセットのｍ番目のキーワードを返す */
-	const wchar_t* UpdateKeyWord( int nIdx, int nIdx2, const WCHAR* pszKeyWord);	/* ｎ番目のセットのｍ番目のキーワードを編集 */
-	int AddKeyWord( int nIdx, const wchar_t* pszKeyWord);	/* ｎ番目のセットにキーワードを追加 */
-	int DelKeyWord( int nIdx, int nIdx2);			/* ｎ番目のセットのｍ番目のキーワードを削除 */
-	bool CanAddKeyWord(int nIdx);	//!< キーワードが追加可能か
-	//@}
-	
-	//@{
-	///	@name 検索
-	//int SearchKeyWord( int , const char*, int );	/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */
-//	BOOL IsModify( CKeyWordSetMgr&, BOOL* pnModifyFlagArr );	/* 変更状況を調査 */	// Uchi 2010/4/14 実体が無いので削除
-	int SearchKeyWord2( int nIdx , const wchar_t* pszKeyWord, int nKeyWordLen );	/* ｎ番目のセットから指定キーワードをバイナリサーチ。見つかれば 0以上を返す */	//MIK
-	int SearchKeyWordSet( const wchar_t* pszKeyWord );		// キーワードセット名からセット番号を取得。見つからなければ -1を返す	// Uchi 2010/4/14
-	//@}
+    // From Here 2004.07.29 Moca 追加 可変長記憶
+    int SetKeyWordArr(int nIdx, int nSize, const wchar_t *pszKeyWordArr); //!< iniからキーワードを設定する
+    int SetKeyWordArr( //!< キーワードの配列から設定する
+        int nIdx, //!< [in] キーワードセット番号
+        int nSize, //!< [in] ppszKeyWordArrの要素数
+        const wchar_t *ppszKeyWordArr[] //!< [in] キーワードの配列(重複・長さ制限等、考慮済みであること)
+    );
+    // To Here 2004.07.29 Moca
+    //@}
 
-	// From Here 2004.07.29 Moca 追加 可変長記憶
-	int CleanKeyWords(int nIdx);	//!< キーワードの整頓・利用できないキーワードの削除
-	int GetAllocSize(int nIdx) const;	//!< 確保している数を返す
-	int GetFreeSize() const;	//!< 未割り当てブロックのキーワード数を返す
-	void ResetAllKeyWordSet( void ); // 全キーワードセットの削除と初期化
-	// To Here 2004.07.29 Moca
+    //@{
+    ///	@name キーワード操作
+    int GetKeyWordNum(int nIdx); /* ｎ番目のセットのキーワードの数を返す */
+    const wchar_t *GetKeyWord(int nIdx, int nIdx2); /* ｎ番目のセットのｍ番目のキーワードを返す */
+    const wchar_t *UpdateKeyWord(int nIdx, int nIdx2, const WCHAR *pszKeyWord); /* ｎ番目のセットのｍ番目のキーワードを編集 */
+    int AddKeyWord(int nIdx, const wchar_t *pszKeyWord); /* ｎ番目のセットにキーワードを追加 */
+    int DelKeyWord(int nIdx, int nIdx2); /* ｎ番目のセットのｍ番目のキーワードを削除 */
+    bool CanAddKeyWord(int nIdx); //!< キーワードが追加可能か
+    //@}
 
-	/*
+    //@{
+    ///	@name 検索
+    //int SearchKeyWord( int , const char*, int );	/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */
+    //	BOOL IsModify( CKeyWordSetMgr&, BOOL* pnModifyFlagArr );	/* 変更状況を調査 */	// Uchi 2010/4/14 実体が無いので削除
+    int SearchKeyWord2(int nIdx, const wchar_t *pszKeyWord, int nKeyWordLen); /* ｎ番目のセットから指定キーワードをバイナリサーチ。見つかれば 0以上を返す */ //MIK
+    int SearchKeyWordSet(const wchar_t *pszKeyWord); // キーワードセット名からセット番号を取得。見つからなければ -1を返す	// Uchi 2010/4/14
+    //@}
+
+    // From Here 2004.07.29 Moca 追加 可変長記憶
+    int CleanKeyWords(int nIdx); //!< キーワードの整頓・利用できないキーワードの削除
+    int GetAllocSize(int nIdx) const; //!< 確保している数を返す
+    int GetFreeSize() const; //!< 未割り当てブロックのキーワード数を返す
+    void ResetAllKeyWordSet(void); // 全キーワードセットの削除と初期化
+    // To Here 2004.07.29 Moca
+
+    /*
 	|| 演算子
 	*/
-	const CKeyWordSetMgr& operator=( CKeyWordSetMgr& );
-	/*
+    const CKeyWordSetMgr &operator=(CKeyWordSetMgr &);
+    /*
 	||  Attributes & Operations
 	*/
-	/*!
+    /*!
 		@brief 現在のキーワードセット番号(GUI用)
 
 		本来の処理とは無関係だが，あるウィンドウで選択したセットが
 		別のウィンドウの設定画面にも引き継がれるようにするため．
 	*/
-	int		m_nCurrentKeyWordSetIdx;
-	int		m_nKeyWordSetNum;	/*!< キーワードセット数 */
-	wchar_t	m_szSetNameArr[MAX_SETNUM][MAX_SETNAMELEN + 1];/*!< キーワードセット名 */
-	bool	m_bKEYWORDCASEArr[MAX_SETNUM];	/*!< キーワードの英大文字小文字区別 */
-	int		m_nKeyWordNumArr[MAX_SETNUM];	/*!< キーワードセットに登録されているキーワード数 */
-private:
-	/*! キーワード格納領域 */
-	wchar_t	m_szKeyWordArr[MAX_KEYWORDNUM][MAX_KEYWORDLEN + 1];	
-	char	m_IsSorted[MAX_SETNUM];	/*!< ソートしたかどうかのフラグ(INI未保存) */  //MIK
+    int m_nCurrentKeyWordSetIdx;
+    int m_nKeyWordSetNum; /*!< キーワードセット数 */
+    wchar_t m_szSetNameArr[MAX_SETNUM][MAX_SETNAMELEN + 1]; /*!< キーワードセット名 */
+    bool m_bKEYWORDCASEArr[MAX_SETNUM]; /*!< キーワードの英大文字小文字区別 */
+    int m_nKeyWordNumArr[MAX_SETNUM]; /*!< キーワードセットに登録されているキーワード数 */
+  private:
+    /*! キーワード格納領域 */
+    wchar_t m_szKeyWordArr[MAX_KEYWORDNUM][MAX_KEYWORDLEN + 1];
+    char m_IsSorted[MAX_SETNUM]; /*!< ソートしたかどうかのフラグ(INI未保存) */ //MIK
 
-protected:
-	// 2004.07.29 Moca 可変長記憶
-	/*! キーワードセットの開始位置(INI未保存)
+  protected:
+    // 2004.07.29 Moca 可変長記憶
+    /*! キーワードセットの開始位置(INI未保存)
 		次の開始位置までが確保済みの領域．
 		+1しているのは最後が0で終わるようにするため．
 	*/
-	int		m_nStartIdx[MAX_SETNUM + 1];
-	int		m_nKeyWordMaxLenArr[MAX_SETNUM]; //!< 一番長いキーワードの長さ(ソート後のみ有効)(INI未保存)
+    int m_nStartIdx[MAX_SETNUM + 1];
+    int m_nKeyWordMaxLenArr[MAX_SETNUM]; //!< 一番長いキーワードの長さ(ソート後のみ有効)(INI未保存)
 
-protected:
-	/*
+  protected:
+    /*
 	||  実装ヘルパ関数
 	*/
-	//bool KeyWordAlloc( int );
-	bool KeyWordReAlloc(int nIdx, int nSize);
-	void KeywordMaxLen(int nIdx);
+    //bool KeyWordAlloc( int );
+    bool KeyWordReAlloc(int nIdx, int nSize);
+    void KeywordMaxLen(int nIdx);
 };

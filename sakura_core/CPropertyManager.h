@@ -30,21 +30,22 @@
 class CImageListMgr;
 class CMenuDrawer;
 
-class CPropertyManager{
-public:
-	void Create( HWND, CImageListMgr*, CMenuDrawer* );
+class CPropertyManager
+{
+  public:
+    void Create(HWND, CImageListMgr *, CMenuDrawer *);
 
-	/*
+    /*
 	|| その他
 	*/
-	bool OpenPropertySheet( HWND hWnd, int nPageNum, bool bTrayProc );	/* 共通設定 */
-	bool OpenPropertySheetTypes( HWND hWnd, int nPageNum, CTypeConfig nSettingType );	/* タイプ別設定 */
+    bool OpenPropertySheet(HWND hWnd, int nPageNum, bool bTrayProc); /* 共通設定 */
+    bool OpenPropertySheetTypes(HWND hWnd, int nPageNum, CTypeConfig nSettingType); /* タイプ別設定 */
 
-private:
-	HWND			m_hwndOwner;
-	CImageListMgr*	m_pImageList;
-	CMenuDrawer*	m_pMenuDrawer;
+  private:
+    HWND m_hwndOwner;
+    CImageListMgr *m_pImageList;
+    CMenuDrawer *m_pMenuDrawer;
 
-	int				m_nPropComPageNum;
-	int				m_nPropTypePageNum;
+    int m_nPropComPageNum;
+    int m_nPropTypePageNum;
 };

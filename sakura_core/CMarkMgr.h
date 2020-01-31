@@ -51,76 +51,111 @@
 	削除操作はサブクラスにまかせる
 
 */
-class CMarkMgr {
-public:
+class CMarkMgr
+{
+  public:
+    //	項目のクラス
+    class CMark
+    {
+      public:
+        //	constructor
+        CMark(const CLogicPoint &pt)
+            : m_ptLogic(pt)
+        {
+        }
 
-	//	項目のクラス
-	class CMark {
-	public:
-		//	constructor
-		CMark( const CLogicPoint& pt ) : m_ptLogic(pt) { }
+        CLogicPoint GetPosition() const
+        {
+            return m_ptLogic;
+        }
+        void SetPosition(const CLogicPoint &pt)
+        {
+            m_ptLogic = pt;
+        }
 
-		CLogicPoint GetPosition() const { return m_ptLogic; }
-		void SetPosition(const CLogicPoint& pt) { m_ptLogic = pt; }
+        bool IsValid(void) const
+        {
+            return true;
+        }
 
-		bool IsValid(void) const { return true; }
+        bool operator==(CMark &r) const
+        {
+            return m_ptLogic.y == r.m_ptLogic.y;
+        }
+        bool operator!=(CMark &r) const
+        {
+            return m_ptLogic.y != r.m_ptLogic.y;
+        }
 
-		bool operator==(CMark &r) const { return m_ptLogic.y == r.m_ptLogic.y; }
-		bool operator!=(CMark &r) const { return m_ptLogic.y != r.m_ptLogic.y; }
+      private:
+        CLogicPoint m_ptLogic;
+    };
 
-	private:
-		CLogicPoint m_ptLogic;
-	};
+    // GENERATE_FACTORY(CMark,CMarkFactory);	//	CMark用Factory class
 
-	// GENERATE_FACTORY(CMark,CMarkFactory);	//	CMark用Factory class
+    //	型宣言
+    typedef std::vector<CMark> CMarkChain;
+    typedef std::vector<CMark>::const_iterator CMarkIterator;
 
-	//	型宣言
-	typedef std::vector<CMark> CMarkChain;
-	typedef std::vector<CMark>::const_iterator	CMarkIterator;
+    //	Interface
+    //	constructor
+    CMarkMgr()
+        : m_nCurpos(0)
+        , m_nMaxitem(10)
+    {
+    }
+    // CMarkMgr(const CDocLineMgr *p) : doc(p) {}
 
-	//	Interface
-	//	constructor
-	CMarkMgr() : m_nCurpos(0), m_nMaxitem(10){}
-	// CMarkMgr(const CDocLineMgr *p) : doc(p) {}
+    int Count(void) const
+    {
+        return (int)m_cMarkChain.size();
+    } //!<	項目数を返す
+    int GetMax(void) const
+    {
+        return m_nMaxitem;
+    } //!<	最大項目数を返す
+    void SetMax(int max); //!<	最大項目数を設定
 
-	int Count(void) const { return (int)m_cMarkChain.size(); }	//!<	項目数を返す
-	int GetMax(void) const { return m_nMaxitem; }	//!<	最大項目数を返す
-	void SetMax(int max);	//!<	最大項目数を設定
+    virtual void Add(const CMark &m) = 0; //!<	要素の追加
 
-	virtual void Add(const CMark& m) = 0;	//!<	要素の追加
+    //	Apr. 1, 2001 genta
+    virtual void Flush(void); //!<	要素の全消去
 
-	//	Apr. 1, 2001 genta
-	virtual void Flush(void);	//!<	要素の全消去
+    //!	要素の取得
+    const CMark &GetCurrent(void) const
+    {
+        return m_cMarkChain[m_nCurpos];
+    }
 
-	//!	要素の取得
-	const CMark& GetCurrent(void) const { return m_cMarkChain[m_nCurpos]; }
+    //	有効性の確認
+    bool CheckCurrent(void) const;
+    bool CheckPrev(void) const;
+    bool CheckNext(void) const;
 
-	//	有効性の確認
-	bool  CheckCurrent(void) const;
-	bool  CheckPrev(void) const;
-	bool  CheckNext(void) const;
+    //	現在位置の移動
+    bool NextValid(void);
+    bool PrevValid(void);
 
-	//	現在位置の移動
-	bool NextValid(void);
-	bool PrevValid(void);
+    const CMark &operator[](int index) const
+    {
+        return m_cMarkChain[index];
+    }
 
-	const CMark& operator[](int index) const { return m_cMarkChain[index]; }
+    //	連続取得インターフェース
+    //	CMarkIterator CurrentPos(void) const { return (CMarkIterator)m_cMarkChain.begin() + m_nCurpos; }
+    //	CMarkIterator Begin(void) const { return (CMarkIterator)m_cMarkChain.begin(); }
+    //	CMarkIterator End(void) const { return (CMarkIterator)m_cMarkChain.end(); }
 
-	//	連続取得インターフェース
-//	CMarkIterator CurrentPos(void) const { return (CMarkIterator)m_cMarkChain.begin() + m_nCurpos; }
-//	CMarkIterator Begin(void) const { return (CMarkIterator)m_cMarkChain.begin(); }
-//	CMarkIterator End(void) const { return (CMarkIterator)m_cMarkChain.end(); }
+  protected:
+    virtual void Expire(void) = 0;
 
-protected:
-	virtual void Expire(void) = 0;
+    // CMarkFactory m_factory;	//	Factory Class (マクロで生成される）
+    CMarkChain m_cMarkChain; //	マークデータ本体
+    int m_nCurpos; //	現在位置（番号）
 
-	// CMarkFactory m_factory;	//	Factory Class (マクロで生成される）
-	CMarkChain m_cMarkChain;	//	マークデータ本体
-	int m_nCurpos;	//	現在位置（番号）
-
-	int m_nMaxitem;	//	保管可能アイテムの最大数
-private:
-	//CMarkMgr( const CMarkMgr& );	//	Copy禁止
+    int m_nMaxitem; //	保管可能アイテムの最大数
+  private:
+    //CMarkMgr( const CMarkMgr& );	//	Copy禁止
 };
 
 // ----------------------------------------------------
@@ -129,8 +164,9 @@ private:
 
 	CMarkMgr を継承し、動作が規定されていない部分を実装する。
 */
-class CAutoMarkMgr final : public CMarkMgr{
-public:
-	void Add(const CMark& m) override;	//!<	要素の追加
-	void Expire(void) override;	//!<	要素数の調整
+class CAutoMarkMgr final : public CMarkMgr
+{
+  public:
+    void Add(const CMark &m) override; //!<	要素の追加
+    void Expire(void) override; //!<	要素数の調整
 };

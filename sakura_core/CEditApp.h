@@ -41,55 +41,74 @@ class CGrepAgent;
 enum EFunctionCode;
 
 //!エディタ部分アプリケーションクラス。CNormalProcess1個につき、1個存在。
-class CEditApp : public TSingleton<CEditApp>{
-	friend class TSingleton<CEditApp>;
-	CEditApp(){}
-	virtual ~CEditApp();
+class CEditApp : public TSingleton<CEditApp>
+{
+    friend class TSingleton<CEditApp>;
+    CEditApp()
+    {
+    }
+    virtual ~CEditApp();
 
-public:
-	void Create(HINSTANCE hInst, int);
+  public:
+    void Create(HINSTANCE hInst, int);
 
-	//モジュール情報
-	HINSTANCE GetAppInstance() const{ return m_hInst; }	//!< インスタンスハンドル取得
+    //モジュール情報
+    HINSTANCE GetAppInstance() const
+    {
+        return m_hInst;
+    } //!< インスタンスハンドル取得
 
-	//ウィンドウ情報
-	CEditWnd* GetEditWindow(){ return m_pcEditWnd; }		//!< ウィンドウ取得
+    //ウィンドウ情報
+    CEditWnd *GetEditWindow()
+    {
+        return m_pcEditWnd;
+    } //!< ウィンドウ取得
 
-	CEditDoc*		GetDocument(){ return m_pcEditDoc; }
-	CImageListMgr&	GetIcons(){ return m_cIcons; }
+    CEditDoc *GetDocument()
+    {
+        return m_pcEditDoc;
+    }
+    CImageListMgr &GetIcons()
+    {
+        return m_cIcons;
+    }
 
-	bool OpenPropertySheet( int nPageNum );
-	bool OpenPropertySheetTypes( int nPageNum, CTypeConfig nSettingType );
+    bool OpenPropertySheet(int nPageNum);
+    bool OpenPropertySheetTypes(int nPageNum, CTypeConfig nSettingType);
 
-public:
-	HINSTANCE			m_hInst;
+  public:
+    HINSTANCE m_hInst;
 
-	//ドキュメント
-	CEditDoc*			m_pcEditDoc;
+    //ドキュメント
+    CEditDoc *m_pcEditDoc;
 
-	//ウィンドウ
-	CEditWnd*			m_pcEditWnd;
+    //ウィンドウ
+    CEditWnd *m_pcEditWnd;
 
-	//IO管理
-	CLoadAgent*			m_pcLoadAgent;
-	CSaveAgent*			m_pcSaveAgent;
-	CVisualProgress*	m_pcVisualProgress;
+    //IO管理
+    CLoadAgent *m_pcLoadAgent;
+    CSaveAgent *m_pcSaveAgent;
+    CVisualProgress *m_pcVisualProgress;
 
-	//その他ヘルパ
-	CMruListener*		m_pcMruListener;		//MRU管理
-	CSMacroMgr*			m_pcSMacroMgr;			//マクロ管理
-private:
-	CPropertyManager*	m_pcPropertyManager;	//プロパティ管理
-public:
-	CGrepAgent*			m_pcGrepAgent;			//GREPモード
-	CSoundSet			m_cSoundSet;			//サウンド管理
+    //その他ヘルパ
+    CMruListener *m_pcMruListener; //MRU管理
+    CSMacroMgr *m_pcSMacroMgr; //マクロ管理
+  private:
+    CPropertyManager *m_pcPropertyManager; //プロパティ管理
+  public:
+    CGrepAgent *m_pcGrepAgent; //GREPモード
+    CSoundSet m_cSoundSet; //サウンド管理
 
-	//GUIオブジェクト
-	CImageListMgr		m_cIcons;					//!< Image List
+    //GUIオブジェクト
+    CImageListMgr m_cIcons; //!< Image List
 };
 
 //WM_QUIT検出例外
-class CAppExitException : public std::exception{
-public:
-	const char* what() const throw(){ return "CAppExitException"; }
+class CAppExitException : public std::exception
+{
+  public:
+    const char *what() const throw()
+    {
+        return "CAppExitException";
+    }
 };

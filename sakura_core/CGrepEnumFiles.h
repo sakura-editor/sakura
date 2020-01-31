@@ -32,22 +32,27 @@
 
 #include "CGrepEnumFileBase.h"
 
-class CGrepEnumFiles : public CGrepEnumFileBase {
-private:
+class CGrepEnumFiles : public CGrepEnumFileBase
+{
+  private:
+  public:
+    CGrepEnumFiles()
+    {
+    }
 
-public:
-	CGrepEnumFiles(){
-	}
+    virtual ~CGrepEnumFiles()
+    {
+    }
 
-	virtual ~CGrepEnumFiles(){
-	}
-
-	BOOL IsValid( WIN32_FIND_DATA& w32fd, LPCWSTR pFile = NULL ) override {
-		if( ! ( w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) ){
-			if( CGrepEnumFileBase::IsValid( w32fd, pFile ) ){
-				return TRUE;
-			}
-		}
-		return FALSE;
-	}
+    BOOL IsValid(WIN32_FIND_DATA &w32fd, LPCWSTR pFile = NULL) override
+    {
+        if (!(w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+        {
+            if (CGrepEnumFileBase::IsValid(w32fd, pFile))
+            {
+                return TRUE;
+            }
+        }
+        return FALSE;
+    }
 };
