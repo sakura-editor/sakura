@@ -28,85 +28,92 @@
 */
 #pragma once
 
-class CRecycledBuffer{
-//コンフィグ
-private:
-	static const int BLOCK_SIZE  = 1024; //ブロックサイズ。バイト単位。
-	static const int CHAIN_COUNT = 64;   //再利用可能なブロック数。
+class CRecycledBuffer
+{
+    //コンフィグ
+  private:
+    static const int BLOCK_SIZE  = 1024; //ブロックサイズ。バイト単位。
+    static const int CHAIN_COUNT = 64; //再利用可能なブロック数。
 
-//コンストラクタ・デストラクタ
-public:
-	CRecycledBuffer()
-	{
-		m_current=0;
-	}
+    //コンストラクタ・デストラクタ
+  public:
+    CRecycledBuffer()
+    {
+        m_current = 0;
+    }
 
-//インターフェース
-public:
-	//!一時的に確保されたメモリブロックを取得。このメモリブロックを解放してはいけない。
-	template <class T>
-	T* GetBuffer(
-		size_t* nCount //!< [out] 領域の要素数を受け取る。T単位。
-	)
-	{
-		if(nCount)*nCount=BLOCK_SIZE/sizeof(T);
-		m_current = (m_current+1) % CHAIN_COUNT;
-		return reinterpret_cast<T*>(m_buf[m_current]);
-	}
+    //インターフェース
+  public:
+    //!一時的に確保されたメモリブロックを取得。このメモリブロックを解放してはいけない。
+    template <class T>
+    T *GetBuffer(
+        size_t *nCount //!< [out] 領域の要素数を受け取る。T単位。
+    )
+    {
+        if (nCount)
+            *nCount = BLOCK_SIZE / sizeof(T);
+        m_current = (m_current + 1) % CHAIN_COUNT;
+        return reinterpret_cast<T *>(m_buf[m_current]);
+    }
 
-	//!領域の要素数を取得。T単位
-	template <class T>
-	size_t GetMaxCount() const
-	{
-		return BLOCK_SIZE/sizeof(T);
-	}
+    //!領域の要素数を取得。T単位
+    template <class T>
+    size_t GetMaxCount() const
+    {
+        return BLOCK_SIZE / sizeof(T);
+    }
 
-//メンバ変数
-private:
-	BYTE m_buf[CHAIN_COUNT][BLOCK_SIZE];
-	int  m_current;
+    //メンバ変数
+  private:
+    BYTE m_buf[CHAIN_COUNT][BLOCK_SIZE];
+    int m_current;
 };
 
-class CRecycledBufferDynamic{
-//コンフィグ
-private:
-	static const int CHAIN_COUNT = 64;   //再利用可能なブロック数。
+class CRecycledBufferDynamic
+{
+    //コンフィグ
+  private:
+    static const int CHAIN_COUNT = 64; //再利用可能なブロック数。
 
-//コンストラクタ・デストラクタ
-public:
-	CRecycledBufferDynamic()
-	{
-		m_current=0;
-		for(int i=0;i<_countof(m_buf);i++){
-			m_buf[i]=NULL;
-		}
-	}
-	~CRecycledBufferDynamic()
-	{
-		for(int i=0;i<_countof(m_buf);i++){
-			if(m_buf[i])delete[] m_buf[i];
-		}
-	}
+    //コンストラクタ・デストラクタ
+  public:
+    CRecycledBufferDynamic()
+    {
+        m_current = 0;
+        for (int i = 0; i < _countof(m_buf); i++)
+        {
+            m_buf[i] = NULL;
+        }
+    }
+    ~CRecycledBufferDynamic()
+    {
+        for (int i = 0; i < _countof(m_buf); i++)
+        {
+            if (m_buf[i])
+                delete[] m_buf[i];
+        }
+    }
 
-//インターフェース
-public:
-	//!一時的に確保されたメモリブロックを取得。このメモリブロックを解放してはいけない。
-	template <class T>
-	T* GetBuffer(
-		size_t nCount //!< [in] 確保する要素数。T単位。
-	)
-	{
-		m_current = (m_current+1) % CHAIN_COUNT;
+    //インターフェース
+  public:
+    //!一時的に確保されたメモリブロックを取得。このメモリブロックを解放してはいけない。
+    template <class T>
+    T *GetBuffer(
+        size_t nCount //!< [in] 確保する要素数。T単位。
+    )
+    {
+        m_current = (m_current + 1) % CHAIN_COUNT;
 
-		//メモリ確保
-		if(m_buf[m_current])delete[] m_buf[m_current];
-		m_buf[m_current]=new BYTE[nCount*sizeof(T)];
+        //メモリ確保
+        if (m_buf[m_current])
+            delete[] m_buf[m_current];
+        m_buf[m_current] = new BYTE[nCount * sizeof(T)];
 
-		return reinterpret_cast<T*>(m_buf[m_current]);
-	}
+        return reinterpret_cast<T *>(m_buf[m_current]);
+    }
 
-//メンバ変数
-private:
-	BYTE* m_buf[CHAIN_COUNT];
-	int   m_current;
+    //メンバ変数
+  private:
+    BYTE *m_buf[CHAIN_COUNT];
+    int m_current;
 };

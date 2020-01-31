@@ -26,47 +26,55 @@
 
 #include "CNative.h"
 
-class CNativeA final : public CNative{
-public:
-	CNativeA() noexcept;
-	CNativeA( const CNativeA& rhs );
-	CNativeA( CNativeA&& other ) noexcept;
-	CNativeA( const char* szData, size_t cchData );
-	CNativeA( const char* szData);
+class CNativeA final : public CNative
+{
+  public:
+    CNativeA() noexcept;
+    CNativeA(const CNativeA &rhs);
+    CNativeA(CNativeA &&other) noexcept;
+    CNativeA(const char *szData, size_t cchData);
+    CNativeA(const char *szData);
 
-	//ネイティブ設定
-	void SetString( const char* pszData );                  //!< バッファの内容を置き換える
-	void SetString( const char* pData, int nDataLen );      //!< バッファの内容を置き換える。nDataLenは文字単位。
-	void SetNativeData( const CNativeA& pcNative );         //!< バッファの内容を置き換える
-	void AppendString( const char* pszData );               //!< バッファの最後にデータを追加する
-	void AppendString( const char* pszData, int nLength );  //!< バッファの最後にデータを追加する。nLengthは文字単位。
-	void AppendStringF(const char* pszData, ...);           //!< バッファの最後にデータを追加する (フォーマット機能付き)
-	void AppendNativeData( const CNativeA& pcNative );      //!< バッファの最後にデータを追加する
-	void AllocStringBuffer( int nDataLen );            //!< (重要：nDataLenは文字単位) バッファサイズの調整。必要に応じて拡大する。
+    //ネイティブ設定
+    void SetString(const char *pszData); //!< バッファの内容を置き換える
+    void SetString(const char *pData, int nDataLen); //!< バッファの内容を置き換える。nDataLenは文字単位。
+    void SetNativeData(const CNativeA &pcNative); //!< バッファの内容を置き換える
+    void AppendString(const char *pszData); //!< バッファの最後にデータを追加する
+    void AppendString(const char *pszData, int nLength); //!< バッファの最後にデータを追加する。nLengthは文字単位。
+    void AppendStringF(const char *pszData, ...); //!< バッファの最後にデータを追加する (フォーマット機能付き)
+    void AppendNativeData(const CNativeA &pcNative); //!< バッファの最後にデータを追加する
+    void AllocStringBuffer(int nDataLen); //!< (重要：nDataLenは文字単位) バッファサイズの調整。必要に応じて拡大する。
 
-	//ネイティブ取得
-	int GetStringLength() const;
-	char operator[](int nIndex) const;                 //!< 任意位置の文字取得。nIndexは文字単位。
-	const char* GetStringPtr() const
-	{
-		return reinterpret_cast<const char*>(GetRawPtr());
-	}
-	char* GetStringPtr()
-	{
-		return reinterpret_cast<char*>(GetRawPtr());
-	}
+    //ネイティブ取得
+    int GetStringLength() const;
+    char operator[](int nIndex) const; //!< 任意位置の文字取得。nIndexは文字単位。
+    const char *GetStringPtr() const
+    {
+        return reinterpret_cast<const char *>(GetRawPtr());
+    }
+    char *GetStringPtr()
+    {
+        return reinterpret_cast<char *>(GetRawPtr());
+    }
 
-	//演算子
-	CNativeA& operator = (const CNativeA& rhs)			{ CNative::operator=(rhs); return *this; }
-	CNativeA& operator = (CNativeA&& rhs) noexcept		{ CNative::operator=(std::forward<CNativeA>(rhs)); return *this; }
-	const CNativeA& operator=( char );
-	const CNativeA& operator+=( char );
+    //演算子
+    CNativeA &operator=(const CNativeA &rhs)
+    {
+        CNative::operator=(rhs);
+        return *this;
+    }
+    CNativeA &operator=(CNativeA &&rhs) noexcept
+    {
+        CNative::operator=(std::forward<CNativeA>(rhs));
+        return *this;
+    }
+    const CNativeA &operator=(char);
+    const CNativeA &operator+=(char);
 
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           変換                              //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+    //                           変換                              //
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	//ネイティブ変換
-	void Replace_j( const char* pszFrom, const char* pszTo ); //!< 文字列置換（日本語考慮版）
-
+    //ネイティブ変換
+    void Replace_j(const char *pszFrom, const char *pszTo); //!< 文字列置換（日本語考慮版）
 };
