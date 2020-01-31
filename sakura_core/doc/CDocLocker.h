@@ -26,26 +26,33 @@
 
 #include "doc/CDocListener.h"
 
-class CDocLocker : public CDocListenerEx{
-public:
-	CDocLocker();
+class CDocLocker : public CDocListenerEx
+{
+  public:
+    CDocLocker();
 
-	//クリア
-	void Clear(void) { m_bIsDocWritable = true; }
+    //クリア
+    void Clear(void)
+    {
+        m_bIsDocWritable = true;
+    }
 
-	//ロード前後
-	void OnAfterLoad(const SLoadInfo& sLoadInfo) override;
-	
-	//セーブ前後
-	void OnBeforeSave(const SSaveInfo& sSaveInfo) override;
-	void OnAfterSave(const SSaveInfo& sSaveInfo) override;
+    //ロード前後
+    void OnAfterLoad(const SLoadInfo &sLoadInfo) override;
 
-	//状態
-	bool IsDocWritable() const{ return m_bIsDocWritable; }
+    //セーブ前後
+    void OnBeforeSave(const SSaveInfo &sSaveInfo) override;
+    void OnAfterSave(const SSaveInfo &sSaveInfo) override;
 
-	//チェック
-	void CheckWritable(bool bMsg);
+    //状態
+    bool IsDocWritable() const
+    {
+        return m_bIsDocWritable;
+    }
 
-private:
-	bool m_bIsDocWritable;
+    //チェック
+    void CheckWritable(bool bMsg);
+
+  private:
+    bool m_bIsDocWritable;
 };
