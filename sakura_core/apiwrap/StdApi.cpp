@@ -6,9 +6,10 @@
 
 using namespace std;
 
-namespace ApiWrap{
+namespace ApiWrap
+{
 
-	/*!
+/*!
 		MakeSureDirectoryPathExists の UNICODE 版。
 		szDirPath で指定されたすべてのディレクトリを作成します。
 		ディレクトリの記述は、ルートから開始します。
@@ -32,36 +33,40 @@ namespace ApiWrap{
 		@date
 			2007.10.15
 	*/
-	BOOL MakeSureDirectoryPathExistsW(LPCWSTR szDirPath)
-	{
-		const wchar_t* p=szDirPath-1;
-		for (;;) {
-			p=wcschr(p+1,L'\\');
-			if(!p)break; //'\\'を走査し終わったので終了
+BOOL MakeSureDirectoryPathExistsW(LPCWSTR szDirPath)
+{
+    const wchar_t *p = szDirPath - 1;
+    for (;;)
+    {
+        p = wcschr(p + 1, L'\\');
+        if (!p)
+            break; //'\\'を走査し終わったので終了
 
-			//先頭からpまでの部分文字列 -> szBuf
-			wchar_t szBuf[_MAX_PATH];
-			wcsncpy_s(szBuf,_countof(szBuf),szDirPath,p-szDirPath);
+        //先頭からpまでの部分文字列 -> szBuf
+        wchar_t szBuf[_MAX_PATH];
+        wcsncpy_s(szBuf, _countof(szBuf), szDirPath, p - szDirPath);
 
-			//存在するか
-			int nAcc = _waccess(szBuf,0);
-			if(nAcc==0)continue; //存在するなら、次へ
+        //存在するか
+        int nAcc = _waccess(szBuf, 0);
+        if (nAcc == 0)
+            continue; //存在するなら、次へ
 
-			//ディレクトリ作成
-			int nDir = _wmkdir(szBuf);
-			if(nDir==-1)return FALSE; //エラーが発生したので、FALSEを返す
-		}
-		return TRUE;
-	}
+        //ディレクトリ作成
+        int nDir = _wmkdir(szBuf);
+        if (nDir == -1)
+            return FALSE; //エラーが発生したので、FALSEを返す
+    }
+    return TRUE;
+}
 
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//             その他W系API                                     //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//             その他W系API                                     //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                    描画API 不具合ラップ                     //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	/*
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                    描画API 不具合ラップ                     //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+/*
 		VistaでSetPixelが動かないため、代替関数を用意。
 
 		参考：http://forums.microsoft.com/MSDN-JA/ShowPost.aspx?PostID=3228018&SiteID=7
@@ -72,25 +77,27 @@ namespace ApiWrap{
 		vista前後でGDIの考え方が変わってるので、デバッグのやり方を考え直すべきと思います。
 		by berryzplus 2018/10/13記す。
 	*/
-	void SetPixelSurely(HDC hdc,int x,int y,COLORREF c)
-	{
-		{
-		//Vista以降：SetPixelエミュレート
-			static HPEN hPen = NULL;
-			static COLORREF clrPen = 0;
-			if(hPen && c!=clrPen){
-				DeleteObject(hPen);
-				hPen = NULL;
-			}
-			//ペン生成
-			if(!hPen){
-				hPen = CreatePen(PS_SOLID,1,clrPen = c);
-			}
-			//描画
-			HPEN hpnOld = (HPEN)SelectObject(hdc,hPen);
-			::MoveToEx(hdc,x,y,NULL);
-			::LineTo(hdc,x+1,y+1);
-			SelectObject(hdc,hpnOld);
-		}
-	}
+void SetPixelSurely(HDC hdc, int x, int y, COLORREF c)
+{
+    {
+        //Vista以降：SetPixelエミュレート
+        static HPEN hPen       = NULL;
+        static COLORREF clrPen = 0;
+        if (hPen && c != clrPen)
+        {
+            DeleteObject(hPen);
+            hPen = NULL;
+        }
+        //ペン生成
+        if (!hPen)
+        {
+            hPen = CreatePen(PS_SOLID, 1, clrPen = c);
+        }
+        //描画
+        HPEN hpnOld = (HPEN)SelectObject(hdc, hPen);
+        ::MoveToEx(hdc, x, y, NULL);
+        ::LineTo(hdc, x + 1, y + 1);
+        SelectObject(hdc, hpnOld);
+    }
 }
+} // namespace ApiWrap
