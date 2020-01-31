@@ -43,29 +43,30 @@ using std::wstring;
 */
 class CDlgTypeAscertain final : public CDialog
 {
-public:
-	// 型
-	struct SAscertainInfo {
-		wstring	sImportFile;	//!< in インポートファイル名
-		wstring	sTypeNameTo;	//!< in タイプ名（インポート先）
-		wstring	sTypeNameFile;	//!< in タイプ名（ファイルから）
-		int 	nColorType;		//!< out 文書種類(カラーコピー用)
-		wstring	sColorFile;		//!< out 色設定ファイル名
-		bool	bAddType;		//!< out タイプを追加する
-	};
+  public:
+    // 型
+    struct SAscertainInfo
+    {
+        wstring sImportFile; //!< in インポートファイル名
+        wstring sTypeNameTo; //!< in タイプ名（インポート先）
+        wstring sTypeNameFile; //!< in タイプ名（ファイルから）
+        int nColorType; //!< out 文書種類(カラーコピー用)
+        wstring sColorFile; //!< out 色設定ファイル名
+        bool bAddType; //!< out タイプを追加する
+    };
 
-public:
-	//  Constructors
-	CDlgTypeAscertain();
-	// モーダルダイアログの表示
-	int DoModal( HINSTANCE hInstance, HWND hwndParent, SAscertainInfo* psAscertainInfo );	/* モーダルダイアログの表示 */
+  public:
+    //  Constructors
+    CDlgTypeAscertain();
+    // モーダルダイアログの表示
+    int DoModal(HINSTANCE hInstance, HWND hwndParent, SAscertainInfo *psAscertainInfo); /* モーダルダイアログの表示 */
 
-protected:
-	// 実装ヘルパ関数
-	BOOL OnBnClicked(int wID) override;
-	void SetData() override;	/* ダイアログデータの設定 */
-	LPVOID GetHelpIdTable(void) override;
+  protected:
+    // 実装ヘルパ関数
+    BOOL OnBnClicked(int wID) override;
+    void SetData() override; /* ダイアログデータの設定 */
+    LPVOID GetHelpIdTable(void) override;
 
-private:
-	SAscertainInfo* m_psi;			// インターフェイス
+  private:
+    SAscertainInfo *m_psi; // インターフェイス
 };

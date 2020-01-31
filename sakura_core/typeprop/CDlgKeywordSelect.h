@@ -32,7 +32,7 @@
 
 #include "dlg/CDialog.h"
 #include "config/maxdata.h" // MAX_KEYWORDSET_PER_TYPE
- 
+
 class CKeyWordSetMgr;
 
 /*
@@ -46,19 +46,18 @@ const int KEYWORD_SELECT_NUM = MAX_KEYWORDSET_PER_TYPE;
 
 class CDlgKeywordSelect final : public CDialog
 {
-public:
-	CDlgKeywordSelect();
-	~CDlgKeywordSelect();
-	int DoModal( HINSTANCE hInstance, HWND hwndParent, int* pnSet );
+  public:
+    CDlgKeywordSelect();
+    ~CDlgKeywordSelect();
+    int DoModal(HINSTANCE hInstance, HWND hwndParent, int *pnSet);
 
-protected:
+  protected:
+    BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
+    BOOL OnBnClicked(int wID) override;
+    int GetData(void) override;
+    void SetData(void) override;
+    LPVOID GetHelpIdTable(void) override;
 
-	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
-	BOOL OnBnClicked(int wID) override;
-	int  GetData( void ) override;
-	void SetData( void ) override;
-	LPVOID GetHelpIdTable( void ) override;
-
-	int m_nSet[ KEYWORD_SELECT_NUM ];
-	CKeyWordSetMgr*	m_pCKeyWordSetMgr;
+    int m_nSet[KEYWORD_SELECT_NUM];
+    CKeyWordSetMgr *m_pCKeyWordSetMgr;
 };

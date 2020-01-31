@@ -37,45 +37,48 @@ using std::wstring;
 
 class CImpExpManager
 {
-public:
-	bool ImportUI(HINSTANCE hInstance, HWND hwndParent);
-	bool ExportUI(HINSTANCE hInstance, HWND hwndParent);
-	virtual bool ImportAscertain(HINSTANCE hInstance, HWND hwndParent, const wstring& sFileName, wstring& sErrMsg);
-	virtual bool Import(const wstring& sFileName, wstring& sErrMsg) = 0;
-	virtual bool Export(const wstring& sFileName, wstring& sErrMsg) = 0;
-	// ファイル名の初期値を設定
-	void SetBaseName(const wstring& sBase);
-	// フルパス名を取得
-	inline wstring GetFullPath()
-	{
-		return { LPCWSTR(GetDllShareData().m_sHistory.m_szIMPORTFOLDER) + m_sOriginName };
-	}
-	// フルパス名を取得
-	inline wstring MakeFullPath( wstring sFileName )
-	{
-		return { LPCWSTR(GetDllShareData().m_sHistory.m_szIMPORTFOLDER) + sFileName };
-	}
-	// ファイル名を取得
-	inline wstring GetFileName()	{ return m_sOriginName; }
+  public:
+    bool ImportUI(HINSTANCE hInstance, HWND hwndParent);
+    bool ExportUI(HINSTANCE hInstance, HWND hwndParent);
+    virtual bool ImportAscertain(HINSTANCE hInstance, HWND hwndParent, const wstring &sFileName, wstring &sErrMsg);
+    virtual bool Import(const wstring &sFileName, wstring &sErrMsg) = 0;
+    virtual bool Export(const wstring &sFileName, wstring &sErrMsg) = 0;
+    // ファイル名の初期値を設定
+    void SetBaseName(const wstring &sBase);
+    // フルパス名を取得
+    inline wstring GetFullPath()
+    {
+        return {LPCWSTR(GetDllShareData().m_sHistory.m_szIMPORTFOLDER) + m_sOriginName};
+    }
+    // フルパス名を取得
+    inline wstring MakeFullPath(wstring sFileName)
+    {
+        return {LPCWSTR(GetDllShareData().m_sHistory.m_szIMPORTFOLDER) + sFileName};
+    }
+    // ファイル名を取得
+    inline wstring GetFileName()
+    {
+        return m_sOriginName;
+    }
 
-protected:
-	// Import Folderの設定
-	inline void SetImportFolder( const WCHAR* szPath ) 
-	{
-		/* ファイルのフルパスをフォルダとファイル名に分割 */
-		/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-		::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL );
-		wcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, L"\\" );
-	}
+  protected:
+    // Import Folderの設定
+    inline void SetImportFolder(const WCHAR *szPath)
+    {
+        /* ファイルのフルパスをフォルダとファイル名に分割 */
+        /* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
+        ::SplitPath_FolderAndFile(szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL);
+        wcscat(GetDllShareData().m_sHistory.m_szIMPORTFOLDER, L"\\");
+    }
 
-	// デフォルト拡張子の取得(「*.txt」形式)
-	virtual const WCHAR* GetDefaultExtension();
-	// デフォルト拡張子の取得(「txt」形式)
-	virtual const wchar_t* GetOriginExtension();
+    // デフォルト拡張子の取得(「*.txt」形式)
+    virtual const WCHAR *GetDefaultExtension();
+    // デフォルト拡張子の取得(「txt」形式)
+    virtual const wchar_t *GetOriginExtension();
 
-protected:
-	wstring		m_sBase;
-	wstring		m_sOriginName;
+  protected:
+    wstring m_sBase;
+    wstring m_sOriginName;
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -83,40 +86,49 @@ protected:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 class CImpExpType : public CImpExpManager
 {
-public:
-	// Constructor
-	CImpExpType( int nIdx, STypeConfig& types, HWND hwndList )
-		: m_nIdx( nIdx )
-		, m_Types( types )
-		, m_hwndList( hwndList )
-	{
-		/* 共有データ構造体のアドレスを返す */
-		m_pShareData = &GetDllShareData();
-	}
+  public:
+    // Constructor
+    CImpExpType(int nIdx, STypeConfig &types, HWND hwndList)
+        : m_nIdx(nIdx)
+        , m_Types(types)
+        , m_hwndList(hwndList)
+    {
+        /* 共有データ構造体のアドレスを返す */
+        m_pShareData = &GetDllShareData();
+    }
 
-public:
-	bool ImportAscertain( HINSTANCE, HWND, const wstring&, wstring& );
-	bool Import( const wstring&, wstring& );
-	bool Export( const wstring&, wstring& );
+  public:
+    bool ImportAscertain(HINSTANCE, HWND, const wstring &, wstring &);
+    bool Import(const wstring &, wstring &);
+    bool Export(const wstring &, wstring &);
 
-public:
-	// デフォルト拡張子の取得
-	const WCHAR* GetDefaultExtension()	{ return L"*.ini"; }
-	const wchar_t* GetOriginExtension()	{ return L"ini"; }
-	bool IsAddType(){ return m_bAddType; }
+  public:
+    // デフォルト拡張子の取得
+    const WCHAR *GetDefaultExtension()
+    {
+        return L"*.ini";
+    }
+    const wchar_t *GetOriginExtension()
+    {
+        return L"ini";
+    }
+    bool IsAddType()
+    {
+        return m_bAddType;
+    }
 
-private:
-	// インターフェース用
-	int 			m_nIdx;
-	STypeConfig&	m_Types;
-	HWND			m_hwndList;
+  private:
+    // インターフェース用
+    int m_nIdx;
+    STypeConfig &m_Types;
+    HWND m_hwndList;
 
-	// 内部使用
-	DLLSHAREDATA*	m_pShareData;
-	int				m_nColorType;
-	wstring 		m_sColorFile;
-	bool			m_bAddType;
-	CDataProfile	m_cProfile;
+    // 内部使用
+    DLLSHAREDATA *m_pShareData;
+    int m_nColorType;
+    wstring m_sColorFile;
+    bool m_bAddType;
+    CDataProfile m_cProfile;
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -124,24 +136,30 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 class CImpExpColors : public CImpExpManager
 {
-public:
-	// Constructor
-	CImpExpColors( ColorInfo * psColorInfoArr )
-		: m_ColorInfoArr( psColorInfoArr )
-	{
-	}
+  public:
+    // Constructor
+    CImpExpColors(ColorInfo *psColorInfoArr)
+        : m_ColorInfoArr(psColorInfoArr)
+    {
+    }
 
-public:
-	bool Import( const wstring&, wstring& );
-	bool Export( const wstring&, wstring& );
+  public:
+    bool Import(const wstring &, wstring &);
+    bool Export(const wstring &, wstring &);
 
-public:
-	// デフォルト拡張子の取得
-	const WCHAR* GetDefaultExtension()	{ return L"*.col"; }
-	const wchar_t* GetOriginExtension()	{ return L"col"; }
+  public:
+    // デフォルト拡張子の取得
+    const WCHAR *GetDefaultExtension()
+    {
+        return L"*.col";
+    }
+    const wchar_t *GetOriginExtension()
+    {
+        return L"col";
+    }
 
-private:
-	ColorInfo*		m_ColorInfoArr;
+  private:
+    ColorInfo *m_ColorInfoArr;
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -149,24 +167,30 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 class CImpExpRegex : public CImpExpManager
 {
-public:
-	// Constructor
-	CImpExpRegex( STypeConfig& types )
-		: m_Types( types )
-	{
-	}
+  public:
+    // Constructor
+    CImpExpRegex(STypeConfig &types)
+        : m_Types(types)
+    {
+    }
 
-public:
-	bool Import( const wstring&, wstring& );
-	bool Export( const wstring&, wstring& );
+  public:
+    bool Import(const wstring &, wstring &);
+    bool Export(const wstring &, wstring &);
 
-public:
-	// デフォルト拡張子の取得
-	const WCHAR* GetDefaultExtension()	{ return L"*.rkw"; }
-	const wchar_t* GetOriginExtension()	{ return L"rkw"; }
+  public:
+    // デフォルト拡張子の取得
+    const WCHAR *GetDefaultExtension()
+    {
+        return L"*.rkw";
+    }
+    const wchar_t *GetOriginExtension()
+    {
+        return L"rkw";
+    }
 
-private:
-	STypeConfig&	m_Types;
+  private:
+    STypeConfig &m_Types;
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -174,24 +198,30 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 class CImpExpKeyHelp : public CImpExpManager
 {
-public:
-	// Constructor
-	CImpExpKeyHelp( STypeConfig& types )
-		: m_Types( types )
-	{
-	}
+  public:
+    // Constructor
+    CImpExpKeyHelp(STypeConfig &types)
+        : m_Types(types)
+    {
+    }
 
-public:
-	bool Import( const wstring&, wstring& );
-	bool Export( const wstring&, wstring& );
+  public:
+    bool Import(const wstring &, wstring &);
+    bool Export(const wstring &, wstring &);
 
-public:
-	// デフォルト拡張子の取得
-	const WCHAR* GetDefaultExtension()	{ return L"*.txt"; }
-	const wchar_t* GetOriginExtension()	{ return L"txt"; }
+  public:
+    // デフォルト拡張子の取得
+    const WCHAR *GetDefaultExtension()
+    {
+        return L"*.txt";
+    }
+    const wchar_t *GetOriginExtension()
+    {
+        return L"txt";
+    }
 
-private:
-	STypeConfig&	m_Types;
+  private:
+    STypeConfig &m_Types;
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -199,24 +229,30 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 class CImpExpKeybind : public CImpExpManager
 {
-public:
-	// Constructor
-	CImpExpKeybind( CommonSetting& common )
-		: m_Common( common )
-	{
-	}
+  public:
+    // Constructor
+    CImpExpKeybind(CommonSetting &common)
+        : m_Common(common)
+    {
+    }
 
-public:
-	bool Import( const wstring&, wstring& );
-	bool Export( const wstring&, wstring& );
+  public:
+    bool Import(const wstring &, wstring &);
+    bool Export(const wstring &, wstring &);
 
-public:
-	// デフォルト拡張子の取得
-	const WCHAR* GetDefaultExtension()	{ return L"*.key"; }
-	const wchar_t* GetOriginExtension()	{ return L"key"; }
+  public:
+    // デフォルト拡張子の取得
+    const WCHAR *GetDefaultExtension()
+    {
+        return L"*.key";
+    }
+    const wchar_t *GetOriginExtension()
+    {
+        return L"key";
+    }
 
-private:
-	CommonSetting&		m_Common;
+  private:
+    CommonSetting &m_Common;
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -224,24 +260,30 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 class CImpExpCustMenu : public CImpExpManager
 {
-public:
-	// Constructor
-	CImpExpCustMenu( CommonSetting& common )
-		: m_Common( common )
-	{
-	}
+  public:
+    // Constructor
+    CImpExpCustMenu(CommonSetting &common)
+        : m_Common(common)
+    {
+    }
 
-public:
-	bool Import( const wstring&, wstring& );
-	bool Export( const wstring&, wstring& );
+  public:
+    bool Import(const wstring &, wstring &);
+    bool Export(const wstring &, wstring &);
 
-public:
-	// デフォルト拡張子の取得
-	const WCHAR* GetDefaultExtension()	{ return L"*.mnu"; }
-	const wchar_t* GetOriginExtension()	{ return L"mnu"; }
+  public:
+    // デフォルト拡張子の取得
+    const WCHAR *GetDefaultExtension()
+    {
+        return L"*.mnu";
+    }
+    const wchar_t *GetOriginExtension()
+    {
+        return L"mnu";
+    }
 
-private:
-	CommonSetting&		m_Common;
+  private:
+    CommonSetting &m_Common;
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -249,28 +291,34 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 class CImpExpKeyWord : public CImpExpManager
 {
-public:
-	// Constructor
-	CImpExpKeyWord( CommonSetting& common, int nKeyWordSetIdx, bool& bCase )
-		: m_Common( common )
-		, m_nIdx( nKeyWordSetIdx )
-		, m_bCase( bCase )
-	{
-	}
+  public:
+    // Constructor
+    CImpExpKeyWord(CommonSetting &common, int nKeyWordSetIdx, bool &bCase)
+        : m_Common(common)
+        , m_nIdx(nKeyWordSetIdx)
+        , m_bCase(bCase)
+    {
+    }
 
-public:
-	bool Import( const wstring&, wstring& );
-	bool Export( const wstring&, wstring& );
+  public:
+    bool Import(const wstring &, wstring &);
+    bool Export(const wstring &, wstring &);
 
-public:
-	// デフォルト拡張子の取得
-	const WCHAR* GetDefaultExtension()	{ return L"*.kwd"; }
-	const wchar_t* GetOriginExtension()	{ return L"kwd"; }
+  public:
+    // デフォルト拡張子の取得
+    const WCHAR *GetDefaultExtension()
+    {
+        return L"*.kwd";
+    }
+    const wchar_t *GetOriginExtension()
+    {
+        return L"kwd";
+    }
 
-private:
-	CommonSetting&		m_Common;
-	int 				m_nIdx;
-	bool&				m_bCase;
+  private:
+    CommonSetting &m_Common;
+    int m_nIdx;
+    bool &m_bCase;
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -278,24 +326,30 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 class CImpExpMainMenu : public CImpExpManager
 {
-public:
-	// Constructor
-	CImpExpMainMenu( CommonSetting& common )
-		: m_Common( common )
-	{
-	}
+  public:
+    // Constructor
+    CImpExpMainMenu(CommonSetting &common)
+        : m_Common(common)
+    {
+    }
 
-public:
-	bool Import( const wstring&, wstring& );
-	bool Export( const wstring&, wstring& );
+  public:
+    bool Import(const wstring &, wstring &);
+    bool Export(const wstring &, wstring &);
 
-public:
-	// デフォルト拡張子の取得
-	const WCHAR* GetDefaultExtension()	{ return L"*.ini"; }
-	const wchar_t* GetOriginExtension()	{ return L"ini"; }
+  public:
+    // デフォルト拡張子の取得
+    const WCHAR *GetDefaultExtension()
+    {
+        return L"*.ini";
+    }
+    const wchar_t *GetOriginExtension()
+    {
+        return L"ini";
+    }
 
-private:
-	CommonSetting&		m_Common;
+  private:
+    CommonSetting &m_Common;
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -303,23 +357,29 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 class CImpExpFileTree : public CImpExpManager
 {
-public:
-	// Constructor
-	CImpExpFileTree( std::vector<SFileTreeItem>& items )
-		: m_aFileTreeItems( items )
-	{
-	}
+  public:
+    // Constructor
+    CImpExpFileTree(std::vector<SFileTreeItem> &items)
+        : m_aFileTreeItems(items)
+    {
+    }
 
-public:
-	bool Import( const wstring&, wstring& );
-	bool Export( const wstring&, wstring& );
-	static void IO_FileTreeIni( CDataProfile&, std::vector<SFileTreeItem>& );
+  public:
+    bool Import(const wstring &, wstring &);
+    bool Export(const wstring &, wstring &);
+    static void IO_FileTreeIni(CDataProfile &, std::vector<SFileTreeItem> &);
 
-public:
-	// デフォルト拡張子の取得
-	const WCHAR* GetDefaultExtension()	{ return L"*.ini"; }
-	const wchar_t* GetOriginExtension()	{ return L"ini"; }
+  public:
+    // デフォルト拡張子の取得
+    const WCHAR *GetDefaultExtension()
+    {
+        return L"*.ini";
+    }
+    const wchar_t *GetOriginExtension()
+    {
+        return L"ini";
+    }
 
-private:
-	std::vector<SFileTreeItem>&		m_aFileTreeItems;
+  private:
+    std::vector<SFileTreeItem> &m_aFileTreeItems;
 };
