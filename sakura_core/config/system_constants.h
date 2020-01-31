@@ -43,9 +43,9 @@
 
 //! デバッグ判別、定数サフィックス 2007.09.20 kobake
 #ifdef _DEBUG
-	#define _DEBUG_SUFFIX_ "_DEBUG"
+#define _DEBUG_SUFFIX_ "_DEBUG"
 #else
-	#define _DEBUG_SUFFIX_ ""
+#define _DEBUG_SUFFIX_ ""
 #endif
 
 //! ビルドコード判別、定数サフィックス 2007.09.20 kobake
@@ -53,9 +53,9 @@
 
 //! ターゲットマシン判別 2010.08.21 Moca 追加
 #ifdef _WIN64
-	#define CON_SKR_MACHINE_SUFFIX_ "M64"
+#define CON_SKR_MACHINE_SUFFIX_ "M64"
 #else
-	#define CON_SKR_MACHINE_SUFFIX_ ""
+#define CON_SKR_MACHINE_SUFFIX_ ""
 #endif
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -549,63 +549,63 @@
 	-- バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
 
 */
-#define N_SHAREDATA_VERSION		176
-#define STR_SHAREDATA_VERSION	NUM_TO_STR(N_SHAREDATA_VERSION)
-#define	GSTR_SHAREDATA	(L"SakuraShareData" _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
+#define N_SHAREDATA_VERSION 176
+#define STR_SHAREDATA_VERSION NUM_TO_STR(N_SHAREDATA_VERSION)
+#define GSTR_SHAREDATA (L"SakuraShareData" _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ミューテックス                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //! アプリケーション実行検出用(インストーラで使用)
-#define	GSTR_MUTEX_SAKURA					L"MutexSakuraEditor"
+#define GSTR_MUTEX_SAKURA L"MutexSakuraEditor"
 
 //! コントロールプロセス
-#define	GSTR_MUTEX_SAKURA_CP				(L"MutexSakuraEditorCP"				_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define GSTR_MUTEX_SAKURA_CP (L"MutexSakuraEditorCP" _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 
 //! ノーマルプロセス初期化同期
-#define	GSTR_MUTEX_SAKURA_INIT				(L"MutexSakuraEditorInit"			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define GSTR_MUTEX_SAKURA_INIT (L"MutexSakuraEditorInit" _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 
 //! ノード操作同期
-#define	GSTR_MUTEX_SAKURA_EDITARR			(L"MutexSakuraEditorEditArr"			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define GSTR_MUTEX_SAKURA_EDITARR (L"MutexSakuraEditorEditArr" _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 
 //DLLSHARE Work操作同期
-#define	GSTR_MUTEX_SAKURA_SHAREWORK			(L"MutexSakuraEditorShareWork"		_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define GSTR_MUTEX_SAKURA_SHAREWORK (L"MutexSakuraEditorShareWork" _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 
 //! 強調キーワードロック
-#define	GSTR_MUTEX_SAKURA_KEYWORD			(L"MutexSakuraEditorKeyword"			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define GSTR_MUTEX_SAKURA_KEYWORD (L"MutexSakuraEditorKeyword" _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 
 //タイプ別設定転送用
-#define	GSTR_MUTEX_SAKURA_DOCTYPE			(L"MutexSakuraEditorDocType"			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define GSTR_MUTEX_SAKURA_DOCTYPE (L"MutexSakuraEditorDocType" _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         イベント                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //! 初期化完了イベント
-#define	GSTR_EVENT_SAKURA_CP_INITIALIZED	(L"EventSakuraEditorCPInitialized"	_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define GSTR_EVENT_SAKURA_CP_INITIALIZED (L"EventSakuraEditorCPInitialized" _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     ウィンドウクラス                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //! コントロールトレイ
-#define	GSTR_CEDITAPP		(L"CControlTray" _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)		_T(STR_SHAREDATA_VERSION))
+#define GSTR_CEDITAPP (L"CControlTray" _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 
 //! メインウィンドウ
-#define	GSTR_EDITWINDOWNAME	(L"TextEditorWindow" _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define GSTR_EDITWINDOWNAME (L"TextEditorWindow" _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 
 //! ビュー
-#define	GSTR_VIEWNAME		(L"SakuraView"												_T(STR_SHAREDATA_VERSION))
+#define GSTR_VIEWNAME (L"SakuraView" _T(STR_SHAREDATA_VERSION))
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         リソース                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //	Dec. 2, 2002 genta
 //	固定ファイル名
-#define FN_APP_ICON  L"my_appicon.ico"
+#define FN_APP_ICON L"my_appicon.ico"
 #define FN_GREP_ICON L"my_grepicon.ico"
-#define FN_TOOL_BMP  L"my_icons.bmp"
+#define FN_TOOL_BMP L"my_icons.bmp"
 
 //	標準アプリケーションアイコンリソース名
 #define ICON_DEFAULT_APP IDI_ICON_STD
@@ -615,15 +615,15 @@
 //                      パフォーマンス                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //バッファサイズ
-const int LINEREADBUFSIZE	= 10240;	//!< ファイルから1行分データを読み込むときのバッファサイズ
+const int LINEREADBUFSIZE = 10240; //!< ファイルから1行分データを読み込むときのバッファサイズ
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          フラグ                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-#define _SHIFT	0x00000001
-#define _CTRL	0x00000002
-#define _ALT	0x00000004
+#define _SHIFT 0x00000001
+#define _CTRL 0x00000002
+#define _ALT 0x00000004
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        メッセージ                           //
@@ -631,60 +631,63 @@ const int LINEREADBUFSIZE	= 10240;	//!< ファイルから1行分データを読
 
 //wParam: X
 //lParam: Y
-#define MYWM_DOSPLIT        (WM_APP+1500)	
+#define MYWM_DOSPLIT (WM_APP + 1500)
 
 //wParam: なんかのインデックス
 //lParam: boolっぽい何か
-#define MYWM_SETACTIVEPANE  (WM_APP+1510)
+#define MYWM_SETACTIVEPANE (WM_APP + 1510)
 
 //!設定が変更されたことの通知メッセージ
 //wParam:PM_CHANGESETTING_TYPEのとき、タイプ別設定Index。それ以外なし。
-#define MYWM_CHANGESETTING  (WM_APP+1520)
+#define MYWM_CHANGESETTING (WM_APP + 1520)
 //! MYWM_CHANGESETTINGメッセージのlParam
-enum e_PM_CHANGESETTING_SELECT {
-	PM_CHANGESETTING_ALL		= 0, //!< 全部
-	PM_CHANGESETTING_FONT		= 1, //!< フォント変更
-	PM_CHANGESETTING_FONTSIZE	= 2, //!< フォントサイズ変更(WPARAM タイプ別番号。-1で共通設定変更)
-	PM_CHANGESETTING_TYPE		= 3, //!< タイプ別設定
-	PM_CHANGESETTING_TYPE2		= 4, //!< タイプ別設定(再読み込みなし)
-	PM_PRINTSETTING				= 5, //!< プリント設定
+enum e_PM_CHANGESETTING_SELECT
+{
+    PM_CHANGESETTING_ALL      = 0, //!< 全部
+    PM_CHANGESETTING_FONT     = 1, //!< フォント変更
+    PM_CHANGESETTING_FONTSIZE = 2, //!< フォントサイズ変更(WPARAM タイプ別番号。-1で共通設定変更)
+    PM_CHANGESETTING_TYPE     = 3, //!< タイプ別設定
+    PM_CHANGESETTING_TYPE2    = 4, //!< タイプ別設定(再読み込みなし)
+    PM_PRINTSETTING           = 5, //!< プリント設定
 };
 //!座標位置情報の保存
-#define MYWM_SAVEEDITSTATE  (WM_APP+1521)
+#define MYWM_SAVEEDITSTATE (WM_APP + 1521)
 
 //! タスクトレイからの通知メッセージ
-#define MYWM_NOTIFYICON		(WM_APP+100)
+#define MYWM_NOTIFYICON (WM_APP + 100)
 
 /*! トレイからエディタへの終了要求 */
-#define	MYWM_CLOSE			(WM_APP+200)
-enum e_PM_CLOSE_WPARAM {
-	PM_CLOSE_EXIT				= 1, //!< 全終了
-	PM_CLOSE_GREPNOCONFIRM		= 2, //!< Grepで終了確認しない
+#define MYWM_CLOSE (WM_APP + 200)
+enum e_PM_CLOSE_WPARAM
+{
+    PM_CLOSE_EXIT          = 1, //!< 全終了
+    PM_CLOSE_GREPNOCONFIRM = 2, //!< Grepで終了確認しない
 };
-#define	MYWM_ALLOWACTIVATE	(WM_APP+201)
+#define MYWM_ALLOWACTIVATE (WM_APP + 201)
 
 /*! トレイからエディタへの編集ファイル情報 要求通知 */
-#define	MYWM_GETFILEINFO	(WM_APP+203)
+#define MYWM_GETFILEINFO (WM_APP + 203)
 
 /*! カーソル位置変更通知 */
-#define	MYWM_SETCARETPOS	(WM_APP+204)
+#define MYWM_SETCARETPOS (WM_APP + 204)
 //! MYWM_SETCARETPOSメッセージのlParam
-enum e_PM_SETCARETPOS_SELECTSTATE {
-	PM_SETCARETPOS_NOSELECT		= 0, //!< 選択解除
-	PM_SETCARETPOS_SELECT		= 1, //!< 選択開始・変更
-	PM_SETCARETPOS_KEEPSELECT	= 2, //!< 現在の選択状態を保って移動
+enum e_PM_SETCARETPOS_SELECTSTATE
+{
+    PM_SETCARETPOS_NOSELECT   = 0, //!< 選択解除
+    PM_SETCARETPOS_SELECT     = 1, //!< 選択開始・変更
+    PM_SETCARETPOS_KEEPSELECT = 2, //!< 現在の選択状態を保って移動
 };
 
 /*! カーソル位置取得要求 */
-#define	MYWM_GETCARETPOS	(WM_APP+205)
+#define MYWM_GETCARETPOS (WM_APP + 205)
 
 //! 未使用
 //wParam:未使用
 //lParam:未使用
-#define	MYWM_ADDSTRING		(WM_APP+206)
+#define MYWM_ADDSTRING (WM_APP + 206)
 
 /*! タグジャンプ元通知 */
-#define	MYWM_SETREFERER		(WM_APP+207)
+#define MYWM_SETREFERER (WM_APP + 207)
 
 /*! 行(改行単位)データの要求(Send)
 	共有データ： EditWnd:Write→呼び出し元Read
@@ -695,54 +698,54 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 	@retval -1以下：エラー
 	@date 2014.05.07 仕様変更。戻り値のマイナス lParamに意味を追加
 */
-#define	MYWM_GETLINEDATA	(WM_APP+208)
+#define MYWM_GETLINEDATA (WM_APP + 208)
 
 /*! 編集ウィンドウオブジェクトからのオブジェクト削除要求 */
-#define	MYWM_DELETE_ME		(WM_APP+209)
+#define MYWM_DELETE_ME (WM_APP + 209)
 
 /*! 新しい編集ウィンドウの作成依頼(コマンドラインを渡す) */
-#define	MYWM_OPENNEWEDITOR	(WM_APP+210)
+#define MYWM_OPENNEWEDITOR (WM_APP + 210)
 
 //ヘルプっぽい何か
-#define	MYWM_HTMLHELP			(WM_APP+212)
+#define MYWM_HTMLHELP (WM_APP + 212)
 
 /*! タブウインドウ用メッセージ */
-#define	MYWM_TAB_WINDOW_NOTIFY	(WM_APP+213)	//@@@ 2003.05.31 MIK
+#define MYWM_TAB_WINDOW_NOTIFY (WM_APP + 213) //@@@ 2003.05.31 MIK
 
 /*! バーの表示・非表示変更メッセージ */
-#define	MYWM_BAR_CHANGE_NOTIFY	(WM_APP+214)	//@@@ 2003.06.10 MIK
+#define MYWM_BAR_CHANGE_NOTIFY (WM_APP + 214) //@@@ 2003.06.10 MIK
 
 /*! エディタ－トレイ間でのUI特権分離の確認メッセージ */
-#define	MYWM_UIPI_CHECK	(WM_APP+215)	//@@@ 2007.06.07 ryoji
+#define MYWM_UIPI_CHECK (WM_APP + 215) //@@@ 2007.06.07 ryoji
 
 /*! ポップアップウィンドウの表示切替指示 */
-#define MYWM_SHOWOWNEDPOPUPS (WM_APP+216)	//@@@ 2007.10.22 ryoji
+#define MYWM_SHOWOWNEDPOPUPS (WM_APP + 216) //@@@ 2007.10.22 ryoji
 
 /*! プロセスの初回アイドリング通知 */
-#define MYWM_FIRST_IDLE (WM_APP+217)	//@@@ 2008.04.19 ryoji
+#define MYWM_FIRST_IDLE (WM_APP + 217) //@@@ 2008.04.19 ryoji
 
 /*! 独自のドロップファイル通知 */
-#define MYWM_DROPFILES (WM_APP+218)	//@@@ 2008.06.18 ryoji
+#define MYWM_DROPFILES (WM_APP + 218) //@@@ 2008.06.18 ryoji
 
 //! テキスト追加通知(共有データ経由)
 // wParam:追加する文字数(WCHAR単位)
 // lParam:未使用
 // @2010.05.11 Moca メッセージ追加
-#define	MYWM_ADDSTRINGLEN_W (WM_APP+219)
+#define MYWM_ADDSTRINGLEN_W (WM_APP + 219)
 
 /*! アウトライン解析画面の通知 */
-#define MYWM_OUTLINE_NOTIFY (WM_APP+220)	//@@@ 2010.06.06 ryoji
+#define MYWM_OUTLINE_NOTIFY (WM_APP + 220) //@@@ 2010.06.06 ryoji
 
 //! タイプ別を設定
 // wParam:タイプ別番号
-#define MYWM_SET_TYPESETTING (WM_APP+221)
+#define MYWM_SET_TYPESETTING (WM_APP + 221)
 //! タイプ別を取得
-#define MYWM_GET_TYPESETTING (WM_APP+222)
+#define MYWM_GET_TYPESETTING (WM_APP + 222)
 
 //! タイプ別を追加
-#define MYWM_ADD_TYPESETTING (WM_APP+223)
+#define MYWM_ADD_TYPESETTING (WM_APP + 223)
 //! タイプ別を削除
-#define MYWM_DEL_TYPESETTING (WM_APP+224)
+#define MYWM_DEL_TYPESETTING (WM_APP + 224)
 
 //! ウィンドウ一覧表示
-#define MYWM_DLGWINLIST (WM_APP+225)
+#define MYWM_DLGWINLIST (WM_APP + 225)
