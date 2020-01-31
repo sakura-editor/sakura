@@ -31,20 +31,22 @@
 // #include "DLLSHAREDATA.h"
 
 //!書式管理
-class CFormatManager{
-public:
-	CFormatManager()
-	{
-		m_pShareData = &GetDllShareData();
-	}
-	//書式 //@@@ 2002.2.9 YAZAKI
-	// 共有DLLSHAREDATA依存
-	const WCHAR* MyGetDateFormat( const SYSTEMTIME& systime, WCHAR* pszDest, int nDestLen );
-	const WCHAR* MyGetTimeFormat( const SYSTEMTIME& systime, WCHAR* pszDest, int nDestLen );
+class CFormatManager
+{
+  public:
+    CFormatManager()
+    {
+        m_pShareData = &GetDllShareData();
+    }
+    //書式 //@@@ 2002.2.9 YAZAKI
+    // 共有DLLSHAREDATA依存
+    const WCHAR *MyGetDateFormat(const SYSTEMTIME &systime, WCHAR *pszDest, int nDestLen);
+    const WCHAR *MyGetTimeFormat(const SYSTEMTIME &systime, WCHAR *pszDest, int nDestLen);
 
-	// 共有DLLSHAREDATA非依存
-	const WCHAR* MyGetDateFormat( const SYSTEMTIME& systime, WCHAR* pszDest, int nDestLen, int nDateFormatType, const WCHAR* szDateFormat );
-	const WCHAR* MyGetTimeFormat( const SYSTEMTIME& systime, WCHAR* pszDest, int nDestLen, int nTimeFormatType, const WCHAR* szTimeFormat );
-private:
-	DLLSHAREDATA* m_pShareData;
+    // 共有DLLSHAREDATA非依存
+    const WCHAR *MyGetDateFormat(const SYSTEMTIME &systime, WCHAR *pszDest, int nDestLen, int nDateFormatType, const WCHAR *szDateFormat);
+    const WCHAR *MyGetTimeFormat(const SYSTEMTIME &systime, WCHAR *pszDest, int nDestLen, int nTimeFormatType, const WCHAR *szTimeFormat);
+
+  private:
+    DLLSHAREDATA *m_pShareData;
 };

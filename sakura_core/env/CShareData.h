@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "CSelectLang.h"		// 2011.04.10 nasukoji
+#include "CSelectLang.h" // 2011.04.10 nasukoji
 
 class CShareData;
 
@@ -56,62 +56,65 @@ class CMutex;
 */
 class CShareData : public TSingleton<CShareData>
 {
-	friend class TSingleton<CShareData>;
-	CShareData();
-	~CShareData();
+    friend class TSingleton<CShareData>;
+    CShareData();
+    ~CShareData();
 
-public:
-	/*
+  public:
+    /*
 	||  Attributes & Operations
 	*/
-	bool InitShareData();	/* CShareDataクラスの初期化処理 */
-	void RefreshString();	/* 言語選択後に共有メモリ内の文字列を更新する */
-	
-	//MRU系
-	BOOL IsPathOpened( const WCHAR* pszPath, HWND* phwndOwner ); /* 指定ファイルが開かれているか調べる */
-	BOOL ActiveAlreadyOpenedWindow( const WCHAR* pszPath, HWND* phwndOwner, ECodeType nCharCode );/* 指定ファイルが開かれているか調べつつ、多重オープン時の文字コード衝突も確認 */	// 2007.03.16
+    bool InitShareData(); /* CShareDataクラスの初期化処理 */
+    void RefreshString(); /* 言語選択後に共有メモリ内の文字列を更新する */
 
-	//デバッグ  今は主にマクロ・外部コマンド実行用
-	void TraceOut( LPCWSTR lpFmt, ...);	/* アウトプットウィンドウに出力(printfフォーマット) */
-	void TraceOutString( const wchar_t* pszStr, int len = -1);	/* アウトプットウィンドウに出力(未加工文字列) */
-	void SetTraceOutSource( HWND hwnd ){ m_hwndTraceOutSource = hwnd; }	/* TraceOut起動元ウィンドウの設定 */
-	bool OpenDebugWindow( HWND hwnd, bool bAllwaysActive );	//!<  デバッグウィンドウを開く
+    //MRU系
+    BOOL IsPathOpened(const WCHAR *pszPath, HWND *phwndOwner); /* 指定ファイルが開かれているか調べる */
+    BOOL ActiveAlreadyOpenedWindow(const WCHAR *pszPath, HWND *phwndOwner, ECodeType nCharCode); /* 指定ファイルが開かれているか調べつつ、多重オープン時の文字コード衝突も確認 */ // 2007.03.16
 
-	BOOL IsPrivateSettings( void );
+    //デバッグ  今は主にマクロ・外部コマンド実行用
+    void TraceOut(LPCWSTR lpFmt, ...); /* アウトプットウィンドウに出力(printfフォーマット) */
+    void TraceOutString(const wchar_t *pszStr, int len = -1); /* アウトプットウィンドウに出力(未加工文字列) */
+    void SetTraceOutSource(HWND hwnd)
+    {
+        m_hwndTraceOutSource = hwnd;
+    } /* TraceOut起動元ウィンドウの設定 */
+    bool OpenDebugWindow(HWND hwnd, bool bAllwaysActive); //!<  デバッグウィンドウを開く
 
-	//マクロ関連
-	int			GetMacroFilename( int idx, WCHAR* pszPath, int nBufLen ); // idxで指定したマクロファイル名（フルパス）を取得する	//	Jun. 14, 2003 genta 引数追加．書式変更
-	bool		BeReloadWhenExecuteMacro( int idx );	//	idxで指定したマクロは、実行するたびにファイルを読み込む設定か？
+    BOOL IsPrivateSettings(void);
 
-	//タイプ別設定(コントロールプロセス専用)
-	void CreateTypeSettings();
-	std::vector<STypeConfig*>& GetTypeSettings();
+    //マクロ関連
+    int GetMacroFilename(int idx, WCHAR *pszPath, int nBufLen); // idxで指定したマクロファイル名（フルパス）を取得する	//	Jun. 14, 2003 genta 引数追加．書式変更
+    bool BeReloadWhenExecuteMacro(int idx); //	idxで指定したマクロは、実行するたびにファイルを読み込む設定か？
 
-	// 国際化対応のための文字列を変更する(コントロールプロセス専用)
-	void ConvertLangValues(std::vector<std::wstring>& values, bool bSetValues);
+    //タイプ別設定(コントロールプロセス専用)
+    void CreateTypeSettings();
+    std::vector<STypeConfig *> &GetTypeSettings();
 
-	static CMutex& GetMutexShareWork();
+    // 国際化対応のための文字列を変更する(コントロールプロセス専用)
+    void ConvertLangValues(std::vector<std::wstring> &values, bool bSetValues);
 
-protected:
-	/*
+    static CMutex &GetMutexShareWork();
+
+  protected:
+    /*
 	||  実装ヘルパ関数
 	*/
 
-	//	Jan. 30, 2005 genta 初期化関数の分割
-	void InitKeyword(DLLSHAREDATA* pShareData);
-	bool InitKeyAssign(DLLSHAREDATA* pShareData); // 2007.11.04 genta 起動中止のため値を返す
-	void RefreshKeyAssignString(DLLSHAREDATA* pShareData);
-	void InitToolButtons(DLLSHAREDATA* pShareData);
-	void InitTypeConfigs(DLLSHAREDATA* pShareData, std::vector<STypeConfig*>& types);
-	void InitPopupMenu(DLLSHAREDATA* pShareData);
+    //	Jan. 30, 2005 genta 初期化関数の分割
+    void InitKeyword(DLLSHAREDATA *pShareData);
+    bool InitKeyAssign(DLLSHAREDATA *pShareData); // 2007.11.04 genta 起動中止のため値を返す
+    void RefreshKeyAssignString(DLLSHAREDATA *pShareData);
+    void InitToolButtons(DLLSHAREDATA *pShareData);
+    void InitTypeConfigs(DLLSHAREDATA *pShareData, std::vector<STypeConfig *> &types);
+    void InitPopupMenu(DLLSHAREDATA *pShareData);
 
-public:
-	static void InitFileTree(SFileTree*);
+  public:
+    static void InitFileTree(SFileTree *);
 
-private:
-	CSelectLang m_cSelectLang;			// メッセージリソースDLL読み込み用（プロセスに1個）		// 2011.04.10 nasukoji
-	HANDLE			m_hFileMap;
-	DLLSHAREDATA*	m_pShareData;
-	std::vector<STypeConfig*>* 	m_pvTypeSettings;	//	(コントロールプロセスのみ)
-	HWND			m_hwndTraceOutSource;	// TraceOutA()起動元ウィンドウ（いちいち起動元を指定しなくてすむように）
+  private:
+    CSelectLang m_cSelectLang; // メッセージリソースDLL読み込み用（プロセスに1個）		// 2011.04.10 nasukoji
+    HANDLE m_hFileMap;
+    DLLSHAREDATA *m_pShareData;
+    std::vector<STypeConfig *> *m_pvTypeSettings; //	(コントロールプロセスのみ)
+    HWND m_hwndTraceOutSource; // TraceOutA()起動元ウィンドウ（いちいち起動元を指定しなくてすむように）
 };
