@@ -34,13 +34,12 @@
 #include "dlg/CDlgFileUpdateQuery.h"
 #include "sakura_rc.h"
 
-BOOL CDlgFileUpdateQuery::OnInitDialog( HWND hWnd, WPARAM wParam, LPARAM lParam )
+BOOL CDlgFileUpdateQuery::OnInitDialog(HWND hWnd, WPARAM wParam, LPARAM lParam)
 {
-	::DlgItem_SetText( hWnd, IDC_UPDATEDFILENAME, m_pFilename );
-	::DlgItem_SetText( hWnd, IDC_QUERYRELOADMSG, m_bModified ?
-		LS(STR_ERR_DLGUPQRY1):LS(STR_ERR_DLGUPQRY2) );
+    ::DlgItem_SetText(hWnd, IDC_UPDATEDFILENAME, m_pFilename);
+    ::DlgItem_SetText(hWnd, IDC_QUERYRELOADMSG, m_bModified ? LS(STR_ERR_DLGUPQRY1) : LS(STR_ERR_DLGUPQRY2));
 
-	return CDialog::OnInitDialog( hWnd, wParam, lParam );
+    return CDialog::OnInitDialog(hWnd, wParam, lParam);
 }
 
 /*!
@@ -48,29 +47,30 @@ BOOL CDlgFileUpdateQuery::OnInitDialog( HWND hWnd, WPARAM wParam, LPARAM lParam 
 */
 BOOL CDlgFileUpdateQuery::OnBnClicked(int id)
 {
-	EFileUpdateQuery result;
+    EFileUpdateQuery result;
 
-	switch( id ){
-	case IDC_BTN_RELOAD: // 再読込
-		result = EFUQ_RELOAD;
-		break;
-	case IDC_BTN_CLOSE: // 閉じる
-		result = EFUQ_CLOSE;
-		break;
-	case IDC_BTN_NOTIFYONLY: // 以後通知メッセージのみ
-		result = EFUQ_NOTIFYONLY;
-		break;
-	case IDC_BTN_NOSUPERVISION: // 以後更新を監視しない
-		result = EFUQ_NOSUPERVISION;
-		break;
-	case IDC_BTN_AUTOLOAD:		// 以後未編集で再ロード
-		result = EFUQ_AUTOLOAD;
-		break;
-	default:
-		result = EFUQ_CLOSE;
-		break;
-	}
-	CloseDialog( (INT_PTR)result );
+    switch (id)
+    {
+        case IDC_BTN_RELOAD: // 再読込
+            result = EFUQ_RELOAD;
+            break;
+        case IDC_BTN_CLOSE: // 閉じる
+            result = EFUQ_CLOSE;
+            break;
+        case IDC_BTN_NOTIFYONLY: // 以後通知メッセージのみ
+            result = EFUQ_NOTIFYONLY;
+            break;
+        case IDC_BTN_NOSUPERVISION: // 以後更新を監視しない
+            result = EFUQ_NOSUPERVISION;
+            break;
+        case IDC_BTN_AUTOLOAD: // 以後未編集で再ロード
+            result = EFUQ_AUTOLOAD;
+            break;
+        default:
+            result = EFUQ_CLOSE;
+            break;
+    }
+    CloseDialog((INT_PTR)result);
 
-	return 0;
+    return 0;
 }
