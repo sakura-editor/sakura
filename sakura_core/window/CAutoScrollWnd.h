@@ -27,24 +27,24 @@
 #include "CWnd.h"
 class CEditView;
 
-class CAutoScrollWnd final: public CWnd
+class CAutoScrollWnd final : public CWnd
 {
-public:
-	CAutoScrollWnd();
-	virtual ~CAutoScrollWnd();
-	HWND Create( HINSTANCE hInstance, HWND hwndParent, bool bVertical, bool bHorizontal,
-				 const CMyPoint& point, CEditView* view );
-	void Close();
+  public:
+    CAutoScrollWnd();
+    virtual ~CAutoScrollWnd();
+    HWND Create(HINSTANCE hInstance, HWND hwndParent, bool bVertical, bool bHorizontal, const CMyPoint &point, CEditView *view);
+    void Close();
 
-private:
-	HBITMAP	m_hCenterImg;
-	CEditView*	m_cView;
-protected:
-	/* 仮想関数 */
+  private:
+    HBITMAP m_hCenterImg;
+    CEditView *m_cView;
 
-	/* 仮想関数 メッセージ処理 詳しくは実装を参照 */
-	LRESULT OnLButtonDown(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;
-	LRESULT OnRButtonDown(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;
-	LRESULT OnMButtonDown(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;
-	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;
+  protected:
+    /* 仮想関数 */
+
+    /* 仮想関数 メッセージ処理 詳しくは実装を参照 */
+    LRESULT OnLButtonDown(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;
+    LRESULT OnRButtonDown(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;
+    LRESULT OnMButtonDown(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;
+    LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;
 };

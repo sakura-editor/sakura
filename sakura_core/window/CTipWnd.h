@@ -25,51 +25,53 @@ class CTipWnd;
 -----------------------------------------------------------------------*/
 class CTipWnd final : public CWnd
 {
-public:
-	/*
+  public:
+    /*
 	||  Constructors
 	*/
-	CTipWnd();
-	~CTipWnd();
-	void Create( HINSTANCE hInstance, HWND hwndParent );	/* 初期化 */
+    CTipWnd();
+    ~CTipWnd();
+    void Create(HINSTANCE hInstance, HWND hwndParent); /* 初期化 */
 
-	/*
+    /*
 	||  Attributes & Operations
 	*/
-	void Show( int nX, int nY, const WCHAR* szText, RECT* pRect = NULL );	/* Tipを表示 */
-	void Hide( void );	/* Tipを消す */
-	void GetWindowSize(LPRECT pRect);		// 2001/06/19 asa-o ウィンドウのサイズを得る
+    void Show(int nX, int nY, const WCHAR *szText, RECT *pRect = NULL); /* Tipを表示 */
+    void Hide(void); /* Tipを消す */
+    void GetWindowSize(LPRECT pRect); // 2001/06/19 asa-o ウィンドウのサイズを得る
 
-	void ChangeFont( LOGFONT* lf ){
-		if ( m_hFont ){
-			::DeleteObject( m_hFont );
-		}
-		m_hFont = ::CreateFontIndirect( lf );
-	}
+    void ChangeFont(LOGFONT *lf)
+    {
+        if (m_hFont)
+        {
+            ::DeleteObject(m_hFont);
+        }
+        m_hFont = ::CreateFontIndirect(lf);
+    }
 
-protected: // 2002/2/10 aroka アクセス権変更
-	HFONT		m_hFont;
+  protected: // 2002/2/10 aroka アクセス権変更
+    HFONT m_hFont;
 
-public:
-	CNativeW	m_cKey;			/* キーの内容データ */
-	BOOL		m_KeyWasHit;	/* キーがヒットしたか */
-	int			m_nSearchLine;	/* 辞書のヒット行 */	// 2006.04.10 fon
-	int			m_nSearchDict;	/* ヒット辞書番号 */	// 2006.04.10 fon
+  public:
+    CNativeW m_cKey; /* キーの内容データ */
+    BOOL m_KeyWasHit; /* キーがヒットしたか */
+    int m_nSearchLine; /* 辞書のヒット行 */ // 2006.04.10 fon
+    int m_nSearchDict; /* ヒット辞書番号 */ // 2006.04.10 fon
 
-	CNativeW	m_cInfo;		/* Tipの内容データ */
-	bool		m_bAlignLeft;	// 右側揃えでチップを表示
+    CNativeW m_cInfo; /* Tipの内容データ */
+    bool m_bAlignLeft; // 右側揃えでチップを表示
 
-protected:
-	/*
+  protected:
+    /*
 	||  実装ヘルパ関数
 	*/
-	void ComputeWindowSize( HDC hdc, RECT* prcResult );	/* ウィンドウのサイズを決める */
-	void DrawTipText( HDC hdc, const RECT& rcPaint );	/* ウィンドウのテキストを表示 */
+    void ComputeWindowSize(HDC hdc, RECT *prcResult); /* ウィンドウのサイズを決める */
+    void DrawTipText(HDC hdc, const RECT &rcPaint); /* ウィンドウのテキストを表示 */
 
-	/* 仮想関数 */
-	//	Jan. 9, 2006 genta
-	void AfterCreateWindow( void ) override;
+    /* 仮想関数 */
+    //	Jan. 9, 2006 genta
+    void AfterCreateWindow(void) override;
 
-	/* 仮想関数 メッセージ処理 詳しくは実装を参照 */
-	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;/* 描画処理 */
+    /* 仮想関数 メッセージ処理 詳しくは実装を参照 */
+    LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override; /* 描画処理 */
 };
