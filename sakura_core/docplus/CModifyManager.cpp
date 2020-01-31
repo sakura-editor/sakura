@@ -5,25 +5,25 @@
 #include "doc/logic/CDocLineMgr.h"
 #include "doc/logic/CDocLine.h"
 
-void CModifyManager::OnAfterSave(const SSaveInfo& sSaveInfo)
+void CModifyManager::OnAfterSave(const SSaveInfo &sSaveInfo)
 {
-	CEditDoc* pcDoc = GetListeningDoc();
+    CEditDoc *pcDoc = GetListeningDoc();
 
-	// 行変更状態をすべてリセット
-	CModifyVisitor().ResetAllModifyFlag(&pcDoc->m_cDocLineMgr, pcDoc->m_cDocEditor.m_cOpeBuf.GetCurrentPointer());
+    // 行変更状態をすべてリセット
+    CModifyVisitor().ResetAllModifyFlag(&pcDoc->m_cDocLineMgr, pcDoc->m_cDocEditor.m_cOpeBuf.GetCurrentPointer());
 }
 
-bool CModifyVisitor::IsLineModified(const CDocLine* pcDocLine, int saveSeq) const
+bool CModifyVisitor::IsLineModified(const CDocLine *pcDocLine, int saveSeq) const
 {
-	return pcDocLine->m_sMark.m_cModified.GetSeq() != saveSeq;
+    return pcDocLine->m_sMark.m_cModified.GetSeq() != saveSeq;
 }
-int CModifyVisitor::GetLineModifiedSeq(const CDocLine* pcDocLine) const
+int CModifyVisitor::GetLineModifiedSeq(const CDocLine *pcDocLine) const
 {
-	return pcDocLine->m_sMark.m_cModified.GetSeq();
+    return pcDocLine->m_sMark.m_cModified.GetSeq();
 }
-void CModifyVisitor::SetLineModified(CDocLine* pcDocLine, int seq)
+void CModifyVisitor::SetLineModified(CDocLine *pcDocLine, int seq)
 {
-	pcDocLine->m_sMark.m_cModified = seq;
+    pcDocLine->m_sMark.m_cModified = seq;
 }
 
 /* 行変更状態をすべてリセット */
@@ -40,12 +40,13 @@ void CModifyVisitor::SetLineModified(CDocLine* pcDocLine, int seq)
   変更回数はUndoしたときに-1される
   変更回数が0になった場合は変更フラグをFALSEにする
 */
-void CModifyVisitor::ResetAllModifyFlag(CDocLineMgr* pcDocLineMgr, int seq)
+void CModifyVisitor::ResetAllModifyFlag(CDocLineMgr *pcDocLineMgr, int seq)
 {
-	CDocLine* pDocLine = pcDocLineMgr->GetDocLineTop();
-	while( pDocLine ){
-		CDocLine* pDocLineNext = pDocLine->GetNextLine();
-		SetLineModified(pDocLine, seq);
-		pDocLine = pDocLineNext;
-	}
+    CDocLine *pDocLine = pcDocLineMgr->GetDocLineTop();
+    while (pDocLine)
+    {
+        CDocLine *pDocLineNext = pDocLine->GetNextLine();
+        SetLineModified(pDocLine, seq);
+        pDocLine = pDocLineNext;
+    }
 }
