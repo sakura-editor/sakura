@@ -26,19 +26,21 @@
 
 #include "CStream.h"
 
-class CBinaryInputStream final : public CStream{
-public:
-	CBinaryInputStream(LPCWSTR pszFilePath);
+class CBinaryInputStream final : public CStream
+{
+  public:
+    CBinaryInputStream(LPCWSTR pszFilePath);
 
-public:
-	//! ストリームの「残り」サイズを取得
-	int GetLength();
+  public:
+    //! ストリームの「残り」サイズを取得
+    int GetLength();
 
-	//! データを無変換で読み込む。戻り値は読み込んだバイト数。
-	int Read(void* pBuffer, int nSizeInBytes);
+    //! データを無変換で読み込む。戻り値は読み込んだバイト数。
+    int Read(void *pBuffer, int nSizeInBytes);
 };
 
-class CBinaryOutputStream final : public COutputStream{
-public:
-	CBinaryOutputStream(LPCWSTR pszFilePath, bool bExceptionMode = false);
+class CBinaryOutputStream final : public COutputStream
+{
+  public:
+    CBinaryOutputStream(LPCWSTR pszFilePath, bool bExceptionMode = false);
 };
