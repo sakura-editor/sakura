@@ -26,7 +26,7 @@
 
 #include "CPropertyManager.h"
 #include "CEditApp.h"
-#include "dlg/CDlgAbout.h"	//Dec. 24, 2000 JEPRO 追加
+#include "dlg/CDlgAbout.h" //Dec. 24, 2000 JEPRO 追加
 #include "env/CHelpManager.h"
 #include "util/module.h"
 #include "util/shell.h"
@@ -42,7 +42,7 @@
 	@date 2000/09/15 JEPRO [Esc]キーと[x]ボタンでも中止できるように変更
 	@date 2005/01/10 genta CEditView_Commandから移動
 */
-void CViewCommander::Command_HOKAN( void )
+void CViewCommander::Command_HOKAN(void)
 {
 #if 0
 // 2011.06.24 Moca Plugin導入に従い未設定の確認をやめる
@@ -65,175 +65,194 @@ retry:;
 		}
 	}
 #endif
-	CNativeW	cmemData;
-	/* カーソル直前の単語を取得 */
-	if( 0 < m_pCommanderView->GetParser().GetLeftWord( &cmemData, 100 ) ){
-		m_pCommanderView->ShowHokanMgr( cmemData, TRUE );
-	}else{
-		InfoBeep(); //2010.04.03 Error→Info
-		m_pCommanderView->SendStatusMessage(LS(STR_SUPPORT_NOT_COMPLITE)); // 2010.05.29 ステータスで表示
-	}
-	return;
+    CNativeW cmemData;
+    /* カーソル直前の単語を取得 */
+    if (0 < m_pCommanderView->GetParser().GetLeftWord(&cmemData, 100))
+    {
+        m_pCommanderView->ShowHokanMgr(cmemData, TRUE);
+    }
+    else
+    {
+        InfoBeep(); //2010.04.03 Error→Info
+        m_pCommanderView->SendStatusMessage(LS(STR_SUPPORT_NOT_COMPLITE)); // 2010.05.29 ステータスで表示
+    }
+    return;
 }
 
 /*! キャレット位置の単語を辞書検索ON-OFF
 
 	@date 2006.03.24 fon 新規作成
 */
-void CViewCommander::Command_ToggleKeySearch( int option )
-{	/* 共通設定ダイアログの設定をキー割り当てでも切り替えられるように */
-	if( option == 0 ){
-		if( GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord ){
-			GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord = FALSE;
-		}else{
-			GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord = TRUE;
-		}
-	}else if( option == 1 ){
-		GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord = TRUE;
-	}else if( option == 2 ){
-		GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord = FALSE;
-	}
+void CViewCommander::Command_ToggleKeySearch(int option)
+{ /* 共通設定ダイアログの設定をキー割り当てでも切り替えられるように */
+    if (option == 0)
+    {
+        if (GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord)
+        {
+            GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord = FALSE;
+        }
+        else
+        {
+            GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord = TRUE;
+        }
+    }
+    else if (option == 1)
+    {
+        GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord = TRUE;
+    }
+    else if (option == 2)
+    {
+        GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord = FALSE;
+    }
 }
 
 /* ヘルプ目次 */
-void CViewCommander::Command_HELP_CONTENTS( void )
+void CViewCommander::Command_HELP_CONTENTS(void)
 {
-	ShowWinHelpContents( m_pCommanderView->GetHwnd() );	//	目次を表示する
-	return;
+    ShowWinHelpContents(m_pCommanderView->GetHwnd()); //	目次を表示する
+    return;
 }
 
 /* ヘルプキーワード検索 */
-void CViewCommander::Command_HELP_SEARCH( void )
+void CViewCommander::Command_HELP_SEARCH(void)
 {
-	MyWinHelp( m_pCommanderView->GetHwnd(), HELP_KEY, (ULONG_PTR)L"" );	// 2006.10.10 ryoji MyWinHelpに変更に変更
-	return;
+    MyWinHelp(m_pCommanderView->GetHwnd(), HELP_KEY, (ULONG_PTR)L""); // 2006.10.10 ryoji MyWinHelpに変更に変更
+    return;
 }
 
 /* コマンド一覧 */
-void CViewCommander::Command_MENU_ALLFUNC( void )
+void CViewCommander::Command_MENU_ALLFUNC(void)
 {
-	UINT	uFlags;
-	POINT	po;
-	RECT	rc;
-	HMENU	hMenu;
-	HMENU	hMenuPopUp;
-	int		i;
-	int		j;
-	int		nId;
+    UINT uFlags;
+    POINT po;
+    RECT rc;
+    HMENU hMenu;
+    HMENU hMenuPopUp;
+    int i;
+    int j;
+    int nId;
 
-//	From Here Sept. 15, 2000 JEPRO
-//	サブメニュー、特に「その他」のコマンドに対してステータスバーに表示されるキーアサイン情報が
-//	メニューで隠れないように右にずらした
-//	(本当はこの「コマンド一覧」メニューをダイアログに変更しバーをつまんで自由に移動できるようにしたい)
-//	po.x = 0;
-	po.x = 540;
-//	To Here Sept. 15, 2000 (Oct. 7, 2000 300→500; Nov. 3, 2000 500→540)
-	po.y = 0;
+    //	From Here Sept. 15, 2000 JEPRO
+    //	サブメニュー、特に「その他」のコマンドに対してステータスバーに表示されるキーアサイン情報が
+    //	メニューで隠れないように右にずらした
+    //	(本当はこの「コマンド一覧」メニューをダイアログに変更しバーをつまんで自由に移動できるようにしたい)
+    //	po.x = 0;
+    po.x = 540;
+    //	To Here Sept. 15, 2000 (Oct. 7, 2000 300→500; Nov. 3, 2000 500→540)
+    po.y = 0;
 
-	CEditWnd*	pCEditWnd = GetEditWindow();	//	Sep. 10, 2002 genta
-	::GetClientRect( pCEditWnd->GetHwnd(), &rc );
-	po.x = t_min( po.x, rc.right );
-	::ClientToScreen( pCEditWnd->GetHwnd(), &po );
-	::GetWindowRect( pCEditWnd->m_cSplitterWnd.GetHwnd() , &rc );
-	po.y = rc.top;
+    CEditWnd *pCEditWnd = GetEditWindow(); //	Sep. 10, 2002 genta
+    ::GetClientRect(pCEditWnd->GetHwnd(), &rc);
+    po.x = t_min(po.x, rc.right);
+    ::ClientToScreen(pCEditWnd->GetHwnd(), &po);
+    ::GetWindowRect(pCEditWnd->m_cSplitterWnd.GetHwnd(), &rc);
+    po.y = rc.top;
 
-	pCEditWnd->GetMenuDrawer().ResetContents();
+    pCEditWnd->GetMenuDrawer().ResetContents();
 
-	//	Oct. 3, 2001 genta
-	CFuncLookup& FuncLookup = GetDocument()->m_cFuncLookup;
+    //	Oct. 3, 2001 genta
+    CFuncLookup &FuncLookup = GetDocument()->m_cFuncLookup;
 
-	hMenu = ::CreatePopupMenu();
-//Oct. 14, 2000 JEPRO 「--未定義--」を表示させないように変更したことで1番(カーソル移動系)が前にシフトされた(この変更によって i=1→i=0 と変更)
-	//	Oct. 3, 2001 genta
-	for( i = 0; i < FuncLookup.GetCategoryCount(); i++ ){
-		hMenuPopUp = ::CreatePopupMenu();
-		for( j = 0; j < FuncLookup.GetItemCount(i); j++ ){
-			//	Oct. 3, 2001 genta
-			int code = FuncLookup.Pos2FuncCode( i, j, false );	// 2007.11.02 ryoji 未登録マクロ非表示を明示指定
-			if( code != 0 ){
-				WCHAR	szLabel[300];
-				FuncLookup.Pos2FuncName( i, j, szLabel, 256 );
-				uFlags = MF_BYPOSITION | MF_STRING | MF_ENABLED;
-				//	Oct. 3, 2001 genta
-				pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenuPopUp, uFlags, code, szLabel, L"" );
-			}
-		}
-		//	Oct. 3, 2001 genta
-		pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp , FuncLookup.Category2Name(i) , L"");
-//		pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , nsFuncCode::ppszFuncKind[i] );
-	}
+    hMenu = ::CreatePopupMenu();
+    //Oct. 14, 2000 JEPRO 「--未定義--」を表示させないように変更したことで1番(カーソル移動系)が前にシフトされた(この変更によって i=1→i=0 と変更)
+    //	Oct. 3, 2001 genta
+    for (i = 0; i < FuncLookup.GetCategoryCount(); i++)
+    {
+        hMenuPopUp = ::CreatePopupMenu();
+        for (j = 0; j < FuncLookup.GetItemCount(i); j++)
+        {
+            //	Oct. 3, 2001 genta
+            int code = FuncLookup.Pos2FuncCode(i, j, false); // 2007.11.02 ryoji 未登録マクロ非表示を明示指定
+            if (code != 0)
+            {
+                WCHAR szLabel[300];
+                FuncLookup.Pos2FuncName(i, j, szLabel, 256);
+                uFlags = MF_BYPOSITION | MF_STRING | MF_ENABLED;
+                //	Oct. 3, 2001 genta
+                pCEditWnd->GetMenuDrawer().MyAppendMenu(hMenuPopUp, uFlags, code, szLabel, L"");
+            }
+        }
+        //	Oct. 3, 2001 genta
+        pCEditWnd->GetMenuDrawer().MyAppendMenu(hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp, FuncLookup.Category2Name(i), L"");
+        //		pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , nsFuncCode::ppszFuncKind[i] );
+    }
 
-	nId = ::TrackPopupMenu(
-		hMenu,
-		TPM_TOPALIGN
-		| TPM_LEFTALIGN
-		| TPM_RETURNCMD
-		| TPM_LEFTBUTTON
-		,
-		po.x,
-		po.y,
-		0,
-		GetMainWindow()/*GetHwnd()*/,
-		NULL
-	);
-	::DestroyMenu( hMenu );
-	if( 0 != nId ){
-		/* コマンドコードによる処理振り分け */
-//		HandleCommand( nFuncID, true, 0, 0, 0, 0 );
-		::PostMessageCmd( GetMainWindow(), WM_COMMAND, MAKELONG( nId, 0 ), (LPARAM)NULL );
-	}
-	return;
+    nId = ::TrackPopupMenu(
+        hMenu,
+        TPM_TOPALIGN | TPM_LEFTALIGN | TPM_RETURNCMD | TPM_LEFTBUTTON,
+        po.x,
+        po.y,
+        0,
+        GetMainWindow() /*GetHwnd()*/,
+        NULL);
+    ::DestroyMenu(hMenu);
+    if (0 != nId)
+    {
+        /* コマンドコードによる処理振り分け */
+        //		HandleCommand( nFuncID, true, 0, 0, 0, 0 );
+        ::PostMessageCmd(GetMainWindow(), WM_COMMAND, MAKELONG(nId, 0), (LPARAM)NULL);
+    }
+    return;
 }
 
 /* 外部ヘルプ１
 	@date 2012.09.26 Moca HTMLHELP対応
 */
-void CViewCommander::Command_EXTHELP1( void )
+void CViewCommander::Command_EXTHELP1(void)
 {
 retry:;
-	if( CHelpManager().ExtWinHelpIsSet( &(GetDocument()->m_cDocType.GetDocumentAttribute()) ) == false){
-//	if( 0 == wcslen( GetDllShareData().m_Common.m_szExtHelp1 ) ){
-		ErrorBeep();
-//From Here Sept. 15, 2000 JEPRO
-//		[Esc]キーと[x]ボタンでも中止できるように変更
-		if( IDYES == ::MYMESSAGEBOX( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
-//To Here Sept. 15, 2000
-			LS(STR_ERR_CEDITVIEW_CMD01)
-		) ){
-			/* 共通設定 プロパティシート */
-			if( !CEditApp::getInstance()->OpenPropertySheet( ID_PROPCOM_PAGENUM_HELPER ) ){
-				return;
-			}
-			goto retry;
-		}
-		//	Jun. 15, 2000 genta
-		else{
-			return;
-		}
-	}
+    if (CHelpManager().ExtWinHelpIsSet(&(GetDocument()->m_cDocType.GetDocumentAttribute())) == false)
+    {
+        //	if( 0 == wcslen( GetDllShareData().m_Common.m_szExtHelp1 ) ){
+        ErrorBeep();
+        //From Here Sept. 15, 2000 JEPRO
+        //		[Esc]キーと[x]ボタンでも中止できるように変更
+        if (IDYES == ::MYMESSAGEBOX(NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
+                                    //To Here Sept. 15, 2000
+                                    LS(STR_ERR_CEDITVIEW_CMD01)))
+        {
+            /* 共通設定 プロパティシート */
+            if (!CEditApp::getInstance()->OpenPropertySheet(ID_PROPCOM_PAGENUM_HELPER))
+            {
+                return;
+            }
+            goto retry;
+        }
+        //	Jun. 15, 2000 genta
+        else
+        {
+            return;
+        }
+    }
 
-	CNativeW		cmemCurText;
-	const WCHAR*	helpfile = CHelpManager().GetExtWinHelp( &(GetDocument()->m_cDocType.GetDocumentAttribute()) );
+    CNativeW cmemCurText;
+    const WCHAR *helpfile = CHelpManager().GetExtWinHelp(&(GetDocument()->m_cDocType.GetDocumentAttribute()));
 
-	/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
-	m_pCommanderView->GetCurrentTextForSearch( cmemCurText, false );
-	WCHAR path[_MAX_PATH];
-	if( _IS_REL_PATH( helpfile ) ){
-		// 2003.06.23 Moca 相対パスは実行ファイルからのパス
-		// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
-		GetInidirOrExedir( path, helpfile );
-	}else{
-		wcscpy( path, helpfile );
-	}
-	// 2012.09.26 Moca HTMLHELP対応
-	WCHAR	szExt[_MAX_EXT];
-	_wsplitpath( path, NULL, NULL, NULL, szExt );
-	if( 0 == _wcsicmp(szExt, L".chi") || 0 == _wcsicmp(szExt, L".chm") || 0 == _wcsicmp(szExt, L".col") ){
-		Command_EXTHTMLHELP( path, cmemCurText.GetStringPtr() );
-	}else{
-		::WinHelp( m_pCommanderView->m_hwndParent, path, HELP_KEY, (ULONG_PTR)cmemCurText.GetStringPtr() );
-	}
-	return;
+    /* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
+    m_pCommanderView->GetCurrentTextForSearch(cmemCurText, false);
+    WCHAR path[_MAX_PATH];
+    if (_IS_REL_PATH(helpfile))
+    {
+        // 2003.06.23 Moca 相対パスは実行ファイルからのパス
+        // 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
+        GetInidirOrExedir(path, helpfile);
+    }
+    else
+    {
+        wcscpy(path, helpfile);
+    }
+    // 2012.09.26 Moca HTMLHELP対応
+    WCHAR szExt[_MAX_EXT];
+    _wsplitpath(path, NULL, NULL, NULL, szExt);
+    if (0 == _wcsicmp(szExt, L".chi") || 0 == _wcsicmp(szExt, L".chm") || 0 == _wcsicmp(szExt, L".col"))
+    {
+        Command_EXTHTMLHELP(path, cmemCurText.GetStringPtr());
+    }
+    else
+    {
+        ::WinHelp(m_pCommanderView->m_hwndParent, path, HELP_KEY, (ULONG_PTR)cmemCurText.GetStringPtr());
+    }
+    return;
 }
 
 /*!
@@ -243,121 +262,134 @@ retry:;
 	@param kwd [in] 検索キーワード．NULLのときはカーソル位置or選択されたワード
 	@date 2002.07.05 genta 任意のファイル・キーワードの指定ができるよう引数追加
 */
-void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* kwd )
+void CViewCommander::Command_EXTHTMLHELP(const WCHAR *_helpfile, const WCHAR *kwd)
 {
-	std::wstring helpfile;
-	if( _helpfile != NULL ){
-		helpfile = _helpfile;
-	}
+    std::wstring helpfile;
+    if (_helpfile != NULL)
+    {
+        helpfile = _helpfile;
+    }
 
-	HWND		hwndHtmlHelp;
-	int			nLen;
+    HWND hwndHtmlHelp;
+    int nLen;
 
-	DEBUG_TRACE( L"helpfile=%s\n", helpfile.c_str() );
+    DEBUG_TRACE(L"helpfile=%s\n", helpfile.c_str());
 
-	//	From Here Jul. 5, 2002 genta
-	const WCHAR *filename = NULL;
-	if ( 0 == helpfile.length() ){
-		while( !CHelpManager().ExtHTMLHelpIsSet( &(GetDocument()->m_cDocType.GetDocumentAttribute())) ){
-			ErrorBeep();
-	//	From Here Sept. 15, 2000 JEPRO
-	//		[Esc]キーと[x]ボタンでも中止できるように変更
-			if( IDYES != ::MYMESSAGEBOX( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
-	//	To Here Sept. 15, 2000
-				LS(STR_ERR_CEDITVIEW_CMD02)
-			) ){
-				return;
-			}
-			/* 共通設定 プロパティシート */
-			if( !CEditApp::getInstance()->OpenPropertySheet( ID_PROPCOM_PAGENUM_HELPER ) ){
-				return;
-			}
-		}
-		filename = CHelpManager().GetExtHTMLHelp( &(GetDocument()->m_cDocType.GetDocumentAttribute()) );
-	}
-	else {
-		filename = helpfile.c_str();
-	}
-	//	To Here Jul. 5, 2002 genta
+    //	From Here Jul. 5, 2002 genta
+    const WCHAR *filename = NULL;
+    if (0 == helpfile.length())
+    {
+        while (!CHelpManager().ExtHTMLHelpIsSet(&(GetDocument()->m_cDocType.GetDocumentAttribute())))
+        {
+            ErrorBeep();
+            //	From Here Sept. 15, 2000 JEPRO
+            //		[Esc]キーと[x]ボタンでも中止できるように変更
+            if (IDYES != ::MYMESSAGEBOX(NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
+                                        //	To Here Sept. 15, 2000
+                                        LS(STR_ERR_CEDITVIEW_CMD02)))
+            {
+                return;
+            }
+            /* 共通設定 プロパティシート */
+            if (!CEditApp::getInstance()->OpenPropertySheet(ID_PROPCOM_PAGENUM_HELPER))
+            {
+                return;
+            }
+        }
+        filename = CHelpManager().GetExtHTMLHelp(&(GetDocument()->m_cDocType.GetDocumentAttribute()));
+    }
+    else
+    {
+        filename = helpfile.c_str();
+    }
+    //	To Here Jul. 5, 2002 genta
 
-	//	Jul. 5, 2002 genta
-	//	キーワードの外部指定を可能に
-	CNativeW	cmemCurText;
-	if( kwd != NULL && kwd[0] != L'\0' ){
-		cmemCurText.SetString( kwd );
-	}
-	else {
-		/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
-		m_pCommanderView->GetCurrentTextForSearch( cmemCurText );
-	}
+    //	Jul. 5, 2002 genta
+    //	キーワードの外部指定を可能に
+    CNativeW cmemCurText;
+    if (kwd != NULL && kwd[0] != L'\0')
+    {
+        cmemCurText.SetString(kwd);
+    }
+    else
+    {
+        /* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
+        m_pCommanderView->GetCurrentTextForSearch(cmemCurText);
+    }
 
-	/* HtmlHelpビューアはひとつ */
-	if( CHelpManager().HTMLHelpIsSingle( &(GetDocument()->m_cDocType.GetDocumentAttribute())) ){
-		// タスクトレイのプロセスにHtmlHelpを起動させる
-		// 2003.06.23 Moca 相対パスは実行ファイルからのパス
-		// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
-		WCHAR* pWork=GetDllShareData().m_sWorkBuffer.GetWorkBuffer<WCHAR>();
-		if( _IS_REL_PATH( filename ) ){
-			GetInidirOrExedir( pWork, filename );
-		}else{
-			wcscpy( pWork, filename ); //	Jul. 5, 2002 genta
-		}
-		nLen = wcslen( pWork );
-		wcscpy( &pWork[nLen + 1], cmemCurText.GetStringPtr() );
-		hwndHtmlHelp = (HWND)::SendMessageAny(
-			GetDllShareData().m_sHandles.m_hwndTray,
-			MYWM_HTMLHELP,
-			(WPARAM)GetMainWindow(),
-			0
-		);
-	}
-	else{
-		/* 自分でHtmlHelpを起動させる */
-		HH_AKLINK	link;
-		link.cbStruct = sizeof( link ) ;
-		link.fReserved = FALSE ;
-		link.pszKeywords = cmemCurText.GetStringPtr();
-		link.pszUrl = NULL;
-		link.pszMsgText = NULL;
-		link.pszMsgTitle = NULL;
-		link.pszWindow = NULL;
-		link.fIndexOnFail = TRUE;
+    /* HtmlHelpビューアはひとつ */
+    if (CHelpManager().HTMLHelpIsSingle(&(GetDocument()->m_cDocType.GetDocumentAttribute())))
+    {
+        // タスクトレイのプロセスにHtmlHelpを起動させる
+        // 2003.06.23 Moca 相対パスは実行ファイルからのパス
+        // 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
+        WCHAR *pWork = GetDllShareData().m_sWorkBuffer.GetWorkBuffer<WCHAR>();
+        if (_IS_REL_PATH(filename))
+        {
+            GetInidirOrExedir(pWork, filename);
+        }
+        else
+        {
+            wcscpy(pWork, filename); //	Jul. 5, 2002 genta
+        }
+        nLen = wcslen(pWork);
+        wcscpy(&pWork[nLen + 1], cmemCurText.GetStringPtr());
+        hwndHtmlHelp = (HWND)::SendMessageAny(
+            GetDllShareData().m_sHandles.m_hwndTray,
+            MYWM_HTMLHELP,
+            (WPARAM)GetMainWindow(),
+            0);
+    }
+    else
+    {
+        /* 自分でHtmlHelpを起動させる */
+        HH_AKLINK link;
+        link.cbStruct     = sizeof(link);
+        link.fReserved    = FALSE;
+        link.pszKeywords  = cmemCurText.GetStringPtr();
+        link.pszUrl       = NULL;
+        link.pszMsgText   = NULL;
+        link.pszMsgTitle  = NULL;
+        link.pszWindow    = NULL;
+        link.fIndexOnFail = TRUE;
 
-		// 2003.06.23 Moca 相対パスは実行ファイルからのパス
-		// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
-		if( _IS_REL_PATH( filename ) ){
-			WCHAR path[_MAX_PATH];
-			GetInidirOrExedir( path, filename );
-			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
-			hwndHtmlHelp = OpenHtmlHelp(
-				NULL/*GetDllShareData().m_sHandles.m_hwndTray*/,
-				path, //	Jul. 5, 2002 genta
-				HH_KEYWORD_LOOKUP,
-				(DWORD_PTR)&link
-			);
-		}else{
-			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
-			hwndHtmlHelp = OpenHtmlHelp(
-				NULL/*GetDllShareData().m_sHandles.m_hwndTray*/,
-				filename, //	Jul. 5, 2002 genta
-				HH_KEYWORD_LOOKUP,
-				(DWORD_PTR)&link
-			);
-		}
-	}
+        // 2003.06.23 Moca 相対パスは実行ファイルからのパス
+        // 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
+        if (_IS_REL_PATH(filename))
+        {
+            WCHAR path[_MAX_PATH];
+            GetInidirOrExedir(path, filename);
+            //	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
+            hwndHtmlHelp = OpenHtmlHelp(
+                NULL /*GetDllShareData().m_sHandles.m_hwndTray*/,
+                path, //	Jul. 5, 2002 genta
+                HH_KEYWORD_LOOKUP,
+                (DWORD_PTR)&link);
+        }
+        else
+        {
+            //	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
+            hwndHtmlHelp = OpenHtmlHelp(
+                NULL /*GetDllShareData().m_sHandles.m_hwndTray*/,
+                filename, //	Jul. 5, 2002 genta
+                HH_KEYWORD_LOOKUP,
+                (DWORD_PTR)&link);
+        }
+    }
 
-	//	Jul. 6, 2001 genta hwndHtmlHelpのチェックを追加
-	if( hwndHtmlHelp != NULL ){
-		::BringWindowToTop( hwndHtmlHelp );
-	}
+    //	Jul. 6, 2001 genta hwndHtmlHelpのチェックを追加
+    if (hwndHtmlHelp != NULL)
+    {
+        ::BringWindowToTop(hwndHtmlHelp);
+    }
 
-	return;
+    return;
 }
 
 /* バージョン情報 */
-void CViewCommander::Command_ABOUT( void )
+void CViewCommander::Command_ABOUT(void)
 {
-	CDlgAbout cDlgAbout;
-	cDlgAbout.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd() );
-	return;
+    CDlgAbout cDlgAbout;
+    cDlgAbout.DoModal(G_AppInstance(), m_pCommanderView->GetHwnd());
+    return;
 }
