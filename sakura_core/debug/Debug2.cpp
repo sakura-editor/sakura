@@ -6,37 +6,37 @@
 
 #ifdef _DEBUG
 //!デバッグメッセージ出力
-void debug_output(const char* str, ...)
+void debug_output(const char *str, ...)
 {
-	char buf[_MAX_PATH+150];
-	va_list mark;
-	va_start(mark,str);
-	// FILE名, LINE 式 分必要
-	tchar_vsnprintf_s(buf,_countof(buf),str,mark);
-	va_end(mark);
+    char buf[_MAX_PATH + 150];
+    va_list mark;
+    va_start(mark, str);
+    // FILE名, LINE 式 分必要
+    tchar_vsnprintf_s(buf, _countof(buf), str, mark);
+    va_end(mark);
 
-	//デバッガに出力
-	OutputDebugStringA(buf);
+    //デバッガに出力
+    OutputDebugStringA(buf);
 }
 
 //!強制終了
 void debug_exit()
 {
-	MessageBox(NULL,L"assertとかに引っ掛かったぽいです",GSTR_APPNAME,MB_OK);
-	exit(1);
+    MessageBox(NULL, L"assertとかに引っ掛かったぽいです", GSTR_APPNAME, MB_OK);
+    exit(1);
 }
 
-void debug_exit2(const char* file, int line, const char* exp)
+void debug_exit2(const char *file, int line, const char *exp)
 {
-	char szBuffer[1024];
-	wsprintfA(szBuffer, "assert\n%s(%d):\n%s", file, line, exp);
-	MessageBoxA(NULL, szBuffer , "sakura", MB_OK);
-	exit(1);
+    char szBuffer[1024];
+    wsprintfA(szBuffer, "assert\n%s(%d):\n%s", file, line, exp);
+    MessageBoxA(NULL, szBuffer, "sakura", MB_OK);
+    exit(1);
 }
 
 void warning_point()
 {
-	int n;
-	n=0; //※←ここにブレークポイントを設けておくと、任意ワーニングでブレークできる
+    int n;
+    n = 0; //※←ここにブレークポイントを設けておくと、任意ワーニングでブレークできる
 }
-#endif	// _DEBUG
+#endif // _DEBUG
