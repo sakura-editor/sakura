@@ -34,14 +34,13 @@
 
 CRecentTagjumpKeyword::CRecentTagjumpKeyword()
 {
-	Create(
-		GetShareData()->m_sTagJump.m_aTagJumpKeywords.dataPtr(),
-		GetShareData()->m_sTagJump.m_aTagJumpKeywords.dataPtr()->GetBufferCount(),
-		&GetShareData()->m_sTagJump.m_aTagJumpKeywords._GetSizeRef(),
-		NULL,
-		MAX_TAGJUMP_KEYWORD,
-		NULL
-	);
+    Create(
+        GetShareData()->m_sTagJump.m_aTagJumpKeywords.dataPtr(),
+        GetShareData()->m_sTagJump.m_aTagJumpKeywords.dataPtr()->GetBufferCount(),
+        &GetShareData()->m_sTagJump.m_aTagJumpKeywords._GetSizeRef(),
+        NULL,
+        MAX_TAGJUMP_KEYWORD,
+        NULL);
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -53,45 +52,47 @@ CRecentTagjumpKeyword::CRecentTagjumpKeyword()
 
 	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
-const WCHAR* CRecentTagjumpKeyword::GetItemText( int nIndex ) const
+const WCHAR *CRecentTagjumpKeyword::GetItemText(int nIndex) const
 {
-	return *GetItem(nIndex);
+    return *GetItem(nIndex);
 }
 
-bool CRecentTagjumpKeyword::DataToReceiveType( LPCWSTR* dst, const CTagjumpKeywordString* src ) const
+bool CRecentTagjumpKeyword::DataToReceiveType(LPCWSTR *dst, const CTagjumpKeywordString *src) const
 {
-	*dst = *src;
-	return true;
+    *dst = *src;
+    return true;
 }
 
-bool CRecentTagjumpKeyword::TextToDataType( CTagjumpKeywordString* dst, LPCWSTR pszText ) const
+bool CRecentTagjumpKeyword::TextToDataType(CTagjumpKeywordString *dst, LPCWSTR pszText) const
 {
-	if( false == ValidateReceiveType(pszText) ){
-		return false;
-	}
-	CopyItem(dst, pszText);
-	return true;
+    if (false == ValidateReceiveType(pszText))
+    {
+        return false;
+    }
+    CopyItem(dst, pszText);
+    return true;
 }
 
-int CRecentTagjumpKeyword::CompareItem( const CTagjumpKeywordString* p1, LPCWSTR p2 ) const
+int CRecentTagjumpKeyword::CompareItem(const CTagjumpKeywordString *p1, LPCWSTR p2) const
 {
-	return wcscmp(*p1,p2);
+    return wcscmp(*p1, p2);
 }
 
-void CRecentTagjumpKeyword::CopyItem( CTagjumpKeywordString* dst, LPCWSTR src ) const
+void CRecentTagjumpKeyword::CopyItem(CTagjumpKeywordString *dst, LPCWSTR src) const
 {
-	wcscpy(*dst,src);
+    wcscpy(*dst, src);
 }
 
-bool CRecentTagjumpKeyword::ValidateReceiveType( LPCWSTR p ) const
+bool CRecentTagjumpKeyword::ValidateReceiveType(LPCWSTR p) const
 {
-	if( GetTextMaxLength() <= wcslen(p) ){
-		return false;
-	}
-	return true;
+    if (GetTextMaxLength() <= wcslen(p))
+    {
+        return false;
+    }
+    return true;
 }
 
 size_t CRecentTagjumpKeyword::GetTextMaxLength() const
 {
-	return m_nTextMaxLength;
+    return m_nTextMaxLength;
 }

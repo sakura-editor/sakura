@@ -34,14 +34,13 @@
 
 CRecentExceptMRU::CRecentExceptMRU()
 {
-	Create(
-		GetShareData()->m_sHistory.m_aExceptMRU.dataPtr(),
-		GetShareData()->m_sHistory.m_aExceptMRU.dataPtr()->GetBufferCount(),
-		&GetShareData()->m_sHistory.m_aExceptMRU._GetSizeRef(),
-		NULL,
-		MAX_MRU,
-		NULL
-	);
+    Create(
+        GetShareData()->m_sHistory.m_aExceptMRU.dataPtr(),
+        GetShareData()->m_sHistory.m_aExceptMRU.dataPtr()->GetBufferCount(),
+        &GetShareData()->m_sHistory.m_aExceptMRU._GetSizeRef(),
+        NULL,
+        MAX_MRU,
+        NULL);
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -53,45 +52,47 @@ CRecentExceptMRU::CRecentExceptMRU()
 
 	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
-const WCHAR* CRecentExceptMRU::GetItemText( int nIndex ) const
+const WCHAR *CRecentExceptMRU::GetItemText(int nIndex) const
 {
-	return *GetItem(nIndex);
+    return *GetItem(nIndex);
 }
 
-bool CRecentExceptMRU::DataToReceiveType( LPCWSTR* dst, const CMetaPath* src ) const
+bool CRecentExceptMRU::DataToReceiveType(LPCWSTR *dst, const CMetaPath *src) const
 {
-	*dst = *src;
-	return true;
+    *dst = *src;
+    return true;
 }
 
-bool CRecentExceptMRU::TextToDataType( CMetaPath* dst, LPCWSTR pszText ) const
+bool CRecentExceptMRU::TextToDataType(CMetaPath *dst, LPCWSTR pszText) const
 {
-	if( false == ValidateReceiveType(pszText) ){
-		return false;
-	}
-	CopyItem(dst, pszText);
-	return true;
+    if (false == ValidateReceiveType(pszText))
+    {
+        return false;
+    }
+    CopyItem(dst, pszText);
+    return true;
 }
 
-int CRecentExceptMRU::CompareItem( const CMetaPath* p1, LPCWSTR p2 ) const
+int CRecentExceptMRU::CompareItem(const CMetaPath *p1, LPCWSTR p2) const
 {
-	return _wcsicmp(*p1,p2);
+    return _wcsicmp(*p1, p2);
 }
 
-void CRecentExceptMRU::CopyItem( CMetaPath* dst, LPCWSTR src ) const
+void CRecentExceptMRU::CopyItem(CMetaPath *dst, LPCWSTR src) const
 {
-	wcscpy(*dst,src);
+    wcscpy(*dst, src);
 }
 
-bool CRecentExceptMRU::ValidateReceiveType( LPCWSTR p ) const
+bool CRecentExceptMRU::ValidateReceiveType(LPCWSTR p) const
 {
-	if( GetTextMaxLength() <= wcslen(p) ){
-		return false;
-	}
-	return true;
+    if (GetTextMaxLength() <= wcslen(p))
+    {
+        return false;
+    }
+    return true;
 }
 
 size_t CRecentExceptMRU::GetTextMaxLength() const
 {
-	return m_nTextMaxLength;
+    return m_nTextMaxLength;
 }

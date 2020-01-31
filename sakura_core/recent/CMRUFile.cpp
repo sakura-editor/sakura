@@ -22,7 +22,7 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CFileNameManager.h"
-#include "uiparts/CMenuDrawer.h"	//	これでいいのか？
+#include "uiparts/CMenuDrawer.h" //	これでいいのか？
 #include "window/CEditWnd.h"
 #include "util/string_ex2.h"
 #include "util/window.h"
@@ -32,14 +32,14 @@
 */
 CMRUFile::CMRUFile()
 {
-	//	初期化。
-	m_pShareData = &GetDllShareData();
+    //	初期化。
+    m_pShareData = &GetDllShareData();
 }
 
 /*	デストラクタ	*/
 CMRUFile::~CMRUFile()
 {
-	m_cRecentFile.Terminate();
+    m_cRecentFile.Terminate();
 }
 
 /*!
@@ -52,13 +52,13 @@ CMRUFile::~CMRUFile()
 
 	2010/5/21 Uchi 組み直し
 */
-HMENU CMRUFile::CreateMenu( CMenuDrawer* pCMenuDrawer ) const
+HMENU CMRUFile::CreateMenu(CMenuDrawer *pCMenuDrawer) const
 {
-	HMENU	hMenuPopUp;
+    HMENU hMenuPopUp;
 
-	//	空メニューを作る
-	hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
-	return CreateMenu( hMenuPopUp, pCMenuDrawer );
+    //	空メニューを作る
+    hMenuPopUp = ::CreatePopupMenu(); // Jan. 29, 2002 genta
+    return CreateMenu(hMenuPopUp, pCMenuDrawer);
 }
 /*!
 	ファイル履歴メニューの作成
@@ -71,42 +71,42 @@ HMENU CMRUFile::CreateMenu( CMenuDrawer* pCMenuDrawer ) const
 
 	2010/5/21 Uchi 組み直し
 */
-HMENU CMRUFile::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
+HMENU CMRUFile::CreateMenu(HMENU hMenuPopUp, CMenuDrawer *pCMenuDrawer) const
 {
-	WCHAR	szMenu[_MAX_PATH * 2 + 10];				//	メニューキャプション
-	int		i;
-	bool	bFavorite;
-	const BOOL bMenuIcon = m_pShareData->m_Common.m_sWindow.m_bMenuIcon;
+    WCHAR szMenu[_MAX_PATH * 2 + 10]; //	メニューキャプション
+    int i;
+    bool bFavorite;
+    const BOOL bMenuIcon = m_pShareData->m_Common.m_sWindow.m_bMenuIcon;
 
-	CFileNameManager::getInstance()->TransformFileName_MakeCache();
-	
-	NONCLIENTMETRICS met;
-	met.cbSize = CCSIZEOF_STRUCT(NONCLIENTMETRICS, lfMessageFont);
-	::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, met.cbSize, &met, 0);
-	CDCFont dcFont(met.lfMenuFont);
+    CFileNameManager::getInstance()->TransformFileName_MakeCache();
 
-	for( i = 0; i < m_cRecentFile.GetItemCount(); ++i )
-	{
-		//	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
-		if ( i >= m_cRecentFile.GetViewCount() ) break;
-		
-		/* MRUリストの中にある開かれていないファイル */
+    NONCLIENTMETRICS met;
+    met.cbSize = CCSIZEOF_STRUCT(NONCLIENTMETRICS, lfMessageFont);
+    ::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, met.cbSize, &met, 0);
+    CDCFont dcFont(met.lfMenuFont);
 
-		const EditInfo	*p = m_cRecentFile.GetItem( i );
-		bFavorite = m_cRecentFile.IsFavorite( i );
-		bool bFavoriteLabel = bFavorite && !bMenuIcon;
-		CFileNameManager::getInstance()->GetMenuFullLabel_MRU( szMenu, _countof(szMenu), p, -1, bFavoriteLabel, i, dcFont.GetHDC() );
+    for (i = 0; i < m_cRecentFile.GetItemCount(); ++i)
+    {
+        //	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
+        if (i >= m_cRecentFile.GetViewCount())
+            break;
 
-		//	メニューに追加。
-		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELMRU + i, szMenu, L"", TRUE,
-			bFavorite ? F_FAVORITE : -1 );
-	}
-	return hMenuPopUp;
+        /* MRUリストの中にある開かれていないファイル */
+
+        const EditInfo *p   = m_cRecentFile.GetItem(i);
+        bFavorite           = m_cRecentFile.IsFavorite(i);
+        bool bFavoriteLabel = bFavorite && !bMenuIcon;
+        CFileNameManager::getInstance()->GetMenuFullLabel_MRU(szMenu, _countof(szMenu), p, -1, bFavoriteLabel, i, dcFont.GetHDC());
+
+        //	メニューに追加。
+        pCMenuDrawer->MyAppendMenu(hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELMRU + i, szMenu, L"", TRUE, bFavorite ? F_FAVORITE : -1);
+    }
+    return hMenuPopUp;
 }
 
-BOOL CMRUFile::DestroyMenu( HMENU hMenuPopUp ) const
+BOOL CMRUFile::DestroyMenu(HMENU hMenuPopUp) const
 {
-	return ::DestroyMenu( hMenuPopUp );
+    return ::DestroyMenu(hMenuPopUp);
 }
 
 /*!
@@ -118,19 +118,21 @@ BOOL CMRUFile::DestroyMenu( HMENU hMenuPopUp ) const
 */
 std::vector<LPCWSTR> CMRUFile::GetPathList() const
 {
-	std::vector<LPCWSTR> ret;
-	for( int i = 0; i < m_cRecentFile.GetItemCount(); ++i ){
-		//	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
-		if ( i >= m_cRecentFile.GetViewCount() ) break;
-		ret.push_back(m_cRecentFile.GetItemText(i));
-	}
-	return ret;
+    std::vector<LPCWSTR> ret;
+    for (int i = 0; i < m_cRecentFile.GetItemCount(); ++i)
+    {
+        //	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
+        if (i >= m_cRecentFile.GetViewCount())
+            break;
+        ret.push_back(m_cRecentFile.GetItemText(i));
+    }
+    return ret;
 }
 
 /*! アイテム数を返す */
 int CMRUFile::Length(void) const
 {
-	return m_cRecentFile.GetItemCount();
+    return m_cRecentFile.GetItemCount();
 }
 
 /*!
@@ -138,7 +140,7 @@ int CMRUFile::Length(void) const
 */
 void CMRUFile::ClearAll(void)
 {
-	m_cRecentFile.DeleteAllItem();
+    m_cRecentFile.DeleteAllItem();
 }
 
 /*!
@@ -150,14 +152,15 @@ void CMRUFile::ClearAll(void)
 	@retval TRUE データが格納された
 	@retval FALSE 正しくない番号が指定された．データは格納されなかった．
 */
-bool CMRUFile::GetEditInfo( int num, EditInfo* pfi ) const
+bool CMRUFile::GetEditInfo(int num, EditInfo *pfi) const
 {
-	const EditInfo*	p = m_cRecentFile.GetItem( num );
-	if( NULL == p ) return false;
+    const EditInfo *p = m_cRecentFile.GetItem(num);
+    if (NULL == p)
+        return false;
 
-	*pfi = *p;
+    *pfi = *p;
 
-	return true;
+    return true;
 }
 
 /*!
@@ -171,14 +174,15 @@ bool CMRUFile::GetEditInfo( int num, EditInfo* pfi ) const
 
 	@date 2001.12.26 CShareData::IsExistInMRUListから移動した。（YAZAKI）
 */
-bool CMRUFile::GetEditInfo( const WCHAR* pszPath, EditInfo* pfi ) const
+bool CMRUFile::GetEditInfo(const WCHAR *pszPath, EditInfo *pfi) const
 {
-	const EditInfo*	p = m_cRecentFile.GetItem( m_cRecentFile.FindItemByPath( pszPath ) );
-	if( NULL == p ) return false;
+    const EditInfo *p = m_cRecentFile.GetItem(m_cRecentFile.FindItemByPath(pszPath));
+    if (NULL == p)
+        return false;
 
-	*pfi = *p;
+    *pfi = *p;
 
-	return true;
+    return true;
 }
 
 /*!	@brief MRUリストへの登録
@@ -190,51 +194,55 @@ bool CMRUFile::GetEditInfo( const WCHAR* pszPath, EditInfo* pfi ) const
 	@date 2001.03.29 MIK リムーバブルディスク上のファイルを登録しないようにした。
 	@date 2001.12.26 YAZAKI CShareData::AddMRUListから移動
 */
-void CMRUFile::Add( EditInfo* pEditInfo )
+void CMRUFile::Add(EditInfo *pEditInfo)
 {
-	//	ファイル名が無ければ無視
-	if( NULL == pEditInfo || pEditInfo->m_szPath[0] == L'\0' ){
-		return;
-	}
-	
-	// すでに登録されている場合は、除外指定を無視する
-	if( -1 == m_cRecentFile.FindItemByPath( pEditInfo->m_szPath ) ){
-		int nSize = m_pShareData->m_sHistory.m_aExceptMRU.size();
-		for( int i = 0 ; i < nSize; i++ ){
-			WCHAR szExceptMRU[_MAX_PATH];
-			CFileNameManager::ExpandMetaToFolder( m_pShareData->m_sHistory.m_aExceptMRU[i], szExceptMRU, _countof(szExceptMRU) );
-			if( NULL != wcsistr( pEditInfo->m_szPath,  szExceptMRU) ){
-				return;
-			}
-		}
-	}
-	EditInfo tmpEditInfo = *pEditInfo;
-	tmpEditInfo.m_bIsModified = FALSE; // 変更フラグを無効に
+    //	ファイル名が無ければ無視
+    if (NULL == pEditInfo || pEditInfo->m_szPath[0] == L'\0')
+    {
+        return;
+    }
 
-	WCHAR	szDrive[_MAX_DRIVE];
-	WCHAR	szDir[_MAX_DIR];
-	WCHAR	szFolder[_MAX_PATH + 1];	//	ドライブ＋フォルダ
+    // すでに登録されている場合は、除外指定を無視する
+    if (-1 == m_cRecentFile.FindItemByPath(pEditInfo->m_szPath))
+    {
+        int nSize = m_pShareData->m_sHistory.m_aExceptMRU.size();
+        for (int i = 0; i < nSize; i++)
+        {
+            WCHAR szExceptMRU[_MAX_PATH];
+            CFileNameManager::ExpandMetaToFolder(m_pShareData->m_sHistory.m_aExceptMRU[i], szExceptMRU, _countof(szExceptMRU));
+            if (NULL != wcsistr(pEditInfo->m_szPath, szExceptMRU))
+            {
+                return;
+            }
+        }
+    }
+    EditInfo tmpEditInfo      = *pEditInfo;
+    tmpEditInfo.m_bIsModified = FALSE; // 変更フラグを無効に
 
-	_wsplitpath( pEditInfo->m_szPath, szDrive, szDir, NULL, NULL );	//	ドライブとフォルダを取り出す。
+    WCHAR szDrive[_MAX_DRIVE];
+    WCHAR szDir[_MAX_DIR];
+    WCHAR szFolder[_MAX_PATH + 1]; //	ドライブ＋フォルダ
 
-	//	Jan.  10, 2006 genta USBメモリはRemovable mediaと認識されるようなので，
-	//	一応無効化する．
-	//	リムーバブルなら非登録？
-	//if (/* 「リムーバブルなら登録しない」オン && */ ! IsLocalDrive( szDrive ) ){
-	//	return;
-	//}
+    _wsplitpath(pEditInfo->m_szPath, szDrive, szDir, NULL, NULL); //	ドライブとフォルダを取り出す。
 
-	//	szFolder作成
-	wcscpy( szFolder, szDrive );
-	wcscat( szFolder, szDir );
+    //	Jan.  10, 2006 genta USBメモリはRemovable mediaと認識されるようなので，
+    //	一応無効化する．
+    //	リムーバブルなら非登録？
+    //if (/* 「リムーバブルなら登録しない」オン && */ ! IsLocalDrive( szDrive ) ){
+    //	return;
+    //}
 
-	//	Folderを、CMRUFolderに登録
-	CMRUFolder cMRUFolder;
-	cMRUFolder.Add(szFolder);
+    //	szFolder作成
+    wcscpy(szFolder, szDrive);
+    wcscat(szFolder, szDir);
 
-	m_cRecentFile.AppendItem( &tmpEditInfo );
-	
-	::SHAddToRecentDocs( SHARD_PATH, pEditInfo->m_szPath );
+    //	Folderを、CMRUFolderに登録
+    CMRUFolder cMRUFolder;
+    cMRUFolder.Add(szFolder);
+
+    m_cRecentFile.AppendItem(&tmpEditInfo);
+
+    ::SHAddToRecentDocs(SHARD_PATH, pEditInfo->m_szPath);
 }
 
 /*EOF*/

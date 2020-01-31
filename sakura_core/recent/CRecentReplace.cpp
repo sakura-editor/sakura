@@ -34,14 +34,13 @@
 
 CRecentReplace::CRecentReplace()
 {
-	Create(
-		GetShareData()->m_sSearchKeywords.m_aReplaceKeys.dataPtr(),
-		GetShareData()->m_sSearchKeywords.m_aReplaceKeys.dataPtr()->GetBufferCount(),
-		&GetShareData()->m_sSearchKeywords.m_aReplaceKeys._GetSizeRef(),
-		NULL,
-		MAX_REPLACEKEY,
-		NULL
-	);
+    Create(
+        GetShareData()->m_sSearchKeywords.m_aReplaceKeys.dataPtr(),
+        GetShareData()->m_sSearchKeywords.m_aReplaceKeys.dataPtr()->GetBufferCount(),
+        &GetShareData()->m_sSearchKeywords.m_aReplaceKeys._GetSizeRef(),
+        NULL,
+        MAX_REPLACEKEY,
+        NULL);
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -53,45 +52,47 @@ CRecentReplace::CRecentReplace()
 
 	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
-const WCHAR* CRecentReplace::GetItemText( int nIndex ) const
+const WCHAR *CRecentReplace::GetItemText(int nIndex) const
 {
-	return *GetItem(nIndex);
+    return *GetItem(nIndex);
 }
 
-bool CRecentReplace::DataToReceiveType( LPCWSTR* dst, const CReplaceString* src ) const
+bool CRecentReplace::DataToReceiveType(LPCWSTR *dst, const CReplaceString *src) const
 {
-	*dst = *src;
-	return true;
+    *dst = *src;
+    return true;
 }
 
-bool CRecentReplace::TextToDataType( CReplaceString* dst, LPCWSTR pszText ) const
+bool CRecentReplace::TextToDataType(CReplaceString *dst, LPCWSTR pszText) const
 {
-	if( false == ValidateReceiveType(pszText) ){
-		return false;
-	}
-	CopyItem(dst, pszText);
-	return true;
+    if (false == ValidateReceiveType(pszText))
+    {
+        return false;
+    }
+    CopyItem(dst, pszText);
+    return true;
 }
 
-int CRecentReplace::CompareItem( const CReplaceString* p1, LPCWSTR p2 ) const
+int CRecentReplace::CompareItem(const CReplaceString *p1, LPCWSTR p2) const
 {
-	return wcscmp(*p1,p2);
+    return wcscmp(*p1, p2);
 }
 
-void CRecentReplace::CopyItem( CReplaceString* dst, LPCWSTR src ) const
+void CRecentReplace::CopyItem(CReplaceString *dst, LPCWSTR src) const
 {
-	wcscpy(*dst,src);
+    wcscpy(*dst, src);
 }
 
-bool CRecentReplace::ValidateReceiveType( LPCWSTR p ) const
+bool CRecentReplace::ValidateReceiveType(LPCWSTR p) const
 {
-	if( GetTextMaxLength() <= wcslen(p) ){
-		return false;
-	}
-	return true;
+    if (GetTextMaxLength() <= wcslen(p))
+    {
+        return false;
+    }
+    return true;
 }
 
 size_t CRecentReplace::GetTextMaxLength() const
 {
-	return m_nTextMaxLength;
+    return m_nTextMaxLength;
 }

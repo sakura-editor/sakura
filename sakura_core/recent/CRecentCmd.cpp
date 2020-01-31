@@ -35,14 +35,13 @@
 
 CRecentCmd::CRecentCmd()
 {
-	Create(
-		GetShareData()->m_sHistory.m_aCommands.dataPtr(),
-		GetShareData()->m_sHistory.m_aCommands.dataPtr()->GetBufferCount(),
-		&GetShareData()->m_sHistory.m_aCommands._GetSizeRef(),
-		NULL,
-		MAX_CMDARR,
-		NULL
-	);
+    Create(
+        GetShareData()->m_sHistory.m_aCommands.dataPtr(),
+        GetShareData()->m_sHistory.m_aCommands.dataPtr()->GetBufferCount(),
+        &GetShareData()->m_sHistory.m_aCommands._GetSizeRef(),
+        NULL,
+        MAX_CMDARR,
+        NULL);
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -54,45 +53,47 @@ CRecentCmd::CRecentCmd()
 
 	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
-const WCHAR* CRecentCmd::GetItemText( int nIndex ) const
+const WCHAR *CRecentCmd::GetItemText(int nIndex) const
 {
-	return *GetItem(nIndex);
+    return *GetItem(nIndex);
 }
 
-bool CRecentCmd::DataToReceiveType( LPCWSTR* dst, const CCmdString* src ) const
+bool CRecentCmd::DataToReceiveType(LPCWSTR *dst, const CCmdString *src) const
 {
-	*dst = *src;
-	return true;
+    *dst = *src;
+    return true;
 }
 
-bool CRecentCmd::TextToDataType( CCmdString* dst, LPCWSTR pszText ) const
+bool CRecentCmd::TextToDataType(CCmdString *dst, LPCWSTR pszText) const
 {
-	if( false == ValidateReceiveType(pszText) ){
-		return false;
-	}
-	CopyItem(dst, pszText);
-	return true;
+    if (false == ValidateReceiveType(pszText))
+    {
+        return false;
+    }
+    CopyItem(dst, pszText);
+    return true;
 }
 
-int CRecentCmd::CompareItem( const CCmdString* p1, LPCWSTR p2 ) const
+int CRecentCmd::CompareItem(const CCmdString *p1, LPCWSTR p2) const
 {
-	return wcscmp(*p1,p2);
+    return wcscmp(*p1, p2);
 }
 
-void CRecentCmd::CopyItem( CCmdString* dst, LPCWSTR src ) const
+void CRecentCmd::CopyItem(CCmdString *dst, LPCWSTR src) const
 {
-	wcscpy(*dst,src);
+    wcscpy(*dst, src);
 }
 
-bool CRecentCmd::ValidateReceiveType( LPCWSTR p ) const
+bool CRecentCmd::ValidateReceiveType(LPCWSTR p) const
 {
-	if( GetTextMaxLength() <= wcslen(p) ){
-		return false;
-	}
-	return true;
+    if (GetTextMaxLength() <= wcslen(p))
+    {
+        return false;
+    }
+    return true;
 }
 
 size_t CRecentCmd::GetTextMaxLength() const
 {
-	return m_nTextMaxLength;
+    return m_nTextMaxLength;
 }

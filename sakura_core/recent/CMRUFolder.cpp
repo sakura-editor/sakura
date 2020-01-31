@@ -18,7 +18,7 @@
 #include "CMRUFolder.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
-#include "uiparts/CMenuDrawer.h"	//	これでいいのか？
+#include "uiparts/CMenuDrawer.h" //	これでいいのか？
 #include "util/string_ex2.h"
 #include "util/window.h"
 
@@ -28,14 +28,14 @@
 */
 CMRUFolder::CMRUFolder()
 {
-	//	初期化。
-	m_pShareData = &GetDllShareData();
+    //	初期化。
+    m_pShareData = &GetDllShareData();
 }
 
 /*	デストラクタ	*/
 CMRUFolder::~CMRUFolder()
 {
-	m_cRecentFolder.Terminate();
+    m_cRecentFolder.Terminate();
 }
 
 /*!
@@ -47,12 +47,12 @@ CMRUFolder::~CMRUFolder()
 
 	2010/5/21 Uchi 組み直し
 */
-HMENU CMRUFolder::CreateMenu( CMenuDrawer* pCMenuDrawer ) const
+HMENU CMRUFolder::CreateMenu(CMenuDrawer *pCMenuDrawer) const
 {
-	HMENU	hMenuPopUp;
+    HMENU hMenuPopUp;
 
-	hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
-	return CreateMenu( hMenuPopUp, pCMenuDrawer );
+    hMenuPopUp = ::CreatePopupMenu(); // Jan. 29, 2002 genta
+    return CreateMenu(hMenuPopUp, pCMenuDrawer);
 }
 
 /*!
@@ -64,84 +64,88 @@ HMENU CMRUFolder::CreateMenu( CMenuDrawer* pCMenuDrawer ) const
 	@author Norio Nakantani
 	@return メニューのハンドル
 */
-HMENU CMRUFolder::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
+HMENU CMRUFolder::CreateMenu(HMENU hMenuPopUp, CMenuDrawer *pCMenuDrawer) const
 {
-	WCHAR	szMenu[_MAX_PATH * 2 + 10];				//	メニューキャプション
-	int		i;
-	bool	bFavorite;
+    WCHAR szMenu[_MAX_PATH * 2 + 10]; //	メニューキャプション
+    int i;
+    bool bFavorite;
 
-	NONCLIENTMETRICS met;
-	met.cbSize = CCSIZEOF_STRUCT(NONCLIENTMETRICS, lfMessageFont);
-	::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, met.cbSize, &met, 0);
-	CDCFont dcFont(met.lfMenuFont);
+    NONCLIENTMETRICS met;
+    met.cbSize = CCSIZEOF_STRUCT(NONCLIENTMETRICS, lfMessageFont);
+    ::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, met.cbSize, &met, 0);
+    CDCFont dcFont(met.lfMenuFont);
 
-	CFileNameManager::getInstance()->TransformFileName_MakeCache();
-	for( i = 0; i < m_cRecentFolder.GetItemCount(); ++i )
-	{
-		//	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
-		if ( i >= m_cRecentFolder.GetViewCount() ) break;
+    CFileNameManager::getInstance()->TransformFileName_MakeCache();
+    for (i = 0; i < m_cRecentFolder.GetItemCount(); ++i)
+    {
+        //	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
+        if (i >= m_cRecentFolder.GetViewCount())
+            break;
 
-		const WCHAR* pszFolder = m_cRecentFolder.GetItemText( i );
-		bFavorite = m_cRecentFolder.IsFavorite( i );
-		bool bFavoriteLabel = bFavorite && !m_pShareData->m_Common.m_sWindow.m_bMenuIcon;
-		CFileNameManager::getInstance()->GetMenuFullLabel( szMenu, _countof(szMenu), true, pszFolder, -1, false, CODE_NONE, bFavoriteLabel, i, true, dcFont.GetHDC() );
+        const WCHAR *pszFolder = m_cRecentFolder.GetItemText(i);
+        bFavorite              = m_cRecentFolder.IsFavorite(i);
+        bool bFavoriteLabel    = bFavorite && !m_pShareData->m_Common.m_sWindow.m_bMenuIcon;
+        CFileNameManager::getInstance()->GetMenuFullLabel(szMenu, _countof(szMenu), true, pszFolder, -1, false, CODE_NONE, bFavoriteLabel, i, true, dcFont.GetHDC());
 
-		//	メニューに追加
-		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELOPENFOLDER + i, szMenu, L"", TRUE,
-			bFavorite ? F_FAVORITE : -1 );
-	}
-	return hMenuPopUp;
+        //	メニューに追加
+        pCMenuDrawer->MyAppendMenu(hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELOPENFOLDER + i, szMenu, L"", TRUE, bFavorite ? F_FAVORITE : -1);
+    }
+    return hMenuPopUp;
 }
 
 std::vector<LPCWSTR> CMRUFolder::GetPathList() const
 {
-	std::vector<LPCWSTR> ret;
-	for( int i = 0; i < m_cRecentFolder.GetItemCount(); ++i ){
-		//	「共通設定」→「全般」→「フォルダの履歴MAX」を反映
-		if ( i >= m_cRecentFolder.GetViewCount() ) break;
-		ret.push_back(m_cRecentFolder.GetItemText(i));
-	}
-	return ret;
+    std::vector<LPCWSTR> ret;
+    for (int i = 0; i < m_cRecentFolder.GetItemCount(); ++i)
+    {
+        //	「共通設定」→「全般」→「フォルダの履歴MAX」を反映
+        if (i >= m_cRecentFolder.GetViewCount())
+            break;
+        ret.push_back(m_cRecentFolder.GetItemText(i));
+    }
+    return ret;
 }
 
 int CMRUFolder::Length() const
 {
-	return m_cRecentFolder.GetItemCount();
+    return m_cRecentFolder.GetItemCount();
 }
 
 void CMRUFolder::ClearAll()
 {
-	m_cRecentFolder.DeleteAllItem();
+    m_cRecentFolder.DeleteAllItem();
 }
 
 /*	@brief 開いたフォルダ リストへの登録
 
 	@date 2001.12.26  CShareData::AddOPENFOLDERListから移動した。（YAZAKI）
 */
-void CMRUFolder::Add( const WCHAR* pszFolder )
+void CMRUFolder::Add(const WCHAR *pszFolder)
 {
-	if( NULL == pszFolder
-	 || pszFolder[0] == L'\0' )
-	{	//	長さが0なら排除。
-		return;
-	}
+    if (NULL == pszFolder || pszFolder[0] == L'\0')
+    { //	長さが0なら排除。
+        return;
+    }
 
-	// すでに登録されている場合は、除外指定を無視する
-	if( -1 == m_cRecentFolder.FindItemByText( pszFolder ) ){
-		int nSize = m_pShareData->m_sHistory.m_aExceptMRU.size();
-		for( int i = 0 ; i < nSize; i++ ){
-			WCHAR szExceptMRU[_MAX_PATH];
-			CFileNameManager::ExpandMetaToFolder( m_pShareData->m_sHistory.m_aExceptMRU[i], szExceptMRU, _countof(szExceptMRU) );
-			if( NULL != wcsistr( pszFolder, szExceptMRU ) ){
-				return;
-			}
-		}
-	}
+    // すでに登録されている場合は、除外指定を無視する
+    if (-1 == m_cRecentFolder.FindItemByText(pszFolder))
+    {
+        int nSize = m_pShareData->m_sHistory.m_aExceptMRU.size();
+        for (int i = 0; i < nSize; i++)
+        {
+            WCHAR szExceptMRU[_MAX_PATH];
+            CFileNameManager::ExpandMetaToFolder(m_pShareData->m_sHistory.m_aExceptMRU[i], szExceptMRU, _countof(szExceptMRU));
+            if (NULL != wcsistr(pszFolder, szExceptMRU))
+            {
+                return;
+            }
+        }
+    }
 
-	m_cRecentFolder.AppendItem( pszFolder );
+    m_cRecentFolder.AppendItem(pszFolder);
 }
 
-const WCHAR* CMRUFolder::GetPath(int num) const
+const WCHAR *CMRUFolder::GetPath(int num) const
 {
-	return m_cRecentFolder.GetItemText( num );
+    return m_cRecentFolder.GetItemText(num);
 }

@@ -35,14 +35,13 @@
 
 CRecentCurDir::CRecentCurDir()
 {
-	Create(
-		GetShareData()->m_sHistory.m_aCurDirs.dataPtr(),
-		GetShareData()->m_sHistory.m_aCurDirs.dataPtr()->GetBufferCount(),
-		&GetShareData()->m_sHistory.m_aCurDirs._GetSizeRef(),
-		NULL,
-		MAX_CMDARR,
-		NULL
-	);
+    Create(
+        GetShareData()->m_sHistory.m_aCurDirs.dataPtr(),
+        GetShareData()->m_sHistory.m_aCurDirs.dataPtr()->GetBufferCount(),
+        &GetShareData()->m_sHistory.m_aCurDirs._GetSizeRef(),
+        NULL,
+        MAX_CMDARR,
+        NULL);
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -54,45 +53,47 @@ CRecentCurDir::CRecentCurDir()
 
 	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
-const WCHAR* CRecentCurDir::GetItemText( int nIndex ) const
+const WCHAR *CRecentCurDir::GetItemText(int nIndex) const
 {
-	return *GetItem(nIndex);
+    return *GetItem(nIndex);
 }
 
-bool CRecentCurDir::DataToReceiveType( LPCWSTR* dst, const CCurDirString* src ) const
+bool CRecentCurDir::DataToReceiveType(LPCWSTR *dst, const CCurDirString *src) const
 {
-	*dst = *src;
-	return true;
+    *dst = *src;
+    return true;
 }
 
-bool CRecentCurDir::TextToDataType( CCurDirString* dst, LPCWSTR pszText ) const
+bool CRecentCurDir::TextToDataType(CCurDirString *dst, LPCWSTR pszText) const
 {
-	if( false == ValidateReceiveType(pszText) ){
-		return false;
-	}
-	CopyItem(dst, pszText);
-	return true;
+    if (false == ValidateReceiveType(pszText))
+    {
+        return false;
+    }
+    CopyItem(dst, pszText);
+    return true;
 }
 
-int CRecentCurDir::CompareItem( const CCurDirString* p1, LPCWSTR p2 ) const
+int CRecentCurDir::CompareItem(const CCurDirString *p1, LPCWSTR p2) const
 {
-	return wcscmp(*p1,p2);
+    return wcscmp(*p1, p2);
 }
 
-void CRecentCurDir::CopyItem( CCurDirString* dst, LPCWSTR src ) const
+void CRecentCurDir::CopyItem(CCurDirString *dst, LPCWSTR src) const
 {
-	wcscpy(*dst,src);
+    wcscpy(*dst, src);
 }
 
-bool CRecentCurDir::ValidateReceiveType( LPCWSTR p ) const
+bool CRecentCurDir::ValidateReceiveType(LPCWSTR p) const
 {
-	if( GetTextMaxLength() <= wcslen(p) ){
-		return false;
-	}
-	return true;
+    if (GetTextMaxLength() <= wcslen(p))
+    {
+        return false;
+    }
+    return true;
 }
 
 size_t CRecentCurDir::GetTextMaxLength() const
 {
-	return m_nTextMaxLength;
+    return m_nTextMaxLength;
 }

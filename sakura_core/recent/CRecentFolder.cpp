@@ -34,14 +34,13 @@
 
 CRecentFolder::CRecentFolder()
 {
-	Create(
-		&GetShareData()->m_sHistory.m_szOPENFOLDERArr[0],
-		GetShareData()->m_sHistory.m_szOPENFOLDERArr[0].GetBufferCount(),
-		&GetShareData()->m_sHistory.m_nOPENFOLDERArrNum,
-		GetShareData()->m_sHistory.m_bOPENFOLDERArrFavorite,
-		MAX_OPENFOLDER,
-		&(GetShareData()->m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX)
-	);
+    Create(
+        &GetShareData()->m_sHistory.m_szOPENFOLDERArr[0],
+        GetShareData()->m_sHistory.m_szOPENFOLDERArr[0].GetBufferCount(),
+        &GetShareData()->m_sHistory.m_nOPENFOLDERArrNum,
+        GetShareData()->m_sHistory.m_bOPENFOLDERArrFavorite,
+        MAX_OPENFOLDER,
+        &(GetShareData()->m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX));
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -53,45 +52,47 @@ CRecentFolder::CRecentFolder()
 
 	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
-const WCHAR* CRecentFolder::GetItemText( int nIndex ) const
+const WCHAR *CRecentFolder::GetItemText(int nIndex) const
 {
-	return *GetItem(nIndex);
+    return *GetItem(nIndex);
 }
 
-bool CRecentFolder::DataToReceiveType( LPCWSTR* dst, const CPathString* src ) const
+bool CRecentFolder::DataToReceiveType(LPCWSTR *dst, const CPathString *src) const
 {
-	*dst = *src;
-	return true;
+    *dst = *src;
+    return true;
 }
 
-bool CRecentFolder::TextToDataType( CPathString* dst, LPCWSTR pszText ) const
+bool CRecentFolder::TextToDataType(CPathString *dst, LPCWSTR pszText) const
 {
-	if( false == ValidateReceiveType(pszText) ){
-		return false;
-	}
-	CopyItem(dst, pszText);
-	return true;
+    if (false == ValidateReceiveType(pszText))
+    {
+        return false;
+    }
+    CopyItem(dst, pszText);
+    return true;
 }
 
-int CRecentFolder::CompareItem( const CPathString* p1, LPCWSTR p2 ) const
+int CRecentFolder::CompareItem(const CPathString *p1, LPCWSTR p2) const
 {
-	return _wcsicmp(*p1,p2);
+    return _wcsicmp(*p1, p2);
 }
 
-void CRecentFolder::CopyItem( CPathString* dst, LPCWSTR src ) const
+void CRecentFolder::CopyItem(CPathString *dst, LPCWSTR src) const
 {
-	wcscpy(*dst,src);
+    wcscpy(*dst, src);
 }
 
-bool CRecentFolder::ValidateReceiveType( LPCWSTR p ) const
+bool CRecentFolder::ValidateReceiveType(LPCWSTR p) const
 {
-	if( GetTextMaxLength() <= wcslen(p) ){
-		return false;
-	}
-	return true;
+    if (GetTextMaxLength() <= wcslen(p))
+    {
+        return false;
+    }
+    return true;
 }
 
 size_t CRecentFolder::GetTextMaxLength() const
 {
-	return m_nTextMaxLength;
+    return m_nTextMaxLength;
 }
