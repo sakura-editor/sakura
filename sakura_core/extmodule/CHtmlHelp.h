@@ -39,29 +39,29 @@
 
 	HTMLヘルプコンポーネントの動的ロードをサポートするクラス
 */
-class CHtmlHelp : public CDllImp {
-public:
-	CHtmlHelp() noexcept;
-	virtual ~CHtmlHelp() noexcept = default;
+class CHtmlHelp : public CDllImp
+{
+  public:
+    CHtmlHelp() noexcept;
+    virtual ~CHtmlHelp() noexcept = default;
 
-protected:
-	//	HtmlHelp のEntry Point
-	typedef decltype(::HtmlHelp)*	FnPtr_HtmlHelp;
+  protected:
+    //	HtmlHelp のEntry Point
+    typedef decltype(::HtmlHelp) *FnPtr_HtmlHelp;
 
-	FnPtr_HtmlHelp		m_pfnHtmlHelp;
+    FnPtr_HtmlHelp m_pfnHtmlHelp;
 
-public:
-	inline HWND WINAPI HtmlHelp(
-		_In_opt_ HWND hwndCaller,
-		_In_ LPCWSTR pszFile,
-		_In_ UINT uCommand,
-		_In_ DWORD_PTR dwData
-	) const noexcept
-	{
-		return m_pfnHtmlHelp(hwndCaller, pszFile, uCommand, dwData);
-	}
+  public:
+    inline HWND WINAPI HtmlHelp(
+        _In_opt_ HWND hwndCaller,
+        _In_ LPCWSTR pszFile,
+        _In_ UINT uCommand,
+        _In_ DWORD_PTR dwData) const noexcept
+    {
+        return m_pfnHtmlHelp(hwndCaller, pszFile, uCommand, dwData);
+    }
 
-protected:
-	virtual bool InitDllImp();
-	virtual LPCWSTR GetDllNameImp(int nIndex);
+  protected:
+    virtual bool InitDllImp();
+    virtual LPCWSTR GetDllNameImp(int nIndex);
 };

@@ -40,35 +40,44 @@
 	今のところDeinitDllが使われている箇所が無いので、このクラスの出番はありませんが。
 	2008.05.10 kobake 作成
 */
-template <class DLLIMP> class CDllHandler{
-public:
-	//コンストラクタ・デストラクタ
-	CDllHandler()
-	{
-		m_pcDllImp = new DLLIMP();
-		m_pcDllImp->InitDll();
-	}
-	~CDllHandler()
-	{
-		m_pcDllImp->DeinitDll(true); //※終了処理に失敗しても強制的にDLL解放
-		delete m_pcDllImp;
-	}
+template <class DLLIMP>
+class CDllHandler
+{
+  public:
+    //コンストラクタ・デストラクタ
+    CDllHandler()
+    {
+        m_pcDllImp = new DLLIMP();
+        m_pcDllImp->InitDll();
+    }
+    ~CDllHandler()
+    {
+        m_pcDllImp->DeinitDll(true); //※終了処理に失敗しても強制的にDLL解放
+        delete m_pcDllImp;
+    }
 
-	//アクセサ
-	DLLIMP* operator->(){ return m_pcDllImp; }
+    //アクセサ
+    DLLIMP *operator->()
+    {
+        return m_pcDllImp;
+    }
 
-	//! 利用状態のチェック（operator版）
-	bool operator!() const { return m_pcDllImp->IsAvailable(); }
+    //! 利用状態のチェック（operator版）
+    bool operator!() const
+    {
+        return m_pcDllImp->IsAvailable();
+    }
 
-private:
-	DLLIMP*	m_pcDllImp;
+  private:
+    DLLIMP *m_pcDllImp;
 };
 
 //!結果定数
-enum EDllResult{
-	DLL_SUCCESS,		//成功
-	DLL_LOADFAILURE,	//DLLロード失敗
-	DLL_INITFAILURE,	//初期処理に失敗
+enum EDllResult
+{
+    DLL_SUCCESS, //成功
+    DLL_LOADFAILURE, //DLLロード失敗
+    DLL_INITFAILURE, //初期処理に失敗
 };
 
 //! DLLの動的なLoad/Unloadを行うためのクラス
@@ -83,62 +92,70 @@ enum EDllResult{
 										純粋仮想関数はやめてプレースホルダーを用意する．
 	@date 2008.05.10 kobake 整理。派生クラスは、～Impをオーバーロードすれば良いという方式です。
 */
-class CDllImp{
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                            型                               //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-public:
-	/*!
+class CDllImp
+{
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+    //                            型                               //
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+  public:
+    /*!
 		アドレスとエントリ名の対応表。RegisterEntriesで使われる。
 		@author YAZAKI
 		@date 2002.01.26
 	*/
-	struct ImportTable{
-		void*		proc;
-		const char*	name;
-	};
+    struct ImportTable
+    {
+        void *proc;
+        const char *name;
+    };
 
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                        生成と破棄                           //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-public:
-	//コンストラクタ・デストラクタ
-	CDllImp();
-	virtual ~CDllImp();
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+    //                        生成と破棄                           //
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+  public:
+    //コンストラクタ・デストラクタ
+    CDllImp();
+    virtual ~CDllImp();
 
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                         DLLロード                           //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-public:
-	//! DLLの関数を呼び出せるか状態どうか
-	virtual bool IsAvailable() const { return m_hInstance != NULL; }
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+    //                         DLLロード                           //
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+  public:
+    //! DLLの関数を呼び出せるか状態どうか
+    virtual bool IsAvailable() const
+    {
+        return m_hInstance != NULL;
+    }
 
-	//! DLLロードと初期処理
-	EDllResult InitDll(
-		LPCWSTR pszSpecifiedDllName = NULL	//!< [in] クラスが定義しているDLL名以外のDLLを読み込みたいときに、そのDLL名を指定。
-	);
+    //! DLLロードと初期処理
+    EDllResult InitDll(
+        LPCWSTR pszSpecifiedDllName = NULL //!< [in] クラスが定義しているDLL名以外のDLLを読み込みたいときに、そのDLL名を指定。
+    );
 
-	//! 終了処理とDLLアンロード
-	bool DeinitDll(
-		bool force = false	//!< [in] 終了処理に失敗してもDLLを解放するかどうか
-	);
+    //! 終了処理とDLLアンロード
+    bool DeinitDll(
+        bool force = false //!< [in] 終了処理に失敗してもDLLを解放するかどうか
+    );
 
-	//! インスタンスハンドルの取得
-	HINSTANCE GetInstance() const { return m_hInstance; }
+    //! インスタンスハンドルの取得
+    HINSTANCE GetInstance() const
+    {
+        return m_hInstance;
+    }
 
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           属性                              //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-public:
-	//! ロード済みDLLファイル名の取得。ロードされていない (またはロードに失敗した) 場合は NULL を返す。
-	LPCWSTR GetLoadedDllName() const;
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+    //                           属性                              //
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+  public:
+    //! ロード済みDLLファイル名の取得。ロードされていない (またはロードに失敗した) 場合は NULL を返す。
+    LPCWSTR GetLoadedDllName() const;
 
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                  オーバーロード可能実装                     //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-protected:
-	//!	DLLの初期化
-	/*!
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+    //                  オーバーロード可能実装                     //
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+  protected:
+    //!	DLLの初期化
+    /*!
 		DLLのロードに成功した直後に呼び出される．エントリポイントの
 		確認などを行う．
 
@@ -147,10 +164,10 @@ protected:
 
 		@note falseを返した場合は、読み込んだDLLを解放する．
 	*/
-	virtual bool InitDllImp() = 0;
+    virtual bool InitDllImp() = 0;
 
-	//!	関数の初期化
-	/*!
+    //!	関数の初期化
+    /*!
 		DLLのアンロードを行う直前に呼び出される．メモリの解放などを
 		行う．
 
@@ -172,10 +189,10 @@ protected:
 		
 		@date 2002.04.15 genta 注意書き追加
 	*/
-	virtual bool DeinitDllImp();
+    virtual bool DeinitDllImp();
 
-	//! DLLファイル名の取得(複数を順次)
-	/*!
+    //! DLLファイル名の取得(複数を順次)
+    /*!
 		DLLファイル名として複数の可能性があり，そのうちの一つでも
 		見つかったものを使用する場合に対応する．
 		
@@ -188,18 +205,18 @@ protected:
 		
 		@return 引数に応じてDLL名(LoadLibraryに渡す文字列)，またはNULL．
 	*/
-	virtual LPCWSTR GetDllNameImp(int nIndex) = 0;
+    virtual LPCWSTR GetDllNameImp(int nIndex) = 0;
 
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                         実装補助                            //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-protected:
-	bool RegisterEntries(const ImportTable table[]);
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+    //                         実装補助                            //
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+  protected:
+    bool RegisterEntries(const ImportTable table[]);
 
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                        メンバ変数                           //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-private:
-	HINSTANCE		m_hInstance;
-	std::wstring	m_strLoadedDllName;
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+    //                        メンバ変数                           //
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+  private:
+    HINSTANCE m_hInstance;
+    std::wstring m_strLoadedDllName;
 };
