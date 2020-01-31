@@ -25,7 +25,11 @@
 */
 #pragma once
 
-#define SAFE_DELETE(p) { delete p; p=0; }
+#define SAFE_DELETE(p) \
+    {                  \
+        delete p;      \
+        p = 0;         \
+    }
 
 /*
 	2007.10.18 kobake
@@ -38,33 +42,30 @@
 */
 
 template <class T>
-inline T t_min(T t1,T t2)
+inline T t_min(T t1, T t2)
 {
-	return t1<t2?t1:t2;
+    return t1 < t2 ? t1 : t2;
 }
 
 template <class T>
-inline T t_max(T t1,T t2)
+inline T t_max(T t1, T t2)
 {
-	return t1>t2?t1:t2;
+    return t1 > t2 ? t1 : t2;
 }
 
 template <class T>
 T t_abs(T t)
 {
-	return t>=T(0)?t:T(-t);
+    return t >= T(0) ? t : T(-t);
 }
 
 template <class T>
 T t_unit(T t)
 {
-	return
-		t>T(0)?1:
-		t<T(0)?-1:
-		0;
+    return t > T(0) ? 1 : t < T(0) ? -1 : 0;
 }
 
-#define sizeof_raw(V)  sizeof(V)
+#define sizeof_raw(V) sizeof(V)
 #define sizeof_type(V) sizeof(V)
 
 /*
