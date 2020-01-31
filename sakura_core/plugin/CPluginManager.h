@@ -31,42 +31,49 @@
 #include <list>
 #include <string>
 
-class CPluginManager final : public TSingleton<CPluginManager>{
-	friend class TSingleton<CPluginManager>;
-	CPluginManager();
+class CPluginManager final : public TSingleton<CPluginManager>
+{
+    friend class TSingleton<CPluginManager>;
+    CPluginManager();
 
-	// 型定義
-private:
-	typedef std::wstring wstring;
-	typedef std::string string;
+    // 型定義
+  private:
+    typedef std::wstring wstring;
+    typedef std::string string;
 
-	// 操作
-public:
-	bool LoadAllPlugin(CommonSetting* common = NULL);				//全プラグインを読み込む
-	void UnloadAllPlugin();				//全プラグインを解放する
-	bool SearchNewPlugin( CommonSetting& common, HWND hWndOwner );		//新規プラグインを導入する
-	int InstallPlugin( CommonSetting& common, const WCHAR* pszPluginName, HWND hWndOwner, wstring& errorMsg, bool bUpdate = false );	//プラグインの初期導入をする
-	bool InstZipPlugin( CommonSetting& common, HWND hWndOwner, const wstring& sZipName, bool bInSearch=false );		//Zipプラグインを追加する
-	CPlugin* GetPlugin( int id );		//プラグインを取得する
-	void UninstallPlugin( CommonSetting& common, int id );		//プラグインを削除する
+    // 操作
+  public:
+    bool LoadAllPlugin(CommonSetting *common = NULL); //全プラグインを読み込む
+    void UnloadAllPlugin(); //全プラグインを解放する
+    bool SearchNewPlugin(CommonSetting &common, HWND hWndOwner); //新規プラグインを導入する
+    int InstallPlugin(CommonSetting &common, const WCHAR *pszPluginName, HWND hWndOwner, wstring &errorMsg, bool bUpdate = false); //プラグインの初期導入をする
+    bool InstZipPlugin(CommonSetting &common, HWND hWndOwner, const wstring &sZipName, bool bInSearch = false); //Zipプラグインを追加する
+    CPlugin *GetPlugin(int id); //プラグインを取得する
+    void UninstallPlugin(CommonSetting &common, int id); //プラグインを削除する
 
-private:
-	CPlugin* LoadPlugin( const WCHAR* pszPluginDir, const WCHAR* pszPluginName, const WCHAR* pszLangName );	//プラグインを読み込む
-	bool RegisterPlugin( CPlugin* plugin );	//プラグインをCJackManagerに登録する
-	bool UnRegisterPlugin( CPlugin* plugin );	//プラグインのCJackManagerの登録を解除する
+  private:
+    CPlugin *LoadPlugin(const WCHAR *pszPluginDir, const WCHAR *pszPluginName, const WCHAR *pszLangName); //プラグインを読み込む
+    bool RegisterPlugin(CPlugin *plugin); //プラグインをCJackManagerに登録する
+    bool UnRegisterPlugin(CPlugin *plugin); //プラグインのCJackManagerの登録を解除する
 
-	//属性
-public:
-	//pluginsフォルダのパス
-	const wstring GetBaseDir() { return m_sBaseDir; }
-	const wstring GetExePluginDir() { return m_sExePluginDir; }
-	bool SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, const wstring& sSearchDir, bool& bCancel );		//新規プラグインを追加する(下請け)
-	bool SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, const wstring& sSearchDir, bool& bCancel );		//新規プラグインを追加する(下請け)Zip File
-	bool InstZipPluginSub( CommonSetting& common, HWND hWndOwner, const wstring& sZipName, const wstring& sDispName, bool bInSearch, bool& bCancel );		//Zipプラグインを導入する(下請け)
+    //属性
+  public:
+    //pluginsフォルダのパス
+    const wstring GetBaseDir()
+    {
+        return m_sBaseDir;
+    }
+    const wstring GetExePluginDir()
+    {
+        return m_sExePluginDir;
+    }
+    bool SearchNewPluginDir(CommonSetting &common, HWND hWndOwner, const wstring &sSearchDir, bool &bCancel); //新規プラグインを追加する(下請け)
+    bool SearchNewPluginZip(CommonSetting &common, HWND hWndOwner, const wstring &sSearchDir, bool &bCancel); //新規プラグインを追加する(下請け)Zip File
+    bool InstZipPluginSub(CommonSetting &common, HWND hWndOwner, const wstring &sZipName, const wstring &sDispName, bool bInSearch, bool &bCancel); //Zipプラグインを導入する(下請け)
 
-	// メンバ変数
-private:
-	CPlugin::List m_plugins;
-	wstring m_sBaseDir;					//pluginsフォルダのパス
-	wstring m_sExePluginDir;			//Exeフォルダ配下pluginsフォルダのパス
+    // メンバ変数
+  private:
+    CPlugin::List m_plugins;
+    wstring m_sBaseDir; //pluginsフォルダのパス
+    wstring m_sExePluginDir; //Exeフォルダ配下pluginsフォルダのパス
 };

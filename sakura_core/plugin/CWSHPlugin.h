@@ -30,57 +30,60 @@
 #include "plugin/CPlugin.h"
 #include "macro/CWSHManager.h"
 
-#define PII_WSH						L"Wsh"			//WSHセクション
-#define PII_WSH_USECACHE			L"UseCache"		//読み込んだスクリプトを再利用する
+#define PII_WSH L"Wsh" //WSHセクション
+#define PII_WSH_USECACHE L"UseCache" //読み込んだスクリプトを再利用する
 
-class CWSHPlug final :
-	public CPlug
+class CWSHPlug final : public CPlug
 {
-public:
-	CWSHPlug( CPlugin& plugin, PlugId id, wstring sJack, wstring sHandler, wstring sLabel ) :
-		CPlug( plugin, id, sJack, sHandler, sLabel )
-	{
-		m_Wsh = NULL;
-	}
-	virtual ~CWSHPlug() {
-		if( m_Wsh ){
-			delete m_Wsh;
-			m_Wsh = NULL;
-		}
-	}
-	CWSHMacroManager* m_Wsh;
+  public:
+    CWSHPlug(CPlugin &plugin, PlugId id, wstring sJack, wstring sHandler, wstring sLabel)
+        : CPlug(plugin, id, sJack, sHandler, sLabel)
+    {
+        m_Wsh = NULL;
+    }
+    virtual ~CWSHPlug()
+    {
+        if (m_Wsh)
+        {
+            delete m_Wsh;
+            m_Wsh = NULL;
+        }
+    }
+    CWSHMacroManager *m_Wsh;
 };
 
-class CWSHPlugin final :
-	public CPlugin
+class CWSHPlugin final : public CPlugin
 {
-	//コンストラクタ
-public:
-	CWSHPlugin( const wstring& sBaseDir ) : CPlugin( sBaseDir ) {
-		m_bUseCache = false;
-	}
+    //コンストラクタ
+  public:
+    CWSHPlugin(const wstring &sBaseDir)
+        : CPlugin(sBaseDir)
+    {
+        m_bUseCache = false;
+    }
 
-	//デストラクタ
-public:
-	~CWSHPlugin(void);
+    //デストラクタ
+  public:
+    ~CWSHPlugin(void);
 
-	//操作
-	//CPlugインスタンスの作成。ReadPluginDefPlug/Command から呼ばれる。
-	CPlug* CreatePlug( CPlugin& plugin, PlugId id, wstring sJack, wstring sHandler, wstring sLabel ) override
-	{
-		return new CWSHPlug( plugin, id, sJack, sHandler, sLabel );
-	}
+    //操作
+    //CPlugインスタンスの作成。ReadPluginDefPlug/Command から呼ばれる。
+    CPlug *CreatePlug(CPlugin &plugin, PlugId id, wstring sJack, wstring sHandler, wstring sLabel) override
+    {
+        return new CWSHPlug(plugin, id, sJack, sHandler, sLabel);
+    }
 
-	//実装
-public:
-	bool ReadPluginDef( CDataProfile *cProfile, CDataProfile *cProfileMlang ) override;
-	bool ReadPluginOption( CDataProfile *cProfile ) override;
-	CPlug::Array GetPlugs() const override{
-		return m_plugs;
-	}
-	bool InvokePlug( CEditView* view, CPlug& plug, CWSHIfObj::List& params ) override;
+    //実装
+  public:
+    bool ReadPluginDef(CDataProfile *cProfile, CDataProfile *cProfileMlang) override;
+    bool ReadPluginOption(CDataProfile *cProfile) override;
+    CPlug::Array GetPlugs() const override
+    {
+        return m_plugs;
+    }
+    bool InvokePlug(CEditView *view, CPlug &plug, CWSHIfObj::List &params) override;
 
-	//メンバ変数
-private:
-	bool m_bUseCache;
+    //メンバ変数
+  private:
+    bool m_bUseCache;
 };
