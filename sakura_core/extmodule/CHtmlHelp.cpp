@@ -34,7 +34,7 @@
 #include "CHtmlHelp.h"
 
 CHtmlHelp::CHtmlHelp(void) noexcept
-	: m_pfnHtmlHelp(nullptr)
+    : m_pfnHtmlHelp(nullptr)
 {
 }
 
@@ -43,20 +43,20 @@ CHtmlHelp::CHtmlHelp(void) noexcept
 */
 LPCWSTR CHtmlHelp::GetDllNameImp(int nIndex)
 {
-	return L"HHCTRL.OCX";
+    return L"HHCTRL.OCX";
 }
 
 bool CHtmlHelp::InitDllImp()
 {
-	//DLL内関数名リスト
-	const ImportTable table[] = {
-		{ (void*)&m_pfnHtmlHelp,		"HtmlHelpW" },
-		{ NULL, 0 }
-	};
+    //DLL内関数名リスト
+    const ImportTable table[] = {
+        {(void *)&m_pfnHtmlHelp, "HtmlHelpW"},
+        {NULL, 0}};
 
-	if (!RegisterEntries(table)) {
-		return false;
-	}
+    if (!RegisterEntries(table))
+    {
+        return false;
+    }
 
-	return true;
+    return true;
 }

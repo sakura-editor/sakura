@@ -40,9 +40,9 @@ CBregexpDll2::~CBregexpDll2()
 		@li 指定有りの場合はそれのみを返す
 		@li 指定無し(NULLまたは空文字列)の場合はBREGONIG, BREGEXPの順で試みる
 */
-LPCWSTR CBregexpDll2::GetDllNameImp( int index )
+LPCWSTR CBregexpDll2::GetDllNameImp(int index)
 {
-	return L"bregonig.dll";
+    return L"bregonig.dll";
 }
 
 /*!
@@ -55,22 +55,22 @@ LPCWSTR CBregexpDll2::GetDllNameImp( int index )
 */
 bool CBregexpDll2::InitDllImp()
 {
-	//DLL内関数名リスト
-	const ImportTable table[] = {
-		{ &m_BMatch,			"BMatchW" },
-		{ &m_BSubst,			"BSubstW" },
-		{ &m_BTrans,			"BTransW" },
-		{ &m_BSplit,			"BSplitW" },
-		{ &m_BRegfree,			"BRegfreeW" },
-		{ &m_BRegexpVersion,	"BRegexpVersionW" },
-		{ &m_BMatchEx,			"BMatchExW" },
-		{ &m_BSubstEx,			"BSubstExW" },
-		{ NULL, 0 }
-	};
-	
-	if( ! RegisterEntries( table )){
-		return false;
-	}
-	
-	return true;
+    //DLL内関数名リスト
+    const ImportTable table[] = {
+        {&m_BMatch, "BMatchW"},
+        {&m_BSubst, "BSubstW"},
+        {&m_BTrans, "BTransW"},
+        {&m_BSplit, "BSplitW"},
+        {&m_BRegfree, "BRegfreeW"},
+        {&m_BRegexpVersion, "BRegexpVersionW"},
+        {&m_BMatchEx, "BMatchExW"},
+        {&m_BSubstEx, "BSubstExW"},
+        {NULL, 0}};
+
+    if (!RegisterEntries(table))
+    {
+        return false;
+    }
+
+    return true;
 }
