@@ -28,23 +28,24 @@ class CEditWnd;
 	
 	エディタプロセスはCEditWndクラスのインスタンスを作る。
 */
-class CNormalProcess final : public CProcess {
-public:
-	//コンストラクタ・デストラクタ
-	CNormalProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine );
-	~CNormalProcess();
+class CNormalProcess final : public CProcess
+{
+  public:
+    //コンストラクタ・デストラクタ
+    CNormalProcess(HINSTANCE hInstance, LPCWSTR lpCmdLine);
+    ~CNormalProcess();
 
-protected:
-	//プロセスハンドラ
-	bool InitializeProcess() override;
-	bool MainLoop() override;
-	void OnExitProcess() override;
+  protected:
+    //プロセスハンドラ
+    bool InitializeProcess() override;
+    bool MainLoop() override;
+    void OnExitProcess() override;
 
-protected:
-	//実装補助
-	HANDLE _GetInitializeMutex() const; // 2002/2/8 aroka
-	void OpenFiles(HWND hwnd);
+  protected:
+    //実装補助
+    HANDLE _GetInitializeMutex() const; // 2002/2/8 aroka
+    void OpenFiles(HWND hwnd);
 
-private:
-	CEditApp*	m_pcEditApp;	//2007.10.23 kobake
+  private:
+    CEditApp *m_pcEditApp; //2007.10.23 kobake
 };
