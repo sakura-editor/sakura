@@ -38,33 +38,33 @@
 */
 class CDlgFileTree final : public CDialog
 {
-public:
-	CDlgFileTree();
+  public:
+    CDlgFileTree();
 
-	int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);
+    int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);
 
-private:
-	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
-	BOOL	OnBnClicked(int wID) override;
-	BOOL	OnNotify(WPARAM wParam, LPARAM lParam) override;
-	LPVOID	GetHelpIdTable() override;
-	void	SetData() override;
-	int		GetData() override;
+  private:
+    BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
+    BOOL OnBnClicked(int wID) override;
+    BOOL OnNotify(WPARAM wParam, LPARAM lParam) override;
+    LPVOID GetHelpIdTable() override;
+    void SetData() override;
+    int GetData() override;
 
-	void	SetDataInit();
-	void	SetDataItem(int nItemIndex);
-	void	ChangeEnableItemType();
-	void	ChangeEnableAddInsert();
-	int		GetDataItem(SFileTreeItem& item);
-	bool	GetDataTree(std::vector<SFileTreeItem>& data, HTREEITEM hItem, int nLevel, int nMaxCount);
-	HTREEITEM InsertTreeItem(SFileTreeItem& item, HTREEITEM htiParent, HTREEITEM htiInsert);
+    void SetDataInit();
+    void SetDataItem(int nItemIndex);
+    void ChangeEnableItemType();
+    void ChangeEnableAddInsert();
+    int GetDataItem(SFileTreeItem &item);
+    bool GetDataTree(std::vector<SFileTreeItem> &data, HTREEITEM hItem, int nLevel, int nMaxCount);
+    HTREEITEM InsertTreeItem(SFileTreeItem &item, HTREEITEM htiParent, HTREEITEM htiInsert);
 
-private:
-	CDlgFuncList*		m_pcDlgFuncList;
-	CFileTreeSetting	m_fileTreeSetting;
-	std::vector<int>	m_aItemRemoveList;
-	int					m_nlParamCount;
-	int					m_nDocType;
+  private:
+    CDlgFuncList *m_pcDlgFuncList;
+    CFileTreeSetting m_fileTreeSetting;
+    std::vector<int> m_aItemRemoveList;
+    int m_nlParamCount;
+    int m_nDocType;
 
-	int					m_bInMove;
+    int m_bInMove;
 };
