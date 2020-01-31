@@ -39,31 +39,35 @@
 class CMenuDrawer;
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-class CMRUFolder {
-public:
-	//	コンストラクタ
-	CMRUFolder();
-	~CMRUFolder();
+class CMRUFolder
+{
+  public:
+    //	コンストラクタ
+    CMRUFolder();
+    ~CMRUFolder();
 
-	//	メニューを取得する
-	HMENU CreateMenu( CMenuDrawer* pCMenuDrawer ) const;	//	うーん。pCMenuDrawerが必要なくなるといいなぁ。
-	HMENU CreateMenu( HMENU hMenu, CMenuDrawer* pCMenuDrawer ) const;	//	2010/5/21 Uchi
-	BOOL DestroyMenu( HMENU hMenu ) const;
-	
-	//	フォルダ名の一覧を教えて
-	std::vector<LPCWSTR> GetPathList() const;
+    //	メニューを取得する
+    HMENU CreateMenu(CMenuDrawer *pCMenuDrawer) const; //	うーん。pCMenuDrawerが必要なくなるといいなぁ。
+    HMENU CreateMenu(HMENU hMenu, CMenuDrawer *pCMenuDrawer) const; //	2010/5/21 Uchi
+    BOOL DestroyMenu(HMENU hMenu) const;
 
-	//	アクセス関数
-	int Length() const;	//	アイテムの数。
-	int MenuLength(void) const{ return t_min(Length(), m_cRecentFolder.GetViewCount()); }	//	メニューに表示されるアイテムの数
-	void ClearAll();					//	アイテムを削除～。
-	void Add( const WCHAR* pszFolder );	//	pszFolderを追加する。
-	const WCHAR* GetPath(int num) const;
+    //	フォルダ名の一覧を教えて
+    std::vector<LPCWSTR> GetPathList() const;
 
-protected:
-	//	共有メモリアクセス用。
-	struct DLLSHAREDATA*	m_pShareData;			//	共有メモリを参照するよ。
+    //	アクセス関数
+    int Length() const; //	アイテムの数。
+    int MenuLength(void) const
+    {
+        return t_min(Length(), m_cRecentFolder.GetViewCount());
+    } //	メニューに表示されるアイテムの数
+    void ClearAll(); //	アイテムを削除～。
+    void Add(const WCHAR *pszFolder); //	pszFolderを追加する。
+    const WCHAR *GetPath(int num) const;
 
-private:
-	CRecentFolder	m_cRecentFolder;	//履歴	//@@@ 2003.04.08 MIK
+  protected:
+    //	共有メモリアクセス用。
+    struct DLLSHAREDATA *m_pShareData; //	共有メモリを参照するよ。
+
+  private:
+    CRecentFolder m_cRecentFolder; //履歴	//@@@ 2003.04.08 MIK
 };
