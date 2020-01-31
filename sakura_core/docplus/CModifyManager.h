@@ -31,36 +31,48 @@ class CDocLine;
 class CDocLineMgr;
 
 //! Modified管理
-class CModifyManager : public TSingleton<CModifyManager>, public CDocListenerEx{
-	friend class TSingleton<CModifyManager>;
-	CModifyManager(){}
+class CModifyManager : public TSingleton<CModifyManager>, public CDocListenerEx
+{
+    friend class TSingleton<CModifyManager>;
+    CModifyManager()
+    {
+    }
 
-public:
-	void OnAfterSave(const SSaveInfo& sSaveInfo) override;
+  public:
+    void OnAfterSave(const SSaveInfo &sSaveInfo) override;
 };
 
 //! 行に付加するModified情報
-class CLineModified{
-public:
-	CLineModified() : m_nModifiedSeq(0) { }
-	int GetSeq() const { return m_nModifiedSeq; }
-	CLineModified& operator = (int seq)
-	{
-		m_nModifiedSeq = seq;
-		return *this;
-	}
-private:
-	int m_nModifiedSeq;
+class CLineModified
+{
+  public:
+    CLineModified()
+        : m_nModifiedSeq(0)
+    {
+    }
+    int GetSeq() const
+    {
+        return m_nModifiedSeq;
+    }
+    CLineModified &operator=(int seq)
+    {
+        m_nModifiedSeq = seq;
+        return *this;
+    }
+
+  private:
+    int m_nModifiedSeq;
 };
 
 //! 行全体のModified情報アクセサ
-class CModifyVisitor{
-public:
-	//状態
-	bool IsLineModified(const CDocLine* pcDocLine, int nSaveSeq) const;
-	int GetLineModifiedSeq(const CDocLine* pcDocLine) const;
-	void SetLineModified(CDocLine* pcDocLine, int nModifiedSeq);
+class CModifyVisitor
+{
+  public:
+    //状態
+    bool IsLineModified(const CDocLine *pcDocLine, int nSaveSeq) const;
+    int GetLineModifiedSeq(const CDocLine *pcDocLine) const;
+    void SetLineModified(CDocLine *pcDocLine, int nModifiedSeq);
 
-	//一括操作
-	void ResetAllModifyFlag(CDocLineMgr* pcDocLineMgr, int nSeq);	// 行変更状態をすべてリセット
+    //一括操作
+    void ResetAllModifyFlag(CDocLineMgr *pcDocLineMgr, int nSeq); // 行変更状態をすべてリセット
 };
