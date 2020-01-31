@@ -27,19 +27,22 @@
 #include "CCodeBase.h"
 #include "CUtf8.h"
 
-class CCesu8 : public CCodeBase {
-public:
-
-	//CCodeBaseインターフェース
-	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst) override{	//!< 特定コード → UNICODE    変換
-		return CUtf8::CESU8ToUnicode(cSrc, pDst);
-	}
-	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst) override{	//!< UNICODE    → 特定コード 変換
-		return CUtf8::UnicodeToCESU8(cSrc, pDst);
-	}
-	void GetBom(CMemory* pcmemBom) override;																			//!< BOMデータ取得
-// GetEolはCCodeBaseに移動	2010/6/13 Uchi
-	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar){			//!< UNICODE → Hex 変換
-		return CUtf8()._UnicodeToHex( cSrc, iSLen, pDst, psStatusbar, true );
-	}
+class CCesu8 : public CCodeBase
+{
+  public:
+    //CCodeBaseインターフェース
+    EConvertResult CodeToUnicode(const CMemory &cSrc, CNativeW *pDst) override
+    { //!< 特定コード → UNICODE    変換
+        return CUtf8::CESU8ToUnicode(cSrc, pDst);
+    }
+    EConvertResult UnicodeToCode(const CNativeW &cSrc, CMemory *pDst) override
+    { //!< UNICODE    → 特定コード 変換
+        return CUtf8::UnicodeToCESU8(cSrc, pDst);
+    }
+    void GetBom(CMemory *pcmemBom) override; //!< BOMデータ取得
+    // GetEolはCCodeBaseに移動	2010/6/13 Uchi
+    EConvertResult UnicodeToHex(const wchar_t *cSrc, const int iSLen, WCHAR *pDst, const CommonSetting_Statusbar *psStatusbar)
+    { //!< UNICODE → Hex 変換
+        return CUtf8()._UnicodeToHex(cSrc, iSLen, pDst, psStatusbar, true);
+    }
 };

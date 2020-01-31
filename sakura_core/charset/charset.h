@@ -30,24 +30,25 @@
 
 // 文字コードセット種別
 //2007.08.14 kobake CODE_ERROR, CODE_DEFAULT 追加
-enum ECodeType {
-	CODE_SJIS,						//!< SJIS				(MS-CP932(Windows-31J), シフトJIS(Shift_JIS))
-	CODE_JIS,						//!< JIS				(MS-CP5022x(ISO-2022-JP-MS)ではない)
-	CODE_EUC,						//!< EUC				(MS-CP51932, eucJP-ms(eucJP-open)ではない)
-	CODE_UNICODE,					//!< Unicode			(UTF-16 LittleEndian(UCS-2))
-	CODE_UTF8,						//!< UTF-8(UCS-2)
-	CODE_UTF7,						//!< UTF-7(UCS-2)
-	CODE_UNICODEBE,					//!< Unicode BigEndian	(UTF-16 BigEndian(UCS-2))
-	CODE_CESU8,						//!< CESU-8
-	CODE_LATIN1,					//!< Latin1				(Latin1, 欧文, Windows-1252, Windows Codepage 1252 West European)
-	CODE_CODEMAX,
-	CODE_CPACP      = 90,
-	CODE_CPOEM      = 91,
-	CODE_AUTODETECT	= 99,			//!< 文字コード自動判別
-	CODE_ERROR      = -1,			//!< エラー
-	CODE_NONE       = -1,			//!< 未検出
-	CODE_DEFAULT    = CODE_UTF8,	//!< デフォルトの文字コード
-	/*
+enum ECodeType
+{
+    CODE_SJIS, //!< SJIS				(MS-CP932(Windows-31J), シフトJIS(Shift_JIS))
+    CODE_JIS, //!< JIS				(MS-CP5022x(ISO-2022-JP-MS)ではない)
+    CODE_EUC, //!< EUC				(MS-CP51932, eucJP-ms(eucJP-open)ではない)
+    CODE_UNICODE, //!< Unicode			(UTF-16 LittleEndian(UCS-2))
+    CODE_UTF8, //!< UTF-8(UCS-2)
+    CODE_UTF7, //!< UTF-7(UCS-2)
+    CODE_UNICODEBE, //!< Unicode BigEndian	(UTF-16 BigEndian(UCS-2))
+    CODE_CESU8, //!< CESU-8
+    CODE_LATIN1, //!< Latin1				(Latin1, 欧文, Windows-1252, Windows Codepage 1252 West European)
+    CODE_CODEMAX,
+    CODE_CPACP      = 90,
+    CODE_CPOEM      = 91,
+    CODE_AUTODETECT = 99, //!< 文字コード自動判別
+    CODE_ERROR      = -1, //!< エラー
+    CODE_NONE       = -1, //!< 未検出
+    CODE_DEFAULT    = CODE_UTF8, //!< デフォルトの文字コード
+    /*
 		- MS-CP50220 
 			Unicode から cp50220 への変換時に、
 			JIS X 0201 片仮名は JIS X 0208 の片仮名に置換される
@@ -76,7 +77,7 @@ bool IsValidCodeType(int code);
 //!有効な文字コードセットならtrue。ただし、SJISは除く(ファイル一覧に文字コードを[]付きで表示のため)
 inline bool IsValidCodeTypeExceptSJIS(int code)
 {
-	return IsValidCodeType(code) && code!=CODE_SJIS;
+    return IsValidCodeType(code) && code != CODE_SJIS;
 }
 
 // 2010/6/21 Uchi 削除
@@ -94,48 +95,63 @@ inline bool IsValidCodeTypeExceptSJIS(int code)
 //}
 inline bool IsValidCodePageEx(int code)
 {
-	return 12000 == code
-		|| 12001 == code
-		|| ::IsValidCodePage(code);
+    return 12000 == code || 12001 == code || ::IsValidCodePage(code);
 }
 
 void InitCodeSet();
 inline bool IsValidCodeOrCPType(int code)
 {
-	return IsValidCodeType(code) || CODE_CPACP == code || CODE_CPOEM == code || (CODE_CODEMAX <= code && IsValidCodePageEx(code));
+    return IsValidCodeType(code) || CODE_CPACP == code || CODE_CPOEM == code || (CODE_CODEMAX <= code && IsValidCodePageEx(code));
 }
 inline bool IsValidCodeOrCPTypeExceptSJIS(int code)
 {
-	return IsValidCodeTypeExceptSJIS(code) || CODE_CPACP == code || CODE_CPOEM == code || (CODE_CODEMAX <= code && IsValidCodePageEx(code));
+    return IsValidCodeTypeExceptSJIS(code) || CODE_CPACP == code || CODE_CPOEM == code || (CODE_CODEMAX <= code && IsValidCodePageEx(code));
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           名前                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-class CCodeTypeName{
-public:
-	CCodeTypeName(ECodeType eCodeType) : m_eCodeType(eCodeType) { InitCodeSet(); }
-	CCodeTypeName(int eCodeType) : m_eCodeType((ECodeType)eCodeType) { InitCodeSet(); }
-	ECodeType GetCode() const { return m_eCodeType; }
-	LPCWSTR	Normal() const;
-	LPCWSTR	Short() const;
-	LPCWSTR	Bracket() const;
-	bool	UseBom();
-	bool	CanDefault();
-	bool	IsBomDefOn();
-private:
-	ECodeType m_eCodeType;
+class CCodeTypeName
+{
+  public:
+    CCodeTypeName(ECodeType eCodeType)
+        : m_eCodeType(eCodeType)
+    {
+        InitCodeSet();
+    }
+    CCodeTypeName(int eCodeType)
+        : m_eCodeType((ECodeType)eCodeType)
+    {
+        InitCodeSet();
+    }
+    ECodeType GetCode() const
+    {
+        return m_eCodeType;
+    }
+    LPCWSTR Normal() const;
+    LPCWSTR Short() const;
+    LPCWSTR Bracket() const;
+    bool UseBom();
+    bool CanDefault();
+    bool IsBomDefOn();
+
+  private:
+    ECodeType m_eCodeType;
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      コンボボックス                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-class CCodeTypesForCombobox{
-public:
-	CCodeTypesForCombobox() { InitCodeSet(); }
-	int			GetCount() const;
-	ECodeType	GetCode(int nIndex) const;
-	LPCWSTR		GetName(int nIndex) const;
+class CCodeTypesForCombobox
+{
+  public:
+    CCodeTypesForCombobox()
+    {
+        InitCodeSet();
+    }
+    int GetCount() const;
+    ECodeType GetCode(int nIndex) const;
+    LPCWSTR GetName(int nIndex) const;
 };

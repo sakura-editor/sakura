@@ -31,18 +31,19 @@
  * 
  * 日本語コードセット判別の詳細を隠ぺいするための仲介クラスです。
  */
-class CCodeMediator final {
-public:
-	explicit CCodeMediator(const SEncodingConfig &encodingConfig) noexcept
-		: m_sEncodingConfig(encodingConfig)
-	{
-	}
+class CCodeMediator final
+{
+  public:
+    explicit CCodeMediator(const SEncodingConfig &encodingConfig) noexcept
+        : m_sEncodingConfig(encodingConfig)
+    {
+    }
 
-	/* 日本語コードセット判別 */
-	ECodeType CheckKanjiCode(const char* buff, size_t size) noexcept;
-	/* ファイルの日本語コードセット判別 */
-	ECodeType CheckKanjiCodeOfFile(const WCHAR* pszFile);
+    /* 日本語コードセット判別 */
+    ECodeType CheckKanjiCode(const char *buff, size_t size) noexcept;
+    /* ファイルの日本語コードセット判別 */
+    ECodeType CheckKanjiCodeOfFile(const WCHAR *pszFile);
 
-private:
-	const SEncodingConfig& m_sEncodingConfig;
+  private:
+    const SEncodingConfig &m_sEncodingConfig;
 };

@@ -28,18 +28,28 @@
 #include "CUnicode.h"
 #include "CEol.h"
 
-class CUnicodeBe : public CCodeBase{
-public:
-	//CCodeBaseインターフェース
-	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst) override{ return UnicodeBEToUnicode(cSrc, pDst); }	//!< 特定コード → UNICODE    変換
-	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst) override{ return UnicodeToUnicodeBE(cSrc, pDst); }	//!< UNICODE    → 特定コード 変換
-	void GetBom(CMemory* pcmemBom) override;	//!< BOMデータ取得
-	void GetEol(CMemory* pcmemEol, EEolType eEolType) override;	//!< 改行データ取得
+class CUnicodeBe : public CCodeBase
+{
+  public:
+    //CCodeBaseインターフェース
+    EConvertResult CodeToUnicode(const CMemory &cSrc, CNativeW *pDst) override
+    {
+        return UnicodeBEToUnicode(cSrc, pDst);
+    } //!< 特定コード → UNICODE    変換
+    EConvertResult UnicodeToCode(const CNativeW &cSrc, CMemory *pDst) override
+    {
+        return UnicodeToUnicodeBE(cSrc, pDst);
+    } //!< UNICODE    → 特定コード 変換
+    void GetBom(CMemory *pcmemBom) override; //!< BOMデータ取得
+    void GetEol(CMemory *pcmemEol, EEolType eEolType) override; //!< 改行データ取得
 
-public:
-
-	inline static EConvertResult UnicodeBEToUnicode(const CMemory& cSrc, CNativeW* pDst)
-		{ return CUnicode::_UnicodeToUnicode_in(cSrc, pDst, true); }	// UnicodeBE → Unicodeコード変換 //2007.08.13 kobake 追加
-	inline static EConvertResult UnicodeToUnicodeBE(const CNativeW& cSrc, CMemory* pDst)
-		{ return CUnicode::_UnicodeToUnicode_out(cSrc, pDst, true); }	// Unicode   → UnicodeBEコード変換
+  public:
+    inline static EConvertResult UnicodeBEToUnicode(const CMemory &cSrc, CNativeW *pDst)
+    {
+        return CUnicode::_UnicodeToUnicode_in(cSrc, pDst, true);
+    } // UnicodeBE → Unicodeコード変換 //2007.08.13 kobake 追加
+    inline static EConvertResult UnicodeToUnicodeBE(const CNativeW &cSrc, CMemory *pDst)
+    {
+        return CUnicode::_UnicodeToUnicode_out(cSrc, pDst, true);
+    } // Unicode   → UnicodeBEコード変換
 };
