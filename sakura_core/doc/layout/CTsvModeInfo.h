@@ -30,23 +30,24 @@
 #include "basis/SakuraBasis.h"
 
 // TSVモード
-#define TSV_MODE_NONE	0	// TSVモードなし
-#define TSV_MODE_TSV	1	// TSVモード
-#define TSV_MODE_CSV	2	// CSVモード
+#define TSV_MODE_NONE 0 // TSVモードなし
+#define TSV_MODE_TSV 1 // TSVモード
+#define TSV_MODE_CSV 2 // CSVモード
 
 class CDocLineMgr;
 
 // TSVモード情報
-class CTsvModeInfo {
-	
-public:
-	void CalcTabLength(CDocLineMgr* cDocLineMgr);	// タブ位置を再計算する
-	void CalcTabLength(LPCWSTR pLine);	// タブ位置を再計算する（一行）
-	CLayoutInt GetActualTabLength(CLayoutInt pos, CLayoutInt px) const;	// 指定したレイアウト位置のタブ幅を取得（折り返しは考慮しない）
+class CTsvModeInfo
+{
 
-	int m_nTsvMode;
-	CLayoutInt m_nMaxCharLayoutX;
+  public:
+    void CalcTabLength(CDocLineMgr *cDocLineMgr); // タブ位置を再計算する
+    void CalcTabLength(LPCWSTR pLine); // タブ位置を再計算する（一行）
+    CLayoutInt GetActualTabLength(CLayoutInt pos, CLayoutInt px) const; // 指定したレイアウト位置のタブ幅を取得（折り返しは考慮しない）
 
-private:
-	std::vector<int> m_tabLength;
+    int m_nTsvMode;
+    CLayoutInt m_nMaxCharLayoutX;
+
+  private:
+    std::vector<int> m_tabLength;
 };
