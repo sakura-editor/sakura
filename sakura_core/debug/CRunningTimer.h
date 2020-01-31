@@ -51,37 +51,37 @@
 */
 class CRunningTimer
 {
-public:
-	/*
+  public:
+    /*
 	||  Constructors
 	*/
-	CRunningTimer( const char* Text = NULL);
-	~CRunningTimer();
+    CRunningTimer(const char *Text = NULL);
+    ~CRunningTimer();
 
-	/*
+    /*
 	|| 関数
 	*/
-	void Reset();
-	DWORD Read();
-	
-	void WriteTrace(const char* msg = "") const;
+    void Reset();
+    DWORD Read();
 
-protected:
-	DWORD	m_nStartTime;
-	char	m_szText[100];	//!< タイマー名
-	int		m_nDeapth;	//!< このオブジェクトのネストの深さ
+    void WriteTrace(const char *msg = "") const;
+
+  protected:
+    DWORD m_nStartTime;
+    char m_szText[100]; //!< タイマー名
+    int m_nDeapth; //!< このオブジェクトのネストの深さ
 
 #ifdef _DEBUG
-	static int m_nNestCount;
+    static int m_nNestCount;
 #endif
 };
 
 //	Oct. 16, 2002 genta
 //	#ifdef _DEBUG～#endifで逐一囲まなくても簡単にタイマーのON/OFFを行うためのマクロ
 #if defined(_DEBUG) && defined(TIME_MEASURE)
-  #define MY_TRACETIME(c,m) (c).WriteTrace(m)
-  #define MY_RUNNINGTIMER(c,m) CRunningTimer c(m)
+#define MY_TRACETIME(c, m) (c).WriteTrace(m)
+#define MY_RUNNINGTIMER(c, m) CRunningTimer c(m)
 #else
-  #define MY_TRACETIME(c,m)
-  #define MY_RUNNINGTIMER(c,m)
+#define MY_TRACETIME(c, m)
+#define MY_RUNNINGTIMER(c, m)
 #endif

@@ -33,28 +33,30 @@
 #endif
 
 #ifdef _DEBUG
-	void debug_output(const char* str, ...);
-	void debug_exit();
-	void debug_exit2(const char* file, int line, const char* exp);
-	void warning_point();
+void debug_output(const char *str, ...);
+void debug_exit();
+void debug_exit2(const char *file, int line, const char *exp);
+void warning_point();
 
-	#define assert(exp) \
-	{ \
-		if(!(exp)){ \
-			debug_output("!assert: %hs(%d): %hs\n", __FILE__, __LINE__, #exp); \
-			debug_exit2(__FILE__, __LINE__, #exp); \
-		} \
-	}
+#define assert(exp)                                                            \
+    {                                                                          \
+        if (!(exp))                                                            \
+        {                                                                      \
+            debug_output("!assert: %hs(%d): %hs\n", __FILE__, __LINE__, #exp); \
+            debug_exit2(__FILE__, __LINE__, #exp);                             \
+        }                                                                      \
+    }
 
-	#define assert_warning(exp) \
-	{ \
-		if(!(exp)){ \
-			debug_output("!warning: %hs(%d): %hs\n", __FILE__, __LINE__, #exp); \
-			warning_point(); \
-		} \
-	}
+#define assert_warning(exp)                                                     \
+    {                                                                           \
+        if (!(exp))                                                             \
+        {                                                                       \
+            debug_output("!warning: %hs(%d): %hs\n", __FILE__, __LINE__, #exp); \
+            warning_point();                                                    \
+        }                                                                       \
+    }
 
 #else
-	#define assert(exp)
-	#define assert_warning(exp)
+#define assert(exp)
+#define assert_warning(exp)
 #endif
