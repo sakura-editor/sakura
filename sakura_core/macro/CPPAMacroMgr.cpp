@@ -35,48 +35,50 @@ CPPAMacroMgr::~CPPAMacroMgr()
 
 	@date 2007.07.20 genta flags追加
 */
-bool CPPAMacroMgr::ExecKeyMacro( CEditView* pcEditView, int flags ) const
+bool CPPAMacroMgr::ExecKeyMacro(CEditView *pcEditView, int flags) const
 {
-	m_cPPA.SetSource( to_achar(m_cBuffer.GetStringPtr()) );
-	return m_cPPA.Execute(pcEditView, flags);
+    m_cPPA.SetSource(to_achar(m_cBuffer.GetStringPtr()));
+    return m_cPPA.Execute(pcEditView, flags);
 }
 
 /*! キーボードマクロの読み込み（ファイルから）
 	エラーメッセージは出しません。呼び出し側でよきにはからってください。
 */
-BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
+BOOL CPPAMacroMgr::LoadKeyMacro(HINSTANCE hInstance, const WCHAR *pszPath)
 {
-	CTextInputStream in( pszPath );
-	if(!in){
-		m_nReady = false;
-		return FALSE;
-	}
+    CTextInputStream in(pszPath);
+    if (!in)
+    {
+        m_nReady = false;
+        return FALSE;
+    }
 
-	CNativeW cmemWork;
+    CNativeW cmemWork;
 
-	// バッファ（cmemWork）にファイル内容を読み込み、m_cPPAに渡す。
-	while( in ){
-		wstring szLine = in.ReadLineW();
-		szLine += L"\n";
-		cmemWork.AppendString(szLine.c_str());
-	}
-	in.Close();
+    // バッファ（cmemWork）にファイル内容を読み込み、m_cPPAに渡す。
+    while (in)
+    {
+        wstring szLine = in.ReadLineW();
+        szLine += L"\n";
+        cmemWork.AppendString(szLine.c_str());
+    }
+    in.Close();
 
-	m_cBuffer.SetNativeData( cmemWork );	//	m_cBufferにコピー
+    m_cBuffer.SetNativeData(cmemWork); //	m_cBufferにコピー
 
-	m_nReady = true;
-	return TRUE;
+    m_nReady = true;
+    return TRUE;
 }
 
 /*! キーボードマクロの読み込み（文字列から）
 	エラーメッセージは出しません。呼び出し側でよきにはからってください。
 */
-BOOL CPPAMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const WCHAR* pszCode )
+BOOL CPPAMacroMgr::LoadKeyMacroStr(HINSTANCE hInstance, const WCHAR *pszCode)
 {
-	m_cBuffer.SetNativeData( pszCode );	//	m_cBufferにコピー
+    m_cBuffer.SetNativeData(pszCode); //	m_cBufferにコピー
 
-	m_nReady = true;
-	return TRUE;
+    m_nReady = true;
+    return TRUE;
 }
 
 //	From Here Apr. 29, 2002 genta
@@ -89,12 +91,13 @@ BOOL CPPAMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const WCHAR* pszCode )
 		そのため，過ったオブジェクト生成を行わないために拡張子チェックは必須．
 
 */
-CMacroManagerBase* CPPAMacroMgr::Creator(const WCHAR* ext)
+CMacroManagerBase *CPPAMacroMgr::Creator(const WCHAR *ext)
 {
-	if( wcscmp( ext, L"ppa" ) == 0 ){
-		return new CPPAMacroMgr;
-	}
-	return NULL;
+    if (wcscmp(ext, L"ppa") == 0)
+    {
+        return new CPPAMacroMgr;
+    }
+    return NULL;
 }
 
 /*!	CPPAMacroManagerの登録
@@ -103,10 +106,11 @@ CMacroManagerBase* CPPAMacroMgr::Creator(const WCHAR* ext)
 
 	@date 2004.01.31 genta RegisterExtの廃止のためRegisterCreatorに置き換え
 */
-void CPPAMacroMgr::declare (void)
+void CPPAMacroMgr::declare(void)
 {
-	if( DLL_SUCCESS == m_cPPA.InitDll() ){
-		CMacroFactory::getInstance()->RegisterCreator( Creator );
-	}
+    if (DLL_SUCCESS == m_cPPA.InitDll())
+    {
+        CMacroFactory::getInstance()->RegisterCreator(Creator);
+    }
 }
 //	To Here Apr. 29, 2002 genta

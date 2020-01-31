@@ -36,7 +36,8 @@
 static const WCHAR NULSTR[] = L"";
 
 CMacroFactory::CMacroFactory()
-{}
+{
+}
 
 /*!
 	与えられた拡張子をmapのkeyに変換する
@@ -49,14 +50,15 @@ CMacroFactory::CMacroFactory()
 */
 std::wstring CMacroFactory::Ext2Key(const WCHAR *ext)
 {
-	if( ext == NULL ){
-		ext = NULSTR;
-	}
-	
-	std::wstring key = ext;
-	std::transform( key.begin(), key.end(), key.begin(), _totlower);
+    if (ext == NULL)
+    {
+        ext = NULSTR;
+    }
 
-	return key;
+    std::wstring key = ext;
+    std::transform(key.begin(), key.end(), key.begin(), _totlower);
+
+    return key;
 }
 
 /*!
@@ -71,14 +73,15 @@ std::wstring CMacroFactory::Ext2Key(const WCHAR *ext)
 
 	@date 2002.08.25 genta 追加
 */
-bool CMacroFactory::RegisterCreator( Creator f )
+bool CMacroFactory::RegisterCreator(Creator f)
 {
-	if( f == NULL ){
-		return false;
-	}
+    if (f == NULL)
+    {
+        return false;
+    }
 
-	m_mMacroCreators.push_back( f );
-	return true;
+    m_mMacroCreators.push_back(f);
+    return true;
 }
 
 /*!
@@ -86,25 +89,28 @@ bool CMacroFactory::RegisterCreator( Creator f )
 	
 	@param f [in] 登録解除するCreator
 */
-bool CMacroFactory::Unregister( Creator f )
+bool CMacroFactory::Unregister(Creator f)
 {
-	//	Creator Listからの削除
-	auto c_it = m_mMacroCreators.begin();
-	while( c_it != m_mMacroCreators.end() ){
-		if( *c_it == f ){
-			//	いきなり削除するとiteratorが無効になるので，
-			//	iteratorを1つ進めてから現在位置を削除する．
-			auto tmp_it = c_it++;
-			m_mMacroCreators.erase( tmp_it );
-			//	重複登録されている場合を考慮して，
-			//	1つ見つかっても最後までチェックする
-		}
-		else {
-			++ c_it;
-		}
-	}
-	
-	return true;
+    //	Creator Listからの削除
+    auto c_it = m_mMacroCreators.begin();
+    while (c_it != m_mMacroCreators.end())
+    {
+        if (*c_it == f)
+        {
+            //	いきなり削除するとiteratorが無効になるので，
+            //	iteratorを1つ進めてから現在位置を削除する．
+            auto tmp_it = c_it++;
+            m_mMacroCreators.erase(tmp_it);
+            //	重複登録されている場合を考慮して，
+            //	1つ見つかっても最後までチェックする
+        }
+        else
+        {
+            ++c_it;
+        }
+    }
+
+    return true;
 }
 
 /*
@@ -116,19 +122,22 @@ bool CMacroFactory::Unregister( Creator f )
 	@pararm ext [in] 拡張子
 	@return Macroオブジェクト。適切なものが見つからなければNULL。
 */
-CMacroManagerBase* CMacroFactory::Create(const WCHAR* ext)
+CMacroManagerBase *CMacroFactory::Create(const WCHAR *ext)
 {
-	std::wstring key = Ext2Key( ext );
+    std::wstring key = Ext2Key(ext);
 
-	//	Creatorを順に試す
-	for( auto c_it = m_mMacroCreators.begin();
-		c_it != m_mMacroCreators.end(); ++ c_it ){
-		CMacroManagerBase* pobj = (*c_it)(key.c_str());
-		if( pobj != NULL ){
-			DEBUG_TRACE( L"CMacroFactory::Create/ Answered for (%s)\n", key.c_str() );
-			return pobj;
-		}
-	}
-	
-	return NULL;
+    //	Creatorを順に試す
+    for (auto c_it = m_mMacroCreators.begin();
+         c_it != m_mMacroCreators.end();
+         ++c_it)
+    {
+        CMacroManagerBase *pobj = (*c_it)(key.c_str());
+        if (pobj != NULL)
+        {
+            DEBUG_TRACE(L"CMacroFactory::Create/ Answered for (%s)\n", key.c_str());
+            return pobj;
+        }
+    }
+
+    return NULL;
 }

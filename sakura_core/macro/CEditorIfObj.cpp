@@ -33,22 +33,22 @@
 //コマンド情報を取得する
 MacroFuncInfoArray CEditorIfObj::GetMacroCommandInfo() const
 {
-	return CSMacroMgr::m_MacroFuncInfoCommandArr;
+    return CSMacroMgr::m_MacroFuncInfoCommandArr;
 }
 //関数情報を取得する
 MacroFuncInfoArray CEditorIfObj::GetMacroFuncInfo() const
 {
-	return CSMacroMgr::m_MacroFuncInfoArr;
+    return CSMacroMgr::m_MacroFuncInfoArr;
 }
 
 //関数を処理する
-bool CEditorIfObj::HandleFunction(CEditView* View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result)
+bool CEditorIfObj::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result)
 {
-	return CMacro::HandleFunction( View, ID, Arguments, ArgSize, Result );
+    return CMacro::HandleFunction(View, ID, Arguments, ArgSize, Result);
 }
 
 //コマンドを処理する
-bool CEditorIfObj::HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize)
+bool CEditorIfObj::HandleCommand(CEditView *View, EFunctionCode ID, const WCHAR *Arguments[], const int ArgLengths[], const int ArgSize)
 {
-	return CMacro::HandleCommand( View, ID, Arguments, ArgLengths, ArgSize );
+    return CMacro::HandleCommand(View, ID, Arguments, ArgLengths, ArgSize);
 }
