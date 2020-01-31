@@ -17,7 +17,8 @@
 #include "mem/CMemory.h"
 
 CDocLine::CDocLine()
-: m_pPrev( NULL ), m_pNext( NULL )
+    : m_pPrev(NULL)
+    , m_pNext(NULL)
 {
 }
 
@@ -33,58 +34,64 @@ CDocLine::~CDocLine()
 */
 bool CDocLine::IsEmptyLine() const
 {
-	const wchar_t* pLine = GetPtr();
-	int nLineLen = GetLengthWithoutEOL();
-	int i;
-	for ( i = 0; i < nLineLen; i++ ){
-		if (pLine[i] != L' ' && pLine[i] != L'\t'){
-			return false;	//	スペースでもタブでもない文字があったらfalse。
-		}
-	}
-	return true;	//	すべてスペースかタブだけだったらtrue。
+    const wchar_t *pLine = GetPtr();
+    int nLineLen         = GetLengthWithoutEOL();
+    int i;
+    for (i = 0; i < nLineLen; i++)
+    {
+        if (pLine[i] != L' ' && pLine[i] != L'\t')
+        {
+            return false; //	スペースでもタブでもない文字があったらfalse。
+        }
+    }
+    return true; //	すべてスペースかタブだけだったらtrue。
 }
 
 void CDocLine::SetEol()
 {
-	const wchar_t* pData = m_cLine.GetStringPtr();
-	int nLength = m_cLine.GetStringLength();
-	//改行コード設定
-	const wchar_t* p = &pData[nLength] - 1;
-	while(p>=pData && WCODE::IsLineDelimiter(*p, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol))p--;
-	p++;
-	if(p>=pData){
-		m_cEol.SetTypeByString(p, &pData[nLength]-p);
-	}
-	else{
-		m_cEol = EOL_NONE;
-	}
+    const wchar_t *pData = m_cLine.GetStringPtr();
+    int nLength          = m_cLine.GetStringLength();
+    //改行コード設定
+    const wchar_t *p = &pData[nLength] - 1;
+    while (p >= pData && WCODE::IsLineDelimiter(*p, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol))
+        p--;
+    p++;
+    if (p >= pData)
+    {
+        m_cEol.SetTypeByString(p, &pData[nLength] - p);
+    }
+    else
+    {
+        m_cEol = EOL_NONE;
+    }
 }
 
-void CDocLine::SetDocLineString(const wchar_t* pData, int nLength)
+void CDocLine::SetDocLineString(const wchar_t *pData, int nLength)
 {
-	m_cLine.SetString(pData, nLength);
-	SetEol();
+    m_cLine.SetString(pData, nLength);
+    SetEol();
 }
 
-void CDocLine::SetDocLineString(const CNativeW& cData)
+void CDocLine::SetDocLineString(const CNativeW &cData)
 {
-	SetDocLineString(cData.GetStringPtr(), cData.GetStringLength());
+    SetDocLineString(cData.GetStringPtr(), cData.GetStringLength());
 }
 
-void CDocLine::SetDocLineStringMove(CNativeW* pcDataFrom)
+void CDocLine::SetDocLineStringMove(CNativeW *pcDataFrom)
 {
-	m_cLine.swap(*pcDataFrom);
-	SetEol();
+    m_cLine.swap(*pcDataFrom);
+    SetEol();
 }
 
-void CDocLine::SetEol(const CEol& cEol, COpeBlk* pcOpeBlk)
+void CDocLine::SetEol(const CEol &cEol, COpeBlk *pcOpeBlk)
 {
-	//改行コードを削除
-	for(int i=0;i<(Int)m_cEol.GetLen();i++){
-		m_cLine.Chop();
-	}
+    //改行コードを削除
+    for (int i = 0; i < (Int)m_cEol.GetLen(); i++)
+    {
+        m_cLine.Chop();
+    }
 
-	//改行コードを挿入
-	m_cEol = cEol;
-	m_cLine += cEol.GetValue2();
+    //改行コードを挿入
+    m_cEol = cEol;
+    m_cLine += cEol.GetValue2();
 }
