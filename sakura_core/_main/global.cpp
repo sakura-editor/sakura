@@ -20,22 +20,22 @@
 #include "CNormalProcess.h"
 
 //2007.10.02 kobake CEditWndのインスタンスへのポインタをここに保存しておく
-CEditWnd* g_pcEditWnd = NULL;
+CEditWnd *g_pcEditWnd = NULL;
 
 /*! 選択領域描画用パラメータ */
-const COLORREF	SELECTEDAREA_RGB = RGB( 255, 255, 255 );
-const int		SELECTEDAREA_ROP2 = R2_XORPEN;
+const COLORREF SELECTEDAREA_RGB = RGB(255, 255, 255);
+const int SELECTEDAREA_ROP2     = R2_XORPEN;
 
 HINSTANCE G_AppInstance()
 {
-	return CProcess::getInstance()->GetProcessInstance();
+    return CProcess::getInstance()->GetProcessInstance();
 }
 
 /*!
  * コンストラクタ
  */
 SSearchOption::SSearchOption() noexcept
-	: SSearchOption(false, false, false)
+    : SSearchOption(false, false, false)
 {
 }
 
@@ -43,22 +43,21 @@ SSearchOption::SSearchOption() noexcept
  * コンストラクタ(値指定)
  */
 SSearchOption::SSearchOption(
-	bool _bRegularExp,
-	bool _bLoHiCase,
-	bool _bWordOnly
-) noexcept
-	: bRegularExp(_bRegularExp)
-	, bLoHiCase(_bLoHiCase)
-	, bWordOnly(_bWordOnly)
+    bool _bRegularExp,
+    bool _bLoHiCase,
+    bool _bWordOnly) noexcept
+    : bRegularExp(_bRegularExp)
+    , bLoHiCase(_bLoHiCase)
+    , bWordOnly(_bWordOnly)
 {
 }
 
 //! リセットする(全部falseにする)
 void SSearchOption::Reset()
 {
-	bRegularExp = false;
-	bLoHiCase = false;
-	bWordOnly = false;
+    bRegularExp = false;
+    bLoHiCase   = false;
+    bWordOnly   = false;
 }
 
 /*!
@@ -68,12 +67,11 @@ void SSearchOption::Reset()
  * @retval true 等しい
  * @retval false 等しくない
  */
-bool SSearchOption::operator == (const SSearchOption& rhs) const noexcept
+bool SSearchOption::operator==(const SSearchOption &rhs) const noexcept
 {
-	if (this == &rhs) return true;
-	return bRegularExp == rhs.bRegularExp
-		&& bLoHiCase == rhs.bLoHiCase
-		&& bWordOnly == rhs.bWordOnly;
+    if (this == &rhs)
+        return true;
+    return bRegularExp == rhs.bRegularExp && bLoHiCase == rhs.bLoHiCase && bWordOnly == rhs.bWordOnly;
 }
 
 /*!
@@ -83,7 +81,7 @@ bool SSearchOption::operator == (const SSearchOption& rhs) const noexcept
  * @retval true 等しくない
  * @retval false 等しい
  */
-bool SSearchOption::operator != (const SSearchOption& rhs) const noexcept
+bool SSearchOption::operator!=(const SSearchOption &rhs) const noexcept
 {
-	return !(*this == rhs);
+    return !(*this == rhs);
 }

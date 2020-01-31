@@ -21,7 +21,7 @@
 #include "CCommandLine.h"
 #include "env/CShareData_IO.h"
 #include "debug/CRunningTimer.h"
-#include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ヘッダ整理
+#include "sakura_rc.h" /// IDD_EXITTING 2002/2/10 aroka ヘッダ整理
 
 //-------------------------------------------------
 
@@ -39,91 +39,99 @@
 */
 bool CControlProcess::InitializeProcess()
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CControlProcess::InitializeProcess" );
+    MY_RUNNINGTIMER(cRunningTimer, "CControlProcess::InitializeProcess");
 
-	// アプリケーション実行検出用(インストーラで使用)
-	m_hMutex = ::CreateMutex( NULL, FALSE, GSTR_MUTEX_SAKURA );
-	if( NULL == m_hMutex ){
-		ErrorBeep();
-		TopErrorMessage( NULL, L"CreateMutex()失敗。\n終了します。" );
-		return false;
-	}
+    // アプリケーション実行検出用(インストーラで使用)
+    m_hMutex = ::CreateMutex(NULL, FALSE, GSTR_MUTEX_SAKURA);
+    if (NULL == m_hMutex)
+    {
+        ErrorBeep();
+        TopErrorMessage(NULL, L"CreateMutex()失敗。\n終了します。");
+        return false;
+    }
 
-	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
+    const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
 
-	// 初期化完了イベントを作成する
-	std::wstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
-	strInitEvent += pszProfileName;
-	m_hEventCPInitialized = ::CreateEvent( NULL, TRUE, FALSE, strInitEvent.c_str() );
-	if( NULL == m_hEventCPInitialized )
-	{
-		ErrorBeep();
-		TopErrorMessage( NULL, L"CreateEvent()失敗。\n終了します。" );
-		return false;
-	}
+    // 初期化完了イベントを作成する
+    std::wstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
+    strInitEvent += pszProfileName;
+    m_hEventCPInitialized = ::CreateEvent(NULL, TRUE, FALSE, strInitEvent.c_str());
+    if (NULL == m_hEventCPInitialized)
+    {
+        ErrorBeep();
+        TopErrorMessage(NULL, L"CreateEvent()失敗。\n終了します。");
+        return false;
+    }
 
-	/* コントロールプロセスの目印 */
-	std::wstring strCtrlProcEvent = GSTR_MUTEX_SAKURA_CP;
-	strCtrlProcEvent += pszProfileName;
-	m_hMutexCP = ::CreateMutex( NULL, TRUE, strCtrlProcEvent.c_str() );
-	if( NULL == m_hMutexCP ){
-		ErrorBeep();
-		TopErrorMessage( NULL, L"CreateMutex()失敗。\n終了します。" );
-		return false;
-	}
-	if( ERROR_ALREADY_EXISTS == ::GetLastError() ){
-		return false;
-	}
-	
-	/* 共有メモリを初期化 */
-	if( !CProcess::InitializeProcess() ){
-		return false;
-	}
+    /* コントロールプロセスの目印 */
+    std::wstring strCtrlProcEvent = GSTR_MUTEX_SAKURA_CP;
+    strCtrlProcEvent += pszProfileName;
+    m_hMutexCP = ::CreateMutex(NULL, TRUE, strCtrlProcEvent.c_str());
+    if (NULL == m_hMutexCP)
+    {
+        ErrorBeep();
+        TopErrorMessage(NULL, L"CreateMutex()失敗。\n終了します。");
+        return false;
+    }
+    if (ERROR_ALREADY_EXISTS == ::GetLastError())
+    {
+        return false;
+    }
 
-	// コントロールプロセスのカレントディレクトリをシステムディレクトリに変更
-	WCHAR szDir[_MAX_PATH];
-	::GetSystemDirectory( szDir, _countof(szDir) );
-	::SetCurrentDirectory( szDir );
+    /* 共有メモリを初期化 */
+    if (!CProcess::InitializeProcess())
+    {
+        return false;
+    }
 
-	/* 共有データのロード */
-	// 2007.05.19 ryoji 「設定を保存して終了する」オプション処理（sakuext連携用）を追加
-	
-	if( !CShareData_IO::LoadShareData() || CCommandLine::getInstance()->IsWriteQuit() ){
-		/* レジストリ項目 作成 */
-		CShareData_IO::SaveShareData();
-		if( CCommandLine::getInstance()->IsWriteQuit() ){
-			return false;
-		}
-	}
+    // コントロールプロセスのカレントディレクトリをシステムディレクトリに変更
+    WCHAR szDir[_MAX_PATH];
+    ::GetSystemDirectory(szDir, _countof(szDir));
+    ::SetCurrentDirectory(szDir);
 
-	/* 言語を選択する */
-	CSelectLang::ChangeLang( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );
-	RefreshString();
+    /* 共有データのロード */
+    // 2007.05.19 ryoji 「設定を保存して終了する」オプション処理（sakuext連携用）を追加
 
-	MY_TRACETIME( cRunningTimer, "Before new CControlTray" );
+    if (!CShareData_IO::LoadShareData() || CCommandLine::getInstance()->IsWriteQuit())
+    {
+        /* レジストリ項目 作成 */
+        CShareData_IO::SaveShareData();
+        if (CCommandLine::getInstance()->IsWriteQuit())
+        {
+            return false;
+        }
+    }
 
-	/* タスクトレイにアイコン作成 */
-	m_pcTray = new CControlTray;
+    /* 言語を選択する */
+    CSelectLang::ChangeLang(GetDllShareData().m_Common.m_sWindow.m_szLanguageDll);
+    RefreshString();
 
-	MY_TRACETIME( cRunningTimer, "After new CControlTray" );
+    MY_TRACETIME(cRunningTimer, "Before new CControlTray");
 
-	HWND hwnd = m_pcTray->Create( GetProcessInstance() );
-	if( !hwnd ){
-		ErrorBeep();
-		TopErrorMessage( NULL, LS(STR_ERR_CTRLMTX3) );
-		return false;
-	}
-	SetMainWindow(hwnd);
-	GetDllShareData().m_sHandles.m_hwndTray = hwnd;
+    /* タスクトレイにアイコン作成 */
+    m_pcTray = new CControlTray;
 
-	// 初期化完了イベントをシグナル状態にする
-	if( !::SetEvent( m_hEventCPInitialized ) ){
-		ErrorBeep();
-		TopErrorMessage( NULL, LS(STR_ERR_CTRLMTX4) );
-		return false;
-	}
+    MY_TRACETIME(cRunningTimer, "After new CControlTray");
 
-	return true;
+    HWND hwnd = m_pcTray->Create(GetProcessInstance());
+    if (!hwnd)
+    {
+        ErrorBeep();
+        TopErrorMessage(NULL, LS(STR_ERR_CTRLMTX3));
+        return false;
+    }
+    SetMainWindow(hwnd);
+    GetDllShareData().m_sHandles.m_hwndTray = hwnd;
+
+    // 初期化完了イベントをシグナル状態にする
+    if (!::SetEvent(m_hEventCPInitialized))
+    {
+        ErrorBeep();
+        TopErrorMessage(NULL, LS(STR_ERR_CTRLMTX4));
+        return false;
+    }
+
+    return true;
 }
 
 /*!
@@ -134,11 +142,12 @@ bool CControlProcess::InitializeProcess()
 */
 bool CControlProcess::MainLoop()
 {
-	if( m_pcTray && GetMainWindow() ){
-		m_pcTray->MessageLoop();	/* メッセージループ */
-		return true;
-	}
-	return false;
+    if (m_pcTray && GetMainWindow())
+    {
+        m_pcTray->MessageLoop(); /* メッセージループ */
+        return true;
+    }
+    return false;
 }
 
 /*!
@@ -150,24 +159,27 @@ bool CControlProcess::MainLoop()
 */
 void CControlProcess::OnExitProcess()
 {
-	GetDllShareData().m_sHandles.m_hwndTray = NULL;
+    GetDllShareData().m_sHandles.m_hwndTray = NULL;
 }
 
 CControlProcess::~CControlProcess()
 {
-	delete m_pcTray;
+    delete m_pcTray;
 
-	if( m_hEventCPInitialized ){
-		::ResetEvent( m_hEventCPInitialized );
-	}
-	::CloseHandle( m_hEventCPInitialized );
-	if( m_hMutexCP ){
-		::ReleaseMutex( m_hMutexCP );
-	}
-	::CloseHandle( m_hMutexCP );
-	// 旧バージョン（1.2.104.1以前）との互換性：「異なるバージョン...」が二回出ないように
-	if( m_hMutex ){
-		::ReleaseMutex( m_hMutex );
-	}
-	::CloseHandle( m_hMutex );
+    if (m_hEventCPInitialized)
+    {
+        ::ResetEvent(m_hEventCPInitialized);
+    }
+    ::CloseHandle(m_hEventCPInitialized);
+    if (m_hMutexCP)
+    {
+        ::ReleaseMutex(m_hMutexCP);
+    }
+    ::CloseHandle(m_hMutexCP);
+    // 旧バージョン（1.2.104.1以前）との互換性：「異なるバージョン...」が二回出ないように
+    if (m_hMutex)
+    {
+        ::ReleaseMutex(m_hMutex);
+    }
+    ::CloseHandle(m_hMutex);
 };

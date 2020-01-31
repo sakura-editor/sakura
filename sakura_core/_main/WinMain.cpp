@@ -50,10 +50,11 @@
 #define _APP_NAME_DEV_(TYPE) TYPE("")
 #endif
 
-#define _GSTR_APPNAME_(TYPE)  _APP_NAME_(TYPE) _APP_NAME_2_(TYPE) _APP_NAME_DEV_(TYPE) _APP_NAME_3_(TYPE)
+#define _GSTR_APPNAME_(TYPE) _APP_NAME_(TYPE) \
+_APP_NAME_2_(TYPE) _APP_NAME_DEV_(TYPE) _APP_NAME_3_(TYPE)
 
-const WCHAR g_szGStrAppName[]  = (_GSTR_APPNAME_(_T)   ); // この変数を直接参照せずに GSTR_APPNAME を使うこと
-const CHAR  g_szGStrAppNameA[] = (_GSTR_APPNAME_(ATEXT)); // この変数を直接参照せずに GSTR_APPNAME_A を使うこと
+const WCHAR g_szGStrAppName[]  = (_GSTR_APPNAME_(_T)); // この変数を直接参照せずに GSTR_APPNAME を使うこと
+const CHAR g_szGStrAppNameA[]  = (_GSTR_APPNAME_(ATEXT)); // この変数を直接参照せずに GSTR_APPNAME_A を使うこと
 const WCHAR g_szGStrAppNameW[] = (_GSTR_APPNAME_(LTEXT)); // この変数を直接参照せずに GSTR_APPNAME_W を使うこと
 
 /*!
@@ -69,45 +70,48 @@ const WCHAR g_szGStrAppNameW[] = (_GSTR_APPNAME_(LTEXT)); // この変数を直�
 		+----------+---------------------------+---------------------------+
 */
 int WINAPI wWinMain(
-	HINSTANCE	hInstance,		//!< handle to current instance
-	HINSTANCE	hPrevInstance,	//!< handle to previous instance
-	LPWSTR		lpCmdLine,		//!< pointer to command line
-	int			nCmdShow		//!< show state of window
+    HINSTANCE hInstance, //!< handle to current instance
+    HINSTANCE hPrevInstance, //!< handle to previous instance
+    LPWSTR lpCmdLine, //!< pointer to command line
+    int nCmdShow //!< show state of window
 )
 {
 #ifdef USE_LEAK_CHECK_WITH_CRTDBG
-	// 2009.9.10 syat メモリリークチェックを追加
-	::_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF);
+    // 2009.9.10 syat メモリリークチェックを追加
+    ::_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF);
 #endif
 
-	MY_RUNNINGTIMER(cRunningTimer, "WinMain" );
-	{
-		// 2014.04.24 DLLの検索パスからカレントディレクトリを削除する
-		::SetDllDirectory( L"" );
-		::SetSearchPathMode( BASE_SEARCH_PATH_ENABLE_SAFE_SEARCHMODE | BASE_SEARCH_PATH_PERMANENT );
+    MY_RUNNINGTIMER(cRunningTimer, "WinMain");
+    {
+        // 2014.04.24 DLLの検索パスからカレントディレクトリを削除する
+        ::SetDllDirectory(L"");
+        ::SetSearchPathMode(BASE_SEARCH_PATH_ENABLE_SAFE_SEARCHMODE | BASE_SEARCH_PATH_PERMANENT);
 
-		setlocale( LC_ALL, "Japanese" ); //2007.08.16 kobake 追加
-		::OleInitialize( NULL );	// 2009.01.07 ryoji 追加
-	}
-	
-	//開発情報
-	DEBUG_TRACE(L"-- -- WinMain -- --\n");
-	DEBUG_TRACE(L"sizeof(DLLSHAREDATA) = %d\n",sizeof(DLLSHAREDATA));
+        setlocale(LC_ALL, "Japanese"); //2007.08.16 kobake 追加
+        ::OleInitialize(NULL); // 2009.01.07 ryoji 追加
+    }
 
-	//プロセスの生成とメッセージループ
-	CProcessFactory aFactory;
-	CProcess *process = 0;
-	try{
-		process = aFactory.Create( hInstance, lpCmdLine );
-		MY_TRACETIME( cRunningTimer, "ProcessObject Created" );
-	}
-	catch(...){
-	}
-	if( 0 != process ){
-		process->Run();
-		delete process;
-	}
+    //開発情報
+    DEBUG_TRACE(L"-- -- WinMain -- --\n");
+    DEBUG_TRACE(L"sizeof(DLLSHAREDATA) = %d\n", sizeof(DLLSHAREDATA));
 
-	::OleUninitialize();	// 2009.01.07 ryoji 追加
-	return 0;
+    //プロセスの生成とメッセージループ
+    CProcessFactory aFactory;
+    CProcess *process = 0;
+    try
+    {
+        process = aFactory.Create(hInstance, lpCmdLine);
+        MY_TRACETIME(cRunningTimer, "ProcessObject Created");
+    }
+    catch (...)
+    {
+    }
+    if (0 != process)
+    {
+        process->Run();
+        delete process;
+    }
+
+    ::OleUninitialize(); // 2009.01.07 ryoji 追加
+    return 0;
 }
