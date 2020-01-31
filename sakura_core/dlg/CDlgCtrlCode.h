@@ -39,34 +39,37 @@ class CDlgCtrlCode;
 //2007.10.18 kobake GetCharCode()を作成。
 class CDlgCtrlCode final : public CDialog
 {
-public:
-	/*
+  public:
+    /*
 	||  Constructors
 	*/
-	CDlgCtrlCode();
+    CDlgCtrlCode();
 
-	/*
+    /*
 	||  Attributes & Operations
 	*/
-	int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);	/* モーダルダイアログの表示 */
+    int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam); /* モーダルダイアログの表示 */
 
-	wchar_t GetCharCode() const{ return m_nCode; } //!< 選択された文字コードを取得
+    wchar_t GetCharCode() const
+    {
+        return m_nCode;
+    } //!< 選択された文字コードを取得
 
-private:
-	/*
+  private:
+    /*
 	||  実装ヘルパ関数
 	*/
-	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
-	BOOL	OnBnClicked(int wID) override;
-	BOOL	OnNotify( WPARAM wParam, LPARAM lParam ) override;
-	LPVOID	GetHelpIdTable( void ) override;
+    BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
+    BOOL OnBnClicked(int wID) override;
+    BOOL OnNotify(WPARAM wParam, LPARAM lParam) override;
+    LPVOID GetHelpIdTable(void) override;
 
-	void	SetData( void ) override;	/* ダイアログデータの設定 */
-	int		GetData( void ) override;	/* ダイアログデータの取得 */
+    void SetData(void) override; /* ダイアログデータの設定 */
+    int GetData(void) override; /* ダイアログデータの取得 */
 
-private:
-	/*
+  private:
+    /*
 	|| メンバ変数
 	*/
-	wchar_t		m_nCode;	// コード
+    wchar_t m_nCode; // コード
 };

@@ -21,28 +21,29 @@ class CDlgJump;
 //! 指定行へのジャンプダイアログボックス
 class CDlgJump final : public CDialog
 {
-public:
-	/*
+  public:
+    /*
 	||  Constructors
 	*/
-	CDlgJump();
-	/*
+    CDlgJump();
+    /*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);	/* モーダルダイアログの表示 */
+    int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam); /* モーダルダイアログの表示 */
 
-	int			m_nLineNum;		/*!< 行番号 */
-	BOOL		m_bPLSQL;		/*!< PL/SQLソースの有効行か */
-	int			m_nPLSQL_E1;
-	int			m_nPLSQL_E2;
-protected:
-	/*
+    int m_nLineNum; /*!< 行番号 */
+    BOOL m_bPLSQL; /*!< PL/SQLソースの有効行か */
+    int m_nPLSQL_E1;
+    int m_nPLSQL_E2;
+
+  protected:
+    /*
 	||  実装ヘルパ関数
 	*/
-	BOOL OnNotify(WPARAM wParam, LPARAM lParam) override;	//	Oct. 6, 2000 JEPRO added for Spin control
-	BOOL OnCbnSelChange(HWND hwndCtl, int wID) override;
-	BOOL OnBnClicked(int wID) override;
-	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
-	void SetData( void ) override;	/* ダイアログデータの設定 */
-	int GetData( void ) override;	/* ダイアログデータの取得 */
+    BOOL OnNotify(WPARAM wParam, LPARAM lParam) override; //	Oct. 6, 2000 JEPRO added for Spin control
+    BOOL OnCbnSelChange(HWND hwndCtl, int wID) override;
+    BOOL OnBnClicked(int wID) override;
+    LPVOID GetHelpIdTable(void) override; //@@@ 2002.01.18 add
+    void SetData(void) override; /* ダイアログデータの設定 */
+    int GetData(void) override; /* ダイアログデータの取得 */
 };

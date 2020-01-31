@@ -38,13 +38,13 @@ class CDlgProperty;
 -----------------------------------------------------------------------*/
 class CDlgProperty final : public CDialog
 {
-public:
-	int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);	/* モーダルダイアログの表示 */
-protected:
-	/*
+  public:
+    int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam); /* モーダルダイアログの表示 */
+  protected:
+    /*
 	||  実装ヘルパ関数
 	*/
-	BOOL OnBnClicked(int wID) override;
-	void SetData( void ) override;	/* ダイアログデータの設定 */
-	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
+    BOOL OnBnClicked(int wID) override;
+    void SetData(void) override; /* ダイアログデータの設定 */
+    LPVOID GetHelpIdTable(void) override; //@@@ 2002.01.18 add
 };

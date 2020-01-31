@@ -40,25 +40,23 @@
 */
 class CDlgWinSize final : public CDialog
 {
-public:
-	CDlgWinSize();
-	~CDlgWinSize();
-	int DoModal( HINSTANCE hInstance, HWND hwndParent, EWinSizeMode& eSaveWinSize,
-				 EWinSizeMode& eSaveWinPos, int& nWinSizeType, RECT& rc );	//!< モーダルダイアログの表示
+  public:
+    CDlgWinSize();
+    ~CDlgWinSize();
+    int DoModal(HINSTANCE hInstance, HWND hwndParent, EWinSizeMode &eSaveWinSize, EWinSizeMode &eSaveWinPos, int &nWinSizeType, RECT &rc); //!< モーダルダイアログの表示
 
-protected:
+  protected:
+    BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
+    BOOL OnBnClicked(int wID) override;
+    int GetData(void) override;
+    void SetData(void) override;
+    LPVOID GetHelpIdTable(void) override;
 
-	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
-	BOOL OnBnClicked(int wID) override;
-	int  GetData( void ) override;
-	void SetData( void ) override;
-	LPVOID GetHelpIdTable( void ) override;
+    void RenewItemState(void);
 
-	void RenewItemState( void );
-
-private:
-	EWinSizeMode	m_eSaveWinSize;	//!< ウィンドウサイズの保存: 0/デフォルト，1/継承，2/指定
-	EWinSizeMode	m_eSaveWinPos;	//!< ウィンドウ位置の保存: 0/デフォルト，1/継承，2/指定
-	int				m_nWinSizeType;	//!< ウィンドウ表示方法: 0/標準，1/最大化，2/最小化
-	RECT			m_rc;
+  private:
+    EWinSizeMode m_eSaveWinSize; //!< ウィンドウサイズの保存: 0/デフォルト，1/継承，2/指定
+    EWinSizeMode m_eSaveWinPos; //!< ウィンドウ位置の保存: 0/デフォルト，1/継承，2/指定
+    int m_nWinSizeType; //!< ウィンドウ表示方法: 0/標準，1/最大化，2/最小化
+    RECT m_rc;
 };

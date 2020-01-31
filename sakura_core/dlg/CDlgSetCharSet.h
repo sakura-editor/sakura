@@ -18,33 +18,33 @@
 //! 文字コードセット設定ダイアログボックス
 class CDlgSetCharSet final : public CDialog
 {
-public:
-	/*
+  public:
+    /*
 	||  Constructors
 	*/
-	CDlgSetCharSet();
-	/*
+    CDlgSetCharSet();
+    /*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE hInstance, HWND hwndParent, ECodeType* pnCharSet, bool* pbBom );	/* モーダルダイアログの表示 */
+    int DoModal(HINSTANCE hInstance, HWND hwndParent, ECodeType *pnCharSet, bool *pbBom); /* モーダルダイアログの表示 */
 
-	ECodeType*	m_pnCharSet;			// 文字コードセット
-	bool*		m_pbBom;				// BOM
+    ECodeType *m_pnCharSet; // 文字コードセット
+    bool *m_pbBom; // BOM
 
-	HWND		m_hwndCharSet;
-	HWND		m_hwndCheckBOM;
+    HWND m_hwndCharSet;
+    HWND m_hwndCheckBOM;
 
-protected:
-	/*
+  protected:
+    /*
 	||  実装ヘルパ関数
 	*/
-	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
-	BOOL	OnBnClicked(int wID) override;
-	BOOL	OnCbnSelChange(HWND hwndCtl, int wID) override;
-	LPVOID	GetHelpIdTable( void ) override;
+    BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
+    BOOL OnBnClicked(int wID) override;
+    BOOL OnCbnSelChange(HWND hwndCtl, int wID) override;
+    LPVOID GetHelpIdTable(void) override;
 
-	void	SetData( void ) override;	/* ダイアログデータの設定 */
-	int 	GetData( void ) override;	/* ダイアログデータの取得 */
+    void SetData(void) override; /* ダイアログデータの設定 */
+    int GetData(void) override; /* ダイアログデータの取得 */
 
-	void	SetBOM( void );		// BOM の設定
+    void SetBOM(void); // BOM の設定
 };

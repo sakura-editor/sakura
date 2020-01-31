@@ -33,27 +33,29 @@
 #include "dlg/CDialog.h"
 class CDlgWindowList final : public CDialog
 {
-public:
-	CDlgWindowList();
+  public:
+    CDlgWindowList();
 
-	int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);
-protected:
-	BOOL	OnBnClicked(int wID) override;
-	LPVOID	GetHelpIdTable() override;
-	INT_PTR DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam) override;
-	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
-	BOOL OnSize(WPARAM wParam, LPARAM lParam) override;
-	BOOL OnMove(WPARAM wParam, LPARAM lParam) override;
-	BOOL OnMinMaxInfo(LPARAM lParam);
-	BOOL OnActivate(WPARAM wParam, LPARAM lParam) override;
+    int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);
 
-	void SetData() override;
-	int  GetData() override;
+  protected:
+    BOOL OnBnClicked(int wID) override;
+    LPVOID GetHelpIdTable() override;
+    INT_PTR DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam) override;
+    BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
+    BOOL OnSize(WPARAM wParam, LPARAM lParam) override;
+    BOOL OnMove(WPARAM wParam, LPARAM lParam) override;
+    BOOL OnMinMaxInfo(LPARAM lParam);
+    BOOL OnActivate(WPARAM wParam, LPARAM lParam) override;
 
-	void GetDataListView(std::vector<HWND>& aHwndList);
-	void CommandClose();
-	void CommandSave();
-private:
-	POINT		m_ptDefaultSize;
-	RECT		m_rcItems[5];
+    void SetData() override;
+    int GetData() override;
+
+    void GetDataListView(std::vector<HWND> &aHwndList);
+    void CommandClose();
+    void CommandSave();
+
+  private:
+    POINT m_ptDefaultSize;
+    RECT m_rcItems[5];
 };

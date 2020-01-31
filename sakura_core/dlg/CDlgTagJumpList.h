@@ -36,7 +36,7 @@
 #include "recent/CRecentTagjumpKeyword.h"
 
 //タグファイル名	//	@@ 2005.03.31 MIK 定数化
-#define TAG_FILENAME_T        L"tags"
+#define TAG_FILENAME_T L"tags"
 
 // 2010.07.22 いくつかcppへ移動
 
@@ -49,125 +49,131 @@ class CSortedTagJumpList;
 */
 class CDlgTagJumpList final : public CDialog
 {
-public:
-	/*
+  public:
+    /*
 	||  Constructors
 	*/
-	CDlgTagJumpList(bool bDirectTagJump);
-	~CDlgTagJumpList();
+    CDlgTagJumpList(bool bDirectTagJump);
+    ~CDlgTagJumpList();
 
-	/*
+    /*
 	||  Attributes & Operations
 	*/
-	int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);	/* モーダルダイアログの表示 */
+    int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam); /* モーダルダイアログの表示 */
 
-	//	@@ 2005.03.31 MIK 階層パラメータを追加
-//	bool AddParamA( const ACHAR*, const ACHAR*, int, const ACHAR*, const ACHAR*, int depth, int baseDirId );	//登録
-	void SetFileName( const WCHAR *pszFileName );
-	void SetKeyword( const wchar_t *pszKeyword );	//	@@ 2005.03.31 MIK
-	int  FindDirectTagJump();
+    //	@@ 2005.03.31 MIK 階層パラメータを追加
+    //	bool AddParamA( const ACHAR*, const ACHAR*, int, const ACHAR*, const ACHAR*, int depth, int baseDirId );	//登録
+    void SetFileName(const WCHAR *pszFileName);
+    void SetKeyword(const wchar_t *pszKeyword); //	@@ 2005.03.31 MIK
+    int FindDirectTagJump();
 
-	bool GetSelectedFullPathAndLine( WCHAR* fullPath, int count, int* lineNum, int* depth );
+    bool GetSelectedFullPathAndLine(WCHAR *fullPath, int count, int *lineNum, int *depth);
 
-protected:
-	/*
+  protected:
+    /*
 	||  実装ヘルパ関数
 	*/
-	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
-	BOOL	OnBnClicked(int wID) override;
-	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ) override;
-	BOOL	OnSize( WPARAM wParam, LPARAM lParam ) override;
-	BOOL	OnMove( WPARAM wParam, LPARAM lParam ) override;
-	BOOL	OnMinMaxInfo( LPARAM lParam );
-	BOOL	OnNotify( WPARAM wParam, LPARAM lParam ) override;
-	//	@@ 2005.03.31 MIK キーワード入力エリアのイベント処理
-	BOOL	OnCbnSelChange( HWND hwndCtl, int wID ) override;
-	BOOL	OnCbnEditChange( HWND hwndCtl, int wID ) override;
-	//BOOL	OnEnChange( HWND hwndCtl, int wID ) override;
-	BOOL	OnTimer( WPARAM wParam ) override;
-	LPVOID	GetHelpIdTable( void ) override;
+    BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
+    BOOL OnBnClicked(int wID) override;
+    INT_PTR DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam) override;
+    BOOL OnSize(WPARAM wParam, LPARAM lParam) override;
+    BOOL OnMove(WPARAM wParam, LPARAM lParam) override;
+    BOOL OnMinMaxInfo(LPARAM lParam);
+    BOOL OnNotify(WPARAM wParam, LPARAM lParam) override;
+    //	@@ 2005.03.31 MIK キーワード入力エリアのイベント処理
+    BOOL OnCbnSelChange(HWND hwndCtl, int wID) override;
+    BOOL OnCbnEditChange(HWND hwndCtl, int wID) override;
+    //BOOL	OnEnChange( HWND hwndCtl, int wID ) override;
+    BOOL OnTimer(WPARAM wParam) override;
+    LPVOID GetHelpIdTable(void) override;
 
-private:
-	struct STagFindState {
-		int   m_nDepth;
-		int   m_nMatchAll;
-		int   m_nNextMode;
-		int   m_nLoop;
-		bool  m_bJumpPath;
-		WCHAR m_szCurPath[1024];
-	};
+  private:
+    struct STagFindState
+    {
+        int m_nDepth;
+        int m_nMatchAll;
+        int m_nNextMode;
+        int m_nLoop;
+        bool m_bJumpPath;
+        WCHAR m_szCurPath[1024];
+    };
 
-	struct STagSearchRule {
-		bool bTagJumpExactMatch;
-		bool bTagJumpPartialMatch;
-		bool bTagJumpICase;
-		int baseDirId;
-		int nTop;
-	};
+    struct STagSearchRule
+    {
+        bool bTagJumpExactMatch;
+        bool bTagJumpPartialMatch;
+        bool bTagJumpICase;
+        int baseDirId;
+        int nTop;
+    };
 
-	void	StopTimer( void );
-	void	StartTimer(int nDelay);
+    void StopTimer(void);
+    void StartTimer(int nDelay);
 
-	void	SetData( void ) override;	/* ダイアログデータの設定 */
-	int		GetData( void ) override;	/* ダイアログデータの取得 */
-	void	UpdateData(bool bInit);	//	@@ 2005.03.31 MIK
+    void SetData(void) override; /* ダイアログデータの設定 */
+    int GetData(void) override; /* ダイアログデータの取得 */
+    void UpdateData(bool bInit); //	@@ 2005.03.31 MIK
 
-	WCHAR	*GetNameByType( const WCHAR type, const WCHAR *name );	//タイプを名前に変換する。
-	int		SearchBestTag( void );	//もっとも確率の高そうなインデックスを返す。
-	//	@@ 2005.03.31 MIK
-	const WCHAR *GetFileName( void );
-	const WCHAR *GetFilePath( void ){ return m_pszFileName != NULL ? m_pszFileName : L""; }
-	void Empty( void );
-	void SetTextDir();
-	void FindNext(bool bNewFind);
-	void find_key( const wchar_t* keyword );
-	int find_key_core(int  nTop, const wchar_t* keyword, bool bTagJumpPartialMatch, bool bTagJumpExactMatch, bool bTagJumpICase, bool bTagJumpICaseByTags, int  nDefaultNextMode);
-	bool parseTagsLine(ACHAR s[][1024], ACHAR* szLineData, int* n2, int nTagFormat);
-	bool ReadTagsParameter(FILE* fp, bool bTagJumpICaseByTags, STagFindState* state, CSortedTagJumpList& cList, int* nTagFormat, bool* bSorted, bool* bFoldcase, bool* bTagJumpICase, PTCHAR szNextPath, int* baseDirId);
-	void find_key_for_BinarySearch( FILE* fp, const ACHAR* paszKeyword, int nTagFormat, STagFindState* state, const STagSearchRule* rule );
-	void find_key_for_LinearSearch( FILE* fp, const ACHAR* paszKeyword, int nTagFormat, STagFindState* state, const STagSearchRule* rule, bool bSorted, bool bFoldcase, int length );
+    WCHAR *GetNameByType(const WCHAR type, const WCHAR *name); //タイプを名前に変換する。
+    int SearchBestTag(void); //もっとも確率の高そうなインデックスを返す。
+    //	@@ 2005.03.31 MIK
+    const WCHAR *GetFileName(void);
+    const WCHAR *GetFilePath(void)
+    {
+        return m_pszFileName != NULL ? m_pszFileName : L"";
+    }
+    void Empty(void);
+    void SetTextDir();
+    void FindNext(bool bNewFind);
+    void find_key(const wchar_t *keyword);
+    int find_key_core(int nTop, const wchar_t *keyword, bool bTagJumpPartialMatch, bool bTagJumpExactMatch, bool bTagJumpICase, bool bTagJumpICaseByTags, int nDefaultNextMode);
+    bool parseTagsLine(ACHAR s[][1024], ACHAR *szLineData, int *n2, int nTagFormat);
+    bool ReadTagsParameter(FILE *fp, bool bTagJumpICaseByTags, STagFindState *state, CSortedTagJumpList &cList, int *nTagFormat, bool *bSorted, bool *bFoldcase, bool *bTagJumpICase, PTCHAR szNextPath, int *baseDirId);
+    void find_key_for_BinarySearch(FILE *fp, const ACHAR *paszKeyword, int nTagFormat, STagFindState *state, const STagSearchRule *rule);
+    void find_key_for_LinearSearch(FILE *fp, const ACHAR *paszKeyword, int nTagFormat, STagFindState *state, const STagSearchRule *rule, bool bSorted, bool bFoldcase, int length);
 
-	bool IsDirectTagJump();
+    bool IsDirectTagJump();
 
-	void ClearPrevFindInfo();
-	bool GetFullPathAndLine( int index, WCHAR *fullPath, int count, int *lineNum, int *depth );
+    void ClearPrevFindInfo();
+    bool GetFullPathAndLine(int index, WCHAR *fullPath, int count, int *lineNum, int *depth);
 
-	//! depthから完全パス名(相対パス/絶対パス)を作成する
-	static WCHAR* GetFullPathFromDepth(WCHAR* pszOutput, int count, WCHAR* basePath, const WCHAR* fileName, int depth);
-	static WCHAR* CopyDirDir( WCHAR* dest, const WCHAR* target, const WCHAR* base );
-public:
-	static int CalcMaxUpDirectory(const WCHAR* p);
-	static WCHAR* DirUp( WCHAR* dir );
+    //! depthから完全パス名(相対パス/絶対パス)を作成する
+    static WCHAR *GetFullPathFromDepth(WCHAR *pszOutput, int count, WCHAR *basePath, const WCHAR *fileName, int depth);
+    static WCHAR *CopyDirDir(WCHAR *dest, const WCHAR *target, const WCHAR *base);
 
-private:
-	bool	m_bDirectTagJump;
+  public:
+    static int CalcMaxUpDirectory(const WCHAR *p);
+    static WCHAR *DirUp(WCHAR *dir);
 
-	int		m_nIndex;		//!< 選択された要素番号
-	WCHAR	*m_pszFileName;	//!< 編集中のファイル名
-	wchar_t	*m_pszKeyword;	//!< キーワード(DoModalのlParam!=0を指定した場合に指定できる)
-	int		m_nLoop;		//!< さかのぼれる階層数
-	CSortedTagJumpList*	m_pcList;	//!< タグジャンプ情報
-	UINT_PTR	m_nTimerId;		//!< タイマ番号
-	BOOL	m_bTagJumpICase;	//!< 大文字小文字を同一視
-	BOOL	m_bTagJumpPartialMatch;	//!< 文字列の途中にマッチ
-	BOOL	m_bTagJumpExactMatch; //!< 完全一致(画面無し)
+  private:
+    bool m_bDirectTagJump;
 
-	int 	m_nTop;			//!< ページめくりの表示の先頭(0開始)
-	bool	m_bNextItem;	//!< まだ次にヒットするものがある
+    int m_nIndex; //!< 選択された要素番号
+    WCHAR *m_pszFileName; //!< 編集中のファイル名
+    wchar_t *m_pszKeyword; //!< キーワード(DoModalのlParam!=0を指定した場合に指定できる)
+    int m_nLoop; //!< さかのぼれる階層数
+    CSortedTagJumpList *m_pcList; //!< タグジャンプ情報
+    UINT_PTR m_nTimerId; //!< タイマ番号
+    BOOL m_bTagJumpICase; //!< 大文字小文字を同一視
+    BOOL m_bTagJumpPartialMatch; //!< 文字列の途中にマッチ
+    BOOL m_bTagJumpExactMatch; //!< 完全一致(画面無し)
 
-	// 絞り込み検索用
-	STagFindState* m_psFindPrev; //!< 前回の最後に検索した状態
-	STagFindState* m_psFind0Match; //!< 前回の1つもHitしなかった最後のtags
+    int m_nTop; //!< ページめくりの表示の先頭(0開始)
+    bool m_bNextItem; //!< まだ次にヒットするものがある
 
-	CNativeW	m_strOldKeyword;	//!< 前回のキーワード
-	BOOL	m_bOldTagJumpICase;	//!< 前回の大文字小文字を同一視
-	BOOL	m_bOldTagJumpPartialMatch;	//!< 前回の文字列の途中にマッチ
+    // 絞り込み検索用
+    STagFindState *m_psFindPrev; //!< 前回の最後に検索した状態
+    STagFindState *m_psFind0Match; //!< 前回の1つもHitしなかった最後のtags
 
-	SComboBoxItemDeleter	m_comboDel;
-	CRecentTagjumpKeyword	m_cRecentKeyword;
+    CNativeW m_strOldKeyword; //!< 前回のキーワード
+    BOOL m_bOldTagJumpICase; //!< 前回の大文字小文字を同一視
+    BOOL m_bOldTagJumpPartialMatch; //!< 前回の文字列の途中にマッチ
 
-	POINT	m_ptDefaultSize;
-	RECT	m_rcItems[11];
+    SComboBoxItemDeleter m_comboDel;
+    CRecentTagjumpKeyword m_cRecentKeyword;
 
-	DISALLOW_COPY_AND_ASSIGN(CDlgTagJumpList);
+    POINT m_ptDefaultSize;
+    RECT m_rcItems[11];
+
+    DISALLOW_COPY_AND_ASSIGN(CDlgTagJumpList);
 };
