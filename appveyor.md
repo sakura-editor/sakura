@@ -175,9 +175,8 @@ APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使う
 | APPVEYOR_ACCOUNT_NAME           | APPVEYOR_ACCOUNT_NAME           | 文字列   |
 | APPVEYOR_PROJECT_SLUG           | APPVEYOR_PROJECT_SLUG           | 文字列   |
 | APPVEYOR_BUILD_VERSION          | APPVEYOR_BUILD_VERSION          | 文字列   |
-| APPVEYOR_BUILD_NUMBER           | APPVEYOR_BUILD_NUMBER           | 文字列   |
-| APPVEYOR_BUILD_NUMBER_INT       | APPVEYOR_BUILD_NUMBER           | 数値     |
-| APPVEYOR_BUILD_NUMBER_LABEL     | APPVEYOR_BUILD_NUMBER           | 数値     |
+| CI_BUILD_NUMBER                 | APPVEYOR_BUILD_NUMBER           | 数値     |
+| CI_BUILD_NUMBER_LABEL           | APPVEYOR_BUILD_NUMBER           | 文字列   |
 | GITHUB_PR_NUMBER                | APPVEYOR_PULL_REQUEST_NUMBER    | 数値     |
 | GITHUB_PR_NUMBER_LABEL          | APPVEYOR_PULL_REQUEST_NUMBER    | 文字列   |
 | GITHUB_COMMIT_URL               | GITHUB_COMMIT_URL               | 文字列   |

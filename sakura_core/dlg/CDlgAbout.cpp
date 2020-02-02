@@ -110,8 +110,8 @@ const DWORD p_helpids[] = {	//12900
 #if defined(APPVEYOR_BUILD_URL)
 #pragma message("APPVEYOR_BUILD_URL: " APPVEYOR_BUILD_URL)
 #endif
-#if defined(APPVEYOR_BUILD_NUMBER_LABEL)
-#pragma message("APPVEYOR_BUILD_NUMBER_LABEL: " APPVEYOR_BUILD_NUMBER_LABEL)
+#if defined(CI_BUILD_NUMBER_LABEL)
+#pragma message("CI_BUILD_NUMBER_LABEL: " CI_BUILD_NUMBER_LABEL)
 #endif
 
 //	From Here Nov. 7, 2000 genta
@@ -274,8 +274,8 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 #ifdef GIT_REMOTE_ORIGIN_URL
 	m_UrlGitWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GIT ) );
 #endif
-#ifdef APPVEYOR_BUILD_NUMBER_LABEL
-	m_UrlBuildLinkWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_APPVEYOR_BUILD ) );
+#ifdef CI_BUILD_NUMBER_LABEL
+	m_UrlBuildLinkWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_CI_BUILD ) );
 #endif
 #ifdef TEMP_GIT_SHORT_COMMIT_HASH
 	m_UrlGitHubCommitWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GITHUB_COMMIT ) );
@@ -329,7 +329,7 @@ BOOL CDlgAbout::OnStnClicked( int wID )
 			::ShellExecute( GetHwnd(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
 			return TRUE;
 		}
-	case IDC_STATIC_URL_APPVEYOR_BUILD:
+	case IDC_STATIC_URL_CI_BUILD:
 		{
 #if defined(APPVEYOR_BUILD_URL)
 			::ShellExecute(GetHwnd(), NULL, _T(APPVEYOR_BUILD_URL), NULL, NULL, SW_SHOWNORMAL);
