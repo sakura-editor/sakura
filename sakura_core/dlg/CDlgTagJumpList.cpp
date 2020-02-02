@@ -820,6 +820,7 @@ WCHAR *CDlgTagJumpList::GetNameByType( const WCHAR type, const WCHAR *name )
 		}
 	}
 
+#line 1000
 	return _wcsdup( L"" );
 }
 
