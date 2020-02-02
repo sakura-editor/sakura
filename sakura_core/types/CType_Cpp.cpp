@@ -34,19 +34,23 @@
 #include "view/colors/EColorIndexType.h"
 
 // 2015.11.14 C/C++のファイル名による判定
-EOutlineType CheckCppType( const wchar_t* pszFileName )
+EOutlineType GetCLangOutlineType( const wchar_t* pszFileName )
 {
-	auto nOutlineType = OUTLINE_C;
-	if( CheckEXT( pszFileName, L"cpp" )
+	auto eOutlineType = OUTLINE_C_CPP;
+	if( CheckEXT( pszFileName, L"c" ) )
+	{
+		eOutlineType = OUTLINE_C;
+	}
+	else if( CheckEXT( pszFileName, L"cpp" )
 		|| CheckEXT( pszFileName, L"c++" )
 		|| CheckEXT( pszFileName, L"cxx" )
 		|| CheckEXT( pszFileName, L"hpp" )
 		|| CheckEXT( pszFileName, L"h++" )
 		|| CheckEXT( pszFileName, L"hxx" ) )
 	{
-		nOutlineType = OUTLINE_CPP;
+		eOutlineType = OUTLINE_CPP;
 	}
-	return nOutlineType;
+	return eOutlineType;
 }
 
 //!CPPキーワードで始まっていれば true
@@ -360,7 +364,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 	CLogicInt	i;
 	if( nOutlineType == OUTLINE_C_CPP ){
 		// 2015.11.14 C/C++のファイル名による判定
-		nOutlineType = CheckCppType( pszFileName );
+		nOutlineType = GetCLangOutlineType( pszFileName );
 	}
 
 	// 2002/10/27 frozen　ここから

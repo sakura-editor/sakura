@@ -64,7 +64,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 		// C/C++はファイル名により判定する
 		if( nOutlineType == OUTLINE_C_CPP
 			&& GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
-			nOutlineType = CheckCppType( GetDocument()->m_cDocFile.GetFilePath() );
+			nOutlineType = GetCLangOutlineType( GetDocument()->m_cDocFile.GetFilePath() );
 		}
 	}
 
