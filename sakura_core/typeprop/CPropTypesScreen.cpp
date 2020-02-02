@@ -765,6 +765,7 @@ void CPropTypesScreen::AddOutlineMethod(int nMethod, const WCHAR* pszName)
 	TYPE_NAME_ID2<EOutlineType> method;
 	method.nMethod = (EOutlineType)nMethod;
 	method.nNameId = 0;
+#line 1000
 	method.pszName = _wcsdup( pszName );
 	m_OlmArr.push_back(method);
 }
@@ -790,6 +791,7 @@ void CPropTypesScreen::AddSIndentMethod(int nMethod, const WCHAR* pszName)
 	TYPE_NAME_ID2<ESmartIndentType> method;
 	method.nMethod = (ESmartIndentType)nMethod;
 	method.nNameId = 0;
+#line 1000
 	method.pszName = _wcsdup( pszName );
 	m_SIndentArr.push_back(method);
 }

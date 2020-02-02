@@ -38,6 +38,7 @@ void CViewCommander::Command_MENU_RBUTTON( void )
 	{
 		nLength = m_pCommanderView->m_cTipWnd.m_cInfo.GetStringLength();
 		const WCHAR* pszStr = m_pCommanderView->m_cTipWnd.m_cInfo.GetStringPtr();
+#line 1000
 		WCHAR* pszWork = _wcsdup( pszStr );
 
 		// 見た目と同じように、\n を CR+LFへ変換する
