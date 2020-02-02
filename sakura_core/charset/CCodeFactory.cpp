@@ -51,7 +51,7 @@ CCodeBase *CCodeFactory::CreateCodeBase(
             {
                 return new CCodePage(eCodeType);
             }
-            assert_warning(0);
+            //assert_warning(0);
     }
     return NULL;
 }

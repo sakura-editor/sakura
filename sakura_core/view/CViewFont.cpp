@@ -106,7 +106,7 @@ void CViewFont::DeleteFont()
 */
 HFONT CViewFont::ChooseFontHandle(int fontNo, SFontAttr sFontAttr) const
 {
-    assert(fontNo == 0);
+    //assert(fontNo == 0);
     if (sFontAttr.m_bBoldFont)
     { /* 太字か */
         if (sFontAttr.m_bUnderLine)

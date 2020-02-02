@@ -1266,7 +1266,7 @@ BOOL CViewCommander::HandleCommand(
 
                 if (plugs.size() > 0)
                 {
-                    assert_warning(1 == plugs.size());
+                    //assert_warning(1 == plugs.size());
                     //インタフェースオブジェクト準備
                     CWSHIfObj::List params;
                     //プラグイン呼び出し

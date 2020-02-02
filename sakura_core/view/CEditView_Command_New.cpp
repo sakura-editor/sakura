@@ -782,7 +782,7 @@ bool CEditView::ReplaceData_CEditView3(
     bool bFastMode, //!< [in] CDocLineMgrを更新しない,行末チェックを省略する。bRedraw==falseの必要あり
     const CLogicRange *psDelRangeLogicFast)
 {
-    assert((bFastMode && bRedraw == false) || (!bFastMode)); // bFastModeのときは bReadraw == false
+    //assert((bFastMode && bRedraw == false) || (!bFastMode)); // bFastModeのときは bReadraw == false
     bool bUpdateAll = true;
 
     bool bDelRangeUpdate = false;

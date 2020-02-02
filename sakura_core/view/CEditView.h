@@ -571,32 +571,32 @@ class CEditView
     //主要構成部品アクセス
     CTextArea &GetTextArea()
     {
-        assert(m_pcTextArea);
+        //assert(m_pcTextArea);
         return *m_pcTextArea;
     }
     const CTextArea &GetTextArea() const
     {
-        assert(m_pcTextArea);
+        //assert(m_pcTextArea);
         return *m_pcTextArea;
     }
     CCaret &GetCaret()
     {
-        assert(m_pcCaret);
+        //assert(m_pcCaret);
         return *m_pcCaret;
     }
     const CCaret &GetCaret() const
     {
-        assert(m_pcCaret);
+        //assert(m_pcCaret);
         return *m_pcCaret;
     }
     CRuler &GetRuler()
     {
-        assert(m_pcRuler);
+        //assert(m_pcRuler);
         return *m_pcRuler;
     }
     const CRuler &GetRuler() const
     {
-        assert(m_pcRuler);
+        //assert(m_pcRuler);
         return *m_pcRuler;
     }
 
@@ -621,12 +621,12 @@ class CEditView
     //主要オブジェクトアクセス
     CViewFont &GetFontset()
     {
-        assert(m_pcViewFont);
+        //assert(m_pcViewFont);
         return *m_pcViewFont;
     }
     const CViewFont &GetFontset() const
     {
-        assert(m_pcViewFont);
+        //assert(m_pcViewFont);
         return *m_pcViewFont;
     }
 

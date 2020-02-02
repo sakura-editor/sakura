@@ -171,7 +171,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 
                 if (plugs.size() > 0)
                 {
-                    assert_warning(1 == plugs.size());
+                    //assert_warning(1 == plugs.size());
                     //インタフェースオブジェクト準備
                     CWSHIfObj::List params;
                     COutlineIfObj *objOutline = new COutlineIfObj(cFuncInfoArr);

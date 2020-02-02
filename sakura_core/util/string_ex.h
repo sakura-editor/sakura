@@ -416,7 +416,7 @@ void wcstombs_vector(const wchar_t *pSrc, int nSrcLen, std::vector<char> *ret); 
 template <size_t Size>
 int wcsncmp_literal(const wchar_t *strData1, const wchar_t (&literalData2)[Size])
 {
-    assert(literalData2[Size - 1] == 0);
+    //assert(literalData2[Size - 1] == 0);
     return ::wcsncmp(strData1, literalData2, Size - 1); //※終端ヌルを含めないので、_countofからマイナス1する
 }
 
@@ -424,7 +424,7 @@ int wcsncmp_literal(const wchar_t *strData1, const wchar_t (&literalData2)[Size]
 template <size_t Size>
 int strncmp_literal(const char *strData1, const char (&literalData2)[Size])
 {
-    assert(literalData2[Size - 1] == 0);
+    //assert(literalData2[Size - 1] == 0);
     return ::strncmp(strData1, literalData2, Size - 1); //※終端ヌルを含めないので、_countofからマイナス1する
 }
 
@@ -432,7 +432,7 @@ int strncmp_literal(const char *strData1, const char (&literalData2)[Size])
 template <size_t Size>
 int wcsnicmp_literal(const wchar_t *strData1, const wchar_t (&literalData2)[Size])
 {
-    assert(literalData2[Size - 1] == 0);
+    //assert(literalData2[Size - 1] == 0);
     return ::_wcsnicmp(strData1, literalData2, Size - 1); //※終端ヌルを含めないので、_countofからマイナス1する
 }
 
@@ -440,6 +440,6 @@ int wcsnicmp_literal(const wchar_t *strData1, const wchar_t (&literalData2)[Size
 template <size_t Size>
 int strnicmp_literal(const char *strData1, const char (&literalData2)[Size])
 {
-    assert(literalData2[Size - 1] == 0);
+    //assert(literalData2[Size - 1] == 0);
     return ::_strnicmp(strData1, literalData2, Size - 1); //※終端ヌルを含めないので、_countofからマイナス1する
 }

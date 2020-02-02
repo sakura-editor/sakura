@@ -138,7 +138,7 @@ class TagProcessor
         {
             return pTitleEnd; // トピックタグではなかった。
         }
-        assert(depth < HierarchyCount);
+        //assert(depth < HierarchyCount);
 
         /* 状態変数の更新
 			現在のタグの深さ(depth)と直前のタグの深さ(tagDepth)の比較から
@@ -165,7 +165,7 @@ class TagProcessor
         {
             treeDepth = 0; // 最初のトピックの場合や、最初のトピックが深い階層(section や subsection など)だったあとに、chapter が現れた場合など。
         }
-        assert(treeDepth < HierarchyCount);
+        //assert(treeDepth < HierarchyCount);
 
         // 2. トピック番号を更新する。
         serials[depth] += 1; // インクリメント
@@ -184,7 +184,7 @@ class TagProcessor
         // トピック文字列を作成する(1)。トビック番号をバッファに埋め込む。
         if (bAddNumber)
         {
-            assert(4 * HierarchyCount + 2 <= _countof(szTopic)); // 4 はトピック番号「ddd.」のドットを含む最大桁数。+2 はヌル文字を含む " " の分。
+            //assert(4 * HierarchyCount + 2 <= _countof(szTopic)); // 4 はトピック番号「ddd.」のドットを含む最大桁数。+2 はヌル文字を含む " " の分。
             int i = 0;
             while (i <= tagDepth && serials[i] == 0)
             {
@@ -198,7 +198,7 @@ class TagProcessor
             *pTopicEnd++ = L' ';
             *pTopicEnd   = L'\0';
         }
-        assert(pTopicEnd < szTopic + _countof(szTopic));
+        //assert(pTopicEnd < szTopic + _countof(szTopic));
 
         // トピック文字列を作成する(2)。タイトルをバッファに埋め込む。
         const ptrdiff_t copyLen = t_min(szTopic + _countof(szTopic) - 1 - pTopicEnd, pTitleEnd - pTitle);
@@ -262,7 +262,7 @@ class TagIterator
                 {
                     break; // コメントなので以降はいらない。
                 }
-                assert(*p == L'\\');
+                //assert(*p == L'\\');
 
                 // '\' の後ろから、'{' を目印にタグとタイトルを見つける。
                 pTag      = p + 1;

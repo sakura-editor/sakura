@@ -235,7 +235,7 @@ TEST(testIsMailAddress, OffsetParameter)
     };
     for (auto &aCase : testCases)
     {
-        assert(Buffer <= aCase.buffer());
+        //assert(Buffer <= aCase.buffer());
     }
 
     /*

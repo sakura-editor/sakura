@@ -360,7 +360,7 @@ BOOL CEditView::Create(
     if (SystemParametersInfo(SPI_GETKEYBOARDSPEED, 0, &dwKeyBoardSpeed, 0))
     {
         // 念の為に assert で確認
-        assert(dwKeyBoardSpeed <= keyboardRepeatSpeedMax);
+        //assert(dwKeyBoardSpeed <= keyboardRepeatSpeedMax);
     }
     else
     {

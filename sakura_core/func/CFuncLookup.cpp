@@ -119,8 +119,8 @@ bool CFuncLookup::Funccode2Name(int funccode, WCHAR *ptr, int bufsize) const
 {
     LPCWSTR pszStr = NULL;
 
-    assert(ptr != NULL);
-    assert(bufsize >= 1);
+    //assert(ptr != NULL);
+    //assert(bufsize >= 1);
 
     if (F_USERMACRO_0 <= funccode && funccode < F_USERMACRO_0 + MAX_CUSTMACRO)
     {

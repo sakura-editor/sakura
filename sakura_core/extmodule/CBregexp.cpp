@@ -679,7 +679,7 @@ bool InitRegexp(
             else
             {
                 pszMsg = LS(STR_BREGONIG_ERROR);
-                assert(0);
+                //assert(0);
             }
             ::MessageBox(hWnd, pszMsg, LS(STR_BREGONIG_TITLE), MB_OK | MB_ICONEXCLAMATION);
         }

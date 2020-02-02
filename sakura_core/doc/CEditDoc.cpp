@@ -218,7 +218,7 @@ CEditDoc::CEditDoc(CEditApp *pcApp)
         int i;
         for (i = 0; i < _countof(EIsModificationForbidden) - 1; i++)
         {
-            assert(EIsModificationForbidden[i] < EIsModificationForbidden[i + 1]);
+            //assert(EIsModificationForbidden[i] < EIsModificationForbidden[i + 1]);
         }
     }
 #endif

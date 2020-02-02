@@ -186,7 +186,7 @@ CDlgTagJumpList::CDlgTagJumpList(bool bDirectTagJump)
     , m_strOldKeyword(L"")
 {
     /* サイズ変更時に位置を制御するコントロール数 */
-    assert(_countof(anchorList) == _countof(m_rcItems));
+    //assert(_countof(anchorList) == _countof(m_rcItems));
 
     // 2010.07.22 Moca ページング採用で 最大値を100→50に減らす
     m_pcList          = new CSortedTagJumpList(50);
@@ -911,7 +911,7 @@ WCHAR *CDlgTagJumpList::GetNameByType(const WCHAR type, const WCHAR *name)
 */
 void CDlgTagJumpList::SetFileName(const WCHAR *pszFileName)
 {
-    assert_warning(pszFileName);
+    //assert_warning(pszFileName);
     if (NULL == pszFileName)
         return;
 
@@ -1177,7 +1177,7 @@ int CDlgTagJumpList::find_key_core(
     bool bTagJumpICaseByTags, // Tagファイル側のソートに従う
     int nDefaultNextMode)
 {
-    assert_warning(!(bTagJumpPartialMatch && bTagJumpExactMatch));
+    //assert_warning(!(bTagJumpPartialMatch && bTagJumpExactMatch));
 
     // to_acharは一時バッファで破壊される可能性があるのでコピー
     CNativeA cmemKeyA        = CNativeA(to_achar(keyword));

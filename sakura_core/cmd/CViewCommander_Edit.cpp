@@ -189,7 +189,7 @@ void CViewCommander::Command_WCHAR(wchar_t wcChar, bool bConvertEOL)
 
                 if (plugs.size() > 0)
                 {
-                    assert_warning(1 == plugs.size());
+                    //assert_warning(1 == plugs.size());
                     //インタフェースオブジェクト準備
                     CWSHIfObj::List params;
                     CSmartIndentIfObj *objIndent = new CSmartIndentIfObj(wcChar); //スマートインデントオブジェクト

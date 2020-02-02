@@ -240,7 +240,7 @@ CDlgFuncList::CDlgFuncList()
     : CDialog(true)
 {
     /* サイズ変更時に位置を制御するコントロール数 */
-    assert(_countof(anchorList) == _countof(m_rcItems));
+    //assert(_countof(anchorList) == _countof(m_rcItems));
 
     m_pcFuncInfoArr = NULL; /* 関数情報配列 */
     m_nCurLine      = CLayoutInt(0); /* 現在行 */
@@ -2884,7 +2884,7 @@ static void SortTree_Sub(HWND hWndTree, HTREEITEM htiParent, STreeViewSortData &
             TreeView_SortChildrenCB(hWndTree, &sort, FALSE);
             break;
         default:
-            assert(0);
+            //assert(0);
             break;
     }
 

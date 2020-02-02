@@ -113,7 +113,7 @@ static bool Commander_COMPARE_core(CViewCommander &commander, bool &bDifferent, 
             nLineOffset = 0;
         }
     }
-    assert_warning(0);
+    //assert_warning(0);
     return false;
 }
 

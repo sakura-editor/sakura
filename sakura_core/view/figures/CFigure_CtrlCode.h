@@ -42,7 +42,7 @@ class CFigure_CtrlCode : public CFigureSpace
     }
     void DispSpace(CGraphics &gr, DispPos *pDispPos, CEditView *pcView, bool bTrans) const
     {
-        assert(0);
+        //assert(0);
     };
     EColorIndexType GetColorIdx(void) const
     {

@@ -144,7 +144,7 @@ CDocListener::CDocListener(CDocSubject *pcDoc)
 {
     if (pcDoc == NULL)
         pcDoc = CEditDoc::GetInstance(0); //$$ インチキ
-    assert(pcDoc);
+    //assert(pcDoc);
     Listen(pcDoc);
 }
 

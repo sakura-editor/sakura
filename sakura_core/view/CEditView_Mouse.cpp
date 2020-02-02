@@ -1405,7 +1405,7 @@ void CEditView::OnMOUSEMOVE(WPARAM fwKeys, int xPos_, int yPos_)
                 }
 
                 // 選択範囲の両端のうちキャレットがある側を単語境界に調整する。
-                assert(PointCompare(sSelect.GetFrom(), sSelect.GetTo()) <= 0); // (sSelect) from <= to
+                //assert(PointCompare(sSelect.GetFrom(), sSelect.GetTo()) <= 0); // (sSelect) from <= to
                 if (PointCompare(sSelect.GetFrom(), sWord.GetTo()) < 0 && PointCompare(sWord.GetFrom(), sSelect.GetTo()) < 0)
                 { // sWord と sSelect は交差している。
                     ptSelectCursor = (ptNewCursor == sSelect.GetTo())

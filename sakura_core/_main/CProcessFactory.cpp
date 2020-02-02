@@ -121,7 +121,7 @@ bool CProcessFactory::ProfileSelect(HINSTANCE hInstance, LPCWSTR lpCmdLine)
     }
     else
     {
-        assert(0 <= settings.m_nDefaultIndex);
+        //assert(0 <= settings.m_nDefaultIndex);
         if (0 < settings.m_nDefaultIndex)
         {
             CCommandLine::getInstance()->SetProfileName(settings.m_vProfList[settings.m_nDefaultIndex - 1].c_str());

@@ -1546,7 +1546,7 @@ void CViewCommander::Command_MODIFYLINE_PREV(bool bSelect)
             }
         }
     }
-    assert(pcDocLine);
+    //assert(pcDocLine);
     bModified = CModifyVisitor().IsLineModified(pcDocLine, nSaveSeq);
     nYOld2    = ptXY.y;
     ptXY.y--;
@@ -1584,7 +1584,7 @@ void CViewCommander::Command_MODIFYLINE_PREV(bool bSelect)
         {
             // 先頭行チェック
             const CDocLine *pcDocLineTemp = GetDocument()->m_cDocLineMgr.GetDocLineTop();
-            assert(pcDocLineTemp);
+            //assert(pcDocLineTemp);
             if (CModifyVisitor().IsLineModified(pcDocLineTemp, nSaveSeq) != false)
             {
                 if (GetCaret().GetCaretLogicPos() != CLogicPoint(0, 0))
@@ -1608,7 +1608,7 @@ void CViewCommander::Command_MODIFYLINE_PREV(bool bSelect)
         if (n == 0)
         {
             const CDocLine *pcDocLineTemp = GetDocument()->m_cDocLineMgr.GetDocLineBottom();
-            assert(pcDocLineTemp);
+            //assert(pcDocLineTemp);
             if (CModifyVisitor().IsLineModified(pcDocLineTemp, nSaveSeq) != false)
             {
                 // 最終行が変更行の場合は、[EOF]に止まる

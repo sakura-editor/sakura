@@ -158,7 +158,7 @@ COutlinePython::COutlinePython()
 */
 int COutlinePython::EnterString(const wchar_t *data, int linelen, int start_offset)
 {
-    assert(m_state != STATE_STRING);
+    //assert(m_state != STATE_STRING);
 
     int col = start_offset;
     //	文字列開始チェック
@@ -217,7 +217,7 @@ int COutlinePython::EnterString(const wchar_t *data, int linelen, int start_offs
 */
 int COutlinePython::ScanNormal(const wchar_t *data, int linelen, int start_offset)
 {
-    assert(m_state == STATE_NORMAL || m_state == STATE_CONTINUE);
+    //assert(m_state == STATE_NORMAL || m_state == STATE_CONTINUE);
     bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
     for (int col = start_offset; col < linelen; ++col)
@@ -287,7 +287,7 @@ int COutlinePython::ScanNormal(const wchar_t *data, int linelen, int start_offse
 */
 int COutlinePython::ScanString(const wchar_t *data, int linelen, int start_offset)
 {
-    assert(m_state == STATE_STRING);
+    //assert(m_state == STATE_STRING);
     bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
     int quote_char = m_quote_char;

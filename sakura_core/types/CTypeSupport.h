@@ -44,7 +44,7 @@ class CTypeSupport
         : m_pFontset(&pEditView->GetFontset())
         , m_nColorIdx(ToColorInfoArrIndex(eColorIdx))
     {
-        assert(0 <= m_nColorIdx);
+        //assert(0 <= m_nColorIdx);
         m_pTypes        = &pEditView->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
         m_pColorInfoArr = &m_pTypes->m_ColorInfoArr[m_nColorIdx];
 

@@ -125,7 +125,7 @@ CDlgFavorite::CDlgFavorite()
     m_szMsg[0]    = L'\0';
 
     /* サイズ変更時に位置を制御するコントロール数 */
-    assert(_countof(anchorList) == _countof(m_rcItems));
+    //assert(_countof(anchorList) == _countof(m_rcItems));
 
     {
         i                                  = 0;
@@ -239,7 +239,7 @@ CDlgFavorite::CDlgFavorite()
         m_aFavoriteInfo[i].m_bAddExcept    = false;
 
         /* これ以上増やすときはテーブルサイズも書き換えてね */
-        assert(i < _countof(m_aFavoriteInfo));
+        //assert(i < _countof(m_aFavoriteInfo));
     }
     for (i = 0; i < FAVORITE_INFO_MAX; i++)
     {

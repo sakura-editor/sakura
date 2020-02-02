@@ -304,7 +304,7 @@ class CTypeConfig
         return m_nType >= 0 && m_nType < MAX_TYPES;
     }
     int GetIndex() const
-    { /*assert(IsValid());*/
+    {
         return m_nType;
     }
 

@@ -115,7 +115,7 @@ class CPoolResource : public std::pmr::memory_resource
             // 解放後の未割当領域の場合は次の未割当領域に繋がる
     };
 
-    static_assert(2 * sizeof(Node) <= BlockSize, "sizeof(T) too big.");
+    //static_assert(2 * sizeof(Node) <= BlockSize, "sizeof(T) too big.");
 
     // 呼び出しの度にメモリの動的確保を細かく行う事を避ける為に、一括でブロック領域を確保
     // ブロックの先頭(head)にはブロックの連結用のポインタが配置され、残る領域（body）には要素が記録される
@@ -133,7 +133,7 @@ class CPoolResource : public std::pmr::memory_resource
         void *body   = buff + sizeof(Node *);
         size_t space = BlockSize - sizeof(Node *);
         body         = std::align(alignof(Node), sizeof(Node), body, space);
-        assert(body);
+        //assert(body);
         m_currentNode = reinterpret_cast<Node *>(body);
     }
 
