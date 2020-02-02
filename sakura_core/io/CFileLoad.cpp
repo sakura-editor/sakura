@@ -479,6 +479,7 @@ void CFileLoad::Buffering(void)
             nBufSize = 1; // Jun. 08, 2003  BCCのmalloc(0)がNULLを返す仕様に対処
         }
 
+#line 999
         m_pReadBuf = (char *)malloc(nBufSize);
         if (NULL == m_pReadBuf)
         {

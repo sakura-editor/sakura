@@ -273,6 +273,7 @@ void CMemory::AllocBuffer(int nNewDataLen)
     if (m_nDataBufSize == 0)
     {
         /* 未確保の状態 */
+#line 999
         pWork = malloc_char(nWorkLen);
     }
     else
@@ -285,10 +286,12 @@ void CMemory::AllocBuffer(int nNewDataLen)
             {
                 free(m_pRawData);
                 m_pRawData = NULL;
+#line 999
                 pWork      = malloc_char(nWorkLen);
             }
             else
             {
+#line 999
                 pWork = (char *)realloc(m_pRawData, nWorkLen);
             }
         }

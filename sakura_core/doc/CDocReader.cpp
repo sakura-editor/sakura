@@ -24,6 +24,7 @@ wchar_t *CDocReader::GetAllData(int *pnDataLen)
         pDocLine = pDocLine->GetNextLine();
     }
 
+#line 999
     wchar_t *pData = (wchar_t *)malloc((nDataLen + 1) * sizeof(wchar_t));
     if (NULL == pData)
     {

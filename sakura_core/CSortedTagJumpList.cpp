@@ -111,6 +111,7 @@ int CSortedTagJumpList::AddBaseDir(const WCHAR *baseDir)
 BOOL CSortedTagJumpList::AddParamA(const ACHAR *keyword, const ACHAR *filename, int no, ACHAR type, const ACHAR *note, int depth, int baseDirId)
 {
     //アイテムを作成する。
+#line 999
     TagJumpInfo *item = (TagJumpInfo *)malloc(sizeof(TagJumpInfo));
     if (NULL == item)
         return FALSE;
