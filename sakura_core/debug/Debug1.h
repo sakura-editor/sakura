@@ -29,21 +29,21 @@ void DebugOutW(LPCWSTR lpFmt, ...);
 	MYTRACEを使う場合には必ず#ifdef _DEBUG ～ #endif で囲む必要がある．
 */
 #ifdef _DEBUG
-#define MYTRACE DebugOutW
+#define MYTRACE(...)
 #else
-#define MYTRACE Do_not_use_the_MYTRACE_function_if_release_mode
+#define MYTRACE(...)
 #endif
 
 //#ifdef _DEBUG～#endifで囲まなくても良い版
 #ifdef _DEBUG
-#define DEBUG_TRACE DebugOutW
+#define DEBUG_TRACE(...)
 #else
 #define DEBUG_TRACE(...)
 #endif
 
 //RELEASE版でも出力する版 (RELEASEでのみ発生するバグを監視する目的)
 #ifdef USE_RELPRINT
-#define RELPRINT DebugOutW
+#define RELPRINT(...)
 #else
-#define RELPRINT Do_not_define_USE_RELPRINT
+#define RELPRINT(...)
 #endif // USE_RELPRINT
