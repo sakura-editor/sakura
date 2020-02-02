@@ -1480,6 +1480,7 @@ void CDlgFuncList::SetTree(bool tagjump, bool nolabel)
 	int nStackPointer = 0;
 	int nStackDepth = 32; // phParentStack の確保している数
 	HTREEITEM* phParentStack;
+#line 999
 	phParentStack = (HTREEITEM*)malloc( nStackDepth * sizeof( HTREEITEM ) );
 	phParentStack[ nStackPointer ] = TVI_ROOT;
 	CLayoutInt nFuncLineOld(-1);
@@ -1532,6 +1533,7 @@ void CDlgFuncList::SetTree(bool tagjump, bool nolabel)
 			if( nStackDepth <= pcFuncInfo->m_nDepth + 1 ){
 				nStackDepth = pcFuncInfo->m_nDepth + 4; // 多めに確保しておく
 				HTREEITEM* phTi;
+#line 999
 				phTi = (HTREEITEM*)realloc( phParentStack, nStackDepth * sizeof( HTREEITEM ) );
 				if( NULL != phTi ){
 					phParentStack = phTi;
