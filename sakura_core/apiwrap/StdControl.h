@@ -119,7 +119,7 @@ namespace ApiWrap{
 		str._SetStringLength(actualCount);
 
 		// 正しく設定されているはず
-		assert(str.GetStringLength() == actualCount);
+		//assert(str.GetStringLength() == actualCount);
 		return true;
 	}
 

@@ -62,7 +62,7 @@ CJackManager::CJackManager()
 
 	m_Jacks.reserve( PP_BUILTIN_JACK_COUNT );
 	for( i=0; i<PP_BUILTIN_JACK_COUNT; i++ ){
-		assert( i == jackNames[i].id );
+		//assert( i == jackNames[i].id );
 
 		JackDef jack;
 		jack.ppId = jackNames[i].id;
@@ -241,7 +241,7 @@ CPlug* CJackManager::GetCommandById( int id ) const
 			return (*it);
 		}
 	}
-	assert_warning(false);	//IDに合致するプラグが登録されていない
+	//assert_warning(false);	//IDに合致するプラグが登録されていない
 	return NULL;
 }
 

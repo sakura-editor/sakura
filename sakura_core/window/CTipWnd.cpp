@@ -140,9 +140,9 @@ void CTipWnd::ComputeWindowSize(
 	RECT*			prcResult
 )
 {
-	assert( m_hFont != NULL );
-	assert( hdc != NULL );
-	assert( prcResult != NULL );
+	//assert( m_hFont != NULL );
+	//assert( hdc != NULL );
+	//assert( prcResult != NULL );
 
 	// システム設定値を取得
 	const int cxScreen = ::GetSystemMetrics( SM_CXSCREEN );
@@ -222,8 +222,8 @@ void CTipWnd::DrawTipText(
 	const RECT&		rcPaint
 )
 {
-	assert( m_hFont != NULL );
-	assert( hdc != NULL );
+	//assert( m_hFont != NULL );
+	//assert( hdc != NULL );
 
 	// 余白の設計値をHighDPI対応の値にする
 	const int cx4 = DpiScaleX( 4 );

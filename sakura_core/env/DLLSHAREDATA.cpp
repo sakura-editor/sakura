@@ -39,19 +39,19 @@ static CMutex g_cKeywordMutex( FALSE, GSTR_MUTEX_SAKURA_KEYWORD );
 
 CShareDataLockCounter::CShareDataLockCounter(){
 	LockGuard<CMutex> guard( g_cKeywordMutex );
-	assert_warning( 0 <= GetDllShareData().m_nLockCount );
+	//assert_warning( 0 <= GetDllShareData().m_nLockCount );
 	GetDllShareData().m_nLockCount++;
 }
 
 CShareDataLockCounter::~CShareDataLockCounter(){
 	LockGuard<CMutex> guard( g_cKeywordMutex );
 	GetDllShareData().m_nLockCount--;
-	assert_warning( 0 <= GetDllShareData().m_nLockCount );
+	//assert_warning( 0 <= GetDllShareData().m_nLockCount );
 }
 
 int CShareDataLockCounter::GetLockCounter(){
 	LockGuard<CMutex> guard( g_cKeywordMutex );
-	assert_warning( 0 <= GetDllShareData().m_nLockCount );
+	//assert_warning( 0 <= GetDllShareData().m_nLockCount );
 	return GetDllShareData().m_nLockCount;
 }
 

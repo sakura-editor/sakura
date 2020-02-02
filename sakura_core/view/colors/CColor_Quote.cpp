@@ -200,7 +200,7 @@ bool CColor_Quote::EndColor(const CStringRef& cStr, int nPos)
 {
 	if( -1 == m_nCOMMENTEND ){
 		// ここにくるのは行頭のはず
-		assert_warning( 0 == nPos );
+		//assert_warning( 0 == nPos );
 		// クォーテーション文字列の終端があるか
 		switch( m_nColorTypeIndex ){
 		case 0:

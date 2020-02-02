@@ -100,16 +100,16 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 		
 		// 言語情報ダイアログで "System default" に表示する文字列を作成する
 		auto nCount = ::LoadString( psLangInfo->hInstance, STR_SELLANG_NAME, psLangInfo->szLangName, _countof(psLangInfo->szLangName) );
-		assert(0 < nCount);
+		//assert(0 < nCount);
 
 		// 言語IDを取得
 		WCHAR szBuf[7];		// "0x" + 4桁 + 番兵
 		nCount = ::LoadString( psLangInfo->hInstance, STR_SELLANG_LANGID, szBuf, _countof(szBuf));
-		assert(nCount == _countof(szBuf) - 1);
+		//assert(nCount == _countof(szBuf) - 1);
 		szBuf[_countof(szBuf) - 1] = L'\0';
 
 		psLangInfo->wLangId = (WORD)wcstoul(szBuf, NULL, 16);		// 言語IDを数値化
-		assert(0 < psLangInfo->wLangId);
+		//assert(0 < psLangInfo->wLangId);
 
 		psLangInfo->bValid = TRUE;		// メッセージリソースDLLとして有効
 

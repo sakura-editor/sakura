@@ -232,7 +232,7 @@ TEST(testIsMailAddress, OffsetParameter)
 		{ true,  Buffer+2, -1 }  // Limitation: Non positive offset prevents IsMailAddress from looking behind of a possible head of a mail address.
 	};
 	for (auto& aCase: testCases) {
-		assert(Buffer <= aCase.buffer());
+		//assert(Buffer <= aCase.buffer());
 	}
 
 	/*

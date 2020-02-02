@@ -536,7 +536,7 @@ bool CBackupAgent::FormatBackUpPath(
 			WCHAR *cp;
 			//	2006.03.25 Aroka szExt[0] == '\0'のときのオーバラン問題を修正
 			WCHAR *ep = (szExt[0]!=0) ? &szExt[1] : &szExt[0];
-			assert( newPathCount <= _countof(temp) );
+			//assert( newPathCount <= _countof(temp) );
 
 			// * を拡張子にする
 			while( wcschr( szNewPath, L'*' ) ){

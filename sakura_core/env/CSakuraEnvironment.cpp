@@ -700,7 +700,7 @@ wchar_t* ExParam_LongName( wchar_t* q, wchar_t* q_max, EExpParamName eLongParam 
 		}
 		break;
 	default:
-		assert( 0 );
+		//assert( 0 );
 		break;
 	}
 	return q;
@@ -767,7 +767,7 @@ std::wstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
 		}
 		break;
 	default:
-		assert(0);
+		//assert(0);
 		return L"";
 	}
 }

@@ -266,7 +266,7 @@ int CDlgFileTree::GetData()
 		DlgItem_GetText(hwndDlg, IDC_EDIT_DEFINI, pFileTree->m_szProjectIni, pFileTree->m_szProjectIni.GetBufferCount());
 		if( bSaveShareData ){
 			pFileTree->m_nItemCount = (int)items.size();
-			assert(pFileTree->m_nItemCount <= _countof(pFileTree->m_aItems));
+			//assert(pFileTree->m_nItemCount <= _countof(pFileTree->m_aItems));
 			for( int i = 0; i < pFileTree->m_nItemCount; i++ ){
 				pFileTree->m_aItems[i] = items[i];
 			}
@@ -659,7 +659,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 					}
 				}
 			}else{
-				assert(wID == IDC_BUTTON_INSERT);
+				//assert(wID == IDC_BUTTON_INSERT);
 				// 挿入(上)
 				// 挿入先を探る
 				htiParent = TreeView_GetParent(hwndTree, htiTemp);

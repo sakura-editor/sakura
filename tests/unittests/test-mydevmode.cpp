@@ -90,7 +90,7 @@ TEST(MYDEVMODETest, operatorEqualByMemCpy)
 	MYDEVMODE value;
 
 	// メモリ領域全体をコピーしてまったく同じにする
-	assert(sizeof(value) == sizeof(myDevMode));
+	//assert(sizeof(value) == sizeof(myDevMode));
 	::memcpy_s(&value, sizeof(value), &myDevMode, sizeof(myDevMode));
 
 	EXPECT_TRUE(value == myDevMode);
@@ -110,7 +110,7 @@ TEST(MYDEVMODETest, operatorNotEqual)
 	MYDEVMODE value;
 
 	// メモリ領域全体をコピーしてまったく同じにする
-	assert(sizeof(value) == sizeof(myDevMode));
+	//assert(sizeof(value) == sizeof(myDevMode));
 	::memcpy_s(&value, sizeof(value), &myDevMode, sizeof(myDevMode));
 
 	EXPECT_TRUE(value == myDevMode);

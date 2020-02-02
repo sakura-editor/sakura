@@ -474,7 +474,7 @@ bool CPluginManager::LoadAllPlugin(CommonSetting* common)
 		}
 		if( plugin ){
 			// 要検討：plugin.defのidとsakuraw.iniのidの不一致処理
-			assert_warning( 0 == wcscmp( plugin_table[iNo].m_szId, plugin->m_sId.c_str() ) );
+			//assert_warning( 0 == wcscmp( plugin_table[iNo].m_szId, plugin->m_sId.c_str() ) );
 			plugin->m_id = iNo;		//プラグインテーブルの行番号をIDとする
 			m_plugins.push_back( plugin );
 			plugin_table[iNo].m_state = PLS_LOADED;

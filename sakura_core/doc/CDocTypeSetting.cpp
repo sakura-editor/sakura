@@ -101,7 +101,7 @@ static ColorInfoIni ColorInfo_DEFAULT[] = {
 
 void GetDefaultColorInfo( ColorInfo* pColorInfo, int nIndex )
 {
-	assert( nIndex < _countof(ColorInfo_DEFAULT) );
+	//assert( nIndex < _countof(ColorInfo_DEFAULT) );
 
 	ColorInfoBase* p = pColorInfo;
 	*p = ColorInfo_DEFAULT[nIndex].m_sColorInfo; //ColorInfoBase
@@ -111,7 +111,7 @@ void GetDefaultColorInfo( ColorInfo* pColorInfo, int nIndex )
 
 void GetDefaultColorInfoName( ColorInfo* pColorInfo, int nIndex )
 {
-	assert( nIndex < _countof(ColorInfo_DEFAULT) );
+	//assert( nIndex < _countof(ColorInfo_DEFAULT) );
 
 	wcscpy(pColorInfo->m_szName, LS( ColorInfo_DEFAULT[nIndex].m_nNameId ) );
 }

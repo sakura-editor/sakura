@@ -108,7 +108,7 @@ protected:
 		if(profile.length()>0){
 			ACHAR buf[2]={0};
 			int ret=wctomb(buf,profile[0]);
-			assert_warning(ret==1);
+			//assert_warning(ret==1);
 			(void)ret;
 			*value = buf[0];
 		}

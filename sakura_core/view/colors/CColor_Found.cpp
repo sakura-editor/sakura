@@ -15,7 +15,7 @@ void CColor_Select::OnStartScanLogic()
 
 bool CColor_Select::BeginColor(const CStringRef& cStr, int nPos)
 {
-	assert(0);
+	//assert(0);
 	return false;
 }
 

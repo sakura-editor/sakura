@@ -116,7 +116,7 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 		m_hFont = ::CreateFontIndirect( &lf );
 		m_nRulerHeight = pCommon->m_sWindow.m_nRulerHeight;
 	}
-	assert(m_hFont != NULL);
+	//assert(m_hFont != NULL);
 	HFONT hFontOld = (HFONT)::SelectObject( gr, m_hFont );
 	::SetBkMode( gr, TRANSPARENT );
 
@@ -192,7 +192,7 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 			apt[idx * 2 + 1] = POINT{nX, nY - 3};
 		}
 		++idx;
-		assert(idx <= nLinesToDraw);
+		//assert(idx <= nLinesToDraw);
 
 		nX += dx;
 		i  += oneColumn;

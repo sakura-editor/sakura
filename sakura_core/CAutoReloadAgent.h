@@ -43,7 +43,7 @@ public:
 
 	//監視の一時停止
 	void PauseWatching(){ m_nPauseCount++; }
-	void ResumeWatching(){ m_nPauseCount--; assert(m_nPauseCount>=0); }
+	void ResumeWatching(){ m_nPauseCount--; }
 	bool IsPausing() const{ return m_nPauseCount>=1; }
 
 public://#####仮

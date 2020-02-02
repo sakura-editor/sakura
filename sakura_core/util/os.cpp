@@ -199,7 +199,7 @@ bool SetClipboardTextImp( HWND hwnd, const T* pszText, int nLength )
 		::SetClipboardData( CF_UNICODETEXT, hgClip );
 	}
 	else{
-		assert(0); //※ここには来ない
+		//assert(0); //※ここには来ない
 	}
 	::CloseClipboard();
 

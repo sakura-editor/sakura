@@ -107,7 +107,7 @@ ptrdiff_t int2dec(
 )
 {
 	// 符号無し整数型は対応外
-	static_assert(std::is_signed<T>::value, "T must be signed type.");
+	//static_assert(std::is_signed<T>::value, "T must be signed type.");
 
 	// 一時領域
 	ChT tmp[int2dec_destBufferSufficientLength<T>()];

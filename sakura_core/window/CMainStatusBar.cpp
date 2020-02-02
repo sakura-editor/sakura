@@ -110,7 +110,7 @@ void CMainStatusBar::SendStatusMessage2( const WCHAR* msg )
 void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText, size_t textLen /* = SIZE_MAX */)
 {
 	if( !m_hwndStatusBar ){
-		assert(m_hwndStatusBar != NULL);
+		//assert(m_hwndStatusBar != NULL);
 		return;
 	}
 	// StatusBar_SetText 関数を呼びだすかどうかを判定するラムダ式

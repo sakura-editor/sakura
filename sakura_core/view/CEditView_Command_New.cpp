@@ -714,7 +714,7 @@ bool CEditView::ReplaceData_CEditView3(
 	const CLogicRange*	psDelRangeLogicFast
 )
 {
-	assert( (bFastMode && bRedraw == false) || (!bFastMode) ); // bFastModeのときは bReadraw == false
+	//assert( (bFastMode && bRedraw == false) || (!bFastMode) ); // bFastModeのときは bReadraw == false
 	bool bUpdateAll = true;
 
 	bool bDelRangeUpdate = false;

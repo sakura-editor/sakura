@@ -51,7 +51,7 @@ CDlgCompare::CDlgCompare()
 	: CDialog(true)
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
-	assert( _countof(anchorList) == _countof(m_rcItems) );
+	//assert( _countof(anchorList) == _countof(m_rcItems) );
 
 	m_bCompareAndTileHorz = TRUE;	/* 左右に並べて表示 */
 

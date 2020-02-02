@@ -351,7 +351,7 @@ BOOL CEditView::Create(
 	constexpr DWORD keyboardRepeatSpeedMax = 31; // 0～31の範囲の最大値
 	if( SystemParametersInfo( SPI_GETKEYBOARDSPEED, 0, &dwKeyBoardSpeed, 0 ) ){
 		// 念の為に assert で確認
-		assert(dwKeyBoardSpeed <= keyboardRepeatSpeedMax);
+		//assert(dwKeyBoardSpeed <= keyboardRepeatSpeedMax);
 	}
 	else{
 		// SystemParametersInfo の呼び出しが失敗した場合は最大値をデフォルト値として設定

@@ -40,21 +40,21 @@ public:
 	int max_size() const{ return MAX_SIZE; }
 
 	//要素アクセス
-	ElementType&       operator[](int nIndex)      { assert(nIndex<MAX_SIZE); assert_warning(nIndex<m_nCount); return m_aElements[nIndex]; }
-	const ElementType& operator[](int nIndex) const{ assert(nIndex<MAX_SIZE); assert_warning(nIndex<m_nCount); return m_aElements[nIndex]; }
+	ElementType&       operator[](int nIndex)      { return m_aElements[nIndex]; }
+	const ElementType& operator[](int nIndex) const{ return m_aElements[nIndex]; }
 
 	//操作
 	void clear(){ m_nCount=0; }
 	void push_back(SET_TYPE e)
 	{
-		assert(m_nCount<MAX_SIZE);
+		//assert(m_nCount<MAX_SIZE);
 		m_nCount++;
 		m_aElements[m_nCount-1]=e;
 	}
 	void resize(int nNewSize)
 	{
-		assert(0 <= nNewSize);
-		assert(nNewSize <= MAX_SIZE);
+		//assert(0 <= nNewSize);
+		//assert(nNewSize <= MAX_SIZE);
 		m_nCount = nNewSize;
 	}
 	

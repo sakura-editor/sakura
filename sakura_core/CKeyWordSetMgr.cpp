@@ -586,8 +586,8 @@ bool CKeyWordSetMgr::CanAddKeyWord( int nIdx )
 */
 bool CKeyWordSetMgr::KeyWordAlloc( int nSize )
 {
-	// assert( m_nKeyWordSetNum < MAX_SETNUM );
-	// assert( 0 <= nSize );
+	// //assert( m_nKeyWordSetNum < MAX_SETNUM );
+	// //assert( 0 <= nSize );
 
 	// ブロックのサイズで整列
 	int nAllocSize = GetAlignmentSize( nSize );
@@ -612,7 +612,7 @@ bool CKeyWordSetMgr::KeyWordAlloc( int nSize )
 */
 bool CKeyWordSetMgr::KeyWordReAlloc( int nIdx, int nSize )
 {
-	// assert( 0 <= nIdx && nIdx < m_nKeyWordSetNum );
+	// //assert( 0 <= nIdx && nIdx < m_nKeyWordSetNum );
 
 	// ブロックのサイズで整列
 	int nAllocSize = GetAlignmentSize( nSize );

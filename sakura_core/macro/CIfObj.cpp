@@ -376,7 +376,7 @@ void CIfObj::AddMethod(
 	Info->Desc.cParams = (SHORT)ArgumentCount + 1; //戻り値の分
 	Info->Desc.lprgelemdescParam = Info->Arguments;
 	//	Nov. 10, 2003 FILE Win9Xでは、[lstrcpyW]が無効のため、[wcscpy]に修正
-	assert( wcslen(Name)<_countof(Info->Name) );
+	//assert( wcslen(Name)<_countof(Info->Name) );
 	wcscpy(Info->Name, Name);
 	Info->Method = Method;
 	Info->ID = ID;

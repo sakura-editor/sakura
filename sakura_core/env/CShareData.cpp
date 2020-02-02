@@ -851,7 +851,7 @@ void CShareData::ConvertLangValues(std::vector<std::wstring>& values, bool bSetV
 			break;
 		}
 	}
-	assert( m_pvTypeSettings != NULL );
+	//assert( m_pvTypeSettings != NULL );
 	indexBackup = index;
 	ConvertLangValue( shareData.m_TypeBasis.m_szTypeName, STR_TYPE_NAME_BASIS );
 	for( i = 0; i < (int)GetTypeSettings().size(); i++ ){

@@ -46,7 +46,7 @@ CDlgWindowList::CDlgWindowList()
 	: CDialog(true)
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
-	assert(_countof(anchorList) == _countof(m_rcItems));
+	//assert(_countof(anchorList) == _countof(m_rcItems));
 	m_ptDefaultSize.x = -1;
 	m_ptDefaultSize.y = -1;
 	return;

@@ -145,11 +145,11 @@ void ActivateFrameWindow( HWND hwnd )
 
 CTextWidthCalc::CTextWidthCalc(HWND hParent, int nID)
 {
-	assert_warning(hParent);
+	//assert_warning(hParent);
 
 	hwnd = ::GetDlgItem(hParent, nID);
 	hDC = ::GetDC( hwnd );
-	assert(hDC);
+	//assert(hDC);
 	hFont = (HFONT)::SendMessageAny(hwnd, WM_GETFONT, 0, 0);
 	hFontOld = (HFONT)::SelectObject(hDC, hFont);
 	nCx = 0;
@@ -160,11 +160,11 @@ CTextWidthCalc::CTextWidthCalc(HWND hParent, int nID)
 
 CTextWidthCalc::CTextWidthCalc(HWND hwndThis)
 {
-	assert_warning(hwndThis);
+	//assert_warning(hwndThis);
 
 	hwnd = hwndThis;
 	hDC = ::GetDC( hwnd );
-	assert(hDC);
+	//assert(hDC);
 	hFont = (HFONT)::SendMessageAny(hwnd, WM_GETFONT, 0, 0);
 	hFontOld = (HFONT)::SelectObject(hDC, hFont);
 	nCx = 0;
@@ -179,7 +179,7 @@ CTextWidthCalc::CTextWidthCalc(HFONT font)
 	HDC hDCTemp = ::GetDC( NULL ); // Desktop
 	hDC = ::CreateCompatibleDC( hDCTemp );
 	::ReleaseDC( NULL, hDCTemp );
-	assert(hDC);
+	//assert(hDC);
 	hFont = font;
 	hFontOld = (HFONT)::SelectObject(hDC, hFont);
 	nCx = 0;
@@ -192,7 +192,7 @@ CTextWidthCalc::CTextWidthCalc(HDC hdc)
 {
 	hwnd = 0;
 	hDC = hdc;
-	assert(hDC);
+	//assert(hDC);
 	nCx = 0;
 	nExt = 0;
 	bHDCComp = true;

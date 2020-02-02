@@ -216,7 +216,7 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 		// 編集禁止コマンドの並びをチェック
 		int i;
 		for ( i = 0; i < _countof(EIsModificationForbidden) - 1; i++){
-			assert( EIsModificationForbidden[i] <  EIsModificationForbidden[i+1] );
+			//assert( EIsModificationForbidden[i] <  EIsModificationForbidden[i+1] );
 		}
 	}
 #endif

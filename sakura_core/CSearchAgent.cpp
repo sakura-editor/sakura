@@ -240,7 +240,7 @@ const wchar_t* CSearchAgent::SearchString(
 				}
 				i = nextTable[i];
 			}
-			assert( 0 == i ); // -1チェック
+			//assert( 0 == i ); // -1チェック
 		}
 	} else {
 #endif
@@ -1135,7 +1135,7 @@ prev_line:;
 #ifdef _DEBUG
 		int nLen = cmemLine.GetStringLength();
 		const wchar_t* pInsLine = cmemLine.GetStringPtr();
-		assert( 0 < nLen && WCODE::IsLineDelimiter(pInsLine[nLen - 1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) );
+		//assert( 0 < nLen && WCODE::IsLineDelimiter(pInsLine[nLen - 1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) );
 #endif
 		{
 			if( NULL == pCDocLine ){

@@ -226,7 +226,7 @@ namespace WCODE
 		}
 		void Clear()
 		{
-			assert(m_pCache!=0);
+			//assert(m_pCache!=0);
 			// キャッシュのクリア
 			memcpy(m_pCache->m_lfFaceName, m_lf.lfFaceName, sizeof(m_lf.lfFaceName));
 			memcpy(m_pCache->m_lfFaceName2, m_lf2.lfFaceName, sizeof(m_lf2.lfFaceName));
@@ -235,7 +235,7 @@ namespace WCODE
 		}
 		bool IsSameFontFace( const LOGFONT &lf1, const LOGFONT &lf2 )
 		{
-			assert(m_pCache!=0);
+			//assert(m_pCache!=0);
 			return ( memcmp(m_pCache->m_lfFaceName, lf1.lfFaceName, sizeof(lf1.lfFaceName)) == 0 &&
 				memcmp(m_pCache->m_lfFaceName2, lf2.lfFaceName, sizeof(lf2.lfFaceName)) == 0 );
 		}
@@ -249,7 +249,7 @@ namespace WCODE
 		}
 		bool ExistCache(wchar_t c) const
 		{
-			assert(m_pCache->m_nCharWidthCacheTest==0x12345678);
+			//assert(m_pCache->m_nCharWidthCacheTest==0x12345678);
 			return _GetRawPx(c)!=0x0;
 		}
 		bool CalcHankakuByFont(wchar_t c)
@@ -421,7 +421,7 @@ void InitCharWidthCacheFromDC( const LOGFONT* lfs, ECharWidthFontMode fMode, HDC
  //	文字幅の動的計算用キャッシュの選択	2013.04.08 aroka
 void SelectCharWidthCache( ECharWidthFontMode fMode, ECharWidthCacheMode cMode  )
 {
-	assert( fMode==CWM_FONT_EDIT || cMode==CWM_CACHE_LOCAL );
+	//assert( fMode==CWM_FONT_EDIT || cMode==CWM_CACHE_LOCAL );
 
 	WCODE::selector.Select( fMode, cMode );
 }

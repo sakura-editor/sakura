@@ -69,7 +69,7 @@ CFigure& CFigureManager::GetFigure(const wchar_t* pText, int nTextLen)
 		}
 	}
 
-	assert(0);
+	//assert(0);
 	return *m_vFiguresDisp.back();
 }
 

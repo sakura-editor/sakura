@@ -2693,7 +2693,7 @@ void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sK
 			sName = flag ? LS( sFuncMenuName[i].nNameId[0] ) : LS( sFuncMenuName[i].nNameId[1] );
 		}
 	}
-	assert( wcslen(sName) );
+	//assert( wcslen(sName) );
 
 	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, nFunc, sName, sKey );
 }
@@ -4314,7 +4314,7 @@ bool CEditWnd::CreateEditViewBySplit(int nViewCount )
 	}
 	if( GetAllViewCount() < nViewCount ){
 		for( int i = GetAllViewCount(); i < nViewCount; i++ ){
-			assert( NULL == m_pcEditViewArr[i] );
+			//assert( NULL == m_pcEditViewArr[i] );
 			m_pcEditViewArr[i] = new CEditView(this);
 			m_pcEditViewArr[i]->Create( m_cSplitterWnd.GetHwnd(), GetDocument(), i, FALSE, false );
 		}
@@ -4382,7 +4382,7 @@ void CEditWnd::Views_Redraw()
 /* アクティブなペインを設定 */
 void  CEditWnd::SetActivePane( int nIndex )
 {
-	assert_warning( nIndex < GetAllViewCount() );
+	//assert_warning( nIndex < GetAllViewCount() );
 	DEBUG_TRACE( L"CEditWnd::SetActivePane %d\n", nIndex );
 
 	/* アクティブなビューを切り替える */

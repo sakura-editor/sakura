@@ -635,10 +635,10 @@ CMenuDrawer::CMenuDrawer()
 	const int myButtonEnd = tbd_num + INDEX_GAP;
 	// 定数の整合性確認
 	// アイコン番号
-	assert_warning( tbd[TOOLBAR_ICON_MACRO_INTERNAL      - INDEX_GAP] == F_MACRO_EXTRA );
-	assert_warning( tbd[TOOLBAR_ICON_PLUGCOMMAND_DEFAULT - INDEX_GAP] == F_PLUGCOMMAND );
+	//assert_warning( tbd[TOOLBAR_ICON_MACRO_INTERNAL      - INDEX_GAP] == F_MACRO_EXTRA );
+	//assert_warning( tbd[TOOLBAR_ICON_PLUGCOMMAND_DEFAULT - INDEX_GAP] == F_PLUGCOMMAND );
 	// コマンド番号
-	assert_warning( tbd[TOOLBAR_BUTTON_F_TOOLBARWRAP     - INDEX_GAP] == F_TOOLBARWRAP );
+	//assert_warning( tbd[TOOLBAR_BUTTON_F_TOOLBARWRAP     - INDEX_GAP] == F_TOOLBARWRAP );
 	m_tbMyButton.resize( tbd_num + INDEX_GAP );
 	SetTBBUTTONVal( &m_tbMyButton[0], -1, F_SEPARATOR, 0, TBSTYLE_SEP, 0, 0 );	//セパレータ	// 2007.11.02 ryoji アイコンの未定義化(-1)
 
@@ -1329,7 +1329,7 @@ int CMenuDrawer::FindToolbarNoFromCommandId( int idCommand, bool bOnlyFunc ) con
 		// 固定部分以外(プラグインなど)はindexではなくidCommandのままにする
 		if( m_nMyButtonFixSize <= index ){
 			// もし コマンド番号が明らかに小さいと区別がつかない
-			assert_warning( idCommand < m_nMyButtonFixSize );
+			//assert_warning( idCommand < m_nMyButtonFixSize );
 			return idCommand;
 		}
 	}

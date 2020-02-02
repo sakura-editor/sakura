@@ -81,12 +81,12 @@ GEN_PROPTYPES_CALLBACK(PropTypesKeyHelp,	CPropTypesKeyHelp)
 CPropTypes::CPropTypes()
 {
 	{
-		assert( sizeof(CPropTypesScreen)  - sizeof(CPropTypes) == 0 );
-		assert( sizeof(CPropTypesWindow)  - sizeof(CPropTypes) == 0 );
-		assert( sizeof(CPropTypesColor)   - sizeof(CPropTypes) == 0 );
-		assert( sizeof(CPropTypesSupport) - sizeof(CPropTypes) == 0 );
-		assert( sizeof(CPropTypesRegex)   - sizeof(CPropTypes) == 0 );
-		assert( sizeof(CPropTypesKeyHelp) - sizeof(CPropTypes) == 0 );
+		//assert( sizeof(CPropTypesScreen)  - sizeof(CPropTypes) == 0 );
+		//assert( sizeof(CPropTypesWindow)  - sizeof(CPropTypes) == 0 );
+		//assert( sizeof(CPropTypesColor)   - sizeof(CPropTypes) == 0 );
+		//assert( sizeof(CPropTypesSupport) - sizeof(CPropTypes) == 0 );
+		//assert( sizeof(CPropTypesRegex)   - sizeof(CPropTypes) == 0 );
+		//assert( sizeof(CPropTypesKeyHelp) - sizeof(CPropTypes) == 0 );
 	}
 
 	/* 共有データ構造体のアドレスを返す */

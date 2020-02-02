@@ -38,7 +38,7 @@ CCodeBase* CCodeFactory::CreateCodeBase(
 		if( IsValidCodePageEx(eCodeType) ){
 			return new CCodePage(eCodeType);
 		}
-		assert_warning(0);
+		//assert_warning(0);
 	}
 	return NULL;
 }
