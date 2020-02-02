@@ -459,6 +459,7 @@ static bool MakeDiffTmpFile_core(CTextOutputStream& out, HWND hwnd, CEditView& v
 BOOL CEditView::MakeDiffTmpFile( WCHAR* filename, HWND hWnd, ECodeType code, bool bBom )
 {
 	//一時
+#line 1200
 	WCHAR* pszTmpName = _wtempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
 	if( NULL == pszTmpName ){
 		WarningMessage( NULL, LS(STR_DIFF_FAILED) );
@@ -512,6 +513,7 @@ BOOL CEditView::MakeDiffTmpFile( WCHAR* filename, HWND hWnd, ECodeType code, boo
 BOOL CEditView::MakeDiffTmpFile2( WCHAR* tmpName, const WCHAR* orgName, ECodeType code, ECodeType saveCode )
 {
 	//一時
+#line 1200
 	WCHAR* pszTmpName = _wtempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
 	if( NULL == pszTmpName ){
 		WarningMessage( NULL, LS(STR_DIFF_FAILED) );
