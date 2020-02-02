@@ -152,7 +152,7 @@ APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使う
 | GITHUB_COMMIT_URL             | gitHub で対応する commit に対する URL               | appveyor でのビルドのみ有効       |
 | GITHUB_COMMIT_URL_PR_HEAD     | gitHub の Pull Request の commit に対応する URL     | appveyor での PR のビルドのみ有効 |
 | APPVEYOR_SHORTHASH_PR_HEAD    | Pull Request の commit hash の先頭8文字             | appveyor での PR のビルドのみ有効 |
-| APPVEYOR_BUILD_URL            | appveyor でのビルドに対応する URL                   | appveyor でのビルドのみ有効       |
+| CI_BUILD_URL                  | appveyor でのビルドに対応する URL                   | appveyor でのビルドのみ有効       |
 | TEMP_GIT_SHORT_COMMIT_HASH    | git の commit Hash の先頭8文字                      | appveyor でのビルドのみ有効 (暫定的な変数。将来整理予定) |
 | TEMP_GIT_COMMIT_HASH          | git の commit Hash                                  | appveyor でのビルドのみ有効 (暫定的な変数。将来整理予定) |
 
@@ -182,7 +182,7 @@ APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使う
 | GITHUB_COMMIT_URL               | GITHUB_COMMIT_URL               | 文字列   |
 | GITHUB_COMMIT_URL_PR_HEAD       | GITHUB_COMMIT_URL_PR_HEAD       | 文字列   |
 | APPVEYOR_SHORTHASH_PR_HEAD      | APPVEYOR_SHORTHASH_PR_HEAD      | 文字列   |
-| APPVEYOR_BUILD_URL              | APPVEYOR_BUILD_URL              | 文字列   |
+| CI_BUILD_URL                    | APPVEYOR_URL, APPVEYOR_ACCOUNT_NAME, APPVEYOR_PROJECT_SLUG, APPVEYOR_BUILD_VERSION          | 文字列   |
 | TEMP_GIT_SHORT_COMMIT_HASH      | TEMP_GIT_SHORT_COMMIT_HASH      | 文字列   |
 | TEMP_GIT_COMMIT_HASH            | TEMP_GIT_COMMIT_HASH            | 文字列   |
 

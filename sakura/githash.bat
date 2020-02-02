@@ -87,16 +87,8 @@ if not "%APPVEYOR_PULL_REQUEST_HEAD_COMMIT%" == "" (
 	set APPVEYOR_SHORTHASH_PR_HEAD=
 )
 
-@rem -- build APPVEYOR_BUILD_URL variable start ----
-set APPVEYOR_BUILD_URL_VALID=1
-if "%APPVEYOR_URL%"           == ""  set APPVEYOR_BUILD_URL_VALID=0
-if "%APPVEYOR_ACCOUNT_NAME%"  == ""  set APPVEYOR_BUILD_URL_VALID=0
-if "%APPVEYOR_PROJECT_SLUG%"  == ""  set APPVEYOR_BUILD_URL_VALID=0
-if "%APPVEYOR_BUILD_VERSION%" == ""  set APPVEYOR_BUILD_URL_VALID=0
-if "%APPVEYOR_BUILD_URL_VALID%" == "1" (
-	set APPVEYOR_BUILD_URL=%APPVEYOR_URL%/project/%APPVEYOR_ACCOUNT_NAME%/%APPVEYOR_PROJECT_SLUG%/build/%APPVEYOR_BUILD_VERSION%
-)
-@rem -- build APPVEYOR_BUILD_URL variable end   ----
+call :set_ci_build_url_for_appveyor
+call :set_ci_build_url_for_azulepipelines
 
 : Output githash.h
 set GITHASH_H=%OUT_DIR%\githash.h
@@ -140,7 +132,7 @@ if not errorlevel 1 (
 	@echo GITHUB_COMMIT_URL           : %GITHUB_COMMIT_URL%
 	@echo GITHUB_COMMIT_URL_PR_HEAD   : %GITHUB_COMMIT_URL_PR_HEAD%
 	@echo APPVEYOR_SHORTHASH_PR_HEAD  : %APPVEYOR_SHORTHASH_PR_HEAD%
-	@echo APPVEYOR_BUILD_URL          : %APPVEYOR_BUILD_URL%
+	@echo CI_BUILD_URL                : %CI_BUILD_URL%
 
 	if exist "%GITHASH_H%" del "%GITHASH_H%"
 	move /y "%GITHASH_H_TMP%" "%GITHASH_H%"
@@ -258,10 +250,28 @@ if "%APPVEYOR_SHORTHASH_PR_HEAD%" == "" (
 	echo #define APPVEYOR_SHORTHASH_PR_HEAD     "%APPVEYOR_SHORTHASH_PR_HEAD%"
 )
 
-if "%APPVEYOR_BUILD_URL%" == "" (
-	echo // APPVEYOR_BUILD_URL is not defined
+if not defined CI_BUILD_URL (
+	echo // CI_BUILD_URL is not defined
 ) else (
-	echo #define APPVEYOR_BUILD_URL             "%APPVEYOR_BUILD_URL%"
+	echo #define CI_BUILD_URL                   "%CI_BUILD_URL%"
 )
 
 exit /b 0
+
+
+:set_ci_build_url_for_appveyor
+if defined CI_BUILD_URL               goto :EOF
+if not defined APPVEYOR_URL           goto :EOF
+if not defined APPVEYOR_ACCOUNT_NAME  goto :EOF
+if not defined APPVEYOR_PROJECT_SLUG  goto :EOF
+if not defined APPVEYOR_BUILD_VERSION goto :EOF
+set CI_BUILD_URL=%APPVEYOR_URL%/project/%APPVEYOR_ACCOUNT_NAME%/%APPVEYOR_PROJECT_SLUG%/build/%APPVEYOR_BUILD_VERSION%
+goto :EOF
+
+:set_ci_build_url_for_azurepipelines
+if not defined SYSTEM_TEAMFOUNDATIONSERVERURI goto :EOF
+if not defined SYSTEM_TEAMPROJECT             goto :EOF
+if not defined BUILD_BUILDID                  goto :EOF
+set CI_BUILD_URL=%SYSTEM_TEAMFOUNDATIONSERVERURI%%SYSTEM_TEAMPROJECT%/_build/results?buildId=%BUILD_BUILDID%
+goto :EOF
+

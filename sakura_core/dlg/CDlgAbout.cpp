@@ -107,8 +107,8 @@ const DWORD p_helpids[] = {	//12900
 	#define MY_WIN32_WINNT 0
 #endif
 
-#if defined(APPVEYOR_BUILD_URL)
-#pragma message("APPVEYOR_BUILD_URL: " APPVEYOR_BUILD_URL)
+#if defined(CI_BUILD_URL)
+#pragma message("CI_BUILD_URL: " CI_BUILD_URL)
 #endif
 #if defined(CI_BUILD_NUMBER_LABEL)
 #pragma message("CI_BUILD_NUMBER_LABEL: " CI_BUILD_NUMBER_LABEL)
@@ -331,8 +331,8 @@ BOOL CDlgAbout::OnStnClicked( int wID )
 		}
 	case IDC_STATIC_URL_CI_BUILD:
 		{
-#if defined(APPVEYOR_BUILD_URL)
-			::ShellExecute(GetHwnd(), NULL, _T(APPVEYOR_BUILD_URL), NULL, NULL, SW_SHOWNORMAL);
+#if defined(CI_BUILD_URL)
+			::ShellExecute(GetHwnd(), NULL, _T(CI_BUILD_URL), NULL, NULL, SW_SHOWNORMAL);
 #elif defined(GIT_REMOTE_ORIGIN_URL)
 			::ShellExecute(GetHwnd(), NULL, _T(GIT_REMOTE_ORIGIN_URL), NULL, NULL, SW_SHOWNORMAL);
 #endif
