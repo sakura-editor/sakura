@@ -1764,6 +1764,7 @@ void CDlgFuncList::SetTree(bool tagjump, bool nolabel)
             {
                 nStackDepth = pcFuncInfo->m_nDepth + 4; // 多めに確保しておく
                 HTREEITEM *phTi;
+#line 999
                 phTi = (HTREEITEM *)realloc(phParentStack, nStackDepth * sizeof(HTREEITEM));
                 if (NULL != phTi)
                 {
