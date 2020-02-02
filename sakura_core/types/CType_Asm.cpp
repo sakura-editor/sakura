@@ -75,6 +75,7 @@ void CDocOutline::MakeTopicList_asm(CFuncInfoArr *pcFuncInfoArr)
             break;
 
         //作業用にコピーを作成する。バイナリがあったらその後ろは知らない。
+#line 1000
         pTmpLine = _wcsdup(pLine);
         if (pTmpLine == NULL)
             break;

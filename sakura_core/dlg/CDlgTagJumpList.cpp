@@ -890,12 +890,14 @@ WCHAR *CDlgTagJumpList::GetNameByType(const WCHAR type, const WCHAR *name)
                 {
                     if (token[0] == type)
                     {
+#line 1000
                         return _wcsdup(&token[2]);
                     }
 
                     token = _wcstok(NULL, L",");
                 }
 
+#line 1000
                 return _wcsdup(L"");
             }
 
@@ -903,6 +905,7 @@ WCHAR *CDlgTagJumpList::GetNameByType(const WCHAR type, const WCHAR *name)
         }
     }
 
+#line 1000
     return _wcsdup(L"");
 }
 
@@ -918,6 +921,7 @@ void CDlgTagJumpList::SetFileName(const WCHAR *pszFileName)
     if (m_pszFileName)
         free(m_pszFileName);
 
+#line 1000
     m_pszFileName = _wcsdup(pszFileName);
 
     m_nLoop = CalcMaxUpDirectory(m_pszFileName);
@@ -935,6 +939,7 @@ void CDlgTagJumpList::SetKeyword(const wchar_t *pszKeyword)
     if (m_pszKeyword)
         free(m_pszKeyword);
 
+#line 1000
     m_pszKeyword = _wcsdup(pszKeyword);
 
     return;

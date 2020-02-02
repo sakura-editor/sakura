@@ -1834,6 +1834,7 @@ void CEditView::OnLBUTTONDBLCLK(WPARAM fwKeys, int _xPos, int _yPos)
 
                 unsigned int nThreadId;
                 LPCWSTR szUrl   = strOPEN.c_str();
+#line 1000
                 LPWSTR szUrlDup = _wcsdup(szUrl);
                 HANDLE hThread  = (HANDLE)_beginthreadex(NULL, 0, ShellExecuteProc, (LPVOID)szUrlDup, 0, &nThreadId);
                 if (hThread != INVALID_HANDLE_VALUE)
