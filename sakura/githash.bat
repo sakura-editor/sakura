@@ -77,15 +77,19 @@ exit /b 0
 	exit /b 0
 
 :set_repo_and_pr_variables
+	if defined APPVEYOR_PULL_REQUEST_NUMBER (
+		set GITHUB_PR_NUMBER=%APPVEYOR_PULL_REQUEST_NUMBER%
+	)
+
 	set PREFIX_GITHUB=https://github.com
 	if "%APPVEYOR_REPO_PROVIDER%" == "gitHub" (
 		set GITHUB_COMMIT_URL=%PREFIX_GITHUB%/%APPVEYOR_REPO_NAME%/commit/%TEMP_GIT_COMMIT_HASH%
 		@rem Not Pull Request
-		if "%APPVEYOR_PULL_REQUEST_NUMBER%" == "" (
+		if "%GITHUB_PR_NUMBER%" == "" (
 			@rem No PR
 		) else (
 			@rem PR URL
-			set GITHUB_COMMIT_URL_PR_HEAD=%PREFIX_GITHUB%/%APPVEYOR_REPO_NAME%/pull/%APPVEYOR_PULL_REQUEST_NUMBER%/commits/%APPVEYOR_PULL_REQUEST_HEAD_COMMIT%
+			set GITHUB_COMMIT_URL_PR_HEAD=%PREFIX_GITHUB%/%APPVEYOR_REPO_NAME%/pull/%GITHUB_PR_NUMBER%/commits/%APPVEYOR_PULL_REQUEST_HEAD_COMMIT%
 		)
 	)
 
@@ -239,14 +243,14 @@ exit /b 0
 		echo #define APPVEYOR_BUILD_NUMBER_LABEL "Build %APPVEYOR_BUILD_NUMBER%"
 	)
 
-	if "%APPVEYOR_PULL_REQUEST_NUMBER%" == "" (
-		echo // APPVEYOR_PULL_REQUEST_NUMBER     is not defined
-		echo // APPVEYOR_PULL_REQUEST_NUMBER_INT is not defined
-		echo // APPVEYOR_PR_NUMBER_LABEL         is not defined
+	if "%GITHUB_PR_NUMBER%" == "" (
+		echo // GITHUB_PR_NUMBER       is not defined
+		echo // GITHUB_PR_NUMBER_INT   is not defined
+		echo // GITHUB_PR_NUMBER_LABEL is not defined
 	) else (
-		echo #define APPVEYOR_PULL_REQUEST_NUMBER     "%APPVEYOR_PULL_REQUEST_NUMBER%"
-		echo #define APPVEYOR_PULL_REQUEST_NUMBER_INT  %APPVEYOR_PULL_REQUEST_NUMBER%
-		echo #define APPVEYOR_PR_NUMBER_LABEL         "PR %APPVEYOR_PULL_REQUEST_NUMBER%"
+		echo #define GITHUB_PR_NUMBER                 "%GITHUB_PR_NUMBER%"
+		echo #define GITHUB_PR_NUMBER_INT              %GITHUB_PR_NUMBER%
+		echo #define GITHUB_PR_NUMBER_LABEL        "PR %GITHUB_PR_NUMBER%"
 	)
 
 	if "%GITHUB_COMMIT_URL%" == "" (
