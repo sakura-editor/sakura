@@ -158,7 +158,7 @@ exit /b 0
 		@echo GIT_REMOTE_ORIGIN_URL : %GIT_REMOTE_ORIGIN_URL%
 		@echo GIT_TAG_NAME          : %GIT_TAG_NAME%
 		@echo APPVEYOR_URL          : %APPVEYOR_URL%
-		@echo APPVEYOR_REPO_NAME    : %APPVEYOR_REPO_NAME%
+		@echo CI_REPO_NAME          : %CI_REPO_NAME%
 		@echo APPVEYOR_ACCOUNT_NAME : %APPVEYOR_ACCOUNT_NAME%
 		@echo APPVEYOR_PROJECT_SLUG : %APPVEYOR_PROJECT_SLUG%
 		@echo APPVEYOR_BUILD_VERSION: %APPVEYOR_BUILD_VERSION%
@@ -218,10 +218,10 @@ exit /b 0
 		echo #define APPVEYOR_URL "%APPVEYOR_URL%"
 	)
 
-	if "%APPVEYOR_REPO_NAME%" == "" (
-		echo // APPVEYOR_REPO_NAME is not defined
+	if "%CI_REPO_NAME%" == "" (
+		echo // CI_REPO_NAME is not defined
 	) else (
-		echo #define APPVEYOR_REPO_NAME "%APPVEYOR_REPO_NAME%"
+		echo #define CI_REPO_NAME "%CI_REPO_NAME%"
 	)
 
 	@rem enable 'dev version' macro which will be disabled on release branches
