@@ -101,16 +101,12 @@ exit /b 0
 	exit /b 0
 
 :set_ci_build_url_for_appveyor
-	@rem -- build APPVEYOR_BUILD_URL variable start ----
-	set APPVEYOR_BUILD_URL_VALID=1
-	if "%APPVEYOR_URL%"           == ""  set APPVEYOR_BUILD_URL_VALID=0
-	if "%APPVEYOR_ACCOUNT_NAME%"  == ""  set APPVEYOR_BUILD_URL_VALID=0
-	if "%APPVEYOR_PROJECT_SLUG%"  == ""  set APPVEYOR_BUILD_URL_VALID=0
-	if "%APPVEYOR_BUILD_VERSION%" == ""  set APPVEYOR_BUILD_URL_VALID=0
-	if "%APPVEYOR_BUILD_URL_VALID%" == "1" (
-		set APPVEYOR_BUILD_URL=%APPVEYOR_URL%/project/%APPVEYOR_ACCOUNT_NAME%/%APPVEYOR_PROJECT_SLUG%/build/%APPVEYOR_BUILD_VERSION%
-	)
-	@rem -- build APPVEYOR_BUILD_URL variable end   ----
+	if not defined APPVEYOR               exit /b 0
+	if not defined APPVEYOR_URL           exit /b 0
+	if not defined APPVEYOR_ACCOUNT_NAME  exit /b 0
+	if not defined APPVEYOR_PROJECT_SLUG  exit /b 0
+	if not defined APPVEYOR_BUILD_VERSION exit /b 0
+	set CI_BUILD_URL=%APPVEYOR_URL%/project/%APPVEYOR_ACCOUNT_NAME%/%APPVEYOR_PROJECT_SLUG%/build/%APPVEYOR_BUILD_VERSION%
 	exit /b 0
 
 :update_output_githash
@@ -155,7 +151,7 @@ exit /b 0
 		@echo GITHUB_COMMIT_URL           : %GITHUB_COMMIT_URL%
 		@echo GITHUB_COMMIT_URL_PR_HEAD   : %GITHUB_COMMIT_URL_PR_HEAD%
 		@echo APPVEYOR_SHORTHASH_PR_HEAD  : %APPVEYOR_SHORTHASH_PR_HEAD%
-		@echo APPVEYOR_BUILD_URL          : %APPVEYOR_BUILD_URL%
+		@echo CI_BUILD_URL                : %CI_BUILD_URL%
 
 		if exist "%GITHASH_H%" del "%GITHASH_H%"
 		move /y "%GITHASH_H_TMP%" "%GITHASH_H%"
@@ -271,10 +267,10 @@ exit /b 0
 		echo #define APPVEYOR_SHORTHASH_PR_HEAD     "%APPVEYOR_SHORTHASH_PR_HEAD%"
 	)
 
-	if "%APPVEYOR_BUILD_URL%" == "" (
-		echo // APPVEYOR_BUILD_URL is not defined
+	if "%CI_BUILD_URL%" == "" (
+		echo // CI_BUILD_URL is not defined
 	) else (
-		echo #define APPVEYOR_BUILD_URL             "%APPVEYOR_BUILD_URL%"
+		echo #define CI_BUILD_URL                  "%CI_BUILD_URL%"
 	)
 
 	exit /b 0
