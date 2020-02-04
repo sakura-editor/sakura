@@ -275,7 +275,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	m_UrlGitWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GIT ) );
 #endif
 #ifdef CI_BUILD_NUMBER_LABEL
-	m_UrlBuildLinkWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_APPVEYOR_BUILD ) );
+	m_UrlBuildLinkWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_CI_BUILD ) );
 #endif
 #ifdef TEMP_GIT_SHORT_COMMIT_HASH
 	m_UrlGitHubCommitWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GITHUB_COMMIT ) );
@@ -329,7 +329,7 @@ BOOL CDlgAbout::OnStnClicked( int wID )
 			::ShellExecute( GetHwnd(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
 			return TRUE;
 		}
-	case IDC_STATIC_URL_APPVEYOR_BUILD:
+	case IDC_STATIC_URL_CI_BUILD:
 		{
 #if defined(CI_BUILD_URL)
 			::ShellExecute(GetHwnd(), NULL, _T(CI_BUILD_URL), NULL, NULL, SW_SHOWNORMAL);
