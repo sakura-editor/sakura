@@ -227,12 +227,6 @@ exit /b 0
 		echo #define GIT_TAG_NAME "%GIT_TAG_NAME%"
 	)
 
-	if "%APPVEYOR_URL%" == "" (
-		echo // APPVEYOR_URL is not defined
-	) else (
-		echo #define APPVEYOR_URL "%APPVEYOR_URL%"
-	)
-
 	if "%CI_REPO_NAME%" == "" (
 		echo // CI_REPO_NAME is not defined
 	) else (
@@ -246,12 +240,6 @@ exit /b 0
 		echo // CI_ACCOUNT_NAME is not defined
 	) else (
 		echo #define CI_ACCOUNT_NAME "%CI_ACCOUNT_NAME%"
-	)
-
-	if "%APPVEYOR_PROJECT_SLUG%" == "" (
-		echo // APPVEYOR_PROJECT_SLUG is not defined
-	) else (
-		echo #define APPVEYOR_PROJECT_SLUG "%APPVEYOR_PROJECT_SLUG%"
 	)
 
 	if "%CI_BUILD_VERSION%" == "" (
@@ -309,5 +297,21 @@ exit /b 0
 	) else (
 		echo #define CI_BUILD_URL                  "%CI_BUILD_URL%"
 	)
+
+	echo // APPVEYOR specific variables
+
+	if "%APPVEYOR_URL%" == "" (
+		echo // APPVEYOR_URL is not defined
+	) else (
+		echo #define APPVEYOR_URL "%APPVEYOR_URL%"
+	)
+
+	if "%APPVEYOR_PROJECT_SLUG%" == "" (
+		echo // APPVEYOR_PROJECT_SLUG is not defined
+	) else (
+		echo #define APPVEYOR_PROJECT_SLUG "%APPVEYOR_PROJECT_SLUG%"
+	)
+	echo // APPVEYOR specific variables end
+	echo //
 
 	exit /b 0
