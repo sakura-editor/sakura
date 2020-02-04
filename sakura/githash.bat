@@ -134,6 +134,7 @@ exit /b 0
 
 :set_ci_build_url
 	call :set_ci_build_url_for_appveyor
+	call :set_ci_build_url_for_azurepipelines
 	exit /b 0
 
 :set_ci_build_url_for_appveyor
@@ -143,6 +144,13 @@ exit /b 0
 	if not defined APPVEYOR_PROJECT_SLUG  exit /b 0
 	if not defined APPVEYOR_BUILD_VERSION exit /b 0
 	set CI_BUILD_URL=%APPVEYOR_URL%/project/%APPVEYOR_ACCOUNT_NAME%/%APPVEYOR_PROJECT_SLUG%/build/%APPVEYOR_BUILD_VERSION%
+	exit /b 0
+
+:set_ci_build_url_for_azurepipelines
+	if not defined SYSTEM_TEAMFOUNDATIONSERVERURI exit /b 0
+	if not defined SYSTEM_TEAMPROJECT             exit /b 0
+	if not defined BUILD_BUILDID                  exit /b 0
+	set CI_BUILD_URL=%SYSTEM_TEAMFOUNDATIONSERVERURI%%SYSTEM_TEAMPROJECT%/_build/results?buildId=%BUILD_BUILDID%
 	exit /b 0
 
 :update_output_githash
