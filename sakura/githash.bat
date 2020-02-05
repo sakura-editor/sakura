@@ -90,6 +90,14 @@ exit /b 0
 		set CI_ACCOUNT_NAME=%APPVEYOR_ACCOUNT_NAME%
 	)
 
+	@rem ----------------------------------------------------------------------------------------------------------
+	@rem Be aware the following rules.
+	@rem BUILD_BUILDID     (at azure pipeline) is the counterpart of APPVEYOR_BUILD_NUMBER  (at appveyor).
+	@rem BUILD_BUILDNUMBER (at azure pipeline) is the counterpart of APPVEYOR_BUILD_VERSION (at appveyor).
+	@rem ----------------------------------------------------------------------------------------------------------
+	@rem This is super confusing.
+	@rem BUILD_BUILDNUMBER (at azure pipeline) and APPVEYOR_BUILD_NUMBER (at appveyor) are different information.
+	@rem ----------------------------------------------------------------------------------------------------------
 	if defined APPVEYOR_BUILD_NUMBER (
 		@rem APPVEYOR_BUILD_NUMBER=1624
 		set CI_BUILD_NUMBER=%APPVEYOR_BUILD_NUMBER%
