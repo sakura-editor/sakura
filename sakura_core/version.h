@@ -61,10 +61,10 @@
 #define ALPHA_VERSION_STR_WITH_SPACE ""
 #endif
 
-#ifdef APPVEYOR_DEV_VERSION
-#define APPVEYOR_DEV_VERSION_STR_WITH_SPACE " dev"
+#ifdef DEV_VERSION
+#define DEV_VERSION_STR_WITH_SPACE " dev"
 #else
-#define APPVEYOR_DEV_VERSION_STR_WITH_SPACE ""
+#define DEV_VERSION_STR_WITH_SPACE ""
 #endif
 
 // バージョン情報埋め込み用 Git ハッシュ文字列 (存在しない場合には空文字列)
@@ -85,6 +85,6 @@
 	VER_GIT_SHORTHASH                           \
 	" " VER_CHARSET                             \
 	" " VER_PLATFORM                            \
-	APPVEYOR_DEV_VERSION_STR_WITH_SPACE         \
+	DEV_VERSION_STR_WITH_SPACE         \
 	SPACE_WHEN_DEBUG                            \
 	VER_CONFIG ALPHA_VERSION_STR_WITH_SPACE
