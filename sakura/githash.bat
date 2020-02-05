@@ -277,6 +277,12 @@ exit /b 0
 		echo #define GITHUB_COMMIT_URL_PR_HEAD     "%GITHUB_COMMIT_URL_PR_HEAD%"
 	)
 
+	if "%GITHUB_PR_HEAD_COMMIT%" == "" (
+		echo // GITHUB_PR_HEAD_COMMIT is not defined
+	) else (
+		echo #define GITHUB_PR_HEAD_COMMIT         "%GITHUB_PR_HEAD_COMMIT%"
+	)
+
 	if "%GITHUB_PR_HEAD_SHORT_COMMIT%" == "" (
 		echo // GITHUB_PR_HEAD_SHORT_COMMIT is not defined
 	) else (
