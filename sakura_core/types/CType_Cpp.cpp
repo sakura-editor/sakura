@@ -33,7 +33,18 @@
 #include "view/CEditView.h"
 #include "view/colors/EColorIndexType.h"
 
-// 2015.11.14 C/C++のファイル名による判定
+/*!
+ * @brief C/C++のファイル名による判定
+ *
+ * @param [in] pszFileName ファイル名(nullptr指定不可、NUL終端すること)
+ * @return アウトライン種別
+ *
+ * @detail
+ * ファイル名(拡張子)に応じたアウトライン種別を取得する。
+ * 拡張子の一致判定は大文字小文字を区別しない。
+ * 現状、拡張子に対応するアウトライン種別はベタ書きで判定している。
+ * 一致する拡張子がない場合、OUTLINE_C_CPPになる。
+ */
 EOutlineType GetCLangOutlineType( const wchar_t* pszFileName )
 {
 	auto eOutlineType = OUTLINE_C_CPP;
