@@ -88,6 +88,8 @@ exit /b 0
 
 	if defined APPVEYOR_ACCOUNT_NAME (
 		set CI_ACCOUNT_NAME=%APPVEYOR_ACCOUNT_NAME%
+	) else if defined BUILD_DEFINITIONNAME (
+		set CI_ACCOUNT_NAME=%BUILD_DEFINITIONNAME%
 	)
 
 	@rem ----------------------------------------------------------------------------------------------------------
