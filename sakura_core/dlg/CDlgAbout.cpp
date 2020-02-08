@@ -110,8 +110,8 @@ const DWORD p_helpids[] = {	//12900
 #if defined(CI_BUILD_URL)
 #pragma message("CI_BUILD_URL: " CI_BUILD_URL)
 #endif
-#if defined(APPVEYOR_BUILD_NUMBER_LABEL)
-#pragma message("APPVEYOR_BUILD_NUMBER_LABEL: " APPVEYOR_BUILD_NUMBER_LABEL)
+#if defined(CI_BUILD_NUMBER_LABEL)
+#pragma message("CI_BUILD_NUMBER_LABEL: " CI_BUILD_NUMBER_LABEL)
 #endif
 
 //	From Here Nov. 7, 2000 genta
@@ -274,7 +274,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 #ifdef GIT_REMOTE_ORIGIN_URL
 	m_UrlGitWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GIT ) );
 #endif
-#ifdef APPVEYOR_BUILD_NUMBER_LABEL
+#ifdef CI_BUILD_NUMBER_LABEL
 	m_UrlBuildLinkWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_APPVEYOR_BUILD ) );
 #endif
 #ifdef TEMP_GIT_SHORT_COMMIT_HASH

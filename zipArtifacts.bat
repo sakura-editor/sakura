@@ -46,9 +46,9 @@ if "%APPVEYOR_ACCOUNT_NAME%" == "sakuraeditor" (
 	set BUILD_ACCOUNT=%APPVEYOR_ACCOUNT_NAME%
 )
 
-@echo checking APPVEYOR_BUILD_NUMBER %APPVEYOR_BUILD_NUMBER%
-if not "%APPVEYOR_BUILD_NUMBER%" == "" (
-	set BUILD_NUMBER=build%APPVEYOR_BUILD_NUMBER%
+@echo checking CI_BUILD_NUMBER %CI_BUILD_NUMBER%
+if not "%CI_BUILD_NUMBER%" == "" (
+	set BUILD_NUMBER=build%CI_BUILD_NUMBER%
 ) else (
 	set BUILD_NUMBER=buildLocal
 )
