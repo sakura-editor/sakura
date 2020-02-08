@@ -13,14 +13,14 @@ call %~dp0sakura\githash.bat %~dp0sakura_core
 @rem ----------------------------------------------------------------
 @rem prepare environment variable
 @rem ----------------------------------------------------------------
-@echo checking APPVEYOR_ACCOUNT_NAME %APPVEYOR_ACCOUNT_NAME%
+@echo checking CI_ACCOUNT_NAME %CI_ACCOUNT_NAME%
 set BUILD_ACCOUNT=
-if "%APPVEYOR_ACCOUNT_NAME%" == "sakuraeditor" (
+if "%CI_ACCOUNT_NAME%" == "sakuraeditor" (
 	set BUILD_ACCOUNT=
-) else if "%APPVEYOR_ACCOUNT_NAME%" == "" (
+) else if "%CI_REPO_NAME%" == "" (
 	set BUILD_ACCOUNT=
 ) else (
-	set BUILD_ACCOUNT=%APPVEYOR_ACCOUNT_NAME%
+	set BUILD_ACCOUNT=%CI_ACCOUNT_NAME%
 )
 
 @echo checking CI_BUILD_NUMBER %CI_BUILD_NUMBER%

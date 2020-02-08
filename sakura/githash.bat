@@ -81,6 +81,10 @@ exit /b 0
 		set CI_REPO_NAME=%APPVEYOR_REPO_NAME%
 	)
 
+	if defined APPVEYOR_ACCOUNT_NAME (
+		set CI_ACCOUNT_NAME=%APPVEYOR_ACCOUNT_NAME%
+	)
+
 	if defined APPVEYOR_BUILD_NUMBER (
 		@rem APPVEYOR_BUILD_NUMBER=1624
 		set CI_BUILD_NUMBER=%APPVEYOR_BUILD_NUMBER%
@@ -170,7 +174,7 @@ exit /b 0
 		@echo GIT_TAG_NAME          : %GIT_TAG_NAME%
 		@echo APPVEYOR_URL          : %APPVEYOR_URL%
 		@echo CI_REPO_NAME          : %CI_REPO_NAME%
-		@echo APPVEYOR_ACCOUNT_NAME : %APPVEYOR_ACCOUNT_NAME%
+		@echo CI_ACCOUNT_NAME             : %CI_ACCOUNT_NAME%
 		@echo APPVEYOR_PROJECT_SLUG : %APPVEYOR_PROJECT_SLUG%
 		@echo CI_BUILD_VERSION            : %CI_BUILD_VERSION%
 		@echo CI_BUILD_NUMBER             : %CI_BUILD_NUMBER%
@@ -238,10 +242,10 @@ exit /b 0
 	@rem enable 'dev version' macro which will be disabled on release branches
 	echo #define DEV_VERSION
 
-	if "%APPVEYOR_ACCOUNT_NAME%" == "" (
-		echo // APPVEYOR_ACCOUNT_NAME is not defined
+	if "%CI_ACCOUNT_NAME%" == "" (
+		echo // CI_ACCOUNT_NAME is not defined
 	) else (
-		echo #define APPVEYOR_ACCOUNT_NAME "%APPVEYOR_ACCOUNT_NAME%"
+		echo #define CI_ACCOUNT_NAME "%CI_ACCOUNT_NAME%"
 	)
 
 	if "%APPVEYOR_PROJECT_SLUG%" == "" (
