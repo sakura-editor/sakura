@@ -112,6 +112,9 @@ exit /b 0
 	if "%BUILD_REPOSITORY_PROVIDER%"=="GitHub" (
 		set GITHUB_ON=1
 	)
+	if "%APPVEYOR_REPO_PROVIDER%"=="gitHub" (
+		set GITHUB_ON=1
+	)
 
 	set PREFIX_GITHUB=https://github.com
 	if "%GITHUB_ON%" == "1" (
