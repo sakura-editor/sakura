@@ -68,8 +68,6 @@ class AppveyorEnv():
 		#	set APPVEYOR_SHORTHASH_PR_HEAD=%APPVEYOR_PULL_REQUEST_HEAD_COMMIT:~0,8%
 		if "APPVEYOR_PULL_REQUEST_HEAD_COMMIT" in self.env:
 			commitHashPRHead = self.env["APPVEYOR_PULL_REQUEST_HEAD_COMMIT"]
-			if len(commitHashPRHead) >= 8:
-				self.var["APPVEYOR_SHORTHASH_PR_HEAD"] = commitHashPRHead[0:8]
 
 		if "APPVEYOR_URL" in self.env and "APPVEYOR_ACCOUNT_NAME" in self.env:
 			if "APPVEYOR_PROJECT_SLUG" in self.env and "APPVEYOR_BUILD_VERSION" in self.env:

@@ -77,22 +77,52 @@ exit /b 0
 	exit /b 0
 
 :set_repo_and_pr_variables
+	if defined APPVEYOR_REPO_NAME (
+		set CI_REPO_NAME=%APPVEYOR_REPO_NAME%
+	)
+
+	if defined APPVEYOR_ACCOUNT_NAME (
+		set CI_ACCOUNT_NAME=%APPVEYOR_ACCOUNT_NAME%
+	)
+
+	if defined APPVEYOR_BUILD_NUMBER (
+		@rem APPVEYOR_BUILD_NUMBER=1624
+		set CI_BUILD_NUMBER=%APPVEYOR_BUILD_NUMBER%
+	)
+
+	if defined APPVEYOR_BUILD_VERSION (
+		@rem APPVEYOR_BUILD_VERSION=1.0.1624
+		set CI_BUILD_VERSION=%APPVEYOR_BUILD_VERSION%
+	)
+
+	if defined APPVEYOR_PULL_REQUEST_NUMBER (
+		set GITHUB_PR_NUMBER=%APPVEYOR_PULL_REQUEST_NUMBER%
+	)
+
+	if defined APPVEYOR_PULL_REQUEST_HEAD_COMMIT (
+		set GITHUB_PR_HEAD_COMMIT=%APPVEYOR_PULL_REQUEST_HEAD_COMMIT%
+	)
+
+	if "%BUILD_REPOSITORY_PROVIDER%"=="GitHub" (
+		set GITHUB_ON=1
+	)
+
 	set PREFIX_GITHUB=https://github.com
-	if "%APPVEYOR_REPO_PROVIDER%" == "gitHub" (
-		set GITHUB_COMMIT_URL=%PREFIX_GITHUB%/%APPVEYOR_REPO_NAME%/commit/%TEMP_GIT_COMMIT_HASH%
+	if "%GITHUB_ON%" == "1" (
+		set "GITHUB_COMMIT_URL=%PREFIX_GITHUB%/%CI_REPO_NAME%/commit/%TEMP_GIT_COMMIT_HASH%"
 		@rem Not Pull Request
-		if "%APPVEYOR_PULL_REQUEST_NUMBER%" == "" (
+		if "%GITHUB_PR_NUMBER%" == "" (
 			@rem No PR
 		) else (
 			@rem PR URL
-			set GITHUB_COMMIT_URL_PR_HEAD=%PREFIX_GITHUB%/%APPVEYOR_REPO_NAME%/pull/%APPVEYOR_PULL_REQUEST_NUMBER%/commits/%APPVEYOR_PULL_REQUEST_HEAD_COMMIT%
+			set "GITHUB_COMMIT_URL_PR_HEAD=%PREFIX_GITHUB%/%CI_REPO_NAME%/pull/%GITHUB_PR_NUMBER%/commits/%GITHUB_PR_HEAD_COMMIT%"
 		)
 	)
 
-	if not "%APPVEYOR_PULL_REQUEST_HEAD_COMMIT%" == "" (
-		set APPVEYOR_SHORTHASH_PR_HEAD=%APPVEYOR_PULL_REQUEST_HEAD_COMMIT:~0,8%
+	if not "%GITHUB_PR_HEAD_COMMIT%" == "" (
+		set GITHUB_PR_HEAD_SHORT_COMMIT=%GITHUB_PR_HEAD_COMMIT:~0,8%
 	) else (
-		set APPVEYOR_SHORTHASH_PR_HEAD=
+		set GITHUB_PR_HEAD_SHORT_COMMIT=
 	)
 	exit /b 0
 
@@ -101,16 +131,12 @@ exit /b 0
 	exit /b 0
 
 :set_ci_build_url_for_appveyor
-	@rem -- build APPVEYOR_BUILD_URL variable start ----
-	set APPVEYOR_BUILD_URL_VALID=1
-	if "%APPVEYOR_URL%"           == ""  set APPVEYOR_BUILD_URL_VALID=0
-	if "%APPVEYOR_ACCOUNT_NAME%"  == ""  set APPVEYOR_BUILD_URL_VALID=0
-	if "%APPVEYOR_PROJECT_SLUG%"  == ""  set APPVEYOR_BUILD_URL_VALID=0
-	if "%APPVEYOR_BUILD_VERSION%" == ""  set APPVEYOR_BUILD_URL_VALID=0
-	if "%APPVEYOR_BUILD_URL_VALID%" == "1" (
-		set APPVEYOR_BUILD_URL=%APPVEYOR_URL%/project/%APPVEYOR_ACCOUNT_NAME%/%APPVEYOR_PROJECT_SLUG%/build/%APPVEYOR_BUILD_VERSION%
-	)
-	@rem -- build APPVEYOR_BUILD_URL variable end   ----
+	if not defined APPVEYOR               exit /b 0
+	if not defined APPVEYOR_URL           exit /b 0
+	if not defined APPVEYOR_ACCOUNT_NAME  exit /b 0
+	if not defined APPVEYOR_PROJECT_SLUG  exit /b 0
+	if not defined APPVEYOR_BUILD_VERSION exit /b 0
+	set CI_BUILD_URL=%APPVEYOR_URL%/project/%APPVEYOR_ACCOUNT_NAME%/%APPVEYOR_PROJECT_SLUG%/build/%APPVEYOR_BUILD_VERSION%
 	exit /b 0
 
 :update_output_githash
@@ -147,15 +173,16 @@ exit /b 0
 		@echo GIT_REMOTE_ORIGIN_URL : %GIT_REMOTE_ORIGIN_URL%
 		@echo GIT_TAG_NAME          : %GIT_TAG_NAME%
 		@echo APPVEYOR_URL          : %APPVEYOR_URL%
-		@echo APPVEYOR_REPO_NAME    : %APPVEYOR_REPO_NAME%
-		@echo APPVEYOR_ACCOUNT_NAME : %APPVEYOR_ACCOUNT_NAME%
+		@echo CI_REPO_NAME          : %CI_REPO_NAME%
+		@echo CI_ACCOUNT_NAME             : %CI_ACCOUNT_NAME%
 		@echo APPVEYOR_PROJECT_SLUG : %APPVEYOR_PROJECT_SLUG%
-		@echo APPVEYOR_BUILD_VERSION: %APPVEYOR_BUILD_VERSION%
-		@echo APPVEYOR_BUILD_NUMBER : %APPVEYOR_BUILD_NUMBER%
+		@echo CI_BUILD_VERSION            : %CI_BUILD_VERSION%
+		@echo CI_BUILD_NUMBER             : %CI_BUILD_NUMBER%
 		@echo GITHUB_COMMIT_URL           : %GITHUB_COMMIT_URL%
 		@echo GITHUB_COMMIT_URL_PR_HEAD   : %GITHUB_COMMIT_URL_PR_HEAD%
-		@echo APPVEYOR_SHORTHASH_PR_HEAD  : %APPVEYOR_SHORTHASH_PR_HEAD%
-		@echo APPVEYOR_BUILD_URL          : %APPVEYOR_BUILD_URL%
+		@echo GITHUB_PR_HEAD_COMMIT       : %GITHUB_PR_HEAD_COMMIT%
+		@echo GITHUB_PR_HEAD_SHORT_COMMIT : %GITHUB_PR_HEAD_SHORT_COMMIT%
+		@echo CI_BUILD_URL                : %CI_BUILD_URL%
 
 		if exist "%GITHASH_H%" del "%GITHASH_H%"
 		move /y "%GITHASH_H_TMP%" "%GITHASH_H%"
@@ -206,19 +233,19 @@ exit /b 0
 		echo #define APPVEYOR_URL "%APPVEYOR_URL%"
 	)
 
-	if "%APPVEYOR_REPO_NAME%" == "" (
-		echo // APPVEYOR_REPO_NAME is not defined
+	if "%CI_REPO_NAME%" == "" (
+		echo // CI_REPO_NAME is not defined
 	) else (
-		echo #define APPVEYOR_REPO_NAME "%APPVEYOR_REPO_NAME%"
+		echo #define CI_REPO_NAME "%CI_REPO_NAME%"
 	)
 
 	@rem enable 'dev version' macro which will be disabled on release branches
-	echo #define APPVEYOR_DEV_VERSION
+	echo #define DEV_VERSION
 
-	if "%APPVEYOR_ACCOUNT_NAME%" == "" (
-		echo // APPVEYOR_ACCOUNT_NAME is not defined
+	if "%CI_ACCOUNT_NAME%" == "" (
+		echo // CI_ACCOUNT_NAME is not defined
 	) else (
-		echo #define APPVEYOR_ACCOUNT_NAME "%APPVEYOR_ACCOUNT_NAME%"
+		echo #define CI_ACCOUNT_NAME "%CI_ACCOUNT_NAME%"
 	)
 
 	if "%APPVEYOR_PROJECT_SLUG%" == "" (
@@ -227,30 +254,30 @@ exit /b 0
 		echo #define APPVEYOR_PROJECT_SLUG "%APPVEYOR_PROJECT_SLUG%"
 	)
 
-	if "%APPVEYOR_BUILD_VERSION%" == "" (
-		echo // APPVEYOR_BUILD_VERSION is not defined
+	if "%CI_BUILD_VERSION%" == "" (
+		echo // CI_BUILD_VERSION is not defined
 	) else (
-		echo #define APPVEYOR_BUILD_VERSION "%APPVEYOR_BUILD_VERSION%"
+		echo #define CI_BUILD_VERSION "%CI_BUILD_VERSION%"
 	)
 
-	if "%APPVEYOR_BUILD_NUMBER%" == "" (
-		echo // APPVEYOR_BUILD_NUMBER     is not defined
-		echo // APPVEYOR_BUILD_NUMBER_INT is not defined
-		echo // APPVEYOR_BUILD_NUMBER_LABEL is not defined
+	if "%CI_BUILD_NUMBER%" == "" (
+		echo // CI_BUILD_NUMBER     is not defined
+		echo // CI_BUILD_NUMBER_INT is not defined
+		echo // CI_BUILD_NUMBER_LABEL is not defined
 	) else (
-		echo #define APPVEYOR_BUILD_NUMBER     "%APPVEYOR_BUILD_NUMBER%"
-		echo #define APPVEYOR_BUILD_NUMBER_INT  %APPVEYOR_BUILD_NUMBER%
-		echo #define APPVEYOR_BUILD_NUMBER_LABEL "Build %APPVEYOR_BUILD_NUMBER%"
+		echo #define CI_BUILD_NUMBER             "%CI_BUILD_NUMBER%"
+		echo #define CI_BUILD_NUMBER_INT          %CI_BUILD_NUMBER%
+		echo #define CI_BUILD_NUMBER_LABEL "Build %CI_BUILD_NUMBER%"
 	)
 
-	if "%APPVEYOR_PULL_REQUEST_NUMBER%" == "" (
-		echo // APPVEYOR_PULL_REQUEST_NUMBER     is not defined
-		echo // APPVEYOR_PULL_REQUEST_NUMBER_INT is not defined
-		echo // APPVEYOR_PR_NUMBER_LABEL         is not defined
+	if "%GITHUB_PR_NUMBER%" == "" (
+		echo // GITHUB_PR_NUMBER       is not defined
+		echo // GITHUB_PR_NUMBER_INT   is not defined
+		echo // GITHUB_PR_NUMBER_LABEL is not defined
 	) else (
-		echo #define APPVEYOR_PULL_REQUEST_NUMBER     "%APPVEYOR_PULL_REQUEST_NUMBER%"
-		echo #define APPVEYOR_PULL_REQUEST_NUMBER_INT  %APPVEYOR_PULL_REQUEST_NUMBER%
-		echo #define APPVEYOR_PR_NUMBER_LABEL         "PR %APPVEYOR_PULL_REQUEST_NUMBER%"
+		echo #define GITHUB_PR_NUMBER                 "%GITHUB_PR_NUMBER%"
+		echo #define GITHUB_PR_NUMBER_INT              %GITHUB_PR_NUMBER%
+		echo #define GITHUB_PR_NUMBER_LABEL        "PR %GITHUB_PR_NUMBER%"
 	)
 
 	if "%GITHUB_COMMIT_URL%" == "" (
@@ -265,16 +292,22 @@ exit /b 0
 		echo #define GITHUB_COMMIT_URL_PR_HEAD     "%GITHUB_COMMIT_URL_PR_HEAD%"
 	)
 
-	if "%APPVEYOR_SHORTHASH_PR_HEAD%" == "" (
-		echo // APPVEYOR_SHORTHASH_PR_HEAD is not defined
+	if "%GITHUB_PR_HEAD_COMMIT%" == "" (
+		echo // GITHUB_PR_HEAD_COMMIT is not defined
 	) else (
-		echo #define APPVEYOR_SHORTHASH_PR_HEAD     "%APPVEYOR_SHORTHASH_PR_HEAD%"
+		echo #define GITHUB_PR_HEAD_COMMIT         "%GITHUB_PR_HEAD_COMMIT%"
 	)
 
-	if "%APPVEYOR_BUILD_URL%" == "" (
-		echo // APPVEYOR_BUILD_URL is not defined
+	if "%GITHUB_PR_HEAD_SHORT_COMMIT%" == "" (
+		echo // GITHUB_PR_HEAD_SHORT_COMMIT is not defined
 	) else (
-		echo #define APPVEYOR_BUILD_URL             "%APPVEYOR_BUILD_URL%"
+		echo #define GITHUB_PR_HEAD_SHORT_COMMIT   "%GITHUB_PR_HEAD_SHORT_COMMIT%"
+	)
+
+	if "%CI_BUILD_URL%" == "" (
+		echo // CI_BUILD_URL is not defined
+	) else (
+		echo #define CI_BUILD_URL                  "%CI_BUILD_URL%"
 	)
 
 	exit /b 0

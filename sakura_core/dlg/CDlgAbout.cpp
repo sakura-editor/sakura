@@ -107,11 +107,11 @@ const DWORD p_helpids[] = {	//12900
 	#define MY_WIN32_WINNT 0
 #endif
 
-#if defined(APPVEYOR_BUILD_URL)
-#pragma message("APPVEYOR_BUILD_URL: " APPVEYOR_BUILD_URL)
+#if defined(CI_BUILD_URL)
+#pragma message("CI_BUILD_URL: " CI_BUILD_URL)
 #endif
-#if defined(APPVEYOR_BUILD_NUMBER_LABEL)
-#pragma message("APPVEYOR_BUILD_NUMBER_LABEL: " APPVEYOR_BUILD_NUMBER_LABEL)
+#if defined(CI_BUILD_NUMBER_LABEL)
+#pragma message("CI_BUILD_NUMBER_LABEL: " CI_BUILD_NUMBER_LABEL)
 #endif
 
 //	From Here Nov. 7, 2000 genta
@@ -192,8 +192,8 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	);
 	cmemMsg.AppendString( L" " _T(VER_PLATFORM) );
 	cmemMsg.AppendString( _T(SPACE_WHEN_DEBUG) _T(VER_CONFIG) );
-#ifdef APPVEYOR_DEV_VERSION
-	cmemMsg.AppendString( _T(APPVEYOR_DEV_VERSION_STR_WITH_SPACE) );
+#ifdef DEV_VERSION
+	cmemMsg.AppendString( _T(DEV_VERSION_STR_WITH_SPACE) );
 #endif
 #ifdef ALPHA_VERSION
 	cmemMsg.AppendString( L" " _T(ALPHA_VERSION_STR));
@@ -274,13 +274,13 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 #ifdef GIT_REMOTE_ORIGIN_URL
 	m_UrlGitWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GIT ) );
 #endif
-#ifdef APPVEYOR_BUILD_NUMBER_LABEL
-	m_UrlBuildLinkWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_APPVEYOR_BUILD ) );
+#ifdef CI_BUILD_NUMBER_LABEL
+	m_UrlBuildLinkWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_CI_BUILD ) );
 #endif
 #ifdef TEMP_GIT_SHORT_COMMIT_HASH
 	m_UrlGitHubCommitWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GITHUB_COMMIT ) );
 #endif
-#ifdef APPVEYOR_PR_NUMBER_LABEL
+#ifdef GITHUB_PR_NUMBER_LABEL
 	m_UrlGitHubPRWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GITHUB_PR ) );
 #endif
 
@@ -329,10 +329,10 @@ BOOL CDlgAbout::OnStnClicked( int wID )
 			::ShellExecute( GetHwnd(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
 			return TRUE;
 		}
-	case IDC_STATIC_URL_APPVEYOR_BUILD:
+	case IDC_STATIC_URL_CI_BUILD:
 		{
-#if defined(APPVEYOR_BUILD_URL)
-			::ShellExecute(GetHwnd(), NULL, _T(APPVEYOR_BUILD_URL), NULL, NULL, SW_SHOWNORMAL);
+#if defined(CI_BUILD_URL)
+			::ShellExecute(GetHwnd(), NULL, _T(CI_BUILD_URL), NULL, NULL, SW_SHOWNORMAL);
 #elif defined(GIT_REMOTE_ORIGIN_URL)
 			::ShellExecute(GetHwnd(), NULL, _T(GIT_REMOTE_ORIGIN_URL), NULL, NULL, SW_SHOWNORMAL);
 #endif
