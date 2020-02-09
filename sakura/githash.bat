@@ -103,6 +103,12 @@ exit /b 0
 		set GITHUB_PR_HEAD_COMMIT=%APPVEYOR_PULL_REQUEST_HEAD_COMMIT%
 	)
 
+	if not "%GITHUB_PR_HEAD_COMMIT%" == "" (
+		set GITHUB_PR_HEAD_SHORT_COMMIT=%GITHUB_PR_HEAD_COMMIT:~0,8%
+	) else (
+		set GITHUB_PR_HEAD_SHORT_COMMIT=
+	)
+
 	if "%BUILD_REPOSITORY_PROVIDER%"=="GitHub" (
 		set GITHUB_ON=1
 	)
@@ -117,12 +123,6 @@ exit /b 0
 			@rem PR URL
 			set "GITHUB_COMMIT_URL_PR_HEAD=%PREFIX_GITHUB%/%CI_REPO_NAME%/pull/%GITHUB_PR_NUMBER%/commits/%GITHUB_PR_HEAD_COMMIT%"
 		)
-	)
-
-	if not "%GITHUB_PR_HEAD_COMMIT%" == "" (
-		set GITHUB_PR_HEAD_SHORT_COMMIT=%GITHUB_PR_HEAD_COMMIT:~0,8%
-	) else (
-		set GITHUB_PR_HEAD_SHORT_COMMIT=
 	)
 	exit /b 0
 
@@ -172,17 +172,20 @@ exit /b 0
 		@echo TEMP_GIT_COMMIT_HASH       : %TEMP_GIT_COMMIT_HASH%
 		@echo GIT_REMOTE_ORIGIN_URL : %GIT_REMOTE_ORIGIN_URL%
 		@echo GIT_TAG_NAME          : %GIT_TAG_NAME%
-		@echo APPVEYOR_URL          : %APPVEYOR_URL%
+		@echo.
 		@echo CI_REPO_NAME          : %CI_REPO_NAME%
 		@echo CI_ACCOUNT_NAME             : %CI_ACCOUNT_NAME%
-		@echo APPVEYOR_PROJECT_SLUG : %APPVEYOR_PROJECT_SLUG%
 		@echo CI_BUILD_VERSION            : %CI_BUILD_VERSION%
 		@echo CI_BUILD_NUMBER             : %CI_BUILD_NUMBER%
+		@echo CI_BUILD_URL                : %CI_BUILD_URL%
+		@echo.
 		@echo GITHUB_COMMIT_URL           : %GITHUB_COMMIT_URL%
 		@echo GITHUB_COMMIT_URL_PR_HEAD   : %GITHUB_COMMIT_URL_PR_HEAD%
 		@echo GITHUB_PR_HEAD_COMMIT       : %GITHUB_PR_HEAD_COMMIT%
 		@echo GITHUB_PR_HEAD_SHORT_COMMIT : %GITHUB_PR_HEAD_SHORT_COMMIT%
-		@echo CI_BUILD_URL                : %CI_BUILD_URL%
+		@echo.
+		@echo APPVEYOR_URL          : %APPVEYOR_URL%
+		@echo APPVEYOR_PROJECT_SLUG : %APPVEYOR_PROJECT_SLUG%
 
 		if exist "%GITHASH_H%" del "%GITHASH_H%"
 		move /y "%GITHASH_H_TMP%" "%GITHASH_H%"
@@ -227,12 +230,6 @@ exit /b 0
 		echo #define GIT_TAG_NAME "%GIT_TAG_NAME%"
 	)
 
-	if "%APPVEYOR_URL%" == "" (
-		echo // APPVEYOR_URL is not defined
-	) else (
-		echo #define APPVEYOR_URL "%APPVEYOR_URL%"
-	)
-
 	if "%CI_REPO_NAME%" == "" (
 		echo // CI_REPO_NAME is not defined
 	) else (
@@ -246,12 +243,6 @@ exit /b 0
 		echo // CI_ACCOUNT_NAME is not defined
 	) else (
 		echo #define CI_ACCOUNT_NAME "%CI_ACCOUNT_NAME%"
-	)
-
-	if "%APPVEYOR_PROJECT_SLUG%" == "" (
-		echo // APPVEYOR_PROJECT_SLUG is not defined
-	) else (
-		echo #define APPVEYOR_PROJECT_SLUG "%APPVEYOR_PROJECT_SLUG%"
 	)
 
 	if "%CI_BUILD_VERSION%" == "" (
@@ -309,5 +300,21 @@ exit /b 0
 	) else (
 		echo #define CI_BUILD_URL                  "%CI_BUILD_URL%"
 	)
+
+	echo // APPVEYOR specific variables
+
+	if "%APPVEYOR_URL%" == "" (
+		echo // APPVEYOR_URL is not defined
+	) else (
+		echo #define APPVEYOR_URL "%APPVEYOR_URL%"
+	)
+
+	if "%APPVEYOR_PROJECT_SLUG%" == "" (
+		echo // APPVEYOR_PROJECT_SLUG is not defined
+	) else (
+		echo #define APPVEYOR_PROJECT_SLUG "%APPVEYOR_PROJECT_SLUG%"
+	)
+	echo // APPVEYOR specific variables end
+	echo //
 
 	exit /b 0
