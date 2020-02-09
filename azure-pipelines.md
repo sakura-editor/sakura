@@ -14,6 +14,7 @@
     - [Azure Pipelines のJOB の構成](#azure-pipelines-のjob-の構成)
     - [Azure Pipelines の TIPS](#azure-pipelines-の-tips)
         - [step または JOB の実行条件](#step-または-job-の実行条件)
+    - [CI Buildおよびローカルビルドの環境変数](#CI-Buildおよびローカルビルドの環境変数)
 
 <!-- /TOC -->
 
@@ -100,4 +101,6 @@ googletest でテストを実施するにあたって、googletest のテスト�
       targetFolder: $(Build.ArtifactStagingDirectory)
 ```
 
+## CI Buildおよびローカルビルドの環境変数
 
+[CI でのビルド](ci-build.md) を参照

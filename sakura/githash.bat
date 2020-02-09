@@ -70,6 +70,9 @@ exit /b 0
 	if not "%APPVEYOR%" == "" (
 		set TEMP_GIT_SHORT_COMMIT_HASH=%GIT_SHORT_COMMIT_HASH%
 		set TEMP_GIT_COMMIT_HASH=%GIT_COMMIT_HASH%
+	) else if defined BUILD_REPOSITORY_NAME (
+		set TEMP_GIT_SHORT_COMMIT_HASH=%GIT_SHORT_COMMIT_HASH%
+		set TEMP_GIT_COMMIT_HASH=%GIT_COMMIT_HASH%
 	) else (
 		set TEMP_GIT_SHORT_COMMIT_HASH=
 		set TEMP_GIT_COMMIT_HASH=
@@ -79,28 +82,50 @@ exit /b 0
 :set_repo_and_pr_variables
 	if defined APPVEYOR_REPO_NAME (
 		set CI_REPO_NAME=%APPVEYOR_REPO_NAME%
+	) else if defined BUILD_REPOSITORY_NAME (
+		set CI_REPO_NAME=%BUILD_REPOSITORY_NAME%
 	)
 
 	if defined APPVEYOR_ACCOUNT_NAME (
 		set CI_ACCOUNT_NAME=%APPVEYOR_ACCOUNT_NAME%
+	) else if defined BUILD_DEFINITIONNAME (
+		set CI_ACCOUNT_NAME=%BUILD_DEFINITIONNAME%
 	)
 
+	@rem ----------------------------------------------------------------------------------------------------------
+	@rem Be aware the following rules.
+	@rem BUILD_BUILDID     (at azure pipeline) is the counterpart of APPVEYOR_BUILD_NUMBER  (at appveyor).
+	@rem BUILD_BUILDNUMBER (at azure pipeline) is the counterpart of APPVEYOR_BUILD_VERSION (at appveyor).
+	@rem ----------------------------------------------------------------------------------------------------------
+	@rem This is super confusing.
+	@rem BUILD_BUILDNUMBER (at azure pipeline) and APPVEYOR_BUILD_NUMBER (at appveyor) are different information.
+	@rem ----------------------------------------------------------------------------------------------------------
 	if defined APPVEYOR_BUILD_NUMBER (
 		@rem APPVEYOR_BUILD_NUMBER=1624
 		set CI_BUILD_NUMBER=%APPVEYOR_BUILD_NUMBER%
+	) else if defined BUILD_BUILDID (
+		@rem example BUILD_BUILDID=672
+		set CI_BUILD_NUMBER=%BUILD_BUILDID%
 	)
 
 	if defined APPVEYOR_BUILD_VERSION (
 		@rem APPVEYOR_BUILD_VERSION=1.0.1624
 		set CI_BUILD_VERSION=%APPVEYOR_BUILD_VERSION%
+	) else if defined BUILD_BUILDNUMBER (
+		@rem example BUILD_BUILDNUMBER=20200205.4
+		set CI_BUILD_VERSION=%BUILD_BUILDNUMBER%
 	)
 
 	if defined APPVEYOR_PULL_REQUEST_NUMBER (
 		set GITHUB_PR_NUMBER=%APPVEYOR_PULL_REQUEST_NUMBER%
+	) else if defined SYSTEM_PULLREQUEST_PULLREQUESTNUMBER (
+		set GITHUB_PR_NUMBER=%SYSTEM_PULLREQUEST_PULLREQUESTNUMBER%
 	)
 
 	if defined APPVEYOR_PULL_REQUEST_HEAD_COMMIT (
 		set GITHUB_PR_HEAD_COMMIT=%APPVEYOR_PULL_REQUEST_HEAD_COMMIT%
+	) else if defined SYSTEM_PULLREQUEST_SOURCECOMMITID (
+		set GITHUB_PR_HEAD_COMMIT=%SYSTEM_PULLREQUEST_SOURCECOMMITID%
 	)
 
 	if not "%GITHUB_PR_HEAD_COMMIT%" == "" (
@@ -131,6 +156,7 @@ exit /b 0
 
 :set_ci_build_url
 	call :set_ci_build_url_for_appveyor
+	call :set_ci_build_url_for_azurepipelines
 	exit /b 0
 
 :set_ci_build_url_for_appveyor
@@ -140,6 +166,13 @@ exit /b 0
 	if not defined APPVEYOR_PROJECT_SLUG  exit /b 0
 	if not defined APPVEYOR_BUILD_VERSION exit /b 0
 	set CI_BUILD_URL=%APPVEYOR_URL%/project/%APPVEYOR_ACCOUNT_NAME%/%APPVEYOR_PROJECT_SLUG%/build/%APPVEYOR_BUILD_VERSION%
+	exit /b 0
+
+:set_ci_build_url_for_azurepipelines
+	if not defined SYSTEM_TEAMFOUNDATIONSERVERURI exit /b 0
+	if not defined SYSTEM_TEAMPROJECT             exit /b 0
+	if not defined BUILD_BUILDID                  exit /b 0
+	set CI_BUILD_URL=%SYSTEM_TEAMFOUNDATIONSERVERURI%%SYSTEM_TEAMPROJECT%/_build/results?buildId=%BUILD_BUILDID%
 	exit /b 0
 
 :update_output_githash
