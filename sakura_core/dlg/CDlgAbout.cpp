@@ -277,10 +277,10 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 #ifdef CI_BUILD_NUMBER_LABEL
 	m_UrlBuildLinkWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_CI_BUILD ) );
 #endif
-#ifdef GIT_SHORT_COMMIT_HASH
+#if defined( GITHUB_COMMIT_URL )
 	m_UrlGitHubCommitWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GITHUB_COMMIT ) );
 #endif
-#ifdef GITHUB_PR_NUMBER_LABEL
+#if defined( GITHUB_COMMIT_URL_PR_HEAD )
 	m_UrlGitHubPRWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GITHUB_PR ) );
 #endif
 
