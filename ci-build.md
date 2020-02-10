@@ -8,8 +8,6 @@
 |GIT_SHORT_COMMIT_HASH|git の commit Hash 短縮形|◎|◎|◎|◎|
 |GIT_REMOTE_ORIGIN_URL|git remote origin URL|◎|◎|◎|◎|
 |GIT_TAG_NAME|git の tag|◎|◎|◎|◎|
-|TEMP_GIT_COMMIT_HASH|CI のときに有効な commit Hash|×|◎|◎|◎|
-|TEMP_GIT_SHORT_COMMIT_HASH|CI のときに有効な commit Hash 短縮形|×|◎|◎|◎|
 |CI_ACCOUNT_NAME|CI のアカウント名|×|◎|◎|◎|
 |CI_BUILD_NUMBER|CI のビルド番号 (数値)|×|◎|◎|◎|
 |CI_BUILD_URL|CI のビルドURL|×|◎|◎|◎|
@@ -64,8 +62,6 @@ APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使う
 |--|--|--|
 |GIT_SHORT_COMMIT_HASH|GIT_SHORT_COMMIT_HASH|文字列|
 |GIT_COMMIT_HASH|GIT_COMMIT_HASH|文字列|
-|TEMP_GIT_SHORT_COMMIT_HASH|TEMP_GIT_SHORT_COMMIT_HASH|文字列|
-|TEMP_GIT_COMMIT_HASH|TEMP_GIT_COMMIT_HASH|文字列|
 |GIT_REMOTE_ORIGIN_URL|GIT_REMOTE_ORIGIN_URL|文字列|
 |GIT_TAG_NAME|GIT_TAG_NAME|文字列|
 |CI_REPO_NAME|CI_REPO_NAME|文字列|
@@ -95,7 +91,7 @@ APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使う
 | TAG_NAME      | "tag_" + tag 名                                    | tag が有効な場合                       |
 | BUILD_NUMBER  | "build" + ビルド番号                               | CI ビルド以外の場合 "buildLocal"       |
 | PR_NAME       | "PR" + PR番号                                      | CI での PR のビルドのみ有効            |
-| SHORTHASH     | commit hash の先頭8文字                            | 実体は TEMP_GIT_SHORT_COMMIT_HASH      |
+| SHORTHASH     | commit hash の先頭8文字                            | 実体は GIT_SHORT_COMMIT_HASH      |
 | RELEASE_PHASE | "alpha" または 空                                  | x64 ビルドの場合のみ有効               |
 | BASENAME      | 成果物の zip ファイル名(拡張子含まない部分)        | 常に有効                               |
 | WORKDIR       | 作業用フォルダ                                     | 常に有効                               |

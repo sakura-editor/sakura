@@ -74,7 +74,7 @@ if not "%GITHUB_PR_NUMBER%" == "" (
 )
 
 @echo hash name
-set SHORTHASH=%TEMP_GIT_SHORT_COMMIT_HASH%
+set SHORTHASH=%GIT_SHORT_COMMIT_HASH%
 
 if "%ALPHA%" == "1" (
 	set RELEASE_PHASE=alpha
