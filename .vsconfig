@@ -10,6 +10,7 @@
 		"microsoft.visualstudio.component.vc.cmake.project",
 		"microsoft.visualstudio.component.vc.testadapterforboosttest",
 		"microsoft.visualstudio.component.vc.testadapterforgoogletest",
-		"microsoft.visualstudio.componentgroup.nativedesktop.win81"
+		"microsoft.visualstudio.componentgroup.nativedesktop.win81",
+		"microsoft.net.component.4.7.2.targetingpack"
 	]
 }
