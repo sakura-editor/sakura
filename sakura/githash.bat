@@ -66,17 +66,6 @@ exit /b 0
 	@rem get back to the original directory
 	popd
 
-	@echo checking GIT_SHORT_COMMIT_HASH, GIT_COMMIT_HASH
-	if not "%APPVEYOR%" == "" (
-		set TEMP_GIT_SHORT_COMMIT_HASH=%GIT_SHORT_COMMIT_HASH%
-		set TEMP_GIT_COMMIT_HASH=%GIT_COMMIT_HASH%
-	) else if defined BUILD_REPOSITORY_NAME (
-		set TEMP_GIT_SHORT_COMMIT_HASH=%GIT_SHORT_COMMIT_HASH%
-		set TEMP_GIT_COMMIT_HASH=%GIT_COMMIT_HASH%
-	) else (
-		set TEMP_GIT_SHORT_COMMIT_HASH=
-		set TEMP_GIT_COMMIT_HASH=
-	)
 	exit /b 0
 
 :set_repo_and_pr_variables
@@ -143,7 +132,7 @@ exit /b 0
 
 	set PREFIX_GITHUB=https://github.com
 	if "%GITHUB_ON%" == "1" (
-		set "GITHUB_COMMIT_URL=%PREFIX_GITHUB%/%CI_REPO_NAME%/commit/%TEMP_GIT_COMMIT_HASH%"
+		set "GITHUB_COMMIT_URL=%PREFIX_GITHUB%/%CI_REPO_NAME%/commit/%GIT_COMMIT_HASH%"
 		@rem Not Pull Request
 		if "%GITHUB_PR_NUMBER%" == "" (
 			@rem No PR
@@ -204,8 +193,6 @@ exit /b 0
 	) else (
 		@echo GIT_SHORT_COMMIT_HASH : %GIT_SHORT_COMMIT_HASH%
 		@echo GIT_COMMIT_HASH       : %GIT_COMMIT_HASH%
-		@echo TEMP_GIT_SHORT_COMMIT_HASH : %TEMP_GIT_SHORT_COMMIT_HASH%
-		@echo TEMP_GIT_COMMIT_HASH       : %TEMP_GIT_COMMIT_HASH%
 		@echo GIT_REMOTE_ORIGIN_URL : %GIT_REMOTE_ORIGIN_URL%
 		@echo GIT_TAG_NAME          : %GIT_TAG_NAME%
 		@echo.
@@ -242,17 +229,6 @@ exit /b 0
 		echo // GIT_COMMIT_HASH is not defined
 	) else (
 		echo #define GIT_COMMIT_HASH "%GIT_COMMIT_HASH%"
-	)
-
-	if "%TEMP_GIT_SHORT_COMMIT_HASH%" == "" (
-		echo // TEMP_GIT_SHORT_COMMIT_HASH is not defined
-	) else (
-		echo #define TEMP_GIT_SHORT_COMMIT_HASH "%TEMP_GIT_SHORT_COMMIT_HASH%"
-	)
-	if "%TEMP_GIT_COMMIT_HASH%" == "" (
-		echo // TEMP_GIT_COMMIT_HASH is not defined
-	) else (
-		echo #define TEMP_GIT_COMMIT_HASH "%TEMP_GIT_COMMIT_HASH%"
 	)
 
 	if "%GIT_REMOTE_ORIGIN_URL%" == "" (
