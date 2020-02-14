@@ -111,7 +111,7 @@ class AppveyorEnv():
 
 					# appveyor の PR の最新の commit Hash
 					if "APPVEYOR_PULL_REQUEST_NUMBER" in self.env and "APPVEYOR_PULL_REQUEST_HEAD_COMMIT" in self.env:
-						# GITHUB_COMMIT_URL_PR_HEAD
+						# GITHUB_PR_HEAD_URL
 						temp = [
 							repoURL,
 							"pull",
@@ -119,7 +119,7 @@ class AppveyorEnv():
 							"commits",
 							self.env["APPVEYOR_PULL_REQUEST_HEAD_COMMIT"],
 						]
-						self.var["GITHUB_COMMIT_URL_PR_HEAD"] = '/'.join(temp)
+						self.var["GITHUB_PR_HEAD_URL"] = '/'.join(temp)
 
 	# msbuild のログに現れる小文字に変換されてしまったファイルパスを
 	# もともとの大文字小文字を保存したパスに変換する。
