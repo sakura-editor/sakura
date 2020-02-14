@@ -1,22 +1,10 @@
 {
   "version": "1.0",
   "components": [
-    "Microsoft.VisualStudio.Component.CoreEditor",
-    "Microsoft.VisualStudio.Workload.CoreEditor",
-    "Microsoft.VisualStudio.Component.Roslyn.Compiler",
-    "Microsoft.Component.MSBuild",
-    "Microsoft.VisualStudio.Component.Static.Analysis.Tools",
-    "Microsoft.VisualStudio.Component.Roslyn.LanguageServices",
-    "Microsoft.VisualStudio.Component.PortableLibrary",
-    "Microsoft.Net.Component.4.6.1.SDK",
-    "Microsoft.Net.Component.4.6.1.TargetingPack",
     "Microsoft.Net.ComponentGroup.DevelopmentPrerequisites",
-    "Microsoft.Component.ClickOnce",
-    "Microsoft.VisualStudio.Component.SQL.CLR",
-    "Microsoft.VisualStudio.Component.VisualStudioData",
-    "Microsoft.VisualStudio.Component.TextTemplating",
-    "Microsoft.VisualStudio.Component.ManagedDesktop.Core",
-    "Microsoft.VisualStudio.Component.ManagedDesktop.Prerequisites",
-    "Microsoft.VisualStudio.Workload.ManagedDesktop"
+    "Microsoft.VisualStudio.Workload.ManagedDesktop",
+    "Microsoft.VisualStudio.Component.Roslyn.Compiler",
+    "Microsoft.VisualStudio.Component.Roslyn.LanguageServices",
+    "Microsoft.Net.Component.4.6.1.TargetingPack"
   ]
 }
