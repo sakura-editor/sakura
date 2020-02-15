@@ -93,8 +93,6 @@ const DWORD p_helpids[] = {	//12900
 	#define TARGET_DEBUG_MODE "R"
 #endif
 
-#define TSTR_TARGET_MODE _T(TARGET_STRING_MODEL) _T(TARGET_DEBUG_MODE)
-
 #ifdef _WIN32_WINDOWS
 	#define MY_WIN32_WINDOWS _WIN32_WINDOWS
 #else
@@ -152,13 +150,6 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	_SetHwnd( hwndDlg );
 
-	WCHAR			szFile[_MAX_PATH];
-
-	/* この実行ファイルの情報 */
-	::GetModuleFileName( NULL, szFile, _countof( szFile ) );
-	
-	//	Oct. 22, 2005 genta タイムスタンプ取得の共通関数利用
-
 	/* バージョン情報 */
 	//	Nov. 6, 2000 genta	Unofficial Releaseのバージョンとして設定
 	//	Jun. 8, 2001 genta	GPL化に伴い、OfficialなReleaseとしての道を歩み始める
@@ -167,81 +158,81 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	2010.04.15 Moca コンパイラ情報を分離/WINヘッダ,N_SHAREDATA_VERSION追加
 
 	// 以下の形式で出力
-	//サクラエディタ   Ver. 2.0.0.0
+	//サクラエディタ   v2.4.0.0 32bit DEBUG dev
 	//(GitHash xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx)
+	//(GitURL http://github.com/ACOUNT_NAME/PROJECT.git)
 	//
-	//      Share Ver: 96
-	//      Compile Info: V 1400  WR WIN600/I601/C000/N600
+	//      Compile Info: V1916 WPD WIN601/I800/C000/N601
 	//      Last Modified: 1999/9/9 00:00:00
 	//      (あればSKR_PATCH_INFOの文字列がそのまま表示)
-	CNativeW cmemMsg;
-	cmemMsg.AppendString(LS(STR_DLGABOUT_APPNAME)); // e.g. "サクラエディタ", "Sakura Editor"
-	cmemMsg.AppendString(L"   ");
 
 	// バージョン情報・コンフィグ情報 //
-#ifdef GIT_COMMIT_HASH
-#define VER_GITHASH "(GitHash " GIT_COMMIT_HASH ")"
-#endif
+	CNativeW cmemMsg;
+
+	// 1行目
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
-	
-	// 1行目
 	cmemMsg.AppendStringF(
-		L"v%d.%d.%d.%d",
+		L"%s   v%d.%d.%d.%d",
+		LS(STR_DLGABOUT_APPNAME), // "サクラエディタ" or "SAKURA Editor"
 		HIWORD(dwVersionMS), LOWORD(dwVersionMS), HIWORD(dwVersionLS), LOWORD(dwVersionLS) // e.g. {2, 3, 2, 0}
 	);
-	cmemMsg.AppendString( L" " _T(VER_PLATFORM) );
-	cmemMsg.AppendString( _T(SPACE_WHEN_DEBUG) _T(VER_CONFIG) );
+	cmemMsg.AppendStringF( L" %hs", VER_PLATFORM );
+#ifdef _DEBUG
+	cmemMsg.AppendStringF( L" %hs", VER_CONFIG );
+#endif //ifdef _DEBUG
 #ifdef DEV_VERSION
-	cmemMsg.AppendString( _T(DEV_VERSION_STR_WITH_SPACE) );
+	cmemMsg.AppendStringF( L"%hs", DEV_VERSION_STR_WITH_SPACE );
 #endif
 #ifdef ALPHA_VERSION
-	cmemMsg.AppendString( L" " _T(ALPHA_VERSION_STR));
+	cmemMsg.AppendStringF( L" %hs", ALPHA_VERSION_STR );
 #endif
 #ifdef GIT_TAG_NAME
-	cmemMsg.AppendStringF(L" (tag %s)", _T(GIT_TAG_NAME));
+	cmemMsg.AppendStringF( L" (tag %hs)", GIT_TAG_NAME );
 #endif
 	cmemMsg.AppendString( L"\r\n" );
 
 	// 2行目
-#ifdef VER_GITHASH
-	cmemMsg.AppendString( _T(VER_GITHASH) L"\r\n");
+#ifdef GIT_COMMIT_HASH
+	cmemMsg.AppendStringF( L"(GitHash %hs)\r\n", GIT_COMMIT_HASH );
 #endif
 
 	// 3行目
 #ifdef GIT_REMOTE_ORIGIN_URL
-	cmemMsg.AppendString( L"(GitURL " _T(GIT_REMOTE_ORIGIN_URL) L")\r\n");
+	cmemMsg.AppendStringF( L"(GitURL %hs)\r\n", GIT_REMOTE_ORIGIN_URL );
 #endif
 
 	// 段落区切り
 	cmemMsg.AppendString( L"\r\n" );
 
 	// コンパイル情報
-	cmemMsg.AppendString( L"      Compile Info: " );
 	cmemMsg.AppendStringF(
-		_T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) L"%d " TSTR_TARGET_MODE L" WIN%03x/I%03x/C%03x/N%03x\r\n",
-		COMPILER_VER, WINVER, _WIN32_IE, MY_WIN32_WINDOWS, MY_WIN32_WINNT
+		L"      Compile Info: %hs%hs%d %hs%hs WIN%03x/I%03x/C%03x/N%03x\r\n",
+		COMPILER_TYPE, TARGET_M_SUFFIX, COMPILER_VER, TARGET_STRING_MODEL, TARGET_DEBUG_MODE,
+		WINVER, _WIN32_IE, MY_WIN32_WINDOWS, MY_WIN32_WINNT
 	);
 
 	// 更新日情報
-	CFileTime cFileTime;
-	GetLastWriteTimestamp( szFile, &cFileTime );
-	cmemMsg.AppendStringF(
-		L"      Last Modified: %d/%d/%d %02d:%02d:%02d\r\n",
-		cFileTime->wYear,
-		cFileTime->wMonth,
-		cFileTime->wDay,
-		cFileTime->wHour,
-		cFileTime->wMinute,
-		cFileTime->wSecond
-	);
+	{
+		WCHAR szFile[_MAX_PATH];
+		::GetModuleFileName( NULL, szFile, _countof( szFile ) );
+
+		CFileTime cFileTime;
+		GetLastWriteTimestamp( szFile, &cFileTime );
+		cmemMsg.AppendStringF(
+			L"      Last Modified: %d/%d/%d %02d:%02d:%02d\r\n",
+			cFileTime->wYear,
+			cFileTime->wMonth,
+			cFileTime->wDay,
+			cFileTime->wHour,
+			cFileTime->wMinute,
+			cFileTime->wSecond
+		);
+	}
 
 	// パッチの情報をコンパイル時に渡せるようにする
 #ifdef SKR_PATCH_INFO
-	cmemMsg.AppendString( L"      " );
-	const WCHAR szPatchInfo[] = SKR_PATCH_INFO;
-	size_t patchInfoLen = _countof(szPatchInfo) - 1;
-	cmemMsg.AppendString( szPatchInfo, t_min(80, patchInfoLen) );
+	cmemMsg.AppendStringF( L"      %.80hs", SKR_PATCH_INFO );
 #endif
 	cmemMsg.AppendString( L"\r\n");
 
@@ -251,10 +242,9 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	Edit Boxにメッセージを追加する．
 	// 2011.06.01 nasukoji	各国語メッセージリソース対応
 	LPCWSTR pszDesc = LS( IDS_ABOUT_DESCRIPTION );
-	WCHAR szMsg[2048];
 	if( wcslen(pszDesc) > 0 ){
-		wcsncpy( szMsg, pszDesc, _countof(szMsg) - 1 );
-		szMsg[_countof(szMsg) - 1] = 0;
+		WCHAR szMsg[2048];
+		::wcsncpy_s( szMsg, pszDesc, _TRUNCATE );
 		::DlgItem_SetText( GetHwnd(), IDC_EDIT_ABOUT, szMsg );
 	}
 	//	To Here Jun. 8, 2001 genta
