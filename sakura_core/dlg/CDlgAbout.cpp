@@ -236,7 +236,74 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 #endif
 	cmemMsg.AppendString( L"\r\n");
 
+	// バージョン情報表示欄のネイティブハンドルを取得する
+	HWND hWndVerText = ::GetDlgItem( GetHwnd(), IDC_EDIT_VER );
+
+	{
+		// 背景色を白にする
+		::SendMessage( hWndVerText, EM_SETBKGNDCOLOR, 0, RGB( 255, 255, 255 ) );
+
+		// デフォルト書式(文字色＝黒)を設定する
+		CHARFORMAT charFormat = {
+			sizeof( CHARFORMAT ),	//cbSize
+			CFM_COLOR,				//dwMask
+			0,						//dwEffects;
+			0,						//yHeight;
+			0,						//yOffset;
+			RGB( 0, 0, 0),			//crTextColor;
+			0,						//bCharSet;
+			0,						//bPitchAndFamily;
+			{ L"" }					//szFaceName[LF_FACESIZE]
+		};
+		::SendMessage( hWndVerText, EM_SETCHARFORMAT, SCF_DEFAULT, reinterpret_cast<LPARAM>( &charFormat ) );
+	}
+
 	::DlgItem_SetText( GetHwnd(), IDC_EDIT_VER, cmemMsg.GetStringPtr() );
+
+	{
+		//行の高さ(twip単位)を求める
+		LONG nLineHeight = 225;
+		{
+			HFONT hDialogFont = (HFONT)::SendMessage( GetHwnd(), WM_GETFONT, 0, 0 );
+			if( hDialogFont != NULL ){
+				LOGFONT lfDialog;
+				if( ::GetObject( hDialogFont, sizeof(lfDialog), &lfDialog ) ){
+					if( lfDialog.lfHeight < 0 ){
+						//DPIを取得する
+						int nDpiY = ::DpiScaleY( 96 );
+
+						//ピクセル数をtwipに変換する
+						nLineHeight = ::MulDiv( -lfDialog.lfHeight, 1440, nDpiY );
+					}
+				}
+			}
+		}
+
+		// テキストを全選択する
+		{
+			CHARRANGE charRange = { 0, -1 };
+			::SendMessage( hWndVerText, EM_EXSETSEL, 0, reinterpret_cast<LPARAM>(&charRange) );
+		}
+
+		// 段落書式を行間なしに設定する
+		PARAFORMAT2 paraFormat = { sizeof( PARAFORMAT2 ) };
+		paraFormat.dwMask = PFM_LINESPACING;
+		paraFormat.bLineSpacingRule = 4;
+		paraFormat.dyLineSpacing = nLineHeight;
+		::SendMessage( hWndVerText, EM_SETPARAFORMAT, 0, reinterpret_cast<LPARAM>(&paraFormat) );
+
+		// 選択範囲を空にする
+		{
+			CHARRANGE charRange = { 0, 0 };
+			::SendMessage( hWndVerText, EM_EXSETSEL, 0, reinterpret_cast<LPARAM>(&charRange) );
+		}
+
+		// URL自動検出を有効にする
+		::SendMessage( hWndVerText, EM_AUTOURLDETECT, TRUE, NULL );
+
+		// イベントフィルタでリンク検出を有効にする
+		::SendMessage( hWndVerText, EM_SETEVENTMASK, 0, ENM_LINK );
+	}
 
 	//	From Here Jun. 8, 2001 genta
 	//	Edit Boxにメッセージを追加する．
@@ -341,6 +408,46 @@ BOOL CDlgAbout::OnStnClicked( int wID )
 	}
 	/* 基底クラスメンバ */
 	return CDialog::OnStnClicked( wID );
+}
+
+BOOL CDlgAbout::OnNotify( WPARAM wParam, LPARAM lParam )
+{
+	const int wID = static_cast<int>(wParam);
+	NMHDR* pNmhdr = reinterpret_cast<NMHDR*>(lParam);
+	if( pNmhdr->code == EN_LINK ){
+		return OnEnLink( wID, reinterpret_cast<ENLINK*>(pNmhdr) );
+	}
+	return FALSE;
+}
+
+inline BOOL CDlgAbout::OnEnLink( int wID, ENLINK* pEnLink )
+{
+	constexpr auto MAX_QUERY_LEN = MAX_PATH;
+
+	if( pEnLink ){
+		switch( pEnLink->msg ){
+		case WM_LBUTTONUP:
+			if( pEnLink->chrg.cpMax - pEnLink->chrg.cpMin <= MAX_QUERY_LEN ){
+				// バージョン情報表示欄のネイティブハンドルを取得する
+				HWND hWndVerText = ::GetDlgItem( GetHwnd(), IDC_EDIT_VER );
+
+				// リンク文字列
+				WCHAR szLink[MAX_QUERY_LEN] = { 0 };
+
+				// 選択範囲の文字列を取得
+				{
+					TEXTRANGE textRange = { pEnLink->chrg, szLink };
+					::SendMessage( hWndVerText, EM_GETTEXTRANGE, 0, reinterpret_cast<LPARAM>(&textRange) );
+				}
+
+				// リンク先URLをブラウザで開く
+				auto retCode = (LONG_PTR)::ShellExecute( GetHwnd(), L"open", szLink, NULL, NULL, SW_SHOWNORMAL );
+				return (retCode > 32);
+			}
+		}
+
+	}
+	return FALSE;
 }
 
 //@@@ 2002.01.18 add start

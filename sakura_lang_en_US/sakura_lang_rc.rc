@@ -105,7 +105,7 @@ CAPTION "Version Information"
 FONT 9, "Tahoma"
 BEGIN
     ICON            IDI_ICON_STD, IDC_STATIC_MYICON, 5, 5, 20, 20, SS_NOTIFY
-    EDITTEXT        IDC_EDIT_VER, 33, 6, 204, 51, ES_MULTILINE | ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
+	CONTROL         "Version Info display area", IDC_EDIT_VER, "RichEdit50W", ES_MULTILINE | ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP, 33, 6, 204, 51
     LTEXT           "Original Author: Take-san(竹パンダ) さん", IDC_STATIC, 33, 61, 125, 8, NOT WS_GROUP
     LTEXT           S_COPYRIGHT, IDC_STATIC, 33, 75, 205, 8, NOT WS_GROUP | SS_NOPREFIX
     LTEXT           "Translation:",IDC_STATIC,33,90,41,8

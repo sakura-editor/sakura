@@ -94,6 +94,16 @@ int WINAPI wWinMain(
 	DEBUG_TRACE(L"-- -- WinMain -- --\n");
 	DEBUG_TRACE(L"sizeof(DLLSHAREDATA) = %d\n",sizeof(DLLSHAREDATA));
 
+	//リッチエディットを使うために必要なDLLを読み込む
+	struct dll_deleter
+	{
+		void operator()( HMODULE hDll ) const
+		{
+			::FreeLibrary( hDll );
+		}
+	};
+	std::unique_ptr<std::remove_pointer<HMODULE>::type, dll_deleter> msftEdit( ::LoadLibrary( L"MSFTEDIT.DLL" ) );
+
 	//プロセスの生成とメッセージループ
 	CProcessFactory aFactory;
 	CProcess *process = 0;

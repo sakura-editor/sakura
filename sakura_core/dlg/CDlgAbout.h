@@ -16,6 +16,7 @@
 #pragma once
 
 #include "dlg/CDialog.h"
+#include <Richedit.h>
 /*!
 	@brief About Box管理
 	
@@ -53,6 +54,8 @@ protected:
 	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
 	BOOL OnBnClicked(int wID) override;
 	BOOL OnStnClicked(int wID) override;
+	BOOL OnNotify( WPARAM wParam, LPARAM lParam ) override;
+	inline BOOL OnEnLink( int wID, ENLINK* pEnLink );
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
 private:
 	CUrlWnd m_UrlUrWnd;
