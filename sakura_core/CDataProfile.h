@@ -27,20 +27,135 @@
 #include "util/StaticType.h"
 #include "CProfile.h"
 
-//文字列バッファの型
-struct StringBufferW_{
-	WCHAR*    pData;
-	const int nDataCount;
+/*!
+ * 独自バッファ参照型
+ *
+ * 固定長の文字配列を標準stringのように扱うためのクラス
+ */
+template <typename CHAR_TYPE>
+class StringBuffer {
+	CHAR_TYPE*	m_pData;			//!< 文字列バッファを指すポインタ
+	size_t		m_cchDataLength;	//!< 有効文字列長
+	size_t		m_cchDataCount;		//!< 文字列バッファのサイズ
 
-	StringBufferW_(WCHAR* _pData, int _nDataCount) : pData(_pData), nDataCount(_nDataCount) { }
-
-	StringBufferW_& operator = (const StringBufferW_& rhs)
+public:
+	/*!
+	 * コンストラクタ
+	 *
+	 * StringBufferのインスタンスを構築する
+	 *
+	 * @param [in] pszData 文字列バッファを指すポインタ
+	 * @param [in] cchDataCount 文字列バッファの確保サイズ(length + 1)
+	 */
+	StringBuffer( CHAR_TYPE* pszData, size_t cchDataCount ) noexcept
+		: m_pData( pszData )
+		, m_cchDataLength( std::char_traits<CHAR_TYPE>::length( pszData ) )
+		, m_cchDataCount( cchDataCount )
 	{
-		wcscpy_s(pData,nDataCount,rhs.pData);
+		// 実装は型パラメータに依存するので特殊化して使う。
+	}
+
+	/*!
+	 * 互換コンストラクタ
+	 *
+	 * StringBufferのインスタンスを構築する
+	 *
+	 * @param [in] pszData 文字列バッファを指すポインタ(NULL指定不可、NUL終端すること)
+	 */
+	StringBuffer( CHAR_TYPE* pszData )
+		: StringBuffer( pszData, std::char_traits<CHAR_TYPE>::length( pszData ) + 1 )
+	{
+	}
+
+	// このクラスはコピー禁止
+	StringBuffer( const StringBuffer& ) = delete;
+	StringBuffer& operator = ( const StringBuffer& ) = delete;
+
+	/*!
+	 * ムーブコンストラクタ
+	 *
+	 * 空のStringBufferインスタンスを構築し、
+	 * 引数で指定されたインスタンスとデータを入れ替える
+	 */
+	StringBuffer( StringBuffer&& other ) noexcept
+		: StringBuffer( NULL, 0 )
+	{
+		*this = std::forward<StringBuffer>( other );
+	}
+
+	/*!
+	 * ムーブ代入演算子
+	 *
+	 * 引数で指定されたインスタンスとデータを入れ替える
+	 */
+	StringBuffer& operator = ( StringBuffer&& rhs ) noexcept
+	{
+		std::swap( m_pData, rhs.m_pData );
+		std::swap( m_cchDataLength, rhs.m_cchDataLength );
+		std::swap( m_cchDataCount, rhs.m_cchDataCount );
 		return *this;
 	}
+
+	const CHAR_TYPE* c_str() const noexcept { return m_pData; }	//!< 文字列ポインタ(C-Style)
+	size_t length() const noexcept { return m_cchDataLength; }	//!< 有効文字列長
+	size_t capacity() const noexcept { return m_cchDataCount; }	//!< 文字列バッファのサイズ
+
+	/*!
+	 * バッファの内容を指定した文字列で置き替える
+	 *
+	 * @param [in] pSrc 文字列ポインタ
+	 */
+	void assign( const CHAR_TYPE* pSrc )
+	{
+		// 実装は型パラメータに依存するので特殊化して使う。
+	}
+
+	StringBuffer& operator = ( const CHAR_TYPE* rhs ) { assign( rhs ); return *this; }
 };
-typedef const StringBufferW_ StringBufferW;
+
+/*!
+ * StringBufferW コンストラクタ(特殊化)
+ *
+ * StringBufferWのインスタンスを構築する
+ *
+ * @param [in] pszData 文字列バッファを指すポインタ
+ * @param [in] cchDataCount 文字列バッファの確保サイズ(length + 1)
+ */
+template<> inline
+StringBuffer<wchar_t>::StringBuffer( wchar_t* pszData, size_t cchDataCount ) noexcept
+	: m_pData( pszData )
+	, m_cchDataLength( 0 )
+	, m_cchDataCount( cchDataCount )
+{
+	// 文字列ポインタとサイズが有効な場合、有効文字列長を求める
+	if( m_pData != NULL && m_cchDataCount > 0 ){
+		m_cchDataLength = ::wcsnlen( m_pData, m_cchDataCount );
+		// NUL終端がなかったら、強制的にNUL終端する
+		if( m_cchDataLength == m_cchDataCount ){
+			m_pData[--m_cchDataLength] = L'\0';
+		}
+	}
+}
+
+/*!
+ * バッファの内容を指定した文字列で置き替える
+ *
+ * @param [in] pSrc 文字列ポインタ
+ */
+template<> inline
+void StringBuffer<wchar_t>::assign( const wchar_t* pSrc )
+{
+	if( m_pData != NULL ){
+		if( pSrc != NULL ){
+			::wcsncpy_s( m_pData, capacity(), pSrc, _TRUNCATE );
+		}else{
+			m_pData[0] = '\0';
+		}
+		m_cchDataLength = ::wcsnlen( m_pData, capacity() );
+	}
+}
+
+typedef StringBuffer<wchar_t> StringBufferW;
 
 //文字列バッファ型インスタンスの生成マクロ
 #define MakeStringBufferW(S) StringBufferW(S,_countof(S))
@@ -131,24 +246,13 @@ protected:
 		profile->assign(1,value);
 	}
 	//StringBufferW
-	void profile_to_value(const wstring& profile, StringBufferW* value)
+	void profile_to_value( const std::wstring& profile, StringBufferW* value )
 	{
-		wcscpy_s(value->pData,value->nDataCount,profile.c_str());
+		*value = profile.c_str();
 	}
-	void value_to_profile(const StringBufferW& value, wstring* profile)
+	void value_to_profile( const StringBufferW& value, wstring* profile )
 	{
-		*profile = value.pData;
-	}
-	//StaticString<WCHAR,N>
-	template <int N>
-	void profile_to_value(const wstring& profile, StaticString<WCHAR, N>* value)
-	{
-		wcscpy_s(value->GetBufferPointer(),value->GetBufferCount(),profile.c_str());
-	}
-	template <int N>
-	void value_to_profile(const StaticString<WCHAR, N>& value, wstring* profile)
-	{
-		*profile = value.GetBufferPointer();
+		profile->assign( value.c_str(), value.length() );
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -159,10 +263,8 @@ public:
 	 * 設定値の入出力テンプレート
 	 *
 	 * 標準stringを介して設定値の入出力を行う。
-	 * @remark StringBufferWはバッファが足りないとabortします。
-	 * @remark StaticStringはバッファが足りないとabortします。
 	 */
-	template <class T> //T=={bool, int, WORD, wchar_t, char, StringBufferW, StaticString}
+	template <class T> //T=={bool, int, WORD, wchar_t, char}
 	bool IOProfileData(
 		const WCHAR*			pszSectionName,	//!< [in] セクション名
 		const WCHAR*			pszEntryKey,	//!< [in] エントリ名
@@ -187,6 +289,41 @@ public:
 			ret = SetProfileDataImp( pszSectionName, pszEntryKey, buf );
 		}
 		return ret;
+	}
+
+	/*!
+	 * 引数が右辺値参照(T&&)となる型のためのグルーコード
+	 *
+	 * @retval true	設定値を正しく読み書きできた
+	 * @retval false 設定値を読み込めなかった
+	 */
+	template <class T>
+	bool IOProfileData(
+		const WCHAR*			pszSectionName,	//!< [in] セクション名
+		const WCHAR*			pszEntryKey,	//!< [in] エントリ名
+		T&&						refEntryValue	//!< [in,out] エントリ値
+	) noexcept
+	{
+		// 右辺値参照引数(=左辺値)を使って入出力テンプレートを呼び出す
+		return IOProfileData( pszSectionName, pszEntryKey, refEntryValue );
+	}
+
+	/*!
+	 * 独自定義文字配列拡張型(StaticString)の入出力(標準stringを介して入出力)
+	 *
+	 * 型引数が合わないために通常入出力と分離。
+	 * @retval true	設定値を正しく読み書きできた
+	 * @retval false 設定値を読み込めなかった
+	 */
+	template <int N>
+	bool IOProfileData(
+		const WCHAR*			pszSectionName,	//!< [in] セクション名
+		const WCHAR*			pszEntryKey,	//!< [in] エントリ名
+		StaticString<WCHAR, N>&	szEntryValue	//!< [in,out] エントリ値
+	) noexcept
+	{
+		// バッファ参照型に変換して入出力する
+		return IOProfileData( pszSectionName, pszEntryKey, StringBufferW( szEntryValue.GetBufferPointer(), szEntryValue.GetBufferCount() ) );
 	}
 
 	//2007.08.14 kobake 追加
