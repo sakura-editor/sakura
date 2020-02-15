@@ -138,7 +138,7 @@ exit /b 0
 			@rem No PR
 		) else (
 			@rem PR URL
-			set "GITHUB_COMMIT_URL_PR_HEAD=%PREFIX_GITHUB%/%CI_REPO_NAME%/pull/%GITHUB_PR_NUMBER%/commits/%GITHUB_PR_HEAD_COMMIT%"
+			set "GITHUB_PR_HEAD_URL=%PREFIX_GITHUB%/%CI_REPO_NAME%/pull/%GITHUB_PR_NUMBER%/commits/%GITHUB_PR_HEAD_COMMIT%"
 		)
 	)
 	exit /b 0
@@ -203,7 +203,7 @@ exit /b 0
 		@echo CI_BUILD_URL                : %CI_BUILD_URL%
 		@echo.
 		@echo GITHUB_COMMIT_URL           : %GITHUB_COMMIT_URL%
-		@echo GITHUB_COMMIT_URL_PR_HEAD   : %GITHUB_COMMIT_URL_PR_HEAD%
+		@echo GITHUB_PR_HEAD_URL          : %GITHUB_PR_HEAD_URL%
 		@echo GITHUB_PR_HEAD_COMMIT       : %GITHUB_PR_HEAD_COMMIT%
 		@echo GITHUB_PR_HEAD_SHORT_COMMIT : %GITHUB_PR_HEAD_SHORT_COMMIT%
 		@echo.
@@ -289,10 +289,10 @@ exit /b 0
 		echo #define GITHUB_COMMIT_URL             "%GITHUB_COMMIT_URL%"
 	)
 
-	if "%GITHUB_COMMIT_URL_PR_HEAD%" == "" (
-		echo // GITHUB_COMMIT_URL_PR_HEAD is not defined
+	if "%GITHUB_PR_HEAD_URL%" == "" (
+		echo // GITHUB_PR_HEAD_URL is not defined
 	) else (
-		echo #define GITHUB_COMMIT_URL_PR_HEAD     "%GITHUB_COMMIT_URL_PR_HEAD%"
+		echo #define GITHUB_PR_HEAD_URL     "%GITHUB_PR_HEAD_URL%"
 	)
 
 	if "%GITHUB_PR_HEAD_COMMIT%" == "" (
