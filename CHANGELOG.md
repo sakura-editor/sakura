@@ -1,5 +1,35 @@
 # Change Log
 
+## [v2.4.0-beta4](https://github.com/sakura-editor/sakura/tree/v2.4.0-beta4) (2020-02-15)
+
+[Full Changelog](https://github.com/sakura-editor/sakura/compare/v2.4.0-beta3...v2.4.0-beta4)
+
+### 機能追加
+
+- batch ファイルのキーワードに setlocal/endlocal を追加 [\#1171](https://github.com/sakura-editor/sakura/pull/1171) ([m-tmatma](https://github.com/m-tmatma))
+
+### バグ修正
+
+- C++ファイルのアウトライン解析がトグルで閉じない不具合の修正 [\#1176](https://github.com/sakura-editor/sakura/pull/1176) ([berryzplus](https://github.com/berryzplus))
+- 検索条件の文字列をエスケープする処理を関数化する変更のうち、CNativeW::AppendStringF を使うように変更したのをやっぱ止める [\#1135](https://github.com/sakura-editor/sakura/pull/1135) ([beru](https://github.com/beru))
+
+
+
+### その他変更
+
+- ChmSourceConverterのターゲットバージョンを下げる [\#1195](https://github.com/sakura-editor/sakura/pull/1195) ([berryzplus](https://github.com/berryzplus))
+- ログの整形、変数の定義位置の移動 \(\#1183 を分割してレビューしやすくする\) [\#1186](https://github.com/sakura-editor/sakura/pull/1186) ([m-tmatma](https://github.com/m-tmatma))
+- Appveyor 専用の環境変数を汎用的なものに定義しなおす \(\#1183 を分割した PR\) [\#1185](https://github.com/sakura-editor/sakura/pull/1185) ([m-tmatma](https://github.com/m-tmatma))
+- Visual Studio 2017/2019 の環境構築方法に関する説明を更新 [\#1165](https://github.com/sakura-editor/sakura/pull/1165) ([m-tmatma](https://github.com/m-tmatma))
+- Visual Studio のインストールオプションの設定ファイルを追加する [\#1162](https://github.com/sakura-editor/sakura/pull/1162) ([m-tmatma](https://github.com/m-tmatma))
+- インストーラに同梱する bregonig.dll を Ver.4.20 にする [\#1158](https://github.com/sakura-editor/sakura/pull/1158) ([m-tmatma](https://github.com/m-tmatma))
+- Universal Ctags の Windows のバイナリ \(2020-01-12/feffe43a\) に差し替え [\#1156](https://github.com/sakura-editor/sakura/pull/1156) ([m-tmatma](https://github.com/m-tmatma))
+- CDataProfileの「abortします」コメントを復活する [\#1155](https://github.com/sakura-editor/sakura/pull/1155) ([berryzplus](https://github.com/berryzplus))
+- Copyright を 2020 にする [\#1154](https://github.com/sakura-editor/sakura/pull/1154) ([m-tmatma](https://github.com/m-tmatma))
+- 検索条件の文字列をエスケープする処理を関数化する [\#1132](https://github.com/sakura-editor/sakura/pull/1132) ([berryzplus](https://github.com/berryzplus))
+- 未初期化のout変数を参照しないため戻り値をチェックするようにする [\#1120](https://github.com/sakura-editor/sakura/pull/1120) ([berryzplus](https://github.com/berryzplus))
+- \#1117 で入れた修正のうち master に入れるべきではない修正を取り除いて取り込む [\#1118](https://github.com/sakura-editor/sakura/pull/1118) ([m-tmatma](https://github.com/m-tmatma))
+
 ## [v2.4.0-beta3](https://github.com/sakura-editor/sakura/tree/v2.4.0-beta3) (2019-12-22)
 
 [Full Changelog](https://github.com/sakura-editor/sakura/compare/v2.4.0-beta2...v2.4.0-beta3)
