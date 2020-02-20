@@ -1340,6 +1340,9 @@ bool CDlgTagJumpList::ReadTagsParameter(
 		}
 		else {
 			//巻き戻し
+			if (old_offset < 0) {
+				old_offset = 0; // 異常時はファイル先頭にする。
+			}
 			fsetpos(fp, &old_offset);
 			break;
 		}
