@@ -1336,13 +1336,12 @@ bool CDlgTagJumpList::ReadTagsParameter(
 			szLineData[nLINEDATA_LAST_CHAR] = '\0';
 			//巻き戻し用に現在のオフセット位置を退避
 			old_offset = ftell(fp);
+			if (old_offset == -1) { //読み取りエラー or ファイル終端に到達時はタグファイルとして扱わない
+				return false;
+			}
 			continue;
 		}
 		else {
-			//巻き戻し
-			if (old_offset < 0) {
-				old_offset = 0; // 異常時はファイル先頭にする。
-			}
 			fsetpos(fp, &old_offset);
 			break;
 		}
