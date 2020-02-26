@@ -1255,15 +1255,13 @@ bool CDlgTagJumpList::ReadTagsParameter(
 	ACHAR	s[4][1024];
 	int nLines = 0;
 	int n2;
-	fpos_t old_offset;
-
+	fpos_t old_offset = 0;
 
 	// バッファの後ろから2文字目が\0かどうかで、行末まで読み込んだか確認する
 	const int nLINEDATA_LAST_CHAR = _countof( szLineData ) - 2;
 	szLineData[nLINEDATA_LAST_CHAR] = '\0';
 
-	while( fgets( szLineData, _countof( szLineData ), fp ) )
-	{
+	while( fgets( szLineData, _countof( szLineData ), fp ) ) {
 		nLines++;
 		// fgetsが行すべてを読み込めていない場合の考慮
 		if( '\0' != szLineData[nLINEDATA_LAST_CHAR] && '\n' != szLineData[nLINEDATA_LAST_CHAR] ){
@@ -1336,15 +1334,17 @@ bool CDlgTagJumpList::ReadTagsParameter(
 				}
 			}
 			szLineData[nLINEDATA_LAST_CHAR] = '\0';
+			//巻き戻し用に現在のオフセット位置を退避
+			old_offset = ftell(fp);
+			if (old_offset == -1) { //読み取りエラー or ファイル終端に到達時はタグファイルとして扱わない
+				return false;
+			}
 			continue;
 		}
 		else {
-			//巻き戻し
 			fsetpos(fp, &old_offset);
 			break;
 		}
-		//巻き戻し用に現在のオフセット位置を退避
-		old_offset = ftell(fp);
 	}
 	return true;
 }
