@@ -152,25 +152,29 @@ static void AppendExcludeFilePatterns(CNativeW& cFilePattern, const CNativeW& cm
 	}
 }
 
+/*!
+ * 除外ファイル、除外フォルダの設定を "-GFILE=" の設定に pack する
+ */
 CNativeW CDlgGrep::GetFile() const
 {
-	CNativeW cmWork2( m_szFile );
-	CNativeW cmWorkExcludeFile( m_szExcludeFile );
-	CNativeW cmWorkExcludeFolder( m_szExcludeFolder );
+	// ダイアログデータを取得
+	CNativeW cmFilePattern( m_szFile );
+	CNativeW cmExcludeFiles( m_szExcludeFile );
+	CNativeW cmExcludeFolders( m_szExcludeFolder );
 
-	cmWork2.Replace( L"\"", L"\"\"" );
-	cmWorkExcludeFile.Replace( L"\"", L"\"\"" );
-	cmWorkExcludeFolder.Replace( L"\"", L"\"\"" );
+	// コマンドライン用に二重引用符をエスケープする
+	cmFilePattern.Replace( L"\"", L"\"\"" );
+	cmExcludeFiles.Replace( L"\"", L"\"\"" );
+	cmExcludeFolders.Replace( L"\"", L"\"\"" );
 
 	// 除外ファイル、除外フォルダの設定を "-GFILE=" の設定に pack するためにデータを作る。
-	CNativeW cFilePattern;
-	AppendExcludeFolderPatterns( cFilePattern, cmWorkExcludeFolder );
-	AppendExcludeFilePatterns( cFilePattern, cmWorkExcludeFile );
-	cFilePattern.AppendString( cmWork2.GetStringPtr() );
+	AppendExcludeFolderPatterns( cmFilePattern, cmExcludeFolders );
+	AppendExcludeFilePatterns( cmFilePattern, cmExcludeFiles );
 
-	cFilePattern.Replace( L"\"\"", L"\"" );
+	// コマンドライン用のエスケープを元に戻す
+	cmFilePattern.Replace( L"\"\"", L"\"" );
 
-	return cFilePattern;
+	return cmFilePattern;
 }
 
 /*!
