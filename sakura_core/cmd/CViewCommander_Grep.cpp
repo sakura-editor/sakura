@@ -62,7 +62,7 @@ void CViewCommander::Command_GREP( void )
 	CNativeW		cmWorkExcludeFile;
 	CNativeW		cmWorkExcludeFolder;
 	cmWork1.SetString( GetEditWindow()->m_cDlgGrep.m_strText.c_str() );
-	cmWork2.SetString( GetEditWindow()->m_cDlgGrep.m_szFile );
+	cmWork2.SetString( GetEditWindow()->m_cDlgGrep.GetFile().GetStringPtr() );
 	cmWork3.SetString( GetEditWindow()->m_cDlgGrep.m_szFolder );
 	cmWorkExcludeFile.SetString(GetEditWindow()->m_cDlgGrep.m_szExcludeFile);
 	cmWorkExcludeFolder.SetString(GetEditWindow()->m_cDlgGrep.m_szExcludeFolder);
@@ -173,7 +173,7 @@ void CViewCommander::Command_GREP_REPLACE( void )
 
 	CDlgGrepReplace& cDlgGrepRep = GetEditWindow()->m_cDlgGrepReplace;
 	cmWork1.SetString( cDlgGrepRep.m_strText.c_str() );
-	cmWork2.SetString( cDlgGrepRep.m_szFile );
+	cmWork2.SetString( cDlgGrepRep.GetFile().GetStringPtr() );
 	cmWork3.SetString( cDlgGrepRep.m_szFolder );
 	cmWork4.SetString( cDlgGrepRep.m_strText2.c_str() );
 	cmWorkExcludeFile.SetString(cDlgGrepRep.m_szExcludeFile);

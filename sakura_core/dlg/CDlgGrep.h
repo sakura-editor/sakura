@@ -34,6 +34,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
+	CNativeW GetFile() const;
 	BOOL OnCbnDropDown( HWND hwndCtl, int wID ) override;
 	int DoModal( HINSTANCE, HWND, const WCHAR* );	/* モーダルダイアログの表示 */
 //	HWND DoModeless( HINSTANCE, HWND, const char* );	/* モードレスダイアログの表示 */
