@@ -108,7 +108,7 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 	CNativeW		cmWorkExcludeFile;
 	CNativeW		cmWorkExcludeFolder;
 	cmWork1.SetString( cDlgGrep.m_strText.c_str() );
-	cmWork2.SetString( cDlgGrep.GetFile().GetStringPtr() );
+	cmWork2 = cDlgGrep.GetPackedGFileString();
 	cmWork3.SetString( cDlgGrep.m_szFolder );
 
 	cmWorkExcludeFile.SetString(cDlgGrep.m_szExcludeFile);

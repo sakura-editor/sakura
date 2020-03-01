@@ -34,7 +34,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	CNativeW GetFile() const;
+	CNativeW GetPackedGFileString() const;	//!< 除外ファイル、除外フォルダの設定を "-GFILE=" の設定に pack する
 	BOOL OnCbnDropDown( HWND hwndCtl, int wID ) override;
 	int DoModal( HINSTANCE, HWND, const WCHAR* );	/* モーダルダイアログの表示 */
 //	HWND DoModeless( HINSTANCE, HWND, const char* );	/* モードレスダイアログの表示 */
