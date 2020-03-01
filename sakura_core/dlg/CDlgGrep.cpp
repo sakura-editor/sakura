@@ -92,7 +92,7 @@ CDlgGrep::CDlgGrep()
 	@param[in]     pattern チェックするパターン
 	@return        true  エスケープする必要がある
 	@return        false エスケープする必要がない
-	@author m_tmatma
+	@author m-tmatma
 */
 static bool IsEscapeRequiredForExcludePattern(const std::wstring & pattern)
 {
@@ -111,7 +111,7 @@ static bool IsEscapeRequiredForExcludePattern(const std::wstring & pattern)
 /*
 	@brief エスケープパターンを取得する
 	@param[in] pattern        エスケープ対象文字列
-	@author m_tmatma
+	@author m-tmatma
 */
 static LPCWSTR GetEscapePattern(const std::wstring& pattern)
 {
@@ -122,7 +122,7 @@ static LPCWSTR GetEscapePattern(const std::wstring& pattern)
 	@brief フォルダの除外パターンを詰める
 	@param[in,out] cFilePattern        "-GFILE=" に指定する引数用のバッファ (このバッファの末尾に追加する)
 	@param[in]     cmWorkExcludeFolder Grep ダイアログで指定されたフォルダの除外パターン
-	@author m_tmatma
+	@author m-tmatma
 */
 static void AppendExcludeFolderPatterns(CNativeW& cFilePattern, const CNativeW& cmWorkExcludeFolder)
 {
@@ -139,7 +139,7 @@ static void AppendExcludeFolderPatterns(CNativeW& cFilePattern, const CNativeW& 
 	@brief ファイルの除外パターンを詰める
 	@param[in,out] cFilePattern        "-GFILE=" に指定する引数用のバッファ (このバッファの末尾に追加する)
 	@param[in]     cmWorkExcludeFile Grep ダイアログで指定されたファイルの除外パターン
-	@author m_tmatma
+	@author m-tmatma
 */
 static void AppendExcludeFilePatterns(CNativeW& cFilePattern, const CNativeW& cmWorkExcludeFile)
 {
