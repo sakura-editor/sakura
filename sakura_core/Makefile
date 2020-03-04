@@ -233,6 +233,7 @@ extmodule/CDllHandler.o \
 extmodule/CHtmlHelp.o \
 extmodule/CIcu4cI18n.o \
 extmodule/CMigemo.o \
+extmodule/CRipgrep.o \
 extmodule/CUxTheme.o \
 func/CFuncKeyWnd.o \
 func/CFuncLookup.o \

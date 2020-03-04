@@ -28,6 +28,7 @@
 #include "util/window.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CSakuraEnvironment.h"
+#include "extmodule/CRipgrep.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -61,6 +62,7 @@ const DWORD p_helpids[] = {	//12000
 	IDC_CHECK_FILE_ONLY,			HIDC_CHECK_FILE_ONLY,				//ファイル毎最初のみ検索
 	IDC_CHECK_BASE_PATH,			HIDC_CHECK_BASE_PATH,				//ベースフォルダ表示
 	IDC_CHECK_SEP_FOLDER,			HIDC_CHECK_SEP_FOLDER,				//フォルダ毎に表示
+	IDC_CHK_USERIPGREP, 			HIDC_CHK_USERIPGREP,				//ripgrepを使う
 //	IDC_STATIC,						-1,
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
@@ -78,6 +80,7 @@ CDlgGrep::CDlgGrep()
 	m_bGrepOutputFileOnly = false;
 	m_bGrepOutputBaseFolder = false;
 	m_bGrepSeparateFolder = false;
+	m_bUseRipgrep = false;
 
 	m_bSetText = false;
 	m_szFile[0] = 0;
@@ -150,6 +153,7 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCur
 	m_bGrepOutputFileOnly = m_pShareData->m_Common.m_sSearch.m_bGrepOutputFileOnly;
 	m_bGrepOutputBaseFolder = m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder;
 	m_bGrepSeparateFolder = m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder;
+	m_bUseRipgrep = m_pShareData->m_Common.m_sSearch.m_bUseRipgrep;
 
 	// 2013.05.21 コンストラクタからDoModalに移動
 	// m_strText は呼び出し元で設定済み
@@ -454,6 +458,16 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			::EnableWindow( GetItemHwnd( IDC_CHECK_SEP_FOLDER ),TRUE );
 		}
 		break;
+	case IDC_CHK_USERIPGREP:
+		if (ExistRipgrep()) {
+			SetUseripgrep(0 != ::IsDlgButtonChecked(GetHwnd(), IDC_CHK_USERIPGREP));
+		}
+		else {
+			// rg.exeが存在していなければチェックできないようにする
+			::CheckDlgButton(GetHwnd(), IDC_CHK_USERIPGREP, 0);
+			SetUseripgrep(false);
+		}
+		break;
 	case IDOK:
 		/* ダイアログデータの取得 */
 		if( GetData() ){
@@ -604,6 +618,17 @@ void CDlgGrep::SetData( void )
 	// フォルダの初期値をカレントフォルダにする
 	::CheckDlgButton( GetHwnd(), IDC_CHK_DEFAULTFOLDER, m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder );
 
+	//ripgrepが使えるか
+	if (ExistRipgrep()) {
+		::CheckDlgButton(GetHwnd(), IDC_CHK_USERIPGREP, m_bUseRipgrep);
+		SetUseripgrep(m_bUseRipgrep);
+	}
+	else {
+		// rg.exeが存在していなければチェックできないようにする
+		::CheckDlgButton(GetHwnd(), IDC_CHK_USERIPGREP, 0);
+		SetUseripgrep(false);
+	}
+
 	return;
 }
 
@@ -634,6 +659,31 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 	return;
 }
 
+/*!
+	ripgrepを使うチェックでの設定
+*/
+void CDlgGrep::SetUseripgrep(bool bChecked )
+{
+	int nUnsupported[] = {
+		IDC_CHK_SUBFOLDER,		// サブフォルダからも検索する
+		IDC_CHK_FROMTHISTEXT,	// 現在編集中のファイルから検索
+		IDC_CHECK_FILE_ONLY,	// ファイル毎最初のみ検索
+		IDC_CHECK_SEP_FOLDER,	// フォルダ毎に表示
+		IDC_CHECK_BASE_PATH,	// ベースフォルダ表示
+		IDC_RADIO_OUTPUTLINE,	// 結果出力:該当行
+		IDC_RADIO_OUTPUTMARKED,	// 結果出力:該当部分
+		IDC_RADIO_NOHIT,		// 結果出力:否該当行
+		IDC_RADIO_OUTPUTSTYLE1,	// 結果出力形式:ノーマル
+		IDC_RADIO_OUTPUTSTYLE2,	// 結果出力形式:ファイル毎
+		IDC_RADIO_OUTPUTSTYLE3	// 結果出力形式:結果のみ
+	};
+
+	for ( auto hwnd : nUnsupported) {
+		::EnableWindow(GetItemHwnd(hwnd), !bChecked);
+	}
+	return;
+}
+
 /*! ダイアログデータの取得
 	@retval TRUE  正常
 	@retval FALSE 入力エラー
@@ -655,6 +705,9 @@ int CDlgGrep::GetData( void )
 
 	/* 正規表現 */
 	m_sSearchOption.bRegularExp = (0!=::IsDlgButtonChecked( GetHwnd(), IDC_CHK_REGULAREXP ));
+
+	/* ripgrepを使う */
+	m_bUseRipgrep = (0!=::IsDlgButtonChecked( GetHwnd(), IDC_CHK_USERIPGREP ));
 
 	/* 文字コード自動判別 */
 //	m_bKanjiCode_AutoDetect = ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_KANJICODEAUTODETECT );
@@ -712,6 +765,7 @@ int CDlgGrep::GetData( void )
 	m_pShareData->m_Common.m_sSearch.m_bGrepOutputFileOnly = m_bGrepOutputFileOnly;
 	m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder = m_bGrepOutputBaseFolder;
 	m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder = m_bGrepSeparateFolder;
+	m_pShareData->m_Common.m_sSearch.m_bUseRipgrep = m_bUseRipgrep;
 
 	if( 0 != wcslen( m_szFile ) ){
 		CGrepEnumKeys enumKeys;

@@ -808,6 +808,7 @@
 #define IDC_COMBO_EXCLUDE_FOLDER        1734
 #define IDC_COMBO_EXCLUDE_FILE          1735
 #define IDC_CHECK_VISTA_STYLE_FILEDIALOG	1737
+#define IDC_CHK_USERIPGREP              1738
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000

@@ -40,6 +40,7 @@ public:
 
 	BOOL		m_bSubFolder;/*!< サブフォルダからも検索する */
 	BOOL		m_bFromThisText;/*!< この編集中のテキストから検索する */
+	BOOL		m_bUseRipgrep;//!<ripgrepを使う
 
 	SSearchOption	m_sSearchOption;	//!< 検索オプション
 
@@ -86,4 +87,5 @@ protected:
 	void SetData( void ) override;	/* ダイアログデータの設定 */
 	int GetData( void ) override;	/* ダイアログデータの取得 */
 	void SetDataFromThisText(bool bChecked);	/* 現在編集中ファイルから検索チェックでの設定 */
+	void SetUseripgrep(bool bChecked); /* ripgrepを使うチェックでの設定 */
 };

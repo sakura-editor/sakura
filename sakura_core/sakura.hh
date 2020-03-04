@@ -832,6 +832,7 @@
 #define HIDC_GREP_CHECK_CP				12025	//コードページ
 #define HIDC_GREP_COMBO_EXCLUDE_FILE	12026	//除外ファイル
 #define HIDC_GREP_COMBO_EXCLUDE_FOLDER	12027	//除外フォルダ
+#define HIDC_CHK_USERIPGREP				12028	//ripgrepを使う
 
 //外部コマンド
 #define HIDC_EXEC_BUTTON_REFERENCE	12100	//参照

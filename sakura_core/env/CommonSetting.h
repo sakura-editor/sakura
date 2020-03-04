@@ -415,6 +415,8 @@ struct CommonSetting_Search
 	BOOL			m_bGTJW_RETURN;				//!< エンターキーでタグジャンプ
 	BOOL			m_bGTJW_LDBLCLK;			//!< ダブルクリックでタグジャンプ
 
+	BOOL			m_bUseRipgrep;				//!< Ripgrepを使う
+
 	//検索・置換ダイアログ
 	BOOL			m_bAutoCloseDlgFind;		//!< 検索ダイアログを自動的に閉じる
 	BOOL			m_bAutoCloseDlgReplace;		//!< 置換 ダイアログを自動的に閉じる
