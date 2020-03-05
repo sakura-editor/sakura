@@ -57,6 +57,7 @@ struct GrepInfo {
 	bool			bGrepReplace;			//!< Grep置換
 	bool			bGrepPaste;				//!< クリップボードから貼り付け
 	bool			bGrepBackup;			//!< 置換でバックアップを保存
+	bool			bUseRipgrep;			//!< Ripgrepを使う
 
 	// コンストラクタ
 	GrepInfo() noexcept;

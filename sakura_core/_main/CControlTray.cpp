@@ -212,9 +212,10 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 	if( 1 == cDlgGrep.m_nGrepOutputStyle		)wcscat( pOpt, L"1" );	// Grep: 出力形式
 	if( 2 == cDlgGrep.m_nGrepOutputStyle		)wcscat( pOpt, L"2" );	// Grep: 出力形式
 	if( 3 == cDlgGrep.m_nGrepOutputStyle		)wcscat( pOpt, L"3" );
-	if( cDlgGrep.m_bGrepOutputFileOnly		)wcscat( pOpt, L"F" );
+	if( cDlgGrep.m_bGrepOutputFileOnly			)wcscat( pOpt, L"F" );
 	if( cDlgGrep.m_bGrepOutputBaseFolder		)wcscat( pOpt, L"B" );
-	if( cDlgGrep.m_bGrepSeparateFolder		)wcscat( pOpt, L"D" );
+	if( cDlgGrep.m_bGrepSeparateFolder			)wcscat( pOpt, L"D" );
+	if( cDlgGrep.m_bUseRipgrep					)wcscat( pOpt, L"Q" );
 	if( pOpt[0] != L'\0' ){
 		cCmdLine.AppendString( L" -GOPT=" );
 		cCmdLine.AppendString( pOpt );

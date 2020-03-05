@@ -50,5 +50,6 @@ GrepInfo::GrepInfo() noexcept
 	, bGrepReplace(false)
 	, bGrepPaste(false)
 	, bGrepBackup(false)
+	, bUseRipgrep(false)
 {
 }

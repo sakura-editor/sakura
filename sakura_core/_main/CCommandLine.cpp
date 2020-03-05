@@ -487,6 +487,8 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 						m_gi.bGrepPaste = true;	break;
 					case 'O':
 						m_gi.bGrepBackup = true;	break;
+					case 'Q':
+						m_gi.bUseRipgrep = true;	break;
 					}
 				}
 				break;

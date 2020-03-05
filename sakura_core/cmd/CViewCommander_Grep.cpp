@@ -111,7 +111,8 @@ void CViewCommander::Command_GREP( void )
 			GetEditWindow()->m_cDlgGrep.m_bGrepOutputBaseFolder,
 			GetEditWindow()->m_cDlgGrep.m_bGrepSeparateFolder,
 			false,
-			false
+			false,
+			GetEditWindow()->m_cDlgGrep.m_bUseRipgrep
 		);
 
 		//プラグイン：DocumentOpenイベント実行
@@ -211,7 +212,8 @@ void CViewCommander::Command_GREP_REPLACE( void )
 			cDlgGrepRep.m_bGrepOutputBaseFolder,
 			cDlgGrepRep.m_bGrepSeparateFolder,
 			cDlgGrepRep.m_bPaste,
-			cDlgGrepRep.m_bBackup
+			cDlgGrepRep.m_bBackup,
+			cDlgGrepRep.m_bUseRipgrep
 		);
 	}
 	else{
