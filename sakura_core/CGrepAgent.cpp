@@ -762,10 +762,10 @@ user_cancel:
 finish:
 	// 結果出力(%d 個が検索されました。)
 	CLayoutInt PosY_afterGrep = pcViewDst->m_pcEditDoc->m_cLayoutMgr.GetLineCount();
-	int nHitCount = PosY_afterGrep.GetValue() - PosY_afterHeadPrint.GetValue();
+	CLayoutInt cLyoutInt_HitCount = PosY_afterGrep - PosY_afterHeadPrint;
 	if( bGrepHeader ){
 		WCHAR szBuffer[128];
-		auto_sprintf( szBuffer, LS( STR_GREP_MATCH_COUNT ), nHitCount );
+		auto_sprintf( szBuffer, LS( STR_GREP_MATCH_COUNT ), cLyoutInt_HitCount);
 		CNativeW cmemOutput;
 		cmemOutput.SetString( szBuffer );
 		AddTail( pcViewDst, cmemOutput, bGrepStdout );
