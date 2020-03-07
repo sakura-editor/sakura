@@ -32,6 +32,7 @@
 #include "StdAfx.h"
 #include "dlg/CDlgWinSize.h"
 #include "util/shell.h"
+#include "util/os.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -123,6 +124,37 @@ BOOL CDlgWinSize::OnBnClicked( int wID )
 		GetData();
 	}
 	return CDialog::OnBnClicked( wID );
+}
+
+// IMEのオープン状態復帰用
+static BOOL s_isImmOpenBkup;
+
+// IMEを使用したくないコントロールのID判定
+static bool isImeUndesirable(int id)
+{
+	switch (id) {
+	case IDC_EDIT_WX:
+	case IDC_EDIT_WY:
+	case IDC_EDIT_SX:
+	case IDC_EDIT_SY:
+		return true;
+	default:
+		return false;
+	}
+}
+
+BOOL CDlgWinSize::OnEnSetFocus(HWND hwndCtl, int wID)
+{
+	if (isImeUndesirable(wID))
+		ImeSetOpen(hwndCtl, FALSE, &s_isImmOpenBkup);
+	return 0;
+}
+
+BOOL CDlgWinSize::OnEnKillFocus(HWND hwndCtl, int wID)
+{
+	if (isImeUndesirable(wID))
+		ImeSetOpen(hwndCtl, s_isImmOpenBkup, nullptr);
+	return 0;
 }
 
 /*! @brief ダイアログボックスにデータを設定

@@ -449,3 +449,24 @@ BOOL IsPowerShellAvailable(void)
 		return FALSE;
 	}
 }
+
+/*!
+	@brief IMEのオープン状態を設定する
+	@param hWnd 設定対象のウィンドウハンドル
+	@param bOpen 設定するオープン状態
+	@param pBackup `nullptr` でなければ設定前のオープン状態を取得
+	@return	手続きが成功したら true 失敗したら false
+*/
+BOOL ImeSetOpen(HWND hWnd, BOOL bOpen, BOOL* pBackup)
+{
+	HIMC hIMC = ImmGetContext(hWnd);
+	if (!hIMC) {
+		return FALSE;
+	}
+	if (pBackup) {
+		*pBackup = ImmGetOpenStatus(hIMC);
+	}
+	BOOL bRet = ImmSetOpenStatus(hIMC, bOpen);
+	bRet &= ImmReleaseContext(hWnd, hIMC);
+	return bRet;
+}

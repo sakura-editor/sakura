@@ -26,6 +26,7 @@
 #include "util/shell.h"
 #include "util/window.h"
 #include "util/file.h" // _IS_REL_PATH
+#include "util/os.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "doc/layout/CTsvModeInfo.h"
@@ -162,6 +163,23 @@ void CPropTypesScreen::CPropTypes_Screen()
 	}
 }
 
+// IMEのオープン状態復帰用
+static BOOL s_isImmOpenBkup;
+
+// IMEを使用したくないコントロールのID判定
+static bool isImeUndesirable(int id)
+{
+	switch (id) {
+	case IDC_EDIT_MAXLINELEN:
+	case IDC_EDIT_CHARSPACE:
+	case IDC_EDIT_LINESPACE:
+	case IDC_EDIT_TABSPACE:
+		return true;
+	default:
+		return false;
+	}
+}
+
 /* Screen メッセージ処理 */
 INT_PTR CPropTypesScreen::DispatchEvent(
 	HWND		hwndDlg,	// handle to dialog box
@@ -172,6 +190,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 {
 	WORD		wNotifyCode;
 	WORD		wID;
+	HWND		hwndCtl;
 	NMHDR*		pNMHDR;
 	NM_UPDOWN*	pMNUD;
 	int			idCtrl;
@@ -203,7 +222,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 	case WM_COMMAND:
 		wNotifyCode	= HIWORD(wParam);	/* 通知コード */
 		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
-//		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
+		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 		switch( wNotifyCode ){
 		case CBN_SELCHANGE:
 			switch( wID ){
@@ -299,6 +318,14 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 				 || ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KINSOKUKUTO ) );
 			}
 			break;	/* BN_CLICKED */
+		case EN_SETFOCUS:
+			if (isImeUndesirable(wID))
+				ImeSetOpen(hwndCtl, FALSE, &s_isImmOpenBkup);
+			break;
+		case EN_KILLFOCUS:
+			if (isImeUndesirable(wID))
+				ImeSetOpen(hwndCtl, s_isImmOpenBkup, nullptr);
+			break;
 		}
 		break;	/* WM_COMMAND */
 	case WM_NOTIFY:

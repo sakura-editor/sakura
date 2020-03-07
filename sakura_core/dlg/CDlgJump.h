@@ -42,6 +42,9 @@ protected:
 	BOOL OnNotify(WPARAM wParam, LPARAM lParam) override;	//	Oct. 6, 2000 JEPRO added for Spin control
 	BOOL OnCbnSelChange(HWND hwndCtl, int wID) override;
 	BOOL OnBnClicked(int wID) override;
+	BOOL OnEnSetFocus(HWND hwndCtl, int wID) override;
+	BOOL OnEnKillFocus(HWND hwndCtl, int wID) override;
+
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
 	void SetData( void ) override;	/* ダイアログデータの設定 */
 	int GetData( void ) override;	/* ダイアログデータの取得 */

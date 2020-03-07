@@ -39,6 +39,7 @@
 #include "util/shell.h"
 #include "util/string_ex2.h"
 #include "util/module.h"
+#include "util/os.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -74,6 +75,20 @@ INT_PTR CALLBACK CPropMacro::DlgProc_page(
 	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropMacro::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 
+// IMEのオープン状態復帰用
+static BOOL s_isImmOpenBkup;
+
+// IMEを使用したくないコントロールのID判定
+static bool isImeUndesirable(int id)
+{
+	switch (id) {
+	case IDC_MACROCANCELTIMER:
+		return true;
+	default:
+		return false;
+	}
+}
+
 /*! Macroページのメッセージ処理
 	@param hwndDlg ダイアログボックスのWindow Handlw
 	@param uMsg メッセージ
@@ -87,6 +102,7 @@ INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 
 	WORD		wNotifyCode;
 	WORD		wID;
+	HWND		hwndCtl;
 
 	switch( uMsg ){
 
@@ -137,6 +153,7 @@ INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam);	/* 通知コード */
 		wID = LOWORD(wParam);			/* 項目ID､ コントロールID､ またはアクセラレータID */
+		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 
 		switch( wNotifyCode ){
 		/* ボタン／チェックボックスがクリックされた */
@@ -158,7 +175,13 @@ INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 			}
 			break;	/* CBN_DROPDOWN */
 		// From Here 2003.06.23 Moca マクロフォルダの最後の\がなければ付ける
+		case EN_SETFOCUS:
+			if (isImeUndesirable(wID))
+				ImeSetOpen(hwndCtl, FALSE, &s_isImmOpenBkup);
+			break;
 		case EN_KILLFOCUS:
+			if (isImeUndesirable(wID))
+				ImeSetOpen(hwndCtl, FALSE, &s_isImmOpenBkup);
 			switch( wID ){
 			case IDC_MACRODIR:
 				{

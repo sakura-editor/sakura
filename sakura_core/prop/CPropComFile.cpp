@@ -19,6 +19,7 @@
 #include "CPropertyManager.h"
 #include "util/shell.h"
 #include "util/window.h"
+#include "util/os.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -67,6 +68,23 @@ INT_PTR CALLBACK CPropFile::DlgProc_page(
 }
 //	To Here Jun. 2, 2001 genta
 
+// IMEのオープン状態復帰用
+static BOOL s_isImmOpenBkup;
+
+// IMEを使用したくないコントロールのID判定
+static bool isImeUndesirable(int id)
+{
+	switch (id) {
+	case IDC_EDIT_AUTOLOAD_DELAY:
+	case IDC_EDIT_nDropFileNumMax:
+	case IDC_EDIT_ALERT_FILESIZE:
+	case IDC_EDIT_AUTOBACKUP_INTERVAL:
+		return true;
+	default:
+		return false;
+	}
+}
+
 /*! ファイルページ メッセージ処理 */
 INT_PTR CPropFile::DispatchEvent(
 	HWND	hwndDlg,	//!< handle to dialog box
@@ -77,6 +95,7 @@ INT_PTR CPropFile::DispatchEvent(
 {
 	WORD		wNotifyCode;
 	WORD		wID;
+	HWND		hwndCtl;
 	NMHDR*		pNMHDR;
 	NM_UPDOWN*	pMNUD;
 	int			idCtrl;
@@ -210,6 +229,7 @@ INT_PTR CPropFile::DispatchEvent(
 	case WM_COMMAND:
 		wNotifyCode	= HIWORD(wParam);	/* 通知コード */
 		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
+		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 
 		if( wID == IDC_COMBO_FILESHAREMODE && wNotifyCode == CBN_SELCHANGE ){	// コンボボックスの選択変更
 			EnableFilePropInput(hwndDlg);
@@ -227,6 +247,14 @@ INT_PTR CPropFile::DispatchEvent(
 				EnableFilePropInput(hwndDlg);
 				break;
 			}
+			break;
+		case EN_SETFOCUS:
+			if (isImeUndesirable(wID))
+				ImeSetOpen(hwndCtl, FALSE, &s_isImmOpenBkup);
+			break;
+		case EN_KILLFOCUS:
+			if (isImeUndesirable(wID))
+				ImeSetOpen(hwndCtl, s_isImmOpenBkup, nullptr);
 			break;
 		}
 		break;

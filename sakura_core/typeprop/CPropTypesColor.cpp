@@ -30,6 +30,7 @@
 #include "uiparts/CGraphics.h"
 #include "util/shell.h"
 #include "util/window.h"
+#include "util/os.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "prop/CPropCommon.h"
@@ -264,6 +265,22 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 	return CallWindowProc( m_wpColorListProc, hwnd, uMsg, wParam, lParam );
 }
 
+// IMEのオープン状態復帰用
+static BOOL s_isImmOpenBkup;
+
+// IMEを使用したくないコントロールのID判定
+static bool isImeUndesirable(int id)
+{
+	switch (id) {
+	case IDC_EDIT_LINECOMMENTPOS:
+	case IDC_EDIT_LINECOMMENTPOS2:
+	case IDC_EDIT_LINECOMMENTPOS3:
+		return true;
+	default:
+		return false;
+	}
+}
+
 /* color メッセージ処理 */
 INT_PTR CPropTypesColor::DispatchEvent(
 	HWND				hwndDlg,	// handle to dialog box
@@ -469,6 +486,14 @@ INT_PTR CPropTypesColor::DispatchEvent(
 				}
 			}
 			break;	/* BN_CLICKED */
+		case EN_SETFOCUS:
+			if (isImeUndesirable(wID))
+				ImeSetOpen(hwndCtl, FALSE, &s_isImmOpenBkup);
+			break;
+		case EN_KILLFOCUS:
+			if (isImeUndesirable(wID))
+				ImeSetOpen(hwndCtl, s_isImmOpenBkup, nullptr);
+			break;
 		}
 		break;	/* WM_COMMAND */
 	case WM_NOTIFY:
