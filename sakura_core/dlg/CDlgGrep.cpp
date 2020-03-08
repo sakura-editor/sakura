@@ -96,12 +96,20 @@ CDlgGrep::CDlgGrep()
 */
 static bool IsEscapeRequiredForExcludePattern(const std::wstring & pattern)
 {
-	const auto NotFound = std::string::npos;
+	const auto NotFound = std::wstring::npos;
 	if (pattern.find(L'!') != NotFound)
 	{
 		return true;
 	}
 	if (pattern.find(L'#') != NotFound)
+	{
+		return true;
+	}
+	if (pattern.find(L'\x20') != NotFound)
+	{
+		return true;
+	}
+	if (pattern.find(L';') != NotFound)
 	{
 		return true;
 	}
@@ -115,7 +123,7 @@ static bool IsEscapeRequiredForExcludePattern(const std::wstring & pattern)
 */
 static LPCWSTR GetEscapePattern(const std::wstring& pattern)
 {
-	return IsEscapeRequiredForExcludePattern(pattern) ? L"\"\"" : L"";
+	return IsEscapeRequiredForExcludePattern(pattern) ? L"\"" : L"";
 }
 
 /*
@@ -130,8 +138,8 @@ static void AppendExcludeFolderPatterns(CNativeW& cFilePattern, const CNativeW& 
 	for (auto iter = patterns.begin(); iter != patterns.end(); ++iter)
 	{
 		const auto & pattern = (*iter);
-		LPCWSTR escapeStr  = GetEscapePattern(pattern);
-		cFilePattern.AppendStringF(L"#%s%s%s;", escapeStr, pattern.c_str(), escapeStr);
+		LPCWSTR escapeStr = GetEscapePattern(pattern);
+		cFilePattern.AppendStringF(L";%s#%s%s", escapeStr, pattern.c_str(), escapeStr);
 	}
 }
 
@@ -147,8 +155,8 @@ static void AppendExcludeFilePatterns(CNativeW& cFilePattern, const CNativeW& cm
 	for (auto iter = patterns.begin(); iter != patterns.end(); ++iter)
 	{
 		const auto & pattern = (*iter);
-		LPCWSTR escapeStr  = GetEscapePattern(pattern);
-		cFilePattern.AppendStringF(L"!%s%s%s;", escapeStr, pattern.c_str(), escapeStr);
+		LPCWSTR escapeStr = GetEscapePattern(pattern);
+		cFilePattern.AppendStringF(L";%s!%s%s", escapeStr, pattern.c_str(), escapeStr);
 	}
 }
 
@@ -162,19 +170,10 @@ CNativeW CDlgGrep::GetPackedGFileString() const
 	CNativeW cmExcludeFiles( m_szExcludeFile );
 	CNativeW cmExcludeFolders( m_szExcludeFolder );
 
-	// コマンドライン用に二重引用符をエスケープする
-	cmFilePattern.Replace( L"\"", L"\"\"" );
-	cmExcludeFiles.Replace( L"\"", L"\"\"" );
-	cmExcludeFolders.Replace( L"\"", L"\"\"" );
-
 	// 除外ファイル、除外フォルダの設定を "-GFILE=" の設定に pack するためにデータを作る。
-	CNativeW cmGFileString;
+	CNativeW cmGFileString( std::move( cmFilePattern ) );
 	AppendExcludeFolderPatterns( cmGFileString, cmExcludeFolders );
 	AppendExcludeFilePatterns( cmGFileString, cmExcludeFiles );
-	cmGFileString += cmFilePattern;
-
-	// コマンドライン用のエスケープを元に戻す
-	cmGFileString.Replace( L"\"\"", L"\"" );
 
 	return cmGFileString;
 }
