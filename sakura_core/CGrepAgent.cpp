@@ -22,6 +22,7 @@
 #include "debug/CRunningTimer.h"
 #include <deque>
 #include <memory>
+#include <list>
 #include "sakura_rc.h"
 
 #define UICHECK_INTERVAL_MILLISEC 100	// UI確認の時間間隔
