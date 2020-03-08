@@ -71,6 +71,7 @@ protected:
 	BOOL OnBnClicked(int wID) override;
 	BOOL OnStnClicked(int wID) override;
 	BOOL OnEnChange( HWND hwndCtl, int wID ) override;
+	BOOL OnEnSetFocus(HWND hwndCtl, int wID) override;
 	BOOL OnEnKillFocus( HWND hwndCtl, int wID ) override;
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
 

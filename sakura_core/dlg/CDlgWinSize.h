@@ -50,6 +50,8 @@ protected:
 
 	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
 	BOOL OnBnClicked(int wID) override;
+	BOOL OnEnSetFocus(HWND hwndCtl, int wID) override;
+	BOOL OnEnKillFocus(HWND hwndCtl, int wID) override;
 	int  GetData( void ) override;
 	void SetData( void ) override;
 	LPVOID GetHelpIdTable( void ) override;

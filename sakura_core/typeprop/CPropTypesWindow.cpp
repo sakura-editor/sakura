@@ -16,6 +16,7 @@
 #include "charset/CCodePage.h"
 #include "util/shell.h"
 #include "util/window.h"
+#include "util/os.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -86,6 +87,23 @@ static const EEolType aeEolType[] = {
 	EOL_PS,
 };
 
+// IMEのオープン状態復帰用
+static BOOL s_isImmOpenBkup;
+
+// IMEを使用したくないコントロールのID判定
+static bool isImeUndesirable(int id)
+{
+	switch (id) {
+	case IDC_EDIT_LINENUMWIDTH:
+	case IDC_EDIT_BACKIMG_OFFSET_X:
+	case IDC_EDIT_BACKIMG_OFFSET_Y:
+	case IDC_EDIT_BACKIMG_TRANSPARENCY:
+		return true;
+	default:
+		return false;
+	}
+}
+
 /*! window メッセージ処理 */
 INT_PTR CPropTypesWindow::DispatchEvent(
 	HWND				hwndDlg,	// handle to dialog box
@@ -96,6 +114,7 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 {
 	WORD				wNotifyCode;
 	WORD				wID;
+	HWND				hwndCtl;
 	NMHDR*				pNMHDR;
 	NM_UPDOWN*			pMNUD;		// 追加 2014.08.02 katze
 
@@ -115,6 +134,7 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 	case WM_COMMAND:
 		wNotifyCode	= HIWORD( wParam );	/* 通知コード */
 		wID			= LOWORD( wParam );	/* 項目ID､ コントロールID､ またはアクセラレータID */
+		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 
 		switch( wNotifyCode ){
 		case CBN_SELCHANGE:
@@ -161,7 +181,13 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 				return TRUE;
 			}
 			break;	/* BN_CLICKED */
+		case EN_SETFOCUS:
+			if (isImeUndesirable(wID))
+				ImeSetOpen(hwndCtl, FALSE, &s_isImmOpenBkup);
+			break;
 		case EN_KILLFOCUS:
+			if (isImeUndesirable(wID))
+				ImeSetOpen(hwndCtl, s_isImmOpenBkup, nullptr);
 			if(wID == IDC_EDIT_BACKIMG_TRANSPARENCY){
 				int nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, NULL, FALSE );
 				if(nVal < 0) nVal = 0;

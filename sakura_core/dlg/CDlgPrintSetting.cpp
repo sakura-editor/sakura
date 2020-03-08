@@ -39,6 +39,7 @@
 #include "func/Funccode.h"		// Stonee, 2001/03/12
 #include "util/shell.h"
 #include "util/window.h"
+#include "util/os.h"
 #include "sakura_rc.h"	// 2002/2/10 aroka
 #include "sakura.hh"
 
@@ -406,6 +407,34 @@ BOOL CDlgPrintSetting::OnEnChange( HWND hwndCtl, int wID )
 	return CDialog::OnEnChange( hwndCtl, wID );
 }
 
+// IMEのオープン状態復帰用
+static BOOL s_isImmOpenBkup;
+
+// IMEを使用したくないコントロールのID判定
+static bool isImeUndesirable(int id)
+{
+	switch (id) {
+	case IDC_EDIT_FONTHEIGHT:
+	case IDC_EDIT_LINESPACE:
+	case IDC_EDIT_DANSUU:
+	case IDC_EDIT_DANSPACE:
+	case IDC_EDIT_MARGINTY:
+	case IDC_EDIT_MARGINBY:
+	case IDC_EDIT_MARGINLX:
+	case IDC_EDIT_MARGINRX:
+		return true;
+	default:
+		return false;
+	}
+}
+
+BOOL CDlgPrintSetting::OnEnSetFocus(HWND hwndCtl, int wID)
+{
+	if (isImeUndesirable(wID))
+		ImeSetOpen(hwndCtl, FALSE, &s_isImmOpenBkup);
+	return 0;
+}
+
 BOOL CDlgPrintSetting::OnEnKillFocus( HWND hwndCtl, int wID )
 {
 	switch( wID ){
@@ -426,6 +455,10 @@ BOOL CDlgPrintSetting::OnEnKillFocus( HWND hwndCtl, int wID )
 		UpdatePrintableLineAndColumn();
 		break;	// ここでは行と桁の更新要求のみ。後の処理はCDialogに任せる。
 	}
+
+	if (isImeUndesirable(wID))
+		ImeSetOpen(hwndCtl, s_isImmOpenBkup, nullptr);
+
 	/* 基底クラスメンバ */
 	return CDialog::OnEnKillFocus( hwndCtl, wID );
 }

@@ -17,6 +17,7 @@
 #include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"
 #include "util/shell.h"
+#include "util/os.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -73,6 +74,23 @@ INT_PTR CALLBACK CPropGeneral::DlgProc_page(
 	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropGeneral::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 
+// IMEのオープン状態復帰用
+static BOOL s_isImmOpenBkup;
+
+// IMEを使用したくないコントロールのID判定
+static bool isImeUndesirable(int id)
+{
+	switch (id) {
+	case IDC_EDIT_REPEATEDSCROLLLINENUM:
+	case IDD_PROP_GENERAL:
+	case IDC_EDIT_MAX_MRU_FILE:
+	case IDC_EDIT_MAX_MRU_FOLDER:
+		return true;
+	default:
+		return false;
+	}
+}
+
 /* General メッセージ処理 */
 INT_PTR CPropGeneral::DispatchEvent(
 	HWND	hwndDlg,	// handle to dialog box
@@ -83,7 +101,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 {
 	WORD		wNotifyCode;
 	WORD		wID;
-//	HWND		hwndCtl;
+	HWND		hwndCtl;
 	NMHDR*		pNMHDR;
 	NM_UPDOWN*	pMNUD;
 	int			idCtrl;
@@ -104,7 +122,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 	case WM_COMMAND:
 		wNotifyCode	= HIWORD(wParam);	/* 通知コード */
 		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
-//		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
+		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 		switch( wNotifyCode ){
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
@@ -181,6 +199,14 @@ INT_PTR CPropGeneral::DispatchEvent(
 				return TRUE;
 			}
 			break;	// CBN_SELENDOK
+		case EN_SETFOCUS:
+			if (isImeUndesirable(wID))
+				ImeSetOpen(hwndCtl, FALSE, &s_isImmOpenBkup);
+			break;
+		case EN_KILLFOCUS:
+			if (isImeUndesirable(wID))
+				ImeSetOpen(hwndCtl, s_isImmOpenBkup, nullptr);
+			break;
 		}
 		break;	/* WM_COMMAND */
 	case WM_NOTIFY:

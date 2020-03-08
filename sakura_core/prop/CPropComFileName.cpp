@@ -35,6 +35,7 @@
 #include "prop/CPropCommon.h"
 #include "util/shell.h"
 #include "util/window.h"
+#include "util/os.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -56,9 +57,44 @@ static const DWORD p_helpids[] = {	//13400
 	0, 0 // 
 };
 
+// IMEのオープン状態復帰用
+static BOOL s_isImmOpenBkup;
+
+// IMEを使用したくないコントロールのID判定
+static bool isImeUndesirable(int id)
+{
+	switch (id) {
+	case IDC_EDIT_SHORTMAXWIDTH:
+		return true;
+	default:
+		return false;
+	}
+}
+
 INT_PTR CALLBACK CPropFileName::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
+	WORD		wNotifyCode;
+	WORD		wID;
+	HWND		hwndCtl;
+	switch (uMsg) {
+	case WM_COMMAND:
+		wNotifyCode	= HIWORD(wParam);	/* 通知コード */
+		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
+		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
+		switch( wNotifyCode ){
+		case EN_SETFOCUS:
+			if (isImeUndesirable(wID))
+				ImeSetOpen(hwndCtl, FALSE, &s_isImmOpenBkup);
+			break;
+		case EN_KILLFOCUS:
+			if (isImeUndesirable(wID))
+				ImeSetOpen(hwndCtl, s_isImmOpenBkup, nullptr);
+			break;
+		}
+		break;
+	}
+
 	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropFileName::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 
