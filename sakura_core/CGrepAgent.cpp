@@ -441,7 +441,31 @@ DWORD CGrepAgent::DoGrep(
 	}
 
 	cmemMessage.AppendString( LS( STR_GREP_SEARCH_TARGET ) );	//L"検索対象   "
-	cmemMessage.AppendString( pcmGrepFile->GetStringPtr() );
+	{
+		// 解析済みのファイルパターン配列を取得する
+		const auto& vecSearchFileKeys = cGrepEnumKeys.m_vecSearchFileKeys;
+
+		std::wstring strPatterns;
+		bool firstItem = true;
+		for( const auto& pszPattern : vecSearchFileKeys ){
+			// パスリストは ':' で区切る(2つ目以降の前に付加する)
+			if( firstItem ){
+				firstItem = false;
+			}else{
+				strPatterns += L';';
+			}
+
+			// ';' を含むパス名は引用符で囲む
+			if( auto_strchr( pszPattern, L';' ) ){
+				strPatterns += L'"';
+				strPatterns += pszPattern;
+				strPatterns += L'"';
+			}else{
+				strPatterns += pszPattern;
+			}
+		}
+		cmemMessage.AppendString( strPatterns.c_str(), strPatterns.length() );
+	}
 	cmemMessage.AppendString( L"\r\n" );
 
 	cmemMessage.AppendString( LS( STR_GREP_SEARCH_FOLDER ) );	//L"フォルダ   "
@@ -469,11 +493,67 @@ DWORD CGrepAgent::DoGrep(
 	cmemMessage.AppendString( L"\r\n" );
 
 	cmemMessage.AppendString(LS(STR_GREP_EXCLUDE_FILE));	//L"除外ファイル   "
-	cmemMessage.AppendString( pcmExcludeFile->GetStringPtr() );
+	{
+		// 除外ファイルの2つの解析済み配列から1つのリストを作る
+		std::list<LPCWSTR> excludeFiles;
+		const auto& vecExceptFileKeys = cGrepEnumKeys.m_vecExceptFileKeys;
+		excludeFiles.insert( excludeFiles.cend(), vecExceptFileKeys.cbegin(), vecExceptFileKeys.cend() );
+		const auto& vecExceptAbsFileKeys = cGrepEnumKeys.m_vecExceptAbsFileKeys;
+		excludeFiles.insert( excludeFiles.cend(), vecExceptAbsFileKeys.cbegin(), vecExceptAbsFileKeys.cend() );
+
+		std::wstring strPatterns;
+		bool firstItem = true;
+		for( const auto& pszPattern : excludeFiles ){
+			// パスリストは ':' で区切る(2つ目以降の前に付加する)
+			if( firstItem ){
+				firstItem = false;
+			}else{
+				strPatterns += L';';
+			}
+
+			// ';' を含むパス名は引用符で囲む
+			if( auto_strchr( pszPattern, L';' ) ){
+				strPatterns += L'"';
+				strPatterns += pszPattern;
+				strPatterns += L'"';
+			}else{
+				strPatterns += pszPattern;
+			}
+		}
+		cmemMessage.AppendString( strPatterns.c_str(), strPatterns.length() );
+	}
 	cmemMessage.AppendString(L"\r\n");
 
 	cmemMessage.AppendString(LS(STR_GREP_EXCLUDE_FOLDER));	//L"除外フォルダ   "
-	cmemMessage.AppendString( pcmExcludeFolder->GetStringPtr() );
+	{
+		// 除外フォルダの2つの解析済み配列から1つのリストを作る
+		std::list<LPCWSTR> excludeFolders;
+		const auto& vecExceptFolderKeys = cGrepEnumKeys.m_vecExceptFolderKeys;
+		excludeFolders.insert( excludeFolders.cend(), vecExceptFolderKeys.cbegin(), vecExceptFolderKeys.cend() );
+		const auto& vecExceptAbsFolderKeys = cGrepEnumKeys.m_vecExceptAbsFolderKeys;
+		excludeFolders.insert( excludeFolders.cend(), vecExceptAbsFolderKeys.cbegin(), vecExceptAbsFolderKeys.cend() );
+
+		std::wstring strPatterns;
+		bool firstItem = true;
+		for( const auto& pszPattern : excludeFolders ){
+			// パスリストは ':' で区切る(2つ目以降の前に付加する)
+			if( firstItem ){
+				firstItem = false;
+			}else{
+				strPatterns += L';';
+			}
+
+			// ';' を含むパス名は引用符で囲む
+			if( auto_strchr( pszPattern, L';' ) ){
+				strPatterns += L'"';
+				strPatterns += pszPattern;
+				strPatterns += L'"';
+			}else{
+				strPatterns += pszPattern;
+			}
+		}
+		cmemMessage.AppendString( strPatterns.c_str(), strPatterns.length() );
+	}
 	cmemMessage.AppendString(L"\r\n");
 
 	const wchar_t*	pszWork;
