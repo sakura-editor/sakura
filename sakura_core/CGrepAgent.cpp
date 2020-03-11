@@ -50,6 +50,34 @@ inline CNativeW EscapeStringLiteral( const STypeConfig& type, const CNativeW& cm
 	return cmemWork2;
 }
 
+/*!
+ * パスリストを文字列化する
+ */
+template<class ContainerType>
+std::wstring FormatPathList( const ContainerType& containter )
+{
+	std::wstring strPatterns;
+	bool firstItem = true;
+	for( const auto& pattern : containter ){
+		// パスリストは ':' で区切る(2つ目以降の前に付加する)
+		if( firstItem ){
+			firstItem = false;
+		}else {
+			strPatterns += L';';
+		}
+
+		// ';' を含むパス名は引用符で囲む
+		if( std::wstring::npos != std::wstring_view( pattern ).find( L';' ) ){
+			strPatterns += L'"';
+			strPatterns += pattern;
+			strPatterns += L'"';
+		}else{
+			strPatterns += pattern;
+		}
+	}
+	return strPatterns;
+}
+
 CGrepAgent::CGrepAgent()
 : m_bGrepMode( false )			/* Grepモードか */
 , m_bGrepRunning( false )		/* Grep処理中 */
@@ -429,51 +457,18 @@ DWORD CGrepAgent::DoGrep(
 	{
 		// 解析済みのファイルパターン配列を取得する
 		const auto& vecSearchFileKeys = cGrepEnumKeys.m_vecSearchFileKeys;
-
-		std::wstring strPatterns;
-		bool firstItem = true;
-		for( const auto& pszPattern : vecSearchFileKeys ){
-			// パスリストは ':' で区切る(2つ目以降の前に付加する)
-			if( firstItem ){
-				firstItem = false;
-			}else{
-				strPatterns += L';';
-			}
-
-			// ';' を含むパス名は引用符で囲む
-			if( auto_strchr( pszPattern, L';' ) ){
-				strPatterns += L'"';
-				strPatterns += pszPattern;
-				strPatterns += L'"';
-			}else{
-				strPatterns += pszPattern;
-			}
-		}
+		std::wstring strPatterns = FormatPathList( vecSearchFileKeys );
 		cmemMessage.AppendString( strPatterns.c_str(), strPatterns.length() );
 	}
 	cmemMessage.AppendString( L"\r\n" );
 
 	cmemMessage.AppendString( LS( STR_GREP_SEARCH_FOLDER ) );	//L"フォルダ   "
 	{
-		std::wstring grepFolder;
-		for( int i = 0; i < (int)vPaths.size(); i++ ){
-			// パスリストは ':' で区切る(2つ目以降の前に付加する)
-			if( i ){
-				grepFolder += L';';
-			}
-			// 末尾のバックスラッシュを削る
-			std::wstring sPath = ChopYen( vPaths[i] );
-
-			// ';' を含むパス名は引用符で囲む
-			if( auto_strchr( sPath.c_str(), L';' ) ){
-				grepFolder += L'"';
-				grepFolder += sPath;
-				grepFolder += L'"';
-			}else{
-				grepFolder += sPath;
-			}
-		}
-		cmemMessage.AppendString( grepFolder.c_str() );
+		// フォルダリストから末尾のバックスラッシュを削ったパスリストを作る
+		std::list<std::wstring> folders;
+		std::transform( vPaths.cbegin(), vPaths.cend(), std::back_inserter( folders ), []( const auto& path ) { return ChopYen( path ); } );
+		std::wstring strPatterns = FormatPathList( folders );
+		cmemMessage.AppendString( strPatterns.c_str(), strPatterns.length() );
 	}
 	cmemMessage.AppendString( L"\r\n" );
 
@@ -486,25 +481,7 @@ DWORD CGrepAgent::DoGrep(
 		const auto& vecExceptAbsFileKeys = cGrepEnumKeys.m_vecExceptAbsFileKeys;
 		excludeFiles.insert( excludeFiles.cend(), vecExceptAbsFileKeys.cbegin(), vecExceptAbsFileKeys.cend() );
 
-		std::wstring strPatterns;
-		bool firstItem = true;
-		for( const auto& pszPattern : excludeFiles ){
-			// パスリストは ':' で区切る(2つ目以降の前に付加する)
-			if( firstItem ){
-				firstItem = false;
-			}else{
-				strPatterns += L';';
-			}
-
-			// ';' を含むパス名は引用符で囲む
-			if( auto_strchr( pszPattern, L';' ) ){
-				strPatterns += L'"';
-				strPatterns += pszPattern;
-				strPatterns += L'"';
-			}else{
-				strPatterns += pszPattern;
-			}
-		}
+		std::wstring strPatterns = FormatPathList( excludeFiles );
 		cmemMessage.AppendString( strPatterns.c_str(), strPatterns.length() );
 	}
 	cmemMessage.AppendString(L"\r\n");
@@ -518,25 +495,7 @@ DWORD CGrepAgent::DoGrep(
 		const auto& vecExceptAbsFolderKeys = cGrepEnumKeys.m_vecExceptAbsFolderKeys;
 		excludeFolders.insert( excludeFolders.cend(), vecExceptAbsFolderKeys.cbegin(), vecExceptAbsFolderKeys.cend() );
 
-		std::wstring strPatterns;
-		bool firstItem = true;
-		for( const auto& pszPattern : excludeFolders ){
-			// パスリストは ':' で区切る(2つ目以降の前に付加する)
-			if( firstItem ){
-				firstItem = false;
-			}else{
-				strPatterns += L';';
-			}
-
-			// ';' を含むパス名は引用符で囲む
-			if( auto_strchr( pszPattern, L';' ) ){
-				strPatterns += L'"';
-				strPatterns += pszPattern;
-				strPatterns += L'"';
-			}else{
-				strPatterns += pszPattern;
-			}
-		}
+		std::wstring strPatterns = FormatPathList( excludeFolders );
 		cmemMessage.AppendString( strPatterns.c_str(), strPatterns.length() );
 	}
 	cmemMessage.AppendString(L"\r\n");
