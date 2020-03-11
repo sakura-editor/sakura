@@ -105,20 +105,14 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 	CNativeW		cmWork1;
 	CNativeW		cmWork2;
 	CNativeW		cmWork3;
-	CNativeW		cmWorkExcludeFile;
-	CNativeW		cmWorkExcludeFolder;
+
 	cmWork1.SetString( cDlgGrep.m_strText.c_str() );
 	cmWork2 = cDlgGrep.GetPackedGFileString();
 	cmWork3.SetString( cDlgGrep.m_szFolder );
 
-	cmWorkExcludeFile.SetString(cDlgGrep.m_szExcludeFile);
-	cmWorkExcludeFolder.SetString(cDlgGrep.m_szExcludeFolder);
-
 	cmWork1.Replace( L"\"", L"\"\"" );
 	cmWork2.Replace( L"\"", L"\"\"" );
 	cmWork3.Replace( L"\"", L"\"\"" );
-	cmWorkExcludeFile.Replace(  L"\"", L"\"\"");
-	cmWorkExcludeFolder.Replace(L"\"", L"\"\"");
 
 	// -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
 	CNativeW cCmdLine;
