@@ -46,8 +46,6 @@ bool operator == (const GrepInfo& lhs, const GrepInfo& rhs) noexcept {
 		&& lhs.cmGrepRep == rhs.cmGrepRep
 		&& lhs.cmGrepFile == rhs.cmGrepFile
 		&& lhs.cmGrepFolder == rhs.cmGrepFolder
-		&& lhs.cmExcludeFile == rhs.cmExcludeFile
-		&& lhs.cmExcludeFolder == rhs.cmExcludeFolder
 		&& lhs.sGrepSearchOption == rhs.sGrepSearchOption
 		&& lhs.bGrepCurFolder == rhs.bGrepCurFolder
 		&& lhs.bGrepStdout == rhs.bGrepStdout
@@ -121,14 +119,6 @@ TEST(GrepInfo, operatorNotEqual)
 	value.cmGrepFolder = L"C:\\work\\sakura";
 	ASSERT_NE(value, other);
 	value.cmGrepFolder = other.cmGrepFolder;
-
-	value.cmExcludeFile = L"除外ファイルの仕様がなんでここに残ってんだっけ？";
-	ASSERT_NE(value, other);
-	value.cmExcludeFile = other.cmExcludeFile;
-
-	value.cmExcludeFolder = L"除外フォルダの仕様がなんで(ry";
-	ASSERT_NE(value, other);
-	value.cmExcludeFolder = other.cmExcludeFolder;
 
 	value.sGrepSearchOption.bRegularExp = true;
 	ASSERT_NE(value, other);

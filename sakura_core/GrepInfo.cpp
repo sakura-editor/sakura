@@ -34,8 +34,6 @@ GrepInfo::GrepInfo() noexcept
 	, cmGrepRep()
 	, cmGrepFile()
 	, cmGrepFolder()
-	, cmExcludeFile()
-	, cmExcludeFolder()
 	, sGrepSearchOption()
 	, bGrepCurFolder(false)
 	, bGrepStdout(false)

@@ -41,8 +41,6 @@ struct GrepInfo {
 	CNativeW		cmGrepRep;				//!< 置換キー
 	CNativeW		cmGrepFile;				//!< 検索対象ファイル
 	CNativeW		cmGrepFolder;			//!< 検索対象フォルダ
-	CNativeW		cmExcludeFile;			//!< 除外対象ファイル
-	CNativeW		cmExcludeFolder;		//!< 除外対象フォルダ
 	SSearchOption	sGrepSearchOption;		//!< 検索オプション
 	bool			bGrepCurFolder;			//!< カレントディレクトリを維持
 	bool			bGrepStdout;			//!< 標準出力モード
