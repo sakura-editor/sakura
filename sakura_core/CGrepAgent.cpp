@@ -22,7 +22,6 @@
 #include "debug/CRunningTimer.h"
 #include <deque>
 #include <memory>
-#include <list>
 #include "sakura_rc.h"
 
 #define UICHECK_INTERVAL_MILLISEC 100	// UI確認の時間間隔
@@ -474,13 +473,8 @@ DWORD CGrepAgent::DoGrep(
 
 	cmemMessage.AppendString(LS(STR_GREP_EXCLUDE_FILE));	//L"除外ファイル   "
 	{
-		// 除外ファイルの2つの解析済み配列から1つのリストを作る
-		std::list<LPCWSTR> excludeFiles;
-		const auto& vecExceptFileKeys = cGrepEnumKeys.m_vecExceptFileKeys;
-		excludeFiles.insert( excludeFiles.cend(), vecExceptFileKeys.cbegin(), vecExceptFileKeys.cend() );
-		const auto& vecExceptAbsFileKeys = cGrepEnumKeys.m_vecExceptAbsFileKeys;
-		excludeFiles.insert( excludeFiles.cend(), vecExceptAbsFileKeys.cbegin(), vecExceptAbsFileKeys.cend() );
-
+		// 除外ファイルの解析済みリストを取得る
+		auto excludeFiles = cGrepEnumKeys.GetExcludeFiles();
 		std::wstring strPatterns = FormatPathList( excludeFiles );
 		cmemMessage.AppendString( strPatterns.c_str(), strPatterns.length() );
 	}
@@ -488,13 +482,8 @@ DWORD CGrepAgent::DoGrep(
 
 	cmemMessage.AppendString(LS(STR_GREP_EXCLUDE_FOLDER));	//L"除外フォルダ   "
 	{
-		// 除外フォルダの2つの解析済み配列から1つのリストを作る
-		std::list<LPCWSTR> excludeFolders;
-		const auto& vecExceptFolderKeys = cGrepEnumKeys.m_vecExceptFolderKeys;
-		excludeFolders.insert( excludeFolders.cend(), vecExceptFolderKeys.cbegin(), vecExceptFolderKeys.cend() );
-		const auto& vecExceptAbsFolderKeys = cGrepEnumKeys.m_vecExceptAbsFolderKeys;
-		excludeFolders.insert( excludeFolders.cend(), vecExceptAbsFolderKeys.cbegin(), vecExceptAbsFolderKeys.cend() );
-
+		// 除外フォルダの解析済みリストを取得する
+		auto excludeFolders = cGrepEnumKeys.GetExcludeFolders();
 		std::wstring strPatterns = FormatPathList( excludeFolders );
 		cmemMessage.AppendString( strPatterns.c_str(), strPatterns.length() );
 	}

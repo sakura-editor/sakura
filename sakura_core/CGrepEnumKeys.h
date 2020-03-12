@@ -31,6 +31,7 @@
 */
 #pragma once
 
+#include <list>
 #include <vector>
 #include <windows.h>
 #include <string.h>
@@ -57,6 +58,26 @@ public:
 
 	~CGrepEnumKeys(){
 		ClearItems();
+	}
+
+	// 除外ファイルの2つの解析済み配列から1つのリストを作る
+	auto GetExcludeFiles() const ->  std::list<decltype(m_vecExceptFileKeys)::value_type> {
+		std::list<decltype(m_vecExceptFileKeys)::value_type> excludeFiles;
+		const auto& fileKeys = m_vecExceptFileKeys;
+		excludeFiles.insert( excludeFiles.cend(), fileKeys.cbegin(), fileKeys.cend() );
+		const auto& absFileKeys = m_vecExceptAbsFileKeys;
+		excludeFiles.insert( excludeFiles.cend(), absFileKeys.cbegin(), absFileKeys.cend() );
+		return excludeFiles;
+	}
+
+	// 除外フォルダの2つの解析済み配列から1つのリストを作る
+	auto GetExcludeFolders() const ->  std::list<decltype(m_vecExceptFolderKeys)::value_type> {
+		std::list<decltype(m_vecExceptFolderKeys)::value_type> excludeFolders;
+		const auto& folderKeys = m_vecExceptFolderKeys;
+		excludeFolders.insert( excludeFolders.cend(), folderKeys.cbegin(), folderKeys.cend() );
+		const auto& absFolderKeys = m_vecExceptAbsFolderKeys;
+		excludeFolders.insert( excludeFolders.cend(), absFolderKeys.cbegin(), absFolderKeys.cend() );
+		return excludeFolders;
 	}
 
 	int SetFileKeys( LPCWSTR lpKeys ){
