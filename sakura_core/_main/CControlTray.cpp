@@ -97,67 +97,6 @@ void CControlTray::DoGrep()
 	DoGrepCreateWindow(m_hInstance, GetDllShareData().m_sHandles.m_hwndTray, m_cDlgGrep);
 }
 
-/*
-	@brief ファイル/フォルダの除外パターンをエスケープする必要があるか判断する
-	@param[in]     pattern チェックするパターン
-	@return        true  エスケープする必要がある
-	@return        false エスケープする必要がない
-*/
-static bool IsEscapeRequiredForExcludePattern(const wstring & pattern)
-{
-	const auto NotFound = std::string::npos;
-	if (pattern.find(L'!') != NotFound)
-	{
-		return true;
-	}
-	if (pattern.find(L'#') != NotFound)
-	{
-		return true;
-	}
-	return false;
-}
-
-/*
-	@brief エスケープパターンを取得する
-	@param[in] pattern        エスケープ対象文字列
-*/
-static LPCWSTR GetEscapePattern(const wstring& pattern)
-{
-	return IsEscapeRequiredForExcludePattern(pattern) ? L"\"\"" : L"";
-}
-
-/*
-	@brief フォルダの除外パターンを詰める
-	@param[in,out] cFilePattern        "-GFILE=" に指定する引数用のバッファ (このバッファの末尾に追加する)
-	@param[in]     cmWorkExcludeFolder Grep ダイアログで指定されたフォルダの除外パターン
-*/
-static void AppendExcludeFolderPatterns(CNativeW& cFilePattern, const CNativeW& cmWorkExcludeFolder)
-{
-	auto patterns = CGrepEnumKeys::SplitPattern(cmWorkExcludeFolder.GetStringPtr());
-	for (auto iter = patterns.begin(); iter != patterns.end(); ++iter)
-	{
-		const auto & pattern = (*iter);
-		LPCWSTR escapeStr  = GetEscapePattern(pattern);
-		cFilePattern.AppendStringF(L"#%s%s%s;", escapeStr, pattern.c_str(), escapeStr);
-	}
-}
-
-/*
-	@brief ファイルの除外パターンを詰める
-	@param[in,out] cFilePattern        "-GFILE=" に指定する引数用のバッファ (このバッファの末尾に追加する)
-	@param[in]     cmWorkExcludeFile Grep ダイアログで指定されたファイルの除外パターン
-*/
-static void AppendExcludeFilePatterns(CNativeW& cFilePattern, const CNativeW& cmWorkExcludeFile)
-{
-	auto patterns = CGrepEnumKeys::SplitPattern(cmWorkExcludeFile.GetStringPtr());
-	for (auto iter = patterns.begin(); iter != patterns.end(); ++iter)
-	{
-		const auto & pattern = (*iter);
-		LPCWSTR escapeStr  = GetEscapePattern(pattern);
-		cFilePattern.AppendStringF(L"!%s%s%s;", escapeStr, pattern.c_str(), escapeStr);
-	}
-}
-
 void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep& cDlgGrep)
 {
 	/*======= Grepの実行 =============*/
@@ -166,35 +105,23 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 	CNativeW		cmWork1;
 	CNativeW		cmWork2;
 	CNativeW		cmWork3;
-	CNativeW		cmWorkExcludeFile;
-	CNativeW		cmWorkExcludeFolder;
-	cmWork1.SetString( cDlgGrep.m_strText.c_str() );
-	cmWork2.SetString( cDlgGrep.m_szFile );
-	cmWork3.SetString( cDlgGrep.m_szFolder );
 
-	cmWorkExcludeFile.SetString(cDlgGrep.m_szExcludeFile);
-	cmWorkExcludeFolder.SetString(cDlgGrep.m_szExcludeFolder);
+	cmWork1.SetString( cDlgGrep.m_strText.c_str() );
+	cmWork2 = cDlgGrep.GetPackedGFileString();
+	cmWork3.SetString( cDlgGrep.m_szFolder );
 
 	cmWork1.Replace( L"\"", L"\"\"" );
 	cmWork2.Replace( L"\"", L"\"\"" );
 	cmWork3.Replace( L"\"", L"\"\"" );
-	cmWorkExcludeFile.Replace(  L"\"", L"\"\"");
-	cmWorkExcludeFolder.Replace(L"\"", L"\"\"");
 
 	// -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
 	CNativeW cCmdLine;
 	WCHAR szTemp[20];
 
-	// 除外ファイル、除外フォルダの設定を "-GFILE=" の設定に pack するためにデータを作る。
-	CNativeW cFilePattern;
-	AppendExcludeFolderPatterns(cFilePattern, cmWorkExcludeFolder);
-	AppendExcludeFilePatterns(cFilePattern, cmWorkExcludeFile);
-	cFilePattern.AppendString(cmWork2.GetStringPtr());
-
 	cCmdLine.AppendString(L"-GREPMODE -GKEY=\"");
 	cCmdLine.AppendString(cmWork1.GetStringPtr());
 	cCmdLine.AppendString(L"\" -GFILE=\"");
-	cCmdLine.AppendString(cFilePattern.GetStringPtr());
+	cCmdLine.AppendString(cmWork2.GetStringPtr());
 	cCmdLine.AppendString(L"\" -GFOLDER=\"");
 	cCmdLine.AppendString(cmWork3.GetStringPtr());
 	cCmdLine.AppendString(L"\" -GCODE=");
