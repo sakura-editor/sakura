@@ -41,7 +41,7 @@ public:
 
 	//要素アクセス
 	ElementType&       operator[](int nIndex)
-    {
+	{
 		assert(nIndex<MAX_SIZE);
 		assert_warning(nIndex<m_nCount);
 		return m_aElements[nIndex];
