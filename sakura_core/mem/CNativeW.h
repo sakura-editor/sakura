@@ -45,7 +45,11 @@ public:
 
 	//########補助
 	bool			IsValid()		const{ return m_pData!=NULL; }
-	wchar_t			At(int nIndex)	const{ assert(nIndex>=0 && nIndex<m_nDataLen); return m_pData[nIndex]; }
+	wchar_t			At(int nIndex)	const
+	{
+		assert(nIndex>=0 && nIndex<m_nDataLen);
+		return m_pData[nIndex];
+	}
 private:
 	const wchar_t*	m_pData;
 	int				m_nDataLen;

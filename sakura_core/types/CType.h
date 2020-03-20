@@ -290,7 +290,11 @@ public:
 		m_nType = n;
 	}
 	bool IsValidType() const{ return m_nType>=0 && m_nType<MAX_TYPES; }
-	int GetIndex() const{ /*assert(IsValid());*/ return m_nType; }
+	int GetIndex() const
+	{
+		/*assert(IsValid());*/
+		return m_nType;
+	}
 
 	//共有データへの簡易アクセサ
 //	STypeConfig* operator->(){ return GetTypeConfig(); }

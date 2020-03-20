@@ -72,8 +72,16 @@ public:
 
 protected:
 	//※2個以上のインスタンスは想定していません。assertが破綻を検出します。
-	TSingleInstance(){ assert(gm_instance==NULL); gm_instance=static_cast<T*>(this); }
-	~TSingleInstance(){ assert(gm_instance); gm_instance=NULL; }
+	TSingleInstance()
+	{
+		assert(gm_instance==NULL);
+		gm_instance=static_cast<T*>(this);
+	}
+	~TSingleInstance()
+	{
+		assert(gm_instance);
+		gm_instance=NULL;
+	}
 private:
 	static T* gm_instance;
 };
