@@ -73,7 +73,7 @@ BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const WCHAR* pszPath )
 */
 BOOL CPPAMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const WCHAR* pszCode )
 {
-	m_cBuffer.SetNativeData( pszCode );	//	m_cBufferにコピー
+	m_cBuffer.SetString( pszCode );	//	m_cBufferにコピー
 
 	m_nReady = true;
 	return TRUE;
