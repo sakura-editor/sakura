@@ -61,12 +61,4 @@ public:
 	CNativeA& operator = (CNativeA&& rhs) noexcept		{ CNative::operator=(std::forward<CNativeA>(rhs)); return *this; }
 	const CNativeA& operator=( char );
 	const CNativeA& operator+=( char );
-
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           変換                              //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-	//ネイティブ変換
-	void Replace_j( const char* pszFrom, const char* pszTo ); //!< 文字列置換（日本語考慮版）
-
 };
