@@ -40,8 +40,18 @@ public:
 	int max_size() const{ return MAX_SIZE; }
 
 	//要素アクセス
-	ElementType&       operator[](int nIndex)      { assert(nIndex<MAX_SIZE); assert_warning(nIndex<m_nCount); return m_aElements[nIndex]; }
-	const ElementType& operator[](int nIndex) const{ assert(nIndex<MAX_SIZE); assert_warning(nIndex<m_nCount); return m_aElements[nIndex]; }
+	ElementType&       operator[](int nIndex)
+	{
+		assert(nIndex<MAX_SIZE);
+		assert_warning(nIndex<m_nCount);
+		return m_aElements[nIndex];
+	}
+	const ElementType& operator[](int nIndex) const
+	{
+		assert(nIndex<MAX_SIZE);
+		assert_warning(nIndex<m_nCount);
+		return m_aElements[nIndex];
+	}
 
 	//操作
 	void clear(){ m_nCount=0; }
