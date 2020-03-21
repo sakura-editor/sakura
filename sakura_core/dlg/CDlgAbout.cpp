@@ -296,25 +296,6 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	}
 	//	To Here Dec. 2, 2002 genta
 
-#if 0
-
-	// URLウィンドウをサブクラス化する
-	m_UrlUrWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_UR ) );
-#ifdef GIT_REMOTE_ORIGIN_URL
-	m_UrlGitWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GIT ) );
-#endif
-#ifdef CI_BUILD_NUMBER_LABEL
-	m_UrlBuildLinkWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_CI_BUILD ) );
-#endif
-#if defined( GITHUB_COMMIT_URL )
-	m_UrlGitHubCommitWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GITHUB_COMMIT ) );
-#endif
-#if defined( GITHUB_PR_HEAD_URL )
-	m_UrlGitHubPRWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GITHUB_PR ) );
-#endif
-
-#endif
-
 	SetSysLinkText(IDC_STATIC_URL_UR, _T("https://sakura-editor.github.io/"));
 
 	// Git remote のリンク
