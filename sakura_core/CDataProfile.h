@@ -33,7 +33,7 @@
  * 固定長の文字配列を標準stringのように扱うためのクラス
  */
 template <typename CHAR_TYPE>
-class StringBuffer {
+class StringBuf {
 	CHAR_TYPE*	m_pData;			//!< 文字列バッファを指すポインタ
 	size_t		m_cchDataLength;	//!< 有効文字列長
 	size_t		m_cchDataCount;		//!< 文字列バッファのサイズ
@@ -42,12 +42,12 @@ public:
 	/*!
 	 * コンストラクタ
 	 *
-	 * StringBufferのインスタンスを構築する
+	 * StringBufのインスタンスを構築する
 	 *
 	 * @param [in] pszData 文字列バッファを指すポインタ
 	 * @param [in] cchDataCount 文字列バッファの確保サイズ(length + 1)
 	 */
-	StringBuffer( CHAR_TYPE* pszData, size_t cchDataCount ) noexcept
+	StringBuf( CHAR_TYPE* pszData, size_t cchDataCount ) noexcept
 		: m_pData( pszData )
 		, m_cchDataLength( std::char_traits<CHAR_TYPE>::length( pszData ) )
 		, m_cchDataCount( cchDataCount )
@@ -58,29 +58,29 @@ public:
 	/*!
 	 * 互換コンストラクタ
 	 *
-	 * StringBufferのインスタンスを構築する
+	 * StringBufのインスタンスを構築する
 	 *
 	 * @param [in] pszData 文字列バッファを指すポインタ(NULL指定不可、NUL終端すること)
 	 */
-	StringBuffer( CHAR_TYPE* pszData )
-		: StringBuffer( pszData, std::char_traits<CHAR_TYPE>::length( pszData ) + 1 )
+	StringBuf( CHAR_TYPE* pszData )
+		: StringBuf( pszData, std::char_traits<CHAR_TYPE>::length( pszData ) + 1 )
 	{
 	}
 
 	// このクラスはコピー禁止
-	StringBuffer( const StringBuffer& ) = delete;
-	StringBuffer& operator = ( const StringBuffer& ) = delete;
+	StringBuf( const StringBuf& ) = delete;
+	StringBuf& operator = ( const StringBuf& ) = delete;
 
 	/*!
 	 * ムーブコンストラクタ
 	 *
-	 * 空のStringBufferインスタンスを構築し、
+	 * 空のStringBufインスタンスを構築し、
 	 * 引数で指定されたインスタンスとデータを入れ替える
 	 */
-	StringBuffer( StringBuffer&& other ) noexcept
-		: StringBuffer( NULL, 0 )
+	StringBuf( StringBuf&& other ) noexcept
+		: StringBuf( NULL, 0 )
 	{
-		*this = std::forward<StringBuffer>( other );
+		*this = std::forward<StringBuf>( other );
 	}
 
 	/*!
@@ -88,7 +88,7 @@ public:
 	 *
 	 * 引数で指定されたインスタンスとデータを入れ替える
 	 */
-	StringBuffer& operator = ( StringBuffer&& rhs ) noexcept
+	StringBuf& operator = ( StringBuf&& rhs ) noexcept
 	{
 		std::swap( m_pData, rhs.m_pData );
 		std::swap( m_cchDataLength, rhs.m_cchDataLength );
@@ -110,19 +110,19 @@ public:
 		// 実装は型パラメータに依存するので特殊化して使う。
 	}
 
-	StringBuffer& operator = ( const CHAR_TYPE* rhs ) { assign( rhs ); return *this; }
+	StringBuf& operator = ( const CHAR_TYPE* rhs ) { assign( rhs ); return *this; }
 };
 
 /*!
- * StringBufferW コンストラクタ(特殊化)
+ * CStringBufW コンストラクタ(特殊化)
  *
- * StringBufferWのインスタンスを構築する
+ * StringBufWのインスタンスを構築する
  *
  * @param [in] pszData 文字列バッファを指すポインタ
  * @param [in] cchDataCount 文字列バッファの確保サイズ(length + 1)
  */
 template<> inline
-StringBuffer<wchar_t>::StringBuffer( wchar_t* pszData, size_t cchDataCount ) noexcept
+StringBuf<wchar_t>::StringBuf( wchar_t* pszData, size_t cchDataCount ) noexcept
 	: m_pData( pszData )
 	, m_cchDataLength( 0 )
 	, m_cchDataCount( cchDataCount )
@@ -143,7 +143,7 @@ StringBuffer<wchar_t>::StringBuffer( wchar_t* pszData, size_t cchDataCount ) noe
  * @param [in] pSrc 文字列ポインタ
  */
 template<> inline
-void StringBuffer<wchar_t>::assign( const wchar_t* pSrc )
+void StringBuf<wchar_t>::assign( const wchar_t* pSrc )
 {
 	if( m_pData != NULL ){
 		if( pSrc != NULL ){
@@ -155,10 +155,10 @@ void StringBuffer<wchar_t>::assign( const wchar_t* pSrc )
 	}
 }
 
-typedef StringBuffer<wchar_t> StringBufferW;
+typedef StringBuf<wchar_t> CStringBufW;
 
 //文字列バッファ型インスタンスの生成マクロ
-#define MakeStringBufferW(S) StringBufferW(S,_countof(S))
+#define MakeStringBufferW(S) CStringBufW(S,_countof(S))
 
 //2007.09.24 kobake データ変換部を子クラスに分離
 //!各種データ変換付きCProfile
@@ -245,12 +245,12 @@ protected:
 	{
 		profile->assign(1,value);
 	}
-	//StringBufferW
-	void profile_to_value( const std::wstring& profile, StringBufferW* value )
+	//CStringBufW
+	void profile_to_value( const std::wstring& profile, CStringBufW* value )
 	{
 		*value = profile.c_str();
 	}
-	void value_to_profile( const StringBufferW& value, wstring* profile )
+	void value_to_profile( const CStringBufW& value, wstring* profile )
 	{
 		profile->assign( value.c_str(), value.length() );
 	}
@@ -323,7 +323,7 @@ public:
 	) noexcept
 	{
 		// バッファ参照型に変換して入出力する
-		return IOProfileData( pszSectionName, pszEntryKey, StringBufferW( szEntryValue.GetBufferPointer(), szEntryValue.GetBufferCount() ) );
+		return IOProfileData( pszSectionName, pszEntryKey, CStringBufW( szEntryValue.GetBufferPointer(), szEntryValue.GetBufferCount() ) );
 	}
 
 	//2007.08.14 kobake 追加
