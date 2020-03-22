@@ -1,6 +1,7 @@
-﻿/*! @file */
-/*
+﻿/*! @file
 	Copyright (C) 2008, kobake
+	Copyright (C) 2008-2017 SAKURA Editor Project
+	Copyright (C) 2018-2020 SAKURA Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -24,90 +25,197 @@
 */
 #pragma once
 
-//単位が明示的に区別されたポイント型。※POINTは継承しないことにした
-/*
-template <int TYPE> class CStrictPoint : public CMyPoint{
-public:
-	CStrictPoint() : CMyPoint() { }
-	CStrictPoint(int _x,int _y) : CMyPoint(_x,_y) { }
-	CStrictPoint(const CStrictPoint& rhs) : CMyPoint(rhs) { }
+#include <Windows.h> //tagPOINT
 
-	//※POINTからの変換は、「明示的に指定されたときのみ」許可する。
-	explicit CStrictPoint(const POINT& rhs) : CMyPoint(rhs) { }
-};
-*/
-template <class SUPER, class INT_TYPE, class SUPER_INT_TYPE = INT_TYPE> class CStrictPoint : public SUPER{
-private:
-	typedef CStrictPoint<SUPER, INT_TYPE> Me;
-public:
-	typedef INT_TYPE       IntType;
-	typedef SUPER_INT_TYPE SuperIntType;
-public:
-	using SUPER::x;
-	using SUPER::y;
-	//コンストラクタ・デストラクタ
-	CStrictPoint(){ x=SuperIntType(0); y=SuperIntType(0); }
-	CStrictPoint(int _x,int _y){ x=SuperIntType(_x); y=SuperIntType(_y); }
-#ifdef USE_STRICT_INT
-	CStrictPoint(IntType _x,IntType _y){ x=SuperIntType(_x); y=SuperIntType(_y); }
-#endif
-	CStrictPoint(const SUPER& rhs){ x=rhs.x; y=rhs.y; }
+/*!
+ * 汎用ポイント型テンプレートクラス
+ *
+ * 型パラメータに渡す基本型を継承するクラスとして動作する。
+ * 数値型のメンバ(x,y)を持つ型ならば何でも指定可能。
+ *
+ * tagPOINT型を渡した場合、tagPOINTを継承する。
+ * メンバ(x,y)の定義型が厳密な数値型の場合、厳密なポイント型となる。
+ *
+ * 使用例
+ * ・CLogicPoint	論理行位置と行頭からのオフセット位置を組み合わせて文字データの絶対位置を表す型
+ * ・CLayoutPoint	レイアウト行位置と桁位置を組み合わせて文字の表示位置を表す型
+ * ・CMyPoint		垂直方向の座標と水平方向の座標を組み合わせて描画位置を表す緩い型
+ */
+template <typename Base>
+class CStrictPoint : public Base {
+	using Me = CStrictPoint<Base>;
 
-	//他の型からも、「明示的に指定すれば」変換が可能
+public:
+	using Base::x;
+	using Base::y;
+	using UNIT_X_TYPE = decltype(Base::x);
+	using UNIT_Y_TYPE = decltype(Base::y);
+
+	/*!
+	 * デフォルトコンストラクタ
+	 *
+	 * 新しいインスタンスを構築する。
+	 */
+	constexpr CStrictPoint() noexcept
+		: Me( 0, 0 )
+	{
+	}
+
+	/*!
+	 * 値指定コンストラクタ
+	 *
+	 * x,yを指定して新しいインスタンスを構築する。
+	 */
+	template<typename X, typename Y,
+		typename = std::enable_if_t< std::is_assignable_v<UNIT_X_TYPE&, X> && std::is_assignable_v<UNIT_Y_TYPE&, Y> > >
+	constexpr CStrictPoint( const X xValue, const Y yValue ) noexcept
+	{
+		Base::x = UNIT_X_TYPE( xValue );
+		Base::y = UNIT_Y_TYPE( yValue );
+	}
+
+	/*!
+	 * 値指定コンストラクタ
+	 *
+	 * 基本型を指定して新しいインスタンスを構築する。
+	 */
+	CStrictPoint( const Base& rhs ) noexcept
+		: Me( rhs.x, rhs.y )
+	{
+	}
+
+	/*!
+	 * 値指定コンストラクタ
+	 *
+	 * 他の型からも、「明示的に指定すれば」変換が可能
+	 */
 	template <class SRC>
-	explicit CStrictPoint(const SRC& rhs){ x=(SuperIntType)rhs.x; y=(SuperIntType)rhs.y; }
+	explicit CStrictPoint( const SRC& rhs ) noexcept
+		: Me( rhs.x, rhs.y )
+	{
+	}
 
-	//算術演算子
-	CStrictPoint& operator += (const SUPER& rhs){ x+=rhs.x; y+=rhs.y; return *this; }
-	CStrictPoint& operator -= (const SUPER& rhs){ x-=rhs.x; y-=rhs.y; return *this; }
-	CStrictPoint& operator *= (int n){ x*=n; y*=n; return *this; }
-	CStrictPoint& operator /= (int n){ x/=n; y/=n; return *this; }
+	//! デフォルトのコピーコンストラクタを使う
+	CStrictPoint( const Me& ) = default;
+	//! デフォルトのコピー代入演算子を使う
+	Me& operator = ( const Me& ) = default;
 
-	//算術演算子２
-	CStrictPoint operator + (const SUPER& rhs) const{ CStrictPoint tmp=*this; tmp+=rhs; return tmp; }
-	CStrictPoint operator - (const SUPER& rhs) const{ CStrictPoint tmp=*this; tmp-=rhs; return tmp; }
-	CStrictPoint operator * (int n) const{ CStrictPoint tmp=*this; tmp*=n; return tmp; }
-	CStrictPoint operator / (int n) const{ CStrictPoint tmp=*this; tmp/=n; return tmp; }
-
-	//代入演算子
-	CStrictPoint& operator = (const SUPER& rhs){ x=rhs.x; y=rhs.y; return *this; }
-
-	//比較演算子
-	bool operator == (const SUPER& rhs) const{ return x==rhs.x && y==rhs.y; }
-	bool operator != (const SUPER& rhs) const{ return !this->operator==(rhs); }
-
-	//設定
-	void Clear(){ x=SuperIntType(0); y=SuperIntType(0); }
-	void Set(INT_TYPE _x, INT_TYPE _y){ x=SuperIntType(_x); y=SuperIntType(_y); }
-	void Set(const SUPER& pt){ x=pt.x; y=pt.y; }
-	void SetX(INT_TYPE _x){ x=SuperIntType(_x); }
-	void SetY(INT_TYPE _y){ y=SuperIntType(_y); }
-	void Offset(int _x,int _y){ x+=_x; y+=_y; }
-	void Offset(const SUPER& pt){ x+=pt.x; y+=pt.y; }
-
-	//取得
-	SuperIntType GetX() const{ return x; }
-	SuperIntType GetY() const{ return y; }
-	SUPER Get() const{ return *this; }
-	INT_TYPE GetX2() const{ return INT_TYPE(x); }
-	INT_TYPE GetY2() const{ return INT_TYPE(y); }
+	//! デフォルトのムーブコンストラクタを使う
+	CStrictPoint( Me&& ) = default;
+	//! デフォルトのムーブ代入演算子を使う
+	Me& operator = ( Me&& ) = default;
 
 	//! x,y いずれかが 0 より小さい場合に true を返す
-	bool HasNegative() const
+	constexpr bool HasNegative() const
 	{
-		return x<0 || y<0;
+		return x < 0 || y < 0;
 	}
 
 	//! x,y どちらも自然数であれば true
-	bool BothNatural() const
+	constexpr bool BothNatural() const
 	{
-		return x>=0 && y>=0;
+		return x >= 0 && y >= 0;
 	}
 
-	//特殊
+	/*!
+	 * 水平方向の位置を取得する。
+	 */
+	constexpr UNIT_X_TYPE GetX() const { return x; }
+
+	/*!
+	 * 垂直方向の位置を取得する。
+	 */
+	constexpr UNIT_Y_TYPE GetY() const { return y; }
+
+	//! 廃止したい
+	UNIT_X_TYPE GetX2() const { return x; }
+	//! 廃止したい
+	UNIT_Y_TYPE GetY2() const { return y; }
+	//! 廃止したい
+	Base Get() const { return *this; }
+	//! 廃止したい
 	POINT GetPOINT() const
 	{
-		POINT pt={(Int)x,(Int)y};
+		POINT pt = { x, y };
 		return pt;
 	}
+
+	/*!
+	 * 水平方向の位置を設定する。
+	 *
+	 * 水平方向の基本型に代入できる型の変数であれば設定可能。
+	 */
+	template<typename X,
+		typename = std::enable_if_t< std::is_assignable_v<UNIT_X_TYPE&, X> > >
+	void SetX( const X& xValue ) { x = UNIT_X_TYPE( xValue ); }
+
+	/*!
+	 * 垂直方向の位置を設定する。
+	 *
+	 * 垂直方向の基本型に代入できる型の変数であれば設定可能。
+	 */
+	template<typename Y,
+		typename = std::enable_if_t< std::is_assignable_v<UNIT_Y_TYPE&, Y> > >
+	void SetY( const Y& yValue ) { y = UNIT_Y_TYPE( yValue ); }
+
+	/*!
+	 * ポイントの位置を設定する。
+	 *
+	 * xは、垂直方向の基本型に代入できる型の変数であれば設定可能。
+	 * yは、垂直方向の基本型に代入できる型の変数であれば設定可能。
+	 */
+	template<typename X, typename Y,
+		typename = std::enable_if_t< std::is_assignable_v<UNIT_X_TYPE&, X> && std::is_assignable_v<UNIT_Y_TYPE&, Y> > >
+	void Set( const X& xValue, const Y& yValue ) {
+		SetX( xValue );
+		SetY( yValue );
+	}
+
+	/*!
+	 * ポイントの位置を設定する。
+	 *
+	 * Uは、数値型のメンバx,yを持つ型でなければならない。
+	 * xは、垂直方向の基本型に代入できる型の変数であれば設定可能。
+	 * yは、垂直方向の基本型に代入できる型の変数であれば設定可能。
+	 */
+	template<typename U>
+	void Set( const U& pt ) { Set( pt.x, pt.y ); }
+
+	/*!
+	 * ポイントの位置をクリアする。
+	 */
+	void Clear() { Set( 0, 0 ); }
+
+	/*!
+	 * ポイントの位置をずらす。
+	 */
+	template<typename X, typename Y>
+	void Offset( const X& xValue, const Y& yValue ) { Set( x + xValue, y + yValue ); }
+
+	/*!
+	 * ポイントの位置をずらす。
+	 */
+	void Offset( const Base& pt ) { Set( x + pt.x, y + pt.y ); }
+
+	//算術演算子
+	Me& operator += ( const Base& rhs ) { x += rhs.x; y += rhs.y; return *this; }
+	Me& operator -= ( const Base& rhs ) { x -= rhs.x; y -= rhs.y; return *this; }
+	Me& operator *= ( int n ) { x *= n; y *= n; return *this; }
+	Me& operator /= ( int n ) { x /= n; y /= n; return *this; }
+
+	//算術演算子２
+	Me operator + ( const Base& rhs ) const { Me ret( *this ); ret += rhs; return ret; }
+	Me operator - ( const Base& rhs ) const { Me ret( *this ); ret -= rhs; return ret; }
+	Me operator * ( int n ) const { Me ret( *this ); ret *= n; return ret; }
+	Me operator / ( int n ) const { Me ret( *this ); ret /= n; return ret; }
+
+	//代入演算子
+	Me& operator = ( const Base& rhs ) { x = rhs.x; y = rhs.y; return *this; }
+
+	//比較演算子
+	bool operator == ( const Base& rhs ) const { return x == rhs.x && y == rhs.y; }
+	bool operator != ( const Base& rhs ) const { return !(*this == rhs); }
 };
+
+// このクラスはメンバー追加禁止
+static_assert(sizeof(CStrictPoint<tagPOINT>) == sizeof(tagPOINT), "size check");

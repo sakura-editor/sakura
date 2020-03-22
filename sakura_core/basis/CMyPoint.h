@@ -1,6 +1,7 @@
-﻿/*! @file */
-/*
+﻿/*! @file
 	Copyright (C) 2008, kobake
+	Copyright (C) 2008-2017 SAKURA Editor Project
+	Copyright (C) 2018-2020 SAKURA Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -24,56 +25,6 @@
 */
 #pragma once
 
-#include <Windows.h> //POINT
+#include "basis/CStrictPoint.h"
 
-class CMyPoint : public POINT{
-public:
-	//コンストラクタ・デストラクタ
-	CMyPoint(){ x=0; y=0; }
-	CMyPoint(int _x,int _y){ x=_x; y=_y; }
-	CMyPoint(const POINT& rhs){ x=rhs.x; y=rhs.y; }
-
-	//算術演算子
-	CMyPoint& operator += (const POINT& rhs){ x+=rhs.x; y+=rhs.y; return *this; }
-	CMyPoint& operator -= (const POINT& rhs){ x-=rhs.x; y-=rhs.y; return *this; }
-	CMyPoint& operator *= (int n){ x*=n; y*=n; return *this; }
-	CMyPoint& operator /= (int n){ x/=n; y/=n; return *this; }
-
-	//算術演算子２
-	CMyPoint operator + (const POINT& rhs) const{ CMyPoint tmp=*this; tmp+=rhs; return tmp; }
-	CMyPoint operator - (const POINT& rhs) const{ CMyPoint tmp=*this; tmp-=rhs; return tmp; }
-	CMyPoint operator * (int n) const{ CMyPoint tmp=*this; tmp*=n; return tmp; }
-	CMyPoint operator / (int n) const{ CMyPoint tmp=*this; tmp/=n; return tmp; }
-
-	//代入演算子
-	CMyPoint& operator = (const POINT& rhs){ x=rhs.x; y=rhs.y; return *this; }
-
-	//比較演算子
-	bool operator == (const POINT& rhs) const{ return x==rhs.x && y==rhs.y; }
-	bool operator != (const POINT& rhs) const{ return !this->operator==(rhs); }
-
-	//設定
-	void Set(int _x,int _y){ x=_x; y=_y; }
-	void Set(const CMyPoint& pt){ x=pt.x; y=pt.y; }
-	void SetX(int _x){ x=_x; }
-	void SetY(int _y){ y=_y; }
-	void Offset(int _x,int _y){ x+=_x; y+=_y; }
-	void Offset(const CMyPoint& pt){ x+=pt.x; y+=pt.y; }
-
-	//取得
-	int GetX() const{ return (int)x; }
-	int GetY() const{ return (int)y; }
-	CMyPoint Get() const{ return *this; }
-
-	//! x,y いずれかが 0 より小さい場合に true を返す
-	bool HasNegative() const
-	{
-		return x<0 || y<0;
-	}
-
-	//! x,y どちらも自然数であれば true
-	bool BothNatural() const
-	{
-		return x>=0 && y>=0;
-	}
-};
+using CMyPoint = CStrictPoint<tagPOINT>;

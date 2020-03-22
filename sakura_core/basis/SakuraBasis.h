@@ -86,20 +86,25 @@ typedef int         CKetaXInt;
 #include "CStrictRect.h"
 
 //ロジック単位
-struct SLogicPoint{ CLogicInt x; CLogicInt y; }; //基底構造体
-typedef CStrictPoint<SLogicPoint, CLogicInt>	CLogicPoint;
-typedef CRangeBase<CLogicPoint>					CLogicRange;
-typedef CStrictRect<CLogicInt, CLogicPoint>		CLogicRect;
+struct SLogicPoint{ CLogicXInt x; CLogicYInt y; }; //基底構造体
+typedef CStrictPoint<SLogicPoint>	CLogicPoint;
+typedef CRangeBase<CLogicPoint>		CLogicRange;
+typedef CStrictRect<CLogicPoint>	CLogicRect;
 
 //レイアウト単位
-struct SLayoutPoint{ CLayoutInt x; CLayoutInt y; }; //基底構造体
-typedef CStrictPoint<SLayoutPoint, CLayoutInt>	CLayoutPoint;
-typedef CRangeBase<CLayoutPoint>				CLayoutRange;
-typedef CStrictRect<CLayoutInt, CLayoutPoint>	CLayoutRect;
+struct SLayoutPoint{ CLayoutXInt x; CLayoutXInt y; }; //基底構造体
+typedef CStrictPoint<SLayoutPoint>	CLayoutPoint;
+typedef CRangeBase<CLayoutPoint>	CLayoutRange;
+typedef CStrictRect<CLayoutPoint>	CLayoutRect;
 
 //ゆるい単位
 #include "CMyPoint.h"
 typedef CRangeBase<CMyPoint>     SelectionRange;
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                          ツール                             //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+#include "CMyRect.h"
 
 /*!
 	pt1 - pt2の結果を返す
@@ -110,10 +115,26 @@ typedef CRangeBase<CMyPoint>     SelectionRange;
 	@return >0 pt1 >  pt2
 */
 template <class POINT_T>
-inline int PointCompare(const POINT_T& pt1,const POINT_T& pt2)
+inline int PointCompare(const POINT_T& pt1, const POINT_T& pt2)
 {
-	if(pt1.y!=pt2.y)return (Int)(pt1.y-pt2.y);
-	return (Int)(pt1.x-pt2.x);
+	if (pt1.y != pt2.y)return (Int)(pt1.y - pt2.y);
+	return (Int)(pt1.x - pt2.x);
+}
+
+//! 2点を対角とする矩形を求める
+template <class POINT_T>
+inline void TwoPointToRect(
+	CStrictRect<POINT_T>*	prcRect,
+	POINT_T					pt1,
+	POINT_T					pt2
+)
+{
+	if( prcRect != NULL ){
+		prcRect->left   = std::min( pt1.x, pt2.x );
+		prcRect->top    = std::max( pt1.y, pt2.y );
+		prcRect->right  = std::min( pt1.x, pt2.x );
+		prcRect->bottom = std::max( pt1.y, pt2.y );
+	}
 }
 
 //! 2点を対角とする矩形を求める
@@ -124,26 +145,11 @@ inline void TwoPointToRect(
 	POINT_T	pt2
 )
 {
-	if( pt1.y < pt2.y ){
-		prcRect->top	= (Int)pt1.y;
-		prcRect->bottom	= (Int)pt2.y;
-	}else{
-		prcRect->top	= (Int)pt2.y;
-		prcRect->bottom	= (Int)pt1.y;
-	}
-	if( pt1.x < pt2.x ){
-		prcRect->left	= (Int)pt1.x;
-		prcRect->right	= (Int)pt2.x;
-	}else{
-		prcRect->left	= (Int)pt2.x;
-		prcRect->right	= (Int)pt1.x;
-	}
+	auto *prc = reinterpret_cast<CStrictRect<POINT>*>( prcRect );
+	POINT ptA = { static_cast<LONG>( (Int)pt1.x ), static_cast<LONG>( (Int)pt1.y ) };
+	POINT ptB = { static_cast<LONG>( (Int)pt2.x ), static_cast<LONG>( (Int)pt2.y ) };
+	TwoPointToRect( prc, ptA, ptB );
 }
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                          ツール                             //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-#include "CMyRect.h"
 
 //変換関数
 template <class POINT_T>
@@ -157,28 +163,4 @@ inline void TwoPointToRange(
 	TwoPointToRect(&rc,pt1,pt2);
 	prangeDst->SetFrom(POINT_T(rc.UpperLeft()));
 	prangeDst->SetTo(POINT_T(rc.LowerRight()));
-}
-
-//! 2点を対角とする矩形を求める
-template <class T, class INT_TYPE>
-inline void TwoPointToRect(
-	CStrictRect<INT_TYPE, CStrictPoint<T,INT_TYPE> >*	prcRect,
-	CStrictPoint<T,INT_TYPE>							pt1,
-	CStrictPoint<T,INT_TYPE>							pt2
-)
-{
-	if( pt1.y < pt2.y ){
-		prcRect->top	= pt1.GetY2();
-		prcRect->bottom	= pt2.GetY2();
-	}else{
-		prcRect->top	= pt2.GetY2();
-		prcRect->bottom	= pt1.GetY2();
-	}
-	if( pt1.x < pt2.x ){
-		prcRect->left	= pt1.GetX2();
-		prcRect->right	= pt2.GetX2();
-	}else{
-		prcRect->left	= pt2.GetX2();
-		prcRect->right	= pt1.GetX2();
-	}
 }
