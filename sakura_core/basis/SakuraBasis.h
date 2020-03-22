@@ -38,27 +38,21 @@
 	#include "CStrictInteger.h"
 
 	//ロジック単位
-	typedef CStrictInteger <
-		0,		//!< 型を分けるための数値。
-		true,	//!< intとの比較を許すかどうか
-		true,	//!< intとの加減算を許すかどうか
-		true,	//!< intへの暗黙の変換を許すかどうか
-		true	//!< intの代入を許すかどうか
-	>
-	CLogicInt;
+	using CLogicInt = CStrictInteger <
+		MakeStrictId( StrictCategory::Logic, StrictAttribute::Horizontal),
+		true,			//!< 基本型への暗黙の変換を許すかどうか
+		ptrdiff_t		//!< 基本型
+	>;
 
 	//レイアウト単位
-	typedef CStrictInteger <
-		1,		//!< 型を分けるための数値。
-		true,	//!< intとの比較を許すかどうか
-		true,	//!< intとの加減算を許すかどうか
-		false,	//!< intへの暗黙の変換を許すかどうか
-		true	//!< intの代入を許すかどうか
-	>
-	CLayoutInt;
+	using CLayoutInt = CStrictInteger <
+		MakeStrictId( StrictCategory::Layout, StrictAttribute::Horizontal ),
+		false,			//!< 基本型への暗黙の変換を許すかどうか
+		ptrdiff_t		//!< 基本型
+	>;
 
 	//中間単位
-	typedef CLaxInteger<int> Int;
+	typedef CLaxInteger<ptrdiff_t> Int;
 
 #else
 	// -- -- 通常のintで単位型を定義
