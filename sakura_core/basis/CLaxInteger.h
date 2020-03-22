@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2020 Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -24,21 +24,62 @@
 */
 #pragma once
 
-//!型チェックの緩い整数型
-class CLaxInteger{
-private:
-	typedef CLaxInteger Me;
+/*!
+ * 型チェックの緩い整数型
+ *
+ * StrictIntegerに対するLax版として作成されたクラスと思われる。
+ * 基本型がint(int32_t)決め打ちになっていて64bit対応しづらいのでテンプレート化。
+ *
+ * このクラスはC++11のリテラル型である。
+ * constexprキーワードを付けて宣言すれば、コンパイル時定数として利用できる。
+ */
+template <typename BASE_TYPE>
+class CLaxInteger {
+	//! 数値データ
+	BASE_TYPE m_value;
+
+	using Me = CLaxInteger<BASE_TYPE>;
 
 public:
-	//コンストラクタ・デストラクタ
-	CLaxInteger(){ m_value=0; }
-	CLaxInteger(const Me& rhs){ m_value=rhs.m_value; }
-	CLaxInteger(int value){ m_value=value; }
+	 //! デフォルトコンストラクタは利用しない
+	CLaxInteger() = delete;
 
-	//暗黙の変換
-	operator const int&() const{ return m_value; }
-	operator       int&()      { return m_value; }
+	/*!
+	 * 値指定コンストラクタ
+	 *
+	 * 指定した値を持つインスタンスを生成する。
+	 * explicit指定のないコンストラクタは暗黙変換を可能にする
+	 */
+	constexpr CLaxInteger( const BASE_TYPE& value ) noexcept
+		: m_value( value )
+	{
+		static_assert(std::is_integral_v<BASE_TYPE>, "unexpected usage.");
+	}
 
-private:
-	int m_value;
+	//! デフォルトのコピーコンストラクタを使う
+	CLaxInteger( const Me& ) = default;
+	//! デフォルトのコピー代入演算子を使う
+	Me& operator = ( const Me& ) = default;
+
+	//! デフォルトのムーブコンストラクタを使う
+	CLaxInteger( Me&& ) = default;
+	//! デフォルトのムーブ代入演算子を使う
+	Me& operator = ( Me&& ) = default;
+
+	//! デフォルトのデストラクタを使う
+	~CLaxInteger( void ) = default;
+
+	/*!
+	 * 基本型へのキャスト演算子(const版)
+	 *
+	 * 基本型への暗黙変換ができるように定義する。
+	 */
+	constexpr operator const BASE_TYPE&() const noexcept { return m_value; }
+
+	/*!
+	 * 基本型へのキャスト演算子(非const版)
+	 *
+	 * 基本型への暗黙変換ができるように定義する。
+	 */
+	constexpr operator BASE_TYPE&() noexcept { return m_value; }
 };

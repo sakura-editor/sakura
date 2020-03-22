@@ -26,6 +26,8 @@
 
 #include <Windows.h> //POINT,LONG
 
+#include "config/build_config.h"
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      １次元型の定義                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -55,15 +57,19 @@
 	>
 	CLayoutInt;
 
+	//中間単位
+	typedef CLaxInteger<int> Int;
+
 #else
 	// -- -- 通常のintで単位型を定義
-	#include "primitive.h" // for Int
-
 	//ロジック単位
 	typedef int CLogicInt;
 
 	//レイアウト単位
 	typedef int CLayoutInt;
+
+	//中間単位
+	typedef int Int;
 
 #endif
 
@@ -100,6 +106,45 @@ typedef CStrictRect<CLayoutInt, CLayoutPoint>	CLayoutRect;
 //ゆるい単位
 #include "CMyPoint.h"
 typedef CRangeBase<CMyPoint>     SelectionRange;
+
+/*!
+	pt1 - pt2の結果を返す
+	Yを優先して比較。Yが同一なら、Xで比較。
+
+	@return <0 pt1 <  pt2
+	@return 0  pt1 == pt2
+	@return >0 pt1 >  pt2
+*/
+template <class POINT_T>
+inline int PointCompare(const POINT_T& pt1,const POINT_T& pt2)
+{
+	if(pt1.y!=pt2.y)return (Int)(pt1.y-pt2.y);
+	return (Int)(pt1.x-pt2.x);
+}
+
+//! 2点を対角とする矩形を求める
+template <class POINT_T>
+inline void TwoPointToRect(
+	RECT*	prcRect,
+	POINT_T	pt1,
+	POINT_T	pt2
+)
+{
+	if( pt1.y < pt2.y ){
+		prcRect->top	= (Int)pt1.y;
+		prcRect->bottom	= (Int)pt2.y;
+	}else{
+		prcRect->top	= (Int)pt2.y;
+		prcRect->bottom	= (Int)pt1.y;
+	}
+	if( pt1.x < pt2.x ){
+		prcRect->left	= (Int)pt1.x;
+		prcRect->right	= (Int)pt2.x;
+	}else{
+		prcRect->left	= (Int)pt2.x;
+		prcRect->right	= (Int)pt1.x;
+	}
+}
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          ツール                             //

@@ -25,6 +25,7 @@
 */
 #pragma once
 
+#include "basis/primitive.h"	//ACHAR
 #include "basis/SakuraBasis.h"
 class CNativeW;
 

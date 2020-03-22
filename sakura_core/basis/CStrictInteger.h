@@ -30,7 +30,7 @@
 */
 #pragma once
 
-#include "primitive.h" // for Int
+#include "basis/CLaxInteger.h"
 
 //int以外の整数型もintにキャストして扱う
 #define STRICTINT_OTHER_TYPE_AS_INT(TYPE) \
@@ -63,6 +63,7 @@ private:
 		ALLOW_ASSIGNOP_INT
 	> Me;
 	static const int NOT_STRICT_ID = (1-STRICT_ID);
+	using LaxType = CLaxInteger<int>;
 
 private:
 	//!ゴミクラス
@@ -127,7 +128,7 @@ public:
 	void SetValue(int n){ m_value=n; }
 
 	//Int(CLaxInt)への変換は常に許す
-	operator Int() const{ return Int(m_value); }
+	operator LaxType() const{ return m_value; }
 
 	//int以外の整数型もintにキャストして扱う
 	STRICTINT_OTHER_TYPE_AS_INT(short)

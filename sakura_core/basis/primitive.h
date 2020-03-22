@@ -46,11 +46,3 @@ typedef long			wchar32_t;
 // -- -- -- -- その他 -- -- -- -- //
 
 typedef char KEYCODE;
-
-//int互換
-#ifdef USE_STRICT_INT
-	#include "CLaxInteger.h"
-	typedef CLaxInteger Int;
-#else
-	typedef int Int;
-#endif
