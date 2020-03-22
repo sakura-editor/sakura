@@ -26,6 +26,8 @@
 
 #include <Windows.h> //POINT,LONG
 
+#include "basis/primitive.h" // for Int
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      １次元型の定義                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -57,7 +59,6 @@
 
 #else
 	// -- -- 通常のintで単位型を定義
-	#include "primitive.h" // for Int
 
 	//ロジック単位
 	typedef int CLogicInt;
