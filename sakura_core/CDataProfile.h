@@ -296,13 +296,18 @@ public:
 		bool ret = false;
 		if( IsReadingMode() ){
 			//文字列読み込み
-			if( GetProfileDataImp( pszSectionName, pszEntryKey, buf ) ){
-				//Tに変換
-				ret = profile_data::TryParse( buf, tEntryValue );
+			ret = GetProfileDataImp( pszSectionName, pszEntryKey, buf );
+			if constexpr( !std::is_same_v<T,std::wstring> ){
+				if( ret ){
+					//Tに変換
+					ret = profile_data::TryParse( buf, tEntryValue );
+				}
 			}
 		}else{
-			//文字列に変換
-			buf = profile_data::ToString( tEntryValue );
+			if constexpr( !std::is_same_v<T,std::wstring> ){
+				//文字列に変換
+				buf = profile_data::ToString( tEntryValue );
+			}
 			//文字列書き込み
 			ret = SetProfileDataImp( pszSectionName, pszEntryKey, buf );
 		}
@@ -355,24 +360,3 @@ public:
 		return ret;
 	}
 };
-
-/*!
- * 文字列型(標準string)の入出力(無変換)
- */
-template <> inline
-bool CDataProfile::IOProfileData<std::wstring>(
-	const WCHAR*			pszSectionName,	//!< [in] セクション名
-	const WCHAR*			pszEntryKey,	//!< [in] エントリ名
-	std::wstring&			strEntryValue	//!< [in,out] エントリ値
-) noexcept
-{
-	bool ret = false;
-	if( IsReadingMode() ){
-		//文字列読み込み
-		ret = GetProfileDataImp( pszSectionName, pszEntryKey, strEntryValue );
-	}else{
-		//文字列書き込み
-		ret = SetProfileDataImp( pszSectionName, pszEntryKey, strEntryValue );
-	}
-	return ret;
-}
