@@ -1413,7 +1413,7 @@ CColorStrategy* CPrintPreview::DrawPageTextFirst(int nPageNum)
 				pStrategy->SetStrategyColorInfo(pcPageTopLayout->GetColorInfo());
 			}
 			if (nPageTopOff) {
-				CStringRef	csr = pcPageTopLayout->GetDocLineRef()->GetStringRefWithEOL();
+				CStringRefW	csr = pcPageTopLayout->GetDocLineRef()->GetStringRefWithEOL();
 				CLogicInt	iLogic;
 				for ( iLogic = 0; iLogic < nPageTopOff; ++iLogic) {
 					bool bChange;
@@ -1696,7 +1696,7 @@ CColorStrategy* CPrintPreview::Print_DrawLine(
 	int nKindLast = 2; //直前のnKind状態
 
 	// 色設定	2012-03-07 ossan
-	CStringRef cStringLine( pLine, nDocLineLen );
+	CStringRefW cStringLine( pLine, nDocLineLen );
 	CColorStrategy* pStrategy = pStrategyStart;
 	// 2014.12.30 色はGetColorStrategyで次の色になる前に取得する必要がある
 	int nColorIdx = ToColorInfoArrIndex( pStrategy ? pStrategy->GetStrategyColor() : COLORIDX_TEXT );
@@ -1853,7 +1853,7 @@ void CPrintPreview::Print_DrawBlock(
 	@date 2014.12.30 Moca 正規表現の違う色が並んでいた場合に色替えできてなかったバグを修正
 */
 CColorStrategy* CPrintPreview::GetColorStrategy(
-	const CStringRef&	cStringLine,
+	const CStringRefW&	cStringLine,
 	int					iLogic,
 	CColorStrategy*		pStrategy,
 	bool&				bChange

@@ -583,7 +583,7 @@ void CViewCommander::Command_TRIM(
 /*!	物理行のソートに使う構造体*/
 struct SORTDATA {
 	const CNativeW* pCmemLine;
-	CStringRef sKey;
+	CStringRefW sKey;
 };
 
 inline int CNativeW_comp(const CNativeW& lhs, const CNativeW& rhs )
@@ -599,7 +599,7 @@ bool SortByLineAsc (SORTDATA* pst1, SORTDATA* pst2) {return CNativeW_comp(*pst1-
 /*!	物理行のソートに使う関数(降順) */
 bool SortByLineDesc(SORTDATA* pst1, SORTDATA* pst2) {return CNativeW_comp(*pst1->pCmemLine, *pst2->pCmemLine) > 0;}
 
-inline int CStringRef_comp(const CStringRef& c1, const CStringRef& c2)
+inline int CStringRef_comp(const CStringRefW& c1, const CStringRefW& c2)
 {
 	int ret = wmemcmp(c1.GetPtr(), c2.GetPtr(), t_min(c1.GetLength(), c2.GetLength()));
 	if( ret == 0 ){
@@ -701,12 +701,12 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 			nColumnTo   = m_pCommanderView->LineColumnToIndex( pcDocLine, nCT );
 			if(nColumnTo<nLineLenWithoutEOL){	// BOX選択範囲の右端が行内に収まっている場合
 				// 2006.03.31 genta std::string::assignを使って一時変数削除
-				pst->sKey = CStringRef( &pLine[nColumnFrom], nColumnTo-nColumnFrom );
+				pst->sKey = CStringRefW( &pLine[nColumnFrom], nColumnTo-nColumnFrom );
 			}else if(nColumnFrom<nLineLenWithoutEOL){	// BOX選択範囲の右端が行末より右にはみ出している場合
-				pst->sKey = CStringRef( &pLine[nColumnFrom], nLineLenWithoutEOL-nColumnFrom );
+				pst->sKey = CStringRefW( &pLine[nColumnFrom], nLineLenWithoutEOL-nColumnFrom );
 			}else{
 				// 選択範囲の左端もはみ出している==データなし
-				pst->sKey = CStringRef( L"", 0 );
+				pst->sKey = CStringRefW( L"", 0 );
 			}
 		}
 		pst->pCmemLine = &cmemLine;
@@ -871,7 +871,7 @@ void CViewCommander::Command_MERGE(void)
 	GetDocument()->m_cLayoutMgr.LogicToLayout(sSelectOld, &sSelectOld_Layout);
 
 	// 2010.08.22 NUL対応修正
-	std::vector<CStringRef> lineArr;
+	std::vector<CStringRefW> lineArr;
 	pLinew=NULL;
 	int nLineLenw = 0;
 	bool bMerge = false;
@@ -880,7 +880,7 @@ void CViewCommander::Command_MERGE(void)
 		const wchar_t*	pLine = GetDocument()->m_cDocLineMgr.GetLine(i)->GetDocLineStrWithEOL(&nLineLen);
 		if( NULL == pLine ) continue;
 		if( NULL == pLinew || nLineLen != nLineLenw || wmemcmp(pLine, pLinew, nLineLen) ){
-			lineArr.push_back( CStringRef(pLine, nLineLen) );
+			lineArr.push_back( CStringRefW(pLine, nLineLen) );
 		}else{
 			bMerge = true;
 		}

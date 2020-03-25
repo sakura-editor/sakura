@@ -11,7 +11,7 @@
 //                           URL                               //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-bool CColor_Url::BeginColor(const CStringRef& cStr, int nPos)
+bool CColor_Url::BeginColor(const CStringRefW& cStr, int nPos)
 {
 	if(!cStr.IsValid())return false;
 
@@ -26,7 +26,7 @@ bool CColor_Url::BeginColor(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-bool CColor_Url::EndColor(const CStringRef& cStr, int nPos)
+bool CColor_Url::EndColor(const CStringRefW& cStr, int nPos)
 {
 	if( nPos == this->m_nCOMMENTEND ){
 		return true;

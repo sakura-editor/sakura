@@ -861,7 +861,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 		CColorStrategy* pStrategyNormal = NULL;
 		CColorStrategy* pStrategyFound = NULL;
 		CColorStrategy* pStrategy = NULL;
-		CStringRef cStringLine(pcDocLine->GetPtr(), pcDocLine->GetLengthWithEOL());
+		CStringRefW cStringLine(pcDocLine->GetPtr(), pcDocLine->GetLengthWithEOL());
 		{
 			pStrategy = pStrategyNormal = pool->GetStrategyByColor(pcLayout->GetColorTypePrev());
 			if( pStrategy ){
@@ -1034,7 +1034,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 	@date 2014.12.30 Moca 同じCColorStrategyで違う色に切り替わったときに対応
 */
 CColorStrategy* CViewCommander::GetColorStrategyHTML(
-	const CStringRef&	cStringLine,
+	const CStringRefW&	cStringLine,
 	int					iLogic,
 	const CColorStrategyPool*	pool,
 	CColorStrategy**	ppStrategy,

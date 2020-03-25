@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <Type Name="CStringRefW">
+    <DisplayString Condition="m_pData == 0">NULL</DisplayString>
+    <DisplayString Condition="m_pData != 0 &amp;&amp; m_pData[0] == 0">empty</DisplayString>
+    <DisplayString Condition="m_pData != 0 &amp;&amp; m_pData[0] != 0">{m_pData,su}</DisplayString>
+    <Expand>
+      <Item Name="_Data">m_pData,su</Item>
+      <Item Name="_Length">m_cchDataLength</Item>
+    </Expand>
+  </Type>
   <Type Name="CNativeW">
     <DisplayString Condition="m_pRawData == 0">empty</DisplayString>
     <DisplayString Condition="m_pRawData != 0">{m_pRawData,su}</DisplayString>

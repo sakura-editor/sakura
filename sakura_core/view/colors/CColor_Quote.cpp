@@ -72,7 +72,7 @@ CLayoutColorInfo* CColor_Quote::GetStrategyColorInfo() const
 
 // nPos "の位置
 //staic
-bool CColor_Quote::IsCppRawString(const CStringRef& cStr, int nPos)
+bool CColor_Quote::IsCppRawString(const CStringRefW& cStr, int nPos)
 {
 	if( 0 < nPos && cStr.At(nPos-1) == 'R' && cStr.At(nPos) == '"'
 		&& nPos + 1 < cStr.GetLength() ){
@@ -106,7 +106,7 @@ bool CColor_Quote::IsCppRawString(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-bool CColor_Quote::BeginColor(const CStringRef& cStr, int nPos)
+bool CColor_Quote::BeginColor(const CStringRefW& cStr, int nPos)
 {
 	if(!cStr.IsValid())return false;
 
@@ -196,7 +196,7 @@ bool CColor_Quote::BeginColor(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-bool CColor_Quote::EndColor(const CStringRef& cStr, int nPos)
+bool CColor_Quote::EndColor(const CStringRefW& cStr, int nPos)
 {
 	if( -1 == m_nCOMMENTEND ){
 		// ここにくるのは行頭のはず
@@ -224,7 +224,7 @@ bool CColor_Quote::EndColor(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-int CColor_Quote::Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLineStr, int escapeType, bool* pbEscapeEnd )
+int CColor_Quote::Match_Quote( wchar_t wcQuote, int nPos, const CStringRefW& cLineStr, int escapeType, bool* pbEscapeEnd )
 {
 	int nCharChars;
 	int i;
@@ -266,7 +266,7 @@ int CColor_Quote::Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLin
 	return cLineStr.GetLength() + 1; // 終端なしはLength + 1
 }
 
-int CColor_Quote::Match_QuoteStr( const wchar_t* pszQuote, int nQuoteLen, int nPos, const CStringRef& cLineStr, bool bEscape )
+int CColor_Quote::Match_QuoteStr( const wchar_t* pszQuote, int nQuoteLen, int nPos, const CStringRefW& cLineStr, bool bEscape )
 {
 	int nCharChars;
 	int i;

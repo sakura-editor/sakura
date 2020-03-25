@@ -31,8 +31,8 @@ public:
 	CColor_KeywordSet();
 	EColorIndexType GetStrategyColor() const override{ return (EColorIndexType)(COLORIDX_KEYWORD1 + m_nKeywordIndex); }
 	void InitStrategyStatus() override{ m_nCOMMENTEND = 0; }
-	bool BeginColor(const CStringRef& cStr, int nPos) override;
-	bool EndColor(const CStringRef& cStr, int nPos) override;
+	bool BeginColor(const CStringRefW& cStr, int nPos) override;
+	bool EndColor(const CStringRefW& cStr, int nPos) override;
 	bool Disp() const override{ return true; }
 private:
 	int m_nKeywordIndex;

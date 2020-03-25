@@ -51,7 +51,7 @@ public:
 	virtual EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst)=0;	//!< 特定コード → UNICODE    変換
 	virtual EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst)=0;	//!< UNICODE    → 特定コード 変換
 	//! UNICODE    → 特定コード 変換
-	virtual EConvertResult UnicodeToCode(const CStringRef& cSrc, CMemory* pDst){
+	virtual EConvertResult UnicodeToCode(const CStringRefW& cSrc, CMemory* pDst){
 		CNativeW mem(cSrc.GetPtr(), cSrc.GetLength());
 		return UnicodeToCode(mem, pDst);
 	}

@@ -61,7 +61,7 @@ CLayoutColorInfo* CColor_Heredoc::GetStrategyColorInfo() const
 	return info;
 }
 
-bool CColor_Heredoc::BeginColor(const CStringRef& cStr, int nPos)
+bool CColor_Heredoc::BeginColor(const CStringRefW& cStr, int nPos)
 {
 	if(!cStr.IsValid())return false;
 
@@ -117,7 +117,7 @@ bool CColor_Heredoc::BeginColor(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-bool CColor_Heredoc::EndColor(const CStringRef& cStr, int nPos)
+bool CColor_Heredoc::EndColor(const CStringRefW& cStr, int nPos)
 {
 	if( 0 == this->m_nCOMMENTEND ){
 		if( m_pTypeData->m_nHeredocType == HEREDOC_PHP

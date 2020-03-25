@@ -31,11 +31,11 @@ public:
 	EColorIndexType GetStrategyColor() const override{ return COLORIDX_SELECT; }
 	//色替え
 	void InitStrategyStatus() override{ }
-	bool BeginColor(const CStringRef& cStr, int nPos) override;
+	bool BeginColor(const CStringRefW& cStr, int nPos) override;
 	bool Disp() const override{ return true; }
-	bool EndColor(const CStringRef& cStr, int nPos) override;
+	bool EndColor(const CStringRefW& cStr, int nPos) override;
 
-	virtual bool BeginColorEx(const CStringRef& cStr, int nPos, CLayoutInt, const CLayout*);
+	virtual bool BeginColorEx(const CStringRefW& cStr, int nPos, CLayoutInt, const CLayout*);
 
 	//イベント
 	void OnStartScanLogic() override;
@@ -53,9 +53,9 @@ public:
 	{ return this->validColorNum != 0 ? this->highlightColors[ (m_nSearchResult - 1) % this->validColorNum ] : COLORIDX_DEFAULT; }
 	//色替え
 	void InitStrategyStatus() override{ } //############要検証
-	bool BeginColor(const CStringRef& cStr, int nPos) override;
+	bool BeginColor(const CStringRefW& cStr, int nPos) override;
 	bool Disp() const override{ return true; }
-	bool EndColor(const CStringRef& cStr, int nPos) override;
+	bool EndColor(const CStringRefW& cStr, int nPos) override;
 	//イベント
 	void OnStartScanLogic() override;
 

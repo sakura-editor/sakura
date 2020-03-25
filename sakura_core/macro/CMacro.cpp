@@ -2261,7 +2261,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 					varCopy4.Data.lVal = -1;
 				}
 				CClipboard cClipboard(View->GetHwnd());
-				CStringRef cstr(varCopy.Data.bstrVal, ::SysStringLen(varCopy.Data.bstrVal));
+				CStringRefW cstr(varCopy.Data.bstrVal, ::SysStringLen(varCopy.Data.bstrVal));
 				bool bret = cClipboard.SetClipboradByFormat(cstr, varCopy2.Data.bstrVal, varCopy3.Data.lVal, varCopy4.Data.lVal);
 				Wrap( &Result )->Receive( bret ? 1 : 0 );
 				return true;

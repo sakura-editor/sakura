@@ -288,8 +288,3 @@ using CStringRefW = StringRef<wchar_t>;
  * この型によるデータの長期保持はおすすめしない。
  */
 using CStringRefA = StringRef<unsigned char>;
-
-/*!
- * 文字列への参照を保持するクラス
- */
-typedef CStringRefW			CStringRef;

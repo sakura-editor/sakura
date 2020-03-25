@@ -31,8 +31,8 @@ public:
 	CColor_Numeric() : m_nCOMMENTEND(0) { }
 	EColorIndexType GetStrategyColor() const override{ return COLORIDX_DIGIT; }
 	void InitStrategyStatus() override{ m_nCOMMENTEND = 0; }
-	bool BeginColor(const CStringRef& cStr, int nPos) override;
-	bool EndColor(const CStringRef& cStr, int nPos) override;
+	bool BeginColor(const CStringRefW& cStr, int nPos) override;
+	bool EndColor(const CStringRefW& cStr, int nPos) override;
 	bool Disp() const override{ return m_pTypeData->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp; }
 private:
 	int m_nCOMMENTEND;

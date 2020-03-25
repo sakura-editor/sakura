@@ -40,7 +40,7 @@ public:
 	bool SetHtmlText(const CNativeW& cmemBUf);
 	bool GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat = (UINT)-1); //!< テキストを取得する
 	bool IsIncludeClipboradFormat(const wchar_t* pFormatName);
-	bool SetClipboradByFormat(const CStringRef& cstr, const wchar_t* pFormatName, int nMode, int nEndMode);
+	bool SetClipboradByFormat(const CStringRefW& cstr, const wchar_t* pFormatName, int nMode, int nEndMode);
 	bool GetClipboradByFormat(CNativeW& mem, const wchar_t* pFormatName, int nMode, int nEndMode, const CEol& cEol);
 
 	//演算子

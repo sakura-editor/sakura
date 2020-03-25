@@ -272,7 +272,7 @@ public:
 		}
 		return CNativeW::GetColmOfChar( pData, nDataLen, i ) + nSpace;
 	}
-	CLayoutXInt GetLayoutXOfChar( const CStringRef& str, int i ) const {
+	CLayoutXInt GetLayoutXOfChar( const CStringRefW& str, int i ) const {
 		return GetLayoutXOfChar(str.GetPtr(), str.GetLength(), i);
 	}
 	CPixelXInt GetWidthPerKeta() const { return Int(m_nCharLayoutXPerKeta); }
@@ -298,7 +298,7 @@ protected:
 		EKinsokuType	eKinsokuType;
 		CLogicInt		nPos;
 		CLogicInt		nBgn;
-		CStringRef		cLineStr;
+		CStringRefW		cLineStr;
 		CLogicInt		nWordBgn;
 		CLogicInt		nWordLen;
 		CLayoutInt		nPosX;

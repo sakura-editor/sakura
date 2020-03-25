@@ -42,8 +42,8 @@ public:
 	void SetBlockCommentRule( const wchar_t* pszFrom, const wchar_t* pszTo );	//	行コメントデリミタをコピーする
 
 	//判定
-	bool Match_CommentFrom( int nPos, const CStringRef& cStr ) const;	//	行コメントに値するか確認する
-	int Match_CommentTo( int nPos, const CStringRef& cStr ) const;	//	行コメントに値するか確認する
+	bool Match_CommentFrom( int nPos, const CStringRefW& cStr ) const;	//	行コメントに値するか確認する
+	int Match_CommentTo( int nPos, const CStringRefW& cStr ) const;	//	行コメントに値するか確認する
 
 	//取得
 	const wchar_t* getBlockCommentFrom() const{ return m_szBlockCommentFrom; }

@@ -65,13 +65,13 @@ public:
 			*pnLen = 0; return NULL;
 		}
 	}
-	CStringRef GetStringRefWithEOL() const //###仮の名前、仮の対処
+	CStringRefW GetStringRefWithEOL() const //###仮の名前、仮の対処
 	{
 		if(this){
-			return CStringRef(GetPtr(),GetLengthWithEOL());
+			return CStringRefW(GetPtr(),GetLengthWithEOL());
 		}
 		else{
-			return CStringRef(NULL,0);
+			return CStringRefW(NULL,0);
 		}
 	}
 	const CEol& GetEol() const{ return m_cEol; }

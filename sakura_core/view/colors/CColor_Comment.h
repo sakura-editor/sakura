@@ -34,8 +34,8 @@ class CColor_LineComment final : public CColorStrategy{
 public:
 	EColorIndexType GetStrategyColor() const override{ return COLORIDX_COMMENT; }
 	void InitStrategyStatus() override{}
-	bool BeginColor(const CStringRef& cStr, int nPos) override;
-	bool EndColor(const CStringRef& cStr, int nPos) override;
+	bool BeginColor(const CStringRefW& cStr, int nPos) override;
+	bool EndColor(const CStringRefW& cStr, int nPos) override;
 	bool Disp() const override{
 		// タイプ別設定 『カラー』プロパティのコメントのリストアイテムのチェックが付いているか
 		if (!m_pTypeData->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp)
@@ -64,8 +64,8 @@ public:
 	}
 	EColorIndexType GetStrategyColor() const override{ return m_nType; }
 	void InitStrategyStatus() override{ m_nCOMMENTEND = 0; }
-	bool BeginColor(const CStringRef& cStr, int nPos) override;
-	bool EndColor(const CStringRef& cStr, int nPos) override;
+	bool BeginColor(const CStringRefW& cStr, int nPos) override;
+	bool EndColor(const CStringRefW& cStr, int nPos) override;
 	bool Disp() const override{
 		// タイプ別設定 『カラー』プロパティのコメントのリストアイテムのチェックが付いているか
 		if (!m_pTypeData->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp)

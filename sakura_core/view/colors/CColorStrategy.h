@@ -31,7 +31,7 @@
 
 class	CEditView;
 
-bool _IsPosKeywordHead(const CStringRef& cStr, int nPos);
+bool _IsPosKeywordHead(const CStringRefW& cStr, int nPos);
 
 //! 正規表現キーワードのEColorIndexType値を作る関数
 inline EColorIndexType ToColorIndexType_RegularExpression(const int nRegexColorIndex)
@@ -111,7 +111,7 @@ struct SColorStrategyInfo{
 	CColor3Setting		m_cIndex;
 
 	//! 色の切り替え
-	bool CheckChangeColor(const CStringRef& cLineStr);
+	bool CheckChangeColor(const CStringRefW& cLineStr);
 	void DoChangeColor(CColor3Setting *pcColor);
 	EColorIndexType GetCurrentColor() const { return m_cIndex.eColorIndex; }
 	EColorIndexType GetCurrentColor2() const { return m_cIndex.eColorIndex2; }
@@ -143,8 +143,8 @@ public:
 	//! 色切り替え開始を検出したら、その直前までの描画を行い、さらに色設定を行う。
 	virtual void InitStrategyStatus() = 0;
 	virtual void SetStrategyColorInfo(const CLayoutColorInfo* = NULL){};
-	virtual bool BeginColor(const CStringRef& cStr, int nPos){ return false; }
-	virtual bool EndColor(const CStringRef& cStr, int nPos){ return true; }
+	virtual bool BeginColor(const CStringRefW& cStr, int nPos){ return false; }
+	virtual bool EndColor(const CStringRefW& cStr, int nPos){ return true; }
 	virtual bool Disp() const = 0;
 	//イベント
 	virtual void OnStartScanLogic(){}
@@ -202,7 +202,7 @@ public:
 	*/
 	//@@@ 2002.09.22 YAZAKI
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
-	void CheckColorMODE( CColorStrategy** ppcColorStrategy, int nPos, const CStringRef& cLineStr );
+	void CheckColorMODE( CColorStrategy** ppcColorStrategy, int nPos, const CStringRefW& cLineStr );
 	bool IsSkipBeforeLayout();	// レイアウトが行頭からチェックしなくていいか判定
 
 	//設定変更
