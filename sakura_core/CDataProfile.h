@@ -26,142 +26,16 @@
 
 #include "util/StaticType.h"
 #include "CProfile.h"
-
-/*!
- * 独自バッファ参照型
- *
- * 固定長の文字配列を標準stringのように扱うためのクラス
- */
-template <typename CHAR_TYPE>
-class StringBuf {
-	CHAR_TYPE*	m_pData;			//!< 文字列バッファを指すポインタ
-	size_t		m_cchDataLength;	//!< 有効文字列長
-	size_t		m_cchDataCount;		//!< 文字列バッファのサイズ
-
-public:
-	/*!
-	 * コンストラクタ
-	 *
-	 * StringBufのインスタンスを構築する
-	 *
-	 * @param [in] pszData 文字列バッファを指すポインタ
-	 * @param [in] cchDataCount 文字列バッファの確保サイズ(length + 1)
-	 */
-	StringBuf( CHAR_TYPE* pszData, size_t cchDataCount ) noexcept
-		: m_pData( pszData )
-		, m_cchDataLength( std::char_traits<CHAR_TYPE>::length( pszData ) )
-		, m_cchDataCount( cchDataCount )
-	{
-		// 実装は型パラメータに依存するので特殊化して使う。
-	}
-
-	/*!
-	 * 互換コンストラクタ
-	 *
-	 * StringBufのインスタンスを構築する
-	 *
-	 * @param [in] pszData 文字列バッファを指すポインタ(NULL指定不可、NUL終端すること)
-	 */
-	StringBuf( CHAR_TYPE* pszData )
-		: StringBuf( pszData, std::char_traits<CHAR_TYPE>::length( pszData ) + 1 )
-	{
-	}
-
-	// このクラスはコピー禁止
-	StringBuf( const StringBuf& ) = delete;
-	StringBuf& operator = ( const StringBuf& ) = delete;
-
-	/*!
-	 * ムーブコンストラクタ
-	 *
-	 * 空のStringBufインスタンスを構築し、
-	 * 引数で指定されたインスタンスとデータを入れ替える
-	 */
-	StringBuf( StringBuf&& other ) noexcept
-		: StringBuf( NULL, 0 )
-	{
-		*this = std::forward<StringBuf>( other );
-	}
-
-	/*!
-	 * ムーブ代入演算子
-	 *
-	 * 引数で指定されたインスタンスとデータを入れ替える
-	 */
-	StringBuf& operator = ( StringBuf&& rhs ) noexcept
-	{
-		std::swap( m_pData, rhs.m_pData );
-		std::swap( m_cchDataLength, rhs.m_cchDataLength );
-		std::swap( m_cchDataCount, rhs.m_cchDataCount );
-		return *this;
-	}
-
-	const CHAR_TYPE* c_str() const noexcept { return m_pData; }	//!< 文字列ポインタ(C-Style)
-	size_t length() const noexcept { return m_cchDataLength; }	//!< 有効文字列長
-	size_t capacity() const noexcept { return m_cchDataCount; }	//!< 文字列バッファのサイズ
-
-	/*!
-	 * バッファの内容を指定した文字列で置き替える
-	 *
-	 * @param [in] pSrc 文字列ポインタ
-	 */
-	void assign( const CHAR_TYPE* pSrc )
-	{
-		// 実装は型パラメータに依存するので特殊化して使う。
-	}
-
-	StringBuf& operator = ( const CHAR_TYPE* rhs ) { assign( rhs ); return *this; }
-};
-
-/*!
- * CStringBufW コンストラクタ(特殊化)
- *
- * StringBufWのインスタンスを構築する
- *
- * @param [in] pszData 文字列バッファを指すポインタ
- * @param [in] cchDataCount 文字列バッファの確保サイズ(length + 1)
- */
-template<> inline
-StringBuf<wchar_t>::StringBuf( wchar_t* pszData, size_t cchDataCount ) noexcept
-	: m_pData( pszData )
-	, m_cchDataLength( 0 )
-	, m_cchDataCount( cchDataCount )
-{
-	// 文字列ポインタとサイズが有効な場合、有効文字列長を求める
-	if( m_pData != NULL && m_cchDataCount > 0 ){
-		m_cchDataLength = ::wcsnlen( m_pData, m_cchDataCount );
-		// NUL終端がなかったら、強制的にNUL終端する
-		if( m_cchDataLength == m_cchDataCount ){
-			m_pData[--m_cchDataLength] = L'\0';
-		}
-	}
-}
-
-/*!
- * バッファの内容を指定した文字列で置き替える
- *
- * @param [in] pSrc 文字列ポインタ
- */
-template<> inline
-void StringBuf<wchar_t>::assign( const wchar_t* pSrc )
-{
-	if( m_pData != NULL ){
-		if( pSrc != NULL ){
-			::wcsncpy_s( m_pData, capacity(), pSrc, _TRUNCATE );
-		}else{
-			m_pData[0] = '\0';
-		}
-		m_cchDataLength = ::wcsnlen( m_pData, capacity() );
-	}
-}
-
-typedef StringBuf<wchar_t> CStringBufW;
+#include "basis/CStringBuf.h"
 
 //文字列バッファ型インスタンスの生成マクロ
 #define MakeStringBufferW(S) CStringBufW(S,_countof(S))
 
-//2007.09.24 kobake データ変換部を子クラスに分離
-//!各種データ変換付きCProfile
+/*!
+ * 各種データ変換付きCProfile
+ *
+ * @date 2007/09/24 kobake データ変換部を子クラスに分離
+ */
 class CDataProfile : public CProfile{
 private:
 	//専用型

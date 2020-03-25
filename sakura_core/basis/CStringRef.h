@@ -147,6 +147,38 @@ public:
 	 */
 	wchar_t At( size_t nIndex )	const noexcept { return at( nIndex ); }
 
+protected:
+	/*!
+	 * 参照先を引数で指定された部分文字列に置き替える
+	 *
+	 * @param [in,opt] pData C-Styleの文字列ポインタ(NULL指定可、NUL終端不要)
+	 * @param [in] cchDataLength 有効文字列長(省略不可)
+	 */
+	constexpr void reset( const CHAR_TYPE* pData, size_t cchDataLength ) noexcept
+	{
+		m_pData = const_cast<CHAR_TYPE*>(pData);
+		m_cchDataLength = cchDataLength;
+	}
+
+	/*!
+	 * 参照先を引数で指定された部分文字列に置き替える
+	 *
+	 * @param [in] rhs 文字列参照
+	 */
+	constexpr void reset( const Me& rhs ) noexcept
+	{
+		reset( rhs.c_str(), rhs.length() );
+	}
+
+	/*!
+	 * 引数で指定されたインスタンスとデータを入れ替える
+	 */
+	constexpr void swap( Me& rhs ) noexcept
+	{
+		std::swap( m_pData, rhs.m_pData );
+		std::swap( m_cchDataLength, rhs.m_cchDataLength );
+	}
+
 public:
 	/*!
 	 * 同型との比較

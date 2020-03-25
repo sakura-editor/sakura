@@ -266,6 +266,7 @@
     <ClInclude Include="..\sakura_core\basis\CStrictPoint.h" />
     <ClInclude Include="..\sakura_core\basis\CStrictRange.h" />
     <ClInclude Include="..\sakura_core\basis\CStrictRect.h" />
+    <ClInclude Include="..\sakura_core\basis\CStringBuf.h" />
     <ClInclude Include="..\sakura_core\basis\CStringRef.h" />
     <ClInclude Include="..\sakura_core\basis\primitive.h" />
     <ClInclude Include="..\sakura_core\basis\SakuraBasis.h" />

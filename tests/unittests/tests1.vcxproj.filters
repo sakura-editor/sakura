@@ -59,6 +59,9 @@
     <ClCompile Include="test-cstringref.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-cstringbuf.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="coverage.cpp">
