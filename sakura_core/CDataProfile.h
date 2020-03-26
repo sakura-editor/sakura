@@ -28,9 +28,6 @@
 #include "CProfile.h"
 #include "basis/CStringBuf.h"
 
-//文字列バッファ型インスタンスの生成マクロ
-#define MakeStringBufferW(S) CStringBufW(S,_countof(S))
-
 /*!
  * 各種データ変換付きCProfile
  *
