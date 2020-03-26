@@ -348,15 +348,4 @@ public:
 		// バッファ参照型に変換して入出力する
 		return IOProfileData( pszSectionName, pszEntryKey, CStringBufW( szEntryValue.GetBufferPointer(), szEntryValue.GetBufferCount() ) );
 	}
-
-	//2007.08.14 kobake 追加
-	//! intを介して任意型の入出力を行う
-	template <class T>
-	bool IOProfileData_WrapInt( const WCHAR* pszSectionName, const WCHAR* pszEntryKey, T& nEntryValue)
-	{
-		int n=nEntryValue;
-		bool ret=this->IOProfileData( pszSectionName, pszEntryKey, n );
-		nEntryValue=(T)n;
-		return ret;
-	}
 };
