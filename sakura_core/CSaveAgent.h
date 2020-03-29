@@ -24,14 +24,16 @@
 */
 #pragma once
 
-class CSaveAgent : public CDocListenerEx{
+class CSaveAgent : public CDocListenerEx
+{
 public:
 	CSaveAgent();
-	ECallbackResult OnCheckSave(SSaveInfo* pSaveInfo) override;
-	void OnBeforeSave(const SSaveInfo& sSaveInfo) override;
-	void OnSave(const SSaveInfo& sSaveInfo) override;
-	void OnAfterSave(const SSaveInfo& sSaveInfo) override;
-	void OnFinalSave(ESaveResult eSaveResult) override;
+	ECallbackResult OnCheckSave(SSaveInfo *pSaveInfo) override;
+	void			OnBeforeSave(const SSaveInfo &sSaveInfo) override;
+	void			OnSave(const SSaveInfo &sSaveInfo) override;
+	void			OnAfterSave(const SSaveInfo &sSaveInfo) override;
+	void			OnFinalSave(ESaveResult eSaveResult) override;
+
 private:
-	SSaveInfo	m_sSaveInfoForRollback;
+	SSaveInfo m_sSaveInfoForRollback;
 };

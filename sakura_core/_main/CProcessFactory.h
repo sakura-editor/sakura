@@ -30,9 +30,11 @@ class CProcess;
 	通常のエディタプロセスの起動が指定された場合には，必要に応じてコントロールプロセス
 	起動の起動をエディタの起動に先立って行う．
 */
-class CProcessFactory {
+class CProcessFactory
+{
 public:
-	CProcess* Create( HINSTANCE hInstance, LPCWSTR lpCmdLine );
+	CProcess *Create(HINSTANCE hInstance, LPCWSTR lpCmdLine);
+
 protected:
 private:
 	bool IsValidVersion();
@@ -40,6 +42,6 @@ private:
 	bool IsStartingControlProcess();
 	bool IsExistControlProcess();
 	bool StartControlProcess();
-	bool WaitForInitializedControlProcess();	// 2006.04.10 ryoji コントロールプロセスの初期化完了イベントを待つ
-	bool TestWriteQuit();	// 2007.09.04 ryoji 「設定を保存して終了する」オプション処理（sakuext連携用）
+	bool WaitForInitializedControlProcess(); // 2006.04.10 ryoji コントロールプロセスの初期化完了イベントを待つ
+	bool TestWriteQuit(); // 2007.09.04 ryoji 「設定を保存して終了する」オプション処理（sakuext連携用）
 };

@@ -36,38 +36,44 @@
 #include "StdAfx.h"
 #include "charset.h"
 #include "CCodePage.h"
-#include <vector>
 #include <map>
+#include <vector>
 
-struct SCodeSet {
-	ECodeType		m_eCodeSet;
-	const WCHAR*	m_sNormal;
-	const WCHAR*	m_sShort;
-	const WCHAR*	m_sLong;		// for Combo
-	bool			m_bUseBom;		// BOMが使えるか
-	bool			m_bIsBomDefOn;	// BOMのデフォルトがOnか
-	bool			m_bCanDefault;	// デフォルト文字コードになれるか
+struct SCodeSet
+{
+	ECodeType	 m_eCodeSet;
+	const WCHAR *m_sNormal;
+	const WCHAR *m_sShort;
+	const WCHAR *m_sLong;		// for Combo
+	bool		 m_bUseBom;		// BOMが使えるか
+	bool		 m_bIsBomDefOn; // BOMのデフォルトがOnか
+	bool		 m_bCanDefault; // デフォルト文字コードになれるか
 };
 
 // 文字コードセット(初期データ)
-static	SCodeSet	ASCodeSet[] = {
-	{ CODE_AUTODETECT,	L"Auto",	L"Auto",	L"自動選択",	false,	false,	false },	//!< 文字コード自動判別	//mapには入れない
-	{ CODE_SJIS,		L"SJIS",	L"SJIS",	L"SJIS",		false,	false,	true  },	//!< SJIS				(MS-CP932(Windows-31J), シフトJIS(Shift_JIS))
-	{ CODE_JIS,			L"JIS",		L"JIS",		L"JIS",			false,	false,	false },	//!< JIS				(MS-CP5022x(ISO-2022-JP-MS))
-	{ CODE_EUC,			L"EUC",		L"EUC",		L"EUC-JP",		false,	false,	true  },	//!< EUC				(MS-CP51932)	// eucJP-ms(eucJP-open)ではない
-	{ CODE_LATIN1,		L"Latin1",	L"Latin1",	L"Latin1",		false,	false,	true  },	//!< Latin1				(欧文, Windows-932, Windows Codepage 1252 West European)
-	{ CODE_UNICODE,		L"UTF-16",	L"UTF-16",	L"UTF-16",		true,	true,	true  },	//!< Unicode			(UTF-16 LittleEndian)	// UCS-2
-	{ CODE_UNICODEBE,	L"U16BE",	L"U16BE",	L"UTF-16BE",	true,	true,	true  },	//!< Unicode BigEndian	(UTF-16 BigEndian)		// UCS-2
-	{ CODE_UTF8,		L"UTF-8",	L"UTF-8",	L"UTF-8",		true,	false,	true  },	//!< UTF-8
-	{ CODE_CESU8,		L"CESU-8",	L"CESU-8",	L"CESU-8",		true,	false,	true  },	//!< CESU-8				(UCS-2からUTF-8化)
-	{ CODE_UTF7,		L"UTF-7",	L"UTF-7",	L"UTF-7",		true,	false,	false },	//!< UTF-7
+static SCodeSet ASCodeSet[] = {
+	{CODE_AUTODETECT, L"Auto", L"Auto", L"自動選択", false, false, false}, //!< 文字コード自動判別	//mapには入れない
+	{CODE_SJIS, L"SJIS", L"SJIS", L"SJIS", false, false,
+	 true}, //!< SJIS				(MS-CP932(Windows-31J), シフトJIS(Shift_JIS))
+	{CODE_JIS, L"JIS", L"JIS", L"JIS", false, false, false}, //!< JIS				(MS-CP5022x(ISO-2022-JP-MS))
+	{CODE_EUC, L"EUC", L"EUC", L"EUC-JP", false, false,
+	 true}, //!< EUC				(MS-CP51932)	// eucJP-ms(eucJP-open)ではない
+	{CODE_LATIN1, L"Latin1", L"Latin1", L"Latin1", false, false,
+	 true}, //!< Latin1				(欧文, Windows-932, Windows Codepage 1252 West European)
+	{CODE_UNICODE, L"UTF-16", L"UTF-16", L"UTF-16", true, true,
+	 true}, //!< Unicode			(UTF-16 LittleEndian)	// UCS-2
+	{CODE_UNICODEBE, L"U16BE", L"U16BE", L"UTF-16BE", true, true,
+	 true},														  //!< Unicode BigEndian	(UTF-16 BigEndian)		// UCS-2
+	{CODE_UTF8, L"UTF-8", L"UTF-8", L"UTF-8", true, false, true}, //!< UTF-8
+	{CODE_CESU8, L"CESU-8", L"CESU-8", L"CESU-8", true, false, true}, //!< CESU-8				(UCS-2からUTF-8化)
+	{CODE_UTF7, L"UTF-7", L"UTF-7", L"UTF-7", true, false, false},	  //!< UTF-7
 };
 
 // 文字コードセット
-typedef	std::map<int, SCodeSet>	MSCodeSet;
+typedef std::map<int, SCodeSet> MSCodeSet;
 static MSCodeSet				msCodeSet;
 // 表示順
-static std::vector<ECodeType>	vDispIdx;
+static std::vector<ECodeType> vDispIdx;
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           初期化                            //
@@ -76,12 +82,10 @@ static std::vector<ECodeType>	vDispIdx;
 void InitCodeSet()
 {
 	if (msCodeSet.empty()) {
-		int 	i;
+		int i;
 		for (i = 0; i < _countof(ASCodeSet); i++) {
-			vDispIdx.push_back( ASCodeSet[i].m_eCodeSet );
-			if (i > 0) {
-				msCodeSet[ASCodeSet[i].m_eCodeSet] = ASCodeSet[i];
-			}
+			vDispIdx.push_back(ASCodeSet[i].m_eCodeSet);
+			if (i > 0) { msCodeSet[ASCodeSet[i].m_eCodeSet] = ASCodeSet[i]; }
 		}
 	}
 }
@@ -93,7 +97,7 @@ extern bool IsValidCodeType(int code)
 {
 	// 初期化
 	InitCodeSet();
-	return (msCodeSet.find( code ) != msCodeSet.end());
+	return (msCodeSet.find(code) != msCodeSet.end());
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -102,41 +106,35 @@ extern bool IsValidCodeType(int code)
 
 LPCWSTR CCodeTypeName::Normal() const
 {
-	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
-		return NULL;
-	}
+	if (msCodeSet.find(m_eCodeType) == msCodeSet.end()) { return NULL; }
 	return msCodeSet[m_eCodeType].m_sNormal;
 }
 
 LPCWSTR CCodeTypeName::Short() const
 {
-	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
-		return NULL;
-	}
+	if (msCodeSet.find(m_eCodeType) == msCodeSet.end()) { return NULL; }
 	return msCodeSet[m_eCodeType].m_sShort;
 }
 
 LPCWSTR CCodeTypeName::Bracket() const
 {
-	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
-		return NULL;
-	}
+	if (msCodeSet.find(m_eCodeType) == msCodeSet.end()) { return NULL; }
 
-//	static	std::wstring	sWork = L"  [" + msCodeSet[m_eCodeType].m_sShort + L"]";
-	static	std::wstring	sWork;
+	//	static	std::wstring	sWork = L"  [" + msCodeSet[m_eCodeType].m_sShort + L"]";
+	static std::wstring sWork;
 	sWork = L"  [";
 	sWork += msCodeSet[m_eCodeType].m_sShort;
-	sWork += L"]";	// 変数の定義と値の設定を一緒にやるとバグる様なので分離	// 2013/4/20 Uchi
+	sWork += L"]"; // 変数の定義と値の設定を一緒にやるとバグる様なので分離	// 2013/4/20 Uchi
 
 	return sWork.c_str();
 }
 
 bool CCodeTypeName::UseBom()
 {
-	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
-		if( IsValidCodeOrCPType(m_eCodeType) ){
+	if (msCodeSet.find(m_eCodeType) == msCodeSet.end()) {
+		if (IsValidCodeOrCPType(m_eCodeType)) {
 			CCodePage encoding(m_eCodeType);
-			CMemory mem;
+			CMemory	  mem;
 			encoding.GetBom(&mem);
 			return 0 < mem.GetRawLength();
 		}
@@ -148,19 +146,15 @@ bool CCodeTypeName::UseBom()
 
 bool CCodeTypeName::IsBomDefOn()
 {
-	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
-		return false;
-	}
+	if (msCodeSet.find(m_eCodeType) == msCodeSet.end()) { return false; }
 
 	return msCodeSet[m_eCodeType].m_bIsBomDefOn;
 }
 
 bool CCodeTypeName::CanDefault()
 {
-	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
-		if( IsValidCodeOrCPType(m_eCodeType) ){
-			return true;
-		}
+	if (msCodeSet.find(m_eCodeType) == msCodeSet.end()) {
+		if (IsValidCodeOrCPType(m_eCodeType)) { return true; }
 		return false;
 	}
 
@@ -171,20 +165,12 @@ bool CCodeTypeName::CanDefault()
 //                      コンボボックス                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-int CCodeTypesForCombobox::GetCount() const
-{
-	return vDispIdx.size();
-}
+int CCodeTypesForCombobox::GetCount() const { return vDispIdx.size(); }
 
-ECodeType CCodeTypesForCombobox::GetCode(int nIndex) const
-{
-	return vDispIdx[nIndex];
-}
+ECodeType CCodeTypesForCombobox::GetCode(int nIndex) const { return vDispIdx[nIndex]; }
 
 LPCWSTR CCodeTypesForCombobox::GetName(int nIndex) const
 {
-	if (nIndex == 0) {
-		return LS(STR_ERR_GLOBAL01);
-	}
+	if (nIndex == 0) { return LS(STR_ERR_GLOBAL01); }
 	return msCodeSet[vDispIdx[nIndex]].m_sLong;
 }

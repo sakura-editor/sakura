@@ -1,5 +1,5 @@
 ﻿/*! @file */
-//2007.10.18 kobake 作成
+// 2007.10.18 kobake 作成
 /*
 	Copyright (C) 2007, kobake
 
@@ -25,7 +25,11 @@
 */
 #pragma once
 
-#define SAFE_DELETE(p) { delete p; p=0; }
+#define SAFE_DELETE(p)                                                                                                 \
+	{                                                                                                                  \
+		delete p;                                                                                                      \
+		p = 0;                                                                                                         \
+	}
 
 /*
 	2007.10.18 kobake
@@ -37,32 +41,13 @@
 	明示的に「t_～」という名前を持つ関数を用意。
 */
 
-template <class T>
-inline T t_min(T t1,T t2)
-{
-	return t1<t2?t1:t2;
-}
+template<class T> inline T t_min(T t1, T t2) { return t1 < t2 ? t1 : t2; }
 
-template <class T>
-inline T t_max(T t1,T t2)
-{
-	return t1>t2?t1:t2;
-}
+template<class T> inline T t_max(T t1, T t2) { return t1 > t2 ? t1 : t2; }
 
-template <class T>
-T t_abs(T t)
-{
-	return t>=T(0)?t:T(-t);
-}
+template<class T> T t_abs(T t) { return t >= T(0) ? t : T(-t); }
 
-template <class T>
-T t_unit(T t)
-{
-	return
-		t>T(0)?1:
-		t<T(0)?-1:
-		0;
-}
+template<class T> T t_unit(T t) { return t > T(0) ? 1 : t < T(0) ? -1 : 0; }
 
 #define sizeof_raw(V)  sizeof(V)
 #define sizeof_type(V) sizeof(V)
@@ -75,8 +60,8 @@ T t_unit(T t)
 
 //ビルド種に関係なく、UNICODE。
 #define __LTEXT(A) L##A
-#define LTEXT(A) __LTEXT(A)
-#define LCHAR(A) __LTEXT(A)
+#define LTEXT(A)   __LTEXT(A)
+#define LCHAR(A)   __LTEXT(A)
 
 //ビルド種に関係なく、ANSI。
 #define ATEXT(A) A

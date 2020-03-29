@@ -28,23 +28,23 @@ public:
 	*/
 	CDlgInput1();
 	~CDlgInput1();
-	BOOL DoModal( HINSTANCE hInstApp, HWND hwndParent, const WCHAR* pszTitle,
-				  const WCHAR* pszMessage, int nMaxTextLen, WCHAR* pszText );	/* モードレスダイアログの表示 */
+	BOOL DoModal(HINSTANCE hInstApp, HWND hwndParent, const WCHAR *pszTitle, const WCHAR *pszMessage, int nMaxTextLen,
+				 WCHAR *pszText); /* モードレスダイアログの表示 */
 
 	/*
 	||  Attributes & Operations
 	*/
-	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);	/* ダイアログのメッセージ処理 */
+	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam); /* ダイアログのメッセージ処理 */
 
-	HINSTANCE	m_hInstance;	/* アプリケーションインスタンスのハンドル */
-	HWND		m_hwndParent;	/* オーナーウィンドウのハンドル */
-	HWND		m_hWnd;			/* このダイアログのハンドル */
+	HINSTANCE m_hInstance;	/* アプリケーションインスタンスのハンドル */
+	HWND	  m_hwndParent; /* オーナーウィンドウのハンドル */
+	HWND	  m_hWnd;		/* このダイアログのハンドル */
 
-	const WCHAR*	m_pszTitle;		/* ダイアログタイトル */
-	const WCHAR*	m_pszMessage;	/* メッセージ */
-	int			m_nMaxTextLen;	/* 入力サイズ上限 */
-//	char*		m_pszText;		/* テキスト */
-	CNativeW	m_cmemText;		/* テキスト */
+	const WCHAR *m_pszTitle;	/* ダイアログタイトル */
+	const WCHAR *m_pszMessage;	/* メッセージ */
+	int			 m_nMaxTextLen; /* 入力サイズ上限 */
+								//	char*		m_pszText;		/* テキスト */
+	CNativeW m_cmemText;		/* テキスト */
 protected:
 	/*
 	||  実装ヘルパ関数

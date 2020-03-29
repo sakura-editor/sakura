@@ -13,54 +13,54 @@
 //                  ファイル属性操作クラス                     //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-class CFileAttribute{
+class CFileAttribute
+{
 public:
-	CFileAttribute(const WCHAR* pszPath)
-	: m_strPath(pszPath)
-	, m_bAttributeChanged(false)
-	, m_dwAttribute(0)
-	{
-	}
+	CFileAttribute(const WCHAR *pszPath)
+		: m_strPath(pszPath)
+		, m_bAttributeChanged(false)
+		, m_dwAttribute(0)
+	{}
 
 	//! 指定属性を取り除く
 	void PopAttribute(DWORD dwPopAttribute)
 	{
-		if(m_bAttributeChanged)return; //既に取り除き済み
+		if (m_bAttributeChanged) return; //既に取り除き済み
 
 		m_dwAttribute = ::GetFileAttributes(m_strPath.c_str());
-		if( m_dwAttribute != (DWORD)-1 ){
-			if(m_dwAttribute & dwPopAttribute){
+		if (m_dwAttribute != (DWORD)-1) {
+			if (m_dwAttribute & dwPopAttribute) {
 				DWORD dwNewAttribute = m_dwAttribute & ~dwPopAttribute;
 				::SetFileAttributes(m_strPath.c_str(), dwNewAttribute);
-				m_bAttributeChanged=true;
+				m_bAttributeChanged = true;
 			}
 		}
 	}
-	
+
 	//! 属性を元に戻す
 	void RestoreAttribute()
 	{
-		if(m_bAttributeChanged)
-			::SetFileAttributes(m_strPath.c_str(),m_dwAttribute);
+		if (m_bAttributeChanged) ::SetFileAttributes(m_strPath.c_str(), m_dwAttribute);
 		m_bAttributeChanged = false;
-		m_dwAttribute = 0;
+		m_dwAttribute		= 0;
 	}
+
 private:
-	std::wstring	m_strPath;
-	bool			m_bAttributeChanged;
-	DWORD			m_dwAttribute;
+	std::wstring m_strPath;
+	bool		 m_bAttributeChanged;
+	DWORD		 m_dwAttribute;
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CStream::CStream(const WCHAR* pszPath, const WCHAR* pszMode, bool bExceptionMode)
+CStream::CStream(const WCHAR *pszPath, const WCHAR *pszMode, bool bExceptionMode)
 {
-	m_fp = NULL;
+	m_fp			  = NULL;
 	m_pcFileAttribute = NULL;
-	m_bExceptionMode = bExceptionMode;
-	Open(pszPath,pszMode);
+	m_bExceptionMode  = bExceptionMode;
+	Open(pszPath, pszMode);
 }
 
 /*
@@ -72,16 +72,13 @@ CStream::CStream()
 }
 */
 
-CStream::~CStream()
-{
-	Close();
-}
+CStream::~CStream() { Close(); }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                    オープン・クローズ                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //
-void CStream::Open(const WCHAR* pszPath, const WCHAR* pszMode)
+void CStream::Open(const WCHAR *pszPath, const WCHAR *pszMode)
 {
 	Close(); //既に開いていたら、一度閉じる
 
@@ -90,27 +87,25 @@ void CStream::Open(const WCHAR* pszPath, const WCHAR* pszMode)
 	m_pcFileAttribute->PopAttribute(FILE_ATTRIBUTE_HIDDEN | FILE_ATTRIBUTE_SYSTEM);
 
 	//オープン
-	m_fp = _wfopen(pszPath,pszMode);
-	if(!m_fp){
+	m_fp = _wfopen(pszPath, pszMode);
+	if (!m_fp) {
 		Close(); //属性復元
 	}
 
 	//エラー処理
-	if(!m_fp && IsExceptionMode()){
-		throw CError_FileOpen();
-	}
+	if (!m_fp && IsExceptionMode()) { throw CError_FileOpen(); }
 }
 
 void CStream::Close()
 {
 	//クローズ
-	if(m_fp){
+	if (m_fp) {
 		fclose(m_fp);
-		m_fp=NULL;
+		m_fp = NULL;
 	}
 
 	//属性復元
-	if(m_pcFileAttribute){
+	if (m_pcFileAttribute) {
 		m_pcFileAttribute->RestoreAttribute();
 		SAFE_DELETE(m_pcFileAttribute);
 	}
@@ -120,16 +115,16 @@ void CStream::Close()
 //                           操作                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-void CStream::SeekSet(	//!< シーク
-	long offset	//!< ストリーム先頭からのオフセット 
+void CStream::SeekSet( //!< シーク
+	long offset		   //!< ストリーム先頭からのオフセット
 )
 {
-	fseek(m_fp,offset,SEEK_SET);
+	fseek(m_fp, offset, SEEK_SET);
 }
 
-void CStream::SeekEnd(   //!< シーク
-	long offset //!< ストリーム終端からのオフセット
+void CStream::SeekEnd( //!< シーク
+	long offset		   //!< ストリーム終端からのオフセット
 )
 {
-	fseek(m_fp,offset,SEEK_END);
+	fseek(m_fp, offset, SEEK_END);
 }

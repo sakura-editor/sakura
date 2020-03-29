@@ -24,9 +24,9 @@
 */
 
 #include "StdAfx.h"
-#include <string.h>
 #include "CRecentGrepFolder.h"
 #include "env/DLLSHAREDATA.h"
+#include <string.h>
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           生成                              //
@@ -34,14 +34,9 @@
 
 CRecentGrepFolder::CRecentGrepFolder()
 {
-	Create(
-		GetShareData()->m_sSearchKeywords.m_aGrepFolders.dataPtr(),
-		GetShareData()->m_sSearchKeywords.m_aGrepFolders.dataPtr()->GetBufferCount(),
-		&GetShareData()->m_sSearchKeywords.m_aGrepFolders._GetSizeRef(),
-		NULL,
-		MAX_GREPFOLDER,
-		NULL
-	);
+	Create(GetShareData()->m_sSearchKeywords.m_aGrepFolders.dataPtr(),
+		   GetShareData()->m_sSearchKeywords.m_aGrepFolders.dataPtr()->GetBufferCount(),
+		   &GetShareData()->m_sSearchKeywords.m_aGrepFolders._GetSizeRef(), NULL, MAX_GREPFOLDER, NULL);
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -53,45 +48,29 @@ CRecentGrepFolder::CRecentGrepFolder()
 
 	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
-const WCHAR* CRecentGrepFolder::GetItemText( int nIndex ) const
-{
-	return *GetItem(nIndex);
-}
+const WCHAR *CRecentGrepFolder::GetItemText(int nIndex) const { return *GetItem(nIndex); }
 
-bool CRecentGrepFolder::DataToReceiveType( LPCWSTR* dst, const CGrepFolderString* src ) const
+bool CRecentGrepFolder::DataToReceiveType(LPCWSTR *dst, const CGrepFolderString *src) const
 {
 	*dst = *src;
 	return true;
 }
 
-bool CRecentGrepFolder::TextToDataType( CGrepFolderString* dst, LPCWSTR pszText ) const
+bool CRecentGrepFolder::TextToDataType(CGrepFolderString *dst, LPCWSTR pszText) const
 {
-	if( false == ValidateReceiveType(pszText) ){
-		return false;
-	}
+	if (false == ValidateReceiveType(pszText)) { return false; }
 	CopyItem(dst, pszText);
 	return true;
 }
 
-int CRecentGrepFolder::CompareItem( const CGrepFolderString* p1, LPCWSTR p2 ) const
-{
-	return _wcsicmp(*p1,p2);
-}
+int CRecentGrepFolder::CompareItem(const CGrepFolderString *p1, LPCWSTR p2) const { return _wcsicmp(*p1, p2); }
 
-void CRecentGrepFolder::CopyItem( CGrepFolderString* dst, LPCWSTR src ) const
-{
-	wcscpy(*dst,src);
-}
+void CRecentGrepFolder::CopyItem(CGrepFolderString *dst, LPCWSTR src) const { wcscpy(*dst, src); }
 
-bool CRecentGrepFolder::ValidateReceiveType( LPCWSTR p ) const
+bool CRecentGrepFolder::ValidateReceiveType(LPCWSTR p) const
 {
-	if( GetTextMaxLength() <= wcslen(p) ){
-		return false;
-	}
+	if (GetTextMaxLength() <= wcslen(p)) { return false; }
 	return true;
 }
 
-size_t CRecentGrepFolder::GetTextMaxLength() const
-{
-	return m_nTextMaxLength;
-}
+size_t CRecentGrepFolder::GetTextMaxLength() const { return m_nTextMaxLength; }

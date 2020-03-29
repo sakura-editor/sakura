@@ -1,7 +1,7 @@
 ﻿/*!	@file
-	
+
 	@brief GREP support library
-	
+
 	@author wakura
 	@date 2008/04/28
 */
@@ -12,8 +12,8 @@
 	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
 	freely, subject to the following restrictions:
 
 		1. The origin of this software must not be misrepresented;
@@ -22,7 +22,7 @@
 		   in the product documentation would be appreciated but is
 		   not required.
 
-		2. Altered source versions must be plainly marked as such, 
+		2. Altered source versions must be plainly marked as such,
 		   and must not be misrepresented as being the original software.
 
 		3. This notice may not be removed or altered from any source
@@ -32,30 +32,28 @@
 
 #include "CGrepEnumFiles.h"
 
-class CGrepEnumFilterFiles final : public CGrepEnumFiles {
+class CGrepEnumFilterFiles final : public CGrepEnumFiles
+{
 private:
-
 public:
 	CGrepEnumFiles m_cGrepEnumExceptFiles;
 
 public:
-	CGrepEnumFilterFiles(){
-	}
+	CGrepEnumFilterFiles() {}
 
-	virtual ~CGrepEnumFilterFiles(){
-	}
+	virtual ~CGrepEnumFilterFiles() {}
 
-	BOOL IsValid( WIN32_FIND_DATA& w32fd, LPCWSTR pFile = NULL  ) override {
-		if( CGrepEnumFiles::IsValid( w32fd, pFile ) ){
-			if( m_cGrepEnumExceptFiles.IsValid( w32fd, pFile ) ){
-				return TRUE;
-			}
+	BOOL IsValid(WIN32_FIND_DATA &w32fd, LPCWSTR pFile = NULL) override
+	{
+		if (CGrepEnumFiles::IsValid(w32fd, pFile)) {
+			if (m_cGrepEnumExceptFiles.IsValid(w32fd, pFile)) { return TRUE; }
 		}
 		return FALSE;
 	}
 
-	int Enumerates( LPCWSTR lpBaseFolder, CGrepEnumKeys& cGrepEnumKeys, CGrepEnumOptions option, CGrepEnumFiles& pExcept ){
-		m_cGrepEnumExceptFiles.Enumerates( lpBaseFolder, cGrepEnumKeys.m_vecExceptFileKeys, option, NULL );
-		return CGrepEnumFiles::Enumerates( lpBaseFolder, cGrepEnumKeys.m_vecSearchFileKeys, option, &pExcept );
+	int Enumerates(LPCWSTR lpBaseFolder, CGrepEnumKeys &cGrepEnumKeys, CGrepEnumOptions option, CGrepEnumFiles &pExcept)
+	{
+		m_cGrepEnumExceptFiles.Enumerates(lpBaseFolder, cGrepEnumKeys.m_vecExceptFileKeys, option, NULL);
+		return CGrepEnumFiles::Enumerates(lpBaseFolder, cGrepEnumKeys.m_vecSearchFileKeys, option, &pExcept);
 	}
 };

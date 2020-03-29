@@ -25,8 +25,8 @@
 
 #include "StdAfx.h"
 #include "CRecentFolder.h"
-#include <string.h>
 #include "env/DLLSHAREDATA.h"
+#include <string.h>
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           生成                              //
@@ -34,14 +34,10 @@
 
 CRecentFolder::CRecentFolder()
 {
-	Create(
-		&GetShareData()->m_sHistory.m_szOPENFOLDERArr[0],
-		GetShareData()->m_sHistory.m_szOPENFOLDERArr[0].GetBufferCount(),
-		&GetShareData()->m_sHistory.m_nOPENFOLDERArrNum,
-		GetShareData()->m_sHistory.m_bOPENFOLDERArrFavorite,
-		MAX_OPENFOLDER,
-		&(GetShareData()->m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX)
-	);
+	Create(&GetShareData()->m_sHistory.m_szOPENFOLDERArr[0],
+		   GetShareData()->m_sHistory.m_szOPENFOLDERArr[0].GetBufferCount(),
+		   &GetShareData()->m_sHistory.m_nOPENFOLDERArrNum, GetShareData()->m_sHistory.m_bOPENFOLDERArrFavorite,
+		   MAX_OPENFOLDER, &(GetShareData()->m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX));
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -53,45 +49,29 @@ CRecentFolder::CRecentFolder()
 
 	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
-const WCHAR* CRecentFolder::GetItemText( int nIndex ) const
-{
-	return *GetItem(nIndex);
-}
+const WCHAR *CRecentFolder::GetItemText(int nIndex) const { return *GetItem(nIndex); }
 
-bool CRecentFolder::DataToReceiveType( LPCWSTR* dst, const CPathString* src ) const
+bool CRecentFolder::DataToReceiveType(LPCWSTR *dst, const CPathString *src) const
 {
 	*dst = *src;
 	return true;
 }
 
-bool CRecentFolder::TextToDataType( CPathString* dst, LPCWSTR pszText ) const
+bool CRecentFolder::TextToDataType(CPathString *dst, LPCWSTR pszText) const
 {
-	if( false == ValidateReceiveType(pszText) ){
-		return false;
-	}
+	if (false == ValidateReceiveType(pszText)) { return false; }
 	CopyItem(dst, pszText);
 	return true;
 }
 
-int CRecentFolder::CompareItem( const CPathString* p1, LPCWSTR p2 ) const
-{
-	return _wcsicmp(*p1,p2);
-}
+int CRecentFolder::CompareItem(const CPathString *p1, LPCWSTR p2) const { return _wcsicmp(*p1, p2); }
 
-void CRecentFolder::CopyItem( CPathString* dst, LPCWSTR src ) const
-{
-	wcscpy(*dst,src);
-}
+void CRecentFolder::CopyItem(CPathString *dst, LPCWSTR src) const { wcscpy(*dst, src); }
 
-bool CRecentFolder::ValidateReceiveType( LPCWSTR p ) const
+bool CRecentFolder::ValidateReceiveType(LPCWSTR p) const
 {
-	if( GetTextMaxLength() <= wcslen(p) ){
-		return false;
-	}
+	if (GetTextMaxLength() <= wcslen(p)) { return false; }
 	return true;
 }
 
-size_t CRecentFolder::GetTextMaxLength() const
-{
-	return m_nTextMaxLength;
-}
+size_t CRecentFolder::GetTextMaxLength() const { return m_nTextMaxLength; }

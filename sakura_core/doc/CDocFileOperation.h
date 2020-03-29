@@ -24,57 +24,56 @@
 */
 #pragma once
 
-#include "doc/CDocListener.h" // SLoadInfo
 #include "CEol.h"
+#include "doc/CDocListener.h" // SLoadInfo
 
 class CEditDoc;
 
-class CDocFileOperation{
+class CDocFileOperation
+{
 public:
-	CDocFileOperation(CEditDoc* pcDoc) : m_pcDocRef(pcDoc) { }
+	CDocFileOperation(CEditDoc *pcDoc)
+		: m_pcDocRef(pcDoc)
+	{}
 
 	//ロック
 	bool _ToDoLock() const;
 	void DoFileLock(bool bMsg = true);
 	void DoFileUnlock();
-	
+
 	//ロードUI
-	bool OpenFileDialog(
-		HWND				hwndParent,
-		const WCHAR*		pszOpenFolder,	//!< [in]  NULL以外を指定すると初期フォルダを指定できる
-		SLoadInfo*			pLoadInfo,		//!< [in,out] ロード情報
-		std::vector<std::wstring>&	files
-	);
+	bool OpenFileDialog(HWND		 hwndParent,
+						const WCHAR *pszOpenFolder, //!< [in]  NULL以外を指定すると初期フォルダを指定できる
+						SLoadInfo *				   pLoadInfo, //!< [in,out] ロード情報
+						std::vector<std::wstring> &files);
 
 	//ロードフロー
-	bool DoLoadFlow(SLoadInfo* pLoadInfo);
-	bool FileLoad(
-		SLoadInfo*	pLoadInfo			//!< [in,out]
+	bool DoLoadFlow(SLoadInfo *pLoadInfo);
+	bool FileLoad(SLoadInfo *pLoadInfo //!< [in,out]
 	);
-	bool FileLoadWithoutAutoMacro(
-		SLoadInfo*	pLoadInfo			//!< [in,out]
+	bool FileLoadWithoutAutoMacro(SLoadInfo *pLoadInfo //!< [in,out]
 	);
-	void ReloadCurrentFile(				//!< 同一ファイルの再オープン Jul. 26, 2003 ryoji BOMオプション追加
-		ECodeType	nCharCode			//!< [in] 文字コード種別
+	void ReloadCurrentFile( //!< 同一ファイルの再オープン Jul. 26, 2003 ryoji BOMオプション追加
+		ECodeType nCharCode //!< [in] 文字コード種別
 	);
 
 	//セーブUI
-	bool SaveFileDialog(SSaveInfo* pSaveInfo);	//!<「ファイル名を付けて保存」ダイアログ
-	bool SaveFileDialog(LPWSTR szPath);			//!<「ファイル名を付けて保存」ダイアログ
+	bool SaveFileDialog(SSaveInfo *pSaveInfo); //!<「ファイル名を付けて保存」ダイアログ
+	bool SaveFileDialog(LPWSTR szPath);		   //!<「ファイル名を付けて保存」ダイアログ
 
 	//セーブフロー
-	bool DoSaveFlow(SSaveInfo* pSaveInfo);
-	bool FileSaveAs( const WCHAR* filename = NULL,ECodeType eCodeType = CODE_NONE, EEolType eEolType = EOL_NONE, bool bDialog = true);	//!< ダイアログでファイル名を入力させ、保存。	// 2006.12.30 ryoji
-	bool FileSave();			//!< 上書き保存。ファイル名が指定されていなかったらダイアログで入力を促す。	// 2006.12.30 ryoji
+	bool DoSaveFlow(SSaveInfo *pSaveInfo);
+	bool FileSaveAs(const WCHAR *filename = NULL, ECodeType eCodeType = CODE_NONE, EEolType eEolType = EOL_NONE,
+					bool bDialog = true); //!< ダイアログでファイル名を入力させ、保存。	// 2006.12.30 ryoji
+	bool FileSave(); //!< 上書き保存。ファイル名が指定されていなかったらダイアログで入力を促す。	// 2006.12.30 ryoji
 
 	//クローズ
-	bool FileClose();			//!< 閉じて(無題)	// 2006.12.30 ryoji
+	bool FileClose(); //!< 閉じて(無題)	// 2006.12.30 ryoji
 
 	//その他
-	void FileCloseOpen(				//!< 閉じて開く	// 2006.12.30 ryoji
-		const SLoadInfo& sLoadInfo = SLoadInfo(L"", CODE_AUTODETECT, false)
-	);
+	void FileCloseOpen( //!< 閉じて開く	// 2006.12.30 ryoji
+		const SLoadInfo &sLoadInfo = SLoadInfo(L"", CODE_AUTODETECT, false));
 
 private:
-	CEditDoc* m_pcDocRef;
+	CEditDoc *m_pcDocRef;
 };

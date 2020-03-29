@@ -4,8 +4,8 @@
 */
 #pragma once
 
-#include <string>
 #include "_os/OleTypes.h"
+#include <string>
 
-bool variant_to_wstr( VARIANT v, std::wstring& wstr );	// VARIANT変数をBSTRとみなし、wstringに変換する
-bool variant_to_int( VARIANT v, int& n );	// VARIANT変数を整数とみなし、intに変換する
+bool variant_to_wstr(VARIANT v, std::wstring &wstr); // VARIANT変数をBSTRとみなし、wstringに変換する
+bool variant_to_int(VARIANT v, int &n);				 // VARIANT変数を整数とみなし、intに変換する

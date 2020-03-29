@@ -10,8 +10,8 @@
 	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
 	freely, subject to the following restrictions:
 
 		1. The origin of this software must not be misrepresented;
@@ -20,7 +20,7 @@
 		   in the product documentation would be appreciated but is
 		   not required.
 
-		2. Altered source versions must be plainly marked as such, 
+		2. Altered source versions must be plainly marked as such,
 		   and must not be misrepresented as being the original software.
 
 		3. This notice may not be removed or altered from any source
@@ -28,22 +28,23 @@
 */
 #pragma once
 
-class CDecode {
+class CDecode
+{
 public:
-	virtual ~CDecode() { }
+	virtual ~CDecode() {}
 
 	//インターフェース
-	bool CallDecode( const CNativeW& pcData, CMemory* pDest )
+	bool CallDecode(const CNativeW &pcData, CMemory *pDest)
 	{
-		bool bRet=DoDecode(pcData, pDest);
-		if(!bRet){
-			ErrorMessage(NULL,LS(STR_CONVERT_ERR));
-			pDest->SetRawData( "", 0 );
+		bool bRet = DoDecode(pcData, pDest);
+		if (!bRet) {
+			ErrorMessage(NULL, LS(STR_CONVERT_ERR));
+			pDest->SetRawData("", 0);
 			return false;
 		}
 		return true;
 	}
 
 	//実装
-	virtual bool DoDecode( const CNativeW& pcData, CMemory* pDest )=0;
+	virtual bool DoDecode(const CNativeW &pcData, CMemory *pDest) = 0;
 };

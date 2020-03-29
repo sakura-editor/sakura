@@ -8,10 +8,11 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //!できる限り全角ひらがなにする
-bool CConvert_ToZenhira::DoConvert(CNativeW* pcData)
+bool CConvert_ToZenhira::DoConvert(CNativeW *pcData)
 {
 	//半カナ→全角カナ
-	wchar_t* pBuf = new wchar_t[pcData->GetStringLength()+1]; //文字数が減ることはあっても増えることは無いので、これでＯＫ
+	wchar_t *pBuf =
+		new wchar_t[pcData->GetStringLength() + 1]; //文字数が減ることはあっても増えることは無いので、これでＯＫ
 	int nBufLen = 0;
 	Convert_HankataToZenkata(pcData->GetStringPtr(), pcData->GetStringLength(), pBuf, &nBufLen);
 

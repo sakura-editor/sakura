@@ -29,27 +29,29 @@ class CEditView;
 #include "basis/SakuraBasis.h"
 #include "doc/layout/CLayout.h"
 
-class CViewSelect{
+class CViewSelect
+{
 public:
-	CEditView* GetEditView(){ return m_pcEditView; }
-	const CEditView* GetEditView() const{ return m_pcEditView; }
+	CEditView *		 GetEditView() { return m_pcEditView; }
+	const CEditView *GetEditView() const { return m_pcEditView; }
 
 public:
-	CViewSelect(CEditView* pcEditView);
-	void CopySelectStatus(CViewSelect* pSelect) const;
+	CViewSelect(CEditView *pcEditView);
+	void CopySelectStatus(CViewSelect *pSelect) const;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      選択範囲の変更                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	void DisableSelectArea( bool bDraw, bool bDrawBracketCursorLine = true ); //!< 現在の選択範囲を非選択状態に戻す
+	void DisableSelectArea(bool bDraw, bool bDrawBracketCursorLine = true); //!< 現在の選択範囲を非選択状態に戻す
 
-	void BeginSelectArea( const CLayoutPoint* po = NULL );								// 現在のカーソル位置から選択を開始する
-	void ChangeSelectAreaByCurrentCursor( const CLayoutPoint& ptCaretPos );			// 現在のカーソル位置によって選択範囲を変更
-	void ChangeSelectAreaByCurrentCursorTEST( const CLayoutPoint& ptCaretPos, CLayoutRange* pSelect );// 現在のカーソル位置によって選択範囲を変更
+	void BeginSelectArea(const CLayoutPoint *po = NULL); // 現在のカーソル位置から選択を開始する
+	void ChangeSelectAreaByCurrentCursor(const CLayoutPoint &ptCaretPos); // 現在のカーソル位置によって選択範囲を変更
+	void ChangeSelectAreaByCurrentCursorTEST(const CLayoutPoint &ptCaretPos,
+											 CLayoutRange *pSelect); // 現在のカーソル位置によって選択範囲を変更
 
 	//!選択範囲を指定する(原点未選択)
 	// 2005.06.24 Moca
-	void SetSelectArea( const CLayoutRange& sRange )
+	void SetSelectArea(const CLayoutRange &sRange)
 	{
 		m_sSelectBgn.Set(sRange.GetFrom());
 		m_sSelect = sRange;
@@ -58,59 +60,57 @@ public:
 	//!単語選択開始
 	void SelectBeginWord()
 	{
-		m_bBeginSelect     = true;				/* 範囲選択中 */
-		m_bBeginBoxSelect  = false;			/* 矩形範囲選択中でない */
-		m_bBeginLineSelect = false;			/* 行単位選択中 */
-		m_bBeginWordSelect = true;			/* 単語単位選択中 */
+		m_bBeginSelect	   = true;	/* 範囲選択中 */
+		m_bBeginBoxSelect  = false; /* 矩形範囲選択中でない */
+		m_bBeginLineSelect = false; /* 行単位選択中 */
+		m_bBeginWordSelect = true;	/* 単語単位選択中 */
 	}
 
 	//!矩形選択開始
 	void SelectBeginBox()
 	{
-		m_bBeginSelect     = true;			/* 範囲選択中 */
-		m_bBeginBoxSelect  = true;		/* 矩形範囲選択中 */
-		m_bBeginLineSelect = false;		/* 行単位選択中 */
-		m_bBeginWordSelect = false;		/* 単語単位選択中 */
+		m_bBeginSelect	   = true;	/* 範囲選択中 */
+		m_bBeginBoxSelect  = true;	/* 矩形範囲選択中 */
+		m_bBeginLineSelect = false; /* 行単位選択中 */
+		m_bBeginWordSelect = false; /* 単語単位選択中 */
 	}
 
 	//!謎の選択開始
 	void SelectBeginNazo()
 	{
-		m_bBeginSelect     = true;			/* 範囲選択中 */
-//		m_bBeginBoxSelect  = false;		/* 矩形範囲選択中でない */
-		m_bBeginLineSelect = false;		/* 行単位選択中 */
-		m_bBeginWordSelect = false;		/* 単語単位選択中 */
+		m_bBeginSelect = true;		/* 範囲選択中 */
+									//		m_bBeginBoxSelect  = false;		/* 矩形範囲選択中でない */
+		m_bBeginLineSelect = false; /* 行単位選択中 */
+		m_bBeginWordSelect = false; /* 単語単位選択中 */
 	}
 
 	//!範囲選択終了
-	void SelectEnd()
-	{
-		m_bBeginSelect = false;
-	}
+	void SelectEnd() { m_bBeginSelect = false; }
 
-	//!m_bBeginBoxSelectを設定。
-	void SetBoxSelect(bool b)
-	{
-		m_bBeginBoxSelect = b;
-	}
+	//! m_bBeginBoxSelectを設定。
+	void SetBoxSelect(bool b) { m_bBeginBoxSelect = b; }
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           描画                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	void DrawSelectArea(bool bDrawBracketCursorLine = true);		//!< 指定行の選択領域の描画
+	void DrawSelectArea(bool bDrawBracketCursorLine = true); //!< 指定行の選択領域の描画
 private:
-	void DrawSelectArea2(HDC) const;		//!< 指定範囲の選択領域の描画
-	void DrawSelectAreaLine(			//!< 指定行の選択領域の描画
-		HDC					hdc,		//!< [in] 描画領域のDevice Context Handle
-		CLayoutInt			nLineNum,	//!< [in] 描画対象行(レイアウト行)
-		const CLayoutRange&	sRange		//!< [in] 選択範囲(レイアウト単位)
+	void DrawSelectArea2(HDC) const;  //!< 指定範囲の選択領域の描画
+	void DrawSelectAreaLine(		  //!< 指定行の選択領域の描画
+		HDC					hdc,	  //!< [in] 描画領域のDevice Context Handle
+		CLayoutInt			nLineNum, //!< [in] 描画対象行(レイアウト行)
+		const CLayoutRange &sRange	  //!< [in] 選択範囲(レイアウト単位)
 	) const;
+
 public:
-	void GetSelectAreaLineFromRange(CLayoutRange& ret, CLayoutInt nLineNum, const CLayout* pcLayout, const CLayoutRange& sRange) const;
-	void GetSelectAreaLine(CLayoutRange& ret, CLayoutInt nLineNum, const CLayout* pcLayout) const{
+	void GetSelectAreaLineFromRange(CLayoutRange &ret, CLayoutInt nLineNum, const CLayout *pcLayout,
+									const CLayoutRange &sRange) const;
+	void GetSelectAreaLine(CLayoutRange &ret, CLayoutInt nLineNum, const CLayout *pcLayout) const
+	{
 		GetSelectAreaLineFromRange(ret, nLineNum, pcLayout, m_sSelect);
 	}
-	CLayoutRange GetSelectAreaLine(CLayoutInt nLineNum, const CLayout* pcLayout) const{
+	CLayoutRange GetSelectAreaLine(CLayoutInt nLineNum, const CLayout *pcLayout) const
+	{
 		CLayoutRange ret;
 		GetSelectAreaLineFromRange(ret, nLineNum, pcLayout, m_sSelect);
 		return ret;
@@ -126,9 +126,10 @@ public:
 	bool IsTextSelected() const
 	{
 		return m_sSelect.IsValid();
-//		return 0!=(
-//			~((DWORD)(m_sSelect.nLineFrom | m_sSelect.nLineTo | m_sSelect.nColumnFrom | m_sSelect.nColumnTo)) >> 31
-//			);
+		//		return 0!=(
+		//			~((DWORD)(m_sSelect.nLineFrom | m_sSelect.nLineTo | m_sSelect.nColumnFrom | m_sSelect.nColumnTo)) >>
+		//31
+		//			);
 	}
 
 	//! テキストの選択中か
@@ -140,44 +141,37 @@ public:
 	}
 
 	//!マウスで選択中か
-	bool IsMouseSelecting() const
-	{
-		return m_bBeginSelect;
-	}
+	bool IsMouseSelecting() const { return m_bBeginSelect; }
 
 	//!矩形選択中か
-	bool IsBoxSelecting() const
-	{
-		return m_bBeginBoxSelect;
-	}
+	bool IsBoxSelecting() const { return m_bBeginBoxSelect; }
 
 private:
 	//参照
-	CEditView*	m_pcEditView;
+	CEditView *m_pcEditView;
 
 public:
-
-	bool	m_bDrawSelectArea;		// 選択範囲を描画したか	// 02/12/13 ai
+	bool m_bDrawSelectArea; // 選択範囲を描画したか	// 02/12/13 ai
 
 	// 選択状態
-	bool	m_bSelectingLock;		// 選択状態のロック
+	bool m_bSelectingLock; // 選択状態のロック
 private:
-	bool	m_bBeginSelect;			// 範囲選択中
-	bool	m_bBeginBoxSelect;		// 矩形範囲選択中
-	bool	m_bSelectAreaChanging;	// 選択範囲変更中
-	int		m_nLastSelectedByteLen;	// 前回選択時の選択バイト数
+	bool m_bBeginSelect;		 // 範囲選択中
+	bool m_bBeginBoxSelect;		 // 矩形範囲選択中
+	bool m_bSelectAreaChanging;	 // 選択範囲変更中
+	int	 m_nLastSelectedByteLen; // 前回選択時の選択バイト数
 
 public:
-	bool	m_bBeginLineSelect;		// 行単位選択中
-	bool	m_bBeginWordSelect;		// 単語単位選択中
+	bool m_bBeginLineSelect; // 行単位選択中
+	bool m_bBeginWordSelect; // 単語単位選択中
 
 	// 選択範囲を保持するための変数群
 	// これらはすべて折り返し行と、折り返し桁を保持している。
 	CLayoutRange m_sSelectBgn; //範囲選択(原点)
-	CLayoutRange m_sSelect;    //範囲選択
+	CLayoutRange m_sSelect;	   //範囲選択
 	CLayoutRange m_sSelectOld; //範囲選択Old
 
-	CMyPoint	m_ptMouseRollPosOld;	// マウス範囲選択前回位置(XY座標)
+	CMyPoint m_ptMouseRollPosOld; // マウス範囲選択前回位置(XY座標)
 };
 
 /*

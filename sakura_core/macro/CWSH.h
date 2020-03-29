@@ -34,8 +34,8 @@ class CWSHClient final : IWSHClient
 {
 public:
 	// 型定義
-	typedef std::vector<CIfObj*> List;      // 所有しているインタフェースオブジェクトのリスト
-	typedef List::const_iterator ListIter;	// そのイテレータ
+	typedef std::vector<CIfObj *> List;		// 所有しているインタフェースオブジェクトのリスト
+	typedef List::const_iterator  ListIter; // そのイテレータ
 
 	// コンストラクタ・デストラクタ
 	CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler, void *AData);
@@ -43,18 +43,19 @@ public:
 
 	// フィールド・アクセサ
 	ScriptErrorHandler m_OnError;
-	void *m_Data;
-	bool m_Valid; ///< trueの場合スクリプトエンジンが使用可能。falseになる場合は ScriptErrorHandlerにエラー内容が通知されている。
-	void* GetData() const override{ return this->m_Data; }
-	const List& GetInterfaceObjects() {	return this->m_IfObjArr; }
+	void *			   m_Data;
+	bool			   m_Valid; ///< trueの場合スクリプトエンジンが使用可能。falseになる場合は
+								///< ScriptErrorHandlerにエラー内容が通知されている。
+	void *		GetData() const override { return this->m_Data; }
+	const List &GetInterfaceObjects() { return this->m_IfObjArr; }
 
 	// 操作
-	void AddInterfaceObject( CIfObj* obj );
+	void AddInterfaceObject(CIfObj *obj);
 	bool Execute(const wchar_t *AScript);
 	void Error(BSTR Description, BSTR Source); ///< ScriptErrorHandlerを呼び出す。
-	void Error(const wchar_t* Description);          ///< ScriptErrorHandlerを呼び出す。
+	void Error(const wchar_t *Description);	   ///< ScriptErrorHandlerを呼び出す。
 
 private:
 	IActiveScript *m_Engine;
-	List m_IfObjArr;
+	List		   m_IfObjArr;
 };

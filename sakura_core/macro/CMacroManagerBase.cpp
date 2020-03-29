@@ -11,8 +11,8 @@
 	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
 	freely, subject to the following restrictions:
 
 		1. The origin of this software must not be misrepresented;
@@ -21,7 +21,7 @@
 		   in the product documentation would be appreciated but is
 		   not required.
 
-		2. Altered source versions must be plainly marked as such, 
+		2. Altered source versions must be plainly marked as such,
 		   and must not be misrepresented as being the original software.
 
 		3. This notice may not be removed or altered from any source
@@ -29,36 +29,34 @@
 */
 #include "StdAfx.h"
 #include "CMacroManagerBase.h"
-#include "view/CEditView.h"
-#include "cmd/CViewCommander_inline.h"
 #include "COpeBlk.h"
+#include "cmd/CViewCommander_inline.h"
+#include "view/CEditView.h"
 
 // CMacroBeforeAfter
 
-void CMacroBeforeAfter::ExecKeyMacroBefore( class CEditView* pcEditView, int flags )
+void CMacroBeforeAfter::ExecKeyMacroBefore(class CEditView *pcEditView, int flags)
 {
-	COpeBlk* opeBlk = pcEditView->m_cCommander.GetOpeBlk();
-	if( opeBlk ){
+	COpeBlk *opeBlk = pcEditView->m_cCommander.GetOpeBlk();
+	if (opeBlk) {
 		m_nOpeBlkCount = opeBlk->GetRefCount();
-	}else{
+	} else {
 		m_nOpeBlkCount = 0;
 	}
 	m_bDrawSwitchOld = pcEditView->GetDrawSwitch();
 }
 
-void CMacroBeforeAfter::ExecKeyMacroAfter( class CEditView* pcEditView, int flags, bool bRet )
+void CMacroBeforeAfter::ExecKeyMacroAfter(class CEditView *pcEditView, int flags, bool bRet)
 {
-	if( 0 < m_nOpeBlkCount ){
-		COpeBlk* opeBlk = pcEditView->m_cCommander.GetOpeBlk();
-		if( opeBlk == NULL ){
-			pcEditView->m_cCommander.SetOpeBlk(new COpeBlk());
+	if (0 < m_nOpeBlkCount) {
+		COpeBlk *opeBlk = pcEditView->m_cCommander.GetOpeBlk();
+		if (opeBlk == NULL) { pcEditView->m_cCommander.SetOpeBlk(new COpeBlk()); }
+		if (pcEditView->m_cCommander.GetOpeBlk()->GetRefCount() != m_nOpeBlkCount) {
+			pcEditView->m_cCommander.GetOpeBlk()->SetRefCount(m_nOpeBlkCount);
 		}
-		if( pcEditView->m_cCommander.GetOpeBlk()->GetRefCount() != m_nOpeBlkCount ){
-			pcEditView->m_cCommander.GetOpeBlk()->SetRefCount( m_nOpeBlkCount );
-		}
-	}else{
-		COpeBlk* opeBlk = pcEditView->m_cCommander.GetOpeBlk();
-		if( opeBlk ){
+	} else {
+		COpeBlk *opeBlk = pcEditView->m_cCommander.GetOpeBlk();
+		if (opeBlk) {
 			opeBlk->SetRefCount(1); // 強制的にリセットするため1を指定
 			pcEditView->SetUndoBuffer();
 		}
@@ -70,13 +68,12 @@ void CMacroBeforeAfter::ExecKeyMacroAfter( class CEditView* pcEditView, int flag
 //	デフォルトのコンストラクタ・デストラクタ
 
 CMacroManagerBase::CMacroManagerBase()
- : m_nReady( false )
+	: m_nReady(false)
 {}
 
-CMacroManagerBase::~CMacroManagerBase()
-{}
+CMacroManagerBase::~CMacroManagerBase() {}
 
-void CMacroManagerBase::ExecKeyMacro2( class CEditView* pcEditView, int flags )
+void CMacroManagerBase::ExecKeyMacro2(class CEditView *pcEditView, int flags)
 {
 	ExecKeyMacroBefore(pcEditView, flags);
 	bool b = ExecKeyMacro(pcEditView, flags);

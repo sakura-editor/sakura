@@ -11,8 +11,8 @@
 	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
 	freely, subject to the following restrictions:
 
 		1. The origin of this software must not be misrepresented;
@@ -21,7 +21,7 @@
 		   in the product documentation would be appreciated but is
 		   not required.
 
-		2. Altered source versions must be plainly marked as such, 
+		2. Altered source versions must be plainly marked as such,
 		   and must not be misrepresented as being the original software.
 
 		3. This notice may not be removed or altered from any source
@@ -30,9 +30,9 @@
 
 #pragma once
 
-#include "dlg/CDialog.h"
 #include "config/maxdata.h" // MAX_KEYWORDSET_PER_TYPE
- 
+#include "dlg/CDialog.h"
+
 class CKeyWordSetMgr;
 
 /*
@@ -49,16 +49,15 @@ class CDlgKeywordSelect final : public CDialog
 public:
 	CDlgKeywordSelect();
 	~CDlgKeywordSelect();
-	int DoModal( HINSTANCE hInstance, HWND hwndParent, int* pnSet );
+	int DoModal(HINSTANCE hInstance, HWND hwndParent, int *pnSet);
 
 protected:
+	BOOL   OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
+	BOOL   OnBnClicked(int wID) override;
+	int	   GetData(void) override;
+	void   SetData(void) override;
+	LPVOID GetHelpIdTable(void) override;
 
-	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
-	BOOL OnBnClicked(int wID) override;
-	int  GetData( void ) override;
-	void SetData( void ) override;
-	LPVOID GetHelpIdTable( void ) override;
-
-	int m_nSet[ KEYWORD_SELECT_NUM ];
-	CKeyWordSetMgr*	m_pCKeyWordSetMgr;
+	int				m_nSet[KEYWORD_SELECT_NUM];
+	CKeyWordSetMgr *m_pCKeyWordSetMgr;
 };

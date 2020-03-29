@@ -14,8 +14,8 @@
 	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
 	freely, subject to the following restrictions:
 
 		1. The origin of this software must not be misrepresented;
@@ -24,7 +24,7 @@
 		   in the product documentation would be appreciated but is
 		   not required.
 
-		2. Altered source versions must be plainly marked as such, 
+		2. Altered source versions must be plainly marked as such,
 		   and must not be misrepresented as being the original software.
 
 		3. This notice may not be removed or altered from any source
@@ -34,9 +34,9 @@
 #pragma once
 
 #include <Windows.h>
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -48,42 +48,42 @@ class CProfile
 {
 	//文字列型
 	typedef std::wstring wstring;
-	typedef std::string string;
+	typedef std::string	 string;
 
-	typedef std::pair< wstring, wstring > PAIR_STR_STR;
-	typedef std::map< wstring, wstring > MAP_STR_STR;
+	typedef std::pair<wstring, wstring> PAIR_STR_STR;
+	typedef std::map<wstring, wstring>	MAP_STR_STR;
 	struct Section
 	{
-		wstring     strSectionName;
+		wstring		strSectionName;
 		MAP_STR_STR mapEntries;
 	};
 
 public:
 	CProfile() {}
 	~CProfile() {}
-	void Init( void );
-	bool IsReadingMode( void ) { return m_bRead; }
-	void SetReadingMode( void ) { m_bRead = true; }
-	void SetWritingMode( void ) { m_bRead = false; }
-	bool ReadProfile( const WCHAR* );
-	bool ReadProfileRes( const WCHAR*, const WCHAR*, std::vector<std::wstring>* = NULL );				// 200/5/19 Uchi
-	bool WriteProfile( const WCHAR*, const WCHAR* pszComment);
+	void Init(void);
+	bool IsReadingMode(void) { return m_bRead; }
+	void SetReadingMode(void) { m_bRead = true; }
+	void SetWritingMode(void) { m_bRead = false; }
+	bool ReadProfile(const WCHAR *);
+	bool ReadProfileRes(const WCHAR *, const WCHAR *, std::vector<std::wstring> * = NULL); // 200/5/19 Uchi
+	bool WriteProfile(const WCHAR *, const WCHAR *pszComment);
 
-	void DUMP( void );
+	void DUMP(void);
 
 protected:
-	void ReadOneline( const wstring& line );
-	bool _WriteFile( const wstring& strFilename, const std::vector< wstring >& vecLine);
+	void ReadOneline(const wstring &line);
+	bool _WriteFile(const wstring &strFilename, const std::vector<wstring> &vecLine);
 
-	bool GetProfileDataImp( const wstring& strSectionName, const wstring& strEntryKey, wstring& strEntryValue);
+	bool GetProfileDataImp(const wstring &strSectionName, const wstring &strEntryKey, wstring &strEntryValue);
 
-	bool SetProfileDataImp( const wstring& strSectionName, const wstring& strEntryKey, const wstring& strEntryValue );
+	bool SetProfileDataImp(const wstring &strSectionName, const wstring &strEntryKey, const wstring &strEntryValue);
 
 protected:
 	// メンバ変数
-	wstring					m_strProfileName;	//!< 最後に読み書きしたファイル名
-	std::vector< Section >	m_ProfileData;
-	bool					m_bRead;			//!< モード(true=読み込み/false=書き出し)
+	wstring				 m_strProfileName; //!< 最後に読み書きしたファイル名
+	std::vector<Section> m_ProfileData;
+	bool				 m_bRead; //!< モード(true=読み込み/false=書き出し)
 };
 
 #define _INI_T LTEXT

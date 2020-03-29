@@ -13,10 +13,10 @@
 
 #pragma once
 
-#include "global.h"
+#include "CEditApp.h"
 #include "CProcess.h"
 #include "extmodule/CMigemo.h"
-#include "CEditApp.h"
+#include "global.h"
 #include "util/design_template.h"
 class CEditWnd;
 
@@ -25,13 +25,14 @@ class CEditWnd;
 -----------------------------------------------------------------------*/
 /*!
 	@brief エディタプロセスクラス
-	
+
 	エディタプロセスはCEditWndクラスのインスタンスを作る。
 */
-class CNormalProcess final : public CProcess {
+class CNormalProcess final : public CProcess
+{
 public:
 	//コンストラクタ・デストラクタ
-	CNormalProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine );
+	CNormalProcess(HINSTANCE hInstance, LPCWSTR lpCmdLine);
 	~CNormalProcess();
 
 protected:
@@ -43,8 +44,8 @@ protected:
 protected:
 	//実装補助
 	HANDLE _GetInitializeMutex() const; // 2002/2/8 aroka
-	void OpenFiles(HWND hwnd);
+	void   OpenFiles(HWND hwnd);
 
 private:
-	CEditApp*	m_pcEditApp;	//2007.10.23 kobake
+	CEditApp *m_pcEditApp; // 2007.10.23 kobake
 };

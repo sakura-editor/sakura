@@ -36,19 +36,20 @@ public:
 	static void Draw3dRect(HDC hdc, int x, int y, int cx, int cy, COLORREF clrTopLeft, COLORREF clrBottomRight);
 	static void FillSolidRect(HDC hdc, int x, int y, int cx, int cy, COLORREF clr);
 
-//	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* メッセージディスパッチャ */
+	//	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* メッセージディスパッチャ */
 
 private:
-	int			m_bVertical;	/* 垂直分割ボックスか */
-	int			m_nDragPosY;
-	int			m_nDragPosX;
+	int m_bVertical; /* 垂直分割ボックスか */
+	int m_nDragPosY;
+	int m_nDragPosX;
+
 protected:
 	/* 仮想関数 */
 
 	/* 仮想関数 メッセージ処理 詳しくは実装を参照 */
-	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;/* 描画処理 */
-	LRESULT OnLButtonDown(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;// WM_LBUTTONDOWN
-	LRESULT OnMouseMove(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;// WM_MOUSEMOVE
-	LRESULT OnLButtonUp(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;//WM_LBUTTONUP
-	LRESULT OnLButtonDblClk(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;//WM_LBUTTONDBLCLK
+	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;		 /* 描画処理 */
+	LRESULT OnLButtonDown(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;	 // WM_LBUTTONDOWN
+	LRESULT OnMouseMove(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;	 // WM_MOUSEMOVE
+	LRESULT OnLButtonUp(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;	 // WM_LBUTTONUP
+	LRESULT OnLButtonDblClk(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override; // WM_LBUTTONDBLCLK
 };

@@ -25,8 +25,8 @@
 #pragma once
 
 //ビルド(コンパイル)設定
-//2007.10.18 kobake 作成
-//2009.09.10 syat メモリリークチェックを追加
+// 2007.10.18 kobake 作成
+// 2009.09.10 syat メモリリークチェックを追加
 
 /*!
 	厳格なintを使うかどうか。
@@ -51,19 +51,19 @@
 //! USE_UNFIXED_FONT を定義すると、フォント選択ダイアログで等幅フォント以外も選べるようになる
 //#define USE_UNFIXED_FONT
 
-//UNICODE BOOL定数.
-static const bool UNICODE_BOOL=true;
+// UNICODE BOOL定数.
+static const bool UNICODE_BOOL = true;
 
-//DebugMonitorLib(仮)を使うかどうか
+// DebugMonitorLib(仮)を使うかどうか
 //#define USE_DEBUGMON
 
-//newされた領域をわざと汚すかどうか (デバッグ用)
-#if defined(_MSC_VER) &&  defined(_DEBUG)
+// newされた領域をわざと汚すかどうか (デバッグ用)
+#if defined(_MSC_VER) && defined(_DEBUG)
 #define FILL_STRANGE_IN_NEW_MEMORY
 #endif
 
-//crtdbg.hによるメモリーリークチェックを使うかどうか (デバッグ用)
-#if defined(_MSC_VER) &&  defined(_DEBUG)
+// crtdbg.hによるメモリーリークチェックを使うかどうか (デバッグ用)
+#if defined(_MSC_VER) && defined(_DEBUG)
 #define USE_LEAK_CHECK_WITH_CRTDBG
 #endif
 
@@ -76,35 +76,26 @@ static const bool UNICODE_BOOL=true;
 
 //デバッグ検証用：newされた領域をわざと汚す。2007.11.27 kobake
 #ifdef FILL_STRANGE_IN_NEW_MEMORY
-	void* operator new(
-		size_t const size,
-		int const    block_use,
-		char const*  file_name,
-		int const    line_number
-		);
-	void* operator new[](size_t const size,
-		int const    block_use,
-		char const*  file_name,
-		int const    line_number
-		);
+void *operator new(size_t const size, int const block_use, char const *file_name, int const line_number);
+void *operator new[](size_t const size, int const block_use, char const *file_name, int const line_number);
 #endif
 
-//crtdbg.hによるメモリーリークチェックを使うかどうか (デバッグ用)
+// crtdbg.hによるメモリーリークチェックを使うかどうか (デバッグ用)
 #ifdef USE_LEAK_CHECK_WITH_CRTDBG
-	//Cランタイムの機能を使ってメモリリークを検出する
-	//  メモリリークチェックの結果出力を得るには
-	//    wWinMainの最後で_CrtDumpMemoryLeaks()を呼び出すか
-	//    wWinMainの最初で_CrtSetDbgFlag()を呼び出す必要がある。
-	//see https://docs.microsoft.com/en-us/visualstudio/debugger/finding-memory-leaks-using-the-crt-library
-	#define _CRTDBG_MAP_ALLOC
-	#include <stdlib.h>
-	#include <crtdbg.h>
+// Cランタイムの機能を使ってメモリリークを検出する
+//  メモリリークチェックの結果出力を得るには
+//    wWinMainの最後で_CrtDumpMemoryLeaks()を呼び出すか
+//    wWinMainの最初で_CrtSetDbgFlag()を呼び出す必要がある。
+// see https://docs.microsoft.com/en-us/visualstudio/debugger/finding-memory-leaks-using-the-crt-library
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
 
-    #define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
-    // Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the
-    // allocations to be of _CLIENT_BLOCK type
+#define DBG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
+// Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the
+// allocations to be of _CLIENT_BLOCK type
 #else
-    #define DBG_NEW new
+#define DBG_NEW new
 #endif
 
 #if _WIN64

@@ -25,11 +25,11 @@
 
 #include "StdAfx.h"
 #include "module.h"
-#include "util/os.h"
 #include "util/file.h"
-#include <Shlwapi.h>	// 2006.06.17 ryoji
+#include "util/os.h"
+#include <Shlwapi.h> // 2006.06.17 ryoji
 
-/*! 
+/*!
 	カレントディレクトリを実行ファイルの場所に移動
 	@date 2010.08.28 Moca 新規作成
 */
@@ -37,20 +37,18 @@ void ChangeCurrentDirectoryToExeDir()
 {
 	WCHAR szExeDir[_MAX_PATH];
 	szExeDir[0] = L'\0';
-	GetExedir( szExeDir, NULL );
-	if( szExeDir[0] ){
-		::SetCurrentDirectory( szExeDir );
-	}else{
+	GetExedir(szExeDir, NULL);
+	if (szExeDir[0]) {
+		::SetCurrentDirectory(szExeDir);
+	} else {
 		// 移動できないときはSYSTEM32(9xではSYSTEM)に移動
 		szExeDir[0] = L'\0';
-		int n = ::GetSystemDirectory( szExeDir, _MAX_PATH );
-		if( n && n < _MAX_PATH ){
-			::SetCurrentDirectory( szExeDir );
-		}
+		int n		= ::GetSystemDirectory(szExeDir, _MAX_PATH);
+		if (n && n < _MAX_PATH) { ::SetCurrentDirectory(szExeDir); }
 	}
 }
 
-/*! 
+/*!
 	@date 2010.08.28 Moca 新規作成
 */
 HMODULE LoadLibraryExedir(LPCWSTR pszDll)
@@ -58,7 +56,7 @@ HMODULE LoadLibraryExedir(LPCWSTR pszDll)
 	CCurrentDirectoryBackupPoint dirBack;
 	// DLL インジェクション対策としてEXEのフォルダに移動する
 	ChangeCurrentDirectoryToExeDir();
-	return ::LoadLibrary( pszDll );
+	return ::LoadLibrary(pszDll);
 }
 
 /*!	シェルやコモンコントロール DLL のバージョン番号を取得
@@ -72,38 +70,32 @@ HMODULE LoadLibraryExedir(LPCWSTR pszDll)
 DWORD GetDllVersion(LPCWSTR lpszDllName)
 {
 	HINSTANCE hinstDll;
-	DWORD dwVersion = 0;
+	DWORD	  dwVersion = 0;
 
 	/* For security purposes, LoadLibrary should be provided with a
 	   fully-qualified path to the DLL. The lpszDllName variable should be
 	   tested to ensure that it is a fully qualified path before it is used. */
 	hinstDll = LoadLibraryExedir(lpszDllName);
 
-	if(hinstDll)
-	{
+	if (hinstDll) {
 		DLLGETVERSIONPROC pDllGetVersion;
-		pDllGetVersion = (DLLGETVERSIONPROC)GetProcAddress(hinstDll,
-						  "DllGetVersion");
+		pDllGetVersion = (DLLGETVERSIONPROC)GetProcAddress(hinstDll, "DllGetVersion");
 
 		/* Because some DLLs might not implement this function, you
 		must test for it explicitly. Depending on the particular
 		DLL, the lack of a DllGetVersion function can be a useful
 		indicator of the version. */
 
-		if(pDllGetVersion)
-		{
+		if (pDllGetVersion) {
 			DLLVERSIONINFO dvi;
-			HRESULT hr;
+			HRESULT		   hr;
 
 			ZeroMemory(&dvi, sizeof(dvi));
 			dvi.cbSize = sizeof(dvi);
 
 			hr = (*pDllGetVersion)(&dvi);
 
-			if(SUCCEEDED(hr))
-			{
-			   dwVersion = PACKVERSION(dvi.dwMajorVersion, dvi.dwMinorVersion);
-			}
+			if (SUCCEEDED(hr)) { dwVersion = PACKVERSION(dvi.dwMajorVersion, dvi.dwMinorVersion); }
 		}
 
 		FreeLibrary(hinstDll);
@@ -113,99 +105,79 @@ DWORD GetDllVersion(LPCWSTR lpszDllName)
 
 /*!
 	@brief アプリケーションアイコンの取得
-	
+
 	アイコンファイルが存在する場合はそこから，無い場合は
 	リソースファイルから取得する
-	
+
 	@param hInst [in] Instance Handle
 	@param nResource [in] デフォルトアイコン用Resource ID
 	@param szFile [in] アイコンファイル名
 	@param bSmall [in] true: small icon (SM_CXSMICON) / false: large icon (SM_CXICON)
-	
+
 	@return アイコンハンドル．失敗した場合はNULL．
-	
+
 	@date 2002.12.02 genta 新規作成
 	@date 2007.05.20 ryoji iniファイルパスを優先
 	@author genta
 */
-HICON GetAppIcon( HINSTANCE hInst, int nResource, const WCHAR* szFile, bool bSmall )
+HICON GetAppIcon(HINSTANCE hInst, int nResource, const WCHAR *szFile, bool bSmall)
 {
 	// サイズの設定
-	int size = GetSystemMetrics( bSmall ? SM_CXSMICON : SM_CXICON );
+	int size = GetSystemMetrics(bSmall ? SM_CXSMICON : SM_CXICON);
 
 	WCHAR szPath[_MAX_PATH];
 	HICON hIcon;
 
 	// ファイルからの読み込みをまず試みる
-	GetInidirOrExedir( szPath, szFile );
+	GetInidirOrExedir(szPath, szFile);
 
-	hIcon = (HICON)::LoadImage(
-		NULL,
-		szPath,
-		IMAGE_ICON,
-		size,
-		size,
-		LR_SHARED | LR_LOADFROMFILE
-	);
-	if( hIcon != NULL ){
-		return hIcon;
-	}
+	hIcon = (HICON)::LoadImage(NULL, szPath, IMAGE_ICON, size, size, LR_SHARED | LR_LOADFROMFILE);
+	if (hIcon != NULL) { return hIcon; }
 
 	//	ファイルからの読み込みに失敗したらリソースから取得
-	hIcon = (HICON)::LoadImage(
-		hInst,
-		MAKEINTRESOURCE(nResource),
-		IMAGE_ICON,
-		size,
-		size,
-		LR_SHARED
-	);
-	
+	hIcon = (HICON)::LoadImage(hInst, MAKEINTRESOURCE(nResource), IMAGE_ICON, size, size, LR_SHARED);
+
 	return hIcon;
 }
 
-struct VS_VERSION_INFO_HEAD {
-	WORD	wLength;
-	WORD	wValueLength;
-	WORD	bText;
-	WCHAR	szKey[16];
+struct VS_VERSION_INFO_HEAD
+{
+	WORD			 wLength;
+	WORD			 wValueLength;
+	WORD			 bText;
+	WCHAR			 szKey[16];
 	VS_FIXEDFILEINFO Value;
 };
 
 /*! リソースから製品バージョンの取得
 	@date 2004.05.13 Moca 一度取得したらキャッシュする
 */
-void GetAppVersionInfo(
-	HINSTANCE	hInstance,
-	int			nVersionResourceID,
-	DWORD*		pdwProductVersionMS,
-	DWORD*		pdwProductVersionLS
-)
+void GetAppVersionInfo(HINSTANCE hInstance, int nVersionResourceID, DWORD *pdwProductVersionMS,
+					   DWORD *pdwProductVersionLS)
 {
-	HRSRC					hRSRC;
-	HGLOBAL					hgRSRC;
-	VS_VERSION_INFO_HEAD*	pVVIH;
+	HRSRC				  hRSRC;
+	HGLOBAL				  hgRSRC;
+	VS_VERSION_INFO_HEAD *pVVIH;
 	/* リソースから製品バージョンの取得 */
-	*pdwProductVersionMS = 0;
-	*pdwProductVersionLS = 0;
-	static bool bLoad = false;
+	*pdwProductVersionMS	 = 0;
+	*pdwProductVersionLS	 = 0;
+	static bool	 bLoad		 = false;
 	static DWORD dwVersionMS = 0;
 	static DWORD dwVersionLS = 0;
-	if( hInstance == NULL && bLoad ){
+	if (hInstance == NULL && bLoad) {
 		*pdwProductVersionMS = dwVersionMS;
 		*pdwProductVersionLS = dwVersionLS;
 		return;
 	}
-	if( NULL != ( hRSRC = ::FindResource( hInstance, MAKEINTRESOURCE(nVersionResourceID), RT_VERSION ) )
-	 && NULL != ( hgRSRC = ::LoadResource( hInstance, hRSRC ) )
-	 && NULL != ( pVVIH = (VS_VERSION_INFO_HEAD*)::LockResource( hgRSRC ) )
-	){
+	if (NULL != (hRSRC = ::FindResource(hInstance, MAKEINTRESOURCE(nVersionResourceID), RT_VERSION))
+		&& NULL != (hgRSRC = ::LoadResource(hInstance, hRSRC))
+		&& NULL != (pVVIH = (VS_VERSION_INFO_HEAD *)::LockResource(hgRSRC))) {
 		*pdwProductVersionMS = pVVIH->Value.dwProductVersionMS;
 		*pdwProductVersionLS = pVVIH->Value.dwProductVersionLS;
-		if( hInstance == NULL ){
+		if (hInstance == NULL) {
 			dwVersionMS = pVVIH->Value.dwProductVersionMS;
 			dwVersionLS = pVVIH->Value.dwProductVersionLS;
-			bLoad = true;
+			bLoad		= true;
 		}
 	}
 	return;

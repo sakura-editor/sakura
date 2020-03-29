@@ -26,17 +26,15 @@
 
 #include "doc/CDocTypeSetting.h" // ColorInfo !!
 
-class CViewFont{
+class CViewFont
+{
 public:
 	CViewFont(const LOGFONT *plf, bool bMiniMap = false)
 	{
 		m_bMiniMap = bMiniMap;
 		CreateFont(plf);
 	}
-	virtual ~CViewFont()
-	{
-		DeleteFont();
-	}
+	virtual ~CViewFont() { DeleteFont(); }
 
 	void UpdateFont(const LOGFONT *plf)
 	{
@@ -44,27 +42,21 @@ public:
 		CreateFont(plf);
 	}
 
-	HFONT ChooseFontHandle( int fontNo, SFontAttr sFontAttr ) const;		/* フォントを選ぶ */
+	HFONT ChooseFontHandle(int fontNo, SFontAttr sFontAttr) const; /* フォントを選ぶ */
 
-	HFONT GetFontHan() const
-	{
-		return m_hFont_HAN;
-	}
+	HFONT GetFontHan() const { return m_hFont_HAN; }
 
-	const LOGFONT& GetLogfont(int FontNo = 0) const
-	{
-		return m_LogFont;
-	}
+	const LOGFONT &GetLogfont(int FontNo = 0) const { return m_LogFont; }
 
 private:
 	void CreateFont(const LOGFONT *plf);
 	void DeleteFont();
 
-	HFONT	m_hFont_HAN;			/* 現在のフォントハンドル */
-	HFONT	m_hFont_HAN_BOLD;		/* 現在のフォントハンドル(太字) */
-	HFONT	m_hFont_HAN_UL;			/* 現在のフォントハンドル(下線) */
-	HFONT	m_hFont_HAN_BOLD_UL;	/* 現在のフォントハンドル(太字、下線) */
+	HFONT m_hFont_HAN;		   /* 現在のフォントハンドル */
+	HFONT m_hFont_HAN_BOLD;	   /* 現在のフォントハンドル(太字) */
+	HFONT m_hFont_HAN_UL;	   /* 現在のフォントハンドル(下線) */
+	HFONT m_hFont_HAN_BOLD_UL; /* 現在のフォントハンドル(太字、下線) */
 
-	LOGFONT	m_LogFont;
+	LOGFONT m_LogFont;
 	bool	m_bMiniMap;
 };

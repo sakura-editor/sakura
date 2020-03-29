@@ -17,8 +17,8 @@
 	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
 	freely, subject to the following restrictions:
 
 		1. The origin of this software must not be misrepresented;
@@ -27,7 +27,7 @@
 		   in the product documentation would be appreciated but is
 		   not required.
 
-		2. Altered source versions must be plainly marked as such, 
+		2. Altered source versions must be plainly marked as such,
 		   and must not be misrepresented as being the original software.
 
 		3. This notice may not be removed or altered from any source
@@ -38,46 +38,44 @@
 #include "_main/global.h"
 #include "env/DLLSHAREDATA.h"
 
-class CRecent{
+class CRecent
+{
 public:
-	virtual ~CRecent(){}
+	virtual ~CRecent() {}
 
 	//インスタンス管理
-	virtual void	Terminate() = 0;
+	virtual void Terminate() = 0;
 
 	//アイテム
-	virtual const WCHAR*	GetItemText( int nIndex ) const = 0;
-	virtual int				GetArrayCount() const = 0;
-	virtual int				GetItemCount() const = 0;
-	virtual void			DeleteAllItem() = 0;
-	virtual bool			DeleteItemsNoFavorite() = 0;
-	virtual bool			DeleteItem( int nIndex ) = 0;	//!< アイテムをクリア
-	virtual bool			AppendItemText(const WCHAR* pszText) = 0;
-	virtual bool			EditItemText( int nIndex, const WCHAR* pszText) = 0;
-	virtual size_t			GetTextMaxLength() const = 0;
+	virtual const WCHAR *GetItemText(int nIndex) const					= 0;
+	virtual int			 GetArrayCount() const							= 0;
+	virtual int			 GetItemCount() const							= 0;
+	virtual void		 DeleteAllItem()								= 0;
+	virtual bool		 DeleteItemsNoFavorite()						= 0;
+	virtual bool		 DeleteItem(int nIndex)							= 0; //!< アイテムをクリア
+	virtual bool		 AppendItemText(const WCHAR *pszText)			= 0;
+	virtual bool		 EditItemText(int nIndex, const WCHAR *pszText) = 0;
+	virtual size_t		 GetTextMaxLength() const						= 0;
 
-	int FindItemByText(const WCHAR* pszText) const
+	int FindItemByText(const WCHAR *pszText) const
 	{
 		int n = GetItemCount();
-		for(int i=0;i<n;i++){
-			if(wcscmp(GetItemText(i),pszText)==0)return i;
+		for (int i = 0; i < n; i++) {
+			if (wcscmp(GetItemText(i), pszText) == 0) return i;
 		}
 		return -1;
 	}
 
 	//お気に入り
-	virtual bool	SetFavorite( int nIndex, bool bFavorite = true ) = 0;	//!< お気に入りに設定
-	virtual bool	IsFavorite(int nIndex) const = 0;						//!< お気に入りか調べる
+	virtual bool SetFavorite(int nIndex, bool bFavorite = true) = 0; //!< お気に入りに設定
+	virtual bool IsFavorite(int nIndex) const					= 0; //!< お気に入りか調べる
 
 	//その他
-	virtual int		GetViewCount() const = 0;
-	virtual bool	UpdateView() = 0;
+	virtual int	 GetViewCount() const = 0;
+	virtual bool UpdateView()		  = 0;
 
 	// 共有メモリアクセス
-	DLLSHAREDATA*	GetShareData()
-	{
-		return &GetDllShareData();
-	}
+	DLLSHAREDATA *GetShareData() { return &GetDllShareData(); }
 };
 
 #include "CRecentImp.h"

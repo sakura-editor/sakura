@@ -34,23 +34,23 @@ extern const WCHAR g_szGStrAppName[];
 extern const CHAR  g_szGStrAppNameA[];
 extern const WCHAR g_szGStrAppNameW[];
 
-#define GSTR_APPNAME    g_szGStrAppName		//!< アプリ名の文字列 (TCHAR版)
-#define GSTR_APPNAME_A  g_szGStrAppNameA	//!< アプリ名の文字列 (CHAR版)
-#define GSTR_APPNAME_W  g_szGStrAppNameW	//!< アプリ名の文字列 (UNICODE版)
+#define GSTR_APPNAME   g_szGStrAppName	//!< アプリ名の文字列 (TCHAR版)
+#define GSTR_APPNAME_A g_szGStrAppNameA //!< アプリ名の文字列 (CHAR版)
+#define GSTR_APPNAME_W g_szGStrAppNameW //!< アプリ名の文字列 (UNICODE版)
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      テキストエリア                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 // Feb. 18, 2003 genta 最大値の定数化と値変更
-const int LINESPACE_MAX = 128;
+const int LINESPACE_MAX	  = 128;
 const int COLUMNSPACE_MAX = 64;
 
 //	Aug. 14, 2005 genta 定数定義追加
 // 2007.09.07 kobake 定数名変更: MAXLINESIZE→MAXLINEKETAS
 // 2007.09.07 kobake 定数名変更: MINLINESIZE→MINLINEKETAS
-const int MAXLINEKETAS		= 10240;	//!< 1行の桁数の最大値
-const int MINLINEKETAS		= 10;		//!< 1行の桁数の最小値
+const int MAXLINEKETAS = 10240; //!< 1行の桁数の最大値
+const int MINLINEKETAS = 10;	//!< 1行の桁数の最小値
 
 // 2014.08.02 定数定義追加 katze
 const int LINENUMWIDTH_MIN = 2;

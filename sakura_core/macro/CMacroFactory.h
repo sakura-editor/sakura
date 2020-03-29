@@ -12,8 +12,8 @@
 	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
 	freely, subject to the following restrictions:
 
 		1. The origin of this software must not be misrepresented;
@@ -22,7 +22,7 @@
 		   in the product documentation would be appreciated but is
 		   not required.
 
-		2. Altered source versions must be plainly marked as such, 
+		2. Altered source versions must be plainly marked as such,
 		   and must not be misrepresented as being the original software.
 
 		3. This notice may not be removed or altered from any source
@@ -31,20 +31,20 @@
 
 #pragma once
 
-#include <map>
-#include <list>
-#include <string>
 #include "util/design_template.h"
+#include <list>
+#include <map>
+#include <string>
 
 class CMacroManagerBase;
 
 /*!
 	@brief マクロHandler生成クラス
-	
+
 	@par 初期化
 	CMacroManagerBase::declare() により，MacroEngineのCreaterの登録
 	RegisterEngine() 及び 対応拡張子の登録 RegisterExt() が呼び出される．
-	
+
 	@par 呼び出し
 	CMacroFactory::Create()を拡張子を引数にして呼び出すと対応する
 	マクロエンジンが返される．得られたEngineに対してLoadKeyMacro()及び
@@ -52,20 +52,21 @@ class CMacroManagerBase;
 
 	Singleton
 */
-class CMacroFactory : public TSingleton<CMacroFactory> {
+class CMacroFactory : public TSingleton<CMacroFactory>
+{
 	friend class TSingleton<CMacroFactory>;
 	CMacroFactory();
 
 public:
-	typedef CMacroManagerBase* (*Creator)(const WCHAR*);
+	typedef CMacroManagerBase *(*Creator)(const WCHAR *);
 
 	bool RegisterCreator(Creator f);
 	// Jan. 31, 2004 genta
 	// バイナリサイズ削減のためm_mMacroExtsを削除
-	//bool RegisterExt( const char*, Creator );
+	// bool RegisterExt( const char*, Creator );
 	bool Unregister(Creator f);
 
-	CMacroManagerBase* Create(const WCHAR* ext);
+	CMacroManagerBase *Create(const WCHAR *ext);
 
 private:
 	std::wstring Ext2Key(const WCHAR *ext);
@@ -77,7 +78,7 @@ private:
 
 	// Jan. 31, 2004 genta
 	// バイナリサイズ削減のため
-	//MacroTypeRep m_mMacroExts;	/*!< 拡張子対応表 */
+	// MacroTypeRep m_mMacroExts;	/*!< 拡張子対応表 */
 	/*!
 		Creatorリスト
 		@date 2002.08.25 genta 追加

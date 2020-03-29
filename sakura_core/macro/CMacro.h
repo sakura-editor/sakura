@@ -33,61 +33,69 @@
 
 #pragma once
 
-#include <Windows.h>
-#include <ObjIdl.h>  // VARIANT等
 #include "func/Funccode.h"
+#include <ObjIdl.h> // VARIANT等
+#include <Windows.h>
 
 class CTextOutputStream;
 class CEditView;
 
-enum EMacroParamType{
+enum EMacroParamType
+{
 	EMacroParamTypeNull,
 	EMacroParamTypeInt,
 	EMacroParamTypeStr,
 };
-struct CMacroParam{
-	WCHAR*			m_pData;
-	CMacroParam*	m_pNext;
+struct CMacroParam
+{
+	WCHAR *			m_pData;
+	CMacroParam *	m_pNext;
 	int				m_nDataLen;
 	EMacroParamType m_eType;
 
-	CMacroParam():m_pData(NULL), m_pNext(NULL), m_nDataLen(0), m_eType(EMacroParamTypeNull){}
-	CMacroParam( const CMacroParam& obj ){
-		if( obj.m_pData ){
+	CMacroParam()
+		: m_pData(NULL)
+		, m_pNext(NULL)
+		, m_nDataLen(0)
+		, m_eType(EMacroParamTypeNull)
+	{}
+	CMacroParam(const CMacroParam &obj)
+	{
+		if (obj.m_pData) {
 			m_pData = new WCHAR[obj.m_nDataLen + 1];
-		}else{
+		} else {
 			m_pData = NULL;
 		}
-		m_pNext = NULL;
+		m_pNext	   = NULL;
 		m_nDataLen = obj.m_nDataLen;
-		m_eType = obj.m_eType;
+		m_eType	   = obj.m_eType;
 	}
-	~CMacroParam(){
-		Clear();
-	}
-	void Clear(){
+	~CMacroParam() { Clear(); }
+	void Clear()
+	{
 		delete[] m_pData;
-		m_pData = NULL;
+		m_pData	   = NULL;
 		m_nDataLen = 0;
-		m_eType = EMacroParamTypeNull;
+		m_eType	   = EMacroParamTypeNull;
 	}
-	void SetStringParam( const WCHAR* szParam, int nLength = -1 );
-	void SetIntParam( const int nParam );
+	void SetStringParam(const WCHAR *szParam, int nLength = -1);
+	void SetIntParam(const int nParam);
 };
 
 /*! @brief キーボードマクロの1コマンド
 
 	引数をリスト構造にして、いくつでも持てるようにしてみました。
 	スタックにするのが通例なのかもしれません（よくわかりません）。
-	
+
 	今後、制御構造が入っても困らないようにしようと思ったのですが、挫折しました。
-	
+
 	さて、このクラスは次のような前提で動作している。
 
 	@li 引数のリストを、m_pParamTopからのリスト構造で保持。
 	@li 引数を新たに追加するには、AddParam()を使用する。
 	  AddParamにどんな値が渡されてもよいように準備するコト。
-	  渡された値が数値なのか、文字列へのポインタなのかは、m_nFuncID（機能 ID）によって、このクラス内で判別し、よろしくやること。
+	  渡された値が数値なのか、文字列へのポインタなのかは、m_nFuncID（機能
+   ID）によって、このクラス内で判別し、よろしくやること。
 	@li 引数は、CMacro内部ではすべて文字列で保持すること（数値97は、"97"として保持）（いまのところ）
 */
 class CMacro
@@ -96,36 +104,38 @@ public:
 	/*
 	||  Constructors
 	*/
-	CMacro( EFunctionCode nFuncID );	//	機能IDを指定して初期化
+	CMacro(EFunctionCode nFuncID); //	機能IDを指定して初期化
 	~CMacro();
 	void ClearMacroParam();
 
-	void SetNext(CMacro* pNext){ m_pNext = pNext; }
-	CMacro* GetNext(){ return m_pNext; }
+	void	SetNext(CMacro *pNext) { m_pNext = pNext; }
+	CMacro *GetNext() { return m_pNext; }
 	// 2007.07.20 genta : flags追加
-	bool Exec( CEditView* pcEditView, int flags ) const; //2007.09.30 kobake const追加
-	void Save( HINSTANCE hInstance, CTextOutputStream& out ) const; //2007.09.30 kobake const追加
-	
-	void AddLParam( const LPARAM* lParam, const CEditView* pcEditView  );	//@@@ 2002.2.2 YAZAKI pcEditViewも渡す
-	void AddStringParam( const WCHAR* szParam, int nLength = -1 );
-	void AddIntParam( const int nParam );
-	int GetParamCount() const;
+	bool Exec(CEditView *pcEditView, int flags) const;			  // 2007.09.30 kobake const追加
+	void Save(HINSTANCE hInstance, CTextOutputStream &out) const; // 2007.09.30 kobake const追加
 
-	static bool HandleCommand( CEditView *View, EFunctionCode ID, const WCHAR* Argument[], const int ArgLengths[], const int ArgSize );
-	static bool HandleFunction( CEditView *View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result);
-	//2009.10.29 syat HandleCommandとHandleFunctionの引数を少しそろえた
+	void AddLParam(const LPARAM *lParam, const CEditView *pcEditView); //@@@ 2002.2.2 YAZAKI pcEditViewも渡す
+	void AddStringParam(const WCHAR *szParam, int nLength = -1);
+	void AddIntParam(const int nParam);
+	int	 GetParamCount() const;
+
+	static bool HandleCommand(CEditView *View, EFunctionCode ID, const WCHAR *Argument[], const int ArgLengths[],
+							  const int ArgSize);
+	static bool HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize,
+							   VARIANT &Result);
+	// 2009.10.29 syat HandleCommandとHandleFunctionの引数を少しそろえた
 
 	/*
 	||  Attributes & Operations
 	*/
 protected:
-	static WCHAR* GetParamAt(CMacroParam*, int);
+	static WCHAR *GetParamAt(CMacroParam *, int);
 
 	/*
 	||  実装ヘルパ関数
 	*/
-	EFunctionCode	m_nFuncID;		//	機能ID
-	CMacroParam*	m_pParamTop;	//	パラメータ
-	CMacroParam*	m_pParamBot;
-	CMacro*			m_pNext;		//	次のマクロへのポインタ
+	EFunctionCode m_nFuncID;   //	機能ID
+	CMacroParam * m_pParamTop; //	パラメータ
+	CMacroParam * m_pParamBot;
+	CMacro *	  m_pNext; //	次のマクロへのポインタ
 };

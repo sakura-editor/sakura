@@ -14,9 +14,9 @@
 
 #pragma once
 
-#include "global.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
+#include "global.h"
 
 #ifdef MINIDUMP_TYPE
 #define USE_CRASHDUMP
@@ -28,43 +28,40 @@
 /*!
 	@brief プロセス基底クラス
 */
-class CProcess : public TSingleInstance<CProcess> {
+class CProcess : public TSingleInstance<CProcess>
+{
 public:
-	CProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine );
+	CProcess(HINSTANCE hInstance, LPCWSTR lpCmdLine);
 	bool Run();
-	virtual ~CProcess(){}
+	virtual ~CProcess() {}
 	virtual void RefreshString();
+
 protected:
 	CProcess();
 	virtual bool InitializeProcess();
-	virtual bool MainLoop() = 0;
+	virtual bool MainLoop()		 = 0;
 	virtual void OnExitProcess() = 0;
 
 protected:
-	void			SetMainWindow(HWND hwnd){ m_hWnd = hwnd; }
+	void SetMainWindow(HWND hwnd) { m_hWnd = hwnd; }
 #ifdef USE_CRASHDUMP
-	int				WriteDump( PEXCEPTION_POINTERS pExceptPtrs );
+	int WriteDump(PEXCEPTION_POINTERS pExceptPtrs);
 #endif
 public:
-	HINSTANCE		GetProcessInstance() const{ return m_hInstance; }
-	CShareData&		GetShareData()   { return *m_pcShareData; }
-	HWND			GetMainWindow() const{ return m_hWnd; }
+	HINSTANCE	GetProcessInstance() const { return m_hInstance; }
+	CShareData &GetShareData() { return *m_pcShareData; }
+	HWND		GetMainWindow() const { return m_hWnd; }
 
 private:
-	HINSTANCE	m_hInstance;
-	HWND		m_hWnd;
+	HINSTANCE m_hInstance;
+	HWND	  m_hWnd;
 #ifdef USE_CRASHDUMP
-	BOOL (WINAPI *m_pfnMiniDumpWriteDump)(
-		HANDLE hProcess,
-		DWORD ProcessId,
-		HANDLE hFile,
-		MINIDUMP_TYPE DumpType,
-		PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam,
-		PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam,
-		PMINIDUMP_CALLBACK_INFORMATION CallbackParam
-		);
+	BOOL(WINAPI *m_pfnMiniDumpWriteDump)
+	(HANDLE hProcess, DWORD ProcessId, HANDLE hFile, MINIDUMP_TYPE DumpType,
+	 PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam, PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam,
+	 PMINIDUMP_CALLBACK_INFORMATION CallbackParam);
 #endif
-	CShareData*		m_pcShareData;
+	CShareData *m_pcShareData;
 
 private:
 };

@@ -35,14 +35,9 @@
 
 CRecentSearch::CRecentSearch()
 {
-	Create(
-		GetShareData()->m_sSearchKeywords.m_aSearchKeys.dataPtr(),
-		GetShareData()->m_sSearchKeywords.m_aSearchKeys.dataPtr()->GetBufferCount(),
-		&GetShareData()->m_sSearchKeywords.m_aSearchKeys._GetSizeRef(),
-		NULL,
-		MAX_SEARCHKEY,
-		NULL
-	);
+	Create(GetShareData()->m_sSearchKeywords.m_aSearchKeys.dataPtr(),
+		   GetShareData()->m_sSearchKeywords.m_aSearchKeys.dataPtr()->GetBufferCount(),
+		   &GetShareData()->m_sSearchKeywords.m_aSearchKeys._GetSizeRef(), NULL, MAX_SEARCHKEY, NULL);
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -54,45 +49,29 @@ CRecentSearch::CRecentSearch()
 
 	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
-const WCHAR* CRecentSearch::GetItemText( int nIndex ) const
-{
-	return *GetItem(nIndex);
-}
+const WCHAR *CRecentSearch::GetItemText(int nIndex) const { return *GetItem(nIndex); }
 
-bool CRecentSearch::DataToReceiveType( LPCWSTR* dst, const CSearchString* src ) const
+bool CRecentSearch::DataToReceiveType(LPCWSTR *dst, const CSearchString *src) const
 {
 	*dst = *src;
 	return true;
 }
 
-bool CRecentSearch::TextToDataType( CSearchString* dst, LPCWSTR pszText ) const
+bool CRecentSearch::TextToDataType(CSearchString *dst, LPCWSTR pszText) const
 {
-	if( false == ValidateReceiveType(pszText) ){
-		return false;
-	}
+	if (false == ValidateReceiveType(pszText)) { return false; }
 	CopyItem(dst, pszText);
 	return true;
 }
 
-int CRecentSearch::CompareItem( const CSearchString* p1, LPCWSTR p2 ) const
-{
-	return wcscmp(*p1,p2);
-}
+int CRecentSearch::CompareItem(const CSearchString *p1, LPCWSTR p2) const { return wcscmp(*p1, p2); }
 
-void CRecentSearch::CopyItem( CSearchString* dst, LPCWSTR src ) const
-{
-	wcscpy(*dst,src);
-}
+void CRecentSearch::CopyItem(CSearchString *dst, LPCWSTR src) const { wcscpy(*dst, src); }
 
-bool CRecentSearch::ValidateReceiveType( LPCWSTR p ) const
+bool CRecentSearch::ValidateReceiveType(LPCWSTR p) const
 {
-	if( GetTextMaxLength() <= wcslen(p) ){
-		return false;
-	}
+	if (GetTextMaxLength() <= wcslen(p)) { return false; }
 	return true;
 }
 
-size_t CRecentSearch::GetTextMaxLength() const
-{
-	return m_nTextMaxLength;
-}
+size_t CRecentSearch::GetTextMaxLength() const { return m_nTextMaxLength; }

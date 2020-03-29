@@ -1,124 +1,104 @@
 ﻿/*! @file */
 #include "StdAfx.h"
 #include "CWriteManager.h"
-#include <list>
-#include "doc/logic/CDocLineMgr.h"
-#include "doc/logic/CDocLine.h"
 #include "CEditApp.h" // CAppExitException
-#include "window/CEditWnd.h"
-#include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"
+#include "charset/CCodeFactory.h"
 #include "charset/CUnicode.h"
-#include "io/CIoBridge.h"
+#include "doc/logic/CDocLine.h"
+#include "doc/logic/CDocLineMgr.h"
 #include "io/CBinaryStream.h"
+#include "io/CIoBridge.h"
 #include "util/window.h"
+#include "window/CEditWnd.h"
+#include <list>
 
 /*! バッファ内容をファイルに書き出す (テスト用)
 
 	@note Windows用にコーディングしてある
 	@date 2003.07.26 ryoji BOM引数追加
 */
-EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
-	const CDocLineMgr&	pcDocLineMgr,	//!< [in]
-	const SSaveInfo&	sSaveInfo		//!< [in]
+EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(const CDocLineMgr &pcDocLineMgr, //!< [in]
+														 const SSaveInfo &	sSaveInfo	  //!< [in]
 )
 {
-	EConvertResult		nRetVal = RESULT_COMPLETE;
-	std::unique_ptr<CCodeBase> pcCodeBase( CCodeFactory::CreateCodeBase(sSaveInfo.eCharCode,0) );
+	EConvertResult			   nRetVal = RESULT_COMPLETE;
+	std::unique_ptr<CCodeBase> pcCodeBase(CCodeFactory::CreateCodeBase(sSaveInfo.eCharCode, 0));
 
 	{
 		// 変換テスト
-		CNativeW buffer = L"abcde";
-		CMemory tmp;
-		EConvertResult e = pcCodeBase->UnicodeToCode( buffer, &tmp );
-		if(e==RESULT_FAILURE){
-			nRetVal=RESULT_FAILURE;
-			ErrorMessage(
-				CEditWnd::getInstance()->GetHwnd(),
-				LS(STR_FILESAVE_CONVERT_ERROR),
-				sSaveInfo.cFilePath.c_str()
-			);
+		CNativeW	   buffer = L"abcde";
+		CMemory		   tmp;
+		EConvertResult e = pcCodeBase->UnicodeToCode(buffer, &tmp);
+		if (e == RESULT_FAILURE) {
+			nRetVal = RESULT_FAILURE;
+			ErrorMessage(CEditWnd::getInstance()->GetHwnd(), LS(STR_FILESAVE_CONVERT_ERROR),
+						 sSaveInfo.cFilePath.c_str());
 			return nRetVal;
 		}
 	}
 
-	try
-	{
+	try {
 		//ファイルオープン
-		CBinaryOutputStream out(sSaveInfo.cFilePath,true);
+		CBinaryOutputStream out(sSaveInfo.cFilePath, true);
 
 		//各行出力
-		int			nLineNumber = 0;
-		const CDocLine*	pcDocLine = pcDocLineMgr.GetDocLineTop();
+		int				nLineNumber = 0;
+		const CDocLine *pcDocLine	= pcDocLineMgr.GetDocLineTop();
 		// 1行目
 		{
 			++nLineNumber;
 			CMemory cmemOutputBuffer;
 			{
 				CNativeW cstrSrc;
-				CMemory cstrBomCheck;
-				pcCodeBase->GetBom( &cstrBomCheck );
-				if( sSaveInfo.bBomExist && 0 < cstrBomCheck.GetRawLength() ){
+				CMemory	 cstrBomCheck;
+				pcCodeBase->GetBom(&cstrBomCheck);
+				if (sSaveInfo.bBomExist && 0 < cstrBomCheck.GetRawLength()) {
 					// 1行目にはBOMを付加する。エンコーダでbomがある場合のみ付加する。
-					CUnicode().GetBom( cstrSrc._GetMemory() );
+					CUnicode().GetBom(cstrSrc._GetMemory());
 				}
-				if( pcDocLine ){
-					cstrSrc.AppendNativeData( pcDocLine->_GetDocLineDataWithEOL() );
-				}
-				EConvertResult e = pcCodeBase->UnicodeToCode( cstrSrc, &cmemOutputBuffer );
-				if(e==RESULT_LOSESOME){
-					nRetVal=RESULT_LOSESOME;
-				}
-				if(e==RESULT_FAILURE){
-					nRetVal=RESULT_FAILURE;
-					ErrorMessage(
-						CEditWnd::getInstance()->GetHwnd(),
-						LS(STR_FILESAVE_CONVERT_ERROR),
-						sSaveInfo.cFilePath.c_str()
-					);
+				if (pcDocLine) { cstrSrc.AppendNativeData(pcDocLine->_GetDocLineDataWithEOL()); }
+				EConvertResult e = pcCodeBase->UnicodeToCode(cstrSrc, &cmemOutputBuffer);
+				if (e == RESULT_LOSESOME) { nRetVal = RESULT_LOSESOME; }
+				if (e == RESULT_FAILURE) {
+					nRetVal = RESULT_FAILURE;
+					ErrorMessage(CEditWnd::getInstance()->GetHwnd(), LS(STR_FILESAVE_CONVERT_ERROR),
+								 sSaveInfo.cFilePath.c_str());
 					throw CError_FileWrite();
 				}
 			}
 			out.Write(cmemOutputBuffer.GetRawPtr(), cmemOutputBuffer.GetRawLength());
-			if( pcDocLine ){
-				pcDocLine = pcDocLine->GetNextLine();
-			}
+			if (pcDocLine) { pcDocLine = pcDocLine->GetNextLine(); }
 		}
-		CMemory cmemOutputBuffer;
+		CMemory			cmemOutputBuffer;
 		constexpr DWORD userInterfaceInterval = 33;
-		DWORD prevTime = GetTickCount() + userInterfaceInterval;
-		while( pcDocLine ){
+		DWORD			prevTime			  = GetTickCount() + userInterfaceInterval;
+		while (pcDocLine) {
 			++nLineNumber;
 
 			//経過通知
 			DWORD currTime = GetTickCount();
 			DWORD diffTime = currTime - prevTime;
-			if(diffTime >= userInterfaceInterval){
+			if (diffTime >= userInterfaceInterval) {
 				prevTime = currTime;
 				NotifyProgress(nLineNumber * 100 / pcDocLineMgr.GetLineCount());
 				// 処理中のユーザー操作を可能にする
-				if( !::BlockingHook( NULL ) ){
+				if (!::BlockingHook(NULL)) {
 					throw CAppExitException(); //中断検出
 				}
 			}
 
-			//1行出力 -> cmemOutputBuffer
+			// 1行出力 -> cmemOutputBuffer
 			{
 				// 書き込み時のコード変換 cstrSrc -> cmemOutputBuffer
-				EConvertResult e = pcCodeBase->UnicodeToCode(
-					pcDocLine->_GetDocLineDataWithEOL(),
-					&cmemOutputBuffer
-				);
-				if(e==RESULT_LOSESOME){
-					if(nRetVal==RESULT_COMPLETE)nRetVal=RESULT_LOSESOME;
+				EConvertResult e = pcCodeBase->UnicodeToCode(pcDocLine->_GetDocLineDataWithEOL(), &cmemOutputBuffer);
+				if (e == RESULT_LOSESOME) {
+					if (nRetVal == RESULT_COMPLETE) nRetVal = RESULT_LOSESOME;
 				}
-				if(e==RESULT_FAILURE){
-					nRetVal=RESULT_FAILURE;
-					ErrorMessage(
-						CEditWnd::getInstance()->GetHwnd(),
-						LS(STR_FILESAVE_CONVERT_ERROR),
-						sSaveInfo.cFilePath.c_str()
-					);
+				if (e == RESULT_FAILURE) {
+					nRetVal = RESULT_FAILURE;
+					ErrorMessage(CEditWnd::getInstance()->GetHwnd(), LS(STR_FILESAVE_CONVERT_ERROR),
+								 sSaveInfo.cFilePath.c_str());
 					break;
 				}
 			}
@@ -132,19 +112,12 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 
 		//ファイルクローズ
 		out.Close();
-	}
-	catch(CError_FileOpen){ //########### 現時点では、この例外が発生した場合は正常に動作できない
-		ErrorMessage(
-			CEditWnd::getInstance()->GetHwnd(),
-			LS(STR_SAVEAGENT_OTHER_APP),
-			sSaveInfo.cFilePath.c_str()
-		);
+	} catch (CError_FileOpen) { //########### 現時点では、この例外が発生した場合は正常に動作できない
+		ErrorMessage(CEditWnd::getInstance()->GetHwnd(), LS(STR_SAVEAGENT_OTHER_APP), sSaveInfo.cFilePath.c_str());
 		nRetVal = RESULT_FAILURE;
-	}
-	catch(CError_FileWrite){
+	} catch (CError_FileWrite) {
 		nRetVal = RESULT_FAILURE;
-	}
-	catch(CAppExitException){
+	} catch (CAppExitException) {
 		//中断検出
 		return RESULT_FAILURE;
 	}

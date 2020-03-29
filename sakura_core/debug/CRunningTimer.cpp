@@ -15,9 +15,9 @@
 */
 
 #include "StdAfx.h"
-#include <MMSystem.h>
 #include "debug/CRunningTimer.h"
 #include "_main/global.h"
+#include <MMSystem.h>
 
 #ifdef _DEBUG
 
@@ -25,15 +25,15 @@
 
 int CRunningTimer::m_nNestCount = 0;
 
-CRunningTimer::CRunningTimer( const char* pszText )
+CRunningTimer::CRunningTimer(const char *pszText)
 {
 	Reset();
-	if( pszText != NULL )
-		strcpy( m_szText, pszText );
+	if (pszText != NULL)
+		strcpy(m_szText, pszText);
 	else
 		m_szText[0] = '\0';
 	m_nDeapth = m_nNestCount++;
-	MYTRACE( L"%3d:\"%hs\" : Enter \n", m_nDeapth, m_szText );
+	MYTRACE(L"%3d:\"%hs\" : Enter \n", m_nDeapth, m_szText);
 	return;
 }
 
@@ -44,21 +44,15 @@ CRunningTimer::~CRunningTimer()
 	return;
 }
 
-void CRunningTimer::Reset()
-{
-	m_nStartTime = timeGetTime();
-}
+void CRunningTimer::Reset() { m_nStartTime = timeGetTime(); }
 
-DWORD CRunningTimer::Read()
-{
-	return timeGetTime() - m_nStartTime;
-}
+DWORD CRunningTimer::Read() { return timeGetTime() - m_nStartTime; }
 
 /*!
 	@date 2002.10.15 genta
 */
-void CRunningTimer::WriteTrace(const char* msg) const
+void CRunningTimer::WriteTrace(const char *msg) const
 {
-	MYTRACE( L"%3d:\"%hs\", %d㍉秒 : %hs\n", m_nDeapth, m_szText, timeGetTime() - m_nStartTime, msg );
+	MYTRACE(L"%3d:\"%hs\", %d㍉秒 : %hs\n", m_nDeapth, m_szText, timeGetTime() - m_nStartTime, msg);
 }
 #endif

@@ -32,29 +32,29 @@
 
 // http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Copy_Constructors
 // A macro to disallow the copy constructor and operator= functions
-#define DISALLOW_COPY_AND_ASSIGN(TypeName) \
-  TypeName(const TypeName&) = delete;      \
-  TypeName& operator=(const TypeName&) = delete; \
-  TypeName(TypeName&&) = delete;           \
-  TypeName& operator=(TypeName&&) = delete;
+#define DISALLOW_COPY_AND_ASSIGN(TypeName)                                                                             \
+	TypeName(const TypeName &) = delete;                                                                               \
+	TypeName &operator=(const TypeName &) = delete;                                                                    \
+	TypeName(TypeName &&)				  = delete;                                                                    \
+	TypeName &operator=(TypeName &&) = delete;
 
 /*!
 	Singletonパターン
 
 	2008.03.03 kobake 作成
 */
-template <class T>
-class TSingleton{
+template<class T> class TSingleton
+{
 public:
 	//公開インターフェース
-	static T* getInstance()
+	static T *getInstance()
 	{
 		static T instance;
 		return &instance;
 	}
 
 protected:
-	TSingleton(){}
+	TSingleton() {}
 	DISALLOW_COPY_AND_ASSIGN(TSingleton);
 };
 
@@ -64,58 +64,59 @@ protected:
 
 	2007.10.23 kobake 作成
 */
-template <class T>
-class TSingleInstance{
+template<class T> class TSingleInstance
+{
 public:
 	//公開インターフェース
-	static T* getInstance(){ return gm_instance; } //!< 作成済みのインスタンスを返す。インスタンスが存在しなければ NULL。
+	static T *getInstance()
+	{
+		return gm_instance;
+	} //!< 作成済みのインスタンスを返す。インスタンスが存在しなければ NULL。
 
 protected:
 	//※2個以上のインスタンスは想定していません。assertが破綻を検出します。
 	TSingleInstance()
 	{
-		assert(gm_instance==NULL);
-		gm_instance=static_cast<T*>(this);
+		assert(gm_instance == NULL);
+		gm_instance = static_cast<T *>(this);
 	}
 	~TSingleInstance()
 	{
 		assert(gm_instance);
-		gm_instance=NULL;
+		gm_instance = NULL;
 	}
+
 private:
-	static T* gm_instance;
+	static T *gm_instance;
 };
-template <class T>
-T* TSingleInstance<T>::gm_instance = NULL;
+template<class T> T *TSingleInstance<T>::gm_instance = NULL;
 
 //記録もする
 #include <vector>
-template <class T> class TInstanceHolder{
+template<class T> class TInstanceHolder
+{
 public:
-	TInstanceHolder()
-	{
-		gm_table.push_back(static_cast<T*>(this));
-	}
+	TInstanceHolder() { gm_table.push_back(static_cast<T *>(this)); }
 	virtual ~TInstanceHolder()
 	{
-		for(size_t i=0;i<gm_table.size();i++){
-			if(gm_table[i]==static_cast<T*>(this)){
-				gm_table.erase(gm_table.begin()+i);
+		for (size_t i = 0; i < gm_table.size(); i++) {
+			if (gm_table[i] == static_cast<T *>(this)) {
+				gm_table.erase(gm_table.begin() + i);
 				break;
 			}
 		}
 	}
-	static int GetInstanceCount(){ return (int)gm_table.size(); }
-	static T* GetInstance(int nIndex)
+	static int GetInstanceCount() { return (int)gm_table.size(); }
+	static T * GetInstance(int nIndex)
 	{
-		if(nIndex>=0 && nIndex<(int)gm_table.size()){
+		if (nIndex >= 0 && nIndex < (int)gm_table.size()) {
 			return gm_table[nIndex];
-		}else{
+		} else {
 			return 0;
 		}
 	}
 
 private:
-	static std::vector<T*> gm_table;
+	static std::vector<T *> gm_table;
 };
-template <class T> std::vector<T*> TInstanceHolder<T>::gm_table;
+template<class T> std::vector<T *> TInstanceHolder<T>::gm_table;

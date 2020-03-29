@@ -16,13 +16,13 @@
 /*!
 	現在のカーソルを保存し、カーソルを砂時計にする
 */
-CWaitCursor::CWaitCursor( HWND hWnd, bool bEnable )
+CWaitCursor::CWaitCursor(HWND hWnd, bool bEnable)
 {
 	m_bEnable = bEnable;
-	if( ! bEnable ) return;
-	SetCapture( hWnd );
-	m_hCursor = ::LoadCursor( NULL, IDC_WAIT );
-	m_hCursorOld = ::SetCursor( m_hCursor );
+	if (!bEnable) return;
+	SetCapture(hWnd);
+	m_hCursor	 = ::LoadCursor(NULL, IDC_WAIT);
+	m_hCursorOld = ::SetCursor(m_hCursor);
 	return;
 }
 
@@ -31,8 +31,8 @@ CWaitCursor::CWaitCursor( HWND hWnd, bool bEnable )
 */
 CWaitCursor::~CWaitCursor()
 {
-	if( m_bEnable ){
+	if (m_bEnable) {
 		ReleaseCapture();
-		::SetCursor( m_hCursorOld );
+		::SetCursor(m_hCursorOld);
 	}
 }

@@ -1,8 +1,8 @@
 ﻿/*! @file */
 #include "StdAfx.h"
 #include "os.h"
-#include "util/module.h"
 #include "extmodule/CUxTheme.h"
+#include "util/module.h"
 
 /*!	Comctl32.dll のバージョン番号を取得
 
@@ -12,10 +12,9 @@
 	@date 2006.06.17 ryoji 新規
 */
 static DWORD s_dwComctl32Version = PACKVERSION(0, 0);
-DWORD GetComctl32Version()
+DWORD		 GetComctl32Version()
 {
-	if( PACKVERSION(0, 0) == s_dwComctl32Version )
-		s_dwComctl32Version = GetDllVersion(L"Comctl32.dll");
+	if (PACKVERSION(0, 0) == s_dwComctl32Version) s_dwComctl32Version = GetDllVersion(L"Comctl32.dll");
 	return s_dwComctl32Version;
 }
 
@@ -31,7 +30,7 @@ BOOL IsVisualStyle()
 {
 	// ロードした Comctl32.dll が Ver 6 以上で画面設定がビジュアルスタイル指定になっている場合だけ
 	// ビジュアルスタイル表示になる（マニフェストで指定しないと Comctl32.dll は 6 未満になる）
-	return ( (GetComctl32Version() >= PACKVERSION(6, 0)) && CUxTheme::getInstance()->IsThemeActive() );
+	return ((GetComctl32Version() >= PACKVERSION(6, 0)) && CUxTheme::getInstance()->IsThemeActive());
 }
 
 /*!	指定ウィンドウでビジュアルスタイルを使わないようにする
@@ -41,9 +40,9 @@ BOOL IsVisualStyle()
 	@author ryoji
 	@date 2006.06.23 ryoji 新規
 */
-void PreventVisualStyle( HWND hWnd )
+void PreventVisualStyle(HWND hWnd)
 {
-	CUxTheme::getInstance()->SetWindowTheme( hWnd, L"", L"" );
+	CUxTheme::getInstance()->SetWindowTheme(hWnd, L"", L"");
 	return;
 }
 
@@ -57,9 +56,7 @@ void MyInitCommonControls()
 	// 利用するコモンコントロールの種類をビットフラグで指定する
 	INITCOMMONCONTROLSEX icex;
 	icex.dwSize = sizeof(icex);
-	icex.dwICC = ICC_WIN95_CLASSES
-		| ICC_COOL_CLASSES
-		;
+	icex.dwICC	= ICC_WIN95_CLASSES | ICC_COOL_CLASSES;
 
 	// コモンコントロールライブラリを初期化する
 	auto bSuccess = ::InitCommonControlsEx(&icex);
@@ -84,70 +81,68 @@ void MyInitCommonControls()
 	該当する領域情報は出力しない。呼び出し元は欲しいものだけを指定すればよい。
 */
 //	From Here May 01, 2004 genta MutiMonitor
-bool GetMonitorWorkRect(HWND hWnd, LPRECT prcWork, LPRECT prcMonitor/* = NULL*/)
+bool GetMonitorWorkRect(HWND hWnd, LPRECT prcWork, LPRECT prcMonitor /* = NULL*/)
 {
 	// 2006.04.21 ryoji Windows API 形式の関数呼び出しに変更（スタブに PSDK の MultiMon.h を利用）
-	HMONITOR hMon = ::MonitorFromWindow( hWnd, MONITOR_DEFAULTTONEAREST );
-	return GetMonitorWorkRect( hMon, prcWork, prcMonitor );
+	HMONITOR hMon = ::MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+	return GetMonitorWorkRect(hMon, prcWork, prcMonitor);
 }
 //	To Here May 01, 2004 genta
 
 //	From Here 2006.04.21 ryoji MutiMonitor
-bool GetMonitorWorkRect(LPCRECT prc, LPRECT prcWork, LPRECT prcMonitor/* = NULL*/)
+bool GetMonitorWorkRect(LPCRECT prc, LPRECT prcWork, LPRECT prcMonitor /* = NULL*/)
 {
-	HMONITOR hMon = ::MonitorFromRect( prc, MONITOR_DEFAULTTONEAREST );
-	return GetMonitorWorkRect( hMon, prcWork, prcMonitor );
+	HMONITOR hMon = ::MonitorFromRect(prc, MONITOR_DEFAULTTONEAREST);
+	return GetMonitorWorkRect(hMon, prcWork, prcMonitor);
 }
 
-bool GetMonitorWorkRect(POINT pt, LPRECT prcWork, LPRECT prcMonitor/* = NULL*/)
+bool GetMonitorWorkRect(POINT pt, LPRECT prcWork, LPRECT prcMonitor /* = NULL*/)
 {
-	HMONITOR hMon = ::MonitorFromPoint( pt, MONITOR_DEFAULTTONEAREST );
-	return GetMonitorWorkRect( hMon, prcWork, prcMonitor );
+	HMONITOR hMon = ::MonitorFromPoint(pt, MONITOR_DEFAULTTONEAREST);
+	return GetMonitorWorkRect(hMon, prcWork, prcMonitor);
 }
 
-bool GetMonitorWorkRect(HMONITOR hMon, LPRECT prcWork, LPRECT prcMonitor/* = NULL*/)
+bool GetMonitorWorkRect(HMONITOR hMon, LPRECT prcWork, LPRECT prcMonitor /* = NULL*/)
 {
 	MONITORINFO mi;
-	::ZeroMemory( &mi, sizeof( mi ));
-	mi.cbSize = sizeof( mi );
-	::GetMonitorInfo( hMon, &mi );
-	if( NULL != prcWork )
-		*prcWork = mi.rcWork;		// work area rectangle of the display monitor
-	if( NULL != prcMonitor )
-		*prcMonitor = mi.rcMonitor;	// display monitor rectangle
-	return ( mi.dwFlags == MONITORINFOF_PRIMARY ) ? true : false;
+	::ZeroMemory(&mi, sizeof(mi));
+	mi.cbSize = sizeof(mi);
+	::GetMonitorInfo(hMon, &mi);
+	if (NULL != prcWork) *prcWork = mi.rcWork;			// work area rectangle of the display monitor
+	if (NULL != prcMonitor) *prcMonitor = mi.rcMonitor; // display monitor rectangle
+	return (mi.dwFlags == MONITORINFOF_PRIMARY) ? true : false;
 }
 //	To Here 2006.04.21 ryoji MutiMonitor
 
 /*!
 	@brief レジストリから文字列を読み出す．
-	
+
 	@param Hive        [in]  HIVE
 	@param Path        [in]  レジストリキーへのパス
 	@param Item        [in]  レジストリアイテム名．NULLで標準のアイテム．
 	@param Buffer      [out] 取得文字列を格納する場所
 	@param BufferCount [in]  Bufferの指す領域のサイズ。文字単位。
-	
+
 	@retval true 値の取得に成功
 	@retval false 値の取得に失敗
-	
+
 	@author 鬼
 	@date 2002.09.10 genta CWSH.cppから移動
 */
-bool ReadRegistry(HKEY Hive, const WCHAR* Path, const WCHAR* Item, WCHAR* Buffer, unsigned BufferCount)
+bool ReadRegistry(HKEY Hive, const WCHAR *Path, const WCHAR *Item, WCHAR *Buffer, unsigned BufferCount)
 {
 	bool Result = false;
-	
+
 	HKEY Key;
-	if(RegOpenKeyEx(Hive, Path, 0, KEY_READ, &Key) == ERROR_SUCCESS)
-	{
+	if (RegOpenKeyEx(Hive, Path, 0, KEY_READ, &Key) == ERROR_SUCCESS) {
 		wmemset(Buffer, 0, BufferCount);
 
-		DWORD dwType = REG_SZ;
+		DWORD dwType	= REG_SZ;
 		DWORD dwDataLen = (BufferCount - 1) * sizeof(WCHAR); //※バイト単位！
-		
-		Result = (RegQueryValueEx(Key, Item, NULL, &dwType, reinterpret_cast<LPBYTE>(Buffer), &dwDataLen) == ERROR_SUCCESS);
-		
+
+		Result =
+			(RegQueryValueEx(Key, Item, NULL, &dwType, reinterpret_cast<LPBYTE>(Buffer), &dwDataLen) == ERROR_SUCCESS);
+
 		RegCloseKey(Key);
 	}
 	return Result;
@@ -157,48 +152,43 @@ bool ReadRegistry(HKEY Hive, const WCHAR* Path, const WCHAR* Item, WCHAR* Buffer
 //                      クリップボード                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//SetClipboardTextA,SetClipboardTextT 実装用テンプレート
-//2007.08.14 kobake UNICODE用に改造
+// SetClipboardTextA,SetClipboardTextT 実装用テンプレート
+// 2007.08.14 kobake UNICODE用に改造
 //
 /*! クリープボードにText形式でコピーする
 	@param hwnd    [in] クリップボードのオーナー
 	@param pszText [in] 設定するテキスト
 	@param nLength [in] 有効なテキストの長さ。文字単位。
-	
+
 	@retval true コピー成功
 	@retval false コピー失敗。場合によってはクリップボードに元の内容が残る
 	@date 2004.02.17 Moca 各所のソースを統合
 */
-template <class T>
-bool SetClipboardTextImp( HWND hwnd, const T* pszText, int nLength )
+template<class T> bool SetClipboardTextImp(HWND hwnd, const T *pszText, int nLength)
 {
-	HGLOBAL	hgClip;
-	T*		pszClip;
+	HGLOBAL hgClip;
+	T *		pszClip;
 
-	hgClip = ::GlobalAlloc( GMEM_MOVEABLE | GMEM_DDESHARE, (nLength + 1) * sizeof(T) );
-	if( NULL == hgClip ){
+	hgClip = ::GlobalAlloc(GMEM_MOVEABLE | GMEM_DDESHARE, (nLength + 1) * sizeof(T));
+	if (NULL == hgClip) { return false; }
+	pszClip = (T *)::GlobalLock(hgClip);
+	if (NULL == pszClip) {
+		::GlobalFree(hgClip);
 		return false;
 	}
-	pszClip = (T*)::GlobalLock( hgClip );
-	if( NULL == pszClip ){
-		::GlobalFree( hgClip );
-		return false;
-	}
-	auto_memcpy( pszClip, pszText, nLength );
+	auto_memcpy(pszClip, pszText, nLength);
 	pszClip[nLength] = 0;
-	::GlobalUnlock( hgClip );
-	if( !::OpenClipboard( hwnd ) ){
-		::GlobalFree( hgClip );
+	::GlobalUnlock(hgClip);
+	if (!::OpenClipboard(hwnd)) {
+		::GlobalFree(hgClip);
 		return false;
 	}
 	::EmptyClipboard();
-	if(sizeof(T)==sizeof(char)){
-		::SetClipboardData( CF_OEMTEXT, hgClip );
-	}
-	else if(sizeof(T)==sizeof(wchar_t)){
-		::SetClipboardData( CF_UNICODETEXT, hgClip );
-	}
-	else{
+	if (sizeof(T) == sizeof(char)) {
+		::SetClipboardData(CF_OEMTEXT, hgClip);
+	} else if (sizeof(T) == sizeof(wchar_t)) {
+		::SetClipboardData(CF_UNICODETEXT, hgClip);
+	} else {
 		assert(0); //※ここには来ない
 	}
 	::CloseClipboard();
@@ -206,61 +196,60 @@ bool SetClipboardTextImp( HWND hwnd, const T* pszText, int nLength )
 	return true;
 }
 
-bool SetClipboardText( HWND hwnd, const WCHAR* pszText, int nLength )
+bool SetClipboardText(HWND hwnd, const WCHAR *pszText, int nLength)
 {
-	return SetClipboardTextImp<WCHAR>(hwnd,pszText,nLength);
+	return SetClipboardTextImp<WCHAR>(hwnd, pszText, nLength);
 }
 
 /*
 	@date 2006.01.16 Moca 他のTYMEDが利用可能でも、取得できるように変更。
 	@note IDataObject::GetData() で tymed = TYMED_HGLOBAL を指定すること。
 */
-BOOL IsDataAvailable( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
+BOOL IsDataAvailable(LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat)
 {
-	FORMATETC	fe;
+	FORMATETC fe;
 
 	// 2006.01.16 Moca 他のTYMEDが利用可能でも、IDataObject::GetData()で
 	//  tymed = TYMED_HGLOBALを指定すれば問題ない
 	fe.cfFormat = cfFormat;
-	fe.ptd = NULL;
+	fe.ptd		= NULL;
 	fe.dwAspect = DVASPECT_CONTENT;
-	fe.lindex = -1;
-	fe.tymed = TYMED_HGLOBAL;
+	fe.lindex	= -1;
+	fe.tymed	= TYMED_HGLOBAL;
 	// 2006.03.16 Moca S_FALSEでも受け入れてしまうバグを修正(ファイルのドロップ等)
-	return S_OK == pDataObject->QueryGetData( &fe );
+	return S_OK == pDataObject->QueryGetData(&fe);
 }
 
-HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
+HGLOBAL GetGlobalData(LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat)
 {
 	FORMATETC fe;
 	fe.cfFormat = cfFormat;
-	fe.ptd = NULL;
+	fe.ptd		= NULL;
 	fe.dwAspect = DVASPECT_CONTENT;
-	fe.lindex = -1;
+	fe.lindex	= -1;
 	// 2006.01.16 Moca fe.tymed = -1からTYMED_HGLOBALに変更。
 	fe.tymed = TYMED_HGLOBAL;
 
-	HGLOBAL hDest = NULL;
+	HGLOBAL	  hDest = NULL;
 	STGMEDIUM stgMedium;
 	// 2006.03.16 Moca SUCCEEDEDマクロではS_FALSEのとき困るので、S_OKに変更
-	if( S_OK == pDataObject->GetData( &fe, &stgMedium ) ){
-		if( stgMedium.pUnkForRelease == NULL ){
-			if( stgMedium.tymed == TYMED_HGLOBAL )
-				hDest = stgMedium.hGlobal;
-		}else{
-			if( stgMedium.tymed == TYMED_HGLOBAL ){
-				DWORD nSize = ::GlobalSize( stgMedium.hGlobal );
-				hDest = ::GlobalAlloc( GMEM_SHARE|GMEM_MOVEABLE, nSize );
-				if( hDest != NULL ){
+	if (S_OK == pDataObject->GetData(&fe, &stgMedium)) {
+		if (stgMedium.pUnkForRelease == NULL) {
+			if (stgMedium.tymed == TYMED_HGLOBAL) hDest = stgMedium.hGlobal;
+		} else {
+			if (stgMedium.tymed == TYMED_HGLOBAL) {
+				DWORD nSize = ::GlobalSize(stgMedium.hGlobal);
+				hDest		= ::GlobalAlloc(GMEM_SHARE | GMEM_MOVEABLE, nSize);
+				if (hDest != NULL) {
 					// copy the bits
-					LPVOID lpSource = ::GlobalLock( stgMedium.hGlobal );
-					LPVOID lpDest = ::GlobalLock( hDest );
-					memcpy_raw( lpDest, lpSource, nSize );
-					::GlobalUnlock( hDest );
-					::GlobalUnlock( stgMedium.hGlobal );
+					LPVOID lpSource = ::GlobalLock(stgMedium.hGlobal);
+					LPVOID lpDest	= ::GlobalLock(hDest);
+					memcpy_raw(lpDest, lpSource, nSize);
+					::GlobalUnlock(hDest);
+					::GlobalUnlock(stgMedium.hGlobal);
 				}
 			}
-			::ReleaseStgMedium( &stgMedium );
+			::ReleaseStgMedium(&stgMedium);
 		}
 	}
 	return hDest;
@@ -277,35 +266,28 @@ HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
 	c:\windows\system\rsrc32.dll があるはずです。これは、リソースメータという Win32 アプリが、
 	Win16 の GetFreeSystemResources 関数を呼ぶ為の DLL です。これを使いましょう。
 */
-BOOL GetSystemResources(
-	int*	pnSystemResources,
-	int*	pnUserResources,
-	int*	pnGDIResources
-)
+BOOL GetSystemResources(int *pnSystemResources, int *pnUserResources, int *pnGDIResources)
 {
-	#define GFSR_SYSTEMRESOURCES	0x0000
-	#define GFSR_GDIRESOURCES		0x0001
-	#define GFSR_USERRESOURCES		0x0002
-	HINSTANCE	hlib;
-	int (CALLBACK *GetFreeSystemResources)( int );
+#define GFSR_SYSTEMRESOURCES 0x0000
+#define GFSR_GDIRESOURCES	 0x0001
+#define GFSR_USERRESOURCES	 0x0002
+	HINSTANCE hlib;
+	int(CALLBACK * GetFreeSystemResources)(int);
 
-	hlib = ::LoadLibraryExedir( L"RSRC32.dll" );
-	if( (INT_PTR)hlib > 32 ){
-		GetFreeSystemResources = (int (CALLBACK *)( int ))GetProcAddress(
-			hlib,
-			"_MyGetFreeSystemResources32@4"
-		);
-		if( GetFreeSystemResources != NULL ){
-			*pnSystemResources = GetFreeSystemResources( GFSR_SYSTEMRESOURCES );
-			*pnUserResources = GetFreeSystemResources( GFSR_USERRESOURCES );
-			*pnGDIResources = GetFreeSystemResources( GFSR_GDIRESOURCES );
-			::FreeLibrary( hlib );
+	hlib = ::LoadLibraryExedir(L"RSRC32.dll");
+	if ((INT_PTR)hlib > 32) {
+		GetFreeSystemResources = (int(CALLBACK *)(int))GetProcAddress(hlib, "_MyGetFreeSystemResources32@4");
+		if (GetFreeSystemResources != NULL) {
+			*pnSystemResources = GetFreeSystemResources(GFSR_SYSTEMRESOURCES);
+			*pnUserResources   = GetFreeSystemResources(GFSR_USERRESOURCES);
+			*pnGDIResources	   = GetFreeSystemResources(GFSR_GDIRESOURCES);
+			::FreeLibrary(hlib);
 			return TRUE;
-		}else{
-			::FreeLibrary( hlib );
+		} else {
+			::FreeLibrary(hlib);
 			return FALSE;
 		}
-	}else{
+	} else {
 		return FALSE;
 	}
 }
@@ -313,53 +295,45 @@ BOOL GetSystemResources(
 #if (WINVER < _WIN32_WINNT_WIN2K)
 // NTではリソースチェックを行わない
 /* システムリソースのチェック */
-BOOL CheckSystemResources( const WCHAR* pszAppName )
+BOOL CheckSystemResources(const WCHAR *pszAppName)
 {
-	int		nSystemResources;
-	int		nUserResources;
-	int		nGDIResources;
-	const WCHAR*	pszResourceName;
+	int			 nSystemResources;
+	int			 nUserResources;
+	int			 nGDIResources;
+	const WCHAR *pszResourceName;
 	/* システムリソースの取得 */
-	if( GetSystemResources( &nSystemResources, &nUserResources,	&nGDIResources ) ){
-//		MYTRACE( L"nSystemResources=%d\n", nSystemResources );
-//		MYTRACE( L"nUserResources=%d\n", nUserResources );
-//		MYTRACE( L"nGDIResources=%d\n", nGDIResources );
+	if (GetSystemResources(&nSystemResources, &nUserResources, &nGDIResources)) {
+		//		MYTRACE( L"nSystemResources=%d\n", nSystemResources );
+		//		MYTRACE( L"nUserResources=%d\n", nUserResources );
+		//		MYTRACE( L"nGDIResources=%d\n", nGDIResources );
 		pszResourceName = NULL;
-		if( nSystemResources <= 5 ){
+		if (nSystemResources <= 5) {
 			pszResourceName = L"システム ";
-		}else
-		if( nUserResources <= 5 ){
+		} else if (nUserResources <= 5) {
 			pszResourceName = L"ユーザー ";
-		}else
-		if( nGDIResources <= 5 ){
+		} else if (nGDIResources <= 5) {
 			pszResourceName = L"GDI ";
 		}
-		if( NULL != pszResourceName ){
+		if (NULL != pszResourceName) {
 			ErrorBeep();
 			ErrorBeep();
-			::MYMESSAGEBOX( NULL, MB_OK | /*MB_YESNO | */ MB_ICONSTOP | MB_APPLMODAL | MB_TOPMOST, pszAppName,
-				L"%sリソースが極端に不足しています。\n"
-				L"このまま%sを起動すると、正常に動作しない可能性があります。\n"
-				L"新しい%sの起動を中断します。\n"
-				L"\n"
-				L"システム リソース\t残り  %d%%\n"
-				L"User リソース\t残り  %d%%\n"
-				L"GDI リソース\t残り  %d%%\n\n",
-				pszResourceName,
-				pszAppName,
-				pszAppName,
-				nSystemResources,
-				nUserResources,
-				nGDIResources
-			);
-//			) ){
-				return FALSE;
-//			}
+			::MYMESSAGEBOX(NULL, MB_OK | /*MB_YESNO | */ MB_ICONSTOP | MB_APPLMODAL | MB_TOPMOST, pszAppName,
+						   L"%sリソースが極端に不足しています。\n"
+						   L"このまま%sを起動すると、正常に動作しない可能性があります。\n"
+						   L"新しい%sの起動を中断します。\n"
+						   L"\n"
+						   L"システム リソース\t残り  %d%%\n"
+						   L"User リソース\t残り  %d%%\n"
+						   L"GDI リソース\t残り  %d%%\n\n",
+						   pszResourceName, pszAppName, pszAppName, nSystemResources, nUserResources, nGDIResources);
+			//			) ){
+			return FALSE;
+			//			}
 		}
 	}
 	return TRUE;
 }
-#endif	// (WINVER < _WIN32_WINNT_WIN2K)
+#endif // (WINVER < _WIN32_WINNT_WIN2K)
 
 /*
 	https://docs.microsoft.com/en-us/windows/desktop/api/wow64apiset/nf-wow64apiset-iswow64process
@@ -367,8 +341,7 @@ BOOL CheckSystemResources( const WCHAR* pszAppName )
 BOOL IsWow64()
 {
 	BOOL bIsWow64 = FALSE;
-	if (!IsWow64Process(GetCurrentProcess(),&bIsWow64))
-	{
+	if (!IsWow64Process(GetCurrentProcess(), &bIsWow64)) {
 		// 失敗したら WOW64 はオフとみなす
 		bIsWow64 = FALSE;
 	}
@@ -383,40 +356,34 @@ BOOL IsWow64()
 
 CCurrentDirectoryBackupPoint::CCurrentDirectoryBackupPoint()
 {
-	int n = ::GetCurrentDirectory(_countof(m_szCurDir),m_szCurDir);
-	if(n>0 && n<_countof(m_szCurDir)){
-		//ok
-	}
-	else{
-		//ng
+	int n = ::GetCurrentDirectory(_countof(m_szCurDir), m_szCurDir);
+	if (n > 0 && n < _countof(m_szCurDir)) {
+		// ok
+	} else {
+		// ng
 		m_szCurDir[0] = L'\0';
 	}
 }
 
 CCurrentDirectoryBackupPoint::~CCurrentDirectoryBackupPoint()
 {
-	if(m_szCurDir[0]){
-		::SetCurrentDirectory(m_szCurDir);
-	}
+	if (m_szCurDir[0]) { ::SetCurrentDirectory(m_szCurDir); }
 }
 
 CDisableWow64FsRedirect::CDisableWow64FsRedirect(BOOL isOn)
-:	m_isSuccess(FALSE)
-,	m_OldValue(NULL)
+	: m_isSuccess(FALSE)
+	, m_OldValue(NULL)
 {
 	if (isOn && IsWow64()) {
 		m_isSuccess = Wow64DisableWow64FsRedirection(&m_OldValue);
-	}
-	else {
+	} else {
 		m_isSuccess = FALSE;
 	}
 }
 
 CDisableWow64FsRedirect::~CDisableWow64FsRedirect()
 {
-	if (m_isSuccess) {
-		Wow64RevertWow64FsRedirection(m_OldValue);
-	}
+	if (m_isSuccess) { Wow64RevertWow64FsRedirection(m_OldValue); }
 }
 
 BOOL IsPowerShellAvailable(void)
@@ -429,23 +396,19 @@ BOOL IsPowerShellAvailable(void)
 	CDisableWow64FsRedirect wow64Redirect(TRUE);
 #endif
 
-	WCHAR szFileBuff[MAX_PATH];
+	WCHAR  szFileBuff[MAX_PATH];
 	LPWSTR lpFilePart = NULL;
 
-	DWORD ret = ::SearchPath(
-		NULL,					// 検索パス
-		L"powershell.exe",	// ファイル名
-		NULL,					// ファイルの拡張子
-		MAX_PATH,				// バッファのサイズ
-		szFileBuff,				// 見つかったファイル名を格納するバッファ
-		&lpFilePart				// ファイルコンポーネント
+	DWORD ret = ::SearchPath(NULL,				// 検索パス
+							 L"powershell.exe", // ファイル名
+							 NULL,				// ファイルの拡張子
+							 MAX_PATH,			// バッファのサイズ
+							 szFileBuff,		// 見つかったファイル名を格納するバッファ
+							 &lpFilePart		// ファイルコンポーネント
 	);
-	if( ret != 0 && lpFilePart != NULL)
-	{
+	if (ret != 0 && lpFilePart != NULL) {
 		return TRUE;
-	}
-	else
-	{
+	} else {
 		return FALSE;
 	}
 }
@@ -457,15 +420,11 @@ BOOL IsPowerShellAvailable(void)
 	@param pBackup `nullptr` でなければ設定前のオープン状態を取得
 	@return	手続きが成功したら true 失敗したら false
 */
-BOOL ImeSetOpen(HWND hWnd, BOOL bOpen, BOOL* pBackup)
+BOOL ImeSetOpen(HWND hWnd, BOOL bOpen, BOOL *pBackup)
 {
 	HIMC hIMC = ImmGetContext(hWnd);
-	if (!hIMC) {
-		return FALSE;
-	}
-	if (pBackup) {
-		*pBackup = ImmGetOpenStatus(hIMC);
-	}
+	if (!hIMC) { return FALSE; }
+	if (pBackup) { *pBackup = ImmGetOpenStatus(hIMC); }
 	BOOL bRet = ImmSetOpenStatus(hIMC, bOpen);
 	bRet &= ImmReleaseContext(hWnd, hIMC);
 	return bRet;

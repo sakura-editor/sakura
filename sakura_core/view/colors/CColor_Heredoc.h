@@ -26,18 +26,20 @@
 
 #include "view/colors/CColorStrategy.h"
 
-class CColor_Heredoc final : public CColorStrategy{
+class CColor_Heredoc final : public CColorStrategy
+{
 public:
-	EColorIndexType GetStrategyColor() const override{ return COLORIDX_HEREDOC; }
-	CLayoutColorInfo* GetStrategyColorInfo() const override;
-	void InitStrategyStatus() override{ m_nCOMMENTEND = 0; }
-	void SetStrategyColorInfo(const CLayoutColorInfo*) override;
-	bool BeginColor(const CStringRef& cStr, int nPos) override;
-	bool Disp() const override{ return m_pTypeData->m_ColorInfoArr[COLORIDX_HEREDOC].m_bDisp; }
-	bool EndColor(const CStringRef& cStr, int nPos) override;
+	EColorIndexType	  GetStrategyColor() const override { return COLORIDX_HEREDOC; }
+	CLayoutColorInfo *GetStrategyColorInfo() const override;
+	void			  InitStrategyStatus() override { m_nCOMMENTEND = 0; }
+	void			  SetStrategyColorInfo(const CLayoutColorInfo *) override;
+	bool			  BeginColor(const CStringRef &cStr, int nPos) override;
+	bool			  Disp() const override { return m_pTypeData->m_ColorInfoArr[COLORIDX_HEREDOC].m_bDisp; }
+	bool			  EndColor(const CStringRef &cStr, int nPos) override;
+
 private:
-	std::wstring m_id;
-	int	     m_nSize;
-	const wchar_t* m_pszId;
-	int m_nCOMMENTEND;
+	std::wstring   m_id;
+	int			   m_nSize;
+	const wchar_t *m_pszId;
+	int			   m_nCOMMENTEND;
 };

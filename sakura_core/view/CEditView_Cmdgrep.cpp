@@ -15,35 +15,28 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include "view/CEditView.h"
-#include "doc/CEditDoc.h"
-#include "_main/CControlTray.h"
-#include "charset/charcode.h"
 #include "CEditApp.h"
 #include "CGrepAgent.h"
+#include "_main/CControlTray.h"
+#include "charset/charcode.h"
+#include "doc/CEditDoc.h"
+#include "view/CEditView.h"
 #include "sakura_rc.h"
 
 /*!
 	コマンドコードの変換(grep mode時)
 */
-void CEditView::TranslateCommand_grep(
-	EFunctionCode&	nCommand,
-	bool&			bRedraw,
-	LPARAM&			lparam1,
-	LPARAM&			lparam2,
-	LPARAM&			lparam3,
-	LPARAM&			lparam4
-)
+void CEditView::TranslateCommand_grep(EFunctionCode &nCommand, bool &bRedraw, LPARAM &lparam1, LPARAM &lparam2,
+									  LPARAM &lparam3, LPARAM &lparam4)
 {
-	if( ! CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode )
-		return;
+	if (!CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode) return;
 
-	if( nCommand == F_WCHAR ){
+	if (nCommand == F_WCHAR) {
 		//	Jan. 23, 2005 genta 文字判定忘れ
-		if( WCODE::IsLineDelimiter((wchar_t)lparam1, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol)
-				&& GetDllShareData().m_Common.m_sSearch.m_bGTJW_RETURN ){
+		if (WCODE::IsLineDelimiter((wchar_t)lparam1, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol)
+			&& GetDllShareData().m_Common.m_sSearch.m_bGTJW_RETURN) {
 			nCommand = F_TAGJUMP;
-			lparam1 = GetKeyState_Control()?1:0;
+			lparam1	 = GetKeyState_Control() ? 1 : 0;
 		}
 	}
 }

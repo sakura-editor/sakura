@@ -1,5 +1,5 @@
 ﻿/*! @file */
-//2007.09.24 kobake 作成
+// 2007.09.24 kobake 作成
 //設定ファイル等のテキスト入出力を行うためのクラス群。
 //.ini や .mac の入出力を扱うときに使うと良いです。
 //※「編集テキスト」を扱うためではなく、あくまでも、.iniや.macのような「設定ファイル」を扱う目的のクラス群です。
@@ -37,10 +37,11 @@
 class CCodeBase;
 
 //テキスト入力ストリーム (UTF-8, SJIS)
-class CTextInputStream : public CStream{
+class CTextInputStream : public CStream
+{
 public:
 	//コンストラクタ・デストラクタ
-	CTextInputStream(const WCHAR* pszPath);
+	CTextInputStream(const WCHAR *pszPath);
 	CTextInputStream();
 	virtual ~CTextInputStream();
 
@@ -53,25 +54,28 @@ private:
 
 //テキスト出力ストリーム
 // 2008.01.26 kobake 出力文字コードを任意で指定できるように変更
-class CTextOutputStream final : public COutputStream{
+class CTextOutputStream final : public COutputStream
+{
 public:
 	//コンストラクタ・デストラクタ
-	CTextOutputStream(const WCHAR* pszPath, ECodeType eCodeType = CODE_UTF8, bool bExceptionMode = false, bool bBom = true);
+	CTextOutputStream(const WCHAR *pszPath, ECodeType eCodeType = CODE_UTF8, bool bExceptionMode = false,
+					  bool bBom = true);
 	virtual ~CTextOutputStream();
 
 	//文字列書込。改行を入れたい場合は、文字列内に'\n'を含めること。(クラス側で適切な改行コードに変換して出力します)
-	void WriteString(const wchar_t* szData, int nLen = -1);
-	void WriteF(const wchar_t* format, ...);
+	void WriteString(const wchar_t *szData, int nLen = -1);
+	void WriteF(const wchar_t *format, ...);
 
 	//数値書込。(クラス側で適当に整形して出力します)
 	void WriteInt(int n);
 
 private:
-	CCodeBase* m_pcCodeBase;
+	CCodeBase *m_pcCodeBase;
 };
 
 //テキスト入力ストリーム。相対パスの場合はINIファイルのパスからの相対パスとして開く。
-class CTextInputStream_AbsIni final : public CTextInputStream{
+class CTextInputStream_AbsIni final : public CTextInputStream
+{
 public:
-	CTextInputStream_AbsIni(const WCHAR* pszPath, bool bOrExedir = true);
+	CTextInputStream_AbsIni(const WCHAR *pszPath, bool bOrExedir = true);
 };

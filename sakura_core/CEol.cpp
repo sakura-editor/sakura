@@ -12,8 +12,8 @@
 	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
 	freely, subject to the following restrictions:
 
 		1. The origin of this software must not be misrepresented;
@@ -22,7 +22,7 @@
 		   in the product documentation would be appreciated but is
 		   not required.
 
-		2. Altered source versions must be plainly marked as such, 
+		2. Altered source versions must be plainly marked as such,
 		   and must not be misrepresented as being the original software.
 
 		3. This notice may not be removed or altered from any source
@@ -33,13 +33,13 @@
 
 /*! 行終端子の配列 */
 const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
-	EOL_NONE			,	// == 0
-	EOL_CRLF			,	// == 2
-	EOL_LF				,	// == 1
-	EOL_CR				,	// == 1
-	EOL_NEL				,	// == 1
-	EOL_LS				,	// == 1
-	EOL_PS					// == 1
+	EOL_NONE, // == 0
+	EOL_CRLF, // == 2
+	EOL_LF,	  // == 1
+	EOL_CR,	  // == 1
+	EOL_NEL,  // == 1
+	EOL_LS,	  // == 1
+	EOL_PS	  // == 1
 };
 
 //-----------------------------------------------
@@ -47,31 +47,35 @@ const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
 //-----------------------------------------------
 
 const SEolDefinition g_aEolTable[] = {
-	{ L"改行無",	L"",			"",			0 },
-	{ L"CRLF",	L"\x0d\x0a",	"\x0d\x0a",	2 },
-	{ L"LF",		L"\x0a",		"\x0a",		1 },
-	{ L"CR",		L"\x0d",		"\x0d",		1 },
-	{ L"NEL",	L"\x85",		"",			1 },
-	{ L"LS",		L"\u2028",		"",			1 },
-	{ L"PS",		L"\u2029",		"",			1 },
+	{L"改行無", L"", "", 0},	 {L"CRLF", L"\x0d\x0a", "\x0d\x0a", 2},
+	{L"LF", L"\x0a", "\x0a", 1}, {L"CR", L"\x0d", "\x0d", 1},
+	{L"NEL", L"\x85", "", 1},	 {L"LS", L"\u2028", "", 1},
+	{L"PS", L"\u2029", "", 1},
 };
 
-struct SEolDefinitionForUniFile{
-	const char*	m_szDataW;
-	const char* m_szDataWB;
+struct SEolDefinitionForUniFile
+{
+	const char *m_szDataW;
+	const char *m_szDataWB;
 	int			m_nLen;
 
-	bool StartsWithW(const char* pData, int nLen) const{ return m_nLen<=nLen && 0==memcmp(pData,m_szDataW,m_nLen); }
-	bool StartsWithWB(const char* pData, int nLen) const{ return m_nLen<=nLen && 0==memcmp(pData,m_szDataWB,m_nLen); }
+	bool StartsWithW(const char *pData, int nLen) const
+	{
+		return m_nLen <= nLen && 0 == memcmp(pData, m_szDataW, m_nLen);
+	}
+	bool StartsWithWB(const char *pData, int nLen) const
+	{
+		return m_nLen <= nLen && 0 == memcmp(pData, m_szDataWB, m_nLen);
+	}
 };
 static const SEolDefinitionForUniFile g_aEolTable_uni_file[] = {
-	{ "",					"", 					0 },
-	{ "\x0d\x00\x0a\x00",	"\x00\x0d\x00\x0a",		4 },
-	{ "\x0a\x00",			"\x00\x0a",				2 },
-	{ "\x0d\x00",			"\x00\x0d",				2 },
-	{ "\x85\x00",			"\x00\x85",				2 },
-	{ "\x28\x20",			"\x20\x28",				2 },
-	{ "\x29\x20",			"\x20\x29",				2 },
+	{"", "", 0},
+	{"\x0d\x00\x0a\x00", "\x00\x0d\x00\x0a", 4},
+	{"\x0a\x00", "\x00\x0a", 2},
+	{"\x0d\x00", "\x00\x0d", 2},
+	{"\x85\x00", "\x00\x85", 2},
+	{"\x28\x20", "\x20\x28", 2},
+	{"\x29\x20", "\x20\x29", 2},
 };
 
 //-----------------------------------------------
@@ -84,12 +88,10 @@ static const SEolDefinitionForUniFile g_aEolTable_uni_file[] = {
 	@param nDataLen 調査対象文字列の長さ
 	@return 改行コードの種類。終端子が見つからなかったときはEOL_NONEを返す。
 */
-template <class T>
-EEolType GetEOLType( const T* pszData, int nDataLen )
+template<class T> EEolType GetEOLType(const T *pszData, int nDataLen)
 {
-	for( int i = 1; i < EOL_TYPE_NUM; ++i ){
-		if( g_aEolTable[i].StartsWith(pszData, nDataLen) )
-			return gm_pnEolTypeArr[i];
+	for (int i = 1; i < EOL_TYPE_NUM; ++i) {
+		if (g_aEolTable[i].StartsWith(pszData, nDataLen)) return gm_pnEolTypeArr[i];
 	}
 	return EOL_NONE;
 }
@@ -98,20 +100,18 @@ EEolType GetEOLType( const T* pszData, int nDataLen )
 	ファイルを読み込むときに使用するもの
 */
 
-EEolType _GetEOLType_uni( const char* pszData, int nDataLen )
+EEolType _GetEOLType_uni(const char *pszData, int nDataLen)
 {
-	for( int i = 1; i < EOL_TYPE_NUM; ++i ){
-		if( g_aEolTable_uni_file[i].StartsWithW(pszData, nDataLen) )
-			return gm_pnEolTypeArr[i];
+	for (int i = 1; i < EOL_TYPE_NUM; ++i) {
+		if (g_aEolTable_uni_file[i].StartsWithW(pszData, nDataLen)) return gm_pnEolTypeArr[i];
 	}
 	return EOL_NONE;
 }
 
-EEolType _GetEOLType_unibe( const char* pszData, int nDataLen )
+EEolType _GetEOLType_unibe(const char *pszData, int nDataLen)
 {
-	for( int i = 1; i < EOL_TYPE_NUM; ++i ){
-		if( g_aEolTable_uni_file[i].StartsWithWB(pszData, nDataLen) )
-			return gm_pnEolTypeArr[i];
+	for (int i = 1; i < EOL_TYPE_NUM; ++i) {
+		if (g_aEolTable_uni_file[i].StartsWithWB(pszData, nDataLen)) return gm_pnEolTypeArr[i];
 	}
 	return EOL_NONE;
 }
@@ -121,16 +121,10 @@ EEolType _GetEOLType_unibe( const char* pszData, int nDataLen )
 //-----------------------------------------------
 
 //! 現在のEOLの名称取得
-const WCHAR* CEol::GetName() const
-{
-	return g_aEolTable[ m_eEolType ].m_szName;
-}
+const WCHAR *CEol::GetName() const { return g_aEolTable[m_eEolType].m_szName; }
 
 //!< 現在のEOL文字列先頭へのポインタを取得
-const wchar_t* CEol::GetValue2() const
-{
-	return g_aEolTable[ m_eEolType ].m_szDataW;
-}
+const wchar_t *CEol::GetValue2() const { return g_aEolTable[m_eEolType].m_szDataW; }
 
 /*!
 	行末種別の設定。
@@ -138,9 +132,9 @@ const wchar_t* CEol::GetValue2() const
 	@retval true 正常終了。設定が反映された。
 	@retval false 異常終了。強制的にCRLFに設定。
 */
-bool CEol::SetType( EEolType t )
+bool CEol::SetType(EEolType t)
 {
-	if( t < EOL_NONE || EOL_CODEMAX <= t ){
+	if (t < EOL_NONE || EOL_CODEMAX <= t) {
 		//	異常値
 		m_eEolType = EOL_CRLF;
 		return false;
@@ -150,22 +144,16 @@ bool CEol::SetType( EEolType t )
 	return true;
 }
 
-void CEol::SetTypeByString( const wchar_t* pszData, int nDataLen )
+void CEol::SetTypeByString(const wchar_t *pszData, int nDataLen) { SetType(GetEOLType(pszData, nDataLen)); }
+
+void CEol::SetTypeByString(const char *pszData, int nDataLen) { SetType(GetEOLType(pszData, nDataLen)); }
+
+void CEol::SetTypeByStringForFile_uni(const char *pszData, int nDataLen)
 {
-	SetType( GetEOLType( pszData, nDataLen ) );
+	SetType(_GetEOLType_uni(pszData, nDataLen));
 }
 
-void CEol::SetTypeByString( const char* pszData, int nDataLen )
+void CEol::SetTypeByStringForFile_unibe(const char *pszData, int nDataLen)
 {
-	SetType( GetEOLType( pszData, nDataLen ) );
-}
-
-void CEol::SetTypeByStringForFile_uni( const char* pszData, int nDataLen )
-{
-	SetType( _GetEOLType_uni( pszData, nDataLen ) );
-}
-
-void CEol::SetTypeByStringForFile_unibe( const char* pszData, int nDataLen )
-{
-	SetType( _GetEOLType_unibe( pszData, nDataLen ) );
+	SetType(_GetEOLType_unibe(pszData, nDataLen));
 }

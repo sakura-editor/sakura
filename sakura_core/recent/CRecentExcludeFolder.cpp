@@ -23,9 +23,9 @@
 */
 
 #include "StdAfx.h"
-#include <string.h>
 #include "CRecentExcludeFolder.h"
 #include "env/DLLSHAREDATA.h"
+#include <string.h>
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           生成                              //
@@ -33,14 +33,9 @@
 
 CRecentExcludeFolder::CRecentExcludeFolder()
 {
-	Create(
-		GetShareData()->m_sSearchKeywords.m_aExcludeFolders.dataPtr(),
-		GetShareData()->m_sSearchKeywords.m_aExcludeFolders.dataPtr()->GetBufferCount(),
-		&GetShareData()->m_sSearchKeywords.m_aExcludeFolders._GetSizeRef(),
-		NULL,
-		MAX_EXCLUDEFOLDER,
-		NULL
-	);
+	Create(GetShareData()->m_sSearchKeywords.m_aExcludeFolders.dataPtr(),
+		   GetShareData()->m_sSearchKeywords.m_aExcludeFolders.dataPtr()->GetBufferCount(),
+		   &GetShareData()->m_sSearchKeywords.m_aExcludeFolders._GetSizeRef(), NULL, MAX_EXCLUDEFOLDER, NULL);
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -52,45 +47,29 @@ CRecentExcludeFolder::CRecentExcludeFolder()
 
 	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
-const WCHAR* CRecentExcludeFolder::GetItemText( int nIndex ) const
-{
-	return *GetItem(nIndex);
-}
+const WCHAR *CRecentExcludeFolder::GetItemText(int nIndex) const { return *GetItem(nIndex); }
 
-bool CRecentExcludeFolder::DataToReceiveType( LPCWSTR* dst, const CExcludeFolderString* src ) const
+bool CRecentExcludeFolder::DataToReceiveType(LPCWSTR *dst, const CExcludeFolderString *src) const
 {
 	*dst = *src;
 	return true;
 }
 
-bool CRecentExcludeFolder::TextToDataType( CExcludeFolderString* dst, LPCWSTR pszText ) const
+bool CRecentExcludeFolder::TextToDataType(CExcludeFolderString *dst, LPCWSTR pszText) const
 {
-	if( false == ValidateReceiveType(pszText) ){
-		return false;
-	}
+	if (false == ValidateReceiveType(pszText)) { return false; }
 	CopyItem(dst, pszText);
 	return true;
 }
 
-int CRecentExcludeFolder::CompareItem( const CExcludeFolderString* p1, LPCWSTR p2 ) const
-{
-	return _wcsicmp(*p1,p2);
-}
+int CRecentExcludeFolder::CompareItem(const CExcludeFolderString *p1, LPCWSTR p2) const { return _wcsicmp(*p1, p2); }
 
-void CRecentExcludeFolder::CopyItem( CExcludeFolderString* dst, LPCWSTR src ) const
-{
-	wcscpy(*dst,src);
-}
+void CRecentExcludeFolder::CopyItem(CExcludeFolderString *dst, LPCWSTR src) const { wcscpy(*dst, src); }
 
-bool CRecentExcludeFolder::ValidateReceiveType( LPCWSTR p ) const
+bool CRecentExcludeFolder::ValidateReceiveType(LPCWSTR p) const
 {
-	if( GetTextMaxLength() <= wcslen(p) ){
-		return false;
-	}
+	if (GetTextMaxLength() <= wcslen(p)) { return false; }
 	return true;
 }
 
-size_t CRecentExcludeFolder::GetTextMaxLength() const
-{
-	return m_nTextMaxLength;
-}
+size_t CRecentExcludeFolder::GetTextMaxLength() const { return m_nTextMaxLength; }

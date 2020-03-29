@@ -24,15 +24,14 @@
 */
 #pragma once
 
-//WCHARに変換
-const WCHAR* to_wchar(const ACHAR* src);
-const WCHAR* to_wchar(const ACHAR* pSrcData, int nSrcLength);
+// WCHARに変換
+const WCHAR *to_wchar(const ACHAR *src);
+const WCHAR *to_wchar(const ACHAR *pSrcData, int nSrcLength);
 
-//ACHARに変換
-inline
-const ACHAR* to_achar(const ACHAR* src){ return src; }
-const ACHAR* to_achar(const WCHAR* src);
-const ACHAR* to_achar(const WCHAR* pSrc, int nSrcLength);
+// ACHARに変換
+inline const ACHAR *to_achar(const ACHAR *src) { return src; }
+const ACHAR *		to_achar(const WCHAR *src);
+const ACHAR *		to_achar(const WCHAR *pSrc, int nSrcLength);
 
 //その他
-const WCHAR* easy_format(const WCHAR* format, ...);
+const WCHAR *easy_format(const WCHAR *format, ...);

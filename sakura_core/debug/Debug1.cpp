@@ -18,8 +18,8 @@
 #include "StdAfx.h"
 #include "debug/Debug1.h"
 
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdio.h>
 
 #if defined(_DEBUG) || defined(USE_RELPRINT)
 
@@ -33,7 +33,7 @@
 
 	引数で与えられた情報をDebugStringとして出力する．
 */
-void DebugOutW( LPCWSTR lpFmt, ...)
+void DebugOutW(LPCWSTR lpFmt, ...)
 {
 	static WCHAR szText[16000];
 
@@ -41,29 +41,26 @@ void DebugOutW( LPCWSTR lpFmt, ...)
 	va_start(argList, lpFmt);
 
 	//整形
-	int ret = _vsnwprintf_s( szText, _TRUNCATE, lpFmt, argList );
+	int ret = _vsnwprintf_s(szText, _TRUNCATE, lpFmt, argList);
 
 	//出力
-	if( errno != EINVAL ){
-		::OutputDebugStringW( szText );
-	}
+	if (errno != EINVAL) { ::OutputDebugStringW(szText); }
 
 	//切り捨て対策
-	if( -1 == ret && errno != ERANGE ){
-		::OutputDebugStringW( L"(切り捨てました...)\n" );
+	if (-1 == ret && errno != ERANGE) {
+		::OutputDebugStringW(L"(切り捨てました...)\n");
 
 		::DebugBreak();
 
-		int count = _vscwprintf( lpFmt, argList );
-		auto pLargeBuf = std::make_unique<WCHAR[]>( count + 1 );
-		if( vswprintf( &pLargeBuf[0], count + 1, lpFmt, argList ) > 0 )
-			::OutputDebugStringW( &pLargeBuf[0] );
+		int	 count	   = _vscwprintf(lpFmt, argList);
+		auto pLargeBuf = std::make_unique<WCHAR[]>(count + 1);
+		if (vswprintf(&pLargeBuf[0], count + 1, lpFmt, argList) > 0) ::OutputDebugStringW(&pLargeBuf[0]);
 	}
 
 	va_end(argList);
 
 	//ウェイト
-	::Sleep(1);	// Norio Nakatani, 2001/06/23 大量にトレースするときのために
+	::Sleep(1); // Norio Nakatani, 2001/06/23 大量にトレースするときのために
 }
 
-#endif	// _DEBUG || USE_RELPRINT
+#endif // _DEBUG || USE_RELPRINT

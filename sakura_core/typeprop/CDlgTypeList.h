@@ -29,40 +29,41 @@ class CDlgTypeList final : public CDialog
 {
 public:
 	// 型
-	struct SResult{
-		CTypeConfig	cDocumentType;	//!< 文書種類
-		bool			bTempChange;	//!< 旧PROP_TEMPCHANGE_FLAG
+	struct SResult
+	{
+		CTypeConfig cDocumentType; //!< 文書種類
+		bool		bTempChange;   //!< 旧PROP_TEMPCHANGE_FLAG
 	};
 
 public:
 	// インターフェース
-	int DoModal( HINSTANCE hInstance, HWND hwndParent, SResult* psResult );	/* モーダルダイアログの表示 */
+	int DoModal(HINSTANCE hInstance, HWND hwndParent, SResult *psResult); /* モーダルダイアログの表示 */
 
 protected:
 	// 実装ヘルパ関数
-	BOOL OnLbnDblclk(int wID) override;
-	BOOL OnBnClicked(int wID) override;
-	BOOL OnActivate( WPARAM wParam, LPARAM lParam ) override;
-	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ) override;
-	void SetData() override;	/* ダイアログデータの設定 */
-	void SetData(int selIdx);	/* ダイアログデータの設定 */
-	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
-	bool Import( void );			// 2010/4/12 Uchi
-	bool Export( void );			// 2010/4/12 Uchi
-	bool InitializeType( void );	// 2010/4/12 Uchi
-	bool CopyType();
-	bool UpType();
-	bool DownType();
-	bool AddType();
-	bool DelType();
-	bool AlertFileAssociation();	// 2011/8/20 syat
+	BOOL	OnLbnDblclk(int wID) override;
+	BOOL	OnBnClicked(int wID) override;
+	BOOL	OnActivate(WPARAM wParam, LPARAM lParam) override;
+	INT_PTR DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam) override;
+	void	SetData() override;			   /* ダイアログデータの設定 */
+	void	SetData(int selIdx);		   /* ダイアログデータの設定 */
+	LPVOID	GetHelpIdTable(void) override; //@@@ 2002.01.18 add
+	bool	Import(void);				   // 2010/4/12 Uchi
+	bool	Export(void);				   // 2010/4/12 Uchi
+	bool	InitializeType(void);		   // 2010/4/12 Uchi
+	bool	CopyType();
+	bool	UpType();
+	bool	DownType();
+	bool	AddType();
+	bool	DelType();
+	bool	AlertFileAssociation(); // 2011/8/20 syat
 
 private:
-	CTypeConfig				m_nSettingType;
+	CTypeConfig m_nSettingType;
 	// 関連付け状態
-	bool m_bRegistryChecked[ MAX_TYPES ];	//レジストリ確認 未／済
-	bool m_bExtRMenu[ MAX_TYPES ];			//右クリック登録 未／済
-	bool m_bExtDblClick[ MAX_TYPES ];		//ダブルクリック 未／済
-	bool m_bAlertFileAssociation;			//関連付け警告の表示フラグ
-	bool m_bEnableTempChange;				//一時適用の有効化
+	bool m_bRegistryChecked[MAX_TYPES]; //レジストリ確認 未／済
+	bool m_bExtRMenu[MAX_TYPES];		//右クリック登録 未／済
+	bool m_bExtDblClick[MAX_TYPES];		//ダブルクリック 未／済
+	bool m_bAlertFileAssociation;		//関連付け警告の表示フラグ
+	bool m_bEnableTempChange;			//一時適用の有効化
 };

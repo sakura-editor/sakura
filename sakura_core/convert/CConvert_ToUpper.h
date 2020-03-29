@@ -26,7 +26,8 @@
 
 #include "CConvert.h"
 
-class CConvert_ToUpper final : public CConvert{
+class CConvert_ToUpper final : public CConvert
+{
 public:
-	bool DoConvert(CNativeW* pcData) override;
+	bool DoConvert(CNativeW *pcData) override;
 };

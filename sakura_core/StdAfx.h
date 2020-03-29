@@ -23,13 +23,21 @@
 #ifdef _MSC_VER
 
 #if defined _M_IX86
-#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'\"")
+#pragma comment(                                                                                                       \
+	linker,                                                                                                            \
+	"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #elif defined _M_IA64
-#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='ia64' publicKeyToken='6595b64144ccf1df' language='*'\"")
+#pragma comment(                                                                                                       \
+	linker,                                                                                                            \
+	"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='ia64' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #elif defined _M_X64
-#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='amd64' publicKeyToken='6595b64144ccf1df' language='*'\"")
+#pragma comment(                                                                                                       \
+	linker,                                                                                                            \
+	"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='amd64' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #else
-#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+#pragma comment(                                                                                                       \
+	linker,                                                                                                            \
+	"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #endif
 #endif
 
@@ -55,30 +63,30 @@
 #include "config/maxdata.h"
 
 //定数(プリコンパイル日付に依存)
-#include "config/system_constants.h"	//システム定数
-#include "config/app_constants.h"		//アプリケーション定数
+#include "config/app_constants.h"	 //アプリケーション定数
+#include "config/system_constants.h" //システム定数
 
 //高頻度API等
 // #include <CommDlg.h> // WIN32_LEAN_AND_MEANでは必要。OpenFileDialg系
 #include <CommCtrl.h> // コモンコントロール
-#include <stdlib.h>  // _MAX_PATH
+#include <stdlib.h>	  // _MAX_PATH
 #include <wchar.h>
 
 #ifndef SAKURA_PCH_MODE_MIN
 // 2010.04.19 重そうなので追加
 #include <HtmlHelp.h>
 #include <ObjIdl.h>
-#include <ShlObj.h>
 #include <ShellAPI.h>
-#include <string.h>
-#include <stdio.h>
-#include <io.h>
-#include <time.h>
-#include <string>
-#include <vector>
-#include <map>
+#include <ShlObj.h>
 #include <algorithm>
+#include <io.h>
+#include <map>
 #include <memory>
+#include <stdio.h>
+#include <string.h>
+#include <string>
+#include <time.h>
+#include <vector>
 #endif // ifndef SAKURA_PCH_MODE_MIN
 
 //デバッグ
@@ -90,40 +98,40 @@
 #include "basis/primitive.h"
 #include "util/std_macro.h"
 
-//MFC互換
-#include "basis/CMyString.h"
-#include "basis/CMyRect.h"
+// MFC互換
 #include "basis/CMyPoint.h"
+#include "basis/CMyRect.h"
 #include "basis/CMySize.h"
+#include "basis/CMyString.h"
 
 //サクラエディタ固有型
 #include "basis/SakuraBasis.h"
 
 //よく使うヘッダ
-#include "mem/CNativeW.h"
 #include "mem/CNativeA.h"
+#include "mem/CNativeW.h"
 
-#include "util/string_ex.h"
-#include "util/MessageBoxF.h"
 #include "CSelectLang.h"
+#include "util/MessageBoxF.h"
+#include "util/string_ex.h"
 #include "String_define.h"
 
 //その他
-#define malloc_char (char*)malloc
-#define GlobalLockChar  (char*)::GlobalLock
-#define GlobalLockUChar (unsigned char*)::GlobalLock
-#define GlobalLockWChar (wchar_t*)::GlobalLock
-#define GlobalLockBYTE  (BYTE*)::GlobalLock
+#define malloc_char		(char *)malloc
+#define GlobalLockChar	(char *)::GlobalLock
+#define GlobalLockUChar (unsigned char *)::GlobalLock
+#define GlobalLockWChar (wchar_t *)::GlobalLock
+#define GlobalLockBYTE	(BYTE *)::GlobalLock
 
-//APIラップ
-#include "apiwrap/StdControl.h"
+// APIラップ
 #include "apiwrap/CommonControl.h"
 #include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
 
-//TCHARユーティリティ
-#include "util/tchar_convert.h"
+// TCHARユーティリティ
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
+#include "util/tchar_convert.h"
 
 // 2010.04.19 Moca includeの大規模整理
 #ifndef SAKURA_PCH_MODE_MIN
@@ -135,18 +143,18 @@
 #endif
 
 #ifdef SAKURA_PCH_MODE_MAX
-#include "env/CShareData.h"
-#include "_main/CNormalProcess.h"
-#include "_main/CAppMode.h"
-#include "window/CEditWnd.h"
 #include "CEditApp.h"
-#include "doc/CDocReader.h"
-#include "docplus/CModifyManager.h"
-#include "docplus/CDiffManager.h"
-#include "docplus/CBookmarkManager.h"
 #include "CReadManager.h"
-#include "CWriteManager.h"
 #include "CSearchAgent.h"
+#include "CWriteManager.h"
+#include "_main/CAppMode.h"
+#include "_main/CNormalProcess.h"
+#include "doc/CDocReader.h"
+#include "docplus/CBookmarkManager.h"
+#include "docplus/CDiffManager.h"
+#include "docplus/CModifyManager.h"
+#include "env/CShareData.h"
+#include "window/CEditWnd.h"
 //###########超仮
 #include "uiparts/CGraphics.h"
 #endif // SAKURA_PCH_MODE_MAX

@@ -27,12 +27,13 @@
 #include "view/figures/CFigureStrategy.h"
 
 //! 全角スペース描画
-class CFigure_ZenSpace : public CFigureSpace{
+class CFigure_ZenSpace : public CFigureSpace
+{
 public:
-	//traits
-	bool Match(const wchar_t* pText, int nTextLen) const;
+	// traits
+	bool Match(const wchar_t *pText, int nTextLen) const;
 
-	//action
-	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const;
-	EColorIndexType GetColorIdx(void) const{ return COLORIDX_ZENSPACE; }
+	// action
+	void			DispSpace(CGraphics &gr, DispPos *pDispPos, CEditView *pcView, bool bTrans) const;
+	EColorIndexType GetColorIdx(void) const { return COLORIDX_ZENSPACE; }
 };

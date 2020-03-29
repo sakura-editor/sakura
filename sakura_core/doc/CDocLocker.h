@@ -26,7 +26,8 @@
 
 #include "doc/CDocListener.h"
 
-class CDocLocker : public CDocListenerEx{
+class CDocLocker : public CDocListenerEx
+{
 public:
 	CDocLocker();
 
@@ -34,14 +35,14 @@ public:
 	void Clear(void) { m_bIsDocWritable = true; }
 
 	//ロード前後
-	void OnAfterLoad(const SLoadInfo& sLoadInfo) override;
-	
+	void OnAfterLoad(const SLoadInfo &sLoadInfo) override;
+
 	//セーブ前後
-	void OnBeforeSave(const SSaveInfo& sSaveInfo) override;
-	void OnAfterSave(const SSaveInfo& sSaveInfo) override;
+	void OnBeforeSave(const SSaveInfo &sSaveInfo) override;
+	void OnAfterSave(const SSaveInfo &sSaveInfo) override;
 
 	//状態
-	bool IsDocWritable() const{ return m_bIsDocWritable; }
+	bool IsDocWritable() const { return m_bIsDocWritable; }
 
 	//チェック
 	void CheckWritable(bool bMsg);

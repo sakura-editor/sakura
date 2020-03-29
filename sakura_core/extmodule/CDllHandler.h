@@ -12,8 +12,8 @@
 	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
 	freely, subject to the following restrictions:
 
 		1. The origin of this software must not be misrepresented;
@@ -22,7 +22,7 @@
 		   in the product documentation would be appreciated but is
 		   not required.
 
-		2. Altered source versions must be plainly marked as such, 
+		2. Altered source versions must be plainly marked as such,
 		   and must not be misrepresented as being the original software.
 
 		3. This notice may not be removed or altered from any source
@@ -31,16 +31,17 @@
 
 #pragma once
 
+#include "_main/global.h"
 #include <Windows.h>
 #include <string>
-#include "_main/global.h"
 
 /*! CDllImp をラップ
 	CDllImp::DeinitDll を呼び忘れないためのヘルパ的クラス。
 	今のところDeinitDllが使われている箇所が無いので、このクラスの出番はありませんが。
 	2008.05.10 kobake 作成
 */
-template <class DLLIMP> class CDllHandler{
+template<class DLLIMP> class CDllHandler
+{
 public:
 	//コンストラクタ・デストラクタ
 	CDllHandler()
@@ -55,20 +56,21 @@ public:
 	}
 
 	//アクセサ
-	DLLIMP* operator->(){ return m_pcDllImp; }
+	DLLIMP *operator->() { return m_pcDllImp; }
 
 	//! 利用状態のチェック（operator版）
 	bool operator!() const { return m_pcDllImp->IsAvailable(); }
 
 private:
-	DLLIMP*	m_pcDllImp;
+	DLLIMP *m_pcDllImp;
 };
 
 //!結果定数
-enum EDllResult{
-	DLL_SUCCESS,		//成功
-	DLL_LOADFAILURE,	//DLLロード失敗
-	DLL_INITFAILURE,	//初期処理に失敗
+enum EDllResult
+{
+	DLL_SUCCESS,	 //成功
+	DLL_LOADFAILURE, // DLLロード失敗
+	DLL_INITFAILURE, //初期処理に失敗
 };
 
 //! DLLの動的なLoad/Unloadを行うためのクラス
@@ -83,7 +85,8 @@ enum EDllResult{
 										純粋仮想関数はやめてプレースホルダーを用意する．
 	@date 2008.05.10 kobake 整理。派生クラスは、～Impをオーバーロードすれば良いという方式です。
 */
-class CDllImp{
+class CDllImp
+{
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                            型                               //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -93,9 +96,10 @@ public:
 		@author YAZAKI
 		@date 2002.01.26
 	*/
-	struct ImportTable{
-		void*		proc;
-		const char*	name;
+	struct ImportTable
+	{
+		void *		proc;
+		const char *name;
 	};
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -114,13 +118,12 @@ public:
 	virtual bool IsAvailable() const { return m_hInstance != NULL; }
 
 	//! DLLロードと初期処理
-	EDllResult InitDll(
-		LPCWSTR pszSpecifiedDllName = NULL	//!< [in] クラスが定義しているDLL名以外のDLLを読み込みたいときに、そのDLL名を指定。
+	EDllResult InitDll(LPCWSTR pszSpecifiedDllName =
+						   NULL //!< [in] クラスが定義しているDLL名以外のDLLを読み込みたいときに、そのDLL名を指定。
 	);
 
 	//! 終了処理とDLLアンロード
-	bool DeinitDll(
-		bool force = false	//!< [in] 終了処理に失敗してもDLLを解放するかどうか
+	bool DeinitDll(bool force = false //!< [in] 終了処理に失敗してもDLLを解放するかどうか
 	);
 
 	//! インスタンスハンドルの取得
@@ -162,14 +165,14 @@ protected:
 		デストラクタからDeinitDll及びDeinitDllImpが呼び出されたときは
 		ポリモーフィズムが行われないためにサブクラスのDeinitDllImpが呼び出されない。
 		そのため、サブクラスのデストラクタではDeinitDllImpを明示的に呼び出す必要がある。
-		
+
 		DeinitDllがデストラクタ以外から呼び出される場合はDeinitDllImpは仮想関数として
 		サブクラスのものが呼び出され、デストラクタは当然呼び出されないので
 		DeinitDllImpそのものは必要である。
-		
+
 		デストラクタからDeinitDllImpを呼ぶときは、初期化されているという保証がないので
 		呼び出し前にIsAvailableによる確認を必ず行うこと。
-		
+
 		@date 2002.04.15 genta 注意書き追加
 	*/
 	virtual bool DeinitDllImp();
@@ -178,14 +181,14 @@ protected:
 	/*!
 		DLLファイル名として複数の可能性があり，そのうちの一つでも
 		見つかったものを使用する場合に対応する．
-		
+
 		番号に応じてそれぞれ異なるファイル名を返すことができる．
 		LoadLibrary()からはcounterを0から1ずつ増加させて順に呼びだされる．
 		それはDLLのロードに成功する(成功)か，戻り値としてNULLを返す(失敗)
 		まで続けられる．
 
 		@param[in] nIndex インデックス．(0～)
-		
+
 		@return 引数に応じてDLL名(LoadLibraryに渡す文字列)，またはNULL．
 	*/
 	virtual LPCWSTR GetDllNameImp(int nIndex) = 0;
@@ -200,6 +203,6 @@ protected:
 	//                        メンバ変数                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 private:
-	HINSTANCE		m_hInstance;
-	std::wstring	m_strLoadedDllName;
+	HINSTANCE	 m_hInstance;
+	std::wstring m_strLoadedDllName;
 };

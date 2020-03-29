@@ -2,7 +2,7 @@
 	@brief 強調キーワード管理
 
 	@author Norio Nakatani
-	
+
 	@date 2000.12.01 MIK binary search
 	@date 2004.07.29-2005.01.27 Moca キーワードの可変長記憶
 */
@@ -17,8 +17,8 @@
 	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
 	freely, subject to the following restrictions:
 
 		1. The origin of this software must not be misrepresented;
@@ -27,7 +27,7 @@
 		   in the product documentation would be appreciated but is
 		   not required.
 
-		2. Altered source versions must be plainly marked as such, 
+		2. Altered source versions must be plainly marked as such,
 		   and must not be misrepresented as being the original software.
 
 		3. This notice may not be removed or altered from any source
@@ -41,7 +41,7 @@
 static const int nKeyWordSetBlockSize = 50;
 
 //! ブロックサイズで整列
-inline int GetAlignmentSize( int nSize )
+inline int GetAlignmentSize(int nSize)
 {
 	return (nKeyWordSetBlockSize - 1 + nSize) / nKeyWordSetBlockSize * nKeyWordSetBlockSize;
 }
@@ -50,17 +50,17 @@ inline int GetAlignmentSize( int nSize )
 	@note CKeyWordSetMgrは共有メモリ構造体に埋め込まれているため，
 	そのままではコンストラクタが動かないことに注意．
 */
-CKeyWordSetMgr::CKeyWordSetMgr( void )
+CKeyWordSetMgr::CKeyWordSetMgr(void)
 {
 	m_nCurrentKeyWordSetIdx = 0;
-	m_nKeyWordSetNum = 0;
-	m_nStartIdx[0] = 0;
-	m_nStartIdx[1] = 0;
+	m_nKeyWordSetNum		= 0;
+	m_nStartIdx[0]			= 0;
+	m_nStartIdx[1]			= 0;
 	m_nStartIdx[MAX_SETNUM] = 0;
 	return;
 }
 
-CKeyWordSetMgr::~CKeyWordSetMgr( void)
+CKeyWordSetMgr::~CKeyWordSetMgr(void)
 {
 	m_nKeyWordSetNum = 0;
 	return;
@@ -70,39 +70,33 @@ CKeyWordSetMgr::~CKeyWordSetMgr( void)
 	@brief 全キーワードセットの削除と初期化
 
 	キーワードセットのインデックスを全て0とする．
-	
+
 	@date 2004.07.29 Moca 可変長記憶
 */
-void CKeyWordSetMgr::ResetAllKeyWordSet( void )
+void CKeyWordSetMgr::ResetAllKeyWordSet(void)
 {
 	m_nKeyWordSetNum = 0;
 	int i;
-	for( i = 0; i < MAX_SETNUM+1; i++ ){
-		m_nStartIdx[i] = 0;
-	}
-	for( i = 0; i < MAX_SETNUM; i++ ){
-		m_nKeyWordNumArr[i] = 0;
-	}
+	for (i = 0; i < MAX_SETNUM + 1; i++) { m_nStartIdx[i] = 0; }
+	for (i = 0; i < MAX_SETNUM; i++) { m_nKeyWordNumArr[i] = 0; }
 }
 
-const CKeyWordSetMgr& CKeyWordSetMgr::operator=( CKeyWordSetMgr& cKeyWordSetMgr )
+const CKeyWordSetMgr &CKeyWordSetMgr::operator=(CKeyWordSetMgr &cKeyWordSetMgr)
 {
-//	int		nDataLen;
-//	char*	pData;
-//	int		i;
-	if( this == &cKeyWordSetMgr ){
-		return *this;
-	}
+	//	int		nDataLen;
+	//	char*	pData;
+	//	int		i;
+	if (this == &cKeyWordSetMgr) { return *this; }
 	m_nCurrentKeyWordSetIdx = cKeyWordSetMgr.m_nCurrentKeyWordSetIdx;
-	m_nKeyWordSetNum = cKeyWordSetMgr.m_nKeyWordSetNum;
+	m_nKeyWordSetNum		= cKeyWordSetMgr.m_nKeyWordSetNum;
 	//配列まるごとコピー
-	memcpy_raw( m_szSetNameArr   , cKeyWordSetMgr.m_szSetNameArr   , sizeof( m_szSetNameArr )    );
-	memcpy_raw( m_bKEYWORDCASEArr, cKeyWordSetMgr.m_bKEYWORDCASEArr, sizeof( m_bKEYWORDCASEArr ) );
-	memcpy_raw( m_nStartIdx      , cKeyWordSetMgr.m_nStartIdx      , sizeof( m_nStartIdx )       );// 2004.07.29 Moca
-	memcpy_raw( m_nKeyWordNumArr , cKeyWordSetMgr.m_nKeyWordNumArr , sizeof( m_nKeyWordNumArr )  );
-	memcpy_raw( m_szKeyWordArr   , cKeyWordSetMgr.m_szKeyWordArr   , sizeof( m_szKeyWordArr )    );
-	memcpy_raw( m_IsSorted       , cKeyWordSetMgr.m_IsSorted       , sizeof( m_IsSorted )        ); //MIK 2000.12.01 binary search
-	memcpy_raw( m_nKeyWordMaxLenArr, cKeyWordSetMgr.m_nKeyWordMaxLenArr, sizeof( m_nKeyWordMaxLenArr ) ); //2014.05.04 Moca
+	memcpy_raw(m_szSetNameArr, cKeyWordSetMgr.m_szSetNameArr, sizeof(m_szSetNameArr));
+	memcpy_raw(m_bKEYWORDCASEArr, cKeyWordSetMgr.m_bKEYWORDCASEArr, sizeof(m_bKEYWORDCASEArr));
+	memcpy_raw(m_nStartIdx, cKeyWordSetMgr.m_nStartIdx, sizeof(m_nStartIdx)); // 2004.07.29 Moca
+	memcpy_raw(m_nKeyWordNumArr, cKeyWordSetMgr.m_nKeyWordNumArr, sizeof(m_nKeyWordNumArr));
+	memcpy_raw(m_szKeyWordArr, cKeyWordSetMgr.m_szKeyWordArr, sizeof(m_szKeyWordArr));
+	memcpy_raw(m_IsSorted, cKeyWordSetMgr.m_IsSorted, sizeof(m_IsSorted)); // MIK 2000.12.01 binary search
+	memcpy_raw(m_nKeyWordMaxLenArr, cKeyWordSetMgr.m_nKeyWordMaxLenArr, sizeof(m_nKeyWordMaxLenArr)); // 2014.05.04 Moca
 	return *this;
 }
 
@@ -111,60 +105,54 @@ const CKeyWordSetMgr& CKeyWordSetMgr::operator=( CKeyWordSetMgr& cKeyWordSetMgr 
 	@date 2005.01.26 Moca 新規作成
 	@date 2005.01.29 genta サイズ0で作成→reallocするように
 */
-bool CKeyWordSetMgr::AddKeyWordSet(
-	const wchar_t*	pszSetName,		//!< [in] セット名
-	bool			bKEYWORDCASE,	//!< [in] 大文字小文字の区別．true:あり, false:無し
-	int				nSize			//!< [in] 最初に領域を確保するサイズ．
+bool CKeyWordSetMgr::AddKeyWordSet(const wchar_t *pszSetName, //!< [in] セット名
+								   bool bKEYWORDCASE, //!< [in] 大文字小文字の区別．true:あり, false:無し
+								   int	nSize		  //!< [in] 最初に領域を確保するサイズ．
 )
 {
-	if( nSize < 0 ) nSize = nKeyWordSetBlockSize;
-	if( MAX_SETNUM <= m_nKeyWordSetNum ){
-		return false;
-	}
-	int nIdx = m_nKeyWordSetNum;	//追加位置
-	m_nStartIdx[ ++m_nKeyWordSetNum ] = m_nStartIdx[ nIdx ];// サイズ0でセット追加
+	if (nSize < 0) nSize = nKeyWordSetBlockSize;
+	if (MAX_SETNUM <= m_nKeyWordSetNum) { return false; }
+	int nIdx						= m_nKeyWordSetNum;	 //追加位置
+	m_nStartIdx[++m_nKeyWordSetNum] = m_nStartIdx[nIdx]; // サイズ0でセット追加
 
-	if( !KeyWordReAlloc( nIdx, nSize ) ){
-		--m_nKeyWordSetNum;	//	キーワードセットの追加をキャンセルする
+	if (!KeyWordReAlloc(nIdx, nSize)) {
+		--m_nKeyWordSetNum; //	キーワードセットの追加をキャンセルする
 		return false;
 	}
-	wcsncpy( m_szSetNameArr[nIdx], pszSetName, _countof(m_szSetNameArr[nIdx]) - 1 );
+	wcsncpy(m_szSetNameArr[nIdx], pszSetName, _countof(m_szSetNameArr[nIdx]) - 1);
 	m_szSetNameArr[nIdx][_countof(m_szSetNameArr[nIdx]) - 1] = L'\0';
-	m_bKEYWORDCASEArr[nIdx] = bKEYWORDCASE;
-	m_nKeyWordNumArr[nIdx] = 0;
-	m_IsSorted[nIdx] = 0;	//MIK 2000.12.01 binary search
+	m_bKEYWORDCASEArr[nIdx]									 = bKEYWORDCASE;
+	m_nKeyWordNumArr[nIdx]									 = 0;
+	m_IsSorted[nIdx] = 0; // MIK 2000.12.01 binary search
 	return true;
 }
 
 /* ｎ番目のセットを削除 */
-bool CKeyWordSetMgr::DelKeyWordSet( int nIdx )
+bool CKeyWordSetMgr::DelKeyWordSet(int nIdx)
 {
-	int		i;
-	if( m_nKeyWordSetNum <= nIdx ||
-		0 > nIdx
-	){
-		return false;
-	}
+	int i;
+	if (m_nKeyWordSetNum <= nIdx || 0 > nIdx) { return false; }
 	// キーワード領域を再割り当て
-	KeyWordReAlloc( nIdx, 0 );
-	
-	for( i = nIdx; i < m_nKeyWordSetNum - 1; ++i ){
+	KeyWordReAlloc(nIdx, 0);
+
+	for (i = nIdx; i < m_nKeyWordSetNum - 1; ++i) {
 		//配列まるごとコピー
-		memcpy_raw( m_szSetNameArr[i], m_szSetNameArr[i + 1], sizeof( m_szSetNameArr[0] ) );
-		m_bKEYWORDCASEArr[i] = m_bKEYWORDCASEArr[i + 1];
-		m_nKeyWordNumArr[i] = m_nKeyWordNumArr[i + 1];
-		m_nStartIdx[i] = m_nStartIdx[i + 1];	//	2004.07.29 Moca 可変長記憶
-		m_IsSorted[i] = m_IsSorted[i+1];	//MIK 2000.12.01 binary search
-		m_nKeyWordMaxLenArr[i] = m_nKeyWordMaxLenArr[i+1];	// 2014.05.04 Moca
+		memcpy_raw(m_szSetNameArr[i], m_szSetNameArr[i + 1], sizeof(m_szSetNameArr[0]));
+		m_bKEYWORDCASEArr[i]   = m_bKEYWORDCASEArr[i + 1];
+		m_nKeyWordNumArr[i]	   = m_nKeyWordNumArr[i + 1];
+		m_nStartIdx[i]		   = m_nStartIdx[i + 1];		 //	2004.07.29 Moca 可変長記憶
+		m_IsSorted[i]		   = m_IsSorted[i + 1];			 // MIK 2000.12.01 binary search
+		m_nKeyWordMaxLenArr[i] = m_nKeyWordMaxLenArr[i + 1]; // 2014.05.04 Moca
 	}
-	m_nStartIdx[m_nKeyWordSetNum - 1] = m_nStartIdx[m_nKeyWordSetNum];	// 2007.07.14 ryoji これが無いと末尾＝最終セットの先頭になってしまう
+	m_nStartIdx[m_nKeyWordSetNum - 1] =
+		m_nStartIdx[m_nKeyWordSetNum]; // 2007.07.14 ryoji これが無いと末尾＝最終セットの先頭になってしまう
 	m_nKeyWordSetNum--;
-	if( m_nKeyWordSetNum <= m_nCurrentKeyWordSetIdx ){
+	if (m_nKeyWordSetNum <= m_nCurrentKeyWordSetIdx) {
 		m_nCurrentKeyWordSetIdx = m_nKeyWordSetNum - 1;
-//セットが無くなったとき、m_nCurrentKeyWordSetIdxをわざと-1にするため、コメント化
-//		if( 0 > m_nCurrentKeyWordSetIdx ){
-//			m_nCurrentKeyWordSetIdx = 0;
-//		}
+		//セットが無くなったとき、m_nCurrentKeyWordSetIdxをわざと-1にするため、コメント化
+		//		if( 0 > m_nCurrentKeyWordSetIdx ){
+		//			m_nCurrentKeyWordSetIdx = 0;
+		//		}
 	}
 	return true;
 }
@@ -173,11 +161,9 @@ bool CKeyWordSetMgr::DelKeyWordSet( int nIdx )
 
 	@param nIdx [in] セット番号 0～キーワードセット数-1
 */
-const wchar_t* CKeyWordSetMgr::GetTypeName( int nIdx )
+const wchar_t *CKeyWordSetMgr::GetTypeName(int nIdx)
 {
-	if( nIdx < 0 || m_nKeyWordSetNum <= nIdx ){
-		return NULL;
-	}
+	if (nIdx < 0 || m_nKeyWordSetNum <= nIdx) { return NULL; }
 	return m_szSetNameArr[nIdx];
 }
 
@@ -185,22 +171,18 @@ const wchar_t* CKeyWordSetMgr::GetTypeName( int nIdx )
 
 	@date 2005.01.26 Moca 新規作成
 */
-const wchar_t* CKeyWordSetMgr::SetTypeName( int nIdx, const wchar_t* name )
+const wchar_t *CKeyWordSetMgr::SetTypeName(int nIdx, const wchar_t *name)
 {
-	if( NULL == name || nIdx < 0 || m_nKeyWordSetNum <= nIdx ){
-		return NULL;
-	}
-	wcsncpy( m_szSetNameArr[nIdx], name, MAX_SETNAMELEN );
+	if (NULL == name || nIdx < 0 || m_nKeyWordSetNum <= nIdx) { return NULL; }
+	wcsncpy(m_szSetNameArr[nIdx], name, MAX_SETNAMELEN);
 	m_szSetNameArr[nIdx][MAX_SETNAMELEN] = L'\0';
 	return m_szSetNameArr[nIdx];
 }
 
 /* ｎ番目のセットのキーワードの数を返す */
-int CKeyWordSetMgr::GetKeyWordNum( int nIdx )
+int CKeyWordSetMgr::GetKeyWordNum(int nIdx)
 {
-	if( nIdx < 0 || m_nKeyWordSetNum <= nIdx ){
-		return 0;
-	}
+	if (nIdx < 0 || m_nKeyWordSetNum <= nIdx) { return 0; }
 	return m_nKeyWordNumArr[nIdx];
 }
 
@@ -209,44 +191,31 @@ int CKeyWordSetMgr::GetKeyWordNum( int nIdx )
 	@param nIdx [in] キーワードセット番号
 	@param nIdx2 [in] キーワード番号
 */
-const wchar_t* CKeyWordSetMgr::GetKeyWord( int nIdx, int nIdx2 )
+const wchar_t *CKeyWordSetMgr::GetKeyWord(int nIdx, int nIdx2)
 {
-	if( nIdx < 0 || m_nKeyWordSetNum <= nIdx ){
-		return NULL;
-	}
-	if( nIdx2 < 0 || m_nKeyWordNumArr[nIdx] <= nIdx2 ){
-		return NULL;
-	}
+	if (nIdx < 0 || m_nKeyWordSetNum <= nIdx) { return NULL; }
+	if (nIdx2 < 0 || m_nKeyWordNumArr[nIdx] <= nIdx2) { return NULL; }
 	return m_szKeyWordArr[m_nStartIdx[nIdx] + nIdx2];
 }
 
 //! ｎ番目のセットのｍ番目のキーワードを編集
-const wchar_t* CKeyWordSetMgr::UpdateKeyWord(
-	int				nIdx,		//!< [in] キーワードセット番号
-	int				nIdx2,		//!< [in] キーワード番号
-	const WCHAR*	pszKeyWord	//!< [in] 設定するキーワード
+const wchar_t *CKeyWordSetMgr::UpdateKeyWord(int		  nIdx,		 //!< [in] キーワードセット番号
+											 int		  nIdx2,	 //!< [in] キーワード番号
+											 const WCHAR *pszKeyWord //!< [in] 設定するキーワード
 )
 {
 	int i;
-	if( nIdx < 0 || m_nKeyWordSetNum <= nIdx ){
-		return NULL;
-	}
-	if( nIdx2 < 0 || m_nKeyWordNumArr[nIdx] <= nIdx2 ){
-		return NULL;
-	}
+	if (nIdx < 0 || m_nKeyWordSetNum <= nIdx) { return NULL; }
+	if (nIdx2 < 0 || m_nKeyWordNumArr[nIdx] <= nIdx2) { return NULL; }
 	/* 0バイトの長さのキーワードは編集しない */
-	if( pszKeyWord[0] == L'\0' ){
-		return NULL;
-	}
+	if (pszKeyWord[0] == L'\0') { return NULL; }
 	/* 重複したキーワードは編集しない */
-	for( i = m_nStartIdx[nIdx]; i < m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx]; ++i ){
-		if( 0 == wcscmp( m_szKeyWordArr[i], pszKeyWord ) ){
-			return NULL;
-		}
+	for (i = m_nStartIdx[nIdx]; i < m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx]; ++i) {
+		if (0 == wcscmp(m_szKeyWordArr[i], pszKeyWord)) { return NULL; }
 	}
-	m_IsSorted[nIdx] = 0;	//MIK 2000.12.01 binary search
-	wchar_t* p = m_szKeyWordArr[m_nStartIdx[nIdx] + nIdx2];
-	wcsncpy( p, pszKeyWord, MAX_KEYWORDLEN );
+	m_IsSorted[nIdx] = 0; // MIK 2000.12.01 binary search
+	wchar_t *p		 = m_szKeyWordArr[m_nStartIdx[nIdx] + nIdx2];
+	wcsncpy(p, pszKeyWord, MAX_KEYWORDLEN);
 	p[MAX_KEYWORDLEN] = L'\0';
 	return p;
 }
@@ -255,44 +224,36 @@ const wchar_t* CKeyWordSetMgr::UpdateKeyWord(
 
 	@param nIdx [in] セット番号
 	@param pszKeyWord [in] キーワード文字列
-	
+
 	@return 0: 成功, 1: セット番号エラー，2: メモリ確保エラー
 		3: キーワード不正，4: キーワード重複
 
 */
-int CKeyWordSetMgr::AddKeyWord( int nIdx, const wchar_t* pszKeyWord )
+int CKeyWordSetMgr::AddKeyWord(int nIdx, const wchar_t *pszKeyWord)
 {
-	int  i;
-	if( m_nKeyWordSetNum <= nIdx ){
-		return 1;
-	}
-// 2004.07.29 Moca
-	if( !KeyWordReAlloc( nIdx, m_nKeyWordNumArr[nIdx] + 1 ) ){
-		return 2;
-	}
-//	if( MAX_KEYWORDNUM <= m_nKeyWordNumArr[nIdx] ){
-//		return FALSE;
-//	}
+	int i;
+	if (m_nKeyWordSetNum <= nIdx) { return 1; }
+	// 2004.07.29 Moca
+	if (!KeyWordReAlloc(nIdx, m_nKeyWordNumArr[nIdx] + 1)) { return 2; }
+	//	if( MAX_KEYWORDNUM <= m_nKeyWordNumArr[nIdx] ){
+	//		return FALSE;
+	//	}
 
 	/* 0バイトの長さのキーワードは登録しない */
-	if( pszKeyWord[0] == L'\0' ){
-		return 3;
-	}
+	if (pszKeyWord[0] == L'\0') { return 3; }
 	/* 重複したキーワードは登録しない */
-	for( i = m_nStartIdx[nIdx]; i < m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx]; ++i ){
-		if( 0 == wcscmp( m_szKeyWordArr[i], pszKeyWord ) ){
-			return 4;
-		}
+	for (i = m_nStartIdx[nIdx]; i < m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx]; ++i) {
+		if (0 == wcscmp(m_szKeyWordArr[i], pszKeyWord)) { return 4; }
 	}
 	/* MAX_KEYWORDLENより長いキーワードは切り捨てる */
-	if( MAX_KEYWORDLEN < wcslen( pszKeyWord ) ){
-		wmemcpy( m_szKeyWordArr[m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx]], pszKeyWord, MAX_KEYWORDLEN );
+	if (MAX_KEYWORDLEN < wcslen(pszKeyWord)) {
+		wmemcpy(m_szKeyWordArr[m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx]], pszKeyWord, MAX_KEYWORDLEN);
 		m_szKeyWordArr[m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx]][MAX_KEYWORDLEN] = L'\0';
-	}else{
-		wcscpy( m_szKeyWordArr[m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx]], pszKeyWord );
+	} else {
+		wcscpy(m_szKeyWordArr[m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx]], pszKeyWord);
 	}
 	m_nKeyWordNumArr[nIdx]++;
-	m_IsSorted[nIdx] = 0;	//MIK 2000.12.01 binary search
+	m_IsSorted[nIdx] = 0; // MIK 2000.12.01 binary search
 	return 0;
 }
 
@@ -301,61 +262,44 @@ int CKeyWordSetMgr::AddKeyWord( int nIdx, const wchar_t* pszKeyWord )
 	@param nIdx [in] キーワードセット番号
 	@param nIdx2 [in] キーワード番号
 */
-int CKeyWordSetMgr::DelKeyWord( int nIdx, int nIdx2 )
+int CKeyWordSetMgr::DelKeyWord(int nIdx, int nIdx2)
 {
-	if( nIdx < 0 || m_nKeyWordSetNum <= nIdx ){
-		return 1;
+	if (nIdx < 0 || m_nKeyWordSetNum <= nIdx) { return 1; }
+	if (nIdx2 < 0 || m_nKeyWordNumArr[nIdx] <= nIdx2) { return 2; }
+	if (0 >= m_nKeyWordNumArr[nIdx]) {
+		return 3; //	登録数が0なら上の条件で引っかかるのでここには来ない？
 	}
-	if( nIdx2 < 0 ||  m_nKeyWordNumArr[nIdx] <= nIdx2 ){
-		return 2;
-	}
-	if( 0 >= m_nKeyWordNumArr[nIdx]	){
-		return 3;	//	登録数が0なら上の条件で引っかかるのでここには来ない？
-	}
-	int nDelKeywordLen = wcslen( m_szKeyWordArr[m_nStartIdx[nIdx] + nIdx2] );
-	int  i;
-	int  endPos = m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx] - 1;
-	for( i = m_nStartIdx[nIdx] + nIdx2; i < endPos; ++i ){
-		wcscpy( m_szKeyWordArr[i], m_szKeyWordArr[i + 1] );
-	}
+	int nDelKeywordLen = wcslen(m_szKeyWordArr[m_nStartIdx[nIdx] + nIdx2]);
+	int i;
+	int endPos = m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx] - 1;
+	for (i = m_nStartIdx[nIdx] + nIdx2; i < endPos; ++i) { wcscpy(m_szKeyWordArr[i], m_szKeyWordArr[i + 1]); }
 	m_nKeyWordNumArr[nIdx]--;
 
 	// 2005.01.26 Moca 1つずらすだけなので、ソートの状態は保持される
 	// m_IsSorted[nIdx] = 0;	//MIK 2000.12.01 binary search
-	KeyWordReAlloc( nIdx, m_nKeyWordNumArr[nIdx] );	// 2004.07.29 Moca
+	KeyWordReAlloc(nIdx, m_nKeyWordNumArr[nIdx]); // 2004.07.29 Moca
 
 	// 2014.05.04 Moca キーワード長の再計算
-	if( nDelKeywordLen == m_nKeyWordMaxLenArr[nIdx] ){
-		KeywordMaxLen(nIdx);
-	}
+	if (nDelKeywordLen == m_nKeyWordMaxLenArr[nIdx]) { KeywordMaxLen(nIdx); }
 	return 0;
 }
 
-//MIK START 2000.12.01 binary search
+// MIK START 2000.12.01 binary search
 /*!	キーワードのソートとキーワード長の最大値計算
 
 	@param nIdx [in] キーワードセット番号
 
 */
-typedef int (__cdecl *qsort_callback)(const void *, const void *);
-void CKeyWordSetMgr::SortKeyWord( int nIdx )
+typedef int(__cdecl *qsort_callback)(const void *, const void *);
+void CKeyWordSetMgr::SortKeyWord(int nIdx)
 {
-	//nIdxのセットをソートする。
-	if( m_bKEYWORDCASEArr[nIdx] ) {
-		qsort(
-			m_szKeyWordArr[m_nStartIdx[nIdx]],
-			m_nKeyWordNumArr[nIdx],
-			sizeof(m_szKeyWordArr[0]),
-			(qsort_callback)wcscmp
-		);
-	}
-	else {
-		qsort(
-			m_szKeyWordArr[m_nStartIdx[nIdx]],
-			m_nKeyWordNumArr[nIdx],
-			sizeof(m_szKeyWordArr[0]),
-			(qsort_callback)_wcsicmp
-		);
+	// nIdxのセットをソートする。
+	if (m_bKEYWORDCASEArr[nIdx]) {
+		qsort(m_szKeyWordArr[m_nStartIdx[nIdx]], m_nKeyWordNumArr[nIdx], sizeof(m_szKeyWordArr[0]),
+			  (qsort_callback)wcscmp);
+	} else {
+		qsort(m_szKeyWordArr[m_nStartIdx[nIdx]], m_nKeyWordNumArr[nIdx], sizeof(m_szKeyWordArr[0]),
+			  (qsort_callback)_wcsicmp);
 	}
 	KeywordMaxLen(nIdx);
 	m_IsSorted[nIdx] = 1;
@@ -364,15 +308,13 @@ void CKeyWordSetMgr::SortKeyWord( int nIdx )
 
 void CKeyWordSetMgr::KeywordMaxLen(int nIdx)
 {
-	int i;
-	int len;
-	int nMaxLen = 0;
-	const int nEnd = m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx];
-	for( i = m_nStartIdx[nIdx]; i < nEnd; i++ ){
-		len = wcslen( m_szKeyWordArr[i] );
-		if( nMaxLen < len ){
-			nMaxLen = len;
-		}
+	int		  i;
+	int		  len;
+	int		  nMaxLen = 0;
+	const int nEnd	  = m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx];
+	for (i = m_nStartIdx[nIdx]; i < nEnd; i++) {
+		len = wcslen(m_szKeyWordArr[i]);
+		if (nMaxLen < len) { nMaxLen = len; }
 	}
 	m_nKeyWordMaxLenArr[nIdx] = nMaxLen;
 }
@@ -384,32 +326,30 @@ void CKeyWordSetMgr::KeywordMaxLen(int nIdx)
 	@retval -2     見つからなかったが、pszKeywordから始まるキーワードが存在している。
 	@retval intmax 見つかったが、pszKeywordから始まる、より長いキーワードが存在している。
 */
-int CKeyWordSetMgr::SearchKeyWord2( int nIdx, const wchar_t* pszKeyWord, int nKeyWordLen )
+int CKeyWordSetMgr::SearchKeyWord2(int nIdx, const wchar_t *pszKeyWord, int nKeyWordLen)
 {
-	//sort
-	if( m_IsSorted[nIdx] == 0 ) {
-		SortKeyWord( nIdx );
-	}
+	// sort
+	if (m_IsSorted[nIdx] == 0) { SortKeyWord(nIdx); }
 
-	if( m_nKeyWordMaxLenArr[nIdx] < nKeyWordLen ) {
+	if (m_nKeyWordMaxLenArr[nIdx] < nKeyWordLen) {
 		return -1; // 字数オーバー。
 	}
 
-	int result = -1;
-	int pl = m_nStartIdx[nIdx];
-	int pr = m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx] - 1;
-	int pc = (pr + 1 - pl) / 2 + pl;
-	auto cmp = m_bKEYWORDCASEArr[nIdx] ? wcsncmp : _wcsnicmp;
-	while( pl <= pr ) {
-		const int ret = cmp( pszKeyWord, m_szKeyWordArr[pc], nKeyWordLen );
-		if( 0 < ret ) {
+	int	 result = -1;
+	int	 pl		= m_nStartIdx[nIdx];
+	int	 pr		= m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx] - 1;
+	int	 pc		= (pr + 1 - pl) / 2 + pl;
+	auto cmp	= m_bKEYWORDCASEArr[nIdx] ? wcsncmp : _wcsnicmp;
+	while (pl <= pr) {
+		const int ret = cmp(pszKeyWord, m_szKeyWordArr[pc], nKeyWordLen);
+		if (0 < ret) {
 			pl = pc + 1;
-		} else if( ret < 0 ) {
+		} else if (ret < 0) {
 			pr = pc - 1;
 		} else {
-			if( wcslen( m_szKeyWordArr[pc] ) > static_cast<size_t>(nKeyWordLen) ) {
+			if (wcslen(m_szKeyWordArr[pc]) > static_cast<size_t>(nKeyWordLen)) {
 				// 始まりは一致したが長さが足りない。
-				if( 0 <= result ) {
+				if (0 <= result) {
 					result = std::numeric_limits<int>::max();
 					break;
 				}
@@ -418,7 +358,7 @@ int CKeyWordSetMgr::SearchKeyWord2( int nIdx, const wchar_t* pszKeyWord, int nKe
 				pr = pc - 1;
 			} else {
 				// 一致するキーワードが見つかった。
-				if( result == -2 ) {
+				if (result == -2) {
 					result = std::numeric_limits<int>::max();
 					break;
 				}
@@ -431,15 +371,15 @@ int CKeyWordSetMgr::SearchKeyWord2( int nIdx, const wchar_t* pszKeyWord, int nKe
 	}
 	return result;
 }
-//MIK END
-//MIK START 2000.12.01 START
-void CKeyWordSetMgr::SetKeyWordCase( int nIdx, int nCase )
+// MIK END
+// MIK START 2000.12.01 START
+void CKeyWordSetMgr::SetKeyWordCase(int nIdx, int nCase)
 {
 	//大文字小文字判断は１ビットあれば実現できる。
 	//今はint型(sizeof(int) * セット数 = 4 * 100 = 400)だが,
-	//char型(sizeof(char) * セット数 = 1 * 100 = 100)で十分だし
+	// char型(sizeof(char) * セット数 = 1 * 100 = 100)で十分だし
 	//ビット操作してもいい。
-	if(nCase) {
+	if (nCase) {
 		m_bKEYWORDCASEArr[nIdx] = true;
 	} else {
 		m_bKEYWORDCASEArr[nIdx] = false;
@@ -449,39 +389,32 @@ void CKeyWordSetMgr::SetKeyWordCase( int nIdx, int nCase )
 	return;
 }
 
-bool CKeyWordSetMgr::GetKeyWordCase( int nIdx )
-{
-	return 	m_bKEYWORDCASEArr[nIdx];
-}
-//MIK END
+bool CKeyWordSetMgr::GetKeyWordCase(int nIdx) { return m_bKEYWORDCASEArr[nIdx]; }
+// MIK END
 
 // From Here 2004.07.29 Moca 可変長記憶
 /*!	@brief \\0またはTABで区切られた文字列からキーワードを設定
 
 	@return 登録に成功したキーワード数
-	
+
 	@author Moca
 	@date 2004.07.29 Moca CShareData::ShareData_IO_2内のコードを元に移築・作成
 */
 int CKeyWordSetMgr::SetKeyWordArr(
-	int				nIdx,			//!< [in] キーワードセット番号
-	int				nSize,			//!< [in] キーワード数
-	const wchar_t*	pszKeyWordArr	//!< [in]「key\\tword\\t\\0」又は「key\\0word\\0\\0」の形式
+	int			   nIdx,		 //!< [in] キーワードセット番号
+	int			   nSize,		 //!< [in] キーワード数
+	const wchar_t *pszKeyWordArr //!< [in]「key\\tword\\t\\0」又は「key\\0word\\0\\0」の形式
 )
 {
-	if( !KeyWordReAlloc( nIdx, nSize ) ){
-		return 0;
-	}
-	int cnt, i;
-	const wchar_t* ptr = pszKeyWordArr;
-	for( cnt = 0, i = m_nStartIdx[nIdx];
-		i < m_nStartIdx[nIdx] + nSize && *ptr != L'\0'; cnt++, i++ ){
+	if (!KeyWordReAlloc(nIdx, nSize)) { return 0; }
+	int			   cnt, i;
+	const wchar_t *ptr = pszKeyWordArr;
+	for (cnt = 0, i = m_nStartIdx[nIdx]; i < m_nStartIdx[nIdx] + nSize && *ptr != L'\0'; cnt++, i++) {
 		//	May 25, 2003 キーワードの区切りとして\0以外にTABを受け付けるようにする
-		const wchar_t* pTop = ptr;	// キーワードの先頭位置を保存
-		while( *ptr != L'\t' && *ptr != L'\0' )
-			++ptr;
+		const wchar_t *pTop = ptr; // キーワードの先頭位置を保存
+		while (*ptr != L'\t' && *ptr != L'\0') ++ptr;
 		int kwlen = ptr - pTop;
-		wmemcpy( m_szKeyWordArr[i], pTop, kwlen );
+		wmemcpy(m_szKeyWordArr[i], pTop, kwlen);
 		m_szKeyWordArr[i][kwlen] = L'\0';
 		++ptr;
 	}
@@ -495,17 +428,15 @@ int CKeyWordSetMgr::SetKeyWordArr(
 	@return 登録したキーワード数．0は失敗．
 */
 int CKeyWordSetMgr::SetKeyWordArr(
-	int				nIdx,				//!< [in] キーワードセット番号
-	int				nSize,				//!< [in] ppszKeyWordArrの要素数
-	const wchar_t*	ppszKeyWordArr[]	//!< [in] キーワードの配列(重複・長さ制限等、考慮済みであること)
+	int			   nIdx,			//!< [in] キーワードセット番号
+	int			   nSize,			//!< [in] ppszKeyWordArrの要素数
+	const wchar_t *ppszKeyWordArr[] //!< [in] キーワードの配列(重複・長さ制限等、考慮済みであること)
 )
 {
-	if( !KeyWordReAlloc( nIdx, nSize ) ){
-		return 0;
-	}
+	if (!KeyWordReAlloc(nIdx, nSize)) { return 0; }
 	int cnt, i;
-	for( cnt = 0, i = m_nStartIdx[nIdx]; i < m_nStartIdx[nIdx] + nSize; cnt++, i++ ){
-		wcscpy( m_szKeyWordArr[i], ppszKeyWordArr[cnt] );
+	for (cnt = 0, i = m_nStartIdx[nIdx]; i < m_nStartIdx[nIdx] + nSize; cnt++, i++) {
+		wcscpy(m_szKeyWordArr[i], ppszKeyWordArr[cnt]);
 	}
 	m_nKeyWordNumArr[nIdx] = nSize;
 	return nSize;
@@ -516,38 +447,34 @@ int CKeyWordSetMgr::SetKeyWordArr(
 	重複や使用不可のキーワードを取り除く
 
 	@param nIdx [in] キーワードセット番号
-	
+
 	@return 削除したキーワード数
 */
-int CKeyWordSetMgr::CleanKeyWords( int nIdx )
+int CKeyWordSetMgr::CleanKeyWords(int nIdx)
 {
 	// 先にソートしておかないと、後で順番が変わると都合が悪い
-	if( m_IsSorted[nIdx] == 0 )	SortKeyWord( nIdx );
+	if (m_IsSorted[nIdx] == 0) SortKeyWord(nIdx);
 
-	int nDelCount = 0;	//!< 削除キーワード数
-	int i = 0;
-	while( i < GetKeyWordNum( nIdx ) - 1 ){
-		const wchar_t* p = GetKeyWord( nIdx, i );
-		bool bDelKey = false;	//!< trueなら削除対象
+	int nDelCount = 0; //!< 削除キーワード数
+	int i		  = 0;
+	while (i < GetKeyWordNum(nIdx) - 1) {
+		const wchar_t *p	   = GetKeyWord(nIdx, i);
+		bool		   bDelKey = false; //!< trueなら削除対象
 		// 重複するキーワードか
-		const wchar_t* r = GetKeyWord( nIdx, i + 1 );
-		unsigned int nKeyWordLen = wcslen( p );
-		if( nKeyWordLen == wcslen( r ) ){
-			if( m_bKEYWORDCASEArr[nIdx] ){
-				if( 0 == wmemcmp( p, r, nKeyWordLen ) ){
-					bDelKey = true;
-				}
-			}else{
-				if( 0 == wmemicmp( p, r, nKeyWordLen ) ){
-					bDelKey = true;
-				}
+		const wchar_t *r		   = GetKeyWord(nIdx, i + 1);
+		unsigned int   nKeyWordLen = wcslen(p);
+		if (nKeyWordLen == wcslen(r)) {
+			if (m_bKEYWORDCASEArr[nIdx]) {
+				if (0 == wmemcmp(p, r, nKeyWordLen)) { bDelKey = true; }
+			} else {
+				if (0 == wmemicmp(p, r, nKeyWordLen)) { bDelKey = true; }
 			}
 		}
-		if( bDelKey ){
-			DelKeyWord( nIdx, i );
+		if (bDelKey) {
+			DelKeyWord(nIdx, i);
 			nDelCount++;
 			//後ろがずれるので、iを増やさない
-		}else{
+		} else {
 			i++;
 		}
 	}
@@ -562,19 +489,15 @@ int CKeyWordSetMgr::CleanKeyWords( int nIdx )
 	@date 2005.01.26 Moca 新規作成
 	@date 2005.01.29 genta 割り当て済みの領域に空きがあれば拡張不能でも追加可能
 */
-bool CKeyWordSetMgr::CanAddKeyWord( int nIdx )
+bool CKeyWordSetMgr::CanAddKeyWord(int nIdx)
 {
 	//	割り当て済みの領域の空きをまず調べる
-	int nSizeOld = GetAllocSize( nIdx );
-	if( m_nKeyWordNumArr[nIdx] < nSizeOld ){
-		return true;
-	}
+	int nSizeOld = GetAllocSize(nIdx);
+	if (m_nKeyWordNumArr[nIdx] < nSizeOld) { return true; }
 
 	//	割り当て済み領域がいっぱいならば，割り当て可能領域の有無を確認
 	//	一応割り当て最小単位分残っていることを確認．
-	if( GetFreeSize() >= nKeyWordSetBlockSize ){
-		return true;
-	}
+	if (GetFreeSize() >= nKeyWordSetBlockSize) { return true; }
 
 	//	それでもだめか
 	return false;
@@ -610,72 +533,61 @@ bool CKeyWordSetMgr::KeyWordAlloc( int nSize )
 	@param nIdx [in] キーワードセット番号
 	@param nSize [in] 必要なキーワード数 (0～)
 */
-bool CKeyWordSetMgr::KeyWordReAlloc( int nIdx, int nSize )
+bool CKeyWordSetMgr::KeyWordReAlloc(int nIdx, int nSize)
 {
 	// assert( 0 <= nIdx && nIdx < m_nKeyWordSetNum );
 
 	// ブロックのサイズで整列
-	int nAllocSize = GetAlignmentSize( nSize );
-	int nSizeOld = GetAllocSize( nIdx );
+	int nAllocSize = GetAlignmentSize(nSize);
+	int nSizeOld   = GetAllocSize(nIdx);
 
-	if( nSize < 0 ){
-		return false;
-	}
-	if( nAllocSize == nSizeOld ){
+	if (nSize < 0) { return false; }
+	if (nAllocSize == nSizeOld) {
 		// サイズ変更なし
 		return true;
 	}
 
 	int nDiffSize = nAllocSize - nSizeOld;
-	if( GetFreeSize() < nDiffSize ){
+	if (GetFreeSize() < nDiffSize) {
 		// メモリ不足
 		return false;
 	}
 	// 後ろのキーワードセットのキーワードをすべて移動する
 	int i;
-	if( nIdx + 1 < m_nKeyWordSetNum ){
+	if (nIdx + 1 < m_nKeyWordSetNum) {
 		int nKeyWordIdx = m_nStartIdx[nIdx + 1];
 		int nKeyWordNum = m_nStartIdx[m_nKeyWordSetNum] - m_nStartIdx[nIdx + 1];
-		memmove( m_szKeyWordArr[nKeyWordIdx + nDiffSize],
-			m_szKeyWordArr[nKeyWordIdx],
-			nKeyWordNum * sizeof( m_szKeyWordArr[0] ) );
+		memmove(m_szKeyWordArr[nKeyWordIdx + nDiffSize], m_szKeyWordArr[nKeyWordIdx],
+				nKeyWordNum * sizeof(m_szKeyWordArr[0]));
 	}
-	for( i = nIdx + 1; i <= m_nKeyWordSetNum; i++ ){
-		m_nStartIdx[ i ] += nDiffSize;
-	}
+	for (i = nIdx + 1; i <= m_nKeyWordSetNum; i++) { m_nStartIdx[i] += nDiffSize; }
 	return true;
 }
 
-/*!	@brief 割り当て済みキーワード数 
+/*!	@brief 割り当て済みキーワード数
 
 	@param nIdx [in] キーワードセット番号
 	@return キーワードセットに割り当て済みのキーワード数
 */
-int CKeyWordSetMgr::GetAllocSize( int nIdx ) const
-{
-	return m_nStartIdx[nIdx + 1] - m_nStartIdx[nIdx];
-}
+int CKeyWordSetMgr::GetAllocSize(int nIdx) const { return m_nStartIdx[nIdx + 1] - m_nStartIdx[nIdx]; }
 
 /*! 共有空きスペース
 
 	@date 2004.07.29 Moca 新規作成
-	
+
 	@return 共有空き領域(キーワード数)
  */
-int CKeyWordSetMgr::GetFreeSize( void ) const 
-{
-	return MAX_KEYWORDNUM - m_nStartIdx[m_nKeyWordSetNum];
-}
+int CKeyWordSetMgr::GetFreeSize(void) const { return MAX_KEYWORDNUM - m_nStartIdx[m_nKeyWordSetNum]; }
 // To Here 2004.07.29 Moca
 
 // キーワードセット名からセット番号を取得。見つからなければ -1
 //	Uchi 2010/4/14
-int  CKeyWordSetMgr::SearchKeyWordSet( const wchar_t* pszKeyWord )
+int CKeyWordSetMgr::SearchKeyWordSet(const wchar_t *pszKeyWord)
 {
-	int		i;
-	int 	nIdx = -1;
+	int i;
+	int nIdx = -1;
 	for (i = 0; i < m_nKeyWordSetNum; i++) {
-		if ( wcscmp(m_szSetNameArr[i], pszKeyWord) == 0) {
+		if (wcscmp(m_szSetNameArr[i], pszKeyWord) == 0) {
 			nIdx = i;
 			break;
 		}

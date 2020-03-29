@@ -28,28 +28,28 @@
 #include "doc/logic/CDocLineMgr.h"
 
 // タブ位置を再計算する
-void CTsvModeInfo::CalcTabLength(CDocLineMgr* cDocLineMgr)
+void CTsvModeInfo::CalcTabLength(CDocLineMgr *cDocLineMgr)
 {
-	int i;
+	int			 i;
 	unsigned int ui;
 
 	m_tabLength.clear();
 	if (m_nTsvMode == TSV_MODE_NONE) return;
 
 	CLogicInt nLine;
-	CLogicInt nLineNum = cDocLineMgr->GetLineCount();
-	wchar_t delimiter = m_nTsvMode == TSV_MODE_TSV ? L'\t' : L',';
-	int nFieldWidth = 0;
+	CLogicInt nLineNum	  = cDocLineMgr->GetLineCount();
+	wchar_t	  delimiter	  = m_nTsvMode == TSV_MODE_TSV ? L'\t' : L',';
+	int		  nFieldWidth = 0;
 
 	for (nLine = CLogicInt(0); nLine < nLineNum; nLine++) {
-		CDocLine* cDocLine = cDocLineMgr->GetLine(nLine);
+		CDocLine *cDocLine = cDocLineMgr->GetLine(nLine);
 
-		int nLineLen;
-		int nCharChars;
-		int nField = 0;
-		int nFieldWidth = 0;
-		LPCWSTR pcLine = cDocLine->GetDocLineStrWithEOL(&nLineLen);
-		for (i = 0; i < nLineLen; ) {
+		int		nLineLen;
+		int		nCharChars;
+		int		nField		= 0;
+		int		nFieldWidth = 0;
+		LPCWSTR pcLine		= cDocLine->GetDocLineStrWithEOL(&nLineLen);
+		for (i = 0; i < nLineLen;) {
 			if (WCODE::IsLineDelimiter(pcLine[i], true)) break;
 			if (pcLine[i] == delimiter) {
 				if (nField == m_tabLength.size()) {
@@ -62,13 +62,13 @@ void CTsvModeInfo::CalcTabLength(CDocLineMgr* cDocLineMgr)
 				i++;
 				continue;
 			}
-			if( pcLine[i] != WCODE::TAB ){
+			if (pcLine[i] != WCODE::TAB) {
 				CKetaXInt nKeta = CNativeW::GetKetaOfChar(pcLine, nLineLen, i);
 				nFieldWidth += Int(nKeta);
 			} else {
 				nFieldWidth++;
 			}
-			nCharChars = CNativeW::GetSizeOfChar( pcLine, nLineLen, i );
+			nCharChars = CNativeW::GetSizeOfChar(pcLine, nLineLen, i);
 			i += nCharChars;
 		}
 		if (nField == m_tabLength.size()) {
@@ -79,11 +79,11 @@ void CTsvModeInfo::CalcTabLength(CDocLineMgr* cDocLineMgr)
 		}
 	}
 
-	for (ui = 0; ui<m_tabLength.size(); ui++) {
+	for (ui = 0; ui < m_tabLength.size(); ui++) {
 		if (ui == 0) {
 			m_tabLength[0] += 2;
 		} else {
-			m_tabLength[ui] += m_tabLength[ui-1] + 2;
+			m_tabLength[ui] += m_tabLength[ui - 1] + 2;
 		}
 	}
 }
@@ -93,9 +93,7 @@ CLayoutInt CTsvModeInfo::GetActualTabLength(CLayoutInt pos, CLayoutInt px) const
 {
 	unsigned int i;
 	for (i = 0; i < m_tabLength.size(); i++) {
-		if (pos < m_tabLength[i] * px) {
-			return CLayoutInt(m_tabLength[i] * px) - pos;
-		}
+		if (pos < m_tabLength[i] * px) { return CLayoutInt(m_tabLength[i] * px) - pos; }
 	}
-	return CLayoutInt(px*2);
+	return CLayoutInt(px * 2);
 }

@@ -38,59 +38,58 @@
 
 	@author aroka
 	@date 2005.11.21 新規
-	
+
 	@todo 出力バッファのサイズチェックを行う
 */
-bool GetDateTimeFormat( WCHAR* szResult, int size, const WCHAR* format, const SYSTEMTIME& systime )
+bool GetDateTimeFormat(WCHAR *szResult, int size, const WCHAR *format, const SYSTEMTIME &systime)
 {
-	WCHAR szTime[10];
+	WCHAR		 szTime[10];
 	const WCHAR *p = format;
-	WCHAR *q = szResult;
-	int len;
-	
-	while( *p ){
-		if( *p == L'%' ){
+	WCHAR *		 q = szResult;
+	int			 len;
+
+	while (*p) {
+		if (*p == L'%') {
 			++p;
-			switch(*p){
+			switch (*p) {
 			case L'Y':
-				len = wsprintf(szTime,L"%d",systime.wYear);
-				wcscpy( q, szTime );
+				len = wsprintf(szTime, L"%d", systime.wYear);
+				wcscpy(q, szTime);
 				break;
 			case L'y':
-				len = wsprintf(szTime,L"%02d",(systime.wYear%100));
-				wcscpy( q, szTime );
+				len = wsprintf(szTime, L"%02d", (systime.wYear % 100));
+				wcscpy(q, szTime);
 				break;
 			case L'm':
-				len = wsprintf(szTime,L"%02d",systime.wMonth);
-				wcscpy( q, szTime );
+				len = wsprintf(szTime, L"%02d", systime.wMonth);
+				wcscpy(q, szTime);
 				break;
 			case L'd':
-				len = wsprintf(szTime,L"%02d",systime.wDay);
-				wcscpy( q, szTime );
+				len = wsprintf(szTime, L"%02d", systime.wDay);
+				wcscpy(q, szTime);
 				break;
 			case L'H':
-				len = wsprintf(szTime,L"%02d",systime.wHour);
-				wcscpy( q, szTime );
+				len = wsprintf(szTime, L"%02d", systime.wHour);
+				wcscpy(q, szTime);
 				break;
 			case L'M':
-				len = wsprintf(szTime,L"%02d",systime.wMinute);
-				wcscpy( q, szTime );
+				len = wsprintf(szTime, L"%02d", systime.wMinute);
+				wcscpy(q, szTime);
 				break;
 			case L'S':
-				len = wsprintf(szTime,L"%02d",systime.wSecond);
-				wcscpy( q, szTime );
+				len = wsprintf(szTime, L"%02d", systime.wSecond);
+				wcscpy(q, szTime);
 				break;
 				// A Z
 			case L'%':
 			default:
-				*q = *p;
+				*q	= *p;
 				len = 1;
 				break;
 			}
-			q+=len;//q += strlen(szTime);
+			q += len; // q += strlen(szTime);
 			++p;
-		}
-		else{
+		} else {
 			*q = *p;
 			q++;
 			p++;
@@ -109,58 +108,61 @@ bool GetDateTimeFormat( WCHAR* szResult, int size, const WCHAR* format, const SY
 	@date 2011.03.18 新規
 	@note 参考 PHP version_compare http://php.s3.to/man/function.version-compare.html
 */
-UINT32 ParseVersion( const WCHAR* sVer )
+UINT32 ParseVersion(const WCHAR *sVer)
 {
-	int nVer;
-	int nShift = 0;	//特別な文字列による下駄
-	int nDigit = 0;	//連続する数字の数
-	UINT32 ret = 0;
+	int	   nVer;
+	int	   nShift = 0; //特別な文字列による下駄
+	int	   nDigit = 0; //連続する数字の数
+	UINT32 ret	  = 0;
 
 	const WCHAR *p = sVer;
-	int i;
+	int			 i;
 
-	for( i=0; *p && i<4; i++){
+	for (i = 0; *p && i < 4; i++) {
 		//特別な文字列の処理
-		if( *p == L'a' ){
-			if( wcsncmp_literal( p, L"alpha" ) == 0 )p += 5;
-			else p++;
+		if (*p == L'a') {
+			if (wcsncmp_literal(p, L"alpha") == 0)
+				p += 5;
+			else
+				p++;
 			nShift = -0x60;
-		}
-		else if( *p == L'b' ){
-			if( wcsncmp_literal( p, L"beta" ) == 0 )p += 4;
-			else p++;
+		} else if (*p == L'b') {
+			if (wcsncmp_literal(p, L"beta") == 0)
+				p += 4;
+			else
+				p++;
 			nShift = -0x40;
-		}
-		else if( *p == L'r' || *p == L'R' ){
-			if( wcsnicmp_literal( p, L"rc" ) == 0 )p += 2;
-			else p++;
+		} else if (*p == L'r' || *p == L'R') {
+			if (wcsnicmp_literal(p, L"rc") == 0)
+				p += 2;
+			else
+				p++;
 			nShift = -0x20;
-		}
-		else if( *p == L'p' ){
-			if( wcsncmp_literal( p, L"pl" ) == 0 )p += 2;
-			else p++;
+		} else if (*p == L'p') {
+			if (wcsncmp_literal(p, L"pl") == 0)
+				p += 2;
+			else
+				p++;
 			nShift = 0x20;
-		}
-		else if( !_istdigit(*p) ){
+		} else if (!_istdigit(*p)) {
 			nShift = -0x80;
-		}
-		else{
+		} else {
 			nShift = 0;
 		}
-		while( *p && !_istdigit(*p) ){ p++; }
+		while (*p && !_istdigit(*p)) { p++; }
 		//数値の抽出
-		for( nVer = 0, nDigit = 0; _istdigit(*p); p++ ){
-			if( ++nDigit > 2 )break;	//数字は2桁までで止める
+		for (nVer = 0, nDigit = 0; _istdigit(*p); p++) {
+			if (++nDigit > 2) break; //数字は2桁までで止める
 			nVer = nVer * 10 + *p - L'0';
 		}
 		//区切り文字の処理
-		while( *p && wcschr( L".-_+", *p ) ){ p++; }
+		while (*p && wcschr(L".-_+", *p)) { p++; }
 
 		DEBUG_TRACE(L"  VersionPart%d: ver=%d,shift=%d\n", i, nVer, nShift);
-		ret |= ( (nShift + nVer + 128) << (24-8*i) );
+		ret |= ((nShift + nVer + 128) << (24 - 8 * i));
 	}
-	for( ; i<4; i++ ){	//残りの部分はsigned 0 (=0x80)を埋める
-		ret |= ( 128 << (24-8*i) );
+	for (; i < 4; i++) { //残りの部分はsigned 0 (=0x80)を埋める
+		ret |= (128 << (24 - 8 * i));
 	}
 
 	DEBUG_TRACE(L"ParseVersion %ls -> %08x\n", sVer, ret);
@@ -176,7 +178,7 @@ UINT32 ParseVersion( const WCHAR* sVer )
 	@author syat
 	@date 2011.03.18 新規
 */
-int CompareVersion( const WCHAR* verA, const WCHAR* verB )
+int CompareVersion(const WCHAR *verA, const WCHAR *verB)
 {
 	UINT32 nVerA = ParseVersion(verA);
 	UINT32 nVerB = ParseVersion(verB);

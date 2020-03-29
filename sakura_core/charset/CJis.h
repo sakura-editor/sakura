@@ -26,27 +26,41 @@
 
 #include "CCodeBase.h"
 
-class CJis : public CCodeBase{
+class CJis : public CCodeBase
+{
 public:
-	CJis(bool base64decode = true) : m_base64decode(base64decode) { }
+	CJis(bool base64decode = true)
+		: m_base64decode(base64decode)
+	{}
+
 public:
-	//CCodeBaseインターフェース
-	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst) override{ return JISToUnicode(cSrc, pDst, m_base64decode); }	//!< 特定コード → UNICODE    変換
-	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst) override{ return UnicodeToJIS(cSrc, pDst); }	//!< UNICODE    → 特定コード 変換
-// GetEolはCCodeBaseに移動	2010/6/13 Uchi
-	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE → Hex 変換
+	// CCodeBaseインターフェース
+	EConvertResult CodeToUnicode(const CMemory &cSrc, CNativeW *pDst) override
+	{
+		return JISToUnicode(cSrc, pDst, m_base64decode);
+	} //!< 特定コード → UNICODE    変換
+	EConvertResult UnicodeToCode(const CNativeW &cSrc, CMemory *pDst) override
+	{
+		return UnicodeToJIS(cSrc, pDst);
+	} //!< UNICODE    → 特定コード 変換
+	  // GetEolはCCodeBaseに移動	2010/6/13 Uchi
+	EConvertResult UnicodeToHex(const wchar_t *cSrc, const int iSLen, WCHAR *pDst,
+								const CommonSetting_Statusbar *psStatusbar); //!< UNICODE → Hex 変換
 
 public:
 	//実装
-	static EConvertResult JISToUnicode(const CMemory& cSrc, CNativeW* pDstMem, bool base64decode = true);	// E-Mail(JIS→Unicode)コード変換	//2007.08.13 kobake 追加
-	static EConvertResult UnicodeToJIS(const CNativeW& cSrc, CMemory* pDstMem);		// Unicode   → JISコード変換
+	static EConvertResult JISToUnicode(
+		const CMemory &cSrc, CNativeW *pDstMem,
+		bool base64decode = true); // E-Mail(JIS→Unicode)コード変換	//2007.08.13 kobake 追加
+	static EConvertResult UnicodeToJIS(const CNativeW &cSrc, CMemory *pDstMem); // Unicode   → JISコード変換
 
 protected:
 	// 2008.11.10  変換ロジックを書き直す
-	static int _JisToUni_block( const unsigned char* pSrc, const int nSrcLen, unsigned short* pDst, const EMyJisEscseq eMyJisesc, bool* pbError );
-	static int JisToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError );
-	static int _SjisToJis_char( const unsigned char* pSrc, unsigned char* pDst, ECharSet eCharset, bool* pbError );
-	static int UniToJis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pbError );
+	static int _JisToUni_block(const unsigned char *pSrc, const int nSrcLen, unsigned short *pDst,
+							   const EMyJisEscseq eMyJisesc, bool *pbError);
+	static int JisToUni(const char *pSrc, const int nSrcLen, wchar_t *pDst, bool *pbError);
+	static int _SjisToJis_char(const unsigned char *pSrc, unsigned char *pDst, ECharSet eCharset, bool *pbError);
+	static int UniToJis(const wchar_t *pSrc, const int nSrcLen, char *pDst, bool *pbError);
 
 private:
 	//変換方針
@@ -62,8 +76,8 @@ public:
 	static const char JISESCDATA_JISX0208_1978[];
 	static const char JISESCDATA_JISX0208_1983[];
 	static const char JISESCDATA_JISX0208_1990[];
-//	static const int TABLE_JISESCLEN[];
-//	static const char* TABLE_JISESCDATA[];
+	//	static const int TABLE_JISESCLEN[];
+	//	static const char* TABLE_JISESCDATA[];
 };
 
 #if 0 // codechecker.h に定義されている

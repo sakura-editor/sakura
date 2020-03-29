@@ -27,18 +27,19 @@
 #include "CWnd.h"
 class CEditView;
 
-class CAutoScrollWnd final: public CWnd
+class CAutoScrollWnd final : public CWnd
 {
 public:
 	CAutoScrollWnd();
 	virtual ~CAutoScrollWnd();
-	HWND Create( HINSTANCE hInstance, HWND hwndParent, bool bVertical, bool bHorizontal,
-				 const CMyPoint& point, CEditView* view );
+	HWND Create(HINSTANCE hInstance, HWND hwndParent, bool bVertical, bool bHorizontal, const CMyPoint &point,
+				CEditView *view);
 	void Close();
 
 private:
-	HBITMAP	m_hCenterImg;
-	CEditView*	m_cView;
+	HBITMAP	   m_hCenterImg;
+	CEditView *m_cView;
+
 protected:
 	/* 仮想関数 */
 

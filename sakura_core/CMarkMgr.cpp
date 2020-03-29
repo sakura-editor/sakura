@@ -12,8 +12,8 @@
 	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
 	freely, subject to the following restrictions:
 
 		1. The origin of this software must not be misrepresented;
@@ -22,7 +22,7 @@
 		   in the product documentation would be appreciated but is
 		   not required.
 
-		2. Altered source versions must be plainly marked as such, 
+		2. Altered source versions must be plainly marked as such,
 		   and must not be misrepresented as being the original software.
 
 		3. This notice may not be removed or altered from any source
@@ -30,8 +30,8 @@
 */
 
 #include "StdAfx.h"
-#include "_main/global.h"
 #include "CMarkMgr.h"
+#include "_main/global.h"
 
 //-----------------------------------
 // CMarkMgr
@@ -46,7 +46,7 @@
 void CMarkMgr::SetMax(int max)
 {
 	m_nMaxitem = max;
-	Expire();	//	指定した数に要素を減らす
+	Expire(); //	指定した数に要素を減らす
 }
 
 /*!
@@ -57,8 +57,7 @@ void CMarkMgr::SetMax(int max)
 */
 bool CMarkMgr::CheckCurrent(void) const
 {
-	if( m_nCurpos < Count() )
-		return m_cMarkChain[ m_nCurpos ].IsValid();
+	if (m_nCurpos < Count()) return m_cMarkChain[m_nCurpos].IsValid();
 
 	return false;
 }
@@ -71,9 +70,8 @@ bool CMarkMgr::CheckCurrent(void) const
 */
 bool CMarkMgr::CheckPrev(void) const
 {
-	for( int i = m_nCurpos - 1; i >= 0; i-- ){
-		if( m_cMarkChain[ i ].IsValid() )
-			return true;
+	for (int i = m_nCurpos - 1; i >= 0; i--) {
+		if (m_cMarkChain[i].IsValid()) return true;
 	}
 	return false;
 }
@@ -86,9 +84,8 @@ bool CMarkMgr::CheckPrev(void) const
 */
 bool CMarkMgr::CheckNext(void) const
 {
-	for( int i = m_nCurpos + 1; i < Count(); i++ ){
-		if( m_cMarkChain[ i ].IsValid() )
-			return true;
+	for (int i = m_nCurpos + 1; i < Count(); i++) {
+		if (m_cMarkChain[i].IsValid()) return true;
 	}
 	return false;
 }
@@ -101,8 +98,8 @@ bool CMarkMgr::CheckNext(void) const
 */
 bool CMarkMgr::PrevValid(void)
 {
-	for( int i = m_nCurpos - 1; i >= 0; i-- ){
-		if( m_cMarkChain[ i ].IsValid() ){
+	for (int i = m_nCurpos - 1; i >= 0; i--) {
+		if (m_cMarkChain[i].IsValid()) {
 			m_nCurpos = i;
 			return true;
 		}
@@ -117,8 +114,8 @@ bool CMarkMgr::PrevValid(void)
 */
 bool CMarkMgr::NextValid(void)
 {
-	for( int i = m_nCurpos + 1; i < Count(); i++ ){
-		if( m_cMarkChain[ i ].IsValid() ){
+	for (int i = m_nCurpos + 1; i < Count(); i++) {
+		if (m_cMarkChain[i].IsValid()) {
 			m_nCurpos = i;
 			return true;
 		}
@@ -135,7 +132,7 @@ bool CMarkMgr::NextValid(void)
 */
 void CMarkMgr::Flush(void)
 {
-	m_cMarkChain.erase( m_cMarkChain.begin(), m_cMarkChain.end() );
+	m_cMarkChain.erase(m_cMarkChain.begin(), m_cMarkChain.end());
 	m_nCurpos = 0;
 }
 //	To Here
@@ -150,12 +147,12 @@ void CMarkMgr::Flush(void)
 
 	@param m 追加する要素
 */
-void CAutoMarkMgr::Add(const CMark& m)
+void CAutoMarkMgr::Add(const CMark &m)
 {
 	//	現在位置が途中の時
-	if( m_nCurpos < (int)m_cMarkChain.size() ){
+	if (m_nCurpos < (int)m_cMarkChain.size()) {
 		//	現在位置まで要素を削除
-		m_cMarkChain.erase( m_cMarkChain.begin() + m_nCurpos, m_cMarkChain.end() );
+		m_cMarkChain.erase(m_cMarkChain.begin() + m_nCurpos, m_cMarkChain.end());
 	}
 
 	//	要素の追加
@@ -174,11 +171,10 @@ void CAutoMarkMgr::Expire(void)
 {
 	int range = m_cMarkChain.size() - GetMax();
 
-	if( range <= 0 )	return;
+	if (range <= 0) return;
 
 	//	最大値を超えている場合
-	m_cMarkChain.erase( m_cMarkChain.begin(), m_cMarkChain.begin() + range );
+	m_cMarkChain.erase(m_cMarkChain.begin(), m_cMarkChain.begin() + range);
 	m_nCurpos -= range;
-	if( m_nCurpos < 0 )
-		m_nCurpos = 0;
+	if (m_nCurpos < 0) m_nCurpos = 0;
 }

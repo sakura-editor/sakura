@@ -25,12 +25,12 @@
 
 #include "StdAfx.h"
 #include "CFigureManager.h"
-#include "CFigure_Tab.h"
 #include "CFigure_Comma.h"
-#include "CFigure_HanSpace.h"
-#include "CFigure_ZenSpace.h"
-#include "CFigure_Eol.h"
 #include "CFigure_CtrlCode.h"
+#include "CFigure_Eol.h"
+#include "CFigure_HanSpace.h"
+#include "CFigure_Tab.h"
+#include "CFigure_ZenSpace.h"
 
 CFigureManager::CFigureManager()
 {
@@ -52,21 +52,17 @@ CFigureManager::~CFigureManager()
 	m_vFiguresDisp.clear();
 
 	int size = (int)m_vFigures.size();
-	for(int i = 0; i < size; i++){
-		SAFE_DELETE(m_vFigures[i]);
-	}
+	for (int i = 0; i < size; i++) { SAFE_DELETE(m_vFigures[i]); }
 	m_vFigures.clear();
 }
 
 //$$ 高速化可能
-CFigure& CFigureManager::GetFigure(const wchar_t* pText, int nTextLen)
+CFigure &CFigureManager::GetFigure(const wchar_t *pText, int nTextLen)
 {
 	int size = (int)m_vFiguresDisp.size();
-	for(int i = 0; i < size; i++){
-		CFigure* pcFigure = m_vFiguresDisp[i];
-		if(pcFigure->Match(pText, nTextLen)){
-			return *pcFigure;
-		}
+	for (int i = 0; i < size; i++) {
+		CFigure *pcFigure = m_vFiguresDisp[i];
+		if (pcFigure->Match(pText, nTextLen)) { return *pcFigure; }
 	}
 
 	assert(0);
@@ -74,18 +70,16 @@ CFigure& CFigureManager::GetFigure(const wchar_t* pText, int nTextLen)
 }
 
 /*! 設定更新
-*/
+ */
 void CFigureManager::OnChangeSetting(void)
 {
 	m_vFiguresDisp.clear();
 
 	int size = (int)m_vFigures.size();
 	int i;
-	for(i = 0; i < size; i++){
+	for (i = 0; i < size; i++) {
 		m_vFigures[i]->Update();
 		// 色分け表示対象のみを登録
-		if( m_vFigures[i]->Disp() ){
-			m_vFiguresDisp.push_back(m_vFigures[i]);
-		}
+		if (m_vFigures[i]->Disp()) { m_vFiguresDisp.push_back(m_vFigures[i]); }
 	}
 }

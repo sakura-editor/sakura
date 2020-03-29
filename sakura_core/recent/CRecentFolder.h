@@ -27,22 +27,23 @@
 #include "CRecentImp.h"
 #include "util/StaticType.h"
 
-//StaticVector< StaticString<WCHAR, _MAX_PATH>, MAX_GREPFOLDER, const WCHAR*>
+// StaticVector< StaticString<WCHAR, _MAX_PATH>, MAX_GREPFOLDER, const WCHAR*>
 
 typedef StaticString<WCHAR, _MAX_PATH> CPathString;
 
 //! フォルダの履歴を管理 (RECENT_FOR_FOLDER)
-class CRecentFolder final : public CRecentImp<CPathString, LPCWSTR>{
+class CRecentFolder final : public CRecentImp<CPathString, LPCWSTR>
+{
 public:
 	//生成
 	CRecentFolder();
 
 	//オーバーライド
-	int				CompareItem( const CPathString* p1, LPCWSTR p2 ) const override;
-	void			CopyItem( CPathString* dst, LPCWSTR src ) const override;
-	const WCHAR*	GetItemText( int nIndex ) const;
-	bool			DataToReceiveType( LPCWSTR* dst, const CPathString* src ) const override;
-	bool			TextToDataType( CPathString* dst, LPCWSTR pszText ) const override;
-	bool			ValidateReceiveType( LPCWSTR p ) const override;
-	size_t			GetTextMaxLength() const;
+	int			 CompareItem(const CPathString *p1, LPCWSTR p2) const override;
+	void		 CopyItem(CPathString *dst, LPCWSTR src) const override;
+	const WCHAR *GetItemText(int nIndex) const;
+	bool		 DataToReceiveType(LPCWSTR *dst, const CPathString *src) const override;
+	bool		 TextToDataType(CPathString *dst, LPCWSTR pszText) const override;
+	bool		 ValidateReceiveType(LPCWSTR p) const override;
+	size_t		 GetTextMaxLength() const;
 };

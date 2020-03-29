@@ -27,12 +27,13 @@
 #include "view/figures/CFigureStrategy.h"
 
 //! 半角スペース描画
-class CFigure_HanSpace : public CFigureSpace{
+class CFigure_HanSpace : public CFigureSpace
+{
 public:
-	//traits
-	bool Match(const wchar_t* pText, int nTextLen) const;
+	// traits
+	bool Match(const wchar_t *pText, int nTextLen) const;
 
-	//action
-	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool trans) const;
-	EColorIndexType GetColorIdx(void) const{ return COLORIDX_SPACE; }
+	// action
+	void			DispSpace(CGraphics &gr, DispPos *pDispPos, CEditView *pcView, bool trans) const;
+	EColorIndexType GetColorIdx(void) const { return COLORIDX_SPACE; }
 };

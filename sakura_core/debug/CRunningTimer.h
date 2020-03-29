@@ -14,8 +14,8 @@
 	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
 	freely, subject to the following restrictions:
 
 		1. The origin of this software must not be misrepresented;
@@ -24,7 +24,7 @@
 		   in the product documentation would be appreciated but is
 		   not required.
 
-		2. Altered source versions must be plainly marked as such, 
+		2. Altered source versions must be plainly marked as such,
 		   and must not be misrepresented as being the original software.
 
 		3. This notice may not be removed or altered from any source
@@ -55,21 +55,21 @@ public:
 	/*
 	||  Constructors
 	*/
-	CRunningTimer( const char* Text = NULL);
+	CRunningTimer(const char *Text = NULL);
 	~CRunningTimer();
 
 	/*
 	|| 関数
 	*/
-	void Reset();
+	void  Reset();
 	DWORD Read();
-	
-	void WriteTrace(const char* msg = "") const;
+
+	void WriteTrace(const char *msg = "") const;
 
 protected:
-	DWORD	m_nStartTime;
-	char	m_szText[100];	//!< タイマー名
-	int		m_nDeapth;	//!< このオブジェクトのネストの深さ
+	DWORD m_nStartTime;
+	char  m_szText[100]; //!< タイマー名
+	int	  m_nDeapth;	 //!< このオブジェクトのネストの深さ
 
 #ifdef _DEBUG
 	static int m_nNestCount;
@@ -79,9 +79,9 @@ protected:
 //	Oct. 16, 2002 genta
 //	#ifdef _DEBUG～#endifで逐一囲まなくても簡単にタイマーのON/OFFを行うためのマクロ
 #if defined(_DEBUG) && defined(TIME_MEASURE)
-  #define MY_TRACETIME(c,m) (c).WriteTrace(m)
-  #define MY_RUNNINGTIMER(c,m) CRunningTimer c(m)
+#define MY_TRACETIME(c, m)	  (c).WriteTrace(m)
+#define MY_RUNNINGTIMER(c, m) CRunningTimer c(m)
 #else
-  #define MY_TRACETIME(c,m)
-  #define MY_RUNNINGTIMER(c,m)
+#define MY_TRACETIME(c, m)
+#define MY_RUNNINGTIMER(c, m)
 #endif

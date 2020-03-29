@@ -22,28 +22,24 @@
 #include <memory>
 #include <vector>
 
-struct SLoadInfo;	// doc/CDocListener.h
-struct SSaveInfo;	// doc/CDocListener.h
+struct SLoadInfo; // doc/CDocListener.h
+struct SSaveInfo; // doc/CDocListener.h
 
 /*! フィルタ設定 */
-enum EFilter {
-	EFITER_NONE,		//!< なし
-	EFITER_TEXT,		//!< テキスト
-	EFITER_MACRO,		//!< マクロ
+enum EFilter
+{
+	EFITER_NONE,  //!< なし
+	EFITER_TEXT,  //!< テキスト
+	EFITER_MACRO, //!< マクロ
 	EFITER_MAX,
 };
 
 class IDlgOpenFile
 {
 public:
-	virtual void Create(
-		HINSTANCE					hInstance,
-		HWND						hwndParent,
-		const WCHAR*				pszUserWildCard,
-		const WCHAR*				pszDefaultPath,
-		const std::vector<LPCWSTR>& vMRU			= std::vector<LPCWSTR>(),
-		const std::vector<LPCWSTR>& vOPENFOLDER		= std::vector<LPCWSTR>()
-	) = 0;
+	virtual void Create(HINSTANCE hInstance, HWND hwndParent, const WCHAR *pszUserWildCard, const WCHAR *pszDefaultPath,
+						const std::vector<LPCWSTR> &vMRU		= std::vector<LPCWSTR>(),
+						const std::vector<LPCWSTR> &vOPENFOLDER = std::vector<LPCWSTR>()) = 0;
 
 	// 操作
 
@@ -53,35 +49,22 @@ public:
 		@retval true ユーザーがファイル名を選択してOKした
 		@retval false ダイアログをユーザーがキャンセル等で閉じたかもしくは開くのに失敗したか
 	*/
-	virtual bool DoModal_GetOpenFileName(
-		WCHAR* pszPath,
-		EFilter eAddFilter
-	) = 0;
+	virtual bool DoModal_GetOpenFileName(WCHAR *pszPath, EFilter eAddFilter) = 0;
 
 	/*! 保存ダイアログ モーダルダイアログの表示
 		@param pszPath [i/o] 初期ファイル名．選択されたファイル名の格納場所
 	*/
-	virtual bool DoModal_GetSaveFileName(
-		WCHAR* pszPath
-	) = 0;
+	virtual bool DoModal_GetSaveFileName(WCHAR *pszPath) = 0;
 
 	/* 開くダイアログ モーダルダイアログの表示 */
-	virtual bool DoModalOpenDlg(
-		SLoadInfo* pLoadInfo,
-		std::vector<std::wstring>* pFilenames,
-		bool bOptions
-	) = 0;
+	virtual bool DoModalOpenDlg(SLoadInfo *pLoadInfo, std::vector<std::wstring> *pFilenames, bool bOptions) = 0;
 
 	/* 保存ダイアログ モーダルダイアログの表示 */
-	virtual bool DoModalSaveDlg(
-		SSaveInfo*	pSaveInfo,
-		bool bSimpleMode
-	) = 0;
+	virtual bool DoModalSaveDlg(SSaveInfo *pSaveInfo, bool bSimpleMode) = 0;
 };
 
-
 /*!	ファイルオープンダイアログボックス
-*/
+ */
 class CDlgOpenFile final : public IDlgOpenFile
 {
 public:
@@ -89,28 +72,23 @@ public:
 	CDlgOpenFile();
 	~CDlgOpenFile() {}
 
-	void Create(
-		HINSTANCE					hInstance,
-		HWND						hwndParent,
-		const WCHAR*				pszUserWildCard,
-		const WCHAR*				pszDefaultPath,
-		const std::vector<LPCWSTR>& vMRU			= std::vector<LPCWSTR>(),
-		const std::vector<LPCWSTR>& vOPENFOLDER		= std::vector<LPCWSTR>()
-	) override;
+	void Create(HINSTANCE hInstance, HWND hwndParent, const WCHAR *pszUserWildCard, const WCHAR *pszDefaultPath,
+				const std::vector<LPCWSTR> &vMRU		= std::vector<LPCWSTR>(),
+				const std::vector<LPCWSTR> &vOPENFOLDER = std::vector<LPCWSTR>()) override;
 
 	//操作
-	inline bool DoModal_GetOpenFileName(WCHAR* pszPath, EFilter eAddFileter = EFITER_TEXT) override;
-	inline bool DoModal_GetSaveFileName(WCHAR* pszPath) override;
-	inline bool DoModalOpenDlg(SLoadInfo* pLoadInfo,
-		std::vector<std::wstring>* pFilenames,
-		bool bOptions = true) override;
-	inline bool DoModalSaveDlg(SSaveInfo*	pSaveInfo, bool bSimpleMode) override;
+	inline bool DoModal_GetOpenFileName(WCHAR *pszPath, EFilter eAddFileter = EFITER_TEXT) override;
+	inline bool DoModal_GetSaveFileName(WCHAR *pszPath) override;
+	inline bool DoModalOpenDlg(SLoadInfo *pLoadInfo, std::vector<std::wstring> *pFilenames,
+							   bool bOptions = true) override;
+	inline bool DoModalSaveDlg(SSaveInfo *pSaveInfo, bool bSimpleMode) override;
 
 	// 設定フォルダ相対ファイル選択(共有データ,ini位置依存)
-	static BOOL SelectFile(HWND parent, HWND hwndCtl, const WCHAR* filter,
-						   bool resolvePath, EFilter eAddFilter = EFITER_TEXT);
+	static BOOL SelectFile(HWND parent, HWND hwndCtl, const WCHAR *filter, bool resolvePath,
+						   EFilter eAddFilter = EFITER_TEXT);
 
 	DISALLOW_COPY_AND_ASSIGN(CDlgOpenFile);
+
 private:
 	std::shared_ptr<IDlgOpenFile> m_pImpl;
 };
