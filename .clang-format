@@ -25,24 +25,25 @@ AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: true
 BinPackArguments: true
 BinPackParameters: true
-BraceWrapping:
-  #AfterCaseLabel:  true
-  AfterClass:      true
-  AfterControlStatement: false
-  AfterEnum:       true
-  AfterFunction:   true
-  AfterNamespace:  false
-  AfterStruct:     true
-  AfterUnion:      false
-  AfterExternBlock: false
-  BeforeCatch:     false
-  BeforeElse:      false
-  IndentBraces:    false
-  SplitEmptyFunction: false
-  SplitEmptyRecord: false
-  SplitEmptyNamespace: false
+#BraceWrapping:
+#  #AfterCaseLabel:  true
+#  AfterClass:      true
+#  AfterControlStatement: false
+#  AfterEnum:       true
+#  AfterFunction:   true
+#  AfterNamespace:  false
+#  AfterStruct:     true
+#  AfterUnion:      false
+#  AfterExternBlock: false
+#  BeforeCatch:     false
+#  BeforeElse:      false
+#  IndentBraces:    false
+#  SplitEmptyFunction: false
+#  SplitEmptyRecord: false
+#  SplitEmptyNamespace: false
 BreakBeforeBinaryOperators: NonAssignment
-BreakBeforeBraces: Custom
+#BreakBeforeBraces: Custom
+BreakBeforeBraces: Stroustrup
 BreakBeforeInheritanceComma: false
 #BreakInheritanceList: BeforeColon
 BreakBeforeTernaryOperators: true
