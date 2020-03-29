@@ -66,12 +66,18 @@ ForEachMacros:
   - BOOST_FOREACH
 IncludeBlocks:   Preserve
 IncludeCategories:
-  - Regex:           '^"(llvm|llvm-c|clang|clang-c)/'
-    Priority:        2
-  - Regex:           '^(<|"(gtest|gmock|isl|json)/)'
+  - Regex:           '^"StdAfx'
+    Priority:        -1
+  - Regex:           '^"version'
     Priority:        3
+  - Regex:           '^"Funccode_enum'
+    Priority:        4
+  - Regex:           '^"String_define'
+    Priority:        5
+  - Regex:           '^"sakura_rc'
+    Priority:        6
   - Regex:           '.*'
-    Priority:        1
+    Priority:        2
 IncludeIsMainRegex: '(Test)?$'
 IndentCaseLabels: false
 IndentPPDirectives: None
