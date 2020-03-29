@@ -27,7 +27,6 @@
 #include "CEditApp.h"
 #include "CWriteManager.h"
 #include "_main/CAppMode.h"
-#include "doc/CDocListener.h" // 親クラス
 #include "doc/CDocVisitor.h"
 #include "doc/CEditDoc.h"
 #include "env/CShareData.h"

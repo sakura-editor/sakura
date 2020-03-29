@@ -24,6 +24,8 @@
 */
 #pragma once
 
+#include "doc/CDocListener.h" // 親クラス
+
 class CSaveAgent : public CDocListenerEx
 {
 public:
