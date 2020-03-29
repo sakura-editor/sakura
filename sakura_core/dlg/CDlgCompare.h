@@ -19,8 +19,7 @@ class CDlgCompare;
 /*!
 	@brief ファイル比較ダイアログボックス
 */
-class CDlgCompare final : public CDialog
-{
+class CDlgCompare final : public CDialog {
 public:
 	/*
 	||  Constructors
@@ -53,7 +52,7 @@ protected:
 	BOOL	OnMinMaxInfo(LPARAM lParam);
 
 	void SetData(void) override; /* ダイアログデータの設定 */
-	int	 GetData(void) override; /* ダイアログデータの取得 */
+	int  GetData(void) override; /* ダイアログデータの取得 */
 
 private:
 	POINT m_ptDefaultSize;

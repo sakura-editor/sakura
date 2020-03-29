@@ -18,7 +18,8 @@ static int NextWordBreak(const CStringRef &str, const int start);
 CColor_KeywordSet::CColor_KeywordSet()
 	: m_nKeywordIndex(0)
 	, m_nCOMMENTEND(0)
-{}
+{
+}
 
 // 2005.01.13 MIK 強調キーワード数追加に伴う配列化
 bool CColor_KeywordSet::BeginColor(const CStringRef &cStr, int nPos)
@@ -38,7 +39,7 @@ bool CColor_KeywordSet::BeginColor(const CStringRef &cStr, int nPos)
 	}
 	if (0 < nPos) {
 		const ECharKind charKindPrev = CWordParse::WhatKindOfChar(cStr.GetPtr(), cStr.GetLength(), nPos - 1);
-		const ECharKind charKindTwo	 = CWordParse::WhatKindOfTwoChars4KW(charKindPrev, charKind);
+		const ECharKind charKindTwo  = CWordParse::WhatKindOfTwoChars4KW(charKindPrev, charKind);
 		if (charKindTwo != CK_NULL) { return false; }
 	}
 
@@ -64,13 +65,16 @@ bool CColor_KeywordSet::BeginColor(const CStringRef &cStr, int nPos)
 					continue;
 				}
 				break;
-			} else if (ret == -1) {
+			}
+			else if (ret == -1) {
 				// 登録されたキーワードではなかった。
 				break;
-			} else if (ret == -2) {
+			}
+			else if (ret == -2) {
 				// 長さが足りなかったので延長してリトライ。
 				continue;
-			} else {
+			}
+			else {
 				// 登録されたキーワードではなかった？
 				// CKeyWordSetMgr::SearchKeyWord2()から想定外の戻り値。
 				break;
@@ -80,7 +84,7 @@ bool CColor_KeywordSet::BeginColor(const CStringRef &cStr, int nPos)
 
 		// nPos...posWordEnd がキーワード。
 		if (nPos < posWordEnd) {
-			this->m_nCOMMENTEND	  = posWordEnd;
+			this->m_nCOMMENTEND   = posWordEnd;
 			this->m_nKeywordIndex = i;
 			return true;
 		}

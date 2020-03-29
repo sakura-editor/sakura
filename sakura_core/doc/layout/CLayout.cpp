@@ -40,15 +40,16 @@ CLayoutInt CLayout::CalcLayoutWidth(const CLayoutMgr &cLayoutMgr) const
 {
 	//ソース
 	const wchar_t *pText	= m_pCDocLine->GetPtr();
-	CLogicInt	   nTextLen = m_pCDocLine->GetLengthWithoutEOL();
+	CLogicInt	  nTextLen = m_pCDocLine->GetLengthWithoutEOL();
 
 	//計算
 	CLayoutInt nWidth = GetIndent();
-	CLogicInt  nLen	  = GetLogicPos().x + m_nLength; // EOL=0,1
+	CLogicInt  nLen   = GetLogicPos().x + m_nLength; // EOL=0,1
 	for (CLogicInt i = m_ptLogicPos.GetX2(); i < nLen;) {
 		if (pText[i] == WCODE::TAB || (pText[i] == L',' && cLayoutMgr.m_tsvInfo.m_nTsvMode == TSV_MODE_CSV)) {
 			nWidth += cLayoutMgr.GetActualTsvSpace(nWidth, pText[i]);
-		} else {
+		}
+		else {
 			nWidth += cLayoutMgr.GetLayoutXOfChar(pText, nTextLen, i);
 		}
 		i += t_max(CLogicInt(1), CNativeW::GetSizeOfChar(pText, nTextLen, i));
@@ -63,11 +64,10 @@ CLayoutInt CLayout::CalcLayoutOffset(const CLayoutMgr &cLayoutMgr, CLogicInt nSt
 	if (this->GetLogicOffset()) {
 		const wchar_t *pLine	= this->m_pCDocLine->GetPtr();
 		int			   nLineLen = this->m_pCDocLine->GetLengthWithEOL();
-		const int	   nOffset	= GetLogicOffset();
+		const int	  nOffset  = GetLogicOffset();
 		for (int i = (Int)nStartPos; i < nOffset; i++) {
-			if (pLine[i] == WCODE::TAB || pLine[i] == L',') {
-				nRet += cLayoutMgr.GetActualTsvSpace(nRet, pLine[i]);
-			} else {
+			if (pLine[i] == WCODE::TAB || pLine[i] == L',') { nRet += cLayoutMgr.GetActualTsvSpace(nRet, pLine[i]); }
+			else {
 				nRet += CNativeW::GetKetaOfChar(pLine, nLineLen, i);
 			}
 		}

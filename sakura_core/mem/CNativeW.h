@@ -29,25 +29,25 @@
 #include "debug/Debug2.h" //assert
 
 //! 文字列への参照を取得するインターフェース
-class IStringRef
-{
+class IStringRef {
 public:
-	virtual const wchar_t *GetPtr() const	 = 0;
+	virtual const wchar_t *GetPtr() const	= 0;
 	virtual int			   GetLength() const = 0;
 };
 
 //! 文字列への参照を保持するクラス
-class CStringRef final : public IStringRef
-{
+class CStringRef final : public IStringRef {
 public:
 	CStringRef()
 		: m_pData(NULL)
 		, m_nDataLen(0)
-	{}
+	{
+	}
 	CStringRef(const wchar_t *pData, int nDataLen)
 		: m_pData(pData)
 		, m_nDataLen(nDataLen)
-	{}
+	{
+	}
 	const wchar_t *GetPtr() const override { return m_pData; }
 	int			   GetLength() const override { return m_nDataLen; }
 
@@ -74,8 +74,7 @@ CNativeW operator+(const CNativeW &lhs, const wchar_t *rhs) noexcept(false);
 CNativeW operator+(const wchar_t *lhs, const CNativeW &rhs) noexcept(false);
 
 //! UNICODE文字列管理クラス
-class CNativeW final : public CNative
-{
+class CNativeW final : public CNative {
 	friend bool operator==(const CNativeW &lhs, const wchar_t *rhs) noexcept;
 
 public:
@@ -129,13 +128,13 @@ public:
 	bool	  operator!=(const CNativeW &rhs) const noexcept { return !(*this == rhs); }
 
 	//ネイティブ取得インターフェース
-	wchar_t	  operator[](int nIndex) const; //!< 任意位置の文字取得。nIndexは文字単位。
+	wchar_t   operator[](int nIndex) const; //!< 任意位置の文字取得。nIndexは文字単位。
 	CLogicInt GetStringLength() const		//!< 文字列長を返す。文字単位。
 	{
 		return CLogicInt(CNative::GetRawLength() / sizeof(wchar_t));
 	}
 	const wchar_t *GetStringPtr() const { return reinterpret_cast<const wchar_t *>(GetRawPtr()); }
-	wchar_t *	   GetStringPtr() { return reinterpret_cast<wchar_t *>(GetRawPtr()); }
+	wchar_t *	  GetStringPtr() { return reinterpret_cast<wchar_t *>(GetRawPtr()); }
 
 	//特殊
 	void _SetStringLength(int nLength) { CNative::_SetRawLength(nLength * sizeof(wchar_t)); }
@@ -147,14 +146,14 @@ public:
 		if (n >= 0) { _SetStringLength(n); }
 	}
 	void swap(CNativeW &left) { CNative::swap(left); }
-	int	 capacity() const noexcept { return CNative::capacity() / sizeof(wchar_t); }
+	int  capacity() const noexcept { return CNative::capacity() / sizeof(wchar_t); }
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           判定                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	int	 Compare(const CNativeW &rhs) const noexcept;
-	int	 Compare(const wchar_t *rhs) const noexcept;
+	int  Compare(const CNativeW &rhs) const noexcept;
+	int  Compare(const wchar_t *rhs) const noexcept;
 	bool Equals(const CNativeW &rhs) const noexcept { return 0 == Compare(rhs); }
 	bool Equals(const wchar_t *rhs) const noexcept { return 0 == Compare(rhs); }
 

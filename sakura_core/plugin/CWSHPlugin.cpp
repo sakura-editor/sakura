@@ -66,7 +66,7 @@ bool CWSHPlugin::ReadPluginOption(CDataProfile *cProfile) { return true; }
 bool CWSHPlugin::InvokePlug(CEditView *view, CPlug &plug, CWSHIfObj::List &params)
 {
 	CWSHPlug &		  wshPlug = static_cast<CWSHPlug &>(plug);
-	CWSHMacroManager *pWsh	  = NULL;
+	CWSHMacroManager *pWsh	= NULL;
 
 	if (!m_bUseCache || wshPlug.m_Wsh == NULL) {
 		CFilePath path(plug.m_cPlugin.GetFilePath(plug.m_sHandler.c_str()).c_str());
@@ -80,8 +80,8 @@ bool CWSHPlugin::InvokePlug(CEditView *view, CPlug &plug, CWSHIfObj::List &param
 			delete pWsh;
 			return false;
 		}
-
-	} else {
+	}
+	else {
 		pWsh = wshPlug.m_Wsh;
 	}
 
@@ -96,9 +96,8 @@ bool CWSHPlugin::InvokePlug(CEditView *view, CPlug &plug, CWSHIfObj::List &param
 
 	pWsh->ClearParam();
 
-	if (m_bUseCache) {
-		wshPlug.m_Wsh = pWsh;
-	} else {
+	if (m_bUseCache) { wshPlug.m_Wsh = pWsh; }
+	else {
 		// 終わったら解放
 		delete pWsh;
 	}

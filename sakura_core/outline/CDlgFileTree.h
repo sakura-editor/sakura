@@ -36,8 +36,7 @@
 /*!
 	@brief ファイルツリー設定ダイアログ
 */
-class CDlgFileTree final : public CDialog
-{
+class CDlgFileTree final : public CDialog {
 public:
 	CDlgFileTree();
 
@@ -49,7 +48,7 @@ private:
 	BOOL   OnNotify(WPARAM wParam, LPARAM lParam) override;
 	LPVOID GetHelpIdTable() override;
 	void   SetData() override;
-	int	   GetData() override;
+	int	GetData() override;
 
 	void	  SetDataInit();
 	void	  SetDataItem(int nItemIndex);
@@ -60,7 +59,7 @@ private:
 	HTREEITEM InsertTreeItem(SFileTreeItem &item, HTREEITEM htiParent, HTREEITEM htiInsert);
 
 private:
-	CDlgFuncList *	 m_pcDlgFuncList;
+	CDlgFuncList *   m_pcDlgFuncList;
 	CFileTreeSetting m_fileTreeSetting;
 	std::vector<int> m_aItemRemoveList;
 	int				 m_nlParamCount;

@@ -37,30 +37,28 @@
 /*!	@brief ダイレクトタグジャンプ用検索結果をソートして保持する．
 	@author MIK
 */
-class CSortedTagJumpList
-{
+class CSortedTagJumpList {
 public:
 	CSortedTagJumpList(int max);
 	~CSortedTagJumpList();
 
-	int	 AddBaseDir(const WCHAR *baseDir);
+	int  AddBaseDir(const WCHAR *baseDir);
 	BOOL AddParamA(const ACHAR *keyword, const ACHAR *filename, int no, ACHAR type, const ACHAR *note, int depth,
 				   const int baseDirId);
 	BOOL GetParam(int index, WCHAR *keyword, WCHAR *filename, int *no, WCHAR *type, WCHAR *note, int *depth,
 				  WCHAR *baseDir);
-	int	 GetCount(void) { return m_nCount; }
+	int  GetCount(void) { return m_nCount; }
 	void Empty(void);
 	bool IsOverflow(void) { return m_bOverflow; }
 
-	typedef struct tagjump_info_t
-	{
+	typedef struct tagjump_info_t {
 		struct tagjump_info_t *next;	  //!< 次のリスト
-		WCHAR *				   keyword;	  //!< キーワード
+		WCHAR *				   keyword;   //!< キーワード
 		WCHAR *				   filename;  //!< ファイル名
 		int					   no;		  //!< 行番号
 		WCHAR				   type;	  //!< 種類
 		WCHAR *				   note;	  //!< 備考
-		int					   depth;	  //!< (さかのぼる)階層
+		int					   depth;	 //!< (さかのぼる)階層
 		int					   baseDirId; //!< ファイル名のベースディレクトリ
 	} TagJumpInfo;
 
@@ -73,10 +71,10 @@ public:
 	int GetCapacity(void) const { return m_MAX_TAGJUMPLIST; }
 
 private:
-	TagJumpInfo *			  m_pTagjump;	//!< タグジャンプ情報
+	TagJumpInfo *			  m_pTagjump;   //!< タグジャンプ情報
 	std::vector<std::wstring> m_baseDirArr; //!< ベースディレクトリ情報
 	int						  m_nCount;		//!< 個数
-	bool					  m_bOverflow;	//!< オーバーフロー
+	bool					  m_bOverflow;  //!< オーバーフロー
 
 	//	2005.04.22 genta 最大値を可変に
 	const int m_MAX_TAGJUMPLIST; //!< 管理する情報の最大数

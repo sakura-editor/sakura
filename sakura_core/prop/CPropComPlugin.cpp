@@ -49,7 +49,7 @@ static const DWORD p_helpids[] = {					 // 11700
 	IDC_PLUGINLIST, HIDC_PLUGINLIST,				 //プラグインリスト
 	IDC_PLUGIN_INST_ZIP, HIDC_PLUGIN_INST_ZIP,		 // Zipプラグインを追加	// 2011/11/2 Uchi
 	IDC_PLUGIN_SearchNew, HIDC_PLUGIN_SearchNew,	 //新規プラグインを追加
-	IDC_PLUGIN_OpenFolder, HIDC_PLUGIN_OpenFolder,	 //フォルダを開く
+	IDC_PLUGIN_OpenFolder, HIDC_PLUGIN_OpenFolder,   //フォルダを開く
 	IDC_PLUGIN_Remove, HIDC_PLUGIN_Remove,			 //プラグインを削除
 	IDC_PLUGIN_OPTION, HIDC_PLUGIN_OPTION,			 //プラグイン設定	// 2010/3/22 Uchi
 	IDC_PLUGIN_README, HIDC_PLUGIN_README,			 // ReadMe表示		// 2011/11/2 Uchi
@@ -77,7 +77,7 @@ INT_PTR CALLBACK CPropPlugin::DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wPara
 INT_PTR CPropPlugin::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	NMHDR *pNMHDR;
-	int	   idCtrl;
+	int	idCtrl;
 
 	WORD wNotifyCode;
 	WORD wID;
@@ -98,10 +98,9 @@ INT_PTR CPropPlugin::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 		switch (idCtrl) {
 		case IDC_PLUGINLIST:
 			switch (pNMHDR->code) {
-			case LVN_ITEMCHANGED:
-			{
+			case LVN_ITEMCHANGED: {
 				HWND hListView = ::GetDlgItem(hwndDlg, IDC_PLUGINLIST);
-				int	 sel	   = ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
+				int  sel	   = ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
 				if (sel >= 0) {
 					CPlugin *plugin = CPluginManager::getInstance()->GetPlugin(sel);
 					if (plugin != NULL) {
@@ -109,7 +108,8 @@ INT_PTR CPropPlugin::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 										plugin->m_sDescription.c_str());
 						::SetWindowText(::GetDlgItem(hwndDlg, IDC_LABEL_PLUGIN_Author), plugin->m_sAuthor.c_str());
 						::SetWindowText(::GetDlgItem(hwndDlg, IDC_LABEL_PLUGIN_Version), plugin->m_sVersion.c_str());
-					} else {
+					}
+					else {
 						::SetWindowText(::GetDlgItem(hwndDlg, IDC_LABEL_PLUGIN_Description), L"");
 						::SetWindowText(::GetDlgItem(hwndDlg, IDC_LABEL_PLUGIN_Author), L"");
 						::SetWindowText(::GetDlgItem(hwndDlg, IDC_LABEL_PLUGIN_Version), L"");
@@ -191,7 +191,7 @@ INT_PTR CPropPlugin::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 			case IDC_PLUGIN_Remove: // プラグインを削除
 			{
 				HWND hListView = ::GetDlgItem(hwndDlg, IDC_PLUGINLIST);
-				int	 sel	   = ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
+				int  sel	   = ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
 				if (sel >= 0) {
 
 					if (MYMESSAGEBOX(hwndDlg, MB_YESNO, GSTR_APPNAME, LS(STR_PROPCOMPLG_DELETE),
@@ -205,15 +205,16 @@ INT_PTR CPropPlugin::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 			case IDC_PLUGIN_OPTION: // プラグイン設定	// 2010/3/22 Uchi
 			{
 				HWND hListView = ::GetDlgItem(hwndDlg, IDC_PLUGINLIST);
-				int	 sel	   = ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
+				int  sel	   = ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
 				if (sel >= 0 && m_Common.m_sPlugin.m_PluginTable[sel].m_state == PLS_LOADED) {
 					// 2010.08.21 プラグイン名(フォルダ名)の同一性の確認
-					CPlugin *plugin	  = CPluginManager::getInstance()->GetPlugin(sel);
-					wstring	 sDirName = plugin->GetFolderName().c_str();
+					CPlugin *plugin   = CPluginManager::getInstance()->GetPlugin(sel);
+					wstring  sDirName = plugin->GetFolderName().c_str();
 					if (plugin && 0 == wmemicmp(sDirName.c_str(), m_Common.m_sPlugin.m_PluginTable[sel].m_szName)) {
 						CDlgPluginOption cDlgPluginOption;
 						cDlgPluginOption.DoModal(::GetModuleHandle(NULL), hwndDlg, this, sel);
-					} else {
+					}
+					else {
 						WarningMessage(hwndDlg, LS(STR_PROPCOMPLG_ERR1));
 					}
 				}
@@ -228,20 +229,20 @@ INT_PTR CPropPlugin::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 			} break;
 			case IDC_PLUGIN_README: // ReadMe表示	// 2011/11/2 Uchi
 			{
-				HWND		 hListView	 = ::GetDlgItem(hwndDlg, IDC_PLUGINLIST);
+				HWND		 hListView   = ::GetDlgItem(hwndDlg, IDC_PLUGINLIST);
 				int			 sel		 = ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
 				std::wstring sName		 = m_Common.m_sPlugin.m_PluginTable[sel].m_szName; // 個別フォルダ名
 				std::wstring sReadMeName = GetReadMeFile(sName);
 				if (!sReadMeName.empty()) {
 					if (!BrowseReadMe(sReadMeName)) { WarningMessage(hwndDlg, LS(STR_PROPCOMPLG_ERR2)); }
-				} else {
+				}
+				else {
 					WarningMessage(hwndDlg, LS(STR_PROPCOMPLG_ERR3));
 				}
 			} break;
-			case IDC_PLUGIN_URL:
-			{
+			case IDC_PLUGIN_URL: {
 				HWND hListView = ::GetDlgItem(hwndDlg, IDC_PLUGINLIST);
-				int	 sel	   = ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
+				int  sel	   = ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
 				if (sel >= 0) {
 					CPlugin *plugin = CPluginManager::getInstance()->GetPlugin(sel);
 					if (plugin != NULL) { ::ShellExecute(NULL, L"Open", plugin->m_sUrl.c_str(), NULL, NULL, SW_SHOW); }
@@ -265,8 +266,7 @@ INT_PTR CPropPlugin::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 
 		break; /* WM_COMMAND */
 			   //@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP:
-	{
+	case WM_HELP: {
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -311,7 +311,7 @@ void CPropPlugin::SetData(HWND hwndDlg)
 void CPropPlugin::SetData_LIST(HWND hwndDlg)
 {
 	int		   index;
-	LVITEM	   sItem;
+	LVITEM	 sItem;
 	PluginRec *plugin_table = m_Common.m_sPlugin.m_PluginTable;
 
 	::EnableWindow(::GetDlgItem(hwndDlg, IDC_PLUGIN_Remove), FALSE);
@@ -331,8 +331,8 @@ void CPropPlugin::SetData_LIST(HWND hwndDlg)
 		//番号
 		WCHAR buf[4];
 		memset_raw(&sItem, 0, sizeof(sItem));
-		sItem.mask	   = LVIF_TEXT | LVIF_PARAM;
-		sItem.iItem	   = index;
+		sItem.mask	 = LVIF_TEXT | LVIF_PARAM;
+		sItem.iItem	= index;
 		sItem.iSubItem = 0;
 		_itot(index, buf, 10);
 		sItem.pszText = buf;
@@ -341,20 +341,19 @@ void CPropPlugin::SetData_LIST(HWND hwndDlg)
 
 		//名前
 		memset_raw(&sItem, 0, sizeof(sItem));
-		sItem.iItem	   = index;
-		sItem.mask	   = LVIF_TEXT;
+		sItem.iItem	= index;
+		sItem.mask	 = LVIF_TEXT;
 		sItem.iSubItem = 1;
-		if (plugin) {
-			sItem.pszText = const_cast<LPWSTR>(plugin->m_sName.c_str());
-		} else {
+		if (plugin) { sItem.pszText = const_cast<LPWSTR>(plugin->m_sName.c_str()); }
+		else {
 			sItem.pszText = const_cast<WCHAR *>(L"-");
 		}
 		ListView_SetItem(hListView, &sItem);
 
 		//状態
 		memset_raw(&sItem, 0, sizeof(sItem));
-		sItem.iItem	   = index;
-		sItem.mask	   = LVIF_TEXT;
+		sItem.iItem	= index;
+		sItem.mask	 = LVIF_TEXT;
 		sItem.iSubItem = 2;
 		switch (plugin_table[index].m_state) {
 		case PLS_INSTALLED: sItem.pszText = const_cast<WCHAR *>(LS(STR_PROPCOMPLG_STATE1)); break;
@@ -368,20 +367,21 @@ void CPropPlugin::SetData_LIST(HWND hwndDlg)
 		ListView_SetItem(hListView, &sItem);
 
 		//読込
-		sItem.iItem	   = index;
-		sItem.mask	   = LVIF_TEXT;
+		sItem.iItem	= index;
+		sItem.mask	 = LVIF_TEXT;
 		sItem.iSubItem = 3;
 		if (plugin_table[index].m_state != PLS_NONE) {
 			sItem.pszText = const_cast<WCHAR *>(plugin ? LS(STR_PROPCOMPLG_LOAD) : L"");
-		} else {
+		}
+		else {
 			sItem.pszText = const_cast<WCHAR *>(L"");
 		}
 		ListView_SetItem(hListView, &sItem);
 
 		//フォルダ
 		memset_raw(&sItem, 0, sizeof(sItem));
-		sItem.iItem	   = index;
-		sItem.mask	   = LVIF_TEXT;
+		sItem.iItem	= index;
+		sItem.mask	 = LVIF_TEXT;
 		sItem.iSubItem = 4;
 		switch (plugin_table[index].m_state) {
 		case PLS_INSTALLED:
@@ -391,7 +391,8 @@ void CPropPlugin::SetData_LIST(HWND hwndDlg)
 			if (plugin) {
 				sDirName	  = plugin->GetFolderName();
 				sItem.pszText = const_cast<LPWSTR>(sDirName.c_str());
-			} else {
+			}
+			else {
 				sItem.pszText = const_cast<LPWSTR>(plugin_table[index].m_szName);
 			}
 			break;
@@ -427,8 +428,7 @@ int CPropPlugin::GetData(HWND hwndDlg)
 	return TRUE;
 }
 
-struct ColumnData_CPropPlugin_Init
-{
+struct ColumnData_CPropPlugin_Init {
 	int titleId;
 	int width;
 };
@@ -458,7 +458,7 @@ void CPropPlugin::InitDialog(HWND hwndDlg)
 
 		memset_raw(&sColumn, 0, sizeof(sColumn));
 		sColumn.mask	 = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM | LVCF_FMT;
-		sColumn.pszText	 = const_cast<WCHAR *>(LS(ColumnList[pos].titleId));
+		sColumn.pszText  = const_cast<WCHAR *>(LS(ColumnList[pos].titleId));
 		sColumn.cx		 = ColumnList[pos].width * width / 499;
 		sColumn.iSubItem = pos;
 		sColumn.fmt		 = LVCFMT_LEFT;
@@ -480,7 +480,8 @@ void CPropPlugin::EnablePluginPropInput(HWND hwndDlg)
 	if (!::IsDlgButtonChecked(hwndDlg, IDC_CHECK_PluginEnable)) {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_PLUGIN_SearchNew), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_PLUGIN_INST_ZIP), FALSE);
-	} else {
+	}
+	else {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_PLUGIN_SearchNew), TRUE);
 		CZipFile cZipFile;
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_PLUGIN_INST_ZIP), cZipFile.IsOk());
@@ -574,7 +575,7 @@ static void LoadPluginTemp(CommonSetting &common, CMenuDrawer &cMenuDrawer)
 		cMenuDrawer.m_pcIcons->ResetExtend();
 		for (CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++) {
 			int			 iBitmap = CMenuDrawer::TOOLBAR_ICON_PLUGCOMMAND_DEFAULT - 1;
-			const CPlug *plug	 = *it;
+			const CPlug *plug	= *it;
 			if (!plug->m_sIcon.empty()) {
 				iBitmap = cMenuDrawer.m_pcIcons->Add(plug->m_cPlugin.GetFilePath(plug->m_sIcon.c_str()).c_str());
 			}

@@ -71,7 +71,7 @@ void CSortedTagJumpList::Empty(void)
 		next = p->next;
 		Free(p);
 	}
-	m_pTagjump	= NULL;
+	m_pTagjump  = NULL;
 	m_nCount	= 0;
 	m_bOverflow = false;
 	m_baseDirArr.clear();
@@ -110,8 +110,8 @@ BOOL CSortedTagJumpList::AddParamA(const ACHAR *keyword, const ACHAR *filename, 
 	//アイテムを作成する。
 	TagJumpInfo *item = (TagJumpInfo *)malloc(sizeof(TagJumpInfo));
 	if (NULL == item) return FALSE;
-	item->keyword	= _wcsdup(to_wchar(keyword));
-	item->filename	= _wcsdup(to_wchar(filename));
+	item->keyword   = _wcsdup(to_wchar(keyword));
+	item->filename  = _wcsdup(to_wchar(filename));
 	item->no		= no;
 	item->type		= type;
 	item->note		= _wcsdup(to_wchar(note));

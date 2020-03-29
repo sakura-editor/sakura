@@ -42,7 +42,8 @@
 CNormalProcess::CNormalProcess(HINSTANCE hInstance, LPCWSTR lpCmdLine)
 	: CProcess(hInstance, lpCmdLine)
 	, m_pcEditApp(NULL)
-{}
+{
+}
 
 CNormalProcess::~CNormalProcess() {}
 
@@ -104,7 +105,8 @@ bool CNormalProcess::InitializeProcess()
 				if (fi.m_ptCursor.x < 0) {
 					//	桁の指定が無い場合
 					::SendMessageAny(hwndOwner, MYWM_GETCARETPOS, 0, 0);
-				} else {
+				}
+				else {
 					pt.x = fi.m_ptCursor.x;
 				}
 				pt.y = fi.m_ptCursor.y;
@@ -175,7 +177,8 @@ bool CNormalProcess::InitializeProcess()
 		// 2010.06.16 Moca アウトプットは CCommnadLineで -TYPE=output 扱いとする
 		pEditWnd->SetDocumentTypeWhenCreate(fi.m_nCharCode, false, nType);
 		pEditWnd->m_cDlgFuncList.Refresh(); // アウトラインを表示する
-	} else if (bGrepMode) {
+	}
+	else if (bGrepMode) {
 		/* GREP */
 		// 2010.06.16 Moca Grepでもオプション指定を適用
 		pEditWnd->SetDocumentTypeWhenCreate(fi.m_nCharCode, false, nType);
@@ -204,7 +207,8 @@ bool CNormalProcess::InitializeProcess()
 				gi.nGrepOutputLineType, gi.nGrepOutputStyle, gi.bGrepOutputFileOnly, gi.bGrepOutputBaseFolder,
 				gi.bGrepSeparateFolder, gi.bGrepPaste, gi.bGrepBackup);
 			pEditWnd->m_cDlgFuncList.Refresh(); // アウトラインを再解析する
-		} else {
+		}
+		else {
 			CAppNodeManager::getInstance()->GetNoNameNumber(pEditWnd->GetHwnd());
 			pEditWnd->UpdateCaption();
 
@@ -225,11 +229,11 @@ bool CNormalProcess::InitializeProcess()
 					cmemGrepFolder.SetString(szCurDir);
 				}
 			}
-			GetDllShareData().m_Common.m_sSearch.m_bGrepSubFolder	   = gi.bGrepSubFolder;
+			GetDllShareData().m_Common.m_sSearch.m_bGrepSubFolder	  = gi.bGrepSubFolder;
 			GetDllShareData().m_Common.m_sSearch.m_sSearchOption	   = gi.sGrepSearchOption;
 			GetDllShareData().m_Common.m_sSearch.m_nGrepCharSet		   = gi.nGrepCharSet;
 			GetDllShareData().m_Common.m_sSearch.m_nGrepOutputLineType = gi.nGrepOutputLineType;
-			GetDllShareData().m_Common.m_sSearch.m_nGrepOutputStyle	   = gi.nGrepOutputStyle;
+			GetDllShareData().m_Common.m_sSearch.m_nGrepOutputStyle	= gi.nGrepOutputStyle;
 			// 2003.06.23 Moca GREPダイアログ表示前にMutexを解放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
 			SetMainWindow(pEditWnd->GetHwnd());
@@ -239,7 +243,7 @@ bool CNormalProcess::InitializeProcess()
 
 			//	Oct. 9, 2003 genta コマンドラインからGERPダイアログを表示させた場合に
 			//	引数の設定がBOXに反映されない
-			pEditWnd->m_cDlgGrep.m_strText	= gi.cmGrepKey.GetStringPtr(); /* 検索文字列 */
+			pEditWnd->m_cDlgGrep.m_strText  = gi.cmGrepKey.GetStringPtr(); /* 検索文字列 */
 			pEditWnd->m_cDlgGrep.m_bSetText = true;
 			int nSize						= _countof2(pEditWnd->m_cDlgGrep.m_szFile);
 			wcsncpy(pEditWnd->m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr(), nSize); /* 検索ファイル */
@@ -250,9 +254,8 @@ bool CNormalProcess::InitializeProcess()
 
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
 			int nRet = pEditWnd->m_cDlgGrep.DoModal(GetProcessInstance(), pEditWnd->GetHwnd(), NULL);
-			if (FALSE != nRet) {
-				pEditWnd->GetActiveView().GetCommander().HandleCommand(F_GREP, true, 0, 0, 0, 0);
-			} else {
+			if (FALSE != nRet) { pEditWnd->GetActiveView().GetCommander().HandleCommand(F_GREP, true, 0, 0, 0, 0); }
+			else {
 				// 自分はGrepでない
 				pEditWnd->GetDocument()->SetCurDirNotitle();
 			}
@@ -271,7 +274,8 @@ bool CNormalProcess::InitializeProcess()
 		}
 
 		return true; // 2003.06.23 Moca
-	} else {
+	}
+	else {
 		// 2004.05.13 Moca さらにif分の中から前に移動
 		// ファイル名が与えられなくてもReadOnly指定を有効にするため．
 		bViewMode = CCommandLine::getInstance()->IsViewMode(); // 2002/2/8 aroka ここに移動
@@ -327,7 +331,8 @@ bool CNormalProcess::InitializeProcess()
 					pEditWnd->GetActiveView().GetCaret().GetCaretLayoutPos().GetX2();
 			}
 			pEditWnd->GetActiveView().RedrawAll();
-		} else {
+		}
+		else {
 			pEditWnd->GetDocument()->SetCurDirNotitle(); // (無題)ウィンドウ
 			// 2004.05.13 Moca ファイル名が与えられなくてもReadOnlyとタイプ指定を有効にする
 			pEditWnd->SetDocumentTypeWhenCreate(fi.m_nCharCode,
@@ -437,7 +442,7 @@ HANDLE CNormalProcess::_GetInitializeMutex() const
 {
 	MY_RUNNINGTIMER(cRunningTimer, "NormalProcess::_GetInitializeMutex");
 	HANDLE		 hMutex;
-	const auto	 pszProfileName	  = CCommandLine::getInstance()->GetProfileName();
+	const auto   pszProfileName   = CCommandLine::getInstance()->GetProfileName();
 	std::wstring strMutexInitName = GSTR_MUTEX_SAKURA_INIT;
 	strMutexInitName += pszProfileName;
 	hMutex = ::CreateMutex(NULL, TRUE, strMutexInitName.c_str());

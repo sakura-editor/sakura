@@ -36,8 +36,7 @@
 struct EditInfo;
 
 //! iniフォルダ設定	// 2007.05.31 ryoji
-struct IniFolder
-{
+struct IniFolder {
 	bool  m_bInit;						 // 初期化済フラグ
 	bool  m_bReadPrivate;				 // マルチユーザ用iniからの読み出しフラグ
 	bool  m_bWritePrivate;				 // マルチユーザ用iniへの書き込みフラグ
@@ -46,14 +45,12 @@ struct IniFolder
 };										 /* iniフォルダ設定 */
 
 //共有メモリ内構造体
-struct SShare_FileNameManagement
-{
+struct SShare_FileNameManagement {
 	IniFolder m_IniFolder; /**** iniフォルダ設定 ****/
 };
 
 //!ファイル名管理
-class CFileNameManager : public TSingleton<CFileNameManager>
-{
+class CFileNameManager : public TSingleton<CFileNameManager> {
 	friend class TSingleton<CFileNameManager>;
 	CFileNameManager()
 	{
@@ -67,7 +64,7 @@ public:
 											int cchMaxWidth = 0); // 2002.11.24 Moca Add
 	int			   TransformFileName_MakeCache(void);
 	static LPCWSTR GetFilePathFormat(LPCWSTR, LPWSTR, int, LPCWSTR, LPCWSTR);
-	static bool	   ExpandMetaToFolder(LPCWSTR, LPWSTR, int);
+	static bool	ExpandMetaToFolder(LPCWSTR, LPWSTR, int);
 
 	//メニュー類のファイル名作成
 	bool GetMenuFullLabel_WinList(WCHAR *pszOutput, int nBuffSize, const EditInfo *editInfo, int id, int index, HDC hDC)
@@ -104,15 +101,15 @@ public:
 	static WCHAR GetAccessKeyByIndex(int index, bool bZeroOrigin);
 
 	static void GetIniFileNameDirect(LPWSTR pszPrivateIniFile, LPWSTR pszIniFile, LPCWSTR pszProfName);
-		/* 構成設定ファイルからiniファイル名を取得する */ // 2007.09.04 ryoji
+	/* 構成設定ファイルからiniファイル名を取得する */ // 2007.09.04 ryoji
 	void GetIniFileName(LPWSTR pszIniFileName, LPCWSTR pszProfName, BOOL bRead = FALSE);
-		/* iniファイル名の取得 */ // 2007.05.19 ryoji
+	/* iniファイル名の取得 */ // 2007.05.19 ryoji
 
 private:
 	DLLSHAREDATA *m_pShareData;
 
 	// ファイル名簡易表示用キャッシュ
-	int	  m_nTransformFileNameCount; // 有効数
+	int   m_nTransformFileNameCount; // 有効数
 	WCHAR m_szTransformFileNameFromExp[MAX_TRANSFORM_FILENAME][_MAX_PATH];
-	int	  m_nTransformFileNameOrgId[MAX_TRANSFORM_FILENAME];
+	int   m_nTransformFileNameOrgId[MAX_TRANSFORM_FILENAME];
 };

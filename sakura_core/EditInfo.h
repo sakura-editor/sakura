@@ -39,13 +39,12 @@
  * @note この構造体は DLLSHAREDATA に含まれるため、
  *   プロセス間共有できない型のメンバを追加してはならない。
  */
-struct EditInfo
-{
+struct EditInfo {
 	//ファイル
-	WCHAR	  m_szPath[_MAX_PATH];				//!< ファイル名
+	WCHAR	 m_szPath[_MAX_PATH];				//!< ファイル名
 	ECodeType m_nCharCode;						//!< 文字コード種別
 	bool	  m_bBom;							//!< BOM(GetFileInfo)
-	WCHAR	  m_szDocType[MAX_DOCTYPE_LEN + 1]; //!< 文書タイプ
+	WCHAR	 m_szDocType[MAX_DOCTYPE_LEN + 1]; //!< 文書タイプ
 	int		  m_nTypeId;						//!< 文書タイプ(MRU)
 
 	//表示域
@@ -69,8 +68,8 @@ struct EditInfo
 	wchar_t m_szMarkLines[MAX_MARKLINES_LEN + 1]; //!< ブックマークの物理行リスト
 
 	//ウィンドウ
-	int m_nWindowSizeX;	  //!< ウィンドウ  幅(ピクセル数)
-	int m_nWindowSizeY;	  //!< ウィンドウ  高さ(ピクセル数)
+	int m_nWindowSizeX;   //!< ウィンドウ  幅(ピクセル数)
+	int m_nWindowSizeY;   //!< ウィンドウ  高さ(ピクセル数)
 	int m_nWindowOriginX; //!< ウィンドウ  物理位置(ピクセル数・マイナス値も有効)
 	int m_nWindowOriginY; //!< ウィンドウ  物理位置(ピクセル数・マイナス値も有効)
 

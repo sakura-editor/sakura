@@ -20,14 +20,13 @@
 
 class CDropTarget;
 class CYbInterfaceBase;
-class CEditWnd;	 // 2008.06.20 ryoji
+class CEditWnd;  // 2008.06.20 ryoji
 class CEditView; // 2002/2/3 aroka ヘッダ軽量化
 
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-class COleLibrary
-{
+class COleLibrary {
 	friend class CYbInterfaceBase;
 
 private:
@@ -42,8 +41,7 @@ private:
 	void UnInitialize();
 };
 
-class CYbInterfaceBase
-{
+class CYbInterfaceBase {
 private:
 	static COleLibrary m_olelib;
 
@@ -53,8 +51,8 @@ protected:
 	static HRESULT QueryInterfaceImpl(IUnknown *, REFIID, REFIID, void **);
 };
 
-template<class BASEINTERFACE> class CYbInterfaceImpl : public BASEINTERFACE, public CYbInterfaceBase
-{
+template<class BASEINTERFACE>
+class CYbInterfaceImpl : public BASEINTERFACE, public CYbInterfaceBase {
 private:
 	static REFIID m_owniid;
 
@@ -65,8 +63,7 @@ public:
 	STDMETHOD_(ULONG, Release)(void) { return 0; }
 };
 
-class CDropTarget : public CYbInterfaceImpl<IDropTarget>
-{
+class CDropTarget : public CYbInterfaceImpl<IDropTarget> {
 public:
 	/*
 	||  Constructors
@@ -96,34 +93,32 @@ protected:
 	*/
 };
 
-class CDropSource : public CYbInterfaceImpl<IDropSource>
-{
+class CDropSource : public CYbInterfaceImpl<IDropSource> {
 private:
 	BOOL m_bLeft;
 
 public:
 	CDropSource(BOOL bLeft)
 		: m_bLeft(bLeft)
-	{}
+	{
+	}
 
 	STDMETHOD(QueryContinueDrag)(BOOL bEscapePressed, DWORD dwKeyState);
 	STDMETHOD(GiveFeedback)(DWORD dropEffect);
 };
 
-class CDataObject : public CYbInterfaceImpl<IDataObject>
-{
+class CDataObject : public CYbInterfaceImpl<IDataObject> {
 private:
 	friend class CEnumFORMATETC; // 2008.03.26 ryoji
 
-	typedef struct
-	{
+	typedef struct {
 		CLIPFORMAT cfFormat;
 		// Feb. 26, 2001, fixed by yebisuya sugoroku
 		LPBYTE		 data; //データ
 		unsigned int size; //データサイズ。バイト単位。
 	} DATA, *PDATA;
 
-	int	  m_nFormat;
+	int   m_nFormat;
 	PDATA m_pData;
 
 public:
@@ -152,8 +147,7 @@ public:
 
 //! CEnumFORMATETC クラス
 //	2008.03.26 ryoji 新規作成
-class CEnumFORMATETC : public CYbInterfaceImpl<IEnumFORMATETC>
-{
+class CEnumFORMATETC : public CYbInterfaceImpl<IEnumFORMATETC> {
 private:
 	LONG		 m_lRef;
 	int			 m_nIndex;
@@ -164,7 +158,8 @@ public:
 		: m_lRef(1)
 		, m_nIndex(0)
 		, m_pcDataObject(pcDataObject)
-	{}
+	{
+	}
 	STDMETHOD_(ULONG, AddRef)(void) { return ::InterlockedIncrement(&m_lRef); }
 	STDMETHOD_(ULONG, Release)(void)
 	{

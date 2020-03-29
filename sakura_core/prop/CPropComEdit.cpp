@@ -34,12 +34,12 @@ static const DWORD p_helpids[] = {						   // 10210
 	HIDC_CHECK_bEnableLineModePaste,			 //ラインモード貼り付けを可能にする	// 2007.10.08 ryoji
 	IDC_CHECK_DRAGDROP, HIDC_CHECK_DRAGDROP,	 // Drag&Drop編集する
 	IDC_CHECK_DROPSOURCE, HIDC_CHECK_DROPSOURCE, //ドロップ元にする
-	IDC_CHECK_bNotOverWriteCRLF, HIDC_CHECK_bNotOverWriteCRLF,	   //上書きモード
-	IDC_CHECK_bOverWriteFixMode, HIDC_CHECK_bOverWriteFixMode,	   //文字幅に合わせてスペースを詰める
+	IDC_CHECK_bNotOverWriteCRLF, HIDC_CHECK_bNotOverWriteCRLF,	 //上書きモード
+	IDC_CHECK_bOverWriteFixMode, HIDC_CHECK_bOverWriteFixMode,	 //文字幅に合わせてスペースを詰める
 	IDC_CHECK_bOverWriteBoxDelete, HIDC_CHECK_bOverWriteBoxDelete, //矩形入力で選択範囲を削除する
 	//	2007.02.11 genta クリッカブルURLをこのページに移動
 	IDC_CHECK_bSelectClickedURL, HIDC_CHECK_bSelectClickedURL, //クリッカブルURL
-	IDC_CHECK_CONVERTEOLPASTE, HIDC_CHECK_CONVERTEOLPASTE,	   //改行コードを変換して貼り付ける
+	IDC_CHECK_CONVERTEOLPASTE, HIDC_CHECK_CONVERTEOLPASTE,	 //改行コードを変換して貼り付ける
 	IDC_RADIO_CURDIR, HIDC_RADIO_CURDIR,					   //カレントフォルダ
 	IDC_RADIO_MRUDIR, HIDC_RADIO_MRUDIR,					   //最近使ったフォルダ
 	IDC_RADIO_SELDIR, HIDC_RADIO_SELDIR,					   //指定フォルダ
@@ -65,10 +65,10 @@ INT_PTR CALLBACK CPropEdit::DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam,
 //	To Here Jun. 2, 2001 genta
 
 /* メッセージ処理 */
-INT_PTR CPropEdit::DispatchEvent(HWND	hwndDlg, // handle to dialog box
-								 UINT	uMsg,	 // message
-								 WPARAM wParam,	 // first message parameter
-								 LPARAM lParam	 // second message parameter
+INT_PTR CPropEdit::DispatchEvent(HWND   hwndDlg, // handle to dialog box
+								 UINT   uMsg,	// message
+								 WPARAM wParam,  // first message parameter
+								 LPARAM lParam   // second message parameter
 )
 {
 	WORD   wNotifyCode;
@@ -99,15 +99,15 @@ INT_PTR CPropEdit::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 			case IDC_CHECK_DRAGDROP: /* タスクトレイを使う */
 				if (::IsDlgButtonChecked(hwndDlg, IDC_CHECK_DRAGDROP)) {
 					::EnableWindow(::GetDlgItem(hwndDlg, IDC_CHECK_DROPSOURCE), TRUE);
-				} else {
+				}
+				else {
 					::EnableWindow(::GetDlgItem(hwndDlg, IDC_CHECK_DROPSOURCE), FALSE);
 				}
 				return TRUE;
 			case IDC_RADIO_CURDIR:
 			case IDC_RADIO_MRUDIR:
 			case IDC_RADIO_SELDIR: EnableEditPropInput(hwndDlg); return TRUE;
-			case IDC_BUTTON_FILEOPENDIR:
-			{
+			case IDC_BUTTON_FILEOPENDIR: {
 				WCHAR szMetaPath[_MAX_PATH];
 				WCHAR szPath[_MAX_PATH];
 				::DlgItem_GetText(hwndDlg, IDC_EDIT_FILEOPENDIR, szMetaPath, _countof(szMetaPath));
@@ -142,8 +142,7 @@ INT_PTR CPropEdit::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 		break; /* WM_NOTIFY */
 
 		//@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP:
-	{
+	case WM_HELP: {
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -170,7 +169,8 @@ void CPropEdit::SetData(HWND hwndDlg)
 	::CheckDlgButton(hwndDlg, IDC_CHECK_DRAGDROP, m_Common.m_sEdit.m_bUseOLE_DragDrop);
 	if (::IsDlgButtonChecked(hwndDlg, IDC_CHECK_DRAGDROP)) {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_CHECK_DROPSOURCE), TRUE);
-	} else {
+	}
+	else {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_CHECK_DROPSOURCE), FALSE);
 	}
 
@@ -287,7 +287,8 @@ void CPropEdit::EnableEditPropInput(HWND hwndDlg)
 	if (::IsDlgButtonChecked(hwndDlg, IDC_RADIO_SELDIR)) {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_FILEOPENDIR), TRUE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_FILEOPENDIR), TRUE);
-	} else {
+	}
+	else {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_FILEOPENDIR), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_FILEOPENDIR), FALSE);
 	}

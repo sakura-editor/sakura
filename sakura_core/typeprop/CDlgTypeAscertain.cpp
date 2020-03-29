@@ -36,19 +36,20 @@
 #include "sakura_rc.h"
 
 // タイプ別設定インポート確認 CDlgTypeAscertain.cpp
-const DWORD p_helpids[] = {IDC_RADIO_TYPE_TO, HIDC_RADIO_TYPE_TO,	//タイプ別名
+const DWORD p_helpids[] = {IDC_RADIO_TYPE_TO, HIDC_RADIO_TYPE_TO,   //タイプ別名
 						   IDC_RADIO_TYPE_ADD, HIDC_RADIO_TYPE_ADD, //タイプ別追加
 						   IDC_COMBO_COLORS, HIDC_COMBO_COLORS,		//色指定
 						   IDOK, HIDOK_DTA,							// OK
 						   IDCANCEL, HIDCANCEL_DTA,					//キャンセル
-						   IDC_BUTTON_HELP, HIDC_DTA_BUTTON_HELP,	//ヘルプ
+						   IDC_BUTTON_HELP, HIDC_DTA_BUTTON_HELP,   //ヘルプ
 																	//	IDC_STATIC,				-1,
 						   0, 0};
 
 //  Constructors
 CDlgTypeAscertain::CDlgTypeAscertain()
 	: m_psi(NULL)
-{}
+{
+}
 
 // モーダルダイアログの表示
 int CDlgTypeAscertain::DoModal(HINSTANCE hInstance, HWND hwndParent, SAscertainInfo *psAscertainInfo)
@@ -69,10 +70,10 @@ BOOL CDlgTypeAscertain::OnBnClicked(int wID)
 		MyWinHelp(GetHwnd(), HELP_CONTEXT, HLP000338);
 		return TRUE;
 	case IDOK:
-		WCHAR	buff1[_MAX_PATH + 20];
+		WCHAR   buff1[_MAX_PATH + 20];
 		wchar_t buff2[_MAX_PATH + 20];
 
-		m_psi->bAddType	  = IsDlgButtonCheckedBool(GetHwnd(), IDC_RADIO_TYPE_ADD);
+		m_psi->bAddType   = IsDlgButtonCheckedBool(GetHwnd(), IDC_RADIO_TYPE_ADD);
 		m_psi->sColorFile = L"";
 		m_psi->nColorType = Combo_GetCurSel(GetItemHwnd(IDC_COMBO_COLORS)) - 1;
 		if (m_psi->nColorType >= MAX_TYPES
@@ -100,7 +101,7 @@ void CDlgTypeAscertain::SetData(void)
 
 	::CheckDlgButton(GetHwnd(), IDC_RADIO_TYPE_ADD, TRUE);
 
-	int	  nIdx;
+	int   nIdx;
 	HWND  hwndCombo;
 	WCHAR szText[_MAX_PATH + 10];
 	hwndCombo = GetItemHwnd(IDC_COMBO_COLORS);
@@ -117,7 +118,8 @@ void CDlgTypeAscertain::SetData(void)
 			auto_sprintf(szText, L"%s (%s)", type->m_szTypeName, /* タイプ属性：名称 */
 						 type->m_szTypeExts						 /* タイプ属性：拡張子リスト */
 			);
-		} else {
+		}
+		else {
 			auto_sprintf(szText, L"%s", type->m_szTypeName /* タイプ属性：拡称 */
 			);
 		}

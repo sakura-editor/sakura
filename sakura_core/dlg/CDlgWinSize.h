@@ -38,8 +38,7 @@
 	共通設定のウィンドウ設定で，ウィンドウ位置を指定するために補助的に
 	使用されるダイアログボックス
 */
-class CDlgWinSize final : public CDialog
-{
+class CDlgWinSize final : public CDialog {
 public:
 	CDlgWinSize();
 	~CDlgWinSize();
@@ -51,7 +50,7 @@ protected:
 	BOOL   OnBnClicked(int wID) override;
 	BOOL   OnEnSetFocus(HWND hwndCtl, int wID) override;
 	BOOL   OnEnKillFocus(HWND hwndCtl, int wID) override;
-	int	   GetData(void) override;
+	int	GetData(void) override;
 	void   SetData(void) override;
 	LPVOID GetHelpIdTable(void) override;
 
@@ -59,7 +58,7 @@ protected:
 
 private:
 	EWinSizeMode m_eSaveWinSize; //!< ウィンドウサイズの保存: 0/デフォルト，1/継承，2/指定
-	EWinSizeMode m_eSaveWinPos;	 //!< ウィンドウ位置の保存: 0/デフォルト，1/継承，2/指定
+	EWinSizeMode m_eSaveWinPos;  //!< ウィンドウ位置の保存: 0/デフォルト，1/継承，2/指定
 	int			 m_nWinSizeType; //!< ウィンドウ表示方法: 0/標準，1/最大化，2/最小化
 	RECT		 m_rc;
 };

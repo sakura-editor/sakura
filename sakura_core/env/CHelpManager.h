@@ -31,8 +31,7 @@
 // #include "DLLSHAREDATA.h"
 
 //!ヘルプ管理
-class CHelpManager
-{
+class CHelpManager {
 public:
 	CHelpManager() { m_pShareData = &GetDllShareData(); }
 	//ヘルプ関連	//@@@ 2002.2.3 YAZAKI

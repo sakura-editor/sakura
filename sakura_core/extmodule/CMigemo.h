@@ -23,20 +23,20 @@ Migemo はローマ字のまま日本語をインクリメンタル検索する�
 #define MIGEMO_VERSION "1.1"
 
 /* for migemo_load() */
-#define MIGEMO_DICTID_INVALID	0
-#define MIGEMO_DICTID_MIGEMO	1
+#define MIGEMO_DICTID_INVALID 0
+#define MIGEMO_DICTID_MIGEMO 1
 #define MIGEMO_DICTID_ROMA2HIRA 2
 #define MIGEMO_DICTID_HIRA2KATA 3
-#define MIGEMO_DICTID_HAN2ZEN	4
-#define MIGEMO_DICTID_ZEN2HAN	5
+#define MIGEMO_DICTID_HAN2ZEN 4
+#define MIGEMO_DICTID_ZEN2HAN 5
 
 /* for migemo_set_operator()/migemo_get_operator().  see: rxgen.h */
-#define MIGEMO_OPINDEX_OR		  0
-#define MIGEMO_OPINDEX_NEST_IN	  1
-#define MIGEMO_OPINDEX_NEST_OUT	  2
-#define MIGEMO_OPINDEX_SELECT_IN  3
+#define MIGEMO_OPINDEX_OR 0
+#define MIGEMO_OPINDEX_NEST_IN 1
+#define MIGEMO_OPINDEX_NEST_OUT 2
+#define MIGEMO_OPINDEX_SELECT_IN 3
 #define MIGEMO_OPINDEX_SELECT_OUT 4
-#define MIGEMO_OPINDEX_NEWLINE	  5
+#define MIGEMO_OPINDEX_NEWLINE 5
 
 /* see: rxgen.h */
 typedef int(__cdecl *MIGEMO_PROC_CHAR2INT)(const unsigned char *, unsigned int *);
@@ -50,8 +50,7 @@ typedef struct _migemo migemo;
 #include "CDllHandler.h"
 #include "util/design_template.h"
 
-class CMigemo : public TSingleton<CMigemo>, public CDllImp
-{
+class CMigemo : public TSingleton<CMigemo>, public CDllImp {
 	friend class TSingleton<CMigemo>;
 	CMigemo() {}
 
@@ -99,8 +98,8 @@ protected:
 	Proc_migemo_close_s			   m_migemo_close_s;
 	Proc_migemo_query_s			   m_migemo_query_s;
 	Proc_migemo_release_s		   m_migemo_release_s;
-	Proc_migemo_set_operator_s	   m_migemo_set_operator_s;
-	Proc_migemo_get_operator_s	   m_migemo_get_operator_s;
+	Proc_migemo_set_operator_s	 m_migemo_set_operator_s;
+	Proc_migemo_get_operator_s	 m_migemo_get_operator_s;
 	Proc_migemo_setproc_char2int_s m_migemo_setproc_char2int_s;
 	Proc_migemo_setproc_int2char_s m_migemo_setproc_int2char_s;
 	Proc_migemo_load_s			   m_migemo_load_s;

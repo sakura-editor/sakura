@@ -29,8 +29,7 @@
 typedef StaticString<WCHAR, MAX_EXCLUDE_PATH> CExcludeFileString;
 
 //! Excludeファイルの履歴を管理 (RECENT_FOR_Exclude_FILE)
-class CRecentExcludeFile final : public CRecentImp<CExcludeFileString, LPCWSTR>
-{
+class CRecentExcludeFile final : public CRecentImp<CExcludeFileString, LPCWSTR> {
 public:
 	//生成
 	CRecentExcludeFile();

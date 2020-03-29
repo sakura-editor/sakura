@@ -44,7 +44,7 @@ void CFigure_CtrlCode::DispSpaceEx(CGraphics &gr, DispPos *pDispPos, CEditView *
 		if (fontNo) {
 			SFONT sFont;
 			sFont.m_sFontAttr = gr.GetCurrentMyFontAttr();
-			sFont.m_hFont	  = pcView->GetFontset().ChooseFontHandle(fontNo, sFont.m_sFontAttr);
+			sFont.m_hFont	 = pcView->GetFontset().ChooseFontHandle(fontNo, sFont.m_sFontAttr);
 			gr.PushMyFont(sFont);
 		}
 		int		nHeightMargin = pcView->GetTextMetrics().GetCharHeightMarginByFontNo(fontNo);

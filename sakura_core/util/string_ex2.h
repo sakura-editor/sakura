@@ -64,7 +64,7 @@ inline void dupamp(const WCHAR *org, WCHAR *out) { cescape(org, out, L'&', L'&')
 		scan_ints("1,23,4,5", "%d,%d,%d", a);
 		//結果: a[0]=1, a[1]=23, a[2]=4 となる。
 */
-int scan_ints(const wchar_t *pszData,	//!< [in]  データ文字列
+int scan_ints(const wchar_t *pszData,   //!< [in]  データ文字列
 			  const wchar_t *pszFormat, //!< [in]  データフォーマット
 			  int *			 anBuf		//!< [out] 取得した数値 (要素数は最大32まで)
 );
@@ -72,19 +72,28 @@ int scan_ints(const wchar_t *pszData,	//!< [in]  データ文字列
 /*! @brief int2dec の第2引数の文字列出力先に必要十分なサイズ取得用
 	符号付き整数の最小値の場合に必要な長さを返す
 */
-template<typename T> constexpr size_t int2dec_destBufferSufficientLength();
+template<typename T>
+constexpr size_t int2dec_destBufferSufficientLength();
 
 /*!
 	符号付き32bit整数の最小値(-2147483648)の10進数文字列の文字数は
 	終端0文字を含めて12文字。
 */
-template<> constexpr size_t int2dec_destBufferSufficientLength<int32_t>() { return _countof(L"-2147483648"); }
+template<>
+constexpr size_t int2dec_destBufferSufficientLength<int32_t>()
+{
+	return _countof(L"-2147483648");
+}
 
 /*!
 	符号付き64bit整数の最小値(-9223372036854775808)の10進数文字列の
 	文字数は終端0文字を含めて21文字
 */
-template<> constexpr size_t int2dec_destBufferSufficientLength<int64_t>() { return _countof(L"-9223372036854775808"); }
+template<>
+constexpr size_t int2dec_destBufferSufficientLength<int64_t>()
+{
+	return _countof(L"-9223372036854775808");
+}
 
 /*! @brief 整数を10進数の文字列に変換
 	参考にしたコード : https://stackoverflow.com/a/12386915/4699324
@@ -95,15 +104,15 @@ template<> constexpr size_t int2dec_destBufferSufficientLength<int64_t>() { retu
 	@return 変換後の文字数（終端0文字の分は含まない）
 */
 template<typename T, typename ChT>
-ptrdiff_t int2dec(T	   value, //!< [in] 文字列化の素になる整数
-				  ChT *sp	  //!< [out] 文字列出力先
+ptrdiff_t int2dec(T	value, //!< [in] 文字列化の素になる整数
+				  ChT *sp	 //!< [out] 文字列出力先
 )
 {
 	// 符号無し整数型は対応外
 	static_assert(std::is_signed<T>::value, "T must be signed type.");
 
 	// 一時領域
-	ChT	 tmp[int2dec_destBufferSufficientLength<T>()];
+	ChT  tmp[int2dec_destBufferSufficientLength<T>()];
 	ChT *tp = tmp;
 
 	uint8_t minAdjuster = (value == std::numeric_limits<T>::min()) ? 1 : 0;

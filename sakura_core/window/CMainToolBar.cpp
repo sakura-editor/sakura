@@ -40,7 +40,8 @@ CMainToolBar::CMainToolBar(CEditWnd *pOwner)
 	, m_hwndSearchBox(NULL)
 	, m_hFontSearchBox(NULL)
 	, m_pcIcons(NULL)
-{}
+{
+}
 
 void CMainToolBar::Create(CImageListMgr *pcIcons) { m_pcIcons = pcIcons; }
 
@@ -58,7 +59,7 @@ void CMainToolBar::ProcSearchBox(MSG *msg)
 					//検索キーを登録
 					CSearchKeywordManager().AddToSearchKeyArr(strText.c_str());
 				}
-				m_pOwner->GetActiveView().m_strCurSearchKey	 = strText;
+				m_pOwner->GetActiveView().m_strCurSearchKey  = strText;
 				m_pOwner->GetActiveView().m_bCurSearchUpdate = true;
 				m_pOwner->GetActiveView().ChangeCurRegexp();
 
@@ -76,7 +77,8 @@ void CMainToolBar::ProcSearchBox(MSG *msg)
 				//次を検索
 				m_pOwner->OnCommand((WORD)0 /*メニュー*/, (WORD)F_SEARCH_NEXT, (HWND)0);
 			}
-		} else if (msg->wParam == VK_TAB) //タブキー
+		}
+		else if (msg->wParam == VK_TAB) //タブキー
 		{
 			//フォーカスを移動
 			//	2004.10.27 MIK IME表示位置のずれ修正
@@ -116,7 +118,7 @@ void CMainToolBar::CreateToolBar(void)
 {
 	if (m_hwndToolBar) return;
 
-	REBARINFO	  rbi;
+	REBARINFO	 rbi;
 	REBARBANDINFO rbBand;
 	int			  nFlag;
 	TBBUTTON	  tbb;
@@ -170,17 +172,18 @@ void CMainToolBar::CreateToolBar(void)
 		}
 		TopWarningMessage(m_pOwner->GetHwnd(), LS(STR_ERR_DLGEDITWND05));
 		DestroyToolBar(); // 2006.06.17 ryoji
-	} else {
+	}
+	else {
 		// 2006.09.06 ryoji ツールバーをサブクラス化する
 		g_pOldToolBarWndProc = (WNDPROC)::SetWindowLongPtr(m_hwndToolBar, GWLP_WNDPROC, (LONG_PTR)ToolBarWndProc);
 
 		// pixel数をベタ書きするとHighDPI環境でずれるのでシステム値を取得して使う
-		const int cxBorder	   = DpiScaleX(1);
-		const int cyBorder	   = DpiScaleY(1);
+		const int cxBorder	 = DpiScaleX(1);
+		const int cyBorder	 = DpiScaleY(1);
 		const int cxEdge	   = DpiScaleX(1);
 		const int cyEdge	   = DpiScaleY(1);
-		const int cxSmIcon	   = DpiScaleX(16);
-		const int cySmIcon	   = DpiScaleY(16);
+		const int cxSmIcon	 = DpiScaleX(16);
+		const int cySmIcon	 = DpiScaleY(16);
 		const int cxToolButton = cxBorder + cxEdge + cxSmIcon + cxEdge + cxBorder; // 22
 		const int cyToolButton = cyBorder + cyEdge + cySmIcon + cyEdge + cyBorder; // 22
 		Toolbar_SetButtonSize(m_hwndToolBar, cxToolButton, cyToolButton); // 2009.10.01 ryoji 高DPI対応スケーリング
@@ -240,7 +243,7 @@ void CMainToolBar::CreateToolBar(void)
 
 					//セパレータ作る
 					memset_raw(&my_tbb, 0, sizeof(my_tbb));
-					my_tbb.fsStyle	 = TBSTYLE_BUTTON; //ボタンにしないと描画が乱れる 2005/8/29 aroka
+					my_tbb.fsStyle   = TBSTYLE_BUTTON; //ボタンにしないと描画が乱れる 2005/8/29 aroka
 					my_tbb.idCommand = tbb.idCommand;  //同じIDにしておく
 					if (tbb.fsState & TBSTATE_WRAP) {  //折り返し 2005/8/29 aroka
 						my_tbb.fsState |= TBSTATE_WRAP;
@@ -275,12 +278,12 @@ void CMainToolBar::CreateToolBar(void)
 						lf.lfHeight = DpiPointsToPixels(-9); // Jan. 14, 2003 genta ダイアログにあわせてちょっと小さく
 															 // // 2009.10.01 ryoji 高DPI対応（ポイント数から算出）
 						lf.lfWidth		 = 0;
-						lf.lfEscapement	 = 0;
+						lf.lfEscapement  = 0;
 						lf.lfOrientation = 0;
 						lf.lfWeight		 = FW_NORMAL;
 						lf.lfItalic		 = FALSE;
-						lf.lfUnderline	 = FALSE;
-						lf.lfStrikeOut	 = FALSE;
+						lf.lfUnderline   = FALSE;
+						lf.lfStrikeOut   = FALSE;
 						// lf.lfCharSet		= GetDllShareData().m_Common.m_sView.m_lf.lfCharSet;
 						lf.lfOutPrecision = OUT_TT_ONLY_PRECIS; // Raster Font を使わないように
 						// lf.lfClipPrecision	= GetDllShareData().m_Common.m_sView.m_lf.lfClipPrecision;
@@ -321,7 +324,7 @@ void CMainToolBar::CreateToolBar(void)
 			} break;
 
 			case TBSTYLE_BUTTON: //ボタン
-			case TBSTYLE_SEP:	 //セパレータ
+			case TBSTYLE_SEP:	//セパレータ
 			default:
 				Toolbar_AddButtons(m_hwndToolBar, 1, &tbb);
 				count++;
@@ -346,11 +349,11 @@ void CMainToolBar::CreateToolBar(void)
 		DWORD dwRows	= Toolbar_GetRows(m_hwndToolBar);
 
 		// バンド情報を設定する
-		// 以前のプラットフォームに _WIN32_WINNT >= 0x0600 で定義される構造体のフルサイズを渡すと失敗する	// 2007.12.21
-		// ryoji
-		rbBand.cbSize	  = CCSIZEOF_STRUCT(REBARBANDINFO, wID);
+		// 以前のプラットフォームに _WIN32_WINNT >= 0x0600 で定義される構造体のフルサイズを渡すと失敗する	//
+		// 2007.12.21 ryoji
+		rbBand.cbSize	 = CCSIZEOF_STRUCT(REBARBANDINFO, wID);
 		rbBand.fMask	  = RBBIM_STYLE | RBBIM_CHILD | RBBIM_CHILDSIZE | RBBIM_SIZE;
-		rbBand.fStyle	  = RBBS_CHILDEDGE;
+		rbBand.fStyle	 = RBBS_CHILDEDGE;
 		rbBand.hwndChild  = m_hwndToolBar; // ツールバー
 		rbBand.cxMinChild = 0;
 		rbBand.cyMinChild = HIWORD(dwBtnSize) * dwRows;
@@ -431,8 +434,7 @@ LPARAM CMainToolBar::ToolBarOwnerDraw(LPNMCUSTOMDRAW pnmh)
 		if (pnmh->dwItemSpec == F_SEARCH_BOX) { return CDRF_SKIPDEFAULT; }
 		return CDRF_NOTIFYPOSTPAINT;
 
-	case CDDS_ITEMPOSTPAINT:
-	{
+	case CDDS_ITEMPOSTPAINT: {
 		//	描画
 		// コマンド番号（pnmh->dwItemSpec）からアイコン番号を取得する	// 2007.11.02 ryoji
 		int nIconId = Toolbar_GetBitmap(pnmh->hdr.hwndFrom, (WPARAM)pnmh->dwItemSpec);
@@ -525,12 +527,12 @@ void CMainToolBar::AcceptSharedSearchKey()
 				&& m_pOwner->GetActiveView().m_nCurSearchKeySequence
 					   < GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence
 			|| 0 == m_pOwner->GetActiveView().m_strCurSearchKey.size()) {
-			if (0 < nSize) {
-				pszText = GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0];
-			} else {
+			if (0 < nSize) { pszText = GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0]; }
+			else {
 				pszText = L"";
 			}
-		} else {
+		}
+		else {
 			pszText = m_pOwner->GetActiveView().m_strCurSearchKey.c_str();
 		}
 		std::wstring strText;
@@ -542,11 +544,12 @@ void CMainToolBar::AcceptSharedSearchKey()
 int CMainToolBar::GetSearchKey(std::wstring &strText)
 {
 	if (m_hwndSearchBox) {
-		int	 nBufferSize = ::GetWindowTextLength(m_hwndSearchBox) + 1;
+		int  nBufferSize = ::GetWindowTextLength(m_hwndSearchBox) + 1;
 		auto vText		 = std::make_unique<WCHAR[]>(nBufferSize);
 		::GetWindowText(m_hwndSearchBox, &vText[0], nBufferSize);
 		strText = &vText[0];
-	} else {
+	}
+	else {
 		strText = L"";
 	}
 	return strText.length();

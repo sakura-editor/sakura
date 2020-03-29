@@ -37,11 +37,11 @@ static const DWORD p_helpids[] = {					   // 11600
 	IDC_BUTTON_REGEX_UPD, HIDC_BUTTON_REGEX_UPD,	   //更新
 	IDC_BUTTON_REGEX_DEL, HIDC_BUTTON_REGEX_DEL,	   //削除
 	IDC_BUTTON_REGEX_TOP, HIDC_BUTTON_REGEX_TOP,	   //先頭
-	IDC_BUTTON_REGEX_LAST, HIDC_BUTTON_REGEX_LAST,	   //最終
+	IDC_BUTTON_REGEX_LAST, HIDC_BUTTON_REGEX_LAST,	 //最終
 	IDC_BUTTON_REGEX_UP, HIDC_BUTTON_REGEX_UP,		   //上へ
-	IDC_BUTTON_REGEX_DOWN, HIDC_BUTTON_REGEX_DOWN,	   //下へ
+	IDC_BUTTON_REGEX_DOWN, HIDC_BUTTON_REGEX_DOWN,	 //下へ
 	IDC_CHECK_REGEX, HIDC_CHECK_REGEX,				   //正規表現キーワードを使用する
-	IDC_COMBO_REGEX_COLOR, HIDC_COMBO_REGEX_COLOR,	   //色
+	IDC_COMBO_REGEX_COLOR, HIDC_COMBO_REGEX_COLOR,	 //色
 	IDC_EDIT_REGEX, HIDC_EDIT_REGEX,				   //正規表現キーワード
 	IDC_LIST_REGEX, HIDC_LIST_REGEX,				   //リスト
 	IDC_LABEL_REGEX_KEYWORD, HIDC_EDIT_REGEX, IDC_LABEL_REGEX_COLOR, HIDC_COMBO_REGEX_COLOR, IDC_FRAME_REGEX,
@@ -73,8 +73,8 @@ bool CPropTypesRegex::Export(HWND hwndDlg)
 }
 
 /* 正規表現キーワード メッセージ処理 */
-INT_PTR CPropTypesRegex::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
-									   UINT	  uMsg,	   // message
+INT_PTR CPropTypesRegex::DispatchEvent(HWND   hwndDlg, // handle to dialog box
+									   UINT   uMsg,	// message
 									   WPARAM wParam,  // first message parameter
 									   LPARAM lParam   // second message parameter
 )
@@ -82,9 +82,9 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 	WORD	   wNotifyCode;
 	WORD	   wID;
 	HWND	   hwndList;
-	NMHDR *	   pNMHDR;
+	NMHDR *	pNMHDR;
 	int		   nIndex, nIndex2, i, j, nRet;
-	LV_ITEM	   lvi;
+	LV_ITEM	lvi;
 	LV_COLUMN  col;
 	RECT	   rc;
 	static int nPrevIndex = -1; //更新時におかしくなるバグ修正 @@@ 2003.03.26 MIK
@@ -93,7 +93,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 
 	// ANSIビルドではCP932だと2倍程度必要
 	const int nKeyWordSize = MAX_REGEX_KEYWORDLEN;
-	WCHAR	  szColorIndex[256];
+	WCHAR	 szColorIndex[256];
 
 	switch (uMsg) {
 	case WM_INITDIALOG:
@@ -107,13 +107,13 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 		col.mask	 = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt		 = LVCFMT_LEFT;
 		col.cx		 = (rc.right - rc.left) * 54 / 100;
-		col.pszText	 = const_cast<WCHAR *>(LS(STR_PROPTYPEREGEX_LIST1));
+		col.pszText  = const_cast<WCHAR *>(LS(STR_PROPTYPEREGEX_LIST1));
 		col.iSubItem = 0;
 		ListView_InsertColumn(hwndList, 0, &col);
 		col.mask	 = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt		 = LVCFMT_LEFT;
 		col.cx		 = (rc.right - rc.left) * 38 / 100;
-		col.pszText	 = const_cast<WCHAR *>(LS(STR_PROPTYPEREGEX_LIST2));
+		col.pszText  = const_cast<WCHAR *>(LS(STR_PROPTYPEREGEX_LIST2));
 		col.iSubItem = 1;
 		ListView_InsertColumn(hwndList, 1, &col);
 
@@ -126,7 +126,8 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 			if (!IsDlgButtonChecked(hwndDlg, IDC_CHECK_REGEX)) {
 				// Disableにする。
 				EnableWindow(GetDlgItem(hwndDlg, IDC_CHECK_REGEX), FALSE);
-			} else {
+			}
+			else {
 				//使用するになってるんだけどDisableにする。もうユーザは変更できない。
 				EnableWindow(GetDlgItem(hwndDlg, IDC_CHECK_REGEX), FALSE);
 			}
@@ -152,7 +153,8 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 							return TRUE;
 						}
 					}
-				} else {
+				}
+				else {
 					if (CheckRegexpVersion(NULL, 0, false) == false) {
 						// Disableにする。
 						EnableWindow(GetDlgItem(hwndDlg, IDC_CHECK_REGEX), FALSE);
@@ -187,15 +189,15 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 				::DlgItem_GetText(hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex));
 				//キー情報を挿入する。
 				lvi.mask	 = LVIF_TEXT | LVIF_PARAM;
-				lvi.pszText	 = &szKeyWord[0];
-				lvi.iItem	 = nIndex;
+				lvi.pszText  = &szKeyWord[0];
+				lvi.iItem	= nIndex;
 				lvi.iSubItem = 0;
-				lvi.lParam	 = 0;
+				lvi.lParam   = 0;
 				ListView_InsertItem(hwndList, &lvi);
 				lvi.mask	 = LVIF_TEXT;
-				lvi.iItem	 = nIndex;
+				lvi.iItem	= nIndex;
 				lvi.iSubItem = 1;
-				lvi.pszText	 = szColorIndex;
+				lvi.pszText  = szColorIndex;
 				ListView_SetItem(hwndList, &lvi);
 				//挿入したキーを選択する。
 				ListView_SetItemState(hwndList, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
@@ -223,15 +225,15 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 				::DlgItem_GetText(hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex));
 				//キーを追加する。
 				lvi.mask	 = LVIF_TEXT | LVIF_PARAM;
-				lvi.pszText	 = &szKeyWord[0];
-				lvi.iItem	 = nIndex;
+				lvi.pszText  = &szKeyWord[0];
+				lvi.iItem	= nIndex;
 				lvi.iSubItem = 0;
-				lvi.lParam	 = 0;
+				lvi.lParam   = 0;
 				ListView_InsertItem(hwndList, &lvi);
 				lvi.mask	 = LVIF_TEXT;
-				lvi.iItem	 = nIndex;
+				lvi.iItem	= nIndex;
 				lvi.iSubItem = 1;
-				lvi.pszText	 = szColorIndex;
+				lvi.pszText  = szColorIndex;
 				ListView_SetItem(hwndList, &lvi);
 				//追加したキーを選択する。
 				ListView_SetItemState(hwndList, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
@@ -258,16 +260,16 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 				::DlgItem_GetText(hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex));
 				//キーを更新する。
 				lvi.mask	 = LVIF_TEXT | LVIF_PARAM;
-				lvi.pszText	 = &szKeyWord[0];
-				lvi.iItem	 = nIndex;
+				lvi.pszText  = &szKeyWord[0];
+				lvi.iItem	= nIndex;
 				lvi.iSubItem = 0;
-				lvi.lParam	 = 0;
+				lvi.lParam   = 0;
 				ListView_SetItem(hwndList, &lvi);
 
 				lvi.mask	 = LVIF_TEXT;
-				lvi.iItem	 = nIndex;
+				lvi.iItem	= nIndex;
 				lvi.iSubItem = 1;
-				lvi.pszText	 = szColorIndex;
+				lvi.pszText  = szColorIndex;
 				ListView_SetItem(hwndList, &lvi);
 
 				//更新したキーを選択する。
@@ -301,15 +303,15 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 				ListView_DeleteItem(hwndList, nIndex); //古いキーを削除
 				//キーを追加する。
 				lvi.mask	 = LVIF_TEXT | LVIF_PARAM;
-				lvi.pszText	 = &szKeyWord[0];
-				lvi.iItem	 = nIndex2;
+				lvi.pszText  = &szKeyWord[0];
+				lvi.iItem	= nIndex2;
 				lvi.iSubItem = 0;
-				lvi.lParam	 = 0;
+				lvi.lParam   = 0;
 				ListView_InsertItem(hwndList, &lvi);
 				lvi.mask	 = LVIF_TEXT;
-				lvi.iItem	 = nIndex2;
+				lvi.iItem	= nIndex2;
 				lvi.iSubItem = 1;
-				lvi.pszText	 = szColorIndex;
+				lvi.pszText  = szColorIndex;
 				ListView_SetItem(hwndList, &lvi);
 				//移動したキーを選択状態にする。
 				ListView_SetItemState(hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
@@ -329,15 +331,15 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
 				//キーを追加する。
 				lvi.mask	 = LVIF_TEXT | LVIF_PARAM;
-				lvi.pszText	 = &szKeyWord[0];
-				lvi.iItem	 = nIndex2;
+				lvi.pszText  = &szKeyWord[0];
+				lvi.iItem	= nIndex2;
 				lvi.iSubItem = 0;
-				lvi.lParam	 = 0;
+				lvi.lParam   = 0;
 				ListView_InsertItem(hwndList, &lvi);
 				lvi.mask	 = LVIF_TEXT;
-				lvi.iItem	 = nIndex2;
+				lvi.iItem	= nIndex2;
 				lvi.iSubItem = 1;
-				lvi.pszText	 = szColorIndex;
+				lvi.pszText  = szColorIndex;
 				ListView_SetItem(hwndList, &lvi);
 				//移動したキーを選択状態にする。
 				ListView_SetItemState(hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
@@ -361,15 +363,15 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 				ListView_DeleteItem(hwndList, nIndex); //古いキーを削除
 				//キーを追加する。
 				lvi.mask	 = LVIF_TEXT | LVIF_PARAM;
-				lvi.pszText	 = &szKeyWord[0];
-				lvi.iItem	 = nIndex2;
+				lvi.pszText  = &szKeyWord[0];
+				lvi.iItem	= nIndex2;
 				lvi.iSubItem = 0;
-				lvi.lParam	 = 0;
+				lvi.lParam   = 0;
 				ListView_InsertItem(hwndList, &lvi);
 				lvi.mask	 = LVIF_TEXT;
-				lvi.iItem	 = nIndex2;
+				lvi.iItem	= nIndex2;
 				lvi.iSubItem = 1;
-				lvi.pszText	 = szColorIndex;
+				lvi.pszText  = szColorIndex;
 				ListView_SetItem(hwndList, &lvi);
 				//移動したキーを選択状態にする。
 				ListView_SetItemState(hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
@@ -391,15 +393,15 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
 				//キーを追加する。
 				lvi.mask	 = LVIF_TEXT | LVIF_PARAM;
-				lvi.pszText	 = &szKeyWord[0];
-				lvi.iItem	 = nIndex2;
+				lvi.pszText  = &szKeyWord[0];
+				lvi.iItem	= nIndex2;
 				lvi.iSubItem = 0;
-				lvi.lParam	 = 0;
+				lvi.lParam   = 0;
 				ListView_InsertItem(hwndList, &lvi);
 				lvi.mask	 = LVIF_TEXT;
-				lvi.iItem	 = nIndex2;
+				lvi.iItem	= nIndex2;
 				lvi.iSubItem = 1;
-				lvi.pszText	 = szColorIndex;
+				lvi.pszText  = szColorIndex;
 				ListView_SetItem(hwndList, &lvi);
 				//移動したキーを選択状態にする。
 				ListView_SetItemState(hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
@@ -485,8 +487,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 		}
 		break;
 
-	case WM_HELP:
-	{
+	case WM_HELP: {
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -507,7 +508,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 void CPropTypesRegex::SetData(HWND hwndDlg)
 {
 	HWND hwndWork;
-	int	 i, j;
+	int  i, j;
 
 	/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 	EditCtl_LimitText(::GetDlgItem(hwndDlg, IDC_EDIT_REGEX), MAX_REGEX_KEYWORDLEN - 1);
@@ -557,15 +558,15 @@ void CPropTypesRegex::SetDataKeywordList(HWND hwndDlg)
 		if (*pKeyword == L'\0') break;
 
 		lvi.mask	 = LVIF_TEXT | LVIF_PARAM;
-		lvi.pszText	 = const_cast<WCHAR *>(pKeyword);
-		lvi.iItem	 = i;
+		lvi.pszText  = const_cast<WCHAR *>(pKeyword);
+		lvi.iItem	= i;
 		lvi.iSubItem = 0;
-		lvi.lParam	 = 0; // m_Types.m_RegexKeywordArr[i].m_nColorIndex;
+		lvi.lParam   = 0; // m_Types.m_RegexKeywordArr[i].m_nColorIndex;
 		ListView_InsertItem(hwndWork, &lvi);
 		lvi.mask	 = LVIF_TEXT;
-		lvi.iItem	 = i;
+		lvi.iItem	= i;
 		lvi.iSubItem = 1;
-		lvi.pszText	 = m_Types.m_ColorInfoArr[m_Types.m_RegexKeywordArr[i].m_nColorIndex].m_szName;
+		lvi.pszText  = m_Types.m_ColorInfoArr[m_Types.m_RegexKeywordArr[i].m_nColorIndex].m_szName;
 		ListView_SetItem(hwndWork, &lvi);
 		for (; *pKeyword != '\0'; pKeyword++) {}
 		pKeyword++;
@@ -582,7 +583,7 @@ int CPropTypesRegex::GetData(HWND hwndDlg)
 	int		  nIndex, i, j;
 	const int szKeyWordSize = _countof(m_Types.m_RegexKeywordList) * 2 + 1;
 	auto	  szKeyWord		= std::make_unique<WCHAR[]>(szKeyWordSize);
-	WCHAR	  szColorIndex[256];
+	WCHAR	 szColorIndex[256];
 
 	//使用する・使用しない
 	if (IsDlgButtonChecked(hwndDlg, IDC_CHECK_REGEX))
@@ -593,7 +594,7 @@ int CPropTypesRegex::GetData(HWND hwndDlg)
 	//リストに登録されている情報を配列に取り込む
 	hwndList			  = GetDlgItem(hwndDlg, IDC_LIST_REGEX);
 	nIndex				  = ListView_GetItemCount(hwndList);
-	wchar_t *pKeyword	  = &m_Types.m_RegexKeywordList[0];
+	wchar_t *pKeyword	 = &m_Types.m_RegexKeywordList[0];
 	wchar_t *pKeywordLast = pKeyword + _countof(m_Types.m_RegexKeywordList) - 1;
 	// key1\0key2\0\0 の形式
 	for (i = 0; i < MAX_REGEX_KEYWORD; i++) {
@@ -615,7 +616,8 @@ int CPropTypesRegex::GetData(HWND hwndDlg)
 				for (; *pKeyword != L'\0'; pKeyword++) {}
 				pKeyword++;
 			}
-		} else //未登録部分はクリアする
+		}
+		else //未登録部分はクリアする
 		{
 			m_Types.m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1;
 		}
@@ -652,9 +654,9 @@ bool CPropTypesRegex::CheckKeywordList(HWND hwndDlg, const WCHAR *szNewKeyWord, 
 	}
 	// 重複確認・文字列長制限チェック
 	const int nKeyWordSize = MAX_REGEX_KEYWORDLEN;
-	HWND	  hwndList	   = GetDlgItem(hwndDlg, IDC_LIST_REGEX);
+	HWND	  hwndList	 = GetDlgItem(hwndDlg, IDC_LIST_REGEX);
 	int		  nIndex	   = ListView_GetItemCount(hwndList);
-	auto	  szKeyWord	   = std::make_unique<WCHAR[]>(nKeyWordSize);
+	auto	  szKeyWord	= std::make_unique<WCHAR[]>(nKeyWordSize);
 	int		  nKeywordLen  = 0;
 	for (int i = 0; i < nIndex; i++) {
 		if (i != nUpdateItem) {

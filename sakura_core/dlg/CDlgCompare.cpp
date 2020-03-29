@@ -45,7 +45,7 @@ const DWORD p_helpids[] = { // 12300
 	0}; //@@@ 2002.01.07 add end MIK
 
 static const SAnchorList anchorList[] = {
-	{IDOK, ANCHOR_BOTTOM},			 {IDCANCEL, ANCHOR_BOTTOM},	   {IDC_BUTTON_HELP, ANCHOR_BOTTOM},
+	{IDOK, ANCHOR_BOTTOM},			 {IDCANCEL, ANCHOR_BOTTOM},	{IDC_BUTTON_HELP, ANCHOR_BOTTOM},
 	{IDC_CHECK_TILE_H, ANCHOR_LEFT}, {IDC_LIST_FILES, ANCHOR_ALL}, {IDC_STATIC_COMPARESRC, ANCHOR_LEFT_RIGHT},
 };
 
@@ -124,7 +124,7 @@ void CDlgCompare::SetData(void)
 	EditNode *pEditNodeArr;
 	EditInfo *pfi;
 	int		  i;
-	WCHAR	  szMenu[512];
+	WCHAR	 szMenu[512];
 	int		  nItem;
 	int		  selIndex = 0;
 
@@ -171,7 +171,7 @@ void CDlgCompare::SetData(void)
 			int scoreTemp = FileMatchScoreSepExt(szFile1, szFile2);
 			if (score < scoreTemp) {
 				// スコアのいいものを選択
-				score	 = scoreTemp;
+				score	= scoreTemp;
 				selIndex = nItem;
 			}
 		}
@@ -201,10 +201,9 @@ int CDlgCompare::GetData(void)
 	int		  nItem;
 	EditInfo *pfi;
 	hwndList = GetItemHwnd(IDC_LIST_FILES);
-	nItem	 = List_GetCurSel(hwndList);
-	if (LB_ERR == nItem) {
-		return FALSE;
-	} else {
+	nItem	= List_GetCurSel(hwndList);
+	if (LB_ERR == nItem) { return FALSE; }
+	else {
 		*m_phwndCompareWnd = (HWND)List_GetItemData(hwndList, nItem);
 		/* トレイからエディタへの編集ファイル名要求通知 */
 		::SendMessageAny(*m_phwndCompareWnd, MYWM_GETFILEINFO, 0, 0);
@@ -252,8 +251,8 @@ BOOL CDlgCompare::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 
 	RECT rcDialog = GetDllShareData().m_Common.m_sOthers.m_rcCompareDialog;
 	if (rcDialog.left != 0 || rcDialog.bottom != 0) {
-		m_xPos	  = rcDialog.left;
-		m_yPos	  = rcDialog.top;
+		m_xPos	= rcDialog.left;
+		m_yPos	= rcDialog.top;
 		m_nWidth  = rcDialog.right - rcDialog.left;
 		m_nHeight = rcDialog.bottom - rcDialog.top;
 	}

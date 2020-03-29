@@ -30,10 +30,15 @@
 #define MAX_BUF 0x7FFFFFFF
 
 //テンプレートで TEXT<T> 使えれば、こんな汚いコピペしなくて済むのに…
-template<class T> inline bool is_field_begin(T c) { return c == _T2(T, '%'); }
+template<class T>
+inline bool is_field_begin(T c)
+{
+	return c == _T2(T, '%');
+}
 
 //書式指定: flag
-template<class T> inline const T *skip_field_flag(const T *p)
+template<class T>
+inline const T *skip_field_flag(const T *p)
 {
 	while (*p) {
 		T c = *p;
@@ -47,7 +52,8 @@ template<class T> inline const T *skip_field_flag(const T *p)
 }
 
 //書式指定: width
-template<class T> inline const T *skip_field_width(const T *p)
+template<class T>
+inline const T *skip_field_width(const T *p)
 {
 	if (*p >= _T2(T, '1') && *p <= _T2(T, '9'))
 		p++;
@@ -58,7 +64,8 @@ template<class T> inline const T *skip_field_width(const T *p)
 }
 
 //書式指定: precision
-template<class T> inline const T *skip_field_precision(const T *p)
+template<class T>
+inline const T *skip_field_precision(const T *p)
 {
 	if (*p == _T2(T, '.'))
 		p++;
@@ -69,7 +76,8 @@ template<class T> inline const T *skip_field_precision(const T *p)
 }
 
 //書式指定: prefix
-template<class T> inline const T *skip_field_prefix(const T *p)
+template<class T>
+inline const T *skip_field_prefix(const T *p)
 {
 	if (*p == _T2(T, 't')) return p + 1; //独自拡張
 	if (*p == _T2(T, 'h')) return p + 1;
@@ -125,13 +133,11 @@ static void my_va_forward(va_list &v, const char *field, const char *prefix)
 	case 'o':
 	case 'u':
 	case 'x':
-	case 'X':
-	{
+	case 'X': {
 		// 2014.06.12 64bit値対応
 		const char *p = prefix;
-		if (p[0] == 'I' && p[1] == '6' && p[2] == '4') {
-			va_arg(v, LONGLONG);
-		} else {
+		if (p[0] == 'I' && p[1] == '6' && p[2] == '4') { va_arg(v, LONGLONG); }
+		else {
 			va_arg(v, int);
 		}
 	} break;
@@ -175,9 +181,8 @@ static void my_va_forward(va_list &v, const wchar_t *field, const wchar_t *prefi
 		// 2014.06.12 64bit値対応
 		{
 			const wchar_t *p = prefix;
-			if (p[0] == L'I' && p[1] == L'6' && p[2] == L'4') {
-				va_arg(v, LONGLONG);
-			} else {
+			if (p[0] == L'I' && p[1] == L'6' && p[2] == L'4') { va_arg(v, LONGLONG); }
+			else {
 				va_arg(v, int);
 			}
 		}
@@ -218,11 +223,12 @@ static void field_convert(wchar_t *src)
 
 //"%ts","%tc"をサポート
 //※日本語考慮しない。(UNICODE版ではこれで問題が発生しない)
-template<class T> int tchar_vsprintf_s_imp(T *buf, size_t nBufCount, const T *format, va_list &v, bool truncate)
+template<class T>
+int tchar_vsprintf_s_imp(T *buf, size_t nBufCount, const T *format, va_list &v, bool truncate)
 {
 	T *buf_end = buf + nBufCount; //変換リミット
 
-	T *		 dst = buf;	   //変換先ワーク変数
+	T *		 dst = buf;	//変換先ワーク変数
 	const T *src = format; //変換元ワーク変数
 	while (*src) {
 		if (nBufCount != MAX_BUF && dst >= buf_end - 1) break;
@@ -259,9 +265,11 @@ template<class T> int tchar_vsprintf_s_imp(T *buf, size_t nBufCount, const T *fo
 						//バッファに入りきらない文字列が切り捨てられた
 						return -1;
 					}
-				} else if (nBufCount != MAX_BUF) {
+				}
+				else if (nBufCount != MAX_BUF) {
 					ret = local_vsprintf_s(dst, buf_end - dst, field, tmp_v);
-				} else {
+				}
+				else {
 					ret = local_vsprintf(dst, field, tmp_v);
 				}
 
@@ -271,11 +279,13 @@ template<class T> int tchar_vsprintf_s_imp(T *buf, size_t nBufCount, const T *fo
 				//変換先ワークポインタを進める
 				if (ret != -1) { dst += ret; }
 				src = field_end;
-			} else {
+			}
+			else {
 				//有効な型フィールドではなかったので、そのまんま出力しちゃう
 				*dst++ = *src++;
 			}
-		} else {
+		}
+		else {
 			//無変換
 			*dst++ = *src++;
 		}

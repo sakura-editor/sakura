@@ -33,7 +33,7 @@ CDicMgr::~CDicMgr() { return; }
 
 	@date 2006.04.10 fon 検索ヒット行を返す引数pLineを追加
 */
-BOOL CDicMgr::Search(const wchar_t *pszKey,	 //!< 検索キーワード
+BOOL CDicMgr::Search(const wchar_t *pszKey,  //!< 検索キーワード
 					 const int		nCmpLen, //!< 検索キーワードの長さ
 					 CNativeW **ppcmemKey, //!< 見つかったキーワード．呼び出し元の責任で解放する．
 					 CNativeW **ppcmemMean, //!< 見つかったキーワードに対応する辞書内容．呼び出し元の責任で解放する．
@@ -46,9 +46,9 @@ BOOL CDicMgr::Search(const wchar_t *pszKey,	 //!< 検索キーワード
 #endif
 	long		   i;
 	const wchar_t *pszDelimit = L" /// ";
-	wchar_t *	   pszWork;
+	wchar_t *	  pszWork;
 	int			   nRes;
-	wchar_t *	   pszToken;
+	wchar_t *	  pszToken;
 	const wchar_t *pszKeySeps = L",\0";
 
 	/* 辞書ファイル */
@@ -135,7 +135,8 @@ int CDicMgr::HokanSearch(const wchar_t *		  pszKey,
 
 		if (bHokanLoHiCase) { /* 英大文字小文字を同一視する */
 			nRet = wmemicmp(pszKey, szLine.c_str(), nKeyLen);
-		} else {
+		}
+		else {
 			nRet = wmemcmp(pszKey, szLine.c_str(), nKeyLen);
 		}
 		if (0 == nRet) {

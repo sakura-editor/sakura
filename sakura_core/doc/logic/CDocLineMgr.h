@@ -29,14 +29,13 @@
 
 class CBregexp; // 2002/2/10 aroka
 
-struct DocLineReplaceArg
-{
-	CLogicRange	  sDelRange;	   //!< [in] 削除範囲。ロジック単位。
-	COpeLineData *pcmemDeleted;	   //!< [out] 削除されたデータを保存
+struct DocLineReplaceArg {
+	CLogicRange   sDelRange;	   //!< [in] 削除範囲。ロジック単位。
+	COpeLineData *pcmemDeleted;	//!< [out] 削除されたデータを保存
 	COpeLineData *pInsData;		   //!< [in,out] 挿入するデータ(中身が移動する)
-	CLogicInt	  nDeletedLineNum; //!< [out] 削除した行の総数
-	CLogicInt	  nInsLineNum;	   //!< [out] 挿入によって増えた行の数
-	CLogicPoint	  ptNewPos;		   //!< [out] 挿入された部分の次の位置
+	CLogicInt	 nDeletedLineNum; //!< [out] 削除した行の総数
+	CLogicInt	 nInsLineNum;	 //!< [out] 挿入によって増えた行の数
+	CLogicPoint   ptNewPos;		   //!< [out] 挿入された部分の次の位置
 	int			  nDelSeq;		   //!< [in] 削除行のOpeシーケンス
 	int			  nInsSeq;		   //!< [out] 挿入行の元のシーケンス
 };
@@ -45,8 +44,7 @@ struct DocLineReplaceArg
 クラスの宣言
 -----------------------------------------------------------------------*/
 // 2007.09.30 kobake WhereCurrentWord_2 を CWordParse に移動
-class CDocLineMgr
-{
+class CDocLineMgr {
 public:
 	//コンストラクタ・デストラクタ
 	CDocLineMgr();
@@ -61,7 +59,7 @@ public:
 	{
 		return const_cast<CDocLine *>(const_cast<CDocLine *>(static_cast<const CDocLineMgr *>(this)->GetLine(nLine)));
 	}
-	const CDocLine *GetDocLineTop() const { return m_pDocLineTop; }	   //!< 先頭行を取得
+	const CDocLine *GetDocLineTop() const { return m_pDocLineTop; }	//!< 先頭行を取得
 	CDocLine *		GetDocLineTop() { return m_pDocLineTop; }		   //!< 先頭行を取得
 	const CDocLine *GetDocLineBottom() const { return m_pDocLineBot; } //!< 最終行を取得
 	CDocLine *		GetDocLineBottom() { return m_pDocLineBot; }	   //!< 最終行を取得

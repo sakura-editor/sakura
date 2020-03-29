@@ -28,15 +28,13 @@
 #include "util/file.h"
 
 //!ファイルの排他制御モード  2007.10.11 kobake 作成
-enum EShareMode
-{
+enum EShareMode {
 	SHAREMODE_NOT_EXCLUSIVE,  //!< 排他制御しない
-	SHAREMODE_DENY_WRITE,	  //!< 他プロセスからの上書きを禁止
+	SHAREMODE_DENY_WRITE,	 //!< 他プロセスからの上書きを禁止
 	SHAREMODE_DENY_READWRITE, //!< 他プロセスからの読み書きを禁止
 };
 
-class CFile
-{
+class CFile {
 public:
 	//コンストラクタ・デストラクタ
 	CFile(LPCWSTR pszPath = NULL);
@@ -60,13 +58,12 @@ public:
 
 private:
 	CFilePath  m_szFilePath;		//!< ファイルパス
-	HANDLE	   m_hLockedFile;		//!< ロックしているファイルのハンドル
+	HANDLE	 m_hLockedFile;		//!< ロックしているファイルのハンドル
 	EShareMode m_nFileShareModeOld; //!< ファイルの排他制御モード
 };
 
 //!一時ファイル
-class CTmpFile
-{
+class CTmpFile {
 public:
 	CTmpFile() { m_fp = tmpfile(); }
 	~CTmpFile() { fclose(m_fp); }

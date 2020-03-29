@@ -22,8 +22,7 @@
 
 	@date 2003.06.25 Moca ファイル内からの補完機能を追加
 */
-class CHokanMgr final : public CDialog
-{
+class CHokanMgr final : public CDialog {
 public:
 	/*
 	||  Constructors
@@ -34,9 +33,9 @@ public:
 	HWND DoModeless(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam); /* モードレスダイアログの表示 */
 	void Hide(void);
 	/* 初期化 */
-	int	 Search(POINT *ppoWin, int nWinHeight, int nColumnWidth, const wchar_t *pszCurWord, const WCHAR *pszHokanFile,
+	int  Search(POINT *ppoWin, int nWinHeight, int nColumnWidth, const wchar_t *pszCurWord, const WCHAR *pszHokanFile,
 				bool bHokanLoHiCase, // 入力補完機能：英大文字小文字を同一視する 2001/06/19 asa-o
-				bool bHokanByFile,	 // 編集中データから候補を探す。 2003.06.23 Moca
+				bool bHokanByFile,   // 編集中データから候補を探す。 2003.06.23 Moca
 				int nHokanType, bool bHokanByKeyword,
 				CNativeW *pcmemHokanWord = NULL // 補完候補が１つのときこれに格納 2001/06/19 asa-o
 	 );
@@ -65,9 +64,9 @@ public:
 	int m_nCurKouhoIdx;
 
 	POINT m_poWin;
-	int	  m_nWinHeight;
-	int	  m_nColumnWidth;
-	int	  m_bTimerFlag;
+	int   m_nWinHeight;
+	int   m_nColumnWidth;
+	int   m_bTimerFlag;
 
 protected:
 	/*

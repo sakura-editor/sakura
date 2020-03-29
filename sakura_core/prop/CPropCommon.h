@@ -50,14 +50,13 @@ class CMenuDrawer; // 2002/2/10 aroka to here
 	@date 2008.6.22 Uchi #define -> enum に変更
 	@date 2008.6.22 Uchi順序変更 Win,Toolbar,Tab,Statusbarの順に、File,FileName 順に
 */
-enum PropComSheetOrder
-{
+enum PropComSheetOrder {
 	ID_PROPCOM_PAGENUM_GENERAL = 0, //!< 全般
 	ID_PROPCOM_PAGENUM_WIN,			//!< ウィンドウ
 	ID_PROPCOM_PAGENUM_MAINMENU,	//!< メインメニュー
 	ID_PROPCOM_PAGENUM_TOOLBAR,		//!< ツールバー
 	ID_PROPCOM_PAGENUM_TAB,			//!< タブバー
-	ID_PROPCOM_PAGENUM_STATUSBAR,	//!< ステータスバー
+	ID_PROPCOM_PAGENUM_STATUSBAR,   //!< ステータスバー
 	ID_PROPCOM_PAGENUM_EDIT,		//!< 編集
 	ID_PROPCOM_PAGENUM_FILE,		//!< ファイル
 	ID_PROPCOM_PAGENUM_FILENAME,	//!< ファイル名表示
@@ -83,8 +82,7 @@ enum PropComSheetOrder
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class CPropCommon
-{
+class CPropCommon {
 public:
 	/*
 	||  Constructors
@@ -113,9 +111,9 @@ public:
 	//	ここにあったEvent Handlerはprotectedエリアに移動した．
 
 	HWND			  m_hwndParent; /* オーナーウィンドウのハンドル */
-	HWND			  m_hwndThis;	/* このダイアログのハンドル */
+	HWND			  m_hwndThis;   /* このダイアログのハンドル */
 	PropComSheetOrder m_nPageNum;
-	DLLSHAREDATA *	  m_pShareData;
+	DLLSHAREDATA *	m_pShareData;
 	int				  m_nKeywordSet1;
 	//	Oct. 16, 2000 genta
 	CImageListMgr *m_pcIcons; //	Image List
@@ -132,8 +130,7 @@ public:
 	CommonSetting m_Common;
 
 	// 2005.01.13 MIK セット数増加
-	struct SKeywordSetIndex
-	{
+	struct SKeywordSetIndex {
 		int typeId;
 		int index[MAX_KEYWORDSET_PER_TYPE];
 	};
@@ -149,7 +146,7 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	void OnHelp(HWND hwndParent, int nPageID); /* ヘルプ */
-	int	 SearchIntArr(int nKey, int *pnArr, int nArrNum);
+	int  SearchIntArr(int nKey, int *pnArr, int nArrNum);
 	//	void DrawToolBarItemList( DRAWITEMSTRUCT* );	/* ツールバーボタンリストのアイテム描画 */
 	//	void DrawColorButton( DRAWITEMSTRUCT* , COLORREF );	/* 色ボタンの描画 */ // 2002.11.09 Moca 未使用
 	//	BOOL SelectColor( HWND , COLORREF* );	/* 色選択ダイアログ */
@@ -193,8 +190,7 @@ protected:
 */
 //==============================================================
 //!	全般ページ
-class CPropGeneral final : CPropCommon
-{
+class CPropGeneral final : CPropCommon {
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -208,8 +204,7 @@ protected:
 
 //==============================================================
 //!	ファイルページ
-class CPropFile final : CPropCommon
-{
+class CPropFile final : CPropCommon {
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -227,8 +222,7 @@ private:
 
 //==============================================================
 //!	キー割り当てページ
-class CPropKeybind final : CPropCommon
-{
+class CPropKeybind final : CPropCommon {
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -248,8 +242,7 @@ private:
 
 //==============================================================
 //!	ツールバーページ
-class CPropToolbar final : CPropCommon
-{
+class CPropToolbar final : CPropCommon {
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -266,8 +259,7 @@ private:
 
 //==============================================================
 //!	キーワードページ
-class CPropKeyword final : CPropCommon
-{
+class CPropKeyword final : CPropCommon {
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -293,8 +285,7 @@ private:
 
 //==============================================================
 //!	カスタムメニューページ
-class CPropCustmenu final : CPropCommon
-{
+class CPropCustmenu final : CPropCommon {
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -311,8 +302,7 @@ protected:
 
 //==============================================================
 //!	書式ページ
-class CPropFormat final : CPropCommon
-{
+class CPropFormat final : CPropCommon {
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -333,8 +323,7 @@ private:
 
 //==============================================================
 //!	支援ページ
-class CPropHelper final : CPropCommon
-{
+class CPropHelper final : CPropCommon {
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -348,8 +337,7 @@ protected:
 
 //==============================================================
 //!	バックアップページ
-class CPropBackup final : CPropCommon
-{
+class CPropBackup final : CPropCommon {
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -369,8 +357,7 @@ private:
 
 //==============================================================
 //!	ウィンドウページ
-class CPropWin final : CPropCommon
-{
+class CPropWin final : CPropCommon {
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -388,8 +375,7 @@ private:
 
 //==============================================================
 //!	タブ動作ページ
-class CPropTab final : CPropCommon
-{
+class CPropTab final : CPropCommon {
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -406,8 +392,7 @@ private:
 
 //==============================================================
 //!	編集ページ
-class CPropEdit final : CPropCommon
-{
+class CPropEdit final : CPropCommon {
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -424,8 +409,7 @@ private:
 
 //==============================================================
 //!	検索ページ
-class CPropGrep final : CPropCommon
-{
+class CPropGrep final : CPropCommon {
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -442,8 +426,7 @@ private:
 
 //==============================================================
 //!	マクロページ
-class CPropMacro final : CPropCommon
-{
+class CPropMacro final : CPropCommon {
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -457,17 +440,16 @@ protected:
 private:
 	void InitDialog(HWND hwndDlg); //!< Macroページの初期化
 	//	To Here Jun. 2, 2001 genta
-	void				SetMacro2List_Macro(HWND hwndDlg);	//!< Macroデータの設定
-	void				SelectBaseDir_Macro(HWND hwndDlg);	//!< Macroディレクトリの選択
-	void				OnFileDropdown_Macro(HWND hwndDlg); //!< ファイルドロップダウンが開かれるとき
-	void				CheckListPosition_Macro(HWND hwndDlg); //!< リストビューのFocus位置確認
+	void	   SetMacro2List_Macro(HWND hwndDlg);	 //!< Macroデータの設定
+	void	   SelectBaseDir_Macro(HWND hwndDlg);	 //!< Macroディレクトリの選択
+	void	   OnFileDropdown_Macro(HWND hwndDlg);	//!< ファイルドロップダウンが開かれるとき
+	void	   CheckListPosition_Macro(HWND hwndDlg); //!< リストビューのFocus位置確認
 	static int CALLBACK DirCallback_Macro(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);
 };
 
 //==============================================================
 //!	ファイル名表示ページ
-class CPropFileName final : CPropCommon
-{
+class CPropFileName final : CPropCommon {
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -479,15 +461,14 @@ protected:
 	int		GetData(HWND hwndDlg); //!< ダイアログデータの取得
 
 private:
-	static int	SetListViewItem_FILENAME(HWND hListView, int, LPWSTR, LPWSTR, bool); //!< ListViewのアイテムを設定
+	static int SetListViewItem_FILENAME(HWND hListView, int, LPWSTR, LPWSTR, bool); //!< ListViewのアイテムを設定
 	static void GetListViewItem_FILENAME(HWND hListView, int, LPWSTR, LPWSTR); //!< ListViewのアイテムを取得
-	static int	MoveListViewItem_FILENAME(HWND hListView, int, int); //!< ListViewのアイテムを移動する
+	static int  MoveListViewItem_FILENAME(HWND hListView, int, int); //!< ListViewのアイテムを移動する
 };
 
 //==============================================================
 //!	ステータスバーページ
-class CPropStatusbar final : CPropCommon
-{
+class CPropStatusbar final : CPropCommon {
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -501,12 +482,11 @@ protected:
 
 //==============================================================
 //!	プラグインページ
-class CPropPlugin final : CPropCommon
-{
+class CPropPlugin final : CPropCommon {
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	std::wstring			GetReadMeFile(const std::wstring &sName);	   //	Readme ファイルの取得
+	std::wstring			GetReadMeFile(const std::wstring &sName);	  //	Readme ファイルの取得
 	bool					BrowseReadMe(const std::wstring &sReadMeName); //	Readme ファイルの表示
 protected:
 	//! Message Handler
@@ -522,8 +502,7 @@ private:
 
 //==============================================================
 //!	メインメニューページ
-class CPropMainMenu final : CPropCommon
-{
+class CPropMainMenu final : CPropCommon {
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);

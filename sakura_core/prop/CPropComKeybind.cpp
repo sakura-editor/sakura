@@ -25,13 +25,13 @@
 #include "sakura_rc.h"
 
 #define STR_SHIFT_PLUS L"Shift+" //@@@ 2001.11.08 add MIK
-#define STR_CTRL_PLUS  L"Ctrl+"	 //@@@ 2001.11.08 add MIK
-#define STR_ALT_PLUS   L"Alt+"	 //@@@ 2001.11.08 add MIK
+#define STR_CTRL_PLUS L"Ctrl+"   //@@@ 2001.11.08 add MIK
+#define STR_ALT_PLUS L"Alt+"	 //@@@ 2001.11.08 add MIK
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {					 // 10700
-	IDC_BUTTON_IMPORT, HIDC_BUTTON_IMPORT_KEYBIND,	 //インポート
-	IDC_BUTTON_EXPORT, HIDC_BUTTON_EXPORT_KEYBIND,	 //エクスポート
+	IDC_BUTTON_IMPORT, HIDC_BUTTON_IMPORT_KEYBIND,   //インポート
+	IDC_BUTTON_EXPORT, HIDC_BUTTON_EXPORT_KEYBIND,   //エクスポート
 	IDC_BUTTON_ASSIGN, HIDC_BUTTON_ASSIGN,			 //キー割り当て
 	IDC_BUTTON_RELEASE, HIDC_BUTTON_RELEASE,		 //キー解除
 	IDC_CHECK_SHIFT, HIDC_CHECK_SHIFT,				 // Shiftキー
@@ -41,7 +41,7 @@ static const DWORD p_helpids[] = {					 // 10700
 	IDC_EDIT_KEYSFUNC, HIDC_EDIT_KEYSFUNC,			 //キーに割り当てられている機能
 	IDC_LIST_FUNC, HIDC_LIST_FUNC_KEYBIND,			 //機能一覧
 	IDC_LIST_KEY, HIDC_LIST_KEY,					 //キー一覧
-	IDC_LIST_ASSIGNEDKEYS, HIDC_LIST_ASSIGNEDKEYS,	 //機能に割り当てられているキー
+	IDC_LIST_ASSIGNEDKEYS, HIDC_LIST_ASSIGNEDKEYS,   //機能に割り当てられているキー
 	IDC_LABEL_MENUFUNCKIND, (DWORD)-1, IDC_LABEL_MENUFUNC, (DWORD)-1, IDC_LABEL_KEYKIND, (DWORD)-1, IDC_LABEL_FUNCtoKEY,
 	(DWORD)-1, IDC_LABEL_KEYtoFUNC, (DWORD)-1,
 	//	IDC_STATIC,						-1,
@@ -80,8 +80,8 @@ LRESULT CALLBACK CPropComKeybindWndProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, 
 /* Keybind メッセージ処理 */
 INT_PTR CPropKeybind::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 									UINT   uMsg,	// message
-									WPARAM wParam,	// first message parameter
-									LPARAM lParam	// second message parameter
+									WPARAM wParam,  // first message parameter
+									LPARAM lParam   // second message parameter
 )
 {
 	WORD		wNotifyCode;
@@ -156,7 +156,7 @@ INT_PTR CPropKeybind::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 			m_nPageNum = ID_PROPCOM_PAGENUM_KEYBOARD;
 
 			// 表示を更新する（マクロ設定画面でのマクロ名変更を反映）	// 2007.11.02 ryoji
-			nIndex	= List_GetCurSel(hwndKeyList);
+			nIndex  = List_GetCurSel(hwndKeyList);
 			nIndex2 = Combo_GetCurSel(hwndCombo);
 			nIndex3 = List_GetCurSel(hwndFuncList);
 			if (nIndex != LB_ERR) {
@@ -173,7 +173,7 @@ INT_PTR CPropKeybind::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam); /* 通知コード */
 		wID			= LOWORD(wParam); /* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl		= (HWND)lParam;	  /* コントロールのハンドル */
+		hwndCtl		= (HWND)lParam;   /* コントロールのハンドル */
 
 		switch (wNotifyCode) {
 		/* ボタン／チェックボックスがクリックされた */
@@ -188,7 +188,7 @@ INT_PTR CPropKeybind::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 				Export(hwndDlg);
 				return TRUE;
 			case IDC_BUTTON_ASSIGN: /* 割付 */
-				nIndex	= List_GetCurSel(hwndKeyList);
+				nIndex  = List_GetCurSel(hwndKeyList);
 				nIndex2 = Combo_GetCurSel(hwndCombo);
 				nIndex3 = List_GetCurSel(hwndFuncList);
 				if (nIndex == LB_ERR || nIndex2 == CB_ERR || nIndex3 == LB_ERR) { return TRUE; }
@@ -220,11 +220,12 @@ INT_PTR CPropKeybind::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 			switch (wNotifyCode) {
 			case BN_CLICKED: ChangeKeyList(hwndDlg); return TRUE;
 			}
-		} else if (hwndKeyList == hwndCtl) {
+		}
+		else if (hwndKeyList == hwndCtl) {
 			switch (wNotifyCode) {
 			case LBN_SELCHANGE:
 				nIndex = List_GetCurSel(hwndKeyList);
-				i	   = 0;
+				i	  = 0;
 				if (::IsDlgButtonChecked(hwndDlg, IDC_CHECK_SHIFT)) { i |= _SHIFT; }
 				if (::IsDlgButtonChecked(hwndDlg, IDC_CHECK_CTRL)) { i |= _CTRL; }
 				if (::IsDlgButtonChecked(hwndDlg, IDC_CHECK_ALT)) { i |= _ALT; }
@@ -234,18 +235,20 @@ INT_PTR CPropKeybind::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 				if (nFuncCode == F_DISABLE) {
 					wcsncpy(pszLabel, LS(STR_PROPCOMKEYBIND_UNASSIGN), _countof(pszLabel) - 1);
 					pszLabel[_countof(pszLabel) - 1] = L'\0';
-				} else {
+				}
+				else {
 					m_cLookup.Funccode2Name(nFuncCode, pszLabel, 255);
 				}
 				Wnd_SetText(hwndEDIT_KEYSFUNC, pszLabel);
 				return TRUE;
 			}
-		} else if (hwndFuncList == hwndCtl) {
+		}
+		else if (hwndFuncList == hwndCtl) {
 			switch (wNotifyCode) {
 			case LBN_SELCHANGE:
-				nIndex	  = List_GetCurSel(hwndKeyList);
-				nIndex2	  = Combo_GetCurSel(hwndCombo);
-				nIndex3	  = List_GetCurSel(hwndFuncList);
+				nIndex	= List_GetCurSel(hwndKeyList);
+				nIndex2   = Combo_GetCurSel(hwndCombo);
+				nIndex3   = List_GetCurSel(hwndFuncList);
 				nFuncCode = m_cLookup.Pos2FuncCode(nIndex2, nIndex3); // Oct. 2, 2001 genta
 				/* 機能に対応するキー名の取得(複数) */
 				CNativeW **ppcAssignedKeyList;
@@ -268,7 +271,8 @@ INT_PTR CPropKeybind::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 				}
 				return TRUE;
 			}
-		} else if (hwndCombo == hwndCtl) {
+		}
+		else if (hwndCombo == hwndCtl) {
 			switch (wNotifyCode) {
 			case CBN_SELCHANGE:
 				nIndex2 = Combo_GetCurSel(hwndCombo);
@@ -278,13 +282,14 @@ INT_PTR CPropKeybind::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 			}
 
 			//@@@ 2001.11.08 add start MIK
-		} else if (hwndAssignedkeyList == hwndCtl) {
+		}
+		else if (hwndAssignedkeyList == hwndCtl) {
 			switch (wNotifyCode) {
 			case LBN_SELCHANGE:
 				// case LBN_DBLCLK:
 				{
 					WCHAR buff[1024], *p;
-					int	  ret;
+					int   ret;
 
 					nIndex = List_GetCurSel(hwndAssignedkeyList);
 					wmemset(buff, 0, _countof(buff));
@@ -340,7 +345,7 @@ INT_PTR CPropKeybind::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 
 	case WM_TIMER:
 		// ボタンの有効／無効を切り替える	// 2007.11.02 ryoji
-		nIndex	= List_GetCurSel(hwndKeyList);
+		nIndex  = List_GetCurSel(hwndKeyList);
 		nIndex2 = Combo_GetCurSel(hwndCombo);
 		nIndex3 = List_GetCurSel(hwndFuncList);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_ASSIGN),
@@ -353,8 +358,7 @@ INT_PTR CPropKeybind::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		break;
 
 		//@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP:
-	{
+	case WM_HELP: {
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -379,7 +383,7 @@ void CPropKeybind::SetData(HWND hwndDlg)
 {
 	HWND hwndCombo;
 	HWND hwndKeyList;
-	int	 i;
+	int  i;
 
 	/* 機能種別一覧に文字列をセット（コンボボックス）*/
 	hwndCombo = ::GetDlgItem(hwndDlg, IDC_COMBO_FUNCKIND);
@@ -410,9 +414,9 @@ void CPropKeybind::ChangeKeyList(HWND hwndDlg)
 	int		i;
 	wchar_t szKeyState[64];
 
-	hwndKeyList	  = ::GetDlgItem(hwndDlg, IDC_LIST_KEY);
+	hwndKeyList   = ::GetDlgItem(hwndDlg, IDC_LIST_KEY);
 	nIndex		  = List_GetCurSel(hwndKeyList);
-	nIndexTop	  = List_GetTopIndex(hwndKeyList);
+	nIndexTop	 = List_GetTopIndex(hwndKeyList);
 	szKeyState[0] = L'\0';
 	i			  = 0;
 	if (::IsDlgButtonChecked(hwndDlg, IDC_CHECK_SHIFT)) {

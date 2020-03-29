@@ -64,8 +64,7 @@ void GetInidirOrExedir(LPWSTR pDir, LPCWSTR szFile = NULL, BOOL bRetExedirIfFile
 LPCWSTR GetRelPath(LPCWSTR pszPath);
 
 //ファイル時刻
-class CFileTime
-{
+class CFileTime {
 public:
 	CFileTime() { ClearFILETIME(); }
 	CFileTime(const FILETIME &ftime) { SetFILETIME(ftime); }

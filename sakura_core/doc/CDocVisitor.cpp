@@ -19,16 +19,16 @@ void CDocVisitor::SetAllEol(CEol cEol)
 	}
 
 	//カーソル位置記憶
-	CLayoutInt	 nViewTopLine	 = pcView->GetTextArea().GetViewTopLine();
-	CLayoutInt	 nViewLeftCol	 = pcView->GetTextArea().GetViewLeftCol();
-	CLayoutPoint ptCaretPosXY	 = pcView->GetCaret().GetCaretLayoutPos();
-	CLayoutInt	 nCaretPosX_Prev = pcView->GetCaret().m_nCaretPosX_Prev;
+	CLayoutInt   nViewTopLine	= pcView->GetTextArea().GetViewTopLine();
+	CLayoutInt   nViewLeftCol	= pcView->GetTextArea().GetViewLeftCol();
+	CLayoutPoint ptCaretPosXY	= pcView->GetCaret().GetCaretLayoutPos();
+	CLayoutInt   nCaretPosX_Prev = pcView->GetCaret().m_nCaretPosX_Prev;
 
 	bool bReplace = false;
 
 	//改行コードを統一する
 	if (cEol.IsValid()) {
-		CLogicInt nLine	   = CLogicInt(0);
+		CLogicInt nLine	= CLogicInt(0);
 		COpeBlk * pcOpeBlk = pcView->m_bDoing_UndoRedo ? NULL : pcView->m_cCommander.GetOpeBlk();
 		for (;;) {
 			CDocLine *pcDocLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLine); //#######非効率
@@ -50,9 +50,8 @@ void CDocVisitor::SetAllEol(CEol cEol)
 	if (bReplace) {
 		m_pcDocRef->m_cLayoutMgr._DoLayout(false);
 		m_pcDocRef->m_pcEditWnd->ClearViewCaretPosInfo();
-		if (m_pcDocRef->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP) {
-			m_pcDocRef->m_cLayoutMgr.CalculateTextWidth();
-		} else {
+		if (m_pcDocRef->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP) { m_pcDocRef->m_cLayoutMgr.CalculateTextWidth(); }
+		else {
 			m_pcDocRef->m_cLayoutMgr.ClearLayoutLineWidth();
 		}
 	}

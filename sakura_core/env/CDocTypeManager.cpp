@@ -94,7 +94,8 @@ bool CDocTypeManager::GetTypeConfig(CTypeConfig cDocumentType, STypeConfig &type
 		if (0 == n) {
 			type = m_pShareData->m_TypeBasis;
 			return true;
-		} else {
+		}
+		else {
 			LockGuard<CMutex> guard(g_cDocTypeMutex);
 			if (SendMessageAny(m_pShareData->m_sHandles.m_hwndTray, MYWM_GET_TYPESETTING, (WPARAM)n, 0)) {
 				type = m_pShareData->m_sWorkBuffer.m_TypeConfig;
@@ -123,8 +124,7 @@ bool CDocTypeManager::SetTypeConfig(CTypeConfig cDocumentType, const STypeConfig
 	@retval true  正常
 	@retval false 異常
 */
-[[nodiscard]] bool CDocTypeManager::GetTypeConfigMini(CTypeConfig cDocumentType, const STypeConfigMini **type)
-{
+[[nodiscard]] bool CDocTypeManager::GetTypeConfigMini(CTypeConfig cDocumentType, const STypeConfigMini **type) {
 	int n = cDocumentType.GetIndex();
 	if (0 <= n && n < m_pShareData->m_nTypesCount) {
 		*type = &m_pShareData->m_TypeMini[n];
@@ -167,7 +167,8 @@ bool CDocTypeManager::IsFileNameMatch(const WCHAR *pszTypeExts, const WCHAR *psz
 			if (_wcsicmp(token, pszFileName) == 0) { return true; }
 			const WCHAR *pszExt = wcsrchr(pszFileName, L'.');
 			if (pszExt != NULL && _wcsicmp(token, pszExt + 1) == 0) { return true; }
-		} else {
+		}
+		else {
 			if (PathMatchSpec(pszFileName, token) == TRUE) { return true; }
 		}
 		token = _wcstok(NULL, m_typeExtSeps);

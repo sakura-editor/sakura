@@ -26,8 +26,7 @@
 
 #include "CNative.h"
 
-class CNativeA final : public CNative
-{
+class CNativeA final : public CNative {
 public:
 	CNativeA() noexcept;
 	CNativeA(const CNativeA &rhs);

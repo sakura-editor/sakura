@@ -48,7 +48,8 @@ static void MacroError(BSTR Description, BSTR Source, void *Data)
 
 CWSHMacroManager::CWSHMacroManager(std::wstring const AEngineName)
 	: m_EngineName(AEngineName)
-{}
+{
+}
 
 CWSHMacroManager::~CWSHMacroManager() {}
 
@@ -61,7 +62,7 @@ CWSHMacroManager::~CWSHMacroManager() {}
 bool CWSHMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 {
 	CWSHClient *Engine;
-	Engine	  = new CWSHClient(m_EngineName.c_str(), MacroError, EditView);
+	Engine	= new CWSHClient(m_EngineName.c_str(), MacroError, EditView);
 	bool bRet = false;
 	if (Engine->m_Valid) {
 		//インタフェースオブジェクトの登録

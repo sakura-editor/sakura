@@ -55,31 +55,31 @@ const DWORD p_helpids[] = { // 12900
 // http://docwiki.embarcadero.com/RADStudio/Rio/en/Predefined_Macros
 // http://docwiki.embarcadero.com/RADStudio/Rio/en/Predefined_Macros#C.2B.2B_Compiler_Versions_in_Predefined_Macros
 #define COMPILER_TYPE "B"
-#define COMPILER_VER  __BORLANDC__
+#define COMPILER_VER __BORLANDC__
 #elif defined(__GNUG__)
 // __GNUG__ = (__GNUC__ && __cplusplus)
 // GNU C++
 // https://gcc.gnu.org/onlinedocs/cpp/Common-Predefined-Macros.html
 #define COMPILER_TYPE "G"
-#define COMPILER_VER  (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
+#define COMPILER_VER (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 #elif defined(__INTEL_COMPILER)
 // Intel Compiler
 // https://software.intel.com/en-us/cpp-compiler-developer-guide-and-reference-additional-predefined-macros
 #define COMPILER_TYPE "I"
-#define COMPILER_VER  __INTEL_COMPILER
+#define COMPILER_VER __INTEL_COMPILER
 #elif defined(__DMC__)
 // Digital Mars C/C++
 // https://digitalmars.com/ctg/predefined.html
 #define COMPILER_TYPE "D"
-#define COMPILER_VER  __DMC__
+#define COMPILER_VER __DMC__
 #elif defined(_MSC_VER)
 // https://docs.microsoft.com/en-us/cpp/preprocessor/predefined-macros?view=vs-2019
 #define COMPILER_TYPE "V"
-#define COMPILER_VER  _MSC_VER
+#define COMPILER_VER _MSC_VER
 #else
 // unknown
 #define COMPILER_TYPE "U"
-#define COMPILER_VER  0
+#define COMPILER_VER 0
 #endif
 //	To Here Feb. 7, 2002 genta
 
@@ -124,9 +124,8 @@ INT_PTR CDlgAbout::DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lPa
 	case WM_CTLCOLORDLG:
 	case WM_CTLCOLORSTATIC:
 		// EDITも READONLY か DISABLEの場合 WM_CTLCOLORSTATIC になります
-		if ((HWND)lParam == GetDlgItem(hWnd, IDC_EDIT_ABOUT)) {
-			::SetTextColor((HDC)wParam, RGB(102, 102, 102));
-		} else {
+		if ((HWND)lParam == GetDlgItem(hWnd, IDC_EDIT_ABOUT)) { ::SetTextColor((HDC)wParam, RGB(102, 102, 102)); }
+		else {
 			::SetTextColor((HDC)wParam, RGB(0, 0, 0));
 		}
 		return (INT_PTR)GetStockObject(WHITE_BRUSH);
@@ -240,7 +239,7 @@ BOOL CDlgAbout::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	//	Edit Boxにメッセージを追加する．
 	// 2011.06.01 nasukoji	各国語メッセージリソース対応
 	LPCWSTR pszDesc = LS(IDS_ABOUT_DESCRIPTION);
-	WCHAR	szMsg[2048];
+	WCHAR   szMsg[2048];
 	if (wcslen(pszDesc) > 0) {
 		wcsncpy(szMsg, pszDesc, _countof(szMsg) - 1);
 		szMsg[_countof(szMsg) - 1] = 0;
@@ -250,7 +249,7 @@ BOOL CDlgAbout::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 
 	//	From Here Dec. 2, 2002 genta
 	//	アイコンをカスタマイズアイコンに合わせる
-	HICON hIcon	   = GetAppIcon(m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, false);
+	HICON hIcon	= GetAppIcon(m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, false);
 	HWND  hIconWnd = GetItemHwnd(IDC_STATIC_MYICON);
 
 	if (hIconWnd != NULL && hIcon != NULL) { StCtl_SetIcon(hIconWnd, hIcon); }
@@ -290,8 +289,7 @@ BOOL CDlgAbout::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 BOOL CDlgAbout::OnBnClicked(int wID)
 {
 	switch (wID) {
-	case IDC_BUTTON_COPY:
-	{
+	case IDC_BUTTON_COPY: {
 		HWND hwndEditVer = GetItemHwnd(IDC_EDIT_VER);
 		EditCtl_SetSel(hwndEditVer, 0, -1);
 		SendMessage(hwndEditVer, WM_COPY, 0, 0);
@@ -316,8 +314,7 @@ BOOL CDlgAbout::OnStnClicked(int wID)
 			::ShellExecute(GetHwnd(), NULL, buf, NULL, NULL, SW_SHOWNORMAL);
 			return TRUE;
 		}
-	case IDC_STATIC_URL_CI_BUILD:
-	{
+	case IDC_STATIC_URL_CI_BUILD: {
 #if defined(CI_BUILD_URL)
 		::ShellExecute(GetHwnd(), NULL, _T(CI_BUILD_URL), NULL, NULL, SW_SHOWNORMAL);
 #elif defined(GIT_REMOTE_ORIGIN_URL)
@@ -360,7 +357,7 @@ BOOL CUrlWnd::SetSubclassWindow(HWND hWnd)
 	m_hWnd = hWnd;
 
 	// 下線付きフォントに変更する
-	HFONT	hFont;
+	HFONT   hFont;
 	LOGFONT lf;
 	hFont = (HFONT)SendMessageAny(hWnd, WM_GETFONT, (WPARAM)0, (LPARAM)0);
 	GetObject(hFont, sizeof(lf), &lf);
@@ -383,7 +380,7 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
 {
 	CUrlWnd *pUrlWnd = (CUrlWnd *)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
-	HDC	  hdc;
+	HDC   hdc;
 	POINT pt;
 	RECT  rc;
 
@@ -464,16 +461,17 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
 		// 背景描画
 		if (pUrlWnd->m_bHilighted) {
 			// ハイライト時背景描画
-			HBRUSH	brush	 = ::CreateSolidBrush(RGB(0xff, 0xff, 0));
+			HBRUSH  brush	= ::CreateSolidBrush(RGB(0xff, 0xff, 0));
 			HGDIOBJ brushOld = ::SelectObject(hdc, brush);
 			::PatBlt(hdc, rc.left, rc.top, rc.right, rc.bottom, PATCOPY);
 			::SelectObject(hdc, brushOld);
 			::DeleteObject(brush);
-		} else {
+		}
+		else {
 			// 親にWM_CTLCOLORSTATICを送って背景ブラシを取得し、背景描画する
 			HBRUSH hbr;
 			HBRUSH hbrOld;
-			hbr	   = (HBRUSH)SendMessageAny(GetParent(hWnd), WM_CTLCOLORSTATIC, wParam, (LPARAM)hWnd);
+			hbr	= (HBRUSH)SendMessageAny(GetParent(hWnd), WM_CTLCOLORSTATIC, wParam, (LPARAM)hWnd);
 			hbrOld = (HBRUSH)SelectObject(hdc, hbr);
 			::PatBlt(hdc, rc.left, rc.top, rc.right, rc.bottom, PATCOPY);
 			SelectObject(hdc, hbrOld);
@@ -487,7 +485,7 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
 		pUrlWnd->m_hWnd		  = NULL;
 		pUrlWnd->m_hFont	  = NULL;
 		pUrlWnd->m_bHilighted = FALSE;
-		pUrlWnd->m_pOldProc	  = NULL;
+		pUrlWnd->m_pOldProc   = NULL;
 		return (LRESULT)0;
 	case WM_SETTEXT: return pUrlWnd->OnSetText((LPCWSTR)lParam) ? TRUE : FALSE;
 	}
@@ -505,7 +503,7 @@ bool CUrlWnd::OnSetText(_In_opt_z_ LPCWSTR pchText, _In_opt_ size_t cchText) con
 	if (retSetText == FALSE) { return false; }
 
 	// サイズを調整のためにDCを取得
-	HDC	 hDC  = ::GetDC(GetHwnd());
+	HDC  hDC  = ::GetDC(GetHwnd());
 	auto hObj = ::SelectObject(hDC, GetFont());
 
 	// DrawText関数を使ってサイズを計測する

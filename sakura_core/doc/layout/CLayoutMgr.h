@@ -36,51 +36,47 @@
 #include <memory_resource>
 #include <vector>
 
-class CBregexp;	   // 2002/2/10 aroka
-class CLayout;	   // 2002/2/10 aroka
+class CBregexp;	// 2002/2/10 aroka
+class CLayout;	 // 2002/2/10 aroka
 class CDocLineMgr; // 2002/2/10 aroka
-class CDocLine;	   // 2002/2/10 aroka
-class CMemory;	   // 2002/2/10 aroka
-class CEditDoc;	   // 2003/07/20 genta
+class CDocLine;	// 2002/2/10 aroka
+class CMemory;	 // 2002/2/10 aroka
+class CEditDoc;	// 2003/07/20 genta
 class CSearchStringPattern;
 class CColorStrategy;
 
 //! レイアウト中の禁則タイプ	//@@@ 2002.04.20 MIK
-enum EKinsokuType
-{
-	KINSOKU_TYPE_NONE = 0,	   //!< なし
-	KINSOKU_TYPE_WORDWRAP,	   //!< 英文ワードラップ中
+enum EKinsokuType {
+	KINSOKU_TYPE_NONE = 0,	 //!< なし
+	KINSOKU_TYPE_WORDWRAP,	 //!< 英文ワードラップ中
 	KINSOKU_TYPE_KINSOKU_HEAD, //!< 行頭禁則中
 	KINSOKU_TYPE_KINSOKU_TAIL, //!< 行末禁則中
 	KINSOKU_TYPE_KINSOKU_KUTO, //!< 句読点ぶら下げ中
 };
 
-struct LayoutReplaceArg
-{
+struct LayoutReplaceArg {
 	CLayoutRange  sDelRange;	//!< [in]削除範囲。レイアウト単位。
 	COpeLineData *pcmemDeleted; //!< [out]削除されたデータ
 	COpeLineData *pInsData;		//!< [in,out]挿入するデータ
-	CLayoutInt	  nAddLineNum;	//!< [out] 再描画ヒント レイアウト行の増減
-	CLayoutInt	  nModLineFrom; //!< [out] 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う)
-	CLayoutInt	  nModLineTo; //!< [out] 再描画ヒント 変更されたレイアウト行To(レイアウト行の増減が0のとき使う)
+	CLayoutInt	nAddLineNum;  //!< [out] 再描画ヒント レイアウト行の増減
+	CLayoutInt	nModLineFrom; //!< [out] 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う)
+	CLayoutInt	nModLineTo; //!< [out] 再描画ヒント 変更されたレイアウト行To(レイアウト行の増減が0のとき使う)
 	CLayoutPoint ptLayoutNew; //!< [out]挿入された部分の次の位置の位置(レイアウト桁位置, レイアウト行)
 	int nDelSeq;			  //!< [in]削除行のOpeシーケンス
 	int nInsSeq;			  //!< [out]挿入行の元のシーケンス
 };
 
 // 編集時のテキスト最大幅算出用		// 2009.08.28 nasukoji
-struct CalTextWidthArg
-{
-	CLayoutPoint ptLayout;	   //!< 編集開始位置
-	CLayoutInt	 nDelLines;	   //!< 削除に関係する行数 - 1（負数の時削除なし）
-	CLayoutInt	 nAllLinesOld; //!< 編集前のテキスト行数
-	BOOL		 bInsData;	   //!< 追加文字列あり
+struct CalTextWidthArg {
+	CLayoutPoint ptLayout;	 //!< 編集開始位置
+	CLayoutInt   nDelLines;	//!< 削除に関係する行数 - 1（負数の時削除なし）
+	CLayoutInt   nAllLinesOld; //!< 編集前のテキスト行数
+	BOOL		 bInsData;	 //!< 追加文字列あり
 };
 
-class CLogicPointEx : public CLogicPoint
-{
+class CLogicPointEx : public CLogicPoint {
 public:
-	CLayoutInt	ext;  //!< ピクセル幅
+	CLayoutInt  ext;  //!< ピクセル幅
 	CLayoutXInt haba; //!< ext設定時の１文字の幅
 };
 
@@ -92,8 +88,7 @@ public:
 	@date 2005.11.21 Moca 色分け情報をメンバーへ移動．不要となった引数をメンバ関数から削除．
 */
 // 2007.10.15 XYLogicalToLayoutを廃止。LogicToLayoutに統合。
-class CLayoutMgr : public CProgressSubject
-{
+class CLayoutMgr : public CProgressSubject {
 private:
 	typedef CLayoutInt (CLayoutMgr::*CalcIndentProc)(CLayout *);
 
@@ -124,15 +119,15 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	// 2007.10.09 kobake 関数名変更: Search → SearchLineByLayoutY
-	CLayoutInt	   GetLineCount() const { return m_nLines; } /* 全物理行数を返す */
+	CLayoutInt	 GetLineCount() const { return m_nLines; } /* 全物理行数を返す */
 	const wchar_t *GetLineStr(CLayoutInt nLine,
 							  CLogicInt *pnLineLen) const; /* 指定された物理行のデータへのポインタとその長さを返す */
 	const wchar_t *GetLineStr(CLayoutInt nLine, CLogicInt *pnLineLen, const CLayout **ppcLayoutDes)
 		const; /* 指定された物理行のデータへのポインタとその長さを返す */
 
 	//先頭と末尾
-	CLayout *	   GetTopLayout() { return m_pLayoutTop; }
-	CLayout *	   GetBottomLayout() { return m_pLayoutBot; }
+	CLayout *	  GetTopLayout() { return m_pLayoutTop; }
+	CLayout *	  GetBottomLayout() { return m_pLayoutBot; }
 	const CLayout *GetTopLayout() const { return m_pLayoutTop; }
 	const CLayout *GetBottomLayout() const { return m_pLayoutBot; }
 
@@ -178,19 +173,22 @@ public:
 		CLayoutInt tabPadding = m_nCharLayoutXPerKeta - 1;
 		if (m_tsvInfo.m_nTsvMode == TSV_MODE_NONE && ch == WCODE::TAB) {
 			return GetTabSpace() + tabPadding - ((pos + tabPadding) % GetTabSpace());
-		} else if (m_tsvInfo.m_nTsvMode == TSV_MODE_CSV && ch == WCODE::TAB) {
+		}
+		else if (m_tsvInfo.m_nTsvMode == TSV_MODE_CSV && ch == WCODE::TAB) {
 			return tabPadding;
-		} else if ((m_tsvInfo.m_nTsvMode == TSV_MODE_TSV && ch == WCODE::TAB)
-				   || (m_tsvInfo.m_nTsvMode == TSV_MODE_CSV && ch == L',')) {
+		}
+		else if ((m_tsvInfo.m_nTsvMode == TSV_MODE_TSV && ch == WCODE::TAB)
+				 || (m_tsvInfo.m_nTsvMode == TSV_MODE_CSV && ch == L',')) {
 			return CLayoutInt(m_tsvInfo.GetActualTabLength(pos, m_tsvInfo.m_nMaxCharLayoutX));
-		} else {
+		}
+		else {
 			return tabPadding;
 		}
 	}
 
 	//	Aug. 14, 2005 genta
 	// Sep. 07, 2007 kobake 関数名変更 GetMaxLineSize→GetMaxLineKetas
-	CKetaXInt	GetMaxLineKetas() const { return m_nMaxLineKetas; }
+	CKetaXInt   GetMaxLineKetas() const { return m_nMaxLineKetas; }
 	CLayoutXInt GetMaxLineLayout() const { return m_nMaxLineKetas * m_nCharLayoutXPerKeta; }
 
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
@@ -276,7 +274,7 @@ public:
 
 	BOOL CalculateTextWidth(BOOL bCalLineLen = TRUE, CLayoutInt nStart = CLayoutInt(-1),
 							CLayoutInt nEnd = CLayoutInt(-1));
-		/* テキスト最大幅を算出する */											  // 2009.08.28 nasukoji
+	/* テキスト最大幅を算出する */												  // 2009.08.28 nasukoji
 	void ClearLayoutLineWidth(void); /* 各行のレイアウト行長の記憶をクリアする */ // 2009.08.28 nasukoji
 	CLayoutXInt GetLayoutXOfChar(const wchar_t *pData, int nDataLen, int i) const
 	{
@@ -296,7 +294,7 @@ protected:
 	||  参照系
 	*/
 	const char *GetFirstLinrStr(int *); /* 順アクセスモード：先頭行を得る */
-	const char *GetNextLinrStr(int *);	/* 順アクセスモード：次の行を得る */
+	const char *GetNextLinrStr(int *);  /* 順アクセスモード：次の行を得る */
 
 	/*
 	|| 更新系
@@ -311,32 +309,31 @@ protected:
 		CLayout *, CLogicInt, CLogicPoint, EColorIndexType, CLayoutColorInfo *, const CalTextWidthArg *,
 		CLayoutInt *); /* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
 	void CalculateTextWidth_Range(const CalTextWidthArg *pctwArg);
-		/* テキストが編集されたら最大幅を算出する */ // 2009.08.28 nasukoji
+	/* テキストが編集されたら最大幅を算出する */ // 2009.08.28 nasukoji
 	CLayout *DeleteLayoutAsLogical(CLayout *, CLayoutInt, CLogicInt, CLogicInt, CLogicPoint,
 								   CLayoutInt *); /* 論理行の指定範囲に該当するレイアウト情報を削除 */
 	void	 ShiftLogicalLineNum(
 			CLayout *, CLogicInt); /* 指定行より後の行のレイアウト情報について、論理行番号を指定行数だけシフトする */
 
 	//部品
-	struct SLayoutWork
-	{
+	struct SLayoutWork {
 		//毎ループ初期化
 		EKinsokuType eKinsokuType;
-		CLogicInt	 nPos;
-		CLogicInt	 nBgn;
-		CStringRef	 cLineStr;
-		CLogicInt	 nWordBgn;
-		CLogicInt	 nWordLen;
-		CLayoutInt	 nPosX;
-		CLayoutInt	 nIndent;
-		CLayout *	 pLayoutCalculated;
+		CLogicInt	nPos;
+		CLogicInt	nBgn;
+		CStringRef   cLineStr;
+		CLogicInt	nWordBgn;
+		CLogicInt	nWordLen;
+		CLayoutInt   nPosX;
+		CLayoutInt   nIndent;
+		CLayout *	pLayoutCalculated;
 
 		//ループ外
 		CDocLine *		pcDocLine;
 		CLayout *		pLayout;
 		CColorStrategy *pcColorStrategy;
 		EColorIndexType colorPrev;
-		CLayoutExInfo	exInfoPrev;
+		CLayoutExInfo   exInfoPrev;
 		CLogicInt		nCurLine;
 
 		//ループ外 (DoLayoutのみ)
@@ -425,22 +422,22 @@ protected:
 	CKetaXInt		   m_nTabSpace;			  //!< TABの文字数
 	CLayoutXInt		   m_nCharLayoutXPerKeta; //!< CKetaXInt(1)あたりのCLayoutXInt値(Spacing入り)
 	CPixelXInt		   m_nSpacing;			  //!< 1文字ずつの間隔(px)
-	vector_ex<wchar_t> m_pszKinsokuHead_1;	  //!< 行頭禁則文字	//@@@ 2002.04.08 MIK
-	vector_ex<wchar_t> m_pszKinsokuTail_1;	  //!< 行末禁則文字	//@@@ 2002.04.08 MIK
-	vector_ex<wchar_t> m_pszKinsokuKuto_1;	  //!< 句読点ぶらさげ文字	//@@@ 2002.04.17 MIK
-	CalcIndentProc	   m_getIndentOffset;	  //!< Oct. 1, 2002 genta インデント幅計算関数を保持
+	vector_ex<wchar_t> m_pszKinsokuHead_1;	//!< 行頭禁則文字	//@@@ 2002.04.08 MIK
+	vector_ex<wchar_t> m_pszKinsokuTail_1;	//!< 行末禁則文字	//@@@ 2002.04.08 MIK
+	vector_ex<wchar_t> m_pszKinsokuKuto_1;	//!< 句読点ぶらさげ文字	//@@@ 2002.04.17 MIK
+	CalcIndentProc	 m_getIndentOffset;	 //!< Oct. 1, 2002 genta インデント幅計算関数を保持
 
 	//フラグ等
 	EColorIndexType m_nLineTypeBot; //!< タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列
 									//!< 4=ダブルクォーテーション文字列
 	CLayoutExInfo m_cLayoutExInfoBot;
-	CLayoutInt	  m_nLines; // 全レイアウト行数
+	CLayoutInt	m_nLines; // 全レイアウト行数
 
 	mutable CLayoutInt m_nPrevReferLine;
 	mutable CLayout *  m_pLayoutPrevRefer;
 
 	// EOFカーソル位置を記憶する(_DoLayout/DoLayout_Rangeで無効にする)	//2006.10.01 Moca
-	CLayoutInt m_nEOFLine;	 //!< EOF行数
+	CLayoutInt m_nEOFLine;   //!< EOF行数
 	CLayoutInt m_nEOFColumn; //!< EOF幅位置
 
 	// テキスト最大幅を記憶（折り返し位置算出に使用）	// 2009.08.28 nasukoji

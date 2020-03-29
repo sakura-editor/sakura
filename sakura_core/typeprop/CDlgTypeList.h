@@ -25,12 +25,10 @@ using std::wstring;
 /*!
 	@brief ファイルタイプ一覧ダイアログ
 */
-class CDlgTypeList final : public CDialog
-{
+class CDlgTypeList final : public CDialog {
 public:
 	// 型
-	struct SResult
-	{
+	struct SResult {
 		CTypeConfig cDocumentType; //!< 文書種類
 		bool		bTempChange;   //!< 旧PROP_TEMPCHANGE_FLAG
 	};
@@ -47,7 +45,7 @@ protected:
 	INT_PTR DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam) override;
 	void	SetData() override;			   /* ダイアログデータの設定 */
 	void	SetData(int selIdx);		   /* ダイアログデータの設定 */
-	LPVOID	GetHelpIdTable(void) override; //@@@ 2002.01.18 add
+	LPVOID  GetHelpIdTable(void) override; //@@@ 2002.01.18 add
 	bool	Import(void);				   // 2010/4/12 Uchi
 	bool	Export(void);				   // 2010/4/12 Uchi
 	bool	InitializeType(void);		   // 2010/4/12 Uchi

@@ -40,7 +40,7 @@
 	@date	2002/08/30 Moca 旧ReadFileを元に作成 ファイルアクセスに関する部分をCFileLoadで行う
 	@date	2003/07/26 ryoji BOMの状態の取得を追加
 */
-EConvertResult CReadManager::ReadFile_To_CDocLineMgr(CDocLineMgr *	  pcDocLineMgr, //!< [out]
+EConvertResult CReadManager::ReadFile_To_CDocLineMgr(CDocLineMgr *	pcDocLineMgr, //!< [out]
 													 const SLoadInfo &sLoadInfo,	//!< [in]
 													 SFileInfo *	  pFileInfo		//!< [out]
 )
@@ -61,7 +61,8 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(CDocLineMgr *	  pcDocLineMg
 	bool bBom;
 	if (eCharCode == type->m_encoding.m_eDefaultCodetype) {
 		bBom = type->m_encoding.m_bDefaultBom; // 2011.01.24 ryoji デフォルトBOM
-	} else {
+	}
+	else {
 		bBom = CCodeTypeName(eCharCode).IsBomDefOn();
 	}
 	pFileInfo->SetCodeSet(eCharCode, bBom);
@@ -99,7 +100,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(CDocLineMgr *	  pcDocLineMg
 		// エラー時はthrow CError_FileRead を投げます
 		CEol			cEol;
 		CNativeW		cUnicodeBuffer;
-		EConvertResult	eRead;
+		EConvertResult  eRead;
 		constexpr DWORD timeInterval = 33;
 		ULONGLONG		nextTime	 = GetTickCount64() + timeInterval;
 		while (RESULT_FAILURE != (eRead = cfl.ReadLine(&cUnicodeBuffer, &cEol))) {
@@ -121,26 +122,32 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(CDocLineMgr *	  pcDocLineMg
 
 		// ファイルをクローズする
 		cfl.FileClose();
-	} catch (CAppExitException) {
+	}
+	catch (CAppExitException) {
 		// WM_QUITが発生した
 		return RESULT_FAILURE;
-	} catch (const CError_FileOpen &ex) {
+	}
+	catch (const CError_FileOpen &ex) {
 		eRet = RESULT_FAILURE;
 		if (ex.Reason() == CError_FileOpen::TOO_BIG) {
 			// ファイルサイズが大きすぎる (32bit 版の場合は 2GB あたりが上限)
 			ErrorMessage(CEditWnd::getInstance()->GetHwnd(), LS(STR_ERR_DLGDOCLM_TOOBIG), pszPath);
-		} else if (!fexist(pszPath)) {
+		}
+		else if (!fexist(pszPath)) {
 			// ファイルがない
 			ErrorMessage(CEditWnd::getInstance()->GetHwnd(),
 						 LS(STR_ERR_DLGDOCLM1), // Mar. 24, 2001 jepro 若干修正
 						 pszPath);
-		} else if (-1 == _waccess(pszPath, 4)) {
+		}
+		else if (-1 == _waccess(pszPath, 4)) {
 			// 読み込みアクセス権がない
 			ErrorMessage(CEditWnd::getInstance()->GetHwnd(), LS(STR_ERR_DLGDOCLM2), pszPath);
-		} else {
+		}
+		else {
 			ErrorMessage(CEditWnd::getInstance()->GetHwnd(), LS(STR_ERR_DLGDOCLM3), pszPath);
 		}
-	} catch (CError_FileRead) {
+	}
+	catch (CError_FileRead) {
 		eRet = RESULT_FAILURE;
 		ErrorMessage(CEditWnd::getInstance()->GetHwnd(), LS(STR_ERR_DLGDOCLM4), pszPath);
 		/* 既存データのクリア */

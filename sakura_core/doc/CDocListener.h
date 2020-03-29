@@ -42,17 +42,15 @@ class CDocListener;
 #include "util/relation_tool.h"
 
 //###
-enum ESaveResult
-{
+enum ESaveResult {
 	SAVED_OK,
 	SAVED_FAILURE,
 	SAVED_INTERRUPT, //!< 中断された
-	SAVED_LOSESOME,	 //!< 文字の一部が失われた
+	SAVED_LOSESOME,  //!< 文字の一部が失われた
 };
 
 //###
-enum ELoadResult
-{
+enum ELoadResult {
 	LOADED_OK,
 	LOADED_FAILURE,
 	LOADED_INTERRUPT, //!< 中断された
@@ -63,18 +61,16 @@ enum ELoadResult
 };
 
 //###
-enum ECallbackResult
-{
-	CALLBACK_CONTINUE,	//!< 続ける
+enum ECallbackResult {
+	CALLBACK_CONTINUE,  //!< 続ける
 	CALLBACK_INTERRUPT, //!< 中断
 };
 
 //###
-struct SLoadInfo
-{
+struct SLoadInfo {
 	//入力
-	CFilePath	cFilePath;
-	ECodeType	eCharCode;
+	CFilePath   cFilePath;
+	ECodeType   eCharCode;
 	bool		bViewMode;
 	bool		bWritableNoMsg; //!< 書き込み禁止メッセージを表示しない
 	CTypeConfig nType;
@@ -93,7 +89,8 @@ struct SLoadInfo
 		, nType(-1)
 		, bRequestReload(false)
 		, bOpened(false)
-	{}
+	{
+	}
 	SLoadInfo(const CFilePath &_cFilePath, ECodeType _eCodeType, bool _bReadOnly, CTypeConfig _nType = CTypeConfig(-1))
 		: cFilePath(_cFilePath)
 		, eCharCode(_eCodeType)
@@ -102,14 +99,14 @@ struct SLoadInfo
 		, nType(_nType)
 		, bRequestReload(false)
 		, bOpened(false)
-	{}
+	{
+	}
 
 	//! ファイルパスの比較
 	bool IsSamePath(LPCWSTR pszPath) const;
 };
 
-struct SSaveInfo
-{
+struct SSaveInfo {
 	CFilePath cFilePath;   //!< 保存ファイル名
 	ECodeType eCharCode;   //!< 保存文字コードセット
 	bool	  bBomExist;   //!< 保存時BOM付加
@@ -126,7 +123,8 @@ struct SSaveInfo
 		, bChgCodeSet(false)
 		, cEol(EOL_NONE)
 		, bOverwriteMode(false)
-	{}
+	{
+	}
 	SSaveInfo(const CFilePath &_cFilePath, ECodeType _eCodeType, const CEol &_cEol, bool _bBomExist)
 		: cFilePath(_cFilePath)
 		, eCharCode(_eCodeType)
@@ -134,7 +132,8 @@ struct SSaveInfo
 		, bChgCodeSet(false)
 		, cEol(_cEol)
 		, bOverwriteMode(false)
-	{}
+	{
+	}
 
 	//! ファイルパスの比較
 	bool IsSamePath(LPCWSTR pszPath) const;
@@ -143,24 +142,21 @@ struct SSaveInfo
 class CProgressListener;
 
 //! 複数のCProgressSubjectからウォッチされる
-class CProgressSubject : public CSubjectT<CProgressListener>
-{
+class CProgressSubject : public CSubjectT<CProgressListener> {
 public:
 	virtual ~CProgressSubject() {}
 	void NotifyProgress(int nPer);
 };
 
 //! 1つのCProgressSubjectをウォッチする
-class CProgressListener : public CListenerT<CProgressSubject>
-{
+class CProgressListener : public CListenerT<CProgressSubject> {
 public:
 	virtual ~CProgressListener() {}
 	virtual void OnProgress(int nPer) = 0;
 };
 
 // Subjectは複数のListenerから観察される
-class CDocSubject : public CSubjectT<CDocListener>
-{
+class CDocSubject : public CSubjectT<CDocListener> {
 public:
 	virtual ~CDocSubject();
 
@@ -186,8 +182,7 @@ public:
 };
 
 // Listenerは1つのSubjectを観察する
-class CDocListener : public CListenerT<CDocSubject>
-{
+class CDocListener : public CListenerT<CDocSubject> {
 public:
 	CDocListener(CDocSubject *pcDoc = NULL);
 	virtual ~CDocListener();
@@ -228,18 +223,17 @@ public:
 
 // GetListeningDocの利便性をアップ
 class CEditDoc;
-class CDocListenerEx : public CDocListener
-{
+class CDocListenerEx : public CDocListener {
 public:
 	CDocListenerEx(CDocSubject *pcDoc = NULL)
 		: CDocListener(pcDoc)
-	{}
+	{
+	}
 	CEditDoc *GetListeningDoc() const;
 };
 
 #include <exception>
-class CFlowInterruption : public std::exception
-{
+class CFlowInterruption : public std::exception {
 public:
 	const char *what() const throw() { return "CFlowInterruption"; }
 };

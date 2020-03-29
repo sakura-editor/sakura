@@ -134,15 +134,14 @@ void CViewCommander::Command_CASCADE(void)
 	int		  nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr(&pEditNodeArr, TRUE /*FALSE*/, TRUE);
 
 	if (nRowNum > 0) {
-		struct WNDARR
-		{
+		struct WNDARR {
 			HWND hWnd;
-			int	 newX;
-			int	 newY;
+			int  newX;
+			int  newY;
 		};
 
 		WNDARR *pWndArr = new WNDARR[nRowNum];
-		int		count	= 0; //	処理対象ウィンドウカウント
+		int		count   = 0; //	処理対象ウィンドウカウント
 		// Mar. 20, 2004 genta 現在のウィンドウを末尾に持っていくのに使う
 		int current_win_index = -1;
 
@@ -179,10 +178,10 @@ void CViewCommander::Command_CASCADE(void)
 		//	May 01, 2004 genta マルチモニタ対応
 		::GetMonitorWorkRect(m_pCommanderView->GetHwnd(), &rcDesktop);
 
-		int width	 = (rcDesktop.right - rcDesktop.left) * 4 / 5; // Mar. 9, 2003 genta 整数演算のみにする
-		int height	 = (rcDesktop.bottom - rcDesktop.top) * 4 / 5;
-		int w_delta	 = ::GetSystemMetrics(SM_CXSIZEFRAME) + ::GetSystemMetrics(SM_CXSIZE);
-		int h_delta	 = ::GetSystemMetrics(SM_CYSIZEFRAME) + ::GetSystemMetrics(SM_CYSIZE);
+		int width   = (rcDesktop.right - rcDesktop.left) * 4 / 5; // Mar. 9, 2003 genta 整数演算のみにする
+		int height  = (rcDesktop.bottom - rcDesktop.top) * 4 / 5;
+		int w_delta = ::GetSystemMetrics(SM_CXSIZEFRAME) + ::GetSystemMetrics(SM_CXSIZE);
+		int h_delta = ::GetSystemMetrics(SM_CYSIZEFRAME) + ::GetSystemMetrics(SM_CYSIZE);
 		int w_offset = rcDesktop.left; // Mar. 19, 2004 crayonzen 絶対値だとエクスプローラーのウィンドウに重なるので
 		int h_offset = rcDesktop.top; //初期値をデスクトップ内に収める。
 
@@ -263,7 +262,7 @@ void CViewCommander::Command_TILE_V(void)
 
 	if (nRowNum > 0) {
 		HWND *phwndArr = new HWND[nRowNum];
-		int	  count	   = 0;
+		int   count	= 0;
 		//	デスクトップサイズを得る
 		RECT rcDesktop;
 		//	May 01, 2004 genta マルチモニタ対応
@@ -280,7 +279,8 @@ void CViewCommander::Command_TILE_V(void)
 			if (pEditNodeArr[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd()) {
 				phwndArr[count] = phwndArr[0];
 				phwndArr[0]		= CEditWnd::getInstance()->GetHwnd();
-			} else {
+			}
+			else {
 				phwndArr[count] = pEditNodeArr[i].GetHwnd();
 			}
 			//	To Here Jul. 28, 2002 genta
@@ -313,7 +313,7 @@ void CViewCommander::Command_TILE_H(void)
 
 	if (nRowNum > 0) {
 		HWND *phwndArr = new HWND[nRowNum];
-		int	  count	   = 0;
+		int   count	= 0;
 		//	デスクトップサイズを得る
 		RECT rcDesktop;
 		//	May 01, 2004 genta マルチモニタ対応
@@ -330,7 +330,8 @@ void CViewCommander::Command_TILE_H(void)
 			if (pEditNodeArr[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd()) {
 				phwndArr[count] = phwndArr[0];
 				phwndArr[0]		= CEditWnd::getInstance()->GetHwnd();
-			} else {
+			}
+			else {
 				phwndArr[count] = pEditNodeArr[i].GetHwnd();
 			}
 			//	To Here Jul. 28, 2002 genta
@@ -387,7 +388,7 @@ void CViewCommander::Command_BIND_WINDOW(void)
 			MYWM_TAB_WINDOW_NOTIFY, //タブウィンドウイベント
 			(WPARAM)((GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin)
 						 ? TWNT_MODE_DISABLE
-						 : TWNT_MODE_ENABLE),	//タブモード有効/無効化イベント
+						 : TWNT_MODE_ENABLE),   //タブモード有効/無効化イベント
 			(LPARAM)GetEditWindow()->GetHwnd(), // CEditWndのウィンドウハンドル
 			m_pCommanderView->GetHwnd());		//自分自身
 												// End 2004.08.27 Kazika
@@ -479,7 +480,8 @@ void CViewCommander::Command_TAB_CLOSELEFT(void)
 				pEditNode[i].m_hWnd = NULL; //自分自身は閉じない
 				nGroup				= pEditNode[i].m_nGroup;
 				bSelfFound			= TRUE;
-			} else if (bSelfFound) {
+			}
+			else if (bSelfFound) {
 				pEditNode[i].m_hWnd = NULL; //右は閉じない
 			}
 		}
@@ -508,7 +510,8 @@ void CViewCommander::Command_TAB_CLOSERIGHT(void)
 				pEditNode[i].m_hWnd = NULL; //自分自身は閉じない
 				nGroup				= pEditNode[i].m_nGroup;
 				bSelfFound			= TRUE;
-			} else if (!bSelfFound) {
+			}
+			else if (!bSelfFound) {
 				pEditNode[i].m_hWnd = NULL; //左は閉じない
 			}
 		}
@@ -557,8 +560,8 @@ void CViewCommander::Command_MAXIMIZE_H(void)
 void CViewCommander::Command_MINIMIZE_ALL(void)
 {
 	HWND *phWndArr;
-	int	  i;
-	int	  j;
+	int   i;
+	int   j;
 	j = GetDllShareData().m_sNodes.m_nEditArrNum;
 	if (0 == j) { return; }
 	phWndArr = new HWND[j];
@@ -603,7 +606,8 @@ void CViewCommander::Command_TRACEOUT(const wchar_t *outputstr, int nLen, int nF
 		wchar_t Buffer[2048];
 		CSakuraEnvironment::ExpandParameter(outputstr, Buffer, 2047);
 		CShareData::getInstance()->TraceOutString(Buffer);
-	} else {
+	}
+	else {
 		CShareData::getInstance()->TraceOutString(outputstr, nLen);
 	}
 

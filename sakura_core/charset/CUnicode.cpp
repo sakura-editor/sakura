@@ -10,10 +10,10 @@ EConvertResult CUnicode::_UnicodeToUnicode_in(const CMemory &cSrc, CNativeW *pDs
 {
 	// ソース取得
 	int					 nSrcLen  = cSrc.GetRawLength();
-	const unsigned char *pSrc	  = reinterpret_cast<const unsigned char *>(cSrc.GetRawPtr());
+	const unsigned char *pSrc	 = reinterpret_cast<const unsigned char *>(cSrc.GetRawPtr());
 	CMemory *			 pDstMem2 = pDstMem->_GetMemory();
 
-	EConvertResult res	 = RESULT_COMPLETE;
+	EConvertResult res   = RESULT_COMPLETE;
 	bool		   bCopy = false;
 	if (nSrcLen % 2 == 1) {
 		// 不足分の最終1バイトとして 0x00 を補う。
@@ -27,7 +27,8 @@ EConvertResult CUnicode::_UnicodeToUnicode_in(const CMemory &cSrc, CNativeW *pDs
 			pDst[nSrcLen] = 0;
 			pDstMem2->_SetRawLength(nSrcLen + 1);
 			res = RESULT_LOSESOME;
-		} else {
+		}
+		else {
 			return RESULT_FAILURE;
 		}
 	}
@@ -36,10 +37,12 @@ EConvertResult CUnicode::_UnicodeToUnicode_in(const CMemory &cSrc, CNativeW *pDs
 		if (&cSrc != pDstMem2 && !bCopy) {
 			// コピーしつつ UnicodeBe -> Unicode
 			pDstMem2->SwabHLByte(cSrc);
-		} else {
+		}
+		else {
 			pDstMem2->SwapHLByte(); // UnicodeBe -> Unicode
 		}
-	} else if (!bCopy) {
+	}
+	else if (!bCopy) {
 		pDstMem2->SetRawDataHoldBuffer(pSrc, nSrcLen);
 	}
 	return res;
@@ -50,13 +53,14 @@ EConvertResult CUnicode::_UnicodeToUnicode_out(const CNativeW &cSrc, CMemory *pD
 	if (bBigEndian == true) {
 		if (cSrc._GetMemory() == pDstMem) {
 			pDstMem->SwapHLByte(); // Unicode -> UnicodeBe
-		} else {
+		}
+		else {
 			pDstMem->SwabHLByte(*(cSrc._GetMemory()));
 		}
-	} else {
-		if (cSrc._GetMemory() != pDstMem) {
-			pDstMem->SetRawDataHoldBuffer(*(cSrc._GetMemory()));
-		} else {
+	}
+	else {
+		if (cSrc._GetMemory() != pDstMem) { pDstMem->SetRawDataHoldBuffer(*(cSrc._GetMemory())); }
+		else {
 			// 何もしない
 		}
 	}
@@ -72,8 +76,7 @@ void CUnicode::GetBom(CMemory *pcmemBom)
 
 void CUnicode::GetEol(CMemory *pcmemEol, EEolType eEolType)
 {
-	static const struct
-	{
+	static const struct {
 		const void *pData;
 		int			nLen;
 	} aEolTable[EOL_TYPE_NUM] = {
@@ -82,8 +85,8 @@ void CUnicode::GetEol(CMemory *pcmemEol, EEolType eEolType)
 		{L"\x0a", 1 * sizeof(wchar_t)},		// EOL_LF
 		{L"\x0d", 1 * sizeof(wchar_t)},		// EOL_CR
 		{L"\x85", 1 * sizeof(wchar_t)},		// EOL_NEL
-		{L"\u2028", 1 * sizeof(wchar_t)},	// EOL_LS
-		{L"\u2029", 1 * sizeof(wchar_t)},	// EOL_PS
+		{L"\u2028", 1 * sizeof(wchar_t)},   // EOL_LS
+		{L"\u2029", 1 * sizeof(wchar_t)},   // EOL_PS
 	};
 	pcmemEol->SetRawData(aEolTable[eEolType].pData, aEolTable[eEolType].nLen);
 }

@@ -36,11 +36,10 @@ struct SEncodingConfig;
 
 #include "_main/global.h"
 
-struct tagEncodingInfo
-{
-	ECodeType eCodeID;	 // 文字コード識別番号
+struct tagEncodingInfo {
+	ECodeType eCodeID;   // 文字コード識別番号
 	int		  nSpecific; // 評価値1
-	int		  nPoints;	 // 評価値2
+	int		  nPoints;   // 評価値2
 };
 typedef struct tagEncodingInfo MBCODE_INFO, WCCODE_INFO;
 
@@ -61,20 +60,18 @@ typedef struct tagEncodingInfo MBCODE_INFO, WCCODE_INFO;
 */
 
 static const DWORD ESI_NOINFORMATION = 0;
-static const DWORD ESI_MBC_DETECTED	 = 1;
-static const DWORD ESI_WC_DETECTED	 = 2;
-static const DWORD ESI_NODETECTED	 = 4;
+static const DWORD ESI_MBC_DETECTED  = 1;
+static const DWORD ESI_WC_DETECTED   = 2;
+static const DWORD ESI_NODETECTED	= 4;
 
 // ワイド文字の２種類あるものの格納位置
-enum EStoreID4WCInfo
-{
+enum EStoreID4WCInfo {
 	ESI_WCIDX_UTF16LE,
 	ESI_WCIDX_UTF16BE,
 	ESI_WCIDX_MAX,
 };
 // BOM タイプ
-enum EBOMType
-{
+enum EBOMType {
 	ESI_BOMTYPE_UNKNOWN = -1,
 	ESI_BOMTYPE_LE		= 0,
 	ESI_BOMTYPE_BE		= 1,
@@ -84,8 +81,7 @@ enum EBOMType
 	文字コードを調査する時に生じる情報格納クラス
 //*/
 
-class CESI
-{
+class CESI {
 public:
 	virtual ~CESI() { ; }
 	explicit CESI(const SEncodingConfig &ref)
@@ -132,9 +128,8 @@ public:
 protected:
 	void SetDataLen(const int n)
 	{
-		if (n < 1) {
-			m_nTargetDataLen = 0;
-		} else {
+		if (n < 1) { m_nTargetDataLen = 0; }
+		else {
 			m_nTargetDataLen = n;
 		}
 	}
@@ -203,7 +198,7 @@ public:
 	}
 
 protected:
-	void GuessEucOrSjis(void);	 //!< EUC か SJIS かを判定
+	void GuessEucOrSjis(void);   //!< EUC か SJIS かを判定
 	void GuessUtf8OrCesu8(void); //!< UTF-8 か CESU-8 かを判定
 public:
 	//
@@ -211,7 +206,7 @@ public:
 	//
 	WCCODE_INFO m_aWcInfo[ESI_WCIDX_MAX]; //!< UTF-16 LE/BE 情報
 	EBOMType	m_eWcBomType;			  //!< m_pWcInfo から推測される BOM の種類
-	ECodeType	m_eMetaName;			  //!< エンコーディング名からの種類判別
+	ECodeType   m_eMetaName;			  //!< エンコーディング名からの種類判別
 
 	EBOMType  GetBOMType(void) const { return m_eWcBomType; }
 	ECodeType GetMetaName() const { return m_eMetaName; }
@@ -249,17 +244,17 @@ inline ECodeType CESI::DetectUnicodeBom(const char *buff, size_t size) noexcept
 	if (!buff || size < 2) return CODE_NONE;
 
 	// バイト列の先頭が \ufeff の utf8 表現と一致するか判定
-	constexpr const BYTE utf8BOM[] {0xef, 0xbb, 0xbf};
+	constexpr const BYTE utf8BOM[]{0xef, 0xbb, 0xbf};
 	if (size >= _countof(utf8BOM) && 0 == ::memcmp(buff, utf8BOM, _countof(utf8BOM))) { return CODE_UTF8; }
 
 	// バイト列の先頭が \ufeff の utf16BE 表現と一致するか判定
-	constexpr const BYTE utf16BeBOM[] {0xfe, 0xff};
+	constexpr const BYTE utf16BeBOM[]{0xfe, 0xff};
 	if (size >= _countof(utf16BeBOM) && 0 == ::memcmp(buff, utf16BeBOM, _countof(utf16BeBOM))) {
 		return CODE_UNICODEBE;
 	}
 
 	// バイト列の先頭が \ufeff の utf16LE 表現と一致するか判定
-	constexpr const BYTE utf16LeBOM[] {0xff, 0xfe};
+	constexpr const BYTE utf16LeBOM[]{0xff, 0xfe};
 	if (size >= _countof(utf16LeBOM) && 0 == ::memcmp(buff, utf16LeBOM, _countof(utf16LeBOM))) { return CODE_UNICODE; }
 
 	// UTF-7 は ASCII 7bit 文字 でない文字を UTF-16BE で符号化してから 修正BASE64 で 符号化する。

@@ -32,8 +32,7 @@ class CTextMetrics;
 class CCaret;
 class CEditWnd;
 
-class CCaretUnderLine
-{
+class CCaretUnderLine {
 public:
 	CCaretUnderLine(CEditView *pcEditView)
 		: m_pcEditView(pcEditView)
@@ -79,8 +78,7 @@ private:
 	bool	   m_bVertLineDoNotOFF;
 };
 
-class CCaret
-{
+class CCaret {
 public:
 	CCaret(CEditView *pEditView, const CEditDoc *pEditDoc);
 	virtual ~CCaret();
@@ -129,9 +127,9 @@ public:
 	CLayoutInt MoveCursor(										   //!< 行桁指定によるカーソル移動
 		CLayoutPoint ptWk_CaretPos,								   //!< [in] 移動先レイアウト位置
 		bool		 bScroll, //!< [in] true: 画面位置調整有り  false: 画面位置調整無し
-		int			 nCaretMarginRate	= _CARETMARGINRATE, //!< [in] 縦スクロール開始位置を決める値
+		int			 nCaretMarginRate   = _CARETMARGINRATE, //!< [in] 縦スクロール開始位置を決める値
 		bool		 bUnderlineDoNotOFF = false,			//!< [in] アンダーラインを消去しない
-		bool		 bVertLineDoNotOFF	= false				//!< [in] カーソル位置縦線を消去しない
+		bool		 bVertLineDoNotOFF  = false				//!< [in] カーソル位置縦線を消去しない
 	);
 	CLayoutInt MoveCursorFastMode(const CLogicPoint &pptWk_CaretPosLogic //!< [in] 移動先ロジック位置
 	);
@@ -160,7 +158,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 	//描画？
-	void ShowEditCaret();	 //!< キャレットの表示・更新
+	void ShowEditCaret();	//!< キャレットの表示・更新
 	void ShowCaretPosInfo(); //!< キャレットの行桁位置を表示する
 
 	// API呼び出し
@@ -197,16 +195,16 @@ private:
 
 	//キャレット位置
 	CLayoutPoint m_ptCaretPos_Layout; // ビュー左上端からのカーソル位置。レイアウト単位。
-	CLogicPoint	 m_ptCaretPos_Logic;  // カーソル位置。ロジック単位。データ内文字単位。
+	CLogicPoint  m_ptCaretPos_Logic;  // カーソル位置。ロジック単位。データ内文字単位。
 
 public:
 	CLayoutInt m_nCaretPosX_Prev; // 直前のX座標記憶用。レイアウト単位。このソースの下部に詳細説明があります。
 
 	//キャレット見た目
 private:
-	CMySize	 m_sizeCaret; // キャレットのサイズ。ピクセル単位。
-	COLORREF m_crCaret;	  // キャレットの色				// 2006.12.07 ryoji
-	HBITMAP	 m_hbmpCaret; // キャレットのビットマップ		// 2006.11.28 ryoji
+	CMySize  m_sizeCaret; // キャレットのサイズ。ピクセル単位。
+	COLORREF m_crCaret;   // キャレットの色				// 2006.12.07 ryoji
+	HBITMAP  m_hbmpCaret; // キャレットのビットマップ		// 2006.11.28 ryoji
 	bool	 m_bCaretShowFlag;
 
 	//アンダーライン

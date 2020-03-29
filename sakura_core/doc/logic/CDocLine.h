@@ -32,8 +32,7 @@ class COpeBlk;
 #pragma pack(push, 1)
 
 //!	文書データ1行
-class CDocLine
-{
+class CDocLine {
 protected:
 	friend class CDocLineMgr; //######仮
 public:
@@ -50,11 +49,11 @@ public:
 		return m_cLine.GetStringLength() - m_cEol.GetLen();
 	} //!< 戻り値は文字単位。
 	const wchar_t *GetPtr() const { return m_cLine.GetStringPtr(); }
-	CLogicInt	   GetLengthWithEOL() const { return m_cLine.GetStringLength(); } //	CMemoryIterator用
+	CLogicInt	  GetLengthWithEOL() const { return m_cLine.GetStringLength(); } //	CMemoryIterator用
 #ifdef USE_STRICT_INT
 	const wchar_t *GetDocLineStrWithEOL(int *pnLen) const //###仮の名前、仮の対処
 	{
-		CLogicInt	   n;
+		CLogicInt	  n;
 		const wchar_t *p = GetDocLineStrWithEOL(&n);
 		*pnLen			 = n;
 		return p;
@@ -65,16 +64,16 @@ public:
 		if (this) {
 			*pnLen = GetLengthWithEOL();
 			return GetPtr();
-		} else {
+		}
+		else {
 			*pnLen = 0;
 			return NULL;
 		}
 	}
 	CStringRef GetStringRefWithEOL() const //###仮の名前、仮の対処
 	{
-		if (this) {
-			return CStringRef(GetPtr(), GetLengthWithEOL());
-		} else {
+		if (this) { return CStringRef(GetPtr(), GetLengthWithEOL()); }
+		else {
 			return CStringRef(NULL, 0);
 		}
 	}
@@ -105,11 +104,10 @@ private:
 	CNativeW m_cLine; //!< データ  2007.10.11 kobake ポインタではなく、実体を持つように変更
 public:
 	//拡張情報 $$分離中
-	struct MarkType
-	{
-		CLineModified	m_cModified;   //変更フラグ
+	struct MarkType {
+		CLineModified   m_cModified;   //変更フラグ
 		CLineBookmarked m_cBookmarked; //ブックマーク
-		CLineFuncList	m_cFuncList;   //関数リストマーク
+		CLineFuncList   m_cFuncList;   //関数リストマーク
 		CLineDiffed		m_cDiffmarked; // DIFF差分情報
 	};
 	MarkType m_sMark;

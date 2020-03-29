@@ -58,7 +58,7 @@
 #include "util/design_template.h"
 
 class CSMacroMgr; // 2002/2/10 aroka
-class CEditWnd;	  // Sep. 10, 2002 genta
+class CEditWnd;   // Sep. 10, 2002 genta
 struct EditInfo;  // 20050705 aroka
 class CFuncInfoArr;
 class CEditApp;
@@ -71,8 +71,7 @@ class CEditApp;
 	@date 2007.12.13 kobake SetDocumentEncoding作成
 	@date 2007.12.13 kobake IsViewMode作成
 */
-class CEditDoc : public CDocSubject, public TInstanceHolder<CEditDoc>
-{
+class CEditDoc : public CDocSubject, public TInstanceHolder<CEditDoc> {
 public:
 	//コンストラクタ・デストラクタ
 	CEditDoc(CEditApp *pcApp);
@@ -127,7 +126,7 @@ public:
 
 	//データ構造
 	CDocLineMgr m_cDocLineMgr;
-	CLayoutMgr	m_cLayoutMgr;
+	CLayoutMgr  m_cLayoutMgr;
 
 	//各種機能
 public:
@@ -135,12 +134,12 @@ public:
 	CDocFileOperation m_cDocFileOperation;
 	CDocEditor		  m_cDocEditor;
 	CDocType		  m_cDocType;
-	CCookieManager	  m_cCookie;
+	CCookieManager	m_cCookie;
 
 	//ヘルパ
 public:
 	CBackupAgent	 m_cBackupAgent;
-	CAutoSaveAgent	 m_cAutoSaveAgent; //!< 自動保存管理
+	CAutoSaveAgent   m_cAutoSaveAgent; //!< 自動保存管理
 	CAutoReloadAgent m_cAutoReloadAgent;
 	CDocOutline		 m_cDocOutline;
 	CDocLocker		 m_cDocLocker;
@@ -155,7 +154,7 @@ public:
 
 	//未整理変数
 public:
-	int		m_nTextWrapMethodCur;	  // 折り返し方法					// 2008.05.30 nasukoji
+	int		m_nTextWrapMethodCur;	 // 折り返し方法					// 2008.05.30 nasukoji
 	bool	m_bTextWrapMethodCurTemp; // 折り返し方法一時設定適用中	// 2008.05.30 nasukoji
 	LOGFONT m_lfCur;				  // 一時設定フォント
 	int		m_nPointSizeCur;		  // 一時設定フォントサイズ

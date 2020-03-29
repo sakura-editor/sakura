@@ -88,10 +88,12 @@ inline bool Wnd_GetText(HWND hwnd, CNativeW &str)
 	if (actualCount < 0) {
 		// 仕様上は負の場合はありえないが、念の為エラーチェックしておく。
 		return false;
-	} else if (actualCount == 0) {
+	}
+	else if (actualCount == 0) {
 		// GetWindowText はエラーの場合、またはテキストが空の場合は 0 を返す
 		if (GetLastError() != 0) { return false; }
-	} else if (actualCount >= str.capacity()) {
+	}
+	else if (actualCount >= str.capacity()) {
 		// GetWindowText() の仕様上はありえないはず
 		return false;
 	}
@@ -184,8 +186,9 @@ inline BOOL Combo_GetDroppedState(HWND hwndCtl)
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      リストボックス                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-LRESULT							 List_GetText(HWND hwndList, int nIndex, WCHAR *pszText, size_t cchText);
-template<size_t cchText> LRESULT List_GetText(HWND hwndList, int nIndex, WCHAR (&pszText)[cchText])
+LRESULT List_GetText(HWND hwndList, int nIndex, WCHAR *pszText, size_t cchText);
+template<size_t cchText>
+LRESULT List_GetText(HWND hwndList, int nIndex, WCHAR (&pszText)[cchText])
 {
 	return List_GetText(hwndList, nIndex, pszText, cchText);
 }
@@ -287,7 +290,7 @@ inline void EditCtl_ReplaceSel(HWND hwndCtl, const WCHAR *lpsz)
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ボタン コントロール                    //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-inline int	BtnCtl_GetCheck(HWND hwndCtl) { return (int)(DWORD)::SendMessage(hwndCtl, BM_GETCHECK, 0L, 0L); }
+inline int  BtnCtl_GetCheck(HWND hwndCtl) { return (int)(DWORD)::SendMessage(hwndCtl, BM_GETCHECK, 0L, 0L); }
 inline void BtnCtl_SetCheck(HWND hwndCtl, int check) { ::SendMessage(hwndCtl, BM_SETCHECK, (WPARAM)check, 0L); }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

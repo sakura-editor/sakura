@@ -53,9 +53,9 @@ CViewCommander::CViewCommander(CEditView *pEditView)
 BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM lparam1, LPARAM lparam2, LPARAM lparam3,
 								   LPARAM lparam4)
 {
-	BOOL bRet	 = TRUE;
+	BOOL bRet	= TRUE;
 	bool bRepeat = false;
-	int	 nFuncID;
+	int  nFuncID;
 
 	//	May. 19, 2006 genta 上位16bitに送信元の識別子が入るように変更したので
 	//	下位16ビットのみを取り出す
@@ -170,7 +170,7 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 		break; //ファイルを開く2
 	case F_FILEOPEN_DROPDOWN:
 		Command_FILEOPEN((const WCHAR *)lparam1);
-		break; /* ファイルを開く(ドロップダウン) */	   //@@@ 2002.06.15 MIK
+		break; /* ファイルを開く(ドロップダウン) */	//@@@ 2002.06.15 MIK
 	case F_FILESAVE: bRet = Command_FILESAVE(); break; /* 上書き保存 */
 	case F_FILESAVEAS_DIALOG:
 		bRet = Command_FILESAVEAS_DIALOG((const WCHAR *)lparam1, (ECodeType)lparam2, (EEolType)lparam3);
@@ -203,8 +203,8 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 		Command_FILE_REOPEN(GetDocument()->GetDocumentEncoding(), lparam1 != 0);
 		break;																	  //	Dec. 4, 2002 genta
 	case F_FILE_REOPEN_SJIS: Command_FILE_REOPEN(CODE_SJIS, lparam1 != 0); break; // SJISで開き直す
-	case F_FILE_REOPEN_JIS: Command_FILE_REOPEN(CODE_JIS, lparam1 != 0); break;	  // JISで開き直す
-	case F_FILE_REOPEN_EUC: Command_FILE_REOPEN(CODE_EUC, lparam1 != 0); break;	  // EUCで開き直す
+	case F_FILE_REOPEN_JIS: Command_FILE_REOPEN(CODE_JIS, lparam1 != 0); break;   // JISで開き直す
+	case F_FILE_REOPEN_EUC: Command_FILE_REOPEN(CODE_EUC, lparam1 != 0); break;   // EUCで開き直す
 	case F_FILE_REOPEN_LATIN1:
 		Command_FILE_REOPEN(CODE_LATIN1, lparam1 != 0);
 		break; // Latin1で開きなおす	// 2010/3/20 Uchi
@@ -223,16 +223,16 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 		break; /* 同名のC/C++ヘッダ(ソース)を開く */ // Feb. 7, 2001 JEPRO 追加
 		//	case F_OPEN_HHPP:			bRet = Command_OPEN_HHPP( (BOOL)lparam1, TRUE );break;		/*
 		//同名のC/C++ヘッダファイルを開く */	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更		del
-		//2008/6/23 Uchi 	case F_OPEN_CCPP:			bRet = Command_OPEN_CCPP( (BOOL)lparam1, TRUE );break;		/*
+		// 2008/6/23 Uchi 	case F_OPEN_CCPP:			bRet = Command_OPEN_CCPP( (BOOL)lparam1, TRUE );break;		/*
 		//同名のC/C++ソースファイルを開く */	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更	del
-		//2008/6/23 Uchi
+		// 2008/6/23 Uchi
 	case F_ACTIVATE_SQLPLUS: Command_ACTIVATE_SQLPLUS(); break; /* Oracle SQL*Plusをアクティブ表示 */
 	case F_PLSQL_COMPILE_ON_SQLPLUS: /* Oracle SQL*Plusで実行 */ Command_PLSQL_COMPILE_ON_SQLPLUS(); break;
 	case F_BROWSE: Command_BROWSE(); break;									  /* ブラウズ */
 	case F_VIEWMODE: Command_VIEWMODE(); break;								  /* ビューモード */
 	case F_PROPERTY_FILE: Command_PROPERTY_FILE(); break;					  /* ファイルのプロパティ */
 	case F_OPEN_FOLDER_IN_EXPLORER: Command_OPEN_FOLDER_IN_EXPLORER(); break; /* ファイルの場所を開く */
-	case F_OPEN_COMMAND_PROMPT: Command_OPEN_COMMAND_PROMPT(FALSE); break;	  /* コマンドプロンプトを開く */
+	case F_OPEN_COMMAND_PROMPT: Command_OPEN_COMMAND_PROMPT(FALSE); break;	/* コマンドプロンプトを開く */
 	case F_OPEN_COMMAND_PROMPT_AS_ADMIN:
 		Command_OPEN_COMMAND_PROMPT(TRUE);
 		break; /* 管理者としてコマンドプロンプトを開く */
@@ -240,7 +240,7 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 	case F_OPEN_POWERSHELL_AS_ADMIN: Command_OPEN_POWERSHELL(TRUE); break; /* 管理者としてPowerShellを開く */
 	case F_PROFILEMGR: Command_PROFILEMGR(); break;						   // プロファイルマネージャ
 	case F_EXITALLEDITORS: Command_EXITALLEDITORS(); break; /* 編集の全終了 */ // 2007.02.13 ryoji 追加
-	case F_EXITALL: Command_EXITALL(); break; /* サクラエディタの全終了 */	   // Dec. 26, 2000 JEPRO 追加
+	case F_EXITALL: Command_EXITALL(); break; /* サクラエディタの全終了 */	 // Dec. 26, 2000 JEPRO 追加
 	case F_PUTFILE:
 		Command_PUTFILE((LPCWSTR)lparam1, (ECodeType)lparam2, (int)lparam3);
 		break; /* 作業中ファイルの一時出力 */ // maru 2006.12.10
@@ -272,8 +272,8 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 		break; //逆SPACEインデント
 			   //	case F_WORDSREFERENCE:			Command_WORDSREFERENCE();break;		/* 単語リファレンス */
 	case F_LTRIM: Command_TRIM(TRUE); break;	  // 2001.12.03 hor
-	case F_RTRIM: Command_TRIM(FALSE); break;	  // 2001.12.03 hor
-	case F_SORT_ASC: Command_SORT(TRUE); break;	  // 2001.12.06 hor
+	case F_RTRIM: Command_TRIM(FALSE); break;	 // 2001.12.03 hor
+	case F_SORT_ASC: Command_SORT(TRUE); break;   // 2001.12.06 hor
 	case F_SORT_DESC: Command_SORT(FALSE); break; // 2001.12.06 hor
 	case F_MERGE: Command_MERGE(); break;		  // 2001.12.06 hor
 	case F_RECONVERT:
@@ -311,9 +311,10 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 	case F_GOLINEEND:
 		Command_GOLINEEND(m_pCommanderView->GetSelectionInfo().m_bSelectingLock, 0, lparam1);
 		break; //行末に移動(折り返し単位)
-			   //	case F_ROLLDOWN:		Command_ROLLDOWN( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ); break;
-		////スクロールダウン 	case F_ROLLUP:			Command_ROLLUP(
-		//m_pCommanderView->GetSelectionInfo().m_bSelectingLock ); break;					//スクロールアップ
+			   //	case F_ROLLDOWN:		Command_ROLLDOWN( m_pCommanderView->GetSelectionInfo().m_bSelectingLock );
+			   // break;
+			   ////スクロールダウン 	case F_ROLLUP:			Command_ROLLUP(
+			   // m_pCommanderView->GetSelectionInfo().m_bSelectingLock ); break;					//スクロールアップ
 	case F_HalfPageUp:
 		Command_HalfPageUp(m_pCommanderView->GetSelectionInfo().m_bSelectingLock, CLayoutYInt(lparam1));
 		break; //半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
@@ -337,7 +338,7 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 	case F_CURLINEBOTTOM: Command_CURLINEBOTTOM(); break; /* カーソル行をウィンドウ下部へ */
 	case F_JUMPHIST_PREV: Command_JUMPHIST_PREV(); break; //移動履歴: 前へ
 	case F_JUMPHIST_NEXT: Command_JUMPHIST_NEXT(); break; //移動履歴: 次へ
-	case F_JUMPHIST_SET: Command_JUMPHIST_SET(); break;	  //現在位置を移動履歴に登録
+	case F_JUMPHIST_SET: Command_JUMPHIST_SET(); break;   //現在位置を移動履歴に登録
 	case F_WndScrollDown: Command_WndScrollDown(); break; //テキストを１行下へスクロール	// 2001/06/20 asa-o
 	case F_WndScrollUp: Command_WndScrollUp(); break; //テキストを１行上へスクロール	// 2001/06/20 asa-o
 	case F_GONEXTPARAGRAPH:
@@ -367,7 +368,7 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 	case F_SELECTALL: Command_SELECTALL(); break;				  //すべて選択
 	case F_SELECTLINE: Command_SELECTLINE(lparam1); break;		  // 1行選択	// 2007.10.13 nasukoji
 	case F_BEGIN_SEL: Command_BEGIN_SELECT(); break;			  /* 範囲選択開始 */
-	case F_UP_SEL: Command_UP(true, bRepeat, lparam1); break;	  //(範囲選択)カーソル上移動
+	case F_UP_SEL: Command_UP(true, bRepeat, lparam1); break;	 //(範囲選択)カーソル上移動
 	case F_DOWN_SEL: Command_DOWN(true, bRepeat); break;		  //(範囲選択)カーソル下移動
 	case F_LEFT_SEL: Command_LEFT(true, bRepeat); break;		  //(範囲選択)カーソル左移動
 	case F_RIGHT_SEL: Command_RIGHT(true, false, bRepeat); break; //(範囲選択)カーソル右移動
@@ -433,7 +434,8 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 		Sub_BoxSelectLock(lparam2);
 		this->Command_GOLINETOP(true, 8 | lparam1);
 		break; //(矩形選択)行頭に移動(改行単位)
-			   //	case F_GOLOGICALLINEEND_BOX:Sub_BoxSelectLock(lparam2); this->Command_GOLINEEND( true, 0, 8 | lparam1
+			   //	case F_GOLOGICALLINEEND_BOX:Sub_BoxSelectLock(lparam2); this->Command_GOLINEEND( true, 0, 8 |
+			   // lparam1
 			   //);break;	//(矩形選択)行末に移動(改行単位)
 	case F_GOLINETOP_BOX:
 		Sub_BoxSelectLock(lparam2);
@@ -574,7 +576,7 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 		Command_GREP_REPLACE_DLG();
 		return bRet;
 	case F_GREP_REPLACE: Command_GREP_REPLACE(); break; // Grep置換
-	case F_JUMP_DIALOG: Command_JUMP_DIALOG(); break;	//指定行ヘジャンプダイアログの表示
+	case F_JUMP_DIALOG: Command_JUMP_DIALOG(); break;   //指定行ヘジャンプダイアログの表示
 	case F_JUMP: Command_JUMP(); break;					//指定行ヘジャンプ
 	case F_OUTLINE: bRet = Command_FUNCLIST((int)lparam1, OUTLINE_DEFAULT); break; //アウトライン解析
 	case F_OUTLINE_TOGGLE:
@@ -596,16 +598,16 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 	case F_DIFF:
 		Command_Diff((const WCHAR *)lparam1, (int)lparam2);
 		break; /* DIFF差分表示 */											   //@@@ 2002.05.25 MIK	// 2005.10.03 maru
-	case F_DIFF_NEXT: Command_Diff_Next(); break; /* DIFF差分表示(次へ) */	   //@@@ 2002.05.25 MIK
-	case F_DIFF_PREV: Command_Diff_Prev(); break; /* DIFF差分表示(前へ) */	   //@@@ 2002.05.25 MIK
+	case F_DIFF_NEXT: Command_Diff_Next(); break; /* DIFF差分表示(次へ) */	 //@@@ 2002.05.25 MIK
+	case F_DIFF_PREV: Command_Diff_Prev(); break; /* DIFF差分表示(前へ) */	 //@@@ 2002.05.25 MIK
 	case F_DIFF_RESET: Command_Diff_Reset(); break; /* DIFF差分表示(全解除) */ //@@@ 2002.05.25 MIK
 	case F_BRACKETPAIR:
 		Command_BRACKETPAIR();
 		break;												//対括弧の検索
 															// From Here 2001.12.03 hor
 	case F_BOOKMARK_SET: Command_BOOKMARK_SET(); break;		/* ブックマーク設定・解除 */
-	case F_BOOKMARK_NEXT: Command_BOOKMARK_NEXT(); break;	/* 次のブックマークへ */
-	case F_BOOKMARK_PREV: Command_BOOKMARK_PREV(); break;	/* 前のブックマークへ */
+	case F_BOOKMARK_NEXT: Command_BOOKMARK_NEXT(); break;   /* 次のブックマークへ */
+	case F_BOOKMARK_PREV: Command_BOOKMARK_PREV(); break;   /* 前のブックマークへ */
 	case F_BOOKMARK_RESET: Command_BOOKMARK_RESET(); break; /* ブックマークの全解除 */
 	case F_BOOKMARK_VIEW:
 		bRet = Command_FUNCLIST((BOOL)lparam1, OUTLINE_BOOKMARK);
@@ -654,7 +656,7 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 	case F_OPTION: Command_OPTION(); break;							  /* 共通設定 */
 	case F_FONT: Command_FONT(); break;								  /* フォント設定 */
 	case F_SETFONTSIZE: Command_SETFONTSIZE((int)lparam1, (int)lparam2, (int)lparam3); break; /* フォントサイズ設定 */
-	case F_SETFONTSIZEUP: HandleCommand(F_SETFONTSIZE, bRedraw, 0, 1, 2, 0); break;	   /* フォントサイズ拡大 */
+	case F_SETFONTSIZEUP: HandleCommand(F_SETFONTSIZE, bRedraw, 0, 1, 2, 0); break;	/* フォントサイズ拡大 */
 	case F_SETFONTSIZEDOWN: HandleCommand(F_SETFONTSIZE, bRedraw, 0, -1, 2, 0); break; /* フォントサイズ縮小 */
 	case F_WRAPWINDOWWIDTH:
 		Command_WRAPWINDOWWIDTH();
@@ -681,7 +683,7 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 		break; // 文字カウントの方法		// 2009.07.06 syat
 
 	/* マクロ系 */
-	case F_RECKEYMACRO: Command_RECKEYMACRO(); break;	/* キーマクロの記録開始／終了 */
+	case F_RECKEYMACRO: Command_RECKEYMACRO(); break;   /* キーマクロの記録開始／終了 */
 	case F_SAVEKEYMACRO: Command_SAVEKEYMACRO(); break; /* キーマクロの保存 */
 	case F_LOADKEYMACRO: Command_LOADKEYMACRO(); break; /* キーマクロの読み込み */
 	case F_EXECKEYMACRO:								/* キーマクロの実行 */
@@ -713,15 +715,15 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 		m_pCommanderView->SetUndoBuffer(true);
 		Command_MENU_RBUTTON();
 		return bRet;
-	case F_CUSTMENU_1:	/* カスタムメニュー1 */
-	case F_CUSTMENU_2:	/* カスタムメニュー2 */
-	case F_CUSTMENU_3:	/* カスタムメニュー3 */
-	case F_CUSTMENU_4:	/* カスタムメニュー4 */
-	case F_CUSTMENU_5:	/* カスタムメニュー5 */
-	case F_CUSTMENU_6:	/* カスタムメニュー6 */
-	case F_CUSTMENU_7:	/* カスタムメニュー7 */
-	case F_CUSTMENU_8:	/* カスタムメニュー8 */
-	case F_CUSTMENU_9:	/* カスタムメニュー9 */
+	case F_CUSTMENU_1:  /* カスタムメニュー1 */
+	case F_CUSTMENU_2:  /* カスタムメニュー2 */
+	case F_CUSTMENU_3:  /* カスタムメニュー3 */
+	case F_CUSTMENU_4:  /* カスタムメニュー4 */
+	case F_CUSTMENU_5:  /* カスタムメニュー5 */
+	case F_CUSTMENU_6:  /* カスタムメニュー6 */
+	case F_CUSTMENU_7:  /* カスタムメニュー7 */
+	case F_CUSTMENU_8:  /* カスタムメニュー8 */
+	case F_CUSTMENU_9:  /* カスタムメニュー9 */
 	case F_CUSTMENU_10: /* カスタムメニュー10 */
 	case F_CUSTMENU_11: /* カスタムメニュー11 */
 	case F_CUSTMENU_12: /* カスタムメニュー12 */
@@ -761,8 +763,8 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 	case F_CASCADE: Command_CASCADE(); break;		  //重ねて表示
 	case F_TILE_V: Command_TILE_V(); break;			  //上下に並べて表示
 	case F_TILE_H: Command_TILE_H(); break;			  //左右に並べて表示
-	case F_MAXIMIZE_V: Command_MAXIMIZE_V(); break;	  //縦方向に最大化
-	case F_MAXIMIZE_H: Command_MAXIMIZE_H(); break;	  //横方向に最大化 //2001.02.10 by MIK
+	case F_MAXIMIZE_V: Command_MAXIMIZE_V(); break;   //縦方向に最大化
+	case F_MAXIMIZE_H: Command_MAXIMIZE_H(); break;   //横方向に最大化 //2001.02.10 by MIK
 	case F_MINIMIZE_ALL:
 		Command_MINIMIZE_ALL();
 		break; /* すべて最小化 */			//	Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
@@ -782,8 +784,8 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 	case F_TAB_MOVERIGHT: Command_TAB_MOVERIGHT(); break; /* タブを右に移動 */		   // 2007.06.20 ryoji 追加
 	case F_TAB_MOVELEFT: Command_TAB_MOVELEFT(); break; /* タブを左に移動 */		   // 2007.06.20 ryoji 追加
 	case F_TAB_SEPARATE: Command_TAB_SEPARATE(); break; /* 新規グループ */			   // 2007.06.20 ryoji 追加
-	case F_TAB_JOINTNEXT: Command_TAB_JOINTNEXT(); break; /* 次のグループに移動 */	   // 2007.06.20 ryoji 追加
-	case F_TAB_JOINTPREV: Command_TAB_JOINTPREV(); break; /* 前のグループに移動 */	   // 2007.06.20 ryoji 追加
+	case F_TAB_JOINTNEXT: Command_TAB_JOINTNEXT(); break; /* 次のグループに移動 */	 // 2007.06.20 ryoji 追加
+	case F_TAB_JOINTPREV: Command_TAB_JOINTPREV(); break; /* 前のグループに移動 */	 // 2007.06.20 ryoji 追加
 	case F_TAB_CLOSEOTHER: Command_TAB_CLOSEOTHER(); break; /* このタブ以外を閉じる */ // 2008.11.22 syat 追加
 	case F_TAB_CLOSELEFT: Command_TAB_CLOSELEFT(); break; /* 左をすべて閉じる */	   // 2008.11.22 syat 追加
 	case F_TAB_CLOSERIGHT:
@@ -847,11 +849,11 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 void CViewCommander::Sub_BoxSelectLock(int flags)
 {
 	bool bSelLock;
-	if (flags == 0x00) {
-		bSelLock = GetDllShareData().m_Common.m_sEdit.m_bBoxSelectLock;
-	} else if (flags == 0x01) {
+	if (flags == 0x00) { bSelLock = GetDllShareData().m_Common.m_sEdit.m_bBoxSelectLock; }
+	else if (flags == 0x01) {
 		bSelLock = true;
-	} else if (flags == 0x02) {
+	}
+	else if (flags == 0x02) {
 		bSelLock = false;
 	}
 	if (!this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting()) { this->Command_BEGIN_BOXSELECT(bSelLock); }
@@ -872,11 +874,13 @@ CLogicInt CViewCommander::ConvertEol(const wchar_t *pszText, CLogicInt nTextLen,
 					if (i + 1 < nTextLen && pszText[i + 1] == WCODE::LF) { i++; }
 				}
 				nConvertedTextLen += eol.GetLen();
-			} else {
+			}
+			else {
 				nConvertedTextLen++;
 			}
 		}
-	} else {
+	}
+	else {
 		for (int i = 0; i < nTextLen; i++) {
 			if (WCODE::IsLineDelimiter(pszText[i], bExtEol)) {
 				if (pszText[i] == WCODE::CR) {
@@ -884,7 +888,8 @@ CLogicInt CViewCommander::ConvertEol(const wchar_t *pszText, CLogicInt nTextLen,
 				}
 				wmemcpy(&pszConvertedText[nConvertedTextLen], eol.GetValue2(), eol.GetLen());
 				nConvertedTextLen += eol.GetLen();
-			} else {
+			}
+			else {
 				pszConvertedText[nConvertedTextLen++] = pszText[i];
 			}
 		}
@@ -906,7 +911,8 @@ void CViewCommander::AlertNotFound(HWND hwnd, bool bReplaceAll, LPCWSTR format, 
 		va_start(p, format);
 		VMessageBoxF(hwnd, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, format, p);
 		va_end(p);
-	} else {
+	}
+	else {
 		DefaultBeep();
 	}
 }

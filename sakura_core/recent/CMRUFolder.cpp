@@ -64,7 +64,7 @@ HMENU CMRUFolder::CreateMenu(CMenuDrawer *pCMenuDrawer) const
 HMENU CMRUFolder::CreateMenu(HMENU hMenuPopUp, CMenuDrawer *pCMenuDrawer) const
 {
 	WCHAR szMenu[_MAX_PATH * 2 + 10]; //	メニューキャプション
-	int	  i;
+	int   i;
 	bool  bFavorite;
 
 	NONCLIENTMETRICS met;
@@ -79,7 +79,7 @@ HMENU CMRUFolder::CreateMenu(HMENU hMenuPopUp, CMenuDrawer *pCMenuDrawer) const
 
 		const WCHAR *pszFolder = m_cRecentFolder.GetItemText(i);
 		bFavorite			   = m_cRecentFolder.IsFavorite(i);
-		bool bFavoriteLabel	   = bFavorite && !m_pShareData->m_Common.m_sWindow.m_bMenuIcon;
+		bool bFavoriteLabel	= bFavorite && !m_pShareData->m_Common.m_sWindow.m_bMenuIcon;
 		CFileNameManager::getInstance()->GetMenuFullLabel(szMenu, _countof(szMenu), true, pszFolder, -1, false,
 														  CODE_NONE, bFavoriteLabel, i, true, dcFont.GetHDC());
 

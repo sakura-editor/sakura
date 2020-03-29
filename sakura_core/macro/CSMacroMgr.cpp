@@ -32,7 +32,7 @@
 #include "view/CEditView.h"
 
 VARTYPE			s_MacroArgEx_i[]  = {VT_I4};
-MacroFuncInfoEx s_MacroInfoEx_i	  = {5, 5, s_MacroArgEx_i};
+MacroFuncInfoEx s_MacroInfoEx_i   = {5, 5, s_MacroArgEx_i};
 VARTYPE			s_MacroArgEx_ii[] = {VT_I4, VT_I4};
 MacroFuncInfoEx s_MacroInfoEx_ii  = {6, 6, s_MacroArgEx_ii};
 #if 0
@@ -44,13 +44,11 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] = {
 	//	機能番号			関数名			引数				作業用バッファ
 
 	/* ファイル操作系 */
-	{F_FILENEW,
-	 LTEXT("FileNew"),
-	 {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},
-	 VT_EMPTY,
-	 NULL}, //新規作成
-			// {F_FILEOPEN,					LTEXT("FileOpen"),				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL},
-			// //開く
+	{F_FILENEW, LTEXT("FileNew"), {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL}, //新規作成
+	// {F_FILEOPEN,					LTEXT("FileOpen"),				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},
+	// VT_EMPTY,
+	// NULL},
+	// //開く
 	{F_FILEOPEN2, LTEXT("FileOpen"), {VT_BSTR, VT_I4, VT_I4, VT_BSTR}, VT_EMPTY, NULL},				 //開く2
 	{F_FILESAVE, LTEXT("FileSave"), {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL},		 //上書き保存
 	{F_FILESAVEALL, LTEXT("FileSaveAll"), {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL}, //上書き保存
@@ -109,7 +107,9 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] = {
 	 VT_EMPTY,
 	 NULL},																				 // UTF-7で開き直す
 	{F_PRINT, LTEXT("Print"), {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL}, //印刷
-	//	{F_PRINT_DIALOG,				LTEXT("PrintDialog"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL},
+	//	{F_PRINT_DIALOG,				LTEXT("PrintDialog"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},
+	//VT_EMPTY,
+	// NULL},
 	////印刷ダイアログ
 	{F_PRINT_PREVIEW, LTEXT("PrintPreview"), {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL}, //印刷プレビュー
 	{F_PRINT_PAGESETUP,
@@ -122,12 +122,18 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] = {
 	 {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},
 	 VT_EMPTY,
 	 NULL}, //同名のC/C++ヘッダ(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
-			//	{F_OPEN_HHPP,					LTEXT("OpenHHpp"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL},
-	////同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更		del 2008/6/23
-	//Uchi
-	//	{F_OPEN_CCPP,					LTEXT("OpenCCpp"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL},
-	////同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更	del 2008/6/23
-	//Uchi
+			//	{F_OPEN_HHPP,					LTEXT("OpenHHpp"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},
+			//VT_EMPTY,
+			// NULL},
+	////同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更		del
+	/// 2008/6/23
+	// Uchi
+	//	{F_OPEN_CCPP,					LTEXT("OpenCCpp"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},
+	//VT_EMPTY,
+	// NULL},
+	////同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更	del
+	/// 2008/6/23
+	// Uchi
 	{F_ACTIVATE_SQLPLUS,
 	 LTEXT("ActivateSQLPLUS"),
 	 {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},
@@ -138,7 +144,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] = {
 	 {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},
 	 VT_EMPTY,
 	 NULL}, /* Oracle SQL*Plusで実行 */
-	{F_BROWSE, LTEXT("Browse"), {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL},	   //ブラウズ
+	{F_BROWSE, LTEXT("Browse"), {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL},	 //ブラウズ
 	{F_VIEWMODE, LTEXT("ViewMode"), {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL}, //ビューモード
 	{F_VIEWMODE, LTEXT("ReadOnly"), {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL}, //ビューモード(旧)
 	{F_PROPERTY_FILE,
@@ -225,8 +231,9 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] = {
 	 {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},
 	 VT_EMPTY,
 	 NULL}, //逆SPACEインデント
-			//	{F_WORDSREFERENCE,		LTEXT("WordReference"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL},
-			////単語リファレンス
+			//	{F_WORDSREFERENCE,		LTEXT("WordReference"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,
+			// NULL},
+	////単語リファレンス
 	{F_LTRIM,
 	 LTEXT("LTrim"),
 	 {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},
@@ -251,8 +258,8 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] = {
 
 	/* カーソル移動系 */
 	{F_UP, LTEXT("Up"), {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL},		 //カーソル上移動
-	{F_DOWN, LTEXT("Down"), {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL},	 //カーソル下移動
-	{F_LEFT, LTEXT("Left"), {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL},	 //カーソル左移動
+	{F_DOWN, LTEXT("Down"), {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL},   //カーソル下移動
+	{F_LEFT, LTEXT("Left"), {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL},   //カーソル左移動
 	{F_RIGHT, LTEXT("Right"), {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL}, //カーソル右移動
 	{F_UP2, LTEXT("Up2"), {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL}, //カーソル上移動(２行ごと)
 	{F_DOWN2, LTEXT("Down2"), {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL}, //カーソル下移動(２行ごと)
@@ -355,8 +362,8 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] = {
 	 VT_EMPTY,
 	 NULL}, //カーソル移動(レイアウト単位)
 	{F_WHEELUP, LTEXT("WheelUp"), {VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL},		//ホイールアップ
-	{F_WHEELDOWN, LTEXT("WheelDown"), {VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL},	//ホイールダウン
-	{F_WHEELLEFT, LTEXT("WheelLeft"), {VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL},	//ホイール左
+	{F_WHEELDOWN, LTEXT("WheelDown"), {VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL},   //ホイールダウン
+	{F_WHEELLEFT, LTEXT("WheelLeft"), {VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL},   //ホイール左
 	{F_WHEELRIGHT, LTEXT("WheelRight"), {VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL}, //ホイール右
 	{F_WHEELPAGEUP, LTEXT("WheelPageUp"), {VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL}, //ホイールページアップ
 	{F_WHEELPAGEDOWN,
@@ -372,7 +379,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] = {
 	 NULL}, //ホイールページ右
 
 	/* 選択系 */ // Oct. 15, 2000 JEPRO
-				 // 「カーソル移動系」が多くなったので「選択系」として独立化(サブメニュー化は構造上できないので)
+	// 「カーソル移動系」が多くなったので「選択系」として独立化(サブメニュー化は構造上できないので)
 	{F_SELECTWORD, LTEXT("SelectWord"), {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL}, //現在位置の単語選択
 	{F_SELECTALL, LTEXT("SelectAll"), {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL}, //すべて選択
 	{F_SELECTLINE,
@@ -821,7 +828,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] = {
 	 VT_EMPTY,
 	 &s_MacroInfoEx_ii},																	 // Grep置換
 	{F_JUMP, LTEXT("Jump"), {VT_I4, VT_I4, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL},			 //指定行ヘジャンプ
-	{F_OUTLINE, LTEXT("Outline"), {VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL},	 //アウトライン解析
+	{F_OUTLINE, LTEXT("Outline"), {VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL},	//アウトライン解析
 	{F_TAGJUMP, LTEXT("TagJump"), {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL}, //タグジャンプ機能
 	{F_TAGJUMPBACK,
 	 LTEXT("TagJumpBack"),
@@ -983,8 +990,8 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] = {
 	 LTEXT("SelectCountMode"),
 	 {VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY},
 	 VT_EMPTY,
-	 NULL}, //文字カウント方法
-			//	Oct. 9, 2001 genta 追加
+	 NULL},																				   //文字カウント方法
+																						   //	Oct. 9, 2001 genta 追加
 	{F_EXECMD, LTEXT("ExecCommand"), {VT_BSTR, VT_I4, VT_BSTR, VT_EMPTY}, VT_EMPTY, NULL}, /* 外部コマンド実行 */
 	{F_EXECMD_DIALOG,
 	 LTEXT("ExecCommandDialog"),
@@ -1554,7 +1561,7 @@ CSMacroMgr::CSMacroMgr()
 	int i;
 	for (i = 0; i < MAX_CUSTMACRO; i++) { m_cSavedKeyMacro[i] = NULL; }
 	//	Jun. 16, 2002 genta
-	m_pKeyMacro	 = NULL;
+	m_pKeyMacro  = NULL;
 	m_pTempMacro = NULL;
 
 	//	Sep. 15, 2005 FILE
@@ -1593,9 +1600,9 @@ void CSMacroMgr::ClearAll(void)
 	@date 2002.06.16 genta キーマクロの多種対応のため変更
 */
 int CSMacroMgr::Append(int			 idx,		//!<
-					   EFunctionCode nFuncID,	//!< [in] 機能番号
-					   const LPARAM *lParams,	//!< [in] パラメータ。
-					   CEditView *	 pcEditView //!<
+					   EFunctionCode nFuncID,   //!< [in] 機能番号
+					   const LPARAM *lParams,   //!< [in] パラメータ。
+					   CEditView *   pcEditView //!<
 )
 {
 	assert(idx == STAND_KEYMACRO);
@@ -1607,7 +1614,7 @@ int CSMacroMgr::Append(int			 idx,		//!<
 			//	いずれにしても再生成する．
 			delete m_pKeyMacro;
 			m_pKeyMacro = new CKeyMacroMgr;
-			pKeyMacro	= dynamic_cast<CKeyMacroMgr *>(m_pKeyMacro);
+			pKeyMacro   = dynamic_cast<CKeyMacroMgr *>(m_pKeyMacro);
 		}
 		pKeyMacro->Append(nFuncID, lParams, pcEditView);
 	}
@@ -1638,7 +1645,8 @@ BOOL CSMacroMgr::Exec(int idx, HINSTANCE hInstance, CEditView *pcEditView, int f
 			m_pKeyMacro->ExecKeyMacro2(pcEditView, flags);
 			SetCurrentIdx(prevmacro);
 			return TRUE;
-		} else {
+		}
+		else {
 			return FALSE;
 		}
 	}
@@ -1648,7 +1656,8 @@ BOOL CSMacroMgr::Exec(int idx, HINSTANCE hInstance, CEditView *pcEditView, int f
 			m_pTempMacro->ExecKeyMacro2(pcEditView, flags);
 			SetCurrentIdx(prevmacro);
 			return TRUE;
-		} else {
+		}
+		else {
 			return FALSE;
 		}
 	}
@@ -1662,7 +1671,7 @@ BOOL CSMacroMgr::Exec(int idx, HINSTANCE hInstance, CEditView *pcEditView, int f
 		//	Jun. 08, 2003 Moca 呼び出し側でパス名を用意
 		//	Jun. 16, 2003 genta 書式をちょっと変更
 		WCHAR ptr[_MAX_PATH * 2];
-		int	  n = CShareData::getInstance()->GetMacroFilename(idx, ptr, _countof(ptr));
+		int   n = CShareData::getInstance()->GetMacroFilename(idx, ptr, _countof(ptr));
 		if (n <= 0) { return FALSE; }
 
 		if (!Load(idx, hInstance, ptr, NULL)) return FALSE;
@@ -1712,7 +1721,8 @@ BOOL CSMacroMgr::Load(int idx, HINSTANCE hInstance, const WCHAR *pszPath, const 
 			}
 		}
 		if (ext != NULL) { ++ext; }
-	} else { //コード指定
+	}
+	else { //コード指定
 		ext = pszType;
 	}
 
@@ -1723,15 +1733,15 @@ BOOL CSMacroMgr::Load(int idx, HINSTANCE hInstance, const WCHAR *pszPath, const 
 	if (pszType == NULL) {
 		bRet = (*ppMacro)->LoadKeyMacro(hInstance, pszPath);
 		if (idx == STAND_KEYMACRO || idx == TEMP_KEYMACRO) { m_sMacroPath = pszPath; }
-	} else {
+	}
+	else {
 		bRet = (*ppMacro)->LoadKeyMacroStr(hInstance, pszPath);
 	}
 
 	//	From Here Jun. 16, 2002 genta
 	//	読み込みエラー時はインスタンス削除
-	if (bRet) {
-		return TRUE;
-	} else {
+	if (bRet) { return TRUE; }
+	else {
 		delete *ppMacro;
 		*ppMacro = NULL;
 	}
@@ -1835,8 +1845,8 @@ const MacroFuncInfo *CSMacroMgr::GetFuncInfoByID(int nFuncID)
 */
 WCHAR *CSMacroMgr::GetFuncInfoByID(
 	HINSTANCE hInstance,   //!< [in] リソース取得のためのInstance Handle
-	int		  nFuncID,	   //!< [in] 機能番号
-	WCHAR *	  pszFuncName, //!< [out] 関数名．この先には最長関数名＋1バイトのメモリが必要．
+	int		  nFuncID,	 //!< [in] 機能番号
+	WCHAR *   pszFuncName, //!< [out] 関数名．この先には最長関数名＋1バイトのメモリが必要．
 	WCHAR *pszFuncNameJapanese //!< [out] 機能名日本語．NULL許容. この先には256バイトのメモリが必要．
 )
 {
@@ -1872,7 +1882,7 @@ WCHAR *CSMacroMgr::GetFuncInfoByID(
 	@date 2002.06.16 genta ループ内の文字列コピーを排除
 */
 EFunctionCode CSMacroMgr::GetFuncInfoByName(
-	HINSTANCE	 hInstance,			 //!< [in]  リソース取得のためのInstance Handle
+	HINSTANCE	hInstance,			 //!< [in]  リソース取得のためのInstance Handle
 	const WCHAR *pszFuncName,		 //!< [in]  関数名
 	WCHAR *		 pszFuncNameJapanese //!< [out] 機能名日本語．この先には256バイトのメモリが必要．
 )
@@ -1882,9 +1892,8 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 
 	//	S_で始まっているか
 	if (pszFuncName == NULL) { return F_INVALID; }
-	if (pszFuncName[0] == LTEXT('S') && pszFuncName[1] == LTEXT('_')) {
-		normalizedFuncName = pszFuncName + 2;
-	} else {
+	if (pszFuncName[0] == LTEXT('S') && pszFuncName[1] == LTEXT('_')) { normalizedFuncName = pszFuncName + 2; }
+	else {
 		normalizedFuncName = pszFuncName;
 	}
 
@@ -1928,23 +1937,24 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro(int nFuncID)
 	case F_FILE_REOPEN_SJIS:	  // SJISで開き直す
 	case F_FILE_REOPEN_JIS:		  // JISで開き直す
 	case F_FILE_REOPEN_EUC:		  // EUCで開き直す
-	case F_FILE_REOPEN_LATIN1:	  // Latin1で開き直す	// 2010/3/20 Uchi
-	case F_FILE_REOPEN_UNICODE:	  // Unicodeで開き直す
+	case F_FILE_REOPEN_LATIN1:	// Latin1で開き直す	// 2010/3/20 Uchi
+	case F_FILE_REOPEN_UNICODE:   // Unicodeで開き直す
 	case F_FILE_REOPEN_UNICODEBE: // UnicodeBEで開き直す
 	case F_FILE_REOPEN_UTF8:	  // UTF-8で開き直す
-	case F_FILE_REOPEN_CESU8:	  // CESU-8で開き直す	// 2010/3/20 Uchi
+	case F_FILE_REOPEN_CESU8:	 // CESU-8で開き直す	// 2010/3/20 Uchi
 	case F_FILE_REOPEN_UTF7:	  // UTF-7で開き直す
-		//	case F_PRINT					://印刷
-		//	case F_PRINT_DIALOG				://印刷ダイアログ
-		//	case F_PRINT_PREVIEW			://印刷プレビュー
-		//	case F_PRINT_PAGESETUP			://印刷ページ設定	//Sept. 14, 2000 jepro
-		//「印刷のページレイアウトの設定」から変更
-		//	case F_OPEN_HfromtoC:			://同名のC/C++ヘッダ(ソース)を開く	//Feb. 9, 2001 JEPRO 追加
-		//	case F_OPEN_HHPP				://同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001
-		//jepro「.cまたは.cppと同名の.hを開く」から変更 	case F_OPEN_CCPP
-		//://同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更 	case
-		//F_ACTIVATE_SQLPLUS			:/* Oracle SQL*Plusをアクティブ表示 */ 	case F_PLSQL_COMPILE_ON_SQLPLUS	:/*
-		//Oracle SQL*Plusで実行 */	//Sept. 17, 2000 jepro 説明の「コンパイル」を「実行」に統一
+								  //	case F_PRINT					://印刷
+								  //	case F_PRINT_DIALOG				://印刷ダイアログ
+								  //	case F_PRINT_PREVIEW			://印刷プレビュー
+								  //	case F_PRINT_PAGESETUP			://印刷ページ設定	//Sept. 14, 2000 jepro
+								  //「印刷のページレイアウトの設定」から変更
+		//	case F_OPEN_HfromtoC:			://同名のC/C++ヘッダ(ソース)を開く	//Feb. 9, 2001 JEPRO
+		//追加 	case F_OPEN_HHPP				://同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001
+		// jepro「.cまたは.cppと同名の.hを開く」から変更 	case F_OPEN_CCPP
+		//://同名のC/C++ソースファイルを開く	//Feb. 9, 2001
+		// jepro「.hと同名の.c(なければ.cpp)を開く」から変更 	case F_ACTIVATE_SQLPLUS			:/*
+		// Oracle SQL*Plusをアクティブ表示 */ 	case F_PLSQL_COMPILE_ON_SQLPLUS	:/* Oracle
+		// SQL*Plusで実行 */	//Sept. 17, 2000 jepro 説明の「コンパイル」を「実行」に統一
 		///	case F_BROWSE					://ブラウズ
 		//	case F_PROPERTY_FILE			://ファイルのプロパティ
 		//	case F_EXITALLEDITORS			://編集の全終了	// 2007.02.13 ryoji 追加
@@ -1960,20 +1970,20 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro(int nFuncID)
 	case F_DELETE:			  //削除
 	case F_DELETE_BACK:		  //カーソル前を削除
 	case F_WordDeleteToStart: //単語の左端まで削除
-	case F_WordDeleteToEnd:	  //単語の右端まで削除
+	case F_WordDeleteToEnd:   //単語の右端まで削除
 	case F_WordCut:			  //単語切り取り
 	case F_WordDelete:		  //単語削除
-	case F_LineCutToStart:	  //行頭まで切り取り(改行単位)
+	case F_LineCutToStart:	//行頭まで切り取り(改行単位)
 	case F_LineCutToEnd:	  //行末まで切り取り(改行単位)
 	case F_LineDeleteToStart: //行頭まで削除(改行単位)
-	case F_LineDeleteToEnd:	  //行末まで削除(改行単位)
+	case F_LineDeleteToEnd:   //行末まで削除(改行単位)
 	case F_CUT_LINE:		  //行切り取り(折り返し単位)
 	case F_DELETE_LINE:		  //行削除(折り返し単位)
-	case F_DUPLICATELINE:	  //行の二重化(折り返し単位)
+	case F_DUPLICATELINE:	 //行の二重化(折り返し単位)
 	case F_INDENT_TAB:		  // TABインデント
 	case F_UNINDENT_TAB:	  //逆TABインデント
 	case F_INDENT_SPACE:	  // SPACEインデント
-	case F_UNINDENT_SPACE:	  //逆SPACEインデント
+	case F_UNINDENT_SPACE:	//逆SPACEインデント
 	case F_LTRIM:			  // 2001.12.03 hor
 	case F_RTRIM:			  // 2001.12.03 hor
 	case F_SORT_ASC:		  // 2001.12.06 hor
@@ -1981,17 +1991,17 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro(int nFuncID)
 	case F_MERGE:			  // 2001.12.06 hor
 
 	/* カーソル移動系 */
-	case F_UP:	  //カーソル上移動
+	case F_UP:	//カーソル上移動
 	case F_DOWN:  //カーソル下移動
 	case F_LEFT:  //カーソル左移動
 	case F_RIGHT: //カーソル右移動
 				  //	case F_ROLLDOWN					://スクロールダウン
 				  //	case F_ROLLUP					://スクロールアップ
-		// 2014.01.15 (Half)Page[Up/down] を有効化
+				  // 2014.01.15 (Half)Page[Up/down] を有効化
 	case F_HalfPageUp: //半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO
 					   //名称変更
 	case F_HalfPageDown: //半ページダウン	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000
-						 //JEPRO 名称変更
+						 // JEPRO 名称変更
 	case F_1PageUp: //１ページアップ	//Oct. 10, 2000 JEPRO
 					//従来のページアップを半ページアップと名称変更し１ページアップを追加
 	case F_1PageDown: //１ページダウン	//Oct. 10, 2000 JEPRO
@@ -2004,38 +2014,38 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro(int nFuncID)
 	case F_GOFILEEND:		//ファイルの最後に移動
 	case F_WORDLEFT:		//単語の左端に移動
 	case F_WORDRIGHT:		//単語の右端に移動
-	case F_CURLINECENTER:	//カーソル行をウィンドウ中央へ
+	case F_CURLINECENTER:   //カーソル行をウィンドウ中央へ
 	case F_CURLINETOP:		//カーソル行をウィンドウ上部へ
-	case F_CURLINEBOTTOM:	//カーソル行をウィンドウ下部へ
-	case F_JUMPHIST_PREV:	//移動履歴: 前へ
-	case F_JUMPHIST_NEXT:	//移動履歴: 次へ
+	case F_CURLINEBOTTOM:   //カーソル行をウィンドウ下部へ
+	case F_JUMPHIST_PREV:   //移動履歴: 前へ
+	case F_JUMPHIST_NEXT:   //移動履歴: 次へ
 	case F_JUMPHIST_SET:	//現在位置を移動履歴に登録
 	case F_MODIFYLINE_NEXT: //次の変更行へ移動
 	case F_MODIFYLINE_PREV: //前の変更行へ移動
 
 	/* 選択系 */ // Oct. 15, 2000 JEPRO
 				 // 「カーソル移動系」が多くなったので独立化して(選択)を移動(サブメニュー化は構造上できないので)
-	case F_SELECTWORD:	  //現在位置の単語選択
-	case F_SELECTALL:	  //すべて選択
-	case F_SELECTLINE:	  // 1行選択	// 2007.10.06 nasukoji
-	case F_BEGIN_SEL:	  //範囲選択開始
+	case F_SELECTWORD:	//現在位置の単語選択
+	case F_SELECTALL:	 //すべて選択
+	case F_SELECTLINE:	// 1行選択	// 2007.10.06 nasukoji
+	case F_BEGIN_SEL:	 //範囲選択開始
 	case F_UP_SEL:		  //(範囲選択)カーソル上移動
 	case F_DOWN_SEL:	  //(範囲選択)カーソル下移動
 	case F_LEFT_SEL:	  //(範囲選択)カーソル左移動
-	case F_RIGHT_SEL:	  //(範囲選択)カーソル右移動
+	case F_RIGHT_SEL:	 //(範囲選択)カーソル右移動
 	case F_UP2_SEL:		  //(範囲選択)カーソル上移動(２行ごと)
-	case F_DOWN2_SEL:	  //(範囲選択)カーソル下移動(２行ごと)
+	case F_DOWN2_SEL:	 //(範囲選択)カーソル下移動(２行ごと)
 	case F_WORDLEFT_SEL:  //(範囲選択)単語の左端に移動
 	case F_WORDRIGHT_SEL: //(範囲選択)単語の右端に移動
 	case F_GOLINETOP_SEL: //(範囲選択)行頭に移動(折り返し単位)
 	case F_GOLINEEND_SEL: //(範囲選択)行末に移動(折り返し単位)
 						  //	case F_ROLLDOWN_SEL				://(範囲選択)スクロールダウン
 						  //	case F_ROLLUP_SEL				://(範囲選択)スクロールアップ
-		// 2014.01.15 (Half)Page[Up/down] を有効化
+						  // 2014.01.15 (Half)Page[Up/down] を有効化
 	case F_HalfPageUp_Sel: //(範囲選択)半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct.
-						   //10, 2000 JEPRO 名称変更
+						   // 10, 2000 JEPRO 名称変更
 	case F_HalfPageDown_Sel: //(範囲選択)半ページダウン	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct.
-							 //10, 2000 JEPRO 名称変更
+							 // 10, 2000 JEPRO 名称変更
 	case F_1PageUp_Sel: //(範囲選択)１ページアップ	//Oct. 10, 2000 JEPRO
 						//従来のページアップを半ページアップと名称変更し１ページアップを追加
 	case F_1PageDown_Sel: //(範囲選択)１ページダウン	//Oct. 10, 2000 JEPRO
@@ -2046,8 +2056,8 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro(int nFuncID)
 	case F_MODIFYLINE_PREV_SEL: //(範囲選択)前の変更行へ移動
 
 		/* 矩形選択系 */ // Oct. 17, 2000 JEPRO (矩形選択)が新設され次第ここにおく
-		//	case F_BOXSELALL				//矩形ですべて選択
-	case F_BEGIN_BOX: //矩形範囲選択開始
+						 //	case F_BOXSELALL				//矩形ですべて選択
+	case F_BEGIN_BOX:	//矩形範囲選択開始
 
 	case F_UP_BOX:				 //(矩形選択)カーソル上移動
 	case F_DOWN_BOX:			 //(矩形選択)カーソル下移動
@@ -2078,7 +2088,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro(int nFuncID)
 									   //	case F_ADDTAIL_W					://最後にテキストを追加
 	case F_COPYLINES:				   //選択範囲内全行コピー
 	case F_COPYLINESASPASSAGE:		   //選択範囲内全行引用符付きコピー
-	case F_COPYLINESWITHLINENUMBER:	   //選択範囲内全行行番号付きコピー
+	case F_COPYLINESWITHLINENUMBER:	//選択範囲内全行行番号付きコピー
 	case F_COPY_COLOR_HTML:			   //選択範囲内色付きHTMLコピー
 	case F_COPY_COLOR_HTML_LINENUMBER: //選択範囲内行番号色付きHTMLコピー
 	case F_COPYPATH:				   //このファイルのパス名をクリップボードにコピー
@@ -2091,9 +2101,9 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro(int nFuncID)
 	/* 挿入系 */
 	case F_INS_DATE: // 日付挿入
 	case F_INS_TIME: // 時刻挿入
-		//	case F_CTRL_CODE_DIALOG			://コントロールコードの入力(ダイアログ)	//@@@ 2002.06.02 MIK
+					 //	case F_CTRL_CODE_DIALOG			://コントロールコードの入力(ダイアログ)	//@@@ 2002.06.02 MIK
 	case F_CTRL_CODE:				 //コントロールコードの入力 2013.12.12
-	case F_INS_FILE_USED_RECENTLY:	 // 最近使ったファイル挿入
+	case F_INS_FILE_USED_RECENTLY:   // 最近使ったファイル挿入
 	case F_INS_FOLDER_USED_RECENTLY: // 最近使ったフォルダ挿入
 
 	/* 変換系 */
@@ -2133,34 +2143,34 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro(int nFuncID)
 	case F_SEARCH_CLEARMARK:  //検索マークのクリア
 	case F_JUMP_SRCHSTARTPOS: //検索開始位置へ戻る		// 02/06/26 ai
 	case F_GREP:			  // Grep
-		//	case F_JUMP_DIALOG				://指定行ヘジャンプ
-	case F_JUMP:			 //指定行へジャンプ @@@ 2002.2.2 YAZAKI
-							 //	case F_OUTLINE					://アウトライン解析
-	case F_TAGJUMP:			 //タグジャンプ機能
-	case F_TAGJUMPBACK:		 //タグジャンプバック機能
-							 //	case F_TAGS_MAKE				://タグファイルの作成	//@@@ 2003.04.13 MIK
-							 //	case F_COMPARE					://ファイル内容比較
-							 //	case F_DIFF_DIALOG				://DIFF差分表示(ダイアログ)	//@@@ 2002.05.25 MIK
-							 //	case F_DIFF						://DIFF差分表示				//@@@ 2002.05.25 MIK
-							 //	case F_DIFF_NEXT				://DIFF差分表示(次へ)		//@@@ 2002.05.25 MIK
-							 //	case F_DIFF_PREV				://DIFF差分表示(前へ)		//@@@ 2002.05.25 MIK
-							 //	case F_DIFF_RESET				://DIFF差分表示(全解除)		//@@@ 2002.05.25 MIK
-	case F_BRACKETPAIR:		 //対括弧の検索
-							 // From Here 2001.12.03 hor
-	case F_BOOKMARK_SET:	 //ブックマーク設定・解除
+							  //	case F_JUMP_DIALOG				://指定行ヘジャンプ
+	case F_JUMP:			  //指定行へジャンプ @@@ 2002.2.2 YAZAKI
+							  //	case F_OUTLINE					://アウトライン解析
+	case F_TAGJUMP:			  //タグジャンプ機能
+	case F_TAGJUMPBACK:		  //タグジャンプバック機能
+							  //	case F_TAGS_MAKE				://タグファイルの作成	//@@@ 2003.04.13 MIK
+							  //	case F_COMPARE					://ファイル内容比較
+							  //	case F_DIFF_DIALOG				://DIFF差分表示(ダイアログ)	//@@@ 2002.05.25 MIK
+							  //	case F_DIFF						://DIFF差分表示				//@@@ 2002.05.25 MIK
+							  //	case F_DIFF_NEXT				://DIFF差分表示(次へ)		//@@@ 2002.05.25 MIK
+							  //	case F_DIFF_PREV				://DIFF差分表示(前へ)		//@@@ 2002.05.25 MIK
+							  //	case F_DIFF_RESET				://DIFF差分表示(全解除)		//@@@ 2002.05.25 MIK
+	case F_BRACKETPAIR:		  //対括弧の検索
+							  // From Here 2001.12.03 hor
+	case F_BOOKMARK_SET:	  //ブックマーク設定・解除
 	case F_BOOKMARK_NEXT:	 //次のブックマークへ
 	case F_BOOKMARK_PREV:	 //前のブックマークへ
-	case F_BOOKMARK_RESET:	 //ブックマークの全解除
-							 //	case F_BOOKMARK_VIEW			://ブックマークの一覧
-							 // To Here 2001.12.03 hor
-	case F_BOOKMARK_PATTERN: //検索しして該当行をマーク	// 2002.02.08 hor
+	case F_BOOKMARK_RESET:	//ブックマークの全解除
+							  //	case F_BOOKMARK_VIEW			://ブックマークの一覧
+							  // To Here 2001.12.03 hor
+	case F_BOOKMARK_PATTERN:  //検索しして該当行をマーク	// 2002.02.08 hor
 	case F_FUNCLIST_NEXT:	 //次の関数リストマークへ
 	case F_FUNCLIST_PREV:	 //前の関数リストマークへ
 
 	/* モード切り替え系 */
-	case F_CHGMOD_INS:	//挿入／上書きモード切り替え
+	case F_CHGMOD_INS:  //挿入／上書きモード切り替え
 	case F_CHG_CHARSET: //文字コードセット指定	2010/6/14 Uchi
-	case F_CHGMOD_EOL:	//入力改行コード指定	2003.06.23 Moca
+	case F_CHGMOD_EOL:  //入力改行コード指定	2003.06.23 Moca
 
 	case F_CANCEL_MODE: //各種モードの取り消し
 
@@ -2181,12 +2191,12 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro(int nFuncID)
 		//	case F_OPTION					:/* 共通設定 */
 		//	case F_FONT						:/* フォント設定 */
 	case F_SETFONTSIZE: // フォントサイズ設定
-		//	case F_WRAPWINDOWWIDTH			:/* 現在のウィンドウ幅で折り返し */	//Oct. 15, 2000 JEPRO
-		//	case F_FAVORITE					:/* 履歴の管理 */	//@@@ 2003.04.08 MIK
-		//	case F_TMPWRAPNOWRAP			:// 折り返さない（一時設定）		// 2008.05.30 nasukoji
-		//	case F_TMPWRAPSETTING			:// 指定桁で折り返す（一時設定）	// 2008.05.30 nasukoji
-		//	case F_TMPWRAPWINDOW			:// 右端で折り返す（一時設定）		// 2008.05.30 nasukoji
-	case F_TEXTWRAPMETHOD:	  // テキストの折り返し方法			// 2008.05.30 nasukoji
+						//	case F_WRAPWINDOWWIDTH			:/* 現在のウィンドウ幅で折り返し */	//Oct. 15, 2000 JEPRO
+						//	case F_FAVORITE					:/* 履歴の管理 */	//@@@ 2003.04.08 MIK
+						//	case F_TMPWRAPNOWRAP			:// 折り返さない（一時設定）		// 2008.05.30 nasukoji
+						//	case F_TMPWRAPSETTING			:// 指定桁で折り返す（一時設定）	// 2008.05.30 nasukoji
+						//	case F_TMPWRAPWINDOW			:// 右端で折り返す（一時設定）		// 2008.05.30 nasukoji
+	case F_TEXTWRAPMETHOD:	// テキストの折り返し方法			// 2008.05.30 nasukoji
 	case F_SELECT_COUNT_MODE: // 文字カウントの方法を取得、設定	// 2009.07.06 syat
 
 	case F_EXECMD: /* 外部コマンド実行 */ //@@@2002.2.2 YAZAKI 追加
@@ -2224,14 +2234,15 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro(int nFuncID)
 		//	case F_SPLIT_VH					://縦横に分割	//Sept. 17, 2000 jepro 説明に「に」を追加
 		//	case F_WINCLOSE					://ウィンドウを閉じる
 		//	case F_WIN_CLOSEALL				://すべてのウィンドウを閉じる	//Oct. 17, 2000 JEPRO
-		//名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL) 	case F_NEXTWINDOW				://次のウィンドウ 	case F_PREVWINDOW
+		//名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL) 	case F_NEXTWINDOW				://次のウィンドウ 	case
+		// F_PREVWINDOW
 		//://前のウィンドウ 	case F_CASCADE					://重ねて表示 	case F_TILE_V ://上下に並べて表示 	case
-		//F_TILE_H					://左右に並べて表示 	case F_MAXIMIZE_V				://縦方向に最大化 	case
-		//F_MINIMIZE_ALL				://すべて最小化	//Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
-	case F_REDRAW:	   //再描画
+		// F_TILE_H					://左右に並べて表示 	case F_MAXIMIZE_V				://縦方向に最大化 	case
+		// F_MINIMIZE_ALL				://すべて最小化	//Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
+	case F_REDRAW:	 //再描画
 	case F_WIN_OUTPUT: //アウトプットウィンドウ表示
 					   //	case F_TRACEOUT					://マクロ用アウトプットウィンドウに表示	2006.04.26 maru
-	case F_TOPMOST:	   //常に手前に表示
+	case F_TOPMOST:	//常に手前に表示
 					   //	case F_GROUPCLOSE				://グループを閉じる	// 2007.06.20 ryoji
 					   //	case F_NEXTGROUP				://次のグループ	// 2007.06.20 ryoji
 					   //	case F_PREVGROUP				://前のグループ	// 2007.06.20 ryoji
@@ -2267,11 +2278,11 @@ CMacroManagerBase **CSMacroMgr::Idx2Ptr(int idx)
 {
 	//	Jun. 16, 2002 genta
 	//	キーマクロ以外のマクロを読み込めるように
-	if (idx == STAND_KEYMACRO) {
-		return &m_pKeyMacro;
-	} else if (idx == TEMP_KEYMACRO) {
+	if (idx == STAND_KEYMACRO) { return &m_pKeyMacro; }
+	else if (idx == TEMP_KEYMACRO) {
 		return &m_pTempMacro;
-	} else if (0 <= idx && idx < MAX_CUSTMACRO) {
+	}
+	else if (0 <= idx && idx < MAX_CUSTMACRO) {
 		return &m_cSavedKeyMacro[idx];
 	}
 

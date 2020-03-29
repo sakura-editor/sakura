@@ -86,7 +86,7 @@ CDocSubject::~CDocSubject() {}
 #define CORE_NOTIFY2(NAME, ARGTYPE)                                                                                    \
 	ELoadResult CDocSubject::Notify##NAME(ARGTYPE a)                                                                   \
 	{                                                                                                                  \
-		int			n	 = GetListenerCount();                                                                         \
+		int			n	= GetListenerCount();                                                                         \
 		ELoadResult eRet = LOADED_FAILURE;                                                                             \
 		for (int i = 0; i < n; i++) {                                                                                  \
 			ELoadResult e = GetListener(i)->On##NAME(a);                                                               \

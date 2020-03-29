@@ -21,8 +21,7 @@
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-class CDlgFind final : public CDialog
-{
+class CDlgFind final : public CDialog {
 public:
 	/*
 	||  Constructors
@@ -36,7 +35,7 @@ public:
 
 	void ChangeView(LPARAM pcEditView);
 
-	SSearchOption m_sSearchOption;	 // 検索オプション
+	SSearchOption m_sSearchOption;   // 検索オプション
 	int			  m_bNOTIFYNOTFOUND; // 検索／置換  見つからないときメッセージを表示
 	std::wstring  m_strText;		 // 検索文字列
 
@@ -50,8 +49,8 @@ protected:
 	//@@@ 2002.2.2 YAZAKI CShareDataに移動
 	//	void AddToSearchKeyArr( const char* );
 	BOOL OnCbnDropDown(HWND hwndCtl, int wID) override;
-	int	 GetData(void) override; /* ダイアログデータの取得 */
-	void SetCombosList(void);	 /* 検索文字列/置換後文字列リストの設定 */
+	int  GetData(void) override; /* ダイアログデータの取得 */
+	void SetCombosList(void);	/* 検索文字列/置換後文字列リストの設定 */
 	void SetData(void) override; /* ダイアログデータの設定 */
 	BOOL OnInitDialog(HWND hwnd, WPARAM wParam, LPARAM lParam) override;
 	BOOL OnDestroy() override;

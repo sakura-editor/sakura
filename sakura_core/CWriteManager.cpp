@@ -19,7 +19,7 @@
 	@date 2003.07.26 ryoji BOM引数追加
 */
 EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(const CDocLineMgr &pcDocLineMgr, //!< [in]
-														 const SSaveInfo &	sSaveInfo	  //!< [in]
+														 const SSaveInfo &  sSaveInfo	 //!< [in]
 )
 {
 	EConvertResult			   nRetVal = RESULT_COMPLETE;
@@ -44,14 +44,14 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(const CDocLineMgr &pcDo
 
 		//各行出力
 		int				nLineNumber = 0;
-		const CDocLine *pcDocLine	= pcDocLineMgr.GetDocLineTop();
+		const CDocLine *pcDocLine   = pcDocLineMgr.GetDocLineTop();
 		// 1行目
 		{
 			++nLineNumber;
 			CMemory cmemOutputBuffer;
 			{
 				CNativeW cstrSrc;
-				CMemory	 cstrBomCheck;
+				CMemory  cstrBomCheck;
 				pcCodeBase->GetBom(&cstrBomCheck);
 				if (sSaveInfo.bBomExist && 0 < cstrBomCheck.GetRawLength()) {
 					// 1行目にはBOMを付加する。エンコーダでbomがある場合のみ付加する。
@@ -112,12 +112,15 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(const CDocLineMgr &pcDo
 
 		//ファイルクローズ
 		out.Close();
-	} catch (CError_FileOpen) { //########### 現時点では、この例外が発生した場合は正常に動作できない
+	}
+	catch (CError_FileOpen) { //########### 現時点では、この例外が発生した場合は正常に動作できない
 		ErrorMessage(CEditWnd::getInstance()->GetHwnd(), LS(STR_SAVEAGENT_OTHER_APP), sSaveInfo.cFilePath.c_str());
 		nRetVal = RESULT_FAILURE;
-	} catch (CError_FileWrite) {
+	}
+	catch (CError_FileWrite) {
 		nRetVal = RESULT_FAILURE;
-	} catch (CAppExitException) {
+	}
+	catch (CAppExitException) {
 		//中断検出
 		return RESULT_FAILURE;
 	}

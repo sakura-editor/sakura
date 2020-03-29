@@ -164,7 +164,8 @@ void CViewCommander::Command_LineCutToEnd(void)
 	if (EOL_NONE == pCLayout->GetDocLineRef()->GetEol()) { /* 改行コードの種類 */
 		GetDocument()->m_cLayoutMgr.LogicToLayout(
 			CLogicPoint(pCLayout->GetDocLineRef()->GetLengthWithEOL(), pCLayout->GetLogicLineNo()), &ptPos);
-	} else {
+	}
+	else {
 		GetDocument()->m_cLayoutMgr.LogicToLayout(
 			CLogicPoint(pCLayout->GetDocLineRef()->GetLengthWithEOL() - pCLayout->GetDocLineRef()->GetEol().GetLen(),
 						pCLayout->GetLogicLineNo()),
@@ -237,7 +238,8 @@ void CViewCommander::Command_LineDeleteToEnd(void)
 	if (EOL_NONE == pCLayout->GetDocLineRef()->GetEol()) { /* 改行コードの種類 */
 		GetDocument()->m_cLayoutMgr.LogicToLayout(
 			CLogicPoint(pCLayout->GetDocLineRef()->GetLengthWithEOL(), pCLayout->GetLogicLineNo()), &ptPos);
-	} else {
+	}
+	else {
 		GetDocument()->m_cLayoutMgr.LogicToLayout(
 			CLogicPoint(pCLayout->GetDocLineRef()->GetLengthWithEOL() - pCLayout->GetDocLineRef()->GetEol().GetLen(),
 						pCLayout->GetLogicLineNo()),
@@ -320,9 +322,8 @@ void CViewCommander::Command_DELETE_LINE(void)
 			nIndex			 = m_pCommanderView->LineColumnToIndex2(pcLayout, ptCaretPos_OLD.GetX2(), &tmp);
 			ptCaretPos_OLD.x = tmp;
 
-			if (ptCaretPos_OLD.x > 0) {
-				ptCaretPos_OLD.x--;
-			} else {
+			if (ptCaretPos_OLD.x > 0) { ptCaretPos_OLD.x--; }
+			else {
 				ptCaretPos_OLD.x = m_pCommanderView->LineIndexToColumn(pcLayout, nIndex);
 			}
 		}

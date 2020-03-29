@@ -79,8 +79,8 @@ void CConvertMediator::ConvMemory(CNativeW *pCMemory, EFunctionCode nFuncCode, C
 	case F_TOUPPER: CConvert_ToUpper().CallConvert(pCMemory); break;			// 大文字
 	case F_TOHANKAKU: CConvert_ToHankaku().CallConvert(pCMemory); break;		// 全角→半角
 	case F_TOHANKATA: CConvert_ZenkataToHankata().CallConvert(pCMemory); break; // 全角カタカナ→半角カタカナ
-	case F_TOZENEI: CConvert_HaneisuToZeneisu().CallConvert(pCMemory); break;	// 半角英数→全角英数
-	case F_TOHANEI: CConvert_ZeneisuToHaneisu().CallConvert(pCMemory); break;	// 全角英数→半角英数
+	case F_TOZENEI: CConvert_HaneisuToZeneisu().CallConvert(pCMemory); break;   // 半角英数→全角英数
+	case F_TOHANEI: CConvert_ZeneisuToHaneisu().CallConvert(pCMemory); break;   // 全角英数→半角英数
 	case F_TOZENKAKUKATA: CConvert_ToZenkata().CallConvert(pCMemory); break; // 半角＋全ひら→全角・カタカナ
 	case F_TOZENKAKUHIRA: CConvert_ToZenhira().CallConvert(pCMemory); break; // 半角＋全カタ→全角・ひらがな
 	case F_HANKATATOZENKATA: CConvert_HankataToZenkata().CallConvert(pCMemory); break; // 半角カタカナ→全角カタカナ
@@ -100,8 +100,7 @@ void CConvertMediator::ConvMemory(CNativeW *pCMemory, EFunctionCode nFuncCode, C
 		break; // 2001.12.03 hor
 	//コード変換(xxx2SJIS)
 	// 2014.02.10 Moca F_CODECNV_AUTO2SJIS追加。自動判別でSJIS, Latin1, CESU8になった場合をサポート
-	case F_CODECNV_AUTO2SJIS:
-	{
+	case F_CODECNV_AUTO2SJIS: {
 		int						   nFlag = true;
 		std::unique_ptr<CCodeBase> pcCode(CCodeFactory::CreateCodeBase(ecode, nFlag));
 		pcCode->CodeToUnicode(*(pCMemory->_GetMemory()), pCMemory);

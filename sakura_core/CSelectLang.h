@@ -18,14 +18,12 @@
 
 #define MAX_SELLANG_NAME_STR 128 // メッセージリソースの言語名の最大文字列長（サイズは適当）
 
-class CSelectLang
-{
+class CSelectLang {
 public:
 	// メッセージリソース用構造体
-	struct SSelLangInfo
-	{
-		WCHAR	  szDllName[MAX_PATH];				// メッセージリソースDLLのファイル名
-		WCHAR	  szLangName[MAX_SELLANG_NAME_STR]; // 言語名
+	struct SSelLangInfo {
+		WCHAR	 szDllName[MAX_PATH];				// メッセージリソースDLLのファイル名
+		WCHAR	 szLangName[MAX_SELLANG_NAME_STR]; // 言語名
 		HINSTANCE hInstance;						// 読み込んだリソースのインスタンスハンドル
 		WORD	  wLangId;							// 言語ID
 		BOOL	  bValid;							// メッセージリソースDLLとして有効
@@ -53,7 +51,7 @@ public:
 		void); // メッセージリソースDLL未読み込み時のデフォルト言語（"(Japanese)" or "(English(United States))"）
 	static WORD getDefaultLangId(void);
 
-	static HINSTANCE InitializeLanguageEnvironment(void);	  // 言語環境を初期化する
+	static HINSTANCE InitializeLanguageEnvironment(void);	 // 言語環境を初期化する
 	static HINSTANCE LoadLangRsrcLibrary(SSelLangInfo &lang); // メッセージ用リソースDLLをロードする
 	static void		 ChangeLang(WCHAR *pszDllName);			  // 言語を変更する
 
@@ -74,18 +72,16 @@ private:
 
 #define LOADSTR_ADD_SIZE 256 // 文字列リソース用バッファの初期または追加サイズ（TCHAR単位）
 
-class CLoadString
-{
+class CLoadString {
 protected:
 	// 文字列リソース読み込み用バッファクラス
-	class CLoadStrBuffer
-	{
+	class CLoadStrBuffer {
 	public:
 		CLoadStrBuffer()
 		{
-			m_pszString	  = m_szString;			  // 変数内に準備したバッファを接続
+			m_pszString   = m_szString;			  // 変数内に準備したバッファを接続
 			m_nBufferSize = _countof(m_szString); // 配列個数
-			m_nLength	  = 0;
+			m_nLength	 = 0;
 			m_szString[0] = L'\0';
 		}
 
@@ -103,8 +99,8 @@ protected:
 
 	protected:
 		LPWSTR m_pszString;					// 文字列読み込みバッファのポインタ
-		int	   m_nBufferSize;				// 取得配列個数（TCHAR単位）
-		int	   m_nLength;					// 取得文字数（TCHAR単位）
+		int	m_nBufferSize;				// 取得配列個数（TCHAR単位）
+		int	m_nLength;					// 取得文字数（TCHAR単位）
 		WCHAR m_szString[LOADSTR_ADD_SIZE]; // 文字列読み込みバッファ（バッファ拡張後は使用されない）
 
 	private:
@@ -114,7 +110,7 @@ protected:
 
 	static CLoadStrBuffer
 				   m_acLoadStrBufferTemp[4]; // 文字列読み込みバッファの配列（CLoadString::LoadStringSt() が使用する）
-	static int	   m_nDataTempArrayIndex; // 最後に使用したバッファのインデックス（CLoadString::LoadStringSt() が使用する）
+	static int	 m_nDataTempArrayIndex; // 最後に使用したバッファのインデックス（CLoadString::LoadStringSt() が使用する）
 	CLoadStrBuffer m_cLoadStrBuffer; // 文字列読み込みバッファ（CLoadString::LoadString() が使用する）
 
 public:

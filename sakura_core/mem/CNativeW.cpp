@@ -9,15 +9,18 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 CNativeW::CNativeW() noexcept
 	: CNative()
-{}
+{
+}
 
 CNativeW::CNativeW(const CNativeW &rhs)
 	: CNative(rhs)
-{}
+{
+}
 
 CNativeW::CNativeW(CNativeW &&other) noexcept
 	: CNative(std::forward<CNativeW>(other))
-{}
+{
+}
 
 //! nDataLenは文字単位。
 CNativeW::CNativeW(const wchar_t *pData, int nDataLen)
@@ -154,9 +157,8 @@ CNativeW operator+(const wchar_t *lhs, const CNativeW &rhs) noexcept(false)
 // GetAt()と同機能
 wchar_t CNativeW::operator[](int nIndex) const
 {
-	if (nIndex < GetStringLength()) {
-		return GetStringPtr()[nIndex];
-	} else {
+	if (nIndex < GetStringLength()) { return GetStringPtr()[nIndex]; }
+	else {
 		return 0;
 	}
 }
@@ -208,7 +210,7 @@ int CNativeW::Compare(const wchar_t *rhs) const noexcept
 	const int rhsIsValid = rhs ? 1 : 0;
 	if (!rhsIsValid || !lhsIsValid) return lhsIsValid - rhsIsValid;
 	const wchar_t *lhs		 = GetStringPtr();
-	const int	   lhsLength = GetStringLength();
+	const int	  lhsLength = GetStringLength();
 	// NUL終端考慮のために終端を拡張し、比較自体はCRTに丸投げする
 	return wcsncmp(lhs, rhs, lhsLength + 1);
 }
@@ -276,7 +278,7 @@ bool operator!=(const wchar_t *lhs, const CNativeW &rhs) noexcept { return !(lhs
 void CNativeW::Replace(const wchar_t *pszFrom, const wchar_t *pszTo)
 {
 	int nFromLen = wcslen(pszFrom);
-	int nToLen	 = wcslen(pszTo);
+	int nToLen   = wcslen(pszTo);
 	Replace(pszFrom, nFromLen, pszTo, nToLen);
 }
 
@@ -284,7 +286,7 @@ void CNativeW::Replace(const wchar_t *pszFrom, int nFromLen, const wchar_t *pszT
 {
 	CNativeW cmemWork;
 	int		 nBgnOld = 0;
-	int		 nBgn	 = 0;
+	int		 nBgn	= 0;
 	while (nBgn <= GetStringLength() - nFromLen) {
 		if (0 == wmemcmp(&GetStringPtr()[nBgn], pszFrom, nFromLen)) {
 			if (nBgnOld == 0 && nFromLen <= nToLen) { cmemWork.AllocStringBuffer(GetStringLength()); }
@@ -292,7 +294,8 @@ void CNativeW::Replace(const wchar_t *pszFrom, int nFromLen, const wchar_t *pszT
 			cmemWork.AppendString(pszTo, nToLen);
 			nBgn	= nBgn + nFromLen;
 			nBgnOld = nBgn;
-		} else {
+		}
+		else {
 			nBgn++;
 		}
 	}
@@ -301,7 +304,8 @@ void CNativeW::Replace(const wchar_t *pszFrom, int nFromLen, const wchar_t *pszT
 			cmemWork.AppendString(&GetStringPtr()[nBgnOld], GetStringLength() - nBgnOld);
 		}
 		SetNativeData(cmemWork);
-	} else {
+	}
+	else {
 		if (this->GetStringPtr() == NULL) { this->SetString(L""); }
 	}
 }
@@ -370,7 +374,8 @@ CHabaXInt CNativeW::GetHabaOfChar(const wchar_t *pData, int nDataLen, int nIdx)
 	// サロゲートチェック
 	if (IsUTF16High(pData[nIdx]) && nIdx + 1 < nDataLen && IsUTF16Low(pData[nIdx + 1])) {
 		return CHabaXInt(WCODE::CalcPxWidthByFont2(pData + nIdx));
-	} else if (IsUTF16Low(pData[nIdx]) && 0 < nIdx && IsUTF16High(pData[nIdx - 1])) {
+	}
+	else if (IsUTF16Low(pData[nIdx]) && 0 < nIdx && IsUTF16High(pData[nIdx - 1])) {
 		// サロゲートペア（下位）
 		return CHabaXInt(0); // 不正位置
 	}

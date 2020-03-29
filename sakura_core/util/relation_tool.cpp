@@ -42,7 +42,8 @@ void CSubject::_RemoveListener(CListener *pcListener)
 
 CListener::CListener()
 	: m_pcSubjectRef(NULL)
-{}
+{
+}
 
 CListener::~CListener() { Listen(NULL); }
 

@@ -11,9 +11,9 @@
 	@retval false	失敗 現在位置のデータは「単語」とは言いきれない気がする。
 */
 bool CWordParse::WhereCurrentWord_2(
-	const wchar_t *pLine,	 //!< [in]  調べるメモリ全体の先頭アドレス
-	CLogicInt	   nLineLen, //!< [in]  調べるメモリ全体の有効長
-	CLogicInt	   nIdx,	 //!< [in]  調査開始地点:pLineからの相対的な位置
+	const wchar_t *pLine,	//!< [in]  調べるメモリ全体の先頭アドレス
+	CLogicInt	  nLineLen, //!< [in]  調べるメモリ全体の有効長
+	CLogicInt	  nIdx,	 //!< [in]  調査開始地点:pLineからの相対的な位置
 	CLogicInt *pnIdxFrom, //!< [out] 単語が見つかった場合は、単語の先頭インデックスを返す。
 	CLogicInt *pnIdxTo, //!< [out] 単語が見つかった場合は、単語の終端の次のバイトの先頭インデックスを返す。
 	CNativeW *
@@ -39,7 +39,7 @@ bool CWordParse::WhereCurrentWord_2(
 	ECharKind nCharKind = WhatKindOfChar(pLine, nLineLen, nIdx);
 
 	// 文字種類が変わるまで前方へサーチ
-	CLogicInt nIdxNext	 = nIdx;
+	CLogicInt nIdxNext   = nIdx;
 	CLogicInt nCharChars = CLogicInt(&pLine[nIdxNext] - CNativeW::GetCharPrev(pLine, nLineLen, &pLine[nIdxNext]));
 	while (nCharChars > 0) {
 		CLogicInt nIdxNextPrev = nIdxNext;
@@ -101,7 +101,8 @@ ECharKind CWordParse::WhatKindOfChar(const wchar_t *pData, int pDataLen, int nId
 	int nCharChars = CNativeW::GetSizeOfChar(pData, pDataLen, nIdx);
 	if (nCharChars == 0) {
 		return CK_NULL; // NULL
-	} else if (nCharChars == 1) {
+	}
+	else if (nCharChars == 1) {
 		wchar_t c = pData[nIdx];
 
 		//今までの半角
@@ -124,7 +125,7 @@ ECharKind CWordParse::WhatKindOfChar(const wchar_t *pData, int pDataLen, int nId
 		if (isCSymbolZen(c)) return CK_ZEN_CSYM;		  // 全角版、識別子に使用可能な文字
 		if (IsZenkakuKigou(c)) return CK_ZEN_KIGO;		  // 全角の記号
 		if (IsHiragana(c)) return CK_HIRA;				  // ひらがな
-		if (IsZenkakuKatakana(c)) return CK_ZEN_KATA;	  // 全角カタカナ
+		if (IsZenkakuKatakana(c)) return CK_ZEN_KATA;	 // 全角カタカナ
 		if (IsGreek(c)) return CK_GREEK;				  // ギリシャ文字
 		if (IsCyrillic(c)) return CK_ZEN_ROS;			  // ロシア文字
 		if (IsBoxDrawing(c)) return CK_ZEN_SKIGO;		  // 全角の特殊記号
@@ -134,7 +135,8 @@ ECharKind CWordParse::WhatKindOfChar(const wchar_t *pData, int pDataLen, int nId
 			return CK_ETC; // 半角のその他
 		else
 			return CK_ZEN_ETC; // 全角のその他(漢字など)
-	} else if (nCharChars == 2) {
+	}
+	else if (nCharChars == 2) {
 		// サロゲートペア 2008/7/8 Uchi
 		if (IsUTF16High(pData[nIdx]) && IsUTF16Low(pData[nIdx + 1])) {
 			int nCode = 0x10000 + ((pData[nIdx] & 0x3FF) << 10) + (pData[nIdx + 1] & 0x3FF); // コードポイント
@@ -143,7 +145,8 @@ ECharKind CWordParse::WhatKindOfChar(const wchar_t *pData, int pDataLen, int nId
 			}
 		}
 		return CK_ETC; // 半角のその他
-	} else {
+	}
+	else {
 		return CK_NULL; // NULL
 	}
 }
@@ -206,7 +209,7 @@ ECharKind CWordParse::WhatKindOfTwoChars4KW(ECharKind kindPre, ECharKind kindCur
 */
 bool CWordParse::SearchNextWordPosition(const wchar_t *pLine, CLogicInt nLineLen,
 										CLogicInt  nIdx,		  //	桁数
-										CLogicInt *pnColumnNew,	  //	見つかった位置
+										CLogicInt *pnColumnNew,   //	見つかった位置
 										BOOL	   bStopsBothEnds //	単語の両端で止まる
 )
 {
@@ -229,7 +232,8 @@ bool CWordParse::SearchNextWordPosition(const wchar_t *pLine, CLogicInt nLineLen
 				return true;
 			}
 			nCharKind = nCharKindNext;
-		} else {
+		}
+		else {
 			ECharKind nCharKindMerge = WhatKindOfTwoChars(nCharKind, nCharKindNext);
 			if (nCharKindMerge == CK_NULL) {
 				*pnColumnNew = nIdxNext;
@@ -249,7 +253,7 @@ bool CWordParse::SearchNextWordPosition(const wchar_t *pLine, CLogicInt nLineLen
 */
 bool CWordParse::SearchNextWordPosition4KW(const wchar_t *pLine, CLogicInt nLineLen,
 										   CLogicInt  nIdx,			 //	桁数
-										   CLogicInt *pnColumnNew,	 //	見つかった位置
+										   CLogicInt *pnColumnNew,   //	見つかった位置
 										   BOOL		  bStopsBothEnds //	単語の両端で止まる
 )
 {
@@ -272,7 +276,8 @@ bool CWordParse::SearchNextWordPosition4KW(const wchar_t *pLine, CLogicInt nLine
 				return true;
 			}
 			nCharKind = nCharKindNext;
-		} else {
+		}
+		else {
 			ECharKind nCharKindMerge = WhatKindOfTwoChars4KW(nCharKind, nCharKindNext);
 			if (nCharKindMerge == CK_NULL) {
 				*pnColumnNew = nIdxNext;
@@ -316,14 +321,13 @@ uchar_t wc_to_c(wchar_t wc)
 
 	2007.10.23 kobake UNICODE対応。//$ wchar_t専用のテーブル(または判定ルーチン)を用意したほうが効率は上がるはずです。
 */
-BOOL IsURL(const wchar_t *pszLine,	 //!< [in]  文字列
-		   int			  offset,	 //!< [in]  検査を開始する位置。
-		   int			  nLineLen,	 //!< [in]  文字列の長さ
+BOOL IsURL(const wchar_t *pszLine,   //!< [in]  文字列
+		   int			  offset,	//!< [in]  検査を開始する位置。
+		   int			  nLineLen,  //!< [in]  文字列の長さ
 		   int *		  pnMatchLen //!< [out] URLの長さ。offset からの距離。
 )
 {
-	struct _url_table_t
-	{
+	struct _url_table_t {
 		wchar_t name[12];
 		int		length;
 		bool	is_mail;
@@ -332,19 +336,19 @@ BOOL IsURL(const wchar_t *pszLine,	 //!< [in]  文字列
 		/* アルファベット順 */
 		{L"file://", 7, false},		 /* 1 */
 		{L"ftp://", 6, false},		 /* 2 */
-		{L"gopher://", 9, false},	 /* 3 */
+		{L"gopher://", 9, false},	/* 3 */
 		{L"http://", 7, false},		 /* 4 */
 		{L"https://", 8, false},	 /* 5 */
 		{L"mailto:", 7, true},		 /* 6 */
 		{L"news:", 5, false},		 /* 7 */
 		{L"nntp://", 7, false},		 /* 8 */
 		{L"prospero://", 11, false}, /* 9 */
-		{L"telnet://", 9, false},	 /* 10 */
+		{L"telnet://", 9, false},	/* 10 */
 		{L"tp://", 5, false},
 		/* 11 */ // 2004.02.02
 		{L"ttp://", 6, false},
 		/* 12 */				  // 2004.02.02
-		{L"wais://", 7, false},	  /* 13 */
+		{L"wais://", 7, false},   /* 13 */
 		{L"{", 0, false} /* 14 */ /* '{' is 'z'+1 : terminate */
 	};
 
@@ -360,14 +364,14 @@ BOOL IsURL(const wchar_t *pszLine,	 //!< [in]  文字列
 
 	static const char url_char[] = {
 		/* +0  +1  +2  +3  +4  +5  +6  +7  +8  +9  +A  +B  +C  +D  +E  +F */
-		0,	 0,	 0,	 0,	 0,	  0,  0,   0,	0,	 0,	 0,	 0,	 0,	 0,	  0,   0,  /* +00: */
-		0,	 0,	 0,	 0,	 0,	  0,  0,   0,	0,	 0,	 0,	 0,	 0,	 0,	  0,   0,  /* +10: */
-		0,	 -1, 0,	 -1, -1,  -1, -1,  0,	0,	 0,	 0,	 -1, -1, -1,  -1,  -1, /* +20: " !"#$%&'()*+,-./" */
-		-1,	 -1, -1, -1, -1,  -1, -1,  -1,	-1,	 -1, -1, -1, 0,	 -1,  0,   -1, /* +30: "0123456789:;<=>?" */
-		-1,	 -1, -1, -1, -1,  -1, -1,  -1,	-1,	 -1, -1, -1, -1, -1,  -1,  -1, /* +40: "@ABCDEFGHIJKLMNO" */
-		-1,	 -1, -1, -1, -1,  -1, -1,  -1,	-1,	 -1, -1, 0,	 -1, 0,	  0,   -1, /* +50: "PQRSTUVWXYZ[\]^_" */
-		0,	 -1, -1, -1, -1,  -1, urF, urG, urH, -1, -1, -1, -1, urM, urN, -1, /* +60: "`abcdefghijklmno" */
-		urP, -1, -1, -1, urT, -1, -1,  urW, -1,	 -1, -1, 0,	 0,	 0,	  -1,  0,  /* +70: "pqrstuvwxyz{|}~ " */
+		0,   0,  0,  0,  0,   0,  0,   0,   0,   0,  0,  0,  0,  0,   0,   0,  /* +00: */
+		0,   0,  0,  0,  0,   0,  0,   0,   0,   0,  0,  0,  0,  0,   0,   0,  /* +10: */
+		0,   -1, 0,  -1, -1,  -1, -1,  0,   0,   0,  0,  -1, -1, -1,  -1,  -1, /* +20: " !"#$%&'()*+,-./" */
+		-1,  -1, -1, -1, -1,  -1, -1,  -1,  -1,  -1, -1, -1, 0,  -1,  0,   -1, /* +30: "0123456789:;<=>?" */
+		-1,  -1, -1, -1, -1,  -1, -1,  -1,  -1,  -1, -1, -1, -1, -1,  -1,  -1, /* +40: "@ABCDEFGHIJKLMNO" */
+		-1,  -1, -1, -1, -1,  -1, -1,  -1,  -1,  -1, -1, 0,  -1, 0,   0,   -1, /* +50: "PQRSTUVWXYZ[\]^_" */
+		0,   -1, -1, -1, -1,  -1, urF, urG, urH, -1, -1, -1, -1, urM, urN, -1, /* +60: "`abcdefghijklmno" */
+		urP, -1, -1, -1, urT, -1, -1,  urW, -1,  -1, -1, 0,  0,  0,   -1,  0,  /* +70: "pqrstuvwxyz{|}~ " */
 		/* あと128バイト犠牲にすればif文を2箇所削除できる */
 		/* 0    : not url char
 		 * -1   : url char
@@ -376,7 +380,7 @@ BOOL IsURL(const wchar_t *pszLine,	 //!< [in]  文字列
 	};
 
 	const wchar_t *const	   begin = pszLine + offset;
-	const wchar_t *const	   end	 = pszLine + nLineLen;
+	const wchar_t *const	   end   = pszLine + nLineLen;
 	const struct _url_table_t *urlp;
 	int						   i;
 
@@ -410,8 +414,7 @@ BOOL IsURL(const wchar_t *pszLine,	 //!< [in]  文字列
 */
 BOOL IsMailAddress(const wchar_t *pszBuf, int offset, int nBufLen, int *pnAddressLength)
 {
-	struct
-	{
+	struct {
 		bool operator()(const wchar_t ch) { return 0x21 <= ch && ch <= 0x7E && NULL == wcschr(L"\"(),:;<>@[\\]", ch); }
 	} IsValidChar;
 
@@ -429,9 +432,8 @@ BOOL IsMailAddress(const wchar_t *pszBuf, int offset, int nBufLen, int *pnAddres
 	int nBgn;
 
 	j = 0;
-	if (pszBuf[j] != L'.' && IsValidChar(pszBuf[j])) {
-		j++;
-	} else {
+	if (pszBuf[j] != L'.' && IsValidChar(pszBuf[j])) { j++; }
+	else {
 		return FALSE;
 	}
 	while (j < nBufLen - 2 && IsValidChar(pszBuf[j])) { j++; }
@@ -451,12 +453,12 @@ BOOL IsMailAddress(const wchar_t *pszBuf, int offset, int nBufLen, int *pnAddres
 		}
 		if (0 == j - nBgn) { return FALSE; }
 		if (L'.' != pszBuf[j]) {
-			if (0 == nDotCount) {
-				return FALSE;
-			} else {
+			if (0 == nDotCount) { return FALSE; }
+			else {
 				break;
 			}
-		} else {
+		}
+		else {
 			nDotCount++;
 			j++;
 		}

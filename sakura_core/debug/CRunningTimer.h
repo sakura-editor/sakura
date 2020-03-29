@@ -49,8 +49,7 @@
 
 	@date 2002/10/16  genta WriteTrace及びマクロ追加
 */
-class CRunningTimer
-{
+class CRunningTimer {
 public:
 	/*
 	||  Constructors
@@ -69,7 +68,7 @@ public:
 protected:
 	DWORD m_nStartTime;
 	char  m_szText[100]; //!< タイマー名
-	int	  m_nDeapth;	 //!< このオブジェクトのネストの深さ
+	int   m_nDeapth;	 //!< このオブジェクトのネストの深さ
 
 #ifdef _DEBUG
 	static int m_nNestCount;
@@ -79,7 +78,7 @@ protected:
 //	Oct. 16, 2002 genta
 //	#ifdef _DEBUG～#endifで逐一囲まなくても簡単にタイマーのON/OFFを行うためのマクロ
 #if defined(_DEBUG) && defined(TIME_MEASURE)
-#define MY_TRACETIME(c, m)	  (c).WriteTrace(m)
+#define MY_TRACETIME(c, m) (c).WriteTrace(m)
 #define MY_RUNNINGTIMER(c, m) CRunningTimer c(m)
 #else
 #define MY_TRACETIME(c, m)

@@ -41,21 +41,21 @@
 
 inline ACHAR _GetHexChar(ACHAR c)
 {
-	if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'F')) {
-		return c;
-	} else if (c >= 'a' && c <= 'f') {
+	if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'F')) { return c; }
+	else if (c >= 'a' && c <= 'f') {
 		return c - ('a' - 'A');
-	} else {
+	}
+	else {
 		return '\0';
 	}
 }
 inline WCHAR _GetHexChar(WCHAR c)
 {
-	if ((c >= L'0' && c <= L'9') || (c >= L'A' && c <= L'F')) {
-		return c;
-	} else if (c >= L'a' && c <= L'f') {
+	if ((c >= L'0' && c <= L'9') || (c >= L'A' && c <= L'F')) { return c; }
+	else if (c >= L'a' && c <= L'f') {
 		return c - (L'a' - L'A');
-	} else {
+	}
+	else {
 		return L'\0';
 	}
 }
@@ -65,22 +65,21 @@ inline WCHAR _GetHexChar(WCHAR c)
 */
 inline int _HexToInt(ACHAR c)
 {
-	if (c <= '9') {
-		return c - '0';
-	} else {
+	if (c <= '9') { return c - '0'; }
+	else {
 		return c - 'A' + 10;
 	}
 }
 inline int _HexToInt(WCHAR c)
 {
-	if (c <= L'9') {
-		return c - L'0';
-	} else {
+	if (c <= L'9') { return c - L'0'; }
+	else {
 		return c - L'A' + 10;
 	}
 }
 
-template<class CHAR_TYPE> int _DecodeQP(const CHAR_TYPE *pS, const int nLen, char *pDst)
+template<class CHAR_TYPE>
+int _DecodeQP(const CHAR_TYPE *pS, const int nLen, char *pDst)
 {
 	const CHAR_TYPE *pr;
 	char *			 pw;
@@ -98,7 +97,8 @@ template<class CHAR_TYPE> int _DecodeQP(const CHAR_TYPE *pS, const int nLen, cha
 				pr += 1;
 				continue;
 			}
-		} else {
+		}
+		else {
 			if (*pr != '=') {
 				*pw = static_cast<char>(*pr);
 				pw += 1;
@@ -117,7 +117,8 @@ template<class CHAR_TYPE> int _DecodeQP(const CHAR_TYPE *pS, const int nLen, cha
 			if (c1 != 0 && c2 != 0) {
 				*pw = static_cast<char>(_HexToInt(c1) << 4) | static_cast<char>(_HexToInt(c2));
 				++pw;
-			} else {
+			}
+			else {
 				pw[0] = '=';
 				pw[1] = static_cast<char>(pr[1] & 0x00ff);
 				pw[2] = static_cast<char>(pr[2] & 0x00ff);
@@ -140,15 +141,17 @@ template<class CHAR_TYPE> int _DecodeQP(const CHAR_TYPE *pS, const int nLen, cha
 //
 
 extern const uchar_t TABLE_BASE64CharToValue[];
-extern const char	 TABLE_ValueToBASE64Char[];
+extern const char	TABLE_ValueToBASE64Char[];
 
 // BASE64文字 <-> 数値
-template<class CHAR_TYPE> inline uchar_t Base64ToVal(const CHAR_TYPE c)
+template<class CHAR_TYPE>
+inline uchar_t Base64ToVal(const CHAR_TYPE c)
 {
 	int c_ = c;
 	return static_cast<uchar_t>((c_ < 0x80) ? TABLE_BASE64CharToValue[c_] : -1);
 }
-template<class CHAR_TYPE> inline CHAR_TYPE ValToBase64(const char v)
+template<class CHAR_TYPE>
+inline CHAR_TYPE ValToBase64(const char v)
 {
 	int v_ = v;
 	return static_cast<CHAR_TYPE>((v_ < 64) ? TABLE_ValueToBASE64Char[v_] : -1);
@@ -202,21 +205,21 @@ bool CheckBase64Padbit( const CHAR_TYPE *pSrc, const int nSrcLen )
 	前の実装を参考に。
 	正しい BASE64 入力文字列を仮定している。
 */
-template<class CHAR_TYPE> int _DecodeBase64(const CHAR_TYPE *pSrc, const int nSrcLen, char *pDest)
+template<class CHAR_TYPE>
+int _DecodeBase64(const CHAR_TYPE *pSrc, const int nSrcLen, char *pDest)
 {
 	long lData;
-	int	 nDesLen;
-	int	 sMax;
-	int	 nsrclen = nSrcLen;
+	int  nDesLen;
+	int  sMax;
+	int  nsrclen = nSrcLen;
 
 	// 文字列の最後のパッド文字 '=' を文字列長に含めないようにする処理
 	{
-		int	 i = 0;
+		int  i = 0;
 		bool bret;
 		for (; i < nsrclen; i++) {
-			if (sizeof(CHAR_TYPE) == 2) {
-				bret = (pSrc[nsrclen - 1 - i] == L'=');
-			} else {
+			if (sizeof(CHAR_TYPE) == 2) { bret = (pSrc[nsrclen - 1 - i] == L'='); }
+			else {
 				bret = (pSrc[nsrclen - 1 - i] == '=');
 			}
 			if (bret != true) { break; }
@@ -226,9 +229,8 @@ template<class CHAR_TYPE> int _DecodeBase64(const CHAR_TYPE *pSrc, const int nSr
 
 	nDesLen = 0;
 	for (int i = 0; i < nsrclen; i++) {
-		if (i < nsrclen - (nsrclen % 4)) {
-			sMax = 4;
-		} else {
+		if (i < nsrclen - (nsrclen % 4)) { sMax = 4; }
+		else {
 			sMax = (nsrclen % 4);
 		}
 		lData = 0;
@@ -251,7 +253,8 @@ template<class CHAR_TYPE> int _DecodeBase64(const CHAR_TYPE *pSrc, const int nSr
 	前の実装を参考に。
 	パッド文字などは付加しない。エラーチェックなし。
 */
-template<class CHAR_TYPE> int _EncodeBase64(const char *pSrc, const int nSrcLen, CHAR_TYPE *pDest)
+template<class CHAR_TYPE>
+int _EncodeBase64(const char *pSrc, const int nSrcLen, CHAR_TYPE *pDest)
 {
 	const unsigned char *psrc;
 	unsigned long		 lDataSrc;
@@ -266,7 +269,8 @@ template<class CHAR_TYPE> int _EncodeBase64(const char *pSrc, const int nSrcLen,
 		if (nSrcLen - i < 3) {
 			n = nSrcLen % 3;
 			j = (n * 4 + 2) / 3; // 端数切り上げ
-		} else {
+		}
+		else {
 			n = 3;
 			j = 4;
 		}
@@ -342,14 +346,15 @@ inline BYTE _UUDECODE_CHAR(ACHAR c)
 	@return 一行分をデコードした結果得られた生データのバイト長
 			書き込んだデータが戻り値よりも大きいときがあるので注意。
 */
-template<class CHAR_TYPE> int _DecodeUU_line(const CHAR_TYPE *pSrc, const int nSrcLen, char *pDest)
+template<class CHAR_TYPE>
+int _DecodeUU_line(const CHAR_TYPE *pSrc, const int nSrcLen, char *pDest)
 {
-	unsigned long	 lDataDes;
+	unsigned long	lDataDes;
 	const CHAR_TYPE *pr;
 
 	if (nSrcLen < 1) { return 0; }
 
-	pr	  = pSrc + 1; // 先頭の文字（M(0x20+45)など）を飛ばす
+	pr	= pSrc + 1; // 先頭の文字（M(0x20+45)など）を飛ばす
 	int i = 0;
 	int j = 0;
 	int k = 0;
@@ -366,7 +371,8 @@ template<class CHAR_TYPE> int _DecodeUU_line(const CHAR_TYPE *pSrc, const int nS
 /*!
 	UUエンコードのヘッダー部分を解析
 */
-template<class CHAR_TYPE> bool CheckUUHeader(const CHAR_TYPE *pSrc, const int nLen, WCHAR *pszFilename)
+template<class CHAR_TYPE>
+bool CheckUUHeader(const CHAR_TYPE *pSrc, const int nLen, WCHAR *pszFilename)
 {
 	//	using namespace WCODE;
 
@@ -380,7 +386,8 @@ template<class CHAR_TYPE> bool CheckUUHeader(const CHAR_TYPE *pSrc, const int nL
 		pszSplitChars[0] = L' ';
 		pszSplitChars[1] = L'\t';
 		pszSplitChars[2] = L'\0';
-	} else {
+	}
+	else {
 		// スペースまたはタブが区切り文字
 		pszSplitChars[0] = ' ';
 		pszSplitChars[1] = '\t';
@@ -397,12 +404,13 @@ template<class CHAR_TYPE> bool CheckUUHeader(const CHAR_TYPE *pSrc, const int nL
 		CHAR_TYPE c = pSrc[nstartidx];
 		if (sizeof(CHAR_TYPE) == 2) {
 			if (c != L'\r' && c != L'\n' && c != L' ' && c != L'\t') { break; }
-		} else {
+		}
+		else {
 			if (c != '\r' && c != '\n' && c != ' ' && c != '\t') { break; }
 		}
 	}
 
-	pr	   = pSrc + nstartidx;
+	pr	 = pSrc + nstartidx;
 	pr_end = pSrc + nLen;
 
 	// ヘッダーの構成
@@ -420,7 +428,8 @@ template<class CHAR_TYPE> bool CheckUUHeader(const CHAR_TYPE *pSrc, const int nL
 			// error.
 			return false;
 		}
-	} else {
+	}
+	else {
 		if (strncmp_literal(reinterpret_cast<const char *>(pwstart), "begin") != 0) {
 			// error.
 			return false;
@@ -441,7 +450,8 @@ template<class CHAR_TYPE> bool CheckUUHeader(const CHAR_TYPE *pSrc, const int nL
 				// error.
 				return false;
 			}
-		} else {
+		}
+		else {
 			// ACHAR の場合の処理
 			if (!isdigit(pwstart[i]) || (pwstart[i] == '8' || pwstart[i] == '9')) {
 				// error.
@@ -458,7 +468,8 @@ template<class CHAR_TYPE> bool CheckUUHeader(const CHAR_TYPE *pSrc, const int nL
 		CHAR_TYPE c = pwstart[nwlen - 1];
 		if (sizeof(CHAR_TYPE) == 2) {
 			if (!WCODE::IsLineDelimiterBasic(c) && c != L' ' && c != L'\t') { break; }
-		} else {
+		}
+		else {
 			if (c != '\r' && c != '\n' && c != ' ' && c != '\t') { break; }
 		}
 	}
@@ -478,7 +489,8 @@ template<class CHAR_TYPE> bool CheckUUHeader(const CHAR_TYPE *pSrc, const int nL
 /*!
 	UU フッターを確認
 */
-template<class CHAR_TYPE> bool CheckUUFooter(const CHAR_TYPE *pS, const int nLen)
+template<class CHAR_TYPE>
+bool CheckUUFooter(const CHAR_TYPE *pS, const int nLen)
 {
 	int				 nstartidx;
 	const CHAR_TYPE *psrc;
@@ -495,7 +507,8 @@ template<class CHAR_TYPE> bool CheckUUFooter(const CHAR_TYPE *pS, const int nLen
 		if (sizeof(CHAR_TYPE) == 2) {
 			// WCHAR の場合の処理
 			if (c != L'\r' && c != L'\n' && c != L' ' && c != L'\t') { break; }
-		} else {
+		}
+		else {
 			// ACHAR の場合の処理
 			if (c != '\r' && c != '\n' && c != ' ' && c != '\t') { break; }
 		}
@@ -511,7 +524,8 @@ template<class CHAR_TYPE> bool CheckUUFooter(const CHAR_TYPE *pS, const int nLen
 			// error.
 			return false;
 		}
-	} else {
+	}
+	else {
 		if (strncmp_literal(reinterpret_cast<const char *>(&pS[nstartidx]), "end") != 0) {
 			// error.
 			return false;
@@ -525,7 +539,8 @@ template<class CHAR_TYPE> bool CheckUUFooter(const CHAR_TYPE *pS, const int nLen
 		if (sizeof(CHAR_TYPE) == 2) {
 			// WCHAR の場合の処理
 			if (!WCODE::IsLineDelimiterBasic(c) && c != L' ' && c != L'\t') { return false; }
-		} else {
+		}
+		else {
 			// ACHAR の場合の処理
 			if (c != '\r' && c != '\n' && c != ' ' && c != '\t') { return false; }
 		}
@@ -541,8 +556,7 @@ template<class CHAR_TYPE> bool CheckUUFooter(const CHAR_TYPE *pS, const int nLen
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
 
-enum EEncodingMethod
-{
+enum EEncodingMethod {
 	EM_NONE,
 	EM_QP,
 	EM_BASE64,
@@ -556,7 +570,7 @@ enum EEncodingMethod
 template<class CHAR_TYPE>
 int _DecodeMimeHeader(const CHAR_TYPE *pSrc, const int nSrcLen, CMemory *pcMem_alt, ECodeType *peCodetype)
 {
-	ECodeType		ecode	= CODE_NONE;
+	ECodeType		ecode   = CODE_NONE;
 	EEncodingMethod emethod = EM_NONE;
 	int				nLen_part1, nLen_part2, nskipped_len;
 	int				ncmpresult1, ncmpresult2, ncmpresult;
@@ -577,11 +591,12 @@ int _DecodeMimeHeader(const CHAR_TYPE *pSrc, const int nSrcLen, CMemory *pcMem_a
 		// JIS の場合
 		if (sizeof(CHAR_TYPE) == 2) {
 			ncmpresult = wcsnicmp_literal(reinterpret_cast<const wchar_t *>(&pSrc[0]), L"=?ISO-2022-JP?");
-		} else {
+		}
+		else {
 			ncmpresult = strnicmp_literal(&pSrc[0], "=?ISO-2022-JP?");
 		}
 		if (ncmpresult == 0) { //
-			ecode	   = CODE_JIS;
+			ecode	  = CODE_JIS;
 			nLen_part1 = 14;
 			goto finish_first_detect;
 		}
@@ -590,11 +605,12 @@ int _DecodeMimeHeader(const CHAR_TYPE *pSrc, const int nSrcLen, CMemory *pcMem_a
 		// UTF-8 の場合
 		if (sizeof(CHAR_TYPE) == 2) {
 			ncmpresult = wcsnicmp_literal(reinterpret_cast<const wchar_t *>(&pSrc[0]), L"=?UTF-8?");
-		} else {
+		}
+		else {
 			ncmpresult = strnicmp_literal(&pSrc[0], "=?UTF-8?");
 		}
 		if (ncmpresult == 0) {
-			ecode	   = CODE_UTF8;
+			ecode	  = CODE_UTF8;
 			nLen_part1 = 8;
 			goto finish_first_detect;
 		}
@@ -621,15 +637,16 @@ finish_first_detect:;
 	if (sizeof(CHAR_TYPE) == 2) {
 		ncmpresult1 = wcsnicmp_literal(reinterpret_cast<const wchar_t *>(&pSrc[nLen_part1]), L"B?");
 		ncmpresult2 = wcsnicmp_literal(reinterpret_cast<const wchar_t *>(&pSrc[nLen_part1]), L"Q?");
-	} else {
+	}
+	else {
 		ncmpresult1 = strnicmp_literal(&pSrc[nLen_part1], "B?");
 		ncmpresult2 = strnicmp_literal(&pSrc[nLen_part1], "Q?");
 	}
-	if (ncmpresult1 == 0) {
-		emethod = EM_BASE64;
-	} else if (ncmpresult2 == 0) {
+	if (ncmpresult1 == 0) { emethod = EM_BASE64; }
+	else if (ncmpresult2 == 0) {
 		emethod = EM_QP;
-	} else {
+	}
+	else {
 		pcMem_alt->SetRawData("", 0);
 		return 0;
 	}
@@ -642,9 +659,8 @@ finish_first_detect:;
 	pr_base = pSrc + nLen_part1 + nLen_part2;
 	pr		= pSrc + nLen_part1 + nLen_part2;
 	for (; pr < pSrc + nSrcLen - 1; ++pr) {
-		if (sizeof(CHAR_TYPE) == 2) {
-			ncmpresult = wcsncmp_literal(reinterpret_cast<const wchar_t *>(pr), L"?=");
-		} else {
+		if (sizeof(CHAR_TYPE) == 2) { ncmpresult = wcsncmp_literal(reinterpret_cast<const wchar_t *>(pr), L"?="); }
+		else {
 			ncmpresult = strncmp_literal(pr, "?=");
 		}
 		if (ncmpresult == 0) { break; }
@@ -666,9 +682,8 @@ finish_first_detect:;
 		return 0;
 	}
 
-	if (emethod == EM_BASE64) {
-		ndecoded_len = _DecodeBase64(pr_base, pr - pr_base, pdst);
-	} else {
+	if (emethod == EM_BASE64) { ndecoded_len = _DecodeBase64(pr_base, pr - pr_base, pdst); }
+	else {
 		ndecoded_len = _DecodeQP(pr_base, pr - pr_base, pdst);
 	}
 

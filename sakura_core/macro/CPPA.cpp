@@ -71,7 +71,7 @@ bool CPPA::Execute(CEditView *pcEditView, int flags)
 	PpaExecInfo info;
 	info.m_pcEditView = pcEditView;
 	info.m_pShareData = &GetDllShareData();
-	info.m_bError	  = false;					//	2003.06.01 Moca
+	info.m_bError	 = false;					//	2003.06.01 Moca
 	info.m_cMemDebug.SetString("");				//	2003.06.01 Moca
 	info.m_commandflags = flags | FA_FROMMACRO; //	2007.07.22 genta
 
@@ -213,24 +213,24 @@ char *CPPA::GetDeclarations(const MacroFuncInfo &cMacroFuncInfo, char *szBuffer)
 	if (cMacroFuncInfo.m_varResult == VT_EMPTY) {
 		strcpy(szType, "procedure");
 		szReturn[0] = '\0';
-	} else {
+	}
+	else {
 		strcpy(szType, "function");
-		if (cMacroFuncInfo.m_varResult == VT_BSTR) {
-			strcpy(szReturn, ": string");
-		} else if (cMacroFuncInfo.m_varResult == VT_I4) {
+		if (cMacroFuncInfo.m_varResult == VT_BSTR) { strcpy(szReturn, ": string"); }
+		else if (cMacroFuncInfo.m_varResult == VT_I4) {
 			strcpy(szReturn, ": Integer");
-		} else {
+		}
+		else {
 			szReturn[0] = '\0';
 		}
 	}
 
 	char szArguments[8][20]; //	引数用バッファ
-	int	 i;
+	int  i;
 	for (i = 0; i < 8; i++) {
 		VARTYPE type = VT_EMPTY;
-		if (i < 4) {
-			type = cMacroFuncInfo.m_varArguments[i];
-		} else {
+		if (i < 4) { type = cMacroFuncInfo.m_varArguments[i]; }
+		else {
 			if (cMacroFuncInfo.m_pData && i < cMacroFuncInfo.m_pData->m_nArgMinSize) {
 				type = cMacroFuncInfo.m_pData->m_pVarArgEx[i - 4];
 			}
@@ -239,15 +239,17 @@ char *CPPA::GetDeclarations(const MacroFuncInfo &cMacroFuncInfo, char *szBuffer)
 		if (type == VT_BSTR) {
 			strcpy(szArguments[i], "s0: string");
 			szArguments[i][1] = '0' + (char)i;
-		} else if (type == VT_I4) {
+		}
+		else if (type == VT_I4) {
 			strcpy(szArguments[i], "i0: Integer");
 			szArguments[i][1] = '0' + (char)i;
-		} else {
+		}
+		else {
 			strcpy(szArguments[i], "u0: Unknown");
 		}
 	}
 	if (i > 0) { //	引数があったとき
-		int	 j;
+		int  j;
 		char szArgument[8 * 20];
 		// 2002.12.06 Moca 原因不明だが，strcatがVC6Proでうまく動かなかったため，strcpyにしてみたら動いた
 		strcpy(szArgument, szArguments[0]);
@@ -257,7 +259,8 @@ char *CPPA::GetDeclarations(const MacroFuncInfo &cMacroFuncInfo, char *szBuffer)
 		}
 		auto_sprintf(szBuffer, "%hs S_%ls(%hs)%hs; index %d;", szType, cMacroFuncInfo.m_pszFuncName, szArgument,
 					 szReturn, cMacroFuncInfo.m_nFuncID);
-	} else {
+	}
+	else {
 		auto_sprintf(szBuffer, "%hs S_%ls%hs; index %d;", szType, cMacroFuncInfo.m_pszFuncName, szReturn,
 					 cMacroFuncInfo.m_nFuncID);
 	}
@@ -322,22 +325,20 @@ void __stdcall CPPA::stdError(int Err_CD, const char *Err_Mes)
 				}
 			}
 		}
-		if (szFuncDec[0] != '\0') {
-			auto_sprintf(szMes, LS(STR_ERR_DLGPPA2), szFuncDec);
-		} else {
+		if (szFuncDec[0] != '\0') { auto_sprintf(szMes, LS(STR_ERR_DLGPPA2), szFuncDec); }
+		else {
 			auto_sprintf(szMes, LS(STR_ERR_DLGPPA3), FuncID);
 		}
-	} else {
+	}
+	else {
 		//	2007.07.26 genta : ネスト実行した場合にPPAが不正なポインタを渡す可能性を考慮．
 		//	実際には不正なエラーは全てPPA.DLL内部でトラップされるようだが念のため．
-		if (IsBadStringPtrA(Err_Mes, 256)) {
-			pszErr = LS(STR_ERR_DLGPPA6);
-		} else {
+		if (IsBadStringPtrA(Err_Mes, 256)) { pszErr = LS(STR_ERR_DLGPPA6); }
+		else {
 			switch (Err_CD) {
 			case 0:
-				if ('\0' == Err_Mes[0]) {
-					pszErr = LS(STR_ERR_DLGPPA4);
-				} else {
+				if ('\0' == Err_Mes[0]) { pszErr = LS(STR_ERR_DLGPPA4); }
+				else {
 					pszErr = to_wchar(Err_Mes);
 				}
 				break;
@@ -347,7 +348,8 @@ void __stdcall CPPA::stdError(int Err_CD, const char *Err_Mes)
 	}
 	if (0 == m_CurInstance->m_cMemDebug.GetStringLength()) {
 		MYMESSAGEBOX(m_CurInstance->m_pcEditView->GetHwnd(), MB_OK, LS(STR_ERR_DLGPPA7), L"%s", pszErr);
-	} else {
+	}
+	else {
 		MYMESSAGEBOX(m_CurInstance->m_pcEditView->GetHwnd(), MB_OK, LS(STR_ERR_DLGPPA7), L"%s\n%hs", pszErr,
 					 m_CurInstance->m_cMemDebug.GetStringPtr());
 	}
@@ -368,12 +370,13 @@ void __stdcall CPPA::stdProc(const char *FuncName, const int _Index, const char 
 
 	// Argumentをwchar_t[]に変換 -> tmpArguments
 	WCHAR **tmpArguments2 = new WCHAR *[ArgSize];
-	int *	tmpArgLengths = new int[ArgSize];
+	int *   tmpArgLengths = new int[ArgSize];
 	for (int i = 0; i < ArgSize; i++) {
 		if (Argument[i]) {
 			tmpArguments2[i] = mbstowcs_new(Argument[i]);
 			tmpArgLengths[i] = wcslen(tmpArguments2[i]);
-		} else {
+		}
+		else {
 			tmpArguments2[i] = NULL;
 			tmpArgLengths[i] = 0;
 		}
@@ -446,7 +449,7 @@ void __stdcall CPPA::stdStrFunc(const char *FuncName, const int Index, const cha
 	*Err_CD = 0;
 	if (false != CallHandleFunction(Index, Argument, ArgSize, &Ret)) {
 		if (VT_BSTR == Ret.vt) {
-			int	  len;
+			int   len;
 			char *buf;
 			Wrap(&Ret.bstrVal)->Get(&buf, &len);
 			m_CurInstance->m_cMemRet.SetString(buf, len); // Mar. 9, 2003 genta
@@ -480,22 +483,19 @@ bool CPPA::CallHandleFunction(const int Index, const char *Arg[], int ArgSize, V
 	for (i = 0; i < maxArgSize && i < ArgSize; i++) { ::VariantInit(&vtArg[i]); }
 	for (i = 0, ArgCnt = 0; i < maxArgSize && i < ArgSize; i++) {
 		VARTYPE type = VT_EMPTY;
-		if (i < 4) {
-			type = mfi->m_varArguments[i];
-		} else {
+		if (i < 4) { type = mfi->m_varArguments[i]; }
+		else {
 			if (mfi->m_pData && i < mfi->m_pData->m_nArgMinSize) { type = mfi->m_pData->m_pVarArgEx[i - 4]; }
 		}
 		if (VT_EMPTY == type) { break; }
 
 		switch (type) {
-		case VT_I4:
-		{
-			vtArg[i].vt	  = VT_I4;
+		case VT_I4: {
+			vtArg[i].vt   = VT_I4;
 			vtArg[i].lVal = atoi(Arg[i]);
 			break;
 		}
-		case VT_BSTR:
-		{
+		case VT_BSTR: {
 			SysString S(Arg[i], lstrlenA(Arg[i]));
 			Wrap(&vtArg[i])->Receive(S);
 			break;
@@ -511,7 +511,8 @@ bool CPPA::CallHandleFunction(const int Index, const char *Arg[], int ArgSize, V
 		Ret = CMacro::HandleFunction(m_CurInstance->m_pcEditView, (EFunctionCode)Index, vtArg, ArgCnt, *Result);
 		for (i = 0; i < maxArgSize && i < ArgSize; i++) { ::VariantClear(&vtArg[i]); }
 		return Ret;
-	} else {
+	}
+	else {
 		for (i = 0; i < maxArgSize && i < ArgSize; i++) { ::VariantClear(&vtArg[i]); }
 		return false;
 	}

@@ -27,8 +27,7 @@
 #include "CConvert.h"
 
 //!半角カナ→全角カナ
-class CConvert_HankataToZenkata final : public CConvert
-{
+class CConvert_HankataToZenkata final : public CConvert {
 public:
 	bool DoConvert(CNativeW *pcData) override;
 };

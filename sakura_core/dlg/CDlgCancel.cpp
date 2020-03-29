@@ -15,7 +15,7 @@
 
 CDlgCancel::CDlgCancel()
 {
-	m_bCANCEL	   = FALSE; /* IDCANCELボタンが押された */
+	m_bCANCEL	  = FALSE; /* IDCANCELボタンが押された */
 	m_bAutoCleanup = false;
 }
 

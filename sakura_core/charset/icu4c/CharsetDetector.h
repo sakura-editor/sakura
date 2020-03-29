@@ -31,8 +31,7 @@
 /*!
  * @brief 文字コード検出クラス
  */
-class CharsetDetector final
-{
+class CharsetDetector final {
 	CIcu4cI18n		  _icuin;
 	UCharsetDetector *_csd;
 

@@ -30,8 +30,7 @@
 typedef StaticString<WCHAR, MAX_GREP_PATH> CGrepFileString;
 
 //! GREPファイルの履歴を管理 (RECENT_FOR_GREP_FILE)
-class CRecentGrepFile final : public CRecentImp<CGrepFileString, LPCWSTR>
-{
+class CRecentGrepFile final : public CRecentImp<CGrepFileString, LPCWSTR> {
 public:
 	//生成
 	CRecentGrepFile();

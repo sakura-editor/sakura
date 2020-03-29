@@ -113,7 +113,7 @@ bool CPassiveTimer::CheckAction(void)
 
 	//	時刻比較
 	DWORD now = ::GetTickCount();
-	int	  diff;
+	int   diff;
 
 	diff = now - nLastTick; //	TickCountが一回りしてもこれでうまくいくはず...
 

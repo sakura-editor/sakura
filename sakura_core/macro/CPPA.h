@@ -57,8 +57,7 @@ Pascalインタプリタコンポーネントです。
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class CPPA : public CDllImp
-{
+class CPPA : public CDllImp {
 public:
 	CPPA();
 	virtual ~CPPA();
@@ -132,7 +131,7 @@ private:
 	typedef void(WINAPI *PPA_SetFinishProc)(void *p); //	2003.06.01 Moca
 #endif												  // PPADLL_VER >= 123
 
-	PPA_Execute	   m_fnExecute;
+	PPA_Execute	m_fnExecute;
 	PPA_SetSource  m_fnSetSource;
 	PPA_SetDeclare m_fnSetDeclare;
 	PPA_SetDefProc m_fnSetDefProc;
@@ -141,9 +140,9 @@ private:
 	PPA_AddStrVar  m_fnAddStrVar;
 	PPA_SetIntFunc m_fnSetIntFunc;
 	PPA_SetStrFunc m_fnSetStrFunc;
-	PPA_SetProc	   m_fnSetProc;
+	PPA_SetProc	m_fnSetProc;
 	PPA_SetErrProc m_fnSetErrProc;
-	PPA_Abort	   m_fnAbort;
+	PPA_Abort	  m_fnAbort;
 	PPA_GetVersion m_fnGetVersion;
 	PPA_DeleteVar  m_fnDeleteVar;
 	PPA_GetArgInt  m_fnGetArgInt;
@@ -160,17 +159,17 @@ private:
 	PPA_SetStrVar  m_fnSetStrVar;
 
 #if PPADLL_VER >= 120
-	PPA_AddRealVar	m_fnAddRealVar;
-	PPA_SetRealObj	m_fnSetRealObj;
-	PPA_AddRealObj	m_fnAddRealObj;
-	PPA_GetRealVar	m_fnGetRealVar;
-	PPA_SetRealVar	m_fnSetRealVar;
+	PPA_AddRealVar  m_fnAddRealVar;
+	PPA_SetRealObj  m_fnSetRealObj;
+	PPA_AddRealObj  m_fnAddRealObj;
+	PPA_GetRealVar  m_fnGetRealVar;
+	PPA_SetRealVar  m_fnSetRealVar;
 	PPA_SetRealFunc m_fnSetRealFunc;
-	PPA_GetArgReal	m_fnGetArgReal;
+	PPA_GetArgReal  m_fnGetArgReal;
 #endif
 
 #if PPADLL_VER >= 123
-	PPA_IsRunning	  m_fnIsRunning;
+	PPA_IsRunning	 m_fnIsRunning;
 	PPA_SetFinishProc m_fnSetFinishProc; //	2003.06.01 Moca
 #endif
 
@@ -192,14 +191,14 @@ public:
 	//	int  GetVersion()
 	//		{ return m_fnGetVersion(); }
 	void  DeleteVar(const char *ss) { m_fnDeleteVar(ss); }
-	int	  GetArgInt(int index) { return m_fnGetArgInt(index); }
+	int   GetArgInt(int index) { return m_fnGetArgInt(index); }
 	char *GetArgStr(int index) { return m_fnGetArgStr(index); }
 	char *GetArgBStr(int index) { return m_fnGetArgBStr(index); }
 	void  SetStrObj(void *proc) { m_fnSetStrObj(proc); }
 	void  SetIntObj(void *proc) { m_fnSetIntObj(proc); }
 	void  AddIntObj(const char *ss, int def, BOOL read, int index) { m_fnAddIntObj(ss, def, read, index); }
 	void  AddStrObj(const char *ss, const char *def, BOOL read, int index) { m_fnAddStrObj(ss, def, read, index); }
-	int	  GetIntVar(const char *ss) { return m_fnGetIntVar(ss); }
+	int   GetIntVar(const char *ss) { return m_fnGetIntVar(ss); }
 	char *GetStrVar(const char *ss) { return m_fnGetStrVar(ss); }
 	char *GetBStrVar(const char *ss) { return m_fnGetBStrVar(ss); }
 	BOOL  SetIntVar(const char *ss, int val) { return m_fnSetIntVar(ss, val); }
@@ -244,13 +243,12 @@ private:
 
 	//	2007.07.26 genta : PPAのネストを許容するために，別データ構造とする．
 
-	struct PpaExecInfo
-	{
+	struct PpaExecInfo {
 		CNativeA	  m_cMemRet;	//!< コールバックからDLLに渡す文字列を保持
-		CEditView *	  m_pcEditView; //	2003.06.01 Moca
+		CEditView *   m_pcEditView; //	2003.06.01 Moca
 		DLLSHAREDATA *m_pShareData; //	2003.06.01 Moca
 		bool		  m_bError;		//!< エラーが2回表示されるのを防ぐ	2003.06.01 Moca
-		CNativeA	  m_cMemDebug;	//!< デバッグ用変数UserErrorMes 2003.06.01 Moca
+		CNativeA	  m_cMemDebug;  //!< デバッグ用変数UserErrorMes 2003.06.01 Moca
 		/** オプションフラグ
 
 			CEditView::HandleCommand()にコマンドと一緒に渡すことで

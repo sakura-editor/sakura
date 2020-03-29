@@ -33,21 +33,21 @@ const unsigned char gm_keyword_char[128] = {
 	/* 0         1         2         3         4         5         6         7         8         9         A         B
 	   C         D         E         F             : 0123456789ABCDEF */
 	CK_CTRL,  CK_CTRL, CK_CTRL, CK_CTRL, CK_CTRL, CK_CTRL, CK_CTRL, CK_CTRL,
-	CK_CTRL,  CK_TAB,  CK_LF,	CK_CTRL, CK_CTRL, CK_CR,   CK_CTRL, CK_CTRL, /* 0: ................ */
+	CK_CTRL,  CK_TAB,  CK_LF,   CK_CTRL, CK_CTRL, CK_CR,   CK_CTRL, CK_CTRL, /* 0: ................ */
 	CK_CTRL,  CK_CTRL, CK_CTRL, CK_CTRL, CK_CTRL, CK_CTRL, CK_CTRL, CK_CTRL,
 	CK_CTRL,  CK_CTRL, CK_CTRL, CK_CTRL, CK_CTRL, CK_CTRL, CK_CTRL, CK_CTRL, /* 1: ................ */
-	CK_SPACE, CK_ETC,  CK_ETC,	CK_UDEF, CK_UDEF, CK_ETC,  CK_ETC,	CK_ETC,
-	CK_ETC,	  CK_ETC,  CK_ETC,	CK_ETC,	 CK_ETC,  CK_ETC,  CK_ETC,	CK_ETC, /* 2:  !"#$%&'()*+,-./ */
+	CK_SPACE, CK_ETC,  CK_ETC,  CK_UDEF, CK_UDEF, CK_ETC,  CK_ETC,  CK_ETC,
+	CK_ETC,   CK_ETC,  CK_ETC,  CK_ETC,  CK_ETC,  CK_ETC,  CK_ETC,  CK_ETC, /* 2:  !"#$%&'()*+,-./ */
 	CK_CSYM,  CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM,
-	CK_CSYM,  CK_CSYM, CK_ETC,	CK_ETC,	 CK_ETC,  CK_ETC,  CK_ETC,	CK_ETC, /* 3: 0123456789:;<=>? */
+	CK_CSYM,  CK_CSYM, CK_ETC,  CK_ETC,  CK_ETC,  CK_ETC,  CK_ETC,  CK_ETC, /* 3: 0123456789:;<=>? */
 	CK_UDEF,  CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM,
 	CK_CSYM,  CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, /* 4: @ABCDEFGHIJKLMNO */
 	CK_CSYM,  CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM,
-	CK_CSYM,  CK_CSYM, CK_CSYM, CK_ETC,	 CK_UDEF, CK_ETC,  CK_ETC,	CK_CSYM, /* 5: PQRSTUVWXYZ[\]^_ */
-	CK_ETC,	  CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM,
+	CK_CSYM,  CK_CSYM, CK_CSYM, CK_ETC,  CK_UDEF, CK_ETC,  CK_ETC,  CK_CSYM, /* 5: PQRSTUVWXYZ[\]^_ */
+	CK_ETC,   CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM,
 	CK_CSYM,  CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, /* 6: `abcdefghijklmno */
 	CK_CSYM,  CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM, CK_CSYM,
-	CK_CSYM,  CK_CSYM, CK_CSYM, CK_ETC,	 CK_ETC,  CK_ETC,  CK_ETC,	CK_CTRL, /* 7: pqrstuvwxyz{|}~. */
+	CK_CSYM,  CK_CSYM, CK_CSYM, CK_ETC,  CK_ETC,  CK_ETC,  CK_ETC,  CK_CTRL, /* 7: pqrstuvwxyz{|}~. */
 	/* 0: not-keyword, 1:__iscsym(), 2:user-define */
 };
 
@@ -63,8 +63,8 @@ bool IsHankaku(wchar_t wc)
 
 	//参考：http://www.swanq.co.jp/blog/archives/000783.html
 	if (wc <= 0x007E // ACODEとか
-		//			|| wc==0x00A5 //円マーク
-		//			|| wc==0x203E //にょろ
+					 //			|| wc==0x00A5 //円マーク
+					 //			|| wc==0x203E //にょろ
 		|| (wc >= 0xFF61 && wc <= 0xFF9f) // 半角カタカナ
 	)
 		return true;
@@ -78,12 +78,14 @@ bool IsHankaku(wchar_t wc)
 		|| wc >= 0x3400 && wc <= 0x4DB5 // Unified Ideographs Extension A, CJK
 	) {
 		wc = 0x4E00; // '一'(0x4E00)の幅で代用
-	} else
+	}
+	else
 		// ハングルはすべて同一幅とみなす	// 2013.04.08 aroka
 		if (wc >= 0xAC00 && wc <= 0xD7A3) // Hangul Syllables
 	{
 		wc = 0xAC00; // (0xAC00)の幅で代用
-	} else
+	}
+	else
 		// 外字はすべて同一幅とみなす	// 2013.04.08 aroka
 		if (wc >= 0xE000 && wc <= 0xE8FF) // Private Use Area
 	{
@@ -141,8 +143,7 @@ bool IsControlCode(wchar_t wc)
 	10:全角
 	11:-
 */
-class LocalCache
-{
+class LocalCache {
 public:
 	LocalCache()
 	{
@@ -151,10 +152,10 @@ public:
 		memset(&m_lf2, 0, sizeof(m_lf2));
 
 		// HDC の初期化
-		m_hdc	  = NULL;
+		m_hdc	 = NULL;
 		m_hdcFull = NULL;
 
-		m_hFont	   = NULL;
+		m_hFont	= NULL;
 		m_hFontOld = NULL;
 		m_pCache   = 0;
 	}
@@ -199,17 +200,18 @@ public:
 		m_lf2 = lfFull;
 
 		m_hFont		   = ::CreateFontIndirect(&lf);
-		m_hFontOld	   = (HFONT)SelectObject(m_hdc, m_hFont);
+		m_hFontOld	 = (HFONT)SelectObject(m_hdc, m_hFont);
 		bool bFullFont = !IsEqual(lf, lfFull);
 		if (bFullFont) {
 			m_bMultiFont   = true;
-			m_hdcFull	   = CreateCompatibleDC(hdcOrg);
-			m_hFontFull	   = ::CreateFontIndirect(&lfFull);
+			m_hdcFull	  = CreateCompatibleDC(hdcOrg);
+			m_hFontFull	= ::CreateFontIndirect(&lfFull);
 			m_hFontFullOld = (HFONT)SelectObject(m_hdcFull, m_hFontFull);
-		} else {
+		}
+		else {
 			m_bMultiFont   = false;
-			m_hdcFull	   = NULL;
-			m_hFontFull	   = NULL;
+			m_hdcFull	  = NULL;
+			m_hFontFull	= NULL;
 			m_hFontFullOld = NULL;
 		}
 		s_MultiFont = m_bMultiFont;
@@ -260,13 +262,13 @@ public:
 		return (size.cx <= m_han_size.cx);
 	}
 	bool IsHankakuByWidth(int width) { return width <= m_han_size.cx; }
-	int	 CalcPxWidthByFont(wchar_t c)
+	int  CalcPxWidthByFont(wchar_t c)
 	{
 		SIZE size = {m_han_size.cx * 2, 0}; //関数が失敗したときのことを考え、全角幅で初期化しておく
 		// 2014.12.21 コントロールコードの表示・NULが1px幅になるのをスペース幅にする
 		if (WCODE::IsControlCode(c)) {
 			GetTextExtentPoint32(SelectHDC(c), &c, 1, &size);
-			const int	  nCx		= size.cx;
+			const int	 nCx		= size.cx;
 			const wchar_t proxyChar = ((L'\0' == c) ? ' ' : L'･');
 			GetTextExtentPoint32(SelectHDC(proxyChar), &proxyChar, 1, &size);
 			return t_max<int>(nCx, size.cx);
@@ -299,8 +301,7 @@ private:
 	SCharWidthCache *m_pCache;
 };
 
-class LocalCacheSelector
-{
+class LocalCacheSelector {
 public:
 	LocalCacheSelector()
 	{
@@ -327,9 +328,8 @@ public:
 		ECharWidthCacheMode cmode = (cMode == CWM_CACHE_NEUTRAL) ? m_eLastEditCacheMode : cMode;
 
 		pcache = &m_localcache[fMode];
-		if (cmode == CWM_CACHE_SHARE) {
-			pcache->SelectCache(&(GetDllShareData().m_sCharWidth));
-		} else {
+		if (cmode == CWM_CACHE_SHARE) { pcache->SelectCache(&(GetDllShareData().m_sCharWidth)); }
+		else {
 			if (m_parCache[fMode] == 0) { m_parCache[fMode] = new SCharWidthCache; }
 			pcache->SelectCache(m_parCache[fMode]);
 		}
@@ -341,7 +341,7 @@ public:
 private:
 	LocalCache *		pcache;
 	LocalCache			m_localcache[3];
-	SCharWidthCache *	m_parCache[3];
+	SCharWidthCache *   m_parCache[3];
 	ECharWidthCacheMode m_eLastEditCacheMode;
 	DISALLOW_COPY_AND_ASSIGN(LocalCacheSelector);
 };

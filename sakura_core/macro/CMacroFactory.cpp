@@ -93,7 +93,8 @@ bool CMacroFactory::Unregister(Creator f)
 			m_mMacroCreators.erase(tmp_it);
 			//	重複登録されている場合を考慮して，
 			//	1つ見つかっても最後までチェックする
-		} else {
+		}
+		else {
 			++c_it;
 		}
 	}

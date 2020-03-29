@@ -40,8 +40,8 @@
 	今のところDeinitDllが使われている箇所が無いので、このクラスの出番はありませんが。
 	2008.05.10 kobake 作成
 */
-template<class DLLIMP> class CDllHandler
-{
+template<class DLLIMP>
+class CDllHandler {
 public:
 	//コンストラクタ・デストラクタ
 	CDllHandler()
@@ -66,8 +66,7 @@ private:
 };
 
 //!結果定数
-enum EDllResult
-{
+enum EDllResult {
 	DLL_SUCCESS,	 //成功
 	DLL_LOADFAILURE, // DLLロード失敗
 	DLL_INITFAILURE, //初期処理に失敗
@@ -85,8 +84,7 @@ enum EDllResult
 										純粋仮想関数はやめてプレースホルダーを用意する．
 	@date 2008.05.10 kobake 整理。派生クラスは、～Impをオーバーロードすれば良いという方式です。
 */
-class CDllImp
-{
+class CDllImp {
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                            型                               //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -96,8 +94,7 @@ public:
 		@author YAZAKI
 		@date 2002.01.26
 	*/
-	struct ImportTable
-	{
+	struct ImportTable {
 		void *		proc;
 		const char *name;
 	};
@@ -203,6 +200,6 @@ protected:
 	//                        メンバ変数                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 private:
-	HINSTANCE	 m_hInstance;
+	HINSTANCE	m_hInstance;
 	std::wstring m_strLoadedDllName;
 };

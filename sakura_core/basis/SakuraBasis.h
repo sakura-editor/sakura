@@ -36,20 +36,20 @@
 #include "CStrictInteger.h"
 
 //ロジック単位
-typedef CStrictInteger<0,	 //!< 型を分けるための数値。
+typedef CStrictInteger<0,	//!< 型を分けるための数値。
 					   true, //!< intとの比較を許すかどうか
 					   true, //!< intとの加減算を許すかどうか
 					   true, //!< intへの暗黙の変換を許すかどうか
-					   true	 //!< intの代入を許すかどうか
+					   true  //!< intの代入を許すかどうか
 					   >
 	CLogicInt;
 
 //レイアウト単位
-typedef CStrictInteger<1,	  //!< 型を分けるための数値。
+typedef CStrictInteger<1,	 //!< 型を分けるための数値。
 					   true,  //!< intとの比較を許すかどうか
 					   true,  //!< intとの加減算を許すかどうか
 					   false, //!< intへの暗黙の変換を許すかどうか
-					   true	  //!< intの代入を許すかどうか
+					   true   //!< intの代入を許すかどうか
 					   >
 	CLayoutInt;
 
@@ -84,18 +84,16 @@ typedef int			CKetaXInt;
 #include "CStrictRect.h"
 
 //ロジック単位
-struct SLogicPoint
-{
+struct SLogicPoint {
 	CLogicInt x;
 	CLogicInt y;
 }; //基底構造体
 typedef CStrictPoint<SLogicPoint, CLogicInt> CLogicPoint;
 typedef CRangeBase<CLogicPoint>				 CLogicRange;
-typedef CStrictRect<CLogicInt, CLogicPoint>	 CLogicRect;
+typedef CStrictRect<CLogicInt, CLogicPoint>  CLogicRect;
 
 //レイアウト単位
-struct SLayoutPoint
-{
+struct SLayoutPoint {
 	CLayoutInt x;
 	CLayoutInt y;
 }; //基底構造体
@@ -113,7 +111,8 @@ typedef CRangeBase<CMyPoint> SelectionRange;
 #include "CMyRect.h"
 
 //変換関数
-template<class POINT_T> inline void TwoPointToRange(CRangeBase<POINT_T> *prangeDst, POINT_T pt1, POINT_T pt2)
+template<class POINT_T>
+inline void TwoPointToRange(CRangeBase<POINT_T> *prangeDst, POINT_T pt1, POINT_T pt2)
 {
 	CMyRect rc;
 	TwoPointToRect(&rc, pt1, pt2);
@@ -129,14 +128,16 @@ inline void TwoPointToRect(CStrictRect<INT_TYPE, CStrictPoint<T, INT_TYPE>> *prc
 	if (pt1.y < pt2.y) {
 		prcRect->top	= pt1.GetY2();
 		prcRect->bottom = pt2.GetY2();
-	} else {
+	}
+	else {
 		prcRect->top	= pt2.GetY2();
 		prcRect->bottom = pt1.GetY2();
 	}
 	if (pt1.x < pt2.x) {
 		prcRect->left  = pt1.GetX2();
 		prcRect->right = pt2.GetX2();
-	} else {
+	}
+	else {
 		prcRect->left  = pt2.GetX2();
 		prcRect->right = pt1.GetX2();
 	}

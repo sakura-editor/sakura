@@ -135,10 +135,10 @@ void CDlgWindowList::SetData()
 
 			LV_ITEM lvi;
 			lvi.mask	 = LVIF_TEXT | LVIF_PARAM;
-			lvi.pszText	 = szName;
-			lvi.iItem	 = i;
+			lvi.pszText  = szName;
+			lvi.iItem	= i;
 			lvi.iSubItem = 0;
-			lvi.lParam	 = (LPARAM)pEditNode[i].GetHwnd();
+			lvi.lParam   = (LPARAM)pEditNode[i].GetHwnd();
 			ListView_InsertItem(hwndList, &lvi);
 		}
 
@@ -175,8 +175,8 @@ BOOL CDlgWindowList::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 
 	RECT rcDialog = GetDllShareData().m_Common.m_sOthers.m_rcWindowListDialog;
 	if (rcDialog.left != 0 || rcDialog.bottom != 0) {
-		m_xPos	  = rcDialog.left;
-		m_yPos	  = rcDialog.top;
+		m_xPos	= rcDialog.left;
+		m_yPos	= rcDialog.top;
 		m_nWidth  = rcDialog.right - rcDialog.left;
 		m_nHeight = rcDialog.bottom - rcDialog.top;
 	}
@@ -192,7 +192,7 @@ BOOL CDlgWindowList::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	col.fmt		   = LVCFMT_LEFT;
 	col.cx		   = rcListView.right - rcListView.left - ::GetSystemMetrics(SM_CXVSCROLL) - 10;
 	WCHAR szNull[] = L"";
-	col.pszText	   = szNull;
+	col.pszText	= szNull;
 	col.iSubItem   = 0;
 	ListView_InsertColumn(hwndList, 0, &col);
 	LONG lngStyle = ListView_GetExtendedListViewStyle(hwndList);

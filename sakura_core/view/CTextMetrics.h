@@ -30,8 +30,7 @@
 
 class CTextMetrics;
 
-class CTextMetrics
-{
+class CTextMetrics {
 public:
 	//コンストラクタ・デストラクタ
 	CTextMetrics();
@@ -71,9 +70,9 @@ public:
 	const int *GetDxArray_AllZenkaku() const { return m_anZenkakuDx; } //!<半角文字列の文字間隔配列を取得。要素数は64。
 
 	const int *GenerateDxArray2(std::vector<int> *vResultArray, //!< [out] 文字間隔配列の受け取りコンテナ
-								const wchar_t *	  pText,		//!< [in]  文字列
+								const wchar_t *   pText,		//!< [in]  文字列
 								int				  nLength		//!< [in]  文字列長
-	) const
+								) const
 	{
 		return GenerateDxArray(vResultArray, pText, nLength, GetHankakuDx(), 8, 0, GetCharSpacing());
 	}
@@ -83,26 +82,26 @@ public:
 									  const wchar_t *pText,			  //!< [in]  文字列
 									  int			 nLength,		  //!< [in]  文字列長
 									  int			 nHankakuDx,	   //!< [in]  半角文字の文字間隔
-									  int			 nTabSpace	  = 8, //   [in]  TAB幅
+									  int			 nTabSpace	= 8, //   [in]  TAB幅
 									  int			 nIndent	  = 0, //   [in]  インデント
 									  int			 nCharSpacing = 0  //   [in]  文字の間隔
 	);
 
 	//!文字列のピクセル幅を返す。
-	static int CalcTextWidth(const wchar_t *pText,	 //!< 文字列
+	static int CalcTextWidth(const wchar_t *pText,   //!< 文字列
 							 int			nLength, //!< 文字列長
 							 const int *	pnDx	 //!< 文字間隔の入った配列
 	);
 
 	//!文字列のピクセル幅を返す。
 	static int CalcTextWidth2(const wchar_t *pText,		 //!< 文字列
-							  int			 nLength,	 //!< 文字列長
+							  int			 nLength,	//!< 文字列長
 							  int			 nHankakuDx, //!< 半角文字の文字間隔
 							  int			 nCharSpacing);
 
 	int CalcTextWidth3(const wchar_t *pText,  //!< 文字列
 					   int			  nLength //!< 文字列長
-	) const;
+					   ) const;
 
 private:
 	//	HDC m_hdc; //!< 計算に用いるデバイスコンテキスト

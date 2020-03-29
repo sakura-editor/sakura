@@ -32,8 +32,7 @@
 #include "env/CDocTypeManager.h"
 #include "types/CType.h" // CTypeConfig
 
-class CDocType
-{
+class CDocType {
 public:
 	//生成と破棄
 	CDocType(CEditDoc *pcDoc);
@@ -63,7 +62,7 @@ public:
 	void SetDocumentIcon(); //アイコンの設定	//Sep. 10, 2002 genta
 
 private:
-	CEditDoc *	m_pcDocRef;
+	CEditDoc *  m_pcDocRef;
 	CTypeConfig m_nSettingType;
 	STypeConfig m_typeConfig;
 	bool		m_nSettingTypeLocked; //!< 文書種別の一時設定状態

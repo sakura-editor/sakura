@@ -28,12 +28,11 @@
 */
 #pragma once
 
-class CRecycledBuffer
-{
+class CRecycledBuffer {
 	//コンフィグ
 private:
-	static const int BLOCK_SIZE	 = 1024; //ブロックサイズ。バイト単位。
-	static const int CHAIN_COUNT = 64;	 //再利用可能なブロック数。
+	static const int BLOCK_SIZE  = 1024; //ブロックサイズ。バイト単位。
+	static const int CHAIN_COUNT = 64;   //再利用可能なブロック数。
 
 	//コンストラクタ・デストラクタ
 public:
@@ -52,16 +51,19 @@ public:
 	}
 
 	//!領域の要素数を取得。T単位
-	template<class T> size_t GetMaxCount() const { return BLOCK_SIZE / sizeof(T); }
+	template<class T>
+	size_t GetMaxCount() const
+	{
+		return BLOCK_SIZE / sizeof(T);
+	}
 
 	//メンバ変数
 private:
 	BYTE m_buf[CHAIN_COUNT][BLOCK_SIZE];
-	int	 m_current;
+	int  m_current;
 };
 
-class CRecycledBufferDynamic
-{
+class CRecycledBufferDynamic {
 	//コンフィグ
 private:
 	static const int CHAIN_COUNT = 64; //再利用可能なブロック数。
@@ -99,5 +101,5 @@ public:
 	//メンバ変数
 private:
 	BYTE *m_buf[CHAIN_COUNT];
-	int	  m_current;
+	int   m_current;
 };

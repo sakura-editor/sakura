@@ -98,8 +98,7 @@ BOOL CViewCommander::Command_FUNCLIST(int nAction, EOutlineType nOutlineType = O
 	// 2015.11.14 「C」「C++」「C/C++」から選べるように
 	case OUTLINE_C: // C/C++ は MakeFuncList_C
 	case OUTLINE_C_CPP:
-	case OUTLINE_CPP:
-	{
+	case OUTLINE_CPP: {
 		GetDocument()->m_cDocOutline.MakeFuncList_C(&cFuncInfoArr, nOutlineType,
 													GetDocument()->m_cDocFile.GetFilePath());
 		nListType = nOutlineType; // 変更された可能性あり
@@ -150,7 +149,7 @@ BOOL CViewCommander::Command_FUNCLIST(int nAction, EOutlineType nOutlineType = O
 				//プラグイン呼び出し
 				(*plugs.begin())->Invoke(m_pCommanderView, params);
 
-				nListType	   = objOutline->m_nListType;	  //ダイアログの表示方法をを上書き
+				nListType	  = objOutline->m_nListType;	 //ダイアログの表示方法をを上書き
 				sTitleOverride = objOutline->m_sOutlineTitle; //ダイアログタイトルを上書き
 
 				objOutline->Release();
@@ -174,7 +173,8 @@ BOOL CViewCommander::Command_FUNCLIST(int nAction, EOutlineType nOutlineType = O
 			poCaret.GetY2() + CLayoutInt(1), poCaret.GetX2() + CLayoutInt(1), nOutlineType, nListType,
 			m_pCommanderView->m_pTypeData->m_bLineNumIsCRLF /* 行番号の表示 false=折り返し単位／true=改行単位 */
 		);
-	} else {
+	}
+	else {
 		/* アクティブにする */
 		GetEditWindow()->m_cDlgFuncList.Redraw(nOutlineType, nListType, &cFuncInfoArr, poCaret.GetY2() + 1,
 											   poCaret.GetX2() + 1);

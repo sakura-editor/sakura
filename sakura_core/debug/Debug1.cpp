@@ -52,7 +52,7 @@ void DebugOutW(LPCWSTR lpFmt, ...)
 
 		::DebugBreak();
 
-		int	 count	   = _vscwprintf(lpFmt, argList);
+		int  count	 = _vscwprintf(lpFmt, argList);
 		auto pLargeBuf = std::make_unique<WCHAR[]>(count + 1);
 		if (vswprintf(&pLargeBuf[0], count + 1, lpFmt, argList) > 0) ::OutputDebugStringW(&pLargeBuf[0]);
 	}

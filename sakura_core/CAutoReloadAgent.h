@@ -27,16 +27,14 @@
 #include "doc/CDocListener.h"
 
 // ファイルが更新された場合に再読込を行うかどうかのフラグ
-enum WatchUpdate
-{
-	WU_QUERY,	 //!< 再読込を行うかどうかダイアログボックスで問い合わせる
-	WU_NOTIFY,	 //!< 更新されたことをステータスバーで通知
+enum WatchUpdate {
+	WU_QUERY,	//!< 再読込を行うかどうかダイアログボックスで問い合わせる
+	WU_NOTIFY,   //!< 更新されたことをステータスバーで通知
 	WU_NONE,	 //!< 更新監視を行わない
 	WU_AUTOLOAD, //!< 更新され未編集の場合に再ロード
 };
 
-class CAutoReloadAgent : public CDocListenerEx
-{
+class CAutoReloadAgent : public CDocListenerEx {
 public:
 	CAutoReloadAgent();
 	void OnBeforeSave(const SSaveInfo &sSaveInfo) override;

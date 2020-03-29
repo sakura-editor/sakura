@@ -62,8 +62,7 @@ class CInterfaceObjectTypeInfo: public ImplementsIUnknown<ITypeInfo>
 	@date Sep. 15, 2005 FILE IActiveScriptSiteWindow実装．
 		マクロでMsgBoxを使用可能にする．
 */
-class CWSHSite : public IActiveScriptSite, public IActiveScriptSiteWindow
-{
+class CWSHSite : public IActiveScriptSite, public IActiveScriptSiteWindow {
 private:
 	CWSHClient *m_Client;
 	ITypeInfo * m_TypeInfo;
@@ -73,7 +72,8 @@ public:
 	CWSHSite(CWSHClient *AClient)
 		: m_Client(AClient)
 		, m_RefCount(0)
-	{}
+	{
+	}
 
 	virtual ULONG STDMETHODCALLTYPE AddRef() { return ++m_RefCount; }
 
@@ -145,7 +145,7 @@ public:
 	}
 
 	virtual HRESULT STDMETHODCALLTYPE OnScriptTerminate(
-		/* [in] */ const VARIANT *	pvarResult,
+		/* [in] */ const VARIANT *  pvarResult,
 		/* [in] */ const EXCEPINFO *pexcepinfo)
 	{
 #ifdef TEST
@@ -249,7 +249,8 @@ CWSHClient::CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler,
 			if (m_Engine->SetScriptSite(Site) != S_OK) {
 				delete Site;
 				Error(LS(STR_ERR_CWSH03));
-			} else {
+			}
+			else {
 				m_Valid = true;
 			}
 		}
@@ -265,12 +266,11 @@ CWSHClient::~CWSHClient()
 }
 
 // AbortMacroProcのパラメータ構造体
-typedef struct
-{
+typedef struct {
 	HANDLE		   hEvent;
 	IActiveScript *pEngine; // ActiveScript
 	int			   nCancelTimer;
-	CEditView *	   view;
+	CEditView *	view;
 } SAbortMacroParam;
 
 // WSHマクロ実行を中止するスレッド
@@ -295,17 +295,17 @@ static unsigned __stdcall AbortMacroProc(LPVOID lpParameter)
 		bool bCanceled = false;
 		for (;;) {
 			DWORD dwResult = MsgWaitForMultipleObjects(1, &pParam->hEvent, FALSE, INFINITE, QS_ALLINPUT);
-			if (dwResult == WAIT_OBJECT_0) {
-				::SendMessage(cDlgCancel.GetHwnd(), WM_CLOSE, 0, 0);
-			} else if (dwResult == WAIT_OBJECT_0 + 1) {
+			if (dwResult == WAIT_OBJECT_0) { ::SendMessage(cDlgCancel.GetHwnd(), WM_CLOSE, 0, 0); }
+			else if (dwResult == WAIT_OBJECT_0 + 1) {
 				while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
-					if (cDlgCancel.GetHwnd() != NULL && ::IsDialogMessage(cDlgCancel.GetHwnd(), &msg)) {
-					} else {
+					if (cDlgCancel.GetHwnd() != NULL && ::IsDialogMessage(cDlgCancel.GetHwnd(), &msg)) {}
+					else {
 						::TranslateMessage(&msg);
 						::DispatchMessage(&msg);
 					}
 				}
-			} else {
+			}
+			else {
 				// MsgWaitForMultipleObjectsに与えたハンドルのエラー
 				break;
 			}
@@ -377,9 +377,11 @@ bool CWSHClient::Execute(const wchar_t *AScript)
 							IActiveScriptSite->OnScriptErrorに通知済み。
 							中断メッセージが既に表示されてるはず。
 						*/
-					} else if (hr != S_OK) {
+					}
+					else if (hr != S_OK) {
 						Error(LS(STR_ERR_CWSH08));
-					} else {
+					}
+					else {
 						bRet = true;
 					}
 				}

@@ -54,7 +54,7 @@
 LPWSTR CFileNameManager::GetTransformFileNameFast(LPCWSTR pszSrc, LPWSTR pszDest, int nDestLen, HDC hDC, bool bFitMode,
 												  int cchMaxWidth)
 {
-	int	  i;
+	int   i;
 	WCHAR szBuf[_MAX_PATH + 1];
 
 	if (-1 == m_nTransformFileNameCount) { TransformFileName_MakeCache(); }
@@ -78,9 +78,11 @@ LPWSTR CFileNameManager::GetTransformFileNameFast(LPCWSTR pszSrc, LPWSTR pszDest
 			wcscpy(szBuf, pszDest);
 			GetShortViewPath(pszDest, nDestLen, szBuf, hDC, nPxWidth, bFitMode);
 		}
-	} else if (nPxWidth != -1) {
+	}
+	else if (nPxWidth != -1) {
 		GetShortViewPath(pszDest, nDestLen, pszSrc, hDC, nPxWidth, bFitMode);
-	} else {
+	}
+	else {
 		// 変換する必要がない コピーだけする
 		wcsncpy(pszDest, pszSrc, nDestLen - 1);
 		pszDest[nDestLen - 1] = '\0';
@@ -123,9 +125,9 @@ LPCWSTR CFileNameManager::GetFilePathFormat(LPCWSTR pszSrc, LPWSTR pszDest, int 
 	int nFromLen, nToLen;
 	int nCopy;
 
-	nSrcLen	 = wcslen(pszSrc);
+	nSrcLen  = wcslen(pszSrc);
 	nFromLen = wcslen(pszFrom);
-	nToLen	 = wcslen(pszTo);
+	nToLen   = wcslen(pszTo);
 
 	nDestLen--;
 
@@ -140,7 +142,8 @@ LPCWSTR CFileNameManager::GetFilePathFormat(LPCWSTR pszSrc, LPWSTR pszDest, int 
 			memcpy(&pszDest[j], pszTo, nCopy * sizeof(WCHAR));
 			j += nCopy;
 			i += nFromLen - 1;
-		} else {
+		}
+		else {
 #if defined(_MBCS)
 			// SJIS 専用処理
 			if (_IS_SJIS_1((unsigned char)pszSrc[i]) && i + 1 < nSrcLen && _IS_SJIS_2((unsigned char)pszSrc[i + 1])) {
@@ -148,7 +151,8 @@ LPCWSTR CFileNameManager::GetFilePathFormat(LPCWSTR pszSrc, LPWSTR pszDest, int 
 					pszDest[j] = pszSrc[i];
 					j++;
 					i++;
-				} else {
+				}
+				else {
 					// SJISの先行バイトだけコピーされるのを防ぐ
 					break; // goto end_of_func;
 				}
@@ -175,12 +179,11 @@ LPCWSTR CFileNameManager::GetFilePathFormat(LPCWSTR pszSrc, LPWSTR pszDest, int 
 bool CFileNameManager::ExpandMetaToFolder(LPCWSTR pszSrc, LPWSTR pszDes, int nDesLen)
 {
 	LPCWSTR ps;
-	LPWSTR	pd, pd_end;
+	LPWSTR  pd, pd_end;
 
 #define _USE_META_ALIAS
 #ifdef _USE_META_ALIAS
-	struct MetaAlias
-	{
+	struct MetaAlias {
 		LPCWSTR szAlias;
 		int		nLenth;
 		LPCWSTR szOrig;
@@ -219,8 +222,8 @@ bool CFileNameManager::ExpandMetaToFolder(LPCWSTR pszSrc, LPWSTR pszDes, int nDe
 		}
 
 		if (L'\0' != ps[1]) {
-			WCHAR	szMeta[_MAX_PATH];
-			WCHAR	szPath[_MAX_PATH + 1];
+			WCHAR   szMeta[_MAX_PATH];
+			WCHAR   szPath[_MAX_PATH + 1];
 			int		nMetaLen;
 			int		nPathLen;
 			bool	bFolderPath;
@@ -244,7 +247,8 @@ bool CFileNameManager::ExpandMetaToFolder(LPCWSTR pszSrc, LPWSTR pszDes, int nDe
 				if (nMetaLen < _MAX_PATH) {
 					wmemcpy(szMeta, ps, nMetaLen);
 					szMeta[nMetaLen] = L'\0';
-				} else {
+				}
+				else {
 					*pd = L'\0';
 					return false;
 				}
@@ -261,7 +265,7 @@ bool CFileNameManager::ExpandMetaToFolder(LPCWSTR pszSrc, LPWSTR pszDes, int nDe
 				}
 #endif
 				// 直接レジストリで調べる
-				szPath[0]	= L'\0';
+				szPath[0]   = L'\0';
 				bFolderPath = ReadRegistry(HKEY_CURRENT_USER,
 										   L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders",
 										   szMeta, szPath, _countof(szPath));
@@ -275,9 +279,8 @@ bool CFileNameManager::ExpandMetaToFolder(LPCWSTR pszSrc, LPWSTR pszDes, int nDe
 					// 環境変数
 					if (NULL != pStr) {
 						nPathLen = wcslen(pStr);
-						if (nPathLen < _MAX_PATH) {
-							wcscpy(szPath, pStr);
-						} else {
+						if (nPathLen < _MAX_PATH) { wcscpy(szPath, pStr); }
+						else {
 							*pd = L'\0';
 							return false;
 						}
@@ -290,12 +293,14 @@ bool CFileNameManager::ExpandMetaToFolder(LPCWSTR pszSrc, LPWSTR pszDes, int nDe
 						pd += nMetaLen + 2;
 						ps += nMetaLen;
 						continue;
-					} else {
+					}
+					else {
 						*pd = L'\0';
 						return false;
 					}
 				}
-			} else {
+			}
+			else {
 				// %...%の終わりの%がない とりあえず，%をコピー
 				*pd = L'%';
 				pd++;
@@ -317,7 +322,8 @@ bool CFileNameManager::ExpandMetaToFolder(LPCWSTR pszSrc, LPWSTR pszDes, int nDe
 				if (_IS_SJIS_1((unsigned char)pStr2[nPathLen]) && _IS_SJIS_2((unsigned char)pStr2[nPathLen + 1])) {
 					// SJIS読み飛ばし
 					nPathLen++; // 2003/01/17 sui
-				} else
+				}
+				else
 #endif
 					if (L'\\' == pStr2[nPathLen] && L'\0' == pStr2[nPathLen + 1]) {
 					pStr2[nPathLen] = L'\0';
@@ -329,11 +335,13 @@ bool CFileNameManager::ExpandMetaToFolder(LPCWSTR pszSrc, LPWSTR pszDes, int nDe
 				wmemcpy(pd, pStr2, nPathLen);
 				pd += nPathLen;
 				ps += nMetaLen;
-			} else {
+			}
+			else {
 				*pd = L'\0';
 				return false;
 			}
-		} else {
+		}
+		else {
 			// 最後の文字が%だった
 			*pd = *ps;
 			pd++;
@@ -346,7 +354,7 @@ bool CFileNameManager::ExpandMetaToFolder(LPCWSTR pszSrc, LPWSTR pszDes, int nDe
 /* static */ WCHAR CFileNameManager::GetAccessKeyByIndex(int index, bool bZeroOrigin)
 {
 	if (index < 0) return 0;
-	int	  accKeyIndex = ((bZeroOrigin ? index : index + 1) % 36);
+	int   accKeyIndex = ((bZeroOrigin ? index : index + 1) % 36);
 	WCHAR c			  = (WCHAR)((accKeyIndex < 10) ? (L'0' + accKeyIndex) : (L'A' + accKeyIndex - 10));
 	return c;
 }
@@ -360,12 +368,14 @@ static void GetAccessKeyLabelByIndex(WCHAR *pszLabel, bool bEspaceAmp, int index
 			pszLabel[1] = c;
 			pszLabel[2] = L' ';
 			pszLabel[3] = L'\0';
-		} else {
+		}
+		else {
 			pszLabel[0] = c;
 			pszLabel[1] = L' ';
 			pszLabel[2] = L'\0';
 		}
-	} else {
+	}
+	else {
 		pszLabel[0] = L'\0';
 	}
 }
@@ -385,7 +395,8 @@ bool CFileNameManager::GetMenuFullLabel(WCHAR *pszOutput, int nBuffSize, bool bE
 		GetAccessKeyLabelByIndex(szAccKey, bEspaceAmp, index, bAccKeyZeroOrigin);
 		ret = auto_snprintf_s(pszOutput, nBuffSize, LS(STR_MENU_UNKOWN), szAccKey);
 		return 0 < ret;
-	} else if (pfi->m_bIsGrep) {
+	}
+	else if (pfi->m_bIsGrep) {
 
 		GetAccessKeyLabelByIndex(szAccKey, bEspaceAmp, index, bAccKeyZeroOrigin);
 		// pfi->m_szGrepKeyShort → cmemDes
@@ -401,7 +412,8 @@ bool CFileNameManager::GetMenuFullLabel(WCHAR *pszOutput, int nBuffSize, bool bE
 		if (bEspaceAmp) {
 			dupamp(cmemDes.GetStringPtr(), szMenu2);
 			pszKey = szMenu2;
-		} else {
+		}
+		else {
 			pszKey = cmemDes.GetStringPtr();
 		}
 
@@ -411,10 +423,12 @@ bool CFileNameManager::GetMenuFullLabel(WCHAR *pszOutput, int nBuffSize, bool bE
 		//	20100729 ExpandParameterにあわせて、・・・を...に変更
 		ret = auto_snprintf_s(pszOutput, nBuffSize, LS(STR_MENU_GREP), szAccKey, pszKey,
 							  (nGrepKeyLen > cmemDes.GetStringLength()) ? L"..." : L"");
-	} else if (pfi->m_bIsDebug) {
+	}
+	else if (pfi->m_bIsDebug) {
 		GetAccessKeyLabelByIndex(szAccKey, bEspaceAmp, index, bAccKeyZeroOrigin);
 		ret = auto_snprintf_s(pszOutput, nBuffSize, LS(STR_MENU_OUTPUT), szAccKey);
-	} else {
+	}
+	else {
 		return GetMenuFullLabel(pszOutput, nBuffSize, bEspaceAmp, pfi->m_szPath, nId, pfi->m_bIsModified,
 								pfi->m_nCharCode, bFavorite, index, bAccKeyZeroOrigin, hDC);
 	}
@@ -440,22 +454,22 @@ bool CFileNameManager::GetMenuFullLabel(WCHAR *pszOutput, int nBuffSize, bool bE
 		if (bEspaceAmp) {
 			dupamp(szFileName, szMenu2);
 			pszName = szMenu2;
-		} else {
+		}
+		else {
 			pszName = szFileName;
 		}
-	} else {
-		if (nId == -1) {
-			wsprintf(szFileName, LS(STR_NO_TITLE1));
-		} else {
+	}
+	else {
+		if (nId == -1) { wsprintf(szFileName, LS(STR_NO_TITLE1)); }
+		else {
 			wsprintf(szFileName, L"%s%d", LS(STR_NO_TITLE1), nId);
 		}
 		pszName = szFileName;
 	}
 	const WCHAR *pszCharset = L"";
 	WCHAR		 szCodePageName[100];
-	if (IsValidCodeTypeExceptSJIS(nCharCode)) {
-		pszCharset = CCodeTypeName(nCharCode).Bracket();
-	} else if (IsValidCodeOrCPTypeExceptSJIS(nCharCode)) {
+	if (IsValidCodeTypeExceptSJIS(nCharCode)) { pszCharset = CCodeTypeName(nCharCode).Bracket(); }
+	else if (IsValidCodeOrCPTypeExceptSJIS(nCharCode)) {
 		CCodePage::GetNameBracket(szCodePageName, nCharCode);
 		pszCharset = szCodePageName;
 	}
@@ -490,7 +504,8 @@ void CFileNameManager::GetIniFileNameDirect(LPWSTR pszPrivateIniFile, LPWSTR psz
 
 	if (pszProfName[0] == '\0') {
 		auto_snprintf_s(pszIniFile, _MAX_PATH - 1, L"%s%s%s%s", szDrive, szDir, szFname, L".ini");
-	} else {
+	}
+	else {
 		auto_snprintf_s(pszIniFile, _MAX_PATH - 1, L"%s%s%s\\%s%s", szDrive, szDir, pszProfName, szFname, L".ini");
 	}
 
@@ -522,7 +537,8 @@ void CFileNameManager::GetIniFileNameDirect(LPWSTR pszPrivateIniFile, LPWSTR psz
 			if (GetSpecialFolderPath(nFolder, szPath)) {
 				if (pszProfName[0] == '\0') {
 					auto_snprintf_s(pszPrivateIniFile, _MAX_PATH - 1, L"%s\\%s\\%s%s", szPath, szDir, szFname, L".ini");
-				} else {
+				}
+				else {
 					auto_snprintf_s(pszPrivateIniFile, _MAX_PATH - 1, L"%s\\%s\\%s\\%s%s", szPath, szDir, pszProfName,
 									szFname, L".ini");
 				}
@@ -553,7 +569,7 @@ void CFileNameManager::GetIniFileName(LPWSTR pszIniFileName, LPCWSTR pszProfName
 		GetIniFileNameDirect(m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile,
 							 m_pShareData->m_sFileNameManagement.m_IniFolder.m_szIniFile, pszProfName);
 		if (m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile[0] != L'\0') {
-			m_pShareData->m_sFileNameManagement.m_IniFolder.m_bReadPrivate	= true;
+			m_pShareData->m_sFileNameManagement.m_IniFolder.m_bReadPrivate  = true;
 			m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate = true;
 			if (CCommandLine::getInstance()->IsNoWindow() && CCommandLine::getInstance()->IsWriteQuit())
 				m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate = false;
@@ -568,7 +584,8 @@ void CFileNameManager::GetIniFileName(LPWSTR pszIniFileName, LPCWSTR pszProfName
 				auto_snprintf_s(szPath, _MAX_PATH - 1, L"%s\\%s", szDrive, szDir);
 				MakeSureDirectoryPathExistsW(szPath);
 			}
-		} else {
+		}
+		else {
 			if (pszProfName[0] != L'\0') {
 				WCHAR szPath[_MAX_PATH];
 				WCHAR szDrive[_MAX_DRIVE];

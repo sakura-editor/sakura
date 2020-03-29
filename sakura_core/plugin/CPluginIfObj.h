@@ -35,11 +35,9 @@
 #include "view/CEditView.h"
 #include "window/CEditWnd.h"
 
-class CPluginIfObj : public CWSHIfObj
-{
+class CPluginIfObj : public CWSHIfObj {
 	// 型定義
-	enum FuncId
-	{
+	enum FuncId {
 		F_PL_COMMAND_FIRST = 0,					//↓コマンドは以下に追加する
 		F_PL_SETOPTION,							//オプションファイルに値を書く
 		F_PL_ADDCOMMAND,						//コマンドを追加する
@@ -50,7 +48,7 @@ class CPluginIfObj : public CWSHIfObj
 		F_PL_GETCOMMANDNO,						//実行中プラグの番号を取得する
 		F_PL_GETSTRING,							//設定ファイルから文字列を読みだす(多言語対応)
 	};
-	typedef std::string	 string;
+	typedef std::string  string;
 	typedef std::wstring wstring;
 
 	// コンストラクタ
@@ -58,7 +56,8 @@ public:
 	CPluginIfObj(CPlugin &cPlugin)
 		: CWSHIfObj(L"Plugin", false)
 		, m_cPlugin(cPlugin)
-	{}
+	{
+	}
 
 	// デストラクタ
 public:
@@ -85,7 +84,7 @@ public:
 			Wrap(&Result)->Receive(S);
 		}
 			return true;
-		case F_PL_GETDEF:	 //設定ファイルから値を読む
+		case F_PL_GETDEF:	//設定ファイルから値を読む
 		case F_PL_GETOPTION: //オプションファイルから値を読む
 		{
 			CDataProfile cProfile;
@@ -96,9 +95,8 @@ public:
 			if (variant_to_wstr(Arguments[1], sKey) != true) return false;
 
 			cProfile.SetReadingMode();
-			if (LOWORD(ID) == F_PL_GETDEF) {
-				cProfile.ReadProfile(m_cPlugin.GetPluginDefPath().c_str());
-			} else {
+			if (LOWORD(ID) == F_PL_GETDEF) { cProfile.ReadProfile(m_cPlugin.GetPluginDefPath().c_str()); }
+			else {
 				cProfile.ReadProfile(m_cPlugin.GetOptionPath().c_str());
 			}
 			if (!cProfile.IOProfileData(sSection.c_str(), sKey.c_str(), sValue) && LOWORD(ID) == F_PL_GETOPTION) {
@@ -124,18 +122,18 @@ public:
 			Wrap(&Result)->Receive(m_nPlugIndex);
 		}
 			return true;
-		case F_PL_GETSTRING:
-		{
+		case F_PL_GETSTRING: {
 			int num;
 			if (variant_to_int(Arguments[0], num) == false) return false;
 			if (0 < num && num < MAX_PLUG_STRING) {
 				std::wstring &str = m_cPlugin.m_aStrings[num];
-				SysString	  S(str.c_str(), str.size());
+				SysString	 S(str.c_str(), str.size());
 				Wrap(&Result)->Receive(S);
 				return true;
-			} else if (0 == num) {
+			}
+			else if (0 == num) {
 				std::wstring str = m_cPlugin.m_sLangName.c_str();
-				SysString	 S(str.c_str(), str.size());
+				SysString	S(str.c_str(), str.size());
 				Wrap(&Result)->Receive(S);
 				return true;
 			}
@@ -182,7 +180,8 @@ private:
 
 //コマンド情報
 MacroFuncInfo CPluginIfObj::m_MacroFuncInfoCommandArr[] = {
-	// ID									関数名							引数										戻り値の型
+	// ID									関数名							引数
+	// 戻り値の型
 	// m_pszData
 	{EFunctionCode(F_PL_SETOPTION),
 	 LTEXT("SetOption"),
@@ -199,7 +198,8 @@ MacroFuncInfo CPluginIfObj::m_MacroFuncInfoCommandArr[] = {
 
 //関数情報
 MacroFuncInfo CPluginIfObj::m_MacroFuncInfoArr[] = {
-	// ID									関数名							引数										戻り値の型
+	// ID									関数名							引数
+	// 戻り値の型
 	// m_pszData
 	{EFunctionCode(F_PL_GETPLUGINDIR),
 	 LTEXT("GetPluginDir"),

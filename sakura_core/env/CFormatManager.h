@@ -31,8 +31,7 @@
 // #include "DLLSHAREDATA.h"
 
 //!書式管理
-class CFormatManager
-{
+class CFormatManager {
 public:
 	CFormatManager() { m_pShareData = &GetDllShareData(); }
 	//書式 //@@@ 2002.2.9 YAZAKI

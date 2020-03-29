@@ -77,7 +77,7 @@ static std::wstring GetProfileMgrFileName(LPCWSTR profName = NULL)
 	static WCHAR  szPath[_MAX_PATH];
 	static WCHAR  szPath2[_MAX_PATH];
 	static WCHAR *pszPath;
-	static bool	  bSet = false;
+	static bool   bSet = false;
 	if (bSet == false) {
 		pszPath = szPath;
 		CFileNameManager::GetIniFileNameDirect(szPath, szPath2, L"");
@@ -95,7 +95,8 @@ static std::wstring GetProfileMgrFileName(LPCWSTR profName = NULL)
 		::GetModuleFileName(NULL, szExePath, _countof(szExePath));
 		_wsplitpath(szExePath, NULL, NULL, szFname, NULL);
 		auto_snprintf_s(szIniFile, _MAX_PATH - 1, L"%s\\%s_prof%s", szDir, szFname, L".ini");
-	} else {
+	}
+	else {
 		auto_snprintf_s(szIniFile, _MAX_PATH - 1, L"%s\\%s", szDir, profName);
 	}
 
@@ -107,7 +108,7 @@ void CDlgProfileMgr::SetData() { SetData(-1); }
 
 void CDlgProfileMgr::SetData(int nSelIndex)
 {
-	int	 nExtent  = 0;
+	int  nExtent  = 0;
 	HWND hwndList = GetItemHwnd(IDC_LIST_PROFILE);
 
 	List_ResetContent(hwndList);
@@ -136,7 +137,8 @@ void CDlgProfileMgr::SetData(int nSelIndex)
 	CheckDlgButtonBool(GetHwnd(), IDC_CHECK_PROF_DEFSTART, settings.m_bDefaultSelect);
 }
 
-template<size_t cchText> static bool MyList_GetText(HWND hwndList, int index, WCHAR (&szText)[cchText])
+template<size_t cchText>
+static bool MyList_GetText(HWND hwndList, int index, WCHAR (&szText)[cchText])
 {
 	List_GetText(hwndList, index, szText);
 	WCHAR *pos = wcschr(szText, L'*');
@@ -152,8 +154,8 @@ int CDlgProfileMgr::GetData() { return GetData(true); }
 
 int CDlgProfileMgr::GetData(bool bStart)
 {
-	HWND  hwndList	= GetItemHwnd(IDC_LIST_PROFILE);
-	int	  nCurIndex = List_GetCurSel(hwndList);
+	HWND  hwndList  = GetItemHwnd(IDC_LIST_PROFILE);
+	int   nCurIndex = List_GetCurSel(hwndList);
 	WCHAR szText[_MAX_PATH];
 	MyList_GetText(hwndList, nCurIndex, szText);
 	m_strProfileName = szText;
@@ -180,20 +182,18 @@ BOOL CDlgProfileMgr::OnBnClicked(int wID)
 
 	case IDC_BUTTON_PROF_DELETE: DeleteProf(); break;
 
-	case IDC_BUTTON_PROF_DEFSET:
-	{
+	case IDC_BUTTON_PROF_DEFSET: {
 		HWND hwndList  = GetItemHwnd(IDC_LIST_PROFILE);
-		int	 nSelIndex = List_GetCurSel(hwndList);
+		int  nSelIndex = List_GetCurSel(hwndList);
 		SetDefaultProf(nSelIndex);
 		UpdateIni();
 		List_SetCurSel(hwndList, nSelIndex);
 		DlgItem_Enable(GetHwnd(), IDC_BUTTON_PROF_DEFCLEAR, true);
 	} break;
 
-	case IDC_BUTTON_PROF_DEFCLEAR:
-	{
+	case IDC_BUTTON_PROF_DEFCLEAR: {
 		HWND hwndList  = GetItemHwnd(IDC_LIST_PROFILE);
-		int	 nSelIndex = List_GetCurSel(hwndList);
+		int  nSelIndex = List_GetCurSel(hwndList);
 		ClearDefaultProf();
 		UpdateIni();
 		List_SetCurSel(hwndList, nSelIndex);
@@ -222,13 +222,12 @@ INT_PTR CDlgProfileMgr::DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARA
 	INT_PTR result;
 	result = CDialog::DispatchEvent(hWnd, wMsg, wParam, lParam);
 	switch (wMsg) {
-	case WM_COMMAND:
-	{
+	case WM_COMMAND: {
 		if (LOWORD(wParam) == IDC_LIST_PROFILE) {
 			switch (HIWORD(wParam)) {
 			case LBN_SELCHANGE:
 				HWND hwndList = (HWND)lParam;
-				int	 nIdx	  = List_GetCurSel(hwndList);
+				int  nIdx	 = List_GetCurSel(hwndList);
 				DlgItem_Enable(GetHwnd(), IDC_BUTTON_PROF_DELETE, nIdx != 0);
 				DlgItem_Enable(GetHwnd(), IDC_BUTTON_PROF_RENAME, nIdx != 0);
 				return TRUE;
@@ -274,10 +273,10 @@ static bool IsProfileDuplicate(HWND hwndList, LPCWSTR szProfName, int skipIndex)
 
 void CDlgProfileMgr::CreateProf()
 {
-	CDlgInput1	 cDlgInput1;
+	CDlgInput1   cDlgInput1;
 	int			 max_size = _MAX_PATH;
 	WCHAR		 szText[_MAX_PATH];
-	std::wstring strTitle	= LS(STR_DLGPROFILE_NEW_PROF_TITLE);
+	std::wstring strTitle   = LS(STR_DLGPROFILE_NEW_PROF_TITLE);
 	std::wstring strMessage = LS(STR_DLGPROFILE_NEW_PROF_MSG);
 	szText[0]				= L'\0';
 	if (!cDlgInput1.DoModal(::GetModuleHandle(NULL), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size,
@@ -317,7 +316,7 @@ void CDlgProfileMgr::CreateProf()
 void CDlgProfileMgr::DeleteProf()
 {
 	HWND hwndList  = GetItemHwnd(IDC_LIST_PROFILE);
-	int	 nCurIndex = List_GetCurSel(hwndList);
+	int  nCurIndex = List_GetCurSel(hwndList);
 	List_DeleteString(hwndList, nCurIndex);
 	UpdateIni();
 	if (List_GetCount(hwndList) <= nCurIndex) { nCurIndex--; }
@@ -329,13 +328,13 @@ void CDlgProfileMgr::RenameProf()
 	HWND	   hwndList = GetItemHwnd(IDC_LIST_PROFILE);
 	CDlgInput1 cDlgInput1;
 	int		   nCurIndex = List_GetCurSel(hwndList);
-	WCHAR	   szText[_MAX_PATH];
+	WCHAR	  szText[_MAX_PATH];
 	bool	   bDefault = MyList_GetText(hwndList, nCurIndex, szText);
-	WCHAR	   szTextOld[_MAX_PATH];
+	WCHAR	  szTextOld[_MAX_PATH];
 	wcscpy(szTextOld, szText);
-	std::wstring strTitle	= LS(STR_DLGPROFILE_RENAME_TITLE);
+	std::wstring strTitle   = LS(STR_DLGPROFILE_RENAME_TITLE);
 	std::wstring strMessage = LS(STR_DLGPROFILE_RENAME_MSG);
-	int			 max_size	= _MAX_PATH;
+	int			 max_size   = _MAX_PATH;
 	if (!cDlgInput1.DoModal(::GetModuleHandle(NULL), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size,
 							szText)) {
 		return;
@@ -361,7 +360,7 @@ void CDlgProfileMgr::RenameProf()
 		return;
 	}
 	std::wstring strProfDirOld = GetProfileMgrFileName(szTextOld);
-	std::wstring strProfDir	   = GetProfileMgrFileName(szText);
+	std::wstring strProfDir	= GetProfileMgrFileName(szText);
 	if (IsFileExists(strProfDirOld.c_str(), false)) {
 		if (!IsFileExists(strProfDirOld.c_str(), true)) {
 			// プロファイル名はディレクトリ
@@ -369,7 +368,8 @@ void CDlgProfileMgr::RenameProf()
 				ErrorMessage(GetHwnd(), LS(STR_DLGPROFILE_ERR_RENAME));
 				return;
 			}
-		} else {
+		}
+		else {
 			// 旧プロファイル名はファイルだったので新規プロファイルとして作成確認
 			if (IsFileExists(strProfDir.c_str(), true)) {
 				ErrorMessage(GetHwnd(), LS(STR_DLGPROFILE_ERR_FILE));
@@ -398,7 +398,7 @@ void CDlgProfileMgr::SetDefaultProf(int index)
 void CDlgProfileMgr::ClearDefaultProf()
 {
 	HWND hwndList = GetItemHwnd(IDC_LIST_PROFILE);
-	int	 nCount	  = List_GetCount(hwndList);
+	int  nCount   = List_GetCount(hwndList);
 	for (int i = 0; i < nCount; i++) {
 		WCHAR szProfileName[_MAX_PATH];
 		if (MyList_GetText(hwndList, i, szProfileName)) {
@@ -411,16 +411,15 @@ void CDlgProfileMgr::ClearDefaultProf()
 static bool IOProfSettings(SProfileSettings &settings, bool bWrite)
 {
 	CDataProfile cProf;
-	if (bWrite) {
-		cProf.SetWritingMode();
-	} else {
+	if (bWrite) { cProf.SetWritingMode(); }
+	else {
 		cProf.SetReadingMode();
 	}
 	std::wstring strIniName = GetProfileMgrFileName();
 	if (!bWrite) {
 		if (!cProf.ReadProfile(strIniName.c_str())) { return false; }
 	}
-	int					 nCount	  = (int)settings.m_vProfList.size();
+	int					 nCount   = (int)settings.m_vProfList.size();
 	const wchar_t *const pSection = L"Profile";
 	cProf.IOProfileData(pSection, L"nCount", nCount);
 	for (int i = 0; i < nCount; i++) {
@@ -430,7 +429,8 @@ static bool IOProfSettings(SProfileSettings &settings, bool bWrite)
 		if (bWrite) {
 			strProfName = settings.m_vProfList[i];
 			cProf.IOProfileData(pSection, szKey, strProfName);
-		} else {
+		}
+		else {
 			cProf.IOProfileData(pSection, szKey, strProfName);
 			settings.m_vProfList.push_back(strProfName);
 		}

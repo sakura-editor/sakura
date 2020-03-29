@@ -45,17 +45,15 @@ INT_PTR CALLBACK PropTypesCommonProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
 	case WM_INITDIALOG:
 		pPsp		= (PROPSHEETPAGE *)lParam;
 		pCPropTypes = reinterpret_cast<CPropTypes *>(pPsp->lParam);
-		if (NULL != pCPropTypes) {
-			return (pCPropTypes->*pDispatch)(hwndDlg, uMsg, wParam, pPsp->lParam);
-		} else {
+		if (NULL != pCPropTypes) { return (pCPropTypes->*pDispatch)(hwndDlg, uMsg, wParam, pPsp->lParam); }
+		else {
 			return FALSE;
 		}
 	default:
 		// Modified by KEITA for WIN64 2003.9.6
 		pCPropTypes = (CPropTypes *)::GetWindowLongPtr(hwndDlg, DWLP_USER);
-		if (NULL != pCPropTypes) {
-			return (pCPropTypes->*pDispatch)(hwndDlg, uMsg, wParam, lParam);
-		} else {
+		if (NULL != pCPropTypes) { return (pCPropTypes->*pDispatch)(hwndDlg, uMsg, wParam, lParam); }
+		else {
 			return FALSE;
 		}
 	}
@@ -97,10 +95,10 @@ CPropTypes::CPropTypes()
 	// Mar. 31, 2003 genta メモリ削減のためポインタに変更
 	m_pCKeyWordSetMgr = &m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
 
-	m_hInstance	 = NULL; /* アプリケーションインスタンスのハンドル */
+	m_hInstance  = NULL; /* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL; /* オーナーウィンドウのハンドル */
-	m_hwndThis	 = NULL; /* このダイアログのハンドル */
-	m_nPageNum	 = ID_PROPTYPE_PAGENUM_SCREEN;
+	m_hwndThis   = NULL; /* このダイアログのハンドル */
+	m_nPageNum   = ID_PROPTYPE_PAGENUM_SCREEN;
 
 	(static_cast<CPropTypesScreen *>(this))->CPropTypes_Screen();
 }
@@ -110,12 +108,11 @@ CPropTypes::~CPropTypes() {}
 /* 初期化 */
 void CPropTypes::Create(HINSTANCE hInstApp, HWND hwndParent)
 {
-	m_hInstance	 = hInstApp;   /* アプリケーションインスタンスのハンドル */
+	m_hInstance  = hInstApp;   /* アプリケーションインスタンスのハンドル */
 	m_hwndParent = hwndParent; /* オーナーウィンドウのハンドル */
 }
 
-struct TypePropSheetInfo
-{
+struct TypePropSheetInfo {
 	int			 m_nTabNameId;							  //!< TABの表示名
 	unsigned int resId;									  //!< Property sheetに対応するDialog resource
 	INT_PTR(CALLBACK *DProc)(HWND, UINT, WPARAM, LPARAM); //!< Dialog Procedure
@@ -154,14 +151,14 @@ INT_PTR CPropTypes::DoPropertySheet(int nPageNum)
 
 		PROPSHEETPAGE *p = &psp[nIdx];
 		memset_raw(p, 0, sizeof_raw(*p));
-		p->dwSize	   = sizeof_raw(*p);
-		p->dwFlags	   = PSP_USETITLE | PSP_HASHELP;
+		p->dwSize	  = sizeof_raw(*p);
+		p->dwFlags	 = PSP_USETITLE | PSP_HASHELP;
 		p->hInstance   = CSelectLang::getLangRsrcInstance();
 		p->pszTemplate = MAKEINTRESOURCE(TypePropSheetInfoList[nIdx].resId);
-		p->pszIcon	   = NULL;
+		p->pszIcon	 = NULL;
 		p->pfnDlgProc  = TypePropSheetInfoList[nIdx].DProc;
-		p->pszTitle	   = sTabname[nIdx].c_str();
-		p->lParam	   = (LPARAM)this;
+		p->pszTitle	= sTabname[nIdx].c_str();
+		p->lParam	  = (LPARAM)this;
 		p->pfnCallback = NULL;
 	}
 
@@ -171,15 +168,15 @@ INT_PTR CPropTypes::DoPropertySheet(int nPageNum)
 	psh.hwndParent		= m_hwndParent;
 	psh.hInstance		= CSelectLang::getLangRsrcInstance();
 	psh.pszIcon			= NULL;
-	psh.pszCaption		= LS(STR_PROPTYPE); // L"タイプ別設定";	// Sept. 8, 2000 jepro 単なる「設定」から変更
-	psh.nPages			= nIdx;
+	psh.pszCaption = LS(STR_PROPTYPE); // L"タイプ別設定";	// Sept. 8, 2000 jepro 単なる「設定」から変更
+	psh.nPages	 = nIdx;
 
 	//- 20020106 aroka # psh.nStartPage は unsigned なので負にならない
-	if (-1 == nPageNum) {
-		psh.nStartPage = m_nPageNum;
-	} else if (0 > nPageNum) { //- 20020106 aroka
+	if (-1 == nPageNum) { psh.nStartPage = m_nPageNum; }
+	else if (0 > nPageNum) { //- 20020106 aroka
 		psh.nStartPage = 0;
-	} else {
+	}
+	else {
 		psh.nStartPage = nPageNum;
 	}
 
@@ -253,8 +250,8 @@ HFONT CPropTypes::SetCtrlFont(HWND hwndDlg, int idc_ctrl, const LOGFONT &lf)
 */
 HFONT CPropTypes::SetFontLabel(HWND hwndDlg, int idc_static, const LOGFONT &lf, int nps, bool bUse)
 {
-	HFONT	hFont;
-	WCHAR	szFontName[80];
+	HFONT   hFont;
+	WCHAR   szFontName[80];
 	LOGFONT lfTemp;
 	lfTemp = lf;
 
@@ -268,7 +265,8 @@ HFONT CPropTypes::SetFontLabel(HWND hwndDlg, int idc_static, const LOGFONT &lf, 
 		// フォント名の設定
 		auto_sprintf(szFontName, nps % 10 ? L"%s(%.1fpt)" : L"%s(%.0fpt)", lf.lfFaceName, double(nps) / 10);
 		::DlgItem_SetText(hwndDlg, idc_static, szFontName);
-	} else {
+	}
+	else {
 		hFont = NULL;
 		::DlgItem_SetText(hwndDlg, idc_static, L"");
 	}

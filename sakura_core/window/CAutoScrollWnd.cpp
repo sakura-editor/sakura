@@ -49,12 +49,14 @@ HWND CAutoScrollWnd::Create(HINSTANCE hInstance, HWND hwndParent, bool bVertical
 			idb			 = IDB_SCROLL_CENTER;
 			idc			 = IDC_CURSOR_AUTOSCROLL_CENTER;
 			pszClassName = L"SakuraAutoScrollCWnd";
-		} else {
+		}
+		else {
 			idb			 = IDB_SCROLL_VERTICAL;
 			idc			 = IDC_CURSOR_AUTOSCROLL_VERTICAL;
 			pszClassName = L"SakuraAutoScrollVWnd";
 		}
-	} else {
+	}
+	else {
 		idb			 = IDB_SCROLL_HORIZONTAL;
 		idc			 = IDC_CURSOR_AUTOSCROLL_HORIZONTAL;
 		pszClassName = L"SakuraAutoScrollHWnd";
@@ -112,7 +114,7 @@ LRESULT CAutoScrollWnd::OnPaint(HWND hwnd, UINT, WPARAM, LPARAM)
 {
 	PAINTSTRUCT ps;
 	HDC			hdc		 = ::BeginPaint(hwnd, &ps);
-	HDC			hdcBmp	 = ::CreateCompatibleDC(hdc);
+	HDC			hdcBmp   = ::CreateCompatibleDC(hdc);
 	HBITMAP		hBbmpOld = (HBITMAP)::SelectObject(hdcBmp, m_hCenterImg);
 	::BitBlt(hdc, 0, 0, 32, 32, hdcBmp, 0, 0, SRCCOPY);
 	::SelectObject(hdcBmp, hBbmpOld);

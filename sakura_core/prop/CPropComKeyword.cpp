@@ -34,12 +34,12 @@
 static const DWORD p_helpids[] = {					   // 10800
 	IDC_BUTTON_ADDSET, HIDC_BUTTON_ADDSET,			   //キーワードセット追加
 	IDC_BUTTON_DELSET, HIDC_BUTTON_DELSET,			   //キーワードセット削除
-	IDC_BUTTON_ADDKEYWORD, HIDC_BUTTON_ADDKEYWORD,	   //キーワード追加
+	IDC_BUTTON_ADDKEYWORD, HIDC_BUTTON_ADDKEYWORD,	 //キーワード追加
 	IDC_BUTTON_EDITKEYWORD, HIDC_BUTTON_EDITKEYWORD,   //キーワード編集
-	IDC_BUTTON_DELKEYWORD, HIDC_BUTTON_DELKEYWORD,	   //キーワード削除
-	IDC_BUTTON_IMPORT, HIDC_BUTTON_IMPORT_KEYWORD,	   //インポート
-	IDC_BUTTON_EXPORT, HIDC_BUTTON_EXPORT_KEYWORD,	   //エクスポート
-	IDC_CHECK_KEYWORDCASE, HIDC_CHECK_KEYWORDCASE,	   //キーワードの英大文字小文字区別
+	IDC_BUTTON_DELKEYWORD, HIDC_BUTTON_DELKEYWORD,	 //キーワード削除
+	IDC_BUTTON_IMPORT, HIDC_BUTTON_IMPORT_KEYWORD,	 //インポート
+	IDC_BUTTON_EXPORT, HIDC_BUTTON_EXPORT_KEYWORD,	 //エクスポート
+	IDC_CHECK_KEYWORDCASE, HIDC_CHECK_KEYWORDCASE,	 //キーワードの英大文字小文字区別
 	IDC_COMBO_SET, HIDC_COMBO_SET,					   //強調キーワードセット名
 	IDC_LIST_KEYWORD, HIDC_LIST_KEYWORD,			   //キーワード一覧
 	IDC_BUTTON_KEYCLEAN, HIDC_BUTTON_KEYCLEAN,		   //キーワード整理	// 2006.08.06 ryoji
@@ -68,8 +68,8 @@ INT_PTR CALLBACK CPropKeyword::DlgProc_dialog(HWND hwndDlg, UINT uMsg, WPARAM wP
 /* Keyword メッセージ処理 */
 INT_PTR CPropKeyword::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 									UINT   uMsg,	// message
-									WPARAM wParam,	// first message parameter
-									LPARAM lParam	// second message parameter
+									WPARAM wParam,  // first message parameter
+									LPARAM lParam   // second message parameter
 )
 {
 	WORD		 wNotifyCode;
@@ -77,12 +77,12 @@ INT_PTR CPropKeyword::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 	HWND		 hwndCtl;
 	NMHDR *		 pNMHDR;
 	int			 nIndex1;
-	LV_COLUMN	 lvc;
-	LV_ITEM *	 plvi;
-	static HWND	 hwndCOMBO_SET;
-	static HWND	 hwndLIST_KEYWORD;
+	LV_COLUMN	lvc;
+	LV_ITEM *	plvi;
+	static HWND  hwndCOMBO_SET;
+	static HWND  hwndLIST_KEYWORD;
 	RECT		 rc;
-	CDlgInput1	 cDlgInput1;
+	CDlgInput1   cDlgInput1;
 	wchar_t		 szKeyWord[MAX_KEYWORDLEN + 1];
 	LONG_PTR	 lStyle;
 	LV_DISPINFO *plvdi;
@@ -95,7 +95,8 @@ INT_PTR CPropKeyword::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 			if (0 <= m_nKeywordSet1) {
 				// タイプ別設定のものを表示
 				m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx = m_nKeywordSet1;
-			} else {
+			}
+			else {
 				// -1だったら共通設定で最後に表示したものを維持する
 			}
 		}
@@ -114,7 +115,8 @@ INT_PTR CPropKeyword::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 			title += L" - ";
 			title += LS(STR_PROPCOMMON_KEYWORD);
 			SetWindowText(hwndDlg, title.c_str());
-		} else {
+		}
+		else {
 			hwndCtl = ::GetDlgItem(hwndDlg, IDOK);
 			ShowWindow(hwndCtl, SW_HIDE);
 			hwndCtl = ::GetDlgItem(hwndDlg, IDCANCEL);
@@ -122,13 +124,13 @@ INT_PTR CPropKeyword::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		}
 
 		/* コントロールのハンドルを取得 */
-		hwndCOMBO_SET	 = ::GetDlgItem(hwndDlg, IDC_COMBO_SET);
+		hwndCOMBO_SET	= ::GetDlgItem(hwndDlg, IDC_COMBO_SET);
 		hwndLIST_KEYWORD = ::GetDlgItem(hwndDlg, IDC_LIST_KEYWORD);
 		::GetWindowRect(hwndLIST_KEYWORD, &rc);
 		lvc.mask	 = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		lvc.fmt		 = LVCFMT_LEFT;
 		lvc.cx		 = rc.right - rc.left;
-		lvc.pszText	 = const_cast<WCHAR *>(L"");
+		lvc.pszText  = const_cast<WCHAR *>(L"");
 		lvc.iSubItem = 0;
 		ListView_InsertColumn(hwndLIST_KEYWORD, 0, &lvc);
 
@@ -190,7 +192,8 @@ INT_PTR CPropKeyword::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 					m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.UpdateKeyWord(
 						m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, plvi->lParam,
 						plvi->pszText);
-				} else {
+				}
+				else {
 					/* ｎ番目のセットのｍ番目のキーワードを削除 */
 					m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.DelKeyWord(
 						m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, plvi->lParam);
@@ -216,7 +219,8 @@ INT_PTR CPropKeyword::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 				}
 				return TRUE;
 			}
-		} else {
+		}
+		else {
 			switch (pNMHDR->code) {
 			case PSN_HELP: OnHelp(hwndDlg, IDD_PROP_KEYWORD); return TRUE;
 			case PSN_KILLACTIVE:
@@ -232,7 +236,7 @@ INT_PTR CPropKeyword::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam); /* 通知コード */
 		wID			= LOWORD(wParam); /* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl		= (HWND)lParam;	  /* コントロールのハンドル */
+		hwndCtl		= (HWND)lParam;   /* コントロールのハンドル */
 		if (hwndCOMBO_SET == hwndCtl) {
 			switch (wNotifyCode) {
 			case CBN_SELCHANGE:
@@ -241,7 +245,8 @@ INT_PTR CPropKeyword::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 				SetKeyWordSet(hwndDlg, nIndex1);
 				return TRUE;
 			}
-		} else {
+		}
+		else {
 			switch (wNotifyCode) {
 			/* ボタン／チェックボックスがクリックされた */
 			case BN_CLICKED:
@@ -288,7 +293,8 @@ INT_PTR CPropKeyword::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 									name += m_tempTypeName;
 									exts = m_tempTypeExts;
 									bAdd = true;
-								} else {
+								}
+								else {
 									const STypeConfigMini *type = NULL;
 									CTypeConfig			   typeConfig =
 										CDocTypeManager().GetDocumentTypeOfId(m_Types_nKeyWordSetIdx[i].typeId);
@@ -311,8 +317,8 @@ INT_PTR CPropKeyword::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 					}
 					if (IDCANCEL
 						== ::MYMESSAGEBOX(
-							hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME, LS(STR_PROPCOMKEYWORD_SETDEL),
-							m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName(nIndex1), strLabel.c_str())) {
+							   hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME, LS(STR_PROPCOMKEYWORD_SETDEL),
+							   m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName(nIndex1), strLabel.c_str())) {
 						return TRUE;
 					}
 					/* 削除対象のセットを使用しているファイルタイプのセットをクリア */
@@ -321,7 +327,8 @@ INT_PTR CPropKeyword::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 						for (int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++) {
 							if (nIndex1 == m_Types_nKeyWordSetIdx[i].index[j]) {
 								m_Types_nKeyWordSetIdx[i].index[j] = -1;
-							} else if (nIndex1 < m_Types_nKeyWordSetIdx[i].index[j]) {
+							}
+							else if (nIndex1 < m_Types_nKeyWordSetIdx[i].index[j]) {
 								m_Types_nKeyWordSetIdx[i].index[j]--;
 							}
 						}
@@ -353,8 +360,8 @@ INT_PTR CPropKeyword::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 					return TRUE;
 				case IDC_CHECK_KEYWORDCASE: /* キーワードの英大文字小文字区別 */
 											//					m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_bKEYWORDCASEArr[
-					//m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ] = ::IsDlgButtonChecked(
-					//hwndDlg, IDC_CHECK_KEYWORDCASE );	//MIK 2000.12.01 case sense
+					// m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ] = ::IsDlgButtonChecked(
+					// hwndDlg, IDC_CHECK_KEYWORDCASE );	//MIK 2000.12.01 case sense
 					m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SetKeyWordCase(
 						m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx,
 						::IsDlgButtonChecked(hwndDlg, IDC_CHECK_KEYWORDCASE)); // MIK 2000.12.01 case sense
@@ -376,7 +383,7 @@ INT_PTR CPropKeyword::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 						/* ｎ番目のセットにキーワードを追加 */
 						if (0
 							== m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.AddKeyWord(
-								m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szKeyWord)) {
+								   m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szKeyWord)) {
 							// ダイアログデータの設定 Keyword 指定キーワードセットの設定
 							SetKeyWordSet(hwndDlg, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx);
 						}
@@ -415,7 +422,8 @@ INT_PTR CPropKeyword::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		if (-1 == nIndex1) {
 			::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_EDITKEYWORD), FALSE);
 			::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_DELKEYWORD), FALSE);
-		} else {
+		}
+		else {
 			::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_EDITKEYWORD), TRUE);
 			::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_DELKEYWORD), TRUE);
 		}
@@ -426,8 +434,7 @@ INT_PTR CPropKeyword::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		break;
 
 		//@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP:
-	{
+	case WM_HELP: {
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -451,14 +458,14 @@ INT_PTR CPropKeyword::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 void CPropKeyword::Edit_List_KeyWord(HWND hwndDlg, HWND hwndLIST_KEYWORD)
 {
 	int		   nIndex1;
-	LV_ITEM	   lvi;
-	wchar_t	   szKeyWord[MAX_KEYWORDLEN + 1];
+	LV_ITEM	lvi;
+	wchar_t	szKeyWord[MAX_KEYWORDLEN + 1];
 	CDlgInput1 cDlgInput1;
 
 	nIndex1 = ListView_GetNextItem(hwndLIST_KEYWORD, -1, LVNI_ALL | LVNI_SELECTED);
 	if (-1 == nIndex1) { return; }
 	lvi.mask	 = LVIF_PARAM;
-	lvi.iItem	 = nIndex1;
+	lvi.iItem	= nIndex1;
 	lvi.iSubItem = 0;
 	ListView_GetItem(hwndLIST_KEYWORD, &lvi);
 
@@ -475,7 +482,8 @@ void CPropKeyword::Edit_List_KeyWord(HWND hwndDlg, HWND hwndLIST_KEYWORD)
 		/* ｎ番目のセットにキーワードを編集 */
 		m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.UpdateKeyWord(
 			m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, lvi.lParam, szKeyWord);
-	} else {
+	}
+	else {
 		/* ｎ番目のセットのｍ番目のキーワードを削除 */
 		m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.DelKeyWord(
 			m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, lvi.lParam);
@@ -496,7 +504,7 @@ void CPropKeyword::Delete_List_KeyWord(HWND hwndDlg, HWND hwndLIST_KEYWORD)
 	nIndex1 = ListView_GetNextItem(hwndLIST_KEYWORD, -1, LVNI_ALL | LVNI_SELECTED);
 	if (-1 == nIndex1) { return; }
 	lvi.mask	 = LVIF_PARAM;
-	lvi.iItem	 = nIndex1;
+	lvi.iItem	= nIndex1;
 	lvi.iSubItem = 0;
 	ListView_GetItem(hwndLIST_KEYWORD, &lvi);
 	/* ｎ番目のセットのｍ番目のキーワードを削除 */
@@ -516,7 +524,7 @@ void CPropKeyword::Delete_List_KeyWord(HWND hwndDlg, HWND hwndLIST_KEYWORD)
 void CPropKeyword::Import_List_KeyWord(HWND hwndDlg, HWND hwndLIST_KEYWORD)
 {
 	bool bCase = false;
-	int	 nIdx  = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx;
+	int  nIdx  = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx;
 	m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SetKeyWordCase(nIdx, bCase);
 	CImpExpKeyWord cImpExpKeyWord(m_Common, nIdx, bCase);
 
@@ -562,7 +570,7 @@ void CPropKeyword::Clean_List_KeyWord(HWND hwndDlg, HWND hwndLIST_KEYWORD)
 /* ダイアログデータの設定 Keyword */
 void CPropKeyword::SetData(HWND hwndDlg)
 {
-	int	 i;
+	int  i;
 	HWND hwndWork;
 
 	/* セット名コンボボックスの値セット */
@@ -577,7 +585,8 @@ void CPropKeyword::SetData(HWND hwndDlg)
 
 		/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
 		SetKeyWordSet(hwndDlg, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx);
-	} else {
+	}
+	else {
 		/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
 		SetKeyWordSet(hwndDlg, -1);
 	}
@@ -606,7 +615,8 @@ void CPropKeyword::SetKeyWordSet(HWND hwndDlg, int nIdx)
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_DELKEYWORD), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_IMPORT), TRUE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_EXPORT), TRUE);
-	} else {
+	}
+	else {
 		::CheckDlgButton(hwndDlg, IDC_CHECK_KEYWORDCASE, FALSE);
 
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_DELSET), FALSE);
@@ -623,7 +633,8 @@ void CPropKeyword::SetKeyWordSet(HWND hwndDlg, int nIdx)
 	/* キーワードの英大文字小文字区別 */
 	if (true == m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWordCase(nIdx)) { // MIK 2000.12.01 case sense
 		::CheckDlgButton(hwndDlg, IDC_CHECK_KEYWORDCASE, TRUE);
-	} else {
+	}
+	else {
 		::CheckDlgButton(hwndDlg, IDC_CHECK_KEYWORDCASE, FALSE);
 	}
 
@@ -639,10 +650,10 @@ void CPropKeyword::SetKeyWordSet(HWND hwndDlg, int nIdx)
 		const WCHAR *pszKeyWord = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord(nIdx, i);
 
 		lvi.mask	 = LVIF_TEXT | LVIF_PARAM;
-		lvi.pszText	 = const_cast<WCHAR *>(pszKeyWord);
-		lvi.iItem	 = i;
+		lvi.pszText  = const_cast<WCHAR *>(pszKeyWord);
+		lvi.iItem	= i;
 		lvi.iSubItem = 0;
-		lvi.lParam	 = i;
+		lvi.lParam   = i;
 		ListView_InsertItem(hwndList, &lvi);
 	}
 	m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx = nIdx;
@@ -666,7 +677,7 @@ void CPropKeyword::GetKeyWordSet(HWND hwndDlg, int nIdx) {}
 void CPropKeyword::DispKeywordCount(HWND hwndDlg)
 {
 	HWND  hwndList;
-	int	  n;
+	int   n;
 	WCHAR szCount[256];
 
 	hwndList = ::GetDlgItem(hwndDlg, IDC_LIST_KEYWORD);

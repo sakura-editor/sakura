@@ -16,7 +16,7 @@ EDiffMark CDiffLineGetter::GetLineDiffMark() const { return (EDiffMark)m_pcDocLi
 */
 bool CDiffLineGetter::GetDiffColor(EColorIndexType *pnColorIndex) const
 {
-	EDiffMark  type	 = GetLineDiffMark();
+	EDiffMark  type  = GetLineDiffMark();
 	CEditView *pView = &CEditWnd::getInstance()->GetActiveView();
 
 	// DIFF差分マーク表示	//@@@ 2002.05.25 MIK
@@ -132,7 +132,7 @@ void CDiffLineMgr::ResetAllDiffMark()
 */
 bool CDiffLineMgr::SearchDiffMark(CLogicInt		   nLineNum,	//!< 検索開始行
 								  ESearchDirection bPrevOrNext, //!< 検索方向
-								  CLogicInt *	   pnLineNum	//!< マッチ行
+								  CLogicInt *	  pnLineNum	//!< マッチ行
 )
 {
 	CLogicInt nLinePos = nLineNum;

@@ -70,7 +70,7 @@ const WCHAR g_szGStrAppNameW[] = (_GSTR_APPNAME_(LTEXT)); // この変数を直�
 */
 int WINAPI wWinMain(HINSTANCE hInstance,	 //!< handle to current instance
 					HINSTANCE hPrevInstance, //!< handle to previous instance
-					LPWSTR	  lpCmdLine,	 //!< pointer to command line
+					LPWSTR	lpCmdLine,	 //!< pointer to command line
 					int		  nCmdShow		 //!< show state of window
 )
 {
@@ -99,7 +99,9 @@ int WINAPI wWinMain(HINSTANCE hInstance,	 //!< handle to current instance
 	try {
 		process = aFactory.Create(hInstance, lpCmdLine);
 		MY_TRACETIME(cRunningTimer, "ProcessObject Created");
-	} catch (...) {}
+	}
+	catch (...) {
+	}
 	if (0 != process) {
 		process->Run();
 		delete process;

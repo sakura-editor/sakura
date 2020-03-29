@@ -25,7 +25,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(LayoutReplaceArg *pArg)
 	CLayoutInt nWork_nLines = m_nLines; //変更前の全行数の保存	@@@ 2002.04.19 MIK
 
 	/* 置換先頭位置のレイアウト情報 */
-	EColorIndexType	  nCurrentLineType = COLORIDX_DEFAULT;
+	EColorIndexType   nCurrentLineType = COLORIDX_DEFAULT;
 	CLayoutColorInfo *colorInfo		   = NULL;
 	CLayoutInt		  nLineWork		   = pArg->sDelRange.GetFrom().GetY2();
 
@@ -37,7 +37,8 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(LayoutReplaceArg *pArg)
 		}
 		nCurrentLineType = pLayoutWork->GetColorTypePrev();
 		colorInfo		 = pLayoutWork->GetLayoutExInfo()->DetachColorInfo();
-	} else if (GetLineCount() == pArg->sDelRange.GetFrom().GetY2()) {
+	}
+	else if (GetLineCount() == pArg->sDelRange.GetFrom().GetY2()) {
 		// 2012.01.05 最終行のRedo/Undoでの色分けが正しくないのを修正
 		nCurrentLineType = m_nLineTypeBot;
 		colorInfo		 = m_cLayoutExInfoBot.DetachColorInfo();
@@ -61,7 +62,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(LayoutReplaceArg *pArg)
 	DLRArg.sDelRange.SetFrom(ptFrom);		  //削除範囲from
 	DLRArg.sDelRange.SetTo(ptTo);			  //削除範囲to
 	DLRArg.pcmemDeleted = pArg->pcmemDeleted; // 削除されたデータを保存
-	DLRArg.pInsData		= pArg->pInsData;	  // 挿入するデータ
+	DLRArg.pInsData		= pArg->pInsData;	 // 挿入するデータ
 	DLRArg.nDelSeq		= pArg->nDelSeq;
 	CSearchAgent(m_pcDocLineMgr).ReplaceData(&DLRArg);
 	pArg->nInsSeq = DLRArg.nInsSeq;
@@ -85,22 +86,24 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(LayoutReplaceArg *pArg)
 		if (0 != DLRArg.nInsLineNum - DLRArg.nDeletedLineNum) {
 			ShiftLogicalLineNum(pLayoutPrev, DLRArg.nInsLineNum - DLRArg.nDeletedLineNum);
 		}
-	} else {
+	}
+	else {
 		pLayoutPrev = m_pLayoutBot;
 	}
 
 	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
 	CLogicInt nRowNum;
 	if (NULL == pLayoutPrev) {
-		if (NULL == m_pLayoutTop) {
-			nRowNum = m_pcDocLineMgr->GetLineCount();
-		} else {
+		if (NULL == m_pLayoutTop) { nRowNum = m_pcDocLineMgr->GetLineCount(); }
+		else {
 			nRowNum = m_pLayoutTop->GetLogicLineNo();
 		}
-	} else {
+	}
+	else {
 		if (NULL == pLayoutPrev->GetNextLayout()) {
 			nRowNum = m_pcDocLineMgr->GetLineCount() - pLayoutPrev->GetLogicLineNo() - CLogicInt(1);
-		} else {
+		}
+		else {
 			nRowNum = pLayoutPrev->m_pNext->GetLogicLineNo() - pLayoutPrev->GetLogicLineNo() - CLogicInt(1);
 		}
 	}

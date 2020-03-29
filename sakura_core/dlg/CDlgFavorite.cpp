@@ -47,14 +47,14 @@
 const DWORD p_helpids[] = {IDC_TAB_FAVORITE, HIDC_TAB_FAVORITE,							 //タブ
 						   IDC_LIST_FAVORITE_FILE, HIDC_LIST_FAVORITE_FILE,				 //ファイル
 						   IDC_LIST_FAVORITE_FOLDER, HIDC_LIST_FAVORITE_FOLDER,			 //フォルダ
-						   IDC_LIST_FAVORITE_EXCEPTMRU, HIDC_LIST_FAVORITE_EXCEPTMRU,	 // MRU除外
+						   IDC_LIST_FAVORITE_EXCEPTMRU, HIDC_LIST_FAVORITE_EXCEPTMRU,	// MRU除外
 						   IDC_LIST_FAVORITE_SEARCH, HIDC_LIST_FAVORITE_SEARCH,			 //検索
 						   IDC_LIST_FAVORITE_REPLACE, HIDC_LIST_FAVORITE_REPLACE,		 //置換
 						   IDC_LIST_FAVORITE_GREP_FILE, HIDC_LIST_FAVORITE_GREPFILE,	 // GREPファイル
 						   IDC_LIST_FAVORITE_GREP_FOLDER, HIDC_LIST_FAVORITE_GREPFOLDER, // GREPフォルダ
 						   IDC_LIST_FAVORITE_CMD, HIDC_LIST_FAVORITE_CMD,				 //コマンド
 						   IDC_LIST_FAVORITE_CUR_DIR, HIDC_LIST_FAVORITE_CUR_DIR, //カレントディレクトリ
-																				  //	IDC_STATIC_BUTTONS,				-1,
+																				  //	IDC_STATIC_BUTTONS, -1,
 						   IDC_BUTTON_CLEAR, HIDC_BUTTON_FAVORITE_CLEAR,		  //すべて	// 2006.10.10 ryoji
 						   IDC_BUTTON_DELETE_NOFAVORATE, HIDC_BUTTON_FAVORITE_DELETE_NOFAVORATE, //お気に入り以外
 						   IDC_BUTTON_DELETE_NOTFOUND, HIDC_BUTTON_FAVORITE_DELETE_NOTFOUND,	 //存在しない項目
@@ -78,12 +78,11 @@ static const SAnchorList anchorList[] = {
 	{IDC_STATIC_FAVORITE_MSG, ANCHOR_BOTTOM},
 };
 
-static int			FormatFavoriteColumn(WCHAR *, int, int, bool);
-static int			ListView_GetLParamInt(HWND, int);
+static int FormatFavoriteColumn(WCHAR *, int, int, bool);
+static int ListView_GetLParamInt(HWND, int);
 static int CALLBACK CompareListViewFunc(LPARAM, LPARAM, LPARAM);
 
-struct CompareListViewLParam
-{
+struct CompareListViewLParam {
 	int			   nSortColumn;
 	bool		   bAbsOrder;
 	HWND		   hwndListView;
@@ -104,7 +103,7 @@ CDlgFavorite::CDlgFavorite()
 	int i;
 
 	m_nCurrentTab = 0;
-	m_szMsg[0]	  = L'\0';
+	m_szMsg[0]	= L'\0';
 
 	/* サイズ変更時に位置を制御するコントロール数 */
 	assert(_countof(anchorList) == _countof(m_rcItems));
@@ -112,120 +111,120 @@ CDlgFavorite::CDlgFavorite()
 	{
 		i								   = 0;
 		m_aFavoriteInfo[i].m_pRecent	   = &m_cRecentFile;
-		m_aFavoriteInfo[i].m_strCaption	   = LS(STR_DLGFAV_FILE);
-		m_aFavoriteInfo[i].m_pszCaption	   = m_aFavoriteInfo[i].m_strCaption.c_str();
+		m_aFavoriteInfo[i].m_strCaption	= LS(STR_DLGFAV_FILE);
+		m_aFavoriteInfo[i].m_pszCaption	= m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId		   = IDC_LIST_FAVORITE_FILE;
 		m_aFavoriteInfo[i].m_bHaveFavorite = true;
-		m_aFavoriteInfo[i].m_bFilePath	   = true;
-		m_aFavoriteInfo[i].m_bHaveView	   = true;
-		m_aFavoriteInfo[i].m_bEditable	   = false;
-		m_aFavoriteInfo[i].m_bAddExcept	   = true;
+		m_aFavoriteInfo[i].m_bFilePath	 = true;
+		m_aFavoriteInfo[i].m_bHaveView	 = true;
+		m_aFavoriteInfo[i].m_bEditable	 = false;
+		m_aFavoriteInfo[i].m_bAddExcept	= true;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent	   = &m_cRecentFolder;
-		m_aFavoriteInfo[i].m_strCaption	   = LS(STR_DLGFAV_FOLDER);
-		m_aFavoriteInfo[i].m_pszCaption	   = m_aFavoriteInfo[i].m_strCaption.c_str();
+		m_aFavoriteInfo[i].m_strCaption	= LS(STR_DLGFAV_FOLDER);
+		m_aFavoriteInfo[i].m_pszCaption	= m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId		   = IDC_LIST_FAVORITE_FOLDER;
 		m_aFavoriteInfo[i].m_bHaveFavorite = true;
-		m_aFavoriteInfo[i].m_bFilePath	   = true;
-		m_aFavoriteInfo[i].m_bHaveView	   = true;
-		m_aFavoriteInfo[i].m_bEditable	   = false;
-		m_aFavoriteInfo[i].m_bAddExcept	   = true;
+		m_aFavoriteInfo[i].m_bFilePath	 = true;
+		m_aFavoriteInfo[i].m_bHaveView	 = true;
+		m_aFavoriteInfo[i].m_bEditable	 = false;
+		m_aFavoriteInfo[i].m_bAddExcept	= true;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent	   = &m_cRecentExceptMRU;
-		m_aFavoriteInfo[i].m_strCaption	   = LS(STR_DLGFAV_FF_EXCLUDE);
-		m_aFavoriteInfo[i].m_pszCaption	   = m_aFavoriteInfo[i].m_strCaption.c_str();
+		m_aFavoriteInfo[i].m_strCaption	= LS(STR_DLGFAV_FF_EXCLUDE);
+		m_aFavoriteInfo[i].m_pszCaption	= m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId		   = IDC_LIST_FAVORITE_EXCEPTMRU;
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
-		m_aFavoriteInfo[i].m_bFilePath	   = false;
-		m_aFavoriteInfo[i].m_bHaveView	   = false;
-		m_aFavoriteInfo[i].m_bEditable	   = true;
-		m_aFavoriteInfo[i].m_bAddExcept	   = false;
+		m_aFavoriteInfo[i].m_bFilePath	 = false;
+		m_aFavoriteInfo[i].m_bHaveView	 = false;
+		m_aFavoriteInfo[i].m_bEditable	 = true;
+		m_aFavoriteInfo[i].m_bAddExcept	= false;
 		m_nExceptTab					   = i;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent	   = &m_cRecentSearch;
-		m_aFavoriteInfo[i].m_strCaption	   = LS(STR_DLGFAV_SEARCH);
-		m_aFavoriteInfo[i].m_pszCaption	   = m_aFavoriteInfo[i].m_strCaption.c_str();
+		m_aFavoriteInfo[i].m_strCaption	= LS(STR_DLGFAV_SEARCH);
+		m_aFavoriteInfo[i].m_pszCaption	= m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId		   = IDC_LIST_FAVORITE_SEARCH;
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
-		m_aFavoriteInfo[i].m_bFilePath	   = false;
-		m_aFavoriteInfo[i].m_bHaveView	   = false;
-		m_aFavoriteInfo[i].m_bEditable	   = true;
-		m_aFavoriteInfo[i].m_bAddExcept	   = false;
+		m_aFavoriteInfo[i].m_bFilePath	 = false;
+		m_aFavoriteInfo[i].m_bHaveView	 = false;
+		m_aFavoriteInfo[i].m_bEditable	 = true;
+		m_aFavoriteInfo[i].m_bAddExcept	= false;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent	   = &m_cRecentReplace;
-		m_aFavoriteInfo[i].m_strCaption	   = LS(STR_DLGFAV_REPLACE);
-		m_aFavoriteInfo[i].m_pszCaption	   = m_aFavoriteInfo[i].m_strCaption.c_str();
+		m_aFavoriteInfo[i].m_strCaption	= LS(STR_DLGFAV_REPLACE);
+		m_aFavoriteInfo[i].m_pszCaption	= m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId		   = IDC_LIST_FAVORITE_REPLACE;
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
-		m_aFavoriteInfo[i].m_bFilePath	   = false;
-		m_aFavoriteInfo[i].m_bHaveView	   = false;
-		m_aFavoriteInfo[i].m_bEditable	   = true;
-		m_aFavoriteInfo[i].m_bAddExcept	   = false;
+		m_aFavoriteInfo[i].m_bFilePath	 = false;
+		m_aFavoriteInfo[i].m_bHaveView	 = false;
+		m_aFavoriteInfo[i].m_bEditable	 = true;
+		m_aFavoriteInfo[i].m_bAddExcept	= false;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent	   = &m_cRecentGrepFile;
-		m_aFavoriteInfo[i].m_strCaption	   = LS(STR_DLGFAV_GREP_FILE);
-		m_aFavoriteInfo[i].m_pszCaption	   = m_aFavoriteInfo[i].m_strCaption.c_str();
+		m_aFavoriteInfo[i].m_strCaption	= LS(STR_DLGFAV_GREP_FILE);
+		m_aFavoriteInfo[i].m_pszCaption	= m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId		   = IDC_LIST_FAVORITE_GREP_FILE;
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
-		m_aFavoriteInfo[i].m_bFilePath	   = false;
-		m_aFavoriteInfo[i].m_bHaveView	   = false;
-		m_aFavoriteInfo[i].m_bEditable	   = true;
-		m_aFavoriteInfo[i].m_bAddExcept	   = false;
+		m_aFavoriteInfo[i].m_bFilePath	 = false;
+		m_aFavoriteInfo[i].m_bHaveView	 = false;
+		m_aFavoriteInfo[i].m_bEditable	 = true;
+		m_aFavoriteInfo[i].m_bAddExcept	= false;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent	   = &m_cRecentGrepFolder;
-		m_aFavoriteInfo[i].m_strCaption	   = LS(STR_DLGFAV_GREP_FOLDER);
-		m_aFavoriteInfo[i].m_pszCaption	   = m_aFavoriteInfo[i].m_strCaption.c_str();
+		m_aFavoriteInfo[i].m_strCaption	= LS(STR_DLGFAV_GREP_FOLDER);
+		m_aFavoriteInfo[i].m_pszCaption	= m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId		   = IDC_LIST_FAVORITE_GREP_FOLDER;
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
-		m_aFavoriteInfo[i].m_bFilePath	   = true;
-		m_aFavoriteInfo[i].m_bHaveView	   = false;
-		m_aFavoriteInfo[i].m_bEditable	   = false;
-		m_aFavoriteInfo[i].m_bAddExcept	   = false;
+		m_aFavoriteInfo[i].m_bFilePath	 = true;
+		m_aFavoriteInfo[i].m_bHaveView	 = false;
+		m_aFavoriteInfo[i].m_bEditable	 = false;
+		m_aFavoriteInfo[i].m_bAddExcept	= false;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent	   = &m_cRecentCmd;
-		m_aFavoriteInfo[i].m_strCaption	   = LS(STR_DLGFAV_EXT_COMMAND);
-		m_aFavoriteInfo[i].m_pszCaption	   = m_aFavoriteInfo[i].m_strCaption.c_str();
+		m_aFavoriteInfo[i].m_strCaption	= LS(STR_DLGFAV_EXT_COMMAND);
+		m_aFavoriteInfo[i].m_pszCaption	= m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId		   = IDC_LIST_FAVORITE_CMD;
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
-		m_aFavoriteInfo[i].m_bFilePath	   = false;
-		m_aFavoriteInfo[i].m_bHaveView	   = false;
-		m_aFavoriteInfo[i].m_bEditable	   = true;
-		m_aFavoriteInfo[i].m_bAddExcept	   = false;
+		m_aFavoriteInfo[i].m_bFilePath	 = false;
+		m_aFavoriteInfo[i].m_bHaveView	 = false;
+		m_aFavoriteInfo[i].m_bEditable	 = true;
+		m_aFavoriteInfo[i].m_bAddExcept	= false;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent	   = &m_cRecentCurDir;
-		m_aFavoriteInfo[i].m_strCaption	   = LS(STR_DLGFAV_CURRENT_DIR);
-		m_aFavoriteInfo[i].m_pszCaption	   = m_aFavoriteInfo[i].m_strCaption.c_str();
+		m_aFavoriteInfo[i].m_strCaption	= LS(STR_DLGFAV_CURRENT_DIR);
+		m_aFavoriteInfo[i].m_pszCaption	= m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId		   = IDC_LIST_FAVORITE_CUR_DIR;
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
-		m_aFavoriteInfo[i].m_bFilePath	   = true;
-		m_aFavoriteInfo[i].m_bHaveView	   = false;
-		m_aFavoriteInfo[i].m_bEditable	   = false;
-		m_aFavoriteInfo[i].m_bAddExcept	   = false;
+		m_aFavoriteInfo[i].m_bFilePath	 = true;
+		m_aFavoriteInfo[i].m_bHaveView	 = false;
+		m_aFavoriteInfo[i].m_bEditable	 = false;
+		m_aFavoriteInfo[i].m_bAddExcept	= false;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent	   = NULL;
-		m_aFavoriteInfo[i].m_pszCaption	   = NULL;
+		m_aFavoriteInfo[i].m_pszCaption	= NULL;
 		m_aFavoriteInfo[i].m_nId		   = -1;
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
-		m_aFavoriteInfo[i].m_bFilePath	   = false;
-		m_aFavoriteInfo[i].m_bHaveView	   = false;
-		m_aFavoriteInfo[i].m_bEditable	   = false;
-		m_aFavoriteInfo[i].m_bAddExcept	   = false;
+		m_aFavoriteInfo[i].m_bFilePath	 = false;
+		m_aFavoriteInfo[i].m_bHaveView	 = false;
+		m_aFavoriteInfo[i].m_bEditable	 = false;
+		m_aFavoriteInfo[i].m_bAddExcept	= false;
 
 		/* これ以上増やすときはテーブルサイズも書き換えてね */
 		assert(i < _countof(m_aFavoriteInfo));
 	}
 	for (i = 0; i < FAVORITE_INFO_MAX; i++) {
 		m_aListViewInfo[i].hListView	  = 0;
-		m_aListViewInfo[i].nSortColumn	  = -1;
+		m_aListViewInfo[i].nSortColumn	= -1;
 		m_aListViewInfo[i].bSortAscending = false;
 	}
 	m_ptDefaultSize.x = -1;
@@ -281,18 +280,18 @@ void CDlgFavorite::SetDataOne(int nIndex, int nLvItemIndex)
 	for (int i = 0; i < nItemCount; i++) {
 		FormatFavoriteColumn(tmp, _countof(tmp), i, i < nViewCount);
 		lvi.mask	 = LVIF_TEXT | LVIF_PARAM;
-		lvi.pszText	 = tmp;
-		lvi.iItem	 = i;
+		lvi.pszText  = tmp;
+		lvi.iItem	= i;
 		lvi.iSubItem = 0;
-		lvi.lParam	 = i;
+		lvi.lParam   = i;
 		ListView_InsertItem(hwndList, &lvi);
 
 		const WCHAR *p = pRecent->GetItemText(i);
 		auto_snprintf_s(tmp, _countof(tmp), L"%s", p ? p : L"");
 		lvi.mask	 = LVIF_TEXT;
-		lvi.iItem	 = i;
+		lvi.iItem	= i;
 		lvi.iSubItem = 1;
-		lvi.pszText	 = tmp;
+		lvi.pszText  = tmp;
 		ListView_SetItem(hwndList, &lvi);
 
 		if (m_aFavoriteInfo[nIndex].m_bHaveFavorite) {
@@ -346,7 +345,7 @@ BOOL CDlgFavorite::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	HWND	  hwndList;
 	HWND	  hwndBaseList;
 	HWND	  hwndTab;
-	TCITEM	  tcitem;
+	TCITEM	tcitem;
 	LV_COLUMN col;
 	RECT	  rc;
 	int		  nTab;
@@ -366,8 +365,8 @@ BOOL CDlgFavorite::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 
 	RECT rcDialog = GetDllShareData().m_Common.m_sOthers.m_rcFavoriteDialog;
 	if (rcDialog.left != 0 || rcDialog.bottom != 0) {
-		m_xPos	  = rcDialog.left;
-		m_yPos	  = rcDialog.top;
+		m_xPos	= rcDialog.left;
+		m_yPos	= rcDialog.top;
 		m_nWidth  = rcDialog.right - rcDialog.left;
 		m_nHeight = rcDialog.bottom - rcDialog.top;
 	}
@@ -392,7 +391,7 @@ BOOL CDlgFavorite::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	// リストビューのItem/SubItem幅を計算
 	std::wstring pszFavTest		  = LS(STR_DLGFAV_FAVORITE);
 	WCHAR *		 pszFAVORITE_TEXT = const_cast<WCHAR *>(pszFavTest.c_str());
-	const int	 nListViewWidthClient =
+	const int	nListViewWidthClient =
 		rc.right - rc.left - CTextWidthCalc::WIDTH_MARGIN_SCROLLBER - ::GetSystemMetrics(SM_CXVSCROLL);
 	// 初期値は従来方式の%指定
 	int nItemCx		= nListViewWidthClient * 16 / 100;
@@ -425,14 +424,14 @@ BOOL CDlgFavorite::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 		col.mask	 = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt		 = LVCFMT_LEFT;
 		col.cx		 = nItemCx;
-		col.pszText	 = pszFAVORITE_TEXT;
+		col.pszText  = pszFAVORITE_TEXT;
 		col.iSubItem = 0;
 		ListView_InsertColumn(hwndList, 0, &col);
 
 		col.mask	 = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt		 = LVCFMT_LEFT;
 		col.cx		 = nSubItem1Cx;
-		col.pszText	 = const_cast<WCHAR *>(m_aFavoriteInfo[nTab].m_pszCaption);
+		col.pszText  = const_cast<WCHAR *>(m_aFavoriteInfo[nTab].m_pszCaption);
 		col.iSubItem = 1;
 		ListView_InsertColumn(hwndList, 1, &col);
 
@@ -443,7 +442,7 @@ BOOL CDlgFavorite::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 		ListView_SetExtendedListViewStyle(hwndList, lngStyle);
 
 		/* タブ項目追加 */
-		tcitem.mask	   = TCIF_TEXT;
+		tcitem.mask	= TCIF_TEXT;
 		tcitem.pszText = const_cast<WCHAR *>(m_aFavoriteInfo[nTab].m_pszCaption);
 		TabCtrl_InsertItem(hwndTab, nTab, &tcitem);
 	}
@@ -479,8 +478,7 @@ BOOL CDlgFavorite::OnBnClicked(int wID)
 	// 2010.03.20 Moca 「お気に入り以外かすべて削除」選択メッセージボックスを廃止し
 	//     それぞれのボタンに変更
 	//すべて削除
-	case IDC_BUTTON_CLEAR:
-	{
+	case IDC_BUTTON_CLEAR: {
 		::DlgItem_SetText(GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"");
 		CRecent *pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
 		if (pRecent) {
@@ -497,8 +495,7 @@ BOOL CDlgFavorite::OnBnClicked(int wID)
 	}
 		return TRUE;
 	//お気に入り以外削除
-	case IDC_BUTTON_DELETE_NOFAVORATE:
-	{
+	case IDC_BUTTON_DELETE_NOFAVORATE: {
 		::DlgItem_SetText(GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"");
 		if (m_aFavoriteInfo[m_nCurrentTab].m_bHaveFavorite) {
 			int const nRet = ConfirmMessage(
@@ -517,8 +514,7 @@ BOOL CDlgFavorite::OnBnClicked(int wID)
 	}
 		return TRUE;
 	// 存在しない項目 を削除
-	case IDC_BUTTON_DELETE_NOTFOUND:
-	{
+	case IDC_BUTTON_DELETE_NOTFOUND: {
 		::DlgItem_SetText(GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"");
 		if (m_aFavoriteInfo[m_nCurrentTab].m_bFilePath) {
 			const int nRet = ConfirmMessage(
@@ -546,13 +542,11 @@ BOOL CDlgFavorite::OnBnClicked(int wID)
 	}
 		return TRUE;
 	//選択項目の削除
-	case IDC_BUTTON_DELETE_SELECTED:
-	{
+	case IDC_BUTTON_DELETE_SELECTED: {
 		DeleteSelected();
 	}
 		return TRUE;
-	case IDC_BUTTON_ADD_FAVORITE:
-	{
+	case IDC_BUTTON_ADD_FAVORITE: {
 		AddItem();
 	}
 		return TRUE;
@@ -577,14 +571,14 @@ BOOL CDlgFavorite::OnNotify(WPARAM wParam, LPARAM lParam)
 			return TRUE;
 			// break;
 		}
-	} else {
+	}
+	else {
 		hwndList = m_aListViewInfo[m_nCurrentTab].hListView;
 		if (hwndList == lpnmhdr->hwndFrom) {
 			NM_LISTVIEW *pnlv = (NM_LISTVIEW *)lParam;
 			switch (lpnmhdr->code) {
 			case NM_DBLCLK: EditItem(); return TRUE;
-			case NM_RCLICK:
-			{
+			case NM_RCLICK: {
 				POINT po;
 				if (0 != GetCursorPos(&po)) { RightMenu(po); }
 			}
@@ -600,8 +594,7 @@ BOOL CDlgFavorite::OnNotify(WPARAM wParam, LPARAM lParam)
 			case LVN_KEYDOWN:
 				switch (((NMLVKEYDOWN *)lParam)->wVKey) {
 				case VK_DELETE: DeleteSelected(); return TRUE;
-				case VK_APPS:
-				{
+				case VK_APPS: {
 					POINT po;
 					RECT  rc;
 					hwndList = GetItemHwnd(m_aFavoriteInfo[m_nCurrentTab].m_nId);
@@ -612,7 +605,7 @@ BOOL CDlgFavorite::OnNotify(WPARAM wParam, LPARAM lParam)
 				}
 					return TRUE;
 				}
-				int	 nIdx = getCtrlKeyState();
+				int  nIdx = getCtrlKeyState();
 				WORD wKey = ((NMLVKEYDOWN *)lParam)->wVKey;
 				if ((wKey == VK_NEXT && nIdx == _CTRL)) {
 					int next = m_nCurrentTab + 1;
@@ -620,7 +613,8 @@ BOOL CDlgFavorite::OnNotify(WPARAM wParam, LPARAM lParam)
 					TabCtrl_SetCurSel(GetItemHwnd(IDC_TAB_FAVORITE), next);
 					TabSelectChange(true);
 					return FALSE;
-				} else if ((wKey == VK_PRIOR && nIdx == _CTRL)) {
+				}
+				else if ((wKey == VK_PRIOR && nIdx == _CTRL)) {
 					int prev = m_nCurrentTab - 1;
 					if (prev < 0) { prev = _countof(m_aFavoriteInfo) - 2; }
 					TabCtrl_SetCurSel(GetItemHwnd(IDC_TAB_FAVORITE), prev);
@@ -639,7 +633,7 @@ void CDlgFavorite::TabSelectChange(bool bSetFocus)
 {
 	::DlgItem_SetText(GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"");
 	HWND hwndTab = GetItemHwnd(IDC_TAB_FAVORITE);
-	int	 nIndex	 = TabCtrl_GetCurSel(hwndTab);
+	int  nIndex  = TabCtrl_GetCurSel(hwndTab);
 	if (-1 != nIndex) {
 		//新しく表示する。
 		HWND hwndList = GetItemHwnd(m_aFavoriteInfo[nIndex].m_nId);
@@ -684,12 +678,12 @@ LPVOID CDlgFavorite::GetHelpIdTable(void) { return (LPVOID)p_helpids; }
 */
 bool CDlgFavorite::RefreshList(void)
 {
-	int	  nTab;
+	int   nTab;
 	bool  bret;
 	bool  ret_val = false;
 	WCHAR msg[1024];
 
-	msg[0]	   = L'\0';
+	msg[0]	 = L'\0';
 	m_szMsg[0] = L'\0';
 
 	//全リストの現在選択中のアイテムを取得する。
@@ -718,10 +712,10 @@ bool CDlgFavorite::RefreshList(void)
 bool CDlgFavorite::RefreshListOne(int nIndex)
 {
 	HWND   hwndList;
-	int	   nCount;
-	int	   nCurrentIndex;
-	int	   nItemCount;
-	int	   i;
+	int	nCount;
+	int	nCurrentIndex;
+	int	nItemCount;
+	int	i;
 	BOOL   bret;
 	LVITEM lvitem;
 
@@ -729,7 +723,7 @@ bool CDlgFavorite::RefreshListOne(int nIndex)
 	nItemCount		 = pRecent->GetItemCount();
 	hwndList		 = GetItemHwnd(m_aFavoriteInfo[nIndex].m_nId);
 	nCount			 = ListView_GetItemCount(hwndList);
-	nCurrentIndex	 = ListView_GetNextItem(hwndList, -1, LVNI_SELECTED);
+	nCurrentIndex	= ListView_GetNextItem(hwndList, -1, LVNI_SELECTED);
 	if (-1 == nCurrentIndex) nCurrentIndex = ListView_GetNextItem(hwndList, -1, LVNI_FOCUSED);
 
 	if (nItemCount != nCount) goto changed; //個数が変わったので再構築
@@ -742,10 +736,10 @@ bool CDlgFavorite::RefreshListOne(int nIndex)
 		wmemset(szText, 0, _countof(szText));
 		memset_raw(&lvitem, 0, sizeof(lvitem));
 		lvitem.mask		  = LVIF_TEXT | LVIF_PARAM;
-		lvitem.pszText	  = szText;
+		lvitem.pszText	= szText;
 		lvitem.cchTextMax = _countof(szText);
 		lvitem.iItem	  = i;
-		lvitem.iSubItem	  = 1;
+		lvitem.iSubItem   = 1;
 		bret			  = ListView_GetItem(hwndList, &lvitem);
 		if (!bret) goto changed; //エラーなので再構築
 
@@ -764,8 +758,8 @@ changed:
 // お気に入りのフラグだけ適用
 void CDlgFavorite::GetFavorite(int nIndex)
 {
-	CRecent *const pRecent	= m_aFavoriteInfo[nIndex].m_pRecent;
-	const HWND	   hwndList = m_aListViewInfo[nIndex].hListView;
+	CRecent *const pRecent  = m_aFavoriteInfo[nIndex].m_pRecent;
+	const HWND	 hwndList = m_aListViewInfo[nIndex].hListView;
 	if (m_aFavoriteInfo[nIndex].m_bHaveFavorite) {
 		const int nCount = ListView_GetItemCount(hwndList);
 		for (int i = 0; i < nCount; i++) {
@@ -787,7 +781,7 @@ int CDlgFavorite::DeleteSelected()
 	CRecent *pRecent	   = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
 	if (pRecent) {
 		HWND hwndList		= m_aListViewInfo[m_nCurrentTab].hListView;
-		int	 nSelectedCount = ListView_GetSelectedCount(hwndList);
+		int  nSelectedCount = ListView_GetSelectedCount(hwndList);
 		if (0 < nSelectedCount) {
 			GetFavorite(m_nCurrentTab);
 
@@ -866,14 +860,14 @@ void CDlgFavorite::UpdateUIState()
 void CDlgFavorite::AddItem()
 {
 	if (!m_aFavoriteInfo[m_nCurrentTab].m_bEditable) { return; }
-	CRecent &		   recent	= *(m_aFavoriteInfo[m_nCurrentTab].m_pRecent);
+	CRecent &		   recent   = *(m_aFavoriteInfo[m_nCurrentTab].m_pRecent);
 	size_t			   max_size = recent.GetTextMaxLength();
 	std::vector<WCHAR> vecAddText(max_size);
 	WCHAR *			   szAddText = &vecAddText[0];
 	szAddText[0]				 = L'\0';
 
-	CDlgInput1	 cDlgInput1;
-	std::wstring strTitle	= LS(STR_DLGFAV_ADD);
+	CDlgInput1   cDlgInput1;
+	std::wstring strTitle   = LS(STR_DLGFAV_ADD);
 	std::wstring strMessage = LS(STR_DLGFAV_ADD_PROMPT);
 	if (!cDlgInput1.DoModal(G_AppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size, szAddText)) {
 		return;
@@ -890,19 +884,19 @@ void CDlgFavorite::EditItem()
 {
 	if (!m_aFavoriteInfo[m_nCurrentTab].m_bEditable) { return; }
 	HWND hwndList		= m_aListViewInfo[m_nCurrentTab].hListView;
-	int	 nSelectedCount = ListView_GetSelectedCount(hwndList);
+	int  nSelectedCount = ListView_GetSelectedCount(hwndList);
 	if (0 < nSelectedCount) {
 		int nLvItem = -1;
 		nLvItem		= ListView_GetNextItem(hwndList, nLvItem, LVNI_SELECTED);
 		if (-1 != nLvItem) {
 			int				   nRecIndex = ListView_GetLParamInt(hwndList, nLvItem);
-			CRecent &		   recent	 = *(m_aFavoriteInfo[m_nCurrentTab].m_pRecent);
-			size_t			   max_size	 = recent.GetTextMaxLength();
+			CRecent &		   recent	= *(m_aFavoriteInfo[m_nCurrentTab].m_pRecent);
+			size_t			   max_size  = recent.GetTextMaxLength();
 			std::vector<WCHAR> vecAddText(max_size);
 			WCHAR *			   szText = &vecAddText[0];
 			wcsncpy_s(szText, max_size, recent.GetItemText(nRecIndex), _TRUNCATE);
-			CDlgInput1	 cDlgInput1;
-			std::wstring strTitle	= LS(STR_DLGFAV_EDIT);
+			CDlgInput1   cDlgInput1;
+			std::wstring strTitle   = LS(STR_DLGFAV_EDIT);
 			std::wstring strMessage = LS(STR_DLGFAV_EDIT_PROMPT);
 			if (!cDlgInput1.DoModal(G_AppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size,
 									szText)) {
@@ -919,14 +913,14 @@ void CDlgFavorite::EditItem()
 
 void CDlgFavorite::RightMenu(POINT &menuPos)
 {
-	HMENU	  hMenu					 = ::CreatePopupMenu();
+	HMENU	 hMenu					 = ::CreatePopupMenu();
 	const int MENU_EDIT				 = 100;
 	const int MENU_ADD_EXCEPT		 = 101;
 	const int MENU_ADD_NEW			 = 102;
 	const int MENU_DELETE_ALL		 = 200;
 	const int MENU_DELETE_NOFAVORATE = 201;
-	const int MENU_DELETE_NOTFOUND	 = 202;
-	const int MENU_DELETE_SELECTED	 = 203;
+	const int MENU_DELETE_NOTFOUND   = 202;
+	const int MENU_DELETE_SELECTED   = 203;
 	CRecent & recent				 = *m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
 	CRecent & exceptMRU				 = *m_aFavoriteInfo[m_nExceptTab].m_pRecent;
 
@@ -964,22 +958,20 @@ void CDlgFavorite::RightMenu(POINT &menuPos)
 
 	switch (nId) {
 	case MENU_EDIT: EditItem(); break;
-	case MENU_ADD_EXCEPT:
-	{
+	case MENU_ADD_EXCEPT: {
 		::DlgItem_SetText(GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"");
 		CRecent *pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
 		if (pRecent) {
 			HWND hwndList		= m_aListViewInfo[m_nCurrentTab].hListView;
-			int	 nSelectedCount = ListView_GetSelectedCount(hwndList);
+			int  nSelectedCount = ListView_GetSelectedCount(hwndList);
 			if (0 < nSelectedCount) {
 				int		 nLvItem   = -1;
 				bool	 bAddFalse = false;
 				CRecent &exceptMRU = *m_aFavoriteInfo[m_nExceptTab].m_pRecent;
 				while ((nLvItem = ListView_GetNextItem(hwndList, nLvItem, LVNI_SELECTED)) != -1) {
 					int nRecIndex = ListView_GetLParamInt(hwndList, nLvItem);
-					if (exceptMRU.GetArrayCount() <= exceptMRU.GetItemCount()) {
-						bAddFalse = true;
-					} else {
+					if (exceptMRU.GetArrayCount() <= exceptMRU.GetItemCount()) { bAddFalse = true; }
+					else {
 						exceptMRU.AppendItemText(pRecent->GetItemText(nRecIndex));
 					}
 				}
@@ -1004,8 +996,8 @@ int FormatFavoriteColumn(WCHAR *buf, int size, int index, bool view)
 {
 	// 2010.03.21 Moca Textに連番を設定することによってアクセスキーにする
 	// 0 - 9 A - Z
-	const int	mod = index % 36;
-	const WCHAR c	= (WCHAR)(((mod) <= 9) ? (L'0' + mod) : (L'A' + mod - 10));
+	const int   mod = index % 36;
+	const WCHAR c   = (WCHAR)(((mod) <= 9) ? (L'0' + mod) : (L'A' + mod - 10));
 	return auto_snprintf_s(buf, size, L"%c %s", c, (view ? L"  " : LS(STR_DLGFAV_HIDDEN)));
 }
 
@@ -1035,45 +1027,44 @@ void CDlgFavorite::ListViewSort(ListViewSortInfo &info, const CRecent *pRecent, 
 {
 	CompareListViewLParam lparamInfo;
 	// ソート順の決定
-	if (info.nSortColumn != column) {
-		info.bSortAscending = true;
-	} else {
+	if (info.nSortColumn != column) { info.bSortAscending = true; }
+	else {
 		// ソート逆順(降順)
 		info.bSortAscending = (bReverse ? (!info.bSortAscending) : true);
 	}
 
 	// ヘッダ書き換え
-	WCHAR	  szHeader[200];
+	WCHAR	 szHeader[200];
 	LV_COLUMN col;
 	if (-1 != info.nSortColumn) {
 		// 元のソートの「 ▼」を取り除く
 		col.mask	   = LVCF_TEXT;
-		col.pszText	   = szHeader;
+		col.pszText	= szHeader;
 		col.cchTextMax = _countof(szHeader);
 		col.iSubItem   = 0;
 		ListView_GetColumn(info.hListView, info.nSortColumn, &col);
 		int nLen = (int)wcslen(szHeader) - wcslen(L"▼");
 		if (0 <= nLen) { szHeader[nLen] = L'\0'; }
 		col.mask	 = LVCF_TEXT;
-		col.pszText	 = szHeader;
+		col.pszText  = szHeader;
 		col.iSubItem = 0;
 		ListView_SetColumn(info.hListView, info.nSortColumn, &col);
 	}
 	// 「▼」を付加
 	col.mask	   = LVCF_TEXT;
-	col.pszText	   = szHeader;
+	col.pszText	= szHeader;
 	col.cchTextMax = _countof(szHeader) - 4;
 	col.iSubItem   = 0;
 	ListView_GetColumn(info.hListView, column, &col);
 	wcscat(szHeader, info.bSortAscending ? L"▼" : L"▲");
 	col.mask	 = LVCF_TEXT;
-	col.pszText	 = szHeader;
+	col.pszText  = szHeader;
 	col.iSubItem = 0;
 	ListView_SetColumn(info.hListView, column, &col);
 
 	info.nSortColumn = column;
 
-	lparamInfo.nSortColumn	= column;
+	lparamInfo.nSortColumn  = column;
 	lparamInfo.hwndListView = info.hListView;
 	lparamInfo.pRecent		= pRecent;
 	lparamInfo.bAbsOrder	= info.bSortAscending;
@@ -1085,9 +1076,8 @@ static int CALLBACK CompareListViewFunc(LPARAM lParamItem1, LPARAM lParamItem2, 
 {
 	CompareListViewLParam *pCompInfo = reinterpret_cast<CompareListViewLParam *>(lParamSort);
 	int					   nRet		 = 0;
-	if (0 == pCompInfo->nSortColumn) {
-		nRet = lParamItem1 - lParamItem2;
-	} else {
+	if (0 == pCompInfo->nSortColumn) { nRet = lParamItem1 - lParamItem2; }
+	else {
 		const CRecent *p = pCompInfo->pRecent;
 		nRet			 = wmemicmp(p->GetItemText((int)lParamItem1), p->GetItemText((int)lParamItem2));
 	}

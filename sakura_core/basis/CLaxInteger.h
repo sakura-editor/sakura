@@ -25,8 +25,7 @@
 #pragma once
 
 //!型チェックの緩い整数型
-class CLaxInteger
-{
+class CLaxInteger {
 private:
 	typedef CLaxInteger Me;
 

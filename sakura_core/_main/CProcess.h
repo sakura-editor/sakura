@@ -28,8 +28,7 @@
 /*!
 	@brief プロセス基底クラス
 */
-class CProcess : public TSingleInstance<CProcess>
-{
+class CProcess : public TSingleInstance<CProcess> {
 public:
 	CProcess(HINSTANCE hInstance, LPCWSTR lpCmdLine);
 	bool Run();
@@ -48,7 +47,7 @@ protected:
 	int WriteDump(PEXCEPTION_POINTERS pExceptPtrs);
 #endif
 public:
-	HINSTANCE	GetProcessInstance() const { return m_hInstance; }
+	HINSTANCE   GetProcessInstance() const { return m_hInstance; }
 	CShareData &GetShareData() { return *m_pcShareData; }
 	HWND		GetMainWindow() const { return m_hWnd; }
 

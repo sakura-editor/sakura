@@ -37,8 +37,7 @@ class CDlgCtrlCode;
 	@brief コントロールコード入力ダイアログボックス
 */
 // 2007.10.18 kobake GetCharCode()を作成。
-class CDlgCtrlCode final : public CDialog
-{
+class CDlgCtrlCode final : public CDialog {
 public:
 	/*
 	||  Constructors
@@ -62,7 +61,7 @@ private:
 	LPVOID GetHelpIdTable(void) override;
 
 	void SetData(void) override; /* ダイアログデータの設定 */
-	int	 GetData(void) override; /* ダイアログデータの取得 */
+	int  GetData(void) override; /* ダイアログデータの取得 */
 
 private:
 	/*

@@ -39,8 +39,7 @@
 
 	HTMLヘルプコンポーネントの動的ロードをサポートするクラス
 */
-class CHtmlHelp : public CDllImp
-{
+class CHtmlHelp : public CDllImp {
 public:
 	CHtmlHelp() noexcept;
 	virtual ~CHtmlHelp() noexcept = default;

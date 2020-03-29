@@ -26,8 +26,7 @@
 
 #include "CCodeBase.h"
 
-class CUtf7 : public CCodeBase
-{
+class CUtf7 : public CCodeBase {
 public:
 	// CCodeBaseインターフェース
 	EConvertResult CodeToUnicode(const CMemory &cSrc, CNativeW *pDst) override
@@ -47,7 +46,7 @@ public:
 										CNativeW *pDstMem); // UTF-7     → Unicodeコード変換 //2007.08.13 kobake 追加
 	static EConvertResult UnicodeToUTF7(const CNativeW &cSrc, CMemory *pDstMem); // Unicode   → UTF-7コード変換
 	//	static int MemBASE64_Encode( const char*, int, char**, int, int );/* Base64エンコード */  //
-	//convert/convert_util2.h へ移動
+	// convert/convert_util2.h へ移動
 
 protected:
 	// 2008.11.10 変換ロジックを書き直す

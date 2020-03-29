@@ -30,7 +30,7 @@ static const DWORD p_helpids[] = {				   // 10400
 	IDC_EDIT_DFORM_EX, HIDC_EDIT_DFORM_EX,		   //日付書式（表示例）
 	IDC_EDIT_TFORM_EX, HIDC_EDIT_TFORM_EX,		   //時刻書式（表示例）
 	IDC_EDIT_MIDASHIKIGOU, HIDC_EDIT_MIDASHIKIGOU, //見出し記号
-	IDC_EDIT_INYOUKIGOU, HIDC_EDIT_INYOUKIGOU,	   //引用符
+	IDC_EDIT_INYOUKIGOU, HIDC_EDIT_INYOUKIGOU,	 //引用符
 	IDC_RADIO_DFORM_0, HIDC_RADIO_DFORM_0,		   //日付書式（標準）
 	IDC_RADIO_DFORM_1, HIDC_RADIO_DFORM_1,		   //日付書式（カスタム）
 	IDC_RADIO_TFORM_0, HIDC_RADIO_TFORM_0,		   //時刻書式（標準）
@@ -56,7 +56,7 @@ static const char *p_date_form[] = {"yyyy'年'M'月'd'日'",
 									"yyyy/M/d' ('ddd')'",
 									NULL};
 
-static const char *p_time_form[] = {"hh:mm:ss",	  "tthh'時'mm'分'ss'秒'", "H:mm:ss", "HH:mm:ss",
+static const char *p_time_form[] = {"hh:mm:ss",   "tthh'時'mm'分'ss'秒'", "H:mm:ss", "HH:mm:ss",
 									"tt h:mm:ss", "tt hh:mm:ss",		  NULL};
 //@@@ 2002.01.12 add end
 
@@ -79,7 +79,7 @@ void CPropFormat::ChangeDateExample(HWND hwndDlg)
 	GetData(hwndDlg);
 
 	/* 日付をフォーマット */
-	WCHAR	   szText[1024];
+	WCHAR	  szText[1024];
 	SYSTEMTIME systime;
 	::GetLocalTime(&systime);
 	CFormatManager().MyGetDateFormat(systime, szText, _countof(szText) - 1, m_Common.m_sFormat.m_nDateFormatType,
@@ -93,7 +93,7 @@ void CPropFormat::ChangeTimeExample(HWND hwndDlg)
 	GetData(hwndDlg);
 
 	/* 時刻をフォーマット */
-	WCHAR	   szText[1024];
+	WCHAR	  szText[1024];
 	SYSTEMTIME systime;
 	::GetLocalTime(&systime);
 	CFormatManager().MyGetTimeFormat(systime, szText, _countof(szText) - 1, m_Common.m_sFormat.m_nTimeFormatType,
@@ -103,8 +103,8 @@ void CPropFormat::ChangeTimeExample(HWND hwndDlg)
 }
 
 /* Format メッセージ処理 */
-INT_PTR CPropFormat::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
-								   UINT	  uMsg,	   // message
+INT_PTR CPropFormat::DispatchEvent(HWND   hwndDlg, // handle to dialog box
+								   UINT   uMsg,	// message
 								   WPARAM wParam,  // first message parameter
 								   LPARAM lParam   // second message parameter
 )
@@ -209,8 +209,7 @@ INT_PTR CPropFormat::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 		break; /* WM_NOTIFY */
 
 		//@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP:
-	{
+	case WM_HELP: {
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -240,18 +239,16 @@ void CPropFormat::SetData(HWND hwndDlg)
 	::DlgItem_SetText(hwndDlg, IDC_EDIT_INYOUKIGOU, m_Common.m_sFormat.m_szInyouKigou);
 
 	//日付書式のタイプ
-	if (0 == m_Common.m_sFormat.m_nDateFormatType) {
-		::CheckDlgButton(hwndDlg, IDC_RADIO_DFORM_0, BST_CHECKED);
-	} else {
+	if (0 == m_Common.m_sFormat.m_nDateFormatType) { ::CheckDlgButton(hwndDlg, IDC_RADIO_DFORM_0, BST_CHECKED); }
+	else {
 		::CheckDlgButton(hwndDlg, IDC_RADIO_DFORM_1, BST_CHECKED);
 	}
 	//日付書式
 	::DlgItem_SetText(hwndDlg, IDC_EDIT_DFORM, m_Common.m_sFormat.m_szDateFormat);
 
 	//時刻書式のタイプ
-	if (0 == m_Common.m_sFormat.m_nTimeFormatType) {
-		::CheckDlgButton(hwndDlg, IDC_RADIO_TFORM_0, BST_CHECKED);
-	} else {
+	if (0 == m_Common.m_sFormat.m_nTimeFormatType) { ::CheckDlgButton(hwndDlg, IDC_RADIO_TFORM_0, BST_CHECKED); }
+	else {
 		::CheckDlgButton(hwndDlg, IDC_RADIO_TFORM_1, BST_CHECKED);
 	}
 	//時刻書式
@@ -284,9 +281,8 @@ int CPropFormat::GetData(HWND hwndDlg)
 					  _countof(m_Common.m_sFormat.m_szInyouKigou));
 
 	//日付書式のタイプ
-	if (BST_CHECKED == ::IsDlgButtonChecked(hwndDlg, IDC_RADIO_DFORM_0)) {
-		m_Common.m_sFormat.m_nDateFormatType = 0;
-	} else {
+	if (BST_CHECKED == ::IsDlgButtonChecked(hwndDlg, IDC_RADIO_DFORM_0)) { m_Common.m_sFormat.m_nDateFormatType = 0; }
+	else {
 		m_Common.m_sFormat.m_nDateFormatType = 1;
 	}
 	//日付書式
@@ -294,9 +290,8 @@ int CPropFormat::GetData(HWND hwndDlg)
 					  _countof(m_Common.m_sFormat.m_szDateFormat));
 
 	//時刻書式のタイプ
-	if (BST_CHECKED == ::IsDlgButtonChecked(hwndDlg, IDC_RADIO_TFORM_0)) {
-		m_Common.m_sFormat.m_nTimeFormatType = 0;
-	} else {
+	if (BST_CHECKED == ::IsDlgButtonChecked(hwndDlg, IDC_RADIO_TFORM_0)) { m_Common.m_sFormat.m_nTimeFormatType = 0; }
+	else {
 		m_Common.m_sFormat.m_nTimeFormatType = 1;
 	}
 
@@ -316,7 +311,8 @@ void CPropFormat::EnableFormatPropInput(HWND hwndDlg)
 	if (::IsDlgButtonChecked(hwndDlg, IDC_RADIO_DFORM_1)) {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_DFORM), TRUE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_DFORM), TRUE);
-	} else {
+	}
+	else {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_DFORM), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_DFORM), FALSE);
 	}
@@ -325,7 +321,8 @@ void CPropFormat::EnableFormatPropInput(HWND hwndDlg)
 	if (::IsDlgButtonChecked(hwndDlg, IDC_RADIO_TFORM_1)) {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_TFORM), TRUE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_TFORM), TRUE);
-	} else {
+	}
+	else {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_TFORM), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_TFORM), FALSE);
 	}

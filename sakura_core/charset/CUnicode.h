@@ -28,8 +28,7 @@
 
 #include "CCodeBase.h"
 
-class CUnicode : public CCodeBase
-{
+class CUnicode : public CCodeBase {
 public:
 	EConvertResult CodeToUnicode(const CMemory &cSrc, CNativeW *pDst) override
 	{ //!< 特定コード → UNICODE    変換

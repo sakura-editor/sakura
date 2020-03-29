@@ -38,34 +38,33 @@ typedef int PluginId;
 typedef int PlugId;
 
 //プラグイン定義ファイル名
-#define PII_FILENAME	 L"plugin.def"
-#define PII_L10NDIR		 L"local"
+#define PII_FILENAME L"plugin.def"
+#define PII_L10NDIR L"local"
 #define PII_L10NFILEBASE L"plugin_"
-#define PII_L10NFILEEXT	 L".def"
+#define PII_L10NFILEEXT L".def"
 //オプションファイル拡張子（オプションファイル＝個別フォルダ名＋拡張子）
 #define PII_OPTFILEEXT L".ini"
 
 //プラグイン定義ファイル・キー文字列
-#define PII_PLUGIN			   L"Plugin"	  //共通情報
-#define PII_PLUGIN_ID		   L"Id"		  // ID：プラグインID
-#define PII_PLUGIN_NAME		   L"Name"		  //名前：プラグイン名
+#define PII_PLUGIN L"Plugin"				  //共通情報
+#define PII_PLUGIN_ID L"Id"					  // ID：プラグインID
+#define PII_PLUGIN_NAME L"Name"				  //名前：プラグイン名
 #define PII_PLUGIN_DESCRIPTION L"Description" //説明：簡潔な説明
-#define PII_PLUGIN_PLUGTYPE	   L"Type"		  //種別：wsh / dll
-#define PII_PLUGIN_AUTHOR	   L"Author"	  //作者：著作権者名
-#define PII_PLUGIN_VERSION	   L"Version"	  //バージョン：プラグインのバージョン
-#define PII_PLUGIN_URL		   L"Url"		  //配布URL：配布元URL
+#define PII_PLUGIN_PLUGTYPE L"Type"			  //種別：wsh / dll
+#define PII_PLUGIN_AUTHOR L"Author"			  //作者：著作権者名
+#define PII_PLUGIN_VERSION L"Version"		  //バージョン：プラグインのバージョン
+#define PII_PLUGIN_URL L"Url"				  //配布URL：配布元URL
 
-#define PII_PLUG   L"Plug"	 //プラグ情報
+#define PII_PLUG L"Plug"	 //プラグ情報
 #define PII_STRING L"String" //文字列情報
 
 #define PII_COMMAND L"Command" //コマンド情報
-#define PII_OPTION	L"Option"  //オプション定義情報	// 2010/3/24 Uchi
+#define PII_OPTION L"Option"   //オプション定義情報	// 2010/3/24 Uchi
 
 class CPlugin;
 
 //プラグ（プラグイン内の処理単位）クラス
-class CPlug
-{
+class CPlug {
 	//型定義
 protected:
 	typedef std::wstring wstring;
@@ -88,7 +87,8 @@ public:
 		, m_sHandler(sHandler)
 		, m_sLabel(sLabel)
 		, m_cPlugin(plugin)
-	{}
+	{
+	}
 	//デストラクタ
 public:
 	virtual ~CPlug() {}
@@ -160,18 +160,17 @@ public:
 	//メンバ変数
 public:
 	const PlugId  m_id;		  //プラグID
-	const wstring m_sJack;	  //関連付けるジャック名
+	const wstring m_sJack;	//関連付けるジャック名
 	const wstring m_sHandler; //ハンドラ文字列（関数名）
-	const wstring m_sLabel;	  //ラベル文字列
-	wstring		  m_sIcon;	  //アイコンのファイルパス
-	CPlugin &	  m_cPlugin;  //親プラグイン
+	const wstring m_sLabel;   //ラベル文字列
+	wstring		  m_sIcon;	//アイコンのファイルパス
+	CPlugin &	 m_cPlugin;  //親プラグイン
 };
 
 // オプション定義	// 2010/3/24 Uchi
 std::vector<std::wstring> wstring_split(std::wstring, wchar_t);
 
-class CPluginOption
-{
+class CPluginOption {
 	//型定義
 protected:
 	typedef std::wstring wstring;
@@ -188,11 +187,11 @@ public:
 		m_parent   = parent;
 		m_sLabel   = sLabel;
 		m_sSection = sSection;
-		m_sKey	   = sKey;
+		m_sKey	 = sKey;
 		// 小文字変換
 		std::transform(sType.begin(), sType.end(), sType.begin(), my_towlower2);
 		m_sType		  = sType;
-		m_sSelects	  = sSelects;
+		m_sSelects	= sSelects;
 		m_sDefaultVal = sDefaultVal;
 		m_index		  = index;
 	}
@@ -216,26 +215,25 @@ public:
 
 protected:
 	CPlugin *m_parent;
-	wstring	 m_sLabel;
-	wstring	 m_sSection;
-	wstring	 m_sKey;
-	wstring	 m_sType;
-	wstring	 m_sSelects; // 選択候補
-	wstring	 m_sDefaultVal;
+	wstring  m_sLabel;
+	wstring  m_sSection;
+	wstring  m_sKey;
+	wstring  m_sType;
+	wstring  m_sSelects; // 選択候補
+	wstring  m_sDefaultVal;
 	int		 m_index;
 };
 
 //プラグインクラス
 
-class CPlugin
-{
+class CPlugin {
 	//型定義
 protected:
 	typedef std::wstring wstring;
-	typedef std::string	 string;
+	typedef std::string  string;
 
 public:
-	typedef std::list<CPlugin *> List;	   //プラグインのリスト
+	typedef std::list<CPlugin *> List;	 //プラグインのリスト
 	typedef List::const_iterator ListIter; //そのイテレータ
 
 	//コンストラクタ
@@ -276,19 +274,19 @@ protected:
 	//属性
 public:
 	wstring GetFilePath(const wstring &sFileName) const; //プラグインフォルダ基準の相対パスをフルパスに変換
-	wstring GetPluginDefPath() const { return GetFilePath(PII_FILENAME); }	//プラグイン定義ファイルのパス
+	wstring GetPluginDefPath() const { return GetFilePath(PII_FILENAME); }  //プラグイン定義ファイルのパス
 	wstring GetOptionPath() const { return m_sOptionDir + PII_OPTFILEEXT; } //オプションファイルのパス
 	wstring GetFolderName() const;											//プラグインのフォルダ名を取得
 	virtual CPlug::Array GetPlugs() const = 0;								//プラグの一覧
 
 	//メンバ変数
 public:
-	PluginId				  m_id;	   //!< プラグイン番号（エディタがふる0～MAX_PLUGIN-1の番号）
+	PluginId				  m_id;	//!< プラグイン番号（エディタがふる0～MAX_PLUGIN-1の番号）
 	wstring					  m_sId;   //!< プラグインID
 	wstring					  m_sName; //!< プラグイン和名
 	wstring					  m_sDescription; //!< プラグインについての簡単な記述
 	wstring					  m_sAuthor;	  //!< 作者
-	wstring					  m_sVersion;	  //!< バージョン
+	wstring					  m_sVersion;	 //!< バージョン
 	wstring					  m_sUrl;		  //!< 配布URL
 	wstring					  m_sBaseDir;
 	wstring					  m_sOptionDir;
@@ -307,5 +305,5 @@ public:
 	virtual bool InvokePlug(CEditView *view, CPlug &plug, CWSHIfObj::List &param) = 0; //プラグを実行する
 	virtual bool ReadPluginDef(CDataProfile *cProfile,
 							   CDataProfile *cProfileMlang) = 0; //プラグイン定義ファイルを読み込む
-	virtual bool ReadPluginOption(CDataProfile *cProfile)	= 0; //オプションファイルを読み込む
+	virtual bool ReadPluginOption(CDataProfile *cProfile)   = 0; //オプションファイルを読み込む
 };

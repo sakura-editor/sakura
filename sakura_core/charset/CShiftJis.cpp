@@ -26,9 +26,8 @@
 */
 int CShiftJis::GetSizeOfChar(const char *pData, int nDataLen, int nIdx)
 {
-	if (nIdx >= nDataLen) {
-		return 0;
-	} else if (nIdx == (nDataLen - 1)) {
+	if (nIdx >= nDataLen) { return 0; }
+	else if (nIdx == (nDataLen - 1)) {
 		return 1;
 	}
 
@@ -55,9 +54,9 @@ int CShiftJis::SjisToUni(const char *pSrc, const int nSrcLen, wchar_t *pDst, boo
 		return 0;
 	}
 
-	pr	   = reinterpret_cast<const unsigned char *>(pSrc);
+	pr	 = reinterpret_cast<const unsigned char *>(pSrc);
 	pr_end = reinterpret_cast<const unsigned char *>(pSrc + nSrcLen);
-	pw	   = reinterpret_cast<unsigned short *>(pDst);
+	pw	 = reinterpret_cast<unsigned short *>(pDst);
 
 	for (; (nclen = CheckSjisChar(reinterpret_cast<const char *>(pr), pr_end - pr, &echarset)) != 0; pr += nclen) {
 		switch (echarset) {
@@ -114,7 +113,8 @@ EConvertResult CShiftJis::SJISToUnicode(const CMemory &cSrc, CNativeW *pDstMem)
 
 		// 後始末
 		delete[] pDst;
-	} else {
+	}
+	else {
 		// 変換先バッファサイズを設定してメモリ領域確保
 		pDstMem->AllocStringBuffer(nSrcLen + 1);
 		wchar_t *pDst = pDstMem->GetStringPtr();
@@ -125,9 +125,8 @@ EConvertResult CShiftJis::SJISToUnicode(const CMemory &cSrc, CNativeW *pDstMem)
 		pDstMem->_SetStringLength(nDstLen);
 	}
 
-	if (bError == false) {
-		return RESULT_COMPLETE;
-	} else {
+	if (bError == false) { return RESULT_COMPLETE; }
+	else {
 		return RESULT_LOSESOME;
 	}
 }
@@ -148,9 +147,9 @@ int CShiftJis::UniToSjis(const wchar_t *pSrc, const int nSrcLen, char *pDst, boo
 		return 0;
 	}
 
-	pr	   = reinterpret_cast<const unsigned short *>(pSrc);
+	pr	 = reinterpret_cast<const unsigned short *>(pSrc);
 	pr_end = reinterpret_cast<const unsigned short *>(pSrc + nSrcLen);
-	pw	   = reinterpret_cast<unsigned char *>(pDst);
+	pw	 = reinterpret_cast<unsigned char *>(pDst);
 
 	while ((nclen = CheckUtf16leChar(reinterpret_cast<const wchar_t *>(pr), pr_end - pr, &echarset, 0)) > 0) {
 		// 保護コード
@@ -163,13 +162,15 @@ int CShiftJis::UniToSjis(const wchar_t *pSrc, const int nSrcLen, char *pDst, boo
 			pw += _UniToSjis_char(pr, pw, echarset, &berror_tmp);
 			if (berror_tmp == true) { berror = true; }
 			pr += nclen;
-		} else {
+		}
+		else {
 			if (nclen == 1 && IsBinaryOnSurrogate(static_cast<wchar_t>(*pr))) {
 				*pw = static_cast<unsigned char>(TextToBin(*pr) & 0x000000ff);
 				++pw;
-			} else {
+			}
+			else {
 				berror = true;
-				*pw	   = '?';
+				*pw	= '?';
 				++pw;
 			}
 			++pr;
@@ -189,7 +190,7 @@ EConvertResult CShiftJis::UnicodeToSJIS(const CNativeW &cSrc, CMemory *pDstMem)
 	const CMemory *pMem = cSrc._GetMemory();
 
 	// ソース取得
-	const wchar_t *pSrc	   = reinterpret_cast<const wchar_t *>(pMem->GetRawPtr());
+	const wchar_t *pSrc	= reinterpret_cast<const wchar_t *>(pMem->GetRawPtr());
 	int			   nSrcLen = pMem->GetRawLength() / sizeof(wchar_t);
 
 	// 変換先バッファサイズを設定してバッファを確保
@@ -206,9 +207,8 @@ EConvertResult CShiftJis::UnicodeToSJIS(const CNativeW &cSrc, CMemory *pDstMem)
 	delete[] pDst;
 
 	// 結果
-	if (berror == true) {
-		return RESULT_LOSESOME;
-	} else {
+	if (berror == true) { return RESULT_LOSESOME; }
+	else {
 		return RESULT_COMPLETE;
 	}
 }
@@ -245,7 +245,8 @@ EConvertResult CShiftJis::UnicodeToHex(const wchar_t *cSrc, const int iSLen, WCH
 		for (i = cCharBuffer._GetMemory()->GetRawLength(); i > 0; i--, ps++, pd += 2) {
 			auto_sprintf(pd, L"%02X", *ps);
 		}
-	} else {
+	}
+	else {
 		auto_sprintf(pd, L"?%02X", *ps);
 	}
 

@@ -31,14 +31,13 @@
 
 // TSVモード
 #define TSV_MODE_NONE 0 // TSVモードなし
-#define TSV_MODE_TSV  1 // TSVモード
-#define TSV_MODE_CSV  2 // CSVモード
+#define TSV_MODE_TSV 1  // TSVモード
+#define TSV_MODE_CSV 2  // CSVモード
 
 class CDocLineMgr;
 
 // TSVモード情報
-class CTsvModeInfo
-{
+class CTsvModeInfo {
 
 public:
 	void	   CalcTabLength(CDocLineMgr *cDocLineMgr); // タブ位置を再計算する

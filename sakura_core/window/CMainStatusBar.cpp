@@ -8,7 +8,8 @@ CMainStatusBar::CMainStatusBar(CEditWnd *pOwner)
 	: m_pOwner(pOwner)
 	, m_hwndStatusBar(NULL)
 	, m_hwndProgressBar(NULL)
-{}
+{
+}
 
 //	キーワード：ステータスバー順序
 /* ステータスバー作成 */
@@ -46,7 +47,8 @@ void CMainStatusBar::DestroyStatusBar()
 		if (GetDllShareData().m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0) { /* ファンクションキー表示位置／0:上 1:下 */
 			/* サイズボックスの表示／非表示切り替え */
 			bSizeBox = false;
-		} else {
+		}
+		else {
 			bSizeBox = true;
 			/* ステータスパーを表示している場合はサイズボックスを表示しない */
 			if (NULL != m_hwndStatusBar) { bSizeBox = false; }
@@ -120,7 +122,8 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR *pszText
 			::StatusBar_GetText(m_hwndStatusBar, nIndex, prev);
 			// 設定済みの文字列と設定する文字列を比較して異なる場合は、SB_SETTEXT メッセージを発行
 			return (wcscmp(prev, pszText) != 0);
-		} else {
+		}
+		else {
 			return true;
 		}
 	}()

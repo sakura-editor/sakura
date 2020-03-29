@@ -30,20 +30,19 @@
 
 	@date 2009.10.01 ryoji 高DPI対応用に作成
 */
-class CDPI
-{
+class CDPI {
 	static void Init()
 	{
 		if (!bInitialized) {
 			HDC hDC = GetDC(NULL);
-			nDpiX	= GetDeviceCaps(hDC, LOGPIXELSX);
-			nDpiY	= GetDeviceCaps(hDC, LOGPIXELSY);
+			nDpiX   = GetDeviceCaps(hDC, LOGPIXELSX);
+			nDpiY   = GetDeviceCaps(hDC, LOGPIXELSY);
 			ReleaseDC(NULL, hDC);
 			bInitialized = true;
 		}
 	}
-	static int	nDpiX;
-	static int	nDpiY;
+	static int  nDpiX;
+	static int  nDpiY;
 	static bool bInitialized;
 
 public:
@@ -69,16 +68,16 @@ public:
 	}
 	static void ScaleRect(LPRECT lprc)
 	{
-		lprc->left	 = ScaleX(lprc->left);
-		lprc->right	 = ScaleX(lprc->right);
-		lprc->top	 = ScaleY(lprc->top);
+		lprc->left   = ScaleX(lprc->left);
+		lprc->right  = ScaleX(lprc->right);
+		lprc->top	= ScaleY(lprc->top);
 		lprc->bottom = ScaleY(lprc->bottom);
 	}
 	static void UnscaleRect(LPRECT lprc)
 	{
-		lprc->left	 = UnscaleX(lprc->left);
-		lprc->right	 = UnscaleX(lprc->right);
-		lprc->top	 = UnscaleY(lprc->top);
+		lprc->left   = UnscaleX(lprc->left);
+		lprc->right  = UnscaleX(lprc->right);
+		lprc->top	= UnscaleY(lprc->top);
 		lprc->bottom = UnscaleY(lprc->bottom);
 	}
 	static int PointsToPixels(int pt, int ptMag = 1)
@@ -93,14 +92,14 @@ public:
 	} // ptMag: 戻り値のポイント数にかける倍率
 };
 
-inline int	DpiScaleX(int x) { return CDPI::ScaleX(x); }
-inline int	DpiScaleY(int y) { return CDPI::ScaleY(y); }
-inline int	DpiUnscaleX(int x) { return CDPI::UnscaleX(x); }
-inline int	DpiUnscaleY(int y) { return CDPI::UnscaleY(y); }
+inline int  DpiScaleX(int x) { return CDPI::ScaleX(x); }
+inline int  DpiScaleY(int y) { return CDPI::ScaleY(y); }
+inline int  DpiUnscaleX(int x) { return CDPI::UnscaleX(x); }
+inline int  DpiUnscaleY(int y) { return CDPI::UnscaleY(y); }
 inline void DpiScaleRect(LPRECT lprc) { CDPI::ScaleRect(lprc); }
 inline void DpiUnscaleRect(LPRECT lprc) { CDPI::UnscaleRect(lprc); }
-inline int	DpiPointsToPixels(int pt, int ptMag = 1) { return CDPI::PointsToPixels(pt, ptMag); }
-inline int	DpiPixelsToPoints(int px, int ptMag = 1) { return CDPI::PixelsToPoints(px, ptMag); }
+inline int  DpiPointsToPixels(int pt, int ptMag = 1) { return CDPI::PointsToPixels(pt, ptMag); }
+inline int  DpiPixelsToPoints(int px, int ptMag = 1) { return CDPI::PixelsToPoints(px, ptMag); }
 
 void ActivateFrameWindow(HWND hwnd); /* アクティブにする */
 
@@ -132,8 +131,7 @@ inline bool DlgItem_Enable(HWND hwndDlg, int nIDDlgItem, bool nEnable)
 
 // 幅計算補助クラス
 // 最大の幅を報告します
-class CTextWidthCalc
-{
+class CTextWidthCalc {
 public:
 	CTextWidthCalc(HWND hParentDlg, int nID);
 	CTextWidthCalc(HWND hwndThis);
@@ -142,7 +140,7 @@ public:
 	virtual ~CTextWidthCalc();
 	void Reset()
 	{
-		nCx	 = 0;
+		nCx  = 0;
 		nExt = 0;
 	}
 	void SetCx(int cx = 0) { nCx = cx; }
@@ -151,14 +149,13 @@ public:
 	bool SetWidthIfMax(int width, int extCx);
 	bool SetTextWidthIfMax(LPCWSTR pszText);
 	bool SetTextWidthIfMax(LPCWSTR pszText, int extCx);
-	int	 GetTextWidth(LPCWSTR pszText) const;
-	int	 GetTextHeight() const;
-	HDC	 GetDC() const { return hDC; }
-	int	 GetCx() { return nCx; }
+	int  GetTextWidth(LPCWSTR pszText) const;
+	int  GetTextHeight() const;
+	HDC  GetDC() const { return hDC; }
+	int  GetCx() { return nCx; }
 	// 算出方法がよく分からないので定数にしておく
 	// 制御不要なら ListViewはLVSCW_AUTOSIZE等推奨
-	enum StaticMagicNambers
-	{
+	enum StaticMagicNambers {
 		//! スクロールバーとアイテムの間の隙間
 		WIDTH_MARGIN_SCROLLBER = 8,
 		//! リストビューヘッダ マージン
@@ -171,17 +168,16 @@ public:
 
 private:
 	HWND  hwnd;
-	HDC	  hDC;
+	HDC   hDC;
 	HFONT hFont;
 	HFONT hFontOld;
-	int	  nCx;
-	int	  nExt;
+	int   nCx;
+	int   nExt;
 	bool  bHDCComp;
 	bool  bFromDC;
 };
 
-class CFontAutoDeleter
-{
+class CFontAutoDeleter {
 public:
 	CFontAutoDeleter();
 	~CFontAutoDeleter();
@@ -195,14 +191,13 @@ private:
 	HWND  m_hwnd;
 };
 
-class CDCFont
-{
+class CDCFont {
 public:
 	CDCFont(LOGFONT &font, HWND hwnd = NULL)
 	{
-		m_hwnd	   = hwnd;
-		m_hDC	   = ::GetDC(hwnd);
-		m_hFont	   = ::CreateFontIndirect(&font);
+		m_hwnd	 = hwnd;
+		m_hDC	  = ::GetDC(hwnd);
+		m_hFont	= ::CreateFontIndirect(&font);
 		m_hFontOld = (HFONT)::SelectObject(m_hDC, m_hFont);
 	}
 	~CDCFont()
@@ -219,7 +214,7 @@ public:
 
 private:
 	HWND  m_hwnd;
-	HDC	  m_hDC;
+	HDC   m_hDC;
 	HFONT m_hFontOld;
 	HFONT m_hFont;
 };

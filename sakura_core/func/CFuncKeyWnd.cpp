@@ -26,8 +26,8 @@
 #include "util/window.h"
 #include "window/CEditWnd.h"
 
-#define IDT_FUNCWND			  1248
-#define TIMER_TIMEOUT		  100
+#define IDT_FUNCWND 1248
+#define TIMER_TIMEOUT 100
 #define TIMER_CHECKFUNCENABLE 300
 
 /****
@@ -75,14 +75,14 @@ CFuncKeyWnd::CFuncKeyWnd()
 	lf.lfUnderline		= 0x0;
 	lf.lfStrikeOut		= 0x0;
 	lf.lfCharSet		= 0x80;
-	lf.lfOutPrecision	= 0x3;
-	lf.lfClipPrecision	= 0x2;
+	lf.lfOutPrecision   = 0x3;
+	lf.lfClipPrecision  = 0x2;
 	lf.lfQuality		= 0x1;
 	lf.lfPitchAndFamily = 0x31;
 	wcscpy(lf.lfFaceName, L"ＭＳ Ｐゴシック");
 	m_hFont = ::CreateFontIndirect(&lf);
 
-	m_bSizeBox	  = false;
+	m_bSizeBox	= false;
 	m_hwndSizeBox = NULL;
 	m_nTimerCount = 0;
 
@@ -103,7 +103,7 @@ HWND CFuncKeyWnd::Open(HINSTANCE hInstance, HWND hwndParent, CEditDoc *pCEditDoc
 
 	m_pcEditDoc		   = pCEditDoc;
 	m_bSizeBox		   = bSizeBox;
-	m_hwndSizeBox	   = NULL;
+	m_hwndSizeBox	  = NULL;
 	m_nCurrentKeyState = -1;
 
 	// 2002.11.04 Moca 変更できるように
@@ -145,11 +145,11 @@ HWND CFuncKeyWnd::Open(HINSTANCE hInstance, HWND hwndParent, CEditDoc *pCEditDoc
 										 0,													 /* horizontal position			*/
 										 0,													 /* vertical position			*/
 										 200,			   /* width of the scroll bar		*/
-										 CW_USEDEFAULT,	   /* default height				*/
+										 CW_USEDEFAULT,	/* default height				*/
 										 GetHwnd(),		   /* handle of main window		*/
-										 (HMENU)NULL,	   /* no menu for a scroll bar 	*/
+										 (HMENU)NULL,	  /* no menu for a scroll bar 	*/
 										 GetAppInstance(), /* instance owning this window	*/
-										 (LPVOID)NULL	   /* pointer not needed			*/
+										 (LPVOID)NULL	  /* pointer not needed			*/
 		);
 	}
 
@@ -178,7 +178,7 @@ LRESULT CFuncKeyWnd::OnSize(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	int i;
 	int nX;
 	//	RECT		rc;
-	int	 nButtonNum;
+	int  nButtonNum;
 	RECT rcParent;
 
 	if (NULL == GetHwnd()) { return 0L; }
@@ -232,7 +232,7 @@ LRESULT CFuncKeyWnd::DispatchEvent(
 
 LRESULT CFuncKeyWnd::OnCommand(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	int	 i;
+	int  i;
 	HWND hwndCtl;
 
 	hwndCtl = (HWND)lParam; // handle of control
@@ -287,9 +287,8 @@ LRESULT CFuncKeyWnd::OnTimer(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 															m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr);
 			if (nFuncCode != m_nFuncCodeArr[i]) {
 				m_nFuncCodeArr[i] = nFuncCode;
-				if (0 == m_nFuncCodeArr[i]) {
-					m_szFuncNameArr[i][0] = LTEXT('\0');
-				} else {
+				if (0 == m_nFuncCodeArr[i]) { m_szFuncNameArr[i][0] = LTEXT('\0'); }
+				else {
 					//	Oct. 2, 2001 genta
 					m_pcEditDoc->m_cFuncLookup.Funccode2Name(m_nFuncCodeArr[i], m_szFuncNameArr[i],
 															 _countof(m_szFuncNameArr[i]) - 1);
@@ -305,7 +304,8 @@ LRESULT CFuncKeyWnd::OnTimer(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		for (i = 0; i < _countof(m_szFuncNameArr); ++i) {
 			if (IsFuncEnable((CEditDoc *)m_pcEditDoc, m_pShareData, m_nFuncCodeArr[i])) {
 				::EnableWindow(m_hwndButtonArr[i], TRUE);
-			} else {
+			}
+			else {
 				::EnableWindow(m_hwndButtonArr[i], FALSE);
 			}
 		}
@@ -344,19 +344,20 @@ LRESULT CFuncKeyWnd::OnDestroy(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 /*! ボタンのサイズを計算 */
 int CFuncKeyWnd::CalcButtonSize(void)
 {
-	int	 nButtonNum;
+	int  nButtonNum;
 	RECT rc;
-	int	 nCyHScroll;
-	int	 nCxVScroll;
+	int  nCyHScroll;
+	int  nCxVScroll;
 	::GetWindowRect(GetHwnd(), &rc);
 
 	nButtonNum = _countof(m_hwndButtonArr);
 
 	if (NULL == m_hwndSizeBox) {
-		//		return ( rc.right - rc.left - nButtonNum - ( (nButtonNum + m_nButtonGroupNum - 1) / m_nButtonGroupNum - 1
-		//) * 12 ) / nButtonNum;
+		//		return ( rc.right - rc.left - nButtonNum - ( (nButtonNum + m_nButtonGroupNum - 1) / m_nButtonGroupNum -
+		// 1 ) * 12 ) / nButtonNum;
 		nCxVScroll = 0;
-	} else {
+	}
+	else {
 		/* サイズボックスの位置、サイズ変更 */
 		nCyHScroll = ::GetSystemMetrics(SM_CYHSCROLL);
 		nCxVScroll = ::GetSystemMetrics(SM_CXVSCROLL);
@@ -365,7 +366,7 @@ int CFuncKeyWnd::CalcButtonSize(void)
 		//		::MoveWindow( m_hwndSizeBox,  0, 0, nCxVScroll, nCyHScroll, TRUE );
 
 		//		return ( rc.right - rc.left - nCxVScroll = - nButtonNum -  ( (nButtonNum + m_nButtonGroupNum - 1) /
-		//m_nButtonGroupNum - 1 ) * 12 ) / nButtonNum;
+		// m_nButtonGroupNum - 1 ) * 12 ) / nButtonNum;
 	}
 	return (rc.right - rc.left - nCxVScroll - nButtonNum
 			- ((nButtonNum + m_nButtonGroupNum - 1) / m_nButtonGroupNum - 1) * 12)
@@ -378,8 +379,8 @@ int CFuncKeyWnd::CalcButtonSize(void)
 void CFuncKeyWnd::CreateButtons(void)
 {
 	RECT rcParent;
-	int	 nButtonHeight;
-	int	 i;
+	int  nButtonHeight;
+	int  i;
 
 	::GetWindowRect(GetHwnd(), &rcParent);
 	nButtonHeight = rcParent.bottom - rcParent.top - 2;
@@ -418,9 +419,10 @@ void CFuncKeyWnd::SizeBox_ONOFF(bool bSizeBox)
 	if (m_bSizeBox) {
 		::DestroyWindow(m_hwndSizeBox);
 		m_hwndSizeBox = NULL;
-		m_bSizeBox	  = false;
+		m_bSizeBox	= false;
 		OnSize(NULL, 0, 0, 0);
-	} else {
+	}
+	else {
 		m_hwndSizeBox = ::CreateWindowEx(0L,		   /* no extended styles			*/
 										 L"SCROLLBAR", /* scroll bar control class		*/
 										 NULL,		   /* text for window title bar	*/
@@ -428,11 +430,11 @@ void CFuncKeyWnd::SizeBox_ONOFF(bool bSizeBox)
 										 0,													 /* horizontal position			*/
 										 0,													 /* vertical position			*/
 										 200,			   /* width of the scroll bar		*/
-										 CW_USEDEFAULT,	   /* default height				*/
+										 CW_USEDEFAULT,	/* default height				*/
 										 GetHwnd(),		   /* handle of main window		*/
-										 (HMENU)NULL,	   /* no menu for a scroll bar 	*/
+										 (HMENU)NULL,	  /* no menu for a scroll bar 	*/
 										 GetAppInstance(), /* instance owning this window	*/
-										 (LPVOID)NULL	   /* pointer not needed				*/
+										 (LPVOID)NULL	  /* pointer not needed				*/
 		);
 		::ShowWindow(m_hwndSizeBox, SW_SHOW);
 		m_bSizeBox = true;
@@ -453,7 +455,8 @@ void CFuncKeyWnd::Timer_ONOFF(bool bStart)
 			if (0 == ::SetTimer(GetHwnd(), IDT_FUNCWND, TIMER_TIMEOUT, NULL)) {
 				WarningMessage(GetHwnd(), LS(STR_ERR_DLGFUNCKEYWN1));
 			}
-		} else {
+		}
+		else {
 			/* タイマーを削除 */
 			::KillTimer(GetHwnd(), IDT_FUNCWND);
 			m_nCurrentKeyState = -1;

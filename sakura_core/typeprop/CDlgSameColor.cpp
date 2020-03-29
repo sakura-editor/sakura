@@ -86,8 +86,7 @@ INT_PTR CDlgSameColor::DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 		}
 		break;
 
-	case WM_CTLCOLORLISTBOX:
-	{
+	case WM_CTLCOLORLISTBOX: {
 		// 項目リストの背景色を設定する処理
 		HWND hwndLB = (HWND)lParam;
 		if (IDC_LIST_ITEMINFO == ::GetDlgCtrlID(hwndLB)) {
@@ -112,7 +111,7 @@ INT_PTR CDlgSameColor::DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 */
 int CDlgSameColor::DoModal(HINSTANCE hInstance, HWND hwndParent, WORD wID, STypeConfig *pTypes, COLORREF cr)
 {
-	m_wID	 = wID;
+	m_wID	= wID;
 	m_pTypes = pTypes;
 	m_cr	 = cr;
 
@@ -129,7 +128,7 @@ BOOL CDlgSameColor::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	BOOL bRet = CDialog::OnInitDialog(hwndDlg, wParam, lParam);
 
 	HWND hwndStatic = GetItemHwnd(IDC_STATIC_COLOR);
-	HWND hwndList	= GetItemHwnd(IDC_LIST_COLORS);
+	HWND hwndList   = GetItemHwnd(IDC_LIST_COLORS);
 
 	// 指定色スタティック、色選択リストをサブクラス化
 	::SetWindowLongPtr(hwndStatic, GWLP_USERDATA, (LONG_PTR)this);
@@ -138,8 +137,8 @@ BOOL CDlgSameColor::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	m_wpColorListProc = (WNDPROC)::SetWindowLongPtr(hwndList, GWLP_WNDPROC, (LONG_PTR)ColorList_SubclassProc);
 
 	WCHAR szText[30];
-	int	  nItem;
-	int	  i;
+	int   nItem;
+	int   i;
 
 	switch (m_wID) // タイプ別設定ダイアログで押されたボタンID
 	{
@@ -191,10 +190,10 @@ BOOL CDlgSameColor::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 BOOL CDlgSameColor::OnBnClicked(int wID)
 {
 	HWND hwndList = GetItemHwnd(IDC_LIST_COLORS);
-	int	 nItemNum = List_GetCount(hwndList);
+	int  nItemNum = List_GetCount(hwndList);
 	BOOL bCheck;
-	int	 i;
-	int	 j;
+	int  i;
+	int  j;
 
 	switch (wID) {
 	case IDC_BUTTON_HELP:
@@ -212,8 +211,8 @@ BOOL CDlgSameColor::OnBnClicked(int wID)
 
 	case IDOK:
 		// タイプ別設定から選択色と同色のものを取り出して指定色に一括変更する
-		WCHAR	 szText[30];
-		LPWSTR	 pszStop;
+		WCHAR	szText[30];
+		LPWSTR   pszStop;
 		COLORREF cr;
 
 		for (i = 0; i < nItemNum; ++i) {
@@ -266,8 +265,8 @@ BOOL CDlgSameColor::OnDrawItem(WPARAM wParam, LPARAM lParam)
 	// 色選択リストの描画処理
 	//
 	RECT	 rc;
-	WCHAR	 szText[30];
-	LPWSTR	 pszStop;
+	WCHAR	szText[30];
+	LPWSTR   pszStop;
 	COLORREF cr;
 
 	List_GetText(pDis->hwndItem, pDis->itemID, szText);
@@ -320,8 +319,8 @@ BOOL CDlgSameColor::OnSelChangeListColors(HWND hwndCtl)
 	// タイプ別設定から同色の項目を取り出して項目リストに表示する
 	HWND	 hwndListInfo;
 	COLORREF cr;
-	WCHAR	 szText[30];
-	LPWSTR	 pszStop;
+	WCHAR	szText[30];
+	LPWSTR   pszStop;
 	int		 i;
 	int		 j;
 
@@ -367,7 +366,7 @@ BOOL CDlgSameColor::OnSelChangeListColors(HWND hwndCtl)
 */
 LRESULT CALLBACK CDlgSameColor::ColorStatic_SubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	HDC	 hDC;
+	HDC  hDC;
 	RECT rc;
 
 	CDlgSameColor *pCDlgSameColor;
@@ -427,8 +426,8 @@ LRESULT CALLBACK CDlgSameColor::ColorList_SubclassProc(HWND hwnd, UINT uMsg, WPA
 	POINT po;
 	RECT  rcItem;
 	RECT  rc;
-	int	  nItemNum;
-	int	  i;
+	int   nItemNum;
+	int   i;
 
 	CDlgSameColor *pCDlgSameColor;
 	pCDlgSameColor = (CDlgSameColor *)::GetWindowLongPtr(hwnd, GWLP_USERDATA);

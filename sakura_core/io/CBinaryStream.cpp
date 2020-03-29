@@ -4,7 +4,8 @@
 
 CBinaryInputStream::CBinaryInputStream(LPCWSTR pszFilePath)
 	: CStream(pszFilePath, L"rb")
-{}
+{
+}
 
 //! ストリームの「残り」サイズを取得
 int CBinaryInputStream::GetLength()
@@ -21,4 +22,5 @@ int CBinaryInputStream::Read(void *pBuffer, int nSizeInBytes) { return fread(pBu
 
 CBinaryOutputStream::CBinaryOutputStream(LPCWSTR pszFilePath, bool bExceptionMode)
 	: COutputStream(pszFilePath, L"wb", bExceptionMode)
-{}
+{
+}

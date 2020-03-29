@@ -59,11 +59,11 @@ static const DWORD p_helpids2[] = {							   // 11400
 	IDC_BUTTON_IMPORT, HIDC_BUTTON_IMPORT_COLOR,			   //インポート
 	IDC_BUTTON_EXPORT, HIDC_BUTTON_EXPORT_COLOR,			   //エクスポート
 	IDC_COMBO_SET, HIDC_COMBO_SET_COLOR,					   //強調キーワード１セット名
-	IDC_BUTTON_KEYWORD_SELECT, HIDC_BUTTON_KEYWORD_SELECT,	   //強調キーワード2～10	// 2006.08.06 ryoji
+	IDC_BUTTON_KEYWORD_SELECT, HIDC_BUTTON_KEYWORD_SELECT,	 //強調キーワード2～10	// 2006.08.06 ryoji
 	IDC_EDIT_BLOCKCOMMENT_FROM, HIDC_EDIT_BLOCKCOMMENT_FROM,   //ブロックコメント１開始
 	IDC_EDIT_BLOCKCOMMENT_TO, HIDC_EDIT_BLOCKCOMMENT_TO,	   //ブロックコメント１終了
 	IDC_EDIT_BLOCKCOMMENT_FROM2, HIDC_EDIT_BLOCKCOMMENT_FROM2, //ブロックコメント２開始
-	IDC_EDIT_BLOCKCOMMENT_TO2, HIDC_EDIT_BLOCKCOMMENT_TO2,	   //ブロックコメント２終了
+	IDC_EDIT_BLOCKCOMMENT_TO2, HIDC_EDIT_BLOCKCOMMENT_TO2,	 //ブロックコメント２終了
 	IDC_EDIT_LINECOMMENT, HIDC_EDIT_LINECOMMENT,			   //行コメント１
 	IDC_EDIT_LINECOMMENT2, HIDC_EDIT_LINECOMMENT2,			   //行コメント２
 	IDC_EDIT_LINECOMMENT3, HIDC_EDIT_LINECOMMENT3,			   //行コメント３
@@ -82,13 +82,12 @@ static const DWORD p_helpids2[] = {							   // 11400
 
 TYPE_NAME_ID<EStringLiteralType> StringLitteralArr[] = {
 	{STRING_LITERAL_CPP, STR_STRINGESC_CPP},	   {STRING_LITERAL_PLSQL, STR_STRINGESC_PLSQL},
-	{STRING_LITERAL_HTML, STR_STRINGESC_HTML},	   {STRING_LITERAL_CSHARP, STR_STRINGESC_CSHARP},
+	{STRING_LITERAL_HTML, STR_STRINGESC_HTML},	 {STRING_LITERAL_CSHARP, STR_STRINGESC_CSHARP},
 	{STRING_LITERAL_PYTHON, STR_STRINGESC_PYTHON},
 };
 
 //	行コメントに関する情報
-struct
-{
+struct {
 	int nEditID;
 	int nCheckBoxID;
 	int nTextID;
@@ -100,7 +99,7 @@ struct
 // 2010/4/23 Uchi Importの外出し
 bool CPropTypesColor::Import(HWND hwndDlg)
 {
-	ColorInfo	  ColorInfoArr[64];
+	ColorInfo	 ColorInfoArr[64];
 	CImpExpColors cImpExpColors(ColorInfoArr);
 
 	/* 色設定 I/O */
@@ -145,7 +144,7 @@ LRESULT APIENTRY ColorList_SubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
 	int		   nItemNum;
 	RECT	   rcItem = {0, 0, 0, 0};
 	int		   i;
-	POINT	   poMouse;
+	POINT	  poMouse;
 	ColorInfo *pColorInfo;
 
 	switch (uMsg) {
@@ -215,13 +214,15 @@ LRESULT APIENTRY ColorList_SubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
 		) {
 			if (pColorInfo->m_bDisp) { /* 色分け/表示する */
 				pColorInfo->m_bDisp = false;
-			} else {
+			}
+			else {
 				pColorInfo->m_bDisp = true;
 			}
 			if (COLORIDX_GYOU == nIndex) { pColorInfo = (ColorInfo *)List_GetItemData(hwnd, nIndex); }
 
 			::InvalidateRect(hwnd, &rcItem, TRUE);
-		} else
+		}
+		else
 			/* 前景色見本 矩形 */
 			if (m_fgColorSampleLeft <= xPos && xPos <= m_fgColorSampleRight
 				&& (0 == (g_ColorAttributeArr[nIndex].fAttribute & COLOR_ATTRIB_NO_TEXT))) {
@@ -232,7 +233,8 @@ LRESULT APIENTRY ColorList_SubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
 				::InvalidateRect(hwnd, &rcItem, TRUE);
 				::InvalidateRect(::GetDlgItem(::GetParent(hwnd), IDC_BUTTON_TEXTCOLOR), NULL, TRUE);
 			}
-		} else
+		}
+		else
 			/* 背景色見本 矩形 */
 			if (m_bgColorSampleLeft <= xPos && xPos <= m_bgColorSampleRight
 				&& (0
@@ -271,8 +273,8 @@ static bool isImeUndesirable(int id)
 }
 
 /* color メッセージ処理 */
-INT_PTR CPropTypesColor::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
-									   UINT	  uMsg,	   // message
+INT_PTR CPropTypesColor::DispatchEvent(HWND   hwndDlg, // handle to dialog box
+									   UINT   uMsg,	// message
 									   WPARAM wParam,  // first message parameter
 									   LPARAM lParam   // second message parameter
 )
@@ -309,7 +311,7 @@ INT_PTR CPropTypesColor::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam); /* 通知コード */
 		wID			= LOWORD(wParam); /* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl		= (HWND)lParam;	  /* コントロールのハンドル */
+		hwndCtl		= (HWND)lParam;   /* コントロールのハンドル */
 		if (hwndListColor == hwndCtl) {
 			switch (wNotifyCode) {
 			case LBN_SELCHANGE:
@@ -434,33 +436,29 @@ INT_PTR CPropTypesColor::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 			//	To Here Sept. 10, 2000
 
 			//強調キーワードの選択
-			case IDC_BUTTON_KEYWORD_SELECT:
-			{
+			case IDC_BUTTON_KEYWORD_SELECT: {
 				CDlgKeywordSelect cDlgKeywordSelect;
 				//強調キーワード1を取得する。
 				HWND hwndCombo = ::GetDlgItem(hwndDlg, IDC_COMBO_SET);
-				int	 nIdx	   = Combo_GetCurSel(hwndCombo);
-				if (CB_ERR == nIdx || 0 == nIdx) {
-					m_nSet[0] = -1;
-				} else {
+				int  nIdx	  = Combo_GetCurSel(hwndCombo);
+				if (CB_ERR == nIdx || 0 == nIdx) { m_nSet[0] = -1; }
+				else {
 					m_nSet[0] = nIdx - 1;
 				}
 				cDlgKeywordSelect.DoModal(::GetModuleHandle(NULL), hwndDlg, m_nSet);
 				RearrangeKeywordSet(hwndDlg); //	Jan. 23, 2005 genta キーワードセット再配置
 				//強調キーワード1を反映する。
-				if (-1 == m_nSet[0]) {
-					Combo_SetCurSel(hwndCombo, 0);
-				} else {
+				if (-1 == m_nSet[0]) { Combo_SetCurSel(hwndCombo, 0); }
+				else {
 					Combo_SetCurSel(hwndCombo, m_nSet[0] + 1);
 				}
 			} break;
 			//強調キーワードの選択
-			case IDC_BUTTON_EDITKEYWORD:
-			{
+			case IDC_BUTTON_EDITKEYWORD: {
 				GetData(hwndDlg); // Keywrod1取得
 				CPropKeyword *pPropKeyword = new CPropKeyword;
-				CPropCommon * pCommon	   = (CPropCommon *)pPropKeyword;
-				pCommon->m_hwndParent	   = ::GetParent(hwndDlg);
+				CPropCommon * pCommon	  = (CPropCommon *)pPropKeyword;
+				pCommon->m_hwndParent	  = ::GetParent(hwndDlg);
 				pCommon->InitData(m_nSet, m_Types.m_szTypeName, m_Types.m_szTypeExts);
 				INT_PTR res = ::DialogBoxParam(CSelectLang::getLangRsrcInstance(), MAKEINTRESOURCE(IDD_PROP_KEYWORD),
 											   hwndDlg, CPropKeyword::DlgProc_dialog, (LPARAM)pPropKeyword);
@@ -475,8 +473,7 @@ INT_PTR CPropTypesColor::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 				delete pPropKeyword;
 				return TRUE;
 			}
-			case IDC_CHECK_STRINGLINEONLY:
-			{
+			case IDC_CHECK_STRINGLINEONLY: {
 				::EnableWindow(::GetDlgItem(hwndDlg, IDC_CHECK_STRINGENDLINE),
 							   ::IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_STRINGLINEONLY));
 				return TRUE;
@@ -500,9 +497,8 @@ INT_PTR CPropTypesColor::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 		case IDC_SPIN_LCColNum:
 			/* 行コメント桁位置 */
 			nVal = ::GetDlgItemInt(hwndDlg, IDC_EDIT_LINECOMMENTPOS, NULL, FALSE);
-			if (pMNUD->iDelta < 0) {
-				++nVal;
-			} else if (pMNUD->iDelta > 0) {
+			if (pMNUD->iDelta < 0) { ++nVal; }
+			else if (pMNUD->iDelta > 0) {
 				--nVal;
 			}
 			if (nVal < 1) { nVal = 1; }
@@ -512,9 +508,8 @@ INT_PTR CPropTypesColor::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 		case IDC_SPIN_LCColNum2:
 			/* 行コメント桁位置 */
 			nVal = ::GetDlgItemInt(hwndDlg, IDC_EDIT_LINECOMMENTPOS2, NULL, FALSE);
-			if (pMNUD->iDelta < 0) {
-				++nVal;
-			} else if (pMNUD->iDelta > 0) {
+			if (pMNUD->iDelta < 0) { ++nVal; }
+			else if (pMNUD->iDelta > 0) {
 				--nVal;
 			}
 			if (nVal < 1) { nVal = 1; }
@@ -527,9 +522,8 @@ INT_PTR CPropTypesColor::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 		case IDC_SPIN_LCColNum3:
 			/* 行コメント桁位置 */
 			nVal = ::GetDlgItemInt(hwndDlg, IDC_EDIT_LINECOMMENTPOS3, NULL, FALSE);
-			if (pMNUD->iDelta < 0) {
-				++nVal;
-			} else if (pMNUD->iDelta > 0) {
+			if (pMNUD->iDelta < 0) { ++nVal; }
+			else if (pMNUD->iDelta > 0) {
 				--nVal;
 			}
 			if (nVal < 1) { nVal = 1; }
@@ -571,8 +565,7 @@ INT_PTR CPropTypesColor::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 		break;
 
 		//@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP:
-	{
+	case WM_HELP: {
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids2); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -596,8 +589,8 @@ INT_PTR CPropTypesColor::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 void CPropTypesColor::SetData(HWND hwndDlg)
 {
 	HWND hwndWork;
-	int	 i;
-	int	 nItem;
+	int  i;
+	int  nItem;
 
 	m_nCurrentColorType = 0; /* 現在選択されている色タイプ */
 
@@ -633,7 +626,8 @@ void CPropTypesColor::SetData(HWND hwndDlg)
 		if (nPos >= 0) {
 			::CheckDlgButton(hwndDlg, cLineComment[i].nCheckBoxID, TRUE);
 			::SetDlgItemInt(hwndDlg, cLineComment[i].nTextID, nPos + 1, FALSE);
-		} else {
+		}
+		else {
 			::CheckDlgButton(hwndDlg, cLineComment[i].nCheckBoxID, FALSE);
 			::SetDlgItemInt(hwndDlg, cLineComment[i].nTextID, (~nPos) + 1, FALSE);
 		}
@@ -675,27 +669,28 @@ void CPropTypesColor::SetData(HWND hwndDlg)
 
 	// from here 2005.11.30 Moca 指定位置縦線の設定
 	WCHAR szVertLine[MAX_VERTLINES * 15] = L"";
-	int	  offset						 = 0;
+	int   offset						 = 0;
 	for (i = 0; i < MAX_VERTLINES && m_Types.m_nVertLineIdx[i] != 0; i++) {
-		CKetaXInt nXCol	   = m_Types.m_nVertLineIdx[i];
+		CKetaXInt nXCol	= m_Types.m_nVertLineIdx[i];
 		CKetaXInt nXColEnd = nXCol;
 		CKetaXInt nXColAdd = CKetaXInt(1);
 		if (nXCol < 0) {
 			if (i < MAX_VERTLINES - 2) {
-				nXCol	 = -nXCol;
+				nXCol	= -nXCol;
 				nXColEnd = m_Types.m_nVertLineIdx[++i];
 				nXColAdd = m_Types.m_nVertLineIdx[++i];
 				if (nXColEnd < nXCol || nXColAdd <= 0) { continue; }
 				if (offset) {
-					szVertLine[offset]	   = ',';
+					szVertLine[offset]	 = ',';
 					szVertLine[offset + 1] = '\0';
 					offset += 1;
 				}
 				offset += auto_sprintf(&szVertLine[offset], L"%d(%d,%d)", nXColAdd, nXCol, nXColEnd);
 			}
-		} else {
+		}
+		else {
 			if (offset) {
-				szVertLine[offset]	   = ',';
+				szVertLine[offset]	 = ',';
 				szVertLine[offset + 1] = '\0';
 				offset += 1;
 			}
@@ -727,7 +722,8 @@ void CPropTypesColor::SetDataKeyword(HWND hwndDlg)
 		if (-1 == set[0]) {
 			/* セット名コンボボックスのデフォルト選択 */
 			Combo_SetCurSel(hwndWork, 0);
-		} else {
+		}
+		else {
 			/* セット名コンボボックスのデフォルト選択 */
 			Combo_SetCurSel(hwndWork, set[0] + 1);
 		}
@@ -741,7 +737,7 @@ void CPropTypesColor::SetDataKeyword(HWND hwndDlg)
 /* ダイアログデータの取得 color */
 int CPropTypesColor::GetData(HWND hwndDlg)
 {
-	int	 nIdx;
+	int  nIdx;
 	HWND hwndWork;
 
 	//	From Here May 12, 2001 genta
@@ -754,10 +750,10 @@ int CPropTypesColor::GetData(HWND hwndDlg)
 
 	int i;
 	for (i = 0; i < COMMENT_DELIMITER_NUM; i++) {
-		en	= ::IsDlgButtonChecked(hwndDlg, cLineComment[i].nCheckBoxID);
+		en  = ::IsDlgButtonChecked(hwndDlg, cLineComment[i].nCheckBoxID);
 		pos = ::GetDlgItemInt(hwndDlg, cLineComment[i].nTextID, &bTranslated, FALSE);
 		if (bTranslated != TRUE) {
-			en	= 0;
+			en  = 0;
 			pos = 0;
 		}
 		//	pos == 0のときは無効扱い
@@ -796,9 +792,8 @@ int CPropTypesColor::GetData(HWND hwndDlg)
 	/* セット名コンボボックスの値セット */
 	hwndWork = ::GetDlgItem(hwndDlg, IDC_COMBO_SET);
 	nIdx	 = Combo_GetCurSel(hwndWork);
-	if (CB_ERR == nIdx || 0 == nIdx) {
-		m_Types.m_nKeyWordSetIdx[0] = -1;
-	} else {
+	if (CB_ERR == nIdx || 0 == nIdx) { m_Types.m_nKeyWordSetIdx[0] = -1; }
+	else {
 		m_Types.m_nKeyWordSetIdx[0] = nIdx - 1;
 	}
 	m_nSet[0] = m_Types.m_nKeyWordSetIdx[0];
@@ -826,9 +821,8 @@ int CPropTypesColor::GetData(HWND hwndDlg)
 				valueBegin = szVertLine[offset] - '0' + valueBegin * 10;
 			}
 			if (valueBegin <= 0) { break; }
-			if (szVertLine[offset] == ',') {
-				offset++;
-			} else if (szVertLine[offset] != ')') {
+			if (szVertLine[offset] == ',') { offset++; }
+			else if (szVertLine[offset] != ')') {
 				break;
 			}
 			for (; '0' <= szVertLine[offset] && szVertLine[offset] <= '9'; offset++) {
@@ -841,10 +835,12 @@ int CPropTypesColor::GetData(HWND hwndDlg)
 				m_Types.m_nVertLineIdx[i++] = CKetaXInt(-valueBegin);
 				m_Types.m_nVertLineIdx[i++] = CKetaXInt(valueEnd);
 				m_Types.m_nVertLineIdx[i++] = CKetaXInt(value);
-			} else {
+			}
+			else {
 				break;
 			}
-		} else {
+		}
+		else {
 			m_Types.m_nVertLineIdx[i++] = CKetaXInt(value);
 		}
 		if (szVertLine[offset] != ',') { break; }
@@ -861,9 +857,9 @@ void CPropTypesColor::DrawColorButton(DRAWITEMSTRUCT *pDis, COLORREF cColor)
 	//	MYTRACE( L"pDis->itemAction = " );
 
 	COLORREF cBtnHiLight  = (COLORREF)::GetSysColor(COLOR_3DHILIGHT);
-	COLORREF cBtnShadow	  = (COLORREF)::GetSysColor(COLOR_3DSHADOW);
+	COLORREF cBtnShadow   = (COLORREF)::GetSysColor(COLOR_3DSHADOW);
 	COLORREF cBtnDkShadow = (COLORREF)::GetSysColor(COLOR_3DDKSHADOW);
-	COLORREF cBtnFace	  = (COLORREF)::GetSysColor(COLOR_3DFACE);
+	COLORREF cBtnFace	 = (COLORREF)::GetSysColor(COLOR_3DFACE);
 	RECT	 rc;
 	RECT	 rcFocus;
 
@@ -909,7 +905,8 @@ void CPropTypesColor::DrawColorButton(DRAWITEMSTRUCT *pDis, COLORREF cColor)
 		rcFocus.left += 1;
 		rcFocus.right += 1;
 		rcFocus.bottom += 1;
-	} else {
+	}
+	else {
 		gr.SetPen(cBtnHiLight);
 		::MoveToEx(gr, 0, pDis->rcItem.bottom - 2, NULL);
 		::LineTo(gr, 0, 0);
@@ -955,7 +952,8 @@ void CPropTypesColor::EnableTypesPropInput(HWND hwndDlg)
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_LINECOMMENTPOS), TRUE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_LCPOS), TRUE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_SPIN_LCColNum), TRUE);
-	} else {
+	}
+	else {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_LINECOMMENTPOS), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_LCPOS), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_SPIN_LCColNum), FALSE);
@@ -965,7 +963,8 @@ void CPropTypesColor::EnableTypesPropInput(HWND hwndDlg)
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_LINECOMMENTPOS2), TRUE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_LCPOS2), TRUE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_SPIN_LCColNum2), TRUE);
-	} else {
+	}
+	else {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_LINECOMMENTPOS2), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_LCPOS2), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_SPIN_LCColNum2), FALSE);
@@ -975,7 +974,8 @@ void CPropTypesColor::EnableTypesPropInput(HWND hwndDlg)
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_LINECOMMENTPOS3), TRUE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_LCPOS3), TRUE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_SPIN_LCColNum3), TRUE);
-	} else {
+	}
+	else {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_LINECOMMENTPOS3), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_LCPOS3), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_SPIN_LCColNum3), FALSE);
@@ -1064,7 +1064,8 @@ void CPropTypesColor::DrawColorListItem(DRAWITEMSTRUCT *pDis)
 	if (pDis->itemState & ODS_SELECTED) {
 		gr.SetBrushColor(::GetSysColor(COLOR_HIGHLIGHT));
 		gr.SetTextForeColor(::GetSysColor(COLOR_HIGHLIGHTTEXT));
-	} else {
+	}
+	else {
 		gr.SetBrushColor(::GetSysColor(COLOR_WINDOW));
 		gr.SetTextForeColor(::GetSysColor(COLOR_WINDOWTEXT));
 	}
@@ -1137,7 +1138,7 @@ void CPropTypesColor::DrawColorListItem(DRAWITEMSTRUCT *pDis)
 		rc1.right = rc1.left + colorSampleWidth;
 		rc1.bottom -= scaled2;
 
-		m_bgColorSampleLeft	 = rc1.left;
+		m_bgColorSampleLeft  = rc1.left;
 		m_bgColorSampleRight = rc1.right;
 
 		gr.SetBrushColor(pColorInfo->m_sColorAttr.m_cBACK);
@@ -1153,7 +1154,7 @@ void CPropTypesColor::DrawColorListItem(DRAWITEMSTRUCT *pDis)
 		rc1.right = rc1.left + colorSampleWidth;
 		rc1.bottom -= scaled2;
 
-		m_fgColorSampleLeft	 = rc1.left;
+		m_fgColorSampleLeft  = rc1.left;
 		m_fgColorSampleRight = rc1.right;
 
 		gr.SetBrushColor(pColorInfo->m_sColorAttr.m_cTEXT);
@@ -1166,11 +1167,11 @@ void CPropTypesColor::DrawColorListItem(DRAWITEMSTRUCT *pDis)
 BOOL CPropTypesColor::SelectColor(HWND hwndParent, COLORREF *pColor, DWORD *pCustColors)
 {
 	CHOOSECOLOR cc;
-	cc.lStructSize	  = sizeof_raw(cc);
+	cc.lStructSize	= sizeof_raw(cc);
 	cc.hwndOwner	  = hwndParent;
 	cc.hInstance	  = NULL;
 	cc.rgbResult	  = *pColor;
-	cc.lpCustColors	  = pCustColors;
+	cc.lpCustColors   = pCustColors;
 	cc.Flags		  = /*CC_PREVENTFULLOPEN |*/ CC_RGBINIT;
 	cc.lCustData	  = 0;
 	cc.lpfnHook		  = NULL;

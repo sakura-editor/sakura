@@ -36,8 +36,7 @@ class CDlgTagsMake;
 /*!
 	@brief タグファイル作成ダイアログボックス
 */
-class CDlgTagsMake final : public CDialog
-{
+class CDlgTagsMake final : public CDialog {
 public:
 	/*
 	||  Constructors
@@ -50,9 +49,9 @@ public:
 	int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam,
 				const WCHAR *pszPath); /* モーダルダイアログの表示 */
 
-	WCHAR m_szPath[_MAX_PATH + 1];	  /* フォルダ */
+	WCHAR m_szPath[_MAX_PATH + 1];	/* フォルダ */
 	WCHAR m_szTagsCmdLine[_MAX_PATH]; /* コマンドラインオプション(個別) */
-	int	  m_nTagsOpt;				  /* CTAGSオプション(チェック) */
+	int   m_nTagsOpt;				  /* CTAGSオプション(チェック) */
 
 protected:
 	/*
@@ -62,7 +61,7 @@ protected:
 	LPVOID GetHelpIdTable(void) override;
 
 	void SetData(void) override; /* ダイアログデータの設定 */
-	int	 GetData(void) override; /* ダイアログデータの取得 */
+	int  GetData(void) override; /* ダイアログデータの取得 */
 
 private:
 	void SelectFolder(HWND hwndDlg);

@@ -23,8 +23,7 @@ class CTipWnd;
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-class CTipWnd final : public CWnd
-{
+class CTipWnd final : public CWnd {
 public:
 	/*
 	||  Constructors
@@ -55,7 +54,7 @@ public:
 	int		 m_nSearchLine; /* 辞書のヒット行 */ // 2006.04.10 fon
 	int		 m_nSearchDict; /* ヒット辞書番号 */ // 2006.04.10 fon
 
-	CNativeW m_cInfo;	   /* Tipの内容データ */
+	CNativeW m_cInfo;	  /* Tipの内容データ */
 	bool	 m_bAlignLeft; // 右側揃えでチップを表示
 
 protected:
@@ -63,7 +62,7 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	void ComputeWindowSize(HDC hdc, RECT *prcResult); /* ウィンドウのサイズを決める */
-	void DrawTipText(HDC hdc, const RECT &rcPaint);	  /* ウィンドウのテキストを表示 */
+	void DrawTipText(HDC hdc, const RECT &rcPaint);   /* ウィンドウのテキストを表示 */
 
 	/* 仮想関数 */
 	//	Jan. 9, 2006 genta

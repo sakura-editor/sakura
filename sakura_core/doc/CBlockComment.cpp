@@ -19,7 +19,7 @@
 CBlockComment::CBlockComment()
 {
 	m_szBlockCommentFrom[0] = '\0';
-	m_szBlockCommentTo[0]	= '\0';
+	m_szBlockCommentTo[0]   = '\0';
 	m_nBlockFromLen			= 0;
 	m_nBlockToLen			= 0;
 }
@@ -35,7 +35,8 @@ void CBlockComment::SetBlockCommentRule(const wchar_t *pszFrom, //!< [in] コメ
 	if (0 < nStrLen && nStrLen < BLOCKCOMMENT_BUFFERSIZE) {
 		wcscpy(m_szBlockCommentFrom, pszFrom);
 		m_nBlockFromLen = nStrLen;
-	} else {
+	}
+	else {
 		m_szBlockCommentFrom[0] = L'\0';
 		m_nBlockFromLen			= 0;
 	}
@@ -43,7 +44,8 @@ void CBlockComment::SetBlockCommentRule(const wchar_t *pszFrom, //!< [in] コメ
 	if (0 < nStrLen && nStrLen < BLOCKCOMMENT_BUFFERSIZE) {
 		wcscpy(m_szBlockCommentTo, pszTo);
 		m_nBlockToLen = nStrLen;
-	} else {
+	}
+	else {
 		m_szBlockCommentTo[0] = L'\0';
 		m_nBlockToLen		  = 0;
 	}
@@ -62,7 +64,7 @@ bool CBlockComment::Match_CommentFrom(
 						   int				nLineLen,	//!< [in] pLineの長さ
 						   const wchar_t*	pLine		//!< [in] 探索行の先頭．
 						   */
-) const
+	) const
 {
 	if (L'\0' != m_szBlockCommentFrom[0] && L'\0' != m_szBlockCommentTo[0] && nPos <= cStr.GetLength() - m_nBlockFromLen
 		&& /* ブロックコメントデリミタ(From) */
@@ -89,7 +91,7 @@ int CBlockComment::Match_CommentTo(
 						   int				nLineLen,	//!< [in] pLineの長さ
 						   const wchar_t*	pLine		//!< [in] 探索行の先頭．探索開始位置のポインタではないことに注意
 						   */
-) const
+	) const
 {
 	for (int i = nPos; i <= cStr.GetLength() - m_nBlockToLen; ++i) {
 		// if( 0 == wmemicmp( &cStr.GetPtr()[i], m_szBlockCommentTo, m_nBlockToLen ) ){

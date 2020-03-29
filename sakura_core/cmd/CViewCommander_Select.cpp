@@ -22,13 +22,13 @@
 bool CViewCommander::Command_SELECTWORD(CLayoutPoint *pptCaretPos)
 {
 	CLayoutRange sRange;
-	CLogicInt	 nIdx;
+	CLogicInt	nIdx;
 	if (m_pCommanderView->GetSelectionInfo().IsTextSelected()) { /* テキストが選択されているか */
 		/* 現在の選択範囲を非選択状態に戻す */
 		m_pCommanderView->GetSelectionInfo().DisableSelectArea(true);
 	}
 	CLayoutPoint   ptCaretPos = (NULL == pptCaretPos ? GetCaret().GetCaretLayoutPos() : *pptCaretPos);
-	const CLayout *pcLayout	  = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY(ptCaretPos.GetY2());
+	const CLayout *pcLayout   = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY(ptCaretPos.GetY2());
 	if (NULL == pcLayout) {
 		return false; //	単語選択に失敗
 	}
@@ -58,7 +58,8 @@ bool CViewCommander::Command_SELECTWORD(CLayoutPoint *pptCaretPos)
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
 		return true; //	単語選択に成功。
-	} else {
+	}
+	else {
 		return false; //	単語選択に失敗
 	}
 }
@@ -115,7 +116,8 @@ void CViewCommander::Command_SELECTLINE(int lparam)
 
 		// 移動後のカーソル位置を取得する
 		ptCaret = GetCaret().GetCaretLayoutPos().Get();
-	} else {
+	}
+	else {
 		// カーソルを最下行（レイアウト行）へ移動する
 		m_pCommanderView->MoveCursorSelecting(CLayoutPoint(CLayoutInt(0), GetDocument()->m_cLayoutMgr.GetLineCount()),
 											  TRUE);
@@ -149,7 +151,8 @@ void CViewCommander::Command_BEGIN_SELECT(void)
 	//	ロックの解除切り替え
 	if (m_pCommanderView->GetSelectionInfo().m_bSelectingLock) {
 		m_pCommanderView->GetSelectionInfo().m_bSelectingLock = false; /* 選択状態のロック解除 */
-	} else {
+	}
+	else {
 		m_pCommanderView->GetSelectionInfo().m_bSelectingLock = true; /* 選択状態のロック */
 	}
 	if (GetSelect().IsOne()) { GetCaret().m_cUnderLine.CaretUnderLineOFF(true); }

@@ -114,7 +114,8 @@ bool CProfile::ReadProfile(const WCHAR *pszProfileName)
 			//解析
 			ReadOneline(line);
 		}
-	} catch (...) {
+	}
+	catch (...) {
 		return false;
 	}
 
@@ -162,7 +163,8 @@ bool CProfile::ReadProfileRes(const WCHAR *pName, const WCHAR *pType, std::vecto
 			if (pn == NULL) {
 				// 最終行
 				pn = psMMres + nSize;
-			} else {
+			}
+			else {
 				pn++;
 			}
 			lnsz = (pn - p) <= 300 ? (pn - p) : 300;
@@ -176,9 +178,8 @@ bool CProfile::ReadProfileRes(const WCHAR *pName, const WCHAR *pType, std::vecto
 			CUtf8::UTF8ToUnicode(cmLine, &cmLineW);
 			line = cmLineW.GetStringPtr();
 
-			if (pData) {
-				pData->push_back(line);
-			} else {
+			if (pData) { pData->push_back(line); }
+			else {
 				//解析
 				ReadOneline(line);
 			}
@@ -284,7 +285,7 @@ bool CProfile::_WriteFile(const wstring &		 strFilename, //!< [in]  ファイル
 */
 bool CProfile::GetProfileDataImp(const wstring &strSectionName, //!< [in] セクション名
 								 const wstring &strEntryKey,	//!< [in] エントリ名
-								 wstring &		strEntryValue	//!< [out] エントリ値
+								 wstring &		strEntryValue   //!< [out] エントリ値
 )
 {
 	for (auto iter = m_ProfileData.begin(); iter != m_ProfileData.end(); iter++) {
@@ -308,7 +309,7 @@ bool CProfile::GetProfileDataImp(const wstring &strSectionName, //!< [in] セク
 */
 bool CProfile::SetProfileDataImp(const wstring &strSectionName, //!< [in] セクション名
 								 const wstring &strEntryKey,	//!< [in] エントリ名
-								 const wstring &strEntryValue	//!< [in] エントリ値
+								 const wstring &strEntryValue   //!< [in] エントリ値
 )
 {
 	auto iter = m_ProfileData.begin();
@@ -320,7 +321,8 @@ bool CProfile::SetProfileDataImp(const wstring &strSectionName, //!< [in] セク
 				//既存のエントリの場合は値を上書き
 				mapiter->second = strEntryValue;
 				break;
-			} else {
+			}
+			else {
 				//既存のエントリが見つからない場合は追加
 				iter->mapEntries.insert(PAIR_STR_STR(strEntryKey, strEntryValue));
 				break;

@@ -72,7 +72,8 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo *pSaveInfo)
 							   // 2009.08.21 ryoji
 			out.Close();
 			if (!bExist) { ::DeleteFile(pSaveInfo->cFilePath); }
-		} catch (CError_FileOpen) {
+		}
+		catch (CError_FileOpen) {
 			// ※ たとえ上書き保存の場合でもここでの失敗では書込み禁止へは遷移しない
 			if (bLock) pcDoc->m_cDocFileOperation.DoFileLock(false);
 			ErrorMessage(CEditWnd::getInstance()->GetHwnd(), LS(STR_SAVEAGENT_OTHER_APP), pSaveInfo->cFilePath.c_str());

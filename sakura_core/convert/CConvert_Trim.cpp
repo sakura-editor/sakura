@@ -22,7 +22,7 @@ bool CConvert_Trim::DoConvert(CNativeW *pcData)
 {
 	const wchar_t *pLine;
 	int			   nLineLen;
-	wchar_t *	   pDes;
+	wchar_t *	  pDes;
 	int			   nBgn;
 	int			   i, j;
 	int			   nPosDes;
@@ -49,9 +49,8 @@ bool CConvert_Trim::DoConvert(CNativeW *pcData)
 										m_bExtEol))) { // 2002/2/10 aroka CMemory変更
 			if (0 < nLineLen) {
 				for (i = 0; i <= nLineLen; ++i) {
-					if (WCODE::IsBlank(pLine[i])) {
-						continue;
-					} else {
+					if (WCODE::IsBlank(pLine[i])) { continue; }
+					else {
 						break;
 					}
 				}

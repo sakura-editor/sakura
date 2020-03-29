@@ -65,9 +65,9 @@ int CLatin1::Latin1ToUni(const char *pSrc, const int nSrcLen, wchar_t *pDst, boo
 	if (pbError) { *pbError = false; }
 	if (nSrcLen < 1) { return 0; }
 
-	pr	   = reinterpret_cast<const unsigned char *>(pSrc);
+	pr	 = reinterpret_cast<const unsigned char *>(pSrc);
 	pr_end = reinterpret_cast<const unsigned char *>(pSrc + nSrcLen);
-	pw	   = reinterpret_cast<unsigned short *>(pDst);
+	pw	 = reinterpret_cast<unsigned short *>(pDst);
 
 	for (; pr < pr_end; pr++) {
 		if (*pr >= 0x80 && *pr <= 0x9f) {
@@ -76,7 +76,8 @@ int CLatin1::Latin1ToUni(const char *pSrc, const int nSrcLen, wchar_t *pDst, boo
 										 reinterpret_cast<wchar_t *>(pw), 4);
 			if (nret == 0) { *pw = static_cast<unsigned short>(*pr); }
 			pw++;
-		} else {
+		}
+		else {
 			*pw++ = static_cast<unsigned short>(*pr);
 		}
 	}
@@ -107,9 +108,8 @@ EConvertResult CLatin1::Latin1ToUnicode(const CMemory &cSrc, CNativeW *pDstMem)
 	// 後始末
 	delete[] pDst;
 
-	if (bError == false) {
-		return RESULT_COMPLETE;
-	} else {
+	if (bError == false) { return RESULT_COMPLETE; }
+	else {
 		return RESULT_LOSESOME;
 	}
 }
@@ -130,9 +130,9 @@ int CLatin1::UniToLatin1(const wchar_t *pSrc, const int nSrcLen, char *pDst, boo
 		return 0;
 	}
 
-	pr	   = reinterpret_cast<const unsigned short *>(pSrc);
+	pr	 = reinterpret_cast<const unsigned short *>(pSrc);
 	pr_end = reinterpret_cast<const unsigned short *>(pSrc + nSrcLen);
-	pw	   = reinterpret_cast<unsigned char *>(pDst);
+	pw	 = reinterpret_cast<unsigned char *>(pDst);
 
 	while ((nclen = CheckUtf16leChar(reinterpret_cast<const wchar_t *>(pr), pr_end - pr, &echarset, 0)) > 0) {
 		// 保護コード
@@ -145,13 +145,15 @@ int CLatin1::UniToLatin1(const wchar_t *pSrc, const int nSrcLen, char *pDst, boo
 			pw += _UniToLatin1_char(pr, pw, echarset, &berror_tmp);
 			if (berror_tmp == true) { berror = true; }
 			pr += nclen;
-		} else {
+		}
+		else {
 			if (nclen == 1 && IsBinaryOnSurrogate(static_cast<wchar_t>(*pr))) {
 				*pw = static_cast<unsigned char>(TextToBin(*pr) & 0x000000ff);
 				++pw;
-			} else {
+			}
+			else {
 				berror = true;
-				*pw	   = '?';
+				*pw	= '?';
 				++pw;
 			}
 			++pr;
@@ -170,7 +172,7 @@ EConvertResult CLatin1::UnicodeToLatin1(const CNativeW &cSrc, CMemory *pDstMem)
 	bool berror;
 
 	// ソース取得
-	const wchar_t *pSrc	   = cSrc.GetStringPtr();
+	const wchar_t *pSrc	= cSrc.GetStringPtr();
 	int			   nSrcLen = cSrc.GetStringLength();
 
 	// 変換先バッファサイズを設定してバッファを確保
@@ -187,9 +189,8 @@ EConvertResult CLatin1::UnicodeToLatin1(const CNativeW &cSrc, CMemory *pDstMem)
 	delete[] pDst;
 
 	// 結果
-	if (berror == true) {
-		return RESULT_LOSESOME;
-	} else {
+	if (berror == true) { return RESULT_LOSESOME; }
+	else {
 		return RESULT_COMPLETE;
 	}
 }
@@ -226,7 +227,8 @@ EConvertResult CLatin1::UnicodeToHex(const wchar_t *cSrc, const int iSLen, WCHAR
 		for (i = cCharBuffer._GetMemory()->GetRawLength(); i > 0; i--, ps++, pd += 2) {
 			auto_sprintf(pd, L"%02x", *ps);
 		}
-	} else {
+	}
+	else {
 		auto_sprintf(pd, L"?%02x", *ps);
 	}
 

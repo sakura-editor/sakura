@@ -88,11 +88,13 @@ bool CFigure_Eol::DrawImp(SColorStrategyInfo *pInfo)
 			// 選択文字色固定指定
 			pcText = &cCurrentType;
 			pcBack = &cCurrentType;
-		} else if (pInfo->GetCurrentColor2() == COLORIDX_SEARCH) {
+		}
+		else if (pInfo->GetCurrentColor2() == COLORIDX_SEARCH) {
 			// 検索色優先
 			pcText = &cSearchType;
 			pcBack = &cSearchType;
-		} else {
+		}
+		else {
 			pcText = cSpaceType.GetTextColor() == cTextType.GetTextColor() ? &cCurrentType2 : &cSpaceType;
 			pcBack = cSpaceType.GetBackColor() == cTextType.GetBackColor() ? &cCurrentType3 : &cSpaceType;
 		}
@@ -100,7 +102,8 @@ bool CFigure_Eol::DrawImp(SColorStrategyInfo *pInfo)
 			// 混合色(検索色を優先しつつ)
 			crText = pcView->GetTextColorByColorInfo2(cCurrentType.GetColorInfo(), pcText->GetColorInfo());
 			crBack = pcView->GetBackColorByColorInfo2(cCurrentType.GetColorInfo(), pcBack->GetColorInfo());
-		} else {
+		}
+		else {
 			crText = pcText->GetTextColor();
 			crBack = pcBack->GetBackColor();
 		}
@@ -119,7 +122,8 @@ bool CFigure_Eol::DrawImp(SColorStrategyInfo *pInfo)
 		DrawImp_DrawUnderline(pInfo, sPos);
 
 		pInfo->m_nPosInLogic += cEol.GetLen();
-	} else {
+	}
+	else {
 		// 無限ループ対策
 		pInfo->m_nPosInLogic += 1;
 		assert_warning(1);
@@ -137,9 +141,8 @@ void _DispWrap(CGraphics &gr, DispPos *pDispPos, const CEditView *pcView, CLayou
 {
 	CTypeSupport   cWrapType(pcView, COLORIDX_WRAP);
 	const wchar_t *szText;
-	if (cWrapType.IsDisp()) {
-		szText = L"<";
-	} else {
+	if (cWrapType.IsDisp()) { szText = L"<"; }
+	else {
 		szText = L" ";
 	}
 	CLayoutXInt width = CLayoutXInt(pcView->GetTextMetrics().CalcTextWidth3(szText, 1));
@@ -161,13 +164,15 @@ void _DispWrap(CGraphics &gr, DispPos *pDispPos, const CEditView *pcView, CLayou
 					eBgcolorOverwrite = COLORIDX_CARETLINEBG;
 					bTrans			  = bTrans && cBgLineType.GetBackColor() == cTextType.GetBackColor();
 				}
-			} else if (cEvenBgLineType.IsDisp() && nLineNum % 2 == 1) {
+			}
+			else if (cEvenBgLineType.IsDisp() && nLineNum % 2 == 1) {
 				if (bBgcolor) {
 					eBgcolorOverwrite = COLORIDX_EVENLINEBG;
 					bTrans			  = bTrans && cEvenBgLineType.GetBackColor() == cTextType.GetBackColor();
 				}
-			} else if (pcView->m_bMiniMap && cActiveView.GetTextArea().GetViewTopLine() <= nLineNum
-					   && nLineNum < cActiveView.GetTextArea().GetBottomLine()) {
+			}
+			else if (pcView->m_bMiniMap && cActiveView.GetTextArea().GetViewTopLine() <= nLineNum
+					 && nLineNum < cActiveView.GetTextArea().GetBottomLine()) {
 				eBgcolorOverwrite = COLORIDX_PAGEVIEW;
 				bTrans			  = bTrans && cPageViewBgLineType.GetBackColor() == cTextType.GetBackColor();
 			}
@@ -203,7 +208,7 @@ EOF記号の描画
 @date 2007.08.28 kobake 引数 fuOptions 削除
 @date 2007.08.30 kobake 引数 EofColInfo 削除
 */
-void _DispEOF(CGraphics &	   gr,		 //!< [in] 描画対象のDevice Context
+void _DispEOF(CGraphics &	  gr,		 //!< [in] 描画対象のDevice Context
 			  DispPos *		   pDispPos, //!< [in] 表示座標
 			  const CEditView *pcView)
 {
@@ -215,7 +220,7 @@ void _DispEOF(CGraphics &	   gr,		 //!< [in] 描画対象のDevice Context
 
 	//必要なインターフェースを取得
 	const CTextMetrics *pMetrics = &pcView->GetTextMetrics();
-	const CTextArea *	pArea	 = &pcView->GetTextArea();
+	const CTextArea *   pArea	= &pcView->GetTextArea();
 
 	//定数
 	static const wchar_t szEof[] = L"[EOF]";
@@ -292,9 +297,9 @@ void _DispEOL(CGraphics &gr, DispPos *pDispPos, CEol cEol, const CEditView *pcVi
 @date 2001.12.21 YAZAKI 改行記号の描きかたを変更。ペンはこの関数内で作るようにした。
 						矢印の先頭を、sx, syにして描画ルーチン書き直し。
 */
-void _DrawEOL(CGraphics &	 gr,	//!< Device Context Handle
+void _DrawEOL(CGraphics &	gr,	//!< Device Context Handle
 			  const CMyRect &rcEol, //!< 描画領域
-			  CEol			 cEol,	//!< 行末コード種別
+			  CEol			 cEol,  //!< 行末コード種別
 			  bool			 bBold, //!< TRUE: 太字
 			  COLORREF		 pColor //!< 色
 )
@@ -373,48 +378,46 @@ void _DrawEOL(CGraphics &	 gr,	//!< Device Context Handle
 	} break;
 	case EOL_LF: //	下向き矢印	// 2007.08.17 ryoji EOL_CR -> EOL_LF
 				 // 2013.04.22 Moca NEL,LS,PS対応。暫定でLFと同じにする
-		{
-			sx		   = rcEol.left + (rcEol.Width() / 2);
-			sy		   = rcEol.top + (rcEol.Height() * 3 / 4);
-			DWORD pp[] = {3, 2};
-			POINT pt[5];
-			pt[0].x = sx; //	上へ
-			pt[0].y = rcEol.top + rcEol.Height() / 4 + 1;
-			pt[1].x = sx; //	上から下へ
-			pt[1].y = sy;
-			pt[2].x = sx - rcEol.Height() / 4; //	そのまま左上へ
-			pt[2].y = sy - rcEol.Height() / 4;
-			pt[3].x = sx; //	矢印の先端に戻る
-			pt[3].y = sy;
-			pt[4].x = sx + rcEol.Height() / 4; //	そして右上へ
-			pt[4].y = sy - rcEol.Height() / 4;
-			::PolyPolyline(gr, pt, pp, _countof(pp));
+	{
+		sx		   = rcEol.left + (rcEol.Width() / 2);
+		sy		   = rcEol.top + (rcEol.Height() * 3 / 4);
+		DWORD pp[] = {3, 2};
+		POINT pt[5];
+		pt[0].x = sx; //	上へ
+		pt[0].y = rcEol.top + rcEol.Height() / 4 + 1;
+		pt[1].x = sx; //	上から下へ
+		pt[1].y = sy;
+		pt[2].x = sx - rcEol.Height() / 4; //	そのまま左上へ
+		pt[2].y = sy - rcEol.Height() / 4;
+		pt[3].x = sx; //	矢印の先端に戻る
+		pt[3].y = sy;
+		pt[4].x = sx + rcEol.Height() / 4; //	そして右上へ
+		pt[4].y = sy - rcEol.Height() / 4;
+		::PolyPolyline(gr, pt, pp, _countof(pp));
 
-			if (bBold) {
-				pt[0].x += 1; //	上へ
-				pt[0].y += 0;
-				pt[1].x += 1; //	上から下へ
-				pt[1].y += 0;
-				pt[2].x += 1; //	そのまま左上へ
-				pt[2].y += 0;
-				pt[3].x += 1; //	矢印の先端に戻る
-				pt[3].y += 0;
-				pt[4].x += 1; //	そして右上へ
-				pt[4].y += 0;
-				::PolyPolyline(gr, pt, pp, _countof(pp));
-			}
+		if (bBold) {
+			pt[0].x += 1; //	上へ
+			pt[0].y += 0;
+			pt[1].x += 1; //	上から下へ
+			pt[1].y += 0;
+			pt[2].x += 1; //	そのまま左上へ
+			pt[2].y += 0;
+			pt[3].x += 1; //	矢印の先端に戻る
+			pt[3].y += 0;
+			pt[4].x += 1; //	そして右上へ
+			pt[4].y += 0;
+			::PolyPolyline(gr, pt, pp, _countof(pp));
 		}
-		break;
+	} break;
 	case EOL_NEL:
 	case EOL_LS:
-	case EOL_PS:
-	{
+	case EOL_PS: {
 		// 左下矢印(折れ曲がりなし)
 		sx		   = rcEol.left;						   // X左端
 		sy		   = rcEol.top + (rcEol.Height() * 3 / 4); // Y上から3/4
 		DWORD pp[] = {2, 3};
 		POINT pt[5];
-		int	  nWidth = t_min(rcEol.Width(), rcEol.Height() / 2);
+		int   nWidth = t_min(rcEol.Width(), rcEol.Height() / 2);
 		pt[0].x		 = sx + nWidth; //	右上から
 		pt[0].y		 = sy - nWidth;
 		pt[1].x		 = sx; //	先頭へ

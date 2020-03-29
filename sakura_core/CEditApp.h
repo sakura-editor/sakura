@@ -41,8 +41,7 @@ class CGrepAgent;
 enum EFunctionCode;
 
 //!エディタ部分アプリケーションクラス。CNormalProcess1個につき、1個存在。
-class CEditApp : public TSingleton<CEditApp>
-{
+class CEditApp : public TSingleton<CEditApp> {
 	friend class TSingleton<CEditApp>;
 	CEditApp() {}
 	virtual ~CEditApp();
@@ -56,7 +55,7 @@ public:
 	//ウィンドウ情報
 	CEditWnd *GetEditWindow() { return m_pcEditWnd; } //!< ウィンドウ取得
 
-	CEditDoc *	   GetDocument() { return m_pcEditDoc; }
+	CEditDoc *	 GetDocument() { return m_pcEditDoc; }
 	CImageListMgr &GetIcons() { return m_cIcons; }
 
 	bool OpenPropertySheet(int nPageNum);
@@ -83,15 +82,14 @@ private:
 	CPropertyManager *m_pcPropertyManager; //プロパティ管理
 public:
 	CGrepAgent *m_pcGrepAgent; // GREPモード
-	CSoundSet	m_cSoundSet;   //サウンド管理
+	CSoundSet   m_cSoundSet;   //サウンド管理
 
 	// GUIオブジェクト
 	CImageListMgr m_cIcons; //!< Image List
 };
 
 // WM_QUIT検出例外
-class CAppExitException : public std::exception
-{
+class CAppExitException : public std::exception {
 public:
 	const char *what() const throw() { return "CAppExitException"; }
 };

@@ -41,9 +41,8 @@
 void CViewCommander::Command_CHGMOD_INS(void)
 {
 	/* 挿入モードか？ */
-	if (m_pCommanderView->IsInsMode()) {
-		m_pCommanderView->SetInsMode(false);
-	} else {
+	if (m_pCommanderView->IsInsMode()) { m_pCommanderView->SetInsMode(false); }
+	else {
 		m_pCommanderView->SetInsMode(true);
 	}
 	/* キャレットの表示・更新 */
@@ -70,7 +69,7 @@ void CViewCommander::Command_CHGMOD_EOL(EEolType e)
 
 //! 文字コードセット指定
 void CViewCommander::Command_CHG_CHARSET(ECodeType eCharSet, // [in] 設定する文字コードセット
-										 bool	   bBom		 // [in] 設定するBOM(Unicode系以外は無視)
+										 bool	  bBom		 // [in] 設定するBOM(Unicode系以外は無視)
 )
 {
 	if (eCharSet == CODE_NONE || eCharSet == CODE_AUTODETECT) {
@@ -107,16 +106,18 @@ void CViewCommander::Command_CANCEL_MODE(int whereCursorIs)
 			CLayoutRange rcSel;
 			TwoPointToRange(&rcSel,
 							GetSelect().GetFrom(), // 範囲選択開始
-							GetSelect().GetTo()	   // 範囲選択終了
+							GetSelect().GetTo()	// 範囲選択終了
 			);
 			// 2013.04.22 Moca 左上固定はやめる
 			rcMoveTo = rcSel;
 		}
 		if (1 == whereCursorIs) { // 左上
 			ptTo = rcMoveTo.GetFrom();
-		} else if (2 == whereCursorIs) { // 右下
+		}
+		else if (2 == whereCursorIs) { // 右下
 			ptTo = rcMoveTo.GetTo();
-		} else {
+		}
+		else {
 			ptTo = GetCaret().GetCaretLayoutPos();
 		}
 
@@ -127,7 +128,8 @@ void CViewCommander::Command_CANCEL_MODE(int whereCursorIs)
 		if (ptTo.y >= GetDocument()->m_cLayoutMgr.GetLineCount()) {
 			/* ファイルの最後に移動 */
 			Command_GOFILEEND(false);
-		} else {
+		}
+		else {
 			if (!GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode && bBoxSelect) {
 				// 2013.04.22 Moca 矩形選択のとき左上固定をやめたので代わりにEOLより右だった場合にEOLに補正する
 				const CLayout *pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY(ptTo.y);
@@ -137,7 +139,8 @@ void CViewCommander::Command_CANCEL_MODE(int whereCursorIs)
 			GetCaret().MoveCursor(ptTo, true);
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 		}
-	} else {
+	}
+	else {
 		// 2011.12.05 Moca 選択中の未選択状態でもLockの解除と描画が必要
 		if (m_pCommanderView->GetSelectionInfo().IsTextSelecting()
 			|| m_pCommanderView->GetSelectionInfo().IsBoxSelecting()) {

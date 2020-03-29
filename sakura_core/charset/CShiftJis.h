@@ -29,8 +29,7 @@
 
 struct CommonSetting_Statusbar;
 
-class CShiftJis : public CCodeBase
-{
+class CShiftJis : public CCodeBase {
 
 public:
 	// CCodeBaseインターフェース
@@ -76,7 +75,7 @@ protected:
 inline int CShiftJis::_SjisToUni_char(const unsigned char *pSrc, unsigned short *pDst, const ECharSet eCharset,
 									  bool *pbError)
 {
-	int	 nret;
+	int  nret;
 	bool berror = false;
 
 	switch (eCharset) {
@@ -96,7 +95,7 @@ inline int CShiftJis::_SjisToUni_char(const unsigned char *pSrc, unsigned short 
 		break;
 	default:
 		// 致命的エラー回避コード
-		berror	= true;
+		berror  = true;
 		pDst[0] = L'?';
 		nret	= 1;
 	}
@@ -116,25 +115,27 @@ inline int CShiftJis::_SjisToUni_char(const unsigned char *pSrc, unsigned short 
 inline int CShiftJis::_UniToSjis_char(const unsigned short *pSrc, unsigned char *pDst, const ECharSet eCharset,
 									  bool *pbError)
 {
-	int	 nret;
+	int  nret;
 	bool berror = false;
 
 	if (eCharset == CHARSET_UNI_NORMAL) {
 		nret = MyWideCharToMultiByte_JP(pSrc, 1, pDst);
 		if (nret < 1) {
 			// Uni -> SJIS 変換に失敗
-			berror	= true;
+			berror  = true;
 			pDst[0] = '?';
 			nret	= 1;
 		}
-	} else if (eCharset == CHARSET_UNI_SURROG) {
+	}
+	else if (eCharset == CHARSET_UNI_SURROG) {
 		// サロゲートペアは SJIS に変換できない。
-		berror	= true;
+		berror  = true;
 		pDst[0] = '?';
 		nret	= 1;
-	} else {
+	}
+	else {
 		// 保護コード
-		berror	= true;
+		berror  = true;
 		pDst[0] = '?';
 		nret	= 1;
 	}

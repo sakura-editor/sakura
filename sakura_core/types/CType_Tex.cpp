@@ -43,10 +43,10 @@ void CType_Tex::InitTypeConfigImp(STypeConfig *pType)
 	wcscpy(pType->m_szTypeExts, L"tex,ltx,sty,bib,log,blg,aux,bbl,toc,lof,lot,idx,ind,glo");
 
 	//設定
-	pType->m_cLineComment.CopyTo(0, L"%", -1);				 /* 行コメントデリミタ */
-	pType->m_eDefaultOutline   = OUTLINE_TEX;				 /* アウトライン解析方法 */
-	pType->m_nKeyWordSetIdx[0] = 9;							 /* キーワードセット */
-	pType->m_nKeyWordSetIdx[1] = 10; /* キーワードセット2 */ // Jan. 19, 2001 JEPRO
+	pType->m_cLineComment.CopyTo(0, L"%", -1);									  /* 行コメントデリミタ */
+	pType->m_eDefaultOutline						= OUTLINE_TEX;				  /* アウトライン解析方法 */
+	pType->m_nKeyWordSetIdx[0]						= 9;						  /* キーワードセット */
+	pType->m_nKeyWordSetIdx[1]						= 10; /* キーワードセット2 */ // Jan. 19, 2001 JEPRO
 	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false; //シングルクォーテーション文字列を色分け表示しない
 	pType->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false; //ダブルクォーテーション文字列を色分け表示しない
 }
@@ -59,8 +59,8 @@ void CType_Tex::InitTypeConfigImp(STypeConfig *pType)
 */
 
 /** アウトライン解析の補助クラス */
-template<int HierarchyCount> class TagProcessor
-{
+template<int HierarchyCount>
+class TagProcessor {
 	// 環境
 	CFuncInfoArr &refFuncInfoArr;
 	CLayoutMgr &  refLayoutMgr;
@@ -81,17 +81,18 @@ public:
 		, tagDepth(0)
 		, treeDepth(-1)
 		, serials()
-	{}
+	{
+	}
 
 	/** \tag{title} を受け取って、タグに対応したアウトライントピックを追加する。 */
 	const wchar_t *operator()(
-		CLogicInt	   nLineNumber, // 行番号
+		CLogicInt	  nLineNumber, // 行番号
 		const wchar_t *pLine,		// 行文字列へのポインタ
 		const wchar_t *pTag,		// \section{dddd} または \section*{dddd} の、s を指すポインタ。
 		const wchar_t *pTagEnd,		// \section{dddd} または \section*{dddd} の、{ を指すポインタ。
-		const wchar_t *pTitle,	  // \section{dddd} または \section*{dddd} の、先頭の d を指すポインタ。
+		const wchar_t *pTitle,	// \section{dddd} または \section*{dddd} の、先頭の d を指すポインタ。
 		const wchar_t *pTitleEnd, // \section{dddd} または \section*{dddd} の、} を指すポインタ。
-		const wchar_t *pLineEnd	  // (改行を含む)行文字列末尾の文字の次を指すポインタ
+		const wchar_t *pLineEnd   // (改行を含む)行文字列末尾の文字の次を指すポインタ
 	)
 	{
 		const bool bAddNumber =
@@ -115,8 +116,8 @@ public:
 			*/
 			if (0 == wcsncmp(L"begin", pTag, pTagEnd - pTag)) {
 				if (const wchar_t *pSlide = wcsstr(pTagEnd, L"{slide}")) {
-					pTitle	  = wmemchr(pSlide + 7, L'{', pLineEnd - pSlide);
-					pTitle	  = pTitle ? pTitle + 1 : pLineEnd;
+					pTitle	= wmemchr(pSlide + 7, L'{', pLineEnd - pSlide);
+					pTitle	= pTitle ? pTitle + 1 : pLineEnd;
 					pTitleEnd = wmemchr(pTitle, L'}', pLineEnd - pTitle);
 					pTitleEnd = pTitleEnd ? pTitleEnd : pLineEnd;
 					if (pTitle < pTitleEnd) { depth = 0; }
@@ -166,8 +167,9 @@ public:
 
 		// トピック文字列を作成する(1)。トビック番号をバッファに埋め込む。
 		if (bAddNumber) {
-			assert(4 * HierarchyCount + 2 <= _countof(
-					   szTopic)); // 4 はトピック番号「ddd.」のドットを含む最大桁数。+2 はヌル文字を含む " " の分。
+			assert(
+				4 * HierarchyCount + 2
+				<= _countof(szTopic)); // 4 はトピック番号「ddd.」のドットを含む最大桁数。+2 はヌル文字を含む " " の分。
 			int i = 0;
 			while (i <= tagDepth && serials[i] == 0) {
 				i += 1; // "0." プリフィックスを表示しないようにスキップする。
@@ -177,7 +179,7 @@ public:
 				pTopicEnd += auto_sprintf(pTopicEnd, serials[i] / 1000 ? L"%03d." : L"%d.", serials[i] % 1000);
 			}
 			*pTopicEnd++ = L' ';
-			*pTopicEnd	 = L'\0';
+			*pTopicEnd   = L'\0';
 		}
 		assert(pTopicEnd < szTopic + _countof(szTopic));
 
@@ -204,21 +206,22 @@ inline TagProcessor<HierarchyCount> MakeTagProcessor(CFuncInfoArr &fia, CLayoutM
 }
 
 /** アウトライン解析の補助クラス */
-class TagIterator
-{
+class TagIterator {
 	const CDocLineMgr &refDocLineMgr;
 
 public:
 	TagIterator(const CDocLineMgr &dlmgr)
 		: refDocLineMgr(dlmgr)
-	{}
+	{
+	}
 
 	/** ドキュメント全体を先頭からスキャンして、見つけた \tag{title} を TagProcessor に渡す。 */
-	template<int HierarchyCount> void each(TagProcessor<HierarchyCount> &&process)
+	template<int HierarchyCount>
+	void each(TagProcessor<HierarchyCount> &&process)
 	{
 		const CLogicInt nLineCount = refDocLineMgr.GetLineCount();
 		for (CLogicInt nLineLen, nLineNumber = CLogicInt(0); nLineNumber < nLineCount; ++nLineNumber) {
-			const wchar_t *const pLine	  = refDocLineMgr.GetLine(nLineNumber)->GetDocLineStrWithEOL(&nLineLen);
+			const wchar_t *const pLine	= refDocLineMgr.GetLine(nLineNumber)->GetDocLineStrWithEOL(&nLineLen);
 			const wchar_t *const pLineEnd = pLine + nLineLen;
 			if (!pLine) { // [EOF] のみの行。
 				break;
@@ -239,8 +242,8 @@ public:
 
 				// '\' の後ろから、'{' を目印にタグとタイトルを見つける。
 				pTag	  = p + 1;
-				pTagEnd	  = std::find(pTag, pLineEnd, L'{');
-				pTitle	  = pTagEnd < pLineEnd ? pTagEnd + 1 : pLineEnd;
+				pTagEnd   = std::find(pTag, pLineEnd, L'{');
+				pTitle	= pTagEnd < pLineEnd ? pTagEnd + 1 : pLineEnd;
 				pTitleEnd = std::find(pTitle, pLineEnd, L'}');
 
 				// タグの処理は任せる。
@@ -249,7 +252,8 @@ public:
 					if (p < pTag || pLineEnd < p) {
 						return; // 無効な値であるか、無限ループのおそれがあるため中断。
 					}
-				} else {
+				}
+				else {
 					p += 1;
 				}
 			}
@@ -351,18 +355,18 @@ const wchar_t *g_ppszKeywordsTEX[] = {
 	L"\\vert", L"\\Vert", L"\\vfil", L"\\vfill", L"\\vrule", L"\\vskip", L"\\vspace", L"\\vspace*", L"\\wedge",
 	L"\\widehat", L"\\widetilde", L"\\wp", L"\\wr", L"\\wrapfigure", L"\\xi", L"\\Xi",
 	L"\\zeta" //,
-	//			"\\[",
-	//			"\\\"",
-	//			"\\\'",
-	//			"\\\\",
-	//			"\\]",
-	//			"\\^",
-	//			"\\_",
-	//			"\\`",
-	//			"\\{",
-	//			"\\|",
-	//			"\\}",
-	//			"\\~",
+			  //			"\\[",
+			  //			"\\\"",
+			  //			"\\\'",
+			  //			"\\\\",
+			  //			"\\]",
+			  //			"\\^",
+			  //			"\\_",
+			  //			"\\`",
+			  //			"\\{",
+			  //			"\\|",
+			  //			"\\}",
+			  //			"\\~",
 };
 int g_nKeywordsTEX = _countof(g_ppszKeywordsTEX);
 
@@ -403,7 +407,7 @@ const wchar_t *g_ppszKeywordsTEX2[] = {
 	//		"sp",
 	L"titlepage", L"tjarticle", L"topnumber", L"totalnumber", L"twocolumn", L"twoside",
 	L"yomi" //,
-	//		"zh",
-	//		"zw"
+			//		"zh",
+			//		"zw"
 };
 int g_nKeywordsTEX2 = _countof(g_ppszKeywordsTEX2);

@@ -39,8 +39,7 @@
 #include "_main/global.h"
 
 //! メモリバッファクラス
-class CMemory
-{
+class CMemory {
 	//コンストラクタ・デストラクタ
 public:
 	CMemory() noexcept;
@@ -63,8 +62,8 @@ public:
 	void Clean() { _Empty(); }
 	void Clear() { _Empty(); }
 
-	inline const void *GetRawPtr() const { return m_pRawData; }	  //!< データへのポインタを返す
-	inline void *	   GetRawPtr() { return m_pRawData; }		  //!< データへのポインタを返す
+	inline const void *GetRawPtr() const { return m_pRawData; }   //!< データへのポインタを返す
+	inline void *	  GetRawPtr() { return m_pRawData; }		  //!< データへのポインタを返す
 	int				   GetRawLength() const { return m_nRawLen; } //!<データ長を返す。バイト単位。
 
 	// 演算子
@@ -114,9 +113,9 @@ private: // 2002/2/10 aroka アクセス権変更
 	/*
 	|| メンバ変数
 	*/
-	char *m_pRawData;	  //バッファ
-	int	  m_nRawLen;	  //データサイズ(m_nDataBufSize以内)。バイト単位。
-	int	  m_nDataBufSize; //バッファサイズ。バイト単位。
+	char *m_pRawData;	 //バッファ
+	int   m_nRawLen;	  //データサイズ(m_nDataBufSize以内)。バイト単位。
+	int   m_nDataBufSize; //バッファサイズ。バイト単位。
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

@@ -28,8 +28,7 @@
 #include "doc/logic/CDocLine.h"
 
 //! ブロックコメントデリミタを管理する
-class CMemoryIterator
-{
+class CMemoryIterator {
 public:
 	// CDocLine用コンストラクタ
 	CMemoryIterator(const CDocLine *pcT, CLayoutInt nTabSpace, const CTsvModeInfo &tsvInfo, CPixelXInt nCharDx,
@@ -66,7 +65,7 @@ public:
 	{
 		m_nIndex		= CLogicInt(0);
 		m_nColumn		= m_nIndent;
-		m_nIndex_Delta	= CLogicInt(0);
+		m_nIndex_Delta  = CLogicInt(0);
 		m_nColumn_Delta = CLayoutInt(0);
 	}
 
@@ -89,14 +88,18 @@ public:
 		if (m_pLine[m_nIndex] == WCODE::TAB) {
 			if (m_tsvInfo.m_nTsvMode == TSV_MODE_TSV) {
 				m_nColumn_Delta = m_tsvInfo.GetActualTabLength(m_nColumn, m_tsvInfo.m_nMaxCharLayoutX);
-			} else if (m_tsvInfo.m_nTsvMode == TSV_MODE_CSV) {
+			}
+			else if (m_tsvInfo.m_nTsvMode == TSV_MODE_CSV) {
 				m_nColumn_Delta = m_nTabPadding;
-			} else {
+			}
+			else {
 				m_nColumn_Delta = m_nTabSpaceDx - (m_nColumn + m_nTabPadding) % m_nTabSpace;
 			}
-		} else if (m_pLine[m_nIndex] == L',' && m_tsvInfo.m_nTsvMode == TSV_MODE_CSV) {
+		}
+		else if (m_pLine[m_nIndex] == L',' && m_tsvInfo.m_nTsvMode == TSV_MODE_CSV) {
 			m_nColumn_Delta = m_tsvInfo.GetActualTabLength(m_nColumn, m_tsvInfo.m_nMaxCharLayoutX);
-		} else {
+		}
+		else {
 			m_nColumn_Delta = CNativeW::GetColmOfChar(m_pLine, m_nLineLen, m_nIndex);
 			if (m_nSpacing) {
 				m_nColumn_Delta += CLayoutXInt(CNativeW::GetKetaOfChar(m_pLine, m_nLineLen, m_nIndex) * m_nSpacing);
@@ -141,6 +144,6 @@ private:
 	//状態変数
 	CLogicInt  m_nIndex;		//データ位置。文字単位。
 	CLayoutInt m_nColumn;		//レイアウト位置。桁(半角幅)単位。
-	CLogicInt  m_nIndex_Delta;	// index増分
+	CLogicInt  m_nIndex_Delta;  // index増分
 	CLayoutInt m_nColumn_Delta; // column増分
 };

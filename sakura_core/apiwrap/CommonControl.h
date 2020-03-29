@@ -52,7 +52,7 @@ inline int StatusBar_SetParts(HWND hwndCtl, int num, int *positions)
 //                      HotKey コントロール                    //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 inline LRESULT HotKey_GetHotKey(HWND hwndCtl) { return (LRESULT)::SendMessage(hwndCtl, HKM_GETHOTKEY, 0L, 0L); }
-inline void	   HotKey_SetHotKey(HWND hwndCtl, DWORD vk_code, DWORD modifier)
+inline void	HotKey_SetHotKey(HWND hwndCtl, DWORD vk_code, DWORD modifier)
 {
 	::SendMessage(hwndCtl, HKM_SETHOTKEY, MAKEWORD(vk_code, modifier), 0L);
 }
@@ -118,7 +118,7 @@ inline int Toolbar_GetBitmap(HWND hwndCtl, int index)
 	return (int)(DWORD)::SendMessage(hwndCtl, TB_GETBITMAP, (WPARAM)index, 0L);
 }
 inline DWORD Toolbar_GetButtonSize(HWND hwndCtl) { return (DWORD)::SendMessage(hwndCtl, TB_GETBUTTONSIZE, 0L, 0L); }
-inline BOOL	 Toolbar_GetItemRect(HWND hwndCtl, int index, RECT *rect)
+inline BOOL  Toolbar_GetItemRect(HWND hwndCtl, int index, RECT *rect)
 {
 	return (BOOL)(DWORD)::SendMessage(hwndCtl, TB_GETITEMRECT, (WPARAM)index, (LPARAM)rect);
 }

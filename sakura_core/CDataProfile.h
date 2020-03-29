@@ -28,15 +28,15 @@
 #include "util/StaticType.h"
 
 //文字列バッファの型
-struct StringBufferW_
-{
-	WCHAR *	  pData;
+struct StringBufferW_ {
+	WCHAR *   pData;
 	const int nDataCount;
 
 	StringBufferW_(WCHAR *_pData, int _nDataCount)
 		: pData(_pData)
 		, nDataCount(_nDataCount)
-	{}
+	{
+	}
 
 	StringBufferW_ &operator=(const StringBufferW_ &rhs)
 	{
@@ -51,8 +51,7 @@ typedef const StringBufferW_ StringBufferW;
 
 // 2007.09.24 kobake データ変換部を子クラスに分離
 //!各種データ変換付きCProfile
-class CDataProfile : public CProfile
-{
+class CDataProfile : public CProfile {
 private:
 	//専用型
 	typedef std::wstring wstring;
@@ -104,11 +103,12 @@ protected:
 	{
 		if (profile.length() > 0) {
 			ACHAR buf[2] = {0};
-			int	  ret	 = wctomb(buf, profile[0]);
+			int   ret	= wctomb(buf, profile[0]);
 			assert_warning(ret == 1);
 			(void)ret;
 			*value = buf[0];
-		} else {
+		}
+		else {
 			*value = '\0';
 		}
 	}
@@ -128,11 +128,13 @@ protected:
 	}
 	void value_to_profile(const StringBufferW &value, wstring *profile) { *profile = value.pData; }
 	// StaticString<WCHAR,N>
-	template<int N> void profile_to_value(const wstring &profile, StaticString<WCHAR, N> *value)
+	template<int N>
+	void profile_to_value(const wstring &profile, StaticString<WCHAR, N> *value)
 	{
 		wcscpy_s(value->GetBufferPointer(), value->GetBufferCount(), profile.c_str());
 	}
-	template<int N> void value_to_profile(const StaticString<WCHAR, N> &value, wstring *profile)
+	template<int N>
+	void value_to_profile(const StaticString<WCHAR, N> &value, wstring *profile)
 	{
 		*profile = value.GetBufferPointer();
 	}
@@ -165,7 +167,8 @@ public:
 				profile_to_value(buf, &tEntryValue);
 				ret = true;
 			}
-		} else {
+		}
+		else {
 			//文字列に変換
 			value_to_profile(tEntryValue, &buf);
 			//文字列書き込み
@@ -176,9 +179,10 @@ public:
 
 	// 2007.08.14 kobake 追加
 	//! intを介して任意型の入出力を行う
-	template<class T> bool IOProfileData_WrapInt(const WCHAR *pszSectionName, const WCHAR *pszEntryKey, T &nEntryValue)
+	template<class T>
+	bool IOProfileData_WrapInt(const WCHAR *pszSectionName, const WCHAR *pszEntryKey, T &nEntryValue)
 	{
-		int	 n		= nEntryValue;
+		int  n		= nEntryValue;
 		bool ret	= this->IOProfileData(pszSectionName, pszEntryKey, n);
 		nEntryValue = (T)n;
 		return ret;
@@ -191,14 +195,15 @@ public:
 template<>
 inline bool CDataProfile::IOProfileData<std::wstring>(const WCHAR * pszSectionName, //!< [in] セクション名
 													  const WCHAR * pszEntryKey,	//!< [in] エントリ名
-													  std::wstring &strEntryValue	//!< [in,out] エントリ値
+													  std::wstring &strEntryValue   //!< [in,out] エントリ値
 													  ) noexcept
 {
 	bool ret = false;
 	if (IsReadingMode()) {
 		//文字列読み込み
 		ret = GetProfileDataImp(pszSectionName, pszEntryKey, strEntryValue);
-	} else {
+	}
+	else {
 		//文字列書き込み
 		ret = SetProfileDataImp(pszSectionName, pszEntryKey, strEntryValue);
 	}

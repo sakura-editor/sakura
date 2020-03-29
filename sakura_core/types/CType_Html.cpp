@@ -62,15 +62,15 @@ void CType_Html::InitTypeConfigImp(STypeConfig *pType)
 void CDocOutline::MakeTopicList_html(CFuncInfoArr *pcFuncInfoArr, bool bXml)
 {
 	const wchar_t *pLineBuf; //	pLineBuf は行全体を指し、
-	const wchar_t *pLine;	 //	pLine は処理中の文字以降の部分を指します。
-	CLogicInt	   nLineLen;
+	const wchar_t *pLine;	//	pLine は処理中の文字以降の部分を指します。
+	CLogicInt	  nLineLen;
 	int			   i;
 	int			   j;
 	int			   k;
 	bool		   bEndTag;
 	bool		   bCommentTag = false;
-	bool		   bCDATA	   = false;
-	bool		   bParaTag	   = false; //	2008.08.15 aroka
+	bool		   bCDATA	  = false;
+	bool		   bParaTag	= false; //	2008.08.15 aroka
 
 	/*	ネストの深さは、nMaxStackレベルまで、ひとつのヘッダは、最長32文字まで区別
 		（32文字まで同じだったら同じものとして扱います）
@@ -78,12 +78,11 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr *pcFuncInfoArr, bool bXml)
 	// 2014.12.25 ネスト32→64
 	const int nMaxStack = 64; //	ネストの最深
 	int		  nDepth	= 0;  //	いまのアイテムの深さを表す数値。
-	wchar_t	  pszStack[nMaxStack][32];
-	wchar_t	  szTitle[32]; //	一時領域
-	wchar_t	  szTag[32];   //	一時領域  小文字で保持して高速化しています。
+	wchar_t   pszStack[nMaxStack][32];
+	wchar_t   szTitle[32]; //	一時領域
+	wchar_t   szTag[32];   //	一時領域  小文字で保持して高速化しています。
 
-	enum ELabelType
-	{ //	列挙体：ラベルの種別
+	enum ELabelType { //	列挙体：ラベルの種別
 		LT_DEFAULT,
 		LT_INLINE,
 		LT_IGNORE,
@@ -250,7 +249,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr *pcFuncInfoArr, bool bXml)
 					if (nLabelType != LT_EMPTY) {
 						// 終了タグなしを除く全てのタグらしきものを判定
 						wcscpy(pszStack[nDepth], szTitle);
-						k	  = j;
+						k	 = j;
 						int x = j;
 						// 2014.12.25 32文字以上のとき,別の行のときにも「/>」bEndTagに対応
 						{
@@ -259,10 +258,11 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr *pcFuncInfoArr, bool bXml)
 								for (; j < nLineLen - i; j++) {
 									if (pLine[j] == L'/' && pLine[j + 1] == L'>') {
 										bEndTag = true; // <emptytag />
-										bLoop	= false;
+										bLoop   = false;
 										j += 2;
 										break;
-									} else if (pLine[j] == L'>') {
+									}
+									else if (pLine[j] == L'>') {
 										bLoop = false;
 										j++;
 										break;
@@ -273,8 +273,8 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr *pcFuncInfoArr, bool bXml)
 									pLineBuf =
 										m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
 									pLine = pLineBuf;
-									j	  = 0;
-									i	  = 0;
+									j	 = 0;
+									i	 = 0;
 								}
 							}
 						}
@@ -294,7 +294,8 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr *pcFuncInfoArr, bool bXml)
 						szTitle[k] = L'\0';
 						pcFuncInfoArr->AppendData(nLineCount + CLogicInt(1), ptPos.GetY2() + CLayoutInt(1), szTitle, 0,
 												  nDepth++);
-					} else {
+					}
+					else {
 						for (; i + j < nLineLen && j < _countof(szTitle) - 1; j++) {
 							if (pLine[j] == L'>') { break; }
 							szTitle[j] = pLine[j];
@@ -312,7 +313,8 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr *pcFuncInfoArr, bool bXml)
 					nDepth--;
 					if (bXml) {
 						if (!wcscmp(pszStack[nDepth], szTitle)) { break; }
-					} else {
+					}
+					else {
 						if (!_wcsicmp(pszStack[nDepth], szTitle)) { break; }
 					}
 				}
@@ -320,10 +322,12 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr *pcFuncInfoArr, bool bXml)
 				if (nDepth == 0) {
 					if (bXml) {
 						if (wcscmp(pszStack[nDepth], szTitle)) { nDepth = nDepthOrg; }
-					} else {
+					}
+					else {
 						if (_wcsicmp(pszStack[nDepth], szTitle)) { nDepth = nDepthOrg; }
 					}
-				} else {
+				}
+				else {
 					if (nLabelType == LT_HEADING) { //	見出しの終わり
 						nHeadDepth[szTitle[1] - L'0'] = nDepth;
 						nDepth++;

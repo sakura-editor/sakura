@@ -29,7 +29,7 @@
 
 //外部コマンド CDlgExec.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {								// 12100
-	IDC_BUTTON_REFERENCE, HIDC_EXEC_BUTTON_REFERENCE,	//参照
+	IDC_BUTTON_REFERENCE, HIDC_EXEC_BUTTON_REFERENCE,   //参照
 	IDOK, HIDOK_EXEC,									//実行
 	IDCANCEL, HIDCANCEL_EXEC,							//キャンセル
 	IDC_BUTTON_HELP, HIDC_EXEC_BUTTON_HELP,				//ヘルプ
@@ -38,11 +38,11 @@ const DWORD p_helpids[] = {								// 12100
 	IDC_COMBO_m_szCommand, HIDC_EXEC_COMBO_m_szCommand, //コマンド
 	IDC_RADIO_OUTPUT, HIDC_RADIO_OUTPUT,		 //標準出力リダイレクト先：アウトプットウィンドウ
 	IDC_RADIO_EDITWINDOW, HIDC_RADIO_EDITWINDOW, //標準出力リダイレクト先：編集中のウィンドウ
-	IDC_CHECK_SENDSTDIN, HIDC_CHECK_SENDSTDIN,	 //標準入力に送る
-	IDC_COMBO_CODE_SEND, HIDC_COMBO_CODE_SEND,	 //標準出力文字コード
+	IDC_CHECK_SENDSTDIN, HIDC_CHECK_SENDSTDIN,   //標準入力に送る
+	IDC_COMBO_CODE_SEND, HIDC_COMBO_CODE_SEND,   //標準出力文字コード
 	IDC_CHECK_CUR_DIR, HIDC_CHECK_CUR_DIR,		 //カレントディレクトリ
 	IDC_COMBO_CUR_DIR, HIDC_COMBO_CUR_DIR,		 //カレントディレクトリ指定
-	IDC_BUTTON_REFERENCE2, HIDC_COMBO_CUR_DIR,	 //カレントディレクトリ指定(参照)
+	IDC_BUTTON_REFERENCE2, HIDC_COMBO_CUR_DIR,   //カレントディレクトリ指定(参照)
 												 //	IDC_STATIC,						-1,
 	0, 0};										 //@@@ 2002.01.07 add end MIK
 
@@ -59,7 +59,7 @@ static const int codeTable2[] = {0x00, 0x10, 0x100};
 int CDlgExec::DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam)
 {
 	m_szCommand[0] = L'\0'; /* コマンドライン */
-	m_bEditable	   = CEditDoc::GetInstance(0)->IsEditable();
+	m_bEditable	= CEditDoc::GetInstance(0)->IsEditable();
 	return (int)CDialog::DoModal(hInstance, hwndParent, IDD_EXEC, lParam);
 }
 
@@ -90,7 +90,7 @@ BOOL CDlgExec::OnInitDialog(HWND hwnd, WPARAM wParam, LPARAM lParam)
 void CDlgExec::SetData(void)
 {
 	//	MYTRACE( L"CDlgExec::SetData()" );
-	int	 i;
+	int  i;
 	HWND hwndCombo;
 
 	/*****************************
@@ -174,7 +174,8 @@ int CDlgExec::GetData(void)
 	DlgItem_GetText(GetHwnd(), IDC_COMBO_m_szCommand, m_szCommand, _countof(m_szCommand));
 	if (IsDlgButtonCheckedBool(GetHwnd(), IDC_CHECK_CUR_DIR)) {
 		DlgItem_GetText(GetHwnd(), IDC_COMBO_CUR_DIR, &m_szCurDir[0], _countof2(m_szCurDir));
-	} else {
+	}
+	else {
 		m_szCurDir[0] = L'\0';
 	}
 	{ //	From Here 2007.01.02 maru 引数を拡張のため
@@ -202,8 +203,7 @@ int CDlgExec::GetData(void)
 BOOL CDlgExec::OnBnClicked(int wID)
 {
 	switch (wID) {
-	case IDC_CHECK_GETSTDOUT:
-	{ //	From Here 2007.01.02 maru 引数を拡張のため
+	case IDC_CHECK_GETSTDOUT: { //	From Here 2007.01.02 maru 引数を拡張のため
 		BOOL bEnabled;
 		bEnabled = (BST_CHECKED == ::IsDlgButtonChecked(GetHwnd(), IDC_CHECK_GETSTDOUT)) ? TRUE : FALSE;
 		::EnableWindow(GetItemHwnd(IDC_RADIO_OUTPUT), bEnabled);
@@ -252,8 +252,7 @@ BOOL CDlgExec::OnBnClicked(int wID)
 		return TRUE;
 		// To Here Mar. 28, 2001
 
-	case IDC_BUTTON_REFERENCE2:
-	{
+	case IDC_BUTTON_REFERENCE2: {
 		if (SelectDir(GetHwnd(), LS(STR_DLGEXEC_SELECT_CURDIR), &m_szCurDir[0], &m_szCurDir[0])) {
 			::DlgItem_SetText(GetHwnd(), IDC_COMBO_CUR_DIR, &m_szCurDir[0]);
 		}

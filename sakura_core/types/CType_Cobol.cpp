@@ -39,8 +39,8 @@ void CType_Cobol::InitTypeConfigImp(STypeConfig *pType)
 	wcscpy(pType->m_szTypeExts, L"cbl,cpy,pco,cob"); // Jun. 04, 2001 JEPRO KENCH氏の助言に従い追加
 
 	//設定
-	pType->m_cLineComment.CopyTo(0, L"*", 6);	 // Jun. 02, 2001 JEPRO 修正
-	pType->m_cLineComment.CopyTo(1, L"D", 6);	 // Jun. 04, 2001 JEPRO 追加
+	pType->m_cLineComment.CopyTo(0, L"*", 6);	// Jun. 02, 2001 JEPRO 修正
+	pType->m_cLineComment.CopyTo(1, L"D", 6);	// Jun. 04, 2001 JEPRO 追加
 	pType->m_nStringType = STRING_LITERAL_PLSQL; /* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	wcscpy(pType->m_szIndentChars, L"*");		 /* その他のインデント対象文字 */
 	pType->m_nKeyWordSetIdx[0] = 3; /* キーワードセット */ // Jul. 10, 2001 JEPRO
@@ -57,7 +57,7 @@ void CType_Cobol::InitTypeConfigImp(STypeConfig *pType)
 void CDocOutline::MakeTopicList_cobol(CFuncInfoArr *pcFuncInfoArr)
 {
 	const wchar_t *pLine;
-	CLogicInt	   nLineLen;
+	CLogicInt	  nLineLen;
 	int			   i;
 	int			   k;
 	wchar_t		   szDivision[1024];
@@ -68,7 +68,7 @@ void CDocOutline::MakeTopicList_cobol(CFuncInfoArr *pcFuncInfoArr)
 	bool		   bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
 	szDivision[0] = L'\0';
-	szLabel[0]	  = L'\0';
+	szLabel[0]	= L'\0';
 
 	CLogicInt nLineCount;
 	for (nLineCount = CLogicInt(0); nLineCount < m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount) {
@@ -93,9 +93,9 @@ void CDocOutline::MakeTopicList_cobol(CFuncInfoArr *pcFuncInfoArr)
 			szLabel[k] = L'\0';
 			//			MYTRACE( L"szLabel=[%ls]\n", szLabel );
 
-			pszKeyWord	= L"division";
+			pszKeyWord  = L"division";
 			nKeyWordLen = wcslen(pszKeyWord);
-			bDivision	= FALSE;
+			bDivision   = FALSE;
 			int nLen	= (int)wcslen(szLabel) - nKeyWordLen;
 			for (i = 0; i <= nLen; ++i) {
 				if (0 == wmemicmp(&szLabel[i], pszKeyWord, nKeyWordLen)) {
@@ -125,7 +125,7 @@ void CDocOutline::MakeTopicList_cobol(CFuncInfoArr *pcFuncInfoArr)
 
 // Jul. 10, 2001 JEPRO 追加
 const wchar_t *g_ppszKeywordsCOBOL[] = {L"ACCEPT",		L"ADD",
-										L"ADVANCING",	L"AFTER",
+										L"ADVANCING",   L"AFTER",
 										L"ALL",			L"AND",
 										L"ARGUMENT",	L"ASSIGN",
 										L"AUTHOR",		L"BEFORE",
@@ -146,7 +146,7 @@ const wchar_t *g_ppszKeywordsCOBOL[] = {L"ACCEPT",		L"ADD",
 										L"FILE",		L"FILLER",
 										L"FROM",		L"GIVING",
 										L"GO",			L"GOBACK",
-										L"HIGH-VALUE",	L"IDENTIFICATION",
+										L"HIGH-VALUE",  L"IDENTIFICATION",
 										L"IF",			L"INITIALIZE",
 										L"INPUT",		L"INTO",
 										L"IS",			L"LABEL",
@@ -160,7 +160,7 @@ const wchar_t *g_ppszKeywordsCOBOL[] = {L"ACCEPT",		L"ADD",
 										L"PIC",			L"PROCEDURE",
 										L"PROGRAM",		L"READ",
 										L"RECORD",		L"RECORDING",
-										L"REDEFINES",	L"REMAINDER",
+										L"REDEFINES",   L"REMAINDER",
 										L"REMARKS",		L"REPLACING",
 										L"REWRITE",		L"ROLLBACK",
 										L"SECTION",		L"SELECT",
@@ -169,7 +169,7 @@ const wchar_t *g_ppszKeywordsCOBOL[] = {L"ACCEPT",		L"ADD",
 										L"STORAGE",		L"SYSOUT",
 										L"TEST",		L"THEN",
 										L"TO",			L"TODAY",
-										L"TRANSFORM",	L"UNTIL",
+										L"TRANSFORM",   L"UNTIL",
 										L"UPON",		L"USING",
 										L"VALUE",		L"VARYING",
 										L"WHEN",		L"WITH",

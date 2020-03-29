@@ -32,9 +32,9 @@ bool CColor_Select::BeginColorEx(const CStringRef &cStr, int nPos, CLayoutInt nL
 		return false;
 	}
 	m_nSelectLine			 = nLineNum;
-	CLayoutRange selectArea	 = view.GetSelectionInfo().GetSelectAreaLine(nLineNum, pcLayout);
-	CLayoutInt	 nSelectFrom = selectArea.GetFrom().x;
-	CLayoutInt	 nSelectTo	 = selectArea.GetTo().x;
+	CLayoutRange selectArea  = view.GetSelectionInfo().GetSelectAreaLine(nLineNum, pcLayout);
+	CLayoutInt   nSelectFrom = selectArea.GetFrom().x;
+	CLayoutInt   nSelectTo   = selectArea.GetTo().x;
 	if (nSelectFrom == nSelectTo || -1 == nSelectFrom) {
 		m_nSelectStart = -1;
 		m_nSelectEnd   = -1;
@@ -42,7 +42,7 @@ bool CColor_Select::BeginColorEx(const CStringRef &cStr, int nPos, CLayoutInt nL
 	}
 	CLogicInt nIdxFrom = view.LineColumnToIndex(pcLayout, nSelectFrom) + pcLayout->GetLogicOffset();
 	CLogicInt nIdxTo   = view.LineColumnToIndex(pcLayout, nSelectTo) + pcLayout->GetLogicOffset();
-	m_nSelectStart	   = nIdxFrom;
+	m_nSelectStart	 = nIdxFrom;
 	m_nSelectEnd	   = nIdxTo;
 	if (m_nSelectStart <= nPos && nPos < m_nSelectEnd) { return true; }
 	return false;
@@ -62,12 +62,13 @@ bool CColor_Select::EndColor(const CStringRef &cStr, int nPos)
 
 CColor_Found::CColor_Found()
 	: validColorNum(0)
-{}
+{
+}
 
 void CColor_Found::OnStartScanLogic()
 {
 	m_nSearchResult = 1;
-	m_nSearchStart	= CLogicInt(-1);
+	m_nSearchStart  = CLogicInt(-1);
 	m_nSearchEnd	= CLogicInt(-1);
 
 	this->validColorNum = 0;
@@ -100,7 +101,7 @@ bool CColor_Found::EndColor(const CStringRef &cStr, int nPos)
 {
 	//マッチ文字列終了検出
 	if (m_nSearchEnd <= nPos) { //+ == では行頭文字の場合、m_nSearchEndも０であるために文字色の解除ができないバグを修正
-								//2003.05.03 かろと
+								// 2003.05.03 かろと
 		// -- -- マッチ文字列を描画 -- -- //
 
 		return true;

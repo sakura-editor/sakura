@@ -36,7 +36,7 @@ void CEditView::TranslateCommand_grep(EFunctionCode &nCommand, bool &bRedraw, LP
 		if (WCODE::IsLineDelimiter((wchar_t)lparam1, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol)
 			&& GetDllShareData().m_Common.m_sSearch.m_bGTJW_RETURN) {
 			nCommand = F_TAGJUMP;
-			lparam1	 = GetKeyState_Control() ? 1 : 0;
+			lparam1  = GetKeyState_Control() ? 1 : 0;
 		}
 	}
 }

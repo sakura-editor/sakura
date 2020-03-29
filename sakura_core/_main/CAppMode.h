@@ -27,8 +27,7 @@
 #include "doc/CDocListener.h"
 #include "util/design_template.h"
 
-class CAppMode : public TSingleton<CAppMode>, public CDocListenerEx
-{ //###仮
+class CAppMode : public TSingleton<CAppMode>, public CDocListenerEx { //###仮
 	friend class TSingleton<CAppMode>;
 	CAppMode()
 		: m_bViewMode(false)  // ビューモード
@@ -42,7 +41,7 @@ public:
 	bool IsViewMode() const { return m_bViewMode; }				  //!< ビューモードを取得
 	void SetViewMode(bool bViewMode) { m_bViewMode = bViewMode; } //!< ビューモードを設定
 	bool IsDebugMode() const { return m_bDebugMode; }
-	void SetDebugModeON();	//!< デバッグモニタモード設定
+	void SetDebugModeON();  //!< デバッグモニタモード設定
 	void SetDebugModeOFF(); //!< デバッグモニタモード解除
 
 	//イベント

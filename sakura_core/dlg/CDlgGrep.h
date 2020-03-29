@@ -20,12 +20,11 @@ class CDlgGrep;
 #include "recent/CRecent.h"
 #include "util/window.h"
 
-#define DEFAULT_EXCLUDE_FILE_PATTERN   L"*.msi;*.exe;*.obj;*.pdb;*.ilk;*.res;*.pch;*.iobj;*.ipdb"
+#define DEFAULT_EXCLUDE_FILE_PATTERN L"*.msi;*.exe;*.obj;*.pdb;*.ilk;*.res;*.pch;*.iobj;*.ipdb"
 #define DEFAULT_EXCLUDE_FOLDER_PATTERN L".git;.svn;.vs"
 
 //! GREPダイアログボックス
-class CDlgGrep : public CDialog
-{
+class CDlgGrep : public CDialog {
 public:
 	/*
 	||  Constructors
@@ -39,13 +38,13 @@ public:
 	int		 DoModal(HINSTANCE, HWND, const WCHAR *); /* モーダルダイアログの表示 */
 	//	HWND DoModeless( HINSTANCE, HWND, const char* );	/* モードレスダイアログの表示 */
 
-	BOOL m_bSubFolder;	  /*!< サブフォルダからも検索する */
+	BOOL m_bSubFolder;	/*!< サブフォルダからも検索する */
 	BOOL m_bFromThisText; /*!< この編集中のテキストから検索する */
 
 	SSearchOption m_sSearchOption; //!< 検索オプション
 
 	ECodeType m_nGrepCharSet;		   /*!< 文字コードセット */
-	int		  m_nGrepOutputStyle;	   /*!< Grep: 出力形式 */
+	int		  m_nGrepOutputStyle;	  /*!< Grep: 出力形式 */
 	int		  m_nGrepOutputLineType;   //!< 結果出力：行を出力/該当部分/否マッチ行
 	bool	  m_bGrepOutputFileOnly;   /*!< ファイル毎最初のみ検索 */
 	bool	  m_bGrepOutputBaseFolder; /*!< ベースフォルダ表示 */
@@ -55,9 +54,9 @@ public:
 	bool		  m_bSetText;		 //!< 検索文字列を設定したか
 	SFilePathLong m_szFile;			 //!< 検索ファイル
 	SFilePathLong m_szFolder;		 //!< 検索フォルダ
-	SFilePathLong m_szExcludeFile;	 //!< 除外ファイル
+	SFilePathLong m_szExcludeFile;   //!< 除外ファイル
 	SFilePathLong m_szExcludeFolder; //!< 除外フォルダ
-	SFilePath	  m_szCurrentFilePath;
+	SFilePath	 m_szCurrentFilePath;
 
 protected:
 	SComboBoxItemDeleter m_comboDelText;
@@ -67,10 +66,10 @@ protected:
 	CRecentGrepFile		 m_cRecentGrepFile;
 
 	SComboBoxItemDeleter m_comboDelFolder;
-	CRecentGrepFolder	 m_cRecentGrepFolder;
+	CRecentGrepFolder	m_cRecentGrepFolder;
 
 	SComboBoxItemDeleter m_comboDelExcludeFile;
-	CRecentExcludeFile	 m_cRecentExcludeFile;
+	CRecentExcludeFile   m_cRecentExcludeFile;
 
 	SComboBoxItemDeleter m_comboDelExcludeFolder;
 	CRecentExcludeFolder m_cRecentExcludeFolder;
@@ -86,6 +85,6 @@ protected:
 	LPVOID GetHelpIdTable(void) override; //@@@ 2002.01.18 add
 
 	void SetData(void) override;			 /* ダイアログデータの設定 */
-	int	 GetData(void) override;			 /* ダイアログデータの取得 */
+	int  GetData(void) override;			 /* ダイアログデータの取得 */
 	void SetDataFromThisText(bool bChecked); /* 現在編集中ファイルから検索チェックでの設定 */
 };

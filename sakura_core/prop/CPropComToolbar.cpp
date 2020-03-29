@@ -73,14 +73,15 @@ INT_PTR CALLBACK CPropToolbar::DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wPar
 	@date 2002.04.13 genta
 */
 int Listbox_INSERTDATA(HWND hWnd,  //!< handle to destination window
-					   int	index, //!< item index
-					   int	value)
+					   int  index, //!< item index
+					   int  value)
 {
 	int nIndex1 = List_InsertItemData(hWnd, index, 1);
 	if (nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE) {
 		TopErrorMessage(NULL, LS(STR_PROPCOMTOOL_ERR01), index, nIndex1);
 		return nIndex1;
-	} else if (List_SetItemData(hWnd, nIndex1, value) == LB_ERR) {
+	}
+	else if (List_SetItemData(hWnd, nIndex1, value) == LB_ERR) {
 		TopErrorMessage(NULL, LS(STR_PROPCOMTOOL_ERR02), nIndex1);
 		return LB_ERR;
 	}
@@ -103,13 +104,14 @@ int Listbox_INSERTDATA(HWND hWnd,  //!< handle to destination window
 	@date 2002.04.13 genta
 */
 int Listbox_ADDDATA(HWND hWnd, //!< handle to destination window
-					int	 value)
+					int  value)
 {
 	int nIndex1 = List_AddItemData(hWnd, 1);
 	if (nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE) {
 		TopErrorMessage(NULL, LS(STR_PROPCOMTOOL_ERR03), nIndex1);
 		return nIndex1;
-	} else if (List_SetItemData(hWnd, nIndex1, value) == LB_ERR) {
+	}
+	else if (List_SetItemData(hWnd, nIndex1, value) == LB_ERR) {
 		TopErrorMessage(NULL, LS(STR_PROPCOMTOOL_ERR04), nIndex1);
 		return LB_ERR;
 	}
@@ -125,27 +127,24 @@ static void SetDlgItemsEnableState(HWND hwndDlg, HWND hwndResList, HWND hwndFunc
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_DELETE), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_UP), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_DOWN), FALSE);
-	} else {
+	}
+	else {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_DELETE), TRUE);
-		if (nIndex1 <= 0) {
-			::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_UP), FALSE);
-		} else {
+		if (nIndex1 <= 0) { ::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_UP), FALSE); }
+		else {
 			::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_UP), TRUE);
 		}
-		if (nIndex1 + 1 >= i) {
-			::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_DOWN), FALSE);
-		} else {
+		if (nIndex1 + 1 >= i) { ::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_DOWN), FALSE); }
+		else {
 			::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_DOWN), TRUE);
 		}
 	}
-	if (LB_ERR == nIndex1 || LB_ERR == nIndex2) {
-		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_INSERT), FALSE);
-	} else {
+	if (LB_ERR == nIndex1 || LB_ERR == nIndex2) { ::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_INSERT), FALSE); }
+	else {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_INSERT), TRUE);
 	}
-	if (LB_ERR == nIndex2) {
-		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_ADD), FALSE);
-	} else {
+	if (LB_ERR == nIndex2) { ::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_ADD), FALSE); }
+	else {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_ADD), TRUE);
 	}
 }
@@ -153,8 +152,8 @@ static void SetDlgItemsEnableState(HWND hwndDlg, HWND hwndResList, HWND hwndFunc
 /* Toolbar メッセージ処理 */
 INT_PTR CPropToolbar::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 									UINT   uMsg,	// message
-									WPARAM wParam,	// first message parameter
-									LPARAM lParam	// second message parameter
+									WPARAM wParam,  // first message parameter
+									LPARAM lParam   // second message parameter
 )
 {
 	WORD			 wNotifyCode;
@@ -173,14 +172,14 @@ INT_PTR CPropToolbar::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 	int		   i;
 	int		   j;
 	static int nListItemHeight;
-	LRESULT	   lResult;
+	LRESULT	lResult;
 
 	switch (uMsg) {
 	case WM_INITDIALOG:
 		/* コントロールのハンドルを取得 */
-		hwndCombo	 = ::GetDlgItem(hwndDlg, IDC_COMBO_FUNCKIND);
+		hwndCombo	= ::GetDlgItem(hwndDlg, IDC_COMBO_FUNCKIND);
 		hwndFuncList = ::GetDlgItem(hwndDlg, IDC_LIST_FUNC);
-		hwndResList	 = ::GetDlgItem(hwndDlg, IDC_LIST_RES);
+		hwndResList  = ::GetDlgItem(hwndDlg, IDC_LIST_RES);
 
 		{
 			// pixel数をベタ書きするとHighDPI環境でずれるのでシステム値を取得して使う
@@ -235,13 +234,14 @@ INT_PTR CPropToolbar::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam); /* 通知コード */
 		wID			= LOWORD(wParam); /* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl		= (HWND)lParam;	  /* コントロールのハンドル */
+		hwndCtl		= (HWND)lParam;   /* コントロールのハンドル */
 
 		if (hwndResList == hwndCtl) {
 			switch (wNotifyCode) {
 			case LBN_SELCHANGE: return TRUE;
 			}
-		} else if (hwndCombo == hwndCtl) {
+		}
+		else if (hwndCombo == hwndCtl) {
 			switch (wNotifyCode) {
 			case CBN_SELCHANGE:
 				nIndex2 = Combo_GetCurSel(hwndCombo);
@@ -252,7 +252,7 @@ INT_PTR CPropToolbar::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 				//	From Here Oct. 15, 2001 genta Lookupを使うように変更
 				nNum = m_cLookup.GetItemCount(nIndex2);
 				for (i = 0; i < nNum; ++i) {
-					nIndex1	   = m_cLookup.Pos2FuncCode(nIndex2, i);
+					nIndex1	= m_cLookup.Pos2FuncCode(nIndex2, i);
 					int nbarNo = m_pcMenuDrawer->FindToolbarNoFromCommandId(nIndex1);
 
 					if (nbarNo >= 0) {
@@ -264,7 +264,8 @@ INT_PTR CPropToolbar::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 				}
 				return TRUE;
 			}
-		} else {
+		}
+		else {
 			switch (wNotifyCode) {
 			/* ボタン／チェックボックスがクリックされた */
 			case BN_CLICKED:
@@ -303,12 +304,12 @@ INT_PTR CPropToolbar::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 					i = List_DeleteString(hwndResList, nIndex1);
 					if (i == LB_ERR) { break; }
 					if (nIndex1 >= i) {
-						if (i == 0) {
-							i = List_SetCurSel(hwndResList, 0);
-						} else {
+						if (i == 0) { i = List_SetCurSel(hwndResList, 0); }
+						else {
 							i = List_SetCurSel(hwndResList, i - 1);
 						}
-					} else {
+					}
+					else {
 						i = List_SetCurSel(hwndResList, nIndex1);
 					}
 					break;
@@ -393,8 +394,7 @@ INT_PTR CPropToolbar::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		break;
 
 		//@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP:
-	{
+	case WM_HELP: {
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -463,9 +463,9 @@ void CPropToolbar::SetData(HWND hwndDlg)
 int CPropToolbar::GetData(HWND hwndDlg)
 {
 	HWND hwndResList;
-	int	 i;
-	int	 j;
-	int	 k;
+	int  i;
+	int  j;
+	int  k;
 
 	hwndResList = ::GetDlgItem(hwndDlg, IDC_LIST_RES);
 
@@ -520,16 +520,17 @@ void CPropToolbar::DrawToolBarItemList(DRAWITEMSTRUCT *pDis)
 
 	/* アイテムが選択されている */
 	if (pDis->itemState & ODS_SELECTED) {
-		bkColor	  = COLOR_HIGHLIGHT;
+		bkColor   = COLOR_HIGHLIGHT;
 		textColor = COLOR_HIGHLIGHTTEXT;
-	} else {
-		bkColor	  = COLOR_WINDOW;
+	}
+	else {
+		bkColor   = COLOR_WINDOW;
 		textColor = COLOR_WINDOWTEXT;
 	}
 
 	// デバイスコンテキストのオプションを設定する
-	int		 bkModeOld	  = ::SetBkMode(pDis->hDC, TRANSPARENT);
-	COLORREF bkColorOld	  = ::SetBkColor(pDis->hDC, ::GetSysColor(bkColor));
+	int		 bkModeOld	= ::SetBkMode(pDis->hDC, TRANSPARENT);
+	COLORREF bkColorOld   = ::SetBkColor(pDis->hDC, ::GetSysColor(bkColor));
 	COLORREF textColorOld = ::SetTextColor(pDis->hDC, ::GetSysColor(textColor));
 
 	// itemDataに紐づくボタン情報を取得する
@@ -542,15 +543,18 @@ void CPropToolbar::DrawToolBarItemList(DRAWITEMSTRUCT *pDis)
 		if (tbb.idCommand == F_SEPARATOR) {
 			wcsncpy(szLabel, LS(STR_PROPCOMTOOL_ITEM1), _countof(szLabel) - 1); // nLength 未使用 2003/01/09 Moca
 			szLabel[_countof(szLabel) - 1] = L'\0';
-		} else if (tbb.idCommand == F_MENU_NOT_USED_FIRST) {
+		}
+		else if (tbb.idCommand == F_MENU_NOT_USED_FIRST) {
 			// ツールバー折返
 			wcsncpy(szLabel, LS(STR_PROPCOMTOOL_ITEM2), _countof(szLabel) - 1);
 			szLabel[_countof(szLabel) - 1] = L'\0';
-		} else {
+		}
+		else {
 			wcsncpy(szLabel, LS(STR_PROPCOMTOOL_ITEM3), _countof(szLabel) - 1);
 			szLabel[_countof(szLabel) - 1] = L'\0';
 		}
-	} else {
+	}
+	else {
 		// アイコンとテキストを表示する
 		m_pcIcons->DrawToolIcon(pDis->hDC, rcItem.left + cxEdge,
 								rcItem.top + cyEdge + (rcItem.bottom - rcItem.top - cySmIcon) / 2, tbb.iBitmap,

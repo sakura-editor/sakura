@@ -28,8 +28,7 @@
 #include "util/design_template.h"
 #include <vector>
 
-class CFigureManager : public TSingleton<CFigureManager>
-{
+class CFigureManager : public TSingleton<CFigureManager> {
 	friend class TSingleton<CFigureManager>;
 	CFigureManager();
 	virtual ~CFigureManager();

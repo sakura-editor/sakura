@@ -12,7 +12,7 @@ bool CConvert_TabToSpace::DoConvert(CNativeW *pcData)
 
 	const wchar_t *pLine;
 	int			   nLineLen;
-	wchar_t *	   pDes;
+	wchar_t *	  pDes;
 	int			   nBgn;
 	int			   i;
 	int			   nPosDes;
@@ -33,7 +33,8 @@ bool CConvert_TabToSpace::DoConvert(CNativeW *pcData)
 					nWork = m_nTabWidth - (nPosX % m_nTabWidth);
 					nPosDes += nWork;
 					nPosX += nWork;
-				} else {
+				}
+				else {
 					nPosDes++;
 					nPosX++;
 					if (WCODE::IsZenkaku(pLine[i])) nPosX++; //全角文字ずれ対応 2008.10.15 matsumo
@@ -59,7 +60,8 @@ bool CConvert_TabToSpace::DoConvert(CNativeW *pcData)
 					wmemset(&pDes[nPosDes], L' ', nWork);
 					nPosDes += nWork;
 					nPosX += nWork;
-				} else {
+				}
+				else {
 					pDes[nPosDes] = pLine[i];
 					nPosDes++;
 					nPosX++;

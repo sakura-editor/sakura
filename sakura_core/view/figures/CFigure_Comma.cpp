@@ -30,10 +30,10 @@ void CFigure_Comma::DispSpace(CGraphics &gr, DispPos *pDispPos, CEditView *pcVie
 
 	//必要なインターフェース
 	const CTextMetrics *pMetrics = &pcView->GetTextMetrics();
-	const CTextArea *	pArea	 = &pcView->GetTextArea();
+	const CTextArea *   pArea	= &pcView->GetTextArea();
 
 	int nLineHeight = pMetrics->GetHankakuDy();
-	int nCharWidth	= pMetrics->GetCharPxWidth(); // Layout→Px
+	int nCharWidth  = pMetrics->GetCharPxWidth(); // Layout→Px
 
 	CTypeSupport cTabType(pcView, COLORIDX_TAB);
 
@@ -53,7 +53,7 @@ void CFigure_Comma::DispSpace(CGraphics &gr, DispPos *pDispPos, CEditView *pcVie
 	rcClip2.left  = sPos.GetDrawPos().x;
 	rcClip2.right = rcClip2.left + nCharWidth * tabDispWidth;
 	if (rcClip2.left < pArea->GetAreaLeft()) { rcClip2.left = pArea->GetAreaLeft(); }
-	rcClip2.top	   = sPos.GetDrawPos().y;
+	rcClip2.top	= sPos.GetDrawPos().y;
 	rcClip2.bottom = sPos.GetDrawPos().y + nLineHeight;
 	int nLen	   = wcslen(m_pTypeData->m_szTabViewString);
 

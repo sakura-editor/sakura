@@ -25,7 +25,7 @@
 #pragma once
 
 #include "CEol.h"
-#include "CRegexKeyword.h"	 // RegexKeywordInfo
+#include "CRegexKeyword.h"   // RegexKeywordInfo
 #include "charset/charset.h" // ECodeType
 #include "doc/CBlockComment.h"
 #include "doc/CDocTypeSetting.h"
@@ -33,16 +33,14 @@
 #include "env/CommonSetting.h"
 
 //! タブ表示方法
-enum ETabArrow
-{
+enum ETabArrow {
 	TABARROW_STRING = 0, //!< 文字指定
 	TABARROW_SHORT,		 //!< 短い矢印
 	TABARROW_LONG,		 //!< 長い矢印
 };
 
 //! アウトライン解析の種類
-enum EOutlineType
-{
+enum EOutlineType {
 	OUTLINE_C,
 	OUTLINE_C_CPP, // C/C++自動認識
 	OUTLINE_PLSQL,
@@ -50,12 +48,12 @@ enum EOutlineType
 	OUTLINE_JAVA,
 	OUTLINE_COBOL,
 	OUTLINE_ASM,
-	OUTLINE_PERL,	//	Sep. 8, 2000 genta
+	OUTLINE_PERL,   //	Sep. 8, 2000 genta
 	OUTLINE_VB,		//	June 23, 2001 N.Nakatani
-	OUTLINE_WZTXT,	// 2003.05.20 zenryaku 階層付テキストアウトライン解析
-	OUTLINE_HTML,	// 2003.05.20 zenryaku HTMLアウトライン解析
+	OUTLINE_WZTXT,  // 2003.05.20 zenryaku 階層付テキストアウトライン解析
+	OUTLINE_HTML,   // 2003.05.20 zenryaku HTMLアウトライン解析
 	OUTLINE_TEX,	// 2003.07.20 naoh TeXアウトライン解析
-	OUTLINE_FILE,	//	2002.04.01 YAZAKI ルールファイル用
+	OUTLINE_FILE,   //	2002.04.01 YAZAKI ルールファイル用
 	OUTLINE_PYTHON, //	2007.02.08 genta Pythonアウトライン解析
 	OUTLINE_ERLANG, //	2009.08.10 genta Erlangアウトライン解析
 	OUTLINE_XML,	//  2014.12.25 Moca
@@ -74,37 +72,33 @@ enum EOutlineType
 };
 
 //! スマートインデント種別
-enum ESmartIndentType
-{
+enum ESmartIndentType {
 	SMARTINDENT_NONE, //!< なし
-	SMARTINDENT_CPP	  //!< C/C++
+	SMARTINDENT_CPP   //!< C/C++
 };
 
 //! ヒアドキュメント種別
-enum EHereDocType
-{
+enum EHereDocType {
 	HEREDOC_PHP,  //!< PHP
 	HEREDOC_RUBY, //!< Ruby
 	HEREDOC_PERL  //!< Perl
 };
 
 //! 背景画像表示位置
-enum EBackgroundImagePos
-{
-	BGIMAGE_TOP_LEFT,	   //!< 左上
-	BGIMAGE_TOP_RIGHT,	   //!< 右上
+enum EBackgroundImagePos {
+	BGIMAGE_TOP_LEFT,	  //!< 左上
+	BGIMAGE_TOP_RIGHT,	 //!< 右上
 	BGIMAGE_BOTTOM_LEFT,   //!< 左下
 	BGIMAGE_BOTTOM_RIGHT,  //!< 右下
 	BGIMAGE_CENTER,		   //!< 中央
-	BGIMAGE_TOP_CENTER,	   //!< 中央上
+	BGIMAGE_TOP_CENTER,	//!< 中央上
 	BGIMAGE_BOTTOM_CENTER, //!< 中央下
 	BGIMAGE_CENTER_LEFT,   //!< 中央左
 	BGIMAGE_CENTER_RIGHT   //!< 中央右
 };
 
 //! エンコードオプション
-struct SEncodingConfig
-{
+struct SEncodingConfig {
 	bool	  m_bPriorCesu8;	  //!< 自動判別時に CESU-8 を優先するかどうか
 	ECodeType m_eDefaultCodetype; //!< デフォルト文字コード
 	EEolType  m_eDefaultEoltype;  //!< デフォルト改行コード	// 2011.01.24 ryoji
@@ -112,9 +106,8 @@ struct SEncodingConfig
 };
 
 //! 文字列区切り記号エスケープ方法
-enum EStringLiteralType
-{
-	STRING_LITERAL_CPP,	   //!< C/C++言語風
+enum EStringLiteralType {
+	STRING_LITERAL_CPP,	//!< C/C++言語風
 	STRING_LITERAL_PLSQL,  //!< PL/SQL風
 	STRING_LITERAL_HTML,   //!< HTML/XML風
 	STRING_LITERAL_CSHARP, //!< C#風
@@ -122,10 +115,9 @@ enum EStringLiteralType
 };
 
 //! 右クリックメニュー表示
-enum EKeyHelpRMenuType
-{
-	KEYHELP_RMENU_NONE,	  //!< 非表示
-	KEYHELP_RMENU_TOP,	  //!< メニュー先頭
+enum EKeyHelpRMenuType {
+	KEYHELP_RMENU_NONE,   //!< 非表示
+	KEYHELP_RMENU_TOP,	//!< メニュー先頭
 	KEYHELP_RMENU_BOTTOM, //!< メニュー末尾
 };
 
@@ -134,13 +126,12 @@ enum EKeyHelpRMenuType
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //! タイプ別設定
-struct STypeConfig
-{
+struct STypeConfig {
 	// 2007.09.07 変数名変更: m_nMaxLineSize→m_nMaxLineKetas
 	int		  m_nIdx;
 	int		  m_id;
-	WCHAR	  m_szTypeName[MAX_TYPES_NAME]; //!< タイプ属性：名称
-	WCHAR	  m_szTypeExts[MAX_TYPES_EXTS]; //!< タイプ属性：拡張子リスト
+	WCHAR	 m_szTypeName[MAX_TYPES_NAME]; //!< タイプ属性：名称
+	WCHAR	 m_szTypeExts[MAX_TYPES_EXTS]; //!< タイプ属性：拡張子リスト
 	int		  m_nTextWrapMethod;			//!< テキストの折り返し方法		// 2008.05.30 nasukoji
 	CKetaXInt m_nMaxLineKetas;				//!< 折り返し桁数
 	int		  m_nColumnSpace;				//!< 文字と文字の隙間
@@ -150,14 +141,14 @@ struct STypeConfig
 	EDIT_CHAR m_szTabViewString[8 + 1]; //!< TAB表示文字列	// 2003.1.26 aroka サイズ拡張	// 2009.02.11 ryoji
 										//!< サイズ戻し(17->8+1)
 	bool m_bInsSpace;					//!< スペースの挿入	// 2001.12.03 hor
-	int	 m_nTsvMode;					//!< TSVモード	// 2015.05.02 syat
+	int  m_nTsvMode;					//!< TSVモード	// 2015.05.02 syat
 	// 2005.01.13 MIK 配列化
 	int m_nKeyWordSetIdx[MAX_KEYWORDSET_PER_TYPE]; //!< キーワードセット
 
-	CLineComment  m_cLineComment;	   //!< 行コメントデリミタ			//@@@ 2002.09.22 YAZAKI
+	CLineComment  m_cLineComment;	  //!< 行コメントデリミタ			//@@@ 2002.09.22 YAZAKI
 	CBlockComment m_cBlockComments[2]; //!< ブロックコメントデリミタ	//@@@ 2002.09.22 YAZAKI
 
-	int		m_nStringType;	   //!< 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""]['']
+	int		m_nStringType;	 //!< 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""]['']
 	bool	m_bStringLineOnly; //!< 文字列は行内のみ
 	bool	m_bStringEndLine;  //!< (終了文字列がない場合)行末まで色分け
 	int		m_nHeredocType;
@@ -168,16 +159,16 @@ struct STypeConfig
 
 	SFilePath			m_szBackImgPath;	//!< 背景画像
 	EBackgroundImagePos m_backImgPos;		//!< 背景画像表示位置
-	bool				m_backImgRepeatX;	//!< 背景画像表示横方向繰り返し
-	bool				m_backImgRepeatY;	//!< 背景画像表示縦方向繰り返し
-	bool				m_backImgScrollX;	//!< 背景画像表示横方向スクロール
-	bool				m_backImgScrollY;	//!< 背景画像表示縦方向スクロール
+	bool				m_backImgRepeatX;   //!< 背景画像表示横方向繰り返し
+	bool				m_backImgRepeatY;   //!< 背景画像表示縦方向繰り返し
+	bool				m_backImgScrollX;   //!< 背景画像表示横方向スクロール
+	bool				m_backImgScrollY;   //!< 背景画像表示縦方向スクロール
 	POINT				m_backImgPosOffset; //!< 背景画像表示オフセット
-	BYTE				m_backImgOpacity;	//!< 背景画像表示不透明度
+	BYTE				m_backImgOpacity;   //!< 背景画像表示不透明度
 
 	bool	  m_bLineNumIsCRLF;				 //!< 行番号の表示 false=折り返し単位／true=改行単位
 	int		  m_nLineTermType;				 //!< 行番号区切り  0=なし 1=縦線 2=任意
-	wchar_t	  m_cLineTermChar;				 //!< 行番号区切り文字
+	wchar_t   m_cLineTermChar;				 //!< 行番号区切り文字
 	CKetaXInt m_nVertLineIdx[MAX_VERTLINES]; //!< 指定桁縦線
 	int		  m_nNoteLineOffset;			 //!< ノート線のオフセット
 
@@ -194,37 +185,37 @@ struct STypeConfig
 	int m_nCurrentPrintSetting; //!< 現在選択している印刷設定
 
 	BOOL		 m_bOutlineDockDisp;	  //!< アウトライン解析表示の有無
-	EDockSide	 m_eOutlineDockSide;	  //!< アウトライン解析ドッキング配置
-	int			 m_cxOutlineDockLeft;	  //!< アウトラインの左ドッキング幅
+	EDockSide	m_eOutlineDockSide;	  //!< アウトライン解析ドッキング配置
+	int			 m_cxOutlineDockLeft;	 //!< アウトラインの左ドッキング幅
 	int			 m_cyOutlineDockTop;	  //!< アウトラインの上ドッキング高
-	int			 m_cxOutlineDockRight;	  //!< アウトラインの右ドッキング幅
-	int			 m_cyOutlineDockBottom;	  //!< アウトラインの下ドッキング高
+	int			 m_cxOutlineDockRight;	//!< アウトラインの右ドッキング幅
+	int			 m_cyOutlineDockBottom;   //!< アウトラインの下ドッキング高
 	int			 m_nDockOutline;		  //!< ドッキング時のアウトライン/ブックマーク
 	EOutlineType m_eDefaultOutline;		  //!< アウトライン解析方法
-	SFilePath	 m_szOutlineRuleFilename; //!< アウトライン解析ルールファイル
+	SFilePath	m_szOutlineRuleFilename; //!< アウトライン解析ルールファイル
 	int			 m_nOutlineSortCol;		  //!< アウトライン解析ソート列番号
 	bool		 m_bOutlineSortDesc;	  //!< アウトライン解析ソート降順
 	int			 m_nOutlineSortType;	  //!< アウトライン解析ソート基準
-	SFileTree	 m_sFileTree;			  /*!< ファイルツリー設定 */
+	SFileTree	m_sFileTree;			  /*!< ファイルツリー設定 */
 
 	ESmartIndentType m_eSmartIndent;			//!< スマートインデント種別
-	bool			 m_bIndentCppStringIgnore;	//!< C/C++インデント：文字列を無視する
+	bool			 m_bIndentCppStringIgnore;  //!< C/C++インデント：文字列を無視する
 	bool			 m_bIndentCppCommentIgnore; //!< C/C++インデント：コメントを無視する
 	bool			 m_bIndentCppUndoSep;		//!< C/C++インデント：Undoバッファを分ける
 	int				 m_nImeState;				//!< 初期IME状態	Nov. 20, 2000 genta
 
 	//	2001/06/14 asa-o 補完のタイプ別設定
 	SFilePath m_szHokanFile; //!< 入力補完 単語ファイル
-	int		  m_nHokanType;	 //!< 入力補完 種別(プラグイン)
+	int		  m_nHokanType;  //!< 入力補完 種別(プラグイン)
 	//	2003.06.23 Moca ファイル内からの入力補完機能
-	bool m_bUseHokanByFile;	   //!< 入力補完 開いているファイル内から候補を探す
+	bool m_bUseHokanByFile;	//!< 入力補完 開いているファイル内から候補を探す
 	bool m_bUseHokanByKeyword; //!< 強調キーワードから入力補完
 
 	//	2001/06/19 asa-o
 	bool m_bHokanLoHiCase; //!< 入力補完機能：英大文字小文字を同一視する
 
 	SFilePath m_szExtHelp;		   //!< 外部ヘルプ１
-	SFilePath m_szExtHtmlHelp;	   //!< 外部HTMLヘルプ
+	SFilePath m_szExtHtmlHelp;	 //!< 外部HTMLヘルプ
 	bool	  m_bHtmlHelpIsSingle; //!< HtmlHelpビューアはひとつ
 
 	bool m_bChkEnterAtEnd; //!< 保存時に改行コードの混在を警告する	2013/4/14 Uchi
@@ -252,25 +243,25 @@ struct STypeConfig
 	bool m_bAutoIndent;			 //!< オートインデント
 	bool m_bAutoIndent_ZENSPACE; //!< 日本語空白もインデント
 	bool m_bRTrimPrevLine;		 //!< 2005.10.11 ryoji 改行時に末尾の空白を削除
-	int	 m_nIndentLayout;		 //!< 折り返しは2行目以降を字下げ表示
+	int  m_nIndentLayout;		 //!< 折り返しは2行目以降を字下げ表示
 
 	//	Sep. 10, 2002 genta
 	bool m_bUseDocumentIcon; //!< ファイルに関連づけられたアイコンを使う
 
 	bool	m_bUseTypeFont; //!< タイプ別フォントの使用
 	LOGFONT m_lf;			//!< フォント // 2013.03.18 aroka
-	INT		m_nPointSize;	//!< フォントサイズ（1/10ポイント単位）
+	INT		m_nPointSize;   //!< フォントサイズ（1/10ポイント単位）
 
 	STypeConfig()
 		: m_nMaxLineKetas(10) //	画面折り返し幅がTAB幅以下にならないことを初期値でも保証する	//	2004.04.03 Moca
-	{}
+	{
+	}
 
 	int m_nLineNumWidth; //!< 行番号の最小桁数 2014.08.02 katze
 };						 /* STypeConfig */
 
 //! タイプ別設定(mini)
-struct STypeConfigMini
-{
+struct STypeConfigMini {
 	int				m_id;
 	WCHAR			m_szTypeName[MAX_TYPES_NAME]; //!< タイプ属性：名称
 	WCHAR			m_szTypeExts[MAX_TYPES_EXTS]; //!< タイプ属性：拡張子リスト
@@ -282,8 +273,7 @@ struct STypeConfigMini
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //!ドキュメント種類。共有データ内 STypeConfig へのアクセサも兼ねる。
 // 2007.12.13 kobake 作成
-class CTypeConfig
-{
+class CTypeConfig {
 public:
 	CTypeConfig()
 	{
@@ -297,7 +287,7 @@ public:
 	}
 	explicit CTypeConfig(int n) { m_nType = n; }
 	bool IsValidType() const { return m_nType >= 0 && m_nType < MAX_TYPES; }
-	int	 GetIndex() const
+	int  GetIndex() const
 	{
 		/*assert(IsValid());*/
 		return m_nType;
@@ -314,8 +304,7 @@ private:
 //                        タイプ設定                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-class CType
-{
+class CType {
 public:
 	virtual ~CType() {}
 	void InitTypeConfig(int nIdx, STypeConfig &);
@@ -325,8 +314,7 @@ protected:
 };
 
 #define GEN_CTYPE(CLASS_NAME)                                                                                          \
-	class CLASS_NAME : public CType                                                                                    \
-	{                                                                                                                  \
+	class CLASS_NAME : public CType {                                                                                  \
 	protected:                                                                                                         \
 		void InitTypeConfigImp(STypeConfig *pType);                                                                    \
 	};

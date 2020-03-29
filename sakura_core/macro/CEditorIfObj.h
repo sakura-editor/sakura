@@ -30,13 +30,13 @@
 #include "_os/OleTypes.h"
 #include "macro/CWSHIfObj.h"
 
-class CEditorIfObj : public CWSHIfObj
-{
+class CEditorIfObj : public CWSHIfObj {
 	// コンストラクタ
 public:
 	CEditorIfObj()
 		: CWSHIfObj(L"Editor", true)
-	{}
+	{
+	}
 
 	// 実装
 	MacroFuncInfoArray GetMacroCommandInfo() const; //コマンド情報を取得する

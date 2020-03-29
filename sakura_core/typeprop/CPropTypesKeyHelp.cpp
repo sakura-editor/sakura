@@ -94,18 +94,18 @@ static int nKeyHelpRMenuType[] = {
 
 	@date 2006.04.10 fon 新規作成
 */
-INT_PTR CPropTypesKeyHelp::DispatchEvent(HWND	hwndDlg, // handle to dialog box
-										 UINT	uMsg,	 // message
-										 WPARAM wParam,	 // first message parameter
-										 LPARAM lParam	 // second message parameter
+INT_PTR CPropTypesKeyHelp::DispatchEvent(HWND   hwndDlg, // handle to dialog box
+										 UINT   uMsg,	// message
+										 WPARAM wParam,  // first message parameter
+										 LPARAM lParam   // second message parameter
 )
 {
 	WORD	  wNotifyCode;
 	WORD	  wID;
 	HWND	  hwndList;
-	NMHDR *	  pNMHDR;
+	NMHDR *   pNMHDR;
 	int		  nIndex, nIndex2;
-	LV_ITEM	  lvi;
+	LV_ITEM   lvi;
 	LV_COLUMN col;
 	RECT	  rc;
 
@@ -129,19 +129,19 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 		col.mask	 = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt		 = LVCFMT_LEFT;
 		col.cx		 = (rc.right - rc.left) * 25 / 100;
-		col.pszText	 = const_cast<WCHAR *>(LS(STR_PROPTYPKEYHELP_DIC)); /* 指定辞書ファイルの使用可否 */
+		col.pszText  = const_cast<WCHAR *>(LS(STR_PROPTYPKEYHELP_DIC)); /* 指定辞書ファイルの使用可否 */
 		col.iSubItem = 0;
 		ListView_InsertColumn(hwndList, 0, &col);
 		col.mask	 = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt		 = LVCFMT_LEFT;
 		col.cx		 = (rc.right - rc.left) * 55 / 100;
-		col.pszText	 = const_cast<WCHAR *>(LS(STR_PROPTYPKEYHELP_INFO)); /* 指定辞書の１行目を取得 */
+		col.pszText  = const_cast<WCHAR *>(LS(STR_PROPTYPKEYHELP_INFO)); /* 指定辞書の１行目を取得 */
 		col.iSubItem = 1;
 		ListView_InsertColumn(hwndList, 1, &col);
 		col.mask	 = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt		 = LVCFMT_LEFT;
 		col.cx		 = (rc.right - rc.left) * 18 / 100;
-		col.pszText	 = const_cast<WCHAR *>(LS(STR_PROPTYPKEYHELP_PATH)); /* 指定辞書ファイルパス */
+		col.pszText  = const_cast<WCHAR *>(LS(STR_PROPTYPKEYHELP_PATH)); /* 指定辞書ファイルパス */
 		col.iSubItem = 2;
 		ListView_InsertColumn(hwndList, 2, &col);
 		SetData(hwndDlg); /* ダイアログデータの設定 辞書ファイル一覧 */
@@ -181,7 +181,7 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 				EnableWindow(GetDlgItem(hwndDlg, IDC_LABEL_KEYHELP_TITLE), bEnable);	 //<辞書の説明>
 				EnableWindow(GetDlgItem(hwndDlg, IDC_LABEL_KEYHELP_ABOUT), bEnable);	 //辞書ファイルの概要
 				EnableWindow(GetDlgItem(hwndDlg, IDC_BUTTON_KEYHELP_UPD), bEnable);		 //更新(&E)
-				EnableWindow(GetDlgItem(hwndDlg, IDC_LABEL_KEYHELP_KEYWORD), bEnable);	 //辞書ファイル
+				EnableWindow(GetDlgItem(hwndDlg, IDC_LABEL_KEYHELP_KEYWORD), bEnable);   //辞書ファイル
 				EnableWindow(GetDlgItem(hwndDlg, IDC_EDIT_KEYHELP), bEnable);			 // EDITTEXT
 				EnableWindow(GetDlgItem(hwndDlg, IDC_BUTTON_KEYHELP_REF), bEnable);		 //参照(&O)...
 				EnableWindow(GetDlgItem(hwndDlg, IDC_LABEL_KEYHELP_PRIOR), bEnable);	 //↑優先度(高)
@@ -216,7 +216,8 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 						/* 選択中でなければ最後にする。 */
 						nIndex = nIndex2;
 					}
-				} else { /* 更新 */
+				}
+				else { /* 更新 */
 					if (-1 == nIndex) {
 						ErrorMessage(hwndDlg, LS(STR_PROPTYPKEYHELP_SELECT));
 						return FALSE;
@@ -229,14 +230,15 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 				/* 重複検査 */
 				nIndex2 = ListView_GetItemCount(hwndList);
 				WCHAR szPath2[_MAX_PATH];
-				int	  i;
+				int   i;
 				for (i = 0; i < nIndex2; i++) {
 					wmemset(szPath2, 0, _countof(szPath2));
 					ListView_GetItemText(hwndList, i, 2, szPath2, _countof(szPath2));
 					if (wcscmp(szPath, szPath2) == 0) {
 						if ((wID == IDC_BUTTON_KEYHELP_UPD)
 							&& (i == nIndex)) { /* 更新時、変わっていなかったら何もしない */
-						} else {
+						}
+						else {
 							ErrorMessage(hwndDlg, LS(STR_PROPTYPKEYHELP_ERR_REG2));
 							return FALSE;
 						}
@@ -267,21 +269,21 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 
 				/* ON/OFF ファイル名 */
 				lvi.mask	 = LVIF_TEXT;
-				lvi.iItem	 = nIndex;
+				lvi.iItem	= nIndex;
 				lvi.iSubItem = 0;
-				lvi.pszText	 = GetFileName(szPath); /* ファイル名を表示 */
+				lvi.pszText  = GetFileName(szPath); /* ファイル名を表示 */
 				ListView_InsertItem(hwndList, &lvi);
 				/* 辞書の説明 */
 				lvi.mask	 = LVIF_TEXT;
-				lvi.iItem	 = nIndex;
+				lvi.iItem	= nIndex;
 				lvi.iSubItem = 1;
-				lvi.pszText	 = szAbout;
+				lvi.pszText  = szAbout;
 				ListView_SetItem(hwndList, &lvi);
 				/* 辞書ファイルパス */
 				lvi.mask	 = LVIF_TEXT;
-				lvi.iItem	 = nIndex;
+				lvi.iItem	= nIndex;
 				lvi.iSubItem = 2;
-				lvi.pszText	 = szPath;
+				lvi.pszText  = szPath;
 				ListView_SetItem(hwndList, &lvi);
 
 				/* デフォルトでチェックON */
@@ -325,21 +327,21 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 				ListView_DeleteItem(hwndList, nIndex); /* 古いキーを削除 */
 				/* ON-OFF */
 				lvi.mask	 = LVIF_TEXT;
-				lvi.iItem	 = nIndex2;
+				lvi.iItem	= nIndex2;
 				lvi.iSubItem = 0;
-				lvi.pszText	 = GetFileName(szPath); /* ファイル名を表示 */
+				lvi.pszText  = GetFileName(szPath); /* ファイル名を表示 */
 				ListView_InsertItem(hwndList, &lvi);
 				/* 辞書の説明 */
 				lvi.mask	 = LVIF_TEXT;
-				lvi.iItem	 = nIndex2;
+				lvi.iItem	= nIndex2;
 				lvi.iSubItem = 1;
-				lvi.pszText	 = szAbout;
+				lvi.pszText  = szAbout;
 				ListView_SetItem(hwndList, &lvi);
 				/* 辞書ファイルパス */
 				lvi.mask	 = LVIF_TEXT;
-				lvi.iItem	 = nIndex2;
+				lvi.iItem	= nIndex2;
 				lvi.iSubItem = 2;
-				lvi.pszText	 = szPath;
+				lvi.pszText  = szPath;
 				ListView_SetItem(hwndList, &lvi);
 				ListView_SetCheckState(hwndList, nIndex2, bUse);
 				/* 移動したキーを選択状態にする。 */
@@ -358,21 +360,21 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 				/* キーを追加する。 */
 				/* ON-OFF */
 				lvi.mask	 = LVIF_TEXT;
-				lvi.iItem	 = nIndex2;
+				lvi.iItem	= nIndex2;
 				lvi.iSubItem = 0;
-				lvi.pszText	 = GetFileName(szPath); /* ファイル名を表示 */
+				lvi.pszText  = GetFileName(szPath); /* ファイル名を表示 */
 				ListView_InsertItem(hwndList, &lvi);
 				/* 辞書の説明 */
 				lvi.mask	 = LVIF_TEXT;
-				lvi.iItem	 = nIndex2;
+				lvi.iItem	= nIndex2;
 				lvi.iSubItem = 1;
-				lvi.pszText	 = szAbout;
+				lvi.pszText  = szAbout;
 				ListView_SetItem(hwndList, &lvi);
 				/* 辞書ファイルパス */
 				lvi.mask	 = LVIF_TEXT;
-				lvi.iItem	 = nIndex2;
+				lvi.iItem	= nIndex2;
 				lvi.iSubItem = 2;
-				lvi.pszText	 = szPath;
+				lvi.pszText  = szPath;
 				ListView_SetItem(hwndList, &lvi);
 				ListView_SetCheckState(hwndList, nIndex2, bUse);
 				/* 移動したキーを選択状態にする。 */
@@ -395,21 +397,21 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 				/* キーを追加する。 */
 				/* ON-OFF */
 				lvi.mask	 = LVIF_TEXT;
-				lvi.iItem	 = nIndex2;
+				lvi.iItem	= nIndex2;
 				lvi.iSubItem = 0;
-				lvi.pszText	 = GetFileName(szPath); /* ファイル名を表示 */
+				lvi.pszText  = GetFileName(szPath); /* ファイル名を表示 */
 				ListView_InsertItem(hwndList, &lvi);
 				/* 辞書の説明 */
 				lvi.mask	 = LVIF_TEXT;
-				lvi.iItem	 = nIndex2;
+				lvi.iItem	= nIndex2;
 				lvi.iSubItem = 1;
-				lvi.pszText	 = szAbout;
+				lvi.pszText  = szAbout;
 				ListView_SetItem(hwndList, &lvi);
 				/* 辞書ファイルパス */
 				lvi.mask	 = LVIF_TEXT;
-				lvi.iItem	 = nIndex2;
+				lvi.iItem	= nIndex2;
 				lvi.iSubItem = 2;
-				lvi.pszText	 = szPath;
+				lvi.pszText  = szPath;
 				ListView_SetItem(hwndList, &lvi);
 				ListView_SetCheckState(hwndList, nIndex2, bUse);
 				/* 移動したキーを選択状態にする。 */
@@ -430,21 +432,21 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 				/* キーを追加する。 */
 				/* ON-OFF */
 				lvi.mask	 = LVIF_TEXT;
-				lvi.iItem	 = nIndex2;
+				lvi.iItem	= nIndex2;
 				lvi.iSubItem = 0;
-				lvi.pszText	 = GetFileName(szPath); /* ファイル名を表示 */
+				lvi.pszText  = GetFileName(szPath); /* ファイル名を表示 */
 				ListView_InsertItem(hwndList, &lvi);
 				/* 辞書の説明 */
 				lvi.mask	 = LVIF_TEXT;
-				lvi.iItem	 = nIndex2;
+				lvi.iItem	= nIndex2;
 				lvi.iSubItem = 1;
-				lvi.pszText	 = szAbout;
+				lvi.pszText  = szAbout;
 				ListView_SetItem(hwndList, &lvi);
 				/* 辞書ファイルパス */
 				lvi.mask	 = LVIF_TEXT;
-				lvi.iItem	 = nIndex2;
+				lvi.iItem	= nIndex2;
 				lvi.iSubItem = 2;
-				lvi.pszText	 = szPath;
+				lvi.pszText  = szPath;
 				ListView_SetItem(hwndList, &lvi);
 				ListView_SetCheckState(hwndList, nIndex2, bUse);
 				/* 移動したキーを選択状態にする。 */
@@ -502,8 +504,7 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 		}
 		break;
 
-	case WM_HELP:
-	{
+	case WM_HELP: {
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -531,7 +532,7 @@ void CPropTypesKeyHelp::SetData(HWND hwndDlg)
 	HWND	hwndWork;
 	int		i;
 	LV_ITEM lvi;
-	DWORD	dwStyle;
+	DWORD   dwStyle;
 
 	/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 	EditCtl_LimitText(::GetDlgItem(hwndDlg, IDC_EDIT_KEYHELP), _countof2(m_Types.m_KeyHelpArr[0].m_szPath) - 1);
@@ -559,26 +560,27 @@ void CPropTypesKeyHelp::SetData(HWND hwndDlg)
 		if (m_Types.m_KeyHelpArr[i].m_szPath[0] == L'\0') break;
 		/* ON-OFF */
 		lvi.mask	 = LVIF_TEXT;
-		lvi.iItem	 = i;
+		lvi.iItem	= i;
 		lvi.iSubItem = 0;
-		lvi.pszText	 = GetFileName(m_Types.m_KeyHelpArr[i].m_szPath);
+		lvi.pszText  = GetFileName(m_Types.m_KeyHelpArr[i].m_szPath);
 		ListView_InsertItem(hwndWork, &lvi);
 		/* 辞書の説明 */
 		lvi.mask	 = LVIF_TEXT;
-		lvi.iItem	 = i;
+		lvi.iItem	= i;
 		lvi.iSubItem = 1;
-		lvi.pszText	 = m_Types.m_KeyHelpArr[i].m_szAbout;
+		lvi.pszText  = m_Types.m_KeyHelpArr[i].m_szAbout;
 		ListView_SetItem(hwndWork, &lvi);
 		/* 辞書ファイルパス */
 		lvi.mask	 = LVIF_TEXT;
-		lvi.iItem	 = i;
+		lvi.iItem	= i;
 		lvi.iSubItem = 2;
-		lvi.pszText	 = m_Types.m_KeyHelpArr[i].m_szPath;
+		lvi.pszText  = m_Types.m_KeyHelpArr[i].m_szPath;
 		ListView_SetItem(hwndWork, &lvi);
 		/* ON/OFFを取得してチェックボックスにセット（とりあえず応急処置） */
 		if (m_Types.m_KeyHelpArr[i].m_bUse) { // ON
 			ListView_SetCheckState(hwndWork, i, TRUE);
-		} else {
+		}
+		else {
 			ListView_SetCheckState(hwndWork, i, FALSE);
 		}
 	}
@@ -593,20 +595,20 @@ void CPropTypesKeyHelp::SetData(HWND hwndDlg)
 int CPropTypesKeyHelp::GetData(HWND hwndDlg)
 {
 	HWND  hwndList;
-	int	  nIndex, i;
+	int   nIndex, i;
 	WCHAR szAbout[DICT_ABOUT_LEN]; /* 辞書の説明(辞書ファイルの1行目から生成) */
 	WCHAR szPath[_MAX_PATH];	   /* ファイルパス */
 
 	/* 使用する・使用しない */
 	m_Types.m_bUseKeyWordHelp		= (BST_CHECKED == IsDlgButtonChecked(hwndDlg, IDC_CHECK_KEYHELP));
-	m_Types.m_bUseKeyHelpAllSearch	= (BST_CHECKED == IsDlgButtonChecked(hwndDlg, IDC_CHECK_KEYHELP_ALLSEARCH));
+	m_Types.m_bUseKeyHelpAllSearch  = (BST_CHECKED == IsDlgButtonChecked(hwndDlg, IDC_CHECK_KEYHELP_ALLSEARCH));
 	m_Types.m_bUseKeyHelpKeyDisp	= (BST_CHECKED == IsDlgButtonChecked(hwndDlg, IDC_CHECK_KEYHELP_KEYDISP));
 	m_Types.m_bUseKeyHelpPrefix		= (BST_CHECKED == IsDlgButtonChecked(hwndDlg, IDC_CHECK_KEYHELP_PREFIX));
 	m_Types.m_eKeyHelpRMenuShowType = (EKeyHelpRMenuType)Combo_GetCurSel(GetDlgItem(hwndDlg, IDC_COMBO_MENU));
 
 	/* リストに登録されている情報を配列に取り込む */
 	hwndList = GetDlgItem(hwndDlg, IDC_LIST_KEYHELP);
-	nIndex	 = ListView_GetItemCount(hwndList);
+	nIndex   = ListView_GetItemCount(hwndList);
 	for (i = 0; i < MAX_KEYHELP_FILE; i++) {
 		if (i < nIndex) {
 			bool bUse  = false; /* 辞書ON(1)/OFF(0) */
@@ -619,7 +621,8 @@ int CPropTypesKeyHelp::GetData(HWND hwndDlg)
 			m_Types.m_KeyHelpArr[i].m_bUse = bUse;
 			wcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, szAbout);
 			wcscpy(m_Types.m_KeyHelpArr[i].m_szPath, szPath);
-		} else { /* 未登録部分はクリアする */
+		}
+		else { /* 未登録部分はクリアする */
 			m_Types.m_KeyHelpArr[i].m_szPath[0] = L'\0';
 		}
 	}
@@ -690,7 +693,8 @@ static WCHAR *GetFileName(const WCHAR *fullpath)
 		if (*p == L'\\') {
 			pszName = p + 1;
 			p++;
-		} else {
+		}
+		else {
 			p++;
 		}
 	}

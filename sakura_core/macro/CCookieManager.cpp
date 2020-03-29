@@ -33,7 +33,7 @@ SysString CCookieManager::GetCookie(LPCWSTR scope, LPCWSTR cookieName) const
 {
 	const std::map<wstring, wstring> *cookies = SelectCookieType(scope);
 	if (cookies == NULL) { return SysString(L"", 0); }
-	wstring key	   = cookieName;
+	wstring key	= cookieName;
 	auto	keyVal = cookies->find(key);
 	if (keyVal == cookies->end()) { return SysString(L"", 0); }
 	return SysString(keyVal->second.c_str(), keyVal->second.length());
@@ -43,7 +43,7 @@ SysString CCookieManager::GetCookieDefault(LPCWSTR scope, LPCWSTR cookieName, LP
 {
 	std::map<wstring, wstring> *cookies = SelectCookieType(scope);
 	if (cookies == NULL) { return SysString(L"", 0); }
-	wstring		key	   = cookieName;
+	wstring		key	= cookieName;
 	const auto &keyVal = cookies->find(key);
 	if (keyVal == cookies->end()) { return SysString(defVal, len); }
 	return SysString(keyVal->second.c_str(), keyVal->second.length());
@@ -63,7 +63,7 @@ int CCookieManager::DeleteCookie(LPCWSTR scope, LPCWSTR cookieName)
 	std::map<wstring, wstring> *cookies = SelectCookieType(scope);
 	if (cookies == NULL) { return 1; }
 	if (!ValidateCookieName(cookieName)) { return 2; }
-	wstring		key	   = cookieName;
+	wstring		key	= cookieName;
 	const auto &keyVal = cookies->find(key);
 	if (keyVal == cookies->end()) { return 5; }
 	cookies->erase(keyVal);
@@ -97,9 +97,8 @@ int CCookieManager::DeleteAll(LPCWSTR scope)
 
 std::map<std::wstring, std::wstring> *CCookieManager::SelectCookieType(LPCWSTR scope) const
 {
-	if (0 == wcscmp(scope, L"window")) {
-		return const_cast<std::map<std::wstring, std::wstring> *>(&m_cookieWindow);
-	} else if (0 == wcscmp(scope, L"document")) {
+	if (0 == wcscmp(scope, L"window")) { return const_cast<std::map<std::wstring, std::wstring> *>(&m_cookieWindow); }
+	else if (0 == wcscmp(scope, L"document")) {
 		return const_cast<std::map<std::wstring, std::wstring> *>(&m_cookieDocument);
 	}
 	return NULL;
@@ -109,8 +108,8 @@ bool CCookieManager::ValidateCookieName(LPCWSTR cookieName) const
 {
 	for (int i = 0; cookieName[i] != L'\0'; i++) {
 		if (L'0' <= cookieName[i] && cookieName[i] <= L'9' || L'a' <= cookieName[i] && cookieName[i] <= L'z'
-			|| L'A' <= cookieName[i] && cookieName[i] <= L'Z' || L'_' <= cookieName[i]) {
-		} else {
+			|| L'A' <= cookieName[i] && cookieName[i] <= L'Z' || L'_' <= cookieName[i]) {}
+		else {
 			return false;
 		}
 	}

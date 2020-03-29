@@ -18,7 +18,7 @@
 
 #include <new>
 
-CSelectLang::SSelLangInfo *	   CSelectLang::m_psLangInfo = NULL; // メッセージリソース用構造体
+CSelectLang::SSelLangInfo *	CSelectLang::m_psLangInfo = NULL; // メッセージリソース用構造体
 CSelectLang::PSSelLangInfoList CSelectLang::m_psLangInfoList;
 
 /*!
@@ -126,8 +126,8 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment(void)
 
 	WIN32_FIND_DATA w32fd;
 	WCHAR			szPath[] = L"sakura_lang_*.dll"; // サーチするメッセージリソースDLL
-	HANDLE			handle	 = FindFirstFile(szPath, &w32fd);
-	BOOL			result	 = (INVALID_HANDLE_VALUE != handle) ? TRUE : FALSE;
+	HANDLE			handle   = FindFirstFile(szPath, &w32fd);
+	BOOL			result   = (INVALID_HANDLE_VALUE != handle) ? TRUE : FALSE;
 
 	while (result) {
 		if (!(w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) { //フォルダでない
@@ -142,7 +142,8 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment(void)
 					::FreeLibrary(psLangInfo->hInstance);
 					psLangInfo->hInstance = NULL;
 					delete psLangInfo;
-				} else {
+				}
+				else {
 					// 有効なメッセージリソースDLL
 					// 一旦DLLを解放し、後でChangeLangで再読み込みする
 					m_psLangInfoList.push_back(psLangInfo);
@@ -313,23 +314,27 @@ int CLoadString::CLoadStrBuffer::LoadString(UINT uid)
 		if (nRet == 0) {
 			if (hRsrc != ::GetModuleHandle(NULL)) {
 				hRsrc = ::GetModuleHandle(NULL); // 内部リソースを使う
-			} else {
+			}
+			else {
 				// 内部リソースからも読めなかったら諦める（普通はあり得ない）
 				m_pszString[0] = L'\0';
 				break;
 			}
 #ifdef UNICODE
-		} else if (nRet >= m_nBufferSize - 1) {
+		}
+		else if (nRet >= m_nBufferSize - 1) {
 #else
-		} else if (nRet >= m_nBufferSize - 2) { // ANSI版は1小さい長さで再読み込みを判定する
+		}
+		else if (nRet >= m_nBufferSize - 2) { // ANSI版は1小さい長さで再読み込みを判定する
 #endif
 			// 読みきれなかった場合、バッファを拡張して読み直す
-			int	   nTemp = m_nBufferSize + LOADSTR_ADD_SIZE; // 拡張したサイズ
+			int	nTemp = m_nBufferSize + LOADSTR_ADD_SIZE; // 拡張したサイズ
 			LPWSTR pTemp;
 
 			try {
 				pTemp = new WCHAR[nTemp];
-			} catch (std::bad_alloc) {
+			}
+			catch (std::bad_alloc) {
 				// メモリ割り当て例外（例外の発生する環境の場合でも旧来の処理にする）
 				pTemp = NULL;
 			}
@@ -337,14 +342,16 @@ int CLoadString::CLoadStrBuffer::LoadString(UINT uid)
 			if (pTemp) {
 				if (m_pszString != m_szString) { delete[] m_pszString; }
 
-				m_pszString	  = pTemp;
+				m_pszString   = pTemp;
 				m_nBufferSize = nTemp;
-			} else {
+			}
+			else {
 				// メモリ取得に失敗した場合は直前の内容で諦める
 				nRet = wcslen(m_pszString);
 				break;
 			}
-		} else {
+		}
+		else {
 			break; // 文字列リソースが正常に取得できた
 		}
 	}
@@ -376,9 +383,8 @@ HINSTANCE CSelectLang::ChangeLang(UINT nIndex)
 	SSelLangInfo *psLangInfo = m_psLangInfoList.at(nIndex);
 	if (psLangInfo->hInstance != GetModuleHandle(NULL)) {
 		psLangInfo->hInstance = LoadLangRsrcLibrary(*psLangInfo);
-		if (psLangInfo->hInstance == NULL) {
-			return m_psLangInfo->hInstance;
-		} else if (!psLangInfo->bValid) {
+		if (psLangInfo->hInstance == NULL) { return m_psLangInfo->hInstance; }
+		else if (!psLangInfo->bValid) {
 			::FreeLibrary(psLangInfo->hInstance);
 			psLangInfo->hInstance = NULL;
 			return m_psLangInfo->hInstance;

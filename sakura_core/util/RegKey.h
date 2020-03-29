@@ -24,8 +24,7 @@
 */
 #pragma once
 
-class CRegKey
-{
+class CRegKey {
 protected:
 	HKEY _root;
 	HKEY _key;
@@ -45,7 +44,7 @@ public:
 		return (test.Open(root, path, access) == 0);
 	}
 	bool IsOpend() const { return (_key != NULL); }
-	int	 Create(HKEY root, const WCHAR *path, unsigned int access = (KEY_READ | KEY_WRITE))
+	int  Create(HKEY root, const WCHAR *path, unsigned int access = (KEY_READ | KEY_WRITE))
 	{
 		LONG error = RegCreateKeyEx(root, path, 0, NULL, 0, access, NULL, &_key, NULL);
 		if (error != ERROR_SUCCESS) { return error; }
@@ -109,8 +108,8 @@ public:
 	int EnumKey(int &index, WCHAR *pNameBuffer, int nMaxChar, int *pGetChar = NULL) const
 	{
 		if (index < 0) { return ERROR_NO_MORE_ITEMS; }
-		DWORD nSize	 = nMaxChar;
-		int	  nError = RegEnumKeyEx(_key, (DWORD)index, pNameBuffer, &nSize, NULL, NULL, NULL, NULL);
+		DWORD nSize  = nMaxChar;
+		int   nError = RegEnumKeyEx(_key, (DWORD)index, pNameBuffer, &nSize, NULL, NULL, NULL, NULL);
 		if (nError != ERROR_SUCCESS) {
 			index = -1;
 			return nError;
@@ -124,8 +123,8 @@ public:
 	{
 		if (index < 0) { return ERROR_NO_MORE_ITEMS; }
 		DWORD nValueSize = nMaxChar;
-		DWORD nDataSize	 = nMaxChar;
-		int	  nError	 = RegEnumValue(_key, (DWORD)index, pNameBuffer, &nValueSize, NULL, lpType, lpData, &nDataSize);
+		DWORD nDataSize  = nMaxChar;
+		int   nError	 = RegEnumValue(_key, (DWORD)index, pNameBuffer, &nValueSize, NULL, lpType, lpData, &nDataSize);
 		if (nError != ERROR_SUCCESS) {
 			index = -1;
 			return nError;

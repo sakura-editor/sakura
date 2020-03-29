@@ -36,7 +36,8 @@ void CLineComment::CopyTo(const int n, const wchar_t *buffer, int nCommentPos)
 		wcscpy(m_pszLineComment[n], buffer);
 		m_nLineCommentPos[n] = nCommentPos;
 		m_nLineCommentLen[n] = nStrLen;
-	} else {
+	}
+	else {
 		m_pszLineComment[n][0] = L'\0';
 		m_nLineCommentPos[n]   = -1;
 		m_nLineCommentLen[n]   = 0;

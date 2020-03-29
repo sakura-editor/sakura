@@ -48,22 +48,24 @@ void CViewCommander::Command_MOVECURSORLAYOUT(CLayoutPoint pos, int option)
 
 	if (bSelect || bBoxSelect) {
 		if (!m_pCommanderView->GetSelectionInfo().IsTextSelected()) {
-			if (bBoxSelect) {
-				Command_BEGIN_BOXSELECT();
-			} else {
+			if (bBoxSelect) { Command_BEGIN_BOXSELECT(); }
+			else {
 				m_pCommanderView->GetSelectionInfo().BeginSelectArea();
 			}
-		} else {
+		}
+		else {
 			// 2014.01.08 追加
 			if (bBoxSelect && !m_pCommanderView->GetSelectionInfo().IsBoxSelecting()) {
 				// 通常選択→矩形選択に変更。他のコマンドに合わせる
 				Command_BEGIN_BOXSELECT();
 			}
 		}
-	} else {
+	}
+	else {
 		if (m_pCommanderView->GetSelectionInfo().IsTextSelected()) {
 			m_pCommanderView->GetSelectionInfo().DisableSelectArea(true);
-		} else if (m_pCommanderView->GetSelectionInfo().IsBoxSelecting()) {
+		}
+		else if (m_pCommanderView->GetSelectionInfo().IsBoxSelecting()) {
 			m_pCommanderView->GetSelectionInfo().SetBoxSelect(false);
 		}
 	}
@@ -93,15 +95,15 @@ int CViewCommander::Command_UP(bool bSelect, bool bRepeat, int lines)
 	/* キーリピート時のスクロールを滑らかにするか */
 	if (!GetDllShareData().m_Common.m_sGeneral.m_nRepeatedScroll_Smooth) {
 		CLayoutInt i;
-		if (!bRepeat) {
-			i = CLayoutInt(-1);
-		} else {
+		if (!bRepeat) { i = CLayoutInt(-1); }
+		else {
 			i = -1
 				* GetDllShareData().m_Common.m_sGeneral.m_nRepeatedScrollLineNum; /* キーリピート時のスクロール行数 */
 		}
 		GetCaret().Cursor_UPDOWN(i, bSelect);
 		nRepeat = -1 * (Int)i;
-	} else {
+	}
+	else {
 		++nRepeat;
 		if (GetCaret().Cursor_UPDOWN(CLayoutInt(-1), bSelect) != 0 && bRepeat) {
 			for (int i = 0; i < GetDllShareData().m_Common.m_sGeneral.m_nRepeatedScrollLineNum - 1;
@@ -123,14 +125,14 @@ int CViewCommander::Command_DOWN(bool bSelect, bool bRepeat)
 	/* キーリピート時のスクロールを滑らかにするか */
 	if (!GetDllShareData().m_Common.m_sGeneral.m_nRepeatedScroll_Smooth) {
 		CLayoutInt i;
-		if (!bRepeat) {
-			i = CLayoutInt(1);
-		} else {
+		if (!bRepeat) { i = CLayoutInt(1); }
+		else {
 			i = GetDllShareData().m_Common.m_sGeneral.m_nRepeatedScrollLineNum; /* キーリピート時のスクロール行数 */
 		}
 		GetCaret().Cursor_UPDOWN(i, bSelect);
 		nRepeat = (Int)i;
-	} else {
+	}
+	else {
 		++nRepeat;
 		if (GetCaret().Cursor_UPDOWN(CLayoutInt(1), bSelect) != 0 && bRepeat) {
 			for (int i = 0; i < GetDllShareData().m_Common.m_sGeneral.m_nRepeatedScrollLineNum - 1;
@@ -160,8 +162,8 @@ int CViewCommander::Command_LEFT(bool bSelect, bool bRepeat)
 		bUnderlineDoNotOFF = false; //選択状態ならアンダーライン消去を行う
 	}
 	bool bMoveCaretLine = false;
-	int	 nRepeat = bRepeat ? GetDllShareData().m_Common.m_sGeneral.m_nRepeatedMoveCaretNum : 1; // 移動する回数
-	int	 nRes	 = 0;
+	int  nRepeat = bRepeat ? GetDllShareData().m_Common.m_sGeneral.m_nRepeatedMoveCaretNum : 1; // 移動する回数
+	int  nRes	= 0;
 	CLayoutPoint ptCaretMove = GetCaret().GetCaretLayoutPos();
 	for (int nRepCount = 0; nRepCount < nRepeat; ++nRepCount) {
 
@@ -174,7 +176,8 @@ int CViewCommander::Command_LEFT(bool bSelect, bool bRepeat)
 				this->Command_CANCEL_MODE(1);
 				nRes = 1;
 				continue; // 選択のキャンセルで左移動を 1消費。この後の移動処理はスキップする。
-			} else if (m_pCommanderView->GetSelectionInfo().IsBoxSelecting()) {
+			}
+			else if (m_pCommanderView->GetSelectionInfo().IsBoxSelecting()) {
 				m_pCommanderView->GetSelectionInfo().SetBoxSelect(false);
 			}
 		}
@@ -199,7 +202,8 @@ int CViewCommander::Command_LEFT(bool bSelect, bool bRepeat)
 				}
 				ptPos.x += it.getColumn() - it.getColumnDelta();
 				ptPos.y--;
-			} else {
+			}
+			else {
 				if (0 < nRepCount) {
 					GetCaret().MoveCursor(ptCaretMove, true, _CARETMARGINRATE, bUnderlineDoNotOFF);
 					GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
@@ -208,7 +212,7 @@ int CViewCommander::Command_LEFT(bool bSelect, bool bRepeat)
 				break; // これ以上左に動けぬ。
 			}
 			bUnderlineDoNotOFF = false; //行が変わるのでアンダーラインを消去する
-			bMoveCaretLine	   = true;
+			bMoveCaretLine	 = true;
 		}
 		//  2004.03.28 Moca EOFだけの行以降の途中にカーソルがあると落ちるバグ修正
 		else if (pcLayout) {
@@ -224,10 +228,12 @@ int CViewCommander::Command_LEFT(bool bSelect, bool bRepeat)
 				const CLayoutXInt eol_hosei = has_eol ? CLayoutXInt(-it.getColumnDelta() + dx_default) : CLayoutXInt(0);
 				if (ptCaretMove.GetX2() <= it.getColumn() + eol_hosei) {
 					ptPos.x = it.getColumn() - it.getColumnDelta();
-				} else {
+				}
+				else {
 					ptPos.x = t_max(ptCaretMove.GetX2() - dx_default, it.getColumn() + eol_hosei);
 				}
-			} else {
+			}
+			else {
 				ptPos.x = it.getColumn();
 			}
 		}
@@ -262,7 +268,7 @@ void CViewCommander::Command_RIGHT(bool bSelect, bool bIgnoreCurrentSelection, b
 		bUnderlineDoNotOFF = false; //選択状態ならアンダーライン消去を行う
 	}
 	bool bMoveCaretLine = false;
-	int	 nRepeat = bRepeat ? GetDllShareData().m_Common.m_sGeneral.m_nRepeatedMoveCaretNum : 1; // 移動する回数
+	int  nRepeat = bRepeat ? GetDllShareData().m_Common.m_sGeneral.m_nRepeatedMoveCaretNum : 1; // 移動する回数
 	CLayoutPoint ptCaretMove = GetCaret().GetCaretLayoutPos();
 	for (int nRepCount = 0; nRepCount < nRepeat; ++nRepCount) {
 		// 2003.06.28 Moca [EOF]のみの行にカーソルがあるときに右を押しても選択を解除できない問題に
@@ -276,7 +282,8 @@ void CViewCommander::Command_RIGHT(bool bSelect, bool bIgnoreCurrentSelection, b
 				if (m_pCommanderView->GetSelectionInfo().IsTextSelected()) {
 					this->Command_CANCEL_MODE(2);
 					continue; // 選択のキャンセルで右移動を 1消費。この後の移動処理はスキップする。
-				} else if (m_pCommanderView->GetSelectionInfo().IsBoxSelecting()) {
+				}
+				else if (m_pCommanderView->GetSelectionInfo().IsBoxSelecting()) {
 					m_pCommanderView->GetSelectionInfo().SetBoxSelect(false);
 				}
 			}
@@ -294,8 +301,9 @@ void CViewCommander::Command_RIGHT(bool bSelect, bool bIgnoreCurrentSelection, b
 			// キャレット位置のレイアウト行について。
 			const CLayoutInt x_wrap =
 				pcLayout->CalcLayoutWidth(GetDocument()->m_cLayoutMgr); // 改行文字、または折り返しの位置。
-			const bool wrapped = EOL_NONE == pcLayout->GetLayoutEol(); // 折り返しているか、改行文字で終わっているか。これにより
-																	   // x_wrapの意味が変わる。
+			const bool wrapped =
+				EOL_NONE == pcLayout->GetLayoutEol(); // 折り返しているか、改行文字で終わっているか。これにより
+													  // x_wrapの意味が変わる。
 			const bool nextline_exists =
 				pcLayout->GetNextLayout()
 				|| pcLayout->GetLayoutEol() != EOL_NONE; // EOFのみの行も含め、キャレットが移動可能な次行が存在するか。
@@ -315,8 +323,7 @@ void CViewCommander::Command_RIGHT(bool bSelect, bool bIgnoreCurrentSelection, b
 
 			// キャレットの右端( x_max )と、そこでの扱い( on_x_max )を決める。
 			CLayoutInt x_max;
-			enum
-			{
+			enum {
 				STOP,
 				MOVE_NEXTLINE_IMMEDIATELY, // 右端に止まらず次の行頭に移動する。(折り返しなど)
 				MOVE_NEXTLINE_NEXTTIME, // 右端に止まり、次に次の行頭に移動する。(改行を超えるときなど)
@@ -324,30 +331,35 @@ void CViewCommander::Command_RIGHT(bool bSelect, bool bIgnoreCurrentSelection, b
 			} on_x_max;
 
 			if (m_pCommanderView->GetSelectionInfo().IsBoxSelecting()) {
-				x_max	 = t_max(x_wrap, GetDocument()->m_cLayoutMgr.GetMaxLineLayout());
+				x_max	= t_max(x_wrap, GetDocument()->m_cLayoutMgr.GetMaxLineLayout());
 				on_x_max = STOP;
-			} else if (GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode) {
+			}
+			else if (GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode) {
 				// フリーカーソルモードでは折り返し位置だけをみて、改行文字の位置はみない。
 				if (wrapped) {
 					if (nextline_exists) {
-						x_max	 = x_wrap;
+						x_max	= x_wrap;
 						on_x_max = MOVE_NEXTLINE_IMMEDIATELY;
-					} else {
+					}
+					else {
 						// データのあるEOF行は折り返しではない
-						x_max	 = t_max(x_wrap, GetDocument()->m_cLayoutMgr.GetMaxLineLayout());
+						x_max	= t_max(x_wrap, GetDocument()->m_cLayoutMgr.GetMaxLineLayout());
 						on_x_max = STOP;
 					}
-				} else {
+				}
+				else {
 					if (x_wrap + dx_default < GetDocument()->m_cLayoutMgr.GetMaxLineLayout()) {
-						x_max	 = GetDocument()->m_cLayoutMgr.GetMaxLineLayout();
+						x_max	= GetDocument()->m_cLayoutMgr.GetMaxLineLayout();
 						on_x_max = MOVE_NEXTLINE_IMMEDIATELY;
-					} else { // 改行文字がぶら下がっているときは例外。
-						x_max	 = x_wrap;
+					}
+					else { // 改行文字がぶら下がっているときは例外。
+						x_max	= x_wrap;
 						on_x_max = MOVE_NEXTLINE_NEXTTIME;
 					}
 				}
-			} else {
-				x_max	 = x_wrap;
+			}
+			else {
+				x_max	= x_wrap;
 				on_x_max = wrapped ? MOVE_NEXTLINE_IMMEDIATELY : MOVE_NEXTLINE_NEXTTIME;
 			}
 
@@ -360,12 +372,14 @@ void CViewCommander::Command_RIGHT(bool bSelect, bool bIgnoreCurrentSelection, b
 				ptTo.x = pcLayout->GetNextLayout() ? pcLayout->GetNextLayout()->GetIndent() : CLayoutInt(0);
 				if (on_x_max == MOVE_NEXTLINE_NEXTTIME_AND_MOVE_RIGHT) { ++nRepeat; }
 				bUnderlineDoNotOFF = false;
-				bMoveCaretLine	   = true;
-			} else {
+				bMoveCaretLine	 = true;
+			}
+			else {
 				ptTo.y = ptCaret.y;
 				ptTo.x = t_min(to_x, x_max);
 			}
-		} else {
+		}
+		else {
 			// pcLayoutがNULLの場合はptPos.x=0に調整
 			ptTo.y = ptCaret.y;
 			ptTo.x = 0;
@@ -413,11 +427,13 @@ void CViewCommander::Command_WORDLEFT(bool bSelect)
 			/* 現在のカーソル位置から選択を開始する */
 			m_pCommanderView->GetSelectionInfo().BeginSelectArea();
 		}
-	} else {
+	}
+	else {
 		if (m_pCommanderView->GetSelectionInfo().IsTextSelected()) { /* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */
 			m_pCommanderView->GetSelectionInfo().DisableSelectArea(true);
-		} else if (m_pCommanderView->GetSelectionInfo().IsBoxSelecting()) {
+		}
+		else if (m_pCommanderView->GetSelectionInfo().IsBoxSelecting()) {
 			m_pCommanderView->GetSelectionInfo().SetBoxSelect(false);
 		}
 	}
@@ -464,7 +480,8 @@ void CViewCommander::Command_WORDLEFT(bool bSelect)
 		}
 		GetCaret().MoveCursor(ptLayoutNew, true, _CARETMARGINRATE, bUnderlineDoNotOFF);
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
-	} else {
+	}
+	else {
 		bool bIsFreeCursorModeOld =
 			GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode; /* フリーカーソルモードか */
 		GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode = false;
@@ -489,11 +506,13 @@ void CViewCommander::Command_WORDRIGHT(bool bSelect)
 			/* 現在のカーソル位置から選択を開始する */
 			m_pCommanderView->GetSelectionInfo().BeginSelectArea();
 		}
-	} else {
+	}
+	else {
 		if (m_pCommanderView->GetSelectionInfo().IsTextSelected()) { /* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */
 			m_pCommanderView->GetSelectionInfo().DisableSelectArea(true);
-		} else if (m_pCommanderView->GetSelectionInfo().IsBoxSelecting()) {
+		}
+		else if (m_pCommanderView->GetSelectionInfo().IsBoxSelecting()) {
 			m_pCommanderView->GetSelectionInfo().SetBoxSelect(false);
 		}
 	}
@@ -534,7 +553,8 @@ try_again:;
 		}
 		GetCaret().MoveCursor(ptLayoutNew, true, _CARETMARGINRATE, bUnderlineDoNotOFF);
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
-	} else {
+	}
+	else {
 		bool bIsFreeCursorModeOld =
 			GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode; /* フリーカーソルモードか */
 		GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode = false;
@@ -558,7 +578,7 @@ try_again:;
 */
 void CViewCommander::Command_GOLINETOP(
 	bool bSelect, //!< [in] 選択の有無。true: 選択しながら移動。false: 選択しないで移動。
-	int	 lparam	  /*!< [in] マクロから使用する拡張フラグ
+	int  lparam   /*!< [in] マクロから使用する拡張フラグ
 							@li 0: キー操作と同一(default)
 							@li 1: カーソル位置に関係なく行頭に移動(合成可)
 							@li 4: 選択して移動(合成可)
@@ -576,7 +596,8 @@ void CViewCommander::Command_GOLINETOP(
 	if (lparam & 8) {
 		/* 改行単位指定の場合は、物理行頭位置から目的論理位置を求める */
 		GetDocument()->m_cLayoutMgr.LogicToLayout(CLogicPoint(0, GetCaret().GetCaretLogicPos().y), &ptCaretPos);
-	} else {
+	}
+	else {
 		const CLayout *pcLayout =
 			GetDocument()->m_cLayoutMgr.SearchLineByLayoutY(GetCaret().GetCaretLayoutPos().GetY2());
 		ptCaretPos.x = pcLayout ? pcLayout->GetIndent() : CLayoutInt(0);
@@ -591,7 +612,7 @@ void CViewCommander::Command_GOLINETOP(
 		nPosY_Layout = ptCaretPos.y - 1;
 		const CLayout *pcLayout;
 		bool		   bZenSpace = m_pCommanderView->m_pTypeData->m_bAutoIndent_ZENSPACE;
-		bool		   bExtEol	 = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
+		bool		   bExtEol   = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
 		CLogicInt nLineLen;
 		do {
@@ -618,7 +639,7 @@ void CViewCommander::Command_GOLINETOP(
 		if (0 == nPosX_Logic) nPosY_Layout = ptCaretPos.y; /* 物理行の移動なし */
 
 		// 指定された行のデータ内の位置に対応する桁の位置を調べる
-		CLayoutInt	 nPosX_Layout = m_pCommanderView->LineIndexToColumn(pcLayout, nPosX_Logic);
+		CLayoutInt   nPosX_Layout = m_pCommanderView->LineIndexToColumn(pcLayout, nPosX_Logic);
 		CLayoutPoint ptPos(nPosX_Layout, nPosY_Layout);
 		if (GetCaret().GetCaretLayoutPos() != ptPos) { ptCaretPos = ptPos; }
 	}
@@ -639,11 +660,13 @@ void CViewCommander::Command_GOLINEEND(bool bSelect, int bIgnoreCurrentSelection
 				/* 現在のカーソル位置から選択を開始する */
 				m_pCommanderView->GetSelectionInfo().BeginSelectArea();
 			}
-		} else {
+		}
+		else {
 			if (m_pCommanderView->GetSelectionInfo().IsTextSelected()) { /* テキストが選択されているか */
 				/* 現在の選択範囲を非選択状態に戻す */
 				m_pCommanderView->GetSelectionInfo().DisableSelectArea(true);
-			} else if (m_pCommanderView->GetSelectionInfo().IsBoxSelecting()) {
+			}
+			else if (m_pCommanderView->GetSelectionInfo().IsBoxSelecting()) {
 				m_pCommanderView->GetSelectionInfo().SetBoxSelect(false);
 			}
 		}
@@ -706,7 +729,7 @@ void CViewCommander::Command_1PageUp(bool bSelect, CLayoutYInt nScrollNum)
 	//		メモ帳ライクに、画面に対するカーソル位置はそのままで１ページアップ
 	{
 		const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(false);
-		CLayoutInt nViewTopLine	  = m_pCommanderView->GetTextArea().GetViewTopLine();
+		CLayoutInt nViewTopLine   = m_pCommanderView->GetTextArea().GetViewTopLine();
 		if (nScrollNum <= 0) { nScrollNum = m_pCommanderView->GetTextArea().m_nViewRowNum - 1; }
 		GetCaret().Cursor_UPDOWN(-nScrollNum, bSelect);
 		//	Sep. 11, 2004 genta 同期スクロール処理のため
@@ -733,7 +756,7 @@ void CViewCommander::Command_1PageDown(bool bSelect, CLayoutYInt nScrollNum)
 	//		メモ帳ライクに、画面に対するカーソル位置はそのままで１ページダウン
 	{
 		const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(false);
-		CLayoutInt nViewTopLine	  = m_pCommanderView->GetTextArea().GetViewTopLine();
+		CLayoutInt nViewTopLine   = m_pCommanderView->GetTextArea().GetViewTopLine();
 		if (nScrollNum <= 0) { nScrollNum = m_pCommanderView->GetTextArea().m_nViewRowNum - 1; }
 		GetCaret().Cursor_UPDOWN(nScrollNum, bSelect);
 		//	Sep. 11, 2004 genta 同期スクロール処理のため
@@ -768,7 +791,8 @@ void CViewCommander::Command_GOFILEEND(bool bSelect)
 	if (!bSelect) {
 		if (m_pCommanderView->GetSelectionInfo().IsTextSelected()) {
 			m_pCommanderView->GetSelectionInfo().DisableSelectArea(true); // 2001.12.21 hor Add
-		} else if (m_pCommanderView->GetSelectionInfo().IsBoxSelecting()) {
+		}
+		else if (m_pCommanderView->GetSelectionInfo().IsBoxSelecting()) {
 			m_pCommanderView->GetSelectionInfo().SetBoxSelect(false);
 		}
 	}
@@ -972,7 +996,8 @@ void CViewCommander::Command_GONEXTPARAGRAPH(bool bSelect)
 		!= NULL) {
 		nFirstLineIsEmptyLine = pcDocLine->IsEmptyLine();
 		nCaretPointer++;
-	} else {
+	}
+	else {
 		// EOF行でした。
 		return;
 	}
@@ -981,9 +1006,8 @@ void CViewCommander::Command_GONEXTPARAGRAPH(bool bSelect)
 	while ((pcDocLine =
 				GetDocument()->m_cDocLineMgr.GetLine(GetCaret().GetCaretLogicPos().GetY2() + CLogicInt(nCaretPointer)))
 		   != NULL) {
-		if (pcDocLine->IsEmptyLine() == nFirstLineIsEmptyLine) {
-			nCaretPointer++;
-		} else {
+		if (pcDocLine->IsEmptyLine() == nFirstLineIsEmptyLine) { nCaretPointer++; }
+		else {
 			break;
 		}
 	}
@@ -993,17 +1017,18 @@ void CViewCommander::Command_GONEXTPARAGRAPH(bool bSelect)
 	*/
 	if (nFirstLineIsEmptyLine == true) {
 		//	おしまい。
-	} else {
+	}
+	else {
 		//	いま見ているところは空行の1行目
 		if (GetDllShareData().m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchParagraph) { //	段落の両端で止まる
-		} else {
+		}
+		else {
 			/* 仕上げに、空行じゃないところまで進む */
 			while ((pcDocLine = GetDocument()->m_cDocLineMgr.GetLine(GetCaret().GetCaretLogicPos().GetY2()
 																	 + CLogicInt(nCaretPointer)))
 				   != NULL) {
-				if (pcDocLine->IsEmptyLine()) {
-					nCaretPointer++;
-				} else {
+				if (pcDocLine->IsEmptyLine()) { nCaretPointer++; }
+				else {
 					break;
 				}
 			}
@@ -1044,7 +1069,8 @@ void CViewCommander::Command_GOPREVPARAGRAPH(bool bSelect)
 		!= NULL) {
 		nFirstLineIsEmptyLine = pcDocLine->IsEmptyLine();
 		nCaretPointer--;
-	} else {
+	}
+	else {
 		nFirstLineIsEmptyLine = true;
 		nCaretPointer--;
 	}
@@ -1053,9 +1079,8 @@ void CViewCommander::Command_GOPREVPARAGRAPH(bool bSelect)
 	while ((pcDocLine =
 				GetDocument()->m_cDocLineMgr.GetLine(GetCaret().GetCaretLogicPos().GetY2() + CLogicInt(nCaretPointer)))
 		   != NULL) {
-		if (pcDocLine->IsEmptyLine() == nFirstLineIsEmptyLine) {
-			nCaretPointer--;
-		} else {
+		if (pcDocLine->IsEmptyLine() == nFirstLineIsEmptyLine) { nCaretPointer--; }
+		else {
 			break;
 		}
 	}
@@ -1067,24 +1092,26 @@ void CViewCommander::Command_GOPREVPARAGRAPH(bool bSelect)
 		//	おしまい。
 		if (GetDllShareData().m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchParagraph) { //	段落の両端で止まる
 			nCaretPointer++; //	空行の最上行（段落の末端の次の行）で止まる。
-		} else {
+		}
+		else {
 			/* 仕上げに、空行じゃないところまで進む */
 			while ((pcDocLine = GetDocument()->m_cDocLineMgr.GetLine(GetCaret().GetCaretLogicPos().GetY2()
 																	 + CLogicInt(nCaretPointer)))
 				   != NULL) {
-				if (pcDocLine->IsEmptyLine()) {
-					break;
-				} else {
+				if (pcDocLine->IsEmptyLine()) { break; }
+				else {
 					nCaretPointer--;
 				}
 			}
 			nCaretPointer++; //	空行の最上行（段落の末端の次の行）で止まる。
 		}
-	} else {
+	}
+	else {
 		//	いま見ているところは空行の1行目
 		if (GetDllShareData().m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchParagraph) { //	段落の両端で止まる
 			nCaretPointer++;
-		} else {
+		}
+		else {
 			nCaretPointer++;
 		}
 	}
@@ -1113,14 +1140,15 @@ void CViewCommander::Command_AUTOSCROLL()
 		ScreenToClient(m_pCommanderView->GetHwnd(), &m_pCommanderView->m_cAutoScrollMousePos);
 		m_pCommanderView->m_bAutoScrollDragMode = false;
 		m_pCommanderView->AutoScrollEnter();
-	} else {
+	}
+	else {
 		m_pCommanderView->AutoScrollExit();
 	}
 }
 
 void CViewCommander::Command_WHEELUP(int zDelta)
 {
-	int	   zDelta2 = (zDelta == 0 ? 120 : zDelta);
+	int	zDelta2 = (zDelta == 0 ? 120 : zDelta);
 	WPARAM wParam  = MAKELONG(0, zDelta2);
 	LPARAM lParam  = 0;
 	m_pCommanderView->OnMOUSEWHEEL2(wParam, lParam, false, F_WHEELUP);
@@ -1128,7 +1156,7 @@ void CViewCommander::Command_WHEELUP(int zDelta)
 
 void CViewCommander::Command_WHEELDOWN(int zDelta)
 {
-	int	   zDelta2 = -1 * (zDelta == 0 ? 120 : zDelta);
+	int	zDelta2 = -1 * (zDelta == 0 ? 120 : zDelta);
 	WPARAM wParam  = MAKELONG(0, zDelta2);
 	LPARAM lParam  = 0;
 	m_pCommanderView->OnMOUSEWHEEL2(wParam, lParam, false, F_WHEELDOWN);
@@ -1136,7 +1164,7 @@ void CViewCommander::Command_WHEELDOWN(int zDelta)
 
 void CViewCommander::Command_WHEELLEFT(int zDelta)
 {
-	int	   zDelta2 = -1 * (zDelta == 0 ? 120 : zDelta);
+	int	zDelta2 = -1 * (zDelta == 0 ? 120 : zDelta);
 	WPARAM wParam  = MAKELONG(0, zDelta2);
 	LPARAM lParam  = 0;
 	m_pCommanderView->OnMOUSEWHEEL2(wParam, lParam, true, F_WHEELLEFT);
@@ -1144,7 +1172,7 @@ void CViewCommander::Command_WHEELLEFT(int zDelta)
 
 void CViewCommander::Command_WHEELRIGHT(int zDelta)
 {
-	int	   zDelta2 = (zDelta == 0 ? 120 : zDelta);
+	int	zDelta2 = (zDelta == 0 ? 120 : zDelta);
 	WPARAM wParam  = MAKELONG(0, zDelta2);
 	LPARAM lParam  = 0;
 	m_pCommanderView->OnMOUSEWHEEL2(wParam, lParam, true, F_WHEELRIGHT);
@@ -1152,7 +1180,7 @@ void CViewCommander::Command_WHEELRIGHT(int zDelta)
 
 void CViewCommander::Command_WHEELPAGEUP(int zDelta)
 {
-	int	   zDelta2 = (zDelta == 0 ? 120 : zDelta);
+	int	zDelta2 = (zDelta == 0 ? 120 : zDelta);
 	WPARAM wParam  = MAKELONG(0, zDelta2);
 	LPARAM lParam  = 0;
 	m_pCommanderView->OnMOUSEWHEEL2(wParam, lParam, false, F_WHEELPAGEUP);
@@ -1160,7 +1188,7 @@ void CViewCommander::Command_WHEELPAGEUP(int zDelta)
 
 void CViewCommander::Command_WHEELPAGEDOWN(int zDelta)
 {
-	int	   zDelta2 = -1 * (zDelta == 0 ? 120 : zDelta);
+	int	zDelta2 = -1 * (zDelta == 0 ? 120 : zDelta);
 	WPARAM wParam  = MAKELONG(0, zDelta2);
 	LPARAM lParam  = 0;
 	m_pCommanderView->OnMOUSEWHEEL2(wParam, lParam, false, F_WHEELPAGEDOWN);
@@ -1168,7 +1196,7 @@ void CViewCommander::Command_WHEELPAGEDOWN(int zDelta)
 
 void CViewCommander::Command_WHEELPAGELEFT(int zDelta)
 {
-	int	   zDelta2 = -1 * (zDelta == 0 ? 120 : zDelta);
+	int	zDelta2 = -1 * (zDelta == 0 ? 120 : zDelta);
 	WPARAM wParam  = MAKELONG(0, zDelta2);
 	LPARAM lParam  = 0;
 	m_pCommanderView->OnMOUSEWHEEL2(wParam, lParam, true, F_WHEELPAGELEFT);
@@ -1176,7 +1204,7 @@ void CViewCommander::Command_WHEELPAGELEFT(int zDelta)
 
 void CViewCommander::Command_WHEELPAGERIGHT(int zDelta)
 {
-	int	   zDelta2 = (zDelta == 0 ? 120 : zDelta);
+	int	zDelta2 = (zDelta == 0 ? 120 : zDelta);
 	WPARAM wParam  = MAKELONG(0, zDelta2);
 	LPARAM lParam  = 0;
 	m_pCommanderView->OnMOUSEWHEEL2(wParam, lParam, true, F_WHEELPAGERIGHT);
@@ -1221,11 +1249,13 @@ void CViewCommander::Command_MODIFYLINE_NEXT(bool bSelect)
 					pos.x = pcDocLineLast->GetLengthWithoutEOL();
 					pos.y = GetDocument()->m_cDocLineMgr.GetLineCount() - 1;
 					if (GetCaret().GetCaretLogicPos() == pos) { bSkip = true; }
-				} else {
+				}
+				else {
 					// 単独[EOF]
 					pos = ptXY;
 				}
-			} else {
+			}
+			else {
 				bSkip = true;
 			}
 			if (!bSkip) {
@@ -1236,7 +1266,7 @@ void CViewCommander::Command_MODIFYLINE_NEXT(bool bSelect)
 			}
 		}
 		if (n == 0) {
-			ptXY.y	  = CLogicInt(0);
+			ptXY.y	= CLogicInt(0);
 			pcDocLine = GetDocument()->m_cDocLineMgr.GetLine(ptXY.GetY2());
 			bModified = false;
 		}
@@ -1258,7 +1288,7 @@ void CViewCommander::Command_MODIFYLINE_PREV(bool bSelect)
 	const CDocLine *pcDocLine = GetDocument()->m_cDocLineMgr.GetLine(ptXY.GetY2());
 	const int		nSaveSeq  = GetDocument()->m_cDocEditor.m_cOpeBuf.GetNoModifiedSeq();
 	bool			bModified = false;
-	bool			bLast	  = false;
+	bool			bLast	 = false;
 	if (pcDocLine == NULL) {
 		// [EOF]
 		const CDocLine *pcDocLineLast = GetDocument()->m_cDocLineMgr.GetLine(ptXY.GetY2() - 1);
@@ -1269,7 +1299,7 @@ void CViewCommander::Command_MODIFYLINE_PREV(bool bSelect)
 		bModified = CModifyVisitor().IsLineModified(pcDocLineLast, nSaveSeq);
 		ptXY.y--;
 		pcDocLine = pcDocLineLast;
-		bLast	  = true;
+		bLast	 = true;
 	}
 	if (!bLast) {
 		const CDocLine *pcDocLineLast = GetDocument()->m_cDocLineMgr.GetDocLineBottom();
@@ -1285,12 +1315,12 @@ void CViewCommander::Command_MODIFYLINE_PREV(bool bSelect)
 	}
 	assert(pcDocLine);
 	bModified = CModifyVisitor().IsLineModified(pcDocLine, nSaveSeq);
-	nYOld2	  = ptXY.y;
+	nYOld2	= ptXY.y;
 	ptXY.y--;
 	pcDocLine = pcDocLine->GetPrevLine();
 	if (pcDocLine && !bLast) {
 		bModified = CModifyVisitor().IsLineModified(pcDocLine, nSaveSeq);
-		nYOld2	  = ptXY.y;
+		nYOld2	= ptXY.y;
 		ptXY.y--;
 		pcDocLine = pcDocLine->GetPrevLine();
 	}
@@ -1323,8 +1353,8 @@ void CViewCommander::Command_MODIFYLINE_PREV(bool bSelect)
 					return;
 				}
 			}
-			ptXY.y	  = GetDocument()->m_cDocLineMgr.GetLineCount() - CLogicInt(1);
-			nYOld2	  = ptXY.y;
+			ptXY.y	= GetDocument()->m_cDocLineMgr.GetLineCount() - CLogicInt(1);
+			nYOld2	= ptXY.y;
 			pcDocLine = GetDocument()->m_cDocLineMgr.GetLine(ptXY.GetY2());
 			bModified = false;
 		}
@@ -1339,7 +1369,8 @@ void CViewCommander::Command_MODIFYLINE_PREV(bool bSelect)
 					pos.x = 0;
 					pos.y = GetDocument()->m_cDocLineMgr.GetLineCount();
 					pos.y++;
-				} else {
+				}
+				else {
 					pos.x = pcDocLine->GetLengthWithoutEOL();
 					pos.y = GetDocument()->m_cDocLineMgr.GetLineCount() - 1;
 				}

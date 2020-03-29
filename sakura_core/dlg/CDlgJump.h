@@ -19,8 +19,7 @@ class CDlgJump;
 
 #include "dlg/CDialog.h"
 //! 指定行へのジャンプダイアログボックス
-class CDlgJump final : public CDialog
-{
+class CDlgJump final : public CDialog {
 public:
 	/*
 	||  Constructors
@@ -31,10 +30,10 @@ public:
 	*/
 	int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam); /* モーダルダイアログの表示 */
 
-	int	 m_nLineNum; /*!< 行番号 */
-	BOOL m_bPLSQL;	 /*!< PL/SQLソースの有効行か */
-	int	 m_nPLSQL_E1;
-	int	 m_nPLSQL_E2;
+	int  m_nLineNum; /*!< 行番号 */
+	BOOL m_bPLSQL;   /*!< PL/SQLソースの有効行か */
+	int  m_nPLSQL_E1;
+	int  m_nPLSQL_E2;
 
 protected:
 	/*
@@ -48,5 +47,5 @@ protected:
 
 	LPVOID GetHelpIdTable(void) override; //@@@ 2002.01.18 add
 	void   SetData(void) override;		  /* ダイアログデータの設定 */
-	int	   GetData(void) override;		  /* ダイアログデータの取得 */
+	int	GetData(void) override;		  /* ダイアログデータの取得 */
 };

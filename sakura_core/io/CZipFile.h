@@ -29,19 +29,18 @@
 
 #include <ShlDisp.h>
 
-class CZipFile
-{
+class CZipFile {
 private:
 	IShellDispatch *psd;
 	Folder *		pZipFile;
 	std::wstring	sZipName;
 
 public:
-	CZipFile();	 // コンストラクタ
+	CZipFile();  // コンストラクタ
 	~CZipFile(); // デストラクタ
 
 public:
-	bool IsOk() { return (psd != NULL); }	   // Zip Folderが使用できるか?
+	bool IsOk() { return (psd != NULL); }	  // Zip Folderが使用できるか?
 	bool SetZip(const std::wstring &sZipPath); // Zip File名 設定
 	bool ChkPluginDef(const std::wstring &sDefFile,
 					  std::wstring &sFolderName); // ZIP File 内 フォルダ名取得と定義ファイル検査(Plugin用)

@@ -80,11 +80,11 @@ int CBregexp::CheckPattern(const wchar_t *szPattern)
 	static const wchar_t TAB_MATCH[] = L"/^\\(*\\^\\$\\)*$/k"; //!< "^$"パターンかをチェック用パターン
 	static const wchar_t LOOKAHEAD[] = L"/\\(\\?[=]/k";		   //!< "(?=" 先読み の存在チェックパターン
 	BREGEXP_W *			 sReg		 = NULL;				   //!< コンパイル構造体
-	wchar_t				 szMsg[80]	 = L"";					   //!< エラーメッセージ
+	wchar_t				 szMsg[80]   = L"";					   //!< エラーメッセージ
 	int					 nLen;								   //!< 検索パターンの長さ
 	const wchar_t *		 szPatternEnd;						   //!< 検索パターンの終端
 
-	m_ePatType	 = PAT_NORMAL; //!<　ノーマルは確定
+	m_ePatType   = PAT_NORMAL; //!<　ノーマルは確定
 	nLen		 = wcslen(szPattern);
 	szPatternEnd = szPattern + nLen;
 	// パターン種別の設定
@@ -103,13 +103,15 @@ int CBregexp::CheckPattern(const wchar_t *szPattern)
 	if (BMatch(DOL_MATCH, szPattern, szPatternEnd, &sReg, szMsg) > 0) {
 		// 行末の\$ にマッチした
 		// PAT_NORMAL
-	} else {
+	}
+	else {
 		BRegfree(sReg);
 		sReg = NULL;
 		if (BMatch(BOT_MATCH, szPattern, szPatternEnd, &sReg, szMsg) > 0) {
 			// 行末パターンにマッチした
 			m_ePatType |= PAT_BOTTOM;
-		} else {
+		}
+		else {
 			// その他
 			// PAT_NORMAL
 		}
@@ -135,7 +137,7 @@ int CBregexp::CheckPattern(const wchar_t *szPattern)
 **
 ** @date 2003.05.03 かろと 関数に切り出し
 */
-wchar_t *CBregexp::MakePatternSub(const wchar_t *szPattern,	 //!< 検索パターン
+wchar_t *CBregexp::MakePatternSub(const wchar_t *szPattern,  //!< 検索パターン
 								  const wchar_t *szPattern2, //!< 置換パターン(NULLなら検索)
 								  const wchar_t *szAdd2, //!< 置換パターンの後ろに付け加えるパターン($1など)
 								  int			 nOption //!< 検索オプション
@@ -154,13 +156,14 @@ wchar_t *CBregexp::MakePatternSub(const wchar_t *szPattern,	 //!< 検索パタ�
 		// 検索(BMatch)時
 		szNPattern = new wchar_t[nLen + 15]; //	15：「s///option」が余裕ではいるように。
 		pPat	   = szNPattern;
-		*pPat++	   = L'm';
-	} else {
+		*pPat++	= L'm';
+	}
+	else {
 		// 置換(BSubst)時
-		nLen2	   = wcslen(szPattern2) + wcslen(szAdd2);
+		nLen2	  = wcslen(szPattern2) + wcslen(szAdd2);
 		szNPattern = new wchar_t[nLen + nLen2 + 15];
 		pPat	   = szNPattern;
-		*pPat++	   = L's';
+		*pPat++	= L's';
 	}
 	*pPat++ = DELIMITER;
 	while (*szPattern != L'\0') { *pPat++ = *szPattern++; }
@@ -218,10 +221,10 @@ wchar_t *CBregexp::MakePattern(const wchar_t *szPattern, const wchar_t *szPatter
 	static const wchar_t  szLF[] = {LF, 0};									   //!< 改行
 	static const wchar_t BOT_SUBST[] = L"s/\\$(\\)*)$/([\\\\r\\\\n]+)\\$$1/k"; //!< 行末パターンの置換用パターン
 	int					 nLen;												   //!< szPatternの長さ
-	BREGEXP_W *			 sReg	   = NULL;									   //!< コンパイル構造体
+	BREGEXP_W *			 sReg	  = NULL;									   //!< コンパイル構造体
 	wchar_t				 szMsg[80] = L"";									   //!< エラーメッセージ
 	wchar_t				 szAdd2[5] = L""; //!< 行末あり置換の $数字 格納用
-	int					 nParens   = 0;	  //!< 検索パターン(szPattern)中の括弧の数(行末時に使用)
+	int					 nParens   = 0;   //!< 検索パターン(szPattern)中の括弧の数(行末時に使用)
 	wchar_t *			 szNPattern;	  //!< 検索パターン
 
 	nLen = CheckPattern(szPattern);
@@ -244,7 +247,8 @@ wchar_t *CBregexp::MakePattern(const wchar_t *szPattern, const wchar_t *szPatter
 						}
 					}
 				}
-			} else {
+			}
+			else {
 				if (BMatch(NULL, szCR, szCR + wcslen(szCR), &sReg, szMsg) <= 0) {
 					if (BMatch(NULL, szLF, szLF + wcslen(szLF), &sReg, szMsg) <= 0) {
 						// 検索文字列は、文字＋行末($)だった
@@ -288,18 +292,18 @@ wchar_t *CBregexp::MakePatternAlternate(const wchar_t *const szSearch, const wch
 {
 	this->CheckPattern(szSearch);
 
-	static const wchar_t szDotAlternative[]	   = L"[^\\r\\n]";
+	static const wchar_t szDotAlternative[]	= L"[^\\r\\n]";
 	static const wchar_t szDollarAlternative[] = L"(?<![\\r\\n])(?=\\r|$)";
 
 	// すべての . を [^\r\n] へ、すべての $ を (?<![\r\n])(?=\r|$)
 	// へ置換すると仮定して、strModifiedSearchの最大長を決定する。
 	std::wstring::size_type modifiedSearchSize = 0;
 	for (const wchar_t *p = szSearch; *p; ++p) {
-		if (*p == L'.') {
-			modifiedSearchSize += (sizeof szDotAlternative) / (sizeof szDotAlternative[0]) - 1;
-		} else if (*p == L'$') {
+		if (*p == L'.') { modifiedSearchSize += (sizeof szDotAlternative) / (sizeof szDotAlternative[0]) - 1; }
+		else if (*p == L'$') {
 			modifiedSearchSize += (sizeof szDollarAlternative) / (sizeof szDollarAlternative[0]) - 1;
-		} else {
+		}
+		else {
 			modifiedSearchSize += 1;
 		}
 	}
@@ -309,8 +313,7 @@ wchar_t *CBregexp::MakePatternAlternate(const wchar_t *const szSearch, const wch
 	strModifiedSearch.reserve(modifiedSearchSize);
 
 	// szSearchを strModifiedSearchへ、ところどころ置換しながら順次コピーしていく。
-	enum State
-	{
+	enum State {
 		DEF = 0, /* DEFULT 一番外側 */
 		D_E,	 /* DEFAULT_ESCAPED 一番外側で \の次 */
 		D_C,	 /* DEFAULT_SMALL_C 一番外側で \cの次 */
@@ -325,8 +328,7 @@ wchar_t *CBregexp::MakePatternAlternate(const wchar_t *const szSearch, const wch
 		_DT = -3, /* DOT (特殊文字としての)ドットを置き換える */
 		_DL = -4, /* DOLLAR (特殊文字としての)ドルを置き換える */
 	};
-	enum CharClass
-	{
+	enum CharClass {
 		OTHER = 0,
 		DOT,	/* . */
 		DOLLAR, /* $ */
@@ -349,11 +351,11 @@ wchar_t *CBregexp::MakePatternAlternate(const wchar_t *const szSearch, const wch
 		/* QEE */ {QEE, QEE, QEE, QEE, QEE, QEE, QEE, QEE, Q_E},
 		/* Q_E */ {QEE, QEE, QEE, QEE, QEE, DEF, QEE, QEE, Q_E}};
 	State state = DEF;
-	int	  charsetLevel =
+	int   charsetLevel =
 		0; // ブラケットの深さ。POSIXブラケット表現など、エスケープされていない [] が入れ子になることがある。
 	const wchar_t *left = szSearch, *right = szSearch;
 	for (; *right; ++right) { // CNativeW::GetSizeOfChar()は使わなくてもいいかな？
-		const wchar_t	ch = *right;
+		const wchar_t   ch = *right;
 		const CharClass charClass =
 			ch == L'.'
 				? DOT
@@ -366,9 +368,8 @@ wchar_t *CBregexp::MakePatternAlternate(const wchar_t *const szSearch, const wch
 													  : ch == L'[' ? LBRCKT
 																   : ch == L']' ? RBRCKT : ch == L'\\' ? ESCAPE : OTHER;
 		const State nextState = state_transition_table[state][charClass];
-		if (0 <= nextState) {
-			state = nextState;
-		} else
+		if (0 <= nextState) { state = nextState; }
+		else
 			switch (nextState) {
 			case _EC: // ENTER CHARSET
 				charsetLevel += 1;
@@ -418,19 +419,19 @@ bool CBregexp::Compile(const wchar_t *szPattern0, const wchar_t *szPattern1, int
 
 	// ライブラリに渡す検索パターンを作成
 	// 別関数で共通処理に変更 2003.05.03 by かろと
-	wchar_t *	   szNPattern  = NULL;
+	wchar_t *	  szNPattern  = NULL;
 	const wchar_t *pszNPattern = NULL;
-	if (bKakomi) {
-		pszNPattern = szPattern0;
-	} else {
-		szNPattern	= MakePatternAlternate(szPattern0, szPattern1, nOption);
+	if (bKakomi) { pszNPattern = szPattern0; }
+	else {
+		szNPattern  = MakePatternAlternate(szPattern0, szPattern1, nOption);
 		pszNPattern = szNPattern;
 	}
 	m_szMsg[0] = L'\0'; //!< エラー解除
 	if (szPattern1 == NULL) {
 		// 検索実行
 		BMatch(pszNPattern, m_tmpBuf, m_tmpBuf + 1, &m_pRegExp, m_szMsg);
-	} else {
+	}
+	else {
 		// 置換実行
 		BSubst(pszNPattern, m_tmpBuf, m_tmpBuf + 1, &m_pRegExp, m_szMsg);
 	}
@@ -479,7 +480,8 @@ bool CBregexp::Match(const wchar_t *target, int len, int nStart)
 		}
 		//	検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
 		matched = BMatch(NULL, target + nStart, target + len, &m_pRegExp, m_szMsg);
-	} else {
+	}
+	else {
 		//	検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
 		matched = BMatchEx(NULL, target, target + nStart, target + len, &m_pRegExp, m_szMsg);
 	}
@@ -490,7 +492,8 @@ bool CBregexp::Match(const wchar_t *target, int len, int nStart)
 		// エラー処理をしていなかったので、nStart>=lenのような場合に、マッチ扱いになり
 		// 無限置換等の不具合になっていた 2003.05.03 by かろと
 		return false;
-	} else if (matched == 0) {
+	}
+	else if (matched == 0) {
 		// 一致しなかった
 		return false;
 	}
@@ -532,9 +535,8 @@ int CBregexp::Replace(const wchar_t *szTarget, int nLen, int nStart)
 	//	To Here 2003.05.03 かろと
 
 	m_szMsg[0] = '\0'; //!< エラー解除
-	if (!ExistBSubstEx()) {
-		result = BSubst(NULL, szTarget + nStart, szTarget + nLen, &m_pRegExp, m_szMsg);
-	} else {
+	if (!ExistBSubstEx()) { result = BSubst(NULL, szTarget + nStart, szTarget + nLen, &m_pRegExp, m_szMsg); }
+	else {
 		result = BSubstEx(NULL, szTarget, szTarget + nStart, szTarget + nLen, &m_pRegExp, m_szMsg);
 	}
 	m_szTarget = szTarget;
@@ -564,7 +566,7 @@ const WCHAR *CBregexp::GetLastMessage() const { return m_szMsg; }
 	@date 2007.08.12 genta 共通設定からDLL名を取得する
 */
 bool InitRegexp(HWND	  hWnd, //!< [in] ダイアログボックスのウィンドウハンドル。バージョン番号の設定が不要であればNULL。
-				CBregexp &rRegexp,	   //!< [in] チェックに利用するCBregexpクラスへの参照
+				CBregexp &rRegexp,	 //!< [in] チェックに利用するCBregexpクラスへの参照
 				bool	  bShowMessage //!< [in] 初期化失敗時にエラーメッセージを出すフラグ
 )
 {
@@ -578,11 +580,11 @@ bool InitRegexp(HWND	  hWnd, //!< [in] ダイアログボックスのウィン�
 	if (DLL_SUCCESS != eDllResult) {
 		if (bShowMessage) {
 			LPCWSTR pszMsg = L"";
-			if (eDllResult == DLL_LOADFAILURE) {
-				pszMsg = LS(STR_BREGONIG_LOAD);
-			} else if (eDllResult == DLL_INITFAILURE) {
+			if (eDllResult == DLL_LOADFAILURE) { pszMsg = LS(STR_BREGONIG_LOAD); }
+			else if (eDllResult == DLL_INITFAILURE) {
 				pszMsg = LS(STR_BREGONIG_INIT);
-			} else {
+			}
+			else {
 				pszMsg = LS(STR_BREGONIG_ERROR);
 				assert(0);
 			}
@@ -602,7 +604,7 @@ bool InitRegexp(HWND	  hWnd, //!< [in] ダイアログボックスのウィン�
 */
 bool CheckRegexpVersion(
 	HWND hWnd, //!< [in] ダイアログボックスのウィンドウハンドル。バージョン番号の設定が不要であればNULL。
-	int	 nCmpId,	  //!< [in] バージョン文字列を設定するコンポーネントID
+	int  nCmpId,	  //!< [in] バージョン文字列を設定するコンポーネントID
 	bool bShowMessage //!< [in] 初期化失敗時にエラーメッセージを出すフラグ
 )
 {

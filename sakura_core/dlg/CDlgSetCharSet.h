@@ -16,8 +16,7 @@
 #include "dlg/CDialog.h"
 
 //! 文字コードセット設定ダイアログボックス
-class CDlgSetCharSet final : public CDialog
-{
+class CDlgSetCharSet final : public CDialog {
 public:
 	/*
 	||  Constructors
@@ -29,7 +28,7 @@ public:
 	int DoModal(HINSTANCE hInstance, HWND hwndParent, ECodeType *pnCharSet, bool *pbBom); /* モーダルダイアログの表示 */
 
 	ECodeType *m_pnCharSet; // 文字コードセット
-	bool *	   m_pbBom;		// BOM
+	bool *	 m_pbBom;		// BOM
 
 	HWND m_hwndCharSet;
 	HWND m_hwndCheckBOM;
@@ -44,7 +43,7 @@ protected:
 	LPVOID GetHelpIdTable(void) override;
 
 	void SetData(void) override; /* ダイアログデータの設定 */
-	int	 GetData(void) override; /* ダイアログデータの取得 */
+	int  GetData(void) override; /* ダイアログデータの取得 */
 
 	void SetBOM(void); // BOM の設定
 };

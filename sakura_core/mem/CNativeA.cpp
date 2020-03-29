@@ -4,15 +4,18 @@
 
 CNativeA::CNativeA() noexcept
 	: CNative()
-{}
+{
+}
 
 CNativeA::CNativeA(const CNativeA &rhs)
 	: CNative(rhs)
-{}
+{
+}
 
 CNativeA::CNativeA(CNativeA &&other) noexcept
 	: CNative(std::forward<CNativeA>(other))
-{}
+{
+}
 
 CNativeA::CNativeA(const char *szData, size_t cchData)
 	: CNative()
@@ -61,7 +64,7 @@ void CNativeA::AppendStringF(const char *pszData, ...)
 	va_list v;
 	va_start(v, pszData);
 	int len = _vsnprintf_s(buf, _countof(buf), _TRUNCATE, pszData, v);
-	int e	= errno;
+	int e   = errno;
 	va_end(v);
 
 	if (len == -1) {
@@ -107,9 +110,8 @@ int CNativeA::GetStringLength() const { return CNative::GetRawLength() / sizeof(
 // 任意位置の文字取得。nIndexは文字単位。
 char CNativeA::operator[](int nIndex) const
 {
-	if (nIndex < GetStringLength()) {
-		return GetStringPtr()[nIndex];
-	} else {
+	if (nIndex < GetStringLength()) { return GetStringPtr()[nIndex]; }
+	else {
 		return 0;
 	}
 }
@@ -123,16 +125,17 @@ void CNativeA::Replace_j(const char *pszFrom, const char *pszTo)
 {
 	CNativeA cmemWork;
 	int		 nFromLen = strlen(pszFrom);
-	int		 nToLen	  = strlen(pszTo);
+	int		 nToLen   = strlen(pszTo);
 	int		 nBgnOld  = 0;
-	int		 nBgn	  = 0;
+	int		 nBgn	 = 0;
 	while (nBgn <= GetStringLength() - nFromLen) {
 		if (0 == memcmp(&GetStringPtr()[nBgn], pszFrom, nFromLen)) {
 			if (0 < nBgn - nBgnOld) { cmemWork.AppendString(&GetStringPtr()[nBgnOld], nBgn - nBgnOld); }
 			cmemWork.AppendString(pszTo, nToLen);
 			nBgn	= nBgn + nFromLen;
 			nBgnOld = nBgn;
-		} else {
+		}
+		else {
 			if (_IS_SJIS_1((unsigned char)GetStringPtr()[nBgn])) nBgn++;
 			nBgn++;
 		}

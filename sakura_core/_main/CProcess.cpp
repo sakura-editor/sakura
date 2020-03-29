@@ -25,7 +25,7 @@
 	@date 2002/01/07
 */
 CProcess::CProcess(HINSTANCE hInstance, //!< handle to process instance
-				   LPCWSTR	 lpCmdLine	//!< pointer to command line
+				   LPCWSTR   lpCmdLine  //!< pointer to command line
 				   )
 	: m_hInstance(hInstance)
 	, m_hWnd(0)
@@ -68,7 +68,7 @@ bool CProcess::Run()
 {
 	if (InitializeProcess()) {
 #ifdef USE_CRASHDUMP
-		HMODULE hDllDbgHelp	   = LoadLibraryExedir(L"dbghelp.dll");
+		HMODULE hDllDbgHelp	= LoadLibraryExedir(L"dbghelp.dll");
 		m_pfnMiniDumpWriteDump = NULL;
 		if (hDllDbgHelp) { *(FARPROC *)&m_pfnMiniDumpWriteDump = ::GetProcAddress(hDllDbgHelp, "MiniDumpWriteDump"); }
 
@@ -77,7 +77,9 @@ bool CProcess::Run()
 			MainLoop();
 			OnExitProcess();
 #ifdef USE_CRASHDUMP
-		} __except (WriteDump(GetExceptionInformation())) {}
+		}
+		__except (WriteDump(GetExceptionInformation())) {
+		}
 
 		if (hDllDbgHelp) {
 			::FreeLibrary(hDllDbgHelp);

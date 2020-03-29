@@ -28,8 +28,7 @@
 */
 #pragma once
 
-class CDecode
-{
+class CDecode {
 public:
 	virtual ~CDecode() {}
 

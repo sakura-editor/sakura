@@ -39,7 +39,7 @@
 #include "_main/global.h" // 2002/2/10 aroka
 #include <Windows.h>
 
-#define MAX_SETNUM	   100 // 2007.12.01 genta 最大値増加
+#define MAX_SETNUM 100 // 2007.12.01 genta 最大値増加
 #define MAX_SETNAMELEN 32
 
 //! キーワード総数 (2005.01.27 1セットあたりの数→セット全体の総数へ意味変更)
@@ -64,8 +64,7 @@
 	頻繁にずらす操作が発生しないよう，nKeyWordSetBlockSize(50個)ずつの
 	ブロック単位で場所を確保するようにしている．
 */
-class CKeyWordSetMgr
-{
+class CKeyWordSetMgr {
 public:
 	/*
 	||  Constructors
@@ -75,10 +74,10 @@ public:
 
 	///	@name キーワードセット操作
 	bool		   AddKeyWordSet(			   //!< セットの追加
-		  const wchar_t *pszSetName,   //!< [in] セット名
-		  bool			 bKEYWORDCASE, //!< [in] 大文字小文字の区別．true:あり, false:無し
-		  int			 nSize = -1	   //!< [in] 最初に領域を確保するサイズ．
-	  );
+				  const wchar_t *pszSetName,   //!< [in] セット名
+				  bool			 bKEYWORDCASE, //!< [in] 大文字小文字の区別．true:あり, false:無し
+				  int			 nSize = -1	//!< [in] 最初に領域を確保するサイズ．
+			  );
 	bool		   DelKeyWordSet(int nIdx);					   /* ｎ番目のセットを削除 */
 	const wchar_t *GetTypeName(int nIdx);					   /* ｎ番目のセット名を返す */
 	const wchar_t *SetTypeName(int nIdx, const wchar_t *name); //!< ｎ番目のセット名を設定する // 2005.01.26 Moca
@@ -102,8 +101,8 @@ public:
 	const wchar_t *GetKeyWord(int nIdx, int nIdx2); /* ｎ番目のセットのｍ番目のキーワードを返す */
 	const wchar_t *UpdateKeyWord(int nIdx, int nIdx2,
 								 const WCHAR *pszKeyWord); /* ｎ番目のセットのｍ番目のキーワードを編集 */
-	int	 AddKeyWord(int nIdx, const wchar_t *pszKeyWord); /* ｎ番目のセットにキーワードを追加 */
-	int	 DelKeyWord(int nIdx, int nIdx2); /* ｎ番目のセットのｍ番目のキーワードを削除 */
+	int  AddKeyWord(int nIdx, const wchar_t *pszKeyWord); /* ｎ番目のセットにキーワードを追加 */
+	int  DelKeyWord(int nIdx, int nIdx2); /* ｎ番目のセットのｍ番目のキーワードを削除 */
 	bool CanAddKeyWord(int nIdx);		  //!< キーワードが追加可能か
 	//@}
 
@@ -113,16 +112,16 @@ public:
 	//	BOOL IsModify( CKeyWordSetMgr&, BOOL* pnModifyFlagArr );	/* 変更状況を調査 */	// Uchi 2010/4/14
 	//実体が無いので削除
 	int SearchKeyWord2(int nIdx, const wchar_t *pszKeyWord, int nKeyWordLen);
-		/* ｎ番目のセットから指定キーワードをバイナリサーチ。見つかれば 0以上を返す */ // MIK
+	/* ｎ番目のセットから指定キーワードをバイナリサーチ。見つかれば 0以上を返す */ // MIK
 	int SearchKeyWordSet(const wchar_t *pszKeyWord); // キーワードセット名からセット番号を取得。見つからなければ
 													 // -1を返す	// Uchi 2010/4/14
 	//@}
 
 	// From Here 2004.07.29 Moca 追加 可変長記憶
-	int	 CleanKeyWords(int nIdx);	   //!< キーワードの整頓・利用できないキーワードの削除
-	int	 GetAllocSize(int nIdx) const; //!< 確保している数を返す
-	int	 GetFreeSize() const;		   //!< 未割り当てブロックのキーワード数を返す
-	void ResetAllKeyWordSet(void);	   // 全キーワードセットの削除と初期化
+	int  CleanKeyWords(int nIdx);	  //!< キーワードの整頓・利用できないキーワードの削除
+	int  GetAllocSize(int nIdx) const; //!< 確保している数を返す
+	int  GetFreeSize() const;		   //!< 未割り当てブロックのキーワード数を返す
+	void ResetAllKeyWordSet(void);	 // 全キーワードセットの削除と初期化
 	// To Here 2004.07.29 Moca
 
 	/*

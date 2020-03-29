@@ -61,32 +61,29 @@
 	@date 2005.03.19 かろと リファクタリング。クラス内部を隠蔽
 	@date 2006.01.22 かろと オプション追加・名称変更(全て行置換用Globalオプション追加のため)
 */
-class CBregexp : public CBregexpDll2
-{
+class CBregexp : public CBregexpDll2 {
 public:
 	CBregexp();
 	virtual ~CBregexp();
 
 	// 2006.01.22 かろと オプション追加・名称変更
-	enum Option
-	{
-		optNothing		 = 0,	 //!< オプションなし
-		optCaseSensitive = 1,	 //!< 大文字小文字区別オプション(/iをつけない)
-		optGlobal		 = 2,	 //!< 全域オプション(/g)
-		optExtend		 = 4,	 //!< 拡張正規表現(/x)
-		optASCII		 = 8,	 //!< ASCII(/a)
+	enum Option {
+		optNothing		 = 0,	//!< オプションなし
+		optCaseSensitive = 1,	//!< 大文字小文字区別オプション(/iをつけない)
+		optGlobal		 = 2,	//!< 全域オプション(/g)
+		optExtend		 = 4,	//!< 拡張正規表現(/x)
+		optASCII		 = 8,	//!< ASCII(/a)
 		optUnicode		 = 0x10, //!< Unicode(/u)
 		optDefault		 = 0x20, //!< Default(/d)
 		optLocale		 = 0x40, //!< Locale(/l)
 		optR			 = 0x80, //!< CRLF(/R)
 	};
 	//! 検索パターン定義
-	enum Pattern
-	{
-		PAT_UNKNOWN	  = 0, //!< 不明（初期値)
-		PAT_NORMAL	  = 1, //!< 通常
+	enum Pattern {
+		PAT_UNKNOWN   = 0, //!< 不明（初期値)
+		PAT_NORMAL	= 1, //!< 通常
 		PAT_TOP		  = 2, //!< 行頭"^"
-		PAT_BOTTOM	  = 4, //!< 行末"$"
+		PAT_BOTTOM	= 4, //!< 行末"$"
 		PAT_TAB		  = 8, //!< 行頭行末"^$"
 		PAT_LOOKAHEAD = 16 //!< 先読み"(?[=]"
 	};
@@ -104,7 +101,7 @@ public:
 	bool Compile(const wchar_t *szPattern0, const wchar_t *szPattern1, int nOption = 0,
 				 bool bKakomi = false);							   //!< Replace用
 	bool Match(const wchar_t *szTarget, int nLen, int nStart = 0); //!< 検索を実行する
-	int	 Replace(const wchar_t *szTarget, int nLen,
+	int  Replace(const wchar_t *szTarget, int nLen,
 				 int nStart = 0); //!< 置換を実行する	// 2007.01.16 ryoji 戻り値を置換個数に変更
 
 	//-----------------------------------------
@@ -141,9 +138,8 @@ public:
 		//	置換後文字列が0幅の場合にoutpがNULLでもoutendpがNULLでない場合があるので，
 		//	outpのNULLチェックが必要
 
-		if (m_pRegExp->outp == NULL) {
-			return CLogicInt(0);
-		} else {
+		if (m_pRegExp->outp == NULL) { return CLogicInt(0); }
+		else {
 			return CLogicInt(m_pRegExp->outendp - m_pRegExp->outp);
 		}
 	}
@@ -202,9 +198,9 @@ private:
 	wchar_t *MakePatternAlternate(const wchar_t *const szSearch, const wchar_t *const szReplace, int nOption);
 
 	//	メンバ変数
-	BREGEXP_W *	   m_pRegExp;	//!< コンパイル構造体
-	int			   m_ePatType;	//!< 検索文字列パターン種別
-	const wchar_t *m_szTarget;	//!< 対象文字列へのポインタ
+	BREGEXP_W *	m_pRegExp;   //!< コンパイル構造体
+	int			   m_ePatType;  //!< 検索文字列パターン種別
+	const wchar_t *m_szTarget;  //!< 対象文字列へのポインタ
 	wchar_t		   m_szMsg[80]; //!< BREGEXP_Wからのメッセージを保持する
 
 	// 静的メンバ変数

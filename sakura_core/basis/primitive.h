@@ -38,7 +38,7 @@ typedef wchar_t EDIT_CHAR;
 #define _EDITL(A) LTEXT(A)
 
 //文字コード別、文字型
-typedef unsigned char  uchar_t;	  //  unsigned char の別名．
+typedef unsigned char  uchar_t;   //  unsigned char の別名．
 typedef unsigned short uchar16_t; //  UTF-16 用．
 typedef unsigned long  uchar32_t; //  UTF-32 用．
 typedef long		   wchar32_t;

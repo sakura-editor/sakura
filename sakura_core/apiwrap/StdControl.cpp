@@ -20,7 +20,7 @@ UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, WCHAR *pszText, int nMaxCount
 bool TreeView_GetItemTextVector(HWND hwndTree, TVITEM &item, std::vector<WCHAR> &vecStr)
 {
 	BOOL ret		 = FALSE;
-	int	 nBufferSize = 64;
+	int  nBufferSize = 64;
 	while (FALSE == ret) {
 		nBufferSize *= 2;
 		if (0x10000 < nBufferSize) { break; }
@@ -75,7 +75,8 @@ void TreeView_ExpandAll(HWND hwndTree, bool bExpand, int nMaxDepth)
 			TreeView_SelectSetFirstVisible(hwndTree, htiItem);
 		}
 		TreeView_SelectItem(hwndTree, NULL);
-	} else {
+	}
+	else {
 		TreeView_SelectSetFirstVisible(hwndTree, htiCur);
 	}
 

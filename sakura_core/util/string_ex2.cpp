@@ -100,7 +100,7 @@ const char *GetNextLine(const char *pData, int nDataLen, int *pnLineLen, int *pn
 			break;
 		}
 	}
-	*pnBgn	   = i + pcEol->GetLen();
+	*pnBgn	 = i + pcEol->GetLen();
 	*pnLineLen = i - nBgn;
 	return &pData[nBgn];
 }
@@ -110,11 +110,11 @@ const char *GetNextLine(const char *pData, int nDataLen, int *pnLineLen, int *pn
 	GetNextLineより作成
 	static メンバ関数
 */
-const wchar_t *GetNextLineW(const wchar_t *pData,	  //!< [in]	検索文字列
+const wchar_t *GetNextLineW(const wchar_t *pData,	 //!< [in]	検索文字列
 							int			   nDataLen,  //!< [in]	検索文字列の文字数
 							int *		   pnLineLen, //!< [out]	1行の文字数を返すただしEOLは含まない
-							int *		   pnBgn,	  //!< [i/o]	検索文字列のオフセット位置
-							CEol *		   pcEol,	  //!< [out]	EOL
+							int *		   pnBgn,	 //!< [i/o]	検索文字列のオフセット位置
+							CEol *		   pcEol,	 //!< [out]	EOL
 							bool		   bExtEol)
 {
 	int i;
@@ -131,7 +131,7 @@ const wchar_t *GetNextLineW(const wchar_t *pData,	  //!< [in]	検索文字列
 			break;
 		}
 	}
-	*pnBgn	   = i + pcEol->GetLen();
+	*pnBgn	 = i + pcEol->GetLen();
 	*pnLineLen = i - nBgn;
 	return &pData[nBgn];
 }
@@ -200,9 +200,9 @@ const wchar_t* GetNextLineWB(
 
 //! データを指定「文字数」以内に切り詰める。戻り値は結果の文字数。
 int LimitStringLengthW(const wchar_t *pszData,		//!< [in]
-					   int			  nDataLength,	//!< [in]
+					   int			  nDataLength,  //!< [in]
 					   int			  nLimitLength, //!< [in]
-					   CNativeW &	  cmemDes		//!< [out]
+					   CNativeW &	 cmemDes		//!< [out]
 )
 {
 	int n = nDataLength;
@@ -231,8 +231,8 @@ void GetLineColumn(const wchar_t *pLine, int *pnJumpToLine, int *pnJumpToColumn)
 		if (pLine[i] >= L'0' && pLine[i] <= L'9') { break; }
 	}
 	wmemset(szNumber, 0, _countof(szNumber));
-	if (i >= nLineLen) {
-	} else {
+	if (i >= nLineLen) {}
+	else {
 		/* 行位置 改行単位行番号(1起点)の抽出 */
 		j = 0;
 		for (; i < nLineLen && j + 1 < _countof(szNumber);) {
@@ -270,7 +270,7 @@ void GetLineColumn(const wchar_t *pLine, int *pnJumpToLine, int *pnJumpToColumn)
 		scan_ints("1,23,4,5", "%d,%d,%d", a);
 		//結果: a[0]=1, a[1]=23, a[2]=4 となる。
 */
-int scan_ints(const wchar_t *pszData,	//!< [in]
+int scan_ints(const wchar_t *pszData,   //!< [in]
 			  const wchar_t *pszFormat, //!< [in]
 			  int *			 anBuf		//!< [out]
 )

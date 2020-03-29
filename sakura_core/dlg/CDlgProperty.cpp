@@ -91,7 +91,7 @@ void CDlgProperty::SetData(void)
 {
 	CEditDoc *pCEditDoc = (CEditDoc *)m_lParam;
 	CNativeW  cmemProp;
-	WCHAR	  szWork[500];
+	WCHAR	 szWork[500];
 
 	HANDLE			nFind;
 	WIN32_FIND_DATA wfd;
@@ -125,9 +125,8 @@ void CDlgProperty::SetData(void)
 	if (CAppMode::getInstance()->IsViewMode()) {
 		cmemProp.AppendString(LS(STR_DLGFLPROP_VIEW_MODE)); // 2009.04.11 ryoji 「上書き禁止モード」→「ビューモード」
 	}
-	if (pCEditDoc->m_cDocEditor.IsModified()) {
-		cmemProp.AppendString(LS(STR_DLGFLPROP_MODIFIED));
-	} else {
+	if (pCEditDoc->m_cDocEditor.IsModified()) { cmemProp.AppendString(LS(STR_DLGFLPROP_MODIFIED)); }
+	else {
 		cmemProp.AppendString(LS(STR_DLGFLPROP_NOT_MODIFIED));
 	}
 
@@ -141,13 +140,16 @@ void CDlgProperty::SetData(void)
 		if (pCEditDoc->m_cDocFile.IsFileLocking()) {
 			if (m_pShareData->m_Common.m_sFile.m_nFileShareMode == SHAREMODE_DENY_WRITE) {
 				wcsncpy_s(szWork, LS(STR_DLGFLPROP_W_LOCK), _TRUNCATE);
-			} else if (m_pShareData->m_Common.m_sFile.m_nFileShareMode == SHAREMODE_DENY_READWRITE) {
+			}
+			else if (m_pShareData->m_Common.m_sFile.m_nFileShareMode == SHAREMODE_DENY_READWRITE) {
 				wcsncpy_s(szWork, LS(STR_DLGFLPROP_RW_LOCK), _TRUNCATE);
-			} else {
+			}
+			else {
 				wcsncpy_s(szWork, LS(STR_DLGFLPROP_LOCK), _TRUNCATE);
 			}
 			cmemProp.AppendString(szWork);
-		} else {
+		}
+		else {
 			wcsncpy_s(szWork, LS(STR_DLGFLPROP_NOT_LOCK), _TRUNCATE);
 			cmemProp.AppendString(szWork);
 		}
@@ -196,8 +198,8 @@ void CDlgProperty::SetData(void)
 	}
 
 #ifdef _DEBUG /////////////////////////////////////////////////////
-	HGLOBAL	 hgData;
-	char *	 pBuf;
+	HGLOBAL  hgData;
+	char *   pBuf;
 	int		 nBufLen;
 	CNativeW ctext;
 	/* メモリ確保 & ファイル読み込み */

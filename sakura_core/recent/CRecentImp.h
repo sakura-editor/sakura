@@ -29,8 +29,8 @@
 
 #include "recent/CRecent.h"
 
-template<class DATA_TYPE, class RECEIVE_TYPE = const DATA_TYPE *> class CRecentImp : public CRecent
-{
+template<class DATA_TYPE, class RECEIVE_TYPE = const DATA_TYPE *>
+class CRecentImp : public CRecent {
 private:
 	typedef CRecentImp<DATA_TYPE, RECEIVE_TYPE> Me;
 	typedef DATA_TYPE							DataType;
@@ -42,12 +42,12 @@ public:
 
 protected:
 	//生成
-	bool Create(DataType *pszItemArray,	  //!< アイテム配列へのポインタ
-				size_t	  nTextMaxLength, //!< 最大テキスト長(終端含む)
-				int *	  pnItemCount,	  //!< アイテム個数へのポインタ
-				bool *	  pbItemFavorite, //!< お気に入りへのポインタ(NULL許可)
-				int		  nArrayCount,	  //!< 最大管理可能なアイテム数
-				int *	  pnViewCount	  //!< 表示個数(NULL許可)
+	bool Create(DataType *pszItemArray,   //!< アイテム配列へのポインタ
+				size_t	nTextMaxLength, //!< 最大テキスト長(終端含む)
+				int *	 pnItemCount,	//!< アイテム個数へのポインタ
+				bool *	pbItemFavorite, //!< お気に入りへのポインタ(NULL許可)
+				int		  nArrayCount,	//!< 最大管理可能なアイテム数
+				int *	 pnViewCount	 //!< 表示個数(NULL許可)
 	);
 
 public:
@@ -89,7 +89,7 @@ public:
 	bool	  MoveItem(int nSrcIndex, int nDstIndex); //アイテムを移動
 
 	//オーバーライド用インターフェース
-	virtual int	 CompareItem(const DataType *p1, ReceiveType p2) const			= 0;
+	virtual int  CompareItem(const DataType *p1, ReceiveType p2) const			= 0;
 	virtual void CopyItem(DataType *dst, ReceiveType src) const					= 0;
 	virtual bool DataToReceiveType(ReceiveType *dst, const DataType *src) const = 0;
 	virtual bool TextToDataType(DataType *dst, LPCWSTR pszText) const			= 0;
@@ -103,7 +103,7 @@ private:
 		return const_cast<DataType *>(static_cast<const Me *>(this)->GetItemPointer(nIndex));
 	}
 	void ZeroItem(int nIndex);						//アイテムをゼロクリアする
-	int	 GetOldestItem(int nIndex, bool bFavorite); //最古のアイテムを探す
+	int  GetOldestItem(int nIndex, bool bFavorite); //最古のアイテムを探す
 	bool CopyItem(int nSrcIndex, int nDstIndex);
 
 protected:
@@ -112,11 +112,11 @@ protected:
 
 	//外部参照
 	DataType *m_puUserItemData;		//!< アイテム配列へのポインタ
-	int *	  m_pnUserItemCount;	//!< アイテム個数へのポインタ
-	bool *	  m_pbUserItemFavorite; //!< お気に入りへのポインタ (NULL許可)
+	int *	 m_pnUserItemCount;	//!< アイテム個数へのポインタ
+	bool *	m_pbUserItemFavorite; //!< お気に入りへのポインタ (NULL許可)
 	int		  m_nArrayCount;		//!< 最大管理可能なアイテム数
-	int *	  m_pnUserViewCount;	//!< 表示個数 (NULL許可)
-	size_t	  m_nTextMaxLength;		//!< 最大テキスト長(終端含む)
+	int *	 m_pnUserViewCount;	//!< 表示個数 (NULL許可)
+	size_t	m_nTextMaxLength;		//!< 最大テキスト長(終端含む)
 };
 
 #include "CRecentCmd.h"

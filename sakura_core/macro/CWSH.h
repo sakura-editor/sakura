@@ -30,8 +30,7 @@ class CInterfaceObject: public ImplementsIUnknown<IDispatch>
  */
 typedef void (*ScriptErrorHandler)(BSTR Description, BSTR Source, void *Data);
 
-class CWSHClient final : IWSHClient
-{
+class CWSHClient final : IWSHClient {
 public:
 	// 型定義
 	typedef std::vector<CIfObj *> List;		// 所有しているインタフェースオブジェクトのリスト
@@ -53,7 +52,7 @@ public:
 	void AddInterfaceObject(CIfObj *obj);
 	bool Execute(const wchar_t *AScript);
 	void Error(BSTR Description, BSTR Source); ///< ScriptErrorHandlerを呼び出す。
-	void Error(const wchar_t *Description);	   ///< ScriptErrorHandlerを呼び出す。
+	void Error(const wchar_t *Description);	///< ScriptErrorHandlerを呼び出す。
 
 private:
 	IActiveScript *m_Engine;

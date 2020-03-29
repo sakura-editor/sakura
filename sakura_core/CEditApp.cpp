@@ -50,8 +50,8 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 	m_pcEditDoc = new CEditDoc(this);
 
 	// IO管理
-	m_pcLoadAgent	   = new CLoadAgent();
-	m_pcSaveAgent	   = new CSaveAgent();
+	m_pcLoadAgent	  = new CLoadAgent();
+	m_pcSaveAgent	  = new CSaveAgent();
 	m_pcVisualProgress = new CVisualProgress();
 
 	// GREPモード管理

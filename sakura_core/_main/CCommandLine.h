@@ -34,17 +34,16 @@
 /*!
  * @brief コマンドラインパーサ クラス
  */
-class CCommandLine : public TSingleton<CCommandLine>
-{
+class CCommandLine : public TSingleton<CCommandLine> {
 	friend class TSingleton<CCommandLine>;
 
 protected:
 	CCommandLine() noexcept;
 
 private:
-	static int CheckCommandLine(LPWSTR	str,   //!< [in] 検証する文字列（先頭の-は含まない）
+	static int CheckCommandLine(LPWSTR  str,   //!< [in] 検証する文字列（先頭の-は含まない）
 								WCHAR **arg,   //!< [out] 引数がある場合はその先頭へのポインタ
-								int *	arglen //!< [out] 引数の長さ
+								int *   arglen //!< [out] 引数の長さ
 	);
 
 	/*!
@@ -93,7 +92,7 @@ public:
 	tagPOINT		   GetWindowOrigin() const noexcept { return {m_fi.m_nWindowOriginX, m_fi.m_nWindowOriginY}; }
 	LPCWSTR			   GetOpenFile() const noexcept { return m_fi.m_szPath; }
 	int				   GetFileNum(void) const noexcept { return m_vFiles.size(); }
-	const WCHAR *	   GetFileName(int i) const noexcept { return i < GetFileNum() ? m_vFiles[i].c_str() : NULL; }
+	const WCHAR *	  GetFileName(int i) const noexcept { return i < GetFileNum() ? m_vFiles[i].c_str() : NULL; }
 	void			   ClearFile(void) noexcept { m_vFiles.clear(); }
 	LPCWSTR			   GetDocType() const noexcept { return m_fi.m_szDocType; }
 	ECodeType		   GetDocCode() const noexcept { return m_fi.m_nCharCode; }

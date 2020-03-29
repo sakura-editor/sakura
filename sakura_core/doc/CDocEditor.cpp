@@ -78,7 +78,8 @@ void CDocEditor::OnAfterLoad(const SLoadInfo &sLoadInfo)
 		const STypeConfig &type = pcDoc->m_cDocType.GetDocumentAttribute();
 		if (pcDoc->m_cDocFile.GetCodeSet() == type.m_encoding.m_eDefaultCodetype) {
 			SetNewLineCode(type.m_encoding.m_eDefaultEoltype); // 2011.01.24 ryoji デフォルトEOL
-		} else {
+		}
+		else {
 			SetNewLineCode(EOL_CRLF);
 		}
 		CDocLine *pFirstlineinfo = pcDoc->m_cDocLineMgr.GetLine(CLogicInt(0));

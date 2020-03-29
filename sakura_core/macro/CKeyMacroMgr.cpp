@@ -51,7 +51,7 @@ void CKeyMacroMgr::ClearAll(void)
 	CMacro *del_p;
 	while (p) {
 		del_p = p;
-		p	  = p->GetNext();
+		p	 = p->GetNext();
 		delete del_p;
 	}
 	//	m_nKeyMacroDataArrNum = 0;	2002.2.2 YAZAKI
@@ -79,7 +79,8 @@ void CKeyMacroMgr::Append(CMacro *macro)
 	if (m_pTop) {
 		m_pBot->SetNext(macro);
 		m_pBot = macro;
-	} else {
+	}
+	else {
 		m_pTop = macro;
 		m_pBot = m_pTop;
 	}
@@ -159,7 +160,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro(HINSTANCE hInstance, const WCHAR *pszPath)
 	int line = 1; //	エラー時に行番号を通知するため．1始まり．
 	for (; in.Good(); ++line) {
 		std::wstring strLine = in.ReadLineW();
-		const WCHAR *szLine	 = strLine.c_str(); // '\0'終端文字列を取得
+		const WCHAR *szLine  = strLine.c_str(); // '\0'終端文字列を取得
 		using namespace WCODE;
 
 		int nLineLen = strLine.length();
@@ -206,9 +207,8 @@ BOOL CKeyMacroMgr::LoadKeyMacro(HINSTANCE hInstance, const WCHAR *pszPath)
 					m_nReady = false;
 				}
 				VARTYPE type = VT_EMPTY;
-				if (nArgs < 4) {
-					type = mInfo->m_varArguments[nArgs];
-				} else {
+				if (nArgs < 4) { type = mInfo->m_varArguments[nArgs]; }
+				else {
 					if (mInfo->m_pData && nArgs < mInfo->m_pData->m_nArgMinSize) {
 						type = mInfo->m_pData->m_pVarArgEx[nArgs - 4];
 					}
@@ -266,7 +266,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro(HINSTANCE hInstance, const WCHAR *pszPath)
 					cmemWork.Replace(L"\\t", L"\t");
 					{
 						// \uXXXX 置換
-						size_t		   nLen	  = cmemWork.GetStringLength();
+						size_t		   nLen   = cmemWork.GetStringLength();
 						size_t		   nBegin = 0;
 						const wchar_t *p	  = cmemWork.GetStringPtr();
 						CNativeW	   cmemTemp;
@@ -284,7 +284,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro(HINSTANCE hInstance, const WCHAR *pszPath)
 									wcsncpy(hex, &p[n + 2], k - n - 2);
 									hex[k - n - 2] = L'\0';
 									wchar_t *pEnd  = NULL;
-									wchar_t	 c	   = static_cast<wchar_t>(wcstol(hex, &pEnd, 16));
+									wchar_t  c	 = static_cast<wchar_t>(wcstol(hex, &pEnd, 16));
 									cmemTemp.AppendString(&c, 1);
 								}
 								n = k - 1;
@@ -298,7 +298,8 @@ BOOL CKeyMacroMgr::LoadKeyMacro(HINSTANCE hInstance, const WCHAR *pszPath)
 					cmemWork.Replace(L"\\\1", L"\\"); // 一時置換を\に戻す(最後でないといけない)
 					macro->AddStringParam(cmemWork.GetStringPtr(),
 										  cmemWork.GetStringLength()); //	引数を文字列として追加
-				} else if (Is09(szLine[i]) || szLine[i] == L'-') { //	数字で始まったら数字列だ(-記号も含む)。
+				}
+				else if (Is09(szLine[i]) || szLine[i] == L'-') { //	数字で始まったら数字列だ(-記号も含む)。
 					// Jun. 16, 2002 genta プロトタイプチェック
 					// Jun. 27, 2002 genta 余分な引数を無視するよう，VT_EMPTYを許容する．
 					if (type != VT_I4 && type != VT_EMPTY) {
@@ -313,7 +314,8 @@ BOOL CKeyMacroMgr::LoadKeyMacro(HINSTANCE hInstance, const WCHAR *pszPath)
 						if (Is09(szLine[i])) {				 // まだ数値
 															 //							++i;
 							continue;
-						} else {
+						}
+						else {
 							nEnd = i; //	数字の最後の文字
 							i--;
 							break;
@@ -332,7 +334,8 @@ BOOL CKeyMacroMgr::LoadKeyMacro(HINSTANCE hInstance, const WCHAR *pszPath)
 				else if (szLine[i] == LTEXT(')')) {
 					//	引数無し
 					break;
-				} else {
+				}
+				else {
 					//	Parse Error:文法エラーっぽい。
 					//	Jun. 16, 2002 genta
 					nBgn = nEnd = i;
@@ -358,7 +361,8 @@ BOOL CKeyMacroMgr::LoadKeyMacro(HINSTANCE hInstance, const WCHAR *pszPath)
 			}
 			/* キーマクロのバッファにデータ追加 */
 			Append(macro);
-		} else {
+		}
+		else {
 			::MYMESSAGEBOX(NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE, LS(STR_ERR_DLGKEYMACMGR8), line,
 						   szFuncName);
 			//	Jun. 16, 2002 genta

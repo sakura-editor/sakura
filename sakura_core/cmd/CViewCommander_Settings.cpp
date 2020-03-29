@@ -135,13 +135,14 @@ void CViewCommander::Command_TYPE_LIST(void)
 	CDlgTypeList		  cDlgTypeList;
 	CDlgTypeList::SResult sResult;
 	sResult.cDocumentType = GetDocument()->m_cDocType.GetDocumentType();
-	sResult.bTempChange	  = true;
+	sResult.bTempChange   = true;
 	if (cDlgTypeList.DoModal(G_AppInstance(), m_pCommanderView->GetHwnd(), &sResult)) {
 		//	Nov. 29, 2000 genta
 		//	一時的な設定適用機能を無理矢理追加
 		if (sResult.bTempChange) {
 			HandleCommand(F_CHANGETYPE, true, (LPARAM)sResult.cDocumentType.GetIndex() + 1, 0, 0, 0);
-		} else {
+		}
+		else {
 			/* タイプ別設定 */
 			CEditApp::getInstance()->OpenPropertySheetTypes(-1, sResult.cDocumentType);
 		}
@@ -199,7 +200,8 @@ void CViewCommander::Command_FONT(void)
 
 		if (GetDllShareData().m_Common.m_sView.m_lf.lfPitchAndFamily & FIXED_PITCH) {
 			GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH = TRUE; /* 現在のフォントは固定幅フォントである */
-		} else {
+		}
+		else {
 			GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH = FALSE; /* 現在のフォントは固定幅フォントである */
 		}
 		// 2010.09.06 プロポーショナルフォントでもたぶん矩形も使えるはず
@@ -232,7 +234,7 @@ void CViewCommander::Command_FONT(void)
 void CViewCommander::Command_SETFONTSIZE(int fontSize, int shift, int mode)
 {
 	// The point sizes recommended by "The Windows Interface: An Application Design Guide", 1/10ポイント単位
-	static const INT sizeTable[] = {8 * 10,	 9 * 10,  10 * 10, (INT)(10.5 * 10), 11 * 10, 12 * 10,
+	static const INT sizeTable[] = {8 * 10,  9 * 10,  10 * 10, (INT)(10.5 * 10), 11 * 10, 12 * 10,
 									14 * 10, 16 * 10, 18 * 10, 20 * 10,			 22 * 10, 24 * 10,
 									26 * 10, 28 * 10, 36 * 10, 48 * 10,			 72 * 10};
 	const LOGFONT &lf = (mode == 0 ? GetDllShareData().m_Common.m_sView.m_lf : GetEditWindow()->GetLogfont(mode == 2));
@@ -246,7 +248,8 @@ void CViewCommander::Command_SETFONTSIZE(int fontSize, int shift, int mode)
 	if (0 != fontSize) {
 		// フォントサイズを直接選択する場合
 		nPointSize = t_max(sizeTable[0], t_min(sizeTable[_countof(sizeTable) - 1], fontSize));
-	} else if (0 != shift) {
+	}
+	else if (0 != shift) {
 		// 現在のフォントに対して、縮小or拡大したフォント選択する場合
 		nPointSize = (mode == 0 ? GetDllShareData().m_Common.m_sView.m_nPointSize
 								: GetEditWindow()->GetFontPointSize(mode == 2));
@@ -260,7 +263,8 @@ void CViewCommander::Command_SETFONTSIZE(int fontSize, int shift, int mode)
 				break;
 			}
 		}
-	} else {
+	}
+	else {
 		// フォントサイズが変わらないので終了
 		return;
 	}
@@ -269,27 +273,29 @@ void CViewCommander::Command_SETFONTSIZE(int fontSize, int shift, int mode)
 	int nTypeIndex = -1;
 	if (mode == 0) {
 		GetDllShareData().m_Common.m_sView.m_lf.lfHeight = lfHeight;
-		GetDllShareData().m_Common.m_sView.m_nPointSize	 = nPointSize;
-	} else if (mode == 1) {
-		CTypeConfig	 nDocType = GetDocument()->m_cDocType.GetDocumentType();
-		STypeConfig *type	  = new STypeConfig();
+		GetDllShareData().m_Common.m_sView.m_nPointSize  = nPointSize;
+	}
+	else if (mode == 1) {
+		CTypeConfig  nDocType = GetDocument()->m_cDocType.GetDocumentType();
+		STypeConfig *type	 = new STypeConfig();
 		if (!CDocTypeManager().GetTypeConfig(nDocType, *type)) {
 			// 謎のエラー
 			return;
 		}
 		type->m_bUseTypeFont = true; // タイプ別フォントを有効にする
 		type->m_lf			 = lf;
-		type->m_lf.lfHeight	 = lfHeight;
-		type->m_nPointSize	 = nPointSize;
+		type->m_lf.lfHeight  = lfHeight;
+		type->m_nPointSize   = nPointSize;
 		CDocTypeManager().SetTypeConfig(nDocType, *type);
 		delete type;
 		nTypeIndex = nDocType.GetIndex();
-	} else if (mode == 2) {
+	}
+	else if (mode == 2) {
 		GetDocument()->m_blfCurTemp		= true;
 		GetDocument()->m_lfCur			= lf;
 		GetDocument()->m_lfCur.lfHeight = lfHeight;
-		GetDocument()->m_nPointSizeCur	= nPointSize;
-		GetDocument()->m_nPointSizeOrg	= GetEditWindow()->GetFontPointSize(false);
+		GetDocument()->m_nPointSizeCur  = nPointSize;
+		GetDocument()->m_nPointSizeOrg  = GetEditWindow()->GetFontPointSize(false);
 	}
 
 	HWND hwndFrame;
@@ -304,7 +310,8 @@ void CViewCommander::Command_SETFONTSIZE(int fontSize, int shift, int mode)
 		}
 		CAppNodeGroupHandle(0).PostMessageToAllEditors(MYWM_CHANGESETTING, (WPARAM)nTypeIndex,
 													   (LPARAM)PM_CHANGESETTING_FONTSIZE, hwndFrame);
-	} else if (mode == 2) {
+	}
+	else if (mode == 2) {
 		// 自分だけ更新
 		GetDocument()->OnChangeSetting(true, false, true);
 	}
@@ -415,7 +422,8 @@ void CViewCommander::Command_TEXTWRAPMETHOD(int nWrapMethod)
 	if (pcDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP) {
 		pcDoc->m_cLayoutMgr.CalculateTextWidth(); // テキスト最大幅を算出する
 		GetEditWindow()->RedrawAllViews(NULL); // スクロールバーの更新が必要なので再表示を実行する
-	} else {
+	}
+	else {
 		pcDoc->m_cLayoutMgr.ClearLayoutLineWidth(); // 各行のレイアウト行長の記憶をクリアする
 	}
 }
@@ -440,11 +448,13 @@ void CViewCommander::Command_SELECT_COUNT_MODE(int nMode)
 		if (*pnSelectCountMode == SELECT_COUNT_TOGGLE) {
 			nCurrentMode = (GetDllShareData().m_Common.m_sStatusbar.m_bDispSelCountByByte ? SELECT_COUNT_BY_BYTE
 																						  : SELECT_COUNT_BY_CHAR);
-		} else {
+		}
+		else {
 			nCurrentMode = *pnSelectCountMode;
 		}
 		*pnSelectCountMode = (nCurrentMode == SELECT_COUNT_BY_BYTE ? SELECT_COUNT_BY_CHAR : SELECT_COUNT_BY_BYTE);
-	} else if (nMode == SELECT_COUNT_BY_BYTE || nMode == SELECT_COUNT_BY_CHAR) {
+	}
+	else if (nMode == SELECT_COUNT_BY_BYTE || nMode == SELECT_COUNT_BY_CHAR) {
 		*pnSelectCountMode = (ESelectCountMode)nMode;
 	}
 }

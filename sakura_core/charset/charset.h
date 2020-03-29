@@ -30,12 +30,11 @@
 
 // 文字コードセット種別
 // 2007.08.14 kobake CODE_ERROR, CODE_DEFAULT 追加
-enum ECodeType
-{
+enum ECodeType {
 	CODE_SJIS,		//!< SJIS				(MS-CP932(Windows-31J), シフトJIS(Shift_JIS))
 	CODE_JIS,		//!< JIS				(MS-CP5022x(ISO-2022-JP-MS)ではない)
 	CODE_EUC,		//!< EUC				(MS-CP51932, eucJP-ms(eucJP-open)ではない)
-	CODE_UNICODE,	//!< Unicode			(UTF-16 LittleEndian(UCS-2))
+	CODE_UNICODE,   //!< Unicode			(UTF-16 LittleEndian(UCS-2))
 	CODE_UTF8,		//!< UTF-8(UCS-2)
 	CODE_UTF7,		//!< UTF-7(UCS-2)
 	CODE_UNICODEBE, //!< Unicode BigEndian	(UTF-16 BigEndian(UCS-2))
@@ -58,7 +57,7 @@ enum ECodeType
 									 - MS-CP50222
 										 Unicode から cp50222 への変換時に、
 										 JIS X 0201 片仮名は、SO/SI を用いてエンコードされる
-							 
+							 
 									 参考
 									 http://legacy-encoding.sourceforge.jp/wiki/
 								 */
@@ -108,8 +107,7 @@ inline bool IsValidCodeOrCPTypeExceptSJIS(int code)
 //                           名前                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-class CCodeTypeName
-{
+class CCodeTypeName {
 public:
 	CCodeTypeName(ECodeType eCodeType)
 		: m_eCodeType(eCodeType)
@@ -122,9 +120,9 @@ public:
 		InitCodeSet();
 	}
 	ECodeType GetCode() const { return m_eCodeType; }
-	LPCWSTR	  Normal() const;
-	LPCWSTR	  Short() const;
-	LPCWSTR	  Bracket() const;
+	LPCWSTR   Normal() const;
+	LPCWSTR   Short() const;
+	LPCWSTR   Bracket() const;
 	bool	  UseBom();
 	bool	  CanDefault();
 	bool	  IsBomDefOn();
@@ -137,11 +135,10 @@ private:
 //                      コンボボックス                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-class CCodeTypesForCombobox
-{
+class CCodeTypesForCombobox {
 public:
 	CCodeTypesForCombobox() { InitCodeSet(); }
 	int		  GetCount() const;
 	ECodeType GetCode(int nIndex) const;
-	LPCWSTR	  GetName(int nIndex) const;
+	LPCWSTR   GetName(int nIndex) const;
 };

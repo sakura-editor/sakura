@@ -38,8 +38,7 @@ class CDlgDiff;
 	@brief DIFF差分表示ダイアログボックス
 */
 //	Feb. 28, 2004 genta 最後に選択されていた番号を保存する
-class CDlgDiff final : public CDialog
-{
+class CDlgDiff final : public CDialog {
 public:
 	/*
 	||  Constructors
@@ -60,7 +59,7 @@ protected:
 	BOOL	OnLbnSelChange(HWND hwndCtl, int wID) override;
 	BOOL	OnLbnDblclk(int wID) override;
 	BOOL	OnEnChange(HWND hwndCtl, int wID) override;
-	LPVOID	GetHelpIdTable(void) override;
+	LPVOID  GetHelpIdTable(void) override;
 	INT_PTR DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam,
 						  LPARAM lParam) override; // 標準以外のメッセージを捕捉する
 	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
@@ -69,10 +68,10 @@ protected:
 	BOOL	OnMinMaxInfo(LPARAM lParam);
 
 	void SetData(void) override; /* ダイアログデータの設定 */
-	int	 GetData(void) override; /* ダイアログデータの取得 */
+	int  GetData(void) override; /* ダイアログデータの取得 */
 
 private:
-	int	  m_nIndexSave; // 最後に選択されていた番号
+	int   m_nIndexSave; // 最後に選択されていた番号
 	POINT m_ptDefaultSize;
 	RECT  m_rcItems[22];
 
@@ -80,7 +79,7 @@ public:
 	SFilePath m_szFile1;		// 自ファイル
 	SFilePath m_szFile2;		// 相手ファイル
 	bool	  m_bIsModifiedDst; // 相手ファイル更新中
-	ECodeType m_nCodeTypeDst;	// 相手ファイルの文字コード
+	ECodeType m_nCodeTypeDst;   // 相手ファイルの文字コード
 	bool	  m_bBomDst;		// 相手ファイルのBOM
 	int		  m_nDiffFlgOpt;	// DIFFオプション
 	HWND	  m_hWnd_Dst;		// 相手ウインドウハンドル

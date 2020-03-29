@@ -59,13 +59,13 @@ void CDocOutline::MakeTopicList_asm(CFuncInfoArr *pcFuncInfoArr)
 
 	for (CLogicInt nLineCount = CLogicInt(0); nLineCount < nTotalLine; nLineCount++) {
 		const WCHAR *pLine;
-		CLogicInt	 nLineLen;
+		CLogicInt	nLineLen;
 		WCHAR *		 pTmpLine;
 		int			 length;
 		int			 offset;
 #define MAX_ASM_TOKEN 2
 		WCHAR *token[MAX_ASM_TOKEN];
-		int	   j;
+		int	j;
 		WCHAR *p;
 
 		// 1行取得する。
@@ -99,7 +99,7 @@ void CDocOutline::MakeTopicList_asm(CFuncInfoArr *pcFuncInfoArr)
 		}
 
 		if (token[0] != NULL) { //トークンが1個以上ある
-			int	   nFuncId	   = -1;
+			int	nFuncId	 = -1;
 			WCHAR *entry_token = NULL;
 
 			length = wcslen(token[0]);
@@ -107,11 +107,13 @@ void CDocOutline::MakeTopicList_asm(CFuncInfoArr *pcFuncInfoArr)
 				token[0][length - 1] = L'\0';
 				nFuncId				 = 51;
 				entry_token			 = token[0];
-			} else if (token[1] != NULL) {				//トークンが2個以上ある
+			}
+			else if (token[1] != NULL) {				//トークンが2個以上ある
 				if (_wcsicmp(token[1], L"proc") == 0) { //関数
 					nFuncId		= 50;
 					entry_token = token[0];
-				} else if (_wcsicmp(token[1], L"endp") == 0) { //関数終了
+				}
+				else if (_wcsicmp(token[1], L"endp") == 0) { //関数終了
 					nFuncId		= 52;
 					entry_token = token[0];
 					//}else

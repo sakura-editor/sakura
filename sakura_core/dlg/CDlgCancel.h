@@ -22,8 +22,7 @@ class CDlgCancel;
 /*!
 	@brief キャンセルボタンダイアログ
 */
-class CDlgCancel : public CDialog
-{
+class CDlgCancel : public CDialog {
 public:
 	/*
 	||  Constructors
@@ -41,7 +40,7 @@ public:
 	//	void Close( void );	/* モードレスダイアログの削除 */
 	BOOL	IsCanceled(void) { return m_bCANCEL; } /* IDCANCELボタンが押されたか？ */
 	INT_PTR DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam) override;
-		/* ダイアログのメッセージ処理 */				 /* BOOL->INT_PTR 2008/7/18 Uchi*/
+	/* ダイアログのメッセージ処理 */					 /* BOOL->INT_PTR 2008/7/18 Uchi*/
 	void DeleteAsync(void); /* 自動破棄を遅延実行する */ // 2008.05.28 ryoji
 
 	//	HINSTANCE	m_hInstance;	/* アプリケーションインスタンスのハンドル */

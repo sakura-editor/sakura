@@ -30,11 +30,9 @@
 #include "macro/CWSHIfObj.h"
 #include "outline/CFuncInfo.h" // FUNCINFO_INFOMASK
 
-class COutlineIfObj : public CWSHIfObj
-{
+class COutlineIfObj : public CWSHIfObj {
 	// 型定義
-	enum FuncId
-	{
+	enum FuncId {
 		F_OL_COMMAND_FIRST = 0, //↓コマンドは以下に追加する
 		F_OL_ADDFUNCINFO,		//アウトライン解析に追加する
 		F_OL_ADDFUNCINFO2,		//アウトライン解析に追加する（深さ指定）
@@ -45,7 +43,7 @@ class COutlineIfObj : public CWSHIfObj
 		F_OL_ADDFUNCINFO4,		//アウトライン解析に追加する（深さ指定、ファイル名）
 		F_OL_FUNCTION_FIRST = F_FUNCTION_FIRST //↓関数は以下に追加する
 	};
-	typedef std::string	 string;
+	typedef std::string  string;
 	typedef std::wstring wstring;
 
 	// コンストラクタ
@@ -54,7 +52,8 @@ public:
 		: CWSHIfObj(L"Outline", false)
 		, m_nListType(OUTLINE_PLUGIN)
 		, m_cFuncInfoArr(cFuncInfoArr)
-	{}
+	{
+	}
 
 	// デストラクタ
 public:
@@ -76,7 +75,7 @@ public:
 					   const int ArgSize)
 	{
 		switch (LOWORD(ID)) {
-		case F_OL_ADDFUNCINFO:	//アウトライン解析に追加する
+		case F_OL_ADDFUNCINFO:  //アウトライン解析に追加する
 		case F_OL_ADDFUNCINFO2: //アウトライン解析に追加する（深さ指定）
 		case F_OL_ADDFUNCINFO3: //アウトライン解析に追加する（ファイル名）
 		case F_OL_ADDFUNCINFO4: //アウトライン解析に追加する（ファイル名/深さ指定）
@@ -85,28 +84,32 @@ public:
 			if (Arguments[1] == NULL) return false;
 			if (Arguments[2] == NULL) return false;
 			if (Arguments[3] == NULL) return false;
-			CLogicPoint	 ptLogic(_wtoi(Arguments[1]) - 1, _wtoi(Arguments[0]) - 1);
+			CLogicPoint  ptLogic(_wtoi(Arguments[1]) - 1, _wtoi(Arguments[0]) - 1);
 			CLayoutPoint ptLayout;
 			if (ptLogic.x < 0 || ptLogic.y < 0) {
 				ptLayout.x = (Int)ptLogic.x;
 				ptLayout.y = (Int)ptLogic.y;
-			} else {
+			}
+			else {
 				View->GetDocument()->m_cLayoutMgr.LogicToLayout(ptLogic, &ptLayout);
 			}
 			int nParam = _wtoi(Arguments[3]);
 			if (LOWORD(ID) == F_OL_ADDFUNCINFO) {
 				m_cFuncInfoArr.AppendData(ptLogic.GetY() + 1, ptLogic.GetX() + 1, ptLayout.GetY() + 1,
 										  ptLayout.GetX() + 1, Arguments[2], NULL, nParam);
-			} else if (LOWORD(ID) == F_OL_ADDFUNCINFO2) {
+			}
+			else if (LOWORD(ID) == F_OL_ADDFUNCINFO2) {
 				int nDepth = nParam & FUNCINFO_INFOMASK;
 				nParam -= nDepth;
 				m_cFuncInfoArr.AppendData(ptLogic.GetY() + 1, ptLogic.GetX() + 1, ptLayout.GetY() + 1,
 										  ptLayout.GetX() + 1, Arguments[2], NULL, nParam, nDepth);
-			} else if (LOWORD(ID) == F_OL_ADDFUNCINFO3) {
+			}
+			else if (LOWORD(ID) == F_OL_ADDFUNCINFO3) {
 				if (ArgSize < 5 || Arguments[4] == NULL) { return false; }
 				m_cFuncInfoArr.AppendData(ptLogic.GetY() + 1, ptLogic.GetX() + 1, ptLayout.GetY() + 1,
 										  ptLayout.GetX() + 1, Arguments[2], Arguments[4], nParam);
-			} else if (LOWORD(ID) == F_OL_ADDFUNCINFO4) {
+			}
+			else if (LOWORD(ID) == F_OL_ADDFUNCINFO4) {
 				if (ArgSize < 5 || Arguments[4] == NULL) { return false; }
 				int nDepth = nParam & FUNCINFO_INFOMASK;
 				nParam -= nDepth;
@@ -146,11 +149,12 @@ private:
 };
 
 VARTYPE			g_OutlineIfObj_MacroArgEx_s[] = {VT_BSTR};
-MacroFuncInfoEx g_OutlineIfObj_FuncInfoEx_s	  = {5, 5, g_OutlineIfObj_MacroArgEx_s};
+MacroFuncInfoEx g_OutlineIfObj_FuncInfoEx_s   = {5, 5, g_OutlineIfObj_MacroArgEx_s};
 
 //コマンド情報
 MacroFuncInfo COutlineIfObj::m_MacroFuncInfoCommandArr[] = {
-	// ID									関数名							引数										戻り値の型
+	// ID									関数名							引数
+	// 戻り値の型
 	// m_pszData
 	{EFunctionCode(F_OL_ADDFUNCINFO),
 	 LTEXT("AddFuncInfo"),
@@ -193,6 +197,7 @@ MacroFuncInfo COutlineIfObj::m_MacroFuncInfoCommandArr[] = {
 
 //関数情報
 MacroFuncInfo COutlineIfObj::m_MacroFuncInfoArr[] = {
-	// ID									関数名							引数										戻り値の型
+	// ID									関数名							引数
+	// 戻り値の型
 	// m_pszData 	終端
 	{F_INVALID, NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL}};

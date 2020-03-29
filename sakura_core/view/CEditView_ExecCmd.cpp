@@ -37,8 +37,7 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       外部コマンド                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class COutputAdapterDefault : public COutputAdapter
-{
+class COutputAdapterDefault : public COutputAdapter {
 public:
 	COutputAdapterDefault(CEditView *view, BOOL bToEditWindow)
 		: m_bWindow(bToEditWindow)
@@ -47,7 +46,7 @@ public:
 		m_pCShareData = CShareData::getInstance();
 		m_pCommander  = &(view->GetCommander());
 	}
-	~COutputAdapterDefault() {};
+	~COutputAdapterDefault(){};
 
 	bool OutputW(const WCHAR *pBuf, int size = -1) override;
 	bool OutputA(const ACHAR *pBuf, int size = -1) override;
@@ -62,14 +61,14 @@ protected:
 	CViewCommander *m_pCommander;
 };
 
-class COutputAdapterUTF8 final : public COutputAdapterDefault
-{
+class COutputAdapterUTF8 final : public COutputAdapterDefault {
 public:
 	COutputAdapterUTF8(CEditView *view, BOOL bToEditWindow)
 		: COutputAdapterDefault(view, bToEditWindow)
 		, pcCodeBase(CCodeFactory::CreateCodeBase(CODE_UTF8, 0))
-	{}
-	~COutputAdapterUTF8() {};
+	{
+	}
+	~COutputAdapterUTF8(){};
 
 	bool OutputA(const ACHAR *pBuf, int size = -1) override;
 
@@ -128,19 +127,19 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 	// BOOL	bIOUnicodeGet	= nFlgOpt & 0x08 ? TRUE : FALSE;	//	標準出力をUnicodeで行う	2008/6/17 Uchi
 	// BOOL	bIOUnicodeSend	= nFlgOpt & 0x10 ? TRUE : FALSE;	//	標準入力をUnicodeで行う	2008/6/20 Uchi
 	ECodeType outputEncoding;
-	if (nFlgOpt & 0x08) {
-		outputEncoding = CODE_UNICODE;
-	} else if (nFlgOpt & 0x80) {
+	if (nFlgOpt & 0x08) { outputEncoding = CODE_UNICODE; }
+	else if (nFlgOpt & 0x80) {
 		outputEncoding = CODE_UTF8;
-	} else {
+	}
+	else {
 		outputEncoding = CODE_SJIS;
 	}
 	ECodeType sendEncoding;
-	if (nFlgOpt & 0x10) {
-		sendEncoding = CODE_UNICODE;
-	} else if (nFlgOpt & 0x100) {
+	if (nFlgOpt & 0x10) { sendEncoding = CODE_UNICODE; }
+	else if (nFlgOpt & 0x100) {
 		sendEncoding = CODE_UTF8;
-	} else {
+	}
+	else {
 		sendEncoding = CODE_SJIS;
 	}
 	//	To Here 2006.12.03 maru 引数を拡張のため
@@ -180,7 +179,7 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 	if (bSendStdin) { /* 現在編集中のファイルを子プロセスの標準入力へ */
 		WCHAR szPathName[MAX_PATH];
 		WCHAR szTempFileName[MAX_PATH];
-		int	  nFlgOpt;
+		int   nFlgOpt;
 
 		GetTempPath(MAX_PATH, szPathName);
 		GetTempFileName(szPathName, TEXT("skr_"), 0, szTempFileName);
@@ -190,7 +189,8 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 
 		if (!GetCommander().Command_PUTFILE(szTempFileName, sendEncoding, nFlgOpt)) { // 一時ファイル出力
 			hStdIn = NULL;
-		} else {
+		}
+		else {
 			// 子プロセスへの継承用にファイルを開く
 			hStdIn = CreateFile(szTempFileName, GENERIC_READ, 0, &sa, OPEN_EXISTING,
 								FILE_ATTRIBUTE_READONLY | FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE, NULL);
@@ -200,7 +200,7 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 
 	if (hStdIn == NULL) { /* 標準入力を制御しない場合、または一時ファイルの生成に失敗した場合 */
 		bSendStdin = FALSE;
-		hStdIn	   = GetStdHandle(STD_INPUT_HANDLE);
+		hStdIn	 = GetStdHandle(STD_INPUT_HANDLE);
 		if (hStdIn == NULL) {
 			// 2013.06.12 Moca 標準入力ハンドルを用意する
 			HANDLE hStdInWrite = NULL;
@@ -220,9 +220,9 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 	if (bGetStdout || bSendStdin) {
 		sui.dwFlags		= STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
 		sui.wShowWindow = bGetStdout ? SW_HIDE : SW_SHOW;
-		sui.hStdInput	= hStdIn;
-		sui.hStdOutput	= bGetStdout ? hStdOutWrite : GetStdHandle(STD_OUTPUT_HANDLE);
-		sui.hStdError	= bGetStdout ? hStdOutWrite : GetStdHandle(STD_ERROR_HANDLE);
+		sui.hStdInput   = hStdIn;
+		sui.hStdOutput  = bGetStdout ? hStdOutWrite : GetStdHandle(STD_OUTPUT_HANDLE);
+		sui.hStdError   = bGetStdout ? hStdOutWrite : GetStdHandle(STD_ERROR_HANDLE);
 	}
 	bool bRet = false;
 
@@ -271,8 +271,8 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 
 	if (bGetStdout) {
 		DWORD new_cnt;
-		int	  bufidx	   = 0;
-		bool  bLoopFlag	   = true;
+		int   bufidx	   = 0;
+		bool  bLoopFlag	= true;
 		bool  bCancelEnd   = false; // キャンセルでプロセス停止
 		oaInst			   = (customOa ? NULL
 						   : (outputEncoding == CODE_UTF8 ? new COutputAdapterUTF8(this, bToEditWindow)
@@ -289,7 +289,7 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 		// 2004.09.20 naoh 多少は見やすく・・・
 		// 2006.12.03 maru アウトプットウィンドウにのみ出力
 		if (bOutputExtInfo) {
-			WCHAR	   szTextDate[1024], szTextTime[1024];
+			WCHAR	  szTextDate[1024], szTextTime[1024];
 			SYSTEMTIME systime;
 			::GetLocalTime(&systime);
 			CFormatManager().MyGetDateFormat(systime, szTextDate, _countof(szTextDate) - 1);
@@ -306,9 +306,9 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 
 		// charで読む
 		typedef char PIPE_CHAR;
-		const int	 WORK_NULL_TERMS = sizeof(wchar_t); // 出力用\0の分
-		const int	 MAX_BUFIDX		 = 10;				// bufidxの分
-		const DWORD	 MAX_WORK_READ	 = 1024 * 5;		// 5KiB ReadFileで読み込む限界値
+		const int	WORK_NULL_TERMS = sizeof(wchar_t); // 出力用\0の分
+		const int	MAX_BUFIDX		 = 10;				// bufidxの分
+		const DWORD  MAX_WORK_READ   = 1024 * 5;		// 5KiB ReadFileで読み込む限界値
 		// 2010.04.13 Moca バッファサイズの調整 1022 Byte 読み取りを 5KiBに変更
 		// ボトルネックはアウトプットウィンドウへの転送
 		// 相手のプログラムがVC9のstdoutではデフォルトで4096。VC6,VC8やWinXPのtypeコマンドでは1024
@@ -385,7 +385,7 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 							bufidx = 0;
 							if (bCarry) {
 								workw[0] = L'\r'; // 2010.04.12 'r' -> '\r'
-								bufidx	 = sizeof(wchar_t);
+								bufidx   = sizeof(wchar_t);
 								DEBUG_TRACE(L"ExecCmd: Carry last character [CR]\n");
 							}
 						}
@@ -405,9 +405,8 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 						int j;
 						for (j = 0; j < (int)read_cnt - 1; j++) {
 							//	2007.09.10 ryoji
-							if (CShiftJis::GetSizeOfChar(work, read_cnt, j) == 2) {
-								j++;
-							} else {
+							if (CShiftJis::GetSizeOfChar(work, read_cnt, j) == 2) { j++; }
+							else {
 								if (work[j] == _T2(PIPE_CHAR, '\r') && work[j + 1] == _T2(PIPE_CHAR, '\n')) { j++; }
 							}
 						}
@@ -416,11 +415,13 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 						if ((DWORD)j == read_cnt - 1) {
 							if (_IS_SJIS_1(work[j])) {
 								j = read_cnt + 1; // ぴったり出力できないことを主張
-							} else if (work[j] == _T2(PIPE_CHAR, '\r')) {
+							}
+							else if (work[j] == _T2(PIPE_CHAR, '\r')) {
 								// CRLFの一部ではない改行が末尾にある
 								// 次の読み込みで、CRLFの一部になる可能性がある
 								j = read_cnt + 1;
-							} else {
+							}
+							else {
 								j = read_cnt;
 							}
 						}
@@ -430,28 +431,30 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 							//	2006.12.03 maru アウトプットウィンドウor編集中のウィンドウ分岐追加
 							if (!oa.OutputA(work, read_cnt)) { goto finish; }
 							bufidx = 0;
-						} else {
+						}
+						else {
 							char tmp		   = work[read_cnt - 1];
 							work[read_cnt - 1] = '\0';
 							//	2006.12.03 maru アウトプットウィンドウor編集中のウィンドウ分岐追加
 							if (!oa.OutputA(work, read_cnt - 1)) { goto finish; }
 							work[0] = tmp;
-							bufidx	= 1;
+							bufidx  = 1;
 							DEBUG_TRACE(L"ExecCmd: Carry last character [%x]\n", tmp);
 						}
-					} else if (outputEncoding == CODE_UTF8) {
+					}
+					else if (outputEncoding == CODE_UTF8) {
 						int j;
 						int checklen = 0;
 						for (j = 0; j < (int)read_cnt;) {
 							ECharSet echarset;
 							checklen = CheckUtf8Char2(work + j, read_cnt - j, &echarset, true, 0);
-							if (echarset == CHARSET_BINARY2) {
-								break;
-							} else if (read_cnt - 1 == j && work[j] == _T2(PIPE_CHAR, '\r')) {
+							if (echarset == CHARSET_BINARY2) { break; }
+							else if (read_cnt - 1 == j && work[j] == _T2(PIPE_CHAR, '\r')) {
 								// CRLFの一部ではない改行が末尾にある
 								// 次の読み込みで、CRLFの一部になる可能性がある
 								break;
-							} else {
+							}
+							else {
 								j += checklen;
 							}
 						}
@@ -460,10 +463,11 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 							//	2006.12.03 maru アウトプットウィンドウor編集中のウィンドウ分岐追加
 							if (!oa.OutputA(work, read_cnt)) { goto finish; }
 							bufidx = 0;
-						} else {
+						}
+						else {
 							DEBUG_TRACE(L"read_cnt %d j %d\n", read_cnt, j);
 							char tmp[5];
-							int	 len = read_cnt - j;
+							int  len = read_cnt - j;
 							memcpy(tmp, &work[j], len);
 							work[j] = '\0';
 							//	2006.12.03 maru アウトプットウィンドウor編集中のウィンドウ分岐追加
@@ -508,14 +512,16 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 					work[bufidx] = 0x00; // 上位バイトを0にしてごまかす
 					bufidx += 1;
 				}
-				wchar_t *workw	 = (wchar_t *)work;
+				wchar_t *workw   = (wchar_t *)work;
 				int		 bufidxw = bufidx / (int)sizeof(wchar_t);
-				workw[bufidxw]	 = L'\0';
+				workw[bufidxw]   = L'\0';
 				oa.OutputW(workw, bufidxw);
-			} else if (outputEncoding == CODE_SJIS) {
+			}
+			else if (outputEncoding == CODE_SJIS) {
 				work[bufidx] = '\0';
 				oa.OutputA(work, bufidx);
-			} else if (outputEncoding == CODE_UTF8) {
+			}
+			else if (outputEncoding == CODE_UTF8) {
 				work[bufidx] = '\0';
 				oa.OutputA(work, bufidx);
 			}
@@ -554,7 +560,8 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 			RedrawAll();
 		}
 		if (!bCancelEnd) { bRet = true; }
-	} else {
+	}
+	else {
 		bRet = true;
 	}
 
@@ -575,9 +582,8 @@ finish:
 */
 void COutputAdapterDefault::OutputBuf(const WCHAR *pBuf, int size)
 {
-	if (m_bWindow) {
-		m_pCommander->Command_INSTEXT(false, pBuf, CLogicInt(size), true);
-	} else {
+	if (m_bWindow) { m_pCommander->Command_INSTEXT(false, pBuf, CLogicInt(size), true); }
+	else {
 		m_pCShareData->TraceOutString(pBuf, size);
 	}
 }
@@ -596,9 +602,8 @@ bool COutputAdapterDefault::OutputA(const ACHAR *pBuf, int size)
 {
 	CNativeA input;
 	CNativeW buf;
-	if (-1 == size) {
-		input.SetString(pBuf);
-	} else {
+	if (-1 == size) { input.SetString(pBuf); }
+	else {
 		input.SetString(pBuf, size);
 	}
 	auto pcCodeBase = std::unique_ptr<CCodeBase>(CCodeFactory::CreateCodeBase(ECodeType::CODE_SJIS, 0));
@@ -613,11 +618,10 @@ bool COutputAdapterDefault::OutputA(const ACHAR *pBuf, int size)
 */
 bool COutputAdapterUTF8::OutputA(const ACHAR *pBuf, int size)
 {
-	CMemory	 input;
+	CMemory  input;
 	CNativeW buf;
-	if (-1 == size) {
-		input.SetRawData(pBuf, strlen(pBuf));
-	} else {
+	if (-1 == size) { input.SetRawData(pBuf, strlen(pBuf)); }
+	else {
 		input.SetRawData(pBuf, size);
 	}
 	pcCodeBase->CodeToUnicode(input, &buf);

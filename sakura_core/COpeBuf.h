@@ -25,8 +25,7 @@ class COpeBlk; /// 2002/2/10 aroka
 /*!
 	@brief アンドゥ・リドゥバッファ
 */
-class COpeBuf
-{
+class COpeBuf {
 public:
 	//コンストラクタ・デストラクタ
 	COpeBuf();
@@ -35,9 +34,9 @@ public:
 	//状態
 	bool IsEnableUndo() const;															  //!< Undo可能な状態か
 	bool IsEnableRedo() const;															  //!< Redo可能な状態か
-	int	 GetCurrentPointer(void) const { return m_nCurrentPointer; } /* 現在位置を返す */ // 2007.12.09 ryoji
-	int	 GetNextSeq() const { return m_nCurrentPointer + 1; }
-	int	 GetNoModifiedSeq() const { return m_nNoModifiedIndex; }
+	int  GetCurrentPointer(void) const { return m_nCurrentPointer; } /* 現在位置を返す */ // 2007.12.09 ryoji
+	int  GetNextSeq() const { return m_nCurrentPointer + 1; }
+	int  GetNoModifiedSeq() const { return m_nNoModifiedIndex; }
 
 	//操作
 	void ClearAll();					  //!< 全要素のクリア
@@ -52,7 +51,7 @@ public:
 	void DUMP(); //!< 編集操作要素ブロックのダンプ
 
 private:
-	std::vector<COpeBlk *> m_vCOpeBlkArr;	   //!< 操作ブロックの配列
+	std::vector<COpeBlk *> m_vCOpeBlkArr;	  //!< 操作ブロックの配列
 	int					   m_nCurrentPointer;  //!< 現在位置
 	int					   m_nNoModifiedIndex; //!< 無変更な状態になった位置
 };

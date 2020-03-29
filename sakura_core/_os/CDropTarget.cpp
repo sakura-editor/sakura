@@ -17,7 +17,7 @@
 #include "CDropTarget.h"
 #include "CClipboard.h"
 #include "_main/global.h"
-#include "view/CEditView.h"	 // 2002/2/3 aroka
+#include "view/CEditView.h"  // 2002/2/3 aroka
 #include "window/CEditWnd.h" // 2008.06.20 ryoji
 
 COleLibrary CYbInterfaceBase::m_olelib;
@@ -75,7 +75,8 @@ void COleLibrary::UnInitialize()
 }
 
 #define DECLARE_YB_INTERFACEIMPL(BASEINTERFACE)                                                                        \
-	template<> REFIID CYbInterfaceImpl<BASEINTERFACE>::m_owniid = IID_##BASEINTERFACE;
+	template<>                                                                                                         \
+	REFIID CYbInterfaceImpl<BASEINTERFACE>::m_owniid = IID_##BASEINTERFACE;
 
 DECLARE_YB_INTERFACEIMPL(IDataObject)
 DECLARE_YB_INTERFACEIMPL(IDropSource)
@@ -177,12 +178,12 @@ void CDataObject::SetText(LPCWSTR lpszText, int nTextLen, BOOL bColumnSelect)
 	if (m_pData != NULL) {
 		for (i = 0; i < m_nFormat; i++) delete[](m_pData[i].data);
 		delete[] m_pData;
-		m_pData	  = NULL;
+		m_pData   = NULL;
 		m_nFormat = 0;
 	}
 	if (lpszText != NULL) {
 		m_nFormat = bColumnSelect ? 4 : 3; // 矩形を含めるか
-		m_pData	  = new DATA[m_nFormat];
+		m_pData   = new DATA[m_nFormat];
 
 		i					= 0;
 		m_pData[0].cfFormat = CF_UNICODETEXT;
@@ -211,7 +212,7 @@ void CDataObject::SetText(LPCWSTR lpszText, int nTextLen, BOOL bColumnSelect)
 			m_pData[i].cfFormat = (CLIPFORMAT)::RegisterClipboardFormat(L"MSDEVColumnSelect");
 			m_pData[i].size		= 1;
 			m_pData[i].data		= new BYTE[1];
-			m_pData[i].data[0]	= '\0';
+			m_pData[i].data[0]  = '\0';
 		}
 	}
 }
@@ -244,7 +245,7 @@ STDMETHODIMP CDataObject::GetData(LPFORMATETC lpfe, LPSTGMEDIUM lpsm)
 	}
 	if (i == m_nFormat) return DV_E_FORMATETC;
 
-	lpsm->tymed	  = TYMED_HGLOBAL;
+	lpsm->tymed   = TYMED_HGLOBAL;
 	lpsm->hGlobal = ::GlobalAlloc(GHND | GMEM_DDESHARE, m_pData[i].size);
 	memcpy_raw(::GlobalLock(lpsm->hGlobal), m_pData[i].data, m_pData[i].size);
 	::GlobalUnlock(lpsm->hGlobal);
@@ -332,8 +333,8 @@ STDMETHODIMP CEnumFORMATETC::Next(ULONG celt, FORMATETC *rgelt, ULONG *pceltFetc
 		(*rgelt).cfFormat = m_pcDataObject->m_pData[m_nIndex].cfFormat;
 		(*rgelt).ptd	  = NULL;
 		(*rgelt).dwAspect = DVASPECT_CONTENT;
-		(*rgelt).lindex	  = -1;
-		(*rgelt).tymed	  = TYMED_HGLOBAL;
+		(*rgelt).lindex   = -1;
+		(*rgelt).tymed	= TYMED_HGLOBAL;
 		rgelt++;
 		m_nIndex++;
 		i--;

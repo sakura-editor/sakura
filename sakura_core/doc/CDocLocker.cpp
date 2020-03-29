@@ -10,7 +10,8 @@
 
 CDocLocker::CDocLocker()
 	: m_bIsDocWritable(true)
-{}
+{
+}
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        ロード前後                           //

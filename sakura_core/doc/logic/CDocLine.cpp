@@ -19,7 +19,8 @@
 CDocLine::CDocLine()
 	: m_pPrev(NULL)
 	, m_pNext(NULL)
-{}
+{
+}
 
 CDocLine::~CDocLine() {}
 
@@ -50,9 +51,8 @@ void CDocLine::SetEol()
 	const wchar_t *p = &pData[nLength] - 1;
 	while (p >= pData && WCODE::IsLineDelimiter(*p, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol)) p--;
 	p++;
-	if (p >= pData) {
-		m_cEol.SetTypeByString(p, &pData[nLength] - p);
-	} else {
+	if (p >= pData) { m_cEol.SetTypeByString(p, &pData[nLength] - p); }
+	else {
 		m_cEol = EOL_NONE;
 	}
 }

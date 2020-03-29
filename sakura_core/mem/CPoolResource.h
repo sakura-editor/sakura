@@ -29,8 +29,8 @@
 
 // std::pmr::unsynchronized_pool_resource だとメモリ使用量が大きい為、自前実装を用意
 // T : 要素型
-template<typename T> class CPoolResource : public std::pmr::memory_resource
-{
+template<typename T>
+class CPoolResource : public std::pmr::memory_resource {
 public:
 	CPoolResource()
 	{
@@ -59,7 +59,8 @@ protected:
 			T *ret			 = reinterpret_cast<T *>(m_unassignedNode);
 			m_unassignedNode = m_unassignedNode->next;
 			return ret;
-		} else {
+		}
+		else {
 			// 未割当領域が無い場合は、ブロックの中から切り出す
 			// 現在のブロックに新規確保するNodeサイズ分の領域が余っていない場合は新規のブロックを確保
 			Node *blockEnd = reinterpret_cast<Node *>(reinterpret_cast<char *>(m_currentBlock) + BlockSize);
@@ -92,8 +93,8 @@ private:
 	// 共用体のサイズは各メンバを格納できるサイズになる事を利用する
 	union Node {
 		~Node() {}
-		T	  element; // 要素型
-		Node *next;	   // ブロックのヘッダの場合は、次のブロックに繋がる
+		T	 element; // 要素型
+		Node *next;	// ブロックのヘッダの場合は、次のブロックに繋がる
 					// 解放後の未割当領域の場合は次の未割当領域に繋がる
 	};
 
@@ -111,7 +112,7 @@ private:
 		m_currentBlock->next = next;
 
 		// ブロック領域の残る部分は要素の領域とするが、アライメントを取る
-		void * body	 = buff + sizeof(Node *);
+		void * body  = buff + sizeof(Node *);
 		size_t space = BlockSize - sizeof(Node *);
 		body		 = std::align(alignof(Node), sizeof(Node), body, space);
 		assert(body);

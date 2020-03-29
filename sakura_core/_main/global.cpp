@@ -23,8 +23,8 @@
 CEditWnd *g_pcEditWnd = NULL;
 
 /*! 選択領域描画用パラメータ */
-const COLORREF SELECTEDAREA_RGB	 = RGB(255, 255, 255);
-const int	   SELECTEDAREA_ROP2 = R2_XORPEN;
+const COLORREF SELECTEDAREA_RGB  = RGB(255, 255, 255);
+const int	  SELECTEDAREA_ROP2 = R2_XORPEN;
 
 HINSTANCE G_AppInstance() { return CProcess::getInstance()->GetProcessInstance(); }
 
@@ -33,7 +33,8 @@ HINSTANCE G_AppInstance() { return CProcess::getInstance()->GetProcessInstance()
  */
 SSearchOption::SSearchOption() noexcept
 	: SSearchOption(false, false, false)
-{}
+{
+}
 
 /*!
  * コンストラクタ(値指定)
@@ -42,14 +43,15 @@ SSearchOption::SSearchOption(bool _bRegularExp, bool _bLoHiCase, bool _bWordOnly
 	: bRegularExp(_bRegularExp)
 	, bLoHiCase(_bLoHiCase)
 	, bWordOnly(_bWordOnly)
-{}
+{
+}
 
 //! リセットする(全部falseにする)
 void SSearchOption::Reset()
 {
 	bRegularExp = false;
-	bLoHiCase	= false;
-	bWordOnly	= false;
+	bLoHiCase   = false;
+	bWordOnly   = false;
 }
 
 /*!

@@ -31,7 +31,7 @@
 
 void CPropertyManager::Create(HWND hwndOwner, CImageListMgr *pImageList, CMenuDrawer *pMenuDrawer)
 {
-	m_hwndOwner	  = hwndOwner;
+	m_hwndOwner   = hwndOwner;
 	m_pImageList  = pImageList;
 	m_pMenuDrawer = pMenuDrawer;
 
@@ -87,7 +87,8 @@ bool CPropertyManager::OpenPropertySheet(HWND hWnd, int nPageNum, bool bTrayProc
 
 		delete pLock;
 		bRet = true;
-	} else {
+	}
+	else {
 		bRet = false;
 	}
 
@@ -137,7 +138,8 @@ bool CPropertyManager::OpenPropertySheetTypes(HWND hWnd, int nPageNum, CTypeConf
 
 		delete pLock;
 		bRet = true;
-	} else {
+	}
+	else {
 		bRet = false;
 	}
 

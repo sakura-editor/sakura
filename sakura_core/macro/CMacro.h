@@ -40,16 +40,14 @@
 class CTextOutputStream;
 class CEditView;
 
-enum EMacroParamType
-{
+enum EMacroParamType {
 	EMacroParamTypeNull,
 	EMacroParamTypeInt,
 	EMacroParamTypeStr,
 };
-struct CMacroParam
-{
+struct CMacroParam {
 	WCHAR *			m_pData;
-	CMacroParam *	m_pNext;
+	CMacroParam *   m_pNext;
 	int				m_nDataLen;
 	EMacroParamType m_eType;
 
@@ -58,25 +56,25 @@ struct CMacroParam
 		, m_pNext(NULL)
 		, m_nDataLen(0)
 		, m_eType(EMacroParamTypeNull)
-	{}
+	{
+	}
 	CMacroParam(const CMacroParam &obj)
 	{
-		if (obj.m_pData) {
-			m_pData = new WCHAR[obj.m_nDataLen + 1];
-		} else {
+		if (obj.m_pData) { m_pData = new WCHAR[obj.m_nDataLen + 1]; }
+		else {
 			m_pData = NULL;
 		}
-		m_pNext	   = NULL;
+		m_pNext	= NULL;
 		m_nDataLen = obj.m_nDataLen;
-		m_eType	   = obj.m_eType;
+		m_eType	= obj.m_eType;
 	}
 	~CMacroParam() { Clear(); }
 	void Clear()
 	{
 		delete[] m_pData;
-		m_pData	   = NULL;
+		m_pData	= NULL;
 		m_nDataLen = 0;
-		m_eType	   = EMacroParamTypeNull;
+		m_eType	= EMacroParamTypeNull;
 	}
 	void SetStringParam(const WCHAR *szParam, int nLength = -1);
 	void SetIntParam(const int nParam);
@@ -98,8 +96,7 @@ struct CMacroParam
    ID）によって、このクラス内で判別し、よろしくやること。
 	@li 引数は、CMacro内部ではすべて文字列で保持すること（数値97は、"97"として保持）（いまのところ）
 */
-class CMacro
-{
+class CMacro {
 public:
 	/*
 	||  Constructors
@@ -117,7 +114,7 @@ public:
 	void AddLParam(const LPARAM *lParam, const CEditView *pcEditView); //@@@ 2002.2.2 YAZAKI pcEditViewも渡す
 	void AddStringParam(const WCHAR *szParam, int nLength = -1);
 	void AddIntParam(const int nParam);
-	int	 GetParamCount() const;
+	int  GetParamCount() const;
 
 	static bool HandleCommand(CEditView *View, EFunctionCode ID, const WCHAR *Argument[], const int ArgLengths[],
 							  const int ArgSize);

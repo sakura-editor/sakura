@@ -30,8 +30,7 @@
 //                        行コメント                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-class CColor_LineComment final : public CColorStrategy
-{
+class CColor_LineComment final : public CColorStrategy {
 public:
 	EColorIndexType GetStrategyColor() const override { return COLORIDX_COMMENT; }
 	void			InitStrategyStatus() override {}
@@ -54,13 +53,13 @@ public:
 //                    ブロックコメント１                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-class CColor_BlockComment final : public CColorStrategy
-{
+class CColor_BlockComment final : public CColorStrategy {
 public:
 	CColor_BlockComment(EColorIndexType nType)
 		: m_nType(nType)
 		, m_nCOMMENTEND(0)
-	{}
+	{
+	}
 	void Update(void) override
 	{
 		const CEditDoc *pCEditDoc = CEditDoc::GetInstance(0);

@@ -37,7 +37,7 @@ void CEditView::PreprocessCommand_hokan(int nCommand)
 	if (m_bHokan) {
 		if (nCommand != F_HOKAN			 //	補完開始・終了コマンド
 			&& nCommand != F_WCHAR		 //	文字入力
-			&& nCommand != F_IME_CHAR	 //	漢字入力
+			&& nCommand != F_IME_CHAR	//	漢字入力
 			&& nCommand != F_DELETE_BACK //	カーソル前を削除
 		) {
 			m_pcEditWnd->m_cHokanMgr.Hide();
@@ -58,9 +58,8 @@ void CEditView::PostprocessCommand_hokan(void)
 		CNativeW cmemData;
 
 		/* カーソル直前の単語を取得 */
-		if (0 < GetParser().GetLeftWord(&cmemData, 100)) {
-			ShowHokanMgr(cmemData, FALSE);
-		} else {
+		if (0 < GetParser().GetLeftWord(&cmemData, 100)) { ShowHokanMgr(cmemData, FALSE); }
+		else {
 			if (m_bHokan) {
 				m_pcEditWnd->m_cHokanMgr.Hide();
 				m_bHokan = FALSE;
@@ -82,22 +81,22 @@ void CEditView::ShowHokanMgr(CNativeW &cmemData, BOOL bAutoDecided)
 	/* 補完対象ワードリストを調べる */
 	CNativeW cmemHokanWord;
 	int		 nKouhoNum;
-	POINT	 poWin;
+	POINT	poWin;
 	/* 補完ウィンドウの表示位置を算出 */
 	CLayoutXInt nX = GetCaret().GetCaretLayoutPos().GetX2() - GetTextArea().GetViewLeftCol();
-	if (nX < 0) {
-		poWin.x = 0;
-	} else if (GetTextArea().m_nViewColNum < nX) {
+	if (nX < 0) { poWin.x = 0; }
+	else if (GetTextArea().m_nViewColNum < nX) {
 		poWin.x = GetTextArea().GetAreaRight();
-	} else {
+	}
+	else {
 		poWin.x = GetTextArea().GetAreaLeft() + GetTextMetrics().GetCharPxWidth(nX);
 	}
 	CLayoutYInt nY = GetCaret().GetCaretLayoutPos().GetY2() - GetTextArea().GetViewTopLine();
-	if (nY < 0) {
-		poWin.y = 0;
-	} else if (GetTextArea().m_nViewRowNum < nY) {
+	if (nY < 0) { poWin.y = 0; }
+	else if (GetTextArea().m_nViewRowNum < nY) {
 		poWin.y = GetTextArea().GetAreaBottom();
-	} else {
+	}
+	else {
 		poWin.y = GetTextArea().GetAreaTop() + (Int)(nY)*GetTextMetrics().GetHankakuDy();
 	}
 	this->ClientToScreen(&poWin);
@@ -109,9 +108,8 @@ void CEditView::ShowHokanMgr(CNativeW &cmemData, BOOL bAutoDecided)
 		詳しくは、Search()の説明を参照のこと。
 	*/
 	CNativeW *pcmemHokanWord;
-	if (bAutoDecided) {
-		pcmemHokanWord = &cmemHokanWord;
-	} else {
+	if (bAutoDecided) { pcmemHokanWord = &cmemHokanWord; }
+	else {
 		pcmemHokanWord = NULL;
 	}
 
@@ -137,7 +135,8 @@ void CEditView::ShowHokanMgr(CNativeW &cmemData, BOOL bAutoDecided)
 			// 2003.06.25 Moca 失敗してたら、ビープ音を出して補完終了。
 			ErrorBeep();
 		}
-	} else if (bAutoDecided && nKouhoNum == 1) { //	候補1つのみ→確定。
+	}
+	else if (bAutoDecided && nKouhoNum == 1) { //	候補1つのみ→確定。
 		if (m_bHokan) {
 			m_pcEditWnd->m_cHokanMgr.Hide();
 			m_bHokan = FALSE;
@@ -146,7 +145,8 @@ void CEditView::ShowHokanMgr(CNativeW &cmemData, BOOL bAutoDecided)
 
 		GetCommander().Command_WordDeleteToStart();
 		GetCommander().Command_INSTEXT(true, cmemHokanWord.GetStringPtr(), cmemHokanWord.GetStringLength(), TRUE);
-	} else {
+	}
+	else {
 		m_bHokan = TRUE;
 	}
 }
@@ -168,7 +168,7 @@ void CEditView::ShowHokanMgr(CNativeW &cmemData, BOOL bAutoDecided)
 */
 int CEditView::HokanSearchByFile(const wchar_t *pszKey,				//!< [in]
 								 bool			bHokanLoHiCase,		//!< [in] 英大文字小文字を同一視する
-								 vector_ex<std::wstring> &vKouho,	//!< [in,out] 候補
+								 vector_ex<std::wstring> &vKouho,   //!< [in,out] 候補
 								 int					  nMaxKouho //!< [in] Max候補数(0==無制限)
 )
 {
@@ -230,9 +230,11 @@ int CEditView::HokanSearchByFile(const wchar_t *pszKey,				//!< [in]
 						kindMerge = kindCur; // ひらがななら続行
 						// 2010.06.16 Moca 漢字のみ送り仮名を候補に含める
 						if (kindPre != CK_ZEN_ETC) { nWordLenStop = nWordLen; }
-					} else if (bKeyStartWithMark && bWordStartWithMark && kindPre == CK_UDEF) {
+					}
+					else if (bKeyStartWithMark && bWordStartWithMark && kindPre == CK_UDEF) {
 						kindMerge = kindCur; // 記号で始まる単語は制限を緩める
-					} else {
+					}
+					else {
 						j -= nCharSize;
 						break; // それ以外は単語の切れ目
 					}
@@ -252,9 +254,8 @@ int CEditView::HokanSearchByFile(const wchar_t *pszKey,				//!< [in]
 			word = pszLine + nWordBegin;
 
 			// キーと比較する
-			if (bHokanLoHiCase) {
-				nRet = wmemicmp(pszKey, word, nKeyLen);
-			} else {
+			if (bHokanLoHiCase) { nRet = wmemicmp(pszKey, word, nKeyLen); }
+			else {
 				nRet = wmemcmp(pszKey, word, nKeyLen);
 			}
 			if (nRet != 0) continue;

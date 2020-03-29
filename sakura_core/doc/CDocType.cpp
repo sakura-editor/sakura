@@ -38,7 +38,8 @@ CDocType::CDocType(CEditDoc *pcDoc)
 	, m_nSettingType(0) // Sep. 11, 2002 genta
 	, m_typeConfig(GetDllShareData().m_TypeBasis)
 	, m_nSettingTypeLocked(false) //	設定値変更可能フラグ
-{}
+{
+}
 
 //! 文書種別の設定
 void CDocType::SetDocumentType(CTypeConfig type, bool force, bool bTypeOnly)
@@ -52,13 +53,15 @@ void CDocType::SetDocumentType(CTypeConfig type, bool force, bool bTypeOnly)
 		}
 		if (bTypeOnly) return; // bTypeOnly == true は特殊ケース（一時利用）に限定
 		UnlockDocumentType();
-	} else {
+	}
+	else {
 		// データは更新しておく
 		CTypeConfig temp = CDocTypeManager().GetDocumentTypeOfId(m_typeConfig.m_id);
 		if (temp.IsValidType()) {
 			m_nSettingType = temp;
 			CDocTypeManager().GetTypeConfig(m_nSettingType, m_typeConfig);
-		} else {
+		}
+		else {
 			m_nSettingType = type;
 			if (false == CDocTypeManager().GetTypeConfig(m_nSettingType, m_typeConfig)) {
 				m_nSettingType = CDocTypeManager().GetDocumentTypeOfPath(m_pcDocRef->m_cDocFile.GetFilePath());
@@ -85,7 +88,7 @@ void CDocType::SetDocumentTypeIdx(int id, bool force)
 	if (temp.IsValidType()) {
 		m_nSettingType		= temp;
 		m_typeConfig.m_nIdx = temp.GetIndex();
-		m_typeConfig.m_id	= setId;
+		m_typeConfig.m_id   = setId;
 	}
 }
 /*!

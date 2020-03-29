@@ -40,29 +40,29 @@
 /*
  * パラメータ宣言
  */
-#define RK_EMPTY  0 //初期状態
-#define RK_CLOSE  1 // BREGEXPクローズ
-#define RK_OPEN	  2 // BREGEXPオープン
+#define RK_EMPTY 0  //初期状態
+#define RK_CLOSE 1  // BREGEXPクローズ
+#define RK_OPEN 2   // BREGEXPオープン
 #define RK_ACTIVE 3 //コンパイル済み
-#define RK_ERROR  9 //コンパイルエラー
+#define RK_ERROR 9  //コンパイルエラー
 
-#define RK_MATCH   4 //マッチする
+#define RK_MATCH 4   //マッチする
 #define RK_NOMATCH 5 //この行ではマッチしない
 
 #define RK_SIZE 100 //最大登録可能数
 
 //#define RK_HEAD_CHAR      '^'    //行先頭の正規表現
-#define RK_HEAD_STR1 L"/^"	// BREGEXP
+#define RK_HEAD_STR1 L"/^"  // BREGEXP
 #define RK_HEAD_STR2 L"m#^" // BREGEXP
 #define RK_HEAD_STR3 L"m/^" // BREGEXP
 //#define RK_HEAD_STR4      "#^"   //BREGEXP
 
 #define RK_KAKOMI_1_START "/"
-#define RK_KAKOMI_1_END	  "/k"
+#define RK_KAKOMI_1_END "/k"
 #define RK_KAKOMI_2_START "m#"
-#define RK_KAKOMI_2_END	  "#k"
+#define RK_KAKOMI_2_END "#k"
 #define RK_KAKOMI_3_START "m/"
-#define RK_KAKOMI_3_END	  "/k"
+#define RK_KAKOMI_3_END "/k"
 //#define RK_KAKOMI_4_START "#"
 //#define RK_KAKOMI_4_END   "#k"
 
@@ -81,7 +81,7 @@ CRegexKeyword::CRegexKeyword(LPCWSTR regexp_dll)
 
 	m_pTypes	 = NULL;
 	m_nTypeIndex = -1;
-	m_nTypeId	 = -1;
+	m_nTypeId	= -1;
 
 	RegexKeyInit();
 }
@@ -123,7 +123,7 @@ BOOL CRegexKeyword::RegexKeyInit(void)
 	m_nTypeIndex		   = -1;
 	m_nTypeId			   = -1;
 	m_nCompiledMagicNumber = 1;
-	m_bUseRegexKeyword	   = false;
+	m_bUseRegexKeyword	 = false;
 	m_nRegexKeyCount	   = 0;
 	for (i = 0; i < MAX_REGEX_KEYWORD; i++) { m_sInfo[i].pBregexp = NULL; }
 
@@ -211,7 +211,7 @@ BOOL CRegexKeyword::RegexKeyCompile(void)
 	m_nTypeIndex		   = m_pTypes->m_nIdx;
 	m_nTypeId			   = m_pTypes->m_id;
 	m_nCompiledMagicNumber = 1; // Not Compiled.
-	m_bUseRegexKeyword	   = m_pTypes->m_bUseRegexKeyword;
+	m_bUseRegexKeyword	 = m_pTypes->m_bUseRegexKeyword;
 	if (!m_bUseRegexKeyword) return FALSE;
 
 	if (!IsAvailable()) {
@@ -234,28 +234,31 @@ BOOL CRegexKeyword::RegexKeyCompile(void)
 				if (wcsncmp_literal(pKeyword, RK_HEAD_STR1) == 0 || wcsncmp_literal(pKeyword, RK_HEAD_STR2) == 0
 					|| wcsncmp_literal(pKeyword, RK_HEAD_STR3) == 0) {
 					m_sInfo[i].nHead = 1;
-				} else {
+				}
+				else {
 					m_sInfo[i].nHead = 0;
 				}
 
 				if (COLORIDX_REGEX1 <= rp->m_nColorIndex && COLORIDX_REGEX10 >= rp->m_nColorIndex) {
 					//色指定でチェックが入ってなければ検索しなくてもよい
-					if (m_pTypes->m_ColorInfoArr[rp->m_nColorIndex].m_bDisp) {
-						m_sInfo[i].nFlag = RK_EMPTY;
-					} else {
+					if (m_pTypes->m_ColorInfoArr[rp->m_nColorIndex].m_bDisp) { m_sInfo[i].nFlag = RK_EMPTY; }
+					else {
 						//正規表現では色指定のチェックを見る。
 						m_sInfo[i].nFlag = RK_NOMATCH;
 					}
-				} else {
+				}
+				else {
 					//正規表現以外では、色指定チェックは見ない。
 					//例えば、半角数値は正規表現を使い、基本機能を使わないという指定もあり得るため
 					m_sInfo[i].nFlag = RK_EMPTY;
 				}
-			} else {
+			}
+			else {
 				//コンパイルエラーなので検索対象からはずす
 				m_sInfo[i].nFlag = RK_NOMATCH;
 			}
-		} else {
+		}
+		else {
 			//書式エラーなので検索対象からはずす
 			m_sInfo[i].nFlag = RK_NOMATCH;
 		}
@@ -324,33 +327,33 @@ BOOL CRegexKeyword::RegexIsKeyword(const CStringRef &cStr, //!< [in] 検索対�
 
 	for (int i = 0; i < m_nRegexKeyCount; i++) {
 		const auto colorIndex = m_pTypes->m_RegexKeywordArr[i].m_nColorIndex;
-		auto &	   info		  = m_sInfo[i];
-		auto *	   pBregexp	  = info.pBregexp;
+		auto &	 info		  = m_sInfo[i];
+		auto *	 pBregexp   = info.pBregexp;
 		if (info.nMatch != RK_NOMATCH) /* この行にキーワードがないと分かっていない */
 		{
 			if (info.nOffset == nPos) /* 以前検索した結果に一致する */
 			{
-				*nMatchLen	 = info.nLength;
+				*nMatchLen   = info.nLength;
 				*nMatchColor = colorIndex;
 				return TRUE; /* マッチした */
 			}
 
 			/* 以前の結果はもう古いので再検索する */
 			if (info.nOffset < nPos) {
-				const auto begp	   = cStr.GetPtr();			  //!< 行頭位置
-				const auto endp	   = begp + cStr.GetLength(); //!< 行末位置
+				const auto begp	= cStr.GetPtr();			  //!< 行頭位置
+				const auto endp	= begp + cStr.GetLength(); //!< 行末位置
 				const auto startp  = begp + nPos;			  //!< 検索開始位置
 				int		   matched = ExistBMatchEx() ? BMatchEx(NULL, begp, startp, endp, &pBregexp, m_szMsg)
 											  : BMatch(NULL, startp, endp, &pBregexp, m_szMsg);
 				if (0 < matched && pBregexp->endp[0] - pBregexp->startp[0] > 0) {
 					info.nOffset = pBregexp->startp[0] - begp;
 					info.nLength = pBregexp->endp[0] - pBregexp->startp[0];
-					info.nMatch	 = RK_MATCH;
+					info.nMatch  = RK_MATCH;
 
 					/* 指定の開始位置でマッチした */
 					if (info.nOffset == nPos) {
 						if (info.nHead != 1 || nPos == 0) {
-							*nMatchLen	 = info.nLength;
+							*nMatchLen   = info.nLength;
 							*nMatchColor = colorIndex;
 							return TRUE; /* マッチした */
 						}
@@ -358,7 +361,8 @@ BOOL CRegexKeyword::RegexIsKeyword(const CStringRef &cStr, //!< [in] 検索対�
 
 					/* 行先頭を要求する正規表現では次回から無視する */
 					if (info.nHead == 1) { info.nMatch = RK_NOMATCH; }
-				} else {
+				}
+				else {
 					/* この行にこのキーワードはない */
 					info.nMatch = RK_NOMATCH;
 				}

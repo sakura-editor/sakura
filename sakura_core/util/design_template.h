@@ -43,8 +43,8 @@
 
 	2008.03.03 kobake 作成
 */
-template<class T> class TSingleton
-{
+template<class T>
+class TSingleton {
 public:
 	//公開インターフェース
 	static T *getInstance()
@@ -64,8 +64,8 @@ protected:
 
 	2007.10.23 kobake 作成
 */
-template<class T> class TSingleInstance
-{
+template<class T>
+class TSingleInstance {
 public:
 	//公開インターフェース
 	static T *getInstance()
@@ -89,12 +89,13 @@ protected:
 private:
 	static T *gm_instance;
 };
-template<class T> T *TSingleInstance<T>::gm_instance = NULL;
+template<class T>
+T *TSingleInstance<T>::gm_instance = NULL;
 
 //記録もする
 #include <vector>
-template<class T> class TInstanceHolder
-{
+template<class T>
+class TInstanceHolder {
 public:
 	TInstanceHolder() { gm_table.push_back(static_cast<T *>(this)); }
 	virtual ~TInstanceHolder()
@@ -109,9 +110,8 @@ public:
 	static int GetInstanceCount() { return (int)gm_table.size(); }
 	static T * GetInstance(int nIndex)
 	{
-		if (nIndex >= 0 && nIndex < (int)gm_table.size()) {
-			return gm_table[nIndex];
-		} else {
+		if (nIndex >= 0 && nIndex < (int)gm_table.size()) { return gm_table[nIndex]; }
+		else {
 			return 0;
 		}
 	}
@@ -119,4 +119,5 @@ public:
 private:
 	static std::vector<T *> gm_table;
 };
-template<class T> std::vector<T *> TInstanceHolder<T>::gm_table;
+template<class T>
+std::vector<T *> TInstanceHolder<T>::gm_table;

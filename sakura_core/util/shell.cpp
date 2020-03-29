@@ -79,9 +79,8 @@ BOOL SelectDir(HWND hWnd, const WCHAR *pszTitle, const WCHAR *pszInitFolder, WCH
 		bRes = ::SHGetPathFromIDList(pList, strFolderName);
 		// :SHBrowseForFolder()で取得したアイテムＩＤリストを削除
 		::CoTaskMemFree(pList);
-		if (bRes) {
-			return TRUE;
-		} else {
+		if (bRes) { return TRUE; }
+		else {
 			return FALSE;
 		}
 	}
@@ -203,9 +202,9 @@ static LRESULT CALLBACK PropSheetWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LP
 								pDesktopFolder->ParseDisplayName(NULL, NULL, pszDisplayName, NULL, &pIDL, NULL))) {
 							SHELLEXECUTEINFO si;
 							::ZeroMemory(&si, sizeof(si));
-							si.cbSize	= sizeof(si);
+							si.cbSize   = sizeof(si);
 							si.fMask	= SEE_MASK_IDLIST;
-							si.lpVerb	= L"open";
+							si.lpVerb   = L"open";
 							si.lpIDList = pIDL;
 							si.nShow	= SW_SHOWNORMAL;
 							::ShellExecuteEx(&si); // フォルダを開く
@@ -245,7 +244,7 @@ static int CALLBACK PropSheetProc(HWND hwndDlg, UINT uMsg, LPARAM lParam)
 	// プロパティシートの初期化時にボタン追加、プロパティシートのサブクラス化を行う
 	if (uMsg == PSCB_INITIALIZED) {
 		s_pOldPropSheetWndProc = (WNDPROC)::SetWindowLongPtr(hwndDlg, GWLP_WNDPROC, (LONG_PTR)PropSheetWndProc);
-		HINSTANCE hInstance	   = (HINSTANCE)::GetModuleHandle(NULL);
+		HINSTANCE hInstance	= (HINSTANCE)::GetModuleHandle(NULL);
 		HWND	  hwndBtn =
 			::CreateWindowEx(0, L"BUTTON", LS(STR_SHELL_INIFOLDER), BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
 							 0, 0, 140, 20, hwndDlg, (HMENU)0x02000, hInstance, NULL);
@@ -293,7 +292,7 @@ DWORD NetConnect(const WCHAR strNetWorkPass[])
 	DWORD dwRet; //戻り値　エラーコードはWINERROR.Hを参照
 	WCHAR sTemp[256];
 	WCHAR sDrive[] = L"";
-	int	  i;
+	int   i;
 
 	if (wcslen(strNetWorkPass) < 3) return ERROR_BAD_NET_NAME;								 // UNCではない。
 	if (strNetWorkPass[0] != L'\\' && strNetWorkPass[1] != L'\\') return ERROR_BAD_NET_NAME; // UNCではない。
@@ -314,8 +313,8 @@ DWORD NetConnect(const WCHAR strNetWorkPass[])
 	nr.dwType		 = RESOURCETYPE_DISK;
 	nr.dwDisplayType = RESOURCEDISPLAYTYPE_SHARE;
 	nr.dwUsage		 = RESOURCEUSAGE_CONNECTABLE;
-	nr.lpLocalName	 = sDrive;
-	nr.lpRemoteName	 = sTemp;
+	nr.lpLocalName   = sDrive;
+	nr.lpRemoteName  = sTemp;
 
 	//ユーザー認証ダイアログを表示
 	dwRet = WNetAddConnection3(0, &nr, NULL, NULL, CONNECT_UPDATE_PROFILE | CONNECT_INTERACTIVE);
@@ -341,8 +340,8 @@ CHtmlHelp g_cHtmlHelp;
 
 HWND OpenHtmlHelp(HWND hWnd, //!< [in] 呼び出し元ウィンドウのウィンドウハンドル
 				  LPCWSTR szFile, //!< [in] HTML Helpのファイル名。不等号に続けてウィンドウタイプ名を指定可能。
-				  UINT		uCmd,	//!< [in] HTML Help に渡すコマンド
-				  DWORD_PTR data,	//!< [in] コマンドに応じたデータ
+				  UINT		uCmd,   //!< [in] HTML Help に渡すコマンド
+				  DWORD_PTR data,   //!< [in] コマンドに応じたデータ
 				  bool		msgflag //!< [in] エラーメッセージを表示するか。省略時はtrue。
 )
 {
@@ -361,12 +360,12 @@ BOOL ResolveShortcutLink(HWND hwnd, LPCWSTR lpszLinkFile, LPWSTR lpszPath)
 	BOOL			bRes;
 	HRESULT			hRes;
 	IShellLink *	pIShellLink;
-	IPersistFile *	pIPersistFile;
+	IPersistFile *  pIPersistFile;
 	WIN32_FIND_DATA wfd;
 	/* 初期化 */
-	pIShellLink	  = NULL;
+	pIShellLink   = NULL;
 	pIPersistFile = NULL;
-	*lpszPath	  = 0; // assume failure
+	*lpszPath	 = 0; // assume failure
 	bRes		  = FALSE;
 
 	// 2009.01.08 ryoji CoInitializeを削除（WinMainにOleInitialize追加）
@@ -447,7 +446,7 @@ static LPCWSTR GetHelpFilePath()
 BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 {
 	UINT	 uCommandOrg = uCommand; // WinHelp のコマンド
-	bool	 bDesktop	 = false;	 // デスクトップを親にしてヘルプ画面を出すかどうか
+	bool	 bDesktop	= false;	// デスクトップを親にしてヘルプ画面を出すかどうか
 	HH_POPUP hp;					 // ポップアップヘルプ用の構造体
 
 	// Note: HH_TP_HELP_CONTEXTMENU や HELP_WM_HELP ではヘルプコンパイル時の
@@ -478,7 +477,7 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 		{
 			// ポップアップヘルプ用の構造体に値をセットする
 			HWND   hwndCtrl; // ヘルプ表示対象のコントロール
-			int	   nCtrlID;	 // 対象コントロールの ID
+			int	nCtrlID;  // 対象コントロールの ID
 			DWORD *pHelpIDs; // コントロール ID とヘルプ ID の対応表へのポインタ
 
 			memset(&hp, 0, sizeof(hp)); // 構造体をゼロクリア
@@ -490,7 +489,8 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 				// マウスカーソル位置から対象コントロールと表示位置を求める
 				if (!::GetCursorPos(&hp.pt)) return FALSE;
 				hwndCtrl = ::WindowFromPoint(hp.pt);
-			} else {
+			}
+			else {
 				// 対象コントロールは hwndCaller
 				// [F1]キーの場合もあるので対象コントロールの位置から表示位置を決める
 				RECT rc;
@@ -522,7 +522,8 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 		if (bDesktop && hWnd != NULL) {
 			::SetForegroundWindow(hWnd); // ヘルプ画面を手前に出す
 		}
-	} else {
+	}
+	else {
 		if (uCommandOrg == HELP_CONTEXTMENU) return FALSE; // 右クリックでは何もしないでおく
 
 		// オンラインヘルプを呼び出す

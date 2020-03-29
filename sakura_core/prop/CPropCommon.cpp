@@ -75,17 +75,15 @@ INT_PTR CPropCommon::DlgProc(INT_PTR (CPropCommon::*DispatchPage)(HWND, UINT, WP
 	case WM_INITDIALOG:
 		pPsp		 = (PROPSHEETPAGE *)lParam;
 		pCPropCommon = (CPropCommon *)(pPsp->lParam);
-		if (NULL != pCPropCommon) {
-			return (pCPropCommon->*DispatchPage)(hwndDlg, uMsg, wParam, pPsp->lParam);
-		} else {
+		if (NULL != pCPropCommon) { return (pCPropCommon->*DispatchPage)(hwndDlg, uMsg, wParam, pPsp->lParam); }
+		else {
 			return FALSE;
 		}
 	default:
 		// Modified by KEITA for WIN64 2003.9.6
 		pCPropCommon = (CPropCommon *)::GetWindowLongPtr(hwndDlg, DWLP_USER);
-		if (NULL != pCPropCommon) {
-			return (pCPropCommon->*DispatchPage)(hwndDlg, uMsg, wParam, lParam);
-		} else {
+		if (NULL != pCPropCommon) { return (pCPropCommon->*DispatchPage)(hwndDlg, uMsg, wParam, lParam); }
+		else {
 			return FALSE;
 		}
 	}
@@ -100,17 +98,15 @@ INT_PTR CPropCommon::DlgProc2(INT_PTR (CPropCommon::*DispatchPage)(HWND, UINT, W
 	switch (uMsg) {
 	case WM_INITDIALOG:
 		pCPropCommon = (CPropCommon *)(lParam);
-		if (NULL != pCPropCommon) {
-			return (pCPropCommon->*DispatchPage)(hwndDlg, uMsg, IDOK, lParam);
-		} else {
+		if (NULL != pCPropCommon) { return (pCPropCommon->*DispatchPage)(hwndDlg, uMsg, IDOK, lParam); }
+		else {
 			return FALSE;
 		}
 	default:
 		// Modified by KEITA for WIN64 2003.9.6
 		pCPropCommon = (CPropCommon *)::GetWindowLongPtr(hwndDlg, DWLP_USER);
-		if (NULL != pCPropCommon) {
-			return (pCPropCommon->*DispatchPage)(hwndDlg, uMsg, wParam, lParam);
-		} else {
+		if (NULL != pCPropCommon) { return (pCPropCommon->*DispatchPage)(hwndDlg, uMsg, wParam, lParam); }
+		else {
 			return FALSE;
 		}
 	}
@@ -144,8 +140,8 @@ CPropCommon::CPropCommon()
 	m_pShareData = &GetDllShareData();
 
 	m_hwndParent   = NULL; /* オーナーウィンドウのハンドル */
-	m_hwndThis	   = NULL; /* このダイアログのハンドル */
-	m_nPageNum	   = ID_PROPCOM_PAGENUM_GENERAL;
+	m_hwndThis	 = NULL; /* このダイアログのハンドル */
+	m_nPageNum	 = ID_PROPCOM_PAGENUM_GENERAL;
 	m_nKeywordSet1 = -1;
 
 	return;
@@ -158,7 +154,7 @@ CPropCommon::~CPropCommon() {}
 void CPropCommon::Create(HWND hwndParent, CImageListMgr *pcIcons, CMenuDrawer *pMenuDrawer)
 {
 	m_hwndParent = hwndParent; /* オーナーウィンドウのハンドル */
-	m_pcIcons	 = pcIcons;
+	m_pcIcons	= pcIcons;
 
 	// 2007.11.02 ryoji マクロ設定を変更したあと、画面を閉じないでカスタムメニュー、ツールバー、
 	//                  キー割り当ての画面に切り替えた時に各画面でマクロ設定の変更が反映されるよう、
@@ -176,8 +172,7 @@ void CPropCommon::Create(HWND hwndParent, CImageListMgr *pcIcons, CMenuDrawer *p
 	「共通設定」プロパティシートの作成時に必要な情報を
 	保持する構造体
 */
-struct ComPropSheetInfo
-{
+struct ComPropSheetInfo {
 	int			 m_nTabNameId;							  //!< TABの表示名
 	unsigned int resId;									  //!< Property sheetに対応するDialog resource
 	INT_PTR(CALLBACK *DProc)(HWND, UINT, WPARAM, LPARAM); //!< Dialog Procedure
@@ -230,14 +225,14 @@ INT_PTR CPropCommon::DoPropertySheet(int nPageNum, bool bTrayProc)
 
 		PROPSHEETPAGE *p = &psp[nIdx];
 		memset_raw(p, 0, sizeof_raw(*p));
-		p->dwSize	   = sizeof_raw(*p);
-		p->dwFlags	   = PSP_USETITLE | PSP_HASHELP;
+		p->dwSize	  = sizeof_raw(*p);
+		p->dwFlags	 = PSP_USETITLE | PSP_HASHELP;
 		p->hInstance   = CSelectLang::getLangRsrcInstance();
 		p->pszTemplate = MAKEINTRESOURCE(ComPropSheetInfoList[nIdx].resId);
-		p->pszIcon	   = NULL;
+		p->pszIcon	 = NULL;
 		p->pfnDlgProc  = ComPropSheetInfoList[nIdx].DProc;
-		p->pszTitle	   = sTabname[nIdx].c_str();
-		p->lParam	   = (LPARAM)this;
+		p->pszTitle	= sTabname[nIdx].c_str();
+		p->lParam	  = (LPARAM)this;
 		p->pfnCallback = NULL;
 	}
 	//	To Here Jun. 2, 2001 genta
@@ -252,11 +247,11 @@ INT_PTR CPropCommon::DoPropertySheet(int nPageNum, bool bTrayProc)
 	psh.nPages			= nIdx;
 
 	//- 20020106 aroka # psh.nStartPage は unsigned なので負にならない
-	if (-1 == nPageNum) {
-		psh.nStartPage = m_nPageNum;
-	} else if (0 > nPageNum) { //- 20020106 aroka
+	if (-1 == nPageNum) { psh.nStartPage = m_nPageNum; }
+	else if (0 > nPageNum) { //- 20020106 aroka
 		psh.nStartPage = 0;
-	} else {
+	}
+	else {
 		psh.nStartPage = nPageNum;
 	}
 	if (psh.nPages - 1 < psh.nStartPage) { psh.nStartPage = psh.nPages - 1; }
@@ -321,7 +316,7 @@ void CPropCommon::ApplyData(int *tempTypeKeywordSet)
 	m_pShareData->m_Common = m_Common;
 
 	int		  i;
-	const int nSize	 = (int)m_Types_nKeyWordSetIdx.size();
+	const int nSize  = (int)m_Types_nKeyWordSetIdx.size();
 	int		  nBegin = 0;
 	if (tempTypeKeywordSet) {
 		for (int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++) {
@@ -419,8 +414,8 @@ HFONT CPropCommon::SetCtrlFont(HWND hwndDlg, int idc_ctrl, const LOGFONT &lf)
 */
 HFONT CPropCommon::SetFontLabel(HWND hwndDlg, int idc_static, const LOGFONT &lf, int nps)
 {
-	HFONT	hFont;
-	WCHAR	szFontName[80];
+	HFONT   hFont;
+	WCHAR   szFontName[80];
 	LOGFONT lfTemp;
 	lfTemp = lf;
 

@@ -83,8 +83,8 @@ static bool isImeUndesirable(int id)
 /* メッセージ処理 */
 INT_PTR CPropWin::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 								UINT   uMsg,	// message
-								WPARAM wParam,	// first message parameter
-								LPARAM lParam	// second message parameter
+								WPARAM wParam,  // first message parameter
+								LPARAM lParam   // second message parameter
 )
 {
 	// From Here Sept. 9, 2000 JEPRO
@@ -93,7 +93,7 @@ INT_PTR CPropWin::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 	HWND hwndCtl;
 	// To Here Sept. 9, 2000
 
-	NMHDR *	   pNMHDR;
+	NMHDR *	pNMHDR;
 	NM_UPDOWN *pMNUD;
 	int		   idCtrl;
 	int		   nVal; // Sept.21, 2000 JEPRO スピン要素を加えたので復活させた
@@ -134,9 +134,8 @@ INT_PTR CPropWin::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		case IDC_SPIN_nRulerHeight:
 			/* ルーラ－の高さ */
 			nVal = ::GetDlgItemInt(hwndDlg, IDC_EDIT_nRulerHeight, NULL, FALSE);
-			if (pMNUD->iDelta < 0) {
-				++nVal;
-			} else if (pMNUD->iDelta > 0) {
+			if (pMNUD->iDelta < 0) { ++nVal; }
+			else if (pMNUD->iDelta > 0) {
 				--nVal;
 			}
 			if (nVal < IDC_SPIN_nRulerHeight_MIN) { nVal = IDC_SPIN_nRulerHeight_MIN; }
@@ -146,9 +145,8 @@ INT_PTR CPropWin::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		case IDC_SPIN_nRulerBottomSpace:
 			/* ルーラーとテキストの隙間 */
 			nVal = ::GetDlgItemInt(hwndDlg, IDC_EDIT_nRulerBottomSpace, NULL, FALSE);
-			if (pMNUD->iDelta < 0) {
-				++nVal;
-			} else if (pMNUD->iDelta > 0) {
+			if (pMNUD->iDelta < 0) { ++nVal; }
+			else if (pMNUD->iDelta > 0) {
 				--nVal;
 			}
 			if (nVal < 0) { nVal = 0; }
@@ -158,9 +156,8 @@ INT_PTR CPropWin::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		case IDC_SPIN_nLineNumberRightSpace:
 			/* ルーラーとテキストの隙間 */
 			nVal = ::GetDlgItemInt(hwndDlg, IDC_EDIT_nLineNumberRightSpace, NULL, FALSE);
-			if (pMNUD->iDelta < 0) {
-				++nVal;
-			} else if (pMNUD->iDelta > 0) {
+			if (pMNUD->iDelta < 0) { ++nVal; }
+			else if (pMNUD->iDelta > 0) {
 				--nVal;
 			}
 			if (nVal < 0) { nVal = 0; }
@@ -169,9 +166,8 @@ INT_PTR CPropWin::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 			return TRUE;
 		case IDC_SPIN_FUNCKEYWND_GROUPNUM:
 			nVal = ::GetDlgItemInt(hwndDlg, IDC_EDIT_FUNCKEYWND_GROUPNUM, NULL, FALSE);
-			if (pMNUD->iDelta < 0) {
-				++nVal;
-			} else if (pMNUD->iDelta > 0) {
+			if (pMNUD->iDelta < 0) { ++nVal; }
+			else if (pMNUD->iDelta > 0) {
 				--nVal;
 			}
 			if (nVal < 1) { nVal = 1; }
@@ -185,7 +181,7 @@ INT_PTR CPropWin::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam); /* 通知コード */
 		wID			= LOWORD(wParam); /* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl		= (HWND)lParam;	  /* コントロールのハンドル */
+		hwndCtl		= (HWND)lParam;   /* コントロールのハンドル */
 		switch (wNotifyCode) {
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
@@ -195,20 +191,19 @@ INT_PTR CPropWin::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 
 			// From Here 2004.05.13 Moca 「位置と大きさの設定」ボタン
 			//	ウィンドウ設定ダイアログにて起動時のウィンドウ状態指定
-			case IDC_BUTTON_WINSIZE:
-			{
+			case IDC_BUTTON_WINSIZE: {
 				CDlgWinSize cDlgWinSize;
 				RECT		rc;
 				rc.right  = m_Common.m_sWindow.m_nWinSizeCX;
 				rc.bottom = m_Common.m_sWindow.m_nWinSizeCY;
-				rc.top	  = m_Common.m_sWindow.m_nWinPosX;
-				rc.left	  = m_Common.m_sWindow.m_nWinPosY;
+				rc.top	= m_Common.m_sWindow.m_nWinPosX;
+				rc.left   = m_Common.m_sWindow.m_nWinPosY;
 				cDlgWinSize.DoModal(::GetModuleHandle(NULL), hwndDlg, m_Common.m_sWindow.m_eSaveWindowSize,
 									m_Common.m_sWindow.m_eSaveWindowPos, m_Common.m_sWindow.m_nWinSizeType, rc);
 				m_Common.m_sWindow.m_nWinSizeCX = rc.right;
 				m_Common.m_sWindow.m_nWinSizeCY = rc.bottom;
-				m_Common.m_sWindow.m_nWinPosX	= rc.top;
-				m_Common.m_sWindow.m_nWinPosY	= rc.left;
+				m_Common.m_sWindow.m_nWinPosX   = rc.top;
+				m_Common.m_sWindow.m_nWinPosY   = rc.left;
 			} break;
 				// To Here 2004.05.13 Moca
 			}
@@ -224,8 +219,7 @@ INT_PTR CPropWin::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		//	To Here Sept. 9, 2000
 
 		//@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP:
-	{
+	case WM_HELP: {
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -260,7 +254,8 @@ void CPropWin::SetData(HWND hwndDlg)
 	if (0 == m_Common.m_sWindow.m_nFUNCKEYWND_Place) {
 		::CheckDlgButton(hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE1, TRUE);
 		::CheckDlgButton(hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE2, FALSE);
-	} else {
+	}
+	else {
 		::CheckDlgButton(hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE1, FALSE);
 		::CheckDlgButton(hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE2, TRUE);
 	}
@@ -319,7 +314,7 @@ void CPropWin::SetData(HWND hwndDlg)
 	// 言語選択
 	HWND hwndCombo = ::GetDlgItem(hwndDlg, IDC_COMBO_LANGUAGE);
 	Combo_ResetContent(hwndCombo);
-	int	 nSelPos = 0;
+	int  nSelPos = 0;
 	UINT uiIndex = 0;
 	for (uiIndex = 0; uiIndex < CSelectLang::m_psLangInfoList.size(); uiIndex++) {
 		CSelectLang::SSelLangInfo *psLangInfo = CSelectLang::m_psLangInfoList.at(uiIndex);
@@ -401,7 +396,7 @@ int CPropWin::GetData(HWND hwndDlg)
 
 	// 言語選択
 	HWND					   hwndCombo  = ::GetDlgItem(hwndDlg, IDC_COMBO_LANGUAGE);
-	int						   nSelPos	  = Combo_GetCurSel(hwndCombo);
+	int						   nSelPos	= Combo_GetCurSel(hwndCombo);
 	CSelectLang::SSelLangInfo *psLangInfo = CSelectLang::m_psLangInfoList.at(nSelPos);
 	if (wcscmp(m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName) != 0) {
 		wcsncpy(m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName,
@@ -422,7 +417,8 @@ void CPropWin::EnableWinPropInput(HWND hwndDlg)
 					   TRUE); // IDC_GROUP_FUNCKEYWND_POSITION->IDC_EDIT_FUNCKEYWND_GROUPNUM 2008/7/4 Uchi
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE1), TRUE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE2), TRUE);
-	} else {
+	}
+	else {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_FUNCKEYWND_GROUPNUM),
 					   FALSE); // IDC_GROUP_FUNCKEYWND_POSITION->IDC_EDIT_FUNCKEYWND_GROUPNUM 2008/7/4 Uchi
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE1), FALSE);

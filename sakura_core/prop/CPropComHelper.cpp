@@ -51,13 +51,14 @@ static const DWORD p_helpids[] = {							 // 10600
 	//	IDC_CHECK_USEHOKAN,				HIDC_CHECK_USEHOKAN,			//逐次入力補完
 	IDC_CHECK_m_bHokanKey_RETURN, HIDC_CHECK_m_bHokanKey_RETURN, //候補決定キー（Enter）
 	IDC_CHECK_m_bHokanKey_TAB, HIDC_CHECK_m_bHokanKey_TAB,		 //候補決定キー（Tab）
-	IDC_CHECK_m_bHokanKey_RIGHT, HIDC_CHECK_m_bHokanKey_RIGHT,	 //候補決定キー（→）
+	IDC_CHECK_m_bHokanKey_RIGHT, HIDC_CHECK_m_bHokanKey_RIGHT,   //候補決定キー（→）
 	//	IDC_CHECK_m_bHokanKey_SPACE,	HIDC_CHECK_m_bHokanKey_SPACE,	//候補決定キー（Space）
 	IDC_CHECK_HTMLHELPISSINGLE, HIDC_CHECK_HTMLHELPISSINGLE, //ビューアの複数起動
 	IDC_EDIT_EXTHELP1, HIDC_EDIT_EXTHELP1,					 //外部ヘルプファイル名
 	IDC_EDIT_EXTHTMLHELP, HIDC_EDIT_EXTHTMLHELP,			 //外部HTMLヘルプファイル名
 	//	2007.02.04 genta カーソル位置の単語の辞書検索は共通設定から外した
-	// IDC_CHECK_CLICKKEYSEARCH,		HIDC_CHECK_CLICKKEYSEARCH,		//キャレット位置の単語を辞書検索	// 2006.03.24
+	// IDC_CHECK_CLICKKEYSEARCH,		HIDC_CHECK_CLICKKEYSEARCH,		//キャレット位置の単語を辞書検索	//
+	// 2006.03.24
 	// fon
 	IDC_BUTTON_KEYWORDHELPFONT, HIDC_BUTTON_KEYWORDHELPFONT, //キーワードヘルプのフォント
 	IDC_EDIT_MIGEMO_DLL, HIDC_EDIT_MIGEMO_DLL,				 // Migemo DLLファイル名	// 2006.08.06 ryoji
@@ -82,8 +83,8 @@ INT_PTR CALLBACK CPropHelper::DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wPara
 //	To Here Jun. 2, 2001 genta
 
 /* Helper メッセージ処理 */
-INT_PTR CPropHelper::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
-								   UINT	  uMsg,	   // message
+INT_PTR CPropHelper::DispatchEvent(HWND   hwndDlg, // handle to dialog box
+								   UINT   uMsg,	// message
 								   WPARAM wParam,  // first message parameter
 								   LPARAM lParam   // second message parameter
 )
@@ -164,7 +165,8 @@ INT_PTR CPropHelper::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 				// 2007.05.27 ryoji 相対パスは設定ファイルからのパスを優先
 				if (_IS_REL_PATH(m_Common.m_sHelper.m_szMigemoDict)) {
 					GetInidirOrExedir(szPath, m_Common.m_sHelper.m_szMigemoDict, TRUE);
-				} else {
+				}
+				else {
 					wcscpy(szPath, m_Common.m_sHelper.m_szMigemoDict);
 				}
 				if (SelectDir(hwndDlg, LS(STR_PROPCOMHELP_MIGEMODIR), szPath, szPath)) {
@@ -204,8 +206,7 @@ INT_PTR CPropHelper::DispatchEvent(HWND	  hwndDlg, // handle to dialog box
 		break; /* WM_NOTIFY */
 
 		//@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP:
-	{
+	case WM_HELP: {
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更

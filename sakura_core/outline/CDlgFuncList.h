@@ -29,38 +29,31 @@ class CFuncInfoArr; // 2002/2/10 aroka
 class CDataProfile;
 
 //! アウトライン動作指定
-#define OUTLINE_LAYOUT_FOREGROUND  (0) //!< 前面用の動作
-#define OUTLINE_LAYOUT_BACKGROUND  (1) //!< 背後用の動作
+#define OUTLINE_LAYOUT_FOREGROUND (0)  //!< 前面用の動作
+#define OUTLINE_LAYOUT_BACKGROUND (1)  //!< 背後用の動作
 #define OUTLINE_LAYOUT_FILECHANGED (2) //!< ファイル切替用の動作（前面だが特殊）
 
 //! ツリービューをソートする基準
-#define SORTTYPE_DEFAULT	  0 //!< デフォルト(ノードに関連づけれられた値順,昇順)
+#define SORTTYPE_DEFAULT 0		//!< デフォルト(ノードに関連づけれられた値順,昇順)
 #define SORTTYPE_DEFAULT_DESC 1 //!< デフォルト(ノードに関連づけれられた値順,降順)
-#define SORTTYPE_ATOZ		  2 //!< アルファベット順(昇順)
-#define SORTTYPE_ZTOA		  3 //!< アルファベット順(降順)
+#define SORTTYPE_ATOZ 2			//!< アルファベット順(昇順)
+#define SORTTYPE_ZTOA 3			//!< アルファベット順(降順)
 
 // ファイルツリー関連クラス
-enum EFileTreeSettingFrom
-{
-	EFileTreeSettingFrom_Common,
-	EFileTreeSettingFrom_Type,
-	EFileTreeSettingFrom_File
-};
+enum EFileTreeSettingFrom { EFileTreeSettingFrom_Common, EFileTreeSettingFrom_Type, EFileTreeSettingFrom_File };
 
-class CFileTreeSetting
-{
+class CFileTreeSetting {
 public:
 	std::vector<SFileTreeItem> m_aItems;			  //!< ツリーアイテム
 	bool					   m_bProject;			  //!< プロジェクトファイルモード
 	SFilePath				   m_szDefaultProjectIni; //!< デフォルトiniファイル名
-	SFilePath				   m_szLoadProjectIni;	  //!< 現在読み込んでいるiniファイル名
+	SFilePath				   m_szLoadProjectIni;	//!< 現在読み込んでいるiniファイル名
 	EFileTreeSettingFrom	   m_eFileTreeSettingOrgType;
 	EFileTreeSettingFrom	   m_eFileTreeSettingLoadType;
 };
 
 //!	アウトライン解析ダイアログボックス
-class CDlgFuncList final : public CDialog
-{
+class CDlgFuncList final : public CDialog {
 public:
 	/*
 	||  Constructors
@@ -122,18 +115,18 @@ public:
 protected:
 	bool m_bInChangeLayout;
 
-	CFuncInfoArr *m_pcFuncInfoArr;	/* 関数情報配列 */
-	CLayoutInt	  m_nCurLine;		/* 現在行 */
-	CLayoutInt	  m_nCurCol;		/* 現在桁 */
+	CFuncInfoArr *m_pcFuncInfoArr;  /* 関数情報配列 */
+	CLayoutInt	m_nCurLine;		/* 現在行 */
+	CLayoutInt	m_nCurCol;		/* 現在桁 */
 	int			  m_nSortCol;		/* ソートする列番号 */
 	int			  m_nSortColOld;	//!< ソートする列番号(OLD)
 	bool		  m_bSortDesc;		//!< 降順
-	CNativeW	  m_cmemClipText;	/* クリップボードコピー用テキスト */
+	CNativeW	  m_cmemClipText;   /* クリップボードコピー用テキスト */
 	bool		  m_bLineNumIsCRLF; /* 行番号の表示 false=折り返し単位／true=改行単位 */
 	int			  m_nListType;		/* 一覧の種類 */
 public:
-	int	 m_nDocType;	  //! ドキュメントの種類 */
-	int	 m_nOutlineType;  /* アウトライン解析の種別 */
+	int  m_nDocType;	  //! ドキュメントの種類 */
+	int  m_nOutlineType;  /* アウトライン解析の種別 */
 	bool m_bEditWndReady; /* エディタ画面の準備完了 */
 protected:
 	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
@@ -145,7 +138,7 @@ protected:
 	BOOL OnCbnSelEndOk(HWND hwndCtl, int wID);
 	BOOL OnContextMenu(WPARAM wParam, LPARAM lParam) override;
 	void SetData() override;	 /* ダイアログデータの設定 */
-	int	 GetData(void) override; /* ダイアログデータの取得 */
+	int  GetData(void) override; /* ダイアログデータの取得 */
 
 	/*
 	||  実装ヘルパ関数
@@ -170,24 +163,24 @@ protected:
 #endif
 
 	//	Apr. 23, 2005 genta リストビューのソートを関数として独立させた
-	void				SortListView(HWND hwndList, int sortcol);
+	void	   SortListView(HWND hwndList, int sortcol);
 	static int CALLBACK CompareFunc_Asc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
 	static int CALLBACK CompareFunc_Desc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
 
 	// 2001.12.03 hor
 	//	void SetTreeBookMark( HWND );		/* ツリーコントロールの初期化：ブックマーク */
-	LPVOID	  GetHelpIdTable(void) override; //@@@ 2002.01.18 add
+	LPVOID	GetHelpIdTable(void) override; //@@@ 2002.01.18 add
 	void	  Key2Command(WORD KeyCode);	 //	キー操作→コマンド変換
 	bool	  HitTestSplitter(int xPos, int yPos);
 	int		  HitTestCaptionButton(int xPos, int yPos);
-	INT_PTR	  OnNcCalcSize(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	INT_PTR	  OnNcHitTest(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	INT_PTR	  OnNcMouseMove(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	INT_PTR	  OnMouseMove(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	INT_PTR	  OnNcLButtonDown(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	INT_PTR	  OnLButtonUp(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	INT_PTR	  OnNcPaint(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	INT_PTR	  OnTimer(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	INT_PTR   OnNcCalcSize(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	INT_PTR   OnNcHitTest(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	INT_PTR   OnNcMouseMove(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	INT_PTR   OnMouseMove(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	INT_PTR   OnNcLButtonDown(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	INT_PTR   OnLButtonUp(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	INT_PTR   OnNcPaint(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	INT_PTR   OnTimer(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	void	  GetDockSpaceRect(LPRECT pRect);
 	void	  GetCaptionRect(LPRECT pRect);
 	bool	  GetCaptionButtonRect(int nButton, LPRECT pRect);
@@ -214,17 +207,17 @@ private:
 	int				 m_nSortType; //!< ツリービューをソートする基準
 	int				 m_nTreeItemCount;
 	bool			 m_bDummyLParamMode; //!< m_vecDummylParams有効/無効
-	std::vector<int> m_vecDummylParams;	 //!< ダミー要素の識別値
+	std::vector<int> m_vecDummylParams;  //!< ダミー要素の識別値
 
 	// 選択中の関数情報
-	CFuncInfo *	 m_cFuncInfo;
+	CFuncInfo *  m_cFuncInfo;
 	std::wstring m_sJumpFile;
 
 	const WCHAR *m_pszTimerJumpFile;
 	CMyPoint	 m_pointTimerJump;
 	bool		 m_bTimerJumpAutoClose;
 
-	EDockSide m_eDockSide;	 // 現在の画面の表示位置
+	EDockSide m_eDockSide;   // 現在の画面の表示位置
 	HWND	  m_hwndToolTip; /*!< ツールチップ（ボタン用） */
 	bool	  m_bStretching;
 	bool	  m_bHovering;

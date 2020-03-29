@@ -7,8 +7,7 @@
 #include "CGraphics.h"
 #include "util/std_macro.h"
 
-class CGDIStock
-{
+class CGDIStock {
 public:
 	CGDIStock() {}
 	~CGDIStock()
@@ -63,7 +62,7 @@ void CGraphics::_InitClipping()
 		//元のクリッピング領域を取得
 		RECT rcDummy = {0, 0, 1, 1};
 		HRGN hrgnOrg = ::CreateRectRgnIndirect(&rcDummy);
-		int	 nRet	 = ::GetClipRgn(m_hdc, hrgnOrg);
+		int  nRet	= ::GetClipRgn(m_hdc, hrgnOrg);
 		if (nRet != 1) {
 			::DeleteObject(hrgnOrg);
 			hrgnOrg = NULL;
@@ -226,9 +225,8 @@ void CGraphics::PopPen()
 {
 	//選択する候補
 	HPEN hpnNew = NULL;
-	if (m_vPens.size() >= 2) {
-		hpnNew = m_vPens[m_vPens.size() - 2];
-	} else {
+	if (m_vPens.size() >= 2) { hpnNew = m_vPens[m_vPens.size() - 2]; }
+	else {
 		hpnNew = m_hpnOrg;
 	}
 
@@ -262,7 +260,8 @@ COLORREF CGraphics::GetPenColor() const
 	if (m_vPens.size()) {
 		LOGPEN logpen;
 		if (GetObject(m_vPens.back(), sizeof(logpen), &logpen)) { return logpen.lopnColor; }
-	} else {
+	}
+	else {
 		return 0;
 	}
 	return 0;
@@ -322,7 +321,7 @@ void CGraphics::ClearBrush()
 //$$note:高速化
 void CGraphics::DrawDotLine(int x1, int y1, int x2, int y2)
 {
-	COLORREF c	= GetPenColor();
+	COLORREF c  = GetPenColor();
 	int		 my = t_unit(y2 - y1) * 2;
 	int		 mx = t_unit(x2 - x1) * 2;
 	if (!mx && !my) return;
@@ -366,7 +365,7 @@ static HBRUSH GetDropRectBrush()
 	static HBRUSH s_hBrush = NULL;
 	if (!s_hBrush) {
 		WORD	wBits[8] = {0x5555, 0xAAAA, 0x5555, 0xAAAA, 0x5555, 0xAAAA, 0x5555, 0xAAAA};
-		HBITMAP hBitmap	 = ::CreateBitmap(8, 8, 1, 1, wBits);
+		HBITMAP hBitmap  = ::CreateBitmap(8, 8, 1, 1, wBits);
 		if (hBitmap) {
 			s_hBrush = ::CreatePatternBrush(hBitmap);
 			::DeleteObject(hBitmap);
@@ -382,7 +381,7 @@ void CGraphics::DrawDropRect(LPCRECT lpRectNew, SIZE sizeNew, LPCRECT lpRectLast
 	if (!lpRectNew && !lpRectLast) return;
 
 	HWND hwndDt = ::GetDesktopWindow();
-	HDC	 hdc	= ::GetDCEx(hwndDt, NULL, DCX_WINDOW | DCX_CACHE | DCX_LOCKWINDOWUPDATE);
+	HDC  hdc	= ::GetDCEx(hwndDt, NULL, DCX_WINDOW | DCX_CACHE | DCX_LOCKWINDOWUPDATE);
 
 	HRGN hRgnNew	= NULL;
 	HRGN hRgnUpdate = NULL;
@@ -393,7 +392,8 @@ void CGraphics::DrawDropRect(LPCRECT lpRectNew, SIZE sizeNew, LPCRECT lpRectLast
 			hRgnUpdate = ::CreateRectRgn(0, 0, 0, 0);
 			::CombineRgn(hRgnUpdate, hRgnLast, hRgnNew, RGN_XOR);
 			::DeleteObject(hRgnLast);
-		} else {
+		}
+		else {
 			hRgnUpdate = hRgnLast;
 		}
 	}
@@ -402,7 +402,7 @@ void CGraphics::DrawDropRect(LPCRECT lpRectNew, SIZE sizeNew, LPCRECT lpRectLast
 	::SelectClipRgn(hdc, hRgnUpdate ? hRgnUpdate : hRgnNew);
 	::GetClipBox(hdc, &rc);
 
-	HBRUSH hBrush	 = GetDropRectBrush();
+	HBRUSH hBrush	= GetDropRectBrush();
 	HBRUSH hBrushOld = (HBRUSH)::SelectObject(hdc, hBrush);
 
 	::PatBlt(hdc, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, PATINVERT);

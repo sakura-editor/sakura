@@ -43,8 +43,7 @@
 
 /////////////////////////////////////////////
 //スクリプトに渡されるオブジェクトの型情報
-class CIfObjTypeInfo : public ImplementsIUnknown<ITypeInfo>
-{
+class CIfObjTypeInfo : public ImplementsIUnknown<ITypeInfo> {
 private:
 	const CIfObj::CMethodInfoList &m_MethodsRef;
 	const std::wstring &		   m_sName;
@@ -135,9 +134,11 @@ public:
 		//	2014.02.12 各パラメータを設定するように
 		if (memid == -1) {
 			if (pBstrName) { *pBstrName = SysAllocString(m_sName.c_str()); }
-		} else if (0 <= memid && memid < (int)m_MethodsRef.size()) {
+		}
+		else if (0 <= memid && memid < (int)m_MethodsRef.size()) {
 			if (pBstrName) { *pBstrName = SysAllocString(m_MethodsRef[memid].Name); }
-		} else {
+		}
+		else {
 			return TYPE_E_ELEMENTNOTFOUND;
 		}
 		if (pBstrDocString) { *pBstrDocString = SysAllocString(L""); }
@@ -147,7 +148,7 @@ public:
 	}
 
 	virtual /* [local] */ HRESULT STDMETHODCALLTYPE GetDllEntry(
-		/* [in] */ MEMBERID	  memid,
+		/* [in] */ MEMBERID   memid,
 		/* [in] */ INVOKEKIND invKind,
 		/* [out] */ BSTR __RPC_FAR *pBstrDllName,
 		/* [out] */ BSTR __RPC_FAR *pBstrName,
@@ -157,14 +158,14 @@ public:
 	}
 
 	virtual HRESULT STDMETHODCALLTYPE GetRefTypeInfo(
-		/* [in] */ HREFTYPE	  hRefType,
+		/* [in] */ HREFTYPE   hRefType,
 		/* [out] */ ITypeInfo __RPC_FAR *__RPC_FAR *ppTInfo)
 	{
 		return E_NOTIMPL;
 	}
 
 	virtual /* [local] */ HRESULT STDMETHODCALLTYPE AddressOfMember(
-		/* [in] */ MEMBERID	  memid,
+		/* [in] */ MEMBERID   memid,
 		/* [in] */ INVOKEKIND invKind,
 		/* [out] */ PVOID __RPC_FAR *ppv)
 	{
@@ -195,15 +196,18 @@ public:
 
 	virtual /* [local] */ void STDMETHODCALLTYPE ReleaseTypeAttr(
 		/* [in] */ TYPEATTR __RPC_FAR *pTypeAttr)
-	{}
+	{
+	}
 
 	virtual /* [local] */ void STDMETHODCALLTYPE ReleaseFuncDesc(
 		/* [in] */ FUNCDESC __RPC_FAR *pFuncDesc)
-	{}
+	{
+	}
 
 	virtual /* [local] */ void STDMETHODCALLTYPE ReleaseVarDesc(
 		/* [in] */ VARDESC __RPC_FAR *pVarDesc)
-	{}
+	{
+	}
 };
 
 CIfObjTypeInfo::CIfObjTypeInfo(const CIfObj::CMethodInfoList &methods, const std::wstring &sName)
@@ -213,7 +217,7 @@ CIfObjTypeInfo::CIfObjTypeInfo(const CIfObj::CMethodInfoList &methods, const std
 {
 	ZeroMemory(&m_TypeAttr, sizeof(m_TypeAttr));
 	m_TypeAttr.cImplTypes = 0; //親クラスのITypeInfoの数
-	m_TypeAttr.cFuncs	  = (WORD)m_MethodsRef.size();
+	m_TypeAttr.cFuncs	 = (WORD)m_MethodsRef.size();
 }
 
 HRESULT STDMETHODCALLTYPE CIfObjTypeInfo::GetFuncDesc(
@@ -251,7 +255,7 @@ CIfObj::CIfObj(const wchar_t *name, bool isGlobal)
 	, m_isGlobal(isGlobal)
 	, m_Owner(0)
 	, m_Methods()
-	, m_TypeInfo(NULL) {};
+	, m_TypeInfo(NULL){};
 
 //デストラクタ
 CIfObj::~CIfObj()
@@ -268,7 +272,8 @@ HRESULT STDMETHODCALLTYPE CIfObj::QueryInterface(REFIID iid, void **ppvObject)
 		AddRef();
 		*ppvObject = this;
 		return S_OK;
-	} else
+	}
+	else
 		return E_NOINTERFACE;
 }
 

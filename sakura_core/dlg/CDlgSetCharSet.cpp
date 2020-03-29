@@ -101,19 +101,19 @@ void CDlgSetCharSet::SetBOM(void)
 {
 	int		nIdx;
 	LRESULT lRes;
-	WPARAM	fCheck;
+	WPARAM  fCheck;
 
 	nIdx = Combo_GetCurSel(m_hwndCharSet);
 	lRes = Combo_GetItemData(m_hwndCharSet, nIdx);
 	CCodeTypeName cCodeTypeName(lRes);
 	if (cCodeTypeName.UseBom()) {
 		::EnableWindow(m_hwndCheckBOM, TRUE);
-		if (lRes == *m_pnCharSet) {
-			fCheck = *m_pbBom ? BST_CHECKED : BST_UNCHECKED;
-		} else {
+		if (lRes == *m_pnCharSet) { fCheck = *m_pbBom ? BST_CHECKED : BST_UNCHECKED; }
+		else {
 			fCheck = cCodeTypeName.IsBomDefOn() ? BST_CHECKED : BST_UNCHECKED;
 		}
-	} else {
+	}
+	else {
 		::EnableWindow(m_hwndCheckBOM, FALSE);
 		fCheck = BST_UNCHECKED;
 	}
@@ -125,7 +125,7 @@ BOOL CDlgSetCharSet::OnCbnSelChange(HWND hwndCtl, int wID)
 {
 	int		nIdx;
 	LRESULT lRes;
-	WPARAM	fCheck;
+	WPARAM  fCheck;
 
 	switch (wID) {
 	//	文字コードの変更をBOMチェックボックスに反映
@@ -136,12 +136,12 @@ BOOL CDlgSetCharSet::OnCbnSelChange(HWND hwndCtl, int wID)
 		CCodeTypeName cCodeTypeName(lRes);
 		if (cCodeTypeName.UseBom()) {
 			::EnableWindow(m_hwndCheckBOM, TRUE);
-			if (lRes == *m_pnCharSet) {
-				fCheck = *m_pbBom ? BST_CHECKED : BST_UNCHECKED;
-			} else {
+			if (lRes == *m_pnCharSet) { fCheck = *m_pbBom ? BST_CHECKED : BST_UNCHECKED; }
+			else {
 				fCheck = cCodeTypeName.IsBomDefOn() ? BST_CHECKED : BST_UNCHECKED;
 			}
-		} else {
+		}
+		else {
 			::EnableWindow(m_hwndCheckBOM, FALSE);
 			fCheck = BST_UNCHECKED;
 		}

@@ -37,8 +37,7 @@ CJackManager::CJackManager()
 
 	//ジャック定義一覧
 	//添え字がEJackの値と同じであること。
-	struct tagJackEntry
-	{
+	struct tagJackEntry {
 		EJack		 id;
 		const WCHAR *name;
 	} jackNames[] = {
@@ -66,7 +65,7 @@ CJackManager::CJackManager()
 		assert(i == jackNames[i].id);
 
 		JackDef jack;
-		jack.ppId	= jackNames[i].id;
+		jack.ppId   = jackNames[i].id;
 		jack.szName = jackNames[i].name;
 
 		m_Jacks.push_back(jack);
@@ -83,11 +82,10 @@ ERegisterPlugResult CJackManager::RegisterPlug(wstring pszJack, CPlug *plug)
 	if (ppId == PP_NONE) { return PPMGR_INVALID_NAME; }
 
 	//機能IDの昇順になるようにプラグを登録する
-	CPlug::Array &plugs	 = m_Jacks[ppId].plugs;
+	CPlug::Array &plugs  = m_Jacks[ppId].plugs;
 	int			  plugid = plug->GetFunctionCode();
-	if (plugs.empty() || (*(plugs.end() - 1))->GetFunctionCode() < plugid) {
-		plugs.push_back(plug);
-	} else {
+	if (plugs.empty() || (*(plugs.end() - 1))->GetFunctionCode() < plugid) { plugs.push_back(plug); }
+	else {
 		for (unsigned int index = 0; index < plugs.size(); index++) {
 			if (plugid < plugs[index]->GetFunctionCode()) {
 				plugs.insert(plugs.begin() + index, plug);
@@ -109,8 +107,7 @@ ERegisterPlugResult CJackManager::RegisterPlug(wstring pszJack, CPlug *plug)
 			plug->GetFunctionCode()); // 2011/8/20 syat プラグ複数化のためGetOutlineType仕様変更// 2010/5/1 Uchi 関数化
 		CPropTypesScreen::AddSIndentMethod(nMethod, plug->m_sLabel.c_str());
 	} break;
-	case PP_COMPLEMENT:
-	{
+	case PP_COMPLEMENT: {
 		int nMethod = CPlug::GetPluginFunctionCode(plug->m_cPlugin.m_id, 0);
 		CPropTypesSupport::AddHokanMethod(nMethod, plug->m_sLabel.c_str());
 	} break;
@@ -134,8 +131,7 @@ bool CJackManager::UnRegisterPlug(wstring pszJack, CPlug *plug)
 		int nMethod = CPlug::GetSmartIndentType(plug->GetFunctionCode());
 		CPropTypesScreen::RemoveSIndentMethod(nMethod, plug->m_sLabel.c_str());
 	} break;
-	case PP_COMPLEMENT:
-	{
+	case PP_COMPLEMENT: {
 		int nMethod = CPlug::GetPluginFunctionCode(plug->m_cPlugin.m_id, 0);
 		CPropTypesSupport::RemoveHokanMethod(nMethod, plug->m_sLabel.c_str());
 	} break;
@@ -191,9 +187,8 @@ EFunctionCode CJackManager::GetCommandCode(int index) const
 {
 	CPlug::Array commands = m_Jacks[PP_COMMAND].plugs;
 
-	if ((unsigned int)index < commands.size()) {
-		return (commands[index])->GetFunctionCode();
-	} else {
+	if ((unsigned int)index < commands.size()) { return (commands[index])->GetFunctionCode(); }
+	else {
 		return F_INVALID;
 	}
 }

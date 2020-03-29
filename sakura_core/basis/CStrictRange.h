@@ -24,8 +24,8 @@
 */
 #pragma once
 
-template<class PointType> class CRangeBase
-{
+template<class PointType>
+class CRangeBase {
 public:
 	typedef typename PointType::IntType IntType;
 
@@ -36,14 +36,14 @@ public:
 	CRangeBase(const PointType &_ptFrom, const PointType &_ptTo)
 	{
 		m_ptFrom = _ptFrom;
-		m_ptTo	 = _ptTo;
+		m_ptTo   = _ptTo;
 	}
 
 	//代入
 	CRangeBase &operator=(const CRangeBase &rhs)
 	{
 		m_ptFrom = rhs.m_ptFrom;
-		m_ptTo	 = rhs.m_ptTo;
+		m_ptTo   = rhs.m_ptTo;
 		return *this;
 	}
 
@@ -77,7 +77,7 @@ public:
 	void Set(const PointType &pt)
 	{
 		m_ptFrom = pt;
-		m_ptTo	 = pt;
+		m_ptTo   = pt;
 	}
 	void SetFrom(const PointType &pt) { m_ptFrom = pt; }
 	void SetTo(const PointType &pt) { m_ptTo = pt; }

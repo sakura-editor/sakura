@@ -41,21 +41,21 @@
 #define CP_SJIS 932
 
 //定数の素 (直接使用は控えてください)
-#define TAB_   '\t'
+#define TAB_ '\t'
 #define SPACE_ ' '
-#define CR_	   '\015'
-#define LF_	   '\012'
-#define ESC_   '\x1b'
-#define CRLF_  "\015\012"
+#define CR_ '\015'
+#define LF_ '\012'
+#define ESC_ '\x1b'
+#define CRLF_ "\015\012"
 
 // ANSI定数
 namespace ACODE {
 //文字
-static const char TAB	= TAB_;
+static const char TAB   = TAB_;
 static const char SPACE = SPACE_;
 static const char CR	= CR_;
 static const char LF	= LF_;
-static const char ESC	= ESC_;
+static const char ESC   = ESC_;
 
 //文字列
 static const char CRLF[] = CRLF_;
@@ -69,8 +69,8 @@ namespace WCODE {
 //文字
 static const wchar_t TAB   = LCHAR(TAB_);
 static const wchar_t SPACE = LCHAR(SPACE_);
-static const wchar_t CR	   = LCHAR(CR_);
-static const wchar_t LF	   = LCHAR(LF_);
+static const wchar_t CR	= LCHAR(CR_);
+static const wchar_t LF	= LCHAR(LF_);
 static const wchar_t ESC   = LCHAR(ESC_);
 
 //文字列
@@ -214,7 +214,7 @@ inline bool IsGreek(wchar_t c) { return c >= 0x0391 && c <= 0x03C9; }
 inline bool IsCyrillic(wchar_t c)
 {
 	return (c >= 0x0400 && c <= 0x052F)		// Cyrillic, Cyrillic Supplement
-		   || (c >= 0x2DE0 && c <= 0x2DFF)	// Cyrillic Extended-A
+		   || (c >= 0x2DE0 && c <= 0x2DFF)  // Cyrillic Extended-A
 		   || (c >= 0xA640 && c <= 0xA69F); // Cyrillic Extended-B
 }
 
@@ -291,24 +291,21 @@ using namespace WCODE;
 }
 
 // 文字幅の動的計算用キャッシュ関連
-struct SCharWidthCache
-{
+struct SCharWidthCache {
 	// 文字半角全角キャッシュ
 	WCHAR m_lfFaceName[LF_FACESIZE];
 	WCHAR m_lfFaceName2[LF_FACESIZE];
 	short m_nCharPxWidthCache[0x10000];
-	int	  m_nCharWidthCacheTest; // cache溢れ検出
+	int   m_nCharWidthCacheTest; // cache溢れ検出
 };
 
-enum ECharWidthFontMode
-{
+enum ECharWidthFontMode {
 	CWM_FONT_EDIT,
 	CWM_FONT_PRINT,
 	CWM_FONT_MINIMAP,
 	CWM_FONT_MAX,
 };
-enum ECharWidthCacheMode
-{
+enum ECharWidthCacheMode {
 	CWM_CACHE_NEUTRAL,
 	CWM_CACHE_SHARE,
 	CWM_CACHE_LOCAL,

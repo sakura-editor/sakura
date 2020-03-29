@@ -74,17 +74,15 @@ inline bool Python_IsWordChar(wchar_t c)
 
 	@date 2007.02.12 genta
 */
-struct COutlinePython
-{
-	enum
-	{
-		STATE_NORMAL,	//!< 通常行 : 行頭を含む
-		STATE_STRING,	//!< 文字列中
+struct COutlinePython {
+	enum {
+		STATE_NORMAL,   //!< 通常行 : 行頭を含む
+		STATE_STRING,   //!< 文字列中
 		STATE_CONTINUE, //!< 継続行 : 前の行からの続きなので行頭とはみなされない
 	} m_state;
 
-	int	 m_quote_char;	//!<	引用符記号
-	bool m_raw_string;	//!<	エスケープ記号無視ならtrue
+	int  m_quote_char;  //!<	引用符記号
+	bool m_raw_string;  //!<	エスケープ記号無視ならtrue
 	bool m_long_string; //!<	長い文字列中ならtrue
 
 	COutlinePython();
@@ -94,9 +92,9 @@ struct COutlinePython
 		ある状態から別の状態に移るところまでを扱う．
 		別の状態に移る判定がややこしいばあいは，Enter*として関数にする．
 	*/
-	int	 ScanNormal(const wchar_t *data, int linelen, int start_offset);
-	int	 ScanString(const wchar_t *data, int linelen, int start_offset);
-	int	 EnterString(const wchar_t *data, int linelen, int start_offset);
+	int  ScanNormal(const wchar_t *data, int linelen, int start_offset);
+	int  ScanString(const wchar_t *data, int linelen, int start_offset);
+	int  EnterString(const wchar_t *data, int linelen, int start_offset);
 	void DoScanLine(const wchar_t *data, int linelen, int start_offset);
 
 	bool IsLogicalLineTop(void) const { return STATE_NORMAL == m_state; }
@@ -126,7 +124,8 @@ COutlinePython::COutlinePython()
 	: m_state(STATE_NORMAL)
 	, m_raw_string(false)
 	, m_long_string(false)
-{}
+{
+}
 
 /*! @brief Python文字列の入り口で文字列種別を決定する
 
@@ -164,13 +163,15 @@ int COutlinePython::EnterString(const wchar_t *data, int linelen, int start_offs
 			//	厳密には直前がSHIFT_JISの2バイト目だと誤判定する可能性があるが
 			//	そういう動かないコードは相手にしない
 			m_raw_string = true;
-		} else {
+		}
+		else {
 			m_raw_string = false;
 		}
 		if (col + 2 < linelen && data[col + 1] == quote_char && data[col + 2] == quote_char) {
 			m_long_string = true;
 			col += 2;
-		} else {
+		}
+		else {
 			m_long_string = false;
 		}
 		++col;
@@ -220,7 +221,8 @@ int COutlinePython::ScanNormal(const wchar_t *data, int linelen, int start_offse
 		//	文字列
 		else if (data[col] == '\"' || data[col] == '\'') {
 			return EnterString(data, linelen, col);
-		} else if (data[col] == '\\') { //	継続行かもしれない
+		}
+		else if (data[col] == '\\') { //	継続行かもしれない
 			//	CRかCRLFかLFで行末
 			//	最終行には改行コードがないことがあるが，それ以降には何もないので影響しない
 			if ((linelen - 2 == col && (data[col + 1] == WCODE::CR && data[col + 2] == WCODE::LF))
@@ -287,7 +289,8 @@ int COutlinePython::ScanString(const wchar_t *data, int linelen, int start_offse
 					// 本当に行末
 					++col;
 					continue;
-				} else if (data[col + 2] == WCODE::LF) {
+				}
+				else if (data[col + 2] == WCODE::LF) {
 					col += 2; //	 CRLF
 				}
 			}
@@ -338,11 +341,11 @@ void COutlinePython::DoScanLine(const wchar_t *data, int linelen, int start_offs
 {
 	int col = start_offset;
 	while (col < linelen) {
-		if (STATE_NORMAL == m_state || STATE_CONTINUE == m_state) {
-			col = ScanNormal(data, linelen, col);
-		} else if (STATE_STRING == m_state) {
+		if (STATE_NORMAL == m_state || STATE_CONTINUE == m_state) { col = ScanNormal(data, linelen, col); }
+		else if (STATE_STRING == m_state) {
 			col = ScanString(data, linelen, col);
-		} else {
+		}
+		else {
 			//	ありえないエラー
 			return;
 		}
@@ -384,7 +387,7 @@ void CDocOutline::MakeFuncList_python(CFuncInfoArr *pcFuncInfoArr)
 	COutlinePython python_analyze_state;
 
 	const int MAX_DEPTH = 10;
-	bool	  bExtEol	= GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
+	bool	  bExtEol   = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
 	int indent_level[MAX_DEPTH]; // 各レベルのインデント桁位置()
 	indent_level[0] = 0;		 // do as python does.
@@ -393,7 +396,7 @@ void CDocOutline::MakeFuncList_python(CFuncInfoArr *pcFuncInfoArr)
 	for (nLineCount = CLogicInt(0); nLineCount < m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount) {
 		const wchar_t *pLine;
 		int			   depth;			   //	indent depth
-		CLogicInt	   col = CLogicInt(0); //	current working column position
+		CLogicInt	  col = CLogicInt(0); //	current working column position
 
 		pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
 
@@ -403,11 +406,11 @@ void CDocOutline::MakeFuncList_python(CFuncInfoArr *pcFuncInfoArr)
 			//	文字列比較がおかしくなる
 			for (depth = 0, col = CLogicInt(0); col < nLineLen; ++col) {
 				//	calculate indent level
-				if (pLine[col] == L' ') {
-					++depth;
-				} else if (pLine[col] == L'\t') {
+				if (pLine[col] == L' ') { ++depth; }
+				else if (pLine[col] == L'\t') {
 					depth = (depth + 8) & ~7;
-				} else {
+				}
+				else {
 					break;
 				}
 			}
@@ -421,11 +424,13 @@ void CDocOutline::MakeFuncList_python(CFuncInfoArr *pcFuncInfoArr)
 				//	"def"
 				nItemFuncId = 1;
 				col += CLogicInt(3); // strlen( def )
-			} else if (nLineLen - col > CLogicInt(5 + 1) && wcsncmp_literal(pLine + col, L"class") == 0) {
+			}
+			else if (nLineLen - col > CLogicInt(5 + 1) && wcsncmp_literal(pLine + col, L"class") == 0) {
 				// class
 				nItemFuncId = 4;
 				col += CLogicInt(5); // strlen( class )
-			} else {
+			}
+			else {
 				python_analyze_state.DoScanLine(pLine, nLineLen, col);
 				continue;
 			}
@@ -450,7 +455,8 @@ void CDocOutline::MakeFuncList_python(CFuncInfoArr *pcFuncInfoArr)
 				if (depth == indent_level[i]) {
 					depth_index = i;
 					break;
-				} else if (depth > indent_level[i] && i < MAX_DEPTH - 1) {
+				}
+				else if (depth > indent_level[i] && i < MAX_DEPTH - 1) {
 					depth_index				  = i + 1;
 					indent_level[depth_index] = depth;
 					break;
@@ -484,7 +490,8 @@ void CDocOutline::MakeFuncList_python(CFuncInfoArr *pcFuncInfoArr)
 				if (len > _countof(szWord) - 1) { len = _countof(szWord) - 1; }
 				wcsncpy(szWord, pLine + col, len);
 				szWord[len] = L'\0';
-			} else {
+			}
+			else {
 				wcscpy(szWord, LS(STR_OUTLINE_PYTHON_UNDEFINED));
 				len = 8;
 			}
@@ -514,9 +521,9 @@ void CDocOutline::MakeFuncList_python(CFuncInfoArr *pcFuncInfoArr)
 }
 
 const wchar_t *g_ppszKeywordsPython[] = {
-	L"False", L"None",	   L"True",	 L"and",	L"as",	 L"assert", L"async",  L"await",	L"break",
-	L"class", L"continue", L"def",	 L"del",	L"elif", L"else",	L"except", L"finally",	L"for",
-	L"from",  L"global",   L"if",	 L"import", L"in",	 L"is",		L"lambda", L"nonlocal", L"not",
-	L"or",	  L"pass",	   L"raise", L"return", L"try",	 L"while",	L"with",   L"yield",	L"self",
+	L"False", L"None",	 L"True",  L"and",	L"as",   L"assert", L"async",  L"await",	L"break",
+	L"class", L"continue", L"def",   L"del",	L"elif", L"else",   L"except", L"finally",  L"for",
+	L"from",  L"global",   L"if",	L"import", L"in",   L"is",		L"lambda", L"nonlocal", L"not",
+	L"or",	L"pass",	 L"raise", L"return", L"try",  L"while",  L"with",   L"yield",	L"self",
 };
 int g_nKeywordsPython = _countof(g_ppszKeywordsPython);

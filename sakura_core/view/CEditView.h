@@ -53,7 +53,7 @@
 #include "view/colors/EColorIndexType.h"
 #include "window/CAutoScrollWnd.h"
 #include "window/CTipWnd.h"
-#include <ObjIdl.h>	  // LPDATAOBJECT
+#include <ObjIdl.h>   // LPDATAOBJECT
 #include <ShellAPI.h> // HDROP
 #include <Windows.h>
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
@@ -68,11 +68,11 @@
 
 class CViewFont;
 class CRuler;
-class CDropTarget;	 /// 2002/2/3 aroka ヘッダ軽量化
+class CDropTarget;   /// 2002/2/3 aroka ヘッダ軽量化
 class COpeBlk;		 ///
-class CSplitBoxWnd;	 ///
+class CSplitBoxWnd;  ///
 class CRegexKeyword; ///
-class CAutoMarkMgr;	 /// 2002/2/3 aroka ヘッダ軽量化 to here
+class CAutoMarkMgr;  /// 2002/2/3 aroka ヘッダ軽量化 to here
 class CEditDoc;		 //	2002/5/13 YAZAKI ヘッダ軽量化
 class CLayout;		 //	2002/5/13 YAZAKI ヘッダ軽量化
 class CMigemo;		 // 2004.09.14 isearch
@@ -92,8 +92,7 @@ class CColor_Found;
 #endif
 
 #if !defined(RECONVERTSTRING) && (WINVER < 0x040A)
-typedef struct tagRECONVERTSTRING
-{
+typedef struct tagRECONVERTSTRING {
 	DWORD dwSize;
 	DWORD dwVersion;
 	DWORD dwStrLen;
@@ -131,8 +130,7 @@ class CEditView
 	,
 	  public CEditView_Paint,
 	  public CMyWnd,
-	  public CDocListenerEx
-{
+	  public CDocListenerEx {
 public:
 	const CEditDoc *GetDocument() const { return m_pcEditDoc; }
 	CEditDoc *		GetDocument() { return m_pcEditDoc; }
@@ -161,7 +159,7 @@ public:
 	/* 初期化系メンバ関数 */
 	BOOL Create(HWND	  hwndParent, //!< 親
 				CEditDoc *pcEditDoc,  //!< 参照するドキュメント
-				int		  nMyIndex,	  //!< ビューのインデックス
+				int		  nMyIndex,   //!< ビューのインデックス
 				BOOL	  bShow,	  //!< 作成時に表示するかどうか
 				bool	  bMiniMap);
 	void CopyViewStatus(CEditView *) const; /* 自分の表示状態を他のビューにコピー */
@@ -180,7 +178,7 @@ public:
 
 	//利用
 	void CopyCurLine(bool bAddCRLFWhenCopy, EEolType neweol, bool bEnableLineModePaste);
-		/* カーソル行をクリップボードにコピーする */ // 2007.10.08 ryoji
+	/* カーソル行をクリップボードにコピーする */ // 2007.10.08 ryoji
 	void CopySelectedAllLines(const wchar_t *pszQuote,
 							  BOOL bWithLineNumber); /* 選択範囲内の全行をクリップボードにコピーする */
 
@@ -209,23 +207,23 @@ public:
 	CLayoutInt OnHScroll(int nScrollCode, int nPos); /* 水平スクロールバーメッセージ処理 */
 	//マウス
 	void OnLBUTTONDOWN(WPARAM fwKeys, int _xPos, int _yPos);   /* マウス左ボタン押下 */
-	void OnMOUSEMOVE(WPARAM fwKeys, int xPos_, int yPos_);	   /* マウス移動のメッセージ処理 */
+	void OnMOUSEMOVE(WPARAM fwKeys, int xPos_, int yPos_);	 /* マウス移動のメッセージ処理 */
 	void OnLBUTTONUP(WPARAM fwKeys, int xPos, int yPos);	   /* マウス左ボタン開放のメッセージ処理 */
 	void OnLBUTTONDBLCLK(WPARAM fwKeys, int _xPos, int _yPos); /* マウス左ボタンダブルクリック */
-	void OnRBUTTONDOWN(WPARAM fwKeys, int xPos, int yPos);	   /* マウス右ボタン押下 */
+	void OnRBUTTONDOWN(WPARAM fwKeys, int xPos, int yPos);	 /* マウス右ボタン押下 */
 	void OnRBUTTONUP(WPARAM fwKeys, int xPos, int yPos);	   /* マウス右ボタン開放 */
-	void OnMBUTTONDOWN(WPARAM fwKeys, int xPos, int yPos);	   /* マウス中ボタン押下 */
+	void OnMBUTTONDOWN(WPARAM fwKeys, int xPos, int yPos);	 /* マウス中ボタン押下 */
 	void OnMBUTTONUP(WPARAM fwKeys, int xPos, int yPos);	   /* マウス中ボタン開放 */
-	void OnXLBUTTONDOWN(WPARAM fwKeys, int xPos, int yPos);	   /* マウスサイドボタン1押下 */
+	void OnXLBUTTONDOWN(WPARAM fwKeys, int xPos, int yPos);	/* マウスサイドボタン1押下 */
 	void OnXLBUTTONUP(WPARAM fwKeys, int xPos, int yPos); /* マウスサイドボタン1開放 */ // 2009.01.17 nasukoji
 	void OnXRBUTTONDOWN(WPARAM fwKeys, int xPos, int yPos); /* マウスサイドボタン2押下 */
 	void OnXRBUTTONUP(WPARAM fwKeys, int xPos, int yPos); /* マウスサイドボタン2開放 */ // 2009.01.17 nasukoji
-	LRESULT OnMOUSEWHEEL(WPARAM wParam, LPARAM lParam);	 //!< 垂直マウスホイールのメッセージ処理
+	LRESULT OnMOUSEWHEEL(WPARAM wParam, LPARAM lParam);  //!< 垂直マウスホイールのメッセージ処理
 	LRESULT OnMOUSEHWHEEL(WPARAM wParam, LPARAM lParam); //!< 水平マウスホイールのメッセージ処理
 	LRESULT OnMOUSEWHEEL2(WPARAM wParam, LPARAM lParam, bool bHorizontalMsg,
 						  EFunctionCode nCmdFuncID); //!< マウスホイールのメッセージ処理
 	bool	IsSpecialScrollMode(int nSelect);
-		/* キー・マウスボタン状態よりスクロールモードを判定する */ // 2009.01.17 nasukoji
+	/* キー・マウスボタン状態よりスクロールモードを判定する */ // 2009.01.17 nasukoji
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           描画                              //
@@ -236,7 +234,7 @@ protected:
 	//! ロジック行を1行描画
 	bool DrawLogicLine(HDC		  hdc,		//!< [in]     作画対象
 					   DispPos *  pDispPos, //!< [in,out] 描画する箇所、描画元ソース
-					   CLayoutInt nLineTo	//!< [in]     作画終了するレイアウト行番号
+					   CLayoutInt nLineTo   //!< [in]     作画終了するレイアウト行番号
 	);
 
 	//! レイアウト行を1行描画
@@ -261,7 +259,7 @@ public:
 public:
 	void DispTextSelected(HDC hdc, CLayoutInt nLineNum, const CMyPoint &ptXY, CLayoutInt nX_Layout); /* テキスト反転 */
 	void RedrawAll(); /* フォーカス移動時の再描画 */
-	void Redraw();	  // 2001/06/21 asa-o 再描画
+	void Redraw();	// 2001/06/21 asa-o 再描画
 	void RedrawLines(CLayoutYInt top, CLayoutYInt bottom);
 	void CaretUnderLineON(bool bDraw, bool bDrawPaint, bool DisalbeUnderLine); /* カーソル行アンダーラインのON */
 	void CaretUnderLineOFF(bool bDraw, bool bDrawPaint, bool bResetFlag,
@@ -269,7 +267,7 @@ public:
 	bool GetDrawSwitch() const { return m_bDrawSWITCH; }
 	bool SetDrawSwitch(bool b)
 	{
-		bool bOld	  = m_bDrawSWITCH;
+		bool bOld	 = m_bDrawSWITCH;
 		m_bDrawSWITCH = b;
 		return bOld;
 	}
@@ -281,11 +279,11 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	void	   AdjustScrollBars(BOOL bRedraw = TRUE);		/* スクロールバーの状態を更新する */
-	BOOL	   CreateScrollBar(); /* スクロールバー作成 */	// 2006.12.19 ryoji
+	BOOL	   CreateScrollBar(); /* スクロールバー作成 */  // 2006.12.19 ryoji
 	void	   DestroyScrollBar(); /* スクロールバー破棄 */ // 2006.12.19 ryoji
 	CLayoutInt GetWrapOverhang(void) const; /* 折り返し桁以後のぶら下げ余白計算 */ // 2008.06.08 ryoji
 	CKetaXInt  ViewColNumToWrapColNum(CLayoutXInt nViewColNum) const;
-		/* 「右端で折り返す」用にビューの桁数から折り返し桁数を計算する */					  // 2008.06.08 ryoji
+	/* 「右端で折り返す」用にビューの桁数から折り返し桁数を計算する */						  // 2008.06.08 ryoji
 	CLayoutInt GetRightEdgeForScrollBar(void); /* スクロールバー制御用に右端座標を取得する */ // 2009.08.28 nasukoji
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -379,10 +377,10 @@ public: /* テスト用にアクセス属性を変更 */
 	STDMETHODIMP DragLeave(void);
 	STDMETHODIMP Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
 	STDMETHODIMP PostMyDropFiles(LPDATAOBJECT pDataObject);
-		/* 独自ドロップファイルメッセージをポストする */							// 2008.06.20 ryoji
+	/* 独自ドロップファイルメッセージをポストする */								// 2008.06.20 ryoji
 	void	   OnMyDropFiles(HDROP hDrop); /* 独自ドロップファイルメッセージ処理 */ // 2008.06.20 ryoji
 	CLIPFORMAT GetAvailableClipFormat(LPDATAOBJECT pDataObject);
-	DWORD	   TranslateDropEffect(CLIPFORMAT cf, DWORD dwKeyState, POINTL pt, DWORD dwEffect);
+	DWORD	  TranslateDropEffect(CLIPFORMAT cf, DWORD dwKeyState, POINTL pt, DWORD dwEffect);
 	bool	   IsDragSource(void);
 
 	void _SetDragMode(BOOL b) { m_bDragMode = b; }
@@ -403,13 +401,13 @@ public:
 							  bool			bRedraw);
 
 	/* データ置換 削除&挿入にも使える */
-	void ReplaceData_CEditView(const CLayoutRange &sDelRange,	// 削除範囲。レイアウト単位。
-							   const wchar_t *	   pInsData,	// 挿入するデータ
+	void ReplaceData_CEditView(const CLayoutRange &sDelRange,   // 削除範囲。レイアウト単位。
+							   const wchar_t *	 pInsData,	// 挿入するデータ
 							   CLogicInt		   nInsDataLen, // 挿入するデータの長さ
 							   bool bRedraw, COpeBlk *pcOpeBlk, bool bFastMode = false,
 							   const CLogicRange *psDelRangeLogicFast = NULL);
-	void ReplaceData_CEditView2(const CLogicRange &sDelRange,	// 削除範囲。ロジック単位。
-								const wchar_t *	   pInsData,	// 挿入するデータ
+	void ReplaceData_CEditView2(const CLogicRange &sDelRange,   // 削除範囲。ロジック単位。
+								const wchar_t *	pInsData,	// 挿入するデータ
 								CLogicInt		   nInsDataLen, // 挿入するデータの長さ
 								bool bRedraw, COpeBlk *pcOpeBlk, bool bFastMode = false);
 	bool ReplaceData_CEditView3(CLayoutRange  sDelRange,		  // 削除範囲。レイアウト単位。
@@ -445,21 +443,22 @@ public:
 	/*!	CEditView::KeyWordHelpSearchDictのコール元指定用ローカルID
 		@date 2006.04.10 fon 新規作成
 	*/
-	enum LID_SKH
-	{
+	enum LID_SKH {
 		LID_SKH_ONTIMER		= 1, /*!< CEditView::OnTimer */
 		LID_SKH_POPUPMENU_R = 2, /*!< CEditView::CreatePopUpMenu_R */
 	};
 	BOOL KeyWordHelpSearchDict(LID_SKH nID, POINT *po, RECT *rc); // 2006.04.10 fon
 
 	int IsSearchString(const CStringRef &cStr, CLogicInt nPos, CLogicInt *pnSearchStart, CLogicInt *pnSearchEnd) const;
-		/* 現在位置が検索文字列に該当するか */ // 2002.02.08 hor 引数追加
+	/* 現在位置が検索文字列に該当するか */ // 2002.02.08 hor 引数追加
 
 	void GetCurrentTextForSearch(
 		CNativeW &cmemCurText, bool bStripMaxPath = true,
 		bool bTrimSpaceTab = false); /* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
-	bool GetCurrentTextForSearchDlg(CNativeW &cmemCurText, bool bGetHistory = false); /* 現在カーソル位置単語または選択範囲より検索等のキーを取得（ダイアログ用）
-																						 2006.08.23 ryoji */
+	bool GetCurrentTextForSearchDlg(
+		CNativeW &cmemCurText,
+		bool	  bGetHistory = false); /* 現在カーソル位置単語または選択範囲より検索等のキーを取得（ダイアログ用）
+								 2006.08.23 ryoji */
 
 private:
 	/* インクリメンタルサーチ */
@@ -515,8 +514,8 @@ public:
 	//                         メニュー                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	int	 CreatePopUpMenu_R(void); /* ポップアップメニュー(右クリック) */
-	int	 CreatePopUpMenuSub(HMENU hMenu, int nMenuIdx, int *pParentMenus,
+	int  CreatePopUpMenu_R(void); /* ポップアップメニュー(右クリック) */
+	int  CreatePopUpMenuSub(HMENU hMenu, int nMenuIdx, int *pParentMenus,
 							EKeyHelpRMenuType eRmenuType); /* ポップアップメニュー */
 	void AddKeyHelpMenu(HMENU hMenu, EKeyHelpRMenuType eRmenuType);
 
@@ -526,10 +525,10 @@ public:
 public:
 	void AnalyzeDiffInfo(const char *pszDiffInfo, int nFlgFile12); /* DIFF情報の解析 */ //@@@ 2002.05.25 MIK
 	BOOL MakeDiffTmpFile(WCHAR *filename, HWND hWnd, ECodeType code, bool bBom);
-		/* DIFF一時ファイル作成 */ //@@@ 2002.05.28 MIK	//2005.10.29 maru
+	/* DIFF一時ファイル作成 */ //@@@ 2002.05.28 MIK	//2005.10.29 maru
 	BOOL MakeDiffTmpFile2(WCHAR *tmpName, const WCHAR *orgName, ECodeType code, ECodeType saveCode);
 	void ViewDiffInfo(const WCHAR *pszFile1, const WCHAR *pszFile2, int nFlgOpt, bool bUTF8);
-		/* DIFF差分表示 */ // 2005.10.29 maru
+	/* DIFF差分表示 */ // 2005.10.29 maru
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           履歴                              //
@@ -546,8 +545,7 @@ public:
 		BOOL bCheckOnly, BOOL bBeepWhenMiss, const WCHAR *file_ext[], const WCHAR *open_ext[], int file_extno,
 		int open_extno, const WCHAR *errmes); // 指定拡張子のファイルに対応するファイルを開く補助関数 // 2003.08.12 Moca
 	//	Jan.  8, 2006 genta 折り返しトグル動作判定
-	enum TOGGLE_WRAP_ACTION
-	{
+	enum TOGGLE_WRAP_ACTION {
 		TGWRAP_NONE = 0,
 		TGWRAP_FULL,
 		TGWRAP_WINDOW,
@@ -639,24 +637,24 @@ public:
 
 	//主要属性
 	CTextMetrics m_cTextMetrics;
-	CViewSelect	 m_cViewSelect;
+	CViewSelect  m_cViewSelect;
 
 	//主要オブジェクト
 	CViewFont *m_pcViewFont;
 
 	//主要ヘルパ
-	CViewParser	   m_cParser;
-	CTextDrawer	   m_cTextDrawer;
+	CViewParser	m_cParser;
+	CTextDrawer	m_cTextDrawer;
 	CViewCommander m_cCommander;
 
 public:
 	//ウィンドウ
 	HWND m_hwndParent;				 /* 親ウィンドウハンドル */
 	HWND m_hwndVScrollBar;			 /* 垂直スクロールバーウィンドウハンドル */
-	int	 m_nVScrollRate;			 /* 垂直スクロールバーの縮尺 */
+	int  m_nVScrollRate;			 /* 垂直スクロールバーの縮尺 */
 	HWND m_hwndHScrollBar;			 /* 水平スクロールバーウィンドウハンドル */
 	HWND m_hwndSizeBox;				 /* サイズボックスウィンドウハンドル */
-	HWND m_hwndSizeBoxPlaceholder;	 /* サイズボックス代替スタティックウィンドウハンドル */
+	HWND m_hwndSizeBoxPlaceholder;   /* サイズボックス代替スタティックウィンドウハンドル */
 	CSplitBoxWnd * m_pcsbwVSplitBox; /* 垂直分割ボックス */
 	CSplitBoxWnd * m_pcsbwHSplitBox; /* 水平分割ボックス */
 	CAutoScrollWnd m_cAutoScrollWnd; //!< オートスクロール
@@ -679,17 +677,17 @@ public:
 	HDC		m_hdcCompatDC;									 /* 再描画用コンパチブルＤＣ */
 	HBITMAP m_hbmpCompatBMP;								 /* 再描画用メモリＢＭＰ */
 	HBITMAP m_hbmpCompatBMPOld;								 /* 再描画用メモリＢＭＰ(OLD) */
-	int m_nCompatBMPWidth; /* 再作画用メモリＢＭＰの幅 */	 // 2007.09.09 Moca 互換BMPによる画面バッファ
+	int m_nCompatBMPWidth; /* 再作画用メモリＢＭＰの幅 */	// 2007.09.09 Moca 互換BMPによる画面バッファ
 	int m_nCompatBMPHeight; /* 再作画用メモリＢＭＰの高さ */ // 2007.09.09 Moca 互換BMPによる画面バッファ
 
 public:
 	// D&D
 	CDropTarget *m_pcDropTarget;
 	BOOL		 m_bDragMode;									  /* 選択テキストのドラッグ中か */
-	CLIPFORMAT	 m_cfDragData; /* ドラッグデータのクリップ形式 */ // 2008.06.20 ryoji
+	CLIPFORMAT   m_cfDragData; /* ドラッグデータのクリップ形式 */ // 2008.06.20 ryoji
 	BOOL		 m_bDragBoxData;								  /* ドラッグデータは矩形か */
-	CLayoutPoint m_ptCaretPos_DragEnter; /* ドラッグ開始時のカーソル位置 */	  // 2007.12.09 ryoji
-	CLayoutInt	 m_nCaretPosX_Prev_DragEnter; /* ドラッグ開始時のX座標記憶 */ // 2007.12.09 ryoji
+	CLayoutPoint m_ptCaretPos_DragEnter; /* ドラッグ開始時のカーソル位置 */   // 2007.12.09 ryoji
+	CLayoutInt   m_nCaretPosX_Prev_DragEnter; /* ドラッグ開始時のX座標記憶 */ // 2007.12.09 ryoji
 
 	//括弧
 	CLogicPoint m_ptBracketCaretPos_PHY; // 前カーソル位置の括弧の位置 (改行単位行先頭からのバイト数(0開始),
@@ -698,7 +696,7 @@ public:
 	BOOL		m_bDrawBracketPairFlag; /* 対括弧の強調表示を行なうか */ // 03/02/18 ai
 
 	//マウス
-	bool		  m_bActivateByMouse;	//!< マウスによるアクティベート	//2007.10.02 nasukoji
+	bool		  m_bActivateByMouse;   //!< マウスによるアクティベート	//2007.10.02 nasukoji
 	DWORD		  m_dwTripleClickCheck; //!< トリプルクリックチェック用時刻	//2007.10.02 nasukoji
 	CMyPoint	  m_cMouseDownPos;		//!< クリック時のマウス座標
 	int			  m_nWheelDelta;		//!< ホイール変化量
@@ -708,9 +706,9 @@ public:
 	bool		  m_bHideMouse;
 
 	int		 m_nAutoScrollMode;		  //!< オートスクロールモード
-	bool	 m_bAutoScrollDragMode;	  //!< ドラッグモード
-	CMyPoint m_cAutoScrollMousePos;	  //!< オートスクロールのマウス基準位置
-	bool	 m_bAutoScrollVertical;	  //!< 垂直スクロール可
+	bool	 m_bAutoScrollDragMode;   //!< ドラッグモード
+	CMyPoint m_cAutoScrollMousePos;   //!< オートスクロールのマウス基準位置
+	bool	 m_bAutoScrollVertical;   //!< 垂直スクロール可
 	bool	 m_bAutoScrollHorizontal; //!< 水平スクロール可
 
 	//検索
@@ -734,7 +732,7 @@ public:
 
 	//マクロ
 	bool m_bExecutingKeyMacro; /* キーボードマクロの実行中 */
-	BOOL m_bCommandRunning;	   /* コマンドの実行中 */
+	BOOL m_bCommandRunning;	/* コマンドの実行中 */
 
 	// 入力補完
 	BOOL m_bHokan; //	補完中か？＝補完ウィンドウが表示されているか？かな？
@@ -743,17 +741,17 @@ public:
 	bool m_bDoing_UndoRedo; /* アンドゥ・リドゥの実行中か */
 
 	// 辞書Tip関連
-	DWORD	m_dwTipTimer;  /* Tip起動タイマー */
-	CTipWnd m_cTipWnd;	   /* Tip表示ウィンドウ */
-	POINT	m_poTipCurPos; /* Tip起動時のマウスカーソル位置 */
+	DWORD   m_dwTipTimer;  /* Tip起動タイマー */
+	CTipWnd m_cTipWnd;	 /* Tip表示ウィンドウ */
+	POINT   m_poTipCurPos; /* Tip起動時のマウスカーソル位置 */
 	BOOL	m_bInMenuLoop; /* メニュー モーダル ループに入っています */
-	CDicMgr m_cDicMgr;	   /* 辞書マネージャ */
+	CDicMgr m_cDicMgr;	 /* 辞書マネージャ */
 
 	WCHAR m_szComposition[512]; // IMR_DOCUMENTFEED用入力中文字列データ
 
 	// IME
 private:
-	int m_nLastReconvLine;	// 2002.04.09 minfu 再変換情報保存用;
+	int m_nLastReconvLine;  // 2002.04.09 minfu 再変換情報保存用;
 	int m_nLastReconvIndex; // 2002.04.09 minfu 再変換情報保存用;
 
 public:
@@ -761,20 +759,19 @@ public:
 	CAutoMarkMgr * m_cHistory;		//	Jump履歴
 	CRegexKeyword *m_cRegexKeyword; //@@@ 2001.11.17 add MIK
 	int			   m_nMyIndex;		/* 分割状態 */
-	CMigemo *	   m_pcmigemo;
+	CMigemo *	  m_pcmigemo;
 	bool		   m_bMiniMap;
 	bool		   m_bMiniMapMouseDown;
-	CLayoutInt	   m_nPageViewTop;
-	CLayoutInt	   m_nPageViewBottom;
+	CLayoutInt	 m_nPageViewTop;
+	CLayoutInt	 m_nPageViewBottom;
 
 	DISALLOW_COPY_AND_ASSIGN(CEditView);
 };
 
-class COutputAdapter
-{
+class COutputAdapter {
 public:
-	COutputAdapter() {};
-	virtual ~COutputAdapter() {};
+	COutputAdapter(){};
+	virtual ~COutputAdapter(){};
 
 	virtual bool OutputW(const WCHAR *pBuf, int size = -1) = 0;
 	virtual bool OutputA(const ACHAR *pBuf, int size = -1) = 0;

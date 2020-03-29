@@ -19,15 +19,14 @@
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-#define COMMENT_DELIMITER_NUM		 3
+#define COMMENT_DELIMITER_NUM 3
 #define COMMENT_DELIMITER_BUFFERSIZE 16
 
 /*! 行コメントデリミタを管理する
 
 	@note CLineCommentは、共有メモリSTypeConfigに含まれるので、メンバ変数は常に実体を持っていなければならない。
 */
-class CLineComment
-{
+class CLineComment {
 public:
 	/*
 	||  Constructors：コンパイラ標準を使用。

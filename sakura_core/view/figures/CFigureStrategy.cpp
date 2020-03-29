@@ -33,10 +33,10 @@
 
 bool CFigure_Text::DrawImp(SColorStrategyInfo *pInfo)
 {
-	int	 nIdx	 = pInfo->GetPosInLogic();
-	int	 nLength = CNativeW::GetSizeOfChar( // サロゲートペア対策	2008.10.12 ryoji
+	int  nIdx	= pInfo->GetPosInLogic();
+	int  nLength = CNativeW::GetSizeOfChar( // サロゲートペア対策	2008.10.12 ryoji
 		 pInfo->m_pLineOfLogic, pInfo->GetDocLine()->GetLengthWithoutEOL(), nIdx);
-	bool bTrans	 = pInfo->m_pcView->IsBkBitmap()
+	bool bTrans  = pInfo->m_pcView->IsBkBitmap()
 				  && CTypeSupport(pInfo->m_pcView, COLORIDX_TEXT).GetBackColor() == GetBkColor(pInfo->m_gr);
 	int fontNo = (nLength == 2 ? WCODE::GetFontNo2(pInfo->m_pLineOfLogic[nIdx], pInfo->m_pLineOfLogic[nIdx + 1])
 							   : WCODE::GetFontNo(pInfo->m_pLineOfLogic[nIdx]));
@@ -85,7 +85,7 @@ bool CFigureSpace::DrawImp_StyleSelect(SColorStrategyInfo *pInfo)
 	// 仮想関数なので派生クラス側のオーバーライドで個別に仕様変更可能
 	CEditView *pcView = pInfo->m_pcView;
 
-	CTypeSupport  cCurrentType(pcView, pInfo->GetCurrentColor());	// 周辺の色（現在の指定色/選択色）
+	CTypeSupport  cCurrentType(pcView, pInfo->GetCurrentColor());   // 周辺の色（現在の指定色/選択色）
 	CTypeSupport  cCurrentType2(pcView, pInfo->GetCurrentColor2()); // 周辺の色（現在の指定色）
 	CTypeSupport  cTextType(pcView, COLORIDX_TEXT);					// テキストの指定色
 	CTypeSupport  cSpaceType(pcView, GetDispColorIdx());			// 空白の指定色
@@ -120,7 +120,8 @@ bool CFigureSpace::DrawImp_StyleSelect(SColorStrategyInfo *pInfo)
 		crText				= pcView->GetTextColorByColorInfo2(cCurrentType.GetColorInfo(), cText.GetColorInfo());
 		crBack				= pcView->GetBackColorByColorInfo2(cCurrentType.GetColorInfo(), cBack.GetColorInfo());
 		bBold				= cCurrentType2.IsBoldFont();
-	} else {
+	}
+	else {
 		CTypeSupport &cText = cSpaceType.GetTextColor() == cTextType.GetTextColor() ? cCurrentType : cSpaceType;
 		CTypeSupport &cBack = cSpaceType.GetBackColor() == cTextType.GetBackColor() ? cCurrentType1 : cSpaceType;
 		crText				= cText.GetTextColor();
@@ -169,20 +170,20 @@ void CFigureSpace::DrawImp_DrawUnderline(SColorStrategyInfo *pInfo, DispPos &sPo
 		pInfo->m_gr.PushMyFont(sFont);
 
 		int				 nHeightMargin = pInfo->m_pcView->GetTextMetrics().GetCharHeightMarginByFontNo(fontNo);
-		CLayoutXInt		 nColLength	   = CLayoutXInt(pInfo->m_pDispPos->GetDrawCol() - sPos.GetDrawCol());
-		int				 nSpWidth	   = pcView->GetTextMetrics().CalcTextWidth3(L" ", 1);
+		CLayoutXInt		 nColLength	= CLayoutXInt(pInfo->m_pDispPos->GetDrawCol() - sPos.GetDrawCol());
+		int				 nSpWidth	  = pcView->GetTextMetrics().CalcTextWidth3(L" ", 1);
 		int				 nLength	   = (Int)(nColLength + nSpWidth - 1) / nSpWidth;
 		wchar_t *		 pszText	   = new wchar_t[nLength];
 		std::vector<int> vDxArray(nLength);
 		for (int i = 0; i < nLength; i++) {
-			pszText[i]	= L' ';
+			pszText[i]  = L' ';
 			vDxArray[i] = nSpWidth;
 		}
 		RECT rcClip2;
 		rcClip2.left  = sPos.GetDrawPos().x;
 		rcClip2.right = rcClip2.left + (Int)(nColLength); // 前提条件：CLayoutInt == px
 		if (rcClip2.left < pcView->GetTextArea().GetAreaLeft()) { rcClip2.left = pcView->GetTextArea().GetAreaLeft(); }
-		rcClip2.top	   = sPos.GetDrawPos().y;
+		rcClip2.top	= sPos.GetDrawPos().y;
 		rcClip2.bottom = sPos.GetDrawPos().y + sPos.GetCharHeight();
 		::ExtTextOut(pInfo->m_gr, sPos.GetDrawPos().x, sPos.GetDrawPos().y + nHeightMargin,
 					 ExtTextOutOption() & ~(ETO_OPAQUE), &rcClip2, pszText, nLength, &vDxArray[0]);

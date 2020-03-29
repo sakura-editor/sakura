@@ -32,8 +32,7 @@
 
 #include "CGrepEnumFileBase.h"
 
-class CGrepEnumFiles : public CGrepEnumFileBase
-{
+class CGrepEnumFiles : public CGrepEnumFileBase {
 private:
 public:
 	CGrepEnumFiles() {}

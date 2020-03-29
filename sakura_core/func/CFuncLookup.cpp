@@ -39,7 +39,7 @@
 //	オフセット値
 const int LUOFFSET_MACRO	= 0;
 const int LUOFFSET_CUSTMENU = 1;
-const int LUOFFSET_PLUGIN	= 2;
+const int LUOFFSET_PLUGIN   = 2;
 
 /*!	@brief 分類中の位置に対応する機能番号を返す．
 
@@ -57,18 +57,21 @@ EFunctionCode CFuncLookup::Pos2FuncCode(int category, int position, bool bGetUna
 
 	if (category < nsFuncCode::nFuncKindNum) {
 		if (position < nsFuncCode::pnFuncListNumArr[category]) return nsFuncCode::ppnFuncListArr[category][position];
-	} else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_MACRO) {
+	}
+	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_MACRO) {
 		//	キー割り当てマクロ
 		if (position < MAX_CUSTMACRO) {
 			if (bGetUnavailable || m_pMacroRec[position].IsEnabled()) return (EFunctionCode)(F_USERMACRO_0 + position);
 		}
-	} else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_CUSTMENU) {
+	}
+	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_CUSTMENU) {
 		//	カスタムメニュー
 		if (position == 0)
 			return F_MENU_RBUTTON;
 		else if (position < MAX_CUSTOM_MENU)
 			return (EFunctionCode)(F_CUSTMENU_BASE + position);
-	} else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_PLUGIN) {
+	}
+	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_PLUGIN) {
 		//	プラグイン
 		return CJackManager::getInstance()->GetCommandCode(position);
 	}
@@ -82,11 +85,11 @@ EFunctionCode CFuncLookup::Pos2FuncCode(int category, int position, bool bGetUna
 
 	@date 2007.11.02 ryoji 処理を簡素化
 */
-bool CFuncLookup::Pos2FuncName(int	  category, //!< [in]  分類番号 (0-)
-							   int	  position, //!< [in]  分類中のindex (0-)
+bool CFuncLookup::Pos2FuncName(int	category, //!< [in]  分類番号 (0-)
+							   int	position, //!< [in]  分類中のindex (0-)
 							   WCHAR *ptr,		//!< [out] 文字列を格納するバッファの先頭
-							   int	  bufsize	//!< [in]  文字列を格納するバッファのサイズ
-) const
+							   int	bufsize   //!< [in]  文字列を格納するバッファのサイズ
+							   ) const
 {
 	int funccode = Pos2FuncCode(category, position);
 	return Funccode2Name(funccode, ptr, bufsize);
@@ -115,26 +118,31 @@ bool CFuncLookup::Funccode2Name(int funccode, WCHAR *ptr, int bufsize) const
 		if (m_pMacroRec[position].IsEnabled()) {
 			const WCHAR *p = m_pMacroRec[position].GetTitle();
 			wcsncpy_s(ptr, bufsize, p, _TRUNCATE);
-		} else {
+		}
+		else {
 			_snwprintf_s(ptr, bufsize, _TRUNCATE, LS(STR_ERR_DLGFUNCLKUP03), position);
 		}
 		return true;
-	} else if (funccode == F_MENU_RBUTTON) {
+	}
+	else if (funccode == F_MENU_RBUTTON) {
 		Custmenu2Name(0, ptr, bufsize);
 		ptr[bufsize - 1] = LTEXT('\0');
 		return true;
-	} else if (F_CUSTMENU_1 <= funccode
-			   && funccode < F_CUSTMENU_BASE + MAX_CUSTOM_MENU) { // MAX_CUSTMACRO->MAX_CUSTOM_MENU	2010/3/14 Uchi
+	}
+	else if (F_CUSTMENU_1 <= funccode
+			 && funccode < F_CUSTMENU_BASE + MAX_CUSTOM_MENU) { // MAX_CUSTMACRO->MAX_CUSTOM_MENU	2010/3/14 Uchi
 		Custmenu2Name(funccode - F_CUSTMENU_BASE, ptr, bufsize);
 		ptr[bufsize - 1] = LTEXT('\0');
 		return true;
-	} else if (F_MENU_FIRST <= funccode && funccode < F_MENU_NOT_USED_FIRST) {
+	}
+	else if (F_MENU_FIRST <= funccode && funccode < F_MENU_NOT_USED_FIRST) {
 		if ((pszStr = LS(funccode))[0] != L'\0') {
 			wcsncpy(ptr, pszStr, bufsize);
 			ptr[bufsize - 1] = LTEXT('\0');
 			return true; // 定義されたコマンド
 		}
-	} else if (F_PLUGCOMMAND_FIRST <= funccode && funccode < F_PLUGCOMMAND_LAST) {
+	}
+	else if (F_PLUGCOMMAND_FIRST <= funccode && funccode < F_PLUGCOMMAND_LAST) {
 		if (CJackManager::getInstance()->GetCommandName(funccode, ptr, bufsize) > 0) {
 			return true; // プラグインコマンド
 		}
@@ -170,13 +178,14 @@ const WCHAR *CFuncLookup::Category2Name(int category) const
 {
 	if (category < 0) return NULL;
 
-	if (category < nsFuncCode::nFuncKindNum) {
-		return LS(nsFuncCode::ppszFuncKind[category]);
-	} else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_MACRO) {
+	if (category < nsFuncCode::nFuncKindNum) { return LS(nsFuncCode::ppszFuncKind[category]); }
+	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_MACRO) {
 		return LS(STR_ERR_DLGFUNCLKUP01);
-	} else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_CUSTMENU) {
+	}
+	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_CUSTMENU) {
 		return LS(STR_ERR_DLGFUNCLKUP02);
-	} else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_PLUGIN) {
+	}
+	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_PLUGIN) {
 		return LS(STR_ERR_DLGFUNCLKUP19);
 	}
 	return NULL;
@@ -214,8 +223,8 @@ void CFuncLookup::SetCategory2Combo(HWND hComboBox) const
 void CFuncLookup::SetListItem(HWND hListBox, int category) const
 {
 	WCHAR pszLabel[256];
-	int	  n;
-	int	  i;
+	int   n;
+	int   i;
 
 	//	リストを初期化する
 	List_ResetContent(hListBox);
@@ -237,15 +246,16 @@ int CFuncLookup::GetItemCount(int category) const
 {
 	if (category < 0) return 0;
 
-	if (category < nsFuncCode::nFuncKindNum) {
-		return nsFuncCode::pnFuncListNumArr[category];
-	} else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_MACRO) {
+	if (category < nsFuncCode::nFuncKindNum) { return nsFuncCode::pnFuncListNumArr[category]; }
+	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_MACRO) {
 		//	マクロ
 		return MAX_CUSTMACRO;
-	} else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_CUSTMENU) {
+	}
+	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_CUSTMENU) {
 		//	カスタムメニュー
 		return MAX_CUSTOM_MENU;
-	} else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_PLUGIN) {
+	}
+	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_PLUGIN) {
 		//	プラグインコマンド
 		return CJackManager::getInstance()->GetCommandCount();
 	}
@@ -272,10 +282,12 @@ const WCHAR *CFuncLookup::Custmenu2Name(int index, WCHAR buf[], int bufSize) con
 	if (index == 0) {
 		wcscpyn(buf, LS(STR_CUSTMENU_RIGHT_CLICK), bufSize);
 		return buf;
-	} else if (index == CUSTMENU_INDEX_FOR_TABWND) {
+	}
+	else if (index == CUSTMENU_INDEX_FOR_TABWND) {
 		wcscpyn(buf, LS(STR_CUSTMENU_TAB), bufSize);
 		return buf;
-	} else {
+	}
+	else {
 		_swprintf(buf, LS(STR_CUSTMENU_CUSTOM), index);
 		return buf;
 	}

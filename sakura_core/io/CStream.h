@@ -27,36 +27,32 @@
 class CFileAttribute;
 
 //! 例外：ファイルオープンに失敗
-class CError_FileOpen
-{
+class CError_FileOpen {
 public:
-	enum EReason
-	{
-		UNKNOWN,
-		TOO_BIG
-	};
+	enum EReason { UNKNOWN, TOO_BIG };
 
 public:
 	CError_FileOpen()
 		: m_reason(UNKNOWN)
-	{}
+	{
+	}
 	CError_FileOpen(EReason reason)
 		: m_reason(reason)
-	{}
+	{
+	}
 	EReason Reason() const { return m_reason; }
 
 private:
 	EReason m_reason;
 };
 
-class CError_FileWrite
-{}; //!< 例外：ファイル書き込み失敗
-class CError_FileRead
-{}; //!< 例外：ファイル読み込み失敗
+class CError_FileWrite {
+}; //!< 例外：ファイル書き込み失敗
+class CError_FileRead {
+}; //!< 例外：ファイル読み込み失敗
 
 //ストリーム基底クラス
-class CStream
-{
+class CStream {
 public:
 	//コンストラクタ・デストラクタ
 	CStream(const WCHAR *pszPath, const WCHAR *pszMode, bool bExceptionMode = false);
@@ -71,10 +67,10 @@ public:
 	void Close();
 
 	//操作
-	void SeekSet(	//!< シーク
+	void SeekSet(   //!< シーク
 		long offset //!< ストリーム先頭からのオフセット
 	);
-	void SeekEnd(	//!< シーク
+	void SeekEnd(   //!< シーク
 		long offset //!< ストリーム終端からのオフセット
 	);
 
@@ -94,12 +90,12 @@ private:
 	bool			m_bExceptionMode;
 };
 
-class COutputStream : public CStream
-{
+class COutputStream : public CStream {
 public:
 	COutputStream(const WCHAR *pszPath, const WCHAR *pszMode, bool bExceptionMode = false)
 		: CStream(pszPath, pszMode, bExceptionMode)
-	{}
+	{
+	}
 
 	//! データを無変換で書き込む。戻り値は書き込んだバイト数。
 	int Write(const void *pBuffer, int nSizeInBytes)

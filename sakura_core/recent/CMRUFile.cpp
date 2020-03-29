@@ -70,7 +70,7 @@ HMENU CMRUFile::CreateMenu(CMenuDrawer *pCMenuDrawer) const
 */
 HMENU CMRUFile::CreateMenu(HMENU hMenuPopUp, CMenuDrawer *pCMenuDrawer) const
 {
-	WCHAR	   szMenu[_MAX_PATH * 2 + 10]; //	メニューキャプション
+	WCHAR	  szMenu[_MAX_PATH * 2 + 10]; //	メニューキャプション
 	int		   i;
 	bool	   bFavorite;
 	const BOOL bMenuIcon = m_pShareData->m_Common.m_sWindow.m_bMenuIcon;
@@ -88,7 +88,7 @@ HMENU CMRUFile::CreateMenu(HMENU hMenuPopUp, CMenuDrawer *pCMenuDrawer) const
 
 		/* MRUリストの中にある開かれていないファイル */
 
-		const EditInfo *p	= m_cRecentFile.GetItem(i);
+		const EditInfo *p   = m_cRecentFile.GetItem(i);
 		bFavorite			= m_cRecentFile.IsFavorite(i);
 		bool bFavoriteLabel = bFavorite && !bMenuIcon;
 		CFileNameManager::getInstance()->GetMenuFullLabel_MRU(szMenu, _countof(szMenu), p, -1, bFavoriteLabel, i,

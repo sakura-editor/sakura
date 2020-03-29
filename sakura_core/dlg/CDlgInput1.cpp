@@ -32,25 +32,23 @@ static const DWORD p_helpids[] = { // 13000
 /* ダイアログプロシージャ */
 INT_PTR CALLBACK CDlgInput1Proc(HWND   hwndDlg, // handle to dialog box
 								UINT   uMsg,	// message
-								WPARAM wParam,	// first message parameter
-								LPARAM lParam	// second message parameter
+								WPARAM wParam,  // first message parameter
+								LPARAM lParam   // second message parameter
 )
 {
 	CDlgInput1 *pCDlgInput1;
 	switch (uMsg) {
 	case WM_INITDIALOG:
 		pCDlgInput1 = (CDlgInput1 *)lParam;
-		if (NULL != pCDlgInput1) {
-			return pCDlgInput1->DispatchEvent(hwndDlg, uMsg, wParam, lParam);
-		} else {
+		if (NULL != pCDlgInput1) { return pCDlgInput1->DispatchEvent(hwndDlg, uMsg, wParam, lParam); }
+		else {
 			return FALSE;
 		}
 	default:
 		// Modified by KEITA for WIN64 2003.9.6
 		pCDlgInput1 = (CDlgInput1 *)::GetWindowLongPtr(hwndDlg, DWLP_USER);
-		if (NULL != pCDlgInput1) {
-			return pCDlgInput1->DispatchEvent(hwndDlg, uMsg, wParam, lParam);
-		} else {
+		if (NULL != pCDlgInput1) { return pCDlgInput1->DispatchEvent(hwndDlg, uMsg, wParam, lParam); }
+		else {
 			return FALSE;
 		}
 	}
@@ -65,10 +63,10 @@ BOOL CDlgInput1::DoModal(HINSTANCE hInstApp, HWND hwndParent, const WCHAR *pszTi
 						 int nMaxTextLen, WCHAR *pszText)
 {
 	BOOL bRet;
-	m_hInstance	  = hInstApp;	 /* アプリケーションインスタンスのハンドル */
-	m_hwndParent  = hwndParent;	 /* オーナーウィンドウのハンドル */
-	m_pszTitle	  = pszTitle;	 /* ダイアログタイトル */
-	m_pszMessage  = pszMessage;	 /* メッセージ */
+	m_hInstance   = hInstApp;	/* アプリケーションインスタンスのハンドル */
+	m_hwndParent  = hwndParent;  /* オーナーウィンドウのハンドル */
+	m_pszTitle	= pszTitle;	/* ダイアログタイトル */
+	m_pszMessage  = pszMessage;  /* メッセージ */
 	m_nMaxTextLen = nMaxTextLen; /* 入力サイズ上限 */
 								 //	m_pszText = pszText;			/* テキスト */
 	m_cmemText.SetString(pszText);
@@ -79,10 +77,10 @@ BOOL CDlgInput1::DoModal(HINSTANCE hInstApp, HWND hwndParent, const WCHAR *pszTi
 }
 
 /* ダイアログのメッセージ処理 */
-INT_PTR CDlgInput1::DispatchEvent(HWND	 hwndDlg, // handle to dialog box
-								  UINT	 uMsg,	  // message
+INT_PTR CDlgInput1::DispatchEvent(HWND   hwndDlg, // handle to dialog box
+								  UINT   uMsg,	// message
 								  WPARAM wParam,  // first message parameter
-								  LPARAM lParam	  // second message parameter
+								  LPARAM lParam   // second message parameter
 )
 {
 	WORD wNotifyCode;
@@ -96,8 +94,8 @@ INT_PTR CDlgInput1::DispatchEvent(HWND	 hwndDlg, // handle to dialog box
 
 		::SetWindowText(hwndDlg, m_pszTitle);									  /* ダイアログタイトル */
 		EditCtl_LimitText(::GetDlgItem(hwndDlg, IDC_EDIT_INPUT1), m_nMaxTextLen); /* 入力サイズ上限 */
-		DlgItem_SetText(hwndDlg, IDC_EDIT_INPUT1, m_cmemText.GetStringPtr());	  /* テキスト */
-		::SetWindowText(::GetDlgItem(hwndDlg, IDC_STATIC_MSG), m_pszMessage);	  /* メッセージ */
+		DlgItem_SetText(hwndDlg, IDC_EDIT_INPUT1, m_cmemText.GetStringPtr());	 /* テキスト */
+		::SetWindowText(::GetDlgItem(hwndDlg, IDC_STATIC_MSG), m_pszMessage);	 /* メッセージ */
 
 		return TRUE;
 	case WM_COMMAND:
@@ -119,8 +117,7 @@ INT_PTR CDlgInput1::DispatchEvent(HWND	 hwndDlg, // handle to dialog box
 		}
 		break; //@@@ 2002.01.07 add
 	//@@@ 2002.01.07 add start
-	case WM_HELP:
-	{
+	case WM_HELP: {
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更

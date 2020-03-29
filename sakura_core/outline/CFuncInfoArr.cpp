@@ -20,7 +20,7 @@
 /* CFuncInfoArrクラス構築 */
 CFuncInfoArr::CFuncInfoArr()
 {
-	m_nFuncInfoArrNum	= 0;	/* 配列要素数 */
+	m_nFuncInfoArrNum   = 0;	/* 配列要素数 */
 	m_ppcFuncInfoArr	= NULL; /* 配列 */
 	m_nAppendTextLenMax = 0;
 	return;
@@ -63,7 +63,8 @@ void CFuncInfoArr::AppendData(CFuncInfo *pcFuncInfo)
 {
 	if (0 == m_nFuncInfoArrNum) {
 		m_ppcFuncInfoArr = (CFuncInfo **)malloc(sizeof(CFuncInfo *) * (m_nFuncInfoArrNum + 1));
-	} else {
+	}
+	else {
 		m_ppcFuncInfoArr = (CFuncInfo **)realloc(m_ppcFuncInfoArr, sizeof(CFuncInfo *) * (m_nFuncInfoArrNum + 1));
 	}
 	m_ppcFuncInfoArr[m_nFuncInfoArrNum] = pcFuncInfo;
@@ -75,10 +76,10 @@ void CFuncInfoArr::AppendData(CFuncInfo *pcFuncInfo)
 
 	@date 2002.04.01 YAZAKI 深さ導入
 */
-void CFuncInfoArr::AppendData(CLogicInt	   nFuncLineCRLF,	//!< 関数のある行(CRLF単位)
-							  CLogicInt	   nFuncColCRLF,	//!< 関数のある桁(CRLF単位)
+void CFuncInfoArr::AppendData(CLogicInt	nFuncLineCRLF,   //!< 関数のある行(CRLF単位)
+							  CLogicInt	nFuncColCRLF,	//!< 関数のある桁(CRLF単位)
 							  CLayoutInt   nFuncLineLAYOUT, //!< 関数のある行(折り返し単位)
-							  CLayoutInt   nFuncColLAYOUT,	//!< 関数のある桁(折り返し単位)
+							  CLayoutInt   nFuncColLAYOUT,  //!< 関数のある桁(折り返し単位)
 							  const WCHAR *pszFuncName,		//!< 関数名
 							  const WCHAR *pszFileName,		//!< ファイル名
 							  int		   nInfo,			//!< 付加情報
@@ -92,7 +93,7 @@ void CFuncInfoArr::AppendData(CLogicInt	   nFuncLineCRLF,	//!< 関数のある�
 	return;
 }
 
-void CFuncInfoArr::AppendData(CLogicInt	   nFuncLineCRLF,	//!< 関数のある行(CRLF単位)
+void CFuncInfoArr::AppendData(CLogicInt	nFuncLineCRLF,   //!< 関数のある行(CRLF単位)
 							  CLayoutInt   nFuncLineLAYOUT, //!< 関数のある行(折り返し単位)
 							  const WCHAR *pszFuncName,		//!< 関数名
 							  int		   nInfo,			//!< 付加情報
@@ -129,7 +130,8 @@ void CFuncInfoArr::SetAppendText(int info, std::wstring s, bool overwrite)
 		std::pair<int, std::wstring> pair(info, s);
 		m_AppendTextArr.insert(pair);
 		if (m_nAppendTextLenMax < (int)s.length()) { m_nAppendTextLenMax = s.length(); }
-	} else {
+	}
+	else {
 		// キーが存在する場合、値を書き換える
 		if (overwrite) { m_AppendTextArr[info] = s; }
 	}

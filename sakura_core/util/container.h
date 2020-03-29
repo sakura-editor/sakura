@@ -33,8 +33,8 @@
 #include <vector>
 
 //! vectorにちょっと機能を追加した版
-template<class T> class vector_ex : public std::vector<T>
-{
+template<class T>
+class vector_ex : public std::vector<T> {
 public:
 	using std::vector<T>::begin;
 	using std::vector<T>::end;

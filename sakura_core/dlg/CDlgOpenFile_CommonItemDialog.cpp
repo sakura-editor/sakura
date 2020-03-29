@@ -35,8 +35,7 @@
 
 struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 											 private IFileDialogEvents,
-											 private IFileDialogControlEvents
-{
+											 private IFileDialogControlEvents {
 	CDlgOpenFile_CommonItemDialog();
 
 	void Create(HINSTANCE hInstance, HWND hwndParent, const WCHAR *pszUserWildCard, const WCHAR *pszDefaultPath,
@@ -55,7 +54,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 	bool	DoModalSaveDlgImpl0(WCHAR *pszPath);
 	HRESULT DoModalSaveDlgImpl1(IFileSaveDialog *pFileSaveDialog, WCHAR *pszPath);
 
-	HINSTANCE m_hInstance;	/* アプリケーションインスタンスのハンドル */
+	HINSTANCE m_hInstance;  /* アプリケーションインスタンスのハンドル */
 	HWND	  m_hwndParent; /* オーナーウィンドウのハンドル */
 
 	DLLSHAREDATA *m_pShareData;
@@ -66,11 +65,10 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 	std::vector<LPCWSTR> m_vMRU;
 	std::vector<LPCWSTR> m_vOPENFOLDER;
 
-	struct CustomizeSetting
-	{
+	struct CustomizeSetting {
 		bool bCustomize;
 		bool bSkipAutoDetect; // 文字コードコンボボックスのアイテムの自動選択を飛ばす
-		bool bShowReadOnly;	  // 読み取り専用チェックボックスを表示する
+		bool bShowReadOnly;   // 読み取り専用チェックボックスを表示する
 		bool bUseEol;
 		bool bUseBom; // BOMの有無を選択する機能を利用するかどうか
 		bool bUseCharCode;
@@ -125,7 +123,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 	}
 
 	HRESULT STDMETHODCALLTYPE AddMenu(
-		/* [in] */ DWORD							dwIDCtl,
+		/* [in] */ DWORD					dwIDCtl,
 		/* [string][in] */ __RPC__in_string LPCWSTR pszLabel)
 	{
 		assert(m_pFileDialogCustomize);
@@ -133,7 +131,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 	}
 
 	HRESULT STDMETHODCALLTYPE AddPushButton(
-		/* [in] */ DWORD							dwIDCtl,
+		/* [in] */ DWORD					dwIDCtl,
 		/* [string][in] */ __RPC__in_string LPCWSTR pszLabel)
 	{
 		assert(m_pFileDialogCustomize);
@@ -155,7 +153,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 	}
 
 	HRESULT STDMETHODCALLTYPE AddCheckButton(
-		/* [in] */ DWORD							dwIDCtl,
+		/* [in] */ DWORD					dwIDCtl,
 		/* [string][in] */ __RPC__in_string LPCWSTR pszLabel,
 		/* [in] */ BOOL								bChecked)
 	{
@@ -164,7 +162,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 	}
 
 	HRESULT STDMETHODCALLTYPE AddEditBox(
-		/* [in] */ DWORD							dwIDCtl,
+		/* [in] */ DWORD					dwIDCtl,
 		/* [string][in] */ __RPC__in_string LPCWSTR pszText)
 	{
 		assert(m_pFileDialogCustomize);
@@ -179,7 +177,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 	}
 
 	HRESULT STDMETHODCALLTYPE AddText(
-		/* [in] */ DWORD							dwIDCtl,
+		/* [in] */ DWORD					dwIDCtl,
 		/* [string][in] */ __RPC__in_string LPCWSTR pszText)
 	{
 		assert(m_pFileDialogCustomize);
@@ -187,7 +185,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 	}
 
 	HRESULT STDMETHODCALLTYPE SetControlLabel(
-		/* [in] */ DWORD							dwIDCtl,
+		/* [in] */ DWORD					dwIDCtl,
 		/* [string][in] */ __RPC__in_string LPCWSTR pszLabel)
 	{
 		assert(m_pFileDialogCustomize);
@@ -219,7 +217,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 	}
 
 	HRESULT STDMETHODCALLTYPE SetEditBoxText(
-		/* [in] */ DWORD							dwIDCtl,
+		/* [in] */ DWORD					dwIDCtl,
 		/* [string][in] */ __RPC__in_string LPCWSTR pszText)
 	{
 		assert(m_pFileDialogCustomize);
@@ -236,15 +234,15 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 
 	HRESULT STDMETHODCALLTYPE SetCheckButtonState(
 		/* [in] */ DWORD dwIDCtl,
-		/* [in] */ BOOL	 bChecked)
+		/* [in] */ BOOL  bChecked)
 	{
 		assert(m_pFileDialogCustomize);
 		return m_pFileDialogCustomize->SetCheckButtonState(dwIDCtl, bChecked);
 	}
 
 	HRESULT STDMETHODCALLTYPE AddControlItem(
-		/* [in] */ DWORD			 dwIDCtl,
-		/* [in] */ DWORD			 dwIDItem,
+		/* [in] */ DWORD	 dwIDCtl,
+		/* [in] */ DWORD	 dwIDItem,
 		/* [in] */ __RPC__in LPCWSTR pszLabel)
 	{
 		assert(m_pFileDialogCustomize);
@@ -301,7 +299,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 	}
 
 	HRESULT STDMETHODCALLTYPE StartVisualGroup(
-		/* [in] */ DWORD							dwIDCtl,
+		/* [in] */ DWORD					dwIDCtl,
 		/* [string][in] */ __RPC__in_string LPCWSTR pszLabel)
 	{
 		assert(m_pFileDialogCustomize);
@@ -322,8 +320,8 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 	}
 
 	HRESULT STDMETHODCALLTYPE SetControlItemText(
-		/* [in] */ DWORD							dwIDCtl,
-		/* [in] */ DWORD							dwIDItem,
+		/* [in] */ DWORD					dwIDCtl,
+		/* [in] */ DWORD					dwIDItem,
 		/* [string][in] */ __RPC__in_string LPCWSTR pszLabel)
 	{
 		assert(m_pFileDialogCustomize);
@@ -406,8 +404,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 	}
 };
 
-enum CtrlId
-{
+enum CtrlId {
 	CHECK_READONLY = 2000,
 	LABEL_CODE,
 	COMBO_CODE,
@@ -423,7 +420,7 @@ enum CtrlId
 
 CDlgOpenFile_CommonItemDialog::CDlgOpenFile_CommonItemDialog()
 {
-	m_hInstance	 = NULL; /* アプリケーションインスタンスのハンドル */
+	m_hInstance  = NULL; /* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL; /* オーナーウィンドウのハンドル */
 
 	/* 共有データ構造体のアドレスを返す */
@@ -447,7 +444,7 @@ void CDlgOpenFile_CommonItemDialog::Create(HINSTANCE hInstance, HWND hwndParent,
 										   const WCHAR *pszDefaultPath, const std::vector<LPCWSTR> &vMRU,
 										   const std::vector<LPCWSTR> &vOPENFOLDER)
 {
-	m_hInstance	 = hInstance;
+	m_hInstance  = hInstance;
 	m_hwndParent = hwndParent;
 
 	/* ユーザー定義ワイルドカード（保存時の拡張子補完でも使用される） */
@@ -474,23 +471,23 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName(WCHAR *pszPath, EFil
 {
 	//	2003.05.12 MIK
 	std::vector<COMDLG_FILTERSPEC> specs;
-	std::vector<std::wstring>	   strs;
+	std::vector<std::wstring>	  strs;
 	strs.reserve(8);
 
 	strs.push_back(LS(STR_DLGOPNFL_EXTNAME1));
-	specs.push_back(COMDLG_FILTERSPEC {strs.back().c_str(), m_szDefaultWildCard});
+	specs.push_back(COMDLG_FILTERSPEC{strs.back().c_str(), m_szDefaultWildCard});
 
 	switch (eAddFilter) {
 	case EFITER_TEXT:
 		strs.push_back(LS(STR_DLGOPNFL_EXTNAME2));
-		specs.push_back(COMDLG_FILTERSPEC {strs.back().c_str(), L"*.txt"});
+		specs.push_back(COMDLG_FILTERSPEC{strs.back().c_str(), L"*.txt"});
 		break;
 	case EFITER_MACRO:
-		specs.push_back(COMDLG_FILTERSPEC {L"Macros", L"*.js;*.vbs;*.ppa;*.mac"});
-		specs.push_back(COMDLG_FILTERSPEC {L"JScript", L"*.js"});
-		specs.push_back(COMDLG_FILTERSPEC {L"VBScript", L"*.vbs"});
-		specs.push_back(COMDLG_FILTERSPEC {L"Pascal", L"*.ppa"});
-		specs.push_back(COMDLG_FILTERSPEC {L"Key Macro", L"*.mac"});
+		specs.push_back(COMDLG_FILTERSPEC{L"Macros", L"*.js;*.vbs;*.ppa;*.mac"});
+		specs.push_back(COMDLG_FILTERSPEC{L"JScript", L"*.js"});
+		specs.push_back(COMDLG_FILTERSPEC{L"VBScript", L"*.vbs"});
+		specs.push_back(COMDLG_FILTERSPEC{L"Pascal", L"*.ppa"});
+		specs.push_back(COMDLG_FILTERSPEC{L"Key Macro", L"*.mac"});
 		break;
 	case EFITER_NONE:
 	default: break;
@@ -498,7 +495,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName(WCHAR *pszPath, EFil
 
 	if (0 != wcscmp(m_szDefaultWildCard, L"*.*")) {
 		strs.push_back(LS(STR_DLGOPNFL_EXTNAME3));
-		specs.push_back(COMDLG_FILTERSPEC {strs.back().c_str(), L"*.*"});
+		specs.push_back(COMDLG_FILTERSPEC{strs.back().c_str(), L"*.*"});
 	}
 
 	m_customizeSetting.bCustomize = false;
@@ -562,7 +559,8 @@ HRESULT CDlgOpenFile_CommonItemDialog::Customize()
 			RETURN_IF_FAILED
 			hr = AddCheckButton(CtrlId::CHECK_CP, L"C&P", FALSE);
 			RETURN_IF_FAILED
-		} else {
+		}
+		else {
 			if (-1 == AddComboCodePages(m_nCharCode)) {
 				hr = SetSelectedControlItem(CtrlId::COMBO_CODE, CODE_SJIS);
 				RETURN_IF_FAILED
@@ -578,7 +576,8 @@ HRESULT CDlgOpenFile_CommonItemDialog::Customize()
 			if (CCodeTypeName(m_nCharCode).UseBom()) {
 				hr = SetCheckButtonState(CtrlId::CHECK_BOM, m_bBom ? TRUE : FALSE);
 				RETURN_IF_FAILED
-			} else {
+			}
+			else {
 				hr = SetControlState(CtrlId::CHECK_BOM, CDCS_VISIBLE);
 				RETURN_IF_FAILED
 			}
@@ -736,7 +735,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlg(SLoadInfo *pLoadInfo, std::ve
 	// ファイルの種類	2003.05.12 MIK
 	const int					   nTypesCount = m_pShareData->m_nTypesCount;
 	std::vector<COMDLG_FILTERSPEC> specs(2 + nTypesCount);
-	std::vector<std::wstring>	   strs(2 + nTypesCount);
+	std::vector<std::wstring>	  strs(2 + nTypesCount);
 	strs[0]			 = LS(STR_DLGOPNFL_EXTNAME3);
 	strs[1]			 = LS(STR_DLGOPNFL_EXTNAME2);
 	specs[0].pszName = strs[0].c_str();
@@ -752,16 +751,17 @@ bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlg(SLoadInfo *pLoadInfo, std::ve
 		if (CDocTypeManager::ConvertTypesExtToDlgExt(type->m_szTypeExts, NULL, szWork)) {
 			strs[2 + i]			 = szWork;
 			specs[2 + i].pszSpec = strs[2 + i].c_str();
-		} else {
+		}
+		else {
 			specs[2 + i].pszSpec = L"";
 		}
 	}
 	m_bViewMode						   = pLoadInfo->bViewMode;
 	m_nCharCode						   = pLoadInfo->eCharCode; /* 文字コード自動判別 */
-	m_customizeSetting.bCustomize	   = true;
+	m_customizeSetting.bCustomize	  = true;
 	m_customizeSetting.bShowReadOnly   = true;
 	m_customizeSetting.bSkipAutoDetect = false;
-	m_customizeSetting.bUseCharCode	   = bOptions;
+	m_customizeSetting.bUseCharCode	= bOptions;
 	bool ret						   = DoModalOpenDlgImpl0(true, pFileNames, pLoadInfo->cFilePath, specs);
 	if (ret) {
 		pLoadInfo->eCharCode = m_nCharCode;
@@ -854,7 +854,8 @@ bool CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl0(WCHAR *pszPath)
 		hr = DoModalSaveDlgImpl1(pFileDialog.Get(), pszPath);
 		pFileDialog->Unadvise(dwCookie);
 		m_pFileDialogCustomize = nullptr;
-	} else {
+	}
+	else {
 		hr = DoModalSaveDlgImpl1(pFileDialog.Get(), pszPath);
 	}
 	m_pFileDialog = nullptr;
@@ -867,14 +868,13 @@ bool CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl0(WCHAR *pszPath)
  */
 bool CDlgOpenFile_CommonItemDialog::DoModalSaveDlg(SSaveInfo *pSaveInfo, bool bSimpleMode)
 {
-	if (bSimpleMode) {
-		m_customizeSetting.bCustomize = false;
-	} else {
+	if (bSimpleMode) { m_customizeSetting.bCustomize = false; }
+	else {
 		m_nCharCode						   = pSaveInfo->eCharCode;
 		m_bBom							   = pSaveInfo->bBomExist;
 		m_cEol							   = pSaveInfo->cEol;
-		m_customizeSetting.bCustomize	   = true;
-		m_customizeSetting.bUseCharCode	   = true;
+		m_customizeSetting.bCustomize	  = true;
+		m_customizeSetting.bUseCharCode	= true;
 		m_customizeSetting.bUseEol		   = true;
 		m_customizeSetting.bUseBom		   = true;
 		m_customizeSetting.bSkipAutoDetect = true;
@@ -899,16 +899,16 @@ HRESULT CDlgOpenFile_CommonItemDialog::OnItemSelected(
 	/* [in] */ DWORD							   dwIDItem)
 {
 	switch (dwIDCtl) {
-	case CtrlId::COMBO_CODE:
-	{
-		CCodeTypeName	cCodeTypeName((int)dwIDItem);
+	case CtrlId::COMBO_CODE: {
+		CCodeTypeName   cCodeTypeName((int)dwIDItem);
 		CDCONTROLSTATEF state;
 		bool			bChecked;
 		if (cCodeTypeName.UseBom()) {
-			state	 = CDCS_ENABLEDVISIBLE;
+			state	= CDCS_ENABLEDVISIBLE;
 			bChecked = (dwIDItem == m_nCharCode) ? m_bBom : cCodeTypeName.IsBomDefOn();
-		} else {
-			state	 = CDCS_VISIBLE;
+		}
+		else {
+			state	= CDCS_VISIBLE;
 			bChecked = false;
 		}
 		SetControlState(CtrlId::CHECK_BOM, state);

@@ -115,11 +115,12 @@ int CBackupAgent::MakeBackUp(const WCHAR *target_file)
 	if (bup_setting.m_bBackUpDialog) { /* バックアップの作成前に確認 */
 		ConfirmBeep();
 		if (bup_setting.m_bBackUpDustBox && !dustflag) { //共通設定：バックアップファイルをごみ箱に放り込む	//@@@
-														 //2001.12.11 add start MIK	//2002.03.23
+														 // 2001.12.11 add start MIK	//2002.03.23
 			nRet =
 				::MYMESSAGEBOX(CEditWnd::getInstance()->GetHwnd(), MB_YESNO /*CANCEL*/ | MB_ICONQUESTION | MB_TOPMOST,
 							   LS(STR_BACKUP_CONFORM_TITLE1), LS(STR_BACKUP_CONFORM_MSG1), target_file, szPath);
-		} else { //@@@ 2001.12.11 add end MIK
+		}
+		else { //@@@ 2001.12.11 add end MIK
 			nRet = ::MYMESSAGEBOX(CEditWnd::getInstance()->GetHwnd(), MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 								  LS(STR_BACKUP_CONFORM_TITLE2), LS(STR_BACKUP_CONFORM_MSG2), target_file,
 								  szPath); // Jul. 06, 2001 jepro [名前を付けて保存] の場合もあるのでメッセージを修正
@@ -127,7 +128,8 @@ int CBackupAgent::MakeBackUp(const WCHAR *target_file)
 		//	Jun.  5, 2005 genta 戻り値変更
 		if (IDNO == nRet) {
 			return 0; //	保存継続
-		} else if (IDCANCEL == nRet) {
+		}
+		else if (IDCANCEL == nRet) {
 			return 2; // 保存中断
 		}
 	}
@@ -242,15 +244,15 @@ int CBackupAgent::MakeBackUp(const WCHAR *target_file)
 			fos.fFlags				  = FOF_ALLOWUNDO | FOF_SIMPLEPROGRESS | FOF_NOCONFIRMATION; //ダイアログなし
 			fos.fAnyOperationsAborted = true;													 // false;
 			fos.hNameMappings		  = NULL;
-			fos.lpszProgressTitle	  = NULL; //"バックアップファイルをごみ箱に移動しています...";
-			if (::SHFileOperation(&fos) == 0) {
-				/* 正常終了 */
-			} else {
+			fos.lpszProgressTitle	 = NULL; //"バックアップファイルをごみ箱に移動しています...";
+			if (::SHFileOperation(&fos) == 0) { /* 正常終了 */ }
+			else {
 				/* エラー終了 */
 			}
 		}
 		//@@@ 2001.12.11 end MIK
-	} else {
+	}
+	else {
 		/* エラー終了 */
 		//	Jun.  5, 2005 genta 戻り値変更
 		return 3;
@@ -299,7 +301,8 @@ bool CBackupAgent::FormatBackUpPath(WCHAR *szNewPath, size_t newPathCount, const
 		}
 		/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
 		AddLastYenFromDirectoryPath(szNewPath);
-	} else {
+	}
+	else {
 		auto_sprintf(szNewPath, L"%s%s", szDrive, szDir);
 	}
 
@@ -307,12 +310,12 @@ bool CBackupAgent::FormatBackUpPath(WCHAR *szNewPath, size_t newPathCount, const
 	if (!bup_setting.m_bBackUpPathAdvanced) {
 		__time64_t ltime  = 0;
 		struct tm  result = {0};
-		wchar_t	   szTime[64];
-		wchar_t	   szForm[64];
+		wchar_t	szTime[64];
+		wchar_t	szForm[64];
 
 		WCHAR *pBase;
-		int	   nBaseCount;
-		pBase	   = szNewPath + wcslen(szNewPath);
+		int	nBaseCount;
+		pBase	  = szNewPath + wcslen(szNewPath);
 		nBaseCount = newPathCount - wcslen(szNewPath);
 
 		/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
@@ -389,9 +392,8 @@ bool CBackupAgent::FormatBackUpPath(WCHAR *szNewPath, size_t newPathCount, const
 			{
 				//	Jun.  5, 2005 genta 拡張子を残せるように処理起点を操作する
 				WCHAR *ptr;
-				if (bup_setting.GetBackupType() == 3) {
-					ptr = szExt;
-				} else {
+				if (bup_setting.GetBackupType() == 3) { ptr = szExt; }
+				else {
 					ptr = szExt + wcslen(szExt);
 				}
 				*ptr   = L'.';
@@ -403,8 +405,8 @@ bool CBackupAgent::FormatBackUpPath(WCHAR *szNewPath, size_t newPathCount, const
 			if (-1 == auto_snprintf_s(pBase, nBaseCount, L"%s%s", szFname, szExt)) { return false; }
 			break;
 		}
-
-	} else { // 詳細設定使用する
+	}
+	else { // 詳細設定使用する
 		WCHAR szFormat[1024];
 
 		switch (bup_setting.GetBackupTypeAdv()) {
@@ -419,8 +421,7 @@ bool CBackupAgent::FormatBackUpPath(WCHAR *szNewPath, size_t newPathCount, const
 			}
 		} break;
 		case 2: //	現在の日付，時刻
-		default:
-		{
+		default: {
 			// 2012.12.26 aroka	詳細設定のファイル保存日時と現在時刻で書式を合わせる
 			SYSTEMTIME SystemTime;
 			// 2016.07.28 UTC→ローカル時刻に変更
@@ -451,7 +452,8 @@ bool CBackupAgent::FormatBackUpPath(WCHAR *szNewPath, size_t newPathCount, const
 					if (cp != NULL) {
 						folders[idx] = cp + 1;
 						*cp			 = L'\0';
-					} else {
+					}
+					else {
 						break;
 					}
 				}
@@ -472,8 +474,8 @@ bool CBackupAgent::FormatBackUpPath(WCHAR *szNewPath, size_t newPathCount, const
 							//							}
 							if (folders[*q - L'0'] != 0) {
 								wcscat(szNewPath, folders[*q - L'0']);
-								//								if( newPathCount < auto_strlcat( szNewPath, folders[*q-L'0'],
-								//newPathCount ) ){ 									return false;
+								//								if( newPathCount < auto_strlcat( szNewPath,
+								// folders[*q-L'0'], newPathCount ) ){ 									return false;
 								//								}
 							}
 							q2 = q + 1;
@@ -497,7 +499,7 @@ bool CBackupAgent::FormatBackUpPath(WCHAR *szNewPath, size_t newPathCount, const
 			// * を拡張子にする
 			while (wcschr(szNewPath, L'*')) {
 				wcscpy(temp, szNewPath);
-				cp	= wcschr(temp, L'*');
+				cp  = wcschr(temp, L'*');
 				*cp = 0;
 				if (-1 == auto_snprintf_s(szNewPath, newPathCount, L"%s%s%s", temp, ep, cp + 1)) { return false; }
 			}

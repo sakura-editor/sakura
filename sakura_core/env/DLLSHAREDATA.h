@@ -66,7 +66,7 @@ inline void SetDllShareData(DLLSHAREDATA *pShareData)
 
 #include "env/CAppNodeManager.h" //SShare_Nodes
 // 2007.09.28 kobake Common構造体をCShareData.hから分離
-#include "env/CFileNameManager.h"	   //SShare_FileNameManagement
+#include "env/CFileNameManager.h"	  //SShare_FileNameManagement
 #include "env/CSearchKeywordManager.h" //SShare_SearchKeywords
 #include "env/CTagJumpManager.h"	   //SShare_TagJump
 #include "env/CommonSetting.h"
@@ -77,29 +77,35 @@ inline void SetDllShareData(DLLSHAREDATA *pShareData)
 #include "types/CType.h"		   // STypeConfig
 
 //! 共有フラグ
-struct SShare_Flags
-{
+struct SShare_Flags {
 	BOOL m_bEditWndChanging; // 編集ウィンドウ切替中	// 2007.04.03 ryoji
 	/*	@@@ 2002.1.24 YAZAKI
 		キーボードマクロは、記録終了した時点でファイル「m_szKeyMacroFileName」に書き出すことにする。
 		m_bRecordingKeyMacroがTRUEのときは、キーボードマクロの記録中なので、m_szKeyMacroFileNameにアクセスしてはならない。
 	*/
-	BOOL m_bRecordingKeyMacro;	  /* キーボードマクロの記録中 */
+	BOOL m_bRecordingKeyMacro;	/* キーボードマクロの記録中 */
 	HWND m_hwndRecordingKeyMacro; /* キーボードマクロを記録中のウィンドウ */
 };
 
 //! 共有ワークバッファ
-struct SShare_WorkBuffer
-{
+struct SShare_WorkBuffer {
 	// 2007.09.16 kobake char型だと、常に文字列であるという誤解を招くので、BYTE型に変更。変数名も変更。
 	//           UNICODE版では、余分に領域を使うことが予想されるため、ANSI版の2倍確保。
 private:
 	BYTE m_pWork[32000 * sizeof(WCHAR)];
 
 public:
-	template<class T> T *GetWorkBuffer() { return reinterpret_cast<T *>(m_pWork); }
+	template<class T>
+	T *GetWorkBuffer()
+	{
+		return reinterpret_cast<T *>(m_pWork);
+	}
 
-	template<class T> size_t GetWorkBufferCount() { return sizeof(m_pWork) / sizeof(T); }
+	template<class T>
+	size_t GetWorkBufferCount()
+	{
+		return sizeof(m_pWork) / sizeof(T);
+	}
 
 public:
 	EditInfo	m_EditInfo_MYWM_GETFILEINFO; // MYWM_GETFILEINFOデータ受け渡し用	####美しくない
@@ -108,16 +114,14 @@ public:
 };
 
 //! 共有ハンドル
-struct SShare_Handles
-{
+struct SShare_Handles {
 	HWND   m_hwndTray;
 	HWND   m_hwndDebug;
 	HACCEL m_hAccel;
 };
 
 //! EXE情報
-struct SShare_Version
-{
+struct SShare_Version {
 	DWORD m_dwProductVersionMS;
 	DWORD m_dwProductVersionLS;
 };
@@ -126,8 +130,7 @@ struct SShare_Version
 //                   共有メモリ構造体本体                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-struct DLLSHAREDATA
-{
+struct DLLSHAREDATA {
 	// -- -- バージョン -- -- //
 	/*!
 		データ構造 Version	//	Oct. 27, 2000 genta
@@ -138,22 +141,22 @@ struct DLLSHAREDATA
 	unsigned int m_nSize;
 
 	// -- -- 非保存対象 -- -- //
-	SShare_Version	  m_sVersion; //※読込は行わないが、書込は行う
+	SShare_Version	m_sVersion; //※読込は行わないが、書込は行う
 	SShare_WorkBuffer m_sWorkBuffer;
 	SShare_Flags	  m_sFlags;
 	SShare_Nodes	  m_sNodes;
-	SShare_Handles	  m_sHandles;
+	SShare_Handles	m_sHandles;
 
 	SCharWidthCache m_sCharWidth;		//!< 文字半角全角キャッシュ
 	DWORD			m_dwCustColors[16]; //!< フォントDialogカスタムパレット
 
 	// プラグイン
 	short m_PlugCmdIcon[MAX_PLUGIN * MAX_PLUG_CMD]; //!< プラグイン コマンド ICON 番号	// 2010/7/3 Uchi
-	int	  m_maxTBNum;								//!< ツールバーボタン 最大値		// 2010/7/5 Uchi
+	int   m_maxTBNum;								//!< ツールバーボタン 最大値		// 2010/7/5 Uchi
 
 	// -- -- 保存対象 -- -- //
 	//設定
-	CommonSetting	m_Common;								// 共通設定
+	CommonSetting   m_Common;								// 共通設定
 	int				m_nTypesCount;							// タイプ別設定数
 	STypeConfig		m_TypeBasis;							// タイプ別設定: 共通
 	STypeConfigMini m_TypeMini[MAX_TYPES];					// タイプ別設定(mini)
@@ -161,7 +164,7 @@ struct DLLSHAREDATA
 	int				m_nLockCount;							//!< ロックカウント
 
 	//その他
-	SShare_SearchKeywords	  m_sSearchKeywords;
+	SShare_SearchKeywords	 m_sSearchKeywords;
 	SShare_TagJump			  m_sTagJump;
 	SShare_FileNameManagement m_sFileNameManagement;
 	SShare_History			  m_sHistory;
@@ -172,20 +175,19 @@ struct DLLSHAREDATA
 	int m_nDiffFlgOpt; /* DIFF差分表示 */ //@@@ 2002.05.27 MIK
 	//タグファイルの作成ダイアログのオプション
 	WCHAR m_szTagsCmdLine[_MAX_PATH]; /* TAGSコマンドラインオプション */ //@@@ 2003.05.12 MIK
-	int	  m_nTagsOpt; /* TAGSオプション(チェック) */					 //@@@ 2003.05.12 MIK
+	int   m_nTagsOpt; /* TAGSオプション(チェック) */					 //@@@ 2003.05.12 MIK
 
 	// -- -- テンポラリ -- -- //
 	//指定行へジャンプダイアログのオプション
 	bool m_bLineNumIsCRLF_ForJump; /* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
 };
 
-class CShareDataLockCounter
-{
+class CShareDataLockCounter {
 public:
 	CShareDataLockCounter();
 	~CShareDataLockCounter();
 
-	static int	GetLockCounter();
+	static int  GetLockCounter();
 	static void WaitLock(HWND hwndParent, CShareDataLockCounter **ppLock = NULL);
 
 private:

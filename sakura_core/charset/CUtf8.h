@@ -29,8 +29,7 @@
 
 struct CommonSetting_Statusbar;
 
-class CUtf8 : public CCodeBase
-{
+class CUtf8 : public CCodeBase {
 public:
 	// CCodeBaseインターフェース
 	EConvertResult CodeToUnicode(const CMemory &cSrc, CNativeW *pDst) override
@@ -105,27 +104,32 @@ inline int CUtf8::_Utf8ToUni_char(const unsigned char *pSrc, const int nSrcLen, 
 		if (nSrcLen < 4) {
 			pDst[0] = static_cast<unsigned short>(DecodeUtf8(pSrc, nSrcLen) & 0x0000ffff);
 			nret	= 1;
-		} else if (nSrcLen == 4) {
+		}
+		else if (nSrcLen == 4) {
 			// UTF-8 サロゲート領域の処理
 			wchar32_t wc32 = DecodeUtf8(pSrc, 4);
 			EncodeUtf16Surrog(wc32, pDst);
 			nret = 2;
-		} else {
+		}
+		else {
 			// 保護コード
 			pDst[0] = L'?';
 			nret	= 1;
 		}
-	} else {
+	}
+	else {
 		// CESU-8 の処理
 		if (nSrcLen < 4) {
 			pDst[0] = static_cast<unsigned short>(DecodeUtf8(pSrc, nSrcLen) & 0x0000ffff);
 			nret	= 1;
-		} else if (nSrcLen == 6) {
+		}
+		else if (nSrcLen == 6) {
 			// CESU-8 サロゲート領域の処理
 			pDst[0] = static_cast<unsigned short>(DecodeUtf8(&pSrc[0], 3) & 0x0000ffff);
 			pDst[1] = static_cast<unsigned short>(DecodeUtf8(&pSrc[3], 3) & 0x0000ffff);
 			nret	= 2;
-		} else {
+		}
+		else {
 			// 保護コード
 			pDst[0] = L'?';
 			nret	= 1;
@@ -151,21 +155,21 @@ inline int CUtf8::_UniToUtf8_char(const unsigned short *pSrc, const int nSrcLen,
 	if (bCESU8Mode != true) {
 		// UTF-8 の処理
 		wchar32_t wc32;
-		if (nSrcLen == 2) {
-			wc32 = DecodeUtf16Surrog(pSrc[0], pSrc[1]);
-		} else if (nSrcLen == 1) { // nSrcLen == 1
+		if (nSrcLen == 2) { wc32 = DecodeUtf16Surrog(pSrc[0], pSrc[1]); }
+		else if (nSrcLen == 1) { // nSrcLen == 1
 			wc32 = pSrc[0];
-		} else {
+		}
+		else {
 			wc32 = L'?';
 		}
 		nret = EncodeUtf8(wc32, &pDst[0]);
-	} else {
+	}
+	else {
 		// CESU-8 の処理
 		int nclen = 0;
 		nclen += EncodeUtf8(pSrc[0], &pDst[0]);
-		if (nSrcLen == 2) {
-			nclen += EncodeUtf8(pSrc[1], &pDst[nclen]);
-		} else {
+		if (nSrcLen == 2) { nclen += EncodeUtf8(pSrc[1], &pDst[nclen]); }
+		else {
 			;
 		}
 		nret = nclen;

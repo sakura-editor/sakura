@@ -26,19 +26,19 @@
 
 #include "CConvert.h"
 
-class CConvert_SpaceToTab final : public CConvert
-{
+class CConvert_SpaceToTab final : public CConvert {
 public:
 	CConvert_SpaceToTab(int nTabWidth, int nStartColumn, bool bExtEol)
 		: m_nTabWidth(nTabWidth)
 		, m_nStartColumn(nStartColumn)
 		, m_bExtEol(bExtEol)
-	{}
+	{
+	}
 
 	bool DoConvert(CNativeW *pcData) override;
 
 private:
-	int	 m_nTabWidth;
-	int	 m_nStartColumn;
+	int  m_nTabWidth;
+	int  m_nStartColumn;
 	bool m_bExtEol;
 };

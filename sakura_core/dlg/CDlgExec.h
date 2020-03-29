@@ -19,8 +19,7 @@
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-class CDlgExec final : public CDialog
-{
+class CDlgExec final : public CDialog {
 public:
 	/*
 	||  Constructors
@@ -31,7 +30,7 @@ public:
 	*/
 	int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam); /* モーダルダイアログの表示 */
 
-	WCHAR	  m_szCommand[1024 + 1];						/* コマンドライン */
+	WCHAR	 m_szCommand[1024 + 1];						/* コマンドライン */
 	SFilePath m_szCurDir;									/* カレントディレクトリ */
 	bool	  m_bEditable; /* 編集ウィンドウへの入力可能 */ // 2009.02.21 ryoji
 
@@ -41,7 +40,7 @@ protected:
 	SComboBoxItemDeleter m_comboDelCur;
 	CRecentCurDir		 m_cRecentCur;
 
-	int	   GetData(void) override; /* ダイアログデータの取得 */
+	int	GetData(void) override; /* ダイアログデータの取得 */
 	void   SetData(void) override; /* ダイアログデータの設定 */
 	BOOL   OnInitDialog(HWND hwnd, WPARAM wParam, LPARAM lParam) override;
 	BOOL   OnBnClicked(int wID) override;

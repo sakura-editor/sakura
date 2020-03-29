@@ -27,8 +27,7 @@
 #include "CWnd.h"
 class CEditView;
 
-class CAutoScrollWnd final : public CWnd
-{
+class CAutoScrollWnd final : public CWnd {
 public:
 	CAutoScrollWnd();
 	virtual ~CAutoScrollWnd();
@@ -37,7 +36,7 @@ public:
 	void Close();
 
 private:
-	HBITMAP	   m_hCenterImg;
+	HBITMAP	m_hCenterImg;
 	CEditView *m_cView;
 
 protected:

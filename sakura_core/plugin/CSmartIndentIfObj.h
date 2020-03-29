@@ -31,16 +31,14 @@
 #include "macro/CWSHIfObj.h"
 
 // スマートインデント用WSHオブジェクト
-class CSmartIndentIfObj final : public CWSHIfObj
-{
+class CSmartIndentIfObj final : public CWSHIfObj {
 	// 型定義
-	enum FuncId
-	{
-		F_SI_COMMAND_FIRST	= 0,				//↓コマンドは以下に追加する
+	enum FuncId {
+		F_SI_COMMAND_FIRST  = 0,				//↓コマンドは以下に追加する
 		F_SI_FUNCTION_FIRST = F_FUNCTION_FIRST, //↓関数は以下に追加する
 		F_SI_GETCHAR							//押下したキーを取得する
 	};
-	typedef std::string	 string;
+	typedef std::string  string;
 	typedef std::wstring wstring;
 
 	// コンストラクタ
@@ -48,7 +46,8 @@ public:
 	CSmartIndentIfObj(wchar_t ch)
 		: CWSHIfObj(L"Indent", false)
 		, m_wcChar(ch)
-	{}
+	{
+	}
 
 	// デストラクタ
 public:
@@ -68,7 +67,8 @@ public:
 	MacroFuncInfoArray GetMacroFuncInfo() const
 	{
 		static MacroFuncInfo macroFuncInfoNotCommandArr[] = {
-			// ID									関数名							引数										戻り値の型
+			// ID									関数名							引数
+			// 戻り値の型
 			// m_pszData
 			{EFunctionCode(F_SI_GETCHAR),
 			 LTEXT("GetChar"),

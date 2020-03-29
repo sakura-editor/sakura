@@ -55,10 +55,10 @@ void CMruListener::OnBeforeLoad(SLoadInfo *pLoadInfo)
 
 	// 前回のコード -> ePrevCode
 	EditInfo  fi;
-	ECodeType ePrevCode	  = CODE_NONE;
+	ECodeType ePrevCode   = CODE_NONE;
 	int		  nPrevTypeId = -1;
 	if (CMRUFile().GetEditInfo(pLoadInfo->cFilePath, &fi)) {
-		ePrevCode	= fi.m_nCharCode;
+		ePrevCode   = fi.m_nCharCode;
 		nPrevTypeId = fi.m_nTypeId;
 	}
 
@@ -79,7 +79,8 @@ void CMruListener::OnBeforeLoad(SLoadInfo *pLoadInfo)
 			CCodeMediator cmediator(type->m_encoding);
 			pLoadInfo->eCharCode = cmediator.CheckKanjiCodeOfFile(pLoadInfo->cFilePath);
 		}
-	} else if (CODE_NONE == pLoadInfo->eCharCode) {
+	}
+	else if (CODE_NONE == pLoadInfo->eCharCode) {
 		pLoadInfo->eCharCode = ePrevCode;
 	}
 	if (CODE_NONE == pLoadInfo->eCharCode) {
@@ -88,7 +89,8 @@ void CMruListener::OnBeforeLoad(SLoadInfo *pLoadInfo)
 			pLoadInfo->eCharCode =
 				type->m_encoding
 					.m_eDefaultCodetype; //無効値の回避	// 2011.01.24 ryoji CODE_DEFAULT -> m_eDefaultCodetype
-		} else {
+		}
+		else {
 			pLoadInfo->eCharCode = GetDllShareData().m_TypeBasis.m_encoding.m_eDefaultCodetype;
 		}
 	}
@@ -108,7 +110,8 @@ void CMruListener::OnBeforeLoad(SLoadInfo *pLoadInfo)
 			if (IDYES == nRet) {
 				// 前回の文字コードを採用する
 				pLoadInfo->eCharCode = ePrevCode;
-			} else {
+			}
+			else {
 				// 元々使おうとしていた文字コードを採用する
 				pLoadInfo->eCharCode = pLoadInfo->eCharCode;
 			}
@@ -120,7 +123,8 @@ void CMruListener::OnBeforeLoad(SLoadInfo *pLoadInfo)
 			//  明示指定の場合：明示指定の文字コードを採用
 			if (!bSpecified) { //自動判別
 				pLoadInfo->eCharCode = ePrevCode;
-			} else { //明示指定
+			}
+			else { //明示指定
 				pLoadInfo->eCharCode = pLoadInfo->eCharCode;
 			}
 		}
@@ -148,7 +152,8 @@ void CMruListener::OnAfterLoad(const SLoadInfo &sLoadInfo)
 		if (ptCaretPos.GetY2() >= pcDoc->m_cLayoutMgr.GetLineCount()) {
 			//ファイルの最後に移動
 			cView.GetCommander().HandleCommand(F_GOFILEEND, false, 0, 0, 0, 0);
-		} else {
+		}
+		else {
 			cView.GetTextArea().SetViewTopLine(eiOld.m_nViewTopLine); // 2001/10/20 novice
 			cView.GetTextArea().SetViewLeftCol(eiOld.m_nViewLeftCol); // 2001/10/20 novice
 			// From Here Mar. 28, 2003 MIK
@@ -169,7 +174,8 @@ void CMruListener::OnAfterLoad(const SLoadInfo &sLoadInfo)
 		if (GetDllShareData().m_Common.m_sFile.GetRestoreBookmarks()) {
 			CBookmarkManager(&pcDoc->m_cDocLineMgr).SetBookMarks(eiOld.m_szMarkLines);
 		}
-	} else {
+	}
+	else {
 		eiOld.m_szMarkLines[0] = L'\0';
 	}
 

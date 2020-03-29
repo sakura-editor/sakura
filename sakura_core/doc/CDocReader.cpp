@@ -87,9 +87,10 @@ const wchar_t *CDocReader::GetFirstLinrStr(int *pnLineLen)
 {
 	const wchar_t *pszLine;
 	if (CLogicInt(0) == m_pcDocLineMgr->GetLineCount()) {
-		pszLine	   = NULL;
+		pszLine	= NULL;
 		*pnLineLen = 0;
-	} else {
+	}
+	else {
 		pszLine = m_pcDocLineMgr->GetDocLineTop()->GetDocLineStrWithEOL(pnLineLen);
 
 		m_pcDocLineMgr->m_pDocLineCurrent = const_cast<CDocLine *>(m_pcDocLineMgr->GetDocLineTop()->GetNextLine());
@@ -109,9 +110,10 @@ const wchar_t *CDocReader::GetNextLinrStr(int *pnLineLen)
 {
 	const wchar_t *pszLine;
 	if (NULL == m_pcDocLineMgr->m_pDocLineCurrent) {
-		pszLine	   = NULL;
+		pszLine	= NULL;
 		*pnLineLen = 0;
-	} else {
+	}
+	else {
 		pszLine = m_pcDocLineMgr->m_pDocLineCurrent->GetDocLineStrWithEOL(pnLineLen);
 
 		m_pcDocLineMgr->m_pDocLineCurrent = m_pcDocLineMgr->m_pDocLineCurrent->GetNextLine();

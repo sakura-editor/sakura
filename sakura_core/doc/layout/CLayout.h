@@ -28,8 +28,7 @@ class CLayoutMgr;
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-class CLayout
-{
+class CLayout {
 protected:
 	friend class CLayoutMgr; //####仮
 public:
@@ -37,17 +36,17 @@ public:
 	||  Constructors
 	*/
 	// 2007.08.23 kobake コンストラクタでメンバ変数を初期化するようにした
-	CLayout(const CDocLine *pcDocLine,	//!< 実データへの参照
+	CLayout(const CDocLine *pcDocLine,  //!< 実データへの参照
 			CLogicPoint		ptLogicPos, //!< 実データ参照位置
 			CLogicInt		nLength,	//!< 実データ内データ長
 			EColorIndexType nTypePrev, CLayoutInt nTypeIndent, CLayoutColorInfo *pColorInfo)
 	{
 		m_pPrev		 = NULL;
 		m_pNext		 = NULL;
-		m_pCDocLine	 = pcDocLine;
+		m_pCDocLine  = pcDocLine;
 		m_ptLogicPos = ptLogicPos; // 実データ参照位置
-		m_nLength	 = nLength;	   // 実データ内データ長
-		m_nTypePrev	 = nTypePrev; // タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列
+		m_nLength	= nLength;	// 実データ内データ長
+		m_nTypePrev  = nTypePrev; // タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列
 								 // 4=ダブルクォーテーション文字列
 		m_nIndent = nTypeIndent; // このレイアウト行のインデント数 @@@ 2002.09.23 YAZAKI
 		m_cExInfo.SetColorInfo(pColorInfo);
@@ -57,8 +56,8 @@ public:
 
 	// m_ptLogicPos.xで補正したあとの文字列を得る
 	const wchar_t *GetPtr() const { return m_pCDocLine->GetPtr() + m_ptLogicPos.x; }
-	CLogicInt	   GetLengthWithEOL() const { return m_nLength; } //	ただしEOLは常に1文字とカウント？？
-	CLogicInt	   GetLengthWithoutEOL() const { return m_nLength - (m_cEol.GetLen() ? 1 : 0); }
+	CLogicInt	  GetLengthWithEOL() const { return m_nLength; } //	ただしEOLは常に1文字とカウント？？
+	CLogicInt	  GetLengthWithoutEOL() const { return m_nLength - (m_cEol.GetLen() ? 1 : 0); }
 	// CLogicInt GetLength() const {	return m_nLength;	}	//	CMemoryIterator用（EOL含む）
 	CLayoutInt GetIndent() const
 	{
@@ -97,9 +96,9 @@ public:
 	CStringRef GetStringRef() const { return CStringRef(GetPtr(), GetLengthWithEOL()); }
 
 	//チェーン属性
-	CLayout *	   GetPrevLayout() { return m_pPrev; }
+	CLayout *	  GetPrevLayout() { return m_pPrev; }
 	const CLayout *GetPrevLayout() const { return m_pPrev; }
-	CLayout *	   GetNextLayout() { return m_pNext; }
+	CLayout *	  GetNextLayout() { return m_pNext; }
 	const CLayout *GetNextLayout() const { return m_pNext; }
 	void		   _SetPrevLayout(CLayout *pcLayout) { m_pPrev = pcLayout; }
 	void		   _SetNextLayout(CLayout *pcLayout) { m_pNext = pcLayout; }
@@ -125,7 +124,7 @@ private:
 	//データ参照範囲
 	const CDocLine *m_pCDocLine;  //!< 実データへの参照
 	CLogicPoint		m_ptLogicPos; //!< 対応するロジック参照位置
-	CLogicInt		m_nLength;	  //!< このレイアウト行の長さ。文字単位。
+	CLogicInt		m_nLength;	//!< このレイアウト行の長さ。文字単位。
 
 	//その他属性
 	EColorIndexType m_nTypePrev; //!< タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列

@@ -26,12 +26,12 @@
 
 #include "view/colors/CColorStrategy.h"
 
-class CColor_Url final : public CColorStrategy
-{
+class CColor_Url final : public CColorStrategy {
 public:
 	CColor_Url()
 		: m_nCOMMENTEND(0)
-	{}
+	{
+	}
 	EColorIndexType GetStrategyColor() const override { return COLORIDX_URL; }
 	void			InitStrategyStatus() override { m_nCOMMENTEND = 0; }
 	bool			BeginColor(const CStringRef &cStr, int nPos) override;

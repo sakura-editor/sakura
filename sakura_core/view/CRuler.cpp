@@ -26,22 +26,21 @@ void CRuler::_DrawRulerCaret(CGraphics &gr, int nCaretDrawPosX, int nCaretWidth)
 {
 	//描画領域 -> hRgn
 	RECT rc;
-	rc.left	  = nCaretDrawPosX + 1; // 2012.07.27 Moca 1px右に修正
+	rc.left   = nCaretDrawPosX + 1; // 2012.07.27 Moca 1px右に修正
 	rc.right  = rc.left + m_pEditView->GetTextMetrics().GetHankakuDx() - 1;
-	rc.top	  = 0;
+	rc.top	= 0;
 	rc.bottom = m_pEditView->GetTextArea().GetAreaTop() - m_pEditView->GetTextArea().GetTopYohaku() - 1;
 	HRGN hRgn = ::CreateRectRgnIndirect(&rc);
 
 	//ブラシ作成 -> hBrush
 	HBRUSH hBrush;
-	if (0 == nCaretWidth) {
-		hBrush = ::CreateSolidBrush(RGB(128, 128, 128));
-	} else {
+	if (0 == nCaretWidth) { hBrush = ::CreateSolidBrush(RGB(128, 128, 128)); }
+	else {
 		hBrush = ::CreateSolidBrush(RGB(0, 0, 0));
 	}
 
 	//領域を描画 (色を反転させる)
-	int	   nROP_Old	 = ::SetROP2(gr, R2_NOTXORPEN);
+	int	nROP_Old  = ::SetROP2(gr, R2_NOTXORPEN);
 	HBRUSH hBrushOld = (HBRUSH)::SelectObject(gr, hBrush);
 	::SelectObject(gr, hBrush);
 	::PaintRgn(gr, hRgn);
@@ -104,8 +103,8 @@ void CRuler::DrawRulerBg(CGraphics &gr)
 		lf.lfUnderline		= 0;
 		lf.lfStrikeOut		= 0;
 		lf.lfCharSet		= 0;
-		lf.lfOutPrecision	= 3;
-		lf.lfClipPrecision	= 2;
+		lf.lfOutPrecision   = 3;
+		lf.lfClipPrecision  = 2;
 		lf.lfQuality		= 1;
 		lf.lfPitchAndFamily = 34;
 		wcscpy_s(lf.lfFaceName, L"Arial");
@@ -118,8 +117,8 @@ void CRuler::DrawRulerBg(CGraphics &gr)
 
 	//背景塗りつぶし
 	RECT rc;
-	rc.left	  = 0;
-	rc.top	  = 0;
+	rc.left   = 0;
+	rc.top	= 0;
 	rc.right  = m_pEditView->GetTextArea().GetAreaRight();
 	rc.bottom = m_pEditView->GetTextArea().GetAreaTop() - m_pEditView->GetTextArea().GetTopYohaku();
 	cRulerType.FillBack(gr, rc);
@@ -135,17 +134,17 @@ void CRuler::DrawRulerBg(CGraphics &gr)
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 	//	2005.11.10 Moca 1dot足りない
 	CLayoutXInt nMaxLineColum = m_pEditDoc->m_cLayoutMgr.GetMaxLineLayout();
-	CKetaXInt	nMaxLineKetas = m_pEditDoc->m_cLayoutMgr.GetMaxLineKetas();
+	CKetaXInt   nMaxLineKetas = m_pEditDoc->m_cLayoutMgr.GetMaxLineKetas();
 	int			nToX =
 		m_pEditView->GetTextArea().GetAreaLeft()
 		+ m_pEditView->GetTextMetrics().GetCharPxWidth(nMaxLineColum - m_pEditView->GetTextArea().GetViewLeftCol()) + 1;
 	if (nToX > m_pEditView->GetTextArea().GetAreaRight()) { nToX = m_pEditView->GetTextArea().GetAreaRight(); }
 
 	//目盛を描画
-	const int	oneColumn = (Int)m_pEditView->GetTextMetrics().GetLayoutXDefault();
+	const int   oneColumn = (Int)m_pEditView->GetTextMetrics().GetLayoutXDefault();
 	CLayoutXInt i		  = m_pEditView->GetTextArea().GetViewLeftCol();
-	CKetaXInt	keta	  = CKetaXInt(((Int)i) / oneColumn);
-	const int	dx		  = m_pEditView->GetTextMetrics().GetHankakuDx(); // PPでもDx
+	CKetaXInt   keta	  = CKetaXInt(((Int)i) / oneColumn);
+	const int   dx		  = m_pEditView->GetTextMetrics().GetHankakuDx(); // PPでもDx
 	// 先頭がかけている場合は次の桁に進む
 	const int pxOffset = (Int)i % oneColumn;
 	if (pxOffset) {
@@ -155,7 +154,7 @@ void CRuler::DrawRulerBg(CGraphics &gr)
 	}
 
 	// 目盛り線を1本ずつ描画するのではなく後述する PolyPolyline でまとめて描画を行う
-	const int	 nWidth = (Int)(m_pEditView->GetTextArea().GetRightCol() - i);
+	const int	nWidth = (Int)(m_pEditView->GetTextArea().GetRightCol() - i);
 	const size_t nLinesToDraw =
 		1 + std::min<int>((nWidth + 1 + 1 + oneColumn - 1) / oneColumn, nMaxLineKetas - keta + 1);
 	auto &apt = m_apt;
@@ -163,29 +162,27 @@ void CRuler::DrawRulerBg(CGraphics &gr)
 	apt.resize(nLinesToDraw * 2);
 	asz.resize(nLinesToDraw, 2);
 	// 下線 (ルーラーと本文の境界)
-	apt[0]	   = POINT {m_pEditView->GetTextArea().GetAreaLeft(), nY + 1};
-	apt[1]	   = POINT {nToX, nY + 1};
+	apt[0]	 = POINT{m_pEditView->GetTextArea().GetAreaLeft(), nY + 1};
+	apt[1]	 = POINT{nToX, nY + 1};
 	size_t idx = 1;
 	while (i <= m_pEditView->GetTextArea().GetRightCol() + 1 && keta <= nMaxLineKetas) {
-		apt[idx * 2 + 0] = POINT {nX, nY};
+		apt[idx * 2 + 0] = POINT{nX, nY};
 		//ルーラー終端の区切り(大)
-		if (keta == nMaxLineKetas) {
-			apt[idx * 2 + 1] = POINT {nX, 0};
-		}
+		if (keta == nMaxLineKetas) { apt[idx * 2 + 1] = POINT{nX, 0}; }
 		// 10目盛おきの区切り(大)と数字
 		else if (0 == keta % 10) {
 			wchar_t szColumn[32];
-			apt[idx * 2 + 1] = POINT {nX, 0};
+			apt[idx * 2 + 1] = POINT{nX, 0};
 			_itow(((Int)keta) / 10, szColumn, 10);
 			::TextOut(gr, nX + 2 + 0, -1 + 0, szColumn, wcslen(szColumn));
 		}
 		// 5目盛おきの区切り(中)
 		else if (0 == keta % 5) {
-			apt[idx * 2 + 1] = POINT {nX, nY - 6};
+			apt[idx * 2 + 1] = POINT{nX, nY - 6};
 		}
 		//毎目盛の区切り(小)
 		else {
-			apt[idx * 2 + 1] = POINT {nX, nY - 3};
+			apt[idx * 2 + 1] = POINT{nX, nY - 3};
 		}
 		++idx;
 		assert(idx <= nLinesToDraw);
@@ -220,9 +217,8 @@ void CRuler::DispRuler(HDC hdc)
 	CGraphics gr(hdc);
 
 	// 2002.02.25 Add By KK ルーラー全体を描き直す必要がない場合は、ルーラ上のキャレットのみ描きなおす
-	if (!m_bRedrawRuler) {
-		DrawRulerCaret(gr);
-	} else {
+	if (!m_bRedrawRuler) { DrawRulerCaret(gr); }
+	else {
 		// 背景描画
 		DrawRulerBg(gr);
 

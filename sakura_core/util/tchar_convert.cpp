@@ -18,15 +18,14 @@ const WCHAR *to_wchar(const ACHAR *pSrc, int nSrcLength)
 	if (pSrc == NULL) return NULL;
 
 	//必要なサイズを計算
-	int	   nDstLen = MultiByteToWideChar(CP_SJIS, // 2008/5/12 Uchi
+	int	nDstLen = MultiByteToWideChar(CP_SJIS, // 2008/5/12 Uchi
 										 0, pSrc, nSrcLength, NULL, 0);
 	size_t nDstCnt = (size_t)nDstLen + 1;
 
 	//バッファ取得
 	WCHAR *pDst;
-	if (nDstCnt < g_bufSmall.GetMaxCount<WCHAR>()) {
-		pDst = g_bufSmall.GetBuffer<WCHAR>(&nDstCnt);
-	} else {
+	if (nDstCnt < g_bufSmall.GetMaxCount<WCHAR>()) { pDst = g_bufSmall.GetBuffer<WCHAR>(&nDstCnt); }
+	else {
 		pDst = g_bufBig.GetBuffer<WCHAR>(nDstCnt);
 	}
 
@@ -50,15 +49,14 @@ const ACHAR *to_achar(const WCHAR *pSrc, int nSrcLength)
 	if (pSrc == NULL) return NULL;
 
 	//必要なサイズを計算
-	int	   nDstLen = WideCharToMultiByte(CP_SJIS, // 2008/5/12 Uchi
+	int	nDstLen = WideCharToMultiByte(CP_SJIS, // 2008/5/12 Uchi
 										 0, pSrc, nSrcLength, NULL, 0, NULL, NULL);
 	size_t nDstCnt = (size_t)nDstLen + 1;
 
 	//バッファ取得
 	ACHAR *pDst;
-	if (nDstCnt < g_bufSmall.GetMaxCount<ACHAR>()) {
-		pDst = g_bufSmall.GetBuffer<ACHAR>(&nDstCnt);
-	} else {
+	if (nDstCnt < g_bufSmall.GetMaxCount<ACHAR>()) { pDst = g_bufSmall.GetBuffer<ACHAR>(&nDstCnt); }
+	else {
 		pDst = g_bufBig.GetBuffer<ACHAR>(nDstCnt);
 	}
 

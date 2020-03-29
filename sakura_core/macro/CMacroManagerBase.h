@@ -33,18 +33,17 @@
 #include <Windows.h>
 class CEditView;
 
-class CMacroBeforeAfter
-{
+class CMacroBeforeAfter {
 public:
 	CMacroBeforeAfter()
 		: m_nOpeBlkCount(0)
-		, m_bDrawSwitchOld(true) {};
-	virtual ~CMacroBeforeAfter() {};
+		, m_bDrawSwitchOld(true){};
+	virtual ~CMacroBeforeAfter(){};
 	virtual void ExecKeyMacroBefore(class CEditView *pcEditView, int flags);
 	virtual void ExecKeyMacroAfter(class CEditView *pcEditView, int flags, bool bRet);
 
 private:
-	int	 m_nOpeBlkCount;
+	int  m_nOpeBlkCount;
 	bool m_bDrawSwitchOld;
 };
 
@@ -52,8 +51,7 @@ private:
 	@brief マクロを処理するエンジン部分の基底クラス
 
 */
-class CMacroManagerBase : CMacroBeforeAfter
-{
+class CMacroManagerBase : CMacroBeforeAfter {
 public:
 	/*! キーボードマクロの実行
 

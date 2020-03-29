@@ -48,13 +48,13 @@ const DWORD p_helpids[] = {									  // 12000
 	IDC_COMBO_TEXT, HIDC_GREP_COMBO_TEXT,					  //条件
 	IDC_COMBO_FILE, HIDC_GREP_COMBO_FILE,					  //ファイル
 	IDC_COMBO_FOLDER, HIDC_GREP_COMBO_FOLDER,				  //フォルダ
-	IDC_COMBO_EXCLUDE_FILE, HIDC_GREP_COMBO_EXCLUDE_FILE,	  //除外ファイル
+	IDC_COMBO_EXCLUDE_FILE, HIDC_GREP_COMBO_EXCLUDE_FILE,	 //除外ファイル
 	IDC_COMBO_EXCLUDE_FOLDER, HIDC_GREP_COMBO_EXCLUDE_FOLDER, //除外フォルダ
 	IDC_BUTTON_FOLDER_UP, HIDC_GREP_BUTTON_FOLDER_UP,		  //上
 	IDC_RADIO_OUTPUTLINE, HIDC_GREP_RADIO_OUTPUTLINE,		  //結果出力：行単位
-	IDC_RADIO_OUTPUTMARKED, HIDC_GREP_RADIO_OUTPUTMARKED,	  //結果出力：該当部分
-	IDC_RADIO_OUTPUTSTYLE1, HIDC_GREP_RADIO_OUTPUTSTYLE1,	  //結果出力形式：ノーマル
-	IDC_RADIO_OUTPUTSTYLE2, HIDC_GREP_RADIO_OUTPUTSTYLE2,	  //結果出力形式：ファイル毎
+	IDC_RADIO_OUTPUTMARKED, HIDC_GREP_RADIO_OUTPUTMARKED,	 //結果出力：該当部分
+	IDC_RADIO_OUTPUTSTYLE1, HIDC_GREP_RADIO_OUTPUTSTYLE1,	 //結果出力形式：ノーマル
+	IDC_RADIO_OUTPUTSTYLE2, HIDC_GREP_RADIO_OUTPUTSTYLE2,	 //結果出力形式：ファイル毎
 	IDC_RADIO_OUTPUTSTYLE3, HIDC_RADIO_OUTPUTSTYLE3,		  //結果出力形式：結果のみ
 	IDC_STATIC_JRE32VER, HIDC_GREP_STATIC_JRE32VER,			  //正規表現バージョン
 	IDC_CHK_DEFAULTFOLDER, HIDC_GREP_CHK_DEFAULTFOLDER, //フォルダの初期値をカレントフォルダにする
@@ -72,16 +72,16 @@ CDlgGrep::CDlgGrep()
 	m_bFromThisText = FALSE;			 // この編集中のテキストから検索する
 	m_sSearchOption.Reset();			 // 検索オプション
 	m_nGrepCharSet			= CODE_SJIS; // 文字コードセット
-	m_nGrepOutputLineType	= 1;		 // 行を出力/該当部分/否マッチ行 を出力
+	m_nGrepOutputLineType   = 1;		 // 行を出力/該当部分/否マッチ行 を出力
 	m_nGrepOutputStyle		= 1;		 // Grep: 出力形式
-	m_bGrepOutputFileOnly	= false;
+	m_bGrepOutputFileOnly   = false;
 	m_bGrepOutputBaseFolder = false;
-	m_bGrepSeparateFolder	= false;
+	m_bGrepSeparateFolder   = false;
 
 	m_bSetText			 = false;
 	m_szFile[0]			 = 0;
 	m_szFolder[0]		 = 0;
-	m_szExcludeFile[0]	 = 0;
+	m_szExcludeFile[0]   = 0;
 	m_szExcludeFolder[0] = 0;
 	return;
 }
@@ -123,7 +123,7 @@ static void AppendExcludeFolderPatterns(CNativeW &cFilePattern, const CNativeW &
 {
 	auto patterns = CGrepEnumKeys::SplitPattern(cmWorkExcludeFolder.GetStringPtr());
 	for (auto iter = patterns.begin(); iter != patterns.end(); ++iter) {
-		const auto &pattern	  = (*iter);
+		const auto &pattern   = (*iter);
 		LPCWSTR		escapeStr = GetEscapePattern(pattern);
 		cFilePattern.AppendStringF(L";%s#%s%s", escapeStr, pattern.c_str(), escapeStr);
 	}
@@ -139,7 +139,7 @@ static void AppendExcludeFilePatterns(CNativeW &cFilePattern, const CNativeW &cm
 {
 	auto patterns = CGrepEnumKeys::SplitPattern(cmWorkExcludeFile.GetStringPtr());
 	for (auto iter = patterns.begin(); iter != patterns.end(); ++iter) {
-		const auto &pattern	  = (*iter);
+		const auto &pattern   = (*iter);
 		LPCWSTR		escapeStr = GetEscapePattern(pattern);
 		cFilePattern.AppendStringF(L";%s!%s%s", escapeStr, pattern.c_str(), escapeStr);
 	}
@@ -219,14 +219,14 @@ BOOL CDlgGrep::OnCbnDropDown(HWND hwndCtl, int wID)
 int CDlgGrep::DoModal(HINSTANCE hInstance, HWND hwndParent, const WCHAR *pszCurrentFilePath)
 {
 	m_bSubFolder	= m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder; // Grep: サブフォルダも検索
-	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;	 // 検索オプション
-	m_nGrepCharSet	= m_pShareData->m_Common.m_sSearch.m_nGrepCharSet;	 // 文字コードセット
+	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;  // 検索オプション
+	m_nGrepCharSet  = m_pShareData->m_Common.m_sSearch.m_nGrepCharSet;   // 文字コードセット
 	m_nGrepOutputLineType =
 		m_pShareData->m_Common.m_sSearch.m_nGrepOutputLineType; // 行を出力/該当部分/否マッチ行 を出力
 	m_nGrepOutputStyle		= m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle; // Grep: 出力形式
-	m_bGrepOutputFileOnly	= m_pShareData->m_Common.m_sSearch.m_bGrepOutputFileOnly;
+	m_bGrepOutputFileOnly   = m_pShareData->m_Common.m_sSearch.m_bGrepOutputFileOnly;
 	m_bGrepOutputBaseFolder = m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder;
-	m_bGrepSeparateFolder	= m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder;
+	m_bGrepSeparateFolder   = m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder;
 
 	// 2013.05.21 コンストラクタからDoModalに移動
 	// m_strText は呼び出し元で設定済み
@@ -241,7 +241,8 @@ int CDlgGrep::DoModal(HINSTANCE hInstance, HWND hwndParent, const WCHAR *pszCurr
 	if (m_szExcludeFile[0] == L'\0') {
 		if (m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
 			wcscpy(m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);
-		} else {
+		}
+		else {
 			/* ユーザーの利便性向上のために除外ファイルに対して初期値を設定する */
 			wcscpy(m_szExcludeFile, DEFAULT_EXCLUDE_FILE_PATTERN); /* 除外ファイル */
 
@@ -254,7 +255,8 @@ int CDlgGrep::DoModal(HINSTANCE hInstance, HWND hwndParent, const WCHAR *pszCurr
 	if (m_szExcludeFolder[0] == L'\0') {
 		if (m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
 			wcscpy(m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);
-		} else {
+		}
+		else {
 			/* ユーザーの利便性向上のために除外フォルダに対して初期値を設定する */
 			wcscpy(m_szExcludeFolder, DEFAULT_EXCLUDE_FOLDER_PATTERN); /* 除外フォルダ */
 
@@ -335,7 +337,7 @@ BOOL CDlgGrep::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 
 	// フォント設定	2012/11/27 Uchi
 	HFONT hFontOld = (HFONT)::SendMessageAny(GetItemHwnd(IDC_COMBO_TEXT), WM_GETFONT, 0, 0);
-	HFONT hFont	   = SetMainFont(GetItemHwnd(IDC_COMBO_TEXT));
+	HFONT hFont	= SetMainFont(GetItemHwnd(IDC_COMBO_TEXT));
 	m_cFontText.SetFont(hFontOld, hFont, GetItemHwnd(IDC_COMBO_TEXT));
 
 	/* 基底クラスメンバ */
@@ -405,18 +407,18 @@ BOOL CDlgGrep::OnBnClicked(int wID)
 			WCHAR szWorkFile[MAX_PATH];
 			SplitPath_FolderAndFile(m_szCurrentFilePath, szWorkFolder, szWorkFile);
 			SetGrepFolder(GetItemHwnd(IDC_COMBO_FOLDER), szWorkFolder);
-		} else {
+		}
+		else {
 			/* 現在のプロセスのカレントディレクトリを取得します */
 			WCHAR szWorkFolder[MAX_PATH];
 			::GetCurrentDirectory(_countof(szWorkFolder) - 1, szWorkFolder);
 			SetGrepFolder(GetItemHwnd(IDC_COMBO_FOLDER), szWorkFolder);
 		}
 		return TRUE;
-	case IDC_BUTTON_FOLDER_UP:
-	{
-		HWND	  hwnd	   = GetItemHwnd(IDC_COMBO_FOLDER);
+	case IDC_BUTTON_FOLDER_UP: {
+		HWND	  hwnd	 = GetItemHwnd(IDC_COMBO_FOLDER);
 		const int nMaxPath = MAX_GREP_PATH;
-		WCHAR	  szFolder[nMaxPath];
+		WCHAR	 szFolder[nMaxPath];
 		::GetWindowText(hwnd, szFolder, _countof(szFolder));
 		std::vector<std::wstring> vPaths;
 		CGrepAgent::CreateFolders(szFolder, vPaths);
@@ -461,7 +463,8 @@ BOOL CDlgGrep::OnBnClicked(int wID)
 			//	正規表現ライブラリの差し替えに伴う処理の見直し
 			if (!CheckRegexpVersion(GetHwnd(), IDC_STATIC_JRE32VER, true)) {
 				::CheckDlgButton(GetHwnd(), IDC_CHK_REGULAREXP, 0);
-			} else {
+			}
+			else {
 				//	To Here Jun. 26, 2001 genta
 				/* 英大文字と英小文字を区別する */
 				//	正規表現のときも選択できるように。
@@ -472,7 +475,8 @@ BOOL CDlgGrep::OnBnClicked(int wID)
 				/* 単語単位で検索 */
 				::EnableWindow(GetItemHwnd(IDC_CHK_WORD), FALSE);
 			}
-		} else {
+		}
+		else {
 			/* 英大文字と英小文字を区別する */
 			//	正規表現のときも選択できるように。
 			//			::EnableWindow( GetItemHwnd( IDC_CHK_LOHICASE ), TRUE );
@@ -490,7 +494,7 @@ BOOL CDlgGrep::OnBnClicked(int wID)
 		/* フォルダ参照ボタン */
 		{
 			const int nMaxPath = MAX_GREP_PATH;
-			WCHAR	  szFolder[nMaxPath];
+			WCHAR	 szFolder[nMaxPath];
 			/* 検索フォルダ */
 			::DlgItem_GetText(GetHwnd(), IDC_COMBO_FOLDER, szFolder, nMaxPath - 1);
 			if (szFolder[0] == L'\0') { ::GetCurrentDirectory(nMaxPath, szFolder); }
@@ -500,8 +504,7 @@ BOOL CDlgGrep::OnBnClicked(int wID)
 		}
 
 		return TRUE;
-	case IDC_CHECK_CP:
-	{
+	case IDC_CHECK_CP: {
 		if (IsDlgButtonChecked(GetHwnd(), IDC_CHECK_CP)) {
 			::EnableWindow(GetItemHwnd(IDC_CHECK_CP), FALSE);
 			HWND combo = GetItemHwnd(IDC_COMBO_CHARSET);
@@ -516,14 +519,12 @@ BOOL CDlgGrep::OnBnClicked(int wID)
 				::IsDlgButtonChecked(GetHwnd(), IDC_CHK_DEFAULTFOLDER);
 		}
 		return TRUE;
-	case IDC_RADIO_OUTPUTSTYLE3:
-	{
+	case IDC_RADIO_OUTPUTSTYLE3: {
 		::EnableWindow(GetItemHwnd(IDC_CHECK_BASE_PATH), FALSE);
 		::EnableWindow(GetItemHwnd(IDC_CHECK_SEP_FOLDER), FALSE);
 	} break;
 	case IDC_RADIO_OUTPUTSTYLE1:
-	case IDC_RADIO_OUTPUTSTYLE2:
-	{
+	case IDC_RADIO_OUTPUTSTYLE2: {
 		::EnableWindow(GetItemHwnd(IDC_CHECK_BASE_PATH), TRUE);
 		::EnableWindow(GetItemHwnd(IDC_CHECK_SEP_FOLDER), TRUE);
 	} break;
@@ -602,9 +603,8 @@ void CDlgGrep::SetData(void)
 			nCharSet = (ECodeType)Combo_GetItemData(hWndCombo, nIdx);
 			if (nCharSet == m_nGrepCharSet) { nCurIdx = nIdx; }
 		}
-		if (nCurIdx != -1) {
-			Combo_SetCurSel(hWndCombo, nCurIdx);
-		} else {
+		if (nCurIdx != -1) { Combo_SetCurSel(hWndCombo, nCurIdx); }
+		else {
 			::CheckDlgButton(GetHwnd(), IDC_CHECK_CP, TRUE);
 			::EnableWindow(GetItemHwnd(IDC_CHECK_CP), FALSE);
 			nCurIdx = CCodePage::AddComboCodePages(GetHwnd(), hWndCombo, m_nGrepCharSet);
@@ -613,26 +613,27 @@ void CDlgGrep::SetData(void)
 	}
 
 	/* 行を出力するか該当部分だけ出力するか */
-	if (m_nGrepOutputLineType == 1) {
-		::CheckDlgButton(GetHwnd(), IDC_RADIO_OUTPUTLINE, TRUE);
-	} else if (m_nGrepOutputLineType == 2) {
+	if (m_nGrepOutputLineType == 1) { ::CheckDlgButton(GetHwnd(), IDC_RADIO_OUTPUTLINE, TRUE); }
+	else if (m_nGrepOutputLineType == 2) {
 		::CheckDlgButton(GetHwnd(), IDC_RADIO_NOHIT, TRUE);
-	} else {
+	}
+	else {
 		::CheckDlgButton(GetHwnd(), IDC_RADIO_OUTPUTMARKED, TRUE);
 	}
 
 	::EnableWindow(GetItemHwnd(IDC_CHECK_BASE_PATH), TRUE);
 	::EnableWindow(GetItemHwnd(IDC_CHECK_SEP_FOLDER), TRUE);
 	/* Grep: 出力形式 */
-	if (1 == m_nGrepOutputStyle) {
-		::CheckDlgButton(GetHwnd(), IDC_RADIO_OUTPUTSTYLE1, TRUE);
-	} else if (2 == m_nGrepOutputStyle) {
+	if (1 == m_nGrepOutputStyle) { ::CheckDlgButton(GetHwnd(), IDC_RADIO_OUTPUTSTYLE1, TRUE); }
+	else if (2 == m_nGrepOutputStyle) {
 		::CheckDlgButton(GetHwnd(), IDC_RADIO_OUTPUTSTYLE2, TRUE);
-	} else if (3 == m_nGrepOutputStyle) {
+	}
+	else if (3 == m_nGrepOutputStyle) {
 		::CheckDlgButton(GetHwnd(), IDC_RADIO_OUTPUTSTYLE3, TRUE);
 		::EnableWindow(GetItemHwnd(IDC_CHECK_BASE_PATH), FALSE);
 		::EnableWindow(GetItemHwnd(IDC_CHECK_SEP_FOLDER), FALSE);
-	} else {
+	}
+	else {
 		::CheckDlgButton(GetHwnd(), IDC_RADIO_OUTPUTSTYLE1, TRUE);
 	}
 
@@ -650,14 +651,14 @@ void CDlgGrep::SetData(void)
 		// 2001/06/23 N.Nakatani
 		/* 単語単位で探す */
 		::EnableWindow(GetItemHwnd(IDC_CHK_WORD), FALSE);
-	} else {
+	}
+	else {
 		::CheckDlgButton(GetHwnd(), IDC_CHK_REGULAREXP, 0);
 	}
 	// To Here Jun. 29, 2001 genta
 
-	if (m_szCurrentFilePath[0] != L'\0') {
-		::EnableWindow(GetItemHwnd(IDC_CHK_FROMTHISTEXT), TRUE);
-	} else {
+	if (m_szCurrentFilePath[0] != L'\0') { ::EnableWindow(GetItemHwnd(IDC_CHK_FROMTHISTEXT), TRUE); }
+	else {
 		::EnableWindow(GetItemHwnd(IDC_CHK_FROMTHISTEXT), FALSE);
 	}
 
@@ -725,18 +726,18 @@ int CDlgGrep::GetData(void)
 
 	/* 文字コードセット */
 	{
-		int	 nIdx;
+		int  nIdx;
 		HWND hWndCombo = GetItemHwnd(IDC_COMBO_CHARSET);
 		nIdx		   = Combo_GetCurSel(hWndCombo);
 		m_nGrepCharSet = (ECodeType)Combo_GetItemData(hWndCombo, nIdx);
 	}
 
 	/* 行を出力/該当部分/否マッチ行 を出力 */
-	if (::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_OUTPUTLINE)) {
-		m_nGrepOutputLineType = 1;
-	} else if (::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_NOHIT)) {
+	if (::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_OUTPUTLINE)) { m_nGrepOutputLineType = 1; }
+	else if (::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_NOHIT)) {
 		m_nGrepOutputLineType = 2;
-	} else {
+	}
+	else {
 		m_nGrepOutputLineType = 0;
 	}
 
@@ -749,12 +750,12 @@ int CDlgGrep::GetData(void)
 	}
 	if (FALSE != ::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_OUTPUTSTYLE3)) { m_nGrepOutputStyle = 3; }
 
-	m_bGrepOutputFileOnly	= IsDlgButtonCheckedBool(GetHwnd(), IDC_CHECK_FILE_ONLY);
+	m_bGrepOutputFileOnly   = IsDlgButtonCheckedBool(GetHwnd(), IDC_CHECK_FILE_ONLY);
 	m_bGrepOutputBaseFolder = IsDlgButtonCheckedBool(GetHwnd(), IDC_CHECK_BASE_PATH);
-	m_bGrepSeparateFolder	= IsDlgButtonCheckedBool(GetHwnd(), IDC_CHECK_SEP_FOLDER);
+	m_bGrepSeparateFolder   = IsDlgButtonCheckedBool(GetHwnd(), IDC_CHECK_SEP_FOLDER);
 
 	/* 検索文字列 */
-	int	 nBufferSize = ::GetWindowTextLength(GetItemHwnd(IDC_COMBO_TEXT)) + 1;
+	int  nBufferSize = ::GetWindowTextLength(GetItemHwnd(IDC_COMBO_TEXT)) + 1;
 	auto vText		 = std::make_unique<WCHAR[]>(nBufferSize);
 	::DlgItem_GetText(GetHwnd(), IDC_COMBO_TEXT, &vText[0], nBufferSize);
 	m_strText  = &vText[0];
@@ -772,9 +773,9 @@ int CDlgGrep::GetData(void)
 	m_pShareData->m_Common.m_sSearch.m_nGrepOutputLineType =
 		m_nGrepOutputLineType; // 行を出力/該当部分/否マッチ行 を出力
 	m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle		 = m_nGrepOutputStyle; // Grep: 出力形式
-	m_pShareData->m_Common.m_sSearch.m_bGrepOutputFileOnly	 = m_bGrepOutputFileOnly;
+	m_pShareData->m_Common.m_sSearch.m_bGrepOutputFileOnly   = m_bGrepOutputFileOnly;
 	m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder = m_bGrepOutputBaseFolder;
-	m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder	 = m_bGrepSeparateFolder;
+	m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder   = m_bGrepSeparateFolder;
 
 	if (0 != wcslen(m_szFile)) {
 		CGrepEnumKeys enumKeys;
@@ -782,7 +783,8 @@ int CDlgGrep::GetData(void)
 		if (1 == nErrorNo) {
 			WarningMessage(GetHwnd(), LS(STR_DLGGREP2));
 			return FALSE;
-		} else if (nErrorNo == 2) {
+		}
+		else if (nErrorNo == 2) {
 			WarningMessage(GetHwnd(), LS(STR_DLGGREP3));
 			return FALSE;
 		}
@@ -807,8 +809,8 @@ int CDlgGrep::GetData(void)
 		std::vector<std::wstring> vPaths;
 		CGrepAgent::CreateFolders(m_szFolder, vPaths);
 		int		  nFolderLen = 0;
-		const int nMaxPath	 = MAX_GREP_PATH;
-		WCHAR	  szFolder[nMaxPath];
+		const int nMaxPath   = MAX_GREP_PATH;
+		WCHAR	 szFolder[nMaxPath];
 		szFolder[0] = L'\0';
 		for (int i = 0; i < (int)vPaths.size(); i++) {
 			// 相対パス→絶対パス
@@ -851,7 +853,8 @@ int CDlgGrep::GetData(void)
 			CSearchKeywordManager().AddToSearchKeyArr(m_strText.c_str());
 			m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption; // 検索オプション
 		}
-	} else {
+	}
+	else {
 		// 2014.07.01 空キーも登録する
 		CSearchKeywordManager().AddToSearchKeyArr(L"");
 	}
@@ -890,7 +893,8 @@ static void SetGrepFolder(HWND hwndCtrl, LPCWSTR folder)
 		wcscpy(szQuoteFolder + 1, folder);
 		wcscat(szQuoteFolder, L"\"");
 		::SetWindowText(hwndCtrl, szQuoteFolder);
-	} else {
+	}
+	else {
 		::SetWindowText(hwndCtrl, folder);
 	}
 }

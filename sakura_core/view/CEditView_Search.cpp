@@ -31,7 +31,7 @@
 #include <limits.h>
 
 const int STRNCMP_MAX = 100;
-	/* MAXキーワード長：_strnicmp文字列比較最大値(CEditView::KeySearchCore) */ // 2006.04.10 fon
+/* MAXキーワード長：_strnicmp文字列比較最大値(CEditView::KeySearchCore) */ // 2006.04.10 fon
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           検索                              //
@@ -64,21 +64,22 @@ BOOL CEditView::KeyWordHelpSearchDict(LID_SKH nID, POINT *po, RECT *rc)
 			goto end_of_search;
 		break;
 	case LID_SKH_POPUPMENU_R:
-		if (!(m_bInMenuLoop == FALSE //&&			/* １．メニュー モーダル ループに入っていない */
-			  //	0 != m_dwTipTimer			&&			/* ２．辞書Tipを表示していない */
-			  //	1000 < ::GetTickCount() - m_dwTipTimer	/* ３．一定時間以上、マウスが固定されている */
+		if (!(m_bInMenuLoop
+			  == FALSE //&&			/* １．メニュー モーダル ループに入っていない */
+					   //	0 != m_dwTipTimer			&&			/* ２．辞書Tipを表示していない */
+					   //	1000 < ::GetTickCount() - m_dwTipTimer	/* ３．一定時間以上、マウスが固定されている */
 			  ))
 			goto end_of_search;
 		break;
 	default: PleaseReportToAuthor(NULL, L"CEditView::KeyWordHelpSearchDict\nnID=%d", (int)nID);
 	}
 	/* 選択範囲のデータを取得(複数行選択の場合は先頭の行のみ) */
-	if (GetSelectedDataOne(cmemCurText, STRNCMP_MAX + 1)) {
-	}
+	if (GetSelectedDataOne(cmemCurText, STRNCMP_MAX + 1)) {}
 	/* キャレット位置の単語を取得する処理 */ // 2006.03.24 fon
 	else if (GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord) {
 		if (!GetParser().GetCurrentWord(&cmemCurText)) goto end_of_search;
-	} else
+	}
+	else
 		goto end_of_search;
 
 	if (CNativeW::IsEqual(cmemCurText, m_cTipWnd.m_cKey) && /* 既に検索済みか */
@@ -88,7 +89,7 @@ BOOL CEditView::KeyWordHelpSearchDict(LID_SKH nID, POINT *po, RECT *rc)
 
 	/* 検索実行 */
 	if (!KeySearchCore(&m_cTipWnd.m_cKey)) goto end_of_search;
-	m_dwTipTimer  = 0;	 /* 辞書Tipを表示している */
+	m_dwTipTimer  = 0;   /* 辞書Tipを表示している */
 	m_poTipCurPos = *po; /* 現在のマウスカーソル位置 */
 	return TRUE;		 /* ここまで来ていればヒット・ワード */
 
@@ -153,9 +154,10 @@ BOOL CEditView::KeySearchCore(const CNativeW *pcmemCurText)
 					if (!m_cTipWnd.m_KeyWasHit) {
 						m_cTipWnd.m_nSearchDict = i; /* 辞書を開くとき最初にヒットした辞書を開く */
 						m_cTipWnd.m_nSearchLine = nLine;
-						m_cTipWnd.m_KeyWasHit	= TRUE;
+						m_cTipWnd.m_KeyWasHit   = TRUE;
 					}
-				} else { /* 最初のヒット項目のみ返す場合 */
+				}
+				else { /* 最初のヒット項目のみ返す場合 */
 					/* キーワードが入っていたらseparator挿入 */
 					if (m_cTipWnd.m_cInfo.GetStringLength() != 0)
 						m_cTipWnd.m_cInfo.AppendString(L"\n--------------------\n");
@@ -173,7 +175,7 @@ BOOL CEditView::KeySearchCore(const CNativeW *pcmemCurText)
 					/* タグジャンプ用の情報を残す */
 					m_cTipWnd.m_nSearchDict = i;
 					m_cTipWnd.m_nSearchLine = nLine;
-					m_cTipWnd.m_KeyWasHit	= TRUE;
+					m_cTipWnd.m_KeyWasHit   = TRUE;
 					return TRUE;
 				}
 			}
@@ -211,14 +213,14 @@ bool CEditView::MiniMapCursorLineTip(POINT *po, RECT *rc, bool *pbHide)
 	}
 	CNativeW	cmemCurText;
 	CLayoutYInt nTipBeginLine = ptNew.y;
-	CLayoutYInt nTipEndLine	  = ptNew.y + CLayoutYInt(4);
+	CLayoutYInt nTipEndLine   = ptNew.y + CLayoutYInt(4);
 	for (CLayoutYInt nCurLine = nTipBeginLine; nCurLine < nTipEndLine; nCurLine++) {
 		const CLayout *pcLayout = NULL;
 		if (0 <= nCurLine) { pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY(nCurLine); }
 		if (pcLayout) {
 			CNativeW cmemCurLine;
 			{
-				CLogicInt	   nLineLen		= pcLayout->GetLengthWithoutEOL();
+				CLogicInt	  nLineLen		= pcLayout->GetLengthWithoutEOL();
 				const wchar_t *pszData		= pcLayout->GetPtr();
 				int			   nLimitLength = 80;
 				int			   pre			= 0;
@@ -238,7 +240,8 @@ bool CEditView::MiniMapCursorLineTip(POINT *po, RECT *rc, bool *pbHide)
 						}
 						pre = i + charSize;
 						k++;
-					} else {
+					}
+					else {
 						k += charWidth;
 						charType = 0;
 					}
@@ -269,8 +272,8 @@ void CEditView::GetCurrentTextForSearch(CNativeW &cmemCurText, bool bStripMaxPat
 	int			   i;
 	CNativeW	   cmemTopic = L"";
 	const wchar_t *pLine;
-	CLogicInt	   nLineLen;
-	CLogicInt	   nIdx;
+	CLogicInt	  nLineLen;
+	CLogicInt	  nIdx;
 	CLayoutRange   sRange;
 
 	cmemCurText.SetString(L"");
@@ -280,11 +283,13 @@ void CEditView::GetCurrentTextForSearch(CNativeW &cmemCurText, bool bStripMaxPat
 			/* 検索文字列を現在位置の単語で初期化 */
 			if (bStripMaxPath) {
 				LimitStringLengthW(cmemCurText.GetStringPtr(), cmemCurText.GetStringLength(), _MAX_PATH - 1, cmemTopic);
-			} else {
+			}
+			else {
 				cmemTopic = cmemCurText;
 			}
 		}
-	} else {
+	}
+	else {
 		const CLayout *pcLayout;
 		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr(GetCaret().GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout);
 		if (NULL != pLine) {
@@ -305,7 +310,8 @@ void CEditView::GetCurrentTextForSearch(CNativeW &cmemCurText, bool bStripMaxPat
 					if (bStripMaxPath) {
 						LimitStringLengthW(cmemCurText.GetStringPtr(), cmemCurText.GetStringLength(), _MAX_PATH - 1,
 										   cmemTopic);
-					} else {
+					}
+					else {
 						cmemTopic = cmemCurText;
 					}
 				}
@@ -348,12 +354,14 @@ bool CEditView::GetCurrentTextForSearchDlg(CNativeW &cmemCurText, bool bGetHisto
 
 	if (GetSelectionInfo().IsTextSelected()) { // テキストが選択されている
 		GetCurrentTextForSearch(cmemCurText, bStripMaxPath);
-	} else { // テキストが選択されていない
+	}
+	else { // テキストが選択されていない
 		bool bGet = false;
 		if (GetDllShareData().m_Common.m_sSearch.m_bCaretTextForSearch) {
 			GetCurrentTextForSearch(cmemCurText, bStripMaxPath); // カーソル位置単語を取得
 			if (cmemCurText.GetStringLength() == 0 && bGetHistory) { bGet = true; }
-		} else {
+		}
+		else {
 			bGet = true;
 		}
 		if (bGet) {
@@ -361,7 +369,8 @@ bool CEditView::GetCurrentTextForSearchDlg(CNativeW &cmemCurText, bool bGetHisto
 				&& m_nCurSearchKeySequence < GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence) {
 				cmemCurText.SetString(GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0]); // 履歴からとってくる
 				return true;																 // ""でもtrue
-			} else {
+			}
+			else {
 				cmemCurText.SetString(m_strCurSearchKey.c_str());
 				return 0 <= m_nCurSearchKeySequence; // ""でもtrue.未設定のときはfalse
 			}
@@ -409,10 +418,12 @@ int CEditView::IsSearchString(const CStringRef &cStr,
 			*pnSearchStart = m_CurRegexp.GetIndex(); // 2002.02.08 hor
 			*pnSearchEnd   = m_CurRegexp.GetLastIndex();
 			return 1;
-		} else {
+		}
+		else {
 			return 0;
 		}
-	} else if (m_sCurSearchOption.bWordOnly) { // 単語検索
+	}
+	else if (m_sCurSearchOption.bWordOnly) { // 単語検索
 		/* 指定位置の単語の範囲を調べる */
 		CLogicInt posWordHead, posWordEnd;
 		if (!CWordParse::WhereCurrentWord_2(cStr.GetPtr(), CLogicInt(cStr.GetLength()), nPos, &posWordHead, &posWordEnd,
@@ -423,13 +434,13 @@ int CEditView::IsSearchString(const CStringRef &cStr,
 			return 0; // 指定位置は単語の始まりではなかった。
 		}
 		const CLogicInt		 wordLength = posWordEnd - posWordHead;
-		const wchar_t *const pWordHead	= cStr.GetPtr() + posWordHead;
+		const wchar_t *const pWordHead  = cStr.GetPtr() + posWordHead;
 
 		// 比較関数
 		auto fcmp = m_sCurSearchOption.bLoHiCase ? wcsncmp : _wcsnicmp;
 
 		// 検索語を単語に分割しながら指定位置の単語と照合する。
-		int					 wordIndex	  = 0;
+		int					 wordIndex	= 0;
 		const wchar_t *const searchKeyEnd = m_strCurSearchKey.data() + m_strCurSearchKey.size();
 		for (const wchar_t *p = m_strCurSearchKey.data(); p < searchKeyEnd;) {
 			CLogicInt begin,
@@ -446,12 +457,14 @@ int CEditView::IsSearchString(const CStringRef &cStr,
 					}
 				}
 				p += end;
-			} else {
+			}
+			else {
 				p += CNativeW::GetSizeOfChar(p, searchKeyEnd - p, 0);
 			}
 		}
 		return 0; // 指定位置の単語と検索文字列に含まれる単語は一致しなかった。
-	} else {
+	}
+	else {
 		const wchar_t *pHit = CSearchAgent::SearchString(cStr.GetPtr(), cStr.GetLength(), nPos, m_sSearchPattern);
 		if (pHit) {
 			*pnSearchStart = pHit - cStr.GetPtr();

@@ -113,7 +113,8 @@ void CViewCommander::Command_FILEOPEN(const WCHAR *filename, ECodeType nCharCode
 			wcscat(szPath, szDir);
 			if (0 == wmemicmp(defName.c_str(), szPath)) {
 				// defNameはフォルダ名だった
-			} else {
+			}
+			else {
 				CFilePath path = defName.c_str();
 				if (0 == wmemicmp(path.GetDirPath().c_str(), szPath)) {
 					// フォルダ名までは実在している
@@ -241,7 +242,8 @@ void CViewCommander::Command_FILE_REOPEN(
 									  GSTR_APPNAME, LS(STR_ERR_CEDITVIEW_CMD29), pcDoc->m_cDocFile.GetFilePath());
 		if (IDOK == nDlgResult) {
 			//継続。下へ進む
-		} else {
+		}
+		else {
 			return; //中断
 		}
 	}
@@ -318,7 +320,7 @@ void CViewCommander::Command_ACTIVATE_SQLPLUS(void)
 	if (NULL == hwndSQLPLUS) {
 		ErrorMessage(m_pCommanderView->GetHwnd(),
 					 LS(STR_SQLERR_ACTV_BUT_NOT_RUN)); //"Oracle SQL*Plusをアクティブ表示します。\n\n\nOracle
-													   //SQL*Plusが起動されていません。\n"
+													   // SQL*Plusが起動されていません。\n"
 		return;
 	}
 	/* Oracle SQL*Plusをアクティブにする */
@@ -333,7 +335,7 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS(void)
 	//	HGLOBAL		hgClip;
 	//	char*		pszClip;
 	HWND  hwndSQLPLUS;
-	int	  nRet;
+	int   nRet;
 	BOOL  nBool;
 	WCHAR szPath[MAX_PATH + 2];
 	BOOL  bResult;
@@ -342,7 +344,7 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS(void)
 	if (NULL == hwndSQLPLUS) {
 		ErrorMessage(m_pCommanderView->GetHwnd(),
 					 LS(STR_SQLERR_EXEC_BUT_NOT_RUN)); //"Oracle SQL*Plusで実行します。\n\n\nOracle
-													   //SQL*Plusが起動されていません。\n"
+													   // SQL*Plusが起動されていません。\n"
 		return;
 	}
 	/* テキストが変更されている場合 */
@@ -356,7 +358,8 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS(void)
 			if (GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()) {
 				// nBool = HandleCommand( F_FILESAVE, true, 0, 0, 0, 0 );
 				nBool = Command_FILESAVE();
-			} else {
+			}
+			else {
 				// nBool = HandleCommand( F_FILESAVEAS_DIALOG, true, 0, 0, 0, 0 );
 				nBool = Command_FILESAVEAS_DIALOG(NULL, CODE_NONE, EOL_NONE);
 			}
@@ -372,7 +375,8 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS(void)
 		//	2003.10.20 MIK コード簡略化
 		if (wcschr(GetDocument()->m_cDocFile.GetFilePath(), TCODE::SPACE) ? TRUE : FALSE) {
 			auto_sprintf(szPath, L"@\"%s\"\r\n", GetDocument()->m_cDocFile.GetFilePath());
-		} else {
+		}
+		else {
 			auto_sprintf(szPath, L"@%s\r\n", GetDocument()->m_cDocFile.GetFilePath());
 		}
 		/* クリップボードにデータを設定 */
@@ -387,7 +391,8 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS(void)
 		bResult = ::SendMessageTimeout(hwndSQLPLUS, WM_COMMAND, MAKELONG(201, 0), 0, SMTO_ABORTIFHUNG | SMTO_NORMAL,
 									   3000, &dwResult);
 		if (!bResult) { TopErrorMessage(m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD20)); }
-	} else {
+	}
+	else {
 		ErrorBeep();
 		ErrorMessage(m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD21));
 		return;
@@ -416,11 +421,11 @@ void CViewCommander::Command_BROWSE(void)
 	info.lpParameters = NULL;
 	info.lpDirectory  = NULL;
 	info.nShow		  = SW_SHOWNORMAL;
-	info.hInstApp	  = 0;
-	info.lpIDList	  = NULL;
+	info.hInstApp	 = 0;
+	info.lpIDList	 = NULL;
 	info.lpClass	  = NULL;
-	info.hkeyClass	  = 0;
-	info.dwHotKey	  = 0;
+	info.hkeyClass	= 0;
+	info.dwHotKey	 = 0;
 	info.hIcon		  = 0;
 
 	::ShellExecuteEx(&info);
@@ -452,16 +457,18 @@ void CViewCommander::Command_PROPERTY_FILE(void)
 #ifdef _DEBUG
 	{
 		/* 全行データを返すテスト */
-		wchar_t *	  pDataAll;
+		wchar_t *	 pDataAll;
 		int			  nDataAllLen;
 		CRunningTimer cRunningTimer("CViewCommander::Command_PROPERTY_FILE 全行データを返すテスト");
 		cRunningTimer.Reset();
 		pDataAll = CDocReader(GetDocument()->m_cDocLineMgr).GetAllData(&nDataAllLen);
-		//		MYTRACE( L"全データ取得             (%dバイト) 所要時間(ミリ秒) = %d\n", nDataAllLen, cRunningTimer.Read()
+		//		MYTRACE( L"全データ取得             (%dバイト) 所要時間(ミリ秒) = %d\n", nDataAllLen,
+		// cRunningTimer.Read()
 		//);
 		free(pDataAll);
 		pDataAll = NULL;
-		//		MYTRACE( L"全データ取得のメモリ解放 (%dバイト) 所要時間(ミリ秒) = %d\n", nDataAllLen, cRunningTimer.Read()
+		//		MYTRACE( L"全データ取得のメモリ解放 (%dバイト) 所要時間(ミリ秒) = %d\n", nDataAllLen,
+		// cRunningTimer.Read()
 		//);
 	}
 #endif
@@ -676,7 +683,8 @@ BOOL CViewCommander::Command_PUTFILE(LPCWSTR   filename,  //!< [in] filename 出
 				cMem2.AppendNativeData(cMem);
 				cMem.Clear();
 				pConvBuffer = &cMem2;
-			} else {
+			}
+			else {
 				pConvBuffer = &cMem;
 			}
 
@@ -686,20 +694,22 @@ BOOL CViewCommander::Command_PUTFILE(LPCWSTR   filename,  //!< [in] filename 出
 
 			//書込
 			if (0 < cDst.GetRawLength()) out.Write(cDst.GetRawPtr(), cDst.GetRawLength());
-		} catch (CError_FileOpen) {
+		}
+		catch (CError_FileOpen) {
 			WarningMessage(NULL, LS(STR_SAVEAGENT_OTHER_APP), filename);
 			bResult = FALSE;
-		} catch (CError_FileWrite) {
+		}
+		catch (CError_FileWrite) {
 			WarningMessage(NULL, LS(STR_ERR_DLGEDITVWCMDNW11));
 			bResult = FALSE;
 		}
-	} else { /* ファイル全体を出力 */
+	}
+	else { /* ファイル全体を出力 */
 		HWND	  hwndProgress;
 		CEditWnd *pCEditWnd = GetEditWindow();
 
-		if (NULL != pCEditWnd) {
-			hwndProgress = pCEditWnd->m_cStatusBar.GetProgressHwnd();
-		} else {
+		if (NULL != pCEditWnd) { hwndProgress = pCEditWnd->m_cStatusBar.GetProgressHwnd(); }
+		else {
 			hwndProgress = NULL;
 		}
 		if (NULL != hwndProgress) { ::ShowWindow(hwndProgress, SW_SHOW); }
@@ -736,10 +746,10 @@ BOOL CViewCommander::Command_INSFILE(LPCWSTR filename, ECodeType nCharCode, int 
 	CEol	  cEol;
 	int		  nLineNum = 0;
 
-	CDlgCancel *pcDlgCancel	 = NULL;
-	HWND		hwndCancel	 = NULL;
+	CDlgCancel *pcDlgCancel  = NULL;
+	HWND		hwndCancel   = NULL;
 	HWND		hwndProgress = NULL;
-	int			nOldPercent	 = -1;
+	int			nOldPercent  = -1;
 	BOOL		bResult		 = TRUE;
 
 	if (filename[0] == L'\0') { return FALSE; }
@@ -756,9 +766,8 @@ BOOL CViewCommander::Command_INSFILE(LPCWSTR filename, ECodeType nCharCode, int 
 	if (nSaveCharCode == CODE_AUTODETECT) {
 		EditInfo	   fi;
 		const CMRUFile cMRU;
-		if (cMRU.GetEditInfo(filename, &fi)) {
-			nSaveCharCode = fi.m_nCharCode;
-		} else {
+		if (cMRU.GetEditInfo(filename, &fi)) { nSaveCharCode = fi.m_nCharCode; }
+		else {
 			nSaveCharCode = GetDocument()->GetDocumentEncoding();
 		}
 	}
@@ -818,7 +827,8 @@ BOOL CViewCommander::Command_INSFILE(LPCWSTR filename, ECodeType nCharCode, int 
 	catch (CError_FileOpen) {
 		WarningMessage(NULL, LS(STR_GREP_ERR_FILEOPEN), filename);
 		bResult = FALSE;
-	} catch (CError_FileRead) {
+	}
+	catch (CError_FileRead) {
 		WarningMessage(NULL, LS(STR_ERR_DLGEDITVWCMDNW12));
 		bResult = FALSE;
 	} // 例外処理終わり

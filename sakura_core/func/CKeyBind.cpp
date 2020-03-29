@@ -22,22 +22,21 @@
 #include "macro/CSMacroMgr.h" // 2002/2/10 aroka
 
 //! KEYDATAとほぼ同じ
-struct KEYDATAINIT
-{
+struct KEYDATAINIT {
 	short m_nKeyCode; //!< Key Code (0 for non-keybord button)
 	union {
 		const WCHAR *m_pszKeyName; //!< Key Name (for display)
 		UINT		 m_nKeyNameId; //!< String Resource Id ( 0x0000 - 0xFFFF )
 	};
 	EFunctionCode m_nFuncCodeArr[8]; //!< Key Function Number
-	//					m_nFuncCodeArr[0]	//                      Key
-	//					m_nFuncCodeArr[1]	// Shift +              Key
-	//					m_nFuncCodeArr[2]	//         Ctrl +       Key
-	//					m_nFuncCodeArr[3]	// Shift + Ctrl +       Key
-	//					m_nFuncCodeArr[4]	//                Alt + Key
-	//					m_nFuncCodeArr[5]	// Shift +        Alt + Key
-	//					m_nFuncCodeArr[6]	//         Ctrl + Alt + Key
-	//					m_nFuncCodeArr[7]	// Shift + Ctrl + Alt + Key
+									 //					m_nFuncCodeArr[0]	//                      Key
+									 //					m_nFuncCodeArr[1]	// Shift +              Key
+									 //					m_nFuncCodeArr[2]	//         Ctrl +       Key
+									 //					m_nFuncCodeArr[3]	// Shift + Ctrl +       Key
+									 //					m_nFuncCodeArr[4]	//                Alt + Key
+									 //					m_nFuncCodeArr[5]	// Shift +        Alt + Key
+									 //					m_nFuncCodeArr[6]	//         Ctrl + Alt + Key
+									 //					m_nFuncCodeArr[7]	// Shift + Ctrl + Alt + Key
 };
 
 //実装補助
@@ -55,7 +54,7 @@ HACCEL CKeyBind::CreateAccerelator(int nKeyNameArrNum, KEYDATA *pKeyNameArr)
 {
 	ACCEL *pAccelArr;
 	HACCEL hAccel;
-	int	   j, k;
+	int	j, k;
 
 	// 機能が割り当てられているキーの数をカウント -> nAccelArrNum
 	int nAccelArrNum = 0;
@@ -110,7 +109,8 @@ EFunctionCode CKeyBind::GetFuncCode(WORD nAccelCmd, int nKeyNameArrNum, KEYDATA 
 		for (int i = 0; i < nKeyNameArrNum; ++i) {
 			if (nCmd == pKeyNameArr[i].m_nKeyCode) { return GetFuncCodeAt(pKeyNameArr[i], nSts, bGetDefFuncCode); }
 		}
-	} else {
+	}
+	else {
 		// 2012.12.10 aroka キーコード検索時のループを除去
 		DLLSHAREDATA *pShareData = &GetDllShareData();
 		return GetFuncCodeAt(pKeyNameArr[pShareData->m_Common.m_sKeyBind.m_VKeyToKeyNameArr[nCmd]], nSts,
@@ -126,17 +126,17 @@ EFunctionCode CKeyBind::GetFuncCode(WORD nAccelCmd, int nKeyNameArrNum, KEYDATA 
 	@date 2007.02.22 ryoji デフォルト機能割り当てに関する処理を追加
 */
 int CKeyBind::CreateKeyBindList(
-	HINSTANCE	 hInstance,		 //!< [in] インスタンスハンドル
+	HINSTANCE	hInstance,		 //!< [in] インスタンスハンドル
 	int			 nKeyNameArrNum, //!< [in]
-	KEYDATA *	 pKeyNameArr,	 //!< [out]
-	CNativeW &	 cMemList,		 //!<
-	CFuncLookup *pcFuncLookup,	 //!< [in] 機能番号→名前の対応を取る
+	KEYDATA *	pKeyNameArr,	//!< [out]
+	CNativeW &   cMemList,		 //!<
+	CFuncLookup *pcFuncLookup,   //!< [in] 機能番号→名前の対応を取る
 	BOOL bGetDefFuncCode //!< [in] ON:デフォルト機能割り当てを使う/OFF:使わない デフォルト:TRUE
 )
 {
-	int	  i;
-	int	  j;
-	int	  nValidKeys;
+	int   i;
+	int   j;
+	int   nValidKeys;
 	WCHAR pszStr[256];
 	WCHAR szFuncName[256];
 	WCHAR szFuncNameJapanese[256];
@@ -145,9 +145,9 @@ int CKeyBind::CreateKeyBindList(
 	cMemList.SetString(LTEXT(""));
 	const WCHAR *pszSHIFT = LTEXT("Shift+");
 	const WCHAR *pszCTRL  = LTEXT("Ctrl+");
-	const WCHAR *pszALT	  = LTEXT("Alt+");
-	const WCHAR *pszTAB	  = LTEXT("\t");
-	const WCHAR *pszCR	  = LTEXT("\r\n"); //\r=0x0d=CRを追加
+	const WCHAR *pszALT   = LTEXT("Alt+");
+	const WCHAR *pszTAB   = LTEXT("\t");
+	const WCHAR *pszCR	= LTEXT("\r\n"); //\r=0x0d=CRを追加
 
 	cMemList.AppendString(LS(STR_ERR_DLGKEYBIND1));
 	cMemList.AppendString(pszCR);
@@ -195,9 +195,8 @@ int CKeyBind::CreateKeyBindList(
 				/* キーマクロに記録可能な機能かどうかを調べる */
 				cMemList.AppendString(pszTAB);
 				//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-				if (CSMacroMgr::CanFuncIsKeyMacro(iFunc)) {
-					cMemList.AppendString(LTEXT("○"));
-				} else {
+				if (CSMacroMgr::CanFuncIsKeyMacro(iFunc)) { cMemList.AppendString(LTEXT("○")); }
+				else {
 					cMemList.AppendString(LTEXT("×"));
 				}
 
@@ -231,7 +230,7 @@ bool CKeyBind::GetKeyStrSub(int &nKeyNameArrBegin, int nKeyNameArrEnd, KEYDATA *
 {
 	const WCHAR *pszSHIFT = L"Shift+";
 	const WCHAR *pszCTRL  = L"Ctrl+";
-	const WCHAR *pszALT	  = L"Alt+";
+	const WCHAR *pszALT   = L"Alt+";
 
 	int i;
 	for (i = nKeyNameArrBegin; i < nKeyNameArrEnd; ++i) {
@@ -323,32 +322,34 @@ int CKeyBind::GetKeyStrList(HINSTANCE hInstance, int nKeyNameArrNum, KEYDATA *pK
 */
 WCHAR *CKeyBind::MakeMenuLabel(const WCHAR *sName, const WCHAR *sKey)
 {
-	const int	 MAX_LABEL_CCH = _MAX_PATH * 2 + 30;
+	const int	MAX_LABEL_CCH = _MAX_PATH * 2 + 30;
 	static WCHAR sLabel[MAX_LABEL_CCH];
 	const WCHAR *p;
 
-	if (sKey == NULL || sKey[0] == L'\0') {
-		return const_cast<WCHAR *>(sName);
-	} else {
+	if (sKey == NULL || sKey[0] == L'\0') { return const_cast<WCHAR *>(sName); }
+	else {
 		if (!GetDllShareData().m_Common.m_sMainMenu.m_bMainMenuKeyParentheses
 			&& (((p = wcschr(sName, sKey[0])) != NULL) || ((p = wcschr(sName, _totlower(sKey[0]))) != NULL))) {
 			// 欧文風、使用している文字をアクセスキーに
 			wcscpy_s(sLabel, _countof(sLabel), sName);
 			sLabel[p - sName] = L'&';
 			wcscpy_s(sLabel + (p - sName) + 1, _countof(sLabel), p);
-		} else if ((p = wcschr(sName, L'(')) != NULL && (p = wcschr(p, sKey[0])) != NULL) {
+		}
+		else if ((p = wcschr(sName, L'(')) != NULL && (p = wcschr(p, sKey[0])) != NULL) {
 			// (付その後にアクセスキー
 			wcscpy_s(sLabel, _countof(sLabel), sName);
 			sLabel[p - sName] = L'&';
 			wcscpy_s(sLabel + (p - sName) + 1, _countof(sLabel), p);
-		} else if (wcscmp(sName + wcslen(sName) - 3, L"...") == 0) {
+		}
+		else if (wcscmp(sName + wcslen(sName) - 3, L"...") == 0) {
 			// 末尾...
 			wcscpy_s(sLabel, _countof(sLabel), sName);
 			sLabel[wcslen(sName) - 3] = '\0'; // 末尾の...を取る
 			wcscat_s(sLabel, L"(&");
 			wcscat_s(sLabel, sKey);
 			wcscat_s(sLabel, L")...");
-		} else {
+		}
+		else {
 			auto_sprintf_s(sLabel, _countof(sLabel), L"%s(&%s)", sName, sKey);
 		}
 
@@ -362,7 +363,7 @@ WCHAR *CKeyBind::MakeMenuLabel(const WCHAR *sName, const WCHAR *sKey)
 	@date 2014.05.04 Moca LABEL_MAX=256 => nLabelSize
 */
 WCHAR *CKeyBind::GetMenuLabel(HINSTANCE hInstance, int nKeyNameArrNum, KEYDATA *pKeyNameArr, int nFuncId,
-							  WCHAR *	   pszLabel, //!< [in,out] バッファは256以上と仮定
+							  WCHAR *	  pszLabel, //!< [in,out] バッファは256以上と仮定
 							  const WCHAR *pszKey, BOOL bKeyStr, int nLabelSize, BOOL bGetDefFuncCode /* = TRUE */
 )
 {
@@ -414,7 +415,8 @@ EFunctionCode CKeyBind::GetDefFuncCode(int nKeyCode, int nState)
 			if (pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin) {
 				nDefFuncCode = F_WINCLOSE; // 閉じる
 			}
-		} else if (nState == _ALT) {
+		}
+		else if (nState == _ALT) {
 			nDefFuncCode = F_WINCLOSE; // 閉じる
 			if (pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin) {
 				if (!pShareData->m_Common.m_sTabBar.m_bTab_CloseOneWin) {
@@ -444,8 +446,8 @@ EFunctionCode CKeyBind::GetFuncCodeAt(KEYDATA &KeyData, int nState, BOOL bGetDef
 }
 
 //	Sep. 14, 2000 JEPRO
-//	Shift+F1 に「コマンド一覧」, Alt+F1 に「ヘルプ目次」, Shift+Alt+F1 に「キーワード検索」を追加	//Nov. 25, 2000 JEPRO
-//殺していたのを修正・復活 Dec. 25, 2000 JEPRO Shift+Ctrl+F1 に「バージョン情報」を追加
+//	Shift+F1 に「コマンド一覧」, Alt+F1 に「ヘルプ目次」, Shift+Alt+F1 に「キーワード検索」を追加	//Nov. 25, 2000
+// JEPRO 殺していたのを修正・復活 Dec. 25, 2000 JEPRO Shift+Ctrl+F1 に「バージョン情報」を追加
 // 2001.12.03 hor F2にブックマーク関連を割当
 // Sept. 21, 2000 JEPRO	Ctrl+F3 に「検索マークのクリア」を追加
 // Aug. 12, 2002 ai	Ctrl+Shift+F3 に「検索開始位置へ戻る」を追加
@@ -461,23 +463,23 @@ EFunctionCode CKeyBind::GetFuncCodeAt(KEYDATA &KeyData, int nState, BOOL bGetDef
 //	May 28, 2001 genta	S-C-A-F5にSPACE-to-TABを追加
 // Jan. 14, 2001 JEPRO	Ctrl+F6 に「小文字」, Alt+F6 に「Base64デコードして保存」を追加
 // 2007.11.15 nasukoji	トリプルクリック・クアドラプルクリック対応
-// Jan. 14, 2001 JEPRO	Ctrl+F7 に「大文字」, Alt+F7 に「UTF-7→SJISコード変換」, Shift+Alt+F7 に「SJIS→UTF-7コード変換」,
-// Ctrl+Alt+F7 に「UTF-7で開き直す」を追加 Nov. 9, 2000 JEPRO	Shift+F8 に「CRLF改行でコピー」を追加 Jan. 14, 2001
-// JEPRO	Ctrl+F8 に「全角→半角」, Alt+F8 に「UTF-8→SJISコード変換」, Shift+Alt+F8 に「SJIS→UTF-8コード変換」, Ctrl+Alt+F8
-// に「UTF-8で開き直す」を追加 Jan. 14, 2001 JEPRO	Ctrl+F9 に「半角＋全ひら→全角・カタカナ」, Alt+F9
-// に「Unicode→SJISコード変換」, Ctrl+Alt+F9 に「Unicodeで開き直す」を追加 Oct. 28, 2000 JEPRO F10
-// に「SQL*Plusで実行」を追加(F5からの移動) Jan. 14, 2001 JEPRO	Ctrl+F10 に「半角＋全カタ→全角・ひらがな」, Alt+F10
-// に「EUC→SJISコード変換」, Shift+Alt+F10 に「SJIS→EUCコード変換」, Ctrl+Alt+F10 に「EUCで開き直す」を追加 Jan. 14, 2001
-// JEPRO	Shift+F11 に「SQL*Plusをアクティブ表示」, Ctrl+F11 に「半角カタカナ→全角カタカナ」, Alt+F11
-// に「E-Mail(JIS→SJIS)コード変換」, Shift+Alt+F11 に「SJIS→JISコード変換」, Ctrl+Alt+F11 に「JISで開き直す」を追加 Jan.
-// 14, 2001 JEPRO	Ctrl+F12 に「半角カタカナ→全角ひらがな」, Alt+F12 に「自動判別→SJISコード変換」, Ctrl+Alt+F11
-// に「SJISで開き直す」を追加 Sept. 1, 2000 JEPRO	Alt+Enter に「ファイルのプロパティ」を追加	//Oct. 15, 2000 JEPRO
-// Ctrl+Enter に「ファイル内容比較」を追加 Oct. 7, 2000 JEPRO 長いので名称を簡略形に変更(BackSpace→BkSp) Oct. 7, 2000
-// JEPRO 名称をVC++に合わせ簡略形に変更(Insert→Ins) Oct. 7, 2000 JEPRO 名称をVC++に合わせ簡略形に変更(Delete→Del) Jun.
-// 26, 2001 JEPRO	Shift+Del に「切り取り」を追加 Oct. 7, 2000 JEPRO	Shift+Ctrl+Alt+↑に「縦方向に最大化」を追加 Jun.
-// 27, 2001 JEPRO 	Ctrl+↑に割り当てられていた「カーソル上移動(２行ごと)」を「テキストを１行下へスクロール」に変更
-// 2001.02.10 by MIK Shift+Ctrl+Alt+→に「横方向に最大化」を追加
-// Sept. 14, 2000 JEPRO
+// Jan. 14, 2001 JEPRO	Ctrl+F7 に「大文字」, Alt+F7 に「UTF-7→SJISコード変換」, Shift+Alt+F7
+// に「SJIS→UTF-7コード変換」, Ctrl+Alt+F7 に「UTF-7で開き直す」を追加 Nov. 9, 2000 JEPRO	Shift+F8
+// に「CRLF改行でコピー」を追加 Jan. 14, 2001 JEPRO	Ctrl+F8 に「全角→半角」, Alt+F8 に「UTF-8→SJISコード変換」,
+// Shift+Alt+F8 に「SJIS→UTF-8コード変換」, Ctrl+Alt+F8 に「UTF-8で開き直す」を追加 Jan. 14, 2001 JEPRO	Ctrl+F9
+// に「半角＋全ひら→全角・カタカナ」, Alt+F9 に「Unicode→SJISコード変換」, Ctrl+Alt+F9 に「Unicodeで開き直す」を追加
+// Oct. 28, 2000 JEPRO F10 に「SQL*Plusで実行」を追加(F5からの移動) Jan. 14, 2001 JEPRO	Ctrl+F10
+// に「半角＋全カタ→全角・ひらがな」, Alt+F10 に「EUC→SJISコード変換」, Shift+Alt+F10 に「SJIS→EUCコード変換」,
+// Ctrl+Alt+F10 に「EUCで開き直す」を追加 Jan. 14, 2001 JEPRO	Shift+F11 に「SQL*Plusをアクティブ表示」, Ctrl+F11
+// に「半角カタカナ→全角カタカナ」, Alt+F11 に「E-Mail(JIS→SJIS)コード変換」, Shift+Alt+F11 に「SJIS→JISコード変換」,
+// Ctrl+Alt+F11 に「JISで開き直す」を追加 Jan. 14, 2001 JEPRO	Ctrl+F12 に「半角カタカナ→全角ひらがな」, Alt+F12
+// に「自動判別→SJISコード変換」, Ctrl+Alt+F11 に「SJISで開き直す」を追加 Sept. 1, 2000 JEPRO	Alt+Enter
+// に「ファイルのプロパティ」を追加	//Oct. 15, 2000 JEPRO Ctrl+Enter に「ファイル内容比較」を追加 Oct. 7, 2000 JEPRO
+// 長いので名称を簡略形に変更(BackSpace→BkSp) Oct. 7, 2000 JEPRO 名称をVC++に合わせ簡略形に変更(Insert→Ins) Oct. 7, 2000
+// JEPRO 名称をVC++に合わせ簡略形に変更(Delete→Del) Jun. 26, 2001 JEPRO	Shift+Del に「切り取り」を追加 Oct. 7, 2000
+// JEPRO	Shift+Ctrl+Alt+↑に「縦方向に最大化」を追加 Jun. 27, 2001 JEPRO
+// Ctrl+↑に割り当てられていた「カーソル上移動(２行ごと)」を「テキストを１行下へスクロール」に変更 2001.02.10 by MIK
+// Shift+Ctrl+Alt+→に「横方向に最大化」を追加 Sept. 14, 2000 JEPRO
 //	Ctrl+↓に割り当てられていた「右クリックメニュー」を「カーソル下移動(２行ごと)」に変更
 //	それに付随してさらに「右クリックメニュー」をCtrl＋Alt＋↓に変更
 // Jun. 27, 2001 JEPRO
@@ -499,20 +501,20 @@ EFunctionCode CKeyBind::GetFuncCodeAt(KEYDATA &KeyData, int nState, BOOL bGetDef
 // Shift+Alt+2 に「カスタムメニュー12」を追加 Jan. 19, 2001 JEPRO	Shift+Ctrl+2 に「カスタムメニュー22」を追加 Oct. 7,
 // 2000 JEPRO	Ctrl+3 を「フォント設定」→「ステータスバーの表示」に変更 Jan. 13, 2001 JEPRO	Alt+3
 // に「カスタムメニュー3」, Shift+Alt+3 に「カスタムメニュー13」を追加 Jan. 19, 2001 JEPRO	Shift+Ctrl+3
-// に「カスタムメニュー23」を追加 Oct. 7, 2000 JEPRO	Ctrl+4 を「ツールバーの表示」→「タイプ別設定一覧」に変更 Jan. 13,
-// 2001 JEPRO	Alt+4 に「カスタムメニュー4」, Shift+Alt+4 に「カスタムメニュー14」を追加 Jan. 19, 2001 JEPRO
+// に「カスタムメニュー23」を追加 Oct. 7, 2000 JEPRO	Ctrl+4 を「ツールバーの表示」→「タイプ別設定一覧」に変更 Jan.
+// 13, 2001 JEPRO	Alt+4 に「カスタムメニュー4」, Shift+Alt+4 に「カスタムメニュー14」を追加 Jan. 19, 2001 JEPRO
 // Shift+Ctrl+4 に「カスタムメニュー24」を追加 Oct. 7, 2000 JEPRO	Ctrl+5
-// を「ファンクションキーの表示」→「タイプ別設定」に変更 Jan. 13, 2001 JEPRO	Alt+5 に「カスタムメニュー5」, Shift+Alt+5
-// に「カスタムメニュー15」を追加 Oct. 7, 2000 JEPRO	Ctrl+6 を「ステータスバーの表示」→「共通設定」に変更 Jan. 13, 2001
-// JEPRO	Alt+6 に「カスタムメニュー6」, Shift+Alt+6 に「カスタムメニュー16」を追加 Oct. 7, 2000 JEPRO	Ctrl+7
-// に「フォント設定」を追加 Jan. 13, 2001 JEPRO	Alt+7 に「カスタムメニュー7」, Shift+Alt+7
+// を「ファンクションキーの表示」→「タイプ別設定」に変更 Jan. 13, 2001 JEPRO	Alt+5 に「カスタムメニュー5」,
+// Shift+Alt+5 に「カスタムメニュー15」を追加 Oct. 7, 2000 JEPRO	Ctrl+6 を「ステータスバーの表示」→「共通設定」に変更
+// Jan. 13, 2001 JEPRO	Alt+6 に「カスタムメニュー6」, Shift+Alt+6 に「カスタムメニュー16」を追加 Oct. 7, 2000 JEPRO
+// Ctrl+7 に「フォント設定」を追加 Jan. 13, 2001 JEPRO	Alt+7 に「カスタムメニュー7」, Shift+Alt+7
 // に「カスタムメニュー17」を追加 Jan. 13, 2001 JEPRO	Alt+8 に「カスタムメニュー8」, Shift+Alt+8
 // に「カスタムメニュー18」を追加 Jan. 13, 2001 JEPRO	Alt+9 に「カスタムメニュー9」, Shift+Alt+9
 // に「カスタムメニュー19」を追加 2001.12.06 hor Alt+A を「SORT_ASC」に割当 Jan. 13, 2001 JEPRO	Ctrl+B
 // に「ブラウズ」を追加 Jan. 16, 2001 JEPRO	SHift+Ctrl+C に「.hと同名の.c(なければ.cpp)を開く」を追加 Feb. 07, 2001
 // JEPRO	SHift+Ctrl+C を「.hと同名の.c(なければ.cpp)を開く」→「同名のC/C++ヘッダ(ソース)を開く」に変更 Jan. 16, 2001
-// JEPRO	Ctrl+D に「単語切り取り」, Shift+Ctrl+D に「単語削除」を追加 2001.12.06 hor Alt+D を「SORT_DESC」に割当 Oct. 7,
-// 2000 JEPRO	Ctrl+Alt+E に「重ねて表示」を追加 Jan. 16, 2001	JEPRO	Ctrl+E に「行切り取り(折り返し単位)」,
+// JEPRO	Ctrl+D に「単語切り取り」, Shift+Ctrl+D に「単語削除」を追加 2001.12.06 hor Alt+D を「SORT_DESC」に割当 Oct.
+// 7, 2000 JEPRO	Ctrl+Alt+E に「重ねて表示」を追加 Jan. 16, 2001	JEPRO	Ctrl+E に「行切り取り(折り返し単位)」,
 // Shift+Ctrl+E に「行削除(折り返し単位)」を追加 Oct. 07, 2000 JEPRO	Ctrl+Alt+H に「上下に並べて表示」を追加 Jan. 16,
 // 2001 JEPRO	Ctrl+H を「カーソル前を削除」→「カーソル行をウィンドウ中央へ」に変更し	Shift+Ctrl+H
 // に「.cまたは.cppと同名の.hを開く」を追加 Feb. 07, 2001 JEPRO	SHift+Ctrl+H
@@ -553,7 +555,7 @@ EFunctionCode CKeyBind::GetFuncCodeAt(KEYDATA &KeyData, int nState, BOOL bGetDef
 // 2008.05.30 nasukoji	Ctrl+Alt+W に「右端で折り返す」を追加
 // 2008.05.30 nasukoji	Ctrl+Alt+X に「折り返さない」を追加
 
-#define _SQL_RUN		 F_PLSQL_COMPILE_ON_SQLPLUS
+#define _SQL_RUN F_PLSQL_COMPILE_ON_SQLPLUS
 #define _COPYWITHLINENUM F_COPYLINESWITHLINENUMBER
 static const KEYDATAINIT KeyDataInit[] = {
 	// Sept. 1, 2000 Jepro note: key binding
@@ -561,7 +563,9 @@ static const KEYDATAINIT KeyDataInit[] = {
 	//		0,		1,		 2(000), 3(001),4(010),	5(011),		6(100),	7(101),		8(110),		9(111)
 
 	/* マウスボタン */
-	// keycode,			keyname,							なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,
+	// keycode,			keyname,							なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,
+	// Shit+Alt+,
+	// Ctrl+Alt+,
 	// Shift+Ctrl+Alt+
 	{
 		VKEX_DBL_CLICK,
@@ -623,7 +627,9 @@ static const KEYDATAINIT KeyDataInit[] = {
 	},
 
 	/* ファンクションキー */
-	// keycode,	keyname,			なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,
+	// keycode,	keyname,			なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,
+	// Shit+Alt+,
+	// Ctrl+Alt+,
 	// Shift+Ctrl+Alt+
 	{
 		VK_F1,
@@ -749,7 +755,9 @@ static const KEYDATAINIT KeyDataInit[] = {
 	},
 
 	/* 特殊キー */
-	// keycode,	keyname,			なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,
+	// keycode,	keyname,			なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,
+	// Shit+Alt+,
+	// Ctrl+Alt+,
 	// Shift+Ctrl+Alt+
 	{
 		VK_TAB,
@@ -829,7 +837,9 @@ static const KEYDATAINIT KeyDataInit[] = {
 	},
 
 	/* 数字 */
-	// keycode,	keyname,			なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,
+	// keycode,	keyname,			なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,
+	// Shit+Alt+,
+	// Ctrl+Alt+,
 	// Shift+Ctrl+Alt+
 	{
 		'0',
@@ -883,7 +893,9 @@ static const KEYDATAINIT KeyDataInit[] = {
 	},
 
 	/* アルファベット */
-	// keycode,	keyname,			なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,
+	// keycode,	keyname,			なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,
+	// Shit+Alt+,
+	// Ctrl+Alt+,
 	// Shift+Ctrl+Alt+
 	{
 		'A',
@@ -1017,7 +1029,9 @@ static const KEYDATAINIT KeyDataInit[] = {
 	},
 
 	/* 記号 */
-	// keycode,	keyname,			なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,
+	// keycode,	keyname,			なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,
+	// Shit+Alt+,
+	// Ctrl+Alt+,
 	// Shift+Ctrl+Alt+
 	{
 		0x00bd,
@@ -1091,11 +1105,11 @@ static const KEYDATAINIT KeyDataInit[] = {
 		 F_MENU_RBUTTON},
 	}};
 
-const WCHAR *jpVKEXNames[]	= {L"ダブルクリック",		L"右クリック",		 L"中クリック",
+const WCHAR *jpVKEXNames[]  = {L"ダブルクリック",		L"右クリック",		 L"中クリック",
 							   L"左サイドクリック",		L"右サイドクリック", L"トリプルクリック",
-							   L"クアドラプルクリック", L"ホイールアップ",	 L"ホイールダウン",
+							   L"クアドラプルクリック", L"ホイールアップ",   L"ホイールダウン",
 							   L"ホイール左",			L"ホイール右"};
-const int	 jpVKEXNamesLen = _countof(jpVKEXNames);
+const int	jpVKEXNamesLen = _countof(jpVKEXNames);
 
 /*!	@brief 共有メモリ初期化/キー割り当て
 

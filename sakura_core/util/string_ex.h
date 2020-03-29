@@ -69,10 +69,10 @@ inline void *memcpy_raw(void *dest, const void *src, size_t size) { return ::mem
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //文字変換
-inline int	   my_toupper(int c) { return (((c) >= 'a') && ((c) <= 'z')) ? ((c) - 'a' + 'A') : (c); }
-inline int	   my_tolower(int c) { return (((c) >= 'A') && ((c) <= 'Z')) ? ((c) - 'A' + 'a') : (c); }
-inline int	   my_towupper(int c) { return (((c) >= L'a') && ((c) <= L'z')) ? ((c) - L'a' + L'A') : (c); }
-inline int	   my_towlower(int c) { return (((c) >= L'A') && ((c) <= L'Z')) ? ((c) - L'A' + L'a') : (c); }
+inline int	 my_toupper(int c) { return (((c) >= 'a') && ((c) <= 'z')) ? ((c) - 'a' + 'A') : (c); }
+inline int	 my_tolower(int c) { return (((c) >= 'A') && ((c) <= 'Z')) ? ((c) - 'A' + 'a') : (c); }
+inline int	 my_towupper(int c) { return (((c) >= L'a') && ((c) <= L'z')) ? ((c) - L'a' + L'A') : (c); }
+inline int	 my_towlower(int c) { return (((c) >= L'A') && ((c) <= L'Z')) ? ((c) - L'A' + L'a') : (c); }
 inline wchar_t my_towupper2(wchar_t c) { return my_towupper(c); }
 inline wchar_t my_towlower2(wchar_t c) { return my_towlower(c); }
 int			   skr_towupper(int c);
@@ -111,9 +111,9 @@ inline char *strstr_j(char *s1, const char *s2) { return const_cast<char *>(strs
 inline char *stristr_j(char *s1, const char *s2) { return const_cast<char *>(stristr_j((const char *)s1, s2)); }
 
 template<class CHAR_TYPE>
-CHAR_TYPE *my_strtok(CHAR_TYPE *	  pBuffer,	 //[in] 文字列バッファ(終端があること)
+CHAR_TYPE *my_strtok(CHAR_TYPE *	  pBuffer,   //[in] 文字列バッファ(終端があること)
 					 int			  nLen,		 //[in] 文字列の長さ
-					 int *			  pnOffset,	 //[in,out] オフセット
+					 int *			  pnOffset,  //[in,out] オフセット
 					 const CHAR_TYPE *pDelimiter //[in] 区切り文字
 );
 
@@ -202,8 +202,8 @@ WCHAR *		strtotcs(WCHAR *dest, const ACHAR *src, size_t count);
 WCHAR *		strtotcs(WCHAR *dest, const WCHAR *src, size_t count);
 
 //印字系
-#define auto_snprintf_s(buf, count, format, ...)	tchar_sprintf_s((buf), count, (format), __VA_ARGS__)
-#define auto_sprintf(buf, format, ...)				tchar_sprintf((buf), (format), __VA_ARGS__)
+#define auto_snprintf_s(buf, count, format, ...) tchar_sprintf_s((buf), count, (format), __VA_ARGS__)
+#define auto_sprintf(buf, format, ...) tchar_sprintf((buf), (format), __VA_ARGS__)
 #define auto_sprintf_s(buf, nBufCount, format, ...) tchar_snprintf_s((buf), nBufCount, (format), __VA_ARGS__)
 
 inline int auto_vsprintf(ACHAR *buf, const ACHAR *format, va_list &v) { return tchar_vsprintf(buf, format, v); }
@@ -251,28 +251,32 @@ void  wcstombs_vector(const wchar_t *pSrc, int nSrcLen, std::vector<char> *ret);
 // カプセル化された関数やマクロに処理を任せるのが望ましい。
 
 // wcsncmpの文字数指定をliteralData2の大きさで取得してくれる版
-template<size_t Size> int wcsncmp_literal(const wchar_t *strData1, const wchar_t (&literalData2)[Size])
+template<size_t Size>
+int wcsncmp_literal(const wchar_t *strData1, const wchar_t (&literalData2)[Size])
 {
 	assert(literalData2[Size - 1] == 0);
 	return ::wcsncmp(strData1, literalData2, Size - 1); //※終端ヌルを含めないので、_countofからマイナス1する
 }
 
 // strncmpの文字数指定をliteralData2の大きさで取得してくれる版
-template<size_t Size> int strncmp_literal(const char *strData1, const char (&literalData2)[Size])
+template<size_t Size>
+int strncmp_literal(const char *strData1, const char (&literalData2)[Size])
 {
 	assert(literalData2[Size - 1] == 0);
 	return ::strncmp(strData1, literalData2, Size - 1); //※終端ヌルを含めないので、_countofからマイナス1する
 }
 
 //_wcsnicmpの文字数指定をliteralData2の大きさで取得してくれる版
-template<size_t Size> int wcsnicmp_literal(const wchar_t *strData1, const wchar_t (&literalData2)[Size])
+template<size_t Size>
+int wcsnicmp_literal(const wchar_t *strData1, const wchar_t (&literalData2)[Size])
 {
 	assert(literalData2[Size - 1] == 0);
 	return ::_wcsnicmp(strData1, literalData2, Size - 1); //※終端ヌルを含めないので、_countofからマイナス1する
 }
 
 //_strnicmpの文字数指定をliteralData2の大きさで取得してくれる版
-template<size_t Size> int strnicmp_literal(const char *strData1, const char (&literalData2)[Size])
+template<size_t Size>
+int strnicmp_literal(const char *strData1, const char (&literalData2)[Size])
 {
 	assert(literalData2[Size - 1] == 0);
 	return ::_strnicmp(strData1, literalData2, Size - 1); //※終端ヌルを含めないので、_countofからマイナス1する

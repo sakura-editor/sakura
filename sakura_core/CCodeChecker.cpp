@@ -19,7 +19,7 @@
 static bool _CheckSavingEolcode(const CDocLineMgr &pcDocLineMgr, CEol cEolType)
 {
 	bool bMix = false;
-	if (cEolType == EOL_NONE) {	   //改行コード変換なし
+	if (cEolType == EOL_NONE) {	//改行コード変換なし
 		CEol			cEolCheck; //比較対象EOL
 		const CDocLine *pcDocLine = pcDocLineMgr.GetDocLineTop();
 		if (pcDocLine) { cEolCheck = pcDocLine->GetEol(); }
@@ -39,9 +39,9 @@ static bool _CheckSavingEolcode(const CDocLineMgr &pcDocLineMgr, CEol cEolType)
 static EConvertResult _CheckSavingCharcode(const CDocLineMgr &pcDocLineMgr, ECodeType eCodeType, CLogicPoint &point,
 										   CNativeW &wc)
 {
-	const CDocLine *pcDocLine	  = pcDocLineMgr.GetDocLineTop();
+	const CDocLine *pcDocLine	 = pcDocLineMgr.GetDocLineTop();
 	const bool		bCodePageMode = IsValidCodeOrCPType(eCodeType) && !IsValidCodeType(eCodeType);
-	CCodeBase *		pCodeBase	  = CCodeFactory::CreateCodeBase(eCodeType, 0);
+	CCodeBase *		pCodeBase	 = CCodeFactory::CreateCodeBase(eCodeType, 0);
 	CMemory			cmemTmp; // バッファを再利用
 	CNativeW		cmemTmp2;
 	CLogicInt		nLine = CLogicInt(0);
@@ -51,9 +51,9 @@ static EConvertResult _CheckSavingCharcode(const CDocLineMgr &pcDocLineMgr, ECod
 		if (bCodePageMode) {
 			// コードページはRESULT_LOSESOMEを返さないので、自分で文字列比較する
 			EConvertResult e2		   = CIoBridge::FileToImpl(cmemTmp, &cmemTmp2, pCodeBase, 0);
-			const int	   nDocLineLen = (Int)pcDocLine->GetLengthWithEOL();
-			const int	   nConvertLen = (Int)cmemTmp2.GetStringLength();
-			const int	   nDataMinLen = t_min(nDocLineLen, nConvertLen);
+			const int	  nDocLineLen = (Int)pcDocLine->GetLengthWithEOL();
+			const int	  nConvertLen = (Int)cmemTmp2.GetStringLength();
+			const int	  nDataMinLen = t_min(nDocLineLen, nConvertLen);
 			const wchar_t *p		   = pcDocLine->GetPtr();
 			const wchar_t *r		   = cmemTmp2.GetStringPtr();
 			int			   nPos		   = -1;
@@ -78,9 +78,9 @@ static EConvertResult _CheckSavingCharcode(const CDocLineMgr &pcDocLineMgr, ECod
 				// 行内の位置を特定
 				point.y					 = nLine;
 				point.x					 = CLogicInt(-1);
-				const WCHAR *	pLine	 = pcDocLine->GetPtr();
+				const WCHAR *   pLine	= pcDocLine->GetPtr();
 				const CLogicInt nLineLen = pcDocLine->GetLengthWithEOL();
-				CLogicInt		chars	 = CNativeW::GetSizeOfChar(pLine, nLineLen, 0);
+				CLogicInt		chars	= CNativeW::GetSizeOfChar(pLine, nLineLen, 0);
 				CLogicInt		nPos	 = CLogicInt(0);
 				CNativeW		mem;
 				while (0 < chars) {
@@ -129,7 +129,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo *pSaveInfo)
 	}
 
 	//指定文字コードで安全に保存できるかどうか判定
-	CLogicPoint	   point;
+	CLogicPoint	point;
 	CNativeW	   cmemChar(L"", 0);
 	EConvertResult nTmpResult = _CheckSavingCharcode(pcDoc->m_cDocLineMgr, pSaveInfo->eCharCode, point, cmemChar);
 
@@ -141,9 +141,8 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo *pSaveInfo)
 		CCodePage::GetNameNormal(szCpName, pSaveInfo->eCharCode);
 		szCharCode[0] = L'\0';
 		szLineNum[0]  = L'\0';
-		if (point.x == -1) {
-			cmemChar.SetString(LS(STR_ERR_CSHAREDATA22));
-		} else {
+		if (point.x == -1) { cmemChar.SetString(LS(STR_ERR_CSHAREDATA22)); }
+		else {
 			auto_sprintf(szLineNum, L"%d", (int)((Int)point.x) + 1);
 			wcscat(szLineNum, LS(STR_DLGFNCLST_LIST_COL));
 			CUnicode().UnicodeToHex(cmemChar.GetStringPtr(), cmemChar.GetStringLength(), szCharCode,
@@ -155,8 +154,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo *pSaveInfo)
 		switch (nDlgResult) {
 		case IDYES: break;					  //続行
 		case IDNO: return CALLBACK_INTERRUPT; //中断
-		case IDCANCEL:
-		{
+		case IDCANCEL: {
 			CLogicPoint pt(point.x < 0 ? CLogicInt(0) : point.x, point.y);
 			pcDoc->m_pcEditWnd->GetActiveView().GetCommander().Command_MOVECURSOR(pt, 0);
 		}

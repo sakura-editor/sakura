@@ -135,8 +135,8 @@ const char *stristr(const char *s1, const char *s2)
 {
 	//$ 日本語考慮してないので、あんまり役に立たない版。stristr_jを使うのが望ましい。
 	size_t		len2 = strlen(s2);
-	const char *p	 = s1;
-	const char *q	 = strchr(s1, L'\0') - len2;
+	const char *p	= s1;
+	const char *q	= strchr(s1, L'\0') - len2;
 	while (p <= q) {
 		if (amemicmp(p, s2, len2) == 0) return p;
 		p++;
@@ -226,7 +226,7 @@ size_t mbstowcs2(wchar_t *dst, const char *src, size_t dst_count)
 }
 size_t mbstowcs2(wchar_t *pDst, int nDstCount, const char *pSrc, int nSrcCount)
 {
-	int ret	  = MultiByteToWideChar(CP_SJIS, // 2008/5/12 Uchi
+	int ret   = MultiByteToWideChar(CP_SJIS, // 2008/5/12 Uchi
 									0, pSrc, nSrcCount, pDst, nDstCount - 1);
 	pDst[ret] = L'\0';
 	return (size_t)ret;
@@ -243,7 +243,7 @@ size_t wcstombs2(char *dst, const wchar_t *src, size_t dst_count)
 // SJIS→UNICODE。戻り値はnew[]で確保して返す。
 wchar_t *mbstowcs_new(const char *src)
 {
-	size_t	 new_length = mbstowcs(NULL, src, 0);
+	size_t   new_length = mbstowcs(NULL, src, 0);
 	wchar_t *ret		= new wchar_t[new_length + 1];
 	mbstowcs(ret, src, new_length);
 	ret[new_length] = L'\0';
@@ -358,21 +358,22 @@ int wmemicmp_ascii(const WCHAR *p1, const WCHAR *p2, size_t count)
 */
 //$ いちいち手間かかる。。
 namespace {
-template<class T> struct Charset
-{};
-template<> struct Charset<ACHAR>
-{
+template<class T>
+struct Charset {
+};
+template<>
+struct Charset<ACHAR> {
 	static const ACHAR QUOT = '"';
 };
-template<> struct Charset<WCHAR>
-{
+template<>
+struct Charset<WCHAR> {
 	static const WCHAR QUOT = L'"';
 };
 } // namespace
 template<class CHAR_TYPE>
-CHAR_TYPE *my_strtok(CHAR_TYPE *	  pBuffer,	 //[in] 文字列バッファ(終端があること)
+CHAR_TYPE *my_strtok(CHAR_TYPE *	  pBuffer,   //[in] 文字列バッファ(終端があること)
 					 int			  nLen,		 //[in] 文字列の長さ
-					 int *			  pnOffset,	 //[in,out] オフセット
+					 int *			  pnOffset,  //[in,out] オフセット
 					 const CHAR_TYPE *pDelimiter //[in] 区切り文字
 )
 {
@@ -471,14 +472,14 @@ int __cdecl my_internal_icmp(const char *s1, const char *s2, unsigned int n, uns
 	//	2002.11.29 Moca 元の値を保持する必要がなくなったため *_lo, *_upを削除
 	//	int	c1, c1_lo, c1_up;
 	//	int	c2, c2_lo, c2_up;
-	int	 c1, c2;
+	int  c1, c2;
 	bool prev1, prev2; /* 前の文字が SJISの１バイト目か */
 #ifdef MY_ICMP_MBS
 	bool mba1, mba2;
 #endif /* MY_ICMP_MBS */
 
-	p1	  = (unsigned char *)s1;
-	p2	  = (unsigned char *)s2;
+	p1	= (unsigned char *)s1;
+	p2	= (unsigned char *)s2;
 	prev1 = prev2 = false;
 #ifdef MY_ICMP_MBS
 	mba1 = mba2 = false;
@@ -505,13 +506,15 @@ int __cdecl my_internal_icmp(const char *s1, const char *s2, unsigned int n, uns
 				if (my_mbisalpha2(c1)) { c1 = my_mbtoupper2(c1); }
 			}
 #endif /* MY_ICMP_MBS */
-		} else if (my_iskanji1(c1)) {
+		}
+		else if (my_iskanji1(c1)) {
 			/* 今回は日本語１バイト目なので変換しない */
 			prev1 = true;
 #ifdef MY_ICMP_MBS
 			if (c1 == 0x82) mba1 = true;
 #endif /* MY_ICMP_MBS */
-		} else {
+		}
+		else {
 			c1 = my_toupper(c1);
 		}
 
@@ -526,13 +529,15 @@ int __cdecl my_internal_icmp(const char *s1, const char *s2, unsigned int n, uns
 				if (my_mbisalpha2(c2)) { c2 = my_mbtoupper2(c2); }
 			}
 #endif /* MY_ICMP_MBS */
-		} else if (my_iskanji1(c2)) {
+		}
+		else if (my_iskanji1(c2)) {
 			/* 今回は日本語１バイト目なので変換しない */
 			prev2 = true;
 #ifdef MY_ICMP_MBS
 			if (c2 == 0x82) mba2 = true;
 #endif /* MY_ICMP_MBS */
-		} else {
+		}
+		else {
 			c2 = my_toupper(c2);
 		}
 
@@ -568,11 +573,11 @@ int skr_towupper(int c)
 {
 #ifdef _MSC_VER
 	static wchar_t szMap[256]; // c < 256 用の変換テーブル
-	static bool	   bInit = false;
+	static bool	bInit = false;
 	if (!bInit) {
 		int		  i;
 		_locale_t locale = _create_locale(LC_CTYPE, "English");
-		for (i = 0; i < 0x80; i++) szMap[i] = (wchar_t)my_towupper(i);	 // 自前で変換
+		for (i = 0; i < 0x80; i++) szMap[i] = (wchar_t)my_towupper(i);   // 自前で変換
 		for (; i < 0xA0; i++) szMap[i] = (wchar_t)i;					 // 無変換（制御コード部）
 		for (; i < 255; i++) szMap[i] = _towupper_l((wchar_t)i, locale); // "English"localeで変換
 		szMap[255] = 0x0178; // Windows-1252 だと 0x9f(制御文字域) にマップしてしまうので
@@ -589,11 +594,11 @@ int skr_towlower(int c)
 {
 #ifdef _MSC_VER
 	static wchar_t szMap[256]; // c < 256 用の変換テーブル
-	static bool	   bInit = false;
+	static bool	bInit = false;
 	if (!bInit) {
 		int		  i;
 		_locale_t locale = _create_locale(LC_CTYPE, "English");
-		for (i = 0; i < 0x80; i++) szMap[i] = (wchar_t)my_towlower(i);	 // 自前で変換
+		for (i = 0; i < 0x80; i++) szMap[i] = (wchar_t)my_towlower(i);   // 自前で変換
 		for (; i < 0xA0; i++) szMap[i] = (wchar_t)i;					 // 無変換（制御コード部）
 		for (; i < 256; i++) szMap[i] = _towlower_l((wchar_t)i, locale); // "English"localeで変換
 		_free_locale(locale);

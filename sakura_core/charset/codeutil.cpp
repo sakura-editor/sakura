@@ -67,18 +67,18 @@ unsigned int _mbcjmstojis_ex( unsigned int nSrc, bool* pbNonroundtrip )
 */
 static const bool bNA				 = false;
 const bool		  TABLE_WctombSpec[] = {
-	   bNA,	 true, true, true, bNA,	 true, true, bNA,  // 00a0 - 00a7
-	   bNA,	 true, true, true, true, true, true, true, // 00a8 - 00af
-	   bNA,	 bNA,  true, true, bNA,	 true, bNA,	 true, // 00b0 - 00b7
-	   true, true, true, true, bNA,	 bNA,  bNA,	 bNA,  // 00b8 - 00bf
-	   true, true, true, true, true, true, true, true, // 00c0 - 00c7
-	   true, true, true, true, true, true, true, true, // 00c8 - 00cf
-	   true, true, true, true, true, true, true, bNA,  // 00d0 - 00d7
-	   true, true, true, true, true, true, true, true, // 00d8 - 00df
-	   true, true, true, true, true, true, true, true, // 00e0 - 00e7
-	   true, true, true, true, true, true, true, true, // 00e8 - 00ef
-	   true, true, true, true, true, true, true, bNA,  // 00f0 - 00f7
-	   true, true, true, true, true, true, true, true, // 00f8 - 00ff
+	bNA,  true, true, true, bNA,  true, true, bNA,  // 00a0 - 00a7
+	bNA,  true, true, true, true, true, true, true, // 00a8 - 00af
+	bNA,  bNA,  true, true, bNA,  true, bNA,  true, // 00b0 - 00b7
+	true, true, true, true, bNA,  bNA,  bNA,  bNA,  // 00b8 - 00bf
+	true, true, true, true, true, true, true, true, // 00c0 - 00c7
+	true, true, true, true, true, true, true, true, // 00c8 - 00cf
+	true, true, true, true, true, true, true, bNA,  // 00d0 - 00d7
+	true, true, true, true, true, true, true, true, // 00d8 - 00df
+	true, true, true, true, true, true, true, true, // 00e0 - 00e7
+	true, true, true, true, true, true, true, true, // 00e8 - 00ef
+	true, true, true, true, true, true, true, bNA,  // 00f0 - 00f7
+	true, true, true, true, true, true, true, true, // 00f8 - 00ff
 };
 
 //
@@ -236,11 +236,11 @@ unsigned int __fastcall SjisFilter_basis(const unsigned int uCode)
 	while (nleft <= nright) {
 		ni		 = (nright + nleft) / 2;
 		code_tmp = TABLE_SjisPoorcodeIndex[ni][0];
-		if (uCode < code_tmp) {
-			nright = ni - 1;
-		} else if (code_tmp < uCode) {
+		if (uCode < code_tmp) { nright = ni - 1; }
+		else if (code_tmp < uCode) {
 			nleft = ni + 1;
-		} else {
+		}
+		else {
 			break; // 発見
 		}
 	}
@@ -270,17 +270,17 @@ unsigned int __fastcall SjisFilter_ibm2nec(const unsigned int uCode)
 	c1 = static_cast<unsigned char>((code >> 8) & 0x000000ff);
 	c2 = static_cast<unsigned char>(code & 0x000000ff);
 	if (c1 == 0xfa || c1 == 0xfb || (c1 == 0xfc && c2 <= 0x4b)) {
-		if (code <= 0xfa49) {
-			code -= 0x0b51;
-		} /* fa40～fa49 → eeef～eef8 (ⅰ～ⅹ) */
+		if (code <= 0xfa49) { code -= 0x0b51; } /* fa40～fa49 → eeef～eef8 (ⅰ～ⅹ) */
 		else if (code <= 0xfa54) {
 			;
-		} else if (code <= 0xfa57) {
+		}
+		else if (code <= 0xfa57) {
 			code -= 0x0b5b;
 		} /* fa55～fa57 → eefa～eefc (￤～＂) */
 		else if (code <= 0xfa5b) {
 			;
-		} else if (code <= 0xfa7e) {
+		}
+		else if (code <= 0xfa7e) {
 			code -= 0x0d1c;
 		} /* fa5c～fa7e → ed40～ed62 (纊～兊) */
 		else if (code <= 0xfa9b) {
@@ -328,9 +328,7 @@ unsigned int __fastcall SjisFilter_nec2ibm(const unsigned int uCode)
 	*/
 	c1 = static_cast<unsigned char>((code >> 8) & 0x000000ff);
 	if (c1 == 0xed || c1 == 0xee) {
-		if (code <= 0xed62) {
-			code += 0x0d1c;
-		} /* ed40～ed62 → fa5c～fa7e (纊～兊) */
+		if (code <= 0xed62) { code += 0x0d1c; } /* ed40～ed62 → fa5c～fa7e (纊～兊) */
 		else if (code <= 0xed7e) {
 			code += 0x0d1d;
 		} /* ed63～ed7e → fa80～fa9b (兤～﨏) */
@@ -354,12 +352,14 @@ unsigned int __fastcall SjisFilter_nec2ibm(const unsigned int uCode)
 		} /* eee1～eeec → fc40～fc4b (髜～黑) */
 		else if (code <= 0xeeee) {
 			;
-		} else if (code <= 0xeef8) {
+		}
+		else if (code <= 0xeef8) {
 			code += 0x0b51;
 		} /* eeef～eef8 → fa40～fa49 (ⅰ～ⅹ) */
 		else if (code == 0xeef9) {
 			;
-		} else {
+		}
+		else {
 			code += 0x0b5b;
 		} /* eefa～eefc → fa55～fa57 (￤～＂) */
 	}

@@ -29,8 +29,7 @@ class CControlTray;
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class CControlProcess final : public CProcess
-{
+class CControlProcess final : public CProcess {
 public:
 	CControlProcess(HINSTANCE hInstance, LPCWSTR lpCmdLine)
 		: CProcess(hInstance, lpCmdLine)
@@ -40,7 +39,8 @@ public:
 		, m_hMutexCP(NULL)
 		, m_hEventCPInitialized(NULL)
 		, m_pcTray(0)
-	{}
+	{
+	}
 
 	~CControlProcess();
 

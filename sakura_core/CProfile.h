@@ -44,16 +44,14 @@
 /*!
 	@brief INIファイル入出力
 */
-class CProfile
-{
+class CProfile {
 	//文字列型
 	typedef std::wstring wstring;
-	typedef std::string	 string;
+	typedef std::string  string;
 
 	typedef std::pair<wstring, wstring> PAIR_STR_STR;
-	typedef std::map<wstring, wstring>	MAP_STR_STR;
-	struct Section
-	{
+	typedef std::map<wstring, wstring>  MAP_STR_STR;
+	struct Section {
 		wstring		strSectionName;
 		MAP_STR_STR mapEntries;
 	};

@@ -30,11 +30,10 @@
 #include "macro/CWSHManager.h"
 #include "plugin/CPlugin.h"
 
-#define PII_WSH			 L"Wsh"		 // WSHセクション
+#define PII_WSH L"Wsh"				 // WSHセクション
 #define PII_WSH_USECACHE L"UseCache" //読み込んだスクリプトを再利用する
 
-class CWSHPlug final : public CPlug
-{
+class CWSHPlug final : public CPlug {
 public:
 	CWSHPlug(CPlugin &plugin, PlugId id, wstring sJack, wstring sHandler, wstring sLabel)
 		: CPlug(plugin, id, sJack, sHandler, sLabel)
@@ -51,8 +50,7 @@ public:
 	CWSHMacroManager *m_Wsh;
 };
 
-class CWSHPlugin final : public CPlugin
-{
+class CWSHPlugin final : public CPlugin {
 	//コンストラクタ
 public:
 	CWSHPlugin(const wstring &sBaseDir)

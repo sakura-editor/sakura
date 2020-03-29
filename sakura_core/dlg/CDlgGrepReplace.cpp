@@ -55,8 +55,8 @@ const DWORD p_helpids[] = {IDC_BUTTON_FOLDER, HIDC_GREP_REP_BUTTON_FOLDER,				 /
 						   IDC_STATIC_JRE32VER, HIDC_GREP_REP_STATIC_JRE32VER,		 //正規表現バージョン
 						   IDC_CHK_DEFAULTFOLDER,
 						   HIDC_GREP_REP_CHK_DEFAULTFOLDER, //フォルダの初期値をカレントフォルダにする
-						   IDC_CHECK_FILE_ONLY, HIDC_GREP_REP_CHECK_FILE_ONLY,	 //ファイル毎最初のみ検索
-						   IDC_CHECK_BASE_PATH, HIDC_GREP_REP_CHECK_BASE_PATH,	 //ベースフォルダ表示
+						   IDC_CHECK_FILE_ONLY, HIDC_GREP_REP_CHECK_FILE_ONLY,   //ファイル毎最初のみ検索
+						   IDC_CHECK_BASE_PATH, HIDC_GREP_REP_CHECK_BASE_PATH,   //ベースフォルダ表示
 						   IDC_CHECK_SEP_FOLDER, HIDC_GREP_REP_CHECK_SEP_FOLDER, //フォルダ毎に表示
 						   0, 0};
 
@@ -72,8 +72,8 @@ CDlgGrepReplace::CDlgGrepReplace()
 int CDlgGrepReplace::DoModal(HINSTANCE hInstance, HWND hwndParent, const WCHAR *pszCurrentFilePath, LPARAM lParam)
 {
 	m_bSubFolder	= m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder; // Grep: サブフォルダも検索
-	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;	 // 検索オプション
-	m_nGrepCharSet	= m_pShareData->m_Common.m_sSearch.m_nGrepCharSet;	 // 文字コードセット
+	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;  // 検索オプション
+	m_nGrepCharSet  = m_pShareData->m_Common.m_sSearch.m_nGrepCharSet;   // 文字コードセット
 	m_nGrepOutputLineType =
 		m_pShareData->m_Common.m_sSearch.m_nGrepOutputLineType; // 行を出力するか該当部分だけ出力するか
 	m_nGrepOutputStyle = m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle; // Grep: 出力形式
@@ -91,7 +91,8 @@ int CDlgGrepReplace::DoModal(HINSTANCE hInstance, HWND hwndParent, const WCHAR *
 	if (m_szExcludeFile[0] == L'\0') {
 		if (m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
 			wcscpy(m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);
-		} else {
+		}
+		else {
 			/* ユーザーの利便性向上のために除外ファイルに対して初期値を設定する */
 			wcscpy(m_szExcludeFile, DEFAULT_EXCLUDE_FILE_PATTERN); /* 除外ファイル */
 
@@ -104,7 +105,8 @@ int CDlgGrepReplace::DoModal(HINSTANCE hInstance, HWND hwndParent, const WCHAR *
 	if (m_szExcludeFolder[0] == L'\0') {
 		if (m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
 			wcscpy(m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);
-		} else {
+		}
+		else {
 			/* ユーザーの利便性向上のために除外フォルダに対して初期値を設定する */
 			wcscpy(m_szExcludeFolder, DEFAULT_EXCLUDE_FOLDER_PATTERN); /* 除外フォルダ */
 
@@ -128,7 +130,7 @@ BOOL CDlgGrepReplace::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	Combo_SetExtendedUI(GetItemHwnd(IDC_COMBO_TEXT2), TRUE);
 
 	HFONT hFontOld = (HFONT)::SendMessageAny(GetItemHwnd(IDC_COMBO_TEXT2), WM_GETFONT, 0, 0);
-	HFONT hFont	   = SetMainFont(GetItemHwnd(IDC_COMBO_TEXT2));
+	HFONT hFont	= SetMainFont(GetItemHwnd(IDC_COMBO_TEXT2));
 	m_cFontText2.SetFont(hFontOld, hFont, GetItemHwnd(IDC_COMBO_TEXT2));
 
 	return CDlgGrep::OnInitDialog(hwndDlg, wParam, lParam);
@@ -147,8 +149,7 @@ BOOL CDlgGrepReplace::OnBnClicked(int wID)
 		MyWinHelp(GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_GREP_REPLACE_DLG));
 		return TRUE;
 	case IDC_CHK_PASTE:
-	case IDOK:
-	{
+	case IDOK: {
 		bool	   bStop	  = false;
 		CEditView *pcEditView = (CEditView *)m_lParam;
 		if (::IsDlgButtonChecked(GetHwnd(), IDC_CHK_PASTE) && !pcEditView->m_pcEditDoc->m_cDocEditor.IsEnablePaste()) {
@@ -187,7 +188,7 @@ int CDlgGrepReplace::GetData(void)
 	m_bPaste = IsDlgButtonCheckedBool(GetHwnd(), IDC_CHK_PASTE);
 
 	/* 置換後 */
-	int	 nBufferSize = ::GetWindowTextLength(GetItemHwnd(IDC_COMBO_TEXT2)) + 1;
+	int  nBufferSize = ::GetWindowTextLength(GetItemHwnd(IDC_COMBO_TEXT2)) + 1;
 	auto vText		 = std::make_unique<WCHAR[]>(nBufferSize);
 	::DlgItem_GetText(GetHwnd(), IDC_COMBO_TEXT2, &vText[0], nBufferSize);
 	m_strText2 = &vText[0];

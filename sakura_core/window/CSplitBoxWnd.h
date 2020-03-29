@@ -23,8 +23,7 @@ class CSplitBoxWnd;
 /*!
 	@brief 分割ボックスウィンドウクラス
 */
-class CSplitBoxWnd final : public CWnd
-{
+class CSplitBoxWnd final : public CWnd {
 public:
 	/*
 	||  Constructors
@@ -48,7 +47,7 @@ protected:
 
 	/* 仮想関数 メッセージ処理 詳しくは実装を参照 */
 	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;		 /* 描画処理 */
-	LRESULT OnLButtonDown(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;	 // WM_LBUTTONDOWN
+	LRESULT OnLButtonDown(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;   // WM_LBUTTONDOWN
 	LRESULT OnMouseMove(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;	 // WM_MOUSEMOVE
 	LRESULT OnLButtonUp(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;	 // WM_LBUTTONUP
 	LRESULT OnLButtonDblClk(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override; // WM_LBUTTONDBLCLK

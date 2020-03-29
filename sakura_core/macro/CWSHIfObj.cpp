@@ -60,21 +60,19 @@ void CWSHIfObj::ReadyCommands(MacroFuncInfo *Info, int flags)
 		wcscpy(FuncName, Info->m_pszFuncName);
 
 		int ArgCount = 0;
-		if (Info->m_pData) {
-			ArgCount = Info->m_pData->m_nArgMinSize;
-		} else {
+		if (Info->m_pData) { ArgCount = Info->m_pData->m_nArgMinSize; }
+		else {
 			for (int i = 0; i < 4; ++i) {
 				if (Info->m_varArguments[i] != VT_EMPTY) ++ArgCount;
 			}
 		}
 		VARTYPE *varArgTmp = NULL;
-		VARTYPE *varArg	   = Info->m_varArguments;
+		VARTYPE *varArg	= Info->m_varArguments;
 		if (4 < ArgCount) {
 			varArgTmp = varArg = new VARTYPE[ArgCount];
 			for (int i = 0; i < ArgCount; i++) {
-				if (i < 4) {
-					varArg[i] = Info->m_varArguments[i];
-				} else {
+				if (i < 4) { varArg[i] = Info->m_varArguments[i]; }
+				else {
 					varArg[i] = Info->m_pData->m_pVarArgEx[i - 4];
 				}
 			}
@@ -120,14 +118,15 @@ HRESULT CWSHIfObj::MacroCommand(int IntID, DISPPARAMS *Arguments, VARIANT *Resul
 		VariantClear(&ret);
 		for (I = 0; I < ArgCount; I++) { ::VariantClear(&rgvargParam[I]); }
 		return r ? S_OK : E_FAIL;
-	} else {
+	}
+	else {
 		// 最低4つは確保
 		int argCountMin = t_max(4, ArgCount);
 		//	Nov. 29, 2005 FILE 引数を文字列で取得する
 		auto StrArgs	= std::make_unique<LPWSTR[]>(argCountMin);
 		auto strLengths = std::make_unique<int[]>(argCountMin);
 		for (I = ArgCount; I < argCountMin; I++) {
-			StrArgs[I]	  = NULL;
+			StrArgs[I]	= NULL;
 			strLengths[I] = 0;
 		}
 		WCHAR * S = NULL; // 初期化必須
@@ -136,10 +135,11 @@ HRESULT CWSHIfObj::MacroCommand(int IntID, DISPPARAMS *Arguments, VARIANT *Resul
 		for (I = 0; I < ArgCount; ++I) {
 			if (VariantChangeType(&varCopy.Data, &(Arguments->rgvarg[I]), 0, VT_BSTR) == S_OK) {
 				Wrap(&varCopy.Data.bstrVal)->GetW(&S, &Len);
-			} else {
-				S	 = new WCHAR[1];
+			}
+			else {
+				S	= new WCHAR[1];
 				S[0] = 0;
-				Len	 = 0;
+				Len  = 0;
 			}
 			StrArgs[ArgCount - I - 1] = S; // DISPPARAMSは引数の順序が逆転しているため正しい順に直す
 			strLengths[ArgCount - I - 1] = Len;

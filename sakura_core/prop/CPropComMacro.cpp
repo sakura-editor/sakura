@@ -46,7 +46,7 @@
 //! Popup Help用ID
 //@@@ 2001.12.22 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {		   // 11700
-	IDC_MACRODIRREF, HIDC_MACRODIRREF,	   //マクロディレクトリ参照
+	IDC_MACRODIRREF, HIDC_MACRODIRREF,	 //マクロディレクトリ参照
 	IDC_MACRO_REG, HIDC_MACRO_REG,		   //マクロ設定
 	IDC_COMBO_MACROID, HIDC_COMBO_MACROID, // ID
 	IDC_MACROPATH, HIDC_MACROPATH,		   // File
@@ -95,7 +95,7 @@ static bool isImeUndesirable(int id)
 INT_PTR CPropMacro::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	NMHDR *pNMHDR;
-	int	   idCtrl;
+	int	idCtrl;
 
 	WORD wNotifyCode;
 	WORD wID;
@@ -145,7 +145,7 @@ INT_PTR CPropMacro::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam); /* 通知コード */
 		wID			= LOWORD(wParam); /* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl		= (HWND)lParam;	  /* コントロールのハンドル */
+		hwndCtl		= (HWND)lParam;   /* コントロールのハンドル */
 
 		switch (wNotifyCode) {
 		/* ボタン／チェックボックスがクリックされた */
@@ -171,8 +171,7 @@ INT_PTR CPropMacro::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 		case EN_KILLFOCUS:
 			if (isImeUndesirable(wID)) ImeSetOpen(hwndCtl, FALSE, &s_isImmOpenBkup);
 			switch (wID) {
-			case IDC_MACRODIR:
-			{
+			case IDC_MACRODIR: {
 				WCHAR szDir[_MAX_PATH];
 				::DlgItem_GetText(hwndDlg, IDC_MACRODIR, szDir, _MAX_PATH);
 				if (1 == AddLastChar(szDir, _MAX_PATH, L'\\')) { ::DlgItem_SetText(hwndDlg, IDC_MACRODIR, szDir); }
@@ -184,8 +183,7 @@ INT_PTR CPropMacro::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 
 		break; /* WM_COMMAND */
 			   //@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP:
-	{
+	case WM_HELP: {
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -212,7 +210,7 @@ INT_PTR CPropMacro::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 */
 void CPropMacro::SetData(HWND hwndDlg)
 {
-	int	   index;
+	int	index;
 	LVITEM sItem;
 
 	//	マクロデータ
@@ -220,22 +218,22 @@ void CPropMacro::SetData(HWND hwndDlg)
 
 	for (index = 0; index < MAX_CUSTMACRO; ++index) {
 		memset_raw(&sItem, 0, sizeof(sItem));
-		sItem.iItem	   = index;
-		sItem.mask	   = LVIF_TEXT;
+		sItem.iItem	= index;
+		sItem.mask	 = LVIF_TEXT;
 		sItem.iSubItem = 1;
 		sItem.pszText  = m_pShareData->m_Common.m_sMacro.m_MacroTable[index].m_szName;
 		ListView_SetItem(hListView, &sItem);
 
 		memset_raw(&sItem, 0, sizeof(sItem));
-		sItem.iItem	   = index;
-		sItem.mask	   = LVIF_TEXT;
+		sItem.iItem	= index;
+		sItem.mask	 = LVIF_TEXT;
 		sItem.iSubItem = 2;
 		sItem.pszText  = m_pShareData->m_Common.m_sMacro.m_MacroTable[index].m_szFile;
 		ListView_SetItem(hListView, &sItem);
 
 		memset_raw(&sItem, 0, sizeof(sItem));
-		sItem.iItem	   = index;
-		sItem.mask	   = LVIF_TEXT;
+		sItem.iItem	= index;
+		sItem.mask	 = LVIF_TEXT;
 		sItem.iSubItem = 3;
 		sItem.pszText  = const_cast<WCHAR *>(
 			 m_pShareData->m_Common.m_sMacro.m_MacroTable[index].m_bReloadWhenExecute ? L"on" : L"off");
@@ -248,8 +246,8 @@ void CPropMacro::SetData(HWND hwndDlg)
 		if (index == m_pShareData->m_Common.m_sMacro.m_nMacroOnTypeChanged) ::lstrcat(szText, L"T");
 		if (index == m_pShareData->m_Common.m_sMacro.m_nMacroOnSave) ::lstrcat(szText, L"S");
 		memset_raw(&sItem, 0, sizeof(sItem));
-		sItem.iItem	   = index;
-		sItem.mask	   = LVIF_TEXT;
+		sItem.iItem	= index;
+		sItem.mask	 = LVIF_TEXT;
 		sItem.iSubItem = 4;
 		sItem.pszText  = szText;
 		ListView_SetItem(hListView, &sItem);
@@ -283,7 +281,7 @@ void CPropMacro::SetData(HWND hwndDlg)
 
 int CPropMacro::GetData(HWND hwndDlg)
 {
-	int	   index;
+	int	index;
 	LVITEM sItem;
 
 	// 自動実行マクロ変数初期化	// 2006.09.01 ryoji
@@ -298,7 +296,7 @@ int CPropMacro::GetData(HWND hwndDlg)
 		memset_raw(&sItem, 0, sizeof(sItem));
 		sItem.iItem		 = index;
 		sItem.mask		 = LVIF_TEXT;
-		sItem.iSubItem	 = 1;
+		sItem.iSubItem   = 1;
 		sItem.cchTextMax = MACRONAME_MAX - 1;
 		//@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
 		sItem.pszText = /*m_pShareData->*/ m_Common.m_sMacro.m_MacroTable[index].m_szName;
@@ -307,33 +305,32 @@ int CPropMacro::GetData(HWND hwndDlg)
 		memset_raw(&sItem, 0, sizeof(sItem));
 		sItem.iItem		 = index;
 		sItem.mask		 = LVIF_TEXT;
-		sItem.iSubItem	 = 2;
+		sItem.iSubItem   = 2;
 		sItem.cchTextMax = _MAX_PATH;
 		//@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
 		sItem.pszText = /*m_pShareData->*/ m_Common.m_sMacro.m_MacroTable[index].m_szFile;
 		ListView_GetItem(hListView, &sItem);
 
 		memset_raw(&sItem, 0, sizeof(sItem));
-		sItem.iItem	   = index;
-		sItem.mask	   = LVIF_TEXT;
+		sItem.iItem	= index;
+		sItem.mask	 = LVIF_TEXT;
 		sItem.iSubItem = 3;
 		WCHAR buf[MAX_PATH];
-		sItem.pszText	 = buf;
+		sItem.pszText	= buf;
 		sItem.cchTextMax = MAX_PATH;
 		ListView_GetItem(hListView, &sItem);
-		if (wcscmp(buf, L"on") == 0) {
-			m_Common.m_sMacro.m_MacroTable[index].m_bReloadWhenExecute = true;
-		} else {
+		if (wcscmp(buf, L"on") == 0) { m_Common.m_sMacro.m_MacroTable[index].m_bReloadWhenExecute = true; }
+		else {
 			m_Common.m_sMacro.m_MacroTable[index].m_bReloadWhenExecute = false;
 		}
 
 		// 自動実行マクロ	// 2006.09.01 ryoji
 		memset_raw(&sItem, 0, sizeof(sItem));
-		sItem.iItem	   = index;
-		sItem.mask	   = LVIF_TEXT;
+		sItem.iItem	= index;
+		sItem.mask	 = LVIF_TEXT;
 		sItem.iSubItem = 4;
 		WCHAR szText[8];
-		sItem.pszText	 = szText;
+		sItem.pszText	= szText;
 		sItem.cchTextMax = _countof(szText);
 		ListView_GetItem(hListView, &sItem);
 		int i;
@@ -360,8 +357,7 @@ int CPropMacro::GetData(HWND hwndDlg)
 	return TRUE;
 }
 
-struct ColumnData_CPropMacro_Init
-{
+struct ColumnData_CPropMacro_Init {
 	int titleId;
 	int width;
 };
@@ -390,7 +386,7 @@ void CPropMacro::InitDialog(HWND hwndDlg)
 
 		memset_raw(&sColumn, 0, sizeof(sColumn));
 		sColumn.mask	 = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM | LVCF_FMT;
-		sColumn.pszText	 = const_cast<WCHAR *>(LS(ColumnList[pos].titleId));
+		sColumn.pszText  = const_cast<WCHAR *>(LS(ColumnList[pos].titleId));
 		sColumn.cx		 = ColumnList[pos].width * width / (499 - 17);
 		sColumn.iSubItem = pos;
 		sColumn.fmt		 = LVCFMT_LEFT;
@@ -410,8 +406,8 @@ void CPropMacro::InitDialog(HWND hwndDlg)
 		LVITEM sItem;
 		WCHAR  buf[4];
 		memset_raw(&sItem, 0, sizeof(sItem));
-		sItem.mask	   = LVIF_TEXT | LVIF_PARAM;
-		sItem.iItem	   = pos;
+		sItem.mask	 = LVIF_TEXT | LVIF_PARAM;
+		sItem.iItem	= pos;
 		sItem.iSubItem = 0;
 		_itot(pos, buf, 10);
 		sItem.pszText = buf;
@@ -428,7 +424,8 @@ void CPropMacro::InitDialog(HWND hwndDlg)
 		if (result == CB_ERR) {
 			PleaseReportToAuthor(hwndDlg, L"PropComMacro::InitDlg::AddMacroId");
 			return; //	よくわからんけど失敗した
-		} else if (result == CB_ERRSPACE) {
+		}
+		else if (result == CB_ERRSPACE) {
 			PleaseReportToAuthor(hwndDlg, L"PropComMacro::InitDlg::AddMacroId/InsufficientSpace");
 			return; //	よくわからんけど失敗した
 		}
@@ -438,11 +435,11 @@ void CPropMacro::InitDialog(HWND hwndDlg)
 
 void CPropMacro::SetMacro2List_Macro(HWND hwndDlg)
 {
-	int	   index;
+	int	index;
 	LVITEM sItem;
 
 	HWND hListView = ::GetDlgItem(hwndDlg, IDC_MACROLIST);
-	HWND hNum	   = ::GetDlgItem(hwndDlg, IDC_COMBO_MACROID);
+	HWND hNum	  = ::GetDlgItem(hwndDlg, IDC_COMBO_MACROID);
 
 	//	設定先取得
 	index = Combo_GetCurSel(hNum);
@@ -453,8 +450,8 @@ void CPropMacro::SetMacro2List_Macro(HWND hwndDlg)
 
 	// マクロ名
 	memset_raw(&sItem, 0, sizeof(sItem));
-	sItem.iItem	   = index;
-	sItem.mask	   = LVIF_TEXT;
+	sItem.iItem	= index;
+	sItem.mask	 = LVIF_TEXT;
 	sItem.iSubItem = 1;
 
 	WCHAR buf[256];
@@ -464,8 +461,8 @@ void CPropMacro::SetMacro2List_Macro(HWND hwndDlg)
 
 	// ファイル名
 	memset_raw(&sItem, 0, sizeof(sItem));
-	sItem.iItem	   = index;
-	sItem.mask	   = LVIF_TEXT;
+	sItem.iItem	= index;
+	sItem.mask	 = LVIF_TEXT;
 	sItem.iSubItem = 2;
 
 	::DlgItem_GetText(hwndDlg, IDC_MACROPATH, buf, _MAX_PATH);
@@ -474,24 +471,24 @@ void CPropMacro::SetMacro2List_Macro(HWND hwndDlg)
 
 	// チェック
 	memset_raw(&sItem, 0, sizeof(sItem));
-	sItem.iItem	   = index;
-	sItem.mask	   = LVIF_TEXT;
+	sItem.iItem	= index;
+	sItem.mask	 = LVIF_TEXT;
 	sItem.iSubItem = 3;
 	sItem.pszText  = const_cast<WCHAR *>(::IsDlgButtonChecked(hwndDlg, IDC_CHECK_RELOADWHENEXECUTE) ? L"on" : L"off");
 	ListView_SetItem(hListView, &sItem);
 
 	// 自動実行マクロ	// 2006.09.01 ryoji
-	int	  nMacroOnOpened	  = -1;
-	int	  nMacroOnTypeChanged = -1;
-	int	  nMacroOnSave		  = -1;
+	int   nMacroOnOpened	  = -1;
+	int   nMacroOnTypeChanged = -1;
+	int   nMacroOnSave		  = -1;
 	WCHAR szText[8];
-	int	  iItem;
+	int   iItem;
 	for (iItem = 0; iItem < MAX_CUSTMACRO; iItem++) {
 		memset_raw(&sItem, 0, sizeof(sItem));
 		sItem.iItem		 = iItem;
 		sItem.mask		 = LVIF_TEXT;
-		sItem.iSubItem	 = 4;
-		sItem.pszText	 = szText;
+		sItem.iSubItem   = 4;
+		sItem.pszText	= szText;
 		sItem.cchTextMax = _countof(szText);
 		ListView_GetItem(hListView, &sItem);
 		int i;
@@ -521,8 +518,8 @@ void CPropMacro::SetMacro2List_Macro(HWND hwndDlg)
 		if (iItem == nMacroOnTypeChanged) ::lstrcat(szText, L"T");
 		if (iItem == nMacroOnSave) ::lstrcat(szText, L"S");
 		memset_raw(&sItem, 0, sizeof(sItem));
-		sItem.iItem	   = iItem;
-		sItem.mask	   = LVIF_TEXT;
+		sItem.iItem	= iItem;
+		sItem.mask	 = LVIF_TEXT;
 		sItem.iSubItem = 4;
 		sItem.pszText  = szText;
 		ListView_SetItem(hListView, &sItem);
@@ -604,7 +601,7 @@ void CPropMacro::OnFileDropdown_Macro(HWND hwndDlg)
 void CPropMacro::CheckListPosition_Macro(HWND hwndDlg)
 {
 	HWND hListView = ::GetDlgItem(hwndDlg, IDC_MACROLIST);
-	HWND hNum	   = ::GetDlgItem(hwndDlg, IDC_COMBO_MACROID);
+	HWND hNum	  = ::GetDlgItem(hwndDlg, IDC_COMBO_MACROID);
 
 	//	現在のFocus取得
 	int current = ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
@@ -622,8 +619,8 @@ void CPropMacro::CheckListPosition_Macro(HWND hwndDlg)
 	memset_raw(&sItem, 0, sizeof(sItem));
 	sItem.iItem		 = current;
 	sItem.mask		 = LVIF_TEXT;
-	sItem.iSubItem	 = 1;
-	sItem.pszText	 = buf;
+	sItem.iSubItem   = 1;
+	sItem.pszText	= buf;
 	sItem.cchTextMax = MACRONAME_MAX;
 
 	ListView_GetItem(hListView, &sItem);
@@ -632,8 +629,8 @@ void CPropMacro::CheckListPosition_Macro(HWND hwndDlg)
 	memset_raw(&sItem, 0, sizeof(sItem));
 	sItem.iItem		 = current;
 	sItem.mask		 = LVIF_TEXT;
-	sItem.iSubItem	 = 2;
-	sItem.pszText	 = buf;
+	sItem.iSubItem   = 2;
+	sItem.pszText	= buf;
 	sItem.cchTextMax = MAX_PATH;
 
 	ListView_GetItem(hListView, &sItem);
@@ -642,23 +639,22 @@ void CPropMacro::CheckListPosition_Macro(HWND hwndDlg)
 	memset_raw(&sItem, 0, sizeof(sItem));
 	sItem.iItem		 = current;
 	sItem.mask		 = LVIF_TEXT;
-	sItem.iSubItem	 = 3;
-	sItem.pszText	 = buf;
+	sItem.iSubItem   = 3;
+	sItem.pszText	= buf;
 	sItem.cchTextMax = MAX_PATH;
 	ListView_GetItem(hListView, &sItem);
-	if (wcscmp(buf, L"on") == 0) {
-		::CheckDlgButton(hwndDlg, IDC_CHECK_RELOADWHENEXECUTE, true);
-	} else {
+	if (wcscmp(buf, L"on") == 0) { ::CheckDlgButton(hwndDlg, IDC_CHECK_RELOADWHENEXECUTE, true); }
+	else {
 		::CheckDlgButton(hwndDlg, IDC_CHECK_RELOADWHENEXECUTE, false);
 	}
 
 	// 自動実行マクロ	// 2006.09.01 ryoji
 	memset_raw(&sItem, 0, sizeof(sItem));
-	sItem.iItem	   = current;
-	sItem.mask	   = LVIF_TEXT;
+	sItem.iItem	= current;
+	sItem.mask	 = LVIF_TEXT;
 	sItem.iSubItem = 4;
 	WCHAR szText[8];
-	sItem.pszText	 = szText;
+	sItem.pszText	= szText;
 	sItem.cchTextMax = _countof(szText);
 	ListView_GetItem(hListView, &sItem);
 	int i;

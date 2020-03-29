@@ -36,8 +36,7 @@
 
 //!「履歴とお気に入りの管理」ダイアログ
 //アクセス方法：[設定] - [履歴の管理]
-class CDlgFavorite final : public CDialog
-{
+class CDlgFavorite final : public CDialog {
 public:
 	/*
 	||  Constructors
@@ -58,7 +57,7 @@ protected:
 	BOOL	OnBnClicked(int wID) override;
 	BOOL	OnNotify(WPARAM wParam, LPARAM lParam) override;
 	BOOL	OnActivate(WPARAM wParam, LPARAM lParam) override;
-	LPVOID	GetHelpIdTable(void) override;
+	LPVOID  GetHelpIdTable(void) override;
 	INT_PTR DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam,
 						  LPARAM lParam) override; // 標準以外のメッセージを捕捉する
 	BOOL	OnSize(WPARAM wParam, LPARAM lParam) override;
@@ -66,7 +65,7 @@ protected:
 	BOOL	OnMinMaxInfo(LPARAM lParam);
 
 	void SetData(void) override; /* ダイアログデータの設定 */
-	int	 GetData(void) override; /* ダイアログデータの取得 */
+	int  GetData(void) override; /* ダイアログデータの取得 */
 
 	void TabSelectChange(bool bSetFocus);
 	bool RefreshList(void);
@@ -76,40 +75,38 @@ protected:
 	void UpdateUIState();
 
 	void GetFavorite(int nIndex);
-	int	 DeleteSelected();
+	int  DeleteSelected();
 	void AddItem();
 	void EditItem();
 	void RightMenu(POINT &menuPos);
 
 private:
 	CRecentFile		  m_cRecentFile;
-	CRecentFolder	  m_cRecentFolder;
+	CRecentFolder	 m_cRecentFolder;
 	CRecentExceptMRU  m_cRecentExceptMRU;
-	CRecentSearch	  m_cRecentSearch;
-	CRecentReplace	  m_cRecentReplace;
-	CRecentGrepFile	  m_cRecentGrepFile;
+	CRecentSearch	 m_cRecentSearch;
+	CRecentReplace	m_cRecentReplace;
+	CRecentGrepFile   m_cRecentGrepFile;
 	CRecentGrepFolder m_cRecentGrepFolder;
 	CRecentCmd		  m_cRecentCmd;
-	CRecentCurDir	  m_cRecentCurDir;
+	CRecentCurDir	 m_cRecentCurDir;
 
-	enum
-	{
+	enum {
 		// ! 管理数
 		FAVORITE_INFO_MAX = 10 // 管理数 +1(番兵)
 	};
 
-	struct FavoriteInfo
-	{
-		CRecent *	 m_pRecent;		  //オブジェクトへのポインタ
-		std::wstring m_strCaption;	  //キャプション
-		const WCHAR *m_pszCaption;	  //キャプション
+	struct FavoriteInfo {
+		CRecent *	m_pRecent;		  //オブジェクトへのポインタ
+		std::wstring m_strCaption;	//キャプション
+		const WCHAR *m_pszCaption;	//キャプション
 		int			 m_nId;			  //コントロールのID
 		bool		 m_bHaveFavorite; //お気に入りを持っているか？
-		bool		 m_bHaveView;	  //表示数変更機能をもっているか？
-		bool		 m_bFilePath;	  //ファイル/フォルダか？
-		bool		 m_bEditable;	  //編集可能
-		bool		 m_bAddExcept;	  //除外へ追加
-		int			 m_nViewCount;	  //カレントの表示数
+		bool		 m_bHaveView;	 //表示数変更機能をもっているか？
+		bool		 m_bFilePath;	 //ファイル/フォルダか？
+		bool		 m_bEditable;	 //編集可能
+		bool		 m_bAddExcept;	//除外へ追加
+		int			 m_nViewCount;	//カレントの表示数
 		FavoriteInfo()
 			: m_pRecent(NULL)
 			, m_pszCaption(NULL)
@@ -119,12 +116,11 @@ private:
 			, m_bFilePath(false)
 			, m_bEditable(false)
 			, m_bAddExcept(false)
-			, m_nViewCount(0) {};
+			, m_nViewCount(0){};
 	};
-	struct ListViewSortInfo
-	{
+	struct ListViewSortInfo {
 		HWND hListView;		 //!< リストビューの HWND
-		int	 nSortColumn;	 //!< ソート列 -1で未指定
+		int  nSortColumn;	//!< ソート列 -1で未指定
 		bool bSortAscending; //!< ソートが昇順
 	};
 
@@ -134,8 +130,8 @@ private:
 	RECT			 m_rcListDefault;
 	RECT			 m_rcItems[10];
 
-	int	  m_nCurrentTab;
-	int	  m_nExceptTab;
+	int   m_nCurrentTab;
+	int   m_nExceptTab;
 	WCHAR m_szMsg[1024];
 
 	static void ListViewSort(ListViewSortInfo &info, const CRecent *pRecent, int column, bool bReverse);

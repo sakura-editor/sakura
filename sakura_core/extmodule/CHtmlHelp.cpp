@@ -35,7 +35,8 @@
 
 CHtmlHelp::CHtmlHelp(void) noexcept
 	: m_pfnHtmlHelp(nullptr)
-{}
+{
+}
 
 /*!
 	HTML Help のファイル名を渡す

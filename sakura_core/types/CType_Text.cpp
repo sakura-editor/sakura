@@ -47,7 +47,7 @@ void CType_Text::InitTypeConfigImp(STypeConfig *pType)
 	wcscpy(pType->m_szTypeExts, L"txt,log,1st,err,ps");
 
 	//設定
-	pType->m_nMaxLineKetas	 = CKetaXInt(120); /* 折り返し桁数 */
+	pType->m_nMaxLineKetas   = CKetaXInt(120); /* 折り返し桁数 */
 	pType->m_eDefaultOutline = OUTLINE_TEXT;   /* アウトライン解析方法 */
 	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp =
 		false; // Oct. 17, 2000 JEPRO	シングルクォーテーション文字列を色分け表示しない
@@ -59,7 +59,7 @@ void CType_Text::InitTypeConfigImp(STypeConfig *pType)
 	pType->m_bKinsokuKuto = false; // 句読点をぶら下げる	//@@@ 2002.04.17 MIK
 	wcscpy(pType->m_szKinsokuHead,
 		   L"!%),.:;?]}\xa2°’”‰′″℃、。々〉》」』】〕゛゜ゝゞ・ヽヾ！％），．：；？］｝｡｣､･ﾞﾟ￠");
-		/* 行頭禁則 */																			 //@@@ 2002.04.13 MIK
+	/* 行頭禁則 */																				 //@@@ 2002.04.13 MIK
 	wcscpy(pType->m_szKinsokuTail, L"$([\\{\xa3\xa5‘“〈《「『【〔＄（［｛｢￡￥"); /* 行末禁則 */ //@@@ 2002.04.08 MIK
 	// pType->m_szKinsokuKuto（句読点ぶら下げ文字）はここではなく全タイプにデフォルト設定	// 2009.08.07 ryoji
 
@@ -105,13 +105,13 @@ void CDocOutline::MakeTopicList_txt(CFuncInfoArr *pcFuncInfoArr)
 	*/
 	const int nMaxStack = 32; //	ネストの最深
 	int		  nDepth	= 0;  //	いまのアイテムの深さを表す数値。
-	wchar_t	  pszStack[nMaxStack][32];
-	wchar_t	  szTitle[32]; //	一時領域
+	wchar_t   pszStack[nMaxStack][32];
+	wchar_t   szTitle[32]; //	一時領域
 	CLogicInt nLineCount;
 	bool	  b278a = false;
 	for (nLineCount = CLogicInt(0); nLineCount < m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount) {
 		//行取得
-		CLogicInt	   nLineLen;
+		CLogicInt	  nLineLen;
 		const wchar_t *pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
 		if (NULL == pLine) break;
 
@@ -147,7 +147,8 @@ void CDocOutline::MakeTopicList_txt(CFuncInfoArr *pcFuncInfoArr)
 				wcscpy(szTitle, L"(a)"); //英小文字
 			else
 				continue; //※「(」の次が英数字で無い場合、見出しとみなさない
-		} else if (IsInRange(pLine[i], L'０', L'９'))
+		}
+		else if (IsInRange(pLine[i], L'０', L'９'))
 			wcscpy(szTitle, L"０"); // 全角数字
 		else if (IsInRange(pLine[i], L'①', L'⑳') || pLine[i] == L'\u24ea' || IsInRange(pLine[i], L'\u3251', L'\u325f')
 				 || IsInRange(pLine[i], L'\u32b1', L'\u32bf'))
@@ -167,12 +168,12 @@ void CDocOutline::MakeTopicList_txt(CFuncInfoArr *pcFuncInfoArr)
 		else if (IsInRange(pLine[i], L'\u24d0', L'\u24e9'))
 			wcscpy(szTitle, L"\u24d0");						  // ○a-○z
 		else if (IsInRange(pLine[i], L'\u24eb', L'\u24f4')) { // ●11-●20
-			if (b278a) {
-				wcscpy(szTitle, L"\u278a");
-			} else {
+			if (b278a) { wcscpy(szTitle, L"\u278a"); }
+			else {
 				wcscpy(szTitle, L"\u2776");
 			}
-		} else if (IsInRange(pLine[i], L'\u24f5', L'\u24fe'))
+		}
+		else if (IsInRange(pLine[i], L'\u24f5', L'\u24fe'))
 			wcscpy(szTitle, L"\u24f5"); // ◎1-◎10
 		else if (IsInRange(pLine[i], L'\u2776', L'\u277f'))
 			wcscpy(szTitle, L"\u2776"); // ●1-●10
@@ -220,7 +221,7 @@ void CDocOutline::MakeTopicList_txt(CFuncInfoArr *pcFuncInfoArr)
 		m_pcDocRef->m_cLayoutMgr.LogicToLayout(CLogicPoint(0, nLineCount), &ptPos);
 
 		/* nDepthを計算 */
-		int	 k;
+		int  k;
 		bool bAppend = true;
 		for (k = 0; k < nDepth; k++) {
 			int nResult = wcscmp(pszStack[k], szTitle);
@@ -230,11 +231,13 @@ void CDocOutline::MakeTopicList_txt(CFuncInfoArr *pcFuncInfoArr)
 			//	ループ途中でbreak;してきた。＝今までに同じ見出しが存在していた。
 			//	ので、同じレベルに合わせてAppendData.
 			nDepth = k;
-		} else if (nMaxStack > k) {
+		}
+		else if (nMaxStack > k) {
 			//	いままでに同じ見出しが存在しなかった。
 			//	ので、pszStackにコピーしてAppendData.
 			wcscpy(pszStack[nDepth], szTitle);
-		} else {
+		}
+		else {
 			// 2002.11.03 Moca 最大値を超えるとバッファオーバーラン
 			// nDepth = nMaxStack;
 			bAppend = false;
@@ -257,12 +260,12 @@ void CDocOutline::MakeTopicList_txt(CFuncInfoArr *pcFuncInfoArr)
 */
 void CDocOutline::MakeTopicList_wztxt(CFuncInfoArr *pcFuncInfoArr)
 {
-	int	 levelPrev = 0;
+	int  levelPrev = 0;
 	bool bExtEol   = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
 	for (CLogicInt nLineCount = CLogicInt(0); nLineCount < m_pcDocRef->m_cDocLineMgr.GetLineCount(); nLineCount++) {
 		const wchar_t *pLine;
-		CLogicInt	   nLineLen;
+		CLogicInt	  nLineLen;
 
 		pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
 		if (!pLine) { break; }
@@ -295,13 +298,12 @@ void CDocOutline::MakeTopicList_wztxt(CFuncInfoArr *pcFuncInfoArr)
 
 			nLength = auto_sprintf(szTitle, L"%d - ", level);
 
-			wchar_t *pDest	  = szTitle + nLength; // 書き込み先
+			wchar_t *pDest	= szTitle + nLength; // 書き込み先
 			wchar_t *pDestEnd = szTitle + _countof(szTitle) - 2;
 
 			while (pDest < pDestEnd) {
-				if (WCODE::IsLineDelimiter(*pPos, bExtEol) || *pPos == L'\0') {
-					break;
-				} else {
+				if (WCODE::IsLineDelimiter(*pPos, bExtEol) || *pPos == L'\0') { break; }
+				else {
 					*pDest++ = *pPos++;
 				}
 			}

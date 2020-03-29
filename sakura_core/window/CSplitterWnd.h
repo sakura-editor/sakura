@@ -30,8 +30,7 @@ struct DLLSHAREDATA;
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class CSplitterWnd final : public CWnd
-{
+class CSplitterWnd final : public CWnd {
 public:
 	/*
 	||  Constructors
@@ -61,13 +60,13 @@ public:																	// 2002/2/3 aroka
 	void SetChildWndArr(HWND *hwndEditViewArr);							/* 子ウィンドウの設定 */
 	void DoSplit(int nHorizontal, int nVertical);						/* ウィンドウの分割 */
 	void SetActivePane(int nIndex);										/* アクティブペインの設定 */
-	int	 GetPrevPane(void);												/* 前のペインを返す */
-	int	 GetNextPane(void);												/* 次のペインを返す */
-	int	 GetFirstPane(void);											/* 最初のペインを返す */
-	int	 GetLastPane(void);												/* 最後のペインを返す */
+	int  GetPrevPane(void);												/* 前のペインを返す */
+	int  GetNextPane(void);												/* 次のペインを返す */
+	int  GetFirstPane(void);											/* 最初のペインを返す */
+	int  GetLastPane(void);												/* 最後のペインを返す */
 
-	void VSplitOnOff(void);	 /* 縦分割ＯＮ／ＯＦＦ */
-	void HSplitOnOff(void);	 /* 横分割ＯＮ／ＯＦＦ */
+	void VSplitOnOff(void);  /* 縦分割ＯＮ／ＯＦＦ */
+	void HSplitOnOff(void);  /* 横分割ＯＮ／ＯＦＦ */
 	void VHSplitOnOff(void); /* 縦横分割ＯＮ／ＯＦＦ */
 	//	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
 	int GetAllSplitRows() { return m_nAllSplitRows; } // 2002/2/3 aroka
@@ -79,7 +78,7 @@ protected:
 
 	/* 仮想関数 メッセージ処理 詳しくは実装を参照 */
 	LRESULT OnSize(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override; /* ウィンドウサイズの変更処理 */
-	LRESULT OnPaint(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;	  /* 描画処理 */
+	LRESULT OnPaint(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;	 /* 描画処理 */
 	LRESULT OnMouseMove(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override; /* マウス移動時の処理 */
 	LRESULT OnLButtonDown(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override; /* マウス左ボタン押下時の処理 */
 	LRESULT OnLButtonUp(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override; /* マウス左ボタン解放時の処理 */
@@ -89,6 +88,6 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	void DrawFrame(HDC hdc, RECT *prc);					  /* 分割フレーム描画 */
-	int	 HitTestSplitter(int xPos, int yPos);			  /* 分割バーへのヒットテスト */
+	int  HitTestSplitter(int xPos, int yPos);			  /* 分割バーへのヒットテスト */
 	void DrawSplitter(int xPos, int yPos, int bEraseOld); /* 分割トラッカーの表示 */
 };

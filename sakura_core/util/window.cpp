@@ -6,8 +6,8 @@
 #include "env/DLLSHAREDATA.h"
 #include <limits.h>
 
-int	 CDPI::nDpiX		= 96;
-int	 CDPI::nDpiY		= 96;
+int  CDPI::nDpiX		= 96;
+int  CDPI::nDpiY		= 96;
 bool CDPI::bInitialized = false;
 
 /**	指定したウィンドウの祖先のハンドルを取得する
@@ -72,13 +72,13 @@ HWND MyGetAncestor(HWND hWnd, UINT gaFlags)
 */
 BOOL BlockingHook(HWND hwndDlgCancel)
 {
-	MSG	 msg;
+	MSG  msg;
 	BOOL ret;
 	//	Jun. 04, 2003 genta メッセージをあるだけ処理するように
 	while ((ret = (BOOL)::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) != 0) {
 		if (msg.message == WM_QUIT) { return FALSE; }
-		if (NULL != hwndDlgCancel && IsDialogMessage(hwndDlgCancel, &msg)) {
-		} else {
+		if (NULL != hwndDlgCancel && IsDialogMessage(hwndDlgCancel, &msg)) {}
+		else {
 			::TranslateMessage(&msg);
 			::DispatchMessage(&msg);
 		}
@@ -109,11 +109,11 @@ void ActivateFrameWindow(HWND hwnd)
 	// 対象がdisableのときは最近のポップアップをフォアグラウンド化する
 	HWND hwndActivate;
 	hwndActivate = ::IsWindowEnabled(hwnd) ? hwnd : ::GetLastActivePopup(hwnd);
-	if (::IsIconic(hwnd)) {
-		::ShowWindow(hwnd, SW_RESTORE);
-	} else if (::IsZoomed(hwnd)) {
+	if (::IsIconic(hwnd)) { ::ShowWindow(hwnd, SW_RESTORE); }
+	else if (::IsZoomed(hwnd)) {
 		::ShowWindow(hwnd, SW_MAXIMIZE);
-	} else {
+	}
+	else {
 		::ShowWindow(hwnd, SW_SHOW);
 	}
 	::SetForegroundWindow(hwndActivate);
@@ -129,14 +129,14 @@ CTextWidthCalc::CTextWidthCalc(HWND hParent, int nID)
 	assert_warning(hParent);
 
 	hwnd = ::GetDlgItem(hParent, nID);
-	hDC	 = ::GetDC(hwnd);
+	hDC  = ::GetDC(hwnd);
 	assert(hDC);
-	hFont	 = (HFONT)::SendMessageAny(hwnd, WM_GETFONT, 0, 0);
+	hFont	= (HFONT)::SendMessageAny(hwnd, WM_GETFONT, 0, 0);
 	hFontOld = (HFONT)::SelectObject(hDC, hFont);
 	nCx		 = 0;
 	nExt	 = 0;
 	bHDCComp = false;
-	bFromDC	 = false;
+	bFromDC  = false;
 }
 
 CTextWidthCalc::CTextWidthCalc(HWND hwndThis)
@@ -144,14 +144,14 @@ CTextWidthCalc::CTextWidthCalc(HWND hwndThis)
 	assert_warning(hwndThis);
 
 	hwnd = hwndThis;
-	hDC	 = ::GetDC(hwnd);
+	hDC  = ::GetDC(hwnd);
 	assert(hDC);
-	hFont	 = (HFONT)::SendMessageAny(hwnd, WM_GETFONT, 0, 0);
+	hFont	= (HFONT)::SendMessageAny(hwnd, WM_GETFONT, 0, 0);
 	hFontOld = (HFONT)::SelectObject(hDC, hFont);
 	nCx		 = 0;
 	nExt	 = 0;
 	bHDCComp = false;
-	bFromDC	 = false;
+	bFromDC  = false;
 }
 
 CTextWidthCalc::CTextWidthCalc(HFONT font)
@@ -161,36 +161,35 @@ CTextWidthCalc::CTextWidthCalc(HFONT font)
 	hDC			= ::CreateCompatibleDC(hDCTemp);
 	::ReleaseDC(NULL, hDCTemp);
 	assert(hDC);
-	hFont	 = font;
+	hFont	= font;
 	hFontOld = (HFONT)::SelectObject(hDC, hFont);
 	nCx		 = 0;
 	nExt	 = 0;
 	bHDCComp = true;
-	bFromDC	 = false;
+	bFromDC  = false;
 }
 
 CTextWidthCalc::CTextWidthCalc(HDC hdc)
 {
 	hwnd = 0;
-	hDC	 = hdc;
+	hDC  = hdc;
 	assert(hDC);
 	nCx		 = 0;
 	nExt	 = 0;
 	bHDCComp = true;
-	bFromDC	 = true;
+	bFromDC  = true;
 }
 
 CTextWidthCalc::~CTextWidthCalc()
 {
 	if (hDC && !bFromDC) {
 		::SelectObject(hDC, hFontOld);
-		if (bHDCComp) {
-			::DeleteDC(hDC);
-		} else {
+		if (bHDCComp) { ::DeleteDC(hDC); }
+		else {
 			::ReleaseDC(hwnd, hDC);
 		}
 		hwnd = 0;
-		hDC	 = 0;
+		hDC  = 0;
 	}
 }
 
@@ -233,7 +232,8 @@ CFontAutoDeleter::CFontAutoDeleter()
 	: m_hFontOld(NULL)
 	, m_hFont(NULL)
 	, m_hwnd(NULL)
-{}
+{
+}
 
 CFontAutoDeleter::~CFontAutoDeleter()
 {
@@ -248,7 +248,7 @@ void CFontAutoDeleter::SetFont(HFONT hfontOld, HFONT hfont, HWND hwnd)
 	if (m_hFont) { ::DeleteObject(m_hFont); }
 	if (m_hFont != hfontOld) { m_hFontOld = hfontOld; }
 	m_hFont = hfont;
-	m_hwnd	= hwnd;
+	m_hwnd  = hwnd;
 }
 
 /*! ウィンドウのリリース(WM_DESTROY用)

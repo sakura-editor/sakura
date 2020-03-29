@@ -38,8 +38,7 @@
 #include "_main/global.h"
 #include "env/DLLSHAREDATA.h"
 
-class CRecent
-{
+class CRecent {
 public:
 	virtual ~CRecent() {}
 
@@ -71,7 +70,7 @@ public:
 	virtual bool IsFavorite(int nIndex) const					= 0; //!< お気に入りか調べる
 
 	//その他
-	virtual int	 GetViewCount() const = 0;
+	virtual int  GetViewCount() const = 0;
 	virtual bool UpdateView()		  = 0;
 
 	// 共有メモリアクセス

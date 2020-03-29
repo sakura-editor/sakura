@@ -49,7 +49,8 @@ CMemory::CMemory() noexcept
 	: m_pRawData(NULL)
 	, m_nRawLen(0)
 	, m_nDataBufSize(0)
-{}
+{
+}
 
 /*
 	@note 格納データにはNULLを含むことができる
@@ -94,7 +95,7 @@ void CMemory::_AddData(const void *pData, int nDataLen)
 	if (NULL == m_pRawData) { return; }
 	memcpy(&m_pRawData[m_nRawLen], pData, nDataLen);
 	m_nRawLen += nDataLen;
-	m_pRawData[m_nRawLen]	  = '\0';
+	m_pRawData[m_nRawLen]	 = '\0';
 	m_pRawData[m_nRawLen + 1] = '\0'; //終端'\0'を2つ付加する('\0''\0'==L'\0')。 2007.08.13 kobake 追加
 	return;
 }
@@ -147,7 +148,7 @@ void CMemory::SwapHLByte(char *pData, const int nDataLen)
 				((pdwchar[0] & (unsigned int)0xff00ff00) >> 8) | ((pdwchar[0] & (unsigned int)0x00ff00ff) << 8);
 		}
 	}
-	p	  = (unsigned char *)pdwchar;
+	p	 = (unsigned char *)pdwchar;
 	p_end = pBuf + nBufLen - 2;
 
 	for (; p <= p_end; p += 2) { std::swap(p[0], p[1]); }
@@ -163,8 +164,8 @@ void CMemory::SwapHLByte(char *pData, const int nDataLen)
 */
 void CMemory::SwapHLByte(void)
 {
-	int	  nBufLen = GetRawLength();
-	char *pBuf	  = reinterpret_cast<char *>(GetRawPtr());
+	int   nBufLen = GetRawLength();
+	char *pBuf	= reinterpret_cast<char *>(GetRawPtr());
 	SwapHLByte(pBuf, nBufLen);
 	return;
 	/*
@@ -219,7 +220,8 @@ bool CMemory::SwabHLByte(const CMemory &mem)
 	if (m_pRawData && nSize + 2 <= m_nDataBufSize) {
 		// データが短い時はバッファの再利用
 		_SetRawLength(0);
-	} else {
+	}
+	else {
 		_Empty();
 	}
 	AllocBuffer(nSize);
@@ -236,7 +238,7 @@ bool CMemory::SwabHLByte(const CMemory &mem)
 */
 void CMemory::AllocBuffer(int nNewDataLen)
 {
-	int	  nWorkLen;
+	int   nWorkLen;
 	char *pWork = NULL;
 
 	// 2バイト多くメモリ確保しておく('\0'またはL'\0'を入れるため) 2007.08.13 kobake 変更
@@ -245,18 +247,21 @@ void CMemory::AllocBuffer(int nNewDataLen)
 	if (m_nDataBufSize == 0) {
 		/* 未確保の状態 */
 		pWork = malloc_char(nWorkLen);
-	} else {
+	}
+	else {
 		/* 現在のバッファサイズより大きくなった場合のみ再確保する */
 		if (m_nDataBufSize < nWorkLen) {
 			// 2014.06.25 有効データ長が0の場合はfree & malloc
 			if (m_nRawLen == 0) {
 				free(m_pRawData);
 				m_pRawData = NULL;
-				pWork	   = malloc_char(nWorkLen);
-			} else {
+				pWork	  = malloc_char(nWorkLen);
+			}
+			else {
 				pWork = (char *)realloc(m_pRawData, nWorkLen);
 			}
-		} else {
+		}
+		else {
 			return;
 		}
 	}
@@ -270,7 +275,7 @@ void CMemory::AllocBuffer(int nNewDataLen)
 		}
 		return;
 	}
-	m_pRawData	   = pWork;
+	m_pRawData	 = pWork;
 	m_nDataBufSize = nWorkLen;
 	return;
 }
@@ -288,7 +293,7 @@ void CMemory::SetRawData(const void *pData, int nDataLen)
 void CMemory::SetRawData(const CMemory &pcmemData)
 {
 	int			nDataLen = pcmemData.GetRawLength();
-	const void *pData	 = pcmemData.GetRawPtr();
+	const void *pData	= pcmemData.GetRawPtr();
 	_Empty();
 	AllocBuffer(nDataLen);
 	_AddData(pData, nDataLen);
@@ -311,7 +316,7 @@ void CMemory::SetRawDataHoldBuffer(const CMemory &pcmemData)
 {
 	if (this == &pcmemData) { return; }
 	int			nDataLen = pcmemData.GetRawLength();
-	const void *pData	 = pcmemData.GetRawPtr();
+	const void *pData	= pcmemData.GetRawPtr();
 	SetRawDataHoldBuffer(pData, nDataLen);
 	return;
 }
@@ -332,7 +337,7 @@ void CMemory::AppendRawData(const CMemory *pcmemData)
 		AppendRawData(&cm);
 	}
 	int			nDataLen = pcmemData->GetRawLength();
-	const void *pData	 = pcmemData->GetRawPtr();
+	const void *pData	= pcmemData->GetRawPtr();
 	AllocBuffer(m_nRawLen + nDataLen);
 	_AddData(pData, nDataLen);
 }
@@ -340,9 +345,9 @@ void CMemory::AppendRawData(const CMemory *pcmemData)
 void CMemory::_Empty(void)
 {
 	free(m_pRawData);
-	m_pRawData	   = NULL;
+	m_pRawData	 = NULL;
 	m_nDataBufSize = 0;
-	m_nRawLen	   = 0;
+	m_nRawLen	  = 0;
 	return;
 }
 
@@ -363,6 +368,6 @@ void CMemory::_SetRawLength(int nLength)
 	assert(m_nRawLen <= m_nDataBufSize - 2); // m_nRawLen を変更する前に必要な条件が成立しているか確認する
 	m_nRawLen = nLength;
 	assert(m_nRawLen <= m_nDataBufSize - 2); // m_nRawLen を変更した後も必要な条件が成立しているか確認する
-	m_pRawData[m_nRawLen]	  = 0;
+	m_pRawData[m_nRawLen]	 = 0;
 	m_pRawData[m_nRawLen + 1] = 0; //終端'\0'を2つ付加する('\0''\0'==L'\0')。
 }

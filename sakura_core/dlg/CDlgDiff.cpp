@@ -76,9 +76,9 @@ CDlgDiff::CDlgDiff()
 	/* サイズ変更時に位置を制御するコントロール数 */
 	assert(_countof(anchorList) == _countof(m_rcItems));
 
-	m_nDiffFlgOpt	  = 0;
+	m_nDiffFlgOpt	 = 0;
 	m_bIsModifiedDst  = false;
-	m_nCodeTypeDst	  = CODE_ERROR;
+	m_nCodeTypeDst	= CODE_ERROR;
 	m_bBomDst		  = false;
 	m_hWnd_Dst		  = NULL;
 	m_ptDefaultSize.x = -1;
@@ -181,7 +181,8 @@ void CDlgDiff::SetData(void)
 	if (m_nDiffFlgOpt & 0x0020) {
 		::CheckDlgButton(GetHwnd(), IDC_RADIO_DIFF_FILE1, FALSE);
 		::CheckDlgButton(GetHwnd(), IDC_RADIO_DIFF_FILE2, TRUE);
-	} else {
+	}
+	else {
 		::CheckDlgButton(GetHwnd(), IDC_RADIO_DIFF_FILE1, TRUE);
 		::CheckDlgButton(GetHwnd(), IDC_RADIO_DIFF_FILE2, FALSE);
 	}
@@ -207,7 +208,7 @@ void CDlgDiff::SetData(void)
 		int		  i;
 		int		  nItem;
 		WIN_CHAR  szName[_MAX_PATH];
-		int		  count	   = 0;
+		int		  count	= 0;
 		int		  selIndex = 0;
 		ECodeType code;
 		int		  selCode = CODE_NONE;
@@ -260,9 +261,9 @@ void CDlgDiff::SetData(void)
 				int scoreTemp = FileMatchScoreSepExt(szFile1, szFile2);
 				if (score < scoreTemp || (selCode != code && code == pFileInfo->m_nCharCode && score == scoreTemp)) {
 					// スコアのいいものを選択. 同じなら文字コードが同じものを選択
-					score	 = scoreTemp;
+					score	= scoreTemp;
 					selIndex = nItem;
-					selCode	 = pFileInfo->m_nCharCode;
+					selCode  = pFileInfo->m_nCharCode;
 				}
 			}
 
@@ -283,7 +284,8 @@ void CDlgDiff::SetData(void)
 			/* その他の編集中リストはなし */
 			::EnableWindow(GetItemHwnd(IDC_RADIO_DIFF_DST2), FALSE);
 			::EnableWindow(GetItemHwnd(IDC_LIST_DIFF_FILES), FALSE);
-		} else {
+		}
+		else {
 			/* 相手ファイルの選択 */
 			::CheckDlgButton(GetHwnd(), IDC_RADIO_DIFF_DST1, FALSE);
 			::CheckDlgButton(GetHwnd(), IDC_RADIO_DIFF_DST2, TRUE);
@@ -327,14 +329,15 @@ int CDlgDiff::GetData(void)
 		//	2004.05.19 MIK 外部ファイルが指定されていない場合はキャンセル
 		//相手ファイルが指定されてなければキャンセル
 		if (m_szFile2[0] == '\0') ret = FALSE;
-	} else if (::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_DIFF_DST2) == BST_CHECKED) {
+	}
+	else if (::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_DIFF_DST2) == BST_CHECKED) {
 		HWND	  hwndList;
 		int		  nItem;
 		EditInfo *pFileInfo;
 
 		/* リストから相手のウインドウハンドルを取得 */
 		hwndList = GetItemHwnd(IDC_LIST_DIFF_FILES);
-		nItem	 = List_GetCurSel(hwndList);
+		nItem	= List_GetCurSel(hwndList);
 		if (nItem != LB_ERR) {
 			m_hWnd_Dst = (HWND)List_GetItemData(hwndList, nItem);
 
@@ -344,12 +347,14 @@ int CDlgDiff::GetData(void)
 
 			wcscpy(m_szFile2, pFileInfo->m_szPath);
 			m_bIsModifiedDst = pFileInfo->m_bIsModified;
-			m_nCodeTypeDst	 = pFileInfo->m_nCharCode;
+			m_nCodeTypeDst   = pFileInfo->m_nCharCode;
 			m_bBomDst		 = pFileInfo->m_bBom;
-		} else {
+		}
+		else {
 			ret = FALSE;
 		}
-	} else {
+	}
+	else {
 		ret = FALSE;
 	}
 
@@ -443,8 +448,8 @@ BOOL CDlgDiff::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 
 	RECT rcDialog = GetDllShareData().m_Common.m_sOthers.m_rcDiffDialog;
 	if (rcDialog.left != 0 || rcDialog.bottom != 0) {
-		m_xPos	  = rcDialog.left;
-		m_yPos	  = rcDialog.top;
+		m_xPos	= rcDialog.left;
+		m_yPos	= rcDialog.top;
 		m_nWidth  = rcDialog.right - rcDialog.left;
 		m_nHeight = rcDialog.bottom - rcDialog.top;
 	}

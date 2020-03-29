@@ -28,7 +28,7 @@ void CBookmarkManager::ResetAllBookMark(void)
 */
 bool CBookmarkManager::SearchBookMark(CLogicInt		   nLineNum,	//!< 検索開始行
 									  ESearchDirection bPrevOrNext, //!< 検索方向
-									  CLogicInt *	   pnLineNum	//!< マッチ行
+									  CLogicInt *	  pnLineNum	//!< マッチ行
 )
 {
 	CDocLine *pDocLine;
@@ -72,7 +72,7 @@ void CBookmarkManager::SetBookMarks(wchar_t *pMarkLines)
 {
 	CDocLine *pCDocLine;
 	wchar_t * p;
-	wchar_t	  delim[] = L", ";
+	wchar_t   delim[] = L", ";
 	p				  = pMarkLines;
 	if (p[0] == L':') {
 		if (p[1] == L'0') {
@@ -88,18 +88,24 @@ void CBookmarkManager::SetBookMarks(wchar_t *pMarkLines)
 				if (L'0' <= *p && *p <= L'9') {
 					nLineTemp += (*p - L'0');
 					bSeparete = true;
-				} else if (L'a' <= *p && *p <= L'v') {
+				}
+				else if (L'a' <= *p && *p <= L'v') {
 					nLineTemp += (*p - L'a') + 10;
 					bSeparete = true;
-				} else if (L'w' <= *p && *p <= L'z') {
+				}
+				else if (L'w' <= *p && *p <= L'z') {
 					nLineTemp += (*p - L'w');
-				} else if (L'A' <= *p && *p <= L'Z') {
+				}
+				else if (L'A' <= *p && *p <= L'Z') {
 					nLineTemp += (*p - L'A') + 4;
-				} else if (*p == L'+') {
+				}
+				else if (*p == L'+') {
 					nLineTemp += 30;
-				} else if (*p == L'-') {
+				}
+				else if (*p == L'-') {
 					nLineTemp += 31;
-				} else {
+				}
+				else {
 					break;
 				}
 				if (bSeparete) {
@@ -108,17 +114,20 @@ void CBookmarkManager::SetBookMarks(wchar_t *pMarkLines)
 					if (pCDocLine) { CBookmarkSetter(pCDocLine).SetBookmark(true); }
 					nLineNum++;
 					nLineTemp = 0;
-				} else {
+				}
+				else {
 					nLineTemp *= 32;
 				}
 				p++;
 			}
-		} else {
+		}
+		else {
 			// 不明なバージョン
 		}
-	} else {
+	}
+	else {
 		// 旧形式 行番号,区切り
-		wchar_t *context {nullptr};
+		wchar_t *context{nullptr};
 		while (wcstok_s(p, delim, &context) != NULL) {
 			while (wcschr(delim, *p) != NULL) p++;
 			pCDocLine = m_pcDocLineMgr->GetLine(CLogicInt(_wtol(p)));
@@ -136,7 +145,7 @@ void CBookmarkManager::SetBookMarks(wchar_t *pMarkLines)
 LPCWSTR CBookmarkManager::GetBookMarks()
 {
 	const CDocLine *pCDocLine;
-	static wchar_t	szText[MAX_MARKLINES_LEN + 1]; // 2002.01.17 // Feb. 17, 2003 genta staticに
+	static wchar_t  szText[MAX_MARKLINES_LEN + 1]; // 2002.01.17 // Feb. 17, 2003 genta staticに
 	wchar_t			szBuff[10];
 	wchar_t			szBuff2[10];
 	CLogicInt		nLinePos	= CLogicInt(0);
@@ -151,25 +160,27 @@ LPCWSTR CBookmarkManager::GetBookMarks()
 			if (nDiff == CLogicInt(0)) {
 				szBuff2[0] = L'0';
 				szBuff2[1] = L'\0';
-			} else {
+			}
+			else {
 				int nColumn = 0;
 				while (nDiff) {
 					CLogicInt nKeta = nDiff % 32;
-					wchar_t	  c;
+					wchar_t   c;
 					if (nColumn == 0) {
-						if (nKeta <= 9) {
-							c = (wchar_t)((Int)nKeta + L'0');
-						} else {
+						if (nKeta <= 9) { c = (wchar_t)((Int)nKeta + L'0'); }
+						else {
 							c = (wchar_t)((Int)nKeta - 10 + L'a');
 						}
-					} else {
-						if (nKeta <= 3) {
-							c = (wchar_t)((Int)nKeta + L'w');
-						} else if (nKeta <= 29) {
+					}
+					else {
+						if (nKeta <= 3) { c = (wchar_t)((Int)nKeta + L'w'); }
+						else if (nKeta <= 29) {
 							c = (wchar_t)((Int)nKeta - 4 + L'A');
-						} else if (nKeta == 30) {
+						}
+						else if (nKeta == 30) {
 							c = L'+';
-						} else { // 31
+						}
+						else { // 31
 							c = L'-';
 						}
 					}
@@ -219,7 +230,7 @@ void CBookmarkManager::MarkSearchWord(const CSearchStringPattern &pattern)
 	/* 1==単語のみ検索 */
 	else if (sSearchOption.bWordOnly) {
 		const wchar_t *pszPattern  = pattern.GetKey();
-		const int	   nPatternLen = pattern.GetLen();
+		const int	  nPatternLen = pattern.GetLen();
 		// 検索語を単語に分割して searchWordsに格納する。
 		std::vector<std::pair<const wchar_t *, CLogicInt>> searchWords; // 単語の開始位置と長さの配列。
 		CSearchAgent::CreateWordList(searchWords, pszPattern, nPatternLen);
@@ -237,7 +248,8 @@ void CBookmarkManager::MarkSearchWord(const CSearchStringPattern &pattern)
 			/* 次の行を見に行く */
 			pDocLine = pDocLine->GetNextLine();
 		}
-	} else {
+	}
+	else {
 		/* 検索条件の情報 */
 		pDocLine = m_pcDocLineMgr->GetLine(CLogicInt(0));
 		while (NULL != pDocLine) {

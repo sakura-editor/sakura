@@ -48,9 +48,9 @@ bool SColorStrategyInfo::CheckChangeColor(const CStringRef &cLineStr)
 {
 	CColorStrategyPool *pool = CColorStrategyPool::getInstance();
 	pool->SetCurrentView(m_pcView);
-	CColor_Found * pcFound	= pool->GetFoundStrategy();
+	CColor_Found * pcFound  = pool->GetFoundStrategy();
 	CColor_Select *pcSelect = pool->GetSelectStrategy();
-	bool		   bChange	= false;
+	bool		   bChange  = false;
 
 	//選択範囲色終了
 	if (m_pStrategySelect) {
@@ -112,7 +112,8 @@ bool SColorStrategyInfo::CheckChangeColor(const CStringRef &cLineStr)
 				m_colorIdxBackLine = COLORIDX_TEXT;
 				bChange			   = true;
 			}
-		} else {
+		}
+		else {
 			if (m_pDispPos->GetLayoutLineRef() == m_pcView->GetCaret().GetCaretLayoutPos().GetY2()) {
 				m_colorIdxBackLine = COLORIDX_CARETLINEBG;
 				bChange			   = true;
@@ -127,7 +128,8 @@ bool SColorStrategyInfo::CheckChangeColor(const CStringRef &cLineStr)
 				m_colorIdxBackLine = COLORIDX_TEXT;
 				bChange			   = true;
 			}
-		} else {
+		}
+		else {
 			if (m_pDispPos->GetLayoutLineRef() % 2 == 1) {
 				m_colorIdxBackLine = COLORIDX_EVENLINEBG;
 				bChange			   = true;
@@ -138,15 +140,16 @@ bool SColorStrategyInfo::CheckChangeColor(const CStringRef &cLineStr)
 		CTypeSupport cPageViewBg(m_pcView, COLORIDX_PAGEVIEW);
 		if (cPageViewBg.IsDisp()) {
 			CEditView &cActiveView = m_pcView->m_pcEditWnd->GetActiveView();
-			CLayoutInt curLine	   = m_pDispPos->GetLayoutLineRef();
+			CLayoutInt curLine	 = m_pDispPos->GetLayoutLineRef();
 			if (m_colorIdxBackLine == COLORIDX_PAGEVIEW) {
 				if (cActiveView.GetTextArea().GetViewTopLine() <= curLine
-					&& curLine < cActiveView.GetTextArea().GetBottomLine()) {
-				} else {
+					&& curLine < cActiveView.GetTextArea().GetBottomLine()) {}
+				else {
 					m_colorIdxBackLine = COLORIDX_TEXT;
 					bChange			   = true;
 				}
-			} else if (m_colorIdxBackLine == COLORIDX_TEXT) {
+			}
+			else if (m_colorIdxBackLine == COLORIDX_TEXT) {
 				if (cActiveView.GetTextArea().GetViewTopLine() <= curLine
 					&& curLine < cActiveView.GetTextArea().GetBottomLine()) {
 					m_colorIdxBackLine = COLORIDX_PAGEVIEW;
@@ -165,17 +168,16 @@ bool SColorStrategyInfo::CheckChangeColor(const CStringRef &cLineStr)
 */
 void SColorStrategyInfo::DoChangeColor(CColor3Setting *pcColor)
 {
-	if (m_pStrategySelect) {
-		m_cIndex.eColorIndex = m_pStrategySelect->GetStrategyColor();
-	} else if (m_pStrategyFound) {
+	if (m_pStrategySelect) { m_cIndex.eColorIndex = m_pStrategySelect->GetStrategyColor(); }
+	else if (m_pStrategyFound) {
 		m_cIndex.eColorIndex = m_pStrategyFound->GetStrategyColor();
-	} else {
+	}
+	else {
 		m_cIndex.eColorIndex = m_pStrategy->GetStrategyColorSafe();
 	}
 
-	if (m_pStrategyFound) {
-		m_cIndex.eColorIndex2 = m_pStrategyFound->GetStrategyColor();
-	} else {
+	if (m_pStrategyFound) { m_cIndex.eColorIndex2 = m_pStrategyFound->GetStrategyColor(); }
+	else {
 		m_cIndex.eColorIndex2 = m_pStrategy->GetStrategyColorSafe();
 	}
 
@@ -306,12 +308,12 @@ void CColorStrategyPool::OnChangeSetting(void)
 
 	// 色分けをしない場合に、処理をスキップできるように確認する
 	const STypeConfig &type					 = CEditDoc::GetInstance(0)->m_cDocType.GetDocumentAttribute();
-	EColorIndexType	   bSkipColorTypeTable[] = {
-		   COLORIDX_DIGIT,	  COLORIDX_COMMENT,	 COLORIDX_SSTRING,	COLORIDX_WSTRING,
+	EColorIndexType	bSkipColorTypeTable[] = {
+		   COLORIDX_DIGIT,	COLORIDX_COMMENT,  COLORIDX_SSTRING,  COLORIDX_WSTRING,
 		   COLORIDX_HEREDOC,  COLORIDX_URL,		 COLORIDX_KEYWORD1, COLORIDX_KEYWORD2,
 		   COLORIDX_KEYWORD3, COLORIDX_KEYWORD4, COLORIDX_KEYWORD5, COLORIDX_KEYWORD6,
 		   COLORIDX_KEYWORD7, COLORIDX_KEYWORD8, COLORIDX_KEYWORD9, COLORIDX_KEYWORD10,
-	   };
+	};
 	m_bSkipBeforeLayoutGeneral = true;
 	int nKeyword1;
 	int bUnuseKeyword = false;
@@ -325,7 +327,8 @@ void CColorStrategyPool::OnChangeSetting(void)
 				m_bSkipBeforeLayoutGeneral = false;
 				break;
 			}
-		} else if (type.m_ColorInfoArr[bSkipColorTypeTable[n]].m_bDisp) {
+		}
+		else if (type.m_ColorInfoArr[bSkipColorTypeTable[n]].m_bDisp) {
 			m_bSkipBeforeLayoutGeneral = false;
 			break;
 		}

@@ -30,8 +30,7 @@ class CProcess;
 	通常のエディタプロセスの起動が指定された場合には，必要に応じてコントロールプロセス
 	起動の起動をエディタの起動に先立って行う．
 */
-class CProcessFactory
-{
+class CProcessFactory {
 public:
 	CProcess *Create(HINSTANCE hInstance, LPCWSTR lpCmdLine);
 

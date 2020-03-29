@@ -87,9 +87,8 @@ bool CPlugin::ReadPluginDefPlug(CDataProfile *cProfile, CDataProfile *cProfileMl
 	for (i = 0; i < jacks.size(); i++) {
 		const wstring sKey = jacks[i].szName;
 		for (int nCount = 0; nCount < MAX_PLUG_CMD; nCount++) {
-			if (nCount == 0) {
-				szIndex[0] = L'\0';
-			} else {
+			if (nCount == 0) { szIndex[0] = L'\0'; }
+			else {
 				_swprintf(szIndex, L"[%d]", nCount);
 			}
 			wstring sHandler;
@@ -105,7 +104,8 @@ bool CPlugin::ReadPluginDefPlug(CDataProfile *cProfile, CDataProfile *cProfileMl
 
 				CPlug *newPlug = CreatePlug(*this, nCount, jacks[i].szName, sHandler, sLabel);
 				m_plugs.push_back(newPlug);
-			} else {
+			}
+			else {
 				break; //定義がなければ読み込みを終了
 			}
 		}
@@ -118,7 +118,7 @@ bool CPlugin::ReadPluginDefPlug(CDataProfile *cProfile, CDataProfile *cProfileMl
 bool CPlugin::ReadPluginDefCommand(CDataProfile *cProfile, CDataProfile *cProfileMlang)
 {
 	wstring sHandler;
-	WCHAR	bufKey[64];
+	WCHAR   bufKey[64];
 
 	for (int nCount = 1; nCount < MAX_PLUG_CMD; nCount++) { //添え字は１から始める
 		_swprintf(bufKey, L"C[%d]", nCount);
@@ -139,7 +139,8 @@ bool CPlugin::ReadPluginDefCommand(CDataProfile *cProfile, CDataProfile *cProfil
 			if (cProfileMlang) { cProfileMlang->IOProfileData(PII_COMMAND, bufKey, sIcon); }
 
 			AddCommand(sHandler.c_str(), sLabel.c_str(), sIcon.c_str(), false);
-		} else {
+		}
+		else {
 			break; //定義がなければ読み込みを終了
 		}
 	}
@@ -157,7 +158,7 @@ bool CPlugin::ReadPluginDefOption(CDataProfile *cProfile, CDataProfile *cProfile
 	wstring sType;
 	wstring sSelect;
 	wstring sDefaultVal;
-	WCHAR	bufKey[64];
+	WCHAR   bufKey[64];
 
 	sSection = L"";
 	for (int nCount = 1; nCount < MAX_PLUG_OPTION; nCount++) { //添え字は１から始める

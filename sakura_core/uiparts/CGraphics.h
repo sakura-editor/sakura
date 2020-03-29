@@ -99,8 +99,8 @@ inline bool MyFillRect(const HDC hDC, const RECT &rc, const COLORREF color) noex
 }
 
 //! オリジナル値保存クラス
-template<class T> class TOriginalHolder
-{
+template<class T>
+class TOriginalHolder {
 public:
 	TOriginalHolder<T>()
 	{
@@ -123,21 +123,19 @@ public:
 	bool	 HasData() const { return m_hold; }
 
 private:
-	T	 m_data;
+	T	m_data;
 	bool m_hold;
 };
 
 //! フォント情報管理
-struct SFONT
-{
+struct SFONT {
 	SFontAttr m_sFontAttr;
-	HFONT	  m_hFont; //!< フォントハンドル
+	HFONT	 m_hFont; //!< フォントハンドル
 };
 
 //! 描画管理
 //最新実装：ブラシ
-class CGraphics
-{
+class CGraphics {
 public:
 	CGraphics(const CGraphics &rhs) { Init(rhs.m_hdc); }
 	CGraphics(HDC hdc = NULL) { Init(hdc); }
@@ -308,7 +306,7 @@ private:
 	//テキスト
 	std::vector<COLORREF> m_vTextForeColors;
 	std::vector<COLORREF> m_vTextBackColors;
-	std::vector<SFONT>	  m_vFonts;
+	std::vector<SFONT>	m_vFonts;
 
 	//テキスト
 	COrgInt m_nTextModeOrg;
@@ -321,5 +319,5 @@ private:
 	std::vector<HBRUSH> m_vBrushes;
 	HBRUSH				m_hbrOrg;
 	HBRUSH				m_hbrCurrent;
-	bool m_bDynamicBrush; // m_hbrCurrentを動的に作成した場合はtrue
+	bool				m_bDynamicBrush; // m_hbrCurrentを動的に作成した場合はtrue
 };

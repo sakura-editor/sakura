@@ -34,7 +34,7 @@ extern const WCHAR g_szGStrAppName[];
 extern const CHAR  g_szGStrAppNameA[];
 extern const WCHAR g_szGStrAppNameW[];
 
-#define GSTR_APPNAME   g_szGStrAppName	//!< アプリ名の文字列 (TCHAR版)
+#define GSTR_APPNAME g_szGStrAppName	//!< アプリ名の文字列 (TCHAR版)
 #define GSTR_APPNAME_A g_szGStrAppNameA //!< アプリ名の文字列 (CHAR版)
 #define GSTR_APPNAME_W g_szGStrAppNameW //!< アプリ名の文字列 (UNICODE版)
 
@@ -43,7 +43,7 @@ extern const WCHAR g_szGStrAppNameW[];
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 // Feb. 18, 2003 genta 最大値の定数化と値変更
-const int LINESPACE_MAX	  = 128;
+const int LINESPACE_MAX   = 128;
 const int COLUMNSPACE_MAX = 64;
 
 //	Aug. 14, 2005 genta 定数定義追加

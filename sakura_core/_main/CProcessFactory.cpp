@@ -63,7 +63,8 @@ CProcess *CProcessFactory::Create(HINSTANCE hInstance, LPCWSTR lpCmdLine)
 			return 0;
 		}
 		if (!IsExistControlProcess()) { process = new CControlProcess(hInstance, lpCmdLine); }
-	} else {
+	}
+	else {
 		if (!IsExistControlProcess()) { StartControlProcess(); }
 		if (WaitForInitializedControlProcess()) { // 2006.04.10 ryoji コントロールプロセスの初期化完了待ち
 			process = new CNormalProcess(hInstance, lpCmdLine);
@@ -74,7 +75,7 @@ CProcess *CProcessFactory::Create(HINSTANCE hInstance, LPCWSTR lpCmdLine)
 
 bool CProcessFactory::ProfileSelect(HINSTANCE hInstance, LPCWSTR lpCmdLine)
 {
-	CDlgProfileMgr	 dlgProf;
+	CDlgProfileMgr   dlgProf;
 	SProfileSettings settings;
 
 	CDlgProfileMgr::ReadProfSettings(settings);
@@ -83,24 +84,26 @@ bool CProcessFactory::ProfileSelect(HINSTANCE hInstance, LPCWSTR lpCmdLine)
 
 	//	May 30, 2000 genta
 	//	実行ファイル名をもとに漢字コードを固定する．
-	WCHAR	  szExeFileName[MAX_PATH];
+	WCHAR	 szExeFileName[MAX_PATH];
 	const int cchExeFileName = ::GetModuleFileName(NULL, szExeFileName, _countof(szExeFileName));
 	CCommandLine::getInstance()->ParseKanjiCodeFromFileName(szExeFileName, cchExeFileName);
 
 	CCommandLine::getInstance()->ParseCommandLine(lpCmdLine);
 
 	bool bDialog;
-	if (CCommandLine::getInstance()->IsProfileMgr()) {
-		bDialog = true;
-	} else if (CCommandLine::getInstance()->IsSetProfile()) {
+	if (CCommandLine::getInstance()->IsProfileMgr()) { bDialog = true; }
+	else if (CCommandLine::getInstance()->IsSetProfile()) {
 		bDialog = false;
-	} else if (settings.m_nDefaultIndex == -1) {
+	}
+	else if (settings.m_nDefaultIndex == -1) {
 		bDialog = true;
-	} else {
+	}
+	else {
 		assert(0 <= settings.m_nDefaultIndex);
 		if (0 < settings.m_nDefaultIndex) {
 			CCommandLine::getInstance()->SetProfileName(settings.m_vProfList[settings.m_nDefaultIndex - 1].c_str());
-		} else {
+		}
+		else {
 			CCommandLine::getInstance()->SetProfileName(L"");
 		}
 		bDialog = false;
@@ -108,7 +111,8 @@ bool CProcessFactory::ProfileSelect(HINSTANCE hInstance, LPCWSTR lpCmdLine)
 	if (bDialog) {
 		if (dlgProf.DoModal(hInstance, NULL, 0)) {
 			CCommandLine::getInstance()->SetProfileName(dlgProf.m_strProfileName.c_str());
-		} else {
+		}
+		else {
 			return false; // プロファイルマネージャで「閉じる」を選んだ。プロセス終了
 		}
 	}
@@ -148,7 +152,7 @@ bool CProcessFactory::IsStartingControlProcess() { return CCommandLine::getInsta
 */
 bool CProcessFactory::IsExistControlProcess()
 {
-	const auto	 pszProfileName	  = CCommandLine::getInstance()->GetProfileName();
+	const auto   pszProfileName   = CCommandLine::getInstance()->GetProfileName();
 	std::wstring strMutexSakuraCp = GSTR_MUTEX_SAKURA_CP;
 	strMutexSakuraCp += pszProfileName;
 	HANDLE hMutexCP;
@@ -183,10 +187,10 @@ bool CProcessFactory::StartControlProcess()
 
 	s.cb		 = sizeof(s);
 	s.lpReserved = NULL;
-	s.lpDesktop	 = NULL;
-	s.lpTitle	 = const_cast<WCHAR *>(L"sakura control process"); // 2007.09.21 kobake
+	s.lpDesktop  = NULL;
+	s.lpTitle	= const_cast<WCHAR *>(L"sakura control process"); // 2007.09.21 kobake
 																// デバッグしやすいように、名前を付ける
-	s.dwFlags	  = STARTF_USESHOWWINDOW;
+	s.dwFlags	 = STARTF_USESHOWWINDOW;
 	s.wShowWindow = SW_SHOWDEFAULT;
 	s.cbReserved2 = 0;
 	s.lpReserved2 = NULL;
@@ -198,7 +202,8 @@ bool CProcessFactory::StartControlProcess()
 	if (CCommandLine::getInstance()->IsSetProfile()) {
 		::auto_sprintf(szCmdLineBuf, L"\"%s\" -NOWIN -PROF=\"%ls\"", szEXE,
 					   CCommandLine::getInstance()->GetProfileName());
-	} else {
+	}
+	else {
 		::auto_sprintf(szCmdLineBuf, L"\"%s\" -NOWIN", szEXE); // ""付加
 	}
 
@@ -208,7 +213,7 @@ bool CProcessFactory::StartControlProcess()
 //	dwCreationFlag |= DEBUG_PROCESS; //2007.09.22 kobake デバッグ用フラグ
 #endif
 	BOOL bCreateResult = ::CreateProcess(szEXE,			 // 実行可能モジュールの名前
-										 szCmdLineBuf,	 // コマンドラインの文字列
+										 szCmdLineBuf,   // コマンドラインの文字列
 										 NULL,			 // セキュリティ記述子
 										 NULL,			 // セキュリティ記述子
 										 FALSE,			 // ハンドルの継承オプション
@@ -267,8 +272,8 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 		return false;
 	}
 
-	const auto	 pszProfileName = CCommandLine::getInstance()->GetProfileName();
-	std::wstring strInitEvent	= GSTR_EVENT_SAKURA_CP_INITIALIZED;
+	const auto   pszProfileName = CCommandLine::getInstance()->GetProfileName();
+	std::wstring strInitEvent   = GSTR_EVENT_SAKURA_CP_INITIALIZED;
 	strInitEvent += pszProfileName;
 	HANDLE hEvent;
 	hEvent = ::OpenEvent(EVENT_ALL_ACCESS, FALSE, strInitEvent.c_str());
@@ -312,7 +317,8 @@ bool CProcessFactory::TestWriteQuit()
 			if (fexist(szIniFileIn)) {
 				if (::CopyFile(szIniFileIn, szIniFileOut, FALSE)) { return true; }
 			}
-		} else {
+		}
+		else {
 			// 既にEXE基準のiniファイルがあれば何もせず終了
 			if (fexist(szIniFileOut)) { return true; }
 		}

@@ -71,7 +71,8 @@ bool CFileExt::AppendExtRaw(const WCHAR *pszName, const WCHAR *pszExt)
 	if (NULL == m_puFileExtInfo) {
 		p = (FileExtInfoTag *)malloc(sizeof(FileExtInfoTag) * 1);
 		if (NULL == p) return false;
-	} else {
+	}
+	else {
 		p = (FileExtInfoTag *)realloc(m_puFileExtInfo, sizeof(FileExtInfoTag) * (m_nCount + 1));
 		if (NULL == p) return false;
 	}

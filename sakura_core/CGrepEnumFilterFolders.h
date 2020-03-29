@@ -32,8 +32,7 @@
 
 #include "CGrepEnumFolders.h"
 
-class CGrepEnumFilterFolders final : public CGrepEnumFolders
-{
+class CGrepEnumFilterFolders final : public CGrepEnumFolders {
 private:
 public:
 	CGrepEnumFolders m_cGrepEnumExceptFolders;

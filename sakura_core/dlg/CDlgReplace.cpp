@@ -51,16 +51,16 @@ const DWORD p_helpids[] = {												 // 11900
 	IDC_CHECK_SEARCHALL, HIDC_REP_CHECK_SEARCHALL,			 // 2002.01.26 hor 先頭（末尾）から再検索
 	IDC_CHECK_CONSECUTIVEALL, HIDC_REP_CHECK_CONSECUTIVEALL, //「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
 															 //	IDC_STATIC,						-1,
-	0, 0};													 //@@@ 2002.01.07 add end MIK
+	0, 0}; //@@@ 2002.01.07 add end MIK
 
 CDlgReplace::CDlgReplace()
 {
 	m_sSearchOption.Reset();   // 検索オプション
 	m_bConsecutiveAll = FALSE; // 「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
-	m_bSelectedArea	  = FALSE; // 選択範囲内置換
-	m_nReplaceTarget  = 0;	   // 置換対象		// 2001.12.03 hor
+	m_bSelectedArea   = FALSE; // 選択範囲内置換
+	m_nReplaceTarget  = 0;	 // 置換対象		// 2001.12.03 hor
 	m_nPaste		  = FALSE; // 貼り付ける？	// 2001.12.03 hor
-	m_nReplaceCnt	  = 0;	   //すべて置換の実行結果		// 2002.02.08 hor
+	m_nReplaceCnt	 = 0;	 //すべて置換の実行結果		// 2002.02.08 hor
 	m_bCanceled		  = false; //すべて置換を中断したか	// 2002.02.08 hor
 	return;
 }
@@ -142,7 +142,8 @@ void CDlgReplace::SetData(void)
 		// 2001/06/23 N.Nakatani
 		/* 単語単位で探す */
 		::EnableWindow(GetItemHwnd(IDC_CHK_WORD), FALSE);
-	} else {
+	}
+	else {
 		::CheckDlgButton(GetHwnd(), IDC_CHK_REGULAREXP, 0);
 
 		/*「すべて置換」は置換の繰返し */
@@ -164,13 +165,14 @@ void CDlgReplace::SetData(void)
 	// クリップボードから貼り付ける？
 	::CheckDlgButton(GetHwnd(), IDC_CHK_PASTE, m_nPaste);
 	// 置換対象
-	if (m_nReplaceTarget == 0) {
-		::CheckDlgButton(GetHwnd(), IDC_RADIO_REPLACE, TRUE);
-	} else if (m_nReplaceTarget == 1) {
+	if (m_nReplaceTarget == 0) { ::CheckDlgButton(GetHwnd(), IDC_RADIO_REPLACE, TRUE); }
+	else if (m_nReplaceTarget == 1) {
 		::CheckDlgButton(GetHwnd(), IDC_RADIO_INSERT, TRUE);
-	} else if (m_nReplaceTarget == 2) {
+	}
+	else if (m_nReplaceTarget == 2) {
 		::CheckDlgButton(GetHwnd(), IDC_RADIO_ADD, TRUE);
-	} else if (m_nReplaceTarget == 3) {
+	}
+	else if (m_nReplaceTarget == 3) {
 		::CheckDlgButton(GetHwnd(), IDC_RADIO_LINEDELETE, TRUE);
 		::EnableWindow(GetItemHwnd(IDC_COMBO_TEXT2), FALSE);
 		::EnableWindow(GetItemHwnd(IDC_CHK_PASTE), FALSE);
@@ -189,7 +191,7 @@ void CDlgReplace::SetCombosList(void)
 	/* 検索文字列 */
 	hwndCombo = GetItemHwnd(IDC_COMBO_TEXT);
 	while (Combo_GetCount(hwndCombo) > 0) { Combo_DeleteString(hwndCombo, 0); }
-	int	 nBufferSize = ::GetWindowTextLength(hwndCombo) + 1;
+	int  nBufferSize = ::GetWindowTextLength(hwndCombo) + 1;
 	auto vText		 = std::make_unique<WCHAR[]>(nBufferSize);
 	Combo_GetText(hwndCombo, &vText[0], nBufferSize);
 	if (m_strText.compare(&vText[0]) != 0) { ::DlgItem_SetText(GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str()); }
@@ -231,14 +233,13 @@ int CDlgReplace::GetData(void)
 		m_bNOTIFYNOTFOUND; // 検索／置換  見つからないときメッセージを表示
 
 	/* 検索文字列 */
-	int	 nBufferSize = ::GetWindowTextLength(GetItemHwnd(IDC_COMBO_TEXT)) + 1;
+	int  nBufferSize = ::GetWindowTextLength(GetItemHwnd(IDC_COMBO_TEXT)) + 1;
 	auto vText		 = std::make_unique<WCHAR[]>(nBufferSize);
 	::DlgItem_GetText(GetHwnd(), IDC_COMBO_TEXT, &vText[0], nBufferSize);
 	m_strText = &vText[0];
 	/* 置換後文字列 */
-	if (::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_LINEDELETE)) {
-		m_strText2 = L"";
-	} else {
+	if (::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_LINEDELETE)) { m_strText2 = L""; }
+	else {
 		nBufferSize = ::GetWindowTextLength(GetItemHwnd(IDC_COMBO_TEXT2)) + 1;
 		vText		= std::make_unique<WCHAR[]>(nBufferSize);
 		::DlgItem_GetText(GetHwnd(), IDC_COMBO_TEXT2, &vText[0], nBufferSize);
@@ -269,8 +270,8 @@ int CDlgReplace::GetData(void)
 		}
 		// 2011.12.18 viewに直接設定
 		CEditView *pcEditView = (CEditView *)m_lParam;
-		if (pcEditView->m_strCurSearchKey == m_strText && pcEditView->m_sCurSearchOption == m_sSearchOption) {
-		} else {
+		if (pcEditView->m_strCurSearchKey == m_strText && pcEditView->m_sCurSearchOption == m_sSearchOption) {}
+		else {
 			pcEditView->m_strCurSearchKey  = m_strText;
 			pcEditView->m_sCurSearchOption = m_sSearchOption;
 			pcEditView->m_bCurSearchUpdate = true;
@@ -288,11 +289,11 @@ int CDlgReplace::GetData(void)
 		::EnableWindow(GetItemHwnd(IDC_COMBO_TEXT2), !m_nPaste);
 		// 置換対象
 		m_nReplaceTarget = 0;
-		if (::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_INSERT)) {
-			m_nReplaceTarget = 1;
-		} else if (::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_ADD)) {
+		if (::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_INSERT)) { m_nReplaceTarget = 1; }
+		else if (::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_ADD)) {
 			m_nReplaceTarget = 2;
-		} else if (::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_LINEDELETE)) {
+		}
+		else if (::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_LINEDELETE)) {
 			m_nReplaceTarget = 3;
 			m_nPaste		 = FALSE;
 			::EnableWindow(GetItemHwnd(IDC_COMBO_TEXT2), FALSE);
@@ -303,7 +304,8 @@ int CDlgReplace::GetData(void)
 		// 検索文字列/置換後文字列リストの設定	2010/5/26 Uchi
 		if (!m_bModal) { SetCombosList(); }
 		return 1;
-	} else {
+	}
+	else {
 		return 0;
 	}
 }
@@ -327,11 +329,12 @@ BOOL CDlgReplace::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	if (m_bSelected) {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_SEARCHPREV), FALSE); // 2001.12.03 hor コメント解除
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_SEARCHNEXT), FALSE); // 2001.12.03 hor コメント解除
-		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_REPALCE), FALSE);	 // 2001.12.03 hor コメント解除
+		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_REPALCE), FALSE);	// 2001.12.03 hor コメント解除
 		::CheckDlgButton(GetHwnd(), IDC_RADIO_SELECTEDAREA, TRUE);
 		//		::CheckDlgButton( GetHwnd(), IDC_RADIO_ALLAREA, FALSE );						// 2001.12.03 hor
 		//コメント
-	} else {
+	}
+	else {
 		//		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_SELECTEDAREA ), FALSE );	// 2001.12.03 hor コメント
 		//		::CheckDlgButton( GetHwnd(), IDC_RADIO_SELECTEDAREA, FALSE );					// 2001.12.03 hor
 		//コメント
@@ -347,11 +350,11 @@ BOOL CDlgReplace::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 
 	// フォント設定	2012/11/27 Uchi
 	HFONT hFontOld = (HFONT)::SendMessageAny(GetItemHwnd(IDC_COMBO_TEXT), WM_GETFONT, 0, 0);
-	HFONT hFont	   = SetMainFont(GetItemHwnd(IDC_COMBO_TEXT));
+	HFONT hFont	= SetMainFont(GetItemHwnd(IDC_COMBO_TEXT));
 	m_cFontText.SetFont(hFontOld, hFont, GetItemHwnd(IDC_COMBO_TEXT));
 
 	hFontOld = (HFONT)::SendMessageAny(GetItemHwnd(IDC_COMBO_TEXT2), WM_GETFONT, 0, 0);
-	hFont	 = SetMainFont(GetItemHwnd(IDC_COMBO_TEXT2));
+	hFont	= SetMainFont(GetItemHwnd(IDC_COMBO_TEXT2));
 	m_cFontText2.SetFont(hFontOld, hFont, GetItemHwnd(IDC_COMBO_TEXT2));
 
 	/* 基底クラスメンバ */
@@ -387,7 +390,8 @@ BOOL CDlgReplace::OnBnClicked(int wID)
 		if (::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_LINEDELETE)) {
 			::EnableWindow(GetItemHwnd(IDC_COMBO_TEXT2), FALSE);
 			::EnableWindow(GetItemHwnd(IDC_CHK_PASTE), FALSE);
-		} else {
+		}
+		else {
 			::EnableWindow(GetItemHwnd(IDC_COMBO_TEXT2), TRUE);
 			::EnableWindow(GetItemHwnd(IDC_CHK_PASTE), TRUE);
 		}
@@ -398,7 +402,8 @@ BOOL CDlgReplace::OnBnClicked(int wID)
 			::EnableWindow(GetItemHwnd(IDC_BUTTON_SEARCHPREV), TRUE);
 			::EnableWindow(GetItemHwnd(IDC_BUTTON_SEARCHNEXT), TRUE);
 			::EnableWindow(GetItemHwnd(IDC_BUTTON_REPALCE), TRUE);
-		} else {
+		}
+		else {
 			::EnableWindow(GetItemHwnd(IDC_BUTTON_SEARCHPREV), FALSE);
 			::EnableWindow(GetItemHwnd(IDC_BUTTON_SEARCHNEXT), FALSE);
 			::EnableWindow(GetItemHwnd(IDC_BUTTON_REPALCE), FALSE);
@@ -410,7 +415,8 @@ BOOL CDlgReplace::OnBnClicked(int wID)
 			::EnableWindow(GetItemHwnd(IDC_BUTTON_SEARCHPREV), TRUE);
 			::EnableWindow(GetItemHwnd(IDC_BUTTON_SEARCHNEXT), TRUE);
 			::EnableWindow(GetItemHwnd(IDC_BUTTON_REPALCE), TRUE);
-		} else {
+		}
+		else {
 			::EnableWindow(GetItemHwnd(IDC_BUTTON_SEARCHPREV), FALSE);
 			::EnableWindow(GetItemHwnd(IDC_BUTTON_SEARCHNEXT), FALSE);
 			::EnableWindow(GetItemHwnd(IDC_BUTTON_REPALCE), FALSE);
@@ -437,7 +443,8 @@ BOOL CDlgReplace::OnBnClicked(int wID)
 			//	正規表現ライブラリの差し替えに伴う処理の見直し
 			if (!CheckRegexpVersion(GetHwnd(), IDC_STATIC_JRE32VER, true)) {
 				::CheckDlgButton(GetHwnd(), IDC_CHK_REGULAREXP, 0);
-			} else {
+			}
+			else {
 				// To Here Jun. 26, 2001 genta
 
 				/* 英大文字と英小文字を区別する */
@@ -453,7 +460,8 @@ BOOL CDlgReplace::OnBnClicked(int wID)
 				/*「すべて置換」は置換の繰返し */
 				::EnableWindow(GetItemHwnd(IDC_CHECK_CONSECUTIVEALL), TRUE); // 2007.01.16 ryoji
 			}
-		} else {
+		}
+		else {
 			/* 英大文字と英小文字を区別する */
 			//::EnableWindow( GetItemHwnd( IDC_CHK_LOHICASE ), TRUE );
 			//	Jan. 31, 2002 genta
@@ -494,7 +502,8 @@ BOOL CDlgReplace::OnBnClicked(int wID)
 			pcEditView->GetCommander().HandleCommand(F_SEARCH_PREV, true, (LPARAM)GetHwnd(), 0, 0, 0);
 			/* 再描画（0文字幅マッチでキャレットを表示するため） */
 			pcEditView->Redraw(); // 前回0文字幅マッチの消去にも必要
-		} else if (nRet == 0) {
+		}
+		else if (nRet == 0) {
 			OkMessage(GetHwnd(), LS(STR_DLGREPLC_STR));
 		}
 		return TRUE;
@@ -513,7 +522,8 @@ BOOL CDlgReplace::OnBnClicked(int wID)
 			pcEditView->GetCommander().HandleCommand(F_SEARCH_NEXT, true, (LPARAM)GetHwnd(), 0, 0, 0);
 			/* 再描画（0文字幅マッチでキャレットを表示するため） */
 			pcEditView->Redraw(); // 前回0文字幅マッチの消去にも必要
-		} else if (nRet == 0) {
+		}
+		else if (nRet == 0) {
 			OkMessage(GetHwnd(), LS(STR_DLGREPLC_STR));
 		}
 		return TRUE;
@@ -542,7 +552,8 @@ BOOL CDlgReplace::OnBnClicked(int wID)
 			pcEditView->GetCommander().HandleCommand(F_REPLACE, true, (LPARAM)GetHwnd(), 0, 0, 0);
 			/* 再描画 */
 			pcEditView->GetCommander().HandleCommand(F_REDRAW, true, 0, 0, 0, 0);
-		} else if (nRet == 0) {
+		}
+		else if (nRet == 0) {
 			OkMessage(GetHwnd(), LS(STR_DLGREPLC_STR));
 		}
 		return TRUE;
@@ -568,13 +579,15 @@ BOOL CDlgReplace::OnBnClicked(int wID)
 				if (m_bModal) { /* モーダルダイアログか */
 					/* 置換ダイアログを閉じる */
 					::EndDialog(GetHwnd(), 0);
-				} else {
+				}
+				else {
 					/* 置換 ダイアログを自動的に閉じる */
 					if (m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgReplace) { ::DestroyWindow(GetHwnd()); }
 				}
 			}
 			return TRUE;
-		} else if (nRet == 0) {
+		}
+		else if (nRet == 0) {
 			OkMessage(GetHwnd(), LS(STR_DLGREPLC_REPSTR));
 		}
 		return TRUE;
@@ -590,8 +603,8 @@ BOOL CDlgReplace::OnBnClicked(int wID)
 BOOL CDlgReplace::OnActivate(WPARAM wParam, LPARAM lParam)
 {
 	// 0文字幅マッチ描画のON/OFF	// 2009.11.29 ryoji
-	CEditView *	 pcEditView = (CEditView *)m_lParam;
-	CLayoutRange cRangeSel	= pcEditView->GetSelectionInfo().m_sSelect;
+	CEditView *  pcEditView = (CEditView *)m_lParam;
+	CLayoutRange cRangeSel  = pcEditView->GetSelectionInfo().m_sSelect;
 	if (cRangeSel.IsValid() && cRangeSel.IsLineOne() && cRangeSel.IsOne())
 		pcEditView->InvalidateRect(NULL); // アクティブ化／非アクティブ化が完了してから再描画
 

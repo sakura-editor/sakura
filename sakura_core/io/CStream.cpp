@@ -13,14 +13,14 @@
 //                  ファイル属性操作クラス                     //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-class CFileAttribute
-{
+class CFileAttribute {
 public:
 	CFileAttribute(const WCHAR *pszPath)
 		: m_strPath(pszPath)
 		, m_bAttributeChanged(false)
 		, m_dwAttribute(0)
-	{}
+	{
+	}
 
 	//! 指定属性を取り除く
 	void PopAttribute(DWORD dwPopAttribute)

@@ -23,8 +23,7 @@ class CDialog;
 struct DLLSHAREDATA;
 class CRecent;
 
-enum EAnchorStyle
-{
+enum EAnchorStyle {
 	ANCHOR_NONE				 = 0,
 	ANCHOR_LEFT				 = 1,
 	ANCHOR_RIGHT			 = 2,
@@ -32,37 +31,36 @@ enum EAnchorStyle
 	ANCHOR_TOP				 = 4,
 	ANCHOR_TOP_LEFT			 = 5,
 	ANCHOR_TOP_RIGHT		 = 6,
-	ANCHOR_TOP_LEFT_RIGHT	 = 7,
+	ANCHOR_TOP_LEFT_RIGHT	= 7,
 	ANCHOR_BOTTOM			 = 8,
 	ANCHOR_BOTTOM_LEFT		 = 9,
 	ANCHOR_BOTTOM_RIGHT		 = 10,
 	ANCHOR_BOTTOM_LEFT_RIGHT = 11,
 	ANCHOR_TOP_BOTTOM		 = 12,
-	ANCHOR_TOP_BOTTOM_LEFT	 = 13,
-	ANCHOR_TOP_BOTTOM_RIGHT	 = 14,
+	ANCHOR_TOP_BOTTOM_LEFT   = 13,
+	ANCHOR_TOP_BOTTOM_RIGHT  = 14,
 	ANCHOR_ALL				 = 15
 };
 
-struct SAnchorList
-{
+struct SAnchorList {
 	int			 id;
 	EAnchorStyle anchor;
 };
 
-struct SComboBoxItemDeleter
-{
+struct SComboBoxItemDeleter {
 	CRecent *pRecent;
 	HWND	 hwndCombo;
-	WNDPROC	 pComboBoxWndProc;
-	WNDPROC	 pEditWndProc;
-	WNDPROC	 pListBoxWndProc;
+	WNDPROC  pComboBoxWndProc;
+	WNDPROC  pEditWndProc;
+	WNDPROC  pListBoxWndProc;
 	SComboBoxItemDeleter()
 		: pRecent(NULL)
 		, hwndCombo(NULL)
 		, pComboBoxWndProc(NULL)
 		, pEditWndProc(NULL)
 		, pListBoxWndProc(NULL)
-	{}
+	{
+	}
 };
 
 /*-----------------------------------------------------------------------
@@ -75,8 +73,7 @@ struct SComboBoxItemDeleter
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class CDialog
-{
+class CDialog {
 public:
 	/*
 	||  Constructors
@@ -106,8 +103,8 @@ public:
 	virtual BOOL OnTimer(WPARAM wParam) { return TRUE; }
 	virtual BOOL OnKeyDown(WPARAM wParam, LPARAM lParam) { return TRUE; }
 	virtual BOOL OnDeviceChange(WPARAM wParam, LPARAM lParam) { return TRUE; }
-	virtual int	 GetData(void) { return 1; } /* ダイアログデータの取得 */
-	virtual void SetData(void) { return; }	 /* ダイアログデータの設定 */
+	virtual int  GetData(void) { return 1; } /* ダイアログデータの取得 */
+	virtual void SetData(void) { return; }   /* ダイアログデータの設定 */
 	virtual BOOL OnBnClicked(int wID);
 	virtual BOOL OnStnClicked(int) { return FALSE; }
 	virtual BOOL OnEnChange(HWND hwndCtl, int wID) { return FALSE; }
@@ -118,7 +115,7 @@ public:
 	virtual BOOL OnCbnSelChange(HWND hwndCtl, int wID) { return FALSE; }
 	virtual BOOL OnCbnEditChange(HWND hwndCtl, int wID) { return FALSE; } // @@2005.03.31 MIK タグジャンプDialog
 	virtual BOOL OnCbnDropDown(HWND hwndCtl, int wID);
-	static BOOL	 OnCbnDropDown(HWND hwndCtl, bool scrollBar);
+	static BOOL  OnCbnDropDown(HWND hwndCtl, bool scrollBar);
 	//	virtual BOOL OnCbnCloseUp( HWND hwndCtl, int wID ){return FALSE;}
 	virtual BOOL OnCbnSelEndOk(HWND hwndCtl, int wID);
 
@@ -126,9 +123,9 @@ public:
 	virtual BOOL	OnActivate(WPARAM wParam, LPARAM lParam) { return FALSE; } //@@@ 2003.04.08 MIK
 	virtual int		OnVKeyToItem(WPARAM wParam, LPARAM lParam) { return -1; }
 	virtual LRESULT OnCharToItem(WPARAM wParam, LPARAM lParam) { return -1; }
-	virtual BOOL	OnPopupHelp(WPARAM wPara, LPARAM lParam);	//@@@ 2002.01.18 add
+	virtual BOOL	OnPopupHelp(WPARAM wPara, LPARAM lParam);   //@@@ 2002.01.18 add
 	virtual BOOL	OnContextMenu(WPARAM wPara, LPARAM lParam); //@@@ 2002.01.18 add
-	virtual LPVOID	GetHelpIdTable(void);						//@@@ 2002.01.18 add
+	virtual LPVOID  GetHelpIdTable(void);						//@@@ 2002.01.18 add
 
 	void		ResizeItem(HWND hTarget, const POINT &ptDlgDefalut, const POINT &ptDlgNew, const RECT &rcItemDefault,
 						   EAnchorStyle anchor, bool bUpdate = true);
@@ -144,7 +141,7 @@ public:
 	void _SetHwnd(HWND hwnd) { m_hWnd = hwnd; }
 
 public:
-	HINSTANCE m_hInstance;	/* アプリケーションインスタンスのハンドル */
+	HINSTANCE m_hInstance;  /* アプリケーションインスタンスのハンドル */
 	HWND	  m_hwndParent; /* オーナーウィンドウのハンドル */
 private:
 	HWND m_hWnd; /* このダイアログのハンドル */
@@ -153,11 +150,11 @@ public:
 	LPARAM m_lParam;
 	BOOL   m_bModal;   /* モーダル ダイアログか */
 	bool   m_bSizable; // 可変ダイアログかどうか
-	int	   m_nShowCmd; //	最大化/最小化
-	int	   m_nWidth;
-	int	   m_nHeight;
-	int	   m_xPos;
-	int	   m_yPos;
+	int	m_nShowCmd; //	最大化/最小化
+	int	m_nWidth;
+	int	m_nHeight;
+	int	m_xPos;
+	int	m_yPos;
 	//	void*			m_pcEditView;
 	DLLSHAREDATA *m_pShareData;
 	BOOL		  m_bInited;

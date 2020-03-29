@@ -30,8 +30,7 @@
 #include "DLLSHAREDATA.h"
 
 //! ドキュメントタイプ管理
-class CDocTypeManager
-{
+class CDocTypeManager {
 public:
 	CDocTypeManager() { m_pShareData = &GetDllShareData(); }
 	CTypeConfig GetDocumentTypeOfPath(

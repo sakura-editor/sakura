@@ -38,16 +38,16 @@
 
 static const DWORD p_helpids[] = { // 2006.10.10 ryoji
 	IDOK,		 HIDOK_KEYWORD_SELECT,
-	IDCANCEL,	 HIDCANCEL_KEYWORD_SELECT,
-	IDC_COMBO1,	 HIDC_COMBO_KEYWORD_SELECT,
-	IDC_COMBO2,	 HIDC_COMBO_KEYWORD_SELECT,
-	IDC_COMBO3,	 HIDC_COMBO_KEYWORD_SELECT,
-	IDC_COMBO4,	 HIDC_COMBO_KEYWORD_SELECT,
-	IDC_COMBO5,	 HIDC_COMBO_KEYWORD_SELECT,
-	IDC_COMBO6,	 HIDC_COMBO_KEYWORD_SELECT,
-	IDC_COMBO7,	 HIDC_COMBO_KEYWORD_SELECT,
-	IDC_COMBO8,	 HIDC_COMBO_KEYWORD_SELECT,
-	IDC_COMBO9,	 HIDC_COMBO_KEYWORD_SELECT,
+	IDCANCEL,	HIDCANCEL_KEYWORD_SELECT,
+	IDC_COMBO1,  HIDC_COMBO_KEYWORD_SELECT,
+	IDC_COMBO2,  HIDC_COMBO_KEYWORD_SELECT,
+	IDC_COMBO3,  HIDC_COMBO_KEYWORD_SELECT,
+	IDC_COMBO4,  HIDC_COMBO_KEYWORD_SELECT,
+	IDC_COMBO5,  HIDC_COMBO_KEYWORD_SELECT,
+	IDC_COMBO6,  HIDC_COMBO_KEYWORD_SELECT,
+	IDC_COMBO7,  HIDC_COMBO_KEYWORD_SELECT,
+	IDC_COMBO8,  HIDC_COMBO_KEYWORD_SELECT,
+	IDC_COMBO9,  HIDC_COMBO_KEYWORD_SELECT,
 	IDC_COMBO10, HIDC_COMBO_KEYWORD_SELECT,
 	0,			 0};
 
@@ -102,8 +102,8 @@ BOOL CDlgKeywordSelect::OnBnClicked(int wID)
 void CDlgKeywordSelect::SetData(void)
 {
 	HWND hwndCombo;
-	int	 i;
-	int	 index;
+	int  i;
+	int  index;
 
 	for (index = 0; index < KEYWORD_SELECT_NUM; index++) {
 		hwndCombo = GetItemHwnd(keyword_select_target_combo[index]);
@@ -122,7 +122,8 @@ void CDlgKeywordSelect::SetData(void)
 			if (-1 == m_nSet[index]) {
 				/* セット名コンボボックスのデフォルト選択 */
 				Combo_SetCurSel(hwndCombo, 0);
-			} else {
+			}
+			else {
 				/* セット名コンボボックスのデフォルト選択 */
 				Combo_SetCurSel(hwndCombo, m_nSet[index] + 1);
 			}
@@ -135,16 +136,15 @@ void CDlgKeywordSelect::SetData(void)
 int CDlgKeywordSelect::GetData(void)
 {
 	HWND hwndCombo;
-	int	 index;
-	int	 n;
+	int  index;
+	int  n;
 
 	for (index = 0; index < KEYWORD_SELECT_NUM; index++) {
 		hwndCombo = GetItemHwnd(keyword_select_target_combo[index]);
 
 		n = Combo_GetCurSel(hwndCombo);
-		if (CB_ERR == n || 0 == n) {
-			m_nSet[index] = -1;
-		} else {
+		if (CB_ERR == n || 0 == n) { m_nSet[index] = -1; }
+		else {
 			m_nSet[index] = n - 1;
 		}
 	}

@@ -58,8 +58,7 @@ int CShareDataLockCounter::GetLockCounter()
 	return GetDllShareData().m_nLockCount;
 }
 
-class CLockCancel final : public CDlgCancel
-{
+class CLockCancel final : public CDlgCancel {
 public:
 	BOOL OnInitDialog(HWND hwnd, WPARAM wParam, LPARAM lParam) override
 	{
@@ -85,7 +84,8 @@ public:
 			LONG_PTR style = ::GetWindowLongPtr(hwndProgress, GWL_STYLE);
 			::SetWindowLongPtr(hwndProgress, GWL_STYLE, style | PBS_MARQUEE);
 			Progress_SetMarquee(hwndProgress, TRUE, 100);
-		} else {
+		}
+		else {
 			HWND hwndProgress = ::GetDlgItem(hwndCancel, IDC_PROGRESS);
 			::ShowWindow(hwndProgress, SW_HIDE);
 		}
@@ -108,7 +108,7 @@ void CShareDataLockCounter::WaitLock(HWND hwndParent, CShareDataLockCounter **pp
 {
 	if (0 < GetCountIf0Lock(ppLock)) {
 		DWORD		 dwTime = ::GetTickCount();
-		CWaitCursor	 cWaitCursor(hwndParent);
+		CWaitCursor  cWaitCursor(hwndParent);
 		CLockCancel *pDlg		= NULL;
 		HWND		 hwndCancel = NULL;
 		::EnableWindow(hwndParent, FALSE);

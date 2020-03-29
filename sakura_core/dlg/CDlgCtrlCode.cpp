@@ -43,40 +43,39 @@ const DWORD p_helpids[] = { // 13300
 	//	IDC_STATIC,				-1,
 	0, 0};
 
-struct ctrl_info_t
-{
-	wchar_t		 code;	  //入力する文字コード
-	unsigned int vKey;	  //表記
+struct ctrl_info_t {
+	wchar_t		 code;	//入力する文字コード
+	unsigned int vKey;	//表記
 	WCHAR		 name[4]; //名前
-	const WCHAR *jname;	  //説明
+	const WCHAR *jname;   //説明
 } static p_ctrl_list[] = {
 	{0x0000, 0x00c0, L"NUL", L""}, // NULL 空文字
-	{0x0001, 'A', L"SOH", L""},	   // START OF HEADING ヘッダ開始
-	{0x0002, 'B', L"STX", L""},	   // START OF TEXT テキスト開始
-	{0x0003, 'C', L"ETX", L""},	   // END OF TEXT テキスト終了
-	{0x0004, 'D', L"EOT", L""},	   // END OF TRANSMISSION 転送終了
-	{0x0005, 'E', L"ENQ", L""},	   // ENQUIRY 照会
-	{0x0006, 'F', L"ACK", L""},	   // ACKNOWLEDGE 受信OK
-	{0x0007, 'G', L"BEL", L""},	   // BELL 警告(ベル)
-	{0x0008, 'H', L"BS", L""},	   // BACKSPACE 後退
-	{0x0009, 'I', L"HT", L""},	   // horizontal tabulation (HT) タブ
-	{0x000a, 'J', L"LF", L""},	   // LINE FEED (LF); new line (NL); end of line(EOL) 改行
-	{0x000b, 'K', L"VT", L""},	   // vertical tabulation (VT) 垂直タブ
-	{0x000c, 'L', L"FF", L""},	   // FORM FEED (FF) 改ページ
-	{0x000d, 'M', L"CR", L""},	   // CARRIAGE RETURN 復帰
-	{0x000e, 'N', L"SO", L""},	   // SHIFT OUT シフトアウト
-	{0x000f, 'O', L"SI", L""},	   // SHIFT IN シフトイン
-	{0x0010, 'P', L"DLE", L""},	   // DATA LINK ESCAPE データリンクエスケープ
-	{0x0011, 'Q', L"DC1", L""},	   // DEVICE CONTROL ONE 装置制御1
-	{0x0012, 'R', L"DC2", L""},	   // DEVICE CONTROL TWO 装置制御2
-	{0x0013, 'S', L"DC3", L""},	   // DEVICE CONTROL THREE 装置制御3
-	{0x0014, 'T', L"DC4", L""},	   // DEVICE CONTROL FOUR 装置制御4
-	{0x0015, 'U', L"NAK", L""},	   // NEGATIVE ACKNOWLEDGE 受信失敗
-	{0x0016, 'V', L"SYN", L""},	   // SYNCHRONOUS IDLE 同期
-	{0x0017, 'W', L"ETB", L""},	   // END OF TRANSMISSION BLOCK 転送ブロック終了
-	{0x0018, 'X', L"CAN", L""},	   // CANCEL キャンセル
-	{0x0019, 'Y', L"EM", L""},	   // END OF MEDIUM メディア終了
-	{0x001a, 'Z', L"SUB", L""},	   // SUBSTITUTE 置換
+	{0x0001, 'A', L"SOH", L""},	// START OF HEADING ヘッダ開始
+	{0x0002, 'B', L"STX", L""},	// START OF TEXT テキスト開始
+	{0x0003, 'C', L"ETX", L""},	// END OF TEXT テキスト終了
+	{0x0004, 'D', L"EOT", L""},	// END OF TRANSMISSION 転送終了
+	{0x0005, 'E', L"ENQ", L""},	// ENQUIRY 照会
+	{0x0006, 'F', L"ACK", L""},	// ACKNOWLEDGE 受信OK
+	{0x0007, 'G', L"BEL", L""},	// BELL 警告(ベル)
+	{0x0008, 'H', L"BS", L""},	 // BACKSPACE 後退
+	{0x0009, 'I', L"HT", L""},	 // horizontal tabulation (HT) タブ
+	{0x000a, 'J', L"LF", L""},	 // LINE FEED (LF); new line (NL); end of line(EOL) 改行
+	{0x000b, 'K', L"VT", L""},	 // vertical tabulation (VT) 垂直タブ
+	{0x000c, 'L', L"FF", L""},	 // FORM FEED (FF) 改ページ
+	{0x000d, 'M', L"CR", L""},	 // CARRIAGE RETURN 復帰
+	{0x000e, 'N', L"SO", L""},	 // SHIFT OUT シフトアウト
+	{0x000f, 'O', L"SI", L""},	 // SHIFT IN シフトイン
+	{0x0010, 'P', L"DLE", L""},	// DATA LINK ESCAPE データリンクエスケープ
+	{0x0011, 'Q', L"DC1", L""},	// DEVICE CONTROL ONE 装置制御1
+	{0x0012, 'R', L"DC2", L""},	// DEVICE CONTROL TWO 装置制御2
+	{0x0013, 'S', L"DC3", L""},	// DEVICE CONTROL THREE 装置制御3
+	{0x0014, 'T', L"DC4", L""},	// DEVICE CONTROL FOUR 装置制御4
+	{0x0015, 'U', L"NAK", L""},	// NEGATIVE ACKNOWLEDGE 受信失敗
+	{0x0016, 'V', L"SYN", L""},	// SYNCHRONOUS IDLE 同期
+	{0x0017, 'W', L"ETB", L""},	// END OF TRANSMISSION BLOCK 転送ブロック終了
+	{0x0018, 'X', L"CAN", L""},	// CANCEL キャンセル
+	{0x0019, 'Y', L"EM", L""},	 // END OF MEDIUM メディア終了
+	{0x001a, 'Z', L"SUB", L""},	// SUBSTITUTE 置換
 	{0x001b, 0x00db, L"ESC", L""}, // ESCAPE エスケープ
 	{0x001c, 0x00dc, L"FS", L""},  // file separator (FS) フォーム区切
 	{0x001d, 0x00dd, L"GS", L""},  // group separator (GS) グループ区切
@@ -131,10 +130,10 @@ void CDlgCtrlCode::SetData(void)
 
 		auto_sprintf(tmp, L"0x%02X", p_ctrl_list[i].code);
 		lvi.mask	 = LVIF_TEXT | LVIF_PARAM;
-		lvi.pszText	 = tmp;
-		lvi.iItem	 = count;
+		lvi.pszText  = tmp;
+		lvi.iItem	= count;
 		lvi.iSubItem = 0;
-		lvi.lParam	 = 0;
+		lvi.lParam   = 0;
 		ListView_InsertItem(hwndWork, &lvi);
 
 		if (p_ctrl_list[i].code <= 0x1f)
@@ -144,21 +143,21 @@ void CDlgCtrlCode::SetData(void)
 		else
 			wcscpy(tmp, L"･");
 		lvi.mask	 = LVIF_TEXT;
-		lvi.iItem	 = count;
+		lvi.iItem	= count;
 		lvi.iSubItem = 1;
-		lvi.pszText	 = tmp;
+		lvi.pszText  = tmp;
 		ListView_SetItem(hwndWork, &lvi);
 
 		lvi.mask	 = LVIF_TEXT;
-		lvi.iItem	 = count;
+		lvi.iItem	= count;
 		lvi.iSubItem = 2;
-		lvi.pszText	 = const_cast<WCHAR *>(p_ctrl_list[i].name);
+		lvi.pszText  = const_cast<WCHAR *>(p_ctrl_list[i].name);
 		ListView_SetItem(hwndWork, &lvi);
 
 		lvi.mask	 = LVIF_TEXT;
-		lvi.iItem	 = count;
+		lvi.iItem	= count;
 		lvi.iSubItem = 3;
-		lvi.pszText	 = const_cast<WCHAR *>(p_ctrl_list[i].jname);
+		lvi.pszText  = const_cast<WCHAR *>(p_ctrl_list[i].jname);
 		ListView_SetItem(hwndWork, &lvi);
 
 		count++;
@@ -172,7 +171,7 @@ void CDlgCtrlCode::SetData(void)
 /* TRUE==正常  FALSE==入力エラー */
 int CDlgCtrlCode::GetData(void)
 {
-	int	 nIndex;
+	int  nIndex;
 	HWND hwndList;
 
 	hwndList = GetItemHwnd(IDC_LIST_CTRLCODE);
@@ -199,28 +198,28 @@ BOOL CDlgCtrlCode::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	col.mask	 = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt		 = LVCFMT_LEFT;
 	col.cx		 = (rc.right - rc.left) * 15 / 100;
-	col.pszText	 = const_cast<WCHAR *>(LS(STR_DLGCTRLCODE_CODE)); // "コード"
+	col.pszText  = const_cast<WCHAR *>(LS(STR_DLGCTRLCODE_CODE)); // "コード"
 	col.iSubItem = 0;
 	ListView_InsertColumn(hwndList, 0, &col);
 
 	col.mask	 = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt		 = LVCFMT_LEFT;
 	col.cx		 = (rc.right - rc.left) * 15 / 100;
-	col.pszText	 = const_cast<WCHAR *>(LS(STR_DLGCTRLCODE_SYMBOL)); // "表記"
+	col.pszText  = const_cast<WCHAR *>(LS(STR_DLGCTRLCODE_SYMBOL)); // "表記"
 	col.iSubItem = 1;
 	ListView_InsertColumn(hwndList, 1, &col);
 
 	col.mask	 = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt		 = LVCFMT_LEFT;
 	col.cx		 = (rc.right - rc.left) * 15 / 100;
-	col.pszText	 = const_cast<WCHAR *>(LS(STR_DLGCTRLCODE_NAME)); // "名前"
+	col.pszText  = const_cast<WCHAR *>(LS(STR_DLGCTRLCODE_NAME)); // "名前"
 	col.iSubItem = 2;
 	ListView_InsertColumn(hwndList, 2, &col);
 
 	col.mask	 = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt		 = LVCFMT_LEFT;
 	col.cx		 = (rc.right - rc.left) * 46 / 100;
-	col.pszText	 = const_cast<WCHAR *>(LS(STR_DLGCTRLCODE_DESC)); // "説明"
+	col.pszText  = const_cast<WCHAR *>(LS(STR_DLGCTRLCODE_DESC)); // "説明"
 	col.iSubItem = 3;
 	ListView_InsertColumn(hwndList, 3, &col);
 
@@ -262,8 +261,7 @@ BOOL CDlgCtrlCode::OnNotify(WPARAM wParam, LPARAM lParam)
 		switch (pNMHDR->code) {
 		case NM_DBLCLK: ::EndDialog(GetHwnd(), GetData()); return TRUE;
 
-		case LVN_KEYDOWN:
-		{
+		case LVN_KEYDOWN: {
 			HWND		 hwndList;
 			NMKEY *		 p = (NMKEY *)lParam;
 			int			 i, j;

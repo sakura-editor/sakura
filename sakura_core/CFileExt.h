@@ -34,8 +34,7 @@
 #include "config/maxdata.h"
 #include "util/design_template.h"
 
-class CFileExt
-{
+class CFileExt {
 public:
 	CFileExt();
 	~CFileExt();
@@ -56,8 +55,7 @@ protected:
 	// bool ConvertTypesExtToDlgExt( const WCHAR *pszSrcExt, WCHAR *pszDstExt );
 
 private:
-	typedef struct
-	{
+	typedef struct {
 		WCHAR m_szName[64]; //名前(64文字以下のはず→m_szTypeName)
 		WCHAR m_szExt[MAX_TYPES_EXTS * 3
 					  + 1]; //拡張子(64文字以下のはず→m_szTypeExts) なお "*." を追加するのでそれなりに必要

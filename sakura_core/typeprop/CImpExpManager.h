@@ -35,8 +35,7 @@
 
 using std::wstring;
 
-class CImpExpManager
-{
+class CImpExpManager {
 public:
 	bool		 ImportUI(HINSTANCE hInstance, HWND hwndParent);
 	bool		 ExportUI(HINSTANCE hInstance, HWND hwndParent);
@@ -78,8 +77,7 @@ protected:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          タイプ別設定                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CImpExpType : public CImpExpManager
-{
+class CImpExpType : public CImpExpManager {
 public:
 	// Constructor
 	CImpExpType(int nIdx, STypeConfig &types, HWND hwndList)
@@ -119,13 +117,13 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          カラー                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CImpExpColors : public CImpExpManager
-{
+class CImpExpColors : public CImpExpManager {
 public:
 	// Constructor
 	CImpExpColors(ColorInfo *psColorInfoArr)
 		: m_ColorInfoArr(psColorInfoArr)
-	{}
+	{
+	}
 
 public:
 	bool Import(const wstring &, wstring &);
@@ -143,13 +141,13 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                    正規表現キーワード                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CImpExpRegex : public CImpExpManager
-{
+class CImpExpRegex : public CImpExpManager {
 public:
 	// Constructor
 	CImpExpRegex(STypeConfig &types)
 		: m_Types(types)
-	{}
+	{
+	}
 
 public:
 	bool Import(const wstring &, wstring &);
@@ -167,13 +165,13 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     キーワードヘルプ                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CImpExpKeyHelp : public CImpExpManager
-{
+class CImpExpKeyHelp : public CImpExpManager {
 public:
 	// Constructor
 	CImpExpKeyHelp(STypeConfig &types)
 		: m_Types(types)
-	{}
+	{
+	}
 
 public:
 	bool Import(const wstring &, wstring &);
@@ -191,13 +189,13 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     キー割り当て                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CImpExpKeybind : public CImpExpManager
-{
+class CImpExpKeybind : public CImpExpManager {
 public:
 	// Constructor
 	CImpExpKeybind(CommonSetting &common)
 		: m_Common(common)
-	{}
+	{
+	}
 
 public:
 	bool Import(const wstring &, wstring &);
@@ -215,13 +213,13 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     カスタムメニュー                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CImpExpCustMenu : public CImpExpManager
-{
+class CImpExpCustMenu : public CImpExpManager {
 public:
 	// Constructor
 	CImpExpCustMenu(CommonSetting &common)
 		: m_Common(common)
-	{}
+	{
+	}
 
 public:
 	bool Import(const wstring &, wstring &);
@@ -239,15 +237,15 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     強調キーワード                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CImpExpKeyWord : public CImpExpManager
-{
+class CImpExpKeyWord : public CImpExpManager {
 public:
 	// Constructor
 	CImpExpKeyWord(CommonSetting &common, int nKeyWordSetIdx, bool &bCase)
 		: m_Common(common)
 		, m_nIdx(nKeyWordSetIdx)
 		, m_bCase(bCase)
-	{}
+	{
+	}
 
 public:
 	bool Import(const wstring &, wstring &);
@@ -267,13 +265,13 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     メインメニュー                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CImpExpMainMenu : public CImpExpManager
-{
+class CImpExpMainMenu : public CImpExpManager {
 public:
 	// Constructor
 	CImpExpMainMenu(CommonSetting &common)
 		: m_Common(common)
-	{}
+	{
+	}
 
 public:
 	bool Import(const wstring &, wstring &);
@@ -291,13 +289,13 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     メインメニュー                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CImpExpFileTree : public CImpExpManager
-{
+class CImpExpFileTree : public CImpExpManager {
 public:
 	// Constructor
 	CImpExpFileTree(std::vector<SFileTreeItem> &items)
 		: m_aFileTreeItems(items)
-	{}
+	{
+	}
 
 public:
 	bool		Import(const wstring &, wstring &);

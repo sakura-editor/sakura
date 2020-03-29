@@ -26,13 +26,13 @@
 
 #include "view/colors/CColorStrategy.h"
 
-class CColor_RegexKeyword final : public CColorStrategy
-{
+class CColor_RegexKeyword final : public CColorStrategy {
 public:
 	CColor_RegexKeyword()
 		: m_nCOMMENTEND(0)
 		, m_nCOMMENTMODE(ToColorIndexType_RegularExpression(0))
-	{}
+	{
+	}
 	EColorIndexType GetStrategyColor() const override { return m_nCOMMENTMODE; }
 	void			InitStrategyStatus() override
 	{

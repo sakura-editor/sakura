@@ -43,8 +43,7 @@ const int MSec2Min = 1000 * 60;
 	ファイルの自動保存で使っている。
 	@author genta
 */
-class CPassiveTimer
-{
+class CPassiveTimer {
 public:
 	/*!
 		初期値は間隔1msecでタイマーは無効。
@@ -58,7 +57,7 @@ public:
 
 	//時間間隔
 	void SetInterval(int m);									  //!	時間間隔の設定
-	int	 GetInterval(void) const { return nInterval / MSec2Min; } //!< 時間間隔の取得
+	int  GetInterval(void) const { return nInterval / MSec2Min; } //!< 時間間隔の取得
 	void Reset(void) { nLastTick = ::GetTickCount(); }			  //!< 基準時刻のリセット
 
 	//有効／無効
@@ -70,12 +69,11 @@ public:
 
 private:
 	DWORD nLastTick; //!< 最後にチェックしたときの時刻 (GetTickCount()で取得したもの)
-	int	  nInterval; //!< Action間隔 (分)
-	bool  bEnabled;	 //!< 有効かどうか
+	int   nInterval; //!< Action間隔 (分)
+	bool  bEnabled;  //!< 有効かどうか
 };
 
-class CAutoSaveAgent : public CDocListenerEx
-{
+class CAutoSaveAgent : public CDocListenerEx {
 public:
 	void CheckAutoSave();
 	void ReloadAutoSaveParam(); //!< 設定をSharedAreaから読み出す

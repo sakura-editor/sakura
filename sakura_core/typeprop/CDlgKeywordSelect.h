@@ -44,8 +44,7 @@ class CKeyWordSetMgr;
 //	2005.01.13 genta ShareDataの定義と連動させる
 const int KEYWORD_SELECT_NUM = MAX_KEYWORDSET_PER_TYPE;
 
-class CDlgKeywordSelect final : public CDialog
-{
+class CDlgKeywordSelect final : public CDialog {
 public:
 	CDlgKeywordSelect();
 	~CDlgKeywordSelect();
@@ -54,7 +53,7 @@ public:
 protected:
 	BOOL   OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
 	BOOL   OnBnClicked(int wID) override;
-	int	   GetData(void) override;
+	int	GetData(void) override;
 	void   SetData(void) override;
 	LPVOID GetHelpIdTable(void) override;
 

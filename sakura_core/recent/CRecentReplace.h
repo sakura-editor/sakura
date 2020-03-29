@@ -30,8 +30,7 @@
 typedef StaticString<WCHAR, _MAX_PATH> CReplaceString;
 
 //! 置換の履歴を管理 (RECENT_FOR_REPLACE)
-class CRecentReplace final : public CRecentImp<CReplaceString, LPCWSTR>
-{
+class CRecentReplace final : public CRecentImp<CReplaceString, LPCWSTR> {
 public:
 	//生成
 	CRecentReplace();

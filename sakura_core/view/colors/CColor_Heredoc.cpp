@@ -27,8 +27,7 @@
 #include "doc/layout/CLayout.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 
-class CLayoutColorHeredocInfo : public CLayoutColorInfo
-{
+class CLayoutColorHeredocInfo : public CLayoutColorInfo {
 public:
 	std::wstring m_id;
 	bool		 IsEqual(const CLayoutColorInfo *p) const
@@ -86,9 +85,8 @@ bool CColor_Heredoc::BeginColor(const CStringRef &cStr, int nPos)
 		if (nPosIdStart == i) { return false; }
 		const int k = i;
 		if (quote != L'\0') {
-			if (i < length && cStr.At(i) == quote) {
-				i++;
-			} else {
+			if (i < length && cStr.At(i) == quote) { i++; }
+			else {
 				return false;
 			}
 		}
@@ -111,26 +109,30 @@ bool CColor_Heredoc::EndColor(const CStringRef &cStr, int nPos)
 			if (m_nSize == cStr.GetLength()) {
 				this->m_nCOMMENTEND = m_nSize;
 				return false;
-			} else {
+			}
+			else {
 				int i = m_nSize;
 				if (i + 1 < cStr.GetLength() && cStr.At(i) == L';'
 					&& WCODE::IsLineDelimiter(cStr.At(i + 1), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol)) {
 					// ID;
 					this->m_nCOMMENTEND = i;
 					return false;
-				} else if (m_nSize < cStr.GetLength()
-						   && WCODE::IsLineDelimiter(cStr.At(m_nSize),
-													 GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol)) {
+				}
+				else if (m_nSize < cStr.GetLength()
+						 && WCODE::IsLineDelimiter(cStr.At(m_nSize),
+												   GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol)) {
 					// ID
 					this->m_nCOMMENTEND = m_nSize;
 					return false;
 				}
 			}
 			this->m_nCOMMENTEND = cStr.GetLength();
-		} else {
+		}
+		else {
 			this->m_nCOMMENTEND = cStr.GetLength();
 		}
-	} else if (nPos == this->m_nCOMMENTEND) {
+	}
+	else if (nPos == this->m_nCOMMENTEND) {
 		return true;
 	}
 	return false;

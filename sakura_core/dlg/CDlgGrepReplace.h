@@ -20,8 +20,7 @@ class CDlgGrep;
 #include "dlg/CDlgGrep.h"
 
 //! GREP置換ダイアログボックス
-class CDlgGrepReplace final : public CDlgGrep
-{
+class CDlgGrepReplace final : public CDlgGrep {
 public:
 	/*
 	||  Constructors
@@ -51,5 +50,5 @@ protected:
 	LPVOID GetHelpIdTable(void) override; //@@@ 2002.01.18 add
 
 	void SetData(void) override; /* ダイアログデータの設定 */
-	int	 GetData(void) override; /* ダイアログデータの取得 */
+	int  GetData(void) override; /* ダイアログデータの取得 */
 };

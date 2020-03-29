@@ -33,8 +33,7 @@ class CBregexp;
 // #define SEARCH_STRING_KMP
 #define SEARCH_STRING_SUNDAY_QUICK
 
-class CSearchStringPattern
-{
+class CSearchStringPattern {
 public:
 	CSearchStringPattern();
 	CSearchStringPattern(HWND, const wchar_t *pszPattern, int nPatternLen, const SSearchOption &sSearchOption,
@@ -68,7 +67,7 @@ private:
 	// 外部依存
 	const wchar_t *		 m_pszKey;
 	const SSearchOption *m_psSearchOption;
-	mutable CBregexp *	 m_pRegexp;
+	mutable CBregexp *   m_pRegexp;
 
 	const wchar_t *m_pszCaseKeyRef;
 
@@ -85,8 +84,7 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(CSearchStringPattern);
 };
 
-class CSearchAgent
-{
+class CSearchAgent {
 public:
 	// 文字列検索
 	static const wchar_t *SearchString(const wchar_t *pLine, int nLineLen, int nIdxPos,
@@ -105,7 +103,8 @@ public:
 public:
 	CSearchAgent(CDocLineMgr *pcDocLineMgr)
 		: m_pcDocLineMgr(pcDocLineMgr)
-	{}
+	{
+	}
 
 	bool WhereCurrentWord(CLogicInt nLineNum, CLogicInt nIdx, CLogicInt *pnIdxFrom, CLogicInt *pnIdxTo,
 						  CNativeW *pcmcmWord, CNativeW *pcmcmWordLeft); /* 現在位置の単語の範囲を調べる */

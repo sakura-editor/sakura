@@ -34,9 +34,8 @@ class CDocLineMgr;
 class CGraphics;
 
 //! DIFF情報定数
-enum EDiffMark : char
-{
-	MARK_DIFF_NONE	 = 0, //!< 無変更
+enum EDiffMark : char {
+	MARK_DIFF_NONE   = 0, //!< 無変更
 	MARK_DIFF_APPEND = 1, //!< 追加
 	MARK_DIFF_CHANGE = 2, //!< 変更
 	MARK_DIFF_DELETE = 3, //!< 削除
@@ -44,8 +43,7 @@ enum EDiffMark : char
 };
 
 //! DIFF挙動の管理
-class CDiffManager : public TSingleton<CDiffManager>
-{
+class CDiffManager : public TSingleton<CDiffManager> {
 	friend class TSingleton<CDiffManager>;
 	CDiffManager() {}
 
@@ -58,12 +56,12 @@ private:
 };
 
 //! 行に付加するDIFF情報
-class CLineDiffed
-{
+class CLineDiffed {
 public:
 	CLineDiffed()
 		: m_nDiffed(MARK_DIFF_NONE)
-	{}
+	{
+	}
 				 operator EDiffMark() const { return m_nDiffed; }
 	CLineDiffed &operator=(EDiffMark e)
 	{
@@ -76,12 +74,12 @@ private:
 };
 
 //! 行のDIFF情報取得
-class CDiffLineGetter
-{
+class CDiffLineGetter {
 public:
 	CDiffLineGetter(const CDocLine *pcDocLine)
 		: m_pcDocLine(pcDocLine)
-	{}
+	{
+	}
 	EDiffMark GetLineDiffMark() const;
 	bool	  GetDiffColor(EColorIndexType *nColor) const;
 	bool	  DrawDiffMark(CGraphics &gr, int y, int nLineHeight, COLORREF color) const;
@@ -91,12 +89,12 @@ private:
 };
 
 //! 行のDIFF情報設定
-class CDiffLineSetter
-{
+class CDiffLineSetter {
 public:
 	CDiffLineSetter(CDocLine *pcDocLine)
 		: m_pcDocLine(pcDocLine)
-	{}
+	{
+	}
 	void SetLineDiffMark(EDiffMark mark);
 
 private:
@@ -104,12 +102,12 @@ private:
 };
 
 //! 行全体のDIFF情報管理
-class CDiffLineMgr
-{
+class CDiffLineMgr {
 public:
 	CDiffLineMgr(CDocLineMgr *pcDocLineMgr)
 		: m_pcDocLineMgr(pcDocLineMgr)
-	{}
+	{
+	}
 	void ResetAllDiffMark(); //!< 差分表示の全解除
 	bool SearchDiffMark(CLogicInt nLineNum, ESearchDirection bPrevOrNext, CLogicInt *pnLineNum); //!< 差分検索
 	void SetDiffMarkRange(EDiffMark nMode, CLogicInt nStartLine, CLogicInt nEndLine); //!< 差分範囲の登録

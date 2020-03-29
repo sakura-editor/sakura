@@ -26,8 +26,7 @@
 
 #include "doc/CDocListener.h"
 
-class CDocLocker : public CDocListenerEx
-{
+class CDocLocker : public CDocListenerEx {
 public:
 	CDocLocker();
 

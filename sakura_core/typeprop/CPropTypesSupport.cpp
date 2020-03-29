@@ -33,12 +33,12 @@ static const DWORD p_helpids3[] = {						 // 11500
 	IDC_EDIT_HOKANFILE, HIDC_EDIT_HOKANFILE,			 //単語ファイル名
 	IDC_BUTTON_HOKANFILE_REF, HIDC_BUTTON_HOKANFILE_REF, //入力補完 単語ファイル参照
 	IDC_COMBO_HOKAN_TYPE, HIDC_COMBO_HOKAN_TYPE,		 //入力補完タイプ
-	IDC_CHECK_HOKANLOHICASE, HIDC_CHECK_HOKANLOHICASE,	 //入力補完の英大文字小文字
+	IDC_CHECK_HOKANLOHICASE, HIDC_CHECK_HOKANLOHICASE,   //入力補完の英大文字小文字
 	IDC_CHECK_HOKANBYFILE, HIDC_CHECK_HOKANBYFILE,		 //現在のファイルから入力補完
 	IDC_CHECK_HOKANBYKEYWORD, HIDC_CHECK_HOKANBYKEYWORD, //強調キーワードから入力補完
 
 	IDC_EDIT_TYPEEXTHELP, HIDC_EDIT_TYPEEXTHELP,		 //外部ヘルプファイル名	// 2006.08.06 ryoji
-	IDC_BUTTON_TYPEOPENHELP, HIDC_BUTTON_TYPEOPENHELP,	 //外部ヘルプファイル参照	// 2006.08.06 ryoji
+	IDC_BUTTON_TYPEOPENHELP, HIDC_BUTTON_TYPEOPENHELP,   //外部ヘルプファイル参照	// 2006.08.06 ryoji
 	IDC_EDIT_TYPEEXTHTMLHELP, HIDC_EDIT_TYPEEXTHTMLHELP, //外部HTMLヘルプファイル名	// 2006.08.06 ryoji
 	IDC_BUTTON_TYPEOPENEXTHTMLHELP, HIDC_BUTTON_TYPEOPENEXTHTMLHELP, //外部HTMLヘルプファイル参照	// 2006.08.06 ryoji
 	IDC_CHECK_TYPEHTMLHELPISSINGLE, HIDC_CHECK_TYPEHTMLHELPISSINGLE, //ビューアを複数起動しない	// 2006.08.06 ryoji
@@ -49,8 +49,7 @@ static const DWORD p_helpids3[] = {						 // 11500
 	//	IDC_STATIC,						-1,
 	0, 0};
 
-struct SHokanMethod
-{
+struct SHokanMethod {
 	int			 nMethod;
 	std::wstring name;
 };
@@ -64,10 +63,10 @@ static std::vector<SHokanMethod> *GetHokanMethodList()
 // 2001/06/13 Start By asa-o: タイプ別設定の支援タブに関する処理
 
 /* メッセージ処理 */
-INT_PTR CPropTypesSupport::DispatchEvent(HWND	hwndDlg, // handle to dialog box
-										 UINT	uMsg,	 // message
-										 WPARAM wParam,	 // first message parameter
-										 LPARAM lParam	 // second message parameter
+INT_PTR CPropTypesSupport::DispatchEvent(HWND   hwndDlg, // handle to dialog box
+										 UINT   uMsg,	// message
+										 WPARAM wParam,  // first message parameter
+										 LPARAM lParam   // second message parameter
 )
 {
 	WORD   wNotifyCode;
@@ -141,8 +140,7 @@ INT_PTR CPropTypesSupport::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 		break;
 
 		// From Here Jul. 05, 2001 JEPRO: Popup Help
-	case WM_HELP:
-	{
+	case WM_HELP: {
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids3); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -169,7 +167,7 @@ void CPropTypesSupport::SetData(HWND hwndDlg)
 	::DlgItem_SetText(hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile);
 
 	{
-		HWND					   hCombo	   = ::GetDlgItem(hwndDlg, IDC_COMBO_HOKAN_TYPE);
+		HWND					   hCombo	  = ::GetDlgItem(hwndDlg, IDC_COMBO_HOKAN_TYPE);
 		std::vector<SHokanMethod> *pMedothList = GetHokanMethodList();
 		ApiWrap::Combo_AddString(hCombo, LS(STR_SMART_INDENT_NONE));
 		Combo_SetCurSel(hCombo, 0);
@@ -209,7 +207,7 @@ int CPropTypesSupport::GetData(HWND hwndDlg)
 	/* 入力補完機能：英大文字小文字を同一視する */
 	m_Types.m_bHokanLoHiCase = ::IsDlgButtonChecked(hwndDlg, IDC_CHECK_HOKANLOHICASE) != 0;
 
-	m_Types.m_bUseHokanByFile	 = ::IsDlgButtonChecked(hwndDlg, IDC_CHECK_HOKANBYFILE) != 0;
+	m_Types.m_bUseHokanByFile	= ::IsDlgButtonChecked(hwndDlg, IDC_CHECK_HOKANBYFILE) != 0;
 	m_Types.m_bUseHokanByKeyword = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_HOKANBYKEYWORD);
 
 	/* 入力補完 単語ファイル */
@@ -218,10 +216,9 @@ int CPropTypesSupport::GetData(HWND hwndDlg)
 	// 入力補完種別
 	{
 		HWND hCombo = ::GetDlgItem(hwndDlg, IDC_COMBO_HOKAN_TYPE);
-		int	 i		= Combo_GetCurSel(hCombo);
-		if (0 == i) {
-			m_Types.m_nHokanType = 0;
-		} else if (CB_ERR != i) {
+		int  i		= Combo_GetCurSel(hCombo);
+		if (0 == i) { m_Types.m_nHokanType = 0; }
+		else if (CB_ERR != i) {
 			m_Types.m_nHokanType = (*GetHokanMethodList())[i - 1].nMethod;
 		}
 	}

@@ -36,8 +36,8 @@ public:
 	explicit CStrictPoint(const POINT& rhs) : CMyPoint(rhs) { }
 };
 */
-template<class SUPER, class INT_TYPE, class SUPER_INT_TYPE = INT_TYPE> class CStrictPoint : public SUPER
-{
+template<class SUPER, class INT_TYPE, class SUPER_INT_TYPE = INT_TYPE>
+class CStrictPoint : public SUPER {
 private:
 	typedef CStrictPoint<SUPER, INT_TYPE> Me;
 
@@ -73,7 +73,8 @@ public:
 	}
 
 	//他の型からも、「明示的に指定すれば」変換が可能
-	template<class SRC> explicit CStrictPoint(const SRC &rhs)
+	template<class SRC>
+	explicit CStrictPoint(const SRC &rhs)
 	{
 		x = (SuperIntType)rhs.x;
 		y = (SuperIntType)rhs.y;

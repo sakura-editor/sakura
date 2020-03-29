@@ -34,8 +34,7 @@
 #include <CommDlg.h> // PRINTDLG
 #include <WinSpool.h>
 
-struct MYDEVMODE
-{
+struct MYDEVMODE {
 	BOOL  m_bPrinterNotFound;					/* プリンタがなかったフラグ */
 	WCHAR m_szPrinterDriverName[_MAX_PATH + 1]; // プリンタドライバ名
 	WCHAR m_szPrinterDeviceName[_MAX_PATH + 1]; // プリンタデバイス名
@@ -63,36 +62,34 @@ struct MYDEVMODE
 
 // 2006.08.14 Moca 用紙情報の統合 PAPER_INFO新設
 //! 用紙情報
-struct PAPER_INFO
-{
+struct PAPER_INFO {
 	int			 m_nId;		   //!< 用紙ID
 	short		 m_nAllWidth;  //!< 幅 (0.1mm単位)
 	short		 m_nAllHeight; //!< 高さ (0.1mm単位)
-	const WCHAR *m_pszName;	   //!< 用紙名称
+	const WCHAR *m_pszName;	//!< 用紙名称
 };
 
 struct PRINTSETTING;
 
 //! 印刷設定
-#define POS_LEFT   0
+#define POS_LEFT 0
 #define POS_CENTER 1
-#define POS_RIGHT  2
+#define POS_RIGHT 2
 #define HEADER_MAX 100
 #define FOOTER_MAX HEADER_MAX
-struct PRINTSETTING
-{
+struct PRINTSETTING {
 	WCHAR m_szPrintSettingName[32 + 1];		 /*!< 印刷設定の名前 */
 	WCHAR m_szPrintFontFaceHan[LF_FACESIZE]; /*!< 印刷フォント */
 	WCHAR m_szPrintFontFaceZen[LF_FACESIZE]; /*!< 印刷フォント */
-	int	  m_nPrintFontWidth;				 /*!< 印刷フォント幅(1/10mm単位単位) */
-	int	  m_nPrintFontHeight;				 /*!< 印刷フォント高さ(1/10mm単位単位) */
-	int	  m_nPrintDansuu;					 /*!< 段組の段数 */
-	int	  m_nPrintDanSpace;					 /*!< 段と段の隙間(1/10mm単位) */
-	int	  m_nPrintLineSpacing;				 /*!< 印刷フォント行間 文字の高さに対する割合(%) */
-	int	  m_nPrintMarginTY;					 /*!< 印刷用紙マージン 上(mm単位) */
-	int	  m_nPrintMarginBY;					 /*!< 印刷用紙マージン 下(mm単位) */
-	int	  m_nPrintMarginLX;					 /*!< 印刷用紙マージン 左(mm単位) */
-	int	  m_nPrintMarginRX;					 /*!< 印刷用紙マージン 右(mm単位) */
+	int   m_nPrintFontWidth;				 /*!< 印刷フォント幅(1/10mm単位単位) */
+	int   m_nPrintFontHeight;				 /*!< 印刷フォント高さ(1/10mm単位単位) */
+	int   m_nPrintDansuu;					 /*!< 段組の段数 */
+	int   m_nPrintDanSpace;					 /*!< 段と段の隙間(1/10mm単位) */
+	int   m_nPrintLineSpacing;				 /*!< 印刷フォント行間 文字の高さに対する割合(%) */
+	int   m_nPrintMarginTY;					 /*!< 印刷用紙マージン 上(mm単位) */
+	int   m_nPrintMarginBY;					 /*!< 印刷用紙マージン 下(mm単位) */
+	int   m_nPrintMarginLX;					 /*!< 印刷用紙マージン 左(mm単位) */
+	int   m_nPrintMarginRX;					 /*!< 印刷用紙マージン 右(mm単位) */
 	short m_nPrintPaperOrientation;			 /*!< 用紙方向 DMORIENT_PORTRAIT (1) または DMORIENT_LANDSCAPE (2) */
 	short m_nPrintPaperSize;				 /*!< 用紙サイズ */
 	bool  m_bColorPrint;					 //!< カラー印刷			// 2013/4/26 Uchi
@@ -124,10 +121,9 @@ struct PRINTSETTING
 
 	オブジェクト指向でないクラス
 */
-class CPrint
-{
+class CPrint {
 public:
-	static const PAPER_INFO m_paperInfoArr[];	//!< 用紙情報一覧
+	static const PAPER_INFO m_paperInfoArr[];   //!< 用紙情報一覧
 	static const int		m_nPaperInfoArrNum; //!< 用紙情報一覧の要素数
 
 	/*
@@ -188,6 +184,6 @@ private:
 	/*
 	||  メンバ変数
 	*/
-	HGLOBAL m_hDevMode;	 //!< 現在プリンタのDEVMODEへのメモリハンドル
+	HGLOBAL m_hDevMode;  //!< 現在プリンタのDEVMODEへのメモリハンドル
 	HGLOBAL m_hDevNames; //!< 現在プリンタのDEVNAMESへのメモリハンドル
 };

@@ -46,8 +46,7 @@ class CEditView;
  *   3. 新しいIfObjを作る時はCWSHIfObjを継承し、以下の4つをオーバーライドすること。
  *      GetMacroCommandInfo, GetMacroFuncInfo, HandleCommand, HandleFunction
  */
-class CWSHIfObj : public CIfObj
-{
+class CWSHIfObj : public CIfObj {
 public:
 	// 型定義
 	typedef std::list<CWSHIfObj *> List;
@@ -56,7 +55,8 @@ public:
 	// コンストラクタ
 	CWSHIfObj(const wchar_t *name, bool isGlobal)
 		: CIfObj(name, isGlobal)
-	{}
+	{
+	}
 
 	virtual void ReadyMethods(CEditView *pView, int flags);
 
@@ -73,7 +73,7 @@ protected:
 	virtual bool HandleCommand(CEditView *View, EFunctionCode ID, const WCHAR *Arguments[], const int ArgLengths[],
 							   const int ArgSize)		   = 0; //コマンドを処理する
 	virtual MacroFuncInfoArray GetMacroCommandInfo() const = 0; //コマンド情報を取得する
-	virtual MacroFuncInfoArray GetMacroFuncInfo() const	   = 0; //関数情報を取得する
+	virtual MacroFuncInfoArray GetMacroFuncInfo() const	= 0; //関数情報を取得する
 
 	CEditView *m_pView;
 };

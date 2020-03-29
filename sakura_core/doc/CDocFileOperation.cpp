@@ -77,7 +77,7 @@ void CDocFileOperation::DoFileUnlock() { m_pcDocRef->m_cDocFile.FileUnlock(); }
 bool CDocFileOperation::OpenFileDialog(
 	HWND		 hwndParent,	//!< [in]
 	const WCHAR *pszOpenFolder, //!< [in]     NULL以外を指定すると初期フォルダを指定できる
-	SLoadInfo *	 pLoadInfo,		//!< [in,out] ロード情報
+	SLoadInfo *  pLoadInfo,		//!< [in,out] ロード情報
 	std::vector<std::wstring> &files)
 {
 	/* アクティブにする */
@@ -109,9 +109,11 @@ bool CDocFileOperation::DoLoadFlow(SLoadInfo *pLoadInfo)
 		m_pcDocRef->NotifyBeforeLoad(pLoadInfo);		  //前処理
 		eLoadResult = m_pcDocRef->NotifyLoad(*pLoadInfo); //本処理
 		m_pcDocRef->NotifyAfterLoad(*pLoadInfo);		  //後処理
-	} catch (CFlowInterruption) {
+	}
+	catch (CFlowInterruption) {
 		eLoadResult = LOADED_INTERRUPT;
-	} catch (...) {
+	}
+	catch (...) {
 		//予期せぬ例外が発生した場合も NotifyFinalLoad は必ず呼ぶ！
 		m_pcDocRef->NotifyFinalLoad(LOADED_FAILURE);
 		throw;
@@ -222,9 +224,8 @@ bool CDocFileOperation::SaveFileDialog(SSaveInfo *pSaveInfo //!< [out]
 
 		const STypeConfig &type = m_pcDocRef->m_cDocType.GetDocumentAttribute();
 		//ファイルパスが無い場合は *.txt とする
-		if (!this->m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath()) {
-			szExt = L"";
-		} else {
+		if (!this->m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath()) { szExt = L""; }
+		else {
 			szExt = this->m_pcDocRef->m_cDocFile.GetFilePathClass().GetExt();
 		}
 		if (type.m_nIdx == 0) {
@@ -232,12 +233,14 @@ bool CDocFileOperation::SaveFileDialog(SSaveInfo *pSaveInfo //!< [out]
 			if (szExt[0] == L'\0') {
 				// ファイルパスが無いまたは拡張子なし
 				wcscpy(szDefaultWildCard, L"*.txt");
-			} else {
+			}
+			else {
 				// 拡張子あり
 				wcscpy(szDefaultWildCard, L"*");
 				wcscat(szDefaultWildCard, szExt);
 			}
-		} else {
+		}
+		else {
 			szDefaultWildCard[0] = L'\0';
 			CDocTypeManager::ConvertTypesExtToDlgExt(type.m_szTypeExts, szExt, szDefaultWildCard);
 		}
@@ -246,7 +249,8 @@ bool CDocFileOperation::SaveFileDialog(SSaveInfo *pSaveInfo //!< [out]
 			//「新規から保存時は全ファイル表示」オプション	// 2008/6/15 バグフィックス Uchi
 			if (GetDllShareData().m_Common.m_sFile.m_bNoFilterSaveNew)
 				wcscat(szDefaultWildCard, L";*.*"); // 全ファイル表示
-		} else {
+		}
+		else {
 			//「新規以外から保存時は全ファイル表示」オプション
 			if (GetDllShareData().m_Common.m_sFile.m_bNoFilterSaveFile)
 				wcscat(szDefaultWildCard, L";*.*"); // 全ファイル表示
@@ -338,9 +342,11 @@ bool CDocFileOperation::DoSaveFlow(SSaveInfo *pSaveInfo)
 
 		//結果
 		eSaveResult = SAVED_OK; //###仮
-	} catch (CFlowInterruption) {
+	}
+	catch (CFlowInterruption) {
 		eSaveResult = SAVED_INTERRUPT;
-	} catch (...) {
+	}
+	catch (...) {
 		//予期せぬ例外が発生した場合も NotifyFinalSave は必ず呼ぶ！
 		m_pcDocRef->NotifyFinalSave(SAVED_FAILURE);
 		throw;

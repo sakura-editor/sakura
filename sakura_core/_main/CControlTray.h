@@ -41,8 +41,7 @@ class CPropertyManager;
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class CControlTray
-{
+class CControlTray {
 public:
 	/*
 	||  Constructors
@@ -60,17 +59,17 @@ public:
 	void	OnDestroy(void); /* WM_DESTROY 処理 */							  // 2006.07.09 ryoji
 	int		CreatePopUpMenu_L(void); /* ポップアップメニュー(トレイ左ボタン) */
 	int		CreatePopUpMenu_R(void); /* ポップアップメニュー(トレイ右ボタン) */
-	void	CreateAccelTbl(void);	 // アクセラレータテーブル作成
-	void	DeleteAccelTbl(void);	 // アクセラレータテーブル破棄
+	void	CreateAccelTbl(void);	// アクセラレータテーブル作成
+	void	DeleteAccelTbl(void);	// アクセラレータテーブル破棄
 
 	//ウィンドウ管理
 	static bool OpenNewEditor(		 //!< 新規編集ウィンドウの追加 ver 0
-		HINSTANCE		 hInstance,	 //!< [in] インスタンスID (実は未使用)
+		HINSTANCE		 hInstance,  //!< [in] インスタンスID (実は未使用)
 		HWND			 hWndParent, //!< [in] 親ウィンドウハンドル．エラーメッセージ表示用
-		const SLoadInfo &sLoadInfo,	 //!< [in]
-		const WCHAR *	 szCmdLineOption = NULL,  //!< [in] 追加のコマンドラインオプション
+		const SLoadInfo &sLoadInfo,  //!< [in]
+		const WCHAR *	szCmdLineOption = NULL,  //!< [in] 追加のコマンドラインオプション
 		bool			 sync			 = false, //!< [in] trueなら新規エディタの起動まで待機する
-		const WCHAR *	 pszCurDir		 = NULL,  //!< [in] 新規エディタのカレントディレクトリ
+		const WCHAR *	pszCurDir		 = NULL,  //!< [in] 新規エディタのカレントディレクトリ
 		bool			 bNewWindow		 = false  //!< [in] 新規エディタをウインドウで開く
 	);
 	static bool OpenNewEditor2( //!< 新規編集ウィンドウの追加 ver 1
@@ -80,8 +79,8 @@ public:
 	static void ActivePrevWindow(HWND hwndParent);
 
 	static BOOL CloseAllEditor(BOOL bCheckConfirm, HWND hWndFrom, BOOL bExit, int nGroup);
-		/* すべてのウィンドウを閉じる */ // Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
-										 // // 2006.12.25, 2007.02.13 ryoji 引数追加
+	/* すべてのウィンドウを閉じる */ // Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
+									 // // 2006.12.25, 2007.02.13 ryoji 引数追加
 	static void TerminateApplication(HWND hWndFrom); /* サクラエディタの全終了 */ // 2006.12.25 ryoji 引数追加
 
 public:

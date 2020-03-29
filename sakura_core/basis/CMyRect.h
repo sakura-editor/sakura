@@ -27,8 +27,7 @@
 #include "CMyPoint.h"
 #include <Windows.h> //RECT
 
-class CMyRect : public RECT
-{
+class CMyRect : public RECT {
 public:
 	//コンストラクタ・デストラクタ
 	CMyRect() { SetLTRB(0, 0, 0, 0); }
@@ -45,14 +44,14 @@ public:
 	void SetLTRB(int l, int t, int r, int b)
 	{
 		left   = l;
-		top	   = t;
+		top	= t;
 		right  = r;
 		bottom = b;
 	}
 	void SetXYWH(int x, int y, int w, int h)
 	{
 		left   = x;
-		top	   = y;
+		top	= y;
 		right  = x + w;
 		bottom = y + h;
 	}
@@ -61,7 +60,7 @@ public:
 		int w = Width();
 		int h = Height();
 		left  = x;
-		top	  = y;
+		top   = y;
 		SetSize(w, h);
 	}
 	void SetSize(int w, int h)

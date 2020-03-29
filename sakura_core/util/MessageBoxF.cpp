@@ -54,9 +54,8 @@ int Wrap_MessageBox(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType)
 
 HWND GetMessageBoxOwner(HWND hwndOwner)
 {
-	if (hwndOwner == NULL && g_pcEditWnd) {
-		return g_pcEditWnd->GetHwnd();
-	} else {
+	if (hwndOwner == NULL && g_pcEditWnd) { return g_pcEditWnd->GetHwnd(); }
+	else {
 		return hwndOwner;
 	}
 }
@@ -67,10 +66,10 @@ HWND GetMessageBoxOwner(HWND hwndOwner)
 	引数で与えられた情報をダイアログボックスで表示する．
 	デバッグ目的以外でも使用できる．
 */
-int VMessageBoxF(HWND	  hwndOwner, //!< [in] オーナーウィンドウのハンドル
-				 UINT	  uType,	 //!< [in] メッセージボックスのスタイル (MessageBoxと同じ形式)
+int VMessageBoxF(HWND	 hwndOwner, //!< [in] オーナーウィンドウのハンドル
+				 UINT	 uType,	 //!< [in] メッセージボックスのスタイル (MessageBoxと同じ形式)
 				 LPCWSTR  lpCaption, //!< [in] メッセージボックスのタイトル
-				 LPCWSTR  lpText,	 //!< [in] 表示するテキスト。printf仕様の書式指定が可能。
+				 LPCWSTR  lpText,	//!< [in] 表示するテキスト。printf仕様の書式指定が可能。
 				 va_list &v			 //!< [in,out] 引数リスト
 )
 {

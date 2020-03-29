@@ -33,16 +33,14 @@
 #include <string>
 #include <vector>
 
-struct SProfileSettings
-{
+struct SProfileSettings {
 	WCHAR					  m_szDllLanguage[_MAX_PATH];
 	int						  m_nDefaultIndex;
 	std::vector<std::wstring> m_vProfList;
 	bool					  m_bDefaultSelect;
 };
 
-class CDlgProfileMgr final : public CDialog
-{
+class CDlgProfileMgr final : public CDialog {
 public:
 	/*
 	||  Constructors
@@ -57,10 +55,10 @@ protected:
 	BOOL	OnBnClicked(int wID) override;
 	INT_PTR DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam) override;
 
-	void   SetData() override;	   /* ダイアログデータの設定 */
+	void   SetData() override;	 /* ダイアログデータの設定 */
 	void   SetData(int nSelIndex); /* ダイアログデータの設定 */
-	int	   GetData() override;	   /* ダイアログデータの取得 */
-	int	   GetData(bool bStart);   /* ダイアログデータの取得 */
+	int	GetData() override;	 /* ダイアログデータの取得 */
+	int	GetData(bool bStart);   /* ダイアログデータの取得 */
 	LPVOID GetHelpIdTable(void) override;
 
 	void UpdateIni();

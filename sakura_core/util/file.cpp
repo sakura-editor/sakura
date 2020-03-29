@@ -55,7 +55,7 @@ bool fexist(LPCWSTR pszPath) { return _waccess(pszPath, 0) != -1; }
 	@date 2013.05.27 Moca 最長一致に変更
 */
 bool IsFilePath(const wchar_t *pLine, //!< [in]  探査対象文字列
-				size_t *pnBgn,	   //!< [out] 先頭offset。pLine + *pnBgnがファイル名先頭へのポインタ。
+				size_t *pnBgn,	 //!< [out] 先頭offset。pLine + *pnBgnがファイル名先頭へのポインタ。
 				size_t *pnPathLen, //!< [out] ファイル名の長さ
 				bool	bFileOnly  //!< [in]  true: ファイルのみ対象 / false: ディレクトリも対象
 )
@@ -150,7 +150,8 @@ bool IsLocalDrive(const WCHAR *pszDrive)
 		auto_sprintf(szDriveType, L"%c:\\", _totupper(pszDrive[0]));
 		lngRet = GetDriveType(szDriveType);
 		if (lngRet == DRIVE_REMOVABLE || lngRet == DRIVE_CDROM || lngRet == DRIVE_REMOTE) { return false; }
-	} else if (pszDrive[0] == L'\\' && pszDrive[1] == L'\\') {
+	}
+	else if (pszDrive[0] == L'\\' && pszDrive[1] == L'\\') {
 		// ネットワークパス	2010/5/27 Uchi
 		return false;
 	}
@@ -166,7 +167,8 @@ const WCHAR *GetFileTitlePointer(const WCHAR *pszPath)
 		if (*p == L'\\') {
 			pszName = p + 1;
 			p++;
-		} else {
+		}
+		else {
 			p++;
 		}
 	}
@@ -208,9 +210,8 @@ FILE *_wfopen_absini(LPCWSTR fname, LPCWSTR mode, BOOL bOrExedir /*=TRUE*/)
 /* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない */
 void CutLastYenFromDirectoryPath(WCHAR *pszFolder)
 {
-	if (3 == wcslen(pszFolder) && pszFolder[1] == L':' && pszFolder[2] == L'\\') {
-		/* ドライブ名:\ */
-	} else {
+	if (3 == wcslen(pszFolder) && pszFolder[1] == L':' && pszFolder[2] == L'\\') { /* ドライブ名:\ */ }
+	else {
 		/* フォルダの最後が半角かつ'\\'の場合は、取り除く */
 		int nFolderLen;
 		int nCharChars;
@@ -225,16 +226,15 @@ void CutLastYenFromDirectoryPath(WCHAR *pszFolder)
 
 void AddLastYenFromDirectoryPath(WCHAR *pszFolder)
 {
-	if (3 == wcslen(pszFolder) && pszFolder[1] == L':' && pszFolder[2] == L'\\') {
-		/* ドライブ名:\ */
-	} else {
+	if (3 == wcslen(pszFolder) && pszFolder[1] == L':' && pszFolder[2] == L'\\') { /* ドライブ名:\ */ }
+	else {
 		/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
 		int nFolderLen;
 		nFolderLen = wcslen(pszFolder);
 		if (0 < nFolderLen) {
-			if (L'\\' == pszFolder[nFolderLen - 1] || L'/' == pszFolder[nFolderLen - 1]) {
-			} else {
-				pszFolder[nFolderLen]	  = L'\\';
+			if (L'\\' == pszFolder[nFolderLen - 1] || L'/' == pszFolder[nFolderLen - 1]) {}
+			else {
+				pszFolder[nFolderLen]	 = L'\\';
 				pszFolder[nFolderLen + 1] = L'\0';
 			}
 		}
@@ -250,8 +250,8 @@ void SplitPath_FolderAndFile(const WCHAR *pszFilePath, WCHAR *pszFolder, WCHAR *
 	WCHAR szDir[_MAX_DIR];
 	WCHAR szFname[_MAX_FNAME];
 	WCHAR szExt[_MAX_EXT];
-	int	  nFolderLen;
-	int	  nCharChars;
+	int   nFolderLen;
+	int   nCharChars;
 	_wsplitpath(pszFilePath, szDrive, szDir, szFname, szExt);
 	if (NULL != pszFolder) {
 		wcscpy(pszFolder, szDrive);
@@ -306,7 +306,7 @@ BOOL GetLongFileName(const WCHAR *pszFilePathSrc, WCHAR *pszFilePathDes)
 {
 	WCHAR *name;
 	WCHAR  szBuf[_MAX_PATH + 1];
-	int	   len = ::GetFullPathName(pszFilePathSrc, _MAX_PATH, szBuf, &name);
+	int	len = ::GetFullPathName(pszFilePathSrc, _MAX_PATH, szBuf, &name);
 	if (len <= 0 || _MAX_PATH <= len) {
 		len = ::GetLongPathName(pszFilePathSrc, pszFilePathDes, _MAX_PATH);
 		if (len <= 0 || _MAX_PATH < len) { return FALSE; }
@@ -325,9 +325,8 @@ BOOL CheckEXT(const WCHAR *pszPath, const WCHAR *pszExt)
 	_wsplitpath(pszPath, NULL, NULL, NULL, szExt);
 	pszWork = szExt;
 	if (pszWork[0] == L'.') { pszWork++; }
-	if (0 == _wcsicmp(pszExt, pszWork)) {
-		return TRUE;
-	} else {
+	if (0 == _wcsicmp(pszExt, pszWork)) { return TRUE; }
+	else {
 		return FALSE;
 	}
 }
@@ -376,13 +375,15 @@ int CalcDirectoryDepth(const WCHAR *path //!< [in] 深さを調べたいファ�
 		&& path[2] == L'\\') {
 		//フルパス
 		--depth; // C:\ の \ はルートの記号なので階層深さではない
-	} else if (path[0] == L'\\') {
+	}
+	else if (path[0] == L'\\') {
 		if (path[1] == L'\\') {
 			//	ネットワークパス
 			//	先頭の2つはネットワークを表し，その次はホスト名なので
 			//	ディレクトリ階層とは無関係
 			depth -= 3;
-		} else {
+		}
+		else {
 			//	ドライブ名無しのフルパス
 			//	先頭の\は対象外
 			--depth;
@@ -400,7 +401,7 @@ int CalcDirectoryDepth(const WCHAR *path //!< [in] 深さを調べたいファ�
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 */
 void GetExedir(
-	LPWSTR	pDir, //!< [out] EXEファイルのあるディレクトリを返す場所．予め_MAX_PATHのバッファを用意しておくこと．
+	LPWSTR  pDir, //!< [out] EXEファイルのあるディレクトリを返す場所．予め_MAX_PATHのバッファを用意しておくこと．
 	LPCWSTR szFile //!< [in]  ディレクトリ名に結合するファイル名．
 )
 {
@@ -409,9 +410,8 @@ void GetExedir(
 	WCHAR szPath[_MAX_PATH];
 	// sakura.exe のパスを取得
 	::GetModuleFileName(NULL, szPath, _countof(szPath));
-	if (szFile == NULL) {
-		SplitPath_FolderAndFile(szPath, pDir, NULL);
-	} else {
+	if (szFile == NULL) { SplitPath_FolderAndFile(szPath, pDir, NULL); }
+	else {
 		WCHAR szDir[_MAX_PATH];
 		SplitPath_FolderAndFile(szPath, szDir, NULL);
 		auto_snprintf_s(pDir, _MAX_PATH, L"%s\\%s", szDir, szFile);
@@ -425,20 +425,19 @@ void GetExedir(
 	@date 2007.05.19 新規作成（GetExedirベース）
 */
 void GetInidir(
-	LPWSTR	pDir, //!< [out] INIファイルのあるディレクトリを返す場所．予め_MAX_PATHのバッファを用意しておくこと．
+	LPWSTR  pDir, //!< [out] INIファイルのあるディレクトリを返す場所．予め_MAX_PATHのバッファを用意しておくこと．
 	LPCWSTR szFile /*=NULL*/ //!< [in] ディレクトリ名に結合するファイル名．
 )
 {
 	if (pDir == NULL) return;
 
 	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
-	WCHAR	   szPath[_MAX_PATH];
+	WCHAR	  szPath[_MAX_PATH];
 
 	// sakura.ini のパスを取得
 	CFileNameManager::getInstance()->GetIniFileName(szPath, pszProfileName);
-	if (szFile == NULL) {
-		SplitPath_FolderAndFile(szPath, pDir, NULL);
-	} else {
+	if (szFile == NULL) { SplitPath_FolderAndFile(szPath, pDir, NULL); }
+	else {
 		WCHAR szDir[_MAX_PATH];
 		SplitPath_FolderAndFile(szPath, szDir, NULL);
 		auto_snprintf_s(pDir, _MAX_PATH, L"%s\\%s", szDir, szFile);
@@ -495,14 +494,13 @@ void GetInidirOrExedir(
 */
 LPCWSTR GetRelPath(LPCWSTR pszPath)
 {
-	WCHAR	szPath[_MAX_PATH + 1];
+	WCHAR   szPath[_MAX_PATH + 1];
 	LPCWSTR pszFileName = pszPath;
 
 	GetInidir(szPath, L"");
 	int nLen = wcslen(szPath);
-	if (0 == wmemicmp(szPath, pszPath, nLen)) {
-		pszFileName = pszPath + nLen;
-	} else {
+	if (0 == wmemicmp(szPath, pszPath, nLen)) { pszFileName = pszPath + nLen; }
+	else {
 		GetExedir(szPath, L"");
 		nLen = wcslen(szPath);
 		if (0 == wmemicmp(szPath, pszPath, nLen)) { pszFileName = pszPath + nLen; }
@@ -564,7 +562,7 @@ bool IsDirectory(LPCWSTR pszPath)
 	@return true: 成功, false: 失敗
 */
 bool GetLastWriteTimestamp(const WCHAR *pszFileName, //!< [in]  ファイルのパス
-						   CFileTime *	pcFileTime	 //!< [out] 更新日時を返す場所
+						   CFileTime *  pcFileTime   //!< [out] 更新日時を返す場所
 )
 {
 	// dwDesiredAccess に 0 を指定する事で読み取りアクセスが拒否されてしまうような場合でも、
@@ -670,15 +668,15 @@ wchar_t *wcsrchr2(const wchar_t *pt, const wchar_t ch1, const wchar_t ch2)
 }
 
 #define GetExistPath_NO_DriveLetter 0 /* ドライブレターが無い */
-#define GetExistPath_IV_Drive		1 /* ドライブが無効 */
-#define GetExistPath_AV_Drive		2 /* ドライブが有効 */
+#define GetExistPath_IV_Drive 1		  /* ドライブが無効 */
+#define GetExistPath_AV_Drive 2		  /* ドライブが有効 */
 
 void GetExistPath(char *po, const char *pi)
 {
 	char *pw, *ps;
-	int	  cnt;
+	int   cnt;
 	char  drv[4] = "_:\\";
-	int	  dl; /* ドライブの状態 */
+	int   dl; /* ドライブの状態 */
 
 	/* pi の内容を
 	/ ・ " を削除しつつ
@@ -717,7 +715,7 @@ void GetExistPath(char *po, const char *pi)
 	if ((*po == '\\') && (*(po + 1) == '\\')) ps += 2;
 
 	if (*ps == '\0') { /* 検索対象が空文字列なら */
-		*po = '\0';	   /* 返値文字列 = "";(空文字列) */
+		*po = '\0';	/* 返値文字列 = "";(空文字列) */
 		return;		   /*これ以上何もしない */
 	}
 
@@ -733,8 +731,9 @@ void GetExistPath(char *po, const char *pi)
 			if (dl == GetExistPath_AV_Drive) {
 				/* 先頭に有効なドライブのドライブレターがある。 */
 				*(po + 2) = '\0'; /* ドライブレター部の文字列のみ返す */
-			} else {			  /* 有効なパス部分が全く見つからなかった */
-				*po = '\0';		  /* 返値文字列 = "";(空文字列) */
+			}
+			else {			/* 有効なパス部分が全く見つからなかった */
+				*po = '\0'; /* 返値文字列 = "";(空文字列) */
 			}
 			break; /* ループを抜ける */
 		}
@@ -755,7 +754,7 @@ void GetExistPathW(wchar_t *po, const wchar_t *pi)
 {
 	wchar_t *pw, *ps;
 	int		 cnt;
-	wchar_t	 drv[4] = L"_:\\";
+	wchar_t  drv[4] = L"_:\\";
 	int		 dl; /* ドライブの状態 */
 
 	/* pi の内容を
@@ -811,8 +810,9 @@ void GetExistPathW(wchar_t *po, const wchar_t *pi)
 			if (dl == GetExistPath_AV_Drive) {
 				/* 先頭に有効なドライブのドライブレターがある。 */
 				*(po + 2) = L'\0'; /* ドライブレター部の文字列のみ返す */
-			} else {			   /* 有効なパス部分が全く見つからなかった */
-				*po = L'\0';	   /* 返値文字列 = "";(空文字列) */
+			}
+			else {			 /* 有効なパス部分が全く見つからなかった */
+				*po = L'\0'; /* 返値文字列 = "";(空文字列) */
 			}
 			break; /* ループを抜ける */
 		}
@@ -834,12 +834,12 @@ void GetExistPathW(wchar_t *po, const wchar_t *pi)
 　 先頭部分に有効なパス名が存在しない場合、全てに空文字列が返る。 */
 void my_splitpath_w(const wchar_t *comln, wchar_t *drv, wchar_t *dir, wchar_t *fnm, wchar_t *ext)
 {
-	wchar_t	 ppp[_MAX_PATH]; /* パス格納（作業用） */
+	wchar_t  ppp[_MAX_PATH]; /* パス格納（作業用） */
 	wchar_t *pd;
 	wchar_t *pf;
 	wchar_t *pe;
-	wchar_t	 ch;
-	DWORD	 attr;
+	wchar_t  ch;
+	DWORD	attr;
 	int		 a_dir;
 
 	if (drv != NULL) *drv = L'\0';
@@ -872,7 +872,7 @@ void my_splitpath_w(const wchar_t *comln, wchar_t *drv, wchar_t *dir, wchar_t *f
 			/* ここまでで pf = ファイル名の先頭位置 */
 			pe = wcsrchr(pf, L'.'); /* 最末尾の '.' を探す。 */
 			if (pe != NULL) {		/* 見つかった(pe = L'.'の位置)*/
-				if (ext != NULL) {	/* 拡張子を返値として書き込む。 */
+				if (ext != NULL) {  /* 拡張子を返値として書き込む。 */
 					wcsncpy(ext, pe, _MAX_EXT - 1);
 					ext[_MAX_EXT - 1] = L'\0';
 				}
@@ -893,7 +893,7 @@ void my_splitpath_w(const wchar_t *comln, wchar_t *drv, wchar_t *dir, wchar_t *f
 			/* 文字列が空でなく、かつ、最後の文字が \ でなかったならば \ を追加。 */
 			if ((ch != L'\\') && (wcslen(ppp) < _MAX_PATH - 1)) {
 				*pf++ = L'\\';
-				*pf	  = L'\0';
+				*pf   = L'\0';
 			}
 
 			/* ディレクトリ名を返値として書き込む。 */
@@ -935,7 +935,8 @@ static void FileNameSepExt(const WCHAR *file, WCHAR *pszFile, WCHAR *pszExt)
 		wmemcpy(pszFile, file, p - file);
 		pszFile[p - file] = L'\0';
 		wcscpy(pszExt, p);
-	} else {
+	}
+	else {
 		wcscpy(pszFile, file);
 		pszExt[0] = L'\0';
 	}
@@ -978,19 +979,19 @@ int FileMatchScore(const WCHAR *file1, const WCHAR *file2)
 				int chars2 = (Int)CNativeW::GetSizeOfChar(file2, len2, m);
 				if (chars1 == chars2) {
 					if (chars1 == 1) {
-						if (skr_towlower(file1[pos1]) == skr_towlower(file2[m])) {
-							tmpScore += chars1;
-						} else {
-							break;
-						}
-					} else {
-						if (0 == wmemicmp(&file1[pos1], &file2[m], chars1)) {
-							tmpScore += chars1;
-						} else {
+						if (skr_towlower(file1[pos1]) == skr_towlower(file2[m])) { tmpScore += chars1; }
+						else {
 							break;
 						}
 					}
-				} else {
+					else {
+						if (0 == wmemicmp(&file1[pos1], &file2[m], chars1)) { tmpScore += chars1; }
+						else {
+							break;
+						}
+					}
+				}
+				else {
 					break;
 				}
 				m += t_max(1, chars1);
@@ -1010,7 +1011,7 @@ void GetStrTrancateWidth(WCHAR *dest, int nSize, const WCHAR *path, HDC hDC, int
 {
 	// できるだけ左側から表示
 	// \\server\dir...
-	const int	   nPathLen = wcslen(path);
+	const int	  nPathLen = wcslen(path);
 	CTextWidthCalc calc(hDC);
 	if (calc.GetTextWidth(path) <= nPxWidth) {
 		wcsncpy_s(dest, nSize, path, _TRUNCATE);
@@ -1045,7 +1046,7 @@ void GetShortViewPath(WCHAR *dest, int nSize, const WCHAR *path, HDC hDC, int nP
 {
 	int			   nLeft	  = 0; // 左側固定表示部分
 	int			   nSkipLevel = 1;
-	const int	   nPathLen	  = wcslen(path);
+	const int	  nPathLen   = wcslen(path);
 	CTextWidthCalc calc(hDC);
 	if (calc.GetTextWidth(path) <= nPxWidth) {
 		// 全部表示可能
@@ -1056,11 +1057,13 @@ void GetShortViewPath(WCHAR *dest, int nSize, const WCHAR *path, HDC hDC, int nP
 		if (path[2] == L'?' && path[4] == L'\\') {
 			// [\\?\A:\]
 			nLeft = 4;
-		} else {
-			nSkipLevel = 2; // [\\server\dir\] の2階層飛ばす
-			nLeft	   = 2;
 		}
-	} else {
+		else {
+			nSkipLevel = 2; // [\\server\dir\] の2階層飛ばす
+			nLeft	  = 2;
+		}
+	}
+	else {
 		// http://server/ とか ftp://server/ とかを保持
 		int nTop = 0;
 		while (path[nTop] != L'\0' && path[nTop] != L'/') {
@@ -1078,7 +1081,8 @@ void GetShortViewPath(WCHAR *dest, int nSize, const WCHAR *path, HDC hDC, int nP
 		}
 		if (path[nLeft] != L'\0') {
 			if (i + 1 < nSkipLevel) { nLeft++; }
-		} else {
+		}
+		else {
 			if (bFitMode) {
 				GetStrTrancateWidth(dest, nSize, path, hDC, nPxWidth);
 				return;
@@ -1115,7 +1119,8 @@ void GetShortViewPath(WCHAR *dest, int nSize, const WCHAR *path, HDC hDC, int nP
 				return;
 			}
 			nRight = nNext;
-		} else {
+		}
+		else {
 			break;
 		}
 	}
@@ -1146,8 +1151,8 @@ void GetShortViewPath(WCHAR *dest, int nSize, const WCHAR *path, HDC hDC, int nP
 			if (nLeft != nRight) {
 				strLeftFile += L"..."; // C:\...
 			}
-			int nExtWidth	   = calc.GetTextWidth(&path[nExtPos]);
-			int nLeftWidth	   = calc.GetTextWidth(strLeftFile.c_str());
+			int nExtWidth	  = calc.GetTextWidth(&path[nExtPos]);
+			int nLeftWidth	 = calc.GetTextWidth(strLeftFile.c_str());
 			int nFileNameWidth = nPxWidth - nLeftWidth - nExtWidth;
 			if (0 < nFileNameWidth) {
 				// 拡張子は省略しない(ファイルタイトルを省略)
@@ -1156,11 +1161,13 @@ void GetShortViewPath(WCHAR *dest, int nSize, const WCHAR *path, HDC hDC, int nP
 				int nExtLen = nPathLen - nExtPos;
 				GetStrTrancateWidth(dest, t_max(0, nSize - nExtLen), strLeftFile.c_str(), hDC, nPxWidth - nExtWidth);
 				wcscat_s(dest, nSize, &path[nExtPos + 1]); // 拡張子連結 C:\...\longf...ext
-			} else {
+			}
+			else {
 				// ファイル名が置けないくらい拡張子か左側が長い。パスの左側を優先して残す
 				GetStrTrancateWidth(dest, nSize, strTemp.c_str(), hDC, nPxWidth);
 			}
-		} else {
+		}
+		else {
 			// 拡張子はなかった。左側から残す
 			GetStrTrancateWidth(dest, nSize, strTemp.c_str(), hDC, nPxWidth);
 		}

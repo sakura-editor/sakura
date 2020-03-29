@@ -43,8 +43,7 @@ class CEditWnd;
 class CLayout;
 class CLayoutMgr;
 
-class CPrintPreview
-{
+class CPrintPreview {
 	/* メンバ関数宣言 */
 public:
 	/*
@@ -69,7 +68,7 @@ public:
 	void OnChangePrintSetting(void);
 	void OnPreviewGoPage(int nPage);									   /* プレビュー ページ指定 */
 	void OnPreviewGoPreviousPage() { OnPreviewGoPage(m_nCurPageNum - 1); } //	前のページへ
-	void OnPreviewGoNextPage() { OnPreviewGoPage(m_nCurPageNum + 1); }	   //	前のページへ
+	void OnPreviewGoNextPage() { OnPreviewGoPage(m_nCurPageNum + 1); }	 //	前のページへ
 	void OnPreviewGoDirectPage(void);
 	void OnPreviewZoom(BOOL bZoomUp);
 	void OnPrint(void); /* 印刷実行 */
@@ -100,13 +99,13 @@ public:
 	//	まずPrintPreviewBar_DlgProcにメッセージが届き、DispatchEvent_PPBに転送する仕組み
 	static INT_PTR CALLBACK PrintPreviewBar_DlgProc(HWND   hwndDlg, // handle to dialog box
 													UINT   uMsg,	// message
-													WPARAM wParam,	// first message parameter
-													LPARAM lParam	// second message parameter
+													WPARAM wParam,  // first message parameter
+													LPARAM lParam   // second message parameter
 	);
-	INT_PTR					DispatchEvent_PPB(HWND	 hwndDlg, // handle to dialog box
-											  UINT	 uMsg,	  // message
+	INT_PTR					DispatchEvent_PPB(HWND   hwndDlg, // handle to dialog box
+											  UINT   uMsg,	// message
 											  WPARAM wParam,  // first message parameter
-											  LPARAM lParam	  // second message parameter
+											  LPARAM lParam   // second message parameter
 					);
 
 protected:
@@ -125,7 +124,7 @@ protected:
 	CColorStrategy *Print_DrawLine(HDC			  hdc,
 								   POINT		  ptDraw, //!< 描画座標。HDC内部単位。
 								   const wchar_t *pLine, int nDocLineLen, int nLineStart, int nLineLen,
-								   CLayoutInt	   nIndent, //!< 折り返しインデント桁数 // 2006.08.14 Moca
+								   CLayoutInt	  nIndent, //!< 折り返しインデント桁数 // 2006.08.14 Moca
 								   const CLayout * pcLayout		  = NULL, //!< 色付用Layout
 								   CColorStrategy *pStrategyStart = NULL);
 
@@ -133,7 +132,7 @@ protected:
 	void Print_DrawBlock(HDC			hdc,
 						 POINT			ptDraw, //!< 描画座標。HDC内部単位。
 						 const wchar_t *pPhysicalLine, int nBlockLen,
-						 int			nKind,	  //< 0:半角, 1:全角
+						 int			nKind,	//< 0:半角, 1:全角
 						 const CLayout *pcLayout, //!< 色設定用Layout
 						 int nColorIndex, int nBgnPhysical, CLayoutInt nLayoutX, int nDx, const int *pDxArray);
 
@@ -148,7 +147,7 @@ protected:
 
 public:
 	//	フォント列挙
-	static int CALLBACK MyEnumFontFamProc(ENUMLOGFONT *	 pelf,		// pointer to logical-font data
+	static int CALLBACK MyEnumFontFamProc(ENUMLOGFONT *  pelf,		// pointer to logical-font data
 										  NEWTEXTMETRIC *pntm,		// pointer to physical-font data
 										  int			 nFontType, // type of font
 										  LPARAM		 lParam		// address of application-defined data
@@ -159,13 +158,13 @@ public:
 	*/
 	void SetPrintSetting(PRINTSETTING *pPrintSetting)
 	{
-		m_sPrintSetting	   = *pPrintSetting;
-		m_pPrintSetting	   = &m_sPrintSetting;
+		m_sPrintSetting	= *pPrintSetting;
+		m_pPrintSetting	= &m_sPrintSetting;
 		m_pPrintSettingOrg = pPrintSetting;
 	}
 	BOOL GetDefaultPrinterInfo() { return m_cPrint.GetDefaultPrinter(&m_pPrintSetting->m_mdmDevMode); }
-	int	 GetCurPageNum() { return m_nCurPageNum; } /* 現在のページ */
-	int	 GetAllPageNum() { return m_nAllPageNum; } /* 現在のページ */
+	int  GetCurPageNum() { return m_nCurPageNum; } /* 現在のページ */
+	int  GetAllPageNum() { return m_nAllPageNum; } /* 現在のページ */
 
 	/*
 	||	ヘッダ・フッタ
@@ -188,20 +187,20 @@ protected:
 	HDC		m_hdcCompatDC;		//!< 再描画用コンパチブルDC
 	HBITMAP m_hbmpCompatBMP;	//!< 再描画用メモリBMP
 	HBITMAP m_hbmpCompatBMPOld; //!< 再描画用メモリBMP(OLD)
-	int		m_nbmpCompatScale;	//!< BMPの画面の10(COMPAT_BMP_BASE)ピクセル幅あたりのBMPのピクセル幅
+	int		m_nbmpCompatScale;  //!< BMPの画面の10(COMPAT_BMP_BASE)ピクセル幅あたりのBMPのピクセル幅
 
 	/*	コントロール制御用	*/
 	//	操作バー
 	HWND m_hwndPrintPreviewBar; /* 印刷プレビュー 操作バー */
 	//	スクロールバー
-	int	 m_nPreviewVScrollPos; /* 印刷プレビュー：スクロール位置縦 */
-	int	 m_nPreviewHScrollPos; /* 印刷プレビュー：スクロール位置横 */
+	int  m_nPreviewVScrollPos; /* 印刷プレビュー：スクロール位置縦 */
+	int  m_nPreviewHScrollPos; /* 印刷プレビュー：スクロール位置横 */
 	BOOL m_SCROLLBAR_HORZ;
 	BOOL m_SCROLLBAR_VERT;
 	HWND m_hwndVScrollBar; /* 垂直スクロールバーウィンドウハンドル */
 	HWND m_hwndHScrollBar; /* 水平スクロールバーウィンドウハンドル */
 	//	サイズボックス
-	HWND m_hwndSizeBox;	   /* サイズボックスウィンドウハンドル */
+	HWND m_hwndSizeBox;	/* サイズボックスウィンドウハンドル */
 	BOOL m_SizeBoxCanMove; /* サイズボックスウィンドウハンドルを動かせるかどうか */
 
 	//	表示
@@ -211,35 +210,35 @@ protected:
 	int		  m_nPreview_ViewWidth;		  /* 印刷プレビュー：ビュー幅(ピクセル) */
 	int		  m_nPreview_ViewHeight;	  /* 印刷プレビュー：ビュー高さ(ピクセル) */
 	int		  m_nPreview_ViewMarginLeft;  /* 印刷プレビュー：ビュー左端と用紙の間隔(1/10mm単位) */
-	int		  m_nPreview_ViewMarginTop;	  /* 印刷プレビュー：ビュー左端と用紙の間隔(1/10mm単位) */
-	short	  m_nPreview_PaperAllWidth;	  /* 用紙幅(1/10mm単位) */
-	short	  m_nPreview_PaperAllHeight;  /* 用紙高さ(1/10mm単位) */
-	short	  m_nPreview_PaperWidth;	  /* 用紙印刷有効幅(1/10mm単位) */
-	short	  m_nPreview_PaperHeight;	  /* 用紙印刷有効高さ(1/10mm単位) */
-	short	  m_nPreview_PaperOffsetLeft; /* 用紙余白左端(1/10mm単位) */
-	short	  m_nPreview_PaperOffsetTop;  /* 用紙余白上端(1/10mm単位) */
-	CKetaXInt m_bPreview_EnableColumns;	  /* 印字可能桁数/ページ */
-	int		  m_bPreview_EnableLines;	  /* 印字可能行数/ページ */
+	int		  m_nPreview_ViewMarginTop;   /* 印刷プレビュー：ビュー左端と用紙の間隔(1/10mm単位) */
+	short	 m_nPreview_PaperAllWidth;   /* 用紙幅(1/10mm単位) */
+	short	 m_nPreview_PaperAllHeight;  /* 用紙高さ(1/10mm単位) */
+	short	 m_nPreview_PaperWidth;	  /* 用紙印刷有効幅(1/10mm単位) */
+	short	 m_nPreview_PaperHeight;	 /* 用紙印刷有効高さ(1/10mm単位) */
+	short	 m_nPreview_PaperOffsetLeft; /* 用紙余白左端(1/10mm単位) */
+	short	 m_nPreview_PaperOffsetTop;  /* 用紙余白上端(1/10mm単位) */
+	CKetaXInt m_bPreview_EnableColumns;   /* 印字可能桁数/ページ */
+	int		  m_bPreview_EnableLines;	 /* 印字可能行数/ページ */
 	int		  m_nPreview_LineNumberColumns; /* 行番号エリアの幅（文字数） */
 	WORD	  m_nAllPageNum;				/* 全ページ数 */
 	WORD	  m_nCurPageNum;				/* 現在のページ */
 
-	PRINTSETTING *m_pPrintSetting;	  /* 現在の印刷設定(キャッシュへのポインタ) */
+	PRINTSETTING *m_pPrintSetting;	/* 現在の印刷設定(キャッシュへのポインタ) */
 	PRINTSETTING *m_pPrintSettingOrg; /* 現在の印刷設定(共有データ) */
-	PRINTSETTING  m_sPrintSetting;	  /* 現在の印刷設定(キャッシュ) */
-	LOGFONT		  m_lfPreviewHan;	  /* プレビュー用フォント */
-	LOGFONT		  m_lfPreviewZen;	  /* プレビュー用フォント */
+	PRINTSETTING  m_sPrintSetting;	/* 現在の印刷設定(キャッシュ) */
+	LOGFONT		  m_lfPreviewHan;	 /* プレビュー用フォント */
+	LOGFONT		  m_lfPreviewZen;	 /* プレビュー用フォント */
 
-	HFONT m_hFontHan;	 // 印刷用半角フォントハンドル
-	HFONT m_hFontHan_b;	 // 印刷用半角フォントハンドル 太字
-	HFONT m_hFontHan_u;	 // 印刷用半角フォントハンドル 下線
+	HFONT m_hFontHan;	// 印刷用半角フォントハンドル
+	HFONT m_hFontHan_b;  // 印刷用半角フォントハンドル 太字
+	HFONT m_hFontHan_u;  // 印刷用半角フォントハンドル 下線
 	HFONT m_hFontHan_bu; // 印刷用半角フォントハンドル 太字、下線
-	HFONT m_hFontZen;	 // 印刷用全角フォントハンドル
-	HFONT m_hFontZen_b;	 // 印刷用全角フォントハンドル 太字
-	HFONT m_hFontZen_u;	 // 印刷用全角フォントハンドル 下線
+	HFONT m_hFontZen;	// 印刷用全角フォントハンドル
+	HFONT m_hFontZen_b;  // 印刷用全角フォントハンドル 太字
+	HFONT m_hFontZen_u;  // 印刷用全角フォントハンドル 下線
 	HFONT m_hFontZen_bu; // 印刷用全角フォントハンドル 太字、下線
-	int	  m_nAscentHan;	 // 半角文字のアセント（文字高/基準ラインからの高さ）
-	int	  m_nAscentZen;	 // 全角文字のアセント（文字高/基準ラインからの高さ）
+	int   m_nAscentHan;  // 半角文字のアセント（文字高/基準ラインからの高さ）
+	int   m_nAscentZen;  // 全角文字のアセント（文字高/基準ラインからの高さ）
 
 	CColorStrategyPool *m_pool; // 色定義管理情報
 

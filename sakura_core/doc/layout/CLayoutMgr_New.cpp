@@ -76,9 +76,8 @@ bool CLayoutMgr::IsKinsokuPosHead(CLayoutInt nRest,		 //!< [in] 行の残り文�
 		if (nCharKetas == 2 && nCharKetas2 == 2) { return true; }
 		break;
 	case 2: // 2文字前
-		if (nCharKetas == 2) {
-			return true;
-		} else if (nCharKetas == 1 && nCharKetas2 == 2) {
+		if (nCharKetas == 2) { return true; }
+		else if (nCharKetas == 1 && nCharKetas2 == 2) {
 			return true;
 		}
 		break;
@@ -108,7 +107,8 @@ bool CLayoutMgr::IsKinsokuPosTail(CLayoutInt nRest,		 //!< [in] 行の残り文�
 		if (nCharKetas == 2) {
 			// "（あ": "あ"で折り返しのとき
 			return true;
-		} else if (nCharKetas == 1 && nCharKetas2 == 2) {
+		}
+		else if (nCharKetas == 1 && nCharKetas2 == 2) {
 			// "(あ": "あ"の2バイト目で折り返しのとき
 			return true;
 		}
@@ -216,11 +216,13 @@ CLayoutInt CLayoutMgr::getIndentOffset_LeftSpace(CLayout *pLayoutPrev)
 			buf[it.getIndexDelta()] = L'\0';
 			if (NULL != wcsstr(szSpecialIndentChar, buf)) {
 				//	インデントのカウントを継続する
-			} else {
+			}
+			else {
 				nIpos = it.getColumn(); //	終了
 				break;
 			}
-		} else {
+		}
+		else {
 			nIpos = it.getColumn(); //	終了
 			break;
 		}
@@ -261,7 +263,7 @@ BOOL CLayoutMgr::CalculateTextWidth(BOOL bCalLineLen, CLayoutInt nStart, CLayout
 	BOOL	   bRet			  = FALSE;
 	BOOL	   bOnlyExpansion = TRUE; // 最大幅の拡大のみをチェックする
 	CLayoutInt nMaxLen		  = CLayoutInt(0);
-	CLayoutInt nMaxLineNum	  = CLayoutInt(0);
+	CLayoutInt nMaxLineNum	= CLayoutInt(0);
 
 	CLayoutInt nLines = GetLineCount(); // テキストのレイアウト行数
 
@@ -282,9 +284,8 @@ BOOL CLayoutMgr::CalculateTextWidth(BOOL bCalLineLen, CLayoutInt nStart, CLayout
 
 	// 算出開始レイアウト行を探す
 	// 2013.05.13 SearchLineByLayoutYを使う
-	if (nStart == 0) {
-		pLayout = m_pLayoutTop;
-	} else {
+	if (nStart == 0) { pLayout = m_pLayoutTop; }
+	else {
 		pLayout = SearchLineByLayoutY(nStart);
 	}
 #if 0
@@ -347,7 +348,8 @@ BOOL CLayoutMgr::CalculateTextWidth(BOOL bCalLineLen, CLayoutInt nStart, CLayout
 				bRet		 = TRUE;
 			}
 		}
-	} else if (Int(m_nTextWidth) && !Int(nLines)) {
+	}
+	else if (Int(m_nTextWidth) && !Int(nLines)) {
 		// 全削除されたら幅の記憶をクリア
 		m_nTextWidthMaxLine = 0;
 		m_nTextWidth		= 0;

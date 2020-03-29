@@ -41,7 +41,8 @@ CImageListMgr::CImageListMgr()
 	, m_cTrans(RGB(0, 0, 0))
 	, m_hIconBitmap(NULL)
 	, m_nIconCount(MAX_TOOLBAR_ICON_COUNT)
-{}
+{
+}
 
 /*!	領域を指定色で塗りつぶす
 
@@ -84,7 +85,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 
 	HBITMAP hRscbmp;		 //	リソースから読み込んだひとかたまりのBitmap
 	HBITMAP hFOldbmp = NULL; //	SetObjectで得られた1つ前のハンドルを保持する
-	HDC		dcFrom	 = 0;	 //	描画用
+	HDC		dcFrom   = 0;	//	描画用
 	int		nRetPos;		 //	後処理用
 
 	nRetPos = 0;
@@ -185,8 +186,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 /*! RGBQUADラッパー
  *  STLコンテナに入れられるよう == 演算子を実装したもの。
  */
-struct MyRGBQUAD : tagRGBQUAD
-{
+struct MyRGBQUAD : tagRGBQUAD {
 	using tagRGBQUAD::rgbBlue;
 	using tagRGBQUAD::rgbGreen;
 	using tagRGBQUAD::rgbRed;
@@ -218,8 +218,7 @@ struct MyRGBQUAD : tagRGBQUAD
 
 // HLS色情報タプル
 typedef std::tuple<double, double, double> _HlsTuple;
-enum
-{
+enum {
 	HLS_H,
 	HLS_S,
 	HLS_L,
@@ -238,13 +237,14 @@ _HlsTuple ToHLS(const COLORREF color)
 	auto   M   = MAX + MIN;
 	auto   m   = MAX - MIN;
 	double H;
-	if (MIN == MAX) {
-		H = std::numeric_limits<double>::infinity();
-	} else if (MIN == B) {
+	if (MIN == MAX) { H = std::numeric_limits<double>::infinity(); }
+	else if (MIN == B) {
 		H = 60. * (m == 0 ? 0 : ((G - R) / m)) + 60.;
-	} else if (MIN == R) {
+	}
+	else if (MIN == R) {
 		H = 60. * (m == 0 ? 0 : ((B - G) / m)) + 180.;
-	} else if (MIN == G) {
+	}
+	else if (MIN == G) {
 		H = 60. * (m == 0 ? 0 : ((R - B) / m)) + 300.;
 	}
 	auto L = M / 2.;
@@ -283,23 +283,28 @@ COLORREF FromHLS(const _HlsTuple &hls)
 		R = MAX;
 		G = MAX + (MAX - MIN) * H / 60;
 		B = MIN;
-	} else if (H < 120) {
+	}
+	else if (H < 120) {
 		R = MIN + (MAX - MIN) * (120 - H) / 60;
 		G = MAX;
 		B = MIN;
-	} else if (H < 180) {
+	}
+	else if (H < 180) {
 		R = MIN;
 		G = MAX;
 		B = MIN + (MAX - MIN) * (H - 120) / 60;
-	} else if (H < 240) {
+	}
+	else if (H < 240) {
 		R = MIN;
 		G = MIN + (MAX - MIN) * (240 - H) / 60;
 		B = MAX;
-	} else if (H < 300) {
+	}
+	else if (H < 300) {
 		R = MIN + (MAX - MIN) * (H - 240) / 60;
 		G = MIN;
 		B = MAX;
-	} else { // if ( H < 360 ) {
+	}
+	else { // if ( H < 360 ) {
 		R = MAX;
 		G = MIN;
 		B = MIN + (MAX - MIN) * (360 - H) / 60;
@@ -317,8 +322,8 @@ COLORREF FromHLS(const _HlsTuple &hls)
 void CImageListMgr::MyBitBlt(HDC drawdc, int nXDest, int nYDest, int nWidth, int nHeight, int nXSrc, int nYSrc) const
 {
 	// 仮想DCを生成してビットマップを展開する
-	const HBITMAP &bmpSrc	 = m_hIconBitmap;
-	HDC			   hdcSrc	 = ::CreateCompatibleDC(drawdc);
+	const HBITMAP &bmpSrc	= m_hIconBitmap;
+	HDC			   hdcSrc	= ::CreateCompatibleDC(drawdc);
 	HGDIOBJ		   bmpSrcOld = ::SelectObject(hdcSrc, bmpSrc);
 
 	// 透過色の変数名が分かりづらいので別名定義する
@@ -343,8 +348,8 @@ void CImageListMgr::MyBitBlt(HDC drawdc, int nXDest, int nYDest, int nWidth, int
 void CImageListMgr::MyDitherBlt(HDC drawdc, int nXDest, int nYDest, int nWidth, int nHeight, int nXSrc, int nYSrc) const
 {
 	// 仮想DCを生成してビットマップを展開する
-	const HBITMAP &bmpSrc	 = m_hIconBitmap;
-	HDC			   hdcSrc	 = ::CreateCompatibleDC(drawdc);
+	const HBITMAP &bmpSrc	= m_hIconBitmap;
+	HDC			   hdcSrc	= ::CreateCompatibleDC(drawdc);
 	HGDIOBJ		   bmpSrcOld = ::SelectObject(hdcSrc, bmpSrc);
 
 	// 作業DCを作成
@@ -360,30 +365,30 @@ void CImageListMgr::MyDitherBlt(HDC drawdc, int nXDest, int nYDest, int nWidth, 
 	bmih.biHeight		 = -nHeight; // top down
 	bmih.biPlanes		 = 1;
 	bmih.biBitCount		 = 32;
-	bmih.biCompression	 = BI_RGB;
+	bmih.biCompression   = BI_RGB;
 	const int lineStride = ((((bmih.biWidth * bmih.biBitCount) + 31) & ~31) / 8);
 	bmih.biSizeImage	 = lineStride * nHeight;
 	bmih.biXPelsPerMeter = 0;
 	bmih.biYPelsPerMeter = 0;
 	bmih.biClrUsed		 = 0;
-	bmih.biClrImportant	 = 0;
+	bmih.biClrImportant  = 0;
 	HBITMAP bmpWork		 = ::CreateDIBSection((HDC)0, &bmi, DIB_RGB_COLORS, (void **)&pBits, NULL, 0);
-	HGDIOBJ bmpWorkOld	 = ::SelectObject(hdcWork, bmpWork);
+	HGDIOBJ bmpWorkOld   = ::SelectObject(hdcWork, bmpWork);
 
 	// 作業DCに転送
 	::StretchBlt(hdcWork, 0, 0, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, cx(), cy(), SRCCOPY);
 
 	// ディザカラーを決める
 	// 淡色テキスト色が背景色と同じなら灰色に避ける、違うなら淡色テキストを使う。
-	COLORREF grayText	= ::GetSysColor(COLOR_GRAYTEXT);
+	COLORREF grayText   = ::GetSysColor(COLOR_GRAYTEXT);
 	COLORREF btnFace	= ::GetSysColor(COLOR_3DFACE);
-	COLORREF textColor	= grayText == btnFace ? RGB(0x80, 0x80, 0x80) : grayText;
+	COLORREF textColor  = grayText == btnFace ? RGB(0x80, 0x80, 0x80) : grayText;
 	auto	 textColorH = ToHLS(textColor);
-	double	 textColorL;
+	double   textColorL;
 	{
-		auto r	   = GetRValue(textColor);
-		auto g	   = GetGValue(textColor);
-		auto b	   = GetBValue(textColor);
+		auto r	 = GetRValue(textColor);
+		auto g	 = GetGValue(textColor);
+		auto b	 = GetBValue(textColor);
 		textColorL = (0.299 * r + 0.587 * g + 0.114 * b) / 255.0; //[0,1]
 	}
 	double textColorR = (1.0 - textColorL) / 255.0;
@@ -411,15 +416,15 @@ void CImageListMgr::MyDitherBlt(HDC drawdc, int nXDest, int nYDest, int nWidth, 
 			if (px == cTransparent) continue;
 
 			// ピクセル色をディザカラーに変換する
-			auto r	  = px.rgbRed;
-			auto g	  = px.rgbGreen;
-			auto b	  = px.rgbBlue;
+			auto r	= px.rgbRed;
+			auto g	= px.rgbGreen;
+			auto b	= px.rgbBlue;
 			auto mono = (77 * r + 150 * g + 29 * b) >> 8; //[0,255]
 
 			// ディザカラーを書き込む
-			px.rgbRed	= GetRValue(ditherColors[mono]);
+			px.rgbRed   = GetRValue(ditherColors[mono]);
 			px.rgbGreen = GetGValue(ditherColors[mono]);
-			px.rgbBlue	= GetBValue(ditherColors[mono]);
+			px.rgbBlue  = GetBValue(ditherColors[mono]);
 		}
 
 		pBits += lineStride;
@@ -463,7 +468,8 @@ bool CImageListMgr::DrawToolIcon(HDC drawdc, LONG x, LONG y, int imageNo, DWORD 
 
 	if ((fStyle & ILD_MASK) == ILD_MASK) {
 		MyDitherBlt(drawdc, x, y, cx, cy, (imageNo % MAX_X) * m_cx, (imageNo / MAX_X) * m_cy);
-	} else {
+	}
+	else {
 		MyBitBlt(drawdc, x, y, cx, cy, (imageNo % MAX_X) * m_cx, (imageNo / MAX_X) * m_cy);
 	}
 	return true;
@@ -494,7 +500,7 @@ int CImageListMgr::Add(const WCHAR *szPath)
 	int imageNo = m_nIconCount++;
 
 	// 仮想DCを生成して読込んだビットマップを展開する
-	HDC		hdcSrc	  = ::CreateCompatibleDC(NULL);
+	HDC		hdcSrc	= ::CreateCompatibleDC(NULL);
 	HGDIOBJ bmpSrcOld = ::SelectObject(hdcSrc, bmpSrc);
 
 	//取得した画像の(0,0)の色を背景色として使う
@@ -513,7 +519,7 @@ int CImageListMgr::Add(const WCHAR *szPath)
 			return -1;
 		}
 
-		nWidth	= di.dsBm.bmWidth;
+		nWidth  = di.dsBm.bmWidth;
 		nHeight = di.dsBm.bmHeight;
 		if (nWidth != nHeight) {
 			DEBUG_TRACE(L"tool bitmap size is unexpected.");
@@ -525,7 +531,7 @@ int CImageListMgr::Add(const WCHAR *szPath)
 	}
 
 	// 作業DCの内容を出力DCに転送
-	HDC		hdcDst	  = ::CreateCompatibleDC(NULL);
+	HDC		hdcDst	= ::CreateCompatibleDC(NULL);
 	HGDIOBJ hbmDstOld = ::SelectObject(hdcDst, m_hIconBitmap);
 	::TransparentBlt(hdcDst, (imageNo % MAX_X) * cx(), (imageNo / MAX_X) * cy(), cx(), cy(), hdcSrc, 0, 0, nWidth,
 					 nHeight, cTransParent);
@@ -565,13 +571,13 @@ HBITMAP CImageListMgr::ResizeToolIcons(HDC hdcSrc, HBITMAP &bmpSrc, int cols, in
 	// アイコンサイズが異なる場合、拡大縮小する
 	if (cx != cxSmIcon) {
 		// 作業DCを作成する
-		HDC		hdcWork	   = ::CreateCompatibleDC(hdcSrc);
-		HBITMAP bmpWork	   = ::CreateCompatibleBitmap(hdcSrc, cxSmIcon * cols, cySmIcon * rows);
+		HDC		hdcWork	= ::CreateCompatibleDC(hdcSrc);
+		HBITMAP bmpWork	= ::CreateCompatibleBitmap(hdcSrc, cxSmIcon * cols, cySmIcon * rows);
 		HGDIOBJ bmpWorkOld = ::SelectObject(hdcWork, bmpWork);
 
 		// 作業DCを透過色で塗りつぶす
 		{
-			HBRUSH	hBrush	  = ::CreateSolidBrush(m_cTrans);
+			HBRUSH  hBrush	= ::CreateSolidBrush(m_cTrans);
 			HGDIOBJ hBrushOld = ::SelectObject(hdcWork, hBrush);
 			::PatBlt(hdcWork, 0, 0, cxSmIcon * cols, cySmIcon * rows, PATCOPY);
 			::SelectObject(hdcWork, hBrushOld);
@@ -611,7 +617,7 @@ void CImageListMgr::Extend(bool bExtend)
 	int curY = m_nIconCount / MAX_X;
 	if (curY < MAX_Y) curY = MAX_Y;
 
-	HDC		hSrcDC	   = ::CreateCompatibleDC(0);
+	HDC		hSrcDC	 = ::CreateCompatibleDC(0);
 	HBITMAP hSrcBmpOld = (HBITMAP)::SelectObject(hSrcDC, m_hIconBitmap);
 
 	// 1行拡張したビットマップを作成

@@ -41,8 +41,7 @@
 
 	UxTheme コンポーネントの動的ロードをサポートするクラス
 */
-class CUxTheme : public TSingleton<CUxTheme>, public CDllImp
-{
+class CUxTheme : public TSingleton<CUxTheme>, public CDllImp {
 	friend class TSingleton<CUxTheme>;
 	CUxTheme();
 	virtual ~CUxTheme();
@@ -68,7 +67,7 @@ public:
 	// UxTheme API Wrapper Functions
 	BOOL	IsThemeActive(VOID);
 	HRESULT SetWindowTheme(HWND hwnd, LPCWSTR pszSubAppName, LPCWSTR pszSubIdList);
-	HTHEME	OpenThemeData(HWND hwnd, LPCWSTR pszClassList);
+	HTHEME  OpenThemeData(HWND hwnd, LPCWSTR pszClassList);
 	HRESULT DrawThemeBackground(HTHEME htheme, HDC hdc, int iPartId, int iStateId, RECT *prc, RECT *prcClip);
 	HRESULT DrawThemeParentBackground(HWND hwnd, HDC hdc, RECT *prc);
 	BOOL	IsThemeBackgroundPartiallyTransparent(HTHEME htheme, int iPartId, int iStateId);

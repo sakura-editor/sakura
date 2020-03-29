@@ -41,21 +41,20 @@
 typedef std::pair<LPWSTR, DWORD>	  PairGrepEnumItem;
 typedef std::vector<PairGrepEnumItem> VPGrepEnumItem;
 
-class CGrepEnumOptions
-{
+class CGrepEnumOptions {
 public:
 	CGrepEnumOptions()
 		: m_bIgnoreHidden(false)
 		, m_bIgnoreReadOnly(false)
 		, m_bIgnoreSystem(false)
-	{}
+	{
+	}
 	bool m_bIgnoreHidden;
 	bool m_bIgnoreReadOnly;
 	bool m_bIgnoreSystem;
 };
 
-class CGrepEnumFileBase
-{
+class CGrepEnumFileBase {
 private:
 	VPGrepEnumItem m_vpItems;
 
@@ -109,23 +108,24 @@ public:
 		int found = 0;
 
 		for (int i = 0; i < (int)vecKeys.size(); i++) {
-			int	   baseLen = wcslen(lpBaseFolder);
+			int	baseLen = wcslen(lpBaseFolder);
 			LPWSTR lpPath  = new WCHAR[baseLen + wcslen(vecKeys[i]) + 2];
 			if (NULL == lpPath) break;
 			wcscpy(lpPath, lpBaseFolder);
 			wcscpy(lpPath + baseLen, L"\\");
 			wcscpy(lpPath + baseLen + 1, vecKeys[i]);
 			// vecKeys[ i ] ==> "subdir\*.h" 等の場合に後で(ファイル|フォルダ)名に "subdir\" を連結する
-			const WCHAR *keyDirYen	 = wcsrchr(vecKeys[i], L'\\');
+			const WCHAR *keyDirYen   = wcsrchr(vecKeys[i], L'\\');
 			const WCHAR *keyDirSlash = wcsrchr(vecKeys[i], L'/');
 			const WCHAR *keyDir;
-			if (keyDirYen == NULL) {
-				keyDir = keyDirSlash;
-			} else if (keyDirSlash == NULL) {
+			if (keyDirYen == NULL) { keyDir = keyDirSlash; }
+			else if (keyDirSlash == NULL) {
 				keyDir = keyDirYen;
-			} else if (keyDirYen < keyDirSlash) {
+			}
+			else if (keyDirYen < keyDirSlash) {
 				keyDir = keyDirSlash;
-			} else {
+			}
+			else {
 				keyDir = keyDirYen;
 			}
 			int nKeyDirLen = keyDir ? keyDir - vecKeys[i] + 1 : 0;
@@ -146,14 +146,15 @@ public:
 					wcscpy(lpFullPath + baseLen, L"\\");
 					wcscpy(lpFullPath + baseLen + 1, lpName);
 					if (IsValid(w32fd, lpName)) {
-						if (pExceptItems && pExceptItems->IsExist(lpFullPath)) {
-						} else {
+						if (pExceptItems && pExceptItems->IsExist(lpFullPath)) {}
+						else {
 							m_vpItems.push_back(PairGrepEnumItem(lpName, w32fd.nFileSizeLow));
 							found++; // 2011.11.19
 							if (pExceptItems && nKeyDirLen) {
 								// フォルダを含んだパスなら検索済みとして除外指定に追加する
 								pExceptItems->m_vpItems.push_back(PairGrepEnumItem(lpFullPath, w32fd.nFileSizeLow));
-							} else {
+							}
+							else {
 								delete[] lpFullPath;
 							}
 							continue;

@@ -85,9 +85,8 @@ int CJis::_JisToUni_block(const unsigned char *pSrc, const int nSrcLen, unsigned
 	switch (eMyJisesc) {
 	case MYJISESC_ASCII7:
 		for (; pr < pSrc + nSrcLen; ++pr) {
-			if (IsAscii7(static_cast<const char>(*pr))) {
-				pw[0] = *pr;
-			} else {
+			if (IsAscii7(static_cast<const char>(*pr))) { pw[0] = *pr; }
+			else {
 				berror = true;
 				pw[0]  = L'?';
 			}
@@ -103,7 +102,8 @@ int CJis::_JisToUni_block(const unsigned char *pSrc, const int nSrcLen, unsigned
 				nret = MyMultiByteToWideChar_JP(&chankata, 1, pw, false);
 				if (nret < 1) { nret = 1; }
 				pw += nret;
-			} else {
+			}
+			else {
 				berror = true;
 				pw[0]  = L'?';
 				++pw;
@@ -128,13 +128,15 @@ int CJis::_JisToUni_block(const unsigned char *pSrc, const int nSrcLen, unsigned
 						nret   = 1;
 					}
 					pw += nret;
-				} else {
+				}
+				else {
 					// 変換に失敗。
 					berror = true;
 					pw[0]  = L'?';
 					++pw;
 				}
-			} else {
+			}
+			else {
 				berror = true;
 				pw[0]  = L'?';
 				++pw;
@@ -144,9 +146,8 @@ int CJis::_JisToUni_block(const unsigned char *pSrc, const int nSrcLen, unsigned
 	case MYJISESC_UNKNOWN:
 		berror = true;
 		for (; pr < pSrc + nSrcLen; ++pr) {
-			if (IsJis(static_cast<const char>(*pr))) {
-				pw[0] = *pr;
-			} else {
+			if (IsJis(static_cast<const char>(*pr))) { pw[0] = *pr; }
+			else {
 				pw[0] = L'?';
 			}
 			++pw;
@@ -184,7 +185,7 @@ int CJis::JisToUni(const char *pSrc, const int nSrcLen, wchar_t *pDst, bool *pbE
 	}
 
 	pr		= reinterpret_cast<const unsigned char *>(pSrc);
-	pr_end	= reinterpret_cast<const unsigned char *>(pSrc + nSrcLen);
+	pr_end  = reinterpret_cast<const unsigned char *>(pSrc + nSrcLen);
 	pw		= reinterpret_cast<unsigned short *>(pDst);
 	esctype = MYJISESC_ASCII7;
 
@@ -272,9 +273,8 @@ EConvertResult CJis::JISToUnicode(const CMemory &cSrc, CNativeW *pDstMem, bool b
 
 	delete[] pDst;
 
-	if (berror == false) {
-		return RESULT_COMPLETE;
-	} else {
+	if (berror == false) { return RESULT_COMPLETE; }
+	else {
 		return RESULT_LOSESOME;
 	}
 }
@@ -307,7 +307,8 @@ int CJis::_SjisToJis_char(const unsigned char *pSrc, unsigned char *pDst, ECharS
 			pDst[0] = static_cast<char>((ctemp & 0x0000ff00) >> 8);
 			pDst[1] = static_cast<char>(ctemp & 0x000000ff);
 			nret	= 2;
-		} else {
+		}
+		else {
 			// 変換に失敗
 			berror = true;
 			// '・'  0x2126(JIS) を出力
@@ -356,32 +357,37 @@ int CJis::UniToJis(const wchar_t *pSrc, const int nSrcLen, char *pDst, bool *pbE
 			if (echarset_cur == CHARSET_ASCII7) {
 				*pw = '?';
 				++pw;
-			} else if (echarset_cur == CHARSET_JIS_HANKATA) {
+			}
+			else if (echarset_cur == CHARSET_JIS_HANKATA) {
 				// '･' 0x25(JIS) を出力
 				*pw = 0x25;
 				++pw;
-			} else if (echarset_cur == CHARSET_JIS_ZENKAKU) {
+			}
+			else if (echarset_cur == CHARSET_JIS_ZENKAKU) {
 				// '・' 0x2126(JIS) を出力
 				pw[0] = 0x21;
 				pw[1] = 0x26;
 				pw += 2;
-			} else {
+			}
+			else {
 				// 保護コード
 				*pw = '?';
 				++pw;
 			}
 			pr += nclen;
-		} else {
+		}
+		else {
 			// 文字セットを確認
 			if (nlen == 1) {
-				if (IsAscii7(cbuf[0])) {
-					echarset = CHARSET_ASCII7;
-				} else {
+				if (IsAscii7(cbuf[0])) { echarset = CHARSET_ASCII7; }
+				else {
 					echarset = CHARSET_JIS_HANKATA;
 				}
-			} else if (nlen == 2) {
+			}
+			else if (nlen == 2) {
 				echarset = CHARSET_JIS_ZENKAKU;
-			} else {
+			}
+			else {
 				// エラー回避コード
 				echarset = CHARSET_ASCII7;
 				nlen	 = 1;
@@ -433,7 +439,7 @@ EConvertResult CJis::UnicodeToJIS(const CNativeW &cSrc, CMemory *pDstMem)
 	bool berror = false;
 
 	// ソースを取得
-	const wchar_t *pSrc	   = cSrc.GetStringPtr();
+	const wchar_t *pSrc	= cSrc.GetStringPtr();
 	int			   nSrcLen = cSrc.GetStringLength();
 
 	// 必要なバッファ容量を確認してバッファを確保
@@ -448,9 +454,8 @@ EConvertResult CJis::UnicodeToJIS(const CNativeW &cSrc, CMemory *pDstMem)
 
 	delete[] pDst;
 
-	if (berror) {
-		return RESULT_LOSESOME;
-	} else {
+	if (berror) { return RESULT_LOSESOME; }
+	else {
 		return RESULT_COMPLETE;
 	}
 }
@@ -481,14 +486,14 @@ EConvertResult CJis::UnicodeToHex(const wchar_t *cSrc, const int iSLen, WCHAR *p
 	// Hex変換
 	bool bInEsc;
 	bInEsc = false;
-	pd	   = pDst;
+	pd	 = pDst;
 	for (i = cCharBuffer._GetMemory()->GetRawLength(), ps = (unsigned char *)cCharBuffer._GetMemory()->GetRawPtr();
 		 i > 0; i--, ps++) {
-		if (*ps == 0x1B) {
-			bInEsc = true;
-		} else if (bInEsc) {
+		if (*ps == 0x1B) { bInEsc = true; }
+		else if (bInEsc) {
 			if (*ps >= 'A' && *ps <= 'Z') { bInEsc = false; }
-		} else {
+		}
+		else {
 			auto_sprintf(pd, L"%02X", *ps);
 			pd += 2;
 		}

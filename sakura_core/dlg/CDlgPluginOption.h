@@ -51,8 +51,7 @@ static const wstring OPTION_TYPE_INT  = wstring(L"int");
 static const wstring OPTION_TYPE_SEL  = wstring(L"sel");
 static const wstring OPTION_TYPE_DIR  = wstring(L"dir");
 
-class CDlgPluginOption final : public CDialog
-{
+class CDlgPluginOption final : public CDialog {
 public:
 	/*
 	||  Constructors
@@ -78,10 +77,10 @@ protected:
 	LPVOID GetHelpIdTable(void) override;
 
 	void SetData(void) override; /* ダイアログデータの設定 */
-	int	 GetData(void) override; /* ダイアログデータの取得 */
+	int  GetData(void) override; /* ダイアログデータの取得 */
 
 	void ChangeListPosition(void); // 編集領域をリストビューに合せて切替える
-	void MoveFocusToEdit(void);	   // 編集領域にフォーカスを移す
+	void MoveFocusToEdit(void);	// 編集領域にフォーカスを移す
 	void SetToEdit(int iLine);
 	void SetFromEdit(int iLine);
 	void SelectEdit(int IDCenable);									 // 編集領域の切り替え
@@ -89,7 +88,7 @@ protected:
 	void SelectDirectory(int iLine);								 // ディレクトリを選択する
 
 private:
-	CPlugin *	 m_cPlugin;
+	CPlugin *	m_cPlugin;
 	CPropPlugin *m_cPropPlugin;
 	int			 m_ID;			// プラグイン番号（エディタがふる番号）
 	int			 m_Line;		// 現在編集中のオプション行番号

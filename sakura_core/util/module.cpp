@@ -38,9 +38,8 @@ void ChangeCurrentDirectoryToExeDir()
 	WCHAR szExeDir[_MAX_PATH];
 	szExeDir[0] = L'\0';
 	GetExedir(szExeDir, NULL);
-	if (szExeDir[0]) {
-		::SetCurrentDirectory(szExeDir);
-	} else {
+	if (szExeDir[0]) { ::SetCurrentDirectory(szExeDir); }
+	else {
 		// 移動できないときはSYSTEM32(9xではSYSTEM)に移動
 		szExeDir[0] = L'\0';
 		int n		= ::GetSystemDirectory(szExeDir, _MAX_PATH);
@@ -70,7 +69,7 @@ HMODULE LoadLibraryExedir(LPCWSTR pszDll)
 DWORD GetDllVersion(LPCWSTR lpszDllName)
 {
 	HINSTANCE hinstDll;
-	DWORD	  dwVersion = 0;
+	DWORD	 dwVersion = 0;
 
 	/* For security purposes, LoadLibrary should be provided with a
 	   fully-qualified path to the DLL. The lpszDllName variable should be
@@ -140,8 +139,7 @@ HICON GetAppIcon(HINSTANCE hInst, int nResource, const WCHAR *szFile, bool bSmal
 	return hIcon;
 }
 
-struct VS_VERSION_INFO_HEAD
-{
+struct VS_VERSION_INFO_HEAD {
 	WORD			 wLength;
 	WORD			 wValueLength;
 	WORD			 bText;
@@ -161,7 +159,7 @@ void GetAppVersionInfo(HINSTANCE hInstance, int nVersionResourceID, DWORD *pdwPr
 	/* リソースから製品バージョンの取得 */
 	*pdwProductVersionMS	 = 0;
 	*pdwProductVersionLS	 = 0;
-	static bool	 bLoad		 = false;
+	static bool  bLoad		 = false;
 	static DWORD dwVersionMS = 0;
 	static DWORD dwVersionLS = 0;
 	if (hInstance == NULL && bLoad) {

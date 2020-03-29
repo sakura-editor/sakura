@@ -27,8 +27,7 @@
 #include "doc/CDocListener.h"
 #include "util/design_template.h"
 
-class CCodeChecker : public CDocListenerEx, public TSingleton<CCodeChecker>
-{
+class CCodeChecker : public CDocListenerEx, public TSingleton<CCodeChecker> {
 	friend class TSingleton<CCodeChecker>;
 	CCodeChecker() {}
 

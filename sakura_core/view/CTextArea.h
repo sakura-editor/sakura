@@ -29,8 +29,7 @@ class CEditView;
 class CLayoutMgr;
 #include "DispPos.h"
 
-class CTextArea
-{
+class CTextArea {
 public:
 	CTextArea(CEditView *pEditView);
 	virtual ~CTextArea();
@@ -66,9 +65,9 @@ public:
 	int GetAreaWidth() const { return m_nViewCx; }
 	int GetAreaHeight() const { return m_nViewCy; }
 
-	int	 GetTopYohaku() const { return m_nTopYohaku; }
+	int  GetTopYohaku() const { return m_nTopYohaku; }
 	void SetTopYohaku(int nPixel) { m_nTopYohaku = nPixel; }
-	int	 GetLeftYohaku() const { return m_nLeftYohaku; }
+	int  GetLeftYohaku() const { return m_nLeftYohaku; }
 	void SetLeftYohaku(int nPixel) { m_nLeftYohaku = nPixel; }
 	// 行番号の幅(余白なし)
 	int GetLineNumberWidth() const { return m_nViewAlignLeft - m_nLeftYohaku; }
@@ -76,7 +75,7 @@ public:
 	//! クライアントサイズ更新
 	void TextArea_OnSize(const CMySize &sizeClient, //!< ウィンドウのクライアントサイズ
 						 int			nCxVScroll, //!< 垂直スクロールバーの横幅
-						 int			nCyHScroll	//!< 水平スクロールバーの縦幅
+						 int			nCyHScroll  //!< 水平スクロールバーの縦幅
 	);
 
 	//! 行番号表示に必要な幅を設定
@@ -134,7 +133,7 @@ public:
 	bool TrimRectByArea(RECT *rc) const;
 	bool GenerateClipRect(RECT *rc, const DispPos &sPos, CLayoutXInt nColumns) const;
 	bool GenerateClipRectRight(RECT *rc, const DispPos &sPos) const; //!< 右端まで全部
-	bool GenerateClipRectLine(RECT *rc, const DispPos &sPos) const;	 //!< 行全部
+	bool GenerateClipRectLine(RECT *rc, const DispPos &sPos) const;  //!< 行全部
 
 	void GenerateTopRect(RECT *rc, CLayoutInt nLineCount) const;
 	void GenerateBottomRect(RECT *rc, CLayoutInt nLineCount) const;

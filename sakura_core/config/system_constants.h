@@ -40,7 +40,7 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //数値定数の文字列化 2009.02.11 ryoji
 #define _NUM_TO_STR(n) #n
-#define NUM_TO_STR(n)  _NUM_TO_STR(n)
+#define NUM_TO_STR(n) _NUM_TO_STR(n)
 
 //! デバッグ判別、定数サフィックス 2007.09.20 kobake
 #ifdef _DEBUG
@@ -551,7 +551,7 @@
    2008.03.02
 
 */
-#define N_SHAREDATA_VERSION	  176
+#define N_SHAREDATA_VERSION 176
 #define STR_SHAREDATA_VERSION NUM_TO_STR(N_SHAREDATA_VERSION)
 #define GSTR_SHAREDATA                                                                                                 \
 	(L"SakuraShareData" _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
@@ -621,12 +621,12 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //	Dec. 2, 2002 genta
 //	固定ファイル名
-#define FN_APP_ICON	 L"my_appicon.ico"
+#define FN_APP_ICON L"my_appicon.ico"
 #define FN_GREP_ICON L"my_grepicon.ico"
-#define FN_TOOL_BMP	 L"my_icons.bmp"
+#define FN_TOOL_BMP L"my_icons.bmp"
 
 //	標準アプリケーションアイコンリソース名
-#define ICON_DEFAULT_APP  IDI_ICON_STD
+#define ICON_DEFAULT_APP IDI_ICON_STD
 #define ICON_DEFAULT_GREP IDI_ICON_GREP
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -640,8 +640,8 @@ const int LINEREADBUFSIZE = 10240; //!< ファイルから1行分データを読
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 #define _SHIFT 0x00000001
-#define _CTRL  0x00000002
-#define _ALT   0x00000004
+#define _CTRL 0x00000002
+#define _ALT 0x00000004
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        メッセージ                           //
@@ -659,13 +659,12 @@ const int LINEREADBUFSIZE = 10240; //!< ファイルから1行分データを読
 // wParam:PM_CHANGESETTING_TYPEのとき、タイプ別設定Index。それ以外なし。
 #define MYWM_CHANGESETTING (WM_APP + 1520)
 //! MYWM_CHANGESETTINGメッセージのlParam
-enum e_PM_CHANGESETTING_SELECT
-{
+enum e_PM_CHANGESETTING_SELECT {
 	PM_CHANGESETTING_ALL	  = 0, //!< 全部
-	PM_CHANGESETTING_FONT	  = 1, //!< フォント変更
+	PM_CHANGESETTING_FONT	 = 1, //!< フォント変更
 	PM_CHANGESETTING_FONTSIZE = 2, //!< フォントサイズ変更(WPARAM タイプ別番号。-1で共通設定変更)
-	PM_CHANGESETTING_TYPE	  = 3, //!< タイプ別設定
-	PM_CHANGESETTING_TYPE2	  = 4, //!< タイプ別設定(再読み込みなし)
+	PM_CHANGESETTING_TYPE	 = 3, //!< タイプ別設定
+	PM_CHANGESETTING_TYPE2	= 4, //!< タイプ別設定(再読み込みなし)
 	PM_PRINTSETTING			  = 5, //!< プリント設定
 };
 //!座標位置情報の保存
@@ -676,8 +675,7 @@ enum e_PM_CHANGESETTING_SELECT
 
 /*! トレイからエディタへの終了要求 */
 #define MYWM_CLOSE (WM_APP + 200)
-enum e_PM_CLOSE_WPARAM
-{
+enum e_PM_CLOSE_WPARAM {
 	PM_CLOSE_EXIT		   = 1, //!< 全終了
 	PM_CLOSE_GREPNOCONFIRM = 2, //!< Grepで終了確認しない
 };
@@ -689,10 +687,9 @@ enum e_PM_CLOSE_WPARAM
 /*! カーソル位置変更通知 */
 #define MYWM_SETCARETPOS (WM_APP + 204)
 //! MYWM_SETCARETPOSメッセージのlParam
-enum e_PM_SETCARETPOS_SELECTSTATE
-{
-	PM_SETCARETPOS_NOSELECT	  = 0, //!< 選択解除
-	PM_SETCARETPOS_SELECT	  = 1, //!< 選択開始・変更
+enum e_PM_SETCARETPOS_SELECTSTATE {
+	PM_SETCARETPOS_NOSELECT   = 0, //!< 選択解除
+	PM_SETCARETPOS_SELECT	 = 1, //!< 選択開始・変更
 	PM_SETCARETPOS_KEEPSELECT = 2, //!< 現在の選択状態を保って移動
 };
 

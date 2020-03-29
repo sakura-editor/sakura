@@ -35,11 +35,11 @@
 const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
 	EOL_NONE, // == 0
 	EOL_CRLF, // == 2
-	EOL_LF,	  // == 1
-	EOL_CR,	  // == 1
+	EOL_LF,   // == 1
+	EOL_CR,   // == 1
 	EOL_NEL,  // == 1
-	EOL_LS,	  // == 1
-	EOL_PS	  // == 1
+	EOL_LS,   // == 1
+	EOL_PS	// == 1
 };
 
 //-----------------------------------------------
@@ -49,12 +49,11 @@ const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
 const SEolDefinition g_aEolTable[] = {
 	{L"改行無", L"", "", 0},	 {L"CRLF", L"\x0d\x0a", "\x0d\x0a", 2},
 	{L"LF", L"\x0a", "\x0a", 1}, {L"CR", L"\x0d", "\x0d", 1},
-	{L"NEL", L"\x85", "", 1},	 {L"LS", L"\u2028", "", 1},
+	{L"NEL", L"\x85", "", 1},	{L"LS", L"\u2028", "", 1},
 	{L"PS", L"\u2029", "", 1},
 };
 
-struct SEolDefinitionForUniFile
-{
+struct SEolDefinitionForUniFile {
 	const char *m_szDataW;
 	const char *m_szDataWB;
 	int			m_nLen;
@@ -88,7 +87,8 @@ static const SEolDefinitionForUniFile g_aEolTable_uni_file[] = {
 	@param nDataLen 調査対象文字列の長さ
 	@return 改行コードの種類。終端子が見つからなかったときはEOL_NONEを返す。
 */
-template<class T> EEolType GetEOLType(const T *pszData, int nDataLen)
+template<class T>
+EEolType GetEOLType(const T *pszData, int nDataLen)
 {
 	for (int i = 1; i < EOL_TYPE_NUM; ++i) {
 		if (g_aEolTable[i].StartsWith(pszData, nDataLen)) return gm_pnEolTypeArr[i];

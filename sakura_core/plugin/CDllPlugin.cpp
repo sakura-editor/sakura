@@ -69,7 +69,7 @@ bool CDllPlugin::ReadPluginDef(CDataProfile *cProfile, CDataProfile *cProfileMla
 // プラグ実行
 bool CDllPlugin::InvokePlug(CEditView *view, CPlug &plug_raw, CWSHIfObj::List &params)
 {
-	wstring	   dllPath = GetFilePath(m_sDllName.c_str());
+	wstring	dllPath = GetFilePath(m_sDllName.c_str());
 	EDllResult resInit = InitDll(dllPath.c_str());
 	if (resInit != DLL_SUCCESS) {
 		::MYMESSAGEBOX(view->m_hwndParent, MB_OK, LS(STR_DLLPLG_TITLE), LS(STR_DLLPLG_INIT_ERR1), dllPath.c_str(),

@@ -47,8 +47,7 @@ class CSortedTagJumpList;
 	ダイレクトタグジャンプで複数の候補がある場合及び
 	キーワード指定タグジャンプのためのダイアログボックス制御
 */
-class CDlgTagJumpList final : public CDialog
-{
+class CDlgTagJumpList final : public CDialog {
 public:
 	/*
 	||  Constructors
@@ -66,7 +65,7 @@ public:
 	////登録
 	void SetFileName(const WCHAR *pszFileName);
 	void SetKeyword(const wchar_t *pszKeyword); //	@@ 2005.03.31 MIK
-	int	 FindDirectTagJump();
+	int  FindDirectTagJump();
 
 	bool GetSelectedFullPathAndLine(WCHAR *fullPath, int count, int *lineNum, int *depth);
 
@@ -89,34 +88,32 @@ protected:
 	LPVOID GetHelpIdTable(void) override;
 
 private:
-	struct STagFindState
-	{
-		int	  m_nDepth;
-		int	  m_nMatchAll;
-		int	  m_nNextMode;
-		int	  m_nLoop;
+	struct STagFindState {
+		int   m_nDepth;
+		int   m_nMatchAll;
+		int   m_nNextMode;
+		int   m_nLoop;
 		bool  m_bJumpPath;
 		WCHAR m_szCurPath[1024];
 	};
 
-	struct STagSearchRule
-	{
+	struct STagSearchRule {
 		bool bTagJumpExactMatch;
 		bool bTagJumpPartialMatch;
 		bool bTagJumpICase;
-		int	 baseDirId;
-		int	 nTop;
+		int  baseDirId;
+		int  nTop;
 	};
 
 	void StopTimer(void);
 	void StartTimer(int nDelay);
 
 	void SetData(void) override; /* ダイアログデータの設定 */
-	int	 GetData(void) override; /* ダイアログデータの取得 */
+	int  GetData(void) override; /* ダイアログデータの取得 */
 	void UpdateData(bool bInit); //	@@ 2005.03.31 MIK
 
 	WCHAR *GetNameByType(const WCHAR type, const WCHAR *name); //タイプを名前に変換する。
-	int	   SearchBestTag(void); //もっとも確率の高そうなインデックスを返す。
+	int	SearchBestTag(void); //もっとも確率の高そうなインデックスを返す。
 	//	@@ 2005.03.31 MIK
 	const WCHAR *GetFileName(void);
 	const WCHAR *GetFilePath(void) { return m_pszFileName != NULL ? m_pszFileName : L""; }
@@ -145,23 +142,23 @@ private:
 	static WCHAR *CopyDirDir(WCHAR *dest, const WCHAR *target, const WCHAR *base);
 
 public:
-	static int	  CalcMaxUpDirectory(const WCHAR *p);
+	static int	CalcMaxUpDirectory(const WCHAR *p);
 	static WCHAR *DirUp(WCHAR *dir);
 
 private:
 	bool m_bDirectTagJump;
 
-	int					m_nIndex;	   //!< 選択された要素番号
+	int					m_nIndex;	  //!< 選択された要素番号
 	WCHAR *				m_pszFileName; //!< 編集中のファイル名
 	wchar_t *			m_pszKeyword;  //!< キーワード(DoModalのlParam!=0を指定した場合に指定できる)
 	int					m_nLoop;	   //!< さかのぼれる階層数
-	CSortedTagJumpList *m_pcList;	   //!< タグジャンプ情報
-	UINT_PTR			m_nTimerId;	   //!< タイマ番号
+	CSortedTagJumpList *m_pcList;	  //!< タグジャンプ情報
+	UINT_PTR			m_nTimerId;	//!< タイマ番号
 	BOOL				m_bTagJumpICase;		//!< 大文字小文字を同一視
 	BOOL				m_bTagJumpPartialMatch; //!< 文字列の途中にマッチ
-	BOOL				m_bTagJumpExactMatch;	//!< 完全一致(画面無し)
+	BOOL				m_bTagJumpExactMatch;   //!< 完全一致(画面無し)
 
-	int	 m_nTop;	  //!< ページめくりの表示の先頭(0開始)
+	int  m_nTop;	  //!< ページめくりの表示の先頭(0開始)
 	bool m_bNextItem; //!< まだ次にヒットするものがある
 
 	// 絞り込み検索用

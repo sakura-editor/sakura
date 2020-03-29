@@ -29,8 +29,7 @@ class CEditView;
 #include "basis/SakuraBasis.h"
 #include "doc/layout/CLayout.h"
 
-class CViewSelect
-{
+class CViewSelect {
 public:
 	CEditView *		 GetEditView() { return m_pcEditView; }
 	const CEditView *GetEditView() const { return m_pcEditView; }
@@ -60,17 +59,17 @@ public:
 	//!単語選択開始
 	void SelectBeginWord()
 	{
-		m_bBeginSelect	   = true;	/* 範囲選択中 */
+		m_bBeginSelect	 = true;  /* 範囲選択中 */
 		m_bBeginBoxSelect  = false; /* 矩形範囲選択中でない */
 		m_bBeginLineSelect = false; /* 行単位選択中 */
-		m_bBeginWordSelect = true;	/* 単語単位選択中 */
+		m_bBeginWordSelect = true;  /* 単語単位選択中 */
 	}
 
 	//!矩形選択開始
 	void SelectBeginBox()
 	{
-		m_bBeginSelect	   = true;	/* 範囲選択中 */
-		m_bBeginBoxSelect  = true;	/* 矩形範囲選択中 */
+		m_bBeginSelect	 = true;  /* 範囲選択中 */
+		m_bBeginBoxSelect  = true;  /* 矩形範囲選択中 */
 		m_bBeginLineSelect = false; /* 行単位選択中 */
 		m_bBeginWordSelect = false; /* 単語単位選択中 */
 	}
@@ -99,8 +98,8 @@ private:
 	void DrawSelectAreaLine(		  //!< 指定行の選択領域の描画
 		HDC					hdc,	  //!< [in] 描画領域のDevice Context Handle
 		CLayoutInt			nLineNum, //!< [in] 描画対象行(レイアウト行)
-		const CLayoutRange &sRange	  //!< [in] 選択範囲(レイアウト単位)
-	) const;
+		const CLayoutRange &sRange	//!< [in] 選択範囲(レイアウト単位)
+		) const;
 
 public:
 	void GetSelectAreaLineFromRange(CLayoutRange &ret, CLayoutInt nLineNum, const CLayout *pcLayout,
@@ -128,7 +127,7 @@ public:
 		return m_sSelect.IsValid();
 		//		return 0!=(
 		//			~((DWORD)(m_sSelect.nLineFrom | m_sSelect.nLineTo | m_sSelect.nColumnFrom | m_sSelect.nColumnTo)) >>
-		//31
+		// 31
 		//			);
 	}
 
@@ -158,8 +157,8 @@ public:
 private:
 	bool m_bBeginSelect;		 // 範囲選択中
 	bool m_bBeginBoxSelect;		 // 矩形範囲選択中
-	bool m_bSelectAreaChanging;	 // 選択範囲変更中
-	int	 m_nLastSelectedByteLen; // 前回選択時の選択バイト数
+	bool m_bSelectAreaChanging;  // 選択範囲変更中
+	int  m_nLastSelectedByteLen; // 前回選択時の選択バイト数
 
 public:
 	bool m_bBeginLineSelect; // 行単位選択中
@@ -168,7 +167,7 @@ public:
 	// 選択範囲を保持するための変数群
 	// これらはすべて折り返し行と、折り返し桁を保持している。
 	CLayoutRange m_sSelectBgn; //範囲選択(原点)
-	CLayoutRange m_sSelect;	   //範囲選択
+	CLayoutRange m_sSelect;	//範囲選択
 	CLayoutRange m_sSelectOld; //範囲選択Old
 
 	CMyPoint m_ptMouseRollPosOld; // マウス範囲選択前回位置(XY座標)

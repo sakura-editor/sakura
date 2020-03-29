@@ -27,7 +27,7 @@
 #pragma once
 
 BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData);
-	/* WinHelp のかわりに HtmlHelp を呼び出す */ // 2006.07.22 ryoji
+/* WinHelp のかわりに HtmlHelp を呼び出す */ // 2006.07.22 ryoji
 
 /* Shell Interface系(?) */
 BOOL SelectDir(HWND hWnd, const WCHAR *pszTitle, const WCHAR *pszInitFolder,

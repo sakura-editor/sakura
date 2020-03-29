@@ -89,7 +89,8 @@ COpeBlk *COpeBuf::DoUndo(bool *pbModified)
 	m_nCurrentPointer--;
 	if (m_nCurrentPointer == m_nNoModifiedIndex) { /* 無変更な状態になった位置 */
 		*pbModified = false;
-	} else {
+	}
+	else {
 		*pbModified = true;
 	}
 	return m_vCOpeBlkArr[m_nCurrentPointer];
@@ -105,7 +106,8 @@ COpeBlk *COpeBuf::DoRedo(bool *pbModified)
 	m_nCurrentPointer++;
 	if (m_nCurrentPointer == m_nNoModifiedIndex) { /* 無変更な状態になった位置 */
 		*pbModified = false;
-	} else {
+	}
+	else {
 		*pbModified = true;
 	}
 	return pcOpeBlk;

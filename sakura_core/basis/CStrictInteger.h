@@ -36,8 +36,8 @@
 #define STRICTINT_OTHER_TYPE_AS_INT(TYPE)                                                                              \
 	Me & operator+=(TYPE rhs) { return operator+=((int)rhs); }                                                         \
 	Me & operator-=(TYPE rhs) { return operator-=((int)rhs); }                                                         \
-	Me	 operator+(TYPE rhs) const { return operator+((int)rhs); }                                                     \
-	Me	 operator-(TYPE rhs) const { return operator-((int)rhs); }                                                     \
+	Me   operator+(TYPE rhs) const { return operator+((int)rhs); }                                                     \
+	Me   operator-(TYPE rhs) const { return operator-((int)rhs); }                                                     \
 	bool operator<(TYPE rhs) const { return operator<((int)rhs); }                                                     \
 	bool operator<=(TYPE rhs) const { return operator<=((int)rhs); }                                                   \
 	bool operator>(TYPE rhs) const { return operator>((int)rhs); }                                                     \
@@ -48,31 +48,29 @@
 //! 暗黙の変換を許さない、整数クラス
 template<int  STRICT_ID,		 //!< 型を分けるための数値。0 or 1。
 		 bool ALLOW_CMP_INT,	 //!< intとの比較を許すかどうか
-		 bool ALLOW_ADDSUB_INT,	 //!< intとの加減算を許すかどうか
-		 bool ALLOW_CAST_INT,	 //!< intへの暗黙の変換を許すかどうか
+		 bool ALLOW_ADDSUB_INT,  //!< intとの加減算を許すかどうか
+		 bool ALLOW_CAST_INT,	//!< intへの暗黙の変換を許すかどうか
 		 bool ALLOW_ASSIGNOP_INT //!< intの代入を許すかどうか
 		 >
-class CStrictInteger
-{
+class CStrictInteger {
 private:
 	typedef CStrictInteger<STRICT_ID, ALLOW_CMP_INT, ALLOW_ADDSUB_INT, ALLOW_CAST_INT, ALLOW_ASSIGNOP_INT> Me;
 	static const int NOT_STRICT_ID = (1 - STRICT_ID);
 
 private:
 	//!ゴミクラス
-	class CDummy
-	{
+	class CDummy {
 	public:
 		CDummy();
 		CDummy(int);
 	};
-	template<bool t, bool = false> struct ChooseIntOrDummy
-	{
+	template<bool t, bool = false>
+	struct ChooseIntOrDummy {
 		typedef int Type;
 	};
 	// クラス内でテンプレートの特殊化をするとG++に怒られるので部分特殊化にする
-	template<bool _> struct ChooseIntOrDummy<false, _>
-	{
+	template<bool _>
+	struct ChooseIntOrDummy<false, _> {
 		typedef CDummy Type;
 	};
 
@@ -149,9 +147,9 @@ public:
 	}
 
 	//算術演算子３
-	int operator++() { return ++m_value; }	  //++c;
+	int operator++() { return ++m_value; }	//++c;
 	int operator++(int) { return m_value++; } // c++;
-	int operator--() { return --m_value; }	  //--c;
+	int operator--() { return --m_value; }	//--c;
 	int operator--(int) { return m_value--; } // c--;
 
 	//算術演算子４
@@ -173,7 +171,7 @@ public:
 	bool operator!=(const Me &rhs) const { return m_value != rhs.m_value; }
 
 	//関数
-	int	 GetValue() const { return m_value; }
+	int  GetValue() const { return m_value; }
 	void SetValue(int n) { m_value = n; }
 
 	// Int(CLaxInt)への変換は常に許す
@@ -186,13 +184,16 @@ public:
 
 	// -- -- -- -- 別種のCStrictIntegerとの演算は絶対許さん(やりたきゃintでも介してください) -- -- -- -- //
 private:
-	template<bool B0, bool B1, bool B2, bool B3> Me &operator+=(const CStrictInteger<NOT_STRICT_ID, B0, B1, B2, B3> &);
-	template<bool B0, bool B1, bool B2, bool B3> Me &operator-=(const CStrictInteger<NOT_STRICT_ID, B0, B1, B2, B3> &);
+	template<bool B0, bool B1, bool B2, bool B3>
+	Me &operator+=(const CStrictInteger<NOT_STRICT_ID, B0, B1, B2, B3> &);
+	template<bool B0, bool B1, bool B2, bool B3>
+	Me &operator-=(const CStrictInteger<NOT_STRICT_ID, B0, B1, B2, B3> &);
 	template<bool B0, bool B1, bool B2, bool B3>
 	Me operator+(const CStrictInteger<NOT_STRICT_ID, B0, B1, B2, B3> &) const;
 	template<bool B0, bool B1, bool B2, bool B3>
 	Me operator-(const CStrictInteger<NOT_STRICT_ID, B0, B1, B2, B3> &) const;
-	template<bool B0, bool B1, bool B2, bool B3> Me &operator=(const CStrictInteger<NOT_STRICT_ID, B0, B1, B2, B3> &);
+	template<bool B0, bool B1, bool B2, bool B3>
+	Me &operator=(const CStrictInteger<NOT_STRICT_ID, B0, B1, B2, B3> &);
 	template<bool B0, bool B1, bool B2, bool B3>
 	bool operator<(const CStrictInteger<NOT_STRICT_ID, B0, B1, B2, B3> &) const;
 	template<bool B0, bool B1, bool B2, bool B3>
@@ -237,12 +238,12 @@ private:
 	//※ALLOW_ADDSUB_INTがfalseの場合は、privateメンバを置くことにより、「明示的に」加減算を禁止する。
 	Me &operator+=(NotAddsubIntegerType rhs);
 	Me &operator-=(NotAddsubIntegerType rhs);
-	Me	operator+(NotAddsubIntegerType rhs) const;
-	Me	operator-(NotAddsubIntegerType rhs) const;
+	Me  operator+(NotAddsubIntegerType rhs) const;
+	Me  operator-(NotAddsubIntegerType rhs) const;
 
 	// -- -- -- -- ALLOW_CMP_INTがtrueの場合は、intとの比較を許す -- -- -- -- //
 private:
-	typedef typename ChooseIntOrDummy<ALLOW_CMP_INT>::Type	CmpIntegerType;
+	typedef typename ChooseIntOrDummy<ALLOW_CMP_INT>::Type  CmpIntegerType;
 	typedef typename ChooseIntOrDummy<!ALLOW_CMP_INT>::Type NotCmpIntegerType;
 
 public:
@@ -264,7 +265,7 @@ private:
 
 	// -- -- -- -- ALLOW_CAST_INTがtrueの場合は、intへの暗黙の変換を許す -- -- -- -- //
 private:
-	typedef typename ChooseIntOrDummy<ALLOW_CAST_INT>::Type	 CastIntegerType;
+	typedef typename ChooseIntOrDummy<ALLOW_CAST_INT>::Type  CastIntegerType;
 	typedef typename ChooseIntOrDummy<!ALLOW_CAST_INT>::Type NotCastIntegerType;
 
 public:
@@ -276,7 +277,7 @@ private:
 
 	// -- -- -- -- ALLOW_ASSIGNOP_INTがtrueの場合は、intの代入を許す -- -- -- -- //
 private:
-	typedef typename ChooseIntOrDummy<ALLOW_ASSIGNOP_INT>::Type	 AssignIntegerType;
+	typedef typename ChooseIntOrDummy<ALLOW_ASSIGNOP_INT>::Type  AssignIntegerType;
 	typedef typename ChooseIntOrDummy<!ALLOW_ASSIGNOP_INT>::Type NotAssignIntegerType;
 
 public:

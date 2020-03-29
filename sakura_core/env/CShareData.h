@@ -54,8 +54,7 @@ class CMutex;
 
 	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 */
-class CShareData : public TSingleton<CShareData>
-{
+class CShareData : public TSingleton<CShareData> {
 	friend class TSingleton<CShareData>;
 	CShareData();
 	~CShareData();
@@ -70,7 +69,7 @@ public:
 	// MRU系
 	BOOL IsPathOpened(const WCHAR *pszPath, HWND *phwndOwner); /* 指定ファイルが開かれているか調べる */
 	BOOL ActiveAlreadyOpenedWindow(const WCHAR *pszPath, HWND *phwndOwner, ECodeType nCharCode);
-		/* 指定ファイルが開かれているか調べつつ、多重オープン時の文字コード衝突も確認 */ // 2007.03.16
+	/* 指定ファイルが開かれているか調べつつ、多重オープン時の文字コード衝突も確認 */ // 2007.03.16
 
 	//デバッグ  今は主にマクロ・外部コマンド実行用
 	void TraceOut(LPCWSTR lpFmt, ...); /* アウトプットウィンドウに出力(printfフォーマット) */

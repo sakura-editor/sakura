@@ -26,8 +26,7 @@
 
 #include "view/colors/CColorStrategy.h"
 
-class CColor_Select final : public CColorStrategy
-{
+class CColor_Select final : public CColorStrategy {
 public:
 	EColorIndexType GetStrategyColor() const override { return COLORIDX_SELECT; }
 	//色替え
@@ -47,8 +46,7 @@ private:
 	CLogicInt  m_nSelectEnd;
 };
 
-class CColor_Found final : public CColorStrategy
-{
+class CColor_Found final : public CColorStrategy {
 public:
 	CColor_Found();
 	EColorIndexType GetStrategyColor() const override

@@ -26,8 +26,7 @@
 
 #include "view/colors/CColorStrategy.h"
 
-class CColor_KeywordSet final : public CColorStrategy
-{
+class CColor_KeywordSet final : public CColorStrategy {
 public:
 	CColor_KeywordSet();
 	EColorIndexType GetStrategyColor() const override { return (EColorIndexType)(COLORIDX_KEYWORD1 + m_nKeywordIndex); }

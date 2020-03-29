@@ -31,8 +31,7 @@
 typedef StaticString<WCHAR, _MAX_PATH> CCurDirString;
 
 //! コマンドの履歴を管理 (RECENT_FOR_CUR_DIR)
-class CRecentCurDir final : public CRecentImp<CCurDirString, LPCWSTR>
-{
+class CRecentCurDir final : public CRecentImp<CCurDirString, LPCWSTR> {
 public:
 	//生成
 	CRecentCurDir();

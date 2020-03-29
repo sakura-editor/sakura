@@ -4,7 +4,7 @@
 #include "CEol.h"
 #include "charset/CCodeFactory.h"
 #include "charset/CShiftJis.h" // move from CCodeMediator.h	2010/6/14 Uchi
-#include "charset/CUtf8.h"	   // move from CCodeMediator.h	2010/6/14 Uchi
+#include "charset/CUtf8.h"	 // move from CCodeMediator.h	2010/6/14 Uchi
 #include "util/file.h"		   // _IS_REL_PATH
 #include "util/module.h"
 
@@ -29,7 +29,8 @@ CTextInputStream::CTextInputStream(const WCHAR *pszPath)
 
 		// UTF-8じゃなければ、ファイルポインタを元に戻す
 		if (!m_bIsUtf8) { fseek(GetFp(), 0, SEEK_SET); }
-	} else {
+	}
+	else {
 		m_bIsUtf8 = false;
 	}
 }
@@ -65,9 +66,7 @@ wstring CTextInputStream::ReadLineW()
 	}
 
 	// UTF-8 → UNICODE
-	if (m_bIsUtf8) {
-		CUtf8::UTF8ToUnicode(*(line._GetMemory()), &line);
-	}
+	if (m_bIsUtf8) { CUtf8::UTF8ToUnicode(*(line._GetMemory()), &line); }
 	// Shift_JIS → UNICODE
 	else {
 		CShiftJis::SJISToUnicode(*(line._GetMemory()), &line);
@@ -95,7 +94,7 @@ CTextOutputStream::CTextOutputStream(const WCHAR *pszPath, ECodeType eCodeType, 
 CTextOutputStream::~CTextOutputStream() { delete m_pcCodeBase; }
 
 void CTextOutputStream::WriteString(const wchar_t *szData, //!< 書き込む文字列
-									int			   nLen	   //!< 書き込む文字列長。-1を渡すと自動計算。
+									int			   nLen	//!< 書き込む文字列長。-1を渡すと自動計算。
 )
 {
 	//$$メモ: 文字変換時にいちいちコピーを作ってるので効率が悪い。後々効率改善予定。
@@ -103,7 +102,7 @@ void CTextOutputStream::WriteString(const wchar_t *szData, //!< 書き込む文�
 	int nDataLen = nLen;
 	if (nDataLen < 0) nDataLen = wcslen(szData);
 	const wchar_t *pData = szData;
-	const wchar_t *pEnd	 = szData + nDataLen;
+	const wchar_t *pEnd  = szData + nDataLen;
 
 	// 1行毎にカキコ。"\n"は"\r\n"に変換しながら出力。ただし、"\r\n"は"\r\r\n"に変換しない。
 	const wchar_t *p = pData;
@@ -123,7 +122,7 @@ void CTextOutputStream::WriteString(const wchar_t *szData, //!< 書き込む文�
 		if (lf) {
 			//\nの前まで(p～lf)出力
 			CNativeW cSrc(p, lf - p);
-			CMemory	 cDst;
+			CMemory  cDst;
 			m_pcCodeBase->UnicodeToCode(cSrc, &cDst); //コード変換
 			fwrite(cDst.GetRawPtr(), 1, cDst.GetRawLength(), GetFp());
 
@@ -134,10 +133,11 @@ void CTextOutputStream::WriteString(const wchar_t *szData, //!< 書き込む文�
 
 			//次へ
 			p = lf + 1;
-		} else {
+		}
+		else {
 			//残りぜんぶ出力
 			CNativeW cSrc(p, pEnd - p);
-			CMemory	 cDst;
+			CMemory  cDst;
 			m_pcCodeBase->UnicodeToCode(cSrc, &cDst); //コード変換
 			fwrite(cDst.GetRawPtr(), 1, cDst.GetRawLength(), GetFp());
 			break;
@@ -177,4 +177,5 @@ static const WCHAR *_Resolve(const WCHAR *fname, bool bOrExedir)
 
 CTextInputStream_AbsIni::CTextInputStream_AbsIni(const WCHAR *fname, bool bOrExedir)
 	: CTextInputStream(_Resolve(fname, bOrExedir))
-{}
+{
+}

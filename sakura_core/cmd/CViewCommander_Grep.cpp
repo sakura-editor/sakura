@@ -74,7 +74,7 @@ void CViewCommander::Command_GREP(void)
 		// 2011.01.23 Grepタイプ別適用
 		if (!GetDocument()->m_cDocEditor.IsModified() && GetDocument()->m_cDocLineMgr.GetLineCount() == 0) {
 			CTypeConfig			   cTypeGrep = CDocTypeManager().GetDocumentTypeOfExt(L"grepout");
-			const STypeConfigMini *pConfig	 = NULL;
+			const STypeConfigMini *pConfig   = NULL;
 			if (!CDocTypeManager().GetTypeConfigMini(cTypeGrep, &pConfig)) { return; }
 			GetDocument()->m_cDocType.SetDocumentTypeIdx(pConfig->m_id);
 			GetDocument()->m_cDocType.LockDocumentType();
@@ -92,7 +92,8 @@ void CViewCommander::Command_GREP(void)
 
 		//プラグイン：DocumentOpenイベント実行
 		CJackManager::getInstance()->InvokePlugins(PP_DOCUMENT_OPEN, &GetEditWindow()->GetActiveView());
-	} else {
+	}
+	else {
 		// 編集ウィンドウの上限チェック
 		if (GetDllShareData().m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS) { //最大値修正	//@@@ 2003.05.31 MIK
 			OkMessage(m_pCommanderView->GetHwnd(), LS(STR_MAXWINDOW), MAX_EDITWINDOWS);
@@ -164,7 +165,8 @@ void CViewCommander::Command_GREP_REPLACE(void)
 			cDlgGrepRep.m_sSearchOption, cDlgGrepRep.m_nGrepCharSet, cDlgGrepRep.m_nGrepOutputLineType,
 			cDlgGrepRep.m_nGrepOutputStyle, cDlgGrepRep.m_bGrepOutputFileOnly, cDlgGrepRep.m_bGrepOutputBaseFolder,
 			cDlgGrepRep.m_bGrepSeparateFolder, cDlgGrepRep.m_bPaste, cDlgGrepRep.m_bBackup);
-	} else {
+	}
+	else {
 		// 編集ウィンドウの上限チェック
 		if (GetDllShareData().m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS) { //最大値修正	//@@@ 2003.05.31 MIK
 			OkMessage(m_pCommanderView->GetHwnd(), L"編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。",
@@ -180,7 +182,7 @@ void CViewCommander::Command_GREP_REPLACE(void)
 
 		// -GREPMODE -GKEY="1" -GREPR="2" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
 		CNativeW cCmdLine;
-		WCHAR	 szTemp[20];
+		WCHAR	szTemp[20];
 		cCmdLine.AppendString(L"-GREPMODE -GKEY=\"");
 		cCmdLine.AppendString(cmWork1.GetStringPtr());
 		cCmdLine.AppendString(L"\" -GREPR=\"");
@@ -197,10 +199,10 @@ void CViewCommander::Command_GREP_REPLACE(void)
 		WCHAR pOpt[64];
 		pOpt[0] = L'\0';
 		if (cDlgGrepRep.m_bSubFolder) wcscat(pOpt, L"S");				 // サブフォルダからも検索する
-		if (cDlgGrepRep.m_sSearchOption.bWordOnly) wcscat(pOpt, L"W");	 // 単語単位で探す
-		if (cDlgGrepRep.m_sSearchOption.bLoHiCase) wcscat(pOpt, L"L");	 // 英大文字と英小文字を区別する
+		if (cDlgGrepRep.m_sSearchOption.bWordOnly) wcscat(pOpt, L"W");   // 単語単位で探す
+		if (cDlgGrepRep.m_sSearchOption.bLoHiCase) wcscat(pOpt, L"L");   // 英大文字と英小文字を区別する
 		if (cDlgGrepRep.m_sSearchOption.bRegularExp) wcscat(pOpt, L"R"); // 正規表現
-		if (cDlgGrepRep.m_nGrepOutputLineType == 1) wcscat(pOpt, L"P");	 // 行を出力する
+		if (cDlgGrepRep.m_nGrepOutputLineType == 1) wcscat(pOpt, L"P");  // 行を出力する
 		// if( cDlgGrepRep.m_nGrepOutputLineType == 2     )wcscat( pOpt, L"N" );	// 否ヒット行を出力する 2014.09.23
 		if (1 == cDlgGrepRep.m_nGrepOutputStyle) wcscat(pOpt, L"1"); // Grep: 出力形式
 		if (2 == cDlgGrepRep.m_nGrepOutputStyle) wcscat(pOpt, L"2"); // Grep: 出力形式

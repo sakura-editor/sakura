@@ -88,8 +88,8 @@ void *operator new[](size_t const size, int const block_use, char const *file_na
 //    wWinMainの最初で_CrtSetDbgFlag()を呼び出す必要がある。
 // see https://docs.microsoft.com/en-us/visualstudio/debugger/finding-memory-leaks-using-the-crt-library
 #define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
 #include <crtdbg.h>
+#include <stdlib.h>
 
 #define DBG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 // Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the

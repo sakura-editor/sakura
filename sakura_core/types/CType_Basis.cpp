@@ -35,7 +35,7 @@ void CType_Basis::InitTypeConfigImp(STypeConfig *pType)
 	pType->m_szTypeExts[0] = L'\0';
 
 	//設定
-	pType->m_nMaxLineKetas	 = CKetaXInt(MAXLINEKETAS); // 折り返し桁数
+	pType->m_nMaxLineKetas   = CKetaXInt(MAXLINEKETAS); // 折り返し桁数
 	pType->m_eDefaultOutline = OUTLINE_TEXT;			// アウトライン解析方法
 	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp =
 		false; // シングルクォーテーション文字列を色分け表示しない	//Oct. 17, 2000 JEPRO

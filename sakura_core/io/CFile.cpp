@@ -92,7 +92,7 @@ bool CFile::FileLock(EShareMode eShareMode, bool bMsg)
 	}
 
 	//オープン
-	m_hLockedFile = CreateFile(this->GetFilePath(),	  //ファイル名
+	m_hLockedFile = CreateFile(this->GetFilePath(),   //ファイル名
 							   GENERIC_READ,		  //読み書きタイプ
 							   dwShareMode,			  //共有モード
 							   NULL,				  //既定のセキュリティ記述子

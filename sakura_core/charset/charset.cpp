@@ -39,9 +39,8 @@
 #include <map>
 #include <vector>
 
-struct SCodeSet
-{
-	ECodeType	 m_eCodeSet;
+struct SCodeSet {
+	ECodeType	m_eCodeSet;
 	const WCHAR *m_sNormal;
 	const WCHAR *m_sShort;
 	const WCHAR *m_sLong;		// for Combo
@@ -66,7 +65,7 @@ static SCodeSet ASCodeSet[] = {
 	 true},														  //!< Unicode BigEndian	(UTF-16 BigEndian)		// UCS-2
 	{CODE_UTF8, L"UTF-8", L"UTF-8", L"UTF-8", true, false, true}, //!< UTF-8
 	{CODE_CESU8, L"CESU-8", L"CESU-8", L"CESU-8", true, false, true}, //!< CESU-8				(UCS-2からUTF-8化)
-	{CODE_UTF7, L"UTF-7", L"UTF-7", L"UTF-7", true, false, false},	  //!< UTF-7
+	{CODE_UTF7, L"UTF-7", L"UTF-7", L"UTF-7", true, false, false},	//!< UTF-7
 };
 
 // 文字コードセット
@@ -134,7 +133,7 @@ bool CCodeTypeName::UseBom()
 	if (msCodeSet.find(m_eCodeType) == msCodeSet.end()) {
 		if (IsValidCodeOrCPType(m_eCodeType)) {
 			CCodePage encoding(m_eCodeType);
-			CMemory	  mem;
+			CMemory   mem;
 			encoding.GetBom(&mem);
 			return 0 < mem.GetRawLength();
 		}

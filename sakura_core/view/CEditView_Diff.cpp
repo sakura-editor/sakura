@@ -59,20 +59,19 @@
 
 #define SAKURA_DIFF_TEMP_PREFIX L"sakura_diff_"
 
-class COutputAdapterDiff final : public COutputAdapter
-{
+class COutputAdapterDiff final : public COutputAdapter {
 public:
 	COutputAdapterDiff(CEditView *view, int nFlgFile12_)
 	{
 		m_view		  = view;
-		bLineHead	  = true;
-		bDiffInfo	  = false;
+		bLineHead	 = true;
+		bDiffInfo	 = false;
 		nDiffLen	  = 0;
 		bFirst		  = true;
-		nFlgFile12	  = nFlgFile12_;
+		nFlgFile12	= nFlgFile12_;
 		szDiffData[0] = 0;
 	}
-	~COutputAdapterDiff() {};
+	~COutputAdapterDiff(){};
 
 	bool OutputW(const WCHAR *pBuf, int size = -1) override { return true; };
 	bool OutputA(const ACHAR *pBuf, int size = -1) override;
@@ -81,12 +80,12 @@ public:
 
 public:
 	bool bDiffInfo;		  // DIFF情報か
-	int	 nDiffLen;		  // DIFF情報長
+	int  nDiffLen;		  // DIFF情報長
 	char szDiffData[100]; // DIFF情報
 protected:
 	CEditView *m_view;
 	bool	   bLineHead; //行頭か
-	bool	   bFirst;	  //先頭か？	//@@@ 2003.05.31 MIK
+	bool	   bFirst;	//先頭か？	//@@@ 2003.05.31 MIK
 	int		   nFlgFile12;
 };
 
@@ -162,7 +161,7 @@ void CEditView::ViewDiffInfo(const WCHAR *pszFile1, const WCHAR *pszFile2, int n
 		auto_sprintf(cmdline, L"\"%s\\%s\" %s \"%s\" \"%s\"",
 					 szExeFolder, // sakura.exeパス
 					 L"diff.exe", // diff.exe
-					 szOption,	  // diffオプション
+					 szOption,	// diffオプション
 					 (nFlgFile12 ? pszFile2 : pszFile1), (nFlgFile12 ? pszFile1 : pszFile2));
 	}
 
@@ -230,7 +229,8 @@ bool COutputAdapterDiff::OutputA(const ACHAR *pBuf, int size)
 				}
 				*/
 			}
-		} else {
+		}
+		else {
 			//行末に達したか？
 			if (pBuf[j] == '\n' || pBuf[j] == '\r') {
 				// DIFF情報があれば解析する
@@ -242,7 +242,8 @@ bool COutputAdapterDiff::OutputA(const ACHAR *pBuf, int size)
 
 				bDiffInfo = false;
 				bLineHead = true;
-			} else if (bDiffInfo == true) {
+			}
+			else if (bDiffInfo == true) {
 				// DIFF情報に追加する
 				szDiffData[nDiffLen++] = pBuf[j];
 				if (nDiffLen >= 99) {
@@ -296,7 +297,8 @@ void CEditView::AnalyzeDiffInfo(const char *pszDiffInfo, int nFlgFile12)
 	if (*q != ',') {
 		//開始・終了行番号は同じ
 		e1 = s1;
-	} else {
+	}
+	else {
 		e1 = 0;
 		for (q++; *q; q++) {
 			if (*q == 'a' || *q == 'c' || *q == 'd') break;
@@ -327,7 +329,8 @@ void CEditView::AnalyzeDiffInfo(const char *pszDiffInfo, int nFlgFile12)
 	if (*q != ',') {
 		//開始・終了行番号は同じ
 		e2 = s2;
-	} else {
+	}
+	else {
 		e2 = 0;
 		for (q++; *q; q++) {
 			//行番号を抽出
@@ -352,7 +355,8 @@ void CEditView::AnalyzeDiffInfo(const char *pszDiffInfo, int nFlgFile12)
 		else if (mode == 'd')
 			CDiffLineMgr(&m_pcEditDoc->m_cDocLineMgr)
 				.SetDiffMarkRange(MARK_DIFF_APPEND, CLogicInt(s1 - 1), CLogicInt(e1 - 1));
-	} else //編集中ファイルは新ファイル
+	}
+	else //編集中ファイルは新ファイル
 	{
 		if (mode == 'a')
 			CDiffLineMgr(&m_pcEditDoc->m_cDocLineMgr)
@@ -369,7 +373,7 @@ void CEditView::AnalyzeDiffInfo(const char *pszDiffInfo, int nFlgFile12)
 
 static bool MakeDiffTmpFile_core(CTextOutputStream &out, HWND hwnd, CEditView &view, bool bBom)
 {
-	CLogicInt	   y = CLogicInt(0);
+	CLogicInt	  y = CLogicInt(0);
 	const wchar_t *pLineData;
 	if (!hwnd) {
 		const CDocLineMgr &docMgr = view.m_pcEditDoc->m_cDocLineMgr;
@@ -383,12 +387,14 @@ static bool MakeDiffTmpFile_core(CTextOutputStream &out, HWND hwnd, CEditView &v
 				cLine2.AppendString(pLineData, nLineLen);
 				out.WriteString(cLine2.GetStringPtr(), cLine2.GetStringLength());
 				bBom = false;
-			} else {
+			}
+			else {
 				out.WriteString(pLineData, nLineLen);
 			}
 			y++;
 		}
-	} else if (IsSakuraMainWindow(hwnd)) {
+	}
+	else if (IsSakuraMainWindow(hwnd)) {
 		const int max_size = (int)GetDllShareData().m_sWorkBuffer.GetWorkBufferCount<const EDIT_CHAR>();
 		pLineData		   = GetDllShareData().m_sWorkBuffer.GetWorkBuffer<const EDIT_CHAR>();
 		for (;;) {
@@ -406,7 +412,8 @@ static bool MakeDiffTmpFile_core(CTextOutputStream &out, HWND hwnd, CEditView &v
 						cLine2.AppendString(pLineData, t_min(nLineLen, max_size));
 						out.WriteString(cLine2.GetStringPtr(), cLine2.GetStringLength());
 						bBom = false;
-					} else {
+					}
+					else {
 						out.WriteString(pLineData, t_min(nLineLen, max_size));
 					}
 				}
@@ -414,7 +421,8 @@ static bool MakeDiffTmpFile_core(CTextOutputStream &out, HWND hwnd, CEditView &v
 			} while (max_size < nLineLen);
 			y++;
 		}
-	} else {
+	}
+	else {
 		return false;
 	}
 	if (bBom) { out.WriteString(L"\ufeff", 1); }
@@ -458,7 +466,8 @@ BOOL CEditView::MakeDiffTmpFile(WCHAR *filename, HWND hWnd, ECodeType code, bool
 	bool bError = false;
 	try {
 		if (!MakeDiffTmpFile_core(out, hWnd, *this, bBom)) { bError = true; }
-	} catch (...) {
+	}
+	catch (...) {
 		bError = true;
 	}
 	if (bError) {
@@ -514,12 +523,14 @@ BOOL CEditView::MakeDiffTmpFile2(WCHAR *tmpName, const WCHAR *orgName, ECodeType
 				cLine2.AppendString(pLineData, nLineLen);
 				out.WriteString(cLine2.GetStringPtr(), cLine2.GetStringLength());
 				bBom = false;
-			} else {
+			}
+			else {
 				out.WriteString(pLineData, nLineLen);
 			}
 		}
 		if (bBom) { out.WriteString(L"\ufeff", 1); }
-	} catch (...) {
+	}
+	catch (...) {
 		out.Close();
 		_wunlink(tmpName); //関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。
 		WarningMessage(NULL, LS(STR_DIFF_FAILED_TEMP));

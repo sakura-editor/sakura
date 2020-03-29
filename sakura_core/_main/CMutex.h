@@ -35,8 +35,7 @@
 /** ミューテックスを扱うクラス
 	@date 2007.07.05 ryoji 新規作成
 */
-class CMutex
-{
+class CMutex {
 public:
 	CMutex(BOOL bInitialOwner, LPCWSTR pszName, LPSECURITY_ATTRIBUTES psa = NULL)
 	{
@@ -84,8 +83,8 @@ protected:
 	}
 	@endcode
 */
-template<class EXCLUSIVE_OBJECT> class LockGuard
-{
+template<class EXCLUSIVE_OBJECT>
+class LockGuard {
 	EXCLUSIVE_OBJECT &o_;
 
 public:

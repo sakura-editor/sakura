@@ -54,7 +54,7 @@ void CTextDrawer::DispText(HDC hdc, DispPos *pDispPos, int marginy, const wchar_
 
 	//必要なインターフェースを取得
 	const CTextMetrics *pMetrics = &m_pEditView->GetTextMetrics();
-	const CTextArea *	pArea	 = GetTextArea();
+	const CTextArea *   pArea	= GetTextArea();
 
 	//文字間隔配列を生成
 	static vector<int> vDxArray(1);
@@ -65,9 +65,9 @@ void CTextDrawer::DispText(HDC hdc, DispPos *pDispPos, int marginy, const wchar_
 
 	//テキストの描画範囲の矩形を求める -> rcClip
 	CMyRect rcClip;
-	rcClip.left	  = x;
+	rcClip.left   = x;
 	rcClip.right  = x + nTextWidth;
-	rcClip.top	  = y;
+	rcClip.top	= y;
 	rcClip.bottom = y + pMetrics->GetHankakuDy();
 	if (rcClip.left < pArea->GetAreaLeft()) { rcClip.left = pArea->GetAreaLeft(); }
 
@@ -81,11 +81,11 @@ void CTextDrawer::DispText(HDC hdc, DispPos *pDispPos, int marginy, const wchar_
 		// ウィンドウの左にあふれた文字数 -> nBefore
 		// 2007.09.08 kobake注 「ウィンドウの左」ではなく「クリップの左」を元に計算したほうが描画領域を節約できるが、
 		//                        バグが出るのが怖いのでとりあえずこのまま。
-		int		   nBeforeLogic	 = 0;
+		int		   nBeforeLogic  = 0;
 		CLayoutInt nBeforeLayout = CLayoutInt(0);
 		if (x < 0) {
 			int			nLeftLayout = (0 - x) / nDx - 1;
-			CLayoutMgr &layoutMgr	= m_pEditView->m_pcEditDoc->m_cLayoutMgr;
+			CLayoutMgr &layoutMgr   = m_pEditView->m_pcEditDoc->m_cLayoutMgr;
 			while (nBeforeLayout < nLeftLayout) {
 				nBeforeLayout += layoutMgr.GetLayoutXOfChar(pData, nLength, nBeforeLogic);
 				nBeforeLogic += CNativeW::GetSizeOfChar(pData, nLength, nBeforeLogic);
@@ -114,7 +114,7 @@ void CTextDrawer::DispText(HDC hdc, DispPos *pDispPos, int marginy, const wchar_
 		// 描画する文字列長を求める -> nDrawLength
 		int nRequiredWidth = rcClip.right - nDrawX; //埋めるべきピクセル幅
 		if (nRequiredWidth <= 0) goto end;
-		int nWorkWidth	= 0;
+		int nWorkWidth  = 0;
 		int nDrawLength = 0;
 		while (nWorkWidth < nRequiredWidth) {
 			if (nDrawLength >= nDrawDataMaxLength) break;
@@ -128,7 +128,7 @@ void CTextDrawer::DispText(HDC hdc, DispPos *pDispPos, int marginy, const wchar_
 					 nDrawX,	  // X
 					 y + marginy, // Y
 					 ExtTextOutOption() & ~(bTransparent ? ETO_OPAQUE : 0), &rcClip,
-					 pDrawData,	  //文字列
+					 pDrawData,   //文字列
 					 nDrawLength, //文字列長
 					 pDrawDxArray //文字間隔の入った配列
 		);
@@ -151,10 +151,10 @@ end:
 */
 void CTextDrawer::DispVerticalLines(CGraphics &gr,		 //!< 作画するウィンドウのDC
 									int		   nTop,	 //!< 線を引く上端のクライアント座標y
-									int		   nBottom,	 //!< 線を引く下端のクライアント座標y
+									int		   nBottom,  //!< 線を引く下端のクライアント座標y
 									CLayoutInt nLeftCol, //!< 線を引く範囲の左桁の指定
 									CLayoutInt nRightCol //!< 線を引く範囲の右桁の指定(-1で未指定)
-) const
+									) const
 {
 	const CEditView *pView = m_pEditView;
 
@@ -179,7 +179,7 @@ void CTextDrawer::DispVerticalLines(CGraphics &gr,		 //!< 作画するウィン�
 		t_min(pView->GetTextMetrics().GetCharPxWidth(pView->GetTextArea().GetAreaLeft() + (nRightCol - nViewLeftCol)),
 			  pView->GetTextArea().GetAreaRight());
 	const int nLineHeight = pView->GetTextMetrics().GetHankakuDy();
-	bool	  bOddLine	  = ((((nLineHeight % 2) ? (Int)pView->GetTextArea().GetViewTopLine() : Int(0))
+	bool	  bOddLine	= ((((nLineHeight % 2) ? (Int)pView->GetTextArea().GetViewTopLine() : Int(0))
 					  + pView->GetTextArea().GetAreaTop() + nTop)
 						 % 2
 					 == 1);
@@ -193,26 +193,28 @@ void CTextDrawer::DispVerticalLines(CGraphics &gr,		 //!< 作画するウィン�
 	if (bExorPen) {
 		gr.SetPen(cVertType.GetBackColor());
 		nROP_Old = ::SetROP2(gr, R2_NOTXORPEN);
-	} else {
+	}
+	else {
 		gr.SetPen(cVertType.GetTextColor());
 	}
 
 	int k;
 	for (k = 0; k < MAX_VERTLINES && typeData.m_nVertLineIdx[k] != 0; k++) {
 		// nXColは1開始。GetTextArea().GetViewLeftCol()は0開始なので注意。
-		CLayoutXInt nXCol	 = pView->GetTextMetrics().GetLayoutXDefault(typeData.m_nVertLineIdx[k]);
+		CLayoutXInt nXCol	= pView->GetTextMetrics().GetLayoutXDefault(typeData.m_nVertLineIdx[k]);
 		CLayoutXInt nXColEnd = nXCol;
 		CLayoutXInt nXColAdd = pView->GetTextMetrics().GetLayoutXDefault();
 		// nXColがマイナスだと繰り返し。k+1を終了値、k+2をステップ幅として利用する
 		if (nXCol < 0) {
 			if (k < MAX_VERTLINES - 2) {
-				nXCol	 = -nXCol;
+				nXCol	= -nXCol;
 				nXColEnd = pView->GetTextMetrics().GetLayoutXDefault(typeData.m_nVertLineIdx[++k]);
 				nXColAdd = pView->GetTextMetrics().GetLayoutXDefault(typeData.m_nVertLineIdx[++k]);
 				if (nXColEnd < nXCol || nXColAdd <= 0) { continue; }
 				// 作画範囲の始めまでスキップ
 				if (nXCol < nViewLeftCol) { nXCol = nViewLeftCol + nXColAdd - (nViewLeftCol - nXCol) % nXColAdd; }
-			} else {
+			}
+			else {
 				k += 2;
 				continue;
 			}
@@ -243,7 +245,8 @@ void CTextDrawer::DispVerticalLines(CGraphics &gr,		 //!< 作画するウィン�
 							::LineTo(gr, nPosXBold, y + 1);
 						}
 					}
-				} else {
+				}
+				else {
 					if (nPosX < nPosXRight) {
 						::MoveToEx(gr, nPosX, nTop, NULL);
 						::LineTo(gr, nPosX, nBottom);
@@ -259,12 +262,12 @@ void CTextDrawer::DispVerticalLines(CGraphics &gr,		 //!< 作画するウィン�
 	if (bExorPen) { ::SetROP2(gr, nROP_Old); }
 }
 
-void CTextDrawer::DispNoteLine(CGraphics &gr,	   //!< 作画するウィンドウのDC
-							   int		  nTop,	   //!< 線を引く上端のクライアント座標y
+void CTextDrawer::DispNoteLine(CGraphics &gr,	  //!< 作画するウィンドウのDC
+							   int		  nTop,	//!< 線を引く上端のクライアント座標y
 							   int		  nBottom, //!< 線を引く下端のクライアント座標y
 							   int		  nLeft,   //!< 線を引く左端
 							   int		  nRight   //!< 線を引く右端
-) const
+							   ) const
 {
 	const CEditView *pView = m_pEditView;
 
@@ -295,10 +298,10 @@ void CTextDrawer::DispNoteLine(CGraphics &gr,	   //!< 作画するウィンド�
 /*!	折り返し桁縦線の描画
 	@date 2009.10.24 ryoji 新規作成
 */
-void CTextDrawer::DispWrapLine(CGraphics &gr,	  //!< 作画するウィンドウのDC
-							   int		  nTop,	  //!< 線を引く上端のクライアント座標y
+void CTextDrawer::DispWrapLine(CGraphics &gr,	 //!< 作画するウィンドウのDC
+							   int		  nTop,   //!< 線を引く上端のクライアント座標y
 							   int		  nBottom //!< 線を引く下端のクライアント座標y
-) const
+							   ) const
 {
 	const CEditView *pView = m_pEditView;
 	CTypeSupport	 cWrapType(pView, COLORIDX_WRAP);
@@ -332,7 +335,7 @@ void CTextDrawer::DispLineNumber(CGraphics &gr, CLayoutInt nLineNum, int y) cons
 	const STypeConfig *pTypes = &pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 
 	int nLineHeight = pView->GetTextMetrics().GetHankakuDy();
-	int nCharWidth	= pView->GetTextMetrics().GetHankakuDx();
+	int nCharWidth  = pView->GetTextMetrics().GetHankakuDx();
 	// 行番号表示部分X幅	Sep. 23, 2002 genta 共通式のくくりだし
 	// int				nLineNumAreaWidth = pView->GetTextArea().m_nViewAlignLeftCols * nCharWidth;
 	int			 nLineNumAreaWidth = pView->GetTextArea().GetLineNumberWidth(); // 2009.03.26 ryoji
@@ -348,15 +351,15 @@ void CTextDrawer::DispLineNumber(CGraphics &gr, CLayoutInt nLineNum, int y) cons
 	//                     nColorIndexを決定                       //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	EColorIndexType nColorIndex = COLORIDX_GYOU; /* 行番号 */
-	const CDocLine *pCDocLine	= NULL;
+	const CDocLine *pCDocLine   = NULL;
 	bool			bGyouMod	= false;
 	if (pcLayout) {
 		pCDocLine = pcLayout->GetDocLineRef();
 
 		if (pView->GetDocument()->m_cDocEditor.IsModified()
 			&& CModifyVisitor().IsLineModified(
-				pCDocLine, pView->GetDocument()->m_cDocEditor.m_cOpeBuf.GetNoModifiedSeq())) { /* 変更フラグ */
-			if (CTypeSupport(pView, COLORIDX_GYOU_MOD).IsDisp()) {							   // 2006.12.12 ryoji
+				   pCDocLine, pView->GetDocument()->m_cDocEditor.m_cOpeBuf.GetNoModifiedSeq())) { /* 変更フラグ */
+			if (CTypeSupport(pView, COLORIDX_GYOU_MOD).IsDisp()) {								  // 2006.12.12 ryoji
 				nColorIndex = COLORIDX_GYOU_MOD; /* 行番号（変更行） */
 				bGyouMod	= true;
 			}
@@ -383,9 +386,9 @@ void CTextDrawer::DispLineNumber(CGraphics &gr, CLayoutInt nLineNum, int y) cons
 
 	//該当行の行番号エリア矩形
 	RECT rcLineNum;
-	rcLineNum.left	 = 0;
-	rcLineNum.right	 = nLineNumAreaWidth;
-	rcLineNum.top	 = y;
+	rcLineNum.left   = 0;
+	rcLineNum.right  = nLineNumAreaWidth;
+	rcLineNum.top	= y;
 	rcLineNum.bottom = y + nLineHeight;
 
 	bool bTrans			   = pView->IsBkBitmap() && cTextType.GetBackColor() == cColorType.GetBackColor();
@@ -400,7 +403,7 @@ void CTextDrawer::DispLineNumber(CGraphics &gr, CLayoutInt nLineNum, int y) cons
 		if (cGyouType.GetTextColor() == cColorType.GetTextColor()) { fgcolor = cGyouModType.GetTextColor(); }
 		if (cGyouType.GetBackColor() == cColorType.GetBackColor()) {
 			bgcolor = cGyouModType.GetBackColor();
-			bTrans	= pView->IsBkBitmap() && cTextType.GetBackColor() == cGyouModType.GetBackColor();
+			bTrans  = pView->IsBkBitmap() && cTextType.GetBackColor() == cGyouModType.GetBackColor();
 		}
 	}
 	// 2014.01.29 Moca 背景色がテキストと同じなら、透過色として行背景色を適用
@@ -413,7 +416,8 @@ void CTextDrawer::DispLineNumber(CGraphics &gr, CLayoutInt nLineNum, int y) cons
 		//行が存在しない場合は、テキスト描画色で塗りつぶし
 		if (!bTransText) { cBackType.FillBack(gr, rcLineNum); }
 		bDispLineNumTrans = true;
-	} else if (CTypeSupport(pView, COLORIDX_GYOU).IsDisp()) { /* 行番号表示／非表示 */
+	}
+	else if (CTypeSupport(pView, COLORIDX_GYOU).IsDisp()) { /* 行番号表示／非表示 */
 		SFONT sFont = cColorType.GetTypeFont();
 		// 2013.12.30 変更行の色・フォント属性をDIFFブックマーク行に継承するように
 		if (bGyouMod && nColorIndex != COLORIDX_GYOU_MOD) {
@@ -442,17 +446,19 @@ void CTextDrawer::DispLineNumber(CGraphics &gr, CLayoutInt nLineNum, int y) cons
 				/* 論理行番号表示モード */
 				if (NULL == pcLayout || 0 != pcLayout->GetLogicOffset()) { //折り返しレイアウト行
 					wcscpy(szLineNum, L" ");
-				} else {
+				}
+				else {
 					_itow(pcLayout->GetLogicLineNo() + 1, szLineNum, 10); /* 対応する論理行番号 */
 																		  //###デバッグ用
 					//					_itow( CModifyVisitor().GetLineModifiedSeq(pCDocLine), szLineNum, 10 );	//
 					//行の変更番号
 				}
-			} else {
+			}
+			else {
 				/* 物理行（レイアウト行）番号表示モード */
 				_itow((Int)nLineNum + 1, szLineNum, 10);
 			}
-			nLineCols	 = wcslen(szLineNum);
+			nLineCols	= wcslen(szLineNum);
 			nLineNumCols = nLineCols; // 2010.08.17 Moca 位置決定に行番号区切りは含めない
 
 			/* 行番号区切り 0=なし 1=縦線 2=任意 */
@@ -464,7 +470,7 @@ void CTextDrawer::DispLineNumber(CGraphics &gr, CLayoutInt nLineNum, int y) cons
 		}
 
 		//	Sep. 23, 2002 genta
-		int drawNumTop	  = (pView->GetTextArea().m_nViewAlignLeftCols - nLineNumCols - 1) * (nCharWidth);
+		int drawNumTop	= (pView->GetTextArea().m_nViewAlignLeftCols - nLineNumCols - 1) * (nCharWidth);
 		int fontNo		  = WCODE::GetFontNo('0');
 		int nHeightMargin = pView->GetTextMetrics().GetCharHeightMarginByFontNo(fontNo);
 		::ExtTextOut(gr, drawNumTop, y + nHeightMargin, ExtTextOutOption() & ~(bTrans ? ETO_OPAQUE : 0), &rcLineNum,
@@ -473,8 +479,8 @@ void CTextDrawer::DispLineNumber(CGraphics &gr, CLayoutInt nLineNum, int y) cons
 		/* 行番号区切り 0=なし 1=縦線 2=任意 */
 		if (1 == pTypes->m_nLineTermType) {
 			RECT rc;
-			rc.left	  = nLineNumAreaWidth - 2;
-			rc.top	  = y;
+			rc.left   = nLineNumAreaWidth - 2;
+			rc.top	= y;
 			rc.right  = nLineNumAreaWidth - 1;
 			rc.bottom = y + nLineHeight;
 			gr.FillSolidMyRect(rc, fgcolor);
@@ -483,7 +489,8 @@ void CTextDrawer::DispLineNumber(CGraphics &gr, CLayoutInt nLineNum, int y) cons
 		gr.PopTextForeColor();
 		gr.PopTextBackColor();
 		gr.PopMyFont();
-	} else {
+	}
+	else {
 		// 行番号エリアの背景描画
 		if (!bTrans) { gr.FillSolidMyRect(rcLineNum, bgcolor); }
 		bDispLineNumTrans = true;
@@ -507,9 +514,9 @@ void CTextDrawer::DispLineNumber(CGraphics &gr, CLayoutInt nLineNum, int y) cons
 	// 行番号とテキストの隙間の描画
 	if (!bTransText) {
 		RECT rcRest;
-		rcRest.left	  = rcLineNum.right;
+		rcRest.left   = rcLineNum.right;
 		rcRest.right  = pView->GetTextArea().GetAreaLeft();
-		rcRest.top	  = y;
+		rcRest.top	= y;
 		rcRest.bottom = y + nLineHeight;
 		cBackType.FillBack(gr, rcRest);
 	}
@@ -518,7 +525,7 @@ void CTextDrawer::DispLineNumber(CGraphics &gr, CLayoutInt nLineNum, int y) cons
 	if (!pView->m_bMiniMap) {
 		int left   = bDispLineNumTrans ? 0 : rcLineNum.right;
 		int right  = pView->GetTextArea().GetAreaLeft();
-		int top	   = y;
+		int top	= y;
 		int bottom = y + nLineHeight;
 		DispNoteLine(gr, top, bottom, left, right);
 	}

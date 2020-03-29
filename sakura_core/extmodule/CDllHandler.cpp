@@ -38,7 +38,8 @@
 
 CDllImp::CDllImp()
 	: m_hInstance(NULL)
-{}
+{
+}
 
 /*!
 	オブジェクト消滅前にDLLが読み込まれた状態であればDLLの解放を行う．
@@ -67,7 +68,8 @@ EDllResult CDllImp::InitDll(LPCWSTR pszSpecifiedDllName)
 		LPCWSTR pszName = NULL;
 		if (i == -1) { //まずは引数で指定された名前から。
 			pszName = pszSpecifiedDllName;
-		} else { //クラス定義のDLL名
+		}
+		else { //クラス定義のDLL名
 			pszName = GetDllNameImp(i);
 			// GetDllNameImpから取得した名前が無効ならループを抜ける
 			if (!pszName || !pszName[0]) { break; }
@@ -102,9 +104,7 @@ EDllResult CDllImp::InitDll(LPCWSTR pszSpecifiedDllName)
 	}
 
 	//ロードと初期処理に成功なら
-	if (IsAvailable()) {
-		return DLL_SUCCESS;
-	}
+	if (IsAvailable()) { return DLL_SUCCESS; }
 	//初期処理に失敗したことがあったら
 	else if (bInitImpFailure) {
 		return DLL_INITFAILURE; // DLLロードはできたけど、その初期処理に失敗
@@ -135,7 +135,8 @@ bool CDllImp::DeinitDll(bool force)
 		m_hInstance = NULL;
 
 		return true;
-	} else {
+	}
+	else {
 		return false;
 	}
 }

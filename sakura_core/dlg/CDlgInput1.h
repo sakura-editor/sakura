@@ -20,8 +20,7 @@ class CDlgInput1;
 /*!
 	@brief １行入力ダイアログボックス
 */
-class CDlgInput1
-{
+class CDlgInput1 {
 public:
 	/*
 	||  Constructors
@@ -36,12 +35,12 @@ public:
 	*/
 	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam); /* ダイアログのメッセージ処理 */
 
-	HINSTANCE m_hInstance;	/* アプリケーションインスタンスのハンドル */
+	HINSTANCE m_hInstance;  /* アプリケーションインスタンスのハンドル */
 	HWND	  m_hwndParent; /* オーナーウィンドウのハンドル */
 	HWND	  m_hWnd;		/* このダイアログのハンドル */
 
 	const WCHAR *m_pszTitle;	/* ダイアログタイトル */
-	const WCHAR *m_pszMessage;	/* メッセージ */
+	const WCHAR *m_pszMessage;  /* メッセージ */
 	int			 m_nMaxTextLen; /* 入力サイズ上限 */
 								//	char*		m_pszText;		/* テキスト */
 	CNativeW m_cmemText;		/* テキスト */

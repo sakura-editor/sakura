@@ -36,7 +36,7 @@ static const DWORD p_helpids[] = {			 // 10500
 	IDC_CHECK_GTJW_LDBLCLK, HIDC_CHECK_GTJW_LDBLCLK,		 //タグジャンプ（ダブルクリック）
 	IDC_CHECK_GREPREALTIME, HIDC_CHECK_GREPREALTIME,		 //リアルタイムで表示する	// 2006.08.08 ryoji
 	IDC_COMBO_TAGJUMP, HIDC_COMBO_TAGJUMP,					 //タグファイルの検索
-	IDC_COMBO_KEYWORD_TAGJUMP, HIDC_COMBO_KEYWORD_TAGJUMP,	 //タグファイルの検索
+	IDC_COMBO_KEYWORD_TAGJUMP, HIDC_COMBO_KEYWORD_TAGJUMP,   //タグファイルの検索
 															 //	IDC_STATIC,						-1,
 	0, 0};
 //@@@ 2001.02.04 End
@@ -97,8 +97,7 @@ INT_PTR CPropGrep::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 		break;
 
 		//@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP:
-	{
+	case WM_HELP: {
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -118,8 +117,7 @@ INT_PTR CPropGrep::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 	return FALSE;
 }
 
-struct tagTagJumpMode
-{
+struct tagTagJumpMode {
 	DWORD m_nMethod;
 	DWORD m_nNameID;
 };
@@ -205,7 +203,7 @@ int CPropGrep::GetData(HWND hwndDlg)
 					  _countof(m_Common.m_sSearch.m_szRegexpLib));
 
 	HWND hwndCombo					  = ::GetDlgItem(hwndDlg, IDC_COMBO_TAGJUMP);
-	int	 nSelPos					  = Combo_GetCurSel(hwndCombo);
+	int  nSelPos					  = Combo_GetCurSel(hwndCombo);
 	m_Common.m_sSearch.m_nTagJumpMode = Combo_GetItemData(hwndCombo, nSelPos);
 
 	hwndCombo								 = ::GetDlgItem(hwndDlg, IDC_COMBO_KEYWORD_TAGJUMP);

@@ -19,8 +19,7 @@
 
 	データ構造はBSTRと互換性あり
 */
-struct SysString
-{
+struct SysString {
 	BSTR Data;
 
 	SysString() { Data = NULL; }
@@ -30,7 +29,7 @@ struct SysString
 	SysString(const char *S, int L)
 	{
 		wchar_t *buf = new wchar_t[L + 1];
-		int		 L2	 = ::MultiByteToWideChar(CP_ACP, 0, S, L, buf, L);
+		int		 L2  = ::MultiByteToWideChar(CP_ACP, 0, S, L, buf, L);
 		Data		 = ::SysAllocStringLen(buf, L2);
 		delete[] buf;
 	}
@@ -40,10 +39,10 @@ struct SysString
 		Data = ::SysAllocStringLen(Source.Data, SysStringLen(Source.Data));
 		return *this;
 	}
-	int	 Length() { return ::SysStringLen(Data); }
+	int  Length() { return ::SysStringLen(Data); }
 	void Get(char **S, int *L)
 	{
-		int Len	 = ::SysStringLen(Data);
+		int Len  = ::SysStringLen(Data);
 		*S		 = new char[Len * 2 + 1];
 		*L		 = ::WideCharToMultiByte(CP_ACP, 0, Data, Len, *S, Len * 2, NULL, NULL);
 		(*S)[*L] = 0;
@@ -59,7 +58,7 @@ struct SysString
 	void Get(std::string *str)
 	{
 		char *S;
-		int	  Len;
+		int   Len;
 		Get(&S, &Len);
 		str->assign(S, Len);
 		delete[] S;
@@ -75,8 +74,7 @@ struct SysString
 
 	データ構造はVARIANTと互換性あり
 */
-struct Variant
-{
+struct Variant {
 	VARIANT Data;
 	Variant() { ::VariantInit(&Data); }
 	Variant(Variant &Source) { ::VariantCopyInd(&Data, &Source.Data); }
@@ -96,7 +94,7 @@ struct Variant
 		::VariantClear(&Data);
 		Data.vt		 = VT_BSTR;
 		Data.bstrVal = Source.Data;
-		Source.Data	 = NULL;
+		Source.Data  = NULL;
 	}
 
 	// 2003.06.25 Moca

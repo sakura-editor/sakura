@@ -24,8 +24,8 @@
 */
 #pragma once
 
-template<class INT_TYPE, class POINT_TYPE> class CStrictRect
-{
+template<class INT_TYPE, class POINT_TYPE>
+class CStrictRect {
 private:
 	typedef CStrictRect<INT_TYPE, POINT_TYPE> Me;
 
@@ -51,9 +51,9 @@ public:
 
 	Me &UnionStrictRect(const Me &rc1, const Me &rc2)
 	{
-		this->left	 = t_min(rc1.left, rc2.left);
-		this->top	 = t_min(rc1.top, rc2.top);
-		this->right	 = t_max(rc1.right, rc2.right);
+		this->left   = t_min(rc1.left, rc2.left);
+		this->top	= t_min(rc1.top, rc2.top);
+		this->right  = t_max(rc1.right, rc2.right);
 		this->bottom = t_max(rc1.bottom, rc2.bottom);
 		return *this;
 	}

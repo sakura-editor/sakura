@@ -30,8 +30,7 @@
 class CAppNodeGroupHandle;
 
 //! 編集ウィンドウノード
-struct EditNode
-{
+struct EditNode {
 	int		  m_nIndex;
 	int		  m_nGroup; //!< グループID								//@@@ 2007.06.20 ryoji
 	HWND	  m_hWnd;
@@ -63,15 +62,13 @@ struct EditNode
 };
 
 //! 拡張構造体
-struct EditNodeEx
-{
+struct EditNodeEx {
 	EditNode *p;		 //!< 編集ウィンドウ配列要素へのポインタ
 	int		  nGroupMru; //!< グループ単位のMRU番号
 };
 
 //! 共有メモリ内構造体
-struct SShare_Nodes
-{
+struct SShare_Nodes {
 	int		 m_nEditArrNum;				  // short->intに修正	//@@@ 2003.05.31 MIK
 	EditNode m_pEditArr[MAX_EDITWINDOWS]; //最大値修正	@@@ 2003.05.31 MIK
 	LONG	 m_nSequences;				  /* ウィンドウ連番 */
@@ -80,8 +77,7 @@ struct SShare_Nodes
 };
 
 //! ノードアクセサ
-class CAppNodeHandle
-{
+class CAppNodeHandle {
 public:
 	CAppNodeHandle(HWND hwnd);
 	EditNode *operator->() { return m_pNodeRef; }
@@ -91,12 +87,12 @@ private:
 };
 
 //! グループアクセサ
-class CAppNodeGroupHandle
-{
+class CAppNodeGroupHandle {
 public:
 	CAppNodeGroupHandle(int nGroupId)
 		: m_nGroup(nGroupId)
-	{}
+	{
+	}
 	CAppNodeGroupHandle(HWND hwnd) { m_nGroup = CAppNodeHandle(hwnd)->GetGroup(); }
 
 	EditNode *GetTopEditNode() { return GetEditNodeAt(0); } //
@@ -108,14 +104,14 @@ public:
 	//!< 2007.06.20 ryoji nGroup引数追加
 
 	int GetEditorWindowsNum(bool bExcludeClosing = true);
-		/* 現在の編集ウィンドウの数を調べる */ // 2007.06.20 ryoji nGroup引数追加	// 2008.04.19 ryoji
-											   // bExcludeClosing引数追加
+	/* 現在の編集ウィンドウの数を調べる */ // 2007.06.20 ryoji nGroup引数追加	// 2008.04.19 ryoji
+										   // bExcludeClosing引数追加
 
 	//全ウィンドウ一括操作
 	BOOL PostMessageToAllEditors(UINT uMsg, WPARAM wParam, LPARAM lParam, HWND hWndLast);
-		/* 全編集ウィンドウへメッセージをポストする */ // 2007.06.20 ryoji nGroup引数追加
+	/* 全編集ウィンドウへメッセージをポストする */ // 2007.06.20 ryoji nGroup引数追加
 	BOOL SendMessageToAllEditors(UINT uMsg, WPARAM wParam, LPARAM lParam, HWND hWndLast);
-		/* 全編集ウィンドウへメッセージを送るする */ // 2007.06.20 ryoji nGroup引数追加
+	/* 全編集ウィンドウへメッセージを送るする */ // 2007.06.20 ryoji nGroup引数追加
 
 public:
 	bool operator==(const CAppNodeGroupHandle &rhs) const { return m_nGroup == rhs.m_nGroup; }
@@ -126,8 +122,7 @@ private:
 	int m_nGroup;
 };
 
-class CAppNodeManager : public TSingleton<CAppNodeManager>
-{
+class CAppNodeManager : public TSingleton<CAppNodeManager> {
 	friend class TSingleton<CAppNodeManager>;
 	CAppNodeManager() {}
 

@@ -88,7 +88,7 @@ const int CPrint::m_nPaperInfoArrNum = _countof(m_paperInfoArr);
 
 CPrint::CPrint(void)
 {
-	m_hDevMode	= NULL;
+	m_hDevMode  = NULL;
 	m_hDevNames = NULL;
 	return;
 }
@@ -99,7 +99,7 @@ CPrint::~CPrint(void)
 	// 2003.05.18 かろと
 	if (m_hDevMode != NULL) { ::GlobalFree(m_hDevMode); }
 	if (m_hDevNames != NULL) { ::GlobalFree(m_hDevNames); }
-	m_hDevMode	= NULL;
+	m_hDevMode  = NULL;
 	m_hDevNames = NULL;
 	return;
 }
@@ -127,22 +127,22 @@ BOOL CPrint::PrintDlg(PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE)
 	//
 	pDEVMODE				= (DEVMODE *)::GlobalLock(m_hDevMode);
 	pDEVMODE->dmOrientation = pMYDEVMODE->dmOrientation;
-	pDEVMODE->dmPaperSize	= pMYDEVMODE->dmPaperSize;
+	pDEVMODE->dmPaperSize   = pMYDEVMODE->dmPaperSize;
 	pDEVMODE->dmPaperLength = pMYDEVMODE->dmPaperLength;
-	pDEVMODE->dmPaperWidth	= pMYDEVMODE->dmPaperWidth;
+	pDEVMODE->dmPaperWidth  = pMYDEVMODE->dmPaperWidth;
 	// PrintDlg()でReAllocされる事を考えて、呼び出す前にUnlock
 	::GlobalUnlock(m_hDevMode);
 
 	/* プリンタダイアログを表示して、プリンタを選択 */
 	pPD->lStructSize = sizeof(*pPD);
-	pPD->hDevMode	 = m_hDevMode;
-	pPD->hDevNames	 = m_hDevNames;
+	pPD->hDevMode	= m_hDevMode;
+	pPD->hDevNames   = m_hDevNames;
 	if (!::PrintDlg(pPD)) {
 		// プリンタを変更しなかった
 		return FALSE;
 	}
 
-	m_hDevMode	= pPD->hDevMode;
+	m_hDevMode  = pPD->hDevMode;
 	m_hDevNames = pPD->hDevNames;
 
 	pDEVMODE  = (DEVMODE *)::GlobalLock(m_hDevMode);
@@ -165,7 +165,7 @@ BOOL CPrint::PrintDlg(PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE)
 	//   縦・横が正しく印刷されない不具合となっていた(2003.07.03 かろと)
 	pMYDEVMODE->dmFields	  = pDEVMODE->dmFields & (DM_ORIENTATION | DM_PAPERSIZE | DM_PAPERLENGTH | DM_PAPERWIDTH);
 	pMYDEVMODE->dmOrientation = pDEVMODE->dmOrientation;
-	pMYDEVMODE->dmPaperSize	  = pDEVMODE->dmPaperSize;
+	pMYDEVMODE->dmPaperSize   = pDEVMODE->dmPaperSize;
 	pMYDEVMODE->dmPaperLength = pDEVMODE->dmPaperLength;
 	pMYDEVMODE->dmPaperWidth  = pDEVMODE->dmPaperWidth;
 
@@ -212,7 +212,7 @@ BOOL CPrint::GetDefaultPrinter(MYDEVMODE *pMYDEVMODE)
 
 		/* 初期化 */
 		memset_raw(pMYDEVMODE, 0, sizeof(*pMYDEVMODE));
-		m_hDevMode	= pd.hDevMode;
+		m_hDevMode  = pd.hDevMode;
 		m_hDevNames = pd.hDevNames;
 	}
 
@@ -237,7 +237,7 @@ BOOL CPrint::GetDefaultPrinter(MYDEVMODE *pMYDEVMODE)
 	//   縦・横が正しく印刷されない不具合となっていた(2003.07.03 かろと)
 	pMYDEVMODE->dmFields	  = pDEVMODE->dmFields & (DM_ORIENTATION | DM_PAPERSIZE | DM_PAPERLENGTH | DM_PAPERWIDTH);
 	pMYDEVMODE->dmOrientation = pDEVMODE->dmOrientation;
-	pMYDEVMODE->dmPaperSize	  = pDEVMODE->dmPaperSize;
+	pMYDEVMODE->dmPaperSize   = pDEVMODE->dmPaperSize;
 	pMYDEVMODE->dmPaperLength = pDEVMODE->dmPaperLength;
 	pMYDEVMODE->dmPaperWidth  = pDEVMODE->dmPaperWidth;
 
@@ -258,7 +258,7 @@ HDC CPrint::CreateDC(MYDEVMODE *pMYDEVMODE, WCHAR *pszErrMsg /* エラーメッ�
 )
 {
 	HDC		 hdc	  = NULL;
-	HANDLE	 hPrinter = NULL;
+	HANDLE   hPrinter = NULL;
 	DEVMODE *pDEVMODE;
 
 	// プリンタが選択されていなければ、NULLを返す
@@ -277,9 +277,9 @@ HDC CPrint::CreateDC(MYDEVMODE *pMYDEVMODE, WCHAR *pszErrMsg /* エラーメッ�
 
 	pDEVMODE				= (DEVMODE *)::GlobalLock(m_hDevMode);
 	pDEVMODE->dmOrientation = pMYDEVMODE->dmOrientation;
-	pDEVMODE->dmPaperSize	= pMYDEVMODE->dmPaperSize;
+	pDEVMODE->dmPaperSize   = pMYDEVMODE->dmPaperSize;
 	pDEVMODE->dmPaperLength = pMYDEVMODE->dmPaperLength;
-	pDEVMODE->dmPaperWidth	= pMYDEVMODE->dmPaperWidth;
+	pDEVMODE->dmPaperWidth  = pMYDEVMODE->dmPaperWidth;
 
 	//
 	// DocumentProperties()でアプリケーション独自のプリンタ設定に変更する
@@ -297,7 +297,7 @@ HDC CPrint::CreateDC(MYDEVMODE *pMYDEVMODE, WCHAR *pszErrMsg /* エラーメッ�
 	//   縦・横が正しく印刷されない不具合となっていた(2003.07.03 かろと)
 	pMYDEVMODE->dmFields	  = pDEVMODE->dmFields & (DM_ORIENTATION | DM_PAPERSIZE | DM_PAPERLENGTH | DM_PAPERWIDTH);
 	pMYDEVMODE->dmOrientation = pDEVMODE->dmOrientation;
-	pMYDEVMODE->dmPaperSize	  = pDEVMODE->dmPaperSize;
+	pMYDEVMODE->dmPaperSize   = pDEVMODE->dmPaperSize;
 	pMYDEVMODE->dmPaperLength = pDEVMODE->dmPaperLength;
 	pMYDEVMODE->dmPaperWidth  = pDEVMODE->dmPaperWidth;
 
@@ -320,7 +320,7 @@ BOOL CPrint::GetPrintMetrics(MYDEVMODE *pMYDEVMODE, short *pnPaperAllWidth, /* �
 )
 {
 	BOOL bRet;
-	HDC	 hdc;
+	HDC  hdc;
 	bRet = TRUE;
 
 	/* 現在の設定で、用紙の幅、高さを確定し、CreateDCに渡す */
@@ -347,7 +347,8 @@ BOOL CPrint::GetPrintMetrics(MYDEVMODE *pMYDEVMODE, short *pnPaperAllWidth, /* �
 		::DPtoLP(hdc, &po, 1);
 		*pnPaperOffsetLeft = (short)abs(po.x); /* 用紙余白左端 */
 		*pnPaperOffsetTop  = (short)abs(po.y); /* 用紙余白上端 */
-	} else {
+	}
+	else {
 		*pnPaperOffsetLeft = 0; /* 用紙余白左端 */
 		*pnPaperOffsetTop  = 0; /* 用紙余白上端 */
 	}
@@ -375,7 +376,8 @@ BOOL CPrint::GetPaperSize(short *pnPaperAllWidth, short *pnPaperAllHeight, MYDEV
 		if (NULL != pi) {
 			*pnPaperAllWidth  = pi->m_nAllWidth;
 			*pnPaperAllHeight = pi->m_nAllHeight;
-		} else {
+		}
+		else {
 			// 2001.12.21 hor マウスでクリックしたままリスト外に出るとここにくるけど、
 			//	異常ではないので FALSE を返すことにする
 			return FALSE;
@@ -384,14 +386,16 @@ BOOL CPrint::GetPaperSize(short *pnPaperAllWidth, short *pnPaperAllHeight, MYDEV
 	if (pDEVMODE->dmFields & DM_PAPERLENGTH && 0 != pDEVMODE->dmPaperLength) {
 		/* pDEVMODE->dmPaperLengthは1/10mm単位である */
 		*pnPaperAllHeight = pDEVMODE->dmPaperLength /* * 10*/;
-	} else {
+	}
+	else {
 		pDEVMODE->dmPaperLength = *pnPaperAllHeight;
 		pDEVMODE->dmFields |= DM_PAPERLENGTH;
 	}
 	if (pDEVMODE->dmFields & DM_PAPERWIDTH && 0 != pDEVMODE->dmPaperWidth) {
 		/* pDEVMODE->dmPaperWidthは1/10mm単位である */
 		*pnPaperAllWidth = pDEVMODE->dmPaperWidth /* * 10*/;
-	} else {
+	}
+	else {
 		pDEVMODE->dmPaperWidth = *pnPaperAllWidth;
 		pDEVMODE->dmFields |= DM_PAPERWIDTH;
 	}
@@ -429,8 +433,8 @@ BOOL CPrint::PrintOpen(WCHAR *pszJobName, MYDEVMODE *pMYDEVMODE, HDC *phdc,
 	//
 	memset_raw(&di, 0, sizeof(di));
 	di.cbSize		= sizeof(di);
-	di.lpszDocName	= pszJobName;
-	di.lpszOutput	= NULL;
+	di.lpszDocName  = pszJobName;
+	di.lpszOutput   = NULL;
 	di.lpszDatatype = NULL;
 	di.fwType		= 0;
 	if (0 >= ::StartDoc(hdc, &di)) {
@@ -465,9 +469,8 @@ WCHAR *CPrint::GetPaperName(int nPaperSize, WCHAR *pszPaperName)
 {
 	// 2006.08.14 Moca 用紙情報の統合
 	const PAPER_INFO *paperInfo = FindPaperInfo(nPaperSize);
-	if (NULL != paperInfo) {
-		wcscpy(pszPaperName, paperInfo->m_pszName);
-	} else {
+	if (NULL != paperInfo) { wcscpy(pszPaperName, paperInfo->m_pszName); }
+	else {
 		wcscpy(pszPaperName, LS(STR_ERR_CPRINT03));
 	}
 	return pszPaperName;
@@ -501,18 +504,18 @@ void CPrint::SettingInitialize(PRINTSETTING &pPrintSetting, const WCHAR *setting
 	pPrintSetting.m_nPrintFontWidth = 12;									// 印刷フォント幅(1/10mm単位)
 	pPrintSetting.m_nPrintFontHeight = pPrintSetting.m_nPrintFontWidth * 2; /* 印刷フォント高さ(1/10mm単位単位) */
 	pPrintSetting.m_nPrintDansuu	  = 1;									/* 段組の段数 */
-	pPrintSetting.m_nPrintDanSpace	  = 70;									/* 段と段の隙間(1/10mm) */
-	pPrintSetting.m_bPrintWordWrap	  = true;								// 英文ワードラップする
+	pPrintSetting.m_nPrintDanSpace	= 70;									/* 段と段の隙間(1/10mm) */
+	pPrintSetting.m_bPrintWordWrap	= true;								// 英文ワードラップする
 	pPrintSetting.m_bPrintKinsokuHead = false;								// 行頭禁則する			//@@@ 2002.04.09 MIK
 	pPrintSetting.m_bPrintKinsokuTail = false;								// 行末禁則する			//@@@ 2002.04.09 MIK
 	pPrintSetting.m_bPrintKinsokuRet  = false; // 改行文字をぶら下げる	//@@@ 2002.04.13 MIK
 	pPrintSetting.m_bPrintKinsokuKuto = false; // 2006.08.14 Moca 初期化ミス
 	pPrintSetting.m_bPrintLineNumber  = false; /* 行番号を印刷する */
-	pPrintSetting.m_nPrintLineSpacing = 30;	   /* 印刷フォント行間 文字の高さに対する割合(%) */
-	pPrintSetting.m_nPrintMarginTY	  = 100;   /* 印刷用紙マージン 上(1/10mm単位) */
-	pPrintSetting.m_nPrintMarginBY	  = 200;   /* 印刷用紙マージン 下(1/10mm単位) */
-	pPrintSetting.m_nPrintMarginLX	  = 200;   /* 印刷用紙マージン 左(1/10mm単位) */
-	pPrintSetting.m_nPrintMarginRX	  = 100;   /* 印刷用紙マージン 右(1/10mm単位) */
+	pPrintSetting.m_nPrintLineSpacing = 30;	/* 印刷フォント行間 文字の高さに対する割合(%) */
+	pPrintSetting.m_nPrintMarginTY	= 100;   /* 印刷用紙マージン 上(1/10mm単位) */
+	pPrintSetting.m_nPrintMarginBY	= 200;   /* 印刷用紙マージン 下(1/10mm単位) */
+	pPrintSetting.m_nPrintMarginLX	= 200;   /* 印刷用紙マージン 左(1/10mm単位) */
+	pPrintSetting.m_nPrintMarginRX	= 100;   /* 印刷用紙マージン 右(1/10mm単位) */
 	pPrintSetting.m_nPrintPaperOrientation =
 		DMORIENT_PORTRAIT; /* 用紙方向 DMORIENT_PORTRAIT (1) または DMORIENT_LANDSCAPE (2) */
 	pPrintSetting.m_nPrintPaperSize = DMPAPER_A4; /* 用紙サイズ */
@@ -525,9 +528,9 @@ void CPrint::SettingInitialize(PRINTSETTING &pPrintSetting, const WCHAR *setting
 	wcscpy(pPrintSetting.m_szHeaderForm[0], L"$f");
 	pPrintSetting.m_szHeaderForm[1][0] = L'\0';
 	pPrintSetting.m_szHeaderForm[2][0] = L'\0';
-	pPrintSetting.m_bFooterUse[0]	   = TRUE;
-	pPrintSetting.m_bFooterUse[1]	   = FALSE;
-	pPrintSetting.m_bFooterUse[2]	   = FALSE;
+	pPrintSetting.m_bFooterUse[0]	  = TRUE;
+	pPrintSetting.m_bFooterUse[1]	  = FALSE;
+	pPrintSetting.m_bFooterUse[2]	  = FALSE;
 	pPrintSetting.m_szFooterForm[0][0] = L'\0';
 	wcscpy(pPrintSetting.m_szFooterForm[1], L"- $p -");
 	pPrintSetting.m_szFooterForm[2][0] = L'\0';
@@ -585,7 +588,8 @@ int CPrint::CalcHeaderHeight(PRINTSETTING *pPS)
 	if (pPS->m_lfHeader.lfFaceName[0] == L'\0') {
 		// フォント指定無し
 		nHeight = pPS->m_nPrintFontHeight;
-	} else {
+	}
+	else {
 		// フォントのサイズ計算(pt->1/10mm)
 		nHeight = pPS->m_nHeaderPointSize * 254 / 720;
 	}
@@ -608,7 +612,8 @@ int CPrint::CalcFooterHeight(PRINTSETTING *pPS)
 	if (pPS->m_lfFooter.lfFaceName[0] == L'\0') {
 		// フォント指定無し
 		nHeight = pPS->m_nPrintFontHeight;
-	} else {
+	}
+	else {
 		// フォントのサイズ計算(pt->1/10mm)
 		nHeight = pPS->m_nFooterPointSize * 254 / 720;
 	}

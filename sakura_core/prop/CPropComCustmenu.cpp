@@ -76,32 +76,29 @@ static void SetDlgItemsEnableState(HWND hwndDlg, HWND hwndCOMBO_MENU, HWND hwndL
 	int nIdx2 = List_GetCurSel(hwndLIST_RES);
 	int nIdx3 = Combo_GetCurSel(hwndCOMBO_FUNCKIND);
 	int nIdx4 = List_GetCurSel(hwndLIST_FUNC);
-	int i	  = List_GetCount(hwndLIST_RES);
+	int i	 = List_GetCount(hwndLIST_RES);
 	if (LB_ERR == nIdx2) {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_DELETE), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_UP), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_DOWN), FALSE);
-	} else {
+	}
+	else {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_DELETE), TRUE);
-		if (nIdx2 <= 0) {
-			::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_UP), FALSE);
-		} else {
+		if (nIdx2 <= 0) { ::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_UP), FALSE); }
+		else {
 			::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_UP), TRUE);
 		}
-		if (nIdx2 + 1 >= i) {
-			::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_DOWN), FALSE);
-		} else {
+		if (nIdx2 + 1 >= i) { ::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_DOWN), FALSE); }
+		else {
 			::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_DOWN), TRUE);
 		}
 	}
-	if (LB_ERR == nIdx2 || LB_ERR == nIdx4) {
-		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_INSERT), FALSE);
-	} else {
+	if (LB_ERR == nIdx2 || LB_ERR == nIdx4) { ::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_INSERT), FALSE); }
+	else {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_INSERT), TRUE);
 	}
-	if (LB_ERR == nIdx4) {
-		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_ADD), FALSE);
-	} else {
+	if (LB_ERR == nIdx4) { ::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_ADD), FALSE); }
+	else {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_ADD), TRUE);
 	}
 	if (MAX_CUSTOM_MENU_ITEMS <= common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1]) {
@@ -117,10 +114,10 @@ static void SetDlgItemsEnableState(HWND hwndDlg, HWND hwndCOMBO_MENU, HWND hwndL
 }
 
 /* Custom menu メッセージ処理 */
-INT_PTR CPropCustmenu::DispatchEvent(HWND	hwndDlg, // handle to dialog box
-									 UINT	uMsg,	 // message
-									 WPARAM wParam,	 // first message parameter
-									 LPARAM lParam	 // second message parameter
+INT_PTR CPropCustmenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
+									 UINT   uMsg,	// message
+									 WPARAM wParam,  // first message parameter
+									 LPARAM lParam   // second message parameter
 )
 {
 	WORD		wNotifyCode;
@@ -134,11 +131,11 @@ INT_PTR CPropCustmenu::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 
 	int i;
 
-	int	  nIdx1;
-	int	  nIdx2;
-	int	  nNum2;
-	int	  nIdx3;
-	int	  nIdx4;
+	int   nIdx1;
+	int   nIdx2;
+	int   nNum2;
+	int   nIdx3;
+	int   nIdx4;
 	WCHAR szLabel[300];
 	WCHAR szLabel2[300 + 4];
 
@@ -153,8 +150,8 @@ INT_PTR CPropCustmenu::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 
 		/* コントロールのハンドルを取得 */
 		hwndCOMBO_FUNCKIND = ::GetDlgItem(hwndDlg, IDC_COMBO_FUNCKIND);
-		hwndLIST_FUNC	   = ::GetDlgItem(hwndDlg, IDC_LIST_FUNC);
-		hwndCOMBO_MENU	   = ::GetDlgItem(hwndDlg, IDC_COMBO_MENU);
+		hwndLIST_FUNC	  = ::GetDlgItem(hwndDlg, IDC_LIST_FUNC);
+		hwndCOMBO_MENU	 = ::GetDlgItem(hwndDlg, IDC_COMBO_MENU);
 		hwndLIST_RES	   = ::GetDlgItem(hwndDlg, IDC_LIST_RES);
 
 		/* キー選択時の処理 */
@@ -201,7 +198,7 @@ INT_PTR CPropCustmenu::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam); /* 通知コード */
 		wID			= LOWORD(wParam); /* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl		= (HWND)lParam;	  /* コントロールのハンドル */
+		hwndCtl		= (HWND)lParam;   /* コントロールのハンドル */
 
 		switch (wNotifyCode) {
 		/* ボタン／チェックボックスがクリックされた */
@@ -240,7 +237,8 @@ INT_PTR CPropCustmenu::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 				SetDataMenuList(hwndDlg, nIdx1);
 				break; /* CBN_SELCHANGE */
 			}
-		} else if (hwndLIST_RES == hwndCtl) {
+		}
+		else if (hwndLIST_RES == hwndCtl) {
 			switch (wNotifyCode) {
 			case LBN_DBLCLK:
 				nIdx1 = Combo_GetCurSel(hwndCOMBO_MENU);
@@ -272,7 +270,8 @@ INT_PTR CPropCustmenu::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 				if (m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]) {
 					auto_sprintf(szLabel2, LTEXT("%s(%hc)"), szLabel,
 								 m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]);
-				} else {
+				}
+				else {
 					auto_sprintf(szLabel2, LTEXT("%ls"), szLabel);
 				}
 
@@ -291,12 +290,13 @@ INT_PTR CPropCustmenu::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 
 				/* キー */
 				if ('\0' == m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]
-					|| ' ' == m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]) {
-				} else {
+					|| ' ' == m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]) {}
+				else {
 				}
 				break; /* LBN_SELCHANGE */
 			}
-		} else if (hwndCOMBO_FUNCKIND == hwndCtl) {
+		}
+		else if (hwndCOMBO_FUNCKIND == hwndCtl) {
 			switch (wNotifyCode) {
 			case CBN_SELCHANGE:
 				nIdx3 = Combo_GetCurSel(hwndCOMBO_FUNCKIND);
@@ -307,14 +307,16 @@ INT_PTR CPropCustmenu::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 					for (i = 0; i < nsFuncCode::nFuncList_Special_Num; i++) {
 						List_AddString(hwndLIST_FUNC, LS(nsFuncCode::pnFuncList_Special[i]));
 					}
-				} else {
+				}
+				else {
 					// Oct. 3, 2001 genta
 					// 専用ルーチンに置き換え
 					m_cLookup.SetListItem(hwndLIST_FUNC, nIdx3);
 				}
 				return TRUE;
 			}
-		} else {
+		}
+		else {
 			EFunctionCode eFuncCode = F_0;
 			switch (wNotifyCode) {
 			/* ボタン／チェックボックスがクリックされた */
@@ -342,7 +344,7 @@ INT_PTR CPropCustmenu::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 							m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][i - 1];
 					}
 					m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2] = F_0;
-					m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]	= '\0';
+					m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]  = '\0';
 					m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1]++;
 
 					//					::SetWindowText( hwndEDIT_KEY, L"" );
@@ -369,8 +371,8 @@ INT_PTR CPropCustmenu::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 					if (nNum2 > 0) {
 						if (nNum2 <= nIdx2) { nIdx2 = nNum2 - 1; }
 						nIdx2 = List_SetCurSel(hwndLIST_RES, nIdx2);
-
-					} else {
+					}
+					else {
 					}
 					break;
 
@@ -398,11 +400,12 @@ INT_PTR CPropCustmenu::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 					if (nIdx3 == nSpecialFuncsNum) {
 						// 特殊機能
 						eFuncCode = nsFuncCode::pnFuncList_Special[nIdx4];
-					} else {
+					}
+					else {
 						eFuncCode = m_cLookup.Pos2FuncCode(nIdx3, nIdx4);
 					}
 					m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2] = eFuncCode;
-					m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]	= '\0';
+					m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]  = '\0';
 					m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1]++;
 
 					nIdx2 = List_InsertString(hwndLIST_RES, nIdx2, szLabel);
@@ -433,13 +436,14 @@ INT_PTR CPropCustmenu::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 						if (0 <= nIdx4 && nIdx4 < nsFuncCode::nFuncList_Special_Num) {
 							eFuncCode = nsFuncCode::pnFuncList_Special[nIdx4];
 						}
-					} else {
+					}
+					else {
 						eFuncCode = m_cLookup.Pos2FuncCode(nIdx3, nIdx4);
 					}
 					//	Oct. 3, 2001 genta
 					if (eFuncCode == F_DISABLE) break;
 					m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nNum2] = eFuncCode;
-					m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nNum2]	= '\0';
+					m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nNum2]  = '\0';
 					m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1]++;
 
 					nIdx2 = List_AddString(hwndLIST_RES, szLabel);
@@ -457,13 +461,13 @@ INT_PTR CPropCustmenu::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 
 					{
 						EFunctionCode nFunc = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2 - 1];
-						KEYCODE		  key	= m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2 - 1];
+						KEYCODE		  key   = m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2 - 1];
 						m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2 - 1] =
 							m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2];
 						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2 - 1] =
 							m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2];
 						m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2] = nFunc;
-						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]	= key;
+						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]  = key;
 					}
 
 					List_GetText(hwndLIST_RES, nIdx2, szLabel);
@@ -483,13 +487,13 @@ INT_PTR CPropCustmenu::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 
 					{
 						EFunctionCode nFunc = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2 + 1];
-						KEYCODE		  key	= m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2 + 1];
+						KEYCODE		  key   = m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2 + 1];
 						m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2 + 1] =
 							m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2];
 						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2 + 1] =
 							m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2];
 						m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2] = nFunc;
-						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]	= key;
+						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]  = key;
 					}
 					List_GetText(hwndLIST_RES, nIdx2, szLabel);
 					List_DeleteString(hwndLIST_RES, nIdx2);
@@ -518,8 +522,7 @@ INT_PTR CPropCustmenu::DispatchEvent(HWND	hwndDlg, // handle to dialog box
 		break;
 
 		//@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP:
-	{
+	case WM_HELP: {
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -544,7 +547,7 @@ void CPropCustmenu::SetData(HWND hwndDlg)
 {
 	HWND  hwndCOMBO_MENU;
 	HWND  hwndCombo;
-	int	  i;
+	int   i;
 	WCHAR buf[MAX_CUSTOM_MENU_NAME_LEN + 1];
 
 	/* 機能種別一覧に文字列をセット（コンボボックス） */
@@ -574,7 +577,7 @@ void CPropCustmenu::SetData(HWND hwndDlg)
 
 void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 {
-	int	  i;
+	int   i;
 	WCHAR szLabel[300];
 	WCHAR szLabel2[300 + 4];
 
@@ -588,15 +591,15 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 					_countof(szLabel)
 						- 1); // Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
 			szLabel[_countof(szLabel) - 1] = L'\0';
-		} else {
+		}
+		else {
 			EFunctionCode code = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i];
 			//	Oct. 3, 2001 genta
 			m_cLookup.Funccode2Name(code, szLabel, 256);
 		}
 		/* キー */
-		if ('\0' == m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx][i]) {
-			wcscpy(szLabel2, szLabel);
-		} else {
+		if ('\0' == m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx][i]) { wcscpy(szLabel2, szLabel); }
+		else {
 			auto_sprintf(szLabel2, LTEXT("%ls(%hc)"), szLabel, m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx][i]);
 		}
 		::List_AddString(hwndLIST_RES, szLabel2);

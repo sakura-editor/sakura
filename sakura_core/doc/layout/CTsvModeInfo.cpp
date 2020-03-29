@@ -37,8 +37,8 @@ void CTsvModeInfo::CalcTabLength(CDocLineMgr *cDocLineMgr)
 	if (m_nTsvMode == TSV_MODE_NONE) return;
 
 	CLogicInt nLine;
-	CLogicInt nLineNum	  = cDocLineMgr->GetLineCount();
-	wchar_t	  delimiter	  = m_nTsvMode == TSV_MODE_TSV ? L'\t' : L',';
+	CLogicInt nLineNum	= cDocLineMgr->GetLineCount();
+	wchar_t   delimiter   = m_nTsvMode == TSV_MODE_TSV ? L'\t' : L',';
 	int		  nFieldWidth = 0;
 
 	for (nLine = CLogicInt(0); nLine < nLineNum; nLine++) {
@@ -52,9 +52,8 @@ void CTsvModeInfo::CalcTabLength(CDocLineMgr *cDocLineMgr)
 		for (i = 0; i < nLineLen;) {
 			if (WCODE::IsLineDelimiter(pcLine[i], true)) break;
 			if (pcLine[i] == delimiter) {
-				if (nField == m_tabLength.size()) {
-					m_tabLength.push_back(nFieldWidth);
-				} else if (m_tabLength[nField] < nFieldWidth) {
+				if (nField == m_tabLength.size()) { m_tabLength.push_back(nFieldWidth); }
+				else if (m_tabLength[nField] < nFieldWidth) {
 					m_tabLength[nField] = nFieldWidth;
 				}
 				nField++;
@@ -65,24 +64,23 @@ void CTsvModeInfo::CalcTabLength(CDocLineMgr *cDocLineMgr)
 			if (pcLine[i] != WCODE::TAB) {
 				CKetaXInt nKeta = CNativeW::GetKetaOfChar(pcLine, nLineLen, i);
 				nFieldWidth += Int(nKeta);
-			} else {
+			}
+			else {
 				nFieldWidth++;
 			}
 			nCharChars = CNativeW::GetSizeOfChar(pcLine, nLineLen, i);
 			i += nCharChars;
 		}
-		if (nField == m_tabLength.size()) {
-			m_tabLength.push_back(nFieldWidth);
-		} else if (m_tabLength[nField] < nFieldWidth) {
+		if (nField == m_tabLength.size()) { m_tabLength.push_back(nFieldWidth); }
+		else if (m_tabLength[nField] < nFieldWidth) {
 			m_tabLength[nField] = nFieldWidth;
 			nField++;
 		}
 	}
 
 	for (ui = 0; ui < m_tabLength.size(); ui++) {
-		if (ui == 0) {
-			m_tabLength[0] += 2;
-		} else {
+		if (ui == 0) { m_tabLength[0] += 2; }
+		else {
 			m_tabLength[ui] += m_tabLength[ui - 1] + 2;
 		}
 	}

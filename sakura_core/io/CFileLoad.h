@@ -44,8 +44,7 @@ class CCodeBase;
 	@note 明示的にFileOpenメンバを呼び出さないと使えない
 		ファイルポインタを共有すると困るので、クラスのコピー禁止
 */
-class CFileLoad
-{
+class CFileLoad {
 public:
 	static bool			IsLoadableSize(ULONGLONG size, bool ignoreLimit = false);
 	static ULONGLONG	GetLimitSize();
@@ -63,7 +62,7 @@ public:
 
 	//! 1行データをロードする 順アクセス用
 	EConvertResult ReadLine(CNativeW *pUnicodeBuffer, //!< [out] UNICODEデータ受け取りバッファ
-							CEol *	  pcEol			  //!< [i/o]
+							CEol *	pcEol			  //!< [i/o]
 	);
 
 	//	未実装関数郡
@@ -90,7 +89,7 @@ public:
 protected:
 	// Oct. 19, 2002 genta スペルミス修正
 	//	void SeekBegin( void );		// ファイルの先頭位置に移動する(BOMを考慮する)
-	void Buffering(void);	 // バッファにデータをロードする
+	void Buffering(void);	// バッファにデータをロードする
 	void ReadBufEmpty(void); // バッファを空にする
 
 	// GetLextLine の 文字コード考慮版
@@ -98,7 +97,7 @@ protected:
 									   int *pnEolLen, int *pnBufferNext);
 	EConvertResult ReadLine_core(CNativeW *pUnicodeBuffer, CEol *pcEol);
 
-	int	  Read(void *pBuf, size_t nSize);		   // inline
+	int   Read(void *pBuf, size_t nSize);		   // inline
 	DWORD FilePointer(DWORD offset, DWORD origin); // inline
 
 	/* メンバオブジェクト */
@@ -106,34 +105,33 @@ protected:
 
 	//	LPWSTR	m_pszFileName;	// ファイル名
 	HANDLE		   m_hFile;		   // ファイルハンドル
-	LONGLONG	   m_nFileSize;	   // ファイルサイズ(64bit)
+	LONGLONG	   m_nFileSize;	// ファイルサイズ(64bit)
 	LONGLONG	   m_nFileDataLen; // ファイルデータ長からBOM長を引いたバイト数
 	LONGLONG	   m_nReadLength; // 現在までにロードしたデータの合計バイト数(BOM長を含まない)
 	int			   m_nLineIndex;  // 現在ロードしている論理行(0開始)
-	ECodeType	   m_CharCode;	  // 文字コード
-	CCodeBase *	   m_pCodeBase;	  ////
+	ECodeType	  m_CharCode;	// 文字コード
+	CCodeBase *	m_pCodeBase;   ////
 	EEncodingTrait m_encodingTrait;
 	CMemory		   m_memEols[3];
 	bool		   m_bEolEx;	 //!< CR/LF以外のEOLが有効か
 	int			   m_nMaxEolLen; //!< EOLの長さ
-	bool		   m_bBomExist;	 // ファイルのBOMが付いているか Jun. 08, 2003 Moca
+	bool		   m_bBomExist;  // ファイルのBOMが付いているか Jun. 08, 2003 Moca
 	int			   m_nFlag;		 // 文字コードの変換オプション
 	//	Jun. 13, 2003 Moca
 	//	状態をenumとしてわかりやすく．
-	enum enumFileLoadMode
-	{
+	enum enumFileLoadMode {
 		FLMODE_CLOSE = 0, //!< 初期状態
 		FLMODE_OPEN,	  //!< ファイルオープンのみ
-		FLMODE_READY,	  //!< 順アクセスOK
+		FLMODE_READY,	 //!< 順アクセスOK
 		FLMODE_READBUFEND //!<ファイルの終端までバッファに入れた
 	};
 	enumFileLoadMode m_eMode; // 現在の読み込み状態
 
 	// 読み込みバッファ系
 	char *m_pReadBuf;		// 読み込みバッファへのポインタ
-	int	  m_nReadBufSize;	// 読み込みバッファの実際に確保しているサイズ
-	int	  m_nReadDataLen;	// 読み込みバッファの有効データサイズ
-	int	  m_nReadBufOffSet; // 読み込みバッファ中のオフセット(次の行頭位置)
+	int   m_nReadBufSize;   // 読み込みバッファの実際に確保しているサイズ
+	int   m_nReadDataLen;   // 読み込みバッファの有効データサイズ
+	int   m_nReadBufOffSet; // 読み込みバッファ中のオフセット(次の行頭位置)
 	//	int		m_nReadBufSumSize;	// 今までにバッファに読み込んだデータの合計サイズ
 	CMemory		   m_cLineBuffer;
 	CNativeW	   m_cLineTemp;

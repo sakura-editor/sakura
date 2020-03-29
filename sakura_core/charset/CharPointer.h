@@ -27,16 +27,17 @@
 #include "charset/charcode.h"
 
 //!< ディレクトリを除いた、ファイル名だけを取得する
-class CharPointerA
-{
+class CharPointerA {
 public:
 	CharPointerA() {}
 	CharPointerA(const char *p)
 		: m_p(p)
-	{}
+	{
+	}
 	CharPointerA(const CharPointerA &rhs)
 		: m_p(rhs.m_p)
-	{}
+	{
+	}
 
 	//進む
 	const char *operator++()
@@ -103,16 +104,17 @@ private:
 	const char *m_p;
 };
 
-class CharPointerW
-{
+class CharPointerW {
 public:
 	CharPointerW() {}
 	CharPointerW(const wchar_t *p)
 		: m_p(p)
-	{}
+	{
+	}
 	CharPointerW(const CharPointerW &rhs)
 		: m_p(rhs.m_p)
-	{}
+	{
+	}
 
 	//進む
 	const wchar_t *operator++()

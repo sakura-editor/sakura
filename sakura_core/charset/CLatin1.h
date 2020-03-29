@@ -31,8 +31,7 @@
 
 #include "CCodeBase.h"
 
-class CLatin1 : public CCodeBase
-{
+class CLatin1 : public CCodeBase {
 
 public:
 	// CCodeBaseインターフェース
@@ -71,7 +70,7 @@ protected:
 inline int CLatin1::_UniToLatin1_char(const unsigned short *pSrc, unsigned char *pDst, const ECharSet eCharset,
 									  bool *pbError)
 {
-	int	 nret;
+	int  nret;
 	bool berror = false;
 	BOOL blost;
 
@@ -80,25 +79,28 @@ inline int CLatin1::_UniToLatin1_char(const unsigned short *pSrc, unsigned char 
 			// ISO 58859-1の範囲
 			pDst[0] = (unsigned char)pSrc[0];
 			nret	= 1;
-		} else {
+		}
+		else {
 			// ISO 8859-1以外
 			nret = ::WideCharToMultiByte(1252, 0, reinterpret_cast<const wchar_t *>(pSrc), 1,
 										 reinterpret_cast<char *>(pDst), 4, NULL, &blost);
 			if (blost != FALSE) {
 				// Uni -> CLatin1 変換に失敗
-				berror	= true;
+				berror  = true;
 				pDst[0] = '?';
 				nret	= 1;
 			}
 		}
-	} else if (eCharset == CHARSET_UNI_SURROG) {
+	}
+	else if (eCharset == CHARSET_UNI_SURROG) {
 		// サロゲートペアは CLatin1 に変換できない。
-		berror	= true;
+		berror  = true;
 		pDst[0] = '?';
 		nret	= 1;
-	} else {
+	}
+	else {
 		// 保護コード
-		berror	= true;
+		berror  = true;
 		pDst[0] = '?';
 		nret	= 1;
 	}

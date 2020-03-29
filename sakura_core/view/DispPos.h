@@ -28,8 +28,7 @@
 #include "doc/layout/CLayout.h"
 #include "doc/layout/CLayoutMgr.h"
 
-struct DispPos
-{
+struct DispPos {
 public:
 	DispPos(int nDx, int nDy)
 		: m_nDx(nDx)
@@ -50,7 +49,7 @@ public:
 	//固定値
 	void InitDrawPos(const POINT &pt)
 	{
-		m_ptDrawOrigin	 = pt;
+		m_ptDrawOrigin   = pt;
 		m_ptDrawLayout.x = m_ptDrawLayout.y = CLayoutInt(0);
 	}
 
@@ -88,13 +87,13 @@ public:
 	void ForwardLayoutLineRef(int nOffsetLine);
 
 	//取得
-	CLayoutInt	   GetLayoutLineRef() const { return m_nLineRef; }
+	CLayoutInt	 GetLayoutLineRef() const { return m_nLineRef; }
 	const CLayout *GetLayoutRef() const { return m_pcLayoutRef; }
 
 private:
 	//固定要素
-	int	  m_nDx;		  //半角文字の文字間隔。固定。
-	int	  m_nDy;		  //半角文字の行間隔。固定。
+	int   m_nDx;		  //半角文字の文字間隔。固定。
+	int   m_nDy;		  //半角文字の行間隔。固定。
 	POINT m_ptDrawOrigin; //描画位置基準。単位はピクセル。固定。
 
 	//描画位置

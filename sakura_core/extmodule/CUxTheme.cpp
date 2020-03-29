@@ -35,7 +35,8 @@
 
 CUxTheme::CUxTheme()
 	: m_bInitialized(false)
-{}
+{
+}
 
 CUxTheme::~CUxTheme() {}
 

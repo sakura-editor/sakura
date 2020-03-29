@@ -28,8 +28,7 @@
 #include "charset/codeutil.h"
 #include <mbstring.h>
 
-class CEuc : public CCodeBase
-{
+class CEuc : public CCodeBase {
 public:
 	// CCodeBaseインターフェース
 	EConvertResult CodeToUnicode(const CMemory &cSrc, CNativeW *pDst) override
@@ -77,7 +76,7 @@ inline int CEuc::_EucjpToUni_char(const unsigned char *pSrc, unsigned short *pDs
 	unsigned char czenkaku[2];
 	unsigned int  ctemp;
 	bool		  berror = false;
-	bool		  hex	 = false;
+	bool		  hex	= false;
 
 	switch (eCharset) {
 	case CHARSET_JIS_HANKATA:
@@ -102,18 +101,19 @@ inline int CEuc::_EucjpToUni_char(const unsigned char *pSrc, unsigned short *pDs
 			nret		= MyMultiByteToWideChar_JP(&czenkaku[0], 2, pDst);
 			if (nret < 1) {
 				nret = BinToText(pSrc, 2, pDst);
-				hex	 = true;
+				hex  = true;
 			}
-		} else {
+		}
+		else {
 			// JIS -> SJIS の変換エラー
 			// エラー処理関数を使う
 			nret = BinToText(pSrc, 2, pDst);
-			hex	 = true;
+			hex  = true;
 		}
 		break;
 	default:
 		// 保護コード
-		berror	= true;
+		berror  = true;
 		hex		= true;
 		pDst[0] = '?';
 		nret	= 1;
@@ -140,50 +140,57 @@ inline int CEuc::_UniToEucjp_char(const unsigned short *pSrc, unsigned char *pDs
 
 	if (eCharset == CHARSET_UNI_SURROG) {
 		// サロゲートは SJIS に変換できない。
-		berror	= true;
+		berror  = true;
 		pDst[0] = '?';
 		nret	= 1;
-	} else if (eCharset == CHARSET_UNI_NORMAL) {
+	}
+	else if (eCharset == CHARSET_UNI_NORMAL) {
 		nclen = MyWideCharToMultiByte_JP(pSrc, 1, cbuf);
 		if (nclen < 1) {
 			// Uni -> SJIS で変換エラー
-			berror	= true;
+			berror  = true;
 			pDst[0] = '?';
 			nret	= 1;
-		} else if (nclen == 1 && IsAscii7(cbuf[0])) {
+		}
+		else if (nclen == 1 && IsAscii7(cbuf[0])) {
 			// 7bit ASCII の処理
 			pDst[0] = cbuf[0];
 			nret	= 1;
-		} else if (nclen == 1 && IsSjisHankata(cbuf[0])) {
+		}
+		else if (nclen == 1 && IsSjisHankata(cbuf[0])) {
 			// 半角カタカナ文字の処理：
 			pDst[0] = 0x8e;
 			pDst[1] = cbuf[0];
 			nret	= 2;
-		} else if (nclen == 2 /* && IsSjisZen(reinterpret_cast<char*>(cbuf)) */) {
+		}
+		else if (nclen == 2 /* && IsSjisZen(reinterpret_cast<char*>(cbuf)) */) {
 			// 全角文字の処理：
 			// SJIS -> JIS
 			unsigned int ctemp_ = SjisFilter_ibm2nec((static_cast<unsigned int>(cbuf[0]) << 8) | cbuf[1]);
 			// < IBM拡張文字をNEC選定IBM拡張文字に変換
 			ctemp = _mbcjmstojis(ctemp_);
 			if (ctemp == 0) {
-				berror	= true;
+				berror  = true;
 				pDst[0] = '?';
 				nret	= 1;
-			} else {
+			}
+			else {
 				// JIS -> EUCJP
 				pDst[0] = static_cast<unsigned char>((ctemp & 0x0000ff00) >> 8) | 0x80;
 				pDst[1] = static_cast<unsigned char>(ctemp & 0x000000ff) | 0x80;
 				nret	= 2;
 			}
-		} else {
+		}
+		else {
 			// 保護コード
-			berror	= true;
+			berror  = true;
 			pDst[0] = '?';
 			nret	= 1;
 		}
-	} else {
+	}
+	else {
 		// 保護コード
-		berror	= true;
+		berror  = true;
 		pDst[0] = '?';
 		nret	= 1;
 	}

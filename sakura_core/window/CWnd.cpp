@@ -25,7 +25,8 @@ LRESULT CALLBACK CWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	if (pCWnd) {
 		/* クラスオブジェクトのポインタを使ってメッセージを配送する */
 		return pCWnd->DispatchEvent(hwnd, uMsg, wParam, lParam);
-	} else {
+	}
+	else {
 		/* ふつうはここには来ない */
 		return ::DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
@@ -33,7 +34,7 @@ LRESULT CALLBACK CWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 //! Windowsフック(CBT)
 namespace CWindowCreationHook {
-int	  g_nCnt  = 0; //参照カウンタ
+int   g_nCnt  = 0; //参照カウンタ
 HHOOK g_hHook = NULL;
 
 //!フック用コールバック
@@ -76,7 +77,7 @@ void Unuse()
 
 CWnd::CWnd(const WCHAR *pszInheritanceAppend)
 {
-	m_hInstance	 = NULL; /* アプリケーションインスタンスのハンドル */
+	m_hInstance  = NULL; /* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL; /* オーナーウィンドウのハンドル */
 	m_hWnd		 = NULL; /* このウィンドウのハンドル */
 #ifdef _DEBUG
@@ -101,10 +102,10 @@ CWnd::~CWnd()
 ATOM CWnd::RegisterWC(
 	/* WNDCLASS用 */
 	HINSTANCE hInstance,
-	HICON	  hIcon,		 // Handle to the class icon.
-	HICON	  hIconSm,		 // Handle to a small icon
-	HCURSOR	  hCursor,		 // Handle to the class cursor.
-	HBRUSH	  hbrBackground, // Handle to the class background brush.
+	HICON	 hIcon,		 // Handle to the class icon.
+	HICON	 hIconSm,		 // Handle to a small icon
+	HCURSOR   hCursor,		 // Handle to the class cursor.
+	HBRUSH	hbrBackground, // Handle to the class background brush.
 	LPCWSTR lpszMenuName, // Pointer to a null-terminated character string that specifies the resource name of the class
 						  // menu, as the name appears in the resource file.
 	LPCWSTR lpszClassName // Pointer to a null-terminated string or is an atom.
@@ -118,14 +119,14 @@ ATOM CWnd::RegisterWC(
 	//	Apr. 27, 2000 genta
 	//	サイズ変更時のちらつきを抑えるためCS_HREDRAW | CS_VREDRAW を外した
 	wc.style		 = CS_DBLCLKS;
-	wc.lpfnWndProc	 = CWndProc;
-	wc.cbClsExtra	 = 0;
-	wc.cbWndExtra	 = 32;
+	wc.lpfnWndProc   = CWndProc;
+	wc.cbClsExtra	= 0;
+	wc.cbWndExtra	= 32;
 	wc.hInstance	 = m_hInstance;
 	wc.hIcon		 = hIcon;
 	wc.hCursor		 = hCursor;
 	wc.hbrBackground = hbrBackground;
-	wc.lpszMenuName	 = lpszMenuName;
+	wc.lpszMenuName  = lpszMenuName;
 	wc.lpszClassName = lpszClassName;
 	wc.hIconSm		 = hIconSm;
 	return ::RegisterClassEx(&wc);
@@ -135,15 +136,15 @@ ATOM CWnd::RegisterWC(
 HWND CWnd::Create(
 	/* CreateWindowEx()用 */
 	HWND	hwndParent,
-	DWORD	dwExStyle,	   // extended window style
+	DWORD   dwExStyle,	 // extended window style
 	LPCWSTR lpszClassName, // Pointer to a null-terminated string or is an atom.
 	LPCWSTR lpWindowName,  // pointer to window name
-	DWORD	dwStyle,	   // window style
+	DWORD   dwStyle,	   // window style
 	int		x,			   // horizontal position of window
 	int		y,			   // vertical position of window
 	int		nWidth,		   // window width
 	int		nHeight,	   // window height
-	HMENU	hMenu		   // handle to menu, or child-window identifier
+	HMENU   hMenu		   // handle to menu, or child-window identifier
 )
 {
 	m_hwndParent = hwndParent;
@@ -159,16 +160,16 @@ HWND CWnd::Create(
 
 	m_hWnd = ::CreateWindowEx(dwExStyle,	 // extended window style
 							  lpszClassName, // pointer to registered class name
-							  lpWindowName,	 // pointer to window name
+							  lpWindowName,  // pointer to window name
 							  dwStyle,		 // window style
 							  x,			 // horizontal position of window
 							  y,			 // vertical position of window
 							  nWidth,		 // window width
 							  nHeight,		 // window height
-							  m_hwndParent,	 // handle to parent or owner window
+							  m_hwndParent,  // handle to parent or owner window
 							  hMenu,		 // handle to menu, or child-window identifier
-							  m_hInstance,	 // handle to application instance
-							  (LPVOID)this	 // pointer to window-creation data
+							  m_hInstance,   // handle to application instance
+							  (LPVOID)this   // pointer to window-creation data
 	);
 
 	// Windowsフック解除

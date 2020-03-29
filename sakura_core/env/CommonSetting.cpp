@@ -29,17 +29,15 @@
 using namespace std;
 
 // CommonValue管理
-struct CommonValueInfo
-{
-	enum EType
-	{
+struct CommonValueInfo {
+	enum EType {
 		TYPE_UNKNOWN,
 		TYPE_ASTR, // char文字列 (終端NULL)
 		TYPE_WSTR, // wchar_t文字列 (終端NULL)
 	};
 
 	void *m_pValue;		//!< 値へのポインタ
-	int	  m_nValueSize; //!< 値のサイズ。バイト単位。
+	int   m_nValueSize; //!< 値のサイズ。バイト単位。
 	char  m_szEntryKey[32];
 	EType m_eType;
 
@@ -56,9 +54,7 @@ struct CommonValueInfo
 		printf("%hs=", m_szEntryKey);
 
 		// intと同じサイズならintとして出力
-		if (m_nValueSize == sizeof(int)) {
-			printf("%d\n", *((int *)m_pValue));
-		}
+		if (m_nValueSize == sizeof(int)) { printf("%d\n", *((int *)m_pValue)); }
 		//それ以外ならバイナリ出力
 		else {
 			for (int i = 0; i < m_nValueSize; i++) { printf("%%%02X", ((BYTE *)m_pValue)[i]); }
@@ -73,8 +69,8 @@ void					CommonValue_AllSave()
 }
 
 // CommonValue ※virtual使うの禁止
-template<class T> class CommonValue
-{
+template<class T>
+class CommonValue {
 private:
 	typedef CommonValue<T> Me;
 

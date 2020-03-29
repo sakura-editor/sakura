@@ -24,7 +24,7 @@
 void CViewCommander::Command_INS_DATE(void)
 {
 	// 日付をフォーマット
-	WCHAR	   szText[1024];
+	WCHAR	  szText[1024];
 	SYSTEMTIME systime;
 	::GetLocalTime(&systime);
 	CFormatManager().MyGetDateFormat(systime, szText, _countof(szText) - 1);
@@ -37,7 +37,7 @@ void CViewCommander::Command_INS_DATE(void)
 void CViewCommander::Command_INS_TIME(void)
 {
 	// 時刻をフォーマット
-	WCHAR	   szText[1024];
+	WCHAR	  szText[1024];
 	SYSTEMTIME systime;
 	::GetLocalTime(&systime);
 	CFormatManager().MyGetTimeFormat(systime, szText, _countof(szText) - 1);
@@ -83,7 +83,7 @@ void CViewCommander::Command_INS_FOLDER_USED_RECENTLY(void)
 {
 	std::wstring eol = GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2();
 	std::wstring s;
-	CMRUFolder	 cMRUFolder;
+	CMRUFolder   cMRUFolder;
 	auto		 list = cMRUFolder.GetPathList();
 	for (auto item : list) {
 		s += item;

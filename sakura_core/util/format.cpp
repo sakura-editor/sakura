@@ -83,13 +83,14 @@ bool GetDateTimeFormat(WCHAR *szResult, int size, const WCHAR *format, const SYS
 				// A Z
 			case L'%':
 			default:
-				*q	= *p;
+				*q  = *p;
 				len = 1;
 				break;
 			}
 			q += len; // q += strlen(szTime);
 			++p;
-		} else {
+		}
+		else {
 			*q = *p;
 			q++;
 			p++;
@@ -110,10 +111,10 @@ bool GetDateTimeFormat(WCHAR *szResult, int size, const WCHAR *format, const SYS
 */
 UINT32 ParseVersion(const WCHAR *sVer)
 {
-	int	   nVer;
-	int	   nShift = 0; //特別な文字列による下駄
-	int	   nDigit = 0; //連続する数字の数
-	UINT32 ret	  = 0;
+	int	nVer;
+	int	nShift = 0; //特別な文字列による下駄
+	int	nDigit = 0; //連続する数字の数
+	UINT32 ret	= 0;
 
 	const WCHAR *p = sVer;
 	int			 i;
@@ -126,27 +127,32 @@ UINT32 ParseVersion(const WCHAR *sVer)
 			else
 				p++;
 			nShift = -0x60;
-		} else if (*p == L'b') {
+		}
+		else if (*p == L'b') {
 			if (wcsncmp_literal(p, L"beta") == 0)
 				p += 4;
 			else
 				p++;
 			nShift = -0x40;
-		} else if (*p == L'r' || *p == L'R') {
+		}
+		else if (*p == L'r' || *p == L'R') {
 			if (wcsnicmp_literal(p, L"rc") == 0)
 				p += 2;
 			else
 				p++;
 			nShift = -0x20;
-		} else if (*p == L'p') {
+		}
+		else if (*p == L'p') {
 			if (wcsncmp_literal(p, L"pl") == 0)
 				p += 2;
 			else
 				p++;
 			nShift = 0x20;
-		} else if (!_istdigit(*p)) {
+		}
+		else if (!_istdigit(*p)) {
 			nShift = -0x80;
-		} else {
+		}
+		else {
 			nShift = 0;
 		}
 		while (*p && !_istdigit(*p)) { p++; }

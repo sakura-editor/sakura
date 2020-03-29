@@ -27,16 +27,15 @@
 class CDataProfile;
 class CMenuDrawer;
 struct CommonSetting_CustomMenu; // defined CommonSetting.h
-struct CommonSetting_MainMenu;	 // defined CommonSetting.h
-struct CommonSetting_KeyBind;	 // defined CommonSetting.h
+struct CommonSetting_MainMenu;   // defined CommonSetting.h
+struct CommonSetting_KeyBind;	// defined CommonSetting.h
 struct ColorInfo;				 // defined doc/CDocTypeSetting.h
 struct SFileTree;
 
 // 2008.XX.XX kobake CShareDataから分離
 // 2008.05.24 Uchi   ShareData_IO_CustMenu, ShareData_IO_KeyBind  move Export、Importに使用
 // 2010.08.21 Moca アクセス権、関数名の整理
-class CShareData_IO
-{
+class CShareData_IO {
 public:
 	//セーブ・ロード
 	static bool LoadShareData(); /* 共有データのロード */
@@ -83,5 +82,5 @@ public:
 	static void IO_MainMenu(CDataProfile &cProfile, std::vector<std::wstring> *pData, CommonSetting_MainMenu &mainmenu,
 							bool bOutCmdName);
 	static void IO_ColorSet(CDataProfile *pcProfile, const WCHAR *pszSecName, ColorInfo *pColorInfoArr);
-		/* 色設定 I/O */ // Feb. 12, 2006 D.S.Koba
+	/* 色設定 I/O */ // Feb. 12, 2006 D.S.Koba
 };

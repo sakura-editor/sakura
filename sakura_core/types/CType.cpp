@@ -48,7 +48,7 @@ void CType::InitTypeConfig(int nIdx, STypeConfig &type)
 
 	//インデックスを設定
 	type.m_nIdx = nIdx;
-	type.m_id	= nIdx;
+	type.m_id   = nIdx;
 
 	//個別設定
 	InitTypeConfigImp(&type);
@@ -67,22 +67,22 @@ void CType::InitTypeConfig(int nIdx, STypeConfig &type)
 void CShareData::InitTypeConfigs(DLLSHAREDATA *pShareData, std::vector<STypeConfig *> &types)
 {
 	CType *table[] = {
-		new CType_Basis(),	//基本
-		new CType_Text(),	//テキスト
+		new CType_Basis(),  //基本
+		new CType_Text(),   //テキスト
 		new CType_Cpp(),	// C/C++
-		new CType_Html(),	// HTML
+		new CType_Html(),   // HTML
 		new CType_Sql(),	// PL/SQL
-		new CType_Cobol(),	// COBOL
-		new CType_Java(),	// Java
+		new CType_Cobol(),  // COBOL
+		new CType_Java(),   // Java
 		new CType_Asm(),	//アセンブラ
 		new CType_Awk(),	// awk
 		new CType_Dos(),	// MS-DOSバッチファイル
 		new CType_Pascal(), // Pascal
 		new CType_Tex(),	// TeX
-		new CType_Perl(),	// Perl
+		new CType_Perl(),   // Perl
 		new CType_Python(), // Python
 		new CType_Vb(),		// Visual Basic
-		new CType_Rich(),	//リッチテキスト
+		new CType_Rich(),   //リッチテキスト
 		new CType_Ini(),	//設定ファイル
 	};
 	types.clear();
@@ -97,7 +97,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA *pShareData, std::vector<STypeConf
 		pShareData->m_TypeMini[i].m_id		 = type->m_id;
 		SAFE_DELETE(table[i]);
 	}
-	pShareData->m_TypeBasis	  = *types[0];
+	pShareData->m_TypeBasis   = *types[0];
 	pShareData->m_nTypesCount = (int)types.size();
 }
 
@@ -130,15 +130,15 @@ void CShareData::InitKeyword(DLLSHAREDATA *pShareData)
 	PopulateKeyword(L"CORBA IDL", true, CORBA_IDL); /* セット 5の追加 */
 	PopulateKeyword(L"AWK", true, AWK);				/* セット 6の追加 */
 	PopulateKeyword(L"MS-DOS batch", false, BAT);
-		/* セット 7の追加 */ // Oct. 31, 2000 JEPRO 'バッチファイル'→'batch' に短縮
+	/* セット 7の追加 */ // Oct. 31, 2000 JEPRO 'バッチファイル'→'batch' に短縮
 	PopulateKeyword(L"Pascal", false, PASCAL);
-		/* セット 8の追加 */ // Nov. 5, 2000 JEPRO 大・小文字の区別を'しない'に変更
+	/* セット 8の追加 */ // Nov. 5, 2000 JEPRO 大・小文字の区別を'しない'に変更
 	PopulateKeyword(L"TeX", true, TEX);
-		/* セット 9の追加 */ // Sept. 2, 2000 jepro Tex →TeX に修正 Bool値は大・小文字の区別
-	PopulateKeyword(L"TeX2", true, TEX2); /* セット10の追加 */	 // Jan. 19, 2001 JEPRO 追加
+	/* セット 9の追加 */ // Sept. 2, 2000 jepro Tex →TeX に修正 Bool値は大・小文字の区別
+	PopulateKeyword(L"TeX2", true, TEX2); /* セット10の追加 */   // Jan. 19, 2001 JEPRO 追加
 	PopulateKeyword(L"Perl", true, PERL);						 /* セット11の追加 */
 	PopulateKeyword(L"Perl2", true, PERL2); /* セット12の追加 */ // Jul. 10, 2001 JEPRO Perlから変数を分離・独立
-	PopulateKeyword(L"Visual Basic", false, VB); /* セット13の追加 */	// Jul. 10, 2001 JEPRO
+	PopulateKeyword(L"Visual Basic", false, VB); /* セット13の追加 */   // Jul. 10, 2001 JEPRO
 	PopulateKeyword(L"Visual Basic2", false, VB2); /* セット14の追加 */ // Jul. 10, 2001 JEPRO
 	PopulateKeyword(L"Rich Text", true, RTF); /* セット15の追加 */		// Jul. 10, 2001 JEPRO
 	PopulateKeyword(L"Python", true, Python);							/* セット16の追加 */
@@ -158,13 +158,13 @@ void _DefaultConfig(STypeConfig *pType)
 	/************************/
 
 	pType->m_nTextWrapMethod = WRAP_NO_TEXT_WRAP;		// テキストの折り返し方法		// 2008.05.30 nasukoji
-	pType->m_nMaxLineKetas	 = CKetaXInt(MAXLINEKETAS); /* 折り返し桁数 */
-	pType->m_nColumnSpace	 = 0;						/* 文字と文字の隙間 */
+	pType->m_nMaxLineKetas   = CKetaXInt(MAXLINEKETAS); /* 折り返し桁数 */
+	pType->m_nColumnSpace	= 0;						/* 文字と文字の隙間 */
 	pType->m_nLineSpace		 = 1;						/* 行間のすきま */
 	pType->m_nTabSpace		 = CKetaXInt(4);			/* TABの文字数 */
 	pType->m_nTsvMode		 = 0;						/* TSVモード */
 	for (int i = 0; i < MAX_KEYWORDSET_PER_TYPE; i++) { pType->m_nKeyWordSetIdx[i] = -1; }
-	wcscpy(pType->m_szTabViewString, _EDITL("^       "));	 /* TAB表示文字列 */
+	wcscpy(pType->m_szTabViewString, _EDITL("^       "));	/* TAB表示文字列 */
 	pType->m_bTabArrow = TABARROW_STRING; /* タブ矢印表示 */ // 2001.12.03 hor	// default on 2013/4/11 Uchi
 	pType->m_bInsSpace = false; /* スペースの挿入 */		 // 2001.12.03 hor
 
@@ -177,8 +177,8 @@ void _DefaultConfig(STypeConfig *pType)
 
 	pType->m_nStringType = STRING_LITERAL_CPP; /* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 	pType->m_bStringLineOnly  = false;
-	pType->m_bStringEndLine	  = false;
-	pType->m_nHeredocType	  = HEREDOC_PHP;
+	pType->m_bStringEndLine   = false;
+	pType->m_nHeredocType	 = HEREDOC_PHP;
 	pType->m_szIndentChars[0] = L'\0'; /* その他のインデント対象文字 */
 
 	pType->m_nColorInfoArrNum = COLORIDX_LAST;
@@ -193,17 +193,17 @@ void _DefaultConfig(STypeConfig *pType)
 	pType->m_bHokanLoHiCase = false; // 入力補完機能：英大文字小文字を同一視する
 
 	//	2003.06.23 Moca ファイル内からの入力補完機能
-	pType->m_bUseHokanByFile	= true;	 //! 入力補完 開いているファイル内から候補を探す
+	pType->m_bUseHokanByFile	= true;  //! 入力補完 開いているファイル内から候補を探す
 	pType->m_bUseHokanByKeyword = false; // 強調キーワードから入力補完
 
 	// 文字コード設定
 	pType->m_encoding.m_bPriorCesu8		 = false;
 	pType->m_encoding.m_eDefaultCodetype = CODE_UTF8;
-	pType->m_encoding.m_eDefaultEoltype	 = EOL_CRLF;
+	pType->m_encoding.m_eDefaultEoltype  = EOL_CRLF;
 	pType->m_encoding.m_bDefaultBom		 = false;
 
 	//@@@2002.2.4 YAZAKI
-	pType->m_szExtHelp[0]	   = L'\0';
+	pType->m_szExtHelp[0]	  = L'\0';
 	pType->m_szExtHtmlHelp[0]  = L'\0';
 	pType->m_bHtmlHelpIsSingle = true;
 
@@ -217,10 +217,10 @@ void _DefaultConfig(STypeConfig *pType)
 	for (int i = 0; i < COLORIDX_LAST; ++i) { GetDefaultColorInfo(&pType->m_ColorInfoArr[i], i); }
 	pType->m_szBackImgPath[0] = '\0';
 	pType->m_backImgPos		  = BGIMAGE_TOP_LEFT;
-	pType->m_backImgRepeatX	  = true;
-	pType->m_backImgRepeatY	  = true;
-	pType->m_backImgScrollX	  = true;
-	pType->m_backImgScrollY	  = true;
+	pType->m_backImgRepeatX   = true;
+	pType->m_backImgRepeatY   = true;
+	pType->m_backImgScrollX   = true;
+	pType->m_backImgScrollY   = true;
 	{
 		POINT pt				  = {0, 0};
 		pType->m_backImgPosOffset = pt;
@@ -231,19 +231,19 @@ void _DefaultConfig(STypeConfig *pType)
 	pType->m_cLineTermChar		  = L':';			// 行番号区切り文字
 	pType->m_bWordWrap			  = false;			// 英文ワードラップをする
 	pType->m_nCurrentPrintSetting = 0;				// 現在選択している印刷設定
-	pType->m_bOutlineDockDisp	  = false;			// アウトライン解析表示の有無
-	pType->m_eOutlineDockSide	  = DOCKSIDE_FLOAT; // アウトライン解析ドッキング配置
-	pType->m_cxOutlineDockLeft	  = 0;				// アウトラインの左ドッキング幅
-	pType->m_cyOutlineDockTop	  = 0;				// アウトラインの上ドッキング高
-	pType->m_cxOutlineDockRight	  = 0;				// アウトラインの右ドッキング幅
+	pType->m_bOutlineDockDisp	 = false;			// アウトライン解析表示の有無
+	pType->m_eOutlineDockSide	 = DOCKSIDE_FLOAT; // アウトライン解析ドッキング配置
+	pType->m_cxOutlineDockLeft	= 0;				// アウトラインの左ドッキング幅
+	pType->m_cyOutlineDockTop	 = 0;				// アウトラインの上ドッキング高
+	pType->m_cxOutlineDockRight   = 0;				// アウトラインの右ドッキング幅
 	pType->m_cyOutlineDockBottom  = 0;				// アウトラインの下ドッキング高
-	pType->m_eDefaultOutline	  = OUTLINE_TEXT;	/* アウトライン解析方法 */
+	pType->m_eDefaultOutline	  = OUTLINE_TEXT;   /* アウトライン解析方法 */
 	pType->m_nOutlineSortCol	  = 0;				/* アウトライン解析ソート列番号 */
-	pType->m_bOutlineSortDesc	  = false;			// アウトライン解析ソート降順
-	pType->m_nOutlineSortType	  = 0;				/* アウトライン解析ソート基準 */
+	pType->m_bOutlineSortDesc	 = false;			// アウトライン解析ソート降順
+	pType->m_nOutlineSortType	 = 0;				/* アウトライン解析ソート基準 */
 	CShareData::InitFileTree(&pType->m_sFileTree);
 	pType->m_eSmartIndent			 = SMARTINDENT_NONE; /* スマートインデント種別 */
-	pType->m_bIndentCppStringIgnore	 = true;
+	pType->m_bIndentCppStringIgnore  = true;
 	pType->m_bIndentCppCommentIgnore = true;
 	pType->m_bIndentCppUndoSep		 = false;
 	pType->m_nImeState				 = IME_CMODE_NOCONVERSION; /* IME入力 */
@@ -264,7 +264,7 @@ void _DefaultConfig(STypeConfig *pType)
 		pType->m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1;
 	}
 	pType->m_RegexKeywordList[0] = L'\0';
-	pType->m_bUseRegexKeyword	 = false;
+	pType->m_bUseRegexKeyword	= false;
 	//@@@ 2001.11.17 add end MIK
 	pType->m_nRegexKeyMagicNumber = 0;
 
@@ -272,13 +272,13 @@ void _DefaultConfig(STypeConfig *pType)
 	for (int i = 0; i < MAX_KEYHELP_FILE; i++) {
 		pType->m_KeyHelpArr[i].m_bUse		= false;
 		pType->m_KeyHelpArr[i].m_szAbout[0] = L'\0';
-		pType->m_KeyHelpArr[i].m_szPath[0]	= L'\0';
+		pType->m_KeyHelpArr[i].m_szPath[0]  = L'\0';
 	}
 	pType->m_bUseKeyWordHelp	   = false; // 辞書選択機能の使用可否
 	pType->m_nKeyHelpNum		   = 0;		// 登録辞書数
 	pType->m_bUseKeyHelpAllSearch  = false; // ヒットした次の辞書も検索(&A)
-	pType->m_bUseKeyHelpKeyDisp	   = false; // 1行目にキーワードも表示する(&W)
-	pType->m_bUseKeyHelpPrefix	   = false; // 選択範囲で前方一致検索(&P)
+	pType->m_bUseKeyHelpKeyDisp	= false; // 1行目にキーワードも表示する(&W)
+	pType->m_bUseKeyHelpPrefix	 = false; // 選択範囲で前方一致検索(&P)
 	pType->m_eKeyHelpRMenuShowType = KEYHELP_RMENU_TOP;
 	//@@@ 2006.04.10 fon ADD-end
 

@@ -12,7 +12,8 @@
 CVisualProgress::CVisualProgress()
 	: m_pcWaitCursor(NULL)
 	, nOldValue(-1)
-{}
+{
+}
 
 CVisualProgress::~CVisualProgress() { SAFE_DELETE(m_pcWaitCursor); }
 

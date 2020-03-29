@@ -36,7 +36,8 @@
 CAutoReloadAgent::CAutoReloadAgent()
 	: m_eWatchUpdate(WU_QUERY)
 	, m_nPauseCount(0)
-{}
+{
+}
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        セーブ前後                           //
@@ -96,9 +97,9 @@ bool CAutoReloadAgent::_IsFileUpdatedByOther(FILETIME *pNewFileTime) const
 	CFileTime ftime;
 	if (GetLastWriteTimestamp(GetListeningDoc()->m_cDocFile.GetFilePath(), &ftime)) {
 		if (0
-			!= ::CompareFileTime(
-				&GetListeningDoc()->m_cDocFile.GetFileTime().GetFILETIME(),
-				&ftime.GetFILETIME())) //	Aug. 13, 2003 wmlhq タイムスタンプが古く変更されている場合も検出対象とする
+			!= ::CompareFileTime(&GetListeningDoc()->m_cDocFile.GetFileTime().GetFILETIME(),
+								 &ftime.GetFILETIME())) //	Aug. 13, 2003 wmlhq
+														//タイムスタンプが古く変更されている場合も検出対象とする
 		{
 			*pNewFileTime = ftime.GetFILETIME();
 			return true;
@@ -127,8 +128,7 @@ void CAutoReloadAgent::CheckFileTimeStamp()
 
 	//	From Here Dec. 4, 2002 genta
 	switch (m_eWatchUpdate) {
-	case WU_NOTIFY:
-	{
+	case WU_NOTIFY: {
 		//ファイル更新のお知らせ -> ステータスバー
 		WCHAR			 szText[40];
 		const CFileTime &ctime = pcDoc->m_cDocFile.GetFileTime();
@@ -147,8 +147,7 @@ void CAutoReloadAgent::CheckFileTimeStamp()
 			break;
 		}
 		// through
-	default:
-	{
+	default: {
 		PauseWatching(); // 更新監視の抑制
 
 		CDlgFileUpdateQuery dlg(pcDoc->m_cDocFile.GetFilePath(), pcDoc->m_cDocEditor.IsModified());

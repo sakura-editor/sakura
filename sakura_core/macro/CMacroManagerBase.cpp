@@ -38,9 +38,8 @@
 void CMacroBeforeAfter::ExecKeyMacroBefore(class CEditView *pcEditView, int flags)
 {
 	COpeBlk *opeBlk = pcEditView->m_cCommander.GetOpeBlk();
-	if (opeBlk) {
-		m_nOpeBlkCount = opeBlk->GetRefCount();
-	} else {
+	if (opeBlk) { m_nOpeBlkCount = opeBlk->GetRefCount(); }
+	else {
 		m_nOpeBlkCount = 0;
 	}
 	m_bDrawSwitchOld = pcEditView->GetDrawSwitch();
@@ -54,7 +53,8 @@ void CMacroBeforeAfter::ExecKeyMacroAfter(class CEditView *pcEditView, int flags
 		if (pcEditView->m_cCommander.GetOpeBlk()->GetRefCount() != m_nOpeBlkCount) {
 			pcEditView->m_cCommander.GetOpeBlk()->SetRefCount(m_nOpeBlkCount);
 		}
-	} else {
+	}
+	else {
 		COpeBlk *opeBlk = pcEditView->m_cCommander.GetOpeBlk();
 		if (opeBlk) {
 			opeBlk->SetRefCount(1); // 強制的にリセットするため1を指定
@@ -69,7 +69,8 @@ void CMacroBeforeAfter::ExecKeyMacroAfter(class CEditView *pcEditView, int flags
 
 CMacroManagerBase::CMacroManagerBase()
 	: m_nReady(false)
-{}
+{
+}
 
 CMacroManagerBase::~CMacroManagerBase() {}
 

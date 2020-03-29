@@ -41,8 +41,7 @@ struct DLLSHAREDATA;
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 	@date 20050809 aroka クラス外部からアクセスされないメンバはprivateにした。
 */
-class CMenuDrawer
-{
+class CMenuDrawer {
 public:
 	/*
 	||  Constructors
@@ -57,7 +56,7 @@ public:
 	void ResetContents(void);
 	void MyAppendMenu(HMENU hMenu, int nFlag, UINT_PTR nFuncId, const WCHAR *pszLabel, const WCHAR *pszKey,
 					  BOOL bAddKeyStr = TRUE, int nForceIconId = -1);
-		/* メニュー項目を追加 */ //お気に入り	//@@@ 2003.04.08 MIK	// add pszKey	2010/5/17 Uchi
+	/* メニュー項目を追加 */ //お気に入り	//@@@ 2003.04.08 MIK	// add pszKey	2010/5/17 Uchi
 	void MyAppendMenuSep(HMENU hMenu, int nFlag, int nFuncId, const WCHAR *pszLabel, BOOL bAddKeyStr = TRUE,
 						 int nForceIconId = -1)
 	{
@@ -77,13 +76,13 @@ public:
 	static const int TOOLBAR_ICON_MACRO_INTERNAL	  = 384; //外部マクロ既定アイコン
 	static const int TOOLBAR_ICON_PLUGCOMMAND_DEFAULT = 283; //プラグインコマンド既定アイコン
 	// m_tbMyButtonのindexに対応する定数
-	static const int TOOLBAR_BUTTON_F_SEPARATOR	  = 0;	 //セパレータ（ダミー）
+	static const int TOOLBAR_BUTTON_F_SEPARATOR   = 0;   //セパレータ（ダミー）
 	static const int TOOLBAR_BUTTON_F_TOOLBARWRAP = 384; //ツールバー折返しアイコン（ダミー）
 
 private:
 	void DeleteCompDC();
-	int	 FindIndexFromCommandId(int idCommand, bool bOnlyFunc = true) const;
-		/* ツールバーIndexの取得 */ // 20050809 aroka
+	int  FindIndexFromCommandId(int idCommand, bool bOnlyFunc = true) const;
+	/* ツールバーIndexの取得 */ // 20050809 aroka
 	int			 Find(int nFuncID);
 	const WCHAR *GetLabel(int nFuncID);
 	WCHAR		 GetAccelCharFromLabel(const WCHAR *pszLabel);
@@ -102,8 +101,7 @@ private:
 	int					  m_nMyButtonFixSize; // 固定部分の最大数
 
 	// 2011.11.18 MenuItemのvector化
-	struct MyMenuItemInfo
-	{
+	struct MyMenuItemInfo {
 		int		 m_nBitmapIdx;
 		int		 m_nFuncId;
 		CNativeW m_cmemLabel;

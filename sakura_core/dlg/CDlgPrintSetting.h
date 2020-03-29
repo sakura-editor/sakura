@@ -37,8 +37,7 @@
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class CDlgPrintSetting final : public CDialog
-{
+class CDlgPrintSetting final : public CDialog {
 public:
 	/*
 	||  Constructors
@@ -63,7 +62,7 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	void   SetData(void) override; /* ダイアログデータの設定 */
-	int	   GetData(void) override; /* ダイアログデータの取得 */
+	int	GetData(void) override; /* ダイアログデータの取得 */
 	BOOL   OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
 	BOOL   OnDestroy(void) override;
 	BOOL   OnNotify(WPARAM wParam, LPARAM lParam) override;
@@ -76,8 +75,8 @@ protected:
 	LPVOID GetHelpIdTable(void) override; //@@@ 2002.01.18 add
 
 	void OnChangeSettingType(BOOL bGetData); /* 設定のタイプが変わった */
-	void OnSpin(int nCtrlId, BOOL bDown);	 /* スピンコントロールの処理 */
-	int	 DataCheckAndCorrect(int nCtrlId, int nData); /* 入力値(数値)のエラーチェックをして正しい値を返す */
+	void OnSpin(int nCtrlId, BOOL bDown);	/* スピンコントロールの処理 */
+	int  DataCheckAndCorrect(int nCtrlId, int nData); /* 入力値(数値)のエラーチェックをして正しい値を返す */
 	BOOL CalcPrintableLineAndColumn();				  /* 行数と桁数を計算 */
 	void UpdatePrintableLineAndColumn();			  /* 行数と桁数の計算要求 */
 	void SetFontName(int idTxt, int idUse, LOGFONT &lf, int nPointSize); // フォント名/使用ボタンの設定

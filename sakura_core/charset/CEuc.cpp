@@ -22,9 +22,9 @@ int CEuc::EucjpToUni(const char *pSrc, const int nSrcLen, wchar_t *pDst, bool *p
 		return 0;
 	}
 
-	pr	   = reinterpret_cast<const unsigned char *>(pSrc);
+	pr	 = reinterpret_cast<const unsigned char *>(pSrc);
 	pr_end = reinterpret_cast<const unsigned char *>(pSrc + nSrcLen);
-	pw	   = reinterpret_cast<unsigned short *>(pDst);
+	pw	 = reinterpret_cast<unsigned short *>(pDst);
 
 	for (; (nclen = CheckEucjpChar(reinterpret_cast<const char *>(pr), pr_end - pr, &echarset)) != 0; pr += nclen) {
 		switch (echarset) {
@@ -83,9 +83,8 @@ EConvertResult CEuc::EUCToUnicode(const CMemory &cSrc, CNativeW *pDstMem)
 
 	//$$ SJISを介しているので無駄にデータを失うかも？
 	// エラーを返すようにする。	2008/5/12 Uchi
-	if (bError == false) {
-		return RESULT_COMPLETE;
-	} else {
+	if (bError == false) { return RESULT_COMPLETE; }
+	else {
 		return RESULT_LOSESOME;
 	}
 }
@@ -98,9 +97,9 @@ int CEuc::UniToEucjp(const wchar_t *pSrc, const int nSrcLen, char *pDst, bool *p
 	bool				  berror = false, berror_tmp;
 	ECharSet			  echarset;
 
-	pr	   = reinterpret_cast<const unsigned short *>(pSrc);
+	pr	 = reinterpret_cast<const unsigned short *>(pSrc);
 	pr_end = reinterpret_cast<const unsigned short *>(pSrc + nSrcLen);
-	pw	   = reinterpret_cast<unsigned char *>(pDst);
+	pw	 = reinterpret_cast<unsigned char *>(pDst);
 
 	while ((nclen = CheckUtf16leChar(reinterpret_cast<const wchar_t *>(pr), pr_end - pr, &echarset, 0)) > 0) {
 		// 保護コード
@@ -114,14 +113,16 @@ int CEuc::UniToEucjp(const wchar_t *pSrc, const int nSrcLen, char *pDst, bool *p
 			// 保護コード
 			if (berror_tmp == true) { berror = true; }
 			pr += nclen;
-		} else {
+		}
+		else {
 			if (nclen == 1 && IsBinaryOnSurrogate(static_cast<wchar_t>(*pr))) {
 				*pw = static_cast<unsigned char>(TextToBin(*pr) & 0x00ff);
 				++pw;
-			} else {
+			}
+			else {
 				// 保護コード
 				berror = true;
-				*pw	   = '?';
+				*pw	= '?';
 				++pw;
 			}
 			++pr;
@@ -138,7 +139,7 @@ EConvertResult CEuc::UnicodeToEUC(const CNativeW &cSrc, CMemory *pDstMem)
 	// エラー状態
 	bool bError = false;
 
-	const wchar_t *pSrc	   = cSrc.GetStringPtr();
+	const wchar_t *pSrc	= cSrc.GetStringPtr();
 	int			   nSrcLen = cSrc.GetStringLength();
 
 	// 必要なバッファサイズを調べてメモリを確保
@@ -154,9 +155,8 @@ EConvertResult CEuc::UnicodeToEUC(const CNativeW &cSrc, CMemory *pDstMem)
 	// 後始末
 	delete[] pDst;
 
-	if (bError == false) {
-		return RESULT_COMPLETE;
-	} else {
+	if (bError == false) { return RESULT_COMPLETE; }
+	else {
 		return RESULT_LOSESOME;
 	}
 }
@@ -194,7 +194,8 @@ EConvertResult CEuc::UnicodeToHex(const wchar_t *cSrc, const int iSLen, WCHAR *p
 		for (i = cCharBuffer._GetMemory()->GetRawLength(); i > 0; i--, ps++, pd += 2) {
 			auto_sprintf(pd, L"%02X", *ps);
 		}
-	} else {
+	}
+	else {
 		auto_sprintf(pd, L"?%02X", *ps);
 	}
 

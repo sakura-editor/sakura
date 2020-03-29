@@ -30,28 +30,27 @@ class CKeyWordSetMgr;
 -----------------------------------------------------------------------*/
 
 // 2007.11.29 kobake 変数の意味を明確にするため、nMethos を テンプレート化。
-template<class TYPE> struct TYPE_NAME
-{
+template<class TYPE>
+struct TYPE_NAME {
 	TYPE		 nMethod;
 	const WCHAR *pszName;
 };
 
-template<class TYPE> struct TYPE_NAME_ID
-{
+template<class TYPE>
+struct TYPE_NAME_ID {
 	TYPE nMethod;
-	int	 nNameId;
+	int  nNameId;
 };
 
-template<class TYPE> struct TYPE_NAME_ID2
-{
+template<class TYPE>
+struct TYPE_NAME_ID2 {
 	TYPE		 nMethod;
 	int			 nNameId;
 	const WCHAR *pszName;
 };
 
 //!< プロパティシート番号
-enum PropTypeSheetOrder
-{
+enum PropTypeSheetOrder {
 	ID_PROPTYPE_PAGENUM_SCREEN = 0, //!< スクリーン
 	ID_PROPTYPE_PAGENUM_COLOR,		//!< カラー
 	ID_PROPTYPE_PAGENUM_WINDOW,		//!< ウィンドウ
@@ -69,8 +68,7 @@ enum PropTypeSheetOrder
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class CPropTypes
-{
+class CPropTypes {
 
 public:
 	//生成と破棄
@@ -83,7 +81,7 @@ public:
 	void SetTypeData(const STypeConfig &t) { m_Types = t; } //!< タイプ別設定データの設定  Jan. 23, 2005 genta
 	void GetTypeData(STypeConfig &t) const { t = m_Types; } //!< タイプ別設定データの取得  Jan. 23, 2005 genta
 	HWND GetHwndParent() const { return m_hwndParent; }
-	int	 GetPageNum() { return m_nPageNum; }
+	int  GetPageNum() { return m_nPageNum; }
 	bool GetChangeKeyWordSet() const { return m_bChangeKeyWordSet; }
 
 protected:
@@ -92,17 +90,17 @@ protected:
 
 protected:
 	//各種参照
-	HINSTANCE m_hInstance;	//!< アプリケーションインスタンスのハンドル
+	HINSTANCE m_hInstance;  //!< アプリケーションインスタンスのハンドル
 	HWND	  m_hwndParent; //!< オーナーウィンドウのハンドル
-	HWND	  m_hwndThis;	//!< このダイアログのハンドル
+	HWND	  m_hwndThis;   //!< このダイアログのハンドル
 
 	//ダイアログデータ
 	PropTypeSheetOrder m_nPageNum;
-	DLLSHAREDATA *	   m_pShareData;
+	DLLSHAREDATA *	 m_pShareData;
 	STypeConfig		   m_Types;
 
 	// スクリーン用データ	2010/5/10 CPropTypes_P1_Screen.cppから移動
-	static std::vector<TYPE_NAME_ID2<EOutlineType>>		m_OlmArr;	  //!<アウトライン解析ルール配列
+	static std::vector<TYPE_NAME_ID2<EOutlineType>>		m_OlmArr;	 //!<アウトライン解析ルール配列
 	static std::vector<TYPE_NAME_ID2<ESmartIndentType>> m_SIndentArr; //!<スマートインデントルール配列
 
 	// カラー用データ
@@ -122,9 +120,9 @@ public:
 	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam); //!< メッセージ処理
 protected:
 	void SetData(HWND hwndDlg); //!< ダイアログデータの設定
-	int	 GetData(HWND hwndDlg); //!< ダイアログデータの取得
-	bool Import(HWND hwndDlg);	//!< インポート
-	bool Export(HWND hwndDlg);	//!< エクスポート
+	int  GetData(HWND hwndDlg); //!< ダイアログデータの取得
+	bool Import(HWND hwndDlg);  //!< インポート
+	bool Export(HWND hwndDlg);  //!< エクスポート
 
 	HFONT SetCtrlFont(HWND hwndDlg, int idc_static,
 					  const LOGFONT &lf); //!< コントロールにフォント設定する		// 2013/4/24 Uchi
@@ -141,17 +139,16 @@ protected:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        スクリーン                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CPropTypesScreen : public CPropTypes
-{
+class CPropTypesScreen : public CPropTypes {
 public:
 	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam); //!< メッセージ処理
 protected:
 	void SetData(HWND hwndDlg); //!< ダイアログデータの設定
-	int	 GetData(HWND hwndDlg); //!< ダイアログデータの取得
+	int  GetData(HWND hwndDlg); //!< ダイアログデータの取得
 
 public:
-	static void AddOutlineMethod(int nMethod, const WCHAR *szName);	   //!<アウトライン解析ルールの追加
-	static void AddSIndentMethod(int nMethod, const WCHAR *szName);	   //!<スマートインデントルールの追加
+	static void AddOutlineMethod(int nMethod, const WCHAR *szName);	//!<アウトライン解析ルールの追加
+	static void AddSIndentMethod(int nMethod, const WCHAR *szName);	//!<スマートインデントルールの追加
 	static void RemoveOutlineMethod(int nMethod, const WCHAR *szName); //!<アウトライン解析ルールの追加
 	static void RemoveSIndentMethod(int nMethod, const WCHAR *szName); //!<スマートインデントルールの追加
 	void		CPropTypes_Screen();								   //!<スクリーンタブのコンストラクタ
@@ -160,13 +157,12 @@ public:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          ウィンドウ                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CPropTypesWindow : public CPropTypes
-{
+class CPropTypesWindow : public CPropTypes {
 public:
 	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam); //!< メッセージ処理
 protected:
 	void SetData(HWND hwndDlg); //!< ダイアログデータの設定
-	int	 GetData(HWND hwndDlg); //!< ダイアログデータの取得
+	int  GetData(HWND hwndDlg); //!< ダイアログデータの取得
 
 protected:
 	void SetCombobox(HWND hwndWork, const int *nIds, int nCount, int select);
@@ -178,21 +174,20 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          カラー                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CPropTypesColor : public CPropTypes
-{
+class CPropTypesColor : public CPropTypes {
 public:
 	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam); //!< メッセージ処理
 protected:
 	void SetData(HWND hwndDlg);		   //!< ダイアログデータの設定
 	void SetDataKeyword(HWND hwndDlg); //!< セット名コンボボックスの値セット
-	int	 GetData(HWND hwndDlg);		   //!< ダイアログデータの取得
+	int  GetData(HWND hwndDlg);		   //!< ダイアログデータの取得
 	bool Import(HWND hwndDlg);		   //!< インポート
 	bool Export(HWND hwndDlg);		   //!< エクスポート
 
 protected:
 	void DrawColorListItem(DRAWITEMSTRUCT *); //!< 色種別リスト オーナー描画
 	void EnableTypesPropInput(HWND hwndDlg);  //!< タイプ別設定のカラー設定のON/OFF
-	void RearrangeKeywordSet(HWND hwndDlg);	  //!< キーワードセット再配置  Jan. 23, 2005 genta
+	void RearrangeKeywordSet(HWND hwndDlg);   //!< キーワードセット再配置  Jan. 23, 2005 genta
 	void DrawColorButton(DRAWITEMSTRUCT *pDis, COLORREF cColor); //!< 色ボタンの描画
 public:
 	static BOOL SelectColor(HWND hwndParent, COLORREF *pColor, DWORD *pCustColors); //!< 色選択ダイアログ
@@ -202,29 +197,27 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           支援                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CPropTypesSupport : public CPropTypes
-{
+class CPropTypesSupport : public CPropTypes {
 public:
 	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam); //!< メッセージ処理
 protected:
 	void SetData(HWND hwndDlg); //!< ダイアログデータの設定
-	int	 GetData(HWND hwndDlg); //!< ダイアログデータの取得
+	int  GetData(HWND hwndDlg); //!< ダイアログデータの取得
 public:
-	static void AddHokanMethod(int nMethod, const WCHAR *szName);	 //!<補完種別の追加
+	static void AddHokanMethod(int nMethod, const WCHAR *szName);	//!<補完種別の追加
 	static void RemoveHokanMethod(int nMethod, const WCHAR *szName); //!<補完種別の追加
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                    正規表現キーワード                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CPropTypesRegex : public CPropTypes
-{
+class CPropTypesRegex : public CPropTypes {
 public:
 	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam); //!< メッセージ処理
 protected:
 	void SetData(HWND hwndDlg);			   //!< ダイアログデータの設定
 	void SetDataKeywordList(HWND hwndDlg); //!< ダイアログデータの設定リスト部分
-	int	 GetData(HWND hwndDlg);			   //!< ダイアログデータの取得
+	int  GetData(HWND hwndDlg);			   //!< ダイアログデータの取得
 	bool Import(HWND hwndDlg);			   //!< インポート
 	bool Export(HWND hwndDlg);			   //!< エクスポート
 private:
@@ -236,18 +229,18 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     キーワードヘルプ                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CPropTypesKeyHelp : public CPropTypes
-{
+class CPropTypesKeyHelp : public CPropTypes {
 public:
 	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam); //!< メッセージ処理
 protected:
 	void SetData(HWND hwndDlg); //!< ダイアログデータの設定
-	int	 GetData(HWND hwndDlg); //!< ダイアログデータの取得
-	bool Import(HWND hwndDlg);	//!< インポート
-	bool Export(HWND hwndDlg);	//!< エクスポート
+	int  GetData(HWND hwndDlg); //!< ダイアログデータの取得
+	bool Import(HWND hwndDlg);  //!< インポート
+	bool Export(HWND hwndDlg);  //!< エクスポート
 };
 
-template<typename T> void InitTypeNameId2(std::vector<TYPE_NAME_ID2<T>> &vec, TYPE_NAME_ID<T> *arr, size_t size)
+template<typename T>
+void InitTypeNameId2(std::vector<TYPE_NAME_ID2<T>> &vec, TYPE_NAME_ID<T> *arr, size_t size)
 {
 	for (size_t i = 0; i < size; i++) {
 		TYPE_NAME_ID2<T> item = {arr[i].nMethod, arr[i].nNameId, NULL};

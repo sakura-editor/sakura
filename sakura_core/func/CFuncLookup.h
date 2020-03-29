@@ -42,11 +42,10 @@ struct MacroRec;	  // 2007.11.02 ryoji
 struct CommonSetting; // 2002/2/10 aroka
 
 //! マクロ情報
-struct MacroRec
-{
+struct MacroRec {
 	WCHAR m_szName[MACRONAME_MAX]; //!< 表示名
 	WCHAR m_szFile[_MAX_PATH + 1]; //!< ファイル名(ディレクトリを含まない)
-	bool  m_bReloadWhenExecute;	   //	実行時に読み込みなおすか（デフォルトon）
+	bool  m_bReloadWhenExecute;	//	実行時に読み込みなおすか（デフォルトon）
 
 	bool		 IsEnabled() const { return m_szFile[0] != L'\0'; }
 	const WCHAR *GetTitle() const { return m_szName[0] == L'\0' ? m_szFile : m_szName; } // 2007.11.02 ryoji 追加
@@ -57,8 +56,7 @@ struct MacroRec
 
 	機能，機能分類と位置，機能番号，文字列などの対応を集約する．
 */
-class CFuncLookup
-{
+class CFuncLookup {
 
 public:
 	//	Oct. 15, 2001 genta 引数追加
@@ -67,12 +65,13 @@ public:
 	//		: m_pMacroRec( pMacroRec ), m_pCommon( pCom ) {}
 	CFuncLookup()
 		: m_pMacroRec(NULL)
-	{}
+	{
+	}
 
 	void Init(MacroRec *pMacroRec, CommonSetting *pCom)
 	{
 		m_pMacroRec = pMacroRec;
-		m_pCommon	= pCom;
+		m_pCommon   = pCom;
 	}
 
 	EFunctionCode Pos2FuncCode(int category, int position,

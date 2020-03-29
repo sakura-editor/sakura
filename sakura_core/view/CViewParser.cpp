@@ -13,21 +13,22 @@
 int CViewParser::GetLeftWord(CNativeW *pcmemWord, int nMaxWordLen) const
 {
 	const wchar_t *pLine;
-	CLogicInt	   nLineLen;
-	CLogicInt	   nIdx;
-	CLogicInt	   nIdxTo;
+	CLogicInt	  nLineLen;
+	CLogicInt	  nIdx;
+	CLogicInt	  nIdxTo;
 
 	CNativeW	   cmemWord;
-	CLayoutInt	   nCurLine;
+	CLayoutInt	 nCurLine;
 	int			   nCharChars;
 	const CLayout *pcLayout;
 
 	nCurLine = m_pEditView->GetCaret().GetCaretLayoutPos().GetY2();
-	pLine	 = m_pEditView->m_pcEditDoc->m_cLayoutMgr.GetLineStr(nCurLine, &nLineLen, &pcLayout);
+	pLine	= m_pEditView->m_pcEditDoc->m_cLayoutMgr.GetLineStr(nCurLine, &nLineLen, &pcLayout);
 	if (NULL == pLine) {
 		//		return 0;
 		nIdxTo = CLogicInt(0);
-	} else {
+	}
+	else {
 		/* 指定された桁に対応する行のデータ内の位置を調べる Ver1 */
 		nIdxTo = m_pEditView->LineColumnToIndex(pcLayout, m_pEditView->GetCaret().GetCaretLayoutPos().GetX2());
 	}
@@ -43,7 +44,8 @@ int CViewParser::GetLeftWord(CNativeW *pcmemWord, int nMaxWordLen) const
 		if (0 == nCharChars) { return 0; }
 		nIdxTo = nLineLen;
 		nIdx   = nIdxTo - CLogicInt(nCharChars);
-	} else {
+	}
+	else {
 		nCharChars = &pLine[nIdxTo] - CNativeW::GetCharPrev(pLine, nLineLen, &pLine[nIdxTo]);
 		if (0 == nCharChars) { return 0; }
 		nIdx = nIdxTo - CLogicInt(nCharChars);
@@ -61,7 +63,8 @@ int CViewParser::GetLeftWord(CNativeW *pcmemWord, int nMaxWordLen) const
 		pcmemWord->AppendString(&pLine[nIdx], nCharChars);
 
 		return pcmemWord->GetStringLength();
-	} else {
+	}
+	else {
 		return 0;
 	}
 }

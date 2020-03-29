@@ -32,8 +32,7 @@
 
 #include "CGrepEnumFiles.h"
 
-class CGrepEnumFilterFiles final : public CGrepEnumFiles
-{
+class CGrepEnumFilterFiles final : public CGrepEnumFiles {
 private:
 public:
 	CGrepEnumFiles m_cGrepEnumExceptFiles;

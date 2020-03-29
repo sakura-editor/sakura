@@ -47,17 +47,17 @@ const uchar_t TABLE_BASE64CharToValue[] = {
 	cNA, cNA, cNA, cNA, cNA, cNA, cNA, cNA, // 10-17:
 	cNA, cNA, cNA, cNA, cNA, cNA, cNA, cNA, // 18-1f:
 	cNA, cNA, cNA, cNA, cNA, cNA, cNA, cNA, // 20-27:
-	cNA, cNA, cNA, 62,	cNA, cNA, cNA, 63,	// 28-2f:    +   /
-	52,	 53,  54,  55,	56,	 57,  58,  59,	// 30-37: 01234567
-	60,	 61,  cNA, cNA, cNA, cNA, cNA, cNA, // 38-3f: 89
-	cNA, 0,	  1,   2,	3,	 4,	  5,   6,	// 40-47:  ABCDEFG
-	7,	 8,	  9,   10,	11,	 12,  13,  14,	// 48-4f: HIJKLMNO
-	15,	 16,  17,  18,	19,	 20,  21,  22,	// 50-57: PQRSTUVW
-	23,	 24,  25,  cNA, cNA, cNA, cNA, cNA, // 58-5f: XYZ
-	cNA, 26,  27,  28,	29,	 30,  31,  32,	// 60-67:  abcdefg
-	33,	 34,  35,  36,	37,	 38,  39,  40,	// 68-6f: hijklmno
-	41,	 42,  43,  44,	45,	 46,  47,  48,	// 70-77: pqrstuvw
-	49,	 50,  51,  cNA, cNA, cNA, cNA, cNA, // 78-7f: xyz
+	cNA, cNA, cNA, 62,  cNA, cNA, cNA, 63,  // 28-2f:    +   /
+	52,  53,  54,  55,  56,  57,  58,  59,  // 30-37: 01234567
+	60,  61,  cNA, cNA, cNA, cNA, cNA, cNA, // 38-3f: 89
+	cNA, 0,   1,   2,   3,   4,   5,   6,   // 40-47:  ABCDEFG
+	7,   8,   9,   10,  11,  12,  13,  14,  // 48-4f: HIJKLMNO
+	15,  16,  17,  18,  19,  20,  21,  22,  // 50-57: PQRSTUVW
+	23,  24,  25,  cNA, cNA, cNA, cNA, cNA, // 58-5f: XYZ
+	cNA, 26,  27,  28,  29,  30,  31,  32,  // 60-67:  abcdefg
+	33,  34,  35,  36,  37,  38,  39,  40,  // 68-6f: hijklmno
+	41,  42,  43,  44,  45,  46,  47,  48,  // 70-77: pqrstuvw
+	49,  50,  51,  cNA, cNA, cNA, cNA, cNA, // 78-7f: xyz
 };
 
 /*!

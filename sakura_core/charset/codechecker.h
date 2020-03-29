@@ -74,8 +74,7 @@ enum ECodeType {
 /*!
 	内部的に認識する文字集合
 */
-enum ECharSet
-{
+enum ECharSet {
 	CHARSET_BINARY,			  //!< 任意値
 	CHARSET_ASCII7,			  //!< 7ビット ASCII 文字  (ISO/IEC 646 IRV)
 	CHARSET_JIS_HANKATA,	  //!< 日本語の半角カタカナ文字  (JIS X 0201)
@@ -96,8 +95,7 @@ enum ECharSet
 
 	@note 順番変えると危険
 */
-enum EJisEscseq
-{
+enum EJisEscseq {
 	JISESC_UNKNOWN,
 	JISESC_ASCII,
 	JISESC_JISX0201Latin,
@@ -133,8 +131,7 @@ enum EJisEscseq
 /*!
 	内部的に認識する JIS エスケープシーケンスの種類
 */
-enum EMyJisEscseq
-{
+enum EMyJisEscseq {
 	MYJISESC_NONE,
 	MYJISESC_ASCII7,
 	MYJISESC_HANKATA,
@@ -178,15 +175,16 @@ inline bool IsUnicodeNoncharacter(const wchar32_t wc)
 
 */
 
-#define CHARCODE__IS_SJIS_ZEN1(x)	   ((unsigned int)((x) ^ 0x20) - 0xa1 < 0x3c)
-#define CHARCODE__IS_SJIS_ZEN2(x)	   (0x40 <= (x) && (x) <= 0xfc && (x) != 0x7f)
-#define CHARCODE__IS_EUCJP_ZEN1(x)	   (0xa1 <= (x) && (x) <= 0xfe)
-#define CHARCODE__IS_EUCJP_ZEN2(x)	   (0xa1 <= (x) && (x) <= 0xfe)
+#define CHARCODE__IS_SJIS_ZEN1(x) ((unsigned int)((x) ^ 0x20) - 0xa1 < 0x3c)
+#define CHARCODE__IS_SJIS_ZEN2(x) (0x40 <= (x) && (x) <= 0xfc && (x) != 0x7f)
+#define CHARCODE__IS_EUCJP_ZEN1(x) (0xa1 <= (x) && (x) <= 0xfe)
+#define CHARCODE__IS_EUCJP_ZEN2(x) (0xa1 <= (x) && (x) <= 0xfe)
 #define CHARCODE__IS_EUCJP_HANKATA2(x) (0xa1 <= (x) && (x) <= 0xdf)
-#define CHARCODE__IS_JIS(x)			   (0x21 <= (x) && (x) <= 0x7e)
+#define CHARCODE__IS_JIS(x) (0x21 <= (x) && (x) <= 0x7e)
 
 //! 7bit ASCII か
-template<typename Tchar> inline bool IsAscii7(const Tchar c)
+template<typename Tchar>
+inline bool IsAscii7(const Tchar c)
 {
 	unsigned int c_ = c;
 	return (c_ < 0x80);
@@ -206,8 +204,8 @@ inline bool _IS_SJIS_1(unsigned char c) { return IsSjisZen1(static_cast<char>(c)
 inline bool _IS_SJIS_2(unsigned char c) { return IsSjisZen2(static_cast<char>(c)); }
 inline bool _IS_SJIS_1(char c) { return IsSjisZen1(c); }
 inline bool _IS_SJIS_2(char c) { return IsSjisZen2(c); }
-inline int	my_iskanji1(int c) { return IsSjisZen1(static_cast<char>(c & 0x00ff)); }
-inline int	my_iskanji2(int c) { return IsSjisZen2(static_cast<char>(c & 0x00ff)); }
+inline int  my_iskanji1(int c) { return IsSjisZen1(static_cast<char>(c & 0x00ff)); }
+inline int  my_iskanji2(int c) { return IsSjisZen2(static_cast<char>(c & 0x00ff)); }
 
 //! SJIS 半角カタカナか
 inline bool IsSjisHankata(const char c)
@@ -291,26 +289,30 @@ inline bool IsUtf8SurrogLow(const char *pS)
 	return false;
 }
 //! UTF-7 Set D の文字か
-template<typename CHAR_TYPE> inline bool IsUtf7SetD(const CHAR_TYPE c)
+template<typename CHAR_TYPE>
+inline bool IsUtf7SetD(const CHAR_TYPE c)
 {
 	unsigned int c_ = c;
 	return (c_ < 0x80 && TABLE_IsUtf7Direct[c_] == 1);
 }
 //! UTF-7 Set O の文字か
-template<typename CHAR_TYPE> inline bool IsUtf7SetO(const CHAR_TYPE c)
+template<typename CHAR_TYPE>
+inline bool IsUtf7SetO(const CHAR_TYPE c)
 {
 	unsigned int c_ = c;
 	return (c_ < 0x80 && TABLE_IsUtf7Direct[c_] == 2);
 }
 //! UTF-7 で直接エンコードされ得る文字か
-template<typename CHAR_TYPE> inline bool IsUtf7Direct(const CHAR_TYPE c)
+template<typename CHAR_TYPE>
+inline bool IsUtf7Direct(const CHAR_TYPE c)
 {
 	return IsUtf7SetD(c) || IsUtf7SetO(c);
 	// 2012.11.08 Set O も読み込めるように
 }
 
 //! UTF-7 Set B (Modified BASE64) の文字か
-template<class CHAR_TYPE> inline bool IsBase64(const CHAR_TYPE c)
+template<class CHAR_TYPE>
+inline bool IsBase64(const CHAR_TYPE c)
 {
 	unsigned int c_ = c;
 	return (c_ < 0x80 && (int)TABLE_BASE64CharToValue[c_] < 64) ? true : false;
@@ -388,8 +390,7 @@ int CheckEucjpChar(const char *, const int, ECharSet *);
 int DetectJisEscseq(const char *, const int, EMyJisEscseq *); // JIS エスケープシーケンス検出器
 int _CheckJisAnyPart(const char *, const int, const char **ppNextChar, EMyJisEscseq *peNextEsc, int *pnErrorCount,
 					 const int nType);
-enum EJisChecker
-{
+enum EJisChecker {
 	JISCHECK_ASCII7,
 	JISCHECK_HANKATA,
 	JISCHECK_ZENKAKU,

@@ -27,12 +27,12 @@
 class CEditView;
 
 //!品詞解析クラス
-class CViewParser
-{
+class CViewParser {
 public:
 	CViewParser(const CEditView *pEditView)
 		: m_pEditView(pEditView)
-	{}
+	{
+	}
 	virtual ~CViewParser() {}
 
 	//! カーソル直前の単語を取得

@@ -29,27 +29,25 @@
 #include "util/shell.h"
 
 /* ダイアログプロシージャ */
-INT_PTR CALLBACK MyDialogProc(HWND	 hwndDlg, // handle to dialog box
-							  UINT	 uMsg,	  // message
+INT_PTR CALLBACK MyDialogProc(HWND   hwndDlg, // handle to dialog box
+							  UINT   uMsg,	// message
 							  WPARAM wParam,  // first message parameter
-							  LPARAM lParam	  // second message parameter
+							  LPARAM lParam   // second message parameter
 )
 {
 	CDialog *pCDialog;
 	switch (uMsg) {
 	case WM_INITDIALOG:
 		pCDialog = (CDialog *)lParam;
-		if (NULL != pCDialog) {
-			return pCDialog->DispatchEvent(hwndDlg, uMsg, wParam, lParam);
-		} else {
+		if (NULL != pCDialog) { return pCDialog->DispatchEvent(hwndDlg, uMsg, wParam, lParam); }
+		else {
 			return FALSE;
 		}
 	default:
 		// Modified by KEITA for WIN64 2003.9.6
 		pCDialog = (CDialog *)::GetWindowLongPtr(hwndDlg, DWLP_USER);
-		if (NULL != pCDialog) {
-			return pCDialog->DispatchEvent(hwndDlg, uMsg, wParam, lParam);
-		} else {
+		if (NULL != pCDialog) { return pCDialog->DispatchEvent(hwndDlg, uMsg, wParam, lParam); }
+		else {
 			return FALSE;
 		}
 	}
@@ -65,17 +63,17 @@ CDialog::CDialog(bool bSizable, bool bCheckShareData)
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData(bCheckShareData);
 
-	m_hInstance	  = NULL; /* アプリケーションインスタンスのハンドル */
+	m_hInstance   = NULL; /* アプリケーションインスタンスのハンドル */
 	m_hwndParent  = NULL; /* オーナーウィンドウのハンドル */
 	m_hWnd		  = NULL; /* このダイアログのハンドル */
 	m_hwndSizeBox = NULL;
-	m_bSizable	  = bSizable;
+	m_bSizable	= bSizable;
 	m_lParam	  = (LPARAM)NULL;
-	m_nShowCmd	  = SW_SHOW;
+	m_nShowCmd	= SW_SHOW;
 	m_xPos		  = -1;
 	m_yPos		  = -1;
 	m_nWidth	  = -1;
-	m_nHeight	  = -1;
+	m_nHeight	 = -1;
 
 	return;
 }
@@ -95,9 +93,9 @@ CDialog::~CDialog()
 */
 INT_PTR CDialog::DoModal(HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete, LPARAM lParam)
 {
-	m_bInited	 = FALSE;
+	m_bInited	= FALSE;
 	m_bModal	 = TRUE;
-	m_hInstance	 = hInstance;  /* アプリケーションインスタンスのハンドル */
+	m_hInstance  = hInstance;  /* アプリケーションインスタンスのハンドル */
 	m_hwndParent = hwndParent; /* オーナーウィンドウのハンドル */
 	m_lParam	 = lParam;
 	m_hLangRsrcInstance = CSelectLang::getLangRsrcInstance(); // メッセージリソースDLLのインスタンスハンドル
@@ -114,9 +112,9 @@ INT_PTR CDialog::DoModal(HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete,
 */
 HWND CDialog::DoModeless(HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete, LPARAM lParam, int nCmdShow)
 {
-	m_bInited	 = FALSE;
+	m_bInited	= FALSE;
 	m_bModal	 = FALSE;
-	m_hInstance	 = hInstance;  /* アプリケーションインスタンスのハンドル */
+	m_hInstance  = hInstance;  /* アプリケーションインスタンスのハンドル */
 	m_hwndParent = hwndParent; /* オーナーウィンドウのハンドル */
 	m_lParam	 = lParam;
 	m_hLangRsrcInstance = CSelectLang::getLangRsrcInstance(); // メッセージリソースDLLのインスタンスハンドル
@@ -128,9 +126,9 @@ HWND CDialog::DoModeless(HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete,
 
 HWND CDialog::DoModeless(HINSTANCE hInstance, HWND hwndParent, LPCDLGTEMPLATE lpTemplate, LPARAM lParam, int nCmdShow)
 {
-	m_bInited	 = FALSE;
+	m_bInited	= FALSE;
 	m_bModal	 = FALSE;
-	m_hInstance	 = hInstance;  /* アプリケーションインスタンスのハンドル */
+	m_hInstance  = hInstance;  /* アプリケーションインスタンスのハンドル */
 	m_hwndParent = hwndParent; /* オーナーウィンドウのハンドル */
 	m_lParam	 = lParam;
 	m_hWnd		 = ::CreateDialogIndirectParam(m_hInstance, lpTemplate, m_hwndParent, MyDialogProc, (LPARAM)this);
@@ -141,9 +139,8 @@ HWND CDialog::DoModeless(HINSTANCE hInstance, HWND hwndParent, LPCDLGTEMPLATE lp
 void CDialog::CloseDialog(INT_PTR nModalRetVal)
 {
 	if (NULL != m_hWnd) {
-		if (m_bModal) {
-			::EndDialog(m_hWnd, nModalRetVal);
-		} else {
+		if (m_bModal) { ::EndDialog(m_hWnd, nModalRetVal); }
+		else {
 			::DestroyWindow(m_hWnd);
 		}
 		m_hWnd = NULL;
@@ -200,8 +197,8 @@ void CDialog::SetDialogPosSize()
 
 			RECT rc;
 			RECT rcWork;
-			rc.left	  = m_xPos;
-			rc.top	  = m_yPos;
+			rc.left   = m_xPos;
+			rc.top	= m_yPos;
 			rc.right  = m_xPos + m_nWidth;
 			rc.bottom = m_yPos + m_nHeight;
 			GetMonitorWorkRect(&rc, &rcWork);
@@ -225,8 +222,8 @@ void CDialog::SetDialogPosSize()
 				rc.right += (rcWork.left - rc.left);
 				rc.left = rcWork.left;
 			}
-			m_xPos	  = rc.left;
-			m_yPos	  = rc.top;
+			m_xPos	= rc.left;
+			m_yPos	= rc.top;
 			m_nWidth  = rc.right - rc.left;
 			m_nHeight = rc.bottom - rc.top;
 		}
@@ -234,9 +231,9 @@ void CDialog::SetDialogPosSize()
 		WINDOWPLACEMENT cWindowPlacement;
 		cWindowPlacement.length					 = sizeof(cWindowPlacement);
 		cWindowPlacement.showCmd				 = m_nShowCmd; //	最大化・最小化
-		cWindowPlacement.rcNormalPosition.left	 = m_xPos;
-		cWindowPlacement.rcNormalPosition.top	 = m_yPos;
-		cWindowPlacement.rcNormalPosition.right	 = m_nWidth + m_xPos;
+		cWindowPlacement.rcNormalPosition.left   = m_xPos;
+		cWindowPlacement.rcNormalPosition.top	= m_yPos;
+		cWindowPlacement.rcNormalPosition.right  = m_nWidth + m_xPos;
 		cWindowPlacement.rcNormalPosition.bottom = m_nHeight + m_yPos;
 		::SetWindowPlacement(m_hWnd, &cWindowPlacement);
 	}
@@ -249,8 +246,8 @@ BOOL CDialog::OnDestroy(void)
 	cWindowPlacement.length = sizeof(cWindowPlacement);
 	if (::GetWindowPlacement(m_hWnd, &cWindowPlacement)) {
 		m_nShowCmd = cWindowPlacement.showCmd; //	最大化・最小化
-		m_xPos	   = cWindowPlacement.rcNormalPosition.left;
-		m_yPos	   = cWindowPlacement.rcNormalPosition.top;
+		m_xPos	 = cWindowPlacement.rcNormalPosition.left;
+		m_yPos	 = cWindowPlacement.rcNormalPosition.top;
 		m_nWidth   = cWindowPlacement.rcNormalPosition.right - cWindowPlacement.rcNormalPosition.left;
 		m_nHeight  = cWindowPlacement.rcNormalPosition.bottom - cWindowPlacement.rcNormalPosition.top;
 	}
@@ -284,8 +281,8 @@ BOOL CDialog::OnSize(WPARAM wParam, LPARAM lParam)
 	::GetWindowRect(m_hWnd, &rc);
 
 	/* ダイアログのサイズの記憶 */
-	m_xPos	  = rc.left;
-	m_yPos	  = rc.top;
+	m_xPos	= rc.left;
+	m_yPos	= rc.top;
 	m_nWidth  = rc.right - rc.left;
 	m_nHeight = rc.bottom - rc.top;
 
@@ -312,9 +309,8 @@ BOOL CDialog::OnSize(WPARAM wParam, LPARAM lParam)
 					   SWP_NOOWNERZORDER | SWP_NOZORDER);
 
 		//	SizeBox問題テスト
-		if (wParam == SIZE_MAXIMIZED) {
-			::ShowWindow(m_hwndSizeBox, SW_HIDE);
-		} else {
+		if (wParam == SIZE_MAXIMIZED) { ::ShowWindow(m_hwndSizeBox, SW_HIDE); }
+		else {
 			::ShowWindow(m_hwndSizeBox, SW_SHOW);
 		}
 		::InvalidateRect(m_hwndSizeBox, NULL, TRUE);
@@ -330,8 +326,8 @@ BOOL CDialog::OnMove(WPARAM wParam, LPARAM lParam)
 	::GetWindowRect(m_hWnd, &rc);
 
 	/* ダイアログのサイズの記憶 */
-	m_xPos	  = rc.left;
-	m_yPos	  = rc.top;
+	m_xPos	= rc.left;
+	m_yPos	= rc.top;
 	m_nWidth  = rc.right - rc.left;
 	m_nHeight = rc.bottom - rc.top;
 	DEBUG_TRACE(L"CDialog::OnMove() m_xPos=%d m_yPos=%d\n", m_xPos, m_yPos);
@@ -388,7 +384,7 @@ BOOL CDialog::OnCommand(WPARAM wParam, LPARAM lParam)
 	HWND hwndCtl;
 	wNotifyCode = HIWORD(wParam); /* 通知コード */
 	wID			= LOWORD(wParam); /* 項目ID、 コントロールID、 またはアクセラレータID */
-	hwndCtl		= (HWND)lParam;	  /* コントロールのハンドル */
+	hwndCtl		= (HWND)lParam;   /* コントロールのハンドル */
 	WCHAR szClass[32];
 
 	// IDOK と IDCANCEL はボタンからでなくても同じ扱い
@@ -403,22 +399,26 @@ BOOL CDialog::OnCommand(WPARAM wParam, LPARAM lParam)
 			/* ボタン／チェックボックスがクリックされた */
 			case BN_CLICKED: return OnBnClicked(wID);
 			}
-		} else if (::lstrcmpi(szClass, L"Static") == 0) {
+		}
+		else if (::lstrcmpi(szClass, L"Static") == 0) {
 			switch (wNotifyCode) {
 			case STN_CLICKED: return OnStnClicked(wID);
 			}
-		} else if (::lstrcmpi(szClass, L"Edit") == 0) {
+		}
+		else if (::lstrcmpi(szClass, L"Edit") == 0) {
 			switch (wNotifyCode) {
 			case EN_CHANGE: return OnEnChange(hwndCtl, wID);
 			case EN_SETFOCUS: return OnEnSetFocus(hwndCtl, wID);
 			case EN_KILLFOCUS: return OnEnKillFocus(hwndCtl, wID);
 			}
-		} else if (::lstrcmpi(szClass, L"ListBox") == 0) {
+		}
+		else if (::lstrcmpi(szClass, L"ListBox") == 0) {
 			switch (wNotifyCode) {
 			case LBN_SELCHANGE: return OnLbnSelChange(hwndCtl, wID);
 			case LBN_DBLCLK: return OnLbnDblclk(wID);
 			}
-		} else if (::lstrcmpi(szClass, L"ComboBox") == 0) {
+		}
+		else if (::lstrcmpi(szClass, L"ComboBox") == 0) {
 			switch (wNotifyCode) {
 			/* コンボボックス用メッセージ */
 			case CBN_SELCHANGE: return OnCbnSelChange(hwndCtl, wID);
@@ -465,8 +465,8 @@ BOOL CDialog::OnCbnSelEndOk(HWND hwndCtl, int wID)
 	//事前に文字列を退避し、リスト非表示後に復元する。
 
 	//文字列を退避
-	int	   nLength = ::GetWindowTextLength(hwndCtl);
-	LPWSTR sBuf	   = new WCHAR[nLength + 1];
+	int	nLength = ::GetWindowTextLength(hwndCtl);
+	LPWSTR sBuf	= new WCHAR[nLength + 1];
 	::GetWindowText(hwndCtl, sBuf, nLength + 1);
 	sBuf[nLength] = L'\0';
 
@@ -496,14 +496,14 @@ BOOL CDialog::OnCbnDropDown(HWND hwndCtl, int wID) { return OnCbnDropDown(hwndCt
 BOOL CDialog::OnCbnDropDown(HWND hwndCtl, bool scrollBar)
 {
 	HDC		  hDC;
-	HFONT	  hFont;
+	HFONT	 hFont;
 	LONG	  nWidth;
 	RECT	  rc;
 	SIZE	  sizeText;
 	int		  nTextLen;
 	int		  iItem;
 	int		  nItem;
-	const int nMargin	   = 8;
+	const int nMargin	  = 8;
 	int		  nScrollWidth = scrollBar ? ::GetSystemMetrics(SM_CXVSCROLL) + 2 : 2;
 
 	hDC = ::GetDC(hwndCtl);
@@ -541,7 +541,8 @@ bool CDialog::DirectoryUp(WCHAR *szDir)
 		if (0 < p - szDir) {
 			if (3 < p - szDir) {
 				szDir[p - szDir - 1] = '\0'; // \を削るので-1
-			} else {
+			}
+			else {
 				// 「C:\」の\を残す
 				szDir[p - szDir] = '\0';
 			}
@@ -556,7 +557,7 @@ HFONT CDialog::SetMainFont(HWND hTarget)
 {
 	if (hTarget == NULL) return NULL;
 
-	HFONT	hFont;
+	HFONT   hFont;
 	LOGFONT lf;
 
 	// 設定するフォントの高さを取得
@@ -568,12 +569,12 @@ HFONT CDialog::SetMainFont(HWND hTarget)
 	lf				 = m_pShareData->m_Common.m_sView.m_lf;
 	lf.lfHeight		 = nfHeight;
 	lf.lfWidth		 = 0;
-	lf.lfEscapement	 = 0;
+	lf.lfEscapement  = 0;
 	lf.lfOrientation = 0;
 	lf.lfWeight		 = FW_NORMAL;
 	lf.lfItalic		 = FALSE;
-	lf.lfUnderline	 = FALSE;
-	lf.lfStrikeOut	 = FALSE;
+	lf.lfUnderline   = FALSE;
+	lf.lfStrikeOut   = FALSE;
 	// lf.lfCharSet		= lf.lfCharSet;
 	lf.lfOutPrecision = OUT_TT_ONLY_PRECIS; // Raster Font を使わないように
 	// lf.lfClipPrecision	= lf.lfClipPrecision;
@@ -594,14 +595,15 @@ void CDialog::ResizeItem(HWND hTarget, const POINT &ptDlgDefault, const POINT &p
 						 EAnchorStyle anchor, bool bUpdate)
 {
 	POINT pt;
-	int	  height, width;
+	int   height, width;
 	pt.x   = rcItemDefault.left;
 	pt.y   = rcItemDefault.top;
 	width  = rcItemDefault.right - rcItemDefault.left;
 	height = rcItemDefault.bottom - rcItemDefault.top;
 	if ((anchor & (ANCHOR_LEFT | ANCHOR_RIGHT)) == ANCHOR_LEFT) {
 		// なし
-	} else if ((anchor & (ANCHOR_LEFT | ANCHOR_RIGHT)) == ANCHOR_RIGHT) {
+	}
+	else if ((anchor & (ANCHOR_LEFT | ANCHOR_RIGHT)) == ANCHOR_RIGHT) {
 		/*
 			[<- rcItemDefault.left ->[   ]      ]
 			[<- rcItemDefault.right  [ ->]      ]
@@ -610,7 +612,8 @@ void CDialog::ResizeItem(HWND hTarget, const POINT &ptDlgDefault, const POINT &p
 			[<-    pt.x                 ->[   ]      ]
 		*/
 		pt.x = rcItemDefault.left + (ptDlgNew.x - ptDlgDefault.x);
-	} else if ((anchor & (ANCHOR_LEFT | ANCHOR_RIGHT)) == (ANCHOR_LEFT | ANCHOR_RIGHT)) {
+	}
+	else if ((anchor & (ANCHOR_LEFT | ANCHOR_RIGHT)) == (ANCHOR_LEFT | ANCHOR_RIGHT)) {
 		/*
 			[<-    ptDlgNew.x        [   ]         ->]
 			[                        [<-width->]     ]
@@ -620,9 +623,11 @@ void CDialog::ResizeItem(HWND hTarget, const POINT &ptDlgDefault, const POINT &p
 
 	if ((anchor & (ANCHOR_TOP | ANCHOR_BOTTOM)) == ANCHOR_TOP) {
 		// なし
-	} else if ((anchor & (ANCHOR_TOP | ANCHOR_BOTTOM)) == ANCHOR_BOTTOM) {
+	}
+	else if ((anchor & (ANCHOR_TOP | ANCHOR_BOTTOM)) == ANCHOR_BOTTOM) {
 		pt.y = rcItemDefault.top + (ptDlgNew.y - ptDlgDefault.y);
-	} else if ((anchor & (ANCHOR_TOP | ANCHOR_BOTTOM)) == (ANCHOR_TOP | ANCHOR_BOTTOM)) {
+	}
+	else if ((anchor & (ANCHOR_TOP | ANCHOR_BOTTOM)) == (ANCHOR_TOP | ANCHOR_BOTTOM)) {
 		height = ptDlgNew.y - rcItemDefault.top - (ptDlgDefault.y - rcItemDefault.bottom);
 	}
 	//	::MoveWindow( hTarget, pt.x, pt.y, width, height, FALSE );
@@ -638,7 +643,7 @@ void CDialog::GetItemClientRect(int wID, RECT &rc)
 	po.y = rc.top;
 	::ScreenToClient(GetHwnd(), &po);
 	rc.left = po.x;
-	rc.top	= po.y;
+	rc.top  = po.y;
 	po.x	= rc.right;
 	po.y	= rc.bottom;
 	::ScreenToClient(GetHwnd(), &po);
@@ -665,11 +670,10 @@ LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	SComboBoxItemDeleter *data = (SComboBoxItemDeleter *)::GetProp(hwnd, TSTR_SUBCOMBOBOXDATA);
 	switch (uMsg) {
-	case WM_KEYDOWN:
-	{
+	case WM_KEYDOWN: {
 		if (wParam == VK_DELETE) {
 			HWND hwndCombo = data->hwndCombo;
-			BOOL bShow	   = Combo_GetDroppedState(hwndCombo);
+			BOOL bShow	 = Combo_GetDroppedState(hwndCombo);
 			if (bShow) {
 				DeleteItem(hwndCombo, data->pRecent);
 				return 0;
@@ -677,8 +681,7 @@ LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	}
-	case WM_DESTROY:
-	{
+	case WM_DESTROY: {
 		::SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)data->pEditWndProc);
 		::RemoveProp(hwnd, TSTR_SUBCOMBOBOXDATA);
 		data->pEditWndProc = NULL;
@@ -693,11 +696,10 @@ LRESULT CALLBACK SubListBoxProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 {
 	SComboBoxItemDeleter *data = (SComboBoxItemDeleter *)::GetProp(hwnd, TSTR_SUBCOMBOBOXDATA);
 	switch (uMsg) {
-	case WM_KEYDOWN:
-	{
+	case WM_KEYDOWN: {
 		if (wParam == VK_DELETE) {
 			HWND hwndCombo = data->hwndCombo;
-			BOOL bShow	   = Combo_GetDroppedState(hwndCombo);
+			BOOL bShow	 = Combo_GetDroppedState(hwndCombo);
 			if (bShow) {
 				DeleteItem(hwndCombo, data->pRecent);
 				return 0;
@@ -705,8 +707,7 @@ LRESULT CALLBACK SubListBoxProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		}
 		break;
 	}
-	case WM_DESTROY:
-	{
+	case WM_DESTROY: {
 		::SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)data->pListBoxWndProc);
 		::RemoveProp(hwnd, TSTR_SUBCOMBOBOXDATA);
 		data->pListBoxWndProc = NULL;
@@ -721,8 +722,7 @@ LRESULT CALLBACK SubComboBoxProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 {
 	SComboBoxItemDeleter *data = (SComboBoxItemDeleter *)::GetProp(hwnd, TSTR_SUBCOMBOBOXDATA);
 	switch (uMsg) {
-	case WM_CTLCOLOREDIT:
-	{
+	case WM_CTLCOLOREDIT: {
 		if (NULL == data->pEditWndProc) {
 			HWND hwndCtl	   = (HWND)lParam;
 			data->pEditWndProc = (WNDPROC)::GetWindowLongPtr(hwndCtl, GWLP_WNDPROC);
@@ -731,8 +731,7 @@ LRESULT CALLBACK SubComboBoxProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		}
 		break;
 	}
-	case WM_CTLCOLORLISTBOX:
-	{
+	case WM_CTLCOLORLISTBOX: {
 		if (NULL == data->pListBoxWndProc) {
 			HWND hwndCtl		  = (HWND)lParam;
 			data->pListBoxWndProc = (WNDPROC)::GetWindowLongPtr(hwndCtl, GWLP_WNDPROC);
@@ -741,8 +740,7 @@ LRESULT CALLBACK SubComboBoxProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		}
 		break;
 	}
-	case WM_DESTROY:
-	{
+	case WM_DESTROY: {
 		::SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)data->pComboBoxWndProc);
 		::RemoveProp(hwnd, TSTR_SUBCOMBOBOXDATA);
 		data->pComboBoxWndProc = NULL;

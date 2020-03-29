@@ -49,7 +49,7 @@ static const DWORD p_helpids[] = {								   // 01310
 	0, 0};
 
 TYPE_NAME_ID<EShareMode> ShareModeArr[] = {
-	{SHAREMODE_NOT_EXCLUSIVE, STR_EXCLU_NO_EXCLUSIVE},	  // L"しない" },
+	{SHAREMODE_NOT_EXCLUSIVE, STR_EXCLU_NO_EXCLUSIVE},	// L"しない" },
 	{SHAREMODE_DENY_WRITE, STR_EXCLU_DENY_WRITE},		  // L"上書きを禁止する" },
 	{SHAREMODE_DENY_READWRITE, STR_EXCLU_DENY_READWRITE}, // L"読み書きを禁止する" },
 };
@@ -83,16 +83,16 @@ static bool isImeUndesirable(int id)
 }
 
 /*! ファイルページ メッセージ処理 */
-INT_PTR CPropFile::DispatchEvent(HWND	hwndDlg, //!< handle to dialog box
-								 UINT	uMsg,	 //!< message
-								 WPARAM wParam,	 //!< first message parameter
-								 LPARAM lParam	 //!< second message parameter
+INT_PTR CPropFile::DispatchEvent(HWND   hwndDlg, //!< handle to dialog box
+								 UINT   uMsg,	//!< message
+								 WPARAM wParam,  //!< first message parameter
+								 LPARAM lParam   //!< second message parameter
 )
 {
 	WORD	   wNotifyCode;
 	WORD	   wID;
 	HWND	   hwndCtl;
-	NMHDR *	   pNMHDR;
+	NMHDR *	pNMHDR;
 	NM_UPDOWN *pMNUD;
 	int		   idCtrl;
 	//	int			nVal;
@@ -107,8 +107,8 @@ INT_PTR CPropFile::DispatchEvent(HWND	hwndDlg, //!< handle to dialog box
 
 		return TRUE;
 		//****	From Here Sept. 21, 2000 JEPRO
-		//ダイアログ要素にスピンを入れるので以下のWM_NOTIFYをコメントアウトにし下に修正を置いた 	case WM_NOTIFY: 		idCtrl =
-		//(int)wParam; 		pNMHDR = (NMHDR*)lParam; 		pMNUD  = (NM_UPDOWN*)lParam;
+		//ダイアログ要素にスピンを入れるので以下のWM_NOTIFYをコメントアウトにし下に修正を置いた 	case WM_NOTIFY:
+		// idCtrl = (int)wParam; 		pNMHDR = (NMHDR*)lParam; 		pMNUD  = (NM_UPDOWN*)lParam;
 		////		switch( idCtrl ){
 		////		default:
 		//			switch( pNMHDR->code ){
@@ -144,9 +144,8 @@ INT_PTR CPropFile::DispatchEvent(HWND	hwndDlg, //!< handle to dialog box
 		case IDC_SPIN_AUTOLOAD_DELAY:
 			// 自動読込時遅延
 			nVal = ::GetDlgItemInt(hwndDlg, IDC_EDIT_AUTOLOAD_DELAY, NULL, FALSE);
-			if (pMNUD->iDelta < 0) {
-				++nVal;
-			} else if (pMNUD->iDelta > 0) {
+			if (pMNUD->iDelta < 0) { ++nVal; }
+			else if (pMNUD->iDelta > 0) {
 				--nVal;
 			}
 			if (nVal < 0) { nVal = 0; }
@@ -155,9 +154,8 @@ INT_PTR CPropFile::DispatchEvent(HWND	hwndDlg, //!< handle to dialog box
 		case IDC_SPIN_nDropFileNumMax:
 			/* 一度にドロップ可能なファイル数 */
 			nVal = ::GetDlgItemInt(hwndDlg, IDC_EDIT_nDropFileNumMax, NULL, FALSE);
-			if (pMNUD->iDelta < 0) {
-				++nVal;
-			} else if (pMNUD->iDelta > 0) {
+			if (pMNUD->iDelta < 0) { ++nVal; }
+			else if (pMNUD->iDelta > 0) {
 				--nVal;
 			}
 			if (nVal < 1) { nVal = 1; }
@@ -170,9 +168,8 @@ INT_PTR CPropFile::DispatchEvent(HWND	hwndDlg, //!< handle to dialog box
 		case IDC_SPIN_AUTOBACKUP_INTERVAL:
 			/* バックアップ間隔 */
 			nVal = ::GetDlgItemInt(hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, NULL, FALSE);
-			if (pMNUD->iDelta < 0) {
-				++nVal;
-			} else if (pMNUD->iDelta > 0) {
+			if (pMNUD->iDelta < 0) { ++nVal; }
+			else if (pMNUD->iDelta > 0) {
 				--nVal;
 			}
 			if (nVal < 1) { nVal = 1; }
@@ -182,9 +179,8 @@ INT_PTR CPropFile::DispatchEvent(HWND	hwndDlg, //!< handle to dialog box
 		case IDC_SPIN_ALERT_FILESIZE:
 			/* ファイルの警告サイズ */
 			nVal = ::GetDlgItemInt(hwndDlg, IDC_EDIT_ALERT_FILESIZE, NULL, FALSE);
-			if (pMNUD->iDelta < 0) {
-				++nVal;
-			} else if (pMNUD->iDelta > 0) {
+			if (pMNUD->iDelta < 0) { ++nVal; }
+			else if (pMNUD->iDelta > 0) {
 				--nVal;
 			}
 			if (nVal < 1) { nVal = 1; }
@@ -204,7 +200,7 @@ INT_PTR CPropFile::DispatchEvent(HWND	hwndDlg, //!< handle to dialog box
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam); /* 通知コード */
 		wID			= LOWORD(wParam); /* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl		= (HWND)lParam;	  /* コントロールのハンドル */
+		hwndCtl		= (HWND)lParam;   /* コントロールのハンドル */
 
 		if (wID == IDC_COMBO_FILESHAREMODE && wNotifyCode == CBN_SELCHANGE) { // コンボボックスの選択変更
 			EnableFilePropInput(hwndDlg);
@@ -216,7 +212,7 @@ INT_PTR CPropFile::DispatchEvent(HWND	hwndDlg, //!< handle to dialog box
 		case BN_CLICKED:
 			switch (wID) {
 			case IDC_CHECK_bCheckFileTimeStamp: // 更新の監視
-			case IDC_CHECK_bDropFileAndClose:	/* ファイルをドロップしたときは閉じて開く */
+			case IDC_CHECK_bDropFileAndClose:   /* ファイルをドロップしたときは閉じて開く */
 			case IDC_CHECK_AUTOSAVE:
 			case IDC_CHECK_ALERT_IF_LARGEFILE: EnableFilePropInput(hwndDlg); break;
 			}
@@ -231,8 +227,7 @@ INT_PTR CPropFile::DispatchEvent(HWND	hwndDlg, //!< handle to dialog box
 		break;
 
 		//@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP:
-	{
+	case WM_HELP: {
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -295,7 +290,7 @@ void CPropFile::SetData(HWND hwndDlg)
 	::CheckDlgButton(hwndDlg, IDC_CHECK_AUTOSAVE, m_Common.m_sBackup.IsAutoBackupEnabled());
 
 	WCHAR buf[6];
-	int	  nN;
+	int   nN;
 
 	nN = m_Common.m_sBackup.GetAutoBackupInterval();
 	nN = nN < 1 ? 1 : nN;
@@ -342,7 +337,7 @@ int CPropFile::GetData(HWND hwndDlg)
 {
 	/* ファイルの排他制御モード */
 	HWND hwndCombo					  = ::GetDlgItem(hwndDlg, IDC_COMBO_FILESHAREMODE);
-	int	 nSelPos					  = Combo_GetCurSel(hwndCombo);
+	int  nSelPos					  = Combo_GetCurSel(hwndCombo);
 	m_Common.m_sFile.m_nFileShareMode = ShareModeArr[nSelPos].nMethod;
 
 	/* 更新の監視 */
@@ -375,15 +370,14 @@ int CPropFile::GetData(HWND hwndDlg)
 
 	//	自動保存間隔の取得
 	WCHAR  szNumBuf[/*6*/ 7]; //@@@ 2001.03.21 by MIK
-	int	   nN;
+	int	nN;
 	WCHAR *pDigit;
 
 	::DlgItem_GetText(hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, szNumBuf, /*5*/ 6); //@@@ 2001.03.21 by MIK
 
 	for (nN = 0, pDigit = szNumBuf; *pDigit != L'\0'; pDigit++) {
-		if (L'0' <= *pDigit && *pDigit <= L'9') {
-			nN = nN * 10 + *pDigit - L'0';
-		} else
+		if (L'0' <= *pDigit && *pDigit <= L'9') { nN = nN * 10 + *pDigit - L'0'; }
+		else
 			break;
 	}
 	nN = nN < 1 ? 1 : nN;
@@ -404,7 +398,7 @@ int CPropFile::GetData(HWND hwndDlg)
 	m_Common.m_sFile.SetAlertIfFileNotExist(::IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_AlertIfFileNotExist));
 	// 開こうとしたファイルが大きい場合に警告する
 	m_Common.m_sFile.m_bAlertIfLargeFile = ::IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_ALERT_IF_LARGEFILE);
-	m_Common.m_sFile.m_nAlertFileSize	 = ::GetDlgItemInt(hwndDlg, IDC_EDIT_ALERT_FILESIZE, NULL, FALSE);
+	m_Common.m_sFile.m_nAlertFileSize	= ::GetDlgItemInt(hwndDlg, IDC_EDIT_ALERT_FILESIZE, NULL, FALSE);
 	if (m_Common.m_sFile.m_nAlertFileSize < 1) { m_Common.m_sFile.m_nAlertFileSize = 1; }
 	if (m_Common.m_sFile.m_nAlertFileSize > 2048) { m_Common.m_sFile.m_nAlertFileSize = 2048; }
 
@@ -434,7 +428,8 @@ void CPropFile::EnableFilePropInput(HWND hwndDlg)
 		::EnableWindow(
 			::GetDlgItem(hwndDlg, IDC_SPIN_nDropFileNumMax),
 			FALSE); // added Oct. 6, JEPRO ファイルオープンを「閉じて開く」にしたときはDisableになるように変更
-	} else {
+	}
+	else {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_AUTOSAVE3), TRUE); // added Sept. 6, JEPRO	同上
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_AUTOSAVE4), TRUE); // added Sept. 6, JEPRO	同上
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_nDropFileNumMax), TRUE);
@@ -451,12 +446,14 @@ void CPropFile::EnableFilePropInput(HWND hwndDlg)
 			::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_AUTOLOAD_DELAY), TRUE);
 			::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_AUTOLOAD_DELAY), TRUE);
 			::EnableWindow(::GetDlgItem(hwndDlg, IDC_SPIN_AUTOLOAD_DELAY), TRUE);
-		} else {
+		}
+		else {
 			::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_AUTOLOAD_DELAY), FALSE);
 			::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_AUTOLOAD_DELAY), FALSE);
 			::EnableWindow(::GetDlgItem(hwndDlg, IDC_SPIN_AUTOLOAD_DELAY), FALSE);
 		}
-	} else {
+	}
+	else {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_CHECK_bCheckFileTimeStamp), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_AUTOLOAD_DELAY), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_AUTOLOAD_DELAY), FALSE);
@@ -470,7 +467,8 @@ void CPropFile::EnableFilePropInput(HWND hwndDlg)
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_AUTOSAVE2),
 					   TRUE); // Sept. 6, 2000 JEPRO 自動保存にしたときだけEnableになるように変更
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_SPIN_AUTOBACKUP_INTERVAL), TRUE); //@@@ 2001.03.21 by MIK
-	} else {
+	}
+	else {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_AUTOSAVE), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_AUTOSAVE2), FALSE);			// Sept. 6, 2000 JEPRO 同上
@@ -481,7 +479,8 @@ void CPropFile::EnableFilePropInput(HWND hwndDlg)
 	if (::IsDlgButtonChecked(hwndDlg, IDC_CHECK_ALERT_IF_LARGEFILE)) {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_ALERT_FILESIZE), TRUE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_SPIN_ALERT_FILESIZE), TRUE);
-	} else {
+	}
+	else {
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_ALERT_FILESIZE), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_SPIN_ALERT_FILESIZE), FALSE);
 	}

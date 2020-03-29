@@ -27,8 +27,7 @@
 /*!
 	@brief 置換ダイアログボックス
 */
-class CDlgReplace final : public CDialog
-{
+class CDlgReplace final : public CDialog {
 public:
 	/*
 	||  Constructors
@@ -74,6 +73,6 @@ protected:
 	LPVOID GetHelpIdTable(void) override;					  //@@@ 2002.01.18 add
 
 	void SetData(void) override; /* ダイアログデータの設定 */
-	void SetCombosList(void);	 /* 検索文字列/置換後文字列リストの設定 */
-	int	 GetData(void) override; /* ダイアログデータの取得 */
+	void SetCombosList(void);	/* 検索文字列/置換後文字列リストの設定 */
+	int  GetData(void) override; /* ダイアログデータの取得 */
 };

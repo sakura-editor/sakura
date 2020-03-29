@@ -32,8 +32,8 @@ void CViewFont::CreateFont(const LOGFONT *plf)
 {
 	LOGFONT lf;
 	int		miniSize = GetDllShareData().m_Common.m_sWindow.m_nMiniMapFontSize;
-	int		quality	 = GetDllShareData().m_Common.m_sWindow.m_nMiniMapQuality;
-	int		outPrec	 = OUT_TT_ONLY_PRECIS; // FixedSys等でMiniMapのフォントが小さくならない修正
+	int		quality  = GetDllShareData().m_Common.m_sWindow.m_nMiniMapQuality;
+	int		outPrec  = OUT_TT_ONLY_PRECIS; // FixedSys等でMiniMapのフォントが小さくならない修正
 
 	/* フォント作成 */
 	lf = *plf;
@@ -43,7 +43,7 @@ void CViewFont::CreateFont(const LOGFONT *plf)
 		lf.lfOutPrecision = outPrec;
 	}
 	m_hFont_HAN = CreateFontIndirect(&lf);
-	m_LogFont	= lf;
+	m_LogFont   = lf;
 
 	/* 太字フォント作成 */
 	lf = *plf;
@@ -100,13 +100,16 @@ HFONT CViewFont::ChooseFontHandle(int fontNo, SFontAttr sFontAttr) const
 	if (sFontAttr.m_bBoldFont) {	  /* 太字か */
 		if (sFontAttr.m_bUnderLine) { /* 下線か */
 			return m_hFont_HAN_BOLD_UL;
-		} else {
+		}
+		else {
 			return m_hFont_HAN_BOLD;
 		}
-	} else {
+	}
+	else {
 		if (sFontAttr.m_bUnderLine) { /* 下線か */
 			return m_hFont_HAN_UL;
-		} else {
+		}
+		else {
 			return m_hFont_HAN;
 		}
 	}

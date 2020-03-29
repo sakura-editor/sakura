@@ -31,15 +31,14 @@
 #include <list>
 #include <string>
 
-class CPluginManager final : public TSingleton<CPluginManager>
-{
+class CPluginManager final : public TSingleton<CPluginManager> {
 	friend class TSingleton<CPluginManager>;
 	CPluginManager();
 
 	// 型定義
 private:
 	typedef std::wstring wstring;
-	typedef std::string	 string;
+	typedef std::string  string;
 
 	// 操作
 public:
@@ -56,8 +55,8 @@ public:
 private:
 	CPlugin *LoadPlugin(const WCHAR *pszPluginDir, const WCHAR *pszPluginName,
 						const WCHAR *pszLangName); //プラグインを読み込む
-	bool	 RegisterPlugin(CPlugin *plugin);	   //プラグインをCJackManagerに登録する
-	bool	 UnRegisterPlugin(CPlugin *plugin);	   //プラグインのCJackManagerの登録を解除する
+	bool	 RegisterPlugin(CPlugin *plugin);	  //プラグインをCJackManagerに登録する
+	bool	 UnRegisterPlugin(CPlugin *plugin);	//プラグインのCJackManagerの登録を解除する
 
 	//属性
 public:
@@ -74,6 +73,6 @@ public:
 	// メンバ変数
 private:
 	CPlugin::List m_plugins;
-	wstring		  m_sBaseDir; // pluginsフォルダのパス
-	wstring m_sExePluginDir;  // Exeフォルダ配下pluginsフォルダのパス
+	wstring		  m_sBaseDir;	  // pluginsフォルダのパス
+	wstring		  m_sExePluginDir; // Exeフォルダ配下pluginsフォルダのパス
 };

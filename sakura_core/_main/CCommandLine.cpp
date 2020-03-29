@@ -31,35 +31,35 @@
 #include <tchar.h>
 
 /* コマンドラインオプション用定数 */
-#define CMDLINEOPT_R		 1002 //!< ビューモード
-#define CMDLINEOPT_NOWIN	 1003 //!< タスクトレイのみ起動
+#define CMDLINEOPT_R 1002		  //!< ビューモード
+#define CMDLINEOPT_NOWIN 1003	 //!< タスクトレイのみ起動
 #define CMDLINEOPT_WRITEQUIT 1004 //!< SakuExtとの連動専用
-#define CMDLINEOPT_GREPMODE	 1100 //!< Grep実行モードで起動
-#define CMDLINEOPT_GREPDLG	 1101 //!< サクラエディタが起動すると同時にGrepダイアログを表示
+#define CMDLINEOPT_GREPMODE 1100  //!< Grep実行モードで起動
+#define CMDLINEOPT_GREPDLG 1101   //!< サクラエディタが起動すると同時にGrepダイアログを表示
 #define CMDLINEOPT_DEBUGMODE 1999 //!< アウトプット用のウィンドウとして起動
 #define CMDLINEOPT_NOMOREOPT 1998 //!< これ以降引数無効
-#define CMDLINEOPT_AT		 11	  //!< レスポンスファイルを指定
-#define CMDLINEOPT_X		 1	  //!< ファイルを開いたときのカーソルの桁位置を指定
-#define CMDLINEOPT_Y		 2	  //!< ファイルを開いたときのカーソルの行位置を指定
-#define CMDLINEOPT_VX		 3	  //!< スクロール：ウィンドウ左端の桁位置
-#define CMDLINEOPT_VY		 4	  //!< スクロール：ウィンドウ上端の行位置
-#define CMDLINEOPT_TYPE		 5	  //!< タイプ別設定
-#define CMDLINEOPT_CODE		 6	  //!< 文字コード種別
-#define CMDLINEOPT_SX		 7	  //!< ウィンドウの幅
-#define CMDLINEOPT_SY		 8	  //!< ウィンドウの高さ
-#define CMDLINEOPT_WX		 9	  //!< ウィンドウ左上のX座標
-#define CMDLINEOPT_WY		 10	  //!< ウィンドウ左上のY座標
-#define CMDLINEOPT_GKEY		 101  //!< Grepの検索文字列
-#define CMDLINEOPT_GFILE	 102  //!< Grepの検索対象のファイル
-#define CMDLINEOPT_GFOLDER	 103  //!< Grepの検索対象のフォルダ
-#define CMDLINEOPT_GOPT		 104  //!< Grepの条件
-#define CMDLINEOPT_GCODE	 105  //!< Grepでの文字コードを指定
-#define CMDLINEOPT_M		 106  //!< 起動時に実行するマクロのファイル名を指定
-#define CMDLINEOPT_MTYPE	 107  //!< マクロの種類を拡張子名で指定
-#define CMDLINEOPT_GREPR	 108  //!< Grepの置換文字列
-#define CMDLINEOPT_GROUP	 500  //!< タブモードのグループを指定して開く
-#define CMDLINEOPT_PROF		 501  //!< プロファイルを選択
-#define CMDLINEOPT_PROFMGR	 502  //!< プロファイルマネージャを起動時に表示
+#define CMDLINEOPT_AT 11		  //!< レスポンスファイルを指定
+#define CMDLINEOPT_X 1			  //!< ファイルを開いたときのカーソルの桁位置を指定
+#define CMDLINEOPT_Y 2			  //!< ファイルを開いたときのカーソルの行位置を指定
+#define CMDLINEOPT_VX 3			  //!< スクロール：ウィンドウ左端の桁位置
+#define CMDLINEOPT_VY 4			  //!< スクロール：ウィンドウ上端の行位置
+#define CMDLINEOPT_TYPE 5		  //!< タイプ別設定
+#define CMDLINEOPT_CODE 6		  //!< 文字コード種別
+#define CMDLINEOPT_SX 7			  //!< ウィンドウの幅
+#define CMDLINEOPT_SY 8			  //!< ウィンドウの高さ
+#define CMDLINEOPT_WX 9			  //!< ウィンドウ左上のX座標
+#define CMDLINEOPT_WY 10		  //!< ウィンドウ左上のY座標
+#define CMDLINEOPT_GKEY 101		  //!< Grepの検索文字列
+#define CMDLINEOPT_GFILE 102	  //!< Grepの検索対象のファイル
+#define CMDLINEOPT_GFOLDER 103	//!< Grepの検索対象のフォルダ
+#define CMDLINEOPT_GOPT 104		  //!< Grepの条件
+#define CMDLINEOPT_GCODE 105	  //!< Grepでの文字コードを指定
+#define CMDLINEOPT_M 106		  //!< 起動時に実行するマクロのファイル名を指定
+#define CMDLINEOPT_MTYPE 107	  //!< マクロの種類を拡張子名で指定
+#define CMDLINEOPT_GREPR 108	  //!< Grepの置換文字列
+#define CMDLINEOPT_GROUP 500	  //!< タブモードのグループを指定して開く
+#define CMDLINEOPT_PROF 501		  //!< プロファイルを選択
+#define CMDLINEOPT_PROFMGR 502	//!< プロファイルマネージャを起動時に表示
 
 /*!
 	コマンドラインのチェックを行って、オプション番号と
@@ -72,16 +72,15 @@
 	@date Apr. 6, 2001
 	@date 2006.10.25 ryoji オプション文字列の大文字小文字を区別しない
 */
-int CCommandLine::CheckCommandLine(LPWSTR  str,	  //!< [in] 検証する文字列（先頭の-は含まない）
-								   WCHAR **arg,	  //!< [out] 引数がある場合はその先頭へのポインタ
+int CCommandLine::CheckCommandLine(LPWSTR  str,   //!< [in] 検証する文字列（先頭の-は含まない）
+								   WCHAR **arg,   //!< [out] 引数がある場合はその先頭へのポインタ
 								   int *   arglen //!< [out] 引数の長さ
 )
 {
 	/*!
 		コマンドラインオプション解析用構造体配列
 	*/
-	struct _CmdLineOpt
-	{
+	struct _CmdLineOpt {
 		LPCWSTR opt;   //!< オプション文字列
 		int		len;   //!< オプションの文字列長（計算を省くため）
 		int		value; //!< 変換後の値
@@ -126,7 +125,7 @@ int CCommandLine::CheckCommandLine(LPWSTR  str,	  //!< [in] 検証する文字�
 											 {L"GROUP", 5, CMDLINEOPT_GROUP, false}, // 2007.06.26 ryoji
 											 {L"M", 1, CMDLINEOPT_M, false},		 // 2009.06.14 syat
 											 {L"MTYPE", 5, CMDLINEOPT_MTYPE, false}, // 2009.06.14 syat
-											 {L"PROF", 4, CMDLINEOPT_PROF, true},	 // 2013.12.20 Moca
+											 {L"PROF", 4, CMDLINEOPT_PROF, true},	// 2013.12.20 Moca
 											 {NULL, 0, 0}};
 
 	const _CmdLineOpt *ptr;
@@ -189,7 +188,8 @@ CCommandLine::CCommandLine() noexcept
 	, m_cmMacroType()
 	, m_cmProfile(L"")
 	, m_vFiles()
-{}
+{
+}
 
 /*!
  * 実行ファイル名に含まれる数値により文字コードを決定する．
@@ -256,15 +256,16 @@ void CCommandLine::ParseCommandLine(LPCWSTR pszCmdLineSrc, bool bResponse)
 		CSakuraEnvironment::ResolvePath(szPath);
 		wcscpy(m_fi.m_szPath, szPath); /* ファイル名 */
 		nPos = i + 1;
-	} else {
+	}
+	else {
 		m_fi.m_szPath[0] = L'\0';
 		nPos			 = 0;
 	}
 
 	CNativeW cmResponseFile = L"";
-	LPWSTR	 pszCmdLineWork = new WCHAR[lstrlen(pszCmdLineSrc) + 1];
+	LPWSTR   pszCmdLineWork = new WCHAR[lstrlen(pszCmdLineSrc) + 1];
 	wcscpy(pszCmdLineWork, pszCmdLineSrc);
-	int	   nCmdLineWorkLen = lstrlen(pszCmdLineWork);
+	int	nCmdLineWorkLen = lstrlen(pszCmdLineWork);
 	LPWSTR pszToken		   = my_strtok<WCHAR>(pszCmdLineWork, nCmdLineWorkLen, &nPos, L" ");
 	while (pszToken != NULL) {
 		DEBUG_TRACE(L"OPT=[%s]\n", pszToken);
@@ -288,10 +289,12 @@ void CCommandLine::ParseCommandLine(LPCWSTR pszCmdLineSrc, bool bResponse)
 					cmWork.SetString(&pszToken[1], len - (pszToken[len] == L'"' ? 1 : 0));
 					cmWork.Replace(L"\"\"", L"\"");
 					wcscpy_s(szPath, _countof(szPath), cmWork.GetStringPtr()); /* ファイル名 */
-				} else {
+				}
+				else {
 					szPath[0] = L'\0';
 				}
-			} else {
+			}
+			else {
 				wcscpy_s(szPath, _countof(szPath), pszToken); /* ファイル名 */
 			}
 
@@ -314,13 +317,13 @@ void CCommandLine::ParseCommandLine(LPCWSTR pszCmdLineSrc, bool bResponse)
 
 			if (szPath[0] != L'\0') {
 				CSakuraEnvironment::ResolvePath(szPath);
-				if (m_fi.m_szPath[0] == L'\0') {
-					wcscpy(m_fi.m_szPath, szPath);
-				} else {
+				if (m_fi.m_szPath[0] == L'\0') { wcscpy(m_fi.m_szPath, szPath); }
+				else {
 					m_vFiles.push_back(szPath);
 				}
 			}
-		} else {
+		}
+		else {
 			if (*pszToken == '"') {
 				++pszToken; // 2007.09.09 genta 先頭の"はスキップ
 				int tokenlen = wcslen(pszToken);
@@ -330,7 +333,7 @@ void CCommandLine::ParseCommandLine(LPCWSTR pszCmdLineSrc, bool bResponse)
 			}
 			++pszToken; //	先頭の'-'はskip
 			WCHAR *arg = NULL;
-			int	   nArgLen;
+			int	nArgLen;
 			switch (CheckCommandLine(pszToken, &arg, &nArgLen)) {
 			case CMDLINEOPT_AT: cmResponseFile.SetString(arg, nArgLen); break;
 			case CMDLINEOPT_X: //	X
@@ -379,7 +382,7 @@ void CCommandLine::ParseCommandLine(LPCWSTR pszCmdLineSrc, bool bResponse)
 				break;
 			case CMDLINEOPT_WRITEQUIT: //	WRITEQUIT	// 2007.05.19 ryoji sakuext用に追加
 				m_bWriteQuit = true;
-				m_bNoWindow	 = true; // 2007.09.05 ryoji -WQを指定されたら-NOWINも指定されたとして扱う
+				m_bNoWindow  = true; // 2007.09.05 ryoji -WQを指定されたら-NOWINも指定されたとして扱う
 				break;
 			case CMDLINEOPT_GREPMODE: //	GREPMODE
 				m_bGrepMode = true;

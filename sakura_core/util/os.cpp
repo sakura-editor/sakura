@@ -56,7 +56,7 @@ void MyInitCommonControls()
 	// 利用するコモンコントロールの種類をビットフラグで指定する
 	INITCOMMONCONTROLSEX icex;
 	icex.dwSize = sizeof(icex);
-	icex.dwICC	= ICC_WIN95_CLASSES | ICC_COOL_CLASSES;
+	icex.dwICC  = ICC_WIN95_CLASSES | ICC_COOL_CLASSES;
 
 	// コモンコントロールライブラリを初期化する
 	auto bSuccess = ::InitCommonControlsEx(&icex);
@@ -164,7 +164,8 @@ bool ReadRegistry(HKEY Hive, const WCHAR *Path, const WCHAR *Item, WCHAR *Buffer
 	@retval false コピー失敗。場合によってはクリップボードに元の内容が残る
 	@date 2004.02.17 Moca 各所のソースを統合
 */
-template<class T> bool SetClipboardTextImp(HWND hwnd, const T *pszText, int nLength)
+template<class T>
+bool SetClipboardTextImp(HWND hwnd, const T *pszText, int nLength)
 {
 	HGLOBAL hgClip;
 	T *		pszClip;
@@ -184,11 +185,11 @@ template<class T> bool SetClipboardTextImp(HWND hwnd, const T *pszText, int nLen
 		return false;
 	}
 	::EmptyClipboard();
-	if (sizeof(T) == sizeof(char)) {
-		::SetClipboardData(CF_OEMTEXT, hgClip);
-	} else if (sizeof(T) == sizeof(wchar_t)) {
+	if (sizeof(T) == sizeof(char)) { ::SetClipboardData(CF_OEMTEXT, hgClip); }
+	else if (sizeof(T) == sizeof(wchar_t)) {
 		::SetClipboardData(CF_UNICODETEXT, hgClip);
-	} else {
+	}
+	else {
 		assert(0); //※ここには来ない
 	}
 	::CloseClipboard();
@@ -214,7 +215,7 @@ BOOL IsDataAvailable(LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat)
 	fe.cfFormat = cfFormat;
 	fe.ptd		= NULL;
 	fe.dwAspect = DVASPECT_CONTENT;
-	fe.lindex	= -1;
+	fe.lindex   = -1;
 	fe.tymed	= TYMED_HGLOBAL;
 	// 2006.03.16 Moca S_FALSEでも受け入れてしまうバグを修正(ファイルのドロップ等)
 	return S_OK == pDataObject->QueryGetData(&fe);
@@ -226,24 +227,25 @@ HGLOBAL GetGlobalData(LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat)
 	fe.cfFormat = cfFormat;
 	fe.ptd		= NULL;
 	fe.dwAspect = DVASPECT_CONTENT;
-	fe.lindex	= -1;
+	fe.lindex   = -1;
 	// 2006.01.16 Moca fe.tymed = -1からTYMED_HGLOBALに変更。
 	fe.tymed = TYMED_HGLOBAL;
 
-	HGLOBAL	  hDest = NULL;
+	HGLOBAL   hDest = NULL;
 	STGMEDIUM stgMedium;
 	// 2006.03.16 Moca SUCCEEDEDマクロではS_FALSEのとき困るので、S_OKに変更
 	if (S_OK == pDataObject->GetData(&fe, &stgMedium)) {
 		if (stgMedium.pUnkForRelease == NULL) {
 			if (stgMedium.tymed == TYMED_HGLOBAL) hDest = stgMedium.hGlobal;
-		} else {
+		}
+		else {
 			if (stgMedium.tymed == TYMED_HGLOBAL) {
 				DWORD nSize = ::GlobalSize(stgMedium.hGlobal);
 				hDest		= ::GlobalAlloc(GMEM_SHARE | GMEM_MOVEABLE, nSize);
 				if (hDest != NULL) {
 					// copy the bits
 					LPVOID lpSource = ::GlobalLock(stgMedium.hGlobal);
-					LPVOID lpDest	= ::GlobalLock(hDest);
+					LPVOID lpDest   = ::GlobalLock(hDest);
 					memcpy_raw(lpDest, lpSource, nSize);
 					::GlobalUnlock(hDest);
 					::GlobalUnlock(stgMedium.hGlobal);
@@ -269,8 +271,8 @@ HGLOBAL GetGlobalData(LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat)
 BOOL GetSystemResources(int *pnSystemResources, int *pnUserResources, int *pnGDIResources)
 {
 #define GFSR_SYSTEMRESOURCES 0x0000
-#define GFSR_GDIRESOURCES	 0x0001
-#define GFSR_USERRESOURCES	 0x0002
+#define GFSR_GDIRESOURCES 0x0001
+#define GFSR_USERRESOURCES 0x0002
 	HINSTANCE hlib;
 	int(CALLBACK * GetFreeSystemResources)(int);
 
@@ -280,14 +282,16 @@ BOOL GetSystemResources(int *pnSystemResources, int *pnUserResources, int *pnGDI
 		if (GetFreeSystemResources != NULL) {
 			*pnSystemResources = GetFreeSystemResources(GFSR_SYSTEMRESOURCES);
 			*pnUserResources   = GetFreeSystemResources(GFSR_USERRESOURCES);
-			*pnGDIResources	   = GetFreeSystemResources(GFSR_GDIRESOURCES);
+			*pnGDIResources	= GetFreeSystemResources(GFSR_GDIRESOURCES);
 			::FreeLibrary(hlib);
 			return TRUE;
-		} else {
+		}
+		else {
 			::FreeLibrary(hlib);
 			return FALSE;
 		}
-	} else {
+	}
+	else {
 		return FALSE;
 	}
 }
@@ -307,11 +311,11 @@ BOOL CheckSystemResources(const WCHAR *pszAppName)
 		//		MYTRACE( L"nUserResources=%d\n", nUserResources );
 		//		MYTRACE( L"nGDIResources=%d\n", nGDIResources );
 		pszResourceName = NULL;
-		if (nSystemResources <= 5) {
-			pszResourceName = L"システム ";
-		} else if (nUserResources <= 5) {
+		if (nSystemResources <= 5) { pszResourceName = L"システム "; }
+		else if (nUserResources <= 5) {
 			pszResourceName = L"ユーザー ";
-		} else if (nGDIResources <= 5) {
+		}
+		else if (nGDIResources <= 5) {
 			pszResourceName = L"GDI ";
 		}
 		if (NULL != pszResourceName) {
@@ -359,7 +363,8 @@ CCurrentDirectoryBackupPoint::CCurrentDirectoryBackupPoint()
 	int n = ::GetCurrentDirectory(_countof(m_szCurDir), m_szCurDir);
 	if (n > 0 && n < _countof(m_szCurDir)) {
 		// ok
-	} else {
+	}
+	else {
 		// ng
 		m_szCurDir[0] = L'\0';
 	}
@@ -374,9 +379,8 @@ CDisableWow64FsRedirect::CDisableWow64FsRedirect(BOOL isOn)
 	: m_isSuccess(FALSE)
 	, m_OldValue(NULL)
 {
-	if (isOn && IsWow64()) {
-		m_isSuccess = Wow64DisableWow64FsRedirection(&m_OldValue);
-	} else {
+	if (isOn && IsWow64()) { m_isSuccess = Wow64DisableWow64FsRedirection(&m_OldValue); }
+	else {
 		m_isSuccess = FALSE;
 	}
 }
@@ -406,9 +410,8 @@ BOOL IsPowerShellAvailable(void)
 							 szFileBuff,		// 見つかったファイル名を格納するバッファ
 							 &lpFilePart		// ファイルコンポーネント
 	);
-	if (ret != 0 && lpFilePart != NULL) {
-		return TRUE;
-	} else {
+	if (ret != 0 && lpFilePart != NULL) { return TRUE; }
+	else {
 		return FALSE;
 	}
 }

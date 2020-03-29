@@ -36,8 +36,7 @@ class CDlgProperty;
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-class CDlgProperty final : public CDialog
-{
+class CDlgProperty final : public CDialog {
 public:
 	int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam); /* モーダルダイアログの表示 */
 protected:

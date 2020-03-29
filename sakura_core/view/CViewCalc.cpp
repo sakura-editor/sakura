@@ -58,9 +58,9 @@ CLogicInt CViewCalc::LineColumnToIndex2(const CLayout *pcLayout, CLayoutInt nCol
 {
 	*pnLineAllColLen = CLayoutInt(0);
 
-	CLogicInt		i2	   = CLogicInt(0);
+	CLogicInt		i2	 = CLogicInt(0);
 	CLayoutInt		nPosX2 = CLayoutInt(0);
-	CMemoryIterator it	   = m_pOwner->m_pcEditDoc->m_cLayoutMgr.CreateCMemoryIterator(pcLayout);
+	CMemoryIterator it	 = m_pOwner->m_pcEditDoc->m_cLayoutMgr.CreateCMemoryIterator(pcLayout);
 	while (!it.end()) {
 		it.scanNext();
 		if (it.getColumn() + it.getColumnDelta() > nColumn) { break; }
@@ -83,7 +83,7 @@ CLayoutInt CViewCalc::LineIndexToColumn(const CLayout *pcLayout, CLogicInt nInde
 {
 	//	以下、iterator版
 	CLayoutInt		nPosX2 = CLayoutInt(0);
-	CMemoryIterator it	   = m_pOwner->m_pcEditDoc->m_cLayoutMgr.CreateCMemoryIterator(pcLayout);
+	CMemoryIterator it	 = m_pOwner->m_pcEditDoc->m_cLayoutMgr.CreateCMemoryIterator(pcLayout);
 	while (!it.end()) {
 		it.scanNext();
 		if (it.getIndex() + it.getIndexDelta() > nIndex) { break; }

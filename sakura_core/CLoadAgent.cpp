@@ -163,7 +163,7 @@ void CLoadAgent::OnBeforeLoad(SLoadInfo *pLoadInfo) {}
 ELoadResult CLoadAgent::OnLoad(const SLoadInfo &sLoadInfo)
 {
 	ELoadResult eRet  = LOADED_OK;
-	CEditDoc *	pcDoc = GetListeningDoc();
+	CEditDoc *  pcDoc = GetListeningDoc();
 
 	/* 既存データのクリア */
 	pcDoc->InitDoc(); //$$
@@ -197,11 +197,12 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo &sLoadInfo)
 		// CDocLineMgrの構成
 		CReadManager	  cReader;
 		CProgressSubject *pOld = CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(&cReader);
-		EConvertResult	  eReadResult =
+		EConvertResult	eReadResult =
 			cReader.ReadFile_To_CDocLineMgr(&pcDoc->m_cDocLineMgr, sLoadInfo, &pcDoc->m_cDocFile.m_sFileInfo);
 		if (eReadResult == RESULT_LOSESOME) { eRet = LOADED_LOSESOME; }
 		CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
-	} else {
+	}
+	else {
 		// 存在しないときもドキュメントに文字コードを反映する
 		const STypeConfig &types = pcDoc->m_cDocType.GetDocumentAttribute();
 		pcDoc->m_cDocFile.SetCodeSet(sLoadInfo.eCharCode, (sLoadInfo.eCharCode == types.m_encoding.m_eDefaultCodetype)

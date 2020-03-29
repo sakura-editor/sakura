@@ -31,12 +31,10 @@
 #include "macro/CWSHIfObj.h"
 #include "util/ole_convert.h"
 
-class CComplementIfObj : public CWSHIfObj
-{
+class CComplementIfObj : public CWSHIfObj {
 	// 型定義
-	enum FuncId
-	{
-		F_OL_COMMAND_FIRST	= 0,				//↓コマンドは以下に追加する
+	enum FuncId {
+		F_OL_COMMAND_FIRST  = 0,				//↓コマンドは以下に追加する
 		F_OL_FUNCTION_FIRST = F_FUNCTION_FIRST, //↓関数は以下に追加する
 		F_CM_GETCURRENTWORD,					//補完対象の文字列を取得
 		F_CM_GETOPTION,							//オプションを取得
@@ -50,7 +48,8 @@ public:
 		, m_sCurrentWord(curWord)
 		, m_pHokanMgr(pMgr)
 		, m_nOption(option)
-	{}
+	{
+	}
 
 	// デストラクタ
 public:
@@ -89,7 +88,8 @@ public:
 			std::wstring strWord(word, nWordLen);
 			if (CHokanMgr::AddKouhoUnique(m_pHokanMgr->m_vKouho, strWord)) {
 				Wrap(&Result)->Receive(m_pHokanMgr->m_vKouho.size());
-			} else {
+			}
+			else {
 				Wrap(&Result)->Receive(-1);
 			}
 			return true;
@@ -107,7 +107,7 @@ public:
 	// メンバ変数
 private:
 	std::wstring m_sCurrentWord;
-	CHokanMgr *	 m_pHokanMgr;
+	CHokanMgr *  m_pHokanMgr;
 	int			 m_nOption; // 0x01 == IgnoreCase
 
 private:
@@ -117,7 +117,8 @@ private:
 
 //コマンド情報
 MacroFuncInfo CComplementIfObj::m_MacroFuncInfoCommandArr[] = {
-	// ID									関数名							引数										戻り値の型
+	// ID									関数名							引数
+	// 戻り値の型
 	// m_pszData 	終端
 	{F_INVALID, NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL}};
 

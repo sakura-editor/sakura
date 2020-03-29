@@ -12,7 +12,7 @@ bool CConvert_SpaceToTab::DoConvert(CNativeW *pcData)
 
 	const wchar_t *pLine;
 	int			   nLineLen;
-	wchar_t *	   pDes;
+	wchar_t *	  pDes;
 	int			   nBgn;
 	int			   i;
 	int			   nPosDes;
@@ -20,8 +20,8 @@ bool CConvert_SpaceToTab::DoConvert(CNativeW *pcData)
 	CEol		   cEol;
 
 	BOOL bSpace = FALSE; //スペースの処理中かどうか
-	int	 j;
-	int	 nStartPos;
+	int  j;
+	int  nStartPos;
 
 	nBgn	= 0;
 	nPosDes = 0;
@@ -43,23 +43,24 @@ bool CConvert_SpaceToTab::DoConvert(CNativeW *pcData)
 		if (0 < nLineLen) {
 			// 先頭行については開始桁位置を考慮する（さらに折り返し関連の対策が必要？）
 			nPosX = (pcData->GetStringPtr() == pLine) ? m_nStartColumn : 0; // 処理中のiに対応する表示桁位置
-			bSpace	  = FALSE;												//直前がスペースか
+			bSpace	= FALSE;												//直前がスペースか
 			nStartPos = 0;													// スペースの先頭
 			for (i = 0; i < nLineLen; ++i) {
 				if (SPACE == pLine[i] || TAB == pLine[i]) {
 					if (bSpace == FALSE) { nStartPos = nPosX; }
 					bSpace = TRUE;
-					if (SPACE == pLine[i]) {
-						nPosX++;
-					} else if (TAB == pLine[i]) {
+					if (SPACE == pLine[i]) { nPosX++; }
+					else if (TAB == pLine[i]) {
 						nPosX += m_nTabWidth - (nPosX % m_nTabWidth);
 					}
-				} else {
+				}
+				else {
 					if (bSpace) {
 						if ((1 == nPosX - nStartPos) && (SPACE == pLine[i - 1])) {
 							pDes[nPosDes] = SPACE;
 							nPosDes++;
-						} else {
+						}
+						else {
 							for (j = nStartPos / m_nTabWidth; j < (nPosX / m_nTabWidth); j++) {
 								pDes[nPosDes] = TAB;
 								nPosDes++;
@@ -89,7 +90,8 @@ bool CConvert_SpaceToTab::DoConvert(CNativeW *pcData)
 				if ((1 == nPosX - nStartPos) && (SPACE == pLine[i - 1])) {
 					pDes[nPosDes] = SPACE;
 					nPosDes++;
-				} else {
+				}
+				else {
 					// for( j = nStartPos - 1; (j + m_nTabWidth) <= nPosX + 1; j+=m_nTabWidth ){
 					for (j = nStartPos / m_nTabWidth; j < (nPosX / m_nTabWidth); j++) {
 						pDes[nPosDes] = TAB;

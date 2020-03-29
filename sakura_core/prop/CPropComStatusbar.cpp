@@ -52,10 +52,10 @@ INT_PTR CALLBACK CPropStatusbar::DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wP
 }
 
 /* メッセージ処理 */
-INT_PTR CPropStatusbar::DispatchEvent(HWND	 hwndDlg, // handle to dialog box
-									  UINT	 uMsg,	  // message
+INT_PTR CPropStatusbar::DispatchEvent(HWND   hwndDlg, // handle to dialog box
+									  UINT   uMsg,	// message
 									  WPARAM wParam,  // first message parameter
-									  LPARAM lParam	  // second message parameter
+									  LPARAM lParam   // second message parameter
 )
 {
 	NMHDR *pNMHDR;
@@ -89,8 +89,7 @@ INT_PTR CPropStatusbar::DispatchEvent(HWND	 hwndDlg, // handle to dialog box
 		break; /* WM_NOTIFY */
 
 		//@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP:
-	{
+	case WM_HELP: {
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更

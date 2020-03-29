@@ -30,8 +30,7 @@ class CEditView;
 
 typedef void (*EngineCallback)(wchar_t *Ext, char *EngineName);
 
-class CWSHMacroManager final : public CMacroManagerBase
-{
+class CWSHMacroManager final : public CMacroManagerBase {
 public:
 	CWSHMacroManager(std::wstring const AEngineName);
 	virtual ~CWSHMacroManager();

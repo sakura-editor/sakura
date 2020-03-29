@@ -28,8 +28,7 @@
 struct EditNode;
 
 //! EditNode(ウィンドウリスト)の履歴を管理 (RECENT_FOR_EDITNODE)
-class CRecentEditNode final : public CRecentImp<EditNode>
-{
+class CRecentEditNode final : public CRecentImp<EditNode> {
 public:
 	//生成
 	CRecentEditNode();
@@ -43,6 +42,6 @@ public:
 	bool		 ValidateReceiveType(const EditNode *) const override;
 	size_t		 GetTextMaxLength() const;
 	//固有インターフェース
-	int	 FindItemByHwnd(HWND hwnd) const;
+	int  FindItemByHwnd(HWND hwnd) const;
 	void DeleteItemByHwnd(HWND hwnd);
 };

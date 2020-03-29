@@ -26,8 +26,7 @@
 
 #include <Windows.h> //SIZE
 
-class CMySize : public SIZE
-{
+class CMySize : public SIZE {
 public:
 	//コンストラクタ・デストラクタ
 	CMySize() {} //※初期化なし

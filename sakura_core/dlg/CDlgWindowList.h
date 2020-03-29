@@ -31,8 +31,7 @@
 #pragma once
 
 #include "dlg/CDialog.h"
-class CDlgWindowList final : public CDialog
-{
+class CDlgWindowList final : public CDialog {
 public:
 	CDlgWindowList();
 
@@ -40,7 +39,7 @@ public:
 
 protected:
 	BOOL	OnBnClicked(int wID) override;
-	LPVOID	GetHelpIdTable() override;
+	LPVOID  GetHelpIdTable() override;
 	INT_PTR DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam) override;
 	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
 	BOOL	OnSize(WPARAM wParam, LPARAM lParam) override;
@@ -49,7 +48,7 @@ protected:
 	BOOL	OnActivate(WPARAM wParam, LPARAM lParam) override;
 
 	void SetData() override;
-	int	 GetData() override;
+	int  GetData() override;
 
 	void GetDataListView(std::vector<HWND> &aHwndList);
 	void CommandClose();
