@@ -144,6 +144,10 @@ namespace ApiWrap{
 	{
 		return Wnd_GetText(hwndCombo, str);
 	}
+	inline bool Combo_SetText(HWND hwndCombo, const CNativeW& str)
+	{
+		return Wnd_SetText(hwndCombo, str) != FALSE;
+	}
 
 	inline int Combo_DeleteString(HWND hwndCtl, int index)				{ return (int)(DWORD)::SendMessage(hwndCtl, CB_DELETESTRING, (WPARAM)index, 0L); }
 	inline int Combo_FindStringExact(HWND hwndCtl, int indexStart, const WCHAR* lpszFind)	{ return (int)(DWORD)::SendMessage(hwndCtl, CB_FINDSTRINGEXACT, (WPARAM)indexStart, LPARAM(lpszFind) ); }
