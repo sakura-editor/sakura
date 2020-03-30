@@ -698,19 +698,59 @@ void CDialog::GetItemClientRect( int wID, RECT& rc )
 
 static const WCHAR* TSTR_SUBCOMBOBOXDATA = L"SubComboBoxData";
 
-static void DeleteItem(HWND hwnd, CRecent* pRecent)
+/*!
+ * コンボボックスのリストアイテムを関連付けられた履歴と共に削除する
+ *
+ * @retval true 履歴項目を削除した
+ */
+static bool DeleteRecentItem(
+	HWND		hwndCombo,	//!< コンボボックスのハンドル
+	int			nIndex,		//!< 選択中のリストアイテムのインデックス
+	CRecent*	pRecent		//!< コンボに関連付けられた履歴
+)
 {
-	int nIndex = Combo_GetCurSel(hwnd);
-	if( 0 <= nIndex ){
-		std::vector<WCHAR> szText;
-		szText.resize(Combo_GetLBTextLen(hwnd, nIndex) + 1);
-		Combo_GetLBText(hwnd, nIndex, &szText[0]);
-		Combo_DeleteString(hwnd, nIndex);
-		int nRecentIndex = pRecent->FindItemByText(&szText[0]);
-		if( 0 <= nRecentIndex ){
-			pRecent->DeleteItem(nRecentIndex);
-		}
+	// アイテムインデックスは0以上の整数である必要がある
+	if (nIndex < 0)
+	{
+		return false;
 	}
+
+	// コンボボックスのエディットテキストを取得
+	CNativeW cEditText;
+	if (!Combo_GetText( hwndCombo, cEditText ))
+	{
+		return false;
+	}
+
+	// ドロップダウンリスト内の選択されたテキストを取得
+	CNativeW cItemText;
+	if (!Combo_GetLBText( hwndCombo, nIndex, cItemText ))
+	{
+		return false;
+	}
+
+	// コンボボックスのキャレット位置を取得
+	int nSelStart = 0;
+	int nSelEnd = 0;
+	Combo_GetEditSel( hwndCombo, nSelStart, nSelEnd );
+
+	// コンボボックスのリストアイテム削除
+	Combo_DeleteString( hwndCombo, nIndex );
+
+	// エディットテキストがアイテムテキストと違うか、エディットが全選択でないなら復元する
+	if (cEditText != cItemText || 0 < nSelStart || nSelEnd < cEditText.GetStringLength())
+	{
+		Combo_SetText( hwndCombo, cEditText );
+		Combo_SetEditSel( hwndCombo, nSelStart, nSelEnd );
+	}
+
+	// 履歴項目を削除
+	int nRecentIndex = pRecent->FindItemByText( cItemText.GetStringPtr() );
+	if (nRecentIndex < 0 || !pRecent->DeleteItem( nRecentIndex )) {
+		return false;
+	}
+
+	return true;
 }
 
 LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -718,17 +758,16 @@ LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	SComboBoxItemDeleter* data = (SComboBoxItemDeleter*)::GetProp( hwnd, TSTR_SUBCOMBOBOXDATA );
 	switch( uMsg ){
 	case WM_KEYDOWN:
-	{
 		if( wParam == VK_DELETE ){
 			HWND hwndCombo = data->hwndCombo;
 			BOOL bShow = Combo_GetDroppedState(hwndCombo);
-			if( bShow ){
-				DeleteItem(hwndCombo, data->pRecent);
-				return 0;
+			int nIndex = Combo_GetCurSel( hwndCombo );
+			if( bShow && 0 <= nIndex ){
+				DeleteRecentItem(hwndCombo, nIndex, data->pRecent);
 			}
 		}
 		break;
-	}
+
 	case WM_DESTROY:
 	{
 		::SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)data->pEditWndProc);
@@ -747,17 +786,16 @@ LRESULT CALLBACK SubListBoxProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	SComboBoxItemDeleter* data = (SComboBoxItemDeleter*)::GetProp( hwnd, TSTR_SUBCOMBOBOXDATA );
 	switch( uMsg ){
 	case WM_KEYDOWN:
-	{
 		if( wParam == VK_DELETE ){
 			HWND hwndCombo = data->hwndCombo;
-			BOOL bShow = Combo_GetDroppedState(hwndCombo);
-			if( bShow ){
-				DeleteItem(hwndCombo, data->pRecent);
+			int nIndex = Combo_GetCurSel( hwndCombo );
+			if( 0 <= nIndex ){
+				DeleteRecentItem(hwndCombo, nIndex, data->pRecent);
 				return 0;
 			}
 		}
 		break;
-	}
+
 	case WM_DESTROY:
 	{
 		::SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)data->pListBoxWndProc);
