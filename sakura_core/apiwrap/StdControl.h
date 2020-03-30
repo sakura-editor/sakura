@@ -168,6 +168,47 @@ namespace ApiWrap{
 	inline int Combo_SetDroppedWidth(HWND hwndCtl, int width)			{ return (int)(DWORD)::SendMessage(hwndCtl, CB_SETDROPPEDWIDTH, (WPARAM)width, 0L); }
 	inline BOOL Combo_GetDroppedState(HWND hwndCtl)						{ return (BOOL)(DWORD)::SendMessage(hwndCtl, CB_GETDROPPEDSTATE, 0L, 0L ); }
 
+	inline bool Combo_GetLBText(HWND hwndCombo, int nIndex, CNativeW& str)
+	{
+		// バッファをクリアしておく
+		str.Clear();
+
+		// 範囲外は失敗にする
+		if (nIndex < 0)
+		{
+			return false;
+		}
+
+		// 文字列長を取得する、取得できなければエラー
+		const int length = Combo_GetLBTextLen( hwndCombo, nIndex );
+		if ( length == CB_ERR || length < 0)
+		{
+			return false;
+		}
+
+		// 必要なメモリを確保する
+		const int bufsize = length + 1;
+		str.AllocStringBuffer( bufsize );
+
+		// アイテムテキストを取得する
+		const int actualCount = (int)Combo_GetLBText( hwndCombo, nIndex, str.GetStringPtr() );
+		if (actualCount == CB_ERR || actualCount < 0)
+		{
+			return false;
+		}
+		else if(str.capacity() <= actualCount)
+		{
+			return false;
+		}
+
+		// CNativeW 内部のデータサイズを更新する
+		str._SetStringLength(actualCount);
+
+		// 正しく設定されているはず
+		assert(str.GetStringLength() == actualCount);
+		return true;
+	}
+
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      リストボックス                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
