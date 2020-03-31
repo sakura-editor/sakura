@@ -57,23 +57,27 @@ void CEditView::SetBracketPairPos(bool flag)
 	CLayoutPoint ptColLine;
 
 	if (flag && !GetSelectionInfo().IsTextSelected() && !GetSelectionInfo().m_bDrawSelectArea
-		&& SearchBracket(GetCaret().GetCaretLayoutPos(), &ptColLine, &mode)) {
+		&& SearchBracket(GetCaret().GetCaretLayoutPos(), &ptColLine, &mode))
+	{
 		// 登録指定(flag=true)			&&
 		// テキストが選択されていない	&&
 		// 選択範囲を描画していない		&&
 		// 対応する括弧が見つかった		場合
 		if ((ptColLine.x >= GetTextArea().GetViewLeftCol()) && (ptColLine.x <= GetTextArea().GetRightCol())
-			&& (ptColLine.y >= GetTextArea().GetViewTopLine()) && (ptColLine.y <= GetTextArea().GetBottomLine())) {
+			&& (ptColLine.y >= GetTextArea().GetViewTopLine()) && (ptColLine.y <= GetTextArea().GetBottomLine()))
+		{
 			// 表示領域内の場合
 
 			// レイアウト位置から物理位置へ変換(強調表示位置を登録)
 			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(ptColLine, &m_ptBracketPairPos_PHY);
 			m_ptBracketCaretPos_PHY.y = GetCaret().GetCaretLogicPos().y;
-			if (0 == (mode & 4)) {
+			if (0 == (mode & 4))
+			{
 				// カーソルの後方文字位置
 				m_ptBracketCaretPos_PHY.x = GetCaret().GetCaretLogicPos().x;
 			}
-			else {
+			else
+			{
 				// カーソルの前方文字位置
 				m_ptBracketCaretPos_PHY.x = GetCaret().GetCaretLogicPos().x - 1;
 			}
@@ -110,16 +114,14 @@ void CEditView::DrawBracketPair(bool bDraw)
 	//   アクティブなペインではない )	場合は終了
 	if (bDraw
 		&& (GetSelectionInfo().IsTextSelected() || GetSelectionInfo().m_bDrawSelectArea || !m_bDrawBracketPairFlag
-			|| (m_pcEditWnd->GetActivePane() != m_nMyIndex))) {
-		return;
-	}
-
-	CGraphics gr;
+			|| (m_pcEditWnd->GetActivePane() != m_nMyIndex)))
+	{ return; } CGraphics gr;
 	gr.Init(::GetDC(GetHwnd()));
 	bool bCaretChange = false;
 	gr.SetTextBackTransparent(true);
 
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 2; i++)
+	{
 		// i=0:対括弧,i=1:カーソル位置の括弧
 		// 2011.11.23 ryoji 対括弧 -> カーソル位置の括弧 の順に処理順序を変更
 		//   ＃ { と } が異なる行にある場合に { を BS で消すと } の強調表示が解除されない問題（Wiki BugReport/89）の対策
@@ -128,26 +130,30 @@ void CEditView::DrawBracketPair(bool bDraw)
 		CLayoutPoint ptColLine;
 
 		if (i == 0) { m_pcEditDoc->m_cLayoutMgr.LogicToLayout(m_ptBracketPairPos_PHY, &ptColLine); }
-		else {
+		else
+		{
 			m_pcEditDoc->m_cLayoutMgr.LogicToLayout(m_ptBracketCaretPos_PHY, &ptColLine);
 		}
 
 		if ((ptColLine.x >= GetTextArea().GetViewLeftCol()) && (ptColLine.x <= GetTextArea().GetRightCol())
-			&& (ptColLine.y >= GetTextArea().GetViewTopLine())
-			&& (ptColLine.y <= GetTextArea().GetBottomLine())) { // 表示領域内の場合
-			if (!bDraw && GetSelectionInfo().m_bDrawSelectArea
-				&& (0 == IsCurrentPositionSelected(ptColLine))) { // 選択範囲描画済みで消去対象の括弧が選択範囲内の場合
+			&& (ptColLine.y >= GetTextArea().GetViewTopLine()) && (ptColLine.y <= GetTextArea().GetBottomLine()))
+		{ // 表示領域内の場合
+			if (!bDraw && GetSelectionInfo().m_bDrawSelectArea && (0 == IsCurrentPositionSelected(ptColLine)))
+			{ // 選択範囲描画済みで消去対象の括弧が選択範囲内の場合
 				continue;
 			}
 			const CLayout *pcLayout;
 			CLogicInt	  nLineLen;
 			const wchar_t *pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr(ptColLine.GetY2(), &nLineLen, &pcLayout);
-			if (pLine) {
+			if (pLine)
+			{
 				EColorIndexType nColorIndex;
 				CLogicInt		OutputX = LineColumnToIndex(pcLayout, ptColLine.GetX2());
 				if (bDraw) { nColorIndex = COLORIDX_BRACKET_PAIR; }
-				else {
-					if (IsBracket(pLine, OutputX, CLogicInt(1))) {
+				else
+				{
+					if (IsBracket(pLine, OutputX, CLogicInt(1)))
+					{
 						DispPos _sPos(0, 0); // 注意：この値はダミー。CheckChangeColorでの参照位置は不正確
 						SColorStrategyInfo  _sInfo;
 						SColorStrategyInfo *pInfo = &_sInfo;
@@ -159,7 +165,8 @@ void CEditView::DrawBracketPair(bool bDraw)
 						CColor3Setting cColor = GetColorIndex(pcLayout, ptColLine.GetY2(), OutputX, pInfo);
 						nColorIndex			  = cColor.eColorIndex2;
 					}
-					else {
+					else
+					{
 						SetBracketPairPos(false);
 						break;
 					}
@@ -176,7 +183,8 @@ void CEditView::DrawBracketPair(bool bDraw)
 				CLayoutInt caretX	 = GetCaret().GetCaretLayoutPos().GetX2();
 				bool	   bCaretHide = (!bCaretChange && (ptColLine.x == caretX || ptColLine.x + 1 == caretX)
 									 && GetCaret().GetCaretShowFlag());
-				if (bCaretHide) {
+				if (bCaretHide)
+				{
 					bCaretChange = true;
 					GetCaret().HideCaret_(GetHwnd()); // キャレットが一瞬消えるのを防止
 				}
@@ -196,14 +204,12 @@ void CEditView::DrawBracketPair(bool bDraw)
 					CTypeSupport  cColorIndexType(this, nColorIndex);
 					CTypeSupport  cColorIndexBgType(this, nColorIndexBg);
 					CTypeSupport *pcColorBack = &cColorIndexType;
-					if (cColorIndexType.GetBackColor() == cTextType.GetBackColor() && nColorIndexBg != COLORIDX_TEXT) {
-						pcColorBack = &cColorIndexBgType;
-					}
-
-					SetCurrentColor(gr, nColorIndex, nColorIndex, nColorIndexBg);
+					if (cColorIndexType.GetBackColor() == cTextType.GetBackColor() && nColorIndexBg != COLORIDX_TEXT)
+					{ pcColorBack = &cColorIndexBgType; } SetCurrentColor(gr, nColorIndex, nColorIndex, nColorIndexBg);
 					bool bTrans = false;
 					// DEBUG_TRACE( L"DrawBracket %d %d " , ptColLine.y, ptColLine.x );
-					if (IsBkBitmap() && cTextType.GetBackColor() == pcColorBack->GetBackColor()) {
+					if (IsBkBitmap() && cTextType.GetBackColor() == pcColorBack->GetBackColor())
+					{
 						bTrans = true;
 						RECT rcChar;
 						rcChar.left		 = nLeft;
@@ -228,16 +234,15 @@ void CEditView::DrawBracketPair(bool bDraw)
 
 				if ((m_pcEditWnd->GetActivePane() == m_nMyIndex)
 					&& ((ptColLine.y == GetCaret().GetCaretLayoutPos().GetY())
-						|| (ptColLine.y - 1
-							== GetCaret()
-								   .GetCaretLayoutPos()
-								   .GetY()))) { // 03/02/27 ai 行の間隔が"0"の時にアンダーラインが欠ける事がある為修正
+						|| (ptColLine.y - 1 == GetCaret().GetCaretLayoutPos().GetY())))
+				{ // 03/02/27 ai 行の間隔が"0"の時にアンダーラインが欠ける事がある為修正
 					GetCaret().m_cUnderLine.CaretUnderLineON(true, false);
 				}
 			}
 		}
 	}
-	if (bCaretChange) {
+	if (bCaretChange)
+	{
 		GetCaret().ShowCaret_(GetHwnd()); // キャレットが一瞬消えるのを防止
 	}
 
@@ -247,7 +252,8 @@ void CEditView::DrawBracketPair(bool bDraw)
 //======================================================================
 //!対括弧の対応表
 // 2007.10.16 kobake
-struct KAKKO_T {
+struct KAKKO_T
+{
 	const wchar_t *sStr;
 	const wchar_t *eStr;
 };
@@ -375,18 +381,20 @@ bool CEditView::SearchBracket(const CLayoutPoint &ptLayout, CLayoutPoint *pptLay
 	// 括弧処理 2007.10.16 kobake
 	{
 		const KAKKO_T *p;
-		for (p = g_aKakkos; p->sStr != NULL; p++) {
-			if (*(p->sStr) == cline[ptPos.x]) {
-				return SearchBracketForward(ptPos, pptLayoutNew, p->sStr, p->eStr, mode);
-			}
-			else if (*(p->eStr) == cline[ptPos.x]) {
+		for (p = g_aKakkos; p->sStr != NULL; p++)
+		{
+			if (*(p->sStr) == cline[ptPos.x])
+			{ return SearchBracketForward(ptPos, pptLayoutNew, p->sStr, p->eStr, mode); }
+			else if (*(p->eStr) == cline[ptPos.x])
+			{
 				return SearchBracketBackward(ptPos, pptLayoutNew, p->sStr, p->eStr, mode);
 			}
 		}
 	}
 
 	// 02/09/18 ai Start
-	if (0 == (*mode & 2)) {
+	if (0 == (*mode & 2))
+	{
 		/* カーソルの前方を調べない場合 */
 		return false;
 	}
@@ -395,21 +403,24 @@ bool CEditView::SearchBracket(const CLayoutPoint &ptLayout, CLayoutPoint *pptLay
 
 	//	括弧が見つからなかったら，カーソルの直前の文字を調べる
 
-	if (ptPos.x <= 0) {
+	if (ptPos.x <= 0)
+	{
 		return false; //	前の文字はない
 	}
 
 	const wchar_t *bPos		 = CNativeW::GetCharPrev(cline, ptPos.x, cline + ptPos.x);
 	int			   nCharSize = cline + ptPos.x - bPos;
 	// 括弧処理 2007.10.16 kobake
-	if (nCharSize == 1) {
+	if (nCharSize == 1)
+	{
 		const KAKKO_T *p;
 		ptPos.x = bPos - cline;
-		for (p = g_aKakkos; p->sStr != NULL; p++) {
-			if (*(p->sStr) == cline[ptPos.x]) {
-				return SearchBracketForward(ptPos, pptLayoutNew, p->sStr, p->eStr, mode);
-			}
-			else if (*(p->eStr) == cline[ptPos.x]) {
+		for (p = g_aKakkos; p->sStr != NULL; p++)
+		{
+			if (*(p->sStr) == cline[ptPos.x])
+			{ return SearchBracketForward(ptPos, pptLayoutNew, p->sStr, p->eStr, mode); }
+			else if (*(p->eStr) == cline[ptPos.x])
+			{
 				return SearchBracketBackward(ptPos, pptLayoutNew, p->sStr, p->eStr, mode);
 			}
 		}
@@ -458,21 +469,26 @@ bool CEditView::SearchBracketForward(CLogicPoint ptPos, CLayoutPoint *pptLayoutN
 	lineend	= cline + len;
 	cPos	   = cline + ptPos.x;
 
-	do {
-		while (cPos < lineend) {
+	do
+	{
+		while (cPos < lineend)
+		{
 			nPos = CNativeW::GetCharNext(cline, len, cPos);
-			if (nPos - cPos > 1) {
+			if (nPos - cPos > 1)
+			{
 				//	skip
 				cPos = nPos;
 				continue;
 			}
 			// 03/01/08 ai Start
 			if (*upChar == *cPos) { ++level; }
-			else if (*dnChar == *cPos) {
+			else if (*dnChar == *cPos)
+			{
 				--level;
 			} // 03/01/08 ai End
 
-			if (level == 0) { //	見つかった！
+			if (level == 0)
+			{ //	見つかった！
 				ptPos.x = cPos - cline;
 				m_pcEditDoc->m_cLayoutMgr.LogicToLayout(ptPos, pptLayoutNew);
 				return true;
@@ -483,7 +499,8 @@ bool CEditView::SearchBracketForward(CLogicPoint ptPos, CLayoutPoint *pptLayoutN
 
 		// 02/09/19 ai Start
 		nSearchNum--;
-		if ((0 > nSearchNum) && (0 == (*mode & 1))) { // 表示領域外を調べないモードで表示領域の終端の場合
+		if ((0 > nSearchNum) && (0 == (*mode & 1)))
+		{ // 表示領域外を調べないモードで表示領域の終端の場合
 			// SendStatusMessage( "対括弧の検索を中断しました" );
 			break;
 		}
@@ -540,21 +557,26 @@ bool CEditView::SearchBracketBackward(CLogicPoint ptPos, CLayoutPoint *pptLayout
 	cline	  = ci->GetDocLineStrWithEOL(&len);
 	cPos	   = cline + ptPos.x;
 
-	do {
-		while (cPos > cline) {
+	do
+	{
+		while (cPos > cline)
+		{
 			pPos = CNativeW::GetCharPrev(cline, len, cPos);
-			if (cPos - pPos > 1) {
+			if (cPos - pPos > 1)
+			{
 				//	skip
 				cPos = pPos;
 				continue;
 			}
 			// 03/01/08 ai Start
 			if (*upChar == *pPos) { ++level; }
-			else if (*dnChar == *pPos) {
+			else if (*dnChar == *pPos)
+			{
 				--level;
 			} // 03/01/08 ai End
 
-			if (level == 0) { //	見つかった！
+			if (level == 0)
+			{ //	見つかった！
 				ptPos.x = pPos - cline;
 				m_pcEditDoc->m_cLayoutMgr.LogicToLayout(ptPos, pptLayoutNew);
 				return true;
@@ -565,7 +587,8 @@ bool CEditView::SearchBracketBackward(CLogicPoint ptPos, CLayoutPoint *pptLayout
 
 		// 02/09/19 ai Start
 		nSearchNum--;
-		if ((0 > nSearchNum) && (0 == (*mode & 1))) { // 表示領域外を調べないモードで表示領域の先頭の場合
+		if ((0 > nSearchNum) && (0 == (*mode & 1)))
+		{ // 表示領域外を調べないモードで表示領域の先頭の場合
 			// SendStatusMessage( "対括弧の検索を中断しました" );
 			break;
 		}
@@ -599,11 +622,14 @@ bool CEditView::SearchBracketBackward(CLogicPoint ptPos, CLayoutPoint *pptLayout
 bool CEditView::IsBracket(const wchar_t *pLine, CLogicInt x, CLogicInt size)
 {
 	// 括弧処理 2007.10.16 kobake
-	if (size == 1) {
+	if (size == 1)
+	{
 		const KAKKO_T *p;
-		for (p = g_aKakkos; p->sStr != NULL; p++) {
+		for (p = g_aKakkos; p->sStr != NULL; p++)
+		{
 			if (*(p->sStr) == pLine[x]) { return true; }
-			else if (*(p->eStr) == pLine[x]) {
+			else if (*(p->eStr) == pLine[x])
+			{
 				return true;
 			}
 		}

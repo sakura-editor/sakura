@@ -34,7 +34,8 @@
 	@date 2002.04.01 YAZAKI
 	@date 2007.11.29 kobake 名前変更: oneRule→SOneRule
 */
-struct SOneRule {
+struct SOneRule
+{
 	wchar_t szMatch[256];
 	int		nLength;
 	wchar_t szText[256]; // RegexReplace時の置換後文字列
@@ -78,17 +79,21 @@ int CDocOutline::ReadRuleFile(const WCHAR *pszFilename, SOneRule *pcOneRule, int
 	// RegexMode /// GroupName,Lv=1
 	// 正規表現置換モード
 	// RegexReplace /// TitleReplace /// GroupName
-	while (file.Good() && nCount < nMaxCount) {
+	while (file.Good() && nCount < nMaxCount)
+	{
 		strLine = file.ReadLineW();
 		pszWork = wcsstr(strLine.c_str(), pszDelimit);
-		if (NULL != pszWork && 0 < strLine.length() && strLine[0] != cComment) {
+		if (NULL != pszWork && 0 < strLine.length() && strLine[0] != cComment)
+		{
 			int nLen = pszWork - strLine.c_str();
-			if (nLen < LINEREADBUFSIZE) {
+			if (nLen < LINEREADBUFSIZE)
+			{
 				// szLine == 「key1,key2」
 				wmemcpy(szLine, strLine.c_str(), nLen);
 				szLine[nLen] = L'\0';
 			}
-			else {
+			else
+			{
 				// この行は長すぎる
 				continue;
 			}
@@ -100,27 +105,34 @@ int CDocOutline::ReadRuleFile(const WCHAR *pszFilename, SOneRule *pcOneRule, int
 			wchar_t *	  context{nullptr};
 			bool		   bTopDummy  = false;
 			bool		   bRegexRep2 = false;
-			if (bRegex) {
+			if (bRegex)
+			{
 				// regexのときは,区切りにしない
 				pszToken = szLine;
-				if (szLine[0] == L'\0') {
-					if (0 < nCount) {
+				if (szLine[0] == L'\0')
+				{
+					if (0 < nCount)
+					{
 						// 空のKey は無視
 						pszToken = NULL;
 					}
-					else {
+					else
+					{
 						// 最初の要素が空のKeyだったらダミー要素
 						bTopDummy = true;
 					}
 				}
-				if (bRegexReplace && pszToken) {
+				if (bRegexReplace && pszToken)
+				{
 					const wchar_t *pszGroupDel = wcsstr(pszWork, pszDelimit);
-					if (NULL != pszGroupDel && 0 < pszWork[0] != L'\0') {
+					if (NULL != pszGroupDel && 0 < pszWork[0] != L'\0')
+					{
 						// pszWork = 「titleRep /// group」
 						// pszGroupDel = 「 /// group」
 						int nTitleLen = pszGroupDel - pszWork; // Len == 0 OK
 						if (nTitleLen < _countof(szText)) { wcsncpy_s(szText, _countof(szText), pszWork, nTitleLen); }
-						else {
+						else
+						{
 							wcsncpy_s(szText, _countof(szText), pszWork, _TRUNCATE);
 						}
 						pszTextReplace = szText;
@@ -129,9 +141,11 @@ int CDocOutline::ReadRuleFile(const WCHAR *pszFilename, SOneRule *pcOneRule, int
 					}
 				}
 			}
-			else {
+			else
+			{
 				pszToken = wcstok_s(szLine, pszKeySeps, &context);
-				if (nCount == 0 && pszToken == NULL) {
+				if (nCount == 0 && pszToken == NULL)
+				{
 					pszToken  = szLine;
 					bTopDummy = true;
 				}
@@ -139,7 +153,8 @@ int CDocOutline::ReadRuleFile(const WCHAR *pszFilename, SOneRule *pcOneRule, int
 			const WCHAR *p   = wcsstr(pszWork, L",Lv=");
 			int			 nLv = 0;
 			if (p) { nLv = _wtoi(p + 4); }
-			while (NULL != pszToken) {
+			while (NULL != pszToken)
+			{
 				wcsncpy(pcOneRule[nCount].szMatch, pszToken, 255);
 				wcsncpy_s(pcOneRule[nCount].szText, _countof(pcOneRule[0].szText), pszTextReplace, _TRUNCATE);
 				wcsncpy(pcOneRule[nCount].szGroupName, pszWork, 255);
@@ -151,55 +166,72 @@ int CDocOutline::ReadRuleFile(const WCHAR *pszFilename, SOneRule *pcOneRule, int
 				pcOneRule[nCount].nRegexMode	   = bRegexRep2 ? 1 : 0; // 文字列が正しい時だけReplaceMode
 				nCount++;
 				if (bTopDummy || bRegex) { pszToken = NULL; }
-				else {
+				else
+				{
 					pszToken = wcstok_s(NULL, pszKeySeps, &context);
 				}
 			}
 		}
-		else {
-			if (0 < strLine.length() && strLine[0] == cComment) {
+		else
+		{
+			if (0 < strLine.length() && strLine[0] == cComment)
+			{
 				if (13 <= strLine.length() && strLine.length() <= 14
-					&& 0 == wcsnicmp_literal(strLine.c_str() + 1, L"CommentChar=")) {
+					&& 0 == wcsnicmp_literal(strLine.c_str() + 1, L"CommentChar="))
+				{
 					if (13 == strLine.length()) { cComment = L'\0'; }
-					else {
+					else
+					{
 						cComment = strLine[13];
 					}
 				}
-				else if (11 == strLine.length() && 0 == _wcsicmp(strLine.c_str() + 1, L"Mode=Regex")) {
+				else if (11 == strLine.length() && 0 == _wcsicmp(strLine.c_str() + 1, L"Mode=Regex"))
+				{
 					bRegex		  = true;
 					bRegexReplace = false;
 				}
-				else if (18 == strLine.length() && 0 == _wcsicmp(strLine.c_str() + 1, L"Mode=RegexReplace")) {
+				else if (18 == strLine.length() && 0 == _wcsicmp(strLine.c_str() + 1, L"Mode=RegexReplace"))
+				{
 					bRegex		  = true;
 					bRegexReplace = true;
 				}
-				else if (7 <= strLine.length() && 0 == wcsnicmp_literal(strLine.c_str() + 1, L"Title=")) {
+				else if (7 <= strLine.length() && 0 == wcsnicmp_literal(strLine.c_str() + 1, L"Title="))
+				{
 					title = strLine.c_str() + 7;
 				}
-				else if (13 < strLine.length() && 0 == wcsnicmp_literal(strLine.c_str() + 1, L"RegexOption=")) {
+				else if (13 < strLine.length() && 0 == wcsnicmp_literal(strLine.c_str() + 1, L"RegexOption="))
+				{
 					int nCaseFlag = CBregexp::optCaseSensitive;
 					regexOption   = 0;
-					for (int i = 13; i < (int)strLine.length(); i++) {
+					for (int i = 13; i < (int)strLine.length(); i++)
+					{
 						if (strLine[i] == L'i') { nCaseFlag = 0; }
-						else if (strLine[i] == L'g') {
+						else if (strLine[i] == L'g')
+						{
 							regexOption |= CBregexp::optGlobal;
 						}
-						else if (strLine[i] == L'x') {
+						else if (strLine[i] == L'x')
+						{
 							regexOption |= CBregexp::optExtend;
 						}
-						else if (strLine[i] == L'a') {
+						else if (strLine[i] == L'a')
+						{
 							regexOption |= CBregexp::optASCII;
 						}
-						else if (strLine[i] == L'u') {
+						else if (strLine[i] == L'u')
+						{
 							regexOption |= CBregexp::optUnicode;
 						}
-						else if (strLine[i] == L'd') {
+						else if (strLine[i] == L'd')
+						{
 							regexOption |= CBregexp::optDefault;
 						}
-						else if (strLine[i] == L'l') {
+						else if (strLine[i] == L'l')
+						{
 							regexOption |= CBregexp::optLocale;
 						}
-						else if (strLine[i] == L'R') {
+						else if (strLine[i] == L'R')
+						{
 							regexOption |= CBregexp::optR;
 						}
 					}
@@ -240,16 +272,21 @@ void CDocOutline::MakeFuncList_RuleFile(CFuncInfoArr *pcFuncInfoArr, std::wstrin
 	wchar_t   nLvStack[nMaxStack];
 	wchar_t   szTitle[256]; //	一時領域
 	CBregexp *pRegex = NULL;
-	if (bRegex) {
+	if (bRegex)
+	{
 		pRegex = new CBregexp[nCount];
-		for (int i = 0; i < nCount; i++) {
+		for (int i = 0; i < nCount; i++)
+		{
 			if (0 == test[i].nLength) { continue; }
-			if (!InitRegexp(NULL, pRegex[i], true)) {
+			if (!InitRegexp(NULL, pRegex[i], true))
+			{
 				delete[] pRegex;
 				return;
 			}
-			if (test[i].nRegexMode == 1) {
-				if (!pRegex[i].Compile(test[i].szMatch, test[i].szText, test[i].nRegexOption)) {
+			if (test[i].nRegexMode == 1)
+			{
+				if (!pRegex[i].Compile(test[i].szMatch, test[i].szText, test[i].nRegexOption))
+				{
 					std::wstring str = test[i].szMatch;
 					str += L"\n";
 					str += test[i].szText;
@@ -258,7 +295,8 @@ void CDocOutline::MakeFuncList_RuleFile(CFuncInfoArr *pcFuncInfoArr, std::wstrin
 					return;
 				}
 			}
-			else if (!pRegex[i].Compile(test[i].szMatch, test[i].nRegexOption)) {
+			else if (!pRegex[i].Compile(test[i].szMatch, test[i].nRegexOption))
+			{
 				ErrorMessage(NULL, LS(STR_DOCOUTLINE_REGEX), test[i].szMatch, pRegex[i].GetLastMessage());
 				delete[] pRegex;
 				return;
@@ -267,14 +305,16 @@ void CDocOutline::MakeFuncList_RuleFile(CFuncInfoArr *pcFuncInfoArr, std::wstrin
 	}
 	// 1つめが空行だった場合は、ルート要素とする
 	// 項目名はグループ名
-	if (test[0].nLength == 0) {
+	if (test[0].nLength == 0)
+	{
 		const wchar_t *g = test[0].szGroupName;
 		wcscpy(pszStack[0], g);
 		nLvStack[0]		 = test[0].nLv;
 		const wchar_t *p = wcschr(g, L',');
 		int			   len;
 		if (p != NULL) { len = p - g; }
-		else {
+		else
+		{
 			len = wcslen(g);
 		}
 		CNativeW mem;
@@ -282,7 +322,8 @@ void CDocOutline::MakeFuncList_RuleFile(CFuncInfoArr *pcFuncInfoArr, std::wstrin
 		pcFuncInfoArr->AppendData(CLogicInt(1), CLayoutInt(1), mem.GetStringPtr(), FUNCINFO_NOCLIPTEXT, nDepth);
 		nDepth = 1;
 	}
-	for (CLogicInt nLineCount = CLogicInt(0); nLineCount < m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount) {
+	for (CLogicInt nLineCount = CLogicInt(0); nLineCount < m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount)
+	{
 		//行取得
 		CLogicInt	  nLineLen;
 		const wchar_t *pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
@@ -290,8 +331,10 @@ void CDocOutline::MakeFuncList_RuleFile(CFuncInfoArr *pcFuncInfoArr, std::wstrin
 
 		//行頭の空白飛ばし
 		int i = 0;
-		if (!bRegex) {
-			for (i = 0; i < nLineLen; ++i) {
+		if (!bRegex)
+		{
+			for (i = 0; i < nLineLen; ++i)
+			{
 				if (pLine[i] == L' ' || pLine[i] == L'\t' || pLine[i] == L'　') { continue; }
 				break;
 			}
@@ -302,16 +345,22 @@ void CDocOutline::MakeFuncList_RuleFile(CFuncInfoArr *pcFuncInfoArr, std::wstrin
 		const wchar_t *pszText = NULL;
 		std::wstring   strText;
 		int			   j;
-		for (j = 0; j < nCount; j++) {
-			if (bRegex) {
-				if (test[j].nRegexMode == 0) {
-					if (0 < test[j].nLength && pRegex[j].Match(pLine, nLineLen, 0)) {
+		for (j = 0; j < nCount; j++)
+		{
+			if (bRegex)
+			{
+				if (test[j].nRegexMode == 0)
+				{
+					if (0 < test[j].nLength && pRegex[j].Match(pLine, nLineLen, 0))
+					{
 						wcscpy(szTitle, test[j].szGroupName);
 						break;
 					}
 				}
-				else {
-					if (0 < test[j].nLength && 0 < pRegex[j].Replace(pLine, nLineLen, 0)) {
+				else
+				{
+					if (0 < test[j].nLength && 0 < pRegex[j].Replace(pLine, nLineLen, 0))
+					{
 						// pLine = "ABC123DEF"
 						// testのszMatch = "\d+"
 						// testのszText = "$&456"
@@ -327,8 +376,10 @@ void CDocOutline::MakeFuncList_RuleFile(CFuncInfoArr *pcFuncInfoArr, std::wstrin
 					}
 				}
 			}
-			else {
-				if (0 < test[j].nLength && 0 == wcsncmp(&pLine[i], test[j].szMatch, test[j].nLength)) {
+			else
+			{
+				if (0 < test[j].nLength && 0 == wcsncmp(&pLine[i], test[j].szMatch, test[j].nLength))
+				{
 					wcscpy(szTitle, test[j].szGroupName);
 					break;
 				}
@@ -342,11 +393,13 @@ void CDocOutline::MakeFuncList_RuleFile(CFuncInfoArr *pcFuncInfoArr, std::wstrin
 
 		//行文字列から改行を取り除く pLine -> pszText
 		// 正規表現置換のときは設定済み
-		if (NULL == pszText) {
+		if (NULL == pszText)
+		{
 			pszText = &pLine[i];
 			nLineLen -= i;
 			const bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
-			for (i = 0; i < nLineLen; ++i) {
+			for (i = 0; i < nLineLen; ++i)
+			{
 				if (WCODE::IsLineDelimiter(pszText[i], bExtEol)) { break; }
 			}
 			strText.assign(pszText, i);
@@ -365,20 +418,25 @@ void CDocOutline::MakeFuncList_RuleFile(CFuncInfoArr *pcFuncInfoArr, std::wstrin
 		/* nDepthを計算 */
 		int  k;
 		bool bAppend = true;
-		for (k = 0; k < nDepth; k++) {
+		for (k = 0; k < nDepth; k++)
+		{
 			int nResult = wcscmp(pszStack[k], szTitle);
 			if (nResult == 0) { break; }
 		}
-		if (k < nDepth) {
+		if (k < nDepth)
+		{
 			//	ループ途中でbreak;してきた。＝今までに同じ見出しが存在していた。
 			//	ので、同じレベルに合わせてAppendData.
 			nDepth = k;
 		}
-		else if (nMaxStack > k) {
+		else if (nMaxStack > k)
+		{
 			//	いままでに同じ見出しが存在しなかった。
 			//	Lvが高い場合は、一致するまでさかのぼる
-			for (k = nDepth - 1; 0 <= k; k--) {
-				if (nLvStack[k] <= test[j].nLv) {
+			for (k = nDepth - 1; 0 <= k; k--)
+			{
+				if (nLvStack[k] <= test[j].nLv)
+				{
 					k++;
 					break;
 				}
@@ -388,13 +446,15 @@ void CDocOutline::MakeFuncList_RuleFile(CFuncInfoArr *pcFuncInfoArr, std::wstrin
 			nLvStack[k] = test[j].nLv;
 			nDepth		= k;
 		}
-		else {
+		else
+		{
 			// 2002.11.03 Moca 最大値を超えるとバッファオーバーランするから規制する
 			// nDepth = nMaxStack;
 			bAppend = false;
 		}
 
-		if (bAppend) {
+		if (bAppend)
+		{
 			pcFuncInfoArr->AppendData(nLineCount + CLogicInt(1), ptPos.GetY2() + CLayoutInt(1), pszText, 0, nDepth);
 			nDepth++;
 		}
@@ -422,31 +482,35 @@ void CDocOutline::MakeFuncList_BookMark(CFuncInfoArr *pcFuncInfoArr)
 	CLogicInt nLineLast   = m_pcDocRef->m_cDocLineMgr.GetLineCount();
 	int		  nCharChars;
 
-	for (nLineCount = CLogicInt(0); nLineCount < nLineLast; ++nLineCount) {
+	for (nLineCount = CLogicInt(0); nLineCount < nLineLast; ++nLineCount)
+	{
 		if (!CBookmarkGetter(m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)).IsBookmarked()) continue;
 		pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
 		if (NULL == pLine) { break; }
 		// Jan, 16, 2002 hor
-		if (bMarkUpBlankLineEnable) { // 20020119 aroka
+		if (bMarkUpBlankLineEnable)
+		{ // 20020119 aroka
 			if (nLineLen <= nNewLineLen && nLineCount < nLineLast) { continue; }
 		} // LTrim
-		for (leftspace = 0; leftspace < nLineLen; ++leftspace) {
+		for (leftspace = 0; leftspace < nLineLen; ++leftspace)
+		{
 			if (WCODE::IsBlank(pLine[leftspace])) { continue; }
 			break;
 		}
 
-		if (bMarkUpBlankLineEnable) { // 20020119 aroka
-			if ((leftspace >= nLineLen - nNewLineLen && nLineCount < nLineLast) || (leftspace >= nLineLen)) {
-				continue;
-			}
-		} // RTrim
+		if (bMarkUpBlankLineEnable)
+		{ // 20020119 aroka
+			if ((leftspace >= nLineLen - nNewLineLen && nLineCount < nLineLast) || (leftspace >= nLineLen))
+			{ continue; } } // RTrim
 		// 2005.10.11 ryoji 右から遡るのではなく左から探すように修正（"ａ@"
 		// の右２バイトが全角空白と判定される問題の対処）
 		k = pos_wo_space = leftspace;
 		bool bExtEol	 = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
-		while (k < nLineLen) {
+		while (k < nLineLen)
+		{
 			nCharChars = CNativeW::GetSizeOfChar(pLine, nLineLen, k);
-			if (1 == nCharChars) {
+			if (1 == nCharChars)
+			{
 				if (!(WCODE::IsLineDelimiter(pLine[k], bExtEol) || pLine[k] == WCODE::SPACE || pLine[k] == WCODE::TAB
 					  || WCODE::IsZenkakuSpace(pLine[k]) || pLine[k] == L'\0'))
 					pos_wo_space = k + nCharChars;

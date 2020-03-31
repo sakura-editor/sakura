@@ -14,10 +14,8 @@ bool CColor_LineComment::BeginColor(const CStringRef &cStr, int nPos)
 
 	// 行コメント
 	if (m_pTypeData->m_cLineComment.Match(nPos, cStr) //@@@ 2002.09.22 YAZAKI
-	) {
-		return true;
-	}
-	return false;
+	)
+	{ return true; } return false;
 }
 
 bool CColor_LineComment::EndColor(const CStringRef &cStr, int nPos)
@@ -41,7 +39,8 @@ bool CColor_BlockComment::BeginColor(const CStringRef &cStr, int nPos)
 
 	// ブロックコメント
 	if (m_pcBlockComment->Match_CommentFrom(nPos, cStr) //@@@ 2002.09.22 YAZAKI
-	) {
+	)
+	{
 		/* この物理行にブロックコメントの終端があるか */ //@@@ 2002.09.22 YAZAKI
 		this->m_nCOMMENTEND = m_pcBlockComment->Match_CommentTo(nPos + m_pcBlockComment->getBlockFromLen(), cStr);
 
@@ -52,11 +51,13 @@ bool CColor_BlockComment::BeginColor(const CStringRef &cStr, int nPos)
 
 bool CColor_BlockComment::EndColor(const CStringRef &cStr, int nPos)
 {
-	if (0 == this->m_nCOMMENTEND) {
+	if (0 == this->m_nCOMMENTEND)
+	{
 		/* この物理行にブロックコメントの終端があるか */
 		this->m_nCOMMENTEND = m_pcBlockComment->Match_CommentTo(nPos, cStr);
 	}
-	else if (nPos == this->m_nCOMMENTEND) {
+	else if (nPos == this->m_nCOMMENTEND)
+	{
 		return true;
 	}
 	return false;

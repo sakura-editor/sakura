@@ -26,7 +26,8 @@ class CFuncInfo;
 
 //! アウトライン解析  データ要素
 //@date 2002.04.01 YAZAKI 深さ導入
-class CFuncInfo {
+class CFuncInfo
+{
 public:
 	CFuncInfo(CLogicInt nFuncLineCRLF, CLogicInt nFuncColCRLF, CLayoutInt nFuncLineLAYOUT, CLayoutInt nFuncColLAYOUT,
 			  const WCHAR *pszFuncName, const WCHAR *pszFileName, int nInfo); /* CFuncInfoクラス構築 */

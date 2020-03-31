@@ -53,7 +53,8 @@ const SEolDefinition g_aEolTable[] = {
 	{L"PS", L"\u2029", "", 1},
 };
 
-struct SEolDefinitionForUniFile {
+struct SEolDefinitionForUniFile
+{
 	const char *m_szDataW;
 	const char *m_szDataWB;
 	int			m_nLen;
@@ -90,7 +91,8 @@ static const SEolDefinitionForUniFile g_aEolTable_uni_file[] = {
 template<class T>
 EEolType GetEOLType(const T *pszData, int nDataLen)
 {
-	for (int i = 1; i < EOL_TYPE_NUM; ++i) {
+	for (int i = 1; i < EOL_TYPE_NUM; ++i)
+	{
 		if (g_aEolTable[i].StartsWith(pszData, nDataLen)) return gm_pnEolTypeArr[i];
 	}
 	return EOL_NONE;
@@ -102,7 +104,8 @@ EEolType GetEOLType(const T *pszData, int nDataLen)
 
 EEolType _GetEOLType_uni(const char *pszData, int nDataLen)
 {
-	for (int i = 1; i < EOL_TYPE_NUM; ++i) {
+	for (int i = 1; i < EOL_TYPE_NUM; ++i)
+	{
 		if (g_aEolTable_uni_file[i].StartsWithW(pszData, nDataLen)) return gm_pnEolTypeArr[i];
 	}
 	return EOL_NONE;
@@ -110,7 +113,8 @@ EEolType _GetEOLType_uni(const char *pszData, int nDataLen)
 
 EEolType _GetEOLType_unibe(const char *pszData, int nDataLen)
 {
-	for (int i = 1; i < EOL_TYPE_NUM; ++i) {
+	for (int i = 1; i < EOL_TYPE_NUM; ++i)
+	{
 		if (g_aEolTable_uni_file[i].StartsWithWB(pszData, nDataLen)) return gm_pnEolTypeArr[i];
 	}
 	return EOL_NONE;
@@ -134,7 +138,8 @@ const wchar_t *CEol::GetValue2() const { return g_aEolTable[m_eEolType].m_szData
 */
 bool CEol::SetType(EEolType t)
 {
-	if (t < EOL_NONE || EOL_CODEMAX <= t) {
+	if (t < EOL_NONE || EOL_CODEMAX <= t)
+	{
 		//	異常値
 		m_eEolType = EOL_CRLF;
 		return false;

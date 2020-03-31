@@ -30,14 +30,16 @@
 class UCharsetDetector;
 class UCharsetMatch;
 
-typedef enum UErrorCode {
+typedef enum UErrorCode
+{
 	U_ZERO_ERROR = 0, /**< No error, no warning. */
 } UErrorCode;
 
 /*!
  * ICU4C の i18n ライブラリ(icuin.dll) をラップするクラス
  */
-class CIcu4cI18n final : public CDllImp {
+class CIcu4cI18n final : public CDllImp
+{
 	// DLL関数型定義
 	typedef UCharsetDetector *(__cdecl *ucsdet_open_t)(UErrorCode *status);
 	typedef void(__cdecl *ucsdet_setText_t)(UCharsetDetector *ucsd, const char *textIn, int32_t len,

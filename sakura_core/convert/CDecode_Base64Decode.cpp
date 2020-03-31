@@ -55,9 +55,11 @@ bool CDecode_Base64Decode::DoDecode(const CNativeW &pcSrc, CMemory *pcDst)
 	pw_base = pw = reinterpret_cast<char *>(pcDst->GetRawPtr());
 
 	i = 0; // pcSrc の添え字
-	do {
+	do
+	{
 		j = 0;
-		for (; i < nSrcLen; ++i) {
+		for (; i < nSrcLen; ++i)
+		{
 			// バッファに文字をためるループ
 			c = pSrc[i];
 			if (IsLineDelimiterBasic(c) || c == TAB || c == SPACE) { continue; }

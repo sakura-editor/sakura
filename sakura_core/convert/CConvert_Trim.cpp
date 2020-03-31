@@ -33,8 +33,9 @@ bool CConvert_Trim::DoConvert(CNativeW *pcData)
 	nPosDes = 0;
 	/* 変換後に必要なバイト数を調べる */
 	while (NULL
-		   != (pLine = GetNextLineW(pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol,
-									m_bExtEol))) { // 2002/2/10 aroka CMemory変更
+		   != (pLine =
+				   GetNextLineW(pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol, m_bExtEol)))
+	{ // 2002/2/10 aroka CMemory変更
 		if (0 < nLineLen) { nPosDes += nLineLen; }
 		nPosDes += cEol.GetLen();
 	}
@@ -43,18 +44,24 @@ bool CConvert_Trim::DoConvert(CNativeW *pcData)
 	nBgn	= 0;
 	nPosDes = 0;
 	// LTRIM
-	if (m_bLeft) {
+	if (m_bLeft)
+	{
 		while (NULL
 			   != (pLine = GetNextLineW(pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol,
-										m_bExtEol))) { // 2002/2/10 aroka CMemory変更
-			if (0 < nLineLen) {
-				for (i = 0; i <= nLineLen; ++i) {
+										m_bExtEol)))
+		{ // 2002/2/10 aroka CMemory変更
+			if (0 < nLineLen)
+			{
+				for (i = 0; i <= nLineLen; ++i)
+				{
 					if (WCODE::IsBlank(pLine[i])) { continue; }
-					else {
+					else
+					{
 						break;
 					}
 				}
-				if (nLineLen - i > 0) {
+				if (nLineLen - i > 0)
+				{
 					wmemcpy(&pDes[nPosDes], &pLine[i], nLineLen);
 					nPosDes += nLineLen - i;
 				}
@@ -64,20 +71,25 @@ bool CConvert_Trim::DoConvert(CNativeW *pcData)
 		}
 	}
 	// RTRIM
-	else {
+	else
+	{
 		while (NULL
 			   != (pLine = GetNextLineW(pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol,
-										m_bExtEol))) { // 2002/2/10 aroka CMemory変更
-			if (0 < nLineLen) {
+										m_bExtEol)))
+		{ // 2002/2/10 aroka CMemory変更
+			if (0 < nLineLen)
+			{
 				// 2005.10.11 ryoji 右から遡るのではなく左から探すように修正（"ａ@"
 				// の右２バイトが全角空白と判定される問題の対処）
 				i = j = 0;
-				while (i < nLineLen) {
+				while (i < nLineLen)
+				{
 					nCharChars = CNativeW::GetSizeOfChar(pLine, nLineLen, i);
 					if (!WCODE::IsBlank(pLine[i])) { j = i + nCharChars; }
 					i += nCharChars;
 				}
-				if (j > 0) {
+				if (j > 0)
+				{
 					wmemcpy(&pDes[nPosDes], &pLine[0], j);
 					nPosDes += j;
 				}

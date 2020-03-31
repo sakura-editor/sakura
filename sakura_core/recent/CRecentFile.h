@@ -28,7 +28,8 @@
 #include "EditInfo.h" //EditInfo
 
 //! EditInfoの履歴を管理 (RECENT_FOR_FILE)
-class CRecentFile final : public CRecentImp<EditInfo> {
+class CRecentFile final : public CRecentImp<EditInfo>
+{
 public:
 	//生成
 	CRecentFile();

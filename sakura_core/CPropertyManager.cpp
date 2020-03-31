@@ -53,7 +53,8 @@ bool CPropertyManager::OpenPropertySheet(HWND hWnd, int nPageNum, bool bTrayProc
 	if (nPageNum != -1) { m_nPropComPageNum = nPageNum; }
 
 	/* プロパティシートの作成 */
-	if (pcPropCommon->DoPropertySheet(m_nPropComPageNum, bTrayProc)) {
+	if (pcPropCommon->DoPropertySheet(m_nPropComPageNum, bTrayProc))
+	{
 
 		// 2002.12.11 Moca この部分で行われていたデータのコピーをCPropCommonに移動・関数化
 		// ShareData に 設定を適用・コピーする
@@ -72,11 +73,8 @@ bool CPropertyManager::OpenPropertySheet(HWND hWnd, int nPageNum, bool bTrayProc
 
 		if (bGroup
 			!= (GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd
-				&& !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin)) {
-			CAppNodeManager::getInstance()->ResetGroupId();
-		}
-
-		/* アクセラレータテーブルの再作成 */
+				&& !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin))
+		{ CAppNodeManager::getInstance()->ResetGroupId(); } /* アクセラレータテーブルの再作成 */
 		::SendMessageAny(GetDllShareData().m_sHandles.m_hwndTray, MYWM_CHANGESETTING, (WPARAM)0,
 						 (LPARAM)PM_CHANGESETTING_ALL);
 
@@ -88,7 +86,8 @@ bool CPropertyManager::OpenPropertySheet(HWND hWnd, int nPageNum, bool bTrayProc
 		delete pLock;
 		bRet = true;
 	}
-	else {
+	else
+	{
 		bRet = false;
 	}
 
@@ -115,7 +114,8 @@ bool CPropertyManager::OpenPropertySheetTypes(HWND hWnd, int nPageNum, CTypeConf
 	if (nPageNum != -1) { m_nPropTypePageNum = nPageNum; }
 
 	/* プロパティシートの作成 */
-	if (pcPropTypes->DoPropertySheet(m_nPropTypePageNum)) {
+	if (pcPropTypes->DoPropertySheet(m_nPropTypePageNum))
+	{
 		// 2013.06.10 Moca 印刷終了まで待機する
 		CShareDataLockCounter *pLock = NULL;
 		CShareDataLockCounter::WaitLock(pcPropTypes->GetHwndParent(), &pLock);
@@ -132,14 +132,16 @@ bool CPropertyManager::OpenPropertySheetTypes(HWND hWnd, int nPageNum, CTypeConf
 		/* 全編集ウィンドウへメッセージをポストする */
 		CAppNodeGroupHandle(0).SendMessageToAllEditors(MYWM_CHANGESETTING, (WPARAM)nSettingType.GetIndex(),
 													   (LPARAM)PM_CHANGESETTING_TYPE, hWnd);
-		if (pcPropTypes->GetChangeKeyWordSet()) {
+		if (pcPropTypes->GetChangeKeyWordSet())
+		{
 			CAppNodeGroupHandle(0).SendMessageToAllEditors(WM_COMMAND, (WPARAM)MAKELONG(F_REDRAW, 0), (LPARAM)0, hWnd);
 		}
 
 		delete pLock;
 		bRet = true;
 	}
-	else {
+	else
+	{
 		bRet = false;
 	}
 

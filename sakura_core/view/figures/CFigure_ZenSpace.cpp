@@ -32,12 +32,14 @@ void CFigure_ZenSpace::DispSpace(CGraphics &gr, DispPos *pDispPos, CEditView *pc
 
 	RECT rc;
 	//クリッピング矩形を計算。画面外なら描画しない
-	if (pcView->GetTextArea().GenerateClipRect(&rc, *pDispPos, CHabaXInt(dx[0]))) {
+	if (pcView->GetTextArea().GenerateClipRect(&rc, *pDispPos, CHabaXInt(dx[0])))
+	{
 		int			   u25a1Dx	 = pcView->GetTextMetrics().CalcTextWidth3(L"□", 1);
 		bool		   bDrawMySelf = dx[0] != u25a1Dx;
 		const wchar_t *pZenSp	  = (bDrawMySelf ? L"　" : L"□");
 		int			   fontNo	  = WCODE::GetFontNo(*pZenSp);
-		if (fontNo) {
+		if (fontNo)
+		{
 			SFONT sFont;
 			sFont.m_sFontAttr = gr.GetCurrentMyFontAttr();
 			sFont.m_hFont	 = pcView->GetFontset().ChooseFontHandle(fontNo, sFont.m_sFontAttr);
@@ -48,7 +50,8 @@ void CFigure_ZenSpace::DispSpace(CGraphics &gr, DispPos *pDispPos, CEditView *pc
 		ExtTextOut(gr, pDispPos->GetDrawPos().x, pDispPos->GetDrawPos().y + nHeightMargin,
 				   ExtTextOutOption() & ~(bTrans ? ETO_OPAQUE : 0), &rc, pZenSp, 1, dx);
 		if (fontNo) { gr.PopMyFont(); }
-		if (bDrawMySelf) {
+		if (bDrawMySelf)
+		{
 			gr.PushClipping(rc); // FIXME: 正確にはCombineRgn RGN_AND が必要
 
 			// 全角SPの大きさ指定

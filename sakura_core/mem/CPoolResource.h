@@ -30,7 +30,8 @@
 // std::pmr::unsynchronized_pool_resource だとメモリ使用量が大きい為、自前実装を用意
 // T : 要素型
 template<typename T>
-class CPoolResource : public std::pmr::memory_resource {
+class CPoolResource : public std::pmr::memory_resource
+{
 public:
 	CPoolResource()
 	{
@@ -42,7 +43,8 @@ public:
 	{
 		// メモリ確保した領域の連結リストを辿って全てのブロック分のメモリ解放
 		Node *curr = m_currentBlock;
-		while (curr) {
+		while (curr)
+		{
 			Node *next = curr->next;
 			VirtualFree(curr, 0, MEM_RELEASE);
 			curr = next;
@@ -55,12 +57,14 @@ protected:
 	void *do_allocate([[maybe_unused]] std::size_t bytes, [[maybe_unused]] std::size_t alignment) override
 	{
 		// メモリ確保時には未割当領域から使用していく
-		if (m_unassignedNode) {
+		if (m_unassignedNode)
+		{
 			T *ret			 = reinterpret_cast<T *>(m_unassignedNode);
 			m_unassignedNode = m_unassignedNode->next;
 			return ret;
 		}
-		else {
+		else
+		{
 			// 未割当領域が無い場合は、ブロックの中から切り出す
 			// 現在のブロックに新規確保するNodeサイズ分の領域が余っていない場合は新規のブロックを確保
 			Node *blockEnd = reinterpret_cast<Node *>(reinterpret_cast<char *>(m_currentBlock) + BlockSize);
@@ -75,7 +79,8 @@ protected:
 	// bytes と alignment 引数は使用しない、template 引数の型で静的に決定する
 	void do_deallocate(void *p, [[maybe_unused]] std::size_t bytes, [[maybe_unused]] std::size_t alignment) override
 	{
-		if (p) {
+		if (p)
+		{
 			// メモリ解放した領域を未割当領域として自己参照共用体の片方向連結リストで繋げる
 			// 次回のメモリ確保時にその領域を再利用する
 			Node *next			   = m_unassignedNode;

@@ -31,7 +31,8 @@
 #include <list>
 #include <string>
 
-class CPluginManager final : public TSingleton<CPluginManager> {
+class CPluginManager final : public TSingleton<CPluginManager>
+{
 	friend class TSingleton<CPluginManager>;
 	CPluginManager();
 

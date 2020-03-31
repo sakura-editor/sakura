@@ -27,7 +27,8 @@
 class CDocLineMgr;
 
 // as decorator
-class CDocReader {
+class CDocReader
+{
 public:
 	CDocReader(const CDocLineMgr &pcDocLineMgr)
 		: m_pcDocLineMgr(&pcDocLineMgr)

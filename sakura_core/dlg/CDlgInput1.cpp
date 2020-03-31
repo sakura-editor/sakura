@@ -37,18 +37,21 @@ INT_PTR CALLBACK CDlgInput1Proc(HWND   hwndDlg, // handle to dialog box
 )
 {
 	CDlgInput1 *pCDlgInput1;
-	switch (uMsg) {
+	switch (uMsg)
+	{
 	case WM_INITDIALOG:
 		pCDlgInput1 = (CDlgInput1 *)lParam;
 		if (NULL != pCDlgInput1) { return pCDlgInput1->DispatchEvent(hwndDlg, uMsg, wParam, lParam); }
-		else {
+		else
+		{
 			return FALSE;
 		}
 	default:
 		// Modified by KEITA for WIN64 2003.9.6
 		pCDlgInput1 = (CDlgInput1 *)::GetWindowLongPtr(hwndDlg, DWLP_USER);
 		if (NULL != pCDlgInput1) { return pCDlgInput1->DispatchEvent(hwndDlg, uMsg, wParam, lParam); }
-		else {
+		else
+		{
 			return FALSE;
 		}
 	}
@@ -86,7 +89,8 @@ INT_PTR CDlgInput1::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 	WORD wNotifyCode;
 	WORD wID;
 	//	int		nRet;
-	switch (uMsg) {
+	switch (uMsg)
+	{
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 */
 		// Modified by KEITA for WIN64 2003.9.6
@@ -101,10 +105,12 @@ INT_PTR CDlgInput1::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam); /* 通知コード */
 		wID			= LOWORD(wParam); /* 項目ID、 コントロールID、 またはアクセラレータID */
-		switch (wNotifyCode) {
+		switch (wNotifyCode)
+		{
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
-			switch (wID) {
+			switch (wID)
+			{
 			case IDOK:
 				m_cmemText.AllocStringBuffer(::GetWindowTextLength(::GetDlgItem(hwndDlg, IDC_EDIT_INPUT1)));
 				::GetWindowText(::GetDlgItem(hwndDlg, IDC_EDIT_INPUT1), m_cmemText.GetStringPtr(),
@@ -117,7 +123,8 @@ INT_PTR CDlgInput1::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		}
 		break; //@@@ 2002.01.07 add
 	//@@@ 2002.01.07 add start
-	case WM_HELP: {
+	case WM_HELP:
+	{
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更

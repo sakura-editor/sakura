@@ -26,7 +26,8 @@
 
 #include <Windows.h> //POINT
 
-class CMyPoint : public POINT {
+class CMyPoint : public POINT
+{
 public:
 	//コンストラクタ・デストラクタ
 	CMyPoint()
@@ -164,19 +165,23 @@ inline int PointCompare(const POINT_T &pt1, const POINT_T &pt2)
 template<class POINT_T>
 inline void TwoPointToRect(RECT *prcRect, POINT_T pt1, POINT_T pt2)
 {
-	if (pt1.y < pt2.y) {
+	if (pt1.y < pt2.y)
+	{
 		prcRect->top	= (Int)pt1.y;
 		prcRect->bottom = (Int)pt2.y;
 	}
-	else {
+	else
+	{
 		prcRect->top	= (Int)pt2.y;
 		prcRect->bottom = (Int)pt1.y;
 	}
-	if (pt1.x < pt2.x) {
+	if (pt1.x < pt2.x)
+	{
 		prcRect->left  = (Int)pt1.x;
 		prcRect->right = (Int)pt2.x;
 	}
-	else {
+	else
+	{
 		prcRect->left  = (Int)pt2.x;
 		prcRect->right = (Int)pt1.x;
 	}

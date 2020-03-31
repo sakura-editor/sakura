@@ -59,7 +59,8 @@
 
 #define SAKURA_DIFF_TEMP_PREFIX L"sakura_diff_"
 
-class COutputAdapterDiff final : public COutputAdapter {
+class COutputAdapterDiff final : public COutputAdapter
+{
 public:
 	COutputAdapterDiff(CEditView *view, int nFlgFile12_)
 	{
@@ -130,7 +131,8 @@ void CEditView::ViewDiffInfo(const WCHAR *pszFile1, const WCHAR *pszFile2, int n
 
 	//	From Here Dec. 28, 2002 MIK
 	//	diff.exeの存在チェック
-	if (!IsFileExists(cmdline, true)) {
+	if (!IsFileExists(cmdline, true))
+	{
 		WarningMessage(GetHwnd(), LS(STR_ERR_DLGEDITVWDIFF2));
 		return;
 	}
@@ -168,7 +170,8 @@ void CEditView::ViewDiffInfo(const WCHAR *pszFile1, const WCHAR *pszFile2, int n
 	{
 		int nFlgOpt = 0;
 		nFlgOpt |= 0x01; // GetStdOut
-		if (bUTF8) {
+		if (bUTF8)
+		{
 			nFlgOpt |= 0x80;  // UTF-8 out (SJISと違ってASCIIセーフなので)
 			nFlgOpt |= 0x100; // UTF-8 in
 		}
@@ -176,8 +179,10 @@ void CEditView::ViewDiffInfo(const WCHAR *pszFile1, const WCHAR *pszFile2, int n
 		COutputAdapterDiff oa(this, nFlgFile12);
 		bool			   ret = ExecCmd(cmdline, nFlgOpt, NULL, &oa);
 
-		if (ret) {
-			if (oa.bDiffInfo == true && oa.nDiffLen > 0) {
+		if (ret)
+		{
+			if (oa.bDiffInfo == true && oa.nDiffLen > 0)
+			{
 				oa.szDiffData[oa.nDiffLen] = '\0';
 				AnalyzeDiffInfo(oa.szDiffData, nFlgFile12);
 			}
@@ -185,7 +190,8 @@ void CEditView::ViewDiffInfo(const WCHAR *pszFile1, const WCHAR *pszFile2, int n
 	}
 
 	// DIFF差分が見つからなかったときにメッセージ表示
-	if (nFlgOpt & 0x0040) {
+	if (nFlgOpt & 0x0040)
+	{
 		if (!CDiffManager::getInstance()->IsDiffUse()) { InfoMessage(this->GetHwnd(), LS(STR_ERR_DLGEDITVWDIFF5)); }
 	}
 
@@ -200,9 +206,11 @@ bool COutputAdapterDiff::OutputA(const ACHAR *pBuf, int size)
 	if (size == -1) { size = strlen(pBuf); }
 	//@@@ 2003.05.31 MIK
 	//	先頭がBinary filesならバイナリファイルのため意味のある差分が取られなかった
-	if (bFirst) {
+	if (bFirst)
+	{
 		bFirst = false;
-		if (strncmp_literal(pBuf, "Binary files ") == 0) {
+		if (strncmp_literal(pBuf, "Binary files ") == 0)
+		{
 			WarningMessage(NULL, LS(STR_ERR_DLGEDITVWDIFF4));
 			return false;
 		}
@@ -210,13 +218,17 @@ bool COutputAdapterDiff::OutputA(const ACHAR *pBuf, int size)
 
 	//読み出した文字列をチェックする
 	int j;
-	for (j = 0; j < (int)size /*-1*/; j++) {
-		if (bLineHead) {
-			if (pBuf[j] != '\n' && pBuf[j] != '\r') {
+	for (j = 0; j < (int)size /*-1*/; j++)
+	{
+		if (bLineHead)
+		{
+			if (pBuf[j] != '\n' && pBuf[j] != '\r')
+			{
 				bLineHead = false;
 
 				// DIFF情報の始まりか？
-				if (pBuf[j] >= '0' && pBuf[j] <= '9') {
+				if (pBuf[j] >= '0' && pBuf[j] <= '9')
+				{
 					bDiffInfo			   = true;
 					nDiffLen			   = 0;
 					szDiffData[nDiffLen++] = pBuf[j];
@@ -230,11 +242,14 @@ bool COutputAdapterDiff::OutputA(const ACHAR *pBuf, int size)
 				*/
 			}
 		}
-		else {
+		else
+		{
 			//行末に達したか？
-			if (pBuf[j] == '\n' || pBuf[j] == '\r') {
+			if (pBuf[j] == '\n' || pBuf[j] == '\r')
+			{
 				// DIFF情報があれば解析する
-				if (bDiffInfo == true && nDiffLen > 0) {
+				if (bDiffInfo == true && nDiffLen > 0)
+				{
 					szDiffData[nDiffLen] = '\0';
 					m_view->AnalyzeDiffInfo(szDiffData, nFlgFile12);
 					nDiffLen = 0;
@@ -243,10 +258,12 @@ bool COutputAdapterDiff::OutputA(const ACHAR *pBuf, int size)
 				bDiffInfo = false;
 				bLineHead = true;
 			}
-			else if (bDiffInfo == true) {
+			else if (bDiffInfo == true)
+			{
 				// DIFF情報に追加する
 				szDiffData[nDiffLen++] = pBuf[j];
-				if (nDiffLen >= 99) {
+				if (nDiffLen >= 99)
+				{
 					nDiffLen  = 0;
 					bDiffInfo = false;
 				}
@@ -282,7 +299,8 @@ void CEditView::AnalyzeDiffInfo(const char *pszDiffInfo, int nFlgFile12)
 
 	//前半ファイルの開始行
 	s1 = 0;
-	for (q = pszDiffInfo; *q; q++) {
+	for (q = pszDiffInfo; *q; q++)
+	{
 		if (*q == ',') break;
 		if (*q == 'a' || *q == 'c' || *q == 'd') break;
 		//行番号を抽出
@@ -294,13 +312,16 @@ void CEditView::AnalyzeDiffInfo(const char *pszDiffInfo, int nFlgFile12)
 	if (!*q) return;
 
 	//前半ファイルの終了行
-	if (*q != ',') {
+	if (*q != ',')
+	{
 		//開始・終了行番号は同じ
 		e1 = s1;
 	}
-	else {
+	else
+	{
 		e1 = 0;
-		for (q++; *q; q++) {
+		for (q++; *q; q++)
+		{
 			if (*q == 'a' || *q == 'c' || *q == 'd') break;
 			//行番号を抽出
 			if (*q >= '0' && *q <= '9')
@@ -316,7 +337,8 @@ void CEditView::AnalyzeDiffInfo(const char *pszDiffInfo, int nFlgFile12)
 
 	//後半ファイルの開始行
 	s2 = 0;
-	for (q++; *q; q++) {
+	for (q++; *q; q++)
+	{
 		if (*q == ',') break;
 		//行番号を抽出
 		if (*q >= '0' && *q <= '9')
@@ -326,13 +348,16 @@ void CEditView::AnalyzeDiffInfo(const char *pszDiffInfo, int nFlgFile12)
 	}
 
 	//後半ファイルの終了行
-	if (*q != ',') {
+	if (*q != ',')
+	{
 		//開始・終了行番号は同じ
 		e2 = s2;
 	}
-	else {
+	else
+	{
 		e2 = 0;
-		for (q++; *q; q++) {
+		for (q++; *q; q++)
+		{
 			//行番号を抽出
 			if (*q >= '0' && *q <= '9')
 				e2 = e2 * 10 + (*q - '0');
@@ -375,45 +400,54 @@ static bool MakeDiffTmpFile_core(CTextOutputStream &out, HWND hwnd, CEditView &v
 {
 	CLogicInt	  y = CLogicInt(0);
 	const wchar_t *pLineData;
-	if (!hwnd) {
+	if (!hwnd)
+	{
 		const CDocLineMgr &docMgr = view.m_pcEditDoc->m_cDocLineMgr;
-		for (;;) {
+		for (;;)
+		{
 			CLogicInt nLineLen;
 			pLineData = docMgr.GetLine(y)->GetDocLineStrWithEOL(&nLineLen);
 			// 正常終了
 			if (0 == nLineLen || NULL == pLineData) break;
-			if (bBom) {
+			if (bBom)
+			{
 				CNativeW cLine2(L"\ufeff");
 				cLine2.AppendString(pLineData, nLineLen);
 				out.WriteString(cLine2.GetStringPtr(), cLine2.GetStringLength());
 				bBom = false;
 			}
-			else {
+			else
+			{
 				out.WriteString(pLineData, nLineLen);
 			}
 			y++;
 		}
 	}
-	else if (IsSakuraMainWindow(hwnd)) {
+	else if (IsSakuraMainWindow(hwnd))
+	{
 		const int max_size = (int)GetDllShareData().m_sWorkBuffer.GetWorkBufferCount<const EDIT_CHAR>();
 		pLineData		   = GetDllShareData().m_sWorkBuffer.GetWorkBuffer<const EDIT_CHAR>();
-		for (;;) {
+		for (;;)
+		{
 			int nLineOffset = 0;
 			int nLineLen	= 0; //初回用仮値
-			do {
+			do
+			{
 				// m_sWorkBuffer#m_Workの排他制御。外部コマンド出力/TraceOut/Diffが対象
 				LockGuard<CMutex> guard(CShareData::GetMutexShareWork());
 				{
 					nLineLen = ::SendMessageAny(hwnd, MYWM_GETLINEDATA, y, nLineOffset);
 					if (nLineLen == 0) { return true; } // EOF => 正常終了
 					if (nLineLen < 0) { return false; } // 何かエラー
-					if (bBom) {
+					if (bBom)
+					{
 						CNativeW cLine2(L"\ufeff");
 						cLine2.AppendString(pLineData, t_min(nLineLen, max_size));
 						out.WriteString(cLine2.GetStringPtr(), cLine2.GetStringLength());
 						bBom = false;
 					}
-					else {
+					else
+					{
 						out.WriteString(pLineData, t_min(nLineLen, max_size));
 					}
 				}
@@ -422,7 +456,8 @@ static bool MakeDiffTmpFile_core(CTextOutputStream &out, HWND hwnd, CEditView &v
 			y++;
 		}
 	}
-	else {
+	else
+	{
 		return false;
 	}
 	if (bBom) { out.WriteString(L"\ufeff", 1); }
@@ -442,7 +477,8 @@ BOOL CEditView::MakeDiffTmpFile(WCHAR *filename, HWND hWnd, ECodeType code, bool
 {
 	//一時
 	WCHAR *pszTmpName = _wtempnam(NULL, SAKURA_DIFF_TEMP_PREFIX);
-	if (NULL == pszTmpName) {
+	if (NULL == pszTmpName)
+	{
 		WarningMessage(NULL, LS(STR_DIFF_FAILED));
 		return FALSE;
 	}
@@ -451,26 +487,31 @@ BOOL CEditView::MakeDiffTmpFile(WCHAR *filename, HWND hWnd, ECodeType code, bool
 	free(pszTmpName);
 
 	//自分か？
-	if (NULL == hWnd) {
+	if (NULL == hWnd)
+	{
 		EConvertResult eWriteResult = CWriteManager().WriteFile_From_CDocLineMgr(
 			m_pcEditDoc->m_cDocLineMgr, SSaveInfo(filename, code, EOL_NONE, bBom));
 		return RESULT_FAILURE != eWriteResult;
 	}
 
 	CTextOutputStream out(filename, code, true, false);
-	if (!out) {
+	if (!out)
+	{
 		WarningMessage(NULL, LS(STR_DIFF_FAILED_TEMP));
 		return FALSE;
 	}
 
 	bool bError = false;
-	try {
+	try
+	{
 		if (!MakeDiffTmpFile_core(out, hWnd, *this, bBom)) { bError = true; }
 	}
-	catch (...) {
+	catch (...)
+	{
 		bError = true;
 	}
-	if (bError) {
+	if (bError)
+	{
 		out.Close();
 		_wunlink(filename); //関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
 		WarningMessage(NULL, LS(STR_DIFF_FAILED_TEMP));
@@ -485,7 +526,8 @@ BOOL CEditView::MakeDiffTmpFile2(WCHAR *tmpName, const WCHAR *orgName, ECodeType
 {
 	//一時
 	WCHAR *pszTmpName = _wtempnam(NULL, SAKURA_DIFF_TEMP_PREFIX);
-	if (NULL == pszTmpName) {
+	if (NULL == pszTmpName)
+	{
 		WarningMessage(NULL, LS(STR_DIFF_FAILED));
 		return FALSE;
 	}
@@ -495,16 +537,16 @@ BOOL CEditView::MakeDiffTmpFile2(WCHAR *tmpName, const WCHAR *orgName, ECodeType
 
 	bool				   bBom		= false;
 	const STypeConfigMini *typeMini = NULL;
-	if (!CDocTypeManager().GetTypeConfigMini(CDocTypeManager().GetDocumentTypeOfPath(orgName), &typeMini)) {
-		return FALSE;
-	}
-	CFileLoad		  cfl(typeMini->m_encoding);
-	CTextOutputStream out(tmpName, saveCode, true, false);
-	if (!out) {
+	if (!CDocTypeManager().GetTypeConfigMini(CDocTypeManager().GetDocumentTypeOfPath(orgName), &typeMini))
+	{ return FALSE; } CFileLoad cfl(typeMini->m_encoding);
+	CTextOutputStream			out(tmpName, saveCode, true, false);
+	if (!out)
+	{
 		WarningMessage(NULL, LS(STR_DIFF_FAILED_TEMP));
 		return FALSE;
 	}
-	try {
+	try
+	{
 		bool bBigFile;
 #ifdef _WIN64
 		bBigFile = true;
@@ -514,23 +556,27 @@ BOOL CEditView::MakeDiffTmpFile2(WCHAR *tmpName, const WCHAR *orgName, ECodeType
 		cfl.FileOpen(orgName, bBigFile, code, GetDllShareData().m_Common.m_sFile.GetAutoMIMEdecode(), &bBom);
 		CNativeW cLine;
 		CEol	 cEol;
-		while (RESULT_FAILURE != cfl.ReadLine(&cLine, &cEol)) {
+		while (RESULT_FAILURE != cfl.ReadLine(&cLine, &cEol))
+		{
 			const CLogicInt nLineLen  = cLine.GetStringLength();
 			const wchar_t * pLineData = cLine.GetStringPtr();
 			if (0 == nLineLen || NULL == pLineData) break;
-			if (bBom) {
+			if (bBom)
+			{
 				CNativeW cLine2(L"\ufeff");
 				cLine2.AppendString(pLineData, nLineLen);
 				out.WriteString(cLine2.GetStringPtr(), cLine2.GetStringLength());
 				bBom = false;
 			}
-			else {
+			else
+			{
 				out.WriteString(pLineData, nLineLen);
 			}
 		}
 		if (bBom) { out.WriteString(L"\ufeff", 1); }
 	}
-	catch (...) {
+	catch (...)
+	{
 		out.Close();
 		_wunlink(tmpName); //関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。
 		WarningMessage(NULL, LS(STR_DIFF_FAILED_TEMP));

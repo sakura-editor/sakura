@@ -67,7 +67,8 @@ void CTextMetrics::Update(HDC hdc, HFONT hFont, int nLineSpace, int nColmSpace)
 	int tmAscent[1];
 	int tmAscentMaxHeight;
 	m_aFontHeightMargin.resize(size);
-	for (int i = 0; i < size; i++) {
+	for (int i = 0; i < size; i++)
+	{
 		HFONT hFontOld = (HFONT)::SelectObject(hdc, hFontArray[i]);
 		SIZE  sz;
 		// LocalCache::m_han_size と一致していなければならない
@@ -80,7 +81,8 @@ void CTextMetrics::Update(HDC hdc, HFONT hFont, int nLineSpace, int nColmSpace)
 		}
 		TEXTMETRIC tm;
 		GetTextMetrics(hdc, &tm);
-		if (GetHankakuHeight() < sz.cy) {
+		if (GetHankakuHeight() < sz.cy)
+		{
 			SetHankakuHeight(sz.cy);
 			tmAscentMaxHeight = tm.tmAscent;
 		}
@@ -89,15 +91,18 @@ void CTextMetrics::Update(HDC hdc, HFONT hFont, int nLineSpace, int nColmSpace)
 		::SelectObject(hdc, hFontOld);
 	}
 	int minMargin = 0;
-	for (int i = 0; i < size; i++) {
+	for (int i = 0; i < size; i++)
+	{
 		if (tmAscentMaxHeight - tmAscent[i] < minMargin) { minMargin = tmAscentMaxHeight - tmAscent[i]; }
 	}
-	if (minMargin < 0) {
+	if (minMargin < 0)
+	{
 		minMargin *= -1;
 		SetHankakuHeight(GetHankakuHeight() + minMargin);
 	}
 	int nOrgHeight = GetHankakuHeight();
-	if (nLineSpace < 0) {
+	if (nLineSpace < 0)
+	{
 		// マイナスの場合は文字の高さも引く
 		SetHankakuHeight(std::max(1, GetHankakuHeight() + nLineSpace));
 	}
@@ -146,21 +151,27 @@ const int *CTextMetrics::GenerateDxArray(std::vector<int> *vResultArray, //!< [o
 	int *		   p		  = &(*vResultArray)[0];
 	int			   nLayoutCnt = nIndent;
 	const wchar_t *x		  = pText;
-	for (int i = 0; i < nLength; i++, p++, x++) {
+	for (int i = 0; i < nLength; i++, p++, x++)
+	{
 		// サロゲートチェック
-		if (*x == WCODE::TAB) {
+		if (*x == WCODE::TAB)
+		{
 			// TAB対応	2013/5/7 Uchi
-			if (i > 0 && *(x - 1) == WCODE::TAB) {
+			if (i > 0 && *(x - 1) == WCODE::TAB)
+			{
 				*p = nTabSpace;
 				nLayoutCnt += *p;
 			}
-			else {
+			else
+			{
 				*p = (nTabSpace + nHankakuDx - 1) - ((nLayoutCnt + nHankakuDx - 1) % nTabSpace);
 				nLayoutCnt += *p;
 			}
 		}
-		else if (IsUTF16High(*x)) {
-			if (i + 1 < nLength && IsUTF16Low(x[1])) {
+		else if (IsUTF16High(*x))
+		{
+			if (i + 1 < nLength && IsUTF16Low(x[1]))
+			{
 				int n = 0;
 				if (nCharSpacing) { n = CNativeW::GetKetaOfChar(pText, nLength, i) * nCharSpacing; }
 				*p = WCODE::CalcPxWidthByFont2(x) + n;
@@ -169,14 +180,16 @@ const int *CTextMetrics::GenerateDxArray(std::vector<int> *vResultArray, //!< [o
 				i++;
 				*p = 0;
 			}
-			else {
+			else
+			{
 				int n = 0;
 				if (nCharSpacing) { n = CNativeW::GetKetaOfChar(pText, nLength, i) * nCharSpacing; }
 				*p = WCODE::CalcPxWidthByFont(*x) + n;
 				nLayoutCnt += *p;
 			}
 		}
-		else {
+		else
+		{
 			int n = 0;
 			if (nCharSpacing) { n = CNativeW::GetKetaOfChar(pText, nLength, i) * nCharSpacing; }
 			*p = WCODE::CalcPxWidthByFont(*x) + n;

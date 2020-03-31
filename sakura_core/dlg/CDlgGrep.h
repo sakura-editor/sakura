@@ -24,7 +24,8 @@ class CDlgGrep;
 #define DEFAULT_EXCLUDE_FOLDER_PATTERN L".git;.svn;.vs"
 
 //! GREPダイアログボックス
-class CDlgGrep : public CDialog {
+class CDlgGrep : public CDialog
+{
 public:
 	/*
 	||  Constructors

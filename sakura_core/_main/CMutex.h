@@ -35,7 +35,8 @@
 /** ミューテックスを扱うクラス
 	@date 2007.07.05 ryoji 新規作成
 */
-class CMutex {
+class CMutex
+{
 public:
 	CMutex(BOOL bInitialOwner, LPCWSTR pszName, LPSECURITY_ATTRIBUTES psa = NULL)
 	{
@@ -43,7 +44,8 @@ public:
 	}
 	~CMutex()
 	{
-		if (NULL != m_hObj) {
+		if (NULL != m_hObj)
+		{
 			::CloseHandle(m_hObj);
 			m_hObj = NULL;
 		}
@@ -84,7 +86,8 @@ protected:
 	@endcode
 */
 template<class EXCLUSIVE_OBJECT>
-class LockGuard {
+class LockGuard
+{
 	EXCLUSIVE_OBJECT &o_;
 
 public:

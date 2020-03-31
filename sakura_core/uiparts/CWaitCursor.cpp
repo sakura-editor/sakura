@@ -31,7 +31,8 @@ CWaitCursor::CWaitCursor(HWND hWnd, bool bEnable)
 */
 CWaitCursor::~CWaitCursor()
 {
-	if (m_bEnable) {
+	if (m_bEnable)
+	{
 		ReleaseCapture();
 		::SetCursor(m_hCursorOld);
 	}

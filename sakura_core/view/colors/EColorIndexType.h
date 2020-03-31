@@ -38,7 +38,8 @@
 	@date 2007.09.09 Moca  中間の定義はお任せに変更
 	@date 2013.04.26 novice 色定数を色番号を変換するための識別bit導入
 */
-enum EColorIndexType {
+enum EColorIndexType
+{
 	COLORIDX_TEXT = 0,	//!< テキスト
 	COLORIDX_RULER,		  //!< ルーラー
 	COLORIDX_CARET,		  //!< キャレット	// 2006.12.07 ryoji

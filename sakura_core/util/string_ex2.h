@@ -124,7 +124,8 @@ ptrdiff_t int2dec(T	value, //!< [in] 文字列化の素になる整数
 	T v = abs(value);
 
 	// 下位桁から変換する
-	do {
+	do
+	{
 		// decimal only
 		*tp++ = (ChT)('0' + (v % 10));
 		v /= 10;
@@ -137,13 +138,15 @@ ptrdiff_t int2dec(T	value, //!< [in] 文字列化の素になる整数
 	ptrdiff_t len = tp - tmp;
 
 	// 負の場合の符号文字
-	if (value < 0) {
+	if (value < 0)
+	{
 		*sp++ = '-';
 		++len;
 	}
 
 	// 下位桁から出力しているので文字列を逆転する
-	while (tp > tmp) {
+	while (tp > tmp)
+	{
 		--tp;
 		*sp = *tp;
 		++sp;

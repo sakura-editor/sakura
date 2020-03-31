@@ -37,7 +37,8 @@ class CDlgCtrlCode;
 	@brief コントロールコード入力ダイアログボックス
 */
 // 2007.10.18 kobake GetCharCode()を作成。
-class CDlgCtrlCode final : public CDialog {
+class CDlgCtrlCode final : public CDialog
+{
 public:
 	/*
 	||  Constructors

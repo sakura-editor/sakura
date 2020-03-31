@@ -25,13 +25,15 @@
 struct STypeConfig;
 
 //@@@ 2001.11.17 add start MIK
-struct RegexKeywordInfo {
+struct RegexKeywordInfo
+{
 	int m_nColorIndex; //色指定番号
 };
 //@@@ 2001.11.17 add end MIK
 
 //!	正規表現キーワード検索情報構造体
-typedef struct RegexInfo_t {
+typedef struct RegexInfo_t
+{
 	BREGEXP_W *pBregexp; // BREGEXP_W構造体
 	int		   nStatus;  //状態(EMPTY,CLOSE,OPEN,ACTIVE,ERROR)
 	int		   nMatch;   //このキーワードのマッチ状態(EMPTY,MATCH,NOMATCH)
@@ -45,7 +47,8 @@ typedef struct RegexInfo_t {
 /*!
 	正規表現キーワードを扱う。
 */
-class CRegexKeyword : public CBregexp {
+class CRegexKeyword : public CBregexp
+{
 public:
 	CRegexKeyword(LPCWSTR);
 	~CRegexKeyword();

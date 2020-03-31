@@ -24,7 +24,8 @@
 */
 #pragma once
 
-class CRegKey {
+class CRegKey
+{
 protected:
 	HKEY _root;
 	HKEY _key;
@@ -60,7 +61,8 @@ public:
 	}
 	void Close()
 	{
-		if (_key != NULL) {
+		if (_key != NULL)
+		{
 			RegCloseKey(_key);
 			_key  = NULL;
 			_root = NULL;
@@ -71,22 +73,18 @@ public:
 		DWORD dwType   = REG_SZ;
 		DWORD nError   = 0;
 		DWORD getChars = nMaxChar;
-		if ((nError = RegQueryValueEx(_key, valueName, NULL, &dwType, (LPBYTE)buffer, &getChars)) != 0) {
-			return nError;
-		}
-		if (pGetChars) { *pGetChars = getChars; }
-		return ERROR_SUCCESS;
+		if ((nError = RegQueryValueEx(_key, valueName, NULL, &dwType, (LPBYTE)buffer, &getChars)) != 0)
+		{ return nError; } if (pGetChars)
+		{ *pGetChars = getChars; } return ERROR_SUCCESS;
 	}
 	int GetValueBINARY(const WCHAR *valueName, BYTE *buffer, unsigned int nMaxChar, int *pGetChars = NULL) const
 	{
 		DWORD dwType   = REG_BINARY;
 		DWORD nError   = 0;
 		DWORD getChars = nMaxChar;
-		if ((nError = RegQueryValueEx(_key, valueName, NULL, &dwType, (LPBYTE)buffer, &getChars)) != 0) {
-			return nError;
-		}
-		if (pGetChars) { *pGetChars = getChars; }
-		return ERROR_SUCCESS;
+		if ((nError = RegQueryValueEx(_key, valueName, NULL, &dwType, (LPBYTE)buffer, &getChars)) != 0)
+		{ return nError; } if (pGetChars)
+		{ *pGetChars = getChars; } return ERROR_SUCCESS;
 	}
 	int SetValue(const WCHAR *valueName, const WCHAR *buffer, int nMaxChar = -1)
 	{
@@ -110,7 +108,8 @@ public:
 		if (index < 0) { return ERROR_NO_MORE_ITEMS; }
 		DWORD nSize  = nMaxChar;
 		int   nError = RegEnumKeyEx(_key, (DWORD)index, pNameBuffer, &nSize, NULL, NULL, NULL, NULL);
-		if (nError != ERROR_SUCCESS) {
+		if (nError != ERROR_SUCCESS)
+		{
 			index = -1;
 			return nError;
 		}
@@ -125,7 +124,8 @@ public:
 		DWORD nValueSize = nMaxChar;
 		DWORD nDataSize  = nMaxChar;
 		int   nError	 = RegEnumValue(_key, (DWORD)index, pNameBuffer, &nValueSize, NULL, lpType, lpData, &nDataSize);
-		if (nError != ERROR_SUCCESS) {
+		if (nError != ERROR_SUCCESS)
+		{
 			index = -1;
 			return nError;
 		}

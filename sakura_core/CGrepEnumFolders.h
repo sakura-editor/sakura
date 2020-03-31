@@ -32,7 +32,8 @@
 
 #include "CGrepEnumFileBase.h"
 
-class CGrepEnumFolders : public CGrepEnumFileBase {
+class CGrepEnumFolders : public CGrepEnumFileBase
+{
 private:
 public:
 	CGrepEnumFolders() {}
@@ -42,7 +43,8 @@ public:
 	virtual BOOL IsValid(WIN32_FIND_DATA &w32fd, LPCWSTR pFile = NULL)
 	{
 		if ((w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && (0 != wcscmp(w32fd.cFileName, L"."))
-			&& (0 != wcscmp(w32fd.cFileName, L".."))) {
+			&& (0 != wcscmp(w32fd.cFileName, L"..")))
+		{
 			if (CGrepEnumFileBase::IsValid(w32fd, pFile)) { return TRUE; }
 		}
 		return FALSE;

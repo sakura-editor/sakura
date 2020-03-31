@@ -83,7 +83,8 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 													   //	}
 	/* 印刷プレビューモードか */
 	//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
-	if (GetEditWindow()->m_pPrintPreview && F_PRINT_PREVIEW != nCommand) {
+	if (GetEditWindow()->m_pPrintPreview && F_PRINT_PREVIEW != nCommand)
+	{
 		ErrorBeep();
 		return -1;
 	}
@@ -94,14 +95,16 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 		GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro == GetMainWindow()
 		&&											  /* キーボードマクロを記録中のウィンドウ */
 		(nCommandFrom & FA_NONRECORD) != FA_NONRECORD /* 2007.07.07 genta 記録抑制フラグ off */
-	) {
+	)
+	{
 		/* キーリピート状態をなくする */
 		bRepeat = false;
 		/* キーマクロに記録可能な機能かどうかを調べる */
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 		// F_EXECEXTMACROコマンドはファイルを選択した後にマクロ文が確定するため個別に記録する。
 		if (CSMacroMgr::CanFuncIsKeyMacro(nCommand) && nCommand != F_EXECEXTMACRO // F_EXECEXTMACROは個別で記録します
-		) {
+		)
+		{
 			/* キーマクロのバッファにデータ追加 */
 			//@@@ 2002.1.24 m_CKeyMacroMgrをCEditDocへ移動
 			LPARAM lparams[] = {lparam1, lparam2, lparam3, lparam4};
@@ -115,16 +118,19 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 	m_pCommanderView->m_bExecutingKeyMacro = (nCommandFrom & FA_FROMMACRO) ? true : false;
 
 	/* キーボードマクロの実行中 */
-	if (m_pCommanderView->m_bExecutingKeyMacro) {
+	if (m_pCommanderView->m_bExecutingKeyMacro)
+	{
 		/* キーリピート状態をなくする */
 		bRepeat = false;
 	}
 
 	//	From Here Sep. 29, 2001 genta マクロの実行機能追加
-	if (F_USERMACRO_0 <= nCommand && nCommand < F_USERMACRO_0 + MAX_CUSTMACRO) {
+	if (F_USERMACRO_0 <= nCommand && nCommand < F_USERMACRO_0 + MAX_CUSTMACRO)
+	{
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一（インターフェースの変更）
 		if (!m_pcSMacroMgr->Exec(nCommand - F_USERMACRO_0, G_AppInstance(), m_pCommanderView,
-								 nCommandFrom & FA_NONRECORD)) {
+								 nCommandFrom & FA_NONRECORD))
+		{
 			InfoMessage(this->m_pCommanderView->m_hwndParent, LS(STR_ERR_MACRO1), nCommand - F_USERMACRO_0,
 						m_pcSMacroMgr->GetFile(nCommand - F_USERMACRO_0));
 		}
@@ -144,7 +150,8 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 	//	ここより前ではUndoバッファの準備ができていないので
 	//	文書の操作を行ってはいけない
 	//@@@ 2002.2.2 YAZAKI HandleCommand内でHandleCommandを呼び出せない問題に対処（何か副作用がある？）
-	if (NULL == GetOpeBlk()) { /* 操作ブロック */
+	if (NULL == GetOpeBlk())
+	{ /* 操作ブロック */
 		SetOpeBlk(new COpeBlk);
 	}
 	GetOpeBlk()->AddRef(); //参照カウンタ増加
@@ -154,11 +161,11 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 	//	途中で処理の打ち切りを行ってはいけない
 	// -------------------------------------
 
-	switch (nCommand) {
-	case F_WCHAR: /* 文字入力 */
+	switch (nCommand)
 	{
-		Command_WCHAR((wchar_t)lparam1);
-	} break;
+	case F_WCHAR: /* 文字入力 */ { Command_WCHAR((wchar_t)lparam1);
+	}
+	break;
 
 	/* ファイル操作系 */
 	case F_FILENEW: Command_FILENEW(); break; /* 新規作成 */
@@ -188,7 +195,8 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 		{ // Command_FILESAVE()とは別に保存不要をチェック	//### Command_FILESAVE() は実際に保存した場合だけ true
 		  // を返すようになった（仕様変更？）
 			if (!GetDllShareData().m_Common.m_sFile.m_bEnableUnmodifiedOverwrite
-				&& !GetDocument()->m_cDocEditor.IsModified()) {
+				&& !GetDocument()->m_cDocEditor.IsModified())
+			{
 				Command_WINCLOSE();
 				break;
 			}
@@ -742,7 +750,8 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 		/* 再帰処理対策 */
 		m_pCommanderView->SetUndoBuffer(true);
 		nFuncID = Command_CUSTMENU(nCommand - F_CUSTMENU_1 + 1);
-		if (0 != nFuncID) {
+		if (0 != nFuncID)
+		{
 			/* コマンドコードによる処理振り分け */
 			//			HandleCommand( nFuncID, true, 0, 0, 0, 0 );
 			::PostMessageCmd(GetMainWindow(), WM_COMMAND, MAKELONG(nFuncID, 0), (LPARAM)NULL);
@@ -825,7 +834,8 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 			CPlug::Array plugs;
 			CJackManager::getInstance()->GetUsablePlug(PP_COMMAND, nCommand, &plugs);
 
-			if (plugs.size() > 0) {
+			if (plugs.size() > 0)
+			{
 				assert_warning(1 == plugs.size());
 				//インタフェースオブジェクト準備
 				CWSHIfObj::List params;
@@ -850,10 +860,12 @@ void CViewCommander::Sub_BoxSelectLock(int flags)
 {
 	bool bSelLock;
 	if (flags == 0x00) { bSelLock = GetDllShareData().m_Common.m_sEdit.m_bBoxSelectLock; }
-	else if (flags == 0x01) {
+	else if (flags == 0x01)
+	{
 		bSelLock = true;
 	}
-	else if (flags == 0x02) {
+	else if (flags == 0x02)
+	{
 		bSelLock = false;
 	}
 	if (!this->m_pCommanderView->GetSelectionInfo().IsBoxSelecting()) { this->Command_BEGIN_BOXSELECT(bSelLock); }
@@ -867,29 +879,39 @@ CLogicInt CViewCommander::ConvertEol(const wchar_t *pszText, CLogicInt nTextLen,
 
 	nConvertedTextLen = 0;
 	bool bExtEol	  = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
-	if (pszConvertedText == NULL) {
-		for (int i = 0; i < nTextLen; i++) {
-			if (WCODE::IsLineDelimiter(pszText[i], bExtEol)) {
-				if (pszText[i] == WCODE::CR) {
+	if (pszConvertedText == NULL)
+	{
+		for (int i = 0; i < nTextLen; i++)
+		{
+			if (WCODE::IsLineDelimiter(pszText[i], bExtEol))
+			{
+				if (pszText[i] == WCODE::CR)
+				{
 					if (i + 1 < nTextLen && pszText[i + 1] == WCODE::LF) { i++; }
 				}
 				nConvertedTextLen += eol.GetLen();
 			}
-			else {
+			else
+			{
 				nConvertedTextLen++;
 			}
 		}
 	}
-	else {
-		for (int i = 0; i < nTextLen; i++) {
-			if (WCODE::IsLineDelimiter(pszText[i], bExtEol)) {
-				if (pszText[i] == WCODE::CR) {
+	else
+	{
+		for (int i = 0; i < nTextLen; i++)
+		{
+			if (WCODE::IsLineDelimiter(pszText[i], bExtEol))
+			{
+				if (pszText[i] == WCODE::CR)
+				{
 					if (i + 1 < nTextLen && pszText[i + 1] == WCODE::LF) { i++; }
 				}
 				wmemcpy(&pszConvertedText[nConvertedTextLen], eol.GetValue2(), eol.GetLen());
 				nConvertedTextLen += eol.GetLen();
 			}
-			else {
+			else
+			{
 				pszConvertedText[nConvertedTextLen++] = pszText[i];
 			}
 		}
@@ -904,7 +926,8 @@ CLogicInt CViewCommander::ConvertEol(const wchar_t *pszText, CLogicInt nTextLen,
 */
 void CViewCommander::AlertNotFound(HWND hwnd, bool bReplaceAll, LPCWSTR format, ...)
 {
-	if (GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND && !bReplaceAll) {
+	if (GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND && !bReplaceAll)
+	{
 		if (NULL == hwnd) { hwnd = m_pCommanderView->GetHwnd(); }
 		// InfoMessage(hwnd, format, __VA_ARGS__);
 		va_list p;
@@ -912,7 +935,8 @@ void CViewCommander::AlertNotFound(HWND hwnd, bool bReplaceAll, LPCWSTR format, 
 		VMessageBoxF(hwnd, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, format, p);
 		va_end(p);
 	}
-	else {
+	else
+	{
 		DefaultBeep();
 	}
 }

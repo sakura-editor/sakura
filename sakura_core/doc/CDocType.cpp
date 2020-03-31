@@ -44,9 +44,11 @@ CDocType::CDocType(CEditDoc *pcDoc)
 //! 文書種別の設定
 void CDocType::SetDocumentType(CTypeConfig type, bool force, bool bTypeOnly)
 {
-	if (!m_nSettingTypeLocked || force) {
+	if (!m_nSettingTypeLocked || force)
+	{
 		m_nSettingType = type;
-		if (false == CDocTypeManager().GetTypeConfig(m_nSettingType, m_typeConfig)) {
+		if (false == CDocTypeManager().GetTypeConfig(m_nSettingType, m_typeConfig))
+		{
 			// 削除されてる/不正
 			m_nSettingType = CDocTypeManager().GetDocumentTypeOfPath(m_pcDocRef->m_cDocFile.GetFilePath());
 			CDocTypeManager().GetTypeConfig(m_nSettingType, m_typeConfig);
@@ -54,16 +56,20 @@ void CDocType::SetDocumentType(CTypeConfig type, bool force, bool bTypeOnly)
 		if (bTypeOnly) return; // bTypeOnly == true は特殊ケース（一時利用）に限定
 		UnlockDocumentType();
 	}
-	else {
+	else
+	{
 		// データは更新しておく
 		CTypeConfig temp = CDocTypeManager().GetDocumentTypeOfId(m_typeConfig.m_id);
-		if (temp.IsValidType()) {
+		if (temp.IsValidType())
+		{
 			m_nSettingType = temp;
 			CDocTypeManager().GetTypeConfig(m_nSettingType, m_typeConfig);
 		}
-		else {
+		else
+		{
 			m_nSettingType = type;
-			if (false == CDocTypeManager().GetTypeConfig(m_nSettingType, m_typeConfig)) {
+			if (false == CDocTypeManager().GetTypeConfig(m_nSettingType, m_typeConfig))
+			{
 				m_nSettingType = CDocTypeManager().GetDocumentTypeOfPath(m_pcDocRef->m_cDocFile.GetFilePath());
 				CDocTypeManager().GetTypeConfig(m_nSettingType, m_typeConfig);
 			}
@@ -81,11 +87,13 @@ void CDocType::SetDocumentType(CTypeConfig type, bool force, bool bTypeOnly)
 void CDocType::SetDocumentTypeIdx(int id, bool force)
 {
 	int setId = m_typeConfig.m_id;
-	if (!m_nSettingTypeLocked || force) {
+	if (!m_nSettingTypeLocked || force)
+	{
 		if (id != -1) { setId = id; }
 	}
 	CTypeConfig temp = CDocTypeManager().GetDocumentTypeOfId(setId);
-	if (temp.IsValidType()) {
+	if (temp.IsValidType())
+	{
 		m_nSettingType		= temp;
 		m_typeConfig.m_nIdx = temp.GetIndex();
 		m_typeConfig.m_id   = setId;

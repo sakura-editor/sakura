@@ -33,7 +33,8 @@
 #include <Windows.h>
 class CEditView;
 
-class CMacroBeforeAfter {
+class CMacroBeforeAfter
+{
 public:
 	CMacroBeforeAfter()
 		: m_nOpeBlkCount(0)
@@ -51,7 +52,8 @@ private:
 	@brief マクロを処理するエンジン部分の基底クラス
 
 */
-class CMacroManagerBase : CMacroBeforeAfter {
+class CMacroManagerBase : CMacroBeforeAfter
+{
 public:
 	/*! キーボードマクロの実行
 

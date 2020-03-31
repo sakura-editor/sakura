@@ -43,7 +43,8 @@ bool CControlProcess::InitializeProcess()
 
 	// アプリケーション実行検出用(インストーラで使用)
 	m_hMutex = ::CreateMutex(NULL, FALSE, GSTR_MUTEX_SAKURA);
-	if (NULL == m_hMutex) {
+	if (NULL == m_hMutex)
+	{
 		ErrorBeep();
 		TopErrorMessage(NULL, L"CreateMutex()失敗。\n終了します。");
 		return false;
@@ -55,7 +56,8 @@ bool CControlProcess::InitializeProcess()
 	std::wstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
 	strInitEvent += pszProfileName;
 	m_hEventCPInitialized = ::CreateEvent(NULL, TRUE, FALSE, strInitEvent.c_str());
-	if (NULL == m_hEventCPInitialized) {
+	if (NULL == m_hEventCPInitialized)
+	{
 		ErrorBeep();
 		TopErrorMessage(NULL, L"CreateEvent()失敗。\n終了します。");
 		return false;
@@ -65,7 +67,8 @@ bool CControlProcess::InitializeProcess()
 	std::wstring strCtrlProcEvent = GSTR_MUTEX_SAKURA_CP;
 	strCtrlProcEvent += pszProfileName;
 	m_hMutexCP = ::CreateMutex(NULL, TRUE, strCtrlProcEvent.c_str());
-	if (NULL == m_hMutexCP) {
+	if (NULL == m_hMutexCP)
+	{
 		ErrorBeep();
 		TopErrorMessage(NULL, L"CreateMutex()失敗。\n終了します。");
 		return false;
@@ -83,7 +86,8 @@ bool CControlProcess::InitializeProcess()
 	/* 共有データのロード */
 	// 2007.05.19 ryoji 「設定を保存して終了する」オプション処理（sakuext連携用）を追加
 
-	if (!CShareData_IO::LoadShareData() || CCommandLine::getInstance()->IsWriteQuit()) {
+	if (!CShareData_IO::LoadShareData() || CCommandLine::getInstance()->IsWriteQuit())
+	{
 		/* レジストリ項目 作成 */
 		CShareData_IO::SaveShareData();
 		if (CCommandLine::getInstance()->IsWriteQuit()) { return false; }
@@ -101,7 +105,8 @@ bool CControlProcess::InitializeProcess()
 	MY_TRACETIME(cRunningTimer, "After new CControlTray");
 
 	HWND hwnd = m_pcTray->Create(GetProcessInstance());
-	if (!hwnd) {
+	if (!hwnd)
+	{
 		ErrorBeep();
 		TopErrorMessage(NULL, LS(STR_ERR_CTRLMTX3));
 		return false;
@@ -110,7 +115,8 @@ bool CControlProcess::InitializeProcess()
 	GetDllShareData().m_sHandles.m_hwndTray = hwnd;
 
 	// 初期化完了イベントをシグナル状態にする
-	if (!::SetEvent(m_hEventCPInitialized)) {
+	if (!::SetEvent(m_hEventCPInitialized))
+	{
 		ErrorBeep();
 		TopErrorMessage(NULL, LS(STR_ERR_CTRLMTX4));
 		return false;
@@ -127,7 +133,8 @@ bool CControlProcess::InitializeProcess()
 */
 bool CControlProcess::MainLoop()
 {
-	if (m_pcTray && GetMainWindow()) {
+	if (m_pcTray && GetMainWindow())
+	{
 		m_pcTray->MessageLoop(); /* メッセージループ */
 		return true;
 	}

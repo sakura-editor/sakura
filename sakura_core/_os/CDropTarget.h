@@ -26,7 +26,8 @@ class CEditView; // 2002/2/3 aroka ヘッダ軽量化
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-class COleLibrary {
+class COleLibrary
+{
 	friend class CYbInterfaceBase;
 
 private:
@@ -41,7 +42,8 @@ private:
 	void UnInitialize();
 };
 
-class CYbInterfaceBase {
+class CYbInterfaceBase
+{
 private:
 	static COleLibrary m_olelib;
 
@@ -52,7 +54,8 @@ protected:
 };
 
 template<class BASEINTERFACE>
-class CYbInterfaceImpl : public BASEINTERFACE, public CYbInterfaceBase {
+class CYbInterfaceImpl : public BASEINTERFACE, public CYbInterfaceBase
+{
 private:
 	static REFIID m_owniid;
 
@@ -63,7 +66,8 @@ public:
 	STDMETHOD_(ULONG, Release)(void) { return 0; }
 };
 
-class CDropTarget : public CYbInterfaceImpl<IDropTarget> {
+class CDropTarget : public CYbInterfaceImpl<IDropTarget>
+{
 public:
 	/*
 	||  Constructors
@@ -93,7 +97,8 @@ protected:
 	*/
 };
 
-class CDropSource : public CYbInterfaceImpl<IDropSource> {
+class CDropSource : public CYbInterfaceImpl<IDropSource>
+{
 private:
 	BOOL m_bLeft;
 
@@ -107,11 +112,13 @@ public:
 	STDMETHOD(GiveFeedback)(DWORD dropEffect);
 };
 
-class CDataObject : public CYbInterfaceImpl<IDataObject> {
+class CDataObject : public CYbInterfaceImpl<IDataObject>
+{
 private:
 	friend class CEnumFORMATETC; // 2008.03.26 ryoji
 
-	typedef struct {
+	typedef struct
+	{
 		CLIPFORMAT cfFormat;
 		// Feb. 26, 2001, fixed by yebisuya sugoroku
 		LPBYTE		 data; //データ
@@ -147,7 +154,8 @@ public:
 
 //! CEnumFORMATETC クラス
 //	2008.03.26 ryoji 新規作成
-class CEnumFORMATETC : public CYbInterfaceImpl<IEnumFORMATETC> {
+class CEnumFORMATETC : public CYbInterfaceImpl<IEnumFORMATETC>
+{
 private:
 	LONG		 m_lRef;
 	int			 m_nIndex;
@@ -163,7 +171,8 @@ public:
 	STDMETHOD_(ULONG, AddRef)(void) { return ::InterlockedIncrement(&m_lRef); }
 	STDMETHOD_(ULONG, Release)(void)
 	{
-		if (::InterlockedDecrement(&m_lRef) == 0) {
+		if (::InterlockedDecrement(&m_lRef) == 0)
+		{
 			delete this;
 			return 0; // 削除後なので m_lRef は使わない
 		}

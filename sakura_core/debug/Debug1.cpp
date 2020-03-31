@@ -47,7 +47,8 @@ void DebugOutW(LPCWSTR lpFmt, ...)
 	if (errno != EINVAL) { ::OutputDebugStringW(szText); }
 
 	//切り捨て対策
-	if (-1 == ret && errno != ERANGE) {
+	if (-1 == ret && errno != ERANGE)
+	{
 		::OutputDebugStringW(L"(切り捨てました...)\n");
 
 		::DebugBreak();

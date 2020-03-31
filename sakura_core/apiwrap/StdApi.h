@@ -38,7 +38,8 @@
 #define DEBUG_SETPIXEL(hdc)
 #endif
 
-namespace ApiWrap {
+namespace ApiWrap
+{
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //          W系が存在しないAPIのための、新しい関数定義         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

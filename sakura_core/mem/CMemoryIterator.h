@@ -28,7 +28,8 @@
 #include "doc/logic/CDocLine.h"
 
 //! ブロックコメントデリミタを管理する
-class CMemoryIterator {
+class CMemoryIterator
+{
 public:
 	// CDocLine用コンストラクタ
 	CMemoryIterator(const CDocLine *pcT, CLayoutInt nTabSpace, const CTsvModeInfo &tsvInfo, CPixelXInt nCharDx,
@@ -85,25 +86,28 @@ public:
 		if (0 == m_nIndex_Delta) m_nIndex_Delta = CLogicInt(1);
 
 		//桁増分を計算
-		if (m_pLine[m_nIndex] == WCODE::TAB) {
-			if (m_tsvInfo.m_nTsvMode == TSV_MODE_TSV) {
-				m_nColumn_Delta = m_tsvInfo.GetActualTabLength(m_nColumn, m_tsvInfo.m_nMaxCharLayoutX);
-			}
-			else if (m_tsvInfo.m_nTsvMode == TSV_MODE_CSV) {
+		if (m_pLine[m_nIndex] == WCODE::TAB)
+		{
+			if (m_tsvInfo.m_nTsvMode == TSV_MODE_TSV)
+			{ m_nColumn_Delta = m_tsvInfo.GetActualTabLength(m_nColumn, m_tsvInfo.m_nMaxCharLayoutX); }
+			else if (m_tsvInfo.m_nTsvMode == TSV_MODE_CSV)
+			{
 				m_nColumn_Delta = m_nTabPadding;
 			}
-			else {
+			else
+			{
 				m_nColumn_Delta = m_nTabSpaceDx - (m_nColumn + m_nTabPadding) % m_nTabSpace;
 			}
 		}
-		else if (m_pLine[m_nIndex] == L',' && m_tsvInfo.m_nTsvMode == TSV_MODE_CSV) {
+		else if (m_pLine[m_nIndex] == L',' && m_tsvInfo.m_nTsvMode == TSV_MODE_CSV)
+		{
 			m_nColumn_Delta = m_tsvInfo.GetActualTabLength(m_nColumn, m_tsvInfo.m_nMaxCharLayoutX);
 		}
-		else {
+		else
+		{
 			m_nColumn_Delta = CNativeW::GetColmOfChar(m_pLine, m_nLineLen, m_nIndex);
-			if (m_nSpacing) {
-				m_nColumn_Delta += CLayoutXInt(CNativeW::GetKetaOfChar(m_pLine, m_nLineLen, m_nIndex) * m_nSpacing);
-			}
+			if (m_nSpacing)
+			{ m_nColumn_Delta += CLayoutXInt(CNativeW::GetKetaOfChar(m_pLine, m_nLineLen, m_nIndex) * m_nSpacing); }
 			//			if( 0 == m_nColumn_Delta )				// 削除 サロゲートペア対策	2008/7/5 Uchi
 			//				m_nColumn_Delta = CLayoutInt(1);
 		}

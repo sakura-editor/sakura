@@ -36,7 +36,8 @@ class CColorStrategyPool;
 class CSMacroMgr;
 #include "CEol.h"
 
-class CViewCommander {
+class CViewCommander
+{
 public:
 	CViewCommander(CEditView *pEditView);
 
@@ -59,7 +60,12 @@ public:
 	int m_bPrevCommand;
 
 private:
-	enum EIndentType { INDENT_NONE, INDENT_TAB, INDENT_SPACE };
+	enum EIndentType
+	{
+		INDENT_NONE,
+		INDENT_TAB,
+		INDENT_SPACE
+	};
 
 	// -- -- -- -- 以下、コマンド処理関数群 -- -- -- -- //
 public:

@@ -233,14 +233,17 @@ unsigned int __fastcall SjisFilter_basis(const unsigned int uCode)
 	/* 二分検索開始 */
 	nleft  = 0;
 	nright = TABLESIZE_SjisPoorcodeIndex - 1;
-	while (nleft <= nright) {
+	while (nleft <= nright)
+	{
 		ni		 = (nright + nleft) / 2;
 		code_tmp = TABLE_SjisPoorcodeIndex[ni][0];
 		if (uCode < code_tmp) { nright = ni - 1; }
-		else if (code_tmp < uCode) {
+		else if (code_tmp < uCode)
+		{
 			nleft = ni + 1;
 		}
-		else {
+		else
+		{
 			break; // 発見
 		}
 	}
@@ -269,39 +272,51 @@ unsigned int __fastcall SjisFilter_ibm2nec(const unsigned int uCode)
 	*/
 	c1 = static_cast<unsigned char>((code >> 8) & 0x000000ff);
 	c2 = static_cast<unsigned char>(code & 0x000000ff);
-	if (c1 == 0xfa || c1 == 0xfb || (c1 == 0xfc && c2 <= 0x4b)) {
+	if (c1 == 0xfa || c1 == 0xfb || (c1 == 0xfc && c2 <= 0x4b))
+	{
 		if (code <= 0xfa49) { code -= 0x0b51; } /* fa40～fa49 → eeef～eef8 (ⅰ～ⅹ) */
-		else if (code <= 0xfa54) {
+		else if (code <= 0xfa54)
+		{
 			;
 		}
-		else if (code <= 0xfa57) {
+		else if (code <= 0xfa57)
+		{
 			code -= 0x0b5b;
 		} /* fa55～fa57 → eefa～eefc (￤～＂) */
-		else if (code <= 0xfa5b) {
+		else if (code <= 0xfa5b)
+		{
 			;
 		}
-		else if (code <= 0xfa7e) {
+		else if (code <= 0xfa7e)
+		{
 			code -= 0x0d1c;
 		} /* fa5c～fa7e → ed40～ed62 (纊～兊) */
-		else if (code <= 0xfa9b) {
+		else if (code <= 0xfa9b)
+		{
 			code -= 0x0d1d;
 		} /* fa80～fa9b → ed63～ed7e (兤～﨏) */
-		else if (code <= 0xfafc) {
+		else if (code <= 0xfafc)
+		{
 			code -= 0x0d1c;
 		} /* fa9c～fafc → ed80～ede0 (塚～浯) */
-		else if (code <= 0xfb5b) {
+		else if (code <= 0xfb5b)
+		{
 			code -= 0x0d5f;
 		} /* fb40～fb5b → ede1～edfc (涖～犱) */
-		else if (code <= 0xfb7e) {
+		else if (code <= 0xfb7e)
+		{
 			code -= 0x0d1c;
 		} /* fb5c～fb7e → ee40～ee62 (犾～神) */
-		else if (code <= 0xfb9b) {
+		else if (code <= 0xfb9b)
+		{
 			code -= 0x0d1d;
 		} /* fb80～fb9b → ee63～ee7e (祥～蕙) */
-		else if (code <= 0xfbfc) {
+		else if (code <= 0xfbfc)
+		{
 			code -= 0x0d1c;
 		} /* fb9c～fbfc → ee80～eee0 (蕫～髙) */
-		else {
+		else
+		{
 			code -= 0x0d5f;
 		} /* fc40～fc4b → eee1～eeec (髜～黑) */
 	}
@@ -327,39 +342,51 @@ unsigned int __fastcall SjisFilter_nec2ibm(const unsigned int uCode)
 		ee40 ～ ee7e, ee80 ～ eefc
 	*/
 	c1 = static_cast<unsigned char>((code >> 8) & 0x000000ff);
-	if (c1 == 0xed || c1 == 0xee) {
+	if (c1 == 0xed || c1 == 0xee)
+	{
 		if (code <= 0xed62) { code += 0x0d1c; } /* ed40～ed62 → fa5c～fa7e (纊～兊) */
-		else if (code <= 0xed7e) {
+		else if (code <= 0xed7e)
+		{
 			code += 0x0d1d;
 		} /* ed63～ed7e → fa80～fa9b (兤～﨏) */
-		else if (code <= 0xede0) {
+		else if (code <= 0xede0)
+		{
 			code += 0x0d1c;
 		} /* ed80～ede0 → fa9c～fafc (塚～浯) */
-		else if (code <= 0xedfc) {
+		else if (code <= 0xedfc)
+		{
 			code += 0x0d5f;
 		} /* ede1～edfc → fb40～fb5b (涖～犱) */
-		else if (code <= 0xee62) {
+		else if (code <= 0xee62)
+		{
 			code += 0x0d1c;
 		} /* ee40～ee62 → fb5c～fb7e (犾～神) */
-		else if (code <= 0xee7e) {
+		else if (code <= 0xee7e)
+		{
 			code += 0x0d1d;
 		} /* ee63～ee7e → fb80～fb9b (祥～蕙) */
-		else if (code <= 0xeee0) {
+		else if (code <= 0xeee0)
+		{
 			code += 0x0d1c;
 		} /* ee80～eee0 → fb9c～fbf0 (蕫～髙) */
-		else if (code <= 0xeeec) {
+		else if (code <= 0xeeec)
+		{
 			code += 0x0d5f;
 		} /* eee1～eeec → fc40～fc4b (髜～黑) */
-		else if (code <= 0xeeee) {
+		else if (code <= 0xeeee)
+		{
 			;
 		}
-		else if (code <= 0xeef8) {
+		else if (code <= 0xeef8)
+		{
 			code += 0x0b51;
 		} /* eeef～eef8 → fa40～fa49 (ⅰ～ⅹ) */
-		else if (code == 0xeef9) {
+		else if (code == 0xeef9)
+		{
 			;
 		}
-		else {
+		else
+		{
 			code += 0x0b5b;
 		} /* eefa～eefc → fa55～fa57 (￤～＂) */
 	}

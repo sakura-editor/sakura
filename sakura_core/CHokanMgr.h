@@ -22,7 +22,8 @@
 
 	@date 2003.06.25 Moca ファイル内からの補完機能を追加
 */
-class CHokanMgr final : public CDialog {
+class CHokanMgr final : public CDialog
+{
 public:
 	/*
 	||  Constructors

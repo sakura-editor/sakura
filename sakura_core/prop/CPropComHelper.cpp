@@ -93,7 +93,8 @@ INT_PTR CPropHelper::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 	WORD   wID;
 	NMHDR *pNMHDR;
 
-	switch (uMsg) {
+	switch (uMsg)
+	{
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 Helper */
 		SetData(hwndDlg);
@@ -110,12 +111,14 @@ INT_PTR CPropHelper::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam); /* 通知コード */
 		wID			= LOWORD(wParam); /* 項目ID､ コントロールID､ またはアクセラレータID */
-		switch (wNotifyCode) {
+		switch (wNotifyCode)
+		{
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
 			/* ダイアログデータの取得 Helper */
 			GetData(hwndDlg);
-			switch (wID) {
+			switch (wID)
+			{
 			case IDC_BUTTON_OPENHELP1: /* 外部ヘルプ１の「参照...」ボタン */
 			{
 				// 2003.06.23 Moca 相対パスは実行ファイルからのパス
@@ -138,7 +141,8 @@ INT_PTR CPropHelper::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 				LOGFONT lf		   = m_Common.m_sHelper.m_lf;
 				INT		nPointSize = m_Common.m_sHelper.m_nPointSize;
 
-				if (MySelectFont(&lf, &nPointSize, hwndDlg, false)) {
+				if (MySelectFont(&lf, &nPointSize, hwndDlg, false))
+				{
 					m_Common.m_sHelper.m_lf			= lf;
 					m_Common.m_sHelper.m_nPointSize = nPointSize; // 2009.10.01 ryoji
 					// キーワードヘルプ フォント表示	// 2013/4/24 Uchi
@@ -163,13 +167,13 @@ INT_PTR CPropHelper::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 				WCHAR szPath[_MAX_PATH];
 				/* 検索フォルダ */
 				// 2007.05.27 ryoji 相対パスは設定ファイルからのパスを優先
-				if (_IS_REL_PATH(m_Common.m_sHelper.m_szMigemoDict)) {
-					GetInidirOrExedir(szPath, m_Common.m_sHelper.m_szMigemoDict, TRUE);
-				}
-				else {
+				if (_IS_REL_PATH(m_Common.m_sHelper.m_szMigemoDict))
+				{ GetInidirOrExedir(szPath, m_Common.m_sHelper.m_szMigemoDict, TRUE); } else
+				{
 					wcscpy(szPath, m_Common.m_sHelper.m_szMigemoDict);
 				}
-				if (SelectDir(hwndDlg, LS(STR_PROPCOMHELP_MIGEMODIR), szPath, szPath)) {
+				if (SelectDir(hwndDlg, LS(STR_PROPCOMHELP_MIGEMODIR), szPath, szPath))
+				{
 					wcscpy(m_Common.m_sHelper.m_szMigemoDict, GetRelPath(szPath)); // 2015.03.03 可能なら相対パスにする
 					::DlgItem_SetText(hwndDlg, IDC_EDIT_MIGEMO_DICT, m_Common.m_sHelper.m_szMigemoDict);
 				}
@@ -185,7 +189,8 @@ INT_PTR CPropHelper::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		//		case ???????:
 		//			return 0L;
 		//		default:
-		switch (pNMHDR->code) {
+		switch (pNMHDR->code)
+		{
 		case PSN_HELP: OnHelp(hwndDlg, IDD_PROP_HELPER); return TRUE;
 		case PSN_KILLACTIVE:
 			//				MYTRACE( L"Helper PSN_KILLACTIVE\n" );
@@ -206,7 +211,8 @@ INT_PTR CPropHelper::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		break; /* WM_NOTIFY */
 
 		//@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP: {
+	case WM_HELP:
+	{
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -225,7 +231,8 @@ INT_PTR CPropHelper::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 
 	case WM_DESTROY:
 		// キーワードヘルプ フォント破棄	// 2013/4/24 Uchi
-		if (m_hKeywordHelpFont != NULL) {
+		if (m_hKeywordHelpFont != NULL)
+		{
 			::DeleteObject(m_hKeywordHelpFont);
 			m_hKeywordHelpFont = NULL;
 		}

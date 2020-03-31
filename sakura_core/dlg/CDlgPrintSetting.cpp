@@ -166,7 +166,8 @@ int CDlgPrintSetting::DoModal(HINSTANCE hInstance, HWND hwndParent, int *pnCurre
 	m_nLineNumberColumns = nLineNumberColumns;
 
 	nRet = (int)CDialog::DoModal(hInstance, hwndParent, IDD_PRINTSETTING, (LPARAM)NULL);
-	if (FALSE != nRet) {
+	if (FALSE != nRet)
+	{
 		*pnCurrentPrintSetting = m_nCurrentPrintSetting;
 		for (i = 0; i < MAX_PRINTSETTINGARR; ++i) { pPrintSettingArr[i] = m_PrintSettingArr[i]; }
 	}
@@ -222,10 +223,12 @@ BOOL CDlgPrintSetting::OnNotify(WPARAM wParam, LPARAM lParam)
 	idCtrl = (int)wParam;
 	pMNUD  = (NM_UPDOWN *)lParam;
 	if (pMNUD->iDelta < 0) { bSpinDown = FALSE; }
-	else {
+	else
+	{
 		bSpinDown = TRUE;
 	}
-	switch (idCtrl) {
+	switch (idCtrl)
+	{
 	case IDC_SPIN_FONTHEIGHT:
 	case IDC_SPIN_LINESPACE:
 	case IDC_SPIN_DANSUU:
@@ -245,7 +248,8 @@ BOOL CDlgPrintSetting::OnNotify(WPARAM wParam, LPARAM lParam)
 BOOL CDlgPrintSetting::OnCbnSelChange(HWND hwndCtl, int wID)
 {
 	//	if( GetItemHwnd( IDC_COMBO_SETTINGNAME ) == hwndCtl ){
-	switch (wID) {
+	switch (wID)
+	{
 	case IDC_COMBO_SETTINGNAME:
 		/* 設定のタイプが変わった */
 		OnChangeSettingType(TRUE);
@@ -264,7 +268,8 @@ BOOL CDlgPrintSetting::OnBnClicked(int wID)
 	WCHAR	  szWork[256];
 	CDlgInput1 cDlgInput1;
 	HWND	   hwndComboSettingName;
-	switch (wID) {
+	switch (wID)
+	{
 	case IDC_BUTTON_HELP:
 		/* 「印刷ページ設定」のヘルプ */
 		// Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
@@ -279,7 +284,8 @@ BOOL CDlgPrintSetting::OnBnClicked(int wID)
 				_countof(m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName) - 1, szWork);
 			if (!bDlgInputResult) { return TRUE; }
 		}
-		if (szWork[0] != L'\0') {
+		if (szWork[0] != L'\0')
+		{
 			int size = _countof(m_PrintSettingArr[0].m_szPrintSettingName) - 1;
 			wcsncpy(m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName, szWork, size);
 			m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName[size] = L'\0';
@@ -290,7 +296,8 @@ BOOL CDlgPrintSetting::OnBnClicked(int wID)
 			int i;
 			int nItemIdx;
 			nSelectIdx = 0;
-			for (i = 0; i < MAX_PRINTSETTINGARR; ++i) {
+			for (i = 0; i < MAX_PRINTSETTINGARR; ++i)
+			{
 				nItemIdx = Combo_AddString(hwndComboSettingName, m_PrintSettingArr[i].m_szPrintSettingName);
 				Combo_SetItemData(hwndComboSettingName, nItemIdx, i);
 				if (i == m_nCurrentPrintSetting) { nSelectIdx = nItemIdx; }
@@ -298,11 +305,13 @@ BOOL CDlgPrintSetting::OnBnClicked(int wID)
 			Combo_SetCurSel(hwndComboSettingName, nSelectIdx);
 		}
 		return TRUE;
-	case IDC_BUTTON_FONT_HEAD: {
+	case IDC_BUTTON_FONT_HEAD:
+	{
 		LOGFONT lf = m_PrintSettingArr[m_nCurrentPrintSetting].m_lfHeader;
 		INT		nPointSize;
 
-		if (lf.lfFaceName[0] == L'\0') {
+		if (lf.lfFaceName[0] == L'\0')
+		{
 			// 半角フォントを設定
 			wcscpy(lf.lfFaceName, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan);
 			// 1/10mm→画面ドット数
@@ -310,7 +319,8 @@ BOOL CDlgPrintSetting::OnBnClicked(int wID)
 							* ::GetDeviceCaps(::GetDC(m_hwndParent), LOGPIXELSY) / 254);
 		}
 
-		if (MySelectFont(&lf, &nPointSize, GetHwnd(), false)) {
+		if (MySelectFont(&lf, &nPointSize, GetHwnd(), false))
+		{
 			m_PrintSettingArr[m_nCurrentPrintSetting].m_lfHeader		 = lf;
 			m_PrintSettingArr[m_nCurrentPrintSetting].m_nHeaderPointSize = nPointSize;
 			SetFontName(IDC_STATIC_FONT_HEAD, IDC_CHECK_USE_FONT_HEAD,
@@ -320,11 +330,13 @@ BOOL CDlgPrintSetting::OnBnClicked(int wID)
 		}
 	}
 		return TRUE;
-	case IDC_BUTTON_FONT_FOOT: {
+	case IDC_BUTTON_FONT_FOOT:
+	{
 		LOGFONT lf = m_PrintSettingArr[m_nCurrentPrintSetting].m_lfFooter;
 		INT		nPointSize;
 
-		if (lf.lfFaceName[0] == L'\0') {
+		if (lf.lfFaceName[0] == L'\0')
+		{
 			// 半角フォントを設定
 			wcscpy(lf.lfFaceName, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan);
 			// 1/10mm→画面ドット数
@@ -332,7 +344,8 @@ BOOL CDlgPrintSetting::OnBnClicked(int wID)
 							* ::GetDeviceCaps(::GetDC(m_hwndParent), LOGPIXELSY) / 254);
 		}
 
-		if (MySelectFont(&lf, &nPointSize, GetHwnd(), false)) {
+		if (MySelectFont(&lf, &nPointSize, GetHwnd(), false))
+		{
 			m_PrintSettingArr[m_nCurrentPrintSetting].m_lfFooter		 = lf;
 			m_PrintSettingArr[m_nCurrentPrintSetting].m_nFooterPointSize = nPointSize;
 			SetFontName(IDC_STATIC_FONT_FOOT, IDC_CHECK_USE_FONT_FOOT,
@@ -343,7 +356,8 @@ BOOL CDlgPrintSetting::OnBnClicked(int wID)
 	}
 		return TRUE;
 	case IDC_CHECK_USE_FONT_HEAD:
-		if (m_PrintSettingArr[m_nCurrentPrintSetting].m_lfHeader.lfFaceName[0] != L'\0') {
+		if (m_PrintSettingArr[m_nCurrentPrintSetting].m_lfHeader.lfFaceName[0] != L'\0')
+		{
 			memset(&m_PrintSettingArr[m_nCurrentPrintSetting].m_lfHeader, 0, sizeof(LOGFONT));
 			m_PrintSettingArr[m_nCurrentPrintSetting].m_nHeaderPointSize = 0;
 			SetFontName(IDC_STATIC_FONT_HEAD, IDC_CHECK_USE_FONT_HEAD,
@@ -353,7 +367,8 @@ BOOL CDlgPrintSetting::OnBnClicked(int wID)
 		UpdatePrintableLineAndColumn();
 		return TRUE;
 	case IDC_CHECK_USE_FONT_FOOT:
-		if (m_PrintSettingArr[m_nCurrentPrintSetting].m_lfFooter.lfFaceName[0] != L'\0') {
+		if (m_PrintSettingArr[m_nCurrentPrintSetting].m_lfFooter.lfFaceName[0] != L'\0')
+		{
 			memset(&m_PrintSettingArr[m_nCurrentPrintSetting].m_lfFooter, 0, sizeof(LOGFONT));
 			m_PrintSettingArr[m_nCurrentPrintSetting].m_nFooterPointSize = 0;
 			SetFontName(IDC_STATIC_FONT_FOOT, IDC_CHECK_USE_FONT_FOOT,
@@ -363,7 +378,8 @@ BOOL CDlgPrintSetting::OnBnClicked(int wID)
 		UpdatePrintableLineAndColumn();
 		return TRUE;
 	case IDOK:
-		if (CalcPrintableLineAndColumn()) {
+		if (CalcPrintableLineAndColumn())
+		{
 			/* ダイアログデータの取得 */
 			::EndDialog(GetHwnd(), GetData());
 		}
@@ -383,12 +399,14 @@ BOOL CDlgPrintSetting::OnBnClicked(int wID)
 
 BOOL CDlgPrintSetting::OnStnClicked(int wID)
 {
-	switch (wID) {
+	switch (wID)
+	{
 	case IDC_STATIC_ENABLECOLUMNS:
 	case IDC_STATIC_ENABLELINES:
 		// 現状クリックは受け付けていないが、メッセージ処理したいのでここに配置 2013.5.5 aroka
 		// メッセージが連続して送られたときは一回だけ対応する 2013.5.5 aroka
-		if (m_bPrintableLinesAndColumnInvalid) {
+		if (m_bPrintableLinesAndColumnInvalid)
+		{
 			m_bPrintableLinesAndColumnInvalid = false;
 			CalcPrintableLineAndColumn();
 		}
@@ -400,11 +418,12 @@ BOOL CDlgPrintSetting::OnStnClicked(int wID)
 
 BOOL CDlgPrintSetting::OnEnChange(HWND hwndCtl, int wID)
 {
-	switch (wID) {
+	switch (wID)
+	{
 	case IDC_EDIT_FONTHEIGHT: // フォント幅の最小値が非０のため'12'と入力すると'1'のところで蹴られてしまう 2013.5.5
 							  // aroka
-		if (::GetDlgItemInt(GetHwnd(), IDC_EDIT_FONTHEIGHT, NULL, FALSE)
-			>= 10) { // 二桁以上の場合は領域チェック 2013.5.20 aroka
+		if (::GetDlgItemInt(GetHwnd(), IDC_EDIT_FONTHEIGHT, NULL, FALSE) >= 10)
+		{ // 二桁以上の場合は領域チェック 2013.5.20 aroka
 			UpdatePrintableLineAndColumn();
 		}
 		break; // ここでは行と桁の更新要求のみ。後の処理はCDialogに任せる。
@@ -428,7 +447,8 @@ static BOOL s_isImmOpenBkup;
 // IMEを使用したくないコントロールのID判定
 static bool isImeUndesirable(int id)
 {
-	switch (id) {
+	switch (id)
+	{
 	case IDC_EDIT_FONTHEIGHT:
 	case IDC_EDIT_LINESPACE:
 	case IDC_EDIT_DANSUU:
@@ -449,7 +469,8 @@ BOOL CDlgPrintSetting::OnEnSetFocus(HWND hwndCtl, int wID)
 
 BOOL CDlgPrintSetting::OnEnKillFocus(HWND hwndCtl, int wID)
 {
-	switch (wID) {
+	switch (wID)
+	{
 	case IDC_EDIT_FONTHEIGHT:
 	// case IDC_EDIT_LINESPACE:	// EN_CHANGE で計算しているので冗長かな、と思いコメントアウト 2013.5.5 aroka
 	// case IDC_EDIT_DANSUU:
@@ -498,7 +519,8 @@ void CDlgPrintSetting::SetData(void)
 	hwndComboPaper = GetItemHwnd(IDC_COMBO_PAPER);
 	Combo_ResetContent(hwndComboPaper);
 	// 2006.08.14 Moca 用紙名一覧の重複削除
-	for (i = 0; i < CPrint::m_nPaperInfoArrNum; ++i) {
+	for (i = 0; i < CPrint::m_nPaperInfoArrNum; ++i)
+	{
 		nItemIdx = Combo_AddString(hwndComboPaper, CPrint::m_paperInfoArr[i].m_pszName);
 		Combo_SetItemData(hwndComboPaper, nItemIdx, CPrint::m_paperInfoArr[i].m_nId);
 	}
@@ -507,7 +529,8 @@ void CDlgPrintSetting::SetData(void)
 	hwndComboSettingName = GetItemHwnd(IDC_COMBO_SETTINGNAME);
 	Combo_ResetContent(hwndComboSettingName);
 	nSelectIdx = 0;
-	for (i = 0; i < MAX_PRINTSETTINGARR; ++i) {
+	for (i = 0; i < MAX_PRINTSETTINGARR; ++i)
+	{
 		nItemIdx = Combo_AddString(hwndComboSettingName, m_PrintSettingArr[i].m_szPrintSettingName);
 		Combo_SetItemData(hwndComboSettingName, nItemIdx, i);
 		if (i == m_nCurrentPrintSetting) { nSelectIdx = nItemIdx; }
@@ -547,7 +570,8 @@ int CDlgPrintSetting::GetData(void)
 
 	/* 入力値(数値)のエラーチェックをして正しい値を返す */
 	nWork = DataCheckAndCorrect(IDC_EDIT_FONTHEIGHT, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight);
-	if (nWork != m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight) {
+	if (nWork != m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight)
+	{
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight = nWork;
 		::SetDlgItemInt(GetHwnd(), IDC_EDIT_FONTHEIGHT, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight,
 						FALSE);
@@ -556,18 +580,21 @@ int CDlgPrintSetting::GetData(void)
 		(m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight + 1) / 2;
 
 	nWork = DataCheckAndCorrect(IDC_EDIT_LINESPACE, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintLineSpacing);
-	if (nWork != m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintLineSpacing) {
+	if (nWork != m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintLineSpacing)
+	{
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintLineSpacing = nWork;
 		::SetDlgItemInt(GetHwnd(), IDC_EDIT_LINESPACE, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintLineSpacing,
 						FALSE);
 	}
 	nWork = DataCheckAndCorrect(IDC_EDIT_DANSUU, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDansuu);
-	if (nWork != m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDansuu) {
+	if (nWork != m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDansuu)
+	{
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDansuu = nWork;
 		::SetDlgItemInt(GetHwnd(), IDC_EDIT_DANSUU, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDansuu, FALSE);
 	}
 	nWork = DataCheckAndCorrect(IDC_EDIT_DANSPACE, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDanSpace / 10);
-	if (nWork != m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDanSpace / 10) {
+	if (nWork != m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDanSpace / 10)
+	{
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDanSpace = nWork * 10;
 		::SetDlgItemInt(GetHwnd(), IDC_EDIT_DANSPACE, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDanSpace / 10,
 						FALSE);
@@ -580,10 +607,9 @@ int CDlgPrintSetting::GetData(void)
 
 	// 用紙の向き
 	// 2006.08.14 Moca 用紙方向コンボボックスを廃止し、ボタンを有効化
-	if (IsDlgButtonCheckedBool(GetHwnd(), IDC_RADIO_PORTRAIT)) {
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperOrientation = DMORIENT_PORTRAIT;
-	}
-	else {
+	if (IsDlgButtonCheckedBool(GetHwnd(), IDC_RADIO_PORTRAIT))
+	{ m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperOrientation = DMORIENT_PORTRAIT; } else
+	{
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperOrientation = DMORIENT_LANDSCAPE;
 	}
 
@@ -598,25 +624,29 @@ int CDlgPrintSetting::GetData(void)
 
 	/* 入力値(数値)のエラーチェックをして正しい値を返す */
 	nWork = DataCheckAndCorrect(IDC_EDIT_MARGINTY, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginTY / 10);
-	if (nWork != m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginTY / 10) {
+	if (nWork != m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginTY / 10)
+	{
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginTY = nWork * 10;
 		::SetDlgItemInt(GetHwnd(), IDC_EDIT_MARGINTY, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginTY / 10,
 						FALSE);
 	}
 	nWork = DataCheckAndCorrect(IDC_EDIT_MARGINBY, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginBY / 10);
-	if (nWork != m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginBY / 10) {
+	if (nWork != m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginBY / 10)
+	{
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginBY = nWork * 10;
 		::SetDlgItemInt(GetHwnd(), IDC_EDIT_MARGINBY, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginBY / 10,
 						FALSE);
 	}
 	nWork = DataCheckAndCorrect(IDC_EDIT_MARGINLX, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginLX / 10);
-	if (nWork != m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginLX / 10) {
+	if (nWork != m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginLX / 10)
+	{
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginLX = nWork * 10;
 		::SetDlgItemInt(GetHwnd(), IDC_EDIT_MARGINLX, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginLX / 10,
 						FALSE);
 	}
 	nWork = DataCheckAndCorrect(IDC_EDIT_MARGINRX, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginRX / 10);
-	if (nWork != m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginRX / 10) {
+	if (nWork != m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginRX / 10)
+	{
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginRX = nWork * 10;
 		::SetDlgItemInt(GetHwnd(), IDC_EDIT_MARGINRX, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginRX / 10,
 						FALSE);
@@ -663,15 +693,10 @@ int CDlgPrintSetting::GetData(void)
 					  HEADER_MAX); //	100文字で制限しないと。。。
 
 	// ヘッダフォント
-	if (!IsDlgButtonCheckedBool(GetHwnd(), IDC_CHECK_USE_FONT_HEAD)) {
-		memset(&m_PrintSettingArr[m_nCurrentPrintSetting].m_lfHeader, 0, sizeof(LOGFONT));
-	}
-	// フッタフォント
-	if (!IsDlgButtonCheckedBool(GetHwnd(), IDC_CHECK_USE_FONT_FOOT)) {
-		memset(&m_PrintSettingArr[m_nCurrentPrintSetting].m_lfFooter, 0, sizeof(LOGFONT));
-	}
-
-	return TRUE;
+	if (!IsDlgButtonCheckedBool(GetHwnd(), IDC_CHECK_USE_FONT_HEAD))
+	{ memset(&m_PrintSettingArr[m_nCurrentPrintSetting].m_lfHeader, 0, sizeof(LOGFONT)); } // フッタフォント
+	if (!IsDlgButtonCheckedBool(GetHwnd(), IDC_CHECK_USE_FONT_FOOT))
+	{ memset(&m_PrintSettingArr[m_nCurrentPrintSetting].m_lfFooter, 0, sizeof(LOGFONT)); } return TRUE;
 }
 
 /* 設定のタイプが変わった */
@@ -712,9 +737,11 @@ void CDlgPrintSetting::OnChangeSettingType(BOOL bGetData)
 	/* 用紙サイズ一覧 */
 	hwndCtrl = GetItemHwnd(IDC_COMBO_PAPER);
 	nItemNum = Combo_GetCount(hwndCtrl);
-	for (i = 0; i < nItemNum; ++i) {
+	for (i = 0; i < nItemNum; ++i)
+	{
 		nItemData = Combo_GetItemData(hwndCtrl, i);
-		if (m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperSize == nItemData) {
+		if (m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperSize == nItemData)
+		{
 			Combo_SetCurSel(hwndCtrl, i);
 			break;
 		}
@@ -792,7 +819,8 @@ void CDlgPrintSetting::OnChangeSettingType(BOOL bGetData)
 	return;
 }
 
-const struct {
+const struct
+{
 	int ctrlid;
 	int minval;
 	int maxval;
@@ -813,7 +841,8 @@ void CDlgPrintSetting::OnSpin(int nCtrlId, BOOL bDown)
 	int nCtrlIdEDIT = 0;
 	int nDiff		= 1;
 	int nIdx		= -1;
-	switch (nCtrlId) {
+	switch (nCtrlId)
+	{
 	case IDC_SPIN_FONTHEIGHT: nIdx = 0; break;
 	case IDC_SPIN_LINESPACE:
 		nIdx  = 1;
@@ -826,11 +855,13 @@ void CDlgPrintSetting::OnSpin(int nCtrlId, BOOL bDown)
 	case IDC_SPIN_MARGINLX: nIdx = 6; break;
 	case IDC_SPIN_MARGINRX: nIdx = 7; break;
 	}
-	if (nIdx >= 0) {
+	if (nIdx >= 0)
+	{
 		nCtrlIdEDIT = sDataRange[nIdx].ctrlid;
 		nData		= ::GetDlgItemInt(GetHwnd(), nCtrlIdEDIT, NULL, FALSE);
 		if (bDown) { nData -= nDiff; }
-		else {
+		else
+		{
 			nData += nDiff;
 		}
 		/* 入力値(数値)のエラーチェックをして正しい値を返す */
@@ -843,7 +874,8 @@ void CDlgPrintSetting::OnSpin(int nCtrlId, BOOL bDown)
 int CDlgPrintSetting::DataCheckAndCorrect(int nCtrlId, int nData)
 {
 	int nIdx = -1;
-	switch (nCtrlId) {
+	switch (nCtrlId)
+	{
 	case IDC_EDIT_FONTHEIGHT: nIdx = 0; break;
 	case IDC_EDIT_LINESPACE: nIdx = 1; break;
 	case IDC_EDIT_DANSUU: nIdx = 2; break;
@@ -853,7 +885,8 @@ int CDlgPrintSetting::DataCheckAndCorrect(int nCtrlId, int nData)
 	case IDC_EDIT_MARGINLX: nIdx = 6; break;
 	case IDC_EDIT_MARGINRX: nIdx = 7; break;
 	}
-	if (nIdx >= 0) {
+	if (nIdx >= 0)
+	{
 		if (nData <= sDataRange[nIdx].minval) { nData = sDataRange[nIdx].minval; }
 		if (nData > sDataRange[nIdx].maxval) { nData = sDataRange[nIdx].maxval; }
 	}
@@ -882,7 +915,8 @@ BOOL CDlgPrintSetting::CalcPrintableLineAndColumn()
 	dmDummy.dmPaperSize   = pPS->m_nPrintPaperSize;
 	dmDummy.dmOrientation = pPS->m_nPrintPaperOrientation;
 	/* 用紙の幅、高さ */
-	if (!CPrint::GetPaperSize(&nPaperAllWidth, &nPaperAllHeight, &dmDummy)) {
+	if (!CPrint::GetPaperSize(&nPaperAllWidth, &nPaperAllHeight, &dmDummy))
+	{
 		// 2001.12.21 hor GetPaperSize失敗時はそのまま終了
 		//	nPaperAllWidth = 210 * 10;		/* 用紙幅 */
 		//	nPaperAllHeight = 297 * 10;		/* 用紙高さ */
@@ -905,11 +939,13 @@ BOOL CDlgPrintSetting::CalcPrintableLineAndColumn()
 	::DlgItem_SetText(GetHwnd(), IDC_STATIC_FONTSIZE, szFontPoints);
 
 	// 印字可能領域がない場合は OK を押せなくする 2013.5.10 aroka
-	if (nEnableColumns == 0 || nEnableLines == 0) {
+	if (nEnableColumns == 0 || nEnableLines == 0)
+	{
 		::EnableWindow(GetItemHwnd(IDOK), FALSE);
 		return FALSE;
 	}
-	else {
+	else
+	{
 		::EnableWindow(GetItemHwnd(IDOK), TRUE);
 		return TRUE;
 	}
@@ -937,7 +973,8 @@ void CDlgPrintSetting::SetFontName(int idTxt, int idUse, LOGFONT &lf, int nPoint
 
 	CheckDlgButtonBool(GetHwnd(), idUse, bUseFont);
 	::EnableWindow(GetItemHwnd(idUse), bUseFont);
-	if (bUseFont) {
+	if (bUseFont)
+	{
 		LOGFONT lft;
 		lft			 = lf;
 		lft.lfHeight = m_nFontHeight; // フォントサイズをダイアログに合せる
@@ -946,11 +983,13 @@ void CDlgPrintSetting::SetFontName(int idTxt, int idUse, LOGFONT &lf, int nPoint
 
 		// 論理フォントを作成
 		HFONT hFont = ::CreateFontIndirect(&lft);
-		if (hFont) {
+		if (hFont)
+		{
 			// フォントの設定
 			::SendMessage(GetItemHwnd(idTxt), WM_SETFONT, (WPARAM)hFont, MAKELPARAM(FALSE, 0));
 		}
-		if (m_hFontDlg != hFontOld) {
+		if (m_hFontDlg != hFontOld)
+		{
 			// 古いフォントの破棄
 			::DeleteObject(hFontOld);
 		}
@@ -960,7 +999,8 @@ void CDlgPrintSetting::SetFontName(int idTxt, int idUse, LOGFONT &lf, int nPoint
 		auto_sprintf(szName, nPointSize % 10 ? L"%.32s(%.1fpt/%d.%dmm)" : L"%.32s(%.0fpt/%d.%dmm)", lf.lfFaceName,
 					 double(nPointSize) / 10, nMM / 10, nMM / 10);
 	}
-	else {
+	else
+	{
 		szName[0] = L'\0';
 	}
 	::DlgItem_SetText(GetHwnd(), idTxt, szName);

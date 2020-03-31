@@ -112,7 +112,8 @@ void CRecentImp<T, S>::_Recovery()
 	if (*m_pnUserItemCount < 0) *m_pnUserItemCount = 0;
 	if (*m_pnUserItemCount > m_nArrayCount) *m_pnUserItemCount = m_nArrayCount;
 
-	if (m_pnUserViewCount) {
+	if (m_pnUserViewCount)
+	{
 		if (*m_pnUserViewCount < 0) *m_pnUserViewCount = 0;
 		if (*m_pnUserViewCount > m_nArrayCount) *m_pnUserViewCount = m_nArrayCount;
 	}
@@ -189,7 +190,8 @@ bool CRecentImp<T, S>::AppendItem(ReceiveType pItemData)
 
 	//登録済みか調べる。
 	int nIndex = FindItem(pItemData);
-	if (nIndex >= 0) {
+	if (nIndex >= 0)
+	{
 		CopyItem(GetItemPointer(nIndex), pItemData);
 
 		//先頭に持ってくる。
@@ -198,7 +200,8 @@ bool CRecentImp<T, S>::AppendItem(ReceiveType pItemData)
 	}
 
 	//いっぱいのときは最古の通常アイテムを削除する。
-	if (m_nArrayCount <= *m_pnUserItemCount) {
+	if (m_nArrayCount <= *m_pnUserItemCount)
+	{
 		nIndex = GetOldestItem(*m_pnUserItemCount - 1, false);
 		if (-1 == nIndex) { return false; }
 
@@ -242,7 +245,8 @@ bool CRecentImp<T, S>::EditItemText(int nIndex, LPCWSTR pText)
 	if (!TextToDataType(&data, pText)) { return false; }
 	if (!DataToReceiveType(&receiveData, &data)) { return false; }
 	int findIndex = FindItem(receiveData);
-	if (-1 != findIndex && nIndex != findIndex) {
+	if (-1 != findIndex && nIndex != findIndex)
+	{
 		// 重複不可。ただし同じ場合は大文字小文字の変更かもしれないのでOK
 		return false;
 	}
@@ -297,8 +301,10 @@ bool CRecentImp<T, S>::DeleteItemsNoFavorite()
 
 	bool bDeleted = false;
 	int  i;
-	for (i = *m_pnUserItemCount - 1; 0 <= i; i--) {
-		if (false == IsFavorite(i)) {
+	for (i = *m_pnUserItemCount - 1; 0 <= i; i--)
+	{
+		if (false == IsFavorite(i))
+		{
 			if (DeleteItem(i)) { bDeleted = true; }
 		}
 	}
@@ -346,10 +352,12 @@ bool CRecentImp<T, S>::MoveItem(int nSrcIndex, int nDstIndex)
 	memcpy_raw(&pri, GetItemPointer(nSrcIndex), sizeof(pri));
 	bFavorite = IsFavorite(nSrcIndex);
 
-	if (nSrcIndex < nDstIndex) {
+	if (nSrcIndex < nDstIndex)
+	{
 		for (i = nSrcIndex; i < nDstIndex; i++) { CopyItem(i + 1, i); }
 	}
-	else {
+	else
+	{
 		for (i = nSrcIndex; i > nDstIndex; i--) { CopyItem(i - 1, i); }
 	}
 
@@ -405,7 +413,8 @@ int CRecentImp<T, S>::FindItem(ReceiveType pItemData) const
 	if (!IsAvailable()) return -1;
 	if (!pItemData) return -1;
 
-	for (int i = 0; i < *m_pnUserItemCount; i++) {
+	for (int i = 0; i < *m_pnUserItemCount; i++)
+	{
 		if (CompareItem(GetItemPointer(i), pItemData) == 0) return i;
 	}
 
@@ -424,7 +433,8 @@ int CRecentImp<T, S>::GetOldestItem(int nIndex, bool bFavorite)
 	if (!IsAvailable()) return -1;
 	if (nIndex >= *m_pnUserItemCount) nIndex = *m_pnUserItemCount - 1;
 
-	for (int i = nIndex; i >= 0; i--) {
+	for (int i = nIndex; i >= 0; i--)
+	{
 		if (IsFavorite(i) == bFavorite) return i;
 	}
 
@@ -461,8 +471,10 @@ bool CRecentImp<T, S>::ChangeViewCount(int nViewCount)
 	if (-1 == i) return true; //ないので何もしないで終了
 
 	//表示外アイテムを表示内に移動する。
-	for (; i >= nViewCount; i--) {
-		if (IsFavorite(i)) {
+	for (; i >= nViewCount; i--)
+	{
+		if (IsFavorite(i))
+		{
 			//カレント位置から上に通常アイテムを探す
 			nIndex = GetOldestItem(i - 1, false);
 			if (-1 == nIndex) break; //もう1個もない

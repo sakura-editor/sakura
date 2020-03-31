@@ -27,7 +27,8 @@
 #include "doc/CDocListener.h"
 #include "util/design_template.h"
 
-class CAppMode : public TSingleton<CAppMode>, public CDocListenerEx { //###仮
+class CAppMode : public TSingleton<CAppMode>, public CDocListenerEx
+{ //###仮
 	friend class TSingleton<CAppMode>;
 	CAppMode()
 		: m_bViewMode(false)  // ビューモード

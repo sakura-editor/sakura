@@ -39,7 +39,8 @@
 //
 void CAutoSaveAgent::CheckAutoSave()
 {
-	if (m_cPassiveTimer.CheckAction()) {
+	if (m_cPassiveTimer.CheckAction())
+	{
 		CEditDoc *pcDoc = GetListeningDoc();
 
 		//	上書き保存
@@ -92,9 +93,11 @@ void CPassiveTimer::SetInterval(int m)
 */
 void CPassiveTimer::Enable(bool flag)
 {
-	if (bEnabled != flag) { //	変更があるとき
+	if (bEnabled != flag)
+	{ //	変更があるとき
 		bEnabled = flag;
-		if (flag) { //	enabled
+		if (flag)
+		{ //	enabled
 			Reset();
 		}
 	}

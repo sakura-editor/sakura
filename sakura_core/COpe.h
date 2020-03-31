@@ -18,7 +18,8 @@
 #include "mem/CNativeW.h"
 
 //! アンドゥバッファ用 操作コード
-enum EOpeCode {
+enum EOpeCode
+{
 	OPE_UNKNOWN   = 0, //!< 不明(未使用)
 	OPE_INSERT	= 1, //!< 挿入
 	OPE_DELETE	= 2, //!< 削除
@@ -26,7 +27,8 @@ enum EOpeCode {
 	OPE_MOVECARET = 4, //!< キャレット移動
 };
 
-class CLineData final {
+class CLineData final
+{
 public:
 	CNativeW cmemLine;
 	int		 nSeq;
@@ -59,7 +61,8 @@ typedef std::vector<CLineData> COpeLineData;
 	1オブジェクトが１つの操作を表す。
 */
 // 2007.10.17 kobake 解放漏れを防ぐため、データをポインタではなくインスタンス実体で持つように変更
-class COpe {
+class COpe
+{
 public:
 	COpe(EOpeCode eCode); /* COpeクラス構築 */
 	virtual ~COpe();	  /* COpeクラス消滅 */
@@ -77,7 +80,8 @@ public:
 };
 
 //!削除
-class CDeleteOpe final : public COpe {
+class CDeleteOpe final : public COpe
+{
 public:
 	CDeleteOpe()
 		: COpe(OPE_DELETE)
@@ -92,7 +96,8 @@ public:
 };
 
 //!挿入
-class CInsertOpe final : public COpe {
+class CInsertOpe final : public COpe
+{
 public:
 	CInsertOpe()
 		: COpe(OPE_INSERT)
@@ -105,7 +110,8 @@ public:
 };
 
 //!置換
-class CReplaceOpe final : public COpe {
+class CReplaceOpe final : public COpe
+{
 public:
 	CReplaceOpe()
 		: COpe(OPE_REPLACE)
@@ -122,7 +128,8 @@ public:
 };
 
 //!キャレット移動
-class CMoveCaretOpe final : public COpe {
+class CMoveCaretOpe final : public COpe
+{
 public:
 	CMoveCaretOpe()
 		: COpe(OPE_MOVECARET)

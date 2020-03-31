@@ -26,7 +26,8 @@
 
 #include "view/colors/CColorStrategy.h"
 
-class CColor_Quote : public CColorStrategy {
+class CColor_Quote : public CColorStrategy
+{
 public:
 	CColor_Quote(wchar_t cQuote)
 		: m_cQuote(cQuote)
@@ -67,7 +68,8 @@ protected:
 	int m_nColorTypeIndex;
 };
 
-class CColor_SingleQuote final : public CColor_Quote {
+class CColor_SingleQuote final : public CColor_Quote
+{
 public:
 	CColor_SingleQuote()
 		: CColor_Quote(L'\'')
@@ -76,7 +78,8 @@ public:
 	EColorIndexType GetStrategyColor() const override { return COLORIDX_SSTRING; }
 };
 
-class CColor_DoubleQuote final : public CColor_Quote {
+class CColor_DoubleQuote final : public CColor_Quote
+{
 public:
 	CColor_DoubleQuote()
 		: CColor_Quote(L'"')

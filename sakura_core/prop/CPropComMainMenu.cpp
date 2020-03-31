@@ -84,7 +84,8 @@ static const DWORD p_helpids[] = {IDC_COMBO_FUNCKIND,
 
 // 内部使用変数
 // 機能格納(Work)
-struct SMainMenuWork {
+struct SMainMenuWork
+{
 	wstring		  m_sName;   // 名前
 	EFunctionCode m_nFunc;   // Function
 	WCHAR		  m_sKey[2]; // アクセスキー
@@ -131,7 +132,8 @@ static LRESULT CALLBACK TreeViewProc(HWND   hwndTree, // handle to dialog box
 	WCHAR		   cKey;
 	SMainMenuWork *pFuncWk; // 機能
 
-	switch (uMsg) {
+	switch (uMsg)
+	{
 	case WM_GETDLGCODE:
 		MSG *pMsg;
 		if (lParam == 0) { break; }
@@ -141,7 +143,8 @@ static LRESULT CALLBACK TreeViewProc(HWND   hwndTree, // handle to dialog box
 	case WM_KEYDOWN:
 		htiItem = TreeView_GetSelection(hwndTree);
 		cKey	= (WCHAR)MapVirtualKey(wParam, 2);
-		if (cKey > ' ') {
+		if (cKey > ' ')
+		{
 			// アクセスキー設定
 			tvi.mask  = TVIF_HANDLE | TVIF_PARAM;
 			tvi.hItem = htiItem;
@@ -157,7 +160,8 @@ static LRESULT CALLBACK TreeViewProc(HWND   hwndTree, // handle to dialog box
 			return 0;
 		}
 
-		switch (wParam) {
+		switch (wParam)
+		{
 		case VK_BACK:
 		case VK_DELETE: //	DELキーが押されたらダイアログボックスにメッセージを送信
 			::SendMessage(m_hwndDlg, WM_COMMAND, IDC_BUTTON_DELETE, (LPARAM)::GetDlgItem(m_hwndDlg, IDC_BUTTON_DELETE));
@@ -179,7 +183,8 @@ static LRESULT CALLBACK WindowProcEdit(HWND   hwndEdit, // handle to dialog box
 									   LPARAM lParam	// second message parameter
 )
 {
-	switch (uMsg) {
+	switch (uMsg)
+	{
 	case WM_GETDLGCODE: return DLGC_WANTALLKEYS;
 	}
 	return CallWindowProc(m_wpEdit, hwndEdit, uMsg, wParam, lParam);
@@ -192,14 +197,16 @@ static void SetDlgItemsEnableState(HWND hwndDlg, HWND hwndTreeRes, HWND hwndComb
 	int		  nIdxFIdx = Combo_GetCurSel(hwndComboFuncKind);
 	int		  nIdxFunc = List_GetCurSel(hwndListFunc);
 	// i = List_GetCount( hwndTreeRes );
-	if (nIdxMenu == NULL) {
+	if (nIdxMenu == NULL)
+	{
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_DELETE), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_UP), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_DOWN), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_RIGHT), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_LEFT), FALSE);
 	}
-	else {
+	else
+	{
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_DELETE), TRUE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_UP), NULL != TreeView_GetPrevSibling(hwndTreeRes, nIdxMenu));
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_DOWN), NULL != TreeView_GetNextSibling(hwndTreeRes, nIdxMenu));
@@ -208,12 +215,14 @@ static void SetDlgItemsEnableState(HWND hwndDlg, HWND hwndTreeRes, HWND hwndComb
 	}
 	if (LB_ERR == nIdxFunc
 		|| (CB_ERR != nIdxFIdx && LB_ERR != nIdxFunc
-			&& (cLookup.Pos2FuncCode(nIdxFIdx, nIdxFunc) == 0 && nIdxFIdx != nSpecialFuncsNum))) {
+			&& (cLookup.Pos2FuncCode(nIdxFIdx, nIdxFunc) == 0 && nIdxFIdx != nSpecialFuncsNum)))
+	{
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_INSERT), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_INSERT_A), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_ADD), FALSE);
 	}
-	else {
+	else
+	{
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_INSERT), NULL != nIdxMenu);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_INSERT_A), NULL != nIdxMenu);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_ADD), TRUE);
@@ -258,7 +267,8 @@ INT_PTR CPropMainMenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 	static bool bInMove;
 	bool		bIsNode;
 
-	switch (uMsg) {
+	switch (uMsg)
+	{
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 Menu */
 		SetData(hwndDlg);
@@ -288,7 +298,8 @@ INT_PTR CPropMainMenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		pNMHDR = (NMHDR *)lParam;
 		ptdi   = (TV_DISPINFO *)lParam;
 
-		switch (pNMHDR->code) {
+		switch (pNMHDR->code)
+		{
 		case PSN_HELP: OnHelp(hwndDlg, IDD_PROP_MAINMENU); return TRUE;
 		case PSN_KILLACTIVE:
 			/* ダイアログデータの取得 Menu */
@@ -300,45 +311,54 @@ INT_PTR CPropMainMenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 			// 表示を更新する（マクロ設定画面でのマクロ名変更を反映）
 			nIdxFIdx = Combo_GetCurSel(hwndComboFunkKind);
 			nIdxFunc = List_GetCurSel(hwndListFunk);
-			if (nIdxFIdx != CB_ERR) {
+			if (nIdxFIdx != CB_ERR)
+			{
 				::SendMessage(hwndDlg, WM_COMMAND, MAKEWPARAM(IDC_COMBO_FUNCKIND, CBN_SELCHANGE),
 							  (LPARAM)hwndComboFunkKind);
 				if (nIdxFunc != LB_ERR) { List_SetCurSel(hwndListFunk, nIdxFunc); }
 			}
 			return TRUE;
 		case TVN_BEGINLABELEDIT: //	アイテムの編集開始
-			if (pNMHDR->hwndFrom == hwndTreeRes) {
+			if (pNMHDR->hwndFrom == hwndTreeRes)
+			{
 				HWND hEdit = TreeView_GetEditControl(hwndTreeRes);
-				if (msMenu[ptdi->item.lParam].m_bIsNode) {
+				if (msMenu[ptdi->item.lParam].m_bIsNode)
+				{
 					// ノードのみ有効
 					SetWindowText(hEdit, msMenu[ptdi->item.lParam].m_sName.c_str());
 					EditCtl_LimitText(hEdit, MAX_MAIN_MENU_NAME_LEN);
 					// 編集時のメッセージ処理
 					m_wpEdit = (WNDPROC)SetWindowLongPtr(hEdit, GWLP_WNDPROC, (LONG_PTR)WindowProcEdit);
 				}
-				else {
+				else
+				{
 					// ノード以外編集不可
 					SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, TRUE);
 				}
 			}
 			return TRUE;
 		case TVN_ENDLABELEDIT: //	アイテムの編集が終了
-			if (pNMHDR->hwndFrom == hwndTreeRes && msMenu[ptdi->item.lParam].m_bIsNode) {
+			if (pNMHDR->hwndFrom == hwndTreeRes && msMenu[ptdi->item.lParam].m_bIsNode)
+			{
 				// ノード有効
 				pFuncWk					= &msMenu[ptdi->item.lParam];
 				std::wstring strNameOld = pFuncWk->m_sName;
-				if (ptdi->item.pszText == NULL) {
+				if (ptdi->item.pszText == NULL)
+				{
 					// Esc
 					//	何も設定しない（元のまま）
 				}
-				else if (wcscmp(ptdi->item.pszText, L"") == 0) {
+				else if (wcscmp(ptdi->item.pszText, L"") == 0)
+				{
 					// 空
 					pFuncWk->m_sName = LS(STR_PROPCOMMAINMENU_EDIT);
 				}
-				else {
+				else
+				{
 					pFuncWk->m_sName = ptdi->item.pszText;
 				}
-				if (strNameOld != pFuncWk->m_sName) {
+				if (strNameOld != pFuncWk->m_sName)
+				{
 					// ラベルを編集したらリソースからの文字列取得をやめる 2012.10.14 syat 各国語対応
 					pFuncWk->m_nFunc = F_NODE;
 				}
@@ -352,7 +372,8 @@ INT_PTR CPropMainMenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 			return TRUE;
 		case TVN_DELETEITEM:
 			if (!bInMove && !msMenu.empty() && pNMHDR->hwndFrom == hwndTreeRes
-				&& (htiItem = TreeView_GetSelection(hwndTreeRes)) != NULL) {
+				&& (htiItem = TreeView_GetSelection(hwndTreeRes)) != NULL)
+			{
 				//付属情報を削除
 				tvi.mask  = TVIF_HANDLE | TVIF_PARAM;
 				tvi.hItem = htiItem;
@@ -362,21 +383,21 @@ INT_PTR CPropMainMenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 			break;
 		case NM_DBLCLK:
 			// ダブルクリック時の処理
-			if (pNMHDR->hwndFrom == hwndTreeRes) {
+			if (pNMHDR->hwndFrom == hwndTreeRes)
+			{
 				htiItem = TreeView_GetSelection(hwndTreeRes);
 				if (htiItem == NULL) { break; }
 				tvi.mask  = TVIF_HANDLE | TVIF_PARAM;
 				tvi.hItem = htiItem;
 				if (!TreeView_GetItem(hwndTreeRes, &tvi)) { break; }
 				pFuncWk = &msMenu[tvi.lParam];
-				if (pFuncWk->m_nFunc != F_SEPARATOR) {
+				if (pFuncWk->m_nFunc != F_SEPARATOR)
+				{
 					auto_sprintf(szKey, L"%ls", pFuncWk->m_sKey);
 
 					if (!cDlgInput1.DoModal(G_AppInstance(), hwndDlg, LS(STR_PROPCOMMAINMENU_ACCKEY1),
-											LS(STR_PROPCOMMAINMENU_ACCKEY2), 1, szKey)) {
-						return TRUE;
-					}
-					auto_sprintf(pFuncWk->m_sKey, L"%s", szKey);
+											LS(STR_PROPCOMMAINMENU_ACCKEY2), 1, szKey))
+					{ return TRUE; } auto_sprintf(pFuncWk->m_sKey, L"%s", szKey);
 					pFuncWk->m_bDupErr = false;
 
 					tvi.mask	= TVIF_HANDLE | TVIF_TEXT | TVIF_PARAM;
@@ -393,19 +414,21 @@ INT_PTR CPropMainMenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		wID			= LOWORD(wParam); /* 項目ID､ コントロールID､ またはアクセラレータID */
 		hwndCtl		= (HWND)lParam;   /* コントロールのハンドル */
 
-		if (hwndComboFunkKind == hwndCtl) {
-			switch (wNotifyCode) {
+		if (hwndComboFunkKind == hwndCtl)
+		{
+			switch (wNotifyCode)
+			{
 			case CBN_SELCHANGE:
 				nIdxFIdx = Combo_GetCurSel(hwndComboFunkKind);
 
-				if (nIdxFIdx == nSpecialFuncsNum) {
+				if (nIdxFIdx == nSpecialFuncsNum)
+				{
 					// 機能一覧に特殊機能をセット
 					List_ResetContent(hwndListFunk);
-					for (i = 0; i < nsFuncCode::nFuncList_Special_Num; i++) {
-						List_AddString(hwndListFunk, LS(nsFuncCode::pnFuncList_Special[i]));
-					}
-				}
-				else {
+					for (i = 0; i < nsFuncCode::nFuncList_Special_Num; i++)
+					{ List_AddString(hwndListFunk, LS(nsFuncCode::pnFuncList_Special[i])); } }
+				else
+				{
 					/* 機能一覧に文字列をセット（リストボックス）*/
 					m_cLookup.SetListItem(hwndListFunk, nIdxFIdx);
 				}
@@ -413,11 +436,14 @@ INT_PTR CPropMainMenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 				return TRUE;
 			}
 		}
-		else {
-			switch (wNotifyCode) {
+		else
+		{
+			switch (wNotifyCode)
+			{
 			/* ボタン／チェックボックスがクリックされた */
 			case BN_CLICKED:
-				switch (wID) {
+				switch (wID)
+				{
 				case IDC_BUTTON_IMPORT: /* インポート */
 					/* カスタムメニュー設定をインポートする */
 					Import(hwndDlg);
@@ -430,10 +456,8 @@ INT_PTR CPropMainMenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 				case IDC_BUTTON_CLEAR:
 					if (IDCANCEL
 						== ::MYMESSAGEBOX(hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
-										  LS(STR_PROPCOMMAINMENU_CLEAR))) {
-						return TRUE;
-					}
-					// 内部データ初期化
+										  LS(STR_PROPCOMMAINMENU_CLEAR)))
+					{ return TRUE; } // 内部データ初期化
 					msMenu.clear();
 					nMenuCnt = 0;
 					// TreeView初期化
@@ -443,10 +467,8 @@ INT_PTR CPropMainMenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 				case IDC_BUTTON_INITIALIZE:
 					if (IDCANCEL
 						== ::MYMESSAGEBOX(hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
-										  LS(STR_PROPCOMMAINMENU_INIT))) {
-						return TRUE;
-					}
-					// 初期状態に戻す
+										  LS(STR_PROPCOMMAINMENU_INIT)))
+					{ return TRUE; } // 初期状態に戻す
 					{
 						CDataProfile			  cProfile;
 						std::vector<std::wstring> data;
@@ -461,15 +483,15 @@ INT_PTR CPropMainMenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 
 				case IDC_BUTTON_DELETE:
 					htiItem = TreeView_GetSelection(hwndTreeRes);
-					if (htiItem != NULL) {
+					if (htiItem != NULL)
+					{
 						if (TreeView_GetChild(hwndTreeRes, htiItem) != NULL
 							&& IDCANCEL
 								   == ::MYMESSAGEBOX(hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
-													 LS(STR_PROPCOMMAINMENU_DEL))) {
-							return TRUE;
-						}
-						htiTemp = TreeView_GetNextSibling(hwndTreeRes, htiItem);
-						if (htiTemp == NULL) {
+													 LS(STR_PROPCOMMAINMENU_DEL)))
+						{ return TRUE; } htiTemp = TreeView_GetNextSibling(hwndTreeRes, htiItem);
+						if (htiTemp == NULL)
+						{
 							// 末尾ならば、前を取る
 							htiTemp = TreeView_GetPrevSibling(hwndTreeRes, htiItem);
 						}
@@ -485,7 +507,8 @@ INT_PTR CPropMainMenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 				case IDC_BUTTON_ADD:			 // 追加
 					eFuncCode = F_INVALID;
 					bIsNode   = false;
-					switch (wID) {
+					switch (wID)
+					{
 					case IDC_BUTTON_INSERT_NODE: // ノード挿入
 						eFuncCode = F_NODE;
 						bIsNode   = true;
@@ -503,16 +526,19 @@ INT_PTR CPropMainMenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 						// Function 取得
 						if (CB_ERR == (nIdxFIdx = Combo_GetCurSel(hwndComboFunkKind))) { return FALSE; }
 						if (LB_ERR == (nIdxFunc = List_GetCurSel(hwndListFunk))) { return FALSE; }
-						if (nIdxFIdx == nSpecialFuncsNum) {
+						if (nIdxFIdx == nSpecialFuncsNum)
+						{
 							// 特殊機能
 							wcscpy(szLabel, LS(nsFuncCode::pnFuncList_Special[nIdxFunc]));
 							eFuncCode = nsFuncCode::pnFuncList_Special[nIdxFunc];
 						}
-						else if (m_cLookup.Pos2FuncCode(nIdxFIdx, nIdxFunc) != 0) {
+						else if (m_cLookup.Pos2FuncCode(nIdxFIdx, nIdxFunc) != 0)
+						{
 							List_GetText(hwndListFunk, nIdxFunc, szLabel);
 							eFuncCode = m_cLookup.Pos2FuncCode(nIdxFIdx, nIdxFunc);
 						}
-						else {
+						else
+						{
 							wcscpy(szLabel, L"?");
 							eFuncCode = F_SEPARATOR;
 						}
@@ -521,84 +547,104 @@ INT_PTR CPropMainMenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 
 					// 挿入位置検索
 					htiTemp = TreeView_GetSelection(hwndTreeRes);
-					if (htiTemp == NULL) {
+					if (htiTemp == NULL)
+					{
 						// 取れなかったらRootの末尾
 						htiParent = TVI_ROOT;
 						htiTemp   = TVI_LAST;
 					}
-					else {
-						if (wID == IDC_BUTTON_ADD) {
+					else
+					{
+						if (wID == IDC_BUTTON_ADD)
+						{
 							// 追加
 							tvi.mask  = TVIF_HANDLE | TVIF_PARAM;
 							tvi.hItem = htiTemp;
-							if (!TreeView_GetItem(hwndTreeRes, &tvi)) {
+							if (!TreeView_GetItem(hwndTreeRes, &tvi))
+							{
 								// 取れなかったらRootの末尾
 								htiParent = TVI_ROOT;
 								htiTemp   = TVI_LAST;
 							}
-							else {
-								if (msMenu[tvi.lParam].m_bIsNode) {
+							else
+							{
+								if (msMenu[tvi.lParam].m_bIsNode)
+								{
 									// ノード
 									htiParent = htiTemp;
 									htiTemp   = TVI_LAST;
 								}
-								else {
+								else
+								{
 									// 子を付けられないので親に付ける（選択アイテムの下に付く）
 									htiParent = TreeView_GetParent(hwndTreeRes, htiTemp);
 									htiTemp   = TVI_LAST;
-									if (htiParent == NULL) {
+									if (htiParent == NULL)
+									{
 										// 取れなかったらRootの末尾
 										htiParent = TVI_ROOT;
 									}
 								}
 							}
 						}
-						else if (wID == IDC_BUTTON_INSERT_NODE || wID == IDC_BUTTON_INSERT_A) {
+						else if (wID == IDC_BUTTON_INSERT_NODE || wID == IDC_BUTTON_INSERT_A)
+						{
 							// ノード挿入、挿入(下)
 							// 追加先を探る
 							htiTemp = TreeView_GetSelection(hwndTreeRes);
-							if (htiTemp == NULL) {
+							if (htiTemp == NULL)
+							{
 								htiParent = TVI_ROOT;
 								htiTemp   = TVI_LAST;
 							}
-							else {
+							else
+							{
 								tvi.mask  = TVIF_HANDLE | TVIF_PARAM;
 								tvi.hItem = htiTemp;
-								if (TreeView_GetItem(hwndTreeRes, &tvi)) {
-									if (msMenu[tvi.lParam].m_bIsNode) {
+								if (TreeView_GetItem(hwndTreeRes, &tvi))
+								{
+									if (msMenu[tvi.lParam].m_bIsNode)
+									{
 										// ノード
 										htiParent = htiTemp;
 										htiTemp   = TVI_FIRST;
 									}
-									else {
+									else
+									{
 										// 子を付けられないので親に付ける（選択アイテムの下に付く）
 										htiParent = TreeView_GetParent(hwndTreeRes, htiTemp);
-										if (htiParent == NULL) {
+										if (htiParent == NULL)
+										{
 											// 取れなかったらRoot
 											htiParent = TVI_ROOT;
 										}
 									}
 								}
-								else {
+								else
+								{
 									// 取れなかったらRoot
 									htiParent = TVI_ROOT;
 									htiTemp   = TVI_LAST;
 								}
 							}
 						}
-						else {
+						else
+						{
 							// 挿入(上)、区切線
 							// 挿入先を探る
 							htiParent = TreeView_GetParent(hwndTreeRes, htiTemp);
-							if (htiParent == NULL) {
+							if (htiParent == NULL)
+							{
 								// 取れなかったらRootのトップ
 								htiParent = TVI_ROOT;
 								htiTemp   = TVI_FIRST;
 							}
-							else {
+							else
+							{
 								// 一つ手前
 								htiTemp = TreeView_GetPrevSibling(hwndTreeRes, htiTemp);
-								if (htiTemp == NULL) {
+								if (htiTemp == NULL)
+								{
 									// 取れなかったら親の最初
 									htiTemp = TVI_FIRST;
 								}
@@ -625,7 +671,8 @@ INT_PTR CPropMainMenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 					TreeView_SelectItem(hwndTreeRes, htiItem);
 
 					// リストを1つ進める
-					switch (wID) {
+					switch (wID)
+					{
 					case IDC_BUTTON_INSERT:   // 挿入
 					case IDC_BUTTON_INSERT_A: // 挿入
 					case IDC_BUTTON_ADD:	  // 追加
@@ -638,7 +685,8 @@ INT_PTR CPropMainMenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 					htiItem = TreeView_GetSelection(hwndTreeRes);
 					if (htiItem == NULL) { break; }
 					htiTemp = TreeView_GetPrevSibling(hwndTreeRes, htiItem);
-					if (htiTemp == NULL) {
+					if (htiTemp == NULL)
+					{
 						// そのエリアで最初
 						break;
 					}
@@ -656,7 +704,8 @@ INT_PTR CPropMainMenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 					htiItem = TreeView_GetSelection(hwndTreeRes);
 					if (htiItem == NULL) { break; }
 					htiTemp = TreeView_GetNextSibling(hwndTreeRes, htiItem);
-					if (htiTemp == NULL) {
+					if (htiTemp == NULL)
+					{
 						// そのエリアで最後
 						break;
 					}
@@ -678,7 +727,8 @@ INT_PTR CPropMainMenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 					htiItem = TreeView_GetSelection(hwndTreeRes);
 					if (htiItem == NULL) { break; }
 					htiTemp = TreeView_GetPrevSibling(hwndTreeRes, htiItem);
-					if (htiTemp == NULL) {
+					if (htiTemp == NULL)
+					{
 						// そのエリアで最初
 						break;
 					}
@@ -686,11 +736,13 @@ INT_PTR CPropMainMenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 					tvi.mask  = TVIF_HANDLE | TVIF_PARAM | TVIF_CHILDREN;
 					tvi.hItem = htiTemp;
 					i		  = TreeView_GetItem(hwndTreeRes, &tvi);
-					if (!TreeView_GetItem(hwndTreeRes, &tvi)) {
+					if (!TreeView_GetItem(hwndTreeRes, &tvi))
+					{
 						// エラー
 						break;
 					}
-					if (tvi.cChildren) {
+					if (tvi.cChildren)
+					{
 						// 直前がノード
 						HTREEITEM htiTemp2;
 						// コピー
@@ -704,7 +756,8 @@ INT_PTR CPropMainMenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 						// 選択
 						TreeView_SelectItem(hwndTreeRes, htiTemp2);
 					}
-					else {
+					else
+					{
 						// ノードが無い
 						break;
 					}
@@ -714,7 +767,8 @@ INT_PTR CPropMainMenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 					htiItem = TreeView_GetSelection(hwndTreeRes);
 					if (htiItem == NULL) { break; }
 					htiParent = TreeView_GetParent(hwndTreeRes, htiItem);
-					if (htiParent == NULL) {
+					if (htiParent == NULL)
+					{
 						// Root
 						break;
 					}
@@ -734,10 +788,12 @@ INT_PTR CPropMainMenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 				{
 					wstring sErrMsg;
 					if (Check_MainMenu(hwndTreeRes, sErrMsg)) { InfoMessage(hwndDlg, LS(STR_PROPCOMMAINMENU_OK)); }
-					else {
+					else
+					{
 						WarningMessage(hwndDlg, sErrMsg.c_str());
 					}
-				} break;
+				}
+				break;
 
 				case IDC_BUTTON_EXPAND: // ツリー全開
 					TreeView_ExpandAll(hwndTreeRes, true);
@@ -766,7 +822,8 @@ INT_PTR CPropMainMenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		nMenuCnt = 0;
 		break;
 
-	case WM_HELP: {
+	case WM_HELP:
+	{
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids);
 	}
@@ -782,8 +839,10 @@ INT_PTR CPropMainMenu::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 static wstring SupplementAmpersand(wstring sLavel)
 {
 	size_t nPos = 0;
-	while ((nPos = sLavel.find(L"&", nPos)) != wstring::npos) {
-		if (sLavel[nPos + 1] != L'&') {
+	while ((nPos = sLavel.find(L"&", nPos)) != wstring::npos)
+	{
+		if (sLavel[nPos + 1] != L'&')
+		{
 			// &&でない
 			sLavel.replace(nPos, 1, L"&&");
 		}
@@ -796,8 +855,10 @@ static wstring SupplementAmpersand(wstring sLavel)
 static wstring RemoveAmpersand(wstring sLavel)
 {
 	size_t nPos = 0;
-	while ((nPos = sLavel.find(L"&", nPos)) != wstring::npos) {
-		if (sLavel[nPos + 1] == L'&') {
+	while ((nPos = sLavel.find(L"&", nPos)) != wstring::npos)
+	{
+		if (sLavel[nPos + 1] == L'&')
+		{
 			// &&
 			sLavel.replace(nPos, 1, L"");
 		}
@@ -848,18 +909,23 @@ void CPropMainMenu::SetData(HWND hwndDlg)
 	nCurLevel = 0;
 	htiParent = TVI_ROOT;
 	htiItem   = TreeView_GetRoot(hwndTreeRes);
-	for (i = 0; i < m_Common.m_sMainMenu.m_nMainMenuNum; i++) {
+	for (i = 0; i < m_Common.m_sMainMenu.m_nMainMenuNum; i++)
+	{
 		pcFunc = &pcMenuTBL[i];
-		if (pcFunc->m_nLevel < nCurLevel) {
+		if (pcFunc->m_nLevel < nCurLevel)
+		{
 			// Level Up
-			for (; pcFunc->m_nLevel < nCurLevel; nCurLevel--) {
+			for (; pcFunc->m_nLevel < nCurLevel; nCurLevel--)
+			{
 				htiParent = (htiParent == TVI_ROOT) ? TVI_ROOT : TreeView_GetParent(hwndTreeRes, htiParent);
 				if (htiParent == NULL) htiParent = TVI_ROOT;
 			}
 		}
-		else if (pcFunc->m_nLevel > nCurLevel) {
+		else if (pcFunc->m_nLevel > nCurLevel)
+		{
 			// Level Down
-			for (htiParent = htiItem, nCurLevel++; pcFunc->m_nLevel < nCurLevel; nCurLevel++) {
+			for (htiParent = htiItem, nCurLevel++; pcFunc->m_nLevel < nCurLevel; nCurLevel++)
+			{
 				// 実行されることは無いはず（データが正常ならば）
 				htiParent = TreeView_GetChild(hwndTreeRes, htiItem);
 				if (htiParent == NULL) htiParent = htiItem;
@@ -870,7 +936,8 @@ void CPropMainMenu::SetData(HWND hwndDlg)
 		pFuncWk			   = &msMenu[nMenuCnt];
 		pFuncWk->m_nFunc   = pcFunc->m_nFunc;
 		pFuncWk->m_bIsNode = false;
-		switch (pcFunc->m_nType) {
+		switch (pcFunc->m_nType)
+		{
 		case T_LEAF:
 			m_cLookup.Funccode2Name(pcFunc->m_nFunc, szLabel, MAX_LABEL_CCH);
 			pFuncWk->m_sName = szLabel;
@@ -884,7 +951,8 @@ void CPropMainMenu::SetData(HWND hwndDlg)
 			pFuncWk->m_bIsNode = true;
 			// ラベル編集後のノードはiniから、それ以外はリソースからラベルを取得 2012.10.14 syat 各国語対応
 			if (pFuncWk->m_nFunc == F_NODE) { pFuncWk->m_sName = RemoveAmpersand(pcFunc->m_sName); }
-			else {
+			else
+			{
 				pFuncWk->m_sName = LS(pFuncWk->m_nFunc);
 			}
 			break;
@@ -937,32 +1005,38 @@ bool CPropMainMenu::GetDataTree(HWND hwndTree, HTREEITEM htiTrg, int nLevel)
 	SMainMenuWork *pFuncWk; // 機能(work)
 	int			   nTopCount = 0;
 
-	if (nLevel == 0) {
+	if (nLevel == 0)
+	{
 		// 共通設定フラグ
 		bOptionOk = false;
 	}
 
-	for (s = htiTrg; s != NULL; s = TreeView_GetNextSibling(hwndTree, s)) {
-		if (m_Common.m_sMainMenu.m_nMainMenuNum >= MAX_MAINMENU) {
+	for (s = htiTrg; s != NULL; s = TreeView_GetNextSibling(hwndTree, s))
+	{
+		if (m_Common.m_sMainMenu.m_nMainMenuNum >= MAX_MAINMENU)
+		{
 			// 登録数 over
 			return false;
 		}
 		tvi.mask  = TVIF_HANDLE | TVIF_PARAM | TVIF_CHILDREN;
 		tvi.hItem = s;
-		if (!TreeView_GetItem(hwndTree, &tvi)) {
+		if (!TreeView_GetItem(hwndTree, &tvi))
+		{
 			// Error
 			return false;
 		}
 		pFuncWk = &msMenu[tvi.lParam];
 
-		if (nLevel == 0) {
+		if (nLevel == 0)
+		{
 			if (nTopCount >= MAX_MAINMENU_TOP) { continue; }
 			// Top Levelの記録
 			m_Common.m_sMainMenu.m_nMenuTopIdx[nTopCount++] = m_Common.m_sMainMenu.m_nMainMenuNum;
 		}
 		pcFunc = &pcMenuTBL[m_Common.m_sMainMenu.m_nMainMenuNum++];
 
-		switch (pFuncWk->m_nFunc) {
+		switch (pFuncWk->m_nFunc)
+		{
 		case F_NODE:
 			pcFunc->m_nType = T_NODE;
 			wcscpy_s(pcFunc->m_sName, MAX_MAIN_MENU_NAME_LEN + 1, SupplementAmpersand(pFuncWk->m_sName).c_str());
@@ -972,18 +1046,21 @@ bool CPropMainMenu::GetDataTree(HWND hwndTree, HTREEITEM htiTrg, int nLevel)
 			pcFunc->m_sName[0] = L'\0';
 			break;
 		default:
-			if (pFuncWk->m_bIsNode) {
+			if (pFuncWk->m_bIsNode)
+			{
 				// コマンド定義外のIDの場合、ノードとして扱う 2012.10.14 syat 各国語対応
 				pcFunc->m_nType	= T_NODE;
 				pcFunc->m_sName[0] = L'\0'; // 名前は、リソースから取得するため空白に設定
 				break;
 			}
-			if (pFuncWk->m_nFunc >= F_SPECIAL_FIRST && pFuncWk->m_nFunc <= F_SPECIAL_LAST) {
+			if (pFuncWk->m_nFunc >= F_SPECIAL_FIRST && pFuncWk->m_nFunc <= F_SPECIAL_LAST)
+			{
 				pcFunc->m_nType = T_SPECIAL;
 				// 2014.05.04 nLevel == 0 のときも"名前なし"にする
 				pcFunc->m_sName[0] = L'\0';
 			}
-			else {
+			else
+			{
 				if (pFuncWk->m_nFunc == F_OPTION) { bOptionOk = true; }
 				pcFunc->m_nType	= T_LEAF;
 				pcFunc->m_sName[0] = L'\0';
@@ -994,17 +1071,21 @@ bool CPropMainMenu::GetDataTree(HWND hwndTree, HTREEITEM htiTrg, int nLevel)
 		wcscpy(pcFunc->m_sKey, pFuncWk->m_sKey);
 		pcFunc->m_nLevel = nLevel;
 
-		if (tvi.cChildren) {
+		if (tvi.cChildren)
+		{
 			ts = TreeView_GetChild(hwndTree, s); //	子の取得
-			if (ts != NULL) {
+			if (ts != NULL)
+			{
 				if (!GetDataTree(hwndTree, ts, nLevel + 1)) { return false; }
 			}
 		}
 	}
 
-	if (nLevel == 0 && !bOptionOk) {
+	if (nLevel == 0 && !bOptionOk)
+	{
 		// 共通設定が無い
-		if (nTopCount < MAX_MAINMENU_TOP && m_Common.m_sMainMenu.m_nMainMenuNum + 1 < MAX_MAINMENU) {
+		if (nTopCount < MAX_MAINMENU_TOP && m_Common.m_sMainMenu.m_nMainMenuNum + 1 < MAX_MAINMENU)
+		{
 			// Top Levelの記録
 			m_Common.m_sMainMenu.m_nMenuTopIdx[nTopCount++] = m_Common.m_sMainMenu.m_nMainMenuNum;
 			// Top Levelの追加（ダミー）
@@ -1015,11 +1096,13 @@ bool CPropMainMenu::GetDataTree(HWND hwndTree, HTREEITEM htiTrg, int nLevel)
 			pcFunc->m_sKey[0] = L'\0';
 			pcFunc->m_nLevel  = nLevel++;
 		}
-		else {
+		else
+		{
 			// 末尾に追加を指定
 			nLevel = 1;
 		}
-		if (m_Common.m_sMainMenu.m_nMainMenuNum < MAX_MAINMENU) {
+		if (m_Common.m_sMainMenu.m_nMainMenuNum < MAX_MAINMENU)
+		{
 			// 共通設定
 			pcFunc			   = &pcMenuTBL[m_Common.m_sMainMenu.m_nMainMenuNum++];
 			pcFunc->m_nType	= T_LEAF;
@@ -1028,7 +1111,8 @@ bool CPropMainMenu::GetDataTree(HWND hwndTree, HTREEITEM htiTrg, int nLevel)
 			pcFunc->m_sKey[0]  = L'\0';
 			pcFunc->m_nLevel   = nLevel;
 		}
-		else {
+		else
+		{
 			// 登録数 over
 			return false;
 		}
@@ -1043,7 +1127,8 @@ void CPropMainMenu::Import(HWND hwndDlg)
 	CImpExpMainMenu cImpExp(m_Common);
 
 	// インポート
-	if (!cImpExp.ImportUI(G_AppInstance(), hwndDlg)) {
+	if (!cImpExp.ImportUI(G_AppInstance(), hwndDlg))
+	{
 		// インポートをしていない
 		return;
 	}
@@ -1058,7 +1143,8 @@ void CPropMainMenu::Export(HWND hwndDlg)
 	GetData(hwndDlg);
 
 	// エクスポート
-	if (!cImpExp.ExportUI(G_AppInstance(), hwndDlg)) {
+	if (!cImpExp.ExportUI(G_AppInstance(), hwndDlg))
+	{
 		// エクスポートをしていない
 		return;
 	}
@@ -1078,22 +1164,26 @@ static HTREEITEM TreeCopy(HWND hwndTree, HTREEITEM dst, HTREEITEM src, bool fChi
 	const int		MAX_LABEL_CCH = 256 + 10;
 	WCHAR			szLabel[MAX_LABEL_CCH];
 
-	for (s = src; s != NULL; s = fOnryOne ? NULL : TreeView_GetNextSibling(hwndTree, s)) {
+	for (s = src; s != NULL; s = fOnryOne ? NULL : TreeView_GetNextSibling(hwndTree, s))
+	{
 		tvi.mask	   = TVIF_HANDLE | TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
 		tvi.hItem	  = s;
 		tvi.pszText	= szLabel;
 		tvi.cchTextMax = MAX_LABEL_CCH;
-		if (!TreeView_GetItem(hwndTree, &tvi)) {
+		if (!TreeView_GetItem(hwndTree, &tvi))
+		{
 			// Error
 			break;
 		}
 		tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
-		if (fChild || n != 0) {
+		if (fChild || n != 0)
+		{
 			// dstの子供として作成
 			tvis.hParent	  = dst;
 			tvis.hInsertAfter = TVI_LAST;
 		}
-		else {
+		else
+		{
 			//	dstの兄弟として作成
 			tvis.hParent	  = TreeView_GetParent(hwndTree, dst);
 			tvis.hInsertAfter = dst;
@@ -1103,7 +1193,8 @@ static HTREEITEM TreeCopy(HWND hwndTree, HTREEITEM dst, HTREEITEM src, bool fChi
 		tvis.item.cChildren = tvi.cChildren;
 		td					= TreeView_InsertItem(hwndTree, &tvis); //	Itemの作成
 
-		if (tvi.cChildren) {
+		if (tvi.cChildren)
+		{
 			ts = TreeView_GetChild(hwndTree, s); //	子の取得
 			if (ts != NULL) { TreeCopy(hwndTree, td, ts, true, false); }
 			// 展開
@@ -1120,11 +1211,13 @@ static const WCHAR *MakeDispLabel(SMainMenuWork *pFunc)
 {
 	static WCHAR szLabel[MAX_MAIN_MENU_NAME_LEN + 10];
 
-	if (pFunc->m_sKey[0]) {
+	if (pFunc->m_sKey[0])
+	{
 		auto_sprintf_s(szLabel, MAX_MAIN_MENU_NAME_LEN + 10, L"%ls%ls(%ls)", pFunc->m_bDupErr ? L">" : L"",
 					   pFunc->m_sName.substr(0, MAX_MAIN_MENU_NAME_LEN).c_str(), pFunc->m_sKey);
 	}
-	else {
+	else
+	{
 		auto_sprintf_s(szLabel, MAX_MAIN_MENU_NAME_LEN + 10, L"%ls%ls", pFunc->m_bDupErr ? L">" : L"",
 					   pFunc->m_sName.substr(0, MAX_MAIN_MENU_NAME_LEN).c_str());
 	}
@@ -1168,55 +1261,67 @@ bool CPropMainMenu::Check_MainMenu_Sub(HWND		 hwndTree, // handle to dialog box
 	SMainMenuWork *			   pFuncWk; // 機能(work)
 	std::map<WCHAR, HTREEITEM> mKey;	// 重複エラー検出用
 
-	if (nLevel == 0) {
+	if (nLevel == 0)
+	{
 		bOptionOk = false;
 		nMenuNum = nTopNum = nDupErrNum = nNoSetErrNum = 0;
 		htiErr										   = NULL;
 	}
 	mKey.clear();
 
-	for (s = htiTrg; s != NULL; s = TreeView_GetNextSibling(hwndTree, s)) {
+	for (s = htiTrg; s != NULL; s = TreeView_GetNextSibling(hwndTree, s))
+	{
 		// メニュー数のカウント
 		nMenuNum++;
 		if (nLevel == 0) { nTopNum++; }
 		tvi.mask  = TVIF_HANDLE | TVIF_PARAM | TVIF_CHILDREN;
 		tvi.hItem = s;
-		if (!TreeView_GetItem(hwndTree, &tvi)) {
+		if (!TreeView_GetItem(hwndTree, &tvi))
+		{
 			// Error
 			sErrMsg = LS(STR_PROPCOMMAINMENU_ERR1);
 			return false;
 		}
 		pFuncWk = &msMenu[tvi.lParam];
-		switch (pFuncWk->m_nFunc) {
+		switch (pFuncWk->m_nFunc)
+		{
 		case F_NODE: nType = T_NODE; break;
 		case F_SEPARATOR: nType = T_SEPARATOR; break;
 		default:
 			if (pFuncWk->m_nFunc >= F_SPECIAL_FIRST && pFuncWk->m_nFunc <= F_SPECIAL_LAST) { nType = T_SPECIAL; }
-			else if (pFuncWk->m_bIsNode) {
+			else if (pFuncWk->m_bIsNode)
+			{
 				nType = T_NODE;
 			}
-			else {
+			else
+			{
 				if (pFuncWk->m_nFunc == F_OPTION) { bOptionOk = true; }
 				nType = T_LEAF;
 			}
 			break;
 		}
-		if (pFuncWk->m_sKey[0] == '\0') {
-			if (nType == T_NODE || nType == T_LEAF) {
+		if (pFuncWk->m_sKey[0] == '\0')
+		{
+			if (nType == T_NODE || nType == T_LEAF)
+			{
 				// 未設定
-				if (nNoSetErrNum == 0) {
+				if (nNoSetErrNum == 0)
+				{
 					if (htiErr == NULL) { htiErr = s; }
 				}
 				TreeView_SelectItem(hwndTree, s);
 				nNoSetErrNum++;
 			}
 		}
-		else {
+		else
+		{
 			auto itKey = mKey.find(pFuncWk->m_sKey[0]);
-			if (itKey == mKey.end()) {
+			if (itKey == mKey.end())
+			{
 				mKey[pFuncWk->m_sKey[0]] = s;
 
-				if (pFuncWk->m_bDupErr) {
+				if (pFuncWk->m_bDupErr)
+				{
 					// 目印クリア
 					pFuncWk->m_bDupErr = false;
 					tvi.mask		   = TVIF_HANDLE | TVIF_TEXT | TVIF_PARAM;
@@ -1224,9 +1329,11 @@ bool CPropMainMenu::Check_MainMenu_Sub(HWND		 hwndTree, // handle to dialog box
 					TreeView_SetItem(hwndTree, &tvi); //	キー設定結果を反映
 				}
 			}
-			else {
+			else
+			{
 				// 重複エラー
-				if (nDupErrNum == 0) {
+				if (nDupErrNum == 0)
+				{
 					if (htiErr == NULL) { htiErr = mKey[pFuncWk->m_sKey[0]]; }
 				}
 				TreeView_SelectItem(hwndTree, mKey[pFuncWk->m_sKey[0]]);
@@ -1242,12 +1349,14 @@ bool CPropMainMenu::Check_MainMenu_Sub(HWND		 hwndTree, // handle to dialog box
 				// 目印設定（元分）
 				tvi.mask  = TVIF_HANDLE | TVIF_PARAM | TVIF_CHILDREN;
 				tvi.hItem = mKey[pFuncWk->m_sKey[0]];
-				if (!TreeView_GetItem(hwndTree, &tvi)) {
+				if (!TreeView_GetItem(hwndTree, &tvi))
+				{
 					// Error
 					sErrMsg = LS(STR_PROPCOMMAINMENU_ERR1);
 					return false;
 				}
-				if (!msMenu[tvi.lParam].m_bDupErr) {
+				if (!msMenu[tvi.lParam].m_bDupErr)
+				{
 					msMenu[tvi.lParam].m_bDupErr = true;
 					tvi.mask					 = TVIF_HANDLE | TVIF_TEXT | TVIF_PARAM;
 					tvi.pszText					 = const_cast<WCHAR *>(MakeDispLabel(&msMenu[tvi.lParam]));
@@ -1255,10 +1364,13 @@ bool CPropMainMenu::Check_MainMenu_Sub(HWND		 hwndTree, // handle to dialog box
 				}
 			}
 		}
-		if (tvi.cChildren) {
+		if (tvi.cChildren)
+		{
 			ts = TreeView_GetChild(hwndTree, s); //	子の取得
-			if (ts != NULL) {
-				if (!Check_MainMenu_Sub(hwndTree, ts, nLevel + 1, sErrMsg)) {
+			if (ts != NULL)
+			{
+				if (!Check_MainMenu_Sub(hwndTree, ts, nLevel + 1, sErrMsg))
+				{
 					// 内部エラー
 					return false;
 				}
@@ -1266,29 +1378,36 @@ bool CPropMainMenu::Check_MainMenu_Sub(HWND		 hwndTree, // handle to dialog box
 		}
 	}
 
-	if (nLevel == 0) {
+	if (nLevel == 0)
+	{
 		sErrMsg = L"";
-		if (!bOptionOk) {
+		if (!bOptionOk)
+		{
 			sErrMsg += LS(STR_PROPCOMMAINMENU_ERR2);
 			bRet = false;
 		}
-		if (nTopNum > MAX_MAINMENU_TOP) {
+		if (nTopNum > MAX_MAINMENU_TOP)
+		{
 			sErrMsg += LS(STR_PROPCOMMAINMENU_ERR3);
 			bRet = false;
 		}
-		if (nMenuNum > MAX_MAINMENU) {
+		if (nMenuNum > MAX_MAINMENU)
+		{
 			sErrMsg += LS(STR_PROPCOMMAINMENU_ERR4);
 			bRet = false;
 		}
-		if (nDupErrNum > 0) {
+		if (nDupErrNum > 0)
+		{
 			sErrMsg += LS(STR_PROPCOMMAINMENU_ERR5);
 			bRet = false;
 		}
-		if (nNoSetErrNum > 0) {
+		if (nNoSetErrNum > 0)
+		{
 			sErrMsg += LS(STR_PROPCOMMAINMENU_ERR6);
 			bRet = false;
 		}
-		if (htiErr != NULL) {
+		if (htiErr != NULL)
+		{
 			TreeView_SelectItem(hwndTree, htiErr);
 			TreeView_SelectSetFirstVisible(hwndTree, htiErr);
 		}

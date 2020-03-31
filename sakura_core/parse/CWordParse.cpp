@@ -41,13 +41,15 @@ bool CWordParse::WhereCurrentWord_2(
 	// 文字種類が変わるまで前方へサーチ
 	CLogicInt nIdxNext   = nIdx;
 	CLogicInt nCharChars = CLogicInt(&pLine[nIdxNext] - CNativeW::GetCharPrev(pLine, nLineLen, &pLine[nIdxNext]));
-	while (nCharChars > 0) {
+	while (nCharChars > 0)
+	{
 		CLogicInt nIdxNextPrev = nIdxNext;
 		nIdxNext -= nCharChars;
 		ECharKind nCharKindNext = WhatKindOfChar(pLine, nLineLen, nIdxNext);
 
 		ECharKind nCharKindMerge = WhatKindOfTwoChars(nCharKindNext, nCharKind);
-		if (nCharKindMerge == CK_NULL) {
+		if (nCharKindMerge == CK_NULL)
+		{
 			nIdxNext = nIdxNextPrev;
 			break;
 		}
@@ -61,7 +63,8 @@ bool CWordParse::WhereCurrentWord_2(
 	// 文字種類が変わるまで後方へサーチ
 	nIdxNext   = nIdx;
 	nCharChars = CNativeW::GetSizeOfChar(pLine, nLineLen, nIdxNext); // 2005-09-02 D.S.Koba GetSizeOfChar
-	while (nCharChars > 0) {
+	while (nCharChars > 0)
+	{
 		nIdxNext += nCharChars;
 		ECharKind nCharKindNext = WhatKindOfChar(pLine, nLineLen, nIdxNext);
 
@@ -99,10 +102,12 @@ ECharKind CWordParse::WhatKindOfChar(const wchar_t *pData, int pDataLen, int nId
 	using namespace WCODE;
 
 	int nCharChars = CNativeW::GetSizeOfChar(pData, pDataLen, nIdx);
-	if (nCharChars == 0) {
+	if (nCharChars == 0)
+	{
 		return CK_NULL; // NULL
 	}
-	else if (nCharChars == 1) {
+	else if (nCharChars == 1)
+	{
 		wchar_t c = pData[nIdx];
 
 		//今までの半角
@@ -136,17 +141,21 @@ ECharKind CWordParse::WhatKindOfChar(const wchar_t *pData, int pDataLen, int nId
 		else
 			return CK_ZEN_ETC; // 全角のその他(漢字など)
 	}
-	else if (nCharChars == 2) {
+	else if (nCharChars == 2)
+	{
 		// サロゲートペア 2008/7/8 Uchi
-		if (IsUTF16High(pData[nIdx]) && IsUTF16Low(pData[nIdx + 1])) {
+		if (IsUTF16High(pData[nIdx]) && IsUTF16Low(pData[nIdx + 1]))
+		{
 			int nCode = 0x10000 + ((pData[nIdx] & 0x3FF) << 10) + (pData[nIdx + 1] & 0x3FF); // コードポイント
-			if (nCode >= 0x20000 && nCode <= 0x2FFFF) { // CJKV 拡張予約域 Ext-B/Ext-C...
-				return CK_ZEN_ETC;						// 全角のその他(漢字など)
+			if (nCode >= 0x20000 && nCode <= 0x2FFFF)
+			{					   // CJKV 拡張予約域 Ext-B/Ext-C...
+				return CK_ZEN_ETC; // 全角のその他(漢字など)
 			}
 		}
 		return CK_ETC; // 半角のその他
 	}
-	else {
+	else
+	{
 		return CK_NULL; // NULL
 	}
 }
@@ -222,20 +231,25 @@ bool CWordParse::SearchNextWordPosition(const wchar_t *pLine, CLogicInt nLineLen
 	CLogicInt nIdxNext = nIdx;
 	// 2005-09-02 D.S.Koba GetSizeOfChar
 	CLogicInt nCharChars = CNativeW::GetSizeOfChar(pLine, nLineLen, nIdxNext);
-	while (nCharChars > 0) {
+	while (nCharChars > 0)
+	{
 		nIdxNext += nCharChars;
 		ECharKind nCharKindNext = WhatKindOfChar(pLine, nLineLen, nIdxNext);
 		// 空白とタブは無視する
-		if (nCharKindNext == CK_TAB || nCharKindNext == CK_SPACE) {
-			if (bStopsBothEnds && nCharKind != nCharKindNext) {
+		if (nCharKindNext == CK_TAB || nCharKindNext == CK_SPACE)
+		{
+			if (bStopsBothEnds && nCharKind != nCharKindNext)
+			{
 				*pnColumnNew = nIdxNext;
 				return true;
 			}
 			nCharKind = nCharKindNext;
 		}
-		else {
+		else
+		{
 			ECharKind nCharKindMerge = WhatKindOfTwoChars(nCharKind, nCharKindNext);
-			if (nCharKindMerge == CK_NULL) {
+			if (nCharKindMerge == CK_NULL)
+			{
 				*pnColumnNew = nIdxNext;
 				return true;
 			}
@@ -266,20 +280,25 @@ bool CWordParse::SearchNextWordPosition4KW(const wchar_t *pLine, CLogicInt nLine
 	CLogicInt nIdxNext = nIdx;
 	// 2005-09-02 D.S.Koba GetSizeOfChar
 	CLogicInt nCharChars = CNativeW::GetSizeOfChar(pLine, nLineLen, nIdxNext);
-	while (nCharChars > 0) {
+	while (nCharChars > 0)
+	{
 		nIdxNext += nCharChars;
 		ECharKind nCharKindNext = WhatKindOfChar(pLine, nLineLen, nIdxNext);
 		// 空白とタブは無視する
-		if (nCharKindNext == CK_TAB || nCharKindNext == CK_SPACE) {
-			if (bStopsBothEnds && nCharKind != nCharKindNext) {
+		if (nCharKindNext == CK_TAB || nCharKindNext == CK_SPACE)
+		{
+			if (bStopsBothEnds && nCharKind != nCharKindNext)
+			{
 				*pnColumnNew = nIdxNext;
 				return true;
 			}
 			nCharKind = nCharKindNext;
 		}
-		else {
+		else
+		{
 			ECharKind nCharKindMerge = WhatKindOfTwoChars4KW(nCharKind, nCharKindNext);
-			if (nCharKindMerge == CK_NULL) {
+			if (nCharKindMerge == CK_NULL)
+			{
 				*pnColumnNew = nIdxNext;
 				return true;
 			}
@@ -327,7 +346,8 @@ BOOL IsURL(const wchar_t *pszLine,   //!< [in]  文字列
 		   int *		  pnMatchLen //!< [out] URLの長さ。offset からの距離。
 )
 {
-	struct _url_table_t {
+	struct _url_table_t
+	{
 		wchar_t name[12];
 		int		length;
 		bool	is_mail;
@@ -385,19 +405,23 @@ BOOL IsURL(const wchar_t *pszLine,   //!< [in]  文字列
 	int						   i;
 
 	if (wc_to_c(*begin) == 0) return FALSE; /* 2バイト文字 */
-	if (0 < url_char[wc_to_c(*begin)]) {	/* URL開始文字 */
-		for (urlp = &url_table[url_char[wc_to_c(*begin)] - 1]; urlp->name[0] == wc_to_c(*begin);
-			 urlp++) { /* URLテーブルを探索 */
-			if ((urlp->length <= end - begin)
-				&& (wmemcmp(urlp->name, begin, urlp->length) == 0)) { /* URLヘッダは一致した */
-				if (urlp->is_mail) {								  /* メール専用の解析へ */
-					if (IsMailAddress(begin, urlp->length, end - begin - urlp->length, pnMatchLen)) {
+	if (0 < url_char[wc_to_c(*begin)])
+	{ /* URL開始文字 */
+		for (urlp = &url_table[url_char[wc_to_c(*begin)] - 1]; urlp->name[0] == wc_to_c(*begin); urlp++)
+		{ /* URLテーブルを探索 */
+			if ((urlp->length <= end - begin) && (wmemcmp(urlp->name, begin, urlp->length) == 0))
+			{ /* URLヘッダは一致した */
+				if (urlp->is_mail)
+				{ /* メール専用の解析へ */
+					if (IsMailAddress(begin, urlp->length, end - begin - urlp->length, pnMatchLen))
+					{
 						*pnMatchLen = *pnMatchLen + urlp->length;
 						return TRUE;
 					}
 					return FALSE;
 				}
-				for (i = urlp->length; i < end - begin; i++) {							   /* 通常の解析へ */
+				for (i = urlp->length; i < end - begin; i++)
+				{																		   /* 通常の解析へ */
 					if (wc_to_c(begin[i]) == 0 || (!(url_char[wc_to_c(begin[i])]))) break; /* 終端に達した */
 				}
 				if (i == urlp->length) return FALSE; /* URLヘッダだけ */
@@ -414,7 +438,8 @@ BOOL IsURL(const wchar_t *pszLine,   //!< [in]  文字列
 */
 BOOL IsMailAddress(const wchar_t *pszBuf, int offset, int nBufLen, int *pnAddressLength)
 {
-	struct {
+	struct
+	{
 		bool operator()(const wchar_t ch) { return 0x21 <= ch && ch <= 0x7E && NULL == wcschr(L"\"(),:;<>@[\\]", ch); }
 	} IsValidChar;
 
@@ -433,7 +458,8 @@ BOOL IsMailAddress(const wchar_t *pszBuf, int offset, int nBufLen, int *pnAddres
 
 	j = 0;
 	if (pszBuf[j] != L'.' && IsValidChar(pszBuf[j])) { j++; }
-	else {
+	else
+	{
 		return FALSE;
 	}
 	while (j < nBufLen - 2 && IsValidChar(pszBuf[j])) { j++; }
@@ -444,21 +470,23 @@ BOOL IsMailAddress(const wchar_t *pszBuf, int offset, int nBufLen, int *pnAddres
 	nDotCount = 0;
 	//	nAlphaCount = 0;
 
-	for (;;) {
+	for (;;)
+	{
 		nBgn = j;
 		while (j < nBufLen
 			   && ((pszBuf[j] >= L'a' && pszBuf[j] <= L'z') || (pszBuf[j] >= L'A' && pszBuf[j] <= L'Z')
-				   || (pszBuf[j] >= L'0' && pszBuf[j] <= L'9') || (pszBuf[j] == L'-') || (pszBuf[j] == L'_'))) {
-			j++;
-		}
-		if (0 == j - nBgn) { return FALSE; }
-		if (L'.' != pszBuf[j]) {
+				   || (pszBuf[j] >= L'0' && pszBuf[j] <= L'9') || (pszBuf[j] == L'-') || (pszBuf[j] == L'_')))
+		{ j++; } if (0 == j - nBgn)
+		{ return FALSE; } if (L'.' != pszBuf[j])
+		{
 			if (0 == nDotCount) { return FALSE; }
-			else {
+			else
+			{
 				break;
 			}
 		}
-		else {
+		else
+		{
 			nDotCount++;
 			j++;
 		}

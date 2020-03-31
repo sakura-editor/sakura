@@ -19,7 +19,8 @@
 
 	データ構造はBSTRと互換性あり
 */
-struct SysString {
+struct SysString
+{
 	BSTR Data;
 
 	SysString() { Data = NULL; }
@@ -74,7 +75,8 @@ struct SysString {
 
 	データ構造はVARIANTと互換性あり
 */
-struct Variant {
+struct Variant
+{
 	VARIANT Data;
 	Variant() { ::VariantInit(&Data); }
 	Variant(Variant &Source) { ::VariantCopyInd(&Data, &Source.Data); }

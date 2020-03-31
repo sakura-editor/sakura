@@ -33,14 +33,16 @@
 #include <string>
 #include <vector>
 
-struct SProfileSettings {
+struct SProfileSettings
+{
 	WCHAR					  m_szDllLanguage[_MAX_PATH];
 	int						  m_nDefaultIndex;
 	std::vector<std::wstring> m_vProfList;
 	bool					  m_bDefaultSelect;
 };
 
-class CDlgProfileMgr final : public CDialog {
+class CDlgProfileMgr final : public CDialog
+{
 public:
 	/*
 	||  Constructors

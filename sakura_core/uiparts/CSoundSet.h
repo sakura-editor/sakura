@@ -24,7 +24,8 @@
 */
 #pragma once
 
-class CSoundSet {
+class CSoundSet
+{
 public:
 	CSoundSet()
 		: m_nMuteCount(0)

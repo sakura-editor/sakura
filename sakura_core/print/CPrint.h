@@ -34,7 +34,8 @@
 #include <CommDlg.h> // PRINTDLG
 #include <WinSpool.h>
 
-struct MYDEVMODE {
+struct MYDEVMODE
+{
 	BOOL  m_bPrinterNotFound;					/* プリンタがなかったフラグ */
 	WCHAR m_szPrinterDriverName[_MAX_PATH + 1]; // プリンタドライバ名
 	WCHAR m_szPrinterDeviceName[_MAX_PATH + 1]; // プリンタデバイス名
@@ -62,7 +63,8 @@ struct MYDEVMODE {
 
 // 2006.08.14 Moca 用紙情報の統合 PAPER_INFO新設
 //! 用紙情報
-struct PAPER_INFO {
+struct PAPER_INFO
+{
 	int			 m_nId;		   //!< 用紙ID
 	short		 m_nAllWidth;  //!< 幅 (0.1mm単位)
 	short		 m_nAllHeight; //!< 高さ (0.1mm単位)
@@ -77,7 +79,8 @@ struct PRINTSETTING;
 #define POS_RIGHT 2
 #define HEADER_MAX 100
 #define FOOTER_MAX HEADER_MAX
-struct PRINTSETTING {
+struct PRINTSETTING
+{
 	WCHAR m_szPrintSettingName[32 + 1];		 /*!< 印刷設定の名前 */
 	WCHAR m_szPrintFontFaceHan[LF_FACESIZE]; /*!< 印刷フォント */
 	WCHAR m_szPrintFontFaceZen[LF_FACESIZE]; /*!< 印刷フォント */
@@ -121,7 +124,8 @@ struct PRINTSETTING {
 
 	オブジェクト指向でないクラス
 */
-class CPrint {
+class CPrint
+{
 public:
 	static const PAPER_INFO m_paperInfoArr[];   //!< 用紙情報一覧
 	static const int		m_nPaperInfoArrNum; //!< 用紙情報一覧の要素数

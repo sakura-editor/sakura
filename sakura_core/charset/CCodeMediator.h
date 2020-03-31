@@ -31,7 +31,8 @@
  *
  * 日本語コードセット判別の詳細を隠ぺいするための仲介クラスです。
  */
-class CCodeMediator final {
+class CCodeMediator final
+{
 public:
 	explicit CCodeMediator(const SEncodingConfig &encodingConfig) noexcept
 		: m_sEncodingConfig(encodingConfig)

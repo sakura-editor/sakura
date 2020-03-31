@@ -42,7 +42,8 @@ CZipFile::CZipFile()
 // デストラクタ
 CZipFile::~CZipFile()
 {
-	if (pZipFile != NULL) {
+	if (pZipFile != NULL)
+	{
 		pZipFile->Release();
 		pZipFile = NULL;
 	}
@@ -55,7 +56,8 @@ bool CZipFile::SetZip(const std::wstring &sZipPath)
 	HRESULT hr;
 	VARIANT var;
 
-	if (pZipFile != NULL) {
+	if (pZipFile != NULL)
+	{
 		pZipFile->Release();
 		pZipFile = NULL;
 	}
@@ -65,7 +67,8 @@ bool CZipFile::SetZip(const std::wstring &sZipPath)
 	var.vt		= VT_BSTR;
 	var.bstrVal = SysAllocString(sZipPath.c_str());
 	hr			= psd->NameSpace(var, &pZipFile);
-	if (hr != S_OK) {
+	if (hr != S_OK)
+	{
 		pZipFile = NULL;
 		return false;
 	}
@@ -88,7 +91,8 @@ bool CZipFile::ChkPluginDef(const std::wstring &sDefFile, std::wstring &sFolderN
 
 	// ZIP File List
 	hr = pZipFile->Items(&pZipFileItems);
-	if (hr != S_OK) {
+	if (hr != S_OK)
+	{
 		pZipFile->Release();
 		return false;
 	}
@@ -97,7 +101,8 @@ bool CZipFile::ChkPluginDef(const std::wstring &sDefFile, std::wstring &sFolderN
 	hr = pZipFileItems->get_Count(&lCount);
 	VariantInit(&vari);
 	vari.vt = VT_I4;
-	for (vari.lVal = 0; vari.lVal < lCount; vari.lVal++) {
+	for (vari.lVal = 0; vari.lVal < lCount; vari.lVal++)
+	{
 		BSTR		 bps;
 		VARIANT_BOOL vFolder;
 		FolderItem * pFileItem;
@@ -108,7 +113,8 @@ bool CZipFile::ChkPluginDef(const std::wstring &sDefFile, std::wstring &sFolderN
 		if (hr != S_OK) { continue; }
 		hr = pFileItem->get_IsFolder(&vFolder);
 		if (hr != S_OK) { continue; }
-		if (vFolder) {
+		if (vFolder)
+		{
 			long		 lCount2;
 			VARIANT		 varj;
 			FolderItems *pFileItems2;
@@ -122,7 +128,8 @@ bool CZipFile::ChkPluginDef(const std::wstring &sDefFile, std::wstring &sFolderN
 			hr = pFileItems2->get_Count(&lCount2);
 			if (hr != S_OK) { continue; }
 			varj.vt = VT_I4;
-			for (varj.lVal = 0; varj.lVal < lCount2; varj.lVal++) {
+			for (varj.lVal = 0; varj.lVal < lCount2; varj.lVal++)
+			{
 				hr = pFileItems2->Item(varj, &pFileItem);
 				if (hr != S_OK) { continue; }
 				hr = pFileItem->get_IsFolder(&vFolder);
@@ -134,7 +141,8 @@ bool CZipFile::ChkPluginDef(const std::wstring &sDefFile, std::wstring &sFolderN
 				if (!vFolder && wcslen(bps) >= sDefFile.length()
 					&& (wmemicmp(bps, ((sFolderName + L"/" + sDefFile).c_str())) == 0
 						|| wmemicmp(bps, ((sFolderName + L"\\" + sDefFile).c_str())) == 0
-						|| wmemicmp(bps, ((sZipName + L"\\" + sFolderName + L"\\" + sDefFile).c_str())) == 0)) {
+						|| wmemicmp(bps, ((sZipName + L"\\" + sFolderName + L"\\" + sDefFile).c_str())) == 0))
+				{
 					bFoundDef = true;
 					break;
 				}
@@ -161,7 +169,8 @@ bool CZipFile::Unzip(const std::wstring sOutPath)
 
 	// ZIP File List
 	hr = pZipFile->Items(&pZipFileItems);
-	if (hr != S_OK) {
+	if (hr != S_OK)
+	{
 		pZipFile->Release();
 		return false;
 	}
@@ -172,7 +181,8 @@ bool CZipFile::Unzip(const std::wstring sOutPath)
 	var.bstrVal = SysAllocString(sOutPath.c_str());
 	hr			= psd->NameSpace(var, &pOutFolder);
 	VariantClear(&var);
-	if (hr != S_OK) {
+	if (hr != S_OK)
+	{
 		pZipFileItems->Release();
 		pZipFile->Release();
 		return false;

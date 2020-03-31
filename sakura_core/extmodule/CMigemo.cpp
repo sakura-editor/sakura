@@ -77,7 +77,8 @@ bool CMigemo::InitDllImp()
 
 	DWORD dwver103 = (1 << 16) | 3;
 	if (dwver103 <= dwVersionMS) { m_bStdcall = true; }
-	else {
+	else
+	{
 		m_bStdcall = false;
 	}
 #endif
@@ -98,17 +99,21 @@ bool CMigemo::DeinitDllImp(void)
 
 LPCWSTR CMigemo::GetDllNameImp(int nIndex)
 {
-	if (nIndex == 0) {
+	if (nIndex == 0)
+	{
 		WCHAR *		 szDll;
 		static WCHAR szDllName[_MAX_PATH];
 		szDll = GetDllShareData().m_Common.m_sHelper.m_szMigemoDll;
 
-		if (szDll[0] == L'\0') {
+		if (szDll[0] == L'\0')
+		{
 			GetInidir(szDllName, L"migemo.dll");
 			return fexist(szDllName) ? szDllName : L"migemo.dll";
 		}
-		else {
-			if (_IS_REL_PATH(szDll)) {
+		else
+		{
+			if (_IS_REL_PATH(szDll))
+			{
 				GetInidirOrExedir(szDllName, szDll); // 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
 				szDll = szDllName;
 			}
@@ -116,7 +121,8 @@ LPCWSTR CMigemo::GetDllNameImp(int nIndex)
 		}
 		// return "migemo.dll";
 	}
-	else {
+	else
+	{
 		return NULL;
 	}
 }
@@ -125,7 +131,8 @@ long CMigemo::migemo_open(char *dict)
 {
 	if (!IsAvailable()) return 0;
 	if (m_bStdcall) { m_migemo = (*m_migemo_open_s)(NULL); }
-	else {
+	else
+	{
 		m_migemo = (*m_migemo_open)(NULL);
 	}
 
@@ -141,7 +148,8 @@ void CMigemo::migemo_close()
 	if (!IsAvailable() || (m_migemo == NULL)) return;
 
 	if (m_bStdcall) { (*m_migemo_close_s)(m_migemo); }
-	else {
+	else
+	{
 		(*m_migemo_close)(m_migemo);
 	}
 }
@@ -150,14 +158,16 @@ unsigned char *CMigemo::migemo_query(unsigned char *query)
 	if (!IsAvailable() || (m_migemo == NULL)) return NULL;
 
 	if (m_bStdcall) { return (*m_migemo_query_s)(m_migemo, query); }
-	else {
+	else
+	{
 		return (*m_migemo_query)(m_migemo, query);
 	}
 }
 
 std::wstring CMigemo::migemo_query_w(const wchar_t *query)
 {
-	if (m_bUtf8) {
+	if (m_bUtf8)
+	{
 		CNativeW cnvStr;
 		CNativeA utf8Str;
 		cnvStr.SetString(query);
@@ -180,7 +190,8 @@ void CMigemo::migemo_release(unsigned char *str)
 	if (!IsAvailable() || (m_migemo == NULL)) return;
 
 	if (m_bStdcall) { (*m_migemo_release_s)(m_migemo, str); }
-	else {
+	else
+	{
 		(*m_migemo_release)(m_migemo, str);
 	}
 }
@@ -189,7 +200,8 @@ int CMigemo::migemo_set_operator(int index, unsigned char *op)
 	if (!IsAvailable() || (m_migemo == NULL)) return 0;
 
 	if (m_bStdcall) { return (*m_migemo_set_operator_s)(m_migemo, index, op); }
-	else {
+	else
+	{
 		return (*m_migemo_set_operator)(m_migemo, index, op);
 	}
 }
@@ -198,7 +210,8 @@ const unsigned char *CMigemo::migemo_get_operator(int index)
 	if (!IsAvailable() || (m_migemo == NULL)) return NULL;
 
 	if (m_bStdcall) { return (*m_migemo_get_operator_s)(m_migemo, index); }
-	else {
+	else
+	{
 		return (*m_migemo_get_operator)(m_migemo, index);
 	}
 }
@@ -207,7 +220,8 @@ void CMigemo::migemo_setproc_char2int(MIGEMO_PROC_CHAR2INT proc)
 	if (!IsAvailable() || (m_migemo == NULL)) return;
 
 	if (m_bStdcall) { (*m_migemo_setproc_char2int_s)(m_migemo, proc); }
-	else {
+	else
+	{
 		(*m_migemo_setproc_char2int)(m_migemo, proc);
 	}
 }
@@ -216,7 +230,8 @@ void CMigemo::migemo_setproc_int2char(MIGEMO_PROC_INT2CHAR proc)
 	if (!IsAvailable() || (m_migemo == NULL)) return;
 
 	if (m_bStdcall) { (*m_migemo_setproc_int2char_s)(m_migemo, proc); }
-	else {
+	else
+	{
 		(*m_migemo_setproc_int2char)(m_migemo, proc);
 	}
 }
@@ -225,7 +240,8 @@ int CMigemo::migemo_load_a(int dict_id, const char *dict_file)
 {
 	if (!IsAvailable() || (m_migemo == NULL)) return 0;
 	if (m_bStdcall) { return (*m_migemo_load_s)(m_migemo, dict_id, dict_file); }
-	else {
+	else
+	{
 		return (*m_migemo_load)(m_migemo, dict_id, dict_file);
 	}
 }
@@ -242,28 +258,34 @@ int CMigemo::migemo_is_enable()
 	if (!IsAvailable() || (m_migemo == NULL)) return 0;
 
 	if (m_bStdcall) { return (*m_migemo_is_enable_s)(m_migemo); }
-	else {
+	else
+	{
 		return (*m_migemo_is_enable)(m_migemo);
 	}
 }
 
 int CMigemo::migemo_load_all()
 {
-	if (!migemo_is_enable()) {
+	if (!migemo_is_enable())
+	{
 
 		WCHAR *szDict = GetDllShareData().m_Common.m_sHelper.m_szMigemoDict;
 		WCHAR  path[MAX_PATH];
 		// char path2[MAX_PATH];
 		WCHAR *ppath;
 
-		if (szDict[0] == L'\0') {
+		if (szDict[0] == L'\0')
+		{
 			GetInidirOrExedir(path, L"dict"); // 2007.05.20 ryoji 相対パスは設定ファイルからのパスを優先
 		}
-		else {
-			if (_IS_REL_PATH(szDict)) {
+		else
+		{
+			if (_IS_REL_PATH(szDict))
+			{
 				GetInidirOrExedir(path, szDict); // 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 			}
-			else {
+			else
+			{
 				wcscpy(path, szDict);
 			}
 		}
@@ -271,14 +293,17 @@ int CMigemo::migemo_load_all()
 		*(ppath++) = L'\\';
 		// ver1.3 utf8対応
 		wcscpy(ppath, L"utf-8\\migemo-dict");
-		if (fexist(path)) {
+		if (fexist(path))
+		{
 			wcscpy(ppath, L"utf-8\\");
 			ppath   = &path[wcslen(path)];
 			m_bUtf8 = true;
 		}
-		else {
+		else
+		{
 			wcscpy(ppath, L"cp932\\migemo-dict");
-			if (fexist(path)) {
+			if (fexist(path))
+			{
 				wcscpy(ppath, L"cp932\\");
 				ppath = &path[wcslen(path)];
 			}
@@ -297,11 +322,13 @@ int CMigemo::migemo_load_all()
 		migemo_load_t(MIGEMO_DICTID_ZEN2HAN, path);
 
 		// 2011.12.11 Moca 辞書登録後でないとmigemo内臓のものに変更されてしまう
-		if (m_bUtf8) {
+		if (m_bUtf8)
+		{
 			migemo_setproc_char2int(pcre_char2int_utf8);
 			migemo_setproc_int2char(pcre_int2char_utf8);
 		}
-		else {
+		else
+		{
 			migemo_setproc_char2int(pcre_char2int_sjis);
 			migemo_setproc_int2char(pcre_int2char); // 2009.04.30 miau
 		}
@@ -313,7 +340,8 @@ CMigemo::~CMigemo() { DeinitDll(); }
 
 int __cdecl pcre_char2int_sjis(const unsigned char *in, unsigned int *out)
 {
-	if (_IS_SJIS_1(in[0]) && _IS_SJIS_2(in[1])) {
+	if (_IS_SJIS_1(in[0]) && _IS_SJIS_2(in[1]))
+	{
 		if (out) { *out = (in[0] << 8) | in[1]; }
 		return 2;
 	}
@@ -325,16 +353,20 @@ int __cdecl pcre_char2int_sjis(const unsigned char *in, unsigned int *out)
 static int __cdecl pcre_int2char(unsigned int in, unsigned char *out)
 {
 	/* outは最低でも16バイトはある、という仮定を置く */
-	if (in >= 0x100) {
-		if (out) {
+	if (in >= 0x100)
+	{
+		if (out)
+		{
 			out[0] = (unsigned char)((in >> 8) & 0xFF);
 			out[1] = (unsigned char)(in & 0xFF);
 		}
 		return 2;
 	}
-	else {
+	else
+	{
 		int len = 0;
-		switch (in) {
+		switch (in)
+		{
 		case '\\':
 		case '.':
 		case '*':
@@ -366,19 +398,22 @@ static int __cdecl pcre_int2char(unsigned int in, unsigned char *out)
 
 int __cdecl pcre_char2int_utf8(const unsigned char *in, unsigned int *out)
 {
-	if (0x80 & in[0]) {
-		if ((0xe0 & in[0]) == 0xc0 && (0xc0 & in[1]) == 0x80) {
+	if (0x80 & in[0])
+	{
+		if ((0xe0 & in[0]) == 0xc0 && (0xc0 & in[1]) == 0x80)
+		{
 			if (out) { *out = ((0x1f & in[0]) << 6) | (0x3f & in[1]); }
 			return 2;
 		}
-		else if ((0xf0 & in[0]) == 0xe0 && (0xc0 & in[1]) == 0x80 && (0xc0 & in[2]) == 0x80) {
+		else if ((0xf0 & in[0]) == 0xe0 && (0xc0 & in[1]) == 0x80 && (0xc0 & in[2]) == 0x80)
+		{
 			if (out) { *out = ((0x1f & in[0]) << 12) | ((0x3f & in[1]) << 6) | (0x3f & in[2]); }
 			return 3;
 		}
-		else if ((0xf8 & in[0]) == 0xf0 && (0xc0 & in[1]) == 0x80 && (0xc0 & in[2]) == 0x80 && (0xc0 & in[3]) == 0x80) {
-			if (out) {
-				*out = ((0x1f & in[0]) << 18) | ((0x3f & in[1]) << 12) | ((0x3f & in[2]) << 6) | (0x3f & in[3]);
-			}
+		else if ((0xf8 & in[0]) == 0xf0 && (0xc0 & in[1]) == 0x80 && (0xc0 & in[2]) == 0x80 && (0xc0 & in[3]) == 0x80)
+		{
+			if (out)
+			{ *out = ((0x1f & in[0]) << 18) | ((0x3f & in[1]) << 12) | ((0x3f & in[2]) << 6) | (0x3f & in[3]); }
 			return 4;
 		}
 	}
@@ -389,8 +424,10 @@ int __cdecl pcre_char2int_utf8(const unsigned char *in, unsigned int *out)
 int __cdecl pcre_int2char_utf8(unsigned int in, unsigned char *out)
 {
 	int len = 0;
-	if (in < 0x80) {
-		switch (in) {
+	if (in < 0x80)
+	{
+		switch (in)
+		{
 		case '\\':
 		case '.':
 		case '*':
@@ -417,23 +454,29 @@ int __cdecl pcre_int2char_utf8(unsigned int in, unsigned char *out)
 			break;
 		}
 	}
-	else if (in < 0x800) {
-		if (out) {
+	else if (in < 0x800)
+	{
+		if (out)
+		{
 			out[0] = static_cast<unsigned char>((in & 0x07c0) >> 6) | 0xc0;
 			out[1] = static_cast<unsigned char>(in & 0x003f) | 0x80;
 		}
 		len = 2;
 	}
-	else if (in < 0x10000) {
-		if (out) {
+	else if (in < 0x10000)
+	{
+		if (out)
+		{
 			out[0] = static_cast<unsigned char>((in & 0xf000) >> 12) | 0xe0;
 			out[1] = static_cast<unsigned char>((in & 0x0fc0) >> 6) | 0x80;
 			out[2] = static_cast<unsigned char>(in & 0x003f) | 0x80;
 		}
 		len = 3;
 	}
-	else {
-		if (out) {
+	else
+	{
+		if (out)
+		{
 			out[0] = static_cast<unsigned char>((in & 0x001c0000) >> 18) | 0xf0;
 			out[1] = static_cast<unsigned char>((in & 0x0003f000) >> 12) | 0x80;
 			out[2] = static_cast<unsigned char>((in & 0x00000fc0) >> 6) | 0x80;

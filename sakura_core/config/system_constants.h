@@ -659,7 +659,8 @@ const int LINEREADBUFSIZE = 10240; //!< ファイルから1行分データを読
 // wParam:PM_CHANGESETTING_TYPEのとき、タイプ別設定Index。それ以外なし。
 #define MYWM_CHANGESETTING (WM_APP + 1520)
 //! MYWM_CHANGESETTINGメッセージのlParam
-enum e_PM_CHANGESETTING_SELECT {
+enum e_PM_CHANGESETTING_SELECT
+{
 	PM_CHANGESETTING_ALL	  = 0, //!< 全部
 	PM_CHANGESETTING_FONT	 = 1, //!< フォント変更
 	PM_CHANGESETTING_FONTSIZE = 2, //!< フォントサイズ変更(WPARAM タイプ別番号。-1で共通設定変更)
@@ -675,7 +676,8 @@ enum e_PM_CHANGESETTING_SELECT {
 
 /*! トレイからエディタへの終了要求 */
 #define MYWM_CLOSE (WM_APP + 200)
-enum e_PM_CLOSE_WPARAM {
+enum e_PM_CLOSE_WPARAM
+{
 	PM_CLOSE_EXIT		   = 1, //!< 全終了
 	PM_CLOSE_GREPNOCONFIRM = 2, //!< Grepで終了確認しない
 };
@@ -687,7 +689,8 @@ enum e_PM_CLOSE_WPARAM {
 /*! カーソル位置変更通知 */
 #define MYWM_SETCARETPOS (WM_APP + 204)
 //! MYWM_SETCARETPOSメッセージのlParam
-enum e_PM_SETCARETPOS_SELECTSTATE {
+enum e_PM_SETCARETPOS_SELECTSTATE
+{
 	PM_SETCARETPOS_NOSELECT   = 0, //!< 選択解除
 	PM_SETCARETPOS_SELECT	 = 1, //!< 選択開始・変更
 	PM_SETCARETPOS_KEEPSELECT = 2, //!< 現在の選択状態を保って移動

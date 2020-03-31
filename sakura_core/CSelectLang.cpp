@@ -30,8 +30,10 @@ CSelectLang::PSSelLangInfoList CSelectLang::m_psLangInfoList;
 */
 CSelectLang::~CSelectLang(void)
 {
-	for (auto it = m_psLangInfoList.begin(); it != m_psLangInfoList.end(); it++) {
-		if ((*it)->hInstance) {
+	for (auto it = m_psLangInfoList.begin(); it != m_psLangInfoList.end(); it++)
+	{
+		if ((*it)->hInstance)
+		{
 			FreeLibrary((*it)->hInstance);
 			(*it)->hInstance = NULL;
 		}
@@ -88,7 +90,8 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment(void)
 {
 	SSelLangInfo *psLangInfo;
 
-	if (m_psLangInfoList.size() == 0) {
+	if (m_psLangInfoList.size() == 0)
+	{
 		// デフォルト情報を作成する
 		psLangInfo			  = new SSelLangInfo();
 		psLangInfo->hInstance = GetModuleHandle(NULL);
@@ -112,7 +115,8 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment(void)
 		m_psLangInfoList.push_back(psLangInfo);
 	}
 
-	if (m_psLangInfo != NULL && m_psLangInfo->hInstance && m_psLangInfo->hInstance != GetModuleHandle(NULL)) {
+	if (m_psLangInfo != NULL && m_psLangInfo->hInstance && m_psLangInfo->hInstance != GetModuleHandle(NULL))
+	{
 		// 読み込み済みのDLLを解放する
 		::FreeLibrary(m_psLangInfo->hInstance);
 		m_psLangInfo->hInstance = NULL;
@@ -129,21 +133,26 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment(void)
 	HANDLE			handle   = FindFirstFile(szPath, &w32fd);
 	BOOL			result   = (INVALID_HANDLE_VALUE != handle) ? TRUE : FALSE;
 
-	while (result) {
-		if (!(w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) { //フォルダでない
+	while (result)
+	{
+		if (!(w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+		{ //フォルダでない
 			// バッファに登録する。
 			psLangInfo = new SSelLangInfo();
 			wcscpy(psLangInfo->szDllName, w32fd.cFileName);
 			psLangInfo->hInstance = CSelectLang::LoadLangRsrcLibrary(*psLangInfo);
 
-			if (psLangInfo->hInstance) {
-				if (!psLangInfo->bValid) {
+			if (psLangInfo->hInstance)
+			{
+				if (!psLangInfo->bValid)
+				{
 					// メッセージリソースDLLとしては無効
 					::FreeLibrary(psLangInfo->hInstance);
 					psLangInfo->hInstance = NULL;
 					delete psLangInfo;
 				}
-				else {
+				else
+				{
 					// 有効なメッセージリソースDLL
 					// 一旦DLLを解放し、後でChangeLangで再読み込みする
 					m_psLangInfoList.push_back(psLangInfo);
@@ -156,7 +165,8 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment(void)
 		result = FindNextFile(handle, &w32fd);
 	}
 
-	if (INVALID_HANDLE_VALUE != handle) {
+	if (INVALID_HANDLE_VALUE != handle)
+	{
 		FindClose(handle);
 		handle = INVALID_HANDLE_VALUE;
 	}
@@ -188,17 +198,20 @@ HINSTANCE CSelectLang::LoadLangRsrcLibrary(SSelLangInfo &lang)
 
 	HINSTANCE hInstance = LoadLibraryExedir(lang.szDllName);
 
-	if (hInstance) {
+	if (hInstance)
+	{
 		// 言語名を取得
 		nCount = ::LoadString(hInstance, STR_SELLANG_NAME, lang.szLangName, _countof(lang.szLangName));
 
-		if (nCount > 0) {
+		if (nCount > 0)
+		{
 			// 言語IDを取得
 			WCHAR szBuf[7]; // "0x" + 4桁 + 番兵
 			nCount					   = ::LoadString(hInstance, STR_SELLANG_LANGID, szBuf, _countof(szBuf));
 			szBuf[_countof(szBuf) - 1] = L'\0';
 
-			if (nCount > 0) {
+			if (nCount > 0)
+			{
 				lang.wLangId = (WORD)wcstoul(szBuf, NULL, 16); // 言語IDを数値化
 
 				if (lang.wLangId > 0) lang.bValid = TRUE; // メッセージリソースDLLとして有効
@@ -290,7 +303,8 @@ LPCWSTR CLoadString::LoadString(UINT uid)
 */
 int CLoadString::CLoadStrBuffer::LoadString(UINT uid)
 {
-	if (!m_pszString) {
+	if (!m_pszString)
+	{
 		// バッファポインタが設定されていない場合初期化する（普通はあり得ない）
 		m_pszString					  = m_szString;			  // 変数内に準備したバッファを接続
 		m_nBufferSize				  = _countof(m_szString); // 配列個数
@@ -300,58 +314,70 @@ int CLoadString::CLoadStrBuffer::LoadString(UINT uid)
 
 	HINSTANCE hRsrc = CSelectLang::getLangRsrcInstance(); // メッセージリソースDLLのインスタンスハンドル
 
-	if (!hRsrc) {
+	if (!hRsrc)
+	{
 		// メッセージリソースDLL読込処理前は内部リソースを使う
 		hRsrc = ::GetModuleHandle(NULL);
 	}
 
 	int nRet = 0;
 
-	while (1) {
+	while (1)
+	{
 		nRet = ::LoadString(hRsrc, uid, m_pszString, m_nBufferSize);
 
 		// リソースが無い
-		if (nRet == 0) {
-			if (hRsrc != ::GetModuleHandle(NULL)) {
+		if (nRet == 0)
+		{
+			if (hRsrc != ::GetModuleHandle(NULL))
+			{
 				hRsrc = ::GetModuleHandle(NULL); // 内部リソースを使う
 			}
-			else {
+			else
+			{
 				// 内部リソースからも読めなかったら諦める（普通はあり得ない）
 				m_pszString[0] = L'\0';
 				break;
 			}
 #ifdef UNICODE
 		}
-		else if (nRet >= m_nBufferSize - 1) {
+		else if (nRet >= m_nBufferSize - 1)
+		{
 #else
 		}
-		else if (nRet >= m_nBufferSize - 2) { // ANSI版は1小さい長さで再読み込みを判定する
+		else if (nRet >= m_nBufferSize - 2)
+		{ // ANSI版は1小さい長さで再読み込みを判定する
 #endif
 			// 読みきれなかった場合、バッファを拡張して読み直す
 			int	nTemp = m_nBufferSize + LOADSTR_ADD_SIZE; // 拡張したサイズ
 			LPWSTR pTemp;
 
-			try {
+			try
+			{
 				pTemp = new WCHAR[nTemp];
 			}
-			catch (std::bad_alloc) {
+			catch (std::bad_alloc)
+			{
 				// メモリ割り当て例外（例外の発生する環境の場合でも旧来の処理にする）
 				pTemp = NULL;
 			}
 
-			if (pTemp) {
+			if (pTemp)
+			{
 				if (m_pszString != m_szString) { delete[] m_pszString; }
 
 				m_pszString   = pTemp;
 				m_nBufferSize = nTemp;
 			}
-			else {
+			else
+			{
 				// メモリ取得に失敗した場合は直前の内容で諦める
 				nRet = wcslen(m_pszString);
 				break;
 			}
 		}
-		else {
+		else
+		{
 			break; // 文字列リソースが正常に取得できた
 		}
 	}
@@ -365,9 +391,11 @@ void CSelectLang::ChangeLang(WCHAR *pszDllName)
 {
 	/* 言語を選択する */
 	UINT unIndex;
-	for (unIndex = 0; unIndex < CSelectLang::m_psLangInfoList.size(); unIndex++) {
+	for (unIndex = 0; unIndex < CSelectLang::m_psLangInfoList.size(); unIndex++)
+	{
 		CSelectLang::SSelLangInfo *psLangInfo = CSelectLang::m_psLangInfoList.at(unIndex);
-		if (wcsncmp(pszDllName, psLangInfo->szDllName, MAX_PATH) == 0) {
+		if (wcsncmp(pszDllName, psLangInfo->szDllName, MAX_PATH) == 0)
+		{
 			CSelectLang::ChangeLang(unIndex);
 			break;
 		}
@@ -376,22 +404,22 @@ void CSelectLang::ChangeLang(WCHAR *pszDllName)
 
 HINSTANCE CSelectLang::ChangeLang(UINT nIndex)
 {
-	if (m_psLangInfoList.size() <= nIndex || m_psLangInfoList.at(nIndex) == m_psLangInfo) {
-		return m_psLangInfo->hInstance;
-	}
-
-	SSelLangInfo *psLangInfo = m_psLangInfoList.at(nIndex);
-	if (psLangInfo->hInstance != GetModuleHandle(NULL)) {
+	if (m_psLangInfoList.size() <= nIndex || m_psLangInfoList.at(nIndex) == m_psLangInfo)
+	{ return m_psLangInfo->hInstance; } SSelLangInfo *psLangInfo = m_psLangInfoList.at(nIndex);
+	if (psLangInfo->hInstance != GetModuleHandle(NULL))
+	{
 		psLangInfo->hInstance = LoadLangRsrcLibrary(*psLangInfo);
 		if (psLangInfo->hInstance == NULL) { return m_psLangInfo->hInstance; }
-		else if (!psLangInfo->bValid) {
+		else if (!psLangInfo->bValid)
+		{
 			::FreeLibrary(psLangInfo->hInstance);
 			psLangInfo->hInstance = NULL;
 			return m_psLangInfo->hInstance;
 		}
 	}
 
-	if (m_psLangInfo->hInstance != GetModuleHandle(NULL)) {
+	if (m_psLangInfo->hInstance != GetModuleHandle(NULL))
+	{
 		::FreeLibrary(m_psLangInfo->hInstance);
 		m_psLangInfo->hInstance = NULL;
 	}

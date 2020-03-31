@@ -52,25 +52,29 @@ template<int  STRICT_ID,		 //!< 型を分けるための数値。0 or 1。
 		 bool ALLOW_CAST_INT,	//!< intへの暗黙の変換を許すかどうか
 		 bool ALLOW_ASSIGNOP_INT //!< intの代入を許すかどうか
 		 >
-class CStrictInteger {
+class CStrictInteger
+{
 private:
 	typedef CStrictInteger<STRICT_ID, ALLOW_CMP_INT, ALLOW_ADDSUB_INT, ALLOW_CAST_INT, ALLOW_ASSIGNOP_INT> Me;
 	static const int NOT_STRICT_ID = (1 - STRICT_ID);
 
 private:
 	//!ゴミクラス
-	class CDummy {
+	class CDummy
+	{
 	public:
 		CDummy();
 		CDummy(int);
 	};
 	template<bool t, bool = false>
-	struct ChooseIntOrDummy {
+	struct ChooseIntOrDummy
+	{
 		typedef int Type;
 	};
 	// クラス内でテンプレートの特殊化をするとG++に怒られるので部分特殊化にする
 	template<bool _>
-	struct ChooseIntOrDummy<false, _> {
+	struct ChooseIntOrDummy<false, _>
+	{
 		typedef CDummy Type;
 	};
 

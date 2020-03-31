@@ -110,7 +110,8 @@ INT_PTR CPropTab::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 	NMHDR *pNMHDR;
 	//	int			idCtrl;
 
-	switch (uMsg) {
+	switch (uMsg)
+	{
 
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 Tab */
@@ -126,7 +127,8 @@ INT_PTR CPropTab::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 		pNMHDR = (NMHDR *)lParam;
 		//		switch( idCtrl ){
 		//		default:
-		switch (pNMHDR->code) {
+		switch (pNMHDR->code)
+		{
 		case PSN_HELP: OnHelp(hwndDlg, IDD_PROP_TAB); return TRUE;
 		case PSN_KILLACTIVE:
 			/* ダイアログデータの取得 Tab */
@@ -139,18 +141,22 @@ INT_PTR CPropTab::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 		//		}
 		break; /* WM_NOTIFY */
 
-	case WM_COMMAND: {
+	case WM_COMMAND:
+	{
 		WORD wNotifyCode = HIWORD(wParam); /* 通知コード */
 		WORD wID		 = LOWORD(wParam); /* 項目ID､ コントロールID､ またはアクセラレータID */
-		if (wNotifyCode == BN_CLICKED) {
-			switch (wID) {
+		if (wNotifyCode == BN_CLICKED)
+		{
+			switch (wID)
+			{
 			case IDC_CHECK_DispTabWnd:
 			case IDC_CHECK_DispTabWndMultiWin: EnableTabPropInput(hwndDlg); break;
 			case IDC_BUTTON_TABFONT:
 				LOGFONT lf		   = m_Common.m_sTabBar.m_lf;
 				INT		nPointSize = m_Common.m_sTabBar.m_nPointSize;
 
-				if (MySelectFont(&lf, &nPointSize, hwndDlg, false)) {
+				if (MySelectFont(&lf, &nPointSize, hwndDlg, false))
+				{
 					m_Common.m_sTabBar.m_lf			= lf;
 					m_Common.m_sTabBar.m_nPointSize = nPointSize;
 					// タブ フォント表示	// 2013/4/24 Uchi
@@ -162,9 +168,11 @@ INT_PTR CPropTab::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 				break;
 			}
 		}
-	} break;
+	}
+	break;
 		//@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP: {
+	case WM_HELP:
+	{
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -183,7 +191,8 @@ INT_PTR CPropTab::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 
 	case WM_DESTROY:
 		// タブ フォント破棄	// 2013/4/24 Uchi
-		if (m_hTabFont != NULL) {
+		if (m_hTabFont != NULL)
+		{
 			::DeleteObject(m_hTabFont);
 			m_hTabFont = NULL;
 		}
@@ -209,7 +218,8 @@ void CPropTab::SetData(HWND hwndDlg)
 	HWND hwndCombo = ::GetDlgItem(hwndDlg, IDC_CHECK_DispTabClose);
 	Combo_ResetContent(hwndCombo);
 	int nSelPos = 0;
-	for (int i = 0; i < _countof(DispTabCloseArr); ++i) {
+	for (int i = 0; i < _countof(DispTabCloseArr); ++i)
+	{
 		Combo_InsertString(hwndCombo, i, LS(DispTabCloseArr[i].nNameId));
 		if (DispTabCloseArr[i].nMethod == m_Common.m_sTabBar.m_bDispTabClose) { nSelPos = i; }
 	}
@@ -218,7 +228,8 @@ void CPropTab::SetData(HWND hwndDlg)
 	hwndCombo = ::GetDlgItem(hwndDlg, IDC_COMBO_TAB_POSITION);
 	Combo_ResetContent(hwndCombo);
 	nSelPos = 0;
-	for (int i = 0; i < _countof(TabPosArr); ++i) {
+	for (int i = 0; i < _countof(TabPosArr); ++i)
+	{
 		Combo_InsertString(hwndCombo, i, LS(TabPosArr[i].nNameId));
 		if (TabPosArr[i].nMethod == m_Common.m_sTabBar.m_eTabPosition) { nSelPos = i; }
 	}

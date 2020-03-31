@@ -40,7 +40,8 @@ void CType::InitTypeConfig(int nIdx, STypeConfig &type)
 	//規定値をコピー
 	static STypeConfig sDefault;
 	static bool		   bLoadedDefault = false;
-	if (!bLoadedDefault) {
+	if (!bLoadedDefault)
+	{
 		_DefaultConfig(&sDefault);
 		bLoadedDefault = true;
 	}
@@ -87,7 +88,8 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA *pShareData, std::vector<STypeConf
 	};
 	types.clear();
 	assert(_countof(table) <= MAX_TYPES);
-	for (int i = 0; i < _countof(table) && i < MAX_TYPES; i++) {
+	for (int i = 0; i < _countof(table) && i < MAX_TYPES; i++)
+	{
 		STypeConfig *type = new STypeConfig;
 		types.push_back(type);
 		table[i]->InitTypeConfig(i, *type);
@@ -260,16 +262,15 @@ void _DefaultConfig(STypeConfig *pType)
 	pType->m_bUseDocumentIcon = false; // 文書に関連づけられたアイコンを使う
 
 	//@@@ 2001.11.17 add start MIK
-	for (int i = 0; i < _countof(pType->m_RegexKeywordArr); i++) {
-		pType->m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1;
-	}
-	pType->m_RegexKeywordList[0] = L'\0';
-	pType->m_bUseRegexKeyword	= false;
+	for (int i = 0; i < _countof(pType->m_RegexKeywordArr); i++)
+	{ pType->m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1; } pType->m_RegexKeywordList[0] = L'\0';
+	pType->m_bUseRegexKeyword																	  = false;
 	//@@@ 2001.11.17 add end MIK
 	pType->m_nRegexKeyMagicNumber = 0;
 
 	//@@@ 2006.04.10 fon ADD-start
-	for (int i = 0; i < MAX_KEYHELP_FILE; i++) {
+	for (int i = 0; i < MAX_KEYHELP_FILE; i++)
+	{
 		pType->m_KeyHelpArr[i].m_bUse		= false;
 		pType->m_KeyHelpArr[i].m_szAbout[0] = L'\0';
 		pType->m_KeyHelpArr[i].m_szPath[0]  = L'\0';

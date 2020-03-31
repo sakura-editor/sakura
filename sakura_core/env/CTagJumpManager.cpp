@@ -66,7 +66,8 @@ void CTagJumpManager::PushTagJump(const TagJump *pTagJump)
 */
 bool CTagJumpManager::PopTagJump(TagJump *pTagJump)
 {
-	if (0 < m_pShareData->m_sTagJump.m_TagJumpNum) {
+	if (0 < m_pShareData->m_sTagJump.m_TagJumpNum)
+	{
 		*pTagJump = m_pShareData->m_sTagJump.m_TagJump[m_pShareData->m_sTagJump.m_TagJumpTop--];
 		if (m_pShareData->m_sTagJump.m_TagJumpTop < 0) { m_pShareData->m_sTagJump.m_TagJumpTop = MAX_TAGJUMPNUM - 1; }
 		m_pShareData->m_sTagJump.m_TagJumpNum--;

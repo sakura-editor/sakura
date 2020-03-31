@@ -43,7 +43,8 @@ const DWORD p_helpids[] = { // 13300
 	//	IDC_STATIC,				-1,
 	0, 0};
 
-struct ctrl_info_t {
+struct ctrl_info_t
+{
 	wchar_t		 code;	//入力する文字コード
 	unsigned int vKey;	//表記
 	WCHAR		 name[4]; //名前
@@ -119,11 +120,13 @@ void CDlgCtrlCode::SetData(void)
 	/* データ表示 */
 	WCHAR tmp[10];
 	count = 0;
-	for (i = 0; i < _countof(p_ctrl_list); i++) {
+	for (i = 0; i < _countof(p_ctrl_list); i++)
+	{
 		if (p_ctrl_list[i].jname == NULL) continue;
 
 		// 2011.06.01 nasukoji	元のjnameがNULLのものはそのまま残す
-		if (p_ctrl_list[i].jname) {
+		if (p_ctrl_list[i].jname)
+		{
 			// LMP: Added, nasukoji changed
 			p_ctrl_list[i].jname = cLabel_jname[i].LoadString(STR_ERR_DLGCTL5 + i);
 		}
@@ -229,7 +232,8 @@ BOOL CDlgCtrlCode::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 
 BOOL CDlgCtrlCode::OnBnClicked(int wID)
 {
-	switch (wID) {
+	switch (wID)
+	{
 	case IDC_BUTTON_HELP:
 		/* ヘルプ */
 		MyWinHelp(GetHwnd(), HELP_CONTEXT,
@@ -257,20 +261,27 @@ BOOL CDlgCtrlCode::OnNotify(WPARAM wParam, LPARAM lParam)
 
 	hwndList = GetItemHwnd(IDC_LIST_CTRLCODE);
 
-	if (hwndList == pNMHDR->hwndFrom) {
-		switch (pNMHDR->code) {
+	if (hwndList == pNMHDR->hwndFrom)
+	{
+		switch (pNMHDR->code)
+		{
 		case NM_DBLCLK: ::EndDialog(GetHwnd(), GetData()); return TRUE;
 
-		case LVN_KEYDOWN: {
+		case LVN_KEYDOWN:
+		{
 			HWND		 hwndList;
 			NMKEY *		 p = (NMKEY *)lParam;
 			int			 i, j;
 			unsigned int c;
-			for (i = 0; i < _countof(p_ctrl_list); i++) {
+			for (i = 0; i < _countof(p_ctrl_list); i++)
+			{
 				c = p_ctrl_list[i].vKey;
-				if (c == (p->nVKey & 0xffff)) {
-					for (j = 0; j < _countof(p_ctrl_list); j++) {
-						if (p_ctrl_list[i].code == p_ctrl_list[j].code) {
+				if (c == (p->nVKey & 0xffff))
+				{
+					for (j = 0; j < _countof(p_ctrl_list); j++)
+					{
+						if (p_ctrl_list[i].code == p_ctrl_list[j].code)
+						{
 							hwndList = GetItemHwnd(IDC_LIST_CTRLCODE);
 							ListView_SetItemState(hwndList, j, LVIS_SELECTED | LVIS_FOCUSED,
 												  LVIS_SELECTED | LVIS_FOCUSED);
@@ -284,7 +295,8 @@ BOOL CDlgCtrlCode::OnNotify(WPARAM wParam, LPARAM lParam)
 					break;
 				}
 			}
-		} break;
+		}
+		break;
 		}
 	}
 

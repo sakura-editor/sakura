@@ -71,17 +71,20 @@ bool CDllPlugin::InvokePlug(CEditView *view, CPlug &plug_raw, CWSHIfObj::List &p
 {
 	wstring	dllPath = GetFilePath(m_sDllName.c_str());
 	EDllResult resInit = InitDll(dllPath.c_str());
-	if (resInit != DLL_SUCCESS) {
+	if (resInit != DLL_SUCCESS)
+	{
 		::MYMESSAGEBOX(view->m_hwndParent, MB_OK, LS(STR_DLLPLG_TITLE), LS(STR_DLLPLG_INIT_ERR1), dllPath.c_str(),
 					   m_sName.c_str());
 		return false;
 	}
 
 	CDllPlug &plug = *(static_cast<CDllPlug *>(&plug_raw));
-	if (!plug.m_handler) {
+	if (!plug.m_handler)
+	{
 		// DLL関数の取得
 		ImportTable imp[2] = {{&plug.m_handler, to_achar(plug.m_sHandler.c_str())}, {NULL, 0}};
-		if (!RegisterEntries(imp)) {
+		if (!RegisterEntries(imp))
+		{
 			//			DWORD err = GetLastError();
 			::MYMESSAGEBOX(NULL, MB_OK, LS(STR_DLLPLG_TITLE), LS(STR_DLLPLG_INIT_ERR2));
 			return false;

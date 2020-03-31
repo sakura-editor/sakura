@@ -35,7 +35,8 @@ struct SFileTree;
 // 2008.XX.XX kobake CShareDataから分離
 // 2008.05.24 Uchi   ShareData_IO_CustMenu, ShareData_IO_KeyBind  move Export、Importに使用
 // 2010.08.21 Moca アクセス権、関数名の整理
-class CShareData_IO {
+class CShareData_IO
+{
 public:
 	//セーブ・ロード
 	static bool LoadShareData(); /* 共有データのロード */

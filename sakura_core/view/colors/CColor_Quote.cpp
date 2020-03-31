@@ -6,7 +6,8 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     クォーテーション                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CLayoutColorQuoteInfo : public CLayoutColorInfo {
+class CLayoutColorQuoteInfo : public CLayoutColorInfo
+{
 public:
 	std::wstring m_tag;
 	int			 m_nColorTypeIndex;
@@ -36,20 +37,23 @@ void CColor_Quote::Update(void)
 
 void CColor_Quote::SetStrategyColorInfo(const CLayoutColorInfo *colorInfo)
 {
-	if (colorInfo) {
+	if (colorInfo)
+	{
 		const CLayoutColorQuoteInfo *info = dynamic_cast<const CLayoutColorQuoteInfo *>(colorInfo);
 		if (info == NULL) { return; }
 		m_tag			  = info->m_tag;
 		m_nColorTypeIndex = info->m_nColorTypeIndex;
 	}
-	else {
+	else
+	{
 		m_nColorTypeIndex = 0;
 	}
 }
 
 CLayoutColorInfo *CColor_Quote::GetStrategyColorInfo() const
 {
-	if (0 < m_nColorTypeIndex) {
+	if (0 < m_nColorTypeIndex)
+	{
 		CLayoutColorQuoteInfo *info = new CLayoutColorQuoteInfo();
 		info->m_tag					= m_tag;
 		info->m_nColorTypeIndex		= m_nColorTypeIndex;
@@ -62,7 +66,8 @@ CLayoutColorInfo *CColor_Quote::GetStrategyColorInfo() const
 // staic
 bool CColor_Quote::IsCppRawString(const CStringRef &cStr, int nPos)
 {
-	if (0 < nPos && cStr.At(nPos - 1) == 'R' && cStr.At(nPos) == '"' && nPos + 1 < cStr.GetLength()) {
+	if (0 < nPos && cStr.At(nPos - 1) == 'R' && cStr.At(nPos) == '"' && nPos + 1 < cStr.GetLength())
+	{
 		// \b(u8|u|U|L|)R"[^(]*\(
 		// \b = ^|[\s!"#$%&'()=@{};:<>?,.*/\-\+\[\]\]
 		wchar_t c1 = L' ';
@@ -70,15 +75,18 @@ bool CColor_Quote::IsCppRawString(const CStringRef &cStr, int nPos)
 		wchar_t c2 = L' ';
 		if (3 <= nPos) { c2 = cStr.At(nPos - 3); }
 		const wchar_t *pszSep = L" \t!\"#$%&'()=@{};:<>?,.*/-+[]";
-		if ((c1 == 'u' || c1 == 'U' || c1 == 'L')) {
+		if ((c1 == 'u' || c1 == 'U' || c1 == 'L'))
+		{
 			if (NULL != wcschr(pszSep, c2)) { return true; }
 		}
-		else if (c1 == '8' && c2 == 'u') {
+		else if (c1 == '8' && c2 == 'u')
+		{
 			wchar_t c3 = L'\0';
 			if (4 <= nPos) { c3 = cStr.At(nPos - 4); }
 			if (NULL != wcschr(pszSep, c3)) { return true; }
 		}
-		else if (NULL != wcschr(pszSep, c1)) {
+		else if (NULL != wcschr(pszSep, c1))
+		{
 			return true;
 		}
 	}
@@ -89,22 +97,29 @@ bool CColor_Quote::BeginColor(const CStringRef &cStr, int nPos)
 {
 	if (!cStr.IsValid()) return false;
 
-	if (cStr.At(nPos) == m_cQuote) {
+	if (cStr.At(nPos) == m_cQuote)
+	{
 		m_nCOMMENTEND	= -1;
 		int  nStringType = m_pTypeData->m_nStringType;
 		bool bPreString  = true;
 		/* クォーテーション文字列の終端があるか */
-		switch (nStringType) {
+		switch (nStringType)
+		{
 		case STRING_LITERAL_CPP:
-			if (IsCppRawString(cStr, nPos)) {
-				for (int i = nPos + 1; i < cStr.GetLength(); i++) {
-					if (cStr.At(i) == '(') {
-						if (nPos + 1 < i) {
+			if (IsCppRawString(cStr, nPos))
+			{
+				for (int i = nPos + 1; i < cStr.GetLength(); i++)
+				{
+					if (cStr.At(i) == '(')
+					{
+						if (nPos + 1 < i)
+						{
 							m_tag = L')';
 							m_tag.append(cStr.GetPtr() + nPos + 1, i - (nPos + 1));
 							m_tag += L'"';
 						}
-						else {
+						else
+						{
 							m_tag.assign(L")\"", 2);
 						}
 						m_nCOMMENTEND	 = Match_QuoteStr(m_tag.c_str(), m_tag.size(), i + 1, cStr, false);
@@ -114,22 +129,27 @@ bool CColor_Quote::BeginColor(const CStringRef &cStr, int nPos)
 				}
 			}
 			break;
-		case STRING_LITERAL_HTML: {
+		case STRING_LITERAL_HTML:
+		{
 			int i;
-			for (i = nPos - 1; 0 <= i; i--) {
+			for (i = nPos - 1; 0 <= i; i--)
+			{
 				if (cStr.At(i) != L' ' && cStr.At(i) != L'\t') { break; }
 			}
 			if (!(0 <= i && cStr.At(i) == L'=')) { bPreString = false; }
-		} break;
+		}
+		break;
 		case STRING_LITERAL_CSHARP:
-			if (0 < nPos && cStr.At(nPos - 1) == L'@' && m_cQuote == L'"') {
+			if (0 < nPos && cStr.At(nPos - 1) == L'@' && m_cQuote == L'"')
+			{
 				m_nCOMMENTEND	 = Match_Quote(m_cQuote, nPos + 1, cStr, STRING_LITERAL_PLSQL);
 				m_nColorTypeIndex = 2;
 				return true;
 			}
 			break;
 		case STRING_LITERAL_PYTHON:
-			if (nPos + 2 < cStr.GetLength() && cStr.At(nPos + 1) == m_cQuote && cStr.At(nPos + 2) == m_cQuote) {
+			if (nPos + 2 < cStr.GetLength() && cStr.At(nPos + 1) == m_cQuote && cStr.At(nPos + 2) == m_cQuote)
+			{
 				m_nCOMMENTEND	 = Match_QuoteStr(m_szQuote, 3, nPos + 3, cStr, true);
 				m_nColorTypeIndex = 3;
 				return true;
@@ -137,24 +157,27 @@ bool CColor_Quote::BeginColor(const CStringRef &cStr, int nPos)
 			break;
 		}
 		m_bEscapeEnd = false;
-		if (bPreString) {
+		if (bPreString)
+		{
 			m_nCOMMENTEND	 = Match_Quote(m_cQuote, nPos + 1, cStr, m_nEscapeType, m_pbEscapeEnd);
 			m_nColorTypeIndex = 0;
 		}
 
 		// 「文字列は行内のみ」(C++ Raw String、Pythonのlong string、@""は特別)
-		if (m_pTypeData->m_bStringLineOnly && !m_bEscapeEnd && m_nCOMMENTEND == cStr.GetLength() + 1) {
+		if (m_pTypeData->m_bStringLineOnly && !m_bEscapeEnd && m_nCOMMENTEND == cStr.GetLength() + 1)
+		{
 			// 終了文字列がない場合は行末までを色分け
-			if (m_pTypeData->m_bStringEndLine) {
+			if (m_pTypeData->m_bStringEndLine)
+			{
 				// 改行コードを除く
 				if (0 < cStr.GetLength()
 					&& WCODE::IsLineDelimiter(cStr.At(cStr.GetLength() - 1),
-											  GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol)) {
+											  GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol))
+				{
 					if (1 < cStr.GetLength() && cStr.At(cStr.GetLength() - 2) == WCODE::CR
-						&& cStr.At(cStr.GetLength() - 1) == WCODE::LF) {
-						m_nCOMMENTEND = cStr.GetLength() - 2;
-					}
-					else {
+						&& cStr.At(cStr.GetLength() - 1) == WCODE::LF)
+					{ m_nCOMMENTEND = cStr.GetLength() - 2; } else
+					{
 						m_nCOMMENTEND = cStr.GetLength() - 1;
 					}
 				}
@@ -171,11 +194,13 @@ bool CColor_Quote::BeginColor(const CStringRef &cStr, int nPos)
 
 bool CColor_Quote::EndColor(const CStringRef &cStr, int nPos)
 {
-	if (-1 == m_nCOMMENTEND) {
+	if (-1 == m_nCOMMENTEND)
+	{
 		// ここにくるのは行頭のはず
 		assert_warning(0 == nPos);
 		// クォーテーション文字列の終端があるか
-		switch (m_nColorTypeIndex) {
+		switch (m_nColorTypeIndex)
+		{
 		case 0: m_nCOMMENTEND = Match_Quote(m_cQuote, nPos, cStr, m_nEscapeType); break;
 		case 1: m_nCOMMENTEND = Match_QuoteStr(m_tag.c_str(), m_tag.size(), nPos, cStr, false); break;
 		case 2: m_nCOMMENTEND = Match_Quote(m_cQuote, nPos, cStr, STRING_LITERAL_PLSQL); break;
@@ -183,7 +208,8 @@ bool CColor_Quote::EndColor(const CStringRef &cStr, int nPos)
 		}
 		// -1でEndColorが呼び出されるのは行を超えてきたからなので行内チェックは不要
 	}
-	else if (nPos == m_nCOMMENTEND) {
+	else if (nPos == m_nCOMMENTEND)
+	{
 		return true;
 	}
 	return false;
@@ -193,32 +219,41 @@ int CColor_Quote::Match_Quote(wchar_t wcQuote, int nPos, const CStringRef &cLine
 {
 	int nCharChars;
 	int i;
-	for (i = nPos; i < cLineStr.GetLength(); ++i) {
+	for (i = nPos; i < cLineStr.GetLength(); ++i)
+	{
 		// 2005-09-02 D.S.Koba GetSizeOfChar
 		nCharChars = (Int)t_max(CLogicInt(1), CNativeW::GetSizeOfChar(cLineStr.GetPtr(), cLineStr.GetLength(), i));
-		if (escapeType == STRING_LITERAL_CPP) {
+		if (escapeType == STRING_LITERAL_CPP)
+		{
 			// エスケープ \"
-			if (1 == nCharChars && cLineStr.At(i) == L'\\') {
+			if (1 == nCharChars && cLineStr.At(i) == L'\\')
+			{
 				++i;
 				if (i < cLineStr.GetLength()
-					&& WCODE::IsLineDelimiter(cLineStr.At(i), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol)) {
+					&& WCODE::IsLineDelimiter(cLineStr.At(i), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol))
+				{
 					if (pbEscapeEnd) { *pbEscapeEnd = true; }
 				}
 			}
-			else if (1 == nCharChars && cLineStr.At(i) == wcQuote) {
+			else if (1 == nCharChars && cLineStr.At(i) == wcQuote)
+			{
 				return i + 1;
 			}
 		}
-		else if (escapeType == STRING_LITERAL_PLSQL) {
+		else if (escapeType == STRING_LITERAL_PLSQL)
+		{
 			// エスケープ ""
-			if (1 == nCharChars && cLineStr.At(i) == wcQuote) {
+			if (1 == nCharChars && cLineStr.At(i) == wcQuote)
+			{
 				if (i + 1 < cLineStr.GetLength() && cLineStr.At(i + 1) == wcQuote) { ++i; }
-				else {
+				else
+				{
 					return i + 1;
 				}
 			}
 		}
-		else {
+		else
+		{
 			// エスケープなし
 			if (1 == nCharChars && cLineStr.At(i) == wcQuote) { return i + 1; }
 		}
@@ -235,12 +270,11 @@ int CColor_Quote::Match_QuoteStr(const wchar_t *pszQuote, int nQuoteLen, int nPo
 	const int	nCompLen = cLineStr.GetLength() - nQuoteLen + 1;
 	const WCHAR  quote1   = pszQuote[0];
 	const WCHAR *pLine	= cLineStr.GetPtr();
-	for (i = nPos; i < nCompLen; i += nCharChars) {
+	for (i = nPos; i < nCompLen; i += nCharChars)
+	{
 		if (quote1 == pLine[i] && wmemcmp(pszQuote + 1, pLine + i + 1, nQuoteLen - 1) == 0) { return i + nQuoteLen; }
 		nCharChars = (Int)t_max(CLogicInt(1), CNativeW::GetSizeOfChar(pLine, cLineStr.GetLength(), i));
-		if (bEscape && pLine[i] == L'\\') {
-			i += (Int)t_max(CLogicInt(1), CNativeW::GetSizeOfChar(pLine, cLineStr.GetLength(), i + nCharChars));
-		}
-	}
+		if (bEscape && pLine[i] == L'\\')
+		{ i += (Int)t_max(CLogicInt(1), CNativeW::GetSizeOfChar(pLine, cLineStr.GetLength(), i + nCharChars)); } }
 	return cLineStr.GetLength();
 }

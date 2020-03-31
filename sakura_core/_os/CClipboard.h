@@ -27,7 +27,8 @@
 class CEol;
 
 //!サクラエディタ用クリップボードクラス。後々はこの中で全てのクリップボードAPIを呼ばせたい。
-class CClipboard {
+class CClipboard
+{
 public:
 	//コンストラクタ・デストラクタ
 	CClipboard(HWND hwnd); //!< コンストラクタ内でクリップボードが開かれる

@@ -29,7 +29,8 @@
 
 class CBregexp; // 2002/2/10 aroka
 
-struct DocLineReplaceArg {
+struct DocLineReplaceArg
+{
 	CLogicRange   sDelRange;	   //!< [in] 削除範囲。ロジック単位。
 	COpeLineData *pcmemDeleted;	//!< [out] 削除されたデータを保存
 	COpeLineData *pInsData;		   //!< [in,out] 挿入するデータ(中身が移動する)
@@ -44,7 +45,8 @@ struct DocLineReplaceArg {
 クラスの宣言
 -----------------------------------------------------------------------*/
 // 2007.09.30 kobake WhereCurrentWord_2 を CWordParse に移動
-class CDocLineMgr {
+class CDocLineMgr
+{
 public:
 	//コンストラクタ・デストラクタ
 	CDocLineMgr();

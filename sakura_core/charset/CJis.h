@@ -26,7 +26,8 @@
 
 #include "CCodeBase.h"
 
-class CJis : public CCodeBase {
+class CJis : public CCodeBase
+{
 public:
 	CJis(bool base64decode = true)
 		: m_base64decode(base64decode)

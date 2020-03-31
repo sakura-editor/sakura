@@ -71,7 +71,8 @@ static BOOL s_isImmOpenBkup;
 // IMEを使用したくないコントロールのID判定
 static bool isImeUndesirable(int id)
 {
-	switch (id) {
+	switch (id)
+	{
 	case IDC_EDIT_nRulerHeight:
 	case IDC_EDIT_nRulerBottomSpace:
 	case IDC_EDIT_nLineNumberRightSpace:
@@ -98,7 +99,8 @@ INT_PTR CPropWin::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 	int		   idCtrl;
 	int		   nVal; // Sept.21, 2000 JEPRO スピン要素を加えたので復活させた
 
-	switch (uMsg) {
+	switch (uMsg)
+	{
 
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 Window */
@@ -118,9 +120,11 @@ INT_PTR CPropWin::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR *)lParam;
 		pMNUD  = (NM_UPDOWN *)lParam;
-		switch (idCtrl) {
+		switch (idCtrl)
+		{
 		default:
-			switch (pNMHDR->code) {
+			switch (pNMHDR->code)
+			{
 			case PSN_HELP: OnHelp(hwndDlg, IDD_PROP_WIN); return TRUE;
 			case PSN_KILLACTIVE:
 				//				MYTRACE( L"Window PSN_KILLACTIVE\n" );
@@ -135,7 +139,8 @@ INT_PTR CPropWin::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 			/* ルーラ－の高さ */
 			nVal = ::GetDlgItemInt(hwndDlg, IDC_EDIT_nRulerHeight, NULL, FALSE);
 			if (pMNUD->iDelta < 0) { ++nVal; }
-			else if (pMNUD->iDelta > 0) {
+			else if (pMNUD->iDelta > 0)
+			{
 				--nVal;
 			}
 			if (nVal < IDC_SPIN_nRulerHeight_MIN) { nVal = IDC_SPIN_nRulerHeight_MIN; }
@@ -146,7 +151,8 @@ INT_PTR CPropWin::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 			/* ルーラーとテキストの隙間 */
 			nVal = ::GetDlgItemInt(hwndDlg, IDC_EDIT_nRulerBottomSpace, NULL, FALSE);
 			if (pMNUD->iDelta < 0) { ++nVal; }
-			else if (pMNUD->iDelta > 0) {
+			else if (pMNUD->iDelta > 0)
+			{
 				--nVal;
 			}
 			if (nVal < 0) { nVal = 0; }
@@ -157,7 +163,8 @@ INT_PTR CPropWin::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 			/* ルーラーとテキストの隙間 */
 			nVal = ::GetDlgItemInt(hwndDlg, IDC_EDIT_nLineNumberRightSpace, NULL, FALSE);
 			if (pMNUD->iDelta < 0) { ++nVal; }
-			else if (pMNUD->iDelta > 0) {
+			else if (pMNUD->iDelta > 0)
+			{
 				--nVal;
 			}
 			if (nVal < 0) { nVal = 0; }
@@ -167,7 +174,8 @@ INT_PTR CPropWin::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		case IDC_SPIN_FUNCKEYWND_GROUPNUM:
 			nVal = ::GetDlgItemInt(hwndDlg, IDC_EDIT_FUNCKEYWND_GROUPNUM, NULL, FALSE);
 			if (pMNUD->iDelta < 0) { ++nVal; }
-			else if (pMNUD->iDelta > 0) {
+			else if (pMNUD->iDelta > 0)
+			{
 				--nVal;
 			}
 			if (nVal < 1) { nVal = 1; }
@@ -182,16 +190,19 @@ INT_PTR CPropWin::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		wNotifyCode = HIWORD(wParam); /* 通知コード */
 		wID			= LOWORD(wParam); /* 項目ID､ コントロールID､ またはアクセラレータID */
 		hwndCtl		= (HWND)lParam;   /* コントロールのハンドル */
-		switch (wNotifyCode) {
+		switch (wNotifyCode)
+		{
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
-			switch (wID) {
+			switch (wID)
+			{
 			//	ファンクションキーを表示する時だけその位置指定をEnableに設定
 			case IDC_CHECK_DispFUNCKEYWND: EnableWinPropInput(hwndDlg); break;
 
 			// From Here 2004.05.13 Moca 「位置と大きさの設定」ボタン
 			//	ウィンドウ設定ダイアログにて起動時のウィンドウ状態指定
-			case IDC_BUTTON_WINSIZE: {
+			case IDC_BUTTON_WINSIZE:
+			{
 				CDlgWinSize cDlgWinSize;
 				RECT		rc;
 				rc.right  = m_Common.m_sWindow.m_nWinSizeCX;
@@ -204,7 +215,8 @@ INT_PTR CPropWin::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 				m_Common.m_sWindow.m_nWinSizeCY = rc.bottom;
 				m_Common.m_sWindow.m_nWinPosX   = rc.top;
 				m_Common.m_sWindow.m_nWinPosY   = rc.left;
-			} break;
+			}
+			break;
 				// To Here 2004.05.13 Moca
 			}
 			break;
@@ -219,7 +231,8 @@ INT_PTR CPropWin::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		//	To Here Sept. 9, 2000
 
 		//@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP: {
+	case WM_HELP:
+	{
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -251,11 +264,13 @@ void CPropWin::SetData(HWND hwndDlg)
 	::CheckDlgButton(hwndDlg, IDC_CHECK_DispFUNCKEYWND, m_Common.m_sWindow.m_bDispFUNCKEYWND);
 
 	/* ファンクションキー表示位置／0:上 1:下 */
-	if (0 == m_Common.m_sWindow.m_nFUNCKEYWND_Place) {
+	if (0 == m_Common.m_sWindow.m_nFUNCKEYWND_Place)
+	{
 		::CheckDlgButton(hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE1, TRUE);
 		::CheckDlgButton(hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE2, FALSE);
 	}
-	else {
+	else
+	{
 		::CheckDlgButton(hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE1, FALSE);
 		::CheckDlgButton(hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE2, TRUE);
 	}
@@ -316,7 +331,8 @@ void CPropWin::SetData(HWND hwndDlg)
 	Combo_ResetContent(hwndCombo);
 	int  nSelPos = 0;
 	UINT uiIndex = 0;
-	for (uiIndex = 0; uiIndex < CSelectLang::m_psLangInfoList.size(); uiIndex++) {
+	for (uiIndex = 0; uiIndex < CSelectLang::m_psLangInfoList.size(); uiIndex++)
+	{
 		CSelectLang::SSelLangInfo *psLangInfo = CSelectLang::m_psLangInfoList.at(uiIndex);
 		Combo_InsertString(hwndCombo, uiIndex, psLangInfo->szLangName);
 		if (wcscmp(m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName) == 0) { nSelPos = uiIndex; }
@@ -361,13 +377,10 @@ int CPropWin::GetData(HWND hwndDlg)
 
 	/* ルーラー高さ */
 	m_Common.m_sWindow.m_nRulerHeight = ::GetDlgItemInt(hwndDlg, IDC_EDIT_nRulerHeight, NULL, FALSE);
-	if (m_Common.m_sWindow.m_nRulerHeight < IDC_SPIN_nRulerHeight_MIN) {
-		m_Common.m_sWindow.m_nRulerHeight = IDC_SPIN_nRulerHeight_MIN;
-	}
-	if (m_Common.m_sWindow.m_nRulerHeight > IDC_SPIN_nRulerHeight_MAX) {
-		m_Common.m_sWindow.m_nRulerHeight = IDC_SPIN_nRulerHeight_MAX;
-	}
-	/* ルーラーとテキストの隙間 */
+	if (m_Common.m_sWindow.m_nRulerHeight < IDC_SPIN_nRulerHeight_MIN)
+	{ m_Common.m_sWindow.m_nRulerHeight = IDC_SPIN_nRulerHeight_MIN; }
+	if (m_Common.m_sWindow.m_nRulerHeight > IDC_SPIN_nRulerHeight_MAX)
+	{ m_Common.m_sWindow.m_nRulerHeight = IDC_SPIN_nRulerHeight_MAX; } /* ルーラーとテキストの隙間 */
 	m_Common.m_sWindow.m_nRulerBottomSpace = ::GetDlgItemInt(hwndDlg, IDC_EDIT_nRulerBottomSpace, NULL, FALSE);
 	if (m_Common.m_sWindow.m_nRulerBottomSpace < 0) { m_Common.m_sWindow.m_nRulerBottomSpace = 0; }
 	if (m_Common.m_sWindow.m_nRulerBottomSpace > 32) { m_Common.m_sWindow.m_nRulerBottomSpace = 32; }
@@ -398,7 +411,8 @@ int CPropWin::GetData(HWND hwndDlg)
 	HWND					   hwndCombo  = ::GetDlgItem(hwndDlg, IDC_COMBO_LANGUAGE);
 	int						   nSelPos	= Combo_GetCurSel(hwndCombo);
 	CSelectLang::SSelLangInfo *psLangInfo = CSelectLang::m_psLangInfoList.at(nSelPos);
-	if (wcscmp(m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName) != 0) {
+	if (wcscmp(m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName) != 0)
+	{
 		wcsncpy(m_Common.m_sWindow.m_szLanguageDll, psLangInfo->szDllName,
 				_countof(m_Common.m_sWindow.m_szLanguageDll));
 	}
@@ -412,13 +426,15 @@ int CPropWin::GetData(HWND hwndDlg)
 void CPropWin::EnableWinPropInput(HWND hwndDlg)
 {
 	//	ファクションキーを表示するかどうか
-	if (::IsDlgButtonChecked(hwndDlg, IDC_CHECK_DispFUNCKEYWND)) {
+	if (::IsDlgButtonChecked(hwndDlg, IDC_CHECK_DispFUNCKEYWND))
+	{
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_FUNCKEYWND_GROUPNUM),
 					   TRUE); // IDC_GROUP_FUNCKEYWND_POSITION->IDC_EDIT_FUNCKEYWND_GROUPNUM 2008/7/4 Uchi
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE1), TRUE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE2), TRUE);
 	}
-	else {
+	else
+	{
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_FUNCKEYWND_GROUPNUM),
 					   FALSE); // IDC_GROUP_FUNCKEYWND_POSITION->IDC_EDIT_FUNCKEYWND_GROUPNUM 2008/7/4 Uchi
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE1), FALSE);

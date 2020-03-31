@@ -41,19 +41,22 @@ INT_PTR CALLBACK PropTypesCommonProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
 {
 	PROPSHEETPAGE *pPsp;
 	CPropTypes *   pCPropTypes;
-	switch (uMsg) {
+	switch (uMsg)
+	{
 	case WM_INITDIALOG:
 		pPsp		= (PROPSHEETPAGE *)lParam;
 		pCPropTypes = reinterpret_cast<CPropTypes *>(pPsp->lParam);
 		if (NULL != pCPropTypes) { return (pCPropTypes->*pDispatch)(hwndDlg, uMsg, wParam, pPsp->lParam); }
-		else {
+		else
+		{
 			return FALSE;
 		}
 	default:
 		// Modified by KEITA for WIN64 2003.9.6
 		pCPropTypes = (CPropTypes *)::GetWindowLongPtr(hwndDlg, DWLP_USER);
 		if (NULL != pCPropTypes) { return (pCPropTypes->*pDispatch)(hwndDlg, uMsg, wParam, lParam); }
-		else {
+		else
+		{
 			return FALSE;
 		}
 	}
@@ -112,7 +115,8 @@ void CPropTypes::Create(HINSTANCE hInstApp, HWND hwndParent)
 	m_hwndParent = hwndParent; /* オーナーウィンドウのハンドル */
 }
 
-struct TypePropSheetInfo {
+struct TypePropSheetInfo
+{
 	int			 m_nTabNameId;							  //!< TABの表示名
 	unsigned int resId;									  //!< Property sheetに対応するDialog resource
 	INT_PTR(CALLBACK *DProc)(HWND, UINT, WPARAM, LPARAM); //!< Dialog Procedure
@@ -146,7 +150,8 @@ INT_PTR CPropTypes::DoPropertySheet(int nPageNum)
 	std::wstring sTabname[_countof(TypePropSheetInfoList)];
 	m_bChangeKeyWordSet = false;
 	PROPSHEETPAGE psp[_countof(TypePropSheetInfoList)];
-	for (nIdx = 0; nIdx < _countof(TypePropSheetInfoList); nIdx++) {
+	for (nIdx = 0; nIdx < _countof(TypePropSheetInfoList); nIdx++)
+	{
 		sTabname[nIdx] = LS(TypePropSheetInfoList[nIdx].m_nTabNameId);
 
 		PROPSHEETPAGE *p = &psp[nIdx];
@@ -173,10 +178,12 @@ INT_PTR CPropTypes::DoPropertySheet(int nPageNum)
 
 	//- 20020106 aroka # psh.nStartPage は unsigned なので負にならない
 	if (-1 == nPageNum) { psh.nStartPage = m_nPageNum; }
-	else if (0 > nPageNum) { //- 20020106 aroka
+	else if (0 > nPageNum)
+	{ //- 20020106 aroka
 		psh.nStartPage = 0;
 	}
-	else {
+	else
+	{
 		psh.nStartPage = nPageNum;
 	}
 
@@ -186,7 +193,8 @@ INT_PTR CPropTypes::DoPropertySheet(int nPageNum)
 
 	nRet = MyPropertySheet(&psh); // 2007.05.24 ryoji 独自拡張プロパティシート
 
-	if (-1 == nRet) {
+	if (-1 == nRet)
+	{
 		WCHAR *pszMsgBuf;
 		::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 						NULL, ::GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // デフォルト言語
@@ -212,7 +220,8 @@ INT_PTR CPropTypes::DoPropertySheet(int nPageNum)
 void CPropTypes::OnHelp(HWND hwndParent, int nPageID)
 {
 	int nContextID;
-	switch (nPageID) {
+	switch (nPageID)
+	{
 	case IDD_PROP_SCREEN: nContextID = ::FuncID_To_HelpContextID(F_TYPE_SCREEN); break;
 	case IDD_PROP_COLOR: nContextID = ::FuncID_To_HelpContextID(F_TYPE_COLOR); break;
 	case IDD_PROP_WINDOW: nContextID = ::FuncID_To_HelpContextID(F_TYPE_WINDOW); break;
@@ -221,7 +230,8 @@ void CPropTypes::OnHelp(HWND hwndParent, int nPageID)
 	case IDD_PROP_KEYHELP: nContextID = ::FuncID_To_HelpContextID(F_TYPE_KEYHELP); break;
 	default: nContextID = -1; break;
 	}
-	if (-1 != nContextID) {
+	if (-1 != nContextID)
+	{
 		MyWinHelp(hwndParent, HELP_CONTEXT, nContextID); // 2006.10.10 ryoji MyWinHelpに変更に変更
 	}
 }
@@ -237,7 +247,8 @@ HFONT CPropTypes::SetCtrlFont(HWND hwndDlg, int idc_ctrl, const LOGFONT &lf)
 	// 論理フォントを作成
 	hCtrl = ::GetDlgItem(hwndDlg, idc_ctrl);
 	hFont = ::CreateFontIndirect(&lf);
-	if (hFont) {
+	if (hFont)
+	{
 		// フォントの設定
 		::SendMessage(hCtrl, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(FALSE, 0));
 	}
@@ -259,14 +270,16 @@ HFONT CPropTypes::SetFontLabel(HWND hwndDlg, int idc_static, const LOGFONT &lf, 
 	LONG limitSize = ::DpiPointsToPixels(16);
 	if (lfTemp.lfHeight < -limitSize) { lfTemp.lfHeight = -limitSize; }
 
-	if (bUse) {
+	if (bUse)
+	{
 		hFont = SetCtrlFont(hwndDlg, idc_static, lfTemp);
 
 		// フォント名の設定
 		auto_sprintf(szFontName, nps % 10 ? L"%s(%.1fpt)" : L"%s(%.0fpt)", lf.lfFaceName, double(nps) / 10);
 		::DlgItem_SetText(hwndDlg, idc_static, szFontName);
 	}
-	else {
+	else
+	{
 		hFont = NULL;
 		::DlgItem_SetText(hwndDlg, idc_static, L"");
 	}

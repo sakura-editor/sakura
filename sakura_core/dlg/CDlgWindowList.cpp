@@ -60,7 +60,8 @@ int CDlgWindowList::DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam)
 
 BOOL CDlgWindowList::OnBnClicked(int wID)
 {
-	switch (wID) {
+	switch (wID)
+	{
 	case IDC_BUTTON_HELP:
 		/* ヘルプ */
 		MyWinHelp(GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_DLGWINLIST));
@@ -78,9 +79,11 @@ void CDlgWindowList::GetDataListView(std::vector<HWND> &aHwndList)
 	HWND hwndList = GetItemHwnd(IDC_LIST_WINDOW);
 	aHwndList.clear();
 	const int nCount = ListView_GetItemCount(hwndList);
-	for (int i = 0; i < nCount; i++) {
+	for (int i = 0; i < nCount; i++)
+	{
 		const BOOL bCheck = ListView_GetCheckState(hwndList, i);
-		if (bCheck) {
+		if (bCheck)
+		{
 			LV_ITEM lvitem;
 			memset_raw(&lvitem, 0, sizeof(lvitem));
 			lvitem.mask		= LVIF_PARAM;
@@ -95,7 +98,8 @@ void CDlgWindowList::CommandSave()
 {
 	std::vector<HWND> aHwndList;
 	GetDataListView(aHwndList);
-	for (int i = 0; i < (int)aHwndList.size(); i++) {
+	for (int i = 0; i < (int)aHwndList.size(); i++)
+	{
 		DWORD dwPid;
 		::GetWindowThreadProcessId(aHwndList[i], &dwPid);
 		::AllowSetForegroundWindow(dwPid);
@@ -108,7 +112,8 @@ void CDlgWindowList::CommandClose()
 {
 	std::vector<HWND> aHwndList;
 	GetDataListView(aHwndList);
-	for (int i = 0; i < (int)aHwndList.size(); i++) {
+	for (int i = 0; i < (int)aHwndList.size(); i++)
+	{
 		DWORD dwPid;
 		::GetWindowThreadProcessId(aHwndList[i], &dwPid);
 		::AllowSetForegroundWindow(dwPid);
@@ -123,9 +128,11 @@ void CDlgWindowList::SetData()
 	ListView_DeleteAllItems(hwndList);
 	EditNode *pEditNode;
 	int		  nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr(&pEditNode, TRUE);
-	if (0 < nRowNum) {
+	if (0 < nRowNum)
+	{
 		CTextWidthCalc calc(hwndList);
-		for (int i = 0; i < nRowNum; i++) {
+		for (int i = 0; i < nRowNum; i++)
+		{
 			::SendMessageAny(pEditNode[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0);
 			const EditInfo *pEditInfo = &m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
@@ -174,7 +181,8 @@ BOOL CDlgWindowList::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	for (int i = 0; i < _countof(anchorList); i++) { GetItemClientRect(anchorList[i].id, m_rcItems[i]); }
 
 	RECT rcDialog = GetDllShareData().m_Common.m_sOthers.m_rcWindowListDialog;
-	if (rcDialog.left != 0 || rcDialog.bottom != 0) {
+	if (rcDialog.left != 0 || rcDialog.bottom != 0)
+	{
 		m_xPos	= rcDialog.left;
 		m_yPos	= rcDialog.top;
 		m_nWidth  = rcDialog.right - rcDialog.left;
@@ -216,9 +224,8 @@ BOOL CDlgWindowList::OnSize(WPARAM wParam, LPARAM lParam)
 	ptNew.x = rc.right - rc.left;
 	ptNew.y = rc.bottom - rc.top;
 
-	for (int i = 0; i < _countof(anchorList); i++) {
-		ResizeItem(GetItemHwnd(anchorList[i].id), m_ptDefaultSize, ptNew, m_rcItems[i], anchorList[i].anchor);
-	}
+	for (int i = 0; i < _countof(anchorList); i++)
+	{ ResizeItem(GetItemHwnd(anchorList[i].id), m_ptDefaultSize, ptNew, m_rcItems[i], anchorList[i].anchor); }
 	::InvalidateRect(GetHwnd(), NULL, TRUE);
 	return TRUE;
 }
@@ -243,7 +250,8 @@ BOOL CDlgWindowList::OnMinMaxInfo(LPARAM lParam)
 
 BOOL CDlgWindowList::OnActivate(WPARAM wParam, LPARAM lParam)
 {
-	switch (LOWORD(wParam)) {
+	switch (LOWORD(wParam))
+	{
 	case WA_ACTIVE:
 	case WA_CLICKACTIVE: SetData(); return TRUE;
 	case WA_INACTIVE:

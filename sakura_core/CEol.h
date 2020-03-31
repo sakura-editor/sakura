@@ -35,7 +35,8 @@
 
 // 2002/09/22 Moca EOL_CRLF_UNICODEを廃止
 /* 行終端子の種類 */
-enum EEolType : char {
+enum EEolType : char
+{
 	EOL_NONE,		 //!<
 	EOL_CRLF,		 //!< 0d0a
 	EOL_LF,			 //!< 0a
@@ -47,7 +48,8 @@ enum EEolType : char {
 	EOL_UNKNOWN = -1 //
 };
 
-struct SEolDefinition {
+struct SEolDefinition
+{
 	const WCHAR *m_szName;
 	const WCHAR *m_szDataW;
 	const ACHAR *m_szDataA;
@@ -78,7 +80,8 @@ extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
 	オブジェクトに対するメソッドで行えるだけだが、グローバル変数への参照を
 	クラス内部に閉じこめることができるのでそれなりに意味はあると思う。
 */
-class CEol {
+class CEol
+{
 public:
 	//コンストラクタ・デストラクタ
 	CEol() { m_eEolType = EOL_NONE; }

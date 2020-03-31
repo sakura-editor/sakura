@@ -27,7 +27,8 @@
 #include "CMyPoint.h"
 #include <Windows.h> //RECT
 
-class CMyRect : public RECT {
+class CMyRect : public RECT
+{
 public:
 	//コンストラクタ・デストラクタ
 	CMyRect() { SetLTRB(0, 0, 0, 0); }

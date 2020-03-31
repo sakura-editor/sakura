@@ -41,7 +41,8 @@
 typedef std::pair<LPWSTR, DWORD>	  PairGrepEnumItem;
 typedef std::vector<PairGrepEnumItem> VPGrepEnumItem;
 
-class CGrepEnumOptions {
+class CGrepEnumOptions
+{
 public:
 	CGrepEnumOptions()
 		: m_bIgnoreHidden(false)
@@ -54,7 +55,8 @@ public:
 	bool m_bIgnoreSystem;
 };
 
-class CGrepEnumFileBase {
+class CGrepEnumFileBase
+{
 private:
 	VPGrepEnumItem m_vpItems;
 
@@ -65,7 +67,8 @@ public:
 
 	void ClearItems(void)
 	{
-		for (int i = 0; i < GetCount(); i++) {
+		for (int i = 0; i < GetCount(); i++)
+		{
 			LPWSTR lp		   = m_vpItems[i].first;
 			m_vpItems[i].first = NULL;
 			delete[] lp;
@@ -76,7 +79,8 @@ public:
 
 	BOOL IsExist(LPCWSTR lpFileName)
 	{
-		for (int i = 0; i < GetCount(); i++) {
+		for (int i = 0; i < GetCount(); i++)
+		{
 			if (wcscmp(m_vpItems[i].first, lpFileName) == 0) { return TRUE; }
 		}
 		return FALSE;
@@ -107,7 +111,8 @@ public:
 	{
 		int found = 0;
 
-		for (int i = 0; i < (int)vecKeys.size(); i++) {
+		for (int i = 0; i < (int)vecKeys.size(); i++)
+		{
 			int	baseLen = wcslen(lpBaseFolder);
 			LPWSTR lpPath  = new WCHAR[baseLen + wcslen(vecKeys[i]) + 2];
 			if (NULL == lpPath) break;
@@ -119,21 +124,26 @@ public:
 			const WCHAR *keyDirSlash = wcsrchr(vecKeys[i], L'/');
 			const WCHAR *keyDir;
 			if (keyDirYen == NULL) { keyDir = keyDirSlash; }
-			else if (keyDirSlash == NULL) {
+			else if (keyDirSlash == NULL)
+			{
 				keyDir = keyDirYen;
 			}
-			else if (keyDirYen < keyDirSlash) {
+			else if (keyDirYen < keyDirSlash)
+			{
 				keyDir = keyDirSlash;
 			}
-			else {
+			else
+			{
 				keyDir = keyDirYen;
 			}
 			int nKeyDirLen = keyDir ? keyDir - vecKeys[i] + 1 : 0;
 
 			WIN32_FIND_DATA w32fd;
 			HANDLE			handle = ::FindFirstFile(lpPath, &w32fd);
-			if (INVALID_HANDLE_VALUE != handle) {
-				do {
+			if (INVALID_HANDLE_VALUE != handle)
+			{
+				do
+				{
 					if (!::PathMatchSpec(w32fd.cFileName, vecKeys[i] + nKeyDirLen)) { continue; }
 					if (option.m_bIgnoreHidden && (w32fd.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN)) { continue; }
 					if (option.m_bIgnoreReadOnly && (w32fd.dwFileAttributes & FILE_ATTRIBUTE_READONLY)) { continue; }
@@ -145,16 +155,20 @@ public:
 					wcscpy(lpFullPath, lpBaseFolder);
 					wcscpy(lpFullPath + baseLen, L"\\");
 					wcscpy(lpFullPath + baseLen + 1, lpName);
-					if (IsValid(w32fd, lpName)) {
+					if (IsValid(w32fd, lpName))
+					{
 						if (pExceptItems && pExceptItems->IsExist(lpFullPath)) {}
-						else {
+						else
+						{
 							m_vpItems.push_back(PairGrepEnumItem(lpName, w32fd.nFileSizeLow));
 							found++; // 2011.11.19
-							if (pExceptItems && nKeyDirLen) {
+							if (pExceptItems && nKeyDirLen)
+							{
 								// フォルダを含んだパスなら検索済みとして除外指定に追加する
 								pExceptItems->m_vpItems.push_back(PairGrepEnumItem(lpFullPath, w32fd.nFileSizeLow));
 							}
-							else {
+							else
+							{
 								delete[] lpFullPath;
 							}
 							continue;

@@ -28,7 +28,8 @@
 */
 #pragma once
 
-class CRecycledBuffer {
+class CRecycledBuffer
+{
 	//コンフィグ
 private:
 	static const int BLOCK_SIZE  = 1024; //ブロックサイズ。バイト単位。
@@ -63,7 +64,8 @@ private:
 	int  m_current;
 };
 
-class CRecycledBufferDynamic {
+class CRecycledBufferDynamic
+{
 	//コンフィグ
 private:
 	static const int CHAIN_COUNT = 64; //再利用可能なブロック数。
@@ -77,7 +79,8 @@ public:
 	}
 	~CRecycledBufferDynamic()
 	{
-		for (int i = 0; i < _countof(m_buf); i++) {
+		for (int i = 0; i < _countof(m_buf); i++)
+		{
 			if (m_buf[i]) delete[] m_buf[i];
 		}
 	}

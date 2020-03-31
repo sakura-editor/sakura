@@ -40,7 +40,8 @@ bool CFigure_Text::DrawImp(SColorStrategyInfo *pInfo)
 				  && CTypeSupport(pInfo->m_pcView, COLORIDX_TEXT).GetBackColor() == GetBkColor(pInfo->m_gr);
 	int fontNo = (nLength == 2 ? WCODE::GetFontNo2(pInfo->m_pLineOfLogic[nIdx], pInfo->m_pLineOfLogic[nIdx + 1])
 							   : WCODE::GetFontNo(pInfo->m_pLineOfLogic[nIdx]));
-	if (fontNo) {
+	if (fontNo)
+	{
 		CTypeSupport cCurrentType(pInfo->m_pcView, pInfo->GetCurrentColor()); // 周辺の色（現在の指定色/選択色）
 		CTypeSupport cCurrentType2(pInfo->m_pcView, pInfo->GetCurrentColor2()); // 周辺の色（現在の指定色）
 		bool		 blendColor = pInfo->GetCurrentColor() != pInfo->GetCurrentColor2()
@@ -114,14 +115,16 @@ bool CFigureSpace::DrawImp_StyleSelect(SColorStrategyInfo *pInfo)
 	bool	 blendColor = pInfo->GetCurrentColor() != pInfo->GetCurrentColor2()
 					  && cCurrentType.GetTextColor() == cCurrentType.GetBackColor(); // 選択混合色
 	bool bBold;
-	if (blendColor) {
+	if (blendColor)
+	{
 		CTypeSupport &cText = cSpaceType.GetTextColor() == cTextType.GetTextColor() ? cCurrentType2 : cSpaceType;
 		CTypeSupport &cBack = cSpaceType.GetBackColor() == cTextType.GetBackColor() ? cCurrentType3 : cSpaceType;
 		crText				= pcView->GetTextColorByColorInfo2(cCurrentType.GetColorInfo(), cText.GetColorInfo());
 		crBack				= pcView->GetBackColorByColorInfo2(cCurrentType.GetColorInfo(), cBack.GetColorInfo());
 		bBold				= cCurrentType2.IsBoldFont();
 	}
-	else {
+	else
+	{
 		CTypeSupport &cText = cSpaceType.GetTextColor() == cTextType.GetTextColor() ? cCurrentType : cSpaceType;
 		CTypeSupport &cBack = cSpaceType.GetBackColor() == cTextType.GetBackColor() ? cCurrentType1 : cSpaceType;
 		crText				= cText.GetTextColor();
@@ -160,7 +163,8 @@ void CFigureSpace::DrawImp_DrawUnderline(SColorStrategyInfo *pInfo, DispPos &sPo
 	CTypeSupport colorStyle(pcView, blendColor ? pInfo->GetCurrentColor2() : pInfo->GetCurrentColor()); // 周辺の色
 	CTypeSupport cSpaceType(pcView, GetDispColorIdx()); // 空白の指定色
 
-	if (!cSpaceType.HasUnderLine() && colorStyle.HasUnderLine()) {
+	if (!cSpaceType.HasUnderLine() && colorStyle.HasUnderLine())
+	{
 		int fontNo = WCODE::GetFontNo(' ');
 		// 下線を周辺の前景色で描画する
 		SFONT sFont;
@@ -175,7 +179,8 @@ void CFigureSpace::DrawImp_DrawUnderline(SColorStrategyInfo *pInfo, DispPos &sPo
 		int				 nLength	   = (Int)(nColLength + nSpWidth - 1) / nSpWidth;
 		wchar_t *		 pszText	   = new wchar_t[nLength];
 		std::vector<int> vDxArray(nLength);
-		for (int i = 0; i < nLength; i++) {
+		for (int i = 0; i < nLength; i++)
+		{
 			pszText[i]  = L' ';
 			vDxArray[i] = nSpWidth;
 		}

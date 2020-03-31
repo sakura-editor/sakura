@@ -29,7 +29,8 @@ class CMacro;
 /*!
 	キーボードマクロクラス
 */
-class CKeyMacroMgr : public CMacroManagerBase {
+class CKeyMacroMgr : public CMacroManagerBase
+{
 public:
 	/*
 	||  Constructors

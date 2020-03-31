@@ -23,7 +23,8 @@ class CSplitBoxWnd;
 /*!
 	@brief 分割ボックスウィンドウクラス
 */
-class CSplitBoxWnd final : public CWnd {
+class CSplitBoxWnd final : public CWnd
+{
 public:
 	/*
 	||  Constructors

@@ -79,8 +79,10 @@ void CViewCommander::Command_TAB_CLOSEOTHER(void)
 	int		  nCount = CAppNodeManager::getInstance()->GetOpenedWindowArr(&pEditNode, TRUE);
 	if (0 >= nCount) return;
 
-	for (int i = 0; i < nCount; i++) {
-		if (pEditNode[i].m_hWnd == GetMainWindow()) {
+	for (int i = 0; i < nCount; i++)
+	{
+		if (pEditNode[i].m_hWnd == GetMainWindow())
+		{
 			pEditNode[i].m_hWnd = NULL; //自分自身は閉じない
 			nGroup				= pEditNode[i].m_nGroup;
 		}
@@ -133,8 +135,10 @@ void CViewCommander::Command_CASCADE(void)
 	EditNode *pEditNodeArr;
 	int		  nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr(&pEditNodeArr, TRUE /*FALSE*/, TRUE);
 
-	if (nRowNum > 0) {
-		struct WNDARR {
+	if (nRowNum > 0)
+	{
+		struct WNDARR
+		{
 			HWND hWnd;
 			int  newX;
 			int  newY;
@@ -149,16 +153,20 @@ void CViewCommander::Command_CASCADE(void)
 		//	ウィンドウ(ハンドル)リストの作成
 		// -----------------------------------------
 
-		for (i = 0; i < nRowNum; ++i) {
-			if (::IsIconic(pEditNodeArr[i].GetHwnd())) { //	最小化しているウィンドウは無視。
+		for (i = 0; i < nRowNum; ++i)
+		{
+			if (::IsIconic(pEditNodeArr[i].GetHwnd()))
+			{ //	最小化しているウィンドウは無視。
 				continue;
 			}
-			if (!::IsWindowVisible(pEditNodeArr[i].GetHwnd())) { //	不可視ウィンドウは無視。
+			if (!::IsWindowVisible(pEditNodeArr[i].GetHwnd()))
+			{ //	不可視ウィンドウは無視。
 				continue;
 			}
 			//	Mar. 20, 2004 genta
 			//	現在のウィンドウを末尾に持っていくためここではスキップ
-			if (pEditNodeArr[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd()) {
+			if (pEditNodeArr[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd())
+			{
 				current_win_index = i;
 				continue;
 			}
@@ -168,7 +176,8 @@ void CViewCommander::Command_CASCADE(void)
 
 		//	Mar. 20, 2004 genta
 		//	現在のウィンドウを末尾に挿入 inspired by crayonzen
-		if (current_win_index >= 0) {
+		if (current_win_index >= 0)
+		{
 			pWndArr[count].hWnd = pEditNodeArr[current_win_index].GetHwnd();
 			count++;
 		}
@@ -199,10 +208,13 @@ void CViewCommander::Command_CASCADE(void)
 		int roundtrip = 0;		 //２度目の描画以降で使用するカウント
 		int sw_offset = w_delta; //右スライドの幅
 
-		for (i = 0; i < count; ++i) {
-			if (w_offset + width > rcDesktop.right || h_offset + height > rcDesktop.bottom) {
+		for (i = 0; i < count; ++i)
+		{
+			if (w_offset + width > rcDesktop.right || h_offset + height > rcDesktop.bottom)
+			{
 				++roundtrip;
-				if ((rcDesktop.right - rcDesktop.left) - sw_offset * roundtrip < width) {
+				if ((rcDesktop.right - rcDesktop.left) - sw_offset * roundtrip < width)
+				{
 					//	これ以上右にずらせないときはしょうがないから左上に戻る
 					roundtrip = 0;
 				}
@@ -240,7 +252,8 @@ void CViewCommander::Command_CASCADE(void)
 		::SetWindowPos(pWndArr[i].hWnd, HWND_TOP, pWndArr[i].newX, pWndArr[i].newY, width, height, 0);
 
 		// 残りを1つずつ下に入れていく
-		while (--i >= 0) {
+		while (--i >= 0)
+		{
 			::SetWindowPos(pWndArr[i].hWnd, pWndArr[i + 1].hWnd, pWndArr[i].newX, pWndArr[i].newY, width, height,
 						   SWP_NOACTIVATE);
 		}
@@ -260,34 +273,41 @@ void CViewCommander::Command_TILE_V(void)
 	EditNode *pEditNodeArr;
 	int		  nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr(&pEditNodeArr, TRUE /*FALSE*/, TRUE);
 
-	if (nRowNum > 0) {
+	if (nRowNum > 0)
+	{
 		HWND *phwndArr = new HWND[nRowNum];
 		int   count	= 0;
 		//	デスクトップサイズを得る
 		RECT rcDesktop;
 		//	May 01, 2004 genta マルチモニタ対応
 		::GetMonitorWorkRect(m_pCommanderView->GetHwnd(), &rcDesktop);
-		for (i = 0; i < nRowNum; ++i) {
-			if (::IsIconic(pEditNodeArr[i].GetHwnd())) { //	最小化しているウィンドウは無視。
+		for (i = 0; i < nRowNum; ++i)
+		{
+			if (::IsIconic(pEditNodeArr[i].GetHwnd()))
+			{ //	最小化しているウィンドウは無視。
 				continue;
 			}
-			if (!::IsWindowVisible(pEditNodeArr[i].GetHwnd())) { //	不可視ウィンドウは無視。
+			if (!::IsWindowVisible(pEditNodeArr[i].GetHwnd()))
+			{ //	不可視ウィンドウは無視。
 				continue;
 			}
 			//	From Here Jul. 28, 2002 genta
 			//	現在のウィンドウを先頭に持ってくる
-			if (pEditNodeArr[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd()) {
+			if (pEditNodeArr[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd())
+			{
 				phwndArr[count] = phwndArr[0];
 				phwndArr[0]		= CEditWnd::getInstance()->GetHwnd();
 			}
-			else {
+			else
+			{
 				phwndArr[count] = pEditNodeArr[i].GetHwnd();
 			}
 			//	To Here Jul. 28, 2002 genta
 			count++;
 		}
 		int height = (rcDesktop.bottom - rcDesktop.top) / count;
-		for (i = 0; i < count; ++i) {
+		for (i = 0; i < count; ++i)
+		{
 			//	Jul. 21, 2002 genta
 			::ShowWindow(phwndArr[i], SW_RESTORE);
 			::SetWindowPos(phwndArr[i], 0, rcDesktop.left,
@@ -311,34 +331,41 @@ void CViewCommander::Command_TILE_H(void)
 	EditNode *pEditNodeArr;
 	int		  nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr(&pEditNodeArr, TRUE /*FALSE*/, TRUE);
 
-	if (nRowNum > 0) {
+	if (nRowNum > 0)
+	{
 		HWND *phwndArr = new HWND[nRowNum];
 		int   count	= 0;
 		//	デスクトップサイズを得る
 		RECT rcDesktop;
 		//	May 01, 2004 genta マルチモニタ対応
 		::GetMonitorWorkRect(m_pCommanderView->GetHwnd(), &rcDesktop);
-		for (i = 0; i < nRowNum; ++i) {
-			if (::IsIconic(pEditNodeArr[i].GetHwnd())) { //	最小化しているウィンドウは無視。
+		for (i = 0; i < nRowNum; ++i)
+		{
+			if (::IsIconic(pEditNodeArr[i].GetHwnd()))
+			{ //	最小化しているウィンドウは無視。
 				continue;
 			}
-			if (!::IsWindowVisible(pEditNodeArr[i].GetHwnd())) { //	不可視ウィンドウは無視。
+			if (!::IsWindowVisible(pEditNodeArr[i].GetHwnd()))
+			{ //	不可視ウィンドウは無視。
 				continue;
 			}
 			//	From Here Jul. 28, 2002 genta
 			//	現在のウィンドウを先頭に持ってくる
-			if (pEditNodeArr[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd()) {
+			if (pEditNodeArr[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd())
+			{
 				phwndArr[count] = phwndArr[0];
 				phwndArr[0]		= CEditWnd::getInstance()->GetHwnd();
 			}
-			else {
+			else
+			{
 				phwndArr[count] = pEditNodeArr[i].GetHwnd();
 			}
 			//	To Here Jul. 28, 2002 genta
 			count++;
 		}
 		int width = (rcDesktop.right - rcDesktop.left) / count;
-		for (i = 0; i < count; ++i) {
+		for (i = 0; i < count; ++i)
+		{
 			//	Jul. 21, 2002 genta
 			::ShowWindow(phwndArr[i], SW_RESTORE);
 			::SetWindowPos(phwndArr[i], 0, width * i + rcDesktop.left,
@@ -370,13 +397,15 @@ void CViewCommander::Command_WINTOPMOST(LPARAM lparam) { GetEditWindow()->Window
 void CViewCommander::Command_BIND_WINDOW(void)
 {
 	//タブモードであるならば
-	if (GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd) {
+	if (GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd)
+	{
 		//タブウィンドウの設定を変更
 		GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin =
 			!GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin;
 
 		// まとめるときは WS_EX_TOPMOST 状態を同期する	// 2007.05.18 ryoji
-		if (!GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin) {
+		if (!GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin)
+		{
 			GetEditWindow()->WindowTopMost(
 				((DWORD)::GetWindowLongPtr(GetEditWindow()->GetHwnd(), GWL_EXSTYLE) & WS_EX_TOPMOST) ? 1 : 2);
 		}
@@ -400,7 +429,8 @@ void CViewCommander::Command_BIND_WINDOW(void)
 void CViewCommander::Command_GROUPCLOSE(void)
 {
 	if (GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd
-		&& !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin) {
+		&& !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin)
+	{
 		int nGroup = CAppNodeManager::getInstance()->GetEditNode(GetMainWindow())->GetGroup();
 		CControlTray::CloseAllEditor(TRUE, GetMainWindow(), TRUE, nGroup);
 	}
@@ -466,7 +496,8 @@ void CViewCommander::Command_TAB_JOINTPREV(void)
 /* 左をすべて閉じる */ // 2008.11.22 syat
 void CViewCommander::Command_TAB_CLOSELEFT(void)
 {
-	if (GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd) {
+	if (GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd)
+	{
 		int nGroup = 0;
 
 		// ウィンドウ一覧を取得する
@@ -475,13 +506,16 @@ void CViewCommander::Command_TAB_CLOSELEFT(void)
 		BOOL	  bSelfFound = FALSE;
 		if (0 >= nCount) return;
 
-		for (int i = 0; i < nCount; i++) {
-			if (pEditNode[i].m_hWnd == GetMainWindow()) {
+		for (int i = 0; i < nCount; i++)
+		{
+			if (pEditNode[i].m_hWnd == GetMainWindow())
+			{
 				pEditNode[i].m_hWnd = NULL; //自分自身は閉じない
 				nGroup				= pEditNode[i].m_nGroup;
 				bSelfFound			= TRUE;
 			}
-			else if (bSelfFound) {
+			else if (bSelfFound)
+			{
 				pEditNode[i].m_hWnd = NULL; //右は閉じない
 			}
 		}
@@ -496,7 +530,8 @@ void CViewCommander::Command_TAB_CLOSELEFT(void)
 /* 右をすべて閉じる */ // 2008.11.22 syat
 void CViewCommander::Command_TAB_CLOSERIGHT(void)
 {
-	if (GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd) {
+	if (GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd)
+	{
 		int nGroup = 0;
 
 		// ウィンドウ一覧を取得する
@@ -505,13 +540,16 @@ void CViewCommander::Command_TAB_CLOSERIGHT(void)
 		BOOL	  bSelfFound = FALSE;
 		if (0 >= nCount) return;
 
-		for (int i = 0; i < nCount; i++) {
-			if (pEditNode[i].m_hWnd == GetMainWindow()) {
+		for (int i = 0; i < nCount; i++)
+		{
+			if (pEditNode[i].m_hWnd == GetMainWindow())
+			{
 				pEditNode[i].m_hWnd = NULL; //自分自身は閉じない
 				nGroup				= pEditNode[i].m_nGroup;
 				bSelfFound			= TRUE;
 			}
-			else if (!bSelfFound) {
+			else if (!bSelfFound)
+			{
 				pEditNode[i].m_hWnd = NULL; //左は閉じない
 			}
 		}
@@ -566,8 +604,10 @@ void CViewCommander::Command_MINIMIZE_ALL(void)
 	if (0 == j) { return; }
 	phWndArr = new HWND[j];
 	for (i = 0; i < j; ++i) { phWndArr[i] = GetDllShareData().m_sNodes.m_pEditArr[i].GetHwnd(); }
-	for (i = 0; i < j; ++i) {
-		if (IsSakuraMainWindow(phWndArr[i])) {
+	for (i = 0; i < j; ++i)
+	{
+		if (IsSakuraMainWindow(phWndArr[i]))
+		{
 			if (::IsWindowVisible(phWndArr[i])) ::ShowWindow(phWndArr[i], SW_MINIMIZE);
 		}
 	}
@@ -602,12 +642,14 @@ void CViewCommander::Command_TRACEOUT(const wchar_t *outputstr, int nLen, int nF
 	if (outputstr == NULL) return;
 
 	// 0x01 ExpandParameterによる文字列展開有無
-	if (nFlgOpt & 0x01) {
+	if (nFlgOpt & 0x01)
+	{
 		wchar_t Buffer[2048];
 		CSakuraEnvironment::ExpandParameter(outputstr, Buffer, 2047);
 		CShareData::getInstance()->TraceOutString(Buffer);
 	}
-	else {
+	else
+	{
 		CShareData::getInstance()->TraceOutString(outputstr, nLen);
 	}
 

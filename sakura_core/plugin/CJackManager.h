@@ -33,7 +33,8 @@
 #define PP_COMMAND_STR L"Command"
 
 // ジャック（＝プラグイン可能箇所）
-enum EJack {
+enum EJack
+{
 	PP_NONE	= -1,
 	PP_COMMAND = 0,
 	//	PP_INSTALL,
@@ -56,21 +57,24 @@ enum EJack {
 };
 
 // ジャック定義構造体
-typedef struct tagJackDef {
+typedef struct tagJackDef
+{
 	EJack		 ppId;
 	const WCHAR *szName;
 	CPlug::Array plugs; //ジャックに関連付けられたプラグ
 } JackDef;
 
 // プラグ登録結果
-enum ERegisterPlugResult {
+enum ERegisterPlugResult
+{
 	PPMGR_REG_OK,		//プラグイン登録成功
 	PPMGR_INVALID_NAME, //ジャック名が不正
 	PPMGR_CONFLICT		//指定したジャックは別のプラグインが接続している
 };
 
 //ジャック管理クラス
-class CJackManager final : public TSingleton<CJackManager> {
+class CJackManager final : public TSingleton<CJackManager>
+{
 	friend class TSingleton<CJackManager>;
 	CJackManager();
 

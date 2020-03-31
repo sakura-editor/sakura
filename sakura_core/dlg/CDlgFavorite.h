@@ -36,7 +36,8 @@
 
 //!「履歴とお気に入りの管理」ダイアログ
 //アクセス方法：[設定] - [履歴の管理]
-class CDlgFavorite final : public CDialog {
+class CDlgFavorite final : public CDialog
+{
 public:
 	/*
 	||  Constructors
@@ -91,12 +92,14 @@ private:
 	CRecentCmd		  m_cRecentCmd;
 	CRecentCurDir	 m_cRecentCurDir;
 
-	enum {
+	enum
+	{
 		// ! 管理数
 		FAVORITE_INFO_MAX = 10 // 管理数 +1(番兵)
 	};
 
-	struct FavoriteInfo {
+	struct FavoriteInfo
+	{
 		CRecent *	m_pRecent;		  //オブジェクトへのポインタ
 		std::wstring m_strCaption;	//キャプション
 		const WCHAR *m_pszCaption;	//キャプション
@@ -118,7 +121,8 @@ private:
 			, m_bAddExcept(false)
 			, m_nViewCount(0){};
 	};
-	struct ListViewSortInfo {
+	struct ListViewSortInfo
+	{
 		HWND hListView;		 //!< リストビューの HWND
 		int  nSortColumn;	//!< ソート列 -1で未指定
 		bool bSortAscending; //!< ソートが昇順

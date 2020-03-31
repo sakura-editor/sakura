@@ -64,7 +64,8 @@ BOOL CDlgSetCharSet::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	int					  i;
 	CCodeTypesForCombobox cCodeTypes;
 	Combo_ResetContent(m_hwndCharSet);
-	for (i = 1; i < cCodeTypes.GetCount(); ++i) {
+	for (i = 1; i < cCodeTypes.GetCount(); ++i)
+	{
 		int idx = Combo_AddString(m_hwndCharSet, cCodeTypes.GetName(i));
 		Combo_SetItemData(m_hwndCharSet, idx, cCodeTypes.GetCode(i));
 	}
@@ -75,7 +76,8 @@ BOOL CDlgSetCharSet::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 
 BOOL CDlgSetCharSet::OnBnClicked(int wID)
 {
-	switch (wID) {
+	switch (wID)
+	{
 	case IDC_CHECK_CP:
 		::CheckDlgButton(GetHwnd(), IDC_CHECK_CP, TRUE);
 		::EnableWindow(GetItemHwnd(IDC_CHECK_CP), FALSE);
@@ -106,14 +108,17 @@ void CDlgSetCharSet::SetBOM(void)
 	nIdx = Combo_GetCurSel(m_hwndCharSet);
 	lRes = Combo_GetItemData(m_hwndCharSet, nIdx);
 	CCodeTypeName cCodeTypeName(lRes);
-	if (cCodeTypeName.UseBom()) {
+	if (cCodeTypeName.UseBom())
+	{
 		::EnableWindow(m_hwndCheckBOM, TRUE);
 		if (lRes == *m_pnCharSet) { fCheck = *m_pbBom ? BST_CHECKED : BST_UNCHECKED; }
-		else {
+		else
+		{
 			fCheck = cCodeTypeName.IsBomDefOn() ? BST_CHECKED : BST_UNCHECKED;
 		}
 	}
-	else {
+	else
+	{
 		::EnableWindow(m_hwndCheckBOM, FALSE);
 		fCheck = BST_UNCHECKED;
 	}
@@ -127,21 +132,25 @@ BOOL CDlgSetCharSet::OnCbnSelChange(HWND hwndCtl, int wID)
 	LRESULT lRes;
 	WPARAM  fCheck;
 
-	switch (wID) {
+	switch (wID)
+	{
 	//	文字コードの変更をBOMチェックボックスに反映
 	case IDC_COMBO_CHARSET:
 		SetBOM();
 		nIdx = Combo_GetCurSel(hwndCtl);
 		lRes = Combo_GetItemData(hwndCtl, nIdx);
 		CCodeTypeName cCodeTypeName(lRes);
-		if (cCodeTypeName.UseBom()) {
+		if (cCodeTypeName.UseBom())
+		{
 			::EnableWindow(m_hwndCheckBOM, TRUE);
 			if (lRes == *m_pnCharSet) { fCheck = *m_pbBom ? BST_CHECKED : BST_UNCHECKED; }
-			else {
+			else
+			{
 				fCheck = cCodeTypeName.IsBomDefOn() ? BST_CHECKED : BST_UNCHECKED;
 			}
 		}
-		else {
+		else
+		{
 			::EnableWindow(m_hwndCheckBOM, FALSE);
 			fCheck = BST_UNCHECKED;
 		}
@@ -163,11 +172,13 @@ void CDlgSetCharSet::SetData(void)
 
 	nIdxOld = Combo_GetCurSel(m_hwndCharSet);
 	nCurIdx = -1;
-	for (nIdx = 0; nIdx < Combo_GetCount(m_hwndCharSet); nIdx++) {
+	for (nIdx = 0; nIdx < Combo_GetCount(m_hwndCharSet); nIdx++)
+	{
 		nCharSet = (ECodeType)Combo_GetItemData(m_hwndCharSet, nIdx);
 		if (nCharSet == *m_pnCharSet) { nCurIdx = nIdx; }
 	}
-	if (-1 == nCurIdx) {
+	if (-1 == nCurIdx)
+	{
 		::CheckDlgButton(GetHwnd(), IDC_CHECK_CP, TRUE);
 		::EnableWindow(GetItemHwnd(IDC_CHECK_CP), FALSE);
 		nCurIdx = CCodePage::AddComboCodePages(GetHwnd(), m_hwndCharSet, *m_pnCharSet);

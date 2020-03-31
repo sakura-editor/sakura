@@ -27,7 +27,8 @@
 class CEditView;
 
 //! クリッピング領域を計算する際のフラグ
-enum EPaintArea {
+enum EPaintArea
+{
 	PAINT_LINENUMBER = (1 << 0), //!< 行番号
 	PAINT_RULER		 = (1 << 1), //!< ルーラー
 	PAINT_BODY		 = (1 << 2), //!< 本文
@@ -36,7 +37,8 @@ enum EPaintArea {
 	PAINT_ALL = PAINT_LINENUMBER | PAINT_RULER | PAINT_BODY, //!< ぜんぶ
 };
 
-class CEditView_Paint {
+class CEditView_Paint
+{
 public:
 	virtual CEditView *GetEditView() = 0;
 

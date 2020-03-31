@@ -30,7 +30,8 @@
 
 class CTextMetrics;
 
-class CTextMetrics {
+class CTextMetrics
+{
 public:
 	//コンストラクタ・デストラクタ
 	CTextMetrics();

@@ -35,8 +35,10 @@ bool CDocLine::IsEmptyLine() const
 	const wchar_t *pLine	= GetPtr();
 	int			   nLineLen = GetLengthWithoutEOL();
 	int			   i;
-	for (i = 0; i < nLineLen; i++) {
-		if (pLine[i] != L' ' && pLine[i] != L'\t') {
+	for (i = 0; i < nLineLen; i++)
+	{
+		if (pLine[i] != L' ' && pLine[i] != L'\t')
+		{
 			return false; //	スペースでもタブでもない文字があったらfalse。
 		}
 	}
@@ -52,7 +54,8 @@ void CDocLine::SetEol()
 	while (p >= pData && WCODE::IsLineDelimiter(*p, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol)) p--;
 	p++;
 	if (p >= pData) { m_cEol.SetTypeByString(p, &pData[nLength] - p); }
-	else {
+	else
+	{
 		m_cEol = EOL_NONE;
 	}
 }

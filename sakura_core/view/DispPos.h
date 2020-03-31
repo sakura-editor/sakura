@@ -28,7 +28,8 @@
 #include "doc/layout/CLayout.h"
 #include "doc/layout/CLayoutMgr.h"
 
-struct DispPos {
+struct DispPos
+{
 public:
 	DispPos(int nDx, int nDy)
 		: m_nDx(nDx)

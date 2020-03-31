@@ -34,7 +34,8 @@
 /*!タイプサポートクラス
 	今のところタイプ別設定の色情報取得の補助
 */
-class CTypeSupport {
+class CTypeSupport
+{
 private:
 	static const COLORREF INVALID_COLOR = 0xFFFFFFFF; //無効な色定数
 
@@ -104,7 +105,8 @@ public:
 	}
 	void RewindGraphicsState(CGraphics &gr)
 	{
-		if (m_gr) {
+		if (m_gr)
+		{
 			gr.PopTextBackColor();
 			gr.PopTextForeColor();
 			gr.PopMyFont();

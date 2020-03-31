@@ -120,12 +120,14 @@ INT_PTR CDlgAbout::DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lPa
 {
 	INT_PTR result;
 	result = CDialog::DispatchEvent(hWnd, wMsg, wParam, lParam);
-	switch (wMsg) {
+	switch (wMsg)
+	{
 	case WM_CTLCOLORDLG:
 	case WM_CTLCOLORSTATIC:
 		// EDITも READONLY か DISABLEの場合 WM_CTLCOLORSTATIC になります
 		if ((HWND)lParam == GetDlgItem(hWnd, IDC_EDIT_ABOUT)) { ::SetTextColor((HDC)wParam, RGB(102, 102, 102)); }
-		else {
+		else
+		{
 			::SetTextColor((HDC)wParam, RGB(0, 0, 0));
 		}
 		return (INT_PTR)GetStockObject(WHITE_BRUSH);
@@ -240,7 +242,8 @@ BOOL CDlgAbout::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	// 2011.06.01 nasukoji	各国語メッセージリソース対応
 	LPCWSTR pszDesc = LS(IDS_ABOUT_DESCRIPTION);
 	WCHAR   szMsg[2048];
-	if (wcslen(pszDesc) > 0) {
+	if (wcslen(pszDesc) > 0)
+	{
 		wcsncpy(szMsg, pszDesc, _countof(szMsg) - 1);
 		szMsg[_countof(szMsg) - 1] = 0;
 		::DlgItem_SetText(GetHwnd(), IDC_EDIT_ABOUT, szMsg);
@@ -288,8 +291,10 @@ BOOL CDlgAbout::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 
 BOOL CDlgAbout::OnBnClicked(int wID)
 {
-	switch (wID) {
-	case IDC_BUTTON_COPY: {
+	switch (wID)
+	{
+	case IDC_BUTTON_COPY:
+	{
 		HWND hwndEditVer = GetItemHwnd(IDC_EDIT_VER);
 		EditCtl_SetSel(hwndEditVer, 0, -1);
 		SendMessage(hwndEditVer, WM_COPY, 0, 0);
@@ -302,7 +307,8 @@ BOOL CDlgAbout::OnBnClicked(int wID)
 
 BOOL CDlgAbout::OnStnClicked(int wID)
 {
-	switch (wID) {
+	switch (wID)
+	{
 	//	2006.07.27 genta 原作者連絡先のボタンを削除 (ヘルプから削除されているため)
 	case IDC_STATIC_URL_UR:
 	case IDC_STATIC_URL_GIT:
@@ -384,7 +390,8 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
 	POINT pt;
 	RECT  rc;
 
-	switch (msg) {
+	switch (msg)
+	{
 	case WM_SETCURSOR:
 		// カーソル形状変更
 		SetHandCursor(); // Hand Cursorを設定 2013/1/29 Uchi
@@ -412,7 +419,8 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
 		pt.y = HIWORD(lParam);
 		GetClientRect(hWnd, &rc);
 		bHilighted = PtInRect(&rc, pt);
-		if (bHilighted != pUrlWnd->m_bHilighted) {
+		if (bHilighted != pUrlWnd->m_bHilighted)
+		{
 			pUrlWnd->m_bHilighted = bHilighted;
 			InvalidateRect(hWnd, NULL, TRUE);
 			if (pUrlWnd->m_bHilighted)
@@ -459,7 +467,8 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
 		GetClientRect(hWnd, &rc);
 
 		// 背景描画
-		if (pUrlWnd->m_bHilighted) {
+		if (pUrlWnd->m_bHilighted)
+		{
 			// ハイライト時背景描画
 			HBRUSH  brush	= ::CreateSolidBrush(RGB(0xff, 0xff, 0));
 			HGDIOBJ brushOld = ::SelectObject(hdc, brush);
@@ -467,7 +476,8 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
 			::SelectObject(hdc, brushOld);
 			::DeleteObject(brush);
 		}
-		else {
+		else
+		{
 			// 親にWM_CTLCOLORSTATICを送って背景ブラシを取得し、背景描画する
 			HBRUSH hbr;
 			HBRUSH hbrOld;

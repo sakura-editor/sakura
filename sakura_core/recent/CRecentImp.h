@@ -30,7 +30,8 @@
 #include "recent/CRecent.h"
 
 template<class DATA_TYPE, class RECEIVE_TYPE = const DATA_TYPE *>
-class CRecentImp : public CRecent {
+class CRecentImp : public CRecent
+{
 private:
 	typedef CRecentImp<DATA_TYPE, RECEIVE_TYPE> Me;
 	typedef DATA_TYPE							DataType;

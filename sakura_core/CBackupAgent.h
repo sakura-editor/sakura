@@ -26,7 +26,8 @@
 
 #include "doc/CDocListener.h"
 
-class CBackupAgent : public CDocListenerEx {
+class CBackupAgent : public CDocListenerEx
+{
 public:
 	ECallbackResult OnPreBeforeSave(SSaveInfo *pSaveInfo) override;
 

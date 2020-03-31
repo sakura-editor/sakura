@@ -18,7 +18,8 @@ CSubject::~CSubject()
 void CSubject::_AddListener(CListener *pcListener)
 {
 	//既に追加済みなら何もしない
-	for (int i = 0; i < (int)m_vListenersRef.size(); i++) {
+	for (int i = 0; i < (int)m_vListenersRef.size(); i++)
+	{
 		if (m_vListenersRef[i] == pcListener) { return; }
 	}
 	//追加
@@ -28,8 +29,10 @@ void CSubject::_AddListener(CListener *pcListener)
 void CSubject::_RemoveListener(CListener *pcListener)
 {
 	//配列から削除
-	for (int i = 0; i < (int)m_vListenersRef.size(); i++) {
-		if (m_vListenersRef[i] == pcListener) {
+	for (int i = 0; i < (int)m_vListenersRef.size(); i++)
+	{
+		if (m_vListenersRef[i] == pcListener)
+		{
 			m_vListenersRef.erase(m_vListenersRef.begin() + i);
 			break;
 		}
@@ -52,7 +55,8 @@ CSubject *CListener::Listen(CSubject *pcSubject)
 	CSubject *pOld = GetListeningSubject();
 
 	//古いサブジェクトを解除
-	if (m_pcSubjectRef) {
+	if (m_pcSubjectRef)
+	{
 		m_pcSubjectRef->_RemoveListener(this);
 		m_pcSubjectRef = NULL;
 	}

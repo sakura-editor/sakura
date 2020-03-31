@@ -19,7 +19,8 @@
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-class CDlgExec final : public CDialog {
+class CDlgExec final : public CDialog
+{
 public:
 	/*
 	||  Constructors

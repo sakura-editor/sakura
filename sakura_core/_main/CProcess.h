@@ -28,7 +28,8 @@
 /*!
 	@brief プロセス基底クラス
 */
-class CProcess : public TSingleInstance<CProcess> {
+class CProcess : public TSingleInstance<CProcess>
+{
 public:
 	CProcess(HINSTANCE hInstance, LPCWSTR lpCmdLine);
 	bool Run();

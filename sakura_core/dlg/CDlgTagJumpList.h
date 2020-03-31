@@ -47,7 +47,8 @@ class CSortedTagJumpList;
 	ダイレクトタグジャンプで複数の候補がある場合及び
 	キーワード指定タグジャンプのためのダイアログボックス制御
 */
-class CDlgTagJumpList final : public CDialog {
+class CDlgTagJumpList final : public CDialog
+{
 public:
 	/*
 	||  Constructors
@@ -88,7 +89,8 @@ protected:
 	LPVOID GetHelpIdTable(void) override;
 
 private:
-	struct STagFindState {
+	struct STagFindState
+	{
 		int   m_nDepth;
 		int   m_nMatchAll;
 		int   m_nNextMode;
@@ -97,7 +99,8 @@ private:
 		WCHAR m_szCurPath[1024];
 	};
 
-	struct STagSearchRule {
+	struct STagSearchRule
+	{
 		bool bTagJumpExactMatch;
 		bool bTagJumpPartialMatch;
 		bool bTagJumpICase;

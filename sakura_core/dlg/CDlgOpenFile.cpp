@@ -30,7 +30,8 @@ void CDlgOpenFile::Create(HINSTANCE hInstance, HWND hwndParent, const WCHAR *psz
 						  const std::vector<LPCWSTR> &vOPENFOLDER)
 {
 	if (GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog) { m_pImpl = New_CDlgOpenFile_CommonItemDialog(); }
-	else {
+	else
+	{
 		m_pImpl = New_CDlgOpenFile_CommonFileDialog();
 	}
 	m_pImpl->Create(hInstance, hwndParent, pszUserWildCard, pszDefaultPath, vMRU, vOPENFOLDER);
@@ -66,15 +67,18 @@ BOOL CDlgOpenFile::SelectFile(HWND parent, HWND hwndCtl, const WCHAR *filter, bo
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	if (resolvePath && _IS_REL_PATH(szFilePath)) { GetInidirOrExedir(szPath, szFilePath); }
-	else {
+	else
+	{
 		wcscpy(szPath, szFilePath);
 	}
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(::GetModuleHandle(NULL), parent, filter, szPath);
-	if (cDlgOpenFile.DoModal_GetOpenFileName(szPath, eAddFilter)) {
+	if (cDlgOpenFile.DoModal_GetOpenFileName(szPath, eAddFilter))
+	{
 		const WCHAR *fileName;
 		if (resolvePath) { fileName = GetRelPath(szPath); }
-		else {
+		else
+		{
 			fileName = szPath;
 		}
 		::SetWindowText(hwndCtl, fileName);

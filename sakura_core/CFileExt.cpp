@@ -68,11 +68,13 @@ bool CFileExt::AppendExtRaw(const WCHAR *pszName, const WCHAR *pszExt)
 	if (NULL == pszName || pszName[0] == L'\0') return false;
 	if (NULL == pszExt || pszExt[0] == L'\0') return false;
 
-	if (NULL == m_puFileExtInfo) {
+	if (NULL == m_puFileExtInfo)
+	{
 		p = (FileExtInfoTag *)malloc(sizeof(FileExtInfoTag) * 1);
 		if (NULL == p) return false;
 	}
-	else {
+	else
+	{
 		p = (FileExtInfoTag *)realloc(m_puFileExtInfo, sizeof(FileExtInfoTag) * (m_nCount + 1));
 		if (NULL == p) return false;
 	}
@@ -107,7 +109,8 @@ const WCHAR *CFileExt::GetExtFilter(void)
 	/* 拡張子フィルタの作成 */
 	m_vstrFilter.resize(0);
 
-	for (i = 0; i < m_nCount; i++) {
+	for (i = 0; i < m_nCount; i++)
+	{
 		// "%s (%s)\0%s\0"
 		work = m_puFileExtInfo[i].m_szName;
 		work.append(L" (");

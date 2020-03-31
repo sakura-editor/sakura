@@ -14,7 +14,8 @@ void CUnicodeBe::GetBom(CMemory *pcmemBom)
 
 void CUnicodeBe::GetEol(CMemory *pcmemEol, EEolType eEolType)
 {
-	static const struct {
+	static const struct
+	{
 		const void *pData;
 		int			nLen;
 	} aEolTable[EOL_TYPE_NUM] = {

@@ -37,7 +37,8 @@ public:
 };
 */
 template<class SUPER, class INT_TYPE, class SUPER_INT_TYPE = INT_TYPE>
-class CStrictPoint : public SUPER {
+class CStrictPoint : public SUPER
+{
 private:
 	typedef CStrictPoint<SUPER, INT_TYPE> Me;
 

@@ -41,10 +41,12 @@ using std::wstring;
 /*!
 	@brief ファイルタイプ一覧ダイアログ
 */
-class CDlgTypeAscertain final : public CDialog {
+class CDlgTypeAscertain final : public CDialog
+{
 public:
 	// 型
-	struct SAscertainInfo {
+	struct SAscertainInfo
+	{
 		wstring sImportFile;   //!< in インポートファイル名
 		wstring sTypeNameTo;   //!< in タイプ名（インポート先）
 		wstring sTypeNameFile; //!< in タイプ名（ファイルから）

@@ -40,12 +40,14 @@
 class CTextOutputStream;
 class CEditView;
 
-enum EMacroParamType {
+enum EMacroParamType
+{
 	EMacroParamTypeNull,
 	EMacroParamTypeInt,
 	EMacroParamTypeStr,
 };
-struct CMacroParam {
+struct CMacroParam
+{
 	WCHAR *			m_pData;
 	CMacroParam *   m_pNext;
 	int				m_nDataLen;
@@ -61,7 +63,8 @@ struct CMacroParam {
 	CMacroParam(const CMacroParam &obj)
 	{
 		if (obj.m_pData) { m_pData = new WCHAR[obj.m_nDataLen + 1]; }
-		else {
+		else
+		{
 			m_pData = NULL;
 		}
 		m_pNext	= NULL;
@@ -96,7 +99,8 @@ struct CMacroParam {
    ID）によって、このクラス内で判別し、よろしくやること。
 	@li 引数は、CMacro内部ではすべて文字列で保持すること（数値97は、"97"として保持）（いまのところ）
 */
-class CMacro {
+class CMacro
+{
 public:
 	/*
 	||  Constructors

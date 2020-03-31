@@ -92,7 +92,8 @@ class CColor_Found;
 #endif
 
 #if !defined(RECONVERTSTRING) && (WINVER < 0x040A)
-typedef struct tagRECONVERTSTRING {
+typedef struct tagRECONVERTSTRING
+{
 	DWORD dwSize;
 	DWORD dwVersion;
 	DWORD dwStrLen;
@@ -130,7 +131,8 @@ class CEditView
 	,
 	  public CEditView_Paint,
 	  public CMyWnd,
-	  public CDocListenerEx {
+	  public CDocListenerEx
+{
 public:
 	const CEditDoc *GetDocument() const { return m_pcEditDoc; }
 	CEditDoc *		GetDocument() { return m_pcEditDoc; }
@@ -443,7 +445,8 @@ public:
 	/*!	CEditView::KeyWordHelpSearchDictのコール元指定用ローカルID
 		@date 2006.04.10 fon 新規作成
 	*/
-	enum LID_SKH {
+	enum LID_SKH
+	{
 		LID_SKH_ONTIMER		= 1, /*!< CEditView::OnTimer */
 		LID_SKH_POPUPMENU_R = 2, /*!< CEditView::CreatePopUpMenu_R */
 	};
@@ -458,7 +461,7 @@ public:
 	bool GetCurrentTextForSearchDlg(
 		CNativeW &cmemCurText,
 		bool	  bGetHistory = false); /* 現在カーソル位置単語または選択範囲より検索等のキーを取得（ダイアログ用）
-								 2006.08.23 ryoji */
+							2006.08.23 ryoji */
 
 private:
 	/* インクリメンタルサーチ */
@@ -545,7 +548,8 @@ public:
 		BOOL bCheckOnly, BOOL bBeepWhenMiss, const WCHAR *file_ext[], const WCHAR *open_ext[], int file_extno,
 		int open_extno, const WCHAR *errmes); // 指定拡張子のファイルに対応するファイルを開く補助関数 // 2003.08.12 Moca
 	//	Jan.  8, 2006 genta 折り返しトグル動作判定
-	enum TOGGLE_WRAP_ACTION {
+	enum TOGGLE_WRAP_ACTION
+	{
 		TGWRAP_NONE = 0,
 		TGWRAP_FULL,
 		TGWRAP_WINDOW,
@@ -768,7 +772,8 @@ public:
 	DISALLOW_COPY_AND_ASSIGN(CEditView);
 };
 
-class COutputAdapter {
+class COutputAdapter
+{
 public:
 	COutputAdapter(){};
 	virtual ~COutputAdapter(){};

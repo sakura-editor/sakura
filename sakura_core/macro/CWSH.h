@@ -30,7 +30,8 @@ class CInterfaceObject: public ImplementsIUnknown<IDispatch>
  */
 typedef void (*ScriptErrorHandler)(BSTR Description, BSTR Source, void *Data);
 
-class CWSHClient final : IWSHClient {
+class CWSHClient final : IWSHClient
+{
 public:
 	// 型定義
 	typedef std::vector<CIfObj *> List;		// 所有しているインタフェースオブジェクトのリスト

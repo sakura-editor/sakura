@@ -34,7 +34,8 @@
 /*!
  * @brief コマンドラインパーサ クラス
  */
-class CCommandLine : public TSingleton<CCommandLine> {
+class CCommandLine : public TSingleton<CCommandLine>
+{
 	friend class TSingleton<CCommandLine>;
 
 protected:

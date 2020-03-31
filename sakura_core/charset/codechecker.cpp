@@ -144,19 +144,23 @@ int CheckSjisChar(const char *pS, const int nLen, ECharSet *peCharset)
 {
 	unsigned char uc;
 
-	if (0 < nLen) {
+	if (0 < nLen)
+	{
 		uc = pS[0];
-		if ((uc & 0x80) == 0) {
+		if ((uc & 0x80) == 0)
+		{
 			// ASCII またはローマ字(JIS X 0201 Roman)
 			if (peCharset) { *peCharset = CHARSET_ASCII7; }
 			return 1;
 		}
-		if (IsSjisHankata(static_cast<char>(uc))) {
+		if (IsSjisHankata(static_cast<char>(uc)))
+		{
 			// 半角カナ(JIS X 0201 Kana)
 			if (peCharset) { *peCharset = CHARSET_JIS_HANKATA; }
 			return 1;
 		}
-		if (1 < nLen && IsSjisZen(pS)) {
+		if (1 < nLen && IsSjisZen(pS))
+		{
 			// SJIS 漢字・全角カナかな  (JIS X 0208)
 			if (peCharset) { *peCharset = CHARSET_JIS_ZENKAKU; }
 			return 2;
@@ -194,26 +198,33 @@ int CheckEucjpChar(const char *pS, const int nLen, ECharSet *peCharset)
 {
 	unsigned char uc;
 
-	if (0 < nLen) {
+	if (0 < nLen)
+	{
 		uc = pS[0];
-		if ((uc & 0x80) == 0) {
+		if ((uc & 0x80) == 0)
+		{
 			// ASCII またはローマ字です.  (JIS X 0201 Roman.)
 			if (peCharset) { *peCharset = CHARSET_ASCII7; }
 			return 1;
 		}
-		if (1 < nLen) {
-			if (IsEucjpZen(pS)) {
+		if (1 < nLen)
+		{
+			if (IsEucjpZen(pS))
+			{
 				// EUC-JP 漢字・かなカナ です.  (JIS X 0208.)
 				if (peCharset) { *peCharset = CHARSET_JIS_ZENKAKU; }
 				return 2;
 			}
-			if (IsEucjpHankata(pS)) {
+			if (IsEucjpHankata(pS))
+			{
 				// 半角カナです.  (JIS X 0201 Kana.)
 				if (peCharset) { *peCharset = CHARSET_JIS_HANKATA; }
 				return 2;
 			}
-			if (2 < nLen) {
-				if (IsEucjpSupplemtal(pS)) {
+			if (2 < nLen)
+			{
+				if (IsEucjpSupplemtal(pS))
+				{
 					// EUC-JP 補助漢字です.  (JIS X 0212.)
 					if (peCharset) { *peCharset = CHARSET_JIS_SUPPLEMENTAL; }
 					return 3;
@@ -248,7 +259,8 @@ int DetectJisEscseq(const char *pS, const int nLen, EMyJisEscseq *peEscType)
 	EJisEscseq   ejisesc;
 	EMyJisEscseq emyjisesc;
 
-	if (nLen < 1) {
+	if (nLen < 1)
+	{
 		*peEscType = MYJISESC_NONE;
 		return 0;
 	}
@@ -258,37 +270,49 @@ int DetectJisEscseq(const char *pS, const int nLen, EMyJisEscseq *peEscType)
 	pr				 = const_cast<char *>(pS);
 	pr_end			 = pS + nLen;
 
-	if (pr[0] == ACODE::ESC) {
+	if (pr[0] == ACODE::ESC)
+	{
 		expected_esc_len++;
 		pr++;
-		if (pr + 1 < pr_end) {
+		if (pr + 1 < pr_end)
+		{
 			expected_esc_len += 2;
-			if (pr[0] == '(') {
-				if (pr[1] == 'B') {
+			if (pr[0] == '(')
+			{
+				if (pr[1] == 'B')
+				{
 					ejisesc = JISESC_ASCII; // ESC ( B  -  ASCII
 				}
-				else if (pr[1] == 'J') {
+				else if (pr[1] == 'J')
+				{
 					ejisesc = JISESC_JISX0201Latin; // ESC ( J  -  JIS X 0201 ラテン
 				}
-				else if (pr[1] == 'H') {
+				else if (pr[1] == 'H')
+				{
 					ejisesc = JISESC_JISX0201Latin_OLD; // ESC ( H  -  JIS X 0201 ラテン
 				}
-				else if (pr[1] == 'I') {
+				else if (pr[1] == 'I')
+				{
 					ejisesc = JISESC_JISX0201Katakana; // ESC ( I  -  JIS X 0201 片仮名
 				}
 			}
-			else if (pr[0] == '$') {
-				if (pr[1] == 'B') {
+			else if (pr[0] == '$')
+			{
+				if (pr[1] == 'B')
+				{
 					ejisesc = JISESC_JISX0208_1983; // ESC $ B  -  JIS X 0208-1983
 				}
-				else if (pr[1] == '@') {
+				else if (pr[1] == '@')
+				{
 					ejisesc = JISESC_JISX0208_1978; // ESC $ @  -  JIS X 0208-1978  (旧JIS)
 				}
 			}
 		}
-		else if (pr + 4 < pr_end) {
+		else if (pr + 4 < pr_end)
+		{
 			expected_esc_len += 5;
-			if (0 == strncmp(pr, "&@\x1b$B", 5)) {
+			if (0 == strncmp(pr, "&@\x1b$B", 5))
+			{
 				ejisesc = JISESC_JISX0208_1990; // ESC & @ ESC $ B  -  JIS X 0208-1990
 			}
 		}
@@ -296,7 +320,8 @@ int DetectJisEscseq(const char *pS, const int nLen, EMyJisEscseq *peEscType)
 
 	// 検出されたJIS エスケープシーケンス識別ＩＤを
 	// 内部の JIS エスケープシーケンス識別ＩＤに変換
-	switch (ejisesc) {
+	switch (ejisesc)
+	{
 	case JISESC_ASCII:
 	case JISESC_JISX0201Latin_OLD:
 	case JISESC_JISX0201Latin: emyjisesc = MYJISESC_ASCII7; break;
@@ -306,7 +331,8 @@ int DetectJisEscseq(const char *pS, const int nLen, EMyJisEscseq *peEscType)
 	case JISESC_JISX0208_1983: emyjisesc = MYJISESC_ZENKAKU; break;
 	default:
 		if (0 < expected_esc_len) { emyjisesc = MYJISESC_UNKNOWN; }
-		else {
+		else
+		{
 			emyjisesc = MYJISESC_NONE;
 		}
 	}
@@ -336,7 +362,8 @@ int _CheckJisAnyPart(
 	int			 nerror_cnt;
 	const char * pr, *pr_end;
 
-	if (nLen < 1) {
+	if (nLen < 1)
+	{
 		*peNextEsc	= MYJISESC_NONE;
 		*ppNextChar   = const_cast<char *>(pS);
 		*pnErrorCount = 0;
@@ -348,14 +375,18 @@ int _CheckJisAnyPart(
 	pr		   = pS;
 	pr_end	 = pS + nLen;
 
-	for (; pr < pr_end; pr++) {
+	for (; pr < pr_end; pr++)
+	{
 		nesclen = DetectJisEscseq(pr, pr_end - pr, &emyesc); // 次のエスケープシーケンスを検索
-		if (emyesc != MYJISESC_NONE || nesclen > 0) {
+		if (emyesc != MYJISESC_NONE || nesclen > 0)
+		{
 			// 長さ nesclen の JIS エスケープシーケンス（種類 emyesc）が見つかった
 			break;
 		}
-		if (pnErrorCount) {
-			switch (nType) {
+		if (pnErrorCount)
+		{
+			switch (nType)
+			{
 			case JISCHECK_ASCII7:
 				if (!IsAscii7(*pr)) { nerror_cnt++; }
 				break;
@@ -363,7 +394,8 @@ int _CheckJisAnyPart(
 				if (!IsJisHankata(*pr)) { nerror_cnt++; }
 				break;
 			case JISCHECK_ZENKAKU:
-				if ((pr - pS + 1) % 2 == 0) {
+				if ((pr - pS + 1) % 2 == 0)
+				{
 					if (!IsJisZen(pr - 1)) { nerror_cnt += 2; }
 				}
 				break;
@@ -376,7 +408,8 @@ int _CheckJisAnyPart(
 
 	*peNextEsc = emyesc;
 	if (pr < pr_end) { *ppNextChar = const_cast<const char *>(pr) + nesclen; }
-	else {
+	else
+	{
 		*ppNextChar = const_cast<const char *>(pr_end);
 		pr			= pr_end;
 	}
@@ -424,16 +457,19 @@ int _CheckUtf16Char(const wchar_t *pS, const int nLen, ECharSet *peCharset, cons
 
 	wc1 = pS[0];
 	if (bBigEndian == true) { wc1 = _SwapHLByte(wc1); }
-	if (1 < nLen) {
+	if (1 < nLen)
+	{
 		wc2 = pS[1];
 		if (bBigEndian == true) { wc2 = _SwapHLByte(wc2); }
 	}
 
-	if (2 <= nLen) {
+	if (2 <= nLen)
+	{
 
 		// サロゲートペアの確認
 
-		if (IsUtf16SurrogHi(wc1) && IsUtf16SurrogLow(wc2)) {
+		if (IsUtf16SurrogHi(wc1) && IsUtf16SurrogLow(wc2))
+		{
 			echarset = CHARSET_UNI_SURROG;
 			ncwidth  = 2;
 			goto EndFunc;
@@ -442,7 +478,8 @@ int _CheckUtf16Char(const wchar_t *pS, const int nLen, ECharSet *peCharset, cons
 
 	// サロゲート断片の確認
 
-	if (IsUtf16SurrogHi(wc1) || IsUtf16SurrogLow(wc1)) {
+	if (IsUtf16SurrogHi(wc1) || IsUtf16SurrogLow(wc1))
+	{
 		echarset = CHARSET_BINARY;
 		ncwidth  = 1;
 		goto EndFunc;
@@ -452,21 +489,27 @@ int _CheckUtf16Char(const wchar_t *pS, const int nLen, ECharSet *peCharset, cons
 	ncwidth = 1;
 
 	// 非文字と予約コードポイントの確認
-	if (nOption != 0 && echarset != CHARSET_BINARY) {
-		if (ncwidth == 1) {
-			if ((nOption & UC_NONCHARACTER) && IsUnicodeNoncharacter(wc1)) {
+	if (nOption != 0 && echarset != CHARSET_BINARY)
+	{
+		if (ncwidth == 1)
+		{
+			if ((nOption & UC_NONCHARACTER) && IsUnicodeNoncharacter(wc1))
+			{
 				echarset = CHARSET_BINARY;
 				ncwidth  = 1;
 			}
 		}
-		else if (ncwidth == 2) {
+		else if (ncwidth == 2)
+		{
 			wchar32_t wc32_checking = DecodeUtf16Surrog(wc1, wc2);
-			if ((nOption & UC_NONCHARACTER) && IsUnicodeNoncharacter(wc32_checking)) {
+			if ((nOption & UC_NONCHARACTER) && IsUnicodeNoncharacter(wc32_checking))
+			{
 				echarset = CHARSET_BINARY;
 				ncwidth  = 1;
 			}
 		}
-		else {
+		else
+		{
 			// 保護コード
 			echarset = CHARSET_BINARY;
 			ncwidth  = 1;
@@ -517,17 +560,21 @@ int CheckUtf8Char(const char *pS, const int nLen, ECharSet *peCharset, const boo
 	echarset = CHARSET_UNI_NORMAL;
 	c0		 = pS[0];
 
-	if (c0 < 0x80) { // 第１バイトが 0aaabbbb の場合
+	if (c0 < 0x80)
+	{				 // 第１バイトが 0aaabbbb の場合
 		ncwidth = 1; // １バイトコードである
 		goto EndFunc;
 	}
-	else if (1 < nLen && (c0 & 0xe0) == 0xc0) { // 第１バイトが110aaabbの場合
+	else if (1 < nLen && (c0 & 0xe0) == 0xc0)
+	{ // 第１バイトが110aaabbの場合
 		c1 = pS[1];
 		// 第２バイトが10bbccccの場合
-		if ((c1 & 0xc0) == 0x80) {
+		if ((c1 & 0xc0) == 0x80)
+		{
 			ncwidth = 2; // ２バイトコードである
 			// 第１バイトがaaabb=0000xの場合（\u80未満に変換される）
-			if ((c0 & 0x1e) == 0) {
+			if ((c0 & 0x1e) == 0)
+			{
 				// デコードできない.(往復変換不可領域)
 				echarset = CHARSET_BINARY;
 				ncwidth  = 1;
@@ -535,14 +582,17 @@ int CheckUtf8Char(const char *pS, const int nLen, ECharSet *peCharset, const boo
 			goto EndFunc;
 		}
 	}
-	else if (2 < nLen && (c0 & 0xf0) == 0xe0) { // 第１バイトが1110aaaaの場合
+	else if (2 < nLen && (c0 & 0xf0) == 0xe0)
+	{ // 第１バイトが1110aaaaの場合
 		c1 = pS[1];
 		c2 = pS[2];
 		// 第２バイトが10bbbbcc、第３バイトが10ccddddの場合
-		if ((c1 & 0xc0) == 0x80 && (c2 & 0xc0) == 0x80) {
+		if ((c1 & 0xc0) == 0x80 && (c2 & 0xc0) == 0x80)
+		{
 			ncwidth = 3; // ３バイトコードである
 			// 第１バイトのaaaa=0000、第２バイトのbbbb=0xxxの場合(\u800未満に変換される)
-			if ((c0 & 0x0f) == 0 && (c1 & 0x20) == 0) {
+			if ((c0 & 0x0f) == 0 && (c1 & 0x20) == 0)
+			{
 				// デコードできない.(往復変換不可領域)
 				echarset = CHARSET_BINARY;
 				ncwidth  = 1;
@@ -552,7 +602,8 @@ int CheckUtf8Char(const char *pS, const int nLen, ECharSet *peCharset, const boo
 			//	charset = CHARSET_BINARY;
 			//	ncwidth = 1;
 			//}
-			if (bAllow4byteCode == true && (c0 & 0x0f) == 0x0d && (c1 & 0x20) != 0) {
+			if (bAllow4byteCode == true && (c0 & 0x0f) == 0x0d && (c1 & 0x20) != 0)
+			{
 				// サロゲート領域 (U+D800 から U+DFFF)
 				echarset = CHARSET_BINARY;
 				ncwidth  = 1;
@@ -560,28 +611,33 @@ int CheckUtf8Char(const char *pS, const int nLen, ECharSet *peCharset, const boo
 			goto EndFunc;
 		}
 	}
-	else if (3 < nLen && (c0 & 0xf8) == 0xf0) { // 第１バイトが11110abbの場合
+	else if (3 < nLen && (c0 & 0xf8) == 0xf0)
+	{ // 第１バイトが11110abbの場合
 		c1 = pS[1];
 		c2 = pS[2];
 		c3 = pS[3];
 		// 第2バイトが10bbcccc、第3バイトが10ddddee、第4バイトが10ddddeeの場合
-		if ((c1 & 0xc0) == 0x80 && (c2 & 0xc0) == 0x80 && (c3 & 0xc0) == 0x80) {
+		if ((c1 & 0xc0) == 0x80 && (c2 & 0xc0) == 0x80 && (c3 & 0xc0) == 0x80)
+		{
 			ncwidth  = 4;				   // ４バイトコードである
 			echarset = CHARSET_UNI_SURROG; // サロゲートペアの文字（初期化）
 			// 第1バイトのabb=000、第2バイトのbb=00の場合（\u10000未満に変換される）
-			if ((c0 & 0x07) == 0 && (c1 & 0x30) == 0) {
+			if ((c0 & 0x07) == 0 && (c1 & 0x30) == 0)
+			{
 				// デコードできない.(往復変換不可領域)
 				echarset = CHARSET_BINARY;
 				ncwidth  = 1;
 			}
 			// １バイト目が 11110xxx=11110100のとき、
 			// かつ、1111 01xx : 10xx oooo の x のところに値があるとき
-			if ((c0 & 0x04) != 0 && ((c0 & 0x03) != 0 || (c1 & 0x30) != 0)) {
+			if ((c0 & 0x04) != 0 && ((c0 & 0x03) != 0 || (c1 & 0x30) != 0))
+			{
 				// 値が大きすぎ（0x10ffffより大きい）
 				echarset = CHARSET_BINARY;
 				ncwidth  = 1;
 			}
-			if (bAllow4byteCode == false) {
+			if (bAllow4byteCode == false)
+			{
 				echarset = CHARSET_BINARY;
 				ncwidth  = 1;
 			}
@@ -596,14 +652,17 @@ int CheckUtf8Char(const char *pS, const int nLen, ECharSet *peCharset, const boo
 EndFunc:
 
 	// 非文字と予約コードポイントをチェック
-	if (nOption != 0 && echarset != CHARSET_BINARY) {
+	if (nOption != 0 && echarset != CHARSET_BINARY)
+	{
 		wchar32_t wc32;
 		wc32 = DecodeUtf8(reinterpret_cast<const unsigned char *>(pS), ncwidth);
-		if ((nOption & UC_NONCHARACTER) && IsUnicodeNoncharacter(wc32)) {
+		if ((nOption & UC_NONCHARACTER) && IsUnicodeNoncharacter(wc32))
+		{
 			echarset = CHARSET_BINARY;
 			ncwidth  = 1;
 		}
-		else {
+		else
+		{
 			// 保護コード
 			echarset = CHARSET_BINARY;
 			ncwidth  = 1;
@@ -631,19 +690,24 @@ int CheckUtf8Char2(const char *pS, const int nLen, ECharSet *peCharset, const bo
 
 	ncwidth = CheckUtf8Char(pS, nLen, &echarset, true, 0);
 	c0		= pS[0];
-	if (echarset == CHARSET_BINARY) {
-		if (1 == nLen && (c0 & 0xe0) == 0xc0) { // 第１バイトが110aaabbの場合
-			echarset = CHARSET_BINARY2;			// 文字列断片(継続用)
+	if (echarset == CHARSET_BINARY)
+	{
+		if (1 == nLen && (c0 & 0xe0) == 0xc0)
+		{								// 第１バイトが110aaabbの場合
+			echarset = CHARSET_BINARY2; // 文字列断片(継続用)
 			ncwidth  = 1;
 			goto EndFunc;
 		}
-		else if (2 == nLen && (c0 & 0xf0) == 0xe0) { // 第１バイトが1110aaaaの場合
+		else if (2 == nLen && (c0 & 0xf0) == 0xe0)
+		{ // 第１バイトが1110aaaaの場合
 			c1 = pS[1];
 			// 第２バイトが10bbbbcc、第３バイトが10ccddddの場合
-			if ((c1 & 0xc0) == 0x80) {
+			if ((c1 & 0xc0) == 0x80)
+			{
 				echarset = CHARSET_BINARY2; // 文字列断片(継続用)
 				ncwidth  = 2;				// ３バイトコードの先頭2バイトである
-				if ((c0 & 0x0f) == 0 && (c1 & 0x20) == 0) {
+				if ((c0 & 0x0f) == 0 && (c1 & 0x20) == 0)
+				{
 					// デコードできない.(往復変換不可領域)
 					echarset = CHARSET_BINARY;
 					ncwidth  = 1;
@@ -653,7 +717,8 @@ int CheckUtf8Char2(const char *pS, const int nLen, ECharSet *peCharset, const bo
 				//	charset = CHARSET_BINARY;
 				//	ncwidth = 1;
 				//}
-				if (bAllow4byteCode == true && (c0 & 0x0f) == 0x0d && (c1 & 0x20) != 0) {
+				if (bAllow4byteCode == true && (c0 & 0x0f) == 0x0d && (c1 & 0x20) != 0)
+				{
 					// サロゲート領域 (U+D800 から U+DFFF)
 					echarset = CHARSET_BINARY;
 					ncwidth  = 1;
@@ -661,38 +726,46 @@ int CheckUtf8Char2(const char *pS, const int nLen, ECharSet *peCharset, const bo
 				goto EndFunc;
 			}
 		}
-		else if (1 == nLen && (c0 & 0xf0) == 0xe0) { // 第１バイトが1110aaaaの場合
-			echarset = CHARSET_BINARY2;				 // 文字列断片(継続用)
+		else if (1 == nLen && (c0 & 0xf0) == 0xe0)
+		{								// 第１バイトが1110aaaaの場合
+			echarset = CHARSET_BINARY2; // 文字列断片(継続用)
 			ncwidth  = 1;
 			goto EndFunc;
 		}
-		else if (0 < nLen && nLen <= 3 && (c0 & 0xf8) == 0xf0) { // 第１バイトが11110abbの場合
+		else if (0 < nLen && nLen <= 3 && (c0 & 0xf8) == 0xf0)
+		{ // 第１バイトが11110abbの場合
 			if (1 < nLen) { c1 = pS[1]; }
-			else {
+			else
+			{
 				c1 = 0xbf;
 			}
 			if (2 < nLen) { c2 = pS[2]; }
-			else {
+			else
+			{
 				c2 = 0xbf;
 			}
 			// 第2バイトが10bbcccc、第3バイトが10ddddee
-			if ((c1 & 0xc0) == 0x80 && (c2 & 0xc0) == 0x80) {
+			if ((c1 & 0xc0) == 0x80 && (c2 & 0xc0) == 0x80)
+			{
 				ncwidth  = nLen;			// ４バイトコードである
 				echarset = CHARSET_BINARY2; // 文字列断片(継続用)
 				// 第1バイトのabb=000、第2バイトのbb=00の場合（\u10000未満に変換される）
-				if ((c0 & 0x07) == 0 && (c1 & 0x30) == 0) {
+				if ((c0 & 0x07) == 0 && (c1 & 0x30) == 0)
+				{
 					// デコードできない.(往復変換不可領域)
 					echarset = CHARSET_BINARY;
 					ncwidth  = 1;
 				}
 				// １バイト目が 11110xxx=11110100のとき、
 				// かつ、1111 01xx : 10xx oooo の x のところに値があるとき
-				if ((c0 & 0x04) != 0 && (c0 & 0x03) != 0) {
+				if ((c0 & 0x04) != 0 && (c0 & 0x03) != 0)
+				{
 					// 値が大きすぎ（0x10ffffより大きい）
 					echarset = CHARSET_BINARY;
 					ncwidth  = 1;
 				}
-				if (bAllow4byteCode == false) {
+				if (bAllow4byteCode == false)
+				{
 					echarset = CHARSET_BINARY;
 					ncwidth  = 1;
 				}
@@ -700,7 +773,8 @@ int CheckUtf8Char2(const char *pS, const int nLen, ECharSet *peCharset, const bo
 			}
 		}
 	}
-	else {
+	else
+	{
 		goto EndFunc;
 	}
 
@@ -728,26 +802,30 @@ int CheckCesu8Char(const char *pS, const int nLen, ECharSet *peCharset, const in
 	nclen1 = CheckUtf8Char(&pS[0], nLen, &echarset1, false, 0);
 
 	// 文字長が３未満の場合
-	if (nclen1 < 3) {
+	if (nclen1 < 3)
+	{
 		// echarset == BAINARY の場合は、からなず nclen1 < 3
 		eret_charset = echarset1;
 		nret_clen	= nclen1;
 	}
 	else
 		// 文字長が３の場合
-		if (nclen1 == 3) {
+		if (nclen1 == 3)
+	{
 		// 正常な３バイト文字があった。
 
 		// ２文字目のスキャン
 		nclen2 = CheckUtf8Char(&pS[3], nLen - 3, &echarset2, false, 0);
 
 		// &pS[3]からの文字長が３でないか echarset2 が CHARSET_BINARY だった場合。
-		if (nclen2 != 3 || echarset2 == CHARSET_BINARY) {
+		if (nclen2 != 3 || echarset2 == CHARSET_BINARY)
+		{
 			// nclen1 と echarset1 を結果とする。
 			eret_charset = echarset1;
 			nret_clen	= nclen1;
 			// &pS[0] から３バイトがサロゲート片だった場合。
-			if (IsUtf8SurrogHi(&pS[0]) || IsUtf8SurrogLow(&pS[0])) {
+			if (IsUtf8SurrogHi(&pS[0]) || IsUtf8SurrogLow(&pS[0]))
+			{
 				eret_charset = CHARSET_BINARY;
 				nret_clen	= 1;
 			}
@@ -758,14 +836,16 @@ int CheckCesu8Char(const char *pS, const int nLen, ECharSet *peCharset, const in
 		// && nclen2 == 3 && echarset2 != CHARSET_BINARY の場合。
 
 		// UTF-8版サロゲートペアを確認。
-		if (IsUtf8SurrogHi(&pS[0]) && IsUtf8SurrogLow(&pS[3])) {
+		if (IsUtf8SurrogHi(&pS[0]) && IsUtf8SurrogLow(&pS[3]))
+		{
 			// CESU-8 であるかどうかをチェック
 			eret_charset = CHARSET_UNI_SURROG;
 			nret_clen	= 6; // CESU-8 のサロゲートである
 		}
 		else
 			// &pS[0] から３バイトがサロゲート片だった場合。
-			if (IsUtf8SurrogHi(&pS[0]) || IsUtf8SurrogLow(&pS[0])) {
+			if (IsUtf8SurrogHi(&pS[0]) || IsUtf8SurrogLow(&pS[0]))
+		{
 			eret_charset = CHARSET_BINARY;
 			nret_clen	= 1;
 		}
@@ -788,26 +868,32 @@ int CheckCesu8Char(const char *pS, const int nLen, ECharSet *peCharset, const in
 EndFunc:;
 
 	// 非文字と予約コードポイントを確認
-	if (nOption != 0 && eret_charset != CHARSET_BINARY) {
+	if (nOption != 0 && eret_charset != CHARSET_BINARY)
+	{
 		wchar32_t wc32;
-		if (nret_clen < 4) {
+		if (nret_clen < 4)
+		{
 			wc32 = DecodeUtf8(reinterpret_cast<const unsigned char *>(pS), nret_clen);
-			if ((nOption & UC_NONCHARACTER) && IsUnicodeNoncharacter(wc32)) {
+			if ((nOption & UC_NONCHARACTER) && IsUnicodeNoncharacter(wc32))
+			{
 				eret_charset = CHARSET_BINARY;
 				nret_clen	= 1;
 			}
 		}
-		else if (nret_clen == 6) {
+		else if (nret_clen == 6)
+		{
 			wc32 = DecodeUtf16Surrog(static_cast<unsigned short>(
 										 DecodeUtf8(reinterpret_cast<const unsigned char *>(&pS[0]), 3) & 0x0000ffff),
 									 static_cast<unsigned short>(
 										 DecodeUtf8(reinterpret_cast<const unsigned char *>(&pS[3]), 3) & 0x0000ffff));
-			if ((nOption & UC_NONCHARACTER) && IsUnicodeNoncharacter(wc32)) {
+			if ((nOption & UC_NONCHARACTER) && IsUnicodeNoncharacter(wc32))
+			{
 				eret_charset = CHARSET_BINARY;
 				nret_clen	= 1;
 			}
 		}
-		else {
+		else
+		{
 			// 保護コード
 			eret_charset = CHARSET_BINARY;
 			nret_clen	= 1;
@@ -852,7 +938,8 @@ int CheckUtf7DPart(const char *pS, const int nLen, char **ppNextChar, bool *pbEr
 	const char *pr, *pr_end;
 	bool		berror = false;
 
-	if (nLen < 1) {
+	if (nLen < 1)
+	{
 		if (pbError) { *pbError = false; }
 		*ppNextChar = const_cast<char *>(pS);
 		return 0;
@@ -860,9 +947,11 @@ int CheckUtf7DPart(const char *pS, const int nLen, char **ppNextChar, bool *pbEr
 
 	pr	 = pS;
 	pr_end = pS + nLen;
-	for (; pr < pr_end; ++pr) {
+	for (; pr < pr_end; ++pr)
+	{
 		if (*pr == '+') { break; }
-		if (!IsUtf7Direct(*pr)) {
+		if (!IsUtf7Direct(*pr))
+		{
 			// UTF-7セットDの文字集合でないものが１文字でも入っている場合、
 			// エラーを返す。*pbError == true の場合は、
 			// *ppNextChar は不定となる。
@@ -872,11 +961,13 @@ int CheckUtf7DPart(const char *pS, const int nLen, char **ppNextChar, bool *pbEr
 	}
 	if (pbError) { *pbError = berror; }
 
-	if (pr < pr_end) {
+	if (pr < pr_end)
+	{
 		// '+' をスキップ
 		*ppNextChar = const_cast<char *>(pr) + 1;
 	}
-	else {
+	else
+	{
 		*ppNextChar = const_cast<char *>(pr);
 	}
 	return pr - pS;
@@ -905,7 +996,8 @@ int CheckUtf7BPart(const char *pS, const int nLen, char **ppNextChar, bool *pbEr
 
 	if (pbNoAddPoint) { *pbNoAddPoint = false; }
 
-	if (nLen < 1) {
+	if (nLen < 1)
+	{
 		if (pbError) { *pbError = false; }
 		*ppNextChar = const_cast<char *>(pS);
 		return 0;
@@ -916,11 +1008,14 @@ int CheckUtf7BPart(const char *pS, const int nLen, char **ppNextChar, bool *pbEr
 	pr			 = pS;
 	pr_end		 = pS + nLen;
 
-	for (; pr < pr_end; ++pr) {
+	for (; pr < pr_end; ++pr)
+	{
 		// セットＢの文字でなくなるまでループ
-		if (!IsBase64(*pr)) {
+		if (!IsBase64(*pr))
+		{
 			if (*pr == '-') { bminus_found = true; }
-			else {
+			else
+			{
 				bminus_found = false;
 			}
 			break;
@@ -947,7 +1042,8 @@ int CheckUtf7BPart(const char *pS, const int nLen, char **ppNextChar, bool *pbEr
 	上記３通りのいづれにも当てはまらない場合は全データを落とす（不正バイトとする）.
 	*/
 	const char *pr_ = pr - 1;
-	switch (nchecklen % 8) {
+	switch (nchecklen % 8)
+	{
 	case 0: break;
 	case 3:
 		if (Base64ToVal(pr_[0]) & 0x03) { berror_found = true; }
@@ -965,7 +1061,8 @@ int CheckUtf7BPart(const char *pS, const int nLen, char **ppNextChar, bool *pbEr
 
 	// UTF-7文字列 "+-" のチェック
 
-	if (pr < pr_end && (nchecklen < 1 && bminus_found != true)) {
+	if (pr < pr_end && (nchecklen < 1 && bminus_found != true))
+	{
 		// 読み取りポインタがデータの終端を指していなくて
 		// 確認できた Set B 文字列の長さがゼロの場合は、
 		// 必ず終端文字 '-' が存在していることを確認する。
@@ -981,13 +1078,16 @@ int CheckUtf7BPart(const char *pS, const int nLen, char **ppNextChar, bool *pbEr
 	if (pdata == NULL) { goto EndFunc; }
 	ndatalen = _DecodeBase64(pS, nchecklen, reinterpret_cast<char *>(pdata)) / sizeof(wchar_t);
 	CMemory::SwapHLByte(reinterpret_cast<char *>(pdata), ndatalen * sizeof(wchar_t));
-	for (int i = 0; i < ndatalen; i += nret) {
+	for (int i = 0; i < ndatalen; i += nret)
+	{
 		nret = CheckUtf16leChar(&pdata[i], ndatalen - i, &echarset, nOption & UC_NONCHARACTER);
-		if (echarset == CHARSET_BINARY) {
+		if (echarset == CHARSET_BINARY)
+		{
 			berror_found = true;
 			goto EndFunc;
 		}
-		if (nret == 1 && IsUtf7SetD(pdata[i])) {
+		if (nret == 1 && IsUtf7SetD(pdata[i]))
+		{
 			berror_found = true;
 			goto EndFunc;
 		}
@@ -997,16 +1097,20 @@ EndFunc:;
 
 	if (pbError) { *pbError = berror_found; }
 
-	if ((berror_found == false || UC_LOOSE == (nOption & UC_LOOSE)) && (pr < pr_end && bminus_found == true)) {
+	if ((berror_found == false || UC_LOOSE == (nOption & UC_LOOSE)) && (pr < pr_end && bminus_found == true))
+	{
 		// '-' をスキップ。
 		*ppNextChar = const_cast<char *>(pr) + 1;
 	}
-	else {
+	else
+	{
 		*ppNextChar = const_cast<char *>(pr);
 
-		if ((UC_LOOSE != (nOption & UC_LOOSE)) && bminus_found == false) {
+		if ((UC_LOOSE != (nOption & UC_LOOSE)) && bminus_found == false)
+		{
 			// 2015.03.05 Moca エンコードチェック時に終端の'-'がない場合はポイントを加算しない
-			if (pr < pr_end) {
+			if (pr < pr_end)
+			{
 				// バッファの終端の場合を除く
 				if (pbNoAddPoint) { *pbNoAddPoint = true; }
 			}

@@ -17,7 +17,8 @@ int CEuc::EucjpToUni(const char *pSrc, const int nSrcLen, wchar_t *pDst, bool *p
 	ECharSet			 echarset;
 	bool				 berror_tmp, berror = false;
 
-	if (nSrcLen < 1) {
+	if (nSrcLen < 1)
+	{
 		if (pbError) { *pbError = false; }
 		return 0;
 	}
@@ -26,8 +27,10 @@ int CEuc::EucjpToUni(const char *pSrc, const int nSrcLen, wchar_t *pDst, bool *p
 	pr_end = reinterpret_cast<const unsigned char *>(pSrc + nSrcLen);
 	pw	 = reinterpret_cast<unsigned short *>(pDst);
 
-	for (; (nclen = CheckEucjpChar(reinterpret_cast<const char *>(pr), pr_end - pr, &echarset)) != 0; pr += nclen) {
-		switch (echarset) {
+	for (; (nclen = CheckEucjpChar(reinterpret_cast<const char *>(pr), pr_end - pr, &echarset)) != 0; pr += nclen)
+	{
+		switch (echarset)
+		{
 		case CHARSET_ASCII7:
 			// 保護コード
 			if (nclen != 1) { nclen = 1; }
@@ -84,7 +87,8 @@ EConvertResult CEuc::EUCToUnicode(const CMemory &cSrc, CNativeW *pDstMem)
 	//$$ SJISを介しているので無駄にデータを失うかも？
 	// エラーを返すようにする。	2008/5/12 Uchi
 	if (bError == false) { return RESULT_COMPLETE; }
-	else {
+	else
+	{
 		return RESULT_LOSESOME;
 	}
 }
@@ -101,25 +105,31 @@ int CEuc::UniToEucjp(const wchar_t *pSrc, const int nSrcLen, char *pDst, bool *p
 	pr_end = reinterpret_cast<const unsigned short *>(pSrc + nSrcLen);
 	pw	 = reinterpret_cast<unsigned char *>(pDst);
 
-	while ((nclen = CheckUtf16leChar(reinterpret_cast<const wchar_t *>(pr), pr_end - pr, &echarset, 0)) > 0) {
+	while ((nclen = CheckUtf16leChar(reinterpret_cast<const wchar_t *>(pr), pr_end - pr, &echarset, 0)) > 0)
+	{
 		// 保護コード
-		switch (echarset) {
+		switch (echarset)
+		{
 		case CHARSET_UNI_NORMAL: nclen = 1; break;
 		case CHARSET_UNI_SURROG: nclen = 2; break;
 		default: echarset = CHARSET_BINARY; nclen = 1;
 		}
-		if (echarset != CHARSET_BINARY) {
+		if (echarset != CHARSET_BINARY)
+		{
 			pw += _UniToEucjp_char(pr, pw, echarset, &berror_tmp);
 			// 保護コード
 			if (berror_tmp == true) { berror = true; }
 			pr += nclen;
 		}
-		else {
-			if (nclen == 1 && IsBinaryOnSurrogate(static_cast<wchar_t>(*pr))) {
+		else
+		{
+			if (nclen == 1 && IsBinaryOnSurrogate(static_cast<wchar_t>(*pr)))
+			{
 				*pw = static_cast<unsigned char>(TextToBin(*pr) & 0x00ff);
 				++pw;
 			}
-			else {
+			else
+			{
 				// 保護コード
 				berror = true;
 				*pw	= '?';
@@ -156,7 +166,8 @@ EConvertResult CEuc::UnicodeToEUC(const CNativeW &cSrc, CMemory *pDstMem)
 	delete[] pDst;
 
 	if (bError == false) { return RESULT_COMPLETE; }
-	else {
+	else
+	{
 		return RESULT_LOSESOME;
 	}
 }
@@ -173,7 +184,8 @@ EConvertResult CEuc::UnicodeToHex(const wchar_t *cSrc, const int iSLen, WCHAR *p
 	bool		   bbinary = false;
 
 	// 2008/6/21 Uchi
-	if (psStatusbar->m_bDispUniInEuc) {
+	if (psStatusbar->m_bDispUniInEuc)
+	{
 		// Unicodeで表示
 		return CCodeBase::UnicodeToHex(cSrc, iSLen, pDst, psStatusbar);
 	}
@@ -190,12 +202,12 @@ EConvertResult CEuc::UnicodeToHex(const wchar_t *cSrc, const int iSLen, WCHAR *p
 	// Hex変換
 	ps = reinterpret_cast<unsigned char *>(cCharBuffer._GetMemory()->GetRawPtr());
 	pd = pDst;
-	if (bbinary == false) {
-		for (i = cCharBuffer._GetMemory()->GetRawLength(); i > 0; i--, ps++, pd += 2) {
-			auto_sprintf(pd, L"%02X", *ps);
-		}
-	}
-	else {
+	if (bbinary == false)
+	{
+		for (i = cCharBuffer._GetMemory()->GetRawLength(); i > 0; i--, ps++, pd += 2)
+		{ auto_sprintf(pd, L"%02X", *ps); } }
+	else
+	{
 		auto_sprintf(pd, L"?%02X", *ps);
 	}
 

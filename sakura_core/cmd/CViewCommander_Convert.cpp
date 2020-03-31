@@ -209,14 +209,16 @@ void CViewCommander::Command_CODECNV_SJIS2UTF7(void)
 void CViewCommander::Command_BASE64DECODE(void)
 {
 	/* テキストが選択されているか */
-	if (!m_pCommanderView->GetSelectionInfo().IsTextSelected()) {
+	if (!m_pCommanderView->GetSelectionInfo().IsTextSelected())
+	{
 		ErrorBeep();
 		return;
 	}
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
 	CNativeW ctextBuf;
-	if (!m_pCommanderView->GetSelectedDataSimple(ctextBuf)) {
+	if (!m_pCommanderView->GetSelectedDataSimple(ctextBuf))
+	{
 		ErrorBeep();
 		return;
 	}
@@ -251,7 +253,8 @@ err:
 void CViewCommander::Command_UUDECODE(void)
 {
 	/* テキストが選択されているか */
-	if (!m_pCommanderView->GetSelectionInfo().IsTextSelected()) {
+	if (!m_pCommanderView->GetSelectionInfo().IsTextSelected())
+	{
 		ErrorBeep();
 		return;
 	}
@@ -259,7 +262,8 @@ void CViewCommander::Command_UUDECODE(void)
 	// 選択範囲のデータを取得 -> cmemBuf
 	// 正常時はTRUE,範囲未選択の場合はFALSEを返す
 	CNativeW ctextBuf;
-	if (!m_pCommanderView->GetSelectedDataSimple(ctextBuf)) {
+	if (!m_pCommanderView->GetSelectedDataSimple(ctextBuf))
+	{
 		ErrorBeep();
 		return;
 	}

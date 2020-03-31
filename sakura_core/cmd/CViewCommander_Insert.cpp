@@ -56,7 +56,8 @@ void CViewCommander::Command_CtrlCode_Dialog(void)
 	CDlgCtrlCode cDlgCtrlCode;
 
 	//コントロールコード入力ダイアログを表示する
-	if (cDlgCtrlCode.DoModal(G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument())) {
+	if (cDlgCtrlCode.DoModal(G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument()))
+	{
 		//コントロールコードを入力する
 		// 2013.06.11 Command_WCHAR -> HandleCommand マクロ記録対応
 		// 2013.12.12 F_WCHAR -> F_CTRL_CODE
@@ -71,7 +72,8 @@ void CViewCommander::Command_INS_FILE_USED_RECENTLY(void)
 	std::wstring s;
 	CMRUFile	 cMRUFile;
 	auto		 list = cMRUFile.GetPathList();
-	for (auto item : list) {
+	for (auto item : list)
+	{
 		s += item;
 		s += eol;
 	}
@@ -85,7 +87,8 @@ void CViewCommander::Command_INS_FOLDER_USED_RECENTLY(void)
 	std::wstring s;
 	CMRUFolder   cMRUFolder;
 	auto		 list = cMRUFolder.GetPathList();
-	for (auto item : list) {
+	for (auto item : list)
+	{
 		s += item;
 		s += eol;
 	}

@@ -31,9 +31,11 @@
 #include "macro/CWSHIfObj.h"
 #include "util/ole_convert.h"
 
-class CComplementIfObj : public CWSHIfObj {
+class CComplementIfObj : public CWSHIfObj
+{
 	// 型定義
-	enum FuncId {
+	enum FuncId
+	{
 		F_OL_COMMAND_FIRST  = 0,				//↓コマンドは以下に追加する
 		F_OL_FUNCTION_FIRST = F_FUNCTION_FIRST, //↓関数は以下に追加する
 		F_CM_GETCURRENTWORD,					//補完対象の文字列を取得
@@ -66,7 +68,8 @@ public:
 	{
 		Variant varCopy; // VT_BYREFだと困るのでコピー用
 
-		switch (LOWORD(ID)) {
+		switch (LOWORD(ID))
+		{
 		case F_CM_GETCURRENTWORD: //補完対象の文字列を取得
 		{
 			SysString s(m_sCurrentWord.c_str(), m_sCurrentWord.length());
@@ -86,10 +89,9 @@ public:
 			int			   nWordLen = keyword.length();
 			if (nWordLen <= 0) return false;
 			std::wstring strWord(word, nWordLen);
-			if (CHokanMgr::AddKouhoUnique(m_pHokanMgr->m_vKouho, strWord)) {
-				Wrap(&Result)->Receive(m_pHokanMgr->m_vKouho.size());
-			}
-			else {
+			if (CHokanMgr::AddKouhoUnique(m_pHokanMgr->m_vKouho, strWord))
+			{ Wrap(&Result)->Receive(m_pHokanMgr->m_vKouho.size()); } else
+			{
 				Wrap(&Result)->Receive(-1);
 			}
 			return true;

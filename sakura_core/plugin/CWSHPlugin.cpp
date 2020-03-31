@@ -68,20 +68,23 @@ bool CWSHPlugin::InvokePlug(CEditView *view, CPlug &plug, CWSHIfObj::List &param
 	CWSHPlug &		  wshPlug = static_cast<CWSHPlug &>(plug);
 	CWSHMacroManager *pWsh	= NULL;
 
-	if (!m_bUseCache || wshPlug.m_Wsh == NULL) {
+	if (!m_bUseCache || wshPlug.m_Wsh == NULL)
+	{
 		CFilePath path(plug.m_cPlugin.GetFilePath(plug.m_sHandler.c_str()).c_str());
 
 		pWsh = (CWSHMacroManager *)CWSHMacroManager::Creator(path.GetExt(true));
 		if (pWsh == NULL) { return false; }
 
 		BOOL bLoadResult = pWsh->LoadKeyMacro(G_AppInstance(), path);
-		if (!bLoadResult) {
+		if (!bLoadResult)
+		{
 			ErrorMessage(NULL, LS(STR_WSHPLUG_LOADMACRO), static_cast<const WCHAR *>(path));
 			delete pWsh;
 			return false;
 		}
 	}
-	else {
+	else
+	{
 		pWsh = wshPlug.m_Wsh;
 	}
 
@@ -97,7 +100,8 @@ bool CWSHPlugin::InvokePlug(CEditView *view, CPlug &plug, CWSHIfObj::List &param
 	pWsh->ClearParam();
 
 	if (m_bUseCache) { wshPlug.m_Wsh = pWsh; }
-	else {
+	else
+	{
 		// 終わったら解放
 		delete pWsh;
 	}

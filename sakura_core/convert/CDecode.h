@@ -28,7 +28,8 @@
 */
 #pragma once
 
-class CDecode {
+class CDecode
+{
 public:
 	virtual ~CDecode() {}
 
@@ -36,7 +37,8 @@ public:
 	bool CallDecode(const CNativeW &pcData, CMemory *pDest)
 	{
 		bool bRet = DoDecode(pcData, pDest);
-		if (!bRet) {
+		if (!bRet)
+		{
 			ErrorMessage(NULL, LS(STR_CONVERT_ERR));
 			pDest->SetRawData("", 0);
 			return false;

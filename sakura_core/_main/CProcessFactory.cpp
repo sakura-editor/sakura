@@ -58,15 +58,19 @@ CProcess *CProcessFactory::Create(HINSTANCE hInstance, LPCWSTR lpCmdLine)
 	// 起動されることもある。
 	// しかし、そのような場合でもミューテックスを最初に確保したコントロールプロセスが唯一生き残る。
 	//
-	if (IsStartingControlProcess()) {
-		if (TestWriteQuit()) { // 2007.09.04 ryoji「設定を保存して終了する」オプション処理（sakuext連携用）
+	if (IsStartingControlProcess())
+	{
+		if (TestWriteQuit())
+		{ // 2007.09.04 ryoji「設定を保存して終了する」オプション処理（sakuext連携用）
 			return 0;
 		}
 		if (!IsExistControlProcess()) { process = new CControlProcess(hInstance, lpCmdLine); }
 	}
-	else {
+	else
+	{
 		if (!IsExistControlProcess()) { StartControlProcess(); }
-		if (WaitForInitializedControlProcess()) { // 2006.04.10 ryoji コントロールプロセスの初期化完了待ち
+		if (WaitForInitializedControlProcess())
+		{ // 2006.04.10 ryoji コントロールプロセスの初期化完了待ち
 			process = new CNormalProcess(hInstance, lpCmdLine);
 		}
 	}
@@ -92,27 +96,30 @@ bool CProcessFactory::ProfileSelect(HINSTANCE hInstance, LPCWSTR lpCmdLine)
 
 	bool bDialog;
 	if (CCommandLine::getInstance()->IsProfileMgr()) { bDialog = true; }
-	else if (CCommandLine::getInstance()->IsSetProfile()) {
+	else if (CCommandLine::getInstance()->IsSetProfile())
+	{
 		bDialog = false;
 	}
-	else if (settings.m_nDefaultIndex == -1) {
+	else if (settings.m_nDefaultIndex == -1)
+	{
 		bDialog = true;
 	}
-	else {
+	else
+	{
 		assert(0 <= settings.m_nDefaultIndex);
-		if (0 < settings.m_nDefaultIndex) {
-			CCommandLine::getInstance()->SetProfileName(settings.m_vProfList[settings.m_nDefaultIndex - 1].c_str());
-		}
-		else {
+		if (0 < settings.m_nDefaultIndex)
+		{ CCommandLine::getInstance()->SetProfileName(settings.m_vProfList[settings.m_nDefaultIndex - 1].c_str()); }
+		else
+		{
 			CCommandLine::getInstance()->SetProfileName(L"");
 		}
 		bDialog = false;
 	}
-	if (bDialog) {
-		if (dlgProf.DoModal(hInstance, NULL, 0)) {
-			CCommandLine::getInstance()->SetProfileName(dlgProf.m_strProfileName.c_str());
-		}
-		else {
+	if (bDialog)
+	{
+		if (dlgProf.DoModal(hInstance, NULL, 0))
+		{ CCommandLine::getInstance()->SetProfileName(dlgProf.m_strProfileName.c_str()); } else
+		{
 			return false; // プロファイルマネージャで「閉じる」を選んだ。プロセス終了
 		}
 	}
@@ -158,7 +165,8 @@ bool CProcessFactory::IsExistControlProcess()
 	HANDLE hMutexCP;
 	hMutexCP = ::OpenMutex(MUTEX_ALL_ACCESS, FALSE,
 						   strMutexSakuraCp.c_str()); // 2006.04.10 ryoji ::CreateMutex() を ::OpenMutex()に変更
-	if (NULL != hMutexCP) {
+	if (NULL != hMutexCP)
+	{
 		::CloseHandle(hMutexCP);
 		return true; // コントロールプロセスが見つかった
 	}
@@ -199,11 +207,13 @@ bool CProcessFactory::StartControlProcess()
 	WCHAR szEXE[MAX_PATH + 1]; //	アプリケーションパス名
 
 	::GetModuleFileName(NULL, szEXE, _countof(szEXE));
-	if (CCommandLine::getInstance()->IsSetProfile()) {
+	if (CCommandLine::getInstance()->IsSetProfile())
+	{
 		::auto_sprintf(szCmdLineBuf, L"\"%s\" -NOWIN -PROF=\"%ls\"", szEXE,
 					   CCommandLine::getInstance()->GetProfileName());
 	}
-	else {
+	else
+	{
 		::auto_sprintf(szCmdLineBuf, L"\"%s\" -NOWIN", szEXE); // ""付加
 	}
 
@@ -223,7 +233,8 @@ bool CProcessFactory::StartControlProcess()
 										 &s,			 // スタートアップ情報
 										 &p				 // プロセス情報
 	);
-	if (!bCreateResult) {
+	if (!bCreateResult)
+	{
 		//	失敗
 		WCHAR *pMsg;
 		::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
@@ -240,7 +251,8 @@ bool CProcessFactory::StartControlProcess()
 	//
 	int nResult;
 	nResult = ::WaitForInputIdle(p.hProcess, 10000); //	最大10秒間待つ
-	if (0 != nResult) {
+	if (0 != nResult)
+	{
 		ErrorMessage(NULL, L"\'%ls\'\nコントロールプロセスの起動に失敗しました。", szEXE);
 		::CloseHandle(p.hThread);
 		::CloseHandle(p.hProcess);
@@ -267,7 +279,8 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 	// Note: コントロールプロセス側は多重起動防止用ミューテックスを ::CreateMutex() で
 	// 作成するよりも先に初期化完了イベントを ::CreateEvent() で作成する。
 	//
-	if (!IsExistControlProcess()) {
+	if (!IsExistControlProcess())
+	{
 		// コントロールプロセスが多重起動防止用のミューテックス作成前に異常終了した場合など
 		return false;
 	}
@@ -277,7 +290,8 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 	strInitEvent += pszProfileName;
 	HANDLE hEvent;
 	hEvent = ::OpenEvent(EVENT_ALL_ACCESS, FALSE, strInitEvent.c_str());
-	if (NULL == hEvent) {
+	if (NULL == hEvent)
+	{
 		// 動作中のコントロールプロセスを旧バージョンとみなし、イベントを待たずに処理を進める
 		//
 		// Note: Ver1.5.9.91以前のバージョンは初期化完了イベントを作らない。
@@ -291,7 +305,8 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 	}
 	DWORD dwRet;
 	dwRet = ::WaitForSingleObject(hEvent, 10000); // 最大10秒間待つ
-	if (WAIT_TIMEOUT == dwRet) {				  // コントロールプロセスの初期化が終了しない
+	if (WAIT_TIMEOUT == dwRet)
+	{ // コントロールプロセスの初期化が終了しない
 		::CloseHandle(hEvent);
 		TopErrorMessage(NULL, L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。");
 		return false;
@@ -308,17 +323,21 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 */
 bool CProcessFactory::TestWriteQuit()
 {
-	if (CCommandLine::getInstance()->IsWriteQuit()) {
+	if (CCommandLine::getInstance()->IsWriteQuit())
+	{
 		WCHAR szIniFileIn[_MAX_PATH];
 		WCHAR szIniFileOut[_MAX_PATH];
 		CFileNameManager::getInstance()->GetIniFileNameDirect(szIniFileIn, szIniFileOut, L"");
-		if (szIniFileIn[0] != L'\0') { // マルチユーザ用設定か
+		if (szIniFileIn[0] != L'\0')
+		{ // マルチユーザ用設定か
 			// 既にマルチユーザ用のiniファイルがあればEXE基準のiniファイルに上書き更新して終了
-			if (fexist(szIniFileIn)) {
+			if (fexist(szIniFileIn))
+			{
 				if (::CopyFile(szIniFileIn, szIniFileOut, FALSE)) { return true; }
 			}
 		}
-		else {
+		else
+		{
 			// 既にEXE基準のiniファイルがあれば何もせず終了
 			if (fexist(szIniFileOut)) { return true; }
 		}

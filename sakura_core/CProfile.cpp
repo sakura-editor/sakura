@@ -72,18 +72,18 @@ void CProfile::ReadOneline(const wstring &line)
 	// セクション取得
 	//	Jan. 29, 2004 genta compare使用
 	if (line.compare(0, 1, LTEXT("[")) == 0 && line.find(LTEXT("=")) == line.npos
-		&& line.find(LTEXT("]")) == (line.size() - 1)) {
+		&& line.find(LTEXT("]")) == (line.size() - 1))
+	{
 		Section Buffer;
 		Buffer.strSectionName = line.substr(1, line.size() - 1 - 1);
 		m_ProfileData.push_back(Buffer);
 	}
 	// エントリ取得
-	else if (!m_ProfileData.empty()) { //最初のセクション以前の行のエントリは無視
+	else if (!m_ProfileData.empty())
+	{ //最初のセクション以前の行のエントリは無視
 		wstring::size_type idx = line.find(LTEXT("="));
-		if (line.npos != idx) {
-			m_ProfileData.back().mapEntries.insert(PAIR_STR_STR(line.substr(0, idx), line.substr(idx + 1)));
-		}
-	}
+		if (line.npos != idx)
+		{ m_ProfileData.back().mapEntries.insert(PAIR_STR_STR(line.substr(0, idx), line.substr(idx + 1))); } }
 }
 
 /*! Profileをファイルから読み出す
@@ -106,8 +106,10 @@ bool CProfile::ReadProfile(const WCHAR *pszProfileName)
 	CTextInputStream in(m_strProfileName.c_str());
 	if (!in) { return false; }
 
-	try {
-		while (in) {
+	try
+	{
+		while (in)
+		{
 			// 1行読込
 			wstring line = in.ReadLineW();
 
@@ -115,7 +117,8 @@ bool CProfile::ReadProfile(const WCHAR *pszProfileName)
 			ReadOneline(line);
 		}
 	}
-	catch (...) {
+	catch (...)
+	{
 		return false;
 	}
 
@@ -151,20 +154,25 @@ bool CProfile::ReadProfileRes(const WCHAR *pName, const WCHAR *pType, std::vecto
 	m_strProfileName = L"-Res-";
 
 	if ((hRsrc = ::FindResource(0, pName, pType)) != NULL && (hGlobal = ::LoadResource(0, hRsrc)) != NULL
-		&& (psMMres = (char *)::LockResource(hGlobal)) != NULL && (nSize = (size_t)::SizeofResource(0, hRsrc)) != 0) {
+		&& (psMMres = (char *)::LockResource(hGlobal)) != NULL && (nSize = (size_t)::SizeofResource(0, hRsrc)) != 0)
+	{
 		p = psMMres;
-		if (nSize >= sizeof(UTF8_BOM) && memcmp(p, UTF8_BOM, sizeof(UTF8_BOM)) == 0) {
+		if (nSize >= sizeof(UTF8_BOM) && memcmp(p, UTF8_BOM, sizeof(UTF8_BOM)) == 0)
+		{
 			// Skip BOM
 			p += sizeof(UTF8_BOM);
 		}
-		for (; p < psMMres + nSize; p = pn) {
+		for (; p < psMMres + nSize; p = pn)
+		{
 			// 1行切り取り（長すぎた場合切捨て）
 			pn = strpbrk(p, "\n");
-			if (pn == NULL) {
+			if (pn == NULL)
+			{
 				// 最終行
 				pn = psMMres + nSize;
 			}
-			else {
+			else
+			{
 				pn++;
 			}
 			lnsz = (pn - p) <= 300 ? (pn - p) : 300;
@@ -179,7 +187,8 @@ bool CProfile::ReadProfileRes(const WCHAR *pName, const WCHAR *pType, std::vecto
 			line = cmLineW.GetStringPtr();
 
 			if (pData) { pData->push_back(line); }
-			else {
+			else
+			{
 				//解析
 				ReadOneline(line);
 			}
@@ -205,14 +214,17 @@ bool CProfile::WriteProfile(const WCHAR *pszProfileName, const WCHAR *pszComment
 	if (pszProfileName != NULL) { m_strProfileName = pszProfileName; }
 
 	std::vector<wstring> vecLine;
-	if (NULL != pszComment) {
+	if (NULL != pszComment)
+	{
 		vecLine.push_back(LTEXT(";") + wstring(pszComment)); // //->;	2008/5/24 Uchi
 		vecLine.push_back(LTEXT(""));
 	}
-	for (auto iter = m_ProfileData.begin(); iter != m_ProfileData.end(); iter++) {
+	for (auto iter = m_ProfileData.begin(); iter != m_ProfileData.end(); iter++)
+	{
 		//セクション名を書き込む
 		vecLine.push_back(LTEXT("[") + iter->strSectionName + LTEXT("]"));
-		for (auto mapiter = iter->mapEntries.cbegin(); mapiter != iter->mapEntries.end(); mapiter++) {
+		for (auto mapiter = iter->mapEntries.cbegin(); mapiter != iter->mapEntries.end(); mapiter++)
+		{
 			//エントリを書き込む
 			vecLine.push_back(mapiter->first + LTEXT("=") + mapiter->second);
 		}
@@ -233,9 +245,12 @@ bool CProfile::WriteProfile(const WCHAR *pszProfileName, const WCHAR *pszComment
 
 	if (!_WriteFile(szMirrorFile[0] ? szMirrorFile : m_strProfileName, vecLine)) return false;
 
-	if (szMirrorFile[0]) {
-		if (!::ReplaceFile(m_strProfileName.c_str(), szMirrorFile, NULL, 0, NULL, NULL)) {
-			if (fexist(m_strProfileName.c_str())) {
+	if (szMirrorFile[0])
+	{
+		if (!::ReplaceFile(m_strProfileName.c_str(), szMirrorFile, NULL, 0, NULL, NULL))
+		{
+			if (fexist(m_strProfileName.c_str()))
+			{
 				if (!::DeleteFile(m_strProfileName.c_str())) { return false; }
 			}
 			if (!::MoveFile(szMirrorFile, m_strProfileName.c_str())) { return false; }
@@ -261,7 +276,8 @@ bool CProfile::_WriteFile(const wstring &		 strFilename, //!< [in]  ファイル
 	if (!out) { return false; }
 
 	size_t nSize = vecLine.size();
-	for (size_t i = 0; i < nSize; i++) {
+	for (size_t i = 0; i < nSize; i++)
+	{
 		// 出力
 		out.WriteString(vecLine[i].c_str());
 		out.WriteString(L"\n");
@@ -288,10 +304,13 @@ bool CProfile::GetProfileDataImp(const wstring &strSectionName, //!< [in] セク
 								 wstring &		strEntryValue   //!< [out] エントリ値
 )
 {
-	for (auto iter = m_ProfileData.begin(); iter != m_ProfileData.end(); iter++) {
-		if (iter->strSectionName == strSectionName) {
+	for (auto iter = m_ProfileData.begin(); iter != m_ProfileData.end(); iter++)
+	{
+		if (iter->strSectionName == strSectionName)
+		{
 			auto mapiter = iter->mapEntries.find(strEntryKey);
-			if (iter->mapEntries.end() != mapiter) {
+			if (iter->mapEntries.end() != mapiter)
+			{
 				strEntryValue = mapiter->second;
 				return true;
 			}
@@ -313,16 +332,20 @@ bool CProfile::SetProfileDataImp(const wstring &strSectionName, //!< [in] セク
 )
 {
 	auto iter = m_ProfileData.begin();
-	for (; iter != m_ProfileData.end(); iter++) {
-		if (iter->strSectionName == strSectionName) {
+	for (; iter != m_ProfileData.end(); iter++)
+	{
+		if (iter->strSectionName == strSectionName)
+		{
 			//既存のセクションの場合
 			auto mapiter = iter->mapEntries.find(strEntryKey);
-			if (iter->mapEntries.end() != mapiter) {
+			if (iter->mapEntries.end() != mapiter)
+			{
 				//既存のエントリの場合は値を上書き
 				mapiter->second = strEntryValue;
 				break;
 			}
-			else {
+			else
+			{
 				//既存のエントリが見つからない場合は追加
 				iter->mapEntries.insert(PAIR_STR_STR(strEntryKey, strEntryValue));
 				break;
@@ -330,7 +353,8 @@ bool CProfile::SetProfileDataImp(const wstring &strSectionName, //!< [in] セク
 		}
 	}
 	//既存のセクションではない場合，セクション及びエントリを追加
-	if (iter == m_ProfileData.end()) {
+	if (iter == m_ProfileData.end())
+	{
 		Section Buffer;
 		Buffer.strSectionName = strSectionName;
 		Buffer.mapEntries.insert(PAIR_STR_STR(strEntryKey, strEntryValue));
@@ -344,12 +368,11 @@ void CProfile::DUMP(void)
 #ifdef _DEBUG
 	//	2006.02.20 ryoji: MAP_STR_STR_ITER削除時の修正漏れによるコンパイルエラー修正
 	MYTRACE(L"\n\nCProfile::DUMP()======================");
-	for (auto iter = m_ProfileData.begin(); iter != m_ProfileData.end(); iter++) {
+	for (auto iter = m_ProfileData.begin(); iter != m_ProfileData.end(); iter++)
+	{
 		MYTRACE(L"\n■strSectionName=%ls", iter->strSectionName.c_str());
-		for (auto mapiter = iter->mapEntries.begin(); mapiter != iter->mapEntries.end(); mapiter++) {
-			MYTRACE(L"\"%ls\" = \"%ls\"\n", mapiter->first.c_str(), mapiter->second.c_str());
-		}
-	}
+		for (auto mapiter = iter->mapEntries.begin(); mapiter != iter->mapEntries.end(); mapiter++)
+		{ MYTRACE(L"\"%ls\" = \"%ls\"\n", mapiter->first.c_str(), mapiter->second.c_str()); } }
 	MYTRACE(L"========================================\n");
 #endif
 	return;

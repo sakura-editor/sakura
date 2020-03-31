@@ -28,7 +28,8 @@ class CEditDoc;
 class CFuncInfoArr;
 struct SOneRule;
 
-class CDocOutline {
+class CDocOutline
+{
 public:
 	CDocOutline(CEditDoc *pcDoc)
 		: m_pcDocRef(pcDoc)

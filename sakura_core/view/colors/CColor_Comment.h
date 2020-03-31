@@ -30,7 +30,8 @@
 //                        行コメント                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-class CColor_LineComment final : public CColorStrategy {
+class CColor_LineComment final : public CColorStrategy
+{
 public:
 	EColorIndexType GetStrategyColor() const override { return COLORIDX_COMMENT; }
 	void			InitStrategyStatus() override {}
@@ -42,7 +43,8 @@ public:
 		if (!m_pTypeData->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp) return false;
 		// 行型コメントの始点記号が入力されているか
 		auto &lineComment = m_pTypeData->m_cLineComment;
-		for (int i = 0; i < COMMENT_DELIMITER_NUM; ++i) {
+		for (int i = 0; i < COMMENT_DELIMITER_NUM; ++i)
+		{
 			if (lineComment.getLineComment(i)[0]) return true;
 		}
 		return false;
@@ -53,7 +55,8 @@ public:
 //                    ブロックコメント１                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-class CColor_BlockComment final : public CColorStrategy {
+class CColor_BlockComment final : public CColorStrategy
+{
 public:
 	CColor_BlockComment(EColorIndexType nType)
 		: m_nType(nType)

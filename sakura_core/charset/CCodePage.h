@@ -34,7 +34,8 @@
 #include <utility>
 #include <vector>
 
-enum EEncodingTrait {
+enum EEncodingTrait
+{
 	ENCODING_TRAIT_ERROR,		// error
 	ENCODING_TRAIT_ASCII,		// ASCII comportible 1byte
 	ENCODING_TRAIT_UTF16LE,		// UTF-16LE
@@ -48,7 +49,8 @@ enum EEncodingTrait {
 /*
 	システムコードページによる文字コード変換
 */
-class CCodePage : public CCodeBase {
+class CCodePage : public CCodeBase
+{
 public:
 	CCodePage(int codepageEx)
 		: m_nCodePageEx(codepageEx)

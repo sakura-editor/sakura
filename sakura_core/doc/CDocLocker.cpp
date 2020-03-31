@@ -62,13 +62,15 @@ void CDocLocker::CheckWritable(bool bMsg)
 	CEditDoc *pcDoc = GetListeningDoc();
 
 	// ファイルが存在しない場合 (「開く」で新しくファイルを作成した扱い) は、以下の処理は行わない
-	if (!fexist(pcDoc->m_cDocFile.GetFilePath())) {
+	if (!fexist(pcDoc->m_cDocFile.GetFilePath()))
+	{
 		m_bIsDocWritable = true;
 		return;
 	}
 
 	// 読み取り専用ファイルの場合は、以下の処理は行わない
-	if (!pcDoc->m_cDocFile.HasWritablePermission()) {
+	if (!pcDoc->m_cDocFile.HasWritablePermission())
+	{
 		m_bIsDocWritable = false;
 		return;
 	}
@@ -76,10 +78,12 @@ void CDocLocker::CheckWritable(bool bMsg)
 	// 書き込めるか検査
 	CDocFile &cDocFile = pcDoc->m_cDocFile;
 	m_bIsDocWritable   = cDocFile.IsFileWritable();
-	if (!m_bIsDocWritable && bMsg) {
+	if (!m_bIsDocWritable && bMsg)
+	{
 		// 排他されている場合だけメッセージを出す
 		// その他の原因（ファイルシステムのセキュリティ設定など）では読み取り専用と同様にメッセージを出さない
-		if (::GetLastError() == ERROR_SHARING_VIOLATION) {
+		if (::GetLastError() == ERROR_SHARING_VIOLATION)
+		{
 			TopWarningMessage(CEditWnd::getInstance()->GetHwnd(),
 							  LS(STR_ERR_DLGEDITDOC21), //"%s\nは現在他のプロセスによって書込みが禁止されています。"
 							  cDocFile.GetFilePathClass().IsValidPath() ? cDocFile.GetFilePath()

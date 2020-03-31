@@ -49,7 +49,8 @@
 #define CRLF_ "\015\012"
 
 // ANSI定数
-namespace ACODE {
+namespace ACODE
+{
 //文字
 static const char TAB   = TAB_;
 static const char SPACE = SPACE_;
@@ -65,7 +66,8 @@ static const wchar_t BREGEXP_DELIMITER = (wchar_t)0xFF;
 } // namespace ACODE
 
 // UNICODE定数
-namespace WCODE {
+namespace WCODE
+{
 //文字
 static const wchar_t TAB   = LCHAR(TAB_);
 static const wchar_t SPACE = LCHAR(SPACE_);
@@ -101,7 +103,8 @@ inline bool IS_KEYWORD_CHAR(wchar_t wc)
 }
 
 // UNICODE判定関数群
-namespace WCODE {
+namespace WCODE
+{
 inline bool IsAZ(wchar_t wc) { return (wc >= L'A' && wc <= L'Z') || (wc >= L'a' && wc <= L'z'); }
 inline bool Is09(wchar_t wc) { return (wc >= L'0' && wc <= L'9'); }
 inline bool IsInRange(wchar_t c, wchar_t front, wchar_t back) { return c >= front && c <= back; }
@@ -245,7 +248,8 @@ int CalcPxWidthByFont2(const wchar_t *c);
 } // namespace WCODE
 
 // ANSI判定関数群
-namespace ACODE {
+namespace ACODE
+{
 inline bool IsAZ(char c) { return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'); }
 
 //!制御文字であるかどうか
@@ -276,7 +280,8 @@ inline bool IsValidFilenameChar(const char c)
 	static const char *table = "<>?\"|*";
 
 	// table内の文字が含まれていて
-	if (strchr(table, c) != NULL) {
+	if (strchr(table, c) != NULL)
+	{
 		// 2013.06.01 判定間違いを削除
 		return false;
 	}
@@ -286,12 +291,14 @@ inline bool IsValidFilenameChar(const char c)
 } // namespace ACODE
 
 // TCHAR判定関数群
-namespace TCODE {
+namespace TCODE
+{
 using namespace WCODE;
 }
 
 // 文字幅の動的計算用キャッシュ関連
-struct SCharWidthCache {
+struct SCharWidthCache
+{
 	// 文字半角全角キャッシュ
 	WCHAR m_lfFaceName[LF_FACESIZE];
 	WCHAR m_lfFaceName2[LF_FACESIZE];
@@ -299,13 +306,15 @@ struct SCharWidthCache {
 	int   m_nCharWidthCacheTest; // cache溢れ検出
 };
 
-enum ECharWidthFontMode {
+enum ECharWidthFontMode
+{
 	CWM_FONT_EDIT,
 	CWM_FONT_PRINT,
 	CWM_FONT_MINIMAP,
 	CWM_FONT_MAX,
 };
-enum ECharWidthCacheMode {
+enum ECharWidthCacheMode
+{
 	CWM_CACHE_NEUTRAL,
 	CWM_CACHE_SHARE,
 	CWM_CACHE_LOCAL,

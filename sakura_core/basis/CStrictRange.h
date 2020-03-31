@@ -25,7 +25,8 @@
 #pragma once
 
 template<class PointType>
-class CRangeBase {
+class CRangeBase
+{
 public:
 	typedef typename PointType::IntType IntType;
 

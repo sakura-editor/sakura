@@ -49,7 +49,8 @@ BOOL CDlgFileUpdateQuery::OnBnClicked(int id)
 {
 	EFileUpdateQuery result;
 
-	switch (id) {
+	switch (id)
+	{
 	case IDC_BTN_RELOAD: // 再読込
 		result = EFUQ_RELOAD;
 		break;

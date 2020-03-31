@@ -97,7 +97,8 @@ BOOL CDlgWinSize::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 
 BOOL CDlgWinSize::OnBnClicked(int wID)
 {
-	switch (wID) {
+	switch (wID)
+	{
 	case IDC_BUTTON_HELP:							   // 2006/09/09 novice id修正
 		MyWinHelp(GetHwnd(), HELP_CONTEXT, HLP000286); // 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
@@ -119,7 +120,8 @@ static BOOL s_isImmOpenBkup;
 // IMEを使用したくないコントロールのID判定
 static bool isImeUndesirable(int id)
 {
-	switch (id) {
+	switch (id)
+	{
 	case IDC_EDIT_WX:
 	case IDC_EDIT_WY:
 	case IDC_EDIT_SX:
@@ -144,20 +146,23 @@ BOOL CDlgWinSize::OnEnKillFocus(HWND hwndCtl, int wID)
  */
 void CDlgWinSize::SetData(void)
 {
-	switch (m_eSaveWinSize) {
+	switch (m_eSaveWinSize)
+	{
 	case 1: ::CheckDlgButton(GetHwnd(), IDC_RADIO_WINSIZE_SAVE, TRUE); break;
 	case 2: ::CheckDlgButton(GetHwnd(), IDC_RADIO_WINSIZE_SET, TRUE); break;
 	default: ::CheckDlgButton(GetHwnd(), IDC_RADIO_WINSIZE_DEF, TRUE);
 	}
 
-	switch (m_eSaveWinPos) {
+	switch (m_eSaveWinPos)
+	{
 	case 1: ::CheckDlgButton(GetHwnd(), IDC_RADIO_WINPOS_SAVE, TRUE); break;
 	case 2: ::CheckDlgButton(GetHwnd(), IDC_RADIO_WINPOS_SET, TRUE); break;
 	default: ::CheckDlgButton(GetHwnd(), IDC_RADIO_WINPOS_DEF, TRUE);
 	}
 
 	int nCurIdx = 0;
-	switch (m_nWinSizeType) {
+	switch (m_nWinSizeType)
+	{
 	case SIZE_MINIMIZED: nCurIdx = 2; break;
 	case SIZE_MAXIMIZED: nCurIdx = 1; break;
 	default: nCurIdx = 0;
@@ -175,24 +180,29 @@ void CDlgWinSize::SetData(void)
 int CDlgWinSize::GetData(void)
 {
 	if (BST_CHECKED == ::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_WINSIZE_DEF)) { m_eSaveWinSize = WINSIZEMODE_DEF; }
-	else if (BST_CHECKED == ::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_WINSIZE_SAVE)) {
+	else if (BST_CHECKED == ::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_WINSIZE_SAVE))
+	{
 		m_eSaveWinSize = WINSIZEMODE_SAVE;
 	}
-	else if (BST_CHECKED == ::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_WINSIZE_SET)) {
+	else if (BST_CHECKED == ::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_WINSIZE_SET))
+	{
 		m_eSaveWinSize = WINSIZEMODE_SET;
 	}
 
 	if (BST_CHECKED == ::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_WINPOS_DEF)) { m_eSaveWinPos = WINSIZEMODE_DEF; }
-	else if (BST_CHECKED == ::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_WINPOS_SAVE)) {
+	else if (BST_CHECKED == ::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_WINPOS_SAVE))
+	{
 		m_eSaveWinPos = WINSIZEMODE_SAVE;
 	}
-	else if (BST_CHECKED == ::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_WINPOS_SET)) {
+	else if (BST_CHECKED == ::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_WINPOS_SET))
+	{
 		m_eSaveWinPos = WINSIZEMODE_SET;
 	}
 
 	int nCurIdx;
 	nCurIdx = Combo_GetCurSel(GetItemHwnd(IDC_COMBO_WINTYPE));
-	switch (nCurIdx) {
+	switch (nCurIdx)
+	{
 	case 2: m_nWinSizeType = SIZE_MINIMIZED; break;
 	case 1: m_nWinSizeType = SIZE_MAXIMIZED; break;
 	default: m_nWinSizeType = SIZE_RESTORED;
@@ -210,14 +220,16 @@ void CDlgWinSize::RenewItemState(void)
 {
 	BOOL state;
 	if (BST_CHECKED == ::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_WINPOS_SET)) { state = TRUE; }
-	else {
+	else
+	{
 		state = FALSE;
 	}
 	::EnableWindow(GetItemHwnd(IDC_EDIT_WX), state);
 	::EnableWindow(GetItemHwnd(IDC_EDIT_WY), state);
 
 	if (BST_CHECKED == ::IsDlgButtonChecked(GetHwnd(), IDC_RADIO_WINSIZE_SET)) { state = TRUE; }
-	else {
+	else
+	{
 		state = FALSE;
 	}
 	::EnableWindow(GetItemHwnd(IDC_COMBO_WINTYPE), state);

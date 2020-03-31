@@ -38,7 +38,8 @@
 #include "_main/global.h"
 #include "env/DLLSHAREDATA.h"
 
-class CRecent {
+class CRecent
+{
 public:
 	virtual ~CRecent() {}
 
@@ -59,7 +60,8 @@ public:
 	int FindItemByText(const WCHAR *pszText) const
 	{
 		int n = GetItemCount();
-		for (int i = 0; i < n; i++) {
+		for (int i = 0; i < n; i++)
+		{
 			if (wcscmp(GetItemText(i), pszText) == 0) return i;
 		}
 		return -1;

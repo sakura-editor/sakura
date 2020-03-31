@@ -44,7 +44,8 @@ struct EditNode;
 struct DLLSHAREDATA;
 
 //! タブバーウィンドウ
-class CTabWnd final : public CWnd {
+class CTabWnd final : public CWnd
+{
 public:
 	/*
 	||  Constructors
@@ -165,8 +166,17 @@ protected:
 	}
 
 protected:
-	enum DragState { DRAG_NONE, DRAG_CHECK, DRAG_DRAG };
-	enum CaptureSrc { CAPT_NONE, CAPT_CLOSE };
+	enum DragState
+	{
+		DRAG_NONE,
+		DRAG_CHECK,
+		DRAG_DRAG
+	};
+	enum CaptureSrc
+	{
+		CAPT_NONE,
+		CAPT_CLOSE
+	};
 
 	/*
 	|| メンバ変数

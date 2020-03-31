@@ -27,7 +27,8 @@ bool CColor_Select::BeginColorEx(const CStringRef &cStr, int nPos, CLayoutInt nL
 	if (!view.GetSelectionInfo().IsTextSelected() || !CTypeSupport(&view, COLORIDX_SELECT).IsDisp()) { return false; }
 
 	// 2011.12.27 レイアウト行頭で1回だけ確認してあとはメンバー変数をみる
-	if (m_nSelectLine == nLineNum) {
+	if (m_nSelectLine == nLineNum)
+	{
 		if (m_nSelectStart <= nPos && nPos < m_nSelectEnd) { return true; }
 		return false;
 	}
@@ -35,7 +36,8 @@ bool CColor_Select::BeginColorEx(const CStringRef &cStr, int nPos, CLayoutInt nL
 	CLayoutRange selectArea  = view.GetSelectionInfo().GetSelectAreaLine(nLineNum, pcLayout);
 	CLayoutInt   nSelectFrom = selectArea.GetFrom().x;
 	CLayoutInt   nSelectTo   = selectArea.GetTo().x;
-	if (nSelectFrom == nSelectTo || -1 == nSelectFrom) {
+	if (nSelectFrom == nSelectTo || -1 == nSelectFrom)
+	{
 		m_nSelectStart = -1;
 		m_nSelectEnd   = -1;
 		return false;
@@ -51,7 +53,8 @@ bool CColor_Select::BeginColorEx(const CStringRef &cStr, int nPos, CLayoutInt nL
 bool CColor_Select::EndColor(const CStringRef &cStr, int nPos)
 {
 	//マッチ文字列終了検出
-	if (m_nSelectEnd <= nPos) {
+	if (m_nSelectEnd <= nPos)
+	{
 		// -- -- マッチ文字列を描画 -- -- //
 
 		return true;
@@ -72,11 +75,10 @@ void CColor_Found::OnStartScanLogic()
 	m_nSearchEnd	= CLogicInt(-1);
 
 	this->validColorNum = 0;
-	for (int color = COLORIDX_SEARCH; color <= COLORIDX_SEARCHTAIL; ++color) {
-		if (m_pTypeData->m_ColorInfoArr[color].m_bDisp) {
-			this->highlightColors[this->validColorNum++] = EColorIndexType(color);
-		}
-	}
+	for (int color = COLORIDX_SEARCH; color <= COLORIDX_SEARCHTAIL; ++color)
+	{
+		if (m_pTypeData->m_ColorInfoArr[color].m_bDisp)
+		{ this->highlightColors[this->validColorNum++] = EColorIndexType(color); } }
 }
 
 bool CColor_Found::BeginColor(const CStringRef &cStr, int nPos)
@@ -89,9 +91,8 @@ bool CColor_Found::BeginColor(const CStringRef &cStr, int nPos)
 	//        検索ヒットフラグ設定 -> bSearchStringMode            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	// 2002.02.08 hor 正規表現の検索文字列マークを少し高速化
-	if (pcView->m_sCurSearchOption.bWordOnly || (m_nSearchResult && m_nSearchStart < nPos)) {
-		m_nSearchResult = pcView->IsSearchString(cStr, CLogicInt(nPos), &m_nSearchStart, &m_nSearchEnd);
-	}
+	if (pcView->m_sCurSearchOption.bWordOnly || (m_nSearchResult && m_nSearchStart < nPos))
+	{ m_nSearchResult = pcView->IsSearchString(cStr, CLogicInt(nPos), &m_nSearchStart, &m_nSearchEnd); }
 	//マッチ文字列検出
 	if (m_nSearchResult && m_nSearchStart == nPos) { return true; }
 	return false;
@@ -100,8 +101,9 @@ bool CColor_Found::BeginColor(const CStringRef &cStr, int nPos)
 bool CColor_Found::EndColor(const CStringRef &cStr, int nPos)
 {
 	//マッチ文字列終了検出
-	if (m_nSearchEnd <= nPos) { //+ == では行頭文字の場合、m_nSearchEndも０であるために文字色の解除ができないバグを修正
-								// 2003.05.03 かろと
+	if (m_nSearchEnd <= nPos)
+	{ //+ == では行頭文字の場合、m_nSearchEndも０であるために文字色の解除ができないバグを修正
+	  // 2003.05.03 かろと
 		// -- -- マッチ文字列を描画 -- -- //
 
 		return true;

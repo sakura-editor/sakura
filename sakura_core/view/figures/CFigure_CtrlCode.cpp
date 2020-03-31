@@ -38,10 +38,12 @@ void CFigure_CtrlCode::DispSpaceEx(CGraphics &gr, DispPos *pDispPos, CEditView *
 
 	RECT rc;
 	//クリッピング矩形を計算。画面外なら描画しない
-	if (pcView->GetTextArea().GenerateClipRect(&rc, *pDispPos, CHabaXInt(dx[0]))) {
+	if (pcView->GetTextArea().GenerateClipRect(&rc, *pDispPos, CHabaXInt(dx[0])))
+	{
 		//描画
 		int fontNo = WCODE::GetFontNo(GetAlternateChar());
-		if (fontNo) {
+		if (fontNo)
+		{
 			SFONT sFont;
 			sFont.m_sFontAttr = gr.GetCurrentMyFontAttr();
 			sFont.m_hFont	 = pcView->GetFontset().ChooseFontHandle(fontNo, sFont.m_sFontAttr);

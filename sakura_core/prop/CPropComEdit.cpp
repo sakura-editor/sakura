@@ -77,7 +77,8 @@ INT_PTR CPropEdit::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 	//	int			nVal;
 	//	LPDRAWITEMSTRUCT pDis;
 
-	switch (uMsg) {
+	switch (uMsg)
+	{
 
 	case WM_INITDIALOG:
 		EditCtl_LimitText(::GetDlgItem(hwndDlg, IDC_EDIT_FILEOPENDIR), _MAX_PATH - 1);
@@ -92,27 +93,30 @@ INT_PTR CPropEdit::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam); /* 通知コード */
 		wID			= LOWORD(wParam); /* 項目ID､ コントロールID､ またはアクセラレータID */
-		switch (wNotifyCode) {
+		switch (wNotifyCode)
+		{
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
-			switch (wID) {
+			switch (wID)
+			{
 			case IDC_CHECK_DRAGDROP: /* タスクトレイを使う */
-				if (::IsDlgButtonChecked(hwndDlg, IDC_CHECK_DRAGDROP)) {
-					::EnableWindow(::GetDlgItem(hwndDlg, IDC_CHECK_DROPSOURCE), TRUE);
-				}
-				else {
+				if (::IsDlgButtonChecked(hwndDlg, IDC_CHECK_DRAGDROP))
+				{ ::EnableWindow(::GetDlgItem(hwndDlg, IDC_CHECK_DROPSOURCE), TRUE); } else
+				{
 					::EnableWindow(::GetDlgItem(hwndDlg, IDC_CHECK_DROPSOURCE), FALSE);
 				}
 				return TRUE;
 			case IDC_RADIO_CURDIR:
 			case IDC_RADIO_MRUDIR:
 			case IDC_RADIO_SELDIR: EnableEditPropInput(hwndDlg); return TRUE;
-			case IDC_BUTTON_FILEOPENDIR: {
+			case IDC_BUTTON_FILEOPENDIR:
+			{
 				WCHAR szMetaPath[_MAX_PATH];
 				WCHAR szPath[_MAX_PATH];
 				::DlgItem_GetText(hwndDlg, IDC_EDIT_FILEOPENDIR, szMetaPath, _countof(szMetaPath));
 				CFileNameManager::ExpandMetaToFolder(szMetaPath, szPath, _countof(szPath));
-				if (SelectDir(hwndDlg, LS(STR_PROPEDIT_SELECT_DIR), szPath, szPath)) {
+				if (SelectDir(hwndDlg, LS(STR_PROPEDIT_SELECT_DIR), szPath, szPath))
+				{
 					CNativeW cmem(szPath);
 					cmem.Replace(L"%", L"%%");
 					::DlgItem_SetText(hwndDlg, IDC_EDIT_FILEOPENDIR, cmem.GetStringPtr());
@@ -126,7 +130,8 @@ INT_PTR CPropEdit::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 
 	case WM_NOTIFY:
 		pNMHDR = (NMHDR *)lParam;
-		switch (pNMHDR->code) {
+		switch (pNMHDR->code)
+		{
 		case PSN_HELP: OnHelp(hwndDlg, IDD_PROP_EDIT); return TRUE;
 		case PSN_KILLACTIVE:
 			DEBUG_TRACE(L"Edit PSN_KILLACTIVE\n");
@@ -142,7 +147,8 @@ INT_PTR CPropEdit::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		break; /* WM_NOTIFY */
 
 		//@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP: {
+	case WM_HELP:
+	{
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -167,10 +173,9 @@ void CPropEdit::SetData(HWND hwndDlg)
 {
 	/* ドラッグ & ドロップ編集 */
 	::CheckDlgButton(hwndDlg, IDC_CHECK_DRAGDROP, m_Common.m_sEdit.m_bUseOLE_DragDrop);
-	if (::IsDlgButtonChecked(hwndDlg, IDC_CHECK_DRAGDROP)) {
-		::EnableWindow(::GetDlgItem(hwndDlg, IDC_CHECK_DROPSOURCE), TRUE);
-	}
-	else {
+	if (::IsDlgButtonChecked(hwndDlg, IDC_CHECK_DRAGDROP))
+	{ ::EnableWindow(::GetDlgItem(hwndDlg, IDC_CHECK_DROPSOURCE), TRUE); } else
+	{
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_CHECK_DROPSOURCE), FALSE);
 	}
 
@@ -284,11 +289,13 @@ int CPropEdit::GetData(HWND hwndDlg)
 void CPropEdit::EnableEditPropInput(HWND hwndDlg)
 {
 	// 指定フォルダ
-	if (::IsDlgButtonChecked(hwndDlg, IDC_RADIO_SELDIR)) {
+	if (::IsDlgButtonChecked(hwndDlg, IDC_RADIO_SELDIR))
+	{
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_FILEOPENDIR), TRUE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_FILEOPENDIR), TRUE);
 	}
-	else {
+	else
+	{
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_FILEOPENDIR), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_BUTTON_FILEOPENDIR), FALSE);
 	}

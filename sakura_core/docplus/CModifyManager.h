@@ -31,7 +31,8 @@ class CDocLine;
 class CDocLineMgr;
 
 //! Modified管理
-class CModifyManager : public TSingleton<CModifyManager>, public CDocListenerEx {
+class CModifyManager : public TSingleton<CModifyManager>, public CDocListenerEx
+{
 	friend class TSingleton<CModifyManager>;
 	CModifyManager() {}
 
@@ -40,7 +41,8 @@ public:
 };
 
 //! 行に付加するModified情報
-class CLineModified {
+class CLineModified
+{
 public:
 	CLineModified()
 		: m_nModifiedSeq(0)
@@ -58,7 +60,8 @@ private:
 };
 
 //! 行全体のModified情報アクセサ
-class CModifyVisitor {
+class CModifyVisitor
+{
 public:
 	//状態
 	bool IsLineModified(const CDocLine *pcDocLine, int nSaveSeq) const;

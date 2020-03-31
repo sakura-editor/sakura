@@ -35,7 +35,8 @@
 
 struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 											 private IFileDialogEvents,
-											 private IFileDialogControlEvents {
+											 private IFileDialogControlEvents
+{
 	CDlgOpenFile_CommonItemDialog();
 
 	void Create(HINSTANCE hInstance, HWND hwndParent, const WCHAR *pszUserWildCard, const WCHAR *pszDefaultPath,
@@ -65,7 +66,8 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 	std::vector<LPCWSTR> m_vMRU;
 	std::vector<LPCWSTR> m_vOPENFOLDER;
 
-	struct CustomizeSetting {
+	struct CustomizeSetting
+	{
 		bool bCustomize;
 		bool bSkipAutoDetect; // 文字コードコンボボックスのアイテムの自動選択を飛ばす
 		bool bShowReadOnly;   // 読み取り専用チェックボックスを表示する
@@ -404,7 +406,8 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 	}
 };
 
-enum CtrlId {
+enum CtrlId
+{
 	CHECK_READONLY = 2000,
 	LABEL_CODE,
 	COMBO_CODE,
@@ -451,7 +454,8 @@ void CDlgOpenFile_CommonItemDialog::Create(HINSTANCE hInstance, HWND hwndParent,
 	if (NULL != pszUserWildCard) { wcscpy(m_szDefaultWildCard, pszUserWildCard); }
 
 	/* 「開く」での初期フォルダ */
-	if (pszDefaultPath && pszDefaultPath[0] != L'\0') { //現在編集中のファイルのパス	//@@@ 2002.04.18
+	if (pszDefaultPath && pszDefaultPath[0] != L'\0')
+	{ //現在編集中のファイルのパス	//@@@ 2002.04.18
 		WCHAR szDrive[_MAX_DRIVE];
 		WCHAR szDir[_MAX_DIR];
 		//	Jun. 23, 2002 genta
@@ -477,7 +481,8 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName(WCHAR *pszPath, EFil
 	strs.push_back(LS(STR_DLGOPNFL_EXTNAME1));
 	specs.push_back(COMDLG_FILTERSPEC{strs.back().c_str(), m_szDefaultWildCard});
 
-	switch (eAddFilter) {
+	switch (eAddFilter)
+	{
 	case EFITER_TEXT:
 		strs.push_back(LS(STR_DLGOPNFL_EXTNAME2));
 		specs.push_back(COMDLG_FILTERSPEC{strs.back().c_str(), L"*.txt"});
@@ -493,7 +498,8 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName(WCHAR *pszPath, EFil
 	default: break;
 	}
 
-	if (0 != wcscmp(m_szDefaultWildCard, L"*.*")) {
+	if (0 != wcscmp(m_szDefaultWildCard, L"*.*"))
+	{
 		strs.push_back(LS(STR_DLGOPNFL_EXTNAME3));
 		specs.push_back(COMDLG_FILTERSPEC{strs.back().c_str(), L"*.*"});
 	}
@@ -511,10 +517,12 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName(WCHAR *pszPath, EFil
 bool CDlgOpenFile_CommonItemDialog::DoModal_GetSaveFileName(WCHAR *pszPath)
 {
 	// 2010.08.28 カレントディレクトリを移動するのでパス解決する
-	if (pszPath[0]) {
+	if (pszPath[0])
+	{
 		WCHAR		 szFullPath[_MAX_PATH];
 		const WCHAR *pOrg = pszPath;
-		if (::GetLongFileName(pOrg, szFullPath)) {
+		if (::GetLongFileName(pOrg, szFullPath))
+		{
 			// 成功。書き戻す
 			wcscpy(pszPath, szFullPath);
 		}
@@ -528,15 +536,18 @@ HRESULT CDlgOpenFile_CommonItemDialog::Customize()
 {
 	HRESULT hr;
 #define RETURN_IF_FAILED                                                                                               \
-	if (FAILED(hr)) { /* __debugbreak(); */                                                                            \
+	if (FAILED(hr))                                                                                                    \
+	{ /* __debugbreak(); */                                                                                            \
 		return hr;                                                                                                     \
 	}
-	if (m_customizeSetting.bShowReadOnly) {
+	if (m_customizeSetting.bShowReadOnly)
+	{
 		hr = AddCheckButton(CtrlId::CHECK_READONLY, LS(STR_FILEDIALOG_READONLY), m_bViewMode ? TRUE : FALSE);
 		RETURN_IF_FAILED
 	}
 
-	if (m_customizeSetting.bUseCharCode) {
+	if (m_customizeSetting.bUseCharCode)
+	{
 		hr = StartVisualGroup(CtrlId::LABEL_CODE, LS(STR_FILEDIALOG_CODE));
 		RETURN_IF_FAILED
 		hr = AddComboBox(CtrlId::COMBO_CODE);
@@ -545,23 +556,28 @@ HRESULT CDlgOpenFile_CommonItemDialog::Customize()
 		bool				  bCodeSel = false;
 		ECodeType			  eCodeSel = CODE_NONE;
 		for (int i = (m_customizeSetting.bSkipAutoDetect ? 1 : 0) /* 保存の場合は自動選択飛ばし */;
-			 i < cCodeTypes.GetCount(); ++i) {
+			 i < cCodeTypes.GetCount(); ++i)
+		{
 			auto code = cCodeTypes.GetCode(i);
 			hr		  = AddControlItem(CtrlId::COMBO_CODE, (DWORD)code, cCodeTypes.GetName(i));
 			RETURN_IF_FAILED
-			if (code == m_nCharCode) {
+			if (code == m_nCharCode)
+			{
 				bCodeSel = true;
 				eCodeSel = code;
 			}
 		}
-		if (bCodeSel) {
+		if (bCodeSel)
+		{
 			hr = SetSelectedControlItem(CtrlId::COMBO_CODE, (DWORD)eCodeSel);
 			RETURN_IF_FAILED
 			hr = AddCheckButton(CtrlId::CHECK_CP, L"C&P", FALSE);
 			RETURN_IF_FAILED
 		}
-		else {
-			if (-1 == AddComboCodePages(m_nCharCode)) {
+		else
+		{
+			if (-1 == AddComboCodePages(m_nCharCode))
+			{
 				hr = SetSelectedControlItem(CtrlId::COMBO_CODE, CODE_SJIS);
 				RETURN_IF_FAILED
 			}
@@ -570,14 +586,17 @@ HRESULT CDlgOpenFile_CommonItemDialog::Customize()
 			hr = SetControlState(CtrlId::CHECK_CP, CDCS_VISIBLE);
 			RETURN_IF_FAILED
 		}
-		if (m_customizeSetting.bUseBom) {
+		if (m_customizeSetting.bUseBom)
+		{
 			hr = AddCheckButton(CtrlId::CHECK_BOM, L"&BOM", FALSE);
 			RETURN_IF_FAILED
-			if (CCodeTypeName(m_nCharCode).UseBom()) {
+			if (CCodeTypeName(m_nCharCode).UseBom())
+			{
 				hr = SetCheckButtonState(CtrlId::CHECK_BOM, m_bBom ? TRUE : FALSE);
 				RETURN_IF_FAILED
 			}
-			else {
+			else
+			{
 				hr = SetControlState(CtrlId::CHECK_BOM, CDCS_VISIBLE);
 				RETURN_IF_FAILED
 			}
@@ -586,7 +605,8 @@ HRESULT CDlgOpenFile_CommonItemDialog::Customize()
 		RETURN_IF_FAILED
 	}
 
-	if (m_customizeSetting.bUseEol) {
+	if (m_customizeSetting.bUseEol)
+	{
 		hr = StartVisualGroup(CtrlId::LABEL_EOL, LS(STR_FILEDIALOG_EOL));
 		RETURN_IF_FAILED
 		hr = AddComboBox(CtrlId::COMBO_EOL);
@@ -609,7 +629,8 @@ HRESULT CDlgOpenFile_CommonItemDialog::Customize()
 	RETURN_IF_FAILED
 	hr = AddComboBox(CtrlId::COMBO_MRU);
 	RETURN_IF_FAILED
-	for (size_t i = 0; i < m_vMRU.size(); ++i) {
+	for (size_t i = 0; i < m_vMRU.size(); ++i)
+	{
 		hr = AddControlItem(CtrlId::COMBO_MRU, (DWORD)1 + i, m_vMRU[i]);
 		RETURN_IF_FAILED
 	}
@@ -619,7 +640,8 @@ HRESULT CDlgOpenFile_CommonItemDialog::Customize()
 	RETURN_IF_FAILED
 	hr = AddComboBox(CtrlId::COMBO_OPENFOLDER);
 	RETURN_IF_FAILED
-	for (size_t i = 0; i < m_vOPENFOLDER.size(); ++i) {
+	for (size_t i = 0; i < m_vOPENFOLDER.size(); ++i)
+	{
 		hr = AddControlItem(CtrlId::COMBO_OPENFOLDER, (DWORD)1 + i, m_vOPENFOLDER[i]);
 		RETURN_IF_FAILED
 	}
@@ -644,7 +666,8 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl1(IFileOpenDialog *pFil
 
 	HRESULT hr;
 #define RETURN_IF_FAILED                                                                                               \
-	if (FAILED(hr)) { /* __debugbreak(); */                                                                            \
+	if (FAILED(hr))                                                                                                    \
+	{ /* __debugbreak(); */                                                                                            \
 		return hr;                                                                                                     \
 	}
 	FILEOPENDIALOGOPTIONS options;
@@ -668,7 +691,8 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl1(IFileOpenDialog *pFil
 
 	m_pFileDialog = pFileOpenDialog;
 	// カスタマイズ
-	if (m_customizeSetting.bCustomize) {
+	if (m_customizeSetting.bCustomize)
+	{
 		hr = Customize();
 		RETURN_IF_FAILED
 	}
@@ -683,7 +707,8 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl1(IFileOpenDialog *pFil
 	hr = pShellItems->GetCount(&numItems);
 	RETURN_IF_FAILED
 	pFileNames->resize(numItems);
-	for (DWORD i = 0; i < numItems; ++i) {
+	for (DWORD i = 0; i < numItems; ++i)
+	{
 		ComPtr<IShellItem> pShellItem;
 		hr = pShellItems->GetItemAt(i, &pShellItem);
 		RETURN_IF_FAILED
@@ -703,7 +728,8 @@ bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl0(bool bAllowMultiSelect, 
 	ComPtr<IFileOpenDialog> pFileDialog;
 	HRESULT					hr;
 #define RETURN_IF_FAILED                                                                                               \
-	if (FAILED(hr)) { /* __debugbreak(); */                                                                            \
+	if (FAILED(hr))                                                                                                    \
+	{ /* __debugbreak(); */                                                                                            \
 		return false;                                                                                                  \
 	}
 	hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, &pFileDialog);
@@ -712,7 +738,8 @@ bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl0(bool bAllowMultiSelect, 
 	hr = pFileDialog->Advise(this, &dwCookie);
 	RETURN_IF_FAILED
 	ComPtr<IFileDialogCustomize> pFileDialogCustomize;
-	if (m_customizeSetting.bCustomize) {
+	if (m_customizeSetting.bCustomize)
+	{
 		hr = pFileDialog.Get()->QueryInterface(IID_PPV_ARGS(&pFileDialogCustomize));
 		RETURN_IF_FAILED
 		m_pFileDialogCustomize = pFileDialogCustomize.Get();
@@ -744,15 +771,18 @@ bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlg(SLoadInfo *pLoadInfo, std::ve
 	specs[1].pszSpec = L"*.txt";
 	CDocTypeManager docTypeMgr;
 	WCHAR			szWork[_countof(STypeConfigMini::m_szTypeExts) * 3];
-	for (int i = 0; i < nTypesCount; i++) {
+	for (int i = 0; i < nTypesCount; i++)
+	{
 		const STypeConfigMini *type = NULL;
 		if (!docTypeMgr.GetTypeConfigMini(CTypeConfig(i), &type)) { continue; }
 		specs[2 + i].pszName = type->m_szTypeName;
-		if (CDocTypeManager::ConvertTypesExtToDlgExt(type->m_szTypeExts, NULL, szWork)) {
+		if (CDocTypeManager::ConvertTypesExtToDlgExt(type->m_szTypeExts, NULL, szWork))
+		{
 			strs[2 + i]			 = szWork;
 			specs[2 + i].pszSpec = strs[2 + i].c_str();
 		}
-		else {
+		else
+		{
 			specs[2 + i].pszSpec = L"";
 		}
 	}
@@ -763,7 +793,8 @@ bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlg(SLoadInfo *pLoadInfo, std::ve
 	m_customizeSetting.bSkipAutoDetect = false;
 	m_customizeSetting.bUseCharCode	= bOptions;
 	bool ret						   = DoModalOpenDlgImpl0(true, pFileNames, pLoadInfo->cFilePath, specs);
-	if (ret) {
+	if (ret)
+	{
 		pLoadInfo->eCharCode = m_nCharCode;
 		pLoadInfo->bViewMode = m_bViewMode;
 	}
@@ -792,7 +823,8 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl1(IFileSaveDialog *pFil
 	specs[2].pszName = strs[2].c_str();
 	specs[2].pszSpec = L"*.*";
 #define RETURN_IF_FAILED                                                                                               \
-	if (FAILED(hr)) { /* __debugbreak(); */                                                                            \
+	if (FAILED(hr))                                                                                                    \
+	{ /* __debugbreak(); */                                                                                            \
 		return hr;                                                                                                     \
 	}
 	hr = pFileSaveDialog->SetDefaultExtension(L"txt");
@@ -808,14 +840,16 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl1(IFileSaveDialog *pFil
 	hr = pFileSaveDialog->SetFileName(szFileName);
 	RETURN_IF_FAILED
 
-	if (m_customizeSetting.bCustomize) {
+	if (m_customizeSetting.bCustomize)
+	{
 		hr = Customize();
 		RETURN_IF_FAILED
 	}
 	hr = pFileSaveDialog->Show(m_hwndParent);
 	RETURN_IF_FAILED
 
-	if (SUCCEEDED(hr)) {
+	if (SUCCEEDED(hr))
+	{
 		ComPtr<IShellItem> pShellItem;
 		hr = pFileSaveDialog->GetResult(&pShellItem);
 		RETURN_IF_FAILED
@@ -837,7 +871,8 @@ bool CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl0(WCHAR *pszPath)
 	ComPtr<IFileSaveDialog> pFileDialog;
 	HRESULT					hr;
 #define RETURN_IF_FAILED                                                                                               \
-	if (FAILED(hr)) { /* __debugbreak(); */                                                                            \
+	if (FAILED(hr))                                                                                                    \
+	{ /* __debugbreak(); */                                                                                            \
 		return false;                                                                                                  \
 	}
 	hr = CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_ALL, IID_IFileSaveDialog, &pFileDialog);
@@ -845,7 +880,8 @@ bool CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl0(WCHAR *pszPath)
 	m_pFileDialog = pFileDialog.Get();
 	DWORD						 dwCookie;
 	ComPtr<IFileDialogCustomize> pFileDialogCustomize;
-	if (m_customizeSetting.bCustomize) {
+	if (m_customizeSetting.bCustomize)
+	{
 		hr = pFileDialog.Get()->QueryInterface(IID_PPV_ARGS(&pFileDialogCustomize));
 		RETURN_IF_FAILED
 		m_pFileDialogCustomize = pFileDialogCustomize.Get();
@@ -855,7 +891,8 @@ bool CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl0(WCHAR *pszPath)
 		pFileDialog->Unadvise(dwCookie);
 		m_pFileDialogCustomize = nullptr;
 	}
-	else {
+	else
+	{
 		hr = DoModalSaveDlgImpl1(pFileDialog.Get(), pszPath);
 	}
 	m_pFileDialog = nullptr;
@@ -869,7 +906,8 @@ bool CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl0(WCHAR *pszPath)
 bool CDlgOpenFile_CommonItemDialog::DoModalSaveDlg(SSaveInfo *pSaveInfo, bool bSimpleMode)
 {
 	if (bSimpleMode) { m_customizeSetting.bCustomize = false; }
-	else {
+	else
+	{
 		m_nCharCode						   = pSaveInfo->eCharCode;
 		m_bBom							   = pSaveInfo->bBomExist;
 		m_cEol							   = pSaveInfo->cEol;
@@ -883,7 +921,8 @@ bool CDlgOpenFile_CommonItemDialog::DoModalSaveDlg(SSaveInfo *pSaveInfo, bool bS
 
 	bool ret = DoModalSaveDlgImpl0(pSaveInfo->cFilePath);
 
-	if (ret && !bSimpleMode) {
+	if (ret && !bSimpleMode)
+	{
 		pSaveInfo->eCharCode = m_nCharCode;
 		//	Feb. 9, 2001 genta
 		if (m_customizeSetting.bUseEol) { pSaveInfo->cEol = m_cEol; }
@@ -898,29 +937,35 @@ HRESULT CDlgOpenFile_CommonItemDialog::OnItemSelected(
 	/* [in] */ DWORD							   dwIDCtl,
 	/* [in] */ DWORD							   dwIDItem)
 {
-	switch (dwIDCtl) {
-	case CtrlId::COMBO_CODE: {
+	switch (dwIDCtl)
+	{
+	case CtrlId::COMBO_CODE:
+	{
 		CCodeTypeName   cCodeTypeName((int)dwIDItem);
 		CDCONTROLSTATEF state;
 		bool			bChecked;
-		if (cCodeTypeName.UseBom()) {
+		if (cCodeTypeName.UseBom())
+		{
 			state	= CDCS_ENABLEDVISIBLE;
 			bChecked = (dwIDItem == m_nCharCode) ? m_bBom : cCodeTypeName.IsBomDefOn();
 		}
-		else {
+		else
+		{
 			state	= CDCS_VISIBLE;
 			bChecked = false;
 		}
 		SetControlState(CtrlId::CHECK_BOM, state);
 		SetCheckButtonState(CtrlId::CHECK_BOM, bChecked ? TRUE : FALSE);
 		m_nCharCode = static_cast<ECodeType>(dwIDItem);
-	} break;
+	}
+	break;
 	case CtrlId::COMBO_EOL: m_cEol = static_cast<EEolType>(dwIDItem); break;
 	case CtrlId::COMBO_MRU:
 		if (dwIDItem != 0) { m_pFileDialog->SetFileName(m_vMRU[dwIDItem - 1]); }
 		break;
 	case CtrlId::COMBO_OPENFOLDER:
-		if (dwIDItem != 0) {
+		if (dwIDItem != 0)
+		{
 			using namespace Microsoft::WRL;
 			ComPtr<IShellItem> psiFolder;
 			SHCreateItemFromParsingName(m_vOPENFOLDER[dwIDItem - 1], NULL, IID_PPV_ARGS(&psiFolder));
@@ -936,7 +981,8 @@ HRESULT CDlgOpenFile_CommonItemDialog::OnCheckButtonToggled(
 	/* [in] */ DWORD							   dwIDCtl,
 	/* [in] */ BOOL								   bChecked)
 {
-	switch (dwIDCtl) {
+	switch (dwIDCtl)
+	{
 	case CtrlId::CHECK_READONLY: m_bViewMode = bChecked ? true : false; break;
 	case CtrlId::CHECK_CP:
 		SetControlState(CtrlId::CHECK_CP, CDCS_VISIBLE);
@@ -952,19 +998,23 @@ int CDlgOpenFile_CommonItemDialog::AddComboCodePages(int nSelCode)
 	HRESULT hr;
 	int		nSel = -1;
 	hr			 = AddControlItem(CtrlId::COMBO_CODE, (DWORD)CODE_CPACP, L"CP_ACP");
-	if (nSelCode == CODE_CPACP) {
+	if (nSelCode == CODE_CPACP)
+	{
 		SetSelectedControlItem(CtrlId::COMBO_CODE, (DWORD)CODE_CPACP);
 		nSel = nSelCode;
 	}
 	hr = AddControlItem(CtrlId::COMBO_CODE, (DWORD)CODE_CPOEM, L"CP_OEM");
-	if (nSelCode == CODE_CPOEM) {
+	if (nSelCode == CODE_CPOEM)
+	{
 		SetSelectedControlItem(CtrlId::COMBO_CODE, (DWORD)CODE_CPOEM);
 		nSel = nSelCode;
 	}
 	CCodePage::CodePageList &cpList = CCodePage::GetCodePageList();
-	for (auto it = cpList.begin(); it != cpList.end(); ++it) {
+	for (auto it = cpList.begin(); it != cpList.end(); ++it)
+	{
 		hr = AddControlItem(CtrlId::COMBO_CODE, (DWORD)it->first, it->second.c_str());
-		if (nSelCode == it->first) {
+		if (nSelCode == it->first)
+		{
 			SetSelectedControlItem(CtrlId::COMBO_CODE, (DWORD)it->first);
 			nSel = nSelCode;
 		}

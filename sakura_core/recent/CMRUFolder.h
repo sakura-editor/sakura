@@ -39,7 +39,8 @@
 class CMenuDrawer;
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-class CMRUFolder {
+class CMRUFolder
+{
 public:
 	//	コンストラクタ
 	CMRUFolder();

@@ -6,7 +6,8 @@
 
 using namespace std;
 
-namespace ApiWrap {
+namespace ApiWrap
+{
 
 /*!
 	MakeSureDirectoryPathExists の UNICODE 版。
@@ -35,7 +36,8 @@ namespace ApiWrap {
 BOOL MakeSureDirectoryPathExistsW(LPCWSTR szDirPath)
 {
 	const wchar_t *p = szDirPath - 1;
-	for (;;) {
+	for (;;)
+	{
 		p = wcschr(p + 1, L'\\');
 		if (!p) break; //'\\'を走査し終わったので終了
 
@@ -78,7 +80,8 @@ void SetPixelSurely(HDC hdc, int x, int y, COLORREF c)
 		// Vista以降：SetPixelエミュレート
 		static HPEN		hPen   = NULL;
 		static COLORREF clrPen = 0;
-		if (hPen && c != clrPen) {
+		if (hPen && c != clrPen)
+		{
 			DeleteObject(hPen);
 			hPen = NULL;
 		}

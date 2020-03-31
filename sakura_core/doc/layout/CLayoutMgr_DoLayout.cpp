@@ -24,7 +24,8 @@ static bool _GetKeywordLength(const CLayoutMgr &cLayoutMgr,
 	CLogicInt  nWordBgn   = nPos;
 	CLogicInt  nWordLen   = CLogicInt(0);
 	CLayoutInt nWordKetas = CLayoutInt(0);
-	while (nPos < cLineStr.GetLength() && IS_KEYWORD_CHAR(cLineStr.At(nPos))) {
+	while (nPos < cLineStr.GetLength() && IS_KEYWORD_CHAR(cLineStr.At(nPos)))
+	{
 		CLayoutInt k = cLayoutMgr.GetLayoutXOfChar(cLineStr, nPos);
 		if (0 == k) k = CLayoutInt(1);
 
@@ -33,13 +34,15 @@ static bool _GetKeywordLength(const CLayoutMgr &cLayoutMgr,
 		nPos++;
 	}
 	//結果
-	if (nWordLen > 0) {
+	if (nWordLen > 0)
+	{
 		*p_nWordBgn   = nWordBgn;
 		*p_nWordLen   = nWordLen;
 		*p_nWordKetas = nWordKetas;
 		return true;
 	}
-	else {
+	else
+	{
 		return false;
 	}
 }
@@ -60,55 +63,58 @@ CLayout *CLayoutMgr::SLayoutWork::_CreateLayout(CLayoutMgr *mgr)
 
 bool CLayoutMgr::_DoKinsokuSkip(SLayoutWork *pWork, PF_OnLine pfOnLine)
 {
-	if (KINSOKU_TYPE_NONE != pWork->eKinsokuType) {
+	if (KINSOKU_TYPE_NONE != pWork->eKinsokuType)
+	{
 		//禁則処理の最後尾に達したら禁則処理中を解除する
-		if (pWork->nPos >= pWork->nWordBgn + pWork->nWordLen) {
-			if (pWork->eKinsokuType == KINSOKU_TYPE_KINSOKU_KUTO && pWork->nPos == pWork->nWordBgn + pWork->nWordLen) {
+		if (pWork->nPos >= pWork->nWordBgn + pWork->nWordLen)
+		{
+			if (pWork->eKinsokuType == KINSOKU_TYPE_KINSOKU_KUTO && pWork->nPos == pWork->nWordBgn + pWork->nWordLen)
+			{
 				int nEol = pWork->pcDocLine->GetEol().GetLen();
 
 				if (!(m_pTypeConfig->m_bKinsokuRet && (pWork->nPos == pWork->cLineStr.GetLength() - nEol)
 					  && nEol)) //改行文字をぶら下げる		//@@@ 2002.04.14 MIK
-				{
-					(this->*pfOnLine)(pWork);
-				}
-			}
+				{ (this->*pfOnLine)(pWork); } }
 
 			pWork->nWordLen		= CLogicInt(0);
 			pWork->eKinsokuType = KINSOKU_TYPE_NONE; //@@@ 2002.04.20 MIK
 		}
 		return true;
 	}
-	else {
+	else
+	{
 		return false;
 	}
 }
 
 void CLayoutMgr::_DoWordWrap(SLayoutWork *pWork, PF_OnLine pfOnLine)
 {
-	if (pWork->eKinsokuType == KINSOKU_TYPE_NONE) {
+	if (pWork->eKinsokuType == KINSOKU_TYPE_NONE)
+	{
 		/* 英単語の先頭か */
-		if (pWork->nPos >= pWork->nBgn && IS_KEYWORD_CHAR(pWork->cLineStr.At(pWork->nPos))) {
+		if (pWork->nPos >= pWork->nBgn && IS_KEYWORD_CHAR(pWork->cLineStr.At(pWork->nPos)))
+		{
 			// キーワード長を取得
 			CLayoutInt nWordKetas = CLayoutInt(0);
 			_GetKeywordLength(*this, pWork->cLineStr, pWork->nPos, &pWork->nWordBgn, &pWork->nWordLen, &nWordKetas);
 
 			pWork->eKinsokuType = KINSOKU_TYPE_WORDWRAP; //@@@ 2002.04.20 MIK
 
-			if (pWork->nPosX + nWordKetas >= GetMaxLineLayout() && pWork->nPos - pWork->nBgn > 0) {
-				(this->*pfOnLine)(pWork);
-			}
-		}
+			if (pWork->nPosX + nWordKetas >= GetMaxLineLayout() && pWork->nPos - pWork->nBgn > 0)
+			{ (this->*pfOnLine)(pWork); } }
 	}
 }
 
 void CLayoutMgr::_DoKutoBurasage(SLayoutWork *pWork)
 {
-	if ((GetMaxLineLayout() - pWork->nPosX < 2) && (pWork->eKinsokuType == KINSOKU_TYPE_NONE)) {
+	if ((GetMaxLineLayout() - pWork->nPosX < 2) && (pWork->eKinsokuType == KINSOKU_TYPE_NONE))
+	{
 		// 2007.09.07 kobake   レイアウトとロジックの区別
 		CLayoutInt nCharKetas = GetLayoutXOfChar(pWork->cLineStr, pWork->nPos);
 
 		if (IsKinsokuPosKuto(GetMaxLineLayout() - pWork->nPosX, nCharKetas)
-			&& IsKinsokuKuto(pWork->cLineStr.At(pWork->nPos))) {
+			&& IsKinsokuKuto(pWork->cLineStr.At(pWork->nPos)))
+		{
 			pWork->nWordBgn		= pWork->nPos;
 			pWork->nWordLen		= 1;
 			pWork->eKinsokuType = KINSOKU_TYPE_KINSOKU_KUTO;
@@ -121,7 +127,8 @@ void CLayoutMgr::_DoGyotoKinsoku(SLayoutWork *pWork, PF_OnLine pfOnLine)
 	if ((pWork->nPos + 1 < pWork->cLineStr.GetLength()) // 2007.02.17 ryoji 追加
 		&& (GetMaxLineLayout() - pWork->nPosX < 4)
 		&& (pWork->nPosX > pWork->nIndent) //	2004.04.09 pWork->nPosXの解釈変更のため，行頭チェックも変更
-		&& (pWork->eKinsokuType == KINSOKU_TYPE_NONE)) {
+		&& (pWork->eKinsokuType == KINSOKU_TYPE_NONE))
+	{
 		// 2007.09.07 kobake   レイアウトとロジックの区別
 		CLayoutInt nCharKetas2 = GetLayoutXOfChar(pWork->cLineStr, pWork->nPos);
 		CLayoutInt nCharKetas3 = GetLayoutXOfChar(pWork->cLineStr, pWork->nPos + 1);
@@ -145,13 +152,14 @@ void CLayoutMgr::_DoGyomatsuKinsoku(SLayoutWork *pWork, PF_OnLine pfOnLine)
 	if ((pWork->nPos + 1 < pWork->cLineStr.GetLength()) // 2007.02.17 ryoji 追加
 		&& (GetMaxLineKetas() - pWork->nPosX < 4)
 		&& (pWork->nPosX > pWork->nIndent) //	2004.04.09 pWork->nPosXの解釈変更のため，行頭チェックも変更
-		&& (pWork->eKinsokuType
-			== KINSOKU_TYPE_NONE)) { /* 行末禁則する && 行末付近 && 行頭でないこと(無限に禁則してしまいそう) */
+		&& (pWork->eKinsokuType == KINSOKU_TYPE_NONE))
+	{ /* 行末禁則する && 行末付近 && 行頭でないこと(無限に禁則してしまいそう) */
 		CLayoutInt nCharKetas2 = GetLayoutXOfChar(pWork->cLineStr, pWork->nPos);
 		CLayoutInt nCharKetas3 = GetLayoutXOfChar(pWork->cLineStr, pWork->nPos + 1);
 
 		if (IsKinsokuPosTail(GetMaxLineLayout() - pWork->nPosX, nCharKetas2, nCharKetas3)
-			&& IsKinsokuTail(pWork->cLineStr.At(pWork->nPos))) {
+			&& IsKinsokuTail(pWork->cLineStr.At(pWork->nPos)))
+		{
 			pWork->nWordBgn		= pWork->nPos;
 			pWork->nWordLen		= 1;
 			pWork->eKinsokuType = KINSOKU_TYPE_KINSOKU_TAIL;
@@ -166,7 +174,8 @@ bool CLayoutMgr::_DoTab(SLayoutWork *pWork, PF_OnLine pfOnLine)
 {
 	//	Sep. 23, 2002 genta せっかく作ったので関数を使う
 	CLayoutInt nCharKetas = GetActualTabSpace(pWork->nPosX);
-	if (pWork->nPosX + nCharKetas > GetMaxLineLayout()) {
+	if (pWork->nPosX + nCharKetas > GetMaxLineLayout())
+	{
 		(this->*pfOnLine)(pWork);
 		return true;
 	}
@@ -190,12 +199,14 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork *pWork, PF_OnLine pfOnLine)
 	CColorStrategyPool &color = *CColorStrategyPool::getInstance();
 
 	// 1ロジック行を消化するまでループ
-	while (pWork->nPos < nLength) {
+	while (pWork->nPos < nLength)
+	{
 		// インデント幅は_OnLineで計算済みなのでここからは削除
 
 		//禁則処理中ならスキップする	@@@ 2002.04.20 MIK
 		if (_DoKinsokuSkip(pWork, pfOnLine)) {}
-		else {
+		else
+		{
 			// 英文ワードラップをする
 			if (m_pTypeConfig->m_bWordWrap) { _DoWordWrap(pWork, pfOnLine); }
 
@@ -212,10 +223,12 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork *pWork, PF_OnLine pfOnLine)
 		//@@@ 2002.09.22 YAZAKI
 		color.CheckColorMODE(&pWork->pcColorStrategy, pWork->nPos, pWork->cLineStr);
 
-		if (pWork->cLineStr.At(pWork->nPos) == WCODE::TAB) {
+		if (pWork->cLineStr.At(pWork->nPos) == WCODE::TAB)
+		{
 			if (_DoTab(pWork, pfOnLine)) { continue; }
 		}
-		else {
+		else
+		{
 			if (pWork->nPos >= pWork->cLineStr.GetLength()) { break; }
 			// 2007.09.07 kobake   ロジック幅とレイアウト幅を区別
 			CLayoutInt nCharKetas = GetLayoutXOfChar(pWork->cLineStr, pWork->nPos);
@@ -223,8 +236,10 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork *pWork, PF_OnLine pfOnLine)
 			//				nCharKetas = CLayoutInt(1);
 			//			}
 
-			if (pWork->nPosX + nCharKetas > GetMaxLineLayout()) {
-				if (pWork->eKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO) {
+			if (pWork->nPosX + nCharKetas > GetMaxLineLayout())
+			{
+				if (pWork->eKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO)
+				{
 					if (!(m_pTypeConfig->m_bKinsokuRet && (pWork->nPos == pWork->cLineStr.GetLength() - nEol)
 						  && nEol)) //改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 					{
@@ -271,10 +286,12 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 	const int nAllLineNum	= m_pcDocLineMgr->GetLineCount();
 	const int nListenerCount = GetListenerCount();
 
-	if (nListenerCount != 0) {
+	if (nListenerCount != 0)
+	{
 		NotifyProgress(0);
 		/* 処理中のユーザー操作を可能にする */
-		if (bBlockingHook) {
+		if (bBlockingHook)
+		{
 			if (!::BlockingHook(NULL)) return;
 		}
 	}
@@ -299,7 +316,8 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 	constexpr DWORD userInterfaceInterval = 33;
 	DWORD			prevTime			  = GetTickCount() + userInterfaceInterval;
 
-	while (NULL != pWork->pcDocLine) {
+	while (NULL != pWork->pcDocLine)
+	{
 		pWork->cLineStr		= pWork->pcDocLine->GetStringRefWithEOL();
 		pWork->eKinsokuType = KINSOKU_TYPE_NONE; //@@@ 2002.04.20 MIK
 		pWork->nBgn			= CLogicInt(0);
@@ -311,7 +329,8 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 
 		_MakeOneLine(pWork, &CLayoutMgr::_OnLine1);
 
-		if (pWork->nPos - pWork->nBgn > 0) {
+		if (pWork->nPos - pWork->nBgn > 0)
+		{
 			// 2002/03/13 novice
 			AddLineBottom(pWork->_CreateLayout(this));
 			pWork->colorPrev = pWork->pcColorStrategy->GetStrategyColorSafe();
@@ -323,13 +342,16 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 		pWork->pcDocLine = pWork->pcDocLine->GetNextLine();
 
 		// 処理中のユーザー操作を可能にする
-		if (nListenerCount != 0 && 0 < nAllLineNum) {
+		if (nListenerCount != 0 && 0 < nAllLineNum)
+		{
 			DWORD currTime = GetTickCount();
 			DWORD diffTime = currTime - prevTime;
-			if (diffTime >= userInterfaceInterval) {
+			if (diffTime >= userInterfaceInterval)
+			{
 				prevTime = currTime;
 				NotifyProgress(::MulDiv(pWork->nCurLine, 100, nAllLineNum));
-				if (bBlockingHook) {
+				if (bBlockingHook)
+				{
 					if (!::BlockingHook(NULL)) return;
 				}
 			}
@@ -345,10 +367,12 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 	m_nPrevReferLine   = CLayoutInt(0);
 	m_pLayoutPrevRefer = NULL;
 
-	if (nListenerCount != 0) {
+	if (nListenerCount != 0)
+	{
 		NotifyProgress(0);
 		/* 処理中のユーザー操作を可能にする */
-		if (bBlockingHook) {
+		if (bBlockingHook)
+		{
 			if (!::BlockingHook(NULL)) return;
 		}
 	}
@@ -361,13 +385,15 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 void CLayoutMgr::_OnLine2(SLayoutWork *pWork)
 {
 	//@@@ 2002.09.23 YAZAKI 最適化
-	if (pWork->bNeedChangeCOMMENTMODE) {
+	if (pWork->bNeedChangeCOMMENTMODE)
+	{
 		pWork->pLayout = pWork->pLayout->GetNextLayout();
 		pWork->pLayout->SetColorTypePrev(pWork->colorPrev);
 		pWork->pLayout->GetLayoutExInfo()->SetColorInfo(pWork->exInfoPrev.DetachColorInfo());
 		(*pWork->pnExtInsLineNum)++; //	再描画してほしい行数+1
 	}
-	else {
+	else
+	{
 		pWork->pLayout = InsertLineNext(pWork->pLayout, pWork->_CreateLayout(this));
 	}
 	pWork->colorPrev = pWork->pcColorStrategy->GetStrategyColorSafe();
@@ -377,10 +403,8 @@ void CLayoutMgr::_OnLine2(SLayoutWork *pWork)
 	// 2004.03.28 Moca pWork->nPosXはインデント幅を含むように変更(TAB位置調整のため)
 	pWork->nPosX = pWork->nIndent = (this->*m_getIndentOffset)(pWork->pLayout);
 	if ((pWork->ptDelLogicalFrom.GetY2() == pWork->nCurLine && pWork->ptDelLogicalFrom.GetX2() < pWork->nPos)
-		|| (pWork->ptDelLogicalFrom.GetY2() < pWork->nCurLine)) {
-		(pWork->nModifyLayoutLinesNew)++;
-	}
-}
+		|| (pWork->ptDelLogicalFrom.GetY2() < pWork->nCurLine))
+	{ (pWork->nModifyLayoutLinesNew)++; } }
 
 /*!
 	指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする
@@ -417,7 +441,8 @@ CLayoutInt CLayoutMgr::DoLayout_Range(CLayout *pLayoutPrev, CLogicInt nLineNum, 
 	pWork->exInfoPrev.SetColorInfo(colorInfo);
 	pWork->bNeedChangeCOMMENTMODE = false;
 	if (NULL == pWork->pLayout) { pWork->nCurLine = CLogicInt(0); }
-	else {
+	else
+	{
 		pWork->nCurLine = pWork->pLayout->GetLogicLineNo() + CLogicInt(1);
 	}
 	pWork->pcDocLine			 = m_pcDocLineMgr->GetLine(pWork->nCurLine);
@@ -426,12 +451,14 @@ CLayoutInt CLayoutMgr::DoLayout_Range(CLayout *pLayoutPrev, CLogicInt nLineNum, 
 	pWork->ptDelLogicalFrom = _ptDelLogicalFrom;
 	pWork->pnExtInsLineNum  = _pnExtInsLineNum;
 
-	if (pWork->pcColorStrategy) {
+	if (pWork->pcColorStrategy)
+	{
 		pWork->pcColorStrategy->InitStrategyStatus();
 		pWork->pcColorStrategy->SetStrategyColorInfo(colorInfo);
 	}
 
-	while (NULL != pWork->pcDocLine) {
+	while (NULL != pWork->pcDocLine)
+	{
 		pWork->cLineStr		= pWork->pcDocLine->GetStringRefWithEOL();
 		pWork->eKinsokuType = KINSOKU_TYPE_NONE; //@@@ 2002.04.20 MIK
 		pWork->nBgn			= CLogicInt(0);
@@ -443,7 +470,8 @@ CLayoutInt CLayoutMgr::DoLayout_Range(CLayout *pLayoutPrev, CLogicInt nLineNum, 
 
 		_MakeOneLine(pWork, &CLayoutMgr::_OnLine2);
 
-		if (pWork->nPos - pWork->nBgn > 0) {
+		if (pWork->nPos - pWork->nBgn > 0)
+		{
 			// 2002/03/13 novice
 			//@@@ 2002.09.23 YAZAKI 最適化
 			_OnLine2(pWork);
@@ -454,28 +482,35 @@ CLayoutInt CLayoutMgr::DoLayout_Range(CLayout *pLayoutPrev, CLogicInt nLineNum, 
 
 		/* 目的の行数(nLineNum)に達したか、または通り過ぎた（＝行数が増えた）か確認 */
 		//@@@ 2002.09.23 YAZAKI 最適化
-		if (nLineNumWork >= nLineNum) {
-			if (pWork->pLayout && pWork->pLayout->GetNextLayout()) {
-				if (pWork->colorPrev != pWork->pLayout->GetNextLayout()->GetColorTypePrev()) {
+		if (nLineNumWork >= nLineNum)
+		{
+			if (pWork->pLayout && pWork->pLayout->GetNextLayout())
+			{
+				if (pWork->colorPrev != pWork->pLayout->GetNextLayout()->GetColorTypePrev())
+				{
 					//	COMMENTMODEが異なる行が増えましたので、次の行→次の行と更新していきます。
 					pWork->bNeedChangeCOMMENTMODE = true;
 				}
 				else if (pWork->exInfoPrev.GetColorInfo() && pWork->pLayout->GetNextLayout()->GetColorInfo()
-						 && !pWork->exInfoPrev.GetColorInfo()->IsEqual(
-								pWork->pLayout->GetNextLayout()->GetColorInfo())) {
+						 && !pWork->exInfoPrev.GetColorInfo()->IsEqual(pWork->pLayout->GetNextLayout()->GetColorInfo()))
+				{
 					pWork->bNeedChangeCOMMENTMODE = true;
 				}
-				else if (pWork->exInfoPrev.GetColorInfo() && NULL == pWork->pLayout->GetNextLayout()->GetColorInfo()) {
+				else if (pWork->exInfoPrev.GetColorInfo() && NULL == pWork->pLayout->GetNextLayout()->GetColorInfo())
+				{
 					pWork->bNeedChangeCOMMENTMODE = true;
 				}
-				else if (NULL == pWork->exInfoPrev.GetColorInfo() && pWork->pLayout->GetNextLayout()->GetColorInfo()) {
+				else if (NULL == pWork->exInfoPrev.GetColorInfo() && pWork->pLayout->GetNextLayout()->GetColorInfo())
+				{
 					pWork->bNeedChangeCOMMENTMODE = true;
 				}
-				else {
+				else
+				{
 					break;
 				}
 			}
-			else {
+			else
+			{
 				break; //	while( NULL != pWork->pcDocLine ) 終了
 			}
 		}
@@ -484,7 +519,8 @@ CLayoutInt CLayoutMgr::DoLayout_Range(CLayout *pLayoutPrev, CLogicInt nLineNum, 
 	}
 
 	// 2004.03.28 Moca EOFだけの論理行の直前の行の色分けが確認・更新された
-	if (pWork->nCurLine == m_pcDocLineMgr->GetLineCount()) {
+	if (pWork->nCurLine == m_pcDocLineMgr->GetLineCount())
+	{
 		m_nLineTypeBot = pWork->pcColorStrategy->GetStrategyColorSafe();
 		m_cLayoutExInfoBot.SetColorInfo(pWork->pcColorStrategy->GetStrategyColorInfoSafe());
 	}
@@ -515,7 +551,8 @@ CLayoutInt CLayoutMgr::DoLayout_Range(CLayout *pLayoutPrev, CLogicInt nLineNum, 
 */
 void CLayoutMgr::CalculateTextWidth_Range(const CalTextWidthArg *pctwArg)
 {
-	if (m_pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP) { // 「折り返さない」
+	if (m_pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP)
+	{										  // 「折り返さない」
 		CLayoutInt nCalTextWidthLinesFrom(0); // テキスト最大幅の算出開始レイアウト行
 		CLayoutInt nCalTextWidthLinesTo(0);   // テキスト最大幅の算出終了レイアウト行
 		BOOL	   bCalTextWidth = TRUE;	  // テキスト最大幅の算出要求をON
@@ -527,12 +564,14 @@ void CLayoutMgr::CalculateTextWidth_Range(const CalTextWidthArg *pctwArg)
 		if ((pctwArg->nDelLines < CLayoutInt(0) && Int(m_nTextWidth) && Int(nInsLineNum) && Int(pctwArg->ptLayout.x)
 			 && m_nTextWidthMaxLine == pctwArg->ptLayout.y)
 			|| (pctwArg->nDelLines >= CLayoutInt(0) && Int(m_nTextWidth) && pctwArg->ptLayout.y <= m_nTextWidthMaxLine
-				&& m_nTextWidthMaxLine <= pctwArg->ptLayout.y + pctwArg->nDelLines)) {
+				&& m_nTextWidthMaxLine <= pctwArg->ptLayout.y + pctwArg->nDelLines))
+		{
 			// 全ラインを走査する
 			nCalTextWidthLinesFrom = -1;
 			nCalTextWidthLinesTo   = -1;
 		}
-		else if (Int(nInsLineNum) || Int(pctwArg->bInsData)) { // 追加削除行 または 追加文字列あり
+		else if (Int(nInsLineNum) || Int(pctwArg->bInsData))
+		{ // 追加削除行 または 追加文字列あり
 			// 追加削除行のみを走査する
 			nCalTextWidthLinesFrom = pctwArg->ptLayout.y;
 
@@ -546,7 +585,8 @@ void CLayoutMgr::CalculateTextWidth_Range(const CalTextWidthArg *pctwArg)
 			if (Int(m_nTextWidth) && Int(nInsLineNum) && m_nTextWidthMaxLine >= pctwArg->ptLayout.y)
 				m_nTextWidthMaxLine += nInsLineNum;
 		}
-		else {
+		else
+		{
 			// 最大幅以外の行を改行を含まずに（1行内で）編集した
 			bCalTextWidth = FALSE; // テキスト最大幅の算出要求をOFF
 		}
@@ -556,13 +596,15 @@ void CLayoutMgr::CalculateTextWidth_Range(const CalTextWidthArg *pctwArg)
 		testcount++;
 
 		// テキスト最大幅を算出する
-		if (bCalTextWidth) {
+		if (bCalTextWidth)
+		{
 			//			MYTRACE_W( L"CLayoutMgr::DoLayout_Range(%d) nCalTextWidthLinesFrom=%d
 			// nCalTextWidthLinesTo=%d\n", testcount, nCalTextWidthLinesFrom, nCalTextWidthLinesTo );
 			CalculateTextWidth(FALSE, nCalTextWidthLinesFrom, nCalTextWidthLinesTo);
 			//			MYTRACE_W( L"CLayoutMgr::DoLayout_Range() m_nTextWidthMaxLine=%d\n", m_nTextWidthMaxLine );
 		}
-		else {
+		else
+		{
 			//			MYTRACE_W( L"CLayoutMgr::DoLayout_Range(%d) FALSE\n", testcount );
 		}
 #else

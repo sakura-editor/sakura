@@ -41,7 +41,8 @@ void CConvertMediator::ConvMemory(CNativeW *pCMemory, EFunctionCode nFuncCode, C
 	//   変換する
 	//   2. バッファ内容をUNICODE版相当に戻すために SJIS→Unicode 変換する
 
-	switch (nFuncCode) {
+	switch (nFuncCode)
+	{
 	//コード変換(xxx2SJIS)
 	case F_CODECNV_AUTO2SJIS:
 	case F_CODECNV_EMAIL:
@@ -58,11 +59,13 @@ void CConvertMediator::ConvMemory(CNativeW *pCMemory, EFunctionCode nFuncCode, C
 	}
 
 	ECodeType ecode = CODE_NONE;
-	if (nFuncCode == F_CODECNV_AUTO2SJIS) {
+	if (nFuncCode == F_CODECNV_AUTO2SJIS)
+	{
 		CCodeMediator ccode(CEditWnd::getInstance()->GetDocument()->m_cDocType.GetDocumentAttribute().m_encoding);
 		ecode = ccode.CheckKanjiCode(reinterpret_cast<const char *>(pCMemory->_GetMemory()->GetRawPtr()),
 									 pCMemory->_GetMemory()->GetRawLength());
-		switch (ecode) {
+		switch (ecode)
+		{
 		case CODE_JIS: nFuncCode = F_CODECNV_EMAIL; break;
 		case CODE_EUC: nFuncCode = F_CODECNV_EUC2SJIS; break;
 		case CODE_UNICODE: nFuncCode = F_CODECNV_UNICODE2SJIS; break;
@@ -73,7 +76,8 @@ void CConvertMediator::ConvMemory(CNativeW *pCMemory, EFunctionCode nFuncCode, C
 	}
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
-	switch (nFuncCode) {
+	switch (nFuncCode)
+	{
 	//文字種変換、整形
 	case F_TOLOWER: CConvert_ToLower().CallConvert(pCMemory); break;			// 小文字
 	case F_TOUPPER: CConvert_ToUpper().CallConvert(pCMemory); break;			// 大文字
@@ -100,11 +104,13 @@ void CConvertMediator::ConvMemory(CNativeW *pCMemory, EFunctionCode nFuncCode, C
 		break; // 2001.12.03 hor
 	//コード変換(xxx2SJIS)
 	// 2014.02.10 Moca F_CODECNV_AUTO2SJIS追加。自動判別でSJIS, Latin1, CESU8になった場合をサポート
-	case F_CODECNV_AUTO2SJIS: {
+	case F_CODECNV_AUTO2SJIS:
+	{
 		int						   nFlag = true;
 		std::unique_ptr<CCodeBase> pcCode(CCodeFactory::CreateCodeBase(ecode, nFlag));
 		pcCode->CodeToUnicode(*(pCMemory->_GetMemory()), pCMemory);
-	} break;
+	}
+	break;
 	case F_CODECNV_EMAIL: CJis::JISToUnicode(*(pCMemory->_GetMemory()), pCMemory, true); break;
 	case F_CODECNV_EUC2SJIS: CEuc::EUCToUnicode(*(pCMemory->_GetMemory()), pCMemory); break;
 	case F_CODECNV_UNICODE2SJIS: /* 無変換 */ break;

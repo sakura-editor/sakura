@@ -97,7 +97,8 @@ CRegexKeyword::~CRegexKeyword()
 
 	MYDBGMSG("~CRegexKeyword")
 	//コンパイル済みのバッファを解放する。
-	for (i = 0; i < MAX_REGEX_KEYWORD; i++) {
+	for (i = 0; i < MAX_REGEX_KEYWORD; i++)
+	{
 		if (m_sInfo[i].pBregexp && IsAvailable()) BRegfree(m_sInfo[i].pBregexp);
 		m_sInfo[i].pBregexp = NULL;
 	}
@@ -145,15 +146,18 @@ BOOL CRegexKeyword::RegexKeyInit(void)
 BOOL CRegexKeyword::RegexKeySetTypes(const STypeConfig *pTypesPtr)
 {
 	MYDBGMSG("RegexKeySetTypes")
-	if (pTypesPtr == NULL) {
+	if (pTypesPtr == NULL)
+	{
 		m_pTypes		   = NULL;
 		m_bUseRegexKeyword = false;
 		return FALSE;
 	}
 
-	if (!pTypesPtr->m_bUseRegexKeyword) {
+	if (!pTypesPtr->m_bUseRegexKeyword)
+	{
 		// OFFになったのにまだONならOFFにする。
-		if (m_bUseRegexKeyword) {
+		if (m_bUseRegexKeyword)
+		{
 			m_pTypes		   = NULL;
 			m_bUseRegexKeyword = false;
 		}
@@ -162,11 +166,8 @@ BOOL CRegexKeyword::RegexKeySetTypes(const STypeConfig *pTypesPtr)
 
 	if (m_nTypeId == pTypesPtr->m_id && m_nCompiledMagicNumber == pTypesPtr->m_nRegexKeyMagicNumber
 		&& m_pTypes != NULL // 2014.07.02 条件追加
-	) {
-		return TRUE;
-	}
-
-	m_pTypes = pTypesPtr;
+	)
+	{ return TRUE; } m_pTypes = pTypesPtr;
 
 	RegexKeyCompile();
 
@@ -193,7 +194,8 @@ BOOL CRegexKeyword::RegexKeyCompile(void)
 
 	MYDBGMSG("RegexKeyCompile")
 	//コンパイル済みのバッファを解放する。
-	for (i = 0; i < MAX_REGEX_KEYWORD; i++) {
+	for (i = 0; i < MAX_REGEX_KEYWORD; i++)
+	{
 		if (m_sInfo[i].pBregexp && IsAvailable()) BRegfree(m_sInfo[i].pBregexp);
 		m_sInfo[i].pBregexp = NULL;
 	}
@@ -201,7 +203,8 @@ BOOL CRegexKeyword::RegexKeyCompile(void)
 	//コンパイルパターンを内部変数に移す。
 	m_nRegexKeyCount		= 0;
 	const wchar_t *pKeyword = &m_pTypes->m_RegexKeywordList[0];
-	for (i = 0; i < MAX_REGEX_KEYWORD; i++) {
+	for (i = 0; i < MAX_REGEX_KEYWORD; i++)
+	{
 		if (pKeyword[0] == L'\0') break;
 		m_nRegexKeyCount++;
 		for (; *pKeyword != '\0'; pKeyword++) {}
@@ -214,17 +217,20 @@ BOOL CRegexKeyword::RegexKeyCompile(void)
 	m_bUseRegexKeyword	 = m_pTypes->m_bUseRegexKeyword;
 	if (!m_bUseRegexKeyword) return FALSE;
 
-	if (!IsAvailable()) {
+	if (!IsAvailable())
+	{
 		m_bUseRegexKeyword = false;
 		return FALSE;
 	}
 
 	pKeyword = &m_pTypes->m_RegexKeywordList[0];
 	//パターンをコンパイルする。
-	for (i = 0; i < m_nRegexKeyCount; i++) {
+	for (i = 0; i < m_nRegexKeyCount; i++)
+	{
 		rp = &m_pTypes->m_RegexKeywordArr[i];
 
-		if (RegexKeyCheckSyntax(pKeyword) != FALSE) {
+		if (RegexKeyCheckSyntax(pKeyword) != FALSE)
+		{
 			m_szMsg[0] = '\0';
 			BMatch(pKeyword, dummy, dummy + 1, &m_sInfo[i].pBregexp, m_szMsg);
 
@@ -232,33 +238,37 @@ BOOL CRegexKeyword::RegexKeyCompile(void)
 			{
 				//先頭以外は検索しなくてよい
 				if (wcsncmp_literal(pKeyword, RK_HEAD_STR1) == 0 || wcsncmp_literal(pKeyword, RK_HEAD_STR2) == 0
-					|| wcsncmp_literal(pKeyword, RK_HEAD_STR3) == 0) {
-					m_sInfo[i].nHead = 1;
-				}
-				else {
+					|| wcsncmp_literal(pKeyword, RK_HEAD_STR3) == 0)
+				{ m_sInfo[i].nHead = 1; } else
+				{
 					m_sInfo[i].nHead = 0;
 				}
 
-				if (COLORIDX_REGEX1 <= rp->m_nColorIndex && COLORIDX_REGEX10 >= rp->m_nColorIndex) {
+				if (COLORIDX_REGEX1 <= rp->m_nColorIndex && COLORIDX_REGEX10 >= rp->m_nColorIndex)
+				{
 					//色指定でチェックが入ってなければ検索しなくてもよい
 					if (m_pTypes->m_ColorInfoArr[rp->m_nColorIndex].m_bDisp) { m_sInfo[i].nFlag = RK_EMPTY; }
-					else {
+					else
+					{
 						//正規表現では色指定のチェックを見る。
 						m_sInfo[i].nFlag = RK_NOMATCH;
 					}
 				}
-				else {
+				else
+				{
 					//正規表現以外では、色指定チェックは見ない。
 					//例えば、半角数値は正規表現を使い、基本機能を使わないという指定もあり得るため
 					m_sInfo[i].nFlag = RK_EMPTY;
 				}
 			}
-			else {
+			else
+			{
 				//コンパイルエラーなので検索対象からはずす
 				m_sInfo[i].nFlag = RK_NOMATCH;
 			}
 		}
-		else {
+		else
+		{
 			//書式エラーなので検索対象からはずす
 			m_sInfo[i].nFlag = RK_NOMATCH;
 		}
@@ -292,7 +302,8 @@ BOOL CRegexKeyword::RegexKeyLineStart(void)
 	if (!m_bUseRegexKeyword || !IsAvailable() || m_pTypes == NULL) { return FALSE; }
 
 	//検索開始のためにオフセット情報等をクリアする。
-	for (i = 0; i < m_nRegexKeyCount; i++) {
+	for (i = 0; i < m_nRegexKeyCount; i++)
+	{
 		m_sInfo[i].nOffset = -1;
 		// m_sInfo[i].nMatch  = RK_EMPTY;
 		m_sInfo[i].nMatch  = m_sInfo[i].nFlag;
@@ -325,7 +336,8 @@ BOOL CRegexKeyword::RegexIsKeyword(const CStringRef &cStr, //!< [in] 検索対�
 	//動作に必要なチェックをする。
 	if (!m_bUseRegexKeyword || !IsAvailable() || m_pTypes == NULL) { return FALSE; }
 
-	for (int i = 0; i < m_nRegexKeyCount; i++) {
+	for (int i = 0; i < m_nRegexKeyCount; i++)
+	{
 		const auto colorIndex = m_pTypes->m_RegexKeywordArr[i].m_nColorIndex;
 		auto &	 info		  = m_sInfo[i];
 		auto *	 pBregexp   = info.pBregexp;
@@ -339,20 +351,24 @@ BOOL CRegexKeyword::RegexIsKeyword(const CStringRef &cStr, //!< [in] 検索対�
 			}
 
 			/* 以前の結果はもう古いので再検索する */
-			if (info.nOffset < nPos) {
+			if (info.nOffset < nPos)
+			{
 				const auto begp	= cStr.GetPtr();			  //!< 行頭位置
 				const auto endp	= begp + cStr.GetLength(); //!< 行末位置
 				const auto startp  = begp + nPos;			  //!< 検索開始位置
 				int		   matched = ExistBMatchEx() ? BMatchEx(NULL, begp, startp, endp, &pBregexp, m_szMsg)
 											  : BMatch(NULL, startp, endp, &pBregexp, m_szMsg);
-				if (0 < matched && pBregexp->endp[0] - pBregexp->startp[0] > 0) {
+				if (0 < matched && pBregexp->endp[0] - pBregexp->startp[0] > 0)
+				{
 					info.nOffset = pBregexp->startp[0] - begp;
 					info.nLength = pBregexp->endp[0] - pBregexp->startp[0];
 					info.nMatch  = RK_MATCH;
 
 					/* 指定の開始位置でマッチした */
-					if (info.nOffset == nPos) {
-						if (info.nHead != 1 || nPos == 0) {
+					if (info.nOffset == nPos)
+					{
+						if (info.nHead != 1 || nPos == 0)
+						{
 							*nMatchLen   = info.nLength;
 							*nMatchColor = colorIndex;
 							return TRUE; /* マッチした */
@@ -362,7 +378,8 @@ BOOL CRegexKeyword::RegexIsKeyword(const CStringRef &cStr, //!< [in] 検索対�
 					/* 行先頭を要求する正規表現では次回から無視する */
 					if (info.nHead == 1) { info.nMatch = RK_NOMATCH; }
 				}
-				else {
+				else
+				{
 					/* この行にこのキーワードはない */
 					info.nMatch = RK_NOMATCH;
 				}
@@ -383,14 +400,18 @@ BOOL CRegexKeyword::RegexKeyCheckSyntax(const wchar_t *s)
 
 	length = wcslen(s);
 
-	for (i = 0; kakomi[i] != NULL; i += 2) {
+	for (i = 0; kakomi[i] != NULL; i += 2)
+	{
 		//文字長を確かめる
-		if (length > (int)wcslen(kakomi[i]) + (int)wcslen(kakomi[i + 1])) {
+		if (length > (int)wcslen(kakomi[i]) + (int)wcslen(kakomi[i + 1]))
+		{
 			//始まりを確かめる
-			if (wcsncmp(kakomi[i], s, wcslen(kakomi[i])) == 0) {
+			if (wcsncmp(kakomi[i], s, wcslen(kakomi[i])) == 0)
+			{
 				//終わりを確かめる
 				p = &s[length - wcslen(kakomi[i + 1])];
-				if (wcscmp(p, kakomi[i + 1]) == 0) {
+				if (wcscmp(p, kakomi[i + 1]) == 0)
+				{
 					//正常
 					return TRUE;
 				}

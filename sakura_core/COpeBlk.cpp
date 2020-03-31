@@ -35,7 +35,8 @@ COpeBlk::~COpeBlk()
 /* 操作の追加 */
 bool COpeBlk::AppendOpe(COpe *pcOpe)
 {
-	if (pcOpe->m_ptCaretPos_PHY_Before.HasNegative() || pcOpe->m_ptCaretPos_PHY_After.HasNegative()) {
+	if (pcOpe->m_ptCaretPos_PHY_Before.HasNegative() || pcOpe->m_ptCaretPos_PHY_After.HasNegative())
+	{
 		TopErrorMessage(NULL,
 						L"COpeBlk::AppendOpe() error.\n"
 						L"Bug.\n"
@@ -67,7 +68,8 @@ void COpeBlk::DUMP(void)
 #ifdef _DEBUG
 	int i;
 	int size = GetNum();
-	for (i = 0; i < size; ++i) {
+	for (i = 0; i < size; ++i)
+	{
 		MYTRACE(L"\tCOpeBlk.m_ppCOpeArr[%d]----\n", i);
 		m_ppCOpeArr[i]->DUMP();
 	}

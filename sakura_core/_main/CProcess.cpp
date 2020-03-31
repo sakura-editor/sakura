@@ -44,7 +44,8 @@ CProcess::CProcess(HINSTANCE hInstance, //!< handle to process instance
 bool CProcess::InitializeProcess()
 {
 	/* 共有データ構造体のアドレスを返す */
-	if (!GetShareData().InitShareData()) {
+	if (!GetShareData().InitShareData())
+	{
 		//	適切なデータを得られなかった
 		::MYMESSAGEBOX(NULL, MB_OK | MB_ICONERROR, GSTR_APPNAME,
 					   L"異なるバージョンのエディタを同時に起動することはできません。");
@@ -66,22 +67,26 @@ bool CProcess::InitializeProcess()
 */
 bool CProcess::Run()
 {
-	if (InitializeProcess()) {
+	if (InitializeProcess())
+	{
 #ifdef USE_CRASHDUMP
 		HMODULE hDllDbgHelp	= LoadLibraryExedir(L"dbghelp.dll");
 		m_pfnMiniDumpWriteDump = NULL;
 		if (hDllDbgHelp) { *(FARPROC *)&m_pfnMiniDumpWriteDump = ::GetProcAddress(hDllDbgHelp, "MiniDumpWriteDump"); }
 
-		__try {
+		__try
+		{
 #endif
 			MainLoop();
 			OnExitProcess();
 #ifdef USE_CRASHDUMP
 		}
-		__except (WriteDump(GetExceptionInformation())) {
+		__except (WriteDump(GetExceptionInformation()))
+		{
 		}
 
-		if (hDllDbgHelp) {
+		if (hDllDbgHelp)
+		{
 			::FreeLibrary(hDllDbgHelp);
 			m_pfnMiniDumpWriteDump = NULL;
 		}
@@ -110,7 +115,8 @@ int CProcess::WriteDump(PEXCEPTION_POINTERS pExceptPtrs)
 	HANDLE hFile = ::CreateFile(szFile, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
 								FILE_ATTRIBUTE_NORMAL | FILE_FLAG_WRITE_THROUGH, NULL);
 
-	if (hFile != INVALID_HANDLE_VALUE) {
+	if (hFile != INVALID_HANDLE_VALUE)
+	{
 		MINIDUMP_EXCEPTION_INFORMATION eInfo;
 		eInfo.ThreadId			= GetCurrentThreadId();
 		eInfo.ExceptionPointers = pExceptPtrs;

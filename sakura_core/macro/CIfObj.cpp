@@ -43,7 +43,8 @@
 
 /////////////////////////////////////////////
 //スクリプトに渡されるオブジェクトの型情報
-class CIfObjTypeInfo : public ImplementsIUnknown<ITypeInfo> {
+class CIfObjTypeInfo : public ImplementsIUnknown<ITypeInfo>
+{
 private:
 	const CIfObj::CMethodInfoList &m_MethodsRef;
 	const std::wstring &		   m_sName;
@@ -132,13 +133,16 @@ public:
 		//	Feb. 08, 2004 genta
 		//	とりあえず全部NULLを返す (情報無し)
 		//	2014.02.12 各パラメータを設定するように
-		if (memid == -1) {
+		if (memid == -1)
+		{
 			if (pBstrName) { *pBstrName = SysAllocString(m_sName.c_str()); }
 		}
-		else if (0 <= memid && memid < (int)m_MethodsRef.size()) {
+		else if (0 <= memid && memid < (int)m_MethodsRef.size())
+		{
 			if (pBstrName) { *pBstrName = SysAllocString(m_MethodsRef[memid].Name); }
 		}
-		else {
+		else
+		{
 			return TYPE_E_ELEMENTNOTFOUND;
 		}
 		if (pBstrDocString) { *pBstrDocString = SysAllocString(L""); }
@@ -268,7 +272,8 @@ HRESULT STDMETHODCALLTYPE CIfObj::QueryInterface(REFIID iid, void **ppvObject)
 {
 	if (ppvObject == NULL)
 		return E_POINTER;
-	else if (IsEqualIID(iid, IID_IUnknown) || IsEqualIID(iid, IID_IDispatch)) {
+	else if (IsEqualIID(iid, IID_IUnknown) || IsEqualIID(iid, IID_IDispatch))
+	{
 		AddRef();
 		*ppvObject = this;
 		return S_OK;
@@ -294,7 +299,8 @@ HRESULT STDMETHODCALLTYPE CIfObj::GetTypeInfo(
 	/* [in] */ LCID		  lcid,
 	/* [out] */ ITypeInfo __RPC_FAR *__RPC_FAR *ppTInfo)
 {
-	if (m_TypeInfo == NULL) {
+	if (m_TypeInfo == NULL)
+	{
 		m_TypeInfo = new CIfObjTypeInfo(this->m_Methods, this->m_sName);
 		m_TypeInfo->AddRef();
 	}
@@ -317,15 +323,18 @@ HRESULT STDMETHODCALLTYPE CIfObj::GetTypeInfoCount(
 HRESULT STDMETHODCALLTYPE CIfObj::GetIDsOfNames(REFIID riid, OLECHAR FAR *FAR *rgszNames, UINT cNames, LCID lcid,
 												DISPID FAR *rgdispid)
 {
-	for (unsigned i = 0; i < cNames; ++i) {
+	for (unsigned i = 0; i < cNames; ++i)
+	{
 #ifdef TEST
 		//大量にメッセージが出るので注意。
 		// DEBUG_TRACE( L"GetIDsOfNames: %ls\n", rgszNames[i] );
 #endif
 		size_t nSize = m_Methods.size();
-		for (size_t j = 0; j < nSize; ++j) {
+		for (size_t j = 0; j < nSize; ++j)
+		{
 			//	Nov. 10, 2003 FILE Win9Xでは、[lstrcmpiW]が無効のため、[_wcsicmp]に修正
-			if (_wcsicmp(rgszNames[i], m_Methods[j].Name) == 0) {
+			if (_wcsicmp(rgszNames[i], m_Methods[j].Name) == 0)
+			{
 				rgdispid[i] = j;
 				goto Found;
 			}
@@ -354,7 +363,8 @@ void CIfObj::AddMethod(const wchar_t *Name, int ID, VARTYPE *ArgumentTypes, int 
 	wcscpy(Info->Name, Name);
 	Info->Method = Method;
 	Info->ID	 = ID;
-	for (int i = 0; i < ArgumentCount; ++i) {
+	for (int i = 0; i < ArgumentCount; ++i)
+	{
 		Info->Arguments[i].tdesc.vt				 = ArgumentTypes[ArgumentCount - i - 1];
 		Info->Arguments[i].paramdesc.wParamFlags = PARAMFLAG_FIN;
 	}

@@ -64,7 +64,8 @@ int CDlgTypeAscertain::DoModal(HINSTANCE hInstance, HWND hwndParent, SAscertainI
 // ボタンクリック
 BOOL CDlgTypeAscertain::OnBnClicked(int wID)
 {
-	switch (wID) {
+	switch (wID)
+	{
 	case IDC_BUTTON_HELP:
 		/* 「タイプ別設定インポート」のヘルプ */
 		MyWinHelp(GetHwnd(), HELP_CONTEXT, HLP000338);
@@ -77,8 +78,10 @@ BOOL CDlgTypeAscertain::OnBnClicked(int wID)
 		m_psi->sColorFile = L"";
 		m_psi->nColorType = Combo_GetCurSel(GetItemHwnd(IDC_COMBO_COLORS)) - 1;
 		if (m_psi->nColorType >= MAX_TYPES
-			&& Combo_GetLBText(GetItemHwnd(IDC_COMBO_COLORS), m_psi->nColorType + 1, buff1)) {
-			if (_stscanf(buff1, L"File -- %ls", buff2) > 0) {
+			&& Combo_GetLBText(GetItemHwnd(IDC_COMBO_COLORS), m_psi->nColorType + 1, buff1))
+		{
+			if (_stscanf(buff1, L"File -- %ls", buff2) > 0)
+			{
 				m_psi->sColorFile = buff2;
 				m_psi->nColorType = MAX_TYPES;
 			}
@@ -111,15 +114,18 @@ void CDlgTypeAscertain::SetData(void)
 	Combo_AddString(hwndCombo, LS(STR_DLGTYPEASC_IMPORT));
 
 	// エディタ内の設定
-	for (nIdx = 0; nIdx < GetDllShareData().m_nTypesCount; ++nIdx) {
+	for (nIdx = 0; nIdx < GetDllShareData().m_nTypesCount; ++nIdx)
+	{
 		const STypeConfigMini *type = NULL;
 		if (!CDocTypeManager().GetTypeConfigMini(CTypeConfig(nIdx), &type)) { continue; }
-		if (type->m_szTypeExts[0] != L'\0') {					 /* タイプ属性：拡張子リスト */
+		if (type->m_szTypeExts[0] != L'\0')
+		{														 /* タイプ属性：拡張子リスト */
 			auto_sprintf(szText, L"%s (%s)", type->m_szTypeName, /* タイプ属性：名称 */
 						 type->m_szTypeExts						 /* タイプ属性：拡張子リスト */
 			);
 		}
-		else {
+		else
+		{
 			auto_sprintf(szText, L"%s", type->m_szTypeName /* タイプ属性：拡称 */
 			);
 		}
@@ -134,8 +140,10 @@ void CDlgTypeAscertain::SetData(void)
 	::SplitPath_FolderAndFile(m_psi->sImportFile.c_str(), sTrgCol, NULL);
 	wcscat(sTrgCol, L"\\*.col");
 	for (bFind = ((hFind = FindFirstFile(sTrgCol, &wf)) != INVALID_HANDLE_VALUE); bFind;
-		 bFind = FindNextFile(hFind, &wf)) {
-		if ((wf.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) {
+		 bFind = FindNextFile(hFind, &wf))
+	{
+		if ((wf.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
+		{
 			// 読込色設定ファイル発見
 			auto_sprintf(szText, L"File -- %s", wf.cFileName);
 			::Combo_AddString(hwndCombo, szText);

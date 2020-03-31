@@ -77,7 +77,8 @@ size_t CRecentFile::GetTextMaxLength() const { return m_nTextMaxLength; }
 int CRecentFile::FindItemByPath(const WCHAR *pszPath) const
 {
 	int n = GetItemCount();
-	for (int i = 0; i < n; i++) {
+	for (int i = 0; i < n; i++)
+	{
 		if (_wcsicmp(GetItem(i)->m_szPath, pszPath) == 0) return i;
 	}
 	return -1;

@@ -64,7 +64,8 @@ typedef int PlugId;
 class CPlugin;
 
 //プラグ（プラグイン内の処理単位）クラス
-class CPlug {
+class CPlug
+{
 	//型定義
 protected:
 	typedef std::wstring wstring;
@@ -117,9 +118,8 @@ public:
 	// 2011/8/20 syat 関数コードの割り当て直し
 	static inline PluginId GetPluginId(EFunctionCode nFunctionCode)
 	{
-		if (nFunctionCode >= F_PLUGCOMMAND_FIRST && nFunctionCode < F_PLUGCOMMAND_LAST) {
-			return PluginId((nFunctionCode - F_PLUGCOMMAND_FIRST) / 100 + (nFunctionCode % 100 / 50 * 20));
-		}
+		if (nFunctionCode >= F_PLUGCOMMAND_FIRST && nFunctionCode < F_PLUGCOMMAND_LAST)
+		{ return PluginId((nFunctionCode - F_PLUGCOMMAND_FIRST) / 100 + (nFunctionCode % 100 / 50 * 20)); }
 		return PluginId(-1);
 	}
 
@@ -128,10 +128,8 @@ public:
 	// 2011/8/20 syat 関数コードの割り当て直し
 	static inline PlugId GetPlugId(EFunctionCode nFunctionCode)
 	{
-		if (nFunctionCode >= F_PLUGCOMMAND_FIRST && nFunctionCode < F_PLUGCOMMAND_LAST) {
-			return PlugId(nFunctionCode % 100 - (nFunctionCode % 100 / 50 * 50));
-		}
-		return PlugId(-1);
+		if (nFunctionCode >= F_PLUGCOMMAND_FIRST && nFunctionCode < F_PLUGCOMMAND_LAST)
+		{ return PlugId(nFunctionCode % 100 - (nFunctionCode % 100 / 50 * 50)); } return PlugId(-1);
 	}
 
 	/* PluginId, PlugId と 関数コードのマッピング *****************************
@@ -170,7 +168,8 @@ public:
 // オプション定義	// 2010/3/24 Uchi
 std::vector<std::wstring> wstring_split(std::wstring, wchar_t);
 
-class CPluginOption {
+class CPluginOption
+{
 	//型定義
 protected:
 	typedef std::wstring wstring;
@@ -226,7 +225,8 @@ protected:
 
 //プラグインクラス
 
-class CPlugin {
+class CPlugin
+{
 	//型定義
 protected:
 	typedef std::wstring wstring;

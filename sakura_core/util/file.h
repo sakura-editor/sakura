@@ -64,7 +64,8 @@ void GetInidirOrExedir(LPWSTR pDir, LPCWSTR szFile = NULL, BOOL bRetExedirIfFile
 LPCWSTR GetRelPath(LPCWSTR pszPath);
 
 //ファイル時刻
-class CFileTime {
+class CFileTime
+{
 public:
 	CFileTime() { ClearFILETIME(); }
 	CFileTime(const FILETIME &ftime) { SetFILETIME(ftime); }
@@ -84,10 +85,12 @@ public:
 	const SYSTEMTIME &GetSYSTEMTIME() const
 	{
 		//キャッシュ更新 -> m_systime, m_bModified
-		if (m_bModified) {
+		if (m_bModified)
+		{
 			m_bModified = false;
 			FILETIME ftimeLocal;
-			if (!::FileTimeToLocalFileTime(&m_ftime, &ftimeLocal) || !::FileTimeToSystemTime(&ftimeLocal, &m_systime)) {
+			if (!::FileTimeToLocalFileTime(&m_ftime, &ftimeLocal) || !::FileTimeToSystemTime(&ftimeLocal, &m_systime))
+			{
 				memset(&m_systime, 0, sizeof(m_systime)); //失敗時ゼロクリア
 			}
 		}

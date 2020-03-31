@@ -35,7 +35,8 @@ void CRuler::_DrawRulerCaret(CGraphics &gr, int nCaretDrawPosX, int nCaretWidth)
 	//ブラシ作成 -> hBrush
 	HBRUSH hBrush;
 	if (0 == nCaretWidth) { hBrush = ::CreateSolidBrush(RGB(128, 128, 128)); }
-	else {
+	else
+	{
 		hBrush = ::CreateSolidBrush(RGB(0, 0, 0));
 	}
 
@@ -60,10 +61,12 @@ void CRuler::_DrawRulerCaret(CGraphics &gr, int nCaretDrawPosX, int nCaretWidth)
 void CRuler::DrawRulerCaret(CGraphics &gr)
 {
 	if (m_pEditView->GetTextArea().GetViewLeftCol() <= m_pEditView->GetCaret().GetCaretLayoutPos().GetX()
-		&& m_pEditView->GetTextArea().GetRightCol() + 2 >= m_pEditView->GetCaret().GetCaretLayoutPos().GetX()) {
+		&& m_pEditView->GetTextArea().GetRightCol() + 2 >= m_pEditView->GetCaret().GetCaretLayoutPos().GetX())
+	{
 		if (m_pEditView->GetRuler().m_nOldRulerDrawX
 				== m_pEditView->GetCaret().CalcCaretDrawPos(m_pEditView->GetCaret().GetCaretLayoutPos()).x
-			&& m_pEditView->GetCaret().GetCaretSize().cx == m_pEditView->GetRuler().m_nOldRulerWidth) {
+			&& m_pEditView->GetCaret().GetCaretSize().cx == m_pEditView->GetRuler().m_nOldRulerWidth)
+		{
 			//前描画した位置画同じ かつ ルーラーのキャレット幅が同じ
 			return;
 		}
@@ -88,11 +91,13 @@ void CRuler::DrawRulerBg(CGraphics &gr)
 	CTypeSupport cRulerType(m_pEditView, COLORIDX_RULER);
 
 	// フォント設定 (ルーラー上の数字用)
-	if (m_hFont && m_nRulerHeight != pCommon->m_sWindow.m_nRulerHeight) {
+	if (m_hFont && m_nRulerHeight != pCommon->m_sWindow.m_nRulerHeight)
+	{
 		::DeleteObject(m_hFont);
 		m_hFont = NULL;
 	}
-	if (m_hFont == NULL) {
+	if (m_hFont == NULL)
+	{
 		LOGFONT lf			= {0};
 		lf.lfHeight			= 1 - pCommon->m_sWindow.m_nRulerHeight; //	2002/05/13 ai
 		lf.lfWidth			= 0;
@@ -147,7 +152,8 @@ void CRuler::DrawRulerBg(CGraphics &gr)
 	const int   dx		  = m_pEditView->GetTextMetrics().GetHankakuDx(); // PPでもDx
 	// 先頭がかけている場合は次の桁に進む
 	const int pxOffset = (Int)i % oneColumn;
-	if (pxOffset) {
+	if (pxOffset)
+	{
 		nX += oneColumn - pxOffset;
 		i += CLayoutXInt(oneColumn - pxOffset); // CLayoutXInt == pixel
 		++keta;
@@ -165,23 +171,27 @@ void CRuler::DrawRulerBg(CGraphics &gr)
 	apt[0]	 = POINT{m_pEditView->GetTextArea().GetAreaLeft(), nY + 1};
 	apt[1]	 = POINT{nToX, nY + 1};
 	size_t idx = 1;
-	while (i <= m_pEditView->GetTextArea().GetRightCol() + 1 && keta <= nMaxLineKetas) {
+	while (i <= m_pEditView->GetTextArea().GetRightCol() + 1 && keta <= nMaxLineKetas)
+	{
 		apt[idx * 2 + 0] = POINT{nX, nY};
 		//ルーラー終端の区切り(大)
 		if (keta == nMaxLineKetas) { apt[idx * 2 + 1] = POINT{nX, 0}; }
 		// 10目盛おきの区切り(大)と数字
-		else if (0 == keta % 10) {
+		else if (0 == keta % 10)
+		{
 			wchar_t szColumn[32];
 			apt[idx * 2 + 1] = POINT{nX, 0};
 			_itow(((Int)keta) / 10, szColumn, 10);
 			::TextOut(gr, nX + 2 + 0, -1 + 0, szColumn, wcslen(szColumn));
 		}
 		// 5目盛おきの区切り(中)
-		else if (0 == keta % 5) {
+		else if (0 == keta % 5)
+		{
 			apt[idx * 2 + 1] = POINT{nX, nY - 6};
 		}
 		//毎目盛の区切り(小)
-		else {
+		else
+		{
 			apt[idx * 2 + 1] = POINT{nX, nY - 3};
 		}
 		++idx;
@@ -218,13 +228,15 @@ void CRuler::DispRuler(HDC hdc)
 
 	// 2002.02.25 Add By KK ルーラー全体を描き直す必要がない場合は、ルーラ上のキャレットのみ描きなおす
 	if (!m_bRedrawRuler) { DrawRulerCaret(gr); }
-	else {
+	else
+	{
 		// 背景描画
 		DrawRulerBg(gr);
 
 		// キャレット描画
 		if (m_pEditView->GetTextArea().GetViewLeftCol() <= m_pEditView->GetCaret().GetCaretLayoutPos().GetX()
-			&& m_pEditView->GetTextArea().GetRightCol() + 2 >= m_pEditView->GetCaret().GetCaretLayoutPos().GetX()) {
+			&& m_pEditView->GetTextArea().GetRightCol() + 2 >= m_pEditView->GetCaret().GetCaretLayoutPos().GetX())
+		{
 			_DrawRulerCaret(gr, m_pEditView->GetCaret().CalcCaretDrawPos(m_pEditView->GetCaret().GetCaretLayoutPos()).x,
 							m_pEditView->GetCaret().GetCaretSize().cx);
 		}

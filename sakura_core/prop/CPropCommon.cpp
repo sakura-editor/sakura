@@ -50,7 +50,8 @@
 int CPropCommon::SearchIntArr(int nKey, int *pnArr, int nArrNum)
 {
 	int i;
-	for (i = 0; i < nArrNum; ++i) {
+	for (i = 0; i < nArrNum; ++i)
+	{
 		if (nKey == pnArr[i]) { return i; }
 	}
 	return -1;
@@ -71,19 +72,22 @@ INT_PTR CPropCommon::DlgProc(INT_PTR (CPropCommon::*DispatchPage)(HWND, UINT, WP
 {
 	PROPSHEETPAGE *pPsp;
 	CPropCommon *  pCPropCommon;
-	switch (uMsg) {
+	switch (uMsg)
+	{
 	case WM_INITDIALOG:
 		pPsp		 = (PROPSHEETPAGE *)lParam;
 		pCPropCommon = (CPropCommon *)(pPsp->lParam);
 		if (NULL != pCPropCommon) { return (pCPropCommon->*DispatchPage)(hwndDlg, uMsg, wParam, pPsp->lParam); }
-		else {
+		else
+		{
 			return FALSE;
 		}
 	default:
 		// Modified by KEITA for WIN64 2003.9.6
 		pCPropCommon = (CPropCommon *)::GetWindowLongPtr(hwndDlg, DWLP_USER);
 		if (NULL != pCPropCommon) { return (pCPropCommon->*DispatchPage)(hwndDlg, uMsg, wParam, lParam); }
-		else {
+		else
+		{
 			return FALSE;
 		}
 	}
@@ -95,18 +99,21 @@ INT_PTR CPropCommon::DlgProc2(INT_PTR (CPropCommon::*DispatchPage)(HWND, UINT, W
 							  WPARAM wParam, LPARAM lParam)
 {
 	CPropCommon *pCPropCommon;
-	switch (uMsg) {
+	switch (uMsg)
+	{
 	case WM_INITDIALOG:
 		pCPropCommon = (CPropCommon *)(lParam);
 		if (NULL != pCPropCommon) { return (pCPropCommon->*DispatchPage)(hwndDlg, uMsg, IDOK, lParam); }
-		else {
+		else
+		{
 			return FALSE;
 		}
 	default:
 		// Modified by KEITA for WIN64 2003.9.6
 		pCPropCommon = (CPropCommon *)::GetWindowLongPtr(hwndDlg, DWLP_USER);
 		if (NULL != pCPropCommon) { return (pCPropCommon->*DispatchPage)(hwndDlg, uMsg, wParam, lParam); }
-		else {
+		else
+		{
 			return FALSE;
 		}
 	}
@@ -172,7 +179,8 @@ void CPropCommon::Create(HWND hwndParent, CImageListMgr *pcIcons, CMenuDrawer *p
 	「共通設定」プロパティシートの作成時に必要な情報を
 	保持する構造体
 */
-struct ComPropSheetInfo {
+struct ComPropSheetInfo
+{
 	int			 m_nTabNameId;							  //!< TABの表示名
 	unsigned int resId;									  //!< Property sheetに対応するDialog resource
 	INT_PTR(CALLBACK *DProc)(HWND, UINT, WPARAM, LPARAM); //!< Dialog Procedure
@@ -220,7 +228,8 @@ INT_PTR CPropCommon::DoPropertySheet(int nPageNum, bool bTrayProc)
 
 	std::wstring  sTabname[_countof(ComPropSheetInfoList)];
 	PROPSHEETPAGE psp[_countof(ComPropSheetInfoList)];
-	for (nIdx = 0; nIdx < _countof(ComPropSheetInfoList); nIdx++) {
+	for (nIdx = 0; nIdx < _countof(ComPropSheetInfoList); nIdx++)
+	{
 		sTabname[nIdx] = LS(ComPropSheetInfoList[nIdx].m_nTabNameId);
 
 		PROPSHEETPAGE *p = &psp[nIdx];
@@ -248,10 +257,12 @@ INT_PTR CPropCommon::DoPropertySheet(int nPageNum, bool bTrayProc)
 
 	//- 20020106 aroka # psh.nStartPage は unsigned なので負にならない
 	if (-1 == nPageNum) { psh.nStartPage = m_nPageNum; }
-	else if (0 > nPageNum) { //- 20020106 aroka
+	else if (0 > nPageNum)
+	{ //- 20020106 aroka
 		psh.nStartPage = 0;
 	}
-	else {
+	else
+	{
 		psh.nStartPage = nPageNum;
 	}
 	if (psh.nPages - 1 < psh.nStartPage) { psh.nStartPage = psh.nPages - 1; }
@@ -260,7 +271,8 @@ INT_PTR CPropCommon::DoPropertySheet(int nPageNum, bool bTrayProc)
 	psh.pfnCallback = NULL;
 
 	nRet = MyPropertySheet(&psh); // 2007.05.24 ryoji 独自拡張プロパティシート
-	if (-1 == nRet) {
+	if (-1 == nRet)
+	{
 		WCHAR *pszMsgBuf;
 		::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 						NULL, ::GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // デフォルト言語
@@ -286,7 +298,8 @@ void CPropCommon::InitData(const int *tempTypeKeywordSet, const WCHAR *name, con
 	m_tempTypeExts[0] = L'\0';
 
 	// 2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
-	if (tempTypeKeywordSet) {
+	if (tempTypeKeywordSet)
+	{
 		m_nKeywordSet1 = tempTypeKeywordSet[0];
 		wcscpy(m_tempTypeName, name);
 		wcscpy(m_tempTypeExts, exts);
@@ -296,7 +309,8 @@ void CPropCommon::InitData(const int *tempTypeKeywordSet, const WCHAR *name, con
 		m_Types_nKeyWordSetIdx.push_back(indexs);
 	}
 	int i;
-	for (i = 0; i < GetDllShareData().m_nTypesCount; ++i) {
+	for (i = 0; i < GetDllShareData().m_nTypesCount; ++i)
+	{
 		SKeywordSetIndex indexs;
 		STypeConfig		 type;
 		CDocTypeManager().GetTypeConfig(CTypeConfig(i), type);
@@ -318,22 +332,22 @@ void CPropCommon::ApplyData(int *tempTypeKeywordSet)
 	int		  i;
 	const int nSize  = (int)m_Types_nKeyWordSetIdx.size();
 	int		  nBegin = 0;
-	if (tempTypeKeywordSet) {
-		for (int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++) {
-			tempTypeKeywordSet[j] = m_Types_nKeyWordSetIdx[0].index[j];
-		}
-		nBegin = 1;
+	if (tempTypeKeywordSet)
+	{
+		for (int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++)
+		{ tempTypeKeywordSet[j] = m_Types_nKeyWordSetIdx[0].index[j]; } nBegin = 1;
 	}
-	for (i = nBegin; i < nSize; ++i) {
+	for (i = nBegin; i < nSize; ++i)
+	{
 		CTypeConfig configIdx = CDocTypeManager().GetDocumentTypeOfId(m_Types_nKeyWordSetIdx[i].typeId);
-		if (configIdx.IsValidType()) {
+		if (configIdx.IsValidType())
+		{
 			STypeConfig type;
 			CDocTypeManager().GetTypeConfig(configIdx, type);
 			// 2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
 			/* 変更された設定値のコピー */
-			for (int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++) {
-				type.m_nKeyWordSetIdx[j] = m_Types_nKeyWordSetIdx[i].index[j];
-			}
+			for (int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++)
+			{ type.m_nKeyWordSetIdx[j] = m_Types_nKeyWordSetIdx[i].index[j]; }
 			CDocTypeManager().SetTypeConfig(configIdx, type);
 		}
 	}
@@ -344,7 +358,8 @@ void CPropCommon::ApplyData(int *tempTypeKeywordSet)
 void CPropCommon::OnHelp(HWND hwndParent, int nPageID)
 {
 	int nContextID;
-	switch (nPageID) {
+	switch (nPageID)
+	{
 	case IDD_PROP_GENERAL: nContextID = ::FuncID_To_HelpContextID(F_OPTION_GENERAL); break;
 	case IDD_PROP_FORMAT: nContextID = ::FuncID_To_HelpContextID(F_OPTION_FORMAT); break;
 	case IDD_PROP_FILE:
@@ -384,7 +399,8 @@ void CPropCommon::OnHelp(HWND hwndParent, int nPageID)
 
 	default: nContextID = -1; break;
 	}
-	if (-1 != nContextID) {
+	if (-1 != nContextID)
+	{
 		MyWinHelp(hwndParent, HELP_CONTEXT, nContextID); // 2006.10.10 ryoji MyWinHelpに変更に変更
 	}
 	return;
@@ -401,7 +417,8 @@ HFONT CPropCommon::SetCtrlFont(HWND hwndDlg, int idc_ctrl, const LOGFONT &lf)
 	// 論理フォントを作成
 	hCtrl = ::GetDlgItem(hwndDlg, idc_ctrl);
 	hFont = ::CreateFontIndirect(&lf);
-	if (hFont) {
+	if (hFont)
+	{
 		// フォントの設定
 		::SendMessage(hCtrl, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(FALSE, 0));
 	}

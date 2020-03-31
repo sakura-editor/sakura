@@ -32,7 +32,8 @@
 	@li RegisterWC()	ウィンドウクラス登録
 	@li Create()		ウィンドウ作成
 */
-class CWnd {
+class CWnd
+{
 protected:
 	friend LRESULT CALLBACK CWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 

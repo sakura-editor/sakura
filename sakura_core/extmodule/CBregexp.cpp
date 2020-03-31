@@ -88,30 +88,36 @@ int CBregexp::CheckPattern(const wchar_t *szPattern)
 	nLen		 = wcslen(szPattern);
 	szPatternEnd = szPattern + nLen;
 	// パターン種別の設定
-	if (BMatch(TOP_MATCH, szPattern, szPatternEnd, &sReg, szMsg) > 0) {
+	if (BMatch(TOP_MATCH, szPattern, szPatternEnd, &sReg, szMsg) > 0)
+	{
 		// 行頭パターンにマッチした
 		m_ePatType |= PAT_TOP;
 	}
 	BRegfree(sReg);
 	sReg = NULL;
-	if (BMatch(TAB_MATCH, szPattern, szPatternEnd, &sReg, szMsg) > 0) {
+	if (BMatch(TAB_MATCH, szPattern, szPatternEnd, &sReg, szMsg) > 0)
+	{
 		// 行頭行末パターンにマッチした
 		m_ePatType |= PAT_TAB;
 	}
 	BRegfree(sReg);
 	sReg = NULL;
-	if (BMatch(DOL_MATCH, szPattern, szPatternEnd, &sReg, szMsg) > 0) {
+	if (BMatch(DOL_MATCH, szPattern, szPatternEnd, &sReg, szMsg) > 0)
+	{
 		// 行末の\$ にマッチした
 		// PAT_NORMAL
 	}
-	else {
+	else
+	{
 		BRegfree(sReg);
 		sReg = NULL;
-		if (BMatch(BOT_MATCH, szPattern, szPatternEnd, &sReg, szMsg) > 0) {
+		if (BMatch(BOT_MATCH, szPattern, szPatternEnd, &sReg, szMsg) > 0)
+		{
 			// 行末パターンにマッチした
 			m_ePatType |= PAT_BOTTOM;
 		}
-		else {
+		else
+		{
 			// その他
 			// PAT_NORMAL
 		}
@@ -119,7 +125,8 @@ int CBregexp::CheckPattern(const wchar_t *szPattern)
 	BRegfree(sReg);
 	sReg = NULL;
 
-	if (BMatch(LOOKAHEAD, szPattern, szPattern + nLen, &sReg, szMsg) > 0) {
+	if (BMatch(LOOKAHEAD, szPattern, szPattern + nLen, &sReg, szMsg) > 0)
+	{
 		// 先読みパターンにマッチした
 		m_ePatType |= PAT_LOOKAHEAD;
 	}
@@ -152,13 +159,15 @@ wchar_t *CBregexp::MakePatternSub(const wchar_t *szPattern,  //!< 検索パタ�
 	wchar_t *pPat;		 //!< パターン文字列操作用のポインタ
 
 	nLen = wcslen(szPattern);
-	if (szPattern2 == NULL) {
+	if (szPattern2 == NULL)
+	{
 		// 検索(BMatch)時
 		szNPattern = new wchar_t[nLen + 15]; //	15：「s///option」が余裕ではいるように。
 		pPat	   = szNPattern;
 		*pPat++	= L'm';
 	}
-	else {
+	else
+	{
 		// 置換(BSubst)時
 		nLen2	  = wcslen(szPattern2) + wcslen(szAdd2);
 		szNPattern = new wchar_t[nLen + nLen2 + 15];
@@ -168,7 +177,8 @@ wchar_t *CBregexp::MakePatternSub(const wchar_t *szPattern,  //!< 検索パタ�
 	*pPat++ = DELIMITER;
 	while (*szPattern != L'\0') { *pPat++ = *szPattern++; }
 	*pPat++ = DELIMITER;
-	if (szPattern2 != NULL) {
+	if (szPattern2 != NULL)
+	{
 		while (*szPattern2 != L'\0') { *pPat++ = *szPattern2++; }
 		while (*szAdd2 != L'\0') { *pPat++ = *szAdd2++; }
 		*pPat++ = DELIMITER;
@@ -176,11 +186,13 @@ wchar_t *CBregexp::MakePatternSub(const wchar_t *szPattern,  //!< 検索パタ�
 	*pPat++ = L'k'; // 漢字対応
 	*pPat++ = L'm'; // 複数行対応(但し、呼び出し側が複数行対応でない)
 	// 2006.01.22 かろと 論理逆なので bIgnoreCase -> optCaseSensitiveに変更
-	if (!(nOption & optCaseSensitive)) { // 2002/2/1 hor IgnoreCase オプション追加 マージ：aroka
-		*pPat++ = L'i';					 // 大文字小文字を同一視(無視)する
+	if (!(nOption & optCaseSensitive))
+	{					// 2002/2/1 hor IgnoreCase オプション追加 マージ：aroka
+		*pPat++ = L'i'; // 大文字小文字を同一視(無視)する
 	}
 	// 2006.01.22 かろと 行単位置換のために、全域オプション追加
-	if ((nOption & optGlobal)) {
+	if ((nOption & optGlobal))
+	{
 		*pPat++ = L'g'; // 全域(global)オプション、行単位の置換をする時に使用する
 	}
 	if ((nOption & optExtend)) { *pPat++ = L'x'; }
@@ -228,29 +240,38 @@ wchar_t *CBregexp::MakePattern(const wchar_t *szPattern, const wchar_t *szPatter
 	wchar_t *			 szNPattern;	  //!< 検索パターン
 
 	nLen = CheckPattern(szPattern);
-	if ((m_ePatType & PAT_BOTTOM) != 0) {
+	if ((m_ePatType & PAT_BOTTOM) != 0)
+	{
 		bool bJustDollar = false; // 行末指定の$のみであるフラグ($の前に \r\nが指定されていない)
 		szNPattern		 = MakePatternSub(szPattern, NULL, NULL, nOption);
 		int matched		 = BMatch(szNPattern, szCRLF, szCRLF + wcslen(szCRLF), &sReg, szMsg);
-		if (matched >= 0) {
+		if (matched >= 0)
+		{
 			// szNPatternが不正なパターン等のエラーでなかった
 			// エラー時には sRegがNULLのままなので、sReg->nparensへのアクセスは不正
 			nParens = sReg->nparens; // オリジナルの検索文字列中の()の数を記憶
-			if (matched > 0) {
-				if (sReg->startp[0] == &szCRLF[1] && sReg->endp[0] == &szCRLF[1]) {
+			if (matched > 0)
+			{
+				if (sReg->startp[0] == &szCRLF[1] && sReg->endp[0] == &szCRLF[1])
+				{
 					if (BMatch(NULL, szCR, szCR + wcslen(szCR), &sReg, szMsg) > 0 && sReg->startp[0] == &szCR[1]
-						&& sReg->endp[0] == &szCR[1]) {
+						&& sReg->endp[0] == &szCR[1])
+					{
 						if (BMatch(NULL, szLF, szLF + wcslen(szLF), &sReg, szMsg) > 0 && sReg->startp[0] == &szLF[0]
-							&& sReg->endp[0] == &szLF[0]) {
+							&& sReg->endp[0] == &szLF[0])
+						{
 							// 検索文字列は 行末($)のみだった
 							bJustDollar = true;
 						}
 					}
 				}
 			}
-			else {
-				if (BMatch(NULL, szCR, szCR + wcslen(szCR), &sReg, szMsg) <= 0) {
-					if (BMatch(NULL, szLF, szLF + wcslen(szLF), &sReg, szMsg) <= 0) {
+			else
+			{
+				if (BMatch(NULL, szCR, szCR + wcslen(szCR), &sReg, szMsg) <= 0)
+				{
+					if (BMatch(NULL, szLF, szLF + wcslen(szLF), &sReg, szMsg) <= 0)
+					{
 						// 検索文字列は、文字＋行末($)だった
 						bJustDollar = true;
 					}
@@ -261,11 +282,14 @@ wchar_t *CBregexp::MakePattern(const wchar_t *szPattern, const wchar_t *szPatter
 		}
 		delete[] szNPattern;
 
-		if (bJustDollar == true || (m_ePatType & PAT_TAB) != 0) {
+		if (bJustDollar == true || (m_ePatType & PAT_TAB) != 0)
+		{
 			// 行末指定の$ or 行頭行末指定 なので、検索文字列を置換
-			if (BSubst(BOT_SUBST, szPattern, szPattern + nLen, &sReg, szMsg) > 0) {
+			if (BSubst(BOT_SUBST, szPattern, szPattern + nLen, &sReg, szMsg) > 0)
+			{
 				szPattern = sReg->outp;
-				if (szPattern2 != NULL) {
+				if (szPattern2 != NULL)
+				{
 					// 置換パターンもあるので、置換パターンの最後に $(nParens+1)を追加
 					auto_sprintf(szAdd2, L"$%d", nParens + 1);
 				}
@@ -298,12 +322,15 @@ wchar_t *CBregexp::MakePatternAlternate(const wchar_t *const szSearch, const wch
 	// すべての . を [^\r\n] へ、すべての $ を (?<![\r\n])(?=\r|$)
 	// へ置換すると仮定して、strModifiedSearchの最大長を決定する。
 	std::wstring::size_type modifiedSearchSize = 0;
-	for (const wchar_t *p = szSearch; *p; ++p) {
+	for (const wchar_t *p = szSearch; *p; ++p)
+	{
 		if (*p == L'.') { modifiedSearchSize += (sizeof szDotAlternative) / (sizeof szDotAlternative[0]) - 1; }
-		else if (*p == L'$') {
+		else if (*p == L'$')
+		{
 			modifiedSearchSize += (sizeof szDollarAlternative) / (sizeof szDollarAlternative[0]) - 1;
 		}
-		else {
+		else
+		{
 			modifiedSearchSize += 1;
 		}
 	}
@@ -313,7 +340,8 @@ wchar_t *CBregexp::MakePatternAlternate(const wchar_t *const szSearch, const wch
 	strModifiedSearch.reserve(modifiedSearchSize);
 
 	// szSearchを strModifiedSearchへ、ところどころ置換しながら順次コピーしていく。
-	enum State {
+	enum State
+	{
 		DEF = 0, /* DEFULT 一番外側 */
 		D_E,	 /* DEFAULT_ESCAPED 一番外側で \の次 */
 		D_C,	 /* DEFAULT_SMALL_C 一番外側で \cの次 */
@@ -328,7 +356,8 @@ wchar_t *CBregexp::MakePatternAlternate(const wchar_t *const szSearch, const wch
 		_DT = -3, /* DOT (特殊文字としての)ドットを置き換える */
 		_DL = -4, /* DOLLAR (特殊文字としての)ドルを置き換える */
 	};
-	enum CharClass {
+	enum CharClass
+	{
 		OTHER = 0,
 		DOT,	/* . */
 		DOLLAR, /* $ */
@@ -354,7 +383,8 @@ wchar_t *CBregexp::MakePatternAlternate(const wchar_t *const szSearch, const wch
 	int   charsetLevel =
 		0; // ブラケットの深さ。POSIXブラケット表現など、エスケープされていない [] が入れ子になることがある。
 	const wchar_t *left = szSearch, *right = szSearch;
-	for (; *right; ++right) { // CNativeW::GetSizeOfChar()は使わなくてもいいかな？
+	for (; *right; ++right)
+	{ // CNativeW::GetSizeOfChar()は使わなくてもいいかな？
 		const wchar_t   ch = *right;
 		const CharClass charClass =
 			ch == L'.'
@@ -370,7 +400,8 @@ wchar_t *CBregexp::MakePatternAlternate(const wchar_t *const szSearch, const wch
 		const State nextState = state_transition_table[state][charClass];
 		if (0 <= nextState) { state = nextState; }
 		else
-			switch (nextState) {
+			switch (nextState)
+			{
 			case _EC: // ENTER CHARSET
 				charsetLevel += 1;
 				state = CHA;
@@ -422,16 +453,19 @@ bool CBregexp::Compile(const wchar_t *szPattern0, const wchar_t *szPattern1, int
 	wchar_t *	  szNPattern  = NULL;
 	const wchar_t *pszNPattern = NULL;
 	if (bKakomi) { pszNPattern = szPattern0; }
-	else {
+	else
+	{
 		szNPattern  = MakePatternAlternate(szPattern0, szPattern1, nOption);
 		pszNPattern = szNPattern;
 	}
 	m_szMsg[0] = L'\0'; //!< エラー解除
-	if (szPattern1 == NULL) {
+	if (szPattern1 == NULL)
+	{
 		// 検索実行
 		BMatch(pszNPattern, m_tmpBuf, m_tmpBuf + 1, &m_pRegExp, m_szMsg);
 	}
-	else {
+	else
+	{
 		// 置換実行
 		BSubst(pszNPattern, m_tmpBuf, m_tmpBuf + 1, &m_pRegExp, m_szMsg);
 	}
@@ -439,7 +473,8 @@ bool CBregexp::Compile(const wchar_t *szPattern0, const wchar_t *szPattern1, int
 
 	//	メッセージが空文字列でなければ何らかのエラー発生。
 	//	サンプルソース参照
-	if (m_szMsg[0]) {
+	if (m_szMsg[0])
+	{
 		ReleaseCompileBuffer();
 		return false;
 	}
@@ -470,30 +505,35 @@ bool CBregexp::Match(const wchar_t *target, int len, int nStart)
 
 	m_szMsg[0] = '\0'; //!< エラー解除
 	// 拡張関数がない場合は、行の先頭("^")の検索時の特別処理 by かろと
-	if (!ExistBMatchEx()) {
+	if (!ExistBMatchEx())
+	{
 		/*
 		** 行頭(^)とマッチするのは、nStart=0の時だけなので、それ以外は false
 		*/
-		if ((m_ePatType & PAT_TOP) != 0 && nStart != 0) {
+		if ((m_ePatType & PAT_TOP) != 0 && nStart != 0)
+		{
 			// nStart!=0でも、BMatch()にとっては行頭になるので、ここでfalseにする必要がある
 			return false;
 		}
 		//	検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
 		matched = BMatch(NULL, target + nStart, target + len, &m_pRegExp, m_szMsg);
 	}
-	else {
+	else
+	{
 		//	検索文字列＝NULLを指定すると前回と同一の文字列と見なされる
 		matched = BMatchEx(NULL, target, target + nStart, target + len, &m_pRegExp, m_szMsg);
 	}
 	m_szTarget = target;
 
-	if (matched < 0 || m_szMsg[0]) {
+	if (matched < 0 || m_szMsg[0])
+	{
 		// BMatchエラー
 		// エラー処理をしていなかったので、nStart>=lenのような場合に、マッチ扱いになり
 		// 無限置換等の不具合になっていた 2003.05.03 by かろと
 		return false;
 	}
-	else if (matched == 0) {
+	else if (matched == 0)
+	{
 		// 一致しなかった
 		return false;
 	}
@@ -536,7 +576,8 @@ int CBregexp::Replace(const wchar_t *szTarget, int nLen, int nStart)
 
 	m_szMsg[0] = '\0'; //!< エラー解除
 	if (!ExistBSubstEx()) { result = BSubst(NULL, szTarget + nStart, szTarget + nLen, &m_pRegExp, m_szMsg); }
-	else {
+	else
+	{
 		result = BSubstEx(NULL, szTarget, szTarget + nStart, szTarget + nLen, &m_pRegExp, m_szMsg);
 	}
 	m_szTarget = szTarget;
@@ -545,7 +586,8 @@ int CBregexp::Replace(const wchar_t *szTarget, int nLen, int nStart)
 	//	サンプルソース参照
 	if (m_szMsg[0]) { return 0; }
 
-	if (result < 0) {
+	if (result < 0)
+	{
 		// 置換するものがなかった
 		return 0;
 	}
@@ -577,14 +619,18 @@ bool InitRegexp(HWND	  hWnd, //!< [in] ダイアログボックスのウィン�
 	//	To Here 2007.08.12 genta
 
 	EDllResult eDllResult = rRegexp.InitDll(RegexpDll);
-	if (DLL_SUCCESS != eDllResult) {
-		if (bShowMessage) {
+	if (DLL_SUCCESS != eDllResult)
+	{
+		if (bShowMessage)
+		{
 			LPCWSTR pszMsg = L"";
 			if (eDllResult == DLL_LOADFAILURE) { pszMsg = LS(STR_BREGONIG_LOAD); }
-			else if (eDllResult == DLL_INITFAILURE) {
+			else if (eDllResult == DLL_INITFAILURE)
+			{
 				pszMsg = LS(STR_BREGONIG_INIT);
 			}
-			else {
+			else
+			{
 				pszMsg = LS(STR_BREGONIG_ERROR);
 				assert(0);
 			}
@@ -610,7 +656,8 @@ bool CheckRegexpVersion(
 {
 	CBregexp cRegexp;
 
-	if (!InitRegexp(hWnd, cRegexp, bShowMessage)) {
+	if (!InitRegexp(hWnd, cRegexp, bShowMessage))
+	{
 		if (hWnd != NULL) { ::DlgItem_SetText(hWnd, nCmpId, L" "); }
 		return false;
 	}
@@ -635,10 +682,10 @@ bool CheckRegexpSyntax(const wchar_t *szPattern, HWND hWnd, bool bShowMessage, i
 
 	if (!InitRegexp(hWnd, cRegexp, bShowMessage)) { return false; }
 	if (nOption == -1) { nOption = CBregexp::optCaseSensitive; }
-	if (!cRegexp.Compile(szPattern, NULL, nOption, bKakomi)) { // 2002/2/1 hor追加
-		if (bShowMessage) {
-			::MessageBox(hWnd, cRegexp.GetLastMessage(), LS(STR_BREGONIG_TITLE), MB_OK | MB_ICONEXCLAMATION);
-		}
+	if (!cRegexp.Compile(szPattern, NULL, nOption, bKakomi))
+	{ // 2002/2/1 hor追加
+		if (bShowMessage)
+		{ ::MessageBox(hWnd, cRegexp.GetLastMessage(), LS(STR_BREGONIG_TITLE), MB_OK | MB_ICONEXCLAMATION); }
 		return false;
 	}
 	return true;

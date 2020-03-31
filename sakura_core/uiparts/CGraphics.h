@@ -100,7 +100,8 @@ inline bool MyFillRect(const HDC hDC, const RECT &rc, const COLORREF color) noex
 
 //! オリジナル値保存クラス
 template<class T>
-class TOriginalHolder {
+class TOriginalHolder
+{
 public:
 	TOriginalHolder<T>()
 	{
@@ -114,7 +115,8 @@ public:
 	}
 	void AssignOnce(const T &t)
 	{
-		if (!m_hold) {
+		if (!m_hold)
+		{
 			m_data = t;
 			m_hold = true;
 		}
@@ -128,14 +130,16 @@ private:
 };
 
 //! フォント情報管理
-struct SFONT {
+struct SFONT
+{
 	SFontAttr m_sFontAttr;
 	HFONT	 m_hFont; //!< フォントハンドル
 };
 
 //! 描画管理
 //最新実装：ブラシ
-class CGraphics {
+class CGraphics
+{
 public:
 	CGraphics(const CGraphics &rhs) { Init(rhs.m_hdc); }
 	CGraphics(HDC hdc = NULL) { Init(hdc); }

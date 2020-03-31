@@ -38,7 +38,8 @@ class CEditView;
 // COM一般
 
 template<class Base>
-class ImplementsIUnknown : public Base {
+class ImplementsIUnknown : public Base
+{
 private:
 	int m_RefCount;
 	ImplementsIUnknown(const ImplementsIUnknown &);
@@ -76,17 +77,20 @@ class CIfObj;
 typedef HRESULT (CIfObj::*CIfObjMethod)(int ID, DISPPARAMS *Arguments, VARIANT *Result, void *Data);
 
 // CIfObjが必要とするWSHClientのインタフェース
-class IWSHClient {
+class IWSHClient
+{
 public:
 	virtual void *GetData() const = 0;
 };
 
 //スクリプトに渡されるオブジェクト
 
-class CIfObj : public ImplementsIUnknown<IDispatch> {
+class CIfObj : public ImplementsIUnknown<IDispatch>
+{
 public:
 	// 型定義
-	struct CMethodInfo {
+	struct CMethodInfo
+	{
 		FUNCDESC	 Desc;
 		wchar_t		 Name[64];
 		CIfObjMethod Method;

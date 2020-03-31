@@ -50,7 +50,8 @@ class CMenuDrawer; // 2002/2/10 aroka to here
 	@date 2008.6.22 Uchi #define -> enum に変更
 	@date 2008.6.22 Uchi順序変更 Win,Toolbar,Tab,Statusbarの順に、File,FileName 順に
 */
-enum PropComSheetOrder {
+enum PropComSheetOrder
+{
 	ID_PROPCOM_PAGENUM_GENERAL = 0, //!< 全般
 	ID_PROPCOM_PAGENUM_WIN,			//!< ウィンドウ
 	ID_PROPCOM_PAGENUM_MAINMENU,	//!< メインメニュー
@@ -82,7 +83,8 @@ enum PropComSheetOrder {
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class CPropCommon {
+class CPropCommon
+{
 public:
 	/*
 	||  Constructors
@@ -130,7 +132,8 @@ public:
 	CommonSetting m_Common;
 
 	// 2005.01.13 MIK セット数増加
-	struct SKeywordSetIndex {
+	struct SKeywordSetIndex
+	{
 		int typeId;
 		int index[MAX_KEYWORDSET_PER_TYPE];
 	};
@@ -190,7 +193,8 @@ protected:
 */
 //==============================================================
 //!	全般ページ
-class CPropGeneral final : CPropCommon {
+class CPropGeneral final : CPropCommon
+{
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -204,7 +208,8 @@ protected:
 
 //==============================================================
 //!	ファイルページ
-class CPropFile final : CPropCommon {
+class CPropFile final : CPropCommon
+{
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -222,7 +227,8 @@ private:
 
 //==============================================================
 //!	キー割り当てページ
-class CPropKeybind final : CPropCommon {
+class CPropKeybind final : CPropCommon
+{
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -242,7 +248,8 @@ private:
 
 //==============================================================
 //!	ツールバーページ
-class CPropToolbar final : CPropCommon {
+class CPropToolbar final : CPropCommon
+{
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -259,7 +266,8 @@ private:
 
 //==============================================================
 //!	キーワードページ
-class CPropKeyword final : CPropCommon {
+class CPropKeyword final : CPropCommon
+{
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -285,7 +293,8 @@ private:
 
 //==============================================================
 //!	カスタムメニューページ
-class CPropCustmenu final : CPropCommon {
+class CPropCustmenu final : CPropCommon
+{
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -302,7 +311,8 @@ protected:
 
 //==============================================================
 //!	書式ページ
-class CPropFormat final : CPropCommon {
+class CPropFormat final : CPropCommon
+{
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -323,7 +333,8 @@ private:
 
 //==============================================================
 //!	支援ページ
-class CPropHelper final : CPropCommon {
+class CPropHelper final : CPropCommon
+{
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -337,7 +348,8 @@ protected:
 
 //==============================================================
 //!	バックアップページ
-class CPropBackup final : CPropCommon {
+class CPropBackup final : CPropCommon
+{
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -357,7 +369,8 @@ private:
 
 //==============================================================
 //!	ウィンドウページ
-class CPropWin final : CPropCommon {
+class CPropWin final : CPropCommon
+{
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -375,7 +388,8 @@ private:
 
 //==============================================================
 //!	タブ動作ページ
-class CPropTab final : CPropCommon {
+class CPropTab final : CPropCommon
+{
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -392,7 +406,8 @@ private:
 
 //==============================================================
 //!	編集ページ
-class CPropEdit final : CPropCommon {
+class CPropEdit final : CPropCommon
+{
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -409,7 +424,8 @@ private:
 
 //==============================================================
 //!	検索ページ
-class CPropGrep final : CPropCommon {
+class CPropGrep final : CPropCommon
+{
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -426,7 +442,8 @@ private:
 
 //==============================================================
 //!	マクロページ
-class CPropMacro final : CPropCommon {
+class CPropMacro final : CPropCommon
+{
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -449,7 +466,8 @@ private:
 
 //==============================================================
 //!	ファイル名表示ページ
-class CPropFileName final : CPropCommon {
+class CPropFileName final : CPropCommon
+{
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -468,7 +486,8 @@ private:
 
 //==============================================================
 //!	ステータスバーページ
-class CPropStatusbar final : CPropCommon {
+class CPropStatusbar final : CPropCommon
+{
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -482,7 +501,8 @@ protected:
 
 //==============================================================
 //!	プラグインページ
-class CPropPlugin final : CPropCommon {
+class CPropPlugin final : CPropCommon
+{
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -502,7 +522,8 @@ private:
 
 //==============================================================
 //!	メインメニューページ
-class CPropMainMenu final : CPropCommon {
+class CPropMainMenu final : CPropCommon
+{
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);

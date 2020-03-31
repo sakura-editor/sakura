@@ -41,7 +41,8 @@ struct DLLSHAREDATA;
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 	@date 20050809 aroka クラス外部からアクセスされないメンバはprivateにした。
 */
-class CMenuDrawer {
+class CMenuDrawer
+{
 public:
 	/*
 	||  Constructors
@@ -101,7 +102,8 @@ private:
 	int					  m_nMyButtonFixSize; // 固定部分の最大数
 
 	// 2011.11.18 MenuItemのvector化
-	struct MyMenuItemInfo {
+	struct MyMenuItemInfo
+	{
 		int		 m_nBitmapIdx;
 		int		 m_nFuncId;
 		CNativeW m_cmemLabel;

@@ -79,7 +79,8 @@ struct DLLSHAREDATA;
 #define IDT_SYSMENU 1357
 #define ID_TOOLBAR 100
 
-struct STabGroupInfo {
+struct STabGroupInfo
+{
 	HWND			hwndTop;
 	WINDOWPLACEMENT wpTop;
 
@@ -94,7 +95,8 @@ struct STabGroupInfo {
 // 2002.02.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 // 2007.10.30 kobake IsFuncEnable,IsFuncCheckedをFunccode.hに移動
 // 2007.10.30 kobake OnHelp_MenuItemをCEditAppに移動
-class CEditWnd : public TSingleton<CEditWnd>, public CDocListenerEx {
+class CEditWnd : public TSingleton<CEditWnd>, public CDocListenerEx
+{
 	friend class TSingleton<CEditWnd>;
 	CEditWnd();
 	~CEditWnd();
@@ -300,7 +302,13 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	// by 鬼
 protected:
-	enum EIconClickStatus { icNone, icDown, icClicked, icDoubleClicked };
+	enum EIconClickStatus
+	{
+		icNone,
+		icDown,
+		icClicked,
+		icDoubleClicked
+	};
 
 protected:
 	//ドロップダウンメニュー
@@ -318,7 +326,8 @@ protected:
 	void IncrementTimerCount(int nInterval)
 	{
 		m_nTimerCount++;
-		if (nInterval <= m_nTimerCount) { // 2012.11.29 aroka 呼び出し間隔のバグ修正
+		if (nInterval <= m_nTimerCount)
+		{ // 2012.11.29 aroka 呼び出し間隔のバグ修正
 			m_nTimerCount = 0;
 		}
 	}

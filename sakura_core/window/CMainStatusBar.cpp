@@ -35,20 +35,24 @@ void CMainStatusBar::CreateStatusBar()
 /* ステータスバー破棄 */
 void CMainStatusBar::DestroyStatusBar()
 {
-	if (NULL != m_hwndProgressBar) {
+	if (NULL != m_hwndProgressBar)
+	{
 		::DestroyWindow(m_hwndProgressBar);
 		m_hwndProgressBar = NULL;
 	}
 	::DestroyWindow(m_hwndStatusBar);
 	m_hwndStatusBar = NULL;
 
-	if (NULL != m_pOwner->m_cFuncKeyWnd.GetHwnd()) {
+	if (NULL != m_pOwner->m_cFuncKeyWnd.GetHwnd())
+	{
 		bool bSizeBox;
-		if (GetDllShareData().m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0) { /* ファンクションキー表示位置／0:上 1:下 */
+		if (GetDllShareData().m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0)
+		{ /* ファンクションキー表示位置／0:上 1:下 */
 			/* サイズボックスの表示／非表示切り替え */
 			bSizeBox = false;
 		}
-		else {
+		else
+		{
 			bSizeBox = true;
 			/* ステータスパーを表示している場合はサイズボックスを表示しない */
 			if (NULL != m_hwndStatusBar) { bSizeBox = false; }
@@ -88,7 +92,8 @@ void CMainStatusBar::SendStatusMessage2(const WCHAR *msg)
 */
 void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR *pszText, size_t textLen /* = SIZE_MAX */)
 {
-	if (!m_hwndStatusBar) {
+	if (!m_hwndStatusBar)
+	{
 		assert(m_hwndStatusBar != NULL);
 		return;
 	}
@@ -102,7 +107,8 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR *pszText
 		// オーナードローではない場合で NULLの場合は空文字に置き換える
 		// NULL を渡しても問題が無いのかどうか公式ドキュメントに記載されていない
 		// NULL のままでも問題は発生しないようだが念の為に対策を追加
-		if (pszText == NULL) {
+		if (pszText == NULL)
+		{
 			static const wchar_t emptyStr[] = L"";
 			pszText							= emptyStr;
 			textLen							= 0;
@@ -118,12 +124,14 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR *pszText
 		if (textLen == SIZE_MAX) { textLen = wcslen(pszText); }
 		// 設定済みの文字列長と設定する文字列長が異なる場合は、SB_SETTEXT メッセージを発行
 		if (prevTextLen != textLen) { return true; }
-		if (prevTextLen > 0) {
+		if (prevTextLen > 0)
+		{
 			::StatusBar_GetText(m_hwndStatusBar, nIndex, prev);
 			// 設定済みの文字列と設定する文字列を比較して異なる場合は、SB_SETTEXT メッセージを発行
 			return (wcscmp(prev, pszText) != 0);
 		}
-		else {
+		else
+		{
 			return true;
 		}
 	}()

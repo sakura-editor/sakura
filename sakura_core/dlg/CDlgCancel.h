@@ -22,7 +22,8 @@ class CDlgCancel;
 /*!
 	@brief キャンセルボタンダイアログ
 */
-class CDlgCancel : public CDialog {
+class CDlgCancel : public CDialog
+{
 public:
 	/*
 	||  Constructors

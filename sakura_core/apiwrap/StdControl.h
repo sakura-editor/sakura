@@ -41,7 +41,8 @@ UNICODE版では問題無いが、ANSI版では設定の前にコード変換す
 #include <vector>
 #include <windows.h>
 
-namespace ApiWrap {
+namespace ApiWrap
+{
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ウィンドウ共通                         //
@@ -71,7 +72,8 @@ inline bool Wnd_GetText(HWND hwnd, CNativeW &str)
 	// 条件によっては必要なサイズより大きな値を返すことがある模様
 	// https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getwindowtextlengtha
 	const int length = ::GetWindowTextLength(hwnd);
-	if (length < 0) {
+	if (length < 0)
+	{
 		// ドキュメントには失敗した場合、あるいはテキストが空の場合には 0 を返すとある。
 		// 0 の場合はエラーかどうか判断できないのでテキストの取得処理を続行する。
 		// 仕様上は負の場合はありえないが、念の為エラーチェックしておく。
@@ -85,15 +87,18 @@ inline bool Wnd_GetText(HWND hwnd, CNativeW &str)
 	if (str.capacity() < bufsize) { str.AllocStringBuffer(bufsize); }
 
 	int actualCount = ::GetWindowText(hwnd, str.GetStringPtr(), str.capacity());
-	if (actualCount < 0) {
+	if (actualCount < 0)
+	{
 		// 仕様上は負の場合はありえないが、念の為エラーチェックしておく。
 		return false;
 	}
-	else if (actualCount == 0) {
+	else if (actualCount == 0)
+	{
 		// GetWindowText はエラーの場合、またはテキストが空の場合は 0 を返す
 		if (GetLastError() != 0) { return false; }
 	}
-	else if (actualCount >= str.capacity()) {
+	else if (actualCount >= str.capacity())
+	{
 		// GetWindowText() の仕様上はありえないはず
 		return false;
 	}

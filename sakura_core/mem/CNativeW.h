@@ -29,14 +29,16 @@
 #include "debug/Debug2.h" //assert
 
 //! 文字列への参照を取得するインターフェース
-class IStringRef {
+class IStringRef
+{
 public:
 	virtual const wchar_t *GetPtr() const	= 0;
 	virtual int			   GetLength() const = 0;
 };
 
 //! 文字列への参照を保持するクラス
-class CStringRef final : public IStringRef {
+class CStringRef final : public IStringRef
+{
 public:
 	CStringRef()
 		: m_pData(NULL)
@@ -74,7 +76,8 @@ CNativeW operator+(const CNativeW &lhs, const wchar_t *rhs) noexcept(false);
 CNativeW operator+(const wchar_t *lhs, const CNativeW &rhs) noexcept(false);
 
 //! UNICODE文字列管理クラス
-class CNativeW final : public CNative {
+class CNativeW final : public CNative
+{
 	friend bool operator==(const CNativeW &lhs, const wchar_t *rhs) noexcept;
 
 public:

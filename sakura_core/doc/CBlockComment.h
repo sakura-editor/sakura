@@ -17,7 +17,8 @@
 //	sakura
 #include "_main/global.h"
 
-enum ECommentType {
+enum ECommentType
+{
 	COMMENT_TYPE_0 = 0,
 	COMMENT_TYPE_1 = 1,
 };
@@ -33,7 +34,8 @@ enum ECommentType {
 #define BLOCKCOMMENT_BUFFERSIZE 16
 
 //	2005.11.10 Moca アクセス関数追加
-class CBlockComment {
+class CBlockComment
+{
 public:
 	//生成と破棄
 	CBlockComment();

@@ -41,7 +41,8 @@ class CGrepAgent;
 enum EFunctionCode;
 
 //!エディタ部分アプリケーションクラス。CNormalProcess1個につき、1個存在。
-class CEditApp : public TSingleton<CEditApp> {
+class CEditApp : public TSingleton<CEditApp>
+{
 	friend class TSingleton<CEditApp>;
 	CEditApp() {}
 	virtual ~CEditApp();
@@ -89,7 +90,8 @@ public:
 };
 
 // WM_QUIT検出例外
-class CAppExitException : public std::exception {
+class CAppExitException : public std::exception
+{
 public:
 	const char *what() const throw() { return "CAppExitException"; }
 };

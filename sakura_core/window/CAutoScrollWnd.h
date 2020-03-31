@@ -27,7 +27,8 @@
 #include "CWnd.h"
 class CEditView;
 
-class CAutoScrollWnd final : public CWnd {
+class CAutoScrollWnd final : public CWnd
+{
 public:
 	CAutoScrollWnd();
 	virtual ~CAutoScrollWnd();

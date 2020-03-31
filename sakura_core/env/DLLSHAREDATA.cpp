@@ -58,7 +58,8 @@ int CShareDataLockCounter::GetLockCounter()
 	return GetDllShareData().m_nLockCount;
 }
 
-class CLockCancel final : public CDlgCancel {
+class CLockCancel final : public CDlgCancel
+{
 public:
 	BOOL OnInitDialog(HWND hwnd, WPARAM wParam, LPARAM lParam) override
 	{
@@ -77,7 +78,8 @@ public:
 		::SetWindowText(hwndMsg, msg);
 		::ShowWindow(hwndCancelButton, SW_HIDE);
 		::ShowWindow(hwndKensuu, SW_HIDE);
-		if (GetComctl32Version() >= PACKVERSION(6, 0)) {
+		if (GetComctl32Version() >= PACKVERSION(6, 0))
+		{
 			// マーキーにする(CommCtrl 6.0以上)
 			HWND hwndProgress = GetItemHwnd(IDC_PROGRESS);
 			// スタイル変更+メッセージでないと機能しない
@@ -85,7 +87,8 @@ public:
 			::SetWindowLongPtr(hwndProgress, GWL_STYLE, style | PBS_MARQUEE);
 			Progress_SetMarquee(hwndProgress, TRUE, 100);
 		}
-		else {
+		else
+		{
 			HWND hwndProgress = ::GetDlgItem(hwndCancel, IDC_PROGRESS);
 			::ShowWindow(hwndProgress, SW_HIDE);
 		}
@@ -98,7 +101,8 @@ static int GetCountIf0Lock(CShareDataLockCounter **ppLock)
 {
 	LockGuard<CMutex> guard(g_cKeywordMutex);
 	int				  count = GetDllShareData().m_nLockCount;
-	if (count <= 0) {
+	if (count <= 0)
+	{
 		if (ppLock) { *ppLock = new CShareDataLockCounter(); }
 	}
 	return count;
@@ -106,25 +110,30 @@ static int GetCountIf0Lock(CShareDataLockCounter **ppLock)
 
 void CShareDataLockCounter::WaitLock(HWND hwndParent, CShareDataLockCounter **ppLock)
 {
-	if (0 < GetCountIf0Lock(ppLock)) {
+	if (0 < GetCountIf0Lock(ppLock))
+	{
 		DWORD		 dwTime = ::GetTickCount();
 		CWaitCursor  cWaitCursor(hwndParent);
 		CLockCancel *pDlg		= NULL;
 		HWND		 hwndCancel = NULL;
 		::EnableWindow(hwndParent, FALSE);
-		while (0 < GetCountIf0Lock(ppLock)) {
+		while (0 < GetCountIf0Lock(ppLock))
+		{
 			DWORD dwResult = MsgWaitForMultipleObjects(0, NULL, FALSE, 100, QS_ALLEVENTS);
 			if (dwResult == 0xFFFFFFFF) { break; }
 			if (!BlockingHook(hwndCancel)) { break; }
-			if (NULL == pDlg) {
+			if (NULL == pDlg)
+			{
 				DWORD dwTimeNow = ::GetTickCount();
-				if (2000 < dwTimeNow - dwTime) {
+				if (2000 < dwTimeNow - dwTime)
+				{
 					pDlg	   = new CLockCancel();
 					hwndCancel = pDlg->DoModeless(::GetModuleHandle(NULL), hwndParent, IDD_OPERATIONRUNNING);
 				}
 			}
 		}
-		if (pDlg) {
+		if (pDlg)
+		{
 			pDlg->CloseDialog(0);
 			delete pDlg;
 		}

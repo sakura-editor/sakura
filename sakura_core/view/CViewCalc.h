@@ -34,7 +34,8 @@ class CLayout;
 class CDocLine;
 class CEditView;
 
-class CViewCalc {
+class CViewCalc
+{
 protected:
 	//外部依存
 	CLayoutInt	GetTabSpace() const;

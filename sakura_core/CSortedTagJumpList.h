@@ -37,7 +37,8 @@
 /*!	@brief ダイレクトタグジャンプ用検索結果をソートして保持する．
 	@author MIK
 */
-class CSortedTagJumpList {
+class CSortedTagJumpList
+{
 public:
 	CSortedTagJumpList(int max);
 	~CSortedTagJumpList();
@@ -51,7 +52,8 @@ public:
 	void Empty(void);
 	bool IsOverflow(void) { return m_bOverflow; }
 
-	typedef struct tagjump_info_t {
+	typedef struct tagjump_info_t
+	{
 		struct tagjump_info_t *next;	  //!< 次のリスト
 		WCHAR *				   keyword;   //!< キーワード
 		WCHAR *				   filename;  //!< ファイル名

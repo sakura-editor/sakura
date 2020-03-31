@@ -36,7 +36,8 @@
 struct EditInfo;
 
 //! iniフォルダ設定	// 2007.05.31 ryoji
-struct IniFolder {
+struct IniFolder
+{
 	bool  m_bInit;						 // 初期化済フラグ
 	bool  m_bReadPrivate;				 // マルチユーザ用iniからの読み出しフラグ
 	bool  m_bWritePrivate;				 // マルチユーザ用iniへの書き込みフラグ
@@ -45,12 +46,14 @@ struct IniFolder {
 };										 /* iniフォルダ設定 */
 
 //共有メモリ内構造体
-struct SShare_FileNameManagement {
+struct SShare_FileNameManagement
+{
 	IniFolder m_IniFolder; /**** iniフォルダ設定 ****/
 };
 
 //!ファイル名管理
-class CFileNameManager : public TSingleton<CFileNameManager> {
+class CFileNameManager : public TSingleton<CFileNameManager>
+{
 	friend class TSingleton<CFileNameManager>;
 	CFileNameManager()
 	{

@@ -40,9 +40,11 @@ inline bool is_field_begin(T c)
 template<class T>
 inline const T *skip_field_flag(const T *p)
 {
-	while (*p) {
+	while (*p)
+	{
 		T c = *p;
-		if (c == _T2(T, '-') || c == _T2(T, '+') || c == _T2(T, '0') || c == _T2(T, ' ') || c == _T2(T, '#')) {
+		if (c == _T2(T, '-') || c == _T2(T, '+') || c == _T2(T, '0') || c == _T2(T, ' ') || c == _T2(T, '#'))
+		{
 			p++;
 			continue;
 		}
@@ -124,7 +126,8 @@ static void my_va_forward(va_list &v, const char *field, const char *prefix)
 {
 	if (*field == 0) return;
 	const char *field_end = auto_strchr(field, 0) - 1;
-	switch (*field_end) {
+	switch (*field_end)
+	{
 	case 's':
 	case 'S':
 	case 'p': va_arg(v, void *); break;
@@ -133,14 +136,17 @@ static void my_va_forward(va_list &v, const char *field, const char *prefix)
 	case 'o':
 	case 'u':
 	case 'x':
-	case 'X': {
+	case 'X':
+	{
 		// 2014.06.12 64bit値対応
 		const char *p = prefix;
 		if (p[0] == 'I' && p[1] == '6' && p[2] == '4') { va_arg(v, LONGLONG); }
-		else {
+		else
+		{
 			va_arg(v, int);
 		}
-	} break;
+	}
+	break;
 	case 'c':
 		if (field_end - 1 >= field && *(field_end - 1) == 'w')
 			va_arg(v, int); // wchar_t
@@ -168,7 +174,8 @@ static void my_va_forward(va_list &v, const wchar_t *field, const wchar_t *prefi
 {
 	if (*field == 0) return;
 	const wchar_t *field_end = auto_strchr(field, 0) - 1;
-	switch (*field_end) {
+	switch (*field_end)
+	{
 	case L's':
 	case L'S':
 	case L'p': va_arg(v, void *); break;
@@ -182,7 +189,8 @@ static void my_va_forward(va_list &v, const wchar_t *field, const wchar_t *prefi
 		{
 			const wchar_t *p = prefix;
 			if (p[0] == L'I' && p[1] == L'6' && p[2] == L'4') { va_arg(v, LONGLONG); }
-			else {
+			else
+			{
 				va_arg(v, int);
 			}
 		}
@@ -230,10 +238,12 @@ int tchar_vsprintf_s_imp(T *buf, size_t nBufCount, const T *format, va_list &v, 
 
 	T *		 dst = buf;	//変換先ワーク変数
 	const T *src = format; //変換元ワーク変数
-	while (*src) {
+	while (*src)
+	{
 		if (nBufCount != MAX_BUF && dst >= buf_end - 1) break;
 		//書式指定フィールドを取得
-		if (is_field_begin(*src)) {
+		if (is_field_begin(*src))
+		{
 			const T *field_begin = src;
 			src++;
 			src				= skip_field_flag(src);
@@ -242,7 +252,8 @@ int tchar_vsprintf_s_imp(T *buf, size_t nBufCount, const T *format, va_list &v, 
 			const T *prefix = src;
 			src				= skip_field_prefix(src);
 
-			if (is_field_type(*src)) {
+			if (is_field_type(*src))
+			{
 				src++;
 				const T *field_end = src;
 
@@ -259,17 +270,21 @@ int tchar_vsprintf_s_imp(T *buf, size_t nBufCount, const T *format, va_list &v, 
 				//変換処理は標準ライブラリに委譲
 				int		ret;
 				va_list tmp_v = v; //※vをコピーして用いる
-				if (truncate) {
+				if (truncate)
+				{
 					ret = local_vsnprintf_s(dst, buf_end - dst, field, tmp_v);
-					if (ret < 0) {
+					if (ret < 0)
+					{
 						//バッファに入りきらない文字列が切り捨てられた
 						return -1;
 					}
 				}
-				else if (nBufCount != MAX_BUF) {
+				else if (nBufCount != MAX_BUF)
+				{
 					ret = local_vsprintf_s(dst, buf_end - dst, field, tmp_v);
 				}
-				else {
+				else
+				{
 					ret = local_vsprintf(dst, field, tmp_v);
 				}
 
@@ -280,12 +295,14 @@ int tchar_vsprintf_s_imp(T *buf, size_t nBufCount, const T *format, va_list &v, 
 				if (ret != -1) { dst += ret; }
 				src = field_end;
 			}
-			else {
+			else
+			{
 				//有効な型フィールドではなかったので、そのまんま出力しちゃう
 				*dst++ = *src++;
 			}
 		}
-		else {
+		else
+		{
 			//無変換
 			*dst++ = *src++;
 		}
@@ -293,8 +310,9 @@ int tchar_vsprintf_s_imp(T *buf, size_t nBufCount, const T *format, va_list &v, 
 	//終端
 	*dst = 0;
 
-	if (truncate && *src != '\0') { //切り詰めありで、srcの処理が完了していない場合
-		return -1;					//切り詰められた
+	if (truncate && *src != '\0')
+	{			   //切り詰めありで、srcの処理が完了していない場合
+		return -1; //切り詰められた
 	}
 	return dst - buf;
 }

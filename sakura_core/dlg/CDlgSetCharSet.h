@@ -16,7 +16,8 @@
 #include "dlg/CDialog.h"
 
 //! 文字コードセット設定ダイアログボックス
-class CDlgSetCharSet final : public CDialog {
+class CDlgSetCharSet final : public CDialog
+{
 public:
 	/*
 	||  Constructors

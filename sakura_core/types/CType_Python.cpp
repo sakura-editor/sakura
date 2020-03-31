@@ -74,8 +74,10 @@ inline bool Python_IsWordChar(wchar_t c)
 
 	@date 2007.02.12 genta
 */
-struct COutlinePython {
-	enum {
+struct COutlinePython
+{
+	enum
+	{
 		STATE_NORMAL,   //!< 通常行 : 行頭を含む
 		STATE_STRING,   //!< 文字列中
 		STATE_CONTINUE, //!< 継続行 : 前の行からの続きなので行頭とはみなされない
@@ -154,24 +156,29 @@ int COutlinePython::EnterString(const wchar_t *data, int linelen, int start_offs
 
 	int col = start_offset;
 	//	文字列開始チェック
-	if (data[col] == '\"' || data[col] == '\'') {
+	if (data[col] == '\"' || data[col] == '\'')
+	{
 		int quote_char = data[col];
 		m_state		   = STATE_STRING;
 		m_quote_char   = quote_char;
 		//	文字列の開始
-		if (col >= 1 && (data[col - 1] == 'r' || data[col - 1] == 'R')) {
+		if (col >= 1 && (data[col - 1] == 'r' || data[col - 1] == 'R'))
+		{
 			//	厳密には直前がSHIFT_JISの2バイト目だと誤判定する可能性があるが
 			//	そういう動かないコードは相手にしない
 			m_raw_string = true;
 		}
-		else {
+		else
+		{
 			m_raw_string = false;
 		}
-		if (col + 2 < linelen && data[col + 1] == quote_char && data[col + 2] == quote_char) {
+		if (col + 2 < linelen && data[col + 1] == quote_char && data[col + 2] == quote_char)
+		{
 			m_long_string = true;
 			col += 2;
 		}
-		else {
+		else
+		{
 			m_long_string = false;
 		}
 		++col;
@@ -204,14 +211,17 @@ int COutlinePython::ScanNormal(const wchar_t *data, int linelen, int start_offse
 	assert(m_state == STATE_NORMAL || m_state == STATE_CONTINUE);
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
-	for (int col = start_offset; col < linelen; ++col) {
+	for (int col = start_offset; col < linelen; ++col)
+	{
 		int nCharChars = CNativeW::GetSizeOfChar(data, linelen, col);
-		if (1 < nCharChars) {
+		if (1 < nCharChars)
+		{
 			col += (nCharChars - 1);
 			continue;
 		}
 		//	コメント
-		if (data[col] == '#') {
+		if (data[col] == '#')
+		{
 			//	コメントは行末と同じ扱いなので
 			//	わざわざ独立して扱う必要性が薄い
 			//	ここで片を付けてしまおう
@@ -219,14 +229,17 @@ int COutlinePython::ScanNormal(const wchar_t *data, int linelen, int start_offse
 			break;
 		}
 		//	文字列
-		else if (data[col] == '\"' || data[col] == '\'') {
+		else if (data[col] == '\"' || data[col] == '\'')
+		{
 			return EnterString(data, linelen, col);
 		}
-		else if (data[col] == '\\') { //	継続行かもしれない
+		else if (data[col] == '\\')
+		{ //	継続行かもしれない
 			//	CRかCRLFかLFで行末
 			//	最終行には改行コードがないことがあるが，それ以降には何もないので影響しない
 			if ((linelen - 2 == col && (data[col + 1] == WCODE::CR && data[col + 2] == WCODE::LF))
-				|| (linelen - 1 == col && (WCODE::IsLineDelimiter(data[col + 1], bExtEol)))) {
+				|| (linelen - 1 == col && (WCODE::IsLineDelimiter(data[col + 1], bExtEol))))
+			{
 				m_state = STATE_CONTINUE;
 				break;
 			}
@@ -266,53 +279,66 @@ int COutlinePython::ScanString(const wchar_t *data, int linelen, int start_offse
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
 	int quote_char = m_quote_char;
-	for (int col = start_offset; col < linelen; ++col) {
+	for (int col = start_offset; col < linelen; ++col)
+	{
 		int nCharChars = CNativeW::GetSizeOfChar(data, linelen, col);
-		if (1 < nCharChars) {
+		if (1 < nCharChars)
+		{
 			col += (nCharChars - 1);
 			continue;
 		}
 		//	rawモード以外ではエスケープをチェック
 		//	rawモードでも継続行はチェック
-		if (data[col] == '\\' && col + 1 < linelen) {
+		if (data[col] == '\\' && col + 1 < linelen)
+		{
 			wchar_t key = data[col + 1];
-			if (!m_raw_string) {
-				if (key == L'\\' || key == L'\"' || key == L'\'') {
+			if (!m_raw_string)
+			{
+				if (key == L'\\' || key == L'\"' || key == L'\'')
+				{
 					++col;
 					//	ignore
 					continue;
 				}
 			}
-			if (WCODE::IsLineDelimiter(key, bExtEol)) {
+			if (WCODE::IsLineDelimiter(key, bExtEol))
+			{
 				// \r\nをまとめて\nとして扱う必要がある
-				if (col + 1 >= linelen || data[col + 2] == key) {
+				if (col + 1 >= linelen || data[col + 2] == key)
+				{
 					// 本当に行末
 					++col;
 					continue;
 				}
-				else if (data[col + 2] == WCODE::LF) {
+				else if (data[col + 2] == WCODE::LF)
+				{
 					col += 2; //	 CRLF
 				}
 			}
 		}
 		//	short string + 改行の場合はエラーから強制復帰
-		else if (WCODE::IsLineDelimiter(data[col], bExtEol)) {
+		else if (WCODE::IsLineDelimiter(data[col], bExtEol))
+		{
 			//あとで
-			if (!m_long_string) {
+			if (!m_long_string)
+			{
 				//	文字列の末尾を発見した
 				m_state = STATE_NORMAL;
 				return col + 1;
 			}
 		}
 		//	引用符が見つかったら終了チェック
-		else if (data[col] == quote_char) {
-			if (!m_long_string) {
+		else if (data[col] == quote_char)
+		{
+			if (!m_long_string)
+			{
 				//	文字列の末尾を発見した
 				m_state = STATE_NORMAL;
 				return col + 1;
 			}
 			//	long stringの場合
-			if (col + 2 < linelen && data[col + 1] == quote_char && data[col + 2] == quote_char) {
+			if (col + 2 < linelen && data[col + 1] == quote_char && data[col + 2] == quote_char)
+			{
 				m_state = STATE_NORMAL;
 				return col + 3;
 			}
@@ -340,12 +366,15 @@ int COutlinePython::ScanString(const wchar_t *data, int linelen, int start_offse
 void COutlinePython::DoScanLine(const wchar_t *data, int linelen, int start_offset)
 {
 	int col = start_offset;
-	while (col < linelen) {
+	while (col < linelen)
+	{
 		if (STATE_NORMAL == m_state || STATE_CONTINUE == m_state) { col = ScanNormal(data, linelen, col); }
-		else if (STATE_STRING == m_state) {
+		else if (STATE_STRING == m_state)
+		{
 			col = ScanString(data, linelen, col);
 		}
-		else {
+		else
+		{
 			//	ありえないエラー
 			return;
 		}
@@ -393,44 +422,53 @@ void CDocOutline::MakeFuncList_python(CFuncInfoArr *pcFuncInfoArr)
 	indent_level[0] = 0;		 // do as python does.
 	int depth_index = 0;
 
-	for (nLineCount = CLogicInt(0); nLineCount < m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount) {
+	for (nLineCount = CLogicInt(0); nLineCount < m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount)
+	{
 		const wchar_t *pLine;
 		int			   depth;			   //	indent depth
 		CLogicInt	  col = CLogicInt(0); //	current working column position
 
 		pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
 
-		if (python_analyze_state.IsLogicalLineTop()) {
+		if (python_analyze_state.IsLogicalLineTop())
+		{
 			//	indent check
 			//	May 15, 2007 genta 桁位置colはデータオフセットdと独立にしないと
 			//	文字列比較がおかしくなる
-			for (depth = 0, col = CLogicInt(0); col < nLineLen; ++col) {
+			for (depth = 0, col = CLogicInt(0); col < nLineLen; ++col)
+			{
 				//	calculate indent level
 				if (pLine[col] == L' ') { ++depth; }
-				else if (pLine[col] == L'\t') {
+				else if (pLine[col] == L'\t')
+				{
 					depth = (depth + 8) & ~7;
 				}
-				else {
+				else
+				{
 					break;
 				}
 			}
-			if (WCODE::IsLineDelimiter(pLine[col], bExtEol) || pLine[col] == L'\0' || pLine[col] == L'#') {
+			if (WCODE::IsLineDelimiter(pLine[col], bExtEol) || pLine[col] == L'\0' || pLine[col] == L'#')
+			{
 				//	blank line or comment line are ignored
 				continue;
 			}
 
 			int nItemFuncId = 0; // topic type
-			if (nLineLen - col > CLogicInt(3 + 1) && wcsncmp_literal(pLine + col, L"def") == 0) {
+			if (nLineLen - col > CLogicInt(3 + 1) && wcsncmp_literal(pLine + col, L"def") == 0)
+			{
 				//	"def"
 				nItemFuncId = 1;
 				col += CLogicInt(3); // strlen( def )
 			}
-			else if (nLineLen - col > CLogicInt(5 + 1) && wcsncmp_literal(pLine + col, L"class") == 0) {
+			else if (nLineLen - col > CLogicInt(5 + 1) && wcsncmp_literal(pLine + col, L"class") == 0)
+			{
 				// class
 				nItemFuncId = 4;
 				col += CLogicInt(5); // strlen( class )
 			}
-			else {
+			else
+			{
 				python_analyze_state.DoScanLine(pLine, nLineLen, col);
 				continue;
 			}
@@ -441,7 +479,8 @@ void CDocOutline::MakeFuncList_python(CFuncInfoArr *pcFuncInfoArr)
 			//	本当は継続行として次の行に関数名を書くことも文法上は可能だが
 			//	複雑になるので対応しない．
 			int c = pLine[col];
-			if (c != L' ' && c != L'\t') {
+			if (c != L' ' && c != L'\t')
+			{
 				python_analyze_state.DoScanLine(pLine, nLineLen, col);
 				continue;
 			}
@@ -451,12 +490,15 @@ void CDocOutline::MakeFuncList_python(CFuncInfoArr *pcFuncInfoArr)
 			//	def/class以外のインデントは記録しない方がいいので
 			//	見出し行と確定してからインデントレベルの判定を行う
 			int i;
-			for (i = depth_index; i >= 0; --i) {
-				if (depth == indent_level[i]) {
+			for (i = depth_index; i >= 0; --i)
+			{
+				if (depth == indent_level[i])
+				{
 					depth_index = i;
 					break;
 				}
-				else if (depth > indent_level[i] && i < MAX_DEPTH - 1) {
+				else if (depth > indent_level[i] && i < MAX_DEPTH - 1)
+				{
 					depth_index				  = i + 1;
 					indent_level[depth_index] = depth;
 					break;
@@ -486,17 +528,21 @@ void CDocOutline::MakeFuncList_python(CFuncInfoArr *pcFuncInfoArr)
 			wchar_t szWord[512]; // 適当に大きな数(pythonでは名前の長さの上限があるのか？)
 			int		len = w_end - col;
 
-			if (len > 0) {
+			if (len > 0)
+			{
 				if (len > _countof(szWord) - 1) { len = _countof(szWord) - 1; }
 				wcsncpy(szWord, pLine + col, len);
 				szWord[len] = L'\0';
 			}
-			else {
+			else
+			{
 				wcscpy(szWord, LS(STR_OUTLINE_PYTHON_UNDEFINED));
 				len = 8;
 			}
-			if (nItemFuncId == 4) {
-				if (_countof(szWord) - 8 < len) {
+			if (nItemFuncId == 4)
+			{
+				if (_countof(szWord) - 8 < len)
+				{
 					//	後ろを削って入れる
 					len = _countof(szWord) - 8;
 				}

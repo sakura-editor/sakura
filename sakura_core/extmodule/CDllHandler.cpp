@@ -55,7 +55,8 @@ CDllImp::~CDllImp()
 
 EDllResult CDllImp::InitDll(LPCWSTR pszSpecifiedDllName)
 {
-	if (IsAvailable()) {
+	if (IsAvailable())
+	{
 		//	既に利用可能で有れば何もしない．
 		return DLL_SUCCESS;
 	}
@@ -63,13 +64,16 @@ EDllResult CDllImp::InitDll(LPCWSTR pszSpecifiedDllName)
 	//名前候補を順次検証し、有効なものを採用する
 	LPCWSTR pszLastName		= NULL;
 	bool	bInitImpFailure = false;
-	for (int i = -1;; i++) {
+	for (int i = -1;; i++)
+	{
 		//名前候補
 		LPCWSTR pszName = NULL;
-		if (i == -1) { //まずは引数で指定された名前から。
+		if (i == -1)
+		{ //まずは引数で指定された名前から。
 			pszName = pszSpecifiedDllName;
 		}
-		else { //クラス定義のDLL名
+		else
+		{ //クラス定義のDLL名
 			pszName = GetDllNameImp(i);
 			// GetDllNameImpから取得した名前が無効ならループを抜ける
 			if (!pszName || !pszName[0]) { break; }
@@ -89,7 +93,8 @@ EDllResult CDllImp::InitDll(LPCWSTR pszSpecifiedDllName)
 		bool ret = InitDllImp();
 
 		//初期処理に失敗した場合はDLLを解放し、次の名前候補を試す。
-		if (!ret) {
+		if (!ret)
+		{
 			bInitImpFailure = true;
 			::FreeLibrary(m_hInstance);
 			m_hInstance = NULL;
@@ -97,7 +102,8 @@ EDllResult CDllImp::InitDll(LPCWSTR pszSpecifiedDllName)
 		}
 
 		//初期処理に成功した場合は、DLL名を保存し、ループを抜ける
-		if (ret) {
+		if (ret)
+		{
 			m_strLoadedDllName = pszName;
 			break;
 		}
@@ -106,18 +112,21 @@ EDllResult CDllImp::InitDll(LPCWSTR pszSpecifiedDllName)
 	//ロードと初期処理に成功なら
 	if (IsAvailable()) { return DLL_SUCCESS; }
 	//初期処理に失敗したことがあったら
-	else if (bInitImpFailure) {
+	else if (bInitImpFailure)
+	{
 		return DLL_INITFAILURE; // DLLロードはできたけど、その初期処理に失敗
 	}
 	//それ以外
-	else {
+	else
+	{
 		return DLL_LOADFAILURE; // DLLロード自体に失敗
 	}
 }
 
 bool CDllImp::DeinitDll(bool force)
 {
-	if (m_hInstance == NULL || (!IsAvailable())) {
+	if (m_hInstance == NULL || (!IsAvailable()))
+	{
 		//	DLLが読み込まれていなければ何もしない
 		return true;
 	}
@@ -126,7 +135,8 @@ bool CDllImp::DeinitDll(bool force)
 	bool ret = DeinitDllImp();
 
 	// DLL解放
-	if (ret || force) {
+	if (ret || force)
+	{
 		// DLL名を解放
 		m_strLoadedDllName = L"";
 
@@ -136,7 +146,8 @@ bool CDllImp::DeinitDll(bool force)
 
 		return true;
 	}
-	else {
+	else
+	{
 		return false;
 	}
 }
@@ -172,7 +183,8 @@ bool CDllImp::RegisterEntries(const ImportTable table[])
 {
 	if (!IsAvailable()) return false;
 
-	for (int i = 0; table[i].proc != NULL; i++) {
+	for (int i = 0; table[i].proc != NULL; i++)
+	{
 		FARPROC proc;
 		if ((proc = ::GetProcAddress(GetInstance(), table[i].name)) == NULL) { return false; }
 		*((FARPROC *)table[i].proc) = proc;

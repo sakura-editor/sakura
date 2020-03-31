@@ -26,7 +26,8 @@
 
 #include "doc/CDocListener.h" // 親クラス
 
-class CSaveAgent : public CDocListenerEx {
+class CSaveAgent : public CDocListenerEx
+{
 public:
 	CSaveAgent();
 	ECallbackResult OnCheckSave(SSaveInfo *pSaveInfo) override;

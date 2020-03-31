@@ -36,7 +36,8 @@ void CViewCommander::Command_GREP_DIALOG(void)
 	bool bSet = m_pCommanderView->GetCurrentTextForSearchDlg(cmemCurText,
 															 bGetHistory); // 2006.08.23 ryoji ダイアログ専用関数に変更
 
-	if (bSet) {
+	if (bSet)
+	{
 		GetEditWindow()->m_cDlgGrep.m_strText  = cmemCurText.GetStringPtr();
 		GetEditWindow()->m_cDlgGrep.m_bSetText = true;
 	}
@@ -70,9 +71,11 @@ void CViewCommander::Command_GREP(void)
 	if ((CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode && !CEditApp::getInstance()->m_pcGrepAgent->m_bGrepRunning)
 		|| (!GetDocument()->m_cDocEditor.IsModified() && !GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()
 			&& /* 現在編集中のファイルのパス */
-			!CAppMode::getInstance()->IsDebugMode())) {
+			!CAppMode::getInstance()->IsDebugMode()))
+	{
 		// 2011.01.23 Grepタイプ別適用
-		if (!GetDocument()->m_cDocEditor.IsModified() && GetDocument()->m_cDocLineMgr.GetLineCount() == 0) {
+		if (!GetDocument()->m_cDocEditor.IsModified() && GetDocument()->m_cDocLineMgr.GetLineCount() == 0)
+		{
 			CTypeConfig			   cTypeGrep = CDocTypeManager().GetDocumentTypeOfExt(L"grepout");
 			const STypeConfigMini *pConfig   = NULL;
 			if (!CDocTypeManager().GetTypeConfigMini(cTypeGrep, &pConfig)) { return; }
@@ -93,9 +96,11 @@ void CViewCommander::Command_GREP(void)
 		//プラグイン：DocumentOpenイベント実行
 		CJackManager::getInstance()->InvokePlugins(PP_DOCUMENT_OPEN, &GetEditWindow()->GetActiveView());
 	}
-	else {
+	else
+	{
 		// 編集ウィンドウの上限チェック
-		if (GetDllShareData().m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS) { //最大値修正	//@@@ 2003.05.31 MIK
+		if (GetDllShareData().m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS)
+		{ //最大値修正	//@@@ 2003.05.31 MIK
 			OkMessage(m_pCommanderView->GetHwnd(), LS(STR_MAXWINDOW), MAX_EDITWINDOWS);
 			return;
 		}
@@ -119,15 +124,15 @@ void CViewCommander::Command_GREP_REPLACE_DLG(void)
 
 	m_pCommanderView->GetCurrentTextForSearchDlg(cmemCurText, bGetHistory);
 
-	if (0 < cmemCurText.GetStringLength()) {
+	if (0 < cmemCurText.GetStringLength())
+	{
 		cDlgGrepRep.m_strText  = cmemCurText.GetStringPtr();
 		cDlgGrepRep.m_bSetText = true;
 	}
-	if (0 < GetDllShareData().m_sSearchKeywords.m_aReplaceKeys.size()) {
-		if (cDlgGrepRep.m_nReplaceKeySequence < GetDllShareData().m_Common.m_sSearch.m_nReplaceKeySequence) {
-			cDlgGrepRep.m_strText2 = GetDllShareData().m_sSearchKeywords.m_aReplaceKeys[0];
-		}
-	}
+	if (0 < GetDllShareData().m_sSearchKeywords.m_aReplaceKeys.size())
+	{
+		if (cDlgGrepRep.m_nReplaceKeySequence < GetDllShareData().m_Common.m_sSearch.m_nReplaceKeySequence)
+		{ cDlgGrepRep.m_strText2 = GetDllShareData().m_sSearchKeywords.m_aReplaceKeys[0]; } }
 
 	int nRet = cDlgGrepRep.DoModal(G_AppInstance(), m_pCommanderView->GetHwnd(),
 								   GetDocument()->m_cDocFile.GetFilePath(), (LPARAM)m_pCommanderView);
@@ -157,7 +162,8 @@ void CViewCommander::Command_GREP_REPLACE(void)
 	if ((CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode && !CEditApp::getInstance()->m_pcGrepAgent->m_bGrepRunning)
 		|| (!GetDocument()->m_cDocEditor.IsModified() && !GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()
 			&& /* 現在編集中のファイルのパス */
-			!CAppMode::getInstance()->IsDebugMode())) {
+			!CAppMode::getInstance()->IsDebugMode()))
+	{
 		CEditApp::getInstance()->m_pcGrepAgent->DoGrep(
 			m_pCommanderView, true, &cmWork1, &cmWork4, &cmWork2, &cmWork3, false, cDlgGrepRep.m_bSubFolder,
 			false, // Stdout
@@ -166,9 +172,11 @@ void CViewCommander::Command_GREP_REPLACE(void)
 			cDlgGrepRep.m_nGrepOutputStyle, cDlgGrepRep.m_bGrepOutputFileOnly, cDlgGrepRep.m_bGrepOutputBaseFolder,
 			cDlgGrepRep.m_bGrepSeparateFolder, cDlgGrepRep.m_bPaste, cDlgGrepRep.m_bBackup);
 	}
-	else {
+	else
+	{
 		// 編集ウィンドウの上限チェック
-		if (GetDllShareData().m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS) { //最大値修正	//@@@ 2003.05.31 MIK
+		if (GetDllShareData().m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS)
+		{ //最大値修正	//@@@ 2003.05.31 MIK
 			OkMessage(m_pCommanderView->GetHwnd(), L"編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。",
 					  MAX_EDITWINDOWS);
 			return;
@@ -212,7 +220,8 @@ void CViewCommander::Command_GREP_REPLACE(void)
 		if (cDlgGrepRep.m_bGrepSeparateFolder) wcscat(pOpt, L"D");
 		if (cDlgGrepRep.m_bPaste) wcscat(pOpt, L"C");  // クリップボードから貼り付け
 		if (cDlgGrepRep.m_bBackup) wcscat(pOpt, L"O"); // バックアップ作成
-		if (0 < wcslen(pOpt)) {
+		if (0 < wcslen(pOpt))
+		{
 			cCmdLine.AppendString(L" -GOPT=");
 			cCmdLine.AppendString(pOpt);
 		}

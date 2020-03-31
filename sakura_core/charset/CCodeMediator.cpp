@@ -24,7 +24,8 @@ ECodeType CCodeMediator::CheckKanjiCode(const char *buff, size_t size) noexcept
 
 	// ICU4CのDLL群が利用できる場合、ICU4Cによる判定を試みる
 	CharsetDetector csd;
-	if (csd.IsAvailable()) {
+	if (csd.IsAvailable())
+	{
 		auto code = csd.Detect(std::string_view(buff, size));
 		if (code != CODE_ERROR) return code;
 	}
@@ -58,7 +59,8 @@ ECodeType CCodeMediator::CheckKanjiCodeOfFile(const WCHAR *pszFile)
 	auto size = std::min<size_t>(in.GetLength(), CheckKanjiCode_MAXREADLENGTH);
 
 	std::unique_ptr<char[]> buff;
-	if (size > 0) {
+	if (size > 0)
+	{
 		// データ確保
 		buff = std::make_unique<char[]>(size);
 

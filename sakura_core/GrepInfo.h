@@ -36,7 +36,8 @@
  * @note この構造体は CNativeW をメンバに含むため、
  *   memcmp による比較を行ってはならない。
  */
-struct GrepInfo {
+struct GrepInfo
+{
 	CNativeW	  cmGrepKey;			 //!< 検索キー
 	CNativeW	  cmGrepRep;			 //!< 置換キー
 	CNativeW	  cmGrepFile;			 //!< 検索対象ファイル

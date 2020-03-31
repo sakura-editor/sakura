@@ -60,7 +60,8 @@ void CType_Tex::InitTypeConfigImp(STypeConfig *pType)
 
 /** アウトライン解析の補助クラス */
 template<int HierarchyCount>
-class TagProcessor {
+class TagProcessor
+{
 	// 環境
 	CFuncInfoArr &refFuncInfoArr;
 	CLayoutMgr &  refLayoutMgr;
@@ -101,21 +102,23 @@ public:
 
 		// 現在のタグの深さ(depth)を求める。
 		int depth; // Tag Depth
-		for (depth = HierarchyCount - 1; 0 <= depth; --depth) {
+		for (depth = HierarchyCount - 1; 0 <= depth; --depth)
+		{
 			if (wcslen(TagHierarchy[depth]) == pTagEnd - pTag
-				&& 0 == wcsncmp(TagHierarchy[depth], pTag, pTagEnd - pTag)) {
-				break;
-			}
-		}
-		if (depth < 0) { // 例外対応
+				&& 0 == wcsncmp(TagHierarchy[depth], pTag, pTagEnd - pTag))
+			{ break; } }
+		if (depth < 0)
+		{ // 例外対応
 			/*
 			タグが begin なら prosper の slide の可能性も考慮して
 			さらに {slide}{} まで読みとっておく。
 
 			\begin{slide}{slide_title} なら、slide_title をタイトルにするということ。
 			*/
-			if (0 == wcsncmp(L"begin", pTag, pTagEnd - pTag)) {
-				if (const wchar_t *pSlide = wcsstr(pTagEnd, L"{slide}")) {
+			if (0 == wcsncmp(L"begin", pTag, pTagEnd - pTag))
+			{
+				if (const wchar_t *pSlide = wcsstr(pTagEnd, L"{slide}"))
+				{
 					pTitle	= wmemchr(pSlide + 7, L'{', pLineEnd - pSlide);
 					pTitle	= pTitle ? pTitle + 1 : pLineEnd;
 					pTitleEnd = wmemchr(pTitle, L'}', pLineEnd - pTitle);
@@ -124,7 +127,8 @@ public:
 				}
 			}
 		}
-		if (depth < 0) {
+		if (depth < 0)
+		{
 			return pTitleEnd; // トピックタグではなかった。
 		}
 		assert(depth < HierarchyCount);
@@ -139,14 +143,16 @@ public:
 		// 1. treeDepth を増減する。
 		//    トピックツリーの仕様から treeDepth の増加幅は１に抑えたい。
 		treeDepth += depth <= tagDepth ? (depth - tagDepth) : 1;
-		for (int i = depth; i < tagDepth; ++i) {
+		for (int i = depth; i < tagDepth; ++i)
+		{
 			/*
 				treeDepth の増加幅を１に抑えた結果としてトピックアイテムが
 				本来の位置(tagDepth)より浅い位置に置かれていることがある。その補正。
 			*/
 			if (0 == serials[i]) { treeDepth += 1; }
 		}
-		if (treeDepth < 0) {
+		if (treeDepth < 0)
+		{
 			treeDepth = 0; // 最初のトピックの場合や、最初のトピックが深い階層(section や subsection
 						   // など)だったあとに、chapter が現れた場合など。
 		}
@@ -154,7 +160,8 @@ public:
 
 		// 2. トピック番号を更新する。
 		serials[depth] += 1; // インクリメント
-		for (int i = depth + 1; i <= tagDepth; ++i) {
+		for (int i = depth + 1; i <= tagDepth; ++i)
+		{
 			serials[i] = 0; // リセット
 		}
 
@@ -166,15 +173,18 @@ public:
 		wchar_t *pTopicEnd = szTopic; // 書き込みポインタ。
 
 		// トピック文字列を作成する(1)。トビック番号をバッファに埋め込む。
-		if (bAddNumber) {
+		if (bAddNumber)
+		{
 			assert(
 				4 * HierarchyCount + 2
 				<= _countof(szTopic)); // 4 はトピック番号「ddd.」のドットを含む最大桁数。+2 はヌル文字を含む " " の分。
 			int i = 0;
-			while (i <= tagDepth && serials[i] == 0) {
+			while (i <= tagDepth && serials[i] == 0)
+			{
 				i += 1; // "0." プリフィックスを表示しないようにスキップする。
 			}
-			for (; i <= tagDepth; ++i) {
+			for (; i <= tagDepth; ++i)
+			{
 				// "1.", "2.", "3.",..., "10.",..., "100.",...,"999.", "000.", "001.",...
 				pTopicEnd += auto_sprintf(pTopicEnd, serials[i] / 1000 ? L"%03d." : L"%d.", serials[i] % 1000);
 			}
@@ -206,7 +216,8 @@ inline TagProcessor<HierarchyCount> MakeTagProcessor(CFuncInfoArr &fia, CLayoutM
 }
 
 /** アウトライン解析の補助クラス */
-class TagIterator {
+class TagIterator
+{
 	const CDocLineMgr &refDocLineMgr;
 
 public:
@@ -220,10 +231,12 @@ public:
 	void each(TagProcessor<HierarchyCount> &&process)
 	{
 		const CLogicInt nLineCount = refDocLineMgr.GetLineCount();
-		for (CLogicInt nLineLen, nLineNumber = CLogicInt(0); nLineNumber < nLineCount; ++nLineNumber) {
+		for (CLogicInt nLineLen, nLineNumber = CLogicInt(0); nLineNumber < nLineCount; ++nLineNumber)
+		{
 			const wchar_t *const pLine	= refDocLineMgr.GetLine(nLineNumber)->GetDocLineStrWithEOL(&nLineLen);
 			const wchar_t *const pLineEnd = pLine + nLineLen;
-			if (!pLine) { // [EOF] のみの行。
+			if (!pLine)
+			{ // [EOF] のみの行。
 				break;
 			}
 
@@ -234,8 +247,10 @@ public:
 
 			const wchar_t  Meta[] = {L'\\', L'%'};
 			const wchar_t *p	  = pLine;
-			while (pLineEnd != (p = std::find_first_of(p, pLineEnd, Meta, Meta + _countof(Meta)))) {
-				if (*p == L'%') {
+			while (pLineEnd != (p = std::find_first_of(p, pLineEnd, Meta, Meta + _countof(Meta))))
+			{
+				if (*p == L'%')
+				{
 					break; // コメントなので以降はいらない。
 				}
 				assert(*p == L'\\');
@@ -247,13 +262,16 @@ public:
 				pTitleEnd = std::find(pTitle, pLineEnd, L'}');
 
 				// タグの処理は任せる。
-				if (pTag < pTagEnd && pTitle < pTitleEnd && pTitleEnd < pLineEnd) {
+				if (pTag < pTagEnd && pTitle < pTitleEnd && pTitleEnd < pLineEnd)
+				{
 					p = process(nLineNumber, pLine, pTag, pTagEnd, pTitle, pTitleEnd, pLineEnd);
-					if (p < pTag || pLineEnd < p) {
+					if (p < pTag || pLineEnd < p)
+					{
 						return; // 無効な値であるか、無限ループのおそれがあるため中断。
 					}
 				}
-				else {
+				else
+				{
 					p += 1;
 				}
 			}

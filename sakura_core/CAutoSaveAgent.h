@@ -43,7 +43,8 @@ const int MSec2Min = 1000 * 60;
 	ファイルの自動保存で使っている。
 	@author genta
 */
-class CPassiveTimer {
+class CPassiveTimer
+{
 public:
 	/*!
 		初期値は間隔1msecでタイマーは無効。
@@ -73,7 +74,8 @@ private:
 	bool  bEnabled;  //!< 有効かどうか
 };
 
-class CAutoSaveAgent : public CDocListenerEx {
+class CAutoSaveAgent : public CDocListenerEx
+{
 public:
 	void CheckAutoSave();
 	void ReloadAutoSaveParam(); //!< 設定をSharedAreaから読み出す

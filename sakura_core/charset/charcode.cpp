@@ -51,7 +51,8 @@ const unsigned char gm_keyword_char[128] = {
 	/* 0: not-keyword, 1:__iscsym(), 2:user-define */
 };
 
-namespace WCODE {
+namespace WCODE
+{
 static bool s_MultiFont;
 
 bool CalcHankakuByFont(wchar_t);
@@ -76,7 +77,8 @@ bool IsHankaku(wchar_t wc)
 	// 漢字はすべて同一幅とみなす	// 2013.04.07 aroka
 	if (wc >= 0x4E00 && wc <= 0x9FBB	// Unified Ideographs, CJK
 		|| wc >= 0x3400 && wc <= 0x4DB5 // Unified Ideographs Extension A, CJK
-	) {
+	)
+	{
 		wc = 0x4E00; // '一'(0x4E00)の幅で代用
 	}
 	else
@@ -143,7 +145,8 @@ bool IsControlCode(wchar_t wc)
 	10:全角
 	11:-
 */
-class LocalCache {
+class LocalCache
+{
 public:
 	LocalCache()
 	{
@@ -166,21 +169,25 @@ public:
 	}
 	void DeleteLocalData()
 	{
-		if (m_hFont != NULL) {
+		if (m_hFont != NULL)
+		{
 			SelectObject(m_hdc, m_hFontOld);
 			DeleteObject(m_hFont);
 			m_hFont = NULL;
 		}
-		if (m_hFontFull != NULL) {
+		if (m_hFontFull != NULL)
+		{
 			SelectObject(m_hdcFull, m_hFontFullOld);
 			DeleteObject(m_hFontFull);
 			m_hFontFull = NULL;
 		}
-		if (m_hdc) {
+		if (m_hdc)
+		{
 			DeleteDC(m_hdc);
 			m_hdc = NULL;
 		}
-		if (m_hdcFull) {
+		if (m_hdcFull)
+		{
 			DeleteDC(m_hdcFull);
 			m_hdcFull = NULL;
 		}
@@ -202,13 +209,15 @@ public:
 		m_hFont		   = ::CreateFontIndirect(&lf);
 		m_hFontOld	 = (HFONT)SelectObject(m_hdc, m_hFont);
 		bool bFullFont = !IsEqual(lf, lfFull);
-		if (bFullFont) {
+		if (bFullFont)
+		{
 			m_bMultiFont   = true;
 			m_hdcFull	  = CreateCompatibleDC(hdcOrg);
 			m_hFontFull	= ::CreateFontIndirect(&lfFull);
 			m_hFontFullOld = (HFONT)SelectObject(m_hdcFull, m_hFontFull);
 		}
-		else {
+		else
+		{
 			m_bMultiFont   = false;
 			m_hdcFull	  = NULL;
 			m_hFontFull	= NULL;
@@ -222,7 +231,8 @@ public:
 		int size	  = (bFullFont ? 2 : 1);
 		m_han_size.cx = 1;
 		m_han_size.cy = 1;
-		for (int i = 0; i < size; i++) {
+		for (int i = 0; i < size; i++)
+		{
 			// KB145994
 			// tmAveCharWidth は不正確(半角か全角なのかも不明な値を返す)
 			SIZE sz;
@@ -266,7 +276,8 @@ public:
 	{
 		SIZE size = {m_han_size.cx * 2, 0}; //関数が失敗したときのことを考え、全角幅で初期化しておく
 		// 2014.12.21 コントロールコードの表示・NULが1px幅になるのをスペース幅にする
-		if (WCODE::IsControlCode(c)) {
+		if (WCODE::IsControlCode(c))
+		{
 			GetTextExtentPoint32(SelectHDC(c), &c, 1, &size);
 			const int	 nCx		= size.cx;
 			const wchar_t proxyChar = ((L'\0' == c) ? ' ' : L'･');
@@ -301,7 +312,8 @@ private:
 	SCharWidthCache *m_pCache;
 };
 
-class LocalCacheSelector {
+class LocalCacheSelector
+{
 public:
 	LocalCacheSelector()
 	{
@@ -311,7 +323,8 @@ public:
 	}
 	~LocalCacheSelector()
 	{
-		for (int i = 0; i < CWM_FONT_MAX; i++) {
+		for (int i = 0; i < CWM_FONT_MAX; i++)
+		{
 			delete m_parCache[i];
 			m_parCache[i] = 0;
 		}
@@ -329,7 +342,8 @@ public:
 
 		pcache = &m_localcache[fMode];
 		if (cmode == CWM_CACHE_SHARE) { pcache->SelectCache(&(GetDllShareData().m_sCharWidth)); }
-		else {
+		else
+		{
 			if (m_parCache[fMode] == 0) { m_parCache[fMode] = new SCharWidthCache; }
 			pcache->SelectCache(m_parCache[fMode]);
 		}
@@ -381,7 +395,8 @@ bool CalcHankakuByFont(wchar_t c)
 // @return 0:半角用 / 1:全角用
 int GetFontNo(wchar_t c)
 {
-	if (s_MultiFont) {
+	if (s_MultiFont)
+	{
 		if (0x0080 <= c && c <= 0xFFFF) { return 1; }
 	}
 	return 0;

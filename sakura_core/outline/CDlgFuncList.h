@@ -40,9 +40,15 @@ class CDataProfile;
 #define SORTTYPE_ZTOA 3			//!< アルファベット順(降順)
 
 // ファイルツリー関連クラス
-enum EFileTreeSettingFrom { EFileTreeSettingFrom_Common, EFileTreeSettingFrom_Type, EFileTreeSettingFrom_File };
+enum EFileTreeSettingFrom
+{
+	EFileTreeSettingFrom_Common,
+	EFileTreeSettingFrom_Type,
+	EFileTreeSettingFrom_File
+};
 
-class CFileTreeSetting {
+class CFileTreeSetting
+{
 public:
 	std::vector<SFileTreeItem> m_aItems;			  //!< ツリーアイテム
 	bool					   m_bProject;			  //!< プロジェクトファイルモード
@@ -53,7 +59,8 @@ public:
 };
 
 //!	アウトライン解析ダイアログボックス
-class CDlgFuncList final : public CDialog {
+class CDlgFuncList final : public CDialog
+{
 public:
 	/*
 	||  Constructors

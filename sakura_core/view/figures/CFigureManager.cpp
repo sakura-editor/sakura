@@ -60,7 +60,8 @@ CFigureManager::~CFigureManager()
 CFigure &CFigureManager::GetFigure(const wchar_t *pText, int nTextLen)
 {
 	int size = (int)m_vFiguresDisp.size();
-	for (int i = 0; i < size; i++) {
+	for (int i = 0; i < size; i++)
+	{
 		CFigure *pcFigure = m_vFiguresDisp[i];
 		if (pcFigure->Match(pText, nTextLen)) { return *pcFigure; }
 	}
@@ -77,7 +78,8 @@ void CFigureManager::OnChangeSetting(void)
 
 	int size = (int)m_vFigures.size();
 	int i;
-	for (i = 0; i < size; i++) {
+	for (i = 0; i < size; i++)
+	{
 		m_vFigures[i]->Update();
 		// 色分け表示対象のみを登録
 		if (m_vFigures[i]->Disp()) { m_vFiguresDisp.push_back(m_vFigures[i]); }

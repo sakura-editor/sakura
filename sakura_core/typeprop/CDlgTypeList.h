@@ -25,10 +25,12 @@ using std::wstring;
 /*!
 	@brief ファイルタイプ一覧ダイアログ
 */
-class CDlgTypeList final : public CDialog {
+class CDlgTypeList final : public CDialog
+{
 public:
 	// 型
-	struct SResult {
+	struct SResult
+	{
 		CTypeConfig cDocumentType; //!< 文書種類
 		bool		bTempChange;   //!< 旧PROP_TEMPCHANGE_FLAG
 	};

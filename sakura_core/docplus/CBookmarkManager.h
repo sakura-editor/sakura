@@ -33,7 +33,8 @@ class CBregexp;
 #include "CSearchAgent.h"
 
 //! 行に付加するブックマーク情報
-class CLineBookmarked {
+class CLineBookmarked
+{
 public:
 	CLineBookmarked()
 		: m_bBookmarked(false)
@@ -51,7 +52,8 @@ private:
 };
 
 //! 行のブックマーク情報の取得
-class CBookmarkGetter {
+class CBookmarkGetter
+{
 public:
 	CBookmarkGetter(const CDocLine *pcDocLine)
 		: m_pcDocLine(pcDocLine)
@@ -64,7 +66,8 @@ private:
 };
 
 //! 行のブックマーク情報の取得・設定
-class CBookmarkSetter : public CBookmarkGetter {
+class CBookmarkSetter : public CBookmarkGetter
+{
 public:
 	CBookmarkSetter(CDocLine *pcDocLine)
 		: CBookmarkGetter(pcDocLine)
@@ -78,7 +81,8 @@ private:
 };
 
 //! 行全体のブックマーク情報の管理
-class CBookmarkManager {
+class CBookmarkManager
+{
 public:
 	CBookmarkManager(CDocLineMgr *pcDocLineMgr)
 		: m_pcDocLineMgr(pcDocLineMgr)

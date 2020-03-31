@@ -30,7 +30,8 @@
 class CEditWnd;
 class CImageListMgr;
 
-class CMainToolBar {
+class CMainToolBar
+{
 public:
 	CMainToolBar(CEditWnd *pOwner);
 

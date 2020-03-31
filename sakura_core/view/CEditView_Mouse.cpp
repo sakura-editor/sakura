@@ -50,7 +50,8 @@ void CEditView::OnLBUTTONDOWN(WPARAM fwKeys, int _xPos, int _yPos)
 {
 	CMyPoint ptMouse(_xPos, _yPos);
 
-	if (m_bHokan) {
+	if (m_bHokan)
+	{
 		m_pcEditWnd->m_cHokanMgr.Hide();
 		m_bHokan = FALSE;
 	}
@@ -58,7 +59,8 @@ void CEditView::OnLBUTTONDOWN(WPARAM fwKeys, int _xPos, int _yPos)
 	// isearch 2004.10.22 isearchをキャンセルする
 	if (m_nISearchMode > SEARCH_NONE) { ISearchExit(); }
 	if (m_nAutoScrollMode) { AutoScrollExit(); }
-	if (m_bMiniMap) {
+	if (m_bMiniMap)
+	{
 		::SetFocus(GetHwnd());
 		::SetCapture(GetHwnd());
 		m_bMiniMapMouseDown = true;
@@ -80,28 +82,33 @@ void CEditView::OnLBUTTONDOWN(WPARAM fwKeys, int _xPos, int _yPos)
 	if (m_pcEditDoc->m_cLayoutMgr.GetLineCount() == 0) { return; }
 
 	/* 辞書Tipが起動されている */
-	if (0 == m_dwTipTimer) {
+	if (0 == m_dwTipTimer)
+	{
 		/* 辞書Tipを消す */
 		m_cTipWnd.Hide();
 		m_dwTipTimer = ::GetTickCount(); /* 辞書Tip起動タイマー */
 	}
-	else {
+	else
+	{
 		m_dwTipTimer = ::GetTickCount(); /* 辞書Tip起動タイマー */
 	}
 
 	// 2007.12.02 nasukoji	トリプルクリックをチェック
 	tripleClickMode = CheckTripleClick(ptMouse);
 
-	if (tripleClickMode) {
+	if (tripleClickMode)
+	{
 		// マウス左トリプルクリックに対応する機能コードはm_Common.m_pKeyNameArr[5]に入っている
 		nFuncID = GetDllShareData()
 					  .m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_TRIPLECLICK]
 					  .m_nFuncCodeArr[getCtrlKeyState()];
-		if (0 == nFuncID) {
+		if (0 == nFuncID)
+		{
 			tripleClickMode = 0; // 割り当て機能無しの時はトリプルクリック OFF
 		}
 	}
-	else {
+	else
+	{
 		m_dwTripleClickCheck = 0; // トリプルクリックチェック OFF
 	}
 
@@ -114,28 +121,34 @@ void CEditView::OnLBUTTONDOWN(WPARAM fwKeys, int _xPos, int _yPos)
 
 	// OLEによるドラッグ & ドロップを使う
 	// 2007.12.02 nasukoji	トリプルクリック時はドラッグを開始しない
-	if (!tripleClickMode && GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DragDrop) {
-		if (GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DropSource) { /* OLEによるドラッグ元にするか */
+	if (!tripleClickMode && GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DragDrop)
+	{
+		if (GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DropSource)
+		{ /* OLEによるドラッグ元にするか */
 			/* 行選択エリアをドラッグした */
 			if (ptMouse.x < GetTextArea().GetAreaLeft() - GetTextMetrics().GetHankakuDx()) { goto normal_action; }
 			/* 指定カーソル位置が選択エリア内にあるか */
-			if (0 == IsCurrentPositionSelected(ptNew)) {
+			if (0 == IsCurrentPositionSelected(ptNew))
+			{
 				POINT ptWk = {ptMouse.x, ptMouse.y};
 				::ClientToScreen(GetHwnd(), &ptWk);
-				if (!::DragDetect(GetHwnd(), ptWk)) {
+				if (!::DragDetect(GetHwnd(), ptWk))
+				{
 					// ドラッグ開始条件を満たさなかったのでクリック位置にカーソル移動する
-					if (GetSelectionInfo().IsTextSelected()) { /* テキストが選択されているか */
+					if (GetSelectionInfo().IsTextSelected())
+					{ /* テキストが選択されているか */
 						/* 現在の選択範囲を非選択状態に戻す */
 						GetSelectionInfo().DisableSelectArea(true);
 					}
 					//@@@ 2002.01.08 YAZAKI
 					//フリーカーソルOFFで複数行選択し、行の後ろをクリックするとそこにキャレットが置かれてしまうバグ修正
 					/* カーソル移動。 */
-					if (ptMouse.y >= GetTextArea().GetAreaTop() && ptMouse.y < GetTextArea().GetAreaBottom()) {
-						if (ptMouse.x >= GetTextArea().GetAreaLeft() && ptMouse.x < GetTextArea().GetAreaRight()) {
-							GetCaret().MoveCursorToClientPoint(ptMouse);
-						}
-						else if (ptMouse.x < GetTextArea().GetAreaLeft()) {
+					if (ptMouse.y >= GetTextArea().GetAreaTop() && ptMouse.y < GetTextArea().GetAreaBottom())
+					{
+						if (ptMouse.x >= GetTextArea().GetAreaLeft() && ptMouse.x < GetTextArea().GetAreaRight())
+						{ GetCaret().MoveCursorToClientPoint(ptMouse); }
+						else if (ptMouse.x < GetTextArea().GetAreaLeft())
+						{
 							GetCaret().MoveCursorToClientPoint(
 								CMyPoint(GetTextArea().GetDocumentLeftClientPointX(), ptMouse.y));
 						}
@@ -144,7 +157,8 @@ void CEditView::OnLBUTTONDOWN(WPARAM fwKeys, int _xPos, int _yPos)
 				}
 				/* 選択範囲のデータを取得 */
 				if (GetSelectedData(&cmemCurText, FALSE, NULL, FALSE,
-									GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy)) {
+									GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy))
+				{
 					DWORD dwEffects;
 					DWORD dwEffectsSrc =
 						(!m_pcEditDoc->IsEditable()) ? DROPEFFECT_COPY : DROPEFFECT_COPY | DROPEFFECT_MOVE;
@@ -154,10 +168,11 @@ void CEditView::OnLBUTTONDOWN(WPARAM fwKeys, int _xPos, int _yPos)
 									 GetSelectionInfo().IsBoxSelecting());
 					dwEffects = data.DragDrop(TRUE, dwEffectsSrc);
 					m_pcEditWnd->SetDragSourceView(NULL);
-					if (m_pcEditDoc->m_cDocEditor.m_cOpeBuf.GetCurrentPointer()
-						== nOpe) { // ドキュメント変更なしか？	// 2007.12.09 ryoji
+					if (m_pcEditDoc->m_cDocEditor.m_cOpeBuf.GetCurrentPointer() == nOpe)
+					{ // ドキュメント変更なしか？	// 2007.12.09 ryoji
 						m_pcEditWnd->SetActivePane(m_nMyIndex);
-						if (DROPEFFECT_MOVE == (dwEffectsSrc & dwEffects)) {
+						if (DROPEFFECT_MOVE == (dwEffectsSrc & dwEffects))
+						{
 							// 移動範囲を削除する
 							// ドロップ先が移動を処理したが自ドキュメントにここまで変更が無い
 							// →ドロップ先は外部のウィンドウである
@@ -180,19 +195,22 @@ void CEditView::OnLBUTTONDOWN(WPARAM fwKeys, int _xPos, int _yPos)
 normal_action:;
 
 	// ALTキーが押されている、かつトリプルクリックでない		// 2007.11.15 nasukoji	トリプルクリック対応
-	if (GetKeyState_Alt() && (!tripleClickMode)) {
-		if (GetSelectionInfo().IsTextSelected()) { /* テキストが選択されているか */
+	if (GetKeyState_Alt() && (!tripleClickMode))
+	{
+		if (GetSelectionInfo().IsTextSelected())
+		{ /* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */
 			GetSelectionInfo().DisableSelectArea(true);
 		}
-		if (ptMouse.y >= GetTextArea().GetAreaTop() && ptMouse.y < GetTextArea().GetAreaBottom()) {
-			if (ptMouse.x >= GetTextArea().GetAreaLeft() && ptMouse.x < GetTextArea().GetAreaRight()) {
-				GetCaret().MoveCursorToClientPoint(ptMouse);
-			}
-			else if (ptMouse.x < GetTextArea().GetAreaLeft()) {
+		if (ptMouse.y >= GetTextArea().GetAreaTop() && ptMouse.y < GetTextArea().GetAreaBottom())
+		{
+			if (ptMouse.x >= GetTextArea().GetAreaLeft() && ptMouse.x < GetTextArea().GetAreaRight())
+			{ GetCaret().MoveCursorToClientPoint(ptMouse); } else if (ptMouse.x < GetTextArea().GetAreaLeft())
+			{
 				GetCaret().MoveCursorToClientPoint(CMyPoint(GetTextArea().GetDocumentLeftClientPointX(), ptMouse.y));
 			}
-			else {
+			else
+			{
 				return;
 			}
 		}
@@ -207,26 +225,33 @@ normal_action:;
 		GetSelectionInfo().BeginSelectArea();
 		GetCaret().m_cUnderLine.CaretUnderLineOFF(true);
 		GetCaret().m_cUnderLine.UnderLineLock();
-		if (ptMouse.x < GetTextArea().GetAreaLeft()) {
+		if (ptMouse.x < GetTextArea().GetAreaLeft())
+		{
 			/* カーソル下移動 */
 			GetCommander().Command_DOWN(true, false);
 		}
 	}
-	else {
+	else
+	{
 		/* カーソル移動 */
-		if (ptMouse.y >= GetTextArea().GetAreaTop() && ptMouse.y < GetTextArea().GetAreaBottom()) {
+		if (ptMouse.y >= GetTextArea().GetAreaTop() && ptMouse.y < GetTextArea().GetAreaBottom())
+		{
 			if (ptMouse.x >= GetTextArea().GetAreaLeft() && ptMouse.x < GetTextArea().GetAreaRight()) {}
-			else if (ptMouse.x < GetTextArea().GetAreaLeft()) {
+			else if (ptMouse.x < GetTextArea().GetAreaLeft())
+			{
 			}
-			else {
+			else
+			{
 				return;
 			}
 		}
-		else if (ptMouse.y < GetTextArea().GetAreaTop()) {
+		else if (ptMouse.y < GetTextArea().GetAreaTop())
+		{
 			//	ルーラクリック
 			return;
 		}
-		else {
+		else
+		{
 			return;
 		}
 
@@ -240,10 +265,12 @@ normal_action:;
 
 		CLayoutPoint ptNewCaret		= GetCaret().GetCaretLayoutPos();
 		bool		 bSetPtNewCaret = false;
-		if (tripleClickMode) { // 2007.11.15 nasukoji	トリプルクリックを処理する
+		if (tripleClickMode)
+		{ // 2007.11.15 nasukoji	トリプルクリックを処理する
 			// 1行選択でない場合は選択文字列を解除
 			// トリプルクリックが1行選択でなくてもクアドラプルクリックを有効とする
-			if (F_SELECTLINE != nFuncID) {
+			if (F_SELECTLINE != nFuncID)
+			{
 				OnLBUTTONUP(fwKeys, ptMouse.x, ptMouse.y); // ここで左ボタンアップしたことにする
 
 				if (GetSelectionInfo().IsTextSelected())		// テキストが選択されているか
@@ -251,10 +278,12 @@ normal_action:;
 			}
 
 			// 単語の途中で折り返されていると下の行が選択されてしまうことへの対処
-			if (F_SELECTLINE != nFuncID) {
+			if (F_SELECTLINE != nFuncID)
+			{
 				GetCaret().MoveCursorToClientPoint(ptMouse); // カーソル移動
 			}
-			else {
+			else
+			{
 				GetCaret().MoveCursorToClientPoint(ptMouse, true, &ptNewCaret); // カーソル移動
 				bSetPtNewCaret = true;
 			}
@@ -269,7 +298,8 @@ normal_action:;
 
 			// 選択するものが無い（[EOF]のみの行）時は通常クリックと同じ処理
 			if ((!GetSelectionInfo().IsTextSelected())
-				&& (GetCaret().GetCaretLogicPos().y >= m_pcEditDoc->m_cDocLineMgr.GetLineCount())) {
+				&& (GetCaret().GetCaretLogicPos().y >= m_pcEditDoc->m_cDocLineMgr.GetLineCount()))
+			{
 				GetSelectionInfo().BeginSelectArea();		   // 現在のカーソル位置から選択を開始する
 				GetSelectionInfo().m_bBeginLineSelect = false; // 行単位選択中 OFF
 			}
@@ -277,46 +307,55 @@ normal_action:;
 		else
 			/* 選択開始処理 */
 			/* SHIFTキーが押されていたか */
-			if (GetKeyState_Shift()) {
-			if (GetSelectionInfo().IsTextSelected()) {	 /* テキストが選択されているか */
-				if (GetSelectionInfo().IsBoxSelecting()) { /* 矩形範囲選択中 */
+			if (GetKeyState_Shift())
+		{
+			if (GetSelectionInfo().IsTextSelected())
+			{ /* テキストが選択されているか */
+				if (GetSelectionInfo().IsBoxSelecting())
+				{ /* 矩形範囲選択中 */
 					/* 現在の選択範囲を非選択状態に戻す */
 					GetSelectionInfo().DisableSelectArea(true);
 
 					/* 現在のカーソル位置から選択を開始する */
 					GetSelectionInfo().BeginSelectArea();
 				}
-				else {
+				else
+				{
 				}
 			}
-			else {
+			else
+			{
 				/* 現在のカーソル位置から選択を開始する */
 				GetSelectionInfo().BeginSelectArea();
 			}
 
 			/* カーソル移動 */
-			if (ptMouse.y >= GetTextArea().GetAreaTop() && ptMouse.y < GetTextArea().GetAreaBottom()) {
-				if (ptMouse.x >= GetTextArea().GetAreaLeft() && ptMouse.x < GetTextArea().GetAreaRight()) {
-					GetCaret().MoveCursorToClientPoint(ptMouse, true, &ptNewCaret);
-				}
-				else if (ptMouse.x < GetTextArea().GetAreaLeft()) {
+			if (ptMouse.y >= GetTextArea().GetAreaTop() && ptMouse.y < GetTextArea().GetAreaBottom())
+			{
+				if (ptMouse.x >= GetTextArea().GetAreaLeft() && ptMouse.x < GetTextArea().GetAreaRight())
+				{ GetCaret().MoveCursorToClientPoint(ptMouse, true, &ptNewCaret); }
+				else if (ptMouse.x < GetTextArea().GetAreaLeft())
+				{
 					GetCaret().MoveCursorToClientPoint(CMyPoint(GetTextArea().GetDocumentLeftClientPointX(), ptMouse.y),
 													   true, &ptNewCaret);
 				}
 				bSetPtNewCaret = true;
 			}
 		}
-		else {
-			if (GetSelectionInfo().IsTextSelected()) { /* テキストが選択されているか */
+		else
+		{
+			if (GetSelectionInfo().IsTextSelected())
+			{ /* テキストが選択されているか */
 				/* 現在の選択範囲を非選択状態に戻す */
 				GetSelectionInfo().DisableSelectArea(true);
 			}
 			/* カーソル移動 */
-			if (ptMouse.y >= GetTextArea().GetAreaTop() && ptMouse.y < GetTextArea().GetAreaBottom()) {
-				if (ptMouse.x >= GetTextArea().GetAreaLeft() && ptMouse.x < GetTextArea().GetAreaRight()) {
-					GetCaret().MoveCursorToClientPoint(ptMouse, true, &ptNewCaret);
-				}
-				else if (ptMouse.x < GetTextArea().GetAreaLeft()) {
+			if (ptMouse.y >= GetTextArea().GetAreaTop() && ptMouse.y < GetTextArea().GetAreaBottom())
+			{
+				if (ptMouse.x >= GetTextArea().GetAreaLeft() && ptMouse.x < GetTextArea().GetAreaRight())
+				{ GetCaret().MoveCursorToClientPoint(ptMouse, true, &ptNewCaret); }
+				else if (ptMouse.x < GetTextArea().GetAreaLeft())
+				{
 					GetCaret().MoveCursorToClientPoint(CMyPoint(GetTextArea().GetDocumentLeftClientPointX(), ptMouse.y),
 													   true, &ptNewCaret);
 				}
@@ -327,7 +366,8 @@ normal_action:;
 		}
 
 		/******* この時点で必ず true == GetSelectionInfo().IsTextSelected() の状態になる ****:*/
-		if (!GetSelectionInfo().IsTextSelected()) {
+		if (!GetSelectionInfo().IsTextSelected())
+		{
 			WarningMessage(GetHwnd(), LS(STR_VIEW_MOUSE_BUG));
 			return;
 		}
@@ -341,16 +381,20 @@ normal_action:;
 
 		bool bSelectWord = false;
 		// CTRLキーが押されている、かつトリプルクリックでない		// 2007.11.15 nasukoji	トリプルクリック対応
-		if (GetKeyState_Control() && (!tripleClickMode)) {
+		if (GetKeyState_Control() && (!tripleClickMode))
+		{
 			GetSelectionInfo().m_bBeginWordSelect = true; /* 単語単位選択中 */
-			if (!GetSelectionInfo().IsTextSelected()) {
+			if (!GetSelectionInfo().IsTextSelected())
+			{
 				/* 現在位置の単語選択 */
-				if (GetCommander().Command_SELECTWORD(&ptNewCaret)) {
+				if (GetCommander().Command_SELECTWORD(&ptNewCaret))
+				{
 					bSelectWord						= true;
 					GetSelectionInfo().m_sSelectBgn = GetSelectionInfo().m_sSelect;
 				}
 			}
-			else {
+			else
+			{
 
 				/* 選択領域描画 */
 				GetSelectionInfo().DrawSelectArea();
@@ -359,12 +403,14 @@ normal_action:;
 				const CLayout *pcLayout;
 				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr(GetSelectionInfo().m_sSelect.GetFrom().GetY2(), &nLineLen,
 															 &pcLayout);
-				if (NULL != pLine) {
+				if (NULL != pLine)
+				{
 					nIdx = LineColumnToIndex(pcLayout, GetSelectionInfo().m_sSelect.GetFrom().GetX2());
 					/* 現在位置の単語の範囲を調べる */
 					bool bWhareResult = m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
 						GetSelectionInfo().m_sSelect.GetFrom().GetY2(), nIdx, &sRange, NULL, NULL);
-					if (bWhareResult) {
+					if (bWhareResult)
+					{
 						// 指定された行のデータ内の位置に対応する桁の位置を調べる。
 						// 2007.10.15 kobake 既にレイアウト単位なので変換は不要
 						/*
@@ -376,7 +422,8 @@ normal_action:;
 
 						nWork = IsCurrentPositionSelected(sRange.GetFrom() // カーソル位置
 						);
-						if (-1 == nWork || 0 == nWork) {
+						if (-1 == nWork || 0 == nWork)
+						{
 							GetSelectionInfo().m_sSelect.SetFrom(sRange.GetFrom());
 							if (1 == nWorkRel) { GetSelectionInfo().m_sSelectBgn = sRange; }
 						}
@@ -384,11 +431,13 @@ normal_action:;
 				}
 				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr(GetSelectionInfo().m_sSelect.GetTo().GetY2(), &nLineLen,
 															 &pcLayout);
-				if (NULL != pLine) {
+				if (NULL != pLine)
+				{
 					nIdx = LineColumnToIndex(pcLayout, GetSelectionInfo().m_sSelect.GetTo().GetX2());
 					/* 現在位置の単語の範囲を調べる */
 					if (m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(GetSelectionInfo().m_sSelect.GetTo().GetY2(), nIdx,
-																   &sRange, NULL, NULL)) {
+																   &sRange, NULL, NULL))
+					{
 						// 指定された行のデータ内の位置に対応する桁の位置を調べる
 						// 2007.10.15 kobake 既にレイアウト単位なので変換は不要
 						/*
@@ -400,11 +449,9 @@ normal_action:;
 
 						nWork = IsCurrentPositionSelected(sRange.GetFrom());
 						if (-1 == nWork || 0 == nWork) { GetSelectionInfo().m_sSelect.SetTo(sRange.GetFrom()); }
-						if (1 == IsCurrentPositionSelected(sRange.GetTo())) {
-							GetSelectionInfo().m_sSelect.SetTo(sRange.GetTo());
-						}
-						if (-1 == nWorkRel || 0 == nWorkRel) { GetSelectionInfo().m_sSelectBgn = sRange; }
-					}
+						if (1 == IsCurrentPositionSelected(sRange.GetTo()))
+						{ GetSelectionInfo().m_sSelect.SetTo(sRange.GetTo()); } if (-1 == nWorkRel || 0 == nWorkRel)
+						{ GetSelectionInfo().m_sSelectBgn = sRange; } }
 				}
 
 				if (0 < nWorkRel) {}
@@ -414,7 +461,8 @@ normal_action:;
 		}
 		// 行番号エリアをクリックした
 		// 2008.05.22 nasukoji	シフトキーを押している場合は行頭クリックとして扱う
-		if (ptMouse.x < GetTextArea().GetAreaLeft() && !GetKeyState_Shift()) {
+		if (ptMouse.x < GetTextArea().GetAreaLeft() && !GetKeyState_Shift())
+		{
 			/* 現在のカーソル位置から選択を開始する */
 			GetSelectionInfo().m_bBeginLineSelect = true;
 
@@ -422,11 +470,13 @@ normal_action:;
 			// Command_GOLINEEND()/Command_RIGHT()ではなく次のレイアウトを調べて移動選択する方法に変更
 			// ※Command_GOLINEEND()/Command_RIGHT()は[折り返し末尾文字の右へ移動]＋[次行の先頭文字の右に移動]の仕様だとＮＧ
 			const CLayout *pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY(ptNewCaret.GetY2());
-			if (pcLayout) {
+			if (pcLayout)
+			{
 				CLayoutPoint   ptCaret;
 				const CLayout *pNext = pcLayout->GetNextLayout();
 				if (pNext) { ptCaret.x = pNext->GetIndent(); }
-				else {
+				else
+				{
 					ptCaret.x = CLayoutInt(0);
 				}
 				ptCaret.y = ptNewCaret.GetY2() + 1; // 改行無しEOF行でも MoveCursor() が有効な座標に調整してくれる
@@ -435,9 +485,11 @@ normal_action:;
 				GetCaret().MoveCursor(ptCaret, true);
 				GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 			}
-			else {
+			else
+			{
 				/* 現在のカーソル位置によって選択範囲を変更 */
-				if (bSetPtNewCaret) {
+				if (bSetPtNewCaret)
+				{
 					GetSelectionInfo().ChangeSelectAreaByCurrentCursor(ptNewCaret);
 					GetCaret().MoveCursor(ptNewCaret, true, 1000);
 					GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
@@ -453,13 +505,13 @@ normal_action:;
 			//	GetSelectionInfo().m_sSelect.GetTo().x/GetSelectionInfo().m_sSelect.GetTo().yが-1のまま残ってしまい、それが
 			//	原点に設定されるためにおかしくなっていた。
 			//	なので、範囲選択が行われていない場合は起点末尾の設定を行わないようにする
-			if (GetSelectionInfo().IsTextSelected()) {
-				GetSelectionInfo().m_sSelectBgn.SetTo(GetSelectionInfo().m_sSelect.GetTo());
-			}
-		}
-		else {
+			if (GetSelectionInfo().IsTextSelected())
+			{ GetSelectionInfo().m_sSelectBgn.SetTo(GetSelectionInfo().m_sSelect.GetTo()); } }
+		else
+		{
 			/* URLがクリックされたら選択するか */
-			if (FALSE != GetDllShareData().m_Common.m_sEdit.m_bSelectClickedURL) {
+			if (FALSE != GetDllShareData().m_Common.m_sEdit.m_bSelectClickedURL)
+			{
 
 				CLogicRange cUrlRange; // URL範囲
 				// カーソル位置にURLが有る場合のその範囲を調べる
@@ -467,7 +519,8 @@ normal_action:;
 												   &cUrlRange, // URL範囲
 												   NULL		   // URL受け取り先
 				);
-				if (bIsUrl) {
+				if (bIsUrl)
+				{
 					/* 現在の選択範囲を非選択状態に戻す */
 					GetSelectionInfo().DisableSelectArea(true);
 
@@ -492,7 +545,8 @@ normal_action:;
 					GetSelectionInfo().DrawSelectArea();
 				}
 			}
-			if (bSetPtNewCaret && !bSelectWord) {
+			if (bSetPtNewCaret && !bSelectWord)
+			{
 				/* 現在のカーソル位置によって選択範囲を変更 */
 				GetCaret().MoveCursor(ptNewCaret, true, 1000);
 				GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
@@ -539,10 +593,9 @@ BOOL CEditView::CheckTripleClick(CMyPoint ptMouse)
 	// かつダブルクリックの許容ずれピクセル以下のずれの時トリプルクリックとする
 	//	2007.10.12 genta/dskoba システムのダブルクリック速度，ずれ許容量を取得
 	if ((ptMouse.x >= GetTextArea().GetAreaLeft()) && (::GetTickCount() - m_dwTripleClickCheck <= GetDoubleClickTime())
-		&& (dpos.x <= GetSystemMetrics(SM_CXDOUBLECLK)) && (dpos.y <= GetSystemMetrics(SM_CYDOUBLECLK))) {
-		result = TRUE;
-	}
-	else {
+		&& (dpos.x <= GetSystemMetrics(SM_CXDOUBLECLK)) && (dpos.y <= GetSystemMetrics(SM_CYDOUBLECLK)))
+	{ result = TRUE; } else
+	{
 		m_dwTripleClickCheck = 0; // トリプルクリックチェック OFF
 	}
 
@@ -565,17 +618,16 @@ void CEditView::OnRBUTTONDOWN(WPARAM fwKeys, int xPos, int yPos)
 	/* 指定カーソル位置が選択エリア内にあるか */
 	if (0
 		== IsCurrentPositionSelected(ptNew // カーソル位置
-									 )) {
-		return;
-	}
-	OnLBUTTONDOWN(fwKeys, xPos, yPos);
+									 ))
+	{ return; } OnLBUTTONDOWN(fwKeys, xPos, yPos);
 	return;
 }
 
 /* マウス右ボタン開放 */
 void CEditView::OnRBUTTONUP(WPARAM fwKeys, int xPos, int yPos)
 {
-	if (GetSelectionInfo().IsMouseSelecting()) { /* 範囲選択中 */
+	if (GetSelectionInfo().IsMouseSelecting())
+	{ /* 範囲選択中 */
 		/* マウス左ボタン開放のメッセージ処理 */
 		OnLBUTTONUP(fwKeys, xPos, yPos);
 	}
@@ -587,7 +639,8 @@ void CEditView::OnRBUTTONUP(WPARAM fwKeys, int xPos, int yPos)
 	nIdx = getCtrlKeyState();
 	/* マウス右クリックに対応する機能コードはm_Common.m_pKeyNameArr[1]に入っている */
 	nFuncID = GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_RIGHT].m_nFuncCodeArr[nIdx];
-	if (nFuncID != 0) {
+	if (nFuncID != 0)
+	{
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
 		::PostMessageCmd(::GetParent(m_hwndParent), WM_COMMAND, MAKELONG(nFuncID, CMD_FROM_MOUSE), (LPARAM)NULL);
@@ -611,13 +664,15 @@ void CEditView::OnRBUTTONUP(WPARAM fwKeys, int xPos, int yPos)
 void CEditView::OnMBUTTONDOWN(WPARAM fwKeys, int xPos, int yPos)
 {
 	int nIdx = getCtrlKeyState();
-	if (F_AUTOSCROLL
-		== GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_CENTER].m_nFuncCodeArr[nIdx]) {
-		if (m_nAutoScrollMode) {
+	if (F_AUTOSCROLL == GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_CENTER].m_nFuncCodeArr[nIdx])
+	{
+		if (m_nAutoScrollMode)
+		{
 			AutoScrollExit();
 			return;
 		}
-		else {
+		else
+		{
 			m_nAutoScrollMode	 = 1;
 			m_cAutoScrollMousePos = CMyPoint(xPos, yPos);
 			::SetCapture(GetHwnd());
@@ -641,14 +696,16 @@ void CEditView::OnMBUTTONUP(WPARAM fwKeys, int xPos, int yPos)
 
 	// ホイール操作によるページスクロールあり
 	if (GetDllShareData().m_Common.m_sGeneral.m_nPageScrollByWheel == MOUSEFUNCTION_CENTER
-		&& m_pcEditWnd->IsPageScrollByWheel()) {
+		&& m_pcEditWnd->IsPageScrollByWheel())
+	{
 		m_pcEditWnd->SetPageScrollByWheel(FALSE);
 		return;
 	}
 
 	// ホイール操作によるページスクロールあり
 	if (GetDllShareData().m_Common.m_sGeneral.m_nHorizontalScrollByWheel == MOUSEFUNCTION_CENTER
-		&& m_pcEditWnd->IsHScrollByWheel()) {
+		&& m_pcEditWnd->IsHScrollByWheel())
+	{
 		m_pcEditWnd->SetHScrollByWheel(FALSE);
 		return;
 	}
@@ -657,18 +714,22 @@ void CEditView::OnMBUTTONUP(WPARAM fwKeys, int xPos, int yPos)
 	nIdx = getCtrlKeyState();
 	/* マウス左サイドボタンに対応する機能コードはm_Common.m_pKeyNameArr[2]に入っている */
 	nFuncID = GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_CENTER].m_nFuncCodeArr[nIdx];
-	if (nFuncID == F_AUTOSCROLL) {
-		if (1 == m_nAutoScrollMode) {
+	if (nFuncID == F_AUTOSCROLL)
+	{
+		if (1 == m_nAutoScrollMode)
+		{
 			m_bAutoScrollDragMode = false;
 			AutoScrollEnter();
 			return;
 		}
-		else if (2 == m_nAutoScrollMode && m_bAutoScrollDragMode) {
+		else if (2 == m_nAutoScrollMode && m_bAutoScrollDragMode)
+		{
 			AutoScrollExit();
 			return;
 		}
 	}
-	else if (nFuncID != 0) {
+	else if (nFuncID != 0)
+	{
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
 		::PostMessageCmd(::GetParent(m_hwndParent), WM_COMMAND, MAKELONG(nFuncID, CMD_FROM_MOUSE), (LPARAM)NULL);
@@ -688,7 +749,8 @@ void CEditView::AutoScrollEnter()
 	m_bAutoScrollVertical   = GetTextArea().m_nViewRowNum < m_pcEditDoc->m_cLayoutMgr.GetLineCount() + 2;
 	m_bAutoScrollHorizontal = GetTextArea().m_nViewColNum < GetRightEdgeForScrollBar();
 	if (m_bMiniMap) { m_bAutoScrollHorizontal = false; }
-	if (!m_bAutoScrollHorizontal && !m_bAutoScrollVertical) {
+	if (!m_bAutoScrollHorizontal && !m_bAutoScrollVertical)
+	{
 		m_nAutoScrollMode = 0;
 		::ReleaseCapture();
 		return;
@@ -705,7 +767,8 @@ void CEditView::AutoScrollEnter()
 void CEditView::AutoScrollExit()
 {
 	if (m_nAutoScrollMode) { ::ReleaseCapture(); }
-	if (2 == m_nAutoScrollMode) {
+	if (2 == m_nAutoScrollMode)
+	{
 		KillTimer(GetHwnd(), 2);
 		m_cAutoScrollWnd.Close();
 	}
@@ -717,17 +780,21 @@ void CEditView::AutoScrollMove(CMyPoint &point)
 	const CMyPoint relPos = point - m_cAutoScrollMousePos;
 	int			   idcX, idcY;
 	if (!m_bAutoScrollHorizontal || abs(relPos.x) < 16) { idcX = 0; }
-	else if (relPos.x < 0) {
+	else if (relPos.x < 0)
+	{
 		idcX = 1;
 	}
-	else {
+	else
+	{
 		idcX = 2;
 	}
 	if (!m_bAutoScrollVertical || abs(relPos.y) < 16) { idcY = 0; }
-	else if (relPos.y < 0) {
+	else if (relPos.y < 0)
+	{
 		idcY = 1;
 	}
-	else {
+	else
+	{
 		idcY = 2;
 	}
 	const int idcs[3][3] = {
@@ -735,9 +802,11 @@ void CEditView::AutoScrollMove(CMyPoint &point)
 		{IDC_CURSOR_AUTOSCROLL_LEFT, IDC_CURSOR_AUTOSCROLL_UP_LEFT, IDC_CURSOR_AUTOSCROLL_DOWN_LEFT},
 		{IDC_CURSOR_AUTOSCROLL_RIGHT, IDC_CURSOR_AUTOSCROLL_UP_RIGHT, IDC_CURSOR_AUTOSCROLL_DOWN_RIGHT}};
 	int cursor = idcs[idcX][idcY];
-	if (cursor == IDC_CURSOR_AUTOSCROLL_CENTER) {
+	if (cursor == IDC_CURSOR_AUTOSCROLL_CENTER)
+	{
 		if (!m_bAutoScrollVertical) { cursor = IDC_CURSOR_AUTOSCROLL_HORIZONTAL; }
-		else if (!m_bAutoScrollHorizontal) {
+		else if (!m_bAutoScrollHorizontal)
+		{
 			cursor = IDC_CURSOR_AUTOSCROLL_VERTICAL;
 		}
 	}
@@ -753,16 +822,20 @@ void CEditView::AutoScrollOnTimer()
 
 	const CMyPoint relPos	= cursorPos - m_cAutoScrollMousePos;
 	CMyPoint	   scrollPos = relPos / 8;
-	if (m_bAutoScrollHorizontal) {
+	if (m_bAutoScrollHorizontal)
+	{
 		if (scrollPos.x < 0) { scrollPos.x += 1; }
-		else if (scrollPos.x > 0) {
+		else if (scrollPos.x > 0)
+		{
 			scrollPos.x -= 1;
 		}
 		SyncScrollH(ScrollAtH(GetTextArea().GetViewLeftCol() + GetTextMetrics().GetLayoutXDefault(scrollPos.x)));
 	}
-	if (m_bAutoScrollVertical) {
+	if (m_bAutoScrollVertical)
+	{
 		if (scrollPos.y < 0) { scrollPos.y += 1; }
-		else if (scrollPos.y > 0) {
+		else if (scrollPos.y > 0)
+		{
 			scrollPos.y -= 1;
 		}
 		SyncScrollV(ScrollAtV(GetTextArea().GetViewTopLine() + scrollPos.y));
@@ -801,14 +874,16 @@ void CEditView::OnXLBUTTONUP(WPARAM fwKeys, int xPos, int yPos)
 
 	// ホイール操作によるページスクロールあり
 	if (GetDllShareData().m_Common.m_sGeneral.m_nPageScrollByWheel == MOUSEFUNCTION_LEFTSIDE
-		&& m_pcEditWnd->IsPageScrollByWheel()) {
+		&& m_pcEditWnd->IsPageScrollByWheel())
+	{
 		m_pcEditWnd->SetPageScrollByWheel(FALSE);
 		return;
 	}
 
 	// ホイール操作によるページスクロールあり
 	if (GetDllShareData().m_Common.m_sGeneral.m_nHorizontalScrollByWheel == MOUSEFUNCTION_LEFTSIDE
-		&& m_pcEditWnd->IsHScrollByWheel()) {
+		&& m_pcEditWnd->IsHScrollByWheel())
+	{
 		m_pcEditWnd->SetHScrollByWheel(FALSE);
 		return;
 	}
@@ -817,7 +892,8 @@ void CEditView::OnXLBUTTONUP(WPARAM fwKeys, int xPos, int yPos)
 	nIdx = getCtrlKeyState();
 	/* マウスサイドボタン1に対応する機能コードはm_Common.m_pKeyNameArr[3]に入っている */
 	nFuncID = GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_LEFTSIDE].m_nFuncCodeArr[nIdx];
-	if (nFuncID != 0) {
+	if (nFuncID != 0)
+	{
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
 		::PostMessageCmd(::GetParent(m_hwndParent), WM_COMMAND, MAKELONG(nFuncID, CMD_FROM_MOUSE), (LPARAM)NULL);
@@ -857,7 +933,8 @@ void CEditView::OnXRBUTTONUP(WPARAM fwKeys, int xPos, int yPos)
 
 	// ホイール操作によるページスクロールあり
 	if (GetDllShareData().m_Common.m_sGeneral.m_nPageScrollByWheel == MOUSEFUNCTION_RIGHTSIDE
-		&& m_pcEditWnd->IsPageScrollByWheel()) {
+		&& m_pcEditWnd->IsPageScrollByWheel())
+	{
 		// ホイール操作によるページスクロールありをOFF
 		m_pcEditWnd->SetPageScrollByWheel(FALSE);
 		return;
@@ -865,7 +942,8 @@ void CEditView::OnXRBUTTONUP(WPARAM fwKeys, int xPos, int yPos)
 
 	// ホイール操作によるページスクロールあり
 	if (GetDllShareData().m_Common.m_sGeneral.m_nHorizontalScrollByWheel == MOUSEFUNCTION_RIGHTSIDE
-		&& m_pcEditWnd->IsHScrollByWheel()) {
+		&& m_pcEditWnd->IsHScrollByWheel())
+	{
 		// ホイール操作による横スクロールありをOFF
 		m_pcEditWnd->SetHScrollByWheel(FALSE);
 		return;
@@ -875,7 +953,8 @@ void CEditView::OnXRBUTTONUP(WPARAM fwKeys, int xPos, int yPos)
 	nIdx = getCtrlKeyState();
 	/* マウスサイドボタン2に対応する機能コードはm_Common.m_pKeyNameArr[4]に入っている */
 	nFuncID = GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_RIGHTSIDE].m_nFuncCodeArr[nIdx];
-	if (nFuncID != 0) {
+	if (nFuncID != 0)
+	{
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
 		::PostMessageCmd(::GetParent(m_hwndParent), WM_COMMAND, MAKELONG(nFuncID, CMD_FROM_MOUSE), (LPARAM)NULL);
@@ -889,7 +968,8 @@ void CEditView::OnMOUSEMOVE(WPARAM fwKeys, int xPos_, int yPos_)
 {
 	CMyPoint ptMouse(xPos_, yPos_);
 
-	if (m_cMousePousePos != ptMouse) {
+	if (m_cMousePousePos != ptMouse)
+	{
 		m_cMousePousePos = ptMouse;
 		if (m_nMousePouse < 0) { m_nMousePouse = 0; }
 	}
@@ -897,33 +977,41 @@ void CEditView::OnMOUSEMOVE(WPARAM fwKeys, int xPos_, int yPos_)
 	CLayoutRange sSelect_Old = GetSelectionInfo().m_sSelect;
 
 	// オートスクロール
-	if (1 == m_nAutoScrollMode) {
+	if (1 == m_nAutoScrollMode)
+	{
 		if (::GetSystemMetrics(SM_CXDOUBLECLK) < abs(ptMouse.x - m_cAutoScrollMousePos.x)
-			|| ::GetSystemMetrics(SM_CYDOUBLECLK) < abs(ptMouse.y - m_cAutoScrollMousePos.y)) {
+			|| ::GetSystemMetrics(SM_CYDOUBLECLK) < abs(ptMouse.y - m_cAutoScrollMousePos.y))
+		{
 			m_bAutoScrollDragMode = true;
 			AutoScrollEnter();
 		}
 		return;
 	}
-	else if (2 == m_nAutoScrollMode) {
+	else if (2 == m_nAutoScrollMode)
+	{
 		AutoScrollMove(ptMouse);
 		return;
 	}
 
-	if (m_bMiniMap) {
+	if (m_bMiniMap)
+	{
 		POINT po;
 		::GetCursorPos(&po);
 		// 辞書Tipが起動されている
-		if (0 == m_dwTipTimer) {
-			if ((m_poTipCurPos.x != po.x || m_poTipCurPos.y != po.y)) {
+		if (0 == m_dwTipTimer)
+		{
+			if ((m_poTipCurPos.x != po.x || m_poTipCurPos.y != po.y))
+			{
 				m_cTipWnd.Hide();
 				m_dwTipTimer = ::GetTickCount();
 			}
 		}
-		else {
+		else
+		{
 			m_dwTipTimer = ::GetTickCount();
 		}
-		if (m_bMiniMapMouseDown) {
+		if (m_bMiniMapMouseDown)
+		{
 			CLayoutPoint ptNew;
 			CTextArea &  area = GetTextArea();
 			area.ClientToLayout(ptMouse, &ptNew);
@@ -933,10 +1021,10 @@ void CEditView::OnMOUSEMOVE(WPARAM fwKeys, int xPos_, int yPos_)
 			CLayoutYInt nScrollMargin = CLayoutYInt(15);
 			nScrollMargin			  = t_min(nScrollMargin, (GetTextArea().m_nViewRowNum) / 2);
 			if (m_pcEditDoc->m_cLayoutMgr.GetLineCount() > area.m_nViewRowNum
-				&& ptNew.y > area.GetViewTopLine() + area.m_nViewRowNum - nScrollMargin) {
-				nScrollRow = (area.GetViewTopLine() + area.m_nViewRowNum - nScrollMargin) - ptNew.y;
-			}
-			else if (0 < area.GetViewTopLine() && ptNew.y < area.GetViewTopLine() + nScrollMargin) {
+				&& ptNew.y > area.GetViewTopLine() + area.m_nViewRowNum - nScrollMargin)
+			{ nScrollRow = (area.GetViewTopLine() + area.m_nViewRowNum - nScrollMargin) - ptNew.y; }
+			else if (0 < area.GetViewTopLine() && ptNew.y < area.GetViewTopLine() + nScrollMargin)
+			{
 				nScrollRow = area.GetViewTopLine() + nScrollMargin - ptNew.y;
 				if (0 > area.GetViewTopLine() - nScrollRow) { nScrollRow = area.GetViewTopLine(); }
 			}
@@ -950,19 +1038,24 @@ void CEditView::OnMOUSEMOVE(WPARAM fwKeys, int xPos_, int yPos_)
 			view.GetCaret().GetAdjustCursorPos(&ptNew);
 			GetDocument()->m_cLayoutMgr.LayoutToLogic(ptNew, &ptNewLogic);
 			GetDocument()->m_cLayoutMgr.LogicToLayout(ptNewLogic, &ptNew, ptNew.y);
-			if (GetKeyState_Shift()) {
-				if (view.GetSelectionInfo().IsTextSelected()) {
-					if (view.GetSelectionInfo().IsBoxSelecting()) {
+			if (GetKeyState_Shift())
+			{
+				if (view.GetSelectionInfo().IsTextSelected())
+				{
+					if (view.GetSelectionInfo().IsBoxSelecting())
+					{
 						view.GetSelectionInfo().DisableSelectArea(true);
 						view.GetSelectionInfo().BeginSelectArea();
 					}
 				}
-				else {
+				else
+				{
 					view.GetSelectionInfo().BeginSelectArea();
 				}
 				view.GetSelectionInfo().ChangeSelectAreaByCurrentCursor(ptNew);
 			}
-			else {
+			else
+			{
 				if (view.GetSelectionInfo().IsTextSelected()) { view.GetSelectionInfo().DisableSelectArea(true); }
 			}
 			view.GetCaret().MoveCursor(ptNew, true);
@@ -973,21 +1066,26 @@ void CEditView::OnMOUSEMOVE(WPARAM fwKeys, int xPos_, int yPos_)
 		return;
 	}
 
-	if (!GetSelectionInfo().IsMouseSelecting()) {
+	if (!GetSelectionInfo().IsMouseSelecting())
+	{
 		// マウスによる範囲選択中でない場合
 		POINT po;
 		::GetCursorPos(&po);
 		//	2001/06/18 asa-o: 補完ウィンドウが表示されていない
-		if (!m_bHokan) {
+		if (!m_bHokan)
+		{
 			/* 辞書Tipが起動されている */
-			if (0 == m_dwTipTimer) {
-				if ((m_poTipCurPos.x != po.x || m_poTipCurPos.y != po.y)) {
+			if (0 == m_dwTipTimer)
+			{
+				if ((m_poTipCurPos.x != po.x || m_poTipCurPos.y != po.y))
+				{
 					/* 辞書Tipを消す */
 					m_cTipWnd.Hide();
 					m_dwTipTimer = ::GetTickCount(); /* 辞書Tip起動タイマー */
 				}
 			}
-			else {
+			else
+			{
 				m_dwTipTimer = ::GetTickCount(); /* 辞書Tip起動タイマー */
 			}
 		}
@@ -998,15 +1096,19 @@ void CEditView::OnMOUSEMOVE(WPARAM fwKeys, int xPos_, int yPos_)
 		CLogicRange cUrlRange; // URL範囲
 
 		/* 選択テキストのドラッグ中か */
-		if (m_bDragMode) {
-			if (GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DragDrop) { /* OLEによるドラッグ & ドロップを使う */
+		if (m_bDragMode)
+		{
+			if (GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DragDrop)
+			{ /* OLEによるドラッグ & ドロップを使う */
 				/* 座標指定によるカーソル移動 */
 				GetCaret().MoveCursorToClientPoint(ptMouse);
 			}
 		}
-		else {
+		else
+		{
 			/* 行選択エリア? */
-			if (ptMouse.x < GetTextArea().GetAreaLeft() || ptMouse.y < GetTextArea().GetAreaTop()) { //	2002/2/10 aroka
+			if (ptMouse.x < GetTextArea().GetAreaLeft() || ptMouse.y < GetTextArea().GetAreaTop())
+			{ //	2002/2/10 aroka
 				/* 矢印カーソル */
 				if (ptMouse.y >= GetTextArea().GetAreaTop())
 					::SetCursor(::LoadCursor(G_AppInstance(), MAKEINTRESOURCE(IDC_CURSOR_RVARROW)));
@@ -1018,7 +1120,8 @@ void CEditView::OnMOUSEMOVE(WPARAM fwKeys, int xPos_, int yPos_)
 					 && 0
 							== IsCurrentPositionSelected(/* 指定カーソル位置が選択エリア内にあるか */
 														 ptNew // カーソル位置
-														 )) {
+														 ))
+			{
 				/* 矢印カーソル */
 				::SetCursor(::LoadCursor(NULL, IDC_ARROW));
 			}
@@ -1026,23 +1129,26 @@ void CEditView::OnMOUSEMOVE(WPARAM fwKeys, int xPos_, int yPos_)
 			else if (IsCurrentPositionURL(ptNew,	  // カーソル位置
 										  &cUrlRange, // URL範囲
 										  NULL		  // URL受け取り先
-										  )) {
+										  ))
+			{
 				/* 手カーソル */
 				SetHandCursor(); // Hand Cursorを設定 2013/1/29 Uchi
 			}
-			else {
+			else
+			{
 				// migemo isearch 2004.10.22
-				if (m_nISearchMode > SEARCH_NONE) {
-					if (m_nISearchDirection == SEARCH_FORWARD) {
-						::SetCursor(::LoadCursor(G_AppInstance(), MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_F)));
-					}
-					else {
+				if (m_nISearchMode > SEARCH_NONE)
+				{
+					if (m_nISearchDirection == SEARCH_FORWARD)
+					{ ::SetCursor(::LoadCursor(G_AppInstance(), MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_F))); } else
+					{
 						::SetCursor(::LoadCursor(G_AppInstance(), MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_B)));
 					}
 				}
 				else
 					/* アイビーム */
-					if (0 <= m_nMousePouse) {
+					if (0 <= m_nMousePouse)
+				{
 					::SetCursor(::LoadCursor(NULL, IDC_IBEAM));
 				}
 			}
@@ -1062,7 +1168,8 @@ void CEditView::OnMOUSEMOVE(WPARAM fwKeys, int xPos_, int yPos_)
 
 	CLayoutPoint const ptOldCursor = GetCaret().GetCaretLayoutPos();
 	CLayoutPoint	   ptNewCursor(CLayoutInt(-1), CLayoutInt(-1));
-	if (GetSelectionInfo().IsBoxSelecting()) { /* 矩形範囲選択中 */
+	if (GetSelectionInfo().IsBoxSelecting())
+	{ /* 矩形範囲選択中 */
 		/* 座標指定によるカーソル移動 */
 		GetCaret().MoveCursorToClientPoint(ptMouse, true, &ptNewCursor);
 		GetSelectionInfo().ChangeSelectAreaByCurrentCursor(ptNewCursor);
@@ -1070,10 +1177,11 @@ void CEditView::OnMOUSEMOVE(WPARAM fwKeys, int xPos_, int yPos_)
 		/* 現在のカーソル位置によって選択範囲を変更 */
 		GetSelectionInfo().m_ptMouseRollPosOld = ptMouse; // マウス範囲選択前回位置(XY座標)
 	}
-	else {
+	else
+	{
 		/* 座標指定によるカーソル移動 */
-		if ((ptMouse.x < GetTextArea().GetAreaLeft() || m_dwTripleClickCheck)
-			&& GetSelectionInfo().m_bBeginLineSelect) { // 行単位選択中
+		if ((ptMouse.x < GetTextArea().GetAreaLeft() || m_dwTripleClickCheck) && GetSelectionInfo().m_bBeginLineSelect)
+		{ // 行単位選択中
 			// 2007.11.15 nasukoji	上方向の行選択時もマウスカーソルの位置の行が選択されるようにする
 			CMyPoint nNewPos(0, ptMouse.y);
 
@@ -1090,30 +1198,36 @@ void CEditView::OnMOUSEMOVE(WPARAM fwKeys, int xPos_, int yPos_)
 			GetCaret().MoveCursorToClientPoint(nNewPos, false, &ptNewCursor);
 
 			// 2.5クリックによる行単位のドラッグ
-			if (m_dwTripleClickCheck) {
+			if (m_dwTripleClickCheck)
+			{
 				// 選択開始行以上にドラッグした
-				if (ptNewCursor.GetY() <= GetSelectionInfo().m_sSelectBgn.GetTo().y) {
+				if (ptNewCursor.GetY() <= GetSelectionInfo().m_sSelectBgn.GetTo().y)
+				{
 					// GetCommander().Command_GOLINETOP( true, 0x09 );		// 改行単位の行頭へ移動
 					CLogicInt	  nLineLen;
 					const CLayout *pcLayout;
 					const wchar_t *pLine =
 						m_pcEditDoc->m_cLayoutMgr.GetLineStr(ptNewCursor.GetY2(), &nLineLen, &pcLayout);
 					ptNewCursor.x = CLayoutInt(0);
-					if (pLine) {
-						while (pcLayout->GetLogicOffset()) {
+					if (pLine)
+					{
+						while (pcLayout->GetLogicOffset())
+						{
 							ptNewCursor.y--;
 							pcLayout = pcLayout->GetPrevLayout();
 						}
 					}
 				}
-				else {
+				else
+				{
 					CLayoutPoint ptCaret;
 
 					CLogicPoint ptCaretPrevLog(0, GetCaret().GetCaretLogicPos().y);
 
 					// 選択開始行より下にカーソルがある時は1行前と物理行番号の違いをチェックする
 					// 選択開始行にカーソルがある時はチェック不要
-					if (ptNewCursor.GetY() > GetSelectionInfo().m_sSelectBgn.GetTo().y) {
+					if (ptNewCursor.GetY() > GetSelectionInfo().m_sSelectBgn.GetTo().y)
+					{
 						// 1行前の物理行を取得する
 						m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(CLayoutPoint(CLayoutInt(0), ptNewCursor.GetY() - 1),
 																&ptCaretPrevLog);
@@ -1122,7 +1236,8 @@ void CEditView::OnMOUSEMOVE(WPARAM fwKeys, int xPos_, int yPos_)
 					CLogicPoint ptNewCursorLogic;
 					m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(ptNewCursor, &ptNewCursorLogic);
 					// 前の行と同じ物理行
-					if (ptCaretPrevLog.y == ptNewCursorLogic.y) {
+					if (ptCaretPrevLog.y == ptNewCursorLogic.y)
+					{
 						// 1行先の物理行からレイアウト行を求める
 						m_pcEditDoc->m_cLayoutMgr.LogicToLayout(CLogicPoint(0, GetCaret().GetCaretLogicPos().y + 1),
 																&ptCaret);
@@ -1133,20 +1248,24 @@ void CEditView::OnMOUSEMOVE(WPARAM fwKeys, int xPos_, int yPos_)
 				}
 			}
 		}
-		else {
+		else
+		{
 			GetCaret().MoveCursorToClientPoint(ptMouse, true, &ptNewCursor);
 		}
 		GetSelectionInfo().m_ptMouseRollPosOld = ptMouse; // マウス範囲選択前回位置(XY座標)
 
-		if (ptOldCursor == ptNewCursor) {
+		if (ptOldCursor == ptNewCursor)
+		{
 			// キャレットの(実際の)移動と、それに応じた選択範囲の更新を、サボる。
 		}
-		else {
+		else
+		{
 			CLayoutPoint ptSelectCursor =
 				ptNewCursor; // 単語単位の選択をしている時に、キャレットの位置と選択範囲の端点が一致しなくなる。それを表現するための変数。
 
 			// 単語単位の選択をしている場合、選択範囲を単語境界に調整する。
-			if (GetSelectionInfo().m_bBeginWordSelect) {
+			if (GetSelectionInfo().m_bBeginWordSelect)
+			{
 
 				// キャレット移動後に予定されている選択範囲
 				CLayoutRange sSelect;
@@ -1154,7 +1273,8 @@ void CEditView::OnMOUSEMOVE(WPARAM fwKeys, int xPos_, int yPos_)
 
 				// キャレット位置にある単語の範囲
 				CLayoutRange sWord = CLayoutRange(CLayoutPoint(-1, -1), CLayoutPoint(-1, -1));
-				if (const CLayout *pLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY(ptNewCursor.y)) {
+				if (const CLayout *pLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY(ptNewCursor.y))
+				{
 					m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(ptNewCursor.y, LineColumnToIndex(pLayout, ptNewCursor.x),
 															   &sWord, NULL, NULL);
 				}
@@ -1162,13 +1282,15 @@ void CEditView::OnMOUSEMOVE(WPARAM fwKeys, int xPos_, int yPos_)
 				// 選択範囲の両端のうちキャレットがある側を単語境界に調整する。
 				assert(PointCompare(sSelect.GetFrom(), sSelect.GetTo()) <= 0); // (sSelect) from <= to
 				if (PointCompare(sSelect.GetFrom(), sWord.GetTo()) < 0
-					&& PointCompare(sWord.GetFrom(), sSelect.GetTo()) < 0) { // sWord と sSelect は交差している。
+					&& PointCompare(sWord.GetFrom(), sSelect.GetTo()) < 0)
+				{ // sWord と sSelect は交差している。
 					ptSelectCursor = (ptNewCursor == sSelect.GetTo())
 										 ? sWord.GetTo() // キャレットは選択範囲終点にある⇒終点を単語末尾まで拡張する
 										 : sWord.GetFrom(); // キャレットは選択範囲始点にある⇒始点を単語の頭まで拡張する
 				}
 			}
-			else {
+			else
+			{
 				// (矩形選択でも単語選択でもない)通常選択時は特別なことをしない。
 			}
 
@@ -1203,18 +1325,23 @@ LRESULT CEditView::OnMOUSEWHEEL2(WPARAM wParam, LPARAM lParam, bool bHorizontalM
 	//	MYTRACE( L"CEditView::DispatchEvent() WM_MOUSEWHEEL fwKeys=%xh zDelta=%d xPos=%d yPos=%d \n", fwKeys, zDelta,
 	// xPos, yPos );
 
-	if (bHorizontalMsg) {
-		if (0 < zDelta) {
+	if (bHorizontalMsg)
+	{
+		if (0 < zDelta)
+		{
 			nScrollCode = SB_LINEDOWN; // 右
 		}
-		else {
+		else
+		{
 			nScrollCode = SB_LINEUP; // 左
 		}
 		zDelta *= -1; // 反対にする
 	}
-	else {
+	else
+	{
 		if (0 < zDelta) { nScrollCode = SB_LINEUP; }
-		else {
+		else
+		{
 			nScrollCode = SB_LINEDOWN;
 		}
 	}
@@ -1223,7 +1350,8 @@ LRESULT CEditView::OnMOUSEWHEEL2(WPARAM wParam, LPARAM lParam, bool bHorizontalM
 		// 2009.01.17 nasukoji	キー/マウスボタン + ホイールスクロールで横スクロールする
 		bool bHorizontal	= false;
 		bool bKeyPageScroll = false;
-		if (nCmdFuncID == F_0) {
+		if (nCmdFuncID == F_0)
+		{
 			// 通常スクロールの時だけ適用
 			bHorizontal	= IsSpecialScrollMode(GetDllShareData().m_Common.m_sGeneral.m_nHorizontalScrollByWheel);
 			bKeyPageScroll = IsSpecialScrollMode(GetDllShareData().m_Common.m_sGeneral.m_nPageScrollByWheel);
@@ -1233,22 +1361,28 @@ LRESULT CEditView::OnMOUSEWHEEL2(WPARAM wParam, LPARAM lParam, bool bHorizontalM
 		int			  nIdx	= getCtrlKeyState();
 		EFunctionCode nFuncID = nCmdFuncID;
 		if (nFuncID != F_0) {}
-		else if (bHorizontalMsg) {
-			if (nScrollCode == SB_LINEUP) {
+		else if (bHorizontalMsg)
+		{
+			if (nScrollCode == SB_LINEUP)
+			{
 				nFuncID =
 					GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_WHEELLEFT].m_nFuncCodeArr[nIdx];
 			}
-			else {
+			else
+			{
 				nFuncID =
 					GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_WHEELRIGHT].m_nFuncCodeArr[nIdx];
 			}
 		}
-		else {
-			if (nScrollCode == SB_LINEUP) {
+		else
+		{
+			if (nScrollCode == SB_LINEUP)
+			{
 				nFuncID =
 					GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_WHEELUP].m_nFuncCodeArr[nIdx];
 			}
-			else {
+			else
+			{
 				nFuncID =
 					GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_WHEELDOWN].m_nFuncCodeArr[nIdx];
 			}
@@ -1257,23 +1391,23 @@ LRESULT CEditView::OnMOUSEWHEEL2(WPARAM wParam, LPARAM lParam, bool bHorizontalM
 		{
 			if (nFuncID < F_WHEEL_FIRST || F_WHEEL_LAST < nFuncID) { bExecCmd = true; }
 			if (nFuncID == F_WHEELLEFT || nFuncID == F_WHEELRIGHT || nFuncID == F_WHEELPAGELEFT
-				|| nFuncID == F_WHEELPAGERIGHT) {
-				bHorizontal = true;
-			}
-			if (nFuncID == F_WHEELPAGEUP || nFuncID == F_WHEELPAGEDOWN || nFuncID == F_WHEELPAGELEFT
-				|| nFuncID == F_WHEELPAGERIGHT) {
-				bKeyPageScroll = true;
-			}
-			if (nFuncID == F_WHEELUP || nFuncID == F_WHEELLEFT || nFuncID == F_WHEELPAGEUP
-				|| nFuncID == F_WHEELPAGELEFT) {
-				if (nScrollCode != SB_LINEUP) {
+				|| nFuncID == F_WHEELPAGERIGHT)
+			{ bHorizontal = true; } if (nFuncID == F_WHEELPAGEUP || nFuncID == F_WHEELPAGEDOWN
+										|| nFuncID == F_WHEELPAGELEFT || nFuncID == F_WHEELPAGERIGHT)
+			{ bKeyPageScroll = true; } if (nFuncID == F_WHEELUP || nFuncID == F_WHEELLEFT || nFuncID == F_WHEELPAGEUP
+										   || nFuncID == F_WHEELPAGELEFT)
+			{
+				if (nScrollCode != SB_LINEUP)
+				{
 					zDelta *= -1;
 					nScrollCode = SB_LINEUP;
 				}
 			}
 			else if (nFuncID == F_WHEELDOWN || nFuncID == F_WHEELRIGHT || nFuncID == F_WHEELPAGEDOWN
-					 || nFuncID == F_WHEELPAGERIGHT) {
-				if (nScrollCode != SB_LINEDOWN) {
+					 || nFuncID == F_WHEELPAGERIGHT)
+			{
+				if (nScrollCode != SB_LINEDOWN)
+				{
 					zDelta *= -1;
 					nScrollCode = SB_LINEDOWN;
 				}
@@ -1288,58 +1422,72 @@ LRESULT CEditView::OnMOUSEWHEEL2(WPARAM wParam, LPARAM lParam, bool bHorizontalM
 		unsigned int uDataLen; // size of value data
 		WCHAR		 szValStr[256];
 		uDataLen = _countof(szValStr) - 1;
-		if (!bExecCmd) {
+		if (!bExecCmd)
+		{
 			bool bGetParam = false;
-			if (bHorizontal) {
+			if (bHorizontal)
+			{
 				int nScrollChars = 3;
-				if (::SystemParametersInfo(SPI_GETWHEELSCROLLCHARS, 0, &nScrollChars, 0)) {
+				if (::SystemParametersInfo(SPI_GETWHEELSCROLLCHARS, 0, &nScrollChars, 0))
+				{
 					bGetParam	= true;
 					nRollLineNum = nScrollChars;
 					if (nRollLineNum != -1 && m_bMiniMap) { nRollLineNum *= 10; }
 				}
 			}
-			if (!bGetParam) {
-				if (ReadRegistry(HKEY_CURRENT_USER, L"Control Panel\\desktop", L"WheelScrollLines", szValStr,
-								 uDataLen)) {
+			if (!bGetParam)
+			{
+				if (ReadRegistry(HKEY_CURRENT_USER, L"Control Panel\\desktop", L"WheelScrollLines", szValStr, uDataLen))
+				{
 					nRollLineNum = ::_wtoi(szValStr);
 					if (nRollLineNum != -1 && m_bMiniMap) { nRollLineNum *= 10; }
 				}
 			}
 		}
 
-		if (-1 == nRollLineNum || bKeyPageScroll) {
+		if (-1 == nRollLineNum || bKeyPageScroll)
+		{
 			/* 「1画面分スクロールする」 */
-			if (bHorizontal) {
+			if (bHorizontal)
+			{
 				nRollLineNum = (Int)GetTextArea().m_nViewColNum - 1; // 表示域の桁数
 			}
-			else {
+			else
+			{
 				nRollLineNum = (Int)GetTextArea().m_nViewRowNum - 1; // 表示域の行数
 			}
 		}
-		else {
-			if (nRollLineNum > 30) { //@@@ YAZAKI 2001.12.31 10→30へ。
+		else
+		{
+			if (nRollLineNum > 30)
+			{ //@@@ YAZAKI 2001.12.31 10→30へ。
 				nRollLineNum = 30;
 			}
 		}
 		if (nRollLineNum < 1 || bExecCmd) { nRollLineNum = 1; }
 
 		// スクロール操作の種類(通常方法のページスクロールはNORMAL扱い)
-		if (bKeyPageScroll) {
-			if (bHorizontal) {
+		if (bKeyPageScroll)
+		{
+			if (bHorizontal)
+			{
 				// ホイール操作による横スクロールあり
 				m_pcEditWnd->SetHScrollByWheel(TRUE);
 			}
 			// ホイール操作によるページスクロールあり
 			m_pcEditWnd->SetPageScrollByWheel(TRUE);
 		}
-		else {
-			if (bHorizontal) {
+		else
+		{
+			if (bHorizontal)
+			{
 				// ホイール操作による横スクロールあり
 				m_pcEditWnd->SetHScrollByWheel(TRUE);
 			}
 		}
 
-		if (nFuncID != m_eWheelScroll || (zDelta < 0 && 0 < m_nWheelDelta) || (0 < zDelta && m_nWheelDelta < 0)) {
+		if (nFuncID != m_eWheelScroll || (zDelta < 0 && 0 < m_nWheelDelta) || (0 < zDelta && m_nWheelDelta < 0))
+		{
 			m_nWheelDelta  = 0;
 			m_eWheelScroll = nFuncID;
 		}
@@ -1350,10 +1498,13 @@ LRESULT CEditView::OnMOUSEWHEEL2(WPARAM wParam, LPARAM lParam, bool bHorizontalM
 		// 次回持越しの変化量(上記式Deltaのあまり。スクロール方向とzDeltaは符号が反対)
 		m_nWheelDelta = (abs(m_nWheelDelta) - nRollNum * 120 / nRollLineNum) * ((nScrollCode == SB_LINEUP) ? 1 : -1);
 
-		if (bExecCmd) {
-			if (nFuncID != F_0) {
+		if (bExecCmd)
+		{
+			if (nFuncID != F_0)
+			{
 				// スクロール変化量分コマンド実行(zDeltaが120あたりで1回)
-				for (int i = 0; i < nRollNum; i++) {
+				for (int i = 0; i < nRollNum; i++)
+				{
 					::PostMessageCmd(::GetParent(m_hwndParent), WM_COMMAND, MAKELONG(nFuncID, CMD_FROM_MOUSE),
 									 (LPARAM)NULL);
 				}
@@ -1366,13 +1517,16 @@ LRESULT CEditView::OnMOUSEWHEEL2(WPARAM wParam, LPARAM lParam, bool bHorizontalM
 		int		   nCount =
 			((nScrollCode == SB_LINEUP) ? -1 : 1) * (bSmooth ? 1 : nRollNum); // 1回あたりのスクロール数(縦横混在)
 
-		for (i = 0; i < nRollActions; ++i) {
+		for (i = 0; i < nRollActions; ++i)
+		{
 			//	Sep. 11, 2004 genta 同期スクロール行数
-			if (bHorizontal) {
+			if (bHorizontal)
+			{
 				const CLayoutXInt layoutCount = nCount * GetTextMetrics().GetLayoutXDefault();
 				SyncScrollH(ScrollAtH(GetTextArea().GetViewLeftCol() + layoutCount));
 			}
-			else {
+			else
+			{
 				SyncScrollV(ScrollAtV(GetTextArea().GetViewTopLine() + CLayoutInt(nCount)));
 			}
 		}
@@ -1411,7 +1565,8 @@ bool CEditView::IsSpecialScrollMode(int nSelect)
 {
 	bool bSpecialScrollMode;
 
-	switch (nSelect) {
+	switch (nSelect)
+	{
 	case 0: // 指定の組み合わせなし
 		bSpecialScrollMode = false;
 		break;
@@ -1450,7 +1605,8 @@ void CEditView::OnLBUTTONUP(WPARAM fwKeys, int xPos, int yPos)
 	//	MYTRACE( L"OnLBUTTONUP()\n" );
 
 	/* 範囲選択終了 & マウスキャプチャーおわり */
-	if (GetSelectionInfo().IsMouseSelecting()) { /* 範囲選択中 */
+	if (GetSelectionInfo().IsMouseSelecting())
+	{ /* 範囲選択中 */
 		/* マウス キャプチャを解放 */
 		::ReleaseCapture();
 		GetCaret().ShowCaret_(GetHwnd()); // 2002/07/22 novice
@@ -1461,12 +1617,14 @@ void CEditView::OnLBUTTONUP(WPARAM fwKeys, int xPos, int yPos)
 		m_cMouseDownPos.Set(-INT_MAX, -INT_MAX);
 
 		GetCaret().m_cUnderLine.UnderLineUnLock();
-		if (GetSelectionInfo().m_sSelect.IsOne()) {
+		if (GetSelectionInfo().m_sSelect.IsOne())
+		{
 			/* 現在の選択範囲を非選択状態に戻す */
 			GetSelectionInfo().DisableSelectArea(true);
 		}
 	}
-	if (m_bMiniMapMouseDown) {
+	if (m_bMiniMapMouseDown)
+	{
 		m_bMiniMapMouseDown = false;
 		::ReleaseCapture();
 	}
@@ -1494,25 +1652,31 @@ void CEditView::OnLBUTTONDBLCLK(WPARAM fwKeys, int _xPos, int _yPos)
 	const wchar_t *pszMailTo = L"mailto:";
 
 	// 2007.10.06 nasukoji	クアドラプルクリック時はチェックしない
-	if (!m_dwTripleClickCheck) {
+	if (!m_dwTripleClickCheck)
+	{
 		/* カーソル位置にURLが有る場合のその範囲を調べる */
 		if (IsCurrentPositionURL(GetCaret().GetCaretLayoutPos(), // カーソル位置
 								 &cUrlRange,					 // URL範囲
 								 &strURL						 // URL受け取り先
-								 )) {
+								 ))
+		{
 			std::wstring strOPEN;
 
 			// URLを開く
 			// 現在位置がメールアドレスならば、NULL以外と、その長さを返す
 			if (IsMailAddress(strURL.c_str(), strURL.length(), NULL)) { strOPEN = pszMailTo + strURL; }
-			else {
-				if (wcsnicmp_literal(strURL.c_str(), L"ttp://") == 0) { //抑止URL
+			else
+			{
+				if (wcsnicmp_literal(strURL.c_str(), L"ttp://") == 0)
+				{ //抑止URL
 					strOPEN = L"h" + strURL;
 				}
-				else if (wcsnicmp_literal(strURL.c_str(), L"tp://") == 0) { //抑止URL
+				else if (wcsnicmp_literal(strURL.c_str(), L"tp://") == 0)
+				{ //抑止URL
 					strOPEN = L"ht" + strURL;
 				}
-				else {
+				else
+				{
 					strOPEN = strURL;
 				}
 			}
@@ -1525,7 +1689,8 @@ void CEditView::OnLBUTTONDBLCLK(WPARAM fwKeys, int _xPos, int _yPos)
 				LPCWSTR		 szUrl	= strOPEN.c_str();
 				LPWSTR		 szUrlDup = _wcsdup(szUrl);
 				HANDLE hThread = (HANDLE)_beginthreadex(NULL, 0, ShellExecuteProc, (LPVOID)szUrlDup, 0, &nThreadId);
-				if (hThread != INVALID_HANDLE_VALUE) {
+				if (hThread != INVALID_HANDLE_VALUE)
+				{
 					// ユーザーのURL起動指示に反応した目印としてちょっとの時間だけ砂時計カーソルを表示しておく
 					// ShellExecute は即座にエラー終了することがちょくちょくあるので WaitForSingleObject ではなく Sleep
 					// を使用（ex.存在しないパスの起動） 【補足】いずれの API でも待ちを長め（2～3秒）にするとなぜか Web
@@ -1533,7 +1698,8 @@ void CEditView::OnLBUTTONDBLCLK(WPARAM fwKeys, int _xPos, int _yPos)
 					::Sleep(200);
 					::CloseHandle(hThread);
 				}
-				else {
+				else
+				{
 					//スレッド作成失敗
 					delete[] szUrlDup;
 				}
@@ -1544,9 +1710,11 @@ void CEditView::OnLBUTTONDBLCLK(WPARAM fwKeys, int _xPos, int _yPos)
 		/* GREP出力モードまたはデバッグモード かつ マウス左ボタンダブルクリックでタグジャンプ の場合 */
 		//	2004.09.20 naoh 外部コマンドの出力からTagjumpできるように
 		if ((CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode || CAppMode::getInstance()->IsDebugMode())
-			&& GetDllShareData().m_Common.m_sSearch.m_bGTJW_LDBLCLK) {
+			&& GetDllShareData().m_Common.m_sSearch.m_bGTJW_LDBLCLK)
+		{
 			/* タグジャンプ機能 */
-			if (GetCommander().Command_TAGJUMP()) {
+			if (GetCommander().Command_TAGJUMP())
+			{
 				// 2013.05.27 タグジャンプ失敗時は通常の処理を実行する
 				return;
 			}
@@ -1563,7 +1731,8 @@ void CEditView::OnLBUTTONDBLCLK(WPARAM fwKeys, int _xPos, int _yPos)
 			.m_Common.m_sKeyBind
 			.m_pKeyNameArr[m_dwTripleClickCheck ? MOUSEFUNCTION_QUADCLICK : MOUSEFUNCTION_DOUBLECLICK]
 			.m_nFuncCodeArr[nIdx];
-	if (m_dwTripleClickCheck) {
+	if (m_dwTripleClickCheck)
+	{
 		// 非選択状態にした後左クリックしたことにする
 		// すべて選択の場合は、3.5クリック時の選択状態保持とドラッグ開始時の
 		// 範囲変更のため。
@@ -1572,7 +1741,8 @@ void CEditView::OnLBUTTONDBLCLK(WPARAM fwKeys, int _xPos, int _yPos)
 		if (GetSelectionInfo().IsTextSelected())		// テキストが選択されているか
 			GetSelectionInfo().DisableSelectArea(true); // 現在の選択範囲を非選択状態に戻す
 
-		if (!nFuncID) {
+		if (!nFuncID)
+		{
 			m_dwTripleClickCheck = 0; // トリプルクリックチェック OFF
 			nFuncID =
 				GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_DOUBLECLICK].m_nFuncCodeArr[nIdx];
@@ -1580,14 +1750,16 @@ void CEditView::OnLBUTTONDBLCLK(WPARAM fwKeys, int _xPos, int _yPos)
 		}
 	}
 
-	if (nFuncID != 0) {
+	if (nFuncID != 0)
+	{
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
 		::SendMessageCmd(::GetParent(m_hwndParent), WM_COMMAND, MAKELONG(nFuncID, CMD_FROM_MOUSE), (LPARAM)NULL);
 	}
 
 	// 2007.10.06 nasukoji	クアドラプルクリック時もここで抜ける
-	if (m_dwTripleClickCheck) {
+	if (m_dwTripleClickCheck)
+	{
 		m_dwTripleClickCheck = 0; // トリプルクリックチェック OFF（次回は通常クリック）
 		return;
 	}
@@ -1610,17 +1782,20 @@ void CEditView::OnLBUTTONDBLCLK(WPARAM fwKeys, int _xPos, int _yPos)
 	/* 範囲選択開始 & マウスキャプチャー */
 	GetSelectionInfo().SelectBeginWord();
 
-	if (GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH) { /* 現在のフォントは固定幅フォントである */
+	if (GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH)
+	{ /* 現在のフォントは固定幅フォントである */
 		/* ALTキーが押されていたか */
 		if (GetKeyState_Alt()) { GetSelectionInfo().SetBoxSelect(true); /* 矩形範囲選択中 */ }
 	}
 	::SetCapture(GetHwnd());
 	GetCaret().HideCaret_(GetHwnd()); // 2002/07/22 novice
-	if (GetSelectionInfo().IsTextSelected()) {
+	if (GetSelectionInfo().IsTextSelected())
+	{
 		/* 常時選択範囲の範囲 */
 		GetSelectionInfo().m_sSelectBgn.SetTo(GetSelectionInfo().m_sSelect.GetTo());
 	}
-	else {
+	else
+	{
 		/* 現在のカーソル位置から選択を開始する */
 		GetSelectionInfo().BeginSelectArea();
 	}
@@ -1646,7 +1821,8 @@ STDMETHODIMP CEditView::DragEnter(LPDATAOBJECT pDataObject, DWORD dwKeyState, PO
 	m_cfDragData = GetAvailableClipFormat(pDataObject);
 	if (m_cfDragData == 0)
 		return E_INVALIDARG;
-	else if (m_cfDragData == CF_HDROP) {
+	else if (m_cfDragData == CF_HDROP)
+	{
 		// 右ボタンで入ってきたときだけファイルをビューで取り扱う
 		if (!(MK_RBUTTON & dwKeyState)) return E_INVALIDARG;
 	}
@@ -1685,11 +1861,8 @@ STDMETHODIMP CEditView::DragOver(DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect)
 	// ドラッグ元が他ビューで、このビューのカーソルがドラッグ元の選択範囲内の場合は禁止マークにする
 	// ※自ビューのときは禁止マークにしない（他アプリでも多くはそうなっている模様）	// 2009.06.09 ryoji
 	if (pcDragSourceView && !IsDragSource()
-		&& !pcDragSourceView->IsCurrentPositionSelected(GetCaret().GetCaretLayoutPos())) {
-		*pdwEffect = DROPEFFECT_NONE;
-	}
-
-	return S_OK;
+		&& !pcDragSourceView->IsCurrentPositionSelected(GetCaret().GetCaretLayoutPos()))
+	{ *pdwEffect = DROPEFFECT_NONE; } return S_OK;
 }
 
 STDMETHODIMP CEditView::DragLeave(void)
@@ -1747,7 +1920,8 @@ STDMETHODIMP CEditView::Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL 
 	bBoxData					= m_bDragBoxData;
 
 	// カーソルが選択範囲内にあるときはコピー／移動しない	// 2009.06.09 ryoji
-	if (pcDragSourceView && !pcDragSourceView->IsCurrentPositionSelected(GetCaret().GetCaretLayoutPos())) {
+	if (pcDragSourceView && !pcDragSourceView->IsCurrentPositionSelected(GetCaret().GetCaretLayoutPos()))
+	{
 		// DragEnter時のカーソル位置を復元
 		// Note. ドラッグ元が他ビューでもマウス移動が速いと稀にここにくる可能性がありそう
 		*pdwEffect = DROPEFFECT_NONE;
@@ -1763,17 +1937,21 @@ STDMETHODIMP CEditView::Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL 
 	if (hData == NULL) return E_INVALIDARG;
 	LPVOID pData = ::GlobalLock(hData);
 	SIZE_T nSize = ::GlobalSize(hData);
-	if (cf == CClipboard::GetSakuraFormat()) {
-		if (nSize > sizeof(int)) {
+	if (cf == CClipboard::GetSakuraFormat())
+	{
+		if (nSize > sizeof(int))
+		{
 			wchar_t *pszData = (wchar_t *)((BYTE *)pData + sizeof(int));
 			cmemBuf.SetString(pszData,
 							  t_min((SIZE_T) * (int *)pData, nSize / sizeof(wchar_t))); // 途中のNUL文字も含める
 		}
 	}
-	else if (cf == CF_UNICODETEXT) {
+	else if (cf == CF_UNICODETEXT)
+	{
 		cmemBuf.SetString((wchar_t *)pData, wcsnlen((wchar_t *)pData, nSize / sizeof(wchar_t)));
 	}
-	else {
+	else
+	{
 		CNativeA binary;
 		binary.SetString((char *)pData, nSize / sizeof(char));
 		auto pcCodeBase = std::unique_ptr<CCodeBase>(CCodeFactory::CreateCodeBase(ECodeType::CODE_SJIS, 0));
@@ -1785,8 +1963,10 @@ STDMETHODIMP CEditView::Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL 
 	m_cCommander.GetOpeBlk()->AddRef();
 
 	/* 移動の場合、位置関係を算出 */
-	if (bMove) {
-		if (bBoxData) {
+	if (bMove)
+	{
+		if (bBoxData)
+		{
 			/* 2点を対角とする矩形を求める */
 			TwoPointToRect(&rcSel,
 						   pcDragSourceView->GetSelectionInfo().m_sSelect.GetFrom(), // 範囲選択開始
@@ -1794,50 +1974,56 @@ STDMETHODIMP CEditView::Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL 
 			);
 			++rcSel.bottom;
 			if (GetCaret().GetCaretLayoutPos().GetY() >= rcSel.bottom) { bMoveToPrev = FALSE; }
-			else if (GetCaret().GetCaretLayoutPos().GetY() + rcSel.bottom - rcSel.top < rcSel.top) {
+			else if (GetCaret().GetCaretLayoutPos().GetY() + rcSel.bottom - rcSel.top < rcSel.top)
+			{
 				bMoveToPrev = TRUE;
 			}
-			else if (GetCaret().GetCaretLayoutPos().GetX2() < rcSel.left) {
+			else if (GetCaret().GetCaretLayoutPos().GetX2() < rcSel.left)
+			{
 				bMoveToPrev = TRUE;
 			}
-			else {
+			else
+			{
 				bMoveToPrev = FALSE;
 			}
 		}
-		else {
-			if (pcDragSourceView->GetSelectionInfo().m_sSelect.GetFrom().y > GetCaret().GetCaretLayoutPos().GetY()) {
-				bMoveToPrev = TRUE;
-			}
-			else if (pcDragSourceView->GetSelectionInfo().m_sSelect.GetFrom().y
-					 == GetCaret().GetCaretLayoutPos().GetY()) {
-				if (pcDragSourceView->GetSelectionInfo().m_sSelect.GetFrom().x
-					> GetCaret().GetCaretLayoutPos().GetX2()) {
-					bMoveToPrev = TRUE;
-				}
-				else {
+		else
+		{
+			if (pcDragSourceView->GetSelectionInfo().m_sSelect.GetFrom().y > GetCaret().GetCaretLayoutPos().GetY())
+			{ bMoveToPrev = TRUE; } else if (pcDragSourceView->GetSelectionInfo().m_sSelect.GetFrom().y
+											 == GetCaret().GetCaretLayoutPos().GetY())
+			{
+				if (pcDragSourceView->GetSelectionInfo().m_sSelect.GetFrom().x > GetCaret().GetCaretLayoutPos().GetX2())
+				{ bMoveToPrev = TRUE; } else
+				{
 					bMoveToPrev = FALSE;
 				}
 			}
-			else {
+			else
+			{
 				bMoveToPrev = FALSE;
 			}
 		}
 	}
 
 	CLayoutPoint ptCaretPos_Old = GetCaret().GetCaretLayoutPos();
-	if (!bMove) {
+	if (!bMove)
+	{
 		/* コピーモード */
 		/* 現在の選択範囲を非選択状態に戻す */
 		GetSelectionInfo().DisableSelectArea(true);
 	}
-	else {
+	else
+	{
 		bBeginBoxSelect_Old = pcDragSourceView->GetSelectionInfo().IsBoxSelecting();
 		sSelectBgn_Old		= pcDragSourceView->GetSelectionInfo().m_sSelectBgn;
 		sSelect_Old			= pcDragSourceView->GetSelectionInfo().m_sSelect;
-		if (bMoveToPrev) {
+		if (bMoveToPrev)
+		{
 			/* 移動モード & 前に移動 */
 			/* 選択エリアを削除 */
-			if (this != pcDragSourceView) {
+			if (this != pcDragSourceView)
+			{
 				pcDragSourceView->GetSelectionInfo().DisableSelectArea(true);
 				GetSelectionInfo().DisableSelectArea(true);
 				GetSelectionInfo().SetBoxSelect(bBeginBoxSelect_Old);
@@ -1847,13 +2033,15 @@ STDMETHODIMP CEditView::Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL 
 			DeleteData(true);
 			GetCaret().MoveCursor(ptCaretPos_Old, true);
 		}
-		else {
+		else
+		{
 			/* 現在の選択範囲を非選択状態に戻す */
 			pcDragSourceView->GetSelectionInfo().DisableSelectArea(true);
 			if (this != pcDragSourceView) GetSelectionInfo().DisableSelectArea(true);
 		}
 	}
-	if (!bBoxData) { /* 矩形データ */
+	if (!bBoxData)
+	{ /* 矩形データ */
 		//	2004,05.14 Moca 引数に文字列長を追加
 
 		// 挿入前のキャレット位置を記憶する
@@ -1862,11 +2050,12 @@ STDMETHODIMP CEditView::Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL 
 		const CLayout *pcLayout;
 		CLogicInt	  nLineLen;
 		CLayoutPoint   ptCaretLayoutPos_Old = GetCaret().GetCaretLayoutPos();
-		if (m_pcEditDoc->m_cLayoutMgr.GetLineStr(ptCaretLayoutPos_Old.GetY2(), &nLineLen, &pcLayout)) {
+		if (m_pcEditDoc->m_cLayoutMgr.GetLineStr(ptCaretLayoutPos_Old.GetY2(), &nLineLen, &pcLayout))
+		{
 			CLayoutInt nLineAllColLen;
 			LineColumnToIndex2(pcLayout, ptCaretLayoutPos_Old.GetX2(), &nLineAllColLen);
-			if (nLineAllColLen
-				> CLayoutInt(0)) { // 行終端より右の場合には nLineAllColLen に行全体の表示桁数が入っている
+			if (nLineAllColLen > CLayoutInt(0))
+			{ // 行終端より右の場合には nLineAllColLen に行全体の表示桁数が入っている
 				ptCaretLogicPos_Old.SetX(ptCaretLogicPos_Old.GetX2()
 										 + (Int)(ptCaretLayoutPos_Old.GetX2() - nLineAllColLen));
 			}
@@ -1880,7 +2069,8 @@ STDMETHODIMP CEditView::Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL 
 		GetSelectionInfo().SetSelectArea(
 			CLayoutRange(ptSelectFrom, GetCaret().GetCaretLayoutPos())); // 2009.07.25 ryoji
 	}
-	else {
+	else
+	{
 		// 2004.07.12 Moca クリップボードを書き換えないように
 		// TRUE == bBoxSelected
 		// FALSE == GetSelectionInfo().IsBoxSelecting()
@@ -1889,9 +2079,11 @@ STDMETHODIMP CEditView::Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL 
 		AdjustScrollBars(); // 2007.07.22 ryoji
 		Redraw();
 	}
-	if (bMove) {
+	if (bMove)
+	{
 		if (bMoveToPrev) {}
-		else {
+		else
+		{
 			/* 移動モード & 後ろに移動*/
 
 			// 現在の選択範囲を記憶する	// 2008.03.26 ryoji
@@ -1914,13 +2106,16 @@ STDMETHODIMP CEditView::Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL 
 			DeleteData(true);
 
 			// 削除前の選択範囲を復元する	// 2008.03.26 ryoji
-			if (!bBoxData) {
+			if (!bBoxData)
+			{
 				// 削除された範囲を考慮して選択範囲を調整する
-				if (sSelLogic.GetFrom().GetY2() == sDelLogic.GetTo().GetY2()) { // 選択開始が削除末尾と同一行
+				if (sSelLogic.GetFrom().GetY2() == sDelLogic.GetTo().GetY2())
+				{ // 選択開始が削除末尾と同一行
 					sSelLogic.SetFromX(sSelLogic.GetFrom().GetX2()
 									   - (sDelLogic.GetTo().GetX2() - sDelLogic.GetFrom().GetX2()));
 				}
-				if (sSelLogic.GetTo().GetY2() == sDelLogic.GetTo().GetY2()) { // 選択終了が削除末尾と同一行
+				if (sSelLogic.GetTo().GetY2() == sDelLogic.GetTo().GetY2())
+				{ // 選択終了が削除末尾と同一行
 					sSelLogic.SetToX(sSelLogic.GetTo().GetX2()
 									 - (sDelLogic.GetTo().GetX2() - sDelLogic.GetFrom().GetX2()));
 				}
@@ -2020,7 +2215,8 @@ void CEditView::OnMyDropFiles(HDROP hDrop)
 	if (nTid1 != nTid2) ::AttachThreadInput(nTid1, nTid2, FALSE);
 
 	// 選択されたメニューに対応する処理を実行する
-	switch (nId) {
+	switch (nId)
+	{
 	case 110: // ファイルを開く
 		// 通常のドロップファイル処理を行う
 		::SendMessageAny(m_pcEditWnd->GetHwnd(), WM_DROPFILES, (WPARAM)hDrop, 0);
@@ -2035,13 +2231,16 @@ void CEditView::OnMyDropFiles(HDROP hDrop)
 		WCHAR	szWork[_MAX_PATH];
 
 		nFiles = ::DragQueryFile(hDrop, 0xFFFFFFFF, NULL, 0);
-		for (UINT i = 0; i < nFiles; i++) {
+		for (UINT i = 0; i < nFiles; i++)
+		{
 			::DragQueryFile(hDrop, i, szPath, _countof(szPath));
 			if (!::GetLongFileName(szPath, szWork)) continue;
-			if (nId == 100) { // パス名
+			if (nId == 100)
+			{ // パス名
 				::lstrcpy(szPath, szWork);
 			}
-			else if (nId == 101) { // ファイル名
+			else if (nId == 101)
+			{ // ファイル名
 				_wsplitpath(szWork, NULL, NULL, szPath, szExt);
 				::lstrcat(szPath, szExt);
 			}
@@ -2059,11 +2258,12 @@ void CEditView::OnMyDropFiles(HDROP hDrop)
 		const CLayout *pcLayout;
 		CLogicInt	  nLineLen;
 		CLayoutPoint   ptCaretLayoutPos_Old = GetCaret().GetCaretLayoutPos();
-		if (m_pcEditDoc->m_cLayoutMgr.GetLineStr(ptCaretLayoutPos_Old.GetY2(), &nLineLen, &pcLayout)) {
+		if (m_pcEditDoc->m_cLayoutMgr.GetLineStr(ptCaretLayoutPos_Old.GetY2(), &nLineLen, &pcLayout))
+		{
 			CLayoutInt nLineAllColLen;
 			LineColumnToIndex2(pcLayout, ptCaretLayoutPos_Old.GetX2(), &nLineAllColLen);
-			if (nLineAllColLen
-				> CLayoutInt(0)) { // 行終端より右の場合には nLineAllColLen に行全体の表示桁数が入っている
+			if (nLineAllColLen > CLayoutInt(0))
+			{ // 行終端より右の場合には nLineAllColLen に行全体の表示桁数が入っている
 				ptCaretLogicPos_Old.SetX(ptCaretLogicPos_Old.GetX2()
 										 + (Int)(ptCaretLayoutPos_Old.GetX2() - nLineAllColLen));
 			}
@@ -2116,15 +2316,18 @@ DWORD CEditView::TranslateDropEffect(CLIPFORMAT cf, DWORD dwKeyState, POINTL pt,
 #if 1
 	// ドラッグ元が外部ウィンドウかどうかによって受け方を変える
 	// ※汎用テキストエディタではこちらが主流っぽい
-	if (pcDragSourceView) {
+	if (pcDragSourceView)
+	{
 #else
 	// ドラッグ元が移動を許すかどうかによって受け方を変える
 	// ※MS 製品（MS Office, Visual Studioなど）ではこちらが主流っぽい
-	if (dwEffect & DROPEFFECT_MOVE) {
+	if (dwEffect & DROPEFFECT_MOVE)
+	{
 #endif
 		dwEffect &= (MK_CONTROL & dwKeyState) ? DROPEFFECT_COPY : DROPEFFECT_MOVE;
 	}
-	else {
+	else
+	{
 		dwEffect &= (MK_SHIFT & dwKeyState) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
 	}
 	return dwEffect;

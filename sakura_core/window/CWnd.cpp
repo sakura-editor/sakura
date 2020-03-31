@@ -22,25 +22,29 @@ LRESULT CALLBACK CWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	CWnd *pCWnd = (CWnd *)::GetWindowLongPtr(hwnd, GWLP_USERDATA);
 
-	if (pCWnd) {
+	if (pCWnd)
+	{
 		/* クラスオブジェクトのポインタを使ってメッセージを配送する */
 		return pCWnd->DispatchEvent(hwnd, uMsg, wParam, lParam);
 	}
-	else {
+	else
+	{
 		/* ふつうはここには来ない */
 		return ::DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
 }
 
 //! Windowsフック(CBT)
-namespace CWindowCreationHook {
+namespace CWindowCreationHook
+{
 int   g_nCnt  = 0; //参照カウンタ
 HHOOK g_hHook = NULL;
 
 //!フック用コールバック
 static LRESULT CALLBACK CBTProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
-	if (nCode == HCBT_CREATEWND) {
+	if (nCode == HCBT_CREATEWND)
+	{
 		HWND		   hwnd		  = (HWND)wParam;
 		CBT_CREATEWND *pCreateWnd = (CBT_CREATEWND *)lParam;
 		CWnd *		   pcWnd	  = static_cast<CWnd *>(pCreateWnd->lpcs->lpCreateParams);
@@ -68,7 +72,8 @@ void Use()
 //!フック終了
 void Unuse()
 {
-	if (--g_nCnt <= 0 && g_hHook != NULL) {
+	if (--g_nCnt <= 0 && g_hHook != NULL)
+	{
 		::UnhookWindowsHookEx(g_hHook);
 		g_hHook = NULL;
 	}
@@ -88,7 +93,8 @@ CWnd::CWnd(const WCHAR *pszInheritanceAppend)
 
 CWnd::~CWnd()
 {
-	if (::IsWindow(m_hWnd)) {
+	if (::IsWindow(m_hWnd))
+	{
 		/* クラスオブジェクトのポインタをNULLにして拡張ウィンドウメモリに格納しておく */
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr(m_hWnd, GWLP_USERDATA, (LONG_PTR)NULL);
@@ -175,7 +181,8 @@ HWND CWnd::Create(
 	// Windowsフック解除
 	CWindowCreationHook::Unuse();
 
-	if (NULL == m_hWnd) {
+	if (NULL == m_hWnd)
+	{
 		::MessageBox(m_hwndParent, L"CWnd::Create()\n\n::CreateWindowEx failed.", L"error", MB_OK);
 		return NULL;
 	}
@@ -190,7 +197,8 @@ LRESULT CWnd::DispatchEvent(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
 #define CALLH(message, method)                                                                                         \
 	case message: return method(hwnd, msg, wp, lp)
-	switch (msg) {
+	switch (msg)
+	{
 		CALLH(WM_CREATE, OnCreate);
 		CALLH(WM_CLOSE, OnClose);
 		CALLH(WM_DESTROY, OnDestroy);
@@ -220,7 +228,8 @@ LRESULT CWnd::DispatchEvent(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		CALLH(WM_CAPTURECHANGED, OnCaptureChanged); // 2006.11.30 ryoji
 
 	default:
-		if (WM_APP <= msg && msg <= 0xBFFF) {
+		if (WM_APP <= msg && msg <= 0xBFFF)
+		{
 			/* アプリケーション定義のメッセージ(WM_APP <= msg <= 0xBFFF) */
 			return DispatchEvent_WM_APP(hwnd, msg, wp, lp);
 		}
@@ -241,7 +250,8 @@ LRESULT CWnd::CallDefWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) { return
 /* ウィンドウを破棄 */
 void CWnd::DestroyWindow()
 {
-	if (m_hWnd) {
+	if (m_hWnd)
+	{
 		::DestroyWindow(m_hWnd);
 		m_hWnd = NULL;
 	}

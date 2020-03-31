@@ -29,7 +29,8 @@
 
 #define m_delete2(p)                                                                                                   \
 	{                                                                                                                  \
-		if (p) {                                                                                                       \
+		if (p)                                                                                                         \
+		{                                                                                                              \
 			delete[] p;                                                                                                \
 			p = 0;                                                                                                     \
 		}                                                                                                              \
@@ -44,7 +45,8 @@
 //共通型
 typedef StaticString<WCHAR, _MAX_PATH>	 SFilePath;
 typedef StaticString<WCHAR, MAX_GREP_PATH> SFilePathLong;
-class CFilePath : public StaticString<WCHAR, _MAX_PATH> {
+class CFilePath : public StaticString<WCHAR, _MAX_PATH>
+{
 private:
 	typedef StaticString<WCHAR, _MAX_PATH> Super;
 
@@ -74,23 +76,27 @@ public:
 	{
 		const WCHAR *head = c_str();
 		const WCHAR *p	= wcschr(head, L'\0') - 1;
-		while (p >= head) {
+		while (p >= head)
+		{
 			if (*p == L'.') break;
 			if (*p == L'\\') break;
 			if (*p == L'/') break;
 			p--;
 		}
-		if (p >= head && *p == L'.') {
+		if (p >= head && *p == L'.')
+		{
 			return bWithoutDot ? p + 1 : p; // bWithoutDot==trueならドットなしを返す
 		}
-		else {
+		else
+		{
 			return wcschr(head, L'\0');
 		}
 	}
 };
 
 //$$ 仮
-class CCommandLineString {
+class CCommandLineString
+{
 public:
 	CCommandLineString()
 	{

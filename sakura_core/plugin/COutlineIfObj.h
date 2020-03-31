@@ -30,9 +30,11 @@
 #include "macro/CWSHIfObj.h"
 #include "outline/CFuncInfo.h" // FUNCINFO_INFOMASK
 
-class COutlineIfObj : public CWSHIfObj {
+class COutlineIfObj : public CWSHIfObj
+{
 	// 型定義
-	enum FuncId {
+	enum FuncId
+	{
 		F_OL_COMMAND_FIRST = 0, //↓コマンドは以下に追加する
 		F_OL_ADDFUNCINFO,		//アウトライン解析に追加する
 		F_OL_ADDFUNCINFO2,		//アウトライン解析に追加する（深さ指定）
@@ -74,7 +76,8 @@ public:
 	bool HandleCommand(CEditView *View, EFunctionCode ID, const WCHAR *Arguments[], const int ArgLengths[],
 					   const int ArgSize)
 	{
-		switch (LOWORD(ID)) {
+		switch (LOWORD(ID))
+		{
 		case F_OL_ADDFUNCINFO:  //アウトライン解析に追加する
 		case F_OL_ADDFUNCINFO2: //アウトライン解析に追加する（深さ指定）
 		case F_OL_ADDFUNCINFO3: //アウトライン解析に追加する（ファイル名）
@@ -86,37 +89,44 @@ public:
 			if (Arguments[3] == NULL) return false;
 			CLogicPoint  ptLogic(_wtoi(Arguments[1]) - 1, _wtoi(Arguments[0]) - 1);
 			CLayoutPoint ptLayout;
-			if (ptLogic.x < 0 || ptLogic.y < 0) {
+			if (ptLogic.x < 0 || ptLogic.y < 0)
+			{
 				ptLayout.x = (Int)ptLogic.x;
 				ptLayout.y = (Int)ptLogic.y;
 			}
-			else {
+			else
+			{
 				View->GetDocument()->m_cLayoutMgr.LogicToLayout(ptLogic, &ptLayout);
 			}
 			int nParam = _wtoi(Arguments[3]);
-			if (LOWORD(ID) == F_OL_ADDFUNCINFO) {
+			if (LOWORD(ID) == F_OL_ADDFUNCINFO)
+			{
 				m_cFuncInfoArr.AppendData(ptLogic.GetY() + 1, ptLogic.GetX() + 1, ptLayout.GetY() + 1,
 										  ptLayout.GetX() + 1, Arguments[2], NULL, nParam);
 			}
-			else if (LOWORD(ID) == F_OL_ADDFUNCINFO2) {
+			else if (LOWORD(ID) == F_OL_ADDFUNCINFO2)
+			{
 				int nDepth = nParam & FUNCINFO_INFOMASK;
 				nParam -= nDepth;
 				m_cFuncInfoArr.AppendData(ptLogic.GetY() + 1, ptLogic.GetX() + 1, ptLayout.GetY() + 1,
 										  ptLayout.GetX() + 1, Arguments[2], NULL, nParam, nDepth);
 			}
-			else if (LOWORD(ID) == F_OL_ADDFUNCINFO3) {
+			else if (LOWORD(ID) == F_OL_ADDFUNCINFO3)
+			{
 				if (ArgSize < 5 || Arguments[4] == NULL) { return false; }
 				m_cFuncInfoArr.AppendData(ptLogic.GetY() + 1, ptLogic.GetX() + 1, ptLayout.GetY() + 1,
 										  ptLayout.GetX() + 1, Arguments[2], Arguments[4], nParam);
 			}
-			else if (LOWORD(ID) == F_OL_ADDFUNCINFO4) {
+			else if (LOWORD(ID) == F_OL_ADDFUNCINFO4)
+			{
 				if (ArgSize < 5 || Arguments[4] == NULL) { return false; }
 				int nDepth = nParam & FUNCINFO_INFOMASK;
 				nParam -= nDepth;
 				m_cFuncInfoArr.AppendData(ptLogic.GetY() + 1, ptLogic.GetX() + 1, ptLayout.GetY() + 1,
 										  ptLayout.GetX() + 1, Arguments[2], Arguments[4], nParam, nDepth);
 			}
-		} break;
+		}
+		break;
 		case F_OL_SETTITLE: //アウトラインダイアログタイトルを指定
 			if (Arguments[0] == NULL) return false;
 			m_sOutlineTitle = Arguments[0];

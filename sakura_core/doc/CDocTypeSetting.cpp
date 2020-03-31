@@ -33,7 +33,8 @@
 #include "CDocTypeSetting.h"
 
 //! 色設定(保存用)
-struct ColorInfoIni {
+struct ColorInfoIni
+{
 	int			  m_nNameId;	//!< 項目名
 	ColorInfoBase m_sColorInfo; //!< 色設定
 };

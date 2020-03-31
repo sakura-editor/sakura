@@ -30,7 +30,8 @@
 #include "_os/OleTypes.h"
 #include "macro/CWSHIfObj.h"
 
-class CEditorIfObj : public CWSHIfObj {
+class CEditorIfObj : public CWSHIfObj
+{
 	// コンストラクタ
 public:
 	CEditorIfObj()

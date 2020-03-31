@@ -51,7 +51,8 @@ static const wstring OPTION_TYPE_INT  = wstring(L"int");
 static const wstring OPTION_TYPE_SEL  = wstring(L"sel");
 static const wstring OPTION_TYPE_DIR  = wstring(L"dir");
 
-class CDlgPluginOption final : public CDialog {
+class CDlgPluginOption final : public CDialog
+{
 public:
 	/*
 	||  Constructors

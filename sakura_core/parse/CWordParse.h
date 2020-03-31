@@ -29,7 +29,8 @@
 class CNativeW;
 
 //! 文字種類識別子
-enum ECharKind {
+enum ECharKind
+{
 	CK_NULL, //!< NULL
 	CK_TAB,  //!< タブ 0x9<=c<=0x9
 	CK_CR,   //!< CR = 0x0d
@@ -57,7 +58,8 @@ enum ECharKind {
 	CK_ZEN_ETC,   //!< 全角のその他（漢字など）
 };
 
-class CWordParse {
+class CWordParse
+{
 public:
 	// 2001.06.23 N.Nakatani
 	// 2007.09.30 kobake     CDocLineMgrから移動
@@ -153,7 +155,8 @@ inline BOOL IsMailAddress(const wchar_t *pszBuf, int nBufLen, int *pnAddressLeng
 // ACHAR 版
 inline bool CWordParse::_match_charlist(const ACHAR c, const ACHAR *pszList)
 {
-	for (int i = 0; pszList[i] != '\0'; i++) {
+	for (int i = 0; pszList[i] != '\0'; i++)
+	{
 		if (pszList[i] == c) { return true; }
 	}
 	return false;
@@ -161,7 +164,8 @@ inline bool CWordParse::_match_charlist(const ACHAR c, const ACHAR *pszList)
 // WCHAR 版
 inline bool CWordParse::_match_charlist(const WCHAR c, const WCHAR *pszList)
 {
-	for (int i = 0; pszList[i] != L'\0'; i++) {
+	for (int i = 0; pszList[i] != L'\0'; i++)
+	{
 		if (pszList[i] == c) { return true; }
 	}
 	return false;
@@ -184,21 +188,24 @@ int CWordParse::GetWord(const CHAR_TYPE *pS, const int nLen, const CHAR_TYPE *ps
 	CHAR_TYPE *		 pwordstart;
 	int				 nwordlen;
 
-	if (nLen < 1) {
+	if (nLen < 1)
+	{
 		pwordstart = const_cast<CHAR_TYPE *>(pS);
 		nwordlen   = 0;
 		goto end_func;
 	}
 
 	// 区切り文字をスキップ
-	for (; pr < pS + nLen; pr++) {
+	for (; pr < pS + nLen; pr++)
+	{
 		// 区切り文字でない文字の間ループ
 		if (!_match_charlist(*pr, pszSplitCharList)) { break; }
 	}
 	pwordstart = const_cast<CHAR_TYPE *>(pr); // 単語の先頭位置を記録
 
 	// 単語をスキップ
-	for (; pr < pS + nLen; pr++) {
+	for (; pr < pS + nLen; pr++)
+	{
 		// 区切り文字がくるまでループ
 		if (_match_charlist(*pr, pszSplitCharList)) { break; }
 	}

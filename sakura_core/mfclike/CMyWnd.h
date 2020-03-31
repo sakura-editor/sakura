@@ -30,7 +30,8 @@
 	2008.01.26 kobake 作成
 */
 
-class CMyWnd {
+class CMyWnd
+{
 public:
 	CMyWnd()
 		: m_hWnd(NULL)

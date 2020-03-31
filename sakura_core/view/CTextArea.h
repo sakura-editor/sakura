@@ -29,7 +29,8 @@ class CEditView;
 class CLayoutMgr;
 #include "DispPos.h"
 
-class CTextArea {
+class CTextArea
+{
 public:
 	CTextArea(CEditView *pEditView);
 	virtual ~CTextArea();

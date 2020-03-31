@@ -20,7 +20,8 @@
 class CFuncLookup;
 
 //! キー情報を保持する
-struct KEYDATA {
+struct KEYDATA
+{
 	/*! キーコード	*/
 	short m_nKeyCode;
 
@@ -61,7 +62,8 @@ extern const int	jpVKEXNamesLen;
 
 	すべての関数はstaticで保持するデータはない。
 */
-class CKeyBind {
+class CKeyBind
+{
 public:
 	/*
 	||  Constructors

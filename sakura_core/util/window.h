@@ -30,10 +30,12 @@
 
 	@date 2009.10.01 ryoji 高DPI対応用に作成
 */
-class CDPI {
+class CDPI
+{
 	static void Init()
 	{
-		if (!bInitialized) {
+		if (!bInitialized)
+		{
 			HDC hDC = GetDC(NULL);
 			nDpiX   = GetDeviceCaps(hDC, LOGPIXELSX);
 			nDpiY   = GetDeviceCaps(hDC, LOGPIXELSY);
@@ -131,7 +133,8 @@ inline bool DlgItem_Enable(HWND hwndDlg, int nIDDlgItem, bool nEnable)
 
 // 幅計算補助クラス
 // 最大の幅を報告します
-class CTextWidthCalc {
+class CTextWidthCalc
+{
 public:
 	CTextWidthCalc(HWND hParentDlg, int nID);
 	CTextWidthCalc(HWND hwndThis);
@@ -155,7 +158,8 @@ public:
 	int  GetCx() { return nCx; }
 	// 算出方法がよく分からないので定数にしておく
 	// 制御不要なら ListViewはLVSCW_AUTOSIZE等推奨
-	enum StaticMagicNambers {
+	enum StaticMagicNambers
+	{
 		//! スクロールバーとアイテムの間の隙間
 		WIDTH_MARGIN_SCROLLBER = 8,
 		//! リストビューヘッダ マージン
@@ -177,7 +181,8 @@ private:
 	bool  bFromDC;
 };
 
-class CFontAutoDeleter {
+class CFontAutoDeleter
+{
 public:
 	CFontAutoDeleter();
 	~CFontAutoDeleter();
@@ -191,7 +196,8 @@ private:
 	HWND  m_hwnd;
 };
 
-class CDCFont {
+class CDCFont
+{
 public:
 	CDCFont(LOGFONT &font, HWND hwnd = NULL)
 	{
@@ -202,7 +208,8 @@ public:
 	}
 	~CDCFont()
 	{
-		if (m_hDC) {
+		if (m_hDC)
+		{
 			::SelectObject(m_hDC, m_hFontOld);
 			::ReleaseDC(m_hwnd, m_hDC);
 			m_hDC = NULL;

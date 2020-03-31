@@ -26,7 +26,8 @@
 
 #include "CCodeBase.h"
 
-class CUtf7 : public CCodeBase {
+class CUtf7 : public CCodeBase
+{
 public:
 	// CCodeBaseインターフェース
 	EConvertResult CodeToUnicode(const CMemory &cSrc, CNativeW *pDst) override

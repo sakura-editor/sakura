@@ -36,7 +36,8 @@ struct SEncodingConfig;
 
 #include "_main/global.h"
 
-struct tagEncodingInfo {
+struct tagEncodingInfo
+{
 	ECodeType eCodeID;   // 文字コード識別番号
 	int		  nSpecific; // 評価値1
 	int		  nPoints;   // 評価値2
@@ -65,13 +66,15 @@ static const DWORD ESI_WC_DETECTED   = 2;
 static const DWORD ESI_NODETECTED	= 4;
 
 // ワイド文字の２種類あるものの格納位置
-enum EStoreID4WCInfo {
+enum EStoreID4WCInfo
+{
 	ESI_WCIDX_UTF16LE,
 	ESI_WCIDX_UTF16BE,
 	ESI_WCIDX_MAX,
 };
 // BOM タイプ
-enum EBOMType {
+enum EBOMType
+{
 	ESI_BOMTYPE_UNKNOWN = -1,
 	ESI_BOMTYPE_LE		= 0,
 	ESI_BOMTYPE_BE		= 1,
@@ -81,7 +84,8 @@ enum EBOMType {
 	文字コードを調査する時に生じる情報格納クラス
 //*/
 
-class CESI {
+class CESI
+{
 public:
 	virtual ~CESI() { ; }
 	explicit CESI(const SEncodingConfig &ref)
@@ -129,7 +133,8 @@ protected:
 	void SetDataLen(const int n)
 	{
 		if (n < 1) { m_nTargetDataLen = 0; }
-		else {
+		else
+		{
 			m_nTargetDataLen = n;
 		}
 	}
@@ -178,10 +183,8 @@ public:
 		// かつ、EUC と SJIS のポイント数が同数のとき
 		if ((m_apMbcInfo[0]->eCodeID == CODE_SJIS && m_apMbcInfo[1]->eCodeID == CODE_EUC
 			 || m_apMbcInfo[1]->eCodeID == CODE_SJIS && m_apMbcInfo[0]->eCodeID == CODE_EUC)
-			&& m_apMbcInfo[0]->nPoints == m_apMbcInfo[1]->nPoints) {
-			return true;
-		}
-		return false;
+			&& m_apMbcInfo[0]->nPoints == m_apMbcInfo[1]->nPoints)
+		{ return true; } return false;
 	}
 
 	//! SJIS と UTF-8 が候補のトップ2に上がっているかどうか
@@ -191,10 +194,8 @@ public:
 		// かつ、UTF-8 と SJIS のポイント数が同数のとき
 		if ((m_apMbcInfo[0]->eCodeID == CODE_UTF8 && m_apMbcInfo[1]->eCodeID == CODE_CESU8
 			 || m_apMbcInfo[1]->eCodeID == CODE_UTF8 && m_apMbcInfo[0]->eCodeID == CODE_CESU8)
-			&& m_apMbcInfo[0]->nPoints == m_apMbcInfo[1]->nPoints) {
-			return true;
-		}
-		return false;
+			&& m_apMbcInfo[0]->nPoints == m_apMbcInfo[1]->nPoints)
+		{ return true; } return false;
 	}
 
 protected:
@@ -249,11 +250,8 @@ inline ECodeType CESI::DetectUnicodeBom(const char *buff, size_t size) noexcept
 
 	// バイト列の先頭が \ufeff の utf16BE 表現と一致するか判定
 	constexpr const BYTE utf16BeBOM[]{0xfe, 0xff};
-	if (size >= _countof(utf16BeBOM) && 0 == ::memcmp(buff, utf16BeBOM, _countof(utf16BeBOM))) {
-		return CODE_UNICODEBE;
-	}
-
-	// バイト列の先頭が \ufeff の utf16LE 表現と一致するか判定
+	if (size >= _countof(utf16BeBOM) && 0 == ::memcmp(buff, utf16BeBOM, _countof(utf16BeBOM)))
+	{ return CODE_UNICODEBE; } // バイト列の先頭が \ufeff の utf16LE 表現と一致するか判定
 	constexpr const BYTE utf16LeBOM[]{0xff, 0xfe};
 	if (size >= _countof(utf16LeBOM) && 0 == ::memcmp(buff, utf16LeBOM, _countof(utf16LeBOM))) { return CODE_UNICODE; }
 

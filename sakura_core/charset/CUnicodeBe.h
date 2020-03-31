@@ -28,7 +28,8 @@
 #include "CEol.h"
 #include "CUnicode.h"
 
-class CUnicodeBe : public CCodeBase {
+class CUnicodeBe : public CCodeBase
+{
 public:
 	// CCodeBaseインターフェース
 	EConvertResult CodeToUnicode(const CMemory &cSrc, CNativeW *pDst) override

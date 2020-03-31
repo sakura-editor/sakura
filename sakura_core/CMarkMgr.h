@@ -51,10 +51,12 @@
 	削除操作はサブクラスにまかせる
 
 */
-class CMarkMgr {
+class CMarkMgr
+{
 public:
 	//	項目のクラス
-	class CMark {
+	class CMark
+	{
 	public:
 		//	constructor
 		CMark(const CLogicPoint &pt)
@@ -135,7 +137,8 @@ private:
 
 	CMarkMgr を継承し、動作が規定されていない部分を実装する。
 */
-class CAutoMarkMgr final : public CMarkMgr {
+class CAutoMarkMgr final : public CMarkMgr
+{
 public:
 	void Add(const CMark &m) override; //!<	要素の追加
 	void Expire(void) override;		   //!<	要素数の調整

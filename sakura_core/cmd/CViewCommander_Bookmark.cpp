@@ -25,14 +25,16 @@
 */
 void CViewCommander::Command_JUMP_SRCHSTARTPOS(void)
 {
-	if (m_pCommanderView->m_ptSrchStartPos_PHY.BothNatural()) {
+	if (m_pCommanderView->m_ptSrchStartPos_PHY.BothNatural())
+	{
 		CLayoutPoint pt;
 		/* 範囲選択中か */
 		GetDocument()->m_cLayoutMgr.LogicToLayout(m_pCommanderView->m_ptSrchStartPos_PHY, &pt);
 		//	2006.07.09 genta 選択状態を保つ
 		m_pCommanderView->MoveCursorSelecting(pt, m_pCommanderView->GetSelectionInfo().m_bSelectingLock);
 	}
-	else {
+	else
+	{
 		ErrorBeep();
 	}
 	return;
@@ -43,10 +45,8 @@ void CViewCommander::Command_JUMP_SRCHSTARTPOS(void)
 */
 void CViewCommander::Command_JUMP_DIALOG(void)
 {
-	if (!GetEditWindow()->m_cDlgJump.DoModal(G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument())) {
-		return;
-	}
-}
+	if (!GetEditWindow()->m_cDlgJump.DoModal(G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument()))
+	{ return; } }
 
 /* 指定行ヘジャンプ */
 void CViewCommander::Command_JUMP(void)
@@ -57,7 +57,8 @@ void CViewCommander::Command_JUMP(void)
 	int			   nCurrentLine;
 	int			   nCommentBegin = 0;
 
-	if (0 == GetDocument()->m_cLayoutMgr.GetLineCount()) {
+	if (0 == GetDocument()->m_cLayoutMgr.GetLineCount())
+	{
 		ErrorBeep();
 		return;
 	}
@@ -66,9 +67,11 @@ void CViewCommander::Command_JUMP(void)
 	int nLineNum; //$$ 単位混在
 	nLineNum = GetEditWindow()->m_cDlgJump.m_nLineNum;
 
-	if (!GetEditWindow()->m_cDlgJump.m_bPLSQL) { /* PL/SQLソースの有効行か */
+	if (!GetEditWindow()->m_cDlgJump.m_bPLSQL)
+	{ /* PL/SQLソースの有効行か */
 		/* 行番号の表示 false=折り返し単位／true=改行単位 */
-		if (GetDllShareData().m_bLineNumIsCRLF_ForJump) {
+		if (GetDllShareData().m_bLineNumIsCRLF_ForJump)
+		{
 			if (CLogicInt(0) >= nLineNum) { nLineNum = CLogicInt(1); }
 			/*
 			  カーソル位置変換
@@ -80,12 +83,11 @@ void CViewCommander::Command_JUMP(void)
 			GetDocument()->m_cLayoutMgr.LogicToLayout(CLogicPoint(0, nLineNum - 1), &ptPosXY);
 			nLineNum = (Int)ptPosXY.y + 1;
 		}
-		else {
+		else
+		{
 			if (0 >= nLineNum) { nLineNum = 1; }
-			if (nLineNum > GetDocument()->m_cLayoutMgr.GetLineCount()) {
-				nLineNum = (Int)GetDocument()->m_cLayoutMgr.GetLineCount();
-			}
-		}
+			if (nLineNum > GetDocument()->m_cLayoutMgr.GetLineCount())
+			{ nLineNum = (Int)GetDocument()->m_cLayoutMgr.GetLineCount(); } }
 		//	Sep. 8, 2000 genta
 		m_pCommanderView->AddCurrentLineToHistory();
 		//	2006.07.09 genta 選択状態を解除しないように
@@ -101,7 +103,8 @@ void CViewCommander::Command_JUMP(void)
 	nLineCount = GetEditWindow()->m_cDlgJump.m_nPLSQL_E1 - 1;
 
 	/* 行番号の表示 false=折り返し単位／true=改行単位 */
-	if (!m_pCommanderView->m_pTypeData->m_bLineNumIsCRLF) { //レイアウト単位
+	if (!m_pCommanderView->m_pTypeData->m_bLineNumIsCRLF)
+	{ //レイアウト単位
 		/*
 		  カーソル位置変換
 		  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
@@ -113,96 +116,114 @@ void CViewCommander::Command_JUMP(void)
 		nLineCount = ptPosXY.y;
 	}
 
-	for (; nLineCount < GetDocument()->m_cDocLineMgr.GetLineCount(); ++nLineCount) {
+	for (; nLineCount < GetDocument()->m_cDocLineMgr.GetLineCount(); ++nLineCount)
+	{
 		CLogicInt nLineLen;
 		CLogicInt nBgn = CLogicInt(0);
 		CLogicInt i;
 		pLine	  = GetDocument()->m_cDocLineMgr.GetLine(CLogicInt(nLineCount))->GetDocLineStrWithEOL(&nLineLen);
 		bValidLine = FALSE;
-		for (i = CLogicInt(0); i < nLineLen; ++i) {
+		for (i = CLogicInt(0); i < nLineLen; ++i)
+		{
 			if (L' ' != pLine[i] && WCODE::TAB != pLine[i]) { break; }
 		}
 		nBgn = i;
-		for (i = nBgn; i < nLineLen; ++i) {
+		for (i = nBgn; i < nLineLen; ++i)
+		{
 			/* シングルクォーテーション文字列読み込み中 */
-			if (20 == nMode) {
+			if (20 == nMode)
+			{
 				bValidLine = TRUE;
-				if (L'\'' == pLine[i]) {
+				if (L'\'' == pLine[i])
+				{
 					if (i > 0 && L'\\' == pLine[i - 1]) {}
-					else {
+					else
+					{
 						nMode = 0;
 						continue;
 					}
 				}
-				else {
+				else
+				{
 				}
 			}
 			else
 				/* ダブルクォーテーション文字列読み込み中 */
-				if (21 == nMode) {
+				if (21 == nMode)
+			{
 				bValidLine = TRUE;
-				if (L'"' == pLine[i]) {
+				if (L'"' == pLine[i])
+				{
 					if (i > 0 && L'\\' == pLine[i - 1]) {}
-					else {
+					else
+					{
 						nMode = 0;
 						continue;
 					}
 				}
-				else {
+				else
+				{
 				}
 			}
 			else
 				/* コメント読み込み中 */
-				if (8 == nMode) {
-				if (i < nLineLen - 1 && L'*' == pLine[i] && L'/' == pLine[i + 1]) {
+				if (8 == nMode)
+			{
+				if (i < nLineLen - 1 && L'*' == pLine[i] && L'/' == pLine[i + 1])
+				{
 					if (/*nCommentBegin != nLineCount &&*/ nCommentBegin != 0) { bValidLine = TRUE; }
 					++i;
 					nMode = 0;
 					continue;
 				}
-				else {
+				else
+				{
 				}
 			}
 			else
 				/* ノーマルモード */
-				if (0 == nMode) {
+				if (0 == nMode)
+			{
 				/* 空白やタブ記号等を飛ばす */
 				if (L'\t' == pLine[i] || L' ' == pLine[i]
-					|| WCODE::IsLineDelimiter(pLine[i], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol)) {
-					continue;
-				}
-				else if (i < nLineLen - 1 && L'-' == pLine[i] && L'-' == pLine[i + 1]) {
+					|| WCODE::IsLineDelimiter(pLine[i], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol))
+				{ continue; } else if (i < nLineLen - 1 && L'-' == pLine[i] && L'-' == pLine[i + 1])
+				{
 					bValidLine = TRUE;
 					break;
 				}
-				else if (i < nLineLen - 1 && L'/' == pLine[i] && L'*' == pLine[i + 1]) {
+				else if (i < nLineLen - 1 && L'/' == pLine[i] && L'*' == pLine[i + 1])
+				{
 					++i;
 					nMode		  = 8;
 					nCommentBegin = nLineCount;
 					continue;
 				}
-				else if (L'\'' == pLine[i]) {
+				else if (L'\'' == pLine[i])
+				{
 					nMode = 20;
 					continue;
 				}
-				else if (L'"' == pLine[i]) {
+				else if (L'"' == pLine[i])
+				{
 					nMode = 21;
 					continue;
 				}
-				else {
+				else
+				{
 					bValidLine = TRUE;
 				}
 			}
 		}
 		/* コメント読み込み中 */
-		if (8 == nMode) {
+		if (8 == nMode)
+		{
 			if (nCommentBegin != 0) { bValidLine = TRUE; }
 			/* コメントブロック内の改行だけの行 */
-			if (WCODE::IsLineDelimiter(pLine[nBgn], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol)) {
-				bValidLine = FALSE;
-			}
-		}
-		if (bValidLine) {
+			if (WCODE::IsLineDelimiter(pLine[nBgn], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol))
+			{ bValidLine = FALSE; } }
+		if (bValidLine)
+		{
 			++nCurrentLine;
 			if (nCurrentLine >= nLineNum) { break; }
 		}
@@ -229,20 +250,23 @@ void CViewCommander::Command_BOOKMARK_SET(void)
 	CDocLine *pCDocLine;
 	if (m_pCommanderView->GetSelectionInfo().IsTextSelected()
 		&& m_pCommanderView->GetSelectionInfo().m_sSelect.GetFrom().y
-			   < m_pCommanderView->GetSelectionInfo().m_sSelect.GetTo().y) {
+			   < m_pCommanderView->GetSelectionInfo().m_sSelect.GetTo().y)
+	{
 		CLogicPoint ptFrom;
 		CLogicPoint ptTo;
 		GetDocument()->m_cLayoutMgr.LayoutToLogic(
 			CLayoutPoint(CLayoutInt(0), m_pCommanderView->GetSelectionInfo().m_sSelect.GetFrom().y), &ptFrom);
 		GetDocument()->m_cLayoutMgr.LayoutToLogic(
 			CLayoutPoint(CLayoutInt(0), m_pCommanderView->GetSelectionInfo().m_sSelect.GetTo().y), &ptTo);
-		for (CLogicInt nY = ptFrom.GetY2(); nY <= ptTo.y; nY++) {
+		for (CLogicInt nY = ptFrom.GetY2(); nY <= ptTo.y; nY++)
+		{
 			pCDocLine = GetDocument()->m_cDocLineMgr.GetLine(nY);
 			CBookmarkSetter cBookmark(pCDocLine);
 			if (pCDocLine) cBookmark.SetBookmark(!cBookmark.IsBookmarked());
 		}
 	}
-	else {
+	else
+	{
 		pCDocLine = GetDocument()->m_cDocLineMgr.GetLine(GetCaret().GetCaretLogicPos().GetY2());
 		CBookmarkSetter cBookmark(pCDocLine);
 		if (pCDocLine) cBookmark.SetBookmark(!cBookmark.IsBookmarked());
@@ -266,7 +290,8 @@ void CViewCommander::Command_BOOKMARK_NEXT(void)
 	nYOld = ptXY.y; // hor
 
 re_do:; // hor
-	if (CBookmarkManager(&GetDocument()->m_cDocLineMgr).SearchBookMark(ptXY.GetY2(), SEARCH_FORWARD, &tmp_y)) {
+	if (CBookmarkManager(&GetDocument()->m_cDocLineMgr).SearchBookMark(ptXY.GetY2(), SEARCH_FORWARD, &tmp_y))
+	{
 		ptXY.y = tmp_y;
 		bFound = TRUE;
 		CLayoutPoint ptLayout;
@@ -275,19 +300,23 @@ re_do:; // hor
 		m_pCommanderView->MoveCursorSelecting(ptLayout, m_pCommanderView->GetSelectionInfo().m_bSelectingLock);
 	}
 	// 2002.01.26 hor
-	if (GetDllShareData().m_Common.m_sSearch.m_bSearchAll) {
+	if (GetDllShareData().m_Common.m_sSearch.m_bSearchAll)
+	{
 		if (!bFound && // 見つからなかった
 			bRedo	  // 最初の検索
-		) {
+		)
+		{
 			ptXY.y = -1; //	2002/06/01 MIK
 			bRedo  = FALSE;
 			goto re_do; // 先頭から再検索
 		}
 	}
-	if (bFound) {
+	if (bFound)
+	{
 		if (nYOld >= ptXY.y) m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRNEXT1));
 	}
-	else {
+	else
+	{
 		m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRNEXT2));
 		AlertNotFound(m_pCommanderView->GetHwnd(), false, LS(STR_BOOKMARK_NEXT_NOT_FOUND));
 	}
@@ -308,7 +337,8 @@ void CViewCommander::Command_BOOKMARK_PREV(void)
 	nYOld = ptXY.y; // hor
 
 re_do:; // hor
-	if (CBookmarkManager(&GetDocument()->m_cDocLineMgr).SearchBookMark(ptXY.GetY2(), SEARCH_BACKWARD, &tmp_y)) {
+	if (CBookmarkManager(&GetDocument()->m_cDocLineMgr).SearchBookMark(ptXY.GetY2(), SEARCH_BACKWARD, &tmp_y))
+	{
 		ptXY.y = tmp_y;
 		bFound = TRUE; // hor
 		CLayoutPoint ptLayout;
@@ -317,20 +347,24 @@ re_do:; // hor
 		m_pCommanderView->MoveCursorSelecting(ptLayout, m_pCommanderView->GetSelectionInfo().m_bSelectingLock);
 	}
 	// 2002.01.26 hor
-	if (GetDllShareData().m_Common.m_sSearch.m_bSearchAll) {
+	if (GetDllShareData().m_Common.m_sSearch.m_bSearchAll)
+	{
 		if (!bFound && // 見つからなかった
 			bRedo	  // 最初の検索
-		) {
+		)
+		{
 			// 2011.02.02 m_cLayoutMgr→m_cDocLineMgr
 			ptXY.y = GetDocument()->m_cDocLineMgr.GetLineCount(); // 2002/06/01 MIK
 			bRedo  = FALSE;
 			goto re_do; // 末尾から再検索
 		}
 	}
-	if (bFound) {
+	if (bFound)
+	{
 		if (nYOld <= ptXY.y) m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRPREV1));
 	}
-	else {
+	else
+	{
 		m_pCommanderView->SendStatusMessage(LS(STR_ERR_SRPREV2));
 		AlertNotFound(m_pCommanderView->GetHwnd(), false, LS(STR_BOOKMARK_PREV_NOT_FOUND));
 	}
@@ -365,9 +399,10 @@ void CViewCommander::Command_FUNCLIST_NEXT(void)
 	CLogicPoint ptXY(0, GetCaret().GetCaretLogicPos().y);
 	int			nYOld = ptXY.y;
 
-	for (int n = 0; n < 2; n++) {
-		if (CFuncListManager().SearchFuncListMark(&GetDocument()->m_cDocLineMgr, ptXY.GetY2(), SEARCH_FORWARD,
-												  &ptXY.y)) {
+	for (int n = 0; n < 2; n++)
+	{
+		if (CFuncListManager().SearchFuncListMark(&GetDocument()->m_cDocLineMgr, ptXY.GetY2(), SEARCH_FORWARD, &ptXY.y))
+		{
 			CLayoutPoint ptLayout;
 			GetDocument()->m_cLayoutMgr.LogicToLayout(ptXY, &ptLayout);
 			m_pCommanderView->MoveCursorSelecting(ptLayout, m_pCommanderView->GetSelectionInfo().m_bSelectingLock);
@@ -388,9 +423,11 @@ void CViewCommander::Command_FUNCLIST_PREV(void)
 	CLogicPoint ptXY(0, GetCaret().GetCaretLogicPos().y);
 	int			nYOld = ptXY.y;
 
-	for (int n = 0; n < 2; n++) {
+	for (int n = 0; n < 2; n++)
+	{
 		if (CFuncListManager().SearchFuncListMark(&GetDocument()->m_cDocLineMgr, ptXY.GetY2(), SEARCH_BACKWARD,
-												  &ptXY.y)) {
+												  &ptXY.y))
+		{
 			CLayoutPoint ptLayout;
 			GetDocument()->m_cLayoutMgr.LogicToLayout(ptXY, &ptLayout);
 			m_pCommanderView->MoveCursorSelecting(ptLayout, m_pCommanderView->GetSelectionInfo().m_bSelectingLock);

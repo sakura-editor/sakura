@@ -71,9 +71,11 @@ void CDocOutline::MakeFuncList_PLSQL(CFuncInfoArr *pcFuncInfoArr)
 	nMode			 = 0;
 	nFuncNum		 = 0;
 	CLogicInt nLineCount;
-	for (nLineCount = CLogicInt(0); nLineCount < m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount) {
+	for (nLineCount = CLogicInt(0); nLineCount < m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount)
+	{
 		pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
-		for (i = 0; i < nLineLen; ++i) {
+		for (i = 0; i < nLineLen; ++i)
+		{
 			/* 1バイト文字だけを処理する */
 			// 2005-09-02 D.S.Koba GetSizeOfChar
 			nCharChars = CNativeW::GetSizeOfChar(pLine, nLineLen, i);
@@ -83,45 +85,56 @@ void CDocOutline::MakeFuncList_PLSQL(CFuncInfoArr *pcFuncInfoArr)
 			//				continue;
 			//			}
 			/* シングルクォーテーション文字列読み込み中 */
-			if (20 == nMode) {
-				if (L'\'' == pLine[i]) {
+			if (20 == nMode)
+			{
+				if (L'\'' == pLine[i])
+				{
 					if (i + 1 < nLineLen && L'\'' == pLine[i + 1]) { ++i; }
-					else {
+					else
+					{
 						nMode = 0;
 						continue;
 					}
 				}
-				else {
+				else
+				{
 				}
 			}
 			else
 				/* コメント読み込み中 */
-				if (8 == nMode) {
-				if (i + 1 < nLineLen && L'*' == pLine[i] && L'/' == pLine[i + 1]) {
+				if (8 == nMode)
+			{
+				if (i + 1 < nLineLen && L'*' == pLine[i] && L'/' == pLine[i + 1])
+				{
 					++i;
 					nMode = 0;
 					continue;
 				}
-				else {
+				else
+				{
 				}
 			}
 			else
 				/* 単語読み込み中 */
-				if (1 == nMode) {
+				if (1 == nMode)
+			{
 				if ((1 == nCharChars
 					 && (L'_' == pLine[i] || L'~' == pLine[i] || (L'a' <= pLine[i] && pLine[i] <= L'z')
 						 || (L'A' <= pLine[i] && pLine[i] <= L'Z') || (L'0' <= pLine[i] && pLine[i] <= L'9')
 						 || (L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i])
 							 && !iswspace(pLine[i])) // 2013.05.08 日本語対応
 						 ))
-					|| 2 == nCharChars) {
+					|| 2 == nCharChars)
+				{
 					//					++nWordIdx;
-					if (nWordIdx >= nMaxWordLeng) {
+					if (nWordIdx >= nMaxWordLeng)
+					{
 						nMode = 999;
 						i += (nCharChars - 1);
 						continue;
 					}
-					else {
+					else
+					{
 						//						szWord[nWordIdx] = pLine[i];
 						//						szWord[nWordIdx + 1] = '\0';
 						wmemcpy(&szWord[nWordIdx], &pLine[i], nCharChars);
@@ -129,44 +142,56 @@ void CDocOutline::MakeFuncList_PLSQL(CFuncInfoArr *pcFuncInfoArr)
 						nWordIdx += (nCharChars);
 					}
 				}
-				else {
-					if (0 == nParseCnt && 0 == _wcsicmp(szWord, L"FUNCTION")) {
+				else
+				{
+					if (0 == nParseCnt && 0 == _wcsicmp(szWord, L"FUNCTION"))
+					{
 						nFuncOrProc = 1;
 						nParseCnt   = 1;
 						nFuncLine   = nLineCount + CLogicInt(1);
 					}
-					else if (0 == nParseCnt && 0 == _wcsicmp(szWord, L"PROCEDURE")) {
+					else if (0 == nParseCnt && 0 == _wcsicmp(szWord, L"PROCEDURE"))
+					{
 						nFuncOrProc = 2;
 						nParseCnt   = 1;
 						nFuncLine   = nLineCount + CLogicInt(1);
 					}
-					else if (0 == nParseCnt && 0 == _wcsicmp(szWord, L"PACKAGE")) {
+					else if (0 == nParseCnt && 0 == _wcsicmp(szWord, L"PACKAGE"))
+					{
 						nFuncOrProc = 3;
 						nParseCnt   = 1;
 						nFuncLine   = nLineCount + CLogicInt(1);
 					}
-					else if (1 == nParseCnt && 3 == nFuncOrProc && 0 == _wcsicmp(szWord, L"BODY")) {
+					else if (1 == nParseCnt && 3 == nFuncOrProc && 0 == _wcsicmp(szWord, L"BODY"))
+					{
 						nFuncOrProc = 4;
 						nParseCnt   = 1;
 					}
-					else if (1 == nParseCnt) {
-						if (1 == nFuncOrProc || 2 == nFuncOrProc || 3 == nFuncOrProc || 4 == nFuncOrProc) {
+					else if (1 == nParseCnt)
+					{
+						if (1 == nFuncOrProc || 2 == nFuncOrProc || 3 == nFuncOrProc || 4 == nFuncOrProc)
+						{
 							++nParseCnt;
 							wcscpy(szFuncName, szWord);
 							//						}else
 							//						if( 3 == nFuncOrProc ){
 						}
 					}
-					else if (2 == nParseCnt) {
-						if (0 == _wcsicmp(szWord, L"IS")) {
+					else if (2 == nParseCnt)
+					{
+						if (0 == _wcsicmp(szWord, L"IS"))
+						{
 							if (1 == nFuncOrProc) { nFuncId = 11; /* ファンクション本体 */ }
-							else if (2 == nFuncOrProc) {
+							else if (2 == nFuncOrProc)
+							{
 								nFuncId = 21; /* プロシージャ本体 */
 							}
-							else if (3 == nFuncOrProc) {
+							else if (3 == nFuncOrProc)
+							{
 								nFuncId = 31; /* パッケージ仕様部 */
 							}
-							else if (4 == nFuncOrProc) {
+							else if (4 == nFuncOrProc)
+							{
 								nFuncId = 41; /* パッケージ本体 */
 							}
 							++nFuncNum;
@@ -181,8 +206,10 @@ void CDocOutline::MakeFuncList_PLSQL(CFuncInfoArr *pcFuncInfoArr)
 							pcFuncInfoArr->AppendData(nFuncLine, ptPos.GetY2() + CLayoutInt(1), szFuncName, nFuncId);
 							nParseCnt = 0;
 						}
-						if (0 == _wcsicmp(szWord, L"AS")) {
-							if (3 == nFuncOrProc) {
+						if (0 == _wcsicmp(szWord, L"AS"))
+						{
+							if (3 == nFuncOrProc)
+							{
 								nFuncId = 31; /* パッケージ仕様部 */
 								++nFuncNum;
 								/*
@@ -197,7 +224,8 @@ void CDocOutline::MakeFuncList_PLSQL(CFuncInfoArr *pcFuncInfoArr)
 														  nFuncId);
 								nParseCnt = 0;
 							}
-							else if (4 == nFuncOrProc) {
+							else if (4 == nFuncOrProc)
+							{
 								nFuncId = 41; /* パッケージ本体 */
 								++nFuncNum;
 								/*
@@ -224,13 +252,15 @@ void CDocOutline::MakeFuncList_PLSQL(CFuncInfoArr *pcFuncInfoArr)
 			}
 			else
 				/* 記号列読み込み中 */
-				if (2 == nMode) {
+				if (2 == nMode)
+			{
 				if (L'_' == pLine[i] || L'~' == pLine[i] || (L'a' <= pLine[i] && pLine[i] <= L'z')
 					|| (L'A' <= pLine[i] && pLine[i] <= L'Z') || (L'0' <= pLine[i] && pLine[i] <= L'9')
 					|| (L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i])) || // 2013.05.08 日本語対応
 					L'\t' == pLine[i] || L' ' == pLine[i] || WCODE::IsLineDelimiter(pLine[i], bExtEol)
 					|| L'{' == pLine[i] || L'}' == pLine[i] || L'(' == pLine[i] || L')' == pLine[i] || L';' == pLine[i]
-					|| L'\'' == pLine[i] || L'/' == pLine[i] || L'-' == pLine[i] || 2 == nCharChars) {
+					|| L'\'' == pLine[i] || L'/' == pLine[i] || L'-' == pLine[i] || 2 == nCharChars)
+				{
 					wcscpy(szWordPrev, szWord);
 					nWordIdx  = 0;
 					szWord[0] = L'\0';
@@ -238,13 +268,16 @@ void CDocOutline::MakeFuncList_PLSQL(CFuncInfoArr *pcFuncInfoArr)
 					i--;
 					continue;
 				}
-				else {
+				else
+				{
 					//					++nWordIdx;
-					if (nWordIdx >= nMaxWordLeng) {
+					if (nWordIdx >= nMaxWordLeng)
+					{
 						nMode = 999;
 						continue;
 					}
-					else {
+					else
+					{
 						//						szWord[nWordIdx] = pLine[i];
 						//						szWord[nWordIdx + 1] = '\0';
 						wmemcpy(&szWord[nWordIdx], &pLine[i], nCharChars);
@@ -255,34 +288,43 @@ void CDocOutline::MakeFuncList_PLSQL(CFuncInfoArr *pcFuncInfoArr)
 			}
 			else
 				/* 長過ぎる単語無視中 */
-				if (999 == nMode) {
+				if (999 == nMode)
+			{
 				/* 空白やタブ記号等を飛ばす */
-				if (L'\t' == pLine[i] || L' ' == pLine[i] || WCODE::IsLineDelimiter(pLine[i], bExtEol)) {
+				if (L'\t' == pLine[i] || L' ' == pLine[i] || WCODE::IsLineDelimiter(pLine[i], bExtEol))
+				{
 					nMode = 0;
 					continue;
 				}
 			}
 			else
 				/* ノーマルモード */
-				if (0 == nMode) {
+				if (0 == nMode)
+			{
 				/* 空白やタブ記号等を飛ばす */
 				if (L'\t' == pLine[i] || L' ' == pLine[i] || WCODE::IsLineDelimiter(pLine[i], bExtEol)) { continue; }
-				else if (i < nLineLen - 1 && L'-' == pLine[i] && L'-' == pLine[i + 1]) {
+				else if (i < nLineLen - 1 && L'-' == pLine[i] && L'-' == pLine[i + 1])
+				{
 					break;
 				}
-				else if (i < nLineLen - 1 && L'/' == pLine[i] && L'*' == pLine[i + 1]) {
+				else if (i < nLineLen - 1 && L'/' == pLine[i] && L'*' == pLine[i + 1])
+				{
 					++i;
 					nMode = 8;
 					continue;
 				}
-				else if (L'\'' == pLine[i]) {
+				else if (L'\'' == pLine[i])
+				{
 					nMode = 20;
 					continue;
 				}
-				else if (L';' == pLine[i]) {
-					if (2 == nParseCnt) {
+				else if (L';' == pLine[i])
+				{
+					if (2 == nParseCnt)
+					{
 						if (1 == nFuncOrProc) { nFuncId = 10; /* ファンクション宣言 */ }
-						else {
+						else
+						{
 							nFuncId = 20; /* プロシージャ宣言 */
 						}
 						++nFuncNum;
@@ -300,14 +342,16 @@ void CDocOutline::MakeFuncList_PLSQL(CFuncInfoArr *pcFuncInfoArr)
 					nMode = 0;
 					continue;
 				}
-				else {
+				else
+				{
 					if ((1 == nCharChars
 						 && (L'_' == pLine[i] || L'~' == pLine[i] || (L'a' <= pLine[i] && pLine[i] <= L'z')
 							 || (L'A' <= pLine[i] && pLine[i] <= L'Z') || (L'0' <= pLine[i] && pLine[i] <= L'9')
 							 || (L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i])
 								 && !iswspace(pLine[i])) // 2013.05.08 日本語対応
 							 ))
-						|| 2 == nCharChars) {
+						|| 2 == nCharChars)
+					{
 						wcscpy(szWordPrev, szWord);
 						nWordIdx = 0;
 
@@ -319,7 +363,8 @@ void CDocOutline::MakeFuncList_PLSQL(CFuncInfoArr *pcFuncInfoArr)
 
 						nMode = 1;
 					}
-					else {
+					else
+					{
 						wcscpy(szWordPrev, szWord);
 						nWordIdx = 0;
 						//						szWord[nWordIdx] = pLine[i];

@@ -48,7 +48,8 @@ bool CFile::IsFileReadable() const
 {
 	HANDLE hTest = CreateFile(this->GetFilePath(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
 							  OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL);
-	if (hTest == INVALID_HANDLE_VALUE) {
+	if (hTest == INVALID_HANDLE_VALUE)
+	{
 		// 読み込みアクセス権がない
 		return false;
 	}
@@ -64,7 +65,8 @@ bool CFile::IsFileReadable() const
 void CFile::FileUnlock()
 {
 	//クローズ
-	if (m_hLockedFile != INVALID_HANDLE_VALUE) {
+	if (m_hLockedFile != INVALID_HANDLE_VALUE)
+	{
 		::CloseHandle(m_hLockedFile);
 		m_hLockedFile = INVALID_HANDLE_VALUE;
 	}
@@ -84,7 +86,8 @@ bool CFile::FileLock(EShareMode eShareMode, bool bMsg)
 
 	//フラグ
 	DWORD dwShareMode = 0;
-	switch (eShareMode) {
+	switch (eShareMode)
+	{
 	case SHAREMODE_NOT_EXCLUSIVE: return true; break;				  //排他制御無し
 	case SHAREMODE_DENY_READWRITE: dwShareMode = 0; break;			  //読み書き禁止→共有無し
 	case SHAREMODE_DENY_WRITE: dwShareMode = FILE_SHARE_READ; break;  //書き込み禁止→読み込みのみ認める
@@ -102,9 +105,11 @@ bool CFile::FileLock(EShareMode eShareMode, bool bMsg)
 	);
 
 	//結果
-	if (INVALID_HANDLE_VALUE == m_hLockedFile && bMsg) {
+	if (INVALID_HANDLE_VALUE == m_hLockedFile && bMsg)
+	{
 		const WCHAR *pszMode;
-		switch (eShareMode) {
+		switch (eShareMode)
+		{
 		case SHAREMODE_DENY_READWRITE: pszMode = LS(STR_EXCLU_DENY_READWRITE); break;
 		case SHAREMODE_DENY_WRITE: pszMode = LS(STR_EXCLU_DENY_WRITE); break;
 		default: pszMode = LS(STR_EXCLU_UNDEFINED); break;

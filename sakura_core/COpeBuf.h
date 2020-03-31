@@ -25,7 +25,8 @@ class COpeBlk; /// 2002/2/10 aroka
 /*!
 	@brief アンドゥ・リドゥバッファ
 */
-class COpeBuf {
+class COpeBuf
+{
 public:
 	//コンストラクタ・デストラクタ
 	COpeBuf();

@@ -39,7 +39,8 @@ void ChangeCurrentDirectoryToExeDir()
 	szExeDir[0] = L'\0';
 	GetExedir(szExeDir, NULL);
 	if (szExeDir[0]) { ::SetCurrentDirectory(szExeDir); }
-	else {
+	else
+	{
 		// 移動できないときはSYSTEM32(9xではSYSTEM)に移動
 		szExeDir[0] = L'\0';
 		int n		= ::GetSystemDirectory(szExeDir, _MAX_PATH);
@@ -76,7 +77,8 @@ DWORD GetDllVersion(LPCWSTR lpszDllName)
 	   tested to ensure that it is a fully qualified path before it is used. */
 	hinstDll = LoadLibraryExedir(lpszDllName);
 
-	if (hinstDll) {
+	if (hinstDll)
+	{
 		DLLGETVERSIONPROC pDllGetVersion;
 		pDllGetVersion = (DLLGETVERSIONPROC)GetProcAddress(hinstDll, "DllGetVersion");
 
@@ -85,7 +87,8 @@ DWORD GetDllVersion(LPCWSTR lpszDllName)
 		DLL, the lack of a DllGetVersion function can be a useful
 		indicator of the version. */
 
-		if (pDllGetVersion) {
+		if (pDllGetVersion)
+		{
 			DLLVERSIONINFO dvi;
 			HRESULT		   hr;
 
@@ -139,7 +142,8 @@ HICON GetAppIcon(HINSTANCE hInst, int nResource, const WCHAR *szFile, bool bSmal
 	return hIcon;
 }
 
-struct VS_VERSION_INFO_HEAD {
+struct VS_VERSION_INFO_HEAD
+{
 	WORD			 wLength;
 	WORD			 wValueLength;
 	WORD			 bText;
@@ -162,17 +166,20 @@ void GetAppVersionInfo(HINSTANCE hInstance, int nVersionResourceID, DWORD *pdwPr
 	static bool  bLoad		 = false;
 	static DWORD dwVersionMS = 0;
 	static DWORD dwVersionLS = 0;
-	if (hInstance == NULL && bLoad) {
+	if (hInstance == NULL && bLoad)
+	{
 		*pdwProductVersionMS = dwVersionMS;
 		*pdwProductVersionLS = dwVersionLS;
 		return;
 	}
 	if (NULL != (hRSRC = ::FindResource(hInstance, MAKEINTRESOURCE(nVersionResourceID), RT_VERSION))
 		&& NULL != (hgRSRC = ::LoadResource(hInstance, hRSRC))
-		&& NULL != (pVVIH = (VS_VERSION_INFO_HEAD *)::LockResource(hgRSRC))) {
+		&& NULL != (pVVIH = (VS_VERSION_INFO_HEAD *)::LockResource(hgRSRC)))
+	{
 		*pdwProductVersionMS = pVVIH->Value.dwProductVersionMS;
 		*pdwProductVersionLS = pVVIH->Value.dwProductVersionLS;
-		if (hInstance == NULL) {
+		if (hInstance == NULL)
+		{
 			dwVersionMS = pVVIH->Value.dwProductVersionMS;
 			dwVersionLS = pVVIH->Value.dwProductVersionLS;
 			bLoad		= true;

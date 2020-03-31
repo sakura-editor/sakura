@@ -40,7 +40,8 @@ void CFigure_Comma::DispSpace(CGraphics &gr, DispPos *pDispPos, CEditView *pcVie
 	// これから描画するタブ幅
 	CLayoutXInt tabDispWidthLayout = pcView->m_pcEditDoc->m_cLayoutMgr.GetActualTsvSpace(sPos.GetDrawCol(), L',');
 	int			tabDispWidth	   = (Int)tabDispWidthLayout;
-	if (pcView->m_bMiniMap) {
+	if (pcView->m_bMiniMap)
+	{
 		CLayoutMgr mgrTemp;
 		mgrTemp.SetTabSpaceInfo(pcView->m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(),
 								CLayoutXInt(pcView->GetTextMetrics().GetHankakuWidth()));
@@ -57,8 +58,10 @@ void CFigure_Comma::DispSpace(CGraphics &gr, DispPos *pDispPos, CEditView *pcVie
 	rcClip2.bottom = sPos.GetDrawPos().y + nLineHeight;
 	int nLen	   = wcslen(m_pTypeData->m_szTabViewString);
 
-	if (pArea->IsRectIntersected(rcClip2)) {
-		if (cTabType.IsDisp()) { // CSVモード
+	if (pArea->IsRectIntersected(rcClip2))
+	{
+		if (cTabType.IsDisp())
+		{ // CSVモード
 			::ExtTextOut(gr, sPos.GetDrawPos().x, sPos.GetDrawPos().y, ExtTextOutOption() & ~(bTrans ? ETO_OPAQUE : 0),
 						 &rcClip2, L",       ",
 						 tabDispWidth <= 8 ? tabDispWidth : 8, // Sep. 22, 2002 genta

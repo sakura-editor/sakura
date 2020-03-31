@@ -26,14 +26,16 @@
 
 #include "util/design_template.h"
 
-class CLayoutColorInfo {
+class CLayoutColorInfo
+{
 public:
 	CLayoutColorInfo() {}
 	virtual ~CLayoutColorInfo(){};
 	virtual bool IsEqual(const CLayoutColorInfo *) const = 0;
 };
 
-class CLayoutExInfo {
+class CLayoutExInfo
+{
 public:
 	CLayoutExInfo()
 		: m_colorInfo(NULL)

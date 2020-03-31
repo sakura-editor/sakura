@@ -39,7 +39,8 @@
 #include "_main/global.h"
 
 //! メモリバッファクラス
-class CMemory {
+class CMemory
+{
 	//コンストラクタ・デストラクタ
 public:
 	CMemory() noexcept;
@@ -76,7 +77,8 @@ public:
 	//! ムーブ代入演算子
 	CMemory &operator=(CMemory &&rhs) noexcept
 	{
-		if (this != &rhs) {
+		if (this != &rhs)
+		{
 			_Empty();
 			swap(rhs);
 		}

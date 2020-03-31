@@ -48,7 +48,8 @@ void CFigure_Tab::DispSpace(CGraphics &gr, DispPos *pDispPos, CEditView *pcView,
 	// これから描画するタブ幅
 	CLayoutXInt tabDispWidthLayout = pcView->m_pcEditDoc->m_cLayoutMgr.GetActualTsvSpace(sPos.GetDrawCol(), WCODE::TAB);
 	int			tabDispWidth	   = (Int)tabDispWidthLayout;
-	if (pcView->m_bMiniMap) {
+	if (pcView->m_bMiniMap)
+	{
 		CLayoutMgr mgrTemp;
 		mgrTemp.SetTabSpaceInfo(pcView->m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(),
 								CLayoutXInt(pcView->GetTextMetrics().GetHankakuWidth()));
@@ -65,10 +66,13 @@ void CFigure_Tab::DispSpace(CGraphics &gr, DispPos *pDispPos, CEditView *pcView,
 	rcClip2.bottom = sPos.GetDrawPos().y + nLineHeight;
 	int nLen	   = wcslen(m_pTypeData->m_szTabViewString);
 
-	if (pArea->IsRectIntersected(rcClip2)) {
-		if (cTabType.IsDisp() && TABARROW_STRING == m_pTypeData->m_bTabArrow) { //タブ通常表示	//@@@ 2003.03.26 MIK
+	if (pArea->IsRectIntersected(rcClip2))
+	{
+		if (cTabType.IsDisp() && TABARROW_STRING == m_pTypeData->m_bTabArrow)
+		{ //タブ通常表示	//@@@ 2003.03.26 MIK
 			int fontNo = WCODE::GetFontNo(m_pTypeData->m_szTabViewString[0]);
-			if (fontNo) {
+			if (fontNo)
+			{
 				SFONT sFont;
 				sFont.m_sFontAttr = gr.GetCurrentMyFontAttr();
 				sFont.m_hFont	 = pcView->GetFontset().ChooseFontHandle(fontNo, sFont.m_sFontAttr);
@@ -84,20 +88,24 @@ void CFigure_Tab::DispSpace(CGraphics &gr, DispPos *pDispPos, CEditView *pcView,
 			);
 			if (fontNo) { gr.PopMyFont(); }
 		}
-		else {
+		else
+		{
 			//背景
 			::ExtTextOut(gr, sPos.GetDrawPos().x, sPos.GetDrawPos().y, ExtTextOutOption() & ~(bTrans ? ETO_OPAQUE : 0),
 						 &rcClip2, L"        ", 8, pMetrics->GetDxArray_AllHankaku());
 
 			//タブ矢印表示
-			if (cTabType.IsDisp()) {
+			if (cTabType.IsDisp())
+			{
 				// 文字色や太字かどうかを現在の DC から調べる	// 2009.05.29 ryoji
 				// （検索マッチ等の状況に柔軟に対応するため、ここは記号の色指定には決め打ちしない）
 				//	太字かどうか設定も見る様にする 2013/4/11 Uchi
 				// 2013.06.21 novice 文字色、太字をCGraphicsから取得
 
-				if (TABARROW_SHORT == m_pTypeData->m_bTabArrow) {
-					if (rcClip2.left <= sPos.GetDrawPos().x) { // Apr. 1, 2003 MIK 行番号と重なる
+				if (TABARROW_SHORT == m_pTypeData->m_bTabArrow)
+				{
+					if (rcClip2.left <= sPos.GetDrawPos().x)
+					{ // Apr. 1, 2003 MIK 行番号と重なる
 						_DrawTabArrow(gr, sPos.GetDrawPos().x, sPos.GetDrawPos().y, pMetrics->GetHankakuWidth(),
 									  pMetrics->GetHankakuHeight(),
 									  gr.GetCurrentMyFontBold()
@@ -105,7 +113,8 @@ void CFigure_Tab::DispSpace(CGraphics &gr, DispPos *pDispPos, CEditView *pcView,
 									  gr.GetCurrentTextForeColor());
 					}
 				}
-				else if (TABARROW_LONG == m_pTypeData->m_bTabArrow) {
+				else if (TABARROW_LONG == m_pTypeData->m_bTabArrow)
+				{
 					int nPosLeft = rcClip2.left > sPos.GetDrawPos().x ? rcClip2.left : sPos.GetDrawPos().x;
 					_DrawTabArrow(
 						gr, nPosLeft, sPos.GetDrawPos().y,
@@ -154,7 +163,8 @@ void _DrawTabArrow(CGraphics &gr,
 	pt[4].y = sy - sa;
 	::PolyPolyline(gr, pt, pp, _countof(pp));
 
-	if (bBold) {
+	if (bBold)
+	{
 		pt[0].x += 0; //「─」左端から右端
 		pt[0].y += 1;
 		pt[1].x += 0; //「／」右端から斜め左下

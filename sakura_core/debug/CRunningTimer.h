@@ -49,7 +49,8 @@
 
 	@date 2002/10/16  genta WriteTrace及びマクロ追加
 */
-class CRunningTimer {
+class CRunningTimer
+{
 public:
 	/*
 	||  Constructors

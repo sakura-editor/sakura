@@ -38,7 +38,8 @@
 	共通設定のウィンドウ設定で，ウィンドウ位置を指定するために補助的に
 	使用されるダイアログボックス
 */
-class CDlgWinSize final : public CDialog {
+class CDlgWinSize final : public CDialog
+{
 public:
 	CDlgWinSize();
 	~CDlgWinSize();

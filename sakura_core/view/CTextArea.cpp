@@ -16,13 +16,15 @@
 
 //! テンプレートでべき乗を計算(!=0)
 template<int N, int M>
-struct power {
+struct power
+{
 	static const int value = N * power<N, M - 1>::value;
 };
 
 //! テンプレートでべき乗を計算(==0)
 template<int N>
-struct power<N, 0> {
+struct power<N, 0>
+{
 	static const int value = 1;
 };
 
@@ -151,24 +153,28 @@ bool CTextArea::DetectWidthOfLineNumberArea(bool bRedraw)
 
 	int nViewAlignLeftNew;
 
-	if (pView->m_pTypeData->m_ColorInfoArr[COLORIDX_GYOU].m_bDisp && !pView->m_bMiniMap) {
+	if (pView->m_pTypeData->m_ColorInfoArr[COLORIDX_GYOU].m_bDisp && !pView->m_bMiniMap)
+	{
 		/* 行番号表示に必要な桁数を計算 */
 		int i				 = DetectWidthOfLineNumberArea_calculate(&pView->m_pcEditDoc->m_cLayoutMgr);
 		nViewAlignLeftNew	= pView->GetTextMetrics().GetHankakuDx() * (i + 1); /* 表示域の左端座標 */
 		m_nViewAlignLeftCols = i + 1;
 	}
-	else if (pView->m_bMiniMap) {
+	else if (pView->m_bMiniMap)
+	{
 		nViewAlignLeftNew	= 4;
 		m_nViewAlignLeftCols = 0;
 	}
-	else {
+	else
+	{
 		nViewAlignLeftNew	= 8;
 		m_nViewAlignLeftCols = 0;
 	}
 
 	//	Sep 18, 2002 genta
 	nViewAlignLeftNew += GetLeftYohaku();
-	if (nViewAlignLeftNew != GetAreaLeft()) {
+	if (nViewAlignLeftNew != GetAreaLeft())
+	{
 		CMyRect rc;
 		SetAreaLeft(nViewAlignLeftNew);
 		pView->GetClientRect(&rc);
@@ -179,7 +185,8 @@ bool CTextArea::DetectWidthOfLineNumberArea(bool bRedraw)
 		// 表示域の桁数
 		UpdateViewColRowNums();
 
-		if (bRedraw && pView2->GetDrawSwitch()) {
+		if (bRedraw && pView2->GetDrawSwitch())
+		{
 			/* 再描画 */
 			pView2->GetCaret().m_cUnderLine.Lock();
 			// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
@@ -205,7 +212,8 @@ bool CTextArea::DetectWidthOfLineNumberArea(bool bRedraw)
 		pView2->GetRuler().SetRedrawFlag();
 		return true;
 	}
-	else {
+	else
+	{
 		return false;
 	}
 }
@@ -225,14 +233,14 @@ int CTextArea::DetectWidthOfLineNumberArea_calculate(const CLayoutMgr *pLayoutMg
 	int nAllLines; //$$ 単位混在
 
 	/* 行番号の表示 false=折り返し単位／true=改行単位 */
-	if (pView->m_pTypeData->m_bLineNumIsCRLF && !bLayout) {
-		nAllLines = pView->m_pcEditDoc->m_cDocLineMgr.GetLineCount();
-	}
-	else {
+	if (pView->m_pTypeData->m_bLineNumIsCRLF && !bLayout)
+	{ nAllLines = pView->m_pcEditDoc->m_cDocLineMgr.GetLineCount(); } else
+	{
 		nAllLines = (Int)pLayoutMgr->GetLineCount();
 	}
 
-	if (0 < nAllLines) {
+	if (0 < nAllLines)
+	{
 		int nWork;
 		int i;
 
@@ -250,8 +258,10 @@ int CTextArea::DetectWidthOfLineNumberArea_calculate(const CLayoutMgr *pLayoutMg
 		nWork = power<10, LINENUMWIDTH_MIN>::value;
 		for (i = LINENUMWIDTH_MIN; i < pView->m_pTypeData->m_nLineNumWidth; ++i) { nWork *= 10; }
 		/* 表示している行数と比較し、大きい方の値を取る */
-		for (/*i = pView->m_pTypeData->m_nLineNumWidth*/; i < LINENUMWIDTH_MAX; ++i) {
-			if (nWork > nAllLines) { // Oct. 18, 2003 genta 式を整理
+		for (/*i = pView->m_pTypeData->m_nLineNumWidth*/; i < LINENUMWIDTH_MAX; ++i)
+		{
+			if (nWork > nAllLines)
+			{ // Oct. 18, 2003 genta 式を整理
 				break;
 			}
 			nWork *= 10;
@@ -260,7 +270,8 @@ int CTextArea::DetectWidthOfLineNumberArea_calculate(const CLayoutMgr *pLayoutMg
 		return (i + 1);
 #endif
 	}
-	else {
+	else
+	{
 		//	2003.09.11 wmlhq 行番号が1桁のときと幅を合わせる
 		// 最小桁数を可変に変更 2014.07.26 katze	// 先頭の空白分を加算する 2014.07.31 katze
 		return pView->m_pTypeData->m_nLineNumWidth + 1;
@@ -348,10 +359,12 @@ int CTextArea::GenerateYPx(CLayoutYInt nLineNum) const
 	CLayoutYInt nY = nLineNum - GetViewTopLine();
 	int			ret;
 	if (nY < 0) { ret = GetAreaTop(); }
-	else if (m_nViewRowNum < nY) {
+	else if (m_nViewRowNum < nY)
+	{
 		ret = GetAreaBottom();
 	}
-	else {
+	else
+	{
 		ret = GetAreaTop() + m_pEditView->GetTextMetrics().GetHankakuDy() * (Int)(nY);
 	}
 	return ret;

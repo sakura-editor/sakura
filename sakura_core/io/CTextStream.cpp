@@ -19,18 +19,17 @@ CTextInputStream::CTextInputStream(const WCHAR *pszPath)
 {
 	m_bIsUtf8 = false;
 
-	if (Good()) {
+	if (Good())
+	{
 		// BOM確認 -> m_bIsUtf8
 		static const BYTE UTF8_BOM[] = {0xEF, 0xBB, 0xBF};
 		BYTE			  buf[3];
-		if (sizeof(UTF8_BOM) == fread(&buf, 1, sizeof(UTF8_BOM), GetFp())) {
-			m_bIsUtf8 = (memcmp(buf, UTF8_BOM, sizeof(UTF8_BOM)) == 0);
-		}
-
-		// UTF-8じゃなければ、ファイルポインタを元に戻す
+		if (sizeof(UTF8_BOM) == fread(&buf, 1, sizeof(UTF8_BOM), GetFp()))
+		{ m_bIsUtf8 = (memcmp(buf, UTF8_BOM, sizeof(UTF8_BOM)) == 0); } // UTF-8じゃなければ、ファイルポインタを元に戻す
 		if (!m_bIsUtf8) { fseek(GetFp(), 0, SEEK_SET); }
 	}
-	else {
+	else
+	{
 		m_bIsUtf8 = false;
 	}
 }
@@ -50,25 +49,27 @@ wstring CTextInputStream::ReadLineW()
 	//$$ 非効率だけど今のところは許して。。
 	CNativeW line;
 	line.AllocStringBuffer(60);
-	for (;;) {
+	for (;;)
+	{
 		int c = getc(GetFp());
 		if (c == EOF) break; // EOFで終了
-		if (c == '\r') {
+		if (c == '\r')
+		{
 			c = getc(GetFp());
 			if (c != '\n') ungetc(c, GetFp());
 			break;
 		}					  //"\r" または "\r\n" で終了
 		if (c == '\n') break; //"\n" で終了
-		if (line._GetMemory()->capacity() < line._GetMemory()->GetRawLength() + 10) {
-			line._GetMemory()->AllocBuffer(line._GetMemory()->GetRawLength() * 2);
-		}
+		if (line._GetMemory()->capacity() < line._GetMemory()->GetRawLength() + 10)
+		{ line._GetMemory()->AllocBuffer(line._GetMemory()->GetRawLength() * 2); }
 		line._GetMemory()->AppendRawData(&c, sizeof(char));
 	}
 
 	// UTF-8 → UNICODE
 	if (m_bIsUtf8) { CUtf8::UTF8ToUnicode(*(line._GetMemory()), &line); }
 	// Shift_JIS → UNICODE
-	else {
+	else
+	{
 		CShiftJis::SJISToUnicode(*(line._GetMemory()), &line);
 	}
 
@@ -83,7 +84,8 @@ CTextOutputStream::CTextOutputStream(const WCHAR *pszPath, ECodeType eCodeType, 
 	: COutputStream(pszPath, L"wb", bExceptionMode)
 {
 	m_pcCodeBase = CCodeFactory::CreateCodeBase(eCodeType, 0);
-	if (Good() && bBom) {
+	if (Good() && bBom)
+	{
 		// BOM付加
 		CMemory cmemBom;
 		m_pcCodeBase->GetBom(&cmemBom);
@@ -106,10 +108,12 @@ void CTextOutputStream::WriteString(const wchar_t *szData, //!< 書き込む文�
 
 	// 1行毎にカキコ。"\n"は"\r\n"に変換しながら出力。ただし、"\r\n"は"\r\r\n"に変換しない。
 	const wchar_t *p = pData;
-	for (;;) {
+	for (;;)
+	{
 		//\nを検出。ただし\r\nは除外。
 		const wchar_t *q = p;
-		while (q < pEnd) {
+		while (q < pEnd)
+		{
 			if (*q == L'\n' && !((q - 1) >= p && *(q - 1) == L'\r')) break;
 			q++;
 		}
@@ -119,7 +123,8 @@ void CTextOutputStream::WriteString(const wchar_t *szData, //!< 書き込む文�
 		else
 			lf = NULL;
 
-		if (lf) {
+		if (lf)
+		{
 			//\nの前まで(p～lf)出力
 			CNativeW cSrc(p, lf - p);
 			CMemory  cDst;
@@ -134,7 +139,8 @@ void CTextOutputStream::WriteString(const wchar_t *szData, //!< 書き込む文�
 			//次へ
 			p = lf + 1;
 		}
-		else {
+		else
+		{
 			//残りぜんぶ出力
 			CNativeW cSrc(p, pEnd - p);
 			CMemory  cDst;
@@ -164,7 +170,8 @@ void CTextOutputStream::WriteF(const wchar_t *format, ...)
 
 static const WCHAR *_Resolve(const WCHAR *fname, bool bOrExedir)
 {
-	if (_IS_REL_PATH(fname)) {
+	if (_IS_REL_PATH(fname))
+	{
 		static WCHAR path[_MAX_PATH];
 		if (bOrExedir)
 			GetInidirOrExedir(path, fname);

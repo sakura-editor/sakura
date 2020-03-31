@@ -29,7 +29,8 @@
 //! ヒープを用いないvector
 // 2007.09.23 kobake 作成。
 template<class ELEMENT_TYPE, int MAX_SIZE, class SET_TYPE = const ELEMENT_TYPE &>
-class StaticVector {
+class StaticVector
+{
 public:
 	//型
 	typedef ELEMENT_TYPE ElementType;
@@ -76,7 +77,8 @@ public:
 	void SetSizeLimit()
 	{
 		if (MAX_SIZE < m_nCount) { m_nCount = MAX_SIZE; }
-		else if (m_nCount < 0) {
+		else if (m_nCount < 0)
+		{
 			m_nCount = 0;
 		}
 	}
@@ -89,7 +91,8 @@ private:
 //! ヒープを用いない文字列クラス
 // 2007.09.23 kobake 作成。
 template<class CHAR_TYPE, int N_BUFFER_COUNT>
-class StaticString {
+class StaticString
+{
 private:
 	typedef StaticString<CHAR_TYPE, N_BUFFER_COUNT> Me;
 

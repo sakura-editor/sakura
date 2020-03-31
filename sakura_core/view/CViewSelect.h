@@ -29,7 +29,8 @@ class CEditView;
 #include "basis/SakuraBasis.h"
 #include "doc/layout/CLayout.h"
 
-class CViewSelect {
+class CViewSelect
+{
 public:
 	CEditView *		 GetEditView() { return m_pcEditView; }
 	const CEditView *GetEditView() const { return m_pcEditView; }

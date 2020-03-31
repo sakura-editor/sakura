@@ -43,7 +43,8 @@ class CEditWnd;
 class CLayout;
 class CLayoutMgr;
 
-class CPrintPreview {
+class CPrintPreview
+{
 	/* メンバ関数宣言 */
 public:
 	/*

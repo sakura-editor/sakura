@@ -96,13 +96,16 @@ int WINAPI wWinMain(HINSTANCE hInstance,	 //!< handle to current instance
 	//プロセスの生成とメッセージループ
 	CProcessFactory aFactory;
 	CProcess *		process = 0;
-	try {
+	try
+	{
 		process = aFactory.Create(hInstance, lpCmdLine);
 		MY_TRACETIME(cRunningTimer, "ProcessObject Created");
 	}
-	catch (...) {
+	catch (...)
+	{
 	}
-	if (0 != process) {
+	if (0 != process)
+	{
 		process->Run();
 		delete process;
 	}

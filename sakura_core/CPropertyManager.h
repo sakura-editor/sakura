@@ -30,7 +30,8 @@
 class CImageListMgr;
 class CMenuDrawer;
 
-class CPropertyManager {
+class CPropertyManager
+{
 public:
 	void Create(HWND, CImageListMgr *, CMenuDrawer *);
 

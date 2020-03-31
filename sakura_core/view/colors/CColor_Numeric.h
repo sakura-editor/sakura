@@ -26,7 +26,8 @@
 
 #include "view/colors/CColorStrategy.h"
 
-class CColor_Numeric final : public CColorStrategy {
+class CColor_Numeric final : public CColorStrategy
+{
 public:
 	CColor_Numeric()
 		: m_nCOMMENTEND(0)

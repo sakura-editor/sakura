@@ -22,7 +22,8 @@ CLogicInt CViewCalc::LineColumnToIndex(const CDocLine *pcDocLine, CLayoutInt nCo
 	CLogicInt		i2 = CLogicInt(0);
 	CMemoryIterator it(pcDocLine, GetTabSpace(), GetTsvMode(), m_pOwner->m_pcEditDoc->m_cLayoutMgr.GetWidthPerKeta(),
 					   GetCharSpacing());
-	while (!it.end()) {
+	while (!it.end())
+	{
 		it.scanNext();
 		if (it.getColumn() + it.getColumnDelta() > nColumn) { break; }
 		it.addDelta();
@@ -39,7 +40,8 @@ CLogicInt CViewCalc::LineColumnToIndex(const CLayout *pcLayout, CLayoutInt nColu
 {
 	CLogicInt		i2 = CLogicInt(0);
 	CMemoryIterator it = m_pOwner->m_pcEditDoc->m_cLayoutMgr.CreateCMemoryIterator(pcLayout);
-	while (!it.end()) {
+	while (!it.end())
+	{
 		it.scanNext();
 		if (it.getColumn() + it.getColumnDelta() > nColumn) { break; }
 		it.addDelta();
@@ -61,13 +63,15 @@ CLogicInt CViewCalc::LineColumnToIndex2(const CLayout *pcLayout, CLayoutInt nCol
 	CLogicInt		i2	 = CLogicInt(0);
 	CLayoutInt		nPosX2 = CLayoutInt(0);
 	CMemoryIterator it	 = m_pOwner->m_pcEditDoc->m_cLayoutMgr.CreateCMemoryIterator(pcLayout);
-	while (!it.end()) {
+	while (!it.end())
+	{
 		it.scanNext();
 		if (it.getColumn() + it.getColumnDelta() > nColumn) { break; }
 		it.addDelta();
 	}
 	i2 += it.getIndex();
-	if (i2 >= pcLayout->GetLengthWithEOL()) {
+	if (i2 >= pcLayout->GetLengthWithEOL())
+	{
 		nPosX2 += it.getColumn();
 		*pnLineAllColLen = nPosX2;
 	}
@@ -84,7 +88,8 @@ CLayoutInt CViewCalc::LineIndexToColumn(const CLayout *pcLayout, CLogicInt nInde
 	//	以下、iterator版
 	CLayoutInt		nPosX2 = CLayoutInt(0);
 	CMemoryIterator it	 = m_pOwner->m_pcEditDoc->m_cLayoutMgr.CreateCMemoryIterator(pcLayout);
-	while (!it.end()) {
+	while (!it.end())
+	{
 		it.scanNext();
 		if (it.getIndex() + it.getIndexDelta() > nIndex) { break; }
 		it.addDelta();
@@ -103,7 +108,8 @@ CLayoutInt CViewCalc::LineIndexToColumn(const CDocLine *pcDocLine, CLogicInt nIn
 	CLayoutInt		nPosX2 = CLayoutInt(0);
 	CMemoryIterator it(pcDocLine, GetTabSpace(), GetTsvMode(), m_pOwner->m_pcEditDoc->m_cLayoutMgr.GetWidthPerKeta(),
 					   GetCharSpacing());
-	while (!it.end()) {
+	while (!it.end())
+	{
 		it.scanNext();
 		if (it.getIndex() + it.getIndexDelta() > nIndex) { break; }
 		it.addDelta();

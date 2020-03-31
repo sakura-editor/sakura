@@ -25,7 +25,8 @@ const WCHAR *to_wchar(const ACHAR *pSrc, int nSrcLength)
 	//バッファ取得
 	WCHAR *pDst;
 	if (nDstCnt < g_bufSmall.GetMaxCount<WCHAR>()) { pDst = g_bufSmall.GetBuffer<WCHAR>(&nDstCnt); }
-	else {
+	else
+	{
 		pDst = g_bufBig.GetBuffer<WCHAR>(nDstCnt);
 	}
 
@@ -56,7 +57,8 @@ const ACHAR *to_achar(const WCHAR *pSrc, int nSrcLength)
 	//バッファ取得
 	ACHAR *pDst;
 	if (nDstCnt < g_bufSmall.GetMaxCount<ACHAR>()) { pDst = g_bufSmall.GetBuffer<ACHAR>(&nDstCnt); }
-	else {
+	else
+	{
 		pDst = g_bufBig.GetBuffer<ACHAR>(nDstCnt);
 	}
 

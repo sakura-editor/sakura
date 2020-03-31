@@ -27,7 +27,8 @@
 #include "view/figures/CFigureStrategy.h"
 
 //! カンマ描画（CSVモード）
-class CFigure_Comma : public CFigureSpace {
+class CFigure_Comma : public CFigureSpace
+{
 public:
 	// traits
 	bool Match(const wchar_t *pText, int nTextLen) const;

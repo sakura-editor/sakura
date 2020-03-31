@@ -118,7 +118,8 @@ BOOL CPrint::PrintDlg(PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE)
 	DEVNAMES *pDEVNAMES; /* プリンタ設定 DEVNAMES用*/
 
 	// デフォルトプリンタが選択されていなければ、選択する
-	if (m_hDevMode == NULL) {
+	if (m_hDevMode == NULL)
+	{
 		if (!GetDefaultPrinter(pMYDEVMODE)) { return FALSE; }
 	}
 
@@ -137,7 +138,8 @@ BOOL CPrint::PrintDlg(PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE)
 	pPD->lStructSize = sizeof(*pPD);
 	pPD->hDevMode	= m_hDevMode;
 	pPD->hDevNames   = m_hDevNames;
-	if (!::PrintDlg(pPD)) {
+	if (!::PrintDlg(pPD))
+	{
 		// プリンタを変更しなかった
 		return FALSE;
 	}
@@ -196,7 +198,8 @@ BOOL CPrint::GetDefaultPrinter(MYDEVMODE *pMYDEVMODE)
 	//}
 
 	// DEVMODEを取得済みでない場合、取得する
-	if (m_hDevMode == NULL) {
+	if (m_hDevMode == NULL)
+	{
 		//
 		// PRINTDLG構造体を初期化する（ダイアログは表示しないように）
 		// PrintDlg()でデフォルトプリンタのデバイス名などを取得する
@@ -204,7 +207,8 @@ BOOL CPrint::GetDefaultPrinter(MYDEVMODE *pMYDEVMODE)
 		memset_raw(&pd, 0, sizeof(pd));
 		pd.lStructSize = sizeof(pd);
 		pd.Flags	   = PD_RETURNDEFAULT;
-		if (!::PrintDlg(&pd)) {
+		if (!::PrintDlg(&pd))
+		{
 			pMYDEVMODE->m_bPrinterNotFound = TRUE; /* プリンタがなかったフラグ */
 			return FALSE;
 		}
@@ -269,7 +273,8 @@ HDC CPrint::CreateDC(MYDEVMODE *pMYDEVMODE, WCHAR *pszErrMsg /* エラーメッ�
 	//
 	if (!::OpenPrinter(pMYDEVMODE->m_szPrinterDeviceName, /* プリンタデバイス名 */
 					   &hPrinter,						  /* プリンタハンドルのポインタ */
-					   NULL)) {
+					   NULL))
+	{
 		auto_sprintf(pszErrMsg, LS(STR_ERR_CPRINT01), pMYDEVMODE->m_szPrinterDeviceName /* プリンタデバイス名 */
 		);
 		goto end_of_func;
@@ -324,7 +329,8 @@ BOOL CPrint::GetPrintMetrics(MYDEVMODE *pMYDEVMODE, short *pnPaperAllWidth, /* �
 	bRet = TRUE;
 
 	/* 現在の設定で、用紙の幅、高さを確定し、CreateDCに渡す */
-	if (!GetPaperSize(pnPaperAllWidth, pnPaperAllHeight, pMYDEVMODE)) {
+	if (!GetPaperSize(pnPaperAllWidth, pnPaperAllHeight, pMYDEVMODE))
+	{
 		*pnPaperAllWidth  = *pnPaperWidth + 2 * (*pnPaperOffsetLeft);
 		*pnPaperAllHeight = *pnPaperHeight + 2 * (*pnPaperOffsetTop);
 	}
@@ -333,7 +339,8 @@ BOOL CPrint::GetPrintMetrics(MYDEVMODE *pMYDEVMODE, short *pnPaperAllWidth, /* �
 	if (NULL == (hdc = CreateDC(pMYDEVMODE, pszErrMsg))) { return FALSE; }
 
 	/* CreateDC実行によって得られた実際のプリンタの用紙の幅、高さを取得 */
-	if (!GetPaperSize(pnPaperAllWidth, pnPaperAllHeight, pMYDEVMODE)) {
+	if (!GetPaperSize(pnPaperAllWidth, pnPaperAllHeight, pMYDEVMODE))
+	{
 		*pnPaperAllWidth  = *pnPaperWidth + 2 * (*pnPaperOffsetLeft);
 		*pnPaperAllHeight = *pnPaperHeight + 2 * (*pnPaperOffsetTop);
 	}
@@ -343,12 +350,14 @@ BOOL CPrint::GetPrintMetrics(MYDEVMODE *pMYDEVMODE, short *pnPaperAllWidth, /* �
 
 	/* 最小左マージンと最小上マージンを取得(1mm単位) */
 	POINT po;
-	if (0 < ::Escape(hdc, GETPRINTINGOFFSET, (int)NULL, NULL, (LPPOINT)&po)) {
+	if (0 < ::Escape(hdc, GETPRINTINGOFFSET, (int)NULL, NULL, (LPPOINT)&po))
+	{
 		::DPtoLP(hdc, &po, 1);
 		*pnPaperOffsetLeft = (short)abs(po.x); /* 用紙余白左端 */
 		*pnPaperOffsetTop  = (short)abs(po.y); /* 用紙余白上端 */
 	}
-	else {
+	else
+	{
 		*pnPaperOffsetLeft = 0; /* 用紙余白左端 */
 		*pnPaperOffsetTop  = 0; /* 用紙余白上端 */
 	}
@@ -370,37 +379,45 @@ BOOL CPrint::GetPaperSize(short *pnPaperAllWidth, short *pnPaperAllHeight, MYDEV
 {
 	short nWork;
 
-	if (pDEVMODE->dmFields & DM_PAPERSIZE) {
+	if (pDEVMODE->dmFields & DM_PAPERSIZE)
+	{
 		// 2006.08.14 Moca swich/caseテーブルを廃止して 用紙情報を統合
 		const PAPER_INFO *pi = FindPaperInfo(pDEVMODE->dmPaperSize);
-		if (NULL != pi) {
+		if (NULL != pi)
+		{
 			*pnPaperAllWidth  = pi->m_nAllWidth;
 			*pnPaperAllHeight = pi->m_nAllHeight;
 		}
-		else {
+		else
+		{
 			// 2001.12.21 hor マウスでクリックしたままリスト外に出るとここにくるけど、
 			//	異常ではないので FALSE を返すことにする
 			return FALSE;
 		}
 	}
-	if (pDEVMODE->dmFields & DM_PAPERLENGTH && 0 != pDEVMODE->dmPaperLength) {
+	if (pDEVMODE->dmFields & DM_PAPERLENGTH && 0 != pDEVMODE->dmPaperLength)
+	{
 		/* pDEVMODE->dmPaperLengthは1/10mm単位である */
 		*pnPaperAllHeight = pDEVMODE->dmPaperLength /* * 10*/;
 	}
-	else {
+	else
+	{
 		pDEVMODE->dmPaperLength = *pnPaperAllHeight;
 		pDEVMODE->dmFields |= DM_PAPERLENGTH;
 	}
-	if (pDEVMODE->dmFields & DM_PAPERWIDTH && 0 != pDEVMODE->dmPaperWidth) {
+	if (pDEVMODE->dmFields & DM_PAPERWIDTH && 0 != pDEVMODE->dmPaperWidth)
+	{
 		/* pDEVMODE->dmPaperWidthは1/10mm単位である */
 		*pnPaperAllWidth = pDEVMODE->dmPaperWidth /* * 10*/;
 	}
-	else {
+	else
+	{
 		pDEVMODE->dmPaperWidth = *pnPaperAllWidth;
 		pDEVMODE->dmFields |= DM_PAPERWIDTH;
 	}
 	/* 用紙の方向 */
-	if (DMORIENT_LANDSCAPE == pDEVMODE->dmOrientation) {
+	if (DMORIENT_LANDSCAPE == pDEVMODE->dmOrientation)
+	{
 		nWork			  = *pnPaperAllWidth;
 		*pnPaperAllWidth  = *pnPaperAllHeight;
 		*pnPaperAllHeight = nWork;
@@ -420,7 +437,8 @@ BOOL CPrint::PrintOpen(WCHAR *pszJobName, MYDEVMODE *pMYDEVMODE, HDC *phdc,
 	//
 	// hdcを取得
 	//
-	if (NULL == (hdc = CreateDC(pMYDEVMODE, pszErrMsg))) {
+	if (NULL == (hdc = CreateDC(pMYDEVMODE, pszErrMsg)))
+	{
 		bRet = FALSE;
 		goto end_of_func;
 	}
@@ -437,7 +455,8 @@ BOOL CPrint::PrintOpen(WCHAR *pszJobName, MYDEVMODE *pMYDEVMODE, HDC *phdc,
 	di.lpszOutput   = NULL;
 	di.lpszDatatype = NULL;
 	di.fwType		= 0;
-	if (0 >= ::StartDoc(hdc, &di)) {
+	if (0 >= ::StartDoc(hdc, &di))
+	{
 		auto_sprintf(pszErrMsg, LS(STR_ERR_CPRINT02), pMYDEVMODE->m_szPrinterDeviceName /* プリンタデバイス名 */
 		);
 		bRet = FALSE;
@@ -470,7 +489,8 @@ WCHAR *CPrint::GetPaperName(int nPaperSize, WCHAR *pszPaperName)
 	// 2006.08.14 Moca 用紙情報の統合
 	const PAPER_INFO *paperInfo = FindPaperInfo(nPaperSize);
 	if (NULL != paperInfo) { wcscpy(pszPaperName, paperInfo->m_pszName); }
-	else {
+	else
+	{
 		wcscpy(pszPaperName, LS(STR_ERR_CPRINT03));
 	}
 	return pszPaperName;
@@ -482,7 +502,8 @@ WCHAR *CPrint::GetPaperName(int nPaperSize, WCHAR *pszPaperName)
 */
 const PAPER_INFO *CPrint::FindPaperInfo(int id)
 {
-	for (int i = 0; i < m_nPaperInfoArrNum; ++i) {
+	for (int i = 0; i < m_nPaperInfoArrNum; ++i)
+	{
 		if (m_paperInfoArr[i].m_nId == id) { return &(m_paperInfoArr[i]); }
 	}
 	return NULL;
@@ -578,18 +599,20 @@ int CPrint::CalculatePrintableLines(PRINTSETTING *pPS, int nPaperAllHeight)
 */
 int CPrint::CalcHeaderHeight(PRINTSETTING *pPS)
 {
-	if (pPS->m_szHeaderForm[0][0] == L'\0' && pPS->m_szHeaderForm[1][0] == L'\0'
-		&& pPS->m_szHeaderForm[2][0] == L'\0') {
+	if (pPS->m_szHeaderForm[0][0] == L'\0' && pPS->m_szHeaderForm[1][0] == L'\0' && pPS->m_szHeaderForm[2][0] == L'\0')
+	{
 		// 使ってなければ 0
 		return 0;
 	}
 
 	int nHeight;
-	if (pPS->m_lfHeader.lfFaceName[0] == L'\0') {
+	if (pPS->m_lfHeader.lfFaceName[0] == L'\0')
+	{
 		// フォント指定無し
 		nHeight = pPS->m_nPrintFontHeight;
 	}
-	else {
+	else
+	{
 		// フォントのサイズ計算(pt->1/10mm)
 		nHeight = pPS->m_nHeaderPointSize * 254 / 720;
 	}
@@ -602,18 +625,20 @@ int CPrint::CalcHeaderHeight(PRINTSETTING *pPS)
 */
 int CPrint::CalcFooterHeight(PRINTSETTING *pPS)
 {
-	if (pPS->m_szFooterForm[0][0] == L'\0' && pPS->m_szFooterForm[1][0] == L'\0'
-		&& pPS->m_szFooterForm[2][0] == L'\0') {
+	if (pPS->m_szFooterForm[0][0] == L'\0' && pPS->m_szFooterForm[1][0] == L'\0' && pPS->m_szFooterForm[2][0] == L'\0')
+	{
 		// 使ってなければ 0
 		return 0;
 	}
 
 	int nHeight;
-	if (pPS->m_lfFooter.lfFaceName[0] == L'\0') {
+	if (pPS->m_lfFooter.lfFaceName[0] == L'\0')
+	{
 		// フォント指定無し
 		nHeight = pPS->m_nPrintFontHeight;
 	}
-	else {
+	else
+	{
 		// フォントのサイズ計算(pt->1/10mm)
 		nHeight = pPS->m_nFooterPointSize * 254 / 720;
 	}

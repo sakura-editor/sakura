@@ -39,7 +39,8 @@
 #include <map>
 #include <vector>
 
-struct SCodeSet {
+struct SCodeSet
+{
 	ECodeType	m_eCodeSet;
 	const WCHAR *m_sNormal;
 	const WCHAR *m_sShort;
@@ -80,9 +81,11 @@ static std::vector<ECodeType> vDispIdx;
 
 void InitCodeSet()
 {
-	if (msCodeSet.empty()) {
+	if (msCodeSet.empty())
+	{
 		int i;
-		for (i = 0; i < _countof(ASCodeSet); i++) {
+		for (i = 0; i < _countof(ASCodeSet); i++)
+		{
 			vDispIdx.push_back(ASCodeSet[i].m_eCodeSet);
 			if (i > 0) { msCodeSet[ASCodeSet[i].m_eCodeSet] = ASCodeSet[i]; }
 		}
@@ -130,8 +133,10 @@ LPCWSTR CCodeTypeName::Bracket() const
 
 bool CCodeTypeName::UseBom()
 {
-	if (msCodeSet.find(m_eCodeType) == msCodeSet.end()) {
-		if (IsValidCodeOrCPType(m_eCodeType)) {
+	if (msCodeSet.find(m_eCodeType) == msCodeSet.end())
+	{
+		if (IsValidCodeOrCPType(m_eCodeType))
+		{
 			CCodePage encoding(m_eCodeType);
 			CMemory   mem;
 			encoding.GetBom(&mem);
@@ -152,7 +157,8 @@ bool CCodeTypeName::IsBomDefOn()
 
 bool CCodeTypeName::CanDefault()
 {
-	if (msCodeSet.find(m_eCodeType) == msCodeSet.end()) {
+	if (msCodeSet.find(m_eCodeType) == msCodeSet.end())
+	{
 		if (IsValidCodeOrCPType(m_eCodeType)) { return true; }
 		return false;
 	}

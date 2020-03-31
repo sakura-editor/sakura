@@ -82,7 +82,8 @@ INT_PTR CPropPlugin::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 	WORD wNotifyCode;
 	WORD wID;
 
-	switch (uMsg) {
+	switch (uMsg)
+	{
 
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 Plugin */
@@ -95,21 +96,27 @@ INT_PTR CPropPlugin::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 	case WM_NOTIFY:
 		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR *)lParam;
-		switch (idCtrl) {
+		switch (idCtrl)
+		{
 		case IDC_PLUGINLIST:
-			switch (pNMHDR->code) {
-			case LVN_ITEMCHANGED: {
+			switch (pNMHDR->code)
+			{
+			case LVN_ITEMCHANGED:
+			{
 				HWND hListView = ::GetDlgItem(hwndDlg, IDC_PLUGINLIST);
 				int  sel	   = ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
-				if (sel >= 0) {
+				if (sel >= 0)
+				{
 					CPlugin *plugin = CPluginManager::getInstance()->GetPlugin(sel);
-					if (plugin != NULL) {
+					if (plugin != NULL)
+					{
 						::SetWindowText(::GetDlgItem(hwndDlg, IDC_LABEL_PLUGIN_Description),
 										plugin->m_sDescription.c_str());
 						::SetWindowText(::GetDlgItem(hwndDlg, IDC_LABEL_PLUGIN_Author), plugin->m_sAuthor.c_str());
 						::SetWindowText(::GetDlgItem(hwndDlg, IDC_LABEL_PLUGIN_Version), plugin->m_sVersion.c_str());
 					}
-					else {
+					else
+					{
 						::SetWindowText(::GetDlgItem(hwndDlg, IDC_LABEL_PLUGIN_Description), L"");
 						::SetWindowText(::GetDlgItem(hwndDlg, IDC_LABEL_PLUGIN_Author), L"");
 						::SetWindowText(::GetDlgItem(hwndDlg, IDC_LABEL_PLUGIN_Version), L"");
@@ -127,10 +134,12 @@ INT_PTR CPropPlugin::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 					::EnableWindow(::GetDlgItem(hwndDlg, IDC_PLUGIN_URL),
 								   state == PLS_LOADED && plugin && plugin->m_sUrl.size() > 0);
 				}
-			} break;
+			}
+			break;
 			case NM_DBLCLK:
 				// リストビューへのダブルクリックで「プラグイン設定」を呼び出す
-				if (::IsWindowEnabled(::GetDlgItem(hwndDlg, IDC_PLUGIN_OPTION))) {
+				if (::IsWindowEnabled(::GetDlgItem(hwndDlg, IDC_PLUGIN_OPTION)))
+				{
 					DispatchEvent(hwndDlg, WM_COMMAND, MAKEWPARAM(IDC_PLUGIN_OPTION, BN_CLICKED),
 								  (LPARAM)::GetDlgItem(hwndDlg, IDC_PLUGIN_OPTION));
 				}
@@ -138,7 +147,8 @@ INT_PTR CPropPlugin::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 			}
 			break;
 		default:
-			switch (pNMHDR->code) {
+			switch (pNMHDR->code)
+			{
 			case PSN_HELP: OnHelp(hwndDlg, IDD_PROP_PLUGIN); return TRUE;
 			case PSN_KILLACTIVE:
 				/* ダイアログデータの取得 Plugin */
@@ -154,10 +164,12 @@ INT_PTR CPropPlugin::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 		wNotifyCode = HIWORD(wParam); /* 通知コード */
 		wID			= LOWORD(wParam); /* 項目ID､ コントロールID､ またはアクセラレータID */
 
-		switch (wNotifyCode) {
+		switch (wNotifyCode)
+		{
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
-			switch (wID) {
+			switch (wID)
+			{
 			case IDC_PLUGIN_SearchNew: // 新規プラグインを追加
 				GetData(hwndDlg);
 				CPluginManager::getInstance()->SearchNewPlugin(m_Common, hwndDlg);
@@ -173,7 +185,8 @@ INT_PTR CPropPlugin::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 					   (sTrgDir.empty() ? CPluginManager::getInstance()->GetBaseDir().c_str() : sTrgDir.c_str()));
 				// ファイルオープンダイアログの初期化
 				cDlgOpenFile.Create(G_AppInstance(), hwndDlg, L"*.zip", szPath);
-				if (cDlgOpenFile.DoModal_GetOpenFileName(szPath)) {
+				if (cDlgOpenFile.DoModal_GetOpenFileName(szPath))
+				{
 					GetData(hwndDlg);
 					CPluginManager::getInstance()->InstZipPlugin(m_Common, hwndDlg, szPath);
 					if (m_bTrayProc) { LoadPluginTemp(m_Common, *m_pcMenuDrawer); }
@@ -184,7 +197,8 @@ INT_PTR CPropPlugin::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 				WCHAR szFname[_MAX_PATH + 1];
 				SplitPath_FolderAndFile(szPath, szFolder, szFname);
 				sTrgDir = szFolder;
-			} break;
+			}
+			break;
 			case IDC_CHECK_PluginEnable: // プラグインを有効にする
 				EnablePluginPropInput(hwndDlg);
 				break;
@@ -192,62 +206,77 @@ INT_PTR CPropPlugin::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 			{
 				HWND hListView = ::GetDlgItem(hwndDlg, IDC_PLUGINLIST);
 				int  sel	   = ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
-				if (sel >= 0) {
+				if (sel >= 0)
+				{
 
 					if (MYMESSAGEBOX(hwndDlg, MB_YESNO, GSTR_APPNAME, LS(STR_PROPCOMPLG_DELETE),
 									 m_Common.m_sPlugin.m_PluginTable[sel].m_szName)
-						== IDYES) {
+						== IDYES)
+					{
 						CPluginManager::getInstance()->UninstallPlugin(m_Common, sel);
 						SetData_LIST(hwndDlg);
 					}
 				}
-			} break;
+			}
+			break;
 			case IDC_PLUGIN_OPTION: // プラグイン設定	// 2010/3/22 Uchi
 			{
 				HWND hListView = ::GetDlgItem(hwndDlg, IDC_PLUGINLIST);
 				int  sel	   = ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
-				if (sel >= 0 && m_Common.m_sPlugin.m_PluginTable[sel].m_state == PLS_LOADED) {
+				if (sel >= 0 && m_Common.m_sPlugin.m_PluginTable[sel].m_state == PLS_LOADED)
+				{
 					// 2010.08.21 プラグイン名(フォルダ名)の同一性の確認
 					CPlugin *plugin   = CPluginManager::getInstance()->GetPlugin(sel);
 					wstring  sDirName = plugin->GetFolderName().c_str();
-					if (plugin && 0 == wmemicmp(sDirName.c_str(), m_Common.m_sPlugin.m_PluginTable[sel].m_szName)) {
+					if (plugin && 0 == wmemicmp(sDirName.c_str(), m_Common.m_sPlugin.m_PluginTable[sel].m_szName))
+					{
 						CDlgPluginOption cDlgPluginOption;
 						cDlgPluginOption.DoModal(::GetModuleHandle(NULL), hwndDlg, this, sel);
 					}
-					else {
+					else
+					{
 						WarningMessage(hwndDlg, LS(STR_PROPCOMPLG_ERR1));
 					}
 				}
-			} break;
+			}
+			break;
 			case IDC_PLUGIN_OpenFolder: // フォルダを開く
 			{
 				std::wstring sBaseDir = CPluginManager::getInstance()->GetBaseDir() + L".";
-				if (!IsDirectory(sBaseDir.c_str())) {
+				if (!IsDirectory(sBaseDir.c_str()))
+				{
 					if (::CreateDirectory(sBaseDir.c_str(), NULL) == 0) { break; }
 				}
 				::ShellExecute(NULL, L"open", sBaseDir.c_str(), NULL, NULL, SW_SHOW);
-			} break;
+			}
+			break;
 			case IDC_PLUGIN_README: // ReadMe表示	// 2011/11/2 Uchi
 			{
 				HWND		 hListView   = ::GetDlgItem(hwndDlg, IDC_PLUGINLIST);
 				int			 sel		 = ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
 				std::wstring sName		 = m_Common.m_sPlugin.m_PluginTable[sel].m_szName; // 個別フォルダ名
 				std::wstring sReadMeName = GetReadMeFile(sName);
-				if (!sReadMeName.empty()) {
+				if (!sReadMeName.empty())
+				{
 					if (!BrowseReadMe(sReadMeName)) { WarningMessage(hwndDlg, LS(STR_PROPCOMPLG_ERR2)); }
 				}
-				else {
+				else
+				{
 					WarningMessage(hwndDlg, LS(STR_PROPCOMPLG_ERR3));
 				}
-			} break;
-			case IDC_PLUGIN_URL: {
+			}
+			break;
+			case IDC_PLUGIN_URL:
+			{
 				HWND hListView = ::GetDlgItem(hwndDlg, IDC_PLUGINLIST);
 				int  sel	   = ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
-				if (sel >= 0) {
+				if (sel >= 0)
+				{
 					CPlugin *plugin = CPluginManager::getInstance()->GetPlugin(sel);
 					if (plugin != NULL) { ::ShellExecute(NULL, L"Open", plugin->m_sUrl.c_str(), NULL, NULL, SW_SHOW); }
 				}
-			} break;
+			}
+			break;
 			}
 			break;
 		case CBN_DROPDOWN:
@@ -266,7 +295,8 @@ INT_PTR CPropPlugin::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 
 		break; /* WM_COMMAND */
 			   //@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP: {
+	case WM_HELP:
+	{
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -324,7 +354,8 @@ void CPropPlugin::SetData_LIST(HWND hwndDlg)
 
 	ListView_DeleteAllItems(hListView);
 
-	for (index = 0; index < MAX_PLUGIN; ++index) {
+	for (index = 0; index < MAX_PLUGIN; ++index)
+	{
 		std::basic_string<WCHAR> sDirName; // CPlugin.GetDirName()の結果保持変数
 		CPlugin *				 plugin = CPluginManager::getInstance()->GetPlugin(index);
 
@@ -345,7 +376,8 @@ void CPropPlugin::SetData_LIST(HWND hwndDlg)
 		sItem.mask	 = LVIF_TEXT;
 		sItem.iSubItem = 1;
 		if (plugin) { sItem.pszText = const_cast<LPWSTR>(plugin->m_sName.c_str()); }
-		else {
+		else
+		{
 			sItem.pszText = const_cast<WCHAR *>(L"-");
 		}
 		ListView_SetItem(hListView, &sItem);
@@ -355,7 +387,8 @@ void CPropPlugin::SetData_LIST(HWND hwndDlg)
 		sItem.iItem	= index;
 		sItem.mask	 = LVIF_TEXT;
 		sItem.iSubItem = 2;
-		switch (plugin_table[index].m_state) {
+		switch (plugin_table[index].m_state)
+		{
 		case PLS_INSTALLED: sItem.pszText = const_cast<WCHAR *>(LS(STR_PROPCOMPLG_STATE1)); break;
 		case PLS_UPDATED: sItem.pszText = const_cast<WCHAR *>(LS(STR_PROPCOMPLG_STATE2)); break;
 		case PLS_STOPPED: sItem.pszText = const_cast<WCHAR *>(LS(STR_PROPCOMPLG_STATE3)); break;
@@ -370,10 +403,9 @@ void CPropPlugin::SetData_LIST(HWND hwndDlg)
 		sItem.iItem	= index;
 		sItem.mask	 = LVIF_TEXT;
 		sItem.iSubItem = 3;
-		if (plugin_table[index].m_state != PLS_NONE) {
-			sItem.pszText = const_cast<WCHAR *>(plugin ? LS(STR_PROPCOMPLG_LOAD) : L"");
-		}
-		else {
+		if (plugin_table[index].m_state != PLS_NONE)
+		{ sItem.pszText = const_cast<WCHAR *>(plugin ? LS(STR_PROPCOMPLG_LOAD) : L""); } else
+		{
 			sItem.pszText = const_cast<WCHAR *>(L"");
 		}
 		ListView_SetItem(hListView, &sItem);
@@ -383,16 +415,19 @@ void CPropPlugin::SetData_LIST(HWND hwndDlg)
 		sItem.iItem	= index;
 		sItem.mask	 = LVIF_TEXT;
 		sItem.iSubItem = 4;
-		switch (plugin_table[index].m_state) {
+		switch (plugin_table[index].m_state)
+		{
 		case PLS_INSTALLED:
 		case PLS_UPDATED:
 		case PLS_STOPPED:
 		case PLS_LOADED:
-			if (plugin) {
+			if (plugin)
+			{
 				sDirName	  = plugin->GetFolderName();
 				sItem.pszText = const_cast<LPWSTR>(sDirName.c_str());
 			}
-			else {
+			else
+			{
 				sItem.pszText = const_cast<LPWSTR>(plugin_table[index].m_szName);
 			}
 			break;
@@ -428,7 +463,8 @@ int CPropPlugin::GetData(HWND hwndDlg)
 	return TRUE;
 }
 
-struct ColumnData_CPropPlugin_Init {
+struct ColumnData_CPropPlugin_Init
+{
 	int titleId;
 	int width;
 };
@@ -454,7 +490,8 @@ void CPropPlugin::InitDialog(HWND hwndDlg)
 	::GetWindowRect(hListView, &rc);
 	int width = rc.right - rc.left;
 
-	for (pos = 0; pos < _countof(ColumnList); ++pos) {
+	for (pos = 0; pos < _countof(ColumnList); ++pos)
+	{
 
 		memset_raw(&sColumn, 0, sizeof(sColumn));
 		sColumn.mask	 = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM | LVCF_FMT;
@@ -463,7 +500,8 @@ void CPropPlugin::InitDialog(HWND hwndDlg)
 		sColumn.iSubItem = pos;
 		sColumn.fmt		 = LVCFMT_LEFT;
 
-		if (ListView_InsertColumn(hListView, pos, &sColumn) < 0) {
+		if (ListView_InsertColumn(hListView, pos, &sColumn) < 0)
+		{
 			PleaseReportToAuthor(hwndDlg, L"PropComMacro::InitDlg::ColumnRegistrationFail");
 			return; //	よくわからんけど失敗した
 		}
@@ -477,11 +515,13 @@ void CPropPlugin::InitDialog(HWND hwndDlg)
 */
 void CPropPlugin::EnablePluginPropInput(HWND hwndDlg)
 {
-	if (!::IsDlgButtonChecked(hwndDlg, IDC_CHECK_PluginEnable)) {
+	if (!::IsDlgButtonChecked(hwndDlg, IDC_CHECK_PluginEnable))
+	{
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_PLUGIN_SearchNew), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_PLUGIN_INST_ZIP), FALSE);
 	}
-	else {
+	else
+	{
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_PLUGIN_SearchNew), TRUE);
 		CZipFile cZipFile;
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_PLUGIN_INST_ZIP), cZipFile.IsOk());
@@ -493,17 +533,20 @@ std::wstring CPropPlugin::GetReadMeFile(const std::wstring &sName)
 {
 	std::wstring sReadMeName = CPluginManager::getInstance()->GetBaseDir() + sName + L"\\ReadMe.txt";
 	CFile *		 fl			 = new CFile(sReadMeName.c_str());
-	if (!fl->IsFileExist()) {
+	if (!fl->IsFileExist())
+	{
 		sReadMeName = CPluginManager::getInstance()->GetBaseDir() + sName + L"\\" + sName + L".txt";
 		delete fl;
 		fl = new CFile(sReadMeName.c_str());
 	}
-	if (!fl->IsFileExist()) {
+	if (!fl->IsFileExist())
+	{
 		// exeフォルダ配下
 		sReadMeName = CPluginManager::getInstance()->GetExePluginDir() + sName + L"\\ReadMe.txt";
 		delete fl;
 		fl = new CFile(sReadMeName.c_str());
-		if (!fl->IsFileExist()) {
+		if (!fl->IsFileExist())
+		{
 			sReadMeName = CPluginManager::getInstance()->GetExePluginDir() + sName + L"\\" + sName + L".txt";
 			delete fl;
 			fl = new CFile(sReadMeName.c_str());
@@ -555,7 +598,8 @@ bool CPropPlugin::BrowseReadMe(const std::wstring &sReadMeName)
 	BOOL bRet = ::CreateProcess(NULL, szCmdLine, NULL, NULL, TRUE, CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi);
 
 	//プロセス作成に成功した場合
-	if (bRet) {
+	if (bRet)
+	{
 		//スレッドハンドルは使わないので閉じておく
 		::CloseHandle(pi.hThread);
 		//プロセスハンドルは使わないので閉じておく
@@ -573,12 +617,12 @@ static void LoadPluginTemp(CommonSetting &common, CMenuDrawer &cMenuDrawer)
 		// ツールバーアイコンの更新
 		const CPlug::Array &plugs = CJackManager::getInstance()->GetPlugs(PP_COMMAND);
 		cMenuDrawer.m_pcIcons->ResetExtend();
-		for (CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++) {
+		for (CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++)
+		{
 			int			 iBitmap = CMenuDrawer::TOOLBAR_ICON_PLUGCOMMAND_DEFAULT - 1;
 			const CPlug *plug	= *it;
-			if (!plug->m_sIcon.empty()) {
-				iBitmap = cMenuDrawer.m_pcIcons->Add(plug->m_cPlugin.GetFilePath(plug->m_sIcon.c_str()).c_str());
-			}
+			if (!plug->m_sIcon.empty())
+			{ iBitmap = cMenuDrawer.m_pcIcons->Add(plug->m_cPlugin.GetFilePath(plug->m_sIcon.c_str()).c_str()); }
 			cMenuDrawer.AddToolButton(iBitmap, plug->GetFunctionCode());
 		}
 	}

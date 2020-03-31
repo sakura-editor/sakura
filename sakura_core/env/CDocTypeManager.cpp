@@ -54,9 +54,11 @@ CTypeConfig CDocTypeManager::GetDocumentTypeOfPath(const WCHAR *pszFilePath)
 	const WCHAR *pszSep		 = wcsrchr(pszFilePath, L'\\');
 	if (pszSep) { pszFileName = pszSep + 1; }
 
-	for (i = 0; i < m_pShareData->m_nTypesCount; ++i) {
+	for (i = 0; i < m_pShareData->m_nTypesCount; ++i)
+	{
 		const STypeConfigMini *mini = NULL;
-		if (GetTypeConfigMini(CTypeConfig(i), &mini) && IsFileNameMatch(mini->m_szTypeExts, pszFileName)) {
+		if (GetTypeConfigMini(CTypeConfig(i), &mini) && IsFileNameMatch(mini->m_szTypeExts, pszFileName))
+		{
 			return CTypeConfig(i); //	番号
 		}
 	}
@@ -80,7 +82,8 @@ CTypeConfig CDocTypeManager::GetDocumentTypeOfId(int id)
 {
 	int i;
 
-	for (i = 0; i < m_pShareData->m_nTypesCount; ++i) {
+	for (i = 0; i < m_pShareData->m_nTypesCount; ++i)
+	{
 		const STypeConfigMini *mini = NULL;
 		if (GetTypeConfigMini(CTypeConfig(i), &mini) && mini->m_id == id) { return CTypeConfig(i); }
 	}
@@ -90,14 +93,18 @@ CTypeConfig CDocTypeManager::GetDocumentTypeOfId(int id)
 bool CDocTypeManager::GetTypeConfig(CTypeConfig cDocumentType, STypeConfig &type)
 {
 	int n = cDocumentType.GetIndex();
-	if (0 <= n && n < m_pShareData->m_nTypesCount) {
-		if (0 == n) {
+	if (0 <= n && n < m_pShareData->m_nTypesCount)
+	{
+		if (0 == n)
+		{
 			type = m_pShareData->m_TypeBasis;
 			return true;
 		}
-		else {
+		else
+		{
 			LockGuard<CMutex> guard(g_cDocTypeMutex);
-			if (SendMessageAny(m_pShareData->m_sHandles.m_hwndTray, MYWM_GET_TYPESETTING, (WPARAM)n, 0)) {
+			if (SendMessageAny(m_pShareData->m_sHandles.m_hwndTray, MYWM_GET_TYPESETTING, (WPARAM)n, 0))
+			{
 				type = m_pShareData->m_sWorkBuffer.m_TypeConfig;
 				return true;
 			}
@@ -109,7 +116,8 @@ bool CDocTypeManager::GetTypeConfig(CTypeConfig cDocumentType, STypeConfig &type
 bool CDocTypeManager::SetTypeConfig(CTypeConfig cDocumentType, const STypeConfig &type)
 {
 	int n = cDocumentType.GetIndex();
-	if (0 <= n && n < m_pShareData->m_nTypesCount) {
+	if (0 <= n && n < m_pShareData->m_nTypesCount)
+	{
 		LockGuard<CMutex> guard(g_cDocTypeMutex);
 		m_pShareData->m_sWorkBuffer.m_TypeConfig = type;
 		if (SendMessageAny(m_pShareData->m_sHandles.m_hwndTray, MYWM_SET_TYPESETTING, (WPARAM)n, 0)) { return true; }
@@ -126,7 +134,8 @@ bool CDocTypeManager::SetTypeConfig(CTypeConfig cDocumentType, const STypeConfig
 */
 [[nodiscard]] bool CDocTypeManager::GetTypeConfigMini(CTypeConfig cDocumentType, const STypeConfigMini **type) {
 	int n = cDocumentType.GetIndex();
-	if (0 <= n && n < m_pShareData->m_nTypesCount) {
+	if (0 <= n && n < m_pShareData->m_nTypesCount)
+	{
 		*type = &m_pShareData->m_TypeMini[n];
 		return true;
 	}
@@ -162,13 +171,16 @@ bool CDocTypeManager::IsFileNameMatch(const WCHAR *pszTypeExts, const WCHAR *psz
 	wcsncpy(szWork, pszTypeExts, _countof(szWork));
 	szWork[_countof(szWork) - 1] = '\0';
 	WCHAR *token				 = _wcstok(szWork, m_typeExtSeps);
-	while (token) {
-		if (wcspbrk(token, m_typeExtWildcards) == NULL) {
+	while (token)
+	{
+		if (wcspbrk(token, m_typeExtWildcards) == NULL)
+		{
 			if (_wcsicmp(token, pszFileName) == 0) { return true; }
 			const WCHAR *pszExt = wcsrchr(pszFileName, L'.');
 			if (pszExt != NULL && _wcsicmp(token, pszExt + 1) == 0) { return true; }
 		}
-		else {
+		else
+		{
 			if (PathMatchSpec(pszFileName, token) == TRUE) { return true; }
 		}
 		token = _wcstok(NULL, m_typeExtSeps);
@@ -190,8 +202,10 @@ void CDocTypeManager::GetFirstExt(const WCHAR *pszTypeExts, WCHAR szFirstExt[], 
 	wcsncpy(szWork, pszTypeExts, _countof(szWork));
 	szWork[_countof(szWork) - 1] = '\0';
 	WCHAR *token				 = _wcstok(szWork, m_typeExtSeps);
-	while (token) {
-		if (wcspbrk(token, m_typeExtWildcards) == NULL) {
+	while (token)
+	{
+		if (wcspbrk(token, m_typeExtWildcards) == NULL)
+		{
 			wcsncpy(szFirstExt, token, nBuffSize);
 			szFirstExt[nBuffSize - 1] = L'\0';
 			return;
@@ -220,18 +234,22 @@ bool CDocTypeManager::ConvertTypesExtToDlgExt(const WCHAR *pszSrcExt, const WCHA
 	p			 = _wcsdup(pszSrcExt);
 	pszDstExt[0] = L'\0';
 
-	if (szExt != NULL && szExt[0] != L'\0') {
+	if (szExt != NULL && szExt[0] != L'\0')
+	{
 		// ファイルパスがあり、拡張子ありの場合、トップに指定
 		wcscpy(pszDstExt, L"*");
 		wcscat(pszDstExt, szExt);
 	}
 
 	token = _wcstok(p, m_typeExtSeps);
-	while (token) {
-		if (szExt == NULL || szExt[0] == L'\0' || wmemicmp(token, szExt + 1) != 0) {
+	while (token)
+	{
+		if (szExt == NULL || szExt[0] == L'\0' || wmemicmp(token, szExt + 1) != 0)
+		{
 			if (pszDstExt[0] != '\0') wcscat(pszDstExt, L";");
 			// 拡張子指定なし、またはマッチした拡張子でない
-			if (wcspbrk(token, m_typeExtWildcards) == NULL) {
+			if (wcspbrk(token, m_typeExtWildcards) == NULL)
+			{
 				if (L'.' == *token)
 					wcscat(pszDstExt, L"*");
 				else

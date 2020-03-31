@@ -82,7 +82,8 @@ static BOOL s_isImmOpenBkup;
 // IMEを使用したくないコントロールのID判定
 static bool isImeUndesirable(int id)
 {
-	switch (id) {
+	switch (id)
+	{
 	case IDC_EDIT_REPEATEDSCROLLLINENUM:
 	case IDD_PROP_GENERAL:
 	case IDC_EDIT_MAX_MRU_FILE:
@@ -107,7 +108,8 @@ INT_PTR CPropGeneral::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 	int		   nVal;
 	//	LPDRAWITEMSTRUCT pDis;
 
-	switch (uMsg) {
+	switch (uMsg)
+	{
 
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 General */
@@ -122,19 +124,20 @@ INT_PTR CPropGeneral::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		wNotifyCode = HIWORD(wParam); /* 通知コード */
 		wID			= LOWORD(wParam); /* 項目ID､ コントロールID､ またはアクセラレータID */
 		hwndCtl		= (HWND)lParam;   /* コントロールのハンドル */
-		switch (wNotifyCode) {
+		switch (wNotifyCode)
+		{
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
-			switch (wID) {
+			switch (wID)
+			{
 
 			case IDC_CHECK_USETRAYICON: /* タスクトレイを使う */
 										// From Here 2001.12.03 hor
 				//		操作しにくいって評判だったのでタスクトレイ関係のEnable制御をやめました
 				//@@@ YAZAKI 2001.12.31 IDC_CHECKSTAYTASKTRAYのアクティブ、非アクティブのみ制御。
-				if (::IsDlgButtonChecked(hwndDlg, IDC_CHECK_USETRAYICON)) {
-					::EnableWindow(::GetDlgItem(hwndDlg, IDC_CHECK_STAYTASKTRAY), TRUE);
-				}
-				else {
+				if (::IsDlgButtonChecked(hwndDlg, IDC_CHECK_USETRAYICON))
+				{ ::EnableWindow(::GetDlgItem(hwndDlg, IDC_CHECK_STAYTASKTRAY), TRUE); } else
+				{
 					::EnableWindow(::GetDlgItem(hwndDlg, IDC_CHECK_STAYTASKTRAY), FALSE);
 				}
 				// To Here 2001.12.03 hor
@@ -145,11 +148,9 @@ INT_PTR CPropGeneral::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 			case IDC_BUTTON_CLEAR_MRU_FILE:
 				/* ファイルの履歴をクリア */
 				if (IDCANCEL
-					== ::MYMESSAGEBOX(hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME, LS(STR_PROPCOMGEN_FILE1))) {
-					return TRUE;
-				}
-				//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-				//				m_pShareData->m_sHistory.m_nMRUArrNum = 0;
+					== ::MYMESSAGEBOX(hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME, LS(STR_PROPCOMGEN_FILE1)))
+				{ return TRUE; } //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
+								 //				m_pShareData->m_sHistory.m_nMRUArrNum = 0;
 				{
 					CMRUFile cMRU;
 					cMRU.ClearAll();
@@ -159,11 +160,9 @@ INT_PTR CPropGeneral::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 			case IDC_BUTTON_CLEAR_MRU_FOLDER:
 				/* フォルダの履歴をクリア */
 				if (IDCANCEL
-					== ::MYMESSAGEBOX(hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME, LS(STR_PROPCOMGEN_DIR1))) {
-					return TRUE;
-				}
-				//@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
-				//				m_pShareData->m_sHistory.m_nOPENFOLDERArrNum = 0;
+					== ::MYMESSAGEBOX(hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME, LS(STR_PROPCOMGEN_DIR1)))
+				{ return TRUE; } //@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
+								 //				m_pShareData->m_sHistory.m_nOPENFOLDERArrNum = 0;
 				{
 					CMRUFolder cMRUFolder; //	MRUリストの初期化。ラベル内だと問題あり？
 					cMRUFolder.ClearAll();
@@ -177,7 +176,8 @@ INT_PTR CPropGeneral::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 			HWND hwndCombo;
 			int  nSelPos;
 
-			switch (wID) {
+			switch (wID)
+			{
 			// 組み合わせてホイール操作した時ページスクロールする
 			case IDC_COMBO_WHEEL_PAGESCROLL:
 				hwndCombo = ::GetDlgItem(hwndDlg, IDC_COMBO_WHEEL_PAGESCROLL);
@@ -206,13 +206,15 @@ INT_PTR CPropGeneral::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR *)lParam;
 		pMNUD  = (NM_UPDOWN *)lParam;
-		switch (idCtrl) {
+		switch (idCtrl)
+		{
 		case IDC_SPIN_REPEATEDSCROLLLINENUM:
 			/* キーリピート時のスクロール行数 */
 			//			MYTRACE( L"IDC_SPIN_REPEATEDSCROLLLINENUM\n" );
 			nVal = ::GetDlgItemInt(hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, NULL, FALSE);
 			if (pMNUD->iDelta < 0) { ++nVal; }
-			else if (pMNUD->iDelta > 0) {
+			else if (pMNUD->iDelta > 0)
+			{
 				--nVal;
 			}
 			if (nVal < 1) { nVal = 1; }
@@ -224,7 +226,8 @@ INT_PTR CPropGeneral::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 			//			MYTRACE( L"IDC_SPIN_MAX_MRU_FILE\n" );
 			nVal = ::GetDlgItemInt(hwndDlg, IDC_EDIT_MAX_MRU_FILE, NULL, FALSE);
 			if (pMNUD->iDelta < 0) { ++nVal; }
-			else if (pMNUD->iDelta > 0) {
+			else if (pMNUD->iDelta > 0)
+			{
 				--nVal;
 			}
 			if (nVal < 0) { nVal = 0; }
@@ -236,7 +239,8 @@ INT_PTR CPropGeneral::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 			//			MYTRACE( L"IDC_SPIN_MAX_MRU_FOLDER\n" );
 			nVal = ::GetDlgItemInt(hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, NULL, FALSE);
 			if (pMNUD->iDelta < 0) { ++nVal; }
-			else if (pMNUD->iDelta > 0) {
+			else if (pMNUD->iDelta > 0)
+			{
 				--nVal;
 			}
 			if (nVal < 0) { nVal = 0; }
@@ -244,7 +248,8 @@ INT_PTR CPropGeneral::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 			::SetDlgItemInt(hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, nVal, FALSE);
 			return TRUE;
 		default:
-			switch (pNMHDR->code) {
+			switch (pNMHDR->code)
+			{
 			case PSN_HELP: OnHelp(hwndDlg, IDD_PROP_GENERAL); return TRUE;
 			case PSN_KILLACTIVE:
 				//				MYTRACE( L"General PSN_KILLACTIVE\n" );
@@ -268,7 +273,8 @@ INT_PTR CPropGeneral::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		break;
 
 		//@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP: {
+	case WM_HELP:
+	{
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -292,11 +298,13 @@ INT_PTR CPropGeneral::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 void CPropGeneral::SetData(HWND hwndDlg)
 {
 	/* カーソルのタイプ 0=win 1=dos  */
-	if (0 == m_Common.m_sGeneral.GetCaretType()) {
+	if (0 == m_Common.m_sGeneral.GetCaretType())
+	{
 		::CheckDlgButton(hwndDlg, IDC_RADIO_CARETTYPE0, TRUE);
 		::CheckDlgButton(hwndDlg, IDC_RADIO_CARETTYPE1, FALSE);
 	}
-	else {
+	else
+	{
 		::CheckDlgButton(hwndDlg, IDC_RADIO_CARETTYPE0, FALSE);
 		::CheckDlgButton(hwndDlg, IDC_RADIO_CARETTYPE1, TRUE);
 	}
@@ -336,10 +344,11 @@ void CPropGeneral::SetData(HWND hwndDlg)
 	hwndCombo = ::GetDlgItem(hwndDlg, IDC_COMBO_WHEEL_PAGESCROLL);
 	Combo_ResetContent(hwndCombo);
 	nSelPos = 0;
-	for (i = 0; i < _countof(SpecialScrollModeArr); ++i) {
+	for (i = 0; i < _countof(SpecialScrollModeArr); ++i)
+	{
 		Combo_InsertString(hwndCombo, i, LS(SpecialScrollModeArr[i].nNameId));
-		if (SpecialScrollModeArr[i].nMethod
-			== m_Common.m_sGeneral.m_nPageScrollByWheel) { // ページスクロールとする組み合わせ操作
+		if (SpecialScrollModeArr[i].nMethod == m_Common.m_sGeneral.m_nPageScrollByWheel)
+		{ // ページスクロールとする組み合わせ操作
 			nSelPos = i;
 		}
 	}
@@ -349,10 +358,11 @@ void CPropGeneral::SetData(HWND hwndDlg)
 	hwndCombo = ::GetDlgItem(hwndDlg, IDC_COMBO_WHEEL_HSCROLL);
 	Combo_ResetContent(hwndCombo);
 	nSelPos = 0;
-	for (i = 0; i < _countof(SpecialScrollModeArr); ++i) {
+	for (i = 0; i < _countof(SpecialScrollModeArr); ++i)
+	{
 		Combo_InsertString(hwndCombo, i, LS(SpecialScrollModeArr[i].nNameId));
-		if (SpecialScrollModeArr[i].nMethod
-			== m_Common.m_sGeneral.m_nHorizontalScrollByWheel) { // 横スクロールとする組み合わせ操作
+		if (SpecialScrollModeArr[i].nMethod == m_Common.m_sGeneral.m_nHorizontalScrollByWheel)
+		{ // 横スクロールとする組み合わせ操作
 			nSelPos = i;
 		}
 	}
@@ -373,7 +383,8 @@ void CPropGeneral::SetData(HWND hwndDlg)
 	// From Here 2001.12.03 hor
 	//@@@ YAZAKI 2001.12.31 ここは制御する。
 	if (m_Common.m_sGeneral.m_bUseTaskTray) { ::EnableWindow(::GetDlgItem(hwndDlg, IDC_CHECK_STAYTASKTRAY), TRUE); }
-	else {
+	else
+	{
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_CHECK_STAYTASKTRAY), FALSE);
 	}
 	// To Here 2001.12.03 hor
@@ -417,14 +428,10 @@ int CPropGeneral::GetData(HWND hwndDlg)
 	/* キーリピート時のスクロール行数 */
 	m_Common.m_sGeneral.m_nRepeatedScrollLineNum =
 		(CLayoutInt)::GetDlgItemInt(hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, NULL, FALSE);
-	if (m_Common.m_sGeneral.m_nRepeatedScrollLineNum < CLayoutInt(1)) {
-		m_Common.m_sGeneral.m_nRepeatedScrollLineNum = CLayoutInt(1);
-	}
-	if (m_Common.m_sGeneral.m_nRepeatedScrollLineNum > CLayoutInt(10)) {
-		m_Common.m_sGeneral.m_nRepeatedScrollLineNum = CLayoutInt(10);
-	}
-
-	/* キーリピート時のスクロールを滑らかにするか */
+	if (m_Common.m_sGeneral.m_nRepeatedScrollLineNum < CLayoutInt(1))
+	{ m_Common.m_sGeneral.m_nRepeatedScrollLineNum = CLayoutInt(1); }
+	if (m_Common.m_sGeneral.m_nRepeatedScrollLineNum > CLayoutInt(10))
+	{ m_Common.m_sGeneral.m_nRepeatedScrollLineNum = CLayoutInt(10); } /* キーリピート時のスクロールを滑らかにするか */
 	m_Common.m_sGeneral.m_nRepeatedScroll_Smooth = ::IsDlgButtonChecked(hwndDlg, IDC_CHECK_REPEATEDSCROLLSMOOTH);
 
 	// 2009.01.17 nasukoji	組み合わせてホイール操作した時ページスクロールする
@@ -460,11 +467,8 @@ int CPropGeneral::GetData(HWND hwndDlg)
 	/* フォルダの履歴MAX */
 	m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX = ::GetDlgItemInt(hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, NULL, FALSE);
 	if (m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX < 0) { m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX = 0; }
-	if (m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX > MAX_OPENFOLDER) {
-		m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX = MAX_OPENFOLDER;
-	}
-
-	{ //履歴の管理	//@@@ 2003.04.09 MIK
+	if (m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX > MAX_OPENFOLDER)
+	{ m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX = MAX_OPENFOLDER; } { //履歴の管理	//@@@ 2003.04.09 MIK
 		CRecentFolder cRecentFolder;
 		cRecentFolder.UpdateView();
 		cRecentFolder.Terminate();
@@ -474,7 +478,8 @@ int CPropGeneral::GetData(HWND hwndDlg)
 	m_Common.m_sGeneral.m_bUseTaskTray = ::IsDlgButtonChecked(hwndDlg, IDC_CHECK_USETRAYICON);
 	//@@@ YAZAKI 2001.12.31 m_bUseTaskTrayに引きづられるように。
 	if (m_Common.m_sGeneral.m_bUseTaskTray) { ::EnableWindow(::GetDlgItem(hwndDlg, IDC_CHECK_STAYTASKTRAY), TRUE); }
-	else {
+	else
+	{
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_CHECK_STAYTASKTRAY), FALSE);
 	}
 	/* タスクトレイに常駐 */

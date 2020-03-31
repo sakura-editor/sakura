@@ -19,7 +19,8 @@ class CDlgJump;
 
 #include "dlg/CDialog.h"
 //! 指定行へのジャンプダイアログボックス
-class CDlgJump final : public CDialog {
+class CDlgJump final : public CDialog
+{
 public:
 	/*
 	||  Constructors

@@ -71,7 +71,8 @@ class CEditApp;
 	@date 2007.12.13 kobake SetDocumentEncoding作成
 	@date 2007.12.13 kobake IsViewMode作成
 */
-class CEditDoc : public CDocSubject, public TInstanceHolder<CEditDoc> {
+class CEditDoc : public CDocSubject, public TInstanceHolder<CEditDoc>
+{
 public:
 	//コンストラクタ・デストラクタ
 	CEditDoc(CEditApp *pcApp);

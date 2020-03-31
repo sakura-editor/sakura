@@ -58,7 +58,8 @@ ACHAR *tcstostr(ACHAR *dest, const WCHAR *src, size_t count)
 {
 	WCHAR *pr = const_cast<WCHAR *>(src);
 	ACHAR *pw = dest;
-	for (; pr < src + count; ++pr) {
+	for (; pr < src + count; ++pr)
+	{
 		*pw = static_cast<ACHAR>(*pr);
 		++pw;
 	}
@@ -68,7 +69,8 @@ WCHAR *tcstostr(WCHAR *dest, const WCHAR *src, size_t count)
 {
 	WCHAR *pr = const_cast<WCHAR *>(src);
 	WCHAR *pw = dest;
-	for (; pr < src + count; ++pr) {
+	for (; pr < src + count; ++pr)
+	{
 		*pw = static_cast<WCHAR>(*pr);
 		++pw;
 	}
@@ -79,7 +81,8 @@ WCHAR *strtotcs(WCHAR *dest, const ACHAR *src, size_t count)
 {
 	ACHAR *pr = const_cast<ACHAR *>(src);
 	WCHAR *pw = dest;
-	for (; pr < src + count; ++pr) {
+	for (; pr < src + count; ++pr)
+	{
 		*pw = static_cast<WCHAR>(*pr);
 		++pw;
 	}
@@ -89,7 +92,8 @@ WCHAR *strtotcs(WCHAR *dest, const WCHAR *src, size_t count)
 {
 	WCHAR *pr = const_cast<WCHAR *>(src);
 	WCHAR *pw = dest;
-	for (; pr < src + count; ++pr) {
+	for (; pr < src + count; ++pr)
+	{
 		*pw = static_cast<WCHAR>(*pr);
 		++pw;
 	}
@@ -124,7 +128,8 @@ const wchar_t *wcsistr(const wchar_t *s1, const wchar_t *s2)
 	size_t		   len2 = wcslen(s2);
 	const wchar_t *p	= s1;
 	const wchar_t *q	= wcschr(s1, L'\0') - len2;
-	while (p <= q) {
+	while (p <= q)
+	{
 		if (wmemicmp(p, s2, len2) == 0) return p;
 		p++;
 	}
@@ -137,7 +142,8 @@ const char *stristr(const char *s1, const char *s2)
 	size_t		len2 = strlen(s2);
 	const char *p	= s1;
 	const char *q	= strchr(s1, L'\0') - len2;
-	while (p <= q) {
+	while (p <= q)
+	{
 		if (amemicmp(p, s2, len2) == 0) return p;
 		p++;
 	}
@@ -154,7 +160,8 @@ const char *strichr_j(const char *s1, char c2)
 		return ::strchr(s1, 0); //文字列終端を探すためにc2に0を渡した場合も、正しく処理されるように。 2007.10.16 kobake
 
 	int C2 = my_toupper(c2);
-	for (const char *p1 = s1; *p1; p1++) {
+	for (const char *p1 = s1; *p1; p1++)
+	{
 		if (my_toupper(*p1) == C2) return p1;
 		if (my_iskanji1(*(const unsigned char *)p1) && *(p1 + 1) != 0) p1++;
 	}
@@ -170,7 +177,8 @@ const char *strchr_j(const char *str, char c)
 	if (c == 0)
 		return ::strchr(str, 0); //文字列終端を探すためにcに0を渡した場合も、正しく処理されるように。 2007.10.16 kobake
 
-	for (const char *p1 = str; *p1; p1++) {
+	for (const char *p1 = str; *p1; p1++)
+	{
 		if (*p1 == c) return p1;
 		if (my_iskanji1(*(const unsigned char *)p1) && *(p1 + 1) != 0) p1++;
 	}
@@ -186,7 +194,8 @@ const char *strchr_j(const char *str, char c)
 const char *strstr_j(const char *s1, const char *s2)
 {
 	size_t n = strlen(s2);
-	for (const char *p1 = s1; *p1; p1++) {
+	for (const char *p1 = s1; *p1; p1++)
+	{
 		if (strncmp(p1, s2, n) == 0) return p1;
 		if (my_iskanji1(*(const unsigned char *)p1) && *(p1 + 1) != 0) p1++;
 	}
@@ -206,7 +215,8 @@ const char *strstr_j(const char *s1, const char *s2)
 const char *stristr_j(const char *s1, const char *s2)
 {
 	size_t n = strlen(s2);
-	for (const char *p1 = s1; *p1; p1++) {
+	for (const char *p1 = s1; *p1; p1++)
+	{
 		if (my_strnicmp(p1, s2, n) == 0) return p1;
 		if (my_iskanji1(*(const unsigned char *)p1) && *(p1 + 1) != 0) p1++;
 	}
@@ -328,7 +338,8 @@ void wcstombs_vector(const wchar_t *pSrc, int nSrcLen, std::vector<char> *ret)
 
 int wmemicmp(const WCHAR *p1, const WCHAR *p2, size_t count)
 {
-	for (size_t i = 0; i < count; i++) {
+	for (size_t i = 0; i < count; i++)
+	{
 		int n = skr_towlower(*p1++) - skr_towlower(*p2++); //非ASCIIも変換
 		if (n != 0) return n;
 	}
@@ -339,7 +350,8 @@ int wmemicmp(const WCHAR *p1, const WCHAR *p2) { return wmemicmp(p1, p2, t_max(w
 
 int wmemicmp_ascii(const WCHAR *p1, const WCHAR *p2, size_t count)
 {
-	for (size_t i = 0; i < count; i++) {
+	for (size_t i = 0; i < count; i++)
+	{
 		int n = my_towlower(*p1++) - my_towlower(*p2++); // ASCIIのみ変換（高速）
 		if (n != 0) return n;
 	}
@@ -357,16 +369,20 @@ int wmemicmp_ascii(const WCHAR *p1, const WCHAR *p2, size_t count)
 	@date 2007.10.21 kobake テンプレート化
 */
 //$ いちいち手間かかる。。
-namespace {
+namespace
+{
 template<class T>
-struct Charset {
+struct Charset
+{
 };
 template<>
-struct Charset<ACHAR> {
+struct Charset<ACHAR>
+{
 	static const ACHAR QUOT = '"';
 };
 template<>
-struct Charset<WCHAR> {
+struct Charset<WCHAR>
+{
 	static const WCHAR QUOT = L'"';
 };
 } // namespace
@@ -380,14 +396,18 @@ CHAR_TYPE *my_strtok(CHAR_TYPE *	  pBuffer,   //[in] 文字列バッファ(終�
 	int		   i = *pnOffset;
 	CHAR_TYPE *p;
 
-	do {
+	do
+	{
 		bool bFlag = false; //ダブルコーテーションの中か？
 		if (i >= nLen) return NULL;
 		p = &pBuffer[i];
-		for (; i < nLen; i++) {
+		for (; i < nLen; i++)
+		{
 			if (pBuffer[i] == Charset<CHAR_TYPE>::QUOT) bFlag = !bFlag;
-			if (!bFlag) {
-				if (auto_strchr(pDelimiter, pBuffer[i])) {
+			if (!bFlag)
+			{
+				if (auto_strchr(pDelimiter, pBuffer[i]))
+				{
 					pBuffer[i++] = L'\0';
 					break;
 				}
@@ -486,7 +506,8 @@ int __cdecl my_internal_icmp(const char *s1, const char *s2, unsigned int n, uns
 #endif /* MY_ICMP_MBS */
 
 	/* 指定長だけ繰り返す */
-	for (i = n; i > 0; i -= dcount) {
+	for (i = n; i > 0; i -= dcount)
+	{
 		/* 比較対象となる文字を取得する */
 		//		c1 = c1_lo = c1_up = (int)((unsigned int)*p1);
 		//		c2 = c2_lo = c2_up = (int)((unsigned int)*p2);
@@ -496,48 +517,56 @@ int __cdecl my_internal_icmp(const char *s1, const char *s2, unsigned int n, uns
 		/* 2002.11.29 Moca 文字列の終端に達したか調べる部分 は後方へ移動 */
 
 		/* 文字１の日本語チェックを行い比較用の大文字小文字をセットする */
-		if (prev1) { /* 前の文字が日本語１バイト目 */
+		if (prev1)
+		{ /* 前の文字が日本語１バイト目 */
 			/* 今回は日本語２バイト目なので変換しない */
 			prev1 = false;
 #ifdef MY_ICMP_MBS
 			/* 全角文字のアルファベット */
-			if (mba1) {
+			if (mba1)
+			{
 				mba1 = false;
 				if (my_mbisalpha2(c1)) { c1 = my_mbtoupper2(c1); }
 			}
 #endif /* MY_ICMP_MBS */
 		}
-		else if (my_iskanji1(c1)) {
+		else if (my_iskanji1(c1))
+		{
 			/* 今回は日本語１バイト目なので変換しない */
 			prev1 = true;
 #ifdef MY_ICMP_MBS
 			if (c1 == 0x82) mba1 = true;
 #endif /* MY_ICMP_MBS */
 		}
-		else {
+		else
+		{
 			c1 = my_toupper(c1);
 		}
 
 		/* 文字２の日本語チェックを行い比較用の大文字小文字をセットする */
-		if (prev2) { /* 前の文字が日本語１バイト目 */
+		if (prev2)
+		{ /* 前の文字が日本語１バイト目 */
 			/* 今回は日本語２バイト目なので変換しない */
 			prev2 = false;
 #ifdef MY_ICMP_MBS
 			/* 全角文字のアルファベット */
-			if (mba2) {
+			if (mba2)
+			{
 				mba2 = false;
 				if (my_mbisalpha2(c2)) { c2 = my_mbtoupper2(c2); }
 			}
 #endif /* MY_ICMP_MBS */
 		}
-		else if (my_iskanji1(c2)) {
+		else if (my_iskanji1(c2))
+		{
 			/* 今回は日本語１バイト目なので変換しない */
 			prev2 = true;
 #ifdef MY_ICMP_MBS
 			if (c2 == 0x82) mba2 = true;
 #endif /* MY_ICMP_MBS */
 		}
-		else {
+		else
+		{
 			c2 = my_toupper(c2);
 		}
 
@@ -547,7 +576,8 @@ int __cdecl my_internal_icmp(const char *s1, const char *s2, unsigned int n, uns
 
 		/* 2002.11.29 Moca 戻り値を変更したことにより，小文字→大文字変換の後に移動
 		   片方だけ NULL文字 の場合は上の比較した時点で return するためその処理は不要 */
-		if (flag) {
+		if (flag)
+		{
 			/* 文字列の終端に達したか調べる */
 			if (!c1) return 0;
 		}
@@ -574,7 +604,8 @@ int skr_towupper(int c)
 #ifdef _MSC_VER
 	static wchar_t szMap[256]; // c < 256 用の変換テーブル
 	static bool	bInit = false;
-	if (!bInit) {
+	if (!bInit)
+	{
 		int		  i;
 		_locale_t locale = _create_locale(LC_CTYPE, "English");
 		for (i = 0; i < 0x80; i++) szMap[i] = (wchar_t)my_towupper(i);   // 自前で変換
@@ -595,7 +626,8 @@ int skr_towlower(int c)
 #ifdef _MSC_VER
 	static wchar_t szMap[256]; // c < 256 用の変換テーブル
 	static bool	bInit = false;
-	if (!bInit) {
+	if (!bInit)
+	{
 		int		  i;
 		_locale_t locale = _create_locale(LC_CTYPE, "English");
 		for (i = 0; i < 0x80; i++) szMap[i] = (wchar_t)my_towlower(i);   // 自前で変換

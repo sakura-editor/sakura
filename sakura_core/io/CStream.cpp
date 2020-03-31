@@ -13,7 +13,8 @@
 //                  ファイル属性操作クラス                     //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-class CFileAttribute {
+class CFileAttribute
+{
 public:
 	CFileAttribute(const WCHAR *pszPath)
 		: m_strPath(pszPath)
@@ -28,8 +29,10 @@ public:
 		if (m_bAttributeChanged) return; //既に取り除き済み
 
 		m_dwAttribute = ::GetFileAttributes(m_strPath.c_str());
-		if (m_dwAttribute != (DWORD)-1) {
-			if (m_dwAttribute & dwPopAttribute) {
+		if (m_dwAttribute != (DWORD)-1)
+		{
+			if (m_dwAttribute & dwPopAttribute)
+			{
 				DWORD dwNewAttribute = m_dwAttribute & ~dwPopAttribute;
 				::SetFileAttributes(m_strPath.c_str(), dwNewAttribute);
 				m_bAttributeChanged = true;
@@ -88,7 +91,8 @@ void CStream::Open(const WCHAR *pszPath, const WCHAR *pszMode)
 
 	//オープン
 	m_fp = _wfopen(pszPath, pszMode);
-	if (!m_fp) {
+	if (!m_fp)
+	{
 		Close(); //属性復元
 	}
 
@@ -99,13 +103,15 @@ void CStream::Open(const WCHAR *pszPath, const WCHAR *pszMode)
 void CStream::Close()
 {
 	//クローズ
-	if (m_fp) {
+	if (m_fp)
+	{
 		fclose(m_fp);
 		m_fp = NULL;
 	}
 
 	//属性復元
-	if (m_pcFileAttribute) {
+	if (m_pcFileAttribute)
+	{
 		m_pcFileAttribute->RestoreAttribute();
 		SAFE_DELETE(m_pcFileAttribute);
 	}

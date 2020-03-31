@@ -137,7 +137,8 @@ HWND CFuncKeyWnd::Open(HINSTANCE hInstance, HWND hwndParent, CEditDoc *pCEditDoc
 	);
 
 	m_hwndSizeBox = NULL;
-	if (m_bSizeBox) {
+	if (m_bSizeBox)
+	{
 		m_hwndSizeBox = ::CreateWindowEx(0L,		   /* no extended styles			*/
 										 L"SCROLLBAR", /* scroll bar control class		*/
 										 NULL,		   /* text for window title bar	*/
@@ -192,7 +193,8 @@ LRESULT CFuncKeyWnd::OnSize(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	nButtonHeight = rcParent.bottom - rcParent.top - 2;
 
 	nX = 1;
-	for (i = 0; i < nButtonNum; ++i) {
+	for (i = 0; i < nButtonNum; ++i)
+	{
 		if (0 < i && 0 == (i % m_nButtonGroupNum)) { nX += 12; }
 		::MoveWindow(m_hwndButtonArr[i], nX, 1, nButtonWidth, nButtonHeight, TRUE);
 		nX += nButtonWidth + 1;
@@ -238,12 +240,12 @@ LRESULT CFuncKeyWnd::OnCommand(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam
 	hwndCtl = (HWND)lParam; // handle of control
 							//	switch( wNotifyCode ){
 							//	case BN_PUSHED:
-	for (i = 0; i < _countof(m_hwndButtonArr); ++i) {
-		if (hwndCtl == m_hwndButtonArr[i]) {
-			if (0 != m_nFuncCodeArr[i]) {
-				::SendMessageCmd(GetParentHwnd(), WM_COMMAND, MAKELONG(m_nFuncCodeArr[i], 0), (LPARAM)hwnd);
-			}
-			break;
+	for (i = 0; i < _countof(m_hwndButtonArr); ++i)
+	{
+		if (hwndCtl == m_hwndButtonArr[i])
+		{
+			if (0 != m_nFuncCodeArr[i])
+			{ ::SendMessageCmd(GetParentHwnd(), WM_COMMAND, MAKELONG(m_nFuncCodeArr[i], 0), (LPARAM)hwnd); } break;
 		}
 	}
 	::SetFocus(GetParentHwnd());
@@ -263,8 +265,8 @@ LRESULT CFuncKeyWnd::OnTimer(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	//	return;
 	if (NULL == GetHwnd()) { return 0; }
 
-	if (::GetActiveWindow() != GetParentHwnd()
-		&& m_nCurrentKeyState != -1) { //	2002/06/02 MIK	// 2006.12.20 ryoji 初回更新は処理する
+	if (::GetActiveWindow() != GetParentHwnd() && m_nCurrentKeyState != -1)
+	{ //	2002/06/02 MIK	// 2006.12.20 ryoji 初回更新は処理する
 		return 0;
 	}
 
@@ -276,19 +278,23 @@ LRESULT CFuncKeyWnd::OnTimer(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
 	/* ALT,Shift,Ctrlキーの状態が変化したか */
-	if (nIdx != m_nCurrentKeyState) {
+	if (nIdx != m_nCurrentKeyState)
+	{
 		m_nTimerCount = TIMER_CHECKFUNCENABLE + 1;
 
 		/* ファンクションキーの機能名を取得 */
-		for (i = 0; i < _countof(m_szFuncNameArr); ++i) {
+		for (i = 0; i < _countof(m_szFuncNameArr); ++i)
+		{
 			// 2007.02.22 ryoji CKeyBind::GetFuncCode()を使う
 			EFunctionCode nFuncCode = CKeyBind::GetFuncCode((WORD)(((VK_F1 + i) | ((WORD)((BYTE)(nIdx))) << 8)),
 															m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
 															m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr);
-			if (nFuncCode != m_nFuncCodeArr[i]) {
+			if (nFuncCode != m_nFuncCodeArr[i])
+			{
 				m_nFuncCodeArr[i] = nFuncCode;
 				if (0 == m_nFuncCodeArr[i]) { m_szFuncNameArr[i][0] = LTEXT('\0'); }
-				else {
+				else
+				{
 					//	Oct. 2, 2001 genta
 					m_pcEditDoc->m_cFuncLookup.Funccode2Name(m_nFuncCodeArr[i], m_szFuncNameArr[i],
 															 _countof(m_szFuncNameArr[i]) - 1);
@@ -298,14 +304,15 @@ LRESULT CFuncKeyWnd::OnTimer(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 	}
 	m_nTimerCount += TIMER_TIMEOUT;
-	if (m_nTimerCount > TIMER_CHECKFUNCENABLE || nIdx != m_nCurrentKeyState) {
+	if (m_nTimerCount > TIMER_CHECKFUNCENABLE || nIdx != m_nCurrentKeyState)
+	{
 		m_nTimerCount = 0;
 		/* 機能が利用可能か調べる */
-		for (i = 0; i < _countof(m_szFuncNameArr); ++i) {
-			if (IsFuncEnable((CEditDoc *)m_pcEditDoc, m_pShareData, m_nFuncCodeArr[i])) {
-				::EnableWindow(m_hwndButtonArr[i], TRUE);
-			}
-			else {
+		for (i = 0; i < _countof(m_szFuncNameArr); ++i)
+		{
+			if (IsFuncEnable((CEditDoc *)m_pcEditDoc, m_pShareData, m_nFuncCodeArr[i]))
+			{ ::EnableWindow(m_hwndButtonArr[i], TRUE); } else
+			{
 				::EnableWindow(m_hwndButtonArr[i], FALSE);
 			}
 		}
@@ -323,15 +330,18 @@ LRESULT CFuncKeyWnd::OnDestroy(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	Timer_ONOFF(false); // 20060126 aroka
 
 	/* ボタンを削除 */
-	for (i = 0; i < _countof(m_hwndButtonArr); ++i) {
-		if (NULL != m_hwndButtonArr[i]) {
+	for (i = 0; i < _countof(m_hwndButtonArr); ++i)
+	{
+		if (NULL != m_hwndButtonArr[i])
+		{
 			::DestroyWindow(m_hwndButtonArr[i]);
 			m_hwndButtonArr[i] = NULL;
 		}
 	}
 
 	/* サイズボックスを削除 */
-	if (NULL != m_hwndSizeBox) {
+	if (NULL != m_hwndSizeBox)
+	{
 		::DestroyWindow(m_hwndSizeBox);
 		m_hwndSizeBox = NULL;
 	}
@@ -352,12 +362,14 @@ int CFuncKeyWnd::CalcButtonSize(void)
 
 	nButtonNum = _countof(m_hwndButtonArr);
 
-	if (NULL == m_hwndSizeBox) {
+	if (NULL == m_hwndSizeBox)
+	{
 		//		return ( rc.right - rc.left - nButtonNum - ( (nButtonNum + m_nButtonGroupNum - 1) / m_nButtonGroupNum -
 		// 1 ) * 12 ) / nButtonNum;
 		nCxVScroll = 0;
 	}
-	else {
+	else
+	{
 		/* サイズボックスの位置、サイズ変更 */
 		nCyHScroll = ::GetSystemMetrics(SM_CYHSCROLL);
 		nCxVScroll = ::GetSystemMetrics(SM_CXVSCROLL);
@@ -387,7 +399,8 @@ void CFuncKeyWnd::CreateButtons(void)
 
 	for (i = 0; i < _countof(m_nFuncCodeArr); ++i) { m_nFuncCodeArr[i] = F_0; }
 
-	for (i = 0; i < _countof(m_hwndButtonArr); ++i) {
+	for (i = 0; i < _countof(m_hwndButtonArr); ++i)
+	{
 		m_hwndButtonArr[i] = ::CreateWindow(
 			L"BUTTON",						 // predefined class
 			L"",							 // button text
@@ -416,13 +429,15 @@ void CFuncKeyWnd::SizeBox_ONOFF(bool bSizeBox)
 	RECT rc;
 	::GetWindowRect(GetHwnd(), &rc);
 	if (m_bSizeBox == bSizeBox) { return; }
-	if (m_bSizeBox) {
+	if (m_bSizeBox)
+	{
 		::DestroyWindow(m_hwndSizeBox);
 		m_hwndSizeBox = NULL;
 		m_bSizeBox	= false;
 		OnSize(NULL, 0, 0, 0);
 	}
-	else {
+	else
+	{
 		m_hwndSizeBox = ::CreateWindowEx(0L,		   /* no extended styles			*/
 										 L"SCROLLBAR", /* scroll bar control class		*/
 										 NULL,		   /* text for window title bar	*/
@@ -449,14 +464,15 @@ void CFuncKeyWnd::SizeBox_ONOFF(bool bSizeBox)
 //	呼び出してもらうことにより、余計な負荷を停止したい。
 void CFuncKeyWnd::Timer_ONOFF(bool bStart)
 {
-	if (NULL != GetHwnd()) {
-		if (bStart) {
+	if (NULL != GetHwnd())
+	{
+		if (bStart)
+		{
 			/* タイマーを起動 */
-			if (0 == ::SetTimer(GetHwnd(), IDT_FUNCWND, TIMER_TIMEOUT, NULL)) {
-				WarningMessage(GetHwnd(), LS(STR_ERR_DLGFUNCKEYWN1));
-			}
-		}
-		else {
+			if (0 == ::SetTimer(GetHwnd(), IDT_FUNCWND, TIMER_TIMEOUT, NULL))
+			{ WarningMessage(GetHwnd(), LS(STR_ERR_DLGFUNCKEYWN1)); } }
+		else
+		{
 			/* タイマーを削除 */
 			::KillTimer(GetHwnd(), IDT_FUNCWND);
 			m_nCurrentKeyState = -1;

@@ -57,7 +57,8 @@ static const DWORD p_helpids[] = { // 13100
 
 static int AddComboCodePages(HWND hdlg, HWND combo, int nSelCode, bool &bInit);
 
-struct CDlgOpenFile_CommonFileDialog final : public IDlgOpenFile {
+struct CDlgOpenFile_CommonFileDialog final : public IDlgOpenFile
+{
 	CDlgOpenFile_CommonFileDialog();
 
 	void Create(HINSTANCE hInstance, HWND hwndParent, const WCHAR *pszUserWildCard, const WCHAR *pszDefaultPath,
@@ -91,7 +92,8 @@ struct CDlgOpenFile_CommonFileDialog final : public IDlgOpenFile {
 	std::vector<LPCWSTR> m_vOPENFOLDER;
 };
 
-class CDlgOpenFileData {
+class CDlgOpenFileData
+{
 public:
 	CDlgOpenFile_CommonFileDialog *m_pcDlgOpenFile;
 
@@ -145,7 +147,8 @@ LRESULT APIENTRY OFNHookProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	WORD				 wNotifyCode;
 	WORD				 wID;
 	static DLLSHAREDATA *pShareData;
-	switch (uMsg) {
+	switch (uMsg)
+	{
 	case WM_MOVE:
 		/* 「開く」ダイアログのサイズと位置 */
 		pShareData = &GetDllShareData();
@@ -155,11 +158,13 @@ LRESULT APIENTRY OFNHookProcMain(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam); // notification code
 		wID			= LOWORD(wParam); // item, control, or accelerator identifier
-		switch (wNotifyCode) {
+		switch (wNotifyCode)
+		{
 			//			break;
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
-			switch (wID) {
+			switch (wID)
+			{
 			case pshHelp:
 				/* ヘルプ */
 				MyWinHelp(hwnd, HELP_CONTEXT, pData->m_nHelpTopicID); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -230,11 +235,13 @@ UINT_PTR CALLBACK OFNHookProc(HWND   hdlg,   // handle to child dialog window
 	int  nRightMargin = 24;
 	HWND hwndFrame;
 
-	switch (uiMsg) {
+	switch (uiMsg)
+	{
 	case WM_MOVE:
 		//		MYTRACE( L"WM_MOVE 2\n" );
 		break;
-	case WM_SIZE: {
+	case WM_SIZE:
+	{
 		nWidth = LOWORD(lParam); // width of client area
 
 		/* 「開く」ダイアログのサイズと位置 */
@@ -253,7 +260,8 @@ UINT_PTR CALLBACK OFNHookProc(HWND   hdlg,   // handle to child dialog window
 					   SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
 		return 0;
 	}
-	case WM_INITDIALOG: {
+	case WM_INITDIALOG:
+	{
 		// Save off the long pointer to the OPENFILENAME structure.
 		// Modified by KEITA for WIN64 2003.9.6
 		OPENFILENAME *	pOfn  = (OPENFILENAME *)lParam;
@@ -283,13 +291,16 @@ UINT_PTR CALLBACK OFNHookProc(HWND   hdlg,   // handle to child dialog window
 		//	From Here Feb. 9, 2001 genta
 		//	改行コードの選択コンボボックス初期化
 		//	必要なときのみ利用する
-		if (pData->m_bUseEol) {
+		if (pData->m_bUseEol)
+		{
 			//	値の設定
 			// 2013.05.27 初期値をSaveInfoから設定する
 			nIdxSel = 0;
-			for (i = 0; i < nEolNameArrNum; ++i) {
+			for (i = 0; i < nEolNameArrNum; ++i)
+			{
 				if (i == 0) { nIdx = Combo_AddString(pData->m_hwndComboEOL, LS(STR_DLGOPNFL1)); }
-				else {
+				else
+				{
 					nIdx = Combo_AddString(pData->m_hwndComboEOL, pEolNameArr[i]);
 				}
 				Combo_SetItemData(pData->m_hwndComboEOL, nIdx, nEolValueArr[i]);
@@ -297,7 +308,8 @@ UINT_PTR CALLBACK OFNHookProc(HWND   hdlg,   // handle to child dialog window
 			}
 			Combo_SetCurSel(pData->m_hwndComboEOL, nIdxSel);
 		}
-		else {
+		else
+		{
 			//	使わないときは隠す
 			::ShowWindow(::GetDlgItem(hdlg, IDC_STATIC_EOL), SW_HIDE);
 			::ShowWindow(pData->m_hwndComboEOL, SW_HIDE);
@@ -305,19 +317,23 @@ UINT_PTR CALLBACK OFNHookProc(HWND   hdlg,   // handle to child dialog window
 		//	To Here Feb. 9, 2001 genta
 
 		//	From Here Jul. 26, 2003 ryoji BOMチェックボックスの初期化
-		if (pData->m_bUseBom) {
+		if (pData->m_bUseBom)
+		{
 			//	使うときは有効／無効を切り替え、チェック状態を初期値に設定する
-			if (CCodeTypeName(pData->m_nCharCode).UseBom()) {
+			if (CCodeTypeName(pData->m_nCharCode).UseBom())
+			{
 				::EnableWindow(pData->m_hwndCheckBOM, TRUE);
 				fCheck = pData->m_bBom ? BST_CHECKED : BST_UNCHECKED;
 			}
-			else {
+			else
+			{
 				::EnableWindow(pData->m_hwndCheckBOM, FALSE);
 				fCheck = BST_UNCHECKED;
 			}
 			BtnCtl_SetCheck(pData->m_hwndCheckBOM, fCheck);
 		}
-		else {
+		else
+		{
 			//	使わないときは隠す
 			::ShowWindow(pData->m_hwndCheckBOM, SW_HIDE);
 		}
@@ -331,26 +347,29 @@ UINT_PTR CALLBACK OFNHookProc(HWND   hdlg,   // handle to child dialog window
 
 		/* 文字コード選択コンボボックス初期化 */
 		nIdxSel = -1;
-		if (pData->m_bIsSaveDialog) { /* 保存のダイアログか */
-			i = 1;					  // 「自動選択」飛ばし
+		if (pData->m_bIsSaveDialog)
+		{		   /* 保存のダイアログか */
+			i = 1; // 「自動選択」飛ばし
 		}
-		else {
+		else
+		{
 			i = 0;
 		}
 		CCodeTypesForCombobox cCodeTypes;
-		for (/*i = 0*/; i < cCodeTypes.GetCount(); ++i) {
+		for (/*i = 0*/; i < cCodeTypes.GetCount(); ++i)
+		{
 			nIdx = Combo_AddString(pData->m_hwndComboCODES, cCodeTypes.GetName(i));
 			Combo_SetItemData(pData->m_hwndComboCODES, nIdx, cCodeTypes.GetCode(i));
 			if (cCodeTypes.GetCode(i) == pData->m_nCharCode) { nIdxSel = nIdx; }
 		}
 		if (nIdxSel != -1) { Combo_SetCurSel(pData->m_hwndComboCODES, nIdxSel); }
-		else {
+		else
+		{
 			CheckDlgButtonBool(hdlg, IDC_CHECK_CP, true);
-			if (-1 == AddComboCodePages(hdlg, pData->m_hwndComboCODES, pData->m_nCharCode, pData->m_bInitCodePage)) {
-				Combo_SetCurSel(pData->m_hwndComboCODES, 0);
-			}
-		}
-		if (!pData->m_bUseCharCode) {
+			if (-1 == AddComboCodePages(hdlg, pData->m_hwndComboCODES, pData->m_nCharCode, pData->m_bInitCodePage))
+			{ Combo_SetCurSel(pData->m_hwndComboCODES, 0); } }
+		if (!pData->m_bUseCharCode)
+		{
 			::ShowWindow(GetDlgItem(hdlg, IDC_STATIC_CHARCODE), SW_HIDE);
 			::ShowWindow(pData->m_hwndComboCODES, SW_HIDE);
 		}
@@ -364,7 +383,8 @@ UINT_PTR CALLBACK OFNHookProc(HWND   hdlg,   // handle to child dialog window
 		pData->m_combDelFolder		   = SComboBoxItemDeleter();
 		pData->m_combDelFolder.pRecent = &pData->m_cRecentFolder;
 		CDialog::SetComboBoxDeleter(pData->m_hwndComboOPENFOLDER, &pData->m_combDelFolder);
-	} break;
+	}
+	break;
 
 	case WM_DESTROY:
 		/* フック解除 */
@@ -383,12 +403,14 @@ UINT_PTR CALLBACK OFNHookProc(HWND   hdlg,   // handle to child dialog window
 		//		MYTRACE( L"pofn->hdr.idFrom=%xh(%d)\n", pofn->hdr.idFrom, pofn->hdr.idFrom );
 		//		MYTRACE( L"pofn->hdr.code=%xh(%d)\n", pofn->hdr.code, pofn->hdr.code );
 
-		switch (pofn->hdr.code) {
+		switch (pofn->hdr.code)
+		{
 		case CDN_FILEOK:
 			// 拡張子の補完を自前で行う	// 2006.11.10 ryoji
 			{
 				CDlgOpenFileData *pData = (CDlgOpenFileData *)::GetWindowLongPtr(hdlg, DWLP_USER);
-				if (pData->m_bIsSaveDialog) {
+				if (pData->m_bIsSaveDialog)
+				{
 					WCHAR  szDefExt[_MAX_EXT];			// 補完する拡張子
 					WCHAR  szBuf[_MAX_PATH + _MAX_EXT]; // ワーク
 					LPWSTR pszCur, pszNext;
@@ -399,25 +421,30 @@ UINT_PTR CALLBACK OFNHookProc(HWND   hdlg,   // handle to child dialog window
 					pszCur = szBuf;
 					while (*pszCur == L' ') // 空白を読み飛ばす
 						pszCur = ::CharNext(pszCur);
-					if (*pszCur == L'\"') { // 二重引用部で始まっている
+					if (*pszCur == L'\"')
+					{ // 二重引用部で始まっている
 						::lstrcpyn(pData->m_szPath, pData->m_pOf->lpstrFile, _MAX_PATH);
 					}
-					else {
+					else
+					{
 						_wsplitpath(pData->m_pOf->lpstrFile, NULL, NULL, NULL, szDefExt);
-						if (szDefExt[0]
-							== L'.' /* && szDefExt[1] != L'\0' */) { // 既に拡張子がついている 2文字目のチェックの削除
-																	 // 2008/6/14 Uchi
+						if (szDefExt[0] == L'.' /* && szDefExt[1] != L'\0' */)
+						{ // 既に拡張子がついている 2文字目のチェックの削除
+						  // 2008/6/14 Uchi
 							// .のみの場合にも拡張子付きとみなす。
 							lstrcpyn(pData->m_szPath, pData->m_pOf->lpstrFile, _MAX_PATH);
 						}
-						else {
-							switch (pData->m_pOf->nFilterIndex) { // 選択されているファイルの種類
-							case 1:								  // ユーザー定義
+						else
+						{
+							switch (pData->m_pOf->nFilterIndex)
+							{		// 選択されているファイルの種類
+							case 1: // ユーザー定義
 								pszCur = pData->m_pcDlgOpenFile->m_szDefaultWildCard;
 								while (*pszCur != L'.' && *pszCur != L'\0') // '.'まで読み飛ばす
 									pszCur = ::CharNext(pszCur);
 								i = 0;
-								while (*pszCur != L';' && *pszCur != L'\0') { // ';'までコピーする
+								while (*pszCur != L';' && *pszCur != L'\0')
+								{ // ';'までコピーする
 									pszNext = ::CharNext(pszCur);
 									while (pszCur < pszNext) szDefExt[i++] = *pszCur++;
 								}
@@ -440,13 +467,15 @@ UINT_PTR CALLBACK OFNHookProc(HWND   hdlg,   // handle to child dialog window
 					}
 
 					// ファイルの上書き確認を自前で行う	// 2006.11.10 ryoji
-					if (IsFileExists(pData->m_szPath, true)) {
+					if (IsFileExists(pData->m_szPath, true))
+					{
 						WCHAR szText[_MAX_PATH + 100];
 						lstrcpyn(szText, pData->m_szPath, _MAX_PATH);
 						::wcscat(szText, LS(STR_DLGOPNFL2));
 						if (IDYES
 							!= ::MessageBox(pData->m_hwndOpenDlg, szText, LS(STR_DLGOPNFL3),
-											MB_YESNO | MB_ICONEXCLAMATION)) {
+											MB_YESNO | MB_ICONEXCLAMATION))
+						{
 							::SetWindowLongPtr(hdlg, DWLP_MSGRESULT, TRUE);
 							return TRUE;
 						}
@@ -458,14 +487,16 @@ UINT_PTR CALLBACK OFNHookProc(HWND   hdlg,   // handle to child dialog window
 				lRes			   = Combo_GetItemData(pData->m_hwndComboCODES, nIdx);
 				pData->m_nCharCode = (ECodeType)lRes; /* 文字コード */
 				//	Feb. 9, 2001 genta
-				if (pData->m_bUseEol) {
+				if (pData->m_bUseEol)
+				{
 					nIdx		  = Combo_GetCurSel(pData->m_hwndComboEOL);
 					lRes		  = Combo_GetItemData(pData->m_hwndComboEOL, nIdx);
 					pData->m_cEol = (EEolType)lRes; /* 文字コード */
 				}
 				//	From Here Jul. 26, 2003 ryoji
 				//	BOMチェックボックスの状態を取得
-				if (pData->m_bUseBom) {
+				if (pData->m_bUseBom)
+				{
 					lRes		  = BtnCtl_GetCheck(pData->m_hwndCheckBOM);
 					pData->m_bBom = (lRes == BST_CHECKED); /* BOM */
 				}
@@ -486,12 +517,15 @@ UINT_PTR CALLBACK OFNHookProc(HWND   hdlg,   // handle to child dialog window
 			//			MYTRACE( L"\tlRes=%d\pszFolder=[%ls]\n", lRes, szFolder );
 
 			break;
-		case CDN_SELCHANGE: {
+		case CDN_SELCHANGE:
+		{
 			CDlgOpenFileData *pData = (CDlgOpenFileData *)::GetWindowLongPtr(hdlg, DWLP_USER);
-			if (pData->m_ofn.Flags & OFN_ALLOWMULTISELECT) {
+			if (pData->m_ofn.Flags & OFN_ALLOWMULTISELECT)
+			{
 				DWORD nLength = CommDlg_OpenSave_GetSpec(pData->m_hwndOpenDlg, NULL, 0);
 				nLength += _MAX_PATH + 2;
-				if (pData->m_ofn.nMaxFile < nLength) {
+				if (pData->m_ofn.nMaxFile < nLength)
+				{
 					delete[] pData->m_ofn.lpstrFile;
 					pData->m_ofn.lpstrFile = new WCHAR[nLength];
 					pData->m_ofn.nMaxFile  = nLength;
@@ -513,96 +547,109 @@ UINT_PTR CALLBACK OFNHookProc(HWND   hdlg,   // handle to child dialog window
 		wNotifyCode = HIWORD(wParam); // notification code
 		wID			= LOWORD(wParam); // item, control, or accelerator identifier
 		hwndCtl		= (HWND)lParam;   // handle of control
-		switch (wNotifyCode) {
+		switch (wNotifyCode)
+		{
 		case CBN_SELCHANGE:
-			switch ((int)LOWORD(wParam)) {
+			switch ((int)LOWORD(wParam))
+			{
 			//	From Here Jul. 26, 2003 ryoji
 			//	文字コードの変更をBOMチェックボックスに反映
-			case IDC_COMBO_CODE: {
+			case IDC_COMBO_CODE:
+			{
 				CDlgOpenFileData *pData = (CDlgOpenFileData *)::GetWindowLongPtr(hdlg, DWLP_USER);
 				nIdx					= Combo_GetCurSel((HWND)lParam);
 				lRes					= Combo_GetItemData((HWND)lParam, nIdx);
 				CCodeTypeName cCodeTypeName(lRes);
-				if (cCodeTypeName.UseBom()) {
+				if (cCodeTypeName.UseBom())
+				{
 					::EnableWindow(pData->m_hwndCheckBOM, TRUE);
 					if (lRes == pData->m_nCharCode) { fCheck = pData->m_bBom ? BST_CHECKED : BST_UNCHECKED; }
-					else {
+					else
+					{
 						fCheck = cCodeTypeName.IsBomDefOn() ? BST_CHECKED : BST_UNCHECKED;
 					}
 				}
-				else {
+				else
+				{
 					::EnableWindow(pData->m_hwndCheckBOM, FALSE);
 					fCheck = BST_UNCHECKED;
 				}
 				BtnCtl_SetCheck(pData->m_hwndCheckBOM, fCheck);
-			} break;
+			}
+			break;
 			//	To Here Jul. 26, 2003 ryoji
 			case IDC_COMBO_MRU:
-			case IDC_COMBO_OPENFOLDER: {
+			case IDC_COMBO_OPENFOLDER:
+			{
 				CDlgOpenFileData *pData = (CDlgOpenFileData *)::GetWindowLongPtr(hdlg, DWLP_USER);
 				WCHAR			  szWork[_MAX_PATH + 1];
 				nIdx = Combo_GetCurSel((HWND)lParam);
 
-				if (CB_ERR != Combo_GetLBText((HWND)lParam, nIdx, szWork)) {
+				if (CB_ERR != Combo_GetLBText((HWND)lParam, nIdx, szWork))
+				{
 					// 2005.11.02 ryoji ファイル名指定のコントロールを確認する
 					hwndFilebox = ::GetDlgItem(pData->m_hwndOpenDlg, cmb13); // ファイル名コンボ（Windows 2000タイプ）
 					if (!::IsWindow(hwndFilebox))
 						hwndFilebox =
 							::GetDlgItem(pData->m_hwndOpenDlg, edt1); // ファイル名エディット（レガシータイプ）
-					if (::IsWindow(hwndFilebox)) {
+					if (::IsWindow(hwndFilebox))
+					{
 						::SetWindowText(hwndFilebox, szWork);
 						if (IDC_COMBO_OPENFOLDER == wID)
 							::PostMessageAny(hwndFilebox, WM_KEYDOWN, VK_RETURN, (LPARAM)0);
 					}
 				}
-			} break;
+			}
+			break;
 			}
 			break; /* CBN_SELCHANGE */
-		case CBN_DROPDOWN: {
+		case CBN_DROPDOWN:
+		{
 			CDlgOpenFileData *pData = (CDlgOpenFileData *)::GetWindowLongPtr(hdlg, DWLP_USER);
 
-			switch (wID) {
+			switch (wID)
+			{
 			case IDC_COMBO_MRU:
-				if (Combo_GetCount(pData->m_hwndComboMRU) == 0) {
+				if (Combo_GetCount(pData->m_hwndComboMRU) == 0)
+				{
 					/* 最近開いたファイル コンボボックス初期値設定 */
 					//	2003.06.22 Moca m_vMRU がNULLの場合を考慮する
 					int nSize = (int)pData->m_pcDlgOpenFile->m_vMRU.size();
-					for (i = 0; i < nSize; i++) {
-						Combo_AddString(pData->m_hwndComboMRU, pData->m_pcDlgOpenFile->m_vMRU[i]);
-					}
-				}
+					for (i = 0; i < nSize; i++)
+					{ Combo_AddString(pData->m_hwndComboMRU, pData->m_pcDlgOpenFile->m_vMRU[i]); } }
 				CDialog::OnCbnDropDown(hwndCtl, true);
 				break;
 
 			case IDC_COMBO_OPENFOLDER:
-				if (Combo_GetCount(pData->m_hwndComboOPENFOLDER) == 0) {
+				if (Combo_GetCount(pData->m_hwndComboOPENFOLDER) == 0)
+				{
 					/* 最近開いたフォルダ コンボボックス初期値設定 */
 					//	2003.06.22 Moca m_vOPENFOLDER がNULLの場合を考慮する
 					int nSize = (int)pData->m_pcDlgOpenFile->m_vOPENFOLDER.size();
-					for (i = 0; i < nSize; i++) {
-						Combo_AddString(pData->m_hwndComboOPENFOLDER, pData->m_pcDlgOpenFile->m_vOPENFOLDER[i]);
-					}
-				}
+					for (i = 0; i < nSize; i++)
+					{ Combo_AddString(pData->m_hwndComboOPENFOLDER, pData->m_pcDlgOpenFile->m_vOPENFOLDER[i]); } }
 				CDialog::OnCbnDropDown(hwndCtl, true);
 				break;
 			}
 			break; /* CBN_DROPDOWN */
 		}
 		case BN_CLICKED:
-			switch (wID) {
-			case IDC_CHECK_CP: {
+			switch (wID)
+			{
+			case IDC_CHECK_CP:
+			{
 				CDlgOpenFileData *pData = (CDlgOpenFileData *)::GetWindowLongPtr(hdlg, DWLP_USER);
-				if (IsDlgButtonCheckedBool(hdlg, IDC_CHECK_CP)) {
-					AddComboCodePages(hdlg, pData->m_hwndComboCODES, -1, pData->m_bInitCodePage);
-				}
-			} break;
+				if (IsDlgButtonCheckedBool(hdlg, IDC_CHECK_CP))
+				{ AddComboCodePages(hdlg, pData->m_hwndComboCODES, -1, pData->m_bInitCodePage); } }
+			break;
 			}
 			break; // BN_CLICKED
 		}
 		break; /* WM_COMMAND */
 
 	//@@@ 2002.01.08 add start
-	case WM_HELP: {
+	case WM_HELP:
+	{
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -623,7 +670,8 @@ UINT_PTR CALLBACK OFNHookProc(HWND   hdlg,   // handle to child dialog window
 int AddComboCodePages(HWND hdlg, HWND combo, int nSelCode, bool &bInit)
 {
 	int nSel = -1;
-	if (!bInit) {
+	if (!bInit)
+	{
 		::EnableWindow(GetDlgItem(hdlg, IDC_CHECK_CP), FALSE);
 		// コードページ追加
 		bInit = true;
@@ -668,7 +716,8 @@ void CDlgOpenFile_CommonFileDialog::Create(HINSTANCE hInstance, HWND hwndParent,
 	if (NULL != pszUserWildCard) { wcscpy(m_szDefaultWildCard, pszUserWildCard); }
 
 	/* 「開く」での初期フォルダ */
-	if (pszDefaultPath && pszDefaultPath[0] != L'\0') { //現在編集中のファイルのパス	//@@@ 2002.04.18
+	if (pszDefaultPath && pszDefaultPath[0] != L'\0')
+	{ //現在編集中のファイルのパス	//@@@ 2002.04.18
 		WCHAR szDrive[_MAX_DRIVE];
 		WCHAR szDir[_MAX_DIR];
 		//	Jun. 23, 2002 genta
@@ -699,7 +748,8 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName(WCHAR *pszPath, EFil
 	CFileExt cFileExt;
 	cFileExt.AppendExtRaw(LS(STR_DLGOPNFL_EXTNAME1), m_szDefaultWildCard);
 
-	switch (eAddFilter) {
+	switch (eAddFilter)
+	{
 	case EFITER_TEXT: cFileExt.AppendExtRaw(LS(STR_DLGOPNFL_EXTNAME2), L"*.txt"); break;
 	case EFITER_MACRO:
 		cFileExt.AppendExtRaw(L"Macros", L"*.js;*.vbs;*.ppa;*.mac");
@@ -739,7 +789,8 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName(WCHAR *pszPath, EFil
 		//	ファイルの場所にディレクトリを指定するとエラーになるので
 		//	ファイルが無い場合は全く指定しないことにする．
 		if (szName[0] == L'\0') { pszPath[0] = L'\0'; }
-		else {
+		else
+		{
 			WCHAR szRelPath[_MAX_PATH];
 			auto_sprintf(szRelPath, L"%s%s%s%s", szDrive, szDir, szName, szExt);
 			const WCHAR *p = szRelPath;
@@ -757,7 +808,8 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName(WCHAR *pszPath, EFil
 	ChangeCurrentDirectoryToExeDir();
 
 	if (_GetOpenFileNameRecover(&pData->m_ofn)) { return true; }
-	else {
+	else
+	{
 		//	May 29, 2004 genta 関数にまとめた
 		DlgOpenFail();
 		return false;
@@ -784,10 +836,12 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetSaveFileName(WCHAR *pszPath)
 	cFileExt.AppendExtRaw(LS(STR_DLGOPNFL_EXTNAME3), L"*.*");
 
 	// 2010.08.28 カレントディレクトリを移動するのでパス解決する
-	if (pszPath[0]) {
+	if (pszPath[0])
+	{
 		WCHAR		 szFullPath[_MAX_PATH];
 		const WCHAR *pOrg = pszPath;
-		if (::GetLongFileName(pOrg, szFullPath)) {
+		if (::GetLongFileName(pOrg, szFullPath))
+		{
 			// 成功。書き戻す
 			wcscpy(pszPath, szFullPath);
 		}
@@ -812,7 +866,8 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetSaveFileName(WCHAR *pszPath)
 	ChangeCurrentDirectoryToExeDir();
 
 	if (GetSaveFileNameRecover(&pData->m_ofn)) { return true; }
-	else {
+	else
+	{
 		//	May 29, 2004 genta 関数にまとめた
 		DlgOpenFail();
 		return false;
@@ -836,7 +891,8 @@ bool CDlgOpenFile_CommonFileDialog::DoModalOpenDlg(SLoadInfo *pLoadInfo, std::ve
 	CFileExt cFileExt;
 	cFileExt.AppendExtRaw(LS(STR_DLGOPNFL_EXTNAME3), L"*.*");
 	cFileExt.AppendExtRaw(LS(STR_DLGOPNFL_EXTNAME2), L"*.txt");
-	for (int i = 0; i < GetDllShareData().m_nTypesCount; i++) {
+	for (int i = 0; i < GetDllShareData().m_nTypesCount; i++)
+	{
 		const STypeConfigMini *type = NULL;
 		if (!CDocTypeManager().GetTypeConfigMini(CTypeConfig(i), &type)) { continue; }
 		cFileExt.AppendExt(type->m_szTypeName, type->m_szTypeExts);
@@ -870,7 +926,8 @@ bool CDlgOpenFile_CommonFileDialog::DoModalOpenDlg(SLoadInfo *pLoadInfo, std::ve
 	if (pData->m_bViewMode) pData->m_ofn.Flags |= OFN_READONLY;
 	if (bMultiSelect) { pData->m_ofn.Flags |= OFN_ALLOWMULTISELECT; }
 	pData->m_ofn.lpstrDefExt = L""; // 2005/02/20 novice 拡張子を省略したら補完する
-	if (bOptions == false) {
+	if (bOptions == false)
+	{
 		pData->m_ofn.Flags |= OFN_HIDEREADONLY;
 		pData->m_bUseCharCode = false;
 	}
@@ -883,17 +940,19 @@ bool CDlgOpenFile_CommonFileDialog::DoModalOpenDlg(SLoadInfo *pLoadInfo, std::ve
 
 	//ダイアログ表示
 	bool bDlgResult = _GetOpenFileNameRecover(&pData->m_ofn);
-	if (bDlgResult) {
-		if (bMultiSelect) {
+	if (bDlgResult)
+	{
+		if (bMultiSelect)
+		{
 			pLoadInfo->cFilePath = L"";
-			if (pData->m_ofn.nFileOffset < wcslen(pData->m_ofn.lpstrFile)) {
-				pFileNames->push_back(pData->m_ofn.lpstrFile);
-			}
-			else {
+			if (pData->m_ofn.nFileOffset < wcslen(pData->m_ofn.lpstrFile))
+			{ pFileNames->push_back(pData->m_ofn.lpstrFile); } else
+			{
 				std::wstring path;
 				WCHAR *		 pos = pData->m_ofn.lpstrFile;
 				pos += wcslen(pos) + 1;
-				while (*pos != L'\0') {
+				while (*pos != L'\0')
+				{
 					path = pData->m_ofn.lpstrFile;
 					path.append(L"\\");
 					path.append(pos);
@@ -902,13 +961,15 @@ bool CDlgOpenFile_CommonFileDialog::DoModalOpenDlg(SLoadInfo *pLoadInfo, std::ve
 				}
 			}
 		}
-		else {
+		else
+		{
 			pLoadInfo->cFilePath = pData->m_ofn.lpstrFile;
 		}
 		pLoadInfo->eCharCode = pData->m_nCharCode;
 		pLoadInfo->bViewMode = pData->m_bViewMode;
 	}
-	else {
+	else
+	{
 		DlgOpenFail();
 	}
 	delete[] pData->m_ofn.lpstrFile;
@@ -954,7 +1015,8 @@ bool CDlgOpenFile_CommonFileDialog::DoModalSaveDlg(SSaveInfo *pSaveInfo, bool bS
 	pData->m_ofn.lpstrInitialDir = m_szInitialDir;
 	pData->m_ofn.Flags = OFN_CREATEPROMPT | OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT
 						 | OFN_SHOWHELP | OFN_ENABLESIZING;
-	if (!bSimpleMode) {
+	if (!bSimpleMode)
+	{
 		pData->m_ofn.Flags = pData->m_ofn.Flags | OFN_ENABLETEMPLATE | OFN_ENABLEHOOK;
 		pData->m_ofn.Flags &= ~OFN_OVERWRITEPROMPT; // 2006.11.10 ryoji 上書き確認もフックの中で自前で処理する
 	}
@@ -973,29 +1035,34 @@ bool CDlgOpenFile_CommonFileDialog::DoModalSaveDlg(SSaveInfo *pSaveInfo, bool bS
 	pData->m_nCharCode = pSaveInfo->eCharCode;
 
 	//	From Here Feb. 9, 2001 genta
-	if (!bSimpleMode) {
+	if (!bSimpleMode)
+	{
 		pData->m_cEol = pSaveInfo->cEol; //	初期値は「改行コードを保存」に固定 // 2013.05.27 初期値を指定
 		pData->m_bUseEol = true;
 	}
-	else {
+	else
+	{
 		pData->m_bUseEol = false;
 	}
 
 	//	To Here Feb. 9, 2001 genta
 	//	Jul. 26, 2003 ryoji BOM設定
-	if (!bSimpleMode) {
+	if (!bSimpleMode)
+	{
 		pData->m_bBom		  = pSaveInfo->bBomExist;
 		pData->m_bUseBom	  = true;
 		pData->m_bUseCharCode = true;
 	}
-	else {
+	else
+	{
 		pData->m_bUseBom	  = false;
 		pData->m_bUseCharCode = false;
 	}
 
 	pData->m_nHelpTopicID = ::FuncID_To_HelpContextID(
 		F_FILESAVEAS_DIALOG); // Stonee, 2001/05/18 機能番号からヘルプトピック番号を調べるようにした
-	if (GetSaveFileNameRecover(&pData->m_ofn)) {
+	if (GetSaveFileNameRecover(&pData->m_ofn))
+	{
 		pSaveInfo->cFilePath = pData->m_ofn.lpstrFile;
 		if (pData->m_ofn.Flags & OFN_ENABLEHOOK)
 			lstrcpyn(pSaveInfo->cFilePath, pData->m_szPath,
@@ -1009,7 +1076,8 @@ bool CDlgOpenFile_CommonFileDialog::DoModalSaveDlg(SSaveInfo *pSaveInfo, bool bS
 		if (pData->m_bUseBom) { pSaveInfo->bBomExist = pData->m_bBom; }
 		return true;
 	}
-	else {
+	else
+	{
 		//	May 29, 2004 genta 関数にまとめた
 		DlgOpenFail();
 		return false;
@@ -1028,12 +1096,14 @@ void CDlgOpenFile_CommonFileDialog::DlgOpenFail(void)
 {
 	const WCHAR *pszError;
 	DWORD		 dwError = ::CommDlgExtendedError();
-	if (dwError == 0) {
+	if (dwError == 0)
+	{
 		//	ユーザキャンセルによる
 		return;
 	}
 
-	switch (dwError) {
+	switch (dwError)
+	{
 	case CDERR_DIALOGFAILURE: pszError = L"CDERR_DIALOGFAILURE  "; break;
 	case CDERR_FINDRESFAILURE: pszError = L"CDERR_FINDRESFAILURE "; break;
 	case CDERR_NOHINSTANCE: pszError = L"CDERR_NOHINSTANCE    "; break;
@@ -1100,7 +1170,8 @@ void CDlgOpenFile_CommonFileDialog::InitLayout(HWND hwndOpenDlg, HWND hwndDlg, H
 	// ファイル名ラベルとファイル名ボックスを取得する
 	if (!::IsWindow(hwndFilelabel = ::GetDlgItem(hwndOpenDlg, stc3))) // ファイル名ラベル
 		return;
-	if (!::IsWindow(hwndFilebox = ::GetDlgItem(hwndOpenDlg, cmb13))) { // ファイル名コンボ（Windows 2000タイプ）
+	if (!::IsWindow(hwndFilebox = ::GetDlgItem(hwndOpenDlg, cmb13)))
+	{ // ファイル名コンボ（Windows 2000タイプ）
 		if (!::IsWindow(hwndFilebox = ::GetDlgItem(hwndOpenDlg, edt1))) // ファイル名エディット（レガシータイプ）
 			return;
 	}
@@ -1116,8 +1187,10 @@ void CDlgOpenFile_CommonFileDialog::InitLayout(HWND hwndOpenDlg, HWND hwndDlg, H
 	// ・基準コントロールよりも左にあるものはファイル名ラベルに合わせて左端に移動
 	// ・その他は移動基準コントロール（ファイル名ボックスと左端を合わせるコントロール）と同じだけ右方向へ相対移動
 	hwndCtrl = ::GetWindow(hwndDlg, GW_CHILD);
-	while (hwndCtrl) {
-		if (::GetDlgCtrlID(hwndCtrl) != stc32) {
+	while (hwndCtrl)
+	{
+		if (::GetDlgCtrlID(hwndCtrl) != stc32)
+		{
 			::GetWindowRect(hwndCtrl, &rc);
 			po.x = (rc.right < rcBase.left) ? nLeft : rc.left + nShift;
 			po.y = rc.top;
@@ -1154,8 +1227,10 @@ void CDlgOpenFile_CommonFileDialog::InitLayout(HWND hwndOpenDlg, HWND hwndDlg, H
 bool CDlgOpenFile_CommonFileDialog::_GetOpenFileNameRecover(OPENFILENAME *ofn)
 {
 	BOOL bRet = ::GetOpenFileName(ofn);
-	if (!bRet) {
-		if (FNERR_INVALIDFILENAME == ::CommDlgExtendedError()) {
+	if (!bRet)
+	{
+		if (FNERR_INVALIDFILENAME == ::CommDlgExtendedError())
+		{
 			ofn->lpstrFile[0]	= L'\0';
 			ofn->lpstrInitialDir = L"";
 			bRet				 = ::GetOpenFileName(ofn);
@@ -1171,8 +1246,10 @@ bool CDlgOpenFile_CommonFileDialog::_GetOpenFileNameRecover(OPENFILENAME *ofn)
 bool CDlgOpenFile_CommonFileDialog::GetSaveFileNameRecover(OPENFILENAME *ofn)
 {
 	BOOL bRet = ::GetSaveFileName(ofn);
-	if (!bRet) {
-		if (FNERR_INVALIDFILENAME == ::CommDlgExtendedError()) {
+	if (!bRet)
+	{
+		if (FNERR_INVALIDFILENAME == ::CommDlgExtendedError())
+		{
 			ofn->lpstrFile[0]	= L'\0';
 			ofn->lpstrInitialDir = L"";
 			bRet				 = ::GetSaveFileName(ofn);

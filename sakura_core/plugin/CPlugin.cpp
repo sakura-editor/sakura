@@ -61,7 +61,8 @@ bool CPlugin::ReadPluginDefCommon(CDataProfile *cProfile, CDataProfile *cProfile
 	cProfile->IOProfileData(PII_PLUGIN, PII_PLUGIN_AUTHOR, m_sAuthor);
 	cProfile->IOProfileData(PII_PLUGIN, PII_PLUGIN_VERSION, m_sVersion);
 	cProfile->IOProfileData(PII_PLUGIN, PII_PLUGIN_URL, m_sUrl);
-	if (cProfileMlang) {
+	if (cProfileMlang)
+	{
 		cProfileMlang->IOProfileData(PII_PLUGIN, PII_PLUGIN_NAME, m_sName);
 		cProfileMlang->IOProfileData(PII_PLUGIN, PII_PLUGIN_DESCRIPTION, m_sDescription);
 		cProfileMlang->IOProfileData(PII_PLUGIN, PII_PLUGIN_URL, m_sUrl);
@@ -84,28 +85,34 @@ bool CPlugin::ReadPluginDefPlug(CDataProfile *cProfile, CDataProfile *cProfileMl
 	std::vector<JackDef> jacks = CJackManager::getInstance()->GetJackDef();
 	wchar_t				 szIndex[8];
 
-	for (i = 0; i < jacks.size(); i++) {
+	for (i = 0; i < jacks.size(); i++)
+	{
 		const wstring sKey = jacks[i].szName;
-		for (int nCount = 0; nCount < MAX_PLUG_CMD; nCount++) {
+		for (int nCount = 0; nCount < MAX_PLUG_CMD; nCount++)
+		{
 			if (nCount == 0) { szIndex[0] = L'\0'; }
-			else {
+			else
+			{
 				_swprintf(szIndex, L"[%d]", nCount);
 			}
 			wstring sHandler;
-			if (cProfile->IOProfileData(PII_PLUG, (sKey + szIndex).c_str(), sHandler)) {
+			if (cProfile->IOProfileData(PII_PLUG, (sKey + szIndex).c_str(), sHandler))
+			{
 				//ラベルの取得
 				wstring sKeyLabel = sKey + szIndex + L".Label";
 				wstring sLabel;
 				cProfile->IOProfileData(PII_PLUG, sKeyLabel.c_str(), sLabel);
 				if (cProfileMlang) { cProfileMlang->IOProfileData(PII_PLUG, sKeyLabel.c_str(), sLabel); }
-				if (sLabel == L"") {
+				if (sLabel == L"")
+				{
 					sLabel = sHandler; // Labelが無ければハンドラ名で代用
 				}
 
 				CPlug *newPlug = CreatePlug(*this, nCount, jacks[i].szName, sHandler, sLabel);
 				m_plugs.push_back(newPlug);
 			}
-			else {
+			else
+			{
 				break; //定義がなければ読み込みを終了
 			}
 		}
@@ -120,9 +127,11 @@ bool CPlugin::ReadPluginDefCommand(CDataProfile *cProfile, CDataProfile *cProfil
 	wstring sHandler;
 	WCHAR   bufKey[64];
 
-	for (int nCount = 1; nCount < MAX_PLUG_CMD; nCount++) { //添え字は１から始める
+	for (int nCount = 1; nCount < MAX_PLUG_CMD; nCount++)
+	{ //添え字は１から始める
 		_swprintf(bufKey, L"C[%d]", nCount);
-		if (cProfile->IOProfileData(PII_COMMAND, bufKey, sHandler)) {
+		if (cProfile->IOProfileData(PII_COMMAND, bufKey, sHandler))
+		{
 			wstring sLabel;
 			wstring sIcon;
 
@@ -130,7 +139,8 @@ bool CPlugin::ReadPluginDefCommand(CDataProfile *cProfile, CDataProfile *cProfil
 			_swprintf(bufKey, L"C[%d].Label", nCount);
 			cProfile->IOProfileData(PII_COMMAND, bufKey, sLabel);
 			if (cProfileMlang) { cProfileMlang->IOProfileData(PII_COMMAND, bufKey, sLabel); }
-			if (sLabel == L"") {
+			if (sLabel == L"")
+			{
 				sLabel = sHandler; // Labelが無ければハンドラ名で代用
 			}
 			//アイコンの取得
@@ -140,7 +150,8 @@ bool CPlugin::ReadPluginDefCommand(CDataProfile *cProfile, CDataProfile *cProfil
 
 			AddCommand(sHandler.c_str(), sLabel.c_str(), sIcon.c_str(), false);
 		}
-		else {
+		else
+		{
 			break; //定義がなければ読み込みを終了
 		}
 	}
@@ -161,15 +172,18 @@ bool CPlugin::ReadPluginDefOption(CDataProfile *cProfile, CDataProfile *cProfile
 	WCHAR   bufKey[64];
 
 	sSection = L"";
-	for (int nCount = 1; nCount < MAX_PLUG_OPTION; nCount++) { //添え字は１から始める
+	for (int nCount = 1; nCount < MAX_PLUG_OPTION; nCount++)
+	{ //添え字は１から始める
 		sKey = sLabel = sType = sDefaultVal = L"";
 		// Keyの取得
 		_swprintf(bufKey, L"O[%d].Key", nCount);
-		if (cProfile->IOProfileData(PII_OPTION, bufKey, sKey)) {
+		if (cProfile->IOProfileData(PII_OPTION, bufKey, sKey))
+		{
 			// Sectionの取得
 			_swprintf(bufKey, L"O[%d].Section", nCount);
 			cProfile->IOProfileData(PII_OPTION, bufKey, sSection_wk);
-			if (!sSection_wk.empty()) { // 指定が無ければ前を引き継ぐ
+			if (!sSection_wk.empty())
+			{ // 指定が無ければ前を引き継ぐ
 				sSection = sSection_wk;
 			}
 			//ラベルの取得
@@ -187,11 +201,13 @@ bool CPlugin::ReadPluginDefOption(CDataProfile *cProfile, CDataProfile *cProfile
 			_swprintf(bufKey, L"O[%d].Default", nCount);
 			cProfile->IOProfileData(PII_OPTION, bufKey, sDefaultVal);
 
-			if (sSection.empty() || sKey.empty()) {
+			if (sSection.empty() || sKey.empty())
+			{
 				// 設定が無かったら無視
 				continue;
 			}
-			if (sLabel.empty()) {
+			if (sLabel.empty())
+			{
 				// Label指定が無ければ、Keyで代用
 				sLabel = sKey;
 			}
@@ -232,7 +248,8 @@ std::vector<std::wstring> wstring_split(std::wstring sTrg, wchar_t cSep)
 	std::vector<std::wstring> splitVec;
 	int						  idx;
 
-	while ((idx = sTrg.find(cSep)) != std::wstring::npos) {
+	while ((idx = sTrg.find(cSep)) != std::wstring::npos)
+	{
 		splitVec.push_back(sTrg.substr(0, idx));
 		sTrg = sTrg.substr(++idx);
 	}
@@ -247,11 +264,13 @@ bool CPlugin::ReadPluginDefString(CDataProfile *cProfile, CDataProfile *cProfile
 {
 	WCHAR bufKey[64];
 	m_aStrings.clear();
-	m_aStrings.push_back(wstring(L""));						   // 0番目ダミー
-	for (int nCount = 1; nCount < MAX_PLUG_STRING; nCount++) { //添え字は１から始める
+	m_aStrings.push_back(wstring(L"")); // 0番目ダミー
+	for (int nCount = 1; nCount < MAX_PLUG_STRING; nCount++)
+	{ //添え字は１から始める
 		wstring sVal = L"";
 		_swprintf(bufKey, L"S[%d]", nCount);
-		if (cProfile->IOProfileData(PII_STRING, bufKey, sVal)) {
+		if (cProfile->IOProfileData(PII_STRING, bufKey, sVal))
+		{
 			if (cProfileMlang) { cProfileMlang->IOProfileData(PII_STRING, bufKey, sVal); }
 		}
 		m_aStrings.push_back(sVal);

@@ -27,7 +27,8 @@
 /*! 最大値定義
 	@date 2007.10.19 kobake 新規作成
 */
-enum maxdata {
+enum maxdata
+{
 	MAX_EDITWINDOWS		= 256, //!< 編集ウィンドウ数
 	MAX_SEARCHKEY		= 30,  //!< 検索キー
 	MAX_REPLACEKEY		= 30,  //!< 置換キー

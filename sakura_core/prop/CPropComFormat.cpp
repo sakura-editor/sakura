@@ -116,7 +116,8 @@ INT_PTR CPropFormat::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 	//	int			idCtrl;
 	//	int			nVal;
 
-	switch (uMsg) {
+	switch (uMsg)
+	{
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 Format */
 		SetData(hwndDlg);
@@ -143,13 +144,16 @@ INT_PTR CPropFormat::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam); /* 通知コード */
 		wID			= LOWORD(wParam); /* 項目ID､ コントロールID､ またはアクセラレータID */
-		switch (wNotifyCode) {
+		switch (wNotifyCode)
+		{
 		case EN_CHANGE:
-			if (IDC_EDIT_DFORM == wID) {
+			if (IDC_EDIT_DFORM == wID)
+			{
 				ChangeDateExample(hwndDlg);
 				return 0;
 			}
-			if (IDC_EDIT_TFORM == wID) {
+			if (IDC_EDIT_TFORM == wID)
+			{
 				ChangeTimeExample(hwndDlg);
 				return 0;
 			}
@@ -157,7 +161,8 @@ INT_PTR CPropFormat::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
-			switch (wID) {
+			switch (wID)
+			{
 			case IDC_RADIO_DFORM_0:
 			case IDC_RADIO_DFORM_1:
 				ChangeDateExample(hwndDlg);
@@ -188,7 +193,8 @@ INT_PTR CPropFormat::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		//		case ???????:
 		//			return 0L;
 		//		default:
-		switch (pNMHDR->code) {
+		switch (pNMHDR->code)
+		{
 		case PSN_HELP: OnHelp(hwndDlg, IDD_PROP_FORMAT); return TRUE;
 		case PSN_KILLACTIVE:
 			//				MYTRACE( L"Format PSN_KILLACTIVE\n" );
@@ -209,7 +215,8 @@ INT_PTR CPropFormat::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		break; /* WM_NOTIFY */
 
 		//@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP: {
+	case WM_HELP:
+	{
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -240,7 +247,8 @@ void CPropFormat::SetData(HWND hwndDlg)
 
 	//日付書式のタイプ
 	if (0 == m_Common.m_sFormat.m_nDateFormatType) { ::CheckDlgButton(hwndDlg, IDC_RADIO_DFORM_0, BST_CHECKED); }
-	else {
+	else
+	{
 		::CheckDlgButton(hwndDlg, IDC_RADIO_DFORM_1, BST_CHECKED);
 	}
 	//日付書式
@@ -248,7 +256,8 @@ void CPropFormat::SetData(HWND hwndDlg)
 
 	//時刻書式のタイプ
 	if (0 == m_Common.m_sFormat.m_nTimeFormatType) { ::CheckDlgButton(hwndDlg, IDC_RADIO_TFORM_0, BST_CHECKED); }
-	else {
+	else
+	{
 		::CheckDlgButton(hwndDlg, IDC_RADIO_TFORM_1, BST_CHECKED);
 	}
 	//時刻書式
@@ -282,7 +291,8 @@ int CPropFormat::GetData(HWND hwndDlg)
 
 	//日付書式のタイプ
 	if (BST_CHECKED == ::IsDlgButtonChecked(hwndDlg, IDC_RADIO_DFORM_0)) { m_Common.m_sFormat.m_nDateFormatType = 0; }
-	else {
+	else
+	{
 		m_Common.m_sFormat.m_nDateFormatType = 1;
 	}
 	//日付書式
@@ -291,7 +301,8 @@ int CPropFormat::GetData(HWND hwndDlg)
 
 	//時刻書式のタイプ
 	if (BST_CHECKED == ::IsDlgButtonChecked(hwndDlg, IDC_RADIO_TFORM_0)) { m_Common.m_sFormat.m_nTimeFormatType = 0; }
-	else {
+	else
+	{
 		m_Common.m_sFormat.m_nTimeFormatType = 1;
 	}
 
@@ -308,21 +319,25 @@ int CPropFormat::GetData(HWND hwndDlg)
 void CPropFormat::EnableFormatPropInput(HWND hwndDlg)
 {
 	//	日付書式をカスタムにするかどうか
-	if (::IsDlgButtonChecked(hwndDlg, IDC_RADIO_DFORM_1)) {
+	if (::IsDlgButtonChecked(hwndDlg, IDC_RADIO_DFORM_1))
+	{
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_DFORM), TRUE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_DFORM), TRUE);
 	}
-	else {
+	else
+	{
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_DFORM), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_DFORM), FALSE);
 	}
 
 	//	時刻書式をカスタムにするかどうか
-	if (::IsDlgButtonChecked(hwndDlg, IDC_RADIO_TFORM_1)) {
+	if (::IsDlgButtonChecked(hwndDlg, IDC_RADIO_TFORM_1))
+	{
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_TFORM), TRUE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_TFORM), TRUE);
 	}
-	else {
+	else
+	{
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_TFORM), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_TFORM), FALSE);
 	}

@@ -31,26 +31,30 @@ class CKeyWordSetMgr;
 
 // 2007.11.29 kobake 変数の意味を明確にするため、nMethos を テンプレート化。
 template<class TYPE>
-struct TYPE_NAME {
+struct TYPE_NAME
+{
 	TYPE		 nMethod;
 	const WCHAR *pszName;
 };
 
 template<class TYPE>
-struct TYPE_NAME_ID {
+struct TYPE_NAME_ID
+{
 	TYPE nMethod;
 	int  nNameId;
 };
 
 template<class TYPE>
-struct TYPE_NAME_ID2 {
+struct TYPE_NAME_ID2
+{
 	TYPE		 nMethod;
 	int			 nNameId;
 	const WCHAR *pszName;
 };
 
 //!< プロパティシート番号
-enum PropTypeSheetOrder {
+enum PropTypeSheetOrder
+{
 	ID_PROPTYPE_PAGENUM_SCREEN = 0, //!< スクリーン
 	ID_PROPTYPE_PAGENUM_COLOR,		//!< カラー
 	ID_PROPTYPE_PAGENUM_WINDOW,		//!< ウィンドウ
@@ -68,7 +72,8 @@ enum PropTypeSheetOrder {
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class CPropTypes {
+class CPropTypes
+{
 
 public:
 	//生成と破棄
@@ -139,7 +144,8 @@ protected:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        スクリーン                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CPropTypesScreen : public CPropTypes {
+class CPropTypesScreen : public CPropTypes
+{
 public:
 	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam); //!< メッセージ処理
 protected:
@@ -157,7 +163,8 @@ public:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          ウィンドウ                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CPropTypesWindow : public CPropTypes {
+class CPropTypesWindow : public CPropTypes
+{
 public:
 	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam); //!< メッセージ処理
 protected:
@@ -174,7 +181,8 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          カラー                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CPropTypesColor : public CPropTypes {
+class CPropTypesColor : public CPropTypes
+{
 public:
 	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam); //!< メッセージ処理
 protected:
@@ -197,7 +205,8 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           支援                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CPropTypesSupport : public CPropTypes {
+class CPropTypesSupport : public CPropTypes
+{
 public:
 	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam); //!< メッセージ処理
 protected:
@@ -211,7 +220,8 @@ public:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                    正規表現キーワード                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CPropTypesRegex : public CPropTypes {
+class CPropTypesRegex : public CPropTypes
+{
 public:
 	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam); //!< メッセージ処理
 protected:
@@ -229,7 +239,8 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     キーワードヘルプ                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class CPropTypesKeyHelp : public CPropTypes {
+class CPropTypesKeyHelp : public CPropTypes
+{
 public:
 	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam); //!< メッセージ処理
 protected:
@@ -242,7 +253,8 @@ protected:
 template<typename T>
 void InitTypeNameId2(std::vector<TYPE_NAME_ID2<T>> &vec, TYPE_NAME_ID<T> *arr, size_t size)
 {
-	for (size_t i = 0; i < size; i++) {
+	for (size_t i = 0; i < size; i++)
+	{
 		TYPE_NAME_ID2<T> item = {arr[i].nMethod, arr[i].nNameId, NULL};
 		vec.push_back(item);
 	}

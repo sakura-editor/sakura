@@ -28,7 +28,8 @@
 #include <vector>
 
 //$$レイアウト構築フロー(DoLayout)も CFigure で行うと整理しやすい
-class CFigure {
+class CFigure
+{
 public:
 	virtual ~CFigure() {}
 	virtual bool DrawImp(SColorStrategyInfo *pInfo)				 = 0;
@@ -49,7 +50,8 @@ protected:
 };
 
 //! 通常テキスト描画
-class CFigure_Text : public CFigure {
+class CFigure_Text : public CFigure
+{
 public:
 	bool DrawImp(SColorStrategyInfo *pInfo);
 	bool Match(const wchar_t *pText, int nTextLen) const { return true; }
@@ -59,7 +61,8 @@ public:
 };
 
 //! 各種空白（半角空白／全角空白／タブ／改行）描画用の基本クラス
-class CFigureSpace : public CFigure {
+class CFigureSpace : public CFigure
+{
 public:
 	virtual bool DrawImp(SColorStrategyInfo *pInfo);
 
@@ -80,7 +83,8 @@ protected:
 
 		EColorIndexType nColorIndex = GetColorIdx();
 		if (m_pTypeData->m_ColorInfoArr[nColorIndex].m_bDisp) { m_nDispColorIndex = nColorIndex; }
-		else {
+		else
+		{
 			m_nDispColorIndex = COLORIDX_TEXT;
 		}
 	}

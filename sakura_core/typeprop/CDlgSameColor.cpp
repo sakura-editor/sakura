@@ -78,24 +78,26 @@ INT_PTR CDlgSameColor::DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 {
 	INT_PTR result;
 	result = CDialog::DispatchEvent(hWnd, wMsg, wParam, lParam);
-	switch (wMsg) {
+	switch (wMsg)
+	{
 	case WM_COMMAND:
 		// 色選択リストボックスの選択が変更された場合の処理
-		if (IDC_LIST_COLORS == LOWORD(wParam) && LBN_SELCHANGE == HIWORD(wParam)) {
-			OnSelChangeListColors((HWND)lParam);
-		}
-		break;
+		if (IDC_LIST_COLORS == LOWORD(wParam) && LBN_SELCHANGE == HIWORD(wParam))
+		{ OnSelChangeListColors((HWND)lParam); } break;
 
-	case WM_CTLCOLORLISTBOX: {
+	case WM_CTLCOLORLISTBOX:
+	{
 		// 項目リストの背景色を設定する処理
 		HWND hwndLB = (HWND)lParam;
-		if (IDC_LIST_ITEMINFO == ::GetDlgCtrlID(hwndLB)) {
+		if (IDC_LIST_ITEMINFO == ::GetDlgCtrlID(hwndLB))
+		{
 			HDC hdcLB = (HDC)wParam;
 			::SetTextColor(hdcLB, ::GetSysColor(COLOR_WINDOWTEXT));
 			::SetBkMode(hdcLB, TRANSPARENT);
 			return (INT_PTR)::GetSysColorBrush(COLOR_BTNFACE);
 		}
-	} break;
+	}
+	break;
 
 	default: break;
 	}
@@ -145,11 +147,14 @@ BOOL CDlgSameColor::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	case IDC_BUTTON_SAMETEXTCOLOR:
 		// タイプ別設定から文字色を重複しないように取り出す
 		::SetWindowText(GetHwnd(), LS(STR_DLGSMCLR_BTN1));
-		for (i = 0; i < COLORIDX_LAST; ++i) {
+		for (i = 0; i < COLORIDX_LAST; ++i)
+		{
 			if (0 != (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_TEXT)) continue;
-			if (m_cr != m_pTypes->m_ColorInfoArr[i].m_sColorAttr.m_cTEXT) {
+			if (m_cr != m_pTypes->m_ColorInfoArr[i].m_sColorAttr.m_cTEXT)
+			{
 				_ultow(m_pTypes->m_ColorInfoArr[i].m_sColorAttr.m_cTEXT, szText, 10);
-				if (LB_ERR == List_FindStringExact(hwndList, -1, szText)) {
+				if (LB_ERR == List_FindStringExact(hwndList, -1, szText))
+				{
 					nItem = ::List_AddString(hwndList, szText);
 					List_SetItemData(hwndList, nItem, FALSE);
 				}
@@ -160,12 +165,15 @@ BOOL CDlgSameColor::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	case IDC_BUTTON_SAMEBKCOLOR:
 		// タイプ別設定から背景色を重複しないように取り出す
 		::SetWindowText(GetHwnd(), LS(STR_DLGSMCLR_BTN2));
-		for (i = 0; i < COLORIDX_LAST; ++i) {
+		for (i = 0; i < COLORIDX_LAST; ++i)
+		{
 			if (0 != (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_BACK)) // 2006.12.18 ryoji フラグ利用で簡素化
 				continue;
-			if (m_cr != m_pTypes->m_ColorInfoArr[i].m_sColorAttr.m_cBACK) {
+			if (m_cr != m_pTypes->m_ColorInfoArr[i].m_sColorAttr.m_cBACK)
+			{
 				_ultow(m_pTypes->m_ColorInfoArr[i].m_sColorAttr.m_cBACK, szText, 10);
-				if (LB_ERR == List_FindStringExact(hwndList, -1, szText)) {
+				if (LB_ERR == List_FindStringExact(hwndList, -1, szText))
+				{
 					nItem = ::List_AddString(hwndList, szText);
 					List_SetItemData(hwndList, nItem, FALSE);
 				}
@@ -176,7 +184,8 @@ BOOL CDlgSameColor::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	default: CloseDialog(IDCANCEL); break;
 	}
 
-	if (0 < List_GetCount(hwndList)) {
+	if (0 < List_GetCount(hwndList))
+	{
 		List_SetCurSel(hwndList, 0);
 		OnSelChangeListColors(hwndList);
 	}
@@ -195,7 +204,8 @@ BOOL CDlgSameColor::OnBnClicked(int wID)
 	int  i;
 	int  j;
 
-	switch (wID) {
+	switch (wID)
+	{
 	case IDC_BUTTON_HELP:
 		// ヘルプ	// 2006.10.07 ryoji
 		MyWinHelp(GetHwnd(), HELP_CONTEXT, HLP000316); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -215,27 +225,28 @@ BOOL CDlgSameColor::OnBnClicked(int wID)
 		LPWSTR   pszStop;
 		COLORREF cr;
 
-		for (i = 0; i < nItemNum; ++i) {
+		for (i = 0; i < nItemNum; ++i)
+		{
 			bCheck = (BOOL)List_GetItemData(hwndList, i);
-			if (bCheck) {
+			if (bCheck)
+			{
 				List_GetText(hwndList, i, szText);
 				cr = wcstoul(szText, &pszStop, 10);
 
-				switch (m_wID) {
+				switch (m_wID)
+				{
 				case IDC_BUTTON_SAMETEXTCOLOR:
-					for (j = 0; j < COLORIDX_LAST; ++j) {
-						if (cr == m_pTypes->m_ColorInfoArr[j].m_sColorAttr.m_cTEXT) {
-							m_pTypes->m_ColorInfoArr[j].m_sColorAttr.m_cTEXT = m_cr;
-						}
-					}
+					for (j = 0; j < COLORIDX_LAST; ++j)
+					{
+						if (cr == m_pTypes->m_ColorInfoArr[j].m_sColorAttr.m_cTEXT)
+						{ m_pTypes->m_ColorInfoArr[j].m_sColorAttr.m_cTEXT = m_cr; } }
 					break;
 
 				case IDC_BUTTON_SAMEBKCOLOR:
-					for (j = 0; j < COLORIDX_LAST; ++j) {
-						if (cr == m_pTypes->m_ColorInfoArr[j].m_sColorAttr.m_cBACK) {
-							m_pTypes->m_ColorInfoArr[j].m_sColorAttr.m_cBACK = m_cr;
-						}
-					}
+					for (j = 0; j < COLORIDX_LAST; ++j)
+					{
+						if (cr == m_pTypes->m_ColorInfoArr[j].m_sColorAttr.m_cBACK)
+						{ m_pTypes->m_ColorInfoArr[j].m_sColorAttr.m_cBACK = m_cr; } }
 					break;
 
 				default: break;
@@ -278,7 +289,8 @@ BOOL CDlgSameColor::OnDrawItem(WPARAM wParam, LPARAM lParam)
 	::MyFillRect(gr, pDis->rcItem, COLOR_WINDOW);
 
 	// アイテムが選択状態
-	if (pDis->itemState & ODS_SELECTED) {
+	if (pDis->itemState & ODS_SELECTED)
+	{
 		rc = pDis->rcItem;
 		rc.left += (rc.bottom - rc.top);
 		::MyFillRect(gr, rc, COLOR_HIGHLIGHT);
@@ -328,30 +340,30 @@ BOOL CDlgSameColor::OnSelChangeListColors(HWND hwndCtl)
 	List_ResetContent(hwndListInfo);
 
 	i = List_GetCaretIndex(hwndCtl);
-	if (LB_ERR != i) {
+	if (LB_ERR != i)
+	{
 		List_GetText(hwndCtl, i, szText);
 		cr = wcstoul(szText, &pszStop, 10);
 
-		switch (m_wID) {
+		switch (m_wID)
+		{
 		case IDC_BUTTON_SAMETEXTCOLOR:
-			for (j = 0; j < COLORIDX_LAST; ++j) {
+			for (j = 0; j < COLORIDX_LAST; ++j)
+			{
 				if (0 != (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_TEXT)) continue;
-				if (cr == m_pTypes->m_ColorInfoArr[j].m_sColorAttr.m_cTEXT) {
-					::List_AddString(hwndListInfo, m_pTypes->m_ColorInfoArr[j].m_szName);
-				}
-			}
+				if (cr == m_pTypes->m_ColorInfoArr[j].m_sColorAttr.m_cTEXT)
+				{ ::List_AddString(hwndListInfo, m_pTypes->m_ColorInfoArr[j].m_szName); } }
 			break;
 
 		case IDC_BUTTON_SAMEBKCOLOR:
-			for (j = 0; j < COLORIDX_LAST; ++j) {
+			for (j = 0; j < COLORIDX_LAST; ++j)
+			{
 				if (0
 					!= (g_ColorAttributeArr[j].fAttribute
 						& COLOR_ATTRIB_NO_BACK)) // 2006.12.18 ryoji フラグ利用で簡素化
 					continue;
-				if (cr == m_pTypes->m_ColorInfoArr[j].m_sColorAttr.m_cBACK) {
-					::List_AddString(hwndListInfo, m_pTypes->m_ColorInfoArr[j].m_szName);
-				}
-			}
+				if (cr == m_pTypes->m_ColorInfoArr[j].m_sColorAttr.m_cBACK)
+				{ ::List_AddString(hwndListInfo, m_pTypes->m_ColorInfoArr[j].m_szName); } }
 			break;
 
 		default: break;
@@ -372,7 +384,8 @@ LRESULT CALLBACK CDlgSameColor::ColorStatic_SubclassProc(HWND hwnd, UINT uMsg, W
 	CDlgSameColor *pCDlgSameColor;
 	pCDlgSameColor = (CDlgSameColor *)::GetWindowLongPtr(hwnd, GWLP_USERDATA);
 
-	switch (uMsg) {
+	switch (uMsg)
+	{
 	case WM_PAINT:
 		// ウィンドウ描画
 		PAINTSTRUCT ps;
@@ -432,20 +445,23 @@ LRESULT CALLBACK CDlgSameColor::ColorList_SubclassProc(HWND hwnd, UINT uMsg, WPA
 	CDlgSameColor *pCDlgSameColor;
 	pCDlgSameColor = (CDlgSameColor *)::GetWindowLongPtr(hwnd, GWLP_USERDATA);
 
-	switch (uMsg) {
+	switch (uMsg)
+	{
 	case WM_LBUTTONUP:
 		// マウスボタン下にある項目の選択／選択解除をトグルする
 		po.x	 = LOWORD(lParam); // horizontal position of cursor
 		po.y	 = HIWORD(lParam); // vertical position of cursor
 		nItemNum = List_GetCount(hwnd);
-		for (i = 0; i < nItemNum; ++i) {
+		for (i = 0; i < nItemNum; ++i)
+		{
 			List_GetItemRect(hwnd, i, &rcItem);
 			rc = rcItem;
 			rc.top += 2;
 			rc.bottom -= 2;
 			rc.left += 2;
 			rc.right = rc.left + (rc.bottom - rc.top);
-			if (::PtInRect(&rc, po)) {
+			if (::PtInRect(&rc, po))
+			{
 				BOOL bCheck;
 				bCheck = !(BOOL)List_GetItemData(hwnd, i);
 				List_SetItemData(hwnd, i, bCheck);
@@ -457,10 +473,12 @@ LRESULT CALLBACK CDlgSameColor::ColorList_SubclassProc(HWND hwnd, UINT uMsg, WPA
 
 	case WM_KEYUP:
 		// フォーカス項目の選択／選択解除をトグルする
-		if (VK_SPACE == wParam) {
+		if (VK_SPACE == wParam)
+		{
 			BOOL bCheck;
 			i = List_GetCaretIndex(hwnd);
-			if (LB_ERR != i) {
+			if (LB_ERR != i)
+			{
 				bCheck = !(BOOL)List_GetItemData(hwnd, i);
 				List_SetItemData(hwnd, i, bCheck);
 				::InvalidateRect(hwnd, NULL, TRUE);

@@ -60,7 +60,8 @@ INT_PTR CPropStatusbar::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 {
 	NMHDR *pNMHDR;
 
-	switch (uMsg) {
+	switch (uMsg)
+	{
 
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 */
@@ -73,7 +74,8 @@ INT_PTR CPropStatusbar::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 
 	case WM_NOTIFY:
 		pNMHDR = (NMHDR *)lParam;
-		switch (pNMHDR->code) {
+		switch (pNMHDR->code)
+		{
 		case PSN_HELP: OnHelp(hwndDlg, IDD_PROP_STATUSBAR); return TRUE;
 		case PSN_KILLACTIVE:
 			DEBUG_TRACE(L"statusbar PSN_KILLACTIVE\n");
@@ -89,7 +91,8 @@ INT_PTR CPropStatusbar::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		break; /* WM_NOTIFY */
 
 		//@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP: {
+	case WM_HELP:
+	{
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更

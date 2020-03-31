@@ -28,7 +28,8 @@
 #include "util/StaticType.h"
 
 //文字列バッファの型
-struct StringBufferW_ {
+struct StringBufferW_
+{
 	WCHAR *   pData;
 	const int nDataCount;
 
@@ -51,7 +52,8 @@ typedef const StringBufferW_ StringBufferW;
 
 // 2007.09.24 kobake データ変換部を子クラスに分離
 //!各種データ変換付きCProfile
-class CDataProfile : public CProfile {
+class CDataProfile : public CProfile
+{
 private:
 	//専用型
 	typedef std::wstring wstring;
@@ -101,14 +103,16 @@ protected:
 	// ACHAR
 	void profile_to_value(const wstring &profile, ACHAR *value)
 	{
-		if (profile.length() > 0) {
+		if (profile.length() > 0)
+		{
 			ACHAR buf[2] = {0};
 			int   ret	= wctomb(buf, profile[0]);
 			assert_warning(ret == 1);
 			(void)ret;
 			*value = buf[0];
 		}
-		else {
+		else
+		{
 			*value = '\0';
 		}
 	}
@@ -160,15 +164,18 @@ public:
 		std::wstring buf;
 
 		bool ret = false;
-		if (IsReadingMode()) {
+		if (IsReadingMode())
+		{
 			//文字列読み込み
-			if (GetProfileDataImp(pszSectionName, pszEntryKey, buf)) {
+			if (GetProfileDataImp(pszSectionName, pszEntryKey, buf))
+			{
 				// Tに変換
 				profile_to_value(buf, &tEntryValue);
 				ret = true;
 			}
 		}
-		else {
+		else
+		{
 			//文字列に変換
 			value_to_profile(tEntryValue, &buf);
 			//文字列書き込み
@@ -199,11 +206,13 @@ inline bool CDataProfile::IOProfileData<std::wstring>(const WCHAR * pszSectionNa
 													  ) noexcept
 {
 	bool ret = false;
-	if (IsReadingMode()) {
+	if (IsReadingMode())
+	{
 		//文字列読み込み
 		ret = GetProfileDataImp(pszSectionName, pszEntryKey, strEntryValue);
 	}
-	else {
+	else
+	{
 		//文字列書き込み
 		ret = SetProfileDataImp(pszSectionName, pszEntryKey, strEntryValue);
 	}

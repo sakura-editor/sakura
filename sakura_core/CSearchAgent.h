@@ -33,7 +33,8 @@ class CBregexp;
 // #define SEARCH_STRING_KMP
 #define SEARCH_STRING_SUNDAY_QUICK
 
-class CSearchStringPattern {
+class CSearchStringPattern
+{
 public:
 	CSearchStringPattern();
 	CSearchStringPattern(HWND, const wchar_t *pszPattern, int nPatternLen, const SSearchOption &sSearchOption,
@@ -84,7 +85,8 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(CSearchStringPattern);
 };
 
-class CSearchAgent {
+class CSearchAgent
+{
 public:
 	// 文字列検索
 	static const wchar_t *SearchString(const wchar_t *pLine, int nLineLen, int nIdxPos,

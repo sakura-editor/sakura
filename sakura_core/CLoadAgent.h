@@ -26,7 +26,8 @@
 
 #include "doc/CDocListener.h"
 
-class CLoadAgent : public CDocListenerEx {
+class CLoadAgent : public CDocListenerEx
+{
 public:
 	ECallbackResult OnCheckLoad(SLoadInfo *pLoadInfo) override;
 	void			OnBeforeLoad(SLoadInfo *sLoadInfo) override;

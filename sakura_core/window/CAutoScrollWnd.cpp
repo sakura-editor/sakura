@@ -44,19 +44,23 @@ HWND CAutoScrollWnd::Create(HINSTANCE hInstance, HWND hwndParent, bool bVertical
 
 	m_cView = view;
 	int idb, idc;
-	if (bVertical) {
-		if (bHorizontal) {
+	if (bVertical)
+	{
+		if (bHorizontal)
+		{
 			idb			 = IDB_SCROLL_CENTER;
 			idc			 = IDC_CURSOR_AUTOSCROLL_CENTER;
 			pszClassName = L"SakuraAutoScrollCWnd";
 		}
-		else {
+		else
+		{
 			idb			 = IDB_SCROLL_VERTICAL;
 			idc			 = IDC_CURSOR_AUTOSCROLL_VERTICAL;
 			pszClassName = L"SakuraAutoScrollVWnd";
 		}
 	}
-	else {
+	else
+	{
 		idb			 = IDB_SCROLL_HORIZONTAL;
 		idc			 = IDC_CURSOR_AUTOSCROLL_HORIZONTAL;
 		pszClassName = L"SakuraAutoScrollHWnd";
@@ -86,7 +90,8 @@ void CAutoScrollWnd::Close()
 {
 	this->DestroyWindow();
 
-	if (m_hCenterImg) {
+	if (m_hCenterImg)
+	{
 		::DeleteObject(m_hCenterImg);
 		m_hCenterImg = NULL;
 	}

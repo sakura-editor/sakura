@@ -26,7 +26,8 @@
 
 #include "doc/CDocTypeSetting.h" // ColorInfo !!
 
-class CViewFont {
+class CViewFont
+{
 public:
 	CViewFont(const LOGFONT *plf, bool bMiniMap = false)
 	{

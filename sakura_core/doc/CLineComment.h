@@ -26,7 +26,8 @@
 
 	@note CLineCommentは、共有メモリSTypeConfigに含まれるので、メンバ変数は常に実体を持っていなければならない。
 */
-class CLineComment {
+class CLineComment
+{
 public:
 	/*
 	||  Constructors：コンパイラ標準を使用。

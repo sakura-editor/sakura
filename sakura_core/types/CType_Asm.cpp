@@ -57,7 +57,8 @@ void CDocOutline::MakeTopicList_asm(CFuncInfoArr *pcFuncInfoArr)
 
 	nTotalLine = m_pcDocRef->m_cDocLineMgr.GetLineCount();
 
-	for (CLogicInt nLineCount = CLogicInt(0); nLineCount < nTotalLine; nLineCount++) {
+	for (CLogicInt nLineCount = CLogicInt(0); nLineCount < nTotalLine; nLineCount++)
+	{
 		const WCHAR *pLine;
 		CLogicInt	nLineLen;
 		WCHAR *		 pTmpLine;
@@ -75,8 +76,9 @@ void CDocOutline::MakeTopicList_asm(CFuncInfoArr *pcFuncInfoArr)
 		//作業用にコピーを作成する。バイナリがあったらその後ろは知らない。
 		pTmpLine = _wcsdup(pLine);
 		if (pTmpLine == NULL) break;
-		if (wcslen(pTmpLine) >= (unsigned int)nLineLen) { //バイナリを含んでいたら短くなるので...
-			pTmpLine[nLineLen] = L'\0';					  //指定長で切り詰め
+		if (wcslen(pTmpLine) >= (unsigned int)nLineLen)
+		{								//バイナリを含んでいたら短くなるので...
+			pTmpLine[nLineLen] = L'\0'; //指定長で切り詰め
 		}
 
 		//行コメント削除
@@ -88,32 +90,39 @@ void CDocOutline::MakeTopicList_asm(CFuncInfoArr *pcFuncInfoArr)
 
 		//トークンに分割
 		for (j = 0; j < MAX_ASM_TOKEN; j++) token[j] = NULL;
-		for (j = 0; j < MAX_ASM_TOKEN; j++) {
+		for (j = 0; j < MAX_ASM_TOKEN; j++)
+		{
 			token[j] = my_strtok<WCHAR>(pTmpLine, length, &offset, L" \t\r\n");
 			if (token[j] == NULL) break;
 			//トークンに含まれるべき文字でないか？
-			if (wcsstr(token[j], L"\"") != NULL || wcsstr(token[j], L"\\") != NULL || wcsstr(token[j], L"'") != NULL) {
+			if (wcsstr(token[j], L"\"") != NULL || wcsstr(token[j], L"\\") != NULL || wcsstr(token[j], L"'") != NULL)
+			{
 				token[j] = NULL;
 				break;
 			}
 		}
 
-		if (token[0] != NULL) { //トークンが1個以上ある
+		if (token[0] != NULL)
+		{ //トークンが1個以上ある
 			int	nFuncId	 = -1;
 			WCHAR *entry_token = NULL;
 
 			length = wcslen(token[0]);
-			if (length >= 2 && token[0][length - 1] == L':') { //ラベル
+			if (length >= 2 && token[0][length - 1] == L':')
+			{ //ラベル
 				token[0][length - 1] = L'\0';
 				nFuncId				 = 51;
 				entry_token			 = token[0];
 			}
-			else if (token[1] != NULL) {				//トークンが2個以上ある
-				if (_wcsicmp(token[1], L"proc") == 0) { //関数
+			else if (token[1] != NULL)
+			{ //トークンが2個以上ある
+				if (_wcsicmp(token[1], L"proc") == 0)
+				{ //関数
 					nFuncId		= 50;
 					entry_token = token[0];
 				}
-				else if (_wcsicmp(token[1], L"endp") == 0) { //関数終了
+				else if (_wcsicmp(token[1], L"endp") == 0)
+				{ //関数終了
 					nFuncId		= 52;
 					entry_token = token[0];
 					//}else
@@ -127,7 +136,8 @@ void CDocOutline::MakeTopicList_asm(CFuncInfoArr *pcFuncInfoArr)
 				}
 			}
 
-			if (nFuncId >= 0) {
+			if (nFuncId >= 0)
+			{
 				/*
 				  カーソル位置変換
 				  物理位置(行頭からのバイト数、折り返し無し行位置)

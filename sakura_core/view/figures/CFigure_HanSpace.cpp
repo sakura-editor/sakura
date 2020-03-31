@@ -26,7 +26,8 @@ void CFigure_HanSpace::DispSpace(CGraphics &gr, DispPos *pDispPos, CEditView *pc
 	CMyRect			  rcClip;
 	const int		  Dx   = pcView->GetTextMetrics().CalcTextWidth3(L" ", 1);
 	const CLayoutXInt nCol = CLayoutXInt(Dx);
-	if (pcView->GetTextArea().GenerateClipRect(&rcClip, *pDispPos, nCol)) {
+	if (pcView->GetTextArea().GenerateClipRect(&rcClip, *pDispPos, nCol))
+	{
 		//小文字"o"の下半分を出力
 		CMyRect rcClipBottom = rcClip;
 		rcClipBottom.top	 = rcClip.top + pcView->GetTextMetrics().GetHankakuHeight() / 2;

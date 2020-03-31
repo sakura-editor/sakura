@@ -36,7 +36,8 @@
 /*!
 	@brief ファイルツリー設定ダイアログ
 */
-class CDlgFileTree final : public CDialog {
+class CDlgFileTree final : public CDialog
+{
 public:
 	CDlgFileTree();
 

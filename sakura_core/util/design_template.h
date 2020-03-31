@@ -44,7 +44,8 @@
 	2008.03.03 kobake 作成
 */
 template<class T>
-class TSingleton {
+class TSingleton
+{
 public:
 	//公開インターフェース
 	static T *getInstance()
@@ -65,7 +66,8 @@ protected:
 	2007.10.23 kobake 作成
 */
 template<class T>
-class TSingleInstance {
+class TSingleInstance
+{
 public:
 	//公開インターフェース
 	static T *getInstance()
@@ -95,13 +97,16 @@ T *TSingleInstance<T>::gm_instance = NULL;
 //記録もする
 #include <vector>
 template<class T>
-class TInstanceHolder {
+class TInstanceHolder
+{
 public:
 	TInstanceHolder() { gm_table.push_back(static_cast<T *>(this)); }
 	virtual ~TInstanceHolder()
 	{
-		for (size_t i = 0; i < gm_table.size(); i++) {
-			if (gm_table[i] == static_cast<T *>(this)) {
+		for (size_t i = 0; i < gm_table.size(); i++)
+		{
+			if (gm_table[i] == static_cast<T *>(this))
+			{
 				gm_table.erase(gm_table.begin() + i);
 				break;
 			}
@@ -111,7 +116,8 @@ public:
 	static T * GetInstance(int nIndex)
 	{
 		if (nIndex >= 0 && nIndex < (int)gm_table.size()) { return gm_table[nIndex]; }
-		else {
+		else
+		{
 			return 0;
 		}
 	}

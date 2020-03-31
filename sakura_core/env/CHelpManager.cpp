@@ -36,10 +36,12 @@
  */
 bool CHelpManager::ExtWinHelpIsSet(const STypeConfig *type)
 {
-	if (m_pShareData->m_Common.m_sHelper.m_szExtHelp[0] != L'\0') {
+	if (m_pShareData->m_Common.m_sHelper.m_szExtHelp[0] != L'\0')
+	{
 		return true; //	共通設定に設定されている
 	}
-	if (type && type->m_szExtHelp[0] != L'\0') {
+	if (type && type->m_szExtHelp[0] != L'\0')
+	{
 		return true; //	タイプ別設定に設定されている。
 	}
 	return false;
@@ -60,10 +62,12 @@ const WCHAR *CHelpManager::GetExtWinHelp(const STypeConfig *type)
  */
 bool CHelpManager::ExtHTMLHelpIsSet(const STypeConfig *type)
 {
-	if (m_pShareData->m_Common.m_sHelper.m_szExtHtmlHelp[0] != L'\0') {
+	if (m_pShareData->m_Common.m_sHelper.m_szExtHtmlHelp[0] != L'\0')
+	{
 		return true; //	共通設定に設定されている
 	}
-	if (type && type->m_szExtHtmlHelp[0] != L'\0') {
+	if (type && type->m_szExtHtmlHelp[0] != L'\0')
+	{
 		return true; //	タイプ別設定に設定されている。
 	}
 	return false;

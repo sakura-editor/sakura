@@ -9,7 +9,8 @@ void CAppMode::OnAfterSave(const SSaveInfo &sSaveInfo)
 	m_bViewMode = false; /* ビューモード */
 
 	// 名前を付けて保存から再ロードが除去された分の不足処理を追加（ANSI版との差異）	// 2009.08.12 ryoji
-	if (IsDebugMode()) {
+	if (IsDebugMode())
+	{
 		SetDebugModeOFF(); // アウトプットウィンドウは通常ウィンドウ化
 	}
 }
@@ -18,7 +19,8 @@ void CAppMode::OnAfterSave(const SSaveInfo &sSaveInfo)
 void CAppMode::SetDebugModeON()
 {
 	DLLSHAREDATA *pShare = &GetDllShareData();
-	if (pShare->m_sHandles.m_hwndDebug) {
+	if (pShare->m_sHandles.m_hwndDebug)
+	{
 		if (IsSakuraMainWindow(pShare->m_sHandles.m_hwndDebug)) { return; }
 	}
 	pShare->m_sHandles.m_hwndDebug = CEditWnd::getInstance()->GetHwnd();
@@ -34,7 +36,8 @@ void CAppMode::SetDebugModeON()
 void CAppMode::SetDebugModeOFF()
 {
 	DLLSHAREDATA *pShare = &GetDllShareData();
-	if (pShare->m_sHandles.m_hwndDebug == CEditWnd::getInstance()->GetHwnd()) {
+	if (pShare->m_sHandles.m_hwndDebug == CEditWnd::getInstance()->GetHwnd())
+	{
 		pShare->m_sHandles.m_hwndDebug = NULL;
 		this->_SetDebugMode(false);
 		CEditWnd::getInstance()->UpdateCaption();

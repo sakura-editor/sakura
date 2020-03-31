@@ -33,7 +33,8 @@ class CFuncInfo;
 #define FL_OBJ_ELEMENT_MAX 30 // プラグインで追加可能な定数の上限
 
 //! アウトライン解析 データ配列
-class CFuncInfoArr {
+class CFuncInfoArr
+{
 public:
 	CFuncInfoArr();									/* CFuncInfoArrクラス構築 */
 	~CFuncInfoArr();								/* CFuncInfoArrクラス消滅 */

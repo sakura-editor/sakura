@@ -27,7 +27,8 @@
 #include "charset/CCodeBase.h"
 #include "mem/CMemory.h"
 
-class CIoBridge {
+class CIoBridge
+{
 public:
 	//! 内部実装のエンコードへ変換
 	static EConvertResult FileToImpl(const CMemory &cSrc,	  //!< [in]  変換元メモリ

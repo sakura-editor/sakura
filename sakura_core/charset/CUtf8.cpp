@@ -18,7 +18,8 @@ void CUtf8::GetBom(CMemory *pcmemBom)
 
 void CUtf8::GetEol(CMemory *pcmemEol, EEolType eEolType)
 {
-	static const struct {
+	static const struct
+	{
 		const char *szData;
 		int			nLen;
 	} aEolTable[EOL_TYPE_NUM] = {
@@ -58,24 +59,27 @@ int CUtf8::Utf8ToUni(const char *pSrc, const int nSrcLen, wchar_t *pDst, bool bC
 	pr_end = reinterpret_cast<const unsigned char *>(pSrc + nSrcLen);
 	pw	 = reinterpret_cast<unsigned short *>(pDst);
 
-	for (;;) {
+	for (;;)
+	{
 
 		// 文字をチェック
-		if (bCESU8Mode != true) {
-			nclen = CheckUtf8Char(reinterpret_cast<const char *>(pr), pr_end - pr, &echarset, true, 0);
-		}
-		else {
+		if (bCESU8Mode != true)
+		{ nclen = CheckUtf8Char(reinterpret_cast<const char *>(pr), pr_end - pr, &echarset, true, 0); } else
+		{
 			nclen = CheckCesu8Char(reinterpret_cast<const char *>(pr), pr_end - pr, &echarset, 0);
 		}
 		if (nclen < 1) { break; }
 
 		// 変換
-		if (echarset != CHARSET_BINARY) {
+		if (echarset != CHARSET_BINARY)
+		{
 			pw += _Utf8ToUni_char(pr, nclen, pw, bCESU8Mode);
 			pr += nclen;
 		}
-		else {
-			if (nclen != 1) { // 保護コード
+		else
+		{
+			if (nclen != 1)
+			{ // 保護コード
 				nclen = 1;
 			}
 			pw += BinToText(pr, 1, pw);
@@ -97,7 +101,8 @@ EConvertResult CUtf8::_UTF8ToUnicode(const CMemory &cSrc, CNativeW *pDstMem, boo
 	int			nSrcLen = cSrc.GetRawLength();
 	const char *pSrc	= reinterpret_cast<const char *>(cSrc.GetRawPtr());
 
-	if (&cSrc == pDstMem->_GetMemory()) {
+	if (&cSrc == pDstMem->_GetMemory())
+	{
 		// 必要なバッファサイズを調べて確保する
 		wchar_t *pDst = new (std::nothrow) wchar_t[nSrcLen];
 		if (pDst == NULL) { return RESULT_FAILURE; }
@@ -111,7 +116,8 @@ EConvertResult CUtf8::_UTF8ToUnicode(const CMemory &cSrc, CNativeW *pDstMem, boo
 		// 後始末
 		delete[] pDst;
 	}
-	else {
+	else
+	{
 		// 変換先バッファサイズを設定してメモリ領域確保
 		pDstMem->AllocStringBuffer(nSrcLen + 1);
 		wchar_t *pDst = pDstMem->GetStringPtr();
@@ -124,7 +130,8 @@ EConvertResult CUtf8::_UTF8ToUnicode(const CMemory &cSrc, CNativeW *pDstMem, boo
 	}
 
 	if (bError == false) { return RESULT_COMPLETE; }
-	else {
+	else
+	{
 		return RESULT_LOSESOME;
 	}
 }
@@ -143,23 +150,29 @@ int CUtf8::UniToUtf8(const wchar_t *pSrc, const int nSrcLen, char *pDst, bool *p
 	bool				  berror = false;
 	ECharSet			  echarset;
 
-	while ((nclen = CheckUtf16leChar(reinterpret_cast<const wchar_t *>(pr), pr_end - pr, &echarset, 0)) > 0) {
+	while ((nclen = CheckUtf16leChar(reinterpret_cast<const wchar_t *>(pr), pr_end - pr, &echarset, 0)) > 0)
+	{
 		// 保護コード
-		switch (echarset) {
+		switch (echarset)
+		{
 		case CHARSET_UNI_NORMAL: nclen = 1; break;
 		case CHARSET_UNI_SURROG: nclen = 2; break;
 		default: echarset = CHARSET_BINARY; nclen = 1;
 		}
-		if (echarset != CHARSET_BINARY) {
+		if (echarset != CHARSET_BINARY)
+		{
 			pw += _UniToUtf8_char(pr, nclen, pw, bCESU8Mode);
 			pr += nclen;
 		}
-		else {
-			if (nclen == 1 && IsBinaryOnSurrogate(static_cast<wchar_t>(*pr))) {
+		else
+		{
+			if (nclen == 1 && IsBinaryOnSurrogate(static_cast<wchar_t>(*pr)))
+			{
 				*pw = static_cast<unsigned char>(TextToBin(*pr) & 0x000000ff);
 				++pw;
 			}
-			else {
+			else
+			{
 				berror = true;
 				*pw	= '?';
 				++pw;
@@ -197,7 +210,8 @@ EConvertResult CUtf8::_UnicodeToUTF8(const CNativeW &cSrc, CMemory *pDstMem, boo
 	delete[] pDst;
 
 	if (bError == false) { return RESULT_COMPLETE; }
-	else {
+	else
+	{
 		return RESULT_LOSESOME;
 	}
 }
@@ -213,23 +227,24 @@ EConvertResult CUtf8::_UnicodeToHex(const wchar_t *cSrc, const int iSLen, WCHAR 
 	unsigned char *ps;
 	bool		   bbinary = false;
 
-	if (psStatusbar->m_bDispUtf8Codepoint) {
+	if (psStatusbar->m_bDispUtf8Codepoint)
+	{
 		// Unicodeで表示
 		return CCodeBase::UnicodeToHex(cSrc, iSLen, pDst, psStatusbar);
 	}
 	cBuff.AllocStringBuffer(4);
 	// 1文字データバッファ
-	if (IsUTF16High(cSrc[0]) && iSLen >= 2 && IsUTF16Low(cSrc[1])) {
-		cBuff._GetMemory()->SetRawDataHoldBuffer(cSrc, 4);
-	}
-	else {
+	if (IsUTF16High(cSrc[0]) && iSLen >= 2 && IsUTF16Low(cSrc[1]))
+	{ cBuff._GetMemory()->SetRawDataHoldBuffer(cSrc, 4); } else
+	{
 		cBuff._GetMemory()->SetRawDataHoldBuffer(cSrc, 2);
 		if (IsBinaryOnSurrogate(cSrc[0])) { bbinary = true; }
 	}
 
 	// UTF-8/CESU-8 変換
 	if (bCESUMode != true) { res = UnicodeToUTF8(cBuff, cBuff._GetMemory()); }
-	else {
+	else
+	{
 		res = UnicodeToCESU8(cBuff, cBuff._GetMemory());
 	}
 	if (res != RESULT_COMPLETE) { return res; }
@@ -237,10 +252,12 @@ EConvertResult CUtf8::_UnicodeToHex(const wchar_t *cSrc, const int iSLen, WCHAR 
 	// Hex変換
 	ps = reinterpret_cast<unsigned char *>(cBuff._GetMemory()->GetRawPtr());
 	pd = pDst;
-	if (bbinary == false) {
+	if (bbinary == false)
+	{
 		for (i = cBuff._GetMemory()->GetRawLength(); i > 0; i--, ps++, pd += 2) { auto_sprintf(pd, L"%02X", *ps); }
 	}
-	else {
+	else
+	{
 		auto_sprintf(pd, L"?%02X", *ps);
 	}
 

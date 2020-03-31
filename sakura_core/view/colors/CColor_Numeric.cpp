@@ -82,12 +82,15 @@ static int IsNumber(const CStringRef &cStr, /*const wchar_t *buf,*/ int offset /
 		{
 			p++;
 			i++;
-			while (p < q) {
-				if ((*p >= L'0' && *p <= L'9') || (*p >= L'A' && *p <= L'F') || (*p >= L'a' && *p <= L'f')) {
+			while (p < q)
+			{
+				if ((*p >= L'0' && *p <= L'9') || (*p >= L'A' && *p <= L'F') || (*p >= L'a' && *p <= L'f'))
+				{
 					p++;
 					i++;
 				}
-				else {
+				else
+				{
 					break;
 				}
 			}
@@ -95,60 +98,77 @@ static int IsNumber(const CStringRef &cStr, /*const wchar_t *buf,*/ int offset /
 			if (i == 2) return 1;
 
 			/* 接尾語 */
-			if (p < q) {
-				if (*p == L'L' || *p == L'l' || *p == L'F' || *p == L'f') {
+			if (p < q)
+			{
+				if (*p == L'L' || *p == L'l' || *p == L'F' || *p == L'f')
+				{
 					p++;
 					i++;
 				}
 			}
 			return i;
 		}
-		else if (*p >= L'0' && *p <= L'9') {
+		else if (*p >= L'0' && *p <= L'9')
+		{
 			p++;
 			i++;
-			while (p < q) {
-				if (*p < L'0' || *p > L'9') {
-					if (*p == L'.') {
+			while (p < q)
+			{
+				if (*p < L'0' || *p > L'9')
+				{
+					if (*p == L'.')
+					{
 						if (f == 1) break; /* 指数部に入っている */
 						d++;
-						if (d > 1) {
+						if (d > 1)
+						{
 							if (*(p - 1) == L'.') break; /* "." が連続なら中断 */
 						}
 					}
-					else if (*p == L'E' || *p == L'e') {
+					else if (*p == L'E' || *p == L'e')
+					{
 						if (f == 1) break; /* 指数部に入っている */
-						if (p + 2 < q) {
-							if ((*(p + 1) == L'+' || *(p + 1) == L'-') && (*(p + 2) >= L'0' && *(p + 2) <= L'9')) {
+						if (p + 2 < q)
+						{
+							if ((*(p + 1) == L'+' || *(p + 1) == L'-') && (*(p + 2) >= L'0' && *(p + 2) <= L'9'))
+							{
 								p++;
 								i++;
 								p++;
 								i++;
 								f = 1;
 							}
-							else if (*(p + 1) >= L'0' && *(p + 1) <= L'9') {
+							else if (*(p + 1) >= L'0' && *(p + 1) <= L'9')
+							{
 								p++;
 								i++;
 								f = 1;
 							}
-							else {
+							else
+							{
 								break;
 							}
 						}
-						else if (p + 1 < q) {
-							if (*(p + 1) >= L'0' && *(p + 1) <= L'9') {
+						else if (p + 1 < q)
+						{
+							if (*(p + 1) >= L'0' && *(p + 1) <= L'9')
+							{
 								p++;
 								i++;
 								f = 1;
 							}
-							else {
+							else
+							{
 								break;
 							}
 						}
-						else {
+						else
+						{
 							break;
 						}
 					}
-					else {
+					else
+					{
 						break;
 					}
 				}
@@ -157,58 +177,75 @@ static int IsNumber(const CStringRef &cStr, /*const wchar_t *buf,*/ int offset /
 			}
 			if (*(p - 1) == L'.') return i - 1; /* 最後が "." なら含めない */
 			/* 接尾語 */
-			if (p < q) {
-				if (((d == 0) && (*p == L'L' || *p == L'l')) || *p == L'F' || *p == L'f') {
+			if (p < q)
+			{
+				if (((d == 0) && (*p == L'L' || *p == L'l')) || *p == L'F' || *p == L'f')
+				{
 					p++;
 					i++;
 				}
 			}
 			return i;
 		}
-		else if (*p == L'.') {
-			while (p < q) {
-				if (*p < L'0' || *p > L'9') {
-					if (*p == L'.') {
+		else if (*p == L'.')
+		{
+			while (p < q)
+			{
+				if (*p < L'0' || *p > L'9')
+				{
+					if (*p == L'.')
+					{
 						if (f == 1) break; /* 指数部に入っている */
 						d++;
-						if (d > 1) {
+						if (d > 1)
+						{
 							if (*(p - 1) == L'.') break; /* "." が連続なら中断 */
 						}
 					}
-					else if (*p == L'E' || *p == L'e') {
+					else if (*p == L'E' || *p == L'e')
+					{
 						if (f == 1) break; /* 指数部に入っている */
-						if (p + 2 < q) {
-							if ((*(p + 1) == L'+' || *(p + 1) == L'-') && (*(p + 2) >= L'0' && *(p + 2) <= L'9')) {
+						if (p + 2 < q)
+						{
+							if ((*(p + 1) == L'+' || *(p + 1) == L'-') && (*(p + 2) >= L'0' && *(p + 2) <= L'9'))
+							{
 								p++;
 								i++;
 								p++;
 								i++;
 								f = 1;
 							}
-							else if (*(p + 1) >= L'0' && *(p + 1) <= L'9') {
+							else if (*(p + 1) >= L'0' && *(p + 1) <= L'9')
+							{
 								p++;
 								i++;
 								f = 1;
 							}
-							else {
+							else
+							{
 								break;
 							}
 						}
-						else if (p + 1 < q) {
-							if (*(p + 1) >= L'0' && *(p + 1) <= L'9') {
+						else if (p + 1 < q)
+						{
+							if (*(p + 1) >= L'0' && *(p + 1) <= L'9')
+							{
 								p++;
 								i++;
 								f = 1;
 							}
-							else {
+							else
+							{
 								break;
 							}
 						}
-						else {
+						else
+						{
 							break;
 						}
 					}
-					else {
+					else
+					{
 						break;
 					}
 				}
@@ -217,32 +254,42 @@ static int IsNumber(const CStringRef &cStr, /*const wchar_t *buf,*/ int offset /
 			}
 			if (*(p - 1) == L'.') return i - 1; /* 最後が "." なら含めない */
 			/* 接尾語 */
-			if (p < q) {
-				if (*p == L'F' || *p == L'f') {
+			if (p < q)
+			{
+				if (*p == L'F' || *p == L'f')
+				{
 					p++;
 					i++;
 				}
 			}
 			return i;
 		}
-		else if (*p == L'E' || *p == L'e') {
+		else if (*p == L'E' || *p == L'e')
+		{
 			p++;
 			i++;
-			while (p < q) {
-				if (*p < L'0' || *p > L'9') {
-					if ((*p == L'+' || *p == L'-') && (*(p - 1) == L'E' || *(p - 1) == L'e')) {
-						if (p + 1 < q) {
-							if (*(p + 1) < L'0' || *(p + 1) > L'9') {
+			while (p < q)
+			{
+				if (*p < L'0' || *p > L'9')
+				{
+					if ((*p == L'+' || *p == L'-') && (*(p - 1) == L'E' || *(p - 1) == L'e'))
+					{
+						if (p + 1 < q)
+						{
+							if (*(p + 1) < L'0' || *(p + 1) > L'9')
+							{
 								/* "0E+", "0E-" */
 								break;
 							}
 						}
-						else {
+						else
+						{
 							/* "0E-", "0E+" */
 							break;
 						}
 					}
-					else {
+					else
+					{
 						break;
 					}
 				}
@@ -251,19 +298,24 @@ static int IsNumber(const CStringRef &cStr, /*const wchar_t *buf,*/ int offset /
 			}
 			if (i == 2) return 1; /* "0E", 0e" なら "0" が数値 */
 			/* 接尾語 */
-			if (p < q) {
-				if (((d == 0) && (*p == L'L' || *p == L'l')) || *p == L'F' || *p == L'f') {
+			if (p < q)
+			{
+				if (((d == 0) && (*p == L'L' || *p == L'l')) || *p == L'F' || *p == L'f')
+				{
 					p++;
 					i++;
 				}
 			}
 			return i;
 		}
-		else {
+		else
+		{
 			/* "0" だけが数値 */
 			/*if( *p == L'.' ) return i - 1;*/ /* 最後が "." なら含めない */
-			if (p < q) {
-				if (((d == 0) && (*p == L'L' || *p == L'l')) || *p == L'F' || *p == L'f') {
+			if (p < q)
+			{
+				if (((d == 0) && (*p == L'L' || *p == L'l')) || *p == L'F' || *p == L'f')
+				{
 					p++;
 					i++;
 				}
@@ -276,49 +328,63 @@ static int IsNumber(const CStringRef &cStr, /*const wchar_t *buf,*/ int offset /
 	{
 		p++;
 		i++;
-		while (p < q) {
-			if (*p < L'0' || *p > L'9') {
-				if (*p == L'.') {
+		while (p < q)
+		{
+			if (*p < L'0' || *p > L'9')
+			{
+				if (*p == L'.')
+				{
 					if (f == 1) break; /* 指数部に入っている */
 					d++;
-					if (d > 1) {
+					if (d > 1)
+					{
 						if (*(p - 1) == L'.') break; /* "." が連続なら中断 */
 					}
 				}
-				else if (*p == L'E' || *p == L'e') {
+				else if (*p == L'E' || *p == L'e')
+				{
 					if (f == 1) break; /* 指数部に入っている */
-					if (p + 2 < q) {
-						if ((*(p + 1) == L'+' || *(p + 1) == L'-') && (*(p + 2) >= L'0' && *(p + 2) <= L'9')) {
+					if (p + 2 < q)
+					{
+						if ((*(p + 1) == L'+' || *(p + 1) == L'-') && (*(p + 2) >= L'0' && *(p + 2) <= L'9'))
+						{
 							p++;
 							i++;
 							p++;
 							i++;
 							f = 1;
 						}
-						else if (*(p + 1) >= L'0' && *(p + 1) <= L'9') {
+						else if (*(p + 1) >= L'0' && *(p + 1) <= L'9')
+						{
 							p++;
 							i++;
 							f = 1;
 						}
-						else {
+						else
+						{
 							break;
 						}
 					}
-					else if (p + 1 < q) {
-						if (*(p + 1) >= L'0' && *(p + 1) <= L'9') {
+					else if (p + 1 < q)
+					{
+						if (*(p + 1) >= L'0' && *(p + 1) <= L'9')
+						{
 							p++;
 							i++;
 							f = 1;
 						}
-						else {
+						else
+						{
 							break;
 						}
 					}
-					else {
+					else
+					{
 						break;
 					}
 				}
-				else {
+				else
+				{
 					break;
 				}
 			}
@@ -327,8 +393,10 @@ static int IsNumber(const CStringRef &cStr, /*const wchar_t *buf,*/ int offset /
 		}
 		if (*(p - 1) == L'.') return i - 1; /* 最後が "." なら含めない */
 		/* 接尾語 */
-		if (p < q) {
-			if (((d == 0) && (*p == L'L' || *p == L'l')) || *p == L'F' || *p == L'f') {
+		if (p < q)
+		{
+			if (((d == 0) && (*p == L'L' || *p == L'l')) || *p == L'F' || *p == L'f')
+			{
 				p++;
 				i++;
 			}
@@ -340,49 +408,63 @@ static int IsNumber(const CStringRef &cStr, /*const wchar_t *buf,*/ int offset /
 	{
 		p++;
 		i++;
-		while (p < q) {
-			if (*p < L'0' || *p > L'9') {
-				if (*p == L'.') {
+		while (p < q)
+		{
+			if (*p < L'0' || *p > L'9')
+			{
+				if (*p == L'.')
+				{
 					if (f == 1) break; /* 指数部に入っている */
 					d++;
-					if (d > 1) {
+					if (d > 1)
+					{
 						if (*(p - 1) == L'.') break; /* "." が連続なら中断 */
 					}
 				}
-				else if (*p == L'E' || *p == L'e') {
+				else if (*p == L'E' || *p == L'e')
+				{
 					if (f == 1) break; /* 指数部に入っている */
-					if (p + 2 < q) {
-						if ((*(p + 1) == L'+' || *(p + 1) == L'-') && (*(p + 2) >= L'0' && *(p + 2) <= L'9')) {
+					if (p + 2 < q)
+					{
+						if ((*(p + 1) == L'+' || *(p + 1) == L'-') && (*(p + 2) >= L'0' && *(p + 2) <= L'9'))
+						{
 							p++;
 							i++;
 							p++;
 							i++;
 							f = 1;
 						}
-						else if (*(p + 1) >= L'0' && *(p + 1) <= L'9') {
+						else if (*(p + 1) >= L'0' && *(p + 1) <= L'9')
+						{
 							p++;
 							i++;
 							f = 1;
 						}
-						else {
+						else
+						{
 							break;
 						}
 					}
-					else if (p + 1 < q) {
-						if (*(p + 1) >= L'0' && *(p + 1) <= L'9') {
+					else if (p + 1 < q)
+					{
+						if (*(p + 1) >= L'0' && *(p + 1) <= L'9')
+						{
 							p++;
 							i++;
 							f = 1;
 						}
-						else {
+						else
+						{
 							break;
 						}
 					}
-					else {
+					else
+					{
 						break;
 					}
 				}
-				else {
+				else
+				{
 					break;
 				}
 			}
@@ -394,14 +476,17 @@ static int IsNumber(const CStringRef &cStr, /*const wchar_t *buf,*/ int offset /
 		// if( i <= 2 ) return 0;
 		// if( *(p - 1)  == L'.' ) return i - 1;  /* 最後が "." なら含めない */
 		if (i == 1) return 0;
-		if (*(p - 1) == L'.') {
+		if (*(p - 1) == L'.')
+		{
 			i--;
 			if (i == 1) return 0;
 			return i;
 		} //@@@ 2001.11.09 end MIK
 		/* 接尾語 */
-		if (p < q) {
-			if (((d == 0) && (*p == L'L' || *p == L'l')) || *p == L'F' || *p == L'f') {
+		if (p < q)
+		{
+			if (((d == 0) && (*p == L'L' || *p == L'l')) || *p == L'F' || *p == L'f')
+			{
 				p++;
 				i++;
 			}
@@ -414,49 +499,63 @@ static int IsNumber(const CStringRef &cStr, /*const wchar_t *buf,*/ int offset /
 		d++;
 		p++;
 		i++;
-		while (p < q) {
-			if (*p < L'0' || *p > L'9') {
-				if (*p == L'.') {
+		while (p < q)
+		{
+			if (*p < L'0' || *p > L'9')
+			{
+				if (*p == L'.')
+				{
 					if (f == 1) break; /* 指数部に入っている */
 					d++;
-					if (d > 1) {
+					if (d > 1)
+					{
 						if (*(p - 1) == L'.') break; /* "." が連続なら中断 */
 					}
 				}
-				else if (*p == L'E' || *p == L'e') {
+				else if (*p == L'E' || *p == L'e')
+				{
 					if (f == 1) break; /* 指数部に入っている */
-					if (p + 2 < q) {
-						if ((*(p + 1) == L'+' || *(p + 1) == L'-') && (*(p + 2) >= L'0' && *(p + 2) <= L'9')) {
+					if (p + 2 < q)
+					{
+						if ((*(p + 1) == L'+' || *(p + 1) == L'-') && (*(p + 2) >= L'0' && *(p + 2) <= L'9'))
+						{
 							p++;
 							i++;
 							p++;
 							i++;
 							f = 1;
 						}
-						else if (*(p + 1) >= L'0' && *(p + 1) <= L'9') {
+						else if (*(p + 1) >= L'0' && *(p + 1) <= L'9')
+						{
 							p++;
 							i++;
 							f = 1;
 						}
-						else {
+						else
+						{
 							break;
 						}
 					}
-					else if (p + 1 < q) {
-						if (*(p + 1) >= L'0' && *(p + 1) <= L'9') {
+					else if (p + 1 < q)
+					{
+						if (*(p + 1) >= L'0' && *(p + 1) <= L'9')
+						{
 							p++;
 							i++;
 							f = 1;
 						}
-						else {
+						else
+						{
 							break;
 						}
 					}
-					else {
+					else
+					{
 						break;
 					}
 				}
-				else {
+				else
+				{
 					break;
 				}
 			}
@@ -467,8 +566,10 @@ static int IsNumber(const CStringRef &cStr, /*const wchar_t *buf,*/ int offset /
 		if (i == 1) return 0;
 		if (*(p - 1) == L'.') return i - 1; /* 最後が "." なら含めない */
 		/* 接尾語 */
-		if (p < q) {
-			if (*p == L'F' || *p == L'f') {
+		if (p < q)
+		{
+			if (*p == L'F' || *p == L'f')
+			{
 				p++;
 				i++;
 			}

@@ -44,7 +44,8 @@ class CCodeBase;
 	@note 明示的にFileOpenメンバを呼び出さないと使えない
 		ファイルポインタを共有すると困るので、クラスのコピー禁止
 */
-class CFileLoad {
+class CFileLoad
+{
 public:
 	static bool			IsLoadableSize(ULONGLONG size, bool ignoreLimit = false);
 	static ULONGLONG	GetLimitSize();
@@ -119,7 +120,8 @@ protected:
 	int			   m_nFlag;		 // 文字コードの変換オプション
 	//	Jun. 13, 2003 Moca
 	//	状態をenumとしてわかりやすく．
-	enum enumFileLoadMode {
+	enum enumFileLoadMode
+	{
 		FLMODE_CLOSE = 0, //!< 初期状態
 		FLMODE_OPEN,	  //!< ファイルオープンのみ
 		FLMODE_READY,	 //!< 順アクセスOK

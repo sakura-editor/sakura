@@ -32,7 +32,8 @@ class COpeBlk;
 #pragma pack(push, 1)
 
 //!	文書データ1行
-class CDocLine {
+class CDocLine
+{
 protected:
 	friend class CDocLineMgr; //######仮
 public:
@@ -61,11 +62,13 @@ public:
 #endif
 	const wchar_t *GetDocLineStrWithEOL(CLogicInt *pnLen) const //###仮の名前、仮の対処
 	{
-		if (this) {
+		if (this)
+		{
 			*pnLen = GetLengthWithEOL();
 			return GetPtr();
 		}
-		else {
+		else
+		{
 			*pnLen = 0;
 			return NULL;
 		}
@@ -73,7 +76,8 @@ public:
 	CStringRef GetStringRefWithEOL() const //###仮の名前、仮の対処
 	{
 		if (this) { return CStringRef(GetPtr(), GetLengthWithEOL()); }
-		else {
+		else
+		{
 			return CStringRef(NULL, 0);
 		}
 	}
@@ -104,7 +108,8 @@ private:
 	CNativeW m_cLine; //!< データ  2007.10.11 kobake ポインタではなく、実体を持つように変更
 public:
 	//拡張情報 $$分離中
-	struct MarkType {
+	struct MarkType
+	{
 		CLineModified   m_cModified;   //変更フラグ
 		CLineBookmarked m_cBookmarked; //ブックマーク
 		CLineFuncList   m_cFuncList;   //関数リストマーク

@@ -29,7 +29,8 @@
 
 #include <ShlDisp.h>
 
-class CZipFile {
+class CZipFile
+{
 private:
 	IShellDispatch *psd;
 	Folder *		pZipFile;

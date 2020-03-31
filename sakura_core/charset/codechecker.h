@@ -74,7 +74,8 @@ enum ECodeType {
 /*!
 	内部的に認識する文字集合
 */
-enum ECharSet {
+enum ECharSet
+{
 	CHARSET_BINARY,			  //!< 任意値
 	CHARSET_ASCII7,			  //!< 7ビット ASCII 文字  (ISO/IEC 646 IRV)
 	CHARSET_JIS_HANKATA,	  //!< 日本語の半角カタカナ文字  (JIS X 0201)
@@ -95,7 +96,8 @@ enum ECharSet {
 
 	@note 順番変えると危険
 */
-enum EJisEscseq {
+enum EJisEscseq
+{
 	JISESC_UNKNOWN,
 	JISESC_ASCII,
 	JISESC_JISX0201Latin,
@@ -131,7 +133,8 @@ enum EJisEscseq {
 /*!
 	内部的に認識する JIS エスケープシーケンスの種類
 */
-enum EMyJisEscseq {
+enum EMyJisEscseq
+{
 	MYJISESC_NONE,
 	MYJISESC_ASCII7,
 	MYJISESC_HANKATA,
@@ -390,7 +393,8 @@ int CheckEucjpChar(const char *, const int, ECharSet *);
 int DetectJisEscseq(const char *, const int, EMyJisEscseq *); // JIS エスケープシーケンス検出器
 int _CheckJisAnyPart(const char *, const int, const char **ppNextChar, EMyJisEscseq *peNextEsc, int *pnErrorCount,
 					 const int nType);
-enum EJisChecker {
+enum EJisChecker
+{
 	JISCHECK_ASCII7,
 	JISCHECK_HANKATA,
 	JISCHECK_ZENKAKU,

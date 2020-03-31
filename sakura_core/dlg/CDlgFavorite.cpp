@@ -82,7 +82,8 @@ static int FormatFavoriteColumn(WCHAR *, int, int, bool);
 static int ListView_GetLParamInt(HWND, int);
 static int CALLBACK CompareListViewFunc(LPARAM, LPARAM, LPARAM);
 
-struct CompareListViewLParam {
+struct CompareListViewLParam
+{
 	int			   nSortColumn;
 	bool		   bAbsOrder;
 	HWND		   hwndListView;
@@ -222,7 +223,8 @@ CDlgFavorite::CDlgFavorite()
 		/* これ以上増やすときはテーブルサイズも書き換えてね */
 		assert(i < _countof(m_aFavoriteInfo));
 	}
-	for (i = 0; i < FAVORITE_INFO_MAX; i++) {
+	for (i = 0; i < FAVORITE_INFO_MAX; i++)
+	{
 		m_aListViewInfo[i].hListView	  = 0;
 		m_aListViewInfo[i].nSortColumn	= -1;
 		m_aListViewInfo[i].bSortAscending = false;
@@ -277,7 +279,8 @@ void CDlgFavorite::SetDataOne(int nIndex, int nLvItemIndex)
 	m_aFavoriteInfo[nIndex].m_nViewCount = nViewCount;
 
 	WCHAR tmp[1024];
-	for (int i = 0; i < nItemCount; i++) {
+	for (int i = 0; i < nItemCount; i++)
+	{
 		FormatFavoriteColumn(tmp, _countof(tmp), i, i < nViewCount);
 		lvi.mask	 = LVIF_TEXT | LVIF_PARAM;
 		lvi.pszText  = tmp;
@@ -294,12 +297,11 @@ void CDlgFavorite::SetDataOne(int nIndex, int nLvItemIndex)
 		lvi.pszText  = tmp;
 		ListView_SetItem(hwndList, &lvi);
 
-		if (m_aFavoriteInfo[nIndex].m_bHaveFavorite) {
-			ListView_SetCheckState(hwndList, i, (BOOL)pRecent->IsFavorite(i));
-		}
-	}
+		if (m_aFavoriteInfo[nIndex].m_bHaveFavorite)
+		{ ListView_SetCheckState(hwndList, i, (BOOL)pRecent->IsFavorite(i)); } }
 
-	if (-1 != m_aListViewInfo[nIndex].nSortColumn) {
+	if (-1 != m_aListViewInfo[nIndex].nSortColumn)
+	{
 		//ソートを維持
 		ListViewSort(m_aListViewInfo[nIndex], pRecent, m_aListViewInfo[nIndex].nSortColumn, false);
 	}
@@ -307,11 +309,9 @@ void CDlgFavorite::SetDataOne(int nIndex, int nLvItemIndex)
 	if (-1 != nLvItemIndex && nLvItemIndex < nItemCount) { nNewFocus = nLvItemIndex; }
 
 	//アイテムがあってどれも非選択なら、要求に近いアイテム(先頭か末尾)を選択
-	if (nItemCount > 0 && -1 != nLvItemIndex && nNewFocus == -1) {
-		nNewFocus = (0 < nLvItemIndex ? nItemCount - 1 : 0);
-	}
-
-	if (-1 != nNewFocus) {
+	if (nItemCount > 0 && -1 != nLvItemIndex && nNewFocus == -1)
+	{ nNewFocus = (0 < nLvItemIndex ? nItemCount - 1 : 0); } if (-1 != nNewFocus)
+	{
 		ListView_SetItemState(hwndList, nNewFocus, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 		ListView_EnsureVisible(hwndList, nNewFocus, FALSE);
 	}
@@ -327,8 +327,10 @@ int CDlgFavorite::GetData(void)
 {
 	int nTab;
 
-	for (nTab = 0; m_aFavoriteInfo[nTab].m_pRecent; nTab++) {
-		if (m_aFavoriteInfo[nTab].m_bHaveFavorite) {
+	for (nTab = 0; m_aFavoriteInfo[nTab].m_pRecent; nTab++)
+	{
+		if (m_aFavoriteInfo[nTab].m_bHaveFavorite)
+		{
 			GetFavorite(nTab);
 
 			//リストを更新する。
@@ -364,7 +366,8 @@ BOOL CDlgFavorite::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	CDialog::OnSize();
 
 	RECT rcDialog = GetDllShareData().m_Common.m_sOthers.m_rcFavoriteDialog;
-	if (rcDialog.left != 0 || rcDialog.bottom != 0) {
+	if (rcDialog.left != 0 || rcDialog.bottom != 0)
+	{
 		m_xPos	= rcDialog.left;
 		m_yPos	= rcDialog.top;
 		m_nWidth  = rcDialog.right - rcDialog.left;
@@ -402,19 +405,22 @@ BOOL CDlgFavorite::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 		CTextWidthCalc calc(hwndBaseList);
 		calc.SetTextWidthIfMax(pszFAVORITE_TEXT, CTextWidthCalc::WIDTH_LV_HEADER);
 		WCHAR szBuf[200];
-		for (int i = 0; i < 40; i++) {
+		for (int i = 0; i < 40; i++)
+		{
 			// 「M (非表示)」等の幅を求める
 			FormatFavoriteColumn(szBuf, _countof(szBuf), i, false);
 			calc.SetTextWidthIfMax(szBuf, CTextWidthCalc::WIDTH_LV_ITEM_CHECKBOX);
 		}
 
-		if (0 < calc.GetCx()) {
+		if (0 < calc.GetCx())
+		{
 			nItemCx		= calc.GetCx();
 			nSubItem1Cx = nListViewWidthClient - nItemCx;
 		}
 	}
 
-	for (nTab = 0; m_aFavoriteInfo[nTab].m_pRecent; nTab++) {
+	for (nTab = 0; m_aFavoriteInfo[nTab].m_pRecent; nTab++)
+	{
 		hwndList						= GetDlgItem(hwndDlg, m_aFavoriteInfo[nTab].m_nId);
 		m_aListViewInfo[nTab].hListView = hwndList;
 
@@ -457,7 +463,8 @@ BOOL CDlgFavorite::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 
 BOOL CDlgFavorite::OnBnClicked(int wID)
 {
-	switch (wID) {
+	switch (wID)
+	{
 	case IDC_BUTTON_HELP:
 		/* ヘルプ */
 		MyWinHelp(GetHwnd(), HELP_CONTEXT,
@@ -478,15 +485,18 @@ BOOL CDlgFavorite::OnBnClicked(int wID)
 	// 2010.03.20 Moca 「お気に入り以外かすべて削除」選択メッセージボックスを廃止し
 	//     それぞれのボタンに変更
 	//すべて削除
-	case IDC_BUTTON_CLEAR: {
+	case IDC_BUTTON_CLEAR:
+	{
 		::DlgItem_SetText(GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"");
 		CRecent *pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
-		if (pRecent) {
+		if (pRecent)
+		{
 			const int nRet =
 				ConfirmMessage(GetHwnd(),
 							   LS(STR_DLGFAV_CONF_DEL_FAV), // "最近使った%sの履歴を削除します。\nよろしいですか？\n"
 							   m_aFavoriteInfo[m_nCurrentTab].m_pszCaption);
-			if (IDYES == nRet) {
+			if (IDYES == nRet)
+			{
 				pRecent->DeleteAllItem();
 				RefreshListOne(m_nCurrentTab);
 				UpdateUIState();
@@ -495,15 +505,18 @@ BOOL CDlgFavorite::OnBnClicked(int wID)
 	}
 		return TRUE;
 	//お気に入り以外削除
-	case IDC_BUTTON_DELETE_NOFAVORATE: {
+	case IDC_BUTTON_DELETE_NOFAVORATE:
+	{
 		::DlgItem_SetText(GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"");
-		if (m_aFavoriteInfo[m_nCurrentTab].m_bHaveFavorite) {
+		if (m_aFavoriteInfo[m_nCurrentTab].m_bHaveFavorite)
+		{
 			int const nRet = ConfirmMessage(
 				GetHwnd(),
 				LS(STR_DLGFAV_CONF_DEL_NOTFAV), // "最近使った%sの履歴のお気に入り以外を削除します。\nよろしいですか？"
 				m_aFavoriteInfo[m_nCurrentTab].m_pszCaption);
 			CRecent *const pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
-			if (IDYES == nRet && pRecent) {
+			if (IDYES == nRet && pRecent)
+			{
 				GetFavorite(m_nCurrentTab);
 				pRecent->DeleteItemsNoFavorite();
 				pRecent->UpdateView();
@@ -514,19 +527,23 @@ BOOL CDlgFavorite::OnBnClicked(int wID)
 	}
 		return TRUE;
 	// 存在しない項目 を削除
-	case IDC_BUTTON_DELETE_NOTFOUND: {
+	case IDC_BUTTON_DELETE_NOTFOUND:
+	{
 		::DlgItem_SetText(GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"");
-		if (m_aFavoriteInfo[m_nCurrentTab].m_bFilePath) {
+		if (m_aFavoriteInfo[m_nCurrentTab].m_bFilePath)
+		{
 			const int nRet = ConfirmMessage(
 				GetHwnd(),
 				LS(STR_DLGFAV_CONF_DEL_PATH), // "最近使った%sの存在しないパスを削除します。\nよろしいですか？"
 				m_aFavoriteInfo[m_nCurrentTab].m_pszCaption);
 			CRecent *const pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
-			if (IDYES == nRet && pRecent) {
+			if (IDYES == nRet && pRecent)
+			{
 				GetFavorite(m_nCurrentTab);
 
 				// 存在しないパスの削除
-				for (int i = pRecent->GetItemCount() - 1; i >= 0; i--) {
+				for (int i = pRecent->GetItemCount() - 1; i >= 0; i--)
+				{
 					size_t			   nLen = wcslen(pRecent->GetItemText(i));
 					std::vector<WCHAR> vecPath(nLen + 2);
 					WCHAR *			   szPath = &vecPath[0];
@@ -542,12 +559,10 @@ BOOL CDlgFavorite::OnBnClicked(int wID)
 	}
 		return TRUE;
 	//選択項目の削除
-	case IDC_BUTTON_DELETE_SELECTED: {
-		DeleteSelected();
+	case IDC_BUTTON_DELETE_SELECTED: { DeleteSelected();
 	}
 		return TRUE;
-	case IDC_BUTTON_ADD_FAVORITE: {
-		AddItem();
+	case IDC_BUTTON_ADD_FAVORITE: { AddItem();
 	}
 		return TRUE;
 	}
@@ -564,21 +579,27 @@ BOOL CDlgFavorite::OnNotify(WPARAM wParam, LPARAM lParam)
 
 	hwndTab = GetItemHwnd(IDC_TAB_FAVORITE);
 	lpnmhdr = (LPNMHDR)lParam;
-	if (lpnmhdr->hwndFrom == hwndTab) {
-		switch (lpnmhdr->code) {
+	if (lpnmhdr->hwndFrom == hwndTab)
+	{
+		switch (lpnmhdr->code)
+		{
 		case TCN_SELCHANGE:
 			TabSelectChange(false);
 			return TRUE;
 			// break;
 		}
 	}
-	else {
+	else
+	{
 		hwndList = m_aListViewInfo[m_nCurrentTab].hListView;
-		if (hwndList == lpnmhdr->hwndFrom) {
+		if (hwndList == lpnmhdr->hwndFrom)
+		{
 			NM_LISTVIEW *pnlv = (NM_LISTVIEW *)lParam;
-			switch (lpnmhdr->code) {
+			switch (lpnmhdr->code)
+			{
 			case NM_DBLCLK: EditItem(); return TRUE;
-			case NM_RCLICK: {
+			case NM_RCLICK:
+			{
 				POINT po;
 				if (0 != GetCursorPos(&po)) { RightMenu(po); }
 			}
@@ -592,9 +613,11 @@ BOOL CDlgFavorite::OnNotify(WPARAM wParam, LPARAM lParam)
 
 			// ListViewでDeleteキーが押された:削除
 			case LVN_KEYDOWN:
-				switch (((NMLVKEYDOWN *)lParam)->wVKey) {
+				switch (((NMLVKEYDOWN *)lParam)->wVKey)
+				{
 				case VK_DELETE: DeleteSelected(); return TRUE;
-				case VK_APPS: {
+				case VK_APPS:
+				{
 					POINT po;
 					RECT  rc;
 					hwndList = GetItemHwnd(m_aFavoriteInfo[m_nCurrentTab].m_nId);
@@ -607,14 +630,16 @@ BOOL CDlgFavorite::OnNotify(WPARAM wParam, LPARAM lParam)
 				}
 				int  nIdx = getCtrlKeyState();
 				WORD wKey = ((NMLVKEYDOWN *)lParam)->wVKey;
-				if ((wKey == VK_NEXT && nIdx == _CTRL)) {
+				if ((wKey == VK_NEXT && nIdx == _CTRL))
+				{
 					int next = m_nCurrentTab + 1;
 					if (_countof(m_aFavoriteInfo) - 1 <= next) { next = 0; }
 					TabCtrl_SetCurSel(GetItemHwnd(IDC_TAB_FAVORITE), next);
 					TabSelectChange(true);
 					return FALSE;
 				}
-				else if ((wKey == VK_PRIOR && nIdx == _CTRL)) {
+				else if ((wKey == VK_PRIOR && nIdx == _CTRL))
+				{
 					int prev = m_nCurrentTab - 1;
 					if (prev < 0) { prev = _countof(m_aFavoriteInfo) - 2; }
 					TabCtrl_SetCurSel(GetItemHwnd(IDC_TAB_FAVORITE), prev);
@@ -634,7 +659,8 @@ void CDlgFavorite::TabSelectChange(bool bSetFocus)
 	::DlgItem_SetText(GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"");
 	HWND hwndTab = GetItemHwnd(IDC_TAB_FAVORITE);
 	int  nIndex  = TabCtrl_GetCurSel(hwndTab);
-	if (-1 != nIndex) {
+	if (-1 != nIndex)
+	{
 		//新しく表示する。
 		HWND hwndList = GetItemHwnd(m_aFavoriteInfo[nIndex].m_nId);
 		::ShowWindow(hwndList, SW_SHOW);
@@ -655,7 +681,8 @@ void CDlgFavorite::TabSelectChange(bool bSetFocus)
 
 BOOL CDlgFavorite::OnActivate(WPARAM wParam, LPARAM lParam)
 {
-	switch (LOWORD(wParam)) {
+	switch (LOWORD(wParam))
+	{
 	case WA_ACTIVE:
 	case WA_CLICKACTIVE:
 		RefreshList();
@@ -687,9 +714,11 @@ bool CDlgFavorite::RefreshList(void)
 	m_szMsg[0] = L'\0';
 
 	//全リストの現在選択中のアイテムを取得する。
-	for (nTab = 0; NULL != m_aFavoriteInfo[nTab].m_pRecent; nTab++) {
+	for (nTab = 0; NULL != m_aFavoriteInfo[nTab].m_pRecent; nTab++)
+	{
 		bret = RefreshListOne(nTab);
-		if (bret == true) {
+		if (bret == true)
+		{
 			ret_val = true;
 
 			if (msg[0] != L'\0') wcscat(msg, LS(STR_DLGFAV_DELIMITER));
@@ -697,7 +726,8 @@ bool CDlgFavorite::RefreshList(void)
 		}
 	}
 
-	if (ret_val) {
+	if (ret_val)
+	{
 		auto_snprintf_s(m_szMsg, _countof(m_szMsg),
 						LS(STR_DLGFAV_FAV_REFRESH), // "履歴(%s)が更新されたため編集中情報を破棄し再表示しました。"
 						msg);
@@ -731,7 +761,8 @@ bool CDlgFavorite::RefreshListOne(int nIndex)
 	//お気に入り数が変わったので再構築
 	if (m_aFavoriteInfo[nIndex].m_nViewCount != pRecent->GetViewCount()) goto changed;
 
-	for (i = 0; i < nCount; i++) {
+	for (i = 0; i < nCount; i++)
+	{
 		WCHAR szText[1024];
 		wmemset(szText, 0, _countof(szText));
 		memset_raw(&lvitem, 0, sizeof(lvitem));
@@ -760,9 +791,11 @@ void CDlgFavorite::GetFavorite(int nIndex)
 {
 	CRecent *const pRecent  = m_aFavoriteInfo[nIndex].m_pRecent;
 	const HWND	 hwndList = m_aListViewInfo[nIndex].hListView;
-	if (m_aFavoriteInfo[nIndex].m_bHaveFavorite) {
+	if (m_aFavoriteInfo[nIndex].m_bHaveFavorite)
+	{
 		const int nCount = ListView_GetItemCount(hwndList);
-		for (int i = 0; i < nCount; i++) {
+		for (int i = 0; i < nCount; i++)
+		{
 			const int  recIndex = ListView_GetLParamInt(hwndList, i);
 			const BOOL bret		= ListView_GetCheckState(hwndList, i);
 			pRecent->SetFavorite(recIndex, bret ? true : false);
@@ -779,19 +812,23 @@ int CDlgFavorite::DeleteSelected()
 	::DlgItem_SetText(GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"");
 	int		 nDelItemCount = 0;
 	CRecent *pRecent	   = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
-	if (pRecent) {
+	if (pRecent)
+	{
 		HWND hwndList		= m_aListViewInfo[m_nCurrentTab].hListView;
 		int  nSelectedCount = ListView_GetSelectedCount(hwndList);
-		if (0 < nSelectedCount) {
+		if (0 < nSelectedCount)
+		{
 			GetFavorite(m_nCurrentTab);
 
 			int				 nLastSelectedItem = -1;
 			std::vector<int> selRecIndexs;
 			{
 				int nLvItem = -1;
-				while ((nLvItem = ListView_GetNextItem(hwndList, nLvItem, LVNI_SELECTED)) != -1) {
+				while ((nLvItem = ListView_GetNextItem(hwndList, nLvItem, LVNI_SELECTED)) != -1)
+				{
 					int nRecIndex = ListView_GetLParamInt(hwndList, nLvItem);
-					if (0 <= nRecIndex) {
+					if (0 <= nRecIndex)
+					{
 						selRecIndexs.push_back(nRecIndex);
 						nLastSelectedItem = nLvItem;
 					}
@@ -800,17 +837,21 @@ int CDlgFavorite::DeleteSelected()
 			std::sort(selRecIndexs.rbegin(), selRecIndexs.rend());
 			// 大きいほうから削除しないと、CRecent側のindexがずれる
 			size_t nSize = selRecIndexs.size();
-			for (size_t n = 0; n < nSize; n++) {
+			for (size_t n = 0; n < nSize; n++)
+			{
 				pRecent->DeleteItem(selRecIndexs[n]);
 				++nDelItemCount;
 			}
 			pRecent->UpdateView();
-			if (0 < nDelItemCount) {
+			if (0 < nDelItemCount)
+			{
 				int nItem = nLastSelectedItem;
-				if (-1 != nItem) {
+				if (-1 != nItem)
+				{
 					nItem += 1;				// 削除したアイテムの次のアイテム
 					nItem -= nDelItemCount; // 新しい位置は、削除した分だけずれる
-					if (pRecent->GetItemCount() <= nItem) {
+					if (pRecent->GetItemCount() <= nItem)
+					{
 						// 旧データの最後の要素が削除されているときは、
 						// 新データの最後を選択
 						nItem = pRecent->GetItemCount() - 1;
@@ -818,14 +859,17 @@ int CDlgFavorite::DeleteSelected()
 				}
 				int nLvTopIndex = ListView_GetTopIndex(hwndList);
 				SetDataOne(m_nCurrentTab, nItem);
-				if (1 == nDelItemCount) {
+				if (1 == nDelItemCount)
+				{
 					// 1つ削除のときは、Yスクロール位置を保持
 					// 2つ以上は複雑なのでSetDataOneにおまかせする
 					nLvTopIndex		   = t_max(0, t_min(pRecent->GetItemCount() - 1, nLvTopIndex));
 					int nNowLvTopIndex = ListView_GetTopIndex(hwndList);
-					if (nNowLvTopIndex != nLvTopIndex) {
+					if (nNowLvTopIndex != nLvTopIndex)
+					{
 						CMyRect rect;
-						if (ListView_GetItemRect(hwndList, nNowLvTopIndex, &rect, LVIR_BOUNDS)) {
+						if (ListView_GetItemRect(hwndList, nNowLvTopIndex, &rect, LVIR_BOUNDS))
+						{
 							// ListView_ScrollのY座標はpixel単位でスクロール変化分を指定
 							ListView_Scroll(hwndList, 0, (nLvTopIndex - nNowLvTopIndex) * (rect.bottom - rect.top));
 						}
@@ -869,12 +913,10 @@ void CDlgFavorite::AddItem()
 	CDlgInput1   cDlgInput1;
 	std::wstring strTitle   = LS(STR_DLGFAV_ADD);
 	std::wstring strMessage = LS(STR_DLGFAV_ADD_PROMPT);
-	if (!cDlgInput1.DoModal(G_AppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size, szAddText)) {
-		return;
-	}
-
-	GetFavorite(m_nCurrentTab);
-	if (recent.AppendItemText(szAddText)) {
+	if (!cDlgInput1.DoModal(G_AppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size, szAddText))
+	{ return; } GetFavorite(m_nCurrentTab);
+	if (recent.AppendItemText(szAddText))
+	{
 		SetDataOne(m_nCurrentTab, -1);
 		UpdateUIState();
 	}
@@ -885,10 +927,12 @@ void CDlgFavorite::EditItem()
 	if (!m_aFavoriteInfo[m_nCurrentTab].m_bEditable) { return; }
 	HWND hwndList		= m_aListViewInfo[m_nCurrentTab].hListView;
 	int  nSelectedCount = ListView_GetSelectedCount(hwndList);
-	if (0 < nSelectedCount) {
+	if (0 < nSelectedCount)
+	{
 		int nLvItem = -1;
 		nLvItem		= ListView_GetNextItem(hwndList, nLvItem, LVNI_SELECTED);
-		if (-1 != nLvItem) {
+		if (-1 != nLvItem)
+		{
 			int				   nRecIndex = ListView_GetLParamInt(hwndList, nLvItem);
 			CRecent &		   recent	= *(m_aFavoriteInfo[m_nCurrentTab].m_pRecent);
 			size_t			   max_size  = recent.GetTextMaxLength();
@@ -898,12 +942,10 @@ void CDlgFavorite::EditItem()
 			CDlgInput1   cDlgInput1;
 			std::wstring strTitle   = LS(STR_DLGFAV_EDIT);
 			std::wstring strMessage = LS(STR_DLGFAV_EDIT_PROMPT);
-			if (!cDlgInput1.DoModal(G_AppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size,
-									szText)) {
-				return;
-			}
-			GetFavorite(m_nCurrentTab);
-			if (recent.EditItemText(nRecIndex, szText)) {
+			if (!cDlgInput1.DoModal(G_AppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size, szText))
+			{ return; } GetFavorite(m_nCurrentTab);
+			if (recent.EditItemText(nRecIndex, szText))
+			{
 				SetDataOne(m_nCurrentTab, nRecIndex);
 				UpdateUIState();
 			}
@@ -931,7 +973,8 @@ void CDlgFavorite::RightMenu(POINT &menuPos)
 	::InsertMenu(hMenu, iPos++, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
 	nEnable = (m_aFavoriteInfo[m_nCurrentTab].m_bEditable ? 0 : MF_GRAYED);
 	::InsertMenu(hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_ADD_NEW, LS(STR_DLGFAV_MENU_ADD));
-	if (m_aFavoriteInfo[m_nCurrentTab].m_bAddExcept) {
+	if (m_aFavoriteInfo[m_nCurrentTab].m_bAddExcept)
+	{
 		nEnable = (exceptMRU.GetItemCount() <= exceptMRU.GetArrayCount() ? 0 : MF_GRAYED);
 		::InsertMenu(hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_ADD_EXCEPT, LS(STR_DLGFAV_MENU_EXCLUDE));
 	}
@@ -956,26 +999,33 @@ void CDlgFavorite::RightMenu(POINT &menuPos)
 							   0, GetHwnd(), NULL);
 	::DestroyMenu(hMenu); // サブメニューは再帰的に破棄される
 
-	switch (nId) {
+	switch (nId)
+	{
 	case MENU_EDIT: EditItem(); break;
-	case MENU_ADD_EXCEPT: {
+	case MENU_ADD_EXCEPT:
+	{
 		::DlgItem_SetText(GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"");
 		CRecent *pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
-		if (pRecent) {
+		if (pRecent)
+		{
 			HWND hwndList		= m_aListViewInfo[m_nCurrentTab].hListView;
 			int  nSelectedCount = ListView_GetSelectedCount(hwndList);
-			if (0 < nSelectedCount) {
+			if (0 < nSelectedCount)
+			{
 				int		 nLvItem   = -1;
 				bool	 bAddFalse = false;
 				CRecent &exceptMRU = *m_aFavoriteInfo[m_nExceptTab].m_pRecent;
-				while ((nLvItem = ListView_GetNextItem(hwndList, nLvItem, LVNI_SELECTED)) != -1) {
+				while ((nLvItem = ListView_GetNextItem(hwndList, nLvItem, LVNI_SELECTED)) != -1)
+				{
 					int nRecIndex = ListView_GetLParamInt(hwndList, nLvItem);
 					if (exceptMRU.GetArrayCount() <= exceptMRU.GetItemCount()) { bAddFalse = true; }
-					else {
+					else
+					{
 						exceptMRU.AppendItemText(pRecent->GetItemText(nRecIndex));
 					}
 				}
-				if (bAddFalse) {
+				if (bAddFalse)
+				{
 					WarningMessage(GetHwnd(),
 								   LS(STR_DLGFAV_LIST_LIMIT_OVER)); // "除外リストがいっぱいで追加できませんでした。"
 				}
@@ -983,7 +1033,8 @@ void CDlgFavorite::RightMenu(POINT &menuPos)
 				UpdateUIState();
 			}
 		}
-	} break;
+	}
+	break;
 	case MENU_ADD_NEW: AddItem(); break;
 	case MENU_DELETE_ALL: OnBnClicked(IDC_BUTTON_CLEAR); break;
 	case MENU_DELETE_NOFAVORATE: OnBnClicked(IDC_BUTTON_DELETE_NOFAVORATE); break;
@@ -1028,7 +1079,8 @@ void CDlgFavorite::ListViewSort(ListViewSortInfo &info, const CRecent *pRecent, 
 	CompareListViewLParam lparamInfo;
 	// ソート順の決定
 	if (info.nSortColumn != column) { info.bSortAscending = true; }
-	else {
+	else
+	{
 		// ソート逆順(降順)
 		info.bSortAscending = (bReverse ? (!info.bSortAscending) : true);
 	}
@@ -1036,7 +1088,8 @@ void CDlgFavorite::ListViewSort(ListViewSortInfo &info, const CRecent *pRecent, 
 	// ヘッダ書き換え
 	WCHAR	 szHeader[200];
 	LV_COLUMN col;
-	if (-1 != info.nSortColumn) {
+	if (-1 != info.nSortColumn)
+	{
 		// 元のソートの「 ▼」を取り除く
 		col.mask	   = LVCF_TEXT;
 		col.pszText	= szHeader;
@@ -1077,7 +1130,8 @@ static int CALLBACK CompareListViewFunc(LPARAM lParamItem1, LPARAM lParamItem2, 
 	CompareListViewLParam *pCompInfo = reinterpret_cast<CompareListViewLParam *>(lParamSort);
 	int					   nRet		 = 0;
 	if (0 == pCompInfo->nSortColumn) { nRet = lParamItem1 - lParamItem2; }
-	else {
+	else
+	{
 		const CRecent *p = pCompInfo->pRecent;
 		nRet			 = wmemicmp(p->GetItemText((int)lParamItem1), p->GetItemText((int)lParamItem2));
 	}
@@ -1106,11 +1160,11 @@ BOOL CDlgFavorite::OnSize(WPARAM wParam, LPARAM lParam)
 	ptNew.x = rc.right - rc.left;
 	ptNew.y = rc.bottom - rc.top;
 
-	for (int i = 0; i < _countof(anchorList); i++) {
-		ResizeItem(GetItemHwnd(anchorList[i].id), m_ptDefaultSize, ptNew, m_rcItems[i], anchorList[i].anchor);
-	}
+	for (int i = 0; i < _countof(anchorList); i++)
+	{ ResizeItem(GetItemHwnd(anchorList[i].id), m_ptDefaultSize, ptNew, m_rcItems[i], anchorList[i].anchor); }
 
-	for (int i = 0; i < FAVORITE_INFO_MAX; i++) {
+	for (int i = 0; i < FAVORITE_INFO_MAX; i++)
+	{
 		HWND hwndList = GetItemHwnd(m_aFavoriteInfo[i].m_nId);
 		ResizeItem(hwndList, m_ptDefaultSize, ptNew, m_rcListDefault, ANCHOR_ALL, (i == m_nCurrentTab));
 	}

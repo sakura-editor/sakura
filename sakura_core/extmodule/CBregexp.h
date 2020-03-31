@@ -61,13 +61,15 @@
 	@date 2005.03.19 かろと リファクタリング。クラス内部を隠蔽
 	@date 2006.01.22 かろと オプション追加・名称変更(全て行置換用Globalオプション追加のため)
 */
-class CBregexp : public CBregexpDll2 {
+class CBregexp : public CBregexpDll2
+{
 public:
 	CBregexp();
 	virtual ~CBregexp();
 
 	// 2006.01.22 かろと オプション追加・名称変更
-	enum Option {
+	enum Option
+	{
 		optNothing		 = 0,	//!< オプションなし
 		optCaseSensitive = 1,	//!< 大文字小文字区別オプション(/iをつけない)
 		optGlobal		 = 2,	//!< 全域オプション(/g)
@@ -79,7 +81,8 @@ public:
 		optR			 = 0x80, //!< CRLF(/R)
 	};
 	//! 検索パターン定義
-	enum Pattern {
+	enum Pattern
+	{
 		PAT_UNKNOWN   = 0, //!< 不明（初期値)
 		PAT_NORMAL	= 1, //!< 通常
 		PAT_TOP		  = 2, //!< 行頭"^"
@@ -139,7 +142,8 @@ public:
 		//	outpのNULLチェックが必要
 
 		if (m_pRegExp->outp == NULL) { return CLogicInt(0); }
-		else {
+		else
+		{
 			return CLogicInt(m_pRegExp->outendp - m_pRegExp->outp);
 		}
 	}
@@ -181,7 +185,8 @@ protected:
 	*/
 	void ReleaseCompileBuffer(void)
 	{
-		if (m_pRegExp) {
+		if (m_pRegExp)
+		{
 			BRegfree(m_pRegExp);
 			m_pRegExp = NULL;
 		}

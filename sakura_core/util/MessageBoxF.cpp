@@ -55,7 +55,8 @@ int Wrap_MessageBox(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType)
 HWND GetMessageBoxOwner(HWND hwndOwner)
 {
 	if (hwndOwner == NULL && g_pcEditWnd) { return g_pcEditWnd->GetHwnd(); }
-	else {
+	else
+	{
 		return hwndOwner;
 	}
 }

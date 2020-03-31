@@ -105,7 +105,8 @@ int CMemory::IsEqual(const CMemory &cmem1, const CMemory &cmem2)
 {
 	const int nLen1 = cmem1.GetRawLength();
 	const int nLen2 = cmem2.GetRawLength();
-	if (nLen1 == nLen2) {
+	if (nLen1 == nLen2)
+	{
 		const char *psz1 = reinterpret_cast<const char *>(cmem1.GetRawPtr());
 		const char *psz2 = reinterpret_cast<const char *>(cmem2.GetRawPtr());
 		if (0 == memcmp(psz1, psz2, nLen1)) { return TRUE; }
@@ -136,14 +137,17 @@ void CMemory::SwapHLByte(char *pData, const int nDataLen)
 	if (nBufLen < 2) { return; }
 	// 高速化のため
 	pdwchar = (unsigned int *)pBuf;
-	if ((size_t)pBuf % 2 == 0) {
-		if ((size_t)pBuf % 4 == 2) {
+	if ((size_t)pBuf % 2 == 0)
+	{
+		if ((size_t)pBuf % 4 == 2)
+		{
 			std::swap(pBuf[0], pBuf[1]);
 			pdwchar = (unsigned int *)(pBuf + 2);
 		}
 		pdw_end = (unsigned int *)(pBuf + nBufLen - sizeof(unsigned int));
 
-		for (; pdwchar <= pdw_end; ++pdwchar) {
+		for (; pdwchar <= pdw_end; ++pdwchar)
+		{
 			pdwchar[0] =
 				((pdwchar[0] & (unsigned int)0xff00ff00) >> 8) | ((pdwchar[0] & (unsigned int)0x00ff00ff) << 8);
 		}
@@ -212,16 +216,19 @@ void CMemory::SwapHLByte(void)
 
 bool CMemory::SwabHLByte(const CMemory &mem)
 {
-	if (this == &mem) {
+	if (this == &mem)
+	{
 		SwapHLByte();
 		return true;
 	}
 	int nSize = mem.GetRawLength();
-	if (m_pRawData && nSize + 2 <= m_nDataBufSize) {
+	if (m_pRawData && nSize + 2 <= m_nDataBufSize)
+	{
 		// データが短い時はバッファの再利用
 		_SetRawLength(0);
 	}
-	else {
+	else
+	{
 		_Empty();
 	}
 	AllocBuffer(nSize);
@@ -244,32 +251,40 @@ void CMemory::AllocBuffer(int nNewDataLen)
 	// 2バイト多くメモリ確保しておく('\0'またはL'\0'を入れるため) 2007.08.13 kobake 変更
 	nWorkLen = ((nNewDataLen + 2) + 7) & (~7); // 8Byteごとに整列
 
-	if (m_nDataBufSize == 0) {
+	if (m_nDataBufSize == 0)
+	{
 		/* 未確保の状態 */
 		pWork = malloc_char(nWorkLen);
 	}
-	else {
+	else
+	{
 		/* 現在のバッファサイズより大きくなった場合のみ再確保する */
-		if (m_nDataBufSize < nWorkLen) {
+		if (m_nDataBufSize < nWorkLen)
+		{
 			// 2014.06.25 有効データ長が0の場合はfree & malloc
-			if (m_nRawLen == 0) {
+			if (m_nRawLen == 0)
+			{
 				free(m_pRawData);
 				m_pRawData = NULL;
 				pWork	  = malloc_char(nWorkLen);
 			}
-			else {
+			else
+			{
 				pWork = (char *)realloc(m_pRawData, nWorkLen);
 			}
 		}
-		else {
+		else
+		{
 			return;
 		}
 	}
 
-	if (NULL == pWork) {
+	if (NULL == pWork)
+	{
 		::MYMESSAGEBOX(NULL, MB_OKCANCEL | MB_ICONQUESTION | MB_TOPMOST, GSTR_APPNAME, LS(STR_ERR_DLGMEM1),
 					   nNewDataLen);
-		if (NULL != m_pRawData && 0 != nWorkLen) {
+		if (NULL != m_pRawData && 0 != nWorkLen)
+		{
 			/* 古いバッファを解放して初期化 */
 			_Empty();
 		}
@@ -332,7 +347,8 @@ void CMemory::AppendRawData(const void *pData, int nDataLenBytes)
 /* バッファの最後にデータを追加する（publicメンバ）*/
 void CMemory::AppendRawData(const CMemory *pcmemData)
 {
-	if (this == pcmemData) {
+	if (this == pcmemData)
+	{
 		CMemory cm = *pcmemData;
 		AppendRawData(&cm);
 	}
@@ -360,7 +376,8 @@ void CMemory::_AppendSz(const char *str)
 
 void CMemory::_SetRawLength(int nLength)
 {
-	if (m_pRawData == NULL || m_nDataBufSize <= 0) {
+	if (m_pRawData == NULL || m_nDataBufSize <= 0)
+	{
 		// バッファが確保されていない状態の場合、有効データサイズを 0 にする要求しか来ないはず
 		assert(nLength == 0);
 		return;

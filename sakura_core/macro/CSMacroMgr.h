@@ -47,7 +47,8 @@ const int STAND_KEYMACRO	= -1; //!< 標準マクロ(キーマクロ)
 const int TEMP_KEYMACRO		= -2; //!< 一時マクロ(名前を指定してマクロ実行)
 const int INVALID_MACRO_IDX = -3; //!< 無効なマクロのインデックス番号 @date Sep. 15, 2005 FILE
 
-struct MacroFuncInfoEx {
+struct MacroFuncInfoEx
+{
 	int		 m_nArgMinSize;
 	int		 m_nArgMaxSize;
 	VARTYPE *m_pVarArgEx;
@@ -55,7 +56,8 @@ struct MacroFuncInfoEx {
 
 //マクロ関数情報構造体
 //	関数名はCSMacroMgrが持つ
-struct MacroFuncInfo {
+struct MacroFuncInfo
+{
 	int				 m_nFuncID;
 	const WCHAR *	m_pszFuncName;
 	VARTYPE			 m_varArguments[4]; //!< 引数の型の配列
@@ -70,7 +72,8 @@ typedef MacroFuncInfo *MacroFuncInfoArray;
 
 @date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 -----------------------------------------------------------------------*/
-class CSMacroMgr {
+class CSMacroMgr
+{
 	//	データの型宣言
 	CMacroManagerBase *m_cSavedKeyMacro[MAX_CUSTMACRO]; //	キーマクロをカスタムメニューの数だけ管理
 	//	Jun. 16, 2002 genta

@@ -95,7 +95,8 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 	const int nKeyWordSize = MAX_REGEX_KEYWORDLEN;
 	WCHAR	 szColorIndex[256];
 
-	switch (uMsg) {
+	switch (uMsg)
+	{
 	case WM_INITDIALOG:
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr(hwndDlg, DWLP_USER, lParam);
@@ -123,11 +124,13 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		{
 			::DlgItem_SetText(hwndDlg, IDC_LABEL_REGEX_VERSION, LS(STR_PROPTYPEREGEX_NOUSE));
 			//ライブラリがなくて、使用しないになっている場合は、無効にする。
-			if (!IsDlgButtonChecked(hwndDlg, IDC_CHECK_REGEX)) {
+			if (!IsDlgButtonChecked(hwndDlg, IDC_CHECK_REGEX))
+			{
 				// Disableにする。
 				EnableWindow(GetDlgItem(hwndDlg, IDC_CHECK_REGEX), FALSE);
 			}
-			else {
+			else
+			{
 				//使用するになってるんだけどDisableにする。もうユーザは変更できない。
 				EnableWindow(GetDlgItem(hwndDlg, IDC_CHECK_REGEX), FALSE);
 			}
@@ -137,16 +140,21 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam); /* 通知コード */
 		wID			= LOWORD(wParam); /* 項目ID､ コントロールID､ またはアクセラレータID */
-		switch (wNotifyCode) {
+		switch (wNotifyCode)
+		{
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
-			switch (wID) {
+			switch (wID)
+			{
 			case IDC_CHECK_REGEX: /* 正規表現キーワードを使う */
-				if (IsDlgButtonChecked(hwndDlg, IDC_CHECK_REGEX)) {
-					if (CheckRegexpVersion(NULL, 0, false) == false) {
+				if (IsDlgButtonChecked(hwndDlg, IDC_CHECK_REGEX))
+				{
+					if (CheckRegexpVersion(NULL, 0, false) == false)
+					{
 						nRet = ::MYMESSAGEBOX(hwndDlg, MB_YESNO | MB_ICONQUESTION | MB_TOPMOST | MB_DEFBUTTON2,
 											  GSTR_APPNAME, LS(STR_PROPTYPEREGEX_NOTFOUND));
-						if (nRet != IDYES) {
+						if (nRet != IDYES)
+						{
 							CheckDlgButton(hwndDlg, IDC_CHECK_REGEX, BST_UNCHECKED);
 							// Disableにする。
 							EnableWindow(GetDlgItem(hwndDlg, IDC_CHECK_REGEX), FALSE);
@@ -154,8 +162,10 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 						}
 					}
 				}
-				else {
-					if (CheckRegexpVersion(NULL, 0, false) == false) {
+				else
+				{
+					if (CheckRegexpVersion(NULL, 0, false) == false)
+					{
 						// Disableにする。
 						EnableWindow(GetDlgItem(hwndDlg, IDC_CHECK_REGEX), FALSE);
 					}
@@ -172,13 +182,15 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 				if (szKeyWord[0] == L'\0') return FALSE;
 				//同じキーがないか調べる。
 				nIndex2 = ListView_GetItemCount(hwndList);
-				if (nIndex2 >= MAX_REGEX_KEYWORD) {
+				if (nIndex2 >= MAX_REGEX_KEYWORD)
+				{
 					ErrorMessage(hwndDlg, LS(STR_PROPTYPEREGEX_NOREG));
 					return FALSE;
 				}
 				//選択中のキーを探す。
 				nIndex = ListView_GetNextItem(hwndList, -1, LVNI_ALL | LVNI_SELECTED);
-				if (-1 == nIndex) {
+				if (-1 == nIndex)
+				{
 					//選択中でなければ最後にする。
 					nIndex = nIndex2;
 				}
@@ -215,7 +227,8 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 				::DlgItem_GetText(hwndDlg, IDC_EDIT_REGEX, &szKeyWord[0], nKeyWordSize);
 				if (szKeyWord[0] == L'\0') return FALSE;
 				nIndex2 = ListView_GetItemCount(hwndList);
-				if (nIndex2 >= MAX_REGEX_KEYWORD) {
+				if (nIndex2 >= MAX_REGEX_KEYWORD)
+				{
 					ErrorMessage(hwndDlg, LS(STR_PROPTYPEREGEX_NOREG));
 					return FALSE;
 				}
@@ -246,7 +259,8 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 				auto szKeyWord = std::make_unique<WCHAR[]>(nKeyWordSize);
 				//選択中のキーを探す。
 				nIndex = ListView_GetNextItem(hwndList, -1, LVNI_ALL | LVNI_SELECTED);
-				if (-1 == nIndex) {
+				if (-1 == nIndex)
+				{
 					ErrorMessage(hwndDlg, LS(STR_PROPTYPEREGEX_NOSEL));
 					return FALSE;
 				}
@@ -424,7 +438,8 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 
 	case WM_NOTIFY:
 		pNMHDR = (NMHDR *)lParam;
-		switch (pNMHDR->code) {
+		switch (pNMHDR->code)
+		{
 		case PSN_HELP: OnHelp(hwndDlg, IDD_PROP_REGEX); return TRUE;
 		case PSN_KILLACTIVE:
 			/* ダイアログデータの取得 正規表現キーワード */
@@ -433,24 +448,25 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 			//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 		case PSN_SETACTIVE: m_nPageNum = ID_PROPTYPE_PAGENUM_REGEX; return TRUE;
 		case LVN_ITEMCHANGED:
-			if (pNMHDR->hwndFrom == hwndList) {
+			if (pNMHDR->hwndFrom == hwndList)
+			{
 				HWND hwndCombo;
 				nIndex = ListView_GetNextItem(hwndList, -1, LVNI_ALL | LVNI_SELECTED);
 				if (-1 == nIndex) //削除、範囲外でクリック時反映されないバグ修正	//@@@ 2003.06.17 MIK
+				{ nIndex = ListView_GetNextItem(hwndList, -1, LVNI_ALL | LVNI_FOCUSED); } if (-1 == nIndex)
 				{
-					nIndex = ListView_GetNextItem(hwndList, -1, LVNI_ALL | LVNI_FOCUSED);
-				}
-				if (-1 == nIndex) {
 					/* 初期値を設定する */
 					::DlgItem_SetText(hwndDlg, IDC_EDIT_REGEX, L"//k"); /* 正規表現 */
 					hwndCombo = GetDlgItem(hwndDlg, IDC_COMBO_REGEX_COLOR);
-					for (i = 0, j = 0; i < COLORIDX_LAST; i++) {
+					for (i = 0, j = 0; i < COLORIDX_LAST; i++)
+					{
 						if (0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_TEXT)
 							&& 0
 								   == (g_ColorAttributeArr[i].fAttribute
 									   & COLOR_ATTRIB_NO_BACK)) // 2006.12.18 ryoji フラグ利用で簡素化
 						{
-							if (m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_REGEX1) {
+							if (m_Types.m_ColorInfoArr[i].m_nColorIdx == COLORIDX_REGEX1)
+							{
 								Combo_SetCurSel(hwndCombo, j); /* コンボボックスのデフォルト選択 */
 								break;
 							}
@@ -467,13 +483,15 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 					ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
 					::DlgItem_SetText(hwndDlg, IDC_EDIT_REGEX, &szKeyWord[0]); /* 正規表現 */
 					hwndCombo = GetDlgItem(hwndDlg, IDC_COMBO_REGEX_COLOR);
-					for (i = 0, j = 0; i < COLORIDX_LAST; i++) {
+					for (i = 0, j = 0; i < COLORIDX_LAST; i++)
+					{
 						if (0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_TEXT)
 							&& 0
 								   == (g_ColorAttributeArr[i].fAttribute
 									   & COLOR_ATTRIB_NO_BACK)) // 2006.12.18 ryoji フラグ利用で簡素化
 						{
-							if (wcscmp(m_Types.m_ColorInfoArr[i].m_szName, szColorIndex) == 0) {
+							if (wcscmp(m_Types.m_ColorInfoArr[i].m_szName, szColorIndex) == 0)
+							{
 								Combo_SetCurSel(hwndCombo, j);
 								break;
 							}
@@ -487,7 +505,8 @@ INT_PTR CPropTypesRegex::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		}
 		break;
 
-	case WM_HELP: {
+	case WM_HELP:
+	{
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -517,7 +536,8 @@ void CPropTypesRegex::SetData(HWND hwndDlg)
 	/* 色種類のリスト */
 	hwndWork = ::GetDlgItem(hwndDlg, IDC_COMBO_REGEX_COLOR);
 	Combo_ResetContent(hwndWork); /* コンボボックスを空にする */
-	for (i = 0; i < COLORIDX_LAST; i++) {
+	for (i = 0; i < COLORIDX_LAST; i++)
+	{
 		GetDefaultColorInfoName(&m_Types.m_ColorInfoArr[i], i);
 		if (0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_TEXT)
 			&& 0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_BACK)) // 2006.12.18 ryoji フラグ利用で簡素化
@@ -554,7 +574,8 @@ void CPropTypesRegex::SetDataKeywordList(HWND hwndDlg)
 
 	/* データ表示 */
 	wchar_t *pKeyword = &m_Types.m_RegexKeywordList[0];
-	for (int i = 0; i < MAX_REGEX_KEYWORD; i++) {
+	for (int i = 0; i < MAX_REGEX_KEYWORD; i++)
+	{
 		if (*pKeyword == L'\0') break;
 
 		lvi.mask	 = LVIF_TEXT | LVIF_PARAM;
@@ -597,8 +618,10 @@ int CPropTypesRegex::GetData(HWND hwndDlg)
 	wchar_t *pKeyword	 = &m_Types.m_RegexKeywordList[0];
 	wchar_t *pKeywordLast = pKeyword + _countof(m_Types.m_RegexKeywordList) - 1;
 	// key1\0key2\0\0 の形式
-	for (i = 0; i < MAX_REGEX_KEYWORD; i++) {
-		if (i < nIndex) {
+	for (i = 0; i < MAX_REGEX_KEYWORD; i++)
+	{
+		if (i < nIndex)
+		{
 			szKeyWord[0]	= L'\0';
 			szColorIndex[0] = L'\0';
 			ListView_GetItemText(hwndList, i, 0, &szKeyWord[0], szKeyWordSize);
@@ -606,13 +629,16 @@ int CPropTypesRegex::GetData(HWND hwndDlg)
 			if (pKeyword < pKeywordLast - 1) { wcsncpy_s(pKeyword, pKeywordLast - pKeyword, &szKeyWord[0], _TRUNCATE); }
 			//色指定文字列を番号に変換する
 			m_Types.m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1;
-			for (j = 0; j < COLORIDX_LAST; j++) {
-				if (wcscmp(m_Types.m_ColorInfoArr[j].m_szName, szColorIndex) == 0) {
+			for (j = 0; j < COLORIDX_LAST; j++)
+			{
+				if (wcscmp(m_Types.m_ColorInfoArr[j].m_szName, szColorIndex) == 0)
+				{
 					m_Types.m_RegexKeywordArr[i].m_nColorIndex = j;
 					break;
 				}
 			}
-			if (*pKeyword) {
+			if (*pKeyword)
+			{
 				for (; *pKeyword != L'\0'; pKeyword++) {}
 				pKeyword++;
 			}
@@ -647,7 +673,8 @@ bool CPropTypesRegex::CheckKeywordList(HWND hwndDlg, const WCHAR *szNewKeyWord, 
 							  LS(STR_PROPTYPEREGEX_KAKOMI));
 		return false;
 	}
-	if (!CheckRegexpSyntax(szNewKeyWord, hwndDlg, false, -1, true)) {
+	if (!CheckRegexpSyntax(szNewKeyWord, hwndDlg, false, -1, true))
+	{
 		nRet = ::MYMESSAGEBOX(hwndDlg, MB_YESNO | MB_ICONQUESTION | MB_TOPMOST | MB_DEFBUTTON2, GSTR_APPNAME,
 							  LS(STR_PROPTYPEREGEX_INVALID));
 		if (nRet != IDYES) return false;
@@ -658,17 +685,21 @@ bool CPropTypesRegex::CheckKeywordList(HWND hwndDlg, const WCHAR *szNewKeyWord, 
 	int		  nIndex	   = ListView_GetItemCount(hwndList);
 	auto	  szKeyWord	= std::make_unique<WCHAR[]>(nKeyWordSize);
 	int		  nKeywordLen  = 0;
-	for (int i = 0; i < nIndex; i++) {
-		if (i != nUpdateItem) {
+	for (int i = 0; i < nIndex; i++)
+	{
+		if (i != nUpdateItem)
+		{
 			szKeyWord[0] = L'\0';
 			ListView_GetItemText(hwndList, i, 0, &szKeyWord[0], nKeyWordSize);
-			if (wcscmp(szNewKeyWord, &szKeyWord[0]) == 0) {
+			if (wcscmp(szNewKeyWord, &szKeyWord[0]) == 0)
+			{
 				ErrorMessage(hwndDlg, LS(STR_PROPTYPEREGEX_ALREADY));
 				return false;
 			}
 			// 長さには\0も含む
 			nKeywordLen += wcsnlen(&szKeyWord[0], nKeyWordSize) + 1;
-			if (_countof(m_Types.m_RegexKeywordList) - 1 < nKeywordLen) {
+			if (_countof(m_Types.m_RegexKeywordList) - 1 < nKeywordLen)
+			{
 				ErrorMessage(hwndDlg, LS(STR_PROPTYPEREGEX_FULL));
 				return false;
 			}

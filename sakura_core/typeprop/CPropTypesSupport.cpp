@@ -49,7 +49,8 @@ static const DWORD p_helpids3[] = {						 // 11500
 	//	IDC_STATIC,						-1,
 	0, 0};
 
-struct SHokanMethod {
+struct SHokanMethod
+{
 	int			 nMethod;
 	std::wstring name;
 };
@@ -73,7 +74,8 @@ INT_PTR CPropTypesSupport::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 	WORD   wID;
 	NMHDR *pNMHDR;
 
-	switch (uMsg) {
+	switch (uMsg)
+	{
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 p2 */
 		SetData(hwndDlg);
@@ -89,12 +91,14 @@ INT_PTR CPropTypesSupport::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		wNotifyCode = HIWORD(wParam); /* 通知コード */
 		wID			= LOWORD(wParam); /* 項目ID､ コントロールID､ またはアクセラレータID */
 									  //		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
-		switch (wNotifyCode) {
+		switch (wNotifyCode)
+		{
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
 			/* ダイアログデータの取得 p2 */
 			GetData(hwndDlg);
-			switch (wID) {
+			switch (wID)
+			{
 			case IDC_BUTTON_HOKANFILE_REF: /* 入力補完 単語ファイルの「参照...」ボタン */
 			{
 				// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
@@ -126,7 +130,8 @@ INT_PTR CPropTypesSupport::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		//		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR *)lParam;
 		//		pMNUD  = (NM_UPDOWN*)lParam;
-		switch (pNMHDR->code) {
+		switch (pNMHDR->code)
+		{
 		case PSN_HELP: // Jul. 03, 2001 JEPRO 支援タブのヘルプを有効化
 			OnHelp(hwndDlg, IDD_PROP_SUPPORT);
 			return TRUE;
@@ -140,7 +145,8 @@ INT_PTR CPropTypesSupport::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		break;
 
 		// From Here Jul. 05, 2001 JEPRO: Popup Help
-	case WM_HELP: {
+	case WM_HELP:
+	{
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids3); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -172,7 +178,8 @@ void CPropTypesSupport::SetData(HWND hwndDlg)
 		ApiWrap::Combo_AddString(hCombo, LS(STR_SMART_INDENT_NONE));
 		Combo_SetCurSel(hCombo, 0);
 		size_t nSize = pMedothList->size();
-		for (size_t i = 0; i < nSize; i++) {
+		for (size_t i = 0; i < nSize; i++)
+		{
 			ApiWrap::Combo_AddString(hCombo, (*pMedothList)[i].name.c_str());
 			if (m_Types.m_nHokanType == (*pMedothList)[i].nMethod) { Combo_SetCurSel(hCombo, i + 1); }
 		}
@@ -218,7 +225,8 @@ int CPropTypesSupport::GetData(HWND hwndDlg)
 		HWND hCombo = ::GetDlgItem(hwndDlg, IDC_COMBO_HOKAN_TYPE);
 		int  i		= Combo_GetCurSel(hCombo);
 		if (0 == i) { m_Types.m_nHokanType = 0; }
-		else if (CB_ERR != i) {
+		else if (CB_ERR != i)
+		{
 			m_Types.m_nHokanType = (*GetHokanMethodList())[i - 1].nMethod;
 		}
 	}
@@ -250,8 +258,10 @@ void CPropTypesSupport::AddHokanMethod(int nMethod, const WCHAR *szName)
 void CPropTypesSupport::RemoveHokanMethod(int nMethod, const WCHAR *szName)
 {
 	int nSize = GetHokanMethodList()->size();
-	for (int i = 0; i < nSize; i++) {
-		if ((*GetHokanMethodList())[i].nMethod == (EOutlineType)nMethod) {
+	for (int i = 0; i < nSize; i++)
+	{
+		if ((*GetHokanMethodList())[i].nMethod == (EOutlineType)nMethod)
+		{
 			GetHokanMethodList()->erase(GetHokanMethodList()->begin() + i);
 			break;
 		}

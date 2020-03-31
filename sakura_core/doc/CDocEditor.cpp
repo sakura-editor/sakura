@@ -76,14 +76,17 @@ void CDocEditor::OnAfterLoad(const SLoadInfo &sLoadInfo)
 	//	編集用改行コードの設定
 	{
 		const STypeConfig &type = pcDoc->m_cDocType.GetDocumentAttribute();
-		if (pcDoc->m_cDocFile.GetCodeSet() == type.m_encoding.m_eDefaultCodetype) {
+		if (pcDoc->m_cDocFile.GetCodeSet() == type.m_encoding.m_eDefaultCodetype)
+		{
 			SetNewLineCode(type.m_encoding.m_eDefaultEoltype); // 2011.01.24 ryoji デフォルトEOL
 		}
-		else {
+		else
+		{
 			SetNewLineCode(EOL_CRLF);
 		}
 		CDocLine *pFirstlineinfo = pcDoc->m_cDocLineMgr.GetLine(CLogicInt(0));
-		if (pFirstlineinfo != NULL) {
+		if (pFirstlineinfo != NULL)
+		{
 			EEolType t = pFirstlineinfo->GetEol();
 			if (t != EOL_NONE && t != EOL_UNKNOWN) { SetNewLineCode(t); }
 		}
@@ -129,10 +132,12 @@ void CDocEditor::SetImeMode(int mode)
 
 	//	最下位ビットはIME自身のOn/Off制御
 	if ((mode & 3) == 2) { ImmSetOpenStatus(hIme, FALSE); }
-	if ((mode >> 2) > 0) {
+	if ((mode >> 2) > 0)
+	{
 		ImmGetConversionStatus(hIme, &conv, &sent);
 
-		switch (mode >> 2) {
+		switch (mode >> 2)
+		{
 		case 1: //	FullShape
 			conv |= IME_CMODE_FULLSHAPE;
 			conv &= ~IME_CMODE_NOCONVERSION;

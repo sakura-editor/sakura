@@ -27,7 +27,8 @@
 #include "CCodeBase.h"
 #include "CUtf8.h"
 
-class CCesu8 : public CCodeBase {
+class CCesu8 : public CCodeBase
+{
 public:
 	// CCodeBaseインターフェース
 	EConvertResult CodeToUnicode(const CMemory &cSrc, CNativeW *pDst) override

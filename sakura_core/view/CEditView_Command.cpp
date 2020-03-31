@@ -69,7 +69,8 @@ bool CEditView::TagJumpSub(const WCHAR *pszFileName,
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	WCHAR szJumpToFile[1024];
 	if (bRelFromIni && _IS_REL_PATH(pszFileName)) { GetInidirOrExedir(szJumpToFile, pszFileName); }
-	else {
+	else
+	{
 		wcscpy(szJumpToFile, pszFileName);
 	}
 
@@ -93,13 +94,16 @@ bool CEditView::TagJumpSub(const WCHAR *pszFileName,
 	/* 指定ファイルが開かれているか調べる */
 	/* 開かれている場合は開いているウィンドウのハンドルも返す */
 	/* ファイルを開いているか */
-	if (CShareData::getInstance()->IsPathOpened(szJumpToFile, &hwndOwner)) {
+	if (CShareData::getInstance()->IsPathOpened(szJumpToFile, &hwndOwner))
+	{
 		// 2004.05.13 Moca マイナス値は無効
-		if (0 < ptJumpTo.y) {
+		if (0 < ptJumpTo.y)
+		{
 			/* カーソルを移動させる */
 			poCaret.y = ptJumpTo.y - 1;
 			if (0 < ptJumpTo.x) { poCaret.x = ptJumpTo.x - 1; }
-			else {
+			else
+			{
 				poCaret.x = 0;
 			}
 			GetDllShareData().m_sWorkBuffer.m_LogicPoint.Set(CLogicInt(poCaret.x), CLogicInt(poCaret.y));
@@ -107,11 +111,13 @@ bool CEditView::TagJumpSub(const WCHAR *pszFileName,
 		}
 		/* アクティブにする */
 		ActivateFrameWindow(hwndOwner);
-		if (tagJump.hwndReferer == hwndOwner) {
+		if (tagJump.hwndReferer == hwndOwner)
+		{
 			if (pbJumpToSelf) { *pbJumpToSelf = true; }
 		}
 	}
-	else {
+	else
+	{
 		/* 新しく開く */
 		EditInfo inf;
 		bool	 bSuccess;
@@ -138,7 +144,8 @@ bool CEditView::TagJumpSub(const WCHAR *pszFileName,
 	// 2006.12.30 ryoji 閉じる処理は最後に（処理位置移動）
 	//	Apr. 2003 genta 閉じるかどうかは引数による
 	//	grep結果からEnterでジャンプするところにCtrl判定移動
-	if (bClose) {
+	if (bClose)
+	{
 		GetCommander().Command_WINCLOSE(); //	挑戦するだけ。
 	}
 
@@ -164,7 +171,8 @@ BOOL CEditView::OPEN_ExtFromtoExt(BOOL bCheckOnly, //!< [in] true: チェック�
 	// To Here Feb. 7, 2001
 
 	/* 編集中ファイルの拡張子を調べる */
-	for (i = 0; i < file_extno; i++) {
+	for (i = 0; i < file_extno; i++)
+	{
 		if (CheckEXT(GetDocument()->m_cDocFile.GetFilePath(), file_ext[i])) { goto open_c; }
 	}
 	if (bBeepWhenMiss) { ErrorBeep(); }
@@ -181,9 +189,11 @@ open_c:;
 
 	_wsplitpath(GetDocument()->m_cDocFile.GetFilePath(), szDrive, szDir, szFname, szExt);
 
-	for (i = 0; i < open_extno; i++) {
+	for (i = 0; i < open_extno; i++)
+	{
 		_tmakepath(szPath, szDrive, szDir, szFname, open_ext[i]);
-		if (!fexist(szPath)) {
+		if (!fexist(szPath))
+		{
 			if (i < open_extno - 1) continue;
 			if (bBeepWhenMiss) { ErrorBeep(); }
 			return FALSE;
@@ -196,7 +206,8 @@ open_c:;
 	/* 開かれている場合は開いているウィンドウのハンドルも返す */
 	/* ファイルを開いているか */
 	if (CShareData::getInstance()->IsPathOpened(szPath, &hwndOwner)) {}
-	else {
+	else
+	{
 		/* 文字コードはこのファイルに合わせる */
 		SLoadInfo sLoadInfo;
 		sLoadInfo.cFilePath = szPath;
@@ -205,7 +216,8 @@ open_c:;
 		CControlTray::OpenNewEditor(G_AppInstance(), this->GetHwnd(), sLoadInfo, NULL, true);
 		/* ファイルを開いているか */
 		if (CShareData::getInstance()->IsPathOpened(szPath, &hwndOwner)) {}
-		else {
+		else
+		{
 			// 2011.01.12 ryoji エラーは表示しないでおく
 			// ファイルサイズが大きすぎて読むかどうか問い合わせているような場合でもエラー表示になるのは変
 			// OpenNewEditor()または起動された側のメッセージ表示で十分と思われる
@@ -280,35 +292,43 @@ CEditView::TOGGLE_WRAP_ACTION CEditView::GetWrapMode(CKetaXInt *_newKetas)
 		c)　└→ウィンドウ幅
 	*/
 
-	if (GetDocument()->m_cLayoutMgr.GetMaxLineKetas() == ViewColNumToWrapColNum(GetTextArea().m_nViewColNum)) {
+	if (GetDocument()->m_cLayoutMgr.GetMaxLineKetas() == ViewColNumToWrapColNum(GetTextArea().m_nViewColNum))
+	{
 		// a)
 		newKetas = CKetaXInt(MAXLINEKETAS);
 		return TGWRAP_FULL;
 	}
-	else if (MINLINEKETAS > GetTextArea().m_nViewColNum - GetWrapOverhang()) { // 2)
+	else if (MINLINEKETAS > GetTextArea().m_nViewColNum - GetWrapOverhang())
+	{ // 2)
 		// 3)
-		if (GetDocument()->m_cLayoutMgr.GetMaxLineKetas() != MAXLINEKETAS) {
+		if (GetDocument()->m_cLayoutMgr.GetMaxLineKetas() != MAXLINEKETAS)
+		{
 			// 4)
 			newKetas = CKetaXInt(MAXLINEKETAS);
 			return TGWRAP_FULL;
 		}
-		else if (m_pTypeData->m_nMaxLineKetas == MAXLINEKETAS) { // 5)
+		else if (m_pTypeData->m_nMaxLineKetas == MAXLINEKETAS)
+		{ // 5)
 			// 6)
 			return TGWRAP_NONE;
 		}
-		else { // 7)
+		else
+		{ // 7)
 			newKetas = m_pTypeData->m_nMaxLineKetas;
 			return TGWRAP_PROP;
 		}
 	}
-	else {																	 // 8)
+	else
+	{																		 // 8)
 		if (GetDocument()->m_cLayoutMgr.GetMaxLineKetas() == MAXLINEKETAS && // 9)
-			m_pTypeData->m_nMaxLineKetas != MAXLINEKETAS) {
+			m_pTypeData->m_nMaxLineKetas != MAXLINEKETAS)
+		{
 			// a)
 			newKetas = m_pTypeData->m_nMaxLineKetas;
 			return TGWRAP_PROP;
 		}
-		else { // b) c)
+		else
+		{ // b) c)
 			//	現在のウィンドウ幅
 			newKetas = ViewColNumToWrapColNum(GetTextArea().m_nViewColNum);
 			return TGWRAP_WINDOW;
@@ -333,20 +353,24 @@ BOOL CEditView::ChangeCurRegexp(bool bRedrawIfChanged)
 
 	if (GetDllShareData().m_Common.m_sSearch.m_bInheritKeyOtherView
 			&& m_nCurSearchKeySequence < GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence
-		|| 0 == m_strCurSearchKey.size()) {
+		|| 0 == m_strCurSearchKey.size())
+	{
 		// 履歴の検索キーに更新
 		m_strCurSearchKey  = GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0]; // 検索文字列
 		m_sCurSearchOption = GetDllShareData().m_Common.m_sSearch.m_sSearchOption; // 検索／置換  オプション
 		m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
 		bChangeState			= true;
 	}
-	else if (m_bCurSearchUpdate) {
+	else if (m_bCurSearchUpdate)
+	{
 		bChangeState = true;
 	}
 	m_bCurSearchUpdate = false;
-	if (bChangeState) {
+	if (bChangeState)
+	{
 		if (!m_sSearchPattern.SetPattern(this->GetHwnd(), m_strCurSearchKey.c_str(), m_strCurSearchKey.size(),
-										 m_sCurSearchOption, &m_CurRegexp)) {
+										 m_sCurSearchOption, &m_CurRegexp))
+		{
 			m_bCurSrchKeyMark = false;
 			return FALSE;
 		}
@@ -355,10 +379,12 @@ BOOL CEditView::ChangeCurRegexp(bool bRedrawIfChanged)
 		m_pcEditWnd->m_cToolbar.AcceptSharedSearchKey();
 		return TRUE;
 	}
-	if (!m_bCurSrchKeyMark) {
+	if (!m_bCurSrchKeyMark)
+	{
 		m_bCurSrchKeyMark = true;
 		// 検索文字列のマークだけ設定
-		if (bRedrawIfChanged) {
+		if (bRedrawIfChanged)
+		{
 			Redraw(); // 自View再描画
 		}
 	}
@@ -384,10 +410,12 @@ void CEditView::CopyCurLine(bool bAddCRLFWhenCopy, //!< [in] 折り返し位置�
 	/* クリップボードに入れるべきテキストデータを、cmemBufに格納する */
 	CNativeW cmemBuf;
 	cmemBuf.SetString(pcLayout->GetPtr(), pcLayout->GetLengthWithoutEOL());
-	if (pcLayout->GetLayoutEol().GetLen() != 0) {
+	if (pcLayout->GetLayoutEol().GetLen() != 0)
+	{
 		cmemBuf.AppendString((neweol == EOL_UNKNOWN) ? pcLayout->GetLayoutEol().GetValue2() : CEol(neweol).GetValue2());
 	}
-	else if (bAddCRLFWhenCopy) { // 2007.10.08 ryoji bAddCRLFWhenCopy対応処理追加
+	else if (bAddCRLFWhenCopy)
+	{ // 2007.10.08 ryoji bAddCRLFWhenCopy対応処理追加
 		cmemBuf.AppendString((neweol == EOL_UNKNOWN) ? WCODE::CRLF : CEol(neweol).GetValue2());
 	}
 
@@ -399,7 +427,8 @@ void CEditView::CopyCurLine(bool bAddCRLFWhenCopy, //!< [in] 折り返し位置�
 
 void CEditView::DrawBracketCursorLine(bool bDraw)
 {
-	if (bDraw) {
+	if (bDraw)
+	{
 		GetCaret().m_cUnderLine.CaretUnderLineON(true, true);
 		DrawBracketPair(false);
 		SetBracketPairPos(true);
@@ -410,7 +439,8 @@ void CEditView::DrawBracketCursorLine(bool bDraw)
 HWND CEditView::StartProgress()
 {
 	HWND hwndProgress = m_pcEditWnd->m_cStatusBar.GetProgressHwnd();
-	if (NULL != hwndProgress) {
+	if (NULL != hwndProgress)
+	{
 		::ShowWindow(hwndProgress, SW_SHOW);
 		Progress_SetRange(hwndProgress, 0, 101);
 		Progress_SetPos(hwndProgress, 0);

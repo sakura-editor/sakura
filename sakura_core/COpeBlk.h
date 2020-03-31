@@ -26,7 +26,8 @@ class COpeBlk;
 
 	COpe を複数束ねるためのもの。Undo, Redoはこのブロック単位で行われる。
 */
-class COpeBlk {
+class COpeBlk
+{
 public:
 	//コンストラクタ・デストラクタ
 	COpeBlk();

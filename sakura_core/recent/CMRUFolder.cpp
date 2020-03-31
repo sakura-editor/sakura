@@ -73,7 +73,8 @@ HMENU CMRUFolder::CreateMenu(HMENU hMenuPopUp, CMenuDrawer *pCMenuDrawer) const
 	CDCFont dcFont(met.lfMenuFont);
 
 	CFileNameManager::getInstance()->TransformFileName_MakeCache();
-	for (i = 0; i < m_cRecentFolder.GetItemCount(); ++i) {
+	for (i = 0; i < m_cRecentFolder.GetItemCount(); ++i)
+	{
 		//	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
 		if (i >= m_cRecentFolder.GetViewCount()) break;
 
@@ -93,7 +94,8 @@ HMENU CMRUFolder::CreateMenu(HMENU hMenuPopUp, CMenuDrawer *pCMenuDrawer) const
 std::vector<LPCWSTR> CMRUFolder::GetPathList() const
 {
 	std::vector<LPCWSTR> ret;
-	for (int i = 0; i < m_cRecentFolder.GetItemCount(); ++i) {
+	for (int i = 0; i < m_cRecentFolder.GetItemCount(); ++i)
+	{
 		//	「共通設定」→「全般」→「フォルダの履歴MAX」を反映
 		if (i >= m_cRecentFolder.GetViewCount()) break;
 		ret.push_back(m_cRecentFolder.GetItemText(i));
@@ -111,14 +113,17 @@ void CMRUFolder::ClearAll() { m_cRecentFolder.DeleteAllItem(); }
 */
 void CMRUFolder::Add(const WCHAR *pszFolder)
 {
-	if (NULL == pszFolder || pszFolder[0] == L'\0') { //	長さが0なら排除。
+	if (NULL == pszFolder || pszFolder[0] == L'\0')
+	{ //	長さが0なら排除。
 		return;
 	}
 
 	// すでに登録されている場合は、除外指定を無視する
-	if (-1 == m_cRecentFolder.FindItemByText(pszFolder)) {
+	if (-1 == m_cRecentFolder.FindItemByText(pszFolder))
+	{
 		int nSize = m_pShareData->m_sHistory.m_aExceptMRU.size();
-		for (int i = 0; i < nSize; i++) {
+		for (int i = 0; i < nSize; i++)
+		{
 			WCHAR szExceptMRU[_MAX_PATH];
 			CFileNameManager::ExpandMetaToFolder(m_pShareData->m_sHistory.m_aExceptMRU[i], szExceptMRU,
 												 _countof(szExceptMRU));

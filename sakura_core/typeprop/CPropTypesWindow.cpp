@@ -80,7 +80,8 @@ static BOOL s_isImmOpenBkup;
 // IMEを使用したくないコントロールのID判定
 static bool isImeUndesirable(int id)
 {
-	switch (id) {
+	switch (id)
+	{
 	case IDC_EDIT_LINENUMWIDTH:
 	case IDC_EDIT_BACKIMG_OFFSET_X:
 	case IDC_EDIT_BACKIMG_OFFSET_Y:
@@ -102,7 +103,8 @@ INT_PTR CPropTypesWindow::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 	NMHDR *	pNMHDR;
 	NM_UPDOWN *pMNUD; // 追加 2014.08.02 katze
 
-	switch (uMsg) {
+	switch (uMsg)
+	{
 	case WM_INITDIALOG:
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr(hwndDlg, DWLP_USER, lParam);
@@ -120,14 +122,18 @@ INT_PTR CPropTypesWindow::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		wID			= LOWORD(wParam); /* 項目ID､ コントロールID､ またはアクセラレータID */
 		hwndCtl		= (HWND)lParam;   /* コントロールのハンドル */
 
-		switch (wNotifyCode) {
-		case CBN_SELCHANGE: {
+		switch (wNotifyCode)
+		{
+		case CBN_SELCHANGE:
+		{
 			int i;
-			switch (wID) {
+			switch (wID)
+			{
 			case IDC_COMBO_DEFAULT_CODETYPE:
 				// 文字コードの変更をBOMチェックボックスに反映
 				i = Combo_GetCurSel((HWND)lParam);
-				if (CB_ERR != i) {
+				if (CB_ERR != i)
+				{
 					CCodeTypeName cCodeTypeName(Combo_GetItemData((HWND)lParam, i));
 					::CheckDlgButton(hwndDlg, IDC_CHECK_DEFAULT_BOM,
 									 (cCodeTypeName.IsBomDefOn() ? BST_CHECKED : BST_UNCHECKED));
@@ -135,12 +141,15 @@ INT_PTR CPropTypesWindow::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 				}
 				break;
 			}
-		} break;
+		}
+		break;
 
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
-			switch (wID) {
-			case IDC_BUTTON_BACKIMG_PATH_SEL: {
+			switch (wID)
+			{
+			case IDC_BUTTON_BACKIMG_PATH_SEL:
+			{
 				CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_PATH),
 										 L"*.bmp;*.jpg;*.jpeg;*.png", true, EFITER_NONE);
 			}
@@ -154,7 +163,8 @@ INT_PTR CPropTypesWindow::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 				return TRUE;
 				//	To Here Sept. 10, 2000
 
-			case IDC_CHECK_CP: {
+			case IDC_CHECK_CP:
+			{
 				::CheckDlgButton(hwndDlg, IDC_CHECK_CP, TRUE);
 				::EnableWindow(GetDlgItem(hwndDlg, IDC_CHECK_CP), FALSE);
 				CCodePage::AddComboCodePages(hwndDlg, ::GetDlgItem(hwndDlg, IDC_COMBO_DEFAULT_CODETYPE), -1);
@@ -167,7 +177,8 @@ INT_PTR CPropTypesWindow::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 			break;
 		case EN_KILLFOCUS:
 			if (isImeUndesirable(wID)) ImeSetOpen(hwndCtl, s_isImmOpenBkup, nullptr);
-			if (wID == IDC_EDIT_BACKIMG_TRANSPARENCY) {
+			if (wID == IDC_EDIT_BACKIMG_TRANSPARENCY)
+			{
 				int nVal = ::GetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, NULL, FALSE);
 				if (nVal < 0) nVal = 0;
 				if (nVal > 255) nVal = 255;
@@ -178,7 +189,8 @@ INT_PTR CPropTypesWindow::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		break; /* WM_COMMAND */
 	case WM_NOTIFY:
 		pNMHDR = (NMHDR *)lParam;
-		switch (pNMHDR->code) {
+		switch (pNMHDR->code)
+		{
 		case PSN_HELP:
 			//	Sept. 10, 2000 JEPRO ID名を実際の名前に変更するため以下の行はコメントアウト
 			//				OnHelp( hwndDlg, IDD_PROP1P3 );
@@ -195,13 +207,15 @@ INT_PTR CPropTypesWindow::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 
 		// switch文追加 2014.08.02 katze
 		pMNUD = (NM_UPDOWN *)lParam;
-		switch ((int)wParam) {
+		switch ((int)wParam)
+		{
 		case IDC_SPIN_LINENUMWIDTH:
 			/* 行番号の最小桁数 */
 			//			MYTRACE( L"IDC_SPIN_LINENUMWIDTH\n" );
 			int nVal = ::GetDlgItemInt(hwndDlg, IDC_EDIT_LINENUMWIDTH, NULL, FALSE);
 			if (pMNUD->iDelta < 0) { ++nVal; }
-			else if (pMNUD->iDelta > 0) {
+			else if (pMNUD->iDelta > 0)
+			{
 				--nVal;
 			}
 			if (nVal < LINENUMWIDTH_MIN) { nVal = LINENUMWIDTH_MIN; }
@@ -209,13 +223,16 @@ INT_PTR CPropTypesWindow::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 			::SetDlgItemInt(hwndDlg, IDC_EDIT_LINENUMWIDTH, nVal, FALSE);
 			return TRUE;
 		}
-		switch ((int)wParam) {
+		switch ((int)wParam)
+		{
 		case IDC_UPDOWN_BACKIMG_TRANSPARENCY:
 			int nVal = ::GetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, NULL, FALSE);
-			if (pMNUD->iDelta < 0) {
+			if (pMNUD->iDelta < 0)
+			{
 				if (nVal < 0xFF) { ++nVal; }
 			}
-			else if (pMNUD->iDelta > 0) {
+			else if (pMNUD->iDelta > 0)
+			{
 				if (nVal > 0) { --nVal; }
 			}
 			::SetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, nVal, FALSE);
@@ -226,7 +243,8 @@ INT_PTR CPropTypesWindow::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		break; /* WM_NOTIFY */
 
 		//@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP: {
+	case WM_HELP:
+	{
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids2); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -244,11 +262,13 @@ INT_PTR CPropTypesWindow::DispatchEvent(HWND   hwndDlg, // handle to dialog box
 		//@@@ 2001.11.17 add end MIK
 
 	case WM_HSCROLL:
-		if ((HWND)lParam == ::GetDlgItem(hwndDlg, IDC_TRACKBAR_BACKIMG_TRANSPARENCY)) {
+		if ((HWND)lParam == ::GetDlgItem(hwndDlg, IDC_TRACKBAR_BACKIMG_TRANSPARENCY))
+		{
 			WORD code = LOWORD(wParam);
 			WORD pos;
 			if (code == TB_THUMBPOSITION || code == TB_THUMBTRACK) { pos = HIWORD(wParam); }
-			else {
+			else
+			{
 				pos = (WORD)TrackBarCtl_GetPos((HWND)lParam);
 			}
 			::SetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_TRANSPARENCY, pos, FALSE);
@@ -281,9 +301,11 @@ void CPropTypesWindow::SetData(HWND hwndDlg)
 		Combo_ResetContent(hwndCombo);
 		ime			= m_Types.m_nImeState & 3;
 		int nSelPos = 0;
-		for (int i = 0; i < _countof(ImeSwitchArr); ++i) {
+		for (int i = 0; i < _countof(ImeSwitchArr); ++i)
+		{
 			Combo_InsertString(hwndCombo, i, LS(ImeSwitchArr[i].nNameId));
-			if (ImeSwitchArr[i].nMethod == ime) { /* IME状態 */
+			if (ImeSwitchArr[i].nMethod == ime)
+			{ /* IME状態 */
 				nSelPos = i;
 			}
 		}
@@ -294,9 +316,11 @@ void CPropTypesWindow::SetData(HWND hwndDlg)
 		Combo_ResetContent(hwndCombo);
 		ime		= m_Types.m_nImeState >> 2;
 		nSelPos = 0;
-		for (int i = 0; i < _countof(ImeStateArr); ++i) {
+		for (int i = 0; i < _countof(ImeStateArr); ++i)
+		{
 			Combo_InsertString(hwndCombo, i, LS(ImeStateArr[i].nNameId));
-			if (ImeStateArr[i].nMethod == ime) { /* IME状態 */
+			if (ImeStateArr[i].nMethod == ime)
+			{ /* IME状態 */
 				nSelPos = i;
 			}
 		}
@@ -316,20 +340,24 @@ void CPropTypesWindow::SetData(HWND hwndDlg)
 		int j	= 0;
 		hCombo   = ::GetDlgItem(hwndDlg, IDC_COMBO_DEFAULT_CODETYPE);
 		CCodeTypesForCombobox cCodeTypes;
-		for (i = 0; i < cCodeTypes.GetCount(); i++) {
-			if (CCodeTypeName(cCodeTypes.GetCode(i)).CanDefault()) {
+		for (i = 0; i < cCodeTypes.GetCount(); i++)
+		{
+			if (CCodeTypeName(cCodeTypes.GetCode(i)).CanDefault())
+			{
 				int idx = Combo_AddString(hCombo, cCodeTypes.GetName(i));
 				Combo_SetItemData(hCombo, idx, cCodeTypes.GetCode(i));
 				if (m_Types.m_encoding.m_eDefaultCodetype == cCodeTypes.GetCode(i)) { nSel = j; }
 				j++;
 			}
 		}
-		if (nSel == -1) {
+		if (nSel == -1)
+		{
 			::CheckDlgButton(hwndDlg, IDC_CHECK_CP, TRUE);
 			::EnableWindow(GetDlgItem(hwndDlg, IDC_CHECK_CP), FALSE);
 			int nIdx = CCodePage::AddComboCodePages(hwndDlg, hCombo, m_Types.m_encoding.m_eDefaultCodetype);
 			if (nIdx == -1) { nSel = 0; }
-			else {
+			else
+			{
 				nSel = nIdx;
 			}
 		}
@@ -345,7 +373,8 @@ void CPropTypesWindow::SetData(HWND hwndDlg)
 		// デフォルト改行タイプのコンボボックス設定
 		hCombo = ::GetDlgItem(hwndDlg, IDC_COMBO_DEFAULT_EOLTYPE);
 		for (i = 0; i < _countof(aszEolStr); ++i) { ApiWrap::Combo_AddString(hCombo, aszEolStr[i]); }
-		for (i = 0; i < _countof(aeEolType); ++i) {
+		for (i = 0; i < _countof(aeEolType); ++i)
+		{
 			if (m_Types.m_encoding.m_eDefaultEoltype == aeEolType[i]) { break; }
 		}
 		if (i == _countof(aeEolType)) { i = 0; }
@@ -353,11 +382,13 @@ void CPropTypesWindow::SetData(HWND hwndDlg)
 	}
 
 	/* 行番号の表示 false=折り返し単位／true=改行単位 */
-	if (!m_Types.m_bLineNumIsCRLF) {
+	if (!m_Types.m_bLineNumIsCRLF)
+	{
 		::CheckDlgButton(hwndDlg, IDC_RADIO_LINENUM_LAYOUT, TRUE);
 		::CheckDlgButton(hwndDlg, IDC_RADIO_LINENUM_CRLF, FALSE);
 	}
-	else {
+	else
+	{
 		::CheckDlgButton(hwndDlg, IDC_RADIO_LINENUM_LAYOUT, FALSE);
 		::CheckDlgButton(hwndDlg, IDC_RADIO_LINENUM_CRLF, TRUE);
 	}
@@ -396,17 +427,20 @@ void CPropTypesWindow::SetData(HWND hwndDlg)
 	TrackBarCtl_SetPos(hWndTrackBar, TRUE, transparency);
 
 	/* 行番号区切り  0=なし 1=縦線 2=任意 */
-	if (0 == m_Types.m_nLineTermType) {
+	if (0 == m_Types.m_nLineTermType)
+	{
 		::CheckDlgButton(hwndDlg, IDC_RADIO_LINETERMTYPE0, TRUE);
 		::CheckDlgButton(hwndDlg, IDC_RADIO_LINETERMTYPE1, FALSE);
 		::CheckDlgButton(hwndDlg, IDC_RADIO_LINETERMTYPE2, FALSE);
 	}
-	else if (1 == m_Types.m_nLineTermType) {
+	else if (1 == m_Types.m_nLineTermType)
+	{
 		::CheckDlgButton(hwndDlg, IDC_RADIO_LINETERMTYPE0, FALSE);
 		::CheckDlgButton(hwndDlg, IDC_RADIO_LINETERMTYPE1, TRUE);
 		::CheckDlgButton(hwndDlg, IDC_RADIO_LINETERMTYPE2, FALSE);
 	}
-	else if (2 == m_Types.m_nLineTermType) {
+	else if (2 == m_Types.m_nLineTermType)
+	{
 		::CheckDlgButton(hwndDlg, IDC_RADIO_LINETERMTYPE0, FALSE);
 		::CheckDlgButton(hwndDlg, IDC_RADIO_LINETERMTYPE1, FALSE);
 		::CheckDlgButton(hwndDlg, IDC_RADIO_LINETERMTYPE2, TRUE);
@@ -474,7 +508,8 @@ int CPropTypesWindow::GetData(HWND hwndDlg)
 
 	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 	if (::IsDlgButtonChecked(hwndDlg, IDC_RADIO_LINENUM_LAYOUT)) { m_Types.m_bLineNumIsCRLF = false; }
-	else {
+	else
+	{
 		m_Types.m_bLineNumIsCRLF = true;
 	}
 
@@ -492,10 +527,12 @@ int CPropTypesWindow::GetData(HWND hwndDlg)
 
 	/* 行番号区切り  0=なし 1=縦線 2=任意 */
 	if (::IsDlgButtonChecked(hwndDlg, IDC_RADIO_LINETERMTYPE0)) { m_Types.m_nLineTermType = 0; }
-	else if (::IsDlgButtonChecked(hwndDlg, IDC_RADIO_LINETERMTYPE1)) {
+	else if (::IsDlgButtonChecked(hwndDlg, IDC_RADIO_LINETERMTYPE1))
+	{
 		m_Types.m_nLineTermType = 1;
 	}
-	else if (::IsDlgButtonChecked(hwndDlg, IDC_RADIO_LINETERMTYPE2)) {
+	else if (::IsDlgButtonChecked(hwndDlg, IDC_RADIO_LINETERMTYPE2))
+	{
 		m_Types.m_nLineTermType = 2;
 	}
 
@@ -518,11 +555,13 @@ int CPropTypesWindow::GetData(HWND hwndDlg)
 void CPropTypesWindow::EnableTypesPropInput(HWND hwndDlg)
 {
 	//	行番号区切りを任意の半角文字にするかどうか
-	if (::IsDlgButtonChecked(hwndDlg, IDC_RADIO_LINETERMTYPE2)) {
+	if (::IsDlgButtonChecked(hwndDlg, IDC_RADIO_LINETERMTYPE2))
+	{
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_LINETERMCHAR), TRUE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_LINETERMCHAR), TRUE);
 	}
-	else {
+	else
+	{
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_LABEL_LINETERMCHAR), FALSE);
 		::EnableWindow(::GetDlgItem(hwndDlg, IDC_EDIT_LINETERMCHAR), FALSE);
 	}

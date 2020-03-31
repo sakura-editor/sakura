@@ -55,23 +55,28 @@ EFunctionCode CFuncLookup::Pos2FuncCode(int category, int position, bool bGetUna
 {
 	if (category < 0 || position < 0) return F_DISABLE;
 
-	if (category < nsFuncCode::nFuncKindNum) {
+	if (category < nsFuncCode::nFuncKindNum)
+	{
 		if (position < nsFuncCode::pnFuncListNumArr[category]) return nsFuncCode::ppnFuncListArr[category][position];
 	}
-	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_MACRO) {
+	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_MACRO)
+	{
 		//	キー割り当てマクロ
-		if (position < MAX_CUSTMACRO) {
+		if (position < MAX_CUSTMACRO)
+		{
 			if (bGetUnavailable || m_pMacroRec[position].IsEnabled()) return (EFunctionCode)(F_USERMACRO_0 + position);
 		}
 	}
-	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_CUSTMENU) {
+	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_CUSTMENU)
+	{
 		//	カスタムメニュー
 		if (position == 0)
 			return F_MENU_RBUTTON;
 		else if (position < MAX_CUSTOM_MENU)
 			return (EFunctionCode)(F_CUSTMENU_BASE + position);
 	}
-	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_PLUGIN) {
+	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_PLUGIN)
+	{
 		//	プラグイン
 		return CJackManager::getInstance()->GetCommandCode(position);
 	}
@@ -113,50 +118,60 @@ bool CFuncLookup::Funccode2Name(int funccode, WCHAR *ptr, int bufsize) const
 	assert(ptr != NULL);
 	assert(bufsize >= 1);
 
-	if (F_USERMACRO_0 <= funccode && funccode < F_USERMACRO_0 + MAX_CUSTMACRO) {
+	if (F_USERMACRO_0 <= funccode && funccode < F_USERMACRO_0 + MAX_CUSTMACRO)
+	{
 		int position = funccode - F_USERMACRO_0;
-		if (m_pMacroRec[position].IsEnabled()) {
+		if (m_pMacroRec[position].IsEnabled())
+		{
 			const WCHAR *p = m_pMacroRec[position].GetTitle();
 			wcsncpy_s(ptr, bufsize, p, _TRUNCATE);
 		}
-		else {
+		else
+		{
 			_snwprintf_s(ptr, bufsize, _TRUNCATE, LS(STR_ERR_DLGFUNCLKUP03), position);
 		}
 		return true;
 	}
-	else if (funccode == F_MENU_RBUTTON) {
+	else if (funccode == F_MENU_RBUTTON)
+	{
 		Custmenu2Name(0, ptr, bufsize);
 		ptr[bufsize - 1] = LTEXT('\0');
 		return true;
 	}
-	else if (F_CUSTMENU_1 <= funccode
-			 && funccode < F_CUSTMENU_BASE + MAX_CUSTOM_MENU) { // MAX_CUSTMACRO->MAX_CUSTOM_MENU	2010/3/14 Uchi
+	else if (F_CUSTMENU_1 <= funccode && funccode < F_CUSTMENU_BASE + MAX_CUSTOM_MENU)
+	{ // MAX_CUSTMACRO->MAX_CUSTOM_MENU	2010/3/14 Uchi
 		Custmenu2Name(funccode - F_CUSTMENU_BASE, ptr, bufsize);
 		ptr[bufsize - 1] = LTEXT('\0');
 		return true;
 	}
-	else if (F_MENU_FIRST <= funccode && funccode < F_MENU_NOT_USED_FIRST) {
-		if ((pszStr = LS(funccode))[0] != L'\0') {
+	else if (F_MENU_FIRST <= funccode && funccode < F_MENU_NOT_USED_FIRST)
+	{
+		if ((pszStr = LS(funccode))[0] != L'\0')
+		{
 			wcsncpy(ptr, pszStr, bufsize);
 			ptr[bufsize - 1] = LTEXT('\0');
 			return true; // 定義されたコマンド
 		}
 	}
-	else if (F_PLUGCOMMAND_FIRST <= funccode && funccode < F_PLUGCOMMAND_LAST) {
-		if (CJackManager::getInstance()->GetCommandName(funccode, ptr, bufsize) > 0) {
+	else if (F_PLUGCOMMAND_FIRST <= funccode && funccode < F_PLUGCOMMAND_LAST)
+	{
+		if (CJackManager::getInstance()->GetCommandName(funccode, ptr, bufsize) > 0)
+		{
 			return true; // プラグインコマンド
 		}
 	}
 
 	// 未定義コマンド(または現在のプロセスではロードされていないプラグインなど)
-	if ((pszStr = LS(funccode))[0] != L'\0') {
+	if ((pszStr = LS(funccode))[0] != L'\0')
+	{
 		wcsncpy(ptr, pszStr, bufsize);
 		ptr[bufsize - 1] = LTEXT('\0');
 		return false;
 	}
 
 	// なにかコピーしないとループ処理などで一つ前の名前になることがあるので(-- 不明 --)をコピーしておく
-	if ((pszStr = LS(F_DISABLE))[0] != L'\0') {
+	if ((pszStr = LS(F_DISABLE))[0] != L'\0')
+	{
 		wcsncpy(ptr, pszStr, bufsize);
 		ptr[bufsize - 1] = LTEXT('\0');
 		return false;
@@ -179,13 +194,16 @@ const WCHAR *CFuncLookup::Category2Name(int category) const
 	if (category < 0) return NULL;
 
 	if (category < nsFuncCode::nFuncKindNum) { return LS(nsFuncCode::ppszFuncKind[category]); }
-	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_MACRO) {
+	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_MACRO)
+	{
 		return LS(STR_ERR_DLGFUNCLKUP01);
 	}
-	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_CUSTMENU) {
+	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_CUSTMENU)
+	{
 		return LS(STR_ERR_DLGFUNCLKUP02);
 	}
-	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_PLUGIN) {
+	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_PLUGIN)
+	{
 		return LS(STR_ERR_DLGFUNCLKUP19);
 	}
 	return NULL;
@@ -230,7 +248,8 @@ void CFuncLookup::SetListItem(HWND hListBox, int category) const
 	List_ResetContent(hListBox);
 
 	n = GetItemCount(category);
-	for (i = 0; i < n; i++) {
+	for (i = 0; i < n; i++)
+	{
 		if (Pos2FuncCode(category, i) == F_DISABLE) continue;
 		Pos2FuncName(category, i, pszLabel, _countof(pszLabel));
 		List_AddString(hListBox, pszLabel);
@@ -247,15 +266,18 @@ int CFuncLookup::GetItemCount(int category) const
 	if (category < 0) return 0;
 
 	if (category < nsFuncCode::nFuncKindNum) { return nsFuncCode::pnFuncListNumArr[category]; }
-	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_MACRO) {
+	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_MACRO)
+	{
 		//	マクロ
 		return MAX_CUSTMACRO;
 	}
-	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_CUSTMENU) {
+	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_CUSTMENU)
+	{
 		//	カスタムメニュー
 		return MAX_CUSTOM_MENU;
 	}
-	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_PLUGIN) {
+	else if (category == nsFuncCode::nFuncKindNum + LUOFFSET_PLUGIN)
+	{
 		//	プラグインコマンド
 		return CJackManager::getInstance()->GetCommandCount();
 	}
@@ -273,21 +295,25 @@ const WCHAR *CFuncLookup::Custmenu2Name(int index, WCHAR buf[], int bufSize) con
 	if (index < 0 || CUSTMENU_INDEX_FOR_TABWND < index) return NULL;
 
 	// 共通設定で名称を設定していればそれを返す
-	if (m_pCommon->m_sCustomMenu.m_szCustMenuNameArr[index][0] != '\0') {
+	if (m_pCommon->m_sCustomMenu.m_szCustMenuNameArr[index][0] != '\0')
+	{
 		wcscpyn(buf, m_pCommon->m_sCustomMenu.m_szCustMenuNameArr[index], bufSize);
 		return m_pCommon->m_sCustomMenu.m_szCustMenuNameArr[index];
 	}
 
 	// 共通設定で未設定の場合、リソースのデフォルト名を返す
-	if (index == 0) {
+	if (index == 0)
+	{
 		wcscpyn(buf, LS(STR_CUSTMENU_RIGHT_CLICK), bufSize);
 		return buf;
 	}
-	else if (index == CUSTMENU_INDEX_FOR_TABWND) {
+	else if (index == CUSTMENU_INDEX_FOR_TABWND)
+	{
 		wcscpyn(buf, LS(STR_CUSTMENU_TAB), bufSize);
 		return buf;
 	}
-	else {
+	else
+	{
 		_swprintf(buf, LS(STR_CUSTMENU_CUSTOM), index);
 		return buf;
 	}

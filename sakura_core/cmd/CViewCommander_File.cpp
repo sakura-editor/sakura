@@ -103,20 +103,25 @@ void CViewCommander::Command_FILEOPEN(const WCHAR *filename, ECodeType nCharCode
 	std::wstring			  defName = (defaultName ? defaultName : L"");
 
 	//必要であれば「ファイルを開く」ダイアログ
-	if (!sLoadInfo.cFilePath.IsValidPath()) {
-		if (!defName.empty()) {
+	if (!sLoadInfo.cFilePath.IsValidPath())
+	{
+		if (!defName.empty())
+		{
 			WCHAR szPath[_MAX_PATH];
 			WCHAR szDir[_MAX_DIR];
 			WCHAR szName[_MAX_FNAME];
 			WCHAR szExt[_MAX_EXT];
 			my_splitpath_t(defName.c_str(), szPath, szDir, szName, szExt);
 			wcscat(szPath, szDir);
-			if (0 == wmemicmp(defName.c_str(), szPath)) {
+			if (0 == wmemicmp(defName.c_str(), szPath))
+			{
 				// defNameはフォルダ名だった
 			}
-			else {
+			else
+			{
 				CFilePath path = defName.c_str();
-				if (0 == wmemicmp(path.GetDirPath().c_str(), szPath)) {
+				if (0 == wmemicmp(path.GetDirPath().c_str(), szPath))
+				{
 					// フォルダ名までは実在している
 					sLoadInfo.cFilePath = defName.c_str();
 				}
@@ -130,8 +135,10 @@ void CViewCommander::Command_FILEOPEN(const WCHAR *filename, ECodeType nCharCode
 		);
 		if (!bDlgResult) return;
 
-		for (size_t i = 0; i < files.size(); i++) {
-			if (files[i].length() >= _MAX_PATH) {
+		for (size_t i = 0; i < files.size(); i++)
+		{
+			if (files[i].length() >= _MAX_PATH)
+			{
 				ErrorMessage(CEditWnd::getInstance()->GetHwnd(), LS(STR_ERR_FILEPATH_TOO_LONG), files[i].c_str());
 				return;
 			}
@@ -139,7 +146,8 @@ void CViewCommander::Command_FILEOPEN(const WCHAR *filename, ECodeType nCharCode
 		sLoadInfo.cFilePath = files[0].c_str();
 		// 他のファイルは新規ウィンドウ
 		int nSize = (int)files.size();
-		for (int i = 1; i < nSize; i++) {
+		for (int i = 1; i < nSize; i++)
+		{
 			SLoadInfo sFilesLoadInfo = sLoadInfo;
 			sFilesLoadInfo.cFilePath = files[i].c_str();
 			CControlTray::OpenNewEditor(G_AppInstance(), CEditWnd::getInstance()->GetHwnd(), sFilesLoadInfo, NULL,
@@ -166,7 +174,8 @@ bool CViewCommander::Command_FILESAVE(bool warnbeep, bool askname)
 	CEditDoc *pcDoc = GetDocument();
 
 	//ファイル名が指定されていない場合は「名前を付けて保存」のフローへ遷移
-	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()) {
+	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath())
+	{
 		if (!askname) return false; // 保存しない
 		return pcDoc->m_cDocFileOperation.FileSaveAs();
 	}
@@ -237,13 +246,16 @@ void CViewCommander::Command_FILE_REOPEN(
 )
 {
 	CEditDoc *pcDoc = GetDocument();
-	if (!bNoConfirm && fexist(pcDoc->m_cDocFile.GetFilePath()) && pcDoc->m_cDocEditor.IsModified()) {
+	if (!bNoConfirm && fexist(pcDoc->m_cDocFile.GetFilePath()) && pcDoc->m_cDocEditor.IsModified())
+	{
 		int nDlgResult = MYMESSAGEBOX(m_pCommanderView->GetHwnd(), MB_OKCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 									  GSTR_APPNAME, LS(STR_ERR_CEDITVIEW_CMD29), pcDoc->m_cDocFile.GetFilePath());
-		if (IDOK == nDlgResult) {
+		if (IDOK == nDlgResult)
+		{
 			//継続。下へ進む
 		}
-		else {
+		else
+		{
 			return; //中断
 		}
 	}
@@ -317,7 +329,8 @@ void CViewCommander::Command_ACTIVATE_SQLPLUS(void)
 {
 	HWND hwndSQLPLUS;
 	hwndSQLPLUS = ::FindWindow(L"SqlplusWClass", L"Oracle SQL*Plus");
-	if (NULL == hwndSQLPLUS) {
+	if (NULL == hwndSQLPLUS)
+	{
 		ErrorMessage(m_pCommanderView->GetHwnd(),
 					 LS(STR_SQLERR_ACTV_BUT_NOT_RUN)); //"Oracle SQL*Plusをアクティブ表示します。\n\n\nOracle
 													   // SQL*Plusが起動されていません。\n"
@@ -341,25 +354,30 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS(void)
 	BOOL  bResult;
 
 	hwndSQLPLUS = ::FindWindow(L"SqlplusWClass", L"Oracle SQL*Plus");
-	if (NULL == hwndSQLPLUS) {
+	if (NULL == hwndSQLPLUS)
+	{
 		ErrorMessage(m_pCommanderView->GetHwnd(),
 					 LS(STR_SQLERR_EXEC_BUT_NOT_RUN)); //"Oracle SQL*Plusで実行します。\n\n\nOracle
 													   // SQL*Plusが起動されていません。\n"
 		return;
 	}
 	/* テキストが変更されている場合 */
-	if (GetDocument()->m_cDocEditor.IsModified()) {
+	if (GetDocument()->m_cDocEditor.IsModified())
+	{
 		nRet = ::MYMESSAGEBOX(
 			m_pCommanderView->GetHwnd(), MB_YESNOCANCEL | MB_ICONEXCLAMATION, GSTR_APPNAME, LS(STR_ERR_CEDITVIEW_CMD18),
 			GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ? GetDocument()->m_cDocFile.GetFilePath()
 																	   : LS(STR_NO_TITLE1));
-		switch (nRet) {
+		switch (nRet)
+		{
 		case IDYES:
-			if (GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()) {
+			if (GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath())
+			{
 				// nBool = HandleCommand( F_FILESAVE, true, 0, 0, 0, 0 );
 				nBool = Command_FILESAVE();
 			}
-			else {
+			else
+			{
 				// nBool = HandleCommand( F_FILESAVEAS_DIALOG, true, 0, 0, 0, 0 );
 				nBool = Command_FILESAVEAS_DIALOG(NULL, CODE_NONE, EOL_NONE);
 			}
@@ -370,13 +388,13 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS(void)
 		default: return;
 		}
 	}
-	if (GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()) {
+	if (GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath())
+	{
 		/* ファイルパスに空白が含まれている場合はダブルクォーテーションで囲む */
 		//	2003.10.20 MIK コード簡略化
-		if (wcschr(GetDocument()->m_cDocFile.GetFilePath(), TCODE::SPACE) ? TRUE : FALSE) {
-			auto_sprintf(szPath, L"@\"%s\"\r\n", GetDocument()->m_cDocFile.GetFilePath());
-		}
-		else {
+		if (wcschr(GetDocument()->m_cDocFile.GetFilePath(), TCODE::SPACE) ? TRUE : FALSE)
+		{ auto_sprintf(szPath, L"@\"%s\"\r\n", GetDocument()->m_cDocFile.GetFilePath()); } else
+		{
 			auto_sprintf(szPath, L"@%s\r\n", GetDocument()->m_cDocFile.GetFilePath());
 		}
 		/* クリップボードにデータを設定 */
@@ -392,7 +410,8 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS(void)
 									   3000, &dwResult);
 		if (!bResult) { TopErrorMessage(m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD20)); }
 	}
-	else {
+	else
+	{
 		ErrorBeep();
 		ErrorMessage(m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD21));
 		return;
@@ -403,7 +422,8 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS(void)
 /* ブラウズ */
 void CViewCommander::Command_BROWSE(void)
 {
-	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()) {
+	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath())
+	{
 		ErrorBeep();
 		return;
 	}
@@ -443,7 +463,8 @@ void CViewCommander::Command_VIEWMODE(void)
 	// ※ビューモード ON 時は排他制御 OFF、ビューモード OFF 時は排他制御 ON の仕様（>>data:5262）を即時反映する
 	GetDocument()->m_cDocFileOperation.DoFileUnlock(); // ファイルの排他ロック解除
 	GetDocument()->m_cDocLocker.CheckWritable(!CAppMode::getInstance()->IsViewMode()); // ファイル書込可能のチェック
-	if (GetDocument()->m_cDocLocker.IsDocWritable()) {
+	if (GetDocument()->m_cDocLocker.IsDocWritable())
+	{
 		GetDocument()->m_cDocFileOperation.DoFileLock(); // ファイルの排他ロック
 	}
 
@@ -482,7 +503,8 @@ void CViewCommander::Command_PROPERTY_FILE(void)
 void CViewCommander::Command_PROFILEMGR(void)
 {
 	CDlgProfileMgr profMgr;
-	if (profMgr.DoModal(G_AppInstance(), m_pCommanderView->GetHwnd(), 0)) {
+	if (profMgr.DoModal(G_AppInstance(), m_pCommanderView->GetHwnd(), 0))
+	{
 		WCHAR szOpt[MAX_PATH + 10];
 		auto_sprintf(szOpt, L"-PROF=\"%s\"", profMgr.m_strProfileName.c_str());
 		SLoadInfo sLoadInfo;
@@ -496,7 +518,8 @@ void CViewCommander::Command_PROFILEMGR(void)
 /* ファイルの場所を開く */
 void CViewCommander::Command_OPEN_FOLDER_IN_EXPLORER(void)
 {
-	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()) {
+	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath())
+	{
 		ErrorBeep();
 		return;
 	}
@@ -511,7 +534,8 @@ void CViewCommander::Command_OPEN_FOLDER_IN_EXPLORER(void)
 
 	auto hInstance = ::ShellExecute(GetMainWindow(), L"open", L"explorer.exe", pszExplorerCommand, NULL, SW_SHOWNORMAL);
 	// If the function succeeds, it returns a value greater than 32.
-	if (hInstance <= (decltype(hInstance))32) {
+	if (hInstance <= (decltype(hInstance))32)
+	{
 		ErrorBeep();
 		return;
 	}
@@ -522,13 +546,15 @@ void CViewCommander::Command_OPEN_FOLDER_IN_EXPLORER(void)
 /* コマンドプロンプトを開く */
 void CViewCommander::Command_OPEN_COMMAND_PROMPT(BOOL isAdmin)
 {
-	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()) {
+	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath())
+	{
 		ErrorBeep();
 		return;
 	}
 
 	/* UNC パスに対してコマンドプロンプトを開けないので弾く */
-	if (PathIsUNCW(GetDocument()->m_cDocFile.GetFilePath())) {
+	if (PathIsUNCW(GetDocument()->m_cDocFile.GetFilePath()))
+	{
 		ErrorBeep();
 		return;
 	}
@@ -550,7 +576,8 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(BOOL isAdmin)
 
 	/* 環境変数 COMSPEC から cmd.exe のパスを取得する */
 	WCHAR szCmdExePathBuf[MAX_PATH];
-	if (::GetEnvironmentVariableW(L"COMSPEC", szCmdExePathBuf, _countof(szCmdExePathBuf)) == 0) {
+	if (::GetEnvironmentVariableW(L"COMSPEC", szCmdExePathBuf, _countof(szCmdExePathBuf)) == 0)
+	{
 		ErrorBeep();
 		return;
 	}
@@ -570,7 +597,8 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(BOOL isAdmin)
 #endif
 	auto hInstance = ::ShellExecuteW(NULL, pVerb, szCmdExePathBuf, pszcmdExeParam, strFolder.c_str(), SW_SHOWNORMAL);
 	// If the function succeeds, it returns a value greater than 32.
-	if (hInstance <= (decltype(hInstance))32) {
+	if (hInstance <= (decltype(hInstance))32)
+	{
 		ErrorBeep();
 		return;
 	}
@@ -579,7 +607,8 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(BOOL isAdmin)
 /* PowerShellを開く */
 void CViewCommander::Command_OPEN_POWERSHELL(BOOL isAdmin)
 {
-	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()) {
+	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath())
+	{
 		ErrorBeep();
 		return;
 	}
@@ -611,7 +640,8 @@ void CViewCommander::Command_OPEN_POWERSHELL(BOOL isAdmin)
 #endif
 	auto hInstance = ::ShellExecuteW(NULL, pVerb, L"powershell.exe", pszcmdExeParam, strFolder.c_str(), SW_SHOWNORMAL);
 	// If the function succeeds, it returns a value greater than 32.
-	if (hInstance <= (decltype(hInstance))32) {
+	if (hInstance <= (decltype(hInstance))32)
+	{
 		ErrorBeep();
 		return;
 	}
@@ -664,8 +694,10 @@ BOOL CViewCommander::Command_PUTFILE(LPCWSTR   filename,  //!< [in] filename 出
 	bool bBom = false;
 	if (CCodeTypeName(nSaveCharCode).UseBom()) { bBom = GetDocument()->GetDocumentBomExist(); }
 
-	if (nFlgOpt & 0x01) { /* 選択範囲を出力 */
-		try {
+	if (nFlgOpt & 0x01)
+	{ /* 選択範囲を出力 */
+		try
+		{
 			CBinaryOutputStream out(filename, true);
 
 			// 選択範囲の取得 -> cMem
@@ -675,7 +707,8 @@ BOOL CViewCommander::Command_PUTFILE(LPCWSTR   filename,  //!< [in] filename 出
 			// BOM追加
 			CNativeW		cMem2;
 			const CNativeW *pConvBuffer;
-			if (bBom) {
+			if (bBom)
+			{
 				CNativeW				   cmemBom;
 				std::unique_ptr<CCodeBase> pcUtf16(CCodeFactory::CreateCodeBase(CODE_UNICODE, 0));
 				pcUtf16->GetBom(cmemBom._GetMemory());
@@ -684,7 +717,8 @@ BOOL CViewCommander::Command_PUTFILE(LPCWSTR   filename,  //!< [in] filename 出
 				cMem.Clear();
 				pConvBuffer = &cMem2;
 			}
-			else {
+			else
+			{
 				pConvBuffer = &cMem;
 			}
 
@@ -695,21 +729,25 @@ BOOL CViewCommander::Command_PUTFILE(LPCWSTR   filename,  //!< [in] filename 出
 			//書込
 			if (0 < cDst.GetRawLength()) out.Write(cDst.GetRawPtr(), cDst.GetRawLength());
 		}
-		catch (CError_FileOpen) {
+		catch (CError_FileOpen)
+		{
 			WarningMessage(NULL, LS(STR_SAVEAGENT_OTHER_APP), filename);
 			bResult = FALSE;
 		}
-		catch (CError_FileWrite) {
+		catch (CError_FileWrite)
+		{
 			WarningMessage(NULL, LS(STR_ERR_DLGEDITVWCMDNW11));
 			bResult = FALSE;
 		}
 	}
-	else { /* ファイル全体を出力 */
+	else
+	{ /* ファイル全体を出力 */
 		HWND	  hwndProgress;
 		CEditWnd *pCEditWnd = GetEditWindow();
 
 		if (NULL != pCEditWnd) { hwndProgress = pCEditWnd->m_cStatusBar.GetProgressHwnd(); }
-		else {
+		else
+		{
 			hwndProgress = NULL;
 		}
 		if (NULL != hwndProgress) { ::ShowWindow(hwndProgress, SW_SHOW); }
@@ -763,11 +801,13 @@ BOOL CViewCommander::Command_INSFILE(LPCWSTR filename, ECodeType nCharCode, int 
 	if (bBeforeTextSelected) { ptFrom = m_pCommanderView->GetSelectionInfo().m_sSelect.GetFrom(); }
 
 	ECodeType nSaveCharCode = nCharCode;
-	if (nSaveCharCode == CODE_AUTODETECT) {
+	if (nSaveCharCode == CODE_AUTODETECT)
+	{
 		EditInfo	   fi;
 		const CMRUFile cMRU;
 		if (cMRU.GetEditInfo(filename, &fi)) { nSaveCharCode = fi.m_nCharCode; }
-		else {
+		else
+		{
 			nSaveCharCode = GetDocument()->GetDocumentEncoding();
 		}
 	}
@@ -775,7 +815,8 @@ BOOL CViewCommander::Command_INSFILE(LPCWSTR filename, ECodeType nCharCode, int 
 	/* ここまできて文字コードが決定しないならどこかおかしい */
 	if (!IsValidCodeOrCPType(nSaveCharCode)) nSaveCharCode = CODE_SJIS;
 
-	try {
+	try
+	{
 		bool bBigFile;
 #ifdef _WIN64
 		bBigFile = true;
@@ -786,9 +827,11 @@ BOOL CViewCommander::Command_INSFILE(LPCWSTR filename, ECodeType nCharCode, int 
 		cfl.FileOpen(filename, bBigFile, nSaveCharCode, 0);
 
 		/* ファイルサイズが65KBを越えたら進捗ダイアログ表示 */
-		if (0x10000 < cfl.GetFileSize()) {
+		if (0x10000 < cfl.GetFileSize())
+		{
 			pcDlgCancel = new CDlgCancel;
-			if (NULL != (hwndCancel = pcDlgCancel->DoModeless(::GetModuleHandle(NULL), NULL, IDD_OPERATIONRUNNING))) {
+			if (NULL != (hwndCancel = pcDlgCancel->DoModeless(::GetModuleHandle(NULL), NULL, IDD_OPERATIONRUNNING)))
+			{
 				hwndProgress = ::GetDlgItem(hwndCancel, IDC_PROGRESS);
 				Progress_SetRange(hwndProgress, 0, 101);
 				Progress_SetPos(hwndProgress, 0);
@@ -798,7 +841,8 @@ BOOL CViewCommander::Command_INSFILE(LPCWSTR filename, ECodeType nCharCode, int 
 		// ReadLineはファイルから 文字コード変換された1行を読み出します
 		// エラー時はthrow CError_FileRead を投げます
 		CNativeW cBuf;
-		while (RESULT_FAILURE != cfl.ReadLine(&cBuf, &cEol)) {
+		while (RESULT_FAILURE != cfl.ReadLine(&cBuf, &cEol))
+		{
 
 			const wchar_t *pLine	= cBuf.GetStringPtr();
 			int			   nLineLen = cBuf.GetStringLength();
@@ -812,8 +856,10 @@ BOOL CViewCommander::Command_INSFILE(LPCWSTR filename, ECodeType nCharCode, int 
 			if (!::BlockingHook(pcDlgCancel->GetHwnd())) { break; }
 			/* 中断ボタン押下チェック */
 			if (pcDlgCancel->IsCanceled()) { break; }
-			if (0 == (nLineNum & 0xFF)) {
-				if (nOldPercent != cfl.GetPercent()) {
+			if (0 == (nLineNum & 0xFF))
+			{
+				if (nOldPercent != cfl.GetPercent())
+				{
 					Progress_SetPos(hwndProgress, cfl.GetPercent() + 1);
 					Progress_SetPos(hwndProgress, cfl.GetPercent());
 					nOldPercent = cfl.GetPercent();
@@ -824,18 +870,21 @@ BOOL CViewCommander::Command_INSFILE(LPCWSTR filename, ECodeType nCharCode, int 
 		// ファイルを明示的に閉じるが、ここで閉じないときはデストラクタで閉じている
 		cfl.FileClose();
 	} // try
-	catch (CError_FileOpen) {
+	catch (CError_FileOpen)
+	{
 		WarningMessage(NULL, LS(STR_GREP_ERR_FILEOPEN), filename);
 		bResult = FALSE;
 	}
-	catch (CError_FileRead) {
+	catch (CError_FileRead)
+	{
 		WarningMessage(NULL, LS(STR_ERR_DLGEDITVWCMDNW12));
 		bResult = FALSE;
 	} // 例外処理終わり
 
 	delete pcDlgCancel;
 
-	if (bBeforeTextSelected) { // 挿入された部分を選択状態に
+	if (bBeforeTextSelected)
+	{ // 挿入された部分を選択状態に
 		m_pCommanderView->GetSelectionInfo().SetSelectArea(CLayoutRange(ptFrom, GetCaret().GetCaretLayoutPos()
 																		/*
 																		m_nCaretPosY, m_nCaretPosX

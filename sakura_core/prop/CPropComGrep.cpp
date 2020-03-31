@@ -64,7 +64,8 @@ INT_PTR CPropGrep::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 	//	int			nVal;
 	//    LPDRAWITEMSTRUCT pDis;
 
-	switch (uMsg) {
+	switch (uMsg)
+	{
 
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 Grep */
@@ -79,7 +80,8 @@ INT_PTR CPropGrep::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 		pNMHDR = (NMHDR *)lParam;
 		//		switch( idCtrl ){
 		//		default:
-		switch (pNMHDR->code) {
+		switch (pNMHDR->code)
+		{
 		case PSN_HELP: OnHelp(hwndDlg, IDD_PROP_GREP); return TRUE;
 		case PSN_KILLACTIVE:
 			/* ダイアログデータの取得 Grep */
@@ -97,7 +99,8 @@ INT_PTR CPropGrep::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 		break;
 
 		//@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP: {
+	case WM_HELP:
+	{
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -117,7 +120,8 @@ INT_PTR CPropGrep::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 	return FALSE;
 }
 
-struct tagTagJumpMode {
+struct tagTagJumpMode
+{
 	DWORD m_nMethod;
 	DWORD m_nNameID;
 };
@@ -155,7 +159,8 @@ void CPropGrep::SetData(HWND hwndDlg)
 	HWND				  hwndCombo			= ::GetDlgItem(hwndDlg, IDC_COMBO_TAGJUMP);
 	Combo_ResetContent(hwndCombo);
 	int nSelPos = 0;
-	for (int i = 0; i < _countof(TagJumpMode1Arr); ++i) {
+	for (int i = 0; i < _countof(TagJumpMode1Arr); ++i)
+	{
 		Combo_InsertString(hwndCombo, i, LS(TagJumpMode1Arr[i].m_nNameID));
 		Combo_SetItemData(hwndCombo, i, TagJumpMode1Arr[i].m_nMethod);
 		if (TagJumpMode1Arr[i].m_nMethod == m_Common.m_sSearch.m_nTagJumpMode) { nSelPos = i; }
@@ -167,7 +172,8 @@ void CPropGrep::SetData(HWND hwndDlg)
 	hwndCombo = ::GetDlgItem(hwndDlg, IDC_COMBO_KEYWORD_TAGJUMP);
 	Combo_ResetContent(hwndCombo);
 	nSelPos = 0;
-	for (int i = 0; i < _countof(TagJumpMode2Arr); ++i) {
+	for (int i = 0; i < _countof(TagJumpMode2Arr); ++i)
+	{
 		Combo_InsertString(hwndCombo, i, LS(TagJumpMode2Arr[i].m_nNameID));
 		Combo_SetItemData(hwndCombo, i, TagJumpMode2Arr[i].m_nMethod);
 		if (TagJumpMode2Arr[i].m_nMethod == m_Common.m_sSearch.m_nTagJumpModeKeyword) { nSelPos = i; }
@@ -219,7 +225,8 @@ void CPropGrep::SetRegexpVersion(HWND hwndDlg)
 
 	::DlgItem_GetText(hwndDlg, IDC_EDIT_REGEXPLIB, regexp_dll, _countof(regexp_dll));
 	CBregexp breg;
-	if (DLL_SUCCESS != breg.InitDll(regexp_dll)) {
+	if (DLL_SUCCESS != breg.InitDll(regexp_dll))
+	{
 		::DlgItem_SetText(hwndDlg, IDC_LABEL_REGEXP_VER, LS(STR_PROPCOMGREP_DLL));
 		return;
 	}

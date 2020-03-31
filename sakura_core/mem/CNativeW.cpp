@@ -103,7 +103,8 @@ void CNativeW::AppendStringF(const wchar_t *pszFormat, ...)
 	AllocStringBuffer(newCapacity);
 
 	int added = 0;
-	if (additional > 0) {
+	if (additional > 0)
+	{
 		// 追加処理の実体はCRTに委譲。この関数は無効な書式を与えると即死する。
 		added = ::_vsnwprintf_s(&GetStringPtr()[currentLength], additional + 1, _TRUNCATE, pszFormat, v);
 	}
@@ -158,7 +159,8 @@ CNativeW operator+(const wchar_t *lhs, const CNativeW &rhs) noexcept(false)
 wchar_t CNativeW::operator[](int nIndex) const
 {
 	if (nIndex < GetStringLength()) { return GetStringPtr()[nIndex]; }
-	else {
+	else
+	{
 		return 0;
 	}
 }
@@ -222,7 +224,8 @@ bool CNativeW::IsEqual(const CNativeW &cmem1, const CNativeW &cmem2)
 
 	const int nLen1 = cmem1.GetStringLength();
 	const int nLen2 = cmem2.GetStringLength();
-	if (nLen1 == nLen2) {
+	if (nLen1 == nLen2)
+	{
 		const wchar_t *psz1 = cmem1.GetStringPtr();
 		const wchar_t *psz2 = cmem2.GetStringPtr();
 		if (0 == wmemcmp(psz1, psz2, nLen1)) { return true; }
@@ -287,25 +290,28 @@ void CNativeW::Replace(const wchar_t *pszFrom, int nFromLen, const wchar_t *pszT
 	CNativeW cmemWork;
 	int		 nBgnOld = 0;
 	int		 nBgn	= 0;
-	while (nBgn <= GetStringLength() - nFromLen) {
-		if (0 == wmemcmp(&GetStringPtr()[nBgn], pszFrom, nFromLen)) {
+	while (nBgn <= GetStringLength() - nFromLen)
+	{
+		if (0 == wmemcmp(&GetStringPtr()[nBgn], pszFrom, nFromLen))
+		{
 			if (nBgnOld == 0 && nFromLen <= nToLen) { cmemWork.AllocStringBuffer(GetStringLength()); }
 			if (0 < nBgn - nBgnOld) { cmemWork.AppendString(&GetStringPtr()[nBgnOld], nBgn - nBgnOld); }
 			cmemWork.AppendString(pszTo, nToLen);
 			nBgn	= nBgn + nFromLen;
 			nBgnOld = nBgn;
 		}
-		else {
+		else
+		{
 			nBgn++;
 		}
 	}
-	if (nBgnOld != 0) {
-		if (0 < GetStringLength() - nBgnOld) {
-			cmemWork.AppendString(&GetStringPtr()[nBgnOld], GetStringLength() - nBgnOld);
-		}
-		SetNativeData(cmemWork);
+	if (nBgnOld != 0)
+	{
+		if (0 < GetStringLength() - nBgnOld)
+		{ cmemWork.AppendString(&GetStringPtr()[nBgnOld], GetStringLength() - nBgnOld); } SetNativeData(cmemWork);
 	}
-	else {
+	else
+	{
 		if (this->GetStringPtr() == NULL) { this->SetString(L""); }
 	}
 }
@@ -320,8 +326,10 @@ CLogicInt CNativeW::GetSizeOfChar(const wchar_t *pData, int nDataLen, int nIdx)
 	if (nIdx >= nDataLen) return CLogicInt(0);
 
 	// サロゲートチェック					2008/7/5 Uchi
-	if (IsUTF16High(pData[nIdx])) {
-		if (nIdx + 1 < nDataLen && IsUTF16Low(pData[nIdx + 1])) {
+	if (IsUTF16High(pData[nIdx]))
+	{
+		if (nIdx + 1 < nDataLen && IsUTF16Low(pData[nIdx + 1]))
+		{
 			// サロゲートペア 2個分
 			return CLogicInt(2);
 		}
@@ -337,11 +345,14 @@ CKetaXInt CNativeW::GetKetaOfChar(const wchar_t *pData, int nDataLen, int nIdx)
 	if (nIdx >= nDataLen) return CKetaXInt(0);
 
 	// サロゲートチェック BMP 以外は全角扱い		2008/7/5 Uchi
-	if (IsUTF16High(pData[nIdx])) {
+	if (IsUTF16High(pData[nIdx]))
+	{
 		return CKetaXInt(2); // 仮
 	}
-	if (IsUTF16Low(pData[nIdx])) {
-		if (nIdx > 0 && IsUTF16High(pData[nIdx - 1])) {
+	if (IsUTF16Low(pData[nIdx]))
+	{
+		if (nIdx > 0 && IsUTF16High(pData[nIdx - 1]))
+		{
 			// サロゲートペア（下位）
 			return CKetaXInt(0);
 		}
@@ -367,15 +378,12 @@ CHabaXInt CNativeW::GetHabaOfChar(const wchar_t *pData, int nDataLen, int nIdx)
 	//文字列範囲外なら 0
 	if (nIdx >= nDataLen) { return CHabaXInt(0); }
 	// HACK:改行コードに対して1を返す
-	if (WCODE::IsLineDelimiter(pData[nIdx], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol)) {
-		return CHabaXInt(1);
-	}
-
-	// サロゲートチェック
-	if (IsUTF16High(pData[nIdx]) && nIdx + 1 < nDataLen && IsUTF16Low(pData[nIdx + 1])) {
-		return CHabaXInt(WCODE::CalcPxWidthByFont2(pData + nIdx));
-	}
-	else if (IsUTF16Low(pData[nIdx]) && 0 < nIdx && IsUTF16High(pData[nIdx - 1])) {
+	if (WCODE::IsLineDelimiter(pData[nIdx], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol))
+	{ return CHabaXInt(1); } // サロゲートチェック
+	if (IsUTF16High(pData[nIdx]) && nIdx + 1 < nDataLen && IsUTF16Low(pData[nIdx + 1]))
+	{ return CHabaXInt(WCODE::CalcPxWidthByFont2(pData + nIdx)); }
+	else if (IsUTF16Low(pData[nIdx]) && 0 < nIdx && IsUTF16High(pData[nIdx - 1]))
+	{
 		// サロゲートペア（下位）
 		return CHabaXInt(0); // 不正位置
 	}
@@ -391,7 +399,8 @@ const wchar_t *CNativeW::GetCharNext(const wchar_t *pData, int nDataLen, const w
 	if (pNext >= &pData[nDataLen]) { return &pData[nDataLen]; }
 
 	// サロゲートペア対応	2008/7/6 Uchi
-	if (IsUTF16High(*pDataCurrent)) {
+	if (IsUTF16High(*pDataCurrent))
+	{
 		if (IsUTF16Low(*pNext)) { pNext += 1; }
 	}
 
@@ -406,7 +415,8 @@ const wchar_t *CNativeW::GetCharPrev(const wchar_t *pData, int nDataLen, const w
 	if (pPrev <= pData) { return pData; }
 
 	// サロゲートペア対応	2008/7/6 Uchi
-	if (IsUTF16Low(*pPrev)) {
+	if (IsUTF16Low(*pPrev))
+	{
 		if (IsUTF16High(*(pPrev - 1))) { pPrev -= 1; }
 	}
 

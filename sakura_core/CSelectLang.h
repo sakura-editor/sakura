@@ -18,10 +18,12 @@
 
 #define MAX_SELLANG_NAME_STR 128 // メッセージリソースの言語名の最大文字列長（サイズは適当）
 
-class CSelectLang {
+class CSelectLang
+{
 public:
 	// メッセージリソース用構造体
-	struct SSelLangInfo {
+	struct SSelLangInfo
+	{
 		WCHAR	 szDllName[MAX_PATH];				// メッセージリソースDLLのファイル名
 		WCHAR	 szLangName[MAX_SELLANG_NAME_STR]; // 言語名
 		HINSTANCE hInstance;						// 読み込んだリソースのインスタンスハンドル
@@ -72,10 +74,12 @@ private:
 
 #define LOADSTR_ADD_SIZE 256 // 文字列リソース用バッファの初期または追加サイズ（TCHAR単位）
 
-class CLoadString {
+class CLoadString
+{
 protected:
 	// 文字列リソース読み込み用バッファクラス
-	class CLoadStrBuffer {
+	class CLoadStrBuffer
+	{
 	public:
 		CLoadStrBuffer()
 		{

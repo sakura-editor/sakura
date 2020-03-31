@@ -26,14 +26,16 @@ struct SLoadInfo; // doc/CDocListener.h
 struct SSaveInfo; // doc/CDocListener.h
 
 /*! フィルタ設定 */
-enum EFilter {
+enum EFilter
+{
 	EFITER_NONE,  //!< なし
 	EFITER_TEXT,  //!< テキスト
 	EFITER_MACRO, //!< マクロ
 	EFITER_MAX,
 };
 
-class IDlgOpenFile {
+class IDlgOpenFile
+{
 public:
 	virtual void Create(HINSTANCE hInstance, HWND hwndParent, const WCHAR *pszUserWildCard, const WCHAR *pszDefaultPath,
 						const std::vector<LPCWSTR> &vMRU		= std::vector<LPCWSTR>(),
@@ -63,7 +65,8 @@ public:
 
 /*!	ファイルオープンダイアログボックス
  */
-class CDlgOpenFile final : public IDlgOpenFile {
+class CDlgOpenFile final : public IDlgOpenFile
+{
 public:
 	//コンストラクタ・デストラクタ
 	CDlgOpenFile();

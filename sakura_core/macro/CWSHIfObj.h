@@ -46,7 +46,8 @@ class CEditView;
  *   3. 新しいIfObjを作る時はCWSHIfObjを継承し、以下の4つをオーバーライドすること。
  *      GetMacroCommandInfo, GetMacroFuncInfo, HandleCommand, HandleFunction
  */
-class CWSHIfObj : public CIfObj {
+class CWSHIfObj : public CIfObj
+{
 public:
 	// 型定義
 	typedef std::list<CWSHIfObj *> List;

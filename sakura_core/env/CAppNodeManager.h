@@ -30,7 +30,8 @@
 class CAppNodeGroupHandle;
 
 //! 編集ウィンドウノード
-struct EditNode {
+struct EditNode
+{
 	int		  m_nIndex;
 	int		  m_nGroup; //!< グループID								//@@@ 2007.06.20 ryoji
 	HWND	  m_hWnd;
@@ -62,13 +63,15 @@ struct EditNode {
 };
 
 //! 拡張構造体
-struct EditNodeEx {
+struct EditNodeEx
+{
 	EditNode *p;		 //!< 編集ウィンドウ配列要素へのポインタ
 	int		  nGroupMru; //!< グループ単位のMRU番号
 };
 
 //! 共有メモリ内構造体
-struct SShare_Nodes {
+struct SShare_Nodes
+{
 	int		 m_nEditArrNum;				  // short->intに修正	//@@@ 2003.05.31 MIK
 	EditNode m_pEditArr[MAX_EDITWINDOWS]; //最大値修正	@@@ 2003.05.31 MIK
 	LONG	 m_nSequences;				  /* ウィンドウ連番 */
@@ -77,7 +80,8 @@ struct SShare_Nodes {
 };
 
 //! ノードアクセサ
-class CAppNodeHandle {
+class CAppNodeHandle
+{
 public:
 	CAppNodeHandle(HWND hwnd);
 	EditNode *operator->() { return m_pNodeRef; }
@@ -87,7 +91,8 @@ private:
 };
 
 //! グループアクセサ
-class CAppNodeGroupHandle {
+class CAppNodeGroupHandle
+{
 public:
 	CAppNodeGroupHandle(int nGroupId)
 		: m_nGroup(nGroupId)
@@ -122,7 +127,8 @@ private:
 	int m_nGroup;
 };
 
-class CAppNodeManager : public TSingleton<CAppNodeManager> {
+class CAppNodeManager : public TSingleton<CAppNodeManager>
+{
 	friend class TSingleton<CAppNodeManager>;
 	CAppNodeManager() {}
 

@@ -63,7 +63,8 @@ static BOOL s_isImmOpenBkup;
 // IMEを使用したくないコントロールのID判定
 static bool isImeUndesirable(int id)
 {
-	switch (id) {
+	switch (id)
+	{
 	case IDC_EDIT_SHORTMAXWIDTH: return true;
 	default: return false;
 	}
@@ -74,12 +75,14 @@ INT_PTR CALLBACK CPropFileName::DlgProc_page(HWND hwndDlg, UINT uMsg, WPARAM wPa
 	WORD wNotifyCode;
 	WORD wID;
 	HWND hwndCtl;
-	switch (uMsg) {
+	switch (uMsg)
+	{
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam); /* 通知コード */
 		wID			= LOWORD(wParam); /* 項目ID､ コントロールID､ またはアクセラレータID */
 		hwndCtl		= (HWND)lParam;   /* コントロールのハンドル */
-		switch (wNotifyCode) {
+		switch (wNotifyCode)
+		{
 		case EN_SETFOCUS:
 			if (isImeUndesirable(wID)) ImeSetOpen(hwndCtl, FALSE, &s_isImmOpenBkup);
 			break;
@@ -100,9 +103,11 @@ INT_PTR CPropFileName::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
 	WCHAR szFrom[_MAX_PATH];
 	WCHAR szTo[_MAX_PATH];
 
-	switch (uMsg) {
+	switch (uMsg)
+	{
 
-	case WM_INITDIALOG: {
+	case WM_INITDIALOG:
+	{
 		RECT	  rc;
 		LV_COLUMN col;
 		hListView = GetDlgItem(hwndDlg, IDC_LIST_FNAME);
@@ -137,27 +142,33 @@ INT_PTR CPropFileName::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
 	}
 		return TRUE;
 
-	case WM_NOTIFY: {
+	case WM_NOTIFY:
+	{
 		NMHDR *pNMHDR = (NMHDR *)lParam;
 		int	idCtrl = (int)wParam;
 
-		switch (idCtrl) {
+		switch (idCtrl)
+		{
 		case IDC_LIST_FNAME:
-			switch (pNMHDR->code) {
+			switch (pNMHDR->code)
+			{
 			case LVN_ITEMCHANGED:
 				hListView = GetDlgItem(hwndDlg, IDC_LIST_FNAME);
 				nIndex	= ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
 				// 未選択
-				if (-1 == nIndex) {
+				if (-1 == nIndex)
+				{
 					::DlgItem_SetText(hwndDlg, IDC_EDIT_FNAME_FROM, L"");
 					::DlgItem_SetText(hwndDlg, IDC_EDIT_FNAME_TO, L"");
 				}
-				else if (nIndex != m_nLastPos_FILENAME) {
+				else if (nIndex != m_nLastPos_FILENAME)
+				{
 					GetListViewItem_FILENAME(hListView, nIndex, szFrom, szTo);
 					::DlgItem_SetText(hwndDlg, IDC_EDIT_FNAME_FROM, szFrom);
 					::DlgItem_SetText(hwndDlg, IDC_EDIT_FNAME_TO, szTo);
 				}
-				else {
+				else
+				{
 					// nIndex == m_nLastPos_FILENAMEのとき
 					// リスト→エディットボックスにデータをコピーすると[更新]がうまくうまく動作しない
 				}
@@ -166,7 +177,8 @@ INT_PTR CPropFileName::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
 			}
 			break;
 		default:
-			switch (pNMHDR->code) {
+			switch (pNMHDR->code)
+			{
 			case PSN_HELP: OnHelp(hwndDlg, IDD_PROP_FNAME); return TRUE;
 			case PSN_KILLACTIVE:
 				// ダイアログデータの取得
@@ -177,23 +189,28 @@ INT_PTR CPropFileName::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
 			}
 			break;
 		}
-	} break;
+	}
+	break;
 
-	case WM_COMMAND: {
+	case WM_COMMAND:
+	{
 		WORD wNotifyCode = HIWORD(wParam); // 通知コード
 		WORD wID		 = LOWORD(wParam); // 項目ID､ コントロールID､ またはアクセラレータID
 		int  nCount;
 
-		switch (wNotifyCode) {
+		switch (wNotifyCode)
+		{
 		// ボタンがクリックされた
 		case BN_CLICKED:
 			hListView = GetDlgItem(hwndDlg, IDC_LIST_FNAME);
 			nIndex	= ListView_GetNextItem(hListView, -1, LVNI_SELECTED);
-			switch (wID) {
+			switch (wID)
+			{
 			case IDC_BUTTON_FNAME_INS: // 挿入
 				// 選択中のキーを探す
 				nCount = ListView_GetItemCount(hListView);
-				if (-1 == nIndex) {
+				if (-1 == nIndex)
+				{
 					// 選択中でなければ最後に追加
 					nIndex = nCount;
 				}
@@ -212,20 +229,24 @@ INT_PTR CPropFileName::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
 				break;
 
 			case IDC_BUTTON_FNAME_UPD: // 更新
-				if (-1 != nIndex) {
+				if (-1 != nIndex)
+				{
 					::DlgItem_GetText(hwndDlg, IDC_EDIT_FNAME_FROM, szFrom, _MAX_PATH);
 					::DlgItem_GetText(hwndDlg, IDC_EDIT_FNAME_TO, szTo, _MAX_PATH);
 					if (-1 != SetListViewItem_FILENAME(hListView, nIndex, szFrom, szTo, false)) { return TRUE; }
 				}
-				else {
+				else
+				{
 					// 未選択でリストにひとつも項目がない場合は追加しておく
-					if (0 == ListView_GetItemCount(hListView)) {
+					if (0 == ListView_GetItemCount(hListView))
+					{
 						if (-1 != SetListViewItem_FILENAME(hListView, 0, szFrom, szTo, true)) { return TRUE; }
 					}
 				}
 				break;
 			case IDC_BUTTON_FNAME_DEL: // 削除
-				if (-1 != nIndex) {
+				if (-1 != nIndex)
+				{
 					ListView_DeleteItem(hListView, nIndex); //古いキーを削除
 					ListView_SetItemState(hListView, nIndex, LVIS_SELECTED | LVIS_FOCUSED,
 										  LVIS_SELECTED | LVIS_FOCUSED);
@@ -253,8 +274,9 @@ INT_PTR CPropFileName::DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
 	}
 
 	break; /* WM_COMMAND */
-		   //@@@ 2001.02.04 Start by MIK: Popup Help
-	case WM_HELP: {
+		//@@@ 2001.02.04 Start by MIK: Popup Help
+	case WM_HELP:
+	{
 		HELPINFO *p = (HELPINFO *)lParam;
 		MyWinHelp((HWND)p->hItemHandle, HELP_WM_HELP,
 				  (ULONG_PTR)(LPVOID)p_helpids); // 2006.10.10 ryoji MyWinHelpに変更に変更
@@ -291,7 +313,8 @@ void CPropFileName::SetData(HWND hwndDlg)
 	ListView_DeleteAllItems(hListView); // リストを空にする
 
 	// リストにデータをセット
-	for (i = 0, nIndex = 0; i < m_Common.m_sFileName.m_nTransformFileNameArrNum; i++) {
+	for (i = 0, nIndex = 0; i < m_Common.m_sFileName.m_nTransformFileNameArrNum; i++)
+	{
 		if ('\0' == m_Common.m_sFileName.m_szTransformFileNameFrom[i][0]) continue;
 
 		::ZeroMemory(&lvItem, sizeof_raw(lvItem));
@@ -312,9 +335,8 @@ void CPropFileName::SetData(HWND hwndDlg)
 	}
 
 	// 一番上を選択しておく
-	if (0 != nIndex) {
-		ListView_SetItemState(hListView, 0, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
-	}
+	if (0 != nIndex)
+	{ ListView_SetItemState(hListView, 0, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED); }
 	//	リストビューの行選択を可能にする．
 	DWORD dwStyle;
 	dwStyle = ListView_GetExtendedListViewStyle(hListView);
@@ -342,22 +364,24 @@ int CPropFileName::GetData(HWND hwndDlg)
 	HWND hListView									= ::GetDlgItem(hwndDlg, IDC_LIST_FNAME);
 	m_Common.m_sFileName.m_nTransformFileNameArrNum = ListView_GetItemCount(hListView);
 
-	for (nIndex = 0, nCount = 0; nIndex < MAX_TRANSFORM_FILENAME; ++nIndex) {
-		if (nIndex < m_Common.m_sFileName.m_nTransformFileNameArrNum) {
+	for (nIndex = 0, nCount = 0; nIndex < MAX_TRANSFORM_FILENAME; ++nIndex)
+	{
+		if (nIndex < m_Common.m_sFileName.m_nTransformFileNameArrNum)
+		{
 			ListView_GetItemText(hListView, nIndex, 0, m_Common.m_sFileName.m_szTransformFileNameFrom[nCount],
 								 _MAX_PATH);
 
 			// 置換前文字列がNULLだったら捨てる
-			if (L'\0' == m_Common.m_sFileName.m_szTransformFileNameFrom[nCount][0]) {
-				m_Common.m_sFileName.m_szTransformFileNameTo[nIndex][0] = L'\0';
-			}
-			else {
+			if (L'\0' == m_Common.m_sFileName.m_szTransformFileNameFrom[nCount][0])
+			{ m_Common.m_sFileName.m_szTransformFileNameTo[nIndex][0] = L'\0'; } else
+			{
 				ListView_GetItemText(hListView, nIndex, 1, m_Common.m_sFileName.m_szTransformFileNameTo[nCount],
 									 _MAX_PATH);
 				nCount++;
 			}
 		}
-		else {
+		else
+		{
 			m_Common.m_sFileName.m_szTransformFileNameFrom[nIndex][0] = L'\0';
 			m_Common.m_sFileName.m_szTransformFileNameTo[nIndex][0]   = L'\0';
 		}
@@ -376,7 +400,8 @@ int CPropFileName::SetListViewItem_FILENAME(HWND hListView, int nIndex, LPWSTR s
 	nCount = ListView_GetItemCount(hListView);
 
 	// これ以上追加できない
-	if (bInsMode && MAX_TRANSFORM_FILENAME <= nCount) {
+	if (bInsMode && MAX_TRANSFORM_FILENAME <= nCount)
+	{
 		ErrorMessage(GetParent(hListView), LS(STR_PROPCOMFNM_ERR_REG));
 		return -1;
 	}
@@ -387,7 +412,8 @@ int CPropFileName::SetListViewItem_FILENAME(HWND hListView, int nIndex, LPWSTR s
 	Item.iSubItem = 0;
 	Item.pszText  = szFrom;
 	if (bInsMode) { ListView_InsertItem(hListView, &Item); }
-	else {
+	else
+	{
 		ListView_SetItem(hListView, &Item);
 	}
 

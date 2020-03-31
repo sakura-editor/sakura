@@ -77,7 +77,8 @@ inline void SetDllShareData(DLLSHAREDATA *pShareData)
 #include "types/CType.h"		   // STypeConfig
 
 //! 共有フラグ
-struct SShare_Flags {
+struct SShare_Flags
+{
 	BOOL m_bEditWndChanging; // 編集ウィンドウ切替中	// 2007.04.03 ryoji
 	/*	@@@ 2002.1.24 YAZAKI
 		キーボードマクロは、記録終了した時点でファイル「m_szKeyMacroFileName」に書き出すことにする。
@@ -88,7 +89,8 @@ struct SShare_Flags {
 };
 
 //! 共有ワークバッファ
-struct SShare_WorkBuffer {
+struct SShare_WorkBuffer
+{
 	// 2007.09.16 kobake char型だと、常に文字列であるという誤解を招くので、BYTE型に変更。変数名も変更。
 	//           UNICODE版では、余分に領域を使うことが予想されるため、ANSI版の2倍確保。
 private:
@@ -114,14 +116,16 @@ public:
 };
 
 //! 共有ハンドル
-struct SShare_Handles {
+struct SShare_Handles
+{
 	HWND   m_hwndTray;
 	HWND   m_hwndDebug;
 	HACCEL m_hAccel;
 };
 
 //! EXE情報
-struct SShare_Version {
+struct SShare_Version
+{
 	DWORD m_dwProductVersionMS;
 	DWORD m_dwProductVersionLS;
 };
@@ -130,7 +134,8 @@ struct SShare_Version {
 //                   共有メモリ構造体本体                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-struct DLLSHAREDATA {
+struct DLLSHAREDATA
+{
 	// -- -- バージョン -- -- //
 	/*!
 		データ構造 Version	//	Oct. 27, 2000 genta
@@ -182,7 +187,8 @@ struct DLLSHAREDATA {
 	bool m_bLineNumIsCRLF_ForJump; /* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
 };
 
-class CShareDataLockCounter {
+class CShareDataLockCounter
+{
 public:
 	CShareDataLockCounter();
 	~CShareDataLockCounter();

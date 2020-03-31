@@ -75,7 +75,8 @@ bool CShareData_IO::ShareData_IO_2(bool bRead)
 
 	// Feb. 12, 2006 D.S.Koba
 	if (bRead) { cProfile.SetReadingMode(); }
-	else {
+	else
+	{
 		cProfile.SetWritingMode();
 	}
 
@@ -86,12 +87,15 @@ bool CShareData_IO::ShareData_IO_2(bool bRead)
 
 	//	MYTRACE( L"Iniファイル処理-1 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
 
-	if (bRead) {
-		if (!cProfile.ReadProfile(szIniFileName)) {
+	if (bRead)
+	{
+		if (!cProfile.ReadProfile(szIniFileName))
+		{
 			/* 設定ファイルが存在しない */
 			LANGID langId = GetUserDefaultUILanguage();
 			// Windowsの表示言語が日本語でない場合は言語設定を英語にする
-			if (langId != MAKELANGID(LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN)) {
+			if (langId != MAKELANGID(LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN))
+			{
 				DLLSHAREDATA *pShareData = &GetDllShareData();
 				wcscpy(pShareData->m_Common.m_sWindow.m_szLanguageDll, L"sakura_lang_en_US.dll");
 				cProfile.IOProfileData(L"Common", L"szLanguageDll",
@@ -113,7 +117,8 @@ bool CShareData_IO::ShareData_IO_2(bool bRead)
 		DLLSHAREDATA *pShareData = &GetDllShareData();
 		if (pShareData->m_sVersion.m_dwProductVersionMS > dwMS
 			|| (pShareData->m_sVersion.m_dwProductVersionMS == dwMS
-				&& pShareData->m_sVersion.m_dwProductVersionLS > dwLS)) {
+				&& pShareData->m_sVersion.m_dwProductVersionLS > dwLS))
+		{
 			WCHAR szBkFileName[_countof(szIniFileName) + 4];
 			::lstrcpy(szBkFileName, szIniFileName);
 			::lstrcat(szBkFileName, L".bak");
@@ -124,7 +129,8 @@ bool CShareData_IO::ShareData_IO_2(bool bRead)
 
 	CMenuDrawer *pcMenuDrawer = new CMenuDrawer; // 2010/7/4 Uchi
 
-	if (bRead) {
+	if (bRead)
+	{
 		DLLSHAREDATA *pShareData = &GetDllShareData();
 		cProfile.IOProfileData(L"Common", L"szLanguageDll",
 							   MakeStringBufferW(pShareData->m_Common.m_sWindow.m_szLanguageDll));
@@ -156,12 +162,11 @@ bool CShareData_IO::ShareData_IO_2(bool bRead)
 	delete pcMenuDrawer; // 2010/7/4 Uchi
 	pcMenuDrawer = NULL;
 
-	if (!bRead) {
+	if (!bRead)
+	{
 		// 2014.12.08 sakura.iniの読み取り専用
-		if (!GetDllShareData().m_Common.m_sOthers.m_bIniReadOnly) {
-			cProfile.WriteProfile(szIniFileName, LTEXT(" sakura.ini テキストエディタ設定ファイル"));
-		}
-	}
+		if (!GetDllShareData().m_Common.m_sOthers.m_bIniReadOnly)
+		{ cProfile.WriteProfile(szIniFileName, LTEXT(" sakura.ini テキストエディタ設定ファイル")); } }
 
 	//	MYTRACE( L"Iniファイル処理 8 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
 	//	MYTRACE( L"Iniファイル処理 所要時間(ミリ秒) = %d\n", cRunningTimerStart.Read() );
@@ -188,7 +193,8 @@ void CShareData_IO::ShareData_IO_Mru(CDataProfile &cProfile)
 	cProfile.IOProfileData(pszSecName, LTEXT("_MRU_Counts"), pShare->m_sHistory.m_nMRUArrNum);
 	SetValueLimit(pShare->m_sHistory.m_nMRUArrNum, MAX_MRU);
 	nSize = pShare->m_sHistory.m_nMRUArrNum;
-	for (i = 0; i < nSize; ++i) {
+	for (i = 0; i < nSize; ++i)
+	{
 		pfiWork = &pShare->m_sHistory.m_fiMRUArr[i];
 		if (cProfile.IsReadingMode()) { pfiWork->m_nTypeId = -1; }
 		auto_sprintf(szKeyName, LTEXT("MRU[%02d].nViewTopLine"), i);
@@ -204,8 +210,10 @@ void CShareData_IO::ShareData_IO_Mru(CDataProfile &cProfile)
 		auto_sprintf(szKeyName, LTEXT("MRU[%02d].szPath"), i);
 		cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(pfiWork->m_szPath));
 		auto_sprintf(szKeyName, LTEXT("MRU[%02d].szMark2"), i);
-		if (!cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(pfiWork->m_szMarkLines))) {
-			if (cProfile.IsReadingMode()) {
+		if (!cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(pfiWork->m_szMarkLines)))
+		{
+			if (cProfile.IsReadingMode())
+			{
 				auto_sprintf(szKeyName, LTEXT("MRU[%02d].szMark"), i); // 旧ver互換
 				cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(pfiWork->m_szMarkLines));
 			}
@@ -217,7 +225,8 @@ void CShareData_IO::ShareData_IO_Mru(CDataProfile &cProfile)
 		cProfile.IOProfileData(pszSecName, szKeyName, pShare->m_sHistory.m_bMRUArrFavorite[i]);
 	}
 	//@@@ 2001.12.26 YAZAKI 残りのm_fiMRUArrを初期化。
-	if (cProfile.IsReadingMode()) {
+	if (cProfile.IsReadingMode())
+	{
 		EditInfo fiInit;
 		//	残りをfiInitで初期化しておく。
 		fiInit.m_nCharCode	= CODE_DEFAULT;
@@ -226,7 +235,8 @@ void CShareData_IO::ShareData_IO_Mru(CDataProfile &cProfile)
 		fiInit.m_ptCursor.Set(CLogicInt(0), CLogicInt(0));
 		fiInit.m_szPath[0]		= L'\0';
 		fiInit.m_szMarkLines[0] = L'\0'; // 2002.01.16 hor
-		for (; i < MAX_MRU; ++i) {
+		for (; i < MAX_MRU; ++i)
+		{
 			pShare->m_sHistory.m_fiMRUArr[i]		= fiInit;
 			pShare->m_sHistory.m_bMRUArrFavorite[i] = false; //お気に入り	//@@@ 2003.04.08 MIK
 		}
@@ -235,7 +245,8 @@ void CShareData_IO::ShareData_IO_Mru(CDataProfile &cProfile)
 	cProfile.IOProfileData(pszSecName, LTEXT("_MRUFOLDER_Counts"), pShare->m_sHistory.m_nOPENFOLDERArrNum);
 	SetValueLimit(pShare->m_sHistory.m_nOPENFOLDERArrNum, MAX_OPENFOLDER);
 	nSize = pShare->m_sHistory.m_nOPENFOLDERArrNum;
-	for (i = 0; i < nSize; ++i) {
+	for (i = 0; i < nSize; ++i)
+	{
 		auto_sprintf(szKeyName, LTEXT("MRUFOLDER[%02d]"), i);
 		cProfile.IOProfileData(pszSecName, szKeyName, pShare->m_sHistory.m_szOPENFOLDERArr[i]);
 		//お気に入り	//@@@ 2003.04.08 MIK
@@ -243,8 +254,10 @@ void CShareData_IO::ShareData_IO_Mru(CDataProfile &cProfile)
 		cProfile.IOProfileData(pszSecName, szKeyName, pShare->m_sHistory.m_bOPENFOLDERArrFavorite[i]);
 	}
 	//読み込み時は残りを初期化
-	if (cProfile.IsReadingMode()) {
-		for (; i < MAX_OPENFOLDER; ++i) {
+	if (cProfile.IsReadingMode())
+	{
+		for (; i < MAX_OPENFOLDER; ++i)
+		{
 			// 2005.04.05 D.S.Koba
 			pShare->m_sHistory.m_szOPENFOLDERArr[i][0]	 = L'\0';
 			pShare->m_sHistory.m_bOPENFOLDERArrFavorite[i] = false; //お気に入り	//@@@ 2003.04.08 MIK
@@ -254,7 +267,8 @@ void CShareData_IO::ShareData_IO_Mru(CDataProfile &cProfile)
 	cProfile.IOProfileData(pszSecName, LTEXT("_ExceptMRU_Counts"), pShare->m_sHistory.m_aExceptMRU._GetSizeRef());
 	pShare->m_sHistory.m_aExceptMRU.SetSizeLimit();
 	nSize = pShare->m_sHistory.m_aExceptMRU.size();
-	for (i = 0; i < nSize; ++i) {
+	for (i = 0; i < nSize; ++i)
+	{
 		auto_sprintf(szKeyName, LTEXT("ExceptMRU[%02d]"), i);
 		cProfile.IOProfileData(pszSecName, szKeyName, pShare->m_sHistory.m_aExceptMRU[i]);
 	}
@@ -279,7 +293,8 @@ void CShareData_IO::ShareData_IO_Keys(CDataProfile &cProfile)
 						   pShare->m_sSearchKeywords.m_aSearchKeys._GetSizeRef());
 	pShare->m_sSearchKeywords.m_aSearchKeys.SetSizeLimit();
 	nSize = pShare->m_sSearchKeywords.m_aSearchKeys.size();
-	for (i = 0; i < nSize; ++i) {
+	for (i = 0; i < nSize; ++i)
+	{
 		auto_sprintf(szKeyName, LTEXT("SEARCHKEY[%02d]"), i);
 		cProfile.IOProfileData(pszSecName, szKeyName, pShare->m_sSearchKeywords.m_aSearchKeys[i]);
 	}
@@ -288,7 +303,8 @@ void CShareData_IO::ShareData_IO_Keys(CDataProfile &cProfile)
 						   pShare->m_sSearchKeywords.m_aReplaceKeys._GetSizeRef());
 	pShare->m_sSearchKeywords.m_aReplaceKeys.SetSizeLimit();
 	nSize = pShare->m_sSearchKeywords.m_aReplaceKeys.size();
-	for (i = 0; i < nSize; ++i) {
+	for (i = 0; i < nSize; ++i)
+	{
 		auto_sprintf(szKeyName, LTEXT("REPLACEKEY[%02d]"), i);
 		cProfile.IOProfileData(pszSecName, szKeyName, pShare->m_sSearchKeywords.m_aReplaceKeys[i]);
 	}
@@ -312,7 +328,8 @@ void CShareData_IO::ShareData_IO_Grep(CDataProfile &cProfile)
 	cProfile.IOProfileData(pszSecName, LTEXT("_GREPFILE_Counts"), pShare->m_sSearchKeywords.m_aGrepFiles._GetSizeRef());
 	pShare->m_sSearchKeywords.m_aGrepFiles.SetSizeLimit();
 	nSize = pShare->m_sSearchKeywords.m_aGrepFiles.size();
-	for (i = 0; i < nSize; ++i) {
+	for (i = 0; i < nSize; ++i)
+	{
 		auto_sprintf(szKeyName, LTEXT("GREPFILE[%02d]"), i);
 		cProfile.IOProfileData(pszSecName, szKeyName, pShare->m_sSearchKeywords.m_aGrepFiles[i]);
 	}
@@ -321,7 +338,8 @@ void CShareData_IO::ShareData_IO_Grep(CDataProfile &cProfile)
 						   pShare->m_sSearchKeywords.m_aGrepFolders._GetSizeRef());
 	pShare->m_sSearchKeywords.m_aGrepFolders.SetSizeLimit();
 	nSize = pShare->m_sSearchKeywords.m_aGrepFolders.size();
-	for (i = 0; i < nSize; ++i) {
+	for (i = 0; i < nSize; ++i)
+	{
 		auto_sprintf(szKeyName, LTEXT("GREPFOLDER[%02d]"), i);
 		cProfile.IOProfileData(pszSecName, szKeyName, pShare->m_sSearchKeywords.m_aGrepFolders[i]);
 	}
@@ -331,7 +349,8 @@ void CShareData_IO::ShareData_IO_Grep(CDataProfile &cProfile)
 						   pShare->m_sSearchKeywords.m_aExcludeFiles._GetSizeRef());
 	pShare->m_sSearchKeywords.m_aExcludeFiles.SetSizeLimit();
 	nSize = pShare->m_sSearchKeywords.m_aExcludeFiles.size();
-	for (i = 0; i < nSize; ++i) {
+	for (i = 0; i < nSize; ++i)
+	{
 		auto_sprintf(szKeyName, LTEXT("GREPEXCLUDEFILE[%02d]"), i);
 		cProfile.IOProfileData(pszSecName, szKeyName, pShare->m_sSearchKeywords.m_aExcludeFiles[i]);
 	}
@@ -341,7 +360,8 @@ void CShareData_IO::ShareData_IO_Grep(CDataProfile &cProfile)
 						   pShare->m_sSearchKeywords.m_aExcludeFolders._GetSizeRef());
 	pShare->m_sSearchKeywords.m_aExcludeFolders.SetSizeLimit();
 	nSize = pShare->m_sSearchKeywords.m_aExcludeFolders.size();
-	for (i = 0; i < nSize; ++i) {
+	for (i = 0; i < nSize; ++i)
+	{
 		auto_sprintf(szKeyName, LTEXT("GREPEXCLUDEFOLDER[%02d]"), i);
 		cProfile.IOProfileData(pszSecName, szKeyName, pShare->m_sSearchKeywords.m_aExcludeFolders[i]);
 	}
@@ -381,7 +401,8 @@ void CShareData_IO::ShareData_IO_Cmd(CDataProfile &cProfile)
 	cProfile.IOProfileData(pszSecName, LTEXT("nCmdArrNum"), pShare->m_sHistory.m_aCommands._GetSizeRef());
 	pShare->m_sHistory.m_aCommands.SetSizeLimit();
 	int nSize = pShare->m_sHistory.m_aCommands.size();
-	for (i = 0; i < nSize; ++i) {
+	for (i = 0; i < nSize; ++i)
+	{
 		auto_sprintf(szKeyName, LTEXT("szCmdArr[%02d]"), i);
 		cProfile.IOProfileData(pszSecName, szKeyName, pShare->m_sHistory.m_aCommands[i]);
 	}
@@ -389,7 +410,8 @@ void CShareData_IO::ShareData_IO_Cmd(CDataProfile &cProfile)
 	cProfile.IOProfileData(pszSecName, LTEXT("nCurDirArrNum"), pShare->m_sHistory.m_aCurDirs._GetSizeRef());
 	pShare->m_sHistory.m_aCurDirs.SetSizeLimit();
 	nSize = pShare->m_sHistory.m_aCurDirs.size();
-	for (i = 0; i < nSize; ++i) {
+	for (i = 0; i < nSize; ++i)
+	{
 		auto_sprintf(szKeyName, LTEXT("szCurDirArr[%02d]"), i);
 		cProfile.IOProfileData(pszSecName, szKeyName, pShare->m_sHistory.m_aCurDirs[i]);
 	}
@@ -415,7 +437,8 @@ void CShareData_IO::ShareData_IO_Nickname(CDataProfile &cProfile)
 	cProfile.IOProfileData(pszSecName, LTEXT("ArrNum"), pShare->m_Common.m_sFileName.m_nTransformFileNameArrNum);
 	SetValueLimit(pShare->m_Common.m_sFileName.m_nTransformFileNameArrNum, MAX_TRANSFORM_FILENAME);
 	int nSize = pShare->m_Common.m_sFileName.m_nTransformFileNameArrNum;
-	for (i = 0; i < nSize; ++i) {
+	for (i = 0; i < nSize; ++i)
+	{
 		auto_sprintf(szKeyName, LTEXT("From%02d"), i);
 		cProfile.IOProfileData(pszSecName, szKeyName,
 							   MakeStringBufferW(pShare->m_Common.m_sFileName.m_szTransformFileNameFrom[i]));
@@ -424,8 +447,10 @@ void CShareData_IO::ShareData_IO_Nickname(CDataProfile &cProfile)
 							   MakeStringBufferW(pShare->m_Common.m_sFileName.m_szTransformFileNameTo[i]));
 	}
 	// 読み込み時，残りをNULLで再初期化
-	if (cProfile.IsReadingMode()) {
-		for (; i < MAX_TRANSFORM_FILENAME; i++) {
+	if (cProfile.IsReadingMode())
+	{
+		for (; i < MAX_TRANSFORM_FILENAME; i++)
+		{
 			pShare->m_Common.m_sFileName.m_szTransformFileNameFrom[i][0] = L'\0';
 			pShare->m_Common.m_sFileName.m_szTransformFileNameTo[i][0]   = L'\0';
 		}
@@ -437,9 +462,11 @@ static bool ShareData_IO_RECT(CDataProfile &cProfile, const WCHAR *pszSecName, c
 	const WCHAR *pszForm = LTEXT("%d,%d,%d,%d");
 	WCHAR		 szKeyData[100];
 	bool		 ret = false;
-	if (cProfile.IsReadingMode()) {
+	if (cProfile.IsReadingMode())
+	{
 		ret = cProfile.IOProfileData(pszSecName, pszKeyName, MakeStringBufferW(szKeyData));
-		if (ret) {
+		if (ret)
+		{
 			int buf[4];
 			scan_ints(szKeyData, pszForm, buf);
 			rcValue.left   = buf[0];
@@ -448,7 +475,8 @@ static bool ShareData_IO_RECT(CDataProfile &cProfile, const WCHAR *pszSecName, c
 			rcValue.bottom = buf[3];
 		}
 	}
-	else {
+	else
+	{
 		auto_sprintf(szKeyData, pszForm, rcValue.left, rcValue.top, rcValue.right, rcValue.bottom);
 		ret = cProfile.IOProfileData(pszSecName, pszKeyName, MakeStringBufferW(szKeyData));
 	}
@@ -537,7 +565,8 @@ void CShareData_IO::ShareData_IO_Common(CDataProfile &cProfile)
 	cProfile.IOProfileData(pszSecName, LTEXT("bBackUpFolder"), common.m_sBackup.m_bBackUpFolder);
 	cProfile.IOProfileData(pszSecName, LTEXT("bBackUpFolderRM"), common.m_sBackup.m_bBackUpFolderRM); // 2010/5/27 Uchi
 
-	if (!cProfile.IsReadingMode()) {
+	if (!cProfile.IsReadingMode())
+	{
 		int nDummy;
 		int nCharChars;
 		nDummy = wcslen(common.m_sBackup.m_szBackUpFolder);
@@ -546,12 +575,14 @@ void CShareData_IO::ShareData_IO_Common(CDataProfile &cProfile)
 					 - CNativeW::GetCharPrev(common.m_sBackup.m_szBackUpFolder, nDummy,
 											 &common.m_sBackup.m_szBackUpFolder[nDummy]);
 		if (1 == nCharChars && common.m_sBackup.m_szBackUpFolder[nDummy - 1] == '\\') {}
-		else {
+		else
+		{
 			wcscat(common.m_sBackup.m_szBackUpFolder, L"\\");
 		}
 	}
 	cProfile.IOProfileData(pszSecName, LTEXT("szBackUpFolder"), common.m_sBackup.m_szBackUpFolder);
-	if (cProfile.IsReadingMode()) {
+	if (cProfile.IsReadingMode())
+	{
 		int nDummy;
 		int nCharChars;
 		nDummy = wcslen(common.m_sBackup.m_szBackUpFolder);
@@ -560,7 +591,8 @@ void CShareData_IO::ShareData_IO_Common(CDataProfile &cProfile)
 					 - CNativeW::GetCharPrev(common.m_sBackup.m_szBackUpFolder, nDummy,
 											 &common.m_sBackup.m_szBackUpFolder[nDummy]);
 		if (1 == nCharChars && common.m_sBackup.m_szBackUpFolder[nDummy - 1] == '\\') {}
-		else {
+		else
+		{
 			wcscat(common.m_sBackup.m_szBackUpFolder, L"\\");
 		}
 	}
@@ -791,7 +823,8 @@ void CShareData_IO::ShareData_IO_Common(CDataProfile &cProfile)
 	// アウトライン/トピックリスト の位置とサイズを記憶  20060201 aroka
 	cProfile.IOProfileData(pszSecName, LTEXT("bRememberOutlineWindowPos"),
 						   common.m_sOutline.m_bRememberOutlineWindowPos);
-	if (common.m_sOutline.m_bRememberOutlineWindowPos) {
+	if (common.m_sOutline.m_bRememberOutlineWindowPos)
+	{
 		cProfile.IOProfileData(pszSecName, LTEXT("widthOutlineWindow"), common.m_sOutline.m_widthOutlineWindow);
 		cProfile.IOProfileData(pszSecName, LTEXT("heightOutlineWindow"), common.m_sOutline.m_heightOutlineWindow);
 		cProfile.IOProfileData(pszSecName, LTEXT("xOutlineWindowPos"), common.m_sOutline.m_xOutlineWindowPos);
@@ -805,8 +838,10 @@ void CShareData_IO::ShareData_IO_Common(CDataProfile &cProfile)
 		const WCHAR *pszKeyName = LTEXT("xyOutlineDock");
 		const WCHAR *pszForm	= LTEXT("%d,%d,%d,%d");
 		WCHAR		 szKeyData[1024];
-		if (cProfile.IsReadingMode()) {
-			if (cProfile.IOProfileData(pszSecName, pszKeyName, MakeStringBufferW(szKeyData))) {
+		if (cProfile.IsReadingMode())
+		{
+			if (cProfile.IOProfileData(pszSecName, pszKeyName, MakeStringBufferW(szKeyData)))
+			{
 				int buf[4];
 				scan_ints(szKeyData, pszForm, buf);
 				common.m_sOutline.m_cxOutlineDockLeft   = buf[0];
@@ -815,7 +850,8 @@ void CShareData_IO::ShareData_IO_Common(CDataProfile &cProfile)
 				common.m_sOutline.m_cyOutlineDockBottom = buf[3];
 			}
 		}
-		else {
+		else
+		{
 			auto_sprintf(szKeyData, pszForm, common.m_sOutline.m_cxOutlineDockLeft,
 						 common.m_sOutline.m_cyOutlineDockTop, common.m_sOutline.m_cxOutlineDockRight,
 						 common.m_sOutline.m_cyOutlineDockBottom);
@@ -847,16 +883,19 @@ EFunctionCode GetPlugCmdInfoByName(const WCHAR *pszFuncName //!< [in]  プラグ
 	psCmdName++;
 
 	nId = -1;
-	for (i = 0; i < MAX_PLUGIN; i++) {
+	for (i = 0; i < MAX_PLUGIN; i++)
+	{
 		PluginRec &pluginrec = plugin.m_PluginTable[i];
-		if (wcscmp(pluginrec.m_szId, sPluginName) == 0) {
+		if (wcscmp(pluginrec.m_szId, sPluginName) == 0)
+		{
 			nId = i;
 			break;
 		}
 	}
 	nNo = _wtoi(psCmdName);
 
-	if (nId < 0 || nNo <= 0 || nNo >= MAX_PLUG_CMD) {
+	if (nId < 0 || nNo <= 0 || nNo >= MAX_PLUG_CMD)
+	{
 		// プラグインがない/番号がおかしい
 		return F_INVALID;
 	}
@@ -889,14 +928,17 @@ static EFunctionCode GetFunctionStrToFunctionCode(const WCHAR *pszFuncName)
 {
 	EFunctionCode n;
 	if (pszFuncName == NULL) { n = F_DEFAULT; }
-	else if (wcschr(pszFuncName, L'/') != NULL) {
+	else if (wcschr(pszFuncName, L'/') != NULL)
+	{
 		// Plugin名
 		n = GetPlugCmdInfoByName(pszFuncName);
 	}
-	else if (WCODE::Is09(pszFuncName[0]) && (pszFuncName[1] == L'\0' || WCODE::Is09(pszFuncName[1]))) {
+	else if (WCODE::Is09(pszFuncName[0]) && (pszFuncName[1] == L'\0' || WCODE::Is09(pszFuncName[1])))
+	{
 		n = (EFunctionCode)_wtol(pszFuncName);
 	}
-	else {
+	else
+	{
 		n = CSMacroMgr::GetFuncInfoByName(0, pszFuncName, NULL);
 	}
 	if (n == F_INVALID) { n = F_DEFAULT; }
@@ -928,47 +970,59 @@ void CShareData_IO::ShareData_IO_Toolbar(CDataProfile &cProfile, CMenuDrawer *pc
 	cProfile.IOProfileData(pszSecName, LTEXT("nToolBarButtonNum"), toolbar.m_nToolBarButtonNum);
 	SetValueLimit(toolbar.m_nToolBarButtonNum, MAX_TOOLBAR_BUTTON_ITEMS);
 	int nSize = toolbar.m_nToolBarButtonNum;
-	for (i = 0; i < nSize; ++i) {
+	for (i = 0; i < nSize; ++i)
+	{
 		auto_sprintf(szKeyName, LTEXT("nTBB[%03d]"), i);
 		// Plugin String Parametor
-		if (cProfile.IsReadingMode()) {
+		if (cProfile.IsReadingMode())
+		{
 			//読み込み
 			cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szText));
-			if (wcschr(szText, L'/') == NULL) {
+			if (wcschr(szText, L'/') == NULL)
+			{
 				// 番号
 				toolbar.m_nToolBarButtonIdxArr[i] = _wtoi(szText);
 			}
-			else {
+			else
+			{
 				// Plugin
 				eFunc = GetPlugCmdInfoByName(szText);
-				if (eFunc == F_INVALID) {
+				if (eFunc == F_INVALID)
+				{
 					toolbar.m_nToolBarButtonIdxArr[i] = -1; // 未解決
 				}
-				else {
+				else
+				{
 					toolbar.m_nToolBarButtonIdxArr[i] = pcMenuDrawer->FindToolbarNoFromCommandId(eFunc, false);
 				}
 			}
 		}
-		else {
+		else
+		{
 			//書き込み
-			if (toolbar.m_nToolBarButtonIdxArr[i] <= MAX_TOOLBAR_ICON_COUNT + 1) { // +1はセパレータ分
+			if (toolbar.m_nToolBarButtonIdxArr[i] <= MAX_TOOLBAR_ICON_COUNT + 1)
+			{ // +1はセパレータ分
 				cProfile.IOProfileData(pszSecName, szKeyName, toolbar.m_nToolBarButtonIdxArr[i]);
 			}
-			else {
+			else
+			{
 				// Plugin
 				eFunc = (EFunctionCode)toolbar.m_nToolBarButtonIdxArr[i];
 				if (eFunc == F_DEFAULT) { cProfile.IOProfileData(pszSecName, szKeyName, nInvalid); }
-				else if (GetPlugCmdInfoByFuncCode(eFunc, szText)) {
+				else if (GetPlugCmdInfoByFuncCode(eFunc, szText))
+				{
 					cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szText));
 				}
-				else {
+				else
+				{
 					cProfile.IOProfileData(pszSecName, szKeyName, toolbar.m_nToolBarButtonIdxArr[i]);
 				}
 			}
 		}
 	}
 	//読み込み時は残りを初期化
-	if (cProfile.IsReadingMode()) {
+	if (cProfile.IsReadingMode())
+	{
 		for (; i < MAX_TOOLBAR_BUTTON_ITEMS; ++i) { toolbar.m_nToolBarButtonIdxArr[i] = 0; }
 	}
 }
@@ -1000,7 +1054,8 @@ void CShareData_IO::IO_CustMenu(CDataProfile &cProfile, CommonSetting_CustomMenu
 	wchar_t		  szFuncName[1024];
 	EFunctionCode n;
 
-	for (i = 0; i < MAX_CUSTOM_MENU; ++i) {
+	for (i = 0; i < MAX_CUSTOM_MENU; ++i)
+	{
 		auto_sprintf(szKeyName, LTEXT("szCMN[%02d]"), i);
 		cProfile.IOProfileData(pszSecName, szKeyName,
 							   MakeStringBufferW(menu.m_szCustMenuNameArr[i])); //	Oct. 15, 2001 genta 最大長指定
@@ -1010,27 +1065,34 @@ void CShareData_IO::IO_CustMenu(CDataProfile &cProfile, CommonSetting_CustomMenu
 		cProfile.IOProfileData(pszSecName, szKeyName, menu.m_nCustMenuItemNumArr[i]);
 		SetValueLimit(menu.m_nCustMenuItemNumArr[i], _countof(menu.m_nCustMenuItemFuncArr[0]));
 		int nSize = menu.m_nCustMenuItemNumArr[i];
-		for (j = 0; j < nSize; ++j) {
+		for (j = 0; j < nSize; ++j)
+		{
 			// start マクロ名でも設定できるように 2008/5/24 Uchi
 			auto_sprintf(szKeyName, LTEXT("nCMIF[%02d][%02d]"), i, j);
-			if (cProfile.IsReadingMode()) {
+			if (cProfile.IsReadingMode())
+			{
 				cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szFuncName));
 				n								  = GetFunctionStrToFunctionCode(szFuncName);
 				menu.m_nCustMenuItemFuncArr[i][j] = n;
 			}
-			else {
-				if (GetPlugCmdInfoByFuncCode(menu.m_nCustMenuItemFuncArr[i][j], szFuncName)) {
+			else
+			{
+				if (GetPlugCmdInfoByFuncCode(menu.m_nCustMenuItemFuncArr[i][j], szFuncName))
+				{
 					// Plugin
 					cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szFuncName));
 				}
-				else {
-					if (bOutCmdName) {
+				else
+				{
+					if (bOutCmdName)
+					{
 						WCHAR *p = CSMacroMgr::GetFuncInfoByID(G_AppInstance(), menu.m_nCustMenuItemFuncArr[i][j],
 															   szFuncName, NULL);
 						if (p == NULL) { auto_sprintf(szFuncName, L"%d", menu.m_nCustMenuItemFuncArr[i][j]); }
 						cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szFuncName));
 					}
-					else {
+					else
+					{
 						cProfile.IOProfileData_WrapInt(pszSecName, szKeyName, menu.m_nCustMenuItemFuncArr[i][j]);
 					}
 				}
@@ -1091,25 +1153,31 @@ void CShareData_IO::IO_KeyBind(CDataProfile &cProfile, CommonSetting_KeyBind &sK
 	const int KEYNAME_SIZE = _countof(sKeyBind.m_pKeyNameArr) - 1; // 最後の１要素はダミー用に予約 2012.11.25 aroka
 	int nKeyNameArrUsed = sKeyBind.m_nKeyNameArrNum;			   // 使用済み領域
 
-	if (cProfile.IsReadingMode()) {
+	if (cProfile.IsReadingMode())
+	{
 		if (!cProfile.IOProfileData(szSecName, L"KeyBind[000]", MakeStringBufferW(szKeyData))) { bOldVer = true; }
-		else {
+		else
+		{
 			// 新スタイルのImportは割り当て表サイズぎりぎりまで読み込む
 			// 旧スタイルは初期値と一致しないKeyNameは捨てるのでデータ数に変化なし
 			sKeyBind.m_nKeyNameArrNum = KEYNAME_SIZE;
 		}
 	}
 
-	for (i = 0; i < sKeyBind.m_nKeyNameArrNum; ++i) {
+	for (i = 0; i < sKeyBind.m_nKeyNameArrNum; ++i)
+	{
 		// 2005.04.07 D.S.Koba
 		// KEYDATA& keydata = m_pShareData->m_pKeyNameArr[i];
 		// KEYDATA& keydata = sKeyBind.ppKeyNameArr[i];
 
-		if (cProfile.IsReadingMode()) {
-			if (bOldVer) {
+		if (cProfile.IsReadingMode())
+		{
+			if (bOldVer)
+			{
 				KEYDATA &keydata = sKeyBind.m_pKeyNameArr[i];
 				wcscpy_s(szKeyName, keydata.m_szKeyName);
-				if (cProfile.IOProfileData(szSecName, szKeyName, MakeStringBufferW(szKeyData))) {
+				if (cProfile.IOProfileData(szSecName, szKeyName, MakeStringBufferW(szKeyData)))
+				{
 					int buf[8];
 					scan_ints(szKeyData, LTEXT("%d,%d,%d,%d,%d,%d,%d,%d"), buf);
 					keydata.m_nFuncCodeArr[0] = (EFunctionCode)buf[0];
@@ -1122,10 +1190,12 @@ void CShareData_IO::IO_KeyBind(CDataProfile &cProfile, CommonSetting_KeyBind &sK
 					keydata.m_nFuncCodeArr[7] = (EFunctionCode)buf[7];
 				}
 			}
-			else { // 新バージョン(キー割り当てのImport,export の合わせた)	2008/5/25 Uchi
+			else
+			{ // 新バージョン(キー割り当てのImport,export の合わせた)	2008/5/25 Uchi
 				KEYDATA tmpKeydata;
 				auto_sprintf(szKeyName, L"KeyBind[%03d]", i);
-				if (cProfile.IOProfileData(szSecName, szKeyName, MakeStringBufferW(szKeyData))) {
+				if (cProfile.IOProfileData(szSecName, szKeyName, MakeStringBufferW(szKeyData)))
+				{
 					wchar_t *p;
 					wchar_t *pn;
 					int		 nRes;
@@ -1142,7 +1212,8 @@ void CShareData_IO::IO_KeyBind(CDataProfile &cProfile, CommonSetting_KeyBind &sK
 					p					  = pn + 1;
 
 					//後に続くトークン
-					for (int j = 0; j < 8; j++) {
+					for (int j = 0; j < 8; j++)
+					{
 						EFunctionCode n;
 						//機能名を数値に置き換える。(数値の機能名もあるかも)
 						//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
@@ -1157,26 +1228,32 @@ void CShareData_IO::IO_KeyBind(CDataProfile &cProfile, CommonSetting_KeyBind &sK
 					wcsncpy(tmpKeydata.m_szKeyName, p, _countof(tmpKeydata.m_szKeyName) - 1);
 					tmpKeydata.m_szKeyName[_countof(tmpKeydata.m_szKeyName) - 1] = '\0';
 
-					if (tmpKeydata.m_nKeyCode
-						<= 0) { // マウスコードは先頭に固定されている KeyCodeが同じなのでKeyNameで判別
+					if (tmpKeydata.m_nKeyCode <= 0)
+					{ // マウスコードは先頭に固定されている KeyCodeが同じなのでKeyNameで判別
 						// 2013.10.23 syat マウスのキーコードを拡張仮想キーコードに変更。以下は互換性のため残す。
-						for (int im = 0; im < jpVKEXNamesLen; im++) {
-							if (wcscmp(tmpKeydata.m_szKeyName, jpVKEXNames[im]) == 0) {
+						for (int im = 0; im < jpVKEXNamesLen; im++)
+						{
+							if (wcscmp(tmpKeydata.m_szKeyName, jpVKEXNames[im]) == 0)
+							{
 								wcscpy(tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[im].m_szKeyName);
 								sKeyBind.m_pKeyNameArr[im + 0x0100] = tmpKeydata;
 							}
 						}
 					}
-					else {
+					else
+					{
 						// 割り当て済みキーコードは上書き
 						int idx = sKeyBind.m_VKeyToKeyNameArr[tmpKeydata.m_nKeyCode];
-						if (idx != KEYNAME_SIZE) {
+						if (idx != KEYNAME_SIZE)
+						{
 							wcscpy(tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[idx].m_szKeyName);
 							sKeyBind.m_pKeyNameArr[idx] = tmpKeydata;
 						}
-						else { // 未割り当てキーコードは末尾に追加
+						else
+						{ // 未割り当てキーコードは末尾に追加
 							if (nKeyNameArrUsed >= KEYNAME_SIZE) {}
-							else {
+							else
+							{
 								wcscpy(tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[nKeyNameArrUsed].m_szKeyName);
 								sKeyBind.m_pKeyNameArr[nKeyNameArrUsed]			   = tmpKeydata;
 								sKeyBind.m_VKeyToKeyNameArr[tmpKeydata.m_nKeyCode] = (BYTE)nKeyNameArrUsed++;
@@ -1186,7 +1263,8 @@ void CShareData_IO::IO_KeyBind(CDataProfile &cProfile, CommonSetting_KeyBind &sK
 				}
 			}
 		}
-		else {
+		else
+		{
 			//	auto_sprintf( szKeyData, LTEXT("%d,%d,%d,%d,%d,%d,%d,%d"),
 			//		keydata.m_nFuncCodeArr[0],
 			//		keydata.m_nFuncCodeArr[1],
@@ -1203,33 +1281,38 @@ void CShareData_IO::IO_KeyBind(CDataProfile &cProfile, CommonSetting_KeyBind &sK
 			KEYDATA &keydata = sKeyBind.m_pKeyNameArr[i];
 			auto_sprintf(szKeyName, L"KeyBind[%03d]", i);
 			auto_sprintf(szKeyData, L"%04x", keydata.m_nKeyCode);
-			for (int j = 0; j < 8; j++) {
+			for (int j = 0; j < 8; j++)
+			{
 				WCHAR szFuncName[256];
-				if (GetPlugCmdInfoByFuncCode(keydata.m_nFuncCodeArr[j], szFuncName)) {
+				if (GetPlugCmdInfoByFuncCode(keydata.m_nFuncCodeArr[j], szFuncName))
+				{
 					// Plugin
 					auto_sprintf(szWork, L",%ls", szFuncName);
 				}
-				else {
-					if (bOutCmdName) {
+				else
+				{
+					if (bOutCmdName)
+					{
 						//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 						// 2010.06.30 Moca 日本語名を取得しないように
 						WCHAR *p = CSMacroMgr::GetFuncInfoByID(0, keydata.m_nFuncCodeArr[j], szFuncName, NULL);
 						if (p) { auto_sprintf(szWork, L",%ls", p); }
-						else {
+						else
+						{
 							auto_sprintf(szWork, L",%d", keydata.m_nFuncCodeArr[j]);
 						}
 					}
-					else {
+					else
+					{
 						auto_sprintf(szWork, L",%d", keydata.m_nFuncCodeArr[j]);
 					}
 				}
 				wcscat(szKeyData, szWork);
 			}
 
-			if (0x0100 <= keydata.m_nKeyCode) {
-				auto_sprintf(szWork, L",%s", jpVKEXNames[keydata.m_nKeyCode - 0x0100]);
-			}
-			else {
+			if (0x0100 <= keydata.m_nKeyCode)
+			{ auto_sprintf(szWork, L",%s", jpVKEXNames[keydata.m_nKeyCode - 0x0100]); } else
+			{
 				auto_sprintf(szWork, L",%s", keydata.m_szKeyName);
 			}
 			wcscat(szKeyData, szWork);
@@ -1255,13 +1338,16 @@ void CShareData_IO::ShareData_IO_Print(CDataProfile &cProfile)
 	int			 i, j;
 	WCHAR		 szKeyName[64];
 	WCHAR		 szKeyData[1024];
-	for (i = 0; i < MAX_PRINTSETTINGARR; ++i) {
+	for (i = 0; i < MAX_PRINTSETTINGARR; ++i)
+	{
 		// 2005.04.07 D.S.Koba
 		PRINTSETTING &printsetting = pShare->m_PrintSettingArr[i];
 		auto_sprintf(szKeyName, LTEXT("PS[%02d].nInts"), i);
 		static const WCHAR *pszForm = LTEXT("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d");
-		if (cProfile.IsReadingMode()) {
-			if (cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szKeyData))) {
+		if (cProfile.IsReadingMode())
+		{
+			if (cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szKeyData)))
+			{
 				int buf[19];
 				scan_ints(szKeyData, pszForm, buf);
 				printsetting.m_nPrintFontWidth		  = buf[0];
@@ -1285,7 +1371,8 @@ void CShareData_IO::ShareData_IO_Print(CDataProfile &cProfile)
 				printsetting.m_bFooterUse[2]		  = buf[18];
 			}
 		}
-		else {
+		else
+		{
 			auto_sprintf(szKeyData, pszForm, printsetting.m_nPrintFontWidth, printsetting.m_nPrintFontHeight,
 						 printsetting.m_nPrintDansuu, printsetting.m_nPrintDanSpace, printsetting.m_nPrintLineSpacing,
 						 printsetting.m_nPrintMarginTY, printsetting.m_nPrintMarginBY, printsetting.m_nPrintMarginLX,
@@ -1305,7 +1392,8 @@ void CShareData_IO::ShareData_IO_Print(CDataProfile &cProfile)
 		auto_sprintf(szKeyName, LTEXT("PS[%02d].szFFZ"), i);
 		cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(printsetting.m_szPrintFontFaceZen));
 		// ヘッダ/フッタ
-		for (j = 0; j < 3; ++j) {
+		for (j = 0; j < 3; ++j)
+		{
 			auto_sprintf(szKeyName, LTEXT("PS[%02d].szHF[%d]"), i, j);
 			cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(printsetting.m_szHeaderForm[j]));
 			auto_sprintf(szKeyName, LTEXT("PS[%02d].szFTF[%d]"), i, j);
@@ -1338,7 +1426,8 @@ void CShareData_IO::ShareData_IO_Print(CDataProfile &cProfile)
 
 		// 2002.02.16 hor とりあえず旧設定を変換しとく
 		if (0 == wcscmp(printsetting.m_szHeaderForm[0], _EDITL("&f"))
-			&& 0 == wcscmp(printsetting.m_szFooterForm[0], _EDITL("&C- &P -"))) {
+			&& 0 == wcscmp(printsetting.m_szFooterForm[0], _EDITL("&C- &P -")))
+		{
 			wcscpy(printsetting.m_szHeaderForm[0], _EDITL("$f"));
 			wcscpy(printsetting.m_szFooterForm[0], _EDITL(""));
 			wcscpy(printsetting.m_szFooterForm[1], _EDITL("- $p -"));
@@ -1374,18 +1463,21 @@ void CShareData_IO::ShareData_IO_Types(CDataProfile &cProfile)
 	WCHAR		  szKey[32];
 
 	int nCountOld = pShare->m_nTypesCount;
-	if (!cProfile.IOProfileData(L"Other", LTEXT("nTypesCount"), pShare->m_nTypesCount)) {
+	if (!cProfile.IOProfileData(L"Other", LTEXT("nTypesCount"), pShare->m_nTypesCount))
+	{
 		pShare->m_nTypesCount = 30; // 旧バージョン読み込み用
 	}
 	SetValueLimit(pShare->m_nTypesCount, 1, MAX_TYPES);
 	// 注：コントロールプロセス専用
 	std::vector<STypeConfig *> &types = CShareData::getInstance()->GetTypeSettings();
-	for (i = GetDllShareData().m_nTypesCount; i < nCountOld; i++) {
+	for (i = GetDllShareData().m_nTypesCount; i < nCountOld; i++)
+	{
 		delete types[i];
 		types[i] = NULL;
 	}
 	types.resize(pShare->m_nTypesCount);
-	for (i = nCountOld; i < pShare->m_nTypesCount; i++) {
+	for (i = nCountOld; i < pShare->m_nTypesCount; i++)
+	{
 		types[i]  = new STypeConfig();
 		*types[i] = *types[0]; // 基本をコピー
 		auto_sprintf(types[i]->m_szTypeName, LS(STR_TRAY_TYPE_NAME), i);
@@ -1393,11 +1485,13 @@ void CShareData_IO::ShareData_IO_Types(CDataProfile &cProfile)
 		types[i]->m_id   = i;
 	}
 
-	for (i = 0; i < pShare->m_nTypesCount; ++i) {
+	for (i = 0; i < pShare->m_nTypesCount; ++i)
+	{
 		auto_sprintf(szKey, LTEXT("Types(%d)"), i);
 		STypeConfig &type = *(types[i]);
 		ShareData_IO_Type_One(cProfile, type, szKey);
-		if (cProfile.IsReadingMode()) {
+		if (cProfile.IsReadingMode())
+		{
 			type.m_nIdx = i;
 			if (i == 0) { pShare->m_TypeBasis = type; }
 			wcscpy(pShare->m_TypeMini[i].m_szTypeExts, type.m_szTypeExts);
@@ -1406,13 +1500,17 @@ void CShareData_IO::ShareData_IO_Types(CDataProfile &cProfile)
 			pShare->m_TypeMini[i].m_encoding = type.m_encoding;
 		}
 	}
-	if (cProfile.IsReadingMode()) {
+	if (cProfile.IsReadingMode())
+	{
 		// Id重複チェック、更新
-		for (i = 0; i < pShare->m_nTypesCount - 1; i++) {
+		for (i = 0; i < pShare->m_nTypesCount - 1; i++)
+		{
 			STypeConfig &type = *(types[i]);
-			for (int k = i + 1; k < pShare->m_nTypesCount; k++) {
+			for (int k = i + 1; k < pShare->m_nTypesCount; k++)
+			{
 				STypeConfig &type2 = *(types[k]);
-				if (type.m_id == type2.m_id) {
+				if (type.m_id == type2.m_id)
+				{
 					type2.m_id				   = (::GetTickCount() & 0x3fffffff) + k * 0x10000;
 					pShare->m_TypeMini[k].m_id = type2.m_id;
 				}
@@ -1434,14 +1532,16 @@ static bool ShareData_IO_BlockComment(CDataProfile &cProfile, const WCHAR *pszSe
 	WCHAR szTo[BLOCKCOMMENT_BUFFERSIZE]{0};
 
 	// 書き込み準備
-	if (!cProfile.IsReadingMode()) {
+	if (!cProfile.IsReadingMode())
+	{
 		::wcscpy_s(szFrom, cBlockComment.getBlockCommentFrom());
 		::wcscpy_s(szTo, cBlockComment.getBlockCommentTo());
 	}
 
 	bool ret = false;
 	if (cProfile.IOProfileData(pszSectionName, pszEntryKeyFrom, MakeStringBufferW(szFrom))
-		&& cProfile.IOProfileData(pszSectionName, pszEntryKeyTo, MakeStringBufferW(szTo))) {
+		&& cProfile.IOProfileData(pszSectionName, pszEntryKeyTo, MakeStringBufferW(szTo)))
+	{
 		//対になる設定が揃った場合のみ有効
 		ret = true;
 	}
@@ -1466,14 +1566,16 @@ static bool ShareData_IO_LineComment(CDataProfile &cProfile, const WCHAR *pszSec
 	int   pos = -1;
 
 	// 書き込み準備
-	if (!cProfile.IsReadingMode()) {
+	if (!cProfile.IsReadingMode())
+	{
 		::wcscpy_s(lbuf, cLineComment.getLineComment(nDataIndex));
 		pos = cLineComment.getLineCommentPos(nDataIndex);
 	}
 
 	bool ret = false;
 	if (cProfile.IOProfileData(pszSectionName, pszEntryKeyComment, MakeStringBufferW(lbuf))
-		&& cProfile.IOProfileData(pszSectionName, pszEntryKeyColumn, pos)) {
+		&& cProfile.IOProfileData(pszSectionName, pszEntryKeyColumn, pos))
+	{
 		//対になる設定が揃った場合のみ有効
 		ret = true;
 	}
@@ -1502,8 +1604,10 @@ void CShareData_IO::ShareData_IO_Type_One(CDataProfile &cProfile, STypeConfig &t
 	// 2005.04.07 D.S.Koba
 	static const WCHAR *pszForm = LTEXT("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d"); // MIK
 	wcscpy(szKeyName, LTEXT("nInts"));
-	if (cProfile.IsReadingMode()) {
-		if (cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szKeyData))) {
+	if (cProfile.IsReadingMode())
+	{
+		if (cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szKeyData)))
+		{
 			int buf[12];
 			scan_ints(szKeyData, pszForm, buf);
 			types.m_nIdx				 = buf[0];
@@ -1523,7 +1627,8 @@ void CShareData_IO::ShareData_IO_Type_One(CDataProfile &cProfile, STypeConfig &t
 		if (types.m_nMaxLineKetas < CKetaXInt(MINLINEKETAS)) { types.m_nMaxLineKetas = CKetaXInt(MINLINEKETAS); }
 		if (types.m_nMaxLineKetas - 2 < types.m_nTabSpace) { types.m_nTabSpace = types.m_nMaxLineKetas - 2; }
 	}
-	else {
+	else
+	{
 		auto_sprintf(szKeyData, pszForm, types.m_nIdx, types.m_nMaxLineKetas, types.m_nColumnSpace, types.m_nTabSpace,
 					 types.m_nKeyWordSetIdx[0], types.m_nKeyWordSetIdx[1], types.m_nStringType,
 					 types.m_bLineNumIsCRLF ? 1 : 0, types.m_nLineTermType, types.m_bWordWrap ? 1 : 0,
@@ -1542,14 +1647,16 @@ void CShareData_IO::ShareData_IO_Type_One(CDataProfile &cProfile, STypeConfig &t
 
 	/* 行間のすきま */
 	cProfile.IOProfileData(pszSecName, LTEXT("nLineSpace"), types.m_nLineSpace);
-	if (cProfile.IsReadingMode()) {
+	if (cProfile.IsReadingMode())
+	{
 		if (types.m_nLineSpace < -LINESPACE_MAX) { types.m_nLineSpace = -LINESPACE_MAX; }
 		if (types.m_nLineSpace > LINESPACE_MAX) { types.m_nLineSpace = LINESPACE_MAX; }
 	}
 
 	/* 行番号の最小桁数 */ // 加追 2014.08.02 katze
 	cProfile.IOProfileData(pszSecName, LTEXT("nLineNumWidth"), types.m_nLineNumWidth);
-	if (cProfile.IsReadingMode()) {
+	if (cProfile.IsReadingMode())
+	{
 		if (types.m_nLineNumWidth < LINENUMWIDTH_MIN) { types.m_nLineNumWidth = LINENUMWIDTH_MIN; }
 		if (types.m_nLineNumWidth > LINENUMWIDTH_MAX) { types.m_nLineNumWidth = LINENUMWIDTH_MAX; }
 	}
@@ -1589,8 +1696,10 @@ void CShareData_IO::ShareData_IO_Type_One(CDataProfile &cProfile, STypeConfig &t
 		const WCHAR *pszKeyName = LTEXT("xyOutlineDock");
 		const WCHAR *pszForm	= LTEXT("%d,%d,%d,%d");
 		WCHAR		 szKeyData[1024];
-		if (cProfile.IsReadingMode()) {
-			if (cProfile.IOProfileData(pszSecName, pszKeyName, MakeStringBufferW(szKeyData))) {
+		if (cProfile.IsReadingMode())
+		{
+			if (cProfile.IOProfileData(pszSecName, pszKeyName, MakeStringBufferW(szKeyData)))
+			{
 				int buf[4];
 				scan_ints(szKeyData, pszForm, buf);
 				types.m_cxOutlineDockLeft   = buf[0];
@@ -1599,7 +1708,8 @@ void CShareData_IO::ShareData_IO_Type_One(CDataProfile &cProfile, STypeConfig &t
 				types.m_cyOutlineDockBottom = buf[3];
 			}
 		}
-		else {
+		else
+		{
 			auto_sprintf(szKeyData, pszForm, types.m_cxOutlineDockLeft, types.m_cyOutlineDockTop,
 						 types.m_cxOutlineDockRight, types.m_cyOutlineDockBottom);
 			cProfile.IOProfileData(pszSecName, pszKeyName, MakeStringBufferW(szKeyData));
@@ -1670,7 +1780,8 @@ void CShareData_IO::ShareData_IO_Type_One(CDataProfile &cProfile, STypeConfig &t
 	cProfile.IOProfileData_WrapInt(pszSecName, L"bgImgOpacity", types.m_backImgOpacity);
 
 	// 2005.11.08 Moca 指定桁縦線
-	for (j = 0; j < MAX_VERTLINES; j++) {
+	for (j = 0; j < MAX_VERTLINES; j++)
+	{
 		auto_sprintf(szKeyName, LTEXT("nVertLineIdx%d"), j + 1);
 		cProfile.IOProfileData(pszSecName, szKeyName, types.m_nVertLineIdx[j]);
 		if (types.m_nVertLineIdx[j] == 0) { break; }
@@ -1685,13 +1796,17 @@ void CShareData_IO::ShareData_IO_Type_One(CDataProfile &cProfile, STypeConfig &t
 		wchar_t *pKeyword	 = types.m_RegexKeywordList;
 		int		 nPos		  = 0;
 		int		 nKeywordSize = _countof(types.m_RegexKeywordList);
-		for (j = 0; j < _countof(types.m_RegexKeywordArr); j++) {
+		for (j = 0; j < _countof(types.m_RegexKeywordArr); j++)
+		{
 			auto_sprintf(szKeyName, LTEXT("RxKey[%03d]"), j);
-			if (cProfile.IsReadingMode()) {
+			if (cProfile.IsReadingMode())
+			{
 				types.m_RegexKeywordArr[j].m_nColorIndex = COLORIDX_REGEX1;
-				if (cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szKeyData))) {
+				if (cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szKeyData)))
+				{
 					p = wcschr(szKeyData, LTEXT(','));
-					if (p) {
+					if (p)
+					{
 						*p										 = LTEXT('\0');
 						types.m_RegexKeywordArr[j].m_nColorIndex = GetColorIndexByName(szKeyData); //@@@ 2002.04.30
 						if (types.m_RegexKeywordArr[j].m_nColorIndex == -1)						   //名前でない
@@ -1699,19 +1814,19 @@ void CShareData_IO::ShareData_IO_Type_One(CDataProfile &cProfile, STypeConfig &t
 						p++;
 						if (0 < nKeywordSize - nPos - 1) { wcscpyn(&pKeyword[nPos], p, nKeywordSize - nPos - 1); }
 						if (types.m_RegexKeywordArr[j].m_nColorIndex < 0
-							|| types.m_RegexKeywordArr[j].m_nColorIndex >= COLORIDX_LAST) {
-							types.m_RegexKeywordArr[j].m_nColorIndex = COLORIDX_REGEX1;
-						}
-						if (pKeyword[nPos]) { nPos += wcslen(&pKeyword[nPos]) + 1; }
-					}
+							|| types.m_RegexKeywordArr[j].m_nColorIndex >= COLORIDX_LAST)
+						{ types.m_RegexKeywordArr[j].m_nColorIndex = COLORIDX_REGEX1; } if (pKeyword[nPos])
+						{ nPos += wcslen(&pKeyword[nPos]) + 1; } }
 				}
-				else {
+				else
+				{
 					// 2010.06.18 Moca 値がない場合は終了
 					break;
 				}
 			}
 			// 2002.02.08 hor 未定義値を無視
-			else if (pKeyword[nPos]) {
+			else if (pKeyword[nPos])
+			{
 				auto_sprintf(szKeyData, LTEXT("%ls,%ls"), GetColorNameByIndex(types.m_RegexKeywordArr[j].m_nColorIndex),
 							 &pKeyword[nPos]);
 				cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szKeyData));
@@ -1750,24 +1865,30 @@ void CShareData_IO::ShareData_IO_Type_One(CDataProfile &cProfile, STypeConfig &t
 		cProfile.IOProfileData(pszSecName, LTEXT("bUseKeyHelpPrefix"),
 							   types.m_bUseKeyHelpPrefix); /* 選択範囲で前方一致検索(&P) */
 		cProfile.IOProfileData_WrapInt(pszSecName, LTEXT("nKeyHelpRMenuShowType"), types.m_eKeyHelpRMenuShowType);
-		for (j = 0; j < MAX_KEYHELP_FILE; j++) {
+		for (j = 0; j < MAX_KEYHELP_FILE; j++)
+		{
 			auto_sprintf(szKeyName, LTEXT("KDct[%02d]"), j);
 			/* 読み出し */
-			if (cProfile.IsReadingMode()) {
+			if (cProfile.IsReadingMode())
+			{
 				types.m_KeyHelpArr[j].m_bUse	   = false;
 				types.m_KeyHelpArr[j].m_szAbout[0] = L'\0';
 				types.m_KeyHelpArr[j].m_szPath[0]  = L'\0';
-				if (cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szKeyData))) {
+				if (cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szKeyData)))
+				{
 					pH = szKeyData;
-					if (NULL != (pT = wcschr(pH, L','))) {
+					if (NULL != (pT = wcschr(pH, L',')))
+					{
 						*pT							 = L'\0';
 						types.m_KeyHelpArr[j].m_bUse = (_wtoi(pH) != 0);
 						pH							 = pT + 1;
-						if (NULL != (pT = wcschr(pH, L','))) {
+						if (NULL != (pT = wcschr(pH, L',')))
+						{
 							*pT = L'\0';
 							wcsncpy_s(types.m_KeyHelpArr[j].m_szAbout, pH, _TRUNCATE);
 							pH = pT + 1;
-							if (L'\0' != (*pH)) {
+							if (L'\0' != (*pH))
+							{
 								types.m_KeyHelpArr[j].m_szPath = pH;
 								types.m_nKeyHelpNum = j + 1; // iniに保存せずに、読み出せたファイル分を辞書数とする
 							}
@@ -1775,8 +1896,10 @@ void CShareData_IO::ShareData_IO_Type_One(CDataProfile &cProfile, STypeConfig &t
 					}
 				}
 			} /* 書き込み */
-			else {
-				if (types.m_KeyHelpArr[j].m_szPath[0] != L'\0') {
+			else
+			{
+				if (types.m_KeyHelpArr[j].m_szPath[0] != L'\0')
+				{
 					auto_sprintf(szKeyData, LTEXT("%d,%s,%s"), types.m_KeyHelpArr[j].m_bUse ? 1 : 0,
 								 types.m_KeyHelpArr[j].m_szAbout, types.m_KeyHelpArr[j].m_szPath.c_str());
 					cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szKeyData));
@@ -1784,12 +1907,11 @@ void CShareData_IO::ShareData_IO_Type_One(CDataProfile &cProfile, STypeConfig &t
 			}
 		}
 		/* 旧バージョンiniファイルの読み出しサポート */
-		if (cProfile.IsReadingMode()) {
+		if (cProfile.IsReadingMode())
+		{
 			SFilePath tmp;
-			if (cProfile.IOProfileData(pszSecName, LTEXT("szKeyWordHelpFile"), tmp)) {
-				types.m_KeyHelpArr[0].m_szPath = tmp;
-			}
-		}
+			if (cProfile.IOProfileData(pszSecName, LTEXT("szKeyWordHelpFile"), tmp))
+			{ types.m_KeyHelpArr[0].m_szPath = tmp; } }
 	}
 	//@@@ 2006.04.10 fon ADD-end
 
@@ -1823,13 +1945,16 @@ void CShareData_IO::ShareData_IO_KeyWords(CDataProfile &cProfile)
 
 	cProfile.IOProfileData(pszSecName, LTEXT("nCurrentKeyWordSetIdx"), pCKeyWordSetMgr->m_nCurrentKeyWordSetIdx);
 	bool bIOSuccess = cProfile.IOProfileData(pszSecName, LTEXT("nKeyWordSetNum"), nKeyWordSetNum);
-	if (cProfile.IsReadingMode()) {
+	if (cProfile.IsReadingMode())
+	{
 		// nKeyWordSetNum が読み込めていれば、すべての情報がそろっていると仮定して処理を進める
-		if (bIOSuccess) {
+		if (bIOSuccess)
+		{
 			// 2004.11.25 Moca キーワードセットの情報は、直接書き換えないで関数を利用する
 			// 初期設定されているため、先に削除しないと固定メモリの確保に失敗する可能性がある
 			pCKeyWordSetMgr->ResetAllKeyWordSet();
-			for (i = 0; i < nKeyWordSetNum; ++i) {
+			for (i = 0; i < nKeyWordSetNum; ++i)
+			{
 				bool bKEYWORDCASE = false;
 				int  nKeyWordNum  = 0;
 				//値の取得
@@ -1845,15 +1970,15 @@ void CShareData_IO::ShareData_IO_KeyWords(CDataProfile &cProfile)
 				auto_sprintf(szKeyName, LTEXT("szKW[%02d]"), i);
 				std::wstring sValue; // wstring のまま受ける（古い ini ファイルのキーワードは中身が NULL
 									 // 文字区切りなので StringBufferW では NG だった）
-				if (cProfile.IOProfileData(pszSecName, szKeyName, sValue)) {
-					pCKeyWordSetMgr->SetKeyWordArr(i, nKeyWordNum, sValue.c_str());
-				}
-			}
+				if (cProfile.IOProfileData(pszSecName, szKeyName, sValue))
+				{ pCKeyWordSetMgr->SetKeyWordArr(i, nKeyWordNum, sValue.c_str()); } }
 		}
 	}
-	else {
+	else
+	{
 		int nSize = pCKeyWordSetMgr->m_nKeyWordSetNum;
-		for (i = 0; i < nSize; ++i) {
+		for (i = 0; i < nSize; ++i)
+		{
 			auto_sprintf(szKeyName, LTEXT("szSN[%02d]"), i);
 			cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(pCKeyWordSetMgr->m_szSetNameArr[i]));
 			auto_sprintf(szKeyName, LTEXT("nCASE[%02d]"), i);
@@ -1862,7 +1987,8 @@ void CShareData_IO::ShareData_IO_KeyWords(CDataProfile &cProfile)
 			cProfile.IOProfileData(pszSecName, szKeyName, pCKeyWordSetMgr->m_nKeyWordNumArr[i]);
 
 			int nMemLen = 0;
-			for (j = 0; j < pCKeyWordSetMgr->m_nKeyWordNumArr[i]; ++j) {
+			for (j = 0; j < pCKeyWordSetMgr->m_nKeyWordNumArr[i]; ++j)
+			{
 				nMemLen += wcslen(pCKeyWordSetMgr->GetKeyWord(i, j));
 				nMemLen++;
 			}
@@ -1872,7 +1998,8 @@ void CShareData_IO::ShareData_IO_KeyWords(CDataProfile &cProfile)
 			wchar_t *pszMem =
 				new wchar_t[nMemLen + 1]; //	May 25, 2003 genta 区切りをTABに変更したので，最後の\0の分を追加
 			wchar_t *pMem = pszMem;
-			for (j = 0; j < pCKeyWordSetMgr->m_nKeyWordNumArr[i]; ++j) {
+			for (j = 0; j < pCKeyWordSetMgr->m_nKeyWordNumArr[i]; ++j)
+			{
 				//	May 25, 2003 genta 区切りをTABに変更
 				int kwlen = wcslen(pCKeyWordSetMgr->GetKeyWord(i, j));
 				wmemcpy(pMem, pCKeyWordSetMgr->GetKeyWord(i, j), kwlen);
@@ -1900,7 +2027,8 @@ void CShareData_IO::ShareData_IO_Macro(CDataProfile &cProfile)
 	const WCHAR *pszSecName = LTEXT("Macro");
 	int			 i;
 	WCHAR		 szKeyName[64];
-	for (i = 0; i < MAX_CUSTMACRO; ++i) {
+	for (i = 0; i < MAX_CUSTMACRO; ++i)
+	{
 		MacroRec &macrorec = pShare->m_Common.m_sMacro.m_MacroTable[i];
 		//	Oct. 4, 2001 genta あまり意味がなさそうなので削除：3行
 		// 2002.02.08 hor 未定義値を無視
@@ -1969,11 +2097,13 @@ void CShareData_IO::ShareData_IO_Plugin(CDataProfile &cProfile, CMenuDrawer *pcM
 	int   i;
 	int   j;
 	WCHAR szKeyName[64];
-	for (i = 0; i < MAX_PLUGIN; ++i) {
+	for (i = 0; i < MAX_PLUGIN; ++i)
+	{
 		PluginRec &pluginrec = common.m_sPlugin.m_PluginTable[i];
 
 		// 2010.08.04 Moca 書き込み直前に削除フラグで削除扱いにする
-		if (pluginrec.m_state == PLS_DELETED) {
+		if (pluginrec.m_state == PLS_DELETED)
+		{
 			pluginrec.m_szName[0] = L'\0';
 			pluginrec.m_szId[0]   = L'\0';
 		}
@@ -1985,8 +2115,10 @@ void CShareData_IO::ShareData_IO_Plugin(CDataProfile &cProfile, CMenuDrawer *pcM
 		cProfile.IOProfileData(pszSecName, szKeyName, pluginrec.m_nCmdNum); // 2010/7/4 Uchi
 		pluginrec.m_state = (pluginrec.m_szId[0] == '\0' ? PLS_NONE : PLS_STOPPED);
 		// Command 仮設定	// 2010/7/4 Uchi
-		if (pluginrec.m_szId[0] != '\0' && pluginrec.m_nCmdNum > 0) {
-			for (j = 1; j <= pluginrec.m_nCmdNum; j++) {
+		if (pluginrec.m_szId[0] != '\0' && pluginrec.m_nCmdNum > 0)
+		{
+			for (j = 1; j <= pluginrec.m_nCmdNum; j++)
+			{
 				pcMenuDrawer->AddToolButton(CMenuDrawer::TOOLBAR_ICON_PLUGCOMMAND_DEFAULT,
 											CPlug::GetPluginFunctionCode(i, j));
 			}
@@ -1994,7 +2126,8 @@ void CShareData_IO::ShareData_IO_Plugin(CDataProfile &cProfile, CMenuDrawer *pcM
 	}
 }
 
-struct SMainMenuAddItemInfo {
+struct SMainMenuAddItemInfo
+{
 	int			  m_nVer;
 	EFunctionCode m_nAddFuncCode;
 	EFunctionCode m_nPrevFuncCode;
@@ -2014,19 +2147,24 @@ void CShareData_IO::ShareData_IO_MainMenu(CDataProfile &cProfile)
 	const int nCurrentVer = 2;
 	nVersion			  = nCurrentVer;
 	if (cProfile.IOProfileData(pszSecName, LTEXT("nMainMenuVer"), nVersion)) {}
-	else {
-		if (cProfile.IsReadingMode()) {
+	else
+	{
+		if (cProfile.IsReadingMode())
+		{
 			int menuNum;
-			if (cProfile.IOProfileData(pszSecName, LTEXT("nMainMenuNum"), menuNum)) {
+			if (cProfile.IOProfileData(pszSecName, LTEXT("nMainMenuNum"), menuNum))
+			{
 				// メインメニューが定義されていた
 				nVersion = 0; // 旧定義はVer0
 			}
-			else {
+			else
+			{
 				// メインメニューすらない古いバージョンからのアップデートでは、最新メニューになるのでパス
 			}
 		}
 	}
-	if (cProfile.IsReadingMode() && nVersion < nCurrentVer) {
+	if (cProfile.IsReadingMode() && nVersion < nCurrentVer)
+	{
 		CommonSetting_MainMenu &mainmenu   = GetDllShareData().m_Common.m_sMainMenu;
 		SMainMenuAddItemInfo	addInfos[] = {
 			   {1, F_FILENEW_NEWWINDOW, F_FILENEW, L'M', false, false},			 // 新しいウインドウを開く
@@ -2053,31 +2191,36 @@ void CShareData_IO::ShareData_IO_MainMenu(CDataProfile &cProfile)
 			   {1, F_MODIFYLINE_PREV_SEL, F_MODIFYLINE_NEXT_SEL, L'\0', false, false}, // (選択)前の変更行へ
 			   {2, F_DLGWINLIST, F_WIN_OUTPUT, L'D', false, false},					   // ウインドウ一覧表示
 		   };
-		for (int i = 0; i < _countof(addInfos); i++) {
+		for (int i = 0; i < _countof(addInfos); i++)
+		{
 			SMainMenuAddItemInfo &item = addInfos[i];
 			if (item.m_nVer <= nVersion) { continue; }
 			CMainMenu *pcMenuTlb = mainmenu.m_cMainMenuTbl;
 			int		   k		 = 0;
-			for (; k < mainmenu.m_nMainMenuNum; k++) {
+			for (; k < mainmenu.m_nMainMenuNum; k++)
+			{
 				if (pcMenuTlb[k].m_nFunc == item.m_nAddFuncCode) { break; }
 			}
 			int nAddSep = 0;
 			if (item.m_bAddPrevSeparete) { nAddSep++; }
 			if (item.m_bAddNextSeparete) { nAddSep++; }
-			if (k == mainmenu.m_nMainMenuNum && mainmenu.m_nMainMenuNum + nAddSep < _countof(mainmenu.m_cMainMenuTbl)) {
+			if (k == mainmenu.m_nMainMenuNum && mainmenu.m_nMainMenuNum + nAddSep < _countof(mainmenu.m_cMainMenuTbl))
+			{
 				// メニュー内にまだ追加されていないので追加する
-				for (int r = 0; r < mainmenu.m_nMainMenuNum; r++) {
-					if (pcMenuTlb[r].m_nFunc == item.m_nPrevFuncCode && 0 < pcMenuTlb[r].m_nLevel) {
+				for (int r = 0; r < mainmenu.m_nMainMenuNum; r++)
+				{
+					if (pcMenuTlb[r].m_nFunc == item.m_nPrevFuncCode && 0 < pcMenuTlb[r].m_nLevel)
+					{
 						// 追加分後ろにずらす
-						for (int n = mainmenu.m_nMainMenuNum - 1; r < n; n--) {
-							pcMenuTlb[n + 1 + nAddSep] = pcMenuTlb[n];
-						}
-						for (int n = 0; n < MAX_MAINMENU_TOP; n++) {
+						for (int n = mainmenu.m_nMainMenuNum - 1; r < n; n--)
+						{ pcMenuTlb[n + 1 + nAddSep] = pcMenuTlb[n]; } for (int n = 0; n < MAX_MAINMENU_TOP; n++)
+						{
 							if (r < mainmenu.m_nMenuTopIdx[n]) { mainmenu.m_nMenuTopIdx[n] += 1 + nAddSep; }
 						}
 						CMainMenu *pcMenu = &pcMenuTlb[r + 1];
 						const int  nLevel = pcMenuTlb[r].m_nLevel;
-						if (item.m_bAddPrevSeparete) {
+						if (item.m_bAddPrevSeparete)
+						{
 							pcMenu->m_nType	= T_SEPARATOR;
 							pcMenu->m_nFunc	= F_SEPARATOR;
 							pcMenu->m_nLevel   = nLevel;
@@ -2094,7 +2237,8 @@ void CShareData_IO::ShareData_IO_MainMenu(CDataProfile &cProfile)
 						pcMenu->m_sKey[0]  = L'\0';
 						pcMenu->m_sKey[1]  = L'\0';
 						mainmenu.m_nMainMenuNum++;
-						if (item.m_bAddNextSeparete) {
+						if (item.m_bAddNextSeparete)
+						{
 							pcMenu++;
 							pcMenu->m_nType	= T_SEPARATOR;
 							pcMenu->m_nFunc	= F_SEPARATOR;
@@ -2136,37 +2280,44 @@ void CShareData_IO::IO_MainMenu(CDataProfile &cProfile, std::vector<std::wstring
 	std::vector<std::wstring> &data	= *pData;
 	int						   dataNum = 0;
 
-	if (cProfile.IsReadingMode()) {
+	if (cProfile.IsReadingMode())
+	{
 		int menuNum = 0;
 		if (pData) { menuNum = (int)data.size() - 1; }
-		else {
+		else
+		{
 			cProfile.IOProfileData(pszSecName, LTEXT("nMainMenuNum"), menuNum);
 		}
 		if (menuNum == 0) { return; }
 		mainmenu.m_nMainMenuNum = menuNum;
 		SetValueLimit(mainmenu.m_nMainMenuNum, MAX_MAINMENU);
 	}
-	else {
+	else
+	{
 		cProfile.IOProfileData(pszSecName, LTEXT("nMainMenuNum"), mainmenu.m_nMainMenuNum);
 	}
 
 	if (pData) { mainmenu.m_bMainMenuKeyParentheses = (_wtoi(data[dataNum++].c_str()) != 0); }
-	else {
+	else
+	{
 		cProfile.IOProfileData(pszSecName, LTEXT("bKeyParentheses"), mainmenu.m_bMainMenuKeyParentheses);
 	}
 
-	if (cProfile.IsReadingMode()) {
+	if (cProfile.IsReadingMode())
+	{
 		// Top Level 初期化
 		memset(mainmenu.m_nMenuTopIdx, -1, sizeof(mainmenu.m_nMenuTopIdx));
 	}
 
 	nIdx = 0;
-	for (int i = 0; i < mainmenu.m_nMainMenuNum; i++) {
+	for (int i = 0; i < mainmenu.m_nMainMenuNum; i++)
+	{
 		//メインメニューテーブル
 		pcMenu = &mainmenu.m_cMainMenuTbl[i];
 
 		auto_sprintf(szKeyName, LTEXT("MM[%03d]"), i);
-		if (cProfile.IsReadingMode()) {
+		if (cProfile.IsReadingMode())
+		{
 			// 読み込み時初期化
 			pcMenu->m_nType	= T_NODE;
 			pcMenu->m_nFunc	= F_INVALID;
@@ -2177,7 +2328,8 @@ void CShareData_IO::IO_MainMenu(CDataProfile &cProfile, std::vector<std::wstring
 
 			// 読み出し
 			if (pData) { wcscpy(szLine, data[dataNum++].c_str()); }
-			else {
+			else
+			{
 				cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szLine));
 			}
 
@@ -2205,14 +2357,17 @@ void CShareData_IO::IO_MainMenu(CDataProfile &cProfile, std::vector<std::wstring
 
 			// アクセスキー
 			p = pn;
-			if (*p == L',') {
+			if (*p == L',')
+			{
 				// Key なし or ,
-				if (p[1] == L',') {
+				if (p[1] == L',')
+				{
 					// Key = ,
 					pcMenu->m_sKey[0] = *p++;
 				}
 			}
-			else {
+			else
+			{
 				pcMenu->m_sKey[0] = *p++;
 			}
 			if (*p == L'\0') { continue; }
@@ -2221,12 +2376,16 @@ void CShareData_IO::IO_MainMenu(CDataProfile &cProfile, std::vector<std::wstring
 			p++;
 			wcscpy_s(pcMenu->m_sName, MAX_MAIN_MENU_NAME_LEN + 1, p);
 		}
-		else {
-			if (GetPlugCmdInfoByFuncCode(pcMenu->m_nFunc, szFuncName)) {
+		else
+		{
+			if (GetPlugCmdInfoByFuncCode(pcMenu->m_nFunc, szFuncName))
+			{
 				// Plugin
 			}
-			else {
-				if (bOutCmdName) {
+			else
+			{
+				if (bOutCmdName)
+				{
 					// マクロ名対応
 					p = CSMacroMgr::GetFuncInfoByID(G_AppInstance(), pcMenu->m_nFunc, szFuncName, NULL);
 				}
@@ -2239,7 +2398,8 @@ void CShareData_IO::IO_MainMenu(CDataProfile &cProfile, std::vector<std::wstring
 			cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szLine));
 		}
 
-		if (cProfile.IsReadingMode() && pcMenu->m_nLevel == 0) {
+		if (cProfile.IsReadingMode() && pcMenu->m_nLevel == 0)
+		{
 			// Top Level設定
 			if (nIdx < MAX_MAINMENU_TOP) { mainmenu.m_nMenuTopIdx[nIdx++] = i; }
 		}
@@ -2262,8 +2422,8 @@ void CShareData_IO::ShareData_IO_Other(CDataProfile &cProfile)
 
 	/* **** その他のダイアログ **** */
 	/* 外部コマンド実行の「標準出力を得る」 */
-	if (!cProfile.IOProfileData(pszSecName, LTEXT("nExecFlgOpt"),
-								pShare->m_nExecFlgOpt)) { //	2006.12.03 maru オプション拡張
+	if (!cProfile.IOProfileData(pszSecName, LTEXT("nExecFlgOpt"), pShare->m_nExecFlgOpt))
+	{ //	2006.12.03 maru オプション拡張
 		cProfile.IOProfileData(pszSecName, LTEXT("bGetStdout"), pShare->m_nExecFlgOpt);
 	}
 
@@ -2282,7 +2442,8 @@ void CShareData_IO::ShareData_IO_Other(CDataProfile &cProfile)
 						   pShare->m_sTagJump.m_aTagJumpKeywords._GetSizeRef());
 	pShare->m_sHistory.m_aCommands.SetSizeLimit();
 	int nSize = pShare->m_sTagJump.m_aTagJumpKeywords.size();
-	for (i = 0; i < nSize; ++i) {
+	for (i = 0; i < nSize; ++i)
+	{
 		auto_sprintf(szKeyName, LTEXT("TagJumpKeyword[%02d]"), i);
 		if (i >= nSize) { pShare->m_sTagJump.m_aTagJumpKeywords[i][0] = LTEXT('\0'); }
 		cProfile.IOProfileData(pszSecName, szKeyName, pShare->m_sTagJump.m_aTagJumpKeywords[i]);
@@ -2292,7 +2453,8 @@ void CShareData_IO::ShareData_IO_Other(CDataProfile &cProfile)
 	// From Here 2005.04.03 MIK キーワード指定タグジャンプの
 
 	//	MIK バージョン情報（書き込みのみ）
-	if (!cProfile.IsReadingMode()) {
+	if (!cProfile.IsReadingMode())
+	{
 		WCHAR iniVer[256];
 		auto_sprintf(iniVer, L"%d.%d.%d.%d", HIWORD(pShare->m_sVersion.m_dwProductVersionMS),
 					 LOWORD(pShare->m_sVersion.m_dwProductVersionMS), HIWORD(pShare->m_sVersion.m_dwProductVersionLS),
@@ -2322,11 +2484,14 @@ void CShareData_IO::IO_ColorSet(CDataProfile *pcProfile, const WCHAR *pszSecName
 	WCHAR szKeyName[256];
 	WCHAR szKeyData[1024];
 	int   j;
-	for (j = 0; j < COLORIDX_LAST; ++j) {
+	for (j = 0; j < COLORIDX_LAST; ++j)
+	{
 		static const WCHAR *pszForm = LTEXT("%d,%d,%06x,%06x,%d");
 		auto_sprintf(szKeyName, LTEXT("C[%s]"), g_ColorAttributeArr[j].szName); // Stonee, 2001/01/12, 2001/01/15
-		if (pcProfile->IsReadingMode()) {
-			if (pcProfile->IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szKeyData))) {
+		if (pcProfile->IsReadingMode())
+		{
+			if (pcProfile->IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szKeyData)))
+			{
 				int buf[5];
 				scan_ints(szKeyData, pszForm, buf);
 				pColorInfoArr[j].m_bDisp				  = (buf[0] != 0);
@@ -2335,7 +2500,8 @@ void CShareData_IO::IO_ColorSet(CDataProfile *pcProfile, const WCHAR *pszSecName
 				pColorInfoArr[j].m_sColorAttr.m_cBACK	 = buf[3];
 				pColorInfoArr[j].m_sFontAttr.m_bUnderLine = (buf[4] != 0);
 			}
-			else {
+			else
+			{
 				// 2006.12.07 ryoji
 				// sakura Ver1.5.13.1 以前のiniファイルを読んだときにキャレットがテキスト背景色と同じになると
 				// ちょっと困るのでキャレット色が読めないときはキャレット色をテキスト色と同じにする
@@ -2349,7 +2515,8 @@ void CShareData_IO::IO_ColorSet(CDataProfile *pcProfile, const WCHAR *pszSecName
 			if (0 != (fAttribute & COLOR_ATTRIB_NO_BOLD)) pColorInfoArr[j].m_sFontAttr.m_bBoldFont = false;
 			if (0 != (fAttribute & COLOR_ATTRIB_NO_UNDERLINE)) pColorInfoArr[j].m_sFontAttr.m_bUnderLine = false;
 		}
-		else {
+		else
+		{
 			auto_sprintf(szKeyData, pszForm, pColorInfoArr[j].m_bDisp ? 1 : 0,
 						 pColorInfoArr[j].m_sFontAttr.m_bBoldFont ? 1 : 0, pColorInfoArr[j].m_sColorAttr.m_cTEXT,
 						 pColorInfoArr[j].m_sColorAttr.m_cBACK, pColorInfoArr[j].m_sFontAttr.m_bUnderLine ? 1 : 0);
@@ -2368,8 +2535,10 @@ void ShareData_IO_Sub_LogFont(CDataProfile &cProfile, const WCHAR *pszSecName, c
 	WCHAR		 szKeyData[1024];
 
 	cProfile.IOProfileData(pszSecName, pszKeyPointSize, nPointSize); // 2009.10.01 ryoji
-	if (cProfile.IsReadingMode()) {
-		if (cProfile.IOProfileData(pszSecName, pszKeyLf, MakeStringBufferW(szKeyData))) {
+	if (cProfile.IsReadingMode())
+	{
+		if (cProfile.IOProfileData(pszSecName, pszKeyLf, MakeStringBufferW(szKeyData)))
+		{
 			int buf[13];
 			scan_ints(szKeyData, pszForm, buf);
 			lf.lfHeight			= buf[0];
@@ -2385,18 +2554,21 @@ void ShareData_IO_Sub_LogFont(CDataProfile &cProfile, const WCHAR *pszSecName, c
 			lf.lfClipPrecision  = (BYTE)buf[10];
 			lf.lfQuality		= (BYTE)buf[11];
 			lf.lfPitchAndFamily = (BYTE)buf[12];
-			if (nPointSize != 0) {
+			if (nPointSize != 0)
+			{
 				// DPI変更してもフォントのポイントサイズが変わらないように
 				// ポイント数からピクセル数に変換する
 				lf.lfHeight = -DpiPointsToPixels(abs(nPointSize), 10); // pointSize: 1/10ポイント単位のサイズ
 			}
-			else {
+			else
+			{
 				// 初回または古いバージョンからの更新時はポイント数をピクセル数から逆算して仮設定
 				nPointSize = DpiPixelsToPoints(abs(lf.lfHeight), 10); // （従来フォントダイアログで小数点は指定不可）
 			}
 		}
 	}
-	else {
+	else
+	{
 		auto_sprintf(szKeyData, pszForm, lf.lfHeight, lf.lfWidth, lf.lfEscapement, lf.lfOrientation, lf.lfWeight,
 					 lf.lfItalic, lf.lfUnderline, lf.lfStrikeOut, lf.lfCharSet, lf.lfOutPrecision, lf.lfClipPrecision,
 					 lf.lfQuality, lf.lfPitchAndFamily);
@@ -2412,10 +2584,8 @@ void CShareData_IO::ShareData_IO_FileTree(CDataProfile &cProfile, SFileTree &fil
 	cProfile.IOProfileData(pszSecName, L"szFileTreeProjectIni", fileTree.m_szProjectIni);
 	cProfile.IOProfileData(pszSecName, L"nFileTreeItemCount", fileTree.m_nItemCount);
 	SetValueLimit(fileTree.m_nItemCount, _countof(fileTree.m_aItems));
-	for (int i = 0; i < fileTree.m_nItemCount; i++) {
-		ShareData_IO_FileTreeItem(cProfile, fileTree.m_aItems[i], pszSecName, i);
-	}
-}
+	for (int i = 0; i < fileTree.m_nItemCount; i++)
+	{ ShareData_IO_FileTreeItem(cProfile, fileTree.m_aItems[i], pszSecName, i); } }
 
 void CShareData_IO::ShareData_IO_FileTreeItem(CDataProfile &cProfile, SFileTreeItem &item, const WCHAR *pszSecName,
 											  int i)
@@ -2424,20 +2594,23 @@ void CShareData_IO::ShareData_IO_FileTreeItem(CDataProfile &cProfile, SFileTreeI
 	auto_sprintf(szKey, L"FileTree(%d).eItemType", i);
 	cProfile.IOProfileData_WrapInt(pszSecName, szKey, item.m_eFileTreeItemType);
 	if (cProfile.IsReadingMode() || item.m_eFileTreeItemType == EFileTreeItemType_Grep
-		|| item.m_eFileTreeItemType == EFileTreeItemType_File) {
+		|| item.m_eFileTreeItemType == EFileTreeItemType_File)
+	{
 		auto_sprintf(szKey, L"FileTree(%d).szTargetPath", i);
 		cProfile.IOProfileData(pszSecName, szKey, item.m_szTargetPath);
 	}
 	if (cProfile.IsReadingMode()
 		|| ((item.m_eFileTreeItemType == EFileTreeItemType_Grep || item.m_eFileTreeItemType == EFileTreeItemType_File)
 			&& item.m_szLabelName[0] != L'\0')
-		|| item.m_eFileTreeItemType == EFileTreeItemType_Folder) {
+		|| item.m_eFileTreeItemType == EFileTreeItemType_Folder)
+	{
 		auto_sprintf(szKey, L"FileTree(%d).szLabelName", i);
 		cProfile.IOProfileData(pszSecName, szKey, item.m_szLabelName);
 	}
 	auto_sprintf(szKey, L"FileTree(%d).nDepth", i);
 	cProfile.IOProfileData(pszSecName, szKey, item.m_nDepth);
-	if (cProfile.IsReadingMode() || item.m_eFileTreeItemType == EFileTreeItemType_Grep) {
+	if (cProfile.IsReadingMode() || item.m_eFileTreeItemType == EFileTreeItemType_Grep)
+	{
 		auto_sprintf(szKey, L"FileTree(%d).szTargetFile", i);
 		cProfile.IOProfileData(pszSecName, szKey, item.m_szTargetFile);
 		auto_sprintf(szKey, L"FileTree(%d).bIgnoreHidden", i);

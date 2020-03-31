@@ -67,7 +67,8 @@ int CDlgTagsMake::DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam,
 
 BOOL CDlgTagsMake::OnBnClicked(int wID)
 {
-	switch (wID) {
+	switch (wID)
+	{
 	case IDC_BUTTON_HELP:
 		/* ヘルプ */
 		MyWinHelp(GetHwnd(), HELP_CONTEXT,
@@ -76,7 +77,8 @@ BOOL CDlgTagsMake::OnBnClicked(int wID)
 
 	case IDC_BUTTON_TAG_MAKE_REF: /* 参照 */ SelectFolder(GetHwnd()); return TRUE;
 
-	case IDC_BUTTON_FOLDER_UP: {
+	case IDC_BUTTON_FOLDER_UP:
+	{
 		WCHAR szDir[_MAX_PATH];
 		HWND  hwnd = GetItemHwnd(IDC_EDIT_TAG_MAKE_FOLDER);
 		::GetWindowText(hwnd, szDir, _countof(szDir));
@@ -108,10 +110,12 @@ void CDlgTagsMake::SelectFolder(HWND hwndDlg)
 	/* フォルダ */
 	::DlgItem_GetText(hwndDlg, IDC_EDIT_TAG_MAKE_FOLDER, szPath, _MAX_PATH);
 
-	if (SelectDir(hwndDlg, LS(STR_DLGTAGMAK_SELECTDIR), szPath, szPath)) {
+	if (SelectDir(hwndDlg, LS(STR_DLGTAGMAK_SELECTDIR), szPath, szPath))
+	{
 		//末尾に\\マークを追加する．
 		int pos = wcslen(szPath);
-		if (pos > 0 && szPath[pos - 1] != L'\\') {
+		if (pos > 0 && szPath[pos - 1] != L'\\')
+		{
 			szPath[pos]		= L'\\';
 			szPath[pos + 1] = L'\0';
 		}
@@ -146,7 +150,8 @@ int CDlgTagsMake::GetData(void)
 	//フォルダ
 	::DlgItem_GetText(GetHwnd(), IDC_EDIT_TAG_MAKE_FOLDER, m_szPath, _countof(m_szPath));
 	int length = wcslen(m_szPath);
-	if (length > 0) {
+	if (length > 0)
+	{
 		if (m_szPath[length - 1] != L'\\') wcscat(m_szPath, L"\\");
 	}
 

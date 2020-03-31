@@ -26,7 +26,8 @@
 
 #include "view/colors/CColorStrategy.h"
 
-class CColor_Heredoc final : public CColorStrategy {
+class CColor_Heredoc final : public CColorStrategy
+{
 public:
 	EColorIndexType   GetStrategyColor() const override { return COLORIDX_HEREDOC; }
 	CLayoutColorInfo *GetStrategyColorInfo() const override;

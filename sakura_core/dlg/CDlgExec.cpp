@@ -143,24 +143,26 @@ void CDlgExec::SetData(void)
 	hwndCombo = GetItemHwnd(IDC_COMBO_CUR_DIR);
 	Combo_ResetContent(hwndCombo);
 	::DlgItem_SetText(GetHwnd(), IDC_COMBO_TEXT, m_szCurDir);
-	for (i = 0; i < m_pShareData->m_sHistory.m_aCurDirs.size(); ++i) {
-		Combo_AddString(hwndCombo, m_pShareData->m_sHistory.m_aCurDirs[i]);
-	}
-	Combo_SetCurSel(hwndCombo, 0);
+	for (i = 0; i < m_pShareData->m_sHistory.m_aCurDirs.size(); ++i)
+	{ Combo_AddString(hwndCombo, m_pShareData->m_sHistory.m_aCurDirs[i]); } Combo_SetCurSel(hwndCombo, 0);
 
 	int nOpt;
 	hwndCombo = GetItemHwnd(IDC_COMBO_CODE_GET);
 	nOpt	  = m_pShareData->m_nExecFlgOpt & 0x88;
-	for (i = 0; _countof(codeTable1); i++) {
-		if (codeTable1[i] == nOpt) {
+	for (i = 0; _countof(codeTable1); i++)
+	{
+		if (codeTable1[i] == nOpt)
+		{
 			Combo_SetCurSel(hwndCombo, i);
 			break;
 		}
 	}
 	hwndCombo = GetItemHwnd(IDC_COMBO_CODE_SEND);
 	nOpt	  = m_pShareData->m_nExecFlgOpt & 0x110;
-	for (i = 0; _countof(codeTable2); i++) {
-		if (codeTable2[i] == nOpt) {
+	for (i = 0; _countof(codeTable2); i++)
+	{
+		if (codeTable2[i] == nOpt)
+		{
 			Combo_SetCurSel(hwndCombo, i);
 			break;
 		}
@@ -172,10 +174,9 @@ void CDlgExec::SetData(void)
 int CDlgExec::GetData(void)
 {
 	DlgItem_GetText(GetHwnd(), IDC_COMBO_m_szCommand, m_szCommand, _countof(m_szCommand));
-	if (IsDlgButtonCheckedBool(GetHwnd(), IDC_CHECK_CUR_DIR)) {
-		DlgItem_GetText(GetHwnd(), IDC_COMBO_CUR_DIR, &m_szCurDir[0], _countof2(m_szCurDir));
-	}
-	else {
+	if (IsDlgButtonCheckedBool(GetHwnd(), IDC_CHECK_CUR_DIR))
+	{ DlgItem_GetText(GetHwnd(), IDC_COMBO_CUR_DIR, &m_szCurDir[0], _countof2(m_szCurDir)); } else
+	{
 		m_szCurDir[0] = L'\0';
 	}
 	{ //	From Here 2007.01.02 maru 引数を拡張のため
@@ -202,8 +203,10 @@ int CDlgExec::GetData(void)
 
 BOOL CDlgExec::OnBnClicked(int wID)
 {
-	switch (wID) {
-	case IDC_CHECK_GETSTDOUT: { //	From Here 2007.01.02 maru 引数を拡張のため
+	switch (wID)
+	{
+	case IDC_CHECK_GETSTDOUT:
+	{ //	From Here 2007.01.02 maru 引数を拡張のため
 		BOOL bEnabled;
 		bEnabled = (BST_CHECKED == ::IsDlgButtonChecked(GetHwnd(), IDC_CHECK_GETSTDOUT)) ? TRUE : FALSE;
 		::EnableWindow(GetItemHwnd(IDC_RADIO_OUTPUT), bEnabled);
@@ -244,7 +247,8 @@ BOOL CDlgExec::OnBnClicked(int wID)
 		szPath[size] = L'\0';
 		/* ファイルオープンダイアログの初期化 */
 		cDlgOpenFile.Create(m_hInstance, GetHwnd(), L"*.com;*.exe;*.bat;*.cmd", m_szCommand);
-		if (cDlgOpenFile.DoModal_GetOpenFileName(szPath)) {
+		if (cDlgOpenFile.DoModal_GetOpenFileName(szPath))
+		{
 			wcscpy(m_szCommand, szPath);
 			::DlgItem_SetText(GetHwnd(), IDC_COMBO_m_szCommand, m_szCommand);
 		}
@@ -252,11 +256,10 @@ BOOL CDlgExec::OnBnClicked(int wID)
 		return TRUE;
 		// To Here Mar. 28, 2001
 
-	case IDC_BUTTON_REFERENCE2: {
-		if (SelectDir(GetHwnd(), LS(STR_DLGEXEC_SELECT_CURDIR), &m_szCurDir[0], &m_szCurDir[0])) {
-			::DlgItem_SetText(GetHwnd(), IDC_COMBO_CUR_DIR, &m_szCurDir[0]);
-		}
-	}
+	case IDC_BUTTON_REFERENCE2:
+	{
+		if (SelectDir(GetHwnd(), LS(STR_DLGEXEC_SELECT_CURDIR), &m_szCurDir[0], &m_szCurDir[0]))
+		{ ::DlgItem_SetText(GetHwnd(), IDC_COMBO_CUR_DIR, &m_szCurDir[0]); } }
 		return TRUE;
 
 	case IDOK: /* 下検索 */

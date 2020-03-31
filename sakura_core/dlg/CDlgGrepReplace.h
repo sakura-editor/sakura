@@ -20,7 +20,8 @@ class CDlgGrep;
 #include "dlg/CDlgGrep.h"
 
 //! GREP置換ダイアログボックス
-class CDlgGrepReplace final : public CDlgGrep {
+class CDlgGrepReplace final : public CDlgGrep
+{
 public:
 	/*
 	||  Constructors

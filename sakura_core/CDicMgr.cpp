@@ -59,7 +59,8 @@ BOOL CDicMgr::Search(const wchar_t *pszKey,  //!< 検索キーワード
 	if (!in) { return FALSE; }
 
 	wchar_t szLine[LINEREADBUFSIZE];
-	for (int line = 1; in; line++) { // 2006.04.10 fon
+	for (int line = 1; in; line++)
+	{ // 2006.04.10 fon
 		// 1行読み込み
 		{
 			wstring tmp = in.ReadLineW(); // NULL != fgetws( szLine, _countof(szLine), pFile );
@@ -68,19 +69,24 @@ BOOL CDicMgr::Search(const wchar_t *pszKey,  //!< 検索キーワード
 		}
 
 		pszWork = wcsstr(szLine, pszDelimit);
-		if (NULL != pszWork && szLine[0] != L';') {
+		if (NULL != pszWork && szLine[0] != L';')
+		{
 			*pszWork = L'\0';
 			pszWork += wcslen(pszDelimit);
 
 			/* 最初のトークンを取得します。 */
 			wchar_t *context = NULL;
 			pszToken		 = wcstok_s(szLine, pszKeySeps, &context);
-			while (NULL != pszToken) {
+			while (NULL != pszToken)
+			{
 				nRes = _wcsnicmp(pszKey, pszToken, nCmpLen); // 2006.04.10 fon
-				if (0 == nRes) {
+				if (0 == nRes)
+				{
 					int nLen = (int)wcslen(pszWork);
-					for (i = 0; i < nLen; ++i) {
-						if (WCODE::IsLineDelimiterBasic(pszWork[i])) {
+					for (i = 0; i < nLen; ++i)
+					{
+						if (WCODE::IsLineDelimiterBasic(pszWork[i]))
+						{
 							pszWork[i] = L'\0';
 							break;
 						}
@@ -123,7 +129,8 @@ int CDicMgr::HokanSearch(const wchar_t *		  pszKey,
 	if (!in) { return 0; }
 	nKeyLen = wcslen(pszKey);
 	wstring szLine;
-	while (in) {
+	while (in)
+	{
 		szLine = in.ReadLineW();
 		if (nKeyLen > (int)szLine.length()) { continue; }
 
@@ -133,13 +140,16 @@ int CDicMgr::HokanSearch(const wchar_t *		  pszKey,
 		//空行無視
 		if (szLine.length() == 0) continue;
 
-		if (bHokanLoHiCase) { /* 英大文字小文字を同一視する */
+		if (bHokanLoHiCase)
+		{ /* 英大文字小文字を同一視する */
 			nRet = wmemicmp(pszKey, szLine.c_str(), nKeyLen);
 		}
-		else {
+		else
+		{
 			nRet = wmemcmp(pszKey, szLine.c_str(), nKeyLen);
 		}
-		if (0 == nRet) {
+		if (0 == nRet)
+		{
 			vKouho.push_back(szLine);
 			if (0 != nMaxKouho && nMaxKouho <= (int)vKouho.size()) { break; }
 		}

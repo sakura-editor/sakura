@@ -36,8 +36,10 @@ CFuncInfoArr::~CFuncInfoArr()
 void CFuncInfoArr::Empty(void)
 {
 	int i;
-	if (m_nFuncInfoArrNum > 0 && NULL != m_ppcFuncInfoArr) {
-		for (i = 0; i < m_nFuncInfoArrNum; ++i) {
+	if (m_nFuncInfoArrNum > 0 && NULL != m_ppcFuncInfoArr)
+	{
+		for (i = 0; i < m_nFuncInfoArrNum; ++i)
+		{
 			delete m_ppcFuncInfoArr[i];
 			m_ppcFuncInfoArr[i] = NULL;
 		}
@@ -61,10 +63,9 @@ CFuncInfo *CFuncInfoArr::GetAt(int nIdx)
 /*! 配列の最後にデータを追加する */
 void CFuncInfoArr::AppendData(CFuncInfo *pcFuncInfo)
 {
-	if (0 == m_nFuncInfoArrNum) {
-		m_ppcFuncInfoArr = (CFuncInfo **)malloc(sizeof(CFuncInfo *) * (m_nFuncInfoArrNum + 1));
-	}
-	else {
+	if (0 == m_nFuncInfoArrNum)
+	{ m_ppcFuncInfoArr = (CFuncInfo **)malloc(sizeof(CFuncInfo *) * (m_nFuncInfoArrNum + 1)); } else
+	{
 		m_ppcFuncInfoArr = (CFuncInfo **)realloc(m_ppcFuncInfoArr, sizeof(CFuncInfo *) * (m_nFuncInfoArrNum + 1));
 	}
 	m_ppcFuncInfoArr[m_nFuncInfoArrNum] = pcFuncInfo;
@@ -109,7 +110,8 @@ void CFuncInfoArr::DUMP(void)
 #ifdef _DEBUG
 	int i;
 	MYTRACE(L"=============================\n");
-	for (i = 0; i < m_nFuncInfoArrNum; i++) {
+	for (i = 0; i < m_nFuncInfoArrNum; i++)
+	{
 		MYTRACE(L"[%d]------------------\n", i);
 		MYTRACE(L"m_nFuncLineCRLF	=%d\n", m_ppcFuncInfoArr[i]->m_nFuncLineCRLF);
 		MYTRACE(L"m_nFuncLineLAYOUT	=%d\n", m_ppcFuncInfoArr[i]->m_nFuncLineLAYOUT);
@@ -125,13 +127,15 @@ void CFuncInfoArr::DUMP(void)
 
 void CFuncInfoArr::SetAppendText(int info, std::wstring s, bool overwrite)
 {
-	if (m_AppendTextArr.find(info) == m_AppendTextArr.end()) {
+	if (m_AppendTextArr.find(info) == m_AppendTextArr.end())
+	{
 		// キーが存在しない場合、追加する
 		std::pair<int, std::wstring> pair(info, s);
 		m_AppendTextArr.insert(pair);
 		if (m_nAppendTextLenMax < (int)s.length()) { m_nAppendTextLenMax = s.length(); }
 	}
-	else {
+	else
+	{
 		// キーが存在する場合、値を書き換える
 		if (overwrite) { m_AppendTextArr[info] = s; }
 	}

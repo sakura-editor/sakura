@@ -64,7 +64,8 @@
 	頻繁にずらす操作が発生しないよう，nKeyWordSetBlockSize(50個)ずつの
 	ブロック単位で場所を確保するようにしている．
 */
-class CKeyWordSetMgr {
+class CKeyWordSetMgr
+{
 public:
 	/*
 	||  Constructors

@@ -46,7 +46,8 @@ class CSearchStringPattern;
 class CColorStrategy;
 
 //! レイアウト中の禁則タイプ	//@@@ 2002.04.20 MIK
-enum EKinsokuType {
+enum EKinsokuType
+{
 	KINSOKU_TYPE_NONE = 0,	 //!< なし
 	KINSOKU_TYPE_WORDWRAP,	 //!< 英文ワードラップ中
 	KINSOKU_TYPE_KINSOKU_HEAD, //!< 行頭禁則中
@@ -54,7 +55,8 @@ enum EKinsokuType {
 	KINSOKU_TYPE_KINSOKU_KUTO, //!< 句読点ぶら下げ中
 };
 
-struct LayoutReplaceArg {
+struct LayoutReplaceArg
+{
 	CLayoutRange  sDelRange;	//!< [in]削除範囲。レイアウト単位。
 	COpeLineData *pcmemDeleted; //!< [out]削除されたデータ
 	COpeLineData *pInsData;		//!< [in,out]挿入するデータ
@@ -67,14 +69,16 @@ struct LayoutReplaceArg {
 };
 
 // 編集時のテキスト最大幅算出用		// 2009.08.28 nasukoji
-struct CalTextWidthArg {
+struct CalTextWidthArg
+{
 	CLayoutPoint ptLayout;	 //!< 編集開始位置
 	CLayoutInt   nDelLines;	//!< 削除に関係する行数 - 1（負数の時削除なし）
 	CLayoutInt   nAllLinesOld; //!< 編集前のテキスト行数
 	BOOL		 bInsData;	 //!< 追加文字列あり
 };
 
-class CLogicPointEx : public CLogicPoint {
+class CLogicPointEx : public CLogicPoint
+{
 public:
 	CLayoutInt  ext;  //!< ピクセル幅
 	CLayoutXInt haba; //!< ext設定時の１文字の幅
@@ -88,7 +92,8 @@ public:
 	@date 2005.11.21 Moca 色分け情報をメンバーへ移動．不要となった引数をメンバ関数から削除．
 */
 // 2007.10.15 XYLogicalToLayoutを廃止。LogicToLayoutに統合。
-class CLayoutMgr : public CProgressSubject {
+class CLayoutMgr : public CProgressSubject
+{
 private:
 	typedef CLayoutInt (CLayoutMgr::*CalcIndentProc)(CLayout *);
 
@@ -171,17 +176,19 @@ public:
 	CLayoutInt GetActualTsvSpace(CLayoutInt pos, wchar_t ch) const
 	{
 		CLayoutInt tabPadding = m_nCharLayoutXPerKeta - 1;
-		if (m_tsvInfo.m_nTsvMode == TSV_MODE_NONE && ch == WCODE::TAB) {
-			return GetTabSpace() + tabPadding - ((pos + tabPadding) % GetTabSpace());
-		}
-		else if (m_tsvInfo.m_nTsvMode == TSV_MODE_CSV && ch == WCODE::TAB) {
+		if (m_tsvInfo.m_nTsvMode == TSV_MODE_NONE && ch == WCODE::TAB)
+		{ return GetTabSpace() + tabPadding - ((pos + tabPadding) % GetTabSpace()); }
+		else if (m_tsvInfo.m_nTsvMode == TSV_MODE_CSV && ch == WCODE::TAB)
+		{
 			return tabPadding;
 		}
 		else if ((m_tsvInfo.m_nTsvMode == TSV_MODE_TSV && ch == WCODE::TAB)
-				 || (m_tsvInfo.m_nTsvMode == TSV_MODE_CSV && ch == L',')) {
+				 || (m_tsvInfo.m_nTsvMode == TSV_MODE_CSV && ch == L','))
+		{
 			return CLayoutInt(m_tsvInfo.GetActualTabLength(pos, m_tsvInfo.m_nMaxCharLayoutX));
 		}
-		else {
+		else
+		{
 			return tabPadding;
 		}
 	}
@@ -226,7 +233,8 @@ public:
 	void LogicToLayoutEx(const CLogicPointEx &ptLogicEx, CLayoutPoint *pptLayout, CLayoutInt nLineHint = CLayoutInt(0))
 	{
 		LogicToLayout(ptLogicEx, pptLayout, nLineHint);
-		if (0 < ptLogicEx.ext) {
+		if (0 < ptLogicEx.ext)
+		{
 			// 文字幅換算をする
 			int ext = std::max(0, ::MulDiv((Int)ptLogicEx.ext, (Int)m_nCharLayoutXPerKeta, (Int)ptLogicEx.haba));
 			pptLayout->x += ext;
@@ -316,7 +324,8 @@ protected:
 			CLayout *, CLogicInt); /* 指定行より後の行のレイアウト情報について、論理行番号を指定行数だけシフトする */
 
 	//部品
-	struct SLayoutWork {
+	struct SLayoutWork
+	{
 		//毎ループ初期化
 		EKinsokuType eKinsokuType;
 		CLogicInt	nPos;

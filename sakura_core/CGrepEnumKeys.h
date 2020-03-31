@@ -41,7 +41,8 @@
 
 typedef std::vector<LPCWSTR> VGrepEnumKeys;
 
-class CGrepEnumKeys {
+class CGrepEnumKeys
+{
 public:
 	VGrepEnumKeys m_vecSearchFileKeys;
 	VGrepEnumKeys m_vecSearchFolderKeys;
@@ -85,22 +86,26 @@ public:
 		ClearItems();
 
 		std::vector<wstring> patterns = SplitPattern(lpKeys);
-		for (size_t i = 0; i < patterns.size(); i++) {
+		for (size_t i = 0; i < patterns.size(); i++)
+		{
 			const wstring &element = patterns[i];
 			const WCHAR *  token   = element.c_str();
 
 			//フィルタを種類ごとに振り分ける
-			enum KeyFilterType {
+			enum KeyFilterType
+			{
 				FILTER_SEARCH,
 				FILTER_EXCEPT_FILE,
 				FILTER_EXCEPT_FOLDER,
 			};
 			KeyFilterType keyType = FILTER_SEARCH;
-			if (token[0] == L'!') {
+			if (token[0] == L'!')
+			{
 				token++;
 				keyType = FILTER_EXCEPT_FILE;
 			}
-			else if (token[0] == L'#') {
+			else if (token[0] == L'#')
+			{
 				token++;
 				keyType = FILTER_EXCEPT_FOLDER;
 			}
@@ -108,23 +113,29 @@ public:
 			bool bRelPath	 = _IS_REL_PATH(token);
 			int  nValidStatus = ValidateKey(token);
 			if (0 != nValidStatus) { return nValidStatus; }
-			if (keyType == FILTER_SEARCH) {
+			if (keyType == FILTER_SEARCH)
+			{
 				if (bRelPath) { push_back_unique(m_vecSearchFileKeys, token); }
-				else {
+				else
+				{
 					//					push_back_unique( m_vecSearchAbsFileKeys, token );
 					//					push_back_unique( m_vecSearchFileKeys, token );
 					return 2; // 絶対パス指定は不可
 				}
 			}
-			else if (keyType == FILTER_EXCEPT_FILE) {
+			else if (keyType == FILTER_EXCEPT_FILE)
+			{
 				if (bRelPath) { push_back_unique(m_vecExceptFileKeys, token); }
-				else {
+				else
+				{
 					push_back_unique(m_vecExceptAbsFileKeys, token);
 				}
 			}
-			else if (keyType == FILTER_EXCEPT_FOLDER) {
+			else if (keyType == FILTER_EXCEPT_FOLDER)
+			{
 				if (bRelPath) { push_back_unique(m_vecExceptFolderKeys, token); }
-				else {
+				else
+				{
 					push_back_unique(m_vecExceptAbsFolderKeys, token);
 				}
 			}
@@ -170,15 +181,16 @@ public:
 
 		int	nPos = 0;
 		WCHAR *token;
-		while (NULL
-			   != (token =
-					   my_strtok<WCHAR>(pWildCard, nWildCardLen, &nPos, WILDCARD_DELIMITER))) { //トークン毎に繰り返す。
+		while (NULL != (token = my_strtok<WCHAR>(pWildCard, nWildCardLen, &nPos, WILDCARD_DELIMITER)))
+		{ //トークン毎に繰り返す。
 			// "を取り除いて左に詰める
 			WCHAR *p;
 			WCHAR *q;
 			p = q = token;
-			while (*p) {
-				if (*p != L'"') {
+			while (*p)
+			{
+				if (*p != L'"')
+				{
 					if (p != q) { *q = *p; }
 					q++;
 				}
@@ -210,7 +222,8 @@ private:
 
 	void push_back_unique(VGrepEnumKeys &keys, LPCWSTR addKey)
 	{
-		if (!IsExist(keys, addKey)) {
+		if (!IsExist(keys, addKey))
+		{
 			WCHAR *newKey = new WCHAR[wcslen(addKey) + 1];
 			wcscpy(newKey, addKey);
 			keys.push_back(newKey);
@@ -219,7 +232,8 @@ private:
 
 	BOOL IsExist(VGrepEnumKeys &keys, LPCWSTR addKey)
 	{
-		for (int i = 0; i < (int)keys.size(); i++) {
+		for (int i = 0; i < (int)keys.size(); i++)
+		{
 			if (wcscmp(keys[i], addKey) == 0) { return TRUE; }
 		}
 		return FALSE;
@@ -233,9 +247,11 @@ private:
 	{
 		//
 		bool wildcard = false;
-		for (int i = 0; key[i]; i++) {
+		for (int i = 0; key[i]; i++)
+		{
 			if (!wildcard && (key[i] == L'*' || key[i] == L'?')) { wildcard = true; }
-			else if (wildcard && (key[i] == L'\\' || key[i] == L'/')) {
+			else if (wildcard && (key[i] == L'\\' || key[i] == L'/'))
+			{
 				return 1;
 			}
 		}
@@ -252,7 +268,8 @@ private:
 	{
 		std::vector<wstring> patterns = SplitPattern(lpKeys);
 
-		for (size_t i = 0; i < patterns.size(); i++) {
+		for (size_t i = 0; i < patterns.size(); i++)
+		{
 			const wstring &element = patterns[i];
 			const WCHAR *  token   = element.c_str();
 
@@ -260,7 +277,8 @@ private:
 			int  nValidStatus = ValidateKey(token);
 			if (0 != nValidStatus) { return nValidStatus; }
 			if (bRelPath) { push_back_unique(exceptionKeys, token); }
-			else {
+			else
+			{
 				push_back_unique(exceptionAbsoluteKeys, token);
 			}
 		}

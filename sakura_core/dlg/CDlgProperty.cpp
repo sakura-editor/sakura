@@ -64,7 +64,8 @@ int CDlgProperty::DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam)
 
 BOOL CDlgProperty::OnBnClicked(int wID)
 {
-	switch (wID) {
+	switch (wID)
+	{
 	case IDC_BUTTON_HELP:
 		/* 「ファイルのプロパティ」のヘルプ */
 		// Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
@@ -122,11 +123,13 @@ void CDlgProperty::SetData(void)
 	auto_sprintf(szWork, LS(STR_DLGFLPROP_LAYOUT_LINE), pCEditDoc->m_cLayoutMgr.GetLineCount());
 	cmemProp.AppendString(szWork);
 
-	if (CAppMode::getInstance()->IsViewMode()) {
+	if (CAppMode::getInstance()->IsViewMode())
+	{
 		cmemProp.AppendString(LS(STR_DLGFLPROP_VIEW_MODE)); // 2009.04.11 ryoji 「上書き禁止モード」→「ビューモード」
 	}
 	if (pCEditDoc->m_cDocEditor.IsModified()) { cmemProp.AppendString(LS(STR_DLGFLPROP_MODIFIED)); }
-	else {
+	else
+	{
 		cmemProp.AppendString(LS(STR_DLGFLPROP_NOT_MODIFIED));
 	}
 
@@ -136,20 +139,24 @@ void CDlgProperty::SetData(void)
 	auto_sprintf(szWork, LS(STR_DLGFLPROP_FILE_INFO), pCEditDoc->m_cDocLineMgr.GetLineCount());
 	cmemProp.AppendString(szWork);
 
-	if (INVALID_HANDLE_VALUE != (nFind = ::FindFirstFile(pCEditDoc->m_cDocFile.GetFilePath(), &wfd))) {
-		if (pCEditDoc->m_cDocFile.IsFileLocking()) {
-			if (m_pShareData->m_Common.m_sFile.m_nFileShareMode == SHAREMODE_DENY_WRITE) {
-				wcsncpy_s(szWork, LS(STR_DLGFLPROP_W_LOCK), _TRUNCATE);
-			}
-			else if (m_pShareData->m_Common.m_sFile.m_nFileShareMode == SHAREMODE_DENY_READWRITE) {
+	if (INVALID_HANDLE_VALUE != (nFind = ::FindFirstFile(pCEditDoc->m_cDocFile.GetFilePath(), &wfd)))
+	{
+		if (pCEditDoc->m_cDocFile.IsFileLocking())
+		{
+			if (m_pShareData->m_Common.m_sFile.m_nFileShareMode == SHAREMODE_DENY_WRITE)
+			{ wcsncpy_s(szWork, LS(STR_DLGFLPROP_W_LOCK), _TRUNCATE); }
+			else if (m_pShareData->m_Common.m_sFile.m_nFileShareMode == SHAREMODE_DENY_READWRITE)
+			{
 				wcsncpy_s(szWork, LS(STR_DLGFLPROP_RW_LOCK), _TRUNCATE);
 			}
-			else {
+			else
+			{
 				wcsncpy_s(szWork, LS(STR_DLGFLPROP_LOCK), _TRUNCATE);
 			}
 			cmemProp.AppendString(szWork);
 		}
-		else {
+		else
+		{
 			wcsncpy_s(szWork, LS(STR_DLGFLPROP_NOT_LOCK), _TRUNCATE);
 			cmemProp.AppendString(szWork);
 		}
@@ -209,7 +216,8 @@ void CDlgProperty::SetData(void)
 	nBufLen = in.GetLength();
 	if (nBufLen > CheckKanjiCode_MAXREADLENGTH) { nBufLen = CheckKanjiCode_MAXREADLENGTH; }
 	hgData = ::GlobalAlloc(GHND, nBufLen + 1);
-	if (NULL == hgData) {
+	if (NULL == hgData)
+	{
 		in.Close();
 		goto end_of_CodeTest;
 	}
@@ -221,7 +229,8 @@ void CDlgProperty::SetData(void)
 	CESI::GetDebugInfo(pBuf, nBufLen, &ctext);
 	cmemProp.AppendNativeData(ctext);
 
-	if (NULL != hgData) {
+	if (NULL != hgData)
+	{
 		::GlobalUnlock(hgData);
 		::GlobalFree(hgData);
 		hgData = NULL;

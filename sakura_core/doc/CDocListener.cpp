@@ -50,7 +50,8 @@ CDocSubject::~CDocSubject() {}
 	ECallbackResult CDocSubject::Notify##NAME()                                                                        \
 	{                                                                                                                  \
 		int n = GetListenerCount();                                                                                    \
-		for (int i = 0; i < n; i++) {                                                                                  \
+		for (int i = 0; i < n; i++)                                                                                    \
+		{                                                                                                              \
 			ECallbackResult eRet = GetListener(i)->On##NAME();                                                         \
 			if (eRet != CALLBACK_CONTINUE) return eRet;                                                                \
 		}                                                                                                              \
@@ -61,7 +62,8 @@ CDocSubject::~CDocSubject() {}
 	ECallbackResult CDocSubject::Notify##NAME(ARGTYPE a)                                                               \
 	{                                                                                                                  \
 		int n = GetListenerCount();                                                                                    \
-		for (int i = 0; i < n; i++) {                                                                                  \
+		for (int i = 0; i < n; i++)                                                                                    \
+		{                                                                                                              \
 			ECallbackResult eRet = GetListener(i)->On##NAME(a);                                                        \
 			if (eRet != CALLBACK_CONTINUE) return eRet;                                                                \
 		}                                                                                                              \
@@ -88,7 +90,8 @@ CDocSubject::~CDocSubject() {}
 	{                                                                                                                  \
 		int			n	= GetListenerCount();                                                                         \
 		ELoadResult eRet = LOADED_FAILURE;                                                                             \
-		for (int i = 0; i < n; i++) {                                                                                  \
+		for (int i = 0; i < n; i++)                                                                                    \
+		{                                                                                                              \
 			ELoadResult e = GetListener(i)->On##NAME(a);                                                               \
 			if (e == LOADED_NOIMPLEMENT) continue;                                                                     \
 			if (e == LOADED_FAILURE) return e;                                                                         \

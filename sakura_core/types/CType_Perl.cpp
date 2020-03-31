@@ -78,17 +78,20 @@ void CDocOutline::MakeFuncList_Perl(CFuncInfoArr *pcFuncInfoArr)
 	bool		   bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
 	CLogicInt nLineCount;
-	for (nLineCount = CLogicInt(0); nLineCount < m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount) {
+	for (nLineCount = CLogicInt(0); nLineCount < m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount)
+	{
 		pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
 		nMode = 0;
-		for (i = 0; i < nLineLen; ++i) {
+		for (i = 0; i < nLineLen; ++i)
+		{
 			/* 1バイト文字だけを処理する */
 			// 2005-09-02 D.S.Koba GetSizeOfChar
 			nCharChars = CNativeW::GetSizeOfChar(pLine, nLineLen, i);
 			if (1 < nCharChars) { break; }
 
 			/* 単語読み込み中 */
-			if (0 == nMode) {
+			if (0 == nMode)
+			{
 				/* 空白やタブ記号等を飛ばす */
 				if (L'\t' == pLine[i] || L' ' == pLine[i] || WCODE::IsLineDelimiter(pLine[i], bExtEol)) { continue; }
 				if ('s' != pLine[i]) break;
@@ -96,17 +99,20 @@ void CDocOutline::MakeFuncList_Perl(CFuncInfoArr *pcFuncInfoArr)
 				if (nLineLen - i < 4) break;
 				if (wcsncmp_literal(pLine + i, L"sub")) break;
 				int c = pLine[i + 3];
-				if (c == L' ' || c == L'\t') {
+				if (c == L' ' || c == L'\t')
+				{
 					nMode = 2; //	発見
 					i += 3;
 				}
 				else
 					break;
 			}
-			else if (2 == nMode) {
+			else if (2 == nMode)
+			{
 				if (L'\t' == pLine[i] || L' ' == pLine[i] || WCODE::IsLineDelimiter(pLine[i], bExtEol)) { continue; }
 				if (L'_' == pLine[i] || (L'a' <= pLine[i] && pLine[i] <= L'z') || (L'A' <= pLine[i] && pLine[i] <= L'Z')
-					|| (L'0' <= pLine[i] && pLine[i] <= L'9')) {
+					|| (L'0' <= pLine[i] && pLine[i] <= L'9'))
+				{
 					//	関数名の始まり
 					nWordIdx			 = 0;
 					szWord[nWordIdx]	 = pLine[i];
@@ -117,20 +123,24 @@ void CDocOutline::MakeFuncList_Perl(CFuncInfoArr *pcFuncInfoArr)
 				else
 					break;
 			}
-			else if (1 == nMode) {
+			else if (1 == nMode)
+			{
 				if (L'_' == pLine[i] || (L'a' <= pLine[i] && pLine[i] <= L'z') || (L'A' <= pLine[i] && pLine[i] <= L'Z')
 					|| (L'0' <= pLine[i] && pLine[i] <= L'9') ||
 					//	Jun. 18, 2005 genta パッケージ修飾子を考慮
 					//	コロンは2つ連続しないといけないのだが，そこは手抜き
-					L':' == pLine[i] || L'\'' == pLine[i]) {
+					L':' == pLine[i] || L'\'' == pLine[i])
+				{
 					++nWordIdx;
 					if (nWordIdx >= nMaxWordLeng) { break; }
-					else {
+					else
+					{
 						szWord[nWordIdx]	 = pLine[i];
 						szWord[nWordIdx + 1] = L'\0';
 					}
 				}
-				else {
+				else
+				{
 					//	関数名取得
 					/*
 					  カーソル位置変換

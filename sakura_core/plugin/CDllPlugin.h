@@ -34,7 +34,8 @@
 
 typedef void (*DllPlugHandler)();
 
-class CDllPlug final : public CPlug {
+class CDllPlug final : public CPlug
+{
 public:
 	CDllPlug(CPlugin &plugin, PlugId id, wstring sJack, wstring sHandler, wstring sLabel)
 		: CPlug(plugin, id, sJack, sHandler, sLabel)
@@ -46,7 +47,8 @@ public:
 	DllPlugHandler m_handler;
 };
 
-class CDllPlugin final : public CPlugin, public CDllImp {
+class CDllPlugin final : public CPlugin, public CDllImp
+{
 	//コンストラクタ
 public:
 	CDllPlugin(const wstring &sBaseDir)

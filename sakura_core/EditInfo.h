@@ -39,7 +39,8 @@
  * @note この構造体は DLLSHAREDATA に含まれるため、
  *   プロセス間共有できない型のメンバを追加してはならない。
  */
-struct EditInfo {
+struct EditInfo
+{
 	//ファイル
 	WCHAR	 m_szPath[_MAX_PATH];				//!< ファイル名
 	ECodeType m_nCharCode;						//!< 文字コード種別

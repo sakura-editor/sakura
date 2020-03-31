@@ -61,7 +61,8 @@ BOOL IsWow64();
 	@brief Wow64 の ファイルシステムリダイレクションを一時的に無効にして、クラス破棄時に元に戻すクラス
 	@note  このクラスを継承しないように final をつける
 */
-class CDisableWow64FsRedirect final {
+class CDisableWow64FsRedirect final
+{
 public:
 	/*!
 		@brief 	コンストラクタで ファイルシステムリダイレクションを無効にする
@@ -90,7 +91,8 @@ private:
 //カレントディレクトリユーティリティ。
 //コンストラクタでカレントディレクトリを保存し、デストラクタでカレントディレクトリを復元するモノ。
 // 2008.03.01 kobake 作成
-class CCurrentDirectoryBackupPoint {
+class CCurrentDirectoryBackupPoint
+{
 public:
 	CCurrentDirectoryBackupPoint();
 	~CCurrentDirectoryBackupPoint();

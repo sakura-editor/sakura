@@ -35,9 +35,11 @@
 #include "view/CEditView.h"
 #include "window/CEditWnd.h"
 
-class CPluginIfObj : public CWSHIfObj {
+class CPluginIfObj : public CWSHIfObj
+{
 	// 型定義
-	enum FuncId {
+	enum FuncId
+	{
 		F_PL_COMMAND_FIRST = 0,					//↓コマンドは以下に追加する
 		F_PL_SETOPTION,							//オプションファイルに値を書く
 		F_PL_ADDCOMMAND,						//コマンドを追加する
@@ -77,7 +79,8 @@ public:
 	{
 		Variant varCopy; // VT_BYREFだと困るのでコピー用
 
-		switch (LOWORD(ID)) {
+		switch (LOWORD(ID))
+		{
 		case F_PL_GETPLUGINDIR: //プラグインフォルダパスを取得する
 		{
 			SysString S(m_cPlugin.m_sBaseDir.c_str(), m_cPlugin.m_sBaseDir.size());
@@ -96,17 +99,21 @@ public:
 
 			cProfile.SetReadingMode();
 			if (LOWORD(ID) == F_PL_GETDEF) { cProfile.ReadProfile(m_cPlugin.GetPluginDefPath().c_str()); }
-			else {
+			else
+			{
 				cProfile.ReadProfile(m_cPlugin.GetOptionPath().c_str());
 			}
-			if (!cProfile.IOProfileData(sSection.c_str(), sKey.c_str(), sValue) && LOWORD(ID) == F_PL_GETOPTION) {
+			if (!cProfile.IOProfileData(sSection.c_str(), sKey.c_str(), sValue) && LOWORD(ID) == F_PL_GETOPTION)
+			{
 				// 設定されていなければデフォルトを取得
 				CPluginOption::ArrayIter it;
-				for (it = m_cPlugin.m_options.begin(); it != m_cPlugin.m_options.end(); it++) {
+				for (it = m_cPlugin.m_options.begin(); it != m_cPlugin.m_options.end(); it++)
+				{
 					wstring sSectionTmp;
 					wstring sKeyTmp;
 					(*it)->GetKey(&sSectionTmp, &sKeyTmp);
-					if (sSection == sSectionTmp && sKey == sKeyTmp) {
+					if (sSection == sSectionTmp && sKey == sKeyTmp)
+					{
 						sValue = (*it)->GetDefaultVal();
 						break;
 					}
@@ -122,16 +129,19 @@ public:
 			Wrap(&Result)->Receive(m_nPlugIndex);
 		}
 			return true;
-		case F_PL_GETSTRING: {
+		case F_PL_GETSTRING:
+		{
 			int num;
 			if (variant_to_int(Arguments[0], num) == false) return false;
-			if (0 < num && num < MAX_PLUG_STRING) {
+			if (0 < num && num < MAX_PLUG_STRING)
+			{
 				std::wstring &str = m_cPlugin.m_aStrings[num];
 				SysString	 S(str.c_str(), str.size());
 				Wrap(&Result)->Receive(S);
 				return true;
 			}
-			else if (0 == num) {
+			else if (0 == num)
+			{
 				std::wstring str = m_cPlugin.m_sLangName.c_str();
 				SysString	S(str.c_str(), str.size());
 				Wrap(&Result)->Receive(S);
@@ -145,7 +155,8 @@ public:
 	bool HandleCommand(CEditView *View, EFunctionCode ID, const WCHAR *Arguments[], const int ArgLengths[],
 					   const int ArgSize)
 	{
-		switch (LOWORD(ID)) {
+		switch (LOWORD(ID))
+		{
 		case F_PL_SETOPTION: //オプションファイルに値を書く
 		{
 			if (Arguments[0] == NULL) return false;
@@ -159,12 +170,14 @@ public:
 			cProfile.IOProfileData(Arguments[0], Arguments[1], tmp);
 			cProfile.WriteProfile(m_cPlugin.GetOptionPath().c_str(),
 								  (m_cPlugin.m_sName + L" プラグイン設定ファイル").c_str());
-		} break;
+		}
+		break;
 		case F_PL_ADDCOMMAND: //コマンドを追加する
 		{
 			int id = m_cPlugin.AddCommand(Arguments[0], Arguments[1], Arguments[2], true);
 			View->m_pcEditWnd->RegisterPluginCommand(id);
-		} break;
+		}
+		break;
 		}
 		return true;
 	}

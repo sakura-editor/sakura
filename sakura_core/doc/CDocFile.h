@@ -30,7 +30,8 @@
 class CEditDoc;
 
 //####本来はここにあるべきでは無い
-struct SFileInfo {
+struct SFileInfo
+{
 	friend class CDocFile;
 
 protected:
@@ -56,7 +57,8 @@ public:
 	void SetFileTime(FILETIME &Time) { cFileTime.SetFILETIME(Time); }
 };
 
-class CDocFile : public CFile {
+class CDocFile : public CFile
+{
 public:
 	CDocFile(CEditDoc *pcDoc)
 		: m_pcDocRef(pcDoc)

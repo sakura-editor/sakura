@@ -32,7 +32,8 @@ class CTextMetrics;
 class CCaret;
 class CEditWnd;
 
-class CCaretUnderLine {
+class CCaretUnderLine
+{
 public:
 	CCaretUnderLine(CEditView *pcEditView)
 		: m_pcEditView(pcEditView)
@@ -78,7 +79,8 @@ private:
 	bool	   m_bVertLineDoNotOFF;
 };
 
-class CCaret {
+class CCaret
+{
 public:
 	CCaret(CEditView *pEditView, const CEditDoc *pEditDoc);
 	virtual ~CCaret();

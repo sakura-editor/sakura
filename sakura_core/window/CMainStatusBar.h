@@ -28,7 +28,8 @@
 
 class CEditWnd;
 
-class CMainStatusBar : public CDocListenerEx {
+class CMainStatusBar : public CDocListenerEx
+{
 public:
 	//作成・破棄
 	CMainStatusBar(CEditWnd *pOwner);

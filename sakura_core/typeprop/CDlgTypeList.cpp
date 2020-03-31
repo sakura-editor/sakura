@@ -75,7 +75,8 @@ int CDlgTypeList::DoModal(HINSTANCE hInstance, HWND hwndParent, SResult *psResul
 	m_bEnableTempChange		= psResult->bTempChange;
 	nRet					= (int)CDialog::DoModal(hInstance, hwndParent, IDD_TYPELIST, (LPARAM)NULL);
 	if (-1 == nRet) { return FALSE; }
-	else {
+	else
+	{
 		//結果
 		psResult->cDocumentType = CTypeConfig(nRet & ~PROP_TEMPCHANGE_FLAG);
 		psResult->bTempChange   = ((nRet & PROP_TEMPCHANGE_FLAG) != 0);
@@ -85,7 +86,8 @@ int CDlgTypeList::DoModal(HINSTANCE hInstance, HWND hwndParent, SResult *psResul
 
 BOOL CDlgTypeList::OnLbnDblclk(int wID)
 {
-	switch (wID) {
+	switch (wID)
+	{
 	case IDC_LIST_TYPES:
 		//	Nov. 29, 2000	genta
 		//	動作変更: 指定タイプの設定ダイアログ→一時的に別の設定を適用
@@ -97,7 +99,8 @@ BOOL CDlgTypeList::OnLbnDblclk(int wID)
 
 BOOL CDlgTypeList::OnBnClicked(int wID)
 {
-	switch (wID) {
+	switch (wID)
+	{
 	case IDC_BUTTON_HELP:
 		/* 「タイプ別設定一覧」のヘルプ */
 		// Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
@@ -127,7 +130,8 @@ BOOL CDlgTypeList::OnBnClicked(int wID)
 
 BOOL CDlgTypeList::OnActivate(WPARAM wParam, LPARAM lParam)
 {
-	switch (LOWORD(wParam)) {
+	switch (LOWORD(wParam))
+	{
 	case WA_ACTIVE:
 	case WA_CLICKACTIVE: SetData(-1); return TRUE;
 
@@ -146,36 +150,46 @@ INT_PTR CDlgTypeList::DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM 
 
 	INT_PTR result;
 	result = CDialog::DispatchEvent(hWnd, wMsg, wParam, lParam);
-	switch (wMsg) {
-	case WM_COMMAND: {
+	switch (wMsg)
+	{
+	case WM_COMMAND:
+	{
 		HWND				   hwndList = GetItemHwnd(IDC_LIST_TYPES);
 		int					   nIdx		= List_GetCurSel(hwndList);
 		const STypeConfigMini *type		= NULL;
-		if (!CDocTypeManager().GetTypeConfigMini(CTypeConfig(nIdx), &type)) {
+		if (!CDocTypeManager().GetTypeConfigMini(CTypeConfig(nIdx), &type))
+		{
 			return TRUE; // 何もできないので処理済みとして抜ける。
 		}
-		if (LOWORD(wParam) == IDC_LIST_TYPES) {
-			switch (HIWORD(wParam)) {
+		if (LOWORD(wParam) == IDC_LIST_TYPES)
+		{
+			switch (HIWORD(wParam))
+			{
 			case LBN_SELCHANGE:
 				DlgItem_Enable(GetHwnd(), IDC_BUTTON_UP_TYPE, 1 < nIdx);
 				DlgItem_Enable(GetHwnd(), IDC_BUTTON_DOWN_TYPE,
 							   nIdx != 0 && nIdx < GetDllShareData().m_nTypesCount - 1);
 				DlgItem_Enable(GetHwnd(), IDC_BUTTON_DEL_TYPE, nIdx != 0);
-				if (type->m_szTypeExts[0] == '\0') {
+				if (type->m_szTypeExts[0] == '\0')
+				{
 					::EnableWindow(hwndRMenu, FALSE);
 					::EnableWindow(hwndDblClick, FALSE);
 				}
-				else {
+				else
+				{
 					::EnableWindow(GetItemHwnd(IDC_CHECK_EXT_RMENU), TRUE);
-					if (!m_bRegistryChecked[nIdx]) {
+					if (!m_bRegistryChecked[nIdx])
+					{
 						WCHAR exts[_countof(type->m_szTypeExts)] = {0};
 						wcscpy(exts, type->m_szTypeExts);
 						WCHAR *ext = _wcstok(exts, CDocTypeManager::m_typeExtSeps);
 
 						m_bExtRMenu[nIdx]	= true;
 						m_bExtDblClick[nIdx] = true;
-						while (NULL != ext) {
-							if (wcspbrk(ext, CDocTypeManager::m_typeExtWildcards) == NULL) {
+						while (NULL != ext)
+						{
+							if (wcspbrk(ext, CDocTypeManager::m_typeExtWildcards) == NULL)
+							{
 								bool bRMenu;
 								bool bDblClick;
 								CheckExt(ext, &bRMenu, &bDblClick);
@@ -193,9 +207,11 @@ INT_PTR CDlgTypeList::DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM 
 				return TRUE;
 			}
 		}
-		else if (LOWORD(wParam) == IDC_CHECK_EXT_RMENU && HIWORD(wParam) == BN_CLICKED) {
+		else if (LOWORD(wParam) == IDC_CHECK_EXT_RMENU && HIWORD(wParam) == BN_CLICKED)
+		{
 			bool checked = (BtnCtl_GetCheck(hwndRMenu) != FALSE ? true : false);
-			if (!AlertFileAssociation()) { //レジストリ変更確認
+			if (!AlertFileAssociation())
+			{ //レジストリ変更確認
 				BtnCtl_SetCheck(hwndRMenu, !checked);
 				break;
 			}
@@ -203,10 +219,14 @@ INT_PTR CDlgTypeList::DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM 
 			wcscpy(exts, type->m_szTypeExts);
 			WCHAR *ext = _wcstok(exts, CDocTypeManager::m_typeExtSeps);
 			int	nRet;
-			while (NULL != ext) {
-				if (wcspbrk(ext, CDocTypeManager::m_typeExtWildcards) == NULL) {
-					if (checked) { //「右クリック」チェックON
-						if ((nRet = RegistExt(ext, true)) != 0) {
+			while (NULL != ext)
+			{
+				if (wcspbrk(ext, CDocTypeManager::m_typeExtWildcards) == NULL)
+				{
+					if (checked)
+					{ //「右クリック」チェックON
+						if ((nRet = RegistExt(ext, true)) != 0)
+						{
 							WCHAR buf[BUFFER_SIZE] = {0};
 							::FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, nRet, 0, buf, _countof(buf), NULL);
 							::MessageBox(GetHwnd(), (wstring(LS(STR_DLGTYPELIST_ERR1)) + buf).c_str(), GSTR_APPNAME,
@@ -214,8 +234,10 @@ INT_PTR CDlgTypeList::DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM 
 							break;
 						}
 					}
-					else { //「右クリック」チェックOFF
-						if ((nRet = UnregistExt(ext)) != 0) {
+					else
+					{ //「右クリック」チェックOFF
+						if ((nRet = UnregistExt(ext)) != 0)
+						{
 							WCHAR buf[BUFFER_SIZE] = {0};
 							::FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, nRet, 0, buf, _countof(buf), NULL);
 							::MessageBox(GetHwnd(), (wstring(LS(STR_DLGTYPELIST_ERR2)) + buf).c_str(), GSTR_APPNAME,
@@ -232,9 +254,11 @@ INT_PTR CDlgTypeList::DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM 
 			BtnCtl_SetCheck(hwndDblClick, checked);
 			return TRUE;
 		}
-		else if (LOWORD(wParam) == IDC_CHECK_EXT_DBLCLICK && HIWORD(wParam) == BN_CLICKED) {
+		else if (LOWORD(wParam) == IDC_CHECK_EXT_DBLCLICK && HIWORD(wParam) == BN_CLICKED)
+		{
 			bool checked = (BtnCtl_GetCheck(hwndDblClick) != FALSE ? true : false);
-			if (!AlertFileAssociation()) { //レジストリ変更確認
+			if (!AlertFileAssociation())
+			{ //レジストリ変更確認
 				BtnCtl_SetCheck(hwndDblClick, !checked);
 				break;
 			}
@@ -242,9 +266,12 @@ INT_PTR CDlgTypeList::DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM 
 			wcscpy(exts, type->m_szTypeExts);
 			WCHAR *ext = _wcstok(exts, CDocTypeManager::m_typeExtSeps);
 			int	nRet;
-			while (NULL != ext) {
-				if (wcspbrk(ext, CDocTypeManager::m_typeExtWildcards) == NULL) {
-					if ((nRet = RegistExt(ext, checked)) != 0) {
+			while (NULL != ext)
+			{
+				if (wcspbrk(ext, CDocTypeManager::m_typeExtWildcards) == NULL)
+				{
+					if ((nRet = RegistExt(ext, checked)) != 0)
+					{
 						WCHAR buf[BUFFER_SIZE] = {0};
 						::FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, nRet, 0, buf, _countof(buf), NULL);
 						::MessageBox(GetHwnd(), (wstring(LS(STR_DLGTYPELIST_ERR1)) + buf).c_str(), GSTR_APPNAME, MB_OK);
@@ -274,21 +301,25 @@ void CDlgTypeList::SetData(int selIdx)
 	HFONT hFont	= (HFONT)::SendMessageAny(hwndList, WM_GETFONT, 0, 0);
 	HFONT hFontOld = (HFONT)::SelectObject(hDC, hFont);
 
-	if (-1 == selIdx) {
+	if (-1 == selIdx)
+	{
 		selIdx = List_GetCurSel(hwndList);
 		if (-1 == selIdx) { selIdx = 0; }
 	}
 	if (GetDllShareData().m_nTypesCount <= selIdx) { selIdx = GetDllShareData().m_nTypesCount - 1; }
 	List_ResetContent(hwndList); /* リストを空にする */
-	for (nIdx = 0; nIdx < GetDllShareData().m_nTypesCount; ++nIdx) {
+	for (nIdx = 0; nIdx < GetDllShareData().m_nTypesCount; ++nIdx)
+	{
 		const STypeConfigMini *type = NULL;
 		if (!CDocTypeManager().GetTypeConfigMini(CTypeConfig(nIdx), &type)) { continue; }
-		if (type->m_szTypeExts[0] != L'\0') {					   /* タイプ属性：拡張子リスト */
+		if (type->m_szTypeExts[0] != L'\0')
+		{														   /* タイプ属性：拡張子リスト */
 			auto_sprintf(szText, L"%s ( %s )", type->m_szTypeName, /* タイプ属性：名称 */
 						 type->m_szTypeExts						   /* タイプ属性：拡張子リスト */
 			);
 		}
-		else {
+		else
+		{
 			auto_sprintf(szText, L"%s", type->m_szTypeName /* タイプ属性：拡称 */
 			);
 		}
@@ -298,11 +329,10 @@ void CDlgTypeList::SetData(int selIdx)
 		m_bExtDblClick[nIdx]	 = FALSE;
 
 		SIZE sizeExtent;
-		if (::GetTextExtentPoint32(hDC, szText, wcslen(szText), &sizeExtent) && sizeExtent.cx > nExtent) {
-			nExtent = sizeExtent.cx;
-		}
-	}
-	for (; nIdx < MAX_TYPES; ++nIdx) {
+		if (::GetTextExtentPoint32(hDC, szText, wcslen(szText), &sizeExtent) && sizeExtent.cx > nExtent)
+		{ nExtent = sizeExtent.cx; } }
+	for (; nIdx < MAX_TYPES; ++nIdx)
+	{
 		m_bRegistryChecked[nIdx] = FALSE;
 		m_bExtRMenu[nIdx]		 = FALSE;
 		m_bExtDblClick[nIdx]	 = FALSE;
@@ -359,17 +389,20 @@ bool CDlgTypeList::Import()
 
 	// インポート
 	cImpExpType.SetBaseName(type.m_szTypeName);
-	if (!cImpExpType.ImportUI(G_AppInstance(), GetHwnd())) {
+	if (!cImpExpType.ImportUI(G_AppInstance(), GetHwnd()))
+	{
 		// インポートをしていない
 		return false;
 	}
 	bool bAdd = cImpExpType.IsAddType();
-	if (bAdd) {
+	if (bAdd)
+	{
 		AddType();
 		nIdx		= GetDllShareData().m_nTypesCount - 1;
 		type.m_nIdx = nIdx;
 	}
-	else {
+	else
+	{
 		// UIを表示している間にずれているかもしれないのでindex再取得
 		nIdx = CDocTypeManager().GetDocumentTypeOfId(id).GetIndex();
 		if (-1 == nIdx) { return false; }
@@ -399,7 +432,8 @@ bool CDlgTypeList::Export()
 
 	// エクスポート
 	cImpExpType.SetBaseName(types.m_szTypeName);
-	if (!cImpExpType.ExportUI(G_AppInstance(), GetHwnd())) {
+	if (!cImpExpType.ExportUI(G_AppInstance(), GetHwnd()))
+	{
 		// エクスポートをしていない
 		return false;
 	}
@@ -420,12 +454,14 @@ bool CDlgTypeList::InitializeType(void)
 	HWND				   hwndList = GetItemHwnd(IDC_LIST_TYPES);
 	int					   iDocType = List_GetCurSel(hwndList);
 	const STypeConfigMini *typeMini;
-	if (!CDocTypeManager().GetTypeConfigMini(CTypeConfig(iDocType), &typeMini)) {
+	if (!CDocTypeManager().GetTypeConfigMini(CTypeConfig(iDocType), &typeMini))
+	{
 		// なんかエラーだった
 		return false;
 	}
 	int nRet;
-	if (typeMini->m_szTypeExts[0] != L'\0' || iDocType == 0) {
+	if (typeMini->m_szTypeExts[0] != L'\0' || iDocType == 0)
+	{
 		nRet = ::MYMESSAGEBOX(GetHwnd(), MB_YESNO | MB_ICONQUESTION, GSTR_APPNAME, LS(STR_DLGTYPELIST_INIT1),
 							  typeMini->m_szTypeName);
 		if (nRet != IDYES) { return false; }
@@ -435,14 +471,17 @@ bool CDlgTypeList::InitializeType(void)
 	if (-1 == iDocType) { return false; }
 	//	_DefaultConfig(&types);		//規定値をコピー
 	std::unique_ptr<STypeConfig> type(new STypeConfig());
-	if (0 != iDocType) {
+	if (0 != iDocType)
+	{
 		CDocTypeManager().GetTypeConfig(CTypeConfig(0), *type); // 基本をコピー
 
 		// 同じ名前にならないように数字をつける
 		int  nNameNum = iDocType + 1;
 		bool bUpdate  = true;
-		for (int i = 1; i < GetDllShareData().m_nTypesCount; i++) {
-			if (bUpdate) {
+		for (int i = 1; i < GetDllShareData().m_nTypesCount; i++)
+		{
+			if (bUpdate)
+			{
 				auto_sprintf(type->m_szTypeName, LS(STR_DLGTYPELIST_SETNAME), nNameNum);
 				nNameNum++;
 				bUpdate = false;
@@ -450,7 +489,8 @@ bool CDlgTypeList::InitializeType(void)
 			if (iDocType == i) { continue; }
 			const STypeConfigMini *typeMini2 = NULL;
 			if (!CDocTypeManager().GetTypeConfigMini(CTypeConfig(i), &typeMini2)) { continue; }
-			if (wcscmp(typeMini2->m_szTypeName, type->m_szTypeName) == 0) {
+			if (wcscmp(typeMini2->m_szTypeName, type->m_szTypeName) == 0)
+			{
 				i		= 0;
 				bUpdate = true;
 			}
@@ -460,7 +500,8 @@ bool CDlgTypeList::InitializeType(void)
 		type->m_id					 = (::GetTickCount() & 0x3fffffff) + iDocType * 0x10000;
 		type->m_nRegexKeyMagicNumber = CRegexKeyword::GetNewMagicNumber();
 	}
-	else {
+	else
+	{
 		// 2016.03.09 基本の初期化
 		CType_Basis basis;
 		basis.InitTypeConfig(0, *type);
@@ -489,20 +530,26 @@ bool CDlgTypeList::CopyType()
 	// 名前に2等を付ける
 	int  n		 = 1;
 	bool bUpdate = true;
-	for (int i = 0; i < nNewTypeIndex; i++) {
-		if (bUpdate) {
+	for (int i = 0; i < nNewTypeIndex; i++)
+	{
+		if (bUpdate)
+		{
 			WCHAR *p = NULL;
-			for (int k = (int)wcslen(type.m_szTypeName) - 1; 0 <= k; k--) {
+			for (int k = (int)wcslen(type.m_szTypeName) - 1; 0 <= k; k--)
+			{
 				if (WCODE::Is09(type.m_szTypeName[k])) { p = &type.m_szTypeName[k]; }
-				else {
+				else
+				{
 					break;
 				}
 			}
-			if (p) {
+			if (p)
+			{
 				n  = _wtoi(p) + 1;
 				*p = L'\0';
 			}
-			else {
+			else
+			{
 				n++;
 			}
 			WCHAR szNum[12];
@@ -520,7 +567,8 @@ bool CDlgTypeList::CopyType()
 		}
 		const STypeConfigMini *typeMini = NULL;
 		if (!CDocTypeManager().GetTypeConfigMini(CTypeConfig(i), &typeMini)) { continue; }
-		if (wcscmp(typeMini->m_szTypeName, type.m_szTypeName) == 0) {
+		if (wcscmp(typeMini->m_szTypeName, type.m_szTypeName) == 0)
+		{
 			i		= -1;
 			bUpdate = true;
 		}
@@ -538,7 +586,8 @@ bool CDlgTypeList::UpType()
 {
 	HWND hwndList = GetItemHwnd(IDC_LIST_TYPES);
 	int  iDocType = List_GetCurSel(hwndList);
-	if (iDocType == 0) {
+	if (iDocType == 0)
+	{
 		// 基本の場合には何もしない
 		return true;
 	}
@@ -560,7 +609,8 @@ bool CDlgTypeList::DownType()
 {
 	HWND hwndList = GetItemHwnd(IDC_LIST_TYPES);
 	int  iDocType = List_GetCurSel(hwndList);
-	if (iDocType == 0 || GetDllShareData().m_nTypesCount <= iDocType + 1) {
+	if (iDocType == 0 || GetDllShareData().m_nTypesCount <= iDocType + 1)
+	{
 		// 基本、最後の場合には何もしない
 		return true;
 	}
@@ -591,12 +641,14 @@ bool CDlgTypeList::DelType()
 	HWND hwndDlg  = GetHwnd();
 	HWND hwndList = GetItemHwnd(IDC_LIST_TYPES);
 	int  iDocType = List_GetCurSel(hwndList);
-	if (iDocType == 0) {
+	if (iDocType == 0)
+	{
 		// 基本の場合には何もしない
 		return true;
 	}
 	const STypeConfigMini *typeMini;
-	if (!CDocTypeManager().GetTypeConfigMini(CTypeConfig(iDocType), &typeMini)) {
+	if (!CDocTypeManager().GetTypeConfigMini(CTypeConfig(iDocType), &typeMini))
+	{
 		// 謎のエラー
 		return false;
 	}
@@ -622,26 +674,31 @@ int CopyRegistry(HKEY srcRoot, const wstring &srcPath, HKEY destRoot, const wstr
 	if ((errorCode = keySrc.Open(srcRoot, srcPath.c_str(), KEY_READ)) != 0) { return errorCode; }
 
 	CRegKey keyDest;
-	if ((errorCode = keyDest.Open(destRoot, destPath.c_str(), KEY_READ | KEY_WRITE)) != 0) {
+	if ((errorCode = keyDest.Open(destRoot, destPath.c_str(), KEY_READ | KEY_WRITE)) != 0)
+	{
 		if ((errorCode = keyDest.Create(destRoot, destPath.c_str())) != 0) { return errorCode; }
 	}
 
 	int index = 0;
-	for (;;) {
+	for (;;)
+	{
 		WCHAR szValue[BUFFER_SIZE] = {0};
 		BYTE  data[BUFFER_SIZE]	= {0};
 		DWORD dwDataLen;
 		DWORD dwType;
 
 		errorCode = keySrc.EnumValue(index, szValue, _countof(szValue), &dwType, data, _countof(data), &dwDataLen);
-		if (errorCode == ERROR_NO_MORE_ITEMS) {
+		if (errorCode == ERROR_NO_MORE_ITEMS)
+		{
 			errorCode = 0;
 			break;
 		}
-		else if (errorCode) {
+		else if (errorCode)
+		{
 			return errorCode;
 		}
-		else {
+		else
+		{
 			// 手抜き：データのサイズがBUFFER_SIZE(=1024)を超える場合を考慮していない
 			if ((errorCode = keyDest.SetValue(szValue, data, dwDataLen, dwType)) != 0) { return errorCode; }
 			index++;
@@ -650,21 +707,22 @@ int CopyRegistry(HKEY srcRoot, const wstring &srcPath, HKEY destRoot, const wstr
 
 	index						= 0;
 	WCHAR szSubKey[BUFFER_SIZE] = {0};
-	for (;;) {
+	for (;;)
+	{
 		errorCode = keySrc.EnumKey(index, szSubKey, _countof(szSubKey));
-		if (errorCode == ERROR_NO_MORE_ITEMS) {
+		if (errorCode == ERROR_NO_MORE_ITEMS)
+		{
 			errorCode = 0;
 			break;
 		}
-		else if (errorCode) {
+		else if (errorCode)
+		{
 			return errorCode;
 		}
-		else {
-			if ((errorCode =
-					 CopyRegistry(srcRoot, srcPath + L"\\" + szSubKey, destRoot, destPath + L"\\" + szSubKey))) {
-				return errorCode;
-			}
-			index++;
+		else
+		{
+			if ((errorCode = CopyRegistry(srcRoot, srcPath + L"\\" + szSubKey, destRoot, destPath + L"\\" + szSubKey)))
+			{ return errorCode; } index++;
 		}
 	}
 
@@ -681,16 +739,20 @@ int DeleteRegistry(HKEY root, const wstring &path)
 	int index					= 0;
 	index						= 0;
 	WCHAR szSubKey[BUFFER_SIZE] = {0};
-	for (;;) {
+	for (;;)
+	{
 		errorCode = keySrc.EnumKey(index, szSubKey, _countof(szSubKey));
-		if (errorCode == ERROR_NO_MORE_ITEMS) {
+		if (errorCode == ERROR_NO_MORE_ITEMS)
+		{
 			errorCode = 0;
 			break;
 		}
-		else if (errorCode) {
+		else if (errorCode)
+		{
 			return errorCode;
 		}
-		else {
+		else
+		{
 			if ((errorCode = DeleteRegistry(root, path + L"\\" + szSubKey)) != 0) { return errorCode; }
 		}
 	}
@@ -745,34 +807,34 @@ int RegistExt(LPCWSTR sExt, bool bDefProg)
 
 	CRegKey keyExt_HKLM;
 	WCHAR   szProgID_HKLM[BUFFER_SIZE] = {0};
-	if ((errorCode = keyExt_HKLM.Open(HKEY_LOCAL_MACHINE, sDotExt.c_str(), KEY_READ)) == 0) {
-		keyExt_HKLM.GetValue(NULL, szProgID_HKLM, _countof(szProgID_HKLM));
-	}
-
-	CRegKey keyExt;
-	if ((errorCode = keyExt.Open(HKEY_CURRENT_USER, sDotExt.c_str(), KEY_READ | KEY_WRITE)) != 0) {
+	if ((errorCode = keyExt_HKLM.Open(HKEY_LOCAL_MACHINE, sDotExt.c_str(), KEY_READ)) == 0)
+	{ keyExt_HKLM.GetValue(NULL, szProgID_HKLM, _countof(szProgID_HKLM)); } CRegKey keyExt;
+	if ((errorCode = keyExt.Open(HKEY_CURRENT_USER, sDotExt.c_str(), KEY_READ | KEY_WRITE)) != 0)
+	{
 		if ((errorCode = keyExt.Create(HKEY_CURRENT_USER, sDotExt.c_str())) != 0) { return errorCode; }
 	}
 
 	WCHAR szProgID[BUFFER_SIZE] = {0};
 	keyExt.GetValue(NULL, szProgID, _countof(szProgID));
 
-	if (wcscmp(sGenProgID.c_str(), szProgID) != 0) {
-		if (szProgID[0] != L'\0') {
+	if (wcscmp(sGenProgID.c_str(), szProgID) != 0)
+	{
+		if (szProgID[0] != L'\0')
+		{
 			if ((errorCode = keyExt.SetValue(PROGID_BACKUP_NAME, szProgID)) != 0) { return errorCode; }
 		}
 		if ((errorCode = keyExt.SetValue(NULL, sGenProgID.c_str())) != 0) { return errorCode; }
 	}
 
 	wstring sProgIDPath = sBasePath + sGenProgID;
-	if (!CRegKey::ExistsKey(HKEY_CURRENT_USER, sProgIDPath.c_str())) {
-		if (szProgID_HKLM[0] != L'\0') {
+	if (!CRegKey::ExistsKey(HKEY_CURRENT_USER, sProgIDPath.c_str()))
+	{
+		if (szProgID_HKLM[0] != L'\0')
+		{
 			if ((errorCode = CopyRegistry(HKEY_LOCAL_MACHINE, (sBasePath + szProgID_HKLM).c_str(), HKEY_CURRENT_USER,
 										  sProgIDPath.c_str()))
-				!= 0) {
-				return errorCode;
-			}
-		}
+				!= 0)
+			{ return errorCode; } }
 	}
 
 	wstring sShellPath				= sProgIDPath + L"\\shell";
@@ -783,11 +845,10 @@ int RegistExt(LPCWSTR sExt, bool bDefProg)
 	CRegKey keyShellActionCommand;
 	if ((errorCode =
 			 keyShellActionCommand.Open(HKEY_CURRENT_USER, sShellActionCommandPath.c_str(), KEY_READ | KEY_WRITE))
-		!= 0) {
-		if ((errorCode = keyShellActionCommand.Create(HKEY_CURRENT_USER, sShellActionCommandPath.c_str())) != 0) {
-			return errorCode;
-		}
-	}
+		!= 0)
+	{
+		if ((errorCode = keyShellActionCommand.Create(HKEY_CURRENT_USER, sShellActionCommandPath.c_str())) != 0)
+		{ return errorCode; } }
 
 	WCHAR sExePath[_MAX_PATH] = {0};
 	::GetModuleFileName(NULL, sExePath, _countof(sExePath));
@@ -795,37 +856,34 @@ int RegistExt(LPCWSTR sExt, bool bDefProg)
 	if ((errorCode = keyShellActionCommand.SetValue(NULL, sCommandPathArg.c_str())) != 0) { return errorCode; }
 
 	CRegKey keyShellAction;
-	if ((errorCode = keyShellAction.Open(HKEY_CURRENT_USER, sShellActionPath.c_str(), KEY_READ | KEY_WRITE)) != 0) {
-		return errorCode;
-	}
-	if ((errorCode = keyShellAction.SetValue(NULL, L"Sakura &Editor")) != 0) { return errorCode; }
-
-	CRegKey keyShell;
-	if ((errorCode = keyShell.Open(HKEY_CURRENT_USER, sShellPath.c_str(), KEY_READ | KEY_WRITE)) != 0) {
-		return errorCode;
-	}
-	WCHAR szShellValue[BUFFER_SIZE] = {0};
+	if ((errorCode = keyShellAction.Open(HKEY_CURRENT_USER, sShellActionPath.c_str(), KEY_READ | KEY_WRITE)) != 0)
+	{ return errorCode; } if ((errorCode = keyShellAction.SetValue(NULL, L"Sakura &Editor")) != 0)
+	{ return errorCode; } CRegKey keyShell;
+	if ((errorCode = keyShell.Open(HKEY_CURRENT_USER, sShellPath.c_str(), KEY_READ | KEY_WRITE)) != 0)
+	{ return errorCode; } WCHAR szShellValue[BUFFER_SIZE] = {0};
 	keyShell.GetValue(NULL, szShellValue, _countof(szShellValue));
-	if (bDefProg) {
-		if (wcscmp(szShellValue, ACTION_NAME) != 0) {
-			if (szShellValue[0] != '\0') {
+	if (bDefProg)
+	{
+		if (wcscmp(szShellValue, ACTION_NAME) != 0)
+		{
+			if (szShellValue[0] != '\0')
+			{
 				CRegKey keyBackup;
-				if ((errorCode = keyBackup.Open(HKEY_CURRENT_USER, sBackupPath.c_str(), KEY_READ | KEY_WRITE)) != 0) {
-					if ((errorCode = keyBackup.Create(HKEY_CURRENT_USER, sBackupPath.c_str())) != 0) {
-						return errorCode;
-					}
-				}
+				if ((errorCode = keyBackup.Open(HKEY_CURRENT_USER, sBackupPath.c_str(), KEY_READ | KEY_WRITE)) != 0)
+				{
+					if ((errorCode = keyBackup.Create(HKEY_CURRENT_USER, sBackupPath.c_str())) != 0)
+					{ return errorCode; } }
 				keyBackup.SetValue(NULL, szShellValue);
 			}
 			keyShell.SetValue(NULL, ACTION_NAME);
 		}
 	}
-	else {
+	else
+	{
 		CRegKey keyBackup;
-		if ((errorCode = keyBackup.Open(HKEY_CURRENT_USER, sBackupPath.c_str(), KEY_READ | KEY_WRITE)) != 0) {
-			keyShell.DeleteValue(L"");
-		}
-		else {
+		if ((errorCode = keyBackup.Open(HKEY_CURRENT_USER, sBackupPath.c_str(), KEY_READ | KEY_WRITE)) != 0)
+		{ keyShell.DeleteValue(L""); } else
+		{
 			WCHAR sBackupValue[BUFFER_SIZE] = {0};
 			keyBackup.GetValue(NULL, sBackupValue, _countof(sBackupValue));
 			keyShell.SetValue(NULL, sBackupValue);
@@ -879,19 +937,13 @@ int UnregistExt(LPCWSTR sExt)
 	wstring sBackupPath				= sShellActionPath + ACTION_BACKUP_PATH;
 
 	CRegKey keyShellAction;
-	if ((errorCode = keyShellAction.Open(HKEY_CURRENT_USER, sShellActionPath.c_str(), KEY_READ | KEY_WRITE)) != 0) {
-		return ERROR_SUCCESS;
-	}
-
-	CRegKey keyShell;
-	if ((errorCode = keyShell.Open(HKEY_CURRENT_USER, sShellPath.c_str(), KEY_READ | KEY_WRITE)) != 0) {
-		return errorCode;
-	}
-	CRegKey keyBackup;
-	if ((errorCode = keyBackup.Open(HKEY_CURRENT_USER, sBackupPath.c_str(), KEY_READ | KEY_WRITE)) != 0) {
-		keyShell.DeleteValue(L"");
-	}
-	else {
+	if ((errorCode = keyShellAction.Open(HKEY_CURRENT_USER, sShellActionPath.c_str(), KEY_READ | KEY_WRITE)) != 0)
+	{ return ERROR_SUCCESS; } CRegKey keyShell;
+	if ((errorCode = keyShell.Open(HKEY_CURRENT_USER, sShellPath.c_str(), KEY_READ | KEY_WRITE)) != 0)
+	{ return errorCode; } CRegKey keyBackup;
+	if ((errorCode = keyBackup.Open(HKEY_CURRENT_USER, sBackupPath.c_str(), KEY_READ | KEY_WRITE)) != 0)
+	{ keyShell.DeleteValue(L""); } else
+	{
 		WCHAR szBackupValue[BUFFER_SIZE] = {0};
 		keyBackup.GetValue(NULL, szBackupValue, _countof(szBackupValue));
 		keyShell.SetValue(NULL, szBackupValue);
@@ -899,17 +951,20 @@ int UnregistExt(LPCWSTR sExt)
 
 	keyBackup.Close();
 	keyShellAction.Close();
-	if (wcsncmp_literal(szProgID, L"SakuraEditor_") == 0) {
+	if (wcsncmp_literal(szProgID, L"SakuraEditor_") == 0)
+	{
 		if ((errorCode = DeleteRegistry(HKEY_CURRENT_USER, sProgIDPath)) != 0) { return errorCode; }
 
 		WCHAR szBackupValue[BUFFER_SIZE] = {0};
 		keyExt.GetValue(PROGID_BACKUP_NAME, szBackupValue, _countof(szBackupValue));
 		if (szBackupValue[0] != L'\0') { keyExt.SetValue(NULL, szBackupValue); }
-		else {
+		else
+		{
 			if ((errorCode = DeleteRegistry(HKEY_CURRENT_USER, sDotExt)) != 0) { return errorCode; }
 		}
 	}
-	else {
+	else
+	{
 		if ((errorCode = DeleteRegistry(HKEY_CURRENT_USER, sShellActionPath)) != 0) { return errorCode; }
 	}
 
@@ -975,14 +1030,17 @@ int CheckExt(LPCWSTR sExt, bool *pbRMenu, bool *pbDblClick)
 */
 bool CDlgTypeList::AlertFileAssociation()
 {
-	if (m_bAlertFileAssociation) {
+	if (m_bAlertFileAssociation)
+	{
 		if (IDYES
 			== ::MYMESSAGEBOX(NULL, MB_YESNO | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
-							  LS(STR_DLGTYPELIST_ACC))) {
+							  LS(STR_DLGTYPELIST_ACC)))
+		{
 			m_bAlertFileAssociation = false; //「はい」なら最初の一度だけ確認する
 			return true;
 		}
-		else {
+		else
+		{
 			return false;
 		}
 	}

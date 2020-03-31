@@ -21,7 +21,8 @@ CCodeBase *CCodeFactory::CreateCodeBase(ECodeType eCodeType, //!< 文字コー�
 										int nFlag //!< bit 0: MIME Encodeされたヘッダをdecodeするかどうか
 )
 {
-	switch (eCodeType) {
+	switch (eCodeType)
+	{
 	case CODE_SJIS: return new CShiftJis();
 	case CODE_EUC: return new CEuc();
 	case CODE_JIS: return new CJis((nFlag & 1) == 1);

@@ -31,7 +31,8 @@
 #pragma once
 
 #include "dlg/CDialog.h"
-class CDlgWindowList final : public CDialog {
+class CDlgWindowList final : public CDialog
+{
 public:
 	CDlgWindowList();
 

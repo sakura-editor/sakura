@@ -31,15 +31,19 @@ void CViewCommander::Command_MENU_RBUTTON(void)
 	/* ポップアップメニュー(右クリック) */
 	nId = m_pCommanderView->CreatePopUpMenu_R();
 	if (0 == nId) { return; }
-	switch (nId) {
-	case IDM_COPYDICINFO: {
+	switch (nId)
+	{
+	case IDM_COPYDICINFO:
+	{
 		nLength				 = m_pCommanderView->m_cTipWnd.m_cInfo.GetStringLength();
 		const WCHAR *pszStr  = m_pCommanderView->m_cTipWnd.m_cInfo.GetStringPtr();
 		WCHAR *		 pszWork = _wcsdup(pszStr);
 
 		// 見た目と同じように、\n を CR+LFへ変換する
-		for (i = 0; i < nLength; ++i) {
-			if (pszWork[i] == L'\\' && pszWork[i + 1] == L'n') {
+		for (i = 0; i < nLength; ++i)
+		{
+			if (pszWork[i] == L'\\' && pszWork[i + 1] == L'n')
+			{
 				pszWork[i]	 = WCODE::CR;
 				pszWork[i + 1] = WCODE::LF;
 			}
@@ -52,7 +56,8 @@ void CViewCommander::Command_MENU_RBUTTON(void)
 	}
 	case IDM_JUMPDICT:
 		/* キーワード辞書ファイルを開く */
-		if (m_pCommanderView->m_pTypeData->m_bUseKeyWordHelp) { /* キーワード辞書セレクトを使用する */ // 2006.04.10 fon
+		if (m_pCommanderView->m_pTypeData->m_bUseKeyWordHelp)
+		{ /* キーワード辞書セレクトを使用する */ // 2006.04.10 fon
 			//	Feb. 17, 2007 genta 相対パスを実行ファイル基準で開くように
 			m_pCommanderView->TagJumpSub(
 				m_pCommanderView->m_pTypeData->m_KeyHelpArr[m_pCommanderView->m_cTipWnd.m_nSearchDict].m_szPath,

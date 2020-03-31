@@ -62,10 +62,8 @@ const DWORD p_helpids[] = {IDC_BUTTON_FOLDER, HIDC_GREP_REP_BUTTON_FOLDER,				 /
 
 CDlgGrepReplace::CDlgGrepReplace()
 {
-	if (0 < m_pShareData->m_sSearchKeywords.m_aReplaceKeys.size()) {
-		m_strText2 = m_pShareData->m_sSearchKeywords.m_aReplaceKeys[0];
-	}
-	return;
+	if (0 < m_pShareData->m_sSearchKeywords.m_aReplaceKeys.size())
+	{ m_strText2 = m_pShareData->m_sSearchKeywords.m_aReplaceKeys[0]; } return;
 }
 
 /* モーダルダイアログの表示 */
@@ -80,19 +78,15 @@ int CDlgGrepReplace::DoModal(HINSTANCE hInstance, HWND hwndParent, const WCHAR *
 	m_bPaste		   = false;
 	m_bBackup		   = m_pShareData->m_Common.m_sSearch.m_bGrepBackup;
 
-	if (m_szFile[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFiles.size()) {
-		wcscpy(m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0]); /* 検索ファイル */
-	}
-	if (m_szFolder[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFolders.size()) {
-		wcscpy(m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0]); /* 検索フォルダ */
-	}
-
-	/* 除外ファイル */
-	if (m_szExcludeFile[0] == L'\0') {
-		if (m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
-			wcscpy(m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);
-		}
-		else {
+	if (m_szFile[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFiles.size())
+	{ wcscpy(m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0]); /* 検索ファイル */ }
+	if (m_szFolder[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFolders.size())
+	{ wcscpy(m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0]); /* 検索フォルダ */ } /* 除外ファイル */
+	if (m_szExcludeFile[0] == L'\0')
+	{
+		if (m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size())
+		{ wcscpy(m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]); } else
+		{
 			/* ユーザーの利便性向上のために除外ファイルに対して初期値を設定する */
 			wcscpy(m_szExcludeFile, DEFAULT_EXCLUDE_FILE_PATTERN); /* 除外ファイル */
 
@@ -102,11 +96,11 @@ int CDlgGrepReplace::DoModal(HINSTANCE hInstance, HWND hwndParent, const WCHAR *
 	}
 
 	/* 除外フォルダ */
-	if (m_szExcludeFolder[0] == L'\0') {
-		if (m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
-			wcscpy(m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);
-		}
-		else {
+	if (m_szExcludeFolder[0] == L'\0')
+	{
+		if (m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size())
+		{ wcscpy(m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]); } else
+		{
 			/* ユーザーの利便性向上のために除外フォルダに対して初期値を設定する */
 			wcscpy(m_szExcludeFolder, DEFAULT_EXCLUDE_FOLDER_PATTERN); /* 除外フォルダ */
 
@@ -115,7 +109,8 @@ int CDlgGrepReplace::DoModal(HINSTANCE hInstance, HWND hwndParent, const WCHAR *
 		}
 	}
 
-	if (pszCurrentFilePath) { // 2010.01.10 ryoji
+	if (pszCurrentFilePath)
+	{ // 2010.01.10 ryoji
 		wcscpy(m_szCurrentFilePath, pszCurrentFilePath);
 	}
 
@@ -144,15 +139,18 @@ BOOL CDlgGrepReplace::OnDestroy()
 
 BOOL CDlgGrepReplace::OnBnClicked(int wID)
 {
-	switch (wID) {
+	switch (wID)
+	{
 	case IDC_BUTTON_HELP:
 		MyWinHelp(GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_GREP_REPLACE_DLG));
 		return TRUE;
 	case IDC_CHK_PASTE:
-	case IDOK: {
+	case IDOK:
+	{
 		bool	   bStop	  = false;
 		CEditView *pcEditView = (CEditView *)m_lParam;
-		if (::IsDlgButtonChecked(GetHwnd(), IDC_CHK_PASTE) && !pcEditView->m_pcEditDoc->m_cDocEditor.IsEnablePaste()) {
+		if (::IsDlgButtonChecked(GetHwnd(), IDC_CHK_PASTE) && !pcEditView->m_pcEditDoc->m_cDocEditor.IsEnablePaste())
+		{
 			OkMessage(GetHwnd(), LS(STR_DLGREPLC_CLIPBOARD));
 			::CheckDlgButton(GetHwnd(), IDC_CHK_PASTE, FALSE);
 			bStop = true;
@@ -171,9 +169,8 @@ void CDlgGrepReplace::SetData(void)
 	/* 置換後 */
 	::DlgItem_SetText(GetHwnd(), IDC_COMBO_TEXT2, m_strText2.c_str());
 	HWND hwndCombo = GetItemHwnd(IDC_COMBO_TEXT2);
-	for (int i = 0; i < m_pShareData->m_sSearchKeywords.m_aReplaceKeys.size(); ++i) {
-		Combo_AddString(hwndCombo, m_pShareData->m_sSearchKeywords.m_aReplaceKeys[i]);
-	}
+	for (int i = 0; i < m_pShareData->m_sSearchKeywords.m_aReplaceKeys.size(); ++i)
+	{ Combo_AddString(hwndCombo, m_pShareData->m_sSearchKeywords.m_aReplaceKeys[i]); }
 
 	CheckDlgButtonBool(GetHwnd(), IDC_CHK_BACKUP, m_bBackup);
 
@@ -193,7 +190,8 @@ int CDlgGrepReplace::GetData(void)
 	::DlgItem_GetText(GetHwnd(), IDC_COMBO_TEXT2, &vText[0], nBufferSize);
 	m_strText2 = &vText[0];
 
-	if (0 == ::GetWindowTextLength(GetItemHwnd(IDC_COMBO_TEXT))) {
+	if (0 == ::GetWindowTextLength(GetItemHwnd(IDC_COMBO_TEXT)))
+	{
 		WarningMessage(GetHwnd(), LS(STR_DLGREPLC_REPSTR));
 		return FALSE;
 	}

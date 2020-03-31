@@ -16,9 +16,11 @@ int CUtf7::_Utf7SetDToUni_block(const char *pSrc, const int nSrcLen, wchar_t *pD
 	const char *pr = pSrc;
 	wchar_t *   pw = pDst;
 
-	for (; pr < pSrc + nSrcLen; ++pr) {
+	for (; pr < pSrc + nSrcLen; ++pr)
+	{
 		if (IsUtf7Direct(*pr)) { *pw = *pr; }
-		else {
+		else
+		{
 			BinToText(reinterpret_cast<const unsigned char *>(pr), 1, reinterpret_cast<unsigned short *>(pw));
 		}
 		++pw;
@@ -32,7 +34,8 @@ int CUtf7::_Utf7SetDToUni_block(const char *pSrc, const int nSrcLen, wchar_t *pD
 int CUtf7::_Utf7SetBToUni_block(const char *pSrc, const int nSrcLen, wchar_t *pDst, bool *pbError)
 {
 	char *pbuf = new (std::nothrow) char[nSrcLen];
-	if (pbuf == NULL) {
+	if (pbuf == NULL)
+	{
 		if (pbError) { *pbError = true; }
 		return 0;
 	}
@@ -41,7 +44,8 @@ int CUtf7::_Utf7SetBToUni_block(const char *pSrc, const int nSrcLen, wchar_t *pD
 	ndecoded_len	 = ndecoded_len - nModLen;
 	CMemory::SwapHLByte(pbuf, ndecoded_len); // UTF-16 BE を UTF-16 LE に直す
 	memcpy(reinterpret_cast<char *>(pDst), pbuf, ndecoded_len);
-	if (nModLen) {
+	if (nModLen)
+	{
 		ndecoded_len += BinToText(reinterpret_cast<const unsigned char *>(pbuf) + ndecoded_len, nModLen,
 								  &reinterpret_cast<unsigned short *>(pDst)[ndecoded_len / sizeof(wchar_t)])
 						* sizeof(wchar_t);
@@ -63,7 +67,8 @@ int CUtf7::Utf7ToUni(const char *pSrc, const int nSrcLen, wchar_t *pDst, bool *p
 	pr_end = pSrc + nSrcLen;
 	pw	 = pDst;
 
-	do {
+	do
+	{
 		// UTF-7 Set D 部分のチェック
 		nblocklen = CheckUtf7DPart(pr, pr_end - pr, &pr_next, &berror_tmp);
 		if (berror_tmp == true) { berror = true; }
@@ -77,12 +82,14 @@ int CUtf7::Utf7ToUni(const char *pSrc, const int nSrcLen, wchar_t *pDst, bool *p
 		{
 			// エラーがあってもできるところまでデコード
 			if (berror_tmp) { berror = true; }
-			if (nblocklen < 1 && *(pr_next - 1) == '-') {
+			if (nblocklen < 1 && *(pr_next - 1) == '-')
+			{
 				// +- → + 変換
 				*pw = L'+';
 				++pw;
 			}
-			else {
+			else
+			{
 				pw += _Utf7SetBToUni_block(pr, nblocklen, pw, &berror_tmp);
 				if (berror_tmp != false) { berror = true; }
 			}
@@ -119,7 +126,8 @@ EConvertResult CUtf7::UTF7ToUnicode(const CMemory &cSrc, CNativeW *pDstMem)
 	delete[] pDst;
 
 	if (bError == false) { return RESULT_COMPLETE; }
-	else {
+	else
+	{
 		return RESULT_LOSESOME;
 	}
 }
@@ -172,22 +180,27 @@ int CUtf7::UniToUtf7(const wchar_t *pSrc, const int nSrcLen, char *pDst)
 	pr_end  = pSrc + nSrcLen;
 	pw		= pDst;
 
-	do {
-		for (; pr < pr_end; ++pr) {
+	do
+	{
+		for (; pr < pr_end; ++pr)
+		{
 			if (!IsUtf7SetD(*pr)) { break; }
 		}
 		pw += _UniToUtf7SetD_block(pr_base, pr - pr_base, pw);
 		pr_base = pr;
 
-		if (*pr == L'+') {
+		if (*pr == L'+')
+		{
 			// '+' → "+-"
 			pw[0] = '+';
 			pw[1] = '-';
 			++pr;
 			pw += 2;
 		}
-		else {
-			for (; pr < pr_end; ++pr) {
+		else
+		{
+			for (; pr < pr_end; ++pr)
+			{
 				if (IsUtf7SetD(*pr)) { break; }
 			}
 			pw += _UniToUtf7SetB_block(pr_base, pr - pr_base, pw);
@@ -232,7 +245,8 @@ void CUtf7::GetBom(CMemory *pcmemBom)
 
 void CUtf7::GetEol(CMemory *pcmemEol, EEolType eEolType)
 {
-	static const struct {
+	static const struct
+	{
 		const char *szData;
 		int			nLen;
 	} aEolTable[EOL_TYPE_NUM] = {

@@ -33,14 +33,16 @@
 #include "env/CommonSetting.h"
 
 //! タブ表示方法
-enum ETabArrow {
+enum ETabArrow
+{
 	TABARROW_STRING = 0, //!< 文字指定
 	TABARROW_SHORT,		 //!< 短い矢印
 	TABARROW_LONG,		 //!< 長い矢印
 };
 
 //! アウトライン解析の種類
-enum EOutlineType {
+enum EOutlineType
+{
 	OUTLINE_C,
 	OUTLINE_C_CPP, // C/C++自動認識
 	OUTLINE_PLSQL,
@@ -72,20 +74,23 @@ enum EOutlineType {
 };
 
 //! スマートインデント種別
-enum ESmartIndentType {
+enum ESmartIndentType
+{
 	SMARTINDENT_NONE, //!< なし
 	SMARTINDENT_CPP   //!< C/C++
 };
 
 //! ヒアドキュメント種別
-enum EHereDocType {
+enum EHereDocType
+{
 	HEREDOC_PHP,  //!< PHP
 	HEREDOC_RUBY, //!< Ruby
 	HEREDOC_PERL  //!< Perl
 };
 
 //! 背景画像表示位置
-enum EBackgroundImagePos {
+enum EBackgroundImagePos
+{
 	BGIMAGE_TOP_LEFT,	  //!< 左上
 	BGIMAGE_TOP_RIGHT,	 //!< 右上
 	BGIMAGE_BOTTOM_LEFT,   //!< 左下
@@ -98,7 +103,8 @@ enum EBackgroundImagePos {
 };
 
 //! エンコードオプション
-struct SEncodingConfig {
+struct SEncodingConfig
+{
 	bool	  m_bPriorCesu8;	  //!< 自動判別時に CESU-8 を優先するかどうか
 	ECodeType m_eDefaultCodetype; //!< デフォルト文字コード
 	EEolType  m_eDefaultEoltype;  //!< デフォルト改行コード	// 2011.01.24 ryoji
@@ -106,7 +112,8 @@ struct SEncodingConfig {
 };
 
 //! 文字列区切り記号エスケープ方法
-enum EStringLiteralType {
+enum EStringLiteralType
+{
 	STRING_LITERAL_CPP,	//!< C/C++言語風
 	STRING_LITERAL_PLSQL,  //!< PL/SQL風
 	STRING_LITERAL_HTML,   //!< HTML/XML風
@@ -115,7 +122,8 @@ enum EStringLiteralType {
 };
 
 //! 右クリックメニュー表示
-enum EKeyHelpRMenuType {
+enum EKeyHelpRMenuType
+{
 	KEYHELP_RMENU_NONE,   //!< 非表示
 	KEYHELP_RMENU_TOP,	//!< メニュー先頭
 	KEYHELP_RMENU_BOTTOM, //!< メニュー末尾
@@ -126,7 +134,8 @@ enum EKeyHelpRMenuType {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //! タイプ別設定
-struct STypeConfig {
+struct STypeConfig
+{
 	// 2007.09.07 変数名変更: m_nMaxLineSize→m_nMaxLineKetas
 	int		  m_nIdx;
 	int		  m_id;
@@ -261,7 +270,8 @@ struct STypeConfig {
 };						 /* STypeConfig */
 
 //! タイプ別設定(mini)
-struct STypeConfigMini {
+struct STypeConfigMini
+{
 	int				m_id;
 	WCHAR			m_szTypeName[MAX_TYPES_NAME]; //!< タイプ属性：名称
 	WCHAR			m_szTypeExts[MAX_TYPES_EXTS]; //!< タイプ属性：拡張子リスト
@@ -273,7 +283,8 @@ struct STypeConfigMini {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //!ドキュメント種類。共有データ内 STypeConfig へのアクセサも兼ねる。
 // 2007.12.13 kobake 作成
-class CTypeConfig {
+class CTypeConfig
+{
 public:
 	CTypeConfig()
 	{
@@ -304,7 +315,8 @@ private:
 //                        タイプ設定                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-class CType {
+class CType
+{
 public:
 	virtual ~CType() {}
 	void InitTypeConfig(int nIdx, STypeConfig &);
@@ -314,7 +326,8 @@ protected:
 };
 
 #define GEN_CTYPE(CLASS_NAME)                                                                                          \
-	class CLASS_NAME : public CType {                                                                                  \
+	class CLASS_NAME : public CType                                                                                    \
+	{                                                                                                                  \
 	protected:                                                                                                         \
 		void InitTypeConfigImp(STypeConfig *pType);                                                                    \
 	};

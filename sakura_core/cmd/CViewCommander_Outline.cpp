@@ -55,21 +55,23 @@ BOOL CViewCommander::Command_FUNCLIST(int nAction, EOutlineType nOutlineType = O
 	std::wstring		sTitleOverride; //プラグインによるダイアログタイトル上書き
 
 	//	2001.12.03 hor & 2002.3.13 YAZAKI
-	if (nOutlineType == OUTLINE_DEFAULT) {
+	if (nOutlineType == OUTLINE_DEFAULT)
+	{
 		/* タイプ別に設定されたアウトライン解析方法 */
 		nOutlineType = m_pCommanderView->m_pTypeData->m_eDefaultOutline;
 		// C/C++はファイル名(拡張子)により追加判定する
-		if (nOutlineType == OUTLINE_C_CPP) {
-			nOutlineType = GetCLangOutlineType(GetDocument()->m_cDocFile.GetFilePath());
-		}
-	}
+		if (nOutlineType == OUTLINE_C_CPP)
+		{ nOutlineType = GetCLangOutlineType(GetDocument()->m_cDocFile.GetFilePath()); } }
 
-	if (NULL != GetEditWindow()->m_cDlgFuncList.GetHwnd() && nAction != SHOW_RELOAD) {
-		switch (nAction) {
+	if (NULL != GetEditWindow()->m_cDlgFuncList.GetHwnd() && nAction != SHOW_RELOAD)
+	{
+		switch (nAction)
+		{
 		case SHOW_NORMAL: // アクティブにする
 			//	開いているものと種別が同じならActiveにするだけ．異なれば再解析
 			GetEditWindow()->m_cDlgFuncList.SyncColor();
-			if (GetEditWindow()->m_cDlgFuncList.CheckListType(nOutlineType)) {
+			if (GetEditWindow()->m_cDlgFuncList.CheckListType(nOutlineType))
+			{
 				if (bForeground) { ::SetFocus(GetEditWindow()->m_cDlgFuncList.GetHwnd()); }
 				bIsProcessing = false;
 				return TRUE;
@@ -77,7 +79,8 @@ BOOL CViewCommander::Command_FUNCLIST(int nAction, EOutlineType nOutlineType = O
 			break;
 		case SHOW_TOGGLE: // 閉じる
 			//	開いているものと種別が同じなら閉じる．異なれば再解析
-			if (GetEditWindow()->m_cDlgFuncList.CheckListType(nOutlineType)) {
+			if (GetEditWindow()->m_cDlgFuncList.CheckListType(nOutlineType))
+			{
 				if (GetEditWindow()->m_cDlgFuncList.IsDocking())
 					::DestroyWindow(GetEditWindow()->m_cDlgFuncList.GetHwnd());
 				else
@@ -94,11 +97,13 @@ BOOL CViewCommander::Command_FUNCLIST(int nAction, EOutlineType nOutlineType = O
 	cFuncInfoArr.Empty();
 	int nListType = nOutlineType; // 2011.06.25 syat
 
-	switch (nOutlineType) {
+	switch (nOutlineType)
+	{
 	// 2015.11.14 「C」「C++」「C/C++」から選べるように
 	case OUTLINE_C: // C/C++ は MakeFuncList_C
 	case OUTLINE_C_CPP:
-	case OUTLINE_CPP: {
+	case OUTLINE_CPP:
+	{
 		GetDocument()->m_cDocOutline.MakeFuncList_C(&cFuncInfoArr, nOutlineType,
 													GetDocument()->m_cDocFile.GetFilePath());
 		nListType = nOutlineType; // 変更された可能性あり
@@ -139,7 +144,8 @@ BOOL CViewCommander::Command_FUNCLIST(int nAction, EOutlineType nOutlineType = O
 			CPlug::Array plugs;
 			CJackManager::getInstance()->GetUsablePlug(PP_OUTLINE, nOutlineType, &plugs);
 
-			if (plugs.size() > 0) {
+			if (plugs.size() > 0)
+			{
 				assert_warning(1 == plugs.size());
 				//インタフェースオブジェクト準備
 				CWSHIfObj::List params;
@@ -167,14 +173,16 @@ BOOL CViewCommander::Command_FUNCLIST(int nAction, EOutlineType nOutlineType = O
 
 	/* アウトライン ダイアログの表示 */
 	CLayoutPoint poCaret = GetCaret().GetCaretLayoutPos();
-	if (NULL == GetEditWindow()->m_cDlgFuncList.GetHwnd()) {
+	if (NULL == GetEditWindow()->m_cDlgFuncList.GetHwnd())
+	{
 		GetEditWindow()->m_cDlgFuncList.DoModeless(
 			G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)m_pCommanderView, &cFuncInfoArr,
 			poCaret.GetY2() + CLayoutInt(1), poCaret.GetX2() + CLayoutInt(1), nOutlineType, nListType,
 			m_pCommanderView->m_pTypeData->m_bLineNumIsCRLF /* 行番号の表示 false=折り返し単位／true=改行単位 */
 		);
 	}
-	else {
+	else
+	{
 		/* アクティブにする */
 		GetEditWindow()->m_cDlgFuncList.Redraw(nOutlineType, nListType, &cFuncInfoArr, poCaret.GetY2() + 1,
 											   poCaret.GetX2() + 1);

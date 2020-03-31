@@ -23,7 +23,8 @@ class CTipWnd;
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-class CTipWnd final : public CWnd {
+class CTipWnd final : public CWnd
+{
 public:
 	/*
 	||  Constructors

@@ -50,7 +50,8 @@ typedef struct _migemo migemo;
 #include "CDllHandler.h"
 #include "util/design_template.h"
 
-class CMigemo : public TSingleton<CMigemo>, public CDllImp {
+class CMigemo : public TSingleton<CMigemo>, public CDllImp
+{
 	friend class TSingleton<CMigemo>;
 	CMigemo() {}
 

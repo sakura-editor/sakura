@@ -26,7 +26,8 @@
 
 #include "doc/CDocListener.h"
 
-class CMruListener : public CDocListenerEx {
+class CMruListener : public CDocListenerEx
+{
 public:
 	//ロード前後
 	//	ECallbackResult OnCheckLoad(SLoadInfo* pLoadInfo) override;

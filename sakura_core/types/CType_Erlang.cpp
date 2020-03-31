@@ -38,8 +38,10 @@
 
 /** Erlang アウトライン解析 管理＆解析
  */
-struct COutlineErlang {
-	enum {
+struct COutlineErlang
+{
+	enum
+	{
 		STATE_NORMAL,			  //!< 解析中でない
 		STATE_FUNC_CANDIDATE_FIN, //!< 関数らしきもの(行頭のatom)を解析済み
 		STATE_FUNC_ARGS1,		  //!< 最初の引数確認中
@@ -100,25 +102,31 @@ const wchar_t *COutlineErlang::ScanFuncName(const wchar_t *buf, const wchar_t *e
 
 	if (p > buf || !(IS_ATOM_HEAD(*p) || *p == L'\'')) { return end; }
 
-	if (*p == L'\'') {
-		do {
+	if (*p == L'\'')
+	{
+		do
+		{
 			++p;
 		} while (*p != L'\'' && p < end);
-		if (p >= end) {
+		if (p >= end)
+		{
 			// invalid atom
 			return p;
 		}
 		++p;
 	}
-	else {
-		do {
+	else
+	{
+		do
+		{
 			++p;
 		} while (IS_ALNUM(*p) && p < end);
 	}
 
 	int buf_len = _countof(m_func);
 	int len		= p - buf;
-	if (buf[0] == L'\'') {
+	if (buf[0] == L'\'')
+	{
 		++buf;
 		len -= 2;
 		--buf_len;
@@ -146,7 +154,8 @@ const wchar_t *COutlineErlang::EnterArgs(const wchar_t *end, const wchar_t *p)
 	if (p >= end) return end;
 
 	if (IS_COMMENT(*p)) { return end; }
-	else if (*p == L'(') { // )
+	else if (*p == L'(')
+	{ // )
 		m_state			  = STATE_FUNC_ARGS1;
 		m_argcount		  = 0;
 		m_parenthesis_ptr = 1;
@@ -176,15 +185,18 @@ const wchar_t *COutlineErlang::ScanArgs1(const wchar_t *end, const wchar_t *p)
 
 	if (p >= end) return end;
 
-	if (*p == /* ( */ L')') {
+	if (*p == /* ( */ L')')
+	{
 		// no argument
 		m_state = STATE_FUNC_ARGS_FIN;
 		p++;
 	}
-	else if (IS_COMMENT(*p)) {
+	else if (IS_COMMENT(*p))
+	{
 		return end;
 	}
-	else {
+	else
+	{
 		// argument found
 		m_state = STATE_FUNC_ARGS;
 		++m_argcount;
@@ -207,19 +219,25 @@ const wchar_t *COutlineErlang::ScanArgs(const wchar_t *end, const wchar_t *p)
 
 	const int parptr_max = _countof(m_parenthesis);
 	wchar_t   quote		 = L'\0'; // 先頭位置を保存
-	for (const wchar_t *head = p; p < end; p++) {
-		if (quote) {
+	for (const wchar_t *head = p; p < end; p++)
+	{
+		if (quote)
+		{
 			if (*p == quote) quote = L'\0';
 		}
-		else {
-			if (wcschr(L"([{", *p)) { //)
+		else
+		{
+			if (wcschr(L"([{", *p))
+			{ //)
 				// level up
 				if (m_parenthesis_ptr < parptr_max) { m_parenthesis[m_parenthesis_ptr] = *p; }
 				m_parenthesis_ptr++;
 			}
-			else if (wcschr(L")]}", *p)) { //)
+			else if (wcschr(L")]}", *p))
+			{ //)
 				wchar_t op;
-				switch (*p) {
+				switch (*p)
+				{
 				case L')': op = L'('; break;
 				case L']': op = L'['; break;
 				case L'}': op = L'{'; break;
@@ -230,52 +248,64 @@ const wchar_t *COutlineErlang::ScanArgs(const wchar_t *end, const wchar_t *p)
 				}
 				// level down
 				--m_parenthesis_ptr;
-				while (1 <= m_parenthesis_ptr && m_parenthesis_ptr < parptr_max) {
-					if (m_parenthesis[m_parenthesis_ptr] != op) {
+				while (1 <= m_parenthesis_ptr && m_parenthesis_ptr < parptr_max)
+				{
+					if (m_parenthesis[m_parenthesis_ptr] != op)
+					{
 						// if unmatch then skip
 						--m_parenthesis_ptr;
 					}
-					else {
+					else
+					{
 						break;
 					}
 				}
 
 				// check level
-				if (m_parenthesis_ptr == 0) {
+				if (m_parenthesis_ptr == 0)
+				{
 					m_state = STATE_FUNC_ARGS_FIN;
 					++p;
 					return p;
 				}
 			}
-			else if (*p == L',' && m_parenthesis_ptr == 1) {
+			else if (*p == L',' && m_parenthesis_ptr == 1)
+			{
 				++m_argcount;
 			}
-			else if (*p == L';') {
+			else if (*p == L';')
+			{
 				//	セミコロンは複数の文の区切り．
 				//	パラメータ中には現れないので，解析が失敗している
 				//	括弧の閉じ忘れが考えられるので，仕切り直し
 				m_state = STATE_NORMAL;
 				return end;
 			}
-			else if (*p == L'.') {
+			else if (*p == L'.')
+			{
 				//	ピリオドは式の末尾か，小数点として使われる．
-				if (p > head && (L'0' <= p[-1] && p[-1] <= L'9')) {
+				if (p > head && (L'0' <= p[-1] && p[-1] <= L'9'))
+				{
 					//	小数点かもしれないので，そのままにする
 				}
-				else {
+				else
+				{
 					//	引数の途中で文末が現れたのは解析が失敗している
 					//	括弧の閉じ忘れが考えられるので，仕切り直し
 					m_state = STATE_NORMAL;
 					return end;
 				}
 			}
-			else if (*p == L'"') {
+			else if (*p == L'"')
+			{
 				quote = L'"';
 			}
-			else if (*p == L'\'') {
+			else if (*p == L'\'')
+			{
 				quote = L'\'';
 			}
-			else if (IS_COMMENT(*p)) {
+			else if (IS_COMMENT(*p))
+			{
 				return end;
 			}
 		}
@@ -298,18 +328,22 @@ const wchar_t *COutlineErlang::EnterCond(const wchar_t *end, const wchar_t *p)
 
 	if (p >= end) return end;
 
-	if (p + 1 < end && wcsncmp_literal(p, L"->") == 0) {
+	if (p + 1 < end && wcsncmp_literal(p, L"->") == 0)
+	{
 		p += 2;
 		m_state = STATE_FUNC_FOUND;
 	}
-	else if (p + 3 < end && wcsncmp_literal(p, L"when") == 0) {
+	else if (p + 3 < end && wcsncmp_literal(p, L"when") == 0)
+	{
 		m_state = STATE_FUNC_FOUND;
 		p += 4;
 	}
-	else if (IS_COMMENT(*p)) {
+	else if (IS_COMMENT(*p))
+	{
 		return end;
 	}
-	else {
+	else
+	{
 		m_state = STATE_NORMAL;
 	}
 	return end;
@@ -326,19 +360,23 @@ bool COutlineErlang::parse(const wchar_t *buf, int linelen, CLogicInt linenum)
 	const wchar_t *		 pos = buf;
 	const wchar_t *const end = buf + linelen;
 	if (m_state == STATE_FUNC_FOUND) { m_state = STATE_NORMAL; }
-	if (m_state == STATE_NORMAL) {
+	if (m_state == STATE_NORMAL)
+	{
 		pos = ScanFuncName(buf, end, pos);
 		if (m_state != STATE_NORMAL) { m_lnum = linenum; }
 	}
-	while (pos < end) {
-		switch (m_state) {
+	while (pos < end)
+	{
+		switch (m_state)
+		{
 		case STATE_FUNC_CANDIDATE_FIN: pos = EnterArgs(end, pos); break;
 		case STATE_FUNC_ARGS1: pos = ScanArgs1(end, pos); break;
 		case STATE_FUNC_ARGS: pos = ScanArgs(end, pos); break;
 		case STATE_FUNC_ARGS_FIN: pos = EnterCond(end, pos); break;
 		default: PleaseReportToAuthor(NULL, L"COutlineErlang::parse Unknown State: %d", m_state); break;
 		}
-		if (m_state == STATE_FUNC_FOUND) {
+		if (m_state == STATE_FUNC_FOUND)
+		{
 			build_arity(m_argcount);
 			break;
 		}
@@ -386,11 +424,13 @@ void CDocOutline::MakeFuncList_Erlang(CFuncInfoArr *pcFuncInfoArr)
 	COutlineErlang erl_state_machine;
 	CLogicInt	  nLineCount;
 
-	for (nLineCount = CLogicInt(0); nLineCount < m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount) {
+	for (nLineCount = CLogicInt(0); nLineCount < m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount)
+	{
 		CLogicInt nLineLen;
 
 		const wchar_t *pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
-		if (erl_state_machine.parse(pLine, nLineLen, nLineCount)) {
+		if (erl_state_machine.parse(pLine, nLineLen, nLineCount))
+		{
 			/*
 			  カーソル位置変換
 			  物理位置(行頭からのバイト数、折り返し無し行位置)

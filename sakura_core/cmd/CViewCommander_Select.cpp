@@ -23,20 +23,23 @@ bool CViewCommander::Command_SELECTWORD(CLayoutPoint *pptCaretPos)
 {
 	CLayoutRange sRange;
 	CLogicInt	nIdx;
-	if (m_pCommanderView->GetSelectionInfo().IsTextSelected()) { /* テキストが選択されているか */
+	if (m_pCommanderView->GetSelectionInfo().IsTextSelected())
+	{ /* テキストが選択されているか */
 		/* 現在の選択範囲を非選択状態に戻す */
 		m_pCommanderView->GetSelectionInfo().DisableSelectArea(true);
 	}
 	CLayoutPoint   ptCaretPos = (NULL == pptCaretPos ? GetCaret().GetCaretLayoutPos() : *pptCaretPos);
 	const CLayout *pcLayout   = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY(ptCaretPos.GetY2());
-	if (NULL == pcLayout) {
+	if (NULL == pcLayout)
+	{
 		return false; //	単語選択に失敗
 	}
 	/* 指定された桁に対応する行のデータ内の位置を調べる */
 	nIdx = m_pCommanderView->LineColumnToIndex(pcLayout, ptCaretPos.GetX2());
 
 	/* 現在位置の単語の範囲を調べる */
-	if (GetDocument()->m_cLayoutMgr.WhereCurrentWord(ptCaretPos.GetY2(), nIdx, &sRange, NULL, NULL)) {
+	if (GetDocument()->m_cLayoutMgr.WhereCurrentWord(ptCaretPos.GetY2(), nIdx, &sRange, NULL, NULL))
+	{
 
 		// 指定された行のデータ内の位置に対応する桁の位置を調べる
 		// 2007.10.15 kobake 既にレイアウト単位なので変換は不要
@@ -59,7 +62,8 @@ bool CViewCommander::Command_SELECTWORD(CLayoutPoint *pptCaretPos)
 
 		return true; //	単語選択に成功。
 	}
-	else {
+	else
+	{
 		return false; //	単語選択に失敗
 	}
 }
@@ -67,7 +71,8 @@ bool CViewCommander::Command_SELECTWORD(CLayoutPoint *pptCaretPos)
 /* すべて選択 */
 void CViewCommander::Command_SELECTALL(void)
 {
-	if (m_pCommanderView->GetSelectionInfo().IsTextSelected()) { /* テキストが選択されているか */
+	if (m_pCommanderView->GetSelectionInfo().IsTextSelected())
+	{ /* テキストが選択されているか */
 		/* 現在の選択範囲を非選択状態に戻す */
 		m_pCommanderView->GetSelectionInfo().DisableSelectArea(true);
 	}
@@ -107,7 +112,8 @@ void CViewCommander::Command_SELECTLINE(int lparam)
 	CLayoutPoint ptCaret;
 
 	// 最下行（物理行）でない
-	if (GetCaret().GetCaretLogicPos().y < GetDocument()->m_cDocLineMgr.GetLineCount()) {
+	if (GetCaret().GetCaretLogicPos().y < GetDocument()->m_cDocLineMgr.GetLineCount())
+	{
 		// 1行先の物理行からレイアウト行を求める
 		GetDocument()->m_cLayoutMgr.LogicToLayout(CLogicPoint(0, GetCaret().GetCaretLogicPos().y + 1), &ptCaret);
 
@@ -117,7 +123,8 @@ void CViewCommander::Command_SELECTLINE(int lparam)
 		// 移動後のカーソル位置を取得する
 		ptCaret = GetCaret().GetCaretLayoutPos().Get();
 	}
-	else {
+	else
+	{
 		// カーソルを最下行（レイアウト行）へ移動する
 		m_pCommanderView->MoveCursorSelecting(CLayoutPoint(CLayoutInt(0), GetDocument()->m_cLayoutMgr.GetLineCount()),
 											  TRUE);
@@ -125,13 +132,15 @@ void CViewCommander::Command_SELECTLINE(int lparam)
 
 		// 選択するものが無い（[EOF]のみの行）時は選択状態としない
 		if ((!m_pCommanderView->GetSelectionInfo().IsTextSelected())
-			&& (GetCaret().GetCaretLogicPos().y >= GetDocument()->m_cDocLineMgr.GetLineCount())) {
+			&& (GetCaret().GetCaretLogicPos().y >= GetDocument()->m_cDocLineMgr.GetLineCount()))
+		{
 			// 現在の選択範囲を非選択状態に戻す
 			m_pCommanderView->GetSelectionInfo().DisableSelectArea(true);
 		}
 	}
 
-	if (m_pCommanderView->GetSelectionInfo().m_bBeginLineSelect) {
+	if (m_pCommanderView->GetSelectionInfo().m_bBeginLineSelect)
+	{
 		// 範囲選択開始行・カラムを記憶
 		m_pCommanderView->GetSelectionInfo().m_sSelect.SetTo(ptCaret);
 		m_pCommanderView->GetSelectionInfo().m_sSelectBgn.SetTo(ptCaret);
@@ -143,16 +152,16 @@ void CViewCommander::Command_SELECTLINE(int lparam)
 /* 範囲選択開始 */
 void CViewCommander::Command_BEGIN_SELECT(void)
 {
-	if (!m_pCommanderView->GetSelectionInfo().IsTextSelected()) { /* テキストが選択されているか */
+	if (!m_pCommanderView->GetSelectionInfo().IsTextSelected())
+	{ /* テキストが選択されているか */
 		/* 現在のカーソル位置から選択を開始する */
 		m_pCommanderView->GetSelectionInfo().BeginSelectArea();
 	}
 
 	//	ロックの解除切り替え
-	if (m_pCommanderView->GetSelectionInfo().m_bSelectingLock) {
-		m_pCommanderView->GetSelectionInfo().m_bSelectingLock = false; /* 選択状態のロック解除 */
-	}
-	else {
+	if (m_pCommanderView->GetSelectionInfo().m_bSelectingLock)
+	{ m_pCommanderView->GetSelectionInfo().m_bSelectingLock = false; /* 選択状態のロック解除 */ } else
+	{
 		m_pCommanderView->GetSelectionInfo().m_bSelectingLock = true; /* 選択状態のロック */
 	}
 	if (GetSelect().IsOne()) { GetCaret().m_cUnderLine.CaretUnderLineOFF(true); }
@@ -163,12 +172,14 @@ void CViewCommander::Command_BEGIN_SELECT(void)
 /* 矩形範囲選択開始 */
 void CViewCommander::Command_BEGIN_BOXSELECT(bool bSelectingLock)
 {
-	if (!GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH) { /* 現在のフォントは固定幅フォントである */
+	if (!GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH)
+	{ /* 現在のフォントは固定幅フォントである */
 		return;
 	}
 
 	//@@@ 2002.01.03 YAZAKI 範囲選択中にShift+F6を実行すると選択範囲がクリアされない問題に対処
-	if (m_pCommanderView->GetSelectionInfo().IsTextSelected()) { /* テキストが選択されているか */
+	if (m_pCommanderView->GetSelectionInfo().IsTextSelected())
+	{ /* テキストが選択されているか */
 		/* 現在の選択範囲を非選択状態に戻す */
 		m_pCommanderView->GetSelectionInfo().DisableSelectArea(true);
 	}

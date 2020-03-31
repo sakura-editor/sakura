@@ -26,7 +26,8 @@
 
 #include "view/colors/CColorStrategy.h"
 
-class CColor_RegexKeyword final : public CColorStrategy {
+class CColor_RegexKeyword final : public CColorStrategy
+{
 public:
 	CColor_RegexKeyword()
 		: m_nCOMMENTEND(0)

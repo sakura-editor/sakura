@@ -50,7 +50,8 @@ static const int MAX_TOOLBAR_ICON_COUNT   = MAX_TOOLBAR_ICON_X * MAX_TOOLBAR_ICO
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           全般                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-struct CommonSetting_General {
+struct CommonSetting_General
+{
 	//	Jul. 3, 2000 genta
 	//	アクセス関数(簡易)
 	//	intをビット単位に分割して使う
@@ -102,13 +103,15 @@ struct CommonSetting_General {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //	2004.05.13 Moca
 //! ウィンドウサイズ・位置の制御方法
-enum EWinSizeMode {
+enum EWinSizeMode
+{
 	WINSIZEMODE_DEF  = 0, //!< 指定なし
 	WINSIZEMODE_SAVE = 1, //!< 継承(保存)
 	WINSIZEMODE_SET  = 2  //!< 直接指定(固定)
 };
 
-struct CommonSetting_Window {
+struct CommonSetting_Window
+{
 	//基本設定
 	BOOL m_bDispTOOLBAR;	  //!< 次回ウィンドウを開いたときツールバーを表示する
 	BOOL m_bDispSTATUSBAR;	//!< 次回ウィンドウを開いたときステータスバーを表示する
@@ -161,13 +164,15 @@ struct CommonSetting_Window {
 //                         タブバー                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //! 閉じるボタン
-enum EDispTabClose {
+enum EDispTabClose
+{
 	DISPTABCLOSE_NO		 = 0, //!< なし
 	DISPTABCLOSE_ALLWAYS = 1, //!< 常に表示
 	DISPTABCLOSE_AUTO	= 2  //!< 自動表示
 };
 
-enum ETabPosition {
+enum ETabPosition
+{
 	TabPosition_Top,
 	TabPosition_Bottom,
 	TabPosition_Left,
@@ -175,7 +180,8 @@ enum ETabPosition {
 	TabPosition_None = -1,
 };
 
-struct CommonSetting_TabBar {
+struct CommonSetting_TabBar
+{
 	BOOL		 m_bDispTabWnd;			//!< タブウインドウ表示する	//@@@ 2003.05.31 MIK
 	BOOL		 m_bDispTabWndMultiWin; //!< タブをまとめない	//@@@ 2003.05.31 MIK
 	BOOL		 m_bTab_RetainEmptyWin; //!< 最後の文書が閉じられたとき(無題)を残す
@@ -204,13 +210,15 @@ struct CommonSetting_TabBar {
 //                           編集                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //! ファイルダイアログの初期位置
-enum EOpenDialogDir {
+enum EOpenDialogDir
+{
 	OPENDIALOGDIR_CUR, //!< カレントフォルダ
 	OPENDIALOGDIR_MRU, //!< 最近使ったフォルダ
 	OPENDIALOGDIR_SEL, //!< 指定フォルダ
 };
 
-struct CommonSetting_Edit {
+struct CommonSetting_Edit
+{
 	//コピー
 	bool m_bAddCRLFWhenCopy;		//!< 折り返し行に改行を付けてコピー
 	BOOL m_bEnableNoSelectCopy;		//!< 選択なしでコピーを可能にする 2007.11.18 ryoji
@@ -246,7 +254,8 @@ struct CommonSetting_Edit {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         ファイル                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-struct CommonSetting_File {
+struct CommonSetting_File
+{
 public:
 	// カーソル位置を復元するかどうか  Oct. 27, 2000 genta
 	bool GetRestoreCurPosition() const { return m_bRestoreCurPosition; }
@@ -301,7 +310,8 @@ public:
 
 //	Aug. 15, 2000 genta
 //! Backup Flags
-enum EBackupOptionFlag {
+enum EBackupOptionFlag
+{
 	BKUP_YEAR  = 32,
 	BKUP_MONTH = 16,
 	BKUP_DAY   = 8,
@@ -313,7 +323,8 @@ enum EBackupOptionFlag {
 	BKUP_AUTO = 64,
 };
 
-struct CommonSetting_Backup {
+struct CommonSetting_Backup
+{
 public:
 	//	Aug. 15, 2000 genta
 	//	Backup設定のアクセス関数
@@ -370,7 +381,8 @@ public:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           書式                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-struct CommonSetting_Format {
+struct CommonSetting_Format
+{
 	//日付書式
 	int   m_nDateFormatType;					   //!< 日付書式のタイプ
 	WCHAR m_szDateFormat[MAX_DATETIMEFOREMAT_LEN]; //!< 日付書式
@@ -389,7 +401,8 @@ struct CommonSetting_Format {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           検索                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-struct CommonSetting_Search {
+struct CommonSetting_Search
+{
 	int			  m_nSearchKeySequence; //!< 検索シーケンス(未保存)
 	SSearchOption m_sSearchOption;		//!< 検索／置換  条件
 
@@ -434,7 +447,8 @@ struct CommonSetting_Search {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       キー割り当て                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-struct CommonSetting_KeyBind {
+struct CommonSetting_KeyBind
+{
 	// キー割り当て
 	int		m_nKeyNameArrNum;		//!< キー割り当て表の有効データ数
 	KEYDATA m_pKeyNameArr[100 + 1]; //!< キー割り当て表 未割り当てキーコード用にダミーを追加
@@ -444,7 +458,8 @@ struct CommonSetting_KeyBind {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     カスタムメニュー                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-struct CommonSetting_CustomMenu {
+struct CommonSetting_CustomMenu
+{
 	WCHAR		  m_szCustMenuNameArr[MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_NAME_LEN + 1];
 	int			  m_nCustMenuItemNumArr[MAX_CUSTOM_MENU];
 	EFunctionCode m_nCustMenuItemFuncArr[MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_ITEMS];
@@ -455,7 +470,8 @@ struct CommonSetting_CustomMenu {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        ツールバー                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-struct CommonSetting_ToolBar {
+struct CommonSetting_ToolBar
+{
 	int m_nToolBarButtonNum;							  //!< ツールバーボタンの数
 	int m_nToolBarButtonIdxArr[MAX_TOOLBAR_BUTTON_ITEMS]; //!< ツールバーボタン構造体
 	int m_bToolBarIsFlat;								  //!< フラットツールバーにする／しない
@@ -464,7 +480,8 @@ struct CommonSetting_ToolBar {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      強調キーワード                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-struct CommonSetting_SpecialKeyword {
+struct CommonSetting_SpecialKeyword
+{
 	// 強調キーワード設定
 	CKeyWordSetMgr m_CKeyWordSetMgr;			//!< 強調キーワード
 	char		   m_szKeyWordSetDir[MAX_PATH]; //!< 強調キーワードファイルのディレクトリ
@@ -473,7 +490,8 @@ struct CommonSetting_SpecialKeyword {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           支援                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-struct CommonSetting_Helper {
+struct CommonSetting_Helper
+{
 	//入力補完機能
 	BOOL m_bHokanKey_RETURN; //!< VK_RETURN	補完決定キーが有効/無効
 	BOOL m_bHokanKey_TAB;	//!< VK_TAB		補完決定キーが有効/無効
@@ -499,7 +517,8 @@ struct CommonSetting_Helper {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          マクロ                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-struct CommonSetting_Macro {
+struct CommonSetting_Macro
+{
 	WCHAR	 m_szKeyMacroFileName[MAX_PATH]; //!< キーボードマクロのファイル名
 	MacroRec  m_MacroTable[MAX_CUSTMACRO];	//!< キー割り当て用マクロテーブル		Sep. 14, 2001 genta
 	SFilePath m_szMACROFOLDER;				  //!< マクロ用フォルダ
@@ -512,7 +531,8 @@ struct CommonSetting_Macro {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ファイル名表示                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-struct CommonSetting_FileName {
+struct CommonSetting_FileName
+{
 	bool m_bTransformShortPath;											//!< ファイル名の省略表記
 	int  m_nTransformShortMaxWidth;										//!< ファイル名の省略表記の最大長
 	int  m_nTransformFileNameArrNum;									//!< ファイル名の簡易表示登録数
@@ -526,7 +546,8 @@ struct CommonSetting_FileName {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //! ドッキング配置
-enum EDockSide {
+enum EDockSide
+{
 	DOCKSIDE_FLOAT,			  //!< フローティング
 	DOCKSIDE_LEFT,			  //!< 左ドッキング
 	DOCKSIDE_TOP,			  //!< 上ドッキング
@@ -535,9 +556,15 @@ enum EDockSide {
 	DOCKSIDE_UNDOCKABLE = -1, //!< ドッキング禁止
 };
 
-enum EFileTreeItemType { EFileTreeItemType_Grep, EFileTreeItemType_File, EFileTreeItemType_Folder };
+enum EFileTreeItemType
+{
+	EFileTreeItemType_Grep,
+	EFileTreeItemType_File,
+	EFileTreeItemType_Folder
+};
 
-struct SFileTreeItem {
+struct SFileTreeItem
+{
 public:
 	EFileTreeItemType			   m_eFileTreeItemType;
 	SFilePath					   m_szTargetPath; //!< フォルダorファイルパス
@@ -560,14 +587,16 @@ public:
 	}
 };
 
-struct SFileTree {
+struct SFileTree
+{
 	bool		  m_bProject;	 //!< プロジェクトファイルモード
 	SFilePath	 m_szProjectIni; //!< デフォルトiniパス
 	int			  m_nItemCount;   //!< ファイルパス数
 	SFileTreeItem m_aItems[20];   //!< ツリーアイテム
 };
 
-struct CommonSetting_OutLine {
+struct CommonSetting_OutLine
+{
 	// 20060201 aroka アウトライン/トピックリスト の位置とサイズを記憶
 	int m_bRememberOutlineWindowPos; //!< アウトライン/トピックリスト の位置とサイズを記憶する
 	int m_widthOutlineWindow;		 //!< アウトライン/トピックリスト のサイズ(幅)
@@ -597,7 +626,8 @@ struct CommonSetting_OutLine {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     ファイル内容比較                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-struct CommonSetting_Compare {
+struct CommonSetting_Compare
+{
 	//ファイル内容比較ダイアログ
 	BOOL m_bCompareAndTileHorz; //!< 文書比較後、左右に並べて表示
 };
@@ -605,7 +635,8 @@ struct CommonSetting_Compare {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          ビュー                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-struct CommonSetting_View {
+struct CommonSetting_View
+{
 	// INI内設定のみ
 	LOGFONT m_lf;				   //!< 現在のフォント情報
 	BOOL	m_bFontIs_FIXED_PITCH; //!< 現在のフォントは固定幅フォントである
@@ -615,7 +646,8 @@ struct CommonSetting_View {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          その他                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-struct CommonSetting_Others {
+struct CommonSetting_Others
+{
 	// INI内設定のみ
 	RECT m_rcOpenDialog;	 //!< 「開く」ダイアログのサイズと位置
 	RECT m_rcCompareDialog;  //!< 「ファイル比較」ダイアログボックスのサイズと位置
@@ -631,7 +663,8 @@ struct CommonSetting_Others {
 //                          ステータスバー                     //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //	2008/6/21	Uchi
-struct CommonSetting_Statusbar {
+struct CommonSetting_Statusbar
+{
 	// 示文字コードの指定
 	BOOL m_bDispUniInSjis;		//!< SJISで文字コード値をUnicodeで表示する
 	BOOL m_bDispUniInJis;		//!< JISで文字コード値をUnicodeで表示する
@@ -647,7 +680,8 @@ struct CommonSetting_Statusbar {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //! プラグイン状態
-enum EPluginState {
+enum EPluginState
+{
 	PLS_NONE,	  //!< プラグインテーブルに登録がない
 	PLS_INSTALLED, //!< 追加された
 	PLS_UPDATED,   //!< 更新された
@@ -656,14 +690,16 @@ enum EPluginState {
 	PLS_DELETED	//!< 削除された
 };
 
-struct PluginRec {
+struct PluginRec
+{
 	WCHAR		 m_szId[MAX_PLUGIN_ID];		//!< プラグインID
 	WCHAR		 m_szName[MAX_PLUGIN_NAME]; //!< プラグインフォルダ/設定ファイル名
 	EPluginState m_state;   //!< プラグイン状態。設定ファイルに保存せずメモリ上のみ。
 	int			 m_nCmdNum; //!< プラグイン コマンドの数	// 2010/7/3 Uchi
 };
 
-struct CommonSetting_Plugin {
+struct CommonSetting_Plugin
+{
 	BOOL	  m_bEnablePlugin;			 //!< プラグインを使用するかどうか
 	PluginRec m_PluginTable[MAX_PLUGIN]; //!< プラグインテーブル
 };
@@ -672,14 +708,16 @@ struct CommonSetting_Plugin {
 //                        メインメニュー                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //! メインメニュー種類
-enum EMainMenuType {
+enum EMainMenuType
+{
 	T_NODE,		 //!< Node
 	T_LEAF,		 //!< 機能コマンド
 	T_SEPARATOR, //!< 区切線
 	T_SPECIAL,   //!< 特殊機能コマンド
 };
 
-class CMainMenu {
+class CMainMenu
+{
 public:
 	EMainMenuType m_nType;							   //!< 種類
 	EFunctionCode m_nFunc;							   //!< Function
@@ -688,7 +726,8 @@ public:
 	int			  m_nLevel;							   //!< レベル
 };
 
-struct CommonSetting_MainMenu {
+struct CommonSetting_MainMenu
+{
 	int		  m_nVersion;					   //!< メインメニューバージョン
 	int		  m_nMenuTopIdx[MAX_MAINMENU_TOP]; //!< メインメニュートップレベル
 	int		  m_nMainMenuNum;				   //!< メインメニューデータの数
@@ -703,7 +742,8 @@ struct CommonSetting_MainMenu {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //! 共通設定
-struct CommonSetting {
+struct CommonSetting
+{
 	CommonSetting_General m_sGeneral; //!< 全般
 	CommonSetting_Window  m_sWindow;  //!< ウィンドウ
 	CommonSetting_TabBar  m_sTabBar;  //!< タブバー

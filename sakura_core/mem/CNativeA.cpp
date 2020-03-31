@@ -67,7 +67,8 @@ void CNativeA::AppendStringF(const char *pszData, ...)
 	int e   = errno;
 	va_end(v);
 
-	if (len == -1) {
+	if (len == -1)
+	{
 		DEBUG_TRACE(L"AppendStringF error. errno = %d", e);
 		throw std::exception();
 	}
@@ -111,7 +112,8 @@ int CNativeA::GetStringLength() const { return CNative::GetRawLength() / sizeof(
 char CNativeA::operator[](int nIndex) const
 {
 	if (nIndex < GetStringLength()) { return GetStringPtr()[nIndex]; }
-	else {
+	else
+	{
 		return 0;
 	}
 }
@@ -128,21 +130,22 @@ void CNativeA::Replace_j(const char *pszFrom, const char *pszTo)
 	int		 nToLen   = strlen(pszTo);
 	int		 nBgnOld  = 0;
 	int		 nBgn	 = 0;
-	while (nBgn <= GetStringLength() - nFromLen) {
-		if (0 == memcmp(&GetStringPtr()[nBgn], pszFrom, nFromLen)) {
+	while (nBgn <= GetStringLength() - nFromLen)
+	{
+		if (0 == memcmp(&GetStringPtr()[nBgn], pszFrom, nFromLen))
+		{
 			if (0 < nBgn - nBgnOld) { cmemWork.AppendString(&GetStringPtr()[nBgnOld], nBgn - nBgnOld); }
 			cmemWork.AppendString(pszTo, nToLen);
 			nBgn	= nBgn + nFromLen;
 			nBgnOld = nBgn;
 		}
-		else {
+		else
+		{
 			if (_IS_SJIS_1((unsigned char)GetStringPtr()[nBgn])) nBgn++;
 			nBgn++;
 		}
 	}
-	if (0 < GetStringLength() - nBgnOld) {
-		cmemWork.AppendString(&GetStringPtr()[nBgnOld], GetStringLength() - nBgnOld);
-	}
-	SetNativeData(cmemWork);
+	if (0 < GetStringLength() - nBgnOld)
+	{ cmemWork.AppendString(&GetStringPtr()[nBgnOld], GetStringLength() - nBgnOld); } SetNativeData(cmemWork);
 	return;
 }

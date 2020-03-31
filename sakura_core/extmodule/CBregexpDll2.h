@@ -26,7 +26,8 @@
 
 #include "CDllHandler.h"
 
-typedef struct bregexp {
+typedef struct bregexp
+{
 	const WCHAR * outp;		 /* result string start ptr  */
 	const WCHAR * outendp;   /* result string end ptr    */
 	const int	 splitctr;  /* split result counter     */
@@ -42,7 +43,8 @@ typedef struct bregexp {
 
 //! BREGONIG.DLLをラップしたもの。
 // 2007.09.13 kobake 作成
-class CBregexpDll2 : public CDllImp {
+class CBregexpDll2 : public CDllImp
+{
 public:
 	CBregexpDll2();
 	virtual ~CBregexpDll2();

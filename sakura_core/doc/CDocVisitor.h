@@ -28,7 +28,8 @@
 
 class CEditDoc;
 
-class CDocVisitor {
+class CDocVisitor
+{
 public:
 	CDocVisitor(CEditDoc *pcDoc)
 		: m_pcDocRef(pcDoc)

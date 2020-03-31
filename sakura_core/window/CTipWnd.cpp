@@ -37,7 +37,8 @@ CTipWnd::CTipWnd()
 /* CTipWndクラス デストラクタ */
 CTipWnd::~CTipWnd()
 {
-	if (NULL != m_hFont) {
+	if (NULL != m_hFont)
+	{
 		::DeleteObject(m_hFont);
 		m_hFont = NULL;
 	}
@@ -77,7 +78,8 @@ void CTipWnd::Create(HINSTANCE hInstance, HWND hwndParent)
 				 NULL									 // handle to menu, or child-window identifier
 	);
 
-	if (NULL != m_hFont) {
+	if (NULL != m_hFont)
+	{
 		::DeleteObject(m_hFont);
 		m_hFont = NULL;
 	}
@@ -107,18 +109,21 @@ void CTipWnd::Show(int nX, int nY, const WCHAR *szText, RECT *pRect)
 
 	// サイズを計算済み	2001/06/19 asa-o
 	if (pRect != NULL) { rc = *pRect; }
-	else {
+	else
+	{
 		/* ウィンドウのサイズを決める */
 		ComputeWindowSize(hdc, &rc);
 	}
 
 	::ReleaseDC(GetHwnd(), hdc);
 
-	if (m_bAlignLeft) {
+	if (m_bAlignLeft)
+	{
 		// 右側固定で表示(MiniMap)
 		::MoveWindow(GetHwnd(), nX - rc.right, nY, rc.right + 8, rc.bottom + 8, TRUE);
 	}
-	else {
+	else
+	{
 		// 左側固定で表示(通常)
 		::MoveWindow(GetHwnd(), nX, nY, rc.right + 8, rc.bottom + 8 /*nHeight*/, TRUE);
 	}
@@ -151,15 +156,18 @@ void CTipWnd::ComputeWindowSize(const HDC hdc, RECT *prcResult)
 
 	HGDIOBJ hFontOld = ::SelectObject(hdc, m_hFont);
 
-	for (size_t i = 0, nLineBgn = 0; i <= cchText;) {
+	for (size_t i = 0, nLineBgn = 0; i <= cchText;)
+	{
 		// iの位置がNUL終端かどうか
 		const bool isEndOfText = (pszText[i] == '\0');
 		// iの位置にNUL終端、または"\n"がある場合
-		if (isEndOfText || (i + 1 < cchText && pszText[i] == '\\' && pszText[i + 1] == 'n')) {
+		if (isEndOfText || (i + 1 < cchText && pszText[i] == '\\' && pszText[i + 1] == 'n'))
+		{
 			// 計測結果を格納する矩形
 			CMyRect rc;
 			// 計測対象の文字列がブランクでない場合
-			if (0 < i - nLineBgn) {
+			if (0 < i - nLineBgn)
+			{
 				// ワードラップを有効にするため幅だけ指定しておく
 				rc.SetXYWH(0, 0, cxScreen, 0);
 
@@ -170,7 +178,8 @@ void CTipWnd::ComputeWindowSize(const HDC hdc, RECT *prcResult)
 				// 計測した幅が最大幅を超えたら更新する
 				if (nCurMaxWidth < rc.Width()) { nCurMaxWidth = rc.Width(); }
 			}
-			else {
+			else
+			{
 				// ダミー文字列を計測して必要な高さを取得する
 				::DrawText(hdc, szDummy, _countof(szDummy) - 1, &rc, DT_CALCRECT);
 			}
@@ -185,7 +194,8 @@ void CTipWnd::ComputeWindowSize(const HDC hdc, RECT *prcResult)
 			nLineBgn = i + 2; // "\\n" の文字数
 			i		 = nLineBgn;
 		}
-		else {
+		else
+		{
 			// 現在位置の文字がTCHAR単位で何文字に当たるか計算してインデックスを進める
 			size_t nCharCount = CNativeW::GetSizeOfChar(pszText, cchText, i);
 			i += nCharCount;
@@ -225,19 +235,23 @@ void CTipWnd::DrawTipText(const HDC hdc, const RECT &rcPaint)
 	HGDIOBJ  hFontOld	 = ::SelectObject(hdc, m_hFont);
 	COLORREF textColorOld = ::SetTextColor(hdc, ::GetSysColor(COLOR_INFOTEXT));
 
-	for (size_t i = 0, nLineBgn = 0; i <= cchText;) {
+	for (size_t i = 0, nLineBgn = 0; i <= cchText;)
+	{
 		// iの位置がNUL終端かどうか
 		const bool isEndOfText = (pszText[i] == '\0');
 		// iの位置にNUL終端、または"\n"がある場合
-		if (isEndOfText || (i + 1 < cchText && pszText[i] == '\\' && pszText[i + 1] == 'n')) {
+		if (isEndOfText || (i + 1 < cchText && pszText[i] == '\\' && pszText[i + 1] == 'n'))
+		{
 			int nHeight;
 			// 計測対象の文字列がブランクでない場合
-			if (0 < i - nLineBgn) {
+			if (0 < i - nLineBgn)
+			{
 				// 指定されたテキストを描画する
 				nHeight = ::DrawText(hdc, &pszText[nLineBgn], i - nLineBgn, &rc,
 									 DT_WORDBREAK | DT_EXPANDTABS | DT_EXTERNALLEADING);
 			}
-			else {
+			else
+			{
 				// ダミー文字列の高さを取得する
 				nHeight = ::DrawText(hdc, szDummy, _countof(szDummy) - 1, &rc, DT_CALCRECT);
 			}
@@ -252,7 +266,8 @@ void CTipWnd::DrawTipText(const HDC hdc, const RECT &rcPaint)
 			nLineBgn = i + 2; // "\\n" の文字数
 			i		 = nLineBgn;
 		}
-		else {
+		else
+		{
 			// 現在位置の文字がTCHAR単位で何文字に当たるか計算してインデックスを進める
 			size_t nCharCount = CNativeW::GetSizeOfChar(pszText, cchText, i);
 			i += nCharCount;

@@ -108,7 +108,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] = {
 	 NULL},																				 // UTF-7で開き直す
 	{F_PRINT, LTEXT("Print"), {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL}, //印刷
 	//	{F_PRINT_DIALOG,				LTEXT("PrintDialog"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},
-	//VT_EMPTY,
+	// VT_EMPTY,
 	// NULL},
 	////印刷ダイアログ
 	{F_PRINT_PREVIEW, LTEXT("PrintPreview"), {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_EMPTY, NULL}, //印刷プレビュー
@@ -123,13 +123,13 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] = {
 	 VT_EMPTY,
 	 NULL}, //同名のC/C++ヘッダ(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
 			//	{F_OPEN_HHPP,					LTEXT("OpenHHpp"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},
-			//VT_EMPTY,
-			// NULL},
+			// VT_EMPTY,
+	// NULL},
 	////同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更		del
 	/// 2008/6/23
 	// Uchi
 	//	{F_OPEN_CCPP,					LTEXT("OpenCCpp"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},
-	//VT_EMPTY,
+	// VT_EMPTY,
 	// NULL},
 	////同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更	del
 	/// 2008/6/23
@@ -1581,7 +1581,8 @@ CSMacroMgr::~CSMacroMgr()
 void CSMacroMgr::ClearAll(void)
 {
 	int i;
-	for (i = 0; i < MAX_CUSTMACRO; i++) {
+	for (i = 0; i < MAX_CUSTMACRO; i++)
+	{
 		//	Apr. 29, 2002 genta
 		delete m_cSavedKeyMacro[i];
 		m_cSavedKeyMacro[i] = NULL;
@@ -1606,9 +1607,11 @@ int CSMacroMgr::Append(int			 idx,		//!<
 )
 {
 	assert(idx == STAND_KEYMACRO);
-	if (idx == STAND_KEYMACRO) {
+	if (idx == STAND_KEYMACRO)
+	{
 		CKeyMacroMgr *pKeyMacro = dynamic_cast<CKeyMacroMgr *>(m_pKeyMacro);
-		if (pKeyMacro == NULL) {
+		if (pKeyMacro == NULL)
+		{
 			//	1. 実体がまだ無い場合
 			//	2. CKeyMacroMgr以外の物が入っていた場合
 			//	いずれにしても再生成する．
@@ -1635,10 +1638,12 @@ int CSMacroMgr::Append(int			 idx,		//!<
 */
 BOOL CSMacroMgr::Exec(int idx, HINSTANCE hInstance, CEditView *pcEditView, int flags)
 {
-	if (idx == STAND_KEYMACRO) {
+	if (idx == STAND_KEYMACRO)
+	{
 		//	Jun. 16, 2002 genta
 		//	キーマクロ以外のサポートによりNULLの可能性が出てきたので判定追加
-		if (m_pKeyMacro != NULL) {
+		if (m_pKeyMacro != NULL)
+		{
 			//	Sep. 15, 2005 FILE
 			//	Jul. 01, 2007 マクロの多重実行時に備えて直前のマクロ番号を退避
 			int prevmacro = SetCurrentIdx(idx);
@@ -1646,18 +1651,22 @@ BOOL CSMacroMgr::Exec(int idx, HINSTANCE hInstance, CEditView *pcEditView, int f
 			SetCurrentIdx(prevmacro);
 			return TRUE;
 		}
-		else {
+		else
+		{
 			return FALSE;
 		}
 	}
-	if (idx == TEMP_KEYMACRO) { // 一時マクロ
-		if (m_pTempMacro != NULL) {
+	if (idx == TEMP_KEYMACRO)
+	{ // 一時マクロ
+		if (m_pTempMacro != NULL)
+		{
 			int prevmacro = SetCurrentIdx(idx);
 			m_pTempMacro->ExecKeyMacro2(pcEditView, flags);
 			SetCurrentIdx(prevmacro);
 			return TRUE;
 		}
-		else {
+		else
+		{
 			return FALSE;
 		}
 	}
@@ -1666,7 +1675,8 @@ BOOL CSMacroMgr::Exec(int idx, HINSTANCE hInstance, CEditView *pcEditView, int f
 
 	/* 読み込み前か、毎回読み込む設定の場合は、ファイルを読み込みなおす */
 	//	Apr. 29, 2002 genta
-	if (m_cSavedKeyMacro[idx] == NULL || CShareData::getInstance()->BeReloadWhenExecuteMacro(idx)) {
+	if (m_cSavedKeyMacro[idx] == NULL || CShareData::getInstance()->BeReloadWhenExecuteMacro(idx))
+	{
 		//	CShareDataから、マクロファイル名を取得
 		//	Jun. 08, 2003 Moca 呼び出し側でパス名を用意
 		//	Jun. 16, 2003 genta 書式をちょっと変更
@@ -1709,20 +1719,24 @@ BOOL CSMacroMgr::Load(int idx, HINSTANCE hInstance, const WCHAR *pszPath, const 
 	*ppMacro = NULL;
 
 	const WCHAR *ext;
-	if (pszType == NULL) { //ファイル指定
+	if (pszType == NULL)
+	{ //ファイル指定
 		//ファイルの拡張子を取得する
 		ext = wcsrchr(pszPath, L'.');
 		//	Feb. 02, 2004 genta .が無い場合にext==NULLとなるのでNULLチェック追加
-		if (ext != NULL) {
+		if (ext != NULL)
+		{
 			const WCHAR *chk = wcsrchr(ext, L'\\');
-			if (chk != NULL) { //	.のあとに\があったらそれは拡張子の区切りではない
-							   //	\が漢字の2バイト目の場合も拡張子ではない。
+			if (chk != NULL)
+			{ //	.のあとに\があったらそれは拡張子の区切りではない
+			  //	\が漢字の2バイト目の場合も拡張子ではない。
 				ext = NULL;
 			}
 		}
 		if (ext != NULL) { ++ext; }
 	}
-	else { //コード指定
+	else
+	{ //コード指定
 		ext = pszType;
 	}
 
@@ -1730,18 +1744,21 @@ BOOL CSMacroMgr::Load(int idx, HINSTANCE hInstance, const WCHAR *pszPath, const 
 	*ppMacro	 = CMacroFactory::getInstance()->Create(ext);
 	if (*ppMacro == NULL) return FALSE;
 	BOOL bRet;
-	if (pszType == NULL) {
+	if (pszType == NULL)
+	{
 		bRet = (*ppMacro)->LoadKeyMacro(hInstance, pszPath);
 		if (idx == STAND_KEYMACRO || idx == TEMP_KEYMACRO) { m_sMacroPath = pszPath; }
 	}
-	else {
+	else
+	{
 		bRet = (*ppMacro)->LoadKeyMacroStr(hInstance, pszPath);
 	}
 
 	//	From Here Jun. 16, 2002 genta
 	//	読み込みエラー時はインスタンス削除
 	if (bRet) { return TRUE; }
-	else {
+	else
+	{
 		delete *ppMacro;
 		*ppMacro = NULL;
 	}
@@ -1758,7 +1775,8 @@ BOOL CSMacroMgr::Load(int idx, HINSTANCE hInstance, const WCHAR *pszPath, const 
 */
 void CSMacroMgr::UnloadAll(void)
 {
-	for (int idx = 0; idx < MAX_CUSTMACRO; idx++) {
+	for (int idx = 0; idx < MAX_CUSTMACRO; idx++)
+	{
 		delete m_cSavedKeyMacro[idx];
 		m_cSavedKeyMacro[idx] = NULL;
 	}
@@ -1775,7 +1793,8 @@ void CSMacroMgr::UnloadAll(void)
 BOOL CSMacroMgr::Save(int idx, HINSTANCE hInstance, const WCHAR *pszPath)
 {
 	assert(idx == STAND_KEYMACRO);
-	if (idx == STAND_KEYMACRO) {
+	if (idx == STAND_KEYMACRO)
+	{
 		CKeyMacroMgr *pKeyMacro = dynamic_cast<CKeyMacroMgr *>(m_pKeyMacro);
 		if (pKeyMacro != NULL) { return pKeyMacro->SaveKeyMacro(hInstance, pszPath); }
 		//	Jun. 27, 2002 genta
@@ -1796,7 +1815,8 @@ BOOL CSMacroMgr::Save(int idx, HINSTANCE hInstance, const WCHAR *pszPath)
 void CSMacroMgr::Clear(int idx)
 {
 	CMacroManagerBase **ppMacro = Idx2Ptr(idx);
-	if (ppMacro != NULL) {
+	if (ppMacro != NULL)
+	{
 		delete *ppMacro;
 		*ppMacro = NULL;
 	}
@@ -1820,10 +1840,12 @@ const MacroFuncInfo *CSMacroMgr::GetFuncInfoByID(int nFuncID)
 	int i;
 	//	Jun. 27, 2002 genta
 	//	番人をコード0として拾ってしまうので，配列サイズによる判定をやめた．
-	for (i = 0; m_MacroFuncInfoCommandArr[i].m_pszFuncName != NULL; ++i) {
+	for (i = 0; m_MacroFuncInfoCommandArr[i].m_pszFuncName != NULL; ++i)
+	{
 		if (m_MacroFuncInfoCommandArr[i].m_nFuncID == nFuncID) { return &m_MacroFuncInfoCommandArr[i]; }
 	}
-	for (i = 0; m_MacroFuncInfoArr[i].m_pszFuncName != NULL; ++i) {
+	for (i = 0; m_MacroFuncInfoArr[i].m_pszFuncName != NULL; ++i)
+	{
 		if (m_MacroFuncInfoArr[i].m_nFuncID == nFuncID) { return &m_MacroFuncInfoArr[i]; }
 	}
 	return NULL;
@@ -1851,12 +1873,16 @@ WCHAR *CSMacroMgr::GetFuncInfoByID(
 )
 {
 	const MacroFuncInfo *MacroInfo = GetFuncInfoByID(nFuncID);
-	if (MacroInfo != NULL) {
-		if (pszFuncName != NULL) {
+	if (MacroInfo != NULL)
+	{
+		if (pszFuncName != NULL)
+		{
 			wcscpy(pszFuncName, MacroInfo->m_pszFuncName);
 			WCHAR *p = pszFuncName;
-			while (*p) {
-				if (*p == LTEXT('(')) {
+			while (*p)
+			{
+				if (*p == LTEXT('('))
+				{
 					*p = LTEXT('\0');
 					break;
 				}
@@ -1893,15 +1919,19 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 	//	S_で始まっているか
 	if (pszFuncName == NULL) { return F_INVALID; }
 	if (pszFuncName[0] == LTEXT('S') && pszFuncName[1] == LTEXT('_')) { normalizedFuncName = pszFuncName + 2; }
-	else {
+	else
+	{
 		normalizedFuncName = pszFuncName;
 	}
 
 	// コマンド関数を検索
-	for (int i = 0; m_MacroFuncInfoCommandArr[i].m_pszFuncName != NULL; ++i) {
-		if (0 == wcscmp(normalizedFuncName, m_MacroFuncInfoCommandArr[i].m_pszFuncName)) {
+	for (int i = 0; m_MacroFuncInfoCommandArr[i].m_pszFuncName != NULL; ++i)
+	{
+		if (0 == wcscmp(normalizedFuncName, m_MacroFuncInfoCommandArr[i].m_pszFuncName))
+		{
 			EFunctionCode nFuncID = EFunctionCode(m_MacroFuncInfoCommandArr[i].m_nFuncID);
-			if (pszFuncNameJapanese != NULL) {
+			if (pszFuncNameJapanese != NULL)
+			{
 				wcsncpy(pszFuncNameJapanese, LS(nFuncID), 255);
 				pszFuncNameJapanese[255] = L'\0';
 			}
@@ -1909,10 +1939,13 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 		}
 	}
 	// 非コマンド関数を検索
-	for (int i = 0; m_MacroFuncInfoArr[i].m_pszFuncName != NULL; ++i) {
-		if (0 == wcscmp(normalizedFuncName, m_MacroFuncInfoArr[i].m_pszFuncName)) {
+	for (int i = 0; m_MacroFuncInfoArr[i].m_pszFuncName != NULL; ++i)
+	{
+		if (0 == wcscmp(normalizedFuncName, m_MacroFuncInfoArr[i].m_pszFuncName))
+		{
 			EFunctionCode nFuncID = EFunctionCode(m_MacroFuncInfoArr[i].m_nFuncID);
-			if (pszFuncNameJapanese != NULL) {
+			if (pszFuncNameJapanese != NULL)
+			{
 				wcsncpy(pszFuncNameJapanese, LS(nFuncID), 255);
 				pszFuncNameJapanese[255] = L'\0';
 			}
@@ -1925,7 +1958,8 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 /* キーマクロに記録可能な機能かどうかを調べる */
 BOOL CSMacroMgr::CanFuncIsKeyMacro(int nFuncID)
 {
-	switch (nFuncID) {
+	switch (nFuncID)
+	{
 		/* ファイル操作系 */
 		//	case F_FILENEW					://新規作成
 		//	case F_FILEOPEN					://開く
@@ -2279,10 +2313,12 @@ CMacroManagerBase **CSMacroMgr::Idx2Ptr(int idx)
 	//	Jun. 16, 2002 genta
 	//	キーマクロ以外のマクロを読み込めるように
 	if (idx == STAND_KEYMACRO) { return &m_pKeyMacro; }
-	else if (idx == TEMP_KEYMACRO) {
+	else if (idx == TEMP_KEYMACRO)
+	{
 		return &m_pTempMacro;
 	}
-	else if (0 <= idx && idx < MAX_CUSTMACRO) {
+	else if (0 <= idx && idx < MAX_CUSTMACRO)
+	{
 		return &m_cSavedKeyMacro[idx];
 	}
 

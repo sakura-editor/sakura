@@ -40,7 +40,8 @@
 
 int CALLBACK MYBrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData)
 {
-	switch (uMsg) {
+	switch (uMsg)
+	{
 	case BFFM_INITIALIZED: ::SendMessage(hwnd, BFFM_SETSELECTION, TRUE, (LPARAM)lpData); break;
 	case BFFM_SELCHANGED: break;
 	}
@@ -74,13 +75,15 @@ BOOL SelectDir(HWND hWnd, const WCHAR *pszTitle, const WCHAR *pszInitFolder, WCH
 	// アイテムＩＤリストを返す
 	// ITEMIDLISTはアイテムの一意を表す構造体
 	LPITEMIDLIST pList = ::SHBrowseForFolder(&bi);
-	if (NULL != pList) {
+	if (NULL != pList)
+	{
 		// SHGetPathFromIDList()関数はアイテムＩＤリストの物理パスを探してくれる
 		bRes = ::SHGetPathFromIDList(pList, strFolderName);
 		// :SHBrowseForFolder()で取得したアイテムＩＤリストを削除
 		::CoTaskMemFree(pList);
 		if (bRes) { return TRUE; }
-		else {
+		else
+		{
 			return FALSE;
 		}
 	}
@@ -107,7 +110,8 @@ BOOL GetSpecialFolderPath(int nFolder, LPWSTR pszPath)
 
 #if (WINVER >= _WIN32_WINNT_WIN2K)
 	hres = ::SHGetFolderLocation(NULL, nFolder, NULL, 0, &pidl);
-	if (SUCCEEDED(hres)) {
+	if (SUCCEEDED(hres))
+	{
 		bRet = ::SHGetPathFromIDList(pidl, pszPath);
 		::CoTaskMemFree(pidl);
 	}
@@ -118,7 +122,8 @@ BOOL GetSpecialFolderPath(int nFolder, LPWSTR pszPath)
 	if (FAILED(hres)) return FALSE;
 
 	hres = ::SHGetSpecialFolderLocation(NULL, nFolder, &pidl);
-	if (SUCCEEDED(hres)) {
+	if (SUCCEEDED(hres))
+	{
 		bRet = ::SHGetPathFromIDList(pidl, pszPath);
 		pMalloc->Free((void *)pidl);
 	}
@@ -140,10 +145,12 @@ static WNDPROC s_pOldPropSheetWndProc; // プロパティシートの元のウ�
 */
 static LRESULT CALLBACK PropSheetWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	switch (uMsg) {
+	switch (uMsg)
+	{
 	case WM_SHOWWINDOW:
 		// 追加ボタンの位置を調整する
-		if (wParam) {
+		if (wParam)
+		{
 			HWND  hwndBtn;
 			RECT  rcOk;
 			RECT  rcTab;
@@ -161,7 +168,8 @@ static LRESULT CALLBACK PropSheetWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LP
 
 	case WM_COMMAND:
 		// 追加ボタンが押された時はその処理を行う
-		if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == 0x02000) {
+		if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == 0x02000)
+		{
 			HWND  hwndBtn = ::GetDlgItem(hwnd, 0x2000);
 			RECT  rc;
 			POINT pt;
@@ -182,7 +190,8 @@ static LRESULT CALLBACK PropSheetWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			::DestroyMenu(hMenu);
 
 			// 選択されたメニューの処理
-			switch (nId) {
+			switch (nId)
+			{
 			case 100: // 設定フォルダを開く
 				WCHAR szPath[_MAX_PATH];
 				GetInidir(szPath);
@@ -193,13 +202,15 @@ static LRESULT CALLBACK PropSheetWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LP
 				//       verbが"open"やNULLではexeのほうが実行され"explore"では失敗する
 				//       （フォルダ名の末尾に'\\'を付加してもWindows 2000では付加しないのと同じ動作になってしまう）
 				LPSHELLFOLDER pDesktopFolder;
-				if (SUCCEEDED(::SHGetDesktopFolder(&pDesktopFolder))) {
+				if (SUCCEEDED(::SHGetDesktopFolder(&pDesktopFolder)))
+				{
 					LPMALLOC pMalloc;
-					if (SUCCEEDED(::SHGetMalloc(&pMalloc))) {
+					if (SUCCEEDED(::SHGetMalloc(&pMalloc)))
+					{
 						LPITEMIDLIST pIDL;
 						WCHAR *		 pszDisplayName = szPath;
-						if (SUCCEEDED(
-								pDesktopFolder->ParseDisplayName(NULL, NULL, pszDisplayName, NULL, &pIDL, NULL))) {
+						if (SUCCEEDED(pDesktopFolder->ParseDisplayName(NULL, NULL, pszDisplayName, NULL, &pIDL, NULL)))
+						{
 							SHELLEXECUTEINFO si;
 							::ZeroMemory(&si, sizeof(si));
 							si.cbSize   = sizeof(si);
@@ -218,7 +229,8 @@ static LRESULT CALLBACK PropSheetWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			case 101: // インポート／エクスポートの起点リセット（起点を設定フォルダにする）
 				int nMsgResult =
 					MYMESSAGEBOX(hwnd, MB_OKCANCEL | MB_ICONINFORMATION, GSTR_APPNAME, LS(STR_SHELL_IMPEXPDIR));
-				if (IDOK == nMsgResult) {
+				if (IDOK == nMsgResult)
+				{
 					DLLSHAREDATA *pShareData = &GetDllShareData();
 					GetInidir(pShareData->m_sHistory.m_szIMPORTFOLDER);
 					AddLastChar(pShareData->m_sHistory.m_szIMPORTFOLDER,
@@ -242,7 +254,8 @@ static LRESULT CALLBACK PropSheetWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LP
 static int CALLBACK PropSheetProc(HWND hwndDlg, UINT uMsg, LPARAM lParam)
 {
 	// プロパティシートの初期化時にボタン追加、プロパティシートのサブクラス化を行う
-	if (uMsg == PSCB_INITIALIZED) {
+	if (uMsg == PSCB_INITIALIZED)
+	{
 		s_pOldPropSheetWndProc = (WNDPROC)::SetWindowLongPtr(hwndDlg, GWLP_WNDPROC, (LONG_PTR)PropSheetWndProc);
 		HINSTANCE hInstance	= (HINSTANCE)::GetModuleHandle(NULL);
 		HWND	  hwndBtn =
@@ -261,7 +274,8 @@ static int CALLBACK PropSheetProc(HWND hwndDlg, UINT uMsg, LPARAM lParam)
 INT_PTR MyPropertySheet(LPPROPSHEETHEADER lppsph)
 {
 	// 個人設定フォルダを使用するときは「設定フォルダ」ボタンを追加する
-	if (CShareData::getInstance()->IsPrivateSettings()) {
+	if (CShareData::getInstance()->IsPrivateSettings())
+	{
 		lppsph->dwFlags |= PSH_USECALLBACK;
 		lppsph->pfnCallback = PropSheetProc;
 	}
@@ -300,7 +314,8 @@ DWORD NetConnect(const WCHAR strNetWorkPass[])
 	// 3文字目から数えて最初の\の直前までを切り出す
 	sTemp[0] = L'\\';
 	sTemp[1] = L'\\';
-	for (i = 2; strNetWorkPass[i] != L'\0'; i++) {
+	for (i = 2; strNetWorkPass[i] != L'\0'; i++)
+	{
 		if (strNetWorkPass[i] == L'\\') break;
 		sTemp[i] = strNetWorkPass[i];
 	}
@@ -380,21 +395,28 @@ BOOL ResolveShortcutLink(HWND hwnd, LPCWSTR lpszLinkFile, LPWSTR lpszPath)
 	ChangeCurrentDirectoryToExeDir();
 
 	if (SUCCEEDED(hRes = ::CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink,
-											(LPVOID *)&pIShellLink))) {
+											(LPVOID *)&pIShellLink)))
+	{
 		// Get a pointer to the IPersistFile interface.
-		if (SUCCEEDED(hRes = pIShellLink->QueryInterface(IID_IPersistFile, (void **)&pIPersistFile))) {
+		if (SUCCEEDED(hRes = pIShellLink->QueryInterface(IID_IPersistFile, (void **)&pIPersistFile)))
+		{
 			// Load the shortcut.
-			if (SUCCEEDED(hRes = pIPersistFile->Load(szAbsLongPath, STGM_READ))) {
+			if (SUCCEEDED(hRes = pIPersistFile->Load(szAbsLongPath, STGM_READ)))
+			{
 				// Resolve the link.
-				if (SUCCEEDED(hRes = pIShellLink->Resolve(hwnd, SLR_ANY_MATCH))) {
+				if (SUCCEEDED(hRes = pIShellLink->Resolve(hwnd, SLR_ANY_MATCH)))
+				{
 					// Get the path to the link target.
 					WCHAR szGotPath[MAX_PATH];
 					szGotPath[0] = L'\0';
-					if (SUCCEEDED(hRes = pIShellLink->GetPath(szGotPath, MAX_PATH, &wfd, SLGP_SHORTPATH))) {
+					if (SUCCEEDED(hRes = pIShellLink->GetPath(szGotPath, MAX_PATH, &wfd, SLGP_SHORTPATH)))
+					{
 						// Get the description of the target.
 						WCHAR szDescription[MAX_PATH];
-						if (SUCCEEDED(hRes = pIShellLink->GetDescription(szDescription, MAX_PATH))) {
-							if (L'\0' != szGotPath[0]) {
+						if (SUCCEEDED(hRes = pIShellLink->GetDescription(szDescription, MAX_PATH)))
+						{
+							if (L'\0' != szGotPath[0])
+							{
 								/* 正常終了 */
 								wcscpy_s(lpszPath, _MAX_PATH, szGotPath);
 								bRes = TRUE;
@@ -406,12 +428,14 @@ BOOL ResolveShortcutLink(HWND hwnd, LPCWSTR lpszLinkFile, LPWSTR lpszPath)
 		}
 	}
 	// Release the pointer to the IPersistFile interface.
-	if (NULL != pIPersistFile) {
+	if (NULL != pIPersistFile)
+	{
 		pIPersistFile->Release();
 		pIPersistFile = NULL;
 	}
 	// Release the pointer to the IShellLink interface.
-	if (NULL != pIShellLink) {
+	if (NULL != pIShellLink)
+	{
 		pIShellLink->Release();
 		pIShellLink = NULL;
 	}
@@ -454,7 +478,8 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 	// そのファイル名を .chm パス名に追加指定する必要がある。
 	//     例）sakura.chm::/xxx.txt
 
-	switch (uCommandOrg) {
+	switch (uCommandOrg)
+	{
 	case HELP_COMMAND: // [ヘルプ]-[目次]
 	case HELP_CONTENTS:
 		uCommand   = HH_DISPLAY_TOC;
@@ -485,12 +510,14 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 			hp.pszFont		 = L"ＭＳ Ｐゴシック, 9";
 			hp.clrForeground = hp.clrBackground = -1;
 			hp.rcMargins.left = hp.rcMargins.top = hp.rcMargins.right = hp.rcMargins.bottom = -1;
-			if (uCommandOrg == HELP_CONTEXTMENU) {
+			if (uCommandOrg == HELP_CONTEXTMENU)
+			{
 				// マウスカーソル位置から対象コントロールと表示位置を求める
 				if (!::GetCursorPos(&hp.pt)) return FALSE;
 				hwndCtrl = ::WindowFromPoint(hp.pt);
 			}
-			else {
+			else
+			{
 				// 対象コントロールは hwndCaller
 				// [F1]キーの場合もあるので対象コントロールの位置から表示位置を決める
 				RECT rc;
@@ -503,7 +530,8 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 			nCtrlID = ::GetDlgCtrlID(hwndCtrl);
 			if (nCtrlID <= 0) return FALSE;
 			pHelpIDs = (DWORD *)dwData;
-			for (;;) {
+			for (;;)
+			{
 				if (*pHelpIDs == 0) return FALSE;		// 見つからなかった
 				if (*pHelpIDs == (DWORD)nCtrlID) break; // 見つかった
 				pHelpIDs += 2;
@@ -516,14 +544,17 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 	}
 
 	LPCWSTR lpszHelp = GetHelpFilePath();
-	if (IsFileExists(lpszHelp, true)) {
+	if (IsFileExists(lpszHelp, true))
+	{
 		// HTML ヘルプを呼び出す
 		HWND hWnd = OpenHtmlHelp(hwndCaller, lpszHelp, uCommand, dwData);
-		if (bDesktop && hWnd != NULL) {
+		if (bDesktop && hWnd != NULL)
+		{
 			::SetForegroundWindow(hWnd); // ヘルプ画面を手前に出す
 		}
 	}
-	else {
+	else
+	{
 		if (uCommandOrg == HELP_CONTEXTMENU) return FALSE; // 右クリックでは何もしないでおく
 
 		// オンラインヘルプを呼び出す
@@ -554,16 +585,19 @@ BOOL MySelectFont(LOGFONT *plf, INT *piPointSize, HWND hwndDlgOwner, bool FixedF
 	cf.hwndOwner   = hwndDlgOwner;
 	cf.hDC		   = NULL;
 	cf.Flags	   = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT;
-	if (FixedFontOnly) {
+	if (FixedFontOnly)
+	{
 		// FIXEDフォント
 		cf.Flags |= CF_FIXEDPITCHONLY;
 	}
 	cf.lpLogFont = plf;
-	if (!ChooseFont(&cf)) {
+	if (!ChooseFont(&cf))
+	{
 #ifdef _DEBUG
 		DWORD nErr;
 		nErr = CommDlgExtendedError();
-		switch (nErr) {
+		switch (nErr)
+		{
 		case CDERR_FINDRESFAILURE: MYTRACE(L"CDERR_FINDRESFAILURE \n"); break;
 		case CDERR_INITIALIZATION: MYTRACE(L"CDERR_INITIALIZATION \n"); break;
 		case CDERR_LOCKRESFAILURE: MYTRACE(L"CDERR_LOCKRESFAILURE \n"); break;

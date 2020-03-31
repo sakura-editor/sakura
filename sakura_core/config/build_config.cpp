@@ -11,7 +11,8 @@ inline void _fill_new_memory(void *ptr, size_t size, const char (&src)[srcCount]
 {
 	const size_t srcLength = srcCount - 1;
 	size_t		 rest	  = size;
-	for (auto dst = reinterpret_cast<char *>(ptr); rest;) {
+	for (auto dst = reinterpret_cast<char *>(ptr); rest;)
+	{
 		auto unit = std::min(srcLength, rest);
 		memcpy_s(dst, rest, src, unit);
 		dst += unit;

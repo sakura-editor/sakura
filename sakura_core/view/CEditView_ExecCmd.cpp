@@ -37,7 +37,8 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       外部コマンド                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class COutputAdapterDefault : public COutputAdapter {
+class COutputAdapterDefault : public COutputAdapter
+{
 public:
 	COutputAdapterDefault(CEditView *view, BOOL bToEditWindow)
 		: m_bWindow(bToEditWindow)
@@ -61,7 +62,8 @@ protected:
 	CViewCommander *m_pCommander;
 };
 
-class COutputAdapterUTF8 final : public COutputAdapterDefault {
+class COutputAdapterUTF8 final : public COutputAdapterDefault
+{
 public:
 	COutputAdapterUTF8(CEditView *view, BOOL bToEditWindow)
 		: COutputAdapterDefault(view, bToEditWindow)
@@ -128,18 +130,22 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 	// BOOL	bIOUnicodeSend	= nFlgOpt & 0x10 ? TRUE : FALSE;	//	標準入力をUnicodeで行う	2008/6/20 Uchi
 	ECodeType outputEncoding;
 	if (nFlgOpt & 0x08) { outputEncoding = CODE_UNICODE; }
-	else if (nFlgOpt & 0x80) {
+	else if (nFlgOpt & 0x80)
+	{
 		outputEncoding = CODE_UTF8;
 	}
-	else {
+	else
+	{
 		outputEncoding = CODE_SJIS;
 	}
 	ECodeType sendEncoding;
 	if (nFlgOpt & 0x10) { sendEncoding = CODE_UNICODE; }
-	else if (nFlgOpt & 0x100) {
+	else if (nFlgOpt & 0x100)
+	{
 		sendEncoding = CODE_UTF8;
 	}
-	else {
+	else
+	{
 		sendEncoding = CODE_SJIS;
 	}
 	//	To Here 2006.12.03 maru 引数を拡張のため
@@ -159,7 +165,8 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 	sa.nLength				= sizeof(sa);
 	sa.bInheritHandle		= TRUE;
 	sa.lpSecurityDescriptor = NULL;
-	if (CreatePipe(&hStdOutRead, &hStdOutWrite, &sa, 1000) == FALSE) {
+	if (CreatePipe(&hStdOutRead, &hStdOutWrite, &sa, 1000) == FALSE)
+	{
 		//エラー。対策無し
 		return false;
 	}
@@ -176,7 +183,8 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 	// ファイルハンドルを返すタイプのものがないので、一旦書き出してから
 	// 一時ファイル属性でオープンすることに。
 	hStdIn = NULL;
-	if (bSendStdin) { /* 現在編集中のファイルを子プロセスの標準入力へ */
+	if (bSendStdin)
+	{ /* 現在編集中のファイルを子プロセスの標準入力へ */
 		WCHAR szPathName[MAX_PATH];
 		WCHAR szTempFileName[MAX_PATH];
 		int   nFlgOpt;
@@ -187,10 +195,12 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 
 		nFlgOpt = bBeforeTextSelected ? 0x01 : 0x00; /* 選択範囲を出力 */
 
-		if (!GetCommander().Command_PUTFILE(szTempFileName, sendEncoding, nFlgOpt)) { // 一時ファイル出力
+		if (!GetCommander().Command_PUTFILE(szTempFileName, sendEncoding, nFlgOpt))
+		{ // 一時ファイル出力
 			hStdIn = NULL;
 		}
-		else {
+		else
+		{
 			// 子プロセスへの継承用にファイルを開く
 			hStdIn = CreateFile(szTempFileName, GENERIC_READ, 0, &sa, OPEN_EXISTING,
 								FILE_ATTRIBUTE_READONLY | FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE, NULL);
@@ -198,13 +208,16 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 		}
 	}
 
-	if (hStdIn == NULL) { /* 標準入力を制御しない場合、または一時ファイルの生成に失敗した場合 */
+	if (hStdIn == NULL)
+	{ /* 標準入力を制御しない場合、または一時ファイルの生成に失敗した場合 */
 		bSendStdin = FALSE;
 		hStdIn	 = GetStdHandle(STD_INPUT_HANDLE);
-		if (hStdIn == NULL) {
+		if (hStdIn == NULL)
+		{
 			// 2013.06.12 Moca 標準入力ハンドルを用意する
 			HANDLE hStdInWrite = NULL;
-			if (CreatePipe(&hStdIn, &hStdInWrite, &sa, 1000) == FALSE) {
+			if (CreatePipe(&hStdIn, &hStdInWrite, &sa, 1000) == FALSE)
+			{
 				//エラー
 				hStdIn = hStdInWrite = NULL;
 			}
@@ -217,7 +230,8 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 	STARTUPINFO sui;
 	ZeroMemory(&sui, sizeof(sui));
 	sui.cb = sizeof(sui);
-	if (bGetStdout || bSendStdin) {
+	if (bGetStdout || bSendStdin)
+	{
 		sui.dwFlags		= STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
 		sui.wShowWindow = bGetStdout ? SW_HIDE : SW_SHOW;
 		sui.hStdInput   = hStdIn;
@@ -230,7 +244,8 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 	WCHAR cmdline[1024];
 	wcscpy(cmdline, pszCmd);
 	if (CreateProcess(NULL, cmdline, NULL, NULL, TRUE, CREATE_NEW_CONSOLE, NULL, bCurDir ? pszCurDir : NULL, &sui, &pi)
-		== FALSE) {
+		== FALSE)
+	{
 		//実行に失敗した場合、コマンドラインベースのアプリケーションと判断して
 		// command(9x) か cmd(NT) を呼び出す
 
@@ -244,7 +259,8 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 					 (bGetStdout ? L"/C " : L"/K "), pszCmd);
 		if (CreateProcess(NULL, cmdline, NULL, NULL, TRUE, CREATE_NEW_CONSOLE, NULL, bCurDir ? pszCurDir : NULL, &sui,
 						  &pi)
-			== FALSE) {
+			== FALSE)
+		{
 			MessageBox(NULL, cmdline, LS(STR_EDITVIEW_EXECCMD_ERR), MB_OK | MB_ICONEXCLAMATION);
 			goto finish;
 		}
@@ -256,7 +272,8 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 	//	「すべて選択」されているものとして，編集データ全体を
 	//	コマンドの出力結果と置き換える．
 	//	2007.05.20 maru
-	if (!bBeforeTextSelected && bSendStdin && bGetStdout && bToEditWindow) {
+	if (!bBeforeTextSelected && bSendStdin && bGetStdout && bToEditWindow)
+	{
 		GetSelectionInfo().SetSelectArea(
 			CLayoutRange(CLayoutPoint(CLayoutInt(0), CLayoutInt(0)),
 						 CLayoutPoint(CLayoutInt(0), m_pcEditDoc->m_cLayoutMgr.GetLineCount())));
@@ -269,7 +286,8 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 	CloseHandle(hStdOutWrite);
 	hStdOutWrite = NULL; // 2007.09.08 genta 二重closeを防ぐ
 
-	if (bGetStdout) {
+	if (bGetStdout)
+	{
 		DWORD new_cnt;
 		int   bufidx	   = 0;
 		bool  bLoopFlag	= true;
@@ -280,7 +298,8 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 		COutputAdapter &oa = customOa ? *customOa : *oaInst;
 
 		//中断ダイアログ表示
-		if (oa.IsEnableRunningDlg()) {
+		if (oa.IsEnableRunningDlg())
+		{
 			cDlgCancel.DoModeless(G_AppInstance(), m_hwndParent, IDD_EXECRUNNING);
 			// ダイアログにコマンドを表示
 			::DlgItem_SetText(cDlgCancel.GetHwnd(), IDC_STATIC_CMD, pszCmd);
@@ -288,7 +307,8 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 		//実行したコマンドラインを表示
 		// 2004.09.20 naoh 多少は見やすく・・・
 		// 2006.12.03 maru アウトプットウィンドウにのみ出力
-		if (bOutputExtInfo) {
+		if (bOutputExtInfo)
+		{
 			WCHAR	  szTextDate[1024], szTextTime[1024];
 			SYSTEMTIME systime;
 			::GetLocalTime(&systime);
@@ -316,7 +336,8 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 		// 4KBだと 4096 -> 100 -> 4096 -> 100 のように読み取ることになるので5KBにした
 		PIPE_CHAR work[MAX_WORK_READ + MAX_BUFIDX + WORK_NULL_TERMS];
 		//実行結果の取り込み
-		do {
+		do
+		{
 			//プロセスが終了していないか確認
 			// Jun. 04, 2003 genta CPU消費を減らすために200msec待つ
 			// その間メッセージ処理が滞らないように待ち方をWaitForSingleObjectから
@@ -324,7 +345,8 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 			// Jan. 23, 2004 genta
 			// 子プロセスの出力をどんどん受け取らないと子プロセスが
 			// 停止してしまうため，待ち時間を200msから20msに減らす
-			switch (MsgWaitForMultipleObjects(1, &pi.hProcess, FALSE, 20, QS_ALLEVENTS)) {
+			switch (MsgWaitForMultipleObjects(1, &pi.hProcess, FALSE, 20, QS_ALLEVENTS))
+			{
 			case WAIT_OBJECT_0:
 				//終了していればループフラグをfalseとする
 				//ただしループの終了条件は プロセス終了 && パイプが空
@@ -332,7 +354,8 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 				break;
 			case WAIT_OBJECT_0 + 1:
 				//処理中のユーザー操作を可能にする
-				if (!::BlockingHook(cDlgCancel.GetHwnd())) {
+				if (!::BlockingHook(cDlgCancel.GetHwnd()))
+				{
 					// WM_QUIT受信。ただちに終了処理
 					::TerminateProcess(pi.hProcess, 0);
 					goto finish;
@@ -341,7 +364,8 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 			default: break;
 			}
 			//中断ボタン押下チェック
-			if (cDlgCancel.IsCanceled()) {
+			if (cDlgCancel.IsCanceled())
+			{
 				//指定されたプロセスと、そのプロセスが持つすべてのスレッドを終了させます。
 				::TerminateProcess(pi.hProcess, 0);
 				bCancelEnd = true;
@@ -349,22 +373,27 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 			}
 			new_cnt = 0;
 
-			if (PeekNamedPipe(hStdOutRead, NULL, 0, NULL, &new_cnt, NULL)) { //パイプの中の読み出し待機中の文字数を取得
-				while (new_cnt > 0) {										 //待機中のものがある
+			if (PeekNamedPipe(hStdOutRead, NULL, 0, NULL, &new_cnt, NULL))
+			{ //パイプの中の読み出し待機中の文字数を取得
+				while (new_cnt > 0)
+				{ //待機中のものがある
 
-					if (new_cnt > MAX_WORK_READ) { //パイプから読み出す量を調整
+					if (new_cnt > MAX_WORK_READ)
+					{ //パイプから読み出す量を調整
 						new_cnt = MAX_WORK_READ;
 					}
 					DWORD read_cnt = 0;
 					::ReadFile(hStdOutRead, &work[bufidx], new_cnt, &read_cnt, NULL); //パイプから読み出し
 					read_cnt += bufidx; // work内の実際のサイズにする
 
-					if (read_cnt == 0) {
+					if (read_cnt == 0)
+					{
 						// Jan. 23, 2004 genta while追加のため制御を変更
 						break;
 					}
 					// Unicode で データを受け取る start 2008/6/8 Uchi
-					if (outputEncoding == CODE_UNICODE) {
+					if (outputEncoding == CODE_UNICODE)
+					{
 						wchar_t *workw;
 						int		 read_cntw;
 						bool	 bCarry;
@@ -372,24 +401,28 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 						workw			   = (wchar_t *)work;
 						read_cntw		   = (int)read_cnt / sizeof(wchar_t);
 						if (read_cnt % (int)sizeof(wchar_t)) { byteCarry = work[read_cnt - 1]; }
-						if (read_cntw) {
+						if (read_cntw)
+						{
 							workw[read_cntw] = L'\0';
 							bCarry			 = false;
 							//読み出した文字列をチェックする
-							if (workw[read_cntw - 1] == L'\r') {
+							if (workw[read_cntw - 1] == L'\r')
+							{
 								bCarry = true;
 								read_cntw -= 1; // 2010.04.12 1文字余分に消されてた
 								workw[read_cntw] = L'\0';
 							}
 							if (!oa.OutputW(workw, read_cntw)) { goto finish; }
 							bufidx = 0;
-							if (bCarry) {
+							if (bCarry)
+							{
 								workw[0] = L'\r'; // 2010.04.12 'r' -> '\r'
 								bufidx   = sizeof(wchar_t);
 								DEBUG_TRACE(L"ExecCmd: Carry last character [CR]\n");
 							}
 						}
-						if (read_cnt % (int)sizeof(wchar_t)) {
+						if (read_cnt % (int)sizeof(wchar_t))
+						{
 							// 高確率で0だと思うが1だと困る
 							DEBUG_TRACE(L"ExecCmd: Carry Unicode 1byte [%x]\n", byteCarry);
 							work[bufidx] = byteCarry;
@@ -397,42 +430,51 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 						}
 					}
 					// end 2008/6/8 Uchi
-					else if (outputEncoding == CODE_SJIS) {
+					else if (outputEncoding == CODE_SJIS)
+					{
 						//読み出した文字列をチェックする
 						// \r\n を \r だけとか漢字の第一バイトだけを出力するのを防ぐ必要がある
 						//@@@ 2002.1.24 YAZAKI 1バイト取りこぼす可能性があった。
 						//	Jan. 28, 2004 Moca 最後の文字はあとでチェックする
 						int j;
-						for (j = 0; j < (int)read_cnt - 1; j++) {
+						for (j = 0; j < (int)read_cnt - 1; j++)
+						{
 							//	2007.09.10 ryoji
 							if (CShiftJis::GetSizeOfChar(work, read_cnt, j) == 2) { j++; }
-							else {
+							else
+							{
 								if (work[j] == _T2(PIPE_CHAR, '\r') && work[j + 1] == _T2(PIPE_CHAR, '\n')) { j++; }
 							}
 						}
 						//	From Here Jan. 28, 2004 Moca
 						//	改行コードが分割されるのを防ぐ
-						if ((DWORD)j == read_cnt - 1) {
-							if (_IS_SJIS_1(work[j])) {
+						if ((DWORD)j == read_cnt - 1)
+						{
+							if (_IS_SJIS_1(work[j]))
+							{
 								j = read_cnt + 1; // ぴったり出力できないことを主張
 							}
-							else if (work[j] == _T2(PIPE_CHAR, '\r')) {
+							else if (work[j] == _T2(PIPE_CHAR, '\r'))
+							{
 								// CRLFの一部ではない改行が末尾にある
 								// 次の読み込みで、CRLFの一部になる可能性がある
 								j = read_cnt + 1;
 							}
-							else {
+							else
+							{
 								j = read_cnt;
 							}
 						}
 						//	To Here Jan. 28, 2004 Moca
-						if (j == (int)read_cnt) { //ぴったり出力できる場合
+						if (j == (int)read_cnt)
+						{ //ぴったり出力できる場合
 							work[read_cnt] = '\0';
 							//	2006.12.03 maru アウトプットウィンドウor編集中のウィンドウ分岐追加
 							if (!oa.OutputA(work, read_cnt)) { goto finish; }
 							bufidx = 0;
 						}
-						else {
+						else
+						{
 							char tmp		   = work[read_cnt - 1];
 							work[read_cnt - 1] = '\0';
 							//	2006.12.03 maru アウトプットウィンドウor編集中のウィンドウ分岐追加
@@ -442,29 +484,35 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 							DEBUG_TRACE(L"ExecCmd: Carry last character [%x]\n", tmp);
 						}
 					}
-					else if (outputEncoding == CODE_UTF8) {
+					else if (outputEncoding == CODE_UTF8)
+					{
 						int j;
 						int checklen = 0;
-						for (j = 0; j < (int)read_cnt;) {
+						for (j = 0; j < (int)read_cnt;)
+						{
 							ECharSet echarset;
 							checklen = CheckUtf8Char2(work + j, read_cnt - j, &echarset, true, 0);
 							if (echarset == CHARSET_BINARY2) { break; }
-							else if (read_cnt - 1 == j && work[j] == _T2(PIPE_CHAR, '\r')) {
+							else if (read_cnt - 1 == j && work[j] == _T2(PIPE_CHAR, '\r'))
+							{
 								// CRLFの一部ではない改行が末尾にある
 								// 次の読み込みで、CRLFの一部になる可能性がある
 								break;
 							}
-							else {
+							else
+							{
 								j += checklen;
 							}
 						}
-						if (j == (int)read_cnt) { //ぴったり出力できる場合
+						if (j == (int)read_cnt)
+						{ //ぴったり出力できる場合
 							work[read_cnt] = '\0';
 							//	2006.12.03 maru アウトプットウィンドウor編集中のウィンドウ分岐追加
 							if (!oa.OutputA(work, read_cnt)) { goto finish; }
 							bufidx = 0;
 						}
-						else {
+						else
+						{
 							DEBUG_TRACE(L"read_cnt %d j %d\n", read_cnt, j);
 							char tmp[5];
 							int  len = read_cnt - j;
@@ -487,11 +535,13 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 					// 2010.04.12 Moca 相手が出力しつづけていると止められないから
 					// BlockingHookとキャンセル確認を読取ループ中でも行う
 					// bLoopFlag が立っていないときは、すでにプロセスは終了しているからTerminateしない
-					if (!::BlockingHook(cDlgCancel.GetHwnd())) {
+					if (!::BlockingHook(cDlgCancel.GetHwnd()))
+					{
 						if (bLoopFlag) { ::TerminateProcess(pi.hProcess, 0); }
 						goto finish;
 					}
-					if (cDlgCancel.IsCanceled()) {
+					if (cDlgCancel.IsCanceled())
+					{
 						//指定されたプロセスと、そのプロセスが持つすべてのスレッドを終了させます。
 						if (bLoopFlag) { ::TerminateProcess(pi.hProcess, 0); }
 						bCancelEnd = true;
@@ -504,9 +554,12 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 	user_cancel:
 
 		// 最後の文字の出力(たいていCR)
-		if (0 < bufidx) {
-			if (outputEncoding == CODE_UNICODE) {
-				if (bufidx % (int)sizeof(wchar_t)) {
+		if (0 < bufidx)
+		{
+			if (outputEncoding == CODE_UNICODE)
+			{
+				if (bufidx % (int)sizeof(wchar_t))
+				{
 					DEBUG_TRACE(L"ExecCmd: Carry last Unicode byte [%x]\n", work[bufidx - 1]);
 					// UTF-16なのに奇数バイトだった
 					work[bufidx] = 0x00; // 上位バイトを0にしてごまかす
@@ -517,17 +570,20 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 				workw[bufidxw]   = L'\0';
 				oa.OutputW(workw, bufidxw);
 			}
-			else if (outputEncoding == CODE_SJIS) {
+			else if (outputEncoding == CODE_SJIS)
+			{
 				work[bufidx] = '\0';
 				oa.OutputA(work, bufidx);
 			}
-			else if (outputEncoding == CODE_UTF8) {
+			else if (outputEncoding == CODE_UTF8)
+			{
 				work[bufidx] = '\0';
 				oa.OutputA(work, bufidx);
 			}
 		}
 
-		if (bCancelEnd && bOutputExtInfo) {
+		if (bCancelEnd && bOutputExtInfo)
+		{
 			//	2006.12.03 maru アウトプットウィンドウにのみ出力
 			//最後にテキストを追加
 			oa.OutputW(LS(STR_EDITVIEW_EXECCMD_STOP));
@@ -538,18 +594,19 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 			//	Jun. 04, 2003 genta	終了コードの取得と出力
 			DWORD result;
 			::GetExitCodeProcess(pi.hProcess, &result);
-			if (bOutputExtInfo) {
+			if (bOutputExtInfo)
+			{
 				WCHAR endCode[128];
 				auto_sprintf(endCode, LS(STR_EDITVIEW_EXECCMD_RET), result);
 				oa.OutputW(endCode);
 			}
 			// 2004.09.20 naoh 終了コードが1以上の時はアウトプットをアクティブにする
-			if (!bToEditWindow && result > 0 && oa.IsActiveDebugWindow()) {
-				ActivateFrameWindow(GetDllShareData().m_sHandles.m_hwndDebug);
-			}
-		}
-		if (bToEditWindow) {
-			if (bBeforeTextSelected) { // 挿入された部分を選択状態に
+			if (!bToEditWindow && result > 0 && oa.IsActiveDebugWindow())
+			{ ActivateFrameWindow(GetDllShareData().m_sHandles.m_hwndDebug); } }
+		if (bToEditWindow)
+		{
+			if (bBeforeTextSelected)
+			{ // 挿入された部分を選択状態に
 				GetSelectionInfo().SetSelectArea(
 					CLayoutRange(ptFrom,
 								 GetCaret().GetCaretLayoutPos() // CLayoutPoint(m_nCaretPosY, m_nCaretPosX )
@@ -561,7 +618,8 @@ bool CEditView::ExecCmd(const WCHAR *pszCmd, int nFlgOpt, const WCHAR *pszCurDir
 		}
 		if (!bCancelEnd) { bRet = true; }
 	}
-	else {
+	else
+	{
 		bRet = true;
 	}
 
@@ -583,7 +641,8 @@ finish:
 void COutputAdapterDefault::OutputBuf(const WCHAR *pBuf, int size)
 {
 	if (m_bWindow) { m_pCommander->Command_INSTEXT(false, pBuf, CLogicInt(size), true); }
-	else {
+	else
+	{
 		m_pCShareData->TraceOutString(pBuf, size);
 	}
 }
@@ -603,7 +662,8 @@ bool COutputAdapterDefault::OutputA(const ACHAR *pBuf, int size)
 	CNativeA input;
 	CNativeW buf;
 	if (-1 == size) { input.SetString(pBuf); }
-	else {
+	else
+	{
 		input.SetString(pBuf, size);
 	}
 	auto pcCodeBase = std::unique_ptr<CCodeBase>(CCodeFactory::CreateCodeBase(ECodeType::CODE_SJIS, 0));
@@ -621,7 +681,8 @@ bool COutputAdapterUTF8::OutputA(const ACHAR *pBuf, int size)
 	CMemory  input;
 	CNativeW buf;
 	if (-1 == size) { input.SetRawData(pBuf, strlen(pBuf)); }
-	else {
+	else
+	{
 		input.SetRawData(pBuf, size);
 	}
 	pcCodeBase->CodeToUnicode(input, &buf);

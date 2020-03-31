@@ -78,13 +78,15 @@ class CColor_Found;
 class CColor_Select;
 
 //! 色設定
-struct CColor3Setting {
+struct CColor3Setting
+{
 	EColorIndexType eColorIndex;   //!< 選択を含む現在の色
 	EColorIndexType eColorIndex2;  //!< 選択以外の現在の色
 	EColorIndexType eColorIndexBg; //!< 背景色
 };
 
-struct SColorStrategyInfo {
+struct SColorStrategyInfo
+{
 	SColorStrategyInfo()
 		: m_sDispPosBegin(0, 0)
 		, m_pStrategy(NULL)
@@ -129,7 +131,8 @@ struct SColorStrategyInfo {
 	const CLayout * GetLayout() const { return m_pDispPos->GetLayoutRef(); }
 };
 
-class CColorStrategy {
+class CColorStrategy
+{
 public:
 	virtual ~CColorStrategy() {}
 	//! 色定義
@@ -178,7 +181,8 @@ class CColor_SingleQuote;
 class CColor_DoubleQuote;
 class CColor_Heredoc;
 
-class CColorStrategyPool : public TSingleton<CColorStrategyPool> {
+class CColorStrategyPool : public TSingleton<CColorStrategyPool>
+{
 	friend class TSingleton<CColorStrategyPool>;
 	CColorStrategyPool();
 	virtual ~CColorStrategyPool();

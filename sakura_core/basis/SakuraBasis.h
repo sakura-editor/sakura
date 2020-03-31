@@ -84,7 +84,8 @@ typedef int			CKetaXInt;
 #include "CStrictRect.h"
 
 //ロジック単位
-struct SLogicPoint {
+struct SLogicPoint
+{
 	CLogicInt x;
 	CLogicInt y;
 }; //基底構造体
@@ -93,7 +94,8 @@ typedef CRangeBase<CLogicPoint>				 CLogicRange;
 typedef CStrictRect<CLogicInt, CLogicPoint>  CLogicRect;
 
 //レイアウト単位
-struct SLayoutPoint {
+struct SLayoutPoint
+{
 	CLayoutInt x;
 	CLayoutInt y;
 }; //基底構造体
@@ -125,19 +127,23 @@ template<class T, class INT_TYPE>
 inline void TwoPointToRect(CStrictRect<INT_TYPE, CStrictPoint<T, INT_TYPE>> *prcRect, CStrictPoint<T, INT_TYPE> pt1,
 						   CStrictPoint<T, INT_TYPE> pt2)
 {
-	if (pt1.y < pt2.y) {
+	if (pt1.y < pt2.y)
+	{
 		prcRect->top	= pt1.GetY2();
 		prcRect->bottom = pt2.GetY2();
 	}
-	else {
+	else
+	{
 		prcRect->top	= pt2.GetY2();
 		prcRect->bottom = pt1.GetY2();
 	}
-	if (pt1.x < pt2.x) {
+	if (pt1.x < pt2.x)
+	{
 		prcRect->left  = pt1.GetX2();
 		prcRect->right = pt2.GetX2();
 	}
-	else {
+	else
+	{
 		prcRect->left  = pt2.GetX2();
 		prcRect->right = pt1.GetX2();
 	}

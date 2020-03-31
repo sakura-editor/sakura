@@ -33,7 +33,8 @@
 
 #include "dlg/CDialog.h"
 
-enum EFileUpdateQuery {
+enum EFileUpdateQuery
+{
 	EFUQ_CLOSE		   = 0, //!< 閉じる
 	EFUQ_RELOAD		   = 1, //!< 再読込
 	EFUQ_NOTIFYONLY	= 2, //!< 以後通知メッセージのみ
@@ -41,7 +42,8 @@ enum EFileUpdateQuery {
 	EFUQ_AUTOLOAD	  = 4  //!< 以後未編集で再ロード
 };
 
-class CDlgFileUpdateQuery final : public CDialog {
+class CDlgFileUpdateQuery final : public CDialog
+{
 public:
 	CDlgFileUpdateQuery(const WCHAR *filename, bool IsModified)
 		: m_pFilename(filename)

@@ -31,7 +31,8 @@ HWND MyGetAncestor(HWND hWnd, UINT gaFlags)
 
 	if (hWnd == hwndDesktop) return NULL;
 
-	switch (gaFlags) {
+	switch (gaFlags)
+	{
 	case GA_PARENT: // 親ウィンドウを返す（オーナーは返さない）
 		hwndAncestor = ((DWORD)::GetWindowLongPtr(hWnd, GWL_STYLE) & WS_CHILD) ? ::GetParent(hWnd) : hwndDesktop;
 		break;
@@ -43,7 +44,8 @@ HWND MyGetAncestor(HWND hWnd, UINT gaFlags)
 
 	case GA_ROOTOWNER: // 親子関係と所有関係をGetParent()で遡って所有されていないトップレベルウィンドウを返す
 		hwndWk = hWnd;
-		do {
+		do
+		{
 			hwndAncestor = hwndWk;
 			hwndWk		 = ::GetParent(hwndAncestor);
 		} while (hwndWk != NULL);
@@ -51,7 +53,8 @@ HWND MyGetAncestor(HWND hWnd, UINT gaFlags)
 
 	case GA_ROOTOWNER2: // 所有関係をGetWindow()で遡って所有されていないトップレベルウィンドウを返す
 		hwndWk = hWnd;
-		do {
+		do
+		{
 			hwndAncestor = hwndWk;
 			hwndWk		 = ::GetParent(hwndAncestor);
 			if (hwndWk == NULL) hwndWk = ::GetWindow(hwndAncestor, GW_OWNER);
@@ -75,10 +78,12 @@ BOOL BlockingHook(HWND hwndDlgCancel)
 	MSG  msg;
 	BOOL ret;
 	//	Jun. 04, 2003 genta メッセージをあるだけ処理するように
-	while ((ret = (BOOL)::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) != 0) {
+	while ((ret = (BOOL)::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) != 0)
+	{
 		if (msg.message == WM_QUIT) { return FALSE; }
 		if (NULL != hwndDlgCancel && IsDialogMessage(hwndDlgCancel, &msg)) {}
-		else {
+		else
+		{
 			::TranslateMessage(&msg);
 			::DispatchMessage(&msg);
 		}
@@ -94,8 +99,10 @@ void ActivateFrameWindow(HWND hwnd)
 {
 	// 編集ウィンドウでタブまとめ表示の場合は表示位置を復元する
 	DLLSHAREDATA *pShareData = &GetDllShareData();
-	if (pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin) {
-		if (IsSakuraMainWindow(hwnd)) {
+	if (pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin)
+	{
+		if (IsSakuraMainWindow(hwnd))
+		{
 			if (pShareData->m_sFlags.m_bEditWndChanging) return; // 切替の最中(busy)は要求を無視する
 			pShareData->m_sFlags.m_bEditWndChanging = TRUE;		 // 編集ウィンドウ切替中ON	2007.04.03 ryoji
 
@@ -110,10 +117,12 @@ void ActivateFrameWindow(HWND hwnd)
 	HWND hwndActivate;
 	hwndActivate = ::IsWindowEnabled(hwnd) ? hwnd : ::GetLastActivePopup(hwnd);
 	if (::IsIconic(hwnd)) { ::ShowWindow(hwnd, SW_RESTORE); }
-	else if (::IsZoomed(hwnd)) {
+	else if (::IsZoomed(hwnd))
+	{
 		::ShowWindow(hwnd, SW_MAXIMIZE);
 	}
-	else {
+	else
+	{
 		::ShowWindow(hwnd, SW_SHOW);
 	}
 	::SetForegroundWindow(hwndActivate);
@@ -182,10 +191,12 @@ CTextWidthCalc::CTextWidthCalc(HDC hdc)
 
 CTextWidthCalc::~CTextWidthCalc()
 {
-	if (hDC && !bFromDC) {
+	if (hDC && !bFromDC)
+	{
 		::SelectObject(hDC, hFontOld);
 		if (bHDCComp) { ::DeleteDC(hDC); }
-		else {
+		else
+		{
 			::ReleaseDC(hwnd, hDC);
 		}
 		hwnd = 0;
@@ -198,7 +209,8 @@ bool CTextWidthCalc::SetWidthIfMax(int width) { return SetWidthIfMax(0, INT_MIN)
 bool CTextWidthCalc::SetWidthIfMax(int width, int extCx)
 {
 	if (INT_MIN == extCx) { extCx = nExt; }
-	if (nCx < width + extCx) {
+	if (nCx < width + extCx)
+	{
 		nCx = width + extCx;
 		return true;
 	}
@@ -237,7 +249,8 @@ CFontAutoDeleter::CFontAutoDeleter()
 
 CFontAutoDeleter::~CFontAutoDeleter()
 {
-	if (m_hFont) {
+	if (m_hFont)
+	{
 		DeleteObject(m_hFont);
 		m_hFont = NULL;
 	}
@@ -255,7 +268,8 @@ void CFontAutoDeleter::SetFont(HFONT hfontOld, HFONT hfont, HWND hwnd)
  */
 void CFontAutoDeleter::ReleaseOnDestroy()
 {
-	if (m_hFont) {
+	if (m_hFont)
+	{
 		::DeleteObject(m_hFont);
 		m_hFont = NULL;
 	}

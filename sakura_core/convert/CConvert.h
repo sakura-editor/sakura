@@ -28,7 +28,8 @@
 
 #include "Funccode_enum.h" // EFunctionCode
 
-class CConvertMediator {
+class CConvertMediator
+{
 public:
 	//! 機能種別によるバッファの変換
 	static void ConvMemory(CNativeW *pCMemory, EFunctionCode nFuncCode, CKetaXInt nTabWidth, int nStartColumn);
@@ -37,7 +38,8 @@ protected:
 	static void Command_TRIM2(CNativeW *pCMemory, BOOL bLeft);
 };
 
-class CConvert {
+class CConvert
+{
 public:
 	virtual ~CConvert() {}
 

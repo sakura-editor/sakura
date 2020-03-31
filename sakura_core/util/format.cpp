@@ -48,10 +48,13 @@ bool GetDateTimeFormat(WCHAR *szResult, int size, const WCHAR *format, const SYS
 	WCHAR *		 q = szResult;
 	int			 len;
 
-	while (*p) {
-		if (*p == L'%') {
+	while (*p)
+	{
+		if (*p == L'%')
+		{
 			++p;
-			switch (*p) {
+			switch (*p)
+			{
 			case L'Y':
 				len = wsprintf(szTime, L"%d", systime.wYear);
 				wcscpy(q, szTime);
@@ -90,7 +93,8 @@ bool GetDateTimeFormat(WCHAR *szResult, int size, const WCHAR *format, const SYS
 			q += len; // q += strlen(szTime);
 			++p;
 		}
-		else {
+		else
+		{
 			*q = *p;
 			q++;
 			p++;
@@ -119,45 +123,53 @@ UINT32 ParseVersion(const WCHAR *sVer)
 	const WCHAR *p = sVer;
 	int			 i;
 
-	for (i = 0; *p && i < 4; i++) {
+	for (i = 0; *p && i < 4; i++)
+	{
 		//特別な文字列の処理
-		if (*p == L'a') {
+		if (*p == L'a')
+		{
 			if (wcsncmp_literal(p, L"alpha") == 0)
 				p += 5;
 			else
 				p++;
 			nShift = -0x60;
 		}
-		else if (*p == L'b') {
+		else if (*p == L'b')
+		{
 			if (wcsncmp_literal(p, L"beta") == 0)
 				p += 4;
 			else
 				p++;
 			nShift = -0x40;
 		}
-		else if (*p == L'r' || *p == L'R') {
+		else if (*p == L'r' || *p == L'R')
+		{
 			if (wcsnicmp_literal(p, L"rc") == 0)
 				p += 2;
 			else
 				p++;
 			nShift = -0x20;
 		}
-		else if (*p == L'p') {
+		else if (*p == L'p')
+		{
 			if (wcsncmp_literal(p, L"pl") == 0)
 				p += 2;
 			else
 				p++;
 			nShift = 0x20;
 		}
-		else if (!_istdigit(*p)) {
+		else if (!_istdigit(*p))
+		{
 			nShift = -0x80;
 		}
-		else {
+		else
+		{
 			nShift = 0;
 		}
 		while (*p && !_istdigit(*p)) { p++; }
 		//数値の抽出
-		for (nVer = 0, nDigit = 0; _istdigit(*p); p++) {
+		for (nVer = 0, nDigit = 0; _istdigit(*p); p++)
+		{
 			if (++nDigit > 2) break; //数字は2桁までで止める
 			nVer = nVer * 10 + *p - L'0';
 		}
@@ -167,7 +179,8 @@ UINT32 ParseVersion(const WCHAR *sVer)
 		DEBUG_TRACE(L"  VersionPart%d: ver=%d,shift=%d\n", i, nVer, nShift);
 		ret |= ((nShift + nVer + 128) << (24 - 8 * i));
 	}
-	for (; i < 4; i++) { //残りの部分はsigned 0 (=0x80)を埋める
+	for (; i < 4; i++)
+	{ //残りの部分はsigned 0 (=0x80)を埋める
 		ret |= (128 << (24 - 8 * i));
 	}
 

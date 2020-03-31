@@ -32,7 +32,8 @@
 
 // 2004/06/21 novice タグジャンプ機能追加
 //! タグジャンプ情報
-struct TagJump {
+struct TagJump
+{
 	HWND		hwndReferer; //!< 参照元ウィンドウ
 	CLogicPoint point;		 //!< ライン, カラム
 };
@@ -40,7 +41,8 @@ struct TagJump {
 //共有メモリ内構造体
 // 2004/06/21 タグジャンプ機能追加
 // 2005.04.03 MIK キーワード指定タグジャンプ
-struct SShare_TagJump {
+struct SShare_TagJump
+{
 	//型
 	typedef StaticVector<StaticString<WCHAR, _MAX_PATH>, MAX_TAGJUMP_KEYWORD> ATagJumpKeywords;
 
@@ -53,7 +55,8 @@ struct SShare_TagJump {
 	BOOL			 m_bTagJumpPartialMatch; //!< 文字列の途中にマッチ
 };
 
-class CTagJumpManager {
+class CTagJumpManager
+{
 public:
 	CTagJumpManager() { m_pShareData = &GetDllShareData(); }
 	//タグジャンプ関連	// 2004/06/21 novice タグジャンプ機能追加

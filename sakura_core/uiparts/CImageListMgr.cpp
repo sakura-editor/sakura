@@ -79,7 +79,8 @@ CImageListMgr::~CImageListMgr()
 bool CImageListMgr::Create(HINSTANCE hInstance)
 {
 	MY_RUNNINGTIMER(cRunningTimer, "CImageListMgr::Create");
-	if (m_hIconBitmap != NULL) { //	既に構築済みなら無視する
+	if (m_hIconBitmap != NULL)
+	{ //	既に構築済みなら無視する
 		return true;
 	}
 
@@ -89,7 +90,8 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 	int		nRetPos;		 //	後処理用
 
 	nRetPos = 0;
-	do {
+	do
+	{
 		//	From Here 2001.7.1 GAE
 		//	2001.7.1 GAE リソースをローカルファイル(sakuraディレクトリ) my_icons.bmp から読めるように
 		// 2007.05.19 ryoji 設定ファイル優先に変更
@@ -98,14 +100,16 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 		hRscbmp = (HBITMAP)::LoadImage(NULL, szPath, IMAGE_BITMAP, 0, 0,
 									   LR_LOADFROMFILE | LR_CREATEDIBSECTION | LR_LOADMAP3DCOLORS);
 
-		if (hRscbmp == NULL) { // ローカルファイルの読み込み失敗時はリソースから取得
+		if (hRscbmp == NULL)
+		{ // ローカルファイルの読み込み失敗時はリソースから取得
 			//	このブロック内は従来の処理
 			//	リソースからBitmapを読み込む
 			//	2003.09.29 wmlhq 環境によってアイコンがつぶれる
 			// hRscbmp = ::LoadBitmap( hInstance, MAKEINTRESOURCE( IDB_MYTOOL ) );
 			hRscbmp = (HBITMAP)::LoadImage(hInstance, MAKEINTRESOURCE(IDB_MYTOOL), IMAGE_BITMAP, 0, 0,
 										   LR_CREATEDIBSECTION /* | LR_LOADMAP3DCOLORS */);
-			if (hRscbmp == NULL) {
+			if (hRscbmp == NULL)
+			{
 				//	Oct. 4, 2003 genta エラーコード追加
 				//	正常終了と同じコードだとdcFromを不正に解放してしまう
 				nRetPos = 2;
@@ -117,7 +121,8 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 		//	透過色を得るためにDCにマップする
 		//	2003.07.21 genta 透過色を得る以外の目的では使わなくなった
 		dcFrom = CreateCompatibleDC(0); //	転送元用
-		if (dcFrom == NULL) {
+		if (dcFrom == NULL)
+		{
 			nRetPos = 1;
 			break;
 		}
@@ -129,7 +134,8 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 		//	スクリーンのDCに対してCreateCompatibleBitmapを
 		//	使うとモノクロBitmapになる．
 		hFOldbmp = (HBITMAP)SelectObject(dcFrom, hRscbmp);
-		if (hFOldbmp == NULL) {
+		if (hFOldbmp == NULL)
+		{
 			nRetPos = 4;
 			break;
 		}
@@ -154,7 +160,8 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 
 		// アイコンサイズが異なる場合、拡大縮小する
 		hRscbmp = ResizeToolIcons(dcFrom, hRscbmp, MAX_X, MAX_Y);
-		if (hRscbmp == NULL) {
+		if (hRscbmp == NULL)
+		{
 			nRetPos = 4;
 			break;
 		}
@@ -167,7 +174,8 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 	} while (0); //	1回しか通らない. breakでここまで飛ぶ
 
 	//	後処理
-	switch (nRetPos) {
+	switch (nRetPos)
+	{
 	case 0:
 		//	Oct. 4, 2003 genta hRscBmpをdcFromから切り離しておく必要がある
 		//	アイコン描画変更時に過って削除されていた
@@ -186,7 +194,8 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 /*! RGBQUADラッパー
  *  STLコンテナに入れられるよう == 演算子を実装したもの。
  */
-struct MyRGBQUAD : tagRGBQUAD {
+struct MyRGBQUAD : tagRGBQUAD
+{
 	using tagRGBQUAD::rgbBlue;
 	using tagRGBQUAD::rgbGreen;
 	using tagRGBQUAD::rgbRed;
@@ -218,7 +227,8 @@ struct MyRGBQUAD : tagRGBQUAD {
 
 // HLS色情報タプル
 typedef std::tuple<double, double, double> _HlsTuple;
-enum {
+enum
+{
 	HLS_H,
 	HLS_S,
 	HLS_L,
@@ -238,13 +248,16 @@ _HlsTuple ToHLS(const COLORREF color)
 	auto   m   = MAX - MIN;
 	double H;
 	if (MIN == MAX) { H = std::numeric_limits<double>::infinity(); }
-	else if (MIN == B) {
+	else if (MIN == B)
+	{
 		H = 60. * (m == 0 ? 0 : ((G - R) / m)) + 60.;
 	}
-	else if (MIN == R) {
+	else if (MIN == R)
+	{
 		H = 60. * (m == 0 ? 0 : ((B - G) / m)) + 180.;
 	}
-	else if (MIN == G) {
+	else if (MIN == G)
+	{
 		H = 60. * (m == 0 ? 0 : ((R - B) / m)) + 300.;
 	}
 	auto L = M / 2.;
@@ -279,32 +292,38 @@ COLORREF FromHLS(const _HlsTuple &hls)
 	double R, G, B;
 	double MIN = L + S * (1 - std::abs(2 * L - 1)) / 2;
 	double MAX = L - S * (1 - std::abs(2 * L - 1)) / 2;
-	if (H < 60) {
+	if (H < 60)
+	{
 		R = MAX;
 		G = MAX + (MAX - MIN) * H / 60;
 		B = MIN;
 	}
-	else if (H < 120) {
+	else if (H < 120)
+	{
 		R = MIN + (MAX - MIN) * (120 - H) / 60;
 		G = MAX;
 		B = MIN;
 	}
-	else if (H < 180) {
+	else if (H < 180)
+	{
 		R = MIN;
 		G = MAX;
 		B = MIN + (MAX - MIN) * (H - 120) / 60;
 	}
-	else if (H < 240) {
+	else if (H < 240)
+	{
 		R = MIN;
 		G = MIN + (MAX - MIN) * (240 - H) / 60;
 		B = MAX;
 	}
-	else if (H < 300) {
+	else if (H < 300)
+	{
 		R = MIN + (MAX - MIN) * (H - 240) / 60;
 		G = MIN;
 		B = MAX;
 	}
-	else { // if ( H < 360 ) {
+	else
+	{ // if ( H < 360 ) {
 		R = MAX;
 		G = MIN;
 		B = MIN + (MAX - MIN) * (360 - H) / 60;
@@ -395,7 +414,8 @@ void CImageListMgr::MyDitherBlt(HDC drawdc, int nXDest, int nYDest, int nWidth, 
 
 	// ディザカラー256諧調の配列を作る
 	std::array<COLORREF, 0x100> ditherColors;
-	for (size_t i = 0; i < ditherColors.size(); ++i) {
+	for (size_t i = 0; i < ditherColors.size(); ++i)
+	{
 		auto ditherColorH(textColorH);
 		std::get<HLS_L>(ditherColorH) = textColorL + i * textColorR;
 		ditherColors[i]				  = FromHLS(ditherColorH);
@@ -405,11 +425,13 @@ void CImageListMgr::MyDitherBlt(HDC drawdc, int nXDest, int nYDest, int nWidth, 
 	const COLORREF cTransparent = m_cTrans;
 
 	// スキャンライン全行を順に取得して処理する
-	for (auto n = 0; n < nHeight; ++n) {
+	for (auto n = 0; n < nHeight; ++n)
+	{
 
 		// スキャンラインを1ピクセルずつ処理する
 		auto pixels = reinterpret_cast<MyRGBQUAD *>(pBits);
-		for (auto m = 0; m < nWidth; ++m) {
+		for (auto m = 0; m < nWidth; ++m)
+		{
 			MyRGBQUAD &px = pixels[m];
 
 			// 透過色はスキップする
@@ -466,10 +488,9 @@ bool CImageListMgr::DrawToolIcon(HDC drawdc, LONG x, LONG y, int imageNo, DWORD 
 	if (m_hIconBitmap == NULL) return false;
 	if (imageNo < 0 || m_nIconCount < imageNo) return false;
 
-	if ((fStyle & ILD_MASK) == ILD_MASK) {
-		MyDitherBlt(drawdc, x, y, cx, cy, (imageNo % MAX_X) * m_cx, (imageNo / MAX_X) * m_cy);
-	}
-	else {
+	if ((fStyle & ILD_MASK) == ILD_MASK)
+	{ MyDitherBlt(drawdc, x, y, cx, cy, (imageNo % MAX_X) * m_cx, (imageNo / MAX_X) * m_cy); } else
+	{
 		MyBitBlt(drawdc, x, y, cx, cy, (imageNo % MAX_X) * m_cx, (imageNo / MAX_X) * m_cy);
 	}
 	return true;
@@ -511,7 +532,8 @@ int CImageListMgr::Add(const WCHAR *szPath)
 	{
 		// DIBセクションを取得する
 		DIBSECTION di = {};
-		if (!::GetObject(bmpSrc, sizeof(di), &di)) {
+		if (!::GetObject(bmpSrc, sizeof(di), &di))
+		{
 			DEBUG_TRACE(L"GetObject() failed.");
 			::SelectObject(hdcSrc, bmpSrcOld);
 			::DeleteDC(hdcSrc);
@@ -521,7 +543,8 @@ int CImageListMgr::Add(const WCHAR *szPath)
 
 		nWidth  = di.dsBm.bmWidth;
 		nHeight = di.dsBm.bmHeight;
-		if (nWidth != nHeight) {
+		if (nWidth != nHeight)
+		{
 			DEBUG_TRACE(L"tool bitmap size is unexpected.");
 			::SelectObject(hdcSrc, bmpSrcOld);
 			::DeleteDC(hdcSrc);
@@ -552,7 +575,8 @@ HBITMAP CImageListMgr::ResizeToolIcons(HDC hdcSrc, HBITMAP &bmpSrc, int cols, in
 {
 	// DIBセクションを取得する
 	DIBSECTION di = {};
-	if (!::GetObject(bmpSrc, sizeof(di), &di)) {
+	if (!::GetObject(bmpSrc, sizeof(di), &di))
+	{
 		DEBUG_TRACE(L"GetObject() failed.");
 		return NULL;
 	}
@@ -560,7 +584,8 @@ HBITMAP CImageListMgr::ResizeToolIcons(HDC hdcSrc, HBITMAP &bmpSrc, int cols, in
 	// DIBセクションからサイズを取得する
 	int cx = di.dsBm.bmWidth / cols;
 	int cy = di.dsBm.bmHeight / rows;
-	if (cx != cy) {
+	if (cx != cy)
+	{
 		DEBUG_TRACE(L"tool bitmap size is unexpected.");
 		return NULL;
 	}
@@ -569,7 +594,8 @@ HBITMAP CImageListMgr::ResizeToolIcons(HDC hdcSrc, HBITMAP &bmpSrc, int cols, in
 	const int cySmIcon = ::GetSystemMetrics(SM_CYSMICON);
 
 	// アイコンサイズが異なる場合、拡大縮小する
-	if (cx != cxSmIcon) {
+	if (cx != cxSmIcon)
+	{
 		// 作業DCを作成する
 		HDC		hdcWork	= ::CreateCompatibleDC(hdcSrc);
 		HBITMAP bmpWork	= ::CreateCompatibleBitmap(hdcSrc, cxSmIcon * cols, cySmIcon * rows);
@@ -585,8 +611,10 @@ HBITMAP CImageListMgr::ResizeToolIcons(HDC hdcSrc, HBITMAP &bmpSrc, int cols, in
 		}
 
 		// ざっくり拡大縮小すると位置がずれるので1個ずつ変換する
-		for (int row = 0; row < rows; ++row) {
-			for (int col = 0; col < cols; ++col) {
+		for (int row = 0; row < rows; ++row)
+		{
+			for (int col = 0; col < cols; ++col)
+			{
 				// 拡大・縮小する
 				::TransparentBlt(hdcWork, col * cxSmIcon, row * cySmIcon, cxSmIcon, cySmIcon, hdcSrc, col * cx,
 								 row * cy, cx, cy, m_cTrans);

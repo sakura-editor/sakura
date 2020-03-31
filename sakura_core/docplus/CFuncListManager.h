@@ -29,7 +29,8 @@ class CDocLine;
 class CDocLineMgr;
 
 //! 行に付加するModified情報
-class CLineFuncList {
+class CLineFuncList
+{
 public:
 	CLineFuncList()
 		: m_bFuncList(false)
@@ -47,7 +48,8 @@ private:
 };
 
 //! 行全体のFuncList情報アクセサ
-class CFuncListManager {
+class CFuncListManager
+{
 public:
 	//状態
 	bool IsLineFuncList(const CDocLine *pcDocLine, bool bFlag) const;

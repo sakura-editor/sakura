@@ -32,7 +32,8 @@
 #include "env/CDocTypeManager.h"
 #include "types/CType.h" // CTypeConfig
 
-class CDocType {
+class CDocType
+{
 public:
 	//生成と破棄
 	CDocType(CEditDoc *pcDoc);

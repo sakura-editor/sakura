@@ -32,7 +32,8 @@
 #include <map>
 #include <string>
 
-class CCookieManager {
+class CCookieManager
+{
 	typedef std::wstring wstring;
 
 public:

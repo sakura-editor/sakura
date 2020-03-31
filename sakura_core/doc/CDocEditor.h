@@ -31,7 +31,8 @@
 class CEditDoc;
 class CDocLineMgr;
 
-class CDocEditor : public CDocListenerEx {
+class CDocEditor : public CDocListenerEx
+{
 public:
 	CDocEditor(CEditDoc *pcDoc);
 
@@ -86,7 +87,8 @@ public:
 	bool	  m_bIsDocModified;
 };
 
-class CDocEditAgent {
+class CDocEditAgent
+{
 public:
 	CDocEditAgent(CDocLineMgr *pcDocLineMgr)
 		: m_pcDocLineMgr(pcDocLineMgr)

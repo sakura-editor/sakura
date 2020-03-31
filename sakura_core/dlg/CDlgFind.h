@@ -21,7 +21,8 @@
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-class CDlgFind final : public CDialog {
+class CDlgFind final : public CDialog
+{
 public:
 	/*
 	||  Constructors

@@ -41,7 +41,8 @@ void CTsvModeInfo::CalcTabLength(CDocLineMgr *cDocLineMgr)
 	wchar_t   delimiter   = m_nTsvMode == TSV_MODE_TSV ? L'\t' : L',';
 	int		  nFieldWidth = 0;
 
-	for (nLine = CLogicInt(0); nLine < nLineNum; nLine++) {
+	for (nLine = CLogicInt(0); nLine < nLineNum; nLine++)
+	{
 		CDocLine *cDocLine = cDocLineMgr->GetLine(nLine);
 
 		int		nLineLen;
@@ -49,11 +50,14 @@ void CTsvModeInfo::CalcTabLength(CDocLineMgr *cDocLineMgr)
 		int		nField		= 0;
 		int		nFieldWidth = 0;
 		LPCWSTR pcLine		= cDocLine->GetDocLineStrWithEOL(&nLineLen);
-		for (i = 0; i < nLineLen;) {
+		for (i = 0; i < nLineLen;)
+		{
 			if (WCODE::IsLineDelimiter(pcLine[i], true)) break;
-			if (pcLine[i] == delimiter) {
+			if (pcLine[i] == delimiter)
+			{
 				if (nField == m_tabLength.size()) { m_tabLength.push_back(nFieldWidth); }
-				else if (m_tabLength[nField] < nFieldWidth) {
+				else if (m_tabLength[nField] < nFieldWidth)
+				{
 					m_tabLength[nField] = nFieldWidth;
 				}
 				nField++;
@@ -61,26 +65,31 @@ void CTsvModeInfo::CalcTabLength(CDocLineMgr *cDocLineMgr)
 				i++;
 				continue;
 			}
-			if (pcLine[i] != WCODE::TAB) {
+			if (pcLine[i] != WCODE::TAB)
+			{
 				CKetaXInt nKeta = CNativeW::GetKetaOfChar(pcLine, nLineLen, i);
 				nFieldWidth += Int(nKeta);
 			}
-			else {
+			else
+			{
 				nFieldWidth++;
 			}
 			nCharChars = CNativeW::GetSizeOfChar(pcLine, nLineLen, i);
 			i += nCharChars;
 		}
 		if (nField == m_tabLength.size()) { m_tabLength.push_back(nFieldWidth); }
-		else if (m_tabLength[nField] < nFieldWidth) {
+		else if (m_tabLength[nField] < nFieldWidth)
+		{
 			m_tabLength[nField] = nFieldWidth;
 			nField++;
 		}
 	}
 
-	for (ui = 0; ui < m_tabLength.size(); ui++) {
+	for (ui = 0; ui < m_tabLength.size(); ui++)
+	{
 		if (ui == 0) { m_tabLength[0] += 2; }
-		else {
+		else
+		{
 			m_tabLength[ui] += m_tabLength[ui - 1] + 2;
 		}
 	}
@@ -90,7 +99,8 @@ void CTsvModeInfo::CalcTabLength(CDocLineMgr *cDocLineMgr)
 CLayoutInt CTsvModeInfo::GetActualTabLength(CLayoutInt pos, CLayoutInt px) const
 {
 	unsigned int i;
-	for (i = 0; i < m_tabLength.size(); i++) {
+	for (i = 0; i < m_tabLength.size(); i++)
+	{
 		if (pos < m_tabLength[i] * px) { return CLayoutInt(m_tabLength[i] * px) - pos; }
 	}
 	return CLayoutInt(px * 2);
