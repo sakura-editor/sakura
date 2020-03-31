@@ -25,8 +25,6 @@
 */
 
 #include "StdAfx.h"
-#define ID_HOTKEY_TRAYMENU	0x1234
-
 #include <HtmlHelp.h>
 #include "CControlTray.h"
 #include "CPropertyManager.h"
@@ -52,6 +50,8 @@
 #include "_main/CCommandLine.h"
 #include "CGrepEnumKeys.h"
 #include "sakura_rc.h"
+
+#define ID_HOTKEY_TRAYMENU	0x1234
 
 #define IDT_EDITCHECK 2
 // 3秒
