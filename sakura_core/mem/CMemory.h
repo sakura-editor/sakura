@@ -33,10 +33,10 @@
 
 #pragma once
 
+#include "_main/global.h"
+
 /*! ファイル文字コードセット判別時の先読み最大サイズ */
 #define CheckKanjiCode_MAXREADLENGTH 16384
-
-#include "_main/global.h"
 
 //! メモリバッファクラス
 class CMemory
