@@ -42,8 +42,9 @@ BinPackParameters: true
 #  SplitEmptyRecord: false
 #  SplitEmptyNamespace: false
 BreakBeforeBinaryOperators: NonAssignment
-#BreakBeforeBraces: Custom
-BreakBeforeBraces: Stroustrup
+##BreakBeforeBraces: Custom
+#BreakBeforeBraces: Stroustrup
+BreakBeforeBraces: Allman
 BreakBeforeInheritanceComma: false
 #BreakInheritanceList: BeforeColon
 BreakBeforeTernaryOperators: true
