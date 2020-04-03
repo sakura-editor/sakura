@@ -23,7 +23,6 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include "doc/CDocListener.h" // 親クラス
 #include "CSaveAgent.h"
 #include "doc/CEditDoc.h"
 #include "doc/CDocVisitor.h"

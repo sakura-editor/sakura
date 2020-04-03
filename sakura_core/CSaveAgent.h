@@ -24,6 +24,8 @@
 */
 #pragma once
 
+#include "doc/CDocListener.h"
+
 class CSaveAgent : public CDocListenerEx{
 public:
 	CSaveAgent();
