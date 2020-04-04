@@ -734,11 +734,17 @@ static bool DeleteRecentItem(
 	int nSelEnd = 0;
 	Combo_GetEditSel( hwndCombo, nSelStart, nSelEnd );
 
+	// エディットテキストがアイテムテキストと同じで、エディットが全選択でないなら中断する
+	if (cEditText == cItemText && (0 < nSelStart || nSelEnd < cEditText.GetStringLength()))
+	{
+		return false;
+	}
+
 	// コンボボックスのリストアイテム削除
 	Combo_DeleteString( hwndCombo, nIndex );
 
-	// エディットテキストがアイテムテキストと違うか、エディットが全選択でないなら復元する
-	if (cEditText != cItemText || 0 < nSelStart || nSelEnd < cEditText.GetStringLength())
+	// エディットテキストがアイテムテキストと違うなら復元する
+	if (cEditText != cItemText)
 	{
 		Combo_SetText( hwndCombo, cEditText );
 		Combo_SetEditSel( hwndCombo, nSelStart, nSelEnd );
