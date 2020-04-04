@@ -54,7 +54,7 @@ TEST(CNativeW, ConstructWithStringWithLength)
 	CNativeW value(sz, cch);
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
-	EXPECT_LT(cch + 1, value.capacity());
+	EXPECT_LE(cch + 1, value.capacity());
 }
 
 /*!
@@ -70,7 +70,7 @@ TEST(CNativeW, ConstructWithString)
 	CNativeW value(sz);
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
-	EXPECT_LT(cch + 1, value.capacity());
+	EXPECT_LE(cch + 1, value.capacity());
 }
 
 /*!
@@ -83,7 +83,7 @@ TEST(CNativeW, ConstructWithStringEmpty)
 	CNativeW value(sz);
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(0, value.GetStringLength());
-	EXPECT_LT(1, value.capacity());
+	EXPECT_LE(1, value.capacity());
 }
 
 /*!
@@ -133,7 +133,7 @@ TEST(CNativeW, ConstructFromOtherByMove)
 	CNativeW value(std::move(other));
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
-	EXPECT_LT(cch + 1, value.capacity());
+	EXPECT_LE(cch + 1, value.capacity());
 
 	// ムーブ元は抜け殻になる
 	ASSERT_EQ(NULL, other.GetStringPtr());
@@ -157,7 +157,7 @@ TEST(CNativeW, CopyFromOther)
 	value = other;
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
-	EXPECT_LT(cch + 1, value.capacity());
+	EXPECT_LE(cch + 1, value.capacity());
 
 	// コピー元バッファとは別に新しいバッファが確保される
 	ASSERT_NE(other.GetStringPtr(), value.GetStringPtr());
@@ -179,7 +179,7 @@ TEST(CNativeW, MoveFromOther)
 	value = std::move(other);
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
-	EXPECT_LT(cch + 1, value.capacity());
+	EXPECT_LE(cch + 1, value.capacity());
 
 	// ムーブ元は抜け殻になる
 	ASSERT_EQ(NULL, other.GetStringPtr());
@@ -220,7 +220,7 @@ TEST(CNativeW, AssignString)
 	value = sz;
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
-	EXPECT_LT(cch + 1, value.capacity());
+	EXPECT_LE(cch + 1, value.capacity());
 }
 
 /*!
@@ -263,7 +263,7 @@ TEST(CNativeW, AppendChar)
 	value += sz[0];
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(1, value.GetStringLength());
-	EXPECT_LT(1 + 1, value.capacity());
+	EXPECT_LE(1 + 1, value.capacity());
 }
 
 /*!
@@ -280,7 +280,7 @@ TEST(CNativeW, AppendString)
 	value += sz;
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
-	EXPECT_LT(cch + 1, value.capacity());
+	EXPECT_LE(cch + 1, value.capacity());
 }
 
 /*!
@@ -548,7 +548,7 @@ TEST(CNativeW, ReplaceOfNullString)
 	value.Replace(L"置換前", L"置換後");
 	ASSERT_STREQ(L"", value.GetStringPtr());
 	EXPECT_EQ(0, value.GetStringLength());
-	EXPECT_LT(1, value.capacity());
+	EXPECT_LE(1, value.capacity());
 }
 
 /*!
