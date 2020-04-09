@@ -715,13 +715,6 @@ static bool DeleteRecentItem(
 		return false;
 	}
 
-	// コンボボックスのエディットテキストを取得
-	CNativeW cEditText;
-	if (!Combo_GetText( hwndCombo, cEditText ))
-	{
-		return false;
-	}
-
 	// ドロップダウンリスト内の選択されたテキストを取得
 	CNativeW cItemText;
 	if (!Combo_GetLBText( hwndCombo, nIndex, cItemText ))
@@ -729,26 +722,8 @@ static bool DeleteRecentItem(
 		return false;
 	}
 
-	// コンボボックスのキャレット位置を取得
-	int nSelStart = 0;
-	int nSelEnd = 0;
-	Combo_GetEditSel( hwndCombo, nSelStart, nSelEnd );
-
-	// エディットテキストがアイテムテキストと同じで、エディットが全選択でないなら中断する
-	if (cEditText == cItemText && (0 < nSelStart || nSelEnd < cEditText.GetStringLength()))
-	{
-		return false;
-	}
-
 	// コンボボックスのリストアイテム削除
 	Combo_DeleteString( hwndCombo, nIndex );
-
-	// エディットテキストがアイテムテキストと違うなら復元する
-	if (cEditText != cItemText)
-	{
-		Combo_SetText( hwndCombo, cEditText );
-		Combo_SetEditSel( hwndCombo, nSelStart, nSelEnd );
-	}
 
 	// 履歴項目を削除
 	int nRecentIndex = pRecent->FindItemByText( cItemText.GetStringPtr() );
@@ -759,17 +734,56 @@ static bool DeleteRecentItem(
 	return true;
 }
 
-LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK SubEditProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	SComboBoxItemDeleter* data = (SComboBoxItemDeleter*)::GetProp( hwnd, TSTR_SUBCOMBOBOXDATA );
-	switch( uMsg ){
+	switch (uMsg) {
 	case WM_KEYDOWN:
-		if( wParam == VK_DELETE ){
+		if (wParam == VK_DELETE) {
 			HWND hwndCombo = data->hwndCombo;
-			BOOL bShow = Combo_GetDroppedState(hwndCombo);
+			BOOL bShow = Combo_GetDroppedState( hwndCombo );
 			int nIndex = Combo_GetCurSel( hwndCombo );
-			if( bShow && 0 <= nIndex ){
-				DeleteRecentItem(hwndCombo, nIndex, data->pRecent);
+			if (bShow && 0 <= nIndex) {
+				DeleteRecentItem( hwndCombo, nIndex, data->pRecent );
+			}
+		}
+		else if (wParam == VK_RIGHT
+			|| wParam == VK_LEFT
+			|| wParam == VK_HOME
+			|| wParam == VK_END
+			)
+		{
+			HWND hwndCombo = data->hwndCombo;
+			const int nIndex = Combo_GetCurSel( hwndCombo );
+			if (0 <= nIndex)
+			{
+				// 先にキー押下処理を走らせる
+				auto ret = CallWindowProc( data->pEditWndProc, hwnd, uMsg, wParam, lParam );
+
+				// コンボボックスのキャレット位置を取得
+				int nSelStart = 0;
+				int nSelEnd = 0;
+				Combo_GetEditSel( hwndCombo, nSelStart, nSelEnd );
+
+				// エディットが全選択でなくなった場合
+				if (0 < nSelStart
+					|| nSelEnd < Combo_GetLBTextLen( hwndCombo, nIndex ))
+				{
+					// コンボボックスのエディットテキストを取得
+					CNativeW cEditText;
+					if (Combo_GetText( hwndCombo, cEditText ))
+					{
+						// ドロップダウンリストの選択を解除する
+						Combo_SetCurSel( hwndCombo, -1 );
+
+						// エディットテキストを復元する
+						Combo_SetText( hwndCombo, cEditText );
+						Combo_SetEditSel( hwndCombo, nSelStart, nSelEnd );
+					}
+				}
+
+				// 移動キー押下の処理結果を返却する
+				return ret;
 			}
 		}
 		break;
