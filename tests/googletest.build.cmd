@@ -9,8 +9,6 @@ if not defined CMD_VSWHERE call %~dp0..\tools\find-tools.bat
 
 set /a NUM_VSVERSION_NEXT=NUM_VSVERSION + 1
 
-call :resolve_cmake_and_ninja
-
 if not exist "%CMD_CMAKE%" (
   echo "no cmake found."
   exit /b 1
@@ -44,34 +42,6 @@ pushd %BUILD_DIR%
 call :run_cmake_install
 
 endlocal && exit /b 0
-
-:resolve_cmake_and_ninja
-for /f "usebackq delims=" %%a in (`"%CMD_VSWHERE%" -property installationPath -version [%NUM_VSVERSION%^,%NUM_VSVERSION_NEXT%^)`) do (
-    pushd "%%a"
-    call "%%a\Common7\Tools\vsdevcmd\ext\cmake.bat"
-    call :resolve_cmake
-    call :resolve_ninja
-    popd
-    goto :EOF
-)
-goto :EOF
-
-:resolve_cmake
-if exist "%CMD_CMAKE%" goto :EOF
-for /f "usebackq delims=" %%a in (`where cmake.exe`) do (
-    set "CMD_CMAKE=%%a"
-    goto :EOF
-)
-goto :EOF
-
-:resolve_ninja
-if exist "%CMD_NINJA%" goto :EOF
-for /f "usebackq delims=" %%a in (`where ninja.exe`) do (
-    set "CMD_NINJA=%%a"
-    goto :EOF
-)
-goto :EOF
-
 
 :run_cmake_install
 call :run_cmake_configure
