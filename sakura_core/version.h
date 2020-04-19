@@ -13,7 +13,7 @@
 //       d  => 0
 #define VER_A   2 // a of ver a.b.c.d
 #define VER_B   4 // b of ver a.b.c.d
-#define VER_C   0 // c of ver a.b.c.d
+#define VER_C   1 // c of ver a.b.c.d
 #ifdef CI_BUILD_NUMBER_INT
 #define VER_D   CI_BUILD_NUMBER_INT // d of ver a.b.c.d
 #else
