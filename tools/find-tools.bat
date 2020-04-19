@@ -174,14 +174,23 @@ exit /b
     )
 
     if "%NUM_VSVERSION%" == "15" (
-        set NUM_VSVERSION=15
         set CMAKE_G_PARAM=Visual Studio 15 2017
     ) else if "%NUM_VSVERSION%" == "16" (
-        set NUM_VSVERSION=16
         set CMAKE_G_PARAM=Visual Studio 16 2019
     ) else (
-        echo Visual Studio Version %NUM_VERSION% is not supported.
-        exit /b 1
+        call :set_cmake_gparam_automatically
+    )
+    exit /b
+
+:set_cmake_gparam_automatically
+    call :get_product_line_version
+    set CMAKE_G_PARAM=Visual Studio %NUM_VSVERSION% %VS_PRODUCT_LINE_VERSION%
+    exit /b
+
+:get_product_line_version
+    set /a NUM_VSVERSION_NEXT=NUM_VSVERSION + 1
+    for /f "usebackq delims=" %%v in (`"%CMD_VSWHERE%" -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property catalog_productLineVersion -version [%NUM_VSVERSION%^,%NUM_VSVERSION_NEXT%^)`) do (
+        set VS_PRODUCT_LINE_VERSION=%%v
     )
     exit /b
 
