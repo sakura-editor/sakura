@@ -25,8 +25,8 @@ if not exist CMakeLists.txt (
 popd
 
 if not exist "%CMD_NINJA%" (
-	set GENERATOR="%CMAKE_G_PARAM%"
-	set GENERATOR_OPTS=-A %PLATFORM% "-DCMAKE_CONFIGURATION_TYPES=Debug;Release"
+  set GENERATOR="%CMAKE_G_PARAM%"
+  set GENERATOR_OPTS=-A %PLATFORM% "-DCMAKE_CONFIGURATION_TYPES=Debug;Release"
   set "MAKE_PROGRAM=%CMD_MSBUILD%"
   set "BUILD_DIR=%BUILD_BASE_DIR%googletest\%platform%"
 ) else (
@@ -75,7 +75,7 @@ goto :EOF
 
 :find_cl_compiler
 for /f "usebackq delims=" %%a in (`where cl.exe`) do (
-	set "CMD_CL=%%a"
-	goto :EOF
+  set "CMD_CL=%%a"
+  goto :EOF
 )
 goto :EOF

@@ -77,7 +77,7 @@ exit /b
 
 :7z
 if "%FORCE_POWERSHELL_ZIP%" == "1" (
-	exit /b
+    exit /b
 )
 set APPDIR=7-Zip
 set PATH2=%PATH%;%ProgramFiles%\%APPDIR%\;%ProgramFiles(x86)%\%APPDIR%\;%ProgramW6432%\%APPDIR%\;
@@ -152,77 +152,74 @@ exit /b
 ::     16     => Visual Studio 2019
 :: ---------------------------------------------------------------------------------------------------------------------
 :msbuild
-	:: convert productLineVersion to Internal Major Version
-	if "%ARG_VSVERSION%" == "" (
-		set NUM_VSVERSION=15
-	) else if "%ARG_VSVERSION%" == "2017" (
-		set NUM_VSVERSION=15
-	) else if "%ARG_VSVERSION%" == "2019" (
-		set NUM_VSVERSION=16
-	) else if "%ARG_VSVERSION%" == "latest" (
-		call :check_latest_installed_vsversion
-	) else (
-		set NUM_VSVERSION=%ARG_VSVERSION%
-	)
+    :: convert productLineVersion to Internal Major Version
+    if "%ARG_VSVERSION%" == "" (
+        set NUM_VSVERSION=15
+    ) else if "%ARG_VSVERSION%" == "2017" (
+        set NUM_VSVERSION=15
+    ) else if "%ARG_VSVERSION%" == "2019" (
+        set NUM_VSVERSION=16
+    ) else if "%ARG_VSVERSION%" == "latest" (
+        call :check_latest_installed_vsversion
+    ) else (
+        set NUM_VSVERSION=%ARG_VSVERSION%
+    )
 
-	call :check_installed_vsversion
+    call :check_installed_vsversion
 
-	call :find_msbuild
-	if not exist "%CMD_MSBUILD%" (
-		call :find_msbuild_legacy
-		set NUM_VSVERSION=15
-	)
+    call :find_msbuild
+    if not exist "%CMD_MSBUILD%" (
+        call :find_msbuild_legacy
+        set NUM_VSVERSION=15
+    )
 
-	if "%NUM_VSVERSION%" == "15" (
-		set NUM_VSVERSION=15
-		set CMAKE_G_PARAM=Visual Studio 15 2017
-		
-	) else if "%NUM_VSVERSION%" == "16" (
-		set NUM_VSVERSION=16
-		set CMAKE_G_PARAM=Visual Studio 16 2019
-		
-	) else (
-		echo Visual Studio Version %NUM_VERSION% is not supported.
-		exit /b 1
-		
-	)
-	exit /b
+    if "%NUM_VSVERSION%" == "15" (
+        set NUM_VSVERSION=15
+        set CMAKE_G_PARAM=Visual Studio 15 2017
+    ) else if "%NUM_VSVERSION%" == "16" (
+        set NUM_VSVERSION=16
+        set CMAKE_G_PARAM=Visual Studio 16 2019
+    ) else (
+        echo Visual Studio Version %NUM_VERSION% is not supported.
+        exit /b 1
+    )
+    exit /b
 
 :check_latest_installed_vsversion
-	for /f "usebackq delims=" %%v in (`"%CMD_VSWHERE%" -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationVersion -latest`) do (
-		set VSVERSION=%%v
-	)
-	set NUM_VSVERSION=%VSVERSION:~0,2%
-	exit /b
+    for /f "usebackq delims=" %%v in (`"%CMD_VSWHERE%" -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationVersion -latest`) do (
+        set VSVERSION=%%v
+    )
+    set NUM_VSVERSION=%VSVERSION:~0,2%
+    exit /b
 
 :check_installed_vsversion
-	set /a NUM_VSVERSION_NEXT=NUM_VSVERSION + 1
-	for /f "usebackq delims=" %%d in (`"%CMD_VSWHERE%" -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath -version [%NUM_VSVERSION%^,%NUM_VSVERSION_NEXT%^)`) do (
-		if exist "%%d" exit /b
-	)
-	call :check_latest_installed_vsversion
-	exit /b
+    set /a NUM_VSVERSION_NEXT=NUM_VSVERSION + 1
+    for /f "usebackq delims=" %%d in (`"%CMD_VSWHERE%" -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath -version [%NUM_VSVERSION%^,%NUM_VSVERSION_NEXT%^)`) do (
+        if exist "%%d" exit /b
+    )
+    call :check_latest_installed_vsversion
+    exit /b
 
 :find_msbuild
-	set /a NUM_VSVERSION_NEXT=NUM_VSVERSION + 1
-	for /f "usebackq delims=" %%a in (`"%CMD_VSWHERE%" -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe -version [%NUM_VSVERSION%^,%NUM_VSVERSION_NEXT%^)`) do (
-	    set "CMD_MSBUILD=%%a"
-	)
-	if exist "%CMD_MSBUILD%" (
-		exit /b
-	)
-	set CMD_MSBUILD=
-	exit /b
+    set /a NUM_VSVERSION_NEXT=NUM_VSVERSION + 1
+    for /f "usebackq delims=" %%a in (`"%CMD_VSWHERE%" -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe -version [%NUM_VSVERSION%^,%NUM_VSVERSION_NEXT%^)`) do (
+        set "CMD_MSBUILD=%%a"
+    )
+    if exist "%CMD_MSBUILD%" (
+        exit /b
+    )
+    set CMD_MSBUILD=
+    exit /b
 
 :find_msbuild_legacy
-	for /f "usebackq delims=" %%d in (`"%CMD_VSWHERE%" -requires Microsoft.Component.MSBuild -property installationPath -version [15^,16^)`) do (
-	    set "CMD_MSBUILD=%%d\MSBuild\15.0\Bin\MSBuild.exe"
-	)
-	if exist "%CMD_MSBUILD%" (
-		exit /b
-	)
-	set CMD_MSBUILD=
-	exit /b
+    for /f "usebackq delims=" %%d in (`"%CMD_VSWHERE%" -requires Microsoft.Component.MSBuild -property installationPath -version [15^,16^)`) do (
+        set "CMD_MSBUILD=%%d\MSBuild\15.0\Bin\MSBuild.exe"
+    )
+    if exist "%CMD_MSBUILD%" (
+        exit /b
+    )
+    set CMD_MSBUILD=
+    exit /b
 
 :cmake
 for /f "usebackq delims=" %%a in (`"%CMD_VSWHERE%" -property installationPath -version [%NUM_VSVERSION%^,%NUM_VSVERSION_NEXT%^)`) do (
@@ -231,7 +228,7 @@ for /f "usebackq delims=" %%a in (`"%CMD_VSWHERE%" -property installationPath -v
     call :resolve_cmake
     call :resolve_ninja
     popd
-	exit /b
+    exit /b
 )
 exit /b
 
@@ -241,7 +238,7 @@ set APPDIR=CMake\bin
 set PATH2=%PATH%;%ProgramFiles%\%APPDIR%\;%ProgramFiles(x86)%\%APPDIR%\;%ProgramW6432%\%APPDIR%\;
 for /f "usebackq delims=" %%a in (`where $PATH2:cmake`) do ( 
     set "CMD_CMAKE=%%a"
-	exit /b
+    exit /b
 )
 exit /b
 
@@ -249,6 +246,6 @@ exit /b
 if exist "%CMD_NINJA%" goto :EOF
 for /f "usebackq delims=" %%a in (`where $PATH:ninja`) do ( 
     set "CMD_NINJA=%%a"
-	exit /b
+    exit /b
 )
 exit /b
