@@ -1,6 +1,6 @@
 setlocal
-set BUILD_BASE_DIR=%~1
-set GOOGLETEST_INSTALL_PATH=%~2
+set BUILD_BASE_DIR=%~dp1
+set GOOGLETEST_INSTALL_PATH=%~dp2
 
 set SOURCE_DIR=%~dp0googletest
 

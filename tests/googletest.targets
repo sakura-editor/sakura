@@ -2,10 +2,10 @@
   <PropertyGroup Label="GoogleTest">
     <GoogleTestSourceDir>$(MSBuildThisFileDirectory)googletest</GoogleTestSourceDir>
     <GoogleTestBuildDir>$(MSBuildThisFileDirectory)build\</GoogleTestBuildDir>
-    <GoogleTestInstallDir>$([MsBuild]::NormalizePath('$(MSBuildThisFileDirectory)..\tools\googletext'))</GoogleTestInstallDir>
-    <IncludePath>$(GoogleTestInstallDir)\include;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Platform)' == 'Win32'">$(GoogleTestInstallDir)\lib;$(LibraryPath)</LibraryPath>
-    <LibraryPath Condition="'$(Platform)' == 'x64'">$(GoogleTestInstallDir)\lib64;$(LibraryPath)</LibraryPath>
+    <GoogleTestInstallDir>$([MsBuild]::NormalizePath('$(MSBuildThisFileDirectory)..\tools\googletest\'))</GoogleTestInstallDir>
+    <IncludePath>$(GoogleTestInstallDir)include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Platform)' == 'Win32'">$(GoogleTestInstallDir)lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Platform)' == 'x64'">$(GoogleTestInstallDir)lib64;$(LibraryPath)</LibraryPath>
     <NameSuffix Condition="'$(Configuration)' == 'Debug'">d</NameSuffix>
     <NameSuffix Condition="'$(Configuration)' == 'Release'"></NameSuffix>
   </PropertyGroup>
