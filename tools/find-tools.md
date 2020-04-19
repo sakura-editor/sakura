@@ -49,18 +49,27 @@ MSBuild以外の探索手順は同一であり、7-Zipを例に説明する。
 
 ### 検索ロジック
 
-1. ```vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe``` で MSBuild.exe を検索する
-2. VS2019 以降の vswhere の場合
-  2.1 MSBuild.exe が見つかる。→ 検索終了
-3. VS2017 の vswhere の場合
-  3.1 ```vswhere -version [15^,16^) -requires Microsoft.Component.MSBuild -property installationPath``` で VS2017 のインストールパスを検索する
-  3.2 ```%Vs2017InstallRoot%\MSBuild\15.0\Bin\amd64\MSBuild.exe``` が存在する場合そのパスを MSBuild.exe のパスとする
-  3.3 ```%Vs2017InstallRoot%\MSBuild\15.0\Bin\MSBuild.exe``` が存在する場合そのパスを MSBuild.exe のパスとする
-
-### MSBuild.exe の引数
-
-```PARAM_VSVERSION``` の環境変数に ```/p:VisualStudioVersion=XXX``` をセットして MSBuild.exe に渡すことにより
-実際にビルドに使用する Visual Studio のバージョンを切り替える。
+1. `ARG_VSVERSION` から`VC++`のバージョン指定(`NUM_VSVERSION`)を判断する。
+	1. `ARG_VSVERSION` 未指定の場合、`15`が指定されたものとみなす。
+	1. `ARG_VSVERSION` が`2017`の場合、`15`が指定されたものとみなす。
+	1. `ARG_VSVERSION` が`2019`の場合、`16`が指定されたものとみなす。
+	1. `ARG_VSVERSION` が`latest`の場合、最新バージョンを取得する。
+	1. `ARG_VSVERSION` が上記以外の場合、`%ARG_VSVERSION%`が指定されたものとみなす。
+1. 指定されたバージョンのVC++がインストールされているかチェックする。  
+	1. `vswhere -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath -version [%NUM_VSVERSION%, %NUM_VSVERSION% + 1)` を実行する。
+	1. 取得したパスが存在していたら、バージョン指定(`NUM_VSVERSION`)は正しいとみなす。
+	1. 取得したパスが存在していなかったら、最新バージョンを取得する。
+1. インストール済み`VC++`の最新バージョンを取得する。
+	1.  `vswhere -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationVersion -latest` を実行する。
+	1.  取得したバージョンが指定されたものとみなす。(`NUM_VSVERSION`に代入する。)
+1. 指定されたバージョンの`MsBuild.exe`を検索する。
+	1. `-find`オプションを付けて`MsBuild.exe`を検索する。(`vswhere -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe -version [%NUM_VSVERSION%, %NUM_VSVERSION% + 1)`)
+	1. `vswhere` が VS2019 以降ver の場合、`MSBuild.exe` が見つかるので検索終了。
+	1. `vswhere` が VS2017 以前ver の場合、`MSBuild.exe` が見つからない(エラーになる)ので検索続行。
+1. VS2017 の `MsBuild.exe` を検索する。
+	1. VS2017 のインストールパスを検索する。(`vswhere -requires Microsoft.Component.MSBuild -property installationPath -version [15^,16^)`)
+	1. VS2017 のインストールパス配下の所定位置(`%Vs2017InstallRoot%\MSBuild\15.0\Bin`)に`MSBuild.exe`が存在する場合、そのパスを `MSBuild.exe` のパスとみなす。
+		この場合、バージョン指定(`NUM_VSVERSION`)に`15`が指定されたものとみなす。
 
 ### 参照
 * https://github.com/Microsoft/vswhere

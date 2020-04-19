@@ -1,9 +1,11 @@
 <Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="GoogleTest">
-    <GoogleTestSourceDir>$(MSBuildThisFileDirectory)googletest\</GoogleTestSourceDir>
-    <GoogleTestBuildDir>$(MSBuildThisFileDirectory)build\$(Platform)\$(Configuration)\googletest</GoogleTestBuildDir>
-    <IncludePath>$(GoogleTestSourceDir)googletest\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(GoogleTestBuildDir)\lib;$(GoogleTestBuildDir)\lib\$(Configuration);$(LibraryPath)</LibraryPath>
+    <GoogleTestSourceDir>$(MSBuildThisFileDirectory)googletest</GoogleTestSourceDir>
+    <GoogleTestBuildDir>$(MSBuildThisFileDirectory)build\</GoogleTestBuildDir>
+    <GoogleTestInstallDir>$([MsBuild]::NormalizePath('$(MSBuildThisFileDirectory)..\tools\googletest\'))</GoogleTestInstallDir>
+    <IncludePath>$(GoogleTestInstallDir)include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Platform)' == 'Win32'">$(GoogleTestInstallDir)lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Platform)' == 'x64'">$(GoogleTestInstallDir)lib64;$(LibraryPath)</LibraryPath>
     <NameSuffix Condition="'$(Configuration)' == 'Debug'">d</NameSuffix>
     <NameSuffix Condition="'$(Configuration)' == 'Release'"></NameSuffix>
   </PropertyGroup>
@@ -18,51 +20,23 @@
       <AdditionalDependencies>gtest_main$(NameSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <Target Name="FindGit" Condition="'$(GitCmd)' == ''">
-    <Message Text="Checking Git for Windows" Importance="high" />
-    <Exec Command="where &quot;$(PATH);$(ProgramW6432)\Git\Cmd;$(ProgramFiles)\Git\Cmd:git&quot;" ConsoleToMSBuild="true">
-      <Output TaskParameter="ConsoleOutput" PropertyName="GitCmd" />
-    </Exec>
-    <PropertyGroup>
-      <GitCmd>$([System.Text.RegularExpressions.Regex]::Replace('$(GitCmd)', '^([^;]+);.*', '$1'))</GitCmd>
-    </PropertyGroup>
-  </Target>
-  <Target Name="UpdateGoogleTest" DependsOnTargets="FindGit" Condition="!Exists('$(GoogleTestSourceDir)\CMakeLists.txt')">
-    <Exec Command="&quot;$(GitCmd)&quot; submodule init" WorkingDirectory="$(GoogleTestSourceDir)" />
-    <Exec Command="&quot;$(GitCmd)&quot; submodule update" WorkingDirectory="$(GoogleTestSourceDir)" />
-  </Target>
   <Target Name="MakeGoogleTestBuildDir" Condition="!Exists('$(GoogleTestBuildDir)')">
     <MakeDir Directories="$(GoogleTestBuildDir)" />
   </Target>
-  <Target Name="BuildGoogleTest" DependsOnTargets="UpdateGoogleTest;MakeGoogleTestBuildDir" BeforeTargets="ClCompile">
-    <PropertyGroup>
-      <VcVarsArchitecture Condition="'$(PROCESSOR_ARCHITECTURE)' == 'x86' And '$(PlatformTarget)' == 'x86'">x86</VcVarsArchitecture>
-      <VcVarsArchitecture Condition="'$(PROCESSOR_ARCHITECTURE)' == 'x86' And '$(PlatformTarget)' == 'x64'">x86_amd64</VcVarsArchitecture>
-      <VcVarsArchitecture Condition="'$(PROCESSOR_ARCHITECTURE)' == 'AMD64' And '$(PlatformTarget)' == 'x86'">amd64_x86</VcVarsArchitecture>
-      <VcVarsArchitecture Condition="'$(PROCESSOR_ARCHITECTURE)' == 'AMD64' And '$(PlatformTarget)' == 'x64'">amd64</VcVarsArchitecture>
-      <NumVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(VisualStudioVersion)', '^(\d+).*', '$1'))</NumVersion>
-      <ProductLineVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(VisualStudioEdition)', '^.* (\d+).*', '$1'))</ProductLineVersion>
-      <GeneratorSuffix Condition="'$(PlatformTarget)' == 'x86'"></GeneratorSuffix>
-      <GeneratorSuffix Condition="'$(PlatformTarget)' == 'x64'"> Win64</GeneratorSuffix>
-      <VsGeneratorName>Visual Studio $(NumVersion) $(ProductLineVersion)$(GeneratorSuffix)</VsGeneratorName>
-    </PropertyGroup>
-    <Exec Command="$(MSBuildThisFileDirectory)googletest.build.cmd $(GoogleTestSourceDir) &quot;$(VsGeneratorName)&quot; $(Configuration) &quot;$(VSInstallRoot)/VC/Auxiliary/Build/vcvarsall.bat&quot; $(VcVarsArchitecture)" WorkingDirectory="$(GoogleTestBuildDir)" />
+  <Target Name="MakeGoogleTestInstallDir" Condition="!Exists('$(GoogleTestInstallDir)')">
+    <MakeDir Directories="$(GoogleTestInstallDir)" />
   </Target>
-  <Target Name="CopyGoogleTestPdb" AfterTargets="BuildGoogleTest">
-    <ItemGroup>
-      <GoogleTestPdb Include="$(GoogleTestBuildDir)\bin\gtest$(NameSuffix).pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\gtest$(NameSuffix).pdb')" />
-      <GoogleTestPdb Include="$(GoogleTestBuildDir)\bin\gtest_main$(NameSuffix).pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\gtest_main$(NameSuffix).pdb')" />
-      <GoogleTestPdb Include="$(GoogleTestBuildDir)\bin\$(Configuration)\gtest$(NameSuffix).pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\$(Configuration)\gtest$(NameSuffix).pdb')" />
-      <GoogleTestPdb Include="$(GoogleTestBuildDir)\bin\$(Configuration)\gtest_main$(NameSuffix).pdb" Condition="Exists('$(GoogleTestBuildDir)\bin\$(Configuration)\gtest_main$(NameSuffix).pdb')" />
-    </ItemGroup>
-    <Copy SourceFiles="@(GoogleTestPdbFound)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" UseHardlinksIfPossible="true" />
+  <Target Name="BuildGoogleTest" DependsOnTargets="MakeGoogleTestBuildDir;MakeGoogleTestInstallDir" BeforeTargets="ClCompile">
+    <PropertyGroup>
+      <VsVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(VisualStudioVersion)', '^(\d+).*', '$1'))</VsVersion>
+    </PropertyGroup>
+    <SetEnv name="platform" value="$(Platform)" prefix="false" />
+    <SetEnv name="configuration" value="$(Configuration)" prefix="false" />
+    <SetEnv name="NUM_VSVERSION" value="$(VsVersion)" prefix="false" />
+    <Exec Command="$(MSBuildThisFileDirectory)googletest.build.cmd &quot;$(GoogleTestBuildDir)&quot; &quot;$(GoogleTestInstallDir)&quot;" ConsoleToMSBuild="true" />
   </Target>
   <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
-    <!-- Add files to @Clean just before running CoreClean. -->
-    <ItemGroup>
-      <Clean Include="$(OutDir)gtest$(NameSuffix).pdb" />
-      <Clean Include="$(OutDir)gtest_main$(NameSuffix).pdb" />
-    </ItemGroup>
     <RemoveDir Directories="$(GoogleTestBuildDir)" />
+    <RemoveDir Directories="$(GoogleTestInstallDir)" />
   </Target>
 </Project>
