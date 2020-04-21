@@ -278,13 +278,6 @@ public:
 	CPixelXInt GetWidthPerKeta() const { return Int(m_nCharLayoutXPerKeta); }
 	CPixelXInt GetCharSpacing() const { return m_nSpacing; }
 
-protected:
-	/*
-	||  参照系
-	*/
-	const char* GetFirstLinrStr( int* );	/* 順アクセスモード：先頭行を得る */
-	const char* GetNextLinrStr( int* );	/* 順アクセスモード：次の行を得る */
-
 	/*
 	|| 更新系
 	*/

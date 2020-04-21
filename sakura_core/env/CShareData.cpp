@@ -755,29 +755,7 @@ static void ConvertLangString( wchar_t* pBuf, size_t chBufSize, std::wstring& or
 	pBuf[chBufSize - 1] = L'\0';
 }
 
-static void ConvertLangString( char* pBuf, size_t chBufSize, std::wstring& org, std::wstring& to )
-{
-	CNativeA mem;
-	mem.SetString(pBuf);
-	mem.Replace_j(to_achar(org.c_str()), to_achar(to.c_str()));
-	strncpy(pBuf, mem.GetStringPtr(), chBufSize);
-	pBuf[chBufSize - 1] = '\0';
-}
-
 static void ConvertLangValueImpl( wchar_t* pBuf, size_t chBufSize, int nStrId, std::vector<std::wstring>& values, int& index, bool setValues, bool bUpdate )
-{
-	if( setValues ){
-		if( bUpdate ){
-			values.push_back( LS(nStrId) );
-		}
-		return;
-	}
-	std::wstring to = LS(nStrId);
-	ConvertLangString( pBuf, chBufSize, values[index], to );
-	index++;
-}
-
-static void ConvertLangValueImpl( char* pBuf, size_t chBufSize, int nStrId, std::vector<std::wstring>& values, int& index, bool setValues, bool bUpdate )
 {
 	if( setValues ){
 		if( bUpdate ){

@@ -131,35 +131,3 @@ char CNativeA::operator[](int nIndex) const
 		return 0;
 	}
 }
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//              ネイティブ変換インターフェース                 //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-/* 文字列置換（日本語考慮版） */
-void CNativeA::Replace_j( const char* pszFrom, const char* pszTo )
-{
-	CNativeA	cmemWork;
-	int			nFromLen = strlen( pszFrom );
-	int			nToLen = strlen( pszTo );
-	int			nBgnOld = 0;
-	int			nBgn = 0;
-	while( nBgn <= GetStringLength() - nFromLen ){
-		if( 0 == memcmp( &GetStringPtr()[nBgn], pszFrom, nFromLen ) ){
-			if( 0  < nBgn - nBgnOld ){
-				cmemWork.AppendString( &GetStringPtr()[nBgnOld], nBgn - nBgnOld );
-			}
-			cmemWork.AppendString( pszTo, nToLen );
-			nBgn = nBgn + nFromLen;
-			nBgnOld = nBgn;
-		}else{
-			if( _IS_SJIS_1( (unsigned char)GetStringPtr()[nBgn] ) ) nBgn++;
-			nBgn++;
-		}
-	}
-	if( 0  < GetStringLength() - nBgnOld ){
-		cmemWork.AppendString( &GetStringPtr()[nBgnOld], GetStringLength() - nBgnOld );
-	}
-	SetNativeData( cmemWork );
-	return;
-}
