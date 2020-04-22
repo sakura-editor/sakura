@@ -630,7 +630,7 @@ bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 	{
 		//1行読み込み
 		wstring line=in.ReadLineW();
-		line.copy( buff, line.length(), 0 );
+		line.copy( buff, line.length() + 1, 0 );
 
 		if(count >= MAX_REGEX_KEYWORD){
 			sErrMsg = LS(STR_IMPEXP_REGEX1);
