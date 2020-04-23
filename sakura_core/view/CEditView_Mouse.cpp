@@ -1526,12 +1526,11 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 }
 
 /* ShellExecuteを呼び出すプロシージャ */
-/*   呼び出し前に lpParameter を new しておくこと */
 static unsigned __stdcall ShellExecuteProc( LPVOID lpParameter )
 {
 	LPWSTR pszFile = (LPWSTR)lpParameter;
 	::ShellExecute( NULL, L"open", pszFile, NULL, NULL, SW_SHOW );
-	delete []pszFile;
+	free( pszFile );
 	return 0;
 }
 
@@ -1590,7 +1589,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 					::CloseHandle(hThread);
 				}else{
 					//スレッド作成失敗
-					delete[] szUrlDup;
+					free( szUrlDup );
 				}
 			}
 			return;

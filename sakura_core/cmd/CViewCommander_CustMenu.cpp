@@ -49,7 +49,7 @@ void CViewCommander::Command_MENU_RBUTTON( void )
 		}
 		/* クリップボードにデータを設定 */
 		m_pCommanderView->MySetClipboardData( pszWork, nLength, false );
-		delete[] pszWork;
+		free( pszWork );
 
 		break;
 	}
