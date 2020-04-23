@@ -45,7 +45,7 @@ TEST(CNativeW, ConstructWithoutParam)
  * @brief コンストラクタ(文字列と文字列長指定)の仕様
  * @remark バッファが確保される
  * @remark 文字列長は指定した文字列長になる
- * @remark バッファサイズは指定した文字列長より大きくなる
+ * @remark バッファサイズは指定した文字列を格納できるサイズになる
  */
 TEST(CNativeW, ConstructWithStringWithLength)
 {
@@ -54,7 +54,7 @@ TEST(CNativeW, ConstructWithStringWithLength)
 	CNativeW value(sz, cch);
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
-	EXPECT_GT(value.capacity(), cch);
+	EXPECT_LE(cch, value.capacity());
 }
 
 /*!
@@ -70,7 +70,7 @@ TEST(CNativeW, ConstructWithString)
 	CNativeW value(sz);
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
-	EXPECT_GT(value.capacity(), cch);
+	EXPECT_LE(cch, value.capacity());
 }
 
 /*!
@@ -83,7 +83,7 @@ TEST(CNativeW, ConstructWithStringEmpty)
 	CNativeW value(sz);
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(0, value.GetStringLength());
-	EXPECT_GT(value.capacity(), 0);
+	EXPECT_LE(0, value.capacity());
 }
 
 /*!
@@ -133,7 +133,7 @@ TEST(CNativeW, ConstructFromOtherByMove)
 	CNativeW value(std::move(other));
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
-	EXPECT_GT(value.capacity(), cch);
+	EXPECT_LE(cch, value.capacity());
 
 	// ムーブ元は抜け殻になる
 	ASSERT_EQ(NULL, other.GetStringPtr());
@@ -157,7 +157,7 @@ TEST(CNativeW, CopyFromOther)
 	value = other;
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
-	EXPECT_GT(value.capacity(), cch);
+	EXPECT_LE(cch, value.capacity());
 
 	// コピー元バッファとは別に新しいバッファが確保される
 	ASSERT_NE(other.GetStringPtr(), value.GetStringPtr());
@@ -179,7 +179,7 @@ TEST(CNativeW, MoveFromOther)
 	value = std::move(other);
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
-	EXPECT_GT(value.capacity(), cch);
+	EXPECT_LE(cch, value.capacity());
 
 	// ムーブ元は抜け殻になる
 	ASSERT_EQ(NULL, other.GetStringPtr());
@@ -220,7 +220,7 @@ TEST(CNativeW, AssignString)
 	value = sz;
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
-	EXPECT_GT(value.capacity(), cch);
+	EXPECT_LE(cch, value.capacity());
 }
 
 /*!
@@ -253,7 +253,7 @@ TEST(CNativeW, AssignStringNullLiteral)
  * @brief 加算代入演算子(文字指定)の仕様
  * @remark バッファが確保される
  * @remark 文字列長は演算子呼出前の文字列長+1になる
- * @remark バッファサイズは2以上になる
+ * @remark バッファサイズは連結された文字列を格納できるサイズになる
  */
 TEST(CNativeW, AppendChar)
 {
@@ -263,7 +263,7 @@ TEST(CNativeW, AppendChar)
 	value += sz[0];
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(1, value.GetStringLength());
-	EXPECT_GT(value.capacity(), 1);
+	EXPECT_LE(1, value.capacity());
 }
 
 /*!
@@ -280,7 +280,7 @@ TEST(CNativeW, AppendString)
 	value += sz;
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
-	EXPECT_GT(value.capacity(), cch);
+	EXPECT_LE(cch, value.capacity());
 }
 
 /*!
@@ -540,7 +540,7 @@ TEST(CNativeW, operatorNotEqualStringNull)
  * @brief 独自関数Replaceの仕様
  * @remark バッファが確保される
  * @remark 文字列長は0になる
- * @remark バッファサイズは1以上になる
+ * @remark バッファサイズは空文字列を格納できるサイズになる
  */
 TEST(CNativeW, ReplaceOfNullString)
 {
@@ -548,7 +548,7 @@ TEST(CNativeW, ReplaceOfNullString)
 	value.Replace(L"置換前", L"置換後");
 	ASSERT_STREQ(L"", value.GetStringPtr());
 	EXPECT_EQ(0, value.GetStringLength());
-	EXPECT_GT(value.capacity(), 0);
+	EXPECT_LE(0, value.capacity());
 }
 
 /*!
@@ -600,7 +600,7 @@ TEST(CNativeW, Clear)
 
 	// 1-3. バッファの状態をチェックする
 
-	EXPECT_GT(orgCapacity, 0);						// データ追加後のバッファサイズを確認する
+	EXPECT_LE(0, orgCapacity);						// データ追加後のバッファサイズを確認する
 	EXPECT_EQ(orgLength, fixedPatternLen);			// データ追加後のデータサイズを確認する
 
 	// 2-1. CNativeW をクリアする
