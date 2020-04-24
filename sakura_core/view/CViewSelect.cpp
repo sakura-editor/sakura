@@ -784,7 +784,8 @@ void CViewSelect::PrintSelectionInfoMsg() const
 					pcLayout = pView->m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
 					for( ; nLineNum < nLineTo && pcLayout; ++nLineNum ){
 						//	2006.06.06 ryoji 指定行のデータが存在しない場合の対策
-						select_sum += pcLayout->GetLengthWithEOL() - 1 + pcLayout->GetLayoutEol().GetLen();
+						CLogicInt eolLen = pcLayout->GetLayoutEol().GetLen();
+						select_sum += pcLayout->GetLengthWithEOL() - (eolLen ? 1 : 0) + eolLen;
 						pcLayout = pcLayout->GetNextLayout();
 					}
 
