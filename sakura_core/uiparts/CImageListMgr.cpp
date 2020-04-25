@@ -58,6 +58,24 @@ static void FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORREF clr)
 	::ExtTextOut( hdc, 0, 0, ETO_OPAQUE, &rect, NULL, 0, NULL );
 }
 
+/*! リソースに埋め込まれたmytool.bmpを読み込む
+ */
+static inline
+HBITMAP LoadMyToolFromModule( HINSTANCE hInstance )
+{
+	//	リソースからBitmapを読み込む
+	HANDLE hRscbmp = ::LoadImageW(
+		hInstance,
+		MAKEINTRESOURCE( IDB_MYTOOL ),
+		IMAGE_BITMAP,
+		0,
+		0,
+		LR_CREATEDIBSECTION
+	);
+
+	return (HBITMAP)hRscbmp;
+}
+
 //	Destructor
 CImageListMgr::~CImageListMgr()
 {
@@ -103,9 +121,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 			//	このブロック内は従来の処理
 			//	リソースからBitmapを読み込む
 			//	2003.09.29 wmlhq 環境によってアイコンがつぶれる
-			//hRscbmp = ::LoadBitmap( hInstance, MAKEINTRESOURCE( IDB_MYTOOL ) );
-			hRscbmp = (HBITMAP)::LoadImage( hInstance, MAKEINTRESOURCE( IDB_MYTOOL ), IMAGE_BITMAP, 0, 0,
-				LR_CREATEDIBSECTION /* | LR_LOADMAP3DCOLORS */  );
+			hRscbmp = LoadMyToolFromModule( hInstance );
 			if( hRscbmp == NULL ){
 				//	Oct. 4, 2003 genta エラーコード追加
 				//	正常終了と同じコードだとdcFromを不正に解放してしまう
