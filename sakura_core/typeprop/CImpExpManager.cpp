@@ -661,11 +661,14 @@ bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 				}
 				if( k != -1 )	/* 3文字カラー名からインデックス番号に変換 */
 				{
-					if( 0 < MAX_REGEX_KEYWORDLISTLEN - keywordPos - 1 ){
+					// pKeywordに書き込める残りサイズ(NUL終端分を含む)
+					const size_t cchAvailableSize = MAX_REGEX_KEYWORDLISTLEN - keywordPos;
+
+					if( 0 < cchAvailableSize - 1 ){
 						regexKeyArr[count].m_nColorIndex = k;
-						wcsncpy_s( &pKeyword[keywordPos], std::min<size_t>(MAX_REGEX_KEYWORDLEN, MAX_REGEX_KEYWORDLISTLEN - keywordPos - 1), p, _TRUNCATE );
+						wcsncpy_s( &pKeyword[keywordPos], std::min<size_t>(MAX_REGEX_KEYWORDLEN, cchAvailableSize), p, _TRUNCATE );
 						count++;
-						keywordPos += wcsnlen( &pKeyword[keywordPos], MAX_REGEX_KEYWORDLISTLEN - keywordPos ) + 1;
+						keywordPos += wcsnlen( &pKeyword[keywordPos], cchAvailableSize) + 1;
 					}else{
 						sErrMsg = LS(STR_IMPEXP_REGEX2);
 					}
