@@ -171,9 +171,14 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 
 		// アイコンサイズが異なる場合、拡大縮小する
 		hRscbmp = ResizeToolIcons(dcFrom, hRscbmp, MAX_X, MAX_Y );
-		if ( hRscbmp == NULL ) {
-			nRetPos = 4;
-			break;
+		if ( hRscbmp == NULL ) {	// アイコンの縦横比がおかしくてリサイズできなかった場合
+			DeleteDC( dcFrom );
+			//	リソースからBitmapを読み込む
+			hRscbmp = LoadMyToolFromModule( hInstance );
+			if (hRscbmp == NULL) {
+				nRetPos = 2;
+				break;
+			}
 		}
 
 		// クラスメンバに変更を保存する
