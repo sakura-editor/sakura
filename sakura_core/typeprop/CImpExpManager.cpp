@@ -663,7 +663,7 @@ bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 				{
 					if( 0 < MAX_REGEX_KEYWORDLISTLEN - keywordPos - 1 ){
 						regexKeyArr[count].m_nColorIndex = k;
-						wcsncpy_s( &pKeyword[keywordPos], MAX_REGEX_KEYWORDLISTLEN - keywordPos, p, _TRUNCATE );
+						wcsncpy_s( &pKeyword[keywordPos], std::min<size_t>(MAX_REGEX_KEYWORDLEN, MAX_REGEX_KEYWORDLISTLEN - keywordPos - 1), p, _TRUNCATE );
 						count++;
 						keywordPos += wcsnlen( &pKeyword[keywordPos], MAX_REGEX_KEYWORDLISTLEN - keywordPos ) + 1;
 					}else{
