@@ -661,22 +661,25 @@ bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 				}
 				if( k != -1 )	/* 3文字カラー名からインデックス番号に変換 */
 				{
-					// pKeywordに書き込める上限サイズ(NUL終端分を含む)
-					const size_t cchAvailableSize = MAX_REGEX_KEYWORDLISTLEN - 1 - keywordPos;
-
-					// 書き込み上限を指定して文字列コピーし、処理結果を受け取る
-					const auto ncpyResult = ::wcsncpy_s( &pKeyword[keywordPos], std::min<size_t>( MAX_REGEX_KEYWORDLEN, cchAvailableSize ), p, _TRUNCATE );
-					const auto ncpyLength = ::wcsnlen( &pKeyword[keywordPos], MAX_REGEX_KEYWORDLEN );
-					if( ncpyResult == 0 ){
-						regexKeyArr[count].m_nColorIndex = k;
-						count++;
-						keywordPos += ncpyLength + 1;
-					}else if( ncpyLength + 1 == MAX_REGEX_KEYWORDLEN ){
+					// pに入っている文字列の長さ
+					const auto ncpyLength = ::wcsnlen( p, MAX_REGEX_KEYWORDLEN );
+					if( ncpyLength == MAX_REGEX_KEYWORDLEN ){
 						// L"キーワードが長過ぎるため切り捨てました。"
 						sErrMsg = LS(STR_IMPEXP_REGEX4);
 					}else{
-						// L"キーワード領域がいっぱいなため切り捨てました。"
-						sErrMsg = LS(STR_IMPEXP_REGEX2);
+						// pKeywordに書き込める上限サイズ(NUL終端分を含む)
+						const size_t cchAvailableSize = MAX_REGEX_KEYWORDLISTLEN - 1 - keywordPos;
+
+						// 書き込み上限を指定して文字列コピーし、処理結果を受け取る
+						const auto ncpyResult = ::wcsncpy_s( &pKeyword[keywordPos], std::min<size_t>( MAX_REGEX_KEYWORDLEN, cchAvailableSize ), p, _TRUNCATE );
+						if( ncpyResult == 0 ){
+							regexKeyArr[count].m_nColorIndex = k;
+							count++;
+							keywordPos += ncpyLength + 1;
+						}else{
+							// L"キーワード領域がいっぱいなため切り捨てました。"
+							sErrMsg = LS(STR_IMPEXP_REGEX2);
+						}
 					}
 				}
 			}else{
