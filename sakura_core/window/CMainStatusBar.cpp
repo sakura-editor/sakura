@@ -95,7 +95,7 @@ void CMainStatusBar::DestroyStatusBar()
 void CMainStatusBar::SendStatusMessage2( const WCHAR* msg )
 {
 	if( NULL != m_hwndStatusBar ){
-		SetStatusText(0, SBT_NOBORDERS, msg);
+		SetStatusText(0, SBT_NOBORDERS, msg, SIZE_MAX, false);
 	}
 }
 
@@ -107,7 +107,7 @@ void CMainStatusBar::SendStatusMessage2( const WCHAR* msg )
 	@param pszText [in] 表示テキスト
 	@param textLen [in] 表示テキストの文字数
 */
-void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText, size_t textLen /* = SIZE_MAX */)
+void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText, size_t textLen /* = SIZE_MAX */, bool bSendMessage /* = true */)
 {
 	if( !m_hwndStatusBar ){
 		assert(m_hwndStatusBar != NULL);
@@ -115,7 +115,7 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText
 	}
 	// StatusBar_SetText 関数を呼びだすかどうかを判定するラムダ式
 	// （StatusBar_SetText は SB_SETTEXT メッセージを SendMessage で送信する）
-	[&]() -> bool {
+	bool bNeedsToDraw = [&]() -> bool {
 		// オーナードローの場合は SB_SETTEXT メッセージを無条件に発行するように判定
 		// 本来表示に変化が無い場合には呼び出さない方が表示のちらつきが減るので好ましいが
 		// 判定が難しいので諦める
@@ -157,5 +157,16 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText
 		else{
 			return true;
 		}
-	}() ? StatusBar_SetText( m_hwndStatusBar, nIndex | nOption, pszText ) : 0;
+	}();
+	if (bNeedsToDraw) {
+		if (bSendMessage) {
+			SendMessageW( m_hwndStatusBar, SB_SETTEXT, nIndex | nOption, (LPARAM)pszText );
+		}else {
+			static std::vector<std::vector<wchar_t>> s_buffers(7);
+			std::vector<wchar_t>& buffer = s_buffers[nIndex];
+			buffer.resize(textLen+1);
+			std::copy(pszText, pszText+textLen+1, buffer.begin());
+			PostMessageW( m_hwndStatusBar, SB_SETTEXT, nIndex | nOption, (LPARAM)buffer.data() );
+		}
+	};
 }
