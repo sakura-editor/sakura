@@ -25,6 +25,8 @@
 #pragma once
 
 #include "doc/CDocListener.h"
+#include <array>
+#include <memory>
 
 class CEditWnd;
 
@@ -52,9 +54,10 @@ public:
 	HWND GetProgressHwnd() const{ return m_hwndProgressBar; }
 
 	//設定
-	void SetStatusText(int nIndex, int nOption, const WCHAR* pszText, size_t textLen = SIZE_MAX);
+	void SetStatusText(int nIndex, int nOption, const WCHAR* pszText, size_t textLen = SIZE_MAX, bool bSendMessage = true);
 private:
 	CEditWnd*	m_pOwner;
 	HWND		m_hwndStatusBar;
 	HWND		m_hwndProgressBar;
+	std::array<std::unique_ptr<wchar_t[]>, 7> m_postponeBuffers;
 };
