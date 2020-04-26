@@ -57,4 +57,5 @@ private:
 	CEditWnd*	m_pOwner;
 	HWND		m_hwndStatusBar;
 	HWND		m_hwndProgressBar;
+	std::vector<std::vector<wchar_t>> m_postponeBuffers;
 };
