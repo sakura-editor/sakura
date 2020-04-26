@@ -65,8 +65,8 @@ struct gdiobject_restorer
 	}
 };
 
-//! SelectObjectの戻り値を保持するスマートポインタ型
-typedef std::unique_ptr<std::remove_pointer<HGDIOBJ>::type, gdiobject_restorer> HGdiObjectHolder;
+//! SelectObjectの戻り値を保持しておいて元に戻す、スマートポインタ風の何かの型
+typedef std::unique_ptr<std::remove_pointer<HGDIOBJ>::type, gdiobject_restorer> HGdiObjectRestorer;
 
 /*! コンストラクタ */
 CImageListMgr::CImageListMgr()
@@ -184,8 +184,8 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 	//	単にCreateCompatibleDC(0)で取得したdcや
 	//	スクリーンのDCに対してCreateCompatibleBitmapを
 	//	使うとモノクロBitmapになる．
-	HGdiObjectHolder bmpHolder( ::SelectObject( dcFrom, hRscbmp ), gdiobject_restorer(dcFrom));
-	if( bmpHolder == NULL ){
+	HGdiObjectRestorer bmpRestorer( ::SelectObject( dcFrom, hRscbmp ), gdiobject_restorer(dcFrom));
+	if( bmpRestorer == NULL ){
 		return false;
 	}
 
@@ -201,9 +201,9 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 			return false;
 		}
 
-		// 仮想DCで読み込んだBitmapを選択する
-		bmpHolder = HGdiObjectHolder( ::SelectObject( dcFrom, hRscbmp ), gdiobject_restorer( dcFrom ) );
-		if( bmpHolder == NULL ){
+		// 読み込んだBitmapを選択する
+		bmpRestorer = HGdiObjectRestorer( ::SelectObject( dcFrom, hRscbmp ), gdiobject_restorer( dcFrom ) );
+		if( bmpRestorer == NULL ){
 			return false;
 		}
 
@@ -223,7 +223,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 	m_cy = ::GetSystemMetrics(SM_CYSMICON);
 
 	// hRscBmpをdcFromから切り離す
-	bmpHolder = NULL;
+	bmpRestorer = NULL;
 
 	return true;
 }
