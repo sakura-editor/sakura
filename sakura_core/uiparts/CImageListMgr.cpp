@@ -659,14 +659,11 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 
 	// DIBセクションからサイズを取得する
 	int cx = di.dsBm.bmWidth / cols;
-	//int cy = di.dsBm.bmHeight / rows;
-	//if ( cx != cy ) {
-	//	DEBUG_TRACE( L"tool bitmap size is unexpected." );
-	//	return NULL;
-	//}
-	// 縦のサイズは動的に判定するようにしてみる
-	int cy = cx;
-	rows = di.dsBm.bmHeight / cy;
+	int cy = di.dsBm.bmHeight / rows;
+	if ( cx != cy ) {
+		DEBUG_TRACE( L"tool bitmap size is unexpected." );
+		return NULL;
+	}
 
 	const int cxSmIcon = ::GetSystemMetrics( SM_CXSMICON );
 	const int cySmIcon = ::GetSystemMetrics( SM_CYSMICON );
