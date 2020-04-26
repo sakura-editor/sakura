@@ -657,7 +657,7 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 		HDcHolder dcHolder( ::CreateCompatibleDC( hdcSrc ) );
 		HDC hdcWork = dcHolder.get();
 		HBITMAP bmpWork = ::CreateCompatibleBitmap( hdcSrc, cxSmIcon * cols, cySmIcon * rows );
-		HGDIOBJ bmpWorkOld = ::SelectObject( hdcWork, bmpWork );
+		HGdiObjectRestorer bmpRestorer( ::SelectObject( hdcWork, bmpWork ), gdiobject_restorer( hdcWork ) );
 
 		// 作業DCを透過色で塗りつぶす
 		{
@@ -689,7 +689,7 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 		}
 
 		// 仮想DCで元Bmpを選択して互換Bmpを解放する
-		::SelectObject( hdcWork, bmpWorkOld );
+		bmpRestorer = NULL;
 
 		// ターゲットDCで変換後Bmpを選択する
 		::SelectObject( hdcSrc, bmpWork );
