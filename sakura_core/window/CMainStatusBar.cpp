@@ -113,8 +113,7 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText
 		assert(m_hwndStatusBar != NULL);
 		return;
 	}
-	// StatusBar_SetText 関数を呼びだすかどうかを判定するラムダ式
-	// （StatusBar_SetText は SB_SETTEXT メッセージを SendMessage で送信する）
+	// SB_SETTEXT メッセージを発行するかどうかを判定するラムダ式
 	bool bNeedsToDraw = [&]() -> bool {
 		// オーナードローの場合は SB_SETTEXT メッセージを無条件に発行するように判定
 		// 本来表示に変化が無い場合には呼び出さない方が表示のちらつきが減るので好ましいが
@@ -150,7 +149,7 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText
 			return true;
 		}
 		if( prevTextLen > 0 ){
-			::StatusBar_GetText( m_hwndStatusBar, nIndex, prev );
+			StatusBar_GetText( m_hwndStatusBar, nIndex, prev );
 			// 設定済みの文字列と設定する文字列を比較して異なる場合は、SB_SETTEXT メッセージを発行
 			return (wcscmp(prev, pszText) != 0);
 		}
@@ -160,13 +159,13 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText
 	}();
 	if (bNeedsToDraw) {
 		if (bSendMessage) {
-			SendMessageW( m_hwndStatusBar, SB_SETTEXT, nIndex | nOption, (LPARAM)pszText );
+			::SendMessageW( m_hwndStatusBar, SB_SETTEXT, nIndex | nOption, (LPARAM)pszText );
 		}else {
 			static std::vector<std::vector<wchar_t>> s_buffers(7);
 			std::vector<wchar_t>& buffer = s_buffers[nIndex];
 			buffer.resize(textLen+1);
 			std::copy(pszText, pszText+textLen+1, buffer.begin());
-			PostMessageW( m_hwndStatusBar, SB_SETTEXT, nIndex | nOption, (LPARAM)buffer.data() );
+			::PostMessageW( m_hwndStatusBar, SB_SETTEXT, nIndex | nOption, (LPARAM)buffer.data() );
 		}
 	};
 }
