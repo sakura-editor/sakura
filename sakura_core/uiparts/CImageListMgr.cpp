@@ -34,6 +34,40 @@
 const int MAX_X = MAX_TOOLBAR_ICON_X;
 const int MAX_Y = MAX_TOOLBAR_ICON_Y;	//2002.01.17
 
+/*! CreateCompatibleDCで作成した仮想DCを削除するデリーター
+ */
+struct dc_deleter
+{
+	void operator()( HDC hDC ) const
+	{
+		::DeleteDC( hDC );
+	}
+};
+
+//! 仮想DCを保持するスマートポインタ型
+typedef std::unique_ptr<std::remove_pointer<HDC>::type, dc_deleter> HDcHolder;
+
+
+/*! SelectObjectの戻り値を、DCに再設定する関数クラス
+ */
+struct gdiobject_restorer
+{
+	HDC hDC;
+
+	gdiobject_restorer( HDC hTargetDC )
+		: hDC( hTargetDC )
+	{
+	}
+
+	void operator()( HGDIOBJ hGdiObj ) const
+	{
+		::SelectObject( hDC, hGdiObj );
+	}
+};
+
+//! SelectObjectの戻り値を保持するスマートポインタ型
+typedef std::unique_ptr<std::remove_pointer<HGDIOBJ>::type, gdiobject_restorer> HGdiObjectHolder;
+
 /*! コンストラクタ */
 CImageListMgr::CImageListMgr()
 	: m_cx( 16 ), m_cy( 16 )
@@ -147,14 +181,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 
 		//	透過色を得るためにDCにマップする
 		//	2003.07.21 genta 透過色を得る以外の目的では使わなくなった
-		struct dc_deleter
-		{
-			void operator()( HDC hDC ) const
-			{
-				::DeleteDC( hDC );
-			}
-		};
-		std::unique_ptr<std::remove_pointer<HDC>::type, dc_deleter> dcHolder( ::CreateCompatibleDC(0) );
+		HDcHolder dcHolder( ::CreateCompatibleDC(0) );
 		HDC dcFrom = dcHolder.get();
 		if( dcFrom == NULL ){
 			nRetPos = 1;
@@ -167,22 +194,8 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 		//	単にCreateCompatibleDC(0)で取得したdcや
 		//	スクリーンのDCに対してCreateCompatibleBitmapを
 		//	使うとモノクロBitmapになる．
-		struct bmp_deleter
-		{
-			HDC hDC;
-
-			bmp_deleter( HDC hTargetDC )
-				: hDC( hTargetDC )
-			{
-			}
-
-			void operator()( HBITMAP hBitmap ) const
-			{
-				::SelectObject( hDC, hBitmap );
-			}
-		};
-		std::unique_ptr<std::remove_pointer<HBITMAP>::type, bmp_deleter> bmpHolder( (HBITMAP)::SelectObject( dcFrom, hRscbmp ), bmp_deleter(dcFrom));
-		HBITMAP	hFOldbmp = bmpHolder.get();
+		HGdiObjectHolder bmpHolder( ::SelectObject( dcFrom, hRscbmp ), gdiobject_restorer(dcFrom));
+		HBITMAP	hFOldbmp = (HBITMAP)bmpHolder.get();
 		if( hFOldbmp == NULL ){
 			nRetPos = 4;
 			break;
