@@ -3865,6 +3865,7 @@ BEGIN
 	STR_IMPEXP_REGEX1				"キーワード数が上限に達したため切り捨てました。"
 	STR_IMPEXP_REGEX2				"キーワード領域がいっぱいなため切り捨てました。"
 	STR_IMPEXP_REGEX3				"不正なキーワードを無視しました。"
+	STR_IMPEXP_REGEX4				"キーワードが長過ぎるため切り捨てました。"
 	STR_IMPEXP_DIC_NOTFOUND			"【辞書ファイルが見つかりません】"
 	STR_IMPEXP_DIC_LENGTH			"辞書の説明は%d文字以内にしてください。\n"
 	STR_IMPEXP_DIC_RECORD			"一部のデータが読み込めませんでした\n不正な行数: %d"

@@ -3874,6 +3874,7 @@ BEGIN
 	STR_IMPEXP_REGEX1				"keyword truncated because the number of keywords has reached the upper limit."
 	STR_IMPEXP_REGEX2				"keyword truncated because keyword are is full."
 	STR_IMPEXP_REGEX3				"Ignore invalid keyword."
+	STR_IMPEXP_REGEX4				"keyword truncated because too long."
 	STR_IMPEXP_DIC_NOTFOUND			"<Could not find dict file>"
 	STR_IMPEXP_DIC_LENGTH			"Dictionary file description should be a maximum of %d characters.\n"
 	STR_IMPEXP_DIC_RECORD			"A part of the data couldn't be read\nIncorrect line: %d"
