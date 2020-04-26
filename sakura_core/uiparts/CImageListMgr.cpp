@@ -34,6 +34,19 @@
 const int MAX_X = MAX_TOOLBAR_ICON_X;
 const int MAX_Y = MAX_TOOLBAR_ICON_Y;	//2002.01.17
 
+/*! LoadImageで作成したビットマップを削除するデリーター
+ */
+struct bitmap_deleter
+{
+	void operator()( HBITMAP hBitmap ) const
+	{
+		::DeleteObject( hBitmap );
+	}
+};
+
+//! ビットマップを保持するスマートポインタ型
+typedef std::unique_ptr<std::remove_pointer<HBITMAP>::type, bitmap_deleter> HBitmapHolder;
+
 /*! CreateCompatibleDCで作成した仮想DCを削除するデリーター
  */
 struct dc_deleter
@@ -95,14 +108,14 @@ static void FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORREF clr)
 /*! ローカルファイル my_icons.bmpを読み込む
  */
 static inline
-HBITMAP LoadMyToolFromFile( void )
+HBitmapHolder LoadMyToolFromFile( void )
 {
 	// 2007.05.19 ryoji 設定ファイル優先に変更
 	WCHAR szPath[_MAX_PATH];
 	GetInidirOrExedir( szPath, FN_TOOL_BMP );
 
 	//	2001.7.1 GAE リソースをローカルファイル(sakuraディレクトリ) my_icons.bmp から読めるように
-	HANDLE hRscbmp = ::LoadImage(
+	HANDLE hRscbmp = ::LoadImageW(
 		NULL,
 		szPath,
 		IMAGE_BITMAP,
@@ -111,13 +124,13 @@ HBITMAP LoadMyToolFromFile( void )
 		LR_LOADFROMFILE | LR_CREATEDIBSECTION | LR_LOADMAP3DCOLORS
 	);
 
-	return (HBITMAP)hRscbmp;
+	return HBitmapHolder( (HBITMAP)hRscbmp );
 }
 
 /*! リソースに埋め込まれたmytool.bmpを読み込む
  */
 static inline
-HBITMAP LoadMyToolFromModule( HINSTANCE hInstance )
+HBitmapHolder LoadMyToolFromModule( HINSTANCE hInstance )
 {
 	//	リソースからBitmapを読み込む
 	HANDLE hRscbmp = ::LoadImageW(
@@ -129,7 +142,7 @@ HBITMAP LoadMyToolFromModule( HINSTANCE hInstance )
 		LR_CREATEDIBSECTION
 	);
 
-	return (HBITMAP)hRscbmp;
+	return HBitmapHolder( (HBITMAP)hRscbmp );
 }
 
 //	Destructor
@@ -158,14 +171,13 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 		return true;
 	}
 
-	HBITMAP	hRscbmp = LoadMyToolFromFile();
-
-	if( hRscbmp == NULL ) {	// ローカルファイルの読み込み失敗時はリソースから取得
+	HBitmapHolder bmpHolder = LoadMyToolFromFile();
+	if( bmpHolder == NULL ) {	// ローカルファイルの読み込み失敗時はリソースから取得
 		//	このブロック内は従来の処理
 		//	リソースからBitmapを読み込む
 		//	2003.09.29 wmlhq 環境によってアイコンがつぶれる
-		hRscbmp = LoadMyToolFromModule( hInstance );
-		if( hRscbmp == NULL ){
+		bmpHolder = LoadMyToolFromModule( hInstance );
+		if( bmpHolder == NULL ){
 			return false;
 		}
 	}
@@ -173,8 +185,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 	//	透過色を得るためにDCにマップする
 	//	2003.07.21 genta 透過色を得る以外の目的では使わなくなった
 	HDcHolder dcHolder( ::CreateCompatibleDC(0) );
-	HDC dcFrom = dcHolder.get();
-	if( dcFrom == NULL ){
+	if( dcHolder == NULL ){
 		return false;
 	}
 
@@ -184,6 +195,8 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 	//	単にCreateCompatibleDC(0)で取得したdcや
 	//	スクリーンのDCに対してCreateCompatibleBitmapを
 	//	使うとモノクロBitmapになる．
+	HDC dcFrom = dcHolder.get();
+	HBITMAP	hRscbmp = bmpHolder.get();
 	HGdiObjectRestorer bmpRestorer( ::SelectObject( dcFrom, hRscbmp ), gdiobject_restorer(dcFrom));
 	if( bmpRestorer == NULL ){
 		return false;
@@ -193,15 +206,17 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 	m_cTrans = ::GetPixel( dcFrom, 0, 0 );
 		
 	// アイコンサイズが異なる場合、拡大縮小する
+	hRscbmp = bmpHolder.release();
 	hRscbmp = ResizeToolIcons( dcFrom, hRscbmp, MAX_X, MAX_Y );
 	if ( hRscbmp == NULL ) {	// アイコンの縦横比がおかしくてリサイズできなかった場合
 		// リソースからBitmapを読み込む
-		hRscbmp = LoadMyToolFromModule( hInstance );
-		if( hRscbmp == NULL ){
+		bmpHolder = LoadMyToolFromModule( hInstance );
+		if( bmpHolder == NULL ){
 			return false;
 		}
 
 		// 読み込んだBitmapを選択する
+		hRscbmp = bmpHolder.get();
 		bmpRestorer = HGdiObjectRestorer( ::SelectObject( dcFrom, hRscbmp ), gdiobject_restorer( dcFrom ) );
 		if( bmpRestorer == NULL ){
 			return false;
@@ -211,6 +226,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 		m_cTrans = ::GetPixel( dcFrom, 0, 0 );
 
 		// アイコンサイズが異なる場合、拡大縮小する
+		hRscbmp = bmpHolder.release();
 		hRscbmp = ResizeToolIcons( dcFrom, hRscbmp, MAX_X, MAX_Y );
 		if( hRscbmp == NULL ){
 			return false;
@@ -633,6 +649,9 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 	int rows
 ) const noexcept
 {
+	// 変換元ビットマップをスマートポインタに入れる
+	HBitmapHolder bmpHolder( bmpSrc );
+
 	// DIBセクションを取得する
 	DIBSECTION di = {};
 	if ( !::GetObject( bmpSrc, sizeof( di ), &di ) ) {
@@ -694,14 +713,15 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 		// ターゲットDCで変換後Bmpを選択する
 		::SelectObject( hdcSrc, bmpWork );
 
-		// 変換前Bmpを破棄して入れ替える
-		::DeleteObject( bmpSrc );
+		// 変換前Bmpを破棄する
+		bmpHolder = NULL;
 
 		// 仮想DCはスコープを抜けるときに削除される
 
 		return bmpWork;
 	}
 
+	bmpHolder.release();
 	return bmpSrc;
 }
 
