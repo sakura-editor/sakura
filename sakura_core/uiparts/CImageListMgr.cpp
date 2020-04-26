@@ -58,6 +58,28 @@ static void FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORREF clr)
 	::ExtTextOut( hdc, 0, 0, ETO_OPAQUE, &rect, NULL, 0, NULL );
 }
 
+/*! ローカルファイル my_icons.bmpを読み込む
+ */
+static inline
+HBITMAP LoadMyToolFromFile( void )
+{
+	// 2007.05.19 ryoji 設定ファイル優先に変更
+	WCHAR szPath[_MAX_PATH];
+	GetInidirOrExedir( szPath, FN_TOOL_BMP );
+
+	//	2001.7.1 GAE リソースをローカルファイル(sakuraディレクトリ) my_icons.bmp から読めるように
+	HANDLE hRscbmp = ::LoadImage(
+		NULL,
+		szPath,
+		IMAGE_BITMAP,
+		0,
+		0,
+		LR_LOADFROMFILE | LR_CREATEDIBSECTION | LR_LOADMAP3DCOLORS
+	);
+
+	return (HBITMAP)hRscbmp;
+}
+
 /*! リソースに埋め込まれたmytool.bmpを読み込む
  */
 static inline
@@ -109,13 +131,8 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 
 	nRetPos = 0;
 	do {
-		//	From Here 2001.7.1 GAE
 		//	2001.7.1 GAE リソースをローカルファイル(sakuraディレクトリ) my_icons.bmp から読めるように
-		// 2007.05.19 ryoji 設定ファイル優先に変更
-		WCHAR szPath[_MAX_PATH];
-		GetInidirOrExedir( szPath, FN_TOOL_BMP );
-		hRscbmp = (HBITMAP)::LoadImage( NULL, szPath, IMAGE_BITMAP, 0, 0,
-			LR_LOADFROMFILE | LR_CREATEDIBSECTION | LR_LOADMAP3DCOLORS );
+		hRscbmp = LoadMyToolFromFile();
 
 		if( hRscbmp == NULL ) {	// ローカルファイルの読み込み失敗時はリソースから取得
 			//	このブロック内は従来の処理
@@ -129,7 +146,6 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 				break;
 			}
 		}
-		//	To Here 2001.7.1 GAE
 
 		//	透過色を得るためにDCにマップする
 		//	2003.07.21 genta 透過色を得る以外の目的では使わなくなった
