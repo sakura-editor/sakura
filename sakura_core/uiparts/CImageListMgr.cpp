@@ -158,87 +158,74 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 		return true;
 	}
 
-	HBITMAP	hRscbmp;			//	リソースから読み込んだひとかたまりのBitmap
-	int		nRetPos;			//	後処理用
+	HBITMAP	hRscbmp = LoadMyToolFromFile();
 
-	nRetPos = 0;
-	do {
-		//	2001.7.1 GAE リソースをローカルファイル(sakuraディレクトリ) my_icons.bmp から読めるように
-		hRscbmp = LoadMyToolFromFile();
-
-		if( hRscbmp == NULL ) {	// ローカルファイルの読み込み失敗時はリソースから取得
-			//	このブロック内は従来の処理
-			//	リソースからBitmapを読み込む
-			//	2003.09.29 wmlhq 環境によってアイコンがつぶれる
-			hRscbmp = LoadMyToolFromModule( hInstance );
-			if( hRscbmp == NULL ){
-				//	Oct. 4, 2003 genta エラーコード追加
-				//	正常終了と同じコードだとdcFromを不正に解放してしまう
-				nRetPos = 2;
-				break;
-			}
+	if( hRscbmp == NULL ) {	// ローカルファイルの読み込み失敗時はリソースから取得
+		//	このブロック内は従来の処理
+		//	リソースからBitmapを読み込む
+		//	2003.09.29 wmlhq 環境によってアイコンがつぶれる
+		hRscbmp = LoadMyToolFromModule( hInstance );
+		if( hRscbmp == NULL ){
+			return false;
 		}
-
-		//	透過色を得るためにDCにマップする
-		//	2003.07.21 genta 透過色を得る以外の目的では使わなくなった
-		HDcHolder dcHolder( ::CreateCompatibleDC(0) );
-		HDC dcFrom = dcHolder.get();
-		if( dcFrom == NULL ){
-			nRetPos = 1;
-			break;
-		}
-
-		//	まずbitmapをdcにmapする
-		//	こうすることでCreateCompatibleBitmapで
-		//	hRscbmpと同じ形式のbitmapを作れる．
-		//	単にCreateCompatibleDC(0)で取得したdcや
-		//	スクリーンのDCに対してCreateCompatibleBitmapを
-		//	使うとモノクロBitmapになる．
-		HGdiObjectHolder bmpHolder( ::SelectObject( dcFrom, hRscbmp ), gdiobject_restorer(dcFrom));
-		HBITMAP	hFOldbmp = (HBITMAP)bmpHolder.get();
-		if( hFOldbmp == NULL ){
-			nRetPos = 4;
-			break;
-		}
-
-		m_cTrans = GetPixel( dcFrom, 0, 0 );//	取得した画像の(0,0)の色を背景色として使う
-		
-		// アイコンサイズが異なる場合、拡大縮小する
-		hRscbmp = ResizeToolIcons(dcFrom, hRscbmp, MAX_X, MAX_Y );
-		if ( hRscbmp == NULL ) {	// アイコンの縦横比がおかしくてリサイズできなかった場合
-			DeleteDC( dcFrom );
-			//	リソースからBitmapを読み込む
-			hRscbmp = LoadMyToolFromModule( hInstance );
-			if (hRscbmp == NULL) {
-				nRetPos = 2;
-				break;
-			}
-		}
-
-		// クラスメンバに変更を保存する
-		m_hIconBitmap = hRscbmp;
-		m_cx = ::GetSystemMetrics(SM_CXSMICON);
-		m_cy = ::GetSystemMetrics(SM_CYSMICON);
-
-		// hRscBmpをdcFromから切り離す
-		bmpHolder = NULL;
-
-	} while(0);	//	1回しか通らない. breakでここまで飛ぶ
-
-	//	後処理
-	switch( nRetPos ){
-	case 0:
-		//	Oct. 4, 2003 genta hRscBmpをdcFromから切り離しておく必要がある
-		//	アイコン描画変更時に過って削除されていた
-	case 4:
-	case 2:
-	case 1:
-		//	2003.07.21 genta hRscbmpは m_hIconBitmap としてオブジェクトと
-		//	同じだけ保持されるので解放してはならない
-		break;
 	}
 
-	return nRetPos == 0;
+	//	透過色を得るためにDCにマップする
+	//	2003.07.21 genta 透過色を得る以外の目的では使わなくなった
+	HDcHolder dcHolder( ::CreateCompatibleDC(0) );
+	HDC dcFrom = dcHolder.get();
+	if( dcFrom == NULL ){
+		return false;
+	}
+
+	//	まずbitmapをdcにmapする
+	//	こうすることでCreateCompatibleBitmapで
+	//	hRscbmpと同じ形式のbitmapを作れる．
+	//	単にCreateCompatibleDC(0)で取得したdcや
+	//	スクリーンのDCに対してCreateCompatibleBitmapを
+	//	使うとモノクロBitmapになる．
+	HGdiObjectHolder bmpHolder( ::SelectObject( dcFrom, hRscbmp ), gdiobject_restorer(dcFrom));
+	if( bmpHolder == NULL ){
+		return false;
+	}
+
+	// 取得した画像の(0,0)の色を取得し、背景色として使う
+	m_cTrans = ::GetPixel( dcFrom, 0, 0 );
+		
+	// アイコンサイズが異なる場合、拡大縮小する
+	hRscbmp = ResizeToolIcons( dcFrom, hRscbmp, MAX_X, MAX_Y );
+	if ( hRscbmp == NULL ) {	// アイコンの縦横比がおかしくてリサイズできなかった場合
+		// リソースからBitmapを読み込む
+		hRscbmp = LoadMyToolFromModule( hInstance );
+		if( hRscbmp == NULL ){
+			return false;
+		}
+
+		// 仮想DCで読み込んだBitmapを選択する
+		bmpHolder = HGdiObjectHolder( ::SelectObject( dcFrom, hRscbmp ), gdiobject_restorer( dcFrom ) );
+		if( bmpHolder == NULL ){
+			return false;
+		}
+
+		// 取得した画像の(0,0)の色を取得し、背景色として使う
+		m_cTrans = ::GetPixel( dcFrom, 0, 0 );
+
+		// アイコンサイズが異なる場合、拡大縮小する
+		hRscbmp = ResizeToolIcons( dcFrom, hRscbmp, MAX_X, MAX_Y );
+		if( hRscbmp == NULL ){
+			return false;
+		}
+	}
+
+	// クラスメンバに変更を保存する
+	m_hIconBitmap = hRscbmp;
+	m_cx = ::GetSystemMetrics(SM_CXSMICON);
+	m_cy = ::GetSystemMetrics(SM_CYSMICON);
+
+	// hRscBmpをdcFromから切り離す
+	bmpHolder = NULL;
+
+	return true;
 }
 
 /*! RGBQUADラッパー
