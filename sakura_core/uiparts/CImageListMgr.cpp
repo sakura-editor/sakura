@@ -149,7 +149,15 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 
 		//	透過色を得るためにDCにマップする
 		//	2003.07.21 genta 透過色を得る以外の目的では使わなくなった
-		dcFrom = CreateCompatibleDC(0);	//	転送元用
+		struct dc_deleter
+		{
+			void operator()( HDC hDC ) const
+			{
+				::DeleteDC( hDC );
+			}
+		};
+		std::unique_ptr<std::remove_pointer<HDC>::type, dc_deleter> dcHolder( ::CreateCompatibleDC(0) );
+		dcFrom = dcHolder.get();
 		if( dcFrom == NULL ){
 			nRetPos = 1;
 			break;
@@ -211,7 +219,6 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 		//	アイコン描画変更時に過って削除されていた
 		SelectObject( dcFrom, hFOldbmp );
 	case 4:
-		DeleteDC( dcFrom );
 	case 2:
 	case 1:
 		//	2003.07.21 genta hRscbmpは m_hIconBitmap としてオブジェクトと
