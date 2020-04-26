@@ -120,7 +120,7 @@ protected:
 	void MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
 		int nWidth, int nHeight, int nXSrc, int nYSrc ) const;
 
-	//! ビットマップを一行拡張する
+	//! ツールイメージをリサイズする
 	HBITMAP ResizeToolIcons(HDC hDC, HBITMAP &hRscbmp, int cols, int rows) const noexcept;
 
 	//! ビットマップを一行拡張する
