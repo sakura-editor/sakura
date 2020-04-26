@@ -654,7 +654,8 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 	// アイコンサイズが異なる場合、拡大縮小する
 	if ( cx != cxSmIcon ) {
 		// 作業DCを作成する
-		HDC hdcWork = ::CreateCompatibleDC( hdcSrc );
+		HDcHolder dcHolder( ::CreateCompatibleDC( hdcSrc ) );
+		HDC hdcWork = dcHolder.get();
 		HBITMAP bmpWork = ::CreateCompatibleBitmap( hdcSrc, cxSmIcon * cols, cySmIcon * rows );
 		HGDIOBJ bmpWorkOld = ::SelectObject( hdcWork, bmpWork );
 
@@ -696,8 +697,7 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 		// 変換前Bmpを破棄して入れ替える
 		::DeleteObject( bmpSrc );
 
-		// 仮想DCを削除する
-		::DeleteDC( hdcWork );
+		// 仮想DCはスコープを抜けるときに削除される
 
 		return bmpWork;
 	}
