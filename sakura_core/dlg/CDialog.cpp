@@ -724,7 +724,6 @@ LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			BOOL bShow = Combo_GetDroppedState(hwndCombo);
 			if( bShow ){
 				DeleteItem(hwndCombo, data->pRecent);
-				return 0;
 			}
 		}
 		break;
