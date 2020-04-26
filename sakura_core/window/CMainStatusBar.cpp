@@ -8,7 +8,6 @@ CMainStatusBar::CMainStatusBar(CEditWnd* pOwner)
 : m_pOwner(pOwner)
 , m_hwndStatusBar( NULL )
 , m_hwndProgressBar( NULL )
-, m_postponeBuffers( 7 )
 {
 }
 
@@ -162,9 +161,10 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText
 		if (bSendMessage) {
 			::SendMessageW( m_hwndStatusBar, SB_SETTEXT, nIndex | nOption, (LPARAM)pszText );
 		}else {
-			std::vector<wchar_t>& buffer = m_postponeBuffers[nIndex];
-			buffer.assign(pszText, pszText+textLen+1);
-			::PostMessageW( m_hwndStatusBar, SB_SETTEXT, nIndex | nOption, (LPARAM)buffer.data() );
+			std::unique_ptr<wchar_t[]> p(new wchar_t[textLen+1]);
+			std::copy(pszText, pszText+textLen+1, p.get());
+			::PostMessageW( m_hwndStatusBar, SB_SETTEXT, nIndex | nOption, (LPARAM)p.get() );
+			m_postponeBuffers[nIndex] = std::move(p);
 		}
 	};
 }

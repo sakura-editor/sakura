@@ -25,6 +25,8 @@
 #pragma once
 
 #include "doc/CDocListener.h"
+#include <array>
+#include <memory>
 
 class CEditWnd;
 
@@ -57,5 +59,5 @@ private:
 	CEditWnd*	m_pOwner;
 	HWND		m_hwndStatusBar;
 	HWND		m_hwndProgressBar;
-	std::vector<std::vector<wchar_t>> m_postponeBuffers;
+	std::array<std::unique_ptr<wchar_t[]>, 7> m_postponeBuffers;
 };
