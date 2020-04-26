@@ -128,6 +128,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 				nRetPos = 2;
 				break;
 			}
+FunctionReTryPoint:
 		}
 		//	To Here 2001.7.1 GAE
 
@@ -179,6 +180,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 				nRetPos = 2;
 				break;
 			}
+			goto FunctionReTryPoint;
 		}
 
 		// クラスメンバに変更を保存する
