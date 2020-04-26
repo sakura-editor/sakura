@@ -125,8 +125,6 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 	}
 
 	HBITMAP	hRscbmp;			//	リソースから読み込んだひとかたまりのBitmap
-	HBITMAP	hFOldbmp = NULL;	//	SetObjectで得られた1つ前のハンドルを保持する
-	HDC		dcFrom = 0;			//	描画用
 	int		nRetPos;			//	後処理用
 
 	nRetPos = 0;
@@ -157,7 +155,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 			}
 		};
 		std::unique_ptr<std::remove_pointer<HDC>::type, dc_deleter> dcHolder( ::CreateCompatibleDC(0) );
-		dcFrom = dcHolder.get();
+		HDC dcFrom = dcHolder.get();
 		if( dcFrom == NULL ){
 			nRetPos = 1;
 			break;
@@ -169,7 +167,22 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 		//	単にCreateCompatibleDC(0)で取得したdcや
 		//	スクリーンのDCに対してCreateCompatibleBitmapを
 		//	使うとモノクロBitmapになる．
-		hFOldbmp = (HBITMAP)SelectObject( dcFrom, hRscbmp );
+		struct bmp_deleter
+		{
+			HDC hDC;
+
+			bmp_deleter( HDC hTargetDC )
+				: hDC( hTargetDC )
+			{
+			}
+
+			void operator()( HBITMAP hBitmap ) const
+			{
+				::SelectObject( hDC, hBitmap );
+			}
+		};
+		std::unique_ptr<std::remove_pointer<HBITMAP>::type, bmp_deleter> bmpHolder( (HBITMAP)::SelectObject( dcFrom, hRscbmp ), bmp_deleter(dcFrom));
+		HBITMAP	hFOldbmp = bmpHolder.get();
 		if( hFOldbmp == NULL ){
 			nRetPos = 4;
 			break;
@@ -210,6 +223,9 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 		m_cx = ::GetSystemMetrics(SM_CXSMICON);
 		m_cy = ::GetSystemMetrics(SM_CYSMICON);
 
+		// hRscBmpをdcFromから切り離す
+		bmpHolder = NULL;
+
 	} while(0);	//	1回しか通らない. breakでここまで飛ぶ
 
 	//	後処理
@@ -217,7 +233,6 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 	case 0:
 		//	Oct. 4, 2003 genta hRscBmpをdcFromから切り離しておく必要がある
 		//	アイコン描画変更時に過って削除されていた
-		SelectObject( dcFrom, hFOldbmp );
 	case 4:
 	case 2:
 	case 1:
