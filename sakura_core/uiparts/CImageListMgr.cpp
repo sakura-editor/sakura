@@ -206,8 +206,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 	m_cTrans = ::GetPixel( dcFrom, 0, 0 );
 		
 	// アイコンサイズが異なる場合、拡大縮小する
-	hRscbmp = bmpHolder.release();
-	hRscbmp = ResizeToolIcons( dcFrom, hRscbmp, MAX_X, MAX_Y );
+	hRscbmp = ResizeToolIcons( dcFrom, bmpHolder.release(), MAX_X, MAX_Y );
 	if ( hRscbmp == NULL ) {	// アイコンの縦横比がおかしくてリサイズできなかった場合
 		// リソースからBitmapを読み込む
 		bmpHolder = LoadMyToolFromModule( hInstance );
@@ -226,8 +225,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 		m_cTrans = ::GetPixel( dcFrom, 0, 0 );
 
 		// アイコンサイズが異なる場合、拡大縮小する
-		hRscbmp = bmpHolder.release();
-		hRscbmp = ResizeToolIcons( dcFrom, hRscbmp, MAX_X, MAX_Y );
+		hRscbmp = ResizeToolIcons( dcFrom, bmpHolder.release(), MAX_X, MAX_Y );
 		if( hRscbmp == NULL ){
 			return false;
 		}
@@ -644,7 +642,7 @@ int CImageListMgr::Add( const WCHAR* szPath )
 // ツールイメージをリサイズする
 HBITMAP CImageListMgr::ResizeToolIcons(
 	HDC hdcSrc,
-	HBITMAP &bmpSrc,
+	HBITMAP bmpSrc,
 	int cols,
 	int rows
 ) const noexcept
