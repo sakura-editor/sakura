@@ -101,6 +101,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Link Include="$(SolutionDir)sakura\$(Platform)\$(Configuration)\*.obj" />
+    <Link Include="$(SolutionDir)sakura\$(Platform)\$(Configuration)\*.res" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test-ccommandline.cpp" />
