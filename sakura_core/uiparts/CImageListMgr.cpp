@@ -28,11 +28,9 @@
 #include "debug/CRunningTimer.h"
 #include "sakura_rc.h"
 
-//  2010/06/29 syat MAX_X, MAX_Yの値をCommonSettings.hに移動
-//	Jul. 21, 2003 genta 他でも使うので関数の外に出した
-//	Oct. 21, 2000 JEPRO 設定
-const int MAX_X = MAX_TOOLBAR_ICON_X;
-const int MAX_Y = MAX_TOOLBAR_ICON_Y;	//2002.01.17
+// アイコンBMP（resource/mytool.bmp）ファイルの中のアイコンの横幅と縦幅
+const int TOOLBAR_ICON_FILE_CX = 16;
+const int TOOLBAR_ICON_FILE_CY = 16;
 
 /*! コンストラクタ */
 CImageListMgr::CImageListMgr()
@@ -65,6 +63,66 @@ CImageListMgr::~CImageListMgr()
 	if( m_hIconBitmap != NULL ){
 		DeleteObject( m_hIconBitmap );
 	}
+}
+
+// ツールイメージをリサイズする
+static
+HBITMAP ResizeToolIcons(HDC hdcSrc, HBITMAP &bmpSrc, COLORREF cTrans, int cxSmIcon, int cySmIcon)
+{
+	// DIBセクションを取得する
+	DIBSECTION di = {};
+	if ( !::GetObject( bmpSrc, sizeof( di ), &di ) ) {
+		DEBUG_TRACE( L"GetObject() failed." );
+		return NULL;
+	}
+
+	// 作業DCを作成する
+	HDC hdcWork = ::CreateCompatibleDC( hdcSrc );
+	HBITMAP bmpWork = ::CreateCompatibleBitmap( hdcSrc, cxSmIcon * MAX_TOOLBAR_ICON_COLS, cySmIcon * MAX_TOOLBAR_ICON_ROWS );
+	HGDIOBJ bmpWorkOld = ::SelectObject( hdcWork, bmpWork );
+
+	// 作業DCを透過色で塗りつぶす
+	{
+		HBRUSH hBrush = ::CreateSolidBrush( cTrans );
+		HGDIOBJ hBrushOld = ::SelectObject( hdcWork, hBrush );
+		::PatBlt( hdcWork, 0, 0, cxSmIcon * MAX_TOOLBAR_ICON_COLS, cySmIcon * MAX_TOOLBAR_ICON_ROWS, PATCOPY );
+		::SelectObject( hdcWork, hBrushOld );
+		::DeleteObject( hBrush );
+	}
+
+	// ざっくり拡大縮小すると位置がずれるので1個ずつ変換する
+	for ( int row = 0; row < MAX_TOOLBAR_ICON_ROWS; ++row ) {
+		for ( int col = 0; col < MAX_TOOLBAR_ICON_COLS; ++col ) {
+			// 拡大・縮小する
+			::TransparentBlt(
+				hdcWork,
+				col * cxSmIcon,
+				row * cySmIcon,
+				cxSmIcon,
+				cySmIcon,
+				hdcSrc,
+				col * TOOLBAR_ICON_FILE_CX,
+				row * TOOLBAR_ICON_FILE_CY,
+				TOOLBAR_ICON_FILE_CX,
+				TOOLBAR_ICON_FILE_CY,
+				cTrans
+			);
+		}
+	}
+
+	// 仮想DCで元Bmpを選択して互換Bmpを解放する
+	::SelectObject( hdcWork, bmpWorkOld );
+
+	// ターゲットDCで変換後Bmpを選択する
+	::SelectObject( hdcSrc, bmpWork );
+
+	// 変換前Bmpを破棄して入れ替える
+	::DeleteObject( bmpSrc );
+
+	// 仮想DCを削除する
+	::DeleteDC( hdcWork );
+
+	return bmpWork;
 }
 
 /*
@@ -153,17 +211,20 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 		//	これによって250msecくらい速度が改善される．
 		//---------------------------------------------------------
 
+		m_cx = ::GetSystemMetrics( SM_CXSMICON );
+		m_cy = ::GetSystemMetrics( SM_CYSMICON );
+
 		// アイコンサイズが異なる場合、拡大縮小する
-		hRscbmp = ResizeToolIcons(dcFrom, hRscbmp, MAX_X, MAX_Y );
-		if ( hRscbmp == NULL ) {
-			nRetPos = 4;
-			break;
+		if ( TOOLBAR_ICON_FILE_CX != m_cx ) {
+			hRscbmp = ResizeToolIcons(dcFrom, hRscbmp, m_cTrans, m_cx, m_cy);
+			if ( hRscbmp == NULL ) {
+				nRetPos = 4;
+				break;
+			}
 		}
 
 		// クラスメンバに変更を保存する
 		m_hIconBitmap = hRscbmp;
-		m_cx = ::GetSystemMetrics(SM_CXSMICON);
-		m_cy = ::GetSystemMetrics(SM_CYSMICON);
 
 	} while(0);	//	1回しか通らない. breakでここまで飛ぶ
 
@@ -497,10 +558,10 @@ bool CImageListMgr::DrawToolIcon( HDC drawdc, LONG x, LONG y,
 
 	if ( (fStyle&ILD_MASK) == ILD_MASK ) {
 		MyDitherBlt( drawdc, x, y, cx, cy,
-			(imageNo % MAX_X) * m_cx, (imageNo / MAX_X) * m_cy );
+			(imageNo % MAX_TOOLBAR_ICON_COLS) * m_cx, (imageNo / MAX_TOOLBAR_ICON_COLS) * m_cy );
 	} else {
 		MyBitBlt( drawdc, x, y, cx, cy,
-			(imageNo % MAX_X) * m_cx, (imageNo / MAX_X) * m_cy );
+			(imageNo % MAX_TOOLBAR_ICON_COLS) * m_cx, (imageNo / MAX_TOOLBAR_ICON_COLS) * m_cy );
 	}
 	return true;
 }
@@ -512,7 +573,6 @@ bool CImageListMgr::DrawToolIcon( HDC drawdc, LONG x, LONG y,
 int CImageListMgr::Count() const
 {
 	return m_nIconCount;
-//	return MAX_X * MAX_Y;
 }
 
 /*!
@@ -520,7 +580,7 @@ int CImageListMgr::Count() const
  */
 int CImageListMgr::Add( const WCHAR* szPath )
 {
-	if ( (m_nIconCount % MAX_X) == 0 ) {
+	if ( (m_nIconCount % MAX_TOOLBAR_ICON_COLS) == 0 ) {
 		Extend();
 	}
 
@@ -568,7 +628,7 @@ int CImageListMgr::Add( const WCHAR* szPath )
 	// 作業DCの内容を出力DCに転送
 	HDC hdcDst = ::CreateCompatibleDC( NULL );
 	HGDIOBJ hbmDstOld = ::SelectObject( hdcDst, m_hIconBitmap );
-	::TransparentBlt( hdcDst, (imageNo % MAX_X) * cx(), (imageNo / MAX_X) * cy(), cx(), cy(),
+	::TransparentBlt( hdcDst, (imageNo % MAX_TOOLBAR_ICON_COLS) * cx(), (imageNo / MAX_TOOLBAR_ICON_COLS) * cy(), cx(), cy(),
 		hdcSrc, 0, 0, nWidth, nHeight, cTransParent );
 
 	// 後始末
@@ -582,106 +642,26 @@ int CImageListMgr::Add( const WCHAR* szPath )
 	return imageNo;
 }
 
-// ツールイメージをリサイズする
-HBITMAP CImageListMgr::ResizeToolIcons(
-	HDC hdcSrc,
-	HBITMAP &bmpSrc,
-	int cols,
-	int rows
-) const noexcept
-{
-	// DIBセクションを取得する
-	DIBSECTION di = {};
-	if ( !::GetObject( bmpSrc, sizeof( di ), &di ) ) {
-		DEBUG_TRACE( L"GetObject() failed." );
-		return NULL;
-	}
-
-	// DIBセクションからサイズを取得する
-	int cx = di.dsBm.bmWidth / cols;
-	int cy = di.dsBm.bmHeight / rows;
-	if ( cx != cy ) {
-		DEBUG_TRACE( L"tool bitmap size is unexpected." );
-		return NULL;
-	}
-
-	const int cxSmIcon = ::GetSystemMetrics( SM_CXSMICON );
-	const int cySmIcon = ::GetSystemMetrics( SM_CYSMICON );
-
-	// アイコンサイズが異なる場合、拡大縮小する
-	if ( cx != cxSmIcon ) {
-		// 作業DCを作成する
-		HDC hdcWork = ::CreateCompatibleDC( hdcSrc );
-		HBITMAP bmpWork = ::CreateCompatibleBitmap( hdcSrc, cxSmIcon * cols, cySmIcon * rows );
-		HGDIOBJ bmpWorkOld = ::SelectObject( hdcWork, bmpWork );
-
-		// 作業DCを透過色で塗りつぶす
-		{
-			HBRUSH hBrush = ::CreateSolidBrush( m_cTrans );
-			HGDIOBJ hBrushOld = ::SelectObject( hdcWork, hBrush );
-			::PatBlt( hdcWork, 0, 0, cxSmIcon * cols, cySmIcon * rows, PATCOPY );
-			::SelectObject( hdcWork, hBrushOld );
-			::DeleteObject( hBrush );
-		}
-
-		// ざっくり拡大縮小すると位置がずれるので1個ずつ変換する
-		for ( int row = 0; row < rows; ++row ) {
-			for ( int col = 0; col < cols; ++col ) {
-				// 拡大・縮小する
-				::TransparentBlt(
-					hdcWork,
-					col * cxSmIcon,
-					row * cySmIcon,
-					cxSmIcon,
-					cySmIcon,
-					hdcSrc,
-					col * cx,
-					row * cy,
-					cx,
-					cy,
-					m_cTrans
-				);
-			}
-		}
-
-		// 仮想DCで元Bmpを選択して互換Bmpを解放する
-		::SelectObject( hdcWork, bmpWorkOld );
-
-		// ターゲットDCで変換後Bmpを選択する
-		::SelectObject( hdcSrc, bmpWork );
-
-		// 変換前Bmpを破棄して入れ替える
-		::DeleteObject( bmpSrc );
-
-		// 仮想DCを削除する
-		::DeleteDC( hdcWork );
-
-		return bmpWork;
-	}
-
-	return bmpSrc;
-}
-
-// ビットマップを一行（MAX_X個）拡張する
+// ビットマップを一行（MAX_TOOLBAR_ICON_COLS個）拡張する
 void CImageListMgr::Extend(bool bExtend)
 {
-	int curY = m_nIconCount / MAX_X;
-	if( curY < MAX_Y )
-		curY = MAX_Y;
+	int curY = m_nIconCount / MAX_TOOLBAR_ICON_COLS;
+	if( curY < MAX_TOOLBAR_ICON_ROWS )
+		curY = MAX_TOOLBAR_ICON_ROWS;
 
 	HDC hSrcDC = ::CreateCompatibleDC( 0 );
 	HBITMAP hSrcBmpOld = (HBITMAP)::SelectObject( hSrcDC, m_hIconBitmap );
 
 	//1行拡張したビットマップを作成
 	HDC hDestDC = ::CreateCompatibleDC( hSrcDC );
-	HBITMAP hDestBmp = ::CreateCompatibleBitmap( hSrcDC, MAX_X * cx(), (curY + (bExtend ? 1 : 0)) * cy() );
+	HBITMAP hDestBmp = ::CreateCompatibleBitmap( hSrcDC, MAX_TOOLBAR_ICON_COLS * cx(), (curY + (bExtend ? 1 : 0)) * cy() );
 	HBITMAP hDestBmpOld = (HBITMAP)::SelectObject( hDestDC, hDestBmp );
 
-	::BitBlt( hDestDC, 0, 0, MAX_X * cx(), curY * cy(), hSrcDC, 0, 0, SRCCOPY );
+	::BitBlt( hDestDC, 0, 0, MAX_TOOLBAR_ICON_COLS * cx(), curY * cy(), hSrcDC, 0, 0, SRCCOPY );
 
 	//拡張した部分は透過色で塗る
 	if( bExtend ){
-		FillSolidRect( hDestDC, 0, curY * cy(), MAX_X * cx(), cy(), m_cTrans );
+		FillSolidRect( hDestDC, 0, curY * cy(), MAX_TOOLBAR_ICON_COLS * cx(), cy(), m_cTrans );
 	}
 
 	::SelectObject( hSrcDC, hSrcBmpOld );
