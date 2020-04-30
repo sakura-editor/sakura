@@ -723,6 +723,16 @@ static void DeleteRecentItem(
 		int nSelEnd = 0;
 		Combo_GetEditSel( hwndCombo, nSelStart, nSelEnd );
 
+		// アイテムテキストとエディットテキストが異なる、またはエディットが全選択でなかった場合
+		if ( cItemText != cEditText
+			|| 0 < nSelStart
+			|| nSelEnd < cEditText.GetStringLength()
+			)
+		{
+			// 履歴削除をスキップする
+			return;
+		}
+
 		// コンボボックスのリストアイテム削除
 		Combo_DeleteString( hwndCombo, nIndex );
 
@@ -730,17 +740,6 @@ static void DeleteRecentItem(
 		int nRecentIndex = pRecent->FindItemByText( cItemText.GetStringPtr() );
 		if( 0 <= nRecentIndex ){
 			pRecent->DeleteItem(nRecentIndex);
-		}
-
-		// アイテムテキストとエディットテキストが異なる、またはエディットが全選択でなかった場合
-		if ( cItemText != cEditText
-			|| 0 < nSelStart
-			|| nSelEnd < cEditText.GetStringLength()
-			)
-		{
-			// エディットテキストを復元する
-			Wnd_SetText( hwndCombo, cEditText );
-			Combo_SetEditSel( hwndCombo, nSelStart, nSelEnd );
 		}
 	}
 }
