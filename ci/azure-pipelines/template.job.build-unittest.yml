@@ -49,9 +49,9 @@ jobs:
 #  - script: build-chm.bat
 #    displayName: Build HTML Help
 #
-#  # Build instaler with Inno Setup
+#  # Build installer with Inno Setup
 #  - script: build-installer.bat $(BuildPlatform) $(Configuration)
-#    displayName: Build instaler with Inno Setup
+#    displayName: Build installer with Inno Setup
 
   # zip files for artifacts
   - script: zipArtifacts.bat    $(BuildPlatform) $(Configuration)
