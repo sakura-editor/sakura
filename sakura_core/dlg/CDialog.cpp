@@ -714,13 +714,32 @@ static void DeleteRecentItem(
 	// ドロップダウンリスト内の選択されたテキストを取得
 	CNativeW cItemText;
 	if( Combo_GetLBText( hwndCombo, nIndex, cItemText ) ){
+		// エディットテキストを取得(失敗しても構わないのでエラー処理なし)
+		CNativeW cEditText;
+		Wnd_GetText( hwndCombo, cEditText );
+
+		// コンボボックスのキャレット位置を取得
+		int nSelStart = 0;
+		int nSelEnd = 0;
+		Combo_GetEditSel( hwndCombo, nSelStart, nSelEnd );
+
+		// アイテムテキストとエディットテキストが異なる、またはエディットが全選択でなかった場合
+		if ( cItemText != cEditText
+			|| 0 < nSelStart
+			|| nSelEnd < cEditText.GetStringLength()
+			)
+		{
+			// 履歴削除をスキップする
+			return;
+		}
+
 		// コンボボックスのリストアイテム削除
 		Combo_DeleteString( hwndCombo, nIndex );
 
 		// 履歴項目を削除
 		int nRecentIndex = pRecent->FindItemByText( cItemText.GetStringPtr() );
 		if( 0 <= nRecentIndex ){
-			pRecent->DeleteItem( nRecentIndex );
+			pRecent->DeleteItem(nRecentIndex);
 		}
 	}
 }
