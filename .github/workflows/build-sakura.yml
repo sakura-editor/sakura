@@ -1,0 +1,60 @@
+name: build sakura
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches:
+      - master
+      - feature/*
+
+  pull_request:
+    branches:
+      - master
+      - release/*
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    name: MSBuild
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        config:
+          - Debug
+          - Release
+        platform:
+          - Win32
+          - x64
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.0
+      
+    - name: MSBuild
+      run: build-sln.bat ${{ matrix.platform }} ${{ matrix.config }}
+      shell: cmd
+      
+    - name: Build HTML Help
+      run: build-chm.bat
+      shell: cmd
+      
+    - name: Build installer with Inno Setup
+      run: build-installer.bat ${{ matrix.platform }} ${{ matrix.config }}
+      shell: cmd
+      
+    - name: zipArtifacts
+      run: zipArtifacts.bat ${{ matrix.platform }} ${{ matrix.config }}
+      shell: cmd
+
+    - name: Upload
+      uses: actions/upload-artifact@v2
+      with:
+        name: exe ${{ matrix.platform }} ${{ matrix.config }}
+        path: '*.zip'
