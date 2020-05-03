@@ -15,11 +15,18 @@ bool CColor_Url::BeginColor(const CStringRef& cStr, int nPos)
 {
 	if(!cStr.IsValid())return false;
 
+	// なんかの条件
+	const bool someCondition = _IsPosKeywordHead( cStr, nPos );
+	//　↓
+	// return (nPos == 0 || !IS_KEYWORD_CHAR( cStr.At( nPos - 1 ) ));
+	//　↓
+	// nPos が 行頭、または、nPos の 直前の文字が キーワードに使える文字 でも ユーザー定義キーワード文字 でもない
+
 	int	nUrlLen;
 
-	if( _IsPosKeywordHead(cStr,nPos) /* URLを表示する */
-	 && IsURL( cStr.GetPtr(), nPos, cStr.GetLength(), &nUrlLen )	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
-	){
+	// nPos が URL の先頭である場合
+	if( someCondition && IsURL( cStr.GetPtr(), nPos, cStr.GetLength(), &nUrlLen ) )
+	{
 		this->m_nCOMMENTEND = nPos + nUrlLen;
 		return true;
 	}
