@@ -329,10 +329,10 @@ uchar_t wc_to_c(wchar_t wc)
 
 //@@@ 2002.01.24 Start by MIK
 /*!
-	文字列がURLかどうかを検査する。
-	
-	@retval TRUE URLである
-	@retval FALSE URLでない
+	指定された文字列内の位置が URL の先頭か検査する。
+
+	@retval TRUE  指定された文字列内の位置はURLの先頭である
+	@retval FALSE 指定された文字列はURLでない、または、URLの先頭でない
 	
 	@note 関数内に定義したテーブルは必ず static const 宣言にすること(性能に影響します)。
 		url_char の値は url_table の配列番号+1 になっています。
@@ -342,10 +342,10 @@ uchar_t wc_to_c(wchar_t wc)
 	2007.10.23 kobake UNICODE対応。//$ wchar_t専用のテーブル(または判定ルーチン)を用意したほうが効率は上がるはずです。
 */
 BOOL IsURL(
-	const wchar_t*	pszLine,	//!< [in]  文字列
-	int				offset,	//!< [in]  検査を開始する位置。
-	int				nLineLen,	//!< [in]  文字列の長さ
-	int*			pnMatchLen	//!< [out] URLの長さ。offset からの距離。
+	const wchar_t*	pszLine,	//!< [in]  文字列バッファ(=行データ)の先頭アドレス
+	const int		offset,		//!< [in]  検査を開始する位置。
+	const int		nLineLen,	//!< [in]  文字列バッファの長さ。wchar_tの個数。
+	int*			pnMatchLen	//!< [opt,out] URLの長さを受け取る変数を指すポインタ。wchar_tの個数。省略可能。
 )
 {
 	struct _url_table_t {
@@ -402,6 +402,16 @@ BOOL IsURL(
 	const wchar_t * const end   = pszLine + nLineLen;
 	const struct _url_table_t	*urlp;
 	int	i;
+	int matchedLength = 0;
+
+	// 検査範囲の直前の文字を取得する(offsetが0のときはNUL)
+	const auto prevChar = 0 < offset ? pszLine[offset - 1] : L'\0';
+
+	// offset の 直前の文字が URLに使えない文字 でない場合
+	if( prevChar != L'\0' && url_char[wc_to_c(prevChar)] != 0 ){
+		// URLの先頭とはなりえないのでFALSEを返して抜ける
+		return FALSE;
+	}
 
 	if( wc_to_c(*begin)==0 ) return FALSE;	/* 2バイト文字 */
 	if( 0 < url_char[wc_to_c(*begin)] ){	/* URL開始文字 */
@@ -409,7 +419,9 @@ BOOL IsURL(
 			if( (urlp->length <= end - begin) && (wmemcmp(urlp->name, begin, urlp->length) == 0) ){	/* URLヘッダは一致した */
 				if( urlp->is_mail ){	/* メール専用の解析へ */
 					if( IsMailAddress(begin, urlp->length, end - begin - urlp->length, pnMatchLen) ){
-						*pnMatchLen = *pnMatchLen + urlp->length;
+						if( pnMatchLen != NULL ){
+							*pnMatchLen = *pnMatchLen + urlp->length;
+						}
 						return TRUE;
 					}
 					return FALSE;
@@ -418,15 +430,31 @@ BOOL IsURL(
 					if( wc_to_c(begin[i])==0 || (!(url_char[wc_to_c(begin[i])])) ) break;	/* 終端に達した */
 				}
 				if( i == urlp->length ) return FALSE;	/* URLヘッダだけ */
-				*pnMatchLen = i;
+				if( pnMatchLen != NULL ){
+					*pnMatchLen = i;
+				}
 				return TRUE;
 			}
 		}
 	}
-	return IsMailAddress(pszLine, offset, nLineLen, pnMatchLen);
+
+	// URLヘッダが一致しなかった場合、追加の境界検出を行う
+	if( prevChar != L'\0' && IS_KEYWORD_CHAR( prevChar ) ){
+		// キーワードの先頭とはなりえないのでFALSEを返して抜ける
+		return FALSE;
+	}
+
+	// メールアドレスとして認識できるかチェックする
+	const BOOL isMailAddress = IsMailAddress( pszLine, offset, nLineLen, &matchedLength );
+	if( isMailAddress ){
+		if( pnMatchLen != NULL ){
+			*pnMatchLen = matchedLength;
+		}
+	}
+	return isMailAddress;
 }
 
-/* 現在位置がメールアドレスならば、NULL以外と、その長さを返す
+/* 指定された文字列内の位置が メールアドレス の先頭であるか検査する。
 	@date 2016.04.27 記号類を許可
 */
 BOOL IsMailAddress( const wchar_t* pszBuf, int offset, int nBufLen, int* pnAddressLength )
@@ -437,13 +465,6 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int offset, int nBufLen, int* pnAddre
 			return 0x21 <= ch && ch <= 0x7E && NULL == wcschr(L"\"(),:;<>@[\\]", ch);
 		}
 	} IsValidChar;
-
-/*
-	直前の文字を利用した境界判定
-*/
-	if (0 < offset && IsValidChar(pszBuf[offset-1])) {
-		return FALSE;
-	}
 
 	pszBuf  += offset;
 	nBufLen -= offset;

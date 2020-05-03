@@ -124,13 +124,11 @@ protected:
 	static bool _match_charlist( const WCHAR c, const WCHAR *pszList );
 };
 
-/** 指定アドレスが URL の先頭ならば TRUE とその長さを返す。
+/** 指定された文字列内の位置が URL の先頭か検査する。
     @param[in]  pszLine    文字列バッファの先頭アドレス
-    @param[in]  offset     URL 判定開始文字を示す、pszLine からの相対位置。
-    @param[in]  nLineLen   URL 判定最終文字の次を示す、pszLine からの相対位置。
-    @param[out] pnMatchLen URL の長さを受け取る変数のアドレス。NULL可。長さとは pszLine + offset からの距離。
-
-    境界判定はメールアドレスの先頭でのみ行われ、URL の先頭ではこれまで通り行われません。
+    @param[in]  offset     検査を開始する位置。
+    @param[in]  nLineLen   文字列バッファの長さ。wchar_tの個数。
+    @param[opt,out] pnMatchLen URL の長さを受け取る変数のアドレス。wchar_tの個数。省略可能。
 */
 BOOL IsURL( const wchar_t* pszLine, int offset, int nLineLen, int* pnMatchLen);
 
@@ -142,15 +140,14 @@ BOOL IsURL( const wchar_t* pszLine, int nLineLen, int* pnMatchLen)
 	return IsURL(pszLine, 0, nLineLen, pnMatchLen);
 }
 
-/** 指定アドレスがメールアドレスの先頭ならば TRUE とその長さを返す。
+/** 指定された文字列内の位置が メールアドレス の先頭であるか検査する。
     @param[in]  pszBuf          文字列バッファの先頭アドレス
     @param[in]  offset          メールアドレス判定開始文字を示す、pszBuf からの相対位置。
     @param[in]  nBufLen         メールアドレス判定最終文字の次を示す、pszBuf からの相対位置。
     @param[out] pnAddressLength メールアドレスの長さを受け取る変数のアドレス。NULL可。長さとは pszBuf + offset からの距離。
 
-    正の offset が与えられた場合は、その場合に限り、判定開始位置直前の文字との間で境界判定を行います。
-    途中から切り出したメールアドレスの一部をメールアドレスであると誤って判定しないために
-    pszBuf を固定し offset を０以上の範囲で変化させるのが望ましい使用方法です。
+	この関数は先頭の境界検出を行わないません。
+	この関数は直接呼び出さず、IsURL関数を利用してください。
 */
 BOOL IsMailAddress( const wchar_t* pszBuf, int offset, int nBufLen, int* pnAddressLength);
 
