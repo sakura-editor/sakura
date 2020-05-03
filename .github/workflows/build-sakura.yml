@@ -1,0 +1,84 @@
+name: build sakura
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches:
+      - master
+      - feature/*
+    paths-ignore:
+      - '*.md'
+      - .gitignore
+      - .editorconfig
+      - appveyor.yml
+      - 'azure-pipelines*.yml'
+      - 'ci/azure-pipelines/template*.yml'
+      - '.github/*.md'
+      - '.github/ISSUE_TEMPLATE/*.md'
+
+  pull_request:
+    branches:
+      - master
+      - feature/*
+      - release/*
+    paths-ignore:
+      - '*.md'
+      - .gitignore
+      - .editorconfig
+      - appveyor.yml
+      - 'azure-pipelines*.yml'
+      - 'ci/azure-pipelines/template*.yml'
+      - '.github/*.md'
+      - '.github/ISSUE_TEMPLATE/*.md'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    name: MSBuild
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        config:
+          - Debug
+          - Release
+        platform:
+          - Win32
+          - x64
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    ## see https://github.com/actions/checkout
+    - uses: actions/checkout@v2
+
+    ## see https://github.com/microsoft/setup-msbuild
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.0
+      
+    - name: MSBuild
+      run: build-sln.bat ${{ matrix.platform }} ${{ matrix.config }}
+      shell: cmd
+      
+    ## #922 のため無効化
+    #
+    #- name: Build HTML Help
+    #  run: build-chm.bat
+    #  shell: cmd
+    #  
+    #- name: Build installer with Inno Setup
+    #  run: build-installer.bat ${{ matrix.platform }} ${{ matrix.config }}
+    #  shell: cmd
+      
+    - name: zipArtifacts
+      run: zipArtifacts.bat ${{ matrix.platform }} ${{ matrix.config }}
+      shell: cmd
+
+    ## see https://github.com/actions/upload-artifact
+    - name: Upload
+      uses: actions/upload-artifact@v2
+      with:
+        name: exe ${{ matrix.platform }} ${{ matrix.config }}
+        path: '*.zip'
