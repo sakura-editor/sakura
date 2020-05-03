@@ -419,8 +419,13 @@ BOOL IsURL(
 	// 検査範囲の先頭文字がASCII文字でなければ、URLではないと判定する
 	if( headChar == 0 ) return FALSE;
 
-	if( 0 < url_char[headChar] ){
-		for(urlp = &url_table[url_char[headChar]-1]; urlp->name[0] == headChar; urlp++){	/* URLテーブルを探索 */
+	// 検査範囲の先頭文字に対応するURL種類のテーブルインデックスを取得する
+	const auto urlTypeIndex = url_char[headChar];
+
+	// URL種類のテーブルインデックスを取得できた場合
+	if( 0 < urlTypeIndex ){
+		// URL種類のテーブルインデックスから順番に走査する
+		for(urlp = &url_table[urlTypeIndex-1]; urlp->name[0] == headChar; urlp++ ){	/* URLテーブルを探索 */
 			if( (urlp->length <= end - begin) && (wmemcmp(urlp->name, begin, urlp->length) == 0) ){	/* URLヘッダは一致した */
 				if( urlp->is_mail ){	/* メール専用の解析へ */
 					if( IsMailAddress(begin, urlp->length, end - begin - urlp->length, pnMatchLen) ){
