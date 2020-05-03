@@ -33,8 +33,10 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+    ## see https://github.com/actions/checkout
     - uses: actions/checkout@v2
 
+    ## see https://github.com/microsoft/setup-msbuild
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.0.0
       
@@ -56,6 +58,7 @@ jobs:
       run: zipArtifacts.bat ${{ matrix.platform }} ${{ matrix.config }}
       shell: cmd
 
+    ## see https://github.com/actions/upload-artifact
     - name: Upload
       uses: actions/upload-artifact@v2
       with:
