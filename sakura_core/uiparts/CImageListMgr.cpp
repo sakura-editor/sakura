@@ -103,8 +103,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 	}
 
 	HBITMAP	hRscbmp;			//	リソースから読み込んだひとかたまりのBitmap
-	HBITMAP	hFOldbmp = NULL;	//	SetObjectで得られた1つ前のハンドルを保持する
-	HDC		dcFrom = 0;			//	描画用
+
 	int		nRetPos;			//	後処理用
 
 	nRetPos = 0;
@@ -131,28 +130,6 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 		}
 		//	To Here 2001.7.1 GAE
 
-		//	透過色を得るためにDCにマップする
-		//	2003.07.21 genta 透過色を得る以外の目的では使わなくなった
-		dcFrom = CreateCompatibleDC(0);	//	転送元用
-		if( dcFrom == NULL ){
-			nRetPos = 1;
-			break;
-		}
-
-		//	まずbitmapをdcにmapする
-		//	こうすることでCreateCompatibleBitmapで
-		//	hRscbmpと同じ形式のbitmapを作れる．
-		//	単にCreateCompatibleDC(0)で取得したdcや
-		//	スクリーンのDCに対してCreateCompatibleBitmapを
-		//	使うとモノクロBitmapになる．
-		hFOldbmp = (HBITMAP)SelectObject( dcFrom, hRscbmp );
-		if( hFOldbmp == NULL ){
-			nRetPos = 4;
-			break;
-		}
-
-		m_cTrans = GetPixel( dcFrom, 0, 0 );//	取得した画像の(0,0)の色を背景色として使う
-		
 		//	2003.07.21 genta
 		//	ImageListへの登録部分は当然ばっさり削除
 		
@@ -174,7 +151,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 		m_cy = ::GetSystemMetrics( SM_CYSMICON );
 
 		// アイコンサイズが異なる場合、拡大縮小する
-		hRscbmp = ResizeToolIcons(dcFrom, hRscbmp);
+		hRscbmp = ResizeToolIcons( hRscbmp, m_cTrans );
 		if ( hRscbmp == NULL ) {
 			nRetPos = 4;
 			break;
@@ -190,9 +167,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 	case 0:
 		//	Oct. 4, 2003 genta hRscBmpをdcFromから切り離しておく必要がある
 		//	アイコン描画変更時に過って削除されていた
-		SelectObject( dcFrom, hFOldbmp );
 	case 4:
-		DeleteDC( dcFrom );
 	case 2:
 	case 1:
 		//	2003.07.21 genta hRscbmpは m_hIconBitmap としてオブジェクトと
@@ -602,8 +577,8 @@ int CImageListMgr::Add( const WCHAR* szPath )
 
 // ツールイメージをリサイズする
 HBITMAP CImageListMgr::ResizeToolIcons(
-	HDC hdcSrc,
-	HBITMAP &bmpSrc
+	HBITMAP		bmpSrc,				//!< [in] 変換前Bmpのハンドル
+	COLORREF&	clrTransparent		//!< [out] 透過色
 ) const noexcept
 {
 	// 引数チェック
@@ -653,6 +628,38 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 		return NULL;
 	}
 
+	// 仮想DCを作成
+	HDC hdcSrc = ::CreateCompatibleDC( 0 );	//	転送元用
+	if( hdcSrc == NULL ){
+
+		// 変換前Bmpを削除する
+		::DeleteObject( bmpSrc );
+
+		return NULL;
+	}
+
+	//	まずbitmapをdcにmapする
+	//	こうすることでCreateCompatibleBitmapで
+	//	bmpSrcと同じ形式のbitmapを作れる．
+	//	単にCreateCompatibleDC(0)で取得したdcや
+	//	スクリーンのDCに対してCreateCompatibleBitmapを
+	//	使うとモノクロBitmapになる．
+	HGDIOBJ hFOldbmp = ::SelectObject( hdcSrc, bmpSrc );
+	if( hFOldbmp == NULL ){
+		DEBUG_TRACE( L"SelectObject() failed." );
+
+		// 変換前Bmpを削除する
+		::DeleteObject( bmpSrc );
+
+		// 仮想DCを削除する
+		::DeleteDC( hdcSrc );
+
+		return NULL;
+	}
+
+	//	仮想DC(=変換前Bmp)の(0,0)の色を背景色として使う
+	clrTransparent = ::GetPixel( hdcSrc, 0, 0 );
+		
 	const int cxSmIcon = m_cx;
 	const int cySmIcon = m_cy;
 
@@ -665,7 +672,7 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 
 		// 作業DCを透過色で塗りつぶす
 		{
-			HBRUSH hBrush = ::CreateSolidBrush( m_cTrans );
+			HBRUSH hBrush = ::CreateSolidBrush( clrTransparent );
 			HGDIOBJ hBrushOld = ::SelectObject( hdcWork, hBrush );
 			::PatBlt( hdcWork, 0, 0, cxSmIcon * cols, cySmIcon * rows, PATCOPY );
 			::SelectObject( hdcWork, hBrushOld );
@@ -692,20 +699,29 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 			}
 		}
 
-		// 仮想DCで元Bmpを選択して互換Bmpを解放する
+		// 作業DCで元Bmpを選択して変換後Bmpを解放する
 		::SelectObject( hdcWork, bmpWorkOld );
 
-		// ターゲットDCで変換後Bmpを選択する
-		::SelectObject( hdcSrc, bmpWork );
+		// 作業DCを削除する
+		::DeleteDC( hdcWork );
 
-		// 変換前Bmpを破棄して入れ替える
-		::DeleteObject( bmpSrc );
+		// 仮想DCで元Bmpを選択して変換前Bmpを解放する
+		::SelectObject( hdcSrc, hFOldbmp );
 
 		// 仮想DCを削除する
-		::DeleteDC( hdcWork );
+		::DeleteDC( hdcSrc );
+
+		// 変換前Bmpを削除する
+		::DeleteObject( bmpSrc );
 
 		return bmpWork;
 	}
+
+	// 仮想DCで元Bmpを選択して変換前Bmpを解放する
+	::SelectObject( hdcSrc, hFOldbmp );
+
+	// 仮想DCを削除する
+	::DeleteDC( hdcSrc );
 
 	return bmpSrc;
 }
