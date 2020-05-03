@@ -2,6 +2,8 @@
 #include "StdAfx.h"
 #include "CWordParse.h"
 #include "charset/charcode.h"
+#include <array>
+#include <string>
 
 //@@@ 2001.06.23 N.Nakatani
 /*!
@@ -327,6 +329,54 @@ uchar_t wc_to_c(wchar_t wc)
 	return 0;
 }
 
+/*!
+ * URL(プロトコル)テーブル
+ * テーブル検索を最高速で行うためのもの。
+ * 登録はアルファベット順で行い、追加or削除時は url_table もメンテすること。
+ */
+static constexpr std::array<std::wstring_view, 13> url_table =
+{
+	L"file://",
+	L"ftp://",
+	L"gopher://",
+	L"http://",
+	L"https://",
+	L"mailto:",
+	L"news:",
+	L"nntp://",
+	L"prospero://",
+	L"telnet://",
+	L"tp://",
+	L"ttp://",
+	L"wais://",
+};
+
+static constexpr char urF = 1;	//!< for file:// or ftp://
+static constexpr char urG = 3;	//!< for gopher://
+static constexpr char urH = 4;	//!< for http:// or https://
+static constexpr char urM = 6;	//!< for mailto://
+static constexpr char urN = 7;	//!< for news:// or nntp
+static constexpr char urP = 9;	//!< for prospero://
+static constexpr char urT = 10;	//!< for telnet://
+static constexpr char urW = 13;	//!< for wais://
+
+/* プロトコルヘッダの検索速度を高めるための定義 */
+static constexpr char url_char[] = {
+	/* +0  +1  +2  +3  +4  +5  +6  +7  +8  +9  +A  +B  +C  +D  +E  +F */
+	    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,	/* +00: */
+	    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,	/* +10: */
+	    0, -1,  0, -1, -1, -1, -1,  0,  0,  0,  0, -1, -1, -1, -1, -1,	/* +20: " !"#$%&'()*+,-./" */
+	   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  0, -1,  0, -1,	/* +30: "0123456789:;<=>?" */
+	   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,	/* +40: "@ABCDEFGHIJKLMNO" */
+	   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  0, -1,  0,  0, -1,	/* +50: "PQRSTUVWXYZ[\]^_" */
+	    0, -1, -1, -1, -1, -1,urF,urG,urH, -1, -1, -1, -1,urM,urN, -1,	/* +60: "`abcdefghijklmno" */
+	  urP, -1, -1, -1,urT, -1, -1,urW, -1, -1, -1,  0,  0,  0, -1,  0,	/* +70: "pqrstuvwxyz{|}~ " */
+	/* 0    : not url char
+	 * -1   : url char
+	 * other: url head char --> url_table array number + 1
+	 */
+};
+
 //@@@ 2002.01.24 Start by MIK
 /*!
 	指定された文字列内の位置が URL の先頭か検査する。
@@ -348,61 +398,10 @@ BOOL IsURL(
 	int*			pnMatchLen	//!< [opt,out] URLの長さを受け取る変数を指すポインタ。wchar_tの個数。省略可能。
 )
 {
-	struct _url_table_t {
-		wchar_t	name[12];
-		int		length;
-		bool	is_mail;
-	};
-	static const struct _url_table_t	url_table[] = {
-		/* アルファベット順 */
-		{ L"file://",		7,	false }, /* 1 */
-		{ L"ftp://",		6,	false }, /* 2 */
-		{ L"gopher://",		9,	false }, /* 3 */
-		{ L"http://",		7,	false }, /* 4 */
-		{ L"https://",		8,	false }, /* 5 */
-		{ L"mailto:",		7,	true  }, /* 6 */
-		{ L"news:",			5,	false }, /* 7 */
-		{ L"nntp://",		7,	false }, /* 8 */
-		{ L"prospero://",	11,	false }, /* 9 */
-		{ L"telnet://",		9,	false }, /* 10 */
-		{ L"tp://",			5,	false }, /* 11 */	//2004.02.02
-		{ L"ttp://",		6,	false }, /* 12 */	//2004.02.02
-		{ L"wais://",		7,	false }, /* 13 */
-		{ L"{",				0,	false }  /* 14 */  /* '{' is 'z'+1 : terminate */
-	};
-
-/* テーブルの保守性を高めるための定義 */
-	const char urF = 1;
-	const char urG = 3;
-	const char urH = 4;
-	const char urM = 6;
-	const char urN = 7;
-	const char urP = 9;
-	const char urT = 10;
-	const char urW = 13;	//2004.02.02
-
-	static const char	url_char[] = {
-	  /* +0  +1  +2  +3  +4  +5  +6  +7  +8  +9  +A  +B  +C  +D  +E  +F */
-		  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,	/* +00: */
-		  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,	/* +10: */
-		  0, -1,  0, -1, -1, -1, -1,  0,  0,  0,  0, -1, -1, -1, -1, -1,	/* +20: " !"#$%&'()*+,-./" */
-		 -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  0, -1,  0, -1,	/* +30: "0123456789:;<=>?" */
-		 -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,	/* +40: "@ABCDEFGHIJKLMNO" */
-		 -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  0, -1,  0,  0, -1,	/* +50: "PQRSTUVWXYZ[\]^_" */
-		  0, -1, -1, -1, -1, -1,urF,urG,urH, -1, -1, -1, -1,urM,urN, -1,	/* +60: "`abcdefghijklmno" */
-		urP, -1, -1, -1,urT, -1, -1,urW, -1, -1, -1,  0,  0,  0, -1,  0,	/* +70: "pqrstuvwxyz{|}~ " */
-		/* あと128バイト犠牲にすればif文を2箇所削除できる */
-		/* 0    : not url char
-		 * -1   : url char
-		 * other: url head char --> url_table array number + 1
-		 */
-	};
+	int matchedLength = 0;
 
 	const wchar_t * const begin = pszLine + offset;
 	const wchar_t * const end   = pszLine + nLineLen;
-	const struct _url_table_t	*urlp;
-	int	i;
-	int matchedLength = 0;
 
 	// 検査範囲の直前の文字を取得する(offsetが0のときはNUL)
 	const auto prevChar = 0 < offset ? pszLine[offset - 1] : L'\0';
@@ -416,35 +415,39 @@ BOOL IsURL(
 	// 検査範囲の先頭文字を取得する(ASCII文字でなければNULになる)
 	const auto headChar = wc_to_c( *begin );
 
-	// 検査範囲の先頭文字がASCII文字でなければ、URLではないと判定する
-	if( headChar == 0 ) return FALSE;
-
 	// 検査範囲の先頭文字に対応するURL種類のテーブルインデックスを取得する
 	const auto urlTypeIndex = url_char[headChar];
 
-	// URL種類のテーブルインデックスを取得できた場合
-	if( 0 < urlTypeIndex ){
-		// URL種類のテーブルインデックスから順番に走査する
-		for(urlp = &url_table[urlTypeIndex-1]; urlp->name[0] == headChar; urlp++ ){	/* URLテーブルを探索 */
-			if( (urlp->length <= end - begin) && (wmemcmp(urlp->name, begin, urlp->length) == 0) ){	/* URLヘッダは一致した */
-				if( urlp->is_mail ){	/* メール専用の解析へ */
-					if( IsMailAddress(begin, urlp->length, end - begin - urlp->length, pnMatchLen) ){
-						if( pnMatchLen != NULL ){
-							*pnMatchLen = *pnMatchLen + urlp->length;
-						}
-						return TRUE;
-					}
-					return FALSE;
-				}
-				for(i = urlp->length; i < end - begin; i++){	/* 通常の解析へ */
-					if( wc_to_c(begin[i])==0 || (!(url_char[wc_to_c(begin[i])])) ) break;	/* 終端に達した */
-				}
-				if( i == urlp->length ) return FALSE;	/* URLヘッダだけ */
-				if( pnMatchLen != NULL ){
-					*pnMatchLen = i;
-				}
-				return TRUE;
+	// URLテーブルを走査する
+	const auto tbegin = 0 < urlTypeIndex ? url_table.cbegin() + (urlTypeIndex - 1) : url_table.cend();
+	const auto tend = std::cend( url_table );
+	const auto it = std::find_if( tbegin, tend, [headChar, begin]( const auto& entry )
+	{
+		return entry[0] == headChar && 0 == ::wcsncmp( entry.data(), begin, entry.length() );
+	} );
+
+	// URLヘッダが一致した場合
+	if( it != tend ){
+		const auto& entry = *it;
+		if( urlTypeIndex == urM ){
+			/* メール専用の解析へ */
+			if( !IsMailAddress( begin, (int)entry.length(), end - begin - entry.length(), &matchedLength ) ){
+				return FALSE;
 			}
+			if( pnMatchLen != NULL ){
+				*pnMatchLen = entry.length() + matchedLength;
+			}
+			return TRUE;
+		}else{
+			/* 通常の解析へ */
+			const auto uend = std::find_if( begin + entry.length(), end,
+				[]( const auto& ch ) { return 0 == url_char[wc_to_c( ch )]; } );
+			matchedLength = uend - begin;
+			if( matchedLength == (int)entry.length() ) return FALSE;	/* URLヘッダだけ */
+			if( pnMatchLen != NULL ){
+				*pnMatchLen = matchedLength;
+			}
+			return TRUE;
 		}
 	}
 
