@@ -33,9 +33,9 @@
 #define _APP_NAME_(TYPE) TYPE("sakura")
 
 #ifdef _DEBUG
-#define _APP_NAME_2_(TYPE) TYPE("(デバッグ版)")
+#define _APP_NAME_2_(TYPE) TYPE("テスト (デバッグ版)")
 #else
-#define _APP_NAME_2_(TYPE) TYPE("")
+#define _APP_NAME_2_(TYPE) TYPE("テスト ")
 #endif
 
 #ifdef ALPHA_VERSION
