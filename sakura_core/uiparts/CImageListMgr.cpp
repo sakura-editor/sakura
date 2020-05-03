@@ -153,8 +153,17 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 		// アイコンサイズが異なる場合、拡大縮小する
 		hRscbmp = ResizeToolIcons( hRscbmp, m_cTrans );
 		if ( hRscbmp == NULL ) {
-			nRetPos = 4;
-			break;
+			//	リソースからBitmapを読み込む
+			hRscbmp = LoadMyToolFromModule( hInstance );
+			if( hRscbmp == NULL ){
+				return false;
+			}
+
+			// アイコンサイズが異なる場合、拡大縮小する
+			hRscbmp = ResizeToolIcons( hRscbmp, m_cTrans );
+			if( hRscbmp == NULL ){
+				return false;
+			}
 		}
 
 		// クラスメンバに変更を保存する
