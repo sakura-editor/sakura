@@ -169,6 +169,10 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 		//	これによって250msecくらい速度が改善される．
 		//---------------------------------------------------------
 
+		// システムのスモールアイコンサイズを取得する
+		m_cx = ::GetSystemMetrics( SM_CXSMICON );
+		m_cy = ::GetSystemMetrics( SM_CYSMICON );
+
 		// アイコンサイズが異なる場合、拡大縮小する
 		hRscbmp = ResizeToolIcons(dcFrom, hRscbmp, MAX_X, MAX_Y );
 		if ( hRscbmp == NULL ) {
@@ -178,8 +182,6 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 
 		// クラスメンバに変更を保存する
 		m_hIconBitmap = hRscbmp;
-		m_cx = ::GetSystemMetrics(SM_CXSMICON);
-		m_cy = ::GetSystemMetrics(SM_CYSMICON);
 
 	} while(0);	//	1回しか通らない. breakでここまで飛ぶ
 
@@ -621,8 +623,8 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 		return NULL;
 	}
 
-	const int cxSmIcon = ::GetSystemMetrics( SM_CXSMICON );
-	const int cySmIcon = ::GetSystemMetrics( SM_CYSMICON );
+	const int cxSmIcon = m_cx;
+	const int cySmIcon = m_cy;
 
 	// アイコンサイズが異なる場合、拡大縮小する
 	if ( cx != cxSmIcon ) {
