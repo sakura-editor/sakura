@@ -104,87 +104,64 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 
 	HBITMAP	hRscbmp;			//	リソースから読み込んだひとかたまりのBitmap
 
-	int		nRetPos;			//	後処理用
+	//	From Here 2001.7.1 GAE
+	//	2001.7.1 GAE リソースをローカルファイル(sakuraディレクトリ) my_icons.bmp から読めるように
+	// 2007.05.19 ryoji 設定ファイル優先に変更
+	WCHAR szPath[_MAX_PATH];
+	GetInidirOrExedir( szPath, FN_TOOL_BMP );
+	hRscbmp = (HBITMAP)::LoadImage( NULL, szPath, IMAGE_BITMAP, 0, 0,
+		LR_LOADFROMFILE | LR_CREATEDIBSECTION | LR_LOADMAP3DCOLORS );
 
-	nRetPos = 0;
-	do {
-		//	From Here 2001.7.1 GAE
-		//	2001.7.1 GAE リソースをローカルファイル(sakuraディレクトリ) my_icons.bmp から読めるように
-		// 2007.05.19 ryoji 設定ファイル優先に変更
-		WCHAR szPath[_MAX_PATH];
-		GetInidirOrExedir( szPath, FN_TOOL_BMP );
-		hRscbmp = (HBITMAP)::LoadImage( NULL, szPath, IMAGE_BITMAP, 0, 0,
-			LR_LOADFROMFILE | LR_CREATEDIBSECTION | LR_LOADMAP3DCOLORS );
-
-		if( hRscbmp == NULL ) {	// ローカルファイルの読み込み失敗時はリソースから取得
-			//	このブロック内は従来の処理
-			//	リソースからBitmapを読み込む
-			//	2003.09.29 wmlhq 環境によってアイコンがつぶれる
-			hRscbmp = LoadMyToolFromModule( hInstance );
-			if( hRscbmp == NULL ){
-				//	Oct. 4, 2003 genta エラーコード追加
-				//	正常終了と同じコードだとdcFromを不正に解放してしまう
-				nRetPos = 2;
-				break;
-			}
+	if( hRscbmp == NULL ) {	// ローカルファイルの読み込み失敗時はリソースから取得
+		//	リソースからBitmapを読み込む
+		//	2003.09.29 wmlhq 環境によってアイコンがつぶれる
+		hRscbmp = LoadMyToolFromModule( hInstance );
+		if( hRscbmp == NULL ){
+			return false;
 		}
-		//	To Here 2001.7.1 GAE
+	}
+	//	To Here 2001.7.1 GAE
 
-		//	2003.07.21 genta
-		//	ImageListへの登録部分は当然ばっさり削除
+	//	2003.07.21 genta
+	//	ImageListへの登録部分は当然ばっさり削除
 		
-		//	もはや処理とは無関係だが，後学のためにコメントのみ残しておこう
-		//---------------------------------------------------------
-		//	BitmapがMemoryDCにAssignされている間はbitmapハンドルを
-		//	使っても正しいbitmapが取得できない．
-		//	つまり，DCへの描画命令を発行してもその場でBitmapに
-		//	反映されるわけではない．
-		//	BitmapをDCから取り外して初めて内容の保証ができる
+	//	もはや処理とは無関係だが，後学のためにコメントのみ残しておこう
+	//---------------------------------------------------------
+	//	BitmapがMemoryDCにAssignされている間はbitmapハンドルを
+	//	使っても正しいbitmapが取得できない．
+	//	つまり，DCへの描画命令を発行してもその場でBitmapに
+	//	反映されるわけではない．
+	//	BitmapをDCから取り外して初めて内容の保証ができる
 
-		//	DCのmap/unmapが速度に大きく影響するため，
-		//	横長のBitmapを作って一括登録するように変更
-		//	これによって250msecくらい速度が改善される．
-		//---------------------------------------------------------
+	//	DCのmap/unmapが速度に大きく影響するため，
+	//	横長のBitmapを作って一括登録するように変更
+	//	これによって250msecくらい速度が改善される．
+	//---------------------------------------------------------
 
-		// システムのスモールアイコンサイズを取得する
-		m_cx = ::GetSystemMetrics( SM_CXSMICON );
-		m_cy = ::GetSystemMetrics( SM_CYSMICON );
+	// システムのスモールアイコンサイズを取得する
+	m_cx = ::GetSystemMetrics( SM_CXSMICON );
+	m_cy = ::GetSystemMetrics( SM_CYSMICON );
+
+	// アイコンサイズが異なる場合、拡大縮小する
+	hRscbmp = ResizeToolIcons( hRscbmp, m_cTrans );
+	if( hRscbmp == NULL ){
+		//	リソースからBitmapを読み込む
+		hRscbmp = LoadMyToolFromModule( hInstance );
+		if( hRscbmp == NULL ){
+			return false;
+		}
 
 		// アイコンサイズが異なる場合、拡大縮小する
 		hRscbmp = ResizeToolIcons( hRscbmp, m_cTrans );
-		if ( hRscbmp == NULL ) {
-			//	リソースからBitmapを読み込む
-			hRscbmp = LoadMyToolFromModule( hInstance );
-			if( hRscbmp == NULL ){
-				return false;
-			}
-
-			// アイコンサイズが異なる場合、拡大縮小する
-			hRscbmp = ResizeToolIcons( hRscbmp, m_cTrans );
-			if( hRscbmp == NULL ){
-				return false;
-			}
+		if( hRscbmp == NULL ){
+			return false;
 		}
-
-		// クラスメンバに変更を保存する
-		m_hIconBitmap = hRscbmp;
-
-	} while(0);	//	1回しか通らない. breakでここまで飛ぶ
-
-	//	後処理
-	switch( nRetPos ){
-	case 0:
-		//	Oct. 4, 2003 genta hRscBmpをdcFromから切り離しておく必要がある
-		//	アイコン描画変更時に過って削除されていた
-	case 4:
-	case 2:
-	case 1:
-		//	2003.07.21 genta hRscbmpは m_hIconBitmap としてオブジェクトと
-		//	同じだけ保持されるので解放してはならない
-		break;
 	}
 
-	return nRetPos == 0;
+	// クラスメンバに変更を保存する
+	m_hIconBitmap = hRscbmp;
+
+	return true;
 }
 
 /*! RGBQUADラッパー
