@@ -608,10 +608,20 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 	int rows
 ) const noexcept
 {
+	// 引数チェック
+	if( bmpSrc == NULL ){
+		DEBUG_TRACE( L"tool bitmap is required." );
+		return NULL;
+	}
+
 	// DIBセクションを取得する
 	DIBSECTION di = {};
 	if ( !::GetObject( bmpSrc, sizeof( di ), &di ) ) {
 		DEBUG_TRACE( L"GetObject() failed." );
+
+		// 変換前Bmpを削除する
+		::DeleteObject( bmpSrc );
+
 		return NULL;
 	}
 
@@ -620,6 +630,10 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 	int cy = di.dsBm.bmHeight / rows;
 	if ( cx != cy ) {
 		DEBUG_TRACE( L"tool bitmap size is unexpected." );
+
+		// 変換前Bmpを削除する
+		::DeleteObject( bmpSrc );
+
 		return NULL;
 	}
 
