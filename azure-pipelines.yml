@@ -15,6 +15,7 @@ trigger:
       - "*.md"
       - .github/*.md
       - .github/ISSUE_TEMPLATE/*.md
+      - .github/workflows/*.yml
       - .gitignore
       - .travis.yml
       - appveyor.yml

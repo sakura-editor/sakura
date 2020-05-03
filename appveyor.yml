@@ -23,6 +23,7 @@ skip_commits:
     - 'ci/azure-pipelines/template*.yml'
     - '.github/*.md'
     - '.github/ISSUE_TEMPLATE/*.md'
+    - '.github/workflows/*.yml'
 
 install:
 - cmd: |
