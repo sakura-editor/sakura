@@ -174,7 +174,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 		m_cy = ::GetSystemMetrics( SM_CYSMICON );
 
 		// アイコンサイズが異なる場合、拡大縮小する
-		hRscbmp = ResizeToolIcons(dcFrom, hRscbmp, MAX_X, MAX_Y );
+		hRscbmp = ResizeToolIcons(dcFrom, hRscbmp);
 		if ( hRscbmp == NULL ) {
 			nRetPos = 4;
 			break;
@@ -603,9 +603,7 @@ int CImageListMgr::Add( const WCHAR* szPath )
 // ツールイメージをリサイズする
 HBITMAP CImageListMgr::ResizeToolIcons(
 	HDC hdcSrc,
-	HBITMAP &bmpSrc,
-	int cols,
-	int rows
+	HBITMAP &bmpSrc
 ) const noexcept
 {
 	// 引数チェック
@@ -626,10 +624,28 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 	}
 
 	// DIBセクションからサイズを取得する
-	int cx = di.dsBm.bmWidth / cols;
-	int cy = di.dsBm.bmHeight / rows;
-	if ( cx != cy ) {
-		DEBUG_TRACE( L"tool bitmap size is unexpected." );
+	const auto bmWidth = di.dsBm.bmWidth;
+	const auto bmHeight = di.dsBm.bmHeight;
+
+	// 内部ビットマップの列数/段数は固定。
+	const int cols = MAX_X;
+	const int rows = MAX_Y;
+
+	// ファイル内の列数は「耳あり」想定で余りが出なければ「耳あり」と判定する。
+	const int cx = bmWidth % (cols + 1) == 0 ? bmWidth / (cols + 1) : bmWidth / cols;
+	if( cx < 16 ){
+		DEBUG_TRACE( L"tool bitmap width is too small." );
+
+		// 変換前Bmpを削除する
+		::DeleteObject( bmpSrc );
+
+		return NULL;
+	}
+
+	// ファイル内の段数はチェックしないが、高さがアイコン高さで割り切れないビットマップはサポートしない。
+	const int cy = cx;
+	if( bmHeight % cy ){
+		DEBUG_TRACE( L"tool bitmap height is unsupported." );
 
 		// 変換前Bmpを削除する
 		::DeleteObject( bmpSrc );
