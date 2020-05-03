@@ -129,16 +129,9 @@ protected:
     @param[in]  offset     検査を開始する位置。
     @param[in]  nLineLen   文字列バッファの長さ。wchar_tの個数。
     @param[opt,out] pnMatchLen URL の長さを受け取る変数のアドレス。wchar_tの個数。省略可能。
+	@param[opt,out] pstrUrl アクセス可能なURL文字列を受け取る変数のアドレス。省略可能。
 */
-BOOL IsURL( const wchar_t* pszLine, int offset, int nLineLen, int* pnMatchLen);
-
-/** @deprecated 互換性のために残されています。offset 引数が追加されたものを使用してください。
-*/
-inline
-BOOL IsURL( const wchar_t* pszLine, int nLineLen, int* pnMatchLen)
-{
-	return IsURL(pszLine, 0, nLineLen, pnMatchLen);
-}
+BOOL IsURL( const wchar_t* pszLine, int offset, int nLineLen, int* pnMatchLen, std::wstring* pstrUrl = NULL );
 
 /** 指定された文字列内の位置が メールアドレス の先頭であるか検査する。
     @param[in]  pszBuf          文字列バッファの先頭アドレス

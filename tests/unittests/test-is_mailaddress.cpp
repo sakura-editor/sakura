@@ -240,9 +240,10 @@ TEST(testIsURL, OffsetParameter)
 	   Apply IsURL to the cases.
 	*/
 	for (auto& aCase: testCases) {
+		int nMatchLen = 0;
 		EXPECT_EQ(
 			aCase.expected,
-			bool(IsURL(aCase.buffer(), aCase.offset, BufferEnd - aCase.buffer(), NULL))
+			bool(IsURL(aCase.buffer(), aCase.offset, BufferEnd - aCase.buffer(), &nMatchLen))
 		) << "1st param of IsURL: pszBuf is \"" << aCase.buffer() << "\"\n"
 		  << "2nd param of IsURL: offset is "   << aCase.offset;
 	}

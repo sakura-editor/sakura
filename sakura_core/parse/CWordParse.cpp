@@ -395,7 +395,8 @@ BOOL IsURL(
 	const wchar_t*	pszLine,	//!< [in]  文字列バッファ(=行データ)の先頭アドレス
 	const int		offset,		//!< [in]  検査を開始する位置。
 	const int		nLineLen,	//!< [in]  文字列バッファの長さ。wchar_tの個数。
-	int*			pnMatchLen	//!< [opt,out] URLの長さを受け取る変数を指すポインタ。wchar_tの個数。省略可能。
+	int*			pnMatchLen,	//!< [opt,out] URLの長さを受け取る変数を指すポインタ。wchar_tの個数。省略可能。
+	std::wstring*	pstrUrl		//!< [opt,out] アクセス可能なURL文字列を受け取る変数のアドレス。省略可能。
 )
 {
 	int matchedLength = 0;
@@ -437,6 +438,9 @@ BOOL IsURL(
 			if( pnMatchLen != NULL ){
 				*pnMatchLen = entry.length() + matchedLength;
 			}
+			if( pstrUrl != NULL ){
+				*pstrUrl = std::wstring( begin, matchedLength );
+			}
 			return TRUE;
 		}else{
 			/* 通常の解析へ */
@@ -446,6 +450,15 @@ BOOL IsURL(
 			if( matchedLength == (int)entry.length() ) return FALSE;	/* URLヘッダだけ */
 			if( pnMatchLen != NULL ){
 				*pnMatchLen = matchedLength;
+			}
+			if( pstrUrl != NULL ){
+				if( urlTypeIndex == urT && entry == L"ttp://" ){
+					*pstrUrl = L"h" + std::wstring( begin, matchedLength );
+				}else if( urlTypeIndex == urT && entry == L"tp://" ){
+					*pstrUrl = L"ht" + std::wstring( begin, matchedLength );
+				}else{
+					*pstrUrl = std::wstring( begin, matchedLength );
+				}
 			}
 			return TRUE;
 		}
@@ -462,6 +475,9 @@ BOOL IsURL(
 	if( isMailAddress ){
 		if( pnMatchLen != NULL ){
 			*pnMatchLen = matchedLength;
+		}
+		if( pstrUrl != NULL ){
+			*pstrUrl = L"mailto:" + std::wstring( begin, matchedLength );
 		}
 	}
 	return isMailAddress;

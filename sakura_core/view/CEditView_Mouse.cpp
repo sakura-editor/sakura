@@ -1540,38 +1540,20 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 {
 	CMyPoint ptMouse(_xPos,_yPos);
 
-	CLogicRange		cUrlRange;	// URL範囲
-	std::wstring	strURL;
-	const wchar_t*	pszMailTo = L"mailto:";
-
 	// 2007.10.06 nasukoji	クアドラプルクリック時はチェックしない
 	if(! m_dwTripleClickCheck){
+		CLogicRange		cUrlRange;	// URL範囲
+		std::wstring	strURL;
 		/* カーソル位置にURLが有る場合のその範囲を調べる */
 		if(
 			IsCurrentPositionURL(
 				GetCaret().GetCaretLayoutPos(),	// カーソル位置
-				&cUrlRange,				// URL範囲
-				&strURL				// URL受け取り先
+				&cUrlRange,						// URL範囲
+				&strURL							// URL受け取り先
 			)
 		){
-			std::wstring strOPEN;
-
 			// URLを開く
-		 	// 現在位置がメールアドレスならば、NULL以外と、その長さを返す
-			if( IsMailAddress( strURL.c_str(), strURL.length(), NULL ) ){
-				strOPEN = pszMailTo + strURL;
-			}
-			else{
-				if( wcsnicmp_literal( strURL.c_str(), L"ttp://" ) == 0 ){	//抑止URL
-					strOPEN = L"h" + strURL;
-				}
-				else if( wcsnicmp_literal( strURL.c_str(), L"tp://" ) == 0 ){	//抑止URL
-					strOPEN = L"ht" + strURL;
-				}
-				else{
-					strOPEN = strURL;
-				}
-			}
+			std::wstring strOPEN( strURL );
 			{
 				// URLを開く
 				// 2009.05.21 syat UNCパスだと1分以上無応答になることがあるのでスレッド化

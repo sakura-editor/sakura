@@ -1194,7 +1194,7 @@ void CEditView::MoveCursorSelecting(
 bool CEditView::IsCurrentPositionURL(
 	const CLayoutPoint&	ptCaretPos,		//!< [in]  カーソル位置
 	CLogicRange*		pUrlRange,		//!< [out] URL範囲。ロジック単位。
-	std::wstring*		pstrURL		//!< [out] URL文字列受け取り先。NULLを指定した場合はURL文字列を受け取らない。
+	std::wstring*		pstrURL			//!< [out] URL文字列受け取り先。NULLを指定した場合はURL文字列を受け取らない。
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditView::IsCurrentPositionURL" );
@@ -1242,15 +1242,12 @@ bool CEditView::IsCurrentPositionURL(
 	int			nMatchColor;
 	int			nUrlLen = 0;
 	CLogicInt	i = CLogicInt(t_max(CLogicInt(0), ptXY.GetX2() - _MAX_PATH));	// 2009.05.22 ryoji 200->_MAX_PATH
-	//nLineLen = CLogicInt(__min(nLineLen, ptXY.GetX2() + _MAX_PATH));
 	while( i <= ptXY.GetX2() && i < nLineLen ){
 		bMatch = ( bUseRegexKeyword
 					&& m_cRegexKeyword->RegexIsKeyword( CStringRef(pLine, nLineLen), i, &nUrlLen, &nMatchColor )
 					&& nMatchColor == COLORIDX_URL );
-		if( !bMatch ){
-			bMatch = ( bDispUrl
-						&& (i == 0 || !IS_KEYWORD_CHAR(pLine[i - 1]))	// 2009.05.22 ryoji CColor_Url::BeginColor()と同条件に
-						&& IsURL(&pLine[i], (Int)(nLineLen - i), &nUrlLen) );	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
+		if( !bMatch && bDispUrl ){
+			bMatch = IsURL( pLine, i, nLineLen, &nUrlLen, pstrURL );
 		}
 		if( bMatch ){
 			if( i <= ptXY.GetX2() && ptXY.GetX2() < i + CLogicInt(nUrlLen) ){
