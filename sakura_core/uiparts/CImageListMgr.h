@@ -121,7 +121,7 @@ protected:
 		int nWidth, int nHeight, int nXSrc, int nYSrc ) const;
 
 	//! ツールイメージをリサイズする
-	HBITMAP ResizeToolIcons(HDC hDC, HBITMAP &hRscbmp) const noexcept;
+	HBITMAP ResizeToolIcons( HBITMAP hRscbmp, COLORREF& clrTransparent ) const noexcept;
 
 	//! ビットマップを一行拡張する
 	void Extend(bool = true);
