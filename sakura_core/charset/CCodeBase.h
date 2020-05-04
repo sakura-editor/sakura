@@ -64,7 +64,7 @@ public:
 	virtual EConvertResult UnicodeToHex(const wchar_t* cSrc, const SSIZE_T iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE → Hex 変換
 
 	// 変換エラー処理（１バイト <-> U+D800 から U+D8FF）
-	static int BinToText(const unsigned char *pSrc, const SSIZE_T nLen, unsigned short *pDst);
+	static SSIZE_T BinToText(const unsigned char *pSrc, const SSIZE_T nLen, unsigned short *pDst);
 	static int TextToBin(const unsigned short cSrc);
 
 	// MIME Header デコーダ
@@ -77,7 +77,7 @@ public:
 /*!
 	バイナリ１バイトを U+DC00 から U+DCFF までに対応付ける
 */
-inline int CCodeBase::BinToText( const unsigned char *pSrc, const SSIZE_T nLen, unsigned short *pDst )
+inline SSIZE_T CCodeBase::BinToText( const unsigned char *pSrc, const SSIZE_T nLen, unsigned short *pDst )
 {
 	SSIZE_T i;
 

@@ -39,7 +39,7 @@ EConvertResult CCodeBase::UnicodeToHex(const wchar_t* cSrc, const SSIZE_T iSLen,
 bool CCodeBase::MIMEHeaderDecode( const char* pSrc, const SSIZE_T nSrcLen, CMemory* pcMem, const ECodeType eCodetype )
 {
 	ECodeType ecodetype;
-	int nskip_bytes;
+	SSIZE_T nskip_bytes;
 
 	// ソースを取得
 	pcMem->AllocBuffer( nSrcLen );

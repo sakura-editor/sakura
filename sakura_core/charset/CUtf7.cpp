@@ -11,7 +11,7 @@
 /*!
 	UTF-7 Set D 部分の読み込み。
 */
-int CUtf7::_Utf7SetDToUni_block( const char* pSrc, const int nSrcLen, wchar_t* pDst )
+int CUtf7::_Utf7SetDToUni_block( const char* pSrc, const SSIZE_T nSrcLen, wchar_t* pDst )
 {
 	const char* pr = pSrc;
 	wchar_t* pw = pDst;
@@ -30,7 +30,7 @@ int CUtf7::_Utf7SetDToUni_block( const char* pSrc, const int nSrcLen, wchar_t* p
 /*!
 	UTF-7 Set B 部分の読み込み
 */
-int CUtf7::_Utf7SetBToUni_block( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError )
+int CUtf7::_Utf7SetBToUni_block( const char* pSrc, const SSIZE_T nSrcLen, wchar_t* pDst, bool* pbError )
 {
 	char* pbuf = new (std::nothrow) char[nSrcLen];
 	if (pbuf == NULL) {
@@ -39,7 +39,7 @@ int CUtf7::_Utf7SetBToUni_block( const char* pSrc, const int nSrcLen, wchar_t* p
 		}
 		return 0;
 	}
-	int ndecoded_len = _DecodeBase64( pSrc, nSrcLen, pbuf );
+	SSIZE_T ndecoded_len = _DecodeBase64( pSrc, nSrcLen, pbuf );
 	int nModLen = ndecoded_len % sizeof(wchar_t);
 	ndecoded_len = ndecoded_len - nModLen;
 	CMemory::SwapHLByte( pbuf, ndecoded_len );  // UTF-16 BE を UTF-16 LE に直す
@@ -55,7 +55,7 @@ int CUtf7::_Utf7SetBToUni_block( const char* pSrc, const int nSrcLen, wchar_t* p
 	return ndecoded_len / sizeof(wchar_t);
 }
 
-int CUtf7::Utf7ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError )
+int CUtf7::Utf7ToUni( const char* pSrc, const SSIZE_T nSrcLen, wchar_t* pDst, bool* pbError )
 {
 	const char *pr, *pr_end;
 	char *pr_next;
@@ -140,9 +140,9 @@ EConvertResult CUtf7::UTF7ToUnicode( const CMemory& cSrc, CNativeW* pDstMem )
 	}
 }
 
-int CUtf7::_UniToUtf7SetD_block( const wchar_t* pSrc, const int nSrcLen, char* pDst )
+int CUtf7::_UniToUtf7SetD_block( const wchar_t* pSrc, const SSIZE_T nSrcLen, char* pDst )
 {
-	int i;
+	SSIZE_T i;
 
 	if( nSrcLen < 1 ){
 		return 0;
@@ -155,7 +155,7 @@ int CUtf7::_UniToUtf7SetD_block( const wchar_t* pSrc, const int nSrcLen, char* p
 	return i;
 }
 
-int CUtf7::_UniToUtf7SetB_block( const wchar_t* pSrc, const int nSrcLen, char* pDst )
+int CUtf7::_UniToUtf7SetB_block( const wchar_t* pSrc, const SSIZE_T nSrcLen, char* pDst )
 {
 	char* pw;
 
@@ -185,7 +185,7 @@ int CUtf7::_UniToUtf7SetB_block( const wchar_t* pSrc, const int nSrcLen, char* p
 	return pw - pDst;
 }
 
-int CUtf7::UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst )
+int CUtf7::UniToUtf7( const wchar_t* pSrc, const SSIZE_T nSrcLen, char* pDst )
 {
 	const wchar_t *pr, *pr_base;
 	const wchar_t* pr_end;

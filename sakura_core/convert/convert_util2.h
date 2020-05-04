@@ -594,16 +594,16 @@ enum EEncodingMethod {
 	@return  CMemory と置き換えられる入力文字列長 (nSkipLen)
 */
 template< class CHAR_TYPE >
-int _DecodeMimeHeader( const CHAR_TYPE* pSrc, const SSIZE_T nSrcLen, CMemory* pcMem_alt, ECodeType* peCodetype )
+SSIZE_T _DecodeMimeHeader( const CHAR_TYPE* pSrc, const SSIZE_T nSrcLen, CMemory* pcMem_alt, ECodeType* peCodetype )
 {
 	ECodeType ecode = CODE_NONE;
 	EEncodingMethod emethod = EM_NONE;
-	int nLen_part1, nLen_part2, nskipped_len;
+	SSIZE_T nLen_part1, nLen_part2, nskipped_len;
 	int ncmpresult1, ncmpresult2, ncmpresult;
 
 	const CHAR_TYPE *pr, *pr_base;
 	char* pdst;
-	int ndecoded_len;
+	SSIZE_T ndecoded_len;
 
 	// MIME の該当部分を検出。----------------------------------------
 	//
