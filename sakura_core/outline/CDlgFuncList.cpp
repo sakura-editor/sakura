@@ -2100,14 +2100,12 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 
 BOOL CDlgFuncList::OnNotify(NMHDR* pNMHDR)
 {
-//	UINT_PTR		idCtrl;
 	NM_LISTVIEW*	pnlv;
 	HWND			hwndList;
 	HWND			hwndTree;
 	NM_TREEVIEW*	pnmtv;
 //	int				nLineTo;
 
-//	idCtrl = pNMHDR->idFrom;
 	pnlv = (NM_LISTVIEW*)pNMHDR;
 
 	CEditView* pcEditView=(CEditView*)m_lParam;

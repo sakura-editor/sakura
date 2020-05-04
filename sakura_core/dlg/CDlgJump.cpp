@@ -69,9 +69,9 @@ int CDlgJump::DoModal(
 BOOL CDlgJump::OnNotify(NMHDR* pNMHDR)
 {
 	NM_UPDOWN*		pMNUD;
-	UINT_PTR		idCtrl;
+	int				idCtrl;
 	int				nData;
-	idCtrl = pNMHDR->idFrom;
+	idCtrl = (int)pNMHDR->idFrom;
 	pMNUD  = (NM_UPDOWN*)pNMHDR;
 /* スピンコントロールの処理 */
 	switch( idCtrl ){

@@ -188,9 +188,9 @@ BOOL CDlgPrintSetting::OnNotify(NMHDR* pNMHDR)
 {
 	CDlgInput1		cDlgInput1;
 	NM_UPDOWN*		pMNUD;
-	UINT_PTR		idCtrl;
+	int				idCtrl;
 	BOOL			bSpinDown;
-	idCtrl = pNMHDR->idFrom;
+	idCtrl = (int)pNMHDR->idFrom;
 	pMNUD  = (NM_UPDOWN*)pNMHDR;
 	if( pMNUD->iDelta < 0 ){
 		bSpinDown = FALSE;

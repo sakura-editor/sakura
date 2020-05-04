@@ -333,9 +333,9 @@ BOOL CDlgPluginOption::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 
 BOOL CDlgPluginOption::OnNotify(NMHDR* pNMHDR)
 {
-	UINT_PTR		idCtrl;
+	int			idCtrl;
 
-	idCtrl = pNMHDR->idFrom;
+	idCtrl = (int)pNMHDR->idFrom;
 	switch( idCtrl ){
 	case IDC_LIST_PLUGIN_OPTIONS:
 		switch( pNMHDR->code ){
