@@ -66,7 +66,7 @@ void CNativeW::SetNativeData( const CNativeW& pcNative )
 }
 
 //! (重要：nDataLenは文字単位) バッファサイズの調整。必要に応じて拡大する。
-void CNativeW::AllocStringBuffer( int nDataLen )
+void CNativeW::AllocStringBuffer( SSIZE_T nDataLen )
 {
 	CNative::AllocBuffer(nDataLen * sizeof(wchar_t));
 }

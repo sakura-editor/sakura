@@ -99,7 +99,7 @@ EConvertResult CLatin1::Latin1ToUnicode( const CMemory& cSrc, CNativeW* pDstMem 
 	bool bError;
 
 	//ソース取得
-	int nSrcLen = cSrc.GetRawLength();
+	SSIZE_T nSrcLen = cSrc.GetRawLength();
 	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr() );
 
 	// 変換先バッファサイズを設定してメモリ領域確保

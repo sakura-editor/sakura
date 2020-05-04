@@ -42,7 +42,7 @@ public:
 	void AppendString( const char* pszData, int nLength );  //!< バッファの最後にデータを追加する。nLengthは文字単位。
 	void AppendStringF(const char* pszData, ...);           //!< バッファの最後にデータを追加する (フォーマット機能付き)
 	void AppendNativeData( const CNativeA& pcNative );      //!< バッファの最後にデータを追加する
-	void AllocStringBuffer( int nDataLen );            //!< (重要：nDataLenは文字単位) バッファサイズの調整。必要に応じて拡大する。
+	void AllocStringBuffer(SSIZE_T nDataLen );               //!< (重要：nDataLenは文字単位) バッファサイズの調整。必要に応じて拡大する。
 
 	//ネイティブ取得
 	int GetStringLength() const;

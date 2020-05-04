@@ -79,7 +79,7 @@ EConvertResult CEuc::EUCToUnicode(const CMemory& cSrc, CNativeW* pDstMem)
 	bool bError = false;
 
 	// ソース取得
-	int nSrcLen = cSrc.GetRawLength();
+	SSIZE_T nSrcLen = cSrc.GetRawLength();
 	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr() );
 
 	// 変換先バッファサイズとその確保

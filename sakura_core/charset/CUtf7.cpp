@@ -116,7 +116,7 @@ EConvertResult CUtf7::UTF7ToUnicode( const CMemory& cSrc, CNativeW* pDstMem )
 	bool bError;
 
 	// データ取得
-	int nDataLen = cSrc.GetRawLength();
+	SSIZE_T nDataLen = cSrc.GetRawLength();
 	const char* pData = reinterpret_cast<const char*>( cSrc.GetRawPtr() );
 
 	// 必要なバッファサイズを調べて確保

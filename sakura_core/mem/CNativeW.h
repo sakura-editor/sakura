@@ -80,7 +80,7 @@ public:
 	bool IsValid() const noexcept { return GetStringPtr() != nullptr; }
 
 	//管理
-	void AllocStringBuffer( int nDataLen );                    //!< (重要：nDataLenは文字単位) バッファサイズの調整。必要に応じて拡大する。
+	void AllocStringBuffer( SSIZE_T nDataLen );                    //!< (重要：nDataLenは文字単位) バッファサイズの調整。必要に応じて拡大する。
 
 	//WCHAR
 	void SetString( const wchar_t* pData, int nDataLen );      //!< バッファの内容を置き換える。nDataLenは文字単位。
@@ -119,14 +119,14 @@ public:
 	}
 
 	//特殊
-	void _SetStringLength(int nLength)
+	void _SetStringLength(SSIZE_T nLength)
 	{
 		CNative::_SetRawLength(nLength*sizeof(wchar_t));
 	}
 	//末尾を1文字削る
 	void Chop()
 	{
-		int n = GetStringLength();
+		SSIZE_T n = GetStringLength();
 		n-=1;
 		if(n>=0){
 			_SetStringLength(n);
@@ -135,7 +135,7 @@ public:
 	void swap( CNativeW& left ){
 		CNative::swap(left);
 	}
-	int capacity() const noexcept {
+	SSIZE_T capacity() const noexcept {
 		return CNative::capacity() / sizeof(wchar_t);
 	}
 

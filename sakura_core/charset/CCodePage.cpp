@@ -113,7 +113,7 @@ EConvertResult CCodePage::CPToUnicode(const CMemory& cSrc, CNativeW* pDst, int c
 	bool bError = false;
 
 	// ソース取得
-	int nSrcLen = cSrc.GetRawLength();
+	SSIZE_T nSrcLen = cSrc.GetRawLength();
 	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr() );
 
 	UINT codepage = CodePageExToMSCP(codepageEx);
