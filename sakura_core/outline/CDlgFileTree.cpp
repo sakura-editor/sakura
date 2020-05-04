@@ -937,10 +937,9 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 	return CDialog::OnBnClicked( wID );
 }
 
-BOOL CDlgFileTree::OnNotify( WPARAM wParam, LPARAM lParam )
+BOOL CDlgFileTree::OnNotify(NMHDR* pNMHDR)
 {
-	NMHDR* pNMHDR = (NMHDR*)lParam;
-	TV_DISPINFO* ptdi = (TV_DISPINFO*)lParam;
+	TV_DISPINFO* ptdi = (TV_DISPINFO*)pNMHDR;
 	HWND hwndTree = GetItemHwnd(IDC_TREE_FL);
 	HTREEITEM htiItem;
 
@@ -976,7 +975,7 @@ BOOL CDlgFileTree::OnNotify( WPARAM wParam, LPARAM lParam )
 		}
 	}
 	/* 基底クラスメンバ */
-	return CDialog::OnNotify( wParam, lParam );
+	return CDialog::OnNotify(pNMHDR);
 }
 
 LPVOID CDlgFileTree::GetHelpIdTable( void )

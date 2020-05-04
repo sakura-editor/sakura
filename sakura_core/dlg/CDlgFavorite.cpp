@@ -586,17 +586,15 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 	return CDialog::OnBnClicked( wID );
 }
 
-BOOL CDlgFavorite::OnNotify( WPARAM wParam, LPARAM lParam )
+BOOL CDlgFavorite::OnNotify(NMHDR* pNMHDR)
 {
-	LPNMHDR	lpnmhdr;
 	HWND	hwndTab;
 	HWND	hwndList;
 
 	hwndTab = GetItemHwnd( IDC_TAB_FAVORITE );
-	lpnmhdr = (LPNMHDR) lParam;
-	if( lpnmhdr->hwndFrom == hwndTab )
+	if(pNMHDR->hwndFrom == hwndTab )
 	{
-		switch( lpnmhdr->code )
+		switch(pNMHDR->code )
 		{
 		case TCN_SELCHANGE:
 			TabSelectChange(false);
@@ -605,10 +603,10 @@ BOOL CDlgFavorite::OnNotify( WPARAM wParam, LPARAM lParam )
 		}
 	}else{
 		hwndList = m_aListViewInfo[m_nCurrentTab].hListView;
-		if( hwndList == lpnmhdr->hwndFrom )
+		if( hwndList == pNMHDR->hwndFrom )
 		{
-			NM_LISTVIEW* pnlv = (NM_LISTVIEW*)lParam;
-			switch( lpnmhdr->code )
+			NM_LISTVIEW* pnlv = (NM_LISTVIEW*)pNMHDR;
+			switch(pNMHDR->code )
 			{
 			case NM_DBLCLK:
 				EditItem();
@@ -632,7 +630,7 @@ BOOL CDlgFavorite::OnNotify( WPARAM wParam, LPARAM lParam )
 			
 			// ListViewでDeleteキーが押された:削除
 			case LVN_KEYDOWN:
-				switch( ((NMLVKEYDOWN*)lParam)->wVKey )
+				switch( ((NMLVKEYDOWN*)pNMHDR)->wVKey )
 				{
 				case VK_DELETE:
 					DeleteSelected();
@@ -650,7 +648,7 @@ BOOL CDlgFavorite::OnNotify( WPARAM wParam, LPARAM lParam )
 					return TRUE;
 				}
 				int nIdx = getCtrlKeyState();
-				WORD wKey = ((NMLVKEYDOWN*)lParam)->wVKey;
+				WORD wKey = ((NMLVKEYDOWN*)pNMHDR)->wVKey;
 				if( (wKey == VK_NEXT && nIdx == _CTRL) ){
 					int next = m_nCurrentTab + 1;
 					if( _countof(m_aFavoriteInfo) - 1 <= next ){
@@ -673,7 +671,7 @@ BOOL CDlgFavorite::OnNotify( WPARAM wParam, LPARAM lParam )
 	}
 
 	/* 基底クラスメンバ */
-	return CDialog::OnNotify( wParam, lParam );
+	return CDialog::OnNotify(pNMHDR);
 }
 
 void CDlgFavorite::TabSelectChange(bool bSetFocus)

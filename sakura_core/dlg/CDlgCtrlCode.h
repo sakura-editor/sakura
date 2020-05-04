@@ -58,7 +58,7 @@ private:
 	*/
 	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
 	BOOL	OnBnClicked(int wID) override;
-	BOOL	OnNotify( WPARAM wParam, LPARAM lParam ) override;
+	BOOL	OnNotify(NMHDR* pNMHDR) override;
 	LPVOID	GetHelpIdTable( void ) override;
 
 	void	SetData( void ) override;	/* ダイアログデータの設定 */

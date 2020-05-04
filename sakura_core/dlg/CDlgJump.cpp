@@ -66,13 +66,13 @@ int CDlgJump::DoModal(
 
 // From Here Oct. 6, 2000 JEPRO added 行番号入力ボックスにスピンコントロールを付けるため
 // CDlgPrintSetting.cppのOnNotifyとOnSpin及びCpropComFile.cppのDispatchEvent_p2内のcase WM_NOTIFYを参考にした
-BOOL CDlgJump::OnNotify( WPARAM wParam, LPARAM lParam )
+BOOL CDlgJump::OnNotify(NMHDR* pNMHDR)
 {
 	NM_UPDOWN*		pMNUD;
 	int				idCtrl;
 	int				nData;
-	idCtrl = (int)wParam;
-	pMNUD  = (NM_UPDOWN*)lParam;
+	idCtrl = (int)pNMHDR->idFrom;
+	pMNUD  = (NM_UPDOWN*)pNMHDR;
 /* スピンコントロールの処理 */
 	switch( idCtrl ){
 	case IDC_SPIN_LINENUM:

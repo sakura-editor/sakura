@@ -331,15 +331,13 @@ BOOL CDlgPluginOption::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 }
 
-BOOL CDlgPluginOption::OnNotify( WPARAM wParam, LPARAM lParam )
+BOOL CDlgPluginOption::OnNotify(NMHDR* pNMHDR)
 {
-	NMHDR*		pNMHDR;
 	int			idCtrl;
 
-	idCtrl = (int)wParam;
+	idCtrl = (int)pNMHDR->idFrom;
 	switch( idCtrl ){
 	case IDC_LIST_PLUGIN_OPTIONS:
-		pNMHDR = (NMHDR*)lParam;
 		switch( pNMHDR->code ){
 		case LVN_ITEMCHANGED:
 			ChangeListPosition( );
@@ -355,7 +353,7 @@ BOOL CDlgPluginOption::OnNotify( WPARAM wParam, LPARAM lParam )
 		int			nVal;
 		NM_UPDOWN*	pMNUD;
 		
-		pMNUD  = (NM_UPDOWN*)lParam;
+		pMNUD  = (NM_UPDOWN*)pNMHDR;
 
 		nVal = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_NUM, NULL, TRUE );
 		if( pMNUD->iDelta < 0 ){
@@ -373,7 +371,7 @@ BOOL CDlgPluginOption::OnNotify( WPARAM wParam, LPARAM lParam )
 	}
 
 	/* 基底クラスメンバ */
-	return CDialog::OnNotify( wParam, lParam );
+	return CDialog::OnNotify(pNMHDR);
 }
 
 BOOL CDlgPluginOption::OnBnClicked( int wID )

@@ -2098,26 +2098,22 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 	return CDialog::OnBnClicked( wID );
 }
 
-BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
+BOOL CDlgFuncList::OnNotify(NMHDR* pNMHDR)
 {
-//	int				idCtrl;
-	LPNMHDR			pnmh;
 	NM_LISTVIEW*	pnlv;
 	HWND			hwndList;
 	HWND			hwndTree;
 	NM_TREEVIEW*	pnmtv;
 //	int				nLineTo;
 
-//	idCtrl = (int) wParam;
-	pnmh = (LPNMHDR) lParam;
-	pnlv = (NM_LISTVIEW*)lParam;
+	pnlv = (NM_LISTVIEW*)pNMHDR;
 
 	CEditView* pcEditView=(CEditView*)m_lParam;
 	hwndList = GetItemHwnd( IDC_LIST_FL );
 	hwndTree = GetItemHwnd( IDC_TREE_FL );
 
-	if( hwndTree == pnmh->hwndFrom ){
-		pnmtv = (NM_TREEVIEW *) lParam;
+	if( hwndTree == pNMHDR->hwndFrom ){
+		pnmtv = (NM_TREEVIEW *)pNMHDR;
 		switch( pnmtv->hdr.code ){
 		case NM_CLICK:
 			if( IsDocking() ){
@@ -2141,11 +2137,11 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 			return TRUE;
 			//return OnJump();
 		case TVN_KEYDOWN:
-			if( ((TV_KEYDOWN *)lParam)->wVKey == VK_SPACE ){
+			if( ((TV_KEYDOWN *)pNMHDR)->wVKey == VK_SPACE ){
 				OnJump( false );
 				return TRUE;
 			}
-			Key2Command( ((TV_KEYDOWN *)lParam)->wVKey );
+			Key2Command( ((TV_KEYDOWN *)pNMHDR)->wVKey );
 			return TRUE;
 		case NM_KILLFOCUS:
 			// 2002.02.16 hor Treeのダブルクリックでフォーカス移動できるように 4/4
@@ -2158,8 +2154,8 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 			return TRUE;
 		}
 	}else
-	if( hwndList == pnmh->hwndFrom ){
-		switch( pnmh->code ){
+	if( hwndList == pNMHDR->hwndFrom ){
+		switch(pNMHDR->code ){
 		case LVN_COLUMNCLICK:
 //			MYTRACE( L"LVN_COLUMNCLICK\n" );
 			m_nSortCol =  pnlv->iSubItem;
@@ -2188,20 +2184,20 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 				OnJump();
 			return TRUE;
 		case LVN_KEYDOWN:
-			if( ((LV_KEYDOWN *)lParam)->wVKey == VK_SPACE ){
+			if( ((LV_KEYDOWN *)pNMHDR)->wVKey == VK_SPACE ){
 				OnJump( false );
 				return TRUE;
 			}
-			Key2Command( ((LV_KEYDOWN *)lParam)->wVKey );
+			Key2Command( ((LV_KEYDOWN *)pNMHDR)->wVKey );
 			return TRUE;
 		}
 	}
 
 #ifdef DEFINE_SYNCCOLOR
 	if( IsDocking() ){
-		if( hwndList == pnmh->hwndFrom || hwndTree == pnmh->hwndFrom ){
-			if( pnmh->code == NM_CUSTOMDRAW ){
-				LPNMCUSTOMDRAW lpnmcd = (LPNMCUSTOMDRAW)lParam;
+		if( hwndList == pNMHDR->hwndFrom || hwndTree == pNMHDR->hwndFrom ){
+			if(pNMHDR->code == NM_CUSTOMDRAW ){
+				LPNMCUSTOMDRAW lpnmcd = (LPNMCUSTOMDRAW)pNMHDR;
 				switch( lpnmcd->dwDrawStage ){
 				case CDDS_PREPAINT:
 					::SetWindowLongPtr( GetHwnd(), DWLP_MSGRESULT, CDRF_NOTIFYITEMDRAW );
@@ -2211,7 +2207,7 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 						const STypeConfig	*TypeDataPtr = &(pcEditView->m_pcEditDoc->m_cDocType.GetDocumentAttribute());
 						COLORREF clrText = TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
 						COLORREF clrTextBk = TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK;
-						if( hwndList == pnmh->hwndFrom ){
+						if( hwndList == pNMHDR->hwndFrom ){
 							//if( lpnmcd->uItemState & CDIS_SELECTED ){	// 非選択のアイテムもすべて CDIS_SELECTED で来る？
 							if( ListView_GetItemState( hwndList, lpnmcd->dwItemSpec, LVIS_SELECTED ) ){
 								((LPNMLVCUSTOMDRAW)lpnmcd)->clrText = clrText ^ RGB(255, 255, 255);

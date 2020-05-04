@@ -39,7 +39,7 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	BOOL OnNotify(WPARAM wParam, LPARAM lParam) override;	//	Oct. 6, 2000 JEPRO added for Spin control
+	BOOL OnNotify(NMHDR* pNMHDR) override;	//	Oct. 6, 2000 JEPRO added for Spin control
 	BOOL OnCbnSelChange(HWND hwndCtl, int wID) override;
 	BOOL OnBnClicked(int wID) override;
 	BOOL OnEnSetFocus(HWND hwndCtl, int wID) override;

@@ -66,7 +66,7 @@ protected:
 	int GetData( void ) override;	/* ダイアログデータの取得 */
 	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
 	BOOL OnDestroy( void ) override;
-	BOOL OnNotify(WPARAM wParam, LPARAM lParam) override;
+	BOOL OnNotify(NMHDR* pNMHDR) override;
 	BOOL OnCbnSelChange(HWND hwndCtl, int wID) override;
 	BOOL OnBnClicked(int wID) override;
 	BOOL OnStnClicked(int wID) override;

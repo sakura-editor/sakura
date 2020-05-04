@@ -395,7 +395,7 @@ INT_PTR CDialog::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 	case WM_INITDIALOG:	return OnInitDialog( hwndDlg, wParam, lParam );
 	case WM_DESTROY:	return OnDestroy();
 	case WM_COMMAND:	return OnCommand( wParam, lParam );
-	case WM_NOTIFY:		return OnNotify( wParam, lParam );
+	case WM_NOTIFY:		return OnNotify( (NMHDR*)lParam );
 	case WM_SIZE:
 		m_hWnd = hwndDlg;
 		return OnSize( wParam, lParam );
