@@ -119,7 +119,7 @@ public:
 protected:
 	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
 	BOOL OnBnClicked(int wID) override;
-	BOOL OnNotify(WPARAM wParam, LPARAM lParam) override;
+	BOOL OnNotify(NMHDR* pNMHDR) override;
 	BOOL OnSize( WPARAM wParam, LPARAM lParam ) override;
 	BOOL OnMinMaxInfo( LPARAM lParam );
 	BOOL OnDestroy(void) override; // 20060201 aroka

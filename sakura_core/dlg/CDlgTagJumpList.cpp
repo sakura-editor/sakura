@@ -631,13 +631,9 @@ BOOL CDlgTagJumpList::OnMinMaxInfo( LPARAM lParam )
 	return 0;
 }
 
-BOOL CDlgTagJumpList::OnNotify( WPARAM wParam, LPARAM lParam )
+BOOL CDlgTagJumpList::OnNotify(NMHDR* pNMHDR)
 {
-	NMHDR*	pNMHDR;
 	HWND	hwndList;
-
-	pNMHDR = (NMHDR*)lParam;
-
 	hwndList = GetItemHwnd( IDC_LIST_TAGJUMP );
 
 	//	候補一覧リストボックス
@@ -653,7 +649,7 @@ BOOL CDlgTagJumpList::OnNotify( WPARAM wParam, LPARAM lParam )
 	}
 
 	/* 基底クラスメンバ */
-	return CDialog::OnNotify( wParam, lParam );
+	return CDialog::OnNotify(pNMHDR);
 }
 
 /*!
