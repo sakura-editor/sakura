@@ -832,7 +832,7 @@ void CCaret::ShowCaretPosInfo()
 		}
 
 		auto& statusBar = m_pEditDoc->m_pcEditWnd->m_cStatusBar;
-		::SendMessage(statusBar.GetStatusHwnd(), WM_SETREDRAW, (WPARAM)FALSE, 0);
+
 		if( m_bClearStatus ){
 			statusBar.SetStatusText( 0, SBT_NOBORDERS, L"" );
 		}
@@ -846,8 +846,6 @@ void CCaret::ShowCaretPosInfo()
 		statusBar.SetStatusText( 4, 0,             pszCodeName );
 		statusBar.SetStatusText( 5, SBT_OWNERDRAW, L"" );
 		statusBar.SetStatusText( 6, 0,             szText_6 );
-		::SendMessage(statusBar.GetStatusHwnd(), WM_SETREDRAW, (WPARAM)TRUE, 0);
-		::RedrawWindow(statusBar.GetStatusHwnd(), NULL, NULL, RDW_ERASE | RDW_FRAME | RDW_INVALIDATE | RDW_ALLCHILDREN);
 	}
 }
 
