@@ -211,10 +211,10 @@ private:
 
 //左辺がint等の場合の演算子
 #define STRICTINT_LEFT_INT_CMP(TYPE) \
-	template <int N,bool B0,bool B1,bool B2,bool B3> inline bool operator <  (TYPE lhs, const CStrictInteger<N,B0,B1,B2,B3>& rhs){ return rhs>=lhs; } \
-	template <int N,bool B0,bool B1,bool B2,bool B3> inline bool operator <= (TYPE lhs, const CStrictInteger<N,B0,B1,B2,B3>& rhs){ return rhs> lhs; } \
-	template <int N,bool B0,bool B1,bool B2,bool B3> inline bool operator >  (TYPE lhs, const CStrictInteger<N,B0,B1,B2,B3>& rhs){ return rhs<=lhs; } \
-	template <int N,bool B0,bool B1,bool B2,bool B3> inline bool operator >= (TYPE lhs, const CStrictInteger<N,B0,B1,B2,B3>& rhs){ return rhs< lhs; } \
+	template <int N,bool B0,bool B1,bool B2,bool B3> inline bool operator <  (TYPE lhs, const CStrictInteger<N,B0,B1,B2,B3>& rhs){ return rhs> lhs; } \
+	template <int N,bool B0,bool B1,bool B2,bool B3> inline bool operator <= (TYPE lhs, const CStrictInteger<N,B0,B1,B2,B3>& rhs){ return rhs>=lhs; } \
+	template <int N,bool B0,bool B1,bool B2,bool B3> inline bool operator >  (TYPE lhs, const CStrictInteger<N,B0,B1,B2,B3>& rhs){ return rhs< lhs; } \
+	template <int N,bool B0,bool B1,bool B2,bool B3> inline bool operator >= (TYPE lhs, const CStrictInteger<N,B0,B1,B2,B3>& rhs){ return rhs<=lhs; } \
 	template <int N,bool B0,bool B1,bool B2,bool B3> inline bool operator == (TYPE lhs, const CStrictInteger<N,B0,B1,B2,B3>& rhs){ return rhs==lhs; } \
 	template <int N,bool B0,bool B1,bool B2,bool B3> inline bool operator != (TYPE lhs, const CStrictInteger<N,B0,B1,B2,B3>& rhs){ return rhs!=lhs; } \
 	template <int N,bool B0,bool B1,bool B2,bool B3> inline CStrictInteger<N,B0,B1,B2,B3> operator + (TYPE lhs, const CStrictInteger<N,B0,B1,B2,B3>& rhs){ return  rhs+lhs; } \
