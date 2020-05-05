@@ -31,6 +31,7 @@
 #include <tchar.h>
 #include <Windows.h>
 
+#include "basis/CStrictInteger.h"
 #include "basis/SakuraBasis.h"
 
 /*!
@@ -38,12 +39,11 @@
  */
 TEST( CLayoutInt, OperatorCompareGreaterThan )
 {
-	CLayoutInt a( 1 );
+	CLayoutInt a;
 
+	a = 0;
 	EXPECT_TRUE( a > -1 );
-	EXPECT_TRUE( a > 0 );
-	EXPECT_FALSE( a > 1 );
-	EXPECT_FALSE( a > 2 );
+	EXPECT_FALSE( a > 0 );
 }
 
 /*!
@@ -51,12 +51,11 @@ TEST( CLayoutInt, OperatorCompareGreaterThan )
  */
 TEST( CLayoutInt, OperatorCompareGreaterOrEqual )
 {
-	CLayoutInt a( 1 );
+	CLayoutInt a;
 
-	EXPECT_TRUE( a >= -1 );
+	a = 0;
 	EXPECT_TRUE( a >= 0 );
-	EXPECT_TRUE( a >= 1 );
-	EXPECT_FALSE( a >= 2 );
+	EXPECT_FALSE( a >= 1 );
 }
 
 /*!
@@ -64,12 +63,11 @@ TEST( CLayoutInt, OperatorCompareGreaterOrEqual )
  */
 TEST( CLayoutInt, OperatorCompareLessThan )
 {
-	CLayoutInt a( 1 );
+	CLayoutInt a;
 
-	EXPECT_FALSE( a < -1 );
+	a = 0;
 	EXPECT_FALSE( a < 0 );
-	EXPECT_FALSE( a < 1 );
-	EXPECT_TRUE( a < 2 );
+	EXPECT_TRUE( a < 1 );
 }
 
 /*!
@@ -77,12 +75,11 @@ TEST( CLayoutInt, OperatorCompareLessThan )
  */
 TEST( CLayoutInt, OperatorCompareLessOrEqual )
 {
-	CLayoutInt a( 1 );
+	CLayoutInt a;
 
+	a = 0;
 	EXPECT_FALSE( a <= -1 );
-	EXPECT_FALSE( a <= 0 );
-	EXPECT_TRUE( a <= 1 );
-	EXPECT_TRUE( a <= 2 );
+	EXPECT_TRUE( a <= 0 );
 }
 
 /*!
@@ -90,12 +87,13 @@ TEST( CLayoutInt, OperatorCompareLessOrEqual )
  */
 TEST( CLayoutInt, GlobalOperatorCompareGreaterThan )
 {
-	CLayoutInt a( 1 );
+	CLayoutInt a;
 
-	EXPECT_FALSE( -1 > a );
+	a = 1;
 	EXPECT_FALSE( 0 > a );
 	EXPECT_FALSE( 1 > a );
 	EXPECT_TRUE( 2 > a );
+	EXPECT_TRUE( 3 > a );
 }
 
 /*!
@@ -103,12 +101,13 @@ TEST( CLayoutInt, GlobalOperatorCompareGreaterThan )
  */
 TEST( CLayoutInt, GlobalOperatorCompareGreaterOrEqual )
 {
-	CLayoutInt a( 1 );
+	CLayoutInt a;
 
-	EXPECT_FALSE( -1 >= a );
+	a = 1;
 	EXPECT_FALSE( 0 >= a );
 	EXPECT_TRUE( 1 >= a );
 	EXPECT_TRUE( 2 >= a );
+	EXPECT_TRUE( 3 >= a );
 }
 
 /*!
@@ -116,12 +115,13 @@ TEST( CLayoutInt, GlobalOperatorCompareGreaterOrEqual )
  */
 TEST( CLayoutInt, GlobalOperatorCompareLessThan )
 {
-	CLayoutInt a( 1 );
+	CLayoutInt a;
 
-	EXPECT_TRUE( -1 < a );
+	a = 1;
 	EXPECT_TRUE( 0 < a );
 	EXPECT_FALSE( 1 < a );
 	EXPECT_FALSE( 2 < a );
+	EXPECT_FALSE( 3 < a );
 }
 
 /*!
@@ -129,10 +129,11 @@ TEST( CLayoutInt, GlobalOperatorCompareLessThan )
  */
 TEST( CLayoutInt, GlobalOperatorCompareLessOrEqual )
 {
-	CLayoutInt a( 1 );
+	CLayoutInt a;
 
-	EXPECT_TRUE( -1 <= a );
+	a = 1;
 	EXPECT_TRUE( 0 <= a );
 	EXPECT_TRUE( 1 <= a );
 	EXPECT_FALSE( 2 <= a );
+	EXPECT_FALSE( 3 <= a );
 }
