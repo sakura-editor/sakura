@@ -57,21 +57,20 @@ jobs:
     ## see https://github.com/microsoft/setup-msbuild
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.0.0
-      
+
     - name: MSBuild
       run: build-sln.bat ${{ matrix.platform }} ${{ matrix.config }}
       shell: cmd
-      
+
     ## #922 のため無効化
     #
     #- name: Build HTML Help
     #  run: build-chm.bat
     #  shell: cmd
-    #  
+    #
     #- name: Build installer with Inno Setup
     #  run: build-installer.bat ${{ matrix.platform }} ${{ matrix.config }}
     #  shell: cmd
-      
     - name: zipArtifacts
       run: zipArtifacts.bat ${{ matrix.platform }} ${{ matrix.config }}
       shell: cmd
