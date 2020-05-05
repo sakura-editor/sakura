@@ -20,13 +20,13 @@
 - プログラムの動作上の問題
   - 正式リリース版
   - Azure Pipelines ビルド版
-  - Appveyor ビルド版
+  - AppVeyor ビルド版
   - GitHub Actions ビルド版
   - ローカルビルド版
 - ビルド関連
   - ビルド手順
   - Azure Pipelines
-  - Appveyor
+  - AppVeyor
   - GitHub Actions
   - ローカルビルド
 - ドキュメントの問題
