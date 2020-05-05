@@ -21,6 +21,7 @@
 | doxygen            | CMD_DOXYGEN  | doxygen\bin        | doxygen.exe  |
 | vswhere            | CMD_VSWHERE  | Microsoft Visual Studio\Installer | vswhere.exe  |
 | MSBuild            | CMD_MSBUILD  | 特殊               | MSBuild.exe  |
+| Locale Emulator    | CMD_LEPROC   | なし               | LEProc.exe   |
 
 ## MSBuild以外の探索手順
 MSBuild以外の探索手順は同一であり、7-Zipを例に説明する。

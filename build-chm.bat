@@ -65,19 +65,35 @@ set PROJECT_CHM=%2
 
 if exist "%PROJECT_CHM%" del /F "%PROJECT_CHM%"
 
-@rem hhc.exe returns 1 on success, and returns 0 on failure
-"%CMD_HHC%" %PROJECT_HHP%
-if not errorlevel 1 (
-	echo error %PROJECT_HHP% errorlevel %errorlevel%
-
-	del /F "%PROJECT_CHM%"
-	"%CMD_HHC%" %PROJECT_HHP%
-)
-if not errorlevel 1 (
-	echo retry error %PROJECT_HHP% errorlevel %errorlevel%
+if defined CMD_LEPROC (
+	"%CMD_LEPROC%" %COMSPEC% /c """%CMD_HHC%"" %PROJECT_HHP%"
+	if errorlevel 1 (
+		echo fail to execute LEProc
+		exit /b 1
+	)
+	@rem wait to create chm
+	for /L %%i in (1,1,30) do (
+		ping -n 2 localhost > NUL
+		copy "%PROJECT_CHM%" nul > NUL 2>&1
+		if not errorlevel 1 exit /b 0
+	)
+	echo fail to create %PROJECT_CHM%
 	exit /b 1
+) else (
+	@rem hhc.exe returns 1 on success, and returns 0 on failure
+	"%CMD_HHC%" %PROJECT_HHP%
+	if not errorlevel 1 (
+		echo error %PROJECT_HHP% errorlevel %errorlevel%
+
+		del /F "%PROJECT_CHM%"
+		"%CMD_HHC%" %PROJECT_HHP%
+	)
+	if not errorlevel 1 (
+		echo retry error %PROJECT_HHP% errorlevel %errorlevel%
+		exit /b 1
+	)
+	exit /b 0
 )
-exit /b 0
 
 :download_archive
 pwsh.exe -ExecutionPolicy RemoteSigned -File %SRC_HELP%\extract-chm-from-artifact.ps1
