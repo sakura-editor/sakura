@@ -62,15 +62,14 @@ jobs:
       run: build-sln.bat ${{ matrix.platform }} ${{ matrix.config }}
       shell: cmd
 
-    ## #922 のため無効化
-    #
-    #- name: Build HTML Help
-    #  run: build-chm.bat
-    #  shell: cmd
-    #
-    #- name: Build installer with Inno Setup
-    #  run: build-installer.bat ${{ matrix.platform }} ${{ matrix.config }}
-    #  shell: cmd
+    - name: Build HTML Help
+      run: build-chm.bat
+      shell: cmd
+
+    - name: Build installer with Inno Setup
+      run: build-installer.bat ${{ matrix.platform }} ${{ matrix.config }}
+      shell: cmd
+
     - name: zipArtifacts
       run: zipArtifacts.bat ${{ matrix.platform }} ${{ matrix.config }}
       shell: cmd
