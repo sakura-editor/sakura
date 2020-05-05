@@ -92,10 +92,10 @@ TEST( CLayoutInt, GlobalOperatorCompareGreaterThan )
 {
 	CLayoutInt a( 1 );
 
-	EXPECT_TRUE( -1 > a );
-	EXPECT_TRUE( 0 > a );
+	EXPECT_FALSE( -1 > a );
+	EXPECT_FALSE( 0 > a );
 	EXPECT_FALSE( 1 > a );
-	EXPECT_FALSE( 2 > a );
+	EXPECT_TRUE( 2 > a );
 }
 
 /*!
@@ -105,10 +105,10 @@ TEST( CLayoutInt, GlobalOperatorCompareGreaterOrEqual )
 {
 	CLayoutInt a( 1 );
 
-	EXPECT_TRUE( -1 >= a );
-	EXPECT_TRUE( 0 >= a );
+	EXPECT_FALSE( -1 >= a );
+	EXPECT_FALSE( 0 >= a );
 	EXPECT_TRUE( 1 >= a );
-	EXPECT_FALSE( 2 >= a );
+	EXPECT_TRUE( 2 >= a );
 }
 
 /*!
@@ -118,10 +118,10 @@ TEST( CLayoutInt, GlobalOperatorCompareLessThan )
 {
 	CLayoutInt a( 1 );
 
-	EXPECT_FALSE( -1 < a );
-	EXPECT_FALSE( 0 < a );
+	EXPECT_TRUE( -1 < a );
+	EXPECT_TRUE( 0 < a );
 	EXPECT_FALSE( 1 < a );
-	EXPECT_TRUE( 2 < a );
+	EXPECT_FALSE( 2 < a );
 }
 
 /*!
@@ -131,9 +131,8 @@ TEST( CLayoutInt, GlobalOperatorCompareLessOrEqual )
 {
 	CLayoutInt a( 1 );
 
-	EXPECT_FALSE( -1 <= a );
-	EXPECT_FALSE( 0 <= a );
+	EXPECT_TRUE( -1 <= a );
+	EXPECT_TRUE( 0 <= a );
 	EXPECT_TRUE( 1 <= a );
-	EXPECT_TRUE( 2 <= a );
+	EXPECT_FALSE( 2 <= a );
 }
-
