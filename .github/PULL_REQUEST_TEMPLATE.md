@@ -17,15 +17,22 @@
 - 速度向上
 - リファクタリング
 - ドキュメント修正
-- ビルド手順
-- ローカルビルド
-- CI関連
-  - Appveyor
+- プログラムの動作上の問題
+  - 正式リリース版
+  - Azure Pipelines ビルド版
+  - Appveyor ビルド版
+  - GitHub Actions ビルド版
+  - ローカルビルド版
+- ビルド関連
+  - ビルド手順
   - Azure Pipelines
+  - Appveyor
   - GitHub Actions
-  - その他連携サービス
+  - ローカルビルド
+- ドキュメントの問題
+- GitHub 関連の問題
 - 実験 (master へのマージを目的としない)
-- その他
+- その他の問題
 
 ## PR の背景
 
