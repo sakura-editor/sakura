@@ -31,6 +31,10 @@
 #include <tchar.h>
 #include <Windows.h>
 
+#ifndef USE_STRICT_INT
+#define USE_STRICT_INT
+#endif /* #ifndef USE_STRICT_INT */
+
 #include "basis/CStrictInteger.h"
 #include "basis/SakuraBasis.h"
 
