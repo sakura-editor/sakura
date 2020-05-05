@@ -592,27 +592,9 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 	const int cols = MAX_X;
 	const int rows = MAX_Y;
 
-	// ファイル内の列数は「耳あり」想定で余りが出なければ「耳あり」と判定する。
-	const int cx = bmWidth % (cols + 1) == 0 ? bmWidth / (cols + 1) : bmWidth / cols;
-	if( cx < 16 ){
-		DEBUG_TRACE( L"tool bitmap width is too small." );
-
-		// 変換前Bmpを削除する
-		::DeleteObject( bmpSrc );
-
-		return NULL;
-	}
-
-	// ファイル内の段数はチェックしないが、高さがアイコン高さで割り切れないビットマップはサポートしない。
+	// アイコンサイズは固定。
+	const int cx = 16;
 	const int cy = cx;
-	if( bmHeight % cy ){
-		DEBUG_TRACE( L"tool bitmap height is unsupported." );
-
-		// 変換前Bmpを削除する
-		::DeleteObject( bmpSrc );
-
-		return NULL;
-	}
 
 	// 仮想DCを作成
 	HDC hdcSrc = ::CreateCompatibleDC( 0 );	//	転送元用
