@@ -1,7 +1,7 @@
 [OPTIONS]
 ;Create CHI file=Yes
 Auto Index=Yes
-Compatibility=1.1 or later
+Compatibility=1.0
 Compiled file=macro.chm
 Contents file=macro.hhc
 Default Font=MS UI Gothic,10,128

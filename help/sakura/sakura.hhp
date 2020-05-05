@@ -1,6 +1,6 @@
 [OPTIONS]
 Auto Index=Yes
-Compatibility=1.1 or later
+Compatibility=1.0
 Compiled file=sakura.chm
 Contents file=sakura.hhc
 Default Font=‚l‚r ‚oƒSƒVƒbƒN,10,128

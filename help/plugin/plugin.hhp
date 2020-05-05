@@ -1,6 +1,6 @@
 [OPTIONS]
 Auto Index=Yes
-Compatibility=1.1 or later
+Compatibility=1.0
 Compiled file=plugin.chm
 Contents file=plugin.hhc
 Default Font=MS UI Gothic,10,128
