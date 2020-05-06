@@ -54,7 +54,32 @@
 
 ## (わかる範囲で) PR の影響範囲
 
+### カテゴリ
+<!-- 該当するものを [x] として関係ないものを削除してください -->
+* [ ] sakura editor 本体
+    * [ ] 32bit Release
+    * [ ] 64bit Release
+    * [ ] 32bit Debug
+    * [ ] 64bit Debug
+* [ ] ビルドスクリプト
+* [ ] インストーラ
+* [ ] CI
+    * [ ] Azure Pipelines
+    * [ ] AppVeyor
+    * [ ] GitHub Actions
+    * [ ] その他
+* [ ] GitHub 連携サービス
+    * [ ] SonarCloud
+    * [ ] CodeFactor
+    * [ ] その他
+* [ ] (ビルドに影響しない) ドキュメント
+* [ ] Compiled HTML Help(=CHM)
+* [ ] GitHub 関連
+* [ ] その他
+
+### 自由記入
 <!-- 既存の処理に対して影響範囲を記載してください。 -->
+
 
 ## (なければ省略可) 関連 issue, PR
 
