@@ -58,6 +58,24 @@ static void FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORREF clr)
 	::ExtTextOut( hdc, 0, 0, ETO_OPAQUE, &rect, NULL, 0, NULL );
 }
 
+/*! リソースに埋め込まれたmytool.bmpを読み込む
+ */
+static inline
+HBITMAP LoadMyToolFromModule( HINSTANCE hInstance )
+{
+	//	リソースからBitmapを読み込む
+	HANDLE hRscbmp = ::LoadImageW(
+		hInstance,
+		MAKEINTRESOURCE( IDB_MYTOOL ),
+		IMAGE_BITMAP,
+		0,
+		0,
+		LR_CREATEDIBSECTION
+	);
+
+	return (HBITMAP)hRscbmp;
+}
+
 //	Destructor
 CImageListMgr::~CImageListMgr()
 {
@@ -85,104 +103,65 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 	}
 
 	HBITMAP	hRscbmp;			//	リソースから読み込んだひとかたまりのBitmap
-	HBITMAP	hFOldbmp = NULL;	//	SetObjectで得られた1つ前のハンドルを保持する
-	HDC		dcFrom = 0;			//	描画用
-	int		nRetPos;			//	後処理用
 
-	nRetPos = 0;
-	do {
-		//	From Here 2001.7.1 GAE
-		//	2001.7.1 GAE リソースをローカルファイル(sakuraディレクトリ) my_icons.bmp から読めるように
-		// 2007.05.19 ryoji 設定ファイル優先に変更
-		WCHAR szPath[_MAX_PATH];
-		GetInidirOrExedir( szPath, FN_TOOL_BMP );
-		hRscbmp = (HBITMAP)::LoadImage( NULL, szPath, IMAGE_BITMAP, 0, 0,
-			LR_LOADFROMFILE | LR_CREATEDIBSECTION | LR_LOADMAP3DCOLORS );
+	//	From Here 2001.7.1 GAE
+	//	2001.7.1 GAE リソースをローカルファイル(sakuraディレクトリ) my_icons.bmp から読めるように
+	// 2007.05.19 ryoji 設定ファイル優先に変更
+	WCHAR szPath[_MAX_PATH];
+	GetInidirOrExedir( szPath, FN_TOOL_BMP );
+	hRscbmp = (HBITMAP)::LoadImage( NULL, szPath, IMAGE_BITMAP, 0, 0,
+		LR_LOADFROMFILE | LR_CREATEDIBSECTION | LR_LOADMAP3DCOLORS );
 
-		if( hRscbmp == NULL ) {	// ローカルファイルの読み込み失敗時はリソースから取得
-			//	このブロック内は従来の処理
-			//	リソースからBitmapを読み込む
-			//	2003.09.29 wmlhq 環境によってアイコンがつぶれる
-			//hRscbmp = ::LoadBitmap( hInstance, MAKEINTRESOURCE( IDB_MYTOOL ) );
-			hRscbmp = (HBITMAP)::LoadImage( hInstance, MAKEINTRESOURCE( IDB_MYTOOL ), IMAGE_BITMAP, 0, 0,
-				LR_CREATEDIBSECTION /* | LR_LOADMAP3DCOLORS */  );
-			if( hRscbmp == NULL ){
-				//	Oct. 4, 2003 genta エラーコード追加
-				//	正常終了と同じコードだとdcFromを不正に解放してしまう
-				nRetPos = 2;
-				break;
-			}
+	if( hRscbmp == NULL ) {	// ローカルファイルの読み込み失敗時はリソースから取得
+		//	リソースからBitmapを読み込む
+		//	2003.09.29 wmlhq 環境によってアイコンがつぶれる
+		hRscbmp = LoadMyToolFromModule( hInstance );
+		if( hRscbmp == NULL ){
+			return false;
 		}
-		//	To Here 2001.7.1 GAE
+	}
+	//	To Here 2001.7.1 GAE
 
-		//	透過色を得るためにDCにマップする
-		//	2003.07.21 genta 透過色を得る以外の目的では使わなくなった
-		dcFrom = CreateCompatibleDC(0);	//	転送元用
-		if( dcFrom == NULL ){
-			nRetPos = 1;
-			break;
-		}
-
-		//	まずbitmapをdcにmapする
-		//	こうすることでCreateCompatibleBitmapで
-		//	hRscbmpと同じ形式のbitmapを作れる．
-		//	単にCreateCompatibleDC(0)で取得したdcや
-		//	スクリーンのDCに対してCreateCompatibleBitmapを
-		//	使うとモノクロBitmapになる．
-		hFOldbmp = (HBITMAP)SelectObject( dcFrom, hRscbmp );
-		if( hFOldbmp == NULL ){
-			nRetPos = 4;
-			break;
-		}
-
-		m_cTrans = GetPixel( dcFrom, 0, 0 );//	取得した画像の(0,0)の色を背景色として使う
+	//	2003.07.21 genta
+	//	ImageListへの登録部分は当然ばっさり削除
 		
-		//	2003.07.21 genta
-		//	ImageListへの登録部分は当然ばっさり削除
-		
-		//	もはや処理とは無関係だが，後学のためにコメントのみ残しておこう
-		//---------------------------------------------------------
-		//	BitmapがMemoryDCにAssignされている間はbitmapハンドルを
-		//	使っても正しいbitmapが取得できない．
-		//	つまり，DCへの描画命令を発行してもその場でBitmapに
-		//	反映されるわけではない．
-		//	BitmapをDCから取り外して初めて内容の保証ができる
+	//	もはや処理とは無関係だが，後学のためにコメントのみ残しておこう
+	//---------------------------------------------------------
+	//	BitmapがMemoryDCにAssignされている間はbitmapハンドルを
+	//	使っても正しいbitmapが取得できない．
+	//	つまり，DCへの描画命令を発行してもその場でBitmapに
+	//	反映されるわけではない．
+	//	BitmapをDCから取り外して初めて内容の保証ができる
 
-		//	DCのmap/unmapが速度に大きく影響するため，
-		//	横長のBitmapを作って一括登録するように変更
-		//	これによって250msecくらい速度が改善される．
-		//---------------------------------------------------------
+	//	DCのmap/unmapが速度に大きく影響するため，
+	//	横長のBitmapを作って一括登録するように変更
+	//	これによって250msecくらい速度が改善される．
+	//---------------------------------------------------------
+
+	// システムのスモールアイコンサイズを取得する
+	m_cx = ::GetSystemMetrics( SM_CXSMICON );
+	m_cy = ::GetSystemMetrics( SM_CYSMICON );
+
+	// アイコンサイズが異なる場合、拡大縮小する
+	hRscbmp = ResizeToolIcons( hRscbmp, m_cTrans );
+	if( hRscbmp == NULL ){
+		//	リソースからBitmapを読み込む
+		hRscbmp = LoadMyToolFromModule( hInstance );
+		if( hRscbmp == NULL ){
+			return false;
+		}
 
 		// アイコンサイズが異なる場合、拡大縮小する
-		hRscbmp = ResizeToolIcons(dcFrom, hRscbmp, MAX_X, MAX_Y );
-		if ( hRscbmp == NULL ) {
-			nRetPos = 4;
-			break;
+		hRscbmp = ResizeToolIcons( hRscbmp, m_cTrans );
+		if( hRscbmp == NULL ){
+			return false;
 		}
-
-		// クラスメンバに変更を保存する
-		m_hIconBitmap = hRscbmp;
-		m_cx = ::GetSystemMetrics(SM_CXSMICON);
-		m_cy = ::GetSystemMetrics(SM_CYSMICON);
-
-	} while(0);	//	1回しか通らない. breakでここまで飛ぶ
-
-	//	後処理
-	switch( nRetPos ){
-	case 0:
-		//	Oct. 4, 2003 genta hRscBmpをdcFromから切り離しておく必要がある
-		//	アイコン描画変更時に過って削除されていた
-		SelectObject( dcFrom, hFOldbmp );
-	case 4:
-		DeleteDC( dcFrom );
-	case 2:
-	case 1:
-		//	2003.07.21 genta hRscbmpは m_hIconBitmap としてオブジェクトと
-		//	同じだけ保持されるので解放してはならない
-		break;
 	}
 
-	return nRetPos == 0;
+	// クラスメンバに変更を保存する
+	m_hIconBitmap = hRscbmp;
+
+	return true;
 }
 
 /*! RGBQUADラッパー
@@ -584,29 +563,73 @@ int CImageListMgr::Add( const WCHAR* szPath )
 
 // ツールイメージをリサイズする
 HBITMAP CImageListMgr::ResizeToolIcons(
-	HDC hdcSrc,
-	HBITMAP &bmpSrc,
-	int cols,
-	int rows
+	HBITMAP		bmpSrc,				//!< [in] 変換前Bmpのハンドル
+	COLORREF&	clrTransparent		//!< [out] 透過色
 ) const noexcept
 {
+	// 引数チェック
+	if( bmpSrc == NULL ){
+		DEBUG_TRACE( L"tool bitmap is required." );
+		return NULL;
+	}
+
 	// DIBセクションを取得する
 	DIBSECTION di = {};
 	if ( !::GetObject( bmpSrc, sizeof( di ), &di ) ) {
 		DEBUG_TRACE( L"GetObject() failed." );
+
+		// 変換前Bmpを削除する
+		::DeleteObject( bmpSrc );
+
 		return NULL;
 	}
 
 	// DIBセクションからサイズを取得する
-	int cx = di.dsBm.bmWidth / cols;
-	int cy = di.dsBm.bmHeight / rows;
-	if ( cx != cy ) {
-		DEBUG_TRACE( L"tool bitmap size is unexpected." );
+	const auto bmWidth = di.dsBm.bmWidth;
+	const auto bmHeight = di.dsBm.bmHeight;
+
+	// 内部ビットマップの列数/段数は固定。
+	const int cols = MAX_X;
+	const int rows = MAX_Y;
+
+	// アイコンサイズは固定。
+	const int cx = 16;
+	const int cy = cx;
+
+	// 仮想DCを作成
+	HDC hdcSrc = ::CreateCompatibleDC( 0 );	//	転送元用
+	if( hdcSrc == NULL ){
+
+		// 変換前Bmpを削除する
+		::DeleteObject( bmpSrc );
+
 		return NULL;
 	}
 
-	const int cxSmIcon = ::GetSystemMetrics( SM_CXSMICON );
-	const int cySmIcon = ::GetSystemMetrics( SM_CYSMICON );
+	//	まずbitmapをdcにmapする
+	//	こうすることでCreateCompatibleBitmapで
+	//	bmpSrcと同じ形式のbitmapを作れる．
+	//	単にCreateCompatibleDC(0)で取得したdcや
+	//	スクリーンのDCに対してCreateCompatibleBitmapを
+	//	使うとモノクロBitmapになる．
+	HGDIOBJ hFOldbmp = ::SelectObject( hdcSrc, bmpSrc );
+	if( hFOldbmp == NULL ){
+		DEBUG_TRACE( L"SelectObject() failed." );
+
+		// 変換前Bmpを削除する
+		::DeleteObject( bmpSrc );
+
+		// 仮想DCを削除する
+		::DeleteDC( hdcSrc );
+
+		return NULL;
+	}
+
+	//	仮想DC(=変換前Bmp)の(0,0)の色を背景色として使う
+	clrTransparent = ::GetPixel( hdcSrc, 0, 0 );
+		
+	const int cxSmIcon = m_cx;
+	const int cySmIcon = m_cy;
 
 	// アイコンサイズが異なる場合、拡大縮小する
 	if ( cx != cxSmIcon ) {
@@ -617,7 +640,7 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 
 		// 作業DCを透過色で塗りつぶす
 		{
-			HBRUSH hBrush = ::CreateSolidBrush( m_cTrans );
+			HBRUSH hBrush = ::CreateSolidBrush( clrTransparent );
 			HGDIOBJ hBrushOld = ::SelectObject( hdcWork, hBrush );
 			::PatBlt( hdcWork, 0, 0, cxSmIcon * cols, cySmIcon * rows, PATCOPY );
 			::SelectObject( hdcWork, hBrushOld );
@@ -644,20 +667,29 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 			}
 		}
 
-		// 仮想DCで元Bmpを選択して互換Bmpを解放する
+		// 作業DCで元Bmpを選択して変換後Bmpを解放する
 		::SelectObject( hdcWork, bmpWorkOld );
 
-		// ターゲットDCで変換後Bmpを選択する
-		::SelectObject( hdcSrc, bmpWork );
+		// 作業DCを削除する
+		::DeleteDC( hdcWork );
 
-		// 変換前Bmpを破棄して入れ替える
-		::DeleteObject( bmpSrc );
+		// 仮想DCで元Bmpを選択して変換前Bmpを解放する
+		::SelectObject( hdcSrc, hFOldbmp );
 
 		// 仮想DCを削除する
-		::DeleteDC( hdcWork );
+		::DeleteDC( hdcSrc );
+
+		// 変換前Bmpを削除する
+		::DeleteObject( bmpSrc );
 
 		return bmpWork;
 	}
+
+	// 仮想DCで元Bmpを選択して変換前Bmpを解放する
+	::SelectObject( hdcSrc, hFOldbmp );
+
+	// 仮想DCを削除する
+	::DeleteDC( hdcSrc );
 
 	return bmpSrc;
 }
