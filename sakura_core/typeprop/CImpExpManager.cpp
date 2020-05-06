@@ -613,92 +613,76 @@ bool CImpExpColors::Export( const wstring& sFileName, wstring& sErrMsg )
 // インポート
 bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 {
-	CTextInputStream	in( sFileName.c_str() );
-	if (!in) {
+	CTextInputStream in( sFileName.c_str() );
+	if( !in ){
+		// L"ファイルを開けませんでした。\n\n"
 		sErrMsg = LS(STR_IMPEXP_ERR_FILEOPEN);
 		sErrMsg += sFileName;
 		return false;
 	}
-
-	RegexKeywordInfo	regexKeyArr[MAX_REGEX_KEYWORD];
-	auto szKeyWordList = std::make_unique<wchar_t[]>(MAX_REGEX_KEYWORDLISTLEN);
-	wchar_t*	pKeyword = &szKeyWordList[0];
-	int	keywordPos = 0;
-	WCHAR				buff[MAX_REGEX_KEYWORDLEN + 20];
-	int count = 0;
-	while(in)
-	{
+	auto& regexKeyArr = m_Types.m_RegexKeywordArr;
+	auto& szKeyWordList = m_Types.m_RegexKeywordList;
+	wchar_t* pKeyword = &szKeyWordList[0];
+	size_t keywordPos = 0;
+	size_t count = 0;
+	while( in ){
 		//1行読み込み
-		wstring line=in.ReadLineW();
-		wcsncpy_s( buff, line.c_str(), _TRUNCATE );
-
-		if(count >= MAX_REGEX_KEYWORD){
+		wstring line = in.ReadLineW();
+		//RxKey[999]=ColorName,RegexKeyword
+		if( line.length() < 12 ) continue;
+		if( wmemcmp(&line[0], L"RxKey[", 6) != 0 ) continue;
+		if( wmemcmp(&line[9], L"]=", 2) != 0 ) continue;
+		auto sepPos = line.find_first_of(L",", 11); // ColorName と RegexKeyword の間の区切り文字の存在を確認する
+		if( sepPos == decltype(line)::npos ) continue;
+		line[sepPos] = L'\0'; // 区切り文字をNULL終端に置き換える事で標準Cライブラリの関数で ColorName を読み取りやすくする
+		const wchar_t* pColorNameInLine = &line[11];
+		const wchar_t* pRegexKeywordInLine = &line[sepPos + 1]; // 区切り文字の後には RegexKeyword
+		if( !*pRegexKeywordInLine || !CRegexKeyword::RegexKeyCheckSyntax(pRegexKeywordInLine) ){
+			// L"不正なキーワードを無視しました。"
+			sErrMsg = LS(STR_IMPEXP_REGEX3);
+			continue;
+		}
+		//色指定名に対応する番号を探す
+		//3文字カラー名からインデックス番号に変換
+		int k = GetColorIndexByName( pColorNameInLine );	//@@@ 2002.04.30
+		if( k == -1 ){
+			/* 日本語名からインデックス番号に変換する */
+			for(int m = 0; m < COLORIDX_LAST; m++){
+				if( wcscmp(m_Types.m_ColorInfoArr[m].m_szName, pColorNameInLine) == 0 ){
+					k = m;
+					break;
+				}
+			}
+		}
+		if( k == -1 ){
+			// 対応する番号が見つからない
+			continue;
+		}
+		if( count >= MAX_REGEX_KEYWORD ){
+			// L"キーワード数が上限に達したため切り捨てました。"
 			sErrMsg = LS(STR_IMPEXP_REGEX1);
 			break;
 		}
-
-		//RxKey[999]=ColorName,RegexKeyword
-		if( wcslen(buff) < 12 ) continue;
-		if( wmemcmp(buff, L"RxKey[", 6) != 0 ) continue;
-		if( wmemcmp(&buff[9], L"]=", 2) != 0 ) continue;
-		WCHAR *p = wcsstr(&buff[11], L",");
-		if( p )
-		{
-			*p = L'\0';
-			p++;
-			if( p[0] && CRegexKeyword::RegexKeyCheckSyntax(p) )	//囲みがある
-			{
-				//色指定名に対応する番号を探す
-				int k = GetColorIndexByName( &buff[11] );	//@@@ 2002.04.30
-				if( k == -1 ){
-					/* 日本語名からインデックス番号に変換する */
-					for(int m = 0; m < COLORIDX_LAST; m++){
-						if( wcscmp(m_Types.m_ColorInfoArr[m].m_szName, &buff[11]) == 0 ){
-							k = m;
-							break;
-						}
-					}
-				}
-				if( k != -1 )	/* 3文字カラー名からインデックス番号に変換 */
-				{
-					// pに入っている文字列の長さ
-					const auto ncpyLength = ::wcsnlen( p, MAX_REGEX_KEYWORDLEN );
-					if( ncpyLength == MAX_REGEX_KEYWORDLEN ){
-						// L"キーワードが長過ぎるため切り捨てました。"
-						sErrMsg = LS(STR_IMPEXP_REGEX4);
-					}else{
-						// pKeywordに書き込める上限サイズ(NUL終端分を含む)
-						const size_t cchAvailableSize = MAX_REGEX_KEYWORDLISTLEN - 1 - keywordPos;
-
-						// 書き込み上限を指定して文字列コピーし、処理結果を受け取る
-						const auto ncpyResult = ::wcsncpy_s( &pKeyword[keywordPos], std::min<size_t>( MAX_REGEX_KEYWORDLEN, cchAvailableSize ), p, _TRUNCATE );
-						if( ncpyResult == 0 ){
-							regexKeyArr[count].m_nColorIndex = k;
-							count++;
-							keywordPos += ncpyLength + 1;
-						}else{
-							// L"キーワード領域がいっぱいなため切り捨てました。"
-							sErrMsg = LS(STR_IMPEXP_REGEX2);
-						}
-					}
-				}
-			}else{
-				// L"不正なキーワードを無視しました。"
-				sErrMsg = LS(STR_IMPEXP_REGEX3);
-			}
+		// 正規表現キーワード文字列の長さ
+		const size_t regKeyLen = line.length() - (pRegexKeywordInLine - &line[0]);
+		if( regKeyLen >= MAX_REGEX_KEYWORDLEN ){
+			// L"キーワードが長過ぎるため切り捨てました。"
+			sErrMsg = LS(STR_IMPEXP_REGEX4);
+			continue;
 		}
-	}
-	pKeyword[keywordPos] = L'\0';	// 2個目のNUL終端を書き込む
 
+		if( keywordPos + regKeyLen + 1 >= MAX_REGEX_KEYWORDLISTLEN ){
+			// L"キーワード領域がいっぱいなため切り捨てました。"
+			sErrMsg = LS(STR_IMPEXP_REGEX2);
+			continue;
+		}
+		std::copy(pRegexKeywordInLine, pRegexKeywordInLine + regKeyLen + 1, &pKeyword[keywordPos]);
+		regexKeyArr[count].m_nColorIndex = k;
+		count++;
+		keywordPos += regKeyLen + 1;
+	}
+	pKeyword[keywordPos] = L'\0';	// 最後のNUL終端を書き込む
 	in.Close();
-
-	for(int i = 0; i < count; i++ ){
-		m_Types.m_RegexKeywordArr[i] = regexKeyArr[i];
-	}
-	for( int i = 0; i <= keywordPos; i++ ){
-		m_Types.m_RegexKeywordList[i] = pKeyword[i];
-	}
-
 	return true;
 }
 
