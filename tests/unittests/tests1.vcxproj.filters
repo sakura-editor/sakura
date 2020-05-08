@@ -59,5 +59,8 @@
     <ClCompile Include="coverage.cpp">
       <Filter>Other Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-loadstring.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
