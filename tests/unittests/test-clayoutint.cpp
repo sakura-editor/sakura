@@ -88,7 +88,9 @@ TEST( CLayoutInt, OperatorDivision )
 }
 
 /*!
- * @brief 除余算演算子のテスト
+ * @brief 剰余算演算子のテスト
+ * 剰余算＝割り算で割った余りを求める計算のこと
+ * nPos + 4 - (nPos % 4) で式の結果は4の倍数になる、とか。 
  */
 TEST( CLayoutInt, OperatorRemainder )
 {
