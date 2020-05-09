@@ -495,6 +495,9 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int offset, int nBufLen, int* pnAddre
 		}
 	} IsValidChar;
 
+	// 検査範囲の先頭文字を取得する
+	const auto headChar = offset < 0 || nBufLen <= offset ? 0 : pszBuf[offset];
+
 	pszBuf  += offset;
 	nBufLen -= offset;
 	offset   = 0;
@@ -551,6 +554,13 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int offset, int nBufLen, int* pnAddre
 			nDotCount++;
 			j++;
 		}
+	}
+	// シングルクォートで囲まれたメールアドレスの引用開始がアドレスの一部と誤検知される対策
+	if( headChar == L'\x27'
+		&& j < nBufLen
+		&& headChar == pszBuf[j] )
+	{
+		return FALSE;
 	}
 	if( NULL != pnAddressLength){
 		*pnAddressLength = j;
