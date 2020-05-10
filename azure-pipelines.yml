@@ -12,9 +12,7 @@ trigger:
       - revert-*
   paths:
     exclude:
-      - "*.md"
-      - .github/*.md
-      - .github/ISSUE_TEMPLATE/*.md
+      - '**/*.md'
       - .github/workflows/*.yml
       - .gitignore
       - .travis.yml
@@ -34,9 +32,7 @@ pr:
       - revert-*
   paths:
     exclude:
-      - "*.md"
-      - .github/*.md
-      - .github/ISSUE_TEMPLATE/*.md
+      - '**/*.md'
       - .gitignore
       - .travis.yml
       - appveyor.yml
