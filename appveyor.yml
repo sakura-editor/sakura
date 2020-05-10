@@ -16,13 +16,11 @@ clone_depth: 5
 # see "Skip commits" at https://www.appveyor.com/docs/how-to/filtering-commits/#commit-files-github-and-bitbucket-only
 skip_commits:
   files:
-    - '*.md'
+    - '**/*.md'
     - .gitignore
     - .editorconfig
     - 'azure-pipelines*.yml'
     - 'ci/azure-pipelines/template*.yml'
-    - '.github/*.md'
-    - '.github/ISSUE_TEMPLATE/*.md'
     - '.github/workflows/*.yml'
 
 install:

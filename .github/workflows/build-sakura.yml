@@ -8,14 +8,12 @@ on:
       - master
       - feature/*
     paths-ignore:
-      - '*.md'
+      - '**/*.md'
       - .gitignore
       - .editorconfig
       - appveyor.yml
       - 'azure-pipelines*.yml'
       - 'ci/azure-pipelines/template*.yml'
-      - '.github/*.md'
-      - '.github/ISSUE_TEMPLATE/*.md'
 
   pull_request:
     branches:
@@ -23,14 +21,12 @@ on:
       - feature/*
       - release/*
     paths-ignore:
-      - '*.md'
+      - '**/*.md'
       - .gitignore
       - .editorconfig
       - appveyor.yml
       - 'azure-pipelines*.yml'
       - 'ci/azure-pipelines/template*.yml'
-      - '.github/*.md'
-      - '.github/ISSUE_TEMPLATE/*.md'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
