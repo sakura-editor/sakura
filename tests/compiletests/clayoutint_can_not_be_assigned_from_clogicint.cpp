@@ -45,5 +45,5 @@ void main()
 	CLogicInt b( 2 );
 
 	//CLayoutInt に CLogicIntを代入することはできない
-	a = (Int)b;	//キャストしてしまえばビルドは通る
+	a = b;
 }
