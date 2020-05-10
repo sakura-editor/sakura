@@ -126,9 +126,12 @@ namespace ApiWrap{
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      コンボボックス                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	inline LRESULT Combo_AddString(HWND hwndCombo, const WCHAR* str)
+	inline int Combo_AddString(HWND hwndCombo, const WCHAR* str)
 	{
-		return ::SendMessage( hwndCombo, CB_ADDSTRING, 0, LPARAM(str) );
+		// CB_ADDSTRING は失敗の時、負の値を返す。
+		// 成功した場合 0 ベースのインデックスを返す。
+		// 64bit 対応時に int で十分
+		return (int)::SendMessage( hwndCombo, CB_ADDSTRING, 0, LPARAM(str) );
 	}
 
 	inline LRESULT Combo_GetLBText(HWND hwndCombo, int nIndex, WCHAR* str)
