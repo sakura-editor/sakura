@@ -105,6 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test-ccommandline.cpp" />
+    <ClCompile Include="test-clayoutint.cpp" />
     <ClCompile Include="test-cmemory.cpp" />
     <ClCompile Include="test-cnative.cpp" />
     <ClCompile Include="test-editinfo.cpp" />
