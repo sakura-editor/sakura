@@ -24,6 +24,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 if(BUILD_GTEST)
 	add_subdirectory(googletest)
 endif()
+add_subdirectory(compiletests)
 add_subdirectory(unittests)
 
 # turn on solution folder
