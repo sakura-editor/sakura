@@ -2,19 +2,32 @@ cmake_minimum_required(VERSION 3.12)
 
 enable_language(CXX)
 
-message( STATUS "Checking clayoutint_can_not_be_assigned_from_clogicint" )
+set( SAKURA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../sakura_core)
+set( SAKURA_DEFINITIONS -D_DEBUG -D_UNICODE -DUNICODE -D_WIN32_WINNT=_WIN32_WINNT_WIN7)
+
+set( TEST_NAME001 clayoutint_can_not_be_assigned_from_clogicint)
+set( TEST_TEMPLATE clayoutint_test.cpp.in )
+set( TEST_BODY "a = b;" )
+set( TEST_DESCRIPTION "CLayoutInt に CLogicIntを代入することはできない" )
+
+message( STATUS "Checking ${TEST_NAME001}" )
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${TEST_TEMPLATE}
+  ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME001}.cpp
+  NEWLINE_STYLE WIN32
+  )
 
 try_compile(FAILED_TO_TEST001 ${CMAKE_CURRENT_BINARY_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/clayoutint_can_not_be_assigned_from_clogicint.cpp
-  CMAKE_FLAGS "-DINCLUDE_DIRECTORIES=${CMAKE_CURRENT_SOURCE_DIR}/../../sakura_core"
-  COMPILE_DEFINITIONS -D_DEBUG -D_UNICODE -DUNICODE -D_WIN32_WINNT=_WIN32_WINNT_WIN7
+  ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME001}.cpp
+  CMAKE_FLAGS "-DINCLUDE_DIRECTORIES=${SAKURA_SOURCE_DIR}"
+  COMPILE_DEFINITIONS ${SAKURA_DEFINITIONS}
   CXX_STANDARD 17
   CXX_STANDARD_REQUIRED ON
   CXX_EXTENSIONS OFF
   )
 
 if (NOT FAILED_TO_TEST001)
-  message( STATUS "Checking clayoutint_can_not_be_assigned_from_clogicint - done" )
+  message( STATUS "Checking ${TEST_NAME001} - done" )
 else()
-  message( FATAL_ERROR "Checking clayoutint_can_not_be_assigned_from_clogicint - Failed." )
+  message( FATAL_ERROR "Checking ${TEST_NAME001} - Failed." )
 endif (NOT FAILED_TO_TEST001)
