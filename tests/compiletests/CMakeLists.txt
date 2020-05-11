@@ -42,4 +42,4 @@ compile_test( clayoutint_test.cpp.in "a > b;" "CLayoutInt と CLogicIntを比較
 compile_test( clayoutint_test.cpp.in "a >= b;" "CLayoutInt と CLogicIntを比較することはできない" clayoutint_can_not_be_compare_with_clogicint_greater_or_equal )
 compile_test( clayoutint_test.cpp.in "a == b;" "CLayoutInt と CLogicIntを比較することはできない" clayoutint_can_not_be_compare_with_clogicint_equal )
 compile_test( clayoutint_test.cpp.in "a != b;" "CLayoutInt と CLogicIntを比較することはできない" clayoutint_can_not_be_compare_with_clogicint_not_equal )
-compile_test( clayoutint_test.cpp.in "int c = (Int)a;" "CLayoutInt は キャストなしでint型に代入することはできない" clayoutint_can_not_be_assigned_to_int )
+compile_test( clayoutint_test.cpp.in "int c = a;" "CLayoutInt は キャストなしでint型に代入することはできない" clayoutint_can_not_be_assigned_to_int )
