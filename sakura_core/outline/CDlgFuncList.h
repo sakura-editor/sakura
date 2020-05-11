@@ -139,10 +139,10 @@ protected:
 	void SetDocLineFuncList();
 
 	void SetTreeFileSub(HTREEITEM hParent, const WCHAR* pszFile);
-	// 2002/11/1 frozen 
+	// 2002/11/1 frozen
 	void SortTree(HWND hWndTree,HTREEITEM htiParent);//!< ツリービューの項目をソートする（ソート基準はm_nSortTypeを使用）
 #if 0
-2002.04.01 YAZAKI SetTreeTxt()、SetTreeTxtNest()は廃止。GetTreeTextNextはもともと使用されていなかった。
+// 2002.04.01 YAZAKI SetTreeTxt()、SetTreeTxtNest()は廃止。GetTreeTextNextはもともと使用されていなかった。
 	void SetTreeTxt( HWND );	/* ツリーコントロールの初期化：テキストトピックツリー */
 	int SetTreeTxtNest( HWND, HTREEITEM, int, int, HTREEITEM*, int );
 	void GetTreeTextNext( HWND, HTREEITEM, int );
@@ -209,7 +209,7 @@ private:
 	bool		m_bHovering;
 	int			m_nHilightedBtn;
 	int			m_nCapturingBtn;
-	
+
 	STypeConfig m_type;
 	CFileTreeSetting	m_fileTreeSetting;
 
