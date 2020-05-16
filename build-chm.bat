@@ -19,7 +19,7 @@ set CHM_PLUGIN=%TMP_HELP%\plugin\plugin.chm
 set CHM_SAKURA=%TMP_HELP%\sakura\sakura.chm
 set HH_SCRIPT=%TMP_HELP%\remove-comment.py
 set HH_INPUT=sakura_core\sakura.hh
-set HH_OUTPUT=help\sakura\sakura.hh
+set HH_OUTPUT=%TMP_HELP%\sakura\sakura.hh
 
 if defined APPVEYOR (
 	if "%PLATFORM%" neq "BuildChm" (
