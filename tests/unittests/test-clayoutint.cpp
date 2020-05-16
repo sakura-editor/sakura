@@ -96,7 +96,7 @@ TEST( CLayoutInt, OperatorRemainder )
 {
 	// コメントアウトの組み合わせは未実装。
 	CLayoutInt a( 2 ), b( 3 ), c( 8 );
-
+	
 	EXPECT_TRUE( a == c % b );
 	EXPECT_TRUE( a == c % 3 );
 	//EXPECT_TRUE( a == 6 % b );
