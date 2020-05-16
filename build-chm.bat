@@ -8,6 +8,7 @@ set SRC_HELP=%~dp0help
 set TMP_HELP=%~dp0temphelp
 
 @rem create sakura.hh before copying because sakura.hh will be uploaded as an artifact.
+set HH_SCRIPT=%SRC_HELP%\remove-comment.py
 set HH_INPUT=sakura_core\sakura.hh
 set HH_OUTPUT=help\sakura\sakura.hh
 
@@ -24,7 +25,6 @@ set HHP_SAKURA=%TMP_HELP%\sakura\sakura.hhp
 set CHM_MACRO=%TMP_HELP%\macro\macro.chm
 set CHM_PLUGIN=%TMP_HELP%\plugin\plugin.chm
 set CHM_SAKURA=%TMP_HELP%\sakura\sakura.chm
-set HH_SCRIPT=%TMP_HELP%\remove-comment.py
 
 if defined APPVEYOR (
 	if "%PLATFORM%" neq "BuildChm" (
