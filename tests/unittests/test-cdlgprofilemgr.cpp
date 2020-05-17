@@ -46,6 +46,40 @@ public:
 };
 
 /*!
+ * プロファイルマネージャ設定ファイルを使うテストのためのフィクスチャクラス
+ *
+ * 設定ファイルを使うテストは「設定ファイルがない状態」からの始動を想定しているので
+ * 始動前に設定ファイルを削除するようにしている。
+ * テスト実行後に設定ファイルを残しておく意味はないので終了後も削除している。
+ */
+class CDlgProfileMgrIniTest : public ::testing::Test {
+protected:
+	/*!
+	 * プロファイルマネージャ設定ファイルの名前
+	 *
+	 * この名前は "%s_prof.ini" に 実行ファイル名 を埋め込んで生成される。
+	 * 実稼働環境では "sakura_prof.ini" となることに注意。
+	 */
+	static constexpr const char szProfileMgrIniName[] = "tests1_prof.ini";
+
+	/*!
+	 * テストが起動される直前に毎回呼ばれる関数
+	 */
+	virtual void SetUp() {
+		// プロファイル設定を削除する
+		std::remove( szProfileMgrIniName );
+	}
+
+	/*!
+	 * テストが実行された直後に毎回呼ばれる関数
+	 */
+	virtual void TearDown() {
+		// プロファイル設定を削除する
+		std::remove( szProfileMgrIniName );
+	}
+};
+
+/*!
  * @brief TrySelectProfileのテスト
  */
 TEST(CDlgProfileMgr, TrySelectProfile_001 )
@@ -70,11 +104,8 @@ TEST( CDlgProfileMgr, TrySelectProfile_002 )
 /*!
  * @brief TrySelectProfileのテスト
  */
-TEST( CDlgProfileMgr, TrySelectProfile_003 )
+TEST_F( CDlgProfileMgrIniTest, TrySelectProfile_003 )
 {
-	// プロファイル設定を削除する
-	std::remove( "tests1_prof.ini" );
-
 	// プロファイル設定がなかったらプロファイルは確定する
 	CCommandLineWrapper cCommandLine;
 	ASSERT_TRUE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
@@ -83,7 +114,7 @@ TEST( CDlgProfileMgr, TrySelectProfile_003 )
 /*!
  * @brief TrySelectProfileのテスト
  */
-TEST( CDlgProfileMgr, TrySelectProfile_004 )
+TEST_F( CDlgProfileMgrIniTest, TrySelectProfile_004 )
 {
 	// プロファイル設定を作る
 	SProfileSettings settings;
@@ -101,7 +132,7 @@ TEST( CDlgProfileMgr, TrySelectProfile_004 )
 /*!
  * @brief TrySelectProfileのテスト
  */
-TEST( CDlgProfileMgr, TrySelectProfile_005 )
+TEST_F( CDlgProfileMgrIniTest, TrySelectProfile_005 )
 {
 	// プロファイル設定を作る
 	SProfileSettings settings;
@@ -119,7 +150,7 @@ TEST( CDlgProfileMgr, TrySelectProfile_005 )
 /*!
  * @brief TrySelectProfileのテスト
  */
-TEST( CDlgProfileMgr, TrySelectProfile_006 )
+TEST_F( CDlgProfileMgrIniTest, TrySelectProfile_006 )
 {
 	// 空のプロファイル設定を作る
 	SProfileSettings settings;
