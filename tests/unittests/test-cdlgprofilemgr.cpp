@@ -34,6 +34,7 @@
 #include "dlg/CDlgProfileMgr.h"
 
 #include <cstdlib>
+#include <filesystem>
 #include <fstream>
 
 /*!
@@ -67,7 +68,7 @@ protected:
 	 */
 	virtual void SetUp() {
 		// プロファイル設定を削除する
-		std::remove( szProfileMgrIniName );
+		std::filesystem::remove( szProfileMgrIniName );
 	}
 
 	/*!
@@ -75,7 +76,7 @@ protected:
 	 */
 	virtual void TearDown() {
 		// プロファイル設定を削除する
-		std::remove( szProfileMgrIniName );
+		std::filesystem::remove( szProfileMgrIniName );
 	}
 };
 
