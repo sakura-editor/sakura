@@ -8,7 +8,7 @@ if not defined CMD_7Z (
 
 
 @rem for GIT_TAG_NAME
-call %~dp0sakura\githash.bat %~dp0sakura_core
+call %~dp0..\sakura\githash.bat %~dp0..\sakura_core
 
 @rem ----------------------------------------------------------------
 @rem prepare environment variable
