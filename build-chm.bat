@@ -62,8 +62,10 @@ exit /b 0
 :BuildChm
 set PROJECT_HHP=%1
 set PROJECT_CHM=%2
+set PROJECT_LOG=%~dp2\Compile.log
 
 if exist "%PROJECT_CHM%" del /F "%PROJECT_CHM%"
+if exist "%PROJECT_LOG%" del /F "%PROJECT_LOG%"
 
 if defined CMD_LEPROC (
 	for /L %%j in (1,1,2) do (
@@ -75,12 +77,8 @@ if defined CMD_LEPROC (
 		@rem wait to create chm
 		for /L %%i in (1,1,30) do (
 			ping -n 2 localhost > NUL
-			copy "%PROJECT_CHM%" nul > NUL 2>&1
-			if not errorlevel 1 (
-				@rem additional wait
-				ping -n 5 localhost > NUL
-				exit /b 0
-			)
+			copy "%PROJECT_LOG%" nul > NUL 2>&1
+			if not errorlevel 1 exit /b 0
 		)
 		echo retry creating %PROJECT_CHM%
 	)
