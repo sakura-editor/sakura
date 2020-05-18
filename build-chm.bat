@@ -66,16 +66,23 @@ set PROJECT_CHM=%2
 if exist "%PROJECT_CHM%" del /F "%PROJECT_CHM%"
 
 if defined CMD_LEPROC (
-	"%CMD_LEPROC%" %COMSPEC% /c """%CMD_HHC%"" %PROJECT_HHP%"
-	if errorlevel 1 (
-		echo fail to execute LEProc
-		exit /b 1
-	)
-	@rem wait to create chm
-	for /L %%i in (1,1,30) do (
-		ping -n 2 localhost > NUL
-		copy "%PROJECT_CHM%" nul > NUL 2>&1
-		if not errorlevel 1 exit /b 0
+	for /L %%j in (1,1,2) do (
+		"%CMD_LEPROC%" %COMSPEC% /c """%CMD_HHC%"" %PROJECT_HHP%"
+		if errorlevel 1 (
+			echo fail to execute LEProc
+			exit /b 1
+		)
+		@rem wait to create chm
+		for /L %%i in (1,1,30) do (
+			ping -n 2 localhost > NUL
+			copy "%PROJECT_CHM%" nul > NUL 2>&1
+			if not errorlevel 1 (
+				@rem additional wait
+				ping -n 5 localhost > NUL
+				exit /b 0
+			)
+		)
+		echo retry creating %PROJECT_CHM%
 	)
 	echo fail to create %PROJECT_CHM%
 	exit /b 1
