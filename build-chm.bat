@@ -68,14 +68,10 @@ if exist "%PROJECT_CHM%" del /F "%PROJECT_CHM%"
 if exist "%PROJECT_LOG%" del /F "%PROJECT_LOG%"
 
 if defined CMD_LEPROC (
-	for /L %%j in (1,1,2) do (
+	for /L %%i in (1,1,2) do (
 		"%CMD_LEPROC%" %COMSPEC% /c """%CMD_HHC%"" %PROJECT_HHP%"
-		if errorlevel 1 (
-			echo fail to execute LEProc
-			exit /b 1
-		)
 		@rem wait to create chm
-		for /L %%i in (1,1,30) do (
+		for /L %%j in (1,1,30) do (
 			ping -n 2 localhost > NUL
 			copy "%PROJECT_LOG%" nul > NUL 2>&1
 			if not errorlevel 1 exit /b 0
@@ -83,22 +79,16 @@ if defined CMD_LEPROC (
 		echo retry creating %PROJECT_CHM%
 	)
 	echo fail to create %PROJECT_CHM%
-	exit /b 1
 ) else (
-	@rem hhc.exe returns 1 on success, and returns 0 on failure
-	"%CMD_HHC%" %PROJECT_HHP%
-	if not errorlevel 1 (
-		echo error %PROJECT_HHP% errorlevel %errorlevel%
-
-		del /F "%PROJECT_CHM%"
+	for /L %%i in (1,1,2) do (
+		@rem hhc.exe returns 1 on success, and returns 0 on failure
 		"%CMD_HHC%" %PROJECT_HHP%
+		if errorlevel 1 exit /b 0
+		echo error %PROJECT_HHP% errorlevel %errorlevel%
+		del /F "%PROJECT_CHM%"
 	)
-	if not errorlevel 1 (
-		echo retry error %PROJECT_HHP% errorlevel %errorlevel%
-		exit /b 1
-	)
-	exit /b 0
 )
+exit /b 1
 
 :download_archive
 pwsh.exe -ExecutionPolicy RemoteSigned -File %SRC_HELP%\extract-chm-from-artifact.ps1
