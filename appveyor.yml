@@ -26,7 +26,7 @@ skip_commits:
 install:
 - cmd: |
     pip install openpyxl --user
-    pip install sphinx --user
+    pip install sphinx
     C:\msys64\usr\bin\bash --login -c "pacman -S --noconfirm mingw-w64-x86_64-gtest"
 
 # to run our custom scripts instead of automatic MSBuild

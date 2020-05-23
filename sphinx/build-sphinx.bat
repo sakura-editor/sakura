@@ -5,7 +5,7 @@ set HHP_SAKURA=%~dp0sakura\build\htmlhelp\SAKURAEditordoc.hhp
 
 python -c "import sphinx"
 if errorlevel 1 (
-	pip install sphinx --user
+	pip install sphinx
 	python -c "import sphinx"
 )
 if errorlevel 1 (
