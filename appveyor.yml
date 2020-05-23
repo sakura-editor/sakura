@@ -59,6 +59,7 @@ for:
   build_script:
     - cmd: cup vswhere
     - cmd: build-chm.bat
+    - cmd: sphinx\build-sphinx.bat
     - cmd: help\make-artifacts.bat
 
   test_script:
