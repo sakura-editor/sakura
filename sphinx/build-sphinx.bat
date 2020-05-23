@@ -5,6 +5,10 @@ set HHP_SAKURA=%~dp0sakura\build\htmlhelp\SAKURAEditordoc.hhp
 
 python -c "import sphinx"
 if errorlevel 1 (
+	pip install sphinx --user
+	python -c "import sphinx"
+)
+if errorlevel 1 (
 	echo Please run 'pip install sphinx' in advance.
 	exit /b 1
 )
