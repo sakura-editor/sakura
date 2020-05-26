@@ -93,10 +93,10 @@ jobs:
         name: Exe ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Exe.zip'
 
-    - name: Upload Exe md5
+    - name: Upload Exe MD5
       uses: actions/upload-artifact@v2
       with:
-        name: Exe md5 ${{ matrix.platform }} ${{ matrix.config }}
+        name: Exe MD5 ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Exe.zip.md5'
 
     - name: Upload Log
