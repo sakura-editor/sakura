@@ -75,8 +75,44 @@ jobs:
       shell: cmd
 
     ## see https://github.com/actions/upload-artifact
-    - name: Upload
+    - name: Upload Installer
       uses: actions/upload-artifact@v2
       with:
-        name: exe ${{ matrix.platform }} ${{ matrix.config }}
-        path: '*.zip'
+        name: Installer ${{ matrix.platform }} ${{ matrix.config }}
+        path: 'sakura-*-Installer.zip'
+
+    - name: Upload Installer MD5
+      uses: actions/upload-artifact@v2
+      with:
+        name: Installer MD5 ${{ matrix.platform }} ${{ matrix.config }}
+        path: 'sakura-*-Installer.zip.md5'
+
+    - name: Upload Exe
+      uses: actions/upload-artifact@v2
+      with:
+        name: Exe ${{ matrix.platform }} ${{ matrix.config }}
+        path: 'sakura-*-Exe.zip'
+
+    - name: Upload Exe MD5
+      uses: actions/upload-artifact@v2
+      with:
+        name: Exe MD5 ${{ matrix.platform }} ${{ matrix.config }}
+        path: 'sakura-*-Exe.zip.md5'
+
+    - name: Upload Log
+      uses: actions/upload-artifact@v2
+      with:
+        name: Log ${{ matrix.platform }} ${{ matrix.config }}
+        path: 'sakura-*-Log.zip'
+
+    - name: Upload Asm
+      uses: actions/upload-artifact@v2
+      with:
+        name: Asm ${{ matrix.platform }} ${{ matrix.config }}
+        path: 'sakura-*-Asm.zip'
+
+    - name: Upload Dev
+      uses: actions/upload-artifact@v2
+      with:
+        name: Dev ${{ matrix.platform }} ${{ matrix.config }}
+        path: 'sakura-*-Dev.zip'
