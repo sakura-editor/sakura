@@ -1,5 +1,22 @@
 # Change Log
 
+## [Unreleased](https://github.com/sakura-editor/sakura/tree/HEAD)
+
+[Full Changelog](https://github.com/sakura-editor/sakura/compare/v2.4.1...HEAD)
+
+### その他変更
+
+- ver 2.4.1 をリリースしたので ver 2.4.2 に上げる [\#1317](https://github.com/sakura-editor/sakura/pull/1317) ([m-tmatma](https://github.com/m-tmatma))
+- Release/v2.4.1  [\#1316](https://github.com/sakura-editor/sakura/pull/1316) ([KENCHjp](https://github.com/KENCHjp))
+
+## [v2.4.1](https://github.com/sakura-editor/sakura/tree/v2.4.1) (2020-05-30)
+
+[Full Changelog](https://github.com/sakura-editor/sakura/compare/v2.4.1-beta3...v2.4.1)
+
+### その他変更
+
+- GitHub Actions の成果物を別々の ZIP として upload する [\#1285](https://github.com/sakura-editor/sakura/pull/1285) ([m-tmatma](https://github.com/m-tmatma))
+
 ## [v2.4.1-beta3](https://github.com/sakura-editor/sakura/tree/v2.4.1-beta3) (2020-05-20)
 
 [Full Changelog](https://github.com/sakura-editor/sakura/compare/v2.4.1-beta2...v2.4.1-beta3)
@@ -16,6 +33,9 @@
 ## [v2.4.1-beta2](https://github.com/sakura-editor/sakura/tree/v2.4.1-beta2) (2020-05-10)
 
 [Full Changelog](https://github.com/sakura-editor/sakura/compare/v2.4.0...v2.4.1-beta2)
+
+### 仕様変更
+
 
 ### バグ修正
 
@@ -34,7 +54,6 @@
 - CodeFactor の警告を修正 [\#1272](https://github.com/sakura-editor/sakura/pull/1272) ([m-tmatma](https://github.com/m-tmatma))
 - GitHub Actions の yml のCodeFactor の警告 [\#1270](https://github.com/sakura-editor/sakura/pull/1270) ([m-tmatma](https://github.com/m-tmatma))
 - azure pipeline の表示名のタイポ修正 [\#1258](https://github.com/sakura-editor/sakura/pull/1258) ([m-tmatma](https://github.com/m-tmatma))
-- PR1254 のヘルプの修正を 2.4.1 beta1 にマージする [\#1257](https://github.com/sakura-editor/sakura/pull/1257) ([m-tmatma](https://github.com/m-tmatma))
 - googletest を無視リストに追加 [\#1256](https://github.com/sakura-editor/sakura/pull/1256) ([m-tmatma](https://github.com/m-tmatma))
 - 履歴コンボの履歴削除機能の発動条件を変更したい [\#1255](https://github.com/sakura-editor/sakura/pull/1255) ([berryzplus](https://github.com/berryzplus))
 - ヘルプの動作環境OSの記述を更新 [\#1254](https://github.com/sakura-editor/sakura/pull/1254) ([beru](https://github.com/beru))
@@ -49,7 +68,6 @@
 - UNICODE一本化対応で見落としていたA版専用処理を削りたい [\#1229](https://github.com/sakura-editor/sakura/pull/1229) ([berryzplus](https://github.com/berryzplus))
 - コピー代入のメソッド名を書き間違っているのを訂正 [\#1228](https://github.com/sakura-editor/sakura/pull/1228) ([berryzplus](https://github.com/berryzplus))
 - googletestのビルドをバッチスクリプトで行うように変更したい [\#1227](https://github.com/sakura-editor/sakura/pull/1227) ([berryzplus](https://github.com/berryzplus))
-- Release/v2.4.0  [\#1226](https://github.com/sakura-editor/sakura/pull/1226) ([KENCHjp](https://github.com/KENCHjp))
 - Grep置換ダイアログの「置換後」の実装を置換ダイアログと合わせる [\#1224](https://github.com/sakura-editor/sakura/pull/1224) ([berryzplus](https://github.com/berryzplus))
 
 ## [v2.4.0](https://github.com/sakura-editor/sakura/tree/v2.4.0) (2020-04-18)
