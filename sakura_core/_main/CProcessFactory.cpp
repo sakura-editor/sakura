@@ -83,13 +83,6 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 
 bool CProcessFactory::ProfileSelect( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 {
-	CDlgProfileMgr dlgProf;
-	SProfileSettings settings;
-
-	CDlgProfileMgr::ReadProfSettings( settings );
-	CSelectLang::InitializeLanguageEnvironment();
-	CSelectLang::ChangeLang( settings.m_szDllLanguage );
-
 	//	May 30, 2000 genta
 	//	実行ファイル名をもとに漢字コードを固定する．
 	WCHAR szExeFileName[MAX_PATH];
@@ -98,23 +91,10 @@ bool CProcessFactory::ProfileSelect( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 
 	CCommandLine::getInstance()->ParseCommandLine(lpCmdLine);
 
-	bool bDialog;
-	if( CCommandLine::getInstance()->IsProfileMgr() ){
-		bDialog = true;
-	}else if( CCommandLine::getInstance()->IsSetProfile() ){
-		bDialog = false;
-	}else if( settings.m_nDefaultIndex == -1 ){
-		bDialog = true;
-	}else{
-		assert( 0 <= settings.m_nDefaultIndex );
-		if( 0 < settings.m_nDefaultIndex ){
-			CCommandLine::getInstance()->SetProfileName( settings.m_vProfList[settings.m_nDefaultIndex - 1].c_str() );
-		}else{
-			CCommandLine::getInstance()->SetProfileName( L"" );
-		}
-		bDialog = false;
-	}
-	if( bDialog ){
+	// コマンドラインオプションから起動プロファイルを判定する
+	bool profileSelected = CDlgProfileMgr::TrySelectProfile( CCommandLine::getInstance() );
+	if( !profileSelected ){
+		CDlgProfileMgr dlgProf;
 		if( dlgProf.DoModal( hInstance, NULL, 0 ) ){
 			CCommandLine::getInstance()->SetProfileName( dlgProf.m_strProfileName.c_str() );
 		}else{

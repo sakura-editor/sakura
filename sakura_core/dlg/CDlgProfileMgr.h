@@ -30,6 +30,7 @@
 #pragma once
 
 #include "dlg/CDialog.h"
+#include "_main/CCommandLine.h"
 #include <string>
 #include <vector>
 
@@ -44,6 +45,9 @@ struct SProfileSettings
 class CDlgProfileMgr final : public CDialog
 {
 public:
+	//! コマンドラインだけでプロファイルが確定するか調べる
+	static bool TrySelectProfile( CCommandLine* pcCommandLine ) noexcept;
+
 	/*
 	||  Constructors
 	*/

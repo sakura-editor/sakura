@@ -51,6 +51,38 @@ const DWORD p_helpids[] = {
 	0, 0
 };
 
+//! コマンドラインだけでプロファイルが確定するか調べる
+bool CDlgProfileMgr::TrySelectProfile( CCommandLine* pcCommandLine ) noexcept
+{
+	SProfileSettings settings;
+	bool bSettingLoaded = ReadProfSettings( settings );
+
+	bool bDialog;
+	if( pcCommandLine->IsProfileMgr() ){		// コマンドラインでプロファイルマネージャの表示が指定されている
+		bDialog = true;
+	}else if( pcCommandLine->IsSetProfile() ){	// コマンドラインでプロファイル名が指定されている
+		bDialog = false;
+	}else if( !bSettingLoaded ){				// プロファイル設定がなかった
+		bDialog = false;
+	}else if( 0 < settings.m_nDefaultIndex && settings.m_nDefaultIndex <= static_cast<int>(settings.m_vProfList.size()) ){
+		// プロファイル設定のデフォルトインデックス値から該当のプロファイル名が指定されたものとして動作する
+		pcCommandLine->SetProfileName( settings.m_vProfList[settings.m_nDefaultIndex - 1].c_str() );
+		bDialog = false;
+	}else{
+		// プロファイル設定のデフォルトインデックス値が不正なのでプロファイルマネージャを表示して設定更新を促す
+		bDialog = true;
+	}
+	if( bDialog ){
+		// プロファイルマネージャを表示する場合、言語環境の初期化を済ませておく
+		CSelectLang::InitializeLanguageEnvironment();
+		if( bSettingLoaded ){
+			// 設定が読めた場合のみ、日本語以外の設定言語を適用する
+			CSelectLang::ChangeLang( settings.m_szDllLanguage );
+		}
+	}
+	return !bDialog;
+}
+
 CDlgProfileMgr::CDlgProfileMgr()
 : CDialog(false, false)
 {
