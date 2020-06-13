@@ -735,16 +735,23 @@ void CViewCommander::Command_1PageUp( bool bSelect, CLayoutYInt nScrollNum )
 // 2001.12.03 hor
 //		メモ帳ライクに、画面に対するカーソル位置はそのままで１ページアップ
 	{
-		const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(false);
 		CLayoutInt nViewTopLine = m_pCommanderView->GetTextArea().GetViewTopLine();
+		const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(false);
 		if( nScrollNum <= 0 ){
 			nScrollNum = m_pCommanderView->GetTextArea().m_nViewRowNum - 1;
 		}
-		GetCaret().Cursor_UPDOWN( -nScrollNum, bSelect );
+		auto& caret = GetCaret();
+		auto prevCaretPos = caret.GetCaretLayoutPos();
+		caret.Cursor_UPDOWN( -nScrollNum, bSelect );
+		auto currCaretPos = caret.GetCaretLayoutPos();
 		//	Sep. 11, 2004 genta 同期スクロール処理のため
 		//	m_pCommanderView->RedrawAllではなくScrollAtを使うように
-		m_pCommanderView->SyncScrollV( m_pCommanderView->ScrollAtV( nViewTopLine - nScrollNum ));
+		CLayoutInt nScrolled = m_pCommanderView->ScrollAtV( nViewTopLine - nScrollNum );
+		m_pCommanderView->SyncScrollV(nScrolled);
 		m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);
+		if (prevCaretPos == currCaretPos && nScrolled == 0) {
+			return;
+		}
 		m_pCommanderView->RedrawAll();
 	}
 	return;
@@ -764,16 +771,23 @@ void CViewCommander::Command_1PageDown( bool bSelect, CLayoutYInt nScrollNum )
 // 2001.12.03 hor
 //		メモ帳ライクに、画面に対するカーソル位置はそのままで１ページダウン
 	{
-		const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(false);
 		CLayoutInt nViewTopLine = m_pCommanderView->GetTextArea().GetViewTopLine();
+		const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(false);
 		if( nScrollNum <= 0 ){
 			nScrollNum = m_pCommanderView->GetTextArea().m_nViewRowNum - 1;
 		}
-		GetCaret().Cursor_UPDOWN( nScrollNum, bSelect );
+		auto& caret = GetCaret();
+		auto prevCaretPos = caret.GetCaretLayoutPos();
+		caret.Cursor_UPDOWN( nScrollNum, bSelect );
+		auto currCaretPos = caret.GetCaretLayoutPos();
 		//	Sep. 11, 2004 genta 同期スクロール処理のため
 		//	m_pCommanderView->RedrawAllではなくScrollAtを使うように
-		m_pCommanderView->SyncScrollV( m_pCommanderView->ScrollAtV( nViewTopLine + nScrollNum ));
+		CLayoutInt nScrolled = m_pCommanderView->ScrollAtV( nViewTopLine + nScrollNum );
+		m_pCommanderView->SyncScrollV(nScrolled);
 		m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);
+		if (prevCaretPos == currCaretPos && nScrolled == 0) {
+			return;
+		}
 		m_pCommanderView->RedrawAll();
 	}
 
