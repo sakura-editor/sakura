@@ -26,6 +26,7 @@
 #include "macro/CSMacroMgr.h"
 #include "macro/CPPAMacroMgr.h"
 #include "macro/CWSHManager.h"
+#include "macro/CPythonMacroManager.h"
 #include "macro/CMacroFactory.h"
 #include "env/CShareData.h"
 #include "view/CEditView.h"
@@ -496,6 +497,7 @@ CSMacroMgr::CSMacroMgr()
 	CPPAMacroMgr::declare();
 	CKeyMacroMgr::declare();
 	CWSHMacroManager::declare();
+	CPythonMacroManager::declare();
 	
 	int i;
 	for ( i = 0 ; i < MAX_CUSTMACRO ; i++ ){

@@ -254,6 +254,7 @@ macro/CMacroFactory.o \
 macro/CMacroManagerBase.o \
 macro/CPPA.o \
 macro/CPPAMacroMgr.o \
+macro/CPythonMacroManager.o \
 macro/CSMacroMgr.o \
 macro/CWSH.o \
 macro/CWSHIfObj.o \
