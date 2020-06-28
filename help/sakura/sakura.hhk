@@ -49,6 +49,10 @@
 <param name="Local" value="res\HLP000112.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
+<param name="Name" value="Windows 10 でのファイル拡張子関連付け">
+<param name="Local" value="res\HLP000374.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
 <param name="Name" value="基本的な使い方">
 <param name="Local" value="res\HLP000001.html#c902">
 </OBJECT>
