@@ -20,7 +20,7 @@ if errorlevel 1 (
 	@echo NOTE: No python command
 ) else (
 	python appveyor_env.py
-	python parse-buildlog.py %LOGFILE% || set ERROR_RESULT=1
+	@rem python parse-buildlog.py %LOGFILE% || set ERROR_RESULT=1
 )
 exit /b %ERROR_RESULT%
 
