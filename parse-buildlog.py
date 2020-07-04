@@ -41,6 +41,9 @@ excelKeys = [
 	'lineNumber',
 ]
 
+colors_YELLOW = "FFFF00"
+colors_BLUE   = "0000FF"
+
 # infile: msbuild のビルドログ・ファイル名
 # 戻り値: ログの解析結果が入ったハッシュの配列
 def parse_buildlog(infile):
@@ -173,7 +176,7 @@ def writeToXLSX(outfile, data):
 		for x, item in enumerate(excelKeys):
 			cell = ws.cell(row=y+1, column=x+1)
 			cell.value = item
-			cell.fill  = PatternFill(patternType='solid', start_color=colors.YELLOW, end_color=colors.YELLOW)
+			cell.fill  = PatternFill(patternType='solid', start_color=colors_YELLOW, end_color=colors_YELLOW)
 			maxWidths.append(len(cell.value) + 1)
 		y = y + 1
 
@@ -211,7 +214,7 @@ def writeToXLSX(outfile, data):
 				if key == "relpath":
 					val            = entry['relpath'] + " line: " + entry['lineNumber']
 					cell.hyperlink = entry['blobURL']
-					cell.font      = Font(u='single', color=colors.BLUE)
+					cell.font      = Font(u='single', color=colors_BLUE)
 				else:
 					entryKey = entry[key]
 					val  = converter(entry[key])
@@ -284,7 +287,7 @@ def writeToXLSX(outfile, data):
 			for x, key in enumerate(outputKeys):
 				cell = wsError.cell(row=y+1, column=x+1)
 				cell.value = key
-				cell.fill  = PatternFill(patternType='solid', start_color=colors.YELLOW, end_color=colors.YELLOW)
+				cell.fill  = PatternFill(patternType='solid', start_color=colors_YELLOW, end_color=colors_YELLOW)
 				maxWidths.append(len(cell.value) + 1)
 			y = y + 1
 
@@ -294,7 +297,7 @@ def writeToXLSX(outfile, data):
 					cell = wsError.cell(row=y+1, column=x+1)
 					if key == "blobURL":
 						cell.hyperlink = entry[key]
-						cell.font      = Font(u='single', color=colors.BLUE)
+						cell.font      = Font(u='single', color=colors_BLUE)
 					val = converter(entry[key])
 					if val.isdigit():
 						cell.value = int(val)
