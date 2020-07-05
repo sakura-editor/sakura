@@ -83,7 +83,7 @@ const wchar_t* CDocReader::GetLineStrWithoutEOL( CLogicInt nLine, int* pnLineLen
 	データが1行もないときは、長さ0、ポインタNULLが返る。
 
 */
-const wchar_t* CDocReader::GetFirstLinrStr( int* pnLineLen )
+const wchar_t* CDocReader::GetFirstLinrStr( CLogicXInt* pnLineLen )
 {
 	const wchar_t* pszLine;
 	if( CLogicInt(0) == m_pcDocLineMgr->GetLineCount() ){
@@ -105,7 +105,7 @@ const wchar_t* CDocReader::GetFirstLinrStr( int* pnLineLen )
 	GetFirstLinrStr()が呼び出されていないとNULLが返る
 
 */
-const wchar_t* CDocReader::GetNextLinrStr( int* pnLineLen )
+const wchar_t* CDocReader::GetNextLinrStr( CLogicXInt* pnLineLen )
 {
 	const wchar_t* pszLine;
 	if( NULL == m_pcDocLineMgr->m_pDocLineCurrent ){
