@@ -208,7 +208,7 @@ void CBookmarkManager::MarkSearchWord(
 	const SSearchOption&	sSearchOption = pattern.GetSearchOption();
 	CDocLine*	pDocLine;
 	const wchar_t*	pLine;
-	int			nLineLen;
+	CLogicXInt		nLineLen;
 
 	/* 1==正規表現 */
 	if( sSearchOption.bRegularExp ){

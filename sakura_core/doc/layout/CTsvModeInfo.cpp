@@ -44,7 +44,7 @@ void CTsvModeInfo::CalcTabLength(CDocLineMgr* cDocLineMgr)
 	for (nLine = CLogicInt(0); nLine < nLineNum; nLine++) {
 		CDocLine* cDocLine = cDocLineMgr->GetLine(nLine);
 
-		int nLineLen;
+		CLogicXInt nLineLen;
 		int nCharChars;
 		int nField = 0;
 		int nFieldWidth = 0;

@@ -405,7 +405,7 @@ bool CEditView::SearchBracketForward(
 {
 	const CDocLine* ci;
 
-	int			len;
+	CLogicXInt len;
 	const wchar_t* cPos;
 	const wchar_t* nPos;
 	const wchar_t* cline;
@@ -498,7 +498,7 @@ bool CEditView::SearchBracketBackward(
 {
 	const CDocLine* ci;
 
-	int			len;
+	CLogicXInt len;
 	const wchar_t* cPos;
 	const wchar_t* pPos;
 	const wchar_t* cline;
