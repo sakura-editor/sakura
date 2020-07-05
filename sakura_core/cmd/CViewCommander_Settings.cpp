@@ -286,7 +286,12 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 		for( i = 0; i < _countof(sizeTable); i++) {
 			if( nPointSize <= sizeTable[i] ){
 				int index = t_max(0, t_min((int)_countof(sizeTable) - 1, (int)(i + shift)));
-				nPointSize = sizeTable[index];
+				int nNewPointSize = sizeTable[index];
+				// フォントサイズが変わらないので終了
+				if (nPointSize == nNewPointSize) {
+					return;
+				}
+				nPointSize = nNewPointSize;
 				break;
 			}
 		}
