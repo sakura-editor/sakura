@@ -66,6 +66,11 @@
 				<param name="Local" value="res\HLP000112.html">
 				<param name="ImageNumber" value="9">
 				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Windows 10 でのファイル拡張子関連付け">
+				<param name="Local" value="res\HLP000374.html">
+				<param name="ImageNumber" value="9">
+				</OBJECT>
 		</UL>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="基本的な使い方">
