@@ -57,13 +57,13 @@
 #else
 	// -- -- 通常のintで単位型を定義
 	//ロジック単位
-	typedef int CLogicInt;
+	typedef ptrdiff_t CLogicInt;
 
 	//レイアウト単位
-	typedef int CLayoutInt;
+	typedef ptrdiff_t CLayoutInt;
 
 	//中間単位
-	typedef int Int;
+	typedef ptrdiff_t Int;
 
 #endif
 
