@@ -14,6 +14,7 @@ if "%1" equ "clear" (
     set CMD_CMAKE=
     set CMD_NINJA=
     set CMD_LEPROC=
+    set CMD_PYTHON=
     set NUM_VSVERSION=
     set CMAKE_G_PARAM=
     set FIND_TOOLS_CALLED=
@@ -39,6 +40,7 @@ if not defined CMD_MSBUILD  call :msbuild  2> nul
 if not defined CMD_CMAKE    call :cmake    2> nul
 if not defined CMD_NINJA    call :cmake    2> nul
 if not defined CMD_LEPROC   call :leproc   2> nul
+if not defined CMD_PYTHON   call :python   2> nul
 echo ^|- CMD_GIT=%CMD_GIT%
 echo ^|- CMD_7Z=%CMD_7Z%
 echo ^|- CMD_HHC=%CMD_HHC%
@@ -50,6 +52,7 @@ echo ^|- CMD_MSBUILD=%CMD_MSBUILD%
 echo ^|- CMD_CMAKE=%CMD_CMAKE%
 echo ^|- CMD_NINJA=%CMD_NINJA%
 echo ^|- CMD_LEPROC=%CMD_LEPROC%
+echo ^|- CMD_PYTHON=%CMD_PYTHON%
 echo ^|- CMAKE_G_PARAM=%CMAKE_G_PARAM%
 endlocal ^
     && set "CMD_GIT=%CMD_GIT%"                  ^
@@ -63,6 +66,7 @@ endlocal ^
     && set "CMD_CMAKE=%CMD_CMAKE%"              ^
     && set "CMD_NINJA=%CMD_NINJA%"              ^
     && set "CMD_LEPROC=%CMD_LEPROC%"            ^
+    && set "CMD_PYTHON=%CMD_PYTHON%"            ^
     && set "NUM_VSVERSION=%NUM_VSVERSION%"      ^
     && set "CMAKE_G_PARAM=%CMAKE_G_PARAM%"      ^
     && echo end
@@ -270,3 +274,19 @@ for /f "usebackq delims=" %%a in (`where $PATH2:LEProc.exe`) do (
     exit /b
 )
 exit /b
+
+:python
+where py.exe 1>nul 2>&1
+if "%errorlevel%" == "0" (
+	set CMD_PYTHON=py.exe
+	exit /b 0
+)
+
+where python 1>nul 2>&1
+if errorlevel 1 exit /b 1
+
+for /F "usebackq tokens=2*" %%v in (`python --version`) do set PYTHON_VERSION=%%v
+if not defined PYTHON_VERSION exit /b 1
+
+set CMD_PYTHON=python.exe
+exit /b 0

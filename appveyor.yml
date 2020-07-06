@@ -24,8 +24,7 @@ skip_commits:
     - '.github/workflows/*.yml'
 
 install:
-- cmd: |
-    pip install openpyxl --user
+  - cmd: py -m pip install openpyxl --user
 
 # to run our custom scripts instead of automatic MSBuild
 build_script:
