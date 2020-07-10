@@ -5,6 +5,8 @@
 //2007.08.30 kobake 追加
 
 #ifdef _DEBUG
+bool g_IsGUIMode = false;
+
 //!デバッグメッセージ出力
 void debug_output(const char* str, ...)
 {
@@ -22,7 +24,14 @@ void debug_output(const char* str, ...)
 //!強制終了
 void debug_exit()
 {
-	MessageBox(NULL,L"assertとかに引っ掛かったぽいです",GSTR_APPNAME,MB_OK);
+	if (g_IsGUIMode)
+	{
+		MessageBox(NULL,L"assertとかに引っ掛かったぽいです",GSTR_APPNAME,MB_OK);
+	}
+	else
+	{
+		fprintf(stderr, "assertとかに引っ掛かったぽいです");
+	}
 	exit(1);
 }
 
@@ -30,7 +39,14 @@ void debug_exit2(const char* file, int line, const char* exp)
 {
 	char szBuffer[1024];
 	wsprintfA(szBuffer, "assert\n%s(%d):\n%s", file, line, exp);
-	MessageBoxA(NULL, szBuffer , "sakura", MB_OK);
+	if (g_IsGUIMode)
+	{
+		MessageBoxA(NULL, szBuffer , "sakura", MB_OK);
+	}
+	else
+	{
+		fprintf(stderr, "%s\n", szBuffer);
+	}
 	exit(1);
 }
 
