@@ -33,6 +33,7 @@
 #endif
 
 #ifdef _DEBUG
+	void debug_setDebugGUIMode(bool isDebugGUIMode);
 	void debug_output(const char* str, ...);
 	void debug_exit();
 	void debug_exit2(const char* file, int line, const char* exp);
