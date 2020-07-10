@@ -73,8 +73,6 @@ bool CDlgProfileMgr::TrySelectProfile( CCommandLine* pcCommandLine ) noexcept
 		bDialog = true;
 	}
 	if( bDialog ){
-		// プロファイルマネージャを表示する場合、言語環境の初期化を済ませておく
-		CSelectLang::InitializeLanguageEnvironment();
 		if( bSettingLoaded ){
 			// 設定が読めた場合のみ、日本語以外の設定言語を適用する
 			CSelectLang::ChangeLang( settings.m_szDllLanguage );

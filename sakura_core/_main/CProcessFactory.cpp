@@ -44,6 +44,9 @@ class CProcess;
 */
 CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 {
+	// 言語環境を初期化する
+	CSelectLang::InitializeLanguageEnvironment();
+
 	if( !ProfileSelect( hInstance, lpCmdLine ) ){
 		return 0;
 	}
