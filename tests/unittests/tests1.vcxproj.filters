@@ -17,6 +17,9 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="test-assert.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
     <ClCompile Include="test-cmemory.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
