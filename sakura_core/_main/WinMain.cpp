@@ -77,7 +77,6 @@ int WINAPI wWinMain(
 {
 #ifdef _DEBUG
 	debug_setDebugGUIMode(true);
-	assert(false);
 #endif
 #ifdef USE_LEAK_CHECK_WITH_CRTDBG
 	// 2009.9.10 syat メモリリークチェックを追加
