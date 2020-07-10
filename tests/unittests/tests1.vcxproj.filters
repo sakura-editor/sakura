@@ -65,8 +65,5 @@
     <ClCompile Include="test-clayoutint.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
-    <ClCompile Include="test-cdlgprofilemgr.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>
