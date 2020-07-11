@@ -335,11 +335,11 @@ void CMainToolBar::CreateToolBar( void )
 							CMyRect rcCombo;
 							::GetWindowRect( m_hwndSearchBox, &rcCombo );
 							::SetWindowPos( m_hwndSearchBox, NULL,
-								rc.left,	//作ったときと同じ値を指定
-								(rc.bottom - rc.top - rcCombo.Height()) / 2,	//上下中央に配置する
-								0,			//rcCombo.Width()のまま変えない
-								0,			//rcCombo.Height()のまま変えない
-								SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOSENDCHANGING );
+								rc.left + cxBorder,
+								rc.top + (rc.bottom - rc.top - rcCombo.Height()) / 2,
+								rcCombo.Width() - cxBorder * 2,
+								rcCombo.Height(),
+								SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOSENDCHANGING );
 						}
 						break;
 
