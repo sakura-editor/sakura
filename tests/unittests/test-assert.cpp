@@ -27,7 +27,7 @@
 #include <exception>
 #include "debug/Debug2.h"
 
-TEST(AssertTest, assert)
+TEST(AssertTest, DISABLED_assert)
 {
 	assert(false);
 }
