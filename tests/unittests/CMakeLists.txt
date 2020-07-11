@@ -5,7 +5,7 @@ include(${CMAKE_SOURCE_DIR}/runtime.cmake)
 set(project_name tests1)
 
 # define a variable SRC with file GLOB
-file(GLOB TEST_SRC ${CMAKE_CURRENT_LIST_DIR}/test*.cpp)
+file(GLOB TEST_SRC ${CMAKE_CURRENT_LIST_DIR}/main.cpp ${CMAKE_CURRENT_LIST_DIR}/test*.cpp)
 file(GLOB TARGET_SRC ${CMAKE_CURRENT_LIST_DIR}/code*.cpp)
 
 # define sources files of an executable
