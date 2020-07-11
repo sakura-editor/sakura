@@ -5,7 +5,7 @@
 //2007.08.30 kobake 追加
 
 #ifdef _DEBUG
-bool g_IsDebugGUIMode = false;
+bool g_IsDebugGUIMode = true;
 
 //!MessageBox を表示するかどうかを変更する
 void debug_setDebugGUIMode(bool isGUIMode)
