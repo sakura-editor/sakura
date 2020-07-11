@@ -331,7 +331,7 @@ void CMainToolBar::CreateToolBar( void )
 							m_comboDel.pRecent = &m_cRecentSearch;
 							CDialog::SetComboBoxDeleter(m_hwndSearchBox, &m_comboDel);
 
-							// コンボボックスの垂直位置を調整する
+							// コンボボックスの位置と幅を調整する
 							CMyRect rcCombo;
 							::GetWindowRect( m_hwndSearchBox, &rcCombo );
 							::SetWindowPos( m_hwndSearchBox, NULL,
