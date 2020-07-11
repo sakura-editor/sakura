@@ -5,12 +5,12 @@
 //2007.08.30 kobake 追加
 
 #ifdef _DEBUG
-static bool g_IsDebugGUIMode = true;
+static DebugGUIMode s_debugGUIMode = DebugGUIDMode_MessageBox;
 
 //!MessageBox を表示するかどうかを変更する
-void debug_setDebugGUIMode(bool isGUIMode)
+void debug_setDebugGUIMode(DebugGUIMode debugGUIMode)
 {
-	g_IsDebugGUIMode = isGUIMode;
+	s_debugGUIMode = debugGUIMode;
 }
 
 //!デバッグメッセージ出力
@@ -30,7 +30,7 @@ void debug_output(const char* str, ...)
 //!強制終了
 void debug_exit()
 {
-	if (g_IsDebugGUIMode)
+	if (s_debugGUIMode == DebugGUIDMode_MessageBox)
 	{
 		MessageBox(NULL,L"assertとかに引っ掛かったぽいです",GSTR_APPNAME,MB_OK);
 	}
@@ -45,7 +45,7 @@ void debug_exit2(const char* file, int line, const char* exp)
 {
 	char szBuffer[1024];
 	wsprintfA(szBuffer, "assert\n%s(%d):\n%s", file, line, exp);
-	if (g_IsDebugGUIMode)
+	if (s_debugGUIMode == DebugGUIDMode_MessageBox)
 	{
 		MessageBoxA(NULL, szBuffer , "sakura", MB_OK);
 	}

@@ -33,7 +33,13 @@
 #endif
 
 #ifdef _DEBUG
-	void debug_setDebugGUIMode(bool isDebugGUIMode);
+	enum DebugGUIMode {
+		DebugGUIDMode_MessageBox,
+		DebugGUIDMode_StdErr,
+		DebugGUIDMode_Max		
+	};
+
+	void debug_setDebugGUIMode(DebugGUIMode debugGUIMode);
 	void debug_output(const char* str, ...);
 	void debug_exit();
 	void debug_exit2(const char* file, int line, const char* exp);
