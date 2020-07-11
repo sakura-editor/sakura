@@ -23,9 +23,13 @@
 		   distribution.
 */
 #include <gtest/gtest.h>
+#include "debug/Debug2.h"
 
 int main(int argc, char **argv)
 {
+#ifdef _DEBUG
+	debug_setDebugGUIMode(DebugGUIDMode_StdErr);
+#endif // _DEBUG
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }

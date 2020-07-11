@@ -29,6 +29,5 @@
 
 TEST(AssertTest, DISABLED_assert)
 {
-	debug_setDebugGUIMode(DebugGUIDMode_StdErr);
 	assert(false);
 }
