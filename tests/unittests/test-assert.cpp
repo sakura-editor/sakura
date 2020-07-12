@@ -29,5 +29,6 @@
 
 TEST(AssertTest, DISABLED_assert)
 {
+	// sakura editor で定義している assert をチェックする
 	assert(false);
 }
