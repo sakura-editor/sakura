@@ -145,7 +145,7 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 	if( m_bSizeBox ){
 		m_hwndSizeBox = ::CreateWindowEx(
 			0L, 						/* no extended styles			*/
-			L"SCROLLBAR",				/* scroll bar control class		*/
+			WC_SCROLLBAR,				/* scroll bar control class		*/
 			NULL,						/* text for window title bar	*/
 			WS_VISIBLE | WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
 			0,							/* horizontal position			*/
@@ -406,7 +406,7 @@ void CFuncKeyWnd::CreateButtons( void )
 
 	for( i = 0; i < _countof( m_hwndButtonArr ); ++i ){
 		m_hwndButtonArr[i] = ::CreateWindow(
-			L"BUTTON",						// predefined class
+			WC_BUTTON,							// predefined class
 			L"",								// button text
 			WS_VISIBLE | WS_CHILD | BS_LEFT,	// styles
 			// Size and position values are given explicitly, because
@@ -443,7 +443,7 @@ void CFuncKeyWnd::SizeBox_ONOFF( bool bSizeBox )
 	}else{
 		m_hwndSizeBox = ::CreateWindowEx(
 			0L, 						/* no extended styles			*/
-			L"SCROLLBAR",				/* scroll bar control class		*/
+			WC_SCROLLBAR,				/* scroll bar control class		*/
 			NULL,						/* text for window title bar	*/
 			WS_VISIBLE | WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
 			0,							/* horizontal position			*/

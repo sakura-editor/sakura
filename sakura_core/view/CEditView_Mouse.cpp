@@ -2087,7 +2087,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 	if( nTid1 != nTid2 ) ::AttachThreadInput( nTid1, nTid2, TRUE );
 
 	// ダミーの STATIC を作ってフォーカスを当てる（エディタが前面に出ないように）
-	HWND hwnd = ::CreateWindow(L"STATIC", L"", 0, 0, 0, 0, 0, NULL, NULL, G_AppInstance(), NULL );
+	HWND hwnd = ::CreateWindow(WC_STATIC, L"", 0, 0, 0, 0, 0, NULL, NULL, G_AppInstance(), NULL );
 	::SetFocus(hwnd);
 
 	// メニューを作成する
