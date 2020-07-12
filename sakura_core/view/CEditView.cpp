@@ -451,7 +451,7 @@ LRESULT CEditView::DispatchEvent(
 		::SetWindowLongPtr( hwnd, 0, (LONG_PTR) this );
 		m_hwndSizeBox = ::CreateWindowEx(
 			0L,									/* no extended styles */
-			L"SCROLLBAR",					/* scroll bar control class */
+			WC_SCROLLBAR,						/* scroll bar control class */
 			NULL,								/* text for window title bar */
 			WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
 			0,									/* horizontal position */
@@ -468,7 +468,7 @@ LRESULT CEditView::DispatchEvent(
 		}
 		m_hwndSizeBoxPlaceholder = ::CreateWindowEx(
 			0L, 								/* no extended styles */
-			L"STATIC",						/* scroll bar control class */
+			WC_STATIC,							/* scroll bar control class */
 			NULL,								/* text for window title bar */
 			WS_CHILD,							/* innocent child */
 			0,									/* horizontal position */
