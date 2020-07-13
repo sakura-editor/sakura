@@ -27,20 +27,6 @@ void debug_output(const char* str, ...)
 	OutputDebugStringA(buf);
 }
 
-//!強制終了
-void debug_exit()
-{
-	if (s_debugGUIMode == DebugGUIDMode_MessageBox)
-	{
-		MessageBox(NULL,L"assertとかに引っ掛かったぽいです",GSTR_APPNAME,MB_OK);
-	}
-	else
-	{
-		fprintf(stderr, "assertとかに引っ掛かったぽいです");
-	}
-	exit(1);
-}
-
 void debug_exit2(const char* file, int line, const char* exp)
 {
 	char szBuffer[1024];
