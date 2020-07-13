@@ -30,5 +30,5 @@
 TEST(AssertTest, assert)
 {
 	// sakura editor で定義している assert をチェックする
-	assert(false);
+	ASSERT_THROW(assert(false), AssertException);
 }

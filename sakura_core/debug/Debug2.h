@@ -33,6 +33,14 @@
 #endif
 
 #ifdef _DEBUG
+	class AssertException
+	{
+	public:
+		AssertException()
+		{
+		}
+	};
+
 	enum DebugGUIMode {
 		DebugGUIDMode_MessageBox,
 		DebugGUIDMode_StdErr,

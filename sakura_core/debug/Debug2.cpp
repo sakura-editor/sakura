@@ -48,12 +48,13 @@ void debug_exit2(const char* file, int line, const char* exp)
 	if (s_debugGUIMode == DebugGUIDMode_MessageBox)
 	{
 		MessageBoxA(NULL, szBuffer , "sakura", MB_OK);
+		exit(1);
 	}
 	else
 	{
 		fprintf(stderr, "%s\n", szBuffer);
+		throw AssertException();
 	}
-	exit(1);
 }
 
 void warning_point()
