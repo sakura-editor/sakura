@@ -29,6 +29,8 @@
 
 TEST(AssertTest, assert)
 {
+#ifdef _DEBUG
 	// sakura editor で定義している assert をチェックする
 	ASSERT_THROW(assert(false), AssertException);
+#endif // _DEBUG
 }
