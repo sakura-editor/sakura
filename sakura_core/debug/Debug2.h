@@ -49,7 +49,6 @@
 
 	void debug_setDebugGUIMode(DebugGUIMode debugGUIMode);
 	void debug_output(const char* str, ...);
-	void debug_exit();
 	void debug_exit2(const char* file, int line, const char* exp);
 	void warning_point();
 
