@@ -105,7 +105,6 @@
     <Link Include="$(SolutionDir)sakura\$(Platform)\$(Configuration)\*.res" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="test-assert.cpp" />
     <ClCompile Include="test-ccommandline.cpp" />
     <ClCompile Include="test-cdlgprofilemgr.cpp" />

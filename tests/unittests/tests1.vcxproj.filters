@@ -17,9 +17,6 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Test Files</Filter>
-    </ClCompile>
     <ClCompile Include="test-assert.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
