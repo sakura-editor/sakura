@@ -24,6 +24,12 @@ void debug_exit2(const char* file, int line, const char* exp)
 	char szBuffer[1024];
 	wsprintfA(szBuffer, "assert\n%s(%d):\n%s", file, line, exp);
 	fprintf(stderr, "%s\n", szBuffer);
+	FILE * fp = fopen("assert.txt", "a");
+	if (fp)
+	{
+		fprintf(fp, "%s\n", szBuffer);
+		fclose(fp);
+	}
 	throw AssertException();
 }
 
