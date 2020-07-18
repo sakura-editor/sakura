@@ -276,14 +276,12 @@ for /f "usebackq delims=" %%a in (`where $PATH2:LEProc.exe`) do (
 exit /b
 
 :python
-:: パスにPython Launcher が存在していたら優先して使用する
 where py.exe 1>nul 2>&1
 if "%errorlevel%" == "0" (
 	set CMD_PYTHON=py.exe
 	exit /b 0
 )
 
-:: パスにPython Launcher が存在しない場合、python.exeを探しにいく
 set PATH2=%PATH%
 for /f "usebackq delims=" %%a in (`where $PATH2:python.exe`) do (
     set "CMD_PYTHON=%%a"
