@@ -276,17 +276,29 @@ for /f "usebackq delims=" %%a in (`where $PATH2:LEProc.exe`) do (
 exit /b
 
 :python
+:: パスにPython Launcher が存在していたら優先して使用する
 where py.exe 1>nul 2>&1
 if "%errorlevel%" == "0" (
 	set CMD_PYTHON=py.exe
 	exit /b 0
 )
 
-where python 1>nul 2>&1
-if errorlevel 1 exit /b 1
+:: パスにPython Launcher が存在しない場合、python.exeを探しにいく
+set PATH2=%PATH%
+for /f "usebackq delims=" %%a in (`where $PATH2:python.exe`) do (
+    set "CMD_PYTHON=%%a"
+    call :check_python_version
+    exit /b 0
+)
+call :check_python_version
+exit /b 0
 
-for /F "usebackq tokens=2*" %%v in (`python --version`) do set PYTHON_VERSION=%%v
-if not defined PYTHON_VERSION exit /b 1
-
-set CMD_PYTHON=python.exe
+:check_python_version
+set PYTHON_VERSION=
+for /F "usebackq tokens=2*" %%v in (`"%CMD_PYTHON%" --version`) do (
+    set PYTHON_VERSION=%%v
+)
+if not defined PYTHON_VERSION (
+    set CMD_PYTHON=
+)
 exit /b 0
