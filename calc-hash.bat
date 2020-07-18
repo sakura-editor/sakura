@@ -17,8 +17,8 @@ if not exist "%SRCDIR%" (
 	exit /b 1
 )
 
-where py.exe 1>nul 2>&1
-if "%errorlevel%" == "0" (
+if not defined CMD_PYTHON call %~dp0tools\find-tools.bat
+if not defined CMD_PYTHON (
 	@echo NOTE: No python command
 ) else (
 	calc-hash.py %OUTHASHFILE% %SRCDIR%
