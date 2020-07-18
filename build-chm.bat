@@ -1,6 +1,3 @@
-:: appveyorÉGÉâÅ[ëŒçÙÇÃÇΩÇﬂÇ…echoóLå¯âª
-echo on
-
 if defined APPVEYOR (
 	if "%PLATFORM%" neq "BuildChm" (
 		goto :download_archive
@@ -92,6 +89,6 @@ if defined CMD_LEPROC (
 exit /b 1
 
 :download_archive
-pwsh.exe -ExecutionPolicy RemoteSigned -File %SRC_HELP%\extract-chm-from-artifact.ps1
+pwsh.exe -ExecutionPolicy RemoteSigned -File %~dp0help\extract-chm-from-artifact.ps1
 if errorlevel 1 exit /b 1
 exit /b 0
