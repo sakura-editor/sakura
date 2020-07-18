@@ -21,7 +21,7 @@ if not defined CMD_PYTHON call %~dp0tools\find-tools.bat
 if not defined CMD_PYTHON (
 	@echo NOTE: No python command
 ) else (
-	%CMD_PYTHON% calc-hash.py %OUTHASHFILE% %SRCDIR% .res
+	"%CMD_PYTHON%" calc-hash.py %OUTHASHFILE% %SRCDIR% .res
 )
 exit /b 0
 
