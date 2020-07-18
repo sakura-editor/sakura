@@ -15,12 +15,12 @@ if not exist "%LOGFILE%" (
 )
 
 set ERROR_RESULT=0
-if not defined CMD_PYTHON call %~dp0tools\find-tools.bat
-if not defined CMD_PYTHON (
+where py.exe 1>nul 2>&1
+if "%errorlevel%" == "0" (
 	@echo NOTE: No python command
 ) else (
-	"%CMD_PYTHON%" appveyor_env.py
-	"%CMD_PYTHON%" parse-buildlog.py %LOGFILE% || set ERROR_RESULT=1
+	appveyor_env.py
+	parse-buildlog.py %LOGFILE% || set ERROR_RESULT=1
 )
 exit /b %ERROR_RESULT%
 
