@@ -6,7 +6,7 @@ if not defined CMD_HHC (
 
 if not defined CMD_PYTHON call %~dp0tools\find-tools.bat
 if not defined CMD_PYTHON (
-	@echo py.exe was not found.
+	@echo python was not found.
 	exit /b 1
 )
 

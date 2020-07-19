@@ -282,18 +282,21 @@ if defined CMD_PYTHON (
 	exit /b 0
 )
 
-set PATH2=%PATH%
-for /f "usebackq delims=" %%a in (`where $PATH2:python.exe`) do (
-    set "CMD_PYTHON=%%a"
-    call :check_python_version
-    exit /b 0
-)
+call :find_python
 call :check_python_version
 exit /b 0
 
 :find_py
 set PATH2=%PATH%
 for /f "usebackq delims=" %%a in (`where $PATH2:py.exe`) do (
+    set "CMD_PYTHON=%%a"
+    exit /b 0
+)
+exit /b 0
+
+:find_python
+set PATH2=%PATH%
+for /f "usebackq delims=" %%a in (`where $PATH2:python.exe`) do (
     set "CMD_PYTHON=%%a"
     exit /b 0
 )
