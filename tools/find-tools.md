@@ -84,7 +84,7 @@ MSBuild以外の探索手順は同一であり、7-Zipを例に説明する。
 適切なpythonインタープリターが見つからない場合、`CMD_PYTHON` は定義されません。
 pythonインタープリターはビルド要件ではないのでpythonを利用するバッチには `CMD_PYTHON` チェックを挟む必要があります。
 
-1. python Launcher(py.exe)が存在していたら、それを使う。
+1. python Launcher(py.exe)が存在し、`py.exe --version`でバージョンが取れたら、それを使う。
 1. パスが通っているpython.exeで`python.exe --version`してバージョンが取れたら、それを使う。
 
 
