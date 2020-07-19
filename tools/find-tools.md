@@ -22,6 +22,7 @@
 | vswhere            | CMD_VSWHERE  | Microsoft Visual Studio\Installer | vswhere.exe  |
 | MSBuild            | CMD_MSBUILD  | 特殊               | MSBuild.exe  |
 | Locale Emulator    | CMD_LEPROC   | なし               | LEProc.exe   |
+| python             | CMD_PYTHON   | なし               | py.exe(python.exe) |
 
 ## MSBuild以外の探索手順
 MSBuild以外の探索手順は同一であり、7-Zipを例に説明する。
@@ -75,6 +76,17 @@ MSBuild以外の探索手順は同一であり、7-Zipを例に説明する。
 ### 参照
 * https://github.com/Microsoft/vswhere
 * https://github.com/Microsoft/vswhere/wiki/Find-MSBuild
+
+## python
+
+ビルドバッチで利用するpythonインタープリターの存在確認をします。
+適切なpythonインタープリターが見つかると、環境変数 `CMD_PYTHON` が定義されます。
+適切なpythonインタープリターが見つからない場合、`CMD_PYTHON` は定義されません。
+pythonインタープリターはビルド要件ではないのでpythonを利用するバッチには `CMD_PYTHON` チェックを挟む必要があります。
+
+1. python Launcher(py.exe)が存在し、`py.exe --version`でバージョンが取れたら、それを使う。
+1. パスが通っているpython.exeで`python.exe --version`してバージョンが取れたら、それを使う。
+
 
 ## zipの処理に7zではなくPowerShellを強制する
 事前に環境変数の`FORCE_POWERSHELL_ZIP`を1にセットすることで、7zの検索をスキップできます。
