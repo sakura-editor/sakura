@@ -1,6 +1,7 @@
 ﻿/*! @file */
 #include "StdAfx.h"
 #include "debug/Debug2.h"
+#include "githash.h"
 
 //2007.08.30 kobake 追加
 
@@ -27,7 +28,11 @@ void debug_exit2(const char* file, int line, const char* exp)
 	FILE * fp = fopen("assert.txt", "a");
 	if (fp)
 	{
+#ifdef GIT_SHORT_COMMIT_HASH
+		fprintf(fp, "%s: %s\n", GIT_SHORT_COMMIT_HASH, szBuffer);
+#else
 		fprintf(fp, "%s\n", szBuffer);
+#endif
 		fclose(fp);
 	}
 	throw AssertException();
