@@ -31,10 +31,6 @@
 #include <tchar.h>
 #include <Windows.h>
 
-#ifndef USE_STRICT_INT
-#define USE_STRICT_INT
-#endif /* #ifndef USE_STRICT_INT */
-
 #include "basis/SakuraBasis.h"
 
 /*!
@@ -193,7 +189,7 @@ TEST( CLayoutInt, OperatorAssignment )
  */
 TEST( CLayoutInt, OperatorCompareGreaterThan )
 {
-	CLayoutInt a;
+	CLayoutInt a( 0 );
 
 	EXPECT_TRUE( a > -1 );
 	EXPECT_FALSE( a > 0 );
@@ -209,7 +205,7 @@ TEST( CLayoutInt, OperatorCompareGreaterThan )
  */
 TEST( CLayoutInt, OperatorCompareGreaterOrEqual )
 {
-	CLayoutInt a;
+	CLayoutInt a( 0 );
 
 	EXPECT_TRUE( a >= 0 );
 	EXPECT_FALSE( a >= 1 );
@@ -225,7 +221,7 @@ TEST( CLayoutInt, OperatorCompareGreaterOrEqual )
  */
 TEST( CLayoutInt, OperatorCompareLessThan )
 {
-	CLayoutInt a;
+	CLayoutInt a( 0 );
 
 	EXPECT_TRUE( a < 1 );
 	EXPECT_FALSE( a < 0 );
@@ -241,7 +237,7 @@ TEST( CLayoutInt, OperatorCompareLessThan )
  */
 TEST( CLayoutInt, OperatorCompareLessOrEqual )
 {
-	CLayoutInt a;
+	CLayoutInt a( 0 );
 
 	EXPECT_FALSE( a <= -1 );
 	EXPECT_TRUE( a <= 0 );
@@ -258,9 +254,9 @@ TEST( CLayoutInt, OperatorCompareLessOrEqual )
 TEST( CLayoutInt, OperatorCastToCLaxInteger )
 {
 	CLayoutInt a( 1 );
-	CLaxInteger la( 0 );
+	Int la( 0 );
 
-	//CLayoutInt ⇒ CLaxIntegerはキャストなしで変換できる
+	//CLayoutInt ⇒ Intはキャストなしで変換できる
 	la = a;
 	EXPECT_TRUE( la == 1 );
 

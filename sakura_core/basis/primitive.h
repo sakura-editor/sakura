@@ -24,6 +24,8 @@
 */
 #pragma once
 
+#include "config/build_config.h"
+
 // -- -- -- -- 文字 -- -- -- -- //
 
 //char,wchar_t の変わりに、別名の ACHAR,WCHAR を使うと、ソース整形がしやすいケースがある。

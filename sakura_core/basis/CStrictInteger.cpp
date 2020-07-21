@@ -1,6 +1,8 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2007, kobake
+	Copyright (C) 2007-2017 SAKURA Editor Project
+	Copyright (C) 2018-2020 SAKURA Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -24,8 +26,4 @@
 */
 
 #include "StdAfx.h"
-#ifdef _MSC_VER
-#ifdef _DEBUG
-#define USE_STRICT_INT //←これをコメントアウトすると厳格なintが無効になります。リリースビルドでは常に無効。
-#endif
-#endif
+#include "basis/CStrictInteger.h"

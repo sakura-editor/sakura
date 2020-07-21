@@ -295,9 +295,9 @@ TEST(CCommandLine, ParseViewLeftCol)
 {
 	CCommandLineWrapper cCommandLine;
 	cCommandLine.ParseCommandLine(L"", false);
-	ASSERT_EQ(-1, cCommandLine.GetViewLocation().x);
+	ASSERT_EQ(-1, (Int)cCommandLine.GetViewLocation().x);
 	cCommandLine.ParseCommandLine(L"-VX=123", false);
-	ASSERT_EQ(122, cCommandLine.GetViewLocation().x);
+	ASSERT_EQ(122, (Int)cCommandLine.GetViewLocation().x);
 }
 
 /*!
@@ -309,9 +309,9 @@ TEST(CCommandLine, ParseViewTopLine)
 {
 	CCommandLineWrapper cCommandLine;
 	cCommandLine.ParseCommandLine(L"", false);
-	ASSERT_EQ(-1, cCommandLine.GetViewLocation().y);
+	ASSERT_EQ(-1, (Int)cCommandLine.GetViewLocation().y);
 	cCommandLine.ParseCommandLine(L"-VY=123", false);
-	ASSERT_EQ(122, cCommandLine.GetViewLocation().y);
+	ASSERT_EQ(122, (Int)cCommandLine.GetViewLocation().y);
 }
 
 /*!
