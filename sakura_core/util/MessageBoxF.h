@@ -36,6 +36,8 @@
 
 #include <Windows.h>
 
+#include "config/app_constants.h"
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                 メッセージボックス：実装                    //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -75,36 +77,36 @@ int MessageBoxF( HWND hWnd, UINT uType, LPCWSTR lpCaption, LPCWSTR pszFormat, ..
 #define DefaultBeep()   ::MessageBeep(MB_OK)
 
 //エラー：赤丸に「×」[OK]
-int ErrorMessage   (HWND hwnd, LPCWSTR format, ...);
-int TopErrorMessage(HWND hwnd, LPCWSTR format, ...);	//(TOPMOST)
+#define ErrorMessage( hWnd, format, ... )				MessageBoxF( (hWnd), MB_OK | MB_ICONSTOP,                      GSTR_APPNAME, (format), ##__VA_ARGS__ )
+#define TopErrorMessage( hWnd, format, ... )			MessageBoxF( (hWnd), MB_OK | MB_ICONSTOP | MB_TOPMOST,         GSTR_APPNAME, (format), ##__VA_ARGS__ )
 #define ErrorBeep()     ::MessageBeep(MB_ICONSTOP)
 
 //警告：三角に「！」[OK]
-int WarningMessage   (HWND hwnd, LPCWSTR format, ...);
-int TopWarningMessage(HWND hwnd, LPCWSTR format, ...);
+#define WarningMessage( hWnd, format, ... )				MessageBoxF( (hWnd), MB_OK | MB_ICONEXCLAMATION,               GSTR_APPNAME, (format), ##__VA_ARGS__ )
+#define TopWarningMessage( hWnd, format, ... )			MessageBoxF( (hWnd), MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST,  GSTR_APPNAME, (format), ##__VA_ARGS__ )
 #define WarningBeep()   ::MessageBeep(MB_ICONEXCLAMATION)
 
 //情報：青丸に「i」[OK]
-int InfoMessage   (HWND hwnd, LPCWSTR format, ...);
-int TopInfoMessage(HWND hwnd, LPCWSTR format, ...);
+#define InfoMessage( hWnd, format, ... )				MessageBoxF( (hWnd), MB_OK | MB_ICONINFORMATION,               GSTR_APPNAME, (format), ##__VA_ARGS__ )
+#define TopInfoMessage( hWnd, format, ... )				MessageBoxF( (hWnd), MB_OK | MB_ICONINFORMATION | MB_TOPMOST,  GSTR_APPNAME, (format), ##__VA_ARGS__ )
 #define InfoBeep()      ::MessageBeep(MB_ICONINFORMATION)
 
 //確認：吹き出しの「？」 [はい][いいえ] 戻り値:IDYES,IDNO
-int ConfirmMessage   (HWND hwnd, LPCWSTR format, ...);
-int TopConfirmMessage(HWND hwnd, LPCWSTR format, ...);
+#define ConfirmMessage( hWnd, format, ... )				MessageBoxF( (hWnd), MB_YESNO | MB_ICONQUESTION,               GSTR_APPNAME, (format), ##__VA_ARGS__ )
+#define TopConfirmMessage( hWnd, format, ... )			MessageBoxF( (hWnd), MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,  GSTR_APPNAME, (format), ##__VA_ARGS__ )
 #define ConfirmBeep()   ::MessageBeep(MB_ICONQUESTION)
 
 //三択：吹き出しの「？」 [はい][いいえ][キャンセル]  戻り値:ID_YES,ID_NO,ID_CANCEL
-int Select3Message   (HWND hwnd, LPCWSTR format, ...);
-int TopSelect3Message(HWND hwnd, LPCWSTR format, ...);
+#define Select3Message( hWnd, format, ... )				MessageBoxF( (hWnd), MB_YESNOCANCEL | MB_ICONQUESTION,              GSTR_APPNAME, (format), ##__VA_ARGS__ )
+#define TopSelect3Message( hWnd, format, ... )			MessageBoxF( (hWnd), MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST, GSTR_APPNAME, (format), ##__VA_ARGS__ )
 
 //その他メッセージ表示用ボックス[OK]
-int OkMessage   (HWND hwnd, LPCWSTR format, ...);
-int TopOkMessage(HWND hwnd, LPCWSTR format, ...);
+#define OkMessage( hWnd, format, ... )					MessageBoxF( (hWnd), MB_OK,              GSTR_APPNAME, (format), ##__VA_ARGS__ )
+#define TopOkMessage( hWnd, format, ... )				MessageBoxF( (hWnd), MB_OK | MB_TOPMOST, GSTR_APPNAME, (format), ##__VA_ARGS__ )
 
 //タイプ指定メッセージ表示用ボックス
-int CustomMessage   (HWND hwnd, UINT uType, LPCWSTR format, ...);
-int TopCustomMessage(HWND hwnd, UINT uType, LPCWSTR format, ...);	//(TOPMOST)
+#define CustomMessage( hWnd, uType, format, ... )		MessageBoxF( (hWnd), (uType),              GSTR_APPNAME, (format), ##__VA_ARGS__ )
+#define TopCustomMessage( hWnd, uType, format, ... )	MessageBoxF( (hWnd), (uType) | MB_TOPMOST, GSTR_APPNAME, (format), ##__VA_ARGS__ )
 
 //作者に教えて欲しいエラー
-int PleaseReportToAuthor(HWND hwnd, LPCWSTR format, ...);
+#define PleaseReportToAuthor( hWnd, format, ... )		MessageBoxF( (hWnd), MB_OK | MB_ICONSTOP | MB_TOPMOST, LS(STR_ERR_DLGDOCLMN1), (format), ##__VA_ARGS__ )
