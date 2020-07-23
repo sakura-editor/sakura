@@ -32,68 +32,113 @@
 */
 
 #include "StdAfx.h"
-#include <stdarg.h>
-#include <tchar.h>
 #include "MessageBoxF.h"
-#include "window/CEditWnd.h"
+#include "_main/CProcess.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                 メッセージボックス：実装                    //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-int Wrap_MessageBox(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType)
-{
-	// 選択中の言語IDを取得する
-	LANGID wLangId = CSelectLang::getDefaultLangId();
 
-	// lpText, lpCaption をローカルバッファにコピーして MessageBox API を呼び出す
-	// ※ 使い回しのバッファが使用されていてそれが裏で書き換えられた場合でも
-	//    メッセージボックス上の Ctrl+C が文字化けしないように
-	return ::MessageBoxEx(hWnd,
-		lpText ? std::wstring(lpText).c_str() : NULL,
-		lpCaption ? std::wstring(lpCaption).c_str() : NULL,
-		uType,
-		wLangId
-	);
-}
-
-HWND GetMessageBoxOwner(HWND hwndOwner)
+/*!
+ * サクラエディタ独自MessageBox実装
+ */
+int Wrap_MessageBox(
+	HWND		hWnd,		//!< [in,opt] メッセージボックスの親ウインドウ
+	LPCWSTR		lpText,		//!< [in,opt] メッセージの本文
+	LPCWSTR		lpCaption,	//!< [in,opt] メッセージの表題
+	UINT		uType		//!< [in] MessageBox関数に渡すオプション
+)
 {
-	if(hwndOwner==NULL && g_pcEditWnd){
-		return g_pcEditWnd->GetHwnd();
+	// メッセージボックスの表示結果(通常は閉じるときに押下されたボタンのID)
+	int nResult = IDOK;
+
+	// lpTextの文字列長を求める
+	DWORD dwTextLength = lpText ? ::wcslen( lpText ) : 0;
+
+	// 標準エラー出力を取得する
+	HANDLE hStdErr = ::GetStdHandle( STD_ERROR_HANDLE );
+	if( hStdErr ){
+		// lpText を標準エラー出力に書き出す
+		DWORD dwWritten = 0;
+		::WriteConsoleW( hStdErr, lpText, dwTextLength, &dwWritten, NULL );
+
+		// メッセージボックスの種類に応じて、一番右端のボタンIDを返す。
+		switch (uType & MB_TYPEMASK){
+		case MB_OK:					nResult = IDOK;       break;
+		case MB_OKCANCEL:			nResult = IDCANCEL;   break;
+		case MB_ABORTRETRYIGNORE:	nResult = IDIGNORE;   break;
+		case MB_YESNOCANCEL:		nResult = IDCANCEL;   break;
+		case MB_YESNO:				nResult = IDNO;       break;
+		case MB_RETRYCANCEL:		nResult = IDCANCEL;   break;
+		case MB_CANCELTRYCONTINUE:	nResult = IDCONTINUE; break;
+		}
+	}else{
+		// メッセージボックスの親ウインドウハンドルを補正する
+		if( hWnd == NULL ){
+			const auto* pcProcess = CProcess::getInstance();
+			if( pcProcess ){
+				hWnd = pcProcess->GetMainWindow();
+			}
+		}
+
+		// メッセージボックスの表題を補正する
+		if ( lpCaption == NULL ){
+			lpCaption = GSTR_APPNAME;
+		}
+
+		// 選択中の言語IDを取得する
+		LANGID wLangId = CSelectLang::getDefaultLangId();
+
+		// Windows API MessageBoxEx を呼び出してダイアログを表示する
+		nResult = ::MessageBoxEx( hWnd, lpText, lpCaption, uType, wLangId );
 	}
-	else{
-		return hwndOwner;
-	}
+
+	return nResult;
 }
 
 /*!
-	書式付きメッセージボックス
+	書式付きメッセージボックス(arg_list版)
 
 	引数で与えられた情報をダイアログボックスで表示する．
 	デバッグ目的以外でも使用できる．
 */
 int VMessageBoxF(
-	HWND		hwndOwner,	//!< [in] オーナーウィンドウのハンドル
-	UINT		uType,		//!< [in] メッセージボックスのスタイル (MessageBoxと同じ形式)
-	LPCWSTR		lpCaption,	//!< [in] メッセージボックスのタイトル
-	LPCWSTR		lpText,		//!< [in] 表示するテキスト。printf仕様の書式指定が可能。
-	va_list&	v			//!< [in,out] 引数リスト
+	HWND		hWnd,		//!< [in,opt] メッセージボックスの親ウインドウ
+	UINT		uType,		//!< [in] MessageBox関数に渡すオプション
+	LPCWSTR		lpCaption,	//!< [in,opt] メッセージの表題
+	LPCWSTR		pszFormat,	//!< [in] 表示するテキスト。printf仕様の書式指定が可能。
+	va_list		argList		//!< [in] 引数リスト
 )
 {
-	hwndOwner=GetMessageBoxOwner(hwndOwner);
-	//整形
+	// 整形用バッファは static に確保する。
+	// MessageBox関数はスレッドをブロックするので、再入は考慮しない。
 	static WCHAR szBuf[16000];
-	tchar_vsnprintf_s(szBuf,_countof(szBuf),lpText,v);
-	//API呼び出し
-	return ::MessageBox( hwndOwner, szBuf, lpCaption, uType);
+
+	// メッセージを整形する
+	::_vsnwprintf_s( szBuf, _TRUNCATE, pszFormat, argList );
+
+	// Windows API を呼び出してダイアログを表示する
+	return Wrap_MessageBox( hWnd, szBuf, lpCaption, uType );
 }
 
-int MessageBoxF( HWND hwndOwner, UINT uType, LPCWSTR lpCaption, LPCWSTR lpText, ... )
+/*!
+	書式付きメッセージボックス(可変長引数版)
+
+	引数で与えられた情報をダイアログボックスで表示する．
+	デバッグ目的以外でも使用できる．
+*/
+int MessageBoxF(
+	HWND		hWnd,		//!< [in,opt] メッセージボックスの親ウインドウ
+	UINT		uType,		//!< [in] MessageBox関数に渡すオプション
+	LPCWSTR		lpCaption,	//!< [in,opt] メッセージの表題
+	LPCWSTR		pszFormat,	//!< [in] 表示するテキスト。printf仕様の書式指定が可能。
+	/*__VA_ARGS__*/ ...
+)
 {
-	va_list v;
-	va_start(v,lpText);
-	int nRet = VMessageBoxF(hwndOwner, uType, lpCaption, lpText, v);
-	va_end(v);
+	va_list argptr;
+	va_start( argptr, pszFormat );
+	int nRet = VMessageBoxF( hWnd, uType, lpCaption, pszFormat, argptr );
+	va_end( argptr );
 	return nRet;
 }
 

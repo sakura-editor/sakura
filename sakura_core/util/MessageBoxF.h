@@ -31,18 +31,39 @@
 
 #pragma once
 
+#include <stdarg.h>
+#include <tchar.h>
+
+#include <Windows.h>
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                 メッセージボックス：実装                    //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//2007.10.02 kobake メッセージボックスの使用はデバッグ時に限らないので、「Debug～」という名前を廃止
+/*!
+ * サクラエディタ独自MessageBox実装
+ *
+ * サクラエディタ独自の特殊な言語切替機構を実現するため、
+ * メッセージボックスのUI言語を選択中の言語で上書きする。
+ * コンソールモードではメッセージボックスを表示しない。
+ *
+ * @date 2007/10/02 kobake メッセージボックスの使用はデバッグ時に限らないので、「Debug～」という名前を廃止
+ * @date 2020/07/23 berryzplus コンソールモードではメッセージボックスを表示しないように変更
+ */
+int Wrap_MessageBox(
+	HWND		hWnd,		//!< [in,opt] メッセージボックスの親ウインドウ
+	LPCWSTR		lpText,		//!< [in,opt] メッセージの本文
+	LPCWSTR		lpCaption,	//!< [in,opt] メッセージの表題
+	UINT		uType		//!< [in] MessageBox関数に渡すオプション
+);
+
+// Windows SDKの定義をundefして独自定義に差し替える
 #undef MessageBox
 #define MessageBox Wrap_MessageBox
-int Wrap_MessageBox(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType);
 
 //テキスト整形機能付きMessageBox
-int VMessageBoxF( HWND hwndOwner, UINT uType, LPCWSTR lpCaption, LPCWSTR lpText, va_list& v );
-int MessageBoxF ( HWND hwndOwner, UINT uType, LPCWSTR lpCaption, LPCWSTR lpText, ... );
+int VMessageBoxF( HWND hWnd, UINT uType, LPCWSTR lpCaption, LPCWSTR pszFormat, va_list argList );
+int MessageBoxF( HWND hWnd, UINT uType, LPCWSTR lpCaption, LPCWSTR pszFormat, ... );
 
 //                ユーザ用メッセージボックス                   //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
