@@ -21,45 +21,12 @@ void debug_output(const char* str, ...)
 	OutputDebugStringA(buf);
 }
 
-static void GetAssertFileName(CHAR* szAssertFileName, int nBuffSize)
-{
-	CHAR szExeFileName[MAX_PATH];
-	const int cchExeFileName = ::GetModuleFileNameA(NULL, szExeFileName, MAX_PATH);
-
-	char szDrive[_MAX_DRIVE];
-	char szDir[_MAX_DIR];
-	
-	_splitpath(szExeFileName, szDrive, szDir, NULL, NULL); 
-	sprintf(szAssertFileName, "%s%sassert.txt", szDrive, szDir);
-}
-
 void debug_exit2(const char* file, int line, const char* exp)
 {
-	CHAR szLogName[MAX_PATH];
-	GetAssertFileName(szLogName, MAX_PATH);
-
 	char szBuffer[1024];
 	wsprintfA(szBuffer, "assert\n%s(%d):\n%s", file, line, exp);
 	fprintf(stderr, "%s\n", szBuffer);
-
-	FILE * fp = NULL;
-	fp = fopen(szLogName, "a");
-	
-	// 実行ファイルと同じディレクトリに書き込み権限がなかった時の保険
-	if (fp == NULL)
-	{
-		fp = fopen("assert.txt", "a");
-	}
-
-	if (fp)
-	{
-#ifdef GIT_SHORT_COMMIT_HASH
-		fprintf(fp, "%s: %s\n", GIT_SHORT_COMMIT_HASH, szBuffer);
-#else
-		fprintf(fp, "%s\n", szBuffer);
-#endif
-		fclose(fp);
-	}
+	OutputDebugStringA(szBuffer);
 	throw AssertException();
 }
 
