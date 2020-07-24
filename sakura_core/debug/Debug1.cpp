@@ -19,9 +19,6 @@
 #include "debug/Debug1.h"
 
 #include <stdio.h>
-#include <stdarg.h>
-
-#if defined(_DEBUG) || defined(USE_RELPRINT)
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                   メッセージ出力：実装                      //
@@ -29,41 +26,59 @@
 
 /*! @brief 書式付きデバッガ出力
 
+	@param[in] pszFormat printfの書式付き文字列
+	@param[in] argList 書式化するパラメータ
+
+	引数で与えられた情報をDebugStringとして出力する．
+*/
+void VDebugOut( LPCWSTR pszFormat, va_list argList )
+{
+	// 出力される文字数をカウントしてメモリ確保
+	const int cchBufLen = ::_vscwprintf( pszFormat, argList );
+	auto memBuf = std::make_unique<WCHAR[]>( cchBufLen + 1 );
+	auto *pszBuf = memBuf.get();
+
+	// メッセージを整形する
+	::_vsnwprintf_s( pszBuf, cchBufLen + 1, _TRUNCATE, pszFormat, argList );
+
+	// デバッガに出力する
+	::OutputDebugString( pszBuf );
+}
+
+/*! @brief 書式付きデバッガ出力
+
 	@param[in] lpFmt printfの書式付き文字列
 
 	引数で与えられた情報をDebugStringとして出力する．
 */
-void DebugOutW( LPCWSTR lpFmt, ...)
+void DebugOut( LPCWSTR pszFormat, ...)
 {
-	static WCHAR szText[16000];
-
 	va_list argList;
-	va_start(argList, lpFmt);
-
-	//整形
-	int ret = _vsnwprintf_s( szText, _TRUNCATE, lpFmt, argList );
-
-	//出力
-	if( errno != EINVAL ){
-		::OutputDebugStringW( szText );
-	}
-
-	//切り捨て対策
-	if( -1 == ret && errno != ERANGE ){
-		::OutputDebugStringW( L"(切り捨てました...)\n" );
-
-		::DebugBreak();
-
-		int count = _vscwprintf( lpFmt, argList );
-		auto pLargeBuf = std::make_unique<WCHAR[]>( count + 1 );
-		if( vswprintf( &pLargeBuf[0], count + 1, lpFmt, argList ) > 0 )
-			::OutputDebugStringW( &pLargeBuf[0] );
-	}
-
-	va_end(argList);
-
-	//ウェイト
-	::Sleep(1);	// Norio Nakatani, 2001/06/23 大量にトレースするときのために
+	va_start( argList, pszFormat );
+	VDebugOut( pszFormat, argList );
+	va_end( argList );
 }
 
-#endif	// _DEBUG || USE_RELPRINT
+//! コンストラクタ
+SakuraTrace::SakuraTrace(const char* pszFile, const int nLine)
+	: m_pszFile( pszFile )
+	, m_nLine( nLine )
+{
+}
+
+/*!
+ * 演算子オーバーロード()の実装
+ *
+ * オブジェクトインスタンスに対し、関数のように引数を渡したときに呼ばれる演算子。
+ */
+void SakuraTrace::operator()( LPCWSTR lpFormat, ... ) const
+{
+	CNativeW cMemFormat;
+	cMemFormat.AppendStringF( L"%hs(%d): %s", m_pszFile, m_nLine, lpFormat );
+	const auto *pszFormat = cMemFormat.GetStringPtr();
+
+	va_list argList;
+	va_start( argList, pszFormat );
+	VDebugOut( pszFormat, argList );
+	va_end( argList );
+}
