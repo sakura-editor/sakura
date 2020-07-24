@@ -68,5 +68,8 @@
     <ClCompile Include="test-cdlgprofilemgr.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-assert.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
