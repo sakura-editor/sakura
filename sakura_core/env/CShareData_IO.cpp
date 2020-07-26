@@ -101,7 +101,10 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 				DLLSHAREDATA* pShareData = &GetDllShareData();
 				wcscpy(pShareData->m_Common.m_sWindow.m_szLanguageDll, L"sakura_lang_en_US.dll");
 				cProfile.IOProfileData( L"Common", L"szLanguageDll", MakeStringBufferW( pShareData->m_Common.m_sWindow.m_szLanguageDll ) );
+				std::vector<std::wstring> values;
+				pcShare->ConvertLangValues( values, true );
 				CSelectLang::ChangeLang( pShareData->m_Common.m_sWindow.m_szLanguageDll );
+				pcShare->ConvertLangValues( values, false );
 				pcShare->RefreshString();
 			}
 			return false;
