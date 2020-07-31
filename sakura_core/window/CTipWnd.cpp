@@ -257,7 +257,7 @@ void CTipWnd::DrawTipText(
 				);
 			}else{
 				// ダミー文字列の高さを取得する
-				nHeight = ::DrawText( hdc, szDummy, _countof(szDummy) - 1, &rc, DT_CALCRECT );
+				nHeight = ::DrawText( hdc, szDummy, _countof(szDummy) - 1, &rc, DT_EXTERNALLEADING );
 			}
 
 			// 描画領域の上端を1行分ずらす
