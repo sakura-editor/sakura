@@ -30,3 +30,4 @@ ExcludeSourceFromCodeCoverage(Exclusion1, L"*\\tests\\unittests\\*");
 ExcludeSourceFromCodeCoverage(Exclusion2, L"*\\tests\\googletest\\googletest\\*");
 ExcludeSourceFromCodeCoverage(Exclusion3, L"*\\Windows Kits\\10\\Include\\*\\winrt\\wrl\\client.h");
 ExcludeSourceFromCodeCoverage(Exclusion4, L"*\\VC\\Tools\\MSVC\\*\\include\\*");
+ExcludeSourceFromCodeCoverage(Exclusion5, L"*\\googletest\\include\\gtest\\*");
