@@ -30,8 +30,6 @@ jobs:
   - script: set
     displayName: Show environmental variables for debug
 
-  - template: /ci/azure-pipelines/template.steps.install-mingw-w64-gcc.yml
-
   # Build GNU C++
   - script: build-gnu.bat       $(BuildPlatform) $(Configuration)
     displayName: Build with MinGW-w64-gcc

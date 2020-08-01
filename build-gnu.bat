@@ -9,44 +9,65 @@ if "%platform%" == "MinGW" (
 	exit /b 1
 )
 
-if "%configuration%" == "Release" (
-	@rem OK
-    set MYDEFINES=-DNDEBUG
-    set MYCFLAGS=-O2
-    set MYLIBS=-s
-) else if "%configuration%" == "Debug" (
-	@rem OK
-    set MYDEFINES=-D_DEBUG
-    set MYCFLAGS=-g -O0
-    set MYLIBS=
-) else (
-	call :showhelp %0
+if not defined CMD_CMAKE call "%~dp0tools\find-tools.bat"
+if not defined CMD_CMAKE (
+	@echo cmake.exe was not found. 1>&2
 	exit /b 1
 )
 
-@rem  remove sh.exe in the PATH(for azure pipelines).
-PATH=%PATH:C:\Program Files\Git\cmd;=%
-PATH=%PATH:C:\Program Files\Git\usr\bin;=%
-PATH=%PATH:C:\Program Files\Git\bin;=%
+if not defined CMD_NINJA (
+	@echo ninja.exe was not found. 1>&2
+	exit /b 1
+)
 
-@rem https://www.appveyor.com/docs/environment-variables/
-@rem path=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin;%path%
+set SOURCE_DIR=%~dp0
+set BUILD_BASE_DIR=%~dp0build\
+set BUILD_DIR=%BUILD_BASE_DIR%%platform%\%configuration%\
+set OUTPUT_BASE_DIR=%~dp0
+set OUTPUT_DIR=%OUTPUT_BASE_DIR%%platform%\%configuration%\
+set GOOGLETEST_INSTALL_DIR=%OUTPUT_BASE_DIR%tools\googletest\
+
+call :run_cmake_build
+
+goto :EOF
+
+:run_cmake_configure
+@rem create build directory, if not exist.
+if not exist %BUILD_DIR% mkdir %BUILD_DIR%
+
+@rem add msys2 path to the PATH.
+set path=%path:C:\msys64\mingw64\bin;=%
 path=C:\msys64\mingw64\bin;%path%
 
-@echo mingw32-make -C sakura_core MYDEFINES="%MYDEFINES%" MYCFLAGS="%MYCFLAGS%" MYLIBS="%MYLIBS%"
-mingw32-make -C sakura_core MYDEFINES="%MYDEFINES%" MYCFLAGS="%MYCFLAGS%" MYLIBS="%MYLIBS%" githash.h Funccode_enum.h Funccode_define.h
-if errorlevel 1 (
-	echo error 1 errorlevel %errorlevel%
-	exit /b 1
+pushd %BUILD_DIR%
+
+:: run cmake configuration.
+"%CMD_CMAKE%" -G Ninja ^
+  "-DCMAKE_MAKE_PROGRAM=%CMD_NINJA%" ^
+  -DCMAKE_BUILD_TYPE=%configuration% ^
+  -DCMAKE_C_COMPILER=C:/msys64/mingw64/bin/gcc.exe ^
+  -DCMAKE_CXX_COMPILER=C:/msys64/mingw64/bin/g++.exe ^
+  -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=%OUTPUT_DIR% ^
+  -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=%OUTPUT_DIR% ^
+  -DPLATFORM=MinGW ^
+  -DBUILD_BASE_DIR=%BUILD_BASE_DIR% ^
+  -DGOOGLETEST_INSTALL_DIR=%GOOGLETEST_INSTALL_DIR% ^
+  %SOURCE_DIR% ^
+  || endlocal && exit /b 1
+
+popd 
+
+goto :EOF
+
+:run_cmake_build
+if not exist "%BUILD_DIR%CMakeCache.txt" (
+  call :run_cmake_configure || endlocal && exit /b 1
 )
 
-mingw32-make -C sakura_core MYDEFINES="%MYDEFINES%" MYCFLAGS="%MYCFLAGS%" MYLIBS="%MYLIBS%" -j4
-if errorlevel 1 (
-	echo error 2 errorlevel %errorlevel%
-	exit /b 1
-)
-exit /b 0
+:: run cmake build, and install artifacts.
+"%CMD_CMAKE%" --build %BUILD_DIR% --config %configuration% || endlocal && exit /b 1
 
+goto :EOF
 
 @rem ------------------------------------------------------------------------------
 @rem show help

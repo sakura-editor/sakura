@@ -42,7 +42,7 @@
   <Import Project="$(ProjectDir)..\googletest.targets" />
   <ItemDefinitionGroup Label="tests1.common">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$([MsBuild]::NormalizePath('$(IntDir)..\sakura_core\'));$(SolutionDir)sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>

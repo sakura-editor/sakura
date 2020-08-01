@@ -3,26 +3,27 @@
 <!-- TOC -->
 
 - [ビルド方法](#ビルド方法)
-    - [必要なもの](#必要なもの)
-        - [実行ファイルのビルドに必要なもの](#実行ファイルのビルドに必要なもの)
-        - [HTML ヘルプのビルドに必要なもの](#html-ヘルプのビルドに必要なもの)
-        - [インストーラのビルドに必要なもの](#インストーラのビルドに必要なもの)
-        - [(オプション) ログの解析等に必要なもの](#オプション-ログの解析等に必要なもの)
-    - [ビルド方法](#ビルド方法-1)
-        - [実行ファイルだけをビルドする場合](#実行ファイルだけをビルドする場合)
-            - [方法1 (GUI)](#方法1-gui)
-            - [方法2 (コマンドライン)](#方法2-コマンドライン)
-                - [具体例 (x64 の Release)](#具体例-x64-の-release)
-        - [すべてビルドする場合](#すべてビルドする場合)
-                - [具体例 (Win32 の Release)](#具体例-win32-の-release)
-    - [ビルドの仕組み](#ビルドの仕組み)
-        - [appveyor でのビルドの仕組み](#appveyor-でのビルドの仕組み)
-        - [Azure Pipelines でのビルドの仕組み](#azure-pipelines-でのビルドの仕組み)
-        - [インストーラの仕組み](#インストーラの仕組み)
-    - [開発者向けの情報](#開発者向けの情報)
-        - [githash.h の更新のスキップ](#githashh-の更新のスキップ)
-        - [Powershell によるZIPファイルの圧縮、解凍、内容確認の強制](#powershell-によるzipファイルの圧縮解凍内容確認の強制)
-        - [MinGW w64 ビルド](#mingw-w64-ビルド)
+  - [必要なもの](#必要なもの)
+    - [実行ファイルのビルドに必要なもの](#実行ファイルのビルドに必要なもの)
+    - [HTML ヘルプのビルドに必要なもの](#html-ヘルプのビルドに必要なもの)
+    - [インストーラのビルドに必要なもの](#インストーラのビルドに必要なもの)
+    - [(オプション) ログの解析等に必要なもの](#オプション-ログの解析等に必要なもの)
+  - [ビルド方法](#ビルド方法-1)
+    - [実行ファイルだけをビルドする場合](#実行ファイルだけをビルドする場合)
+      - [方法1 (GUI)](#方法1-gui)
+      - [方法2 (コマンドライン)](#方法2-コマンドライン)
+        - [具体例 (x64 の Release)](#具体例-x64-の-release)
+    - [すべてビルドする場合](#すべてビルドする場合)
+        - [具体例 (Win32 の Release)](#具体例-win32-の-release)
+      - [Visual Studio 2019 を使用してコマンドラインでビルド](#visual-studio-2019-を使用してコマンドラインでビルド)
+  - [ビルドの仕組み](#ビルドの仕組み)
+    - [appveyor でのビルドの仕組み](#appveyor-でのビルドの仕組み)
+    - [Azure Pipelines でのビルドの仕組み](#azure-pipelines-でのビルドの仕組み)
+    - [インストーラの仕組み](#インストーラの仕組み)
+  - [開発者向けの情報](#開発者向けの情報)
+    - [githash.h の更新のスキップ](#githashh-の更新のスキップ)
+    - [Powershell によるZIPファイルの圧縮、解凍、内容確認の強制](#powershell-によるzipファイルの圧縮解凍内容確認の強制)
+    - [MinGW w64 ビルド](#mingw-w64-ビルド)
 
 <!-- /TOC -->
 
@@ -30,12 +31,24 @@
 
 ### 実行ファイルのビルドに必要なもの
 
+- [Visual Studio 2017](https://visualstudio.microsoft.com/ja/vs/older-downloads/)  
+  Visual Studio 2019で代替することも可能です。
+  以下オプションが必要です。
+  - `Visual C++ コアデスクトップ開発`
+  - `Windows 10 SDK (10.0.17763.0)`
+  - `CMakeのVisual C++ ツール`
+  - `Test Adapter for Google Test`
+- [Visual Studio 2019](https://visualstudio.microsoft.com/ja/downloads/)
+  Visual Studio 2017の代替です。
+  Visual Studio 2019を選択した場合、[.vsconfig](https://github.com/sakura-editor/sakura/blob/master/.vsconfig)により必要なオプションがインストールされていない旨のメッセージが表示されます。
+  以下オプションが必要です。
+  - `Visual C++ コアデスクトップ開発`
+  - `Windows 10 SDK (10.0.18362.0)`
+  - `CMakeのVisual C++ ツール`
+  - `Test Adapter for Google Test`
 - (オプション) [7Zip](https://sevenzip.osdn.jp/) (外部依存ファイルの解凍に使用)
-- Visual Studio 2017 Comminity Edition
-   以下オプションも必要です。
-   - Windows XP Support for C++
-   - Windows 8.1 SDK と UCRT SDK
-   - C++ に関する Windows XP サポート
+- (オプション) [Python](https://www.python.org/downloads/) (ビルドログの解析に使用)
+  インストールする場合、最新版のx64版バイナリを使用してください。
 
 ### HTML ヘルプのビルドに必要なもの
 
@@ -48,6 +61,9 @@
    - VSインストール後でもVisual Studio Installerを起動して導入可能です。 
 ![vsi](https://user-images.githubusercontent.com/39618965/44622575-012dcc80-a8f6-11e8-906a-14d8cd6dfac9.PNG)
    - ヘルプファイルを編集する場合 HTML Help Workshop 等の編集ソフトも別途必要になります。
+- (必須) [Python](https://www.python.org/downloads/) (sakura.hhのコメントを除外する整形処理に使用)
+  インストールする場合、最新版のx64版バイナリを使用してください。
+  HTMLヘルプのビルドにはPythonインタープリターが必須です。
 
 ### インストーラのビルドに必要なもの
 

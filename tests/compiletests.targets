@@ -7,7 +7,7 @@
     <MakeDir Directories="$(CompileTestBuildDir)" />
   </Target>
   <!-- This target depends on googletest.targets -->
-  <Target Name="RunCompileTests" Condition="!Exists('$(CompileTestBuildDir)CMakeCache.txt')" DependsOnTargets="MakeCompileTestBuildDir;BuildGoogleTest" BeforeTargets="ClCompile">
+  <Target Name="RunCompileTests" Condition="!Exists('$(CompileTestBuildDir)CMakeCache.txt')" DependsOnTargets="MakeCompileTestBuildDir" BeforeTargets="ClCompile">
     <PropertyGroup>
       <VsVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(VisualStudioVersion)', '^(\d+).*', '$1'))</VsVersion>
     </PropertyGroup>
