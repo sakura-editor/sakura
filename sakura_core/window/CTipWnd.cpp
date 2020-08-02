@@ -185,7 +185,7 @@ void CTipWnd::ComputeWindowSize(
 				}
 			}else{
 				// ダミー文字列を計測して必要な高さを取得する
-				::DrawText( hdc, szDummy, _countof( szDummy ) - 1, &rc, DT_CALCRECT );
+				::DrawText( hdc, szDummy, _countof( szDummy ) - 1, &rc, DT_CALCRECT | DT_EXTERNALLEADING );
 			}
 
 			// 計測した高さを加算する
