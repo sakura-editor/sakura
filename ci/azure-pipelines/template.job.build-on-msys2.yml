@@ -35,8 +35,10 @@ jobs:
     displayName: Build with MinGW-w64-gcc
 
   # Unit tests
-  - script: tests\build-and-test.bat $(BuildPlatform) $(Configuration)
-    displayName: Unit test
+  - task: CMake@1
+    inputs:
+      workingDirectory: $(Build.SourcesDirectory)/build/$(BuildPlatform)/$(Configuration)
+      cmakeArgs: --build . --config $(Configuration) --target test
 
   # see https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/copy-files?view=azure-devops&tabs=yaml
   #
