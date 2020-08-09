@@ -45,6 +45,20 @@ int Wrap_MessageBox(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType)
 	// 選択中の言語IDを取得する
 	LANGID wLangId = CSelectLang::getDefaultLangId();
 
+	// 標準エラー出力を取得する
+	HANDLE hStdErr = ::GetStdHandle( STD_ERROR_HANDLE );
+	if( hStdErr ){
+			// lpTextの文字列長を求める
+		DWORD dwTextLen = lpText ? ::wcslen( lpText ) : 0;
+
+		// lpText を標準エラー出力に書き出す
+		DWORD dwWritten = 0;
+		::WriteConsoleW( hStdErr, lpText, dwTextLen, &dwWritten, NULL );
+
+		// いい加減な戻り値を返す。(返り値0は未定義なので本来返らない値を返している)
+		return 0;
+	}
+
 	// lpText, lpCaption をローカルバッファにコピーして MessageBox API を呼び出す
 	// ※ 使い回しのバッファが使用されていてそれが裏で書き換えられた場合でも
 	//    メッセージボックス上の Ctrl+C が文字化けしないように

@@ -27,29 +27,32 @@
 */
 #pragma once
 
-//2007.08.30 kobake 追加
-#ifdef assert
+#include <cassert>
+
+#include "debug/Debug1.h"
+#include "util/MessageBoxF.h"
+
+// C Runtime の定義をundefして独自定義に差し替える
 #undef assert
-#endif
 
 #ifdef _DEBUG
-	void debug_output(const char* str, ...);
+
 	void debug_exit();
-	void debug_exit2(const char* file, int line, const char* exp);
 	void warning_point();
 
 	#define assert(exp) \
 	{ \
 		if(!(exp)){ \
-			debug_output("!assert: %hs(%d): %hs\n", __FILE__, __LINE__, #exp); \
-			debug_exit2(__FILE__, __LINE__, #exp); \
+			TRACE( "!assert: " #exp, NULL ); \
+			ErrorMessage( NULL, L"!assert\n%hs(%d):\n%hs", __FILE__, __LINE__, #exp ); \
+			debug_exit(); \
 		} \
 	}
 
 	#define assert_warning(exp) \
 	{ \
 		if(!(exp)){ \
-			debug_output("!warning: %hs(%d): %hs\n", __FILE__, __LINE__, #exp); \
+			TRACE( "!warning: " #exp, NULL ); \
 			warning_point(); \
 		} \
 	}
