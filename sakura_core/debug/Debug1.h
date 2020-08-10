@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include <stdarg.h>
+#include <vadefs.h>
 
 #include <Windows.h>
 
