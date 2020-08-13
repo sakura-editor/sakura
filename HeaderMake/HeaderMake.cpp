@@ -47,6 +47,13 @@
 	usage() を参照
 */
 
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif /* #ifndef NOMINMAX */
+
+#include <tchar.h>
+#include <Windows.h>
+
 #include <stdio.h>
 #include <string>
 #include <vector>
@@ -70,6 +77,20 @@ enum EMode{
 	MODE_DEFINE,
 };
 
+/*!
+ * HANDLE型のスマートポインタを実現するためのdeleterクラス
+ */
+struct handle_closer
+{
+	void operator()( HANDLE handle ) const
+	{
+		::CloseHandle( handle );
+	}
+};
+
+//! HANDLE型のスマートポインタ
+typedef std::unique_ptr<std::remove_pointer<HANDLE>::type, handle_closer> handleHolder;
+
 int usage()
 {
 	printf(
@@ -86,6 +107,17 @@ int usage()
 		"    enum   : Output .h file as enum list\n"
 	);
 	return 1;
+}
+
+inline LPCWSTR getMutexName( const char* mode_name )
+{
+	char szModeUpper[8];
+	::strcpy_s( szModeUpper, mode_name );
+	::_strupr_s( szModeUpper);
+
+	static WCHAR szMutexName[MAX_PATH];
+	::_snwprintf_s( szMutexName, _TRUNCATE, L"SAKURA-Editor.BuildTools.HeaderMake.%hs", szModeUpper );
+	return szMutexName;
 }
 
 inline bool is_token(char c)
@@ -194,6 +226,24 @@ int main_impl(
 	else{
 		printf("Error: Unknown mode[%s].\n", mode_name);
 		return 2;
+	}
+
+	// ミューテックスを作成する
+	auto *pszMutexName = getMutexName( mode_name );
+	auto hMutex = ::CreateMutex( NULL, FALSE, pszMutexName );
+	if( !hMutex ){
+		::fprintf_s( stderr, "Error: create mutex[%ls].\n", pszMutexName );
+		return 3;
+	}
+
+	// ミューテックスをスマートポインタに入れる
+	handleHolder eventHolder( hMutex );
+
+	// ミューテックス解放を待つ
+	DWORD dwRet = ::WaitForSingleObject( hMutex, 10000 );
+	if( WAIT_TIMEOUT == dwRet ){
+		::fprintf_s( stderr, "Error: timeout mutex[%ls].\n", pszMutexName );
+		return 4;
 	}
 
 	//ファイル更新時刻比較 (なんか、VSのカスタムビルドがうまくいかないので、ここで判定(汗) )
