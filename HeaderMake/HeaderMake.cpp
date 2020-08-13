@@ -55,6 +55,7 @@
 #include <Windows.h>
 
 #include <stdio.h>
+#include <memory>
 #include <string>
 #include <vector>
 #include <time.h>
@@ -113,7 +114,7 @@ inline LPCWSTR getMutexName( const char* mode_name )
 {
 	char szModeUpper[8];
 	::strcpy_s( szModeUpper, mode_name );
-	::_strupr_s( szModeUpper);
+	::_strupr_s( szModeUpper, _countof(szModeUpper) );
 
 	static WCHAR szMutexName[MAX_PATH];
 	::_snwprintf_s( szMutexName, _TRUNCATE, L"SAKURA-Editor.BuildTools.HeaderMake.%hs", szModeUpper );
