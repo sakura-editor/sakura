@@ -1,20 +1,12 @@
 <Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup Label="GitHash">
-    <GitHash>..\sakura_core\githash.h</GitHash>
+  <PropertyGroup Label="GeneratedGitHash">
+    <GeneratedGitHash>..\sakura_core\githash.h</GeneratedGitHash>
   </PropertyGroup>
-  <ItemGroup>
-    <GitHashSource Include="..\.git\HEAD" Condition="Exists('..\.git\HEAD')" />
-    <GitHashSource Include="..\.git\index" Condition="Exists('..\.git\index')" />
-    <GitHashSource Include="..\.git\config" Condition="Exists('..\.git\config')" />
-  </ItemGroup>
-  <Target Name="GitHash" BeforeTargets="ClCompile"
-      Inputs="@(GitHashSource)"
-      Outputs="$(GitHash)">
-    <Exec Command="..\sakura\githash.bat ..\sakura_core $(GitHash)" />
-  </Target>
-  <Target Name="GitHashForZip" BeforeTargets="ClCompile" AfterTargets="GitHash"
-      Condition="!Exists('$(GitHash)')"
-      Outputs="$(GitHash)">
-    <Exec Command="..\sakura\githash.bat ..\sakura_core $(GitHash)" />
+  <Target Name="GenerateGitHash"
+      Condition="!Exists('$(GeneratedGitHash)')"
+      Outputs="$(GeneratedGitHash)"
+      AfterTargets="SelectClCompile"
+      BeforeTargets="ClCompile">
+    <Exec Command="..\sakura\githash.bat ..\sakura_core $(GeneratedGitHash)" />
   </Target>
 </Project>
