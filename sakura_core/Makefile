@@ -20,7 +20,7 @@ endif
 CC= $(PREFIX)gcc
 CXX= $(PREFIX)g++
 RC= $(RCPREFIX)windres
-RM= "$(CURDIR)/../sakura/mingw32-del.bat"
+RM= cmd /c ..\sakura\mingw32-del.bat
 
 DEFINES= \
  -DWIN32 \
@@ -451,7 +451,7 @@ Funccode_enum.h: $(HEADERMAKE) Funccode_x.hsrc
 	$(HEADERMAKE) -in=../sakura_core/Funccode_x.hsrc -out=../sakura_core/Funccode_enum.h -mode=enum -enum=EFunctionCode
 
 githash.h:
-	"$(CURDIR)/../sakura/githash.bat" ../sakura_core
+	cmd /c ..\sakura\githash.bat ../sakura_core
 
 .cpp.o: githash.h Funccode_enum.h
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
