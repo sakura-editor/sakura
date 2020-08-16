@@ -195,6 +195,5 @@ x86_64 | posix | sjlj | pthreadのDLLが必要
 
 ```
 path=C:\msys64\mingw64\bin;%path%
-mingw32-make -C sakura_core githash.h Funccode_enum.h Funccode_define.h
 mingw32-make -C sakura_core -j4
 ```
