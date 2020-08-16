@@ -369,8 +369,10 @@ begin
        IsVistaOrLater and
       ( MultiUserPage.Values[0] = False ) then
       begin
+{
+         Program Files等のシステムフォルダへインストールする場合はUACを無効にしないと設定が保存できません。
+}
          selected := MsgBox(
-{          'Program Files等のシステムフォルダへインストールする場合はUACを無効にしないと設定が保存できませんがよろしいですか？',}
           CustomMessage('MultiUser'),
           mbConfirmation,
           ( MB_OKCANCEL ));
