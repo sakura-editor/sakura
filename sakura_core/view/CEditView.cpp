@@ -1236,7 +1236,7 @@ bool CEditView::IsCurrentPositionURL(
 		&ptXY
 	);
 	CLogicInt		nLineLen;
-	const wchar_t*	pLine = m_pcEditDoc->m_cDocLineMgr.GetLine(ptXY.GetY2())->GetDocLineStrWithEOL(&nLineLen); //2007.10.09 kobake レイアウト・ロジック混在バグ修正
+	const wchar_t*	pLine = CDocLine::GetDocLineStrWithEOL_Safe(m_pcEditDoc->m_cDocLineMgr.GetLine(ptXY.GetY2()), &nLineLen); //2007.10.09 kobake レイアウト・ロジック混在バグ修正
 
 	bool		bMatch;
 	int			nMatchColor;

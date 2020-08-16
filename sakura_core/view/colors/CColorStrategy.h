@@ -124,7 +124,12 @@ struct SColorStrategyInfo{
 	}
 	const CDocLine* GetDocLine() const
 	{
-		return m_pDispPos->GetLayoutRef()->GetDocLineRef();
+		const CLayout* layout = m_pDispPos->GetLayoutRef();
+
+		if (layout) {
+			return layout->GetDocLineRef();
+		}
+		return NULL;
 	}
 	const CLayout* GetLayout() const
 	{
@@ -157,10 +162,15 @@ public:
 	}
 
 	//#######ラップ
-	EColorIndexType GetStrategyColorSafe() const{ if(this)return GetStrategyColor(); else return COLORIDX_TEXT; }
-	CLayoutColorInfo* GetStrategyColorInfoSafe() const{
-		if(this){
-			return GetStrategyColorInfo();
+	static EColorIndexType GetStrategyColorSafe(const CColorStrategy *strategy) {
+		if (strategy) {
+			return strategy->GetStrategyColor();
+		}
+		return COLORIDX_TEXT;
+	}
+	static CLayoutColorInfo* GetStrategyColorInfoSafe(const CColorStrategy *strategy) {
+		if (strategy) {
+			return strategy->GetStrategyColorInfo();
 		}
 		return NULL;
 	}

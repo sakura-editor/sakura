@@ -86,9 +86,13 @@ public:
 	void DestroyPrintPreviewControls( void );
 
 	void SetFocusToPrintPreviewBar( void );
-	HWND GetPrintPreviewBarHANDLE( void ){ return m_hwndPrintPreviewBar;	}
-	HWND GetPrintPreviewBarHANDLE_Safe() const{ if(!this)return NULL; else return m_hwndPrintPreviewBar; } //!< thisがNULLでも実行できる版。2007.10.29 kobake
-	
+	HWND GetPrintPreviewBarHANDLE( void ){ return m_hwndPrintPreviewBar; }
+	static HWND GetPrintPreviewBarHANDLE_Safe(const CPrintPreview *preview) {
+		if (preview)
+			return preview->m_hwndPrintPreviewBar;
+		return NULL;
+	}
+
 	//	PrintPreviewバーのメッセージ処理。
 	//	まずPrintPreviewBar_DlgProcにメッセージが届き、DispatchEvent_PPBに転送する仕組み
 	static INT_PTR CALLBACK PrintPreviewBar_DlgProc(

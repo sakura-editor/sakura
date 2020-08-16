@@ -102,7 +102,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 
 	/* 現在行のデータを取得 */
 	CLogicInt		nLineLen;
-	const wchar_t*	pLine = GetDocument()->m_cDocLineMgr.GetLine(ptXY.GetY2())->GetDocLineStrWithEOL(&nLineLen);
+	const wchar_t*	pLine = CDocLine::GetDocLineStrWithEOL_Safe(GetDocument()->m_cDocLineMgr.GetLine(ptXY.GetY2()), &nLineLen);
 	if( NULL == pLine ){
 		goto can_not_tagjump;
 	}

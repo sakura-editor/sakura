@@ -1077,7 +1077,7 @@ void CEditWnd::MessageLoop( void )
 		if(ret==-1)break; //GetMessage失敗
 
 		//ダイアログメッセージ
-		     if( MyIsDialogMessage( m_pPrintPreview->GetPrintPreviewBarHANDLE_Safe(),	&msg ) ){}	//!< 印刷プレビュー 操作バー
+		     if( MyIsDialogMessage( CPrintPreview::GetPrintPreviewBarHANDLE_Safe(m_pPrintPreview),	&msg ) ){}	//!< 印刷プレビュー 操作バー
 		else if( MyIsDialogMessage( m_cDlgFind.GetHwnd(),								&msg ) ){}	//!<「検索」ダイアログ
 		else if( MyIsDialogMessage( m_cDlgFuncList.GetHwnd(),							&msg ) ){}	//!<「アウトライン」ダイアログ
 		else if( MyIsDialogMessage( m_cDlgReplace.GetHwnd(),							&msg ) ){}	//!<「置換」ダイアログ
@@ -4575,8 +4575,8 @@ BOOL CEditWnd::UpdateTextWrap( void )
 void CEditWnd::ChangeLayoutParam( bool bShowProgress, CKetaXInt nTabSize, int nTsvMode, CKetaXInt nMaxLineKetas )
 {
 	HWND		hwndProgress = NULL;
-	if( bShowProgress && NULL != this ){
-		hwndProgress = this->m_cStatusBar.GetProgressHwnd();
+	if( bShowProgress ){
+		hwndProgress = m_cStatusBar.GetProgressHwnd();
 		//	Status Barが表示されていないときはm_hwndProgressBar == NULL
 	}
 

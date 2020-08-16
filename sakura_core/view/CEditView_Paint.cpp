@@ -940,12 +940,12 @@ bool CEditView::DrawLogicLine(
 		bDispEOF = DrawLayoutLine(pInfo);
 
 		//行を進める
-		CLogicInt nOldLogicLineNo = pInfo->m_pDispPos->GetLayoutRef()->GetLogicLineNo();
+		CLogicInt nOldLogicLineNo = CLayout::GetLogicLineNo_Safe(pInfo->m_pDispPos->GetLayoutRef());
 		pInfo->m_pDispPos->ForwardDrawLine(1);		//描画Y座標＋＋
 		pInfo->m_pDispPos->ForwardLayoutLineRef(1);	//レイアウト行＋＋
 
 		// ロジック行を描画し終わったら抜ける
-		if(pInfo->m_pDispPos->GetLayoutRef()->GetLogicLineNo()!=nOldLogicLineNo){
+		if(CLayout::GetLogicLineNo_Safe(pInfo->m_pDispPos->GetLayoutRef()) != nOldLogicLineNo){
 			break;
 		}
 
@@ -979,7 +979,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 
 	//文字列参照
 	const CDocLine* pcDocLine = pInfo->GetDocLine();
-	CStringRef cLineStr = pcDocLine->GetStringRefWithEOL();
+	CStringRef cLineStr = CDocLine::GetStringRefWithEOL_Safe(pcDocLine);
 
 	// 描画範囲外の場合は色切替だけで抜ける
 	if(pInfo->m_pDispPos->GetDrawPos().y < GetTextArea().GetAreaTop()){
