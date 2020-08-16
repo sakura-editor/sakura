@@ -171,7 +171,7 @@ void CLayoutMgr::_DoGyomatsuKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 			pWork->nWordBgn = pWork->nPos;
 			pWork->nWordLen = 1;
 			pWork->eKinsokuType = KINSOKU_TYPE_KINSOKU_TAIL;
-			
+
 			(this->*pfOnLine)(pWork);
 		}
 	}
@@ -311,7 +311,7 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 
 	_Empty();
 	Init();
-	
+
 	//	Nov. 16, 2002 genta
 	//	折り返し幅 <= TAB幅のとき無限ループするのを避けるため，
 	//	TABが折り返し幅以上の時はTAB=4としてしまう
@@ -353,7 +353,7 @@ void CLayoutMgr::_DoLayout(bool bBlockingHook)
 		// 次の行へ
 		pWork->nCurLine++;
 		pWork->pcDocLine = pWork->pcDocLine->GetNextLine();
-		
+
 		// 処理中のユーザー操作を可能にする
 		if( nListenerCount !=0 && 0 < nAllLineNum) {
 			DWORD currTime = GetTickCount();
@@ -417,7 +417,7 @@ void CLayoutMgr::_OnLine2(SLayoutWork* pWork)
 
 /*!
 	指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする
-	
+
 	@date 2002.10.07 YAZAKI rename from "DoLayout3_New"
 	@date 2004.04.03 Moca TABが使われると折り返し位置がずれるのを防ぐため，
 		pWork->nPosXがインデントを含む幅を保持するように変更．m_nMaxLineKetasは

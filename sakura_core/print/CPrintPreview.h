@@ -51,7 +51,7 @@ public:
 	*/
 	CPrintPreview( class CEditWnd* pParentWnd );
 	~CPrintPreview();
-	
+
 	/*
 	||	イベント
 	*/
@@ -80,7 +80,7 @@ public:
 	*/
 	//	スクロールバー
 	void InitPreviewScrollBar( void );
-	
+
 	//	PrintPreviewバー（画面上部のコントロール）
 	void CreatePrintPreviewControls( void );
 	void DestroyPrintPreviewControls( void );
@@ -259,7 +259,7 @@ public:
 protected:
 	STypeConfig m_typePrint;
 
-	// プレビューから出ても現在のプリンタ情報を記憶しておけるようにstaticにする 2003.05.02 かろと 
+	// プレビューから出ても現在のプリンタ情報を記憶しておけるようにstaticにする 2003.05.02 かろと
 	static CPrint	m_cPrint;					//!< 現在のプリンタ情報
 
 	bool			m_bLockSetting;				// 設定のロック

@@ -57,7 +57,7 @@ public:
 	}
 	~CLayout();
 	void DUMP( void );
-	
+
 	// m_ptLogicPos.xで補正したあとの文字列を得る
 	const wchar_t* GetPtr() const   { return m_pCDocLine->GetPtr() + m_ptLogicPos.x; }
 	CLogicInt GetLengthWithEOL() const    { return m_nLength;	}	//	ただしEOLは常に1文字とカウント？？
@@ -115,7 +115,7 @@ private:
 	const CDocLine*		m_pCDocLine;		//!< 実データへの参照
 	CLogicPoint			m_ptLogicPos;		//!< 対応するロジック参照位置
 	CLogicInt			m_nLength;			//!< このレイアウト行の長さ。文字単位。
-	
+
 	//その他属性
 	EColorIndexType		m_nTypePrev;		//!< タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列
 	CLayoutInt			m_nIndent;			//!< このレイアウト行のインデント数 @@@ 2002.09.23 YAZAKI
