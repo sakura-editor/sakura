@@ -41,14 +41,14 @@ struct EditNode {
 	UINT			m_showCmdRestore;			//!< 元のサイズに戻すときのサイズ種別		//@@@ 2007.06.20 ryoji
 	BOOL			m_bClosing;					//!< 終了中か（「最後のファイルを閉じても(無題)を残す」用）	//@@@ 2007.06.20 ryoji
 
-	HWND GetHwnd() const{ return m_hWnd; }
-	//static HWND GetSafeHwnd(const EditNode* node) { return node ? node->m_hWnd : NULL; }
-	int GetId() const{ return m_nId; }
-	//static int GetSafeId(const EditNode* node) { return node ? node->m_nId : 0; }
+	HWND GetHwnd() const{ if(this)return m_hWnd; else return NULL; } // TODO: Remove "this" check
+	static HWND GetSafeHwnd(const EditNode* node) { return node ? node->m_hWnd : NULL; }
+	int GetId() const{ if(this)return m_nId; else return 0; } // TODO: Remove "this" check
+	static int GetSafeId(const EditNode* node) { return node ? node->m_nId : 0; }
 	CAppNodeGroupHandle GetGroup() const;
-	//static CAppNodeGroupHandle GetGroup_Safe(const EditNode* node);
+	static CAppNodeGroupHandle GetGroup_Safe(const EditNode* node);
 	bool IsTopInGroup() const;
-	//static bool IsTopInGroup_Safe(const EditNode* node);
+	static bool IsTopInGroup_Safe(const EditNode* node);
 };
 
 //! 拡張構造体
@@ -131,25 +131,21 @@ public:
 	HWND GetNextTab(HWND hWndCur);										// Close した時の次のWindowを取得する(タブまとめ表示の場合)	2013/4/10 Uchi
 };
 
-inline CAppNodeGroupHandle EditNode::GetGroup() const{ return m_nGroup; }
-#if 0
+inline CAppNodeGroupHandle EditNode::GetGroup() const{ if(this)return m_nGroup; else return 0; } // TODO: Remove "this" check
 inline CAppNodeGroupHandle EditNode::GetGroup_Safe(const EditNode* node)
 {
 	if (node)
 		return node->m_nGroup;
 	return 0;
 }
-#endif
 
-inline bool EditNode::IsTopInGroup() const{ return (CAppNodeGroupHandle(m_nGroup).GetEditNodeAt(0) == this); }
-#if 0
+inline bool EditNode::IsTopInGroup() const{ return this && (CAppNodeGroupHandle(m_nGroup).GetEditNodeAt(0) == this); } // TODO: Remove "this" check
 inline bool EditNode::IsTopInGroup_Safe(const EditNode* node)
 {
 	if (node)
 		return node->IsTopInGroup();
 	return false;
 }
-#endif
 
 inline CAppNodeHandle::CAppNodeHandle(HWND hwnd)
 {

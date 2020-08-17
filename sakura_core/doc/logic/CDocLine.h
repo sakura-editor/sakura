@@ -56,10 +56,14 @@ public:
 		return p;
 	}
 #endif
-	const wchar_t* GetDocLineStrWithEOL(CLogicInt* pnLen) const //###仮の名前、仮の対処
+	const wchar_t*	GetDocLineStrWithEOL(CLogicInt* pnLen) const //###仮の名前、仮の対処
 	{
-		*pnLen = GetLengthWithEOL();
-		return GetPtr();
+		if(this){ // TODO: Remove "this" check
+			*pnLen = GetLengthWithEOL(); return GetPtr();
+		}
+		else{
+			*pnLen = 0; return NULL;
+		}
 	}
 	static const wchar_t* GetDocLineStrWithEOL_Safe(const CDocLine* docline, CLogicInt* pnLen) //###仮の名前、仮の対処
 	{
@@ -72,12 +76,17 @@ public:
 	}
 	CStringRef GetStringRefWithEOL() const //###仮の名前、仮の対処
 	{
-		return CStringRef(GetPtr(), GetLengthWithEOL());
+		if(this){ // TODO: Remove "this" check
+			return CStringRef(GetPtr(),GetLengthWithEOL());
+		}
+		else{
+			return CStringRef(NULL,0);
+		}
 	}
 	static CStringRef GetStringRefWithEOL_Safe(const CDocLine* docline) //###仮の名前、仮の対処
 	{
 		if(docline){
-			return CStringRef(docline->GetPtr(), docline->GetLengthWithEOL());
+			return docline->GetStringRefWithEOL();
 		}
 		else{
 			return CStringRef(NULL, 0);
