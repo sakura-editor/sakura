@@ -24,22 +24,11 @@ if "%configuration%" == "Release" (
 	exit /b 1
 )
 
-@rem  remove sh.exe in the PATH(for azure pipelines).
-PATH=%PATH:C:\Program Files\Git\cmd;=%
-PATH=%PATH:C:\Program Files\Git\usr\bin;=%
-PATH=%PATH:C:\Program Files\Git\bin;=%
-
 @rem https://www.appveyor.com/docs/environment-variables/
 @rem path=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin;%path%
 path=C:\msys64\mingw64\bin;%path%
 
 @echo mingw32-make -C sakura_core MYDEFINES="%MYDEFINES%" MYCFLAGS="%MYCFLAGS%" MYLIBS="%MYLIBS%"
-mingw32-make -C sakura_core MYDEFINES="%MYDEFINES%" MYCFLAGS="%MYCFLAGS%" MYLIBS="%MYLIBS%" githash.h Funccode_enum.h Funccode_define.h
-if errorlevel 1 (
-	echo error 1 errorlevel %errorlevel%
-	exit /b 1
-)
-
 mingw32-make -C sakura_core MYDEFINES="%MYDEFINES%" MYCFLAGS="%MYCFLAGS%" MYLIBS="%MYLIBS%" -j4
 if errorlevel 1 (
 	echo error 2 errorlevel %errorlevel%

@@ -20,7 +20,7 @@ endif
 CC= $(PREFIX)gcc
 CXX= $(PREFIX)g++
 RC= $(RCPREFIX)windres
-RM= "$(CURDIR)/../sakura/mingw32-del.bat"
+RM= cmd /c ..\sakura\mingw32-del.bat
 
 DEFINES= \
  -DWIN32 \
@@ -31,6 +31,7 @@ DEFINES= \
 CFLAGS= \
  -finput-charset=utf-8 \
  -fexec-charset=cp932 \
+ -MMD \
  -I. \
  $(DEFINES) $(MYCFLAGS)
 CXXFLAGS= $(CFLAGS) \
@@ -431,6 +432,8 @@ _os/CClipboard.o \
 _os/CDropTarget.o \
 sakura_rc.o \
 
+DEPS= $(OBJS:%.o=%.d)
+
 GENERATED_FILES= \
 Funccode_define.h \
 Funccode_enum.h \
@@ -451,24 +454,24 @@ Funccode_enum.h: $(HEADERMAKE) Funccode_x.hsrc
 	$(HEADERMAKE) -in=../sakura_core/Funccode_x.hsrc -out=../sakura_core/Funccode_enum.h -mode=enum -enum=EFunctionCode
 
 githash.h:
-	"$(CURDIR)/../sakura/githash.bat" ../sakura_core
+	cmd /c ..\sakura\githash.bat ../sakura_core
 
-.cpp.o: githash.h Funccode_enum.h
+.cpp.o:
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
+$(OBJS): githash.h Funccode_enum.h
+
 $(HEADERMAKE): $(HEADERMAKETOOLDIR)/HeaderMake.cpp
-	$(CXX) $(CXXFLAGS) $(HEADERMAKETOOLDIR)/HeaderMake.cpp -o $@ -static-libgcc
+	$(CXX) $(CXXFLAGS:-MMD=) $(HEADERMAKETOOLDIR)/HeaderMake.cpp -o $@ -static-libgcc
 
 sakura_rc.o: githash.h Funccode_define.h sakura_rc.rc
 	$(RC) -c utf-8 --language=0411 $(DEFINES) sakura_rc.rc -o $@
 
 clean:
-	$(RM) $(exe) $(OBJS) $(HEADERMAKE) StdAfx.h.gch $(GENERATED_FILES) depend.mak
-
-depend: githash.h Funccode_enum.h
-	$(CXX) -E -MM -w $(DEFINES) $(CXXFLAGS) *.cpp > depend.mak
+	$(RM) $(exe) $(OBJS) $(HEADERMAKE) StdAfx.h.gch $(GENERATED_FILES)
+	$(RM) $(DEPS)
 
 .SUFFIXES: .cpp .o .rc
-.PHONY: all clean depend
+.PHONY: all clean
 
--include depend.mak
+-include $(DEPS)
