@@ -455,7 +455,7 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 		rcOrg.left -= rcOrg.right - rcDesktop.right;
 		rcOrg.right = rcDesktop.right;	//@@@ 2002.01.08
 	}
-	
+
 	if( rcOrg.top < rcDesktop.top ){
 		rcOrg.bottom += rcDesktop.top - rcOrg.top;
 		rcOrg.top = rcDesktop.top;
@@ -837,7 +837,7 @@ void CEditWnd::LayoutMainMenu()
 			// ラベル未設定かつFunctionコードがありならストリングテーブルから取得 2012/10/18 syat 各国語対応
 			pszName = ( cMainMenu->m_sName[0] == L'\0' && cMainMenu->m_nFunc != F_NODE )
 								? LS( cMainMenu->m_nFunc ) : cMainMenu->m_sName;
-			::AppendMenu( hMenu, MF_POPUP | MF_STRING | (nCount<=1 ? MF_GRAYED : 0), (UINT_PTR)CreatePopupMenu(), 
+			::AppendMenu( hMenu, MF_POPUP | MF_STRING | (nCount<=1 ? MF_GRAYED : 0), (UINT_PTR)CreatePopupMenu(),
 				CKeyBind::MakeMenuLabel( pszName, cMainMenu->m_sKey ) );
 			break;
 		case T_LEAF:
@@ -913,7 +913,7 @@ void CEditWnd::LayoutMainMenu()
 				}
 				break;
 			}
-			::AppendMenu( hMenu, MF_POPUP | MF_STRING | (nCount<=0 ? MF_GRAYED : 0), (UINT_PTR)CreatePopupMenu(), 
+			::AppendMenu( hMenu, MF_POPUP | MF_STRING | (nCount<=0 ? MF_GRAYED : 0), (UINT_PTR)CreatePopupMenu(),
 				CKeyBind::MakeMenuLabel( LS(cMainMenu->m_nFunc), cMainMenu->m_sKey ) );
 			break;
 		}
@@ -1077,7 +1077,7 @@ void CEditWnd::MessageLoop( void )
 		if(ret==-1)break; //GetMessage失敗
 
 		//ダイアログメッセージ
-		     if( MyIsDialogMessage( m_pPrintPreview->GetPrintPreviewBarHANDLE_Safe(),	&msg ) ){}	//!< 印刷プレビュー 操作バー
+		     if( MyIsDialogMessage( CPrintPreview::GetPrintPreviewBarHANDLE_Safe(m_pPrintPreview),	&msg ) ){}	//!< 印刷プレビュー 操作バー
 		else if( MyIsDialogMessage( m_cDlgFind.GetHwnd(),								&msg ) ){}	//!<「検索」ダイアログ
 		else if( MyIsDialogMessage( m_cDlgFuncList.GetHwnd(),							&msg ) ){}	//!<「アウトライン」ダイアログ
 		else if( MyIsDialogMessage( m_cDlgReplace.GetHwnd(),							&msg ) ){}	//!<「置換」ダイアログ
@@ -1207,7 +1207,7 @@ LRESULT CEditWnd::DispatchEvent(
 				}
 				::SetTextColor( lpdis->hDC, ::GetSysColor( nColor ) );
 				::SetBkMode( lpdis->hDC, TRANSPARENT );
-				
+
 				// 2003.08.26 Moca 上下中央位置に作画
 				TEXTMETRIC tm;
 				::GetTextMetrics( lpdis->hDC, &tm );
@@ -1411,7 +1411,7 @@ LRESULT CEditWnd::DispatchEvent(
 
 	case WM_NOTIFY:
 		pnmh = (LPNMHDR) lParam;
-		//	From Here Feb. 15, 2004 genta 
+		//	From Here Feb. 15, 2004 genta
 		//	ステータスバーのダブルクリックでモード切替ができるようにする
 		if( m_cStatusBar.GetStatusHwnd() && pnmh->hwndFrom == m_cStatusBar.GetStatusHwnd() ){
 			if( pnmh->code == NM_DBLCLK ){
@@ -1442,7 +1442,7 @@ LRESULT CEditWnd::DispatchEvent(
 					};
 					m_cMenuDrawer.ResetContents();
 					HMENU hMenuPopUp = ::CreatePopupMenu();
-					m_cMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_CRLF, 
+					m_cMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_CRLF,
 						LS( F_CHGMOD_EOL_CRLF ), L"C" ); // 入力改行コード指定(CRLF)
 					m_cMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_LF,
 						LS( F_CHGMOD_EOL_LF ), L"L" ); // 入力改行コード指定(LF)
@@ -1457,7 +1457,7 @@ LRESULT CEditWnd::DispatchEvent(
 						m_cMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_PS,
 							LS(STR_EDITWND_MENU_PS), L"", TRUE, -2 ); // 入力改行コード指定(PS)
 					}
-					
+
 					//	mp->ptはステータスバー内部の座標なので，スクリーン座標への変換が必要
 					POINT	po = mp->pt;
 					::ClientToScreen( m_cStatusBar.GetStatusHwnd(), &po );
@@ -1493,7 +1493,7 @@ LRESULT CEditWnd::DispatchEvent(
 			}
 			return 0L;
 		}
-		//	To Here Feb. 15, 2004 genta 
+		//	To Here Feb. 15, 2004 genta
 
 		switch( pnmh->code ){
 		// 2007.09.08 kobake TTN_NEEDTEXTの処理をA版とW版に分けて明示的に処理するようにしました。
@@ -1837,7 +1837,7 @@ LRESULT CEditWnd::DispatchEvent(
 				SelectCharWidthCache( CWM_FONT_PRINT, CWM_CACHE_LOCAL );
 			}
 		}
-		return 0L; 
+		return 0L;
 	case MYWM_SETACTIVEPANE:
 		if( -1 == (int)wParam ){
 			if( 0 == lParam ){
@@ -1861,7 +1861,7 @@ LRESULT CEditWnd::DispatchEvent(
 				// 現在の状態をKEEP
 				bSelect = GetActiveView().GetSelectionInfo().m_bSelectingLock;
 			}
-			
+
 			//	2006.07.09 genta 強制解除しない
 			/*
 			カーソル位置変換
@@ -2262,7 +2262,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 //	キーワード：メニューバー順序
 //	Sept.14, 2000 Jepro note: メニューバーの項目のキャプションや順番設定などは以下で行っているらしい
 //	Sept.16, 2000 Jepro note: アイコンとの関連付けはCShareData_new2.cppファイルで行っている
-//	2010/5/16	Uchi	動的に作成する様に変更	
+//	2010/5/16	Uchi	動的に作成する様に変更
 void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 {
 	int			cMenuItems;
@@ -2323,7 +2323,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				}else{
 					pMenuName = cMainMenu->m_sName;
 				}
-				m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp , 
+				m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp ,
 					pMenuName, cMainMenu->m_sKey );
 				if (hSubMenu.size() > (size_t)nLv) {
 					hSubMenu[nLv] = hMenuPopUp;
@@ -2345,10 +2345,10 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				if (!bInList) {
 					//分割線に囲まれ、かつリストなし ならば 次の分割線をスキップ
 					if ((i == nIdxStr + 1
-						  || (pcMenu->m_cMainMenuTbl[i-1].m_nType == T_SEPARATOR 
+						  || (pcMenu->m_cMainMenuTbl[i-1].m_nType == T_SEPARATOR
 							&& pcMenu->m_cMainMenuTbl[i-1].m_nLevel == cMainMenu->m_nLevel))
 						&& i + 1 < nIdxEnd
-						&& pcMenu->m_cMainMenuTbl[i+1].m_nType == T_SEPARATOR 
+						&& pcMenu->m_cMainMenuTbl[i+1].m_nType == T_SEPARATOR
 						&& pcMenu->m_cMainMenuTbl[i+1].m_nLevel == cMainMenu->m_nLevel) {
 						i++;		// スキップ
 					}
@@ -2451,56 +2451,56 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 		case F_SAVEKEYMACRO:
 		case F_LOADKEYMACRO:
 		case F_EXECKEYMACRO:
-			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+			SetMenuFuncSel( hMenu, eFunc, pszKey,
 				!m_pShareData->m_sFlags.m_bRecordingKeyMacro);
 			break;
-		case F_SPLIT_V:	
-			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+		case F_SPLIT_V:
+			SetMenuFuncSel( hMenu, eFunc, pszKey,
 				m_cSplitterWnd.GetAllSplitRows() == 1 );
 			break;
 		case F_SPLIT_H:
-			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+			SetMenuFuncSel( hMenu, eFunc, pszKey,
 				m_cSplitterWnd.GetAllSplitCols() == 1 );
 			break;
 		case F_SPLIT_VH:
-			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+			SetMenuFuncSel( hMenu, eFunc, pszKey,
 				m_cSplitterWnd.GetAllSplitRows() == 1 || m_cSplitterWnd.GetAllSplitCols() == 1 );
 			break;
 		case F_TAB_CLOSEOTHER:
-			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+			SetMenuFuncSel( hMenu, eFunc, pszKey,
 				m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd != 0 );
 			break;
 		case F_TOPMOST:
-			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+			SetMenuFuncSel( hMenu, eFunc, pszKey,
 				((DWORD)::GetWindowLongPtr( GetHwnd(), GWL_EXSTYLE ) & WS_EX_TOPMOST) == 0 );
 			break;
 		case F_BIND_WINDOW:
-			SetMenuFuncSel( hMenu, eFunc, pszKey, 
-				(!m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd 
+			SetMenuFuncSel( hMenu, eFunc, pszKey,
+				(!m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd
 				|| m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin) );
 			break;
 		case F_SHOWTOOLBAR:
-			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+			SetMenuFuncSel( hMenu, eFunc, pszKey,
 				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon | !m_cToolbar.GetToolbarHwnd() );
 			break;
 		case F_SHOWFUNCKEY:
-			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+			SetMenuFuncSel( hMenu, eFunc, pszKey,
 				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon | !m_cFuncKeyWnd.GetHwnd() );
 			break;
 		case F_SHOWTAB:
-			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+			SetMenuFuncSel( hMenu, eFunc, pszKey,
 				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon | !m_cTabWnd.GetHwnd() );
 			break;
 		case F_SHOWSTATUSBAR:
-			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+			SetMenuFuncSel( hMenu, eFunc, pszKey,
 				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon | !m_cStatusBar.GetStatusHwnd() );
 			break;
 		case F_SHOWMINIMAP:
-			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+			SetMenuFuncSel( hMenu, eFunc, pszKey,
 				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon | !GetMiniMap().GetHwnd() );
 			break;
 		case F_TOGGLE_KEY_SEARCH:
-			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+			SetMenuFuncSel( hMenu, eFunc, pszKey,
 				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon | !IsFuncChecked( GetDocument(), m_pShareData, F_TOGGLE_KEY_SEARCH ) );
 			break;
 		case F_WRAPWINDOWWIDTH:
@@ -2542,7 +2542,7 @@ void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t
 			}
 			break;
 		default:
-			m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, eFunc, 
+			m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, eFunc,
 				pszName, pszKey );
 			break;
 		}
@@ -2822,7 +2822,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 	return;
 }
 
-/*! WM_TIMER 処理 
+/*! WM_TIMER 処理
 	@date 2007.04.03 ryoji 新規
 	@date 2008.04.19 ryoji IDT_FIRST_IDLE での MYWM_FIRST_IDLE ポスト処理を追加
 	@date 2013.06.09 novice コントロールプロセスへの MYWM_FIRST_IDLE ポスト処理を追加
@@ -3283,7 +3283,7 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 	int nMiniMapWidth = 0;
 	if( GetMiniMap().GetHwnd() ){
 		nMiniMapWidth = GetDllShareData().m_Common.m_sWindow.m_nMiniMapWidth;
-		::MoveWindow( m_pcEditViewMiniMap->GetHwnd(), 
+		::MoveWindow( m_pcEditViewMiniMap->GetHwnd(),
 			(eDockSideFL == DOCKSIDE_RIGHT)? cx - nFuncListWidth - nMiniMapWidth: cx - nMiniMapWidth,
 			(eDockSideFL == DOCKSIDE_TOP)? nTop + nFuncListHeight: nTop,
 			nMiniMapWidth,
@@ -3761,7 +3761,7 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 		//	アクティブ
 		m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp, LS(F_FOLDER_USED_RECENTLY), L"" );
 	}
-	else 
+	else
 	{
 		//	非アクティブ
 		m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT_PTR)hMenuPopUp, LS(F_FOLDER_USED_RECENTLY), L"" );
@@ -3833,16 +3833,16 @@ void CEditWnd::GetDefaultIcon( HICON* hIconBig, HICON* hIconSmall ) const
 
 /*!
 	アイコンの取得
-	
+
 	指定されたファイル名に対応するアイコン(大・小)を取得して返す．
-	
+
 	@param szFile     [in] ファイル名
 	@param hIconBig   [out] 大きいアイコンのハンドル
 	@param hIconSmall [out] 小さいアイコンのハンドル
-	
+
 	@retval true 関連づけられたアイコンが見つかった
 	@retval false 関連づけられたアイコンが見つからなかった
-	
+
 	@author genta
 	@date 2002.09.10
 */
@@ -3854,7 +3854,7 @@ bool CEditWnd::GetRelatedIcon(const WCHAR* szFile, HICON* hIconBig, HICON* hIcon
 
 		// (.で始まる)拡張子の取得
 		_wsplitpath( szFile, NULL, NULL, NULL, szExt );
-		
+
 		if( ReadRegistry(HKEY_CLASSES_ROOT, szExt, NULL, FileType, _countof(FileType) - 13)){
 			wcscat( FileType, L"\\DefaultIcon" );
 			if( ReadRegistry(HKEY_CLASSES_ROOT, FileType, NULL, NULL, 0)){
@@ -3876,9 +3876,9 @@ bool CEditWnd::GetRelatedIcon(const WCHAR* szFile, HICON* hIconBig, HICON* hIcon
 
 /*
 	@brief メニューバー表示用フォントの初期化
-	
+
 	メニューバー表示用フォントの初期化を行う．
-	
+
 	@date 2002.12.04 CEditViewのコンストラクタから移動
 */
 void CEditWnd::InitMenubarMessageFont(void)
@@ -3917,10 +3917,10 @@ void CEditWnd::InitMenubarMessageFont(void)
 
 /*
 	@brief メニューバーにメッセージを表示する
-	
+
 	事前にメニューバー表示用フォントが初期化されていなくてはならない．
 	指定できる文字数は最大30文字．それ以上の場合はうち切って表示する．
-	
+
 	@author genta
 	@date 2002.12.04
 */
@@ -3984,10 +3984,10 @@ void CEditWnd::PrintMenubarMessage( const WCHAR* msg )
 
 /*!
 	@brief メッセージの表示
-	
+
 	指定されたメッセージをステータスバーに表示する．
 	ステータスバーが非表示の場合はメニューバーの右端に表示する．
-	
+
 	@param msg [in] 表示するメッセージ
 	@date 2002.01.26 hor 新規作成
 	@date 2002.12.04 genta CEditViewより移動
@@ -4133,7 +4133,7 @@ LRESULT CEditWnd::PopupWinList( bool bMousePos )
 
 	// ポップアップ位置をアクティブビューの上辺に設定
 	RECT rc;
-	
+
 	if( bMousePos ){
 		::GetCursorPos( &pt );	// マウスカーソル位置に変更
 	}
@@ -4170,7 +4170,7 @@ LRESULT CEditWnd::PopupWinList( bool bMousePos )
 	return 0L;
 }
 
-/*! @brief 現在開いている編集窓のリストをメニューにする 
+/*! @brief 現在開いている編集窓のリストをメニューにする
 	@date  2006.03.23 fon CEditWnd::InitMenuから移動。////が元からあるコメント。//>は追加コメントアウト。
 	@date 2009.06.02 ryoji アイテム数が多いときはアクセスキーを 1-9,A-Z の範囲で再使用する（従来は36個未満を仮定）
 */
@@ -4249,9 +4249,9 @@ void CEditWnd::OnEditTimer( void )
 	IncrementTimerCount(6);
 
 	// 2006.01.28 aroka ツールバー更新関連は OnToolbarTimerに移動した。
-	
+
 	//	Aug. 29, 2003 wmlhq, ryoji
-	if( m_nTimerCount == 0 && GetCapture() == NULL ){ 
+	if( m_nTimerCount == 0 && GetCapture() == NULL ){
 		// ファイルのタイムスタンプのチェック処理
 		GetDocument()->m_cAutoReloadAgent.CheckFileTimeStamp();
 
@@ -4575,8 +4575,8 @@ BOOL CEditWnd::UpdateTextWrap( void )
 void CEditWnd::ChangeLayoutParam( bool bShowProgress, CKetaXInt nTabSize, int nTsvMode, CKetaXInt nMaxLineKetas )
 {
 	HWND		hwndProgress = NULL;
-	if( bShowProgress && NULL != this ){
-		hwndProgress = this->m_cStatusBar.GetProgressHwnd();
+	if( bShowProgress && NULL != this ){ // TODO: Remove "this" check
+		hwndProgress = m_cStatusBar.GetProgressHwnd();
 		//	Status Barが表示されていないときはm_hwndProgressBar == NULL
 	}
 
@@ -4630,9 +4630,9 @@ CLogicPointEx* CEditWnd::SavePhysPosOfAllView()
 {
 	const int NUM_OF_VIEW = GetAllViewCount();
 	const int NUM_OF_POS = 6;
-	
+
 	CLogicPointEx* pptPosArray = new CLogicPointEx[NUM_OF_VIEW * NUM_OF_POS];
-	
+
 	for( int i = 0; i < NUM_OF_VIEW; ++i ){
 		CLayoutPoint tmp = CLayoutPoint(CLayoutInt(0), GetView(i).m_pcTextArea->GetViewTopLine());
 		const CLayout* layoutLine = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY(tmp.GetY2());

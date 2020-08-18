@@ -171,13 +171,13 @@ void SColorStrategyInfo::DoChangeColor(CColor3Setting *pcColor)
 	}else if(m_pStrategyFound){
 		m_cIndex.eColorIndex = m_pStrategyFound->GetStrategyColor();
 	}else{
-		m_cIndex.eColorIndex = m_pStrategy->GetStrategyColorSafe();
+		m_cIndex.eColorIndex = CColorStrategy::GetStrategyColorSafe(m_pStrategy);
 	}
 
 	if(m_pStrategyFound){
 		m_cIndex.eColorIndex2 = m_pStrategyFound->GetStrategyColor();
 	}else{
-		m_cIndex.eColorIndex2 = m_pStrategy->GetStrategyColorSafe();
+		m_cIndex.eColorIndex2 = CColorStrategy::GetStrategyColorSafe(m_pStrategy);
 	}
 
 	m_cIndex.eColorIndexBg = m_colorIdxBackLine;

@@ -96,7 +96,7 @@ void CEditView::RedrawAll()
 	if( NULL == GetHwnd() ){
 		return;
 	}
-	
+
 	if( GetDrawSwitch() ){
 		// ウィンドウ全体を再描画
 		PAINTSTRUCT	ps;
@@ -270,7 +270,7 @@ void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
 		}
 	}
 	rcImagePos.SetSize(doc.m_nBackImgWidth, doc.m_nBackImgHeight);
-	
+
 	RECT rc = rcPaint;
 	// rc.left = t_max((int)rc.left, area.GetAreaLeft());
 	rc.top  = t_max((int)rc.top,  area.GetRulerHeight()); // ルーラーを除外
@@ -576,7 +576,7 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 	}
 }
 
-/*! 通常の描画処理 new 
+/*! 通常の描画処理 new
 	@param pPs  pPs.rcPaint は正しい必要がある
 	@param bDrawFromComptibleBmp  TRUE 画面バッファからhdcに作画する(コピーするだけ)。
 			TRUEの場合、pPs.rcPaint領域外は作画されないが、FALSEの場合は作画される事がある。
@@ -604,7 +604,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 		bDrawFromComptibleBmp
 		);
 #endif
-	
+
 	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
 	// 互換BMPからの転送のみによる作画
 	if( bDrawFromComptibleBmp
@@ -940,12 +940,12 @@ bool CEditView::DrawLogicLine(
 		bDispEOF = DrawLayoutLine(pInfo);
 
 		//行を進める
-		CLogicInt nOldLogicLineNo = pInfo->m_pDispPos->GetLayoutRef()->GetLogicLineNo();
+		CLogicInt nOldLogicLineNo = CLayout::GetLogicLineNo_Safe(pInfo->m_pDispPos->GetLayoutRef());
 		pInfo->m_pDispPos->ForwardDrawLine(1);		//描画Y座標＋＋
 		pInfo->m_pDispPos->ForwardLayoutLineRef(1);	//レイアウト行＋＋
 
 		// ロジック行を描画し終わったら抜ける
-		if(pInfo->m_pDispPos->GetLayoutRef()->GetLogicLineNo()!=nOldLogicLineNo){
+		if(CLayout::GetLogicLineNo_Safe(pInfo->m_pDispPos->GetLayoutRef()) != nOldLogicLineNo){
 			break;
 		}
 
@@ -979,7 +979,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 
 	//文字列参照
 	const CDocLine* pcDocLine = pInfo->GetDocLine();
-	CStringRef cLineStr = pcDocLine->GetStringRefWithEOL();
+	CStringRef cLineStr = CDocLine::GetStringRefWithEOL_Safe(pcDocLine);
 
 	// 描画範囲外の場合は色切替だけで抜ける
 	if(pInfo->m_pDispPos->GetDrawPos().y < GetTextArea().GetAreaTop()){
@@ -1195,16 +1195,16 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 
 /* テキスト反転
 
-	@param hdc      
-	@param nLineNum 
-	@param x        
-	@param y        
-	@param nX       
+	@param hdc
+	@param nLineNum
+	@param x
+	@param y
+	@param nX
 
 	@note
 	CCEditView::DrawLogicLine() での作画(WM_PAINT)時に、1レイアウト行をまとめて反転処理するための関数。
 	範囲選択の随時更新は、CEditView::DrawSelectArea() が選択・反転解除を行う。
-	
+
 */
 void CEditView::DispTextSelected(
 	HDC				hdc,		//!< 作画対象ビットマップを含むデバイス
@@ -1274,12 +1274,12 @@ void CEditView::DispTextSelected(
 			if( rcClip.right > GetTextArea().GetAreaRight() ){
 				rcClip.right = GetTextArea().GetAreaRight();
 			}
-			
+
 			// 選択色表示なら反転しない
 			if( !bOMatch && CTypeSupport(this, COLORIDX_SELECT).IsDisp() ){
 				return;
 			}
-			
+
 			HBRUSH hBrush    = ::CreateSolidBrush( SELECTEDAREA_RGB );
 
 			int    nROP_Old  = ::SetROP2( hdc, SELECTEDAREA_ROP2 );
@@ -1303,7 +1303,7 @@ void CEditView::DispTextSelected(
 /*!
 	画面の互換ビットマップを作成または更新する。
 		必要の無いときは何もしない。
-	
+
 	@param cx ウィンドウの高さ
 	@param cy ウィンドウの幅
 	@return true: ビットマップを利用可能 / false: ビットマップの作成・更新に失敗
@@ -1373,7 +1373,7 @@ bool CEditView::CreateOrUpdateCompatibleBitmap( int cx, int cy )
 
 	@note 分割ビューが非表示になった場合と
 		親ウィンドウが非表示・最小化された場合に削除される。
-	@date 2007.09.09 Moca 新規作成 
+	@date 2007.09.09 Moca 新規作成
 */
 void CEditView::DeleteCompatibleBitmap()
 {
