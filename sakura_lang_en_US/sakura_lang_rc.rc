@@ -29,7 +29,7 @@
 
 /* LMP (Lucien Murray-Pitts) : 2011-02-26 Added Basic English Translation Resources */
 
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 #ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_DEFAULT
 #endif //_WIN32
