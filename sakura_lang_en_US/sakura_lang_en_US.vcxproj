@@ -81,7 +81,7 @@
   <ItemDefinitionGroup Label="Common Settings">
     <ResourceCompile>
       <AdditionalIncludeDirectories>..\sakura_core;$(OutDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <Culture>0x0411</Culture>
+      <Culture>0x0409</Culture>
       <AdditionalOptions>/c 65001</AdditionalOptions>
     </ResourceCompile>
     <Link>
