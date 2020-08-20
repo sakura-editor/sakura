@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <PYTHON_DIR>C:\Python38</PYTHON_DIR>
+  </PropertyGroup>
+  <PropertyGroup>
+    <IncludePath>$(PYTHON_DIR)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(PYTHON_DIR)\libs;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <Link />
+    <Link>
+      <DelayLoadDLLs>python38.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="PYTHON_DIR">
+      <Value>$(PYTHON_DIR)</Value>
+    </BuildMacro>
+  </ItemGroup>
+</Project>

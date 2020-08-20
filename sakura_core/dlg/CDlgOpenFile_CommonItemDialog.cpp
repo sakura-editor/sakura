@@ -472,10 +472,11 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 		specs.push_back(COMDLG_FILTERSPEC{strs.back().c_str(), L"*.txt"});
 		break;
 	case EFITER_MACRO:
-		specs.push_back(COMDLG_FILTERSPEC{L"Macros", L"*.js;*.vbs;*.ppa;*.mac"});
+		specs.push_back(COMDLG_FILTERSPEC{L"Macros", L"*.js;*.vbs;*.ppa;*.py;*.mac"});
 		specs.push_back(COMDLG_FILTERSPEC{L"JScript", L"*.js"});
 		specs.push_back(COMDLG_FILTERSPEC{L"VBScript", L"*.vbs"});
 		specs.push_back(COMDLG_FILTERSPEC{L"Pascal", L"*.ppa"});
+		specs.push_back(COMDLG_FILTERSPEC{L"Python", L"*.py"});
 		specs.push_back(COMDLG_FILTERSPEC{L"Key Macro", L"*.mac"});
 		break;
 	case EFITER_NONE:
