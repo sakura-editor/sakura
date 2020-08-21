@@ -28,6 +28,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CGREPENUMFILTERFILES_48762BD9_D3E4_4D32_8C3A_502A7A6AE85A_H_
+#define SAKURA_CGREPENUMFILTERFILES_48762BD9_D3E4_4D32_8C3A_502A7A6AE85A_H_
 #pragma once
 
 #include "CGrepEnumFiles.h"
@@ -59,3 +61,4 @@ public:
 		return CGrepEnumFiles::Enumerates( lpBaseFolder, cGrepEnumKeys.m_vecSearchFileKeys, option, &pExcept );
 	}
 };
+#endif /* SAKURA_CGREPENUMFILTERFILES_48762BD9_D3E4_4D32_8C3A_502A7A6AE85A_H_ */

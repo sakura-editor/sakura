@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CVIEWSELECT_08C2314F_EB28_43C0_9719_56EB5A6A95C5_H_
+#define SAKURA_CVIEWSELECT_08C2314F_EB28_43C0_9719_56EB5A6A95C5_H_
 #pragma once
 
 class CEditView;
@@ -186,3 +188,4 @@ m_sSelectOldについて
 	現在の選択範囲をOldへコピーした上で新しい選択範囲をSelectに設定して
 	DrawSelectArea()を呼びだすことで新しい範囲が描かれる．
 */
+#endif /* SAKURA_CVIEWSELECT_08C2314F_EB28_43C0_9719_56EB5A6A95C5_H_ */

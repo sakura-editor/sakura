@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_STDCONTROL_57A7282D_B9F0_4642_ABFF_48B6D715CCA7_H_
+#define SAKURA_STDCONTROL_57A7282D_B9F0_4642_ABFF_48B6D715CCA7_H_
 #pragma once
 
 /*
@@ -298,3 +300,4 @@ namespace ApiWrap{
 	void TreeView_ExpandAll( HWND, bool, int nMaxDepth = 100 );
 }
 using namespace ApiWrap;
+#endif /* SAKURA_STDCONTROL_57A7282D_B9F0_4642_ABFF_48B6D715CCA7_H_ */

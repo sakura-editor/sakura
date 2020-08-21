@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CAUTORELOADAGENT_6340340B_4677_4748_8240_689427F4AE3D_H_
+#define SAKURA_CAUTORELOADAGENT_6340340B_4677_4748_8240_689427F4AE3D_H_
 #pragma once
 
 #include "doc/CDocListener.h"
@@ -62,3 +64,4 @@ private:
 	int m_nPauseCount;	//これが1以上の場合は監視をしない
 	int m_nDelayCount;	//未編集で再ロード時の遅延カウンタ
 };
+#endif /* SAKURA_CAUTORELOADAGENT_6340340B_4677_4748_8240_689427F4AE3D_H_ */

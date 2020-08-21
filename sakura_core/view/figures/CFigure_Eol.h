@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CFIGURE_EOL_C51A4502_29AE_4D38_8056_5B0CFCC3686B_H_
+#define SAKURA_CFIGURE_EOL_C51A4502_29AE_4D38_8056_5B0CFCC3686B_H_
 #pragma once
 
 #include "view/figures/CFigureStrategy.h"
@@ -41,3 +43,4 @@ public:
 	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const {};
 	EColorIndexType GetColorIdx(void) const{ return COLORIDX_EOL; }
 };
+#endif /* SAKURA_CFIGURE_EOL_C51A4502_29AE_4D38_8056_5B0CFCC3686B_H_ */

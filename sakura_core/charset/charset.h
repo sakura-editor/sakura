@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CHARSET_CD85F6F9_5224_44A2_9BC4_5F631B467701_H_
+#define SAKURA_CHARSET_CD85F6F9_5224_44A2_9BC4_5F631B467701_H_
 #pragma once
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -139,3 +141,4 @@ public:
 	ECodeType	GetCode(int nIndex) const;
 	LPCWSTR		GetName(int nIndex) const;
 };
+#endif /* SAKURA_CHARSET_CD85F6F9_5224_44A2_9BC4_5F631B467701_H_ */

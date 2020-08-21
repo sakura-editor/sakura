@@ -28,6 +28,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CFILEEXT_DEFC4B1D_6DA5_4C83_AA7E_198C3E0BC50F_H_
+#define SAKURA_CFILEEXT_DEFC4B1D_6DA5_4C83_AA7E_198C3E0BC50F_H_
 #pragma once
 
 #include "_main/global.h"
@@ -68,3 +70,4 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(CFileExt);
 };
+#endif /* SAKURA_CFILEEXT_DEFC4B1D_6DA5_4C83_AA7E_198C3E0BC50F_H_ */

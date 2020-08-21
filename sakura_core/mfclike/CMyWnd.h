@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CMYWND_AA99D3B1_9B1C_4DB5_A62C_AEE66BEFBD52_H_
+#define SAKURA_CMYWND_AA99D3B1_9B1C_4DB5_A62C_AEE66BEFBD52_H_
 #pragma once
 
 /*
@@ -78,3 +80,4 @@ public:
 private:
 	HWND m_hWnd;
 };
+#endif /* SAKURA_CMYWND_AA99D3B1_9B1C_4DB5_A62C_AEE66BEFBD52_H_ */

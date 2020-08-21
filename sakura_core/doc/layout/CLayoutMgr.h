@@ -19,6 +19,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CLAYOUTMGR_5398B1C5_280C_4D86_B7BB_C7B5C8B0403F_H_
+#define SAKURA_CLAYOUTMGR_5398B1C5_280C_4D86_B7BB_C7B5C8B0403F_H_
 #pragma once
 
 #include <Windows.h>// 2002/2/10 aroka
@@ -423,3 +425,4 @@ protected:
 
 	DISALLOW_COPY_AND_ASSIGN(CLayoutMgr);
 };
+#endif /* SAKURA_CLAYOUTMGR_5398B1C5_280C_4D86_B7BB_C7B5C8B0403F_H_ */

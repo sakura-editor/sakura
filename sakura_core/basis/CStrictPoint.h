@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CSTRICTPOINT_61EFDE2B_5ACD_464A_8F49_7FB76A4A34C4_H_
+#define SAKURA_CSTRICTPOINT_61EFDE2B_5ACD_464A_8F49_7FB76A4A34C4_H_
 #pragma once
 
 //単位が明示的に区別されたポイント型。※POINTは継承しないことにした
@@ -111,3 +113,4 @@ public:
 		return pt;
 	}
 };
+#endif /* SAKURA_CSTRICTPOINT_61EFDE2B_5ACD_464A_8F49_7FB76A4A34C4_H_ */

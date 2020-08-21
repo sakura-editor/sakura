@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CDOCTYPESETTING_87013082_2E52_4683_8CEE_499218F2D584_H_
+#define SAKURA_CDOCTYPESETTING_87013082_2E52_4683_8CEE_499218F2D584_H_
 #pragma once
 
 #include "basis/CMyString.h"	//SFilePath
@@ -71,3 +73,4 @@ struct KeyHelpInfo {
 	SFilePath	m_szPath;					//!< ファイルパス
 };
 //@@@ 2006.04.10 fon ADD-end
+#endif /* SAKURA_CDOCTYPESETTING_87013082_2E52_4683_8CEE_499218F2D584_H_ */

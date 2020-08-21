@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CSEARCHAGENT_9FAD6EE9_3D33_4D9F_9E9D_CAA9BE284140_H_
+#define SAKURA_CSEARCHAGENT_9FAD6EE9_3D33_4D9F_9E9D_CAA9BE284140_H_
 #pragma once
 
 #include "_main/global.h"
@@ -129,3 +131,4 @@ public:
 private:
 	CDocLineMgr* m_pcDocLineMgr;
 };
+#endif /* SAKURA_CSEARCHAGENT_9FAD6EE9_3D33_4D9F_9E9D_CAA9BE284140_H_ */

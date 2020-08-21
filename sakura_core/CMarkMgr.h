@@ -29,6 +29,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CMARKMGR_7A2BB103_5584_4393_A8E9_7639E3C7D787_H_
+#define SAKURA_CMARKMGR_7A2BB103_5584_4393_A8E9_7639E3C7D787_H_
 #pragma once
 
 #include <vector>
@@ -134,3 +136,4 @@ public:
 	void Add(const CMark& m) override;	//!<	要素の追加
 	void Expire(void) override;	//!<	要素数の調整
 };
+#endif /* SAKURA_CMARKMGR_7A2BB103_5584_4393_A8E9_7639E3C7D787_H_ */

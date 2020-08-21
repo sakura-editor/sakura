@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CRECENTEDITNODE_51FF7E34_DFF5_45BA_AB77_7845F21F7A85_H_
+#define SAKURA_CRECENTEDITNODE_51FF7E34_DFF5_45BA_AB77_7845F21F7A85_H_
 #pragma once
 
 #include "CRecentImp.h"
@@ -45,3 +47,4 @@ public:
 	int FindItemByHwnd(HWND hwnd) const;
 	void DeleteItemByHwnd(HWND hwnd);
 };
+#endif /* SAKURA_CRECENTEDITNODE_51FF7E34_DFF5_45BA_AB77_7845F21F7A85_H_ */

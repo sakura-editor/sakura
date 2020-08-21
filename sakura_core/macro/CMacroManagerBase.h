@@ -28,6 +28,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CMACROMANAGERBASE_40AD4654_61DF_45E5_BC2F_7C702E530B5D_H_
+#define SAKURA_CMACROMANAGERBASE_40AD4654_61DF_45E5_BC2F_7C702E530B5D_H_
 #pragma once
 
 #include <Windows.h>
@@ -97,3 +99,4 @@ public:
 	// Constructor
 	CMacroManagerBase();
 };
+#endif /* SAKURA_CMACROMANAGERBASE_40AD4654_61DF_45E5_BC2F_7C702E530B5D_H_ */

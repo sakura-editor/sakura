@@ -25,6 +25,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CFORMATMANAGER_4161FE80_FFA1_4619_BD0A_74FF4F59BDDA_H_
+#define SAKURA_CFORMATMANAGER_4161FE80_FFA1_4619_BD0A_74FF4F59BDDA_H_
 #pragma once
 
 // 要先行定義
@@ -48,3 +50,4 @@ public:
 private:
 	DLLSHAREDATA* m_pShareData;
 };
+#endif /* SAKURA_CFORMATMANAGER_4161FE80_FFA1_4619_BD0A_74FF4F59BDDA_H_ */

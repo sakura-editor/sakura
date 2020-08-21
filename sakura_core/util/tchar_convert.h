@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_TCHAR_CONVERT_2F41312D_27C8_4366_89F5_046BF7ED3B32_H_
+#define SAKURA_TCHAR_CONVERT_2F41312D_27C8_4366_89F5_046BF7ED3B32_H_
 #pragma once
 
 //WCHARに変換
@@ -36,3 +38,4 @@ const ACHAR* to_achar(const WCHAR* pSrc, int nSrcLength);
 
 //その他
 const WCHAR* easy_format(const WCHAR* format, ...);
+#endif /* SAKURA_TCHAR_CONVERT_2F41312D_27C8_4366_89F5_046BF7ED3B32_H_ */

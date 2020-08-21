@@ -11,6 +11,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CSELECTLANG_657416B2_2B3D_455C_AC28_8B86244F5F83_H_
+#define SAKURA_CSELECTLANG_657416B2_2B3D_455C_AC28_8B86244F5F83_H_
 #pragma once
 
 #include <windows.h>
@@ -143,3 +145,4 @@ private:
 
 // 文字列ロード簡易化マクロ
 #define LS( id ) ( CLoadString::LoadStringSt( id ) )
+#endif /* SAKURA_CSELECTLANG_657416B2_2B3D_455C_AC28_8B86244F5F83_H_ */

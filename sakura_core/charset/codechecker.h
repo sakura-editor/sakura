@@ -31,6 +31,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CODECHECKER_62A18A31_2ECD_47B6_AEE1_38EDDAD3FF2B_H_
+#define SAKURA_CODECHECKER_62A18A31_2ECD_47B6_AEE1_38EDDAD3FF2B_H_
 #pragma once
 
 #include "_main/global.h"
@@ -445,3 +447,4 @@ int CheckCesu8Char( const char*, const int, ECharSet*, const int nOption );
 // UTF-7 フォーマットチェック
 int CheckUtf7DPart( const char*, const int, char **ppNextChar, bool *pbError );
 int CheckUtf7BPart( const char*, const int, char **ppNextChar, bool *pbError, const int nOption, bool *pbNoAddPoint = NULL );
+#endif /* SAKURA_CODECHECKER_62A18A31_2ECD_47B6_AEE1_38EDDAD3FF2B_H_ */

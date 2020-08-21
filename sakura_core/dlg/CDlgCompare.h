@@ -11,6 +11,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CDLGCOMPARE_58A610D8_1E87_4096_96E2_724BEAC310F1_H_
+#define SAKURA_CDLGCOMPARE_58A610D8_1E87_4096_96E2_724BEAC310F1_H_
 #pragma once
 
 class CDlgCompare;
@@ -58,3 +60,4 @@ private:
 	POINT			m_ptDefaultSize;
 	RECT			m_rcItems[6];
 };
+#endif /* SAKURA_CDLGCOMPARE_58A610D8_1E87_4096_96E2_724BEAC310F1_H_ */

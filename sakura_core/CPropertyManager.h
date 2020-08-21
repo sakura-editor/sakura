@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CPROPERTYMANAGER_E2156683_CAC9_4255_82A2_749A0D1D383A_H_
+#define SAKURA_CPROPERTYMANAGER_E2156683_CAC9_4255_82A2_749A0D1D383A_H_
 #pragma once
 
 #include "prop/CPropCommon.h"
@@ -48,3 +50,4 @@ private:
 	int				m_nPropComPageNum;
 	int				m_nPropTypePageNum;
 };
+#endif /* SAKURA_CPROPERTYMANAGER_E2156683_CAC9_4255_82A2_749A0D1D383A_H_ */

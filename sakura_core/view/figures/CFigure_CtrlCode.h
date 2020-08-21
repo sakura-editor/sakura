@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CFIGURE_CTRLCODE_53EB409B_17F7_4B7F_9AD2_A00C29CDC792_H_
+#define SAKURA_CFIGURE_CTRLCODE_53EB409B_17F7_4B7F_9AD2_A00C29CDC792_H_
 #pragma once
 
 #include "view/figures/CFigureStrategy.h"
@@ -64,3 +66,4 @@ public:
 	virtual wchar_t GetAlternateChar() const{ return L'〓'; }
 	EColorIndexType GetColorIdx(void) const{ return COLORIDX_CTRLCODE; }
 };
+#endif /* SAKURA_CFIGURE_CTRLCODE_53EB409B_17F7_4B7F_9AD2_A00C29CDC792_H_ */

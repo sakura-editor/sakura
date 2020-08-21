@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_STRING_EX_87282FEB_4B23_4112_9C5A_419F43618705_H_
+#define SAKURA_STRING_EX_87282FEB_4B23_4112_9C5A_419F43618705_H_
 #pragma once
 
 // 2007.10.19 kobake
@@ -257,3 +259,4 @@ int strnicmp_literal(const char* strData1, const char (&literalData2)[Size]) {
 	assert(literalData2[Size - 1] == 0);
 	return ::_strnicmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
 }
+#endif /* SAKURA_STRING_EX_87282FEB_4B23_4112_9C5A_419F43618705_H_ */

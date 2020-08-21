@@ -12,6 +12,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CKEYBIND_9B930CDD_DCA8_4096_B61C_37CED61C575A_H_
+#define SAKURA_CKEYBIND_9B930CDD_DCA8_4096_B61C_37CED61C575A_H_
 #pragma once
 
 #include <Windows.h>
@@ -93,3 +95,4 @@ protected:
 	static bool GetKeyStrSub(int& nKeyNameArrBegin, int nKeyNameArrEnd, KEYDATA* pKeyNameArr,
 			int nShiftState, CNativeW& cMemList, int nFuncId, BOOL bGetDefFuncCode );
 };
+#endif /* SAKURA_CKEYBIND_9B930CDD_DCA8_4096_B61C_37CED61C575A_H_ */

@@ -28,6 +28,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CDLGTAGSMAKE_65A013DF_4315_4254_8C64_4E7489E8E5FC_H_
+#define SAKURA_CDLGTAGSMAKE_65A013DF_4315_4254_8C64_4E7489E8E5FC_H_
 #pragma once
 
 class CDlgTagsMake;
@@ -66,3 +68,4 @@ protected:
 private:
 	void SelectFolder( HWND hwndDlg );
 };
+#endif /* SAKURA_CDLGTAGSMAKE_65A013DF_4315_4254_8C64_4E7489E8E5FC_H_ */

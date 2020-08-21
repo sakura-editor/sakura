@@ -28,6 +28,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CMUTEX_51EDDE78_F635_419A_9E10_159485D0F710_H_
+#define SAKURA_CMUTEX_51EDDE78_F635_419A_9E10_159485D0F710_H_
 #pragma once
 
 #include <Windows.h>
@@ -103,3 +105,4 @@ public:
 		o_.Unlock();
 	}
 };
+#endif /* SAKURA_CMUTEX_51EDDE78_F635_419A_9E10_159485D0F710_H_ */

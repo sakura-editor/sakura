@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CVIEWFONT_650DC4AC_DEA2_4652_B47A_6CA998C2F9EF_H_
+#define SAKURA_CVIEWFONT_650DC4AC_DEA2_4652_B47A_6CA998C2F9EF_H_
 #pragma once
 
 #include "doc/CDocTypeSetting.h" // ColorInfo !!
@@ -68,3 +70,4 @@ private:
 	LOGFONT	m_LogFont;
 	bool	m_bMiniMap;
 };
+#endif /* SAKURA_CVIEWFONT_650DC4AC_DEA2_4652_B47A_6CA998C2F9EF_H_ */

@@ -28,6 +28,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CDLGFILETREE_58915B5A_6480_4286_AB4F_28A7A6502AEC_H_
+#define SAKURA_CDLGFILETREE_58915B5A_6480_4286_AB4F_28A7A6502AEC_H_
 #pragma once
 
 #include "dlg/CDialog.h"
@@ -68,3 +70,4 @@ private:
 
 	int					m_bInMove;
 };
+#endif /* SAKURA_CDLGFILETREE_58915B5A_6480_4286_AB4F_28A7A6502AEC_H_ */

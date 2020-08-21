@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CONVERT_UTIL_277AEF33_C47A_4760_A892_04C57763274E_H_
+#define SAKURA_CONVERT_UTIL_277AEF33_C47A_4760_A892_04C57763274E_H_
 #pragma once
 
 //2007.10.18 kobake
@@ -65,3 +67,4 @@ void Convert_HankataToZenkata(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst
 	pDstにはあらかじめ十分なメモリを確保しておくこと。
 */
 void Convert_HankataToZenhira(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst, int* nDstLength);
+#endif /* SAKURA_CONVERT_UTIL_277AEF33_C47A_4760_A892_04C57763274E_H_ */

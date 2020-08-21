@@ -25,6 +25,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_DEBUG2_46C93AD6_37D9_4646_B78C_E09168383A42_H_
+#define SAKURA_DEBUG2_46C93AD6_37D9_4646_B78C_E09168383A42_H_
 #pragma once
 
 #include <cassert>
@@ -61,3 +63,4 @@
 	#define assert(exp)
 	#define assert_warning(exp)
 #endif
+#endif /* SAKURA_DEBUG2_46C93AD6_37D9_4646_B78C_E09168383A42_H_ */

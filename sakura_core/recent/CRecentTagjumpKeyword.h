@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CRECENTTAGJUMPKEYWORD_1416AC30_3714_4760_A313_76588D26A0A1_H_
+#define SAKURA_CRECENTTAGJUMPKEYWORD_1416AC30_3714_4760_A313_76588D26A0A1_H_
 #pragma once
 
 #include "CRecentImp.h"
@@ -44,3 +46,4 @@ public:
 	bool			ValidateReceiveType( LPCWSTR p ) const override;
 	size_t			GetTextMaxLength() const;
 };
+#endif /* SAKURA_CRECENTTAGJUMPKEYWORD_1416AC30_3714_4760_A313_76588D26A0A1_H_ */

@@ -37,6 +37,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CEDITDOC_D845B5F3_FD71_4722_B115_63145B804253_H_
+#define SAKURA_CEDITDOC_D845B5F3_FD71_4722_B115_63145B804253_H_
 #pragma once
 
 #include "_main/global.h"
@@ -164,3 +166,4 @@ public:
 	int				m_nBackImgWidth;
 	int				m_nBackImgHeight;
 };
+#endif /* SAKURA_CEDITDOC_D845B5F3_FD71_4722_B115_63145B804253_H_ */

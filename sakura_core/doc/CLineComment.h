@@ -11,6 +11,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CLINECOMMENT_FAE12DDF_1FAE_45C6_8614_AB0F03F9E888_H_
+#define SAKURA_CLINECOMMENT_FAE12DDF_1FAE_45C6_8614_AB0F03F9E888_H_
 #pragma once
 
 //	sakura
@@ -49,3 +51,4 @@ private:
 	int		m_nLineCommentPos[COMMENT_DELIMITER_NUM];	//!< 行コメントの開始位置(負数は指定無し)
 	int		m_nLineCommentLen[COMMENT_DELIMITER_NUM];	//!< 行コメント文字列の長さ
 };
+#endif /* SAKURA_CLINECOMMENT_FAE12DDF_1FAE_45C6_8614_AB0F03F9E888_H_ */

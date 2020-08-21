@@ -13,6 +13,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CPPAMACROMGR_C2A77DE3_E368_4D65_AC46_7E743718D84A_H_
+#define SAKURA_CPPAMACROMGR_C2A77DE3_E368_4D65_AC46_7E743718D84A_H_
 #pragma once
 
 #include <Windows.h>
@@ -48,3 +50,4 @@ public:
 protected:
 	CNativeW m_cBuffer;
 };
+#endif /* SAKURA_CPPAMACROMGR_C2A77DE3_E368_4D65_AC46_7E743718D84A_H_ */

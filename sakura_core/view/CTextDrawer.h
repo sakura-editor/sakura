@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CTEXTDRAWER_1AC4291D_DBBD_4A04_8974_26BC505B5318_H_
+#define SAKURA_CTEXTDRAWER_1AC4291D_DBBD_4A04_8974_26BC505B5318_H_
 #pragma once
 
 class CTextMetrics;
@@ -69,3 +71,4 @@ public:
 private:
 	const CEditView* m_pEditView;
 };
+#endif /* SAKURA_CTEXTDRAWER_1AC4291D_DBBD_4A04_8974_26BC505B5318_H_ */

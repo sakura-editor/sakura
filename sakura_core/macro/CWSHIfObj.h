@@ -28,6 +28,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CWSHIFOBJ_7C4DEA59_C6E2_4814_9209_8818D90096DE_H_
+#define SAKURA_CWSHIFOBJ_7C4DEA59_C6E2_4814_9209_8818D90096DE_H_
 #pragma once
 
 #include <list>
@@ -76,3 +78,4 @@ protected:
 
 	CEditView* m_pView;
 };
+#endif /* SAKURA_CWSHIFOBJ_7C4DEA59_C6E2_4814_9209_8818D90096DE_H_ */

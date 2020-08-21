@@ -34,6 +34,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CKEYWORDSETMGR_2DE7B72E_8DAF_433A_B91F_A807FAD06FB8_H_
+#define SAKURA_CKEYWORDSETMGR_2DE7B72E_8DAF_433A_B91F_A807FAD06FB8_H_
 #pragma once
 
 #include <Windows.h>
@@ -161,3 +163,4 @@ protected:
 	bool KeyWordReAlloc(int nIdx, int nSize);
 	void KeywordMaxLen(int nIdx);
 };
+#endif /* SAKURA_CKEYWORDSETMGR_2DE7B72E_8DAF_433A_B91F_A807FAD06FB8_H_ */

@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CTEXTMETRICS_7972A864_FDFF_4852_9EA5_A91D39657A7F_H_
+#define SAKURA_CTEXTMETRICS_7972A864_FDFF_4852_9EA5_A91D39657A7F_H_
 #pragma once
 
 //2007.08.25 kobake 追加
@@ -128,3 +130,4 @@ private:
 	int m_anZenkakuDx[64]; //!< 全角用文字間隔配列
 	std::vector<int> m_aFontHeightMargin;
 };
+#endif /* SAKURA_CTEXTMETRICS_7972A864_FDFF_4852_9EA5_A91D39657A7F_H_ */

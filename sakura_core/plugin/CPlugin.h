@@ -25,6 +25,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CPLUGIN_9E2D4124_CD2F_46B4_BEFA_4887FCCB2D0A_H_
+#define SAKURA_CPLUGIN_9E2D4124_CD2F_46B4_BEFA_4887FCCB2D0A_H_
 #pragma once
 
 #include <algorithm>
@@ -300,3 +302,4 @@ public:
 	virtual bool ReadPluginDef( CDataProfile *cProfile, CDataProfile *cProfileMlang ) =0;		//プラグイン定義ファイルを読み込む
 	virtual bool ReadPluginOption( CDataProfile *cProfile ) =0;		//オプションファイルを読み込む
 };
+#endif /* SAKURA_CPLUGIN_9E2D4124_CD2F_46B4_BEFA_4887FCCB2D0A_H_ */

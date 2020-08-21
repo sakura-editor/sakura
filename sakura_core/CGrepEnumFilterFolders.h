@@ -28,6 +28,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CGREPENUMFILTERFOLDERS_4EF27C6D_F01D_495F_94A0_E78CC756B09E_H_
+#define SAKURA_CGREPENUMFILTERFOLDERS_4EF27C6D_F01D_495F_94A0_E78CC756B09E_H_
 #pragma once
 
 #include "CGrepEnumFolders.h"
@@ -59,3 +61,4 @@ public:
 		return CGrepEnumFolders::Enumerates( lpBaseFolder, cGrepEnumKeys.m_vecSearchFolderKeys, option, &except );
 	}
 };
+#endif /* SAKURA_CGREPENUMFILTERFOLDERS_4EF27C6D_F01D_495F_94A0_E78CC756B09E_H_ */

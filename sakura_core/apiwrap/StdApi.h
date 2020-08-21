@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_STDAPI_29C8A971_234C_46ED_96DB_A2D479992ABE_H_
+#define SAKURA_STDAPI_29C8A971_234C_46ED_96DB_A2D479992ABE_H_
 #pragma once
 
 //ランタイム情報ライブラリにアクセスするWindowsヘッダを参照する
@@ -103,3 +105,4 @@ namespace ApiWrap
 	#define PostMessageCmd PostMessage
 }
 using namespace ApiWrap;
+#endif /* SAKURA_STDAPI_29C8A971_234C_46ED_96DB_A2D479992ABE_H_ */

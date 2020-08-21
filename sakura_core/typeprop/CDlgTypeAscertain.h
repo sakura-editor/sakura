@@ -28,6 +28,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CDLGTYPEASCERTAIN_7000A035_D26C_4FB2_AE75_6A63F3F806B9_H_
+#define SAKURA_CDLGTYPEASCERTAIN_7000A035_D26C_4FB2_AE75_6A63F3F806B9_H_
 #pragma once
 
 class CDlgTypeAscertain;
@@ -69,3 +71,4 @@ protected:
 private:
 	SAscertainInfo* m_psi;			// インターフェイス
 };
+#endif /* SAKURA_CDLGTYPEASCERTAIN_7000A035_D26C_4FB2_AE75_6A63F3F806B9_H_ */

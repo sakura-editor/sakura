@@ -25,6 +25,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CSEARCHKEYWORDMANAGER_AFD28203_4738_46B7_9A7F_E758A94DB290_H_
+#define SAKURA_CSEARCHKEYWORDMANAGER_AFD28203_4738_46B7_9A7F_E758A94DB290_H_
 #pragma once
 
 // 要先行定義
@@ -58,3 +60,4 @@ public:
 private:
 	DLLSHAREDATA* m_pShareData;
 };
+#endif /* SAKURA_CSEARCHKEYWORDMANAGER_AFD28203_4738_46B7_9A7F_E758A94DB290_H_ */

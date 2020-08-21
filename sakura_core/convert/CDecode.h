@@ -26,6 +26,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CDECODE_2E6ED248_B211_48AB_BD69_032199189323_H_
+#define SAKURA_CDECODE_2E6ED248_B211_48AB_BD69_032199189323_H_
 #pragma once
 
 class CDecode {
@@ -47,3 +49,4 @@ public:
 	//実装
 	virtual bool DoDecode( const CNativeW& pcData, CMemory* pDest )=0;
 };
+#endif /* SAKURA_CDECODE_2E6ED248_B211_48AB_BD69_032199189323_H_ */

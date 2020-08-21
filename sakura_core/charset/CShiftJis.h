@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CSHIFTJIS_2D69DAF0_0B19_4527_BDB8_D1C848651C31_H_
+#define SAKURA_CSHIFTJIS_2D69DAF0_0B19_4527_BDB8_D1C848651C31_H_
 #pragma once
 
 #include "CCodeBase.h"
@@ -137,3 +139,4 @@ inline int CShiftJis::_UniToSjis_char( const unsigned short* pSrc, unsigned char
 
 	return nret;
 }
+#endif /* SAKURA_CSHIFTJIS_2D69DAF0_0B19_4527_BDB8_D1C848651C31_H_ */

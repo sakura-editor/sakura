@@ -33,6 +33,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CRECENT_F4D70310_9FAF_4F07_9431_2B011A47142D_H_
+#define SAKURA_CRECENT_F4D70310_9FAF_4F07_9431_2B011A47142D_H_
 #pragma once
 
 #include "_main/global.h"
@@ -81,3 +83,4 @@ public:
 };
 
 #include "CRecentImp.h"
+#endif /* SAKURA_CRECENT_F4D70310_9FAF_4F07_9431_2B011A47142D_H_ */

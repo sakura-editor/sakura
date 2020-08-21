@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CLAXINTEGER_B3F68913_E6AE_472E_AC4F_E8985190BD7E_H_
+#define SAKURA_CLAXINTEGER_B3F68913_E6AE_472E_AC4F_E8985190BD7E_H_
 #pragma once
 
 //!型チェックの緩い整数型
@@ -42,3 +44,4 @@ public:
 private:
 	int m_value;
 };
+#endif /* SAKURA_CLAXINTEGER_B3F68913_E6AE_472E_AC4F_E8985190BD7E_H_ */

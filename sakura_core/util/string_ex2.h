@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_STRING_EX2_9F6CF6F6_33BD_46DF_9492_0EAF6CFBAE22_H_
+#define SAKURA_STRING_EX2_9F6CF6F6_33BD_46DF_9492_0EAF6CFBAE22_H_
 #pragma once
 
 class CEol;
@@ -152,3 +154,4 @@ ptrdiff_t int2dec(
 
 	return len;
 }
+#endif /* SAKURA_STRING_EX2_9F6CF6F6_33BD_46DF_9492_0EAF6CFBAE22_H_ */

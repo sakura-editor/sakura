@@ -28,6 +28,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CSTRICTINTEGER_5B7614A0_282F_48F6_9420_CE672061CF3E_H_
+#define SAKURA_CSTRICTINTEGER_5B7614A0_282F_48F6_9420_CE672061CF3E_H_
 #pragma once
 
 #include "primitive.h" // for Int
@@ -224,3 +226,4 @@ STRICTINT_LEFT_INT_CMP(int)
 STRICTINT_LEFT_INT_CMP(short)
 STRICTINT_LEFT_INT_CMP(size_t)
 STRICTINT_LEFT_INT_CMP(LONG)
+#endif /* SAKURA_CSTRICTINTEGER_5B7614A0_282F_48F6_9420_CE672061CF3E_H_ */
