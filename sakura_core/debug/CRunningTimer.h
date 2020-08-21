@@ -31,6 +31,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CRUNNINGTIMER_B4A1B7C4_EA83_41F2_9132_21DE3A57470D_H_
+#define SAKURA_CRUNNINGTIMER_B4A1B7C4_EA83_41F2_9132_21DE3A57470D_H_
 #pragma once
 
 #include <windows.h>
@@ -85,3 +87,4 @@ protected:
   #define MY_TRACETIME(c,m)
   #define MY_RUNNINGTIMER(c,m)
 #endif
+#endif /* SAKURA_CRUNNINGTIMER_B4A1B7C4_EA83_41F2_9132_21DE3A57470D_H_ */

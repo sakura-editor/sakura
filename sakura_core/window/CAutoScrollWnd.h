@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CAUTOSCROLLWND_F588E196_7D77_4DFA_AAB0_A2D95FFB8849_H_
+#define SAKURA_CAUTOSCROLLWND_F588E196_7D77_4DFA_AAB0_A2D95FFB8849_H_
 #pragma once
 
 #include "CWnd.h"
@@ -48,3 +50,4 @@ protected:
 	LRESULT OnMButtonDown(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;
 	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;
 };
+#endif /* SAKURA_CAUTOSCROLLWND_F588E196_7D77_4DFA_AAB0_A2D95FFB8849_H_ */

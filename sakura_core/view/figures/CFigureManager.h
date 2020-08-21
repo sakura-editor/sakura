@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CFIGUREMANAGER_34C07527_BAEA_4B91_A3E0_7FCAFCFBAF0C_H_
+#define SAKURA_CFIGUREMANAGER_34C07527_BAEA_4B91_A3E0_7FCAFCFBAF0C_H_
 #pragma once
 
 #include <vector>
@@ -46,3 +48,4 @@ private:
 	std::vector<CFigure*>	m_vFigures;
 	std::vector<CFigure*>	m_vFiguresDisp;	//!< 色分け表示対象
 };
+#endif /* SAKURA_CFIGUREMANAGER_34C07527_BAEA_4B91_A3E0_7FCAFCFBAF0C_H_ */

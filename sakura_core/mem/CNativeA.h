@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CNATIVEA_03C02187_A42C_4403_9D24_8B4CA20EEA81_H_
+#define SAKURA_CNATIVEA_03C02187_A42C_4403_9D24_8B4CA20EEA81_H_
 #pragma once
 
 #include "CNative.h"
@@ -62,3 +64,4 @@ public:
 	const CNativeA& operator=( char );
 	const CNativeA& operator+=( char );
 };
+#endif /* SAKURA_CNATIVEA_03C02187_A42C_4403_9D24_8B4CA20EEA81_H_ */

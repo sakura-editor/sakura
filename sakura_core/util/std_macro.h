@@ -23,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_STD_MACRO_ED0953D9_582D_40D6_8190_3FFA9344819D_H_
+#define SAKURA_STD_MACRO_ED0953D9_582D_40D6_8190_3FFA9344819D_H_
 #pragma once
 
 #define SAFE_DELETE(p) { delete p; p=0; }
@@ -80,3 +82,4 @@ T t_unit(T t)
 
 //ビルド種に関係なく、ANSI。
 #define ATEXT(A) A
+#endif /* SAKURA_STD_MACRO_ED0953D9_582D_40D6_8190_3FFA9344819D_H_ */

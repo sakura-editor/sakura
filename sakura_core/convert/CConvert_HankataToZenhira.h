@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CCONVERT_HANKATATOZENHIRA_E5BFC342_4B93_4E34_9380_3E81149A315D_H_
+#define SAKURA_CCONVERT_HANKATATOZENHIRA_E5BFC342_4B93_4E34_9380_3E81149A315D_H_
 #pragma once
 
 #include "CConvert.h"
@@ -31,3 +33,4 @@ class CConvert_HankataToZenhira final : public CConvert{
 public:
 	bool DoConvert(CNativeW* pcData) override;
 };
+#endif /* SAKURA_CCONVERT_HANKATATOZENHIRA_E5BFC342_4B93_4E34_9380_3E81149A315D_H_ */

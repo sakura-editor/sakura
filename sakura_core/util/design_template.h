@@ -28,6 +28,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_DESIGN_TEMPLATE_BBC57590_CED0_40D0_B719_F5A4522B8A56_H_
+#define SAKURA_DESIGN_TEMPLATE_BBC57590_CED0_40D0_B719_F5A4522B8A56_H_
 #pragma once
 
 // http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Copy_Constructors
@@ -119,3 +121,4 @@ private:
 	static std::vector<T*> gm_table;
 };
 template <class T> std::vector<T*> TInstanceHolder<T>::gm_table;
+#endif /* SAKURA_DESIGN_TEMPLATE_BBC57590_CED0_40D0_B719_F5A4522B8A56_H_ */

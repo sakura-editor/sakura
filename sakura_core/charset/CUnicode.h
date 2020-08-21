@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CUNICODE_58DBF44E_DCA1_43C3_B825_EAF692A045DC_H_
+#define SAKURA_CUNICODE_58DBF44E_DCA1_43C3_B825_EAF692A045DC_H_
 #pragma once
 
 // IsUtf16SurrogHi()、IsUtf16SurrogLow() 関数をcharset/codechecker.h に移動
@@ -46,3 +48,4 @@ public:
 	inline static EConvertResult UnicodeToUnicode_in(const CMemory& cSrc, CNativeW* pDst){ return _UnicodeToUnicode_in(cSrc, pDst, false); }
 	inline static EConvertResult UnicodeToUnicode_out(const CNativeW& cSrc, CMemory* pDst){ return _UnicodeToUnicode_out(cSrc, pDst, false); }
 };
+#endif /* SAKURA_CUNICODE_58DBF44E_DCA1_43C3_B825_EAF692A045DC_H_ */

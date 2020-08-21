@@ -25,6 +25,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CDLLPLUGIN_7F8E705E_8E61_4B89_BA48_936CD5429E1D_H_
+#define SAKURA_CDLLPLUGIN_7F8E705E_8E61_4B89_BA48_936CD5429E1D_H_
 #pragma once
 
 #include "CPlugin.h"
@@ -82,3 +84,4 @@ public:
 private:
 	wstring m_sDllName;
 };
+#endif /* SAKURA_CDLLPLUGIN_7F8E705E_8E61_4B89_BA48_936CD5429E1D_H_ */

@@ -27,6 +27,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CDECODE_UUDECODE_E299AA83_2825_45E6_866A_A08D73F8F47F_H_
+#define SAKURA_CDECODE_UUDECODE_E299AA83_2825_45E6_866A_A08D73F8F47F_H_
 #pragma once
 
 #include "convert/CDecode.h"
@@ -38,3 +40,4 @@ public:
 	bool DoDecode(const CNativeW& cData, CMemory* pDst) override;
 	void CopyFilename( WCHAR *pcDst ) const { wcscpy( pcDst, m_aFilename ); }
 };
+#endif /* SAKURA_CDECODE_UUDECODE_E299AA83_2825_45E6_866A_A08D73F8F47F_H_ */

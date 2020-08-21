@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CBINARYSTREAM_856F71C1_27E0_4075_BA32_245D18E142BA_H_
+#define SAKURA_CBINARYSTREAM_856F71C1_27E0_4075_BA32_245D18E142BA_H_
 #pragma once
 
 #include "CStream.h"
@@ -42,3 +44,4 @@ class CBinaryOutputStream final : public COutputStream{
 public:
 	CBinaryOutputStream(LPCWSTR pszFilePath, bool bExceptionMode = false);
 };
+#endif /* SAKURA_CBINARYSTREAM_856F71C1_27E0_4075_BA32_245D18E142BA_H_ */

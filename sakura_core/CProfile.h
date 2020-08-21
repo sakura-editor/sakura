@@ -31,6 +31,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CPROFILE_1871E9A6_3FD3_45B5_A67D_6CC42F60363E_H_
+#define SAKURA_CPROFILE_1871E9A6_3FD3_45B5_A67D_6CC42F60363E_H_
 #pragma once
 
 #include <Windows.h>
@@ -87,3 +89,4 @@ protected:
 };
 
 #define _INI_T LTEXT
+#endif /* SAKURA_CPROFILE_1871E9A6_3FD3_45B5_A67D_6CC42F60363E_H_ */

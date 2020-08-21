@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CCOLOR_HEREDOC_88B5007B_1615_411C_AED2_73E7AF92C146_H_
+#define SAKURA_CCOLOR_HEREDOC_88B5007B_1615_411C_AED2_73E7AF92C146_H_
 #pragma once
 
 #include "view/colors/CColorStrategy.h"
@@ -41,3 +43,4 @@ private:
 	const wchar_t* m_pszId;
 	int m_nCOMMENTEND;
 };
+#endif /* SAKURA_CCOLOR_HEREDOC_88B5007B_1615_411C_AED2_73E7AF92C146_H_ */

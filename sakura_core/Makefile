@@ -456,10 +456,13 @@ Funccode_enum.h: $(HEADERMAKE) Funccode_x.hsrc
 githash.h:
 	cmd /c ..\sakura\githash.bat ../sakura_core
 
+StdAfx.h.gch: githash.h Funccode_enum.h
+	$(CXX) $(CXXFLAGS) -c StdAfx.h
+
 .cpp.o:
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
-$(OBJS): githash.h Funccode_enum.h
+$(OBJS): StdAfx.h.gch
 
 $(HEADERMAKE): $(HEADERMAKETOOLDIR)/HeaderMake.cpp
 	$(CXX) $(CXXFLAGS:-MMD=) $(HEADERMAKETOOLDIR)/HeaderMake.cpp -o $@ -static-libgcc

@@ -27,6 +27,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CDLGPROFILEMGR_E77A329C_4D06_436A_84E3_01B4D8F34A9A_H_
+#define SAKURA_CDLGPROFILEMGR_E77A329C_4D06_436A_84E3_01B4D8F34A9A_H_
 #pragma once
 
 #include "dlg/CDialog.h"
@@ -80,3 +82,4 @@ public:
 	static bool ReadProfSettings(SProfileSettings& settings);
 	static bool WriteProfSettings(SProfileSettings& settings);
 };
+#endif /* SAKURA_CDLGPROFILEMGR_E77A329C_4D06_436A_84E3_01B4D8F34A9A_H_ */

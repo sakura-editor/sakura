@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CCOLOR_FOUND_8094BA64_0ACB_4776_A190_D68729D3FABC_H_
+#define SAKURA_CCOLOR_FOUND_8094BA64_0ACB_4776_A190_D68729D3FABC_H_
 #pragma once
 
 #include "view/colors/CColorStrategy.h"
@@ -66,3 +68,4 @@ private:
 	EColorIndexType highlightColors[ COLORIDX_SEARCHTAIL - COLORIDX_SEARCH + 1 ]; ///< チェックが付いている検索文字列色の配列。
 	unsigned validColorNum; ///< highlightColorsの何番目の要素までが有効か。
 };
+#endif /* SAKURA_CCOLOR_FOUND_8094BA64_0ACB_4776_A190_D68729D3FABC_H_ */

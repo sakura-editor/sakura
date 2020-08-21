@@ -30,6 +30,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CUXTHEME_430C1CAA_3F14_4C30_8EB6_FCC34E9E0FF5_H_
+#define SAKURA_CUXTHEME_430C1CAA_3F14_4C30_8EB6_FCC34E9E0FF5_H_
 #pragma once
 
 #include <vsstyle.h>
@@ -71,3 +73,4 @@ public:
 	HRESULT DrawThemeParentBackground( HWND hwnd, HDC hdc, RECT* prc );
 	BOOL IsThemeBackgroundPartiallyTransparent( HTHEME htheme, int iPartId, int iStateId );
 };
+#endif /* SAKURA_CUXTHEME_430C1CAA_3F14_4C30_8EB6_FCC34E9E0FF5_H_ */

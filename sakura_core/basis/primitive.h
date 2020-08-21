@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_PRIMITIVE_C8059DE4_C986_492E_9C09_7F044049C481_H_
+#define SAKURA_PRIMITIVE_C8059DE4_C986_492E_9C09_7F044049C481_H_
 #pragma once
 
 #include "config/build_config.h"
@@ -56,3 +58,4 @@ typedef char KEYCODE;
 #else
 	typedef int Int;
 #endif
+#endif /* SAKURA_PRIMITIVE_C8059DE4_C986_492E_9C09_7F044049C481_H_ */

@@ -45,6 +45,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_TCHAR_PRINTF_A728AFEF_DAD4_4967_8654_BF6DB52EDCD9_H_
+#define SAKURA_TCHAR_PRINTF_A728AFEF_DAD4_4967_8654_BF6DB52EDCD9_H_
 #pragma once
 
 // vsprintf_sラップ
@@ -70,3 +72,4 @@ int tchar_sprintf(WCHAR* buf, const WCHAR* format, ...);
 // _snprintf_sラップ
 int tchar_snprintf_s(ACHAR* buf, size_t count, const ACHAR* format, ...);
 int tchar_snprintf_s(WCHAR* buf, size_t count, const WCHAR* format, ...);
+#endif /* SAKURA_TCHAR_PRINTF_A728AFEF_DAD4_4967_8654_BF6DB52EDCD9_H_ */

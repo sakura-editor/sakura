@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CCONVERT_ZENEISUTOHANEISU_D2E876FE_A781_4F64_B2CE_F6CBBF2FC563_H_
+#define SAKURA_CCONVERT_ZENEISUTOHANEISU_D2E876FE_A781_4F64_B2CE_F6CBBF2FC563_H_
 #pragma once
 
 #include "CConvert.h"
@@ -31,3 +33,4 @@ class CConvert_ZeneisuToHaneisu final : public CConvert{
 public:
 	bool DoConvert(CNativeW* pcData) override;
 };
+#endif /* SAKURA_CCONVERT_ZENEISUTOHANEISU_D2E876FE_A781_4F64_B2CE_F6CBBF2FC563_H_ */

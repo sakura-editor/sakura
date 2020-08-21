@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_EDITINFO_27D29614_33E6_4D60_B4B1_05115049CD16_H_
+#define SAKURA_EDITINFO_27D29614_33E6_4D60_B4B1_05115049CD16_H_
 #pragma once
 
 #include "basis/SakuraBasis.h"
@@ -76,3 +78,4 @@ struct EditInfo {
 	// コンストラクタ
 	EditInfo() noexcept;
 };
+#endif /* SAKURA_EDITINFO_27D29614_33E6_4D60_B4B1_05115049CD16_H_ */

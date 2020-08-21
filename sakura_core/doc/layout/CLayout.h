@@ -13,6 +13,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CLAYOUT_7DF189B5_10E6_42A4_8A49_371C848CB38F_H_
+#define SAKURA_CLAYOUT_7DF189B5_10E6_42A4_8A49_371C848CB38F_H_
 #pragma once
 
 #include "util/design_template.h"
@@ -130,3 +132,4 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(CLayout);
 };
+#endif /* SAKURA_CLAYOUT_7DF189B5_10E6_42A4_8A49_371C848CB38F_H_ */

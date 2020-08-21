@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CVIEWCOMMANDER_INLINE_EF3571A1_FED4_439C_957F_E77B28E2384F_H_
+#define SAKURA_CVIEWCOMMANDER_INLINE_EF3571A1_FED4_439C_957F_E77B28E2384F_H_
 #pragma once
 
 #include "view/CEditView.h"
@@ -59,3 +61,4 @@ inline CCaret& CViewCommander::GetCaret()
 {
 	return m_pCommanderView->GetCaret();
 }
+#endif /* SAKURA_CVIEWCOMMANDER_INLINE_EF3571A1_FED4_439C_957F_E77B28E2384F_H_ */

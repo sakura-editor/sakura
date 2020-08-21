@@ -27,6 +27,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CDECODE_BASE64DECODE_5AA66699_D761_436E_87F6_C8CA30BD775D_H_
+#define SAKURA_CDECODE_BASE64DECODE_5AA66699_D761_436E_87F6_C8CA30BD775D_H_
 #pragma once
 
 #include "convert/CDecode.h"
@@ -35,3 +37,4 @@ class CDecode_Base64Decode final : public CDecode{
 public:
 	bool DoDecode(const CNativeW& cData, CMemory* pcDst) override;
 };
+#endif /* SAKURA_CDECODE_BASE64DECODE_5AA66699_D761_436E_87F6_C8CA30BD775D_H_ */

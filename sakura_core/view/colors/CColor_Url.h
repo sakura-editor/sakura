@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CCOLOR_URL_E9C938AC_E5C6_468E_925E_A7787635AB82_H_
+#define SAKURA_CCOLOR_URL_E9C938AC_E5C6_468E_925E_A7787635AB82_H_
 #pragma once
 
 #include "view/colors/CColorStrategy.h"
@@ -37,3 +39,4 @@ public:
 private:
 	int m_nCOMMENTEND;
 };
+#endif /* SAKURA_CCOLOR_URL_E9C938AC_E5C6_468E_925E_A7787635AB82_H_ */

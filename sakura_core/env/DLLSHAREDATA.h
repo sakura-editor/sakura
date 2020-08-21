@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_DLLSHAREDATA_13672D62_A18D_4E76_B3E7_A8192BCDC6A1_H_
+#define SAKURA_DLLSHAREDATA_13672D62_A18D_4E76_B3E7_A8192BCDC6A1_H_
 #pragma once
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -186,3 +188,4 @@ public:
 	static void WaitLock( HWND hwndParent, CShareDataLockCounter** ppLock = NULL );
 private:
 };
+#endif /* SAKURA_DLLSHAREDATA_13672D62_A18D_4E76_B3E7_A8192BCDC6A1_H_ */

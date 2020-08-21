@@ -12,6 +12,8 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
+#ifndef SAKURA_CDLGGREP_01A0D5CB_326B_4C56_A527_C811F84FD8D8_H_
+#define SAKURA_CDLGGREP_01A0D5CB_326B_4C56_A527_C811F84FD8D8_H_
 #pragma once
 
 class CDlgGrep;
@@ -88,3 +90,4 @@ protected:
 	int GetData( void ) override;	/* ダイアログデータの取得 */
 	void SetDataFromThisText(bool bChecked);	/* 現在編集中ファイルから検索チェックでの設定 */
 };
+#endif /* SAKURA_CDLGGREP_01A0D5CB_326B_4C56_A527_C811F84FD8D8_H_ */

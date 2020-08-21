@@ -23,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CDOCFILE_E6C44A51_14C1_4D5E_BE03_70E617EF0E89_H_
+#define SAKURA_CDOCFILE_E6C44A51_14C1_4D5E_BE03_70E617EF0E89_H_
 #pragma once
 
 #include "io/CFile.h"
@@ -77,3 +79,4 @@ public: //####
 	SFileInfo	m_sFileInfo;
 	CFilePath	m_szSaveFilePath;	/* 保存時のファイルのパス（マクロ用） */	// 2006.09.04 ryoji
 };
+#endif /* SAKURA_CDOCFILE_E6C44A51_14C1_4D5E_BE03_70E617EF0E89_H_ */

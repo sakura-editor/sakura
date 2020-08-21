@@ -25,6 +25,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CWSHPLUGIN_C424AA2D_B0A3_4170_9566_7F316368EDAF_H_
+#define SAKURA_CWSHPLUGIN_C424AA2D_B0A3_4170_9566_7F316368EDAF_H_
 #pragma once
 
 #include "plugin/CPlugin.h"
@@ -84,3 +86,4 @@ public:
 private:
 	bool m_bUseCache;
 };
+#endif /* SAKURA_CWSHPLUGIN_C424AA2D_B0A3_4170_9566_7F316368EDAF_H_ */

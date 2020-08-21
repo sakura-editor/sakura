@@ -12,6 +12,8 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
+#ifndef SAKURA_CDLGFIND_AF260AA4_6075_4B87_9F03_2CEEDAD64094_H_
+#define SAKURA_CDLGFIND_AF260AA4_6075_4B87_9F03_2CEEDAD64094_H_
 #pragma once
 
 #include "dlg/CDialog.h"
@@ -61,3 +63,4 @@ protected:
 	// BOOL OnKeyDown( WPARAM wParam, LPARAM lParam ) override;
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
 };
+#endif /* SAKURA_CDLGFIND_AF260AA4_6075_4B87_9F03_2CEEDAD64094_H_ */

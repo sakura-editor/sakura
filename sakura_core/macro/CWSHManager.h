@@ -19,6 +19,8 @@
 
 */
 
+#ifndef SAKURA_CWSHMANAGER_35D4F066_36AC_4CE5_910E_D705F0D814E2_H_
+#define SAKURA_CWSHMANAGER_35D4F066_36AC_4CE5_910E_D705F0D814E2_H_
 #pragma once
 
 #include <Windows.h>
@@ -55,3 +57,4 @@ protected:
 	////	2007.07.20 genta : flags追加
 	//static void ReadyCommands(CIfObj *Object, MacroFuncInfo *Info, int flags);
 };
+#endif /* SAKURA_CWSHMANAGER_35D4F066_36AC_4CE5_910E_D705F0D814E2_H_ */

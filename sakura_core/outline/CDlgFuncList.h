@@ -18,6 +18,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CDLGFUNCLIST_B22A3877_572A_49B7_B683_50ECA451A6F8_H_
+#define SAKURA_CDLGFUNCLIST_B22A3877_572A_49B7_B683_50ECA451A6F8_H_
 #pragma once
 
 #include <Windows.h>
@@ -221,3 +223,4 @@ private:
 	POINT				m_ptDefaultSizeClient;
 	RECT				m_rcItems[12];
 };
+#endif /* SAKURA_CDLGFUNCLIST_B22A3877_572A_49B7_B683_50ECA451A6F8_H_ */

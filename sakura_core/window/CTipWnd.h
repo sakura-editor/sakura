@@ -14,6 +14,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CTIPWND_E3DB6CF2_888C_42F5_953E_D923221F0B16_H_
+#define SAKURA_CTIPWND_E3DB6CF2_888C_42F5_953E_D923221F0B16_H_
 #pragma once
 
 class CTipWnd;
@@ -73,3 +75,4 @@ protected:
 	/* 仮想関数 メッセージ処理 詳しくは実装を参照 */
 	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;/* 描画処理 */
 };
+#endif /* SAKURA_CTIPWND_E3DB6CF2_888C_42F5_953E_D923221F0B16_H_ */

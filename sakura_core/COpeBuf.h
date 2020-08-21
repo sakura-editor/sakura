@@ -11,6 +11,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_COPEBUF_6320338E_171D_4A96_B110_6A9E8407492A_H_
+#define SAKURA_COPEBUF_6320338E_171D_4A96_B110_6A9E8407492A_H_
 #pragma once
 
 class COpeBuf;
@@ -55,3 +57,4 @@ private:
 	int						m_nCurrentPointer;	//!< 現在位置
 	int						m_nNoModifiedIndex;	//!< 無変更な状態になった位置
 };
+#endif /* SAKURA_COPEBUF_6320338E_171D_4A96_B110_6A9E8407492A_H_ */

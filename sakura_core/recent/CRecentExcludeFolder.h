@@ -21,6 +21,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CRECENTEXCLUDEFOLDER_D933B071_8956_4B13_A01D_A5075CCE2A05_H_
+#define SAKURA_CRECENTEXCLUDEFOLDER_D933B071_8956_4B13_A01D_A5075CCE2A05_H_
 #pragma once
 
 #include "CRecentImp.h"
@@ -43,3 +45,4 @@ public:
 	bool			ValidateReceiveType( LPCWSTR p ) const override;
 	size_t			GetTextMaxLength() const;
 };
+#endif /* SAKURA_CRECENTEXCLUDEFOLDER_D933B071_8956_4B13_A01D_A5075CCE2A05_H_ */

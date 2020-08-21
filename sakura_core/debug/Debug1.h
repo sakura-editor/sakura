@@ -12,6 +12,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_DEBUG1_382EF8C2_DA86_410F_80D9_7F357A356C80_H_
+#define SAKURA_DEBUG1_382EF8C2_DA86_410F_80D9_7F357A356C80_H_
 #pragma once
 
 #include <vadefs.h>
@@ -58,3 +60,4 @@ void DebugOutW( LPCWSTR lpFmt, ...);
 #else
 	#define TRACE( ... )
 #endif
+#endif /* SAKURA_DEBUG1_382EF8C2_DA86_410F_80D9_7F357A356C80_H_ */

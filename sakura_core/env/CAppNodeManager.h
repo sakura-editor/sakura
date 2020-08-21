@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CAPPNODEMANAGER_CAE7A323_DEA3_47E4_91DE_C99A88C32683_H_
+#define SAKURA_CAPPNODEMANAGER_CAE7A323_DEA3_47E4_91DE_C99A88C32683_H_
 #pragma once
 
 #include "util/design_template.h"
@@ -151,3 +153,4 @@ inline CAppNodeHandle::CAppNodeHandle(HWND hwnd)
 {
 	m_pNodeRef = CAppNodeManager::getInstance()->GetEditNode(hwnd);
 }
+#endif /* SAKURA_CAPPNODEMANAGER_CAE7A323_DEA3_47E4_91DE_C99A88C32683_H_ */

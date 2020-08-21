@@ -35,6 +35,8 @@
 PPA(Poor-Pascal for Application)はDelphi/C++Builder用のPascalインタプリタコンポーネントです。
 */
 
+#ifndef SAKURA_CPPA_FB41BBAE_DFBC_449D_9342_5D9424CFE086_H_
+#define SAKURA_CPPA_FB41BBAE_DFBC_449D_9342_5D9424CFE086_H_
 #pragma once
 
 #include <ObjIdl.h>  // VARIANT等
@@ -291,3 +293,4 @@ private:
 	static int					m_nFuncNum;	//	SAKURAエディタ用関数の数
 */
 };
+#endif /* SAKURA_CPPA_FB41BBAE_DFBC_449D_9342_5D9424CFE086_H_ */

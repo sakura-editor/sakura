@@ -28,6 +28,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CDLGKEYWORDSELECT_3430FB9A_96EE_492E_A8FD_FEB4CDB553AA_H_
+#define SAKURA_CDLGKEYWORDSELECT_3430FB9A_96EE_492E_A8FD_FEB4CDB553AA_H_
 #pragma once
 
 #include "dlg/CDialog.h"
@@ -62,3 +64,4 @@ protected:
 	int m_nSet[ KEYWORD_SELECT_NUM ];
 	CKeyWordSetMgr*	m_pCKeyWordSetMgr;
 };
+#endif /* SAKURA_CDLGKEYWORDSELECT_3430FB9A_96EE_492E_A8FD_FEB4CDB553AA_H_ */

@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CCODEFACTORY_A5C6C204_F9BD_42BA_A5CD_1B086833CCA4_H_
+#define SAKURA_CCODEFACTORY_A5C6C204_F9BD_42BA_A5CD_1B086833CCA4_H_
 #pragma once
 
 class CCodeBase;
@@ -34,3 +36,4 @@ public:
 		int			nFlag			//!< bit 0: MIME Encodeされたヘッダをdecodeするかどうか
 	);
 };
+#endif /* SAKURA_CCODEFACTORY_A5C6C204_F9BD_42BA_A5CD_1B086833CCA4_H_ */

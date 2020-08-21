@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CHARCODE_4C34C669_0BAB_441A_9B1D_2B9AC1895380_H_
+#define SAKURA_CHARCODE_4C34C669_0BAB_441A_9B1D_2B9AC1895380_H_
 #pragma once
 
 //2007.09.13 kobake 作成
@@ -343,3 +345,4 @@ enum ECharWidthCacheMode {
 void SelectCharWidthCache( ECharWidthFontMode fMode, ECharWidthCacheMode cMode );  //!< モードを変更したいとき
 void InitCharWidthCache( const LOGFONT &lf, ECharWidthFontMode fMode=CWM_FONT_EDIT ); //!< フォントを変更したとき
 void InitCharWidthCacheFromDC(const LOGFONT* lfs, ECharWidthFontMode fMode, HDC hdcOrg );
+#endif /* SAKURA_CHARCODE_4C34C669_0BAB_441A_9B1D_2B9AC1895380_H_ */

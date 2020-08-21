@@ -25,6 +25,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CPLUGINMANAGER_CE705DAD_1876_4B21_9052_07A9BFD292DE_H_
+#define SAKURA_CPLUGINMANAGER_CE705DAD_1876_4B21_9052_07A9BFD292DE_H_
 #pragma once
 
 #include "plugin/CPlugin.h"
@@ -70,3 +72,4 @@ private:
 	wstring m_sBaseDir;					//pluginsフォルダのパス
 	wstring m_sExePluginDir;			//Exeフォルダ配下pluginsフォルダのパス
 };
+#endif /* SAKURA_CPLUGINMANAGER_CE705DAD_1876_4B21_9052_07A9BFD292DE_H_ */

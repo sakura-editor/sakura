@@ -16,6 +16,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CDIALOG_17C8C15C_881C_4C1F_B953_CB11FCC8B70B_H_
+#define SAKURA_CDIALOG_17C8C15C_881C_4C1F_B953_CB11FCC8B70B_H_
 #pragma once
 
 class CDialog;
@@ -162,3 +164,4 @@ protected:
 	// コントロールに画面のフォントを設定	2012/11/27 Uchi
 	HFONT SetMainFont( HWND hTarget );
 };
+#endif /* SAKURA_CDIALOG_17C8C15C_881C_4C1F_B953_CB11FCC8B70B_H_ */
