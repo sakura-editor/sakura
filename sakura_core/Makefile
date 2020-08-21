@@ -432,7 +432,7 @@ _os/CClipboard.o \
 _os/CDropTarget.o \
 sakura_rc.o \
 
-DEPS= $(OBJS:%.o=%.d)
+DEPS= $(OBJS:%.o=%.d) StdAfx.h.d
 
 GENERATED_FILES= \
 Funccode_define.h \
@@ -457,7 +457,7 @@ githash.h:
 	cmd /c ..\sakura\githash.bat ../sakura_core
 
 StdAfx.h.gch: githash.h Funccode_enum.h
-	$(CXX) $(CXXFLAGS) -c StdAfx.h
+	$(CXX) $(CXXFLAGS) -c StdAfx.h -o $@
 
 .cpp.o:
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
