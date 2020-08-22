@@ -319,7 +319,20 @@ TEST_F( WinMainTest, runEditorProcess )
 
 		// 起動時実行マクロの中身を作る
 		std::wstring strStartupMacro;
-		strStartupMacro += L"WinCloseAll();";
+		strStartupMacro += L"Down();";
+		strStartupMacro += L"Up();";
+		strStartupMacro += L"Right();";
+		strStartupMacro += L"Left();";
+		strStartupMacro += L"ShowFunckey();";	//ShowFunckey 出す
+		strStartupMacro += L"ShowMiniMap();";	//ShowMiniMap 出す
+		strStartupMacro += L"ShowTab();";	//ShowTab 出す
+		strStartupMacro += L"SelectAll();";
+		strStartupMacro += L"GoFileEnd();";
+		strStartupMacro += L"GoFileTop();";
+		strStartupMacro += L"ShowFunckey();";	//ShowFunckey 消す
+		strStartupMacro += L"ShowMiniMap();";	//ShowMiniMap 消す
+		strStartupMacro += L"ShowTab();";	//ShowTab 消す
+		strStartupMacro += L"ExitAll();";
 
 		// コマンドラインを組み立てる
 		std::wstring strCommandLine( _T(__FILE__)  L" -MTYPE=js" );
