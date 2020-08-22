@@ -122,6 +122,7 @@
     <ClCompile Include="test-sample.cpp" />
     <ClCompile Include="test-ssearchoption.cpp" />
     <ClCompile Include="test-StdControl.cpp" />
+    <ClCompile Include="test-winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
