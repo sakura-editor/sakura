@@ -105,6 +105,7 @@
     <Link Include="$(SolutionDir)sakura\$(Platform)\$(Configuration)\*.res" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="code-main.cpp" />
     <ClCompile Include="test-ccommandline.cpp" />
     <ClCompile Include="test-cdlgprofilemgr.cpp" />
     <ClCompile Include="test-clayoutint.cpp" />
@@ -135,6 +136,9 @@
     <ProjectReference Include="..\..\sakura_lang_en_US\sakura_lang_en_US.vcxproj">
       <Project>{7a6d0f29-e560-4985-835b-5f92a08eb242}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CallWinMain.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

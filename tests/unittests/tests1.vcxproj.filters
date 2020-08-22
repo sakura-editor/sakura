@@ -68,5 +68,13 @@
     <ClCompile Include="test-cdlgprofilemgr.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="code-main.cpp">
+      <Filter>Other Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CallWinMain.h">
+      <Filter>Other Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
