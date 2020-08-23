@@ -24,22 +24,28 @@ if "%ERROR_RESULT%" == "1" (
 	exit /b 1
 )
 
-pushd "%~dp0"
-
-if not exist "googletest\CMakeLists.txt" (
-    git submodule init
-    git submodule update
+set BINARY_DIR=%~dp0..\%platform%\%configuration%
+set BUILDDIR=%~dp0..\build\%platform%\%configuration%\tests
+if exist %BUILDDIR%\CMakeCache.txt (
+	exit /b 0
 )
 
-set BUILDDIR=build\%platform%
-if exist "%BUILDDIR%" (
-	rmdir /s /q "%BUILDDIR%"
+if not exist %BUILDDIR% (
+	mkdir %BUILDDIR%
 )
-mkdir "%BUILDDIR%"
 
-call :setenv_%platform% %platform% %configuration%
-"%CMD_CMAKE%" %CMAKE_GEN_OPT% -H. -B"%BUILDDIR%" || set ERROR_RESULT=1
+if not exist %~dp0googletest\CMakeLists.txt (
+	"%CMD_GIT%" submodule update --init
+)
 
+if "%platform%" == "MinGW" (
+	call :setenv_MinGW %platform% %configuration%
+) else (
+	exit /b 0
+)
+
+pushd %BUILDDIR%
+"%CMD_CMAKE%" %CMAKE_GEN_OPT% %~dp0 || set ERROR_RESULT=1
 popd
 
 if "%ERROR_RESULT%" == "1" (
@@ -53,17 +59,7 @@ exit /b
 @rem  sub-routines
 @rem ----------------------------------------------
 
-:setenv_Win32
-:setenv_x64
-	if defined CMAKE_G_PARAM (
-		set CMAKE_G_OPTION=-G "%CMAKE_G_PARAM%"
-	) else (
-		set CMAKE_G_OPTION=
-	)
-	set CMAKE_GEN_OPT=%CMAKE_G_OPTION% -A "%~1" -D BUILD_GTEST=ON
-exit /b
-
 :setenv_MinGW
-	set CMAKE_GEN_OPT=-G "MinGW Makefiles" -D CMAKE_BUILD_TYPE="%~2" -D BUILD_GTEST=OFF
+	set CMAKE_GEN_OPT=-G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=%configuration% -DBUILD_GTEST=OFF -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=%BINARY_DIR% -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=%BINARY_DIR%
 	set PATH=C:\msys64\mingw64\bin;%PATH:C:\Program Files\Git\usr\bin;=%
 exit /b
