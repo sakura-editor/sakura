@@ -14,6 +14,10 @@ ifneq ($(SRCDIR),.)
 VPATH = $(SRCDIR)
 endif
 
+# The directory where the .exe files will be output.
+# If empty, they will be output to the default directories.
+OUTDIR =
+
 ifeq ($(SHELL),sh.exe)
 # If cmd.exe is used as a shell.
 MKDIR = md
@@ -83,7 +87,7 @@ LIBS= \
  -municode \
  $(MYLIBS)
 
-exe= sakura.exe
+exe= $(or $(OUTDIR),.)/sakura.exe
 
 SRCS = $(wildcard $(SRCDIR)/*.cpp) \
        $(wildcard $(SRCDIR)/*/*.cpp) \
@@ -102,7 +106,7 @@ GENERATED_FILES= \
  githash.h \
 
 HEADERMAKETOOLDIR= $(SRCDIR)/../HeaderMake
-HEADERMAKE= $(HEADERMAKETOOLDIR)/HeaderMake.exe
+HEADERMAKE= $(or $(OUTDIR),$(HEADERMAKETOOLDIR))/HeaderMake.exe
 
 all: $(exe)
 
