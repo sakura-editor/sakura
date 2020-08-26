@@ -17,11 +17,15 @@ endif
 ifeq ($(SHELL),sh.exe)
 # If cmd.exe is used as a shell.
 MKDIR = md
-RM = cmd /c $(SRCDIR)\..\sakura\mingw32-del.bat
+RM = del
+DIRSEP = \\
+DEVNULL = NUL
 else
 # If unix-like shell is used.
 MKDIR = mkdir -p
 RM = rm -f
+DIRSEP = /
+DEVNULL = /dev/null
 endif
 
 ifndef PREFIX
@@ -115,7 +119,7 @@ githash.h:
 
 StdAfx.h.gch: StdAfx.h githash.h Funccode_enum.h
 ifneq ($(SRCDIR),.)
-	$(MKDIR) $(subst /,\\,$(DIRS))
+	-$(MKDIR) $(subst /,$(DIRSEP),$(DIRS)) > $(DEVNULL) 2>&1
 endif
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
@@ -131,8 +135,8 @@ sakura_rc.o: sakura_rc.rc githash.h Funccode_define.h
 	$(RC) -c utf-8 --language=0411 $(DEFINES) -I. -I$(SRCDIR) $< -o $@
 
 clean:
-	$(RM) $(exe) $(OBJS) $(HEADERMAKE) StdAfx.h.gch $(GENERATED_FILES)
-	$(RM) $(DEPS)
+	-$(RM) $(exe) $(subst /,$(DIRSEP),$(OBJS) $(HEADERMAKE)) StdAfx.h.gch $(GENERATED_FILES)
+	-$(RM) $(subst /,$(DIRSEP),$(DEPS))
 
 .SUFFIXES: .cpp .o .rc
 .PHONY: all clean
