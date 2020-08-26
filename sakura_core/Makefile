@@ -1,13 +1,13 @@
 # Makefile for MinGW32/MinGW-W64
 
 # Relative path of "sakura_core" directory from the current directory.
-# If you build in a shadow directory, you should specify this.
-# E.g.
+# If you build in a shadow directory, you can specify this.  E.g.
 #   $ cd sakura_code
 #   $ mkdir _build
 #   $ cd _build
 #   $ mingw32-make -f ../Makefile SRCDIR=..
-SRCDIR = .
+# Normally, this is derived from the path of Makefile.
+SRCDIR = $(patsubst %/,%,$(dir $(word 1,$(MAKEFILE_LIST))))
 
 # If SRCDIR is different from the current directory, set it to VPATH.
 ifneq ($(SRCDIR),.)
@@ -89,9 +89,12 @@ SRCS = $(wildcard $(SRCDIR)/*.cpp) \
        $(wildcard $(SRCDIR)/*/*.cpp) \
        $(wildcard $(SRCDIR)/*/*/*.cpp)
 OBJS = $(SRCS:$(SRCDIR)/%.cpp=%.o) sakura_rc.o
+
 _DIRS = $(filter %/, $(wildcard $(SRCDIR)/*/)) \
         $(filter %/, $(wildcard $(SRCDIR)/*/*/))
-DIRS = $(_DIRS:$(SRCDIR)/%/=%)
+# Filter out the current directory name.
+DIRS = $(patsubst %/,%, \
+       $(filter-out $(notdir $(CURDIR))/%,$(_DIRS:$(SRCDIR)/%/=%/)))
 
 DEPS= $(OBJS:%.o=%.d) StdAfx.h.d
 
