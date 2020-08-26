@@ -92,9 +92,7 @@ OBJS = $(SRCS:$(SRCDIR)/%.cpp=%.o) sakura_rc.o
 
 _DIRS = $(filter %/, $(wildcard $(SRCDIR)/*/)) \
         $(filter %/, $(wildcard $(SRCDIR)/*/*/))
-# Filter out the current directory name.
-DIRS = $(patsubst %/,%, \
-       $(filter-out $(notdir $(CURDIR))/%,$(_DIRS:$(SRCDIR)/%/=%/)))
+DIRS = $(_DIRS:$(SRCDIR)/%/=%)
 
 DEPS= $(OBJS:%.o=%.d) StdAfx.h.d
 
