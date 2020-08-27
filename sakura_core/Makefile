@@ -22,7 +22,7 @@ ifeq ($(SHELL),sh.exe)
 # If cmd.exe is used as a shell.
 MKDIR = md
 RM = del
-DIRSEP = \\
+DIRSEP = $(strip \ )
 DEVNULL = NUL
 else
 # If unix-like shell is used.
@@ -120,7 +120,7 @@ Funccode_enum.h: Funccode_x.hsrc $(HEADERMAKE)
 	$(HEADERMAKE) -in=$< -out=$@ -mode=enum -enum=EFunctionCode
 
 githash.h:
-	cmd /c $(SRCDIR)\..\sakura\githash.bat .
+	cmd /c $(subst /,\,$(SRCDIR))\..\sakura\githash.bat .
 
 StdAfx.h.gch: StdAfx.h githash.h Funccode_enum.h
 ifneq ($(SRCDIR),.)
@@ -140,7 +140,7 @@ sakura_rc.o: sakura_rc.rc githash.h Funccode_define.h
 	$(RC) -c utf-8 --language=0411 $(DEFINES) -I. -I$(SRCDIR) $< -o $@
 
 clean:
-	-$(RM) $(exe) $(subst /,$(DIRSEP),$(OBJS) $(HEADERMAKE)) StdAfx.h.gch $(GENERATED_FILES)
+	-$(RM) $(subst /,$(DIRSEP),$(exe) $(OBJS) $(HEADERMAKE)) StdAfx.h.gch $(GENERATED_FILES)
 	-$(RM) $(subst /,$(DIRSEP),$(DEPS))
 
 .SUFFIXES: .cpp .o .rc
