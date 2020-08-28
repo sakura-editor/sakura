@@ -134,7 +134,7 @@ endif
 $(OBJS): StdAfx.h.gch
 
 $(HEADERMAKE): $(HEADERMAKETOOLDIR)/HeaderMake.cpp
-	$(CXX) $(CXXFLAGS:-MMD=) $(HEADERMAKETOOLDIR)/HeaderMake.cpp -o $@ -static-libgcc
+	$(CXX) $(CXXFLAGS:-MMD=) $< -o $@ -static-libgcc
 
 sakura_rc.o: sakura_rc.rc githash.h Funccode_define.h
 	$(RC) -c utf-8 --language=0411 $(DEFINES) -I. -I$(SRCDIR) $< -o $@
