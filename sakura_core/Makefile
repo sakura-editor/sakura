@@ -35,17 +35,13 @@ endif
 ifndef PREFIX
 PREFIX=
 RCPREFIX=
-else
-ifeq ($(PREFIX),x86_64-w64-mingw32-)
+else ifeq ($(PREFIX),x86_64-w64-mingw32-)
 RCPREFIX=$(PREFIX)
-else
-ifeq ($(PREFIX),i686-w64-mingw32-)
+else ifeq ($(PREFIX),i686-w64-mingw32-)
 ifeq ($(OS),Windows_NT)
 RCPREFIX=
 else
 RCPREFIX=$(PREFIX)
-endif
-endif
 endif
 endif
 
