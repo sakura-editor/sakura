@@ -1,7 +1,7 @@
 # Makefile for MinGW32/MinGW-W64
 
 # Relative path of "sakura_core" directory from the current directory.
-# If you build in a shadow directory, you can specify this.  E.g.
+# Useful when doing out-of-source build.  E.g.
 #   $ cd sakura_core
 #   $ mkdir _build
 #   $ cd _build
