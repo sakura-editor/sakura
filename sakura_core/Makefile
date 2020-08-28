@@ -2,7 +2,7 @@
 
 # Relative path of "sakura_core" directory from the current directory.
 # If you build in a shadow directory, you can specify this.  E.g.
-#   $ cd sakura_code
+#   $ cd sakura_core
 #   $ mkdir _build
 #   $ cd _build
 #   $ mingw32-make -f ../Makefile SRCDIR=..
