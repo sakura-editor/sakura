@@ -10,8 +10,9 @@
 SRCDIR = $(patsubst %/,%,$(dir $(word 1,$(MAKEFILE_LIST))))
 
 # If SRCDIR is different from the current directory, set it to VPATH.
+# (If SRCDIR ends with a backslash, remove it before set to VPATH.)
 ifneq ($(SRCDIR),.)
-VPATH = $(SRCDIR)
+VPATH = $(patsubst %\,%,$(SRCDIR))
 endif
 
 # The directory where the .exe files will be output.
