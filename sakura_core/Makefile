@@ -1,13 +1,17 @@
 # Makefile for MinGW32/MinGW-W64
 
-# Relative path of "sakura_core" directory from the current directory.
-# Useful when doing out-of-source build.  E.g.
-#   $ cd sakura_core
-#   $ mkdir _build
-#   $ cd _build
-#   $ mingw32-make -f ../Makefile SRCDIR=..
-# Normally, this is derived from the path of Makefile.
-SRCDIR = $(patsubst %/,%,$(dir $(word 1,$(MAKEFILE_LIST))))
+# Example usages:
+#   Out-of-source build:
+#     $ mkdir -p build/MinGW/Release
+#     $ cd build/MinGW/Release
+#     $ mingw32-make -f ../../../sakura_core/Makefile MYCFLAGS=-O2 OUTDIR=. -j4
+#
+#   Debug build with coverage:
+#     $ cd sakura_core
+#     $ mingw32-make MYCFLAGS="-g --coverage" MYLIBS=--coverage -j4
+
+# Path of "sakura_core" directory. Compute it from the path of Makefile.
+SRCDIR = $(patsubst %/,%,$(subst \,/,$(dir $(firstword $(MAKEFILE_LIST)))))
 
 # If SRCDIR is different from the current directory, set it to VPATH.
 # (If SRCDIR ends with a backslash, remove it before set to VPATH.)
