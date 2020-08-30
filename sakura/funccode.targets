@@ -10,15 +10,72 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
-  <Target Name="FuncCodeDefine" BeforeTargets="ResourceCompile" AfterTargets="GitHash"
-      Inputs="@(FuncCodeRes)"
-      Outputs="$(FuncCodeDefine)">
+  <Target Name="_WriteFuncCodeDefineRcTlogs"
+      Condition="'@(FuncCodeRes)' != '' and '@(SelectedFiles)' == ''">
+    <ItemGroup>
+      <_FuncCodeDefineReadTlog Include="^$([MSBuild]::NormalizePath('$(MSBuildProjectDirectory)', '$(FuncCodeDefine)'));%(FuncCodeRes.FullPath)" 
+         Condition="'%(FuncCodeRes.ExcludedFromBuild)' != 'true' and '$(FuncCodeDefine)' != ''"/>
+      <_FuncCodeDefineWriteTlog Include="^%(FuncCodeRes.FullPath);$([MSBuild]::NormalizePath('$(MSBuildProjectDirectory)', '$(FuncCodeDefine)'))" 
+         Condition="'%(FuncCodeRes.ExcludedFromBuild)' != 'true' and '$(FuncCodeDefine)' != ''"/>
+    </ItemGroup>
+    <WriteLinesToFile
+      Condition="'@(_FuncCodeDefineReadTlog)' != ''"
+      File="$(TLogLocation)rc.read.1u.tlog"
+      Lines="@(_FuncCodeDefineReadTlog->MetaData('Identity')->ToUpperInvariant());"
+      Overwrite="true"
+      Encoding="Unicode"/>
+    <WriteLinesToFile
+      Condition="'@(_FuncCodeDefineWriteTlog)' != ''"
+      File="$(TLogLocation)rc.write.1u.tlog"
+      Lines="@(_FuncCodeDefineWriteTlog->MetaData('Identity')->ToUpperInvariant());"
+      Overwrite="true"
+      Encoding="Unicode"/>
+    <ItemGroup>
+      <_FuncCodeDefineReadTlog Remove="@(_FuncCodeDefineReadTlog)" />
+      <_FuncCodeDefineWriteTlog Remove="@(_FuncCodeDefineWriteTlog)" />
+    </ItemGroup>
+  </Target>
+  <Target Name="FuncCodeDefine"
+      Condition="'@(FuncCodeRes)' != ''"
+      Inputs="%(FuncCodeRes.Identity);%(FuncCodeRes.AdditionalDependencies);$(MSBuildProjectFile)"
+      Outputs="$(FuncCodeDefine)"
+      DependsOnTargets="_WriteFuncCodeDefineRcTlogs;_SelectedFiles"
+      AfterTargets="SelectClCompile;GenerateGitHash"
+      BeforeTargets="ResourceCompile">
     <Exec Command="$(HeaderMake) -in=@(FuncCodeRes) -out=$(FuncCodeDefine) -mode=define" />
   </Target>
-  <Target Name="FuncCodeEnum" BeforeTargets="ClCompile"
-      Inputs="@(FuncCodeRes)"
+  <Target Name="_WriteFuncCodeEnumClTlogs"
+      Condition="'@(FuncCodeRes)' != '' and '@(SelectedFiles)' == ''">
+    <ItemGroup>
+      <_FuncCodeEnumReadTlog Include="^$([MSBuild]::NormalizePath('$(MSBuildProjectDirectory)', '$(FuncCodeEnum)'));%(FuncCodeRes.FullPath)" 
+         Condition="'%(FuncCodeRes.ExcludedFromBuild)' != 'true' and '$(FuncCodeEnum)' != ''"/>
+      <_FuncCodeEnumWriteTlog Include="^%(FuncCodeRes.FullPath);$([MSBuild]::NormalizePath('$(MSBuildProjectDirectory)', '$(FuncCodeEnum)'))" 
+         Condition="'%(FuncCodeRes.ExcludedFromBuild)' != 'true' and '$(FuncCodeEnum)' != ''"/>
+    </ItemGroup>
+    <WriteLinesToFile
+      Condition="'@(_FuncCodeEnumReadTlog)' != ''"
+      File="$(TLogLocation)CL.read.1u.tlog"
+      Lines="@(_FuncCodeEnumReadTlog->MetaData('Identity')->ToUpperInvariant());"
+      Overwrite="true"
+      Encoding="Unicode"/>
+    <WriteLinesToFile
+      Condition="'@(_FuncCodeEnumWriteTlog)' != ''"
+      File="$(TLogLocation)CL.write.1u.tlog"
+      Lines="@(_FuncCodeEnumWriteTlog->MetaData('Identity')->ToUpperInvariant());"
+      Overwrite="true"
+      Encoding="Unicode"/>
+    <ItemGroup>
+      <_FuncCodeEnumReadTlog Remove="@(_FuncCodeEnumReadTlog)" />
+      <_FuncCodeEnumWriteTlog Remove="@(_FuncCodeEnumWriteTlog)" />
+    </ItemGroup>
+  </Target>
+  <Target Name="FuncCodeEnum"
+      Condition="'@(FuncCodeRes)' != ''"
+      Inputs="%(FuncCodeRes.Identity);%(FuncCodeRes.AdditionalDependencies);$(MSBuildProjectFile)"
       Outputs="$(FuncCodeEnum)"
-      Condition="'$(GenerateFuncCodeEnum)'=='true'">
+      DependsOnTargets="_WriteFuncCodeEnumClTlogs;_SelectedFiles"
+      AfterTargets="SelectClCompile;GenerateGitHash"
+      BeforeTargets="ClCompile">
     <Exec Command="$(HeaderMake) -in=@(FuncCodeRes) -out=$(FuncCodeEnum) -mode=enum -enum=EFunctionCode" />
   </Target>
 </Project>
