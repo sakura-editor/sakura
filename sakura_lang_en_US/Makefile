@@ -2,15 +2,15 @@
 
 # Example usages:
 #   Out-of-source build:
-#     $ mkdir -p build/MinGW/Release
-#     $ cd build/MinGW/Release
-#     $ mingw32-make -f ../../../sakura_core/Makefile MYCFLAGS=-O2 OUTDIR=. -j4
+#     $ mkdir -p build/MinGW/Release/sakura_lang_en_US/
+#     $ cd build/MinGW/Release/sakura_lang_en_US
+#     $ mingw32-make -f ../../../../sakura_lang_en_US/Makefile OUTDIR=. -j4
 #
-#   Debug build with coverage:
-#     $ cd sakura_core
-#     $ mingw32-make MYCFLAGS="-g --coverage" MYLIBS=--coverage -j4
+#   Debug build:
+#     $ cd sakura_lang_en_US
+#     $ mingw32-make MYDEFINES="_DEBUG" -j4
 
-# Path of "sakura_core" directory. Compute it from the path of Makefile.
+# Path of "sakura_lang_en_US" directory. Compute it from the path of Makefile.
 SRCDIR = $(patsubst %/,%,$(subst \,/,$(dir $(firstword $(MAKEFILE_LIST)))))
 
 # If SRCDIR is different from the current directory, set it to VPATH.
@@ -19,8 +19,8 @@ ifneq ($(SRCDIR),.)
 VPATH = $(patsubst %\,%,$(SRCDIR))
 endif
 
-# The directory where the .exe files will be output.
-# If empty, they will be output to the default directories.
+# The directory where the .dll files will be output.
+# If empty, it will be output to the default directory.
 OUTDIR =
 
 ifeq ($(SHELL),sh.exe)
@@ -53,24 +53,28 @@ endif
 CC= $(PREFIX)gcc
 RC= $(RCPREFIX)windres
 
+ifeq (_DEBUG,$(findstring _DEBUG,$(MYDEFINES)))
+else ifeq (NDEBUG,$(findstring NDEBUG,$(MYDEFINES)))
+else
+MYDEFINES += NDEBUG
+endif
+
 DEFINES= \
  -DWIN32 \
  -D_WIN32_WINNT=_WIN32_WINNT_WIN7 \
  -D_UNICODE \
  -DUNICODE \
- $(MYDEFINES)
+ $(addprefix -D,$(MYDEFINES))
 LIBS= \
  -static \
  -shared \
- -mwindows \
- $(MYLIBS)
+ -mwindows
 
 dll = $(or $(OUTDIR),.)/sakura_lang_en_US.dll
 sakura_rc = ../sakura_core/sakura_rc.o
 
 SRCS = $(wildcard $(SRCDIR)/*.rc)
 OBJS = $(SRCS:$(SRCDIR)/%.rc=%.o)
-DEPS = $(OBJS:%.o=%.d)
 
 all: $(dll)
 
@@ -78,15 +82,16 @@ $(dll): $(OBJS)
 	$(CC) $(OBJS) $(LIBS) -o $@
 
 $(sakura_rc): ../sakura_core/Makefile
-	$(MAKE) -f $< -C $(patsubst %/,%,$(dir $<)) $(@F)
+ifneq ($(SRCDIR),.)
+	-$(MKDIR) $(subst /,$(DIRSEP),$(@D)) > $(DEVNULL) 2>&1
+endif
+	$(MAKE) -f $< -C $(@D) $(@F)
 
 sakura_lang_rc.o: sakura_lang_rc.rc $(sakura_rc)
 	$(RC) -c utf-8 --language=0409 $(DEFINES) -I../sakura_core -I$(SRCDIR)/../sakura_core $< -o $@
 
 clean:
-	-$(RM) $(subst /,$(DIRSEP),$(dll) $(OBJS) $(DEPS))
+	-$(RM) $(subst /,$(DIRSEP),$(dll) $(OBJS))
 
 .SUFFIXES: .o .rc
-.PHONY: all clean $(sakura_rc)
-
--include $(DEPS)
+.PHONY: all clean
