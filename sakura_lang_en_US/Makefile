@@ -4,7 +4,12 @@
 #   Out-of-source build:
 #     $ mkdir -p build/MinGW/Release/sakura_lang_en_US/
 #     $ cd build/MinGW/Release/sakura_lang_en_US
-#     $ mingw32-make -f ../../../../sakura_lang_en_US/Makefile OUTDIR=. -j4
+#     $ mingw32-make -f ../../../../sakura_lang_en_US/Makefile OUTDIR=.. -j4
+#
+#   Out-of-source build (alternate style):
+#     $ mkdir -p build/MinGW/Release/
+#     $ cd build/MinGW/Release
+#     $ mingw32-make -f ../../../sakura_lang_en_US/Makefile SAKURA_CORE=. OUTDIR=. -j4
 #
 #   Debug build:
 #     $ cd sakura_lang_en_US
@@ -18,6 +23,9 @@ SRCDIR = $(patsubst %/,%,$(subst \,/,$(dir $(firstword $(MAKEFILE_LIST)))))
 ifneq ($(SRCDIR),.)
 VPATH = $(patsubst %\,%,$(SRCDIR))
 endif
+
+# Path of "sakura_core" directory.
+SAKURA_CORE = ../sakura_core
 
 # The directory where the .dll files will be output.
 # If empty, it will be output to the default directory.
@@ -68,10 +76,11 @@ DEFINES= \
 LIBS= \
  -static \
  -shared \
- -mwindows
+ -mwindows \
+ -s
 
 dll = $(or $(OUTDIR),.)/sakura_lang_en_US.dll
-sakura_rc = ../sakura_core/sakura_rc.o
+sakura_rc = $(SAKURA_CORE)/sakura_rc.o
 
 SRCS = $(wildcard $(SRCDIR)/*.rc)
 OBJS = $(SRCS:$(SRCDIR)/%.rc=%.o)
@@ -82,13 +91,13 @@ $(dll): $(OBJS)
 	$(CC) $(OBJS) $(LIBS) -o $@
 
 $(sakura_rc): ../sakura_core/Makefile
-ifneq ($(SRCDIR),.)
+ifneq ($(SAKURA_CORE),.)
 	-$(MKDIR) $(subst /,$(DIRSEP),$(@D)) > $(DEVNULL) 2>&1
 endif
 	$(MAKE) -f $< -C $(@D) $(@F)
 
 sakura_lang_rc.o: sakura_lang_rc.rc $(sakura_rc)
-	$(RC) -c utf-8 --language=0409 $(DEFINES) -I../sakura_core -I$(SRCDIR)/../sakura_core $< -o $@
+	$(RC) -c utf-8 --language=0409 $(DEFINES) -I$(SAKURA_CORE) -I$(SRCDIR)/../sakura_core $< -o $@
 
 clean:
 	-$(RM) $(subst /,$(DIRSEP),$(dll) $(OBJS))
