@@ -1,12 +1,12 @@
 # Makefile for MinGW32/MinGW-W64
 
 # Example usages:
-#   Out-of-source build:
+#   Out-of-source build (build in the same directory as sakura_core):
 #     $ mkdir -p build/MinGW/Release/
 #     $ cd build/MinGW/Release
 #     $ mingw32-make -f ../../../sakura_lang_en_US/Makefile SAKURA_CORE=. OUTDIR=. -j4
 #
-#   Out-of-source build (alternate style):
+#   Out-of-source build (create sakura_lang_en_US and sakura_core in a common directory):
 #     $ mkdir -p build/MinGW/Release/sakura_lang_en_US/
 #     $ cd build/MinGW/Release/sakura_lang_en_US
 #     $ mingw32-make -f ../../../../sakura_lang_en_US/Makefile OUTDIR=.. -j4
