@@ -1006,12 +1006,6 @@
   <ItemGroup>
     <FuncCodeRes Include="..\sakura_core\Funccode_x.hsrc" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MakefileMake\MakefileMake.vcxproj">
-      <Project>{40735439-b12b-40ac-92f7-f1183d8b6862}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

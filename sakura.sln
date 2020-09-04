@@ -6,8 +6,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sakura", "sakura\sakura.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HeaderMake", "HeaderMake\HeaderMake.vcxproj", "{0F2918B0-23E3-42E8-A1A8-8739F726A23E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MakefileMake", "MakefileMake\MakefileMake.vcxproj", "{40735439-B12B-40AC-92F7-F1183D8B6862}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sakura_lang_en_US", "sakura_lang_en_US\sakura_lang_en_US.vcxproj", "{7A6D0F29-E560-4985-835B-5F92A08EB242}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tests1", "tests\unittests\tests1.vcxproj", "{701E3407-EC27-49F7-ADC7-520CF2B4B438}"
@@ -36,14 +34,6 @@ Global
 		{0F2918B0-23E3-42E8-A1A8-8739F726A23E}.Release|Win32.Build.0 = Release|Win32
 		{0F2918B0-23E3-42E8-A1A8-8739F726A23E}.Release|x64.ActiveCfg = Release|Win32
 		{0F2918B0-23E3-42E8-A1A8-8739F726A23E}.Release|x64.Build.0 = Release|Win32
-		{40735439-B12B-40AC-92F7-F1183D8B6862}.Debug|Win32.ActiveCfg = Debug|Win32
-		{40735439-B12B-40AC-92F7-F1183D8B6862}.Debug|Win32.Build.0 = Debug|Win32
-		{40735439-B12B-40AC-92F7-F1183D8B6862}.Debug|x64.ActiveCfg = Debug|Win32
-		{40735439-B12B-40AC-92F7-F1183D8B6862}.Debug|x64.Build.0 = Debug|Win32
-		{40735439-B12B-40AC-92F7-F1183D8B6862}.Release|Win32.ActiveCfg = Release|Win32
-		{40735439-B12B-40AC-92F7-F1183D8B6862}.Release|Win32.Build.0 = Release|Win32
-		{40735439-B12B-40AC-92F7-F1183D8B6862}.Release|x64.ActiveCfg = Release|Win32
-		{40735439-B12B-40AC-92F7-F1183D8B6862}.Release|x64.Build.0 = Release|Win32
 		{7A6D0F29-E560-4985-835B-5F92A08EB242}.Debug|Win32.ActiveCfg = Debug|Win32
 		{7A6D0F29-E560-4985-835B-5F92A08EB242}.Debug|Win32.Build.0 = Debug|Win32
 		{7A6D0F29-E560-4985-835B-5F92A08EB242}.Debug|x64.ActiveCfg = Debug|x64
