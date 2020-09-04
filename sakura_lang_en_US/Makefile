@@ -73,7 +73,7 @@ DEFINES= \
  -D_UNICODE \
  -DUNICODE \
  $(addprefix -D,$(MYDEFINES))
-LIBS= \
+LDFLAGS= \
  -static \
  -shared \
  -mwindows \
@@ -88,7 +88,7 @@ OBJS = $(SRCS:$(SRCDIR)/%.rc=%.o)
 all: $(dll)
 
 $(dll): $(OBJS)
-	$(CC) $(OBJS) $(LIBS) -o $@
+	$(CC) $(OBJS) $(LDFLAGS) -o $@
 
 $(sakura_rc): ../sakura_core/Makefile
 ifneq ($(SAKURA_CORE),.)
