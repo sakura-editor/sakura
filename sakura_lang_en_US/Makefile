@@ -2,14 +2,14 @@
 
 # Example usages:
 #   Out-of-source build:
-#     $ mkdir -p build/MinGW/Release/
-#     $ cd build/MinGW/Release
-#     $ mingw32-make -f ../../../sakura_lang_en_US/Makefile OUTDIR=. -j4
-#
-#   Out-of-source build (alternate style):
 #     $ mkdir -p build/MinGW/Release/sakura_lang_en_US/
 #     $ cd build/MinGW/Release/sakura_lang_en_US
-#     $ mingw32-make -f ../../../../sakura_lang_en_US/Makefile SAKURA_CORE=../sakura_core OUTDIR=.. -j4
+#     $ mingw32-make -f ../../../../sakura_lang_en_US/Makefile OUTDIR=.. -j4
+#
+#   Out-of-source build (alternate style):
+#     $ mkdir -p build/MinGW/Release/
+#     $ cd build/MinGW/Release
+#     $ mingw32-make -f ../../../sakura_lang_en_US/Makefile SAKURA_CORE=. OUTDIR=. -j4
 #
 #   Debug build:
 #     $ cd sakura_lang_en_US
@@ -25,7 +25,7 @@ VPATH = $(patsubst %\,%,$(SRCDIR))
 endif
 
 # Path of "sakura_core" directory.
-SAKURA_CORE = .
+SAKURA_CORE = ../sakura_core
 
 # The directory where the .dll files will be output.
 # If empty, it will be output to the default directory.
