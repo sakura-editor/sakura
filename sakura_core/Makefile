@@ -93,7 +93,7 @@ exe= $(or $(OUTDIR),.)/sakura.exe
 SRCS = $(wildcard $(SRCDIR)/*.cpp) \
        $(wildcard $(SRCDIR)/*/*.cpp) \
        $(wildcard $(SRCDIR)/*/*/*.cpp)
-OBJS = $(SRCS:$(SRCDIR)/%.cpp=%.o) sakura_rc.o
+OBJS = $(SRCS:$(SRCDIR)/%.cpp=%.o)
 
 _DIRS = $(filter %/, $(wildcard $(SRCDIR)/*/)) \
         $(filter %/, $(wildcard $(SRCDIR)/*/*/))
@@ -111,8 +111,8 @@ HEADERMAKE= $(or $(OUTDIR),$(HEADERMAKETOOLDIR))/HeaderMake.exe
 
 all: $(exe)
 
-$(exe): $(OBJS)
-	$(CXX) -o $@ $(OBJS) $(LIBS)
+$(exe): $(OBJS) sakura_rc.o
+	$(CXX) -o $@ $(OBJS) sakura_rc.o $(LIBS)
 
 Funccode_define.h: Funccode_x.hsrc $(HEADERMAKE)
 	$(HEADERMAKE) -in=$< -out=$@ -mode=define
