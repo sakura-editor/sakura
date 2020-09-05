@@ -735,8 +735,8 @@ void CViewCommander::Command_1PageUp( bool bSelect, CLayoutYInt nScrollNum )
 // 2001.12.03 hor
 //		メモ帳ライクに、画面に対するカーソル位置はそのままで１ページアップ
 	{
-		CLayoutInt nViewTopLine = m_pCommanderView->GetTextArea().GetViewTopLine();
 		const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(false);
+		CLayoutInt nViewTopLine = m_pCommanderView->GetTextArea().GetViewTopLine();
 		if( nScrollNum <= 0 ){
 			nScrollNum = m_pCommanderView->GetTextArea().m_nViewRowNum - 1;
 		}
@@ -744,11 +744,10 @@ void CViewCommander::Command_1PageUp( bool bSelect, CLayoutYInt nScrollNum )
 		auto prevCaretPos = caret.GetCaretLayoutPos();
 		caret.Cursor_UPDOWN( -nScrollNum, bSelect );
 		auto currCaretPos = caret.GetCaretLayoutPos();
-		//	Sep. 11, 2004 genta 同期スクロール処理のため
-		//	m_pCommanderView->RedrawAllではなくScrollAtを使うように
 		CLayoutInt nScrolled = m_pCommanderView->ScrollAtV( nViewTopLine - nScrollNum );
 		m_pCommanderView->SyncScrollV(nScrolled);
 		m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);
+		// カーソル位置が変化しなかった、かつ、スクロール行数が0だった場合、描画を省く
 		if (prevCaretPos == currCaretPos && nScrolled == 0) {
 			return;
 		}
@@ -771,8 +770,8 @@ void CViewCommander::Command_1PageDown( bool bSelect, CLayoutYInt nScrollNum )
 // 2001.12.03 hor
 //		メモ帳ライクに、画面に対するカーソル位置はそのままで１ページダウン
 	{
-		CLayoutInt nViewTopLine = m_pCommanderView->GetTextArea().GetViewTopLine();
 		const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(false);
+		CLayoutInt nViewTopLine = m_pCommanderView->GetTextArea().GetViewTopLine();
 		if( nScrollNum <= 0 ){
 			nScrollNum = m_pCommanderView->GetTextArea().m_nViewRowNum - 1;
 		}
@@ -780,11 +779,10 @@ void CViewCommander::Command_1PageDown( bool bSelect, CLayoutYInt nScrollNum )
 		auto prevCaretPos = caret.GetCaretLayoutPos();
 		caret.Cursor_UPDOWN( nScrollNum, bSelect );
 		auto currCaretPos = caret.GetCaretLayoutPos();
-		//	Sep. 11, 2004 genta 同期スクロール処理のため
-		//	m_pCommanderView->RedrawAllではなくScrollAtを使うように
 		CLayoutInt nScrolled = m_pCommanderView->ScrollAtV( nViewTopLine + nScrollNum );
 		m_pCommanderView->SyncScrollV(nScrolled);
 		m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);
+		// カーソル位置が変化しなかった、かつ、スクロール行数が0だった場合、描画を省く
 		if (prevCaretPos == currCaretPos && nScrolled == 0) {
 			return;
 		}
