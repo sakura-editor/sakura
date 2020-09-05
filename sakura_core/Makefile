@@ -60,6 +60,13 @@ DEFINES= \
  -D_UNICODE \
  -DUNICODE \
  $(MYDEFINES)
+
+ifeq (,$(findstring -D_DEBUG,$(DEFINES)))
+ifeq (,$(findstring -DNDEBUG,$(DEFINES)))
+DEFINES += -DNDEBUG
+endif
+endif
+
 CFLAGS= \
  -finput-charset=utf-8 \
  -fexec-charset=cp932 \
