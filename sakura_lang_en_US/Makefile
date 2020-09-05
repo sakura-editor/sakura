@@ -61,18 +61,19 @@ endif
 CC= $(PREFIX)gcc
 RC= $(RCPREFIX)windres
 
-ifeq (-D_DEBUG,$(findstring -D_DEBUG,$(MYDEFINES)))
-else ifeq (-DNDEBUG,$(findstring -DNDEBUG,$(MYDEFINES)))
-else
-MYDEFINES += -DNDEBUG
-endif
-
 DEFINES= \
  -DWIN32 \
  -D_WIN32_WINNT=_WIN32_WINNT_WIN7 \
  -D_UNICODE \
  -DUNICODE \
  $(MYDEFINES)
+
+ifeq (,$(findstring -D_DEBUG,$(DEFINES)))
+ifeq (,$(findstring -DNDEBUG,$(DEFINES)))
+DEFINES += -DNDEBUG
+endif
+endif
+
 LDFLAGS= \
  -static \
  -shared \
