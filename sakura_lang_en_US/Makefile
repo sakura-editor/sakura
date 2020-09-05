@@ -13,7 +13,7 @@
 #
 #   Debug build:
 #     $ cd sakura_lang_en_US
-#     $ mingw32-make MYDEFINES="_DEBUG" -j4
+#     $ mingw32-make MYDEFINES="-D_DEBUG" -j4
 
 # Path of "sakura_lang_en_US" directory. Compute it from the path of Makefile.
 SRCDIR = $(patsubst %/,%,$(subst \,/,$(dir $(firstword $(MAKEFILE_LIST)))))
@@ -61,10 +61,10 @@ endif
 CC= $(PREFIX)gcc
 RC= $(RCPREFIX)windres
 
-ifeq (_DEBUG,$(findstring _DEBUG,$(MYDEFINES)))
-else ifeq (NDEBUG,$(findstring NDEBUG,$(MYDEFINES)))
+ifeq (-D_DEBUG,$(findstring -D_DEBUG,$(MYDEFINES)))
+else ifeq (-DNDEBUG,$(findstring -DNDEBUG,$(MYDEFINES)))
 else
-MYDEFINES += NDEBUG
+MYDEFINES += -DNDEBUG
 endif
 
 DEFINES= \
@@ -72,7 +72,7 @@ DEFINES= \
  -D_WIN32_WINNT=_WIN32_WINNT_WIN7 \
  -D_UNICODE \
  -DUNICODE \
- $(addprefix -D,$(MYDEFINES))
+ $(MYDEFINES)
 LDFLAGS= \
  -static \
  -shared \
