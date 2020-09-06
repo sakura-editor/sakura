@@ -240,7 +240,7 @@ DWORD CGrepAgent::DoGrep(CEditView *pcViewDst, bool bGrepReplace, const CNativeW
 	// 再入不可
 	if (this->m_bGrepRunning)
 	{
-		assert_warning(false == this->m_bGrepRunning);
+		;
 		return 0xffffffff;
 	}
 
@@ -903,7 +903,7 @@ static inline wchar_t *lineColumnToString(wchar_t (&strWork)[nCapacity], /*!< [o
 											   + 1													// )
 											   + 1 // \0 終端0文字の分
 		;
-	static_assert(nCapacity >= requiredMinimumCapacity, "nCapacity not enough.");
+	;
 	wchar_t *p = strWork;
 	*p++	   = L'(';
 	p += int2dec(nLine, p);
@@ -915,7 +915,7 @@ static inline wchar_t *lineColumnToString(wchar_t (&strWork)[nCapacity], /*!< [o
 	// Debug 版に限って両方実行して、両者が一致することを確認
 	wchar_t strWork2[requiredMinimumCapacity];
 	::auto_sprintf(strWork2, L"(%I64d,%d)", nLine, nColumn);
-	assert(wcscmp(strWork, strWork2) == 0);
+	;
 #endif
 	return strWork;
 }

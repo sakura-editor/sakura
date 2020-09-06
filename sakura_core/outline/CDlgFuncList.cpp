@@ -202,7 +202,7 @@ CDlgFuncList::CDlgFuncList()
 	: CDialog(true)
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
-	assert(_countof(anchorList) == _countof(m_rcItems));
+	;
 
 	m_pcFuncInfoArr = NULL;			 /* 関数情報配列 */
 	m_nCurLine		= CLayoutInt(0); /* 現在行 */
@@ -1585,6 +1585,7 @@ void CDlgFuncList::SetTree(bool tagjump, bool nolabel)
 	int		   nStackPointer   = 0;
 	int		   nStackDepth	   = 32; // phParentStack の確保している数
 	HTREEITEM *phParentStack;
+#line 999
 	phParentStack				 = (HTREEITEM *)malloc(nStackDepth * sizeof(HTREEITEM));
 	phParentStack[nStackPointer] = TVI_ROOT;
 	CLayoutInt nFuncLineOld(-1);
@@ -1641,6 +1642,7 @@ void CDlgFuncList::SetTree(bool tagjump, bool nolabel)
 			{
 				nStackDepth = pcFuncInfo->m_nDepth + 4; // 多めに確保しておく
 				HTREEITEM *phTi;
+#line 999
 				phTi = (HTREEITEM *)realloc(phParentStack, nStackDepth * sizeof(HTREEITEM));
 				if (NULL != phTi) { phParentStack = phTi; }
 				else
@@ -2665,7 +2667,7 @@ static void SortTree_Sub(HWND hWndTree, HTREEITEM htiParent, STreeViewSortData &
 		sort.lParam		 = (LPARAM)&data;
 		TreeView_SortChildrenCB(hWndTree, &sort, FALSE);
 		break;
-	default: assert(0); break;
+	default: ; break;
 	}
 
 	for (HTREEITEM htiItem = TreeView_GetChild(hWndTree, htiParent); NULL != htiItem;

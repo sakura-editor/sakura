@@ -38,7 +38,7 @@ inline DLLSHAREDATA &GetDllShareData()
 {
 	extern DLLSHAREDATA *g_theDLLSHAREDATA;
 
-	assert(g_theDLLSHAREDATA);
+	;
 	return *g_theDLLSHAREDATA;
 }
 
@@ -46,7 +46,7 @@ inline DLLSHAREDATA &GetDllShareData(bool bNullCheck)
 {
 	extern DLLSHAREDATA *g_theDLLSHAREDATA;
 
-	if (bNullCheck) { assert(g_theDLLSHAREDATA); }
+	if (bNullCheck) { ; }
 	return *g_theDLLSHAREDATA;
 }
 

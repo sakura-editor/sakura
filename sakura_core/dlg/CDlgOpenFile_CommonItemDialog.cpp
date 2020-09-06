@@ -120,7 +120,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 	HRESULT STDMETHODCALLTYPE EnableOpenDropDown(
 		/* [in] */ DWORD dwIDCtl)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->EnableOpenDropDown(dwIDCtl);
 	}
 
@@ -128,7 +128,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 		/* [in] */ DWORD							dwIDCtl,
 		/* [string][in] */ __RPC__in_string LPCWSTR pszLabel)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->AddMenu(dwIDCtl, pszLabel);
 	}
 
@@ -136,21 +136,21 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 		/* [in] */ DWORD							dwIDCtl,
 		/* [string][in] */ __RPC__in_string LPCWSTR pszLabel)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->AddPushButton(dwIDCtl, pszLabel);
 	}
 
 	HRESULT STDMETHODCALLTYPE AddComboBox(
 		/* [in] */ DWORD dwIDCtl)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->AddComboBox(dwIDCtl);
 	}
 
 	HRESULT STDMETHODCALLTYPE AddRadioButtonList(
 		/* [in] */ DWORD dwIDCtl)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->AddRadioButtonList(dwIDCtl);
 	}
 
@@ -159,7 +159,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 		/* [string][in] */ __RPC__in_string LPCWSTR pszLabel,
 		/* [in] */ BOOL								bChecked)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->AddCheckButton(dwIDCtl, pszLabel, bChecked);
 	}
 
@@ -167,14 +167,14 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 		/* [in] */ DWORD							dwIDCtl,
 		/* [string][in] */ __RPC__in_string LPCWSTR pszText)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->AddEditBox(dwIDCtl, pszText);
 	}
 
 	HRESULT STDMETHODCALLTYPE AddSeparator(
 		/* [in] */ DWORD dwIDCtl)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->AddSeparator(dwIDCtl);
 	}
 
@@ -182,7 +182,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 		/* [in] */ DWORD							dwIDCtl,
 		/* [string][in] */ __RPC__in_string LPCWSTR pszText)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->AddText(dwIDCtl, pszText);
 	}
 
@@ -190,7 +190,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 		/* [in] */ DWORD							dwIDCtl,
 		/* [string][in] */ __RPC__in_string LPCWSTR pszLabel)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->SetControlLabel(dwIDCtl, pszLabel);
 	}
 
@@ -198,7 +198,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 		/* [in] */ DWORD	   dwIDCtl,
 		/* [out] */ __RPC__out CDCONTROLSTATEF *pdwState)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->GetControlState(dwIDCtl, pdwState);
 	}
 
@@ -206,7 +206,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 		/* [in] */ DWORD		   dwIDCtl,
 		/* [in] */ CDCONTROLSTATEF dwState)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->SetControlState(dwIDCtl, dwState);
 	}
 
@@ -214,7 +214,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 		/* [in] */ DWORD								dwIDCtl,
 		/* [string][out] */ __RPC__deref_out_opt_string WCHAR **ppszText)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->GetEditBoxText(dwIDCtl, ppszText);
 	}
 
@@ -222,7 +222,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 		/* [in] */ DWORD							dwIDCtl,
 		/* [string][in] */ __RPC__in_string LPCWSTR pszText)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->SetEditBoxText(dwIDCtl, pszText);
 	}
 
@@ -230,7 +230,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 		/* [in] */ DWORD	   dwIDCtl,
 		/* [out] */ __RPC__out BOOL *pbChecked)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->GetCheckButtonState(dwIDCtl, pbChecked);
 	}
 
@@ -238,7 +238,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 		/* [in] */ DWORD dwIDCtl,
 		/* [in] */ BOOL	 bChecked)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->SetCheckButtonState(dwIDCtl, bChecked);
 	}
 
@@ -247,7 +247,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 		/* [in] */ DWORD			 dwIDItem,
 		/* [in] */ __RPC__in LPCWSTR pszLabel)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->AddControlItem(dwIDCtl, dwIDItem, pszLabel);
 	}
 
@@ -255,14 +255,14 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 		/* [in] */ DWORD dwIDCtl,
 		/* [in] */ DWORD dwIDItem)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->RemoveControlItem(dwIDCtl, dwIDItem);
 	}
 
 	HRESULT STDMETHODCALLTYPE RemoveAllControlItems(
 		/* [in] */ DWORD dwIDCtl)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->RemoveAllControlItems(dwIDCtl);
 	}
 
@@ -271,7 +271,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 		/* [in] */ DWORD	   dwIDItem,
 		/* [out] */ __RPC__out CDCONTROLSTATEF *pdwState)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->GetControlItemState(dwIDCtl, dwIDItem, pdwState);
 	}
 
@@ -280,7 +280,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 		/* [in] */ DWORD		   dwIDItem,
 		/* [in] */ CDCONTROLSTATEF dwState)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->SetControlItemState(dwIDCtl, dwIDItem, dwState);
 	}
 
@@ -288,7 +288,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 		/* [in] */ DWORD	   dwIDCtl,
 		/* [out] */ __RPC__out DWORD *pdwIDItem)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->GetSelectedControlItem(dwIDCtl, pdwIDItem);
 	}
 
@@ -296,7 +296,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 		/* [in] */ DWORD dwIDCtl,
 		/* [in] */ DWORD dwIDItem)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->SetSelectedControlItem(dwIDCtl, dwIDItem);
 	}
 
@@ -304,20 +304,20 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 		/* [in] */ DWORD							dwIDCtl,
 		/* [string][in] */ __RPC__in_string LPCWSTR pszLabel)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->StartVisualGroup(dwIDCtl, pszLabel);
 	}
 
 	HRESULT STDMETHODCALLTYPE EndVisualGroup(void)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->EndVisualGroup();
 	}
 
 	HRESULT STDMETHODCALLTYPE MakeProminent(
 		/* [in] */ DWORD dwIDCtl)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->MakeProminent(dwIDCtl);
 	}
 
@@ -326,7 +326,7 @@ struct CDlgOpenFile_CommonItemDialog final : public IDlgOpenFile,
 		/* [in] */ DWORD							dwIDItem,
 		/* [string][in] */ __RPC__in_string LPCWSTR pszLabel)
 	{
-		assert(m_pFileDialogCustomize);
+		;
 		return m_pFileDialogCustomize->SetControlItemText(dwIDCtl, dwIDItem, pszLabel);
 	}
 

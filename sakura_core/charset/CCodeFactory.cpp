@@ -36,7 +36,7 @@ CCodeBase *CCodeFactory::CreateCodeBase(ECodeType eCodeType, //!< 文字コー�
 	case CODE_CPOEM: return new CCodePage(eCodeType);
 	default:
 		if (IsValidCodePageEx(eCodeType)) { return new CCodePage(eCodeType); }
-		assert_warning(0);
+		;
 	}
 	return NULL;
 }

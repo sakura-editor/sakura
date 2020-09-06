@@ -1,4 +1,4 @@
-/*! @file */
+﻿/*! @file */
 #pragma once
 #define GIT_SHORT_COMMIT_HASH "d6e5f24bd"
 #define GIT_COMMIT_HASH "d6e5f24bdcd0a66222febf17f0f494982f4233a5"

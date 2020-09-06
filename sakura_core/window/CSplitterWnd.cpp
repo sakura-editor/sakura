@@ -575,7 +575,7 @@ void CSplitterWnd::DoSplit(int nHorizontal, int nVertical)
 /* アクティブペインの設定 */
 void CSplitterWnd::SetActivePane(int nIndex)
 {
-	assert(nIndex < MAXCOUNTOFVIEW);
+	;
 	m_nActivePane = nIndex;
 	return;
 }

@@ -117,6 +117,7 @@
 #include "String_define.h"
 
 //その他
+#line 999
 #define malloc_char (char *)malloc
 #define GlobalLockChar (char *)::GlobalLock
 #define GlobalLockUChar (unsigned char *)::GlobalLock

@@ -836,7 +836,7 @@ BOOL CViewCommander::HandleCommand(EFunctionCode nCommand, bool bRedraw, LPARAM 
 
 			if (plugs.size() > 0)
 			{
-				assert_warning(1 == plugs.size());
+				;
 				//インタフェースオブジェクト準備
 				CWSHIfObj::List params;
 				//プラグイン呼び出し

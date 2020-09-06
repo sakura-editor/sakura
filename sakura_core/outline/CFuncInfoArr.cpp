@@ -64,9 +64,11 @@ CFuncInfo *CFuncInfoArr::GetAt(int nIdx)
 void CFuncInfoArr::AppendData(CFuncInfo *pcFuncInfo)
 {
 	if (0 == m_nFuncInfoArrNum)
+#line 999
 	{ m_ppcFuncInfoArr = (CFuncInfo **)malloc(sizeof(CFuncInfo *) * (m_nFuncInfoArrNum + 1)); }
 	else
 	{
+#line 999
 		m_ppcFuncInfoArr = (CFuncInfo **)realloc(m_ppcFuncInfoArr, sizeof(CFuncInfo *) * (m_nFuncInfoArrNum + 1));
 	}
 	m_ppcFuncInfoArr[m_nFuncInfoArrNum] = pcFuncInfo;

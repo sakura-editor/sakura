@@ -66,7 +66,7 @@ CFigure &CFigureManager::GetFigure(const wchar_t *pText, int nTextLen)
 		if (pcFigure->Match(pText, nTextLen)) { return *pcFigure; }
 	}
 
-	assert(0);
+	;
 	return *m_vFiguresDisp.back();
 }
 

@@ -232,6 +232,7 @@ bool CDocTypeManager::ConvertTypesExtToDlgExt(const WCHAR *pszSrcExt, const WCHA
 	if (NULL == pszSrcExt) return false;
 	if (NULL == pszDstExt) return false;
 
+#line 1000
 	p			 = _wcsdup(pszSrcExt);
 	pszDstExt[0] = L'\0';
 

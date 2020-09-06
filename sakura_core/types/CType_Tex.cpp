@@ -132,7 +132,7 @@ public:
 		{
 			return pTitleEnd; // トピックタグではなかった。
 		}
-		assert(depth < HierarchyCount);
+		;
 
 		/* 状態変数の更新
 			現在のタグの深さ(depth)と直前のタグの深さ(tagDepth)の比較から
@@ -157,7 +157,7 @@ public:
 			treeDepth = 0; // 最初のトピックの場合や、最初のトピックが深い階層(section や subsection
 						   // など)だったあとに、chapter が現れた場合など。
 		}
-		assert(treeDepth < HierarchyCount);
+		;
 
 		// 2. トピック番号を更新する。
 		serials[depth] += 1; // インクリメント
@@ -191,7 +191,7 @@ public:
 			*pTopicEnd++ = L' ';
 			*pTopicEnd	 = L'\0';
 		}
-		assert(pTopicEnd < szTopic + _countof(szTopic));
+		;
 
 		// トピック文字列を作成する(2)。タイトルをバッファに埋め込む。
 		const ptrdiff_t copyLen = t_min(szTopic + _countof(szTopic) - 1 - pTopicEnd, pTitleEnd - pTitle);
@@ -253,7 +253,7 @@ public:
 				{
 					break; // コメントなので以降はいらない。
 				}
-				assert(*p == L'\\');
+				;
 
 				// '\' の後ろから、'{' を目印にタグとタイトルを見つける。
 				pTag	  = p + 1;

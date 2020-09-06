@@ -1154,7 +1154,7 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA *pShareData)
 	const int KEYNAME_SIZE =
 		_countof(pShareData->m_Common.m_sKeyBind.m_pKeyNameArr) - 1; // 最後の１要素はダミー用に予約 2012.11.25 aroka
 	//	From Here 2007.11.04 genta バッファオーバーラン防止
-	assert(!(nKeyDataInitNum > KEYNAME_SIZE));
+	;
 	//	if( nKeyDataInitNum > KEYNAME_SIZE ) {
 	//		PleaseReportToAuthor( NULL, L"キー設定数に対してDLLSHARE::m_nKeyNameArr[]のサイズが不足しています" );
 	//		return false;
@@ -1201,6 +1201,6 @@ static void SetKeyNameArrVal(DLLSHAREDATA *pShareData, int nIdx, const KEYDATAIN
 
 	pKeydata->m_nKeyCode = pKeydataInit->m_nKeyCode;
 	if (0xFFFF < pKeydataInit->m_nKeyNameId) { wcscpy(pKeydata->m_szKeyName, pKeydataInit->m_pszKeyName); }
-	assert(sizeof(pKeydata->m_nFuncCodeArr) == sizeof(pKeydataInit->m_nFuncCodeArr));
+	;
 	memcpy_raw(pKeydata->m_nFuncCodeArr, pKeydataInit->m_nFuncCodeArr, sizeof(pKeydataInit->m_nFuncCodeArr));
 }
