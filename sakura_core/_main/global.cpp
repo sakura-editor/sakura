@@ -19,17 +19,14 @@
 #include "window/CEditWnd.h"
 #include "CNormalProcess.h"
 
-//2007.10.02 kobake CEditWndのインスタンスへのポインタをここに保存しておく
-CEditWnd* g_pcEditWnd = NULL;
+// 2007.10.02 kobake CEditWndのインスタンスへのポインタをここに保存しておく
+CEditWnd *g_pcEditWnd = NULL;
 
 /*! 選択領域描画用パラメータ */
-const COLORREF	SELECTEDAREA_RGB = RGB( 255, 255, 255 );
-const int		SELECTEDAREA_ROP2 = R2_XORPEN;
+const COLORREF SELECTEDAREA_RGB	 = RGB(255, 255, 255);
+const int	   SELECTEDAREA_ROP2 = R2_XORPEN;
 
-HINSTANCE G_AppInstance()
-{
-	return CProcess::getInstance()->GetProcessInstance();
-}
+HINSTANCE G_AppInstance() { return CProcess::getInstance()->GetProcessInstance(); }
 
 /*!
  * コンストラクタ
@@ -42,11 +39,7 @@ SSearchOption::SSearchOption() noexcept
 /*!
  * コンストラクタ(値指定)
  */
-SSearchOption::SSearchOption(
-	bool _bRegularExp,
-	bool _bLoHiCase,
-	bool _bWordOnly
-) noexcept
+SSearchOption::SSearchOption(bool _bRegularExp, bool _bLoHiCase, bool _bWordOnly) noexcept
 	: bRegularExp(_bRegularExp)
 	, bLoHiCase(_bLoHiCase)
 	, bWordOnly(_bWordOnly)
@@ -57,8 +50,8 @@ SSearchOption::SSearchOption(
 void SSearchOption::Reset()
 {
 	bRegularExp = false;
-	bLoHiCase = false;
-	bWordOnly = false;
+	bLoHiCase	= false;
+	bWordOnly	= false;
 }
 
 /*!
@@ -68,12 +61,10 @@ void SSearchOption::Reset()
  * @retval true 等しい
  * @retval false 等しくない
  */
-bool SSearchOption::operator == (const SSearchOption& rhs) const noexcept
+bool SSearchOption::operator==(const SSearchOption &rhs) const noexcept
 {
 	if (this == &rhs) return true;
-	return bRegularExp == rhs.bRegularExp
-		&& bLoHiCase == rhs.bLoHiCase
-		&& bWordOnly == rhs.bWordOnly;
+	return bRegularExp == rhs.bRegularExp && bLoHiCase == rhs.bLoHiCase && bWordOnly == rhs.bWordOnly;
 }
 
 /*!
@@ -83,7 +74,4 @@ bool SSearchOption::operator == (const SSearchOption& rhs) const noexcept
  * @retval true 等しくない
  * @retval false 等しい
  */
-bool SSearchOption::operator != (const SSearchOption& rhs) const noexcept
-{
-	return !(*this == rhs);
-}
+bool SSearchOption::operator!=(const SSearchOption &rhs) const noexcept { return !(*this == rhs); }

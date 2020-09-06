@@ -26,20 +26,17 @@
 #define SAKURA_CREADMANAGER_BF5A195D_BEA1_4508_8BC7_DB5316B5B66E_H_
 #pragma once
 
-#include "doc/CDocListener.h" // CProgressSubject
+#include "doc/CDocListener.h"  // CProgressSubject
 #include "charset/CCodeBase.h" // EConvertResult
 
 class CDocLineMgr;
 struct SFileInfo; // doc/CDocFile.h
 
-class CReadManager : public CProgressSubject{
+class CReadManager : public CProgressSubject
+{
 public:
 	//	Nov. 12, 2000 genta 引数追加
 	//	Jul. 26, 2003 ryoji BOM引数追加
-	EConvertResult ReadFile_To_CDocLineMgr(
-		CDocLineMgr*		pcDocLineMgr,
-		const SLoadInfo&	sLoadInfo,
-		SFileInfo*			pFileInfo
-	);
+	EConvertResult ReadFile_To_CDocLineMgr(CDocLineMgr *pcDocLineMgr, const SLoadInfo &sLoadInfo, SFileInfo *pFileInfo);
 };
 #endif /* SAKURA_CREADMANAGER_BF5A195D_BEA1_4508_8BC7_DB5316B5B66E_H_ */

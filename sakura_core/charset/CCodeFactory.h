@@ -28,12 +28,12 @@
 
 class CCodeBase;
 
-class CCodeFactory{
+class CCodeFactory
+{
 public:
 	//! eCodeTypeに適合する CCodeBaseインスタンス を生成
-	static CCodeBase* CreateCodeBase(
-		ECodeType	eCodeType,		//!< 文字コード
-		int			nFlag			//!< bit 0: MIME Encodeされたヘッダをdecodeするかどうか
+	static CCodeBase *CreateCodeBase(ECodeType eCodeType, //!< 文字コード
+									 int nFlag //!< bit 0: MIME Encodeされたヘッダをdecodeするかどうか
 	);
 };
 #endif /* SAKURA_CCODEFACTORY_A5C6C204_F9BD_42BA_A5CD_1B086833CCA4_H_ */

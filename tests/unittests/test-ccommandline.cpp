@@ -36,11 +36,11 @@
 #include <cstdlib>
 #include <fstream>
 
-bool operator == (const EditInfo& lhs, const EditInfo& rhs) noexcept;
-bool operator != (const EditInfo& lhs, const EditInfo& rhs) noexcept;
+bool operator==(const EditInfo &lhs, const EditInfo &rhs) noexcept;
+bool operator!=(const EditInfo &lhs, const EditInfo &rhs) noexcept;
 
-bool operator == (const GrepInfo& lhs, const GrepInfo& rhs) noexcept;
-bool operator != (const GrepInfo& lhs, const GrepInfo& rhs) noexcept;
+bool operator==(const GrepInfo &lhs, const GrepInfo &rhs) noexcept;
+bool operator!=(const GrepInfo &lhs, const GrepInfo &rhs) noexcept;
 
 /*!
  * テスト用の極薄ラッパークラス
@@ -74,7 +74,7 @@ TEST(CCommandLine, ConstructWithoutParam)
 	EXPECT_EQ(-1, cCommandLine.GetGroupId());
 	EXPECT_EQ(NULL, cCommandLine.GetMacro());
 	EXPECT_EQ(NULL, cCommandLine.GetMacroType());
-	EXPECT_STREQ(L"", cCommandLine.GetProfileName());	//不自然
+	EXPECT_STREQ(L"", cCommandLine.GetProfileName()); //不自然
 	EXPECT_FALSE(cCommandLine.IsSetProfile());
 	EXPECT_FALSE(cCommandLine.IsProfileMgr());
 	EXPECT_EQ(0, cCommandLine.GetFileNum());
@@ -128,7 +128,7 @@ TEST(CCommandLine, ParseGrepMode)
 	cCommandLine.ParseCommandLine(L"-GREPMODE", false);
 	ASSERT_TRUE(cCommandLine.IsGrepMode());
 
-	//Grepモード時は文書タイプが"grepout"になる
+	// Grepモード時は文書タイプが"grepout"になる
 	ASSERT_STREQ(L"grepout", cCommandLine.GetDocType());
 }
 
@@ -144,7 +144,7 @@ TEST(CCommandLine, ParseGrepDialog)
 	EXPECT_FALSE(cCommandLine.IsGrepDlg());
 	cCommandLine.ParseCommandLine(L"-GREPDLG", false);
 	ASSERT_TRUE(cCommandLine.IsGrepDlg());
-	//FIXME: Grepダイアログ指定時にGrepモードにならないのは不自然な気がする
+	// FIXME: Grepダイアログ指定時にGrepモードにならないのは不自然な気がする
 }
 
 /*!
@@ -161,7 +161,7 @@ TEST(CCommandLine, ParseDebugMode)
 	cCommandLine.ParseCommandLine(L"-DEBUGMODE", false);
 	ASSERT_TRUE(cCommandLine.IsDebugMode());
 
-	//Debugモード時は文書タイプが"output"になる
+	// Debugモード時は文書タイプが"output"になる
 	ASSERT_STREQ(L"output", cCommandLine.GetDocType());
 }
 
@@ -403,8 +403,8 @@ TEST(CCommandLine, ParseDocCode)
 	EXPECT_EQ(CODE_UTF8, cCommandLine.GetDocCode());
 
 	// 実行ファイル名に1(=JIS)を含む場合の例
-	wchar_t szExeFileName[MAX_PATH] = L"sakura1.exe";
-	const int cchExeFileName = ::wcsnlen(szExeFileName, _countof(szExeFileName));
+	wchar_t	  szExeFileName[MAX_PATH] = L"sakura1.exe";
+	const int cchExeFileName		  = ::wcsnlen(szExeFileName, _countof(szExeFileName));
 	cCommandLine.ParseKanjiCodeFromFileName(szExeFileName, cchExeFileName);
 	cCommandLine.ParseCommandLine(L"", false);
 	EXPECT_EQ(CODE_JIS, cCommandLine.GetDocCode());
@@ -491,10 +491,10 @@ TEST(CCommandLine, ParseGrepFolder)
 }
 
 /*!
-* @brief パラメータ解析(-GOPT)の仕様
-* @remark -GOPTが指定されていなければFALSE
-* @remark -GOPTが指定されていたらTRUE
-*/
+ * @brief パラメータ解析(-GOPT)の仕様
+ * @remark -GOPTが指定されていなければFALSE
+ * @remark -GOPTが指定されていたらTRUE
+ */
 TEST(CCommandLine, ParseGrepCurFolder)
 {
 	CCommandLineWrapper cCommandLine;
@@ -505,10 +505,10 @@ TEST(CCommandLine, ParseGrepCurFolder)
 }
 
 /*!
-* @brief パラメータ解析(-GOPT)の仕様
-* @remark -GOPTが指定されていなければFALSE
-* @remark -GOPTが指定されていたらTRUE
-*/
+ * @brief パラメータ解析(-GOPT)の仕様
+ * @remark -GOPTが指定されていなければFALSE
+ * @remark -GOPTが指定されていたらTRUE
+ */
 TEST(CCommandLine, ParseGrepStdout)
 {
 	CCommandLineWrapper cCommandLine;
@@ -519,10 +519,10 @@ TEST(CCommandLine, ParseGrepStdout)
 }
 
 /*!
-* @brief パラメータ解析(-GOPT)の仕様
-* @remark -GOPTが指定されていなければTRUE
-* @remark -GOPTが指定されていたらFALSE
-*/
+ * @brief パラメータ解析(-GOPT)の仕様
+ * @remark -GOPTが指定されていなければTRUE
+ * @remark -GOPTが指定されていたらFALSE
+ */
 TEST(CCommandLine, ParseGrepHeader)
 {
 	CCommandLineWrapper cCommandLine;
@@ -533,10 +533,10 @@ TEST(CCommandLine, ParseGrepHeader)
 }
 
 /*!
-* @brief パラメータ解析(-GOPT)の仕様
-* @remark -GOPTが指定されていなければFALSE
-* @remark -GOPTが指定されていたらTRUE
-*/
+ * @brief パラメータ解析(-GOPT)の仕様
+ * @remark -GOPTが指定されていなければFALSE
+ * @remark -GOPTが指定されていたらTRUE
+ */
 TEST(CCommandLine, ParseGrepSubFolder)
 {
 	CCommandLineWrapper cCommandLine;
@@ -547,10 +547,10 @@ TEST(CCommandLine, ParseGrepSubFolder)
 }
 
 /*!
-* @brief パラメータ解析(-GOPT)の仕様
-* @remark -GOPTが指定されていなければFALSE
-* @remark -GOPTが指定されていたらTRUE
-*/
+ * @brief パラメータ解析(-GOPT)の仕様
+ * @remark -GOPTが指定されていなければFALSE
+ * @remark -GOPTが指定されていたらTRUE
+ */
 TEST(CCommandLine, ParseGrepCaseSensitive)
 {
 	CCommandLineWrapper cCommandLine;
@@ -561,10 +561,10 @@ TEST(CCommandLine, ParseGrepCaseSensitive)
 }
 
 /*!
-* @brief パラメータ解析(-GOPT)の仕様
-* @remark -GOPTが指定されていなければFALSE
-* @remark -GOPTが指定されていたらTRUE
-*/
+ * @brief パラメータ解析(-GOPT)の仕様
+ * @remark -GOPTが指定されていなければFALSE
+ * @remark -GOPTが指定されていたらTRUE
+ */
 TEST(CCommandLine, ParseGrepUseRegularExpressions)
 {
 	CCommandLineWrapper cCommandLine;
@@ -575,11 +575,11 @@ TEST(CCommandLine, ParseGrepUseRegularExpressions)
 }
 
 /*!
-* @brief パラメータ解析(-GOPT)の仕様
-* @remark -GOPTが指定されていなければSJIS
-* @remark -GOPTが指定されていたら自動検知
-* @note このオプションは特殊
-*/
+ * @brief パラメータ解析(-GOPT)の仕様
+ * @remark -GOPTが指定されていなければSJIS
+ * @remark -GOPTが指定されていたら自動検知
+ * @note このオプションは特殊
+ */
 TEST(CCommandLine, ParseGrepCodeAutoDetect)
 {
 	CCommandLineWrapper cCommandLine;
@@ -590,25 +590,25 @@ TEST(CCommandLine, ParseGrepCodeAutoDetect)
 }
 
 /*!
-* @brief パラメータ解析(-GOPT)の仕様
-* @note このオプションは特殊
-*/
+ * @brief パラメータ解析(-GOPT)の仕様
+ * @note このオプションは特殊
+ */
 TEST(CCommandLine, ParseGrepOutputLineType)
 {
 	CCommandLineWrapper cCommandLine;
 	cCommandLine.ParseCommandLine(L"", false);
 	EXPECT_EQ(0, cCommandLine.GetGrepInfoRef().nGrepOutputLineType);
-	cCommandLine.ParseCommandLine(L"-GOPT=P", false); //Positive?
+	cCommandLine.ParseCommandLine(L"-GOPT=P", false); // Positive?
 	EXPECT_EQ(1, cCommandLine.GetGrepInfoRef().nGrepOutputLineType);
-	cCommandLine.ParseCommandLine(L"-GOPT=N", false); //Negative?
+	cCommandLine.ParseCommandLine(L"-GOPT=N", false); // Negative?
 	EXPECT_EQ(2, cCommandLine.GetGrepInfoRef().nGrepOutputLineType);
 }
 
 /*!
-* @brief パラメータ解析(-GOPT)の仕様
-* @remark -GOPTが指定されていなければFALSE
-* @remark -GOPTが指定されていたらTRUE
-*/
+ * @brief パラメータ解析(-GOPT)の仕様
+ * @remark -GOPTが指定されていなければFALSE
+ * @remark -GOPTが指定されていたらTRUE
+ */
 TEST(CCommandLine, ParseGrepUseWordParse)
 {
 	CCommandLineWrapper cCommandLine;
@@ -619,9 +619,9 @@ TEST(CCommandLine, ParseGrepUseWordParse)
 }
 
 /*!
-* @brief パラメータ解析(-GOPT)の仕様
-* @note このオプションは特殊
-*/
+ * @brief パラメータ解析(-GOPT)の仕様
+ * @note このオプションは特殊
+ */
 TEST(CCommandLine, ParseGrepOutputStyle)
 {
 	CCommandLineWrapper cCommandLine;
@@ -636,10 +636,10 @@ TEST(CCommandLine, ParseGrepOutputStyle)
 }
 
 /*!
-* @brief パラメータ解析(-GOPT)の仕様
-* @remark -GOPTが指定されていなければFALSE
-* @remark -GOPTが指定されていたらTRUE
-*/
+ * @brief パラメータ解析(-GOPT)の仕様
+ * @remark -GOPTが指定されていなければFALSE
+ * @remark -GOPTが指定されていたらTRUE
+ */
 TEST(CCommandLine, ParseGrepListFileNameOnly)
 {
 	CCommandLineWrapper cCommandLine;
@@ -650,10 +650,10 @@ TEST(CCommandLine, ParseGrepListFileNameOnly)
 }
 
 /*!
-* @brief パラメータ解析(-GOPT)の仕様
-* @remark -GOPTが指定されていなければFALSE
-* @remark -GOPTが指定されていたらTRUE
-*/
+ * @brief パラメータ解析(-GOPT)の仕様
+ * @remark -GOPTが指定されていなければFALSE
+ * @remark -GOPTが指定されていたらTRUE
+ */
 TEST(CCommandLine, ParseGrepDisplayRoot)
 {
 	CCommandLineWrapper cCommandLine;
@@ -664,10 +664,10 @@ TEST(CCommandLine, ParseGrepDisplayRoot)
 }
 
 /*!
-* @brief パラメータ解析(-GOPT)の仕様
-* @remark -GOPTが指定されていなければFALSE
-* @remark -GOPTが指定されていたらTRUE
-*/
+ * @brief パラメータ解析(-GOPT)の仕様
+ * @remark -GOPTが指定されていなければFALSE
+ * @remark -GOPTが指定されていたらTRUE
+ */
 TEST(CCommandLine, ParseGrepSplitResultPerFolder)
 {
 	CCommandLineWrapper cCommandLine;
@@ -678,10 +678,10 @@ TEST(CCommandLine, ParseGrepSplitResultPerFolder)
 }
 
 /*!
-* @brief パラメータ解析(-GOPT)の仕様
-* @remark -GOPTが指定されていなければFALSE
-* @remark -GOPTが指定されていたらTRUE
-*/
+ * @brief パラメータ解析(-GOPT)の仕様
+ * @remark -GOPTが指定されていなければFALSE
+ * @remark -GOPTが指定されていたらTRUE
+ */
 TEST(CCommandLine, ParseGrepReplacePasteFromClipBoard)
 {
 	CCommandLineWrapper cCommandLine;
@@ -692,10 +692,10 @@ TEST(CCommandLine, ParseGrepReplacePasteFromClipBoard)
 }
 
 /*!
-* @brief パラメータ解析(-GOPT)の仕様
-* @remark -GOPTが指定されていなければFALSE
-* @remark -GOPTが指定されていたらTRUE
-*/
+ * @brief パラメータ解析(-GOPT)の仕様
+ * @remark -GOPTが指定されていなければFALSE
+ * @remark -GOPTが指定されていたらTRUE
+ */
 TEST(CCommandLine, ParseGrepReplaceCreateBackupFiles)
 {
 	CCommandLineWrapper cCommandLine;

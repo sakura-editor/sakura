@@ -53,7 +53,8 @@ public:
  * 始動前に設定ファイルを削除するようにしている。
  * テスト実行後に設定ファイルを残しておく意味はないので終了後も削除している。
  */
-class CDlgProfileMgrIniTest : public ::testing::Test {
+class CDlgProfileMgrIniTest : public ::testing::Test
+{
 protected:
 	/*!
 	 * プロファイルマネージャ設定ファイルの名前
@@ -66,101 +67,103 @@ protected:
 	/*!
 	 * テストが起動される直前に毎回呼ばれる関数
 	 */
-	virtual void SetUp() {
+	virtual void SetUp()
+	{
 		// プロファイル設定を削除する
-		std::filesystem::remove( szProfileMgrIniName );
+		std::filesystem::remove(szProfileMgrIniName);
 	}
 
 	/*!
 	 * テストが実行された直後に毎回呼ばれる関数
 	 */
-	virtual void TearDown() {
+	virtual void TearDown()
+	{
 		// プロファイル設定を削除する
-		std::filesystem::remove( szProfileMgrIniName );
+		std::filesystem::remove(szProfileMgrIniName);
 	}
 };
 
 /*!
  * @brief TrySelectProfileのテスト
  */
-TEST(CDlgProfileMgr, TrySelectProfile_001 )
+TEST(CDlgProfileMgr, TrySelectProfile_001)
 {
 	// プロファイルマネージャ表示オプションが付いてたらプロファイルは確定しない
 	CCommandLineWrapper cCommandLine;
-	cCommandLine.ParseCommandLine( L"-PROFMGR", false );
-	ASSERT_FALSE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
+	cCommandLine.ParseCommandLine(L"-PROFMGR", false);
+	ASSERT_FALSE(CDlgProfileMgr::TrySelectProfile(&cCommandLine));
 }
 
 /*!
  * @brief TrySelectProfileのテスト
  */
-TEST( CDlgProfileMgr, TrySelectProfile_002 )
+TEST(CDlgProfileMgr, TrySelectProfile_002)
 {
 	// プロファイル名が指定されていたらプロファイルは確定する
 	CCommandLineWrapper cCommandLine;
-	cCommandLine.ParseCommandLine( L"-PROF=執筆用", false );
-	ASSERT_TRUE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
+	cCommandLine.ParseCommandLine(L"-PROF=執筆用", false);
+	ASSERT_TRUE(CDlgProfileMgr::TrySelectProfile(&cCommandLine));
 }
 
 /*!
  * @brief TrySelectProfileのテスト
  */
-TEST_F( CDlgProfileMgrIniTest, TrySelectProfile_003 )
+TEST_F(CDlgProfileMgrIniTest, TrySelectProfile_003)
 {
 	// プロファイル設定がなかったらプロファイルは確定する
 	CCommandLineWrapper cCommandLine;
-	ASSERT_TRUE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
+	ASSERT_TRUE(CDlgProfileMgr::TrySelectProfile(&cCommandLine));
 }
 
 /*!
  * @brief TrySelectProfileのテスト
  */
-TEST_F( CDlgProfileMgrIniTest, TrySelectProfile_004 )
+TEST_F(CDlgProfileMgrIniTest, TrySelectProfile_004)
 {
 	// プロファイル設定を作る
 	SProfileSettings settings;
 	settings.m_szDllLanguage[0] = L'\0';
-	settings.m_nDefaultIndex = 3;
-	settings.m_vProfList = { L"保存用", L"鑑賞用", L"使用用" };
-	settings.m_bDefaultSelect = true;
-	CDlgProfileMgr::WriteProfSettings( settings );
+	settings.m_nDefaultIndex	= 3;
+	settings.m_vProfList		= {L"保存用", L"鑑賞用", L"使用用"};
+	settings.m_bDefaultSelect	= true;
+	CDlgProfileMgr::WriteProfSettings(settings);
 
 	// プロファイル設定にデフォルト定義があればプロファイルは確定する
 	CCommandLineWrapper cCommandLine;
-	ASSERT_TRUE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
+	ASSERT_TRUE(CDlgProfileMgr::TrySelectProfile(&cCommandLine));
 }
 
 /*!
  * @brief TrySelectProfileのテスト
  */
-TEST_F( CDlgProfileMgrIniTest, TrySelectProfile_005 )
+TEST_F(CDlgProfileMgrIniTest, TrySelectProfile_005)
 {
 	// プロファイル設定を作る
 	SProfileSettings settings;
 	settings.m_szDllLanguage[0] = L'\0';
-	settings.m_nDefaultIndex = 4;
-	settings.m_vProfList = { L"保存用", L"鑑賞用", L"使用用" };
-	settings.m_bDefaultSelect = true;
-	CDlgProfileMgr::WriteProfSettings( settings );
+	settings.m_nDefaultIndex	= 4;
+	settings.m_vProfList		= {L"保存用", L"鑑賞用", L"使用用"};
+	settings.m_bDefaultSelect	= true;
+	CDlgProfileMgr::WriteProfSettings(settings);
 
 	// プロファイル設定にデフォルト定義がおかしればプロファイルは確定しない
 	CCommandLineWrapper cCommandLine;
-	ASSERT_FALSE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
+	ASSERT_FALSE(CDlgProfileMgr::TrySelectProfile(&cCommandLine));
 }
 
 /*!
  * @brief TrySelectProfileのテスト
  */
-TEST_F( CDlgProfileMgrIniTest, TrySelectProfile_006 )
+TEST_F(CDlgProfileMgrIniTest, TrySelectProfile_006)
 {
 	// 空のプロファイル設定を作る
 	SProfileSettings settings;
 	settings.m_szDllLanguage[0] = L'\0';
-	settings.m_nDefaultIndex = -1;
-	settings.m_bDefaultSelect = false;
-	CDlgProfileMgr::WriteProfSettings( settings );
+	settings.m_nDefaultIndex	= -1;
+	settings.m_bDefaultSelect	= false;
+	CDlgProfileMgr::WriteProfSettings(settings);
 
 	// プロファイル設定が空定義ならプロファイルは確定しない
 	CCommandLineWrapper cCommandLine;
-	ASSERT_FALSE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
+	ASSERT_FALSE(CDlgProfileMgr::TrySelectProfile(&cCommandLine));
 }

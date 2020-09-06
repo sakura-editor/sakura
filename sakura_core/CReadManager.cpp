@@ -23,9 +23,9 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include <io.h>	// _access
+#include <io.h> // _access
 #include "CReadManager.h"
-#include "CEditApp.h"	// CAppExitException
+#include "CEditApp.h" // CAppExitException
 #include "window/CEditWnd.h"
 #include "charset/CCodeMediator.h"
 #include "io/CFileLoad.h"
@@ -40,47 +40,50 @@
 	@date	2002/08/30 Moca 旧ReadFileを元に作成 ファイルアクセスに関する部分をCFileLoadで行う
 	@date	2003/07/26 ryoji BOMの状態の取得を追加
 */
-EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
-	CDocLineMgr*		pcDocLineMgr,	//!< [out]
-	const SLoadInfo&	sLoadInfo,		//!< [in]
-	SFileInfo*			pFileInfo		//!< [out]
+EConvertResult CReadManager::ReadFile_To_CDocLineMgr(CDocLineMgr *	  pcDocLineMgr, //!< [out]
+													 const SLoadInfo &sLoadInfo,	//!< [in]
+													 SFileInfo *	  pFileInfo		//!< [out]
 )
 {
 	LPCWSTR pszPath = sLoadInfo.cFilePath.c_str();
 
 	// 文字コード種別
-	const STypeConfigMini* type = NULL;
-	if( !CDocTypeManager().GetTypeConfigMini( sLoadInfo.nType, &type ) ){
-		return RESULT_FAILURE;
+	const STypeConfigMini *type = NULL;
+	if (!CDocTypeManager().GetTypeConfigMini(sLoadInfo.nType, &type)) { return RESULT_FAILURE; }
+	ECodeType eCharCode = sLoadInfo.eCharCode;
+	if (CODE_AUTODETECT == eCharCode)
+	{
+		CCodeMediator cmediator(type->m_encoding);
+		eCharCode = cmediator.CheckKanjiCodeOfFile(pszPath);
 	}
-	ECodeType	eCharCode = sLoadInfo.eCharCode;
-	if (CODE_AUTODETECT == eCharCode) {
-		CCodeMediator cmediator( type->m_encoding );
-		eCharCode = cmediator.CheckKanjiCodeOfFile( pszPath );
+	if (!IsValidCodeOrCPType(eCharCode))
+	{
+		eCharCode = type->m_encoding.m_eDefaultCodetype; // 2011.01.24 ryoji デフォルト文字コード
 	}
-	if (!IsValidCodeOrCPType( eCharCode )) {
-		eCharCode = type->m_encoding.m_eDefaultCodetype;	// 2011.01.24 ryoji デフォルト文字コード
+	bool bBom;
+	if (eCharCode == type->m_encoding.m_eDefaultCodetype)
+	{
+		bBom = type->m_encoding.m_bDefaultBom; // 2011.01.24 ryoji デフォルトBOM
 	}
-	bool	bBom;
-	if (eCharCode == type->m_encoding.m_eDefaultCodetype) {
-		bBom = type->m_encoding.m_bDefaultBom;	// 2011.01.24 ryoji デフォルトBOM
+	else
+	{
+		bBom = CCodeTypeName(eCharCode).IsBomDefOn();
 	}
-	else{
-		bBom = CCodeTypeName( eCharCode ).IsBomDefOn();
-	}
-	pFileInfo->SetCodeSet( eCharCode, bBom );
+	pFileInfo->SetCodeSet(eCharCode, bBom);
 
 	/* 既存データのクリア */
 	pcDocLineMgr->DeleteAllLine();
 
 	/* 処理中のユーザー操作を可能にする */
-	if( !::BlockingHook( NULL ) ){
+	if (!::BlockingHook(NULL))
+	{
 		return RESULT_FAILURE; //######INTERRUPT
 	}
 
 	EConvertResult eRet = RESULT_COMPLETE;
 
-	try{
+	try
+	{
 		CFileLoad cfl(type->m_encoding);
 
 		bool bBigFile;
@@ -92,14 +95,12 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		// ファイルを開く
 		// ファイルを閉じるにはFileCloseメンバ又はデストラクタのどちらかで処理できます
 		//	Jul. 28, 2003 ryoji BOMパラメータ追加
-		cfl.FileOpen( pszPath, bBigFile, eCharCode, GetDllShareData().m_Common.m_sFile.GetAutoMIMEdecode(), &bBom );
-		pFileInfo->SetBomExist( bBom );
+		cfl.FileOpen(pszPath, bBigFile, eCharCode, GetDllShareData().m_Common.m_sFile.GetAutoMIMEdecode(), &bBom);
+		pFileInfo->SetBomExist(bBom);
 
 		/* ファイル時刻の取得 */
-		FILETIME	FileTime;
-		if( cfl.GetFileTime( NULL, NULL, &FileTime ) ){
-			pFileInfo->SetFileTime( FileTime );
-		}
+		FILETIME FileTime;
+		if (cfl.GetFileTime(NULL, NULL, &FileTime)) { pFileInfo->SetFileTime(FileTime); }
 
 		// ReadLineはファイルから 文字コード変換された1行を読み出します
 		// エラー時はthrow CError_FileRead を投げます
@@ -107,21 +108,22 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		CNativeW		cUnicodeBuffer;
 		EConvertResult	eRead;
 		constexpr DWORD timeInterval = 33;
-		ULONGLONG nextTime = GetTickCount64() + timeInterval;
-		while( RESULT_FAILURE != (eRead = cfl.ReadLine( &cUnicodeBuffer, &cEol )) ){
-			if(eRead==RESULT_LOSESOME){
-				eRet = RESULT_LOSESOME;
-			}
-			const wchar_t*	pLine = cUnicodeBuffer.GetStringPtr();
-			int		nLineLen = cUnicodeBuffer.GetStringLength();
-			CDocEditAgent(pcDocLineMgr).AddLineStrX( pLine, nLineLen );
+		ULONGLONG		nextTime	 = GetTickCount64() + timeInterval;
+		while (RESULT_FAILURE != (eRead = cfl.ReadLine(&cUnicodeBuffer, &cEol)))
+		{
+			if (eRead == RESULT_LOSESOME) { eRet = RESULT_LOSESOME; }
+			const wchar_t *pLine	= cUnicodeBuffer.GetStringPtr();
+			int			   nLineLen = cUnicodeBuffer.GetStringLength();
+			CDocEditAgent(pcDocLineMgr).AddLineStrX(pLine, nLineLen);
 			//経過通知
 			ULONGLONG currTime = GetTickCount64();
-			if(currTime >= nextTime){
+			if (currTime >= nextTime)
+			{
 				nextTime += timeInterval;
 				NotifyProgress(cfl.GetPercent());
 				// 処理中のユーザー操作を可能にする
-				if( !::BlockingHook( NULL ) ){
+				if (!::BlockingHook(NULL))
+				{
 					throw CAppExitException(); //中断検出
 				}
 			}
@@ -130,62 +132,52 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		// ファイルをクローズする
 		cfl.FileClose();
 	}
-	catch(CAppExitException){
-		//WM_QUITが発生した
+	catch (CAppExitException)
+	{
+		// WM_QUITが発生した
 		return RESULT_FAILURE;
 	}
-	catch( const CError_FileOpen& ex ){
+	catch (const CError_FileOpen &ex)
+	{
 		eRet = RESULT_FAILURE;
-		if (ex.Reason() == CError_FileOpen::TOO_BIG) {
+		if (ex.Reason() == CError_FileOpen::TOO_BIG)
+		{
 			// ファイルサイズが大きすぎる (32bit 版の場合は 2GB あたりが上限)
-			ErrorMessage(
-				CEditWnd::getInstance()->GetHwnd(),
-				LS(STR_ERR_DLGDOCLM_TOOBIG),
-				pszPath
-			);
+			ErrorMessage(CEditWnd::getInstance()->GetHwnd(), LS(STR_ERR_DLGDOCLM_TOOBIG), pszPath);
 		}
-		else if( !fexist( pszPath )){
+		else if (!fexist(pszPath))
+		{
 			// ファイルがない
-			ErrorMessage(
-				CEditWnd::getInstance()->GetHwnd(),
-				LS(STR_ERR_DLGDOCLM1),	//Mar. 24, 2001 jepro 若干修正
-				pszPath
-			);
+			ErrorMessage(CEditWnd::getInstance()->GetHwnd(),
+						 LS(STR_ERR_DLGDOCLM1), // Mar. 24, 2001 jepro 若干修正
+						 pszPath);
 		}
-		else if( -1 == _waccess( pszPath, 4 )){
+		else if (-1 == _waccess(pszPath, 4))
+		{
 			// 読み込みアクセス権がない
-			ErrorMessage(
-				CEditWnd::getInstance()->GetHwnd(),
-				LS(STR_ERR_DLGDOCLM2),
-				pszPath
-			 );
+			ErrorMessage(CEditWnd::getInstance()->GetHwnd(), LS(STR_ERR_DLGDOCLM2), pszPath);
 		}
-		else{
-			ErrorMessage(
-				CEditWnd::getInstance()->GetHwnd(),
-				LS(STR_ERR_DLGDOCLM3),
-				pszPath
-			 );
+		else
+		{
+			ErrorMessage(CEditWnd::getInstance()->GetHwnd(), LS(STR_ERR_DLGDOCLM3), pszPath);
 		}
 	}
-	catch( CError_FileRead ){
+	catch (CError_FileRead)
+	{
 		eRet = RESULT_FAILURE;
-		ErrorMessage(
-			CEditWnd::getInstance()->GetHwnd(),
-			LS(STR_ERR_DLGDOCLM4),
-			pszPath
-		 );
+		ErrorMessage(CEditWnd::getInstance()->GetHwnd(), LS(STR_ERR_DLGDOCLM4), pszPath);
 		/* 既存データのクリア */
 		pcDocLineMgr->DeleteAllLine();
 	} // 例外処理終わり
 
 	NotifyProgress(0);
 	/* 処理中のユーザー操作を可能にする */
-	if( !::BlockingHook( NULL ) ){
+	if (!::BlockingHook(NULL))
+	{
 		return RESULT_FAILURE; //####INTERRUPT
 	}
 
 	/* 行変更状態をすべてリセット */
-//	CModifyVisitor().ResetAllModifyFlag(pcDocLineMgr, 0);
+	//	CModifyVisitor().ResetAllModifyFlag(pcDocLineMgr, 0);
 	return eRet;
 }

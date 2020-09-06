@@ -35,17 +35,15 @@
  */
 class CharsetDetector final
 {
-	CIcu4cI18n _icuin;
-	UCharsetDetector* _csd;
+	CIcu4cI18n		  _icuin;
+	UCharsetDetector *_csd;
 
 public:
 	CharsetDetector() noexcept;
 	~CharsetDetector() noexcept;
 
-	bool IsAvailable() const noexcept {
-		return _icuin.IsAvailable();
-	}
+	bool IsAvailable() const noexcept { return _icuin.IsAvailable(); }
 
-	ECodeType Detect(const std::string_view& bytes);
+	ECodeType Detect(const std::string_view &bytes);
 };
 #endif /* SAKURA_CHARSETDETECTOR_23D1755A_0001_4BAE_96C1_C3BD492E6BD0_H_ */

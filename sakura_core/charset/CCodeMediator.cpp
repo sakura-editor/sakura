@@ -17,16 +17,15 @@
 	UTF-7		CODE_UTF7
 	UnicodeBE	CODE_UNICODEBE
 */
-ECodeType CCodeMediator::CheckKanjiCode(const char* buff, size_t size) noexcept
+ECodeType CCodeMediator::CheckKanjiCode(const char *buff, size_t size) noexcept
 {
 	// 0バイトならタイプ別のデフォルト設定
-	if (size == 0) {
-		return m_sEncodingConfig.m_eDefaultCodetype;
-	}
+	if (size == 0) { return m_sEncodingConfig.m_eDefaultCodetype; }
 
 	// ICU4CのDLL群が利用できる場合、ICU4Cによる判定を試みる
 	CharsetDetector csd;
-	if (csd.IsAvailable()) {
+	if (csd.IsAvailable())
+	{
 		auto code = csd.Detect(std::string_view(buff, size));
 		if (code != CODE_ERROR) return code;
 	}
@@ -48,17 +47,13 @@ ECodeType CCodeMediator::CheckKanjiCode(const char* buff, size_t size) noexcept
 ||	UnicodeBE	CODE_UNICODEBE
 ||	エラー		CODE_ERROR
 */
-ECodeType CCodeMediator::CheckKanjiCodeOfFile(const WCHAR* pszFile)
+ECodeType CCodeMediator::CheckKanjiCodeOfFile(const WCHAR *pszFile)
 {
-	if (!pszFile) {
-		return CODE_ERROR;
-	}
+	if (!pszFile) { return CODE_ERROR; }
 
 	// オープン
 	CBinaryInputStream in(pszFile);
-	if(!in){
-		return CODE_ERROR;
-	}
+	if (!in) { return CODE_ERROR; }
 
 	// データ長取得
 	auto size = std::min<size_t>(in.GetLength(), CheckKanjiCode_MAXREADLENGTH);

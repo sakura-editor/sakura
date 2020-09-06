@@ -29,8 +29,9 @@
 #include "CConvert.h"
 
 //!全角英数→半角英数
-class CConvert_ZeneisuToHaneisu final : public CConvert{
+class CConvert_ZeneisuToHaneisu final : public CConvert
+{
 public:
-	bool DoConvert(CNativeW* pcData) override;
+	bool DoConvert(CNativeW *pcData) override;
 };
 #endif /* SAKURA_CCONVERT_ZENEISUTOHANEISU_D2E876FE_A781_4F64_B2CE_F6CBBF2FC563_H_ */

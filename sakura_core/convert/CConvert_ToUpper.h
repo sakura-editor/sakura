@@ -28,8 +28,9 @@
 
 #include "CConvert.h"
 
-class CConvert_ToUpper final : public CConvert{
+class CConvert_ToUpper final : public CConvert
+{
 public:
-	bool DoConvert(CNativeW* pcData) override;
+	bool DoConvert(CNativeW *pcData) override;
 };
 #endif /* SAKURA_CCONVERT_TOUPPER_B5706A27_CFA5_42C8_8B8A_5FA05967AABC_H_ */

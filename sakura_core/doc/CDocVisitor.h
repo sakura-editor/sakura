@@ -30,12 +30,16 @@
 
 class CEditDoc;
 
-class CDocVisitor{
+class CDocVisitor
+{
 public:
-	CDocVisitor(CEditDoc* pcDoc) : m_pcDocRef(pcDoc) { }
+	CDocVisitor(CEditDoc *pcDoc)
+		: m_pcDocRef(pcDoc)
+	{
+	}
 
 	void SetAllEol(CEol cEol); //!< 改行コードを統一する
 private:
-	CEditDoc* m_pcDocRef;
+	CEditDoc *m_pcDocRef;
 };
 #endif /* SAKURA_CDOCVISITOR_02993457_F17D_4B64_A914_C954D40568B1_H_ */

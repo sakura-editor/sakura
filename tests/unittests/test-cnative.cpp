@@ -50,8 +50,8 @@ TEST(CNativeW, ConstructWithoutParam)
 TEST(CNativeW, ConstructWithStringWithLength)
 {
 	constexpr const wchar_t sz[] = L"test";
-	constexpr const size_t cch = _countof(sz) - 1;
-	CNativeW value(sz, cch);
+	constexpr const size_t	cch	 = _countof(sz) - 1;
+	CNativeW				value(sz, cch);
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
 	EXPECT_LE(cch, value.capacity());
@@ -66,8 +66,8 @@ TEST(CNativeW, ConstructWithStringWithLength)
 TEST(CNativeW, ConstructWithString)
 {
 	constexpr const wchar_t sz[] = L"test";
-	constexpr const size_t cch = _countof(sz) - 1;
-	CNativeW value(sz);
+	constexpr const size_t	cch	 = _countof(sz) - 1;
+	CNativeW				value(sz);
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
 	EXPECT_LE(cch, value.capacity());
@@ -80,7 +80,7 @@ TEST(CNativeW, ConstructWithString)
 TEST(CNativeW, ConstructWithStringEmpty)
 {
 	constexpr const wchar_t sz[] = L"";
-	CNativeW value(sz);
+	CNativeW				value(sz);
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(0, value.GetStringLength());
 	EXPECT_LE(0, value.capacity());
@@ -110,8 +110,8 @@ TEST(CNativeW, ConstructWithStringNull)
 TEST(CNativeW, ConstructFromOtherByCopy)
 {
 	constexpr const wchar_t sz[] = L"test";
-	CNativeW other(sz);
-	CNativeW value(other);
+	CNativeW				other(sz);
+	CNativeW				value(other);
 	ASSERT_STREQ(other.GetStringPtr(), value.GetStringPtr());
 	EXPECT_EQ(other.GetStringLength(), value.GetStringLength());
 	EXPECT_EQ(other.capacity(), value.capacity());
@@ -128,9 +128,9 @@ TEST(CNativeW, ConstructFromOtherByCopy)
 TEST(CNativeW, ConstructFromOtherByMove)
 {
 	constexpr const wchar_t sz[] = L"test";
-	constexpr const size_t cch = _countof(sz) - 1;
-	CNativeW other(sz);
-	CNativeW value(std::move(other));
+	constexpr const size_t	cch	 = _countof(sz) - 1;
+	CNativeW				other(sz);
+	CNativeW				value(std::move(other));
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
 	EXPECT_LE(cch, value.capacity());
@@ -151,9 +151,9 @@ TEST(CNativeW, ConstructFromOtherByMove)
 TEST(CNativeW, CopyFromOther)
 {
 	constexpr const wchar_t sz[] = L"test";
-	constexpr const size_t cch = _countof(sz) - 1;
-	CNativeW value;
-	CNativeW other(sz);
+	constexpr const size_t	cch	 = _countof(sz) - 1;
+	CNativeW				value;
+	CNativeW				other(sz);
 	value = other;
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
@@ -173,9 +173,9 @@ TEST(CNativeW, CopyFromOther)
 TEST(CNativeW, MoveFromOther)
 {
 	constexpr const wchar_t sz[] = L"test";
-	constexpr const size_t cch = _countof(sz) - 1;
-	CNativeW value;
-	CNativeW other(sz);
+	constexpr const size_t	cch	 = _countof(sz) - 1;
+	CNativeW				value;
+	CNativeW				other(sz);
 	value = std::move(other);
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
@@ -196,12 +196,10 @@ TEST(CNativeW, MoveFromOther)
 TEST(CNativeW, GetCharAtIndex)
 {
 	constexpr const wchar_t sz[] = L"森鷗外";
-	constexpr const size_t cch = _countof(sz) - 1;
-	CNativeW value(sz, cch);
+	constexpr const size_t	cch	 = _countof(sz) - 1;
+	CNativeW				value(sz, cch);
 	EXPECT_EQ(cch, value.GetStringLength());
-	for (size_t index = 0; index < cch; ++index) {
-		EXPECT_EQ(sz[index], value[index]);
-	}
+	for (size_t index = 0; index < cch; ++index) { EXPECT_EQ(sz[index], value[index]); }
 	ASSERT_EQ(0, value[cch]);
 	EXPECT_EQ(0, value[value.capacity() + 1]);
 }
@@ -215,8 +213,8 @@ TEST(CNativeW, GetCharAtIndex)
 TEST(CNativeW, AssignString)
 {
 	constexpr const wchar_t sz[] = L"test";
-	constexpr const size_t cch = _countof(sz) - 1;
-	CNativeW value;
+	constexpr const size_t	cch	 = _countof(sz) - 1;
+	CNativeW				value;
 	value = sz;
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
@@ -258,8 +256,8 @@ TEST(CNativeW, AssignStringNullLiteral)
 TEST(CNativeW, AppendChar)
 {
 	constexpr const wchar_t sz[] = L"X";
-	constexpr const size_t cch = _countof(sz) - 1;
-	CNativeW value;
+	constexpr const size_t	cch	 = _countof(sz) - 1;
+	CNativeW				value;
 	value += sz[0];
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(1, value.GetStringLength());
@@ -275,8 +273,8 @@ TEST(CNativeW, AppendChar)
 TEST(CNativeW, AppendString)
 {
 	constexpr const wchar_t sz[] = L"test";
-	constexpr const size_t cch = _countof(sz) - 1;
-	CNativeW value;
+	constexpr const size_t	cch	 = _countof(sz) - 1;
+	CNativeW				value;
 	value += sz;
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(cch, value.GetStringLength());
@@ -332,7 +330,7 @@ TEST(CNativeW, AppendStringWithFormatting)
 	// 文字列長を0にして、追加確保が行われないケースをテストする
 	value = L"いちご100%"; //テスト前の初期値(念のため再代入しておく
 	value._SetStringLength(0);
-	value.AppendStringF(L"いちご%d%%", 25); //1文字短くなるような指定をしている
+	value.AppendStringF(L"いちご%d%%", 25); // 1文字短くなるような指定をしている
 	ASSERT_EQ(L"いちご25%", value);
 
 	// 追加フォーマットが空文字列となるケースをテストする
@@ -341,23 +339,23 @@ TEST(CNativeW, AppendStringWithFormatting)
 
 	// 未確保状態からの書式化をテストする
 	value = NULL; //テスト前の初期値(未確保
-	value.AppendStringF( L"KEY[%03d]", 12 );
-	ASSERT_EQ( L"KEY[012]", value );
+	value.AppendStringF(L"KEY[%03d]", 12);
+	ASSERT_EQ(L"KEY[012]", value);
 
 	// 文字列連結(書式でmax長指定)をテストする
-	value.AppendStringF( L"%.3s", L"abcdef" );
-	ASSERT_EQ( L"KEY[012]abc", value );
+	value.AppendStringF(L"%.3s", L"abcdef");
+	ASSERT_EQ(L"KEY[012]abc", value);
 
 	// 文字列連結(書式で出力長指定)をテストする
-	value.AppendStringF( L"%6s", L"abc" );
-	ASSERT_EQ( L"KEY[012]abc   abc", value );
+	value.AppendStringF(L"%6s", L"abc");
+	ASSERT_EQ(L"KEY[012]abc   abc", value);
 
 	// フォーマット出力長2047字を超える条件をテストする
 	{
-		std::wstring longText( 2048, L'=' );
+		std::wstring longText(2048, L'=');
 		value = NULL; //テスト前の初期値(未確保
-		value.AppendStringF( L"%s", longText.c_str() );
-		ASSERT_EQ( longText.c_str(), value );
+		value.AppendStringF(L"%s", longText.c_str());
+		ASSERT_EQ(longText.c_str(), value);
 	}
 }
 
@@ -388,7 +386,7 @@ TEST(CNativeW, operatorEqualNullptr)
 TEST(CNativeW, operatorEqualStringNull)
 {
 	CNativeW value;
-	LPCWSTR str = NULL;
+	LPCWSTR	 str = NULL;
 	ASSERT_EQ(value, str);
 }
 
@@ -497,8 +495,8 @@ TEST(CNativeW, operatorNotEqualNotSameContent)
 TEST(CNativeW, operatorEqualSameString)
 {
 	constexpr const wchar_t text[] = L"おっす！オラ(ry";
-	CNativeW value(text);
-	LPCWSTR str = text;
+	CNativeW				value(text);
+	LPCWSTR					str = text;
 	ASSERT_EQ(value, str);
 }
 
@@ -509,7 +507,7 @@ TEST(CNativeW, operatorEqualSameString)
 TEST(CNativeW, operatorNotEqualAlmostSameString)
 {
 	CNativeW value(L"おっす！オラ(ry");
-	LPCWSTR str = L"おっと！オラ(ry";
+	LPCWSTR	 str = L"おっと！オラ(ry";
 	ASSERT_NE(value, str);
 }
 
@@ -520,7 +518,7 @@ TEST(CNativeW, operatorNotEqualAlmostSameString)
 TEST(CNativeW, operatorNotEqualNullptr)
 {
 	constexpr const wchar_t text[] = L"おっす！オラ(ry";
-	CNativeW value(text);
+	CNativeW				value(text);
 	ASSERT_NE(value, nullptr);
 }
 
@@ -531,8 +529,8 @@ TEST(CNativeW, operatorNotEqualNullptr)
 TEST(CNativeW, operatorNotEqualStringNull)
 {
 	constexpr const wchar_t text[] = L"おっす！オラ(ry";
-	CNativeW value(text);
-	LPCWSTR str = NULL;
+	CNativeW				value(text);
+	LPCWSTR					str = NULL;
 	ASSERT_NE(value, str);
 }
 
@@ -581,55 +579,55 @@ TEST(CNativeW, ReplaceWithSomeChanges)
 */
 TEST(CNativeW, Clear)
 {
-	constexpr const WCHAR*	fixedPatternStr = L"abc";
-	constexpr const int		fixedPatternLen = 3;
-	
+	constexpr const WCHAR *fixedPatternStr = L"abc";
+	constexpr const int	   fixedPatternLen = 3;
+
 	CNativeW stringW;
-	
+
 	// 0. バッファが空の状態でクリアする
 	stringW.Clear();
 
 	// 1-1. 固定データを追加する
 
-	stringW.AppendString(fixedPatternStr);			// 固定データを追加する
+	stringW.AppendString(fixedPatternStr); // 固定データを追加する
 
 	// 1-2. バッファの状態を取得する
-	
-	auto orgCapacity = stringW.capacity();			// データ追加後にバッファサイズを取得する
-	auto orgLength   = stringW.GetStringLength();	// Clear() 前にデータサイズを取得する
+
+	auto orgCapacity = stringW.capacity();		  // データ追加後にバッファサイズを取得する
+	auto orgLength	 = stringW.GetStringLength(); // Clear() 前にデータサイズを取得する
 
 	// 1-3. バッファの状態をチェックする
 
-	EXPECT_LE(0, orgCapacity);						// データ追加後のバッファサイズを確認する
-	EXPECT_EQ(orgLength, fixedPatternLen);			// データ追加後のデータサイズを確認する
+	EXPECT_LE(0, orgCapacity);			   // データ追加後のバッファサイズを確認する
+	EXPECT_EQ(orgLength, fixedPatternLen); // データ追加後のデータサイズを確認する
 
 	// 2-1. CNativeW をクリアする
-	
-	stringW.Clear();								// CNativeW をクリアする
+
+	stringW.Clear(); // CNativeW をクリアする
 
 	// 2-2. クリア後のバッファの状態を取得する
 
-	auto newCapacity = stringW.capacity();			// Clear() 後にバッファサイズを取得する
-	auto newLength   = stringW.GetStringLength();	// Clear() 後にデータサイズを取得する
+	auto newCapacity = stringW.capacity();		  // Clear() 後にバッファサイズを取得する
+	auto newLength	 = stringW.GetStringLength(); // Clear() 後にデータサイズを取得する
 
 	// 2-3. クリア後のバッファの状態をチェックする
-	
-	EXPECT_EQ(orgCapacity, newCapacity);			// Clear() 後にバッファサイズが変わっていないのを確認する
-	EXPECT_EQ(newLength, 0);						// Clear() 後にデータが空なのを確認する
+
+	EXPECT_EQ(orgCapacity, newCapacity); // Clear() 後にバッファサイズが変わっていないのを確認する
+	EXPECT_EQ(newLength, 0);			 // Clear() 後にデータが空なのを確認する
 
 	// 3-1. 固定データを再追加する
 
-	stringW.AppendString(fixedPatternStr);			// Clear() 後に固定データを再追加する
+	stringW.AppendString(fixedPatternStr); // Clear() 後に固定データを再追加する
 
 	// 3-2. バッファの状態を取得する
-	
-	auto newCapacity2 = stringW.capacity();			// 再追加後にバッファサイズを取得する
-	auto newLength2   = stringW.GetStringLength();	// 再追加後にデータサイズを取得する
+
+	auto newCapacity2 = stringW.capacity();		   // 再追加後にバッファサイズを取得する
+	auto newLength2	  = stringW.GetStringLength(); // 再追加後にデータサイズを取得する
 
 	// 3-3. バッファの状態をチェックする
-	
-	EXPECT_EQ(orgCapacity, newCapacity2);			// 再追加後にバッファサイズが変わっていないのを確認する
-	EXPECT_EQ(newLength2, fixedPatternLen);			// 再追加後にデータサイズを確認する
+
+	EXPECT_EQ(orgCapacity, newCapacity2); // 再追加後にバッファサイズが変わっていないのを確認する
+	EXPECT_EQ(newLength2, fixedPatternLen); // 再追加後にデータサイズを確認する
 }
 
 /*!
@@ -661,19 +659,15 @@ TEST(CNativeW, CheckEmpty)
 TEST(CNativeW, CompareWithCNativeW)
 {
 	//互いに値の異なる文字列定数を定義する
-	constexpr const wchar_t szS0[]	= L"a\0b\0c";
-	constexpr const wchar_t szM0[]	= L"a\0a\0c\0";
-	constexpr const wchar_t szM1[]	= L"a\0b\0c\0";
-	constexpr const wchar_t szM2[]	= L"a\0c\0c\0";
-	constexpr const wchar_t szL0[]	= L"a\0b\0c\0d";
+	constexpr const wchar_t szS0[] = L"a\0b\0c";
+	constexpr const wchar_t szM0[] = L"a\0a\0c\0";
+	constexpr const wchar_t szM1[] = L"a\0b\0c\0";
+	constexpr const wchar_t szM2[] = L"a\0c\0c\0";
+	constexpr const wchar_t szL0[] = L"a\0b\0c\0d";
 
 	// 値なしの変数と文字列定数に対応するCNativeWのインスタンスを用意する
-	CNativeW cN0, cN1
-		, cS0(szS0, _countof(szS0))
-		, cM0(szM0, _countof(szM0))
-		, cM1(szM1, _countof(szM1))
-		, cM2(szM2, _countof(szM2))
-		, cL0(szL0, _countof(szL0));
+	CNativeW cN0, cN1, cS0(szS0, _countof(szS0)), cM0(szM0, _countof(szM0)), cM1(szM1, _countof(szM1)),
+		cM2(szM2, _countof(szM2)), cL0(szL0, _countof(szL0));
 
 	// 比較
 	// ASSERT_GTの判定仕様は v1 > v2
@@ -702,12 +696,12 @@ TEST(CNativeW, CompareWithCNativeW)
 TEST(CNativeW, CompareWithStringPtr)
 {
 	//互いに値の異なる文字列定数を定義する
-	constexpr const wchar_t* pcN0 = nullptr;
-	constexpr const wchar_t szS0[] = L"ab";
-	constexpr const wchar_t szM0[] = L"aac";
-	constexpr const wchar_t szM1[] = L"abc";
-	constexpr const wchar_t szM2[] = L"acc";
-	constexpr const wchar_t szL0[] = L"abcd";
+	constexpr const wchar_t *pcN0	= nullptr;
+	constexpr const wchar_t	 szS0[] = L"ab";
+	constexpr const wchar_t	 szM0[] = L"aac";
+	constexpr const wchar_t	 szM1[] = L"abc";
+	constexpr const wchar_t	 szM2[] = L"acc";
+	constexpr const wchar_t	 szL0[] = L"abcd";
 
 	// 定数に対応するCNativeWのインスタンスを用意する
 	CNativeW cN0(pcN0), cM1(szM1);
@@ -733,11 +727,11 @@ TEST(CNativeW, CompareWithStringPtr)
  */
 TEST(CNativeW, globalOperatorAdd)
 {
-	CNativeW v1(L"前半");
+	CNativeW				v1(L"前半");
 	constexpr const wchar_t v2[] = L"後半";
 	EXPECT_STREQ(L"前半後半", (v1 + v2).GetStringPtr());
 
 	constexpr const wchar_t v3[] = L"前半";
-	CNativeW v4(L"後半");
+	CNativeW				v4(L"後半");
 	EXPECT_STREQ(L"前半後半", (v3 + v4).GetStringPtr());
 }

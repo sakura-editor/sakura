@@ -11,8 +11,8 @@
 	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
 	freely, subject to the following restrictions:
 
 		1. The origin of this software must not be misrepresented;
@@ -21,7 +21,7 @@
 		   in the product documentation would be appreciated but is
 		   not required.
 
-		2. Altered source versions must be plainly marked as such, 
+		2. Altered source versions must be plainly marked as such,
 		   and must not be misrepresented as being the original software.
 
 		3. This notice may not be removed or altered from any source
@@ -38,17 +38,17 @@
 
 struct SProfileSettings
 {
-	WCHAR m_szDllLanguage[_MAX_PATH];
-	int	m_nDefaultIndex;
+	WCHAR					  m_szDllLanguage[_MAX_PATH];
+	int						  m_nDefaultIndex;
 	std::vector<std::wstring> m_vProfList;
-	bool m_bDefaultSelect;
+	bool					  m_bDefaultSelect;
 };
 
 class CDlgProfileMgr final : public CDialog
 {
 public:
 	//! コマンドラインだけでプロファイルが確定するか調べる
-	static bool TrySelectProfile( CCommandLine* pcCommandLine ) noexcept;
+	static bool TrySelectProfile(CCommandLine *pcCommandLine) noexcept;
 
 	/*
 	||  Constructors
@@ -57,29 +57,29 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int		DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);	/* モーダルダイアログの表示 */
+	int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam); /* モーダルダイアログの表示 */
 
 protected:
-
 	BOOL	OnBnClicked(int wID) override;
-	INT_PTR	DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ) override;
+	INT_PTR DispatchEvent(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam) override;
 
-	void	SetData() override;	/* ダイアログデータの設定 */
-	void	SetData(int nSelIndex);	/* ダイアログデータの設定 */
-	int		GetData() override;	/* ダイアログデータの取得 */
-	int		GetData(bool bStart);	/* ダイアログデータの取得 */
-	LPVOID	GetHelpIdTable(void) override;
+	void   SetData() override;	   /* ダイアログデータの設定 */
+	void   SetData(int nSelIndex); /* ダイアログデータの設定 */
+	int	   GetData() override;	   /* ダイアログデータの取得 */
+	int	   GetData(bool bStart);   /* ダイアログデータの取得 */
+	LPVOID GetHelpIdTable(void) override;
 
-	void	UpdateIni();
-	void	CreateProf();
-	void	DeleteProf();
-	void	RenameProf();
-	void	SetDefaultProf(int index);
-	void	ClearDefaultProf();
+	void UpdateIni();
+	void CreateProf();
+	void DeleteProf();
+	void RenameProf();
+	void SetDefaultProf(int index);
+	void ClearDefaultProf();
+
 public:
 	std::wstring m_strProfileName;
 
-	static bool ReadProfSettings(SProfileSettings& settings);
-	static bool WriteProfSettings(SProfileSettings& settings);
+	static bool ReadProfSettings(SProfileSettings &settings);
+	static bool WriteProfSettings(SProfileSettings &settings);
 };
 #endif /* SAKURA_CDLGPROFILEMGR_E77A329C_4D06_436A_84E3_01B4D8F34A9A_H_ */
