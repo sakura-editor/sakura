@@ -235,7 +235,7 @@ const wchar_t *CSearchAgent::SearchString(const wchar_t *pLine, int nLineLen, in
 				if (i >= nPatternLen) { return &pLine[nPos - nPatternLen]; }
 				i = nextTable[i];
 			}
-			assert(0 == i); // -1チェック
+			; // -1チェック
 		}
 	}
 	else

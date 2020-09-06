@@ -632,7 +632,7 @@ bool InitRegexp(HWND	  hWnd, //!< [in] ダイアログボックスのウィン�
 			else
 			{
 				pszMsg = LS(STR_BREGONIG_ERROR);
-				assert(0);
+				;
 			}
 			::MessageBox(hWnd, pszMsg, LS(STR_BREGONIG_TITLE), MB_OK | MB_ICONEXCLAMATION);
 		}

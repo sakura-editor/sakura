@@ -133,7 +133,7 @@ bool CFigure_Eol::DrawImp(SColorStrategyInfo *pInfo)
 	{
 		// 無限ループ対策
 		pInfo->m_nPosInLogic += 1;
-		assert_warning(1);
+		;
 	}
 
 	return true;

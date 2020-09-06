@@ -1106,6 +1106,7 @@ bool CControlTray::OpenNewEditor(HINSTANCE hInstance, //!< [in] インスタン�
 		{
 			WCHAR szIniDir[_MAX_PATH];
 			GetInidir(szIniDir);
+#line 1200
 			LPWSTR pszTempFile = _wtempnam(szIniDir, L"skr_resp");
 			if (!pszTempFile)
 			{

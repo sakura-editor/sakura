@@ -249,7 +249,7 @@ int CDlgFileTree::GetData()
 		if (bSaveShareData)
 		{
 			pFileTree->m_nItemCount = (int)items.size();
-			assert(pFileTree->m_nItemCount <= _countof(pFileTree->m_aItems));
+			;
 			for (int i = 0; i < pFileTree->m_nItemCount; i++) { pFileTree->m_aItems[i] = items[i]; }
 		}
 		if (m_fileTreeSetting.m_eFileTreeSettingOrgType == EFileTreeSettingFrom_Type)
@@ -673,7 +673,7 @@ BOOL CDlgFileTree::OnBnClicked(int wID)
 		}
 		else
 		{
-			assert(wID == IDC_BUTTON_INSERT);
+			;
 			// 挿入(上)
 			// 挿入先を探る
 			htiParent = TreeView_GetParent(hwndTree, htiTemp);

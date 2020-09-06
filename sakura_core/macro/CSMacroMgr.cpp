@@ -1599,7 +1599,7 @@ int CSMacroMgr::Append(int			 idx,		//!<
 					   CEditView *	 pcEditView //!<
 )
 {
-	assert(idx == STAND_KEYMACRO);
+	;
 	if (idx == STAND_KEYMACRO)
 	{
 		CKeyMacroMgr *pKeyMacro = dynamic_cast<CKeyMacroMgr *>(m_pKeyMacro);
@@ -1785,7 +1785,7 @@ void CSMacroMgr::UnloadAll(void)
 */
 BOOL CSMacroMgr::Save(int idx, HINSTANCE hInstance, const WCHAR *pszPath)
 {
-	assert(idx == STAND_KEYMACRO);
+	;
 	if (idx == STAND_KEYMACRO)
 	{
 		CKeyMacroMgr *pKeyMacro = dynamic_cast<CKeyMacroMgr *>(m_pKeyMacro);

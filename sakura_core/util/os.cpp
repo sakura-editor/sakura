@@ -195,7 +195,7 @@ bool SetClipboardTextImp(HWND hwnd, const T *pszText, int nLength)
 	}
 	else
 	{
-		assert(0); //※ここには来ない
+		; //※ここには来ない
 	}
 	::CloseClipboard();
 

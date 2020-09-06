@@ -202,7 +202,7 @@ void CEditView::DrawBackImage(HDC hdc, RECT &rcPaint, HDC hdcBgImg)
 	case BGIMAGE_CENTER:
 		rcImagePos.left = area.GetAreaLeft() + area.GetAreaWidth() / 2 - doc.m_nBackImgWidth / 2;
 		break;
-	default: assert_warning(0 != typeConfig.m_backImgPos); break;
+	default: ; break;
 	}
 	switch (typeConfig.m_backImgPos)
 	{
@@ -217,7 +217,7 @@ void CEditView::DrawBackImage(HDC hdc, RECT &rcPaint, HDC hdcBgImg)
 	case BGIMAGE_CENTER:
 		rcImagePos.top = area.GetAreaTop() + area.GetAreaHeight() / 2 - doc.m_nBackImgHeight / 2;
 		break;
-	default: assert_warning(0 != typeConfig.m_backImgPos); break;
+	default: ; break;
 	}
 	rcImagePos.left += typeConfig.m_backImgPosOffset.x;
 	rcImagePos.top += typeConfig.m_backImgPosOffset.y;
@@ -616,7 +616,7 @@ void CEditView::OnPaint2(HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp)
 	// 2007.09.09 Moca bUseMemoryDCを有効化。
 	// bUseMemoryDC = FALSE;
 	BOOL bUseMemoryDC = (m_hdcCompatDC != NULL);
-	assert_warning(gr != m_hdcCompatDC);
+	;
 	bool bClipping = false;
 	if (bUseMemoryDC)
 	{

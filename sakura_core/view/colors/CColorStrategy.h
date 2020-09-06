@@ -60,7 +60,7 @@ inline int ToColorInfoArrIndex(const EColorIndexType eColorIndex)
 	else if (eColorIndex & COLORIDX_REGEX_BIT)
 		return ToColorInfoArrIndex_RegularExpression(eColorIndex);
 
-	assert(0); // ここには来ない
+	; // ここには来ない
 	return COLORIDX_TEXT;
 }
 

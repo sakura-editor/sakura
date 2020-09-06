@@ -254,6 +254,7 @@ void CMemory::AllocBuffer(int nNewDataLen)
 	if (m_nDataBufSize == 0)
 	{
 		/* 未確保の状態 */
+#line 999
 		pWork = malloc_char(nWorkLen);
 	}
 	else
@@ -266,10 +267,12 @@ void CMemory::AllocBuffer(int nNewDataLen)
 			{
 				free(m_pRawData);
 				m_pRawData = NULL;
+#line 999
 				pWork	   = malloc_char(nWorkLen);
 			}
 			else
 			{
+#line 999
 				pWork = (char *)realloc(m_pRawData, nWorkLen);
 			}
 		}
@@ -319,7 +322,7 @@ void CMemory::SetRawData(const CMemory &pcmemData)
 void CMemory::SetRawDataHoldBuffer(const void *pData, int nDataLen)
 {
 	// this 重複不可
-	assert(m_pRawData != pData);
+	;
 	if (m_nRawLen != 0) { _SetRawLength(0); }
 	AllocBuffer(nDataLen);
 	_AddData(pData, nDataLen);
@@ -379,12 +382,12 @@ void CMemory::_SetRawLength(int nLength)
 	if (m_pRawData == NULL || m_nDataBufSize <= 0)
 	{
 		// バッファが確保されていない状態の場合、有効データサイズを 0 にする要求しか来ないはず
-		assert(nLength == 0);
+		;
 		return;
 	}
-	assert(m_nRawLen <= m_nDataBufSize - 2); // m_nRawLen を変更する前に必要な条件が成立しているか確認する
+	; // m_nRawLen を変更する前に必要な条件が成立しているか確認する
 	m_nRawLen = nLength;
-	assert(m_nRawLen <= m_nDataBufSize - 2); // m_nRawLen を変更した後も必要な条件が成立しているか確認する
+	; // m_nRawLen を変更した後も必要な条件が成立しているか確認する
 	m_pRawData[m_nRawLen]	  = 0;
 	m_pRawData[m_nRawLen + 1] = 0; //終端'\0'を2つ付加する('\0''\0'==L'\0')。
 }

@@ -98,7 +98,7 @@ COutlineErlang::COutlineErlang()
 */
 const wchar_t *COutlineErlang::ScanFuncName(const wchar_t *buf, const wchar_t *end, const wchar_t *p)
 {
-	assert(m_state == STATE_NORMAL);
+	;
 
 	if (p > buf || !(IS_ATOM_HEAD(*p) || *p == L'\'')) { return end; }
 
@@ -147,7 +147,7 @@ const wchar_t *COutlineErlang::ScanFuncName(const wchar_t *buf, const wchar_t *e
 */
 const wchar_t *COutlineErlang::EnterArgs(const wchar_t *end, const wchar_t *p)
 {
-	assert(m_state == STATE_FUNC_CANDIDATE_FIN);
+	;
 
 	while (IS_SPACE(*p) && p < end) p++;
 
@@ -179,7 +179,7 @@ const wchar_t *COutlineErlang::EnterArgs(const wchar_t *end, const wchar_t *p)
 */
 const wchar_t *COutlineErlang::ScanArgs1(const wchar_t *end, const wchar_t *p)
 {
-	assert(m_state == STATE_FUNC_ARGS1);
+	;
 
 	while (IS_SPACE(*p) && p < end) p++;
 
@@ -215,7 +215,7 @@ const wchar_t *COutlineErlang::ScanArgs1(const wchar_t *end, const wchar_t *p)
 */
 const wchar_t *COutlineErlang::ScanArgs(const wchar_t *end, const wchar_t *p)
 {
-	assert(m_state == STATE_FUNC_ARGS);
+	;
 
 	const int parptr_max = _countof(m_parenthesis);
 	wchar_t	  quote		 = L'\0'; // 先頭位置を保存

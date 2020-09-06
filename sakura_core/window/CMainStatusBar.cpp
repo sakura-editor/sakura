@@ -94,7 +94,7 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR *pszText
 {
 	if (!m_hwndStatusBar)
 	{
-		assert(m_hwndStatusBar != NULL);
+		;
 		return;
 	}
 	// StatusBar_SetText 関数を呼びだすかどうかを判定するラムダ式

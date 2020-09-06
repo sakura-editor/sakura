@@ -712,7 +712,7 @@ wchar_t *ExParam_LongName(wchar_t *q, wchar_t *q_max, EExpParamName eLongParam)
 		q				= wcs_pushW(q, q_max - q, pszProf);
 	}
 	break;
-	default: assert(0); break;
+	default: ; break;
 	}
 	return q;
 }
@@ -773,7 +773,7 @@ std::wstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
 		return szSelDir;
 	}
 	break;
-	default: assert(0); return L"";
+	default: ; return L"";
 	}
 }
 

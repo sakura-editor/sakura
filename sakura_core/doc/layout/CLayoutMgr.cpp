@@ -116,8 +116,8 @@ void CLayoutMgr::SetLayoutInfo(bool bDoLayout, bool bBlockingHook, const STypeCo
 {
 	MY_RUNNINGTIMER(cRunningTimer, "CLayoutMgr::SetLayoutInfo");
 
-	assert_warning((!bDoLayout && m_nMaxLineKetas == nMaxLineKetas) || bDoLayout);
-	assert_warning((!bDoLayout && m_nTabSpace == refType.m_nTabSpace) || bDoLayout);
+	;
+	;
 
 	//タイプ別設定
 	m_pTypeConfig		 = &refType;
