@@ -72,7 +72,8 @@ BOOL CViewCommander::Command_FUNCLIST(
 		case SHOW_NORMAL: // アクティブにする
 			// 開いているものと種別が同じかつ内容が最新ならActiveにするだけ．それ以外なら再解析
 			GetEditWindow()->m_cDlgFuncList.SyncColor();
-			if( GetEditWindow()->m_cDlgFuncList.CheckListType( nOutlineType )){
+			if( GetEditWindow()->m_cDlgFuncList.CheckListType( nOutlineType )
+				&& GetEditWindow()->m_cDlgFuncList.IsUpToDate() ){
 				if( bForeground ){
 					::SetFocus( GetEditWindow()->m_cDlgFuncList.GetHwnd() );
 				}

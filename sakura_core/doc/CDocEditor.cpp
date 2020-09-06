@@ -55,6 +55,8 @@ CDocEditor::CDocEditor(CEditDoc* pcDoc)
 */
 void CDocEditor::SetModified( bool flag, bool redraw)
 {
+	m_pcDocRef->m_pcEditWnd->m_cDlgFuncList.NotifyDocModification();
+
 	if( m_bIsDocModified == flag )	//	変更がなければ何もしない
 		return;
 

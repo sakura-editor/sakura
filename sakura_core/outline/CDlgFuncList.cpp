@@ -346,6 +346,7 @@ HWND CDlgFuncList::DoModeless(
 	CEditView* pcEditView=(CEditView*)lParam;
 	if( !pcEditView ) return NULL;
 	m_pcFuncInfoArr = pcFuncInfoArr;	/* 関数情報配列 */
+	m_bFuncInfoArrIsUpToDate = true;
 	m_nCurLine = nCurLine;				/* 現在行 */
 	m_nCurCol = nCurCol;				/* 現在桁 */
 	m_nOutlineType = nOutlineType;		/* アウトライン解析の種別 */
@@ -2553,6 +2554,7 @@ void CDlgFuncList::Redraw( int nOutLineType, int nListType, CFuncInfoArr* pcFunc
 	m_nOutlineType = nOutLineType;
 	m_nListType = nListType;
 	m_pcFuncInfoArr = pcFuncInfoArr;	/* 関数情報配列 */
+	m_bFuncInfoArrIsUpToDate = true;
 	m_nCurLine = nCurLine;				/* 現在行 */
 	m_nCurCol = nCurCol;				/* 現在桁 */
 
@@ -3913,6 +3915,14 @@ void CDlgFuncList::NotifyCaretMovement( CLayoutInt nCurLine, CLayoutInt nCurCol 
 		return;
 	}
 
+	if( !m_bFuncInfoArrIsUpToDate ){
+		return;
+	}
+
+	if( m_nCurLine == nCurLine && m_nCurCol == nCurCol ){
+		return;
+	}
+
 	m_nCurLine = nCurLine;
 	m_nCurCol = nCurCol;
 
@@ -3961,11 +3971,15 @@ void CDlgFuncList::SetItemSelection( int nFuncInfoIndex )
 */
 void CDlgFuncList::SetItemSelectionForTreeView( HWND hwndTree, int nFuncInfoIndex )
 {
-	// 関数情報のインデックスに該当するアイテム探してを選択状態に
+	if( nFuncInfoIndex == -1 ){
+		TreeView_SelectItem( hwndTree, NULL );
+		return;
+	}
+
 	std::vector<HTREEITEM> htiStack;
 	htiStack.reserve( TreeView_GetCount( hwndTree ) );
 	htiStack.push_back( TreeView_GetRoot( hwndTree ) );
-	int nStackIndex = 0;
+	size_t nStackIndex = 0;
 	bool bFound = false;
 	while( !bFound && nStackIndex < htiStack.size() ){
 		HTREEITEM htiCurrent = htiStack[nStackIndex];
@@ -4000,8 +4014,12 @@ void CDlgFuncList::SetItemSelectionForTreeView( HWND hwndTree, int nFuncInfoInde
 */
 void CDlgFuncList::SetItemSelectionForListView( HWND hwndList, int nFuncInfoIndex )
 {
-	ListView_SetItemState( hwndList, nFuncInfoIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-	ListView_EnsureVisible( hwndList, nFuncInfoIndex, FALSE );
+	if( nFuncInfoIndex != -1 ){
+		ListView_SetItemState( hwndList, nFuncInfoIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
+		ListView_EnsureVisible( hwndList, nFuncInfoIndex, FALSE );
+	}else{
+		ListView_SetItemState( hwndList, nFuncInfoIndex, 0, LVIS_SELECTED | LVIS_FOCUSED );
+	}
 
 	return;
 }
