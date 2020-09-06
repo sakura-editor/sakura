@@ -12,6 +12,12 @@ def cutcomment(fileName):
 			with codecs.open(fileName, "r", "utf_8_sig") as fin:
 				for line in fin:
 					line = re.sub(r'\s*;.*$', '', line)
+					
+					# 空行を削除する
+					match = re.search(r'^\s*$', line)
+					if match:
+						continue
+					
 					fout.write(line)
 		os.remove(fileName)
 		os.rename(tmp_file, fileName)
