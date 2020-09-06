@@ -19,6 +19,17 @@ def tweek_source(fin, fout):
 		if match:
 			line = re.sub(pattern, r'//', line)
 			fout.write(line)
+
+			while True:
+				# セミコロンの有無をチェック
+				match2 = re.search(r';', line)
+				if match2:
+					break
+				
+				line = fin.readline()
+				#line = re.sub(r'^(\s*)', r'\1//', line)
+				fout.write(r'//' + line)
+
 			continue
 
 		# malloc の前の行に #line を挿入
@@ -41,6 +52,8 @@ def tweek_source(fin, fout):
 			fout.write("#line 1200\r\n")
 			fout.write(line)
 			continue
+
+		# そのまま出力
 		fout.write(line)
 
 def cutcomment(fileName):
