@@ -26,7 +26,7 @@
 #include "apiwrap/StdControl.h"
 
 /*!
-*/
+ */
 TEST(StdControl, Wnd_GetText)
 {
 	CNativeW tempText;

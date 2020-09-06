@@ -11,8 +11,8 @@
 	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
 	freely, subject to the following restrictions:
 
 		1. The origin of this software must not be misrepresented;
@@ -21,7 +21,7 @@
 		   in the product documentation would be appreciated but is
 		   not required.
 
-		2. Altered source versions must be plainly marked as such, 
+		2. Altered source versions must be plainly marked as such,
 		   and must not be misrepresented as being the original software.
 
 		3. This notice may not be removed or altered from any source
@@ -32,8 +32,5 @@
 #define SAKURA_HANDCURSOR_096969CA_716E_4F14_9CE4_1C1CAED014EA_H_
 #pragma once
 
-inline void SetHandCursor ()
-{
-	SetCursor( LoadCursor( NULL, IDC_HAND ) );
-}
+inline void SetHandCursor() { SetCursor(LoadCursor(NULL, IDC_HAND)); }
 #endif /* SAKURA_HANDCURSOR_096969CA_716E_4F14_9CE4_1C1CAED014EA_H_ */

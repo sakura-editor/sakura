@@ -102,10 +102,8 @@ TEST(SSearchOption, operatorEqualAndNotEqual)
  */
 TEST(SSearchOption, Reset)
 {
-	SSearchOption value{ true,true,true }, other;
+	SSearchOption value{true, true, true}, other;
 	EXPECT_NE(value, other);
 	value.Reset();
 	ASSERT_EQ(value, other);
-
 }
-

@@ -11,8 +11,8 @@
 	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
 	freely, subject to the following restrictions:
 
 		1. The origin of this software must not be misrepresented;
@@ -21,7 +21,7 @@
 		   in the product documentation would be appreciated but is
 		   not required.
 
-		2. Altered source versions must be plainly marked as such, 
+		2. Altered source versions must be plainly marked as such,
 		   and must not be misrepresented as being the original software.
 
 		3. This notice may not be removed or altered from any source
@@ -46,28 +46,28 @@ public:
 	int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);
 
 private:
-	BOOL	OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
-	BOOL	OnBnClicked(int wID) override;
-	BOOL	OnNotify(NMHDR* pNMHDR) override;
-	LPVOID	GetHelpIdTable() override;
-	void	SetData() override;
-	int		GetData() override;
+	BOOL   OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
+	BOOL   OnBnClicked(int wID) override;
+	BOOL   OnNotify(NMHDR *pNMHDR) override;
+	LPVOID GetHelpIdTable() override;
+	void   SetData() override;
+	int	   GetData() override;
 
-	void	SetDataInit();
-	void	SetDataItem(int nItemIndex);
-	void	ChangeEnableItemType();
-	void	ChangeEnableAddInsert();
-	int		GetDataItem(SFileTreeItem& item);
-	bool	GetDataTree(std::vector<SFileTreeItem>& data, HTREEITEM hItem, int nLevel, int nMaxCount);
-	HTREEITEM InsertTreeItem(SFileTreeItem& item, HTREEITEM htiParent, HTREEITEM htiInsert);
+	void	  SetDataInit();
+	void	  SetDataItem(int nItemIndex);
+	void	  ChangeEnableItemType();
+	void	  ChangeEnableAddInsert();
+	int		  GetDataItem(SFileTreeItem &item);
+	bool	  GetDataTree(std::vector<SFileTreeItem> &data, HTREEITEM hItem, int nLevel, int nMaxCount);
+	HTREEITEM InsertTreeItem(SFileTreeItem &item, HTREEITEM htiParent, HTREEITEM htiInsert);
 
 private:
-	CDlgFuncList*		m_pcDlgFuncList;
-	CFileTreeSetting	m_fileTreeSetting;
-	std::vector<int>	m_aItemRemoveList;
-	int					m_nlParamCount;
-	int					m_nDocType;
+	CDlgFuncList *	 m_pcDlgFuncList;
+	CFileTreeSetting m_fileTreeSetting;
+	std::vector<int> m_aItemRemoveList;
+	int				 m_nlParamCount;
+	int				 m_nDocType;
 
-	int					m_bInMove;
+	int m_bInMove;
 };
 #endif /* SAKURA_CDLGFILETREE_58915B5A_6480_4286_AB4F_28A7A6502AEC_H_ */

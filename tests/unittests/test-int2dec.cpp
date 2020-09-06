@@ -11,24 +11,23 @@
 #include "basis/primitive.h"
 #include "util/string_ex2.h"
 
-template <typename T>
-void test_int2dec(T value, ptrdiff_t lenExpected, const wchar_t* strExpected)
+template<typename T>
+void test_int2dec(T value, ptrdiff_t lenExpected, const wchar_t *strExpected)
 {
-	wchar_t buff[int2dec_destBufferSufficientLength<T>()];
+	wchar_t	  buff[int2dec_destBufferSufficientLength<T>()];
 	ptrdiff_t len = int2dec(value, buff);
 	EXPECT_EQ(len, lenExpected);
 	EXPECT_STREQ(buff, strExpected);
 }
 
-template <typename T>
-void test_plusminus(T plusValue, ptrdiff_t lenExpected, const wchar_t* strExpected)
+template<typename T>
+void test_plusminus(T plusValue, ptrdiff_t lenExpected, const wchar_t *strExpected)
 {
 	test_int2dec(plusValue, lenExpected, strExpected);
-	test_int2dec(-plusValue, 1+lenExpected, (std::wstring(L"-")+strExpected).c_str());
+	test_int2dec(-plusValue, 1 + lenExpected, (std::wstring(L"-") + strExpected).c_str());
 }
 
-static
-void test_32_64_plus_minus(int value, ptrdiff_t lenExpected, const wchar_t* strExpected)
+static void test_32_64_plus_minus(int value, ptrdiff_t lenExpected, const wchar_t *strExpected)
 {
 	test_plusminus<int32_t>(value, lenExpected, strExpected);
 	test_plusminus<int64_t>(value, lenExpected, strExpected);

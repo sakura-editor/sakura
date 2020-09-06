@@ -15,8 +15,8 @@
 	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
 	freely, subject to the following restrictions:
 
 		1. The origin of this software must not be misrepresented;
@@ -25,7 +25,7 @@
 		   in the product documentation would be appreciated but is
 		   not required.
 
-		2. Altered source versions must be plainly marked as such, 
+		2. Altered source versions must be plainly marked as such,
 		   and must not be misrepresented as being the original software.
 
 		3. This notice may not be removed or altered from any source
@@ -44,33 +44,37 @@ struct EditInfo; // 2004.04.11 genta パラメータ内のstructを削除する�
 class CMenuDrawer;
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-class CMRUFile {
+class CMRUFile
+{
 public:
 	//	コンストラクタ
 	CMRUFile();
 	~CMRUFile();
 
 	//	メニューを取得する
-	HMENU CreateMenu( CMenuDrawer* pCMenuDrawer ) const;	//	うーん。pCMenuDrawerが必要なくなるといいなぁ。
-	HMENU CreateMenu( HMENU hMenu, CMenuDrawer* pCMenuDrawer ) const;	//	2010/5/21 Uchi
-	BOOL DestroyMenu( HMENU hMenu ) const;
-	
+	HMENU CreateMenu(CMenuDrawer *pCMenuDrawer) const; //	うーん。pCMenuDrawerが必要なくなるといいなぁ。
+	HMENU CreateMenu(HMENU hMenu, CMenuDrawer *pCMenuDrawer) const; //	2010/5/21 Uchi
+	BOOL  DestroyMenu(HMENU hMenu) const;
+
 	//	ファイル名の一覧を教えて
 	std::vector<LPCWSTR> GetPathList() const;
 
 	//	アクセス関数
-	int Length(void) const;	//	アイテムの数。
-	int MenuLength(void) const { return t_min(Length(), m_cRecentFile.GetViewCount()); }	//	メニューに表示されるアイテムの数
-	void ClearAll(void);//	アイテムを削除～。
-	bool GetEditInfo( int num, EditInfo* pfi ) const;				//	番号で指定したEditInfo（情報をまるごと）
-	bool GetEditInfo( const WCHAR* pszPath, EditInfo* pfi ) const;	//	ファイル名で指定したEditInfo（情報をまるごと）
-	void Add( EditInfo* pEditInfo );		//	*pEditInfoを追加する。
+	int Length(void) const; //	アイテムの数。
+	int MenuLength(void) const
+	{
+		return t_min(Length(), m_cRecentFile.GetViewCount());
+	}												//	メニューに表示されるアイテムの数
+	void ClearAll(void);							//	アイテムを削除～。
+	bool GetEditInfo(int num, EditInfo *pfi) const; //	番号で指定したEditInfo（情報をまるごと）
+	bool GetEditInfo(const WCHAR *pszPath, EditInfo *pfi) const; //	ファイル名で指定したEditInfo（情報をまるごと）
+	void Add(EditInfo *pEditInfo);								 //	*pEditInfoを追加する。
 
 protected:
 	//	共有メモリアクセス用。
-	struct DLLSHAREDATA*	m_pShareData;		//	共有メモリを参照するよ。
+	struct DLLSHAREDATA *m_pShareData; //	共有メモリを参照するよ。
 
 private:
-	CRecentFile	m_cRecentFile;	//履歴	//@@@ 2003.04.08 MIK
+	CRecentFile m_cRecentFile; //履歴	//@@@ 2003.04.08 MIK
 };
 #endif /* SAKURA_CMRUFILE_41099ADB_562E_457B_873D_8F81AC958AC2_H_ */

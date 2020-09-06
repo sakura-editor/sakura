@@ -39,28 +39,15 @@
 
 #ifdef _DEBUG
 
-	void debug_exit();
-	void warning_point();
+void debug_exit();
+void warning_point();
 
-	#define assert(exp) \
-	{ \
-		if(!(exp)){ \
-			TRACE( "!assert: " #exp, NULL ); \
-			ErrorMessage( NULL, L"!assert\n%hs(%d):\n%hs", __FILE__, __LINE__, #exp ); \
-			debug_exit(); \
-		} \
-	}
+#define assert(exp)
 
-	#define assert_warning(exp) \
-	{ \
-		if(!(exp)){ \
-			TRACE( "!warning: " #exp, NULL ); \
-			warning_point(); \
-		} \
-	}
+#define assert_warning(exp)
 
 #else
-	#define assert(exp)
-	#define assert_warning(exp)
+#define assert(exp)
+#define assert_warning(exp)
 #endif
 #endif /* SAKURA_DEBUG2_46C93AD6_37D9_4646_B78C_E09168383A42_H_ */

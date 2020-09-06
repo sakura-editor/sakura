@@ -4,6 +4,6 @@
 
 void CSoundSet::NeedlessToSaveBeep()
 {
-	if( m_nMuteCount>=1 )return;
+	if (m_nMuteCount >= 1) return;
 	ErrorBeep();
 }
