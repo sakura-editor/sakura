@@ -29,8 +29,9 @@
 #include "CConvert.h"
 
 //!できる限り全角カタカナにする
-class CConvert_ToZenkata final : public CConvert{
+class CConvert_ToZenkata final : public CConvert
+{
 public:
-	bool DoConvert(CNativeW* pcData) override;
+	bool DoConvert(CNativeW *pcData) override;
 };
 #endif /* SAKURA_CCONVERT_TOZENKATA_E29B7690_ADDA_4A97_9F09_BBBBBB4C1356_H_ */

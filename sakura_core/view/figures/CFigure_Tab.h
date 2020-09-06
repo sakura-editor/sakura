@@ -29,17 +29,15 @@
 #include "view/figures/CFigureStrategy.h"
 
 //! タブ描画
-class CFigure_Tab : public CFigureSpace{
+class CFigure_Tab : public CFigureSpace
+{
 public:
-	//traits
-	bool Match(const wchar_t* pText, int nTextLen) const;
-	bool Disp(void) const
-	{
-		return true;
-	}
+	// traits
+	bool Match(const wchar_t *pText, int nTextLen) const;
+	bool Disp(void) const { return true; }
 
-	//action
-	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const;
-	EColorIndexType GetColorIdx(void) const{ return COLORIDX_TAB; }
+	// action
+	void			DispSpace(CGraphics &gr, DispPos *pDispPos, CEditView *pcView, bool bTrans) const;
+	EColorIndexType GetColorIdx(void) const { return COLORIDX_TAB; }
 };
 #endif /* SAKURA_CFIGURE_TAB_4401678E_D165_4130_A973_CC40038CDE8E_H_ */

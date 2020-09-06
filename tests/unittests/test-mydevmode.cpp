@@ -41,15 +41,15 @@
 
 /*! テストのベースとなる値 */
 static constexpr MYDEVMODE myDevMode = {
-	FALSE, //BOOL	m_bPrinterNotFound;
-	{L"m_szPrinterDriverName"}, //WCHAR	m_szPrinterDriverName[_MAX_PATH + 1];
-	{L"m_szPrinterDeviceName"}, //WCHAR	m_szPrinterDeviceName[_MAX_PATH + 1];
-	{L"m_szPrinterOutputName"}, //WCHAR	m_szPrinterOutputName[_MAX_PATH + 1];
-	std::numeric_limits<DWORD>::min(), //DWORD	dmFields;
-	std::numeric_limits<short>::min(), //short	dmOrientation;
-	std::numeric_limits<short>::min(), //short	dmPaperSize;
-	std::numeric_limits<short>::min(), //short	dmPaperLength;
-	std::numeric_limits<short>::min(), //short	dmPaperWidth;
+	FALSE,							   // BOOL	m_bPrinterNotFound;
+	{L"m_szPrinterDriverName"},		   // WCHAR	m_szPrinterDriverName[_MAX_PATH + 1];
+	{L"m_szPrinterDeviceName"},		   // WCHAR	m_szPrinterDeviceName[_MAX_PATH + 1];
+	{L"m_szPrinterOutputName"},		   // WCHAR	m_szPrinterOutputName[_MAX_PATH + 1];
+	std::numeric_limits<DWORD>::min(), // DWORD	dmFields;
+	std::numeric_limits<short>::min(), // short	dmOrientation;
+	std::numeric_limits<short>::min(), // short	dmPaperSize;
+	std::numeric_limits<short>::min(), // short	dmPaperLength;
+	std::numeric_limits<short>::min(), // short	dmPaperWidth;
 };
 
 /*!
@@ -172,9 +172,9 @@ TEST(MYDEVMODETest, operatorNotEqualAntiLazyCode)
 	MYDEVMODE value, other;
 
 	// スタック変数のアドレスをchar*にキャストしてデータを書き替える
-	char* buf1 = reinterpret_cast<char*>(&value);
+	char *buf1 = reinterpret_cast<char *>(&value);
 	::memset(buf1, 'a', sizeof(MYDEVMODE));
-	char* buf2 = reinterpret_cast<char*>(&other);
+	char *buf2 = reinterpret_cast<char *>(&other);
 	::memset(buf2, 'a', sizeof(MYDEVMODE));
 
 	// まったく同じなので等価になる
@@ -200,7 +200,7 @@ TEST(MYDEVMODETest, operatorNotEqualAntiLazyCode)
 TEST(MYDEVMODETest, StrategyForSegmentationFault)
 {
 	// システムのページサイズを取得する
-	SYSTEM_INFO systemInfo = { 0 };
+	SYSTEM_INFO systemInfo = {0};
 	::GetSystemInfo(&systemInfo);
 
 	// システムページサイズ
@@ -213,23 +213,23 @@ TEST(MYDEVMODETest, StrategyForSegmentationFault)
 	EXPECT_TRUE(memBlock1 != NULL);
 
 	// 仮想メモリ全域をコミット(=確保)する。
-	wchar_t* buf1 = static_cast<wchar_t*>(::VirtualAlloc(memBlock1, allocSize, MEM_COMMIT, PAGE_READWRITE));
+	wchar_t *buf1 = static_cast<wchar_t *>(::VirtualAlloc(memBlock1, allocSize, MEM_COMMIT, PAGE_READWRITE));
 	EXPECT_TRUE(buf1 != NULL);
 
 	// 確保したメモリ全域をASCII文字'a'で埋める
 	::wmemset(buf1, L'a', pageSize);
 
 	// 2ページ目の保護モードをNOACCESSにする。
-	DWORD flOldProtect = 0;
-	volatile BOOL retVirtualProtect = ::VirtualProtect((char*)buf1 + pageSize, pageSize, PAGE_NOACCESS, &flOldProtect);
+	DWORD		  flOldProtect		= 0;
+	volatile BOOL retVirtualProtect = ::VirtualProtect((char *)buf1 + pageSize, pageSize, PAGE_NOACCESS, &flOldProtect);
 	EXPECT_TRUE(retVirtualProtect);
 
 	// メモリデータをテスト対象型にマップする。実態として配列のように扱えるポインタを取得している。
-	MYDEVMODE* pValues = reinterpret_cast<MYDEVMODE*>(buf1);
+	MYDEVMODE *pValues = reinterpret_cast<MYDEVMODE *>(buf1);
 
 	// 例外判定用の巨大な文字列を作る。これは2ページ分のサイズを持つ巨大データ。
 	std::wstring largeString(pageSize, L'a');
-	const auto pLargeStr = largeString.c_str();
+	const auto	 pLargeStr = largeString.c_str();
 
 	/* DEATHテストで例外ケースの判定を行う。
 	 * pLargeStrには、コミットサイズの倍のデータが入っているので、

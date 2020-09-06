@@ -31,24 +31,25 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);	/* モーダルダイアログの表示 */
+	int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam); /* モーダルダイアログの表示 */
 
-	int			m_nLineNum;		/*!< 行番号 */
-	BOOL		m_bPLSQL;		/*!< PL/SQLソースの有効行か */
-	int			m_nPLSQL_E1;
-	int			m_nPLSQL_E2;
+	int	 m_nLineNum; /*!< 行番号 */
+	BOOL m_bPLSQL;	 /*!< PL/SQLソースの有効行か */
+	int	 m_nPLSQL_E1;
+	int	 m_nPLSQL_E2;
+
 protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	BOOL OnNotify(NMHDR* pNMHDR) override;	//	Oct. 6, 2000 JEPRO added for Spin control
+	BOOL OnNotify(NMHDR *pNMHDR) override; //	Oct. 6, 2000 JEPRO added for Spin control
 	BOOL OnCbnSelChange(HWND hwndCtl, int wID) override;
 	BOOL OnBnClicked(int wID) override;
 	BOOL OnEnSetFocus(HWND hwndCtl, int wID) override;
 	BOOL OnEnKillFocus(HWND hwndCtl, int wID) override;
 
-	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
-	void SetData( void ) override;	/* ダイアログデータの設定 */
-	int GetData( void ) override;	/* ダイアログデータの取得 */
+	LPVOID GetHelpIdTable(void) override; //@@@ 2002.01.18 add
+	void   SetData(void) override;		  /* ダイアログデータの設定 */
+	int	   GetData(void) override;		  /* ダイアログデータの取得 */
 };
 #endif /* SAKURA_CDLGJUMP_13AD9DC8_92E0_43AB_81D4_A0FBA28EE2D8_H_ */

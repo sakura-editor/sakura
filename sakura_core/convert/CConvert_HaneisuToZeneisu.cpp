@@ -8,7 +8,7 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //!半角英数→全角英数
-bool CConvert_HaneisuToZeneisu::DoConvert(CNativeW* pcData)
+bool CConvert_HaneisuToZeneisu::DoConvert(CNativeW *pcData)
 {
 	//半角英数→全角英数
 	Convert_HaneisuToZeneisu(pcData->GetStringPtr(), pcData->GetStringLength());

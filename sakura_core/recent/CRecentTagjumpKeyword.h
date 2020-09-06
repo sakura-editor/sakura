@@ -32,18 +32,19 @@
 typedef StaticString<WCHAR, _MAX_PATH> CTagjumpKeywordString;
 
 //! タグジャンプキーワードの履歴を管理 (RECENT_FOR_TAGJUMP_KEYWORD)
-class CRecentTagjumpKeyword final : public CRecentImp<CTagjumpKeywordString, LPCWSTR>{
+class CRecentTagjumpKeyword final : public CRecentImp<CTagjumpKeywordString, LPCWSTR>
+{
 public:
 	//生成
 	CRecentTagjumpKeyword();
 
 	//オーバーライド
-	int				CompareItem( const CTagjumpKeywordString* p1, LPCWSTR p2 ) const override;
-	void			CopyItem( CTagjumpKeywordString* dst, LPCWSTR src ) const override;
-	const WCHAR*	GetItemText( int nIndex ) const;
-	bool			DataToReceiveType( LPCWSTR* dst, const CTagjumpKeywordString* src ) const override;
-	bool			TextToDataType( CTagjumpKeywordString* dst, LPCWSTR pszText ) const override;
-	bool			ValidateReceiveType( LPCWSTR p ) const override;
-	size_t			GetTextMaxLength() const;
+	int			 CompareItem(const CTagjumpKeywordString *p1, LPCWSTR p2) const override;
+	void		 CopyItem(CTagjumpKeywordString *dst, LPCWSTR src) const override;
+	const WCHAR *GetItemText(int nIndex) const;
+	bool		 DataToReceiveType(LPCWSTR *dst, const CTagjumpKeywordString *src) const override;
+	bool		 TextToDataType(CTagjumpKeywordString *dst, LPCWSTR pszText) const override;
+	bool		 ValidateReceiveType(LPCWSTR p) const override;
+	size_t		 GetTextMaxLength() const;
 };
 #endif /* SAKURA_CRECENTTAGJUMPKEYWORD_1416AC30_3714_4760_A313_76588D26A0A1_H_ */

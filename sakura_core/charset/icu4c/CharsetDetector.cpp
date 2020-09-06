@@ -34,34 +34,24 @@ CharsetDetector::CharsetDetector() noexcept
 
 CharsetDetector::~CharsetDetector() noexcept
 {
-	if (_icuin.IsAvailable()) {
-		_icuin.ucsdet_close(_csd);
-	}
+	if (_icuin.IsAvailable()) { _icuin.ucsdet_close(_csd); }
 }
 
-ECodeType CharsetDetector::Detect(const std::string_view& bytes)
+ECodeType CharsetDetector::Detect(const std::string_view &bytes)
 {
 	UErrorCode status = U_ZERO_ERROR;
 
 	_csd = _icuin.ucsdet_open(&status);
-	if (status != U_ZERO_ERROR) {
-		return CODE_ERROR;
-	}
+	if (status != U_ZERO_ERROR) { return CODE_ERROR; }
 
 	_icuin.ucsdet_setText(_csd, bytes.data(), bytes.length(), &status);
-	if (status != U_ZERO_ERROR) {
-		return CODE_ERROR;
-	}
+	if (status != U_ZERO_ERROR) { return CODE_ERROR; }
 
 	const auto csm = _icuin.ucsdet_detect(_csd, &status);
-	if (status != U_ZERO_ERROR) {
-		return CODE_ERROR;
-	}
+	if (status != U_ZERO_ERROR) { return CODE_ERROR; }
 
 	std::string_view name = _icuin.ucsdet_getName(csm, &status);
-	if (status != U_ZERO_ERROR) {
-		return CODE_ERROR;
-	}
+	if (status != U_ZERO_ERROR) { return CODE_ERROR; }
 
 	// 文字セット名⇒サクラエディタ内部コードの変換
 	if (name == "UTF-8") return CODE_UTF8;

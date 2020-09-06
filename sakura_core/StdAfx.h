@@ -23,13 +23,21 @@
 #ifdef _MSC_VER
 
 #if defined _M_IX86
-#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'\"")
+#pragma comment(                                                                                                       \
+	linker,                                                                                                            \
+	"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #elif defined _M_IA64
-#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='ia64' publicKeyToken='6595b64144ccf1df' language='*'\"")
+#pragma comment(                                                                                                       \
+	linker,                                                                                                            \
+	"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='ia64' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #elif defined _M_X64
-#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='amd64' publicKeyToken='6595b64144ccf1df' language='*'\"")
+#pragma comment(                                                                                                       \
+	linker,                                                                                                            \
+	"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='amd64' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #else
-#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+#pragma comment(                                                                                                       \
+	linker,                                                                                                            \
+	"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #endif
 #endif
 
@@ -55,13 +63,13 @@
 #include "config/maxdata.h"
 
 //定数(プリコンパイル日付に依存)
-#include "config/system_constants.h"	//システム定数
-#include "config/app_constants.h"		//アプリケーション定数
+#include "config/system_constants.h" //システム定数
+#include "config/app_constants.h"	 //アプリケーション定数
 
 //高頻度API等
 // #include <CommDlg.h> // WIN32_LEAN_AND_MEANでは必要。OpenFileDialg系
 #include <CommCtrl.h> // コモンコントロール
-#include <stdlib.h>  // _MAX_PATH
+#include <stdlib.h>	  // _MAX_PATH
 #include <wchar.h>
 
 #ifndef SAKURA_PCH_MODE_MIN
@@ -90,7 +98,7 @@
 #include "basis/primitive.h"
 #include "util/std_macro.h"
 
-//MFC互換
+// MFC互換
 #include "basis/CMyString.h"
 #include "basis/CMyRect.h"
 #include "basis/CMyPoint.h"
@@ -109,18 +117,18 @@
 #include "String_define.h"
 
 //その他
-#define malloc_char (char*)malloc
-#define GlobalLockChar  (char*)::GlobalLock
-#define GlobalLockUChar (unsigned char*)::GlobalLock
-#define GlobalLockWChar (wchar_t*)::GlobalLock
-#define GlobalLockBYTE  (BYTE*)::GlobalLock
+#define malloc_char (char *)malloc
+#define GlobalLockChar (char *)::GlobalLock
+#define GlobalLockUChar (unsigned char *)::GlobalLock
+#define GlobalLockWChar (wchar_t *)::GlobalLock
+#define GlobalLockBYTE (BYTE *)::GlobalLock
 
-//APIラップ
+// APIラップ
 #include "apiwrap/StdControl.h"
 #include "apiwrap/CommonControl.h"
 #include "apiwrap/StdApi.h"
 
-//TCHARユーティリティ
+// TCHARユーティリティ
 #include "util/tchar_convert.h"
 #include "charset/charcode.h"
 #include "charset/codechecker.h"

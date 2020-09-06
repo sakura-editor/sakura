@@ -3,7 +3,4 @@
 #include "CNative.h"
 
 //! 空っぽにする
-void CNative::Clear()
-{
-	this->_GetMemory()->_SetRawLength(0);
-}
+void CNative::Clear() { this->_GetMemory()->_SetRawLength(0); }

@@ -40,26 +40,18 @@
  * @retval true 等しい
  * @retval false 等しくない
  */
-bool operator == (const GrepInfo& lhs, const GrepInfo& rhs) noexcept {
+bool operator==(const GrepInfo &lhs, const GrepInfo &rhs) noexcept
+{
 	if (&lhs == &rhs) return true;
-	return lhs.cmGrepKey == rhs.cmGrepKey
-		&& lhs.cmGrepRep == rhs.cmGrepRep
-		&& lhs.cmGrepFile == rhs.cmGrepFile
-		&& lhs.cmGrepFolder == rhs.cmGrepFolder
-		&& lhs.sGrepSearchOption == rhs.sGrepSearchOption
-		&& lhs.bGrepCurFolder == rhs.bGrepCurFolder
-		&& lhs.bGrepStdout == rhs.bGrepStdout
-		&& lhs.bGrepHeader == rhs.bGrepHeader
-		&& lhs.bGrepSubFolder == rhs.bGrepSubFolder
-		&& lhs.nGrepCharSet == rhs.nGrepCharSet
-		&& lhs.nGrepOutputStyle == rhs.nGrepOutputStyle
-		&& lhs.nGrepOutputLineType == rhs.nGrepOutputLineType
-		&& lhs.bGrepOutputFileOnly == rhs.bGrepOutputFileOnly
-		&& lhs.bGrepOutputBaseFolder == rhs.bGrepOutputBaseFolder
-		&& lhs.bGrepSeparateFolder == rhs.bGrepSeparateFolder
-		&& lhs.bGrepReplace == rhs.bGrepReplace
-		&& lhs.bGrepPaste == rhs.bGrepPaste
-		&& lhs.bGrepBackup == rhs.bGrepBackup;
+	return lhs.cmGrepKey == rhs.cmGrepKey && lhs.cmGrepRep == rhs.cmGrepRep && lhs.cmGrepFile == rhs.cmGrepFile
+		   && lhs.cmGrepFolder == rhs.cmGrepFolder && lhs.sGrepSearchOption == rhs.sGrepSearchOption
+		   && lhs.bGrepCurFolder == rhs.bGrepCurFolder && lhs.bGrepStdout == rhs.bGrepStdout
+		   && lhs.bGrepHeader == rhs.bGrepHeader && lhs.bGrepSubFolder == rhs.bGrepSubFolder
+		   && lhs.nGrepCharSet == rhs.nGrepCharSet && lhs.nGrepOutputStyle == rhs.nGrepOutputStyle
+		   && lhs.nGrepOutputLineType == rhs.nGrepOutputLineType && lhs.bGrepOutputFileOnly == rhs.bGrepOutputFileOnly
+		   && lhs.bGrepOutputBaseFolder == rhs.bGrepOutputBaseFolder
+		   && lhs.bGrepSeparateFolder == rhs.bGrepSeparateFolder && lhs.bGrepReplace == rhs.bGrepReplace
+		   && lhs.bGrepPaste == rhs.bGrepPaste && lhs.bGrepBackup == rhs.bGrepBackup;
 }
 
 /*!
@@ -69,10 +61,7 @@ bool operator == (const GrepInfo& lhs, const GrepInfo& rhs) noexcept {
  * @retval true 等しくない
  * @retval false 等しい
  */
-bool operator != (const GrepInfo& lhs, const GrepInfo& rhs) noexcept
-{
-	return !(lhs == rhs);
-}
+bool operator!=(const GrepInfo &lhs, const GrepInfo &rhs) noexcept { return !(lhs == rhs); }
 
 /*!
  * @brief 等価比較演算子のテスト

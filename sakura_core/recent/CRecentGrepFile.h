@@ -32,18 +32,19 @@
 typedef StaticString<WCHAR, MAX_GREP_PATH> CGrepFileString;
 
 //! GREPファイルの履歴を管理 (RECENT_FOR_GREP_FILE)
-class CRecentGrepFile final : public CRecentImp<CGrepFileString, LPCWSTR>{
+class CRecentGrepFile final : public CRecentImp<CGrepFileString, LPCWSTR>
+{
 public:
 	//生成
 	CRecentGrepFile();
 
 	//オーバーライド
-	int				CompareItem( const CGrepFileString* p1, LPCWSTR p2 ) const override;
-	void			CopyItem( CGrepFileString* dst, LPCWSTR src ) const override;
-	const WCHAR*	GetItemText( int nIndex ) const;
-	bool			DataToReceiveType( LPCWSTR* dst, const CGrepFileString* src ) const override;
-	bool			TextToDataType( CGrepFileString* dst, LPCWSTR pszText ) const override;
-	bool			ValidateReceiveType( LPCWSTR p ) const override;
-	size_t			GetTextMaxLength() const;
+	int			 CompareItem(const CGrepFileString *p1, LPCWSTR p2) const override;
+	void		 CopyItem(CGrepFileString *dst, LPCWSTR src) const override;
+	const WCHAR *GetItemText(int nIndex) const;
+	bool		 DataToReceiveType(LPCWSTR *dst, const CGrepFileString *src) const override;
+	bool		 TextToDataType(CGrepFileString *dst, LPCWSTR pszText) const override;
+	bool		 ValidateReceiveType(LPCWSTR p) const override;
+	size_t		 GetTextMaxLength() const;
 };
 #endif /* SAKURA_CRECENTGREPFILE_E23BE08A_1B53_492D_85EE_4370AA956BB5_H_ */

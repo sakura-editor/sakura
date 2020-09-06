@@ -31,13 +31,14 @@ public:
 	/*
 	||  Constructors
 	*/
-	CWaitCursor( HWND, bool bEnable = true );
+	CWaitCursor(HWND, bool bEnable = true);
 	~CWaitCursor();
 
-	bool IsEnable(){ return m_bEnable; }
+	bool IsEnable() { return m_bEnable; }
+
 private: // 2002/2/10 aroka
-	HCURSOR	m_hCursor;
-	HCURSOR	m_hCursorOld;
+	HCURSOR m_hCursor;
+	HCURSOR m_hCursorOld;
 	bool	m_bEnable;
 };
 #endif /* SAKURA_CWAITCURSOR_6EAC4CB5_4D04_4501_B076_85C8A0395785_H_ */

@@ -38,16 +38,12 @@ protected:
 	/*!
 		テスト前の準備
 	*/
-	virtual void SetUp()
-	{
-	}
+	virtual void SetUp() {}
 
 	/*!
 		テスト後の後始末
 	*/
-	virtual void TearDown()
-	{
-	}
+	virtual void TearDown() {}
 };
 
 /*!
@@ -84,16 +80,12 @@ protected:
 	/*!
 		テスト前の準備
 	*/
-	virtual void SetUp()
-	{
-	}
+	virtual void SetUp() {}
 
 	/*!
 		テスト後の後始末
 	*/
-	virtual void TearDown()
-	{
-	}
+	virtual void TearDown() {}
 };
 
 /*!

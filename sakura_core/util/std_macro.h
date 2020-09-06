@@ -1,5 +1,5 @@
 ﻿/*! @file */
-//2007.10.18 kobake 作成
+// 2007.10.18 kobake 作成
 /*
 	Copyright (C) 2007, kobake
 
@@ -27,7 +27,11 @@
 #define SAKURA_STD_MACRO_ED0953D9_582D_40D6_8190_3FFA9344819D_H_
 #pragma once
 
-#define SAFE_DELETE(p) { delete p; p=0; }
+#define SAFE_DELETE(p)                                                                                                 \
+	{                                                                                                                  \
+		delete p;                                                                                                      \
+		p = 0;                                                                                                         \
+	}
 
 /*
 	2007.10.18 kobake
@@ -39,34 +43,31 @@
 	明示的に「t_～」という名前を持つ関数を用意。
 */
 
-template <class T>
-inline T t_min(T t1,T t2)
+template<class T>
+inline T t_min(T t1, T t2)
 {
-	return t1<t2?t1:t2;
+	return t1 < t2 ? t1 : t2;
 }
 
-template <class T>
-inline T t_max(T t1,T t2)
+template<class T>
+inline T t_max(T t1, T t2)
 {
-	return t1>t2?t1:t2;
+	return t1 > t2 ? t1 : t2;
 }
 
-template <class T>
+template<class T>
 T t_abs(T t)
 {
-	return t>=T(0)?t:T(-t);
+	return t >= T(0) ? t : T(-t);
 }
 
-template <class T>
+template<class T>
 T t_unit(T t)
 {
-	return
-		t>T(0)?1:
-		t<T(0)?-1:
-		0;
+	return t > T(0) ? 1 : t < T(0) ? -1 : 0;
 }
 
-#define sizeof_raw(V)  sizeof(V)
+#define sizeof_raw(V) sizeof(V)
 #define sizeof_type(V) sizeof(V)
 
 /*

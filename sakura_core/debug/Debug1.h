@@ -24,8 +24,8 @@
 //                   メッセージ出力：実装                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 #if defined(_DEBUG) || defined(USE_RELPRINT)
-void DebugOutW( LPCWSTR lpFmt, ...);
-#endif	// _DEBUG || USE_RELPRINT
+void DebugOutW(LPCWSTR lpFmt, ...);
+#endif // _DEBUG || USE_RELPRINT
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                 デバッグ用メッセージ出力                    //
@@ -35,29 +35,29 @@ void DebugOutW( LPCWSTR lpFmt, ...);
 	MYTRACEを使う場合には必ず#ifdef _DEBUG ～ #endif で囲む必要がある．
 */
 #ifdef _DEBUG
-	#define MYTRACE(...)
+#define MYTRACE(...)
 #else
-	#define MYTRACE(...)
+#define MYTRACE(...)
 #endif
 
 //#ifdef _DEBUG～#endifで囲まなくても良い版
 #ifdef _DEBUG
-	#define DEBUG_TRACE(...)
+#define DEBUG_TRACE(...)
 #else
-	#define DEBUG_TRACE(...)
+#define DEBUG_TRACE(...)
 #endif
 
-//RELEASE版でも出力する版 (RELEASEでのみ発生するバグを監視する目的)
+// RELEASE版でも出力する版 (RELEASEでのみ発生するバグを監視する目的)
 #ifdef USE_RELPRINT
-	#define RELPRINT(...)
+#define RELPRINT(...)
 #else
-	#define RELPRINT(...)
-#endif	// USE_RELPRINT
+#define RELPRINT(...)
+#endif // USE_RELPRINT
 
 //トレース出力（トレース箇所のファイルパスと行番号を出力してエラー解析を容易にする目的）
 #ifdef _DEBUG
-	#define TRACE( format, ... )	DEBUG_TRACE( _T("%hs(%d): ") _T(format) _T("\n"), __FILE__, __LINE__, __VA_ARGS__ )
+#define TRACE(format, ...) DEBUG_TRACE(_T("%hs(%d): ") _T(format) _T("\n"), __FILE__, __LINE__, __VA_ARGS__)
 #else
-	#define TRACE( ... )
+#define TRACE(...)
 #endif
 #endif /* SAKURA_DEBUG1_382EF8C2_DA86_410F_80D9_7F357A356C80_H_ */

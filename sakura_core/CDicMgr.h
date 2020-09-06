@@ -34,14 +34,13 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-//	BOOL Open( char* );
-	static BOOL Search( const wchar_t* pszKey, const int nCmpLen,
-						CNativeW** ppcmemKey, CNativeW** ppcmemMean,
-						const WCHAR* pszKeyWordHelpFile, int * pLine );	// 2006.04.10 fon (const int,CMemory**,int*)引数を追加
-	static int HokanSearch( const wchar_t* pszKey, bool bHokanLoHiCase,
-							vector_ex<std::wstring>& vKouho, int nMaxKouho,
-							const WCHAR* pszKeyWordFile );
-//	BOOL Close( char* );
+	//	BOOL Open( char* );
+	static BOOL Search(const wchar_t *pszKey, const int nCmpLen, CNativeW **ppcmemKey, CNativeW **ppcmemMean,
+					   const WCHAR *pszKeyWordHelpFile,
+					   int *		pLine); // 2006.04.10 fon (const int,CMemory**,int*)引数を追加
+	static int	HokanSearch(const wchar_t *pszKey, bool bHokanLoHiCase, vector_ex<std::wstring> &vKouho, int nMaxKouho,
+							const WCHAR *pszKeyWordFile);
+	//	BOOL Close( char* );
 
 protected:
 	/*

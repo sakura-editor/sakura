@@ -37,7 +37,7 @@
 
 // テスト対象関数のヘッダファイル
 //#include "util/string_ex.h" //依存関係が多いのでテスト対象の関数定義のみ抜き出し
-BOOL IsMailAddress(const wchar_t* pszBuf, int nBufLen, int* pnAddressLength);
+BOOL IsMailAddress(const wchar_t *pszBuf, int nBufLen, int *pnAddressLength);
 
 //////////////////////////////////////////////////////////////////////
 // テストマクロ
@@ -51,13 +51,13 @@ BOOL IsMailAddress(const wchar_t* pszBuf, int nBufLen, int* pnAddressLength);
 
 // 新旧動作比較用マクロ1(TRUE, FALSE向け)
 // ASSERT_SAME: 旧実装と新実装で動作が変わらないことを期待
-#define ASSERT_SAME(expected, szTarget, cchTarget, pchMatchedLen) \
-		EXPECT_##expected(IsMailAddress(szTarget, cchTarget, pchMatchedLen))
+#define ASSERT_SAME(expected, szTarget, cchTarget, pchMatchedLen)                                                      \
+	EXPECT_##expected(IsMailAddress(szTarget, cchTarget, pchMatchedLen))
 
 // 新旧動作比較用マクロ2(TRUE, FALSE向け)
 // ASSERT_CHANGE: 旧実装と新実装で動作が変わることを期待
-#define ASSERT_CHANGE(expected, szTarget, cchTarget, pchMatchedLen) \
-		EXPECT_NE(expected, IsMailAddress(szTarget, cchTarget, pchMatchedLen))
+#define ASSERT_CHANGE(expected, szTarget, cchTarget, pchMatchedLen)                                                    \
+	EXPECT_NE(expected, IsMailAddress(szTarget, cchTarget, pchMatchedLen))
 
 //////////////////////////////////////////////////////////////////////
 // テストコード
@@ -83,7 +83,7 @@ TEST(testIsMailAddress, CheckExampleCoJp)
 TEST(testIsMailAddress, CheckTrailingSpace)
 {
 	wchar_t szTest[] = L"test@example.co.jp "; //標準的なサンプルメールアドレス
-	int mailboxLength;
+	int		mailboxLength;
 	ASSERT_SAME(TRUE, szTest, _countof(szTest) - 1, &mailboxLength);
 	ASSERT_EQ(_countof(szTest) - 2, mailboxLength);
 }
@@ -98,7 +98,8 @@ TEST(testIsMailAddress, CheckMaxLocalPart)
 {
 	wchar_t szTest[256];
 	wchar_t szSeed[] = L"0123456789ABCDEF"; // 16文字の素片
-	::swprintf_s(szTest, _countof(szTest), L"%s%s%s%s@example.com", szSeed, szSeed, szSeed, szSeed); //4個繋げて64文字にする
+	::swprintf_s(szTest, _countof(szTest), L"%s%s%s%s@example.com", szSeed, szSeed, szSeed,
+				 szSeed); // 4個繋げて64文字にする
 	ASSERT_SAME(TRUE, szTest, ::wcslen(szTest), NULL);
 }
 
@@ -107,7 +108,8 @@ TEST(testIsMailAddress, CheckExceedMaxLocalPart)
 {
 	wchar_t szTest[256];
 	wchar_t szSeed[] = L"0123456789ABCDEF"; // 16文字の素片
-	::swprintf_s(szTest, _countof(szTest), L"%s%s%s%s0@example.com", szSeed, szSeed, szSeed, szSeed); //4個繋げて64文字 + 1
+	::swprintf_s(szTest, _countof(szTest), L"%s%s%s%s0@example.com", szSeed, szSeed, szSeed,
+				 szSeed); // 4個繋げて64文字 + 1
 	ASSERT_CHANGE(FALSE, szTest, _countof(szTest) - 1, NULL);
 }
 
@@ -115,9 +117,10 @@ TEST(testIsMailAddress, CheckMaxMailbox)
 {
 	wchar_t szTest[256];
 	wchar_t szSeed64[64 + 1];
-	wchar_t szSeed[] = L"0123456789ABCDEF"; // 16文字の素片
-	::swprintf_s(szSeed64, _countof(szSeed64), L"%s%s%s%s", szSeed, szSeed, szSeed, szSeed); //4個繋げて64文字にする
-	::swprintf_s(szTest, _countof(szTest), L"%s@%.63s.%.63s.%.58s.com", szSeed64, szSeed64, szSeed64, szSeed64); //最大255文字のチェック
+	wchar_t szSeed[] = L"0123456789ABCDEF";													 // 16文字の素片
+	::swprintf_s(szSeed64, _countof(szSeed64), L"%s%s%s%s", szSeed, szSeed, szSeed, szSeed); // 4個繋げて64文字にする
+	::swprintf_s(szTest, _countof(szTest), L"%s@%.63s.%.63s.%.58s.com", szSeed64, szSeed64, szSeed64,
+				 szSeed64); //最大255文字のチェック
 	int mailboxLength;
 	ASSERT_SAME(TRUE, szTest, _countof(szTest) - 1, &mailboxLength);
 	ASSERT_EQ(255, mailboxLength);
@@ -128,9 +131,10 @@ TEST(testIsMailAddress, CheckMaxExceedMailbox)
 {
 	wchar_t szTest[256 + 1];
 	wchar_t szSeed64[64 + 1];
-	wchar_t szSeed[] = L"0123456789ABCDEF"; // 16文字の素片
-	::swprintf_s(szSeed64, _countof(szSeed64), L"%s%s%s%s", szSeed, szSeed, szSeed, szSeed); //4個繋げて64文字にする
-	::swprintf_s(szTest, _countof(szTest), L"%s@%.63s.%.63s.%.58s0.com", szSeed64, szSeed64, szSeed64, szSeed64); //最大255文字オーバーのチェック
+	wchar_t szSeed[] = L"0123456789ABCDEF";													 // 16文字の素片
+	::swprintf_s(szSeed64, _countof(szSeed64), L"%s%s%s%s", szSeed, szSeed, szSeed, szSeed); // 4個繋げて64文字にする
+	::swprintf_s(szTest, _countof(szTest), L"%s@%.63s.%.63s.%.58s0.com", szSeed64, szSeed64, szSeed64,
+				 szSeed64); //最大255文字オーバーのチェック
 	ASSERT_CHANGE(FALSE, szTest, _countof(szTest) - 1, NULL);
 }
 
@@ -139,9 +143,9 @@ TEST(testIsMailAddress, CheckTooLongDomain)
 {
 	wchar_t szTest[256];
 	wchar_t szSeed64[64 + 1];
-	wchar_t szSeed[] = L"0123456789ABCDEF"; // 16文字の素片
-	::swprintf_s(szSeed64, _countof(szSeed64), L"%s%s%s%s", szSeed, szSeed, szSeed, szSeed); //4個繋げて64文字にする
-	::swprintf_s(szTest, _countof(szTest), L"%s@%s.com", szSeed64, szSeed64); //63文字を超えるドメイン
+	wchar_t szSeed[] = L"0123456789ABCDEF";													 // 16文字の素片
+	::swprintf_s(szSeed64, _countof(szSeed64), L"%s%s%s%s", szSeed, szSeed, szSeed, szSeed); // 4個繋げて64文字にする
+	::swprintf_s(szTest, _countof(szTest), L"%s@%s.com", szSeed64, szSeed64); // 63文字を超えるドメイン
 	ASSERT_CHANGE(FALSE, szTest, ::wcslen(szTest), NULL);
 }
 
@@ -155,7 +159,7 @@ TEST(testIsMailAddress, CheckTooShortDomain)
 // 動作変更あり。新実装では条件を厳しくして高速化している
 TEST(testIsMailAddress, CheckTooShortCCTLD)
 {
-	wchar_t szTest[] = L"test@test.c.bak"; //CCTLD部は2文字以上
+	wchar_t szTest[] = L"test@test.c.bak"; // CCTLD部は2文字以上
 	ASSERT_CHANGE(FALSE, szTest, _countof(szTest) - 1, NULL);
 }
 
@@ -163,7 +167,7 @@ TEST(testIsMailAddress, CheckTooShortCCTLD)
 TEST(testIsMailAddress, CheckDomainIncludesUnderScore)
 {
 	wchar_t szTest[256];
-	wchar_t szSeed[] = L"0123456789ABCDEF"; // 16文字の素片
+	wchar_t szSeed[] = L"0123456789ABCDEF";								 // 16文字の素片
 	::swprintf(szTest, _countof(szTest), L"%s@test_domain.com", szSeed); //_を含むドメイン
 	ASSERT_CHANGE(FALSE, szTest, ::wcslen(szTest), NULL);
 }
@@ -171,7 +175,7 @@ TEST(testIsMailAddress, CheckDomainIncludesUnderScore)
 TEST(testIsMailAddress, CheckDomainIncludesSingleHyphen)
 {
 	wchar_t szTest[256];
-	wchar_t szSeed[] = L"0123456789ABCDEF"; // 16文字の素片
+	wchar_t szSeed[] = L"0123456789ABCDEF";								   // 16文字の素片
 	::swprintf_s(szTest, _countof(szTest), L"%s@test-domain.com", szSeed); //途中に-を含むドメイン
 	ASSERT_SAME(TRUE, szTest, ::wcslen(szTest), NULL);
 }
@@ -180,7 +184,7 @@ TEST(testIsMailAddress, CheckDomainIncludesSingleHyphen)
 TEST(testIsMailAddress, CheckDomainIncludesDoubleHyphen)
 {
 	wchar_t szTest[256];
-	wchar_t szSeed[] = L"0123456789ABCDEF"; // 16文字の素片
+	wchar_t szSeed[] = L"0123456789ABCDEF";									// 16文字の素片
 	::swprintf_s(szTest, _countof(szTest), L"%s@test--domain.com", szSeed); //途中に-を含むドメイン
 	ASSERT_CHANGE(FALSE, szTest, ::wcslen(szTest), NULL);
 }
@@ -214,90 +218,106 @@ TEST(testIsMailAddress, OffsetParameter)
 	   (Buffer+1=メールアドレスの先頭, Buffer+2=メールアドレスの途中)
 	   の組み合わせにより定義する。
 	*/
-	const wchar_t* const Buffer = L" test@example.com";
-	const wchar_t* const BufferEnd = Buffer + wcslen(Buffer);
-	const struct {
-		bool           expected;
-		const wchar_t* address;         // to be tested by IsMailAddress.
-		int            offset;          // passed to IsMailAddress as 2nd param.
-		const wchar_t* buffer() const { // passed to IsMailAddress as 1st param.
+	const wchar_t *const Buffer	   = L" test@example.com";
+	const wchar_t *const BufferEnd = Buffer + wcslen(Buffer);
+	const struct
+	{
+		bool		   expected;
+		const wchar_t *address; // to be tested by IsMailAddress.
+		int			   offset;	// passed to IsMailAddress as 2nd param.
+		const wchar_t *buffer() const
+		{ // passed to IsMailAddress as 1st param.
 			return this->address - this->offset;
 		}
 	} testCases[] = {
-		{ true,  Buffer+1,  0 }, // true is OK. Buffer+1 is a mail address.
-		{ true,  Buffer+1,  1 }, // true is OK. Buffer+1 is a mail address.
-		{ true,  Buffer+1, -1 }, // true is OK. Buffer+1 is a mail address.
-		{ true,  Buffer+2,  0 }, // Limitation: Non positive offset prevents IsMailAddress from looking behind of a possible head of a mail address.
-		{ false, Buffer+2,  1 }, // false is OK. Buffer+2 is not a head of a mail adderss.
-		{ true,  Buffer+2, -1 }  // Limitation: Non positive offset prevents IsMailAddress from looking behind of a possible head of a mail address.
+		{true, Buffer + 1, 0},	// true is OK. Buffer+1 is a mail address.
+		{true, Buffer + 1, 1},	// true is OK. Buffer+1 is a mail address.
+		{true, Buffer + 1, -1}, // true is OK. Buffer+1 is a mail address.
+		{true, Buffer + 2, 0},	// Limitation: Non positive offset prevents IsMailAddress from looking behind of a
+								// possible head of a mail address.
+		{false, Buffer + 2, 1}, // false is OK. Buffer+2 is not a head of a mail adderss.
+		{true, Buffer + 2, -1}	// Limitation: Non positive offset prevents IsMailAddress from looking behind of a
+								// possible head of a mail address.
 	};
-	for (auto& aCase: testCases) {
-		assert(Buffer <= aCase.buffer());
-	}
+	for (auto &aCase : testCases) { assert(Buffer <= aCase.buffer()); }
 
 	/*
 	   Apply IsMailAddress to the cases.
 	*/
-	for (auto& aCase: testCases) {
-		EXPECT_EQ(
-			aCase.expected,
-			bool(IsMailAddress(aCase.buffer(), aCase.offset, BufferEnd - aCase.buffer(), NULL))
-		) << "1st param of IsMailAddress: pszBuf is \"" << aCase.buffer() << "\"\n"
-		  << "2nd param of IsMailAddress: offset is "   << aCase.offset;
+	for (auto &aCase : testCases)
+	{
+		EXPECT_EQ(aCase.expected, bool(IsMailAddress(aCase.buffer(), aCase.offset, BufferEnd - aCase.buffer(), NULL)))
+			<< "1st param of IsMailAddress: pszBuf is \"" << aCase.buffer() << "\"\n"
+			<< "2nd param of IsMailAddress: offset is " << aCase.offset;
 	}
 }
 
 TEST(testIsMailAddress, OffsetParameter2)
 {
-	const wchar_t* const Text             = L"   test@example.com   ";
-	const wchar_t* const Address          = Text +  3; // Address is "test@example.com"
-	const wchar_t* const PseudoAddress    = Text +  6; // PseudoAddress is "t@example.c", shortest form recognized by IsMailAddress.
-	const wchar_t* const PseudoAddressEnd = Text + 17;
-	const wchar_t* const AddressEnd       = Text + 19;
-	const wchar_t* const TextEnd          = Text + 22;
+	const wchar_t *const Text	 = L"   test@example.com   ";
+	const wchar_t *const Address = Text + 3; // Address is "test@example.com"
+	const wchar_t *const PseudoAddress =
+		Text + 6; // PseudoAddress is "t@example.c", shortest form recognized by IsMailAddress.
+	const wchar_t *const PseudoAddressEnd = Text + 17;
+	const wchar_t *const AddressEnd		  = Text + 19;
+	const wchar_t *const TextEnd		  = Text + 22;
 
-	struct Result {
-		bool is_address;
-		int  length;
-	};
-	const Result FalseResult = {false, 0};
-	auto ExpectedResult = [=](const wchar_t* p1, const wchar_t* p2, const wchar_t* p3) -> Result
+	struct Result
 	{
+		bool is_address;
+		int	 length;
+	};
+	const Result FalseResult	= {false, 0};
+	auto		 ExpectedResult = [=](const wchar_t *p1, const wchar_t *p2, const wchar_t *p3) -> Result {
 		/*
 		   p2 と p3 が以下の条件を外れたら、TRUE 判定の可能性はゼロ。
 		   * Address <= p2 <= PseudoAddress
 		   * PseudoAddressEnd <= p3
 		*/
-		if (p2 < Address || PseudoAddress < p2) {
-			return FalseResult;
-		}
-		if (p3 < PseudoAddressEnd) {
-			return FalseResult;
-		}
+		if (p2 < Address || PseudoAddress < p2) { return FalseResult; }
+		if (p3 < PseudoAddressEnd) { return FalseResult; }
 
-		if (p2 == Address) {
-			if (AddressEnd <= p3) {
+		if (p2 == Address)
+		{
+			if (AddressEnd <= p3)
+			{
 				return Result{true, static_cast<int>(AddressEnd - Address)}; // 文句なしの TRUE 判定。
-			} else {
-				return Result{true, static_cast<int>(p3 - Address)}; // アドレスの終端が切り詰められているが、IsMailAddress には知る由がない。ゆえに問題なし。
 			}
-		} else if (p2 <= p1) {
-			if (AddressEnd <= p3) {
-				return Result{true, static_cast<int>(AddressEnd - p2)}; // アドレスの先端が切り詰められているが、IsMailAddress には知る由がない。ゆえに問題なし。
-			} else {
-				return Result{true, static_cast<int>(p3 - p2)}; // アドレスの先端と終端が切り詰められているが、IsMailAddress には知る由がない。ゆえに問題なし。
+			else
+			{
+				return Result{true, static_cast<int>(p3 - Address)}; // アドレスの終端が切り詰められているが、IsMailAddress
+																	 // には知る由がない。ゆえに問題なし。
 			}
-		} else {
-			return FalseResult; // アドレスの先端が切り詰められ、IsMailAddress が境界判定によりそれを検知した。文句なしの FALSE 判定。
+		}
+		else if (p2 <= p1)
+		{
+			if (AddressEnd <= p3)
+			{
+				return Result{true, static_cast<int>(AddressEnd - p2)}; // アドレスの先端が切り詰められているが、IsMailAddress
+																		// には知る由がない。ゆえに問題なし。
+			}
+			else
+			{
+				return Result{true, static_cast<int>(p3 - p2)}; // アドレスの先端と終端が切り詰められているが、IsMailAddress
+																// には知る由がない。ゆえに問題なし。
+			}
+		}
+		else
+		{
+			return FalseResult; // アドレスの先端が切り詰められ、IsMailAddress
+								// が境界判定によりそれを検知した。文句なしの FALSE 判定。
 		}
 	};
-	auto IsEqualResult = [](const Result& expected, const Result& actual) -> testing::AssertionResult
-	{
-		if (expected.is_address != actual.is_address) {
-			return testing::AssertionFailure() << "IsMailAddress returned " << (actual.is_address?"TRUE":"FALSE") << " but expected " << (expected.is_address?"TRUE":"FALSE") << ".";
+	auto IsEqualResult = [](const Result &expected, const Result &actual) -> testing::AssertionResult {
+		if (expected.is_address != actual.is_address)
+		{
+			return testing::AssertionFailure() << "IsMailAddress returned " << (actual.is_address ? "TRUE" : "FALSE")
+											   << " but expected " << (expected.is_address ? "TRUE" : "FALSE") << ".";
 		}
-		if (expected.length != actual.length) {
-			return testing::AssertionFailure() << "IsMailAddress returned the address length " << (actual.length) << " but expected " << (expected.length) << ".";
+		if (expected.length != actual.length)
+		{
+			return testing::AssertionFailure() << "IsMailAddress returned the address length " << (actual.length)
+											   << " but expected " << (expected.length) << ".";
 		}
 		return testing::AssertionSuccess();
 	};
@@ -306,17 +326,18 @@ TEST(testIsMailAddress, OffsetParameter2)
 	   Text...TextEnd の範囲の文字配列に対して、IsMailAddress の３つの
 	   引数(pszBuf, offset, nBufLen)がとりうるすべての値を総当たりで試す。
 	*/
-	for (const wchar_t* p1 = Text; p1 != TextEnd; ++p1)   // p1 is a pointer to buffer.
-	for (const wchar_t* p2 = Text; p2 != TextEnd; ++p2)   // p2 is a pointer to address.
-	for (const wchar_t* p3 = Text; p3 != TextEnd; ++p3) { // p3 is a pointer to the end of buffer.
-		Result actual = {false, 0};
-		actual.is_address = IsMailAddress(p1, p2 - p1, p3 - p1, &(actual.length));
+	for (const wchar_t *p1 = Text; p1 != TextEnd; ++p1)		// p1 is a pointer to buffer.
+		for (const wchar_t *p2 = Text; p2 != TextEnd; ++p2) // p2 is a pointer to address.
+			for (const wchar_t *p3 = Text; p3 != TextEnd; ++p3)
+			{ // p3 is a pointer to the end of buffer.
+				Result actual	  = {false, 0};
+				actual.is_address = IsMailAddress(p1, p2 - p1, p3 - p1, &(actual.length));
 
-		EXPECT_TRUE(IsEqualResult(ExpectedResult(p1, p2, p3), actual))
-		<< "1st param of IsMailAddress: pszBuf is \"" << (p1 <= p3 ? std::wstring(p1, p3) : L"") << "\"\n"
-		<< "2nd param of IsMailAddress: offset is "   << (p2 - p1) << "\n"
-		<< "pszBuf + offset is \"" << (p2 <= p3 ? std::wstring(p2, p3) : L"") << "\"";
-	}
+				EXPECT_TRUE(IsEqualResult(ExpectedResult(p1, p2, p3), actual))
+					<< "1st param of IsMailAddress: pszBuf is \"" << (p1 <= p3 ? std::wstring(p1, p3) : L"") << "\"\n"
+					<< "2nd param of IsMailAddress: offset is " << (p2 - p1) << "\n"
+					<< "pszBuf + offset is \"" << (p2 <= p3 ? std::wstring(p2, p3) : L"") << "\"";
+			}
 }
 
 //////////////////////////////////////////////////////////////////////

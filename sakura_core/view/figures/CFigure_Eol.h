@@ -29,18 +29,16 @@
 #include "view/figures/CFigureStrategy.h"
 
 //! 改行描画
-class CFigure_Eol : public CFigureSpace{
+class CFigure_Eol : public CFigureSpace
+{
 public:
-	//traits
-	bool Match(const wchar_t* pText, int nTextLen) const;
-	bool Disp(void) const
-	{
-		return true;
-	}
+	// traits
+	bool Match(const wchar_t *pText, int nTextLen) const;
+	bool Disp(void) const { return true; }
 
-	//action
-	bool DrawImp(SColorStrategyInfo* pInfo);
-	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const {};
-	EColorIndexType GetColorIdx(void) const{ return COLORIDX_EOL; }
+	// action
+	bool			DrawImp(SColorStrategyInfo *pInfo);
+	void			DispSpace(CGraphics &gr, DispPos *pDispPos, CEditView *pcView, bool bTrans) const {};
+	EColorIndexType GetColorIdx(void) const { return COLORIDX_EOL; }
 };
 #endif /* SAKURA_CFIGURE_EOL_C51A4502_29AE_4D38_8056_5B0CFCC3686B_H_ */

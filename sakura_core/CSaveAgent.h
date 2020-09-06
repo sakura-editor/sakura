@@ -28,15 +28,17 @@
 
 #include "doc/CDocListener.h"
 
-class CSaveAgent : public CDocListenerEx{
+class CSaveAgent : public CDocListenerEx
+{
 public:
 	CSaveAgent();
-	ECallbackResult OnCheckSave(SSaveInfo* pSaveInfo) override;
-	void OnBeforeSave(const SSaveInfo& sSaveInfo) override;
-	void OnSave(const SSaveInfo& sSaveInfo) override;
-	void OnAfterSave(const SSaveInfo& sSaveInfo) override;
-	void OnFinalSave(ESaveResult eSaveResult) override;
+	ECallbackResult OnCheckSave(SSaveInfo *pSaveInfo) override;
+	void			OnBeforeSave(const SSaveInfo &sSaveInfo) override;
+	void			OnSave(const SSaveInfo &sSaveInfo) override;
+	void			OnAfterSave(const SSaveInfo &sSaveInfo) override;
+	void			OnFinalSave(ESaveResult eSaveResult) override;
+
 private:
-	SSaveInfo	m_sSaveInfoForRollback;
+	SSaveInfo m_sSaveInfoForRollback;
 };
 #endif /* SAKURA_CSAVEAGENT_9EDD4D3A_82B2_4651_82E5_AE471A54812B_H_ */
