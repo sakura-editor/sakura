@@ -11,26 +11,29 @@ def tweek_source(fin, fout):
 		match = re.search(r'^#line', line)
 		if match:
 			continue
-
-		# assert_warning, static_assert, assert をコメントアウト
-		regex   = r'\s*(assert_warning|static_assert|assert)\s*\('
-		pattern = r'^(?=' + regex + r')'
+		
+		# assert_warning, static_assert, assert を削除
+		assert_lines = []
+		pattern = r'\s*(assert_warning|static_assert|assert)\s*\(.*'
 		match = re.search(pattern, line)
 		if match:
-			line = re.sub(pattern, r'//', line)
-			fout.write(line)
+			match = re.search(r'^\s*#\s*define\s+', line)
+			if not match:
+				while True:
+					assert_lines.append(line)
 
-			while True:
-				# セミコロンの有無をチェック
-				match2 = re.search(r';', line)
-				if match2:
-					break
-				
-				line = fin.readline()
-				#line = re.sub(r'^(\s*)', r'\1//', line)
-				fout.write(r'//' + line)
+					# セミコロンの有無をチェック
+					match = re.search(r';', line)
+					if match:
+						break
+					line = fin.readline()
 
-			continue
+				one_line = ''.join(assert_lines)
+				assert_lines = []
+
+				one_line = re.sub(r'(\s*)(assert_warning|static_assert|assert)\s*\(.*\);', r'\1;', one_line, flags=re.MULTILINE)
+				fout.write(one_line)
+				continue
 
 		# malloc の前の行に #line を挿入
 		match = re.search(r'\b(malloc|realloc|malloc_char)\b\s*\(', line)
