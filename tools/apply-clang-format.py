@@ -3,7 +3,7 @@ import os
 import sys
 import re
 import codecs
-
+import subprocess
 clang_format = r'"C:\Program Files\LLVM\bin\clang-format.exe"'
 
 def processFiles(topdir):
@@ -13,7 +13,8 @@ def processFiles(topdir):
 			if fullPath.endswith('.cpp') or fullPath.endswith('.h'):
 				command = clang_format + ' -style=file -i ' + fullPath
 				print(command)
-				os.system(command)
+				subprocess.call(command, shell=False)
+
 
 if __name__ == '__main__':
 	processFiles('.')
