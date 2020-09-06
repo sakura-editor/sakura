@@ -740,11 +740,17 @@ void CViewCommander::Command_1PageUp( bool bSelect, CLayoutYInt nScrollNum )
 		if( nScrollNum <= 0 ){
 			nScrollNum = m_pCommanderView->GetTextArea().m_nViewRowNum - 1;
 		}
-		GetCaret().Cursor_UPDOWN( -nScrollNum, bSelect );
-		//	Sep. 11, 2004 genta 同期スクロール処理のため
-		//	m_pCommanderView->RedrawAllではなくScrollAtを使うように
-		m_pCommanderView->SyncScrollV( m_pCommanderView->ScrollAtV( nViewTopLine - nScrollNum ));
+		auto& caret = GetCaret();
+		auto prevCaretPos = caret.GetCaretLayoutPos();
+		caret.Cursor_UPDOWN( -nScrollNum, bSelect );
+		auto currCaretPos = caret.GetCaretLayoutPos();
+		CLayoutInt nScrolled = m_pCommanderView->ScrollAtV( nViewTopLine - nScrollNum );
+		m_pCommanderView->SyncScrollV(nScrolled);
 		m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);
+		// カーソル位置が変化しなかった、かつ、スクロール行数が0だった場合、描画を省く
+		if (prevCaretPos == currCaretPos && nScrolled == 0) {
+			return;
+		}
 		m_pCommanderView->RedrawAll();
 	}
 	return;
@@ -769,11 +775,17 @@ void CViewCommander::Command_1PageDown( bool bSelect, CLayoutYInt nScrollNum )
 		if( nScrollNum <= 0 ){
 			nScrollNum = m_pCommanderView->GetTextArea().m_nViewRowNum - 1;
 		}
-		GetCaret().Cursor_UPDOWN( nScrollNum, bSelect );
-		//	Sep. 11, 2004 genta 同期スクロール処理のため
-		//	m_pCommanderView->RedrawAllではなくScrollAtを使うように
-		m_pCommanderView->SyncScrollV( m_pCommanderView->ScrollAtV( nViewTopLine + nScrollNum ));
+		auto& caret = GetCaret();
+		auto prevCaretPos = caret.GetCaretLayoutPos();
+		caret.Cursor_UPDOWN( nScrollNum, bSelect );
+		auto currCaretPos = caret.GetCaretLayoutPos();
+		CLayoutInt nScrolled = m_pCommanderView->ScrollAtV( nViewTopLine + nScrollNum );
+		m_pCommanderView->SyncScrollV(nScrolled);
 		m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);
+		// カーソル位置が変化しなかった、かつ、スクロール行数が0だった場合、描画を省く
+		if (prevCaretPos == currCaretPos && nScrolled == 0) {
+			return;
+		}
 		m_pCommanderView->RedrawAll();
 	}
 
