@@ -121,7 +121,7 @@ namespace ApiWrap{
 		str._SetStringLength(actualCount);
 
 		// 正しく設定されているはず
-		assert(str.GetStringLength() == actualCount);
+		;
 		return true;
 	}
 
@@ -202,7 +202,7 @@ namespace ApiWrap{
 		str._SetStringLength(actualCount);
 
 		// 正しく設定されているはず
-		assert(str.GetStringLength() == actualCount);
+		;
 		return true;
 	}
 	inline void Combo_GetEditSel( HWND hwndCombo, int &nSelStart, int &nSelEnd )
@@ -210,8 +210,8 @@ namespace ApiWrap{
 		DWORD dwSelStart = 0;
 		DWORD dwSelEnd = 0;
 		::SendMessage( hwndCombo, CB_GETEDITSEL, WPARAM( &dwSelStart ), LPARAM( &dwSelEnd ) );
-		assert_warning( 0x7FFFFFFF < dwSelStart );
-		assert_warning( 0x7FFFFFFF < dwSelEnd );
+		;
+		;
 		nSelStart = static_cast<int>(dwSelStart);
 		nSelEnd = static_cast<int>(dwSelEnd);
 	}

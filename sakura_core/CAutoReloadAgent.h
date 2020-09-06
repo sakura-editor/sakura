@@ -48,7 +48,7 @@ public:
 	void ResumeWatching()
 	{
 		m_nPauseCount--;
-		assert(m_nPauseCount>=0);
+		;
 	}
 	bool IsPausing() const{ return m_nPauseCount>=1; }
 

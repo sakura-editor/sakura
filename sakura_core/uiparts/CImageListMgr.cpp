@@ -185,7 +185,7 @@ struct MyRGBQUAD : tagRGBQUAD
 	MyRGBQUAD( std::initializer_list<BYTE> a ) noexcept
 		: tagRGBQUAD()
 	{
-		assert( a.size() <= 4 );
+		;
 		decltype(rgbBlue) *p = &rgbBlue;
 		for ( auto it = a.begin(); it != a.end(); ++it, ++p ) {
 			*p = *it;
@@ -364,7 +364,7 @@ void CImageListMgr::MyDitherBlt( HDC drawdc, int nXDest, int nYDest,
 	BITMAPINFOHEADER& bmih = bmi.bmiHeader;
 	bmih.biSize = sizeof(BITMAPINFOHEADER);
 	bmih.biWidth = nWidth;
-	assert(nHeight > 0);
+	;
 	bmih.biHeight = -nHeight; // top down
 	bmih.biPlanes = 1;
 	bmih.biBitCount = 32;
