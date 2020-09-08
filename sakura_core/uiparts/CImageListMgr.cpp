@@ -122,9 +122,11 @@ HBITMAP ConvertTo32bppBMP(HBITMAP hbmpSrc)
 		DeleteObject(hdib);
 		return hbmpSrc;
 	}
-	SelectObject(hdcSrc, hbmpSrc);
-	SelectObject(hdcDst, hdib);
+	HGDIOBJ hbmpSrcOld = SelectObject(hdcSrc, hbmpSrc);
+	HGDIOBJ hbmpDstOld = SelectObject(hdcDst, hdib);
 	BitBlt(hdcDst, 0, 0, bmp.bmWidth, bmp.bmHeight, hdcSrc, 0, 0, SRCCOPY);
+	SelectObject(hdcSrc, hbmpSrcOld);
+	SelectObject(hdcDst, hbmpDstOld);
 	DeleteDC(hdcSrc);
 	DeleteDC(hdcDst);
 	DeleteObject(hbmpSrc);
