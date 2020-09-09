@@ -85,6 +85,55 @@ CImageListMgr::~CImageListMgr()
 	}
 }
 
+static
+HBITMAP ConvertTo32bppBMP(HBITMAP hbmpSrc)
+{
+	BITMAP bmp;
+	if (0 == GetObject(hbmpSrc, sizeof(BITMAP), &bmp )) {
+		return hbmpSrc;
+	}
+	if (bmp.bmBitsPixel == 32) {
+		return hbmpSrc;
+	}
+	BITMAPINFO bmi;
+	bmi.bmiHeader.biSize = sizeof(bmi.bmiHeader);
+	bmi.bmiHeader.biWidth = bmp.bmWidth;
+	bmi.bmiHeader.biHeight = bmp.bmHeight;
+	bmi.bmiHeader.biPlanes = bmp.bmPlanes;
+	bmi.bmiHeader.biBitCount = 32;
+	bmi.bmiHeader.biCompression = BI_RGB;
+	bmi.bmiHeader.biSizeImage = 0;
+	bmi.bmiHeader.biXPelsPerMeter = 0;
+	bmi.bmiHeader.biYPelsPerMeter = 0;
+	bmi.bmiHeader.biClrUsed = 0;
+	bmi.bmiHeader.biClrImportant = 0;
+	HBITMAP hdib = CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, NULL, NULL, 0);
+	if (hdib == NULL) {
+		return hbmpSrc;
+	}
+	HDC hdcSrc = CreateCompatibleDC(NULL);
+	if (!hdcSrc) {
+		DeleteObject(hdib);
+		return hbmpSrc;
+	}
+	HDC hdcDst = CreateCompatibleDC(NULL);
+	if (!hdcDst) {
+		DeleteDC(hdcSrc);
+		DeleteObject(hdib);
+		return hbmpSrc;
+	}
+	HGDIOBJ hbmpSrcOld = SelectObject(hdcSrc, hbmpSrc);
+	HGDIOBJ hbmpDstOld = SelectObject(hdcDst, hdib);
+	BitBlt(hdcDst, 0, 0, bmp.bmWidth, bmp.bmHeight, hdcSrc, 0, 0, SRCCOPY);
+	SelectObject(hdcSrc, hbmpSrcOld);
+	SelectObject(hdcDst, hbmpDstOld);
+	DeleteDC(hdcSrc);
+	DeleteDC(hdcDst);
+	DeleteObject(hbmpSrc);
+	return hdib;
+}
+
+
 /*
 	@brief Image Listの作成
 	
@@ -120,6 +169,9 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 			return false;
 		}
 	}
+
+	hRscbmp = ConvertTo32bppBMP(hRscbmp);
+
 	//	To Here 2001.7.1 GAE
 
 	//	2003.07.21 genta
@@ -150,6 +202,8 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 		if( hRscbmp == NULL ){
 			return false;
 		}
+
+		hRscbmp = ConvertTo32bppBMP(hRscbmp);
 
 		// アイコンサイズが異なる場合、拡大縮小する
 		hRscbmp = ResizeToolIcons( hRscbmp, m_cTrans );
