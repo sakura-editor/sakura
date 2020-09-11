@@ -43,8 +43,8 @@
  */
 inline bool MyFillRect( const HDC hDC, const RECT &rc, const HBRUSH hBrush ) noexcept
 {
-	assert( hDC );
-	assert( hBrush );
+	;
+	;
 
 	if ( !hDC || !hBrush ) return false;
 
@@ -66,7 +66,7 @@ inline bool MyFillRect( const HDC hDC, const RECT &rc, const HBRUSH hBrush ) noe
  */
 inline bool MyFillRect( const HDC hDC, const RECT &rc, const int sysColor ) noexcept
 {
-	assert( hDC );
+	;
 
 	if ( !hDC ) return false;
 
@@ -87,7 +87,7 @@ inline bool MyFillRect( const HDC hDC, const RECT &rc, const int sysColor ) noex
  */
 inline bool MyFillRect( const HDC hDC, const RECT &rc, const COLORREF color ) noexcept
 {
-	assert( hDC );
+	;
 
 	if ( !hDC ) return false;
 
@@ -176,7 +176,7 @@ public:
 	}
 	COLORREF GetCurrentTextForeColor()
 	{
-		assert(!m_vTextForeColors.empty());
+		;
 		return m_vTextForeColors.back();
 	}
 
@@ -192,7 +192,7 @@ public:
 	}
 	COLORREF GetTextBackColor()
 	{
-		assert(!m_vTextBackColors.empty());
+		;
 		return m_vTextBackColors.back();
 	}
 
@@ -225,17 +225,17 @@ public:
 	}
 	bool GetCurrentMyFontBold()
 	{
-		assert(!m_vFonts.empty());
+		;
 		return  m_vFonts.back().m_sFontAttr.m_bBoldFont;
 	}
 	bool GetCurrentMyFontUnderline()
 	{
-		assert(!m_vFonts.empty());
+		;
 		return  m_vFonts.back().m_sFontAttr.m_bUnderLine;
 	}
 	const SFontAttr& GetCurrentMyFontAttr()
 	{
-		assert(!m_vFonts.empty());
+		;
 		return  m_vFonts.back().m_sFontAttr;
 	}
 

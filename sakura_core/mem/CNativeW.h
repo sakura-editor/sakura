@@ -49,7 +49,7 @@ public:
 	bool			IsValid()		const{ return m_pData!=NULL; }
 	wchar_t			At(int nIndex)	const
 	{
-		assert(nIndex>=0 && nIndex<m_nDataLen);
+		;
 		return m_pData[nIndex];
 	}
 private:
@@ -179,5 +179,5 @@ public:
 };
 
 // 派生クラスでメンバー追加禁止
-static_assert(sizeof(CNativeW) == sizeof(CNative), "size check");
+;
 #endif /* SAKURA_CNATIVEW_3B48F63E_5B62_4FAB_9718_0D80114E20C1_H_ */
