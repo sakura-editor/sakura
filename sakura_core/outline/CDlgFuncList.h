@@ -103,7 +103,6 @@ public:
 	void LoadFileTreeSetting( CFileTreeSetting& data, SFilePath& IniDirPath );
 	void NotifyCaretMovement( CLayoutInt nCurLine, CLayoutInt nCurCol );
 	void NotifyDocModification();
-	bool IsUpToDate() { return m_bFuncInfoArrIsUpToDate; }
 
 protected:
 	bool m_bInChangeLayout;
@@ -142,10 +141,10 @@ protected:
 	void SetTreeFile();				// ツリーコントロールの初期化：ファイルツリー
 	void SetListVB( void );			/* リストビューコントロールの初期化：VisualBasic */		// Jul 10, 2003  little YOSHI
 	void SetDocLineFuncList();
-	void SetItemSelection( int nSelectItemIndex );
-	void SetItemSelectionForTreeView( HWND hwndTree, int nSelectItemIndex );
+	void SetItemSelection( int nSelectItemIndex, bool bAllowExpand );
+	void SetItemSelectionForTreeView( HWND hwndTree, int nSelectItemIndex, bool bAllowExpand );
 	void SetItemSelectionForListView( HWND hwndList, int nSelectItemIndex );
-	bool GetFuncInfoIndex( CLayoutInt nCurLine, CLayoutInt nCurCol, int* pIndexOut );
+	bool GetFuncInfoIndex( CLayoutInt nCurLine, CLayoutInt nCurCol, int* pnIndexOut );
 
 	void SetTreeFileSub(HTREEITEM hParent, const WCHAR* pszFile);
 	// 2002/11/1 frozen

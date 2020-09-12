@@ -670,7 +670,7 @@ void CDlgFuncList::SetData()
 	// 選択状態更新
 	int nFuncInfoIndex = -1;
 	if( GetFuncInfoIndex( m_nCurLine, m_nCurCol, &nFuncInfoIndex ) ){
-		SetItemSelection( nFuncInfoIndex );
+		SetItemSelection( nFuncInfoIndex, true );
 	}
 
 	/* アウトライン ダイアログを自動的に閉じる */
@@ -3928,7 +3928,7 @@ void CDlgFuncList::NotifyCaretMovement( CLayoutInt nCurLine, CLayoutInt nCurCol 
 
 	int nFuncInfoIndex = -1;
 	if( GetFuncInfoIndex( nCurLine, nCurCol, &nFuncInfoIndex ) ){
-		SetItemSelection( nFuncInfoIndex );
+		SetItemSelection( nFuncInfoIndex, false );
 	}
 
 	return;
@@ -3948,12 +3948,13 @@ void CDlgFuncList::NotifyDocModification()
 /*!
 	リスト/ツリービュー上のアイテムを選択または選択解除
 	@param[in]	nFuncInfoIndex	選択対象とする関数情報配列のインデックス(-1の場合は選択解除)
+	@param[in]	bAllowExpand	選択対象を含むノードを展開するかどうか(ツリービュー以外では無視)
 */
-void CDlgFuncList::SetItemSelection( int nFuncInfoIndex )
+void CDlgFuncList::SetItemSelection( int nFuncInfoIndex, bool bAllowExpand )
 {
 	if( m_nViewType == VIEWTYPE_TREE ){
 		HWND hwndTree = GetItemHwnd( IDC_TREE_FL );
-		SetItemSelectionForTreeView( hwndTree, nFuncInfoIndex );
+		SetItemSelectionForTreeView( hwndTree, nFuncInfoIndex, bAllowExpand );
 	}else if( m_nViewType == VIEWTYPE_LIST ){
 		HWND hwndList = GetItemHwnd( IDC_LIST_FL );
 		SetItemSelectionForListView( hwndList, nFuncInfoIndex );
@@ -3968,8 +3969,9 @@ void CDlgFuncList::SetItemSelection( int nFuncInfoIndex )
 	ツリービュー上のアイテムを選択または選択解除
 	@param[in]	hwndTree		対象とするツリービューのハンドル
 	@param[in]	nFuncInfoIndex	選択対象とする関数情報配列のインデックス(-1の場合は選択解除)
+	@param[in]	bAllowExpand	選択対象を含むノードを展開するかどうか
 */
-void CDlgFuncList::SetItemSelectionForTreeView( HWND hwndTree, int nFuncInfoIndex )
+void CDlgFuncList::SetItemSelectionForTreeView( HWND hwndTree, int nFuncInfoIndex, bool bAllowExpand )
 {
 	if( nFuncInfoIndex == -1 ){
 		TreeView_SelectItem( hwndTree, NULL );
@@ -3977,11 +3979,11 @@ void CDlgFuncList::SetItemSelectionForTreeView( HWND hwndTree, int nFuncInfoInde
 	}
 
 	std::vector<HTREEITEM> htiStack;
+	HTREEITEM htiFound = NULL;
 	htiStack.reserve( TreeView_GetCount( hwndTree ) );
 	htiStack.push_back( TreeView_GetRoot( hwndTree ) );
 	size_t nStackIndex = 0;
-	bool bFound = false;
-	while( !bFound && nStackIndex < htiStack.size() ){
+	while( htiFound == NULL && nStackIndex < htiStack.size() ){
 		HTREEITEM htiCurrent = htiStack[nStackIndex];
 		for( ; NULL != htiCurrent ; htiCurrent = TreeView_GetNextSibling( hwndTree, htiCurrent ) ){
 			TVITEM tvItem = {};
@@ -3990,9 +3992,7 @@ void CDlgFuncList::SetItemSelectionForTreeView( HWND hwndTree, int nFuncInfoInde
 			TreeView_GetItem( hwndTree, &tvItem );
 			if( nFuncInfoIndex == TreeDummylParamToFuncInfoIndex( m_vecDummylParams, tvItem.lParam ) ){
 				// 発見
-				TreeView_SelectItem( hwndTree, htiCurrent );
-				TreeView_EnsureVisible( hwndTree, htiCurrent );
-				bFound = true;
+				htiFound = htiCurrent;
 				break;
 			}
 
@@ -4002,6 +4002,24 @@ void CDlgFuncList::SetItemSelectionForTreeView( HWND hwndTree, int nFuncInfoInde
 			}
 		}
 		++nStackIndex;
+	}
+
+	if( htiFound != NULL ){
+		HTREEITEM htiSelect = htiFound;
+		if( !bAllowExpand ){
+			// 未展開のアイテムは勝手に開けないよう気を付けて選択
+			HTREEITEM htiParent = TreeView_GetParent( hwndTree, htiFound );
+			while( htiParent != NULL && (TreeView_GetItemState( hwndTree, htiParent, TVIS_EXPANDED ) & TVIS_EXPANDED) == 0 ){
+				// [A] 展開
+				//  +-[B] 未展開 <<< ここを探します
+				//     +-[C] 未展開
+				//        +-[htiFound]
+				htiSelect = htiParent;
+				htiParent = TreeView_GetParent( hwndTree, htiParent );
+			}
+		}
+		TreeView_SelectItem( hwndTree, htiSelect );
+		TreeView_EnsureVisible( hwndTree, htiSelect );
 	}
 
 	return;
@@ -4028,11 +4046,11 @@ void CDlgFuncList::SetItemSelectionForListView( HWND hwndList, int nFuncInfoInde
 	指定した位置に該当する関数情報のインデックスを取得
 	@param[in]	nCurLine	行
 	@param[in]	nCurCol		桁
-	@param[out]	pIndexOut	該当する関数情報のインデックスを格納
+	@param[out]	pnIndexOut	該当する関数情報のインデックスを格納
 	@retval		true		該当あり
 	@retval		false		該当なし(出力引数には何も設定せず)
 */
-bool CDlgFuncList::GetFuncInfoIndex( CLayoutInt nCurLine, CLayoutInt nCurCol, int* pIndexOut )
+bool CDlgFuncList::GetFuncInfoIndex( CLayoutInt nCurLine, CLayoutInt nCurCol, int* pnIndexOut )
 {
 	const CFuncInfo* pcFuncInfo = NULL;
 	CLayoutInt nFuncLineOld(-1);
@@ -4042,7 +4060,7 @@ bool CDlgFuncList::GetFuncInfoIndex( CLayoutInt nCurLine, CLayoutInt nCurCol, in
 	int nFoundIndex = -1;
 	int i;
 
-	if( m_pcFuncInfoArr == NULL || pIndexOut == NULL ){
+	if( m_pcFuncInfoArr == NULL || pnIndexOut == NULL ){
 		return false;
 	}
 
@@ -4080,7 +4098,7 @@ bool CDlgFuncList::GetFuncInfoIndex( CLayoutInt nCurLine, CLayoutInt nCurCol, in
 		return false;
 	}
 
-	*pIndexOut = nFoundIndex;
+	*pnIndexOut = nFoundIndex;
 
 	return true;
 }
