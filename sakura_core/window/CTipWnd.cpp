@@ -17,10 +17,6 @@
 
 #include "StdAfx.h"
 #include "CTipWnd.h"
-
-#include <string>
-#include <regex>
-
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "util/window.h"
@@ -155,16 +151,6 @@ void CTipWnd::ComputeWindowSize(
 	const int cx4 = DpiScaleX( 4 );
 	const int cy4 = DpiScaleY( 4 );
 
-	std::wregex re1( LR"(([^\\])\\n)" );
-	std::wregex re2( LR"((\\)\\)" );
-	if( m_cInfo.IsValid()
-		&& ( std::regex_search( m_cInfo.GetStringPtr(), re1 ) || std::regex_search( m_cInfo.GetStringPtr(), re2 ) ) ){
-		auto text = std::regex_replace( m_cInfo.GetStringPtr(), re1, L"$1\n" );
-		text = std::regex_replace( text, re1, L"$1\n" );
-		text = std::regex_replace( text, re2, L"$1" );
-		m_cInfo.SetString( text.c_str(), text.length() );
-	}
-
 	// 計測対象をメンバ変数からローカル変数に取得
 	const WCHAR* pszText = m_cInfo.GetStringPtr();
 	const size_t cchText = m_cInfo.GetStringLength();
@@ -180,7 +166,7 @@ void CTipWnd::ComputeWindowSize(
 		const bool isEndOfText = ( pszText[i] == '\0' );
 		// iの位置にNUL終端、または"\n"がある場合
 		if ( isEndOfText
-			|| pszText[i] == '\n' ) {
+			|| ( i + 1 < cchText && pszText[i] == '\\' && pszText[i + 1] == 'n' ) ) {
 			// 計測結果を格納する矩形
 			CMyRect rc;
 			// 計測対象の文字列がブランクでない場合
@@ -211,7 +197,7 @@ void CTipWnd::ComputeWindowSize(
 			}
 
 			// 次の行の開始位置を設定する
-			nLineBgn = i + 1; // "\n" の文字数
+			nLineBgn = i + 2; // "\\n" の文字数
 			i = nLineBgn;
 		}else{
 			// 現在位置の文字がTCHAR単位で何文字に当たるか計算してインデックスを進める
@@ -261,7 +247,7 @@ void CTipWnd::DrawTipText(
 		const bool isEndOfText = ( pszText[i] == '\0' );
 		// iの位置にNUL終端、または"\n"がある場合
 		if ( isEndOfText
-			|| pszText[i] == '\n' ) {
+			|| ( i + 1 < cchText && pszText[i] == '\\' && pszText[i + 1] == 'n' ) ) {
 			int nHeight;
 			// 計測対象の文字列がブランクでない場合
 			if ( 0 < i - nLineBgn ) {
@@ -283,7 +269,7 @@ void CTipWnd::DrawTipText(
 			}
 
 			// 次の行の開始位置を設定する
-			nLineBgn = i + 1; // "\n" の文字数
+			nLineBgn = i + 2; // "\\n" の文字数
 			i = nLineBgn;
 		}else{
 			// 現在位置の文字がTCHAR単位で何文字に当たるか計算してインデックスを進める
