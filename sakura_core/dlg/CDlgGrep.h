@@ -76,7 +76,7 @@ protected:
 	SComboBoxItemDeleter	m_comboDelExcludeFolder;
 	CRecentExcludeFolder	m_cRecentExcludeFolder;
 
-	CFontAutoDeleter		m_cFontText;
+	std::vector<CFontAutoDeleter>	m_cFontDeleters;
 
 	/*
 	||  実装ヘルパ関数

@@ -350,9 +350,14 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_EXCLUDE_FOLDER), &m_comboDelExcludeFolder);
 
 	// フォント設定	2012/11/27 Uchi
-	HFONT hFontOld = (HFONT)::SendMessageAny( GetItemHwnd( IDC_COMBO_TEXT ), WM_GETFONT, 0, 0 );
-	HFONT hFont = SetMainFont( GetItemHwnd( IDC_COMBO_TEXT ) );
-	m_cFontText.SetFont( hFontOld, hFont, GetItemHwnd( IDC_COMBO_TEXT ) );
+	const int nItemIds[] = { IDC_COMBO_TEXT, IDC_COMBO_FILE, IDC_COMBO_FOLDER, IDC_COMBO_EXCLUDE_FILE, IDC_COMBO_EXCLUDE_FOLDER };
+	m_cFontDeleters.resize( sizeof(nItemIds) / sizeof(nItemIds[0]) );
+	for( i = 0; i < m_cFontDeleters.size(); ++i ){
+		HWND hwndItem = GetItemHwnd( nItemIds[i] );
+		HFONT hFontOld = (HFONT)::SendMessageAny( hwndItem, WM_GETFONT, 0, 0 );
+		HFONT hFont = SetMainFont( hwndItem );
+		m_cFontDeleters[i].SetFont( hFontOld, hFont, hwndItem );
+	}
 
 	/* 基底クラスメンバ */
 //	CreateSizeBox();
@@ -397,7 +402,9 @@ LRESULT CALLBACK OnFolderProc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 
 BOOL CDlgGrep::OnDestroy()
 {
-	m_cFontText.ReleaseOnDestroy();
+	for( int i = 0; i < m_cFontDeleters.size(); ++i ){
+		m_cFontDeleters[i].ReleaseOnDestroy();
+	}
 	return CDialog::OnDestroy();
 }
 
