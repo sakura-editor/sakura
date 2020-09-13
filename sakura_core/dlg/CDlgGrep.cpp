@@ -351,8 +351,8 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	// フォント設定	2012/11/27 Uchi
 	const int nItemIds[] = { IDC_COMBO_TEXT, IDC_COMBO_FILE, IDC_COMBO_FOLDER, IDC_COMBO_EXCLUDE_FILE, IDC_COMBO_EXCLUDE_FOLDER };
-	m_cFontDeleters.resize( sizeof(nItemIds) / sizeof(nItemIds[0]) );
-	for( i = 0; i < m_cFontDeleters.size(); ++i ){
+	m_cFontDeleters.resize( _countof( nItemIds ) );
+	for( size_t i = 0; i < _countof( nItemIds ); ++i ){
 		HWND hwndItem = GetItemHwnd( nItemIds[i] );
 		HFONT hFontOld = (HFONT)::SendMessageAny( hwndItem, WM_GETFONT, 0, 0 );
 		HFONT hFont = SetMainFont( hwndItem );
@@ -402,7 +402,7 @@ LRESULT CALLBACK OnFolderProc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 
 BOOL CDlgGrep::OnDestroy()
 {
-	for( int i = 0; i < m_cFontDeleters.size(); ++i ){
+	for( size_t i = 0; i < m_cFontDeleters.size(); ++i ){
 		m_cFontDeleters[i].ReleaseOnDestroy();
 	}
 	return CDialog::OnDestroy();
