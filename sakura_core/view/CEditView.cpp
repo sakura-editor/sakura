@@ -1296,7 +1296,7 @@ VOID CEditView::OnTimer(
 			bool bHide;
 			if( MiniMapCursorLineTip( &po, &rc, &bHide ) ){
 				m_cTipWnd.m_bAlignLeft = true;
-				m_cTipWnd.Show( po.x, po.y + m_pcEditWnd->GetActiveView().GetTextMetrics().GetHankakuHeight(), NULL );
+				m_cTipWnd.Show( po.x, po.y + m_pcEditWnd->GetActiveView().GetTextMetrics().GetHankakuHeight() );
 			}else{
 				if( bHide && 0 == m_dwTipTimer ){
 					m_cTipWnd.Hide();
@@ -1305,7 +1305,7 @@ VOID CEditView::OnTimer(
 		}else{
 			if( FALSE != KeyWordHelpSearchDict( LID_SKH_ONTIMER, &po, &rc ) ){	// 2006.04.10 fon
 				/* 辞書Tipを表示 */
-				m_cTipWnd.Show( po.x, po.y + GetTextMetrics().GetHankakuHeight(), NULL );
+				m_cTipWnd.Show( po.x, po.y + GetTextMetrics().GetHankakuHeight() );
 			}
 		}
 	}
@@ -2662,7 +2662,7 @@ bool  CEditView::ShowKeywordHelp( POINT po, LPCWSTR pszHelp, LPRECT prcHokanWin)
 		// 2001/06/19 End
 
 			/* 辞書Tipを表示 */
-			m_cTipWnd.Show( po.x, po.y , NULL , &rcTipWin);
+			m_cTipWnd.Show( po.x, po.y, &rcTipWin );
 			return true;
 		}
 	}

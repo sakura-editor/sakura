@@ -106,15 +106,10 @@ void CTipWnd::AfterCreateWindow( void )
 }
 
 /* Tipを表示 */
-void CTipWnd::Show( int nX, int nY, const WCHAR* szText, RECT* pRect )
+void CTipWnd::Show( int nX, int nY, RECT* pRect )
 {
 	HDC		hdc;
 	RECT	rc;
-
-	if( NULL != szText ){
-		m_cInfo.SetString( szText );
-		UnEscapeInfoText( m_cInfo );
-	}
 
 	hdc = ::GetDC( GetHwnd() );
 
