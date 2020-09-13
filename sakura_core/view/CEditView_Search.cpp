@@ -106,77 +106,88 @@ BOOL CEditView::KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc )
 */
 BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 {
-	/* tooltipバッファ初期化 */
-	m_cTipWnd.m_cInfo.Clear();
+	CNativeW*	pcmemRefKey;
+	int			nCmpLen = STRNCMP_MAX; // 2006.04.10 fon
+	int			nLine; // 2006.04.10 fon
 
+	m_cTipWnd.m_cInfo.SetString( L"" );	/* tooltipバッファ初期化 */
 	/* 1行目にキーワード表示の場合 */
-	if( m_pTypeData->m_bUseKeyHelpKeyDisp ){	/* キーワードも表示する */	// 2006.04.10 fon
-		m_cTipWnd.m_cInfo.AppendStringF( L"[ %s ]", pcmemCurText->GetStringPtr() );
+	if(m_pTypeData->m_bUseKeyHelpKeyDisp){	/* キーワードも表示する */	// 2006.04.10 fon
+		m_cTipWnd.m_cInfo.AppendString( L"[ " );
+		m_cTipWnd.m_cInfo.AppendString( pcmemCurText->GetStringPtr() );
+		m_cTipWnd.m_cInfo.AppendString( L" ]" );
 	}
-
-	// 一致確認する最大文字数、途中まで一致を使う場合は短くする
-	const int nCmpLen = m_pTypeData->m_bUseKeyHelpPrefix
-		? std::min( STRNCMP_MAX, (int)::wcslen( pcmemCurText->GetStringPtr() ) )
-		: STRNCMP_MAX;
-
-	// 検索前にヒットフラグをクリアしておく
+	/* 途中まで一致を使う場合 */
+	if(m_pTypeData->m_bUseKeyHelpPrefix)
+		nCmpLen = wcslen( pcmemCurText->GetStringPtr() );	// 2006.04.10 fon
 	m_cTipWnd.m_KeyWasHit = FALSE;
-
-	// 辞書ファイルの冊数、最大値は MAX_KEYHELP_FILE 。
-	const int nKeyHelpNum = std::min(m_pTypeData->m_nKeyHelpNum, (int)MAX_KEYHELP_FILE);
-
-	for( int i = 0; i < nKeyHelpNum; i++ ){
+	for(int i =0 ; i < m_pTypeData->m_nKeyHelpNum; i++){	//最大数：MAX_KEYHELP_FILE
 		if( m_pTypeData->m_KeyHelpArr[i].m_bUse ){
-			CNativeW*	pcmemRefKey = NULL;
-			CNativeW*	pcmemRefText = NULL;
-			int			nLine;
-			const auto& szPath = m_pTypeData->m_KeyHelpArr[i].m_szPath;
-			const int nSearchResult = m_cDicMgr.CDicMgr::Search(
+			// 2006.04.10 fon (nCmpLen,pcmemRefKey,nSearchLine)引数を追加
+			CNativeW*	pcmemRefText;
+			int nSearchResult=m_cDicMgr.CDicMgr::Search(
 				pcmemCurText->GetStringPtr(),
 				nCmpLen,
 				&pcmemRefKey,
 				&pcmemRefText,
-				szPath,
+				m_pTypeData->m_KeyHelpArr[i].m_szPath,
 				&nLine
 			);
-
 			/* 該当するキーがある */
 			if( nSearchResult ){
-				// バッファが空でなければseparator挿入
-				if( m_cTipWnd.GetInfoText().GetStringLength() != 0 ){
-					m_cTipWnd.m_cInfo.AppendString( L"\n--------------------\n" );
-				}
-
 				/* 有効になっている辞書を全部なめて、ヒットの都度説明の継ぎ増し */
-				if( m_pTypeData->m_bUseKeyHelpAllSearch ){	/* ヒットした次の辞書も検索 */
-					/* 複数辞書をなめるので辞書のパス挿入、表示するのはファイル名(拡張子なし)のみ */
-					WCHAR szFile[MAX_PATH];
-					_wsplitpath( szPath, NULL, NULL, szFile, NULL );
-					m_cTipWnd.m_cInfo.AppendStringF( L"■%s\n", szFile );
-				}
+				if(m_pTypeData->m_bUseKeyHelpAllSearch){	/* ヒットした次の辞書も検索 */	// 2006.04.10 fon
+					/* バッファに前のデータが詰まっていたらseparator挿入 */
+					if(m_cTipWnd.m_cInfo.GetStringLength() != 0)
+						m_cTipWnd.m_cInfo.AppendString( LS(STR_ERR_DLGEDITVW5) );
+					else
+						m_cTipWnd.m_cInfo.AppendString( LS(STR_ERR_DLGEDITVW6) );	/* 先頭の場合 */
+					/* 辞書のパス挿入 */
+					{
+						WCHAR szFile[MAX_PATH];
+						// 2013.05.08 表示するのはファイル名(拡張子なし)のみにする
+						_wsplitpath( m_pTypeData->m_KeyHelpArr[i].m_szPath, NULL, NULL, szFile, NULL );
+						m_cTipWnd.m_cInfo.AppendString( szFile );
+					}
+					m_cTipWnd.m_cInfo.AppendString( L"\n" );
+					/* 前方一致でヒットした単語を挿入 */
+					if(m_pTypeData->m_bUseKeyHelpPrefix){	/* 選択範囲で前方一致検索 */
+						m_cTipWnd.m_cInfo.AppendString( pcmemRefKey->GetStringPtr() );
+						m_cTipWnd.m_cInfo.AppendString( L" >>\n" );
+					}
 
-				/* 前方一致でヒットした単語を挿入 */
-				if( m_pTypeData->m_bUseKeyHelpPrefix ){	/* 選択範囲で前方一致検索 */
-					m_cTipWnd.m_cInfo.AppendStringF(L"%s >>\n", pcmemRefKey->GetStringPtr() );
-				}
-					
-				/* 調査した「意味」を挿入 */
-				m_cTipWnd.m_cInfo.AppendString( UnEscapeInfoText( *pcmemRefText ) );
+					/* 調査した「意味」を挿入 */
+					m_cTipWnd.m_cInfo.AppendString( UnEscapeInfoText( *pcmemRefText ) );
 
-				/* 最初のヒット項目のみ返す場合、または、初回ヒットの場合 */
-				if( !m_pTypeData->m_bUseKeyHelpAllSearch
-					|| !m_cTipWnd.m_KeyWasHit ){
+					delete pcmemRefText;
+					delete pcmemRefKey;	// 2006.07.02 genta
 					/* タグジャンプ用の情報を残す */
-					m_cTipWnd.m_nSearchDict = i;
-					m_cTipWnd.m_nSearchLine = nLine;
-					m_cTipWnd.m_KeyWasHit = TRUE;
+					if(!m_cTipWnd.m_KeyWasHit){
+						m_cTipWnd.m_nSearchDict=i;	/* 辞書を開くとき最初にヒットした辞書を開く */
+						m_cTipWnd.m_nSearchLine=nLine;
+						m_cTipWnd.m_KeyWasHit = TRUE;
+					}
 				}
+				else{	/* 最初のヒット項目のみ返す場合 */
+					/* キーワードが入っていたらseparator挿入 */
+					if(m_cTipWnd.m_cInfo.GetStringLength() != 0)
+						m_cTipWnd.m_cInfo.AppendString( L"\n--------------------\n" );
+					
+					/* 前方一致でヒットした単語を挿入 */
+					if(m_pTypeData->m_bUseKeyHelpPrefix){	/* 選択範囲で前方一致検索 */
+						m_cTipWnd.m_cInfo.AppendString( pcmemRefKey->GetStringPtr() );
+						m_cTipWnd.m_cInfo.AppendString( L" >>\n" );
+					}
+					
+					/* 調査した「意味」を挿入 */
+					m_cTipWnd.m_cInfo.AppendString( UnEscapeInfoText( *pcmemRefText ) );
 
-				delete pcmemRefText;
-				delete pcmemRefKey;
-
-				/* 最初のヒット項目のみ返す場合 */
-				if( !m_pTypeData->m_bUseKeyHelpAllSearch ){
+					delete pcmemRefText;
+					delete pcmemRefKey;	// 2006.07.02 genta
+					/* タグジャンプ用の情報を残す */
+					m_cTipWnd.m_nSearchDict=i;
+					m_cTipWnd.m_nSearchLine=nLine;
+					m_cTipWnd.m_KeyWasHit = TRUE;
 					return TRUE;
 				}
 			}
