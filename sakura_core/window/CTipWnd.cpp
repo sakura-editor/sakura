@@ -28,7 +28,7 @@ static constexpr WCHAR szDummy[] = { L" " };
 const WCHAR* UnEscapeInfoText( CNativeW& cInfo )
 {
 	cInfo.Replace( L"\\n", L"\n" );
-	cInfo.Replace( L"\\x53", L"\\" );
+	cInfo.Replace( L"\\\\", L"\\" );
 	return cInfo.GetStringPtr();
 }
 
