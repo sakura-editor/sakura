@@ -243,7 +243,7 @@ bool CNormalProcess::InitializeProcess()
 				// 2013.05.21 指定なしの場合はカレントフォルダにする
 				if( cmemGrepFolder.GetStringLength() == 0 ){
 					WCHAR szCurDir[_MAX_PATH];
-					::GetCurrentDirectory( _countof(szCurDir), szCurDir );
+					::GetCurrentDirectory( std::size(szCurDir), szCurDir );
 					cmemGrepFolder.SetString( szCurDir );
 				}
 			}

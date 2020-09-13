@@ -275,7 +275,7 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 
 	if( 0 != fontSize ){
 		// フォントサイズを直接選択する場合
-		nPointSize = t_max(sizeTable[0], t_min(sizeTable[_countof(sizeTable)-1], fontSize));
+		nPointSize = t_max(sizeTable[0], t_min(sizeTable[std::size(sizeTable)-1], fontSize));
 	} else if( 0 != shift ) {
 		// 現在のフォントに対して、縮小or拡大したフォント選択する場合
 		nPointSize = (mode == 0 ? GetDllShareData().m_Common.m_sView.m_nPointSize
@@ -283,9 +283,9 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 
 		// フォントの拡大or縮小するためのサイズ検索
 		int i;
-		for( i = 0; i < _countof(sizeTable); i++) {
+		for( i = 0; i < std::size(sizeTable); i++) {
 			if( nPointSize <= sizeTable[i] ){
-				int index = t_max(0, t_min((int)_countof(sizeTable) - 1, (int)(i + shift)));
+				int index = t_max(0, t_min((int)std::size(sizeTable) - 1, (int)(i + shift)));
 				int nNewPointSize = sizeTable[index];
 				// フォントサイズが変わらないので終了
 				if (nPointSize == nNewPointSize) {
@@ -503,7 +503,7 @@ void CViewCommander::Command_SET_QUOTESTRING( const wchar_t* quotestr )
 		return;
 
 	wcsncpy( GetDllShareData().m_Common.m_sFormat.m_szInyouKigou, quotestr,
-		_countof( GetDllShareData().m_Common.m_sFormat.m_szInyouKigou ));
+		std::size( GetDllShareData().m_Common.m_sFormat.m_szInyouKigou ));
 	
-	GetDllShareData().m_Common.m_sFormat.m_szInyouKigou[ _countof( GetDllShareData().m_Common.m_sFormat.m_szInyouKigou ) - 1 ] = L'\0';
+	GetDllShareData().m_Common.m_sFormat.m_szInyouKigou[ std::size( GetDllShareData().m_Common.m_sFormat.m_szInyouKigou ) - 1 ] = L'\0';
 }

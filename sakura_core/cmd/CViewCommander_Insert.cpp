@@ -27,7 +27,7 @@ void CViewCommander::Command_INS_DATE( void )
 	WCHAR szText[1024];
 	SYSTEMTIME systime;
 	::GetLocalTime( &systime );
-	CFormatManager().MyGetDateFormat( systime, szText, _countof( szText ) - 1 );
+	CFormatManager().MyGetDateFormat( systime, szText, std::size( szText ) - 1 );
 
 	// テキストを貼り付け ver1
 	Command_INSTEXT( true, szText, CLogicInt(-1), TRUE );
@@ -40,7 +40,7 @@ void CViewCommander::Command_INS_TIME( void )
 	WCHAR szText[1024];
 	SYSTEMTIME systime;
 	::GetLocalTime( &systime );
-	CFormatManager().MyGetTimeFormat( systime, szText, _countof( szText ) - 1 );
+	CFormatManager().MyGetTimeFormat( systime, szText, std::size( szText ) - 1 );
 
 	// テキストを貼り付け ver1
 	Command_INSTEXT( true, szText, CLogicInt(-1), TRUE );

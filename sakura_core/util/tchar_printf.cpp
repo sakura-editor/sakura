@@ -257,7 +257,7 @@ int tchar_vsprintf_s_imp(T* buf, size_t nBufCount, const T* format, va_list& v, 
 
 				//フィールドを一時変数にコピー
 				T field[64];
-				if(field_end-field_begin>=_countof(field))field_end=field_begin+_countof(field)-1; //フィールド長制限
+				if(field_end-field_begin>=std::size(field))field_end=field_begin+std::size(field)-1; //フィールド長制限
 				auto_strncpy(field,field_begin,field_end-field_begin);
 				field[field_end-field_begin] = 0;
 				

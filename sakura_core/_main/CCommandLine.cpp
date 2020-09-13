@@ -250,7 +250,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 	int		nPos;
 	int		i = 0;
 	if( pszCmdLineSrc[0] != L'-' ){
-		for( i = 0; i < _countof( szPath ); ++i ){
+		for( i = 0; i < std::size( szPath ); ++i ){
 			if( pszCmdLineSrc[i] == L' ' || pszCmdLineSrc[i] == L'\0' ){
 				/* ファイルの存在をチェック */
 				szPath[i] = L'\0';	// 終端文字
@@ -302,14 +302,14 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				if( len > 0 ){
 					cmWork.SetString( &pszToken[1], len - ( pszToken[len] == L'"' ? 1 : 0 ));
 					cmWork.Replace( L"\"\"", L"\"" );
-					wcscpy_s( szPath, _countof(szPath), cmWork.GetStringPtr() );	/* ファイル名 */
+					wcscpy_s( szPath, std::size(szPath), cmWork.GetStringPtr() );	/* ファイル名 */
 				}
 				else {
 					szPath[0] = L'\0';
 				}
 			}
 			else{
-				wcscpy_s( szPath, _countof(szPath), pszToken );		/* ファイル名 */
+				wcscpy_s( szPath, std::size(szPath), pszToken );		/* ファイル名 */
 			}
 
 			// Nov. 11, 2005 susu
@@ -323,7 +323,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				if ( !TCODE::IsValidFilenameChar(szPath[i]) ){
 					WCHAR msg_str[_MAX_PATH + 1];
 					swprintf(
-						msg_str, _countof(msg_str),
+						msg_str, std::size(msg_str),
 						LS(STR_CMDLINE_PARSECMD1),
 						szPath
 					);

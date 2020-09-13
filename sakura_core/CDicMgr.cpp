@@ -73,9 +73,9 @@ BOOL CDicMgr::Search(
 	for(int line=1 ; in; line++ ){	// 2006.04.10 fon
 		//1行読み込み
 		{
-			wstring tmp = in.ReadLineW(); //NULL != fgetws( szLine, _countof(szLine), pFile );
-			wcsncpy_s(szLine,_countof(szLine),tmp.c_str(), _TRUNCATE);
-			// auto_strlcpy(szLine,tmp.c_str(), _countof(szLine));
+			wstring tmp = in.ReadLineW(); //NULL != fgetws( szLine, std::size(szLine), pFile );
+			wcsncpy_s(szLine,std::size(szLine),tmp.c_str(), _TRUNCATE);
+			// auto_strlcpy(szLine,tmp.c_str(), std::size(szLine));
 		}
 
 		pszWork = wcsstr( szLine, pszDelimit );

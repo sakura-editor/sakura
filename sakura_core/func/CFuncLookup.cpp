@@ -240,7 +240,7 @@ void CFuncLookup::SetListItem( HWND hListBox, int category ) const
 	for( i = 0; i < n; i++ ){
 		if( Pos2FuncCode( category, i ) == F_DISABLE )
 			continue;
-		Pos2FuncName( category, i, pszLabel, _countof(pszLabel) );
+		Pos2FuncName( category, i, pszLabel, std::size(pszLabel) );
 		List_AddString( hListBox, pszLabel );
 	}
 }

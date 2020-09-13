@@ -98,7 +98,7 @@ namespace WCODE
 		//if(wc==TAB)return false;
 
 		//return iswcntrl(wc)!=0;
-		return (wc<_countof(gm_keyword_char) && gm_keyword_char[wc]==CK_CTRL);
+		return (wc<std::size(gm_keyword_char) && gm_keyword_char[wc]==CK_CTRL);
 	}
 
 #if 0

@@ -72,11 +72,11 @@ BOOL CDlgExec::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 	HWND hwndCombo;
 	int i;
 	hwndCombo = GetItemHwnd( IDC_COMBO_CODE_GET );
-	for( i = 0; i < _countof(codes); ++i ){
+	for( i = 0; i < std::size(codes); ++i ){
 		Combo_AddString( hwndCombo, CCodeTypeName(codes[i]).Normal() );
 	}
 	hwndCombo = GetItemHwnd( IDC_COMBO_CODE_SEND );
-	for( i = 0; i < _countof(codes); ++i ){
+	for( i = 0; i < std::size(codes); ++i ){
 		Combo_AddString( hwndCombo, CCodeTypeName(codes[i]).Normal() );
 	}
 
@@ -102,7 +102,7 @@ void CDlgExec::SetData( void )
 	*           初期             *
 	*****************************/
 	/* ユーザーがコンボ ボックスのエディット コントロールに入力できるテキストの長さを制限する */
-	Combo_LimitText( GetItemHwnd( IDC_COMBO_m_szCommand ), _countof( m_szCommand ) - 1 );
+	Combo_LimitText( GetItemHwnd( IDC_COMBO_m_szCommand ), std::size( m_szCommand ) - 1 );
 	Combo_LimitText( GetItemHwnd( IDC_COMBO_CUR_DIR ), _countof2( m_szCurDir ) - 1 );
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_m_szCommand ), TRUE );
@@ -156,7 +156,7 @@ void CDlgExec::SetData( void )
 	int nOpt;
 	hwndCombo = GetItemHwnd( IDC_COMBO_CODE_GET );
 	nOpt = m_pShareData->m_nExecFlgOpt & 0x88;
-	for( i = 0; _countof(codeTable1); i++ ){
+	for( i = 0; std::size(codeTable1); i++ ){
 		if( codeTable1[i] == nOpt ){
 			Combo_SetCurSel( hwndCombo, i );
 			break;
@@ -164,7 +164,7 @@ void CDlgExec::SetData( void )
 	}
 	hwndCombo = GetItemHwnd( IDC_COMBO_CODE_SEND );
 	nOpt = m_pShareData->m_nExecFlgOpt & 0x110;
-	for( i = 0; _countof(codeTable2); i++ ){
+	for( i = 0; std::size(codeTable2); i++ ){
 		if( codeTable2[i] == nOpt ){
 			Combo_SetCurSel( hwndCombo, i );
 			break;
@@ -176,7 +176,7 @@ void CDlgExec::SetData( void )
 /* ダイアログデータの取得 */
 int CDlgExec::GetData( void )
 {
-	DlgItem_GetText( GetHwnd(), IDC_COMBO_m_szCommand, m_szCommand, _countof( m_szCommand ));
+	DlgItem_GetText( GetHwnd(), IDC_COMBO_m_szCommand, m_szCommand, std::size( m_szCommand ));
 	if( IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_CUR_DIR ) ){
 		DlgItem_GetText( GetHwnd(), IDC_COMBO_CUR_DIR, &m_szCurDir[0], _countof2( m_szCurDir ));
 	}else{
@@ -238,7 +238,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 		{
 			CDlgOpenFile	cDlgOpenFile;
 			WCHAR			szPath[_MAX_PATH + 1];
-			int				size = _countof(szPath) - 1;
+			int				size = std::size(szPath) - 1;
 			wcsncpy( szPath, m_szCommand, size);
 			szPath[size] = L'\0';
 			/* ファイルオープンダイアログの初期化 */

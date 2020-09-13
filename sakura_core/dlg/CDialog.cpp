@@ -433,7 +433,7 @@ BOOL CDialog::OnCommand( WPARAM wParam, LPARAM lParam )
 
 	// 通知元がコントロールだった場合の処理
 	if( hwndCtl ){
-		::GetClassName(hwndCtl, szClass, _countof(szClass));
+		::GetClassName(hwndCtl, szClass, std::size(szClass));
 		if( ::lstrcmpi(szClass, L"Button") == 0 ){
 			switch( wNotifyCode ){
 			/* ボタン／チェックボックスがクリックされた */
@@ -623,7 +623,7 @@ HFONT CDialog::SetMainFont( HWND hTarget )
 	//lf.lfClipPrecision	= lf.lfClipPrecision;
 	//lf.lfQuality		= lf.lfQuality;
 	//lf.lfPitchAndFamily	= lf.lfPitchAndFamily;
-	//wcsncpy( lf.lfFaceName, lf.lfFaceName, _countof(lf.lfFaceName));	// 画面のフォントに設定	2012/11/27 Uchi
+	//wcsncpy( lf.lfFaceName, lf.lfFaceName, std::size(lf.lfFaceName));	// 画面のフォントに設定	2012/11/27 Uchi
 
 	// フォントを作成
 	hFont = ::CreateFontIndirect(&lf);

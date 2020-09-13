@@ -471,7 +471,7 @@ BOOL CHokanMgr::OnSize( WPARAM wParam, LPARAM lParam )
 	int	Controls[] = {
 		IDC_LIST_WORDS
 	};
-	int		nControls = _countof( Controls );
+	int		nControls = std::size( Controls );
 	int		nWidth;
 	int		nHeight;
 	int		i;

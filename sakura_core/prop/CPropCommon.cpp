@@ -228,9 +228,9 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum, bool bTrayProc )
 		{ STR_PROPCOMMON_PLUGIN,	IDD_PROP_PLUGIN,	CPropPlugin::DlgProc_page },
 	};
 
-	std::wstring		sTabname[_countof(ComPropSheetInfoList)];
-	PROPSHEETPAGE		psp[_countof(ComPropSheetInfoList)];
-	for( nIdx = 0; nIdx < _countof(ComPropSheetInfoList); nIdx++ ){
+	std::wstring		sTabname[std::size(ComPropSheetInfoList)];
+	PROPSHEETPAGE		psp[std::size(ComPropSheetInfoList)];
+	for( nIdx = 0; nIdx < std::size(ComPropSheetInfoList); nIdx++ ){
 		sTabname[nIdx] = LS(ComPropSheetInfoList[nIdx].m_nTabNameId);
 
 		PROPSHEETPAGE *p = &psp[nIdx];

@@ -44,7 +44,7 @@ struct CommonValueInfo{
 	CommonValueInfo(void* pValue, int nValueSize, const char* szEntryKey, EType eType=TYPE_UNKNOWN)
 	: m_pValue(pValue), m_nValueSize(nValueSize), m_eType(eType)
 	{
-		strcpy_s(m_szEntryKey,_countof(m_szEntryKey),szEntryKey);
+		strcpy_s(m_szEntryKey,std::size(m_szEntryKey),szEntryKey);
 	}
 
 	void Save()

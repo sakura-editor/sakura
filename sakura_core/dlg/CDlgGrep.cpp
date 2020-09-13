@@ -424,7 +424,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 		else{
 			/* 現在のプロセスのカレントディレクトリを取得します */
 			WCHAR	szWorkFolder[MAX_PATH];
-			::GetCurrentDirectory( _countof( szWorkFolder ) - 1, szWorkFolder );
+			::GetCurrentDirectory( std::size( szWorkFolder ) - 1, szWorkFolder );
 			SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), szWorkFolder );
 		}
 		return TRUE;
@@ -433,7 +433,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			HWND hwnd = GetItemHwnd( IDC_COMBO_FOLDER );
 			const int nMaxPath = MAX_GREP_PATH;
 			WCHAR szFolder[nMaxPath];
-			::GetWindowText( hwnd, szFolder, _countof(szFolder) );
+			::GetWindowText( hwnd, szFolder, std::size(szFolder) );
 			std::vector<std::wstring> vPaths;
 			CGrepAgent::CreateFolders( szFolder, vPaths );
 			if( 0 < vPaths.size() ){

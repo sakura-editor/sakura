@@ -131,4 +131,4 @@ const wchar_t* g_ppszKeywordsRTF[] = {
 	L"eml",
 	L"emr"
 };
-int g_nKeywordsRTF = _countof(g_ppszKeywordsRTF);
+int g_nKeywordsRTF = std::size(g_ppszKeywordsRTF);

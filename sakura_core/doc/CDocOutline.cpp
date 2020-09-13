@@ -118,10 +118,10 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 						// pszWork = 「titleRep /// group」
 						// pszGroupDel = 「 /// group」
 						int nTitleLen = pszGroupDel - pszWork; // Len == 0 OK
-						if( nTitleLen < _countof(szText) ){
-							wcsncpy_s(szText, _countof(szText), pszWork, nTitleLen);
+						if( nTitleLen < std::size(szText) ){
+							wcsncpy_s(szText, std::size(szText), pszWork, nTitleLen);
 						}else{
-							wcsncpy_s(szText, _countof(szText), pszWork, _TRUNCATE);
+							wcsncpy_s(szText, std::size(szText), pszWork, _TRUNCATE);
 						}
 						pszTextReplace = szText;
 						bRegexRep2 = true;
@@ -142,7 +142,7 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 			}
 			while( NULL != pszToken ){
 				wcsncpy( pcOneRule[nCount].szMatch, pszToken, 255 );
-				wcsncpy_s( pcOneRule[nCount].szText, _countof(pcOneRule[0].szText), pszTextReplace, _TRUNCATE );
+				wcsncpy_s( pcOneRule[nCount].szText, std::size(pcOneRule[0].szText), pszTextReplace, _TRUNCATE );
 				wcsncpy( pcOneRule[nCount].szGroupName, pszWork, 255 );
 				pcOneRule[nCount].szMatch[255] = L'\0';
 				pcOneRule[nCount].szGroupName[255] = L'\0';

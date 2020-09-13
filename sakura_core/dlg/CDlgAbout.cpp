@@ -155,7 +155,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	WCHAR			szFile[_MAX_PATH];
 
 	/* この実行ファイルの情報 */
-	::GetModuleFileName( NULL, szFile, _countof( szFile ) );
+	::GetModuleFileName( NULL, szFile, std::size( szFile ) );
 	
 	//	Oct. 22, 2005 genta タイムスタンプ取得の共通関数利用
 
@@ -240,7 +240,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 #ifdef SKR_PATCH_INFO
 	cmemMsg.AppendString( L"      " );
 	const WCHAR szPatchInfo[] = SKR_PATCH_INFO;
-	size_t patchInfoLen = _countof(szPatchInfo) - 1;
+	size_t patchInfoLen = std::size(szPatchInfo) - 1;
 	cmemMsg.AppendString( szPatchInfo, t_min(80, patchInfoLen) );
 #endif
 	cmemMsg.AppendString( L"\r\n");
@@ -253,8 +253,8 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	LPCWSTR pszDesc = LS( IDS_ABOUT_DESCRIPTION );
 	WCHAR szMsg[2048];
 	if( wcslen(pszDesc) > 0 ){
-		wcsncpy( szMsg, pszDesc, _countof(szMsg) - 1 );
-		szMsg[_countof(szMsg) - 1] = 0;
+		wcsncpy( szMsg, pszDesc, std::size(szMsg) - 1 );
+		szMsg[std::size(szMsg) - 1] = 0;
 		::DlgItem_SetText( GetHwnd(), IDC_EDIT_ABOUT, szMsg );
 	}
 	//	To Here Jun. 8, 2001 genta
@@ -325,7 +325,7 @@ BOOL CDlgAbout::OnStnClicked( int wID )
 		//	Web Browserの起動
 		{
 			WCHAR buf[512];
-			::GetWindowText( GetItemHwnd( wID ), buf, _countof(buf) );
+			::GetWindowText( GetItemHwnd( wID ), buf, std::size(buf) );
 			::ShellExecute( GetHwnd(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
 			return TRUE;
 		}
@@ -464,7 +464,7 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 
 		// 現在のクライアント矩形、テキスト、フォントを取得する
 		GetClientRect( hWnd, &rc );
-		GetWindowText( hWnd, szText, _countof(szText) );
+		GetWindowText( hWnd, szText, std::size(szText) );
 		hFont = (HFONT)SendMessageAny( hWnd, WM_GETFONT, (WPARAM)0, (LPARAM)0 );
 
 		// テキスト描画

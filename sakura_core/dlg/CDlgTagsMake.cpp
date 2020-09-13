@@ -88,7 +88,7 @@ BOOL CDlgTagsMake::OnBnClicked( int wID )
 		{
 			WCHAR szDir[_MAX_PATH];
 			HWND hwnd = GetItemHwnd( IDC_EDIT_TAG_MAKE_FOLDER );
-			::GetWindowText( hwnd, szDir, _countof(szDir) );
+			::GetWindowText( hwnd, szDir, std::size(szDir) );
 			if( DirectoryUp( szDir ) ){
 				::SetWindowText( hwnd, szDir );
 			}
@@ -139,7 +139,7 @@ void CDlgTagsMake::SelectFolder( HWND hwndDlg )
 void CDlgTagsMake::SetData( void )
 {
 	//作成フォルダ
-	Combo_LimitText( GetItemHwnd( IDC_EDIT_TAG_MAKE_FOLDER ), _countof( m_szPath ) );
+	Combo_LimitText( GetItemHwnd( IDC_EDIT_TAG_MAKE_FOLDER ), std::size( m_szPath ) );
 	::DlgItem_SetText( GetHwnd(), IDC_EDIT_TAG_MAKE_FOLDER, m_szPath );
 
 	//オプション
@@ -147,7 +147,7 @@ void CDlgTagsMake::SetData( void )
 	if( m_nTagsOpt & 0x0001 ) ::CheckDlgButton( GetHwnd(), IDC_CHECK_TAG_MAKE_RECURSE, TRUE );
 
 	//コマンドライン
-	Combo_LimitText( GetItemHwnd( IDC_EDIT_TAG_MAKE_CMDLINE ), _countof( m_pShareData->m_szTagsCmdLine ) );
+	Combo_LimitText( GetItemHwnd( IDC_EDIT_TAG_MAKE_CMDLINE ), std::size( m_pShareData->m_szTagsCmdLine ) );
 	wcscpy( m_szTagsCmdLine, m_pShareData->m_szTagsCmdLine );
 	::DlgItem_SetText( GetHwnd(), IDC_EDIT_TAG_MAKE_CMDLINE, m_pShareData->m_szTagsCmdLine );
 
@@ -159,7 +159,7 @@ void CDlgTagsMake::SetData( void )
 int CDlgTagsMake::GetData( void )
 {
 	//フォルダ
-	::DlgItem_GetText( GetHwnd(), IDC_EDIT_TAG_MAKE_FOLDER, m_szPath, _countof( m_szPath ) );
+	::DlgItem_GetText( GetHwnd(), IDC_EDIT_TAG_MAKE_FOLDER, m_szPath, std::size( m_szPath ) );
 	int length = wcslen( m_szPath );
 	if( length > 0 )
 	{
@@ -172,7 +172,7 @@ int CDlgTagsMake::GetData( void )
 	m_pShareData->m_nTagsOpt = m_nTagsOpt;
 
 	//コマンドライン
-	::DlgItem_GetText( GetHwnd(), IDC_EDIT_TAG_MAKE_CMDLINE, m_szTagsCmdLine, _countof( m_szTagsCmdLine ) );
+	::DlgItem_GetText( GetHwnd(), IDC_EDIT_TAG_MAKE_CMDLINE, m_szTagsCmdLine, std::size( m_szTagsCmdLine ) );
 	wcscpy( m_pShareData->m_szTagsCmdLine, m_szTagsCmdLine );
 
 	return TRUE;

@@ -114,8 +114,8 @@ INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		//	Oct. 5, 2002 genta エディット コントロールに入力できるテキストの長さを制限する
-		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_MACRONAME ), _countof( m_Common.m_sMacro.m_MacroTable[0].m_szName ) - 1 );
-		Combo_LimitText( ::GetDlgItem( hwndDlg, IDC_MACROPATH ), _countof( m_Common.m_sMacro.m_MacroTable[0].m_szFile ) - 1 );
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_MACRONAME ), std::size( m_Common.m_sMacro.m_MacroTable[0].m_szName ) - 1 );
+		Combo_LimitText( ::GetDlgItem( hwndDlg, IDC_MACROPATH ), std::size( m_Common.m_sMacro.m_MacroTable[0].m_szFile ) - 1 );
 		// 2003.06.23 Moca
 		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_MACRODIR ), _countof2( m_Common.m_sMacro.m_szMACROFOLDER ) - 1 );
 		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_MACROCANCELTIMER ), 4 );
@@ -351,7 +351,7 @@ int CPropMacro::GetData( HWND hwndDlg )
 		sItem.iSubItem = 4;
 		WCHAR szText[8];
 		sItem.pszText = szText;
-		sItem.cchTextMax = _countof(szText);
+		sItem.cchTextMax = std::size(szText);
 		ListView_GetItem( hListView, &sItem );
 		int i;
 		int nLen;
@@ -375,7 +375,7 @@ int CPropMacro::GetData( HWND hwndDlg )
 	
 	//	マクロ停止ダイアログ表示待ち時間
 	WCHAR szCancelTimer[16] = {0};
-	::DlgItem_GetText( hwndDlg, IDC_MACROCANCELTIMER, szCancelTimer, _countof(szCancelTimer) );
+	::DlgItem_GetText( hwndDlg, IDC_MACROCANCELTIMER, szCancelTimer, std::size(szCancelTimer) );
 	m_Common.m_sMacro.m_nMacroCancelTimer = _wtoi(szCancelTimer);
 
 	return TRUE;
@@ -409,7 +409,7 @@ void CPropMacro::InitDialog( HWND hwndDlg )
 	::GetWindowRect( hListView, &rc );
 	int width = rc.right - rc.left - ::GetSystemMetrics(SM_CXHSCROLL);
 	
-	for( pos = 0; pos < _countof( ColumnList ); ++pos ){
+	for( pos = 0; pos < std::size( ColumnList ); ++pos ){
 		
 		memset_raw( &sColumn, 0, sizeof( sColumn ));
 		sColumn.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM | LVCF_FMT;
@@ -516,7 +516,7 @@ void CPropMacro::SetMacro2List_Macro( HWND hwndDlg )
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 4;
 		sItem.pszText = szText;
-		sItem.cchTextMax = _countof(szText);
+		sItem.cchTextMax = std::size(szText);
 		ListView_GetItem( hListView, &sItem );
 		int i;
 		int nLen;
@@ -570,7 +570,7 @@ void CPropMacro::SelectBaseDir_Macro( HWND hwndDlg )
 	WCHAR szDir[_MAX_PATH];
 
 	/* 検索フォルダ */
-	::DlgItem_GetText( hwndDlg, IDC_MACRODIR, szDir, _countof(szDir) );
+	::DlgItem_GetText( hwndDlg, IDC_MACRODIR, szDir, std::size(szDir) );
 
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
@@ -582,7 +582,7 @@ void CPropMacro::SelectBaseDir_Macro( HWND hwndDlg )
 
 	if( SelectDir( hwndDlg, LS(STR_PROPCOMMACR_SEL_DIR), szDir, szDir ) ){
 		//	末尾に\\マークを追加する．
-		AddLastChar( szDir, _countof(szDir), L'\\' );
+		AddLastChar( szDir, std::size(szDir), L'\\' );
 		::DlgItem_SetText( hwndDlg, IDC_MACRODIR, GetRelPath(szDir) ); // 2015.03.03 可能なら相対パスにする
 	}
 }
@@ -599,7 +599,7 @@ void CPropMacro::OnFileDropdown_Macro( HWND hwndDlg )
 	HWND hCombo = ::GetDlgItem( hwndDlg, IDC_MACROPATH );
 
 	WCHAR path[_MAX_PATH * 2];
-	::DlgItem_GetText( hwndDlg, IDC_MACRODIR, path, _countof(path) );
+	::DlgItem_GetText( hwndDlg, IDC_MACRODIR, path, std::size(path) );
 
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
@@ -695,7 +695,7 @@ void CPropMacro::CheckListPosition_Macro( HWND hwndDlg )
 	sItem.iSubItem = 4;
 	WCHAR szText[8];
 	sItem.pszText = szText;
-	sItem.cchTextMax = _countof(szText);
+	sItem.cchTextMax = std::size(szText);
 	ListView_GetItem( hListView, &sItem );
 	int i;
 	int nLen;

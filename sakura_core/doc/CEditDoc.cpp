@@ -215,7 +215,7 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 	{
 		// 編集禁止コマンドの並びをチェック
 		int i;
-		for ( i = 0; i < _countof(EIsModificationForbidden) - 1; i++){
+		for ( i = 0; i < std::size(EIsModificationForbidden) - 1; i++){
 			assert( EIsModificationForbidden[i] <  EIsModificationForbidden[i+1] );
 		}
 	}
@@ -534,7 +534,7 @@ bool CEditDoc::IsModificationForbidden( EFunctionCode nCommand ) const
 	//	編集禁止の場合(バイナリサーチ)
 	{
 		int lbound = 0;
-		int ubound = _countof(EIsModificationForbidden) - 1;
+		int ubound = std::size(EIsModificationForbidden) - 1;
 
 		while( lbound <= ubound ){
 			int mid = ( lbound + ubound ) / 2;
@@ -1018,7 +1018,7 @@ void CEditDoc::SetCurDirNotitle()
 			}
 		}
 	}else if( eOpenDialogDir == OPENDIALOGDIR_SEL ){
-		CFileNameManager::ExpandMetaToFolder( GetDllShareData().m_Common.m_sEdit.m_OpenDialogSelDir, szSelDir, _countof(szSelDir) );
+		CFileNameManager::ExpandMetaToFolder( GetDllShareData().m_Common.m_sEdit.m_OpenDialogSelDir, szSelDir, std::size(szSelDir) );
 		pszDir = szSelDir;
 	}
 	if( pszDir != NULL ){

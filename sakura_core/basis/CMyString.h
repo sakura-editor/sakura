@@ -89,7 +89,7 @@ public:
 	{
 		va_list v;
 		va_start(v,szFormat);
-		m_pHead+=auto_vsprintf_s(m_pHead,_countof(m_szCmdLine)-(m_pHead-m_szCmdLine),szFormat,v);
+		m_pHead+=auto_vsprintf_s(m_pHead,std::size(m_szCmdLine)-(m_pHead-m_szCmdLine),szFormat,v);
 		va_end(v);
 	}
 	const WCHAR* c_str() const
@@ -102,7 +102,7 @@ public:
 	}
 	size_t max_size() const
 	{
-		return _countof(m_szCmdLine) - 1;
+		return std::size(m_szCmdLine) - 1;
 	}
 private:
 	WCHAR	m_szCmdLine[1024];

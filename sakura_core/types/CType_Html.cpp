@@ -139,7 +139,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 				pLine++; i++;
 				bEndTag = true;
 			}
-			for(j=0;i+j<nLineLen && j<_countof(szTitle)-1; )
+			for(j=0;i+j<nLineLen && j<std::size(szTitle)-1; )
 			{
 				// タグ名を切り出す
 				// スペース、タブ、「_:-.英数」以外の半角文字、１文字目の「-.数字」は認めない。
@@ -312,12 +312,12 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 								}
 							}
 						}
-						if (x < _countof(szTitle) - 3) {
+						if (x < std::size(szTitle) - 3) {
 							if(!bEndTag)
 							{
 								szTitle[k++]	=	L' ';
 								bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
-								for (; i+j < nLineLen && k < _countof(szTitle) -1 ; k++, j++) {
+								for (; i+j < nLineLen && k < std::size(szTitle) -1 ; k++, j++) {
 									if (pLine[j]==L'<' || WCODE::IsLineDelimiter(pLine[j], bExtEol)){
 										j--;
 										break;
@@ -331,7 +331,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 					}
 					else
 					{
-						for(;i+j<nLineLen && j<_countof(szTitle)-1;j++)
+						for(;i+j<nLineLen && j<std::size(szTitle)-1;j++)
 						{
 							if(pLine[j]==L'>')
 							{
@@ -641,4 +641,4 @@ const wchar_t* g_ppszKeywordsHTML[] = {
 	L"WRAP",
 	L"XMP"
 };
-int g_nKeywordsHTML = _countof(g_ppszKeywordsHTML);
+int g_nKeywordsHTML = std::size(g_ppszKeywordsHTML);

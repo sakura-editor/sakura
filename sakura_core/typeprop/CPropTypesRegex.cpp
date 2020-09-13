@@ -205,8 +205,8 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				}
 				
 				//挿入するキー情報を取得する。
-				wmemset(szColorIndex, 0, _countof(szColorIndex));
-				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
+				wmemset(szColorIndex, 0, std::size(szColorIndex));
+				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, std::size(szColorIndex) );
 				//キー情報を挿入する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 				lvi.pszText  = &szKeyWord[0];
@@ -244,8 +244,8 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 					return FALSE;
 				}
 				//追加するキー情報を取得する。
-				wmemset(szColorIndex, 0, _countof(szColorIndex));
-				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
+				wmemset(szColorIndex, 0, std::size(szColorIndex));
+				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, std::size(szColorIndex) );
 				//キーを追加する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 				lvi.pszText  = &szKeyWord[0];
@@ -282,8 +282,8 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 					return FALSE;
 				}
 				//追加するキー情報を取得する。
-				wmemset(szColorIndex, 0, _countof(szColorIndex));
-				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
+				wmemset(szColorIndex, 0, std::size(szColorIndex));
+				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, std::size(szColorIndex) );
 				//キーを更新する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 				lvi.pszText  = &szKeyWord[0];
@@ -325,7 +325,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				if( 0 == nIndex ) return TRUE;	//すでに先頭にある。
 				nIndex2 = 0;
 				ListView_GetItemText(hwndList, nIndex, 0, &szKeyWord[0], nKeyWordSize);
-				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
+				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, std::size(szColorIndex));
 				ListView_DeleteItem(hwndList, nIndex);	//古いキーを削除
 				//キーを追加する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
@@ -354,7 +354,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				nIndex2 = ListView_GetItemCount(hwndList);
 				if( nIndex2 - 1 == nIndex ) return TRUE;	//すでに最終にある。
 				ListView_GetItemText(hwndList, nIndex, 0, &szKeyWord[0], nKeyWordSize);
-				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
+				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, std::size(szColorIndex));
 				//キーを追加する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 				lvi.pszText  = &szKeyWord[0];
@@ -385,7 +385,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				if( nIndex2 <= 1 ) return TRUE;
 				nIndex2 = nIndex - 1;
 				ListView_GetItemText(hwndList, nIndex, 0, &szKeyWord[0], nKeyWordSize);
-				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
+				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, std::size(szColorIndex));
 				ListView_DeleteItem(hwndList, nIndex);	//古いキーを削除
 				//キーを追加する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
@@ -416,7 +416,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				if( nIndex2 <= 1 ) return TRUE;
 				nIndex2 = nIndex + 2;
 				ListView_GetItemText(hwndList, nIndex, 0, &szKeyWord[0], nKeyWordSize);
-				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
+				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, std::size(szColorIndex));
 				//キーを追加する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 				lvi.pszText  = &szKeyWord[0];
@@ -497,7 +497,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 					auto szKeyWord = std::make_unique<WCHAR[]>(nKeyWordSize);
 					szKeyWord[0] = L'\0';
 					ListView_GetItemText(hwndList, nIndex, 0, &szKeyWord[0], nKeyWordSize);
-					ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
+					ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, std::size(szColorIndex));
 					::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEX, &szKeyWord[0] );	/* 正規表現 */
 					hwndCombo = GetDlgItem( hwndDlg, IDC_COMBO_REGEX_COLOR );
 					for(i = 0, j = 0; i < COLORIDX_LAST; i++)
@@ -616,7 +616,7 @@ int CPropTypesRegex::GetData( HWND hwndDlg )
 {
 	HWND	hwndList;
 	int	nIndex, i, j;
-	const int szKeyWordSize = _countof(m_Types.m_RegexKeywordList) * 2 + 1;
+	const int szKeyWordSize = std::size(m_Types.m_RegexKeywordList) * 2 + 1;
 	auto szKeyWord = std::make_unique<WCHAR[]>(szKeyWordSize);
 	WCHAR	szColorIndex[256];
 
@@ -630,7 +630,7 @@ int CPropTypesRegex::GetData( HWND hwndDlg )
 	hwndList = GetDlgItem( hwndDlg, IDC_LIST_REGEX );
 	nIndex = ListView_GetItemCount(hwndList);
 	wchar_t* pKeyword = &m_Types.m_RegexKeywordList[0];
-	wchar_t* pKeywordLast = pKeyword + _countof(m_Types.m_RegexKeywordList) - 1;
+	wchar_t* pKeywordLast = pKeyword + std::size(m_Types.m_RegexKeywordList) - 1;
 	// key1\0key2\0\0 の形式
 	for(i = 0; i < MAX_REGEX_KEYWORD; i++)
 	{
@@ -639,7 +639,7 @@ int CPropTypesRegex::GetData( HWND hwndDlg )
 			szKeyWord[0]    = L'\0';
 			szColorIndex[0] = L'\0';
 			ListView_GetItemText(hwndList, i, 0, &szKeyWord[0], szKeyWordSize );
-			ListView_GetItemText(hwndList, i, 1, szColorIndex, _countof(szColorIndex));
+			ListView_GetItemText(hwndList, i, 1, szColorIndex, std::size(szColorIndex));
 			if( pKeyword < pKeywordLast - 1 ){
 				wcsncpy_s( pKeyword, pKeywordLast - pKeyword, &szKeyWord[0], _TRUNCATE );
 			}
@@ -720,7 +720,7 @@ bool CPropTypesRegex::CheckKeywordList(HWND hwndDlg, const WCHAR* szNewKeyWord, 
 			}
 			// 長さには\0も含む
 			nKeywordLen += wcsnlen(&szKeyWord[0], nKeyWordSize) + 1;
-			if( _countof(m_Types.m_RegexKeywordList) - 1 < nKeywordLen ){
+			if( std::size(m_Types.m_RegexKeywordList) - 1 < nKeywordLen ){
 				ErrorMessage( hwndDlg, LS(STR_PROPTYPEREGEX_FULL) );
 				return false;
 			}

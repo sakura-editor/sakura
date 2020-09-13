@@ -588,15 +588,15 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 	if( tbb.fsStyle & TBSTYLE_SEP ){
 		// テキストだけ表示する
 		if( tbb.idCommand == F_SEPARATOR ){
-			wcsncpy( szLabel, LS(STR_PROPCOMTOOL_ITEM1), _countof(szLabel) - 1 );	// nLength 未使用 2003/01/09 Moca
-			szLabel[_countof(szLabel) - 1] = L'\0';
+			wcsncpy( szLabel, LS(STR_PROPCOMTOOL_ITEM1), std::size(szLabel) - 1 );	// nLength 未使用 2003/01/09 Moca
+			szLabel[std::size(szLabel) - 1] = L'\0';
 		}else if( tbb.idCommand == F_MENU_NOT_USED_FIRST ){
 			// ツールバー折返
-			wcsncpy( szLabel, LS(STR_PROPCOMTOOL_ITEM2), _countof(szLabel) - 1 );
-			szLabel[_countof(szLabel) - 1] = L'\0';
+			wcsncpy( szLabel, LS(STR_PROPCOMTOOL_ITEM2), std::size(szLabel) - 1 );
+			szLabel[std::size(szLabel) - 1] = L'\0';
 		}else{
-			wcsncpy( szLabel, LS(STR_PROPCOMTOOL_ITEM3), _countof(szLabel) - 1 );
-			szLabel[_countof(szLabel) - 1] = L'\0';
+			wcsncpy( szLabel, LS(STR_PROPCOMTOOL_ITEM3), std::size(szLabel) - 1 );
+			szLabel[std::size(szLabel) - 1] = L'\0';
 		}
 	}else{
 		// アイコンとテキストを表示する
@@ -609,7 +609,7 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 			cxSmIcon,
 			cySmIcon
 		);
-		m_cLookup.Funccode2Name( tbb.idCommand, szLabel, _countof( szLabel ) );
+		m_cLookup.Funccode2Name( tbb.idCommand, szLabel, std::size( szLabel ) );
 	}
 
 	// 微調整 フォーカス枠の分へこませる

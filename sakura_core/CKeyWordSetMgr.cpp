@@ -128,8 +128,8 @@ bool CKeyWordSetMgr::AddKeyWordSet(
 		--m_nKeyWordSetNum;	//	キーワードセットの追加をキャンセルする
 		return false;
 	}
-	wcsncpy( m_szSetNameArr[nIdx], pszSetName, _countof(m_szSetNameArr[nIdx]) - 1 );
-	m_szSetNameArr[nIdx][_countof(m_szSetNameArr[nIdx]) - 1] = L'\0';
+	wcsncpy( m_szSetNameArr[nIdx], pszSetName, std::size(m_szSetNameArr[nIdx]) - 1 );
+	m_szSetNameArr[nIdx][std::size(m_szSetNameArr[nIdx]) - 1] = L'\0';
 	m_bKEYWORDCASEArr[nIdx] = bKEYWORDCASE;
 	m_nKeyWordNumArr[nIdx] = 0;
 	m_IsSorted[nIdx] = 0;	//MIK 2000.12.01 binary search

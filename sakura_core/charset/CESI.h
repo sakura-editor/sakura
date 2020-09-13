@@ -241,19 +241,19 @@ ECodeType CESI::DetectUnicodeBom(const char* buff, size_t size) noexcept
 
 	// バイト列の先頭が \ufeff の utf8 表現と一致するか判定
 	constexpr const BYTE utf8BOM[]{ 0xef, 0xbb, 0xbf };
-	if (size >= _countof(utf8BOM) && 0 == ::memcmp(buff, utf8BOM, _countof(utf8BOM))) {
+	if (size >= std::size(utf8BOM) && 0 == ::memcmp(buff, utf8BOM, std::size(utf8BOM))) {
 		return CODE_UTF8;
 	}
 
 	// バイト列の先頭が \ufeff の utf16BE 表現と一致するか判定
 	constexpr const BYTE utf16BeBOM[]{ 0xfe, 0xff };
-	if (size >= _countof(utf16BeBOM) && 0 == ::memcmp(buff, utf16BeBOM, _countof(utf16BeBOM))) {
+	if (size >= std::size(utf16BeBOM) && 0 == ::memcmp(buff, utf16BeBOM, std::size(utf16BeBOM))) {
 		return CODE_UNICODEBE;
 	}
 
 	// バイト列の先頭が \ufeff の utf16LE 表現と一致するか判定
 	constexpr const BYTE utf16LeBOM[]{ 0xff, 0xfe };
-	if (size >= _countof(utf16LeBOM) && 0 == ::memcmp(buff, utf16LeBOM, _countof(utf16LeBOM))) {
+	if (size >= std::size(utf16LeBOM) && 0 == ::memcmp(buff, utf16LeBOM, std::size(utf16LeBOM))) {
 		return CODE_UNICODE;
 	}
 

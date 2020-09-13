@@ -207,16 +207,16 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 					}
 				}
 				/* 更新するキー情報を取得する。 */
-				wmemset(szPath, 0, _countof(szPath));
-				::DlgItem_GetText( hwndDlg, IDC_EDIT_KEYHELP, szPath, _countof(szPath) );
+				wmemset(szPath, 0, std::size(szPath));
+				::DlgItem_GetText( hwndDlg, IDC_EDIT_KEYHELP, szPath, std::size(szPath) );
 				if( szPath[0] == L'\0' ) return FALSE;
 				/* 重複検査 */
 				nIndex2 = ListView_GetItemCount(hwndList);
 				WCHAR szPath2[_MAX_PATH];
 				int i;
 				for(i = 0; i < nIndex2; i++){
-					wmemset(szPath2, 0, _countof(szPath2));
-					ListView_GetItemText(hwndList, i, 2, szPath2, _countof(szPath2));
+					wmemset(szPath2, 0, std::size(szPath2));
+					ListView_GetItemText(hwndList, i, 2, szPath2, std::size(szPath2));
 					if( wcscmp(szPath, szPath2) == 0 ){
 						if( (wID ==IDC_BUTTON_KEYHELP_UPD) && (i == nIndex) ){	/* 更新時、変わっていなかったら何もしない */
 						}else{
@@ -302,8 +302,8 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 				if( 0 == nIndex ) return TRUE;	/* すでに先頭にある。 */
 				nIndex2 = 0;
 				bUse = ListView_GetCheckState(hwndList, nIndex);
-				ListView_GetItemText(hwndList, nIndex, 1, szAbout, _countof(szAbout));
-				ListView_GetItemText(hwndList, nIndex, 2, szPath, _countof(szPath));
+				ListView_GetItemText(hwndList, nIndex, 1, szAbout, std::size(szAbout));
+				ListView_GetItemText(hwndList, nIndex, 2, szPath, std::size(szPath));
 				ListView_DeleteItem(hwndList, nIndex);	/* 古いキーを削除 */
 				/* ON-OFF */
 				lvi.mask     = LVIF_TEXT;
@@ -335,8 +335,8 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 				nIndex2 = ListView_GetItemCount(hwndList);
 				if( nIndex2 - 1 == nIndex ) return TRUE;	/* すでに最終にある。 */
 				bUse = ListView_GetCheckState(hwndList, nIndex);
-				ListView_GetItemText(hwndList, nIndex, 1, szAbout, _countof(szAbout));
-				ListView_GetItemText(hwndList, nIndex, 2, szPath, _countof(szPath));
+				ListView_GetItemText(hwndList, nIndex, 1, szAbout, std::size(szAbout));
+				ListView_GetItemText(hwndList, nIndex, 2, szPath, std::size(szPath));
 				/* キーを追加する。 */
 				/* ON-OFF */
 				lvi.mask     = LVIF_TEXT;
@@ -371,8 +371,8 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 				if( nIndex2 <= 1 ) return TRUE;
 				nIndex2 = nIndex - 1;
 				bUse = ListView_GetCheckState(hwndList, nIndex);
-				ListView_GetItemText(hwndList, nIndex, 1, szAbout, _countof(szAbout));
-				ListView_GetItemText(hwndList, nIndex, 2, szPath, _countof(szPath));
+				ListView_GetItemText(hwndList, nIndex, 1, szAbout, std::size(szAbout));
+				ListView_GetItemText(hwndList, nIndex, 2, szPath, std::size(szPath));
 				ListView_DeleteItem(hwndList, nIndex);	/* 古いキーを削除 */
 				/* キーを追加する。 */
 				/* ON-OFF */
@@ -407,8 +407,8 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 				if( nIndex2 <= 1 ) return TRUE;
 				nIndex2 = nIndex + 2;
 				bUse = ListView_GetCheckState(hwndList, nIndex);
-				ListView_GetItemText(hwndList, nIndex, 1, szAbout, _countof(szAbout));
-				ListView_GetItemText(hwndList, nIndex, 2, szPath, _countof(szPath));
+				ListView_GetItemText(hwndList, nIndex, 1, szAbout, std::size(szAbout));
+				ListView_GetItemText(hwndList, nIndex, 2, szPath, std::size(szPath));
 				/* キーを追加する。 */
 				/* ON-OFF */
 				lvi.mask     = LVIF_TEXT;
@@ -481,8 +481,8 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 					nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_FOCUSED );
 					return FALSE;
 				}
-				ListView_GetItemText(hwndList, nIndex, 1, szAbout, _countof(szAbout));
-				ListView_GetItemText(hwndList, nIndex, 2, szPath, _countof(szPath));
+				ListView_GetItemText(hwndList, nIndex, 1, szAbout, std::size(szAbout));
+				ListView_GetItemText(hwndList, nIndex, 2, szPath, std::size(szPath));
 				::DlgItem_SetText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, szAbout );	/* 辞書の説明 */
 				::DlgItem_SetText( hwndDlg, IDC_EDIT_KEYHELP, szPath );			/* ファイルパス */
 			}
@@ -528,7 +528,7 @@ void CPropTypesKeyHelp::SetData( HWND hwndDlg )
 
 	HWND hwndCombo = GetDlgItem(hwndDlg, IDC_COMBO_MENU);
 	Combo_ResetContent(hwndCombo);
-	for( i = 0; i < (int)_countof(nKeyHelpRMenuType); i++ ){
+	for( i = 0; i < (int)std::size(nKeyHelpRMenuType); i++ ){
 		Combo_AddString(hwndCombo, LS(nKeyHelpRMenuType[i]));
 	}
 	Combo_SetCurSel(hwndCombo, m_Types.m_eKeyHelpRMenuShowType);
@@ -602,8 +602,8 @@ int CPropTypesKeyHelp::GetData( HWND hwndDlg )
 			/* チェックボックス状態を取得してbUseにセット */
 			if(ListView_GetCheckState(hwndList, i))
 				bUse = true;
-			ListView_GetItemText( hwndList, i, 1, szAbout, _countof(szAbout) );
-			ListView_GetItemText( hwndList, i, 2, szPath, _countof(szPath) );
+			ListView_GetItemText( hwndList, i, 1, szAbout, std::size(szAbout) );
+			ListView_GetItemText( hwndList, i, 2, szPath, std::size(szPath) );
 			m_Types.m_KeyHelpArr[i].m_bUse = bUse;
 			wcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, szAbout);
 			wcscpy(m_Types.m_KeyHelpArr[i].m_szPath, szPath);

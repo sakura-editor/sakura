@@ -84,7 +84,7 @@ const PAPER_INFO CPrint::m_paperInfoArr[] = {
 	{DMPAPER_FANFOLD_LGL_GERMAN,  2159,  3302, L"German Legal Fanfold (8 1/2 x 13 inch)"},
 };
 
-const int CPrint::m_nPaperInfoArrNum = _countof( m_paperInfoArr );
+const int CPrint::m_nPaperInfoArrNum = std::size( m_paperInfoArr );
 
 CPrint::CPrint( void )
 {
@@ -157,19 +157,19 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 	// プリンタドライバ名
 	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDriverName,
-		_countof(pMYDEVMODE->m_szPrinterDriverName),
+		std::size(pMYDEVMODE->m_szPrinterDriverName),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset
 	);
 	// プリンタデバイス名
 	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDeviceName,
-		_countof(pMYDEVMODE->m_szPrinterDeviceName),
+		std::size(pMYDEVMODE->m_szPrinterDeviceName),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset
 	);
 	// プリンタポート名
 	wcscpy_s(
 		pMYDEVMODE->m_szPrinterOutputName,
-		_countof(pMYDEVMODE->m_szPrinterOutputName),
+		std::size(pMYDEVMODE->m_szPrinterOutputName),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset
 	);
 
@@ -238,19 +238,19 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 	// プリンタドライバ名
 	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDriverName,
-		_countof(pMYDEVMODE->m_szPrinterDriverName),
+		std::size(pMYDEVMODE->m_szPrinterDriverName),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset
 	);
 	// プリンタデバイス名
 	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDeviceName,
-		_countof(pMYDEVMODE->m_szPrinterDeviceName),
+		std::size(pMYDEVMODE->m_szPrinterDeviceName),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset
 	);
 	// プリンタポート名
 	wcscpy_s(
 		pMYDEVMODE->m_szPrinterOutputName,
-		_countof(pMYDEVMODE->m_szPrinterOutputName),
+		std::size(pMYDEVMODE->m_szPrinterOutputName),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset
 	);
 

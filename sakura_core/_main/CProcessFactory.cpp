@@ -89,7 +89,7 @@ bool CProcessFactory::ProfileSelect( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 	//	May 30, 2000 genta
 	//	実行ファイル名をもとに漢字コードを固定する．
 	WCHAR szExeFileName[MAX_PATH];
-	const int cchExeFileName = ::GetModuleFileName(NULL, szExeFileName, _countof(szExeFileName));
+	const int cchExeFileName = ::GetModuleFileName(NULL, szExeFileName, std::size(szExeFileName));
 	CCommandLine::getInstance()->ParseKanjiCodeFromFileName(szExeFileName, cchExeFileName);
 
 	CCommandLine::getInstance()->ParseCommandLine(lpCmdLine);
@@ -187,7 +187,7 @@ bool CProcessFactory::StartControlProcess()
 	WCHAR szCmdLineBuf[1024];	//	コマンドライン
 	WCHAR szEXE[MAX_PATH + 1];	//	アプリケーションパス名
 
-	::GetModuleFileName( NULL, szEXE, _countof( szEXE ));
+	::GetModuleFileName( NULL, szEXE, std::size( szEXE ));
 	if( CCommandLine::getInstance()->IsSetProfile() ){
 		::auto_sprintf( szCmdLineBuf, L"\"%s\" -NOWIN -PROF=\"%ls\"",
 			szEXE, CCommandLine::getInstance()->GetProfileName() );

@@ -308,7 +308,7 @@ bool CControlTray::CreateTrayIcon( HWND hWnd )
 			profname = L" ";
 			profname += CCommandLine::getInstance()->GetProfileName();
 		}
-		auto_snprintf_s( pszTips, _countof(pszTips), L"%s %d.%d.%d.%d%ls",		//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
+		auto_snprintf_s( pszTips, std::size(pszTips), L"%s %d.%d.%d.%d%ls",		//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
 			GSTR_APPNAME,
 			HIWORD( dwVersionMS ),
 			LOWORD( dwVersionMS ),
@@ -353,7 +353,7 @@ BOOL CControlTray::TrayMessage( HWND hDlg, DWORD dwMessage, UINT uID, HICON hIco
 	tnd.uCallbackMessage	= MYWM_NOTIFYICON;
 	tnd.hIcon				= hIcon;
 	if( pszTip ){
-		lstrcpyn( tnd.szTip, pszTip, _countof( tnd.szTip ) );
+		lstrcpyn( tnd.szTip, pszTip, std::size( tnd.szTip ) );
 	}else{
 		tnd.szTip[0] = L'\0';
 	}
@@ -430,8 +430,8 @@ LRESULT CControlTray::DispatchEvent(
 
 			hwndWork = ::GetForegroundWindow();
 			szClassName[0] = L'\0';
-			::GetClassName( hwndWork, szClassName, _countof( szClassName ) - 1 );
-			::GetWindowText( hwndWork, szText, _countof( szText ) - 1 );
+			::GetClassName( hwndWork, szClassName, std::size( szClassName ) - 1 );
+			::GetWindowText( hwndWork, szText, std::size( szText ) - 1 );
 			if( 0 == wcscmp( szText, LS(STR_PROPCOMMON) ) ){
 				return -1;
 			}
@@ -1117,7 +1117,7 @@ bool CControlTray::OpenNewEditor(
 
 	//アプリケーションパス
 	WCHAR szEXE[MAX_PATH + 1];
-	::GetModuleFileName( NULL, szEXE, _countof( szEXE ) );
+	::GetModuleFileName( NULL, szEXE, std::size( szEXE ) );
 	cCmdLineBuf.AppendF( L"\"%s\"", szEXE );
 
 	// ファイル名
@@ -1217,7 +1217,7 @@ bool CControlTray::OpenNewEditor(
 #ifdef _DEBUG
 //	dwCreationFlag |= DEBUG_PROCESS; //2007.09.22 kobake デバッグ用フラグ
 #endif
-	WCHAR szCmdLine[1024]; wcscpy_s(szCmdLine, _countof(szCmdLine), cCmdLineBuf.c_str());
+	WCHAR szCmdLine[1024]; wcscpy_s(szCmdLine, std::size(szCmdLine), cCmdLineBuf.c_str());
 	BOOL bCreateResult = CreateProcess(
 		szEXE,					// 実行可能モジュールの名前
 		szCmdLine,				// コマンドラインの文字列
@@ -1563,7 +1563,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 				pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
 				// メニューラベル。1からアクセスキーを振る
-				CFileNameManager::getInstance()->GetMenuFullLabel_WinList( szMenu, _countof(szMenu), pfi, m_pShareData->m_sNodes.m_pEditArr[i].m_nId, i, dcFont.GetHDC() );
+				CFileNameManager::getInstance()->GetMenuFullLabel_WinList( szMenu, std::size(szMenu), pfi, m_pShareData->m_sNodes.m_pEditArr[i].m_nId, i, dcFont.GetHDC() );
 				m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + i, szMenu, L"", FALSE );
 				++j;
 			}

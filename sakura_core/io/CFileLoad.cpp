@@ -90,7 +90,7 @@ std::wstring CFileLoad::GetSizeStringForHuman(ULONGLONG size)
 
 	// to string
 	wchar_t buf[32];
-	swprintf_s(buf, _countof(buf), L"%I64u", megabytes);
+	swprintf_s(buf, std::size(buf), L"%I64u", megabytes);
 	std::wstring str = buf;
 
 	// https://stackoverflow.com/questions/7276826/c-format-number-with-commas
@@ -247,7 +247,7 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	m_pCodeBase->GetEol( &m_memEols[2], EOL_PS );
 	bool bEolEx = false;
 	int  nMaxEolLen = 0;
-	for( int k = 0; k < (int)_countof(m_memEols); k++ ){
+	for( int k = 0; k < (int)std::size(m_memEols); k++ ){
 		if( 0 != m_memEols[k].GetRawLength() ){
 			bEolEx = true;
 			nMaxEolLen = t_max(nMaxEolLen, m_memEols[k].GetRawLength());
@@ -534,7 +534,7 @@ const char* CFileLoad::GetNextLineCharCode(
 				}
 				if( m_bEolEx ){
 					int k;
-					for( k = 0; k < (int)_countof(eEolEx); k++ ){
+					for( k = 0; k < (int)std::size(eEolEx); k++ ){
 						if( 0 != m_memEols[k].GetRawLength() && i + m_memEols[k].GetRawLength() - 1 < nDataLen
 								&& 0 == memcmp( m_memEols[k].GetRawPtr(), pData + i, m_memEols[k].GetRawLength()) ){
 							pcEol->SetType(eEolEx[k]);
@@ -542,7 +542,7 @@ const char* CFileLoad::GetNextLineCharCode(
 							break;
 						}
 					}
-					if( k != (int)_countof(eEolEx) ){
+					if( k != (int)std::size(eEolEx) ){
 						break;
 					}
 				}
@@ -552,7 +552,7 @@ const char* CFileLoad::GetNextLineCharCode(
 				for( i = t_max(0, nDataLen - m_nMaxEolLen - 1); i < nDataLen; i++ ){
 					int k;
 					bool bSet = false;
-					for( k = 0; k < (int)_countof(eEolEx); k++ ){
+					for( k = 0; k < (int)std::size(eEolEx); k++ ){
 						int nCompLen = t_min(nDataLen - i, m_memEols[k].GetRawLength());
 						if( 0 != nCompLen && 0 == memcmp(m_memEols[k].GetRawPtr(), pData + i, nCompLen) ){
 							*pnBufferNext = t_max(*pnBufferNext, nCompLen);

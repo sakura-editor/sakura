@@ -171,7 +171,7 @@ INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 				{
 					/* バックアップを作成するフォルダ */
 					WCHAR		szFolder[_MAX_PATH];
-					::DlgItem_GetText( hwndDlg, IDC_EDIT_BACKUPFOLDER, szFolder, _countof( szFolder ));
+					::DlgItem_GetText( hwndDlg, IDC_EDIT_BACKUPFOLDER, szFolder, std::size( szFolder ));
 
 					if( SelectDir( hwndDlg, LS(STR_PROPCOMBK_SEL_FOLDER), szFolder, szFolder ) ){
 						wcscpy( m_Common.m_sBackup.m_szBackUpFolder, szFolder );

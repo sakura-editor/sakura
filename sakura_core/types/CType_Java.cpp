@@ -174,7 +174,7 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 							&ptPosXY_Layout
 						);
 						wchar_t szWork[256];
-						if( 0 < auto_snprintf_s( szWork, _countof(szWork), L"%ls::%ls", szClass, LS(STR_OUTLINE_JAVA_DEFPOS) ) ){
+						if( 0 < auto_snprintf_s( szWork, std::size(szWork), L"%ls::%ls", szClass, LS(STR_OUTLINE_JAVA_DEFPOS) ) ){
 							pcFuncInfoArr->AppendData( ptPosXY_Logic.GetY2() + CLogicInt(1), ptPosXY_Layout.GetY2() + CLayoutInt(1), szWork, nFuncId ); //2007.10.09 kobake レイアウト・ロジックの混在バグ修正
 						}
 					}
@@ -276,7 +276,7 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 								&ptPosXY
 							);
 							wchar_t szWork[256];
-							if( 0 < auto_snprintf_s( szWork, _countof(szWork), L"%ls::%ls", szClass, szFuncName ) ){
+							if( 0 < auto_snprintf_s( szWork, std::size(szWork), L"%ls::%ls", szClass, szFuncName ) ){
 								pcFuncInfoArr->AppendData( nFuncLine, ptPosXY.GetY2() + CLayoutInt(1), szWork, nFuncId );
 							}
 						}
@@ -417,7 +417,7 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 								&ptPosXY
 							);
 							wchar_t szWork[256];
-							if( 0 < auto_snprintf_s( szWork, _countof(szWork), L"%ls::%ls", szClass, szFuncName ) ){
+							if( 0 < auto_snprintf_s( szWork, std::size(szWork), L"%ls::%ls", szClass, szFuncName ) ){
 								pcFuncInfoArr->AppendData( nFuncLine, ptPosXY.GetY2() + CLayoutInt(1), szWork, nFuncId );
 							}
 						}
@@ -503,4 +503,4 @@ const wchar_t* g_ppszKeywordsJAVA[] = {
 	L"volatile",
 	L"while"
 };
-int g_nKeywordsJAVA = _countof(g_ppszKeywordsJAVA);
+int g_nKeywordsJAVA = std::size(g_ppszKeywordsJAVA);

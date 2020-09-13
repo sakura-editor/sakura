@@ -84,7 +84,7 @@ protected:
 		CLoadStrBuffer()
 		{
 			m_pszString   = m_szString;				// 変数内に準備したバッファを接続
-			m_nBufferSize = _countof(m_szString);	// 配列個数
+			m_nBufferSize = std::size(m_szString);	// 配列個数
 			m_nLength     = 0;
 			m_szString[0] = L'\0';
 		}

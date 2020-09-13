@@ -280,7 +280,7 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 		while( ( uFormat = ::EnumClipboardFormats( uFormat ) ) != 0 ){
 			// Jul. 2, 2005 genta : check return value of GetClipboardFormatName
 			WCHAR szFormatName[128];
-			if( ::GetClipboardFormatName( uFormat, szFormatName, _countof(szFormatName) - 1 ) ){
+			if( ::GetClipboardFormatName( uFormat, szFormatName, std::size(szFormatName) - 1 ) ){
 				if( NULL != pbColumnSelect && 0 == lstrcmpi( L"MSDEVColumnSelect", szFormatName ) ){
 					*pbColumnSelect = true;
 					break;
@@ -356,7 +356,7 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 			const int nMaxCnt = DragQueryFile(hDrop, 0xFFFFFFFF, NULL, 0);
 
 			for(int nLoop = 0; nLoop < nMaxCnt; nLoop++){
-				DragQueryFile(hDrop, nLoop, sTmpPath, _countof(sTmpPath) - 1);
+				DragQueryFile(hDrop, nLoop, sTmpPath, std::size(sTmpPath) - 1);
 				// 2012.10.05 Moca ANSI版に合わせて最終行にも改行コードをつける
 				cmemBuf->AppendString(sTmpPath);
 				if(nMaxCnt > 1){
@@ -402,7 +402,7 @@ static CLIPFORMAT GetClipFormat(const wchar_t* pFormatName)
 	if( pFormatName[0] == L'\0' ){
 		return uFormat;
 	}
-	for(int i = 0; i < _countof(sClipFormatNames); i++){
+	for(int i = 0; i < std::size(sClipFormatNames); i++){
 		if( 0 == _wcsicmp(pFormatName, sClipFormatNames[i].m_pszName) ){
 			uFormat = sClipFormatNames[i].m_nClipFormat;
 		}

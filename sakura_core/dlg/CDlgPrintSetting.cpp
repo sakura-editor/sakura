@@ -250,7 +250,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 				GetHwnd(),
 				LS(STR_DLGPRNST1),
 				LS(STR_DLGPRNST2),
-				_countof( m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName ) - 1,
+				std::size( m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName ) - 1,
 				szWork
 			);
 			if( !bDlgInputResult ){
@@ -258,7 +258,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 			}
 		}
 		if( szWork[0] != L'\0' ){
-			int		size = _countof(m_PrintSettingArr[0].m_szPrintSettingName) - 1;
+			int		size = std::size(m_PrintSettingArr[0].m_szPrintSettingName) - 1;
 			wcsncpy( m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName, szWork, size);
 			m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName[size] = L'\0';
 			/* 印刷設定名一覧 */
@@ -864,7 +864,7 @@ BOOL CDlgPrintSetting::CalcPrintableLineAndColumn()
 	// 1pt = 1/72in = 25.4/72mm
 	int		nFontPoints = pPS->m_nPrintFontHeight * 720 / 254;
 	WCHAR	szFontPoints[20];
-	auto_sprintf_s( szFontPoints, _countof(szFontPoints), L"%d.%dpt", nFontPoints/10, nFontPoints%10 );
+	auto_sprintf_s( szFontPoints, std::size(szFontPoints), L"%d.%dpt", nFontPoints/10, nFontPoints%10 );
 	::DlgItem_SetText( GetHwnd(), IDC_STATIC_FONTSIZE, szFontPoints );
 
 	// 印字可能領域がない場合は OK を押せなくする 2013.5.10 aroka

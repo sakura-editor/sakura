@@ -115,7 +115,7 @@ static std::wstring GetProfileMgrFileName(LPCWSTR profName = NULL)
 	if( profName == NULL ){
 		WCHAR szExePath[_MAX_PATH];
 		WCHAR szFname[_MAX_FNAME];
-		::GetModuleFileName( NULL, szExePath, _countof(szExePath) );
+		::GetModuleFileName( NULL, szExePath, std::size(szExePath) );
 		_wsplitpath( szExePath, NULL, NULL, szFname, NULL );
 		auto_snprintf_s( szIniFile, _MAX_PATH - 1, L"%s\\%s_prof%s", szDir, szFname, L".ini" );
 	}else{
@@ -348,7 +348,7 @@ void CDlgProfileMgr::CreateProf()
 	}
 	std::wstring strText = szText;
 	static const WCHAR szReservedChars[] = L"/\\*?<>&|:\"'\t";
-	for( int x = 0; x < _countof(szReservedChars); ++x ){
+	for( int x = 0; x < std::size(szReservedChars); ++x ){
 		if( strText.npos != strText.find(szReservedChars[x]) ){
 			ErrorMessage( GetHwnd(), LS(STR_DLGPROFILE_ERR_INVALID_CHAR) );
 			return;
@@ -410,7 +410,7 @@ void CDlgProfileMgr::RenameProf()
 	}
 	std::wstring strText = szText;
 	static const WCHAR szReservedChars[] = L"/\\*?<>&|:\"'\t";
-	for( int x = 0; x < _countof(szReservedChars); ++x ){
+	for( int x = 0; x < std::size(szReservedChars); ++x ){
 		if( strText.npos != strText.find(szReservedChars[x]) ){
 			ErrorMessage( GetHwnd(), LS(STR_DLGPROFILE_ERR_INVALID_CHAR) );
 			return;
@@ -510,7 +510,7 @@ static bool IOProfSettings( SProfileSettings& settings, bool bWrite )
 	if( settings.m_nDefaultIndex < -1 ){
 		settings.m_nDefaultIndex = -1;
 	}
-	cProf.IOProfileData( pSection, L"szDllLanguage", StringBufferW(settings.m_szDllLanguage, _countof(settings.m_szDllLanguage)) );
+	cProf.IOProfileData( pSection, L"szDllLanguage", StringBufferW(settings.m_szDllLanguage, std::size(settings.m_szDllLanguage)) );
 	cProf.IOProfileData( pSection, L"bDefaultSelect", settings.m_bDefaultSelect );
 
 	if( bWrite ){

@@ -106,7 +106,7 @@ int CBackupAgent::MakeBackUp(
 	const CommonSetting_Backup& bup_setting = GetDllShareData().m_Common.m_sBackup;
 
 	WCHAR	szPath[_MAX_PATH]; // バックアップ先パス名
-	if( !FormatBackUpPath( szPath, _countof(szPath), target_file ) ){
+	if( !FormatBackUpPath( szPath, std::size(szPath), target_file ) ){
 		int nMsgResult = ::TopConfirmMessage(
 			CEditWnd::getInstance()->GetHwnd(),
 			LS(STR_BACKUP_ERR_PATH_CRETE)
@@ -319,7 +319,7 @@ bool CBackupAgent::FormatBackUpPath(
 	if( bup_setting.m_bBackUpFolder
 	  && (!bup_setting.m_bBackUpFolderRM || !IsLocalDrive( target_file ))) {	/* 指定フォルダにバックアップを作成する */	// m_bBackUpFolderRM 追加	2010/5/27 Uchi
 		WCHAR selDir[_MAX_PATH];
-		CFileNameManager::ExpandMetaToFolder( bup_setting.m_szBackUpFolder, selDir, _countof(selDir) );
+		CFileNameManager::ExpandMetaToFolder( bup_setting.m_szBackUpFolder, selDir, std::size(selDir) );
 		if (GetFullPathName(selDir, _MAX_PATH, szNewPath, &psNext) == 0) {
 			// うまく取れなかった
 			wcscpy( szNewPath, selDir );
@@ -381,7 +381,7 @@ bool CBackupAgent::FormatBackUpPath(
 				wcscat( szForm, L"%S" );
 			}
 			/* YYYYMMDD時分秒 形式に変換 */
-			wcsftime( szTime, _countof( szTime ) - 1, szForm, &result );
+			wcsftime( szTime, std::size( szTime ) - 1, szForm, &result );
 			if( -1 == auto_snprintf_s( pBase, nBaseCount, L"%s_%ls%s", szFname, szTime, szExt ) ){
 				return false;
 			}
@@ -453,7 +453,7 @@ bool CBackupAgent::FormatBackUpPath(
 				// 2005.10.20 ryoji FindFirstFileを使うように変更
 				CFileTime ctimeLastWrite;
 				GetLastWriteTimestamp( target_file, &ctimeLastWrite );
-				if( !GetDateTimeFormat( szFormat, _countof(szFormat), bup_setting.m_szBackUpPathAdvanced , ctimeLastWrite.GetSYSTEMTIME() ) ){
+				if( !GetDateTimeFormat( szFormat, std::size(szFormat), bup_setting.m_szBackUpPathAdvanced , ctimeLastWrite.GetSYSTEMTIME() ) ){
 					return false;
 				}
 			}
@@ -466,7 +466,7 @@ bool CBackupAgent::FormatBackUpPath(
 				// 2016.07.28 UTC→ローカル時刻に変更
 				::GetLocalTime(&SystemTime);			// 現在時刻を取得
 
-				if( !GetDateTimeFormat( szFormat, _countof(szFormat), bup_setting.m_szBackUpPathAdvanced , SystemTime ) ){
+				if( !GetDateTimeFormat( szFormat, std::size(szFormat), bup_setting.m_szBackUpPathAdvanced , SystemTime ) ){
 					return false;
 				}
 			}
@@ -536,7 +536,7 @@ bool CBackupAgent::FormatBackUpPath(
 			WCHAR *cp;
 			//	2006.03.25 Aroka szExt[0] == '\0'のときのオーバラン問題を修正
 			WCHAR *ep = (szExt[0]!=0) ? &szExt[1] : &szExt[0];
-			assert( newPathCount <= _countof(temp) );
+			assert( newPathCount <= std::size(temp) );
 
 			// * を拡張子にする
 			while( wcschr( szNewPath, L'*' ) ){

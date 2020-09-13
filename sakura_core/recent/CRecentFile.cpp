@@ -46,7 +46,7 @@ CRecentFile::CRecentFile()
 {
 	Create(
 		GetShareData()->m_sHistory.m_fiMRUArr,
-		_countof(GetShareData()->m_sHistory.m_fiMRUArr[0].m_szPath),
+		std::size(GetShareData()->m_sHistory.m_fiMRUArr[0].m_szPath),
 		&GetShareData()->m_sHistory.m_nMRUArrNum,
 		GetShareData()->m_sHistory.m_bMRUArrFavorite,
 		MAX_MRU,
@@ -62,7 +62,7 @@ bool CRecentFile::DataToReceiveType( const EditInfo** dst, const EditInfo* src )
 
 bool CRecentFile::TextToDataType( EditInfo* dst, LPCWSTR pszText ) const
 {
-	if( _countof(dst->m_szPath) < wcslen(pszText) + 1 ){
+	if( std::size(dst->m_szPath) < wcslen(pszText) + 1 ){
 		return false;
 	}
 	wcscpy(dst->m_szPath, pszText);

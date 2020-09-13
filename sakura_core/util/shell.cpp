@@ -566,7 +566,7 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 			dwData = 1;	// 目次ページ
 
 		WCHAR buf[256];
-		swprintf( buf, _countof(buf), L"https://sakura-editor.github.io/help/HLP%06Iu.html", dwData );
+		swprintf( buf, std::size(buf), L"https://sakura-editor.github.io/help/HLP%06Iu.html", dwData );
 		ShellExecute( ::GetActiveWindow(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
 	}
 

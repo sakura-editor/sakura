@@ -258,7 +258,7 @@ int CMigemo::migemo_load_a(int dict_id, const char* dict_file)
 int CMigemo::migemo_load_w(int dict_id, const wchar_t* dict_file)
 {
 	char szBuf[_MAX_PATH];
-	wcstombs2(szBuf,dict_file,_countof(szBuf));
+	wcstombs2(szBuf,dict_file,std::size(szBuf));
 	return migemo_load_a(dict_id,szBuf);
 }
 

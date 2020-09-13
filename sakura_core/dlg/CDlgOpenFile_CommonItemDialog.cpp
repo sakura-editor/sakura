@@ -409,7 +409,7 @@ CDlgOpenFile_CommonItemDialog::CDlgOpenFile_CommonItemDialog()
 	WCHAR	szDir[_MAX_DIR];
 	::GetModuleFileName(
 		NULL,
-		szFile, _countof( szFile )
+		szFile, std::size( szFile )
 	);
 	_wsplitpath( szFile, szDrive, szDir, NULL, NULL );
 	wcscpy( m_szInitialDir, szDrive );

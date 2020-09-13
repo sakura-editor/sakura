@@ -232,7 +232,7 @@ UINT_PTR CALLBACK OFNHookProc(
 		L"LF (UNIX)",
 		L"CR (Mac)",
 	};
-	int nEolNameArrNum = (int)_countof(pEolNameArr);
+	int nEolNameArrNum = (int)std::size(pEolNameArr);
 
 //	To Here	Feb. 9, 2001 genta
 	int	nRightMargin = 24;
@@ -491,7 +491,7 @@ UINT_PTR CALLBACK OFNHookProc(
 			{
 				wchar_t szFolder[_MAX_PATH];
 				CDlgOpenFileData* pData = (CDlgOpenFileData*)::GetWindowLongPtr(hdlg, DWLP_USER);
-				lRes = CommDlg_OpenSave_GetFolderPath( pData->m_hwndOpenDlg, szFolder, _countof( szFolder ) );
+				lRes = CommDlg_OpenSave_GetFolderPath( pData->m_hwndOpenDlg, szFolder, std::size( szFolder ) );
 			}
 //			MYTRACE( L"\tlRes=%d\pszFolder=[%ls]\n", lRes, szFolder );
 
@@ -667,7 +667,7 @@ CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog()
 	WCHAR	szDir[_MAX_DIR];
 	::GetModuleFileName(
 		NULL,
-		szFile, _countof( szFile )
+		szFile, std::size( szFile )
 	);
 	_wsplitpath( szFile, szDrive, szDir, NULL, NULL );
 	wcscpy( m_szInitialDir, szDrive );

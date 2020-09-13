@@ -86,8 +86,8 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData, std::vector<STypeConf
 		new CType_Ini(),	//設定ファイル
 	};
 	types.clear();
-	assert( _countof(table) <= MAX_TYPES );
-	for(int i = 0; i < _countof(table) && i < MAX_TYPES; i++){
+	assert( std::size(table) <= MAX_TYPES );
+	for(int i = 0; i < std::size(table) && i < MAX_TYPES; i++){
 		STypeConfig* type = new STypeConfig;
 		types.push_back(type);
 		table[i]->InitTypeConfig(i, *type);
@@ -211,7 +211,7 @@ void _DefaultConfig(STypeConfig* pType)
 
 	pType->m_nIndentLayout = 0;	/* 折り返しは2行目以降を字下げ表示 */
 
-	assert( COLORIDX_LAST <= _countof(pType->m_ColorInfoArr) );
+	assert( COLORIDX_LAST <= std::size(pType->m_ColorInfoArr) );
 	for( int i = 0; i < COLORIDX_LAST; ++i ){
 		GetDefaultColorInfo(&pType->m_ColorInfoArr[i],i);
 	}
@@ -260,7 +260,7 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_bUseDocumentIcon = false;				// 文書に関連づけられたアイコンを使う
 
 //@@@ 2001.11.17 add start MIK
-	for(int i = 0; i < _countof(pType->m_RegexKeywordArr); i++)
+	for(int i = 0; i < std::size(pType->m_RegexKeywordArr); i++)
 	{
 		pType->m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1;
 	}

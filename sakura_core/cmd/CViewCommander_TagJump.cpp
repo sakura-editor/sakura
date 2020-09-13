@@ -85,7 +85,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 	wchar_t		szFile[_MAX_PATH] = {L'\0'};
 	size_t		nBgn;
 	size_t		nPathLen;
-	wmemset( szJumpToFile, 0, _countof(szJumpToFile) );
+	wmemset( szJumpToFile, 0, std::size(szJumpToFile) );
 
 	/*
 	  カーソル位置変換
@@ -171,19 +171,19 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 				wmemcpy( szJumpToFile, &pLine[2 + nBgn], nPathLen );
 				GetLineColumn( &pLine[2 + nPathLen], &nJumpToLine, &nJumpToColumn );
 				break;
-			}else if( !GetQuoteFilePath( &pLine[2], szFile, _countof(szFile) ) ){
+			}else if( !GetQuoteFilePath( &pLine[2], szFile, std::size(szFile) ) ){
 				break;
 			}
 			searchMode = TAGLIST_ROOT;
 		}else if( 0 == wmemcmp( pLine, L"◆\"", 2 ) ){
-			if( !GetQuoteFilePath( &pLine[2], szFile, _countof(szFile) ) ){
+			if( !GetQuoteFilePath( &pLine[2], szFile, std::size(szFile) ) ){
 				break;
 			}
 			searchMode = TAGLIST_SUBPATH;
 		}else if( 0 == wmemcmp( pLine, L"・", 1 ) ){
 			if( pLine[1] == L'"' ){
 				// ・"FileName.ext"
-				if( !GetQuoteFilePath( &pLine[2], szFile, _countof(szFile) ) ){
+				if( !GetQuoteFilePath( &pLine[2], szFile, std::size(szFile) ) ){
 					break;
 				}
 				searchMode = TAGLIST_SUBPATH;
@@ -219,7 +219,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 					for( ; 1 < fileEnd && (L'0' <= pLine[fileEnd] && pLine[fileEnd] <= L'9'); fileEnd-- ){}
 					if(    1 < fileEnd && (L',' == pLine[fileEnd]) ){ fileEnd--; }
 					for( ; 1 < fileEnd && (L'0' <= pLine[fileEnd] && pLine[fileEnd] <= L'9'); fileEnd-- ){}
-					if( 1 < fileEnd && L'(' == pLine[fileEnd] && fileEnd - 1 < (int)_countof(szFile) ){
+					if( 1 < fileEnd && L'(' == pLine[fileEnd] && fileEnd - 1 < (int)std::size(szFile) ){
 						wmemcpy( szFile, pLine + 1, fileEnd - 1 );
 						szFile[fileEnd - 1] = L'\0';
 						GetLineColumn( &pLine[fileEnd + 1], &nJumpToLine, &nJumpToColumn );
@@ -246,7 +246,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 					continue;
 				}
 				// フォルダ毎：ファイル名
-				if( GetQuoteFilePath(&pLine[2], szFile, _countof(szFile)) ){
+				if( GetQuoteFilePath(&pLine[2], szFile, std::size(szFile)) ){
 					searchMode = TAGLIST_SUBPATH;
 					continue;
 				}
@@ -268,7 +268,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 				}
 				// 相対フォルダorファイル名
 				wchar_t		szPath[_MAX_PATH];
-				if( GetQuoteFilePath( &pLine[2], szPath, _countof(szPath) ) ){
+				if( GetQuoteFilePath( &pLine[2], szPath, std::size(szPath) ) ){
 					if( szFile[0] ){
 						AddLastYenFromDirectoryPath( szPath );
 					}
@@ -284,7 +284,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 				}
 				break;
 			}else if( 3 <= nLineLen && 0 == wmemcmp( pLine, L"◎\"", 2 ) ){
-				if( GetQuoteFilePath( &pLine[2], szJumpToFile, _countof(szJumpToFile) ) ){
+				if( GetQuoteFilePath( &pLine[2], szJumpToFile, std::size(szJumpToFile) ) ){
 					AddLastYenFromDirectoryPath( szJumpToFile );
 					wcscat( szJumpToFile, szFile );
 					if( IsFileExists2( szJumpToFile ) ){
@@ -396,7 +396,7 @@ bool CViewCommander::Command_TagsMake( void )
 	else
 	{
 		// 20100722 Moca サクラのフォルダからカレントディレクトリに変更
-		::GetCurrentDirectory( _countof(szTargetPath), szTargetPath );
+		::GetCurrentDirectory( std::size(szTargetPath), szTargetPath );
 	}
 
 	//ダイアログを表示する
@@ -468,7 +468,7 @@ bool CViewCommander::Command_TagsMake( void )
 	{
 		// 2010.08.28 Moca システムディレクトリ付加
 		WCHAR szCmdDir[_MAX_PATH];
-		::GetSystemDirectory(szCmdDir, _countof(szCmdDir));
+		::GetSystemDirectory(szCmdDir, std::size(szCmdDir));
 		//	2006.08.04 genta add /D to disable autorun
 		auto_sprintf( cmdline, L"\"%s\\cmd.exe\" /D /C \"\"%s\\%s\" %s\"",
 				szCmdDir,
@@ -536,9 +536,9 @@ bool CViewCommander::Command_TagsMake( void )
 			{
 				if( new_cnt > 0 )												//待機中のものがある
 				{
-					if( new_cnt >= _countof(work) - 2 )							//パイプから読み出す量を調整
+					if( new_cnt >= std::size(work) - 2 )							//パイプから読み出す量を調整
 					{
-						new_cnt = _countof(work) - 2;
+						new_cnt = std::size(work) - 2;
 					}
 					::ReadFile( hStdOutRead, &work[0], new_cnt, &read_cnt, NULL );	//パイプから読み出し
 					if( read_cnt == 0 )
@@ -613,7 +613,7 @@ bool CViewCommander::Command_TagJumpByTagsFile( bool bClose )
 	}
 
 	WCHAR	szDirFile[1024];
-	if( false == Sub_PreProcTagJumpByTagsFile( szDirFile, _countof(szDirFile) ) ){
+	if( false == Sub_PreProcTagJumpByTagsFile( szDirFile, std::size(szDirFile) ) ){
 		return false;
 	}
 	CDlgTagJumpList	cDlgTagJumpList(true);	//タグジャンプリスト
@@ -637,7 +637,7 @@ bool CViewCommander::Command_TagJumpByTagsFile( bool bClose )
 		WCHAR fileName[1024];
 		int   fileLine;
 
-		if( false == cDlgTagJumpList.GetSelectedFullPathAndLine( fileName, _countof(fileName), &fileLine , NULL ) ){
+		if( false == cDlgTagJumpList.GetSelectedFullPathAndLine( fileName, std::size(fileName), &fileLine , NULL ) ){
 			return false;
 		}
 		return m_pCommanderView->TagJumpSub( fileName, CMyPoint(0, fileLine), bClose );
@@ -660,7 +660,7 @@ bool CViewCommander::Command_TagJumpByTagsFileKeyword( const wchar_t* keyword )
 	int		fileLine;	// 行番号
 	WCHAR	szCurrentPath[1024];
 
-	if( false == Sub_PreProcTagJumpByTagsFile( szCurrentPath, _countof(szCurrentPath) ) ){
+	if( false == Sub_PreProcTagJumpByTagsFile( szCurrentPath, std::size(szCurrentPath) ) ){
 		return false;
 	}
 
@@ -673,7 +673,7 @@ bool CViewCommander::Command_TagJumpByTagsFileKeyword( const wchar_t* keyword )
 	}
 
 	//タグジャンプする。
-	if( false == cDlgTagJumpList.GetSelectedFullPathAndLine( fileName, _countof(fileName), &fileLine, NULL ) )
+	if( false == cDlgTagJumpList.GetSelectedFullPathAndLine( fileName, std::size(fileName), &fileLine, NULL ) )
 	{
 		return false;
 	}
@@ -703,13 +703,13 @@ bool CViewCommander::Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int cou
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		wcscpy( szCurrentPath, GetDocument()->m_cDocFile.GetFilePath() );
 	}else{
-		if( 0 == ::GetCurrentDirectory( count - _countof(L"\\dmy") - MAX_TYPES_EXTS, szCurrentPath ) ){
+		if( 0 == ::GetCurrentDirectory( count - std::size(L"\\dmy") - MAX_TYPES_EXTS, szCurrentPath ) ){
 			return false;
 		}
 		// (無題)でもファイル名を要求してくるのでダミーをつける
 		// 現在のタイプ別の1番目の拡張子を拝借
 		WCHAR szExts[MAX_TYPES_EXTS];
-		CDocTypeManager::GetFirstExt(m_pCommanderView->m_pTypeData->m_szTypeExts, szExts, _countof(szExts));
+		CDocTypeManager::GetFirstExt(m_pCommanderView->m_pTypeData->m_szTypeExts, szExts, std::size(szExts));
 		int nExtLen = wcslen( szExts );
 		wcscat( szCurrentPath, L"\\dmy" );
 		if( nExtLen ){

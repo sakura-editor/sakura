@@ -96,7 +96,7 @@ extern const unsigned char gm_keyword_char[128];
 //Nov. 27, 2010 syat   速度改善のためテーブルに変更
 inline bool IS_KEYWORD_CHAR(wchar_t wc)
 {
-	if(0 <= wc && wc < _countof(gm_keyword_char) && (gm_keyword_char[wc] == CK_CSYM||gm_keyword_char[wc] == CK_UDEF) )
+	if(0 <= wc && wc < std::size(gm_keyword_char) && (gm_keyword_char[wc] == CK_CSYM||gm_keyword_char[wc] == CK_UDEF) )
 		return true;
 	else
 		return false;

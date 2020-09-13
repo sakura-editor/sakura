@@ -197,7 +197,7 @@ HINSTANCE CDlgFuncList::m_lastRcInstance = 0;
 CDlgFuncList::CDlgFuncList() : CDialog(true)
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
-	assert( _countof(anchorList) == _countof(m_rcItems) );
+	assert( std::size(anchorList) == std::size(m_rcItems) );
 
 	m_pcFuncInfoArr = NULL;		/* 関数情報配列 */
 	m_nCurLine = CLayoutInt(0);				/* 現在行 */
@@ -792,7 +792,7 @@ bool CDlgFuncList::GetTreeFileFullName(HWND hwndTree, HTREEITEM target, std::wst
 		WCHAR szFileName[_MAX_PATH];
 		tvItem.mask = TVIF_HANDLE | TVIF_TEXT;
 		tvItem.pszText = szFileName;
-		tvItem.cchTextMax = _countof(szFileName);
+		tvItem.cchTextMax = std::size(szFileName);
 		tvItem.hItem = target;
 		TreeView_GetItem( hwndTree, &tvItem );
 		if( ((-tvItem.lParam) % 10) == 3 ){
@@ -1325,9 +1325,9 @@ void CDlgFuncList::SetListVB (void)
 
 		// 2001/06/23 N.Nakatani for Visual Basic
 		//	Jun. 26, 2001 genta 半角かな→全角に
-		wmemset(szText, L'\0', _countof(szText));
-		wmemset(szType, L'\0', _countof(szType));
-		wmemset(szOption, L'\0', _countof(szOption));
+		wmemset(szText, L'\0', std::size(szText));
+		wmemset(szType, L'\0', std::size(szType));
+		wmemset(szOption, L'\0', std::size(szOption));
 		if( 1 == ((pcFuncInfo->m_nInfo >> 8) & 0x01) ){
 			// スタティック宣言(Static)
 			// 2006.12.12 Moca 末尾にスペース追加
@@ -1335,15 +1335,15 @@ void CDlgFuncList::SetListVB (void)
 		}
 		switch ((pcFuncInfo->m_nInfo >> 4) & 0x0f) {
 			case 2  :	// プライベート(Private)
-				wcsncat(szOption, LS(STR_DLGFNCLST_VB_PRIVATE), _countof(szOption) - wcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
+				wcsncat(szOption, LS(STR_DLGFNCLST_VB_PRIVATE), std::size(szOption) - wcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
 				break;
 
 			case 3  :	// フレンド(Friend)
-				wcsncat(szOption, LS(STR_DLGFNCLST_VB_FRIEND), _countof(szOption) - wcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
+				wcsncat(szOption, LS(STR_DLGFNCLST_VB_FRIEND), std::size(szOption) - wcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
 				break;
 
 			default :	// パブリック(Public)
-				wcsncat(szOption, LS(STR_DLGFNCLST_VB_PUBLIC), _countof(szOption) - wcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
+				wcsncat(szOption, LS(STR_DLGFNCLST_VB_PUBLIC), std::size(szOption) - wcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
 		}
 		int nInfo = pcFuncInfo->m_nInfo;
 		switch (nInfo & 0x0f) {
@@ -1389,7 +1389,7 @@ void CDlgFuncList::SetListVB (void)
 		}
 		if ( 2 == ((nInfo >> 8) & 0x02) ) {
 			// 宣言(Declareなど)
-			wcsncat(szType, LS(STR_DLGFNCLST_VB_DECL), _countof(szType) - wcslen(szType));
+			wcsncat(szType, LS(STR_DLGFNCLST_VB_DECL), std::size(szType) - wcslen(szType));
 		}
 
 		WCHAR szTypeOption[256]; // 2006.12.12 Moca auto_sprintfの入出力で同一変数を使わないための作業領域追加
@@ -1674,18 +1674,18 @@ void CDlgFuncList::SetTreeFile()
 		WCHAR szPath2[_MAX_PATH];
 		const SFileTreeItem& item = m_fileTreeSetting.m_aItems[i];
 		// item.m_szTargetPath => szPath メタ文字の展開
-		if( !CFileNameManager::ExpandMetaToFolder(item.m_szTargetPath, szPath, _countof(szPath)) ){
-			wcscpy_s(szPath, _countof(szPath), L"<Error:Long Path>");
+		if( !CFileNameManager::ExpandMetaToFolder(item.m_szTargetPath, szPath, std::size(szPath)) ){
+			wcscpy_s(szPath, std::size(szPath), L"<Error:Long Path>");
 		}
 		// szPath => szPath2 <iniroot>展開
 		const WCHAR* pszFrom = szPath;
 		if( m_fileTreeSetting.m_szLoadProjectIni[0] != L'\0'){
 			CNativeW strTemp(pszFrom);
 			strTemp.Replace(L"<iniroot>", IniDirPath);
-			if( _countof(szPath2) <= strTemp.GetStringLength() ){
-				wcscpy_s(szPath2, _countof(szPath), L"<Error:Long Path>");
+			if( std::size(szPath2) <= strTemp.GetStringLength() ){
+				wcscpy_s(szPath2, std::size(szPath), L"<Error:Long Path>");
 			}else{
-				wcscpy_s(szPath2, _countof(szPath), strTemp.GetStringPtr());
+				wcscpy_s(szPath2, std::size(szPath), strTemp.GetStringPtr());
 			}
 		}else{
 			wcscpy(szPath2, pszFrom);
@@ -2001,7 +2001,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	m_ptDefaultSizeClient.x = rc.right;
 	m_ptDefaultSizeClient.y = rc.bottom;
 
-	for( int i = 0; i < _countof(anchorList); i++ ){
+	for( int i = 0; i < std::size(anchorList); i++ ){
 		GetItemClientRect( anchorList[i].id, m_rcItems[i] );
 		// ドッキング中はウィンドウ幅いっぱいまで伸ばす
 		if( IsDocking() ){
@@ -2334,7 +2334,7 @@ BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 	ptNew.x = rcDlg.right - rcDlg.left;
 	ptNew.y = rcDlg.bottom - rcDlg.top;
 
-	for( int i = 0 ; i < _countof(anchorList); i++ ){
+	for( int i = 0 ; i < std::size(anchorList); i++ ){
 		HWND hwndCtrl = GetItemHwnd(anchorList[i].id);
 		ResizeItem( hwndCtrl, m_ptDefaultSizeClient, ptNew, m_rcItems[i], anchorList[i].anchor, (anchorList[i].anchor != ANCHOR_ALL));
 //	2013.2.6 aroka ちらつき防止用の試行錯誤

@@ -316,7 +316,7 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 		Combo_ResetContent( hwndCombo );
 		ime = m_Types.m_nImeState & 3;
 		int		nSelPos = 0;
-		for( int i = 0; i < _countof( ImeSwitchArr ); ++i ){
+		for( int i = 0; i < std::size( ImeSwitchArr ); ++i ){
 			Combo_InsertString( hwndCombo, i, LS(ImeSwitchArr[i].nNameId) );
 			if( ImeSwitchArr[i].nMethod == ime ){	/* IME状態 */
 				nSelPos = i;
@@ -329,7 +329,7 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 		Combo_ResetContent( hwndCombo );
 		ime = m_Types.m_nImeState >> 2;
 		nSelPos = 0;
-		for( int i = 0; i < _countof( ImeStateArr ); ++i ){
+		for( int i = 0; i < std::size( ImeStateArr ); ++i ){
 			Combo_InsertString( hwndCombo, i, LS(ImeStateArr[i].nNameId) );
 			if( ImeStateArr[i].nMethod == ime ){	/* IME状態 */
 				nSelPos = i;
@@ -382,15 +382,15 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 
 		// デフォルト改行タイプのコンボボックス設定
 		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_EOLTYPE );
-		for( i = 0; i < _countof(aszEolStr); ++i ){
+		for( i = 0; i < std::size(aszEolStr); ++i ){
 			ApiWrap::Combo_AddString( hCombo, aszEolStr[i] );
 		}
-		for( i = 0; i < _countof(aeEolType); ++i ){
+		for( i = 0; i < std::size(aeEolType); ++i ){
 			if( m_Types.m_encoding.m_eDefaultEoltype == aeEolType[i] ){
 				break;
 			}
 		}
-		if( i == _countof(aeEolType) ){
+		if( i == std::size(aeEolType) ){
 			i = 0;
 		}
 		Combo_SetCurSel( hCombo, i );
@@ -430,7 +430,7 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 			STR_IMAGE_POS9,
 		};
 		/*BGIMAGE_TOP_LEFT .. */
-		int nCount = _countof(posNameId);
+		int nCount = std::size(posNameId);
 		SetCombobox( ::GetDlgItem(hwndDlg, IDC_COMBO_BACKIMG_POS), posNameId, nCount, m_Types.m_backImgPos);
 	}
 	CheckDlgButtonBool(hwndDlg, IDC_CHECK_BACKIMG_REP_X, m_Types.m_backImgRepeatX);

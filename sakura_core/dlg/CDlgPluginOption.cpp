@@ -124,7 +124,7 @@ void CDlgPluginOption::SetData( void )
 	for( i=0, it = m_cPlugin->m_options.begin(); it != m_cPlugin->m_options.end(); i++, it++ ){
 		cOpt = *it;
 
-		auto_snprintf_s( buf, _countof(buf), L"%ls", cOpt->GetLabel().c_str());
+		auto_snprintf_s( buf, std::size(buf), L"%ls", cOpt->GetLabel().c_str());
 		lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 		lvi.pszText  = buf;
 		lvi.iItem    = i;
@@ -172,13 +172,13 @@ void CDlgPluginOption::SetData( void )
 			for (auto it = selects.begin(); it != selects.end(); it++) {
 				SepSelect(*it, &sView, &sTrg);
 				if (sValue == sTrg) {
-					auto_snprintf_s( buf, _countof(buf), L"%ls", sView.c_str());
+					auto_snprintf_s( buf, std::size(buf), L"%ls", sView.c_str());
 					break;
 				}
 			}
 		}
 		else {
-			auto_snprintf_s( buf, _countof(buf), L"%ls", sValue.c_str());
+			auto_snprintf_s( buf, std::size(buf), L"%ls", sValue.c_str());
 		}
 		lvi.mask     = LVIF_TEXT;
 		lvi.iItem    = i;
@@ -707,7 +707,7 @@ void CDlgPluginOption::SelectDirectory( int iLine )
 	WCHAR	szDir[_MAX_PATH+1];
 
 	/* 検索フォルダ */
-	::DlgItem_GetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR, szDir, _countof(szDir) );
+	::DlgItem_GetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR, szDir, std::size(szDir) );
 
 	if (_IS_REL_PATH( szDir )) {
 		WCHAR	folder[_MAX_PATH];
@@ -731,7 +731,7 @@ void CDlgPluginOption::SelectDirectory( int iLine )
 	auto_sprintf( sTitle, LS(STR_DLGPLUGINOPT_SELECT), buf);
 	if (SelectDir( GetHwnd(), (const WCHAR*)sTitle /*L"ディレクトリの選択"*/, szDir, szDir )) {
 		//	末尾に\マークを追加する．
-		AddLastChar( szDir, _countof(szDir), L'\\' );
+		AddLastChar( szDir, std::size(szDir), L'\\' );
 		::DlgItem_SetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR, szDir );
 	}
 }

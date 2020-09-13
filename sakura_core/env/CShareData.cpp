@@ -172,7 +172,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_sHandles.m_hAccel = NULL;
 		m_pShareData->m_sHandles.m_hwndDebug = NULL;
 
-		for( int i = 0; i < _countof(m_pShareData->m_dwCustColors); i++ ){
+		for( int i = 0; i < std::size(m_pShareData->m_dwCustColors); i++ ){
 			m_pShareData->m_dwCustColors[i] = RGB( 255, 255, 255 );
 		}
 
@@ -768,8 +768,8 @@ static void ConvertLangValueImpl( wchar_t* pBuf, size_t chBufSize, int nStrId, s
 	index++;
 }
 
-#define ConvertLangValue(buf, id)  ConvertLangValueImpl(buf, _countof(buf), id, values, index, bSetValues, true);
-#define ConvertLangValue2(buf, id) ConvertLangValueImpl(buf, _countof(buf), id, values, index, bSetValues, false);
+#define ConvertLangValue(buf, id)  ConvertLangValueImpl(buf, std::size(buf), id, values, index, bSetValues, true);
+#define ConvertLangValue2(buf, id) ConvertLangValueImpl(buf, std::size(buf), id, values, index, bSetValues, false);
 
 /*!
 	国際化対応のための文字列を変更する
@@ -1239,7 +1239,7 @@ void CShareData::InitToolButtons(DLLSHAREDATA* pShareData)
 
 	//	ツールバーアイコン数の最大値を超えないためのおまじない
 	//	最大値を超えて定義しようとするとここでコンパイルエラーになります．
-	char dummy[ _countof(DEFAULT_TOOL_BUTTONS) < MAX_TOOLBAR_BUTTON_ITEMS ? 1:0 ];
+	char dummy[ std::size(DEFAULT_TOOL_BUTTONS) < MAX_TOOLBAR_BUTTON_ITEMS ? 1:0 ];
 	dummy[0]=0;
 
 	memcpy_raw(
@@ -1249,7 +1249,7 @@ void CShareData::InitToolButtons(DLLSHAREDATA* pShareData)
 	);
 
 	/* ツールバーボタンの数 */
-	pShareData->m_Common.m_sToolBar.m_nToolBarButtonNum = _countof(DEFAULT_TOOL_BUTTONS);
+	pShareData->m_Common.m_sToolBar.m_nToolBarButtonNum = std::size(DEFAULT_TOOL_BUTTONS);
 	pShareData->m_Common.m_sToolBar.m_bToolBarIsFlat = !IsVisualStyle();			/* フラットツールバーにする／しない */	// 2006.06.23 ryoji ビジュアルスタイルでは初期値をノーマルにする
 }
 
@@ -1484,7 +1484,7 @@ std::vector<STypeConfig*>& CShareData::GetTypeSettings()
 void CShareData::InitFileTree( SFileTree* setting )
 {
 	setting->m_bProject = true;
-	for(int i = 0; i < (int)_countof(setting->m_aItems); i++){
+	for(int i = 0; i < (int)std::size(setting->m_aItems); i++){
 		SFileTreeItem& item = setting->m_aItems[i];
 		item.m_eFileTreeItemType = EFileTreeItemType_Grep;
 		item.m_szTargetPath = L"";

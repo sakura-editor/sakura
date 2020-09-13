@@ -179,7 +179,7 @@ void _DrawTabArrow(
 	pt[3].y = sy;
 	pt[4].x = sx - sa;
 	pt[4].y = sy - sa;
-	::PolyPolyline( gr, pt, pp, _countof(pp));
+	::PolyPolyline( gr, pt, pp, std::size(pp));
 
 	if( bBold ){
 		pt[0].x += 0;	//「─」左端から右端
@@ -192,7 +192,7 @@ void _DrawTabArrow(
 		pt[3].y += 1;
 		pt[4].x += 0;
 		pt[4].y += 1;
-		::PolyPolyline( gr, pt, pp, _countof(pp));
+		::PolyPolyline( gr, pt, pp, std::size(pp));
 	}
 
 	gr.PopPen();

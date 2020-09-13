@@ -46,7 +46,7 @@ CDlgWindowList::CDlgWindowList()
 	: CDialog(true)
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
-	assert(_countof(anchorList) == _countof(m_rcItems));
+	assert(std::size(anchorList) == std::size(m_rcItems));
 	m_ptDefaultSize.x = -1;
 	m_ptDefaultSize.y = -1;
 	return;
@@ -144,7 +144,7 @@ void CDlgWindowList::SetData()
 			const EditInfo* pEditInfo = &m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
 			WCHAR szName[_MAX_PATH];
-			CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape(szName, _countof(szName), pEditInfo, pEditNode[i].m_nId, i, calc.GetDC());
+			CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape(szName, std::size(szName), pEditInfo, pEditNode[i].m_nId, i, calc.GetDC());
 
 			LV_ITEM lvi;
 			lvi.mask     = LVIF_TEXT | LVIF_PARAM;
@@ -192,7 +192,7 @@ BOOL CDlgWindowList::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	m_ptDefaultSize.x = rc.right - rc.left;
 	m_ptDefaultSize.y = rc.bottom - rc.top;
 
-	for (int i = 0; i < _countof(anchorList); i++) {
+	for (int i = 0; i < std::size(anchorList); i++) {
 		GetItemClientRect(anchorList[i].id, m_rcItems[i]);
 	}
 
@@ -239,7 +239,7 @@ BOOL CDlgWindowList::OnSize(WPARAM wParam, LPARAM lParam)
 	ptNew.x = rc.right - rc.left;
 	ptNew.y = rc.bottom - rc.top;
 
-	for (int i = 0; i < _countof(anchorList); i++) {
+	for (int i = 0; i < std::size(anchorList); i++) {
 		ResizeItem(GetItemHwnd(anchorList[i].id), m_ptDefaultSize, ptNew, m_rcItems[i], anchorList[i].anchor);
 	}
 	::InvalidateRect(GetHwnd(), NULL, TRUE);
