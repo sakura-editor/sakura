@@ -4032,11 +4032,23 @@ void CDlgFuncList::SetItemSelectionForTreeView( HWND hwndTree, int nFuncInfoInde
 */
 void CDlgFuncList::SetItemSelectionForListView( HWND hwndList, int nFuncInfoIndex )
 {
-	if( nFuncInfoIndex != -1 ){
-		ListView_SetItemState( hwndList, nFuncInfoIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-		ListView_EnsureVisible( hwndList, nFuncInfoIndex, FALSE );
-	}else{
+	if( nFuncInfoIndex == -1 ){
 		ListView_SetItemState( hwndList, nFuncInfoIndex, 0, LVIS_SELECTED | LVIS_FOCUSED );
+		return;
+	}
+
+	int nCount = ListView_GetItemCount( hwndList );
+	for( int i = 0; i < nCount; ++i ){
+		LVITEM lvItem = {};
+		lvItem.mask = LVIF_PARAM;
+		lvItem.iItem = i;
+		lvItem.iSubItem = 0;
+		ListView_GetItem( hwndList, &lvItem );
+		if( lvItem.lParam == nFuncInfoIndex ){
+			ListView_SetItemState( hwndList, i, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
+			ListView_EnsureVisible( hwndList, i, FALSE );
+			break;
+		}
 	}
 
 	return;
