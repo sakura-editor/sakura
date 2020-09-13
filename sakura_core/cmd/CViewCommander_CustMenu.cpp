@@ -33,7 +33,7 @@ void CViewCommander::Command_MENU_RBUTTON( void )
 	{
 		CNativeW cInfo = m_pCommanderView->m_cTipWnd.GetInfoText();
 
-		// 見た目と同じように、\n を CR+LFへ変換する
+		// 貼り付けで扱いやすいように、改行記号を CR+LF に置換する
 		cInfo.Replace( L"\n", L"\r\n" );
 
 		/* クリップボードにデータを設定 */
