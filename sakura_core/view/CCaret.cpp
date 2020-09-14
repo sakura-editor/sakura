@@ -376,6 +376,10 @@ CLayoutInt CCaret::MoveCursor(
 	m_pEditView->DrawBracketPair( true );
 // 02/09/18 対括弧の強調表示 ai End		03/02/18 ai mod E
 
+	// アウトライン表示の選択位置を更新
+	CLayoutPoint poCaret = GetCaretLayoutPos();
+	m_pEditDoc->m_pcEditWnd->m_cDlgFuncList.NotifyCaretMovement( poCaret.GetY2() + 1, poCaret.GetX2() + 1 );
+
 	return nScrollRowNum;
 }
 
