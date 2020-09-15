@@ -23,33 +23,21 @@
 /* 右クリックメニュー */
 void CViewCommander::Command_MENU_RBUTTON( void )
 {
-	int			nId;
-	int			nLength;
-//	HGLOBAL		hgClip;
-//	char*		pszClip;
-	int			i;
 	/* ポップアップメニュー(右クリック) */
-	nId = m_pCommanderView->CreatePopUpMenu_R();
+	auto nId = m_pCommanderView->CreatePopUpMenu_R();
 	if( 0 == nId ){
 		return;
 	}
 	switch( nId ){
 	case IDM_COPYDICINFO:
 	{
-		nLength = m_pCommanderView->m_cTipWnd.m_cInfo.GetStringLength();
-		const WCHAR* pszStr = m_pCommanderView->m_cTipWnd.m_cInfo.GetStringPtr();
-		WCHAR* pszWork = _wcsdup( pszStr );
+		CNativeW cInfo = m_pCommanderView->m_cTipWnd.GetInfoText();
 
-		// 見た目と同じように、\n を CR+LFへ変換する
-		for( i = 0; i < nLength ; ++i){
-			if( pszWork[i] == L'\\' && pszWork[i + 1] == L'n'){
-				pszWork[i] =     WCODE::CR;
-				pszWork[i + 1] = WCODE::LF;
-			}
-		}
+		// 貼り付けで扱いやすいように、改行記号を CR+LF に置換する
+		cInfo.Replace( L"\n", L"\r\n" );
+
 		/* クリップボードにデータを設定 */
-		m_pCommanderView->MySetClipboardData( pszWork, nLength, false );
-		free( pszWork );
+		m_pCommanderView->MySetClipboardData( cInfo.GetStringPtr(), cInfo.GetStringLength(), false );
 
 		break;
 	}
@@ -68,7 +56,6 @@ void CViewCommander::Command_MENU_RBUTTON( void )
 
 	default:
 		/* コマンドコードによる処理振り分け */
-//		HandleCommand( nId, true, 0, 0, 0, 0 );
 		::PostMessageCmd( GetMainWindow(), WM_COMMAND, MAKELONG( nId, 0 ),  (LPARAM)NULL );
 		break;
 	}

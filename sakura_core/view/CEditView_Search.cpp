@@ -133,9 +133,8 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 				m_pTypeData->m_KeyHelpArr[i].m_szPath,
 				&nLine
 			);
-			if(nSearchResult){
-				/* 該当するキーがある */
-				LPWSTR pszWork = pcmemRefText->GetStringPtr();
+			/* 該当するキーがある */
+			if( nSearchResult ){
 				/* 有効になっている辞書を全部なめて、ヒットの都度説明の継ぎ増し */
 				if(m_pTypeData->m_bUseKeyHelpAllSearch){	/* ヒットした次の辞書も検索 */	// 2006.04.10 fon
 					/* バッファに前のデータが詰まっていたらseparator挿入 */
@@ -155,8 +154,11 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 					if(m_pTypeData->m_bUseKeyHelpPrefix){	/* 選択範囲で前方一致検索 */
 						m_cTipWnd.m_cInfo.AppendString( pcmemRefKey->GetStringPtr() );
 						m_cTipWnd.m_cInfo.AppendString( L" >>\n" );
-					}/* 調査した「意味」を挿入 */
-					m_cTipWnd.m_cInfo.AppendString( pszWork );
+					}
+
+					/* 調査した「意味」を挿入 */
+					m_cTipWnd.m_cInfo.AppendString( UnEscapeInfoText( *pcmemRefText ) );
+
 					delete pcmemRefText;
 					delete pcmemRefKey;	// 2006.07.02 genta
 					/* タグジャンプ用の情報を残す */
@@ -178,7 +180,8 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 					}
 					
 					/* 調査した「意味」を挿入 */
-					m_cTipWnd.m_cInfo.AppendString( pszWork );
+					m_cTipWnd.m_cInfo.AppendString( UnEscapeInfoText( *pcmemRefText ) );
+
 					delete pcmemRefText;
 					delete pcmemRefKey;	// 2006.07.02 genta
 					/* タグジャンプ用の情報を残す */
