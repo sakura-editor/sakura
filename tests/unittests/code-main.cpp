@@ -37,6 +37,34 @@
 #include <regex>
 #include <string>
 
+#include "debug/Debug2.h"
+#include "StartEditorProcessForTest.h"
+
+/*!
+ * テストコード専用wWinMain呼出のラッパー関数
+ *
+ * 単体テストから wWinMain を呼び出すためのラッパー関数です。
+ *
+ * コマンドラインでプロファイルが指定されていない場合、空指定を付加します。
+ */
+int StartEditorProcessForTest( const std::wstring_view& strCommandLine )
+{
+
+	// 実行中モジュールのインスタンスハンドルを取得する
+	HINSTANCE hInstance = ::GetModuleHandle( NULL );
+
+	// WinMainを起動するためのコマンドラインを組み立てる
+	std::wstring strCmdBuff( strCommandLine );
+
+	// コマンドラインに -PROF 指定がない場合は付加する
+	if( !std::regex_search( strCmdBuff, std::wregex( L"-PROF\\b", std::wregex::icase ) ) ){
+		strCmdBuff += L" -PROF=\"\"";
+	}
+
+	// wWinMainを起動する
+	return wWinMain( hInstance, NULL, &*strCmdBuff.begin(), SW_SHOWDEFAULT );
+}
+
 /*!
  * 必要な場合にwWinMainを起動して終了する。
  *

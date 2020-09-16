@@ -75,4 +75,9 @@
       <Filter>Test Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="StartEditorProcessForTest.h">
+      <Filter>Other Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
