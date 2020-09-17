@@ -114,6 +114,34 @@ const DWORD p_helpids[] = {	//12900
 #pragma message("CI_BUILD_NUMBER_LABEL: " CI_BUILD_NUMBER_LABEL)
 #endif
 
+/*!
+	@brief 指定したウィンドウハンドルが 指定したウィンドウクラス なのかチェックする
+	@param hWnd			チェックするウィンドウハンドル
+	@param pClassName	比較するウィンドウクラス名
+*/
+static bool CheckWindowClass(HWND hWnd, LPCTSTR pClassName)
+{
+	TCHAR szClassName[256];
+	int count = ::GetClassName(hWnd, szClassName, _countof(szClassName));
+	if (0 < count && count < _countof(szClassName))
+	{
+		if (wcscmp(szClassName, pClassName) == 0)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+/*!
+	@brief 指定したウィンドウハンドルが SysLink なのかチェックする
+	@param hWnd			チェックするウィンドウハンドル
+*/
+static bool IsSysLink(HWND hWnd)
+{
+	return CheckWindowClass(hWnd, _T("SysLink"));
+}
+
 //	From Here Nov. 7, 2000 genta
 /*!
 	標準以外のメッセージを捕捉する
@@ -132,6 +160,22 @@ INT_PTR CDlgAbout::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lP
 			::SetTextColor( (HDC)wParam, RGB( 0, 0, 0 ) );
         }
 		return (INT_PTR)GetStockObject( WHITE_BRUSH );
+	case WM_NOTIFY:
+		switch (((LPNMHDR)lParam)->code)
+		{
+		case NM_CLICK:	// Fall through to the next case.
+		case NM_RETURN:
+			{
+				PNMLINK pNMLink = (PNMLINK)lParam;
+				LITEM   item    = pNMLink->item;
+				if (IsSysLink(pNMLink->hdr.hwndFrom))
+				{
+					ShellExecute(NULL, L"open", item.szUrl, NULL, NULL, SW_SHOW);
+				}
+			}
+			break;
+		}
+		break;
 	}
 	return result;
 }
@@ -141,6 +185,20 @@ INT_PTR CDlgAbout::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lP
 int CDlgAbout::DoModal( HINSTANCE hInstance, HWND hwndParent )
 {
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_ABOUT, (LPARAM)NULL );
+}
+
+/*  SysLink のタイトルを設定する (URL とタイトルが異なるバージョン) */
+void CDlgAbout::SetSysLinkText(int nID, LPCWSTR pTitle, LPCWSTR pLink)
+{
+	CNativeW title;
+	title.AppendStringF(L"<a href=\"%s\">%s</a>", pLink, pTitle);
+	::SetWindowTextW(GetItemHwnd(nID), title.GetStringPtr());
+}
+
+/*  SysLink のタイトルを設定する (URL とタイトルが同じバージョン) */
+void CDlgAbout::SetSysLinkText(int nID, LPCWSTR pLink)
+{
+	SetSysLinkText(nID, pLink, pLink);
 }
 
 /*! 初期化処理
@@ -269,19 +327,25 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	}
 	//	To Here Dec. 2, 2002 genta
 
-	// URLウィンドウをサブクラス化する
-	m_UrlUrWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_UR ) );
-#ifdef GIT_REMOTE_ORIGIN_URL
-	m_UrlGitWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GIT ) );
+	SetSysLinkText(IDC_STATIC_URL_UR, _T("https://sakura-editor.github.io/"));
+
+	// Git remote のリンク
+#if defined(GIT_REMOTE_ORIGIN_URL)
+	SetSysLinkText(IDC_STATIC_URL_GIT, _T(GIT_REMOTE_ORIGIN_URL), _T(GIT_REMOTE_ORIGIN_URL));
 #endif
-#ifdef CI_BUILD_NUMBER_LABEL
-	m_UrlBuildLinkWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_CI_BUILD ) );
+
+#if defined(CI_BUILD_NUMBER_LABEL)
+	SetSysLinkText(IDC_STATIC_URL_CI_BUILD, _T(CI_BUILD_NUMBER_LABEL), _T(CI_BUILD_URL));
 #endif
-#if defined( GITHUB_COMMIT_URL )
-	m_UrlGitHubCommitWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GITHUB_COMMIT ) );
+
+	// GitHub の Commit のリンク
+#if defined(GITHUB_COMMIT_URL)
+	SetSysLinkText(IDC_STATIC_URL_GITHUB_COMMIT, _T(GIT_SHORT_COMMIT_HASH), _T(GITHUB_COMMIT_URL));
 #endif
-#if defined( GITHUB_PR_HEAD_URL )
-	m_UrlGitHubPRWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GITHUB_PR ) );
+
+	// GitHub の PR のリンク
+#if defined(GITHUB_PR_HEAD_URL)
+	SetSysLinkText(IDC_STATIC_URL_GITHUB_PR, _T(GITHUB_PR_NUMBER_LABEL), _T(GITHUB_PR_HEAD_URL));
 #endif
 
 	//	Oct. 22, 2005 genta 原作者ホームページが無くなったので削除

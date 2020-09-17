@@ -55,10 +55,12 @@ void PreventVisualStyle( HWND hWnd )
 void MyInitCommonControls()
 {
 	// 利用するコモンコントロールの種類をビットフラグで指定する
+	// 参考: https://docs.microsoft.com/ja-jp/windows/desktop/api/commctrl/ns-commctrl-taginitcommoncontrolsex
 	INITCOMMONCONTROLSEX icex;
 	icex.dwSize = sizeof(icex);
 	icex.dwICC = ICC_WIN95_CLASSES
 		| ICC_COOL_CLASSES
+		| ICC_LINK_CLASS /* for "Load a hyperlink control class" */
 		;
 
 	// コモンコントロールライブラリを初期化する
