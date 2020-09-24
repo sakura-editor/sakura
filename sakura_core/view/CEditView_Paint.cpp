@@ -1086,7 +1086,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 			if (cFigure.IsFigureText()) {
 				nextRenderType = cFigureText.GetRenderType(pInfo);
 			}
-			if (CFigure_Text::IsRenderType_Block(prevRenderType) && 
+			if (CFigure_Text::IsRenderType_Block(prevRenderType) &&
 				(prevRenderType != nextRenderType || (nDrawBlockLen < pInfo->GetPosInLogic() - nPosBgn))) {
 				if (0 < pInfo->GetPosInLogic() - nPosBgn) {
 					cFigureText.DrawImpBlock(pInfo, nPosBgn, pInfo->GetPosInLogic() - nPosBgn);

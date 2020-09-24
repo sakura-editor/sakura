@@ -56,7 +56,7 @@ int CFigure_Text::GetRenderType(SColorStrategyInfo* pInfo)
 			|| 0xFF01 <= code && code <= 0xFF5E // 全角ASCII
 			|| 0xFF61 <= code && code <= 0xFF9F // 半角カナ
 		){
-			nType = 1; 
+			nType = 1;
 		}
 	}
 	return (fontNo << 1) | nType;
