@@ -31,7 +31,7 @@
 #include "charset/charcode.h"
 #include "types/CTypeSupport.h"
 
-int CFigure_Text::GetRenderType(SColorStrategyInfo* pInfo)
+FigureRenderType CFigure_Text::GetRenderType(SColorStrategyInfo* pInfo)
 {
 	const int nIdx = pInfo->GetPosInLogic();
 	const int nLength =	CNativeW::GetSizeOfChar(
@@ -41,7 +41,7 @@ int CFigure_Text::GetRenderType(SColorStrategyInfo* pInfo)
 					);
 	const int fontNo = (nLength == 2 ? WCODE::GetFontNo2(pInfo->m_pLineOfLogic[nIdx], pInfo->m_pLineOfLogic[nIdx+1]):
 			WCODE::GetFontNo(pInfo->m_pLineOfLogic[nIdx]));
-	int nType = 0;
+	FigureRenderType nType = 0;
 	if(nLength == 1){
 		const wchar_t code = pInfo->m_pLineOfLogic[nIdx];
 		// 未合成で一度に描画しても安全そうな文字一覧(その範囲の文字が合成用文字ではないもの)

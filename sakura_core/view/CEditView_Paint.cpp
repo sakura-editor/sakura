@@ -1077,12 +1077,12 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 		int nPosTo = pcLayout->GetLogicOffset() + pcLayout->GetLengthWithEOL();
 		CFigureManager* pcFigureManager = CFigureManager::getInstance();
 		CFigure_Text& cFigureText = pcFigureManager->GetFigureText();
-		int prevRenderType = CFigure_Text::RenderType_None;
+		FigureRenderType prevRenderType = CFigure_Text::RenderType_None;
 		while(pInfo->m_nPosInLogic < nPosTo){
 			//1文字情報取得
 			CFigure& cFigure = pcFigureManager->GetFigure(&cLineStr.GetPtr()[pInfo->GetPosInLogic()],
 				cLineStr.GetLength() - pInfo->GetPosInLogic());
-			int nextRenderType = CFigure_Text::RenderType_None;
+			FigureRenderType nextRenderType = CFigure_Text::RenderType_None;
 			if (cFigure.IsFigureText()) {
 				nextRenderType = cFigureText.GetRenderType(pInfo);
 			}

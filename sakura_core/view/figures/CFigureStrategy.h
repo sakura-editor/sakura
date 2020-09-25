@@ -53,13 +53,16 @@ protected:
 	const STypeConfig* m_pTypeData;
 };
 
+typedef int FigureRenderType;
+
 //! 通常テキスト描画
 class CFigure_Text : public CFigure{
 public:
 	// 文字列を進める
-	int GetRenderType(SColorStrategyInfo* pInfo);
-	static const int RenderType_None = -1;
-	static bool IsRenderType_Block(int nRenderType){
+	FigureRenderType GetRenderType(SColorStrategyInfo* pInfo);
+
+	static const FigureRenderType RenderType_None = -1;
+	static bool IsRenderType_Block(FigureRenderType nRenderType){
 		return (nRenderType != RenderType_None) && (nRenderType & 0x1);
 	}
 
