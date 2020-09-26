@@ -269,12 +269,13 @@ void CTextDrawer::DispVerticalLinesImpl(HDC hdc, const int *nArrVertLineIdx, int
 			if( nPosXLeft <= nPosX ){
 				if( bDot ){
 					// 点線で作画。1ドットの線を作成
-					int y = nTop;
+					int y_org = nDirectY * nTop;
 					// スクロールしても線が切れないように座標を調整
 					if( bOddLine ){
-						y++;
+						y_org += nDirectY;
 					}
-					for( ; y < nBottom; y += nDirectY * 2 ){
+					for( ; y_org < nDirectY * nBottom; y_org += 2 ){
+						int y = nDirectY * y_org;
 						if( nPosX < nPosXRight ){
 							::MoveToEx( hdc, nPosX, y, NULL );
 							::LineTo( hdc, nPosX, y + nDirectY );
