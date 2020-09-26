@@ -187,7 +187,6 @@ BOOL CDlgPrintSetting::OnDestroy( void )
 
 BOOL CDlgPrintSetting::OnNotify(NMHDR* pNMHDR)
 {
-	CDlgInput1		cDlgInput1;
 	NM_UPDOWN*		pMNUD;
 	int				idCtrl;
 	BOOL			bSpinDown;

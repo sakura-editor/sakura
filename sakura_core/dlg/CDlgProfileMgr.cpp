@@ -343,7 +343,7 @@ void CDlgProfileMgr::CreateProf()
 	std::wstring strTitle = LS(STR_DLGPROFILE_NEW_PROF_TITLE);
 	std::wstring strMessage = LS(STR_DLGPROFILE_NEW_PROF_MSG);
 	szText[0] = L'\0';
-	if( !cDlgInput1.DoModal(::GetModuleHandle(NULL), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size, szText) ){
+	if( !cDlgInput1.DoModal(::GetModuleHandle(NULL), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size - 1, szText) ){
 		return;
 	}
 	if( szText[0] == L'\0' ){
@@ -402,7 +402,7 @@ void CDlgProfileMgr::RenameProf()
 	std::wstring strTitle = LS(STR_DLGPROFILE_RENAME_TITLE);
 	std::wstring strMessage = LS(STR_DLGPROFILE_RENAME_MSG);
 	int max_size = _MAX_PATH;
-	if( !cDlgInput1.DoModal(::GetModuleHandle(NULL), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size, szText) ){
+	if( !cDlgInput1.DoModal(::GetModuleHandle(NULL), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size - 1, szText) ){
 		return;
 	}
 	if( szText[0] == L'\0' ){
