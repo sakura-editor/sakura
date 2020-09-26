@@ -1077,7 +1077,6 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 		const int nDrawBlockLen = 1000; // ExtTextOutの長さ制限にかからない適当な値
 		int nPosTo = pcLayout->GetLogicOffset() + pcLayout->GetLengthWithEOL();
 		CFigureManager* pcFigureManager = CFigureManager::getInstance();
-		CFigure_Text& cFigureText = pcFigureManager->GetFigureText();
 		FigureRenderType prevRenderType = CFigure_Text::RenderType_None;
 		while(pInfo->m_nPosInLogic < nPosTo){
 			int nPosInLogic = pInfo->GetPosInLogic(); // FowardChars/DrawImpで更新される
@@ -1088,12 +1087,12 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 			FigureRenderType nextRenderType = CFigure_Text::RenderType_None;
 			bool is_text = (typeid(cFigure) == typeid(CFigure_Text));
 			if (is_text) {
-				nextRenderType = cFigureText.GetRenderType(pInfo);
+				nextRenderType = CFigure_Text::GetRenderType(pInfo);
 			}
 			if (CFigure_Text::IsRenderType_Block(prevRenderType) &&
 				(prevRenderType != nextRenderType || (nDrawBlockLen < nPosLength))) {
 				if (0 < nPosLength) {
-					cFigureText.DrawImpBlock(pInfo, nPosBgn, nPosLength);
+					CFigure_Text::DrawImpBlock(pInfo, nPosBgn, nPosLength);
 					nPosBgn = nPosInLogic;
 					nPosLength = 0;
 				}
@@ -1103,7 +1102,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 			//色切替
 			if( pInfo->CheckChangeColor(cLineStr) ){
 				if (0 < nPosLength) {
-					cFigureText.DrawImpBlock(pInfo, nPosBgn, nPosLength);
+					CFigure_Text::DrawImpBlock(pInfo, nPosBgn, nPosLength);
 					nPosBgn = nPosInLogic;
 					nPosLength = 0;
 				}
@@ -1114,7 +1113,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 
 			//1文字描画
 			if (is_text && CFigure_Text::IsRenderType_Block(nextRenderType)){
-				nDrawX += cFigureText.FowardChars(pInfo);
+				nDrawX += CFigure_Text::FowardChars(pInfo);
 				nPosInLogic = pInfo->GetPosInLogic();
 				nPosLength = nPosInLogic - nPosBgn;
 			}else{
@@ -1125,7 +1124,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 			}
 			if( bSkipRight && GetTextArea().GetAreaRight() < nDrawX ){
 				if (0 < nPosLength) {
-					cFigureText.DrawImpBlock(pInfo, nPosBgn, nPosLength);
+					CFigure_Text::DrawImpBlock(pInfo, nPosBgn, nPosLength);
 					nPosBgn = nPosInLogic;
 				}
 				pInfo->m_nPosInLogic = nPosTo;
@@ -1134,7 +1133,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 			}
 		}
 		if (0 < nPosLength) {
-			cFigureText.DrawImpBlock(pInfo, nPosBgn, nPosLength);
+			CFigure_Text::DrawImpBlock(pInfo, nPosBgn, nPosLength);
 		}
 	}
 

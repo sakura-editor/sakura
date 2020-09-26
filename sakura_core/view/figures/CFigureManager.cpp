@@ -42,8 +42,7 @@ CFigureManager::CFigureManager()
 	m_vFigures.push_back(new CFigure_CtrlCode());
 	m_vFigures.push_back(new CFigure_HanBinary());
 	m_vFigures.push_back(new CFigure_ZenBinary());
-	m_pcFigureText = new CFigure_Text();
-	m_vFigures.push_back(m_pcFigureText);
+	m_vFigures.push_back(new CFigure_Text());
 
 	OnChangeSetting();
 }
@@ -57,7 +56,6 @@ CFigureManager::~CFigureManager()
 		SAFE_DELETE(m_vFigures[i]);
 	}
 	m_vFigures.clear();
-	m_pcFigureText = nullptr;
 }
 
 //$$ 高速化可能

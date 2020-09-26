@@ -45,10 +45,6 @@ public:
 		CEditDoc* pCEditDoc = CEditDoc::GetInstance(0);
 		m_pTypeData = &pCEditDoc->m_cDocType.GetDocumentAttribute();
 	}
-	virtual bool IsFigureText() const
-	{
-		return false;
-	}
 protected:
 	const STypeConfig* m_pTypeData;
 };
@@ -59,15 +55,15 @@ typedef int FigureRenderType;
 class CFigure_Text : public CFigure{
 public:
 	// 文字列を進める
-	FigureRenderType GetRenderType(SColorStrategyInfo* pInfo);
+	static FigureRenderType GetRenderType(SColorStrategyInfo* pInfo);
 
 	static const FigureRenderType RenderType_None = -1;
 	static bool IsRenderType_Block(FigureRenderType nRenderType){
 		return (nRenderType != RenderType_None) && (nRenderType & 0x1);
 	}
+	static bool DrawImpBlock(SColorStrategyInfo* pInfo, int nPos, int nLength);
+	static int FowardChars(SColorStrategyInfo* pInfo);
 
-	int FowardChars(SColorStrategyInfo* pInfo);
-	bool DrawImpBlock(SColorStrategyInfo* pInfo, int nPos, int nLength);
 	bool DrawImp(SColorStrategyInfo* pInfo);
 	bool Match(const wchar_t* pText, int nTextLen) const
 	{
@@ -76,11 +72,6 @@ public:
 
 	//! 色分け表示対象判定
 	virtual bool Disp(void) const
-	{
-		return true;
-	}
-
-	virtual bool IsFigureText() const
 	{
 		return true;
 	}
