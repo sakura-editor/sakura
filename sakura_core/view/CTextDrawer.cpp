@@ -209,18 +209,37 @@ void CTextDrawer::DispVerticalLines(
 		gr.SetPen( cVertType.GetTextColor() );
 	}
 
+	// 1半角文字に対応するレイアウト座標数(プロポーショナル版ではルーラー文字幅px)
+	int nXDefault = (Int)pView->GetTextMetrics().GetLayoutXDefault();
+	// レイアウト座標数に対応するpx数(プロポーショナル版では絶えず1)
+	int px = pView->GetTextMetrics().GetCharPxWidth();
+
+	DispVerticalLinesImpl(gr, typeData.m_nVertLineIdx, MAX_VERTLINES, bBold, bDot,
+		(Int)nViewLeftCol, (Int)nWrapLayout, (Int)nRightCol, nPosXOffset, nPosXLeft, nPosXRight, nTop, nBottom, 1, bOddLine,
+		nXDefault, px);
+
+	if( bExorPen ){
+		::SetROP2( gr, nROP_Old );
+	}
+}
+
+void CTextDrawer::DispVerticalLinesImpl(HDC hdc, const int *nArrVertLineIdx, int nArrVertLineSize,
+	bool bBold,bool bDot, int nViewLeftCol, int nWrapLayout, int nRightCol,
+	int nPosXOffset, int nPosXLeft, int nPosXRight, int nTop, int nBottom, int nDirectY, bool bOddLine,
+	int nLayoutXDefault, int nCharPx)
+{
 	int k;
-	for( k = 0; k < MAX_VERTLINES && typeData.m_nVertLineIdx[k] != 0; k++ ){
+	for( k = 0; k < nArrVertLineSize && nArrVertLineIdx[k] != 0; k++ ){
 		// nXColは1開始。GetTextArea().GetViewLeftCol()は0開始なので注意。
-		CLayoutXInt nXCol = pView->GetTextMetrics().GetLayoutXDefault(typeData.m_nVertLineIdx[k]);
-		CLayoutXInt nXColEnd = nXCol;
-		CLayoutXInt nXColAdd = pView->GetTextMetrics().GetLayoutXDefault();
+		int nXCol = nLayoutXDefault * nArrVertLineIdx[k];
+		int nXColEnd = nXCol;
+		int nXColAdd = nLayoutXDefault;
 		// nXColがマイナスだと繰り返し。k+1を終了値、k+2をステップ幅として利用する
 		if( nXCol < 0 ){
-			if( k < MAX_VERTLINES - 2 ){
+			if( k < nArrVertLineSize - 2 ){
 				nXCol = -nXCol;
-				nXColEnd = pView->GetTextMetrics().GetLayoutXDefault(typeData.m_nVertLineIdx[++k]);
-				nXColAdd = pView->GetTextMetrics().GetLayoutXDefault(typeData.m_nVertLineIdx[++k]);
+				nXColEnd = nLayoutXDefault * nArrVertLineIdx[++k];
+				nXColAdd = nLayoutXDefault * nArrVertLineIdx[++k];
 				if( nXColEnd < nXCol || nXColAdd <= 0 ){
 					continue;
 				}
@@ -237,7 +256,7 @@ void CTextDrawer::DispVerticalLines(
 			if( nWrapLayout < nXCol ){
 				break;
 			}
-			int nPosX = nPosXOffset + pView->GetTextMetrics().GetCharPxWidth(nXCol - pView->GetTextMetrics().GetLayoutXDefault() - nViewLeftCol);
+			int nPosX = nPosXOffset + nCharPx * (nXCol - nLayoutXDefault - nViewLeftCol);
 			// 2006.04.30 Moca 線の引く範囲・方法を変更
 			// 太線の場合、半分だけ作画する可能性がある。
 			int nPosXBold = nPosX;
@@ -255,31 +274,28 @@ void CTextDrawer::DispVerticalLines(
 					if( bOddLine ){
 						y++;
 					}
-					for( ; y < nBottom; y += 2 ){
+					for( ; y < nBottom; y += nDirectY * 2 ){
 						if( nPosX < nPosXRight ){
-							::MoveToEx( gr, nPosX, y, NULL );
-							::LineTo( gr, nPosX, y + 1 );
+							::MoveToEx( hdc, nPosX, y, NULL );
+							::LineTo( hdc, nPosX, y + nDirectY );
 						}
 						if( bBold && nPosXLeft <= nPosXBold ){
-							::MoveToEx( gr, nPosXBold, y, NULL );
-							::LineTo( gr, nPosXBold, y + 1 );
+							::MoveToEx( hdc, nPosXBold, y, NULL );
+							::LineTo( hdc, nPosXBold, y + nDirectY );
 						}
 					}
 				}else{
 					if( nPosX < nPosXRight ){
-						::MoveToEx( gr, nPosX, nTop, NULL );
-						::LineTo( gr, nPosX, nBottom );
+						::MoveToEx( hdc, nPosX, nTop, NULL );
+						::LineTo( hdc, nPosX, nBottom );
 					}
 					if( bBold && nPosXLeft <= nPosXBold ){
-						::MoveToEx( gr, nPosXBold, nTop, NULL );
-						::LineTo( gr, nPosXBold, nBottom );
+						::MoveToEx( hdc, nPosXBold, nTop, NULL );
+						::LineTo( hdc, nPosXBold, nBottom );
 					}
 				}
 			}
 		}
-	}
-	if( bExorPen ){
-		::SetROP2( gr, nROP_Old );
 	}
 }
 

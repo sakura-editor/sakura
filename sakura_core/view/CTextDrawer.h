@@ -63,6 +63,12 @@ public:
 	//!	指定桁縦線描画関数	// 2005.11.08 Moca
 	void DispVerticalLines( CGraphics& gr, int nTop, int nBottom, CLayoutInt nLeftCol, CLayoutInt nRightCol ) const;
 
+	static void DispVerticalLinesImpl(HDC hdc, const int *nArrVertLineIdx, int nArrVertLineSize,
+		bool bBold, bool bDot, int nViewLeftCol, int nWrapLayout, int nRightCol,
+		int nPosXOffset, int nPosXLeft, int nPosXRight, int nTop, int nBottom, int nDirectY, bool bOddLine,
+		int nLayoutXDefault, int nCharPx);
+
+
 	// -- -- 折り返し桁縦線描画 -- -- //
 	void DispWrapLine( CGraphics& gr, int nTop, int nBottom ) const;
 

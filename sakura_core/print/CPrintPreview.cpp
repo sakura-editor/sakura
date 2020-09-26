@@ -49,6 +49,7 @@
 #include "util/shell.h"
 #include "env/CSakuraEnvironment.h"
 // CColorStrategyは本来はCEditViewが必要だが、CEditWnd.hあたりでinclude済み
+#include "view/CTextDrawer.h"
 #include "view/colors/CColorStrategy.h"
 #include "apiwrap/StdApi.h"
 #include "apiwrap/StdControl.h"
@@ -1579,6 +1580,39 @@ CColorStrategy* CPrintPreview::DrawPageText(
 				nBasePosX - (m_pPrintSetting->m_nPrintFontWidth / 2 ),
 				nDirectY * ( nOffY + nLineHeight * i )
 			);
+		}
+
+		// 指定桁縦線。段ごとに一度に引く
+		const STypeConfig& type = m_typePrint;
+		const ColorInfo& vline_cinfo = type.m_ColorInfoArr[COLORIDX_VERTLINE];
+		const SColorAttr& vline_color = vline_cinfo.m_sColorAttr;
+		const SFontAttr& vline_attr = vline_cinfo.m_sFontAttr;
+		if(vline_cinfo.m_bDisp){
+			COLORREF pen_color = RGB(0,0,0);
+			if(m_pPrintSetting->m_bColorPrint){
+				pen_color = vline_color.m_cTEXT;
+			}
+			HPEN hpNew = ::CreatePen(PS_SOLID, vline_attr.m_bBoldFont ? 2 : 1, pen_color);
+			HPEN hpOld = (HPEN)::SelectObject(hdc, hpNew);
+			CTextDrawer::DispVerticalLinesImpl(
+				hdc, type.m_nVertLineIdx, MAX_VERTLINES,
+				false, // BoldはPen幅で対応
+				vline_attr.m_bUnderLine,
+				0, // nViewLeftCol 横スクロースしないので0固定
+				m_pPrintSetting->m_nPrintFontWidth * type.m_nMaxLineKetas, // nWrapLayout
+				nBasePosX + m_pPrintSetting->m_nPrintFontWidth * type.m_nMaxLineKetas, // nRightCol
+				nBasePosX, // nPosXOffset
+				nBasePosX, // nPosXLeft
+				nBasePosX + m_pPrintSetting->m_nPrintFontWidth * type.m_nMaxLineKetas, // nPosXRight
+				nDirectY * nOffY, // nTop,
+				nDirectY * ( nOffY + nLineHeight * i ), // nBottom
+				nDirectY,
+				false, // bOddLine
+				m_pPrintSetting->m_nPrintFontWidth, // nLayoutXDefault
+				1 // nCharPx(プロポーショナル版では1固定)
+			);
+			::SelectObject(hdc, hpOld);
+			::DeleteObject(hpNew);
 		}
 	}
 	return pStrategy;
