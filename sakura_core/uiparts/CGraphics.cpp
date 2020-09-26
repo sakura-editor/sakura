@@ -249,7 +249,7 @@ void CGraphics::PopBrushColor()
 void CGraphics::ClearBrush()
 {
 	//ブラシをすべて削除
-	size_t nSize = (int)m_vBrushes.size();
+	size_t nSize = m_vBrushes.size();
 	for(size_t i=0;i<nSize;i++){
 		::DeleteObject(m_vBrushes[i]);
 	}
