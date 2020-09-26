@@ -108,7 +108,6 @@ static bool Commander_COMPARE_core(CViewCommander& commander, bool& bDifferent, 
 void CViewCommander::Command_COMPARE( void )
 {
 	HWND		hwndCompareWnd = NULL;
-	WCHAR		szPath[_MAX_PATH + 1];
 	CDlgCompare	cDlgCompare;
 	HWND		hwndMsgBox;	//@@@ 2003.06.12 MIK
 
@@ -119,7 +118,6 @@ void CViewCommander::Command_COMPARE( void )
 		m_pCommanderView->GetHwnd(),
 		(LPARAM)GetDocument(),
 		GetDocument()->m_cDocFile.GetFilePath(),
-		szPath,
 		&hwndCompareWnd
 	);
 	if( !bDlgCompareResult ){
