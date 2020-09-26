@@ -1111,12 +1111,12 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 				SetCurrentColor(pInfo->m_gr, cColor.eColorIndex, cColor.eColorIndex2, cColor.eColorIndexBg);
 			}
 
-			//1文字描画
 			if (is_text && CFigure_Text::IsRenderType_Block(nextRenderType)){
 				nDrawX += CFigure_Text::FowardChars(pInfo);
 				nPosInLogic = pInfo->GetPosInLogic();
 				nPosLength = nPosInLogic - nPosBgn;
 			}else{
+				//1文字描画
 				cFigure.DrawImp(pInfo);
 				nPosBgn = nPosInLogic = pInfo->GetPosInLogic();
 				nPosLength = 0;
