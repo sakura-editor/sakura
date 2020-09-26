@@ -1122,7 +1122,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 				nPosLength = 0;
 				nDrawX = pInfo->m_pDispPos->GetDrawCol();
 			}
-			if( bSkipRight && GetTextArea().GetAreaRight() < nDrawX ){
+			if( bSkipRight && GetTextArea().GetRightCol() < nDrawX ){
 				if (0 < nPosLength) {
 					CFigure_Text::DrawImpBlock(pInfo, nPosBgn, nPosLength);
 					nPosBgn = nPosInLogic;
