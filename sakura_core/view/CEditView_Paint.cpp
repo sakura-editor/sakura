@@ -1086,7 +1086,8 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 			CFigure& cFigure = pcFigureManager->GetFigure(&cLineStr.GetPtr()[nPosInLogic],
 				cLineStr.GetLength() - nPosInLogic);
 			FigureRenderType nextRenderType = CFigure_Text::RenderType_None;
-			if (cFigure.IsFigureText()) {
+			bool is_text = (typeid(cFigure) == typeid(CFigure_Text));
+			if (is_text) {
 				nextRenderType = cFigureText.GetRenderType(pInfo);
 			}
 			if (CFigure_Text::IsRenderType_Block(prevRenderType) &&
@@ -1112,7 +1113,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 			}
 
 			//1文字描画
-			if (cFigure.IsFigureText() && CFigure_Text::IsRenderType_Block(nextRenderType)){
+			if (is_text && CFigure_Text::IsRenderType_Block(nextRenderType)){
 				nDrawX += cFigureText.FowardChars(pInfo);
 				nPosInLogic = pInfo->GetPosInLogic();
 				nPosLength = nPosInLogic - nPosBgn;
