@@ -326,7 +326,7 @@ void _DrawEOL(
 )
 {
 	int sx, sy;	//	矢印の先頭
-	gr.SetPen( pColor );
+	gr.PushPen( pColor, 1 );
 
 	switch( cEol.GetType() ){
 	case EOL_CRLF:	//	下左矢印
@@ -471,4 +471,6 @@ void _DrawEOL(
 		}
 		break;
 	}
+
+	gr.PopPen();
 }
