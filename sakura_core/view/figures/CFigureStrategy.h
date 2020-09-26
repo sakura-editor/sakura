@@ -49,9 +49,21 @@ protected:
 	const STypeConfig* m_pTypeData;
 };
 
+typedef int FigureRenderType;
+
 //! 通常テキスト描画
 class CFigure_Text : public CFigure{
 public:
+	// 文字列を進める
+	static FigureRenderType GetRenderType(SColorStrategyInfo* pInfo);
+
+	static const FigureRenderType RenderType_None = -1;
+	static bool IsRenderType_Block(FigureRenderType nRenderType){
+		return (nRenderType != RenderType_None) && (nRenderType & 0x1);
+	}
+	static bool DrawImpBlock(SColorStrategyInfo* pInfo, int nPos, int nLength);
+	static int FowardChars(SColorStrategyInfo* pInfo);
+
 	bool DrawImp(SColorStrategyInfo* pInfo);
 	bool Match(const wchar_t* pText, int nTextLen) const
 	{

@@ -158,7 +158,9 @@ const int* CTextMetrics::GenerateDxArray(
 	int nCharSpacing				//!< [in]  文字隙間
 )
 {
-	vResultArray->resize(nLength);
+	if( (int)vResultArray->size() < nLength ){
+		vResultArray->resize(nLength);
+	}
 	if(!pText || nLength<=0)return NULL;
 
 	int* p=&(*vResultArray)[0];
