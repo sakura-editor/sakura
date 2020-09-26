@@ -144,31 +144,16 @@ struct SFONT {
 //最新実装：ブラシ
 class CGraphics{
 public:
-	CGraphics(const CGraphics& rhs){
-		if (rhs.m_hdc) {
-			m_hdcOrg = rhs.m_hdc;
-			m_dcState = SaveDC(m_hdcOrg);
-		}else {
-			m_hdcOrg = NULL;
-			m_dcState = 0;
-		}
-		Init(rhs.m_hdc);
-	}
-	CGraphics(HDC hdc = NULL){
-		if (hdc) {
-			m_hdcOrg = hdc;
-			m_dcState = SaveDC(hdc);
-		}else {
-			m_hdcOrg = NULL;
-			m_dcState = 0;
-		}
-		Init(hdc);
-	}
+	CGraphics(const CGraphics& rhs){ Init(rhs.m_hdc); }
+	CGraphics(HDC hdc = NULL){ Init(hdc); }
 	~CGraphics();
+	void Init(HDC hdc);
 
 	operator HDC() const{ return m_hdc; }
 
 	//クリッピング
+private:
+	void _InitClipping();
 public:
 	void PushClipping(const RECT& rc);
 	void PopClipping();
@@ -218,6 +203,10 @@ public:
 		m_nTextModeOrg.AssignOnce( ::SetBkMode(m_hdc,b?TRANSPARENT:OPAQUE) );
 	}
 
+	//テキスト
+public:
+	void RestoreTextColors();
+
 	//フォント
 public:
 	void PushMyFont(HFONT hFont)
@@ -264,6 +253,7 @@ public:
 
 	//ブラシ
 public:
+	void _InitBrushColor();
 	void PushBrushColor(
 		COLORREF color	//!< ブラシの色。(COLORREF)-1 にすると、透明ブラシとなる。
 	);
@@ -316,10 +306,7 @@ private:
 	typedef TOriginalHolder<COLORREF>	COrgColor;
 	typedef TOriginalHolder<int>		COrgInt;
 private:
-	void Init(HDC hdc);
 	HDC					m_hdc;
-	HDC					m_hdcOrg;
-	int					m_dcState;
 
 	//クリッピング
 	std::vector<HRGN>		m_vClippingRgns;
@@ -333,10 +320,12 @@ private:
 	COrgInt				m_nTextModeOrg;
 
 	//ペン
+	HPEN				m_hpnOrg;
 	std::vector<HPEN>	m_vPens;
 
 	//ブラシ
 	std::vector<HBRUSH>	m_vBrushes;
+	HBRUSH				m_hbrOrg;
 	HBRUSH				m_hbrCurrent;
 	bool				m_bDynamicBrush;	//m_hbrCurrentを動的に作成した場合はtrue
 };
