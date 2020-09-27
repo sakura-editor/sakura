@@ -60,13 +60,13 @@ protected:
 
 private:
 
-	typedef struct {
-		WCHAR	m_szName[64];		//名前(64文字以下のはず→m_szTypeName)
-		WCHAR	m_szExt[MAX_TYPES_EXTS*3+1];	//拡張子(64文字以下のはず→m_szTypeExts) なお "*." を追加するのでそれなりに必要
-	} FileExtInfoTag;
+	struct SFileExtInfo {
+		std::wstring	m_sTypeName;	//名前
+		std::wstring	m_sExt;			//拡張子
+	};
 
 	int				m_nCount;
-	FileExtInfoTag	*m_puFileExtInfo;
+	std::vector<SFileExtInfo>	m_vFileExtInfo;
 	std::vector<WCHAR>	m_vstrFilter;
 
 	DISALLOW_COPY_AND_ASSIGN(CFileExt);
