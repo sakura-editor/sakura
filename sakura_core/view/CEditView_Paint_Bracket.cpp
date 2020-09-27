@@ -125,8 +125,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 		return;
 	}
 
-	CGraphics gr;
-	gr.Init(::GetDC(GetHwnd()));
+	CGraphics gr(::GetDC(GetHwnd()));
 	bool bCaretChange = false;
 	gr.SetTextBackTransparent(true);
 

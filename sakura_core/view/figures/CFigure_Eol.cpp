@@ -44,7 +44,7 @@ void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView);
 
 //改行記号描画
 //2007.08.30 kobake 追加
-void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcView, bool bTrans);
+void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcView, bool bTrans, HPEN hPen);
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        CFigure_Eol                            //
@@ -113,7 +113,16 @@ bool CFigure_Eol::DrawImp(SColorStrategyInfo* pInfo)
 		pInfo->m_gr.PushMyFont(sFont);
 
 		DispPos sPos(*pInfo->m_pDispPos);	// 現在位置を覚えておく
-		_DispEOL(pInfo->m_gr, pInfo->m_pDispPos, cEol, pcView, bTrans);
+
+		if (crText != m_clrPen || m_hPen == NULL) {
+			if (m_hPen != NULL) {
+				::DeleteObject(m_hPen);
+			}
+			m_hPen = CreatePen(PS_SOLID, 1, crText);
+			m_clrPen = crText;
+		}
+
+		_DispEOL(pInfo->m_gr, pInfo->m_pDispPos, cEol, pcView, bTrans, m_hPen);
 		DrawImp_StylePop(pInfo);
 		DrawImp_DrawUnderline(pInfo, sPos);
 
@@ -252,11 +261,11 @@ void _DrawEOL(
 	const CMyRect&	rcEol,
 	CEol			cEol,
 	bool			bBold,
-	COLORREF		pColor
+	HPEN			hPen
 );
 
 //2007.08.30 kobake 追加
-void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcView, bool bTrans)
+void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcView, bool bTrans, HPEN hPen)
 {
 	const CLayoutXInt nCol = CTypeSupport(pcView,COLORIDX_EOL).IsDisp()
 		? pcView->GetTextMetrics().GetLayoutXDefault(CKetaXInt(1)) + CLayoutXInt(4) // ONのときは1幅+4px
@@ -293,7 +302,7 @@ void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcVi
 			// 文字色や太字かどうかを現在の DC から調べる	// 2009.05.29 ryoji 
 			// （検索マッチ等の状況に柔軟に対応するため、ここは記号の色指定には決め打ちしない）
 			// 2013.06.21 novice 文字色、太字をCGraphicsから取得
-			_DrawEOL(gr, rcEol, cEol, gr.GetCurrentMyFontBold(), gr.GetCurrentTextForeColor());
+			_DrawEOL(gr, rcEol, cEol, gr.GetCurrentMyFontBold(), hPen);
 
 			// リージョン破棄
 			gr.PopClipping();
@@ -322,11 +331,11 @@ void _DrawEOL(
 	const CMyRect&	rcEol,		//!< 描画領域
 	CEol			cEol,		//!< 行末コード種別
 	bool			bBold,		//!< TRUE: 太字
-	COLORREF		pColor		//!< 色
+	HPEN			hPen		//!< ペン
 )
 {
 	int sx, sy;	//	矢印の先頭
-	gr.SetPen( pColor );
+	HPEN hPenOld = (HPEN)SelectObject(gr, hPen);
 
 	switch( cEol.GetType() ){
 	case EOL_CRLF:	//	下左矢印
@@ -471,4 +480,6 @@ void _DrawEOL(
 		}
 		break;
 	}
+
+	SelectObject(gr, hPenOld);
 }

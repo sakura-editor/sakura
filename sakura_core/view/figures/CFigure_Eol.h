@@ -31,6 +31,12 @@
 //! 改行描画
 class CFigure_Eol : public CFigureSpace{
 public:
+	~CFigure_Eol()
+	{
+		if (m_hPen) {
+			::DeleteObject(m_hPen);
+		}
+	}
 	//traits
 	bool Match(const wchar_t* pText, int nTextLen) const;
 	bool Disp(void) const
@@ -42,5 +48,8 @@ public:
 	bool DrawImp(SColorStrategyInfo* pInfo);
 	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const {};
 	EColorIndexType GetColorIdx(void) const{ return COLORIDX_EOL; }
+private:
+	HPEN m_hPen = NULL;
+	COLORREF m_clrPen;
 };
 #endif /* SAKURA_CFIGURE_EOL_C51A4502_29AE_4D38_8056_5B0CFCC3686B_H_ */
