@@ -1888,10 +1888,6 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			if (MAX_PATH <= sDefault.length()) {
 				return false;
 			}
-			// sFilterの先はSFilePath型
-			if (MAX_PATH <= sFilter.length()) {
-				return false;
-			}
 
 			CDlgOpenFile cDlgOpenFile;
 			cDlgOpenFile.Create(

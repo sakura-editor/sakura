@@ -47,10 +47,10 @@ CFileExt::CFileExt()
 
 bool CFileExt::AppendExt( const WCHAR *pszName, const WCHAR *pszExt )
 {
-	WCHAR	szWork[MAX_PATH];
+	std::wstring workExt;
 
-	if( !CDocTypeManager::ConvertTypesExtToDlgExt( pszExt, NULL, szWork ) ) return false;
-	return AppendExtRaw( pszName, szWork );
+	if( !CDocTypeManager::ConvertTypesExtToDlgExt( pszExt, NULL, workExt ) ) return false;
+	return AppendExtRaw( pszName, workExt.c_str() );
 }
 
 bool CFileExt::AppendExtRaw( const WCHAR *pszName, const WCHAR *pszExt )

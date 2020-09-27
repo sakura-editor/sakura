@@ -700,15 +700,15 @@ bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlg(
 	specs[1].pszName = strs[1].c_str();
 	specs[1].pszSpec = L"*.txt";
 	CDocTypeManager docTypeMgr;
-	WCHAR szWork[_countof(STypeConfigMini::m_szTypeExts) * 3];
+	std::wstring worksString;
 	for( int i = 0; i < nTypesCount; i++ ){
 		const STypeConfigMini* type = NULL;
 		if( !docTypeMgr.GetTypeConfigMini( CTypeConfig(i), &type ) ){
 			continue;
 		}
 		specs[2 + i].pszName = type->m_szTypeName;
-		if (CDocTypeManager::ConvertTypesExtToDlgExt(type->m_szTypeExts, NULL, szWork)) {
-			strs[2 + i] = szWork;
+		if (CDocTypeManager::ConvertTypesExtToDlgExt(type->m_szTypeExts, NULL, worksString)) {
+			strs[2 + i] = worksString;
 			specs[2 + i].pszSpec = strs[2 + i].c_str();
 		}
 		else {
