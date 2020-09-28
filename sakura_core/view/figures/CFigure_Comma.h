@@ -29,17 +29,17 @@
 #include "view/figures/CFigureStrategy.h"
 
 //! カンマ描画（CSVモード）
-class CFigure_Comma : public CFigureSpace{
+class CFigure_Comma final : public CFigureSpace{
 public:
 	//traits
-	bool Match(const wchar_t* pText, int nTextLen) const;
-	bool Disp(void) const
+	bool Match(const wchar_t* pText, int nTextLen) const override;
+	bool Disp(void) const override
 	{
 		return true;
 	}
 
 	//action
-	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const;
-	EColorIndexType GetColorIdx(void) const{ return COLORIDX_TAB; }
+	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const override;
+	EColorIndexType GetColorIdx(void) const override { return COLORIDX_TAB; }
 };
 #endif /* SAKURA_CFIGURE_COMMA_DE8237CD_24C0_4A21_8599_5BE8B04BF7E6_H_ */
