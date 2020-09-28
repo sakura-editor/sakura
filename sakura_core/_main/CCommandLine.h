@@ -90,7 +90,7 @@ public:
 	LPCWSTR GetDocType() const noexcept { return m_fi.m_szDocType; }
 	ECodeType GetDocCode() const noexcept { return m_fi.m_nCharCode; }
 	void ParseKanjiCodeFromFileName( LPWSTR pszExeFileName, int cchExeFileName );
-	void ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse = true );
+	void ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse = true, bool bError = false );
 
 // member valiables
 private:
