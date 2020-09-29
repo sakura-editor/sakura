@@ -45,6 +45,7 @@ public:
 		CEditDoc* pCEditDoc = CEditDoc::GetInstance(0);
 		m_pTypeData = &pCEditDoc->m_cDocType.GetDocumentAttribute();
 	}
+
 protected:
 	const STypeConfig* m_pTypeData;
 };
@@ -52,7 +53,7 @@ protected:
 typedef int FigureRenderType;
 
 //! 通常テキスト描画
-class CFigure_Text : public CFigure{
+class CFigure_Text final : public CFigure{
 public:
 	// 文字列を進める
 	static FigureRenderType GetRenderType(SColorStrategyInfo* pInfo);
@@ -64,14 +65,14 @@ public:
 	static bool DrawImpBlock(SColorStrategyInfo* pInfo, int nPos, int nLength);
 	static int FowardChars(SColorStrategyInfo* pInfo);
 
-	bool DrawImp(SColorStrategyInfo* pInfo);
-	bool Match(const wchar_t* pText, int nTextLen) const
+	bool DrawImp(SColorStrategyInfo* pInfo) override;
+	bool Match(const wchar_t* pText, int nTextLen) const override
 	{
 		return true;
 	}
 
 	//! 色分け表示対象判定
-	virtual bool Disp(void) const
+	bool Disp(void) const override
 	{
 		return true;
 	}
@@ -80,19 +81,21 @@ public:
 //! 各種空白（半角空白／全角空白／タブ／改行）描画用の基本クラス
 class CFigureSpace : public CFigure{
 public:
-	virtual bool DrawImp(SColorStrategyInfo* pInfo);
+	bool DrawImp(SColorStrategyInfo* pInfo) override;
+
 protected:
 	virtual void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const = 0;
 	virtual EColorIndexType GetColorIdx(void) const = 0;
 
+public:
 	//! 色分け表示対象判定
-	virtual bool Disp(void) const
+	bool Disp(void) const override
 	{
 		EColorIndexType nColorIndex = GetColorIdx();
 		return m_pTypeData->m_ColorInfoArr[nColorIndex].m_bDisp;
 	}
 
-	virtual void Update(void)
+	void Update(void) override
 	{
 		CFigure::Update();
 
@@ -104,6 +107,7 @@ protected:
 		}
 	}
 
+protected:
 	EColorIndexType GetDispColorIdx(void) const{ return m_nDispColorIndex; }
 
 	// 実装補助

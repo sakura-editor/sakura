@@ -29,7 +29,7 @@
 #include "view/figures/CFigureStrategy.h"
 
 //! 改行描画
-class CFigure_Eol : public CFigureSpace{
+class CFigure_Eol final : public CFigureSpace{
 public:
 	~CFigure_Eol()
 	{
@@ -38,16 +38,17 @@ public:
 		}
 	}
 	//traits
-	bool Match(const wchar_t* pText, int nTextLen) const;
-	bool Disp(void) const
+	bool Match(const wchar_t* pText, int nTextLen) const override;
+	bool Disp(void) const override
 	{
 		return true;
 	}
 
 	//action
-	bool DrawImp(SColorStrategyInfo* pInfo);
-	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const {};
-	EColorIndexType GetColorIdx(void) const{ return COLORIDX_EOL; }
+	bool DrawImp(SColorStrategyInfo* pInfo) override;
+	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const  override {};
+	EColorIndexType GetColorIdx(void) const override { return COLORIDX_EOL; }
+
 private:
 	HPEN m_hPen = NULL;
 	COLORREF m_clrPen;
