@@ -904,7 +904,7 @@ static ECodeType MatchEncoding(const char* pBuf, int nSize)
 {
 	for(int k = 0; k < _countof(encodingNameToCode); k++ ){
 		const int nLen = encodingNameToCode[k].nLen;
-		if( nLen == nSize && 0 == memicmp(encodingNameToCode[k].name, pBuf, nLen) ){
+		if( nLen == nSize && 0 == _memicmp(encodingNameToCode[k].name, pBuf, nLen) ){
 			return static_cast<ECodeType>(encodingNameToCode[k].nCode);
 		}
 	}
