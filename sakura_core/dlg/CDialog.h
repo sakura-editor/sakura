@@ -90,6 +90,7 @@ public:
 
 	virtual BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
 	virtual void SetDialogPosSize();
+	virtual void SetDialogFont();
 	virtual BOOL OnDestroy( void );
 	virtual BOOL OnNotify(NMHDR* pNMHDR){return FALSE;}
 	BOOL OnSize();
@@ -140,6 +141,7 @@ public:
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
 private:
 	HWND			m_hWnd;			/* このダイアログのハンドル */
+	HFONT			m_hFontMessage;	// ダイアログボックス用フォント
 public:
 	HWND			m_hwndSizeBox;
 	LPARAM			m_lParam;
