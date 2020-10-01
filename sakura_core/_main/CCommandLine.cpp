@@ -23,6 +23,7 @@
 #include <tchar.h>
 #include <io.h>
 #include <string.h>
+#include <memory>
 #include "debug/CRunningTimer.h"
 #include "charset/charcode.h"  // 2006.06.28 rastiv
 #include "io/CTextStream.h"
@@ -275,9 +276,14 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 	}
 
 	CNativeW cmResponseFile = L"";
-	LPWSTR pszCmdLineWork = new WCHAR[lstrlen( pszCmdLineSrc ) + 1];
-	wcscpy( pszCmdLineWork, pszCmdLineSrc );
-	int nCmdLineWorkLen = lstrlen( pszCmdLineWork );
+
+	const int nCmdLineWorkLen = static_cast<int>( ::wcsnlen( pszCmdLineSrc, SHRT_MAX ) );
+	assert( nCmdLineWorkLen < SHRT_MAX );
+
+	auto cmdLineWork = std::make_unique<WCHAR[]>( nCmdLineWorkLen + 1 );
+	LPWSTR pszCmdLineWork = cmdLineWork.get();
+	::wcscpy_s( pszCmdLineWork, nCmdLineWorkLen + 1, pszCmdLineSrc );
+
 	LPWSTR pszToken = my_strtok<WCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, L" " );
 	while( pszToken != NULL )
 	{
@@ -524,7 +530,6 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 		}
 		pszToken = my_strtok<WCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, L" " );
 	}
-	delete [] pszCmdLineWork;
 
 	// レスポンスファイル解析
 	if( cmResponseFile.GetStringLength() && bResponse ){
