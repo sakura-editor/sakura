@@ -431,6 +431,7 @@
     <ClInclude Include="..\sakura_core\io\CStream.h" />
     <ClInclude Include="..\sakura_core\io\CTextStream.h" />
     <ClInclude Include="..\sakura_core\io\CZipFile.h" />
+    <ClInclude Include="..\sakura_core\io\FilePathTooLongError.h" />
     <ClInclude Include="..\sakura_core\macro\CCookieManager.h" />
     <ClInclude Include="..\sakura_core\macro\CEditorIfObj.h" />
     <ClInclude Include="..\sakura_core\macro\CIfObj.h" />
@@ -796,6 +797,7 @@
     <ClCompile Include="..\sakura_core\io\CStream.cpp" />
     <ClCompile Include="..\sakura_core\io\CTextStream.cpp" />
     <ClCompile Include="..\sakura_core\io\CZipFile.cpp" />
+    <ClCompile Include="..\sakura_core\io\FilePathTooLongError.cpp" />
     <ClCompile Include="..\sakura_core\macro\CCookieManager.cpp" />
     <ClCompile Include="..\sakura_core\macro\CEditorIfObj.cpp" />
     <ClCompile Include="..\sakura_core\macro\CIfObj.cpp" />

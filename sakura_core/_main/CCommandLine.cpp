@@ -27,6 +27,7 @@
 #include "debug/CRunningTimer.h"
 #include "charset/charcode.h"  // 2006.06.28 rastiv
 #include "io/CTextStream.h"
+#include "io/FilePathTooLongError.h"
 #include "util/shell.h"
 #include "util/file.h"
 #include "env/CSakuraEnvironment.h"
@@ -265,6 +266,10 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			}
 			szPath[i] = pszCmdLineSrc[i];
 		}
+
+		if( i == _countof(szPath) ){
+			throw FilePathTooLongError( std::wstring_view( pszCmdLineSrc, ::wcscspn( pszCmdLineSrc, L" " ) ) );
+		}
 	}
 	if( bFind ){
 		CSakuraEnvironment::ResolvePath(szPath);
@@ -308,6 +313,9 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				if( len > 0 ){
 					cmWork.SetString( &pszToken[1], len - ( pszToken[len] == L'"' ? 1 : 0 ));
 					cmWork.Replace( L"\"\"", L"\"" );
+					if( _countof(szPath) == ::wcsnlen( cmWork.GetStringPtr(), _countof(szPath) ) ){
+						throw FilePathTooLongError( std::wstring_view( cmWork.GetStringPtr() ) );
+					}
 					wcscpy_s( szPath, _countof(szPath), cmWork.GetStringPtr() );	/* ファイル名 */
 				}
 				else {
@@ -315,6 +323,9 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				}
 			}
 			else{
+				if( _countof(szPath) == ::wcsnlen( pszToken, _countof(szPath) ) ){
+					throw FilePathTooLongError( std::wstring_view( pszToken ) );
+				}
 				wcscpy_s( szPath, _countof(szPath), pszToken );		/* ファイル名 */
 			}
 

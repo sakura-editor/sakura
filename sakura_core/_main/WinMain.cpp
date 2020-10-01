@@ -24,6 +24,7 @@
 #include <locale.h>
 #include "CProcessFactory.h"
 #include "CProcess.h"
+#include "io/FilePathTooLongError.h"
 #include "util/os.h"
 #include "util/module.h"
 #include "debug/CRunningTimer.h"
@@ -100,6 +101,9 @@ int WINAPI wWinMain(
 	try{
 		process = aFactory.Create( hInstance, lpCmdLine );
 		MY_TRACETIME( cRunningTimer, "ProcessObject Created" );
+	}
+	catch( const FilePathTooLongError& ex ){
+		ex.ShowMessage();
 	}
 	catch(...){
 	}
