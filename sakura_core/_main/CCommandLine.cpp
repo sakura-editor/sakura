@@ -282,8 +282,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 
 	CNativeW cmResponseFile = L"";
 
-	const int nCmdLineWorkLen = static_cast<int>( ::wcsnlen( pszCmdLineSrc, SHRT_MAX ) );
-	assert( nCmdLineWorkLen < SHRT_MAX );
+	const int nCmdLineWorkLen = static_cast<int>( ::wcsnlen( pszCmdLineSrc, INT_MAX ) );
 
 	auto cmdLineWork = std::make_unique<WCHAR[]>( nCmdLineWorkLen + 1 );
 	LPWSTR pszCmdLineWork = cmdLineWork.get();
