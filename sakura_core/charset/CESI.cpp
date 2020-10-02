@@ -958,7 +958,7 @@ ECodeType CESI::AutoDetectByXML( const char* pBuf, int nSize )
 				}
 				// encoding指定無しでxml宣言が終了した
 				if( pBuf[i] == '?' && pBuf[i + 1] == '>' ){
-					return CODE_UTF8;
+					return CODE_AUTODETECT;
 				}
 			}
 		}
