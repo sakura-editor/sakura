@@ -501,12 +501,21 @@ void CESI::GetEncodingInfo_meta( const char* pS, const int nLen )
 {
 	// XML宣言は先頭にあるので、最初にチェック
 	ECodeType encoding = AutoDetectByXML( pS, nLen );
+	auto nret = CODE_NONE;
 	if( encoding == CODE_NONE || encoding == CODE_AUTODETECT ){
 		// スクリプト等Coding中にHTMLがあるのでCodingを優先
-		encoding = AutoDetectByCoding( pS, nLen );
+		nret = AutoDetectByCoding( pS, nLen );
+		if( nret != CODE_NONE ){
+			// 判定に成功した場合はencodingを更新する
+			encoding = nret;
+		}
 	}
 	if( encoding == CODE_NONE || encoding == CODE_AUTODETECT ){
-		encoding = AutoDetectByHTML( pS, nLen );
+		nret = AutoDetectByHTML( pS, nLen );
+		if( nret != CODE_NONE ){
+			// 判定に成功した場合はencodingを更新する
+			encoding = nret;
+		}
 	}
 	m_eMetaName = encoding;
 }
