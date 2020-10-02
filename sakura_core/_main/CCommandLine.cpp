@@ -247,39 +247,9 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 	MY_RUNNINGTIMER( cRunningTimer, "CCommandLine::Parse" );
 
 	WCHAR	szPath[_MAX_PATH];
-	bool	bFind = false;				// ファイル名発見フラグ
-	bool	bParseOptDisabled = false;	// 2007.09.09 genta オプション解析を行わなず，ファイル名として扱う
-	int		nPos;
+	bool	bParseOptDisabled = false;	// 2007.09.09 genta オプション解析を行なわず，ファイル名として扱う
+	int		nPos = 0;
 	int		i = 0;
-	if( pszCmdLineSrc[0] != L'-' ){
-		for( i = 0; i < _countof( szPath ); ++i ){
-			if( pszCmdLineSrc[i] == L' ' || pszCmdLineSrc[i] == L'\0' ){
-				/* ファイルの存在をチェック */
-				szPath[i] = L'\0';	// 終端文字
-				if( fexist(szPath) ){
-					bFind = true;
-					break;
-				}
-				if( pszCmdLineSrc[i] == L'\0' ){
-					break;
-				}
-			}
-			szPath[i] = pszCmdLineSrc[i];
-		}
-
-		const int nFirstArgLen = bFind ? 0 : (int) ::wcscspn( pszCmdLineSrc, L" " );
-		if( !bFind && _countof(szPath) <= nFirstArgLen ){
-			throw FilePathTooLongError( std::wstring_view( pszCmdLineSrc, nFirstArgLen ) );
-		}
-	}
-	if( bFind ){
-		CSakuraEnvironment::ResolvePath(szPath);
-		wcscpy( m_fi.m_szPath, szPath );	/* ファイル名 */
-		nPos = i + 1;
-	}else{
-		m_fi.m_szPath[0] = L'\0';
-		nPos = 0;
-	}
 
 	CNativeW cmResponseFile = L"";
 
@@ -354,10 +324,9 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 
 			if (szPath[0] != L'\0') {
 				CSakuraEnvironment::ResolvePath(szPath);
-				if (m_fi.m_szPath[0] == L'\0') {
-					wcscpy(m_fi.m_szPath, szPath );
-				}
-				else {
+				if( m_fi.m_szPath[0] == L'\0' && fexist( szPath ) ){
+					wcscpy_s( m_fi.m_szPath, szPath );
+				}else{
 					m_vFiles.push_back( szPath );
 				}
 			}
