@@ -834,7 +834,6 @@ static const struct{
 	{"ibm1026",            7,  1026},
 	{"windows-1250",      12,  1250},
 	{"windows-1251",      12,  1251},
-	{"windows-1252",      12,  1252},
 	{"windows-1253",      12,  1253},
 	{"windows-1254",      12,  1254},
 	{"windows-1255",      12,  1255},
