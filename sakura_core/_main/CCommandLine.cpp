@@ -267,8 +267,9 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			szPath[i] = pszCmdLineSrc[i];
 		}
 
-		if( i == _countof(szPath) ){
-			throw FilePathTooLongError( std::wstring_view( pszCmdLineSrc, ::wcscspn( pszCmdLineSrc, L" " ) ) );
+		const int nFirstArgLen = bFind ? 0 : (int) ::wcscspn( pszCmdLineSrc, L" " );
+		if( !bFind && _countof(szPath) <= nFirstArgLen ){
+			throw FilePathTooLongError( std::wstring_view( pszCmdLineSrc, nFirstArgLen ) );
 		}
 	}
 	if( bFind ){
