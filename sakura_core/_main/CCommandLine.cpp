@@ -522,6 +522,13 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			responseData += input.ReadLineW();
 		}
 		ParseCommandLine( responseData.c_str(), false );
+	}else{
+		// オプションでない引数がすべて存在しないパスだった場合、先頭要素をパスとして扱う
+		if( !m_vFiles.empty() && m_fi.m_szPath[0] == L'\0' ){
+			const std::wstring& firstFile = m_vFiles.front();
+			firstFile.copy( m_fi.m_szPath, firstFile.length() );
+			m_vFiles.erase( m_vFiles.cbegin() );
+		}
 	}
 
 	return;
