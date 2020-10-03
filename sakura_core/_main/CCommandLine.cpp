@@ -248,7 +248,6 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 
 	bool	bParseOptDisabled = false;	// 2007.09.09 genta オプション解析を行なわず，ファイル名として扱う
 	int		nPos = 0;
-	int		i = 0;
 
 	CNativeW cmResponseFile = L"";
 
@@ -257,6 +256,24 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 	auto cmdLineWork = std::make_unique<WCHAR[]>( nCmdLineWorkLen + 1 );
 	LPWSTR pszCmdLineWork = cmdLineWork.get();
 	::wcscpy_s( pszCmdLineWork, nCmdLineWorkLen + 1, pszCmdLineSrc );
+
+	// コマンドラインの先頭が '-' で始まっていない場合
+	if( pszCmdLineWork[0] != L'-' ){
+		// 先頭部分を空白を含むパスとして切り出せる場合は切り出す。
+		WCHAR szPath[_MAX_PATH]{ 0 };
+		for( size_t i = 0; i < _countof( szPath ); ++i ){
+			if( pszCmdLineWork[i] == L' ' || pszCmdLineWork[i] == L'\0' ){
+				szPath[i] = L'\0';
+				if( fexist(szPath) ){
+					CSakuraEnvironment::ResolvePath(szPath);
+					::wcscpy_s( m_fi.m_szPath, szPath );
+					nPos = static_cast<int>(i + 1); //残りの解析開始位置をずらす
+					break;
+				}
+			}
+			szPath[i] = pszCmdLineWork[i];
+		}
+	}
 
 	LPWSTR pszToken = my_strtok<WCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, L" " );
 	while( pszToken != NULL )
@@ -519,16 +536,9 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 
 	// このエディタプロセスで開くファイルパスを決定する
 	if( m_fi.m_szPath[0] == L'\0' && !m_vFiles.empty() ){
-		// オプションでない引数のうち、最初に見つかった存在するファイルを検索
-		const auto cend = m_vFiles.cend();
-		auto it = std::find_if( m_vFiles.cbegin(), cend, [] ( const std::wstring& s ) { return fexist( s.c_str() ); } );
-		if( it == cend ){
-			// 見つからないときは、先頭要素を使う
-			it = m_vFiles.cbegin();
-		}
-		const std::wstring& firstFile = *it;
+		const std::wstring& firstFile = m_vFiles.front();
 		::wcscpy_s( m_fi.m_szPath, firstFile.c_str() );
-		m_vFiles.erase( it );
+		m_vFiles.erase( m_vFiles.cbegin() );
 	}
 
 	return;
