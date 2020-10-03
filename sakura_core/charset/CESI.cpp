@@ -508,13 +508,12 @@ void CESI::GetEncodingInfo_meta( const char* pS, const int nLen )
 		if( nret != CODE_NONE ){
 			// 判定に成功した場合はencodingを更新する
 			encoding = nret;
-		}
-	}
-	if( encoding == CODE_NONE || encoding == CODE_AUTODETECT ){
-		nret = AutoDetectByHTML( pS, nLen );
-		if( nret != CODE_NONE ){
-			// 判定に成功した場合はencodingを更新する
-			encoding = nret;
+		} else {
+			nret = AutoDetectByHTML( pS, nLen );
+			if( nret != CODE_NONE ){
+				// 判定に成功した場合はencodingを更新する
+				encoding = nret;
+			}
 		}
 	}
 	m_eMetaName = encoding;
