@@ -246,7 +246,6 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CCommandLine::Parse" );
 
-	WCHAR	szPath[_MAX_PATH];
 	bool	bParseOptDisabled = false;	// 2007.09.09 genta オプション解析を行なわず，ファイル名として扱う
 	int		nPos = 0;
 	int		i = 0;
@@ -267,6 +266,8 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 		//	2007.09.09 genta オプション判定ルール変更．オプション解析停止と""で囲まれたオプションを考慮
 		if( ( bParseOptDisabled ||
 			! (pszToken[0] == '-' || pszToken[0] == '"' && pszToken[1] == '-' ) )){
+			// ファイルパス解析用バッファ
+			WCHAR szPath[_MAX_PATH]{ 0 };
 
 			if( pszToken[0] == L'\"' ){
 				CNativeW cmWork;
