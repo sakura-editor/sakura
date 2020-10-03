@@ -349,6 +349,9 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	m_comboDelExcludeFolder.pRecent = &m_cRecentExcludeFolder;
 	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_EXCLUDE_FOLDER), &m_comboDelExcludeFolder);
 
+	BOOL bRet = CDialog::OnInitDialog( hwndDlg, wParam, lParam );
+	if( !bRet ) return bRet;
+
 	// フォント設定	2012/11/27 Uchi
 	const int nItemIds[] = { IDC_COMBO_TEXT, IDC_COMBO_FILE, IDC_COMBO_FOLDER, IDC_COMBO_EXCLUDE_FILE, IDC_COMBO_EXCLUDE_FOLDER };
 	m_cFontDeleters.resize( _countof( nItemIds ) );
@@ -359,9 +362,7 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		m_cFontDeleters[i].SetFont( hFontOld, hFont, hwndItem );
 	}
 
-	/* 基底クラスメンバ */
-//	CreateSizeBox();
-	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
+	return bRet;
 }
 
 /*! @brief フォルダ指定EditBoxのコールバック関数

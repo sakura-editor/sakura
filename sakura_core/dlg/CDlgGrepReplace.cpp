@@ -133,11 +133,14 @@ BOOL CDlgGrepReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	m_comboDelText2.pRecent = &m_cRecentReplace;
 	SetComboBoxDeleter( GetItemHwnd( IDC_COMBO_TEXT2 ), &m_comboDelText2 );
 
+	BOOL bRet = CDlgGrep::OnInitDialog( hwndDlg, wParam, lParam );
+	if( !bRet ) return bRet;
+
 	HFONT hFontOld = (HFONT)::SendMessageAny( GetItemHwnd( IDC_COMBO_TEXT2 ), WM_GETFONT, 0, 0 );
 	HFONT hFont = SetMainFont( GetItemHwnd( IDC_COMBO_TEXT2 ) );
 	m_cFontText2.SetFont( hFontOld, hFont, GetItemHwnd( IDC_COMBO_TEXT2 ) );
 
-	return CDlgGrep::OnInitDialog( hwndDlg, wParam, lParam );
+	return bRet;
 }
 
 BOOL CDlgGrepReplace::OnDestroy()
