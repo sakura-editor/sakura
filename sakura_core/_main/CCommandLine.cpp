@@ -27,7 +27,6 @@
 #include "debug/CRunningTimer.h"
 #include "charset/charcode.h"  // 2006.06.28 rastiv
 #include "io/CTextStream.h"
-#include "io/FilePathTooLongError.h"
 #include "util/shell.h"
 #include "util/file.h"
 #include "env/CSakuraEnvironment.h"
@@ -301,13 +300,15 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				cmWork.SetString( &pszToken[1], (int) nTokenLen - ( nTokenLen != 0 && pszToken[nTokenLen] == L'\"' ? 1 : 0 ) );
 				cmWork.Replace( L"\"\"", L"\"" );
 				if( _countof(szPath) == ::wcsnlen( cmWork.GetStringPtr(), _countof(szPath) ) ){
-					FilePathTooLongError( std::wstring_view( cmWork.GetStringPtr() ) ).ShowMessage();
+					// L"%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
+					ErrorMessage( NULL, LS(STR_ERR_FILEPATH_TOO_LONG), cmWork.GetStringPtr() );
 				}else{
 					::wcscpy_s( szPath, cmWork.GetStringPtr() );
 				}
 			}else{
 				if( _countof(szPath) == ::wcsnlen( pszToken, _countof(szPath) ) ){
-					FilePathTooLongError( std::wstring_view( pszToken ) ).ShowMessage();
+					// L"%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
+					ErrorMessage( NULL, LS(STR_ERR_FILEPATH_TOO_LONG), pszToken );
 				}else{
 					::wcscpy_s( szPath, pszToken );
 				}
