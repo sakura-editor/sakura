@@ -245,16 +245,14 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CCommandLine::Parse" );
 
-	bool	bParseOptDisabled = false;	// 2007.09.09 genta オプション解析を行なわず，ファイル名として扱う
-	int		nPos = 0;
-
-	CNativeW cmResponseFile = L"";
-
 	const int nCmdLineWorkLen = static_cast<int>( ::wcsnlen( pszCmdLineSrc, INT_MAX ) );
 
 	auto cmdLineWork = std::make_unique<WCHAR[]>( nCmdLineWorkLen + 1 );
 	LPWSTR pszCmdLineWork = cmdLineWork.get();
 	::wcscpy_s( pszCmdLineWork, nCmdLineWorkLen + 1, pszCmdLineSrc );
+
+	// コマンドラインの解析を開始する位置(先頭部分をスキップする場合がある)
+	int nPos = 0;
 
 	// コマンドラインの先頭が '-' で始まっていない場合
 	if( pszCmdLineWork[0] != L'-' ){
@@ -266,13 +264,19 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				if( fexist(szPath) ){
 					CSakuraEnvironment::ResolvePath(szPath);
 					::wcscpy_s( m_fi.m_szPath, szPath );
-					nPos = static_cast<int>(i + 1); //残りの解析開始位置をずらす
+					nPos = static_cast<int>(i + 1); //残りの解析の開始位置をずらす
 					break;
 				}
 			}
 			szPath[i] = pszCmdLineWork[i];
 		}
 	}
+
+	// オプション解析停止フラグを検出したかどうか
+	bool bParseOptDisabled = false;
+
+	// レスポンスファイルのファイル名(オプション指定を解析すると値が入る)
+	CNativeW cmResponseFile;
 
 	LPWSTR pszToken = my_strtok<WCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, L" " );
 	while( pszToken != NULL )
@@ -317,32 +321,29 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			// Nov. 11, 2005 susu
 			// 不正なファイル名のままだとファイル保存時ダイアログが出なくなるので
 			// 簡単なファイルチェックを行うように修正
-			if (wcsncmp_literal(szPath, L"file:///")==0) {
-				wcscpy(szPath, &(szPath[8]));
+			if( 0 == wcsncmp_literal( szPath, L"file:///" ) ){
+				::wcscpy_s( szPath, &szPath[8] );
 			}
-			int len = wcslen(szPath);
-			for (int i = 0; i < len ; ) {
-				if ( !TCODE::IsValidFilenameChar(szPath[i]) ){
-					WCHAR msg_str[_MAX_PATH + 1];
-					swprintf(
-						msg_str, _countof(msg_str),
-						LS(STR_CMDLINE_PARSECMD1),
-						szPath
-					);
-					MessageBox( NULL, msg_str, L"FileNameError", MB_OK);
-					szPath[0] = L'\0';
-					break;
-				}
-				int nChars = t_max(1, int(CNativeW::GetCharNext( szPath, len, szPath + i ) - (szPath + i)));
-				i += nChars;
+
+			// ファイル名に使えない文字
+			constexpr const wchar_t invalidFilenameChars[] = L"<>?\"|*";
+
+			if( szPath[0] && ::wcscspn( szPath, invalidFilenameChars ) < ::wcsnlen( szPath, _countof(szPath) ) ){
+				// L"%ls\r\n上記のファイル名は不正です。ファイル名に \\ / : * ? "" < > | の文字は使えません。 "
+				ErrorMessage( NULL, LS(STR_CMDLINE_PARSECMD1), szPath );
+
+				szPath[0] = L'\0'; // クリアする
 			}
 
 			if( szPath[0] != L'\0' ){
 				CSakuraEnvironment::ResolvePath( szPath );
-				m_vFiles.push_back( szPath );
+				if( m_fi.m_szPath[0] == L'\0' ){
+					::wcscpy_s( m_fi.m_szPath, szPath );
+				}else{
+					m_vFiles.push_back( szPath );
+				}
 			}
-		}
-		else{
+		}else{
 			if( *pszToken == '"' ){
 				++pszToken;	// 2007.09.09 genta 先頭の"はスキップ
 				int tokenlen = wcslen( pszToken );
@@ -533,13 +534,6 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			responseData += input.ReadLineW();
 		}
 		ParseCommandLine( responseData.c_str(), false );
-	}
-
-	// このエディタプロセスで開くファイルパスを決定する
-	if( m_fi.m_szPath[0] == L'\0' && !m_vFiles.empty() ){
-		const std::wstring& firstFile = m_vFiles.front();
-		::wcscpy_s( m_fi.m_szPath, firstFile.c_str() );
-		m_vFiles.erase( m_vFiles.cbegin() );
 	}
 
 	return;
