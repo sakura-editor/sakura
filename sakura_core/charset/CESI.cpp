@@ -996,7 +996,7 @@ ECodeType CESI::AutoDetectByXML( const char* pBuf, int nSize )
 			}
 			// encoding指定無しでxml宣言が終了した
 			if( pBuf[i] == '?' && pBuf[i + 1] == '>' ){
-				return CODE_AUTODETECT; // 2016.04.05 特別にAUTODETECTにする。後で考慮
+				return CODE_AUTODETECT;
 			}
 		}
 	}else
@@ -1278,7 +1278,7 @@ ECodeType CESI::CheckKanjiCode(const char* pBuf, size_t nBufLen) noexcept
 		return nret;
 	}
 	if( GetMetaName() == CODE_AUTODETECT ){
-		// 2016.04.05 MetaがAUTODETECTの場合は、encodingがないxml文書。XML仕様書の通りUTF-8にする
+		// MetaがAUTODETECTの場合は、encodingがないxml文書。これまで通りUTF-8とみなす。
 		return CODE_UTF8;
 	}
 
