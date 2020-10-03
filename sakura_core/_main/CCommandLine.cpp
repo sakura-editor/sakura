@@ -270,7 +270,6 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			WCHAR szPath[_MAX_PATH]{ 0 };
 
 			if( pszToken[0] == L'\"' ){
-				CNativeW cmWork;
 				//	Nov. 3, 2005 genta
 				//	末尾のクォーテーションが無い場合を考慮して，
 				//	最後がダブルクォートの場合のみ取り除く
@@ -280,24 +279,21 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				//	引数がダブルクォート1つの場合に，その1つを最初と最後の1つずつと
 				//	見間違えて，インデックス-1にアクセスしてしまうのを防ぐために長さをチェックする
 				//	ファイル名の後ろにあるOptionを解析するため，ループは継続
-				int len = lstrlen( pszToken + 1 );
-				if( len > 0 ){
-					cmWork.SetString( &pszToken[1], len - ( pszToken[len] == L'"' ? 1 : 0 ));
-					cmWork.Replace( L"\"\"", L"\"" );
-					if( _countof(szPath) == ::wcsnlen( cmWork.GetStringPtr(), _countof(szPath) ) ){
-						throw FilePathTooLongError( std::wstring_view( cmWork.GetStringPtr() ) );
-					}
-					wcscpy_s( szPath, _countof(szPath), cmWork.GetStringPtr() );	/* ファイル名 */
+				const size_t nTokenLen = ::wcsnlen( &pszToken[1], INT_MAX );
+				CNativeW cmWork;
+				cmWork.SetString( &pszToken[1], (int) nTokenLen - ( nTokenLen != 0 && pszToken[nTokenLen] == L'\"' ? 1 : 0 ) );
+				cmWork.Replace( L"\"\"", L"\"" );
+				if( _countof(szPath) == ::wcsnlen( cmWork.GetStringPtr(), _countof(szPath) ) ){
+					FilePathTooLongError( std::wstring_view( cmWork.GetStringPtr() ) ).ShowMessage();
+				}else{
+					::wcscpy_s( szPath, cmWork.GetStringPtr() );
 				}
-				else {
-					szPath[0] = L'\0';
-				}
-			}
-			else{
+			}else{
 				if( _countof(szPath) == ::wcsnlen( pszToken, _countof(szPath) ) ){
-					throw FilePathTooLongError( std::wstring_view( pszToken ) );
+					FilePathTooLongError( std::wstring_view( pszToken ) ).ShowMessage();
+				}else{
+					::wcscpy_s( szPath, pszToken );
 				}
-				wcscpy_s( szPath, _countof(szPath), pszToken );		/* ファイル名 */
 			}
 
 			// Nov. 11, 2005 susu
