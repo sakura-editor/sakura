@@ -323,13 +323,9 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				i += nChars;
 			}
 
-			if (szPath[0] != L'\0') {
-				CSakuraEnvironment::ResolvePath(szPath);
-				if( m_fi.m_szPath[0] == L'\0' && fexist( szPath ) ){
-					wcscpy_s( m_fi.m_szPath, szPath );
-				}else{
-					m_vFiles.push_back( szPath );
-				}
+			if( szPath[0] != L'\0' ){
+				CSakuraEnvironment::ResolvePath( szPath );
+				m_vFiles.push_back( szPath );
 			}
 		}
 		else{
@@ -525,11 +521,18 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 		ParseCommandLine( responseData.c_str(), false );
 	}
 
-	// オプションでない引数がすべて存在しないパスだった場合、先頭要素をパスとして扱う
-	if( !m_vFiles.empty() && m_fi.m_szPath[0] == L'\0' ){
-		const std::wstring& firstFile = m_vFiles.front();
-		firstFile.copy( m_fi.m_szPath, firstFile.length() );
-		m_vFiles.erase( m_vFiles.cbegin() );
+	// このエディタプロセスで開くファイルパスを決定する
+	if( m_fi.m_szPath[0] == L'\0' && !m_vFiles.empty() ){
+		// オプションでない引数のうち、最初に見つかった存在するファイルを検索
+		const auto cend = m_vFiles.cend();
+		auto it = std::find_if( m_vFiles.cbegin(), cend, [] ( const std::wstring& s ) { return fexist( s.c_str() ); } );
+		if( it == cend ){
+			// 見つからないときは、先頭要素を使う
+			it = m_vFiles.cbegin();
+		}
+		const std::wstring& firstFile = *it;
+		::wcscpy_s( m_fi.m_szPath, firstFile.c_str() );
+		m_vFiles.erase( it );
 	}
 
 	return;
