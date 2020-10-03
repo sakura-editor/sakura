@@ -58,6 +58,29 @@ int	CPropCommon::SearchIntArr( int nKey, int* pnArr, int nArrNum )
 	return -1;
 }
 
+BOOL CALLBACK SetPropFontProc( HWND hwnd , LPARAM hFont )
+{
+	SendMessageAny( hwnd, WM_SETFONT, (WPARAM)hFont, (LPARAM)FALSE );
+	return TRUE;
+}
+
+void CPropCommon::SetPropFont( HWND hwnd )
+{
+	// 後ほどCDialogの同様処理と共通化
+	HFONT hFontBase = (HFONT)::SendMessageAny( hwnd, WM_GETFONT, 0, (LPARAM)NULL );
+	LOGFONT lfBaseFont = {};
+	GetObject( hFontBase, sizeof(lfBaseFont), &lfBaseFont );
+
+	NONCLIENTMETRICS metrics = {};
+	metrics.cbSize = sizeof( metrics );
+	SystemParametersInfo( SPI_GETNONCLIENTMETRICS, 0, &metrics, 0 );
+	LOGFONT lfMessageFont = metrics.lfMessageFont;
+	lfMessageFont.lfHeight = lfBaseFont.lfHeight;
+	m_hFontControl = CreateFontIndirect( &lfMessageFont );
+	SendMessageAny( hwnd, WM_SETFONT, (WPARAM)m_hFontControl, (LPARAM)FALSE );
+	EnumChildWindows( hwnd, SetPropFontProc, (LPARAM)m_hFontControl );
+}
+
 /*!
 	プロパティページごとのWindow Procedureを引数に取ることで
 	処理の共通化を狙った．
@@ -80,6 +103,7 @@ INT_PTR CPropCommon::DlgProc(
 		pPsp = (PROPSHEETPAGE*)lParam;
 		pCPropCommon = ( CPropCommon* )(pPsp->lParam);
 		if( NULL != pCPropCommon ){
+			pCPropCommon->SetPropFont( hwndDlg );
 			return (pCPropCommon->*DispatchPage)( hwndDlg, uMsg, wParam, pPsp->lParam );
 		}else{
 			return FALSE;
@@ -107,6 +131,7 @@ INT_PTR CPropCommon::DlgProc2(
 	case WM_INITDIALOG:
 		pCPropCommon = ( CPropCommon* )(lParam);
 		if( NULL != pCPropCommon ){
+			pCPropCommon->SetPropFont( hwndDlg );
 			return (pCPropCommon->*DispatchPage)( hwndDlg, uMsg, IDOK, lParam );
 		}else{
 			return FALSE;
@@ -159,6 +184,7 @@ CPropCommon::CPropCommon()
 
 CPropCommon::~CPropCommon()
 {
+	DeleteObject( m_hFontControl );
 }
 
 /* 初期化 */

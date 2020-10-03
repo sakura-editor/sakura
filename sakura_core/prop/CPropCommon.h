@@ -143,6 +143,7 @@ public:
 	bool			m_bTrayProc;
 	HFONT			m_hKeywordHelpFont;		//!< キーワードヘルプ フォント ハンドル
 	HFONT			m_hTabFont;				//!< タブ フォント ハンドル
+	HFONT			m_hFontControl;			//!< ダイアログボックス用フォント
 
 protected:
 	/*
@@ -181,6 +182,8 @@ protected:
 
 	HFONT SetCtrlFont( HWND hwndDlg, int idc_static, const LOGFONT& lf );			//!< コントロールにフォント設定する		// 2013/4/24 Uchi
 	HFONT SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf, int nps );	//!< フォントラベルにフォントとフォント名設定する	// 2013/4/24 Uchi
+
+	void SetPropFont( HWND hwnd );
 };
 
 /*!

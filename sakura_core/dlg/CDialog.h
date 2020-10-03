@@ -141,7 +141,7 @@ public:
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
 private:
 	HWND			m_hWnd;			/* このダイアログのハンドル */
-	HFONT			m_hFontMessage;	// ダイアログボックス用フォント
+	HFONT			m_hFontControl;	// ダイアログボックス用フォント
 public:
 	HWND			m_hwndSizeBox;
 	LPARAM			m_lParam;
