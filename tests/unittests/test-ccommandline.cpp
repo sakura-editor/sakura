@@ -34,6 +34,7 @@
 #include "_main/CCommandLine.h"
 
 #include <cstdlib>
+#include <filesystem>
 #include <fstream>
 
 bool operator == (const EditInfo& lhs, const EditInfo& rhs) noexcept;
@@ -50,6 +51,16 @@ class CCommandLineWrapper : public CCommandLine
 public:
 	CCommandLineWrapper() = default;
 };
+
+/*!
+ * 指定されたパスをフルパスに変換する
+ */
+LPCWSTR ToFullPath(LPCWSTR szFilename)
+{
+	static WCHAR szPath[_MAX_PATH]{ 0 };
+	::_wfullpath( szPath, szFilename, _countof(szPath) );
+	return szPath;
+}
 
 /*!
  * @brief コンストラクタ(パラメータなし)の仕様
@@ -856,4 +867,144 @@ TEST(CCommandLine, EndOfOptionMark)
 	CCommandLineWrapper cCommandLine;
 	cCommandLine.ParseCommandLine(L"-- -GROUP=2", false);
 	EXPECT_EQ(-1, cCommandLine.GetGroupId());
+	EXPECT_STREQ(ToFullPath(L"-GROUP=2"), cCommandLine.GetOpenFile());
+	EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
+	EXPECT_EQ(0, cCommandLine.GetFileNum());
+}
+
+/*!
+ * @brief コマンドライン先頭が「空白を含むファイルパス」である場合の仕様
+ * @remark 「空白を含むファイルパス」を扱うための仕様。
+ * @remark コマンドラインの先頭が "-" で始まらない場合に、
+ *   存在するファイルパスと一致する先頭部分をファイルパスとする。
+ */
+TEST(CCommandLine, UnquotedFileIncludesSpacesAtBeginOfCommandLine)
+{
+#define TESTLOCAL_FILE_NAME "unquoted file path includes spaces"
+
+	// ファイルパスが既に存在していたら削除して作り直す
+	if( fexist( _T(TESTLOCAL_FILE_NAME) ) ){
+		std::filesystem::remove( _T(TESTLOCAL_FILE_NAME) );
+	}
+
+	// ファイルパスにテキトーなテキストファイルを作成する
+	{
+		std::ofstream local_file( TESTLOCAL_FILE_NAME );
+		local_file << TESTLOCAL_FILE_NAME << std::endl;
+	}
+
+	CCommandLineWrapper cCommandLine;
+	cCommandLine.ParseCommandLine( _T(TESTLOCAL_FILE_NAME) L" tmp.txt -R", false );
+	EXPECT_STREQ(ToFullPath(_T(TESTLOCAL_FILE_NAME)), cCommandLine.GetOpenFile());
+	EXPECT_STREQ(ToFullPath(L"tmp.txt"), cCommandLine.GetFileName(0));
+	EXPECT_EQ(1, cCommandLine.GetFileNum());
+	EXPECT_TRUE(cCommandLine.IsViewMode());
+
+	// テストが終わったら要らんので削除してしまう
+	std::filesystem::remove( _T(TESTLOCAL_FILE_NAME) );
+
+#undef TESTLOCAL_FILE_NAME
+}
+
+/*!
+ * @brief 長過ぎるファイルパスに関する仕様
+ * @remark _MAX_PATH - 1までのファイル名は利用できる
+ */
+TEST(CCommandLine, QuotedMaxFilePath)
+{
+	std::wstring strPath(_MAX_PATH, L'a');
+	WCHAR szPath[_MAX_PATH]{ 0 };
+	::_snwprintf_s(szPath, _TRUNCATE, L"C:\\%s", strPath.c_str());
+	CNativeW cmTestCmd;
+	cmTestCmd.AppendStringF(L"\"%s\" test.txt", szPath);
+	CCommandLineWrapper cCommandLine;
+	cCommandLine.ParseCommandLine(cmTestCmd.GetStringPtr(), false);
+	EXPECT_STREQ(szPath, cCommandLine.GetOpenFile());
+	EXPECT_STREQ(ToFullPath(L"test.txt"), cCommandLine.GetFileName(0));
+	EXPECT_EQ(1, cCommandLine.GetFileNum());
+}
+
+/*!
+ * @brief 長過ぎるファイルパスに関する仕様
+ * @remark _MAX_PATH - 1までのファイル名は利用できる
+ */
+TEST(CCommandLine, UnquotedMaxFilePath)
+{
+	std::wstring strPath(_MAX_PATH, L'a');
+	WCHAR szPath[_MAX_PATH]{ 0 };
+	::_snwprintf_s(szPath, _TRUNCATE, L"C:\\%s", strPath.c_str());
+	CNativeW cmTestCmd;
+	cmTestCmd.AppendStringF(L"%s test.txt", szPath);
+	CCommandLineWrapper cCommandLine;
+	cCommandLine.ParseCommandLine(cmTestCmd.GetStringPtr(), false);
+	EXPECT_STREQ(szPath, cCommandLine.GetOpenFile());
+	EXPECT_STREQ(ToFullPath(L"test.txt"), cCommandLine.GetFileName(0));
+	EXPECT_EQ(1, cCommandLine.GetFileNum());
+}
+
+/*!
+ * @brief 長過ぎるファイルパスに関する仕様
+ * @remark _MAX_PATH - 1を超えるファイル名は利用できない
+ */
+TEST(CCommandLine, QuotedTooLongFilePath)
+{
+	std::wstring strPath(_MAX_PATH, L'a');
+	CNativeW cmTestCmd;
+	cmTestCmd.AppendStringF(L"\"%s\" test.txt", strPath.c_str());
+	CCommandLineWrapper cCommandLine;
+	cCommandLine.ParseCommandLine(cmTestCmd.GetStringPtr(), false);
+	EXPECT_STREQ(ToFullPath(L"test.txt"), cCommandLine.GetOpenFile());
+	EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
+	EXPECT_EQ(0, cCommandLine.GetFileNum());
+}
+
+/*!
+ * @brief 長過ぎるファイルパスに関する仕様
+ * @remark _MAX_PATH - 1を超えるファイル名は利用できない
+ */
+TEST(CCommandLine, UnquotedTooLongFilePath)
+{
+	std::wstring strPath(_MAX_PATH, L'a');
+	CNativeW cmTestCmd;
+	cmTestCmd.AppendStringF(L"%s test.txt", strPath.c_str());
+	CCommandLineWrapper cCommandLine;
+	cCommandLine.ParseCommandLine(cmTestCmd.GetStringPtr(), false);
+	EXPECT_STREQ(ToFullPath(L"test.txt"), cCommandLine.GetOpenFile());
+	EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
+	EXPECT_EQ(0, cCommandLine.GetFileNum());
+}
+
+/*!
+ * @brief ファイルパスにファイルプロトコルの接頭辞を含めた場合の仕様
+ */
+TEST(CCommandLine, StripFileProtocol)
+{
+#define TESTLOCAL_FILE_NAME "test.txt"
+
+	CCommandLineWrapper cCommandLine;
+	cCommandLine.ParseCommandLine( L"file:///" _T(TESTLOCAL_FILE_NAME), false );
+	EXPECT_STREQ(ToFullPath(_T(TESTLOCAL_FILE_NAME)), cCommandLine.GetOpenFile());
+	EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
+	EXPECT_EQ(0, cCommandLine.GetFileNum());
+
+#undef TESTLOCAL_FILE_NAME
+}
+
+/*!
+ * @brief ファイルパスに「ファイルに使えない文字」を含めた場合の仕様
+ */
+TEST(CCommandLine, InvalidFilenameChars)
+{
+	// ファイル名に使えない文字('"'は除外)
+	constexpr const wchar_t invalidFilenameChars[] = L"<>?|*";
+	for (int n = 0; n < _countof(invalidFilenameChars); ++n ) {
+		if( invalidFilenameChars[n] == L'\0' ) break;
+		CNativeW cmTestCmd;
+		cmTestCmd.AppendStringF( L"\"%c.txt\" test.txt", invalidFilenameChars[n] );
+		CCommandLineWrapper cCommandLine;
+		cCommandLine.ParseCommandLine( cmTestCmd.GetStringPtr(), false );
+		EXPECT_STREQ(ToFullPath(L"test.txt"), cCommandLine.GetOpenFile());
+		EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
+		EXPECT_EQ(0, cCommandLine.GetFileNum());
+	}
 }
