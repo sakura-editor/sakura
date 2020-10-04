@@ -310,3 +310,39 @@ void CFontAutoDeleter::Release()
 	}
 }
 #endif
+
+BOOL CALLBACK SetSystemFontProc( HWND hwnd , LPARAM hFont )
+{
+	SendMessageAny( hwnd, WM_SETFONT, (WPARAM)hFont, (LPARAM)FALSE );
+	return TRUE;
+}
+
+// 後ほどちゃんとする
+void SetSystemFont( HWND hwnd )
+{
+	static std::map<LONG, HFONT> hFontMap;
+
+	HFONT hFontBase = (HFONT)::SendMessageAny( hwnd, WM_GETFONT, 0, (LPARAM)NULL );
+	LOGFONT lfBaseFont = {};
+	GetObject( hFontBase, sizeof(lfBaseFont), &lfBaseFont );
+
+	HFONT hFontControl;
+	auto found = hFontMap.find( lfBaseFont.lfHeight );
+	if( found == hFontMap.end() )
+	{
+		NONCLIENTMETRICS metrics = {};
+		metrics.cbSize = sizeof( metrics );
+		SystemParametersInfo( SPI_GETNONCLIENTMETRICS, 0, &metrics, 0 );
+		LOGFONT lfMessageFont = metrics.lfMessageFont;
+		lfMessageFont.lfHeight = lfBaseFont.lfHeight;
+		hFontControl = CreateFontIndirect( &lfMessageFont );
+		hFontMap[lfMessageFont.lfHeight] = hFontControl;
+	}
+	else
+	{
+		hFontControl = found->second;
+	}
+
+	SendMessageAny( hwnd, WM_SETFONT, (WPARAM)hFontControl, (LPARAM)FALSE );
+	EnumChildWindows( hwnd, SetSystemFontProc, (LPARAM)hFontControl );
+}
