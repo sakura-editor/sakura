@@ -44,26 +44,4 @@ public:
 	}
 	EColorIndexType GetColorIdx(void) const override { return COLORIDX_CTRLCODE; }
 };
-
-//! バイナリ半角描画
-class CFigure_HanBinary final: public CFigure_CtrlCode{
-public:
-	//traits
-	bool Match(const wchar_t* pText, int nTextLen) const override;
-
-	//action
-	wchar_t GetAlternateChar() const override { return L'〓'; }
-	EColorIndexType GetColorIdx(void) const override { return COLORIDX_CTRLCODE; }
-};
-
-//! バイナリ全角描画
-class CFigure_ZenBinary final : public CFigure_CtrlCode{
-public:
-	//traits
-	bool Match(const wchar_t* pText, int nTextLen) const override;
-
-	//action
-	wchar_t GetAlternateChar() const override { return L'〓'; }
-	EColorIndexType GetColorIdx(void) const override { return COLORIDX_CTRLCODE; }
-};
 #endif /* SAKURA_CFIGURE_CTRLCODE_53EB409B_17F7_4B7F_9AD2_A00C29CDC792_H_ */
