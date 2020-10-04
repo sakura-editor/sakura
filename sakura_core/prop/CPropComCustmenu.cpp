@@ -665,6 +665,7 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 	WCHAR		szLabel[300];
 	WCHAR		szLabel2[300+4];
 
+	::SendMessageAny( hwndDlg, WM_SETREDRAW, FALSE, 0 );
 	/* メニュー項目一覧に文字列をセット（リストボックス）*/
 	HWND hwndLIST_RES = ::GetDlgItem( hwndDlg, IDC_LIST_RES );
 //	hwndEDIT_KEY = ::GetDlgItem( hwndDlg, IDC_EDIT_KEY );
@@ -694,6 +695,8 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_MENUNAME, m_Common.m_sCustomMenu.m_szCustMenuNameArr[nIdx] );
 
 	CheckDlgButtonBool( hwndDlg, IDC_CHECK_SUBMENU, m_Common.m_sCustomMenu.m_bCustMenuPopupArr[nIdx] );
+	::SendMessageAny( hwndDlg, WM_SETREDRAW, TRUE, 0 );
+	::InvalidateRect( hwndDlg, NULL, FALSE );
 	return;
 }
 
