@@ -354,6 +354,11 @@ void SetFontRecursive( HWND hwnd, HFONT hFont )
 
 void UpdateDialogFont( HWND hwnd )
 {
+	// 日本語リソース以外の場合はそのまま
+	if( wcsncmp_literal( CSelectLang::getDefaultLangString(), _T("Japanese" ) ) != 0 ){
+		return;
+	}
+
 	HFONT hFontBase = (HFONT)::SendMessageAny( hwnd, WM_GETFONT, 0, (LPARAM)NULL );
 	LOGFONT lfBaseFont = {};
 	GetObject( hFontBase, sizeof( lfBaseFont ), &lfBaseFont );
