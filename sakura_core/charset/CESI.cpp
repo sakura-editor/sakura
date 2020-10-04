@@ -761,7 +761,6 @@ void CESI::GuessUtf8OrCesu8( void )
 	}
 }
 
-// 2016.04.05 いくつかの互換名を追加
 static const struct{
 	const char* name;
 	int nLen;
@@ -985,7 +984,6 @@ ECodeType CESI::AutoDetectByXML( const char* pBuf, int nSize )
 				i++;
 				int k;
 				for(k = i; pBuf[k] != quoteChar && k < nSize - 1; ++k){}
-				// 2016.04.05 不明なencoding名の場合にUTF-8になっていたのをNoneに変更
 				return MatchEncoding(pBuf + i, k - i);
 			}else{
 				if( pBuf[i] == '<' || pBuf[i] == '>' ){
