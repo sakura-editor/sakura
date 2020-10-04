@@ -2062,6 +2062,8 @@ INT_PTR CALLBACK CPrintPreview::PrintPreviewBar_DlgProc(
 	CPrintPreview* pCPrintPreview;
 	switch( uMsg ){
 	case WM_INITDIALOG:
+		SetSystemFont( hwndDlg );
+
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 		// 2007.02.11 Moca WM_INITもDispatchEvent_PPBを呼ぶように
