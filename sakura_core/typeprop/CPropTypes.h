@@ -86,8 +86,6 @@ public:
 	int GetPageNum(){ return m_nPageNum; }
 	bool GetChangeKeyWordSet() const { return m_bChangeKeyWordSet; }
 
-	void SetPropTypesFont( HWND hwnd );
-
 protected:
 	//イベント
 	void OnHelp(HWND hwndParent, int nPageID);	//!< ヘルプ
@@ -116,8 +114,6 @@ protected:
 
 	// フォント表示用データ
 	HFONT			m_hTypeFont;							//!< タイプ別フォント表示ハンドル
-
-	HFONT			m_hFontControl;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      各プロパティページ                     //

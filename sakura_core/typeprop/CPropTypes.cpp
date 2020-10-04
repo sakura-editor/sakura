@@ -45,7 +45,7 @@ INT_PTR CALLBACK PropTypesCommonProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
 		pPsp = (PROPSHEETPAGE*)lParam;
 		pCPropTypes = reinterpret_cast<CPropTypes*>(pPsp->lParam);
 		if( NULL != pCPropTypes ){
-			pCPropTypes->SetPropTypesFont( hwndDlg );
+			UpdateDialogFont( hwndDlg );
 			return (pCPropTypes->*pDispatch)( hwndDlg, uMsg, wParam, pPsp->lParam );
 		}else{
 			return FALSE;
@@ -106,7 +106,6 @@ CPropTypes::CPropTypes()
 
 CPropTypes::~CPropTypes()
 {
-	DeleteObject( m_hFontControl );
 }
 
 /* 初期化 */
@@ -297,27 +296,4 @@ HFONT CPropTypes::SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf,
 	}
 
 	return hFont;
-}
-
-BOOL CALLBACK SetPropTypesFontProc( HWND hwnd , LPARAM hFont )
-{
-	SendMessageAny( hwnd, WM_SETFONT, (WPARAM)hFont, (LPARAM)FALSE );
-	return TRUE;
-}
-
-void CPropTypes::SetPropTypesFont( HWND hwnd )
-{
-	// 後ほどCDialogの同様処理と共通化
-	HFONT hFontBase = (HFONT)::SendMessageAny( hwnd, WM_GETFONT, 0, (LPARAM)NULL );
-	LOGFONT lfBaseFont = {};
-	GetObject( hFontBase, sizeof(lfBaseFont), &lfBaseFont );
-
-	NONCLIENTMETRICS metrics = {};
-	metrics.cbSize = sizeof( metrics );
-	SystemParametersInfo( SPI_GETNONCLIENTMETRICS, 0, &metrics, 0 );
-	LOGFONT lfMessageFont = metrics.lfMessageFont;
-	lfMessageFont.lfHeight = lfBaseFont.lfHeight;
-	m_hFontControl = CreateFontIndirect( &lfMessageFont );
-	SendMessageAny( hwnd, WM_SETFONT, (WPARAM)m_hFontControl, (LPARAM)FALSE );
-	EnumChildWindows( hwnd, SetPropTypesFontProc, (LPARAM)m_hFontControl );
 }

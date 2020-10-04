@@ -311,38 +311,55 @@ void CFontAutoDeleter::Release()
 }
 #endif
 
-BOOL CALLBACK SetSystemFontProc( HWND hwnd , LPARAM hFont )
+HFONT GetSystemFont( LONG nHeight )
+{
+	// キー:"フォント名/高さ"
+	static std::map<std::wstring, HFONT> fontStock;
+
+	NONCLIENTMETRICS metrics = {};
+	metrics.cbSize = sizeof( metrics );
+	if( !SystemParametersInfo( SPI_GETNONCLIENTMETRICS, 0, &metrics, 0 ) ) {
+		return NULL;
+	}
+	LOGFONT lfFont = metrics.lfMessageFont;
+
+	const size_t nKeySize = LF_FACESIZE + 5;
+	TCHAR key[nKeySize] = {};
+	auto_snprintf_s( key, nKeySize, _T("%s/%d"), lfFont.lfFaceName, nHeight );
+	auto found = fontStock.find( key );
+	if( found != fontStock.end() ) {
+		return found->second;
+	}
+
+	lfFont.lfHeight = nHeight;
+	HFONT hFont = CreateFontIndirect( &lfFont );
+	if( hFont != NULL ) {
+		fontStock[key] = hFont;
+	}
+	return hFont;
+}
+
+BOOL CALLBACK SetFontRecursiveProc( HWND hwnd, LPARAM hFont )
 {
 	SendMessageAny( hwnd, WM_SETFONT, (WPARAM)hFont, (LPARAM)FALSE );
+	EnumChildWindows( hwnd, SetFontRecursiveProc, (LPARAM)hFont );
 	return TRUE;
 }
 
-// 後ほどちゃんとする
-void SetSystemFont( HWND hwnd )
+void SetFontRecursive( HWND hwnd, HFONT hFont )
 {
-	static std::map<LONG, HFONT> hFontMap;
+	SendMessageAny( hwnd, WM_SETFONT, (WPARAM)hFont, (LPARAM)FALSE );
+	EnumChildWindows( hwnd, SetFontRecursiveProc, (LPARAM)hFont );
+}
 
+void UpdateDialogFont( HWND hwnd )
+{
 	HFONT hFontBase = (HFONT)::SendMessageAny( hwnd, WM_GETFONT, 0, (LPARAM)NULL );
 	LOGFONT lfBaseFont = {};
-	GetObject( hFontBase, sizeof(lfBaseFont), &lfBaseFont );
-
-	HFONT hFontControl;
-	auto found = hFontMap.find( lfBaseFont.lfHeight );
-	if( found == hFontMap.end() )
-	{
-		NONCLIENTMETRICS metrics = {};
-		metrics.cbSize = sizeof( metrics );
-		SystemParametersInfo( SPI_GETNONCLIENTMETRICS, 0, &metrics, 0 );
-		LOGFONT lfMessageFont = metrics.lfMessageFont;
-		lfMessageFont.lfHeight = lfBaseFont.lfHeight;
-		hFontControl = CreateFontIndirect( &lfMessageFont );
-		hFontMap[lfMessageFont.lfHeight] = hFontControl;
+	GetObject( hFontBase, sizeof( lfBaseFont ), &lfBaseFont );
+	
+	HFONT hFont = GetSystemFont( lfBaseFont.lfHeight );
+	if( hFont != NULL ){
+		SetFontRecursive( hwnd, hFont );
 	}
-	else
-	{
-		hFontControl = found->second;
-	}
-
-	SendMessageAny( hwnd, WM_SETFONT, (WPARAM)hFontControl, (LPARAM)FALSE );
-	EnumChildWindows( hwnd, SetSystemFontProc, (LPARAM)hFontControl );
 }
