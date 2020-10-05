@@ -417,7 +417,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 			case CBN_SELCHANGE:
 				nIdxFIdx = Combo_GetCurSel( hwndComboFunkKind );
 
-				::SendMessageAny( hwndListFunk, WM_SETREDRAW, FALSE, 0 );
+				::SendMessage( hwndListFunk, WM_SETREDRAW, FALSE, 0 );
 				if (nIdxFIdx == nSpecialFuncsNum) {
 					// 機能一覧に特殊機能をセット
 					List_ResetContent( hwndListFunk );
@@ -429,7 +429,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					/* 機能一覧に文字列をセット（リストボックス）*/
 					m_cLookup.SetListItem( hwndListFunk, nIdxFIdx );
 				}
-				::SendMessageAny( hwndListFunk, WM_SETREDRAW, TRUE, 0 );
+				::SendMessage( hwndListFunk, WM_SETREDRAW, TRUE, 0 );
 
 				return TRUE;
 			}

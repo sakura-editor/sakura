@@ -268,7 +268,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 			case CBN_SELCHANGE:
 				nIndex2 = Combo_GetCurSel( hwndCombo );
 
-				::SendMessageAny( hwndFuncList, WM_SETREDRAW, FALSE, 0 );
+				::SendMessage( hwndFuncList, WM_SETREDRAW, FALSE, 0 );
 				List_ResetContent( hwndFuncList );
 
 				/* 機能一覧に文字列をセット (リストボックス) */
@@ -287,7 +287,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 						lResult = List_SetItemHeight( hwndFuncList, lResult, nListItemHeight );
 					}
 				}
-				::SendMessageAny( hwndFuncList, WM_SETREDRAW, TRUE, 0 );
+				::SendMessage( hwndFuncList, WM_SETREDRAW, TRUE, 0 );
 				return TRUE;
 			}
 		}else{

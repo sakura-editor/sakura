@@ -616,7 +616,7 @@ void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
 	HWND	hwndList;
 	LV_ITEM	lvi;
 
-	::SendMessageAny( hwndDlg, WM_SETREDRAW, FALSE, 0 );
+	::SendMessage( hwndDlg, WM_SETREDRAW, FALSE, 0 );
 
 	ListView_DeleteAllItems( ::GetDlgItem( hwndDlg, IDC_LIST_KEYWORD ) );
 	if( 0 <= nIdx ){
@@ -672,7 +672,7 @@ void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
 	//キーワード数を表示する。
 	DispKeywordCount( hwndDlg );
 
-	::SendMessageAny( hwndDlg, WM_SETREDRAW, TRUE, 0 );
+	::SendMessage( hwndDlg, WM_SETREDRAW, TRUE, 0 );
 	InvalidateRect(hwndDlg, NULL, FALSE);
 
 	return;
