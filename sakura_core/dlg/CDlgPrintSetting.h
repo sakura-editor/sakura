@@ -57,7 +57,6 @@ private:
 	PRINTSETTING	m_PrintSettingArr[MAX_PRINTSETTINGARR];
 	int				m_nLineNumberColumns;					// 行番号表示する場合の桁数
 	bool			m_bPrintableLinesAndColumnInvalid;
-	HFONT			m_hFontDlg;								// ダイアログのフォントハンドル
 	int				m_nFontHeight;							// ダイアログのフォントのサイズ
 
 protected:

@@ -184,7 +184,7 @@ BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	SetDialogPosSize();
 
-	UpdateDialogFont( hwndDlg );
+	m_hFontDialog = UpdateDialogFont( hwndDlg );
 
 	m_bInited = TRUE;
 	return TRUE;

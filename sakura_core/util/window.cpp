@@ -352,19 +352,27 @@ void SetFontRecursive( HWND hwnd, HFONT hFont )
 	EnumChildWindows( hwnd, SetFontRecursiveProc, (LPARAM)hFont );
 }
 
-void UpdateDialogFont( HWND hwnd )
+/*!
+	ダイアログボックス用のフォントを設定(日本語以外では何もしない)
+	@param[in]	hwnd		設定対象ダイアログボックスのウィンドウハンドル
+	@return		ダイアログボックスに設定されたフォントハンドル(破棄禁止)
+*/
+HFONT UpdateDialogFont( HWND hwnd )
 {
-	// 日本語リソース以外の場合はそのまま
-	if( wcsncmp_literal( CSelectLang::getDefaultLangString(), _T("Japanese" ) ) != 0 ){
-		return;
+	HFONT hFontDialog = (HFONT)::SendMessageAny( hwnd, WM_GETFONT, 0, (LPARAM)NULL );
+
+	if( wcsncmp_literal( CSelectLang::getDefaultLangString(), _T("Japanese") ) != 0 ){
+		return hFontDialog;
 	}
 
-	HFONT hFontBase = (HFONT)::SendMessageAny( hwnd, WM_GETFONT, 0, (LPARAM)NULL );
-	LOGFONT lfBaseFont = {};
-	GetObject( hFontBase, sizeof( lfBaseFont ), &lfBaseFont );
-	
-	HFONT hFont = GetSystemFont( lfBaseFont.lfHeight );
-	if( hFont != NULL ){
-		SetFontRecursive( hwnd, hFont );
+	// 現在設定済みフォントと同じ高さのシステムフォントを得て再設定
+	LOGFONT lfDialog = {};
+	GetObject( hFontDialog, sizeof( lfDialog ), &lfDialog );
+	HFONT hFontSystem = GetSystemFont( lfDialog.lfHeight );
+	if( hFontSystem != NULL ){
+		SetFontRecursive( hwnd, hFontSystem );
+		hFontDialog = hFontSystem;
 	}
+
+	return hFontDialog;
 }
