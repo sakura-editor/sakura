@@ -260,8 +260,9 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 		WCHAR szPath[_MAX_PATH]{ 0 };
 		for( size_t i = 0; i < _countof( szPath ); ++i ){
 			const WCHAR& chSrc = pszCmdLineWork[i];
+			WCHAR& chDst = szPath[i];
 			if( chSrc == L' ' || chSrc == L'\0' ){
-				szPath[i] = L'\0';
+				chDst = L'\0';
 				if( fexist(szPath) ){
 					CSakuraEnvironment::ResolvePath(szPath);
 					::wcscpy_s( m_fi.m_szPath, szPath );
@@ -269,7 +270,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 					break;
 				}
 			}
-			szPath[i] = chSrc;
+			chDst = chSrc;
 		}
 	}
 
