@@ -259,7 +259,8 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 		// 先頭部分を空白を含むパスとして切り出せる場合は切り出す。
 		WCHAR szPath[_MAX_PATH]{ 0 };
 		for( size_t i = 0; i < _countof( szPath ); ++i ){
-			if( pszCmdLineWork[i] == L' ' || pszCmdLineWork[i] == L'\0' ){
+			const WCHAR& chSrc = pszCmdLineWork[i];
+			if( chSrc == L' ' || chSrc == L'\0' ){
 				szPath[i] = L'\0';
 				if( fexist(szPath) ){
 					CSakuraEnvironment::ResolvePath(szPath);
@@ -268,7 +269,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 					break;
 				}
 			}
-			szPath[i] = pszCmdLineWork[i];
+			szPath[i] = chSrc;
 		}
 	}
 
