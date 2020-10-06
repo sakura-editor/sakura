@@ -1164,14 +1164,7 @@ ECodeType CESI::AutoDetectByCoding( const char* pBuf, int nSize )
 			if( nBegin == i ){
 				return CODE_NONE;
 			}
-			int k;
-			for( k = 0; k < _countof(encodingNameToCode); k++ ){
-				const int nLen = encodingNameToCode[k].nLen;
-				if( i - nBegin == nLen
-				  && 0 == _memicmp( encodingNameToCode[k].name, pBuf + nBegin, nLen ) ){
-					return static_cast<ECodeType>(encodingNameToCode[k].nCode);
-				}
-			}
+			return MatchEncoding( pBuf + nBegin, i - nBegin );
 		}else if( '\r' == pBuf[i] || '\n' == pBuf[i] ){
 			if( '\r' == pBuf[i] && '\n' == pBuf[i+1] ){
 				i++;
