@@ -260,17 +260,19 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 		WCHAR szPath[_MAX_PATH]{ 0 };
 		for( size_t i = 0; i < _countof( szPath ); ++i ){
 			const WCHAR& chSrc = pszCmdLineWork[i];
+			const bool isSpace = chSrc == L' ';
 			WCHAR& chDst = szPath[i];
-			if( chSrc == L' ' || chSrc == L'\0' ){
-				chDst = L'\0';
+			chDst = chSrc;
+			if( isSpace ) chDst = L'\0';
+			if( chDst == L'\0' ){
 				if( fexist(szPath) ){
 					CSakuraEnvironment::ResolvePath(szPath);
 					::wcscpy_s( m_fi.m_szPath, szPath );
 					nPos = static_cast<int>(i + 1); //残りの解析の開始位置をずらす
 					break;
 				}
+				if( isSpace ) chDst = chSrc;
 			}
-			chDst = chSrc;
 		}
 	}
 
