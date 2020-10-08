@@ -981,8 +981,12 @@ ECodeType CESI::AutoDetectByXML( const char* pBuf, int nSize )
 				}
 				quoteChar = pBuf[i];
 				i++;
-				std::string sBuf = pBuf;
-				return MatchEncoding( pBuf + i, sBuf.find_first_of( quoteChar, i ) - i );
+				std::string_view sBuf( pBuf, nSize );
+				auto nLen = sBuf.find_first_of( quoteChar, i );
+				if( nLen == std::string_view::npos ){
+					break;
+				}
+				return MatchEncoding( pBuf + i, nLen - i );
 			}else{
 				if( pBuf[i] == '<' || pBuf[i] == '>' ){
 					break;
