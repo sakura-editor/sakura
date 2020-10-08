@@ -5,6 +5,7 @@
 #include "env/CSakuraEnvironment.h"
 #include <limits.h>
 #include "window.h"
+#include <sstream>
 
 int CDPI::nDpiX = 96;
 int CDPI::nDpiY = 96;
@@ -311,34 +312,56 @@ void CFontAutoDeleter::Release()
 }
 #endif
 
-HFONT GetSystemFont( LONG nHeight )
+/*!
+	システムフォントに準拠したフォントを取得
+	@param[in]	nLogicalHeight	フォント高さ(論理単位)
+	@return		フォントハンドル(破棄禁止)
+*/
+HFONT GetSystemBasedFont( LONG nLogicalHeight )
 {
-	// キー:"フォント名/高さ"
+	// キー:文字列化したLOGFONT
 	static std::map<std::wstring, HFONT> fontStock;
 
-	NONCLIENTMETRICS metrics = {};
-	metrics.cbSize = sizeof( metrics );
+	NONCLIENTMETRICS metrics = { CCSIZEOF_STRUCT( NONCLIENTMETRICS, lfMessageFont ) };
 	if( !SystemParametersInfo( SPI_GETNONCLIENTMETRICS, 0, &metrics, 0 ) ) {
 		return NULL;
 	}
 	LOGFONT lfFont = metrics.lfMessageFont;
+	lfFont.lfHeight = nLogicalHeight;
 
-	const size_t nKeySize = LF_FACESIZE + 5;
-	TCHAR key[nKeySize] = {};
-	auto_snprintf_s( key, nKeySize, _T("%s/%d"), lfFont.lfFaceName, nHeight );
-	auto found = fontStock.find( key );
+	std::wostringstream key;
+	key << lfFont.lfHeight << " "
+		<< lfFont.lfWidth << " "
+		<< lfFont.lfEscapement << " "
+		<< lfFont.lfOrientation << " "
+		<< lfFont.lfWeight << " "
+		<< lfFont.lfItalic << " "
+		<< lfFont.lfUnderline << " "
+		<< lfFont.lfStrikeOut << " "
+		<< lfFont.lfCharSet << " "
+		<< lfFont.lfOutPrecision << " "
+		<< lfFont.lfClipPrecision << " "
+		<< lfFont.lfQuality << " "
+		<< lfFont.lfPitchAndFamily << " "
+		<< lfFont.lfFaceName;
+	auto found = fontStock.find( key.str() );
 	if( found != fontStock.end() ) {
 		return found->second;
 	}
 
-	lfFont.lfHeight = nHeight;
 	HFONT hFont = CreateFontIndirect( &lfFont );
 	if( hFont != NULL ) {
-		fontStock[key] = hFont;
+		fontStock[key.str()] = hFont;
 	}
+
 	return hFont;
 }
 
+/*!
+	SetFontRecursiveで使用するコールバック関数
+	@param[in]	hwnd	設定先のウィンドウハンドル
+	@param[in]	hFont	フォントハンドル
+*/
 BOOL CALLBACK SetFontRecursiveProc( HWND hwnd, LPARAM hFont )
 {
 	SendMessageAny( hwnd, WM_SETFONT, (WPARAM)hFont, (LPARAM)FALSE );
@@ -346,6 +369,11 @@ BOOL CALLBACK SetFontRecursiveProc( HWND hwnd, LPARAM hFont )
 	return TRUE;
 }
 
+/*!
+	指定したウィンドウおよびその子孫にフォントを設定
+	@param[in]	hwnd	設定先のウィンドウハンドル
+	@param[in]	hFont	フォントハンドル
+*/
 void SetFontRecursive( HWND hwnd, HFONT hFont )
 {
 	SendMessageAny( hwnd, WM_SETFONT, (WPARAM)hFont, (LPARAM)FALSE );
@@ -365,13 +393,13 @@ HFONT UpdateDialogFont( HWND hwnd )
 		return hFontDialog;
 	}
 
-	// 現在設定済みフォントと同じ高さのシステムフォントを得て再設定
+	// 現在設定済みフォントと同じ高さのシステムフォント風フォントを得て再設定
 	LOGFONT lfDialog = {};
 	GetObject( hFontDialog, sizeof( lfDialog ), &lfDialog );
-	HFONT hFontSystem = GetSystemFont( lfDialog.lfHeight );
-	if( hFontSystem != NULL ){
-		SetFontRecursive( hwnd, hFontSystem );
-		hFontDialog = hFontSystem;
+	HFONT hFontSystemBased = GetSystemBasedFont( lfDialog.lfHeight );
+	if( hFontSystemBased != NULL ){
+		SetFontRecursive( hwnd, hFontSystemBased );
+		hFontDialog = hFontSystemBased;
 	}
 
 	return hFontDialog;
