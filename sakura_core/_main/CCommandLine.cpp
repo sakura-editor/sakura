@@ -390,12 +390,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				m_fi.m_nWindowOriginY = AtoiOptionInt( arg );
 				break;
 			case CMDLINEOPT_TYPE:	//	TYPE
-				//	Mar. 7, 2002 genta
-				//	ファイルタイプの強制指定
-				{
-					wcsncpy( m_fi.m_szDocType, arg, MAX_DOCTYPE_LEN );
-					m_fi.m_szDocType[ nArgLen < MAX_DOCTYPE_LEN ? nArgLen : MAX_DOCTYPE_LEN ] = L'\0';
-				}
+				::wcsncpy_s( m_fi.m_szDocType, arg, _TRUNCATE );
 				break;
 			case CMDLINEOPT_CODE:	//	CODE
 				m_fi.m_nCharCode = (ECodeType)AtoiOptionInt( arg );
