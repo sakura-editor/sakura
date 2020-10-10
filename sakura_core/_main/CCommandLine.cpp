@@ -332,7 +332,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			// ファイル名に使えない文字
 			constexpr const wchar_t invalidFilenameChars[] = L"<>?\"|*";
 
-			if( szPath[0] && ::wcscspn( szPath, invalidFilenameChars ) < ::wcsnlen( szPath, _countof(szPath) ) ){
+			if( ::wcscspn( szPath, invalidFilenameChars ) < ::wcsnlen( szPath, _countof(szPath) ) ){
 				// L"%ls\r\n上記のファイル名は不正です。ファイル名に \\ / : * ? "" < > | の文字は使えません。 "
 				ErrorMessage( NULL, LS(STR_CMDLINE_PARSECMD1), szPath );
 
