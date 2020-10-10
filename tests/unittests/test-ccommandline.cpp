@@ -754,6 +754,40 @@ TEST(CCommandLine, ParseFromResponseFile)
 }
 
 /*!
+ * @brief パラメータ解析(-@)の仕様
+ * @remark -@が指定されていたら指定されたファイルが存在しない場合、無視する
+ */
+TEST(CCommandLine, ParseFromResponseFileMissing)
+{
+#define TESTLOCAL_FILE_NAME "not-found.response"
+
+	// ファイルパスが既に存在していたら削除して作り直す
+	if( fexist( _T(TESTLOCAL_FILE_NAME) ) ){
+		std::filesystem::remove( _T(TESTLOCAL_FILE_NAME) );
+	}
+
+	CCommandLineWrapper cCommandLine;
+	cCommandLine.ParseCommandLine(L"-@=" _T(TESTLOCAL_FILE_NAME), true);
+	EXPECT_STREQ(L"", cCommandLine.GetOpenFile());
+	EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
+	EXPECT_EQ(0, cCommandLine.GetFileNum());
+
+	EXPECT_FALSE(cCommandLine.IsViewMode());
+
+#undef TESTLOCAL_FILE_NAME
+}
+
+/*!
+ * @brief パラメータ解析の仕様
+ * @remark 未定義のオプションは無視する
+ */
+TEST(CCommandLine, ParseUndefinedOption)
+{
+	CCommandLineWrapper cCommandLine;
+	cCommandLine.ParseCommandLine(L"-UNDEFINED", false);
+}
+
+/*!
  * @brief オプションの仕様
  * @remark オプションはダブルクォートで囲んでもよい
  */
@@ -868,6 +902,18 @@ TEST(CCommandLine, EndOfOptionMark)
 	cCommandLine.ParseCommandLine(L"-- -GROUP=2", false);
 	EXPECT_EQ(-1, cCommandLine.GetGroupId());
 	EXPECT_STREQ(ToFullPath(L"-GROUP=2"), cCommandLine.GetOpenFile());
+	EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
+	EXPECT_EQ(0, cCommandLine.GetFileNum());
+}
+
+/*!
+ * @brief 終端されない二重引用符の仕様
+ */
+TEST(CCommandLine, UnterminatedQuotedOption)
+{
+	CCommandLineWrapper cCommandLine;
+	cCommandLine.ParseCommandLine(L"\"", false);
+	EXPECT_STREQ(L"", cCommandLine.GetOpenFile());
 	EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
 	EXPECT_EQ(0, cCommandLine.GetFileNum());
 }
@@ -1007,4 +1053,21 @@ TEST(CCommandLine, InvalidFilenameChars)
 		EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
 		EXPECT_EQ(0, cCommandLine.GetFileNum());
 	}
+}
+
+/*!
+ * @brief CCommandLine::ClearFileの仕様
+ */
+TEST(CCommandLine, ClearFile)
+{
+	CNativeW cmTestCmd(L"test1.txt test2.txt");
+	CCommandLineWrapper cCommandLine;
+	cCommandLine.ParseCommandLine(cmTestCmd.GetStringPtr(), false);
+	EXPECT_STREQ(ToFullPath(L"test1.txt"), cCommandLine.GetOpenFile());
+	EXPECT_STREQ(ToFullPath(L"test2.txt"), cCommandLine.GetFileName(0));
+	EXPECT_EQ(1, cCommandLine.GetFileNum());
+
+	cCommandLine.ClearFile(); //クリアする
+	EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
+	EXPECT_EQ(0, cCommandLine.GetFileNum());
 }
