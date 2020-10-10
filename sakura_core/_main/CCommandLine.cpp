@@ -416,22 +416,22 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				break;
 			case CMDLINEOPT_GKEY:	//	GKEY
 				//	前後の""を取り除く
-				m_gi.cmGrepKey.SetString( arg,  lstrlen( arg ) );
+				m_gi.cmGrepKey.SetString( arg, nArgLen );
 				m_gi.cmGrepKey.Replace( L"\"\"", L"\"" );
 				break;
 			case CMDLINEOPT_GREPR:	//	GREPR
 				//	前後の""を取り除く
-				m_gi.cmGrepRep.SetString( arg,  lstrlen( arg ) );
+				m_gi.cmGrepRep.SetString( arg, nArgLen );
 				m_gi.cmGrepRep.Replace( L"\"\"", L"\"" );
 				m_gi.bGrepReplace = true;
 				break;
 			case CMDLINEOPT_GFILE:	//	GFILE
 				//	前後の""を取り除く
-				m_gi.cmGrepFile.SetString( arg,  lstrlen( arg ) );
+				m_gi.cmGrepFile.SetString( arg, nArgLen );
 				m_gi.cmGrepFile.Replace( L"\"\"", L"\"" );
 				break;
 			case CMDLINEOPT_GFOLDER:	//	GFOLDER
-				m_gi.cmGrepFolder.SetString( arg,  lstrlen( arg ) );
+				m_gi.cmGrepFolder.SetString( arg, nArgLen );
 				m_gi.cmGrepFolder.Replace( L"\"\"", L"\"" );
 				break;
 			case CMDLINEOPT_GOPT:	//	GOPT
@@ -504,14 +504,14 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				bParseOptDisabled = true;
 				break;
 			case CMDLINEOPT_M:			// 2009.06.14 syat 追加
-				m_cmMacro.SetString( arg );
+				m_cmMacro.SetString( arg, nArgLen );
 				m_cmMacro.Replace( L"\"\"", L"\"" );
 				break;
 			case CMDLINEOPT_MTYPE:		// 2009.06.14 syat 追加
-				m_cmMacroType.SetString( arg );
+				m_cmMacroType.SetString( arg, nArgLen );
 				break;
 			case CMDLINEOPT_PROF:		// 2013.12.20 Moca 追加
-				m_cmProfile.SetString( arg );
+				m_cmProfile.SetString( arg, nArgLen );
 				m_bSetProfile = true;
 				break;
 			case CMDLINEOPT_PROFMGR:
