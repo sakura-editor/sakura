@@ -140,7 +140,7 @@ int CCommandLine::CheckCommandLine(
 	//	引数がある場合を先に確認
 	for( ptr = _COptWithA; ptr->opt != NULL; ptr++ )
 	{
-		if( len >= ptr->len &&	//	長さが足りているか
+		if( len > ptr->len &&	//	長さが足りているか
 			( str[ptr->len] == '=' || str[ptr->len] == ':' ) &&	//	オプション部分の長さチェック
 			wmemicmp( str, ptr->opt, ptr->len ) == 0 )	//	文字列の比較	// 2006.10.25 ryoji memcmp() -> _memicmp()
 		{
