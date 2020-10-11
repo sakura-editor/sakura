@@ -94,6 +94,12 @@ bool CProcessFactory::ProfileSelect( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 
 	CCommandLine::getInstance()->ParseCommandLine(lpCmdLine);
 
+	// コマンドライン解析のエラーがあれば、最初のメッセージだけ表示する
+	const auto& vErrorMessages = CCommandLine::getInstance()->GetErrorMessages();
+	if( !vErrorMessages.empty() ){
+		ErrorMessage( NULL, vErrorMessages.front().c_str() );
+	}
+
 	// コマンドラインオプションから起動プロファイルを判定する
 	bool profileSelected = CDlgProfileMgr::TrySelectProfile( CCommandLine::getInstance() );
 	if( !profileSelected ){

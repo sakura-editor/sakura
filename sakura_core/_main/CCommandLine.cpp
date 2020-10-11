@@ -31,6 +31,28 @@
 #include "util/file.h"
 #include "env/CSakuraEnvironment.h"
 
+//! ファイル名に使えない文字が含まれるエラーのメッセージを取得する
+inline std::wstring GetFilePathIncludeInvalidCharErrorMessage( LPCWSTR pszPath )
+{
+	CNativeW cmText;
+
+	// L"%ls\r\n上記のファイル名は不正です。ファイル名に \\ / : * ? "" < > | の文字は使えません。 "
+	ErrorMessage( NULL, LS(STR_CMDLINE_PARSECMD1), pszPath );
+
+	return std::wstring( cmText.GetStringPtr(), cmText.GetStringLength() );
+}
+
+//! ファイル名が長すぎるエラーのメッセージを取得する
+inline std::wstring GetFilePathTooLongErrorMessage( LPCWSTR pszPath )
+{
+	CNativeW cmText;
+
+	// L"%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
+	cmText.AppendStringF( LS(STR_ERR_FILEPATH_TOO_LONG), pszPath );
+
+	return std::wstring( cmText.GetStringPtr(), cmText.GetStringLength() );
+}
+
 /* コマンドラインオプション用定数 */
 #define CMDLINEOPT_R			1002 //!< ビューモード
 #define CMDLINEOPT_NOWIN		1003 //!< タスクトレイのみ起動
@@ -267,8 +289,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			if( chDst == L'\0' ){
 				if( fexist(szPath) ){
 					if( !CSakuraEnvironment::ResolvePath( szPath ) ){
-						// L"%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
-						ErrorMessage( NULL, LS(STR_ERR_FILEPATH_TOO_LONG), szPath );
+						m_vErrorMessages.emplace_back( GetFilePathTooLongErrorMessage( szPath ) );
 					}else{
 						::wcscpy_s( m_fi.m_szPath, szPath );
 						nPos = static_cast<int>(i + 1); //残りの解析の開始位置をずらす
@@ -312,15 +333,13 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				cmWork.SetString( &pszToken[1], (int) nTokenLen - ( nTokenLen != 0 && pszToken[nTokenLen] == L'\"' ? 1 : 0 ) );
 				cmWork.Replace( L"\"\"", L"\"" );
 				if( _countof(szPath) == ::wcsnlen( cmWork.GetStringPtr(), _countof(szPath) ) ){
-					// L"%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
-					ErrorMessage( NULL, LS(STR_ERR_FILEPATH_TOO_LONG), cmWork.GetStringPtr() );
+					m_vErrorMessages.emplace_back( GetFilePathTooLongErrorMessage( cmWork.GetStringPtr() ) );
 				}else{
 					::wcscpy_s( szPath, cmWork.GetStringPtr() );
 				}
 			}else{
 				if( _countof(szPath) == ::wcsnlen( pszToken, _countof(szPath) ) ){
-					// L"%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
-					ErrorMessage( NULL, LS(STR_ERR_FILEPATH_TOO_LONG), pszToken );
+					m_vErrorMessages.emplace_back( GetFilePathTooLongErrorMessage( pszToken ) );
 				}else{
 					::wcscpy_s( szPath, pszToken );
 				}
@@ -337,16 +356,13 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			constexpr const wchar_t invalidFilenameChars[] = L"<>?\"|*";
 
 			if( ::wcscspn( szPath, invalidFilenameChars ) < ::wcsnlen( szPath, _countof(szPath) ) ){
-				// L"%ls\r\n上記のファイル名は不正です。ファイル名に \\ / : * ? "" < > | の文字は使えません。 "
-				ErrorMessage( NULL, LS(STR_CMDLINE_PARSECMD1), szPath );
-
+				m_vErrorMessages.emplace_back( GetFilePathIncludeInvalidCharErrorMessage( pszToken ) );
 				::wcscpy_s( szPath, L"" ); // クリアする
 			}
 
 			if( szPath[0] != L'\0' ){
 				if( !CSakuraEnvironment::ResolvePath( szPath ) ){
-					// L"%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
-					ErrorMessage( NULL, LS(STR_ERR_FILEPATH_TOO_LONG), szPath );
+					m_vErrorMessages.emplace_back( GetFilePathTooLongErrorMessage( szPath ) );
 				}else if( m_fi.m_szPath[0] == L'\0' ){
 					::wcscpy_s( m_fi.m_szPath, szPath );
 				}else{
