@@ -460,6 +460,7 @@ void CPropKeybind::ChangeKeyList( HWND hwndDlg){
 		i |= _ALT;
 		wcscat( szKeyState, L"Alt+" );
 	}
+	::SendMessage( hwndKeyList, WM_SETREDRAW, FALSE, 0 );
 	/* キー一覧に文字列をセット（リストボックス）*/
 	List_ResetContent( hwndKeyList );
 	for( i = 0; i < m_Common.m_sKeyBind.m_nKeyNameArrNum; ++i ){
@@ -470,6 +471,7 @@ void CPropKeybind::ChangeKeyList( HWND hwndDlg){
 	List_SetCurSel( hwndKeyList, nIndex );
 	List_SetTopIndex( hwndKeyList, nIndexTop );
 	::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndKeyList );
+	::SendMessage( hwndKeyList, WM_SETREDRAW, TRUE, 0 );
 }
 
 /* Keybind:キー割り当て設定をインポートする */

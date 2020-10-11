@@ -616,6 +616,8 @@ void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
 	HWND	hwndList;
 	LV_ITEM	lvi;
 
+	::SendMessage( hwndDlg, WM_SETREDRAW, FALSE, 0 );
+
 	ListView_DeleteAllItems( ::GetDlgItem( hwndDlg, IDC_LIST_KEYWORD ) );
 	if( 0 <= nIdx ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELSET ), TRUE );
@@ -654,9 +656,6 @@ void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
 	nNum = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWordNum( nIdx );
 	hwndList = ::GetDlgItem( hwndDlg, IDC_LIST_KEYWORD );
 
-	// 2005.01.25 Moca/genta リスト追加中は再描画を抑制してすばやく表示
-	::SendMessageAny( hwndList, WM_SETREDRAW, FALSE, 0 );
-
 	for( i = 0; i < nNum; ++i ){
 		/* ｎ番目のセットのｍ番目のキーワードを返す */
 		const WCHAR* pszKeyWord = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( nIdx, i );
@@ -670,11 +669,11 @@ void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
 	}
 	m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx = nIdx;
 
-	// 2005.01.25 Moca/genta リスト追加完了のため再描画許可
-	::SendMessageAny( hwndList, WM_SETREDRAW, TRUE, 0 );
-
 	//キーワード数を表示する。
 	DispKeywordCount( hwndDlg );
+
+	::SendMessage( hwndDlg, WM_SETREDRAW, TRUE, 0 );
+	InvalidateRect(hwndDlg, NULL, FALSE);
 
 	return;
 }
