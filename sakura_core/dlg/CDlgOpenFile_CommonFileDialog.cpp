@@ -262,6 +262,8 @@ UINT_PTR CALLBACK OFNHookProc(
 		}
 	case WM_INITDIALOG:
 		{
+			UpdateDialogFont( hdlg );
+
 			// Save off the long pointer to the OPENFILENAME structure.
 			// Modified by KEITA for WIN64 2003.9.6
 			OPENFILENAME* pOfn = (OPENFILENAME*)lParam;

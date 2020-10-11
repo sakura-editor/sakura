@@ -140,6 +140,7 @@ public:
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
 private:
 	HWND			m_hWnd;			/* このダイアログのハンドル */
+	HFONT			m_hFontDialog;	// ダイアログに設定されているフォント(破棄禁止)
 public:
 	HWND			m_hwndSizeBox;
 	LPARAM			m_lParam;
@@ -163,5 +164,7 @@ protected:
 
 	// コントロールに画面のフォントを設定	2012/11/27 Uchi
 	HFONT SetMainFont( HWND hTarget );
+	// このダイアログに設定されているフォントを取得
+	HFONT GetDialogFont() { return m_hFontDialog; }
 };
 #endif /* SAKURA_CDIALOG_17C8C15C_881C_4C1F_B953_CB11FCC8B70B_H_ */

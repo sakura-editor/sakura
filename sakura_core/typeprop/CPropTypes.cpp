@@ -45,6 +45,7 @@ INT_PTR CALLBACK PropTypesCommonProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
 		pPsp = (PROPSHEETPAGE*)lParam;
 		pCPropTypes = reinterpret_cast<CPropTypes*>(pPsp->lParam);
 		if( NULL != pCPropTypes ){
+			UpdateDialogFont( hwndDlg );
 			return (pCPropTypes->*pDispatch)( hwndDlg, uMsg, wParam, pPsp->lParam );
 		}else{
 			return FALSE;

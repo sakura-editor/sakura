@@ -269,6 +269,9 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	}
 	//	To Here Dec. 2, 2002 genta
 
+	/* 基底クラスメンバ */
+	(void)CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
+
 	// URLウィンドウをサブクラス化する
 	m_UrlUrWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_UR ) );
 #ifdef GIT_REMOTE_ORIGIN_URL
@@ -286,9 +289,6 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	//	Oct. 22, 2005 genta 原作者ホームページが無くなったので削除
 	//m_UrlOrgWnd.SubclassWindow( GetItemHwnd(IDC_STATIC_URL_ORG ) );
-
-	/* 基底クラスメンバ */
-	(void)CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 
 	/* デフォルトでは一番最初のタブオーダーの要素になるので明示的に OK ボタンにフォーカスを合わせる */
 	::SetFocus(GetItemHwnd(IDOK));

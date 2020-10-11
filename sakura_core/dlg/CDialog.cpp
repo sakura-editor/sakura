@@ -27,6 +27,7 @@
 #include "util/os.h"
 #include "util/shell.h"
 #include "util/module.h"
+#include "util/window.h"
 
 /* ダイアログプロシージャ */
 INT_PTR CALLBACK MyDialogProc(
@@ -182,6 +183,8 @@ BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	SetData();
 
 	SetDialogPosSize();
+
+	m_hFontDialog = UpdateDialogFont( hwndDlg );
 
 	m_bInited = TRUE;
 	return TRUE;

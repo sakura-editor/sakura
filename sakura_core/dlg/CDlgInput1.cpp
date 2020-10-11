@@ -20,6 +20,7 @@
 #include "util/shell.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "util/window.h"
 
 // 入力 CDlgInput1.cpp	//@@@ 2002.01.07 add start MIK
 static const DWORD p_helpids[] = {	//13000
@@ -44,6 +45,7 @@ INT_PTR CALLBACK CDlgInput1Proc(
 	case WM_INITDIALOG:
 		pCDlgInput1 = ( CDlgInput1* )lParam;
 		if( NULL != pCDlgInput1 ){
+			UpdateDialogFont( hwndDlg );
 			return pCDlgInput1->DispatchEvent( hwndDlg, uMsg, wParam, lParam );
 		}else{
 			return FALSE;
