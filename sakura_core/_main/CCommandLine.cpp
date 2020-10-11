@@ -266,10 +266,14 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			if( isSpace ) chDst = L'\0';
 			if( chDst == L'\0' ){
 				if( fexist(szPath) ){
-					CSakuraEnvironment::ResolvePath(szPath);
-					::wcscpy_s( m_fi.m_szPath, szPath );
-					nPos = static_cast<int>(i + 1); //残りの解析の開始位置をずらす
-					break;
+					if( !CSakuraEnvironment::ResolvePath( szPath ) ){
+						// L"%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
+						ErrorMessage( NULL, LS(STR_ERR_FILEPATH_TOO_LONG), szPath );
+					}else{
+						::wcscpy_s( m_fi.m_szPath, szPath );
+						nPos = static_cast<int>(i + 1); //残りの解析の開始位置をずらす
+						break;
+					}
 				}
 				if( isSpace ) chDst = chSrc;
 			}
@@ -336,12 +340,14 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				// L"%ls\r\n上記のファイル名は不正です。ファイル名に \\ / : * ? "" < > | の文字は使えません。 "
 				ErrorMessage( NULL, LS(STR_CMDLINE_PARSECMD1), szPath );
 
-				szPath[0] = L'\0'; // クリアする
+				::wcscpy_s( szPath, L"" ); // クリアする
 			}
 
 			if( szPath[0] != L'\0' ){
-				CSakuraEnvironment::ResolvePath( szPath );
-				if( m_fi.m_szPath[0] == L'\0' ){
+				if( !CSakuraEnvironment::ResolvePath( szPath ) ){
+					// L"%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
+					ErrorMessage( NULL, LS(STR_ERR_FILEPATH_TOO_LONG), szPath );
+				}else if( m_fi.m_szPath[0] == L'\0' ){
 					::wcscpy_s( m_fi.m_szPath, szPath );
 				}else{
 					m_vFiles.push_back( szPath );

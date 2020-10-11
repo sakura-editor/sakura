@@ -24,6 +24,7 @@
 */
 
 #include "StdAfx.h"
+#include <wrl.h>
 #include <HtmlHelp.h>
 #include <ShlObj.h>
 #include <ShellAPI.h>
@@ -376,72 +377,35 @@ HWND OpenHtmlHelp(
 
 //	To Here Jun. 26, 2001 genta
 
-/*! ショートカット(.lnk)の解決
-	@date 2009.01.08 ryoji CoInitialize/CoUninitializeを削除（WinMainにOleInitialize/OleUninitializeを追加）
-*/
-BOOL ResolveShortcutLink( HWND hwnd, LPCWSTR lpszLinkFile, LPWSTR lpszPath )
+/*!
+ * ショートカット(.lnk)の解決
+ */
+BOOL ResolveShortcutLink(
+	HWND		hWnd,				//!< [in,opt] ユーザー問い合わせに使うウインドウハンドル
+	LPCWSTR		pszAbsLinkPath,		//!< [in] ショートカット(.lnk)のフルパス
+	LPWSTR		szResolvedPath		//!< [out] 解決されたファイルパス
+)
 {
-	BOOL			bRes;
-	HRESULT			hRes;
-	IShellLink*		pIShellLink;
-	IPersistFile*	pIPersistFile;
-	WIN32_FIND_DATA	wfd;
-	/* 初期化 */
-	pIShellLink = NULL;
-	pIPersistFile = NULL;
-	*lpszPath = 0; // assume failure
-	bRes = FALSE;
-
-// 2009.01.08 ryoji CoInitializeを削除（WinMainにOleInitialize追加）
-
+	using namespace Microsoft::WRL;
+	ComPtr<IShellLink> pShellLink;
 	// Get a pointer to the IShellLink interface.
-//	hRes = 0;
-	WCHAR szAbsLongPath[_MAX_PATH];
-	if( ! ::GetLongFileName( lpszLinkFile, szAbsLongPath ) ){
-		return FALSE;
-	}
-
-	// 2010.08.28 DLL インジェクション対策としてEXEのフォルダに移動する
-	CCurrentDirectoryBackupPoint dirBack;
-	ChangeCurrentDirectoryToExeDir();
-
-	if( SUCCEEDED( hRes = ::CoCreateInstance( CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID *)&pIShellLink ) ) ){
+	if( SUCCEEDED( ::CoCreateInstance( CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pShellLink) ) ) ){
+		ComPtr<IPersistFile> pPersistFile;
 		// Get a pointer to the IPersistFile interface.
-		if( SUCCEEDED(hRes = pIShellLink->QueryInterface( IID_IPersistFile, (void**)&pIPersistFile ) ) ){
+		if( SUCCEEDED( pShellLink->QueryInterface( IID_PPV_ARGS(&pPersistFile) ) ) ){
 			// Load the shortcut.
-			if( SUCCEEDED(hRes = pIPersistFile->Load( szAbsLongPath, STGM_READ ) ) ){
+			if( SUCCEEDED( pPersistFile->Load( pszAbsLinkPath, STGM_READ ) ) ){
 				// Resolve the link.
-				if( SUCCEEDED( hRes = pIShellLink->Resolve(hwnd, SLR_ANY_MATCH ) ) ){
+				if( SUCCEEDED( pShellLink->Resolve( hWnd, SLR_ANY_MATCH ) ) ){
 					// Get the path to the link target.
-					WCHAR szGotPath[MAX_PATH];
-					szGotPath[0] = L'\0';
-					if( SUCCEEDED( hRes = pIShellLink->GetPath(szGotPath, MAX_PATH, &wfd, SLGP_SHORTPATH ) ) ){
-						// Get the description of the target.
-						WCHAR szDescription[MAX_PATH];
-						if( SUCCEEDED(hRes = pIShellLink->GetDescription(szDescription, MAX_PATH ) ) ){
-							if( L'\0' != szGotPath[0] ){
-								/* 正常終了 */
-								wcscpy_s( lpszPath, _MAX_PATH, szGotPath );
-								bRes = TRUE;
-							}
-						}
+					if( SUCCEEDED( pShellLink->GetPath( szResolvedPath, _MAX_PATH, NULL, 0 ) ) ){
+						return TRUE;
 					}
 				}
 			}
 		}
 	}
-	// Release the pointer to the IPersistFile interface.
-	if( NULL != pIPersistFile ){
-		pIPersistFile->Release();
-		pIPersistFile = NULL;
-	}
-	// Release the pointer to the IShellLink interface.
-	if( NULL != pIShellLink ){
-		pIShellLink->Release();
-		pIShellLink = NULL;
-	}
-// 2009.01.08 ryoji CoUninitializeを削除（WinMainにOleUninitialize追加）
-	return bRes;
+	return FALSE;
 }
 
 /*! ヘルプファイルのフルパスを返す

@@ -772,27 +772,36 @@ std::wstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
 	}
 }
 
-void CSakuraEnvironment::ResolvePath(WCHAR* pszPath)
+/*!
+ * ショートカットの解決とロングファイル名へ変換を行う。
+ */
+bool CSakuraEnvironment::ResolvePath(WCHAR* pszPath)
 {
-	// pszPath -> pSrc
-	WCHAR* pSrc = pszPath;
-
-	// ショートカット(.lnk)の解決: pSrc -> szBuf -> pSrc
-	WCHAR szBuf[_MAX_PATH];
-	if( ResolveShortcutLink( NULL, pSrc, szBuf ) ){
-		pSrc = szBuf;
+	// 絶対パスに変換する
+	WCHAR szAbsPath[_MAX_PATH];
+	if( !::_wfullpath( szAbsPath, pszPath, _countof(szAbsPath) ) ){
+		return false;
 	}
 
-	// ロングファイル名を取得する: pSrc -> szBuf2 -> pSrc
-	WCHAR szBuf2[_MAX_PATH];
-	if( ::GetLongFileName( pSrc, szBuf2 ) ){
-		pSrc = szBuf2;
+	// パスの末尾がショートカットの拡張子(.lnk)と一致する場合
+	const auto cchAbsPath = ::wcsnlen( szAbsPath, _countof(szAbsPath) );
+	if( cchAbsPath > 4 && 0 == wcsnicmp_literal( &szAbsPath[cchAbsPath - 4], L".lnk" ) ){
+		// ショートカット(.lnk)の解決
+		if( !ResolveShortcutLink( NULL, szAbsPath, pszPath ) ){
+			return false;
+		}
+		::wcscpy_s( szAbsPath, pszPath );
 	}
 
-	// pSrc -> pszPath
-	if(pSrc != pszPath){
-		wcscpy_s(pszPath, _MAX_PATH, pSrc);
+	// ロングファイル名に変換する
+	auto cchLongPath = ::GetLongPathNameW( szAbsPath, pszPath, _MAX_PATH );
+	if( _MAX_PATH <= cchLongPath ){
+		return false;
+	}else if( cchLongPath == 0 && 0 != ::wcscmp( pszPath, szAbsPath ) ){
+		::wcscpy_s( pszPath, _MAX_PATH, szAbsPath );
 	}
+
+	return true;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

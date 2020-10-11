@@ -1044,14 +1044,74 @@ TEST(CCommandLine, LinkFiles)
 }
 
 /*!
+ * @brief ショートカット(.lnk)のパス解決失敗に関するテスト
+ */
+TEST(CCommandLine, FailToResolveLink)
+{
+	// 埋め文字用に超長い文字列を作成する
+	std::wstring strPath(_MAX_PATH, L'a');
+
+	// カレントディレクトリに限界超のファイル名のファイルを作る
+	WCHAR szAbsPath[_MAX_PATH + 1]{ 0 };
+	::_snwprintf_s(szAbsPath, _countof(szAbsPath) - 4, _TRUNCATE, L"%s%s", ToFullPath(L"test"), strPath.c_str());
+	::wcscat_s(szAbsPath, L".txt");
+
+	// _MAX_PATH制限突破用にプレフィックスを付けた絶対パスを用意する
+	std::wstring absPath(L"\\\\?\\");
+	absPath += szAbsPath;
+
+	// ファイルパスにテキトーなテキストファイルを作成する
+	{
+		std::wofstream local_file( L"test.txt" );
+		local_file << szAbsPath << std::endl;
+	}
+
+	// 作ったファイルを移動する
+	::MoveFileW( L"test.txt", absPath.c_str() );
+
+	// カレントディレクトリに限界長のファイル名のショートカットを作る
+	WCHAR szAbsLinkPath[_MAX_PATH - 1]{ 0 };
+	::_snwprintf_s(szAbsLinkPath, _countof(szAbsLinkPath) - 4, _TRUNCATE, L"%s%s", ToFullPath(L"test"), strPath.c_str());
+	::wcscat_s(szAbsLinkPath, L".lnk");
+
+	// ファイル名を8.3形式に置換する(プレフィックスは外す)
+	WCHAR szShortPath[_MAX_PATH];
+	::GetShortPathNameW(absPath.c_str(), szShortPath, _countof(szShortPath));
+	::wcscpy_s(szShortPath, &szShortPath[4]);
+
+	// ショートカットをファイルと関連付ける
+	EXPECT_TRUE(CreateShortcutLink(szAbsLinkPath, szShortPath));
+
+	CNativeW cmTestCmd;
+	cmTestCmd.AppendStringF(L"%s test.txt", szAbsLinkPath);
+	CCommandLineWrapper cCommandLine;
+	cCommandLine.ParseCommandLine(cmTestCmd.GetStringPtr(), false);
+	EXPECT_STREQ(ToFullPath(L"test.txt"), cCommandLine.GetOpenFile());
+	EXPECT_STREQ(NULL, cCommandLine.GetFileName(0));
+	EXPECT_EQ(0, cCommandLine.GetFileNum());
+
+	// 削除するためにファイルを移動する
+	::MoveFileW( absPath.c_str(), L"test.txt" );
+
+	// テストが終わったら要らんので削除してしまう
+	std::filesystem::remove( szAbsLinkPath );
+	std::filesystem::remove( L"test.txt" );
+}
+
+/*!
  * @brief 長過ぎるファイルパスに関する仕様
  * @remark _MAX_PATH - 1までのファイル名は利用できる
  */
-TEST(CCommandLine, QuotedMaxFilePath)
+TEST(CCommandLine, QuotedMaxAbsFilePath)
 {
+	// 埋め文字用に超長い文字列を作成する
 	std::wstring strPath(_MAX_PATH, L'a');
+
+	// カレントディレクトリに限界長のファイル名のファイルを作る
 	WCHAR szPath[_MAX_PATH]{ 0 };
-	::_snwprintf_s(szPath, _TRUNCATE, L"C:\\%s", strPath.c_str());
+	::_snwprintf_s(szPath, _MAX_PATH - 4, _TRUNCATE, L"%s%s", ToFullPath(L"test"), strPath.c_str());
+	::wcscat_s(szPath, L".txt");
+
 	CNativeW cmTestCmd;
 	cmTestCmd.AppendStringF(L"\"%s\" test.txt", szPath);
 	CCommandLineWrapper cCommandLine;
@@ -1065,11 +1125,16 @@ TEST(CCommandLine, QuotedMaxFilePath)
  * @brief 長過ぎるファイルパスに関する仕様
  * @remark _MAX_PATH - 1までのファイル名は利用できる
  */
-TEST(CCommandLine, UnquotedMaxFilePath)
+TEST(CCommandLine, UnquotedMaxAbsFilePath)
 {
+	// 埋め文字用に超長い文字列を作成する
 	std::wstring strPath(_MAX_PATH, L'a');
+
+	// カレントディレクトリに限界長のファイル名のファイルを作る
 	WCHAR szPath[_MAX_PATH]{ 0 };
-	::_snwprintf_s(szPath, _TRUNCATE, L"C:\\%s", strPath.c_str());
+	::_snwprintf_s(szPath, _MAX_PATH - 4, _TRUNCATE, L"%s%s", ToFullPath(L"test"), strPath.c_str());
+	::wcscat_s(szPath, L".txt");
+
 	CNativeW cmTestCmd;
 	cmTestCmd.AppendStringF(L"%s test.txt", szPath);
 	CCommandLineWrapper cCommandLine;
@@ -1102,6 +1167,38 @@ TEST(CCommandLine, QuotedTooLongFilePath)
 TEST(CCommandLine, UnquotedTooLongFilePath)
 {
 	std::wstring strPath(_MAX_PATH, L'a');
+	CNativeW cmTestCmd;
+	cmTestCmd.AppendStringF(L"%s test.txt", strPath.c_str());
+	CCommandLineWrapper cCommandLine;
+	cCommandLine.ParseCommandLine(cmTestCmd.GetStringPtr(), false);
+	EXPECT_STREQ(ToFullPath(L"test.txt"), cCommandLine.GetOpenFile());
+	EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
+	EXPECT_EQ(0, cCommandLine.GetFileNum());
+}
+
+/*!
+ * @brief 長過ぎるファイルパスに関する仕様
+ * @remark _MAX_PATH - 1を超えるファイル名は利用できない
+ */
+TEST(CCommandLine, QuotedTooLongFileName)
+{
+	std::wstring strPath(_MAX_PATH - 1, L'a');
+	CNativeW cmTestCmd;
+	cmTestCmd.AppendStringF(L"\"%s\" test.txt", strPath.c_str());
+	CCommandLineWrapper cCommandLine;
+	cCommandLine.ParseCommandLine(cmTestCmd.GetStringPtr(), false);
+	EXPECT_STREQ(ToFullPath(L"test.txt"), cCommandLine.GetOpenFile());
+	EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
+	EXPECT_EQ(0, cCommandLine.GetFileNum());
+}
+
+/*!
+ * @brief 長過ぎるファイルパスに関する仕様
+ * @remark _MAX_PATH - 1を超えるファイル名は利用できない
+ */
+TEST(CCommandLine, UnquotedTooLongFileName)
+{
+	std::wstring strPath(_MAX_PATH - 1, L'a');
 	CNativeW cmTestCmd;
 	cmTestCmd.AppendStringF(L"%s test.txt", strPath.c_str());
 	CCommandLineWrapper cCommandLine;
