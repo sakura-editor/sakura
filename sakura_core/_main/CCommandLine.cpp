@@ -281,7 +281,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 		// 先頭部分を空白を含むパスとして切り出せる場合は切り出す。
 		WCHAR szPath[_MAX_PATH]{ 0 };
 		for( size_t i = 0; i < _countof( szPath ); ++i ){
-			const WCHAR& chSrc = pszCmdLineWork[i];
+			const WCHAR chSrc = pszCmdLineWork[i];
 			const bool isSpace = chSrc == L' ';
 			WCHAR& chDst = szPath[i];
 			chDst = chSrc;
