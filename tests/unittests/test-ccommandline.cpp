@@ -32,6 +32,11 @@
 #include <Windows.h>
 
 #include "_main/CCommandLine.h"
+#include "debug/debug2.h"
+
+#include <wrl.h>
+#include <ShlObj.h>
+#include <Shlwapi.h>
 
 #include <cstdlib>
 #include <filesystem>
@@ -60,6 +65,40 @@ LPCWSTR ToFullPath(LPCWSTR szFilename)
 	static WCHAR szPath[_MAX_PATH]{ 0 };
 	::_wfullpath( szPath, szFilename, _countof(szPath) );
 	return szPath;
+}
+
+/*!
+ * ショートカット(.lnk)の作成
+ *
+ * @remark この関数はテストで利用することのみを想定した簡易実装になっているので、本体に移植するなら例外処理を実装する必要があります。
+ */
+bool CreateShortcutLink(
+	LPCWSTR pszAbsLinkPath,			//!< [in] ショートカット(.lnk)のフルパス
+	LPCWSTR pszPathToBeLinked		//!< [in] リンク先ファイルのフルパス
+)
+{
+	using namespace Microsoft::WRL;
+
+	// 引数の前提条件(IShellLinkは_MAX_PATH以上のパスをサポートしません。)
+	assert(pszAbsLinkPath && pszAbsLinkPath[0] && _MAX_PATH != ::wcsnlen(pszAbsLinkPath, _MAX_PATH));
+	assert(pszPathToBeLinked && pszPathToBeLinked[0] && _MAX_PATH != ::wcsnlen(pszPathToBeLinked, _MAX_PATH));
+
+	ComPtr<IShellLink> pShellLink;
+	// Get a pointer to the IShellLink interface.
+	if( SUCCEEDED( ::CoCreateInstance( CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pShellLink) ) ) ){
+		// Set the path to the link target.
+		if( SUCCEEDED( pShellLink->SetPath( pszPathToBeLinked ) ) ){
+			ComPtr<IPersistFile> pPersistFile;
+			// Get a pointer to the IPersistFile interface.
+			if( SUCCEEDED( pShellLink->QueryInterface( IID_PPV_ARGS(&pPersistFile) ) ) ){
+				// Save the shortcut.
+				if( SUCCEEDED( pPersistFile->Save( pszAbsLinkPath, TRUE ) ) ){
+					return true;
+				}
+			}
+		}
+	}
+	return false;
 }
 
 /*!
@@ -950,6 +989,58 @@ TEST(CCommandLine, UnquotedFileIncludesSpacesAtBeginOfCommandLine)
 	std::filesystem::remove( _T(TESTLOCAL_FILE_NAME) );
 
 #undef TESTLOCAL_FILE_NAME
+}
+
+/*!
+ * @brief ショートカット(.lnk)のパス解決に関する仕様
+ */
+TEST(CCommandLine, LinkFiles)
+{
+	// 埋め文字用に超長い文字列を作成する
+	std::wstring strPath(_MAX_PATH, L'a');
+
+	// カレントディレクトリに限界長のファイル名のファイルを作る
+	WCHAR szAbsPath[_MAX_PATH]{ 0 };
+	::_snwprintf_s(szAbsPath, _MAX_PATH - 4, _TRUNCATE, L"%s%s", ToFullPath(L"test"), strPath.c_str());
+	::wcscat_s(szAbsPath, L".txt");
+
+	// ファイルパスが既に存在していたら削除して作り直す
+	if( fexist( szAbsPath ) ){
+		std::filesystem::remove( szAbsPath );
+	}
+
+	// ファイルパスにテキトーなテキストファイルを作成する
+	{
+		std::wofstream local_file( szAbsPath );
+		local_file << szAbsPath << std::endl;
+	}
+
+	// カレントディレクトリに限界長のファイル名のショートカットを作る
+	WCHAR szAbsLinkPath[_MAX_PATH]{ 0 };
+	::_snwprintf_s(szAbsLinkPath, _countof(szAbsLinkPath) - 4, _TRUNCATE, L"%s%s", ToFullPath(L"test"), strPath.c_str());
+	::wcscat_s(szAbsLinkPath, L".lnk");
+
+	// ローカルショートカットファイル名を取得する
+	LPCWSTR pszLinkPath = ::PathFindFileName( szAbsLinkPath );
+
+	// ショートカットをファイルと関連付ける
+	EXPECT_TRUE(CreateShortcutLink(szAbsLinkPath, szAbsPath));
+
+	// ショートカットのファイル名を8.3形式に置換する
+	WCHAR szShortLinkPath[_MAX_PATH];
+	::GetShortPathNameW( pszLinkPath, szShortLinkPath, _countof(szShortLinkPath) );
+
+	CNativeW cmTestCmd;
+	cmTestCmd.AppendStringF(L"\"%s\" test.txt", szShortLinkPath);
+	CCommandLineWrapper cCommandLine;
+	cCommandLine.ParseCommandLine(cmTestCmd.GetStringPtr(), false);
+	EXPECT_STREQ(szAbsPath, cCommandLine.GetOpenFile());
+	EXPECT_STREQ(ToFullPath(L"test.txt"), cCommandLine.GetFileName(0));
+	EXPECT_EQ(1, cCommandLine.GetFileNum());
+
+	// テストが終わったら要らんので削除してしまう
+	std::filesystem::remove( szAbsLinkPath );
+	std::filesystem::remove( szAbsPath );
 }
 
 /*!
