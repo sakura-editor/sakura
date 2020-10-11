@@ -1275,7 +1275,7 @@ BEGIN
     EDITTEXT        IDC_EDIT_nDropFileNumMax, 123, 124, 25, 12, ES_AUTOHSCROLL
     CONTROL         "Spin1", IDC_SPIN_nDropFileNumMax, "msctls_updown32", UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS, 179, 124, 9, 12
     LTEXT           "個までとする", IDC_LABEL_AUTOSAVE4, 151, 126, 41, 10, NOT WS_GROUP
-    LTEXT           "←注：ドロップファイルは1つのみ有効", IDC_LANEL_NOTE, 161, 111, 106, 10
+    LTEXT           "←注：ドロップファイルは1つのみ有効", IDC_LANEL_NOTE, 161, 111, 116, 10
     CONTROL         "ファイルを開いたときにカーソル位置を復元する(&C)", IDC_CHECK_RestoreCurPosition, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 8, 140, 174, 10
     CONTROL         "ファイルを開いたときにブックマークを復元する(&B)", IDC_CHECK_RestoreBookmarks, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 8, 155, 214, 10
     CONTROL         "ファイルを開いたときにMIMEエンコードされたヘッダをデコードする(&D)", IDC_CHECK_AutoMIMEDecode, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 8, 169, 231, 10
