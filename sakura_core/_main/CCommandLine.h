@@ -91,7 +91,8 @@ public:
 	ECodeType GetDocCode() const noexcept { return m_fi.m_nCharCode; }
 	void ParseKanjiCodeFromFileName( LPWSTR pszExeFileName, int cchExeFileName );
 	void ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse = true );
-
+	const std::vector<std::wstring>& GetErrorMessages() const { return m_vErrorMessages; }
+	
 // member valiables
 private:
 	bool		m_bGrepMode;		//! [out] TRUE: Grep Mode
@@ -109,5 +110,6 @@ private:
 	CNativeW	m_cmMacroType;		//! [out] マクロ種別
 	CNativeW	m_cmProfile;		//! プロファイル名
 	std::vector<std::wstring> m_vFiles;	//!< ファイル名(複数)
+	std::vector<std::wstring> m_vErrorMessages;	//!< エラーメッセージ(複数)
 };
 #endif /* SAKURA_CCOMMANDLINE_DF7E2E03_76E1_458C_82AC_7C485EECF677_H_ */

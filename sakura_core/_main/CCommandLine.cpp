@@ -23,12 +23,35 @@
 #include <tchar.h>
 #include <io.h>
 #include <string.h>
+#include <memory>
 #include "debug/CRunningTimer.h"
 #include "charset/charcode.h"  // 2006.06.28 rastiv
 #include "io/CTextStream.h"
 #include "util/shell.h"
 #include "util/file.h"
 #include "env/CSakuraEnvironment.h"
+
+//! ファイル名に使えない文字が含まれるエラーのメッセージを取得する
+inline std::wstring GetFilePathIncludeInvalidCharErrorMessage( LPCWSTR pszPath )
+{
+	CNativeW cmText;
+
+	// L"%ls\r\n上記のファイル名は不正です。ファイル名に \\ / : * ? "" < > | の文字は使えません。 "
+	ErrorMessage( NULL, LS(STR_CMDLINE_PARSECMD1), pszPath );
+
+	return std::wstring( cmText.GetStringPtr(), cmText.GetStringLength() );
+}
+
+//! ファイル名が長すぎるエラーのメッセージを取得する
+inline std::wstring GetFilePathTooLongErrorMessage( LPCWSTR pszPath )
+{
+	CNativeW cmText;
+
+	// L"%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
+	cmText.AppendStringF( LS(STR_ERR_FILEPATH_TOO_LONG), pszPath );
+
+	return std::wstring( cmText.GetStringPtr(), cmText.GetStringLength() );
+}
 
 /* コマンドラインオプション用定数 */
 #define CMDLINEOPT_R			1002 //!< ビューモード
@@ -139,7 +162,7 @@ int CCommandLine::CheckCommandLine(
 	//	引数がある場合を先に確認
 	for( ptr = _COptWithA; ptr->opt != NULL; ptr++ )
 	{
-		if( len >= ptr->len &&	//	長さが足りているか
+		if( len > ptr->len &&	//	長さが足りているか
 			( str[ptr->len] == '=' || str[ptr->len] == ':' ) &&	//	オプション部分の長さチェック
 			wmemicmp( str, ptr->opt, ptr->len ) == 0 )	//	文字列の比較	// 2006.10.25 ryoji memcmp() -> _memicmp()
 		{
@@ -244,40 +267,46 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CCommandLine::Parse" );
 
-	WCHAR	szPath[_MAX_PATH];
-	bool	bFind = false;				// ファイル名発見フラグ
-	bool	bParseOptDisabled = false;	// 2007.09.09 genta オプション解析を行わなず，ファイル名として扱う
-	int		nPos;
-	int		i = 0;
-	if( pszCmdLineSrc[0] != L'-' ){
-		for( i = 0; i < _countof( szPath ); ++i ){
-			if( pszCmdLineSrc[i] == L' ' || pszCmdLineSrc[i] == L'\0' ){
-				/* ファイルの存在をチェック */
-				szPath[i] = L'\0';	// 終端文字
+	const int nCmdLineWorkLen = static_cast<int>( ::wcsnlen( pszCmdLineSrc, INT_MAX ) );
+
+	auto cmdLineWork = std::make_unique<WCHAR[]>( nCmdLineWorkLen + 1 );
+	LPWSTR pszCmdLineWork = cmdLineWork.get();
+	::wcscpy_s( pszCmdLineWork, nCmdLineWorkLen + 1, pszCmdLineSrc );
+
+	// コマンドラインの解析を開始する位置(先頭部分をスキップする場合がある)
+	int nPos = 0;
+
+	// コマンドラインの先頭が '-' で始まっていない場合
+	if( pszCmdLineWork[0] != L'-' ){
+		// 先頭部分を空白を含むパスとして切り出せる場合は切り出す。
+		WCHAR szPath[_MAX_PATH]{ 0 };
+		for( size_t i = 0; i < _countof( szPath ); ++i ){
+			const WCHAR chSrc = pszCmdLineWork[i];
+			const bool isSpace = chSrc == L' ';
+			WCHAR& chDst = szPath[i];
+			chDst = chSrc;
+			if( isSpace ) chDst = L'\0';
+			if( chDst == L'\0' ){
 				if( fexist(szPath) ){
-					bFind = true;
-					break;
+					if( !CSakuraEnvironment::ResolvePath( szPath ) ){
+						m_vErrorMessages.emplace_back( GetFilePathTooLongErrorMessage( szPath ) );
+					}else{
+						::wcscpy_s( m_fi.m_szPath, szPath );
+						nPos = static_cast<int>(i + 1); //残りの解析の開始位置をずらす
+						break;
+					}
 				}
-				if( pszCmdLineSrc[i] == L'\0' ){
-					break;
-				}
+				if( isSpace ) chDst = chSrc;
 			}
-			szPath[i] = pszCmdLineSrc[i];
 		}
 	}
-	if( bFind ){
-		CSakuraEnvironment::ResolvePath(szPath);
-		wcscpy( m_fi.m_szPath, szPath );	/* ファイル名 */
-		nPos = i + 1;
-	}else{
-		m_fi.m_szPath[0] = L'\0';
-		nPos = 0;
-	}
 
-	CNativeW cmResponseFile = L"";
-	LPWSTR pszCmdLineWork = new WCHAR[lstrlen( pszCmdLineSrc ) + 1];
-	wcscpy( pszCmdLineWork, pszCmdLineSrc );
-	int nCmdLineWorkLen = lstrlen( pszCmdLineWork );
+	// オプション解析停止フラグを検出したかどうか
+	bool bParseOptDisabled = false;
+
+	// レスポンスファイルのファイル名(オプション指定を解析すると値が入る)
+	CNativeW cmResponseFile;
+
 	LPWSTR pszToken = my_strtok<WCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, L" " );
 	while( pszToken != NULL )
 	{
@@ -286,9 +315,10 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 		//	2007.09.09 genta オプション判定ルール変更．オプション解析停止と""で囲まれたオプションを考慮
 		if( ( bParseOptDisabled ||
 			! (pszToken[0] == '-' || pszToken[0] == '"' && pszToken[1] == '-' ) )){
+			// ファイルパス解析用バッファ
+			WCHAR szPath[_MAX_PATH]{ 0 };
 
 			if( pszToken[0] == L'\"' ){
-				CNativeW cmWork;
 				//	Nov. 3, 2005 genta
 				//	末尾のクォーテーションが無い場合を考慮して，
 				//	最後がダブルクォートの場合のみ取り除く
@@ -298,54 +328,48 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				//	引数がダブルクォート1つの場合に，その1つを最初と最後の1つずつと
 				//	見間違えて，インデックス-1にアクセスしてしまうのを防ぐために長さをチェックする
 				//	ファイル名の後ろにあるOptionを解析するため，ループは継続
-				int len = lstrlen( pszToken + 1 );
-				if( len > 0 ){
-					cmWork.SetString( &pszToken[1], len - ( pszToken[len] == L'"' ? 1 : 0 ));
-					cmWork.Replace( L"\"\"", L"\"" );
-					wcscpy_s( szPath, _countof(szPath), cmWork.GetStringPtr() );	/* ファイル名 */
+				const size_t nTokenLen = ::wcsnlen( &pszToken[1], INT_MAX );
+				CNativeW cmWork;
+				cmWork.SetString( &pszToken[1], (int) nTokenLen - ( nTokenLen != 0 && pszToken[nTokenLen] == L'\"' ? 1 : 0 ) );
+				cmWork.Replace( L"\"\"", L"\"" );
+				if( _countof(szPath) == ::wcsnlen( cmWork.GetStringPtr(), _countof(szPath) ) ){
+					m_vErrorMessages.emplace_back( GetFilePathTooLongErrorMessage( cmWork.GetStringPtr() ) );
+				}else{
+					::wcscpy_s( szPath, cmWork.GetStringPtr() );
 				}
-				else {
-					szPath[0] = L'\0';
+			}else{
+				if( _countof(szPath) == ::wcsnlen( pszToken, _countof(szPath) ) ){
+					m_vErrorMessages.emplace_back( GetFilePathTooLongErrorMessage( pszToken ) );
+				}else{
+					::wcscpy_s( szPath, pszToken );
 				}
-			}
-			else{
-				wcscpy_s( szPath, _countof(szPath), pszToken );		/* ファイル名 */
 			}
 
 			// Nov. 11, 2005 susu
 			// 不正なファイル名のままだとファイル保存時ダイアログが出なくなるので
 			// 簡単なファイルチェックを行うように修正
-			if (wcsncmp_literal(szPath, L"file:///")==0) {
-				wcscpy(szPath, &(szPath[8]));
-			}
-			int len = wcslen(szPath);
-			for (int i = 0; i < len ; ) {
-				if ( !TCODE::IsValidFilenameChar(szPath[i]) ){
-					WCHAR msg_str[_MAX_PATH + 1];
-					swprintf(
-						msg_str, _countof(msg_str),
-						LS(STR_CMDLINE_PARSECMD1),
-						szPath
-					);
-					MessageBox( NULL, msg_str, L"FileNameError", MB_OK);
-					szPath[0] = L'\0';
-					break;
-				}
-				int nChars = t_max(1, int(CNativeW::GetCharNext( szPath, len, szPath + i ) - (szPath + i)));
-				i += nChars;
+			if( 0 == wcsncmp_literal( szPath, L"file:///" ) ){
+				::wcscpy_s( szPath, &szPath[8] );
 			}
 
-			if (szPath[0] != L'\0') {
-				CSakuraEnvironment::ResolvePath(szPath);
-				if (m_fi.m_szPath[0] == L'\0') {
-					wcscpy(m_fi.m_szPath, szPath );
-				}
-				else {
+			// ファイル名に使えない文字
+			constexpr const wchar_t invalidFilenameChars[] = L"<>?\"|*";
+
+			if( ::wcscspn( szPath, invalidFilenameChars ) < ::wcsnlen( szPath, _countof(szPath) ) ){
+				m_vErrorMessages.emplace_back( GetFilePathIncludeInvalidCharErrorMessage( pszToken ) );
+				::wcscpy_s( szPath, L"" ); // クリアする
+			}
+
+			if( szPath[0] != L'\0' ){
+				if( !CSakuraEnvironment::ResolvePath( szPath ) ){
+					m_vErrorMessages.emplace_back( GetFilePathTooLongErrorMessage( szPath ) );
+				}else if( m_fi.m_szPath[0] == L'\0' ){
+					::wcscpy_s( m_fi.m_szPath, szPath );
+				}else{
 					m_vFiles.push_back( szPath );
 				}
 			}
-		}
-		else{
+		}else{
 			if( *pszToken == '"' ){
 				++pszToken;	// 2007.09.09 genta 先頭の"はスキップ
 				int tokenlen = wcslen( pszToken );
@@ -388,12 +412,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				m_fi.m_nWindowOriginY = AtoiOptionInt( arg );
 				break;
 			case CMDLINEOPT_TYPE:	//	TYPE
-				//	Mar. 7, 2002 genta
-				//	ファイルタイプの強制指定
-				{
-					wcsncpy( m_fi.m_szDocType, arg, MAX_DOCTYPE_LEN );
-					m_fi.m_szDocType[ nArgLen < MAX_DOCTYPE_LEN ? nArgLen : MAX_DOCTYPE_LEN ] = L'\0';
-				}
+				::wcsncpy_s( m_fi.m_szDocType, arg, _TRUNCATE );
 				break;
 			case CMDLINEOPT_CODE:	//	CODE
 				m_fi.m_nCharCode = (ECodeType)AtoiOptionInt( arg );
@@ -419,22 +438,22 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				break;
 			case CMDLINEOPT_GKEY:	//	GKEY
 				//	前後の""を取り除く
-				m_gi.cmGrepKey.SetString( arg,  lstrlen( arg ) );
+				m_gi.cmGrepKey.SetString( arg, nArgLen );
 				m_gi.cmGrepKey.Replace( L"\"\"", L"\"" );
 				break;
 			case CMDLINEOPT_GREPR:	//	GREPR
 				//	前後の""を取り除く
-				m_gi.cmGrepRep.SetString( arg,  lstrlen( arg ) );
+				m_gi.cmGrepRep.SetString( arg, nArgLen );
 				m_gi.cmGrepRep.Replace( L"\"\"", L"\"" );
 				m_gi.bGrepReplace = true;
 				break;
 			case CMDLINEOPT_GFILE:	//	GFILE
 				//	前後の""を取り除く
-				m_gi.cmGrepFile.SetString( arg,  lstrlen( arg ) );
+				m_gi.cmGrepFile.SetString( arg, nArgLen );
 				m_gi.cmGrepFile.Replace( L"\"\"", L"\"" );
 				break;
 			case CMDLINEOPT_GFOLDER:	//	GFOLDER
-				m_gi.cmGrepFolder.SetString( arg,  lstrlen( arg ) );
+				m_gi.cmGrepFolder.SetString( arg, nArgLen );
 				m_gi.cmGrepFolder.Replace( L"\"\"", L"\"" );
 				break;
 			case CMDLINEOPT_GOPT:	//	GOPT
@@ -507,14 +526,14 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				bParseOptDisabled = true;
 				break;
 			case CMDLINEOPT_M:			// 2009.06.14 syat 追加
-				m_cmMacro.SetString( arg );
+				m_cmMacro.SetString( arg, nArgLen );
 				m_cmMacro.Replace( L"\"\"", L"\"" );
 				break;
 			case CMDLINEOPT_MTYPE:		// 2009.06.14 syat 追加
-				m_cmMacroType.SetString( arg );
+				m_cmMacroType.SetString( arg, nArgLen );
 				break;
 			case CMDLINEOPT_PROF:		// 2013.12.20 Moca 追加
-				m_cmProfile.SetString( arg );
+				m_cmProfile.SetString( arg, nArgLen );
 				m_bSetProfile = true;
 				break;
 			case CMDLINEOPT_PROFMGR:
@@ -524,7 +543,6 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 		}
 		pszToken = my_strtok<WCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, L" " );
 	}
-	delete [] pszCmdLineWork;
 
 	// レスポンスファイル解析
 	if( cmResponseFile.GetStringLength() && bResponse ){

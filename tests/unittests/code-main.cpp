@@ -124,5 +124,15 @@ int main(int argc, char **argv) {
 	// WinMainを起動しない場合、標準のgtest_main同様の処理を実行する
 	printf("Running main() from %s\n", __FILE__);
 	testing::InitGoogleTest(&argc, argv);
-	return RUN_ALL_TESTS();
+
+	// OLEフレームワークを初期化する
+	::OleInitialize( NULL );
+
+	// 標準のgtest実行処理を呼び出す
+	const auto ret = RUN_ALL_TESTS();
+
+	// OLEフレームワークを解放する
+	::OleUninitialize();
+
+	return ret;
 }
