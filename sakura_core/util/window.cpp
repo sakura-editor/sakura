@@ -381,15 +381,16 @@ void SetFontRecursive( HWND hwnd, HFONT hFont )
 }
 
 /*!
-	ダイアログボックス用のフォントを設定(日本語以外では何もしない)
+	ダイアログボックス用のフォントを設定
 	@param[in]	hwnd		設定対象ダイアログボックスのウィンドウハンドル
+	@param[in]	force		強制設定有無(TRUE:必ず設定 FALSE:日本語の場合は設定しそれ以外では設定しない)
 	@return		ダイアログボックスに設定されたフォントハンドル(破棄禁止)
 */
-HFONT UpdateDialogFont( HWND hwnd )
+HFONT UpdateDialogFont( HWND hwnd, BOOL force )
 {
 	HFONT hFontDialog = (HFONT)::SendMessageAny( hwnd, WM_GETFONT, 0, (LPARAM)NULL );
 
-	if( wcsncmp_literal( CSelectLang::getDefaultLangString(), _T("Japanese") ) != 0 ){
+	if( !force && wcsncmp_literal( CSelectLang::getDefaultLangString(), _T("Japanese") ) != 0 ){
 		return hFontDialog;
 	}
 

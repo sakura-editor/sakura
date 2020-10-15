@@ -192,6 +192,6 @@ private:
 	HFONT m_hFont;
 };
 
-HFONT UpdateDialogFont( HWND hwnd );
+HFONT UpdateDialogFont( HWND hwnd, BOOL force = FALSE );
 
 #endif /* SAKURA_WINDOW_A0833476_5E32_46BE_87B6_ECD55F10D34A_H_ */
