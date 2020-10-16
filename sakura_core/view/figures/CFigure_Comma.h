@@ -33,10 +33,7 @@ class CFigure_Comma final : public CFigureSpace{
 public:
 	//traits
 	bool Match(const wchar_t* pText, int nTextLen) const override;
-	bool Disp(void) const override
-	{
-		return true;
-	}
+	bool Disp(void) const override;
 
 	//action
 	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const override;
