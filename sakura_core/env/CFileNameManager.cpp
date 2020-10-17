@@ -555,48 +555,17 @@ void CFileNameManager::GetIniFileNameDirect( LPWSTR pszPrivateIniFile, LPWSTR ps
 	iniファイル名の取得
 
 	共有データからsakura.iniの格納フォルダを取得し、フルパス名を返す
-	（共有データ未設定のときは共有データ設定を行う）
-
-	@param[out] pszIniFileName iniファイル名（フルパス）
-	@param[in] bRead true: 読み込み / false: 書き込み
+	
+	@param[out] pszIniFileName iniファイル名（フルパス）。予め_MAX_PATHのバッファを用意しておくこと
 
 	@author ryoji
 	@date 2007.05.19 ryoji 新規作成
 */
-void CFileNameManager::GetIniFileName( LPWSTR pszIniFileName, LPCWSTR pszProfName, BOOL bRead/*=FALSE*/ )
+void CFileNameManager::GetIniFileName( LPWSTR pszIniFileName )
 {
-	auto &iniFolder = m_pShareData->m_sFileNameManagement.m_IniFolder;
-	if( !iniFolder.m_bInit ){
-		iniFolder.m_bInit = true;			// 初期化済フラグ
-		iniFolder.m_bReadPrivate = false;	// マルチユーザ用iniからの読み出しフラグ
-		iniFolder.m_bWritePrivate = false;	// マルチユーザ用iniへの書き込みフラグ
-
-		GetIniFileNameDirect( iniFolder.m_szPrivateIniFile, iniFolder.m_szIniFile, pszProfName );
-		if( iniFolder.m_szPrivateIniFile[0] != L'\0' ){
-			iniFolder.m_bReadPrivate = true;
-			iniFolder.m_bWritePrivate = true;
-
-			// マルチユーザ用のiniフォルダを作成しておく
-			{
-				WCHAR szPath[_MAX_PATH];
-				WCHAR szDrive[_MAX_DRIVE];
-				WCHAR szDir[_MAX_DIR];
-				_wsplitpath( iniFolder.m_szPrivateIniFile, szDrive, szDir, NULL, NULL );
-				auto_snprintf_s( szPath, _MAX_PATH - 1, L"%s\\%s", szDrive, szDir );
-				MakeSureDirectoryPathExistsW( szPath );
-			}
-		}else{
-			if( pszProfName[0] != L'\0' ){
-				WCHAR szPath[_MAX_PATH];
-				WCHAR szDrive[_MAX_DRIVE];
-				WCHAR szDir[_MAX_DIR];
-				_wsplitpath( iniFolder.m_szIniFile, szDrive, szDir, NULL, NULL );
-				auto_snprintf_s( szPath, _MAX_PATH - 1, L"%s\\%s", szDrive, szDir );
-				MakeSureDirectoryPathExistsW( szPath );
-			}
-		}
-	}
-
-	bool bPrivate = bRead ? iniFolder.m_bReadPrivate : iniFolder.m_bWritePrivate;
-	::lstrcpy( pszIniFileName, bPrivate ? iniFolder.m_szPrivateIniFile : iniFolder.m_szIniFile );
+	const auto &iniFolder = m_pShareData->m_sFileNameManagement.m_IniFolder;
+	const bool bPrivate = iniFolder.m_szPrivateIniFile[0] != L'\0';
+	const auto& szPrivateIniFile = iniFolder.m_szPrivateIniFile;
+	const auto& szIniFile = iniFolder.m_szIniFile;
+	::wcscpy_s( pszIniFileName, _MAX_PATH, bPrivate ? szPrivateIniFile : szIniFile );
 }

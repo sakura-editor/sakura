@@ -25,6 +25,9 @@
 
 #include "StdAfx.h"
 #include "env/CShareData.h"
+
+#include <Shlwapi.h>
+
 #include "env/DLLSHAREDATA.h"
 #include "env/CShareData_IO.h"
 #include "env/CSakuraEnvironment.h"
@@ -148,7 +151,25 @@ bool CShareData::InitShareData()
 
 		// 2007.05.19 ryoji 実行ファイルフォルダ->設定ファイルフォルダに変更
 		WCHAR	szIniFolder[_MAX_PATH];
-		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bInit = false;
+		{
+			// INI/EXE基準のINIファイルパスを取得する
+			const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
+			auto& iniFolder = m_pShareData->m_sFileNameManagement.m_IniFolder;
+			auto& szPrivateIniFile = iniFolder.m_szPrivateIniFile;
+			auto& szIniFile = iniFolder.m_szIniFile;
+			CFileNameManager::GetIniFileNameDirect( szPrivateIniFile, szIniFile, pszProfileName );
+
+			// INIフォルダのパスを取得する
+			WCHAR szIniDir[_MAX_PATH]{ 0 };
+			const auto& pszIniPath = iniFolder.m_szPrivateIniFile[0] != L'\0' ? szPrivateIniFile : szIniFile;
+			const auto* pszIniFile = ::PathFindFileName( pszIniPath );
+			::_snwprintf_s( szIniDir, pszIniFile - pszIniPath, L"%s", pszIniPath );
+
+			// iniフォルダが存在しなければ作成しておく
+			if( !IsDirectory( szIniDir ) ){
+				MakeSureDirectoryPathExistsW( szIniDir );
+			}
+		}
 		GetInidir( szIniFolder );
 		AddLastChar( szIniFolder, _MAX_PATH, L'\\' );
 
@@ -1087,7 +1108,7 @@ bool CShareData::OpenDebugWindow( HWND hwnd, bool bAllwaysActive )
 
 /* iniファイルの保存先がユーザ別設定フォルダかどうか */	// 2007.05.25 ryoji
 BOOL CShareData::IsPrivateSettings( void ){
-	return m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate;
+	return m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile[0] != L'\0';
 }
 
 /*

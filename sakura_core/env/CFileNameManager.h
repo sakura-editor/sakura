@@ -39,9 +39,6 @@ struct EditInfo;
 
 //! iniフォルダ設定	// 2007.05.31 ryoji
 struct IniFolder {
-	bool m_bInit;							// 初期化済フラグ
-	bool m_bReadPrivate;					// マルチユーザ用iniからの読み出しフラグ
-	bool m_bWritePrivate;					// マルチユーザ用iniへの書き込みフラグ
 	WCHAR m_szIniFile[_MAX_PATH];			// EXE基準のiniファイルパス
 	WCHAR m_szPrivateIniFile[_MAX_PATH];	// マルチユーザ用のiniファイルパス
 };	/* iniフォルダ設定 */
@@ -90,7 +87,7 @@ public:
 	static WCHAR GetAccessKeyByIndex(int index, bool bZeroOrigin);
 
 	static void GetIniFileNameDirect( LPWSTR pszPrivateIniFile, LPWSTR pszIniFile, LPCWSTR pszProfName );	/* 構成設定ファイルからiniファイル名を取得する */	// 2007.09.04 ryoji
-	void GetIniFileName( LPWSTR pszIniFileName, LPCWSTR pszProfName, BOOL bRead = FALSE );	/* iniファイル名の取得 */	// 2007.05.19 ryoji
+	void GetIniFileName( LPWSTR pszIniFileName );	//!< iniファイル名の取得
 
 private:
 	DLLSHAREDATA* m_pShareData;

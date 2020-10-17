@@ -478,8 +478,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			//	iniファイルのフルパス
 			{
 				WCHAR	szPath[_MAX_PATH + 1];
-				const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
-				CFileNameManager::getInstance()->GetIniFileName( szPath, pszProfileName );
+				CFileNameManager::getInstance()->GetIniFileName( szPath );
 				q = wcs_pushW( q, q_max - q, szPath );
 				++p;
 			}
