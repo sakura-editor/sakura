@@ -59,7 +59,6 @@ TEST(CCommandLine, ConstructWithoutParam)
 {
 	CCommandLineWrapper cCommandLine;
 	EXPECT_FALSE(cCommandLine.IsNoWindow());
-	EXPECT_FALSE(cCommandLine.IsWriteQuit());
 	EXPECT_FALSE(cCommandLine.IsGrepMode());
 	EXPECT_FALSE(cCommandLine.IsGrepDlg());
 	EXPECT_FALSE(cCommandLine.IsDebugMode());
@@ -85,7 +84,6 @@ TEST(CCommandLine, ConstructWithoutParam)
  * @brief パラメータ解析(-NOWIN)の仕様
  * @remark -NOWINが指定されていなければFALSE
  * @remark -NOWINが指定されていたらTRUE
- * @remark -WQが指定された場合、-NOWINがなくてもTRUE
  */
 TEST(CCommandLine, ParseNoWin)
 {
@@ -93,24 +91,6 @@ TEST(CCommandLine, ParseNoWin)
 	cCommandLine.ParseCommandLine(L"", false);
 	EXPECT_FALSE(cCommandLine.IsNoWindow());
 	cCommandLine.ParseCommandLine(L"-NOWIN", false);
-	ASSERT_TRUE(cCommandLine.IsNoWindow());
-	cCommandLine.ParseCommandLine(L"-WQ", false);
-	ASSERT_TRUE(cCommandLine.IsNoWindow());
-}
-
-/*!
- * @brief パラメータ解析(-WQ)の仕様
- * @remark -WQが指定されていなければFALSE
- * @remark -WQが指定されていたらTRUE
- * @remark -WQが指定された場合、-NOWINもTRUE
- */
-TEST(CCommandLine, ParseWriteQuit)
-{
-	CCommandLineWrapper cCommandLine;
-	cCommandLine.ParseCommandLine(L"", false);
-	EXPECT_FALSE(cCommandLine.IsWriteQuit());
-	cCommandLine.ParseCommandLine(L"-WQ", false);
-	ASSERT_TRUE(cCommandLine.IsWriteQuit());
 	ASSERT_TRUE(cCommandLine.IsNoWindow());
 }
 

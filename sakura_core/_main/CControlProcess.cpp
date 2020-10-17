@@ -86,14 +86,9 @@ bool CControlProcess::InitializeProcess()
 	::SetCurrentDirectory( szDir );
 
 	/* 共有データのロード */
-	// 2007.05.19 ryoji 「設定を保存して終了する」オプション処理（sakuext連携用）を追加
-	
-	if( !CShareData_IO::LoadShareData() || CCommandLine::getInstance()->IsWriteQuit() ){
+	if( !CShareData_IO::LoadShareData() ){
 		/* レジストリ項目 作成 */
 		CShareData_IO::SaveShareData();
-		if( CCommandLine::getInstance()->IsWriteQuit() ){
-			return false;
-		}
 	}
 
 	/* 言語を選択する */

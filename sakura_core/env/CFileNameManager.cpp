@@ -574,8 +574,6 @@ void CFileNameManager::GetIniFileName( LPWSTR pszIniFileName, LPCWSTR pszProfNam
 		if( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile[0] != L'\0' ){
 			m_pShareData->m_sFileNameManagement.m_IniFolder.m_bReadPrivate = true;
 			m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate = true;
-			if( CCommandLine::getInstance()->IsNoWindow() && CCommandLine::getInstance()->IsWriteQuit() )
-				m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate = false;
 
 			// マルチユーザ用のiniフォルダを作成しておく
 			if( m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate ){

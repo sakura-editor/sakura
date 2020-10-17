@@ -66,9 +66,6 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 	// しかし、そのような場合でもミューテックスを最初に確保したコントロールプロセスが唯一生き残る。
 	//
 	if( IsStartingControlProcess() ){
-		if( TestWriteQuit() ){	// 2007.09.04 ryoji「設定を保存して終了する」オプション処理（sakuext連携用）
-			return 0;
-		}
 		if( !IsExistControlProcess() ){
 			process = new CControlProcess( hInstance, lpCmdLine );
 		}
@@ -268,33 +265,4 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 	}
 	::CloseHandle( hEvent );
 	return true;
-}
-
-/*!
-	@brief 「設定を保存して終了する」オプション処理（sakuext連携用）
-
-	@author ryoji
-	@date 2007.09.04
-*/
-bool CProcessFactory::TestWriteQuit()
-{
-	if( CCommandLine::getInstance()->IsWriteQuit() ){
-		WCHAR szIniFileIn[_MAX_PATH];
-		WCHAR szIniFileOut[_MAX_PATH];
-		CFileNameManager::getInstance()->GetIniFileNameDirect( szIniFileIn, szIniFileOut, L"" );
-		if( szIniFileIn[0] != L'\0' ){	// マルチユーザ用設定か
-			// 既にマルチユーザ用のiniファイルがあればEXE基準のiniファイルに上書き更新して終了
-			if( fexist(szIniFileIn) ){
-				if( ::CopyFile( szIniFileIn, szIniFileOut, FALSE ) ){
-					return true;
-				}
-			}
-		}else{
-			// 既にEXE基準のiniファイルがあれば何もせず終了
-			if( fexist(szIniFileOut) ){
-				return true;
-			}
-		}
-	}
-	return false;
 }
