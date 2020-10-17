@@ -576,7 +576,7 @@ void CFileNameManager::GetIniFileName( LPWSTR pszIniFileName, LPCWSTR pszProfNam
 			m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate = true;
 
 			// マルチユーザ用のiniフォルダを作成しておく
-			if( m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate ){
+			{
 				WCHAR szPath[_MAX_PATH];
 				WCHAR szDrive[_MAX_DRIVE];
 				WCHAR szDir[_MAX_DIR];
