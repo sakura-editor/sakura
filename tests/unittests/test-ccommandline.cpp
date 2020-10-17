@@ -375,6 +375,7 @@ TEST(CCommandLine, ParseWindowOriginY)
  * @remark -TYPEが指定されていなければNULL
  * @remark -TYPEが指定されていたら指定された文字列
  * @remark DocTypeには任意の文字列を指定できる
+ * @remark DocTypeにMAX_DOCTYPE_LENを超える文字列を指定した場合、切り捨てられる
  */
 TEST(CCommandLine, ParseDocType)
 {
@@ -385,6 +386,10 @@ TEST(CCommandLine, ParseDocType)
 	cCommandLine.ParseCommandLine(L"-TYPE=" TESTLOCAL_DOC_TYPE, false);
 	ASSERT_STREQ(TESTLOCAL_DOC_TYPE, cCommandLine.GetDocType());
 #undef TESTLOCAL_DOC_TYPE
+
+	// MAX_DOCTYPE_LENより長いタイプ名は切り捨てられる
+	cCommandLine.ParseCommandLine(L"-TYPE=TooLongTypeName", false);
+	ASSERT_STREQ(L"TooLong", cCommandLine.GetDocType());
 }
 
 /*!
