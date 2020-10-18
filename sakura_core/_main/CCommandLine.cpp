@@ -33,7 +33,6 @@
 /* コマンドラインオプション用定数 */
 #define CMDLINEOPT_R			1002 //!< ビューモード
 #define CMDLINEOPT_NOWIN		1003 //!< タスクトレイのみ起動
-#define CMDLINEOPT_WRITEQUIT	1004 //!< SakuExtとの連動専用
 #define CMDLINEOPT_GREPMODE		1100 //!< Grep実行モードで起動
 #define CMDLINEOPT_GREPDLG		1101 //!< サクラエディタが起動すると同時にGrepダイアログを表示
 #define CMDLINEOPT_DEBUGMODE	1999 //!< アウトプット用のウィンドウとして起動
@@ -96,7 +95,6 @@ int CCommandLine::CheckCommandLine(
 		{L"R",			1,	CMDLINEOPT_R, false},
 		{L"-",			1,	CMDLINEOPT_NOMOREOPT, false},
 		{L"NOWIN",		5,	CMDLINEOPT_NOWIN, false},
-		{L"WQ",			2,	CMDLINEOPT_WRITEQUIT, false},	// 2007.05.19 ryoji sakuext用に追加
 		{L"GREPMODE",	8,	CMDLINEOPT_GREPMODE, false},
 		{L"GREPDLG",		7,	CMDLINEOPT_GREPDLG, false},
 		{L"DEBUGMODE",	9,	CMDLINEOPT_DEBUGMODE, false},
@@ -184,7 +182,6 @@ CCommandLine::CCommandLine() noexcept
 	, m_bGrepDlg(false)
 	, m_bDebugMode(false)
 	, m_bNoWindow(false)
-	, m_bWriteQuit(false)
 	, m_bProfileMgr(false)
 	, m_bSetProfile(false)
 	, m_fi()
@@ -398,10 +395,6 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				break;
 			case CMDLINEOPT_NOWIN:	//	NOWIN
 				m_bNoWindow = true;
-				break;
-			case CMDLINEOPT_WRITEQUIT:	//	WRITEQUIT	// 2007.05.19 ryoji sakuext用に追加
-				m_bWriteQuit = true;
-				m_bNoWindow = true;	// 2007.09.05 ryoji -WQを指定されたら-NOWINも指定されたとして扱う
 				break;
 			case CMDLINEOPT_GREPMODE:	//	GREPMODE
 				m_bGrepMode = true;
