@@ -1,5 +1,5 @@
 setlocal
-set BUILD_BASE_DIR=%~dp1
+set BUILD_DIR=%~dp1
 set SOURCE_DIR=%~dp0compiletests
 
 :: find generic tools
@@ -16,12 +16,10 @@ if not exist "%CMD_NINJA%" (
   set GENERATOR="%CMAKE_G_PARAM%"
   set GENERATOR_OPTS=-A %PLATFORM% "-DCMAKE_CONFIGURATION_TYPES=Debug;Release"
   set "MAKE_PROGRAM=%CMD_MSBUILD%"
-  set "BUILD_DIR=%BUILD_BASE_DIR%compiletests\%platform%"
 ) else (
   set GENERATOR=Ninja
   set GENERATOR_OPTS=-DCMAKE_BUILD_TYPE=%CONFIGURATION%
   set "MAKE_PROGRAM=%CMD_NINJA%"
-  set "BUILD_DIR=%BUILD_BASE_DIR%compiletests\%platform%\%configuration%"
 )
 
 mkdir %BUILD_DIR% > NUL 2>&1
