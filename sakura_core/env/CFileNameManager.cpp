@@ -557,14 +557,15 @@ void CFileNameManager::GetIniFileNameDirect( LPWSTR pszPrivateIniFile, LPWSTR ps
 	共有データからsakura.iniの格納フォルダを取得し、フルパス名を返す
 	
 	@param[out] pszIniFileName iniファイル名（フルパス）。予め_MAX_PATHのバッファを用意しておくこと
-	@param[in] bRead true: 読み込み / false: 書き込み
 
 	@author ryoji
 	@date 2007.05.19 ryoji 新規作成
 */
-void CFileNameManager::GetIniFileName( LPWSTR pszIniFileName, LPCWSTR pszProfName, BOOL bRead/*=FALSE*/ )
+void CFileNameManager::GetIniFileName( LPWSTR pszIniFileName ) const
 {
-	auto &iniFolder = m_pShareData->m_sFileNameManagement.m_IniFolder;
-	bool bPrivate = bRead ? iniFolder.m_bReadPrivate : iniFolder.m_bWritePrivate;
-	::lstrcpy( pszIniFileName, bPrivate ? iniFolder.m_szPrivateIniFile : iniFolder.m_szIniFile );
+	const auto &iniFolder = m_pShareData->m_sFileNameManagement.m_IniFolder;
+	const bool bPrivate = iniFolder.m_szPrivateIniFile[0] != L'\0';
+	const auto& szPrivateIniFile = iniFolder.m_szPrivateIniFile;
+	const auto& szIniFile = iniFolder.m_szIniFile;
+	::wcscpy_s( pszIniFileName, _MAX_PATH, bPrivate ? szPrivateIniFile : szIniFile );
 }

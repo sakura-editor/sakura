@@ -90,7 +90,7 @@ public:
 	static WCHAR GetAccessKeyByIndex(int index, bool bZeroOrigin);
 
 	static void GetIniFileNameDirect( LPWSTR pszPrivateIniFile, LPWSTR pszIniFile, LPCWSTR pszProfName );	/* 構成設定ファイルからiniファイル名を取得する */	// 2007.09.04 ryoji
-	void GetIniFileName( LPWSTR pszIniFileName, LPCWSTR pszProfName, BOOL bRead = FALSE );	/* iniファイル名の取得 */	// 2007.05.19 ryoji
+	void GetIniFileName( LPWSTR pszIniFileName ) const;	//!< iniファイル名の取得
 
 private:
 	DLLSHAREDATA* m_pShareData;
