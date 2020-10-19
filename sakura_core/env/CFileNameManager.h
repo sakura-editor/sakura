@@ -39,9 +39,6 @@ struct EditInfo;
 
 //! iniフォルダ設定	// 2007.05.31 ryoji
 struct IniFolder {
-	bool m_bInit;							// 初期化済フラグ
-	bool m_bReadPrivate;					// マルチユーザ用iniからの読み出しフラグ
-	bool m_bWritePrivate;					// マルチユーザ用iniへの書き込みフラグ
 	WCHAR m_szIniFile[_MAX_PATH];			// EXE基準のiniファイルパス
 	WCHAR m_szPrivateIniFile[_MAX_PATH];	// マルチユーザ用のiniファイルパス
 };	/* iniフォルダ設定 */

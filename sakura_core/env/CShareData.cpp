@@ -153,14 +153,6 @@ bool CShareData::InitShareData()
 			auto& szPrivateIniFile = iniFolder.m_szPrivateIniFile;
 			auto& szIniFile = iniFolder.m_szIniFile;
 			CFileNameManager::GetIniFileNameDirect( szPrivateIniFile, szIniFile, pszProfileName );
-
-			iniFolder.m_bInit = true;			// 初期化済フラグ
-			iniFolder.m_bReadPrivate = false;	// マルチユーザ用iniからの読み出しフラグ
-			iniFolder.m_bWritePrivate = false;	// マルチユーザ用iniへの書き込みフラグ
-			if( iniFolder.m_szPrivateIniFile[0] != L'\0' ){
-				iniFolder.m_bReadPrivate = true;
-				iniFolder.m_bWritePrivate = true;
-			}
 		}
 
 		// 2007.05.19 ryoji 実行ファイルフォルダ->設定ファイルフォルダに変更
