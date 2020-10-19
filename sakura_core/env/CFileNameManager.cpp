@@ -555,9 +555,8 @@ void CFileNameManager::GetIniFileNameDirect( LPWSTR pszPrivateIniFile, LPWSTR ps
 	iniファイル名の取得
 
 	共有データからsakura.iniの格納フォルダを取得し、フルパス名を返す
-	（共有データ未設定のときは共有データ設定を行う）
-
-	@param[out] pszIniFileName iniファイル名（フルパス）
+	
+	@param[out] pszIniFileName iniファイル名（フルパス）。予め_MAX_PATHのバッファを用意しておくこと
 	@param[in] bRead true: 読み込み / false: 書き込み
 
 	@author ryoji
@@ -566,18 +565,6 @@ void CFileNameManager::GetIniFileNameDirect( LPWSTR pszPrivateIniFile, LPWSTR ps
 void CFileNameManager::GetIniFileName( LPWSTR pszIniFileName, LPCWSTR pszProfName, BOOL bRead/*=FALSE*/ )
 {
 	auto &iniFolder = m_pShareData->m_sFileNameManagement.m_IniFolder;
-	if( !iniFolder.m_bInit ){
-		iniFolder.m_bInit = true;			// 初期化済フラグ
-		iniFolder.m_bReadPrivate = false;	// マルチユーザ用iniからの読み出しフラグ
-		iniFolder.m_bWritePrivate = false;	// マルチユーザ用iniへの書き込みフラグ
-
-		GetIniFileNameDirect( iniFolder.m_szPrivateIniFile, iniFolder.m_szIniFile, pszProfName );
-		if( iniFolder.m_szPrivateIniFile[0] != L'\0' ){
-			iniFolder.m_bReadPrivate = true;
-			iniFolder.m_bWritePrivate = true;
-		}
-	}
-
 	bool bPrivate = bRead ? iniFolder.m_bReadPrivate : iniFolder.m_bWritePrivate;
 	::lstrcpy( pszIniFileName, bPrivate ? iniFolder.m_szPrivateIniFile : iniFolder.m_szIniFile );
 }

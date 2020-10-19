@@ -146,11 +146,26 @@ bool CShareData::InitShareData()
 		CreateTypeSettings();
 		SetDllShareData( m_pShareData );
 
+		// IniFolder構造体を初期化する
+		{
+			const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
+			auto& iniFolder = m_pShareData->m_sFileNameManagement.m_IniFolder;
+			auto& szPrivateIniFile = iniFolder.m_szPrivateIniFile;
+			auto& szIniFile = iniFolder.m_szIniFile;
+			CFileNameManager::GetIniFileNameDirect( szPrivateIniFile, szIniFile, pszProfileName );
+
+			iniFolder.m_bInit = true;			// 初期化済フラグ
+			iniFolder.m_bReadPrivate = false;	// マルチユーザ用iniからの読み出しフラグ
+			iniFolder.m_bWritePrivate = false;	// マルチユーザ用iniへの書き込みフラグ
+			if( iniFolder.m_szPrivateIniFile[0] != L'\0' ){
+				iniFolder.m_bReadPrivate = true;
+				iniFolder.m_bWritePrivate = true;
+			}
+		}
+
 		// 2007.05.19 ryoji 実行ファイルフォルダ->設定ファイルフォルダに変更
-		WCHAR	szIniFolder[_MAX_PATH];
-		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bInit = false;
-		GetInidir( szIniFolder );
-		AddLastChar( szIniFolder, _MAX_PATH, L'\\' );
+		WCHAR szIniFolder[_MAX_PATH];
+		GetInidir( szIniFolder, NULL );
 
 		m_pShareData->m_vStructureVersion = uShareDataVersion;
 		m_pShareData->m_nSize = sizeof(*m_pShareData);
@@ -1087,7 +1102,7 @@ bool CShareData::OpenDebugWindow( HWND hwnd, bool bAllwaysActive )
 
 /* iniファイルの保存先がユーザ別設定フォルダかどうか */	// 2007.05.25 ryoji
 BOOL CShareData::IsPrivateSettings( void ){
-	return m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate;
+	return m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile[0] != L'\0';
 }
 
 /*
