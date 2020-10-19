@@ -1100,11 +1100,6 @@ bool CShareData::OpenDebugWindow( HWND hwnd, bool bAllwaysActive )
 	return ret;
 }
 
-/* iniファイルの保存先がユーザ別設定フォルダかどうか */	// 2007.05.25 ryoji
-BOOL CShareData::IsPrivateSettings( void ){
-	return CFileNameManager::getInstance()->IsPrivateSettings();
-}
-
 /*
 	CShareData::CheckMRUandOPENFOLDERList
 	MRUとOPENFOLDERリストの存在チェックなど
