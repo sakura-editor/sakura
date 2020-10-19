@@ -575,25 +575,6 @@ void CFileNameManager::GetIniFileName( LPWSTR pszIniFileName, LPCWSTR pszProfNam
 		if( iniFolder.m_szPrivateIniFile[0] != L'\0' ){
 			iniFolder.m_bReadPrivate = true;
 			iniFolder.m_bWritePrivate = true;
-
-			// マルチユーザ用のiniフォルダを作成しておく
-			{
-				WCHAR szPath[_MAX_PATH];
-				WCHAR szDrive[_MAX_DRIVE];
-				WCHAR szDir[_MAX_DIR];
-				_wsplitpath( iniFolder.m_szPrivateIniFile, szDrive, szDir, NULL, NULL );
-				auto_snprintf_s( szPath, _MAX_PATH - 1, L"%s\\%s", szDrive, szDir );
-				MakeSureDirectoryPathExistsW( szPath );
-			}
-		}else{
-			if( pszProfName[0] != L'\0' ){
-				WCHAR szPath[_MAX_PATH];
-				WCHAR szDrive[_MAX_DRIVE];
-				WCHAR szDir[_MAX_DIR];
-				_wsplitpath( iniFolder.m_szIniFile, szDrive, szDir, NULL, NULL );
-				auto_snprintf_s( szPath, _MAX_PATH - 1, L"%s\\%s", szDrive, szDir );
-				MakeSureDirectoryPathExistsW( szPath );
-			}
 		}
 	}
 
