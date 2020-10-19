@@ -509,18 +509,11 @@ void CESI::GetEncodingInfo_meta( const char* pS, const int nLen )
 {
 	// XML宣言は先頭にあるので、最初にチェック
 	ECodeType encoding = AutoDetectByXML( pS, nLen );
-	if( encoding == CODE_NONE || encoding == CODE_AUTODETECT ){
+	if( encoding == CODE_NONE ){
 		// スクリプト等Coding中にHTMLがあるのでCodingを優先
-		auto nret = AutoDetectByCoding( pS, nLen );
-		if( nret != CODE_NONE ){
-			// 判定に成功した場合はencodingを更新する
-			encoding = nret;
-		} else {
-			nret = AutoDetectByHTML( pS, nLen );
-			if( nret != CODE_NONE ){
-				// 判定に成功した場合はencodingを更新する
-				encoding = nret;
-			}
+		encoding = AutoDetectByCoding( pS, nLen );
+		if( encoding == CODE_NONE ){
+			encoding = AutoDetectByHTML( pS, nLen );
 		}
 	}
 	m_eMetaName = encoding;
@@ -945,8 +938,7 @@ static ECodeType MatchEncoding(const char* pBuf, int nSize)
 }
 
 /*!	ファイル中のエンコーディング指定を利用した文字コード自動選択
- *	@return	決定した文字コード。 未決定は-1を返す。
- 		xml宣言ありでencodingがない場合、CODE_AUTODETECTなので注意
+ *	@return	決定した文字コード。 未決定は-1を返す
 */
 ECodeType CESI::AutoDetectByXML( const char* pBuf, int nSize )
 {
@@ -993,7 +985,8 @@ ECodeType CESI::AutoDetectByXML( const char* pBuf, int nSize )
 				}
 				// encoding指定無しでxml宣言が終了した
 				if( pBuf[i] == '?' && pBuf[i + 1] == '>' ){
-					return CODE_AUTODETECT;
+					// 決定せずに引き続き判定処理を行う
+					return CODE_NONE;
 				}
 			}
 		}
@@ -1003,7 +996,8 @@ ECodeType CESI::AutoDetectByXML( const char* pBuf, int nSize )
 			}
 			// encoding指定無しでxml宣言が終了した
 			if( pBuf[i] == '?' && pBuf[i + 1] == '>' ){
-				return CODE_AUTODETECT;
+				// 決定せずに引き続き判定処理を行う
+				return CODE_NONE;
 			}
 		}
 	}else
@@ -1266,7 +1260,7 @@ ECodeType CESI::CheckKanjiCode(const char* pBuf, size_t nBufLen) noexcept
 	*/
 	SetInformation(pBuf, nBufLen);
 
-	if( GetMetaName() != CODE_NONE && GetMetaName() != CODE_AUTODETECT ){
+	if( GetMetaName() != CODE_NONE ){
 		return GetMetaName();
 	}
 	auto nret = DetectUnicode( this );
@@ -1276,10 +1270,6 @@ ECodeType CESI::CheckKanjiCode(const char* pBuf, size_t nBufLen) noexcept
 	nret = DetectMBCode( this );
 	if( nret != CODE_NONE && GetStatus() != ESI_NODETECTED ){
 		return nret;
-	}
-	if( GetMetaName() == CODE_AUTODETECT ){
-		// MetaがAUTODETECTの場合は、encodingがないxml文書。これまで通りUTF-8とみなす。
-		return CODE_UTF8;
 	}
 
 	// デフォルト文字コードを返す
