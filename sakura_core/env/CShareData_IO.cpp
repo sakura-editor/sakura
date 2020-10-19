@@ -166,6 +166,16 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 	if( !bRead ){
 		// 2014.12.08 sakura.iniの読み取り専用
 		if( !GetDllShareData().m_Common.m_sOthers.m_bIniReadOnly ){
+			// INIフォルダのパスを取得する
+			WCHAR szIniFolder[_MAX_PATH]{ 0 };
+			::GetInidir( szIniFolder, NULL );
+
+			// INIフォルダが存在しなければ作成する
+			if( !IsDirectory( szIniFolder ) ){
+				MakeSureDirectoryPathExistsW( szIniFolder );
+			}
+
+			// INIファイルを出力する
 			cProfile.WriteProfile( szIniFileName, LTEXT(" sakura.ini テキストエディタ設定ファイル") );
 		}
 	}
