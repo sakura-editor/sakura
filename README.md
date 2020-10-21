@@ -27,12 +27,9 @@
   - [Web Site](#web-site)
   - [開発参加ポリシー](#開発参加ポリシー)
   - [Build Requirements](#build-requirements)
-    - [Visual Studio Install options required](#visual-studio-install-options-required)
     - [Visual Studio Community 2019 対応に関して](#visual-studio-community-2019-対応に関して)
     - [.vsconfig に関して](#vsconfig-に関して)
-      - [Visaul Studio 2017/2019 共通](#visaul-studio-20172019-共通)
-      - [Visaul Studio 2019 のみ](#visaul-studio-2019-のみ)
-      - [参照](#参照)
+    - [参照](#参照)
   - [How to build](#how-to-build)
     - [詳細情報](#詳細情報)
   - [CI Buildおよびローカルビルドの環境変数](#ci-buildおよびローカルビルドの環境変数)
@@ -71,19 +68,13 @@ https://github.com/sakura-editor/sakura/wiki
 
 ## Build Requirements
 
-Sakura Editor をコンパイルするためにはいずれかが必要
--  [Visual Studio Community 2017][Visual Studio Community 2017]
--  [Visual Studio Community 2019][Visual Studio Community 2019]
+Sakura Editor をコンパイルするためには以下が必要です。
+- [Visual Studio](https://visualstudio.microsoft.com/ja/)
+- [Git for Windows](https://gitforwindows.org/)  
+- [Python](https://www.python.org/)
+- [7Zip](https://sevenzip.osdn.jp/)
 
-正式バイナリは [Visual Studio Community 2017][Visual Studio Community 2017] でビルドされます。
-
-### Visual Studio Install options required
-- Windows SDK
-- Windows XP Support for C++
-- Windows 8.1 SDK と UCRT SDK
-- C++ に関する Windows XP サポート
-
-More information: https://github.com/sakura-editor/sakura/issues/6
+正式バイナリは [Visual Studio Community 2017](https://www.appveyor.com/docs/windows-images-software/#visual-studio-2017) でビルドされます。
 
 ### Visual Studio Community 2019 対応に関して
 
@@ -92,25 +83,18 @@ Visual Studio 2017/2019 の両対応に関しては  [#866](https://github.com/s
 
 ### .vsconfig に関して
 
-Sakura Editor のコンパイルに必要なコンポーネントを Visual Studio 2017/2019 にインストールするために [.vsconfig](.vsconfig) という設定ファイルを用意しています。
+[.vsconfig](https://github.com/sakura-editor/sakura/blob/master/.vsconfig) は [vs2019](https://visualstudio.microsoft.com/ja/downloads/) で `SAKURA Editor` をビルドするために必要なオプションを定義した JSONファイルです。ソリューションと同じフォルダに `.vsconfig` を置いておくと、ソリューションの読み込み時にインストール済みコンポーネントがチェックされます。必要なコンポーネントが足りないときは、追加コンポーネントのインストールを促すメッセージが表示されます。メッセージに表示されたインストールをクリックすると、必要なコンポーネントが自動的にインストールされます。 
 
-[#1162](https://github.com/sakura-editor/sakura/pull/1162) で [.vsconfig](.vsconfig) というファイルを sakura.sln と同じディレクトリに配置しています。
+[.vsconfig](.vsconfig) の導入時経緯については [#1162](https://github.com/sakura-editor/sakura/pull/1162) を参照してください。
 
-#### Visaul Studio 2017/2019 共通
+[vs2017](https://my.visualstudio.com/Downloads?q=visual%20studio%202017&wt.mc_id=o~msft~vscom~older-downloads) にはコンポーネントの自動インストール機能がありませんが、インストーラーに --config オプションを付けて実行することにより、必要なコンポーネントを自動インストールさせることができます。vs2017向け .vsconfig はファイル名を変えて登録しています。👉[.vsconfig_vs2017](https://github.com/sakura-editor/sakura/blob/master/.vsconfig_vs2017)
 
-`vs_community__XXXXX.exe` でインストールする際に、--config オプションをつけてインストールする。
-あるいは構成変更することにより、必要なコンポーネントを自動的にインストールします。
-
-```
-vs_community__XXXXX.exe --config <.vsconfig のファイルパス>
+```cmd
+vs_community__XXXXX.exe --config C:\work\sakura-editor\sakura\.vsconfig_vs2017
 ```
 
-#### Visaul Studio 2019 のみ
 
-`sakura.sln` と同じディレクトリに [.vsconfig](.vsconfig) が存在するので、
-Visaul Studio 2019 で `sakura.sln` を開くと必要なコンポーネントが足りない場合、インストールを促す表示が出るので、インストールをクリックすると自動的にインストールする。
-
-#### 参照
+### 参照
 
 - [How to extract currently installed Visual Studio component IDs?][How to extract currently installed Visual Studio component IDs?]
 - [Configure Visual Studio across your organization with .vsconfig][Configure Visual Studio across your organization with .vsconfig]
@@ -120,8 +104,7 @@ Visaul Studio 2019 で `sakura.sln` を開くと必要なコンポーネント�
 
 ## How to build
 
-- [7Zip](https://sevenzip.osdn.jp/) のインストールして 7z.exe へのパスを通します。
-- Visual Studio Community 2017 で `sakura.sln` を開いてビルドします。
+- Visual Studio で `sakura.sln` を開いてビルドします。
 
 ### 詳細情報
 
