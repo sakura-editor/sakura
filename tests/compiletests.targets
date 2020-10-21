@@ -1,12 +1,21 @@
 <Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!-- This target depends on googletest.targets -->
-  <Target Name="RunCompileTests" DependsOnTargets="MakeGoogleTestBuildDir;BuildGoogleTest" BeforeTargets="ClCompile">
+  <PropertyGroup Label="CompileTest">
+    <CompileTestSourceDir>$(MSBuildThisFileDirectory)compiletests\</CompileTestSourceDir>
+    <CompileTestBuildDir>$(MSBuildThisFileDirectory)build\$(Platform)\$(Configuration)\compiletests\</CompileTestBuildDir>
+  </PropertyGroup>
+  <Target Name="MakeCompileTestBuildDir" Condition="!Exists('$(CompileTestBuildDir)')">
+    <MakeDir Directories="$(CompileTestBuildDir)" />
+  </Target>
+  <Target Name="RunCompileTests" DependsOnTargets="MakeCompileTestBuildDir" BeforeTargets="ClCompile" Condition="!Exists('$(CompileTestBuildDir)CMakeCache.txt')">
     <PropertyGroup>
       <VsVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(VisualStudioVersion)', '^(\d+).*', '$1'))</VsVersion>
     </PropertyGroup>
     <SetEnv name="platform" value="$(Platform)" prefix="false" />
     <SetEnv name="configuration" value="$(Configuration)" prefix="false" />
     <SetEnv name="NUM_VSVERSION" value="$(VsVersion)" prefix="false" />
-    <Exec Command="$(MSBuildThisFileDirectory)compiletests.run.cmd &quot;$(GoogleTestBuildDir)&quot;" ConsoleToMSBuild="true" />
+    <Exec Command="$(MSBuildThisFileDirectory)compiletests.run.cmd &quot;$(CompileTestBuildDir)&quot;" ConsoleToMSBuild="true" />
+  </Target>
+  <Target Name="AppendCleanTargetsForCompileTest" BeforeTargets="CoreClean">
+    <RemoveDir Directories="$(CompileTestBuildDir)" />
   </Target>
 </Project>
