@@ -217,6 +217,18 @@ bool CProfile::WriteProfile(
 {
 	if( pszProfileName!=NULL ) {
 		m_strProfileName = pszProfileName;
+
+		const size_t cchLastYen = m_strProfileName.find_last_of( L'\\' );
+		if( cchLastYen != std::wstring::npos && cchLastYen < m_strProfileName.length() && cchLastYen + 1 < _MAX_PATH ){
+			// フォルダのパスを取得する
+			WCHAR szProfileFolder[_MAX_PATH]{ 0 };
+			::wcsncpy_s( szProfileFolder, m_strProfileName.data(), cchLastYen + 1 );
+
+			// フォルダが存在しなければ作成する
+			if( !IsDirectory( szProfileFolder ) ){
+				MakeSureDirectoryPathExistsW( szProfileFolder );
+			}
+		}
 	}
     
 	std::vector< wstring > vecLine;
