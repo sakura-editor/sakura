@@ -23,7 +23,7 @@
   - [開発者向けの情報](#開発者向けの情報)
     - [githash.h の更新のスキップ](#githashh-の更新のスキップ)
     - [Powershell によるZIPファイルの圧縮、解凍、内容確認の強制](#powershell-によるzipファイルの圧縮解凍内容確認の強制)
-    - [MinGW w64 ビルド](#mingw-w64-ビルド)
+    - [MinGW ビルド](#mingw-ビルド)
 
 <!-- /TOC -->
 
@@ -31,12 +31,10 @@
 
 ### 実行ファイルのビルドに必要なもの
 
+- Git for Windows
+- Visual Studio
+- (オプション) [Python](https://www.python.org/)
 - (オプション) [7Zip](https://sevenzip.osdn.jp/) (外部依存ファイルの解凍に使用)
-- Visual Studio 2017 Comminity Edition
-   以下オプションも必要です。
-   - Windows XP Support for C++
-   - Windows 8.1 SDK と UCRT SDK
-   - C++ に関する Windows XP サポート
 
 ### HTML ヘルプのビルドに必要なもの
 
@@ -60,7 +58,8 @@
 
 ### (オプション) ログの解析等に必要なもの
 
-- [Python](https://www.python.org/) の 2.7 系、3.x 系のどちらでも OK (のはず)
+- [Python](https://www.python.org/) パーサの実行に必要です。
+- [Microsoft Excel](https://www.office.com/?omkt=ja-jp) 解析されたログファイルを表示するのに必要です。
 
 ## ビルド方法
 
@@ -68,7 +67,7 @@
 
 #### 方法1 (GUI)
 
-Visual Studio Community 2017 で `sakura.sln` をダブルクリックして開いてビルドします。
+Visual Studio で `sakura.sln` を開いてビルドします。
 
 #### 方法2 (コマンドライン)
 
@@ -171,30 +170,16 @@ build-sln.bat x64   Release
 build-sln.bat x64   Debug
 ```
 
-### MinGW w64 ビルド
+### MinGW ビルド
 
-生成されるバイナリは正しく動作しないが、MinGWでのビルドも可能。
+MinGWでのビルドも可能です。
+MinGWビルド版はSEGV発生時にクラッシュすることが分かっています。手動でビルドすれば「自分だけのサクラエディタ」を楽しむことができます。
 
-
-MinGW64のビルド環境
-
-* [pleiades 4.6 Neon](http://mergedoc.osdn.jp/)
-* [MSYS2+MinGW-w64](https://gist.github.com/Hamayama/eb4b4824ada3ac71beee0c9bb5fa546d)
-* [MinGW-w64](https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/)
-
-cpu | thread モデル | 例外モデル | コメント
----- | ---- | ---- | ----
-x86_64 | win32 | seh | windows向け。外部DLL不要
-x86_64 | posix | seh | 標準。pthreadのDLLが必要
-x86_64 | win32 | sjlj | 外部DLL不要
-x86_64 | posix | sjlj | pthreadのDLLが必要
-
-標準的なMinGWセットアップでビルドしたバイナリは ```libwinpthread-1.dll``` に依存することに注意。
-
+ビルド環境は chocolatey の msys2 を利用することができます。chocolatey版msys2のインストール方法については、ググって一般情報を参考にしてください。
 
 コマンド実行例
 
 ```
-path=C:\msys64\mingw64\bin;%path%
-mingw32-make -C sakura_core -j4
+build-gnu.bat MinGW Debug
+build-gnu.bat MinGW Release
 ```
