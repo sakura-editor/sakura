@@ -111,6 +111,7 @@
     <ClCompile Include="test-clayoutint.cpp" />
     <ClCompile Include="test-cmemory.cpp" />
     <ClCompile Include="test-cnative.cpp" />
+    <ClCompile Include="test-cprofile.cpp" />
     <ClCompile Include="test-editinfo.cpp" />
     <ClCompile Include="test-grepinfo.cpp" />
     <ClCompile Include="test-int2dec.cpp" />

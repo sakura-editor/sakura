@@ -74,6 +74,9 @@
     <ClCompile Include="test-winmain.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-cprofile.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartEditorProcessForTest.h">
