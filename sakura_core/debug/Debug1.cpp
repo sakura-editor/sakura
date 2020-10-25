@@ -54,10 +54,15 @@ void DebugOutW( LPCWSTR lpFmt, ...)
 
 		::DebugBreak();
 
-		int count = _vscwprintf( lpFmt, argList );
-		auto pLargeBuf = std::make_unique<WCHAR[]>( count + 1 );
-		if( vswprintf( &pLargeBuf[0], count + 1, lpFmt, argList ) > 0 )
-			::OutputDebugStringW( &pLargeBuf[0] );
+		const int count = _vscwprintf( lpFmt, argList );
+
+		std::wstring strTooLongMessage;
+		strTooLongMessage.reserve( count );
+
+		::_vsnwprintf_s( strTooLongMessage.data(), count + 1, _TRUNCATE, lpFmt, argList );
+		strTooLongMessage.assign( strTooLongMessage.data(), count );
+
+		::OutputDebugStringW( strTooLongMessage.c_str() );
 	}
 
 	va_end(argList);
