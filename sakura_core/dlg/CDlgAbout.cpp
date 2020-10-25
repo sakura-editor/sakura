@@ -390,14 +390,14 @@ BOOL CUrlWnd::SetSubclassWindow( HWND hWnd )
 		SendMessageAny( hWnd, WM_SETFONT, (WPARAM)m_hFont, (LPARAM)FALSE );
 
 	// 設定されているテキストを取得する
-	const ULONG cchText = ::GetWindowTextLength( hWnd );
-	auto textBuf = std::make_unique<WCHAR[]>( cchText + 1 );
-	WCHAR* pchText = textBuf.get();
-	::GetWindowText( hWnd, pchText, cchText + 1 );
+	std::wstring strText;
+	if( ApiWrap::Wnd_GetText( hWnd, strText ) ){
+		// サイズを調整する
+		auto retSetText = OnSetText( strText.data(), strText.length() );
+		return retSetText ? TRUE : FALSE;
+	}
 
-	// サイズを調整する
-	auto retSetText = OnSetText( pchText, cchText );
-	return retSetText ? TRUE : FALSE;
+	return FALSE;
 }
 
 LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )

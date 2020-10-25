@@ -199,10 +199,7 @@ int CDlgGrepReplace::GetData( void )
 	m_bPaste = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHK_PASTE );
 
 	/* 置換後 */
-	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT2) ) + 1;
-	auto vText = std::make_unique<WCHAR[]>(nBufferSize);
-	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT2, &vText[0], nBufferSize);
-	m_strText2 = &vText[0];
+	ApiWrap::DlgItem_GetText(GetHwnd(), IDC_COMBO_TEXT2, m_strText2 );
 
 	if( 0 == ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT) ) ){
 		WarningMessage(	GetHwnd(), LS(STR_DLGREPLC_REPSTR) );

@@ -182,10 +182,10 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 			case IDC_BUTTON_REGEX_INS:	/* 挿入 */
 			{
 				//挿入するキー情報を取得する。
-				auto szKeyWord = std::make_unique<WCHAR[]>(nKeyWordSize);
-				szKeyWord[0] = L'\0';
-				::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEX, &szKeyWord[0], nKeyWordSize );
-				if( szKeyWord[0] == L'\0' ) return FALSE;
+				std::wstring strKeyWord;
+				if( !ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEX, strKeyWord ) ){
+					return FALSE;
+				}
 				//同じキーがないか調べる。
 				nIndex2 = ListView_GetItemCount(hwndList);
 				if( nIndex2 >= MAX_REGEX_KEYWORD )
@@ -200,7 +200,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 					//選択中でなければ最後にする。
 					nIndex = nIndex2;
 				}
-				if( !CheckKeywordList(hwndDlg, &szKeyWord[0], -1) ){
+				if( !CheckKeywordList( hwndDlg, strKeyWord.c_str(), -1 ) ){
 					return FALSE;
 				}
 				
@@ -209,7 +209,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
 				//キー情報を挿入する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
-				lvi.pszText  = &szKeyWord[0];
+				lvi.pszText  = strKeyWord.data();
 				lvi.iItem    = nIndex;
 				lvi.iSubItem = 0;
 				lvi.lParam   = 0;
@@ -227,20 +227,20 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 
 			case IDC_BUTTON_REGEX_ADD:	/* 追加 */
 			{
-				auto szKeyWord = std::make_unique<WCHAR[]>(nKeyWordSize);
 				//最後のキー番号を取得する。
 				nIndex = ListView_GetItemCount( hwndList );
 				//追加するキー情報を取得する。
-				szKeyWord[0] = L'\0';
-				::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEX, &szKeyWord[0], nKeyWordSize );
-				if( szKeyWord[0] == L'\0' ) return FALSE;
+				std::wstring strKeyWord;
+				if( !ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEX, strKeyWord ) ){
+					return FALSE;
+				}
 				nIndex2 = ListView_GetItemCount(hwndList);
 				if( nIndex2 >= MAX_REGEX_KEYWORD )
 				{
 					ErrorMessage( hwndDlg, LS(STR_PROPTYPEREGEX_NOREG));
 					return FALSE;
 				}
-				if( !CheckKeywordList(hwndDlg, &szKeyWord[0], -1) ){
+				if( !CheckKeywordList( hwndDlg, strKeyWord.c_str(), -1 ) ){
 					return FALSE;
 				}
 				//追加するキー情報を取得する。
@@ -248,7 +248,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
 				//キーを追加する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
-				lvi.pszText  = &szKeyWord[0];
+				lvi.pszText  = strKeyWord.data();
 				lvi.iItem    = nIndex;
 				lvi.iSubItem = 0;
 				lvi.lParam   = 0;
@@ -266,7 +266,6 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 
 			case IDC_BUTTON_REGEX_UPD:	/* 更新 */
 			{
-				auto szKeyWord = std::make_unique<WCHAR[]>(nKeyWordSize);
 				//選択中のキーを探す。
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex )
@@ -275,10 +274,11 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 					return FALSE;
 				}
 				//更新するキー情報を取得する。
-				szKeyWord[0] = L'\0';
-				::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEX, &szKeyWord[0], nKeyWordSize );
-				if( szKeyWord[0] == L'\0' ) return FALSE;
-				if( !CheckKeywordList(hwndDlg, &szKeyWord[0], nIndex) ){
+				std::wstring strKeyWord;
+				if( !ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEX, strKeyWord ) ){
+					return FALSE;
+				}
+				if( !CheckKeywordList( hwndDlg, strKeyWord.c_str(), nIndex ) ){
 					return FALSE;
 				}
 				//追加するキー情報を取得する。
@@ -286,7 +286,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				::DlgItem_GetText( hwndDlg, IDC_COMBO_REGEX_COLOR, szColorIndex, _countof(szColorIndex) );
 				//キーを更新する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
-				lvi.pszText  = &szKeyWord[0];
+				lvi.pszText  = strKeyWord.data();
 				lvi.iItem    = nIndex;
 				lvi.iSubItem = 0;
 				lvi.lParam   = 0;
