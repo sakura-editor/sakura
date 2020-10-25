@@ -65,6 +65,15 @@ namespace ApiWrap{
 
 	/*!
 		@brief Window テキストを取得する
+		@param[in]  hWnd	ウィンドウハンドル
+		@param[out] strText	ウィンドウテキストを受け取る変数
+		@return		成功した場合 true
+		@return		失敗した場合 false
+	*/
+	bool Wnd_GetText( HWND hWnd, std::wstring& strText );
+
+	/*!
+		@brief Window テキストを取得する
 		@param[in]  hwnd	ウィンドウハンドル
 		@param[out] str		ウィンドウテキスト
 		@return		成功した場合 true

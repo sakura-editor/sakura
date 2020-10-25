@@ -4,6 +4,62 @@
 
 namespace ApiWrap{
 
+	/*!
+		@brief Window テキストを取得する
+		@param[in]  hWnd	ウィンドウハンドル
+		@param[out] strText	ウィンドウテキストを受け取る変数
+		@return		成功した場合 true
+		@return		失敗した場合 false
+	*/
+	bool Wnd_GetText( HWND hWnd, std::wstring& strText )
+	{
+		// バッファをクリアしておく
+		strText.clear();
+
+		// GetWindowTextLength() はウィンドウテキスト取得に必要なバッファサイズを返す。
+		// 条件によっては必要なサイズより大きな値を返すことがある模様
+		// https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-getwindowtextlengthw
+		const int cchRequired = ::GetWindowTextLength( hWnd );
+		if( cchRequired < 0 ){
+			// ドキュメントには失敗した場合、あるいはテキストが空の場合には 0 を返すとある。
+			// 0 の場合はエラーかどうか判断できないのでテキストの取得処理を続行する。
+			// 仕様上は負の場合はありえないが、念の為エラーチェックしておく。
+			return false;
+		}else if( cchRequired == 0 ){
+			// GetWindowTextLength はエラーの場合、またはテキストが空の場合は 0 を返す
+			if( GetLastError() != 0 ){
+				return false;
+			}
+			return true;
+		}
+
+		// ウィンドウテキストを取得するのに必要なバッファを確保する
+		strText.reserve( cchRequired );
+
+		// GetWindowText() はコピーした文字数を返す。
+		// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getwindowtextw
+		const int actualCopied = ::GetWindowText( hWnd, strText.data(), cchRequired );
+		if( actualCopied < 0 ){
+			// 仕様上は負の場合はありえないが、念の為エラーチェックしておく。
+			return false;
+		}
+		else if( actualCopied == 0 ){
+			// GetWindowText はエラーの場合、またはテキストが空の場合は 0 を返す
+			if( GetLastError() != 0 ){
+				return false;
+			}
+		}
+		else if( (int)strText.capacity() <= actualCopied ){
+			// GetWindowText() の仕様上はありえないはず
+			return false;
+		}
+
+		// データサイズを反映する
+		strText.assign( strText.data(), actualCopied );
+
+		return true;
+	}
+
 	LRESULT List_GetText(HWND hwndList, int nIndex, WCHAR* pszText, size_t cchText)
 	{
 		LRESULT nCount = SendMessage( hwndList, LB_GETTEXTLEN, (WPARAM)nIndex, (LPARAM)0);
