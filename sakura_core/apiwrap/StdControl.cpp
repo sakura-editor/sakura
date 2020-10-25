@@ -2,6 +2,8 @@
 #include "StdAfx.h"
 #include "StdControl.h"
 
+#include <windowsx.h>
+
 namespace ApiWrap{
 
 	/*!
@@ -51,6 +53,47 @@ namespace ApiWrap{
 		}
 		else if( (int)strText.capacity() <= actualCopied ){
 			// GetWindowText() の仕様上はありえないはず
+			return false;
+		}
+
+		// データサイズを反映する
+		strText.assign( strText.data(), actualCopied );
+
+		return true;
+	}
+
+	/*!
+		@brief リストアイテムのテキストを取得する
+		@param[in]  hList		リストコントロールのウインドウハンドル
+		@param[in]  nIndex		リストアイテムのインデックス
+		@param[out] strText		アイテムテキストを受け取る変数
+		@return		成功した場合 true
+		@return		失敗した場合 false
+	*/
+	bool List_GetText( HWND hList, int nIndex, std::wstring& strText )
+	{
+		// バッファをクリアしておく
+		strText.clear();
+
+		const int cchRequired = ListBox_GetTextLen( hList, nIndex );
+		if( cchRequired < 0 ){
+			// LB_ERR(-1)とその他のエラーは区別しない
+			return false;
+		}else if( cchRequired == 0 ){
+			return true;
+		}
+
+		// ウィンドウタイトルを設定するのに必要なバッファを確保する
+		strText.reserve( cchRequired );
+
+		// ListBox_GetText() はコピーした文字数を返す。
+		const int actualCopied = ListBox_GetText( hList, nIndex, strText.data() );
+		if( actualCopied < 0 ){
+			// LB_ERR(-1)とその他のエラーは区別しない
+			return false;
+		}
+		else if( (int)strText.capacity() <= actualCopied ){
+			// ListBox_GetText() の仕様上はありえないはず
 			return false;
 		}
 

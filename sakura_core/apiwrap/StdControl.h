@@ -228,6 +228,7 @@ namespace ApiWrap{
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      リストボックス                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	bool List_GetText( HWND hList, int nIndex, std::wstring& strText );
 	LRESULT List_GetText(HWND hwndList, int nIndex, WCHAR* pszText, size_t cchText);
 	template <size_t cchText>
 	LRESULT List_GetText(HWND hwndList, int nIndex, WCHAR(&pszText)[cchText]) {
