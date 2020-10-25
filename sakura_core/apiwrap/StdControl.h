@@ -303,6 +303,7 @@ namespace ApiWrap{
 		return SetDlgItemText(hwndDlg, nIDDlgItem, str);
 	}
 
+	bool DlgItem_GetText( HWND hDlg, int nIDDlgItem, std::wstring& strText );
 	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, WCHAR* pszText, int nMaxCount);
 
 	bool TreeView_GetItemTextVector(HWND hwndTree, TVITEM& item, std::vector<WCHAR>& vecStr);

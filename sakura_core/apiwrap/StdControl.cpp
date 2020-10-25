@@ -70,6 +70,28 @@ namespace ApiWrap{
 		return SendMessage( hwndList, LB_GETTEXT, (WPARAM)nIndex, LPARAM(pszText) );
 	}
 
+	/*!
+		@brief ダイアログアイテムのテキストを取得する
+		@param[in]  hDlg		ウィンドウハンドル
+		@param[in]  nIDDlgItem	ダイアログアイテムのID
+		@param[out] strText		アイテムテキストを受け取る変数
+		@return		成功した場合 true
+		@return		失敗した場合 false
+	*/
+	bool DlgItem_GetText( HWND hDlg, int nIDDlgItem, std::wstring& strText )
+	{
+		// バッファをクリアしておく
+		strText.clear();
+
+		// アイテムのハンドルを取得する
+		HWND hWnd = ::GetDlgItem( hDlg, nIDDlgItem );
+		if( hWnd == NULL ){
+			return false;
+		}
+
+		return Wnd_GetText( hWnd, strText );
+	}
+
 	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, WCHAR* pszText, int nMaxCount)
 	{
 		return GetDlgItemText(hwndDlg, nIDDlgItem, pszText, nMaxCount);
