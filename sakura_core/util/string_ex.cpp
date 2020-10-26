@@ -1,6 +1,9 @@
 ﻿/*! @file */
 #include "StdAfx.h"
 #include "string_ex.h"
+
+#include <stdarg.h>
+
 #include "charset/charcode.h"
 #include "util/std_macro.h"
 #include <limits.h>
@@ -209,6 +212,61 @@ const char* stristr_j( const char* s1, const char* s2 )
 		if( my_iskanji1( *(const unsigned char*)p1 ) && *(p1+1) != 0 ) p1++;
 	}
 	return NULL;
+}
+
+/*!
+	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
+	@param[out] strOut		フォーマットされたテキストを受け取る変数
+	@param[in]  pszFormat	フォーマット文字列
+	@param[in]  argList		引数リスト
+	@returns 出力された文字数。NUL終端を含まない。
+	@retval >= 0 正常終了
+	@retval < 0 異常終了
+*/
+int vstrprintf( std::wstring& strOut, const WCHAR* pszFormat, va_list& argList )
+{
+	// バッファをクリアしておく
+	strOut.clear();
+
+	// _vscwprintf() はフォーマットに必要な文字数を返す。
+	const int cchOut = ::_vscwprintf( pszFormat, argList );
+	if( cchOut <= 0 ){
+		// 出力文字数が0なら後続処理は要らない。また、エラー時は-1が返る。
+		return cchOut;
+	}
+
+	// フォーマットに必要なバッファを確保する
+	strOut.resize( cchOut );
+
+	// vswprintf_s() はコピーした文字数を返す。
+	const int actualCopied = ::vswprintf_s( strOut.data(), strOut.capacity(), pszFormat, argList );
+	if( actualCopied < 0 ){
+		// データサイズを反映する
+		strOut.assign( strOut.data(), cchOut );
+	}
+
+	return actualCopied;
+}
+
+/*!
+	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
+	@param[out] strOut		フォーマットされたテキストを受け取る変数
+	@param[in]  pszFormat	フォーマット文字列
+	@param[in]  ...			引数リスト
+	@returns 出力された文字数。NUL終端を含まない。
+	@retval >= 0 正常終了
+	@retval < 0 異常終了
+*/
+int strprintf( std::wstring& strOut, const WCHAR* pszFormat, ... )
+{
+	va_list argList;
+	va_start( argList, pszFormat );
+
+	const int nRet = vstrprintf( strOut, pszFormat, argList );
+
+	va_end( argList );
+
+	return nRet;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
