@@ -40,7 +40,7 @@ namespace ApiWrap{
 
 		// GetWindowText() はコピーした文字数を返す。
 		// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getwindowtextw
-		const int actualCopied = ::GetWindowText( hWnd, strText.data(), cchRequired );
+		const int actualCopied = ::GetWindowText( hWnd, strText.data(), (int)strText.capacity() );
 		if( actualCopied < 0 ){
 			// 仕様上は負の場合はありえないが、念の為エラーチェックしておく。
 			return false;
