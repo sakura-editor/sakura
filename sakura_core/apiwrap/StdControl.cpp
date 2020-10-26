@@ -36,7 +36,7 @@ namespace ApiWrap{
 		}
 
 		// ウィンドウテキストを取得するのに必要なバッファを確保する
-		strText.reserve( cchRequired );
+		strText.resize( cchRequired );
 
 		// GetWindowText() はコピーした文字数を返す。
 		// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getwindowtextw
@@ -83,8 +83,8 @@ namespace ApiWrap{
 			return true;
 		}
 
-		// ウィンドウタイトルを設定するのに必要なバッファを確保する
-		strText.reserve( cchRequired );
+		// アイテムテキストを設定するのに必要なバッファを確保する
+		strText.resize( cchRequired );
 
 		// ListBox_GetText() はコピーした文字数を返す。
 		const int actualCopied = ListBox_GetText( hList, nIndex, strText.data() );
