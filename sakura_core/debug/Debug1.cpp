@@ -21,6 +21,8 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#include "util/string_ex.h"
+
 #if defined(_DEBUG) || defined(USE_RELPRINT)
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -54,13 +56,8 @@ void DebugOutW( LPCWSTR lpFmt, ...)
 
 		::DebugBreak();
 
-		const int count = _vscwprintf( lpFmt, argList );
-
 		std::wstring strTooLongMessage;
-		strTooLongMessage.reserve( count );
-
-		::_vsnwprintf_s( strTooLongMessage.data(), count + 1, _TRUNCATE, lpFmt, argList );
-		strTooLongMessage.assign( strTooLongMessage.data(), count );
+		vstrprintf( strTooLongMessage, lpFmt, argList );
 
 		::OutputDebugStringW( strTooLongMessage.c_str() );
 	}

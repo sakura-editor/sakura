@@ -26,6 +26,8 @@
 #define SAKURA_STRING_EX_87282FEB_4B23_4112_9C5A_419F43618705_H_
 #pragma once
 
+#include <string>
+
 // 2007.10.19 kobake
 // string.h で定義されている関数を拡張したようなモノ達
 
@@ -199,6 +201,51 @@ inline int auto_vsprintf(ACHAR* buf, const ACHAR* format, va_list& v){ return tc
 inline int auto_vsprintf(WCHAR* buf, const WCHAR* format, va_list& v){ return tchar_vsprintf(buf,format,v); }
 inline int auto_vsprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list& v){ return tchar_vsprintf_s(buf, nBufCount, format, v); }
 inline int auto_vsprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list& v){ return tchar_vsprintf_s(buf, nBufCount, format, v); }
+
+template<typename ChType>
+inline int vstrprintf( std::basic_string<ChType>& strOut, const ChType* pszFormat, va_list& argList )
+{
+	static_assert( 0, "not implemented" );
+	return -1;
+}
+
+template<typename ChType>
+inline int strprintf( std::basic_string<ChType>& strOut, const ChType* pszFormat, ... )
+{
+	static_assert( 0, "not implemented" );
+	return -1;
+}
+
+template<>
+inline int vstrprintf<WCHAR>( std::wstring& strOut, const WCHAR* pszFormat, va_list& argList )
+{
+	strOut.clear();
+
+	const int cchOut = _vscwprintf( pszFormat, argList );
+	if( cchOut > 0 ){
+
+		strOut.reserve( cchOut );
+
+		::vswprintf_s( strOut.data(), strOut.capacity(), pszFormat, argList );
+
+		strOut.assign( strOut.data(), cchOut );
+	}
+
+	return cchOut;
+}
+
+template<>
+inline int strprintf<WCHAR>( std::wstring& strOut, const WCHAR* pszFormat, ... )
+{
+	va_list argList;
+	va_start( argList, pszFormat );
+
+	const int nRet = vstrprintf( strOut, pszFormat, argList );
+
+	va_end( argList );
+
+	return nRet;
+}
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      文字コード変換                         //
