@@ -134,11 +134,11 @@ void CDlgExec::SetData( void )
 	/*****************************
 	*         データ設定         *
 	*****************************/
-	int nCommandsCount = m_pShareData->m_sHistory.m_aCommands.size();
+	hwndCombo = GetItemHwnd( IDC_COMBO_m_szCommand );
+	Combo_ResetContent( hwndCombo );
+	const int nCommandsCount = m_pShareData->m_sHistory.m_aCommands.size();
 	if( 0 < nCommandsCount ){
 		wcscpy( m_szCommand, m_pShareData->m_sHistory.m_aCommands[0] );
-		hwndCombo = GetItemHwnd( IDC_COMBO_m_szCommand );
-		Combo_ResetContent( hwndCombo );
 		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCommand );
 		for( i = 0; i < nCommandsCount; ++i ){
 			Combo_AddString( hwndCombo, m_pShareData->m_sHistory.m_aCommands[i] );
@@ -146,11 +146,11 @@ void CDlgExec::SetData( void )
 		Combo_SetCurSel( hwndCombo, 0 );
 	}
 
-	int nCurDirsCount = m_pShareData->m_sHistory.m_aCurDirs.size();
+	hwndCombo = GetItemHwnd( IDC_COMBO_CUR_DIR );
+	Combo_ResetContent( hwndCombo );
+	const int nCurDirsCount = m_pShareData->m_sHistory.m_aCurDirs.size();
 	if( 0 < nCurDirsCount ){
 		wcscpy( m_szCurDir, m_pShareData->m_sHistory.m_aCurDirs[0] );
-		hwndCombo = GetItemHwnd( IDC_COMBO_CUR_DIR );
-		Combo_ResetContent( hwndCombo );
 		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCurDir );
 		for( i = 0; i < nCurDirsCount; ++i ){
 			Combo_AddString( hwndCombo, m_pShareData->m_sHistory.m_aCurDirs[i] );
