@@ -25,28 +25,28 @@ HR {
 	border-color: #666; margin: 1em; border-style: solid; height: 2px;
 }
 H1 {
-	padding: 0.2em 0.5em 0.2em 0.5em; font-weight: bold; font-size: 1.5em; line-height: 1;
+	padding: 0.2em 0.5em; font-weight: bold; font-size: 1.5em; line-height: 1;
 	border-color: #f28; background-color: #fee; color: #000;
 }
 H2 {
-	padding: 0.2em 0.5em 0.2em 0.5em; font-weight: bold; font-size: 1.2em; line-height: 1; margin-top: 1em;
+	padding: 0.2em 0.5em; font-weight: bold; font-size: 1.2em; line-height: 1; margin-top: 1em;
 	border-top: 2px solid #f28; border-bottom: 2px solid #f28;
 	background-color: #fee; color: #000;
 }
 H3 {
-	padding: 0.2em 0.5em 0.2em 0.5em; font-weight: bold; font-size: 1em; line-height: 1; margin-top: 1em;
+	padding: 0.2em 0.5em; font-weight: bold; font-size: 1em; line-height: 1; margin-top: 1em;
 	border-bottom: 2px solid #f28;
 	background-color: #fee; color: #000;
 }
 H4 {
-	padding: 0.2em 0.5em 0.2em 0.5em; font-weight: bold; font-size: 1em; line-height: 1; margin-top: 1em;
+	padding: 0.2em 0.5em; font-weight: bold; font-size: 1em; line-height: 1; margin-top: 1em;
 	background-color: #fee; color: #000;
 }
 DL {
 	padding: 0; border: 1px solid #666; margin-right: 1em; margin-left: 1em;
 }
 DT {
-	PADDING: 0.1em 0.3em 0.1em 0.3em; MARGIN: 0.5em 0 0; BORDER-RIGHT: 1px; BORDER-TOP: 1px solid #666; BORDER-LEFT: 1px; BORDER-BOTTOM: 1px solid #f28; BACKGROUND-COLOR: #fee
+	PADDING: 0.1em 0.3em; MARGIN: 0.5em 0 0; BORDER-RIGHT: 1px; BORDER-TOP: 1px solid #666; BORDER-LEFT: 1px; BORDER-BOTTOM: 1px solid #f28; BACKGROUND-COLOR: #fee
 }
 DD {
 	PADDING-RIGHT: 0.1em; PADDING-LEFT: 0.5em; PADDING-BOTTOM: 0.2em; MARGIN: 0; PADDING-TOP: 0.2em
@@ -97,7 +97,7 @@ STRONG {
 	FONT-WEIGHT: bold; TEXT-ALIGN: center
 }
 .example {
-	margin: 0; padding: 0 1em 0 1em; font-weight: bold; border-top-style: none; 
+	margin: 0; padding: 0 1em; font-weight: bold; border-top-style: none; 
 	; border-right-style: none; border-left-style: none; background-color: #e0fce8; text-align: left; border-bottom-style: none
 }
 .note {
