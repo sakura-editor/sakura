@@ -44,9 +44,11 @@ H4 {
 }
 DL {
 	padding: 0; border: 1px solid #666; margin-right: 1em; margin-left: 1em;
+	LINE-HEIGHT: 1.4
 }
 DT {
 	PADDING: 0.1em 0.3em; MARGIN: 0.5em 0 0; BORDER-RIGHT: 1px; BORDER-TOP: 1px solid #666; BORDER-LEFT: 1px; BORDER-BOTTOM: 1px solid #f28; BACKGROUND-COLOR: #fee
+	FONT-WEIGHT: bold
 }
 DD {
 	PADDING-RIGHT: 0.1em; PADDING-LEFT: 0.5em; PADDING-BOTTOM: 0.2em; MARGIN: 0; PADDING-TOP: 0.2em
@@ -63,28 +65,18 @@ TD {
 P {
 	LINE-HEIGHT: 1.4
 }
-DL {
-	LINE-HEIGHT: 1.4
-}
 UL {
 	LINE-HEIGHT: 1.4
+	LIST-STYLE-TYPE: square
 }
 OL {
 	LINE-HEIGHT: 1.4
-}
-DT {
-	FONT-WEIGHT: bold
-}
-UL {
-	LIST-STYLE-TYPE: square
 }
 EM {
 	COLOR: #909; BACKGROUND-COLOR: transparent
 }
 STRONG {
 	COLOR: #909; BACKGROUND-COLOR: transparent
-}
-STRONG {
 	BORDER-RIGHT: 3px; BORDER-TOP: 3px; BORDER-LEFT: 3px; BORDER-BOTTOM: 3px double
 }
 .s {
