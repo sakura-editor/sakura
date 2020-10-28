@@ -249,9 +249,6 @@ void CDlgJump::SetData( void )
 	nIndex = 0;
 	nPLSQLBlockNum = 0;
 	for( i = 0; i < cFuncInfoArr.GetNum(); ++i ){
-		if( 31 == cFuncInfoArr.GetAt( i )->m_nInfo ||
-			41 == cFuncInfoArr.GetAt( i )->m_nInfo ){
-		}
 		if( 31 == cFuncInfoArr.GetAt( i )->m_nInfo ){
 			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 				auto_sprintf( szText, LS(STR_DLGJUMP_PSLQL),
