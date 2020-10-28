@@ -289,8 +289,11 @@ BOOL CEditView::Create(
 	wc.hbrBackground	= (HBRUSH)NULL/*(COLOR_WINDOW + 1)*/;
 	wc.lpszMenuName		= NULL;
 	wc.lpszClassName	= GSTR_VIEWNAME;
-	if( 0 == ::RegisterClass( &wc ) ){
-	}
+
+	// TODO: 実装を改善する余地があります。
+	// RegisterClassは既に登録された状態で呼ぶと失敗するため、
+	// 単純に成否チェックして抜けたらマズいです。
+	::RegisterClass( &wc );
 
 	/* エディタウィンドウの作成 */
 	SetHwnd(
