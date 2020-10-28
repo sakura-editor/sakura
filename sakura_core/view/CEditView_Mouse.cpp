@@ -422,8 +422,6 @@ normal_action:;
 					}
 				}
 
-				if( 0 < nWorkRel ){
-				}
 				/* 選択領域描画 */
 				GetSelectionInfo().DrawSelectArea();
 			}
