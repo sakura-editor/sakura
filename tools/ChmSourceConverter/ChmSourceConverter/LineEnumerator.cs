@@ -24,40 +24,55 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace ChmSourceConverter
 {
     /// <summary>
-    /// テキストファイルを開いて行データを列挙するクラス
+    /// 行データを列挙するオブジェクトのクラス
     /// </summary>
-    public class FileContents : IEnumerable<string>, IDisposable
+    internal class LineEnumerator : IEnumerator<string>
     {
         /// <summary>
-        /// 行データの列挙オブジェクト
+        /// ストリームリーダー
         /// </summary>
-        private IEnumerator<string> LineEnumerator;
+        private StreamReader Reader;
+
+        /// <summary>
+        /// 現在行の行データ
+        /// </summary>
+        private string CurrentLine;
+
+        /// <inheritdoc />
+        public string Current => CurrentLine;
+
+        /// <inheritdoc />
+        object IEnumerator.Current => CurrentLine;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="encoding"></param>
-        public FileContents(string filename, Encoding encoding)
+        public LineEnumerator(string filename, Encoding encoding)
         {
-            LineEnumerator = new LineEnumerator(filename, encoding);
+            Reader = new StreamReader(filename, encoding, true);
         }
 
         /// <inheritdoc />
-        public IEnumerator<string> GetEnumerator()
+        public bool MoveNext()
         {
-            return LineEnumerator;
+            if (Reader.EndOfStream) return false;
+            CurrentLine = Reader.ReadLine();
+            return true;
         }
 
         /// <inheritdoc />
-        IEnumerator IEnumerable.GetEnumerator()
+        public void Reset()
         {
-            return LineEnumerator;
+            CurrentLine = null;
+            Reader.BaseStream.Seek(0, SeekOrigin.Begin);
         }
 
         #region IDisposable Support
@@ -70,15 +85,15 @@ namespace ChmSourceConverter
                 if (disposing)
                 {
                     // dispose managed state (managed objects).
-                    LineEnumerator.Dispose();
-                    LineEnumerator = null;
+                    Reader.Dispose();
+                    Reader = null;
                 }
 
                 disposedValue = true;
             }
         }
 
-        ~FileContents()
+        ~LineEnumerator()
         {
             // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
             Dispose(false);
