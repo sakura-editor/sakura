@@ -90,7 +90,7 @@ STRONG {
 }
 .example {
 	margin: 0; padding: 0 1em; font-weight: bold; border-top-style: none; 
-	; border-right-style: none; border-left-style: none; background-color: #e0fce8; text-align: left; border-bottom-style: none
+	border-right-style: none; border-left-style: none; background-color: #e0fce8; text-align: left; border-bottom-style: none
 }
 .note {
 	PADDING-RIGHT: 1em; PADDING-LEFT: 1em; PADDING-BOTTOM: 0; MARGIN: 0; BORDER-TOP-STYLE: none; PADDING-TOP: 0; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; BACKGROUND-COLOR: #cdf; TEXT-ALIGN: left; BORDER-BOTTOM-STYLE: none
