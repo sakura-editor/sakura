@@ -492,7 +492,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					}
 					nNum2 = List_GetCount( hwndLIST_RES );
 					if( LB_ERR == nNum2 ){
-						nIdx2 = 0;
+						nNum2 = 0;
 					}
 					nIdx3 = Combo_GetCurSel( hwndCOMBO_FUNCKIND );
 					if( CB_ERR == nIdx3 ){
