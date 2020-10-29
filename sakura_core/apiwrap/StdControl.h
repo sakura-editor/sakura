@@ -65,6 +65,15 @@ namespace ApiWrap{
 
 	/*!
 		@brief Window テキストを取得する
+		@param[in]  hWnd	ウィンドウハンドル
+		@param[out] strText	ウィンドウテキストを受け取る変数
+		@return		成功した場合 true
+		@return		失敗した場合 false
+	*/
+	bool Wnd_GetText( HWND hWnd, std::wstring& strText );
+
+	/*!
+		@brief Window テキストを取得する
 		@param[in]  hwnd	ウィンドウハンドル
 		@param[out] str		ウィンドウテキスト
 		@return		成功した場合 true
@@ -219,6 +228,7 @@ namespace ApiWrap{
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      リストボックス                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	bool List_GetText( HWND hList, int nIndex, std::wstring& strText );
 	LRESULT List_GetText(HWND hwndList, int nIndex, WCHAR* pszText, size_t cchText);
 	template <size_t cchText>
 	LRESULT List_GetText(HWND hwndList, int nIndex, WCHAR(&pszText)[cchText]) {
@@ -294,6 +304,7 @@ namespace ApiWrap{
 		return SetDlgItemText(hwndDlg, nIDDlgItem, str);
 	}
 
+	bool DlgItem_GetText( HWND hDlg, int nIDDlgItem, std::wstring& strText );
 	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, WCHAR* pszText, int nMaxCount);
 
 	bool TreeView_GetItemTextVector(HWND hwndTree, TVITEM& item, std::vector<WCHAR>& vecStr);

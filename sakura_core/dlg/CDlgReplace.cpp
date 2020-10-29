@@ -194,10 +194,8 @@ void CDlgReplace::SetCombosList( void )
 	while (Combo_GetCount(hwndCombo) > 0) {
 		Combo_DeleteString( hwndCombo, 0);
 	}
-	int nBufferSize = ::GetWindowTextLength( hwndCombo ) + 1;
-	auto vText = std::make_unique<WCHAR[]>(nBufferSize);
-	Combo_GetText( hwndCombo, &vText[0], nBufferSize );
-	if (m_strText.compare( &vText[0] ) != 0) {
+	std::wstring strText;
+	if( !ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, strText ) || strText != m_strText ) {
 		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
 	}
 
@@ -206,10 +204,8 @@ void CDlgReplace::SetCombosList( void )
 	while (Combo_GetCount(hwndCombo) > 0) {
 		Combo_DeleteString( hwndCombo, 0);
 	}
-	nBufferSize = ::GetWindowTextLength( hwndCombo ) + 1;
-	vText = std::make_unique<WCHAR[]>(nBufferSize);
-	Combo_GetText( hwndCombo, &vText[0], nBufferSize );
-	if (m_strText2.compare( &vText[0] ) != 0) {
+	std::wstring strText2;
+	if( !ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT2, strText2 ) || strText2 != m_strText2 ) {
 		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT2, m_strText2.c_str() );
 	}
 }
@@ -240,18 +236,13 @@ int CDlgReplace::GetData( void )
 	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
 
 	/* 検索文字列 */
-	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT) ) + 1;
-	auto vText = std::make_unique<WCHAR[]>(nBufferSize);
-	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, &vText[0], nBufferSize);
-	m_strText = &vText[0];
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, m_strText );
+
 	/* 置換後文字列 */
 	if( ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_LINEDELETE ) ){
 		m_strText2 = L"";
 	}else{
-		nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT2) ) + 1;
-		vText = std::make_unique<WCHAR[]>(nBufferSize);
-		::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT2, &vText[0], nBufferSize);
-		m_strText2 = &vText[0];
+		ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT2, m_strText2 );
 	}
 
 	/* 置換 ダイアログを自動的に閉じる */

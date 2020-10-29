@@ -596,10 +596,7 @@ void CMainToolBar::AcceptSharedSearchKey()
 int CMainToolBar::GetSearchKey(std::wstring& strText)
 {
 	if( m_hwndSearchBox ){
-		int nBufferSize = ::GetWindowTextLength( m_hwndSearchBox ) + 1;
-		auto vText = std::make_unique<WCHAR[]>(nBufferSize);
-		::GetWindowText( m_hwndSearchBox, &vText[0], nBufferSize);
-		strText = &vText[0];
+		ApiWrap::Wnd_GetText( m_hwndSearchBox, strText );
 	}else{
 		strText = L"";
 	}
