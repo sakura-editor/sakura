@@ -40,6 +40,26 @@ bool fexist(LPCWSTR pszPath)
 	return _waccess(pszPath,0)!=-1;
 }
 
+
+/*!
+ * パスがファイル名に使えない文字を含んでいないかチェックする
+ * @param[in] strPath チェック対象のパス
+ * @retval true  パスはファイル名に使えない文字を含んでいない
+ * retuval false パスはファイル名に使えない文字を含んでいる
+ */
+bool CheckInvalidFilenameChars( const std::wstring_view& strPath )
+{
+	// ファイル名に使えない文字
+	constexpr const wchar_t invalidFilenameChars[] = L":*?\"<>|";
+
+	// 文字列中の最後のパス区切り位置を検出してファイル名を抽出する
+	const auto lastPathSep = strPath.find_last_of( L"\\/" );
+	const auto strFilename = lastPathSep == std::wstring_view::npos ? strPath : strPath.substr( lastPathSep + 1 );
+
+	// ファイル名に使えない文字が含まれる場合、エラーにする
+	return ::wcscspn( strFilename.data(), invalidFilenameChars ) == strFilename.length();
+}
+
 /*!	ファイル名の切り出し
 
 	指定文字列からファイル名と認識される文字列を取り出し、

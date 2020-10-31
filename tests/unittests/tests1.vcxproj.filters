@@ -80,6 +80,9 @@
     <ClCompile Include="test-string_ex.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-file.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartEditorProcessForTest.h">

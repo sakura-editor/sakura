@@ -315,19 +315,14 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			if (wcsncmp_literal(szPath, L"file:///")==0) {
 				wcscpy(szPath, &(szPath[8]));
 			}
-			int len = wcslen(szPath);
-			for (int i = 0; i < len ; ) {
-				if ( !TCODE::IsValidFilenameChar(szPath[i]) ){
+
+			if ( !CheckInvalidFilenameChars( szPath ) ){
 					std::wstring msg;
 					// "%ls\r\n上記のファイル名は不正です。ファイル名に \\ / : * ? "" < > | の文字は使えません。 "
 					strprintf( msg, LS(STR_CMDLINE_PARSECMD1), szPath );
 					const WCHAR* msg_str = msg.c_str();
 					MessageBox( NULL, msg_str, L"FileNameError", MB_OK);
 					szPath[0] = L'\0';
-					break;
-				}
-				int nChars = t_max(1, int(CNativeW::GetCharNext( szPath, len, szPath + i ) - (szPath + i)));
-				i += nChars;
 			}
 
 			if (szPath[0] != L'\0') {
