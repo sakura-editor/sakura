@@ -192,6 +192,50 @@ private:
 	HFONT m_hFont;
 };
 
+class CFont
+{
+public:
+	CFont() = default;
+	CFont( const CFont& font ) : CFont( font.m_hFont ){}
+	CFont( CFont&& font ) noexcept { *this = std::move( font ); }
+	CFont( HFONT hFont, LONG nLogicalHeight = LONG_MAX ) : CFont( GetLogFont( hFont ), nLogicalHeight ){}
+	CFont( const LOGFONT& logfont, LONG nLogicalHeight = LONG_MAX ){
+		LOGFONT lf = logfont;
+		if( nLogicalHeight != LONG_MAX ){
+			lf.lfHeight = nLogicalHeight;
+		}
+		m_hFont = ::CreateFontIndirect( &lf );
+		m_nLogicalHeight = lf.lfHeight;
+		m_strFaceName.assign( lf.lfFaceName );
+	}
+	~CFont(){
+		if( m_hFont != NULL ){
+			::DeleteObject( m_hFont );
+		}
+	}
+	CFont& operator=(CFont& other) = delete;
+	CFont& operator=(CFont&& other) noexcept {
+		std::swap( m_hFont, other.m_hFont );
+		std::swap( m_strFaceName, other.m_strFaceName );
+		std::swap( m_nLogicalHeight, other.m_nLogicalHeight );
+		return *this;
+	}
+	HFONT GetHandle(){ return m_hFont; }
+	LONG GetLogicalHeight(){ return m_nLogicalHeight; }
+	const TCHAR* GetFaceName(){ return m_strFaceName.c_str(); }
+
+private:
+	LOGFONT GetLogFont( HFONT hFont ){
+		LOGFONT lf = {};
+		GetObject( hFont, sizeof( lf ), &lf );
+		return lf;
+	}
+
+	HFONT m_hFont = NULL;
+	LONG m_nLogicalHeight = 0;
+	std::wstring m_strFaceName;
+};
+
 HFONT UpdateDialogFont( HWND hwnd, BOOL force = FALSE );
 
 #endif /* SAKURA_WINDOW_A0833476_5E32_46BE_87B6_ECD55F10D34A_H_ */

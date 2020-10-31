@@ -25,6 +25,7 @@
 #include <Windows.h>
 #include "dlg/CDialog.h"
 #include "doc/CEditDoc.h"
+#include "util/window.h"
 
 class CFuncInfo;
 class CFuncInfoArr; // 2002/2/10 aroka
@@ -103,6 +104,7 @@ public:
 	void LoadFileTreeSetting( CFileTreeSetting& data, SFilePath& IniDirPath );
 	void NotifyCaretMovement( CLayoutInt nCurLine, CLayoutInt nCurCol );
 	void NotifyDocModification();
+	void UpdateViewFont( const LOGFONT& logfont );
 
 protected:
 	bool m_bInChangeLayout;
@@ -230,5 +232,7 @@ private:
 	RECT				m_rcItems[12];
 
 	bool		m_bFuncInfoArrIsUpToDate;
+
+	CFont		m_cFontView;
 };
 #endif /* SAKURA_CDLGFUNCLIST_B22A3877_572A_49B7_B683_50ECA451A6F8_H_ */

@@ -1872,7 +1872,14 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		}
 	}
 
-	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
+	BOOL bRet = CDialog::OnInitDialog( hwndDlg, wParam, lParam );
+
+	m_cFontView = CFont( (HFONT)::SendMessageAny( hwndDlg, WM_GETFONT, 0, (LPARAM)NULL ) );
+	if( pcEditView != NULL ){
+		UpdateViewFont( pcEditView->m_pcEditWnd->m_pcViewFont->GetLogfont() );
+	}
+
+	return bRet;
 }
 
 BOOL CDlgFuncList::OnBnClicked( int wID )
@@ -2567,6 +2574,7 @@ void CDlgFuncList::Redraw( int nOutLineType, int nListType, CFuncInfoArr* pcFunc
 	}
 
 	SetData();
+	UpdateViewFont( pcEditView->m_pcEditWnd->m_pcViewFont->GetLogfont() );
 }
 
 //ダイアログタイトルの設定
@@ -3943,6 +3951,19 @@ void CDlgFuncList::NotifyDocModification()
 	m_bFuncInfoArrIsUpToDate = false;
 
 	return;
+}
+
+/*!
+	リスト/ツリービューのフォントを更新
+*/
+void CDlgFuncList::UpdateViewFont( const LOGFONT& logfont )
+{
+	CFont cFontNew = CFont( logfont, m_cFontView.GetLogicalHeight() );
+	const HWND hwnds[] = { GetItemHwnd( IDC_LIST_FL ), GetItemHwnd( IDC_TREE_FL ) };
+	for( size_t i = 0; i < _countof( hwnds ); ++i ){
+		::SendMessage( hwnds[i], WM_SETFONT, (WPARAM)cFontNew.GetHandle(), MAKELPARAM( FALSE, 0 ) );
+	}
+	m_cFontView = std::move( cFontNew );
 }
 
 /*!
