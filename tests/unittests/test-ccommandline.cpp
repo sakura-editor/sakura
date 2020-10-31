@@ -842,3 +842,31 @@ TEST(CCommandLine, EndOfOptionMark)
 	cCommandLine.ParseCommandLine(L"-- -GROUP=2", false);
 	EXPECT_EQ(-1, cCommandLine.GetGroupId());
 }
+
+/*!
+ * @brief ファイルパスに「ファイルに使えない文字」を含めた場合の仕様
+ * @remark 無視される
+ */
+TEST(CCommandLine, ParseFileNameIncludesInvalidFilenameChars)
+{
+	// ファイル名に使えない文字 = "\\/:*?\"<>|"
+	// このうち、\\と/はパス区切りのため実質対象外になる。
+	const std::wstring_view badNames[] = {
+		L"localhost:8080",
+		L"test*.txt",
+		L"test?.txt",
+		L"test\".txt",
+		L"test<.txt",
+		L"test>.txt",
+		L"test|.txt",
+	};
+
+	// ファイル名に使えない文字を含んでいたら、ファイル名としては認識されない。
+	CCommandLineWrapper cCommandLine;
+	for (const auto& badName : badNames) {
+		cCommandLine.ParseCommandLine( badName.data(), false );
+		EXPECT_STREQ(L"", cCommandLine.GetOpenFile());
+		EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
+		EXPECT_EQ(0, cCommandLine.GetFileNum());
+	}
+}
