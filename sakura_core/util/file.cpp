@@ -42,12 +42,12 @@ bool fexist(LPCWSTR pszPath)
 
 
 /*!
- * パスがファイル名に使えない文字を含んでいないかチェックする
+ * パスがファイル名に使えない文字を含んでいるかチェックする
  * @param[in] strPath チェック対象のパス
- * @retval true  パスはファイル名に使えない文字を含んでいない
- * retuval false パスはファイル名に使えない文字を含んでいる
+ * @retval true  パスはファイル名に使えない文字を含んでいる
+ * retuval false パスはファイル名に使えない文字を含んでいない
  */
-bool CheckInvalidFilenameChars( const std::wstring_view& strPath )
+bool IsInvalidFilenameChars( const std::wstring_view& strPath )
 {
 	// ファイル名に使えない文字
 	constexpr const wchar_t invalidFilenameChars[] = L":*?\"<>|";
@@ -56,8 +56,8 @@ bool CheckInvalidFilenameChars( const std::wstring_view& strPath )
 	const auto lastPathSep = strPath.find_last_of( L"\\/" );
 	const auto strFilename = lastPathSep == std::wstring_view::npos ? strPath : strPath.substr( lastPathSep + 1 );
 
-	// ファイル名に使えない文字が含まれる場合、エラーにする
-	return ::wcscspn( strFilename.data(), invalidFilenameChars ) == strFilename.length();
+	// ファイル名に使えない文字が含まれる場合、trueを返す
+	return ::wcscspn( strFilename.data(), invalidFilenameChars ) < strFilename.length();
 }
 
 /*!	ファイル名の切り出し

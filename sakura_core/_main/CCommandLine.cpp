@@ -316,7 +316,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				wcscpy(szPath, &(szPath[8]));
 			}
 
-			if ( !CheckInvalidFilenameChars( szPath ) ){
+			if ( IsInvalidFilenameChars( szPath ) ){
 				std::wstring msg;
 				// "%ls\r\n上記のファイル名は不正です。ファイル名に \\ / : * ? "" < > | の文字は使えません。 "
 				strprintf( msg, LS(STR_CMDLINE_PARSECMD1), szPath );

@@ -35,25 +35,25 @@
 #include "util/file.h"
 
 /*!
- * @brief パスがファイル名に使えない文字を含んでいないかチェックする
+ * @brief パスがファイル名に使えない文字を含んでいるかチェックする
  */
-TEST( file, CheckInvalidFilenameChars )
+TEST( file, IsInvalidFilenameChars )
 {
 	// ファイル名に使えない文字 = "\\/:*?\"<>|"
 	// このうち、\\と/はパス区切りのため実質対象外になる。
-	EXPECT_TRUE(CheckInvalidFilenameChars(L"test.txt"));
-	EXPECT_TRUE(CheckInvalidFilenameChars(L".\\test.txt"));
-	EXPECT_TRUE(CheckInvalidFilenameChars(L"./test.txt"));
-	EXPECT_TRUE(CheckInvalidFilenameChars(L"C:\\test.txt"));
-	EXPECT_TRUE(CheckInvalidFilenameChars(L"C:/test.txt"));
-	EXPECT_TRUE(CheckInvalidFilenameChars(L"C:\\"));
-	EXPECT_TRUE(CheckInvalidFilenameChars(L"C:/"));
+	EXPECT_FALSE(IsInvalidFilenameChars(L"test.txt"));
+	EXPECT_FALSE(IsInvalidFilenameChars(L".\\test.txt"));
+	EXPECT_FALSE(IsInvalidFilenameChars(L"./test.txt"));
+	EXPECT_FALSE(IsInvalidFilenameChars(L"C:\\test.txt"));
+	EXPECT_FALSE(IsInvalidFilenameChars(L"C:/test.txt"));
+	EXPECT_FALSE(IsInvalidFilenameChars(L"C:\\"));
+	EXPECT_FALSE(IsInvalidFilenameChars(L"C:/"));
 
-	EXPECT_FALSE(CheckInvalidFilenameChars(L"localhost:8080"));
-	EXPECT_FALSE(CheckInvalidFilenameChars(L"test*.txt"));
-	EXPECT_FALSE(CheckInvalidFilenameChars(L"test?.txt"));
-	EXPECT_FALSE(CheckInvalidFilenameChars(L"test\".txt"));
-	EXPECT_FALSE(CheckInvalidFilenameChars(L"test<.txt"));
-	EXPECT_FALSE(CheckInvalidFilenameChars(L"test>.txt"));
-	EXPECT_FALSE(CheckInvalidFilenameChars(L"test|.txt"));
+	EXPECT_TRUE(IsInvalidFilenameChars(L"localhost:8080"));
+	EXPECT_TRUE(IsInvalidFilenameChars(L"test*.txt"));
+	EXPECT_TRUE(IsInvalidFilenameChars(L"test?.txt"));
+	EXPECT_TRUE(IsInvalidFilenameChars(L"test\".txt"));
+	EXPECT_TRUE(IsInvalidFilenameChars(L"test<.txt"));
+	EXPECT_TRUE(IsInvalidFilenameChars(L"test>.txt"));
+	EXPECT_TRUE(IsInvalidFilenameChars(L"test|.txt"));
 }
