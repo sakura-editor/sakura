@@ -284,57 +284,51 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 		if( ( bParseOptDisabled ||
 			! (pszToken[0] == '-' || pszToken[0] == '"' && pszToken[1] == '-' ) )){
 
-			if( pszToken[0] == L'\"' ){
-				CNativeW cmWork;
-				//	Nov. 3, 2005 genta
-				//	末尾のクォーテーションが無い場合を考慮して，
-				//	最後がダブルクォートの場合のみ取り除く
-				//	ファイル名には使えない文字なのでファイル名に含まれている場合は考慮不要
-				//	またSHIFT-JISの2バイト目の考慮も不要
-				//	Nov. 27, 2005 genta
-				//	引数がダブルクォート1つの場合に，その1つを最初と最後の1つずつと
-				//	見間違えて，インデックス-1にアクセスしてしまうのを防ぐために長さをチェックする
-				//	ファイル名の後ろにあるOptionを解析するため，ループは継続
-				int len = lstrlen( pszToken + 1 );
-				if( len > 0 ){
-					cmWork.SetString( &pszToken[1], len - ( pszToken[len] == L'"' ? 1 : 0 ));
-					cmWork.Replace( L"\"\"", L"\"" );
-					wcscpy_s( szPath, _countof(szPath), cmWork.GetStringPtr() );	/* ファイル名 */
-				}
-				else {
-					szPath[0] = L'\0';
-				}
-			}
-			else{
-				wcscpy_s( szPath, _countof(szPath), pszToken );		/* ファイル名 */
+			// トークンの長さを取得する（あとで調整するのでconstにできない）
+			size_t cchToken = ::wcsnlen( pszToken, nCmdLineWorkLen - (pszToken - pszCmdLineWork) );
+
+			// トークンが引用符で囲まれていたら、引用符を外す
+			if( cchToken > 1 && pszToken[0] == '"' && pszToken[0] == pszToken[cchToken - 1] ){
+				pszToken[cchToken - 1] = '\0';
+				++pszToken;
+				cchToken -= 2;
 			}
 
 			// Nov. 11, 2005 susu
 			// 不正なファイル名のままだとファイル保存時ダイアログが出なくなるので
 			// 簡単なファイルチェックを行うように修正
-			if (wcsncmp_literal(szPath, L"file:///")==0) {
-				wcscpy(szPath, &(szPath[8]));
+			constexpr const WCHAR protocolPrefix[] = L"file:///";
+			if( 0 == wcsncmp_literal( pszToken, protocolPrefix ) ){
+				pszToken += _countof(protocolPrefix) - 1;
+				cchToken -= _countof(protocolPrefix) - 1;
 			}
 
-			if ( IsInvalidFilenameChars( szPath ) ){
-				std::wstring msg;
+			// ファイルパスの問題報告するメッセージ(問題なければempty。)
+			std::wstring msg;
+
+			if ( IsInvalidFilenameChars( pszToken ) ){
 				// "%ls\r\n上記のファイル名は不正です。ファイル名に \\ / : * ? "" < > | の文字は使えません。 "
-				strprintf( msg, LS(STR_CMDLINE_PARSECMD1), szPath );
-				const WCHAR* msg_str = msg.c_str();
-				MessageBox( NULL, msg_str, L"FileNameError", MB_OK);
-				szPath[0] = L'\0';
+				strprintf( msg, LS(STR_CMDLINE_PARSECMD1), pszToken );
+				MessageBox( NULL, msg.c_str(), L"FileNameError", MB_OK);
+			}
+			// パスの長さチェック
+			else if( _countof(m_fi.m_szPath) <= cchToken ){
+				// "%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
+				strprintf( msg, LS(STR_ERR_FILEPATH_TOO_LONG), pszToken );
+				MessageBox( NULL, msg.c_str(), L"FileNameError", MB_OK);
 			}
 
-			if (szPath[0] != L'\0') {
-				CSakuraEnvironment::ResolvePath(szPath);
-				if (m_fi.m_szPath[0] == L'\0') {
-					wcscpy(m_fi.m_szPath, szPath );
-				}
-				else {
-					m_vFiles.push_back( szPath );
+			// ファイルパスに問題がない場合
+			if( msg.empty() ){
+				if( m_fi.m_szPath[0] == L'\0' ){
+					wcscpy( m_fi.m_szPath, pszToken );
+					CSakuraEnvironment::ResolvePath( m_fi.m_szPath );
+				}else{
+					m_vFiles.push_back( pszToken );
 				}
 			}
 		}
+		// オプションの場合
 		else{
 			if( *pszToken == '"' ){
 				++pszToken;	// 2007.09.09 genta 先頭の"はスキップ
