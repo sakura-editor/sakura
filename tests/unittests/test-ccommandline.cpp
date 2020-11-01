@@ -844,6 +844,18 @@ TEST(CCommandLine, EndOfOptionMark)
 }
 
 /*!
+ * @brief 終端されない二重引用符の仕様
+ */
+TEST(CCommandLine, UnterminatedQuotedFilename)
+{
+	CCommandLineWrapper cCommandLine;
+	cCommandLine.ParseCommandLine(L"\"", false);
+	EXPECT_STREQ(L"", cCommandLine.GetOpenFile());
+	EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
+	EXPECT_EQ(0, cCommandLine.GetFileNum());
+}
+
+/*!
  * @brief ファイルパスにファイルプロトコルの接頭辞を含めた場合の仕様
  */
 TEST(CCommandLine, StripFileProtocol)
