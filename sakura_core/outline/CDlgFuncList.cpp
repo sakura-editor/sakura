@@ -3962,8 +3962,12 @@ void CDlgFuncList::UpdateViewFont( const LOGFONT& logfont )
 	const HWND hwnds[] = { GetItemHwnd( IDC_LIST_FL ), GetItemHwnd( IDC_TREE_FL ) };
 	for( size_t i = 0; i < _countof( hwnds ); ++i ){
 		::SendMessage( hwnds[i], WM_SETFONT, (WPARAM)cFontNew.GetHandle(), MAKELPARAM( FALSE, 0 ) );
+		// フォント変更前の文字が一部残ることがあるので再描画
+		InvalidateRect( hwnds[i], NULL, TRUE );
 	}
 	m_cFontView = std::move( cFontNew );
+
+	return;
 }
 
 /*!
