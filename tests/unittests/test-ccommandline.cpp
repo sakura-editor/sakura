@@ -844,6 +844,28 @@ TEST(CCommandLine, EndOfOptionMark)
 }
 
 /*!
+ * @brief ファイルパスにファイルプロトコルの接頭辞を含めた場合の仕様
+ */
+TEST(CCommandLine, StripFileProtocol)
+{
+	// 絶対パスへの変換処理の影響を受けないように、事前に絶対パス化しておく
+	std::wstring strPath(_MAX_PATH, L'a');
+	strPath = L".\\" + strPath;
+	strPath.resize(_MAX_PATH * 2);
+	auto* p = ::_wfullpath(NULL, strPath.c_str(), strPath.capacity());
+
+	CCommandLineWrapper cCommandLine;
+	std::wstring strCmdLine;
+	strPath.assign(p, _MAX_PATH - 1);
+	strprintf(strCmdLine, L"file:///%s test.txt", strPath.data());
+	cCommandLine.ParseCommandLine(strCmdLine.data(), false);
+	EXPECT_STREQ(strPath.c_str(), cCommandLine.GetOpenFile());
+	EXPECT_STREQ(L"test.txt", cCommandLine.GetFileName(0));
+	EXPECT_EQ(NULL, cCommandLine.GetFileName(1));
+	EXPECT_EQ(1, cCommandLine.GetFileNum());
+}
+
+/*!
  * @brief ファイルパスに「ファイルに使えない文字」を含めた場合の仕様
  * @remark 無視される
  */
