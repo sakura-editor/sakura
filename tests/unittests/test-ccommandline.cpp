@@ -870,3 +870,39 @@ TEST(CCommandLine, ParseFileNameIncludesInvalidFilenameChars)
 		EXPECT_EQ(0, cCommandLine.GetFileNum());
 	}
 }
+
+/*!
+ * @brief 長過ぎるファイルパスに関する仕様
+ * @remark _MAX_PATH - 1を超えるファイル名は利用できない
+ */
+TEST(CCommandLine, ParseTooLongFilePath)
+{
+	// 絶対パスへの変換処理の影響を受けないように、事前に絶対パス化しておく
+	std::wstring strPath(_MAX_PATH, L'a');
+	strPath = L".\\" + strPath;
+	strPath.resize(_MAX_PATH * 2);
+	auto* p = ::_wfullpath(NULL, strPath.c_str(), strPath.capacity());
+
+	// _MAX_PATH - 1までのパスは受け付けられる
+	CCommandLineWrapper cCommandLine1;
+	std::wstring strCmdLine1;
+	strPath.assign(p, _MAX_PATH - 1);
+	strprintf(strCmdLine1, L"%s test.txt", strPath.data());
+	cCommandLine1.ParseCommandLine(strCmdLine1.data(), false);
+	EXPECT_STREQ(strPath.c_str(), cCommandLine1.GetOpenFile());
+	EXPECT_STREQ(L"test.txt", cCommandLine1.GetFileName(0));
+	EXPECT_EQ(NULL, cCommandLine1.GetFileName(1));
+	EXPECT_EQ(1, cCommandLine1.GetFileNum());
+
+	// _MAX_PATH - 1を超えるパスは無視される
+	CCommandLineWrapper cCommandLine2;
+	std::wstring strCmdLine2;
+	strPath.assign(p, _MAX_PATH);
+	strprintf(strCmdLine2, L"%s test.txt", strPath.data());
+	cCommandLine2.ParseCommandLine(strCmdLine2.data(), false);
+	EXPECT_STRNE(L"", cCommandLine2.GetOpenFile());
+	EXPECT_EQ(NULL, cCommandLine2.GetFileName(0));
+	EXPECT_EQ(0, cCommandLine2.GetFileNum());
+
+	::free(p);
+}
