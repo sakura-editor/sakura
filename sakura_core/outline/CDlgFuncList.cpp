@@ -1874,7 +1874,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	BOOL bRet = CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 
-	m_cFontView = CFont( (HFONT)::SendMessageAny( hwndDlg, WM_GETFONT, 0, (LPARAM)NULL ) );
+	m_cViewFont = CGdiFont( GetDialogFont() );
 	if( pcEditView != NULL ){
 		UpdateViewFont( pcEditView->m_pcEditWnd->m_pcViewFont->GetLogfont() );
 	}
@@ -3958,14 +3958,14 @@ void CDlgFuncList::NotifyDocModification()
 */
 void CDlgFuncList::UpdateViewFont( const LOGFONT& logfont )
 {
-	CFont cFontNew = CFont( logfont, m_cFontView.GetLogicalHeight() );
+	CGdiFont cNewFont = CGdiFont( logfont, m_cViewFont.GetLogicalHeight() );
 	const HWND hwnds[] = { GetItemHwnd( IDC_LIST_FL ), GetItemHwnd( IDC_TREE_FL ) };
 	for( size_t i = 0; i < _countof( hwnds ); ++i ){
-		::SendMessage( hwnds[i], WM_SETFONT, (WPARAM)cFontNew.GetHandle(), MAKELPARAM( FALSE, 0 ) );
+		::SendMessage( hwnds[i], WM_SETFONT, (WPARAM)cNewFont.GetHandle(), MAKELPARAM( FALSE, 0 ) );
 		// フォント変更前の文字が一部残ることがあるので再描画
 		InvalidateRect( hwnds[i], NULL, TRUE );
 	}
-	m_cFontView = std::move( cFontNew );
+	m_cViewFont = std::move( cNewFont );
 
 	return;
 }

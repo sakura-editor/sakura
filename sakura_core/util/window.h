@@ -192,14 +192,14 @@ private:
 	HFONT m_hFont;
 };
 
-class CFont
+class CGdiFont
 {
 public:
-	CFont() = default;
-	CFont( const CFont& font ) : CFont( font.m_hFont ){}
-	CFont( CFont&& font ) noexcept { *this = std::move( font ); }
-	CFont( HFONT hFont, LONG nLogicalHeight = LONG_MAX ) : CFont( GetLogFont( hFont ), nLogicalHeight ){}
-	CFont( const LOGFONT& logfont, LONG nLogicalHeight = LONG_MAX ){
+	CGdiFont() = default;
+	CGdiFont( const CGdiFont& font ) : CGdiFont( font.m_hFont ){}
+	CGdiFont( CGdiFont&& font ) noexcept { *this = std::move( font ); }
+	CGdiFont( HFONT hFont, LONG nLogicalHeight = LONG_MAX ) : CGdiFont( GetLogFont( hFont ), nLogicalHeight ){}
+	CGdiFont( const LOGFONT& logfont, LONG nLogicalHeight = LONG_MAX ){
 		LOGFONT lf = logfont;
 		if( nLogicalHeight != LONG_MAX ){
 			lf.lfHeight = nLogicalHeight;
@@ -208,24 +208,24 @@ public:
 		m_nLogicalHeight = lf.lfHeight;
 		m_strFaceName.assign( lf.lfFaceName );
 	}
-	~CFont(){
+	~CGdiFont(){
 		if( m_hFont != NULL ){
 			::DeleteObject( m_hFont );
 		}
 	}
-	CFont& operator=(CFont& other) = delete;
-	CFont& operator=(CFont&& other) noexcept {
+	CGdiFont& operator=( const CGdiFont& other ) = delete;
+	CGdiFont& operator=( CGdiFont&& other ) noexcept {
 		std::swap( m_hFont, other.m_hFont );
 		std::swap( m_strFaceName, other.m_strFaceName );
 		std::swap( m_nLogicalHeight, other.m_nLogicalHeight );
 		return *this;
 	}
-	HFONT GetHandle(){ return m_hFont; }
-	LONG GetLogicalHeight(){ return m_nLogicalHeight; }
-	const TCHAR* GetFaceName(){ return m_strFaceName.c_str(); }
+	HFONT GetHandle() const { return m_hFont; }
+	LONG GetLogicalHeight() const { return m_nLogicalHeight; }
+	const TCHAR* GetFaceName() const { return m_strFaceName.c_str(); }
 
 private:
-	LOGFONT GetLogFont( HFONT hFont ){
+	static LOGFONT GetLogFont( HFONT hFont ){
 		LOGFONT lf = {};
 		GetObject( hFont, sizeof( lf ), &lf );
 		return lf;

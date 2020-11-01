@@ -233,6 +233,6 @@ private:
 
 	bool		m_bFuncInfoArrIsUpToDate;
 
-	CFont		m_cFontView;
+	CGdiFont		m_cViewFont;
 };
 #endif /* SAKURA_CDLGFUNCLIST_B22A3877_572A_49B7_B683_50ECA451A6F8_H_ */
