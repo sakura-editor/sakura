@@ -851,8 +851,8 @@ TEST(CCommandLine, ParseFileNameIncludesInvalidFilenameChars)
 {
 	// ファイル名に使えない文字 = "\\/:*?\"<>|"
 	// このうち、\\と/はパス区切りのため実質対象外になる。
+	// このうち、:は代替データストリーム(ADS)の識別記号のため対象外とする。
 	const std::wstring_view badNames[] = {
-		L"localhost:8080",
 		L"test*.txt",
 		L"test?.txt",
 		L"test\".txt",
