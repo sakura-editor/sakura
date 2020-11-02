@@ -27,6 +27,9 @@
 #include "StdAfx.h"
 #include <io.h>
 #include "file.h"
+
+#include <Shlwapi.h>
+
 #include "charset/CharPointer.h"
 #include "util/module.h"
 #include "util/window.h"
@@ -49,12 +52,11 @@ bool fexist(LPCWSTR pszPath)
  */
 bool IsInvalidFilenameChars( const std::wstring_view& strPath )
 {
-	// ファイル名に使えない文字
-	constexpr const wchar_t invalidFilenameChars[] = L":*?\"<>|";
+	// ファイル名に使えない文字(ADSを使えるように':'は除外する)
+	constexpr const wchar_t invalidFilenameChars[] = L"*?\"<>|";
 
-	// 文字列中の最後のパス区切り位置を検出してファイル名を抽出する
-	const auto lastPathSep = strPath.find_last_of( L"\\/" );
-	const auto strFilename = lastPathSep == std::wstring_view::npos ? strPath : strPath.substr( lastPathSep + 1 );
+	// 文字列中のファイル名を抽出する
+	std::wstring_view strFilename = ::PathFindFileNameW( strPath.data() );
 
 	// ファイル名に使えない文字が含まれる場合、trueを返す
 	return ::wcscspn( strFilename.data(), invalidFilenameChars ) < strFilename.length();

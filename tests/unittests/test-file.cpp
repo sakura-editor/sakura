@@ -49,7 +49,8 @@ TEST( file, IsInvalidFilenameChars )
 	EXPECT_FALSE(IsInvalidFilenameChars(L"C:\\"));
 	EXPECT_FALSE(IsInvalidFilenameChars(L"C:/"));
 
-	EXPECT_TRUE(IsInvalidFilenameChars(L"localhost:8080"));
+	EXPECT_FALSE(IsInvalidFilenameChars(L"test:001.txt"));
+
 	EXPECT_TRUE(IsInvalidFilenameChars(L"test*.txt"));
 	EXPECT_TRUE(IsInvalidFilenameChars(L"test?.txt"));
 	EXPECT_TRUE(IsInvalidFilenameChars(L"test\".txt"));
