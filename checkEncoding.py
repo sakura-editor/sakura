@@ -15,15 +15,14 @@ patternUTF8_BOM   = (
 patternUTF8_NoBOM = (
 	"utf-8"
 )
-patternSJIS = (
-	"shift_jis",
-	"cp932"
+patternUTF16 = (
+	"utf-16"
 )
 expectEncoding = {
 	".cpp" : patternUTF8_BOM,
 	".h"   : patternUTF8_BOM,
-	".rc"  : patternSJIS,
-	".rc2" : patternSJIS
+	".rc"  : patternUTF16,
+	".rc2" : patternUTF16
 }
 
 # チェック対象の拡張子リスト

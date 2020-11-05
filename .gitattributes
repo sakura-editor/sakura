@@ -3,3 +3,5 @@
 *.hkn text
 *.bat text
 Makefile text eolf=lf
+*.rc text working-tree-encoding=utf-16le-bom eol=crlf
+*.rc2 text working-tree-encoding=utf-16le-bom eol=crlf
