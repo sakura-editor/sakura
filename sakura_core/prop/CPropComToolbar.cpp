@@ -367,8 +367,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 					List_SetCurSel( hwndResList, nIndex1 + 1 );
 
 					// 機能リストのフォーカスを一つ下にずらす
-					nNum = List_GetCount( hwndFuncList );
-					if( nIndex2 + 1 < nNum ) {
+					if( nIndex2 + 1 < List_GetCount(hwndFuncList) ) {
 						List_SetCurSel( hwndFuncList, nIndex2 + 1 );
 					}
 					break;
@@ -391,8 +390,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 					List_SetCurSel( hwndResList, nIndex1 );
 
 					// 機能リストのフォーカスを一つ下にずらす
-					nNum = List_GetCount( hwndFuncList );
-					if( nIndex2 + 1 < nNum ) {
+					if( nIndex2 + 1 < List_GetCount(hwndFuncList) ) {
 						List_SetCurSel( hwndFuncList, nIndex2 + 1 );
 					}
 					break;
