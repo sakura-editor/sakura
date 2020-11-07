@@ -143,6 +143,39 @@
       <Project>{af03508c-515e-4a0e-87be-67ed1e254bd0}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\resource\auto_scroll_center.bmp" />
+    <Image Include="..\resource\auto_scroll_horizontal.bmp" />
+    <Image Include="..\resource\auto_scroll_vertical.bmp" />
+    <Image Include="..\resource\icon_grep.ico" />
+    <Image Include="..\resource\mytool.bmp" />
+    <Image Include="..\resource\printer.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\resource\auto_scroll_center.cur" />
+    <None Include="..\resource\auto_scroll_down.cur" />
+    <None Include="..\resource\auto_scroll_down_left.cur" />
+    <None Include="..\resource\auto_scroll_down_right.cur" />
+    <None Include="..\resource\auto_scroll_horizontal.cur" />
+    <None Include="..\resource\auto_scroll_left.cur" />
+    <None Include="..\resource\auto_scroll_right.cur" />
+    <None Include="..\resource\auto_scroll_up.cur" />
+    <None Include="..\resource\auto_scroll_up_left.cur" />
+    <None Include="..\resource\auto_scroll_up_right.cur" />
+    <None Include="..\resource\auto_scroll_vertical.cur" />
+    <None Include="..\resource\cursor_copy.cur" />
+    <None Include="..\resource\cursor_isb.cur" />
+    <None Include="..\resource\cursor_isf.cur" />
+    <None Include="..\resource\cursor_move.cur" />
+    <None Include="..\resource\cursor_rvarrow.cur" />
+    <None Include="..\resource\cursor_tab_join.cur" />
+    <None Include="..\resource\cursor_tab_separate.cur" />
+    <None Include="..\resource\MainMenu.ini" />
+    <None Include="sakura_lang_rc.rc2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\sakura_core\sakura_rc.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
