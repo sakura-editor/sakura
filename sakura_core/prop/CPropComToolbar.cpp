@@ -366,10 +366,8 @@ INT_PTR CPropToolbar::DispatchEvent(
 					//	To Here Apr. 13, 2002 genta
 					List_SetCurSel( hwndResList, nIndex1 + 1 );
 
-					// 機能リストのフォーカスを一つ下にずらす
-					if( nIndex2 + 1 < List_GetCount(hwndFuncList) ) {
-						List_SetCurSel( hwndFuncList, nIndex2 + 1 );
-					}
+					// 機能リストを1つ進める
+					List_SetCurSel( hwndFuncList, nIndex2 + 1 );
 					break;
 
 				case IDC_BUTTON_ADD:
@@ -389,10 +387,8 @@ INT_PTR CPropToolbar::DispatchEvent(
 					//	To Here Apr. 13, 2002 genta
 					List_SetCurSel( hwndResList, nIndex1 );
 
-					// 機能リストのフォーカスを一つ下にずらす
-					if( nIndex2 + 1 < List_GetCount(hwndFuncList) ) {
-						List_SetCurSel( hwndFuncList, nIndex2 + 1 );
-					}
+					// 機能リストを1つ進める
+					List_SetCurSel( hwndFuncList, nIndex2 + 1 );
 					break;
 
 				case IDC_BUTTON_UP:
