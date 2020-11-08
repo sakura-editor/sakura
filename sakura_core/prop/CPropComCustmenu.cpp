@@ -474,6 +474,8 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					}
 					List_SetCurSel( hwndLIST_RES, nIdx2 );
 
+					// 機能リストを1つ進める
+					List_SetCurSel( hwndLIST_FUNC, nIdx4 + 1 );
 					break;
 
 				case IDC_BUTTON_ADD:
@@ -526,6 +528,8 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					}
 					List_SetCurSel( hwndLIST_RES, nIdx2 );
 
+					// 機能リストを1つ進める
+					List_SetCurSel( hwndLIST_FUNC, nIdx4 + 1 );
 					break;
 
 				case IDC_BUTTON_UP:
