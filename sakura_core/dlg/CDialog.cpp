@@ -805,51 +805,20 @@ LRESULT CALLBACK SubListBoxProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	return CallWindowProc(data->pListBoxWndProc, hwnd, uMsg, wParam, lParam);
 }
 
-LRESULT CALLBACK SubComboBoxProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	SComboBoxItemDeleter* data = (SComboBoxItemDeleter*)::GetProp( hwnd, TSTR_SUBCOMBOBOXDATA );
-	switch( uMsg ){
-	case WM_CTLCOLOREDIT:
-	{
-		if( NULL == data->pEditWndProc ){
-			HWND hwndCtl = (HWND)lParam;
-			data->pEditWndProc = (WNDPROC)::GetWindowLongPtr(hwndCtl, GWLP_WNDPROC);
-			::SetProp(hwndCtl, TSTR_SUBCOMBOBOXDATA, data);
-			::SetWindowLongPtr(hwndCtl, GWLP_WNDPROC, (LONG_PTR)SubEditProc);
-		}
-		break;
-	}
-	case WM_CTLCOLORLISTBOX:
-	{
-		if( NULL == data->pListBoxWndProc ){
-			HWND hwndCtl = (HWND)lParam;
-			data->pListBoxWndProc = (WNDPROC)::GetWindowLongPtr(hwndCtl, GWLP_WNDPROC);
-			::SetProp(hwndCtl, TSTR_SUBCOMBOBOXDATA, data);
-			::SetWindowLongPtr(hwndCtl, GWLP_WNDPROC, (LONG_PTR)SubListBoxProc);
-		}
-		break;
-	}
-	case WM_DESTROY:
-	{
-		::SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)data->pComboBoxWndProc);
-		::RemoveProp(hwnd, TSTR_SUBCOMBOBOXDATA);
-		data->pComboBoxWndProc = NULL;
-		break;
-	}
-
-	default:
-		break;
-	}
-	return CallWindowProc(data->pComboBoxWndProc, hwnd, uMsg, wParam, lParam);
-}
-
 void CDialog::SetComboBoxDeleter( HWND hwndCtl, SComboBoxItemDeleter* data )
 {
 	if( NULL == data->pRecent ){
 		return;
 	}
 	data->hwndCombo = hwndCtl;
-	data->pComboBoxWndProc = (WNDPROC)::GetWindowLongPtr(hwndCtl, GWLP_WNDPROC);
-	::SetProp(hwndCtl, TSTR_SUBCOMBOBOXDATA, data);
-	::SetWindowLongPtr(hwndCtl, GWLP_WNDPROC, (LONG_PTR)SubComboBoxProc);
+
+	COMBOBOXINFO info = { sizeof(COMBOBOXINFO) };
+	if (!::GetComboBoxInfo(hwndCtl, &info))
+		return;
+	data->pEditWndProc = reinterpret_cast<WNDPROC>(::GetWindowLongPtr(info.hwndItem, GWLP_WNDPROC));
+	::SetProp(info.hwndItem, TSTR_SUBCOMBOBOXDATA, data);
+	::SetWindowLongPtr(info.hwndItem, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(SubEditProc));
+	data->pListBoxWndProc = reinterpret_cast<WNDPROC>(::GetWindowLongPtr(info.hwndList, GWLP_WNDPROC));
+	::SetProp(info.hwndList, TSTR_SUBCOMBOBOXDATA, data);
+	::SetWindowLongPtr(info.hwndList, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(SubListBoxProc));
 }
