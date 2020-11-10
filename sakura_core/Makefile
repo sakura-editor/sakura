@@ -154,11 +154,8 @@ sakura_rc.o: $(RC_TMP_DIR)/sakura_rc.rc $(RC_TMP_DIR)/sakura_rc.rc2 githash.h Fu
 	$(RC) -c utf-8 --language=0411 $(DEFINES) -I. -I$(SRCDIR) $< -o $@
 	-$(RMDIR) $(RC_TMP_DIR) > $(DEVNULL) 2>&1
 
-$(RC_TMP_DIR)/sakura_rc.rc: $(RC_TMP_DIR)/
-	$(ICONV) -f utf-16 -t utf-8 sakura_rc.rc > $(RC_TMP_DIR)/sakura_rc.rc
-
-$(RC_TMP_DIR)/sakura_rc.rc2: $(RC_TMP_DIR)/
-	$(ICONV) -f utf-16 -t utf-8 sakura_rc.rc2 > $(RC_TMP_DIR)/sakura_rc.rc2
+$(RC_TMP_DIR)/sakura_rc.rc $(RC_TMP_DIR)/sakura_rc.rc2: $(RC_TMP_DIR)/
+	$(ICONV) -f utf-16 -t utf-8 $(@F) > $@
 
 $(RC_TMP_DIR)/:
 	-$(MKDIR) $(RC_TMP_DIR) > $(DEVNULL) 2>&1
