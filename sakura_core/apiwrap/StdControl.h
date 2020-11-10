@@ -214,9 +214,9 @@ namespace ApiWrap{
 		assert(str.GetStringLength() == actualCount);
 		return true;
 	}
-	inline void Combo_GetEditSel( HWND hwndCombo, DWORD* pdwSelStart, DWORD* pdwSelEnd )
+	inline void Combo_GetEditSel( HWND hwndCombo, DWORD& dwSelStart, DWORD& dwSelEnd )
 	{
-		::SendMessage( hwndCombo, CB_GETEDITSEL, WPARAM( pdwSelStart ), LPARAM( pdwSelEnd ) );
+		::SendMessage( hwndCombo, CB_GETEDITSEL, WPARAM( &dwSelStart ), LPARAM( &dwSelEnd ) );
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

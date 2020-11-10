@@ -724,7 +724,7 @@ static void DeleteRecentItem(
 		// コンボボックスのキャレット位置を取得
 		DWORD dwSelStart = 0;
 		DWORD dwSelEnd = 0;
-		Combo_GetEditSel( hwndCombo, &dwSelStart, &dwSelEnd );
+		Combo_GetEditSel( hwndCombo, dwSelStart, dwSelEnd );
 
 		// アイテムテキストとエディットテキストが異なる、またはエディットが全選択でなかった場合
 		if ( cItemText != cEditText
