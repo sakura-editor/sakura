@@ -750,16 +750,15 @@ static void DeleteRecentItem(
 LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 	                         UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 {
-	SComboBoxItemDeleter* data = reinterpret_cast<SComboBoxItemDeleter*>(dwRefData);
+	HWND hwndCombo = reinterpret_cast<HWND>(dwRefData);
 	switch( uMsg ){
 	case WM_KEYDOWN:
 	{
 		if( wParam == VK_DELETE ){
-			HWND hwndCombo = data->hwndCombo;
 			BOOL bShow = Combo_GetDroppedState(hwndCombo);
 			int nIndex = Combo_GetCurSel(hwndCombo);
 			if( bShow && 0 <= nIndex ){
-				DeleteRecentItem(hwndCombo, nIndex, data->pRecent);
+				DeleteRecentItem(hwndCombo, nIndex, reinterpret_cast<CRecent*>(::GetProp(hwndCombo, TSTR_SUBCOMBOBOXDATA)));
 			}
 		}
 		break;
@@ -771,15 +770,14 @@ LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 LRESULT CALLBACK SubListBoxProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 	                            UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 {
-	SComboBoxItemDeleter* data = reinterpret_cast<SComboBoxItemDeleter*>(dwRefData);
+	HWND hwndCombo = reinterpret_cast<HWND>(dwRefData);
 	switch( uMsg ){
 	case WM_KEYDOWN:
 	{
 		if( wParam == VK_DELETE ){
-			HWND hwndCombo = data->hwndCombo;
 			int nIndex = Combo_GetCurSel(hwndCombo);
 			if( 0 <= nIndex ){
-				DeleteRecentItem(hwndCombo, nIndex, data->pRecent);
+				DeleteRecentItem(hwndCombo, nIndex, reinterpret_cast<CRecent*>(::GetProp(hwndCombo, TSTR_SUBCOMBOBOXDATA)));
 				return 0;
 			}
 		}
@@ -789,16 +787,14 @@ LRESULT CALLBACK SubListBoxProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	return ::DefSubclassProc(hwnd, uMsg, wParam, lParam);
 }
 
-void CDialog::SetComboBoxDeleter( HWND hwndCtl, SComboBoxItemDeleter* data )
+void CDialog::SetComboBoxDeleter(HWND hwndCtl, CRecent* pRecent)
 {
-	if( NULL == data->pRecent ){
-		return;
-	}
-	data->hwndCombo = hwndCtl;
+	assert(pRecent);
 
 	COMBOBOXINFO info = { sizeof(COMBOBOXINFO) };
 	if (!::GetComboBoxInfo(hwndCtl, &info))
 		return;
-	::SetWindowSubclass(info.hwndItem, SubEditProc, 0, reinterpret_cast<DWORD_PTR>(data));
-	::SetWindowSubclass(info.hwndList, SubListBoxProc, 0, reinterpret_cast<DWORD_PTR>(data));
+	::SetProp(hwndCtl, TSTR_SUBCOMBOBOXDATA, pRecent);
+	::SetWindowSubclass(info.hwndItem, SubEditProc, 0, reinterpret_cast<DWORD_PTR>(hwndCtl));
+	::SetWindowSubclass(info.hwndList, SubListBoxProc, 0, reinterpret_cast<DWORD_PTR>(hwndCtl));
 }

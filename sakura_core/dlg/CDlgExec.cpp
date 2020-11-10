@@ -81,13 +81,8 @@ BOOL CDlgExec::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 	}
 
 	BOOL bRet = CDialog::OnInitDialog(hwnd, wParam, lParam);
-
-	m_comboDel = SComboBoxItemDeleter();
-	m_comboDel.pRecent = &m_cRecentCmd;
-	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_m_szCommand), &m_comboDel);
-	m_comboDelCur = SComboBoxItemDeleter();
-	m_comboDelCur.pRecent = &m_cRecentCur;
-	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_CUR_DIR), &m_comboDelCur);
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_m_szCommand), &m_cRecentCmd);
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_CUR_DIR), &m_cRecentCur);
 	return bRet;
 }
 

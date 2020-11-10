@@ -331,23 +331,12 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	g_pOnFolderProc = (WNDPROC)GetWindowLongPtr(hFolder, GWLP_WNDPROC);
 	SetWindowLongPtr(hFolder, GWLP_WNDPROC, (LONG_PTR)OnFolderProc);
 
-	m_comboDelText = SComboBoxItemDeleter();
-	m_comboDelText.pRecent = &m_cRecentSearch;
-	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_TEXT), &m_comboDelText);
-	m_comboDelFile = SComboBoxItemDeleter();
-	m_comboDelFile.pRecent = &m_cRecentGrepFile;
-	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_FILE), &m_comboDelFile);
-	m_comboDelFolder = SComboBoxItemDeleter();
-	m_comboDelFolder.pRecent = &m_cRecentGrepFolder;
-	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_FOLDER), &m_comboDelFolder);
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_TEXT), &m_cRecentSearch);
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_FILE), &m_cRecentGrepFile);
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_FOLDER), &m_cRecentGrepFolder);
 
-	m_comboDelExcludeFile = SComboBoxItemDeleter();
-	m_comboDelExcludeFile.pRecent = &m_cRecentExcludeFile;
-	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_EXCLUDE_FILE), &m_comboDelExcludeFile);
-
-	m_comboDelExcludeFolder = SComboBoxItemDeleter();
-	m_comboDelExcludeFolder.pRecent = &m_cRecentExcludeFolder;
-	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_EXCLUDE_FOLDER), &m_comboDelExcludeFolder);
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_EXCLUDE_FILE), &m_cRecentExcludeFile);
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_EXCLUDE_FOLDER), &m_cRecentExcludeFolder);
 
 	BOOL bRet = CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 	if( !bRet ) return bRet;

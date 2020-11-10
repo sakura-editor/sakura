@@ -129,9 +129,7 @@ BOOL CDlgGrepReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT2 ), TRUE );
 
-	m_comboDelText2 = SComboBoxItemDeleter();
-	m_comboDelText2.pRecent = &m_cRecentReplace;
-	SetComboBoxDeleter( GetItemHwnd( IDC_COMBO_TEXT2 ), &m_comboDelText2 );
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_TEXT2), &m_cRecentReplace);
 
 	BOOL bRet = CDlgGrep::OnInitDialog( hwndDlg, wParam, lParam );
 	if( !bRet ) return bRet;
