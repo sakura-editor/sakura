@@ -747,9 +747,10 @@ static void DeleteRecentItem(
 	}
 }
 
-LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
+	                         UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 {
-	SComboBoxItemDeleter* data = (SComboBoxItemDeleter*)::GetProp( hwnd, TSTR_SUBCOMBOBOXDATA );
+	SComboBoxItemDeleter* data = reinterpret_cast<SComboBoxItemDeleter*>(dwRefData);
 	switch( uMsg ){
 	case WM_KEYDOWN:
 	{
@@ -763,22 +764,14 @@ LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	}
-	case WM_DESTROY:
-	{
-		::SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)data->pEditWndProc);
-		::RemoveProp(hwnd, TSTR_SUBCOMBOBOXDATA);
-		data->pEditWndProc = NULL;
-		break;
 	}
-	default:
-		break;
-	}
-	return CallWindowProc(data->pEditWndProc, hwnd, uMsg, wParam, lParam);
+	return ::DefSubclassProc(hwnd, uMsg, wParam, lParam);
 }
 
-LRESULT CALLBACK SubListBoxProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK SubListBoxProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
+	                            UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 {
-	SComboBoxItemDeleter* data = (SComboBoxItemDeleter*)::GetProp( hwnd, TSTR_SUBCOMBOBOXDATA );
+	SComboBoxItemDeleter* data = reinterpret_cast<SComboBoxItemDeleter*>(dwRefData);
 	switch( uMsg ){
 	case WM_KEYDOWN:
 	{
@@ -792,17 +785,8 @@ LRESULT CALLBACK SubListBoxProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		}
 		break;
 	}
-	case WM_DESTROY:
-	{
-		::SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)data->pListBoxWndProc);
-		::RemoveProp(hwnd, TSTR_SUBCOMBOBOXDATA);
-		data->pListBoxWndProc = NULL;
-		break;
 	}
-	default:
-		break;
-	}
-	return CallWindowProc(data->pListBoxWndProc, hwnd, uMsg, wParam, lParam);
+	return ::DefSubclassProc(hwnd, uMsg, wParam, lParam);
 }
 
 void CDialog::SetComboBoxDeleter( HWND hwndCtl, SComboBoxItemDeleter* data )
@@ -815,10 +799,6 @@ void CDialog::SetComboBoxDeleter( HWND hwndCtl, SComboBoxItemDeleter* data )
 	COMBOBOXINFO info = { sizeof(COMBOBOXINFO) };
 	if (!::GetComboBoxInfo(hwndCtl, &info))
 		return;
-	data->pEditWndProc = reinterpret_cast<WNDPROC>(::GetWindowLongPtr(info.hwndItem, GWLP_WNDPROC));
-	::SetProp(info.hwndItem, TSTR_SUBCOMBOBOXDATA, data);
-	::SetWindowLongPtr(info.hwndItem, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(SubEditProc));
-	data->pListBoxWndProc = reinterpret_cast<WNDPROC>(::GetWindowLongPtr(info.hwndList, GWLP_WNDPROC));
-	::SetProp(info.hwndList, TSTR_SUBCOMBOBOXDATA, data);
-	::SetWindowLongPtr(info.hwndList, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(SubListBoxProc));
+	::SetWindowSubclass(info.hwndItem, SubEditProc, 0, reinterpret_cast<DWORD_PTR>(data));
+	::SetWindowSubclass(info.hwndList, SubListBoxProc, 0, reinterpret_cast<DWORD_PTR>(data));
 }

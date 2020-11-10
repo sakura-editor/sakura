@@ -55,9 +55,7 @@ struct SComboBoxItemDeleter
 {
 	CRecent*	pRecent;
 	HWND		hwndCombo;
-	WNDPROC		pEditWndProc;
-	WNDPROC		pListBoxWndProc;
-	SComboBoxItemDeleter(): pRecent(NULL), hwndCombo(NULL), pEditWndProc(NULL), pListBoxWndProc(NULL){}
+	SComboBoxItemDeleter() : pRecent(NULL), hwndCombo(NULL) {}
 };
 
 /*-----------------------------------------------------------------------
