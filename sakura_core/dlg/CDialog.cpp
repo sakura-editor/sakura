@@ -722,14 +722,14 @@ static void DeleteRecentItem(
 		Wnd_GetText( hwndCombo, cEditText );
 
 		// コンボボックスのキャレット位置を取得
-		int nSelStart = 0;
-		int nSelEnd = 0;
-		Combo_GetEditSel( hwndCombo, nSelStart, nSelEnd );
+		DWORD dwSelStart = 0;
+		DWORD dwSelEnd = 0;
+		Combo_GetEditSel( hwndCombo, dwSelStart, dwSelEnd );
 
 		// アイテムテキストとエディットテキストが異なる、またはエディットが全選択でなかった場合
 		if ( cItemText != cEditText
-			|| 0 < nSelStart
-			|| nSelEnd < cEditText.GetStringLength()
+			|| 0 < dwSelStart
+			|| dwSelEnd < (DWORD)cEditText.GetStringLength()
 			)
 		{
 			// 履歴削除をスキップする
