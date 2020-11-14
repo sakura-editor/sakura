@@ -11,7 +11,6 @@
 /cppcheck-*.xml
 /cppcheck-install.log
 /help/sakura/sakura.hh
-/sakura_core/StdAfx.h.gch
 /tests/build
 /tests/unittests/Win32
 /tests/unittests/x64
