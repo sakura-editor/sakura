@@ -699,8 +699,6 @@ void CDialog::GetItemClientRect( int wID, RECT& rc )
 	rc.bottom = po.y;
 }
 
-static const WCHAR* TSTR_SUBCOMBOBOXDATA = L"SubComboBoxData";
-
 /*! コンボボックスのリストアイテムを関連付けられた履歴と共に削除する
  */
 static void DeleteRecentItem(
@@ -750,7 +748,7 @@ static void DeleteRecentItem(
 LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 	                         UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 {
-	HWND hwndCombo = (HWND)dwRefData;
+	HWND hwndCombo = GetParent(hwnd);
 	switch( uMsg ){
 	case WM_KEYDOWN:
 	{
@@ -758,27 +756,7 @@ LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 			BOOL bShow = Combo_GetDroppedState(hwndCombo);
 			int nIndex = Combo_GetCurSel(hwndCombo);
 			if( bShow && 0 <= nIndex ){
-				DeleteRecentItem(hwndCombo, nIndex, (CRecent*)::GetProp(hwndCombo, TSTR_SUBCOMBOBOXDATA));
-			}
-		}
-		break;
-	}
-	}
-	return ::DefSubclassProc(hwnd, uMsg, wParam, lParam);
-}
-
-LRESULT CALLBACK SubListBoxProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
-	                            UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
-{
-	HWND hwndCombo = (HWND)dwRefData;
-	switch( uMsg ){
-	case WM_KEYDOWN:
-	{
-		if( wParam == VK_DELETE ){
-			int nIndex = Combo_GetCurSel(hwndCombo);
-			if( 0 <= nIndex ){
-				DeleteRecentItem(hwndCombo, nIndex, (CRecent*)::GetProp(hwndCombo, TSTR_SUBCOMBOBOXDATA));
-				return 0;
+				DeleteRecentItem(hwndCombo, nIndex, (CRecent*)dwRefData);
 			}
 		}
 		break;
@@ -794,7 +772,5 @@ void CDialog::SetComboBoxDeleter(HWND hwndCtl, CRecent* pRecent)
 	COMBOBOXINFO info = { sizeof(COMBOBOXINFO) };
 	if (!::GetComboBoxInfo(hwndCtl, &info))
 		return;
-	::SetProp(hwndCtl, TSTR_SUBCOMBOBOXDATA, pRecent);
-	::SetWindowSubclass(info.hwndItem, SubEditProc, 0, (DWORD_PTR)hwndCtl);
-	::SetWindowSubclass(info.hwndList, SubListBoxProc, 0, (DWORD_PTR)hwndCtl);
+	::SetWindowSubclass(info.hwndItem, SubEditProc, 0, (DWORD_PTR)pRecent);
 }
