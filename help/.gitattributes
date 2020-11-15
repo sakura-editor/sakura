@@ -1,3 +1,6 @@
+*.html     working-tree-encoding=cp932 eol=crlf
+*.css      working-tree-encoding=cp932 eol=crlf
+*.js       working-tree-encoding=cp932 eol=crlf
 *.hhp      working-tree-encoding=cp932 eol=crlf
 *.hhk      working-tree-encoding=cp932 eol=crlf
 *.hhc      working-tree-encoding=cp932 eol=crlf
