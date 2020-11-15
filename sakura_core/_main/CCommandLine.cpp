@@ -299,14 +299,28 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				if( len > 0 ){
 					cmWork.SetString( &pszToken[1], len - ( pszToken[len] == L'"' ? 1 : 0 ));
 					cmWork.Replace( L"\"\"", L"\"" );
-					wcscpy_s( szPath, _countof(szPath), cmWork.GetStringPtr() );	/* ファイル名 */
+					if( STRUNCATE == ::wcsncpy_s( szPath, cmWork.GetStringPtr(), _TRUNCATE ) ){
+						std::wstring msg;
+						// "%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
+						strprintf( msg, LS(STR_ERR_FILEPATH_TOO_LONG), cmWork.GetStringPtr() );
+						const WCHAR* msg_str = msg.c_str();
+						MessageBox( NULL, msg_str, L"FileNameError", MB_OK );
+						szPath[0] = L'\0';
+					}
 				}
 				else {
 					szPath[0] = L'\0';
 				}
 			}
 			else{
-				wcscpy_s( szPath, _countof(szPath), pszToken );		/* ファイル名 */
+				if( STRUNCATE == ::wcsncpy_s( szPath, pszToken, _TRUNCATE ) ){
+					std::wstring msg;
+					// "%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
+					strprintf( msg, LS(STR_ERR_FILEPATH_TOO_LONG), pszToken );
+					const WCHAR* msg_str = msg.c_str();
+					MessageBox( NULL, msg_str, L"FileNameError", MB_OK );
+					szPath[0] = L'\0';
+				}
 			}
 
 			// Nov. 11, 2005 susu
