@@ -1,4 +1,4 @@
-﻿// HHCtrls
+// HHCtrls
 function HHCtrlClose()
 {
 	document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');

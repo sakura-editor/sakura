@@ -1,7 +1,7 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML lang="ja">
 <HEAD>
-<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
 <link rel="shortcut icon" href="images/favicon.ico">
 <TITLE>プラグイン定義ファイル等</TITLE>
@@ -62,7 +62,7 @@ table.box td { border: #666 1px solid; padding: 4px 10px 3px; }
 	<tr><td>C[n].Icon</td>		<td>アイコンファイル(16x16のBMPファイル)<br>
 									指定されなかった場合は<img src="images/PluginCommand.png" alt="規定のアイコン" title="(mytool.bmpが無い場合)">で表示される</td></tr>
 	</table>
-	　(n=1～49。欠番があるとその後は読み込まれない)<br>
+	　(n=1〜49。欠番があるとその後は読み込まれない)<br>
 <br>
 	<table class=box>
 	<tr><th width=120>[Option]</th>	<th>プラグインオプションの定義</th></tr>
@@ -77,7 +77,7 @@ table.box td { border: #666 1px solid; padding: 4px 10px 3px; }
 				<tr><td>Str</td>	<td>文字列型(1024文字まで)</td></tr>
 				<tr><td>Dir</td>	<td>ディレクトリ型(ボタンでディレクトリの指定が可能) (Ver.2.0.9.0以降)</td></tr>
 				<tr><td>Bool</td>	<td>ブール型 True で 1 False で 0 をプラグインオプションに設定する。</td></tr>
-				<tr><td>Int</td>	<td>整数型(-2147483647～2147483647、32bit符号付整数)</td></tr>
+				<tr><td>Int</td>	<td>整数型(-2147483647〜2147483647、32bit符号付整数)</td></tr>
 				<tr><td>Sel</td>	<td>選択型(ドロップダウンリストで選択)<br>
 										選択項目は Select で指定する。</td></tr>
 			</table><br>
@@ -88,13 +88,13 @@ table.box td { border: #666 1px solid; padding: 4px 10px 3px; }
 										項目内に <b>:</b> が無かった場合には、項目の値を表示、値の両方に使用する。<br>
 										例） O[3].Select=自動:0|XML固定:1|XML/XHTML検出:2|XHTML固定:3|HTML固定:6</td></tr>
 	</table>
-	　(n=1～99。欠番があっても読み込む)<br>
+	　(n=1〜99。欠番があっても読み込む)<br>
 <br>
 	<table class=box>
 	<tr><th width=120>[String]</th><th>文字列の定義(sakura 2.1.1.0以降)</th></tr>
 	<tr><td>S[n]</td>		<td>多言語化のための文字列の定義</td></tr>
 	</table>
-	　(n=1～99。欠番があっても読み込む)<br>
+	　(n=1〜99。欠番があっても読み込む)<br>
 </div><br>
 	■WSHプラグイン固有<br>
 <div class=li200>

@@ -1,7 +1,7 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <HTML lang="ja">
 <HEAD>
-<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
 <link rel="shortcut icon" href="images/favicon.ico">
 <TITLE>改行コードについて</TITLE>
@@ -63,8 +63,8 @@ PS	( 2029 )<br>
 
 	"<font color="red">SAKURAClipW</font>"形式のデータをクリップボードに格納<br>
 	<ul>
-		<li>先頭0～3の4バイトがint型のデータ長(n)</li>
-		<li>先頭4～4 + 2 * (n - 1) のバイトがUnicodeデータ(バイナリ含む)</li>
+		<li>先頭0〜3の4バイトがint型のデータ長(n)</li>
+		<li>先頭4〜4 + 2 * (n - 1) のバイトがUnicodeデータ(バイナリ含む)</li>
 		<li>選択領域の各行が改行を含む場合はCRLFに変換、改行を含まない場合はCRLFを付加</li>
 		<li>すべての改行コードをCRLFに統一</li>
 	</ul>
@@ -79,8 +79,8 @@ PS	( 2029 )<br>
 	</ul>
 	"<font color="red">SAKURAClipW</font>"形式のデータをクリップボードに格納
 	<ul>
-		<li>先頭0～3の4バイトがint型のデータ長(n)</li>
-		<li>先頭4～4 + 2 * (n - 1) の2 * n バイトがUnicodeデータ(バイナリ含む)</li>
+		<li>先頭0〜3の4バイトがint型のデータ長(n)</li>
+		<li>先頭4〜4 + 2 * (n - 1) の2 * n バイトがUnicodeデータ(バイナリ含む)</li>
 	</ul>
 </div>
 ■<b><font color="blue">未選択時</font></b><br>
