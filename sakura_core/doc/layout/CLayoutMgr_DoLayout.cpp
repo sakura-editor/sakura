@@ -118,12 +118,16 @@ void CLayoutMgr::_DoWordWrap(SLayoutWork* pWork, PF_OnLine pfOnLine)
 
 void CLayoutMgr::_DoKutoBurasage(SLayoutWork* pWork)
 {
-	if( (GetMaxLineLayout() - pWork->nPosX < 2) && (pWork->eKinsokuType == KINSOKU_TYPE_NONE) )
+	// 基準となる半角の最大文字幅を確認
+	const CPixelXInt nBaseWidth = t_max( GetWidthPerKeta(), WCODE::CalcPxWidthByFont( L'W' ) );
+
+	if( ( GetMaxLineLayout() - pWork->nPosX < 2 * nBaseWidth ) && ( pWork->eKinsokuType == KINSOKU_TYPE_NONE ) )
 	{
 		// 2007.09.07 kobake   レイアウトとロジックの区別
-		CLayoutInt nCharKetas = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
+		CLayoutInt nRemainChars = ( GetMaxLineLayout() - pWork->nPosX ) / nBaseWidth;
+		CLayoutInt nCharKetas = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos ) / nBaseWidth;
 
-		if( IsKinsokuPosKuto(GetMaxLineLayout() - pWork->nPosX, nCharKetas) && IsKinsokuKuto( pWork->cLineStr.At(pWork->nPos) ) )
+		if( IsKinsokuPosKuto( nRemainChars, nCharKetas ) && IsKinsokuKuto( pWork->cLineStr.At( pWork->nPos ) ) )
 		{
 			pWork->nWordBgn = pWork->nPos;
 			pWork->nWordLen = 1;
@@ -134,16 +138,20 @@ void CLayoutMgr::_DoKutoBurasage(SLayoutWork* pWork)
 
 void CLayoutMgr::_DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 {
+	// 基準となる半角の最大文字幅を確認
+	const CPixelXInt nBaseWidth = t_max( GetWidthPerKeta(), WCODE::CalcPxWidthByFont( L'W' ) );
+
 	if( (pWork->nPos+1 < pWork->cLineStr.GetLength())	// 2007.02.17 ryoji 追加
-	 && (GetMaxLineLayout() - pWork->nPosX < 4)
+	 && ( GetMaxLineLayout() - pWork->nPosX < 4 * nBaseWidth )
 	 && ( pWork->nPosX > pWork->nIndent )	//	2004.04.09 pWork->nPosXの解釈変更のため，行頭チェックも変更
 	 && (pWork->eKinsokuType == KINSOKU_TYPE_NONE) )
 	{
 		// 2007.09.07 kobake   レイアウトとロジックの区別
-		CLayoutInt nCharKetas2 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
-		CLayoutInt nCharKetas3 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos+1 );
+		CLayoutInt nRemainChars = ( GetMaxLineLayout() - pWork->nPosX ) / nBaseWidth;
+		CLayoutInt nCharKetas2 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos ) / nBaseWidth;
+		CLayoutInt nCharKetas3 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos + 1 ) / nBaseWidth;
 
-		if( IsKinsokuPosHead( GetMaxLineLayout() - pWork->nPosX, nCharKetas2, nCharKetas3 )
+		if( IsKinsokuPosHead( nRemainChars, nCharKetas2, nCharKetas3 )
 		 && IsKinsokuHead( pWork->cLineStr.At(pWork->nPos+1) )
 		 && ! IsKinsokuHead( pWork->cLineStr.At(pWork->nPos) )	//1文字前が行頭禁則でない
 		 && ! IsKinsokuKuto( pWork->cLineStr.At(pWork->nPos) ) )	//句読点でない
@@ -159,15 +167,19 @@ void CLayoutMgr::_DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 
 void CLayoutMgr::_DoGyomatsuKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 {
+	// 基準となる半角の最大文字幅を確認
+	const CPixelXInt nBaseWidth = t_max( GetWidthPerKeta(), WCODE::CalcPxWidthByFont( L'W' ) );
+
 	if( (pWork->nPos+1 < pWork->cLineStr.GetLength())	// 2007.02.17 ryoji 追加
-	 && (GetMaxLineKetas() - pWork->nPosX < 4)
+	 && ( GetMaxLineLayout() - pWork->nPosX < 4 * nBaseWidth )
 	 && ( pWork->nPosX > pWork->nIndent )	//	2004.04.09 pWork->nPosXの解釈変更のため，行頭チェックも変更
 	 && (pWork->eKinsokuType == KINSOKU_TYPE_NONE) )
 	{	/* 行末禁則する && 行末付近 && 行頭でないこと(無限に禁則してしまいそう) */
-		CLayoutInt nCharKetas2 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
-		CLayoutInt nCharKetas3 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos+1 );
+		CLayoutInt nRemainChars = ( GetMaxLineLayout() - pWork->nPosX ) / nBaseWidth;
+		CLayoutInt nCharKetas2 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos ) / nBaseWidth;
+		CLayoutInt nCharKetas3 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos + 1 ) / nBaseWidth;
 
-		if( IsKinsokuPosTail(GetMaxLineLayout() - pWork->nPosX, nCharKetas2, nCharKetas3) && IsKinsokuTail(pWork->cLineStr.At(pWork->nPos)) ){
+		if( IsKinsokuPosTail( nRemainChars, nCharKetas2, nCharKetas3 ) && IsKinsokuTail( pWork->cLineStr.At( pWork->nPos ) ) ){
 			pWork->nWordBgn = pWork->nPos;
 			pWork->nWordLen = 1;
 			pWork->eKinsokuType = KINSOKU_TYPE_KINSOKU_TAIL;
