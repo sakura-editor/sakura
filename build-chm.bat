@@ -11,7 +11,6 @@ if not defined CMD_PYTHON (
 )
 
 set SRC_HELP=%~dp0help
-set TMP_HELP=%~dp0temphelp
 
 @rem create sakura.hh before copying because sakura.hh will be uploaded as an artifact.
 set HH_SCRIPT=%SRC_HELP%\remove-comment.py
@@ -21,16 +20,13 @@ set HH_OUTPUT=help\sakura\sakura.hh
 if exist "%HH_OUTPUT%" del /F "%HH_OUTPUT%"
 %CMD_PYTHON% "%HH_SCRIPT%" "%HH_INPUT%" "%HH_OUTPUT%"  || (echo error && exit /b 1)
 
-if exist "%TMP_HELP%" rmdir /s /q    "%TMP_HELP%"
-xcopy /i /k /s "%SRC_HELP%" "%TMP_HELP%"
+set HHP_MACRO=%SRC_HELP%\macro\macro.HHP
+set HHP_PLUGIN=%SRC_HELP%\plugin\plugin.hhp
+set HHP_SAKURA=%SRC_HELP%\sakura\sakura.hhp
 
-set HHP_MACRO=%TMP_HELP%\macro\macro.HHP
-set HHP_PLUGIN=%TMP_HELP%\plugin\plugin.hhp
-set HHP_SAKURA=%TMP_HELP%\sakura\sakura.hhp
-
-set CHM_MACRO=%TMP_HELP%\macro\macro.chm
-set CHM_PLUGIN=%TMP_HELP%\plugin\plugin.chm
-set CHM_SAKURA=%TMP_HELP%\sakura\sakura.chm
+set CHM_MACRO=%SRC_HELP%\macro\macro.chm
+set CHM_PLUGIN=%SRC_HELP%\plugin\plugin.chm
+set CHM_SAKURA=%SRC_HELP%\sakura\sakura.chm
 
 if defined APPVEYOR (
 	if "%PLATFORM%" neq "BuildChm" (
@@ -39,25 +35,9 @@ if defined APPVEYOR (
 	)
 )
 
-set "TOOL_SLN_FILE=%~dp0tools\ChmSourceConverter\ChmSourceConverter.sln"
-@echo "%CMD_MSBUILD%" %TOOL_SLN_FILE% "/p:Platform=Any CPU" /p:Configuration=Release /t:"Build" /v:q
-      "%CMD_MSBUILD%" %TOOL_SLN_FILE% "/p:Platform=Any CPU" /p:Configuration=Release /t:"Build" /v:q
-if errorlevel 1 exit /b 1
-
-%~dp0tools\ChmSourceConverter\ChmSourceConverter\bin\Release\ChmSourceConverter.exe "%TMP_HELP%"
-if errorlevel 1 exit /b 1
-
 call :BuildChm %HHP_MACRO%  %CHM_MACRO%   || (echo error && exit /b 1)
 call :BuildChm %HHP_PLUGIN% %CHM_PLUGIN%  || (echo error && exit /b 1)
 call :BuildChm %HHP_SAKURA% %CHM_SAKURA%  || (echo error && exit /b 1)
-
-copy /Y %TMP_HELP%\macro\*.chm   %SRC_HELP%\macro\   || (echo error && exit /b 1)
-copy /Y %TMP_HELP%\plugin\*.chm  %SRC_HELP%\plugin\  || (echo error && exit /b 1)
-copy /Y %TMP_HELP%\sakura\*.chm  %SRC_HELP%\sakura\  || (echo error && exit /b 1)
-
-copy /Y %TMP_HELP%\macro\*.Log   %SRC_HELP%\macro\   || (echo error && exit /b 1)
-copy /Y %TMP_HELP%\plugin\*.Log  %SRC_HELP%\plugin\  || (echo error && exit /b 1)
-copy /Y %TMP_HELP%\sakura\*.Log  %SRC_HELP%\sakura\  || (echo error && exit /b 1)
 
 rmdir /s /q %TMP_HELP%
 exit /b 0
