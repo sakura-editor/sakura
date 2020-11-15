@@ -11,8 +11,8 @@ Display compile progress=No
 Error log file=Compile.Log
 Full-text search=Yes
 Index file=macro.hhk
-Language=0x411 “ú–{Œê
-Title=ƒ}ƒNƒƒŠƒtƒ@ƒŒƒ“ƒX
+Language=0x411 æ—¥æœ¬èª
+Title=ãƒã‚¯ãƒ­ãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹
 
 [WINDOWS]
 macro="Macro Reference","macro.hhc","macro.hhk","source\reference\index.html",,,,,,0x40720,250,0x100e,[200,100,900,700],,,,,,,0
