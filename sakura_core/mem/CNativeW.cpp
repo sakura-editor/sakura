@@ -17,11 +17,6 @@ CNativeW::CNativeW(const CNativeW& rhs)
 {
 }
 
-CNativeW::CNativeW(CNativeW&& other) noexcept
-	: CNative(std::forward<CNativeW>(other))
-{
-}
-
 //! nDataLenは文字単位。
 CNativeW::CNativeW( const wchar_t* pData, int nDataLen )
 	: CNative()

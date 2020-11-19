@@ -12,11 +12,6 @@ CNativeA::CNativeA(const CNativeA& rhs)
 {
 }
 
-CNativeA::CNativeA(CNativeA&& other) noexcept
-	: CNative(std::forward<CNativeA>(other))
-{
-}
-
 CNativeA::CNativeA( const char* szData, size_t cchData )
 	: CNative()
 {
