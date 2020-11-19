@@ -2,16 +2,6 @@
 #include "StdAfx.h"
 #include "CNativeA.h"
 
-CNativeA::CNativeA() noexcept
-	: CNative()
-{
-}
-
-CNativeA::CNativeA(const CNativeA& rhs)
-	: CNative(rhs)
-{
-}
-
 CNativeA::CNativeA( const char* szData, size_t cchData )
 	: CNative()
 {

@@ -72,8 +72,8 @@ class CNativeW final : public CNative{
 
 public:
 	//コンストラクタ・デストラクタ
-	CNativeW() noexcept;
-	CNativeW( const CNativeW& rhs );
+	CNativeW() noexcept = default;
+	CNativeW( const CNativeW& rhs ) = default;
 	CNativeW( CNativeW&& other ) noexcept = default;
 	CNativeW( const wchar_t* pData, int nDataLen ); //!< nDataLenは文字単位。
 	CNativeW( const wchar_t* pData);

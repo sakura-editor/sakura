@@ -7,16 +7,6 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-CNativeW::CNativeW() noexcept
-	: CNative()
-{
-}
-
-CNativeW::CNativeW(const CNativeW& rhs)
-	: CNative(rhs)
-{
-}
-
 //! nDataLenは文字単位。
 CNativeW::CNativeW( const wchar_t* pData, int nDataLen )
 	: CNative()

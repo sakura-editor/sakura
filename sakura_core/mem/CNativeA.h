@@ -30,8 +30,8 @@
 
 class CNativeA final : public CNative{
 public:
-	CNativeA() noexcept;
-	CNativeA( const CNativeA& rhs );
+	CNativeA() noexcept = default;
+	CNativeA( const CNativeA& rhs ) = default;
 	CNativeA( CNativeA&& other ) noexcept = default;
 	CNativeA( const char* szData, size_t cchData );
 	CNativeA( const char* szData);
