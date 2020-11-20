@@ -103,9 +103,7 @@ private:
 bool GetLastWriteTimestamp( const WCHAR* filename, CFileTime* pcFileTime ); //	Oct. 22, 2005 genta
 
 //文字列分割
-void my_splitpath ( const char *comln , char *drv,char *dir,char *fnm,char *ext );
 void my_splitpath_w ( const wchar_t *comln , wchar_t *drv,wchar_t *dir,wchar_t *fnm,wchar_t *ext );
-void my_splitpath_t ( const WCHAR *comln , WCHAR *drv,WCHAR *dir,WCHAR *fnm,WCHAR *ext );
 #define my_splitpath_t my_splitpath_w
 
 int FileMatchScoreSepExt( const WCHAR *file1, const WCHAR *file2 );
