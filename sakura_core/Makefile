@@ -26,19 +26,19 @@ OUTDIR =
 ifeq ($(SHELL),sh.exe)
 # If cmd.exe is used as a shell.
 MKDIR = md
-RMDIR = rmdir /s /q
 RM = del
 DIRSEP = $(strip \ )
 DEVNULL = NUL
 ICONV = C:\msys64\usr\bin\iconv.exe
+SED = C:\msys64\usr\bin\sed.exe
 else
 # If unix-like shell is used.
 MKDIR = mkdir -p
-RMDIR = rm -fr
 RM = rm -f
 DIRSEP = /
 DEVNULL = /dev/null
 ICONV = iconv
+SED = sed
 endif
 
 ifndef PREFIX
@@ -120,8 +120,6 @@ GENERATED_FILES= \
 HEADERMAKETOOLDIR= $(SRCDIR)/../HeaderMake
 HEADERMAKE= $(or $(OUTDIR),$(HEADERMAKETOOLDIR))/HeaderMake.exe
 
-RC_TMP_DIR = _rc_tmp
-
 all: $(exe)
 
 $(exe): $(OBJS) sakura_rc.o
@@ -150,15 +148,11 @@ $(OBJS): StdAfx.h.gch
 $(HEADERMAKE): $(HEADERMAKETOOLDIR)/HeaderMake.cpp
 	$(CXX) $(CXXFLAGS:-MMD=) $< -o $@ -static-libgcc
 
-sakura_rc.o: $(RC_TMP_DIR)/sakura_rc.rc $(RC_TMP_DIR)/sakura_rc.rc2 githash.h Funccode_define.h
+sakura_rc.o: sakura_rc.rc.utf8 sakura_rc.rc2.utf8 githash.h Funccode_define.h
 	$(RC) -c utf-8 --language=0411 $(DEFINES) -I. -I$(SRCDIR) $< -o $@
-	-$(RMDIR) $(RC_TMP_DIR) > $(DEVNULL) 2>&1
 
-$(RC_TMP_DIR)/sakura_rc.rc $(RC_TMP_DIR)/sakura_rc.rc2: $(RC_TMP_DIR)/
-	$(ICONV) -f utf-16 -t utf-8 $(@F) > $@
-
-$(RC_TMP_DIR)/:
-	-$(MKDIR) $(RC_TMP_DIR) > $(DEVNULL) 2>&1
+sakura_rc.rc.utf8 sakura_rc.rc2.utf8: sakura_rc.rc sakura_rc.rc2
+	$(ICONV) -f utf-16 -t utf-8 $(subst .utf8,,$(@F)) | $(SED) '/#include/s/.rc2\b/.rc2.utf8/' > $@
 
 clean:
 	-$(RM) $(subst /,$(DIRSEP),$(exe) $(OBJS) $(HEADERMAKE)) StdAfx.h.gch $(GENERATED_FILES)
