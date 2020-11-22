@@ -200,7 +200,7 @@ zh_hant.ReadyMemo_VirtualStoreDisable=無效
 en.ReadyMemo_ExecProfileDir=Same as the executable file
 ja.ReadyMemo_ExecProfileDir=実行ファイルと同一ディレクトリ
 zh_hans.ReadyMemo_ExecProfileDir=与可执行文件相同
-zh_hant.ReadyMemo_ExecProfileDir=実行ファイルと同一ディレクトリ
+zh_hant.ReadyMemo_ExecProfileDir=與可執行文件相同
 
 en.ReadyMemo_VirtualStoreEnable=Enable
 ja.ReadyMemo_VirtualStoreEnable=有効
