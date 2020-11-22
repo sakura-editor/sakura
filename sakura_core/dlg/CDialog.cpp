@@ -19,10 +19,13 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
+#include <algorithm>
+#include <memory>
 #include "dlg/CDialog.h"
 #include "CEditApp.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
+#include "parse/CWordParse.h"
 #include "recent/CRecent.h"
 #include "util/os.h"
 #include "util/shell.h"
@@ -745,13 +748,28 @@ static void DeleteRecentItem(
 	}
 }
 
+//! コンボボックスのエディットの単語削除処理を行う
+static int DeletePreviousWord(wchar_t* text, int length, int curPos)
+{
+	if (curPos == 0) {
+		// カーソル位置が既に先頭なので何もしない
+		return 0;
+	}
+	CLogicInt prevWordStartPos;
+	CWordParse::SearchPrevWordPosition(text, CLogicInt(length), CLogicInt(curPos), &prevWordStartPos,
+		GetDllShareData().m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchWord);
+	assert(prevWordStartPos < curPos);
+	// null文字ごと前方へ移動する
+	std::copy(text + curPos, text + length + 1, text + prevWordStartPos);
+	return prevWordStartPos;
+}
+
 LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 	                         UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 {
 	HWND hwndCombo = GetParent(hwnd);
 	switch( uMsg ){
 	case WM_KEYDOWN:
-	{
 		if( wParam == VK_DELETE ){
 			BOOL bShow = Combo_GetDroppedState(hwndCombo);
 			int nIndex = Combo_GetCurSel(hwndCombo);
@@ -760,7 +778,30 @@ LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 			}
 		}
 		break;
-	}
+	case WM_CHAR:
+		// ASCII 削除文字。Ctrl + Backspace が入力された。
+		if (wParam == 0x7f) {
+			DWORD selStart, selEnd;
+			Combo_GetEditSel(hwndCombo, selStart, selEnd);
+			if (selStart != selEnd) {
+				// テキストが選択されているため、通常の削除動作を行う。
+				// Edit に Backspace を流して処理してもらう。
+				wParam = VK_BACK;
+				break;
+			}
+
+			// 単語削除する
+			const int length = ::GetWindowTextLength(hwndCombo);
+			auto text = std::make_unique<wchar_t[]>(length + 1);
+			::GetWindowText(hwndCombo, text.get(), length + 1);
+
+			const int pos = DeletePreviousWord(text.get(), length, selStart);
+
+			::SetWindowText(hwndCombo, text.get());
+			Combo_SetEditSel(hwndCombo, pos, pos);
+			return 0;
+		}
+		break;
 	}
 	return ::DefSubclassProc(hwnd, uMsg, wParam, lParam);
 }
