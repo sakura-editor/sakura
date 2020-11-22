@@ -61,19 +61,10 @@ public:
 	SFilePathLong	m_szExcludeFolder;		//!< 除外フォルダ
 	SFilePath	m_szCurrentFilePath;
 protected:
-	SComboBoxItemDeleter	m_comboDelText;
 	CRecentSearch			m_cRecentSearch;
-
-	SComboBoxItemDeleter	m_comboDelFile;
 	CRecentGrepFile			m_cRecentGrepFile;
-
-	SComboBoxItemDeleter	m_comboDelFolder;
 	CRecentGrepFolder		m_cRecentGrepFolder;
-
-	SComboBoxItemDeleter	m_comboDelExcludeFile;
 	CRecentExcludeFile		m_cRecentExcludeFile;
-
-	SComboBoxItemDeleter	m_comboDelExcludeFolder;
 	CRecentExcludeFolder	m_cRecentExcludeFolder;
 
 	std::vector<CFontAutoDeleter>	m_cFontDeleters;

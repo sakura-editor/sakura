@@ -343,12 +343,8 @@ BOOL CDlgReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_ALLAREA, TRUE );
 	}
 
-	m_comboDelText = SComboBoxItemDeleter();
-	m_comboDelText.pRecent = &m_cRecentSearch;
-	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_TEXT), &m_comboDelText);
-	m_comboDelText2 = SComboBoxItemDeleter();
-	m_comboDelText2.pRecent = &m_cRecentReplace;
-	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_TEXT2), &m_comboDelText2);
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_TEXT), &m_cRecentSearch);
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_TEXT2), &m_cRecentReplace);
 
 	BOOL bRet = CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 	if( !bRet ) return bRet;

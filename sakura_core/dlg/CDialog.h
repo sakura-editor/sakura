@@ -51,16 +51,6 @@ struct SAnchorList
 	EAnchorStyle anchor;
 };
 
-struct SComboBoxItemDeleter
-{
-	CRecent*	pRecent;
-	HWND		hwndCombo;
-	WNDPROC		pComboBoxWndProc;
-	WNDPROC		pEditWndProc;
-	WNDPROC		pListBoxWndProc;
-	SComboBoxItemDeleter(): pRecent(NULL), hwndCombo(NULL), pComboBoxWndProc(NULL), pEditWndProc(NULL), pListBoxWndProc(NULL){}
-};
-
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -125,7 +115,7 @@ public:
 
 	void ResizeItem( HWND hTarget, const POINT& ptDlgDefalut, const POINT& ptDlgNew, const RECT& rcItemDefault, EAnchorStyle anchor, bool bUpdate = true);
 	void GetItemClientRect( int wID, RECT& rc );
-	static void SetComboBoxDeleter( HWND hwndCtl, SComboBoxItemDeleter* data );
+	static void SetComboBoxDeleter( HWND hwndCtl, CRecent* pRecent );
 public:
 
 	static bool DirectoryUp(WCHAR* szDir);

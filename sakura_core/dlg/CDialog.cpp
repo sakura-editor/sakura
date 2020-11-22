@@ -699,8 +699,6 @@ void CDialog::GetItemClientRect( int wID, RECT& rc )
 	rc.bottom = po.y;
 }
 
-static const WCHAR* TSTR_SUBCOMBOBOXDATA = L"SubComboBoxData";
-
 /*! コンボボックスのリストアイテムを関連付けられた履歴と共に削除する
  */
 static void DeleteRecentItem(
@@ -747,109 +745,32 @@ static void DeleteRecentItem(
 	}
 }
 
-LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
+	                         UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 {
-	SComboBoxItemDeleter* data = (SComboBoxItemDeleter*)::GetProp( hwnd, TSTR_SUBCOMBOBOXDATA );
+	HWND hwndCombo = GetParent(hwnd);
 	switch( uMsg ){
 	case WM_KEYDOWN:
 	{
 		if( wParam == VK_DELETE ){
-			HWND hwndCombo = data->hwndCombo;
 			BOOL bShow = Combo_GetDroppedState(hwndCombo);
 			int nIndex = Combo_GetCurSel(hwndCombo);
 			if( bShow && 0 <= nIndex ){
-				DeleteRecentItem(hwndCombo, nIndex, data->pRecent);
+				DeleteRecentItem(hwndCombo, nIndex, (CRecent*)dwRefData);
 			}
 		}
 		break;
 	}
-	case WM_DESTROY:
-	{
-		::SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)data->pEditWndProc);
-		::RemoveProp(hwnd, TSTR_SUBCOMBOBOXDATA);
-		data->pEditWndProc = NULL;
-		break;
 	}
-	default:
-		break;
-	}
-	return CallWindowProc(data->pEditWndProc, hwnd, uMsg, wParam, lParam);
+	return ::DefSubclassProc(hwnd, uMsg, wParam, lParam);
 }
 
-LRESULT CALLBACK SubListBoxProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+void CDialog::SetComboBoxDeleter(HWND hwndCtl, CRecent* pRecent)
 {
-	SComboBoxItemDeleter* data = (SComboBoxItemDeleter*)::GetProp( hwnd, TSTR_SUBCOMBOBOXDATA );
-	switch( uMsg ){
-	case WM_KEYDOWN:
-	{
-		if( wParam == VK_DELETE ){
-			HWND hwndCombo = data->hwndCombo;
-			int nIndex = Combo_GetCurSel(hwndCombo);
-			if( 0 <= nIndex ){
-				DeleteRecentItem(hwndCombo, nIndex, data->pRecent);
-				return 0;
-			}
-		}
-		break;
-	}
-	case WM_DESTROY:
-	{
-		::SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)data->pListBoxWndProc);
-		::RemoveProp(hwnd, TSTR_SUBCOMBOBOXDATA);
-		data->pListBoxWndProc = NULL;
-		break;
-	}
-	default:
-		break;
-	}
-	return CallWindowProc(data->pListBoxWndProc, hwnd, uMsg, wParam, lParam);
-}
+	assert(pRecent);
 
-LRESULT CALLBACK SubComboBoxProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	SComboBoxItemDeleter* data = (SComboBoxItemDeleter*)::GetProp( hwnd, TSTR_SUBCOMBOBOXDATA );
-	switch( uMsg ){
-	case WM_CTLCOLOREDIT:
-	{
-		if( NULL == data->pEditWndProc ){
-			HWND hwndCtl = (HWND)lParam;
-			data->pEditWndProc = (WNDPROC)::GetWindowLongPtr(hwndCtl, GWLP_WNDPROC);
-			::SetProp(hwndCtl, TSTR_SUBCOMBOBOXDATA, data);
-			::SetWindowLongPtr(hwndCtl, GWLP_WNDPROC, (LONG_PTR)SubEditProc);
-		}
-		break;
-	}
-	case WM_CTLCOLORLISTBOX:
-	{
-		if( NULL == data->pListBoxWndProc ){
-			HWND hwndCtl = (HWND)lParam;
-			data->pListBoxWndProc = (WNDPROC)::GetWindowLongPtr(hwndCtl, GWLP_WNDPROC);
-			::SetProp(hwndCtl, TSTR_SUBCOMBOBOXDATA, data);
-			::SetWindowLongPtr(hwndCtl, GWLP_WNDPROC, (LONG_PTR)SubListBoxProc);
-		}
-		break;
-	}
-	case WM_DESTROY:
-	{
-		::SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)data->pComboBoxWndProc);
-		::RemoveProp(hwnd, TSTR_SUBCOMBOBOXDATA);
-		data->pComboBoxWndProc = NULL;
-		break;
-	}
-
-	default:
-		break;
-	}
-	return CallWindowProc(data->pComboBoxWndProc, hwnd, uMsg, wParam, lParam);
-}
-
-void CDialog::SetComboBoxDeleter( HWND hwndCtl, SComboBoxItemDeleter* data )
-{
-	if( NULL == data->pRecent ){
+	COMBOBOXINFO info = { sizeof(COMBOBOXINFO) };
+	if (!::GetComboBoxInfo(hwndCtl, &info))
 		return;
-	}
-	data->hwndCombo = hwndCtl;
-	data->pComboBoxWndProc = (WNDPROC)::GetWindowLongPtr(hwndCtl, GWLP_WNDPROC);
-	::SetProp(hwndCtl, TSTR_SUBCOMBOBOXDATA, data);
-	::SetWindowLongPtr(hwndCtl, GWLP_WNDPROC, (LONG_PTR)SubComboBoxProc);
+	::SetWindowSubclass(info.hwndItem, SubEditProc, 0, (DWORD_PTR)pRecent);
 }

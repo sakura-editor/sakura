@@ -165,7 +165,6 @@ private:
 	BOOL	m_bOldTagJumpICase;	//!< 前回の大文字小文字を同一視
 	BOOL	m_bOldTagJumpPartialMatch;	//!< 前回の文字列の途中にマッチ
 
-	SComboBoxItemDeleter	m_comboDel;
 	CRecentTagjumpKeyword	m_cRecentKeyword;
 
 	POINT	m_ptDefaultSize;

@@ -42,7 +42,6 @@ public:
 
 protected:
 	CRecentReplace			m_cRecentReplace;
-	SComboBoxItemDeleter	m_comboDelText2;
 	CFontAutoDeleter		m_cFontText2;
 
 	/*

@@ -38,9 +38,7 @@ public:
 	bool	m_bEditable;			/* 編集ウィンドウへの入力可能 */	// 2009.02.21 ryoji
 
 protected:
-	SComboBoxItemDeleter m_comboDel;
 	CRecentCmd m_cRecentCmd;
-	SComboBoxItemDeleter m_comboDelCur;
 	CRecentCurDir m_cRecentCur;
 
 	int GetData( void ) override;	/* ダイアログデータの取得 */

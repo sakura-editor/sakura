@@ -59,9 +59,7 @@ public:
 
 protected:
 	CRecentSearch			m_cRecentSearch;
-	SComboBoxItemDeleter	m_comboDelText;
 	CRecentReplace			m_cRecentReplace;
-	SComboBoxItemDeleter	m_comboDelText2;
 	CFontAutoDeleter		m_cFontText;
 	CFontAutoDeleter		m_cFontText2;
 

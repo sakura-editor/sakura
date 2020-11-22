@@ -118,9 +118,7 @@ public:
 
 	bool			m_bInitCodePage;
 
-	SComboBoxItemDeleter	m_combDelFile;
 	CRecentFile				m_cRecentFile;
-	SComboBoxItemDeleter	m_combDelFolder;
 	CRecentFolder			m_cRecentFolder;
 
 	OPENFILENAME*	m_pOf;
@@ -373,12 +371,8 @@ UINT_PTR CALLBACK OFNHookProc(
 			/* ビューモードの初期値セット */
 			::CheckDlgButton( pData->m_hwndOpenDlg, chx1, pData->m_bViewMode );
 
-			pData->m_combDelFile = SComboBoxItemDeleter();
-			pData->m_combDelFile.pRecent = &pData->m_cRecentFile;
-			CDialog::SetComboBoxDeleter(pData->m_hwndComboMRU, &pData->m_combDelFile);
-			pData->m_combDelFolder = SComboBoxItemDeleter();
-			pData->m_combDelFolder.pRecent = &pData->m_cRecentFolder;
-			CDialog::SetComboBoxDeleter(pData->m_hwndComboOPENFOLDER, &pData->m_combDelFolder);
+			CDialog::SetComboBoxDeleter(pData->m_hwndComboMRU, &pData->m_cRecentFile);
+			CDialog::SetComboBoxDeleter(pData->m_hwndComboOPENFOLDER, &pData->m_cRecentFolder);
 		}
 		break;
 
