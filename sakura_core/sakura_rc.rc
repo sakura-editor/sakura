@@ -2155,6 +2155,18 @@ IDC_CURSOR_AUTOSCROLL_DOWN_RIGHT CURSOR                  "../resource/auto_scrol
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON_GREP           ICON                    "../resource/icon_grep.ico"
+
+IDI_PRINTER             ICON                    "../resource/printer.ico"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // 100
 //
 
@@ -2883,8 +2895,6 @@ END
 
 STRINGTABLE
 BEGIN
-    STR_SELLANG_NAME        "Japanese"
-    STR_SELLANG_LANGID      "0x0411"
     STR_SQLERR_EXEC_BUT_NOT_RUN 
                             "Oracle SQL*Plusで実行します。\n\n\nOracle SQL*Plusが起動されていません。\n"
     STR_SQLERR_ACTV_BUT_NOT_RUN 
@@ -3143,8 +3153,6 @@ BEGIN
     STR_DLGFNCLST_MENU_UNIFY "継承情報を統一(&U)"
     STR_DLGFNCLST_MENU_CLOSE "閉じる(&X)"
     STR_DLGFNCLST_UNIFY     "現在の画面のドッキング配置情報をすべての共通設定・タイプ別設定にコピーして統一します。\n（現在開いている他画面の状態も統一します。）\n"
-    STR_BREGONIG_LOAD       "bregonig.dll のロードに失敗しました。\r\n正規表現を利用するには Unicode 版の bregonig.dll が必要です。\r\n入手方法はヘルプを参照してください。"
-    STR_BREGONIG_INIT       "bregonig.dll の利用に失敗しました。\r\n正規表現を利用するには Unicode 版の bregonig.dll が必要です。\r\n入手方法はヘルプを参照してください。"
     STR_BREGONIG_ERROR      "bregonig.dll のロードで予期せぬエラーが発生しました。"
     STR_BREGONIG_TITLE      "正規表現エラー"
     STR_ERR_CWSH09          "マクロの実行を中断しました。"
