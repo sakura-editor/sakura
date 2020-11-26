@@ -29,12 +29,16 @@ MKDIR = md
 RM = del
 DIRSEP = $(strip \ )
 DEVNULL = NUL
+ICONV = C:\msys64\usr\bin\iconv.exe
+SED = C:\msys64\usr\bin\sed.exe
 else
 # If unix-like shell is used.
 MKDIR = mkdir -p
 RM = rm -f
 DIRSEP = /
 DEVNULL = /dev/null
+ICONV = iconv
+SED = sed
 endif
 
 ifndef PREFIX
@@ -144,11 +148,14 @@ $(OBJS): StdAfx.h.gch
 $(HEADERMAKE): $(HEADERMAKETOOLDIR)/HeaderMake.cpp
 	$(CXX) $(CXXFLAGS:-MMD=) $< -o $@ -static-libgcc
 
-sakura_rc.o: sakura_rc.rc githash.h Funccode_define.h
+sakura_rc.o: sakura_rc.rc.utf8 sakura_rc.rc2.utf8 githash.h Funccode_define.h
 	$(RC) -c utf-8 --language=0411 $(DEFINES) -I. -I$(SRCDIR) $< -o $@
 
+sakura_rc.rc.utf8 sakura_rc.rc2.utf8: sakura_rc.rc sakura_rc.rc2
+	$(ICONV) -f utf-16 -t utf-8 $(subst .utf8,,$(@F)) | $(SED) -e 1i'#pragma code_page(65001)' -e '/#include/s/.rc2\b/.rc2.utf8/' > $@
+
 clean:
-	-$(RM) $(subst /,$(DIRSEP),$(exe) $(OBJS) $(HEADERMAKE)) StdAfx.h.gch $(GENERATED_FILES)
+	-$(RM) $(subst /,$(DIRSEP),$(exe) $(OBJS) $(HEADERMAKE)) StdAfx.h.gch $(GENERATED_FILES) sakura_rc.o sakura_rc.*.utf8
 	-$(RM) $(subst /,$(DIRSEP),$(DEPS))
 
 .SUFFIXES: .cpp .o .rc

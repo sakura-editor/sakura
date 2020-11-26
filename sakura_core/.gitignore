@@ -7,4 +7,5 @@
 /sakura.exe
 *.d
 *.o
+*.utf8
 /StdAfx.h.gch
