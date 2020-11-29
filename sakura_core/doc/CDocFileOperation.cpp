@@ -40,6 +40,7 @@
 #include "env/CSakuraEnvironment.h"
 #include "plugin/CPlugin.h"
 #include "plugin/CJackManager.h"
+#include "util/format.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          ロック                             //
@@ -263,14 +264,19 @@ bool CDocFileOperation::SaveFileDialog(
 				wcscat(szDefaultWildCard, L";*.*");	// 全ファイル表示
 		}
 	}
-	// 無題に、無題番号を付ける
+
+	// 無題の時は日時を付ける
 	if( pSaveInfo->cFilePath[0] == L'\0' ){
-		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( m_pcDocRef->m_pcEditWnd->GetHwnd() );
-		if( 0 < node->m_nId ){
-			WCHAR szText[16];
-			auto_sprintf(szText, L"%d", node->m_nId);
-			wcscpy(pSaveInfo->cFilePath, LS(STR_NO_TITLE2));	// 無題
-			wcscat(pSaveInfo->cFilePath, szText);
+		SYSTEMTIME localTime = {};
+		::GetLocalTime( &localTime );
+		TCHAR format[40] = {};
+		auto_sprintf_s( format, _countof(format), _T("%s_%%Y%%m%%d_%%H%%M%%S"), LS(STR_NO_TITLE2) );
+		if( !GetDateTimeFormat( pSaveInfo->cFilePath, pSaveInfo->cFilePath.GetBufferCount(), format, localTime ) ){
+			// 失敗したら日時の代わりに連番を付与
+			const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( m_pcDocRef->m_pcEditWnd->GetHwnd() );
+			if( 0 < node->m_nId ){
+				auto_sprintf_s( pSaveInfo->cFilePath, pSaveInfo->cFilePath.GetBufferCount(), _T("%s%d"), LS(STR_NO_TITLE2), node->m_nId );
+			}
 		}
 	}
 
