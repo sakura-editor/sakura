@@ -309,6 +309,51 @@ bool CWordParse::SearchNextWordPosition4KW(
 	return false;
 }
 
+bool CWordParse::SearchPrevWordPosition(const wchar_t* pLine,
+	CLogicInt nLineLen, CLogicInt nIdx, CLogicInt* pnColumnNew, BOOL bStopsBothEnds)
+{
+	/* 現在位置の文字の種類を調べる */
+	ECharKind	nCharKind = CWordParse::WhatKindOfChar( pLine, nLineLen, nIdx );
+	if( nIdx == 0 ){
+		return false;
+	}
+
+	/* 文字種類が変わるまで前方へサーチ */
+	/* 空白とタブは無視する */
+	int		nCount = 0;
+	CLogicInt	nIdxNext = nIdx;
+	CLogicInt	nCharChars = CLogicInt(&pLine[nIdxNext] - CNativeW::GetCharPrev( pLine, nLineLen, &pLine[nIdxNext] ));
+	while( nCharChars > 0 ){
+		CLogicInt		nIdxNextPrev = nIdxNext;
+		nIdxNext -= nCharChars;
+		ECharKind nCharKindNext = CWordParse::WhatKindOfChar( pLine, nLineLen, nIdxNext );
+
+		ECharKind nCharKindMerge = CWordParse::WhatKindOfTwoChars( nCharKindNext, nCharKind );
+		if( nCharKindMerge == CK_NULL ){
+			/* サーチ開始位置の文字が空白またはタブの場合 */
+			if( nCharKind == CK_TAB	|| nCharKind == CK_SPACE ){
+				if ( bStopsBothEnds && nCount ){
+					nIdxNext = nIdxNextPrev;
+					break;
+				}
+				nCharKindMerge = nCharKindNext;
+			}else{
+				if( nCount == 0){
+					nCharKindMerge = nCharKindNext;
+				}else{
+					nIdxNext = nIdxNextPrev;
+					break;
+				}
+			}
+		}
+		nCharKind = nCharKindMerge;
+		nCharChars = CLogicInt(&pLine[nIdxNext] - CNativeW::GetCharPrev( pLine, nLineLen, &pLine[nIdxNext] ));
+		++nCount;
+	}
+	*pnColumnNew = nIdxNext;
+	return true;
+}
+
 //! wcがasciiなら0-127のまま返す。それ以外は0を返す。
 uchar_t wc_to_c(wchar_t wc)
 {

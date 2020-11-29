@@ -116,6 +116,9 @@ public:
 		BOOL			bStopsBothEnds	//	単語の両端で止まる
 	);
 
+	static bool SearchPrevWordPosition(const wchar_t* pLine,
+		CLogicInt nLineLen, CLogicInt nIdx, CLogicInt* pnColumnNew, BOOL bStopsBothEnds);
+
 	template< class CHAR_TYPE >
 	static int GetWord( const CHAR_TYPE* pS, const int nLen, const CHAR_TYPE *pszSplitCharList,
 		CHAR_TYPE **ppWordStart, int *pnWordLen );

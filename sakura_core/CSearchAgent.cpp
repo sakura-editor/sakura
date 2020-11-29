@@ -406,48 +406,9 @@ bool CSearchAgent::PrevOrNextWord(
 	}
 	/* 前の単語か？後ろの単語か？ */
 	if( bLEFT ){
-		/* 現在位置の文字の種類を調べる */
-		ECharKind	nCharKind = CWordParse::WhatKindOfChar( pLine, nLineLen, nIdx );
-		if( nIdx == 0 ){
-			return false;
-		}
-
-		/* 文字種類が変わるまで前方へサーチ */
-		/* 空白とタブは無視する */
-		int		nCount = 0;
-		CLogicInt	nIdxNext = nIdx;
-		CLogicInt	nCharChars = CLogicInt(&pLine[nIdxNext] - CNativeW::GetCharPrev( pLine, nLineLen, &pLine[nIdxNext] ));
-		while( nCharChars > 0 ){
-			CLogicInt		nIdxNextPrev = nIdxNext;
-			nIdxNext -= nCharChars;
-			ECharKind nCharKindNext = CWordParse::WhatKindOfChar( pLine, nLineLen, nIdxNext );
-
-			ECharKind nCharKindMerge = CWordParse::WhatKindOfTwoChars( nCharKindNext, nCharKind );
-			if( nCharKindMerge == CK_NULL ){
-				/* サーチ開始位置の文字が空白またはタブの場合 */
-				if( nCharKind == CK_TAB	|| nCharKind == CK_SPACE ){
-					if ( bStopsBothEnds && nCount ){
-						nIdxNext = nIdxNextPrev;
-						break;
-					}
-					nCharKindMerge = nCharKindNext;
-				}else{
-					if( nCount == 0){
-						nCharKindMerge = nCharKindNext;
-					}else{
-						nIdxNext = nIdxNextPrev;
-						break;
-					}
-				}
-			}
-			nCharKind = nCharKindMerge;
-			nCharChars = CLogicInt(&pLine[nIdxNext] - CNativeW::GetCharPrev( pLine, nLineLen, &pLine[nIdxNext] ));
-			++nCount;
-		}
-		*pnColumnNew = nIdxNext;
-	}else{
-		CWordParse::SearchNextWordPosition(pLine, nLineLen, nIdx, pnColumnNew, bStopsBothEnds);
+		return CWordParse::SearchPrevWordPosition(pLine, nLineLen, nIdx, pnColumnNew, bStopsBothEnds);
 	}
+	CWordParse::SearchNextWordPosition(pLine, nLineLen, nIdx, pnColumnNew, bStopsBothEnds);
 	return true;
 }
 
