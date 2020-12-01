@@ -296,6 +296,11 @@ void CViewCommander::Command_TILE_V( void )
 			//	To Here Jul. 28, 2002 genta
 			count++;
 		}
+		if( count == 0 ){
+			delete[] phwndArr;
+			delete[] pEditNodeArr;
+			return;
+		}
 		int height = (rcDesktop.bottom - rcDesktop.top ) / count;
 		for(i = 0; i < count; ++i ){
 			//	Jul. 21, 2002 genta
