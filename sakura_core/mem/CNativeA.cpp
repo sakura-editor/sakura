@@ -13,7 +13,7 @@ CNativeA::CNativeA(const CNativeA& rhs)
 }
 
 CNativeA::CNativeA(CNativeA&& other) noexcept
-	: CNative(std::forward<CNativeA>(other))
+	: CNative(std::move(other))
 {
 }
 

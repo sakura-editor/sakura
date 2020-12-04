@@ -18,7 +18,7 @@ CNativeW::CNativeW(const CNativeW& rhs)
 }
 
 CNativeW::CNativeW(CNativeW&& other) noexcept
-	: CNative(std::forward<CNativeW>(other))
+	: CNative(std::move(other))
 {
 }
 

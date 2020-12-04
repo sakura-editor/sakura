@@ -60,7 +60,7 @@ public:
 
 	//演算子
 	CNativeA& operator = (const CNativeA& rhs)			{ CNative::operator=(rhs); return *this; }
-	CNativeA& operator = (CNativeA&& rhs) noexcept		{ CNative::operator=(std::forward<CNativeA>(rhs)); return *this; }
+	CNativeA& operator = (CNativeA&& rhs) noexcept		{ CNative::operator=(std::move(rhs)); return *this; }
 	const CNativeA& operator=( char );
 	const CNativeA& operator+=( char );
 };
