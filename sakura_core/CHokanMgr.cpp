@@ -539,26 +539,23 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 	if( VK_TAB		== nVKey && !m_pShareData->m_Common.m_sHelper.m_bHokanKey_TAB ) 		return FALSE;/* VK_TAB    補完決定キーが有効/無効 */
 	if( VK_RIGHT	== nVKey && !m_pShareData->m_Common.m_sHelper.m_bHokanKey_RIGHT )		return FALSE;/* VK_RIGHT  補完決定キーが有効/無効 */
 
-	HWND hwndList;
-	int nItem;
-	CEditView* pcEditView;
-	hwndList = GetItemHwnd( IDC_LIST_WORDS );
-	nItem = List_GetCurSel( hwndList );
+	HWND hList = GetItemHwnd( IDC_LIST_WORDS );
+	const int nItem = List_GetCurSel( hList );
 	if( LB_ERR == nItem ){
 		return FALSE;
 	}
-	int nLabelLen = List_GetTextLen( hwndList, nItem );
-	auto pszLabel = std::make_unique<WCHAR[]>(nLabelLen + 1);
-	List_GetText( hwndList, nItem, &pszLabel[0], nLabelLen + 1 );
+
+	std::wstring strLabel;
+	if( !ApiWrap::List_GetText( hList, nItem, strLabel ) ){
+		return FALSE;
+	}
 
  	/* テキストを貼り付け */
-	pcEditView = reinterpret_cast<CEditView*>(m_lParam);
+	CEditView* pcEditView = reinterpret_cast<CEditView*>(m_lParam);
 	//	Apr. 28, 2000 genta
 	pcEditView->GetCommander().HandleCommand( F_WordDeleteToStart, false, 0, 0, 0, 0 );
-	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)&pszLabel[0], wcslen(&pszLabel[0]), TRUE, 0 );
+	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)strLabel.data(), strLabel.length(), TRUE, 0 );
 
-	// Until here
-//	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)(pszLabel + m_cmemCurWord.GetLength()), TRUE, 0, 0 );
 	Hide();
 
 	return TRUE;
@@ -658,9 +655,8 @@ void CHokanMgr::ShowTip()
 	nItem = List_GetCurSel( hwndCtrl );
 	if( LB_ERR == nItem )	return ;
 
-	int nLabelLen = List_GetTextLen( hwndCtrl, nItem );
-	auto szLabel = std::make_unique<WCHAR[]>(nLabelLen + 1);
-	List_GetText( hwndCtrl, nItem, &szLabel[0], nLabelLen + 1 );	// 選択中の単語を取得
+	std::wstring strLabel;
+	if( !ApiWrap::List_GetText( hwndCtrl, nItem, strLabel ) ) return;
 
 	pcEditView = reinterpret_cast<CEditView*>(m_lParam);
 
@@ -681,7 +677,7 @@ void CHokanMgr::ShowTip()
 	if( point.y > m_poWin.y && point.y < m_poWin.y + m_nHeight )
 	{
 		::SetRect( &rcHokanWin , m_poWin.x, m_poWin.y, m_poWin.x + m_nWidth, m_poWin.y + m_nHeight );
-		if( !pcEditView -> ShowKeywordHelp( point, &szLabel[0], &rcHokanWin ) )
+		if( !pcEditView -> ShowKeywordHelp( point, strLabel.data(), &rcHokanWin ) )
 			pcEditView -> m_dwTipTimer = ::GetTickCount();	// 表示するべきキーワードヘルプが無い
 	}
 }

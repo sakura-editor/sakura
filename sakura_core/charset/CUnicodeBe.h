@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CUNICODEBE_26648A4B_A79C_4739_ADD3_DC7833A91E18_H_
+#define SAKURA_CUNICODEBE_26648A4B_A79C_4739_ADD3_DC7833A91E18_H_
 #pragma once
 
 #include "CCodeBase.h"
@@ -43,3 +45,4 @@ public:
 	inline static EConvertResult UnicodeToUnicodeBE(const CNativeW& cSrc, CMemory* pDst)
 		{ return CUnicode::_UnicodeToUnicode_out(cSrc, pDst, true); }	// Unicode   → UnicodeBEコード変換
 };
+#endif /* SAKURA_CUNICODEBE_26648A4B_A79C_4739_ADD3_DC7833A91E18_H_ */

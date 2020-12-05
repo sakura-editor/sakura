@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CNATIVE_D712C69D_7FA3_49CE_B63A_49273441B558_H_
+#define SAKURA_CNATIVE_D712C69D_7FA3_49CE_B63A_49273441B558_H_
 #pragma once
 
 #include "mem/CMemory.h"
@@ -43,3 +45,4 @@ static_assert(sizeof(CNative) == sizeof(CMemory), "size check");
 
 #include "mem/CNativeA.h"
 #include "mem/CNativeW.h"
+#endif /* SAKURA_CNATIVE_D712C69D_7FA3_49CE_B63A_49273441B558_H_ */

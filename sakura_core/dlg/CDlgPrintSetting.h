@@ -27,6 +27,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CDLGPRINTSETTING_CA277796_0DDF_4D2D_92A6_67ACAC460E10_H_
+#define SAKURA_CDLGPRINTSETTING_CA277796_0DDF_4D2D_92A6_67ACAC460E10_H_
 #pragma once
 
 #include "dlg/CDialog.h"
@@ -55,7 +57,6 @@ private:
 	PRINTSETTING	m_PrintSettingArr[MAX_PRINTSETTINGARR];
 	int				m_nLineNumberColumns;					// 行番号表示する場合の桁数
 	bool			m_bPrintableLinesAndColumnInvalid;
-	HFONT			m_hFontDlg;								// ダイアログのフォントハンドル
 	int				m_nFontHeight;							// ダイアログのフォントのサイズ
 
 protected:
@@ -82,3 +83,4 @@ protected:
 	void UpdatePrintableLineAndColumn();	/* 行数と桁数の計算要求 */
 	void SetFontName( int idTxt, int idUse, LOGFONT& lf, int nPointSize );	// フォント名/使用ボタンの設定
 };
+#endif /* SAKURA_CDLGPRINTSETTING_CA277796_0DDF_4D2D_92A6_67ACAC460E10_H_ */

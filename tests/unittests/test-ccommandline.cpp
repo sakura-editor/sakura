@@ -32,6 +32,7 @@
 #include <Windows.h>
 
 #include "_main/CCommandLine.h"
+#include "env/CSakuraEnvironment.h"
 
 #include <cstdlib>
 #include <fstream>
@@ -41,6 +42,24 @@ bool operator != (const EditInfo& lhs, const EditInfo& rhs) noexcept;
 
 bool operator == (const GrepInfo& lhs, const GrepInfo& rhs) noexcept;
 bool operator != (const GrepInfo& lhs, const GrepInfo& rhs) noexcept;
+
+/*!
+ * ローカルパスをフルパスに変換する
+ *
+ * コマンドラインで指定されたパスは、フルパスに変換して格納される。
+ * フルパスに変換するルールが特殊なので、実際に利用する関数を使って変換する。
+ */
+std::wstring GetLocalPath(const std::wstring_view& filename)
+{
+	constexpr size_t cchBufSize = 4096;
+	auto pathBuf = std::make_unique<WCHAR[]>(cchBufSize);
+	if (!pathBuf) throw std::bad_alloc();
+
+	LPWSTR pszResolvedPath = pathBuf.get();
+	::wcscpy_s(pszResolvedPath, cchBufSize, filename.data());
+	CSakuraEnvironment::ResolvePath(pszResolvedPath);
+	return pszResolvedPath;
+}
 
 /*!
  * テスト用の極薄ラッパークラス
@@ -59,7 +78,6 @@ TEST(CCommandLine, ConstructWithoutParam)
 {
 	CCommandLineWrapper cCommandLine;
 	EXPECT_FALSE(cCommandLine.IsNoWindow());
-	EXPECT_FALSE(cCommandLine.IsWriteQuit());
 	EXPECT_FALSE(cCommandLine.IsGrepMode());
 	EXPECT_FALSE(cCommandLine.IsGrepDlg());
 	EXPECT_FALSE(cCommandLine.IsDebugMode());
@@ -85,7 +103,6 @@ TEST(CCommandLine, ConstructWithoutParam)
  * @brief パラメータ解析(-NOWIN)の仕様
  * @remark -NOWINが指定されていなければFALSE
  * @remark -NOWINが指定されていたらTRUE
- * @remark -WQが指定された場合、-NOWINがなくてもTRUE
  */
 TEST(CCommandLine, ParseNoWin)
 {
@@ -93,24 +110,6 @@ TEST(CCommandLine, ParseNoWin)
 	cCommandLine.ParseCommandLine(L"", false);
 	EXPECT_FALSE(cCommandLine.IsNoWindow());
 	cCommandLine.ParseCommandLine(L"-NOWIN", false);
-	ASSERT_TRUE(cCommandLine.IsNoWindow());
-	cCommandLine.ParseCommandLine(L"-WQ", false);
-	ASSERT_TRUE(cCommandLine.IsNoWindow());
-}
-
-/*!
- * @brief パラメータ解析(-WQ)の仕様
- * @remark -WQが指定されていなければFALSE
- * @remark -WQが指定されていたらTRUE
- * @remark -WQが指定された場合、-NOWINもTRUE
- */
-TEST(CCommandLine, ParseWriteQuit)
-{
-	CCommandLineWrapper cCommandLine;
-	cCommandLine.ParseCommandLine(L"", false);
-	EXPECT_FALSE(cCommandLine.IsWriteQuit());
-	cCommandLine.ParseCommandLine(L"-WQ", false);
-	ASSERT_TRUE(cCommandLine.IsWriteQuit());
 	ASSERT_TRUE(cCommandLine.IsNoWindow());
 }
 
@@ -375,6 +374,7 @@ TEST(CCommandLine, ParseWindowOriginY)
  * @remark -TYPEが指定されていなければNULL
  * @remark -TYPEが指定されていたら指定された文字列
  * @remark DocTypeには任意の文字列を指定できる
+ * @remark DocTypeにMAX_DOCTYPE_LENを超える文字列を指定した場合、切り捨てられる
  */
 TEST(CCommandLine, ParseDocType)
 {
@@ -385,6 +385,10 @@ TEST(CCommandLine, ParseDocType)
 	cCommandLine.ParseCommandLine(L"-TYPE=" TESTLOCAL_DOC_TYPE, false);
 	ASSERT_STREQ(TESTLOCAL_DOC_TYPE, cCommandLine.GetDocType());
 #undef TESTLOCAL_DOC_TYPE
+
+	// MAX_DOCTYPE_LENより長いタイプ名は切り捨てられる
+	cCommandLine.ParseCommandLine(L"-TYPE=TooLongTypeName", false);
+	ASSERT_STREQ(L"TooLong", cCommandLine.GetDocType());
 }
 
 /*!
@@ -856,4 +860,114 @@ TEST(CCommandLine, EndOfOptionMark)
 	CCommandLineWrapper cCommandLine;
 	cCommandLine.ParseCommandLine(L"-- -GROUP=2", false);
 	EXPECT_EQ(-1, cCommandLine.GetGroupId());
+	EXPECT_STREQ(GetLocalPath(L"-GROUP=2").data(), cCommandLine.GetOpenFile());
+	EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
+	EXPECT_EQ(0, cCommandLine.GetFileNum());
 }
+
+/*!
+ * @brief ファイル名の指定に関する仕様
+ * @remark オプションでない引数はファイル名と解釈する
+ * @remark ファイル名を複数指定した場合、1つ目のファイル名をオープン対象とする
+ */
+TEST(CCommandLine, ParseOpenFile)
+{
+	CCommandLineWrapper cCommandLine1;
+	std::wstring strCmdLine1 = L"test.txt";
+	cCommandLine1.ParseCommandLine(strCmdLine1.data(), false);
+	EXPECT_STREQ(GetLocalPath(L"test.txt").data(), cCommandLine1.GetOpenFile());
+	EXPECT_EQ(NULL, cCommandLine1.GetFileName(0));
+	EXPECT_EQ(0, cCommandLine1.GetFileNum());
+
+	CCommandLineWrapper cCommandLine2;
+	std::wstring strCmdLine2 = L"test1.txt test2.txt";
+	cCommandLine2.ParseCommandLine(strCmdLine2.data(), false);
+	EXPECT_STREQ(GetLocalPath(L"test1.txt").data(), cCommandLine2.GetOpenFile());
+	EXPECT_STREQ(GetLocalPath(L"test2.txt").data(), cCommandLine2.GetFileName(0));
+	EXPECT_EQ(NULL, cCommandLine1.GetFileName(1));
+	EXPECT_EQ(1, cCommandLine2.GetFileNum());
+}
+
+/*!
+ * @brief 終端されない二重引用符の仕様
+ */
+TEST(CCommandLine, UnterminatedQuotedFilename)
+{
+	CCommandLineWrapper cCommandLine;
+	cCommandLine.ParseCommandLine(L"\"", false);
+	EXPECT_STREQ(L"", cCommandLine.GetOpenFile());
+	EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
+	EXPECT_EQ(0, cCommandLine.GetFileNum());
+}
+
+/*!
+ * @brief ファイルパスに「ファイルに使えない文字」を含めた場合の仕様
+ * @remark 無視される
+ */
+TEST(CCommandLine, ParseFileNameIncludesInvalidFilenameChars)
+{
+	// ファイル名に使えない文字 = "\\/:*?\"<>|"
+	// このうち、\\と/はパス区切りのため実質対象外になる。
+	// このうち、:は代替データストリーム(ADS)の識別記号のため対象外とする。
+	const std::wstring_view badNames[] = {
+		L"test*.txt",
+		L"test?.txt",
+		L"test\".txt",
+		L"test<.txt",
+		L"test>.txt",
+		L"test|.txt",
+	};
+
+	// ファイル名に使えない文字を含んでいたら、ファイル名としては認識されない。
+	CCommandLineWrapper cCommandLine;
+	for (const auto& badName : badNames) {
+		cCommandLine.ParseCommandLine( badName.data(), false );
+		EXPECT_STREQ(L"", cCommandLine.GetOpenFile());
+		EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
+		EXPECT_EQ(0, cCommandLine.GetFileNum());
+	}
+}
+
+/*!
+ * @brief 長過ぎるファイルパスに関する仕様
+ * @remark _MAX_PATH - 1を超えるファイル名は利用できない
+ */
+TEST(CCommandLine, ParseTooLongFilePath)
+{
+	// _MAX_PATH - 1を超えるパスは無視される
+	CCommandLineWrapper cCommandLine;
+	std::wstring strCmdLine;
+	std::wstring strPath(_MAX_PATH, L'a');
+	strprintf(strCmdLine, L"%s test.txt", strPath.c_str());
+	cCommandLine.ParseCommandLine(strCmdLine.data(), false);
+	// 以下のチェックはMinGWで動作しないため、コメントアウトしておく
+	//EXPECT_STREQ(GetLocalPath(L"test.txt").data(), cCommandLine.GetOpenFile());
+	EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
+	EXPECT_EQ(0, cCommandLine.GetFileNum());
+}
+
+// 以下のチェックはMinGWで動作しないため、コメントアウトしておく
+#ifndef __MINGW32__
+
+/*!
+ * @brief ファイルパスに指定できる上限文字列長に関する仕様
+ * @remark _MAX_PATH - 1までのパスは利用できる
+ */
+TEST(CCommandLine, ParseMaxFilePath)
+{
+	// 絶対パスへの変換処理の影響を受けないように、事前に絶対パス化しておく
+	std::wstring strPath = GetLocalPath(L"a");
+	strPath.resize(_MAX_PATH - 1, L'a');
+
+	// _MAX_PATH - 1までのパスは受け付けられる
+	CCommandLineWrapper cCommandLine;
+	std::wstring strCmdLine;
+	strprintf(strCmdLine, L"%s test.txt", strPath.c_str());
+	cCommandLine.ParseCommandLine(strCmdLine.data(), false);
+	EXPECT_STREQ(strPath.data(), cCommandLine.GetOpenFile());
+	EXPECT_STREQ(GetLocalPath(L"test.txt").data(), cCommandLine.GetFileName(0));
+	EXPECT_EQ(NULL, cCommandLine.GetFileName(1));
+	EXPECT_EQ(1, cCommandLine.GetFileNum());
+}
+
+#endif //ifndef __MINGW32__

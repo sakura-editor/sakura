@@ -158,7 +158,9 @@ const int* CTextMetrics::GenerateDxArray(
 	int nCharSpacing				//!< [in]  文字隙間
 )
 {
-	vResultArray->resize(nLength);
+	if( (int)vResultArray->size() < nLength ){
+		vResultArray->resize(nLength);
+	}
 	if(!pText || nLength<=0)return NULL;
 
 	int* p=&(*vResultArray)[0];
@@ -235,11 +237,10 @@ int CTextMetrics::CalcTextWidth2(
 	const wchar_t* pText, //!< 文字列
 	int nLength,          //!< 文字列長
 	int nHankakuDx,       //!< 半角文字の文字間隔
-	int nCharSpacing      //!< 文字の隙間
+	int nCharSpacing,     //!< 文字の隙間
+	std::vector<int>& vDxArray //!< [out] 文字間隔配列
 )
 {
-	//文字間隔配列を生成
-	vector<int> vDxArray;
 	const int* pDxArray = CTextMetrics::GenerateDxArray(
 		&vDxArray,
 		pText,
@@ -256,8 +257,8 @@ int CTextMetrics::CalcTextWidth2(
 
 int CTextMetrics::CalcTextWidth3(
 	const wchar_t* pText, //!< 文字列
-	int nLength          //!< 文字列長
+	int nLength           //!< 文字列長
 ) const
 {
-	return CalcTextWidth2(pText, nLength, GetCharPxWidth(), GetCharSpacing());
+	return CalcTextWidth2(pText, nLength, GetCharPxWidth(), GetCharSpacing(), m_vDxArray);
 }

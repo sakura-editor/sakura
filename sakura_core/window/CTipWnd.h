@@ -14,12 +14,15 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CTIPWND_E3DB6CF2_888C_42F5_953E_D923221F0B16_H_
+#define SAKURA_CTIPWND_E3DB6CF2_888C_42F5_953E_D923221F0B16_H_
 #pragma once
 
 class CTipWnd;
 
 #include "CWnd.h"
-#include "mem/CMemory.h"
+#include "mem/CNativeW.h"
+
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -36,7 +39,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	void Show( int nX, int nY, const WCHAR* szText, RECT* pRect = NULL );	/* Tipを表示 */
+	void Show( int nX, int nY, RECT* pRect = NULL );	/* Tipを表示 */
 	void Hide( void );	/* Tipを消す */
 	void GetWindowSize(LPRECT pRect);		// 2001/06/19 asa-o ウィンドウのサイズを得る
 
@@ -72,4 +75,13 @@ protected:
 
 	/* 仮想関数 メッセージ処理 詳しくは実装を参照 */
 	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;/* 描画処理 */
+
+public:
+	/* Tipの内容データを取得する */
+	const CNativeW& GetInfoText() const { return m_cInfo; }
 };
+
+/* Tipの内容データを設定するためにエスケープ解除を行う */
+const WCHAR* UnEscapeInfoText( CNativeW& cInfo );
+
+#endif /* SAKURA_CTIPWND_E3DB6CF2_888C_42F5_953E_D923221F0B16_H_ */

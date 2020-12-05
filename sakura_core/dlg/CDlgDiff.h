@@ -29,6 +29,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CDLGDIFF_57739DBD_0797_4F83_9DB0_F4D51A54157F_H_
+#define SAKURA_CDLGDIFF_57739DBD_0797_4F83_9DB0_F4D51A54157F_H_
 #pragma once
 
 class CDlgDiff;
@@ -83,3 +85,4 @@ public:
 	int			m_nDiffFlgOpt;		// DIFFオプション
 	HWND		m_hWnd_Dst;			// 相手ウインドウハンドル
 };
+#endif /* SAKURA_CDLGDIFF_57739DBD_0797_4F83_9DB0_F4D51A54157F_H_ */

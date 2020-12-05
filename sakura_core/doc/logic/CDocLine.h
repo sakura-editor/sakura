@@ -15,6 +15,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CDOCLINE_B592082C_24CC_41A6_A931_774BE9675F42_H_
+#define SAKURA_CDOCLINE_B592082C_24CC_41A6_A931_774BE9675F42_H_
 #pragma once
 
 #include "util/design_template.h"
@@ -58,8 +60,17 @@ public:
 #endif
 	const wchar_t*	GetDocLineStrWithEOL(CLogicInt* pnLen) const //###仮の名前、仮の対処
 	{
-		if(this){
+		if(this){ // TODO: Remove "this" check
 			*pnLen = GetLengthWithEOL(); return GetPtr();
+		}
+		else{
+			*pnLen = 0; return NULL;
+		}
+	}
+	static const wchar_t* GetDocLineStrWithEOL_Safe(const CDocLine* docline, CLogicInt* pnLen) //###仮の名前、仮の対処
+	{
+		if(docline){
+			return docline->GetDocLineStrWithEOL(pnLen);
 		}
 		else{
 			*pnLen = 0; return NULL;
@@ -67,11 +78,20 @@ public:
 	}
 	CStringRef GetStringRefWithEOL() const //###仮の名前、仮の対処
 	{
-		if(this){
+		if(this){ // TODO: Remove "this" check
 			return CStringRef(GetPtr(),GetLengthWithEOL());
 		}
 		else{
 			return CStringRef(NULL,0);
+		}
+	}
+	static CStringRef GetStringRefWithEOL_Safe(const CDocLine* docline) //###仮の名前、仮の対処
+	{
+		if(docline){
+			return docline->GetStringRefWithEOL();
+		}
+		else{
+			return CStringRef(NULL, 0);
 		}
 	}
 	const CEol& GetEol() const{ return m_cEol; }
@@ -93,7 +113,7 @@ public:
 	const CDocLine* GetNextLine() const { return m_pNext; }
 	void _SetPrevLine(CDocLine* pcDocLine){ m_pPrev = pcDocLine; }
 	void _SetNextLine(CDocLine* pcDocLine){ m_pNext = pcDocLine; }
-	
+
 private: //####
 	CDocLine*	m_pPrev;	//!< 一つ前の要素
 	CDocLine*	m_pNext;	//!< 一つ後の要素
@@ -115,3 +135,4 @@ private:
 };
 
 #pragma pack(pop)
+#endif /* SAKURA_CDOCLINE_B592082C_24CC_41A6_A931_774BE9675F42_H_ */

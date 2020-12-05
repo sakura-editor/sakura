@@ -29,6 +29,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CPRINTPREVIEW_71FC07B8_7648_4179_81A7_0FE3299DBA0A_H_
+#define SAKURA_CPRINTPREVIEW_71FC07B8_7648_4179_81A7_0FE3299DBA0A_H_
 #pragma once
 
 #include <Windows.h> // 2002/2/10 aroka
@@ -51,7 +53,7 @@ public:
 	*/
 	CPrintPreview( class CEditWnd* pParentWnd );
 	~CPrintPreview();
-	
+
 	/*
 	||	イベント
 	*/
@@ -80,15 +82,19 @@ public:
 	*/
 	//	スクロールバー
 	void InitPreviewScrollBar( void );
-	
+
 	//	PrintPreviewバー（画面上部のコントロール）
 	void CreatePrintPreviewControls( void );
 	void DestroyPrintPreviewControls( void );
 
 	void SetFocusToPrintPreviewBar( void );
-	HWND GetPrintPreviewBarHANDLE( void ){ return m_hwndPrintPreviewBar;	}
-	HWND GetPrintPreviewBarHANDLE_Safe() const{ if(!this)return NULL; else return m_hwndPrintPreviewBar; } //!< thisがNULLでも実行できる版。2007.10.29 kobake
-	
+	HWND GetPrintPreviewBarHANDLE( void ){ return m_hwndPrintPreviewBar; }
+	static HWND GetPrintPreviewBarHANDLE_Safe(const CPrintPreview *preview) {
+		if (preview)
+			return preview->m_hwndPrintPreviewBar;
+		return NULL;
+	}
+
 	//	PrintPreviewバーのメッセージ処理。
 	//	まずPrintPreviewBar_DlgProcにメッセージが届き、DispatchEvent_PPBに転送する仕組み
 	static INT_PTR CALLBACK PrintPreviewBar_DlgProc(
@@ -259,7 +265,7 @@ public:
 protected:
 	STypeConfig m_typePrint;
 
-	// プレビューから出ても現在のプリンタ情報を記憶しておけるようにstaticにする 2003.05.02 かろと 
+	// プレビューから出ても現在のプリンタ情報を記憶しておけるようにstaticにする 2003.05.02 かろと
 	static CPrint	m_cPrint;					//!< 現在のプリンタ情報
 
 	bool			m_bLockSetting;				// 設定のロック
@@ -267,3 +273,4 @@ protected:
 
 	DISALLOW_COPY_AND_ASSIGN(CPrintPreview);
 };
+#endif /* SAKURA_CPRINTPREVIEW_71FC07B8_7648_4179_81A7_0FE3299DBA0A_H_ */

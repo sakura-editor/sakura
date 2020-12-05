@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CCONVERT_HANKATATOZENKATA_2C7E51E1_CA18_41C1_867C_E0CC9CD2138D_H_
+#define SAKURA_CCONVERT_HANKATATOZENKATA_2C7E51E1_CA18_41C1_867C_E0CC9CD2138D_H_
 #pragma once
 
 #include "CConvert.h"
@@ -31,3 +33,4 @@ class CConvert_HankataToZenkata final : public CConvert{
 public:
 	bool DoConvert(CNativeW* pcData) override;
 };
+#endif /* SAKURA_CCONVERT_HANKATATOZENKATA_2C7E51E1_CA18_41C1_867C_E0CC9CD2138D_H_ */

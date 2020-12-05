@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CVIEWPARSER_440F895C_409D_4ACF_906E_1DD7A0C0C2C0_H_
+#define SAKURA_CVIEWPARSER_440F895C_409D_4ACF_906E_1DD7A0C0C2C0_H_
 #pragma once
 
 class CEditView;
@@ -42,3 +44,4 @@ public:
 private:
 	const CEditView* m_pEditView;
 };
+#endif /* SAKURA_CVIEWPARSER_440F895C_409D_4ACF_906E_1DD7A0C0C2C0_H_ */

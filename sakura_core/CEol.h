@@ -29,6 +29,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CEOL_036E1E16_7462_46A4_8F59_51D8E171E657_H_
+#define SAKURA_CEOL_036E1E16_7462_46A4_8F59_51D8E171E657_H_
 #pragma once
 
 #include "_main/global.h"
@@ -113,3 +115,4 @@ public:
 private:
 	EEolType	m_eEolType;	//!< 改行コードの種類
 };
+#endif /* SAKURA_CEOL_036E1E16_7462_46A4_8F59_51D8E171E657_H_ */

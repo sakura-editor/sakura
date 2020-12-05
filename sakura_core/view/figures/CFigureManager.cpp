@@ -40,8 +40,6 @@ CFigureManager::CFigureManager()
 	m_vFigures.push_back(new CFigure_ZenSpace());
 	m_vFigures.push_back(new CFigure_Eol());
 	m_vFigures.push_back(new CFigure_CtrlCode());
-	m_vFigures.push_back(new CFigure_HanBinary());
-	m_vFigures.push_back(new CFigure_ZenBinary());
 	m_vFigures.push_back(new CFigure_Text());
 
 	OnChangeSetting();

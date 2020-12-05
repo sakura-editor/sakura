@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CGREPAGENT_97F2B632_71C8_4E4A_AC42_13A6098B248F_H_
+#define SAKURA_CGREPAGENT_97F2B632_71C8_4E4A_AC42_13A6098B248F_H_
 #pragma once
 
 #include "doc/CDocListener.h"
@@ -192,3 +194,4 @@ public: //$$ 仮
 	bool	m_bGrepMode;		//!< Grepモードか
 	bool	m_bGrepRunning;		//!< Grep処理中
 };
+#endif /* SAKURA_CGREPAGENT_97F2B632_71C8_4E4A_AC42_13A6098B248F_H_ */

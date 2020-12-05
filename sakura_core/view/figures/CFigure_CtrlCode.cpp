@@ -71,21 +71,3 @@ void CFigure_CtrlCode::DispSpaceEx(CGraphics& gr, DispPos* pDispPos, CEditView* 
 	}
 	pDispPos->ForwardDrawCol(CLayoutXInt(dx[0]));
 }
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                     CFigure_HanBinary                       //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-bool CFigure_HanBinary::Match(const wchar_t* pText, int nTextLen) const
-{
-	return false;
-}
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                     CFigure_ZenBinary                       //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-bool CFigure_ZenBinary::Match(const wchar_t* pText, int nTextLen) const
-{
-	return false;
-}

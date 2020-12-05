@@ -13,6 +13,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CDLGCANCEL_D62561A1_41F6_4904_99B0_18EE33734269_H_
+#define SAKURA_CDLGCANCEL_D62561A1_41F6_4904_99B0_18EE33734269_H_
 #pragma once
 
 class CDlgCancel;
@@ -57,3 +59,4 @@ protected:
 	BOOL OnBnClicked(int wID) override;
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
 };
+#endif /* SAKURA_CDLGCANCEL_D62561A1_41F6_4904_99B0_18EE33734269_H_ */

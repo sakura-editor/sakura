@@ -59,6 +59,7 @@ jobs:
 
   # zip files for artifacts
   - script: zipArtifacts.bat    $(BuildPlatform) $(Configuration)
+    condition: eq(variables['Configuration'], 'Release')
     displayName: Zip files for artifacts
 
   # Unit tests

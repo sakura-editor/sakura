@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CMAINTOOLBAR_FEA7E388_DFEC_4E15_94CC_90A7E779797B_H_
+#define SAKURA_CMAINTOOLBAR_FEA7E388_DFEC_4E15_94CC_90A7E779797B_H_
 #pragma once
 
 #include "recent/CRecent.h"
@@ -74,7 +76,7 @@ private:
 	//フォント
 	HFONT		m_hFontSearchBox;	//!< 検索コンボボックスのフォント
 
-	SComboBoxItemDeleter	m_comboDel;
 	CRecentSearch			m_cRecentSearch;
 	CImageListMgr*			m_pcIcons;
 };
+#endif /* SAKURA_CMAINTOOLBAR_FEA7E388_DFEC_4E15_94CC_90A7E779797B_H_ */

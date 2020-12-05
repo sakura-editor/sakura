@@ -327,9 +327,7 @@ void CMainToolBar::CreateToolBar( void )
 							//検索ボックスを更新	// 関数化 2010/6/6 Uchi
 							AcceptSharedSearchKey();
 
-							m_comboDel = SComboBoxItemDeleter(); // 再表示用の初期化
-							m_comboDel.pRecent = &m_cRecentSearch;
-							CDialog::SetComboBoxDeleter(m_hwndSearchBox, &m_comboDel);
+							CDialog::SetComboBoxDeleter(m_hwndSearchBox, &m_cRecentSearch);
 
 							// コンボボックスの位置と幅を調整する
 							CMyRect rcCombo;
@@ -596,10 +594,7 @@ void CMainToolBar::AcceptSharedSearchKey()
 int CMainToolBar::GetSearchKey(std::wstring& strText)
 {
 	if( m_hwndSearchBox ){
-		int nBufferSize = ::GetWindowTextLength( m_hwndSearchBox ) + 1;
-		auto vText = std::make_unique<WCHAR[]>(nBufferSize);
-		::GetWindowText( m_hwndSearchBox, &vText[0], nBufferSize);
-		strText = &vText[0];
+		ApiWrap::Wnd_GetText( m_hwndSearchBox, strText );
 	}else{
 		strText = L"";
 	}

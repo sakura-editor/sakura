@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CLOADAGENT_369F511F_4F3E_41A2_84AB_EDE3BB368568_H_
+#define SAKURA_CLOADAGENT_369F511F_4F3E_41A2_84AB_EDE3BB368568_H_
 #pragma once
 
 #include "doc/CDocListener.h"
@@ -34,3 +36,4 @@ public:
 	void OnAfterLoad(const SLoadInfo& sLoadInfo) override;
 	void OnFinalLoad(ELoadResult eLoadResult) override;
 };
+#endif /* SAKURA_CLOADAGENT_369F511F_4F3E_41A2_84AB_EDE3BB368568_H_ */

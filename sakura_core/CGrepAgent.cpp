@@ -114,43 +114,21 @@ void CGrepAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
 */
 void CGrepAgent::CreateFolders( const WCHAR* pszPath, std::vector<std::wstring>& vPaths )
 {
-	const int nPathLen = wcslen( pszPath );
-	auto szPath = std::make_unique<WCHAR[]>(nPathLen + 1);
-	auto szTmp = std::make_unique<WCHAR[]>(nPathLen + 1);
-	wcscpy( &szPath[0], pszPath );
+	std::wstring strPath( pszPath );
+	const int nPathLen = static_cast<int>( strPath.length() );
+
 	WCHAR* token;
 	int nPathPos = 0;
-	while( NULL != (token = my_strtok<WCHAR>( &szPath[0], nPathLen, &nPathPos, L";")) ){
-		wcscpy( &szTmp[0], token );
-		WCHAR* p;
-		WCHAR* q;
-		p = q = &szTmp[0];
-		while( *p ){
-			if( *p != L'"' ){
-				if( p != q ){
-					*q = *p;
-				}
-				q++;
-			}
-			p++;
-		}
-		*q = L'\0';
-#if 0
-		// 2011.12.25 仕様変更。最後の\\は取り除く
-		int	nFolderLen = q - &szTmp[0];
-		if( 0 < nFolderLen ){
-			int nCharChars = &szTmp[nFolderLen] - CNativeW::GetCharPrev( &szTmp[0], nFolderLen, &szTmp[nFolderLen] );
-			if( 1 == nCharChars && (L'\\' == szTmp[nFolderLen - 1] || L'/' == szTmp[nFolderLen - 1]) ){
-				szTmp[nFolderLen - 1] = L'\0';
-			}
-		}
-#endif
+	while( NULL != (token = my_strtok<WCHAR>( strPath.data(), nPathLen, &nPathPos, L";")) ){
+		std::wstring strTemp( token );
+		// パスに含まれる '"' を削除する
+		strTemp.erase( std::remove( strTemp.begin(), strTemp.end(), L'"' ), strTemp.end() );
 		/* ロングファイル名を取得する */
 		WCHAR szTmp2[_MAX_PATH];
-		if( ::GetLongFileName( &szTmp[0], szTmp2 ) ){
+		if( ::GetLongFileName( strTemp.c_str(), szTmp2 ) ){
 			vPaths.push_back( szTmp2 );
 		}else{
-			vPaths.push_back( &szTmp[0] );
+			vPaths.emplace_back( strTemp );
 		}
 	}
 }

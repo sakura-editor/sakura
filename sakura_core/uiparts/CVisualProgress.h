@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CVISUALPROGRESS_A9390FAB_E0F3_4EA2_8A6C_1ACB3143DD3F_H_
+#define SAKURA_CVISUALPROGRESS_A9390FAB_E0F3_4EA2_8A6C_1ACB3143DD3F_H_
 #pragma once
 
 #include "doc/CDocListener.h"
@@ -56,3 +58,4 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(CVisualProgress);
 };
+#endif /* SAKURA_CVISUALPROGRESS_A9390FAB_E0F3_4EA2_8A6C_1ACB3143DD3F_H_ */

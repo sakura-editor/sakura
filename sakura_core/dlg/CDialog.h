@@ -16,6 +16,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CDIALOG_17C8C15C_881C_4C1F_B953_CB11FCC8B70B_H_
+#define SAKURA_CDIALOG_17C8C15C_881C_4C1F_B953_CB11FCC8B70B_H_
 #pragma once
 
 class CDialog;
@@ -47,16 +49,6 @@ struct SAnchorList
 {
 	int id;
 	EAnchorStyle anchor;
-};
-
-struct SComboBoxItemDeleter
-{
-	CRecent*	pRecent;
-	HWND		hwndCombo;
-	WNDPROC		pComboBoxWndProc;
-	WNDPROC		pEditWndProc;
-	WNDPROC		pListBoxWndProc;
-	SComboBoxItemDeleter(): pRecent(NULL), hwndCombo(NULL), pComboBoxWndProc(NULL), pEditWndProc(NULL), pListBoxWndProc(NULL){}
 };
 
 /*-----------------------------------------------------------------------
@@ -123,7 +115,7 @@ public:
 
 	void ResizeItem( HWND hTarget, const POINT& ptDlgDefalut, const POINT& ptDlgNew, const RECT& rcItemDefault, EAnchorStyle anchor, bool bUpdate = true);
 	void GetItemClientRect( int wID, RECT& rc );
-	static void SetComboBoxDeleter( HWND hwndCtl, SComboBoxItemDeleter* data );
+	static void SetComboBoxDeleter( HWND hwndCtl, CRecent* pRecent );
 public:
 
 	static bool DirectoryUp(WCHAR* szDir);
@@ -138,6 +130,7 @@ public:
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
 private:
 	HWND			m_hWnd;			/* このダイアログのハンドル */
+	HFONT			m_hFontDialog;	// ダイアログに設定されているフォント(破棄禁止)
 public:
 	HWND			m_hwndSizeBox;
 	LPARAM			m_lParam;
@@ -161,4 +154,7 @@ protected:
 
 	// コントロールに画面のフォントを設定	2012/11/27 Uchi
 	HFONT SetMainFont( HWND hTarget );
+	// このダイアログに設定されているフォントを取得
+	HFONT GetDialogFont() { return m_hFontDialog; }
 };
+#endif /* SAKURA_CDIALOG_17C8C15C_881C_4C1F_B953_CB11FCC8B70B_H_ */

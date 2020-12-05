@@ -1,70 +1,107 @@
 # Makefile for MinGW32/MinGW-W64
 
+# Example usages:
+#   Out-of-source build (build in the same directory as sakura_core):
+#     $ mkdir -p build/MinGW/Release/
+#     $ cd build/MinGW/Release
+#     $ mingw32-make -f ../../../sakura_lang_en_US/Makefile SAKURA_CORE=. OUTDIR=. -j4
+#
+#   Out-of-source build (create sakura_lang_en_US and sakura_core in a common directory):
+#     $ mkdir -p build/MinGW/Release/sakura_lang_en_US/
+#     $ cd build/MinGW/Release/sakura_lang_en_US
+#     $ mingw32-make -f ../../../../sakura_lang_en_US/Makefile OUTDIR=.. -j4
+#
+#   Debug build:
+#     $ cd sakura_lang_en_US
+#     $ mingw32-make MYDEFINES="-D_DEBUG" -j4
+
+# Path of "sakura_lang_en_US" directory. Compute it from the path of Makefile.
+SRCDIR = $(patsubst %/,%,$(subst \,/,$(dir $(firstword $(MAKEFILE_LIST)))))
+
+# If SRCDIR is different from the current directory, set it to VPATH.
+# (If SRCDIR ends with a backslash, remove it before set to VPATH.)
+ifneq ($(SRCDIR),.)
+VPATH = $(patsubst %\,%,$(SRCDIR))
+endif
+
+# The directory where "sakura_core" is built.
+SAKURA_CORE = ../sakura_core
+
+# The directory where the .dll files will be output.
+# If empty, it will be output to the default directory.
+OUTDIR =
+
+ifeq ($(SHELL),sh.exe)
+# If cmd.exe is used as a shell.
+MKDIR = md
+RM = del
+DIRSEP = $(strip \ )
+DEVNULL = NUL
+else
+# If unix-like shell is used.
+MKDIR = mkdir -p
+RM = rm -f
+DIRSEP = /
+DEVNULL = /dev/null
+endif
+
 ifndef PREFIX
 PREFIX=
 RCPREFIX=
-else
-ifeq ($(PREFIX),x86_64-w64-mingw32-)
+else ifeq ($(PREFIX),x86_64-w64-mingw32-)
 RCPREFIX=$(PREFIX)
-else
-ifeq ($(PREFIX),i686-w64-mingw32-)
+else ifeq ($(PREFIX),i686-w64-mingw32-)
 ifeq ($(OS),Windows_NT)
 RCPREFIX=
 else
 RCPREFIX=$(PREFIX)
 endif
 endif
-endif
-endif
 
 CC= $(PREFIX)gcc
-CXX= $(PREFIX)g++
 RC= $(RCPREFIX)windres
-RM= cmd /c $(CURDIR)/../sakura/mingw32-del.bat
 
 DEFINES= \
  -DWIN32 \
  -D_WIN32_WINNT=_WIN32_WINNT_WIN7 \
  -D_UNICODE \
  -DUNICODE \
- -DNDEBUG
-CFLAGS= -O2 \
- -finput-charset=utf-8 -fexec-charset=cp932 \
- -I. \
- $(DEFINES) $(MYCFLAGS)
-CXXFLAGS= $(CFLAGS) $(MYCXXFLAGS)
-LIBS= \
- -lkernel32 -luser32 -lgdi32 \
- -lwinspool -lcomdlg32 -ladvapi32 \
- -lshell32 -lole32 -loleaut32 \
- -luuid -lcomctl32 -limm32 \
- -lmpr -limagehlp \
- -static-libgcc -static-libstdc++ -mwindows -municode -s
+ $(MYDEFINES)
 
-exe= sakura_lang_en_US.dll
+ifeq (,$(findstring -D_DEBUG,$(DEFINES)))
+ifeq (,$(findstring -DNDEBUG,$(DEFINES)))
+DEFINES += -DNDEBUG
+endif
+endif
 
-# ls *.cpp */*.cpp */*/*.cpp | sed -E -e "s/([[:alnum:]_]+)\.[[:alnum:]]+/\1.o \\\\/"
-OBJS= \
-sakura_lang_rc.o \
+LDFLAGS= \
+ -static \
+ -shared \
+ -mwindows \
+ -s
 
-all: $(exe)
+dll = $(or $(OUTDIR),.)/sakura_lang_en_US.dll
+sakura_rc = $(SAKURA_CORE)/sakura_rc.o
 
-$(exe): sakura_lang.h $(OBJS)
-	$(CXX) -shared -o $@ $(OBJS) $(LIBS)
+SRCS = $(wildcard $(SRCDIR)/*.rc)
+OBJS = $(SRCS:$(SRCDIR)/%.rc=%.o)
 
-sakura_rc:
-	$(MAKE) -C ../sakura_core sakura_rc.o
+all: $(dll)
 
-sakura_lang_rc.o: sakura_rc sakura_lang_rc.rc
-	$(RC) -c utf-8 --language=0411 $(DEFINES) sakura_lang_rc.rc -o $@
+$(dll): $(OBJS)
+	$(CC) $(OBJS) $(LDFLAGS) -o $@
+
+$(sakura_rc): ../sakura_core/Makefile
+ifneq ($(SAKURA_CORE),.)
+	-$(MKDIR) $(subst /,$(DIRSEP),$(@D)) > $(DEVNULL) 2>&1
+endif
+	$(MAKE) -f $< -C $(@D) $(@F)
+
+sakura_lang_rc.o: sakura_lang_rc.rc $(sakura_rc)
+	$(RC) -c utf-8 --language=0409 $(DEFINES) -I$(SAKURA_CORE) -I$(SRCDIR)/../sakura_core $< -o $@
 
 clean:
-	$(RM) $(exe) $(OBJS)
+	-$(RM) $(subst /,$(DIRSEP),$(dll) $(OBJS))
 
-depend:
-	$(CXX) -E -MM -w $(DEFINES) $(CXXFLAGS) *.cpp */*.cpp */*/*.cpp > depend.mak
-
-.SUFFIXES: .cpp .o .rc
-.PHONY: all clean depend
-
--include depend.mak
+.SUFFIXES: .o .rc
+.PHONY: all clean

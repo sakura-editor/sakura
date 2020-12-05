@@ -29,6 +29,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_MESSAGEBOXF_542C25FF_34EB_4920_AC1A_DA32919E101B_H_
+#define SAKURA_MESSAGEBOXF_542C25FF_34EB_4920_AC1A_DA32919E101B_H_
 #pragma once
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -87,3 +89,4 @@ int TopCustomMessage(HWND hwnd, UINT uType, LPCWSTR format, ...);	//(TOPMOST)
 
 //作者に教えて欲しいエラー
 int PleaseReportToAuthor(HWND hwnd, LPCWSTR format, ...);
+#endif /* SAKURA_MESSAGEBOXF_542C25FF_34EB_4920_AC1A_DA32919E101B_H_ */

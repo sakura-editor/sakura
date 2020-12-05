@@ -16,6 +16,8 @@
 
 */
 
+#ifndef SAKURA_CWSH_B4802BFB_233E_4104_AEA7_AE3721801C27_H_
+#define SAKURA_CWSH_B4802BFB_233E_4104_AEA7_AE3721801C27_H_
 #pragma once
 
 #include <ActivScp.h>
@@ -58,3 +60,4 @@ private:
 	IActiveScript *m_Engine;
 	List m_IfObjArr;
 };
+#endif /* SAKURA_CWSH_B4802BFB_233E_4104_AEA7_AE3721801C27_H_ */

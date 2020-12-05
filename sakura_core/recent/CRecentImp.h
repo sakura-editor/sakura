@@ -25,6 +25,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CRECENTIMP_B18E6196_5684_44E4_91E0_ADB1542BF7E1_H_
+#define SAKURA_CRECENTIMP_B18E6196_5684_44E4_91E0_ADB1542BF7E1_H_
 #pragma once
 
 #include "recent/CRecent.h"
@@ -129,3 +131,4 @@ protected:
 #include "CRecentCurDir.h"
 #include "CRecentEditNode.h"
 #include "CRecentTagjumpKeyword.h"
+#endif /* SAKURA_CRECENTIMP_B18E6196_5684_44E4_91E0_ADB1542BF7E1_H_ */

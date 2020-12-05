@@ -11,6 +11,8 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
+#ifndef SAKURA_CDLGEXEC_4A4BE162_D6C9_4E28_B1AC_091DFFE7DD72_H_
+#define SAKURA_CDLGEXEC_4A4BE162_D6C9_4E28_B1AC_091DFFE7DD72_H_
 #pragma once
 
 #include "dlg/CDialog.h"
@@ -36,9 +38,7 @@ public:
 	bool	m_bEditable;			/* 編集ウィンドウへの入力可能 */	// 2009.02.21 ryoji
 
 protected:
-	SComboBoxItemDeleter m_comboDel;
 	CRecentCmd m_cRecentCmd;
-	SComboBoxItemDeleter m_comboDelCur;
 	CRecentCurDir m_cRecentCur;
 
 	int GetData( void ) override;	/* ダイアログデータの取得 */
@@ -47,3 +47,4 @@ protected:
 	BOOL OnBnClicked(int wID) override;
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
 };
+#endif /* SAKURA_CDLGEXEC_4A4BE162_D6C9_4E28_B1AC_091DFFE7DD72_H_ */

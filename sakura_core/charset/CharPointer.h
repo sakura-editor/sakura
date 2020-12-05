@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CHARPOINTER_B649A129_0BBB_4ABE_BE02_0389CF537319_H_
+#define SAKURA_CHARPOINTER_B649A129_0BBB_4ABE_BE02_0389CF537319_H_
 #pragma once
 
 #include "charset/charcode.h"
@@ -108,3 +110,4 @@ private:
 };
 
 typedef CharPointerW CharPointerT;
+#endif /* SAKURA_CHARPOINTER_B649A129_0BBB_4ABE_BE02_0389CF537319_H_ */

@@ -2,4 +2,18 @@
 *.khp text
 *.hkn text
 *.bat text
-Makefile text eolf=lf
+Makefile text eol=lf
+sakura_rc.h text eol=crlf
+*.rc text working-tree-encoding=utf-16le-bom eol=crlf
+*.rc2 text working-tree-encoding=utf-16le-bom eol=crlf
+*.config text eol=crlf
+*.csproj text eol=crlf
+*.filters text eol=crlf
+*.manifest text eol=crlf
+*.natvis text eol=crlf
+*.props text eol=crlf
+*.settings text eol=crlf
+*.sln text eol=crlf
+*.targets text eol=crlf
+*.vcxproj text eol=crlf
+*.vsconfig text eol=crlf

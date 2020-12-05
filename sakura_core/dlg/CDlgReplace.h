@@ -15,6 +15,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CDLGREPLACE_37D62C07_5DAB_4CAC_A8B2_83C75329F8B7_H_
+#define SAKURA_CDLGREPLACE_37D62C07_5DAB_4CAC_A8B2_83C75329F8B7_H_
 #pragma once
 
 #include "dlg/CDialog.h"
@@ -57,9 +59,7 @@ public:
 
 protected:
 	CRecentSearch			m_cRecentSearch;
-	SComboBoxItemDeleter	m_comboDelText;
 	CRecentReplace			m_cRecentReplace;
-	SComboBoxItemDeleter	m_comboDelText2;
 	CFontAutoDeleter		m_cFontText;
 	CFontAutoDeleter		m_cFontText2;
 
@@ -77,3 +77,4 @@ protected:
 	void SetCombosList( void );	/* 検索文字列/置換後文字列リストの設定 */
 	int GetData( void ) override;		/* ダイアログデータの取得 */
 };
+#endif /* SAKURA_CDLGREPLACE_37D62C07_5DAB_4CAC_A8B2_83C75329F8B7_H_ */

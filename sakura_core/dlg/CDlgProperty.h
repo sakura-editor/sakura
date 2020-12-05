@@ -28,6 +28,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CDLGPROPERTY_FF915918_FBA0_4D89_9A72_5E1409D7F88A_H_
+#define SAKURA_CDLGPROPERTY_FF915918_FBA0_4D89_9A72_5E1409D7F88A_H_
 #pragma once
 
 class CDlgProperty;
@@ -48,3 +50,4 @@ protected:
 	void SetData( void ) override;	/* ダイアログデータの設定 */
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
 };
+#endif /* SAKURA_CDLGPROPERTY_FF915918_FBA0_4D89_9A72_5E1409D7F88A_H_ */

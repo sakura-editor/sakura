@@ -11,6 +11,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CSPLITBOXWND_D85ABC4D_AF8F_4B42_B1E5_BA066925314E_H_
+#define SAKURA_CSPLITBOXWND_D85ABC4D_AF8F_4B42_B1E5_BA066925314E_H_
 #pragma once
 
 class CSplitBoxWnd;
@@ -52,3 +54,4 @@ protected:
 	LRESULT OnLButtonUp(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;//WM_LBUTTONUP
 	LRESULT OnLButtonDblClk(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;//WM_LBUTTONDBLCLK
 };
+#endif /* SAKURA_CSPLITBOXWND_D85ABC4D_AF8F_4B42_B1E5_BA066925314E_H_ */

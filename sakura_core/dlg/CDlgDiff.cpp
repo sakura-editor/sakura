@@ -239,7 +239,7 @@ void CDlgDiff::SetData( void )
 		EditInfo	*pFileInfo;
 		int			i;
 		int			nItem;
-		WIN_CHAR	szName[_MAX_PATH];
+		WCHAR		szName[512];
 		int			count = 0;
 		int			selIndex = 0;
 		ECodeType	code;

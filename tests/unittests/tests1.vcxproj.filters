@@ -68,5 +68,25 @@
     <ClCompile Include="test-cdlgprofilemgr.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="code-main.cpp">
+      <Filter>Other Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-winmain.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-cprofile.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-string_ex.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-file.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="StartEditorProcessForTest.h">
+      <Filter>Other Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

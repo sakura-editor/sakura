@@ -30,6 +30,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CDLGTAGJUMPLIST_D44C3C98_9BF7_4B99_923B_9005CD54872F_H_
+#define SAKURA_CDLGTAGJUMPLIST_D44C3C98_9BF7_4B99_923B_9005CD54872F_H_
 #pragma once
 
 #include "dlg/CDialog.h"
@@ -163,7 +165,6 @@ private:
 	BOOL	m_bOldTagJumpICase;	//!< 前回の大文字小文字を同一視
 	BOOL	m_bOldTagJumpPartialMatch;	//!< 前回の文字列の途中にマッチ
 
-	SComboBoxItemDeleter	m_comboDel;
 	CRecentTagjumpKeyword	m_cRecentKeyword;
 
 	POINT	m_ptDefaultSize;
@@ -171,3 +172,4 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(CDlgTagJumpList);
 };
+#endif /* SAKURA_CDLGTAGJUMPLIST_D44C3C98_9BF7_4B99_923B_9005CD54872F_H_ */

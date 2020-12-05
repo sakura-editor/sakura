@@ -105,12 +105,15 @@
     <Link Include="$(SolutionDir)sakura\$(Platform)\$(Configuration)\*.res" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="code-main.cpp" />
     <ClCompile Include="test-ccommandline.cpp" />
     <ClCompile Include="test-cdlgprofilemgr.cpp" />
     <ClCompile Include="test-clayoutint.cpp" />
     <ClCompile Include="test-cmemory.cpp" />
     <ClCompile Include="test-cnative.cpp" />
+    <ClCompile Include="test-cprofile.cpp" />
     <ClCompile Include="test-editinfo.cpp" />
+    <ClCompile Include="test-file.cpp" />
     <ClCompile Include="test-grepinfo.cpp" />
     <ClCompile Include="test-int2dec.cpp" />
     <ClCompile Include="test-is_mailaddress.cpp" />
@@ -121,6 +124,8 @@
     <ClCompile Include="test-sample.cpp" />
     <ClCompile Include="test-ssearchoption.cpp" />
     <ClCompile Include="test-StdControl.cpp" />
+    <ClCompile Include="test-string_ex.cpp" />
+    <ClCompile Include="test-winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
@@ -135,6 +140,9 @@
     <ProjectReference Include="..\..\sakura_lang_en_US\sakura_lang_en_US.vcxproj">
       <Project>{7a6d0f29-e560-4985-835b-5f92a08eb242}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="StartEditorProcessForTest.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

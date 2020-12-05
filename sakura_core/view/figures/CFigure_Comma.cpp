@@ -14,10 +14,15 @@ void _DispTab( CGraphics& gr, DispPos* pDispPos, const CEditView* pcView );
 
 bool CFigure_Comma::Match(const wchar_t* pText, int nTextLen) const
 {
-	if ( pText[0] == L',' && m_pTypeData->m_nTsvMode == TSV_MODE_CSV ) {
+	if ( pText[0] == L',' ) {
 		return true;
 	}
 	return false;
+}
+
+bool CFigure_Comma::Disp(void) const
+{
+	return m_pTypeData->m_nTsvMode == TSV_MODE_CSV;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

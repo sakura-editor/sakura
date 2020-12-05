@@ -23,13 +23,19 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_FILE_FE33056B_6B48_4668_AE95_923EC960A607_H_
+#define SAKURA_FILE_FE33056B_6B48_4668_AE95_923EC960A607_H_
 #pragma once
+
+#include <string>
 
 bool fexist(LPCWSTR pszPath); //!< ファイルまたはディレクトリが存在すればtrue
 
 bool IsFilePath( const wchar_t* pLine, size_t* pnBgn, size_t* pnPathLen, bool bFileOnly = true );
 bool IsFileExists(const WCHAR* path, bool bFileOnly = false);
 bool IsDirectory(LPCWSTR pszPath);	// 2009.08.20 ryoji
+
+bool IsInvalidFilenameChars( const std::wstring_view& strPath );
 
 //	Apr. 30, 2003 genta
 //	ディレクトリの深さを調べる
@@ -106,3 +112,4 @@ int FileMatchScoreSepExt( const WCHAR *file1, const WCHAR *file2 );
 
 void GetStrTrancateWidth( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int nPxWidth );
 void GetShortViewPath(WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int nPxWidth, bool bFitMode );
+#endif /* SAKURA_FILE_FE33056B_6B48_4668_AE95_923EC960A607_H_ */

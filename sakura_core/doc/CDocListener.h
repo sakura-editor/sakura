@@ -32,6 +32,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CDOCLISTENER_BEF5B814_A5B8_4D07_9B2F_009A5CB29B2F_H_
+#define SAKURA_CDOCLISTENER_BEF5B814_A5B8_4D07_9B2F_009A5CB29B2F_H_
 #pragma once
 
 class CDocListener;
@@ -211,3 +213,4 @@ class CFlowInterruption : public std::exception{
 public:
 	const char* what() const throw(){ return "CFlowInterruption"; }
 };
+#endif /* SAKURA_CDOCLISTENER_BEF5B814_A5B8_4D07_9B2F_009A5CB29B2F_H_ */

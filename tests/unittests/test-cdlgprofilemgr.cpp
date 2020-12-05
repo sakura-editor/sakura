@@ -36,6 +36,17 @@
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
+#include <iterator>
+#include <regex>
+#include <string>
+
+#include "config/maxdata.h"
+#include "basis/primitive.h"
+#include "debug/Debug2.h"
+#include "basis/CMyString.h"
+#include "mem/CNativeW.h"
+#include "env/DLLSHAREDATA.h"
+#include "util/file.h"
 
 /*!
  * テスト用の極薄ラッパークラス
@@ -53,29 +64,38 @@ public:
  * 始動前に設定ファイルを削除するようにしている。
  * テスト実行後に設定ファイルを残しておく意味はないので終了後も削除している。
  */
-class CDlgProfileMgrIniTest : public ::testing::Test {
+class CDlgProfileMgrTest : public ::testing::Test {
 protected:
 	/*!
-	 * プロファイルマネージャ設定ファイルの名前
-	 *
-	 * この名前は "%s_prof.ini" に 実行ファイル名 を埋め込んで生成される。
-	 * 実稼働環境では "sakura_prof.ini" となることに注意。
+	 * プロファイルマネージャ設定ファイルのパス
 	 */
-	static constexpr const char szProfileMgrIniName[] = "tests1_prof.ini";
+	WCHAR szProfileMgrIniName[_MAX_PATH];
 
 	/*!
 	 * テストが起動される直前に毎回呼ばれる関数
 	 */
-	virtual void SetUp() {
-		// プロファイル設定を削除する
-		std::filesystem::remove( szProfileMgrIniName );
+	void SetUp() override {
+		// INIファイルのパスを取得
+		WCHAR szPrivateIniFile[_MAX_PATH];
+		WCHAR szIniFile[_MAX_PATH];
+		CFileNameManager::GetIniFileNameDirect( szPrivateIniFile, szIniFile, L"" );
+
+		// プロファイルマネージャ設定ファイルのパスを生成
+		std::wregex re( L"\\.ini$", std::wregex::icase );
+		const auto strProfileMgrIniName = std::regex_replace( szIniFile, re, L"_prof$&" );
+		::wcscpy_s( szProfileMgrIniName, strProfileMgrIniName.data() );
+
+		if( fexist( szProfileMgrIniName ) ){
+			// プロファイルマネージャー設定を削除する
+			std::filesystem::remove( szProfileMgrIniName );
+		}
 	}
 
 	/*!
 	 * テストが実行された直後に毎回呼ばれる関数
 	 */
-	virtual void TearDown() {
-		// プロファイル設定を削除する
+	void TearDown() override {
+		// プロファイルマネージャー設定を削除する
 		std::filesystem::remove( szProfileMgrIniName );
 	}
 };
@@ -83,7 +103,7 @@ protected:
 /*!
  * @brief TrySelectProfileのテスト
  */
-TEST(CDlgProfileMgr, TrySelectProfile_001 )
+TEST_F( CDlgProfileMgrTest, TrySelectProfile_001 )
 {
 	// プロファイルマネージャ表示オプションが付いてたらプロファイルは確定しない
 	CCommandLineWrapper cCommandLine;
@@ -94,7 +114,7 @@ TEST(CDlgProfileMgr, TrySelectProfile_001 )
 /*!
  * @brief TrySelectProfileのテスト
  */
-TEST( CDlgProfileMgr, TrySelectProfile_002 )
+TEST_F( CDlgProfileMgrTest, TrySelectProfile_002 )
 {
 	// プロファイル名が指定されていたらプロファイルは確定する
 	CCommandLineWrapper cCommandLine;
@@ -105,9 +125,9 @@ TEST( CDlgProfileMgr, TrySelectProfile_002 )
 /*!
  * @brief TrySelectProfileのテスト
  */
-TEST_F( CDlgProfileMgrIniTest, TrySelectProfile_003 )
+TEST_F( CDlgProfileMgrTest, TrySelectProfile_003 )
 {
-	// プロファイル設定がなかったらプロファイルは確定する
+	// プロファイルマネージャー設定がなかったらプロファイルは確定する
 	CCommandLineWrapper cCommandLine;
 	ASSERT_TRUE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
 }
@@ -115,7 +135,7 @@ TEST_F( CDlgProfileMgrIniTest, TrySelectProfile_003 )
 /*!
  * @brief TrySelectProfileのテスト
  */
-TEST_F( CDlgProfileMgrIniTest, TrySelectProfile_004 )
+TEST_F( CDlgProfileMgrTest, TrySelectProfile_004 )
 {
 	// プロファイル設定を作る
 	SProfileSettings settings;
@@ -125,7 +145,7 @@ TEST_F( CDlgProfileMgrIniTest, TrySelectProfile_004 )
 	settings.m_bDefaultSelect = true;
 	CDlgProfileMgr::WriteProfSettings( settings );
 
-	// プロファイル設定にデフォルト定義があればプロファイルは確定する
+	// プロファイルマネージャー設定にデフォルト定義があればプロファイルは確定する
 	CCommandLineWrapper cCommandLine;
 	ASSERT_TRUE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
 }
@@ -133,7 +153,7 @@ TEST_F( CDlgProfileMgrIniTest, TrySelectProfile_004 )
 /*!
  * @brief TrySelectProfileのテスト
  */
-TEST_F( CDlgProfileMgrIniTest, TrySelectProfile_005 )
+TEST_F( CDlgProfileMgrTest, TrySelectProfile_005 )
 {
 	// プロファイル設定を作る
 	SProfileSettings settings;
@@ -143,7 +163,7 @@ TEST_F( CDlgProfileMgrIniTest, TrySelectProfile_005 )
 	settings.m_bDefaultSelect = true;
 	CDlgProfileMgr::WriteProfSettings( settings );
 
-	// プロファイル設定にデフォルト定義がおかしればプロファイルは確定しない
+	// プロファイルマネージャー設定のデフォルト定義がおかしればプロファイルは確定しない
 	CCommandLineWrapper cCommandLine;
 	ASSERT_FALSE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
 }
@@ -151,7 +171,7 @@ TEST_F( CDlgProfileMgrIniTest, TrySelectProfile_005 )
 /*!
  * @brief TrySelectProfileのテスト
  */
-TEST_F( CDlgProfileMgrIniTest, TrySelectProfile_006 )
+TEST_F( CDlgProfileMgrTest, TrySelectProfile_006 )
 {
 	// 空のプロファイル設定を作る
 	SProfileSettings settings;
@@ -160,7 +180,7 @@ TEST_F( CDlgProfileMgrIniTest, TrySelectProfile_006 )
 	settings.m_bDefaultSelect = false;
 	CDlgProfileMgr::WriteProfSettings( settings );
 
-	// プロファイル設定が空定義ならプロファイルは確定しない
+	// プロファイルマネージャー設定が空定義ならプロファイルは確定しない
 	CCommandLineWrapper cCommandLine;
 	ASSERT_FALSE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
 }

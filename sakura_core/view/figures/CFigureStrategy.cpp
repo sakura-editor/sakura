@@ -31,7 +31,38 @@
 #include "charset/charcode.h"
 #include "types/CTypeSupport.h"
 
-bool CFigure_Text::DrawImp(SColorStrategyInfo* pInfo)
+FigureRenderType CFigure_Text::GetRenderType(SColorStrategyInfo* pInfo)
+{
+	const int nIdx = pInfo->GetPosInLogic();
+	const int nLength =	CNativeW::GetSizeOfChar(
+						pInfo->m_pLineOfLogic,
+						pInfo->GetDocLine()->GetLengthWithoutEOL(),
+						nIdx
+					);
+	const int fontNo = (nLength == 2 ? WCODE::GetFontNo2(pInfo->m_pLineOfLogic[nIdx], pInfo->m_pLineOfLogic[nIdx+1]):
+			WCODE::GetFontNo(pInfo->m_pLineOfLogic[nIdx]));
+	FigureRenderType nType = 0;
+	if(nLength == 1){
+		const wchar_t code = pInfo->m_pLineOfLogic[nIdx];
+		// 未合成で一度に描画しても安全そうな文字一覧(その範囲の文字が合成用文字ではないもの)
+		// 合成は未サポート
+		if((0x20 <= code && code <= 0x7f) // ASCII
+			|| 0x2E80 <= code && code <= 0x2FDF // 漢字部首
+			|| 0x3041 <= code && code <= 0x3096 // ひらがな
+			|| 0x30A1 <= code && code <= 0x30FA // カタカナ(合成用濁点などを除く)
+			|| 0x3400 <= code && code <= 0x4DBF // CJK統合漢字拡張A
+			|| 0x4E00 <= code && code <= 0x9FFF // CJK統合漢字
+			|| 0xF900 <= code && code <= 0xFAFF // CJK互換漢字
+			|| 0xFF01 <= code && code <= 0xFF5E // 全角ASCII
+			|| 0xFF61 <= code && code <= 0xFF9F // 半角カナ
+		){
+			nType = 1;
+		}
+	}
+	return (fontNo << 1) | nType;
+}
+
+int CFigure_Text::FowardChars(SColorStrategyInfo* pInfo)
 {
 	int nIdx = pInfo->GetPosInLogic();
 	int nLength =	CNativeW::GetSizeOfChar(	// サロゲートペア対策	2008.10.12 ryoji
@@ -39,8 +70,22 @@ bool CFigure_Text::DrawImp(SColorStrategyInfo* pInfo)
 						pInfo->GetDocLine()->GetLengthWithoutEOL(),
 						nIdx
 					);
+	pInfo->m_nPosInLogic += nLength;
+	return pInfo->m_pcView->GetTextMetrics().CalcTextWidth3(pInfo->m_pLineOfLogic + nIdx, nLength);
+}
+
+bool CFigure_Text::DrawImpBlock(SColorStrategyInfo* pInfo, int nPos, int nLength)
+{
+	int nIdx = nPos;
 	bool bTrans = pInfo->m_pcView->IsBkBitmap() && CTypeSupport(pInfo->m_pcView, COLORIDX_TEXT).GetBackColor() == GetBkColor(pInfo->m_gr);
-	int fontNo = (nLength == 2 ? WCODE::GetFontNo2(pInfo->m_pLineOfLogic[nIdx], pInfo->m_pLineOfLogic[nIdx+1]):
+	int nLengthFirst = CNativeW::GetSizeOfChar(
+						pInfo->m_pLineOfLogic,
+						pInfo->GetDocLine()->GetLengthWithoutEOL(),
+						nPos
+					);
+
+	// 先頭の文字のフォントを採用する。フォント判別は上位で行う必要がある
+	int fontNo = (nLengthFirst == 2 ? WCODE::GetFontNo2(pInfo->m_pLineOfLogic[nIdx], pInfo->m_pLineOfLogic[nIdx+1]):
 			WCODE::GetFontNo(pInfo->m_pLineOfLogic[nIdx]));
 	if( fontNo ){
 		CTypeSupport cCurrentType(pInfo->m_pcView, pInfo->GetCurrentColor());	// 周辺の色（現在の指定色/選択色）
@@ -64,6 +109,19 @@ bool CFigure_Text::DrawImp(SColorStrategyInfo* pInfo)
 	if( fontNo ){
 		pInfo->m_gr.PopMyFont();
 	}
+	// pInfo->m_nPosInLogic += nLength; ここでは進めない
+	return true;
+}
+
+bool CFigure_Text::DrawImp(SColorStrategyInfo* pInfo)
+{
+	// 1文字前提
+	const int nLength = CNativeW::GetSizeOfChar(	// 行末以外はここでスキャン位置を１字進める
+		pInfo->m_pLineOfLogic,
+		pInfo->GetDocLine()->GetLengthWithoutEOL(),
+		pInfo->GetPosInLogic()
+		);
+	DrawImpBlock(pInfo, pInfo->m_nPosInLogic, nLength);
 	pInfo->m_nPosInLogic += nLength;
 	return true;
 }

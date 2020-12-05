@@ -12,6 +12,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CHOKANMGR_0CB0AF1A_1F22_482E_9221_B9FAE4F0D8A0_H_
+#define SAKURA_CHOKANMGR_0CB0AF1A_1F22_482E_9221_B9FAE4F0D8A0_H_
 #pragma once
 
 #include <Windows.h>
@@ -85,3 +87,4 @@ protected:
 	*/
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
 };
+#endif /* SAKURA_CHOKANMGR_0CB0AF1A_1F22_482E_9221_B9FAE4F0D8A0_H_ */

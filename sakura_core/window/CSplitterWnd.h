@@ -11,6 +11,8 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
+#ifndef SAKURA_CSPLITTERWND_8F27B39C_B96B_4964_ACD8_E157A146F892_H_
+#define SAKURA_CSPLITTERWND_8F27B39C_B96B_4964_ACD8_E157A146F892_H_
 #pragma once
 
 #include "CWnd.h"
@@ -89,3 +91,4 @@ protected:
 	int HitTestSplitter(int xPos, int yPos);	/* 分割バーへのヒットテスト */
 	void DrawSplitter(int xPos, int yPos, int bEraseOld);	/* 分割トラッカーの表示 */
 };
+#endif /* SAKURA_CSPLITTERWND_8F27B39C_B96B_4964_ACD8_E157A146F892_H_ */

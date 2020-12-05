@@ -13,6 +13,8 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
+#ifndef SAKURA_CDLGJUMP_13AD9DC8_92E0_43AB_81D4_A0FBA28EE2D8_H_
+#define SAKURA_CDLGJUMP_13AD9DC8_92E0_43AB_81D4_A0FBA28EE2D8_H_
 #pragma once
 
 class CDlgJump;
@@ -49,3 +51,4 @@ protected:
 	void SetData( void ) override;	/* ダイアログデータの設定 */
 	int GetData( void ) override;	/* ダイアログデータの取得 */
 };
+#endif /* SAKURA_CDLGJUMP_13AD9DC8_92E0_43AB_81D4_A0FBA28EE2D8_H_ */

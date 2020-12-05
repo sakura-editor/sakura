@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CCOLORSTRATEGY_96B6EB56_C928_4B89_8841_166AAAB8D760_H_
+#define SAKURA_CCOLORSTRATEGY_96B6EB56_C928_4B89_8841_166AAAB8D760_H_
 #pragma once
 
 // 要先行定義
@@ -85,7 +87,14 @@ struct CColor3Setting {
 };
 
 struct SColorStrategyInfo{
-	SColorStrategyInfo() : m_sDispPosBegin(0,0), m_pStrategy(NULL), m_pStrategyFound(NULL), m_pStrategySelect(NULL), m_colorIdxBackLine(COLORIDX_TEXT) {
+	SColorStrategyInfo(HDC hDC = NULL)
+		: m_sDispPosBegin(0,0)
+		, m_pStrategy(NULL)
+		, m_pStrategyFound(NULL)
+		, m_pStrategySelect(NULL)
+		, m_colorIdxBackLine(COLORIDX_TEXT)
+		, m_gr(hDC)
+	{
 		m_cIndex.eColorIndex = COLORIDX_TEXT;
 		m_cIndex.eColorIndex2 = COLORIDX_TEXT;
 		m_cIndex.eColorIndexBg = COLORIDX_TEXT;
@@ -124,7 +133,12 @@ struct SColorStrategyInfo{
 	}
 	const CDocLine* GetDocLine() const
 	{
-		return m_pDispPos->GetLayoutRef()->GetDocLineRef();
+		const CLayout* layout = m_pDispPos->GetLayoutRef();
+
+		if (layout) {
+			return layout->GetDocLineRef();
+		}
+		return NULL;
 	}
 	const CLayout* GetLayout() const
 	{
@@ -157,10 +171,15 @@ public:
 	}
 
 	//#######ラップ
-	EColorIndexType GetStrategyColorSafe() const{ if(this)return GetStrategyColor(); else return COLORIDX_TEXT; }
-	CLayoutColorInfo* GetStrategyColorInfoSafe() const{
-		if(this){
-			return GetStrategyColorInfo();
+	static EColorIndexType GetStrategyColorSafe(const CColorStrategy *strategy) {
+		if (strategy) {
+			return strategy->GetStrategyColor();
+		}
+		return COLORIDX_TEXT;
+	}
+	static CLayoutColorInfo* GetStrategyColorInfoSafe(const CColorStrategy *strategy) {
+		if (strategy) {
+			return strategy->GetStrategyColorInfo();
 		}
 		return NULL;
 	}
@@ -230,3 +249,4 @@ private:
 	bool	m_bSkipBeforeLayoutGeneral;
 	bool	m_bSkipBeforeLayoutFound;
 };
+#endif /* SAKURA_CCOLORSTRATEGY_96B6EB56_C928_4B89_8841_166AAAB8D760_H_ */

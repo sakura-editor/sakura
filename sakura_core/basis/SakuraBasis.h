@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_SAKURABASIS_9AF1C7D6_E092_41E8_8BC6_6194067C0CA2_H_
+#define SAKURA_SAKURABASIS_9AF1C7D6_E092_41E8_8BC6_6194067C0CA2_H_
 #pragma once
 
 #include <Windows.h> //POINT,LONG
@@ -144,3 +146,4 @@ inline void TwoPointToRect(
 		prcRect->right	= pt1.GetX2();
 	}
 }
+#endif /* SAKURA_SAKURABASIS_9AF1C7D6_E092_41E8_8BC6_6194067C0CA2_H_ */

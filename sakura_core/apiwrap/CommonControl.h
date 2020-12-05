@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_COMMONCONTROL_27CF9891_7D70_469F_8AC4_155FA493D7CC_H_
+#define SAKURA_COMMONCONTROL_27CF9891_7D70_469F_8AC4_155FA493D7CC_H_
 #pragma once
 
 #include <CommCtrl.h> // コモンコントロール
@@ -99,3 +101,4 @@ namespace ApiWrap
 }
 
 using namespace ApiWrap;
+#endif /* SAKURA_COMMONCONTROL_27CF9891_7D70_469F_8AC4_155FA493D7CC_H_ */

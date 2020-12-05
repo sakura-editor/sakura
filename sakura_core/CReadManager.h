@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CREADMANAGER_BF5A195D_BEA1_4508_8BC7_DB5316B5B66E_H_
+#define SAKURA_CREADMANAGER_BF5A195D_BEA1_4508_8BC7_DB5316B5B66E_H_
 #pragma once
 
 #include "doc/CDocListener.h" // CProgressSubject
@@ -40,3 +42,4 @@ public:
 		SFileInfo*			pFileInfo
 	);
 };
+#endif /* SAKURA_CREADMANAGER_BF5A195D_BEA1_4508_8BC7_DB5316B5B66E_H_ */

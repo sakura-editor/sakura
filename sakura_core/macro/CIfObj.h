@@ -28,6 +28,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CIFOBJ_12FF5D67_757D_47E3_A7B3_E9896AAA6BB4_H_
+#define SAKURA_CIFOBJ_12FF5D67_757D_47E3_A7B3_E9896AAA6BB4_H_
 #pragma once
 
 #include <string>
@@ -137,3 +139,4 @@ private:
 	CMethodInfoList m_Methods;			//メソッド情報リスト
 	ITypeInfo* m_TypeInfo;
 };
+#endif /* SAKURA_CIFOBJ_12FF5D67_757D_47E3_A7B3_E9896AAA6BB4_H_ */

@@ -28,6 +28,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CDLGCTRLCODE_84B2AD70_76BB_4CE3_9B09_4D1AF49BF5EE_H_
+#define SAKURA_CDLGCTRLCODE_84B2AD70_76BB_4CE3_9B09_4D1AF49BF5EE_H_
 #pragma once
 
 class CDlgCtrlCode;
@@ -70,3 +72,4 @@ private:
 	*/
 	wchar_t		m_nCode;	// コード
 };
+#endif /* SAKURA_CDLGCTRLCODE_84B2AD70_76BB_4CE3_9B09_4D1AF49BF5EE_H_ */

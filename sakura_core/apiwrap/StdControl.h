@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_STDCONTROL_57A7282D_B9F0_4642_ABFF_48B6D715CCA7_H_
+#define SAKURA_STDCONTROL_57A7282D_B9F0_4642_ABFF_48B6D715CCA7_H_
 #pragma once
 
 /*
@@ -60,6 +62,15 @@ namespace ApiWrap{
 	{
 		return SetWindowText(hwnd, str.GetStringPtr());
 	}
+
+	/*!
+		@brief Window テキストを取得する
+		@param[in]  hWnd	ウィンドウハンドル
+		@param[out] strText	ウィンドウテキストを受け取る変数
+		@return		成功した場合 true
+		@return		失敗した場合 false
+	*/
+	bool Wnd_GetText( HWND hWnd, std::wstring& strText );
 
 	/*!
 		@brief Window テキストを取得する
@@ -203,20 +214,15 @@ namespace ApiWrap{
 		assert(str.GetStringLength() == actualCount);
 		return true;
 	}
-	inline void Combo_GetEditSel( HWND hwndCombo, int &nSelStart, int &nSelEnd )
+	inline void Combo_GetEditSel( HWND hwndCombo, DWORD& dwSelStart, DWORD& dwSelEnd )
 	{
-		DWORD dwSelStart = 0;
-		DWORD dwSelEnd = 0;
 		::SendMessage( hwndCombo, CB_GETEDITSEL, WPARAM( &dwSelStart ), LPARAM( &dwSelEnd ) );
-		assert_warning( 0x7FFFFFFF < dwSelStart );
-		assert_warning( 0x7FFFFFFF < dwSelEnd );
-		nSelStart = static_cast<int>(dwSelStart);
-		nSelEnd = static_cast<int>(dwSelEnd);
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      リストボックス                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	bool List_GetText( HWND hList, int nIndex, std::wstring& strText );
 	LRESULT List_GetText(HWND hwndList, int nIndex, WCHAR* pszText, size_t cchText);
 	template <size_t cchText>
 	LRESULT List_GetText(HWND hwndList, int nIndex, WCHAR(&pszText)[cchText]) {
@@ -292,9 +298,11 @@ namespace ApiWrap{
 		return SetDlgItemText(hwndDlg, nIDDlgItem, str);
 	}
 
+	bool DlgItem_GetText( HWND hDlg, int nIDDlgItem, std::wstring& strText );
 	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, WCHAR* pszText, int nMaxCount);
 
 	bool TreeView_GetItemTextVector(HWND hwndTree, TVITEM& item, std::vector<WCHAR>& vecStr);
 	void TreeView_ExpandAll( HWND, bool, int nMaxDepth = 100 );
 }
 using namespace ApiWrap;
+#endif /* SAKURA_STDCONTROL_57A7282D_B9F0_4642_ABFF_48B6D715CCA7_H_ */

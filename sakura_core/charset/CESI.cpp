@@ -46,6 +46,14 @@
 #include "env/CShareData.h"
 
 /*!
+	encodingNameToCode構造体におけるエンコーディング名の定義
+
+	name: エンコーディング名
+	code: 文字コードセット種別、もしくはコードページ番号
+*/
+#define ENCODING_NAME( name, code ) { name, (int)( _countof( name ) - 1 ), (int)( code ) }
+
+/*!
 	マルチバイト文字コードの優先順位表（既定値）
 
 	@note
@@ -504,9 +512,9 @@ void CESI::GetEncodingInfo_meta( const char* pS, const int nLen )
 	if( encoding == CODE_NONE ){
 		// スクリプト等Coding中にHTMLがあるのでCodingを優先
 		encoding = AutoDetectByCoding( pS, nLen );
-	}
-	if( encoding == CODE_NONE ){
-		encoding = AutoDetectByHTML( pS, nLen );
+		if( encoding == CODE_NONE ){
+			encoding = AutoDetectByHTML( pS, nLen );
+		}
 	}
 	m_eMetaName = encoding;
 }
@@ -750,118 +758,152 @@ static const struct{
 	int nLen;
 	int nCode;
 } encodingNameToCode[] = {
-	{ "windows-31j",  11, CODE_SJIS },
-	{ "x-sjis",        6, CODE_SJIS },
-	{ "shift_jis",     9, CODE_SJIS },
-	{ "cp932",         9, CODE_SJIS },
-	{ "iso-2022-jp",  11, CODE_JIS },
-	{ "euc-jp",        6, CODE_EUC },
-//	{ "utf-7",         5, CODE_UTF7 },
-	{ "utf-8",         5, CODE_UTF8 },
-	{ "cesu-8",        6, CODE_CESU8 },
-	{ "iso-8859-1",   10, CODE_LATIN1 },
-	{ "latin1",        7, CODE_LATIN1 },
-	{ "latin-1",       8, CODE_LATIN1 },
-	{ "windows-1252", 12, CODE_LATIN1 },
-	{"ibm437",             6,   437},
-	{"asmo-708",           8,   708},
-	{"dos-720",            7,   720},
-	{"ibm737",             6,   737},
-	{"ibm775",             6,   775},
-	{"ibm850",             6,   850},
-	{"ibm852",             6,   852},
-	{"ibm855",             6,   855},
-	{"ibm857",             6,   857},
-	{"ibm00858",           8,   858},
-	{"ibm860",             6,   860},
-	{"ibm861",             6,   861},
-	{"dos-862",            7,   862},
-	{"ibm863",             6,   863},
-	{"ibm864",             6,   864},
-	{"ibm865",             6,   865},
-	{"cp866",              5,   866},
-	{"ibm869",             6,   869},
-	{"windows-874",       11,   874},
-	{"gb2312",             6,   936},
-	{"ks_c_5601-1987",    14,   949},
-	{"big5",               4,   950},
-	{"ibm1026",            7,  1026},
-	{"windows-1250",      12,  1250},
-	{"windows-1251",      12,  1251},
-	{"windows-1252",      12,  1252},
-	{"windows-1253",      12,  1253},
-	{"windows-1254",      12,  1254},
-	{"windows-1255",      12,  1255},
-	{"windows-1256",      12,  1256},
-	{"windows-1257",      12,  1257},
-	{"windows-1258",      12,  1258},
-	{"johab",              5,  1361},
-	{"macintosh",          9, 10000},
-	{"x-mac-japanese",    14, 10001},
-	{"x-mac-chinesetrad", 17, 10002},
-	{"x-mac-korean",      12, 10003},
-	{"x-mac-arabic",      12, 10004},
-	{"x-mac-hebrew",      12, 10005},
-	{"x-mac-greek",       11, 10006},
-	{"x-mac-cyrillic",    14, 10007},
-	{"x-mac-chinesesimp", 17, 10008},
-	{"x-mac-romanian",    14, 10010},
-	{"x-mac-ukrainian",   15, 10017},
-	{"x-mac-thai",        10, 10021},
-	{"x-mac-ce",           8, 10029},
-	{"x-mac-icelandic",   15, 10079},
-	{"x-mac-turkish",     13, 10081},
-	{"x-mac-croatian",    14, 10082},
-	{"x-chinese-cns",     13, 20000},
-	{"x-cp20001",          9, 20001},
-	{"x-chinese-eten",    14, 20002},
-	{"x-cp20003",          9, 20003},
-	{"x-cp20004",          9, 20004},
-	{"x-cp20005",          9, 20005},
-	{"x-ia5",              5, 20105},
-	{"x-ia5-german",      12, 20106},
-	{"x-ia5-swedish",     13, 20107},
-	{"x-ia5-norwegian",   15, 20108},
-	{"x-cp20261",          9, 20261},
-	{"x-cp20269",          9, 20269},
-	{"koi8-r",             6, 20866},
-	{"x-cp20936",          9, 20936},
-	{"x-cp20949",          9, 20949},
-	{"koi8-u",             6, 21866},
-	{"iso-8859-2",        10, 28592},
-	{"latin2",             6, 28592} ,
-	{"iso-8859-3",        10, 28593},
-	{"latin3",             6, 28593},
-	{"iso-8859-4",        10, 28594},
-	{"latin4",             6, 28594},
-	{"iso-8859-5",        10, 28595},
-	{"iso-8859-6",        10, 28596},
-	{"iso-8859-7",        10, 28597},
-	{"iso-8859-8",        10, 28598},
-	{"iso-8859-9",        10, 28599},
-	{"latin5",             6, 28599},
-	{"iso-8859-13",       11, 28603},
-	{"iso-8859-15",       11, 28605},
-	{"latin-9",            7, 28605},
-	{"x-europa",           8, 29001},
-	{"iso-8859-8-i",      12, 38598},
-	{"iso-2022-kr",       11, 50225},
-	{"x-cp50227",          9, 50227},
-	{"euc-cn",             6, 51936},
-	{"euc-kr",             6, 51949},
-	{"hz-gb-2312",        10, 52936},
-	{"gb18030",            7, 54936},
-	{"x-iscii-de",        10, 57002},
-	{"x-iscii-be",        10, 57003},
-	{"x-iscii-ta",        10, 57004},
-	{"x-iscii-te",        10, 57005},
-	{"x-iscii-as",        10, 57006},
-	{"x-iscii-or",        10, 57007},
-	{"x-iscii-ka",        10, 57008},
-	{"x-iscii-ma",        10, 57009},
-	{"x-iscii-gu",        10, 57010},
-	{"x-iscii-pa",        10, 57011},
-	{ NULL, 0, 0}
+	ENCODING_NAME( "shift_jis",			CODE_SJIS ),
+	ENCODING_NAME( "windows-31j",		CODE_SJIS ),
+	ENCODING_NAME( "x-sjis",			CODE_SJIS ),
+	ENCODING_NAME( "cp932",				CODE_SJIS ),
+	ENCODING_NAME( "ms932",				CODE_SJIS ),
+	ENCODING_NAME( "shift-jis",			CODE_SJIS ),
+	ENCODING_NAME( "csWindows31J",		CODE_SJIS ),
+	ENCODING_NAME( "MS_Kanji",			CODE_SJIS ),
+	ENCODING_NAME( "csShiftJIS",		CODE_SJIS ),
+	ENCODING_NAME( "sjis",				CODE_SJIS ),
+	ENCODING_NAME( "iso-2022-jp",		CODE_JIS ),
+	ENCODING_NAME( "iso2022jp",			CODE_JIS ),
+	ENCODING_NAME( "csISO2022jp",		CODE_JIS ),
+	ENCODING_NAME( "euc-jp",			CODE_EUC ),
+	ENCODING_NAME( "euc_jp",			CODE_EUC ),
+	ENCODING_NAME( "eucjp",				CODE_EUC ),
+	ENCODING_NAME( "cseucpkdfmtjapanese",	CODE_EUC ),
+	ENCODING_NAME( "extended_unix_code_packed_format_for_japanese",	CODE_EUC ),
+	ENCODING_NAME( "x-euc-jp",			CODE_EUC ),
+//	ENCODING_NAME( "utf-7",				CODE_UTF7 ),
+//	ENCODING_NAME( "csutf7",			CODE_UTF7 ),
+	ENCODING_NAME( "utf-8",				CODE_UTF8 ),
+	ENCODING_NAME( "utf_8",				CODE_UTF8 ),
+	ENCODING_NAME( "utf8",				CODE_UTF8 ),
+	ENCODING_NAME( "csutf8",			CODE_UTF8 ),
+	ENCODING_NAME( "unicode-1-1-utf-8",	CODE_UTF8 ),
+	ENCODING_NAME( "unicode11utf8",		CODE_UTF8 ),
+	ENCODING_NAME( "unicode20utf8",		CODE_UTF8 ),
+	ENCODING_NAME( "x-unicode20utf8",	CODE_UTF8 ),
+	ENCODING_NAME( "cesu-8",			CODE_CESU8 ),
+	ENCODING_NAME( "cscesu-8",			CODE_CESU8 ),
+	ENCODING_NAME( "cscesu8",			CODE_CESU8 ),
+	ENCODING_NAME( "iso-8859-1",		CODE_LATIN1 ),
+	ENCODING_NAME( "latin1",			CODE_LATIN1 ),
+	ENCODING_NAME( "latin-1",			CODE_LATIN1 ),
+	ENCODING_NAME( "iso8859_1",			CODE_LATIN1 ),
+	ENCODING_NAME( "iso_8859_1",		CODE_LATIN1 ),
+	ENCODING_NAME( "iso88591",			CODE_LATIN1 ),
+	ENCODING_NAME( "cp819",				CODE_LATIN1 ),
+	ENCODING_NAME( "csisolatin1",		CODE_LATIN1 ),
+	ENCODING_NAME( "ibm819",			CODE_LATIN1 ),
+	ENCODING_NAME( "iso-ir-100",		CODE_LATIN1 ),
+	ENCODING_NAME( "iso8859-1",			CODE_LATIN1 ),
+	ENCODING_NAME( "iso_8859-1",		CODE_LATIN1 ),
+	ENCODING_NAME( "l1",				CODE_LATIN1 ),
+	ENCODING_NAME( "windows-1252",		CODE_LATIN1 ),
+	ENCODING_NAME( "cp1252",			CODE_LATIN1 ),
+	ENCODING_NAME( "cswindows1252",		CODE_LATIN1 ),
+	ENCODING_NAME( "x-cp1252",			CODE_LATIN1 ),
+	ENCODING_NAME( "ibm437",			  437 ),
+	ENCODING_NAME( "asmo-708",			  708 ),
+	ENCODING_NAME( "dos-720",			  720 ),
+	ENCODING_NAME( "ibm737",			  737 ),
+	ENCODING_NAME( "ibm775",			  775 ),
+	ENCODING_NAME( "ibm850",			  850 ),
+	ENCODING_NAME( "ibm852",			  852 ),
+	ENCODING_NAME( "ibm855",			  855 ),
+	ENCODING_NAME( "ibm857",			  857 ),
+	ENCODING_NAME( "ibm00858",			  858 ),
+	ENCODING_NAME( "ibm860",			  860 ),
+	ENCODING_NAME( "ibm861",			  861 ),
+	ENCODING_NAME( "dos-862",			  862 ),
+	ENCODING_NAME( "ibm863",			  863 ),
+	ENCODING_NAME( "ibm864",			  864 ),
+	ENCODING_NAME( "ibm865",			  865 ),
+	ENCODING_NAME( "cp866",				  866 ),
+	ENCODING_NAME( "ibm869",			  869 ),
+	ENCODING_NAME( "windows-874",		  874 ),
+	ENCODING_NAME( "gb2312",			  936 ),
+	ENCODING_NAME( "ks_c_5601-1987",	  949 ),
+	ENCODING_NAME( "big5",				  950 ),
+	ENCODING_NAME( "ibm1026",			 1026 ),
+	ENCODING_NAME( "windows-1250",		 1250 ),
+	ENCODING_NAME( "windows-1251",		 1251 ),
+	ENCODING_NAME( "windows-1253",		 1253 ),
+	ENCODING_NAME( "windows-1254",		 1254 ),
+	ENCODING_NAME( "windows-1255",		 1255 ),
+	ENCODING_NAME( "windows-1256",		 1256 ),
+	ENCODING_NAME( "windows-1257",		 1257 ),
+	ENCODING_NAME( "windows-1258",		 1258 ),
+	ENCODING_NAME( "johab",				 1361 ),
+	ENCODING_NAME( "macintosh",			10000 ),
+	ENCODING_NAME( "x-mac-japanese",	10001 ),
+	ENCODING_NAME( "x-mac-chinesetrad",	10002 ),
+	ENCODING_NAME( "x-mac-korean",		10003 ),
+	ENCODING_NAME( "x-mac-arabic",		10004 ),
+	ENCODING_NAME( "x-mac-hebrew",		10005 ),
+	ENCODING_NAME( "x-mac-greek",		10006 ),
+	ENCODING_NAME( "x-mac-cyrillic",	10007 ),
+	ENCODING_NAME( "x-mac-chinesesimp",	10008 ),
+	ENCODING_NAME( "x-mac-romanian",	10010 ),
+	ENCODING_NAME( "x-mac-ukrainian",	10017 ),
+	ENCODING_NAME( "x-mac-thai",		10021 ),
+	ENCODING_NAME( "x-mac-ce",			10029 ),
+	ENCODING_NAME( "x-mac-icelandic",	10079 ),
+	ENCODING_NAME( "x-mac-turkish",		10081 ),
+	ENCODING_NAME( "x-mac-croatian",	10082 ),
+	ENCODING_NAME( "x-chinese-cns",		20000 ),
+	ENCODING_NAME( "x-cp20001",			20001 ),
+	ENCODING_NAME( "x-chinese-eten",	20002 ),
+	ENCODING_NAME( "x-cp20003",			20003 ),
+	ENCODING_NAME( "x-cp20004",			20004 ),
+	ENCODING_NAME( "x-cp20005",			20005 ),
+	ENCODING_NAME( "x-ia5",				20105 ),
+	ENCODING_NAME( "x-ia5-german",		20106 ),
+	ENCODING_NAME( "x-ia5-swedish",		20107 ),
+	ENCODING_NAME( "x-ia5-norwegian",	20108 ),
+	ENCODING_NAME( "x-cp20261",			20261 ),
+	ENCODING_NAME( "x-cp20269",			20269 ),
+	ENCODING_NAME( "koi8-r",			20866 ),
+	ENCODING_NAME( "x-cp20936",			20936 ),
+	ENCODING_NAME( "x-cp20949",			20949 ),
+	ENCODING_NAME( "koi8-u",			21866 ),
+	ENCODING_NAME( "iso-8859-2",		28592 ),
+	ENCODING_NAME( "latin2",			28592 ),
+	ENCODING_NAME( "iso-8859-3",		28593 ),
+	ENCODING_NAME( "latin3",			28593 ),
+	ENCODING_NAME( "iso-8859-4",		28594 ),
+	ENCODING_NAME( "latin4",			28594 ),
+	ENCODING_NAME( "iso-8859-5",		28595 ),
+	ENCODING_NAME( "iso-8859-6",		28596 ),
+	ENCODING_NAME( "iso-8859-7",		28597 ),
+	ENCODING_NAME( "iso-8859-8",		28598 ),
+	ENCODING_NAME( "iso-8859-9",		28599 ),
+	ENCODING_NAME( "latin5",			28599 ),
+	ENCODING_NAME( "iso-8859-13",		28603 ),
+	ENCODING_NAME( "iso-8859-15",		28605 ),
+	ENCODING_NAME( "latin-9",			28605 ),
+	ENCODING_NAME( "x-europa",			29001 ),
+	ENCODING_NAME( "iso-8859-8-i",		38598 ),
+	ENCODING_NAME( "iso-2022-kr",		50225 ),
+	ENCODING_NAME( "x-cp50227",			50227 ),
+	ENCODING_NAME( "euc-cn",			51936 ),
+	ENCODING_NAME( "euc-kr",			51949 ),
+	ENCODING_NAME( "hz-gb-2312",		52936 ),
+	ENCODING_NAME( "gb18030",			54936 ),
+	ENCODING_NAME( "x-iscii-de",		57002 ),
+	ENCODING_NAME( "x-iscii-be",		57003 ),
+	ENCODING_NAME( "x-iscii-ta",		57004 ),
+	ENCODING_NAME( "x-iscii-te",		57005 ),
+	ENCODING_NAME( "x-iscii-as",		57006 ),
+	ENCODING_NAME( "x-iscii-or",		57007 ),
+	ENCODING_NAME( "x-iscii-ka",		57008 ),
+	ENCODING_NAME( "x-iscii-ma",		57009 ),
+	ENCODING_NAME( "x-iscii-gu",		57010 ),
+	ENCODING_NAME( "x-iscii-pa",		57011 ),
 };
 
 static bool IsXMLWhiteSpace( int c )
@@ -874,6 +916,25 @@ static bool IsXMLWhiteSpace( int c )
 		return true;
 	}
 	return false;
+}
+
+/*!
+	文字列からコードを判定する。
+
+	@param [in] pBuf 判定対象文字列
+	@param [in] nSize 文字列サイズ
+
+	@return 文字コード
+*/
+static ECodeType MatchEncoding(const char* pBuf, int nSize)
+{
+	for(int k = 0; k < _countof(encodingNameToCode); k++ ){
+		const int nLen = encodingNameToCode[k].nLen;
+		if( nLen == nSize && 0 == _memicmp(encodingNameToCode[k].name, pBuf, nLen) ){
+			return static_cast<ECodeType>(encodingNameToCode[k].nCode);
+		}
+	}
+	return CODE_NONE;
 }
 
 /*!	ファイル中のエンコーディング指定を利用した文字コード自動選択
@@ -912,22 +973,20 @@ ECodeType CESI::AutoDetectByXML( const char* pBuf, int nSize )
 				}
 				quoteChar = pBuf[i];
 				i++;
-				int k;
-				for( k = 0; encodingNameToCode[k].name != NULL; k++ ){
-					const int nLen = encodingNameToCode[k].nLen;
-					if( i + nLen < nSize - 1
-					  && pBuf[i + nLen] == quoteChar
-					  && 0 == _memicmp( encodingNameToCode[k].name, pBuf + i, nLen ) ){
-						return static_cast<ECodeType>(encodingNameToCode[k].nCode);
-					}
+				std::string_view sBuf( pBuf, nSize );
+				auto nLen = sBuf.find_first_of( quoteChar, i );
+				if( nLen == std::string_view::npos ){
+					break;
 				}
+				return MatchEncoding( pBuf + i, nLen - i );
 			}else{
 				if( pBuf[i] == '<' || pBuf[i] == '>' ){
 					break;
 				}
 				// encoding指定無しでxml宣言が終了した
 				if( pBuf[i] == '?' && pBuf[i + 1] == '>' ){
-					return CODE_UTF8;
+					// 決定せずに引き続き判定処理を行う
+					return CODE_NONE;
 				}
 			}
 		}
@@ -937,7 +996,8 @@ ECodeType CESI::AutoDetectByXML( const char* pBuf, int nSize )
 			}
 			// encoding指定無しでxml宣言が終了した
 			if( pBuf[i] == '?' && pBuf[i + 1] == '>' ){
-				return CODE_UTF8;
+				// 決定せずに引き続き判定処理を行う
+				return CODE_NONE;
 			}
 		}
 	}else
@@ -1041,29 +1101,20 @@ ECodeType CESI::AutoDetectByHTML( const char* pBuf, int nSize )
 							if( nEndAttVal <= i ){ i = nNextPos; continue; }
 							int nCharsetBegin = i;
 							while( i < nEndAttVal && !IsXMLWhiteSpace(pBuf[i]) ){ i++; }
-							int k;
-							for( k = 0; encodingNameToCode[k].name != NULL; k++ ){
-								const int nLen = encodingNameToCode[k].nLen;
-								if( i - nCharsetBegin == nLen
-								  && 0 == _memicmp( encodingNameToCode[k].name, pBuf + nCharsetBegin, nLen ) ){
-									if( bContentType ){
-										return static_cast<ECodeType>(encodingNameToCode[k].nCode);
-									}else{
-										encoding = static_cast<ECodeType>(encodingNameToCode[k].nCode);
-										break;
-									}
+							ECodeType eCode = MatchEncoding(pBuf + nCharsetBegin, i - nCharsetBegin);
+							if( eCode != CODE_NONE ){
+								if( bContentType ){
+									return eCode;
+								}else{
+									encoding = eCode;
 								}
 							}
 						}
 						i = nNextPos;
 					}else if( 3 == nAttType ){
-						int k;
-						for( k = 0; encodingNameToCode[k].name != NULL; k++ ){
-							const int nLen = encodingNameToCode[k].nLen;
-							if( nEndAttVal - nBeginAttVal == nLen
-							  && 0 == _memicmp( encodingNameToCode[k].name, pBuf + nBeginAttVal, nLen ) ){
-								return static_cast<ECodeType>(encodingNameToCode[k].nCode);
-							}
+						ECodeType eCode = MatchEncoding(pBuf + nBeginAttVal, nEndAttVal - nBeginAttVal);
+						if( eCode != CODE_NONE ){
+							return eCode;
 						}
 					}
 				}else if( '<' == pBuf[i] ){
@@ -1085,6 +1136,7 @@ static bool IsEncodingNameChar( int c )
 {
 	return ('A' <= c && c <= 'Z')
 		|| ('a' <= c && c <= 'z')
+		|| ('0' <= c && c <= '9')
 		|| '_' == c
 		|| '-' == c
 	;
@@ -1110,14 +1162,7 @@ ECodeType CESI::AutoDetectByCoding( const char* pBuf, int nSize )
 			if( nBegin == i ){
 				return CODE_NONE;
 			}
-			int k;
-			for( k = 0; encodingNameToCode[k].name != NULL; k++ ){
-				const int nLen = encodingNameToCode[k].nLen;
-				if( i - nBegin == nLen
-				  && 0 == _memicmp( encodingNameToCode[k].name, pBuf + nBegin, nLen ) ){
-					return static_cast<ECodeType>(encodingNameToCode[k].nCode);
-				}
-			}
+			return MatchEncoding( pBuf + nBegin, i - nBegin );
 		}else if( '\r' == pBuf[i] || '\n' == pBuf[i] ){
 			if( '\r' == pBuf[i] && '\n' == pBuf[i+1] ){
 				i++;
@@ -1196,7 +1241,7 @@ static ECodeType DetectUnicode( CESI* pcesi )
 	return pcesi->m_aWcInfo[ebom_type].eCodeID;
 }
 
-/*
+/*!
 	日本語コードセット判定
 */
 ECodeType CESI::CheckKanjiCode(const char* pBuf, size_t nBufLen) noexcept

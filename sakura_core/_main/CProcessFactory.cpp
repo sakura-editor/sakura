@@ -66,9 +66,6 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 	// しかし、そのような場合でもミューテックスを最初に確保したコントロールプロセスが唯一生き残る。
 	//
 	if( IsStartingControlProcess() ){
-		if( TestWriteQuit() ){	// 2007.09.04 ryoji「設定を保存して終了する」オプション処理（sakuext連携用）
-			return 0;
-		}
 		if( !IsExistControlProcess() ){
 			process = new CControlProcess( hInstance, lpCmdLine );
 		}
@@ -230,20 +227,6 @@ bool CProcessFactory::StartControlProcess()
 		return false;
 	}
 
-	// 起動したプロセスが完全に立ち上がるまでちょっと待つ．
-	//
-	// Note: この待ちにより、ここで起動したコントロールプロセスが競争に生き残れなかった場合でも、
-	// 唯一生き残ったコントロールプロセスが多重起動防止用ミューテックスを作成しているはず。
-	//
-	int nResult;
-	nResult = ::WaitForInputIdle( p.hProcess, 10000 );	//	最大10秒間待つ
-	if( 0 != nResult ){
-		ErrorMessage( NULL, L"\'%ls\'\nコントロールプロセスの起動に失敗しました。", szEXE );
-		::CloseHandle( p.hThread );
-		::CloseHandle( p.hProcess );
-		return false;
-	}
-
 	::CloseHandle( p.hThread );
 	::CloseHandle( p.hProcess );
 	
@@ -264,27 +247,14 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 	// Note: コントロールプロセス側は多重起動防止用ミューテックスを ::CreateMutex() で
 	// 作成するよりも先に初期化完了イベントを ::CreateEvent() で作成する。
 	//
-	if( !IsExistControlProcess() ){
-		// コントロールプロセスが多重起動防止用のミューテックス作成前に異常終了した場合など
-		return false;
-	}
-
 	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
 	std::wstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
 	strInitEvent += pszProfileName;
 	HANDLE hEvent;
-	hEvent = ::OpenEvent( EVENT_ALL_ACCESS, FALSE, strInitEvent.c_str() );
+	hEvent = ::CreateEventW( NULL, TRUE, FALSE, strInitEvent.c_str() );
 	if( NULL == hEvent ){
-		// 動作中のコントロールプロセスを旧バージョンとみなし、イベントを待たずに処理を進める
-		//
-		// Note: Ver1.5.9.91以前のバージョンは初期化完了イベントを作らない。
-		// このため、コントロールプロセスが常駐していないときに複数ウィンドウをほぼ
-		// 同時に起動すると、競争に生き残れなかったコントロールプロセスの親プロセスや、
-		// 僅かに出遅れてコントロールプロセスを作成しなかったプロセスでも、
-		// コントロールプロセスの初期化処理を追い越してしまい、異常終了したり、
-		// 「タブバーが表示されない」のような問題が発生していた。
-		//
-		return true;
+		TopErrorMessage( NULL, L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。" );
+		return false;
 	}
 	DWORD dwRet;
 	dwRet = ::WaitForSingleObject( hEvent, 10000 );	// 最大10秒間待つ
@@ -295,33 +265,4 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 	}
 	::CloseHandle( hEvent );
 	return true;
-}
-
-/*!
-	@brief 「設定を保存して終了する」オプション処理（sakuext連携用）
-
-	@author ryoji
-	@date 2007.09.04
-*/
-bool CProcessFactory::TestWriteQuit()
-{
-	if( CCommandLine::getInstance()->IsWriteQuit() ){
-		WCHAR szIniFileIn[_MAX_PATH];
-		WCHAR szIniFileOut[_MAX_PATH];
-		CFileNameManager::getInstance()->GetIniFileNameDirect( szIniFileIn, szIniFileOut, L"" );
-		if( szIniFileIn[0] != L'\0' ){	// マルチユーザ用設定か
-			// 既にマルチユーザ用のiniファイルがあればEXE基準のiniファイルに上書き更新して終了
-			if( fexist(szIniFileIn) ){
-				if( ::CopyFile( szIniFileIn, szIniFileOut, FALSE ) ){
-					return true;
-				}
-			}
-		}else{
-			// 既にEXE基準のiniファイルがあれば何もせず終了
-			if( fexist(szIniFileOut) ){
-				return true;
-			}
-		}
-	}
-	return false;
 }

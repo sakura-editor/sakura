@@ -23,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CFUNCLISTMANAGER_C2C5861D_3B93_4B1F_B241_E3314414A2C1_H_
+#define SAKURA_CFUNCLISTMANAGER_C2C5861D_3B93_4B1F_B241_E3314414A2C1_H_
 #pragma once
 
 class CDocLine;
@@ -55,3 +57,4 @@ public:
 	//一括操作
 	void ResetAllFucListMark(CDocLineMgr* pcDocLineMgr, bool bFlag);	// 関数リストマークをすべてリセット
 };
+#endif /* SAKURA_CFUNCLISTMANAGER_C2C5861D_3B93_4B1F_B241_E3314414A2C1_H_ */

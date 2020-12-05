@@ -1,13 +1,18 @@
 <Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="GoogleTest">
     <GoogleTestSourceDir>$(MSBuildThisFileDirectory)googletest</GoogleTestSourceDir>
-    <GoogleTestBuildDir>$(MSBuildThisFileDirectory)build\</GoogleTestBuildDir>
-    <GoogleTestInstallDir>$([MsBuild]::NormalizePath('$(MSBuildThisFileDirectory)..\tools\googletest\'))</GoogleTestInstallDir>
+    <GoogleTestBuildDir>$(MSBuildThisFileDirectory)build\$(Platform)\$(Configuration)\gtest_build\</GoogleTestBuildDir>
+    <GoogleTestInstallDir>$([MsBuild]::NormalizePath('$(GoogleTestBuildDir)..\googletest\'))</GoogleTestInstallDir>
     <IncludePath>$(GoogleTestInstallDir)include;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Platform)' == 'Win32'">$(GoogleTestInstallDir)lib;$(LibraryPath)</LibraryPath>
-    <LibraryPath Condition="'$(Platform)' == 'x64'">$(GoogleTestInstallDir)lib64;$(LibraryPath)</LibraryPath>
+    <GoogleTestLibInstallDir Condition="'$(Platform)' == 'Win32'">$(GoogleTestInstallDir)lib</GoogleTestLibInstallDir>
+    <GoogleTestLibInstallDir Condition="'$(Platform)' == 'x64'">$(GoogleTestInstallDir)lib64</GoogleTestLibInstallDir>
+    <LibraryPath>$(GoogleTestLibInstallDir);$(LibraryPath)</LibraryPath>
     <NameSuffix Condition="'$(Configuration)' == 'Debug'">d</NameSuffix>
     <NameSuffix Condition="'$(Configuration)' == 'Release'"></NameSuffix>
+    <GTestLibName>gtest$(NameSuffix).lib</GTestLibName>
+    <GTestMainLibName>gtest_main$(NameSuffix).lib</GTestMainLibName>
+    <GTestLibPath>$(GoogleTestLibInstallDir)\$(GTestLibName)</GTestLibPath>
+    <GTestMainLibPath>$(GoogleTestLibInstallDir)\$(GTestMainLibName)</GTestMainLibPath>
   </PropertyGroup>
   <ItemDefinitionGroup Label="GoogleTest.Requirements">
     <ClCompile>
@@ -16,8 +21,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Label="GoogleTest.Libs">
     <Link>
-      <AdditionalDependencies>gtest$(NameSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalDependencies>gtest_main$(NameSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(GTestLibName);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(GTestMainLibName);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Target Name="MakeGoogleTestBuildDir" Condition="!Exists('$(GoogleTestBuildDir)')">
@@ -26,7 +31,7 @@
   <Target Name="MakeGoogleTestInstallDir" Condition="!Exists('$(GoogleTestInstallDir)')">
     <MakeDir Directories="$(GoogleTestInstallDir)" />
   </Target>
-  <Target Name="BuildGoogleTest" DependsOnTargets="MakeGoogleTestBuildDir;MakeGoogleTestInstallDir" BeforeTargets="ClCompile">
+  <Target Name="BuildGoogleTest" DependsOnTargets="MakeGoogleTestBuildDir;MakeGoogleTestInstallDir" BeforeTargets="ClCompile" Condition="!Exists('$(GTestLibPath)') Or !Exists('$(GTestMainLibPath)')">
     <PropertyGroup>
       <VsVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(VisualStudioVersion)', '^(\d+).*', '$1'))</VsVersion>
     </PropertyGroup>
@@ -35,7 +40,7 @@
     <SetEnv name="NUM_VSVERSION" value="$(VsVersion)" prefix="false" />
     <Exec Command="$(MSBuildThisFileDirectory)googletest.build.cmd &quot;$(GoogleTestBuildDir)&quot; &quot;$(GoogleTestInstallDir)&quot;" ConsoleToMSBuild="true" />
   </Target>
-  <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
+  <Target Name="AppendCleanTargetsForGoogleTest" BeforeTargets="CoreClean">
     <RemoveDir Directories="$(GoogleTestBuildDir)" />
     <RemoveDir Directories="$(GoogleTestInstallDir)" />
   </Target>

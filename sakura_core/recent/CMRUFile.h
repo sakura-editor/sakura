@@ -32,6 +32,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CMRUFILE_41099ADB_562E_457B_873D_8F81AC958AC2_H_
+#define SAKURA_CMRUFILE_41099ADB_562E_457B_873D_8F81AC958AC2_H_
 #pragma once
 
 #include <Windows.h> /// BOOL,HMENU // 2002/2/10 aroka
@@ -71,3 +73,4 @@ protected:
 private:
 	CRecentFile	m_cRecentFile;	//履歴	//@@@ 2003.04.08 MIK
 };
+#endif /* SAKURA_CMRUFILE_41099ADB_562E_457B_873D_8F81AC958AC2_H_ */

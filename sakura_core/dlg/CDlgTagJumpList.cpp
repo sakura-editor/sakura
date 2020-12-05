@@ -522,9 +522,7 @@ BOOL CDlgTagJumpList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		bRet = FALSE;	//for set focus
 	}
 
-	m_comboDel = SComboBoxItemDeleter();
-	m_comboDel.pRecent = &m_cRecentKeyword;
-	SetComboBoxDeleter(hwndKey, &m_comboDel);
+	SetComboBoxDeleter(hwndKey, &m_cRecentKeyword);
 
 	/* 基底クラスメンバ */
 	CDialog::OnInitDialog( GetHwnd(), wParam, lParam );

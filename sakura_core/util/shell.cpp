@@ -257,13 +257,19 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 */
 static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, LPARAM lParam )
 {
-	// プロパティシートの初期化時にボタン追加、プロパティシートのサブクラス化を行う
+	// プロパティシートの初期化時にシステムフォント設定、ボタン追加、プロパティシートのサブクラス化を行う
 	if( uMsg == PSCB_INITIALIZED ){
-		s_pOldPropSheetWndProc = (WNDPROC)::SetWindowLongPtr( hwndDlg, GWLP_WNDPROC, (LONG_PTR)PropSheetWndProc );
-		HINSTANCE hInstance = (HINSTANCE)::GetModuleHandle( NULL );
-		HWND hwndBtn = ::CreateWindowEx( 0, WC_BUTTON, LS(STR_SHELL_INIFOLDER), BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 0, 0, 140, 20, hwndDlg, (HMENU)0x02000, hInstance, NULL );
-		::SendMessage( hwndBtn, WM_SETFONT, (WPARAM)::SendMessage( hwndDlg, WM_GETFONT, 0, 0 ), MAKELPARAM( FALSE, 0 ) );
-		::SetWindowPos( hwndBtn, ::GetDlgItem( hwndDlg, IDHELP), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+		// システムフォント設定は言語設定に関係なく実施(force=TRUE)
+		HFONT hFont = UpdateDialogFont( hwndDlg, TRUE );
+
+		if( CShareData::getInstance()->IsPrivateSettings() ){
+			// 個人設定フォルダを使用するときは「設定フォルダ」ボタンを追加する
+			s_pOldPropSheetWndProc = (WNDPROC)::SetWindowLongPtr( hwndDlg, GWLP_WNDPROC, (LONG_PTR)PropSheetWndProc );
+			HINSTANCE hInstance = (HINSTANCE)::GetModuleHandle( NULL );
+			HWND hwndBtn = ::CreateWindowEx( 0, WC_BUTTON, LS(STR_SHELL_INIFOLDER), BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 0, 0, 140, 20, hwndDlg, (HMENU)0x02000, hInstance, NULL );
+			::SendMessage( hwndBtn, WM_SETFONT, (WPARAM)hFont, MAKELPARAM( FALSE, 0 ) );
+			::SetWindowPos( hwndBtn, ::GetDlgItem( hwndDlg, IDHELP), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+		}
 	}
 	return 0;
 }
@@ -274,11 +280,9 @@ static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, LPARAM lParam )
 */
 INT_PTR MyPropertySheet( LPPROPSHEETHEADER lppsph )
 {
-	// 個人設定フォルダを使用するときは「設定フォルダ」ボタンを追加する
-	if( CShareData::getInstance()->IsPrivateSettings() ){
-		lppsph->dwFlags |= PSH_USECALLBACK;
-		lppsph->pfnCallback = PropSheetProc;
-	}
+	lppsph->dwFlags |= PSH_USECALLBACK;
+	lppsph->pfnCallback = PropSheetProc;
+
 	return ::PropertySheet( lppsph );
 }
 

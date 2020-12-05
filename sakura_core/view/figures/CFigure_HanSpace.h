@@ -22,17 +22,20 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CFIGURE_HANSPACE_38751BA0_6F58_4929_A24D_1937F2FB3E6A_H_
+#define SAKURA_CFIGURE_HANSPACE_38751BA0_6F58_4929_A24D_1937F2FB3E6A_H_
 #pragma once
 
 #include "view/figures/CFigureStrategy.h"
 
 //! 半角スペース描画
-class CFigure_HanSpace : public CFigureSpace{
+class CFigure_HanSpace final : public CFigureSpace{
 public:
 	//traits
-	bool Match(const wchar_t* pText, int nTextLen) const;
+	bool Match(const wchar_t* pText, int nTextLen) const override;
 
 	//action
-	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool trans) const;
-	EColorIndexType GetColorIdx(void) const{ return COLORIDX_SPACE; }
+	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool trans) const override;
+	EColorIndexType GetColorIdx(void) const override { return COLORIDX_SPACE; }
 };
+#endif /* SAKURA_CFIGURE_HANSPACE_38751BA0_6F58_4929_A24D_1937F2FB3E6A_H_ */

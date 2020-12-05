@@ -65,11 +65,14 @@ for:
   artifacts:
     - path: 'sakura-*-Chm.zip*'
 
+# run only for Release
 -
   matrix:
     only:
       - platform: Win32
+        configuration: Release
       - platform: x64
+        configuration: Release
 
   artifacts:
     - path: 'sakura-*$(platform)-$(configuration)*.zip*'

@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CFIGURESTRATEGY_5D122522_91F9_4FC5_A31A_E78FB5DB0D0F_H_
+#define SAKURA_CFIGURESTRATEGY_5D122522_91F9_4FC5_A31A_E78FB5DB0D0F_H_
 #pragma once
 
 #include <vector>
@@ -43,21 +45,34 @@ public:
 		CEditDoc* pCEditDoc = CEditDoc::GetInstance(0);
 		m_pTypeData = &pCEditDoc->m_cDocType.GetDocumentAttribute();
 	}
+
 protected:
 	const STypeConfig* m_pTypeData;
 };
 
+typedef int FigureRenderType;
+
 //! 通常テキスト描画
-class CFigure_Text : public CFigure{
+class CFigure_Text final : public CFigure{
 public:
-	bool DrawImp(SColorStrategyInfo* pInfo);
-	bool Match(const wchar_t* pText, int nTextLen) const
+	// 文字列を進める
+	static FigureRenderType GetRenderType(SColorStrategyInfo* pInfo);
+
+	static const FigureRenderType RenderType_None = -1;
+	static bool IsRenderType_Block(FigureRenderType nRenderType){
+		return (nRenderType != RenderType_None) && (nRenderType & 0x1);
+	}
+	static bool DrawImpBlock(SColorStrategyInfo* pInfo, int nPos, int nLength);
+	static int FowardChars(SColorStrategyInfo* pInfo);
+
+	bool DrawImp(SColorStrategyInfo* pInfo) override;
+	bool Match(const wchar_t* pText, int nTextLen) const override
 	{
 		return true;
 	}
 
 	//! 色分け表示対象判定
-	virtual bool Disp(void) const
+	bool Disp(void) const override
 	{
 		return true;
 	}
@@ -66,19 +81,21 @@ public:
 //! 各種空白（半角空白／全角空白／タブ／改行）描画用の基本クラス
 class CFigureSpace : public CFigure{
 public:
-	virtual bool DrawImp(SColorStrategyInfo* pInfo);
+	bool DrawImp(SColorStrategyInfo* pInfo) override;
+
 protected:
 	virtual void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const = 0;
 	virtual EColorIndexType GetColorIdx(void) const = 0;
 
+public:
 	//! 色分け表示対象判定
-	virtual bool Disp(void) const
+	bool Disp(void) const override
 	{
 		EColorIndexType nColorIndex = GetColorIdx();
 		return m_pTypeData->m_ColorInfoArr[nColorIndex].m_bDisp;
 	}
 
-	virtual void Update(void)
+	void Update(void) override
 	{
 		CFigure::Update();
 
@@ -90,6 +107,7 @@ protected:
 		}
 	}
 
+protected:
 	EColorIndexType GetDispColorIdx(void) const{ return m_nDispColorIndex; }
 
 	// 実装補助
@@ -100,3 +118,4 @@ protected:
 protected:
 	EColorIndexType m_nDispColorIndex;
 };
+#endif /* SAKURA_CFIGURESTRATEGY_5D122522_91F9_4FC5_A31A_E78FB5DB0D0F_H_ */

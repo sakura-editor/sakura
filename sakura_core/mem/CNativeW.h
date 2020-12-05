@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CNATIVEW_3B48F63E_5B62_4FAB_9718_0D80114E20C1_H_
+#define SAKURA_CNATIVEW_3B48F63E_5B62_4FAB_9718_0D80114E20C1_H_
 #pragma once
 
 #include "CNative.h"
@@ -178,3 +180,4 @@ public:
 
 // 派生クラスでメンバー追加禁止
 static_assert(sizeof(CNativeW) == sizeof(CNative), "size check");
+#endif /* SAKURA_CNATIVEW_3B48F63E_5B62_4FAB_9718_0D80114E20C1_H_ */

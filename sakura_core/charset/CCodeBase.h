@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CCODEBASE_1AB194FB_933C_495E_A3A3_62E117C72644_H_
+#define SAKURA_CCODEBASE_1AB194FB_933C_495E_A3A3_62E117C72644_H_
 #pragma once
 
 //定数
@@ -95,3 +97,4 @@ inline int CCodeBase::TextToBin( const unsigned short cSrc )
 {
 	return static_cast<int>((cSrc - 0xdc00) & 0x00ff);
 }
+#endif /* SAKURA_CCODEBASE_1AB194FB_933C_495E_A3A3_62E117C72644_H_ */

@@ -5,6 +5,7 @@
 #include "env/CSakuraEnvironment.h"
 #include <limits.h>
 #include "window.h"
+#include <sstream>
 
 int CDPI::nDpiX = 96;
 int CDPI::nDpiY = 96;
@@ -310,3 +311,97 @@ void CFontAutoDeleter::Release()
 	}
 }
 #endif
+
+/*!
+	システムフォントに準拠したフォントを取得
+	@param[in]	nLogicalHeight	フォント高さ(論理単位)
+	@return		フォントハンドル(破棄禁止)
+*/
+HFONT GetSystemBasedFont( LONG nLogicalHeight )
+{
+	// キー:文字列化したLOGFONT
+	static std::map<std::wstring, HFONT> fontStock;
+
+	NONCLIENTMETRICS metrics = { CCSIZEOF_STRUCT( NONCLIENTMETRICS, lfMessageFont ) };
+	if( !SystemParametersInfo( SPI_GETNONCLIENTMETRICS, 0, &metrics, 0 ) ) {
+		return NULL;
+	}
+	LOGFONT lfFont = metrics.lfMessageFont;
+	lfFont.lfHeight = nLogicalHeight;
+
+	std::wostringstream key;
+	key << lfFont.lfHeight << " "
+		<< lfFont.lfWidth << " "
+		<< lfFont.lfEscapement << " "
+		<< lfFont.lfOrientation << " "
+		<< lfFont.lfWeight << " "
+		<< lfFont.lfItalic << " "
+		<< lfFont.lfUnderline << " "
+		<< lfFont.lfStrikeOut << " "
+		<< lfFont.lfCharSet << " "
+		<< lfFont.lfOutPrecision << " "
+		<< lfFont.lfClipPrecision << " "
+		<< lfFont.lfQuality << " "
+		<< lfFont.lfPitchAndFamily << " "
+		<< lfFont.lfFaceName;
+	auto found = fontStock.find( key.str() );
+	if( found != fontStock.end() ) {
+		return found->second;
+	}
+
+	HFONT hFont = CreateFontIndirect( &lfFont );
+	if( hFont != NULL ) {
+		fontStock[key.str()] = hFont;
+	}
+
+	return hFont;
+}
+
+/*!
+	SetFontRecursiveで使用するコールバック関数
+	@param[in]	hwnd	設定先のウィンドウハンドル
+	@param[in]	hFont	フォントハンドル
+*/
+BOOL CALLBACK SetFontRecursiveProc( HWND hwnd, LPARAM hFont )
+{
+	SendMessageAny( hwnd, WM_SETFONT, (WPARAM)hFont, (LPARAM)FALSE );
+	EnumChildWindows( hwnd, SetFontRecursiveProc, (LPARAM)hFont );
+	return TRUE;
+}
+
+/*!
+	指定したウィンドウおよびその子孫にフォントを設定
+	@param[in]	hwnd	設定先のウィンドウハンドル
+	@param[in]	hFont	フォントハンドル
+*/
+void SetFontRecursive( HWND hwnd, HFONT hFont )
+{
+	SendMessageAny( hwnd, WM_SETFONT, (WPARAM)hFont, (LPARAM)FALSE );
+	EnumChildWindows( hwnd, SetFontRecursiveProc, (LPARAM)hFont );
+}
+
+/*!
+	ダイアログボックス用のフォントを設定
+	@param[in]	hwnd		設定対象ダイアログボックスのウィンドウハンドル
+	@param[in]	force		強制設定有無(TRUE:必ず設定 FALSE:日本語の場合は設定しそれ以外では設定しない)
+	@return		ダイアログボックスに設定されたフォントハンドル(破棄禁止)
+*/
+HFONT UpdateDialogFont( HWND hwnd, BOOL force )
+{
+	HFONT hFontDialog = (HFONT)::SendMessageAny( hwnd, WM_GETFONT, 0, (LPARAM)NULL );
+
+	if( !force && wcsncmp_literal( CSelectLang::getDefaultLangString(), _T("Japanese") ) != 0 ){
+		return hFontDialog;
+	}
+
+	// 現在設定済みフォントと同じ高さのシステムフォント風フォントを得て再設定
+	LOGFONT lfDialog = {};
+	GetObject( hFontDialog, sizeof( lfDialog ), &lfDialog );
+	HFONT hFontSystemBased = GetSystemBasedFont( lfDialog.lfHeight );
+	if( hFontSystemBased != NULL ){
+		SetFontRecursive( hwnd, hFontSystemBased );
+		hFontDialog = hFontSystemBased;
+	}
+
+	return hFontDialog;
+}

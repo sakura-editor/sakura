@@ -29,6 +29,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CDLGFAVORITE_D3C5AE69_3DBD_4C29_9918_BCC0D3BE61FE_H_
+#define SAKURA_CDLGFAVORITE_D3C5AE69_3DBD_4C29_9918_BCC0D3BE61FE_H_
 #pragma once
 
 #include "dlg/CDialog.h"
@@ -137,3 +139,4 @@ private:
 
 	static void  ListViewSort(ListViewSortInfo& info, const CRecent* pRecent, int column, bool bReverse);
 };
+#endif /* SAKURA_CDLGFAVORITE_D3C5AE69_3DBD_4C29_9918_BCC0D3BE61FE_H_ */

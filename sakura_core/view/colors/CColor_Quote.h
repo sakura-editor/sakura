@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CCOLOR_QUOTE_DA1E69BE_19D1_4B16_BCF0_1516B00565D1_H_
+#define SAKURA_CCOLOR_QUOTE_DA1E69BE_19D1_4B16_BCF0_1516B00565D1_H_
 #pragma once
 
 #include "view/colors/CColorStrategy.h"
@@ -71,3 +73,4 @@ public:
 	CColor_DoubleQuote() : CColor_Quote(L'"') { }
 	EColorIndexType GetStrategyColor() const override{ return COLORIDX_WSTRING; }
 };
+#endif /* SAKURA_CCOLOR_QUOTE_DA1E69BE_19D1_4B16_BCF0_1516B00565D1_H_ */

@@ -90,9 +90,7 @@ void CDlgFind::ChangeView( LPARAM pcEditView )
 BOOL CDlgFind::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 {
 	BOOL bRet = CDialog::OnInitDialog(hwnd, wParam, lParam);
-	m_comboDel = SComboBoxItemDeleter();
-	m_comboDel.pRecent = &m_cRecentSearch;
-	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_TEXT), &m_comboDel);
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_TEXT), &m_cRecentSearch);
 
 	// フォント設定	2012/11/27 Uchi
 	HFONT hFontOld = (HFONT)::SendMessageAny( GetItemHwnd( IDC_COMBO_TEXT ), WM_GETFONT, 0, 0 );
@@ -182,10 +180,8 @@ void CDlgFind::SetCombosList( void )
 	while (Combo_GetCount(hwndCombo) > 0) {
 		Combo_DeleteString( hwndCombo, 0);
 	}
-	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT) ) + 1;
-	auto vText = std::make_unique<WCHAR[]>(nBufferSize);
-	Combo_GetText( hwndCombo, &vText[0], nBufferSize );
-	if (m_strText.compare( &vText[0] ) != 0) {
+	std::wstring strText;
+	if( !ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, strText ) || strText != m_strText ) {
 		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
 	}
 }
@@ -212,10 +208,7 @@ int CDlgFind::GetData( void )
 	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
 
 	/* 検索文字列 */
-	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT) ) + 1;
-	auto vText = std::make_unique<WCHAR[]>(nBufferSize);
-	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, &vText[0], nBufferSize);
-	m_strText = &vText[0];
+	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, m_strText );
 
 	/* 検索ダイアログを自動的に閉じる */
 	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_bAutoCloseDlgFind );

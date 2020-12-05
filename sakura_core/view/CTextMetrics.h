@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CTEXTMETRICS_7972A864_FDFF_4852_9EA5_A91D39657A7F_H_
+#define SAKURA_CTEXTMETRICS_7972A864_FDFF_4852_9EA5_A91D39657A7F_H_
 #pragma once
 
 //2007.08.25 kobake 追加
@@ -110,7 +112,8 @@ public:
 		const wchar_t* pText, //!< 文字列
 		int nLength,          //!< 文字列長
 		int nHankakuDx,       //!< 半角文字の文字間隔
-		int nCharSpacing
+		int nCharSpacing,     //!< 文字の隙間
+		std::vector<int>& vDxArray //!< [out] 文字間隔配列
 	);
 
 	int CalcTextWidth3(
@@ -127,4 +130,6 @@ private:
 	int m_anHankakuDx[64]; //!< 半角用文字間隔配列
 	int m_anZenkakuDx[64]; //!< 全角用文字間隔配列
 	std::vector<int> m_aFontHeightMargin;
+	mutable std::vector<int> m_vDxArray; //!< 文字間隔配列
 };
+#endif /* SAKURA_CTEXTMETRICS_7972A864_FDFF_4852_9EA5_A91D39657A7F_H_ */

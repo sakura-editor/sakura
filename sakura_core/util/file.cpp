@@ -27,6 +27,9 @@
 #include "StdAfx.h"
 #include <io.h>
 #include "file.h"
+
+#include <Shlwapi.h>
+
 #include "charset/CharPointer.h"
 #include "util/module.h"
 #include "util/window.h"
@@ -38,6 +41,25 @@
 bool fexist(LPCWSTR pszPath)
 {
 	return _waccess(pszPath,0)!=-1;
+}
+
+
+/*!
+ * パスがファイル名に使えない文字を含んでいるかチェックする
+ * @param[in] strPath チェック対象のパス
+ * @retval true  パスはファイル名に使えない文字を含んでいる
+ * retuval false パスはファイル名に使えない文字を含んでいない
+ */
+bool IsInvalidFilenameChars( const std::wstring_view& strPath )
+{
+	// ファイル名に使えない文字(ADSを使えるように':'は除外する)
+	constexpr const wchar_t invalidFilenameChars[] = L"*?\"<>|";
+
+	// 文字列中のファイル名を抽出する
+	std::wstring_view strFilename = ::PathFindFileNameW( strPath.data() );
+
+	// ファイル名に使えない文字が含まれる場合、trueを返す
+	return ::wcscspn( strFilename.data(), invalidFilenameChars ) < strFilename.length();
 }
 
 /*!	ファイル名の切り出し

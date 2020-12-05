@@ -268,6 +268,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 			case CBN_SELCHANGE:
 				nIndex2 = Combo_GetCurSel( hwndCombo );
 
+				::SendMessage( hwndFuncList, WM_SETREDRAW, FALSE, 0 );
 				List_ResetContent( hwndFuncList );
 
 				/* 機能一覧に文字列をセット (リストボックス) */
@@ -286,6 +287,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 						lResult = List_SetItemHeight( hwndFuncList, lResult, nListItemHeight );
 					}
 				}
+				::SendMessage( hwndFuncList, WM_SETREDRAW, TRUE, 0 );
 				return TRUE;
 			}
 		}else{
@@ -363,6 +365,9 @@ INT_PTR CPropToolbar::DispatchEvent(
 					}
 					//	To Here Apr. 13, 2002 genta
 					List_SetCurSel( hwndResList, nIndex1 + 1 );
+
+					// 機能リストを1つ進める
+					List_SetCurSel( hwndFuncList, nIndex2 + 1 );
 					break;
 
 				case IDC_BUTTON_ADD:
@@ -381,6 +386,9 @@ INT_PTR CPropToolbar::DispatchEvent(
 					}
 					//	To Here Apr. 13, 2002 genta
 					List_SetCurSel( hwndResList, nIndex1 );
+
+					// 機能リストを1つ進める
+					List_SetCurSel( hwndFuncList, nIndex2 + 1 );
 					break;
 
 				case IDC_BUTTON_UP:

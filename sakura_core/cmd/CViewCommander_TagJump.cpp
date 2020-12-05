@@ -102,7 +102,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 
 	/* 現在行のデータを取得 */
 	CLogicInt		nLineLen;
-	const wchar_t*	pLine = GetDocument()->m_cDocLineMgr.GetLine(ptXY.GetY2())->GetDocLineStrWithEOL(&nLineLen);
+	const wchar_t*	pLine = CDocLine::GetDocLineStrWithEOL_Safe(GetDocument()->m_cDocLineMgr.GetLine(ptXY.GetY2()), &nLineLen);
 	if( NULL == pLine ){
 		goto can_not_tagjump;
 	}
@@ -316,7 +316,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 				;
 			if( p >= p_end )
 				break;
-		
+
 			//	Check Path
 			if( IsFilePath( p, &nBgn, &nPathLen ) ){
 				wmemcpy( szJumpToFile, &p[nBgn], nPathLen );
@@ -330,7 +330,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 				;
 		}
 	}
-	
+
 	// 2011.11.29 Grep形式で失敗した後もTagsを検索する
 	if( szJumpToFile[0] == L'\0' ){
 		if( Command_TagJumpByTagsFile(bClose) ){	//@@@ 2003.04.13
@@ -602,7 +602,7 @@ bool CViewCommander::Command_TagJumpByTagsFileMsg( bool bMsg )
 	@author	MIK
 	@date	2003.04.13	新規作成
 	@date	2003.05.12	フォルダ階層も考慮して探す
-	@date	
+	@date
 */
 bool CViewCommander::Command_TagJumpByTagsFile( bool bClose )
 {
@@ -611,13 +611,13 @@ bool CViewCommander::Command_TagJumpByTagsFile( bool bClose )
 	if( 0 == cmemKeyW.GetStringLength() ){
 		return false;
 	}
-	
+
 	WCHAR	szDirFile[1024];
 	if( false == Sub_PreProcTagJumpByTagsFile( szDirFile, _countof(szDirFile) ) ){
 		return false;
 	}
 	CDlgTagJumpList	cDlgTagJumpList(true);	//タグジャンプリスト
-	
+
 	cDlgTagJumpList.SetFileName( szDirFile );
 	cDlgTagJumpList.SetKeyword(cmemKeyW.GetStringPtr());
 
@@ -667,7 +667,7 @@ bool CViewCommander::Command_TagJumpByTagsFileKeyword( const wchar_t* keyword )
 	cDlgTagJumpList.SetFileName( szCurrentPath );
 	cDlgTagJumpList.SetKeyword( keyword );
 
-	if( ! cDlgTagJumpList.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 0 ) ) 
+	if( ! cDlgTagJumpList.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 0 ) )
 	{
 		return true;	//キャンセル
 	}
@@ -698,7 +698,7 @@ bool CViewCommander::Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int cou
 		    return false;
 		}
 	}
-	
+
 	// 基準ファイル名の設定
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		wcscpy( szCurrentPath, GetDocument()->m_cDocFile.GetFilePath() );

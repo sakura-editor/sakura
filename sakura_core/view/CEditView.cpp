@@ -201,7 +201,7 @@ BOOL CEditView::Create(
 
 	m_ptSrchStartPos_PHY.Set(CLogicInt(-1), CLogicInt(-1));	//検索/置換開始時のカーソル位置  (改行単位行先頭からのバイト数(0開始), 改行単位行の行番号(0開始))
 	m_bSearch = FALSE;					// 検索/置換開始位置を登録するか */											// 02/06/26 ai
-	
+
 	m_ptBracketPairPos_PHY.Set(CLogicInt(-1), CLogicInt(-1)); // 対括弧の位置 (改行単位行先頭からのバイト数(0開始), 改行単位行の行番号(0開始))
 	m_ptBracketCaretPos_PHY.Set(CLogicInt(-1), CLogicInt(-1));
 
@@ -210,7 +210,7 @@ BOOL CEditView::Create(
 
 	m_crBack = -1;				/* テキストの背景色 */			// 2006.12.16 ryoji
 	m_crBack2 = -1;
-	
+
 	m_szComposition[0] = L'\0';
 
 	/* ルーラー表示 */
@@ -223,7 +223,7 @@ BOOL CEditView::Create(
 	m_nCompatBMPWidth = -1;
 	m_nCompatBMPHeight = -1;
 	// To Here 2007.09.09 Moca
-	
+
 	m_nOldUnderLineY = -1;
 	m_nOldCursorLineX = -1;
 	m_nOldCursorVLineWidth = 1;
@@ -289,8 +289,11 @@ BOOL CEditView::Create(
 	wc.hbrBackground	= (HBRUSH)NULL/*(COLOR_WINDOW + 1)*/;
 	wc.lpszMenuName		= NULL;
 	wc.lpszClassName	= GSTR_VIEWNAME;
-	if( 0 == ::RegisterClass( &wc ) ){
-	}
+
+	// TODO: 実装を改善する余地があります。
+	// RegisterClassは既に登録された状態で呼ぶと失敗するため、
+	// 単純に成否チェックして抜けたらマズいです。
+	::RegisterClass( &wc );
 
 	/* エディタウィンドウの作成 */
 	SetHwnd(
@@ -404,7 +407,7 @@ void CEditView::Close()
 
 	delete m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
 	m_cRegexKeyword = NULL;
-	
+
 	delete m_pcTextArea;
 	m_pcTextArea = NULL;
 	delete m_pcCaret;
@@ -624,7 +627,7 @@ LRESULT CEditView::DispatchEvent(
 			/* アクティブなペインを設定 */
 			m_pcEditWnd->SetActivePane( m_nMyIndex );
 			// カーソルをクリック位置へ移動する
-			OnLBUTTONDOWN( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );	
+			OnLBUTTONDOWN( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
 			// 2007.10.02 nasukoji
 			m_bActivateByMouse = FALSE;		// マウスによるアクティベートを示すフラグをOFF
 		}
@@ -806,25 +809,25 @@ LRESULT CEditView::DispatchEvent(
 		return 0L;
 
 	case WM_IME_REQUEST:  /* 再変換  by minfu 2002.03.27 */ // 20020331 aroka
-		
-		// 2002.04.09 switch case に変更  minfu 
+
+		// 2002.04.09 switch case に変更  minfu
 		switch ( wParam ){
 		case IMR_RECONVERTSTRING:
 			return SetReconvertStruct((PRECONVERTSTRING)lParam, UNICODE_BOOL);
-			
+
 		case IMR_CONFIRMRECONVERTSTRING:
 			return SetSelectionFromReonvert((PRECONVERTSTRING)lParam, UNICODE_BOOL);
-			
+
 		// 2010.03.16 MS-IME 2002 だと「カーソル位置の前後の内容を参照して変換を行う」の機能
 		case IMR_DOCUMENTFEED:
 			return SetReconvertStruct((PRECONVERTSTRING)lParam, UNICODE_BOOL, true);
-			
+
 		default:
 			break;
 		}
 		// 2010.03.16 0LではなくTSFが何かするかもしれないのでDefにまかせる
 		return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
-	
+
 	case MYWM_DROPFILES:	// 独自のドロップファイル通知	// 2008.06.20 ryoji
 		OnMyDropFiles( (HDROP)wParam );
 		return 0L;
@@ -906,7 +909,7 @@ void CEditView::OnMove( int x, int y, int nWidth, int nHeight )
 /* ウィンドウサイズの変更処理 */
 void CEditView::OnSize( int cx, int cy )
 {
-	if( NULL == GetHwnd() 
+	if( NULL == GetHwnd()
 		|| ( cx == 0 && cy == 0 ) ){
 		// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
 		// ウィンドウ無効時にも互換BMPを破棄する
@@ -1168,8 +1171,8 @@ void CEditView::MoveCursorSelecting(
 	GetCaret().GetAdjustCursorPos(&ptWk_CaretPos);
 	if( bSelect ){
 		/*	現在のカーソル位置によって選択範囲を変更．
-		
-			2004.04.02 Moca 
+
+			2004.04.02 Moca
 			キャレット位置が不正だった場合にMoveCursorの移動結果が
 			引数で与えた座標とは異なることがあるため，
 			nPosX, nPosYの代わりに実際の移動結果を使うように．
@@ -1236,7 +1239,7 @@ bool CEditView::IsCurrentPositionURL(
 		&ptXY
 	);
 	CLogicInt		nLineLen;
-	const wchar_t*	pLine = m_pcEditDoc->m_cDocLineMgr.GetLine(ptXY.GetY2())->GetDocLineStrWithEOL(&nLineLen); //2007.10.09 kobake レイアウト・ロジック混在バグ修正
+	const wchar_t*	pLine = CDocLine::GetDocLineStrWithEOL_Safe(m_pcEditDoc->m_cDocLineMgr.GetLine(ptXY.GetY2()), &nLineLen); //2007.10.09 kobake レイアウト・ロジック混在バグ修正
 
 	bool		bMatch;
 	int			nMatchColor;
@@ -1296,7 +1299,7 @@ VOID CEditView::OnTimer(
 			bool bHide;
 			if( MiniMapCursorLineTip( &po, &rc, &bHide ) ){
 				m_cTipWnd.m_bAlignLeft = true;
-				m_cTipWnd.Show( po.x, po.y + m_pcEditWnd->GetActiveView().GetTextMetrics().GetHankakuHeight(), NULL );
+				m_cTipWnd.Show( po.x, po.y + m_pcEditWnd->GetActiveView().GetTextMetrics().GetHankakuHeight() );
 			}else{
 				if( bHide && 0 == m_dwTipTimer ){
 					m_cTipWnd.Hide();
@@ -1305,7 +1308,7 @@ VOID CEditView::OnTimer(
 		}else{
 			if( FALSE != KeyWordHelpSearchDict( LID_SKH_ONTIMER, &po, &rc ) ){	// 2006.04.10 fon
 				/* 辞書Tipを表示 */
-				m_cTipWnd.Show( po.x, po.y + GetTextMetrics().GetHankakuHeight(), NULL );
+				m_cTipWnd.Show( po.x, po.y + GetTextMetrics().GetHankakuHeight() );
 			}
 		}
 	}
@@ -1403,7 +1406,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 					nDelLen,
 					&cmemBuf
 				);
-				
+
 				{
 					/* 機能種別によるバッファの変換 */
 					int nStartColumn = (Int)sPos.GetX2() / (Int)GetTextMetrics().GetLayoutXDefault();
@@ -2272,7 +2275,7 @@ bool CEditView::MyGetClipboardData( CNativeW& cmemBuf, bool* pbColumnSelect, boo
 
 	if(!CClipboard::HasValidData())
 		return false;
-	
+
 	CClipboard cClipboard(GetHwnd());
 	if(!cClipboard)
 		return false;
@@ -2327,7 +2330,7 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint, bool DisalbeUnder
 //	m_nOldUnderLineY  = -1;
 	// 2011.12.06 Moca IsTextSelected → IsTextSelecting に変更。ロック中も下線を表示しない
 	int bCursorLineBgDraw = false;
-	
+
 	// カーソル行の描画
 	if( bDraw
 	 && bCursorLineBg
@@ -2356,7 +2359,7 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint, bool DisalbeUnder
 			GetCaret().m_cUnderLine.UnLock();
 		}
 	}
-	
+
 	int nCursorVLineX = -1;
 	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
 	if( bCursorVLine ){
@@ -2394,7 +2397,7 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint, bool DisalbeUnder
 		}	// ReleaseDC の前に gr デストラクト
 		::ReleaseDC( GetHwnd(), hdc );
 	}
-	
+
 	int nUnderLineY = -1;
 	if( bUnderLine ){
 		nUnderLineY = GetTextArea().GetAreaTop() + (Int)(GetCaret().GetCaretLayoutPos().GetY2() - GetTextArea().GetViewTopLine())
@@ -2493,7 +2496,7 @@ void CEditView::CaretUnderLineOFF( bool bDraw, bool bDrawPaint, bool bResetFlag,
 
 			//	選択情報を復元
 			GetCaret().m_cUnderLine.UnLock();
-			
+
 			if( bDrawPaint ){
 				m_nOldUnderLineYBg = -1;
 			}
@@ -2662,7 +2665,7 @@ bool  CEditView::ShowKeywordHelp( POINT po, LPCWSTR pszHelp, LPRECT prcHokanWin)
 		// 2001/06/19 End
 
 			/* 辞書Tipを表示 */
-			m_cTipWnd.Show( po.x, po.y , NULL , &rcTipWin);
+			m_cTipWnd.Show( po.x, po.y, &rcTipWin );
 			return true;
 		}
 	}
@@ -2677,7 +2680,7 @@ bool  CEditView::ShowKeywordHelp( POINT po, LPCWSTR pszHelp, LPRECT prcHokanWin)
 	@param[in] ptTo    指定範囲終了
 	@param[in] bSelect    範囲指定
 	@param[in] bBoxSelect 矩形選択
-	
+
 	@retval true  指定位置または指定範囲内にテキストが存在しない
 			false 指定位置または指定範囲内にテキストが存在する
 

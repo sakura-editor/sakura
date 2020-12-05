@@ -23,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CWORDPARSE_C025B28F_9FBB_464A_9831_5E9DDAAEAA35_H_
+#define SAKURA_CWORDPARSE_C025B28F_9FBB_464A_9831_5E9DDAAEAA35_H_
 #pragma once
 
 #include "basis/SakuraBasis.h"
@@ -113,6 +115,9 @@ public:
 		CLogicInt*		pnColumnNew,	//	見つかった位置
 		BOOL			bStopsBothEnds	//	単語の両端で止まる
 	);
+
+	static bool SearchPrevWordPosition(const wchar_t* pLine,
+		CLogicInt nLineLen, CLogicInt nIdx, CLogicInt* pnColumnNew, BOOL bStopsBothEnds);
 
 	template< class CHAR_TYPE >
 	static int GetWord( const CHAR_TYPE* pS, const int nLen, const CHAR_TYPE *pszSplitCharList,
@@ -229,3 +234,4 @@ end_func:
 	}
 	return pr - pS;
 }
+#endif /* SAKURA_CWORDPARSE_C025B28F_9FBB_464A_9831_5E9DDAAEAA35_H_ */

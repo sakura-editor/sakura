@@ -22,7 +22,12 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_STRING_EX_87282FEB_4B23_4112_9C5A_419F43618705_H_
+#define SAKURA_STRING_EX_87282FEB_4B23_4112_9C5A_419F43618705_H_
 #pragma once
+
+#include <vadefs.h>
+#include <string>
 
 // 2007.10.19 kobake
 // string.h で定義されている関数を拡張したようなモノ達
@@ -198,6 +203,9 @@ inline int auto_vsprintf(WCHAR* buf, const WCHAR* format, va_list& v){ return tc
 inline int auto_vsprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list& v){ return tchar_vsprintf_s(buf, nBufCount, format, v); }
 inline int auto_vsprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list& v){ return tchar_vsprintf_s(buf, nBufCount, format, v); }
 
+int vstrprintf( std::wstring& strOut, const WCHAR* pszFormat, va_list& argList );
+int strprintf( std::wstring& strOut, const WCHAR* pszFormat, ... );
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      文字コード変換                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -257,3 +265,4 @@ int strnicmp_literal(const char* strData1, const char (&literalData2)[Size]) {
 	assert(literalData2[Size - 1] == 0);
 	return ::_strnicmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
 }
+#endif /* SAKURA_STRING_EX_87282FEB_4B23_4112_9C5A_419F43618705_H_ */

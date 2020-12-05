@@ -191,6 +191,8 @@ INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 /* ダイアログデータの設定 */
 void CPropTab::SetData( HWND hwndDlg )
 {
+	::SendMessage(hwndDlg, WM_SETREDRAW, (WPARAM)FALSE, 0);
+
 	//	Feb. 11, 2007 genta「ウィンドウ」シートより移動
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabWnd, m_Common.m_sTabBar.m_bDispTabWnd );	//@@@ 2003.05.31 MIK
 	::CheckDlgButton( hwndDlg, IDC_CHECK_SameTabWidth, m_Common.m_sTabBar.m_bSameTabWidth );	//@@@ 2006.01.28 ryoji
@@ -233,6 +235,8 @@ void CPropTab::SetData( HWND hwndDlg )
 	m_hTabFont = SetFontLabel( hwndDlg, IDC_STATIC_TABFONT, m_Common.m_sTabBar.m_lf, m_Common.m_sTabBar.m_nPointSize);
 
 	EnableTabPropInput(hwndDlg);
+
+	::SendMessage(hwndDlg, WM_SETREDRAW, (WPARAM)TRUE, 0);
 }
 
 /* ダイアログデータの取得 */

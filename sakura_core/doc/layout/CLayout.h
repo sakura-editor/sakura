@@ -13,6 +13,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CLAYOUT_7DF189B5_10E6_42A4_8A49_371C848CB38F_H_
+#define SAKURA_CLAYOUT_7DF189B5_10E6_42A4_8A49_371C848CB38F_H_
 #pragma once
 
 #include "util/design_template.h"
@@ -57,7 +59,7 @@ public:
 	}
 	~CLayout();
 	void DUMP( void );
-	
+
 	// m_ptLogicPos.xで補正したあとの文字列を得る
 	const wchar_t* GetPtr() const   { return m_pCDocLine->GetPtr() + m_ptLogicPos.x; }
 	CLogicInt GetLengthWithEOL() const    { return m_nLength;	}	//	ただしEOLは常に1文字とカウント？？
@@ -66,7 +68,12 @@ public:
 	CLayoutInt GetIndent() const {	return m_nIndent;	}	//!< このレイアウト行のインデントサイズを取得。単位は半角文字。	CMemoryIterator用
 
 	//取得インターフェース
-	CLogicInt GetLogicLineNo() const{ if(this)return m_ptLogicPos.GetY2(); else return CLogicInt(-1); } //$$$高速化
+	CLogicInt GetLogicLineNo() const{ if(this)return m_ptLogicPos.GetY2(); else return CLogicInt(-1); } //$$$高速化 // TODO: Remove "this" check
+	static CLogicInt GetLogicLineNo_Safe(const CLayout* layout) {
+		if (layout)
+			return layout->m_ptLogicPos.GetY2();
+		return CLogicInt(-1);
+	}
 	CLogicInt GetLogicOffset() const{ return m_ptLogicPos.GetX2(); }
 	CLogicPoint GetLogicPos() const{ return m_ptLogicPos; }
 	EColorIndexType GetColorTypePrev() const{ return m_nTypePrev; } //#########汚っ
@@ -98,7 +105,7 @@ public:
 	void _SetNextLayout(CLayout* pcLayout){ m_pNext = pcLayout; }
 
 	//実データ参照
-	const CDocLine* GetDocLineRef() const{ if(this)return m_pCDocLine; else return NULL; } //$$note:高速化
+	const CDocLine* GetDocLineRef() const{ if(this)return m_pCDocLine; else return NULL; } //$$note:高速化 // TODO: Remove "this" check
 
 	//その他属性参照
 	const CEol& GetLayoutEol() const{ return m_cEol; }
@@ -115,7 +122,7 @@ private:
 	const CDocLine*		m_pCDocLine;		//!< 実データへの参照
 	CLogicPoint			m_ptLogicPos;		//!< 対応するロジック参照位置
 	CLogicInt			m_nLength;			//!< このレイアウト行の長さ。文字単位。
-	
+
 	//その他属性
 	EColorIndexType		m_nTypePrev;		//!< タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列
 	CLayoutInt			m_nIndent;			//!< このレイアウト行のインデント数 @@@ 2002.09.23 YAZAKI
@@ -125,3 +132,4 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(CLayout);
 };
+#endif /* SAKURA_CLAYOUT_7DF189B5_10E6_42A4_8A49_371C848CB38F_H_ */

@@ -155,14 +155,14 @@ BOOL CDlgPrintSetting::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 	//	::SetTimer( GetHwnd(), IDT_PRINTSETTING, 500, NULL );
 	//UpdatePrintableLineAndColumn();
 
-	// ダイアログのフォントの取得
-	m_hFontDlg = (HFONT)::SendMessage( GetHwnd(), WM_GETFONT, 0, 0 );	// ダイアログのフォント
+	BOOL bRet = CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
+
+	// ダイアログフォントの寸法を得ておく
 	LOGFONT	lf;
-	::GetObject(m_hFontDlg, sizeof(LOGFONT), &lf);
+	::GetObject(GetDialogFont(), sizeof(LOGFONT), &lf);
 	m_nFontHeight = lf.lfHeight;		// フォントサイズ
 
-	/* 基底クラスメンバ */
-	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
+	return bRet;
 }
 
 BOOL CDlgPrintSetting::OnDestroy( void )
@@ -172,11 +172,11 @@ BOOL CDlgPrintSetting::OnDestroy( void )
 	// フォントの破棄
 	HFONT	hFontOld;
 	hFontOld = (HFONT)::SendMessage(GetItemHwnd( IDC_STATIC_FONT_HEAD ), WM_GETFONT, 0, 0 );
-	if (m_hFontDlg != hFontOld) {
+	if (GetDialogFont() != hFontOld) {
 		::DeleteObject( hFontOld );
 	}
 	hFontOld = (HFONT)::SendMessage(GetItemHwnd( IDC_STATIC_FONT_FOOT ), WM_GETFONT, 0, 0 );
-	if (m_hFontDlg != hFontOld) {
+	if (GetDialogFont() != hFontOld) {
 		::DeleteObject( hFontOld );
 	}
 
@@ -913,7 +913,7 @@ void CDlgPrintSetting::SetFontName( int idTxt, int idUse, LOGFONT& lf, int nPoin
 			// フォントの設定
 			::SendMessage( GetItemHwnd( idTxt ), WM_SETFONT, (WPARAM)hFont, MAKELPARAM(FALSE, 0) );
 		}
-		if (m_hFontDlg != hFontOld) {
+		if (GetDialogFont() != hFontOld) {
 			// 古いフォントの破棄
 			::DeleteObject( hFontOld );
 		}

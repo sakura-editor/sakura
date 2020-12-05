@@ -565,39 +565,19 @@ void CFileNameManager::GetIniFileNameDirect( LPWSTR pszPrivateIniFile, LPWSTR ps
 */
 void CFileNameManager::GetIniFileName( LPWSTR pszIniFileName, LPCWSTR pszProfName, BOOL bRead/*=FALSE*/ )
 {
-	if( !m_pShareData->m_sFileNameManagement.m_IniFolder.m_bInit ){
-		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bInit = true;			// 初期化済フラグ
-		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bReadPrivate = false;	// マルチユーザ用iniからの読み出しフラグ
-		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate = false;	// マルチユーザ用iniへの書き込みフラグ
+	auto &iniFolder = m_pShareData->m_sFileNameManagement.m_IniFolder;
+	if( !iniFolder.m_bInit ){
+		iniFolder.m_bInit = true;			// 初期化済フラグ
+		iniFolder.m_bReadPrivate = false;	// マルチユーザ用iniからの読み出しフラグ
+		iniFolder.m_bWritePrivate = false;	// マルチユーザ用iniへの書き込みフラグ
 
-		GetIniFileNameDirect( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile, m_pShareData->m_sFileNameManagement.m_IniFolder.m_szIniFile, pszProfName );
-		if( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile[0] != L'\0' ){
-			m_pShareData->m_sFileNameManagement.m_IniFolder.m_bReadPrivate = true;
-			m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate = true;
-			if( CCommandLine::getInstance()->IsNoWindow() && CCommandLine::getInstance()->IsWriteQuit() )
-				m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate = false;
-
-			// マルチユーザ用のiniフォルダを作成しておく
-			if( m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate ){
-				WCHAR szPath[_MAX_PATH];
-				WCHAR szDrive[_MAX_DRIVE];
-				WCHAR szDir[_MAX_DIR];
-				_wsplitpath( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile, szDrive, szDir, NULL, NULL );
-				auto_snprintf_s( szPath, _MAX_PATH - 1, L"%s\\%s", szDrive, szDir );
-				MakeSureDirectoryPathExistsW( szPath );
-			}
-		}else{
-			if( pszProfName[0] != L'\0' ){
-				WCHAR szPath[_MAX_PATH];
-				WCHAR szDrive[_MAX_DRIVE];
-				WCHAR szDir[_MAX_DIR];
-				_wsplitpath( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szIniFile, szDrive, szDir, NULL, NULL );
-				auto_snprintf_s( szPath, _MAX_PATH - 1, L"%s\\%s", szDrive, szDir );
-				MakeSureDirectoryPathExistsW( szPath );
-			}
+		GetIniFileNameDirect( iniFolder.m_szPrivateIniFile, iniFolder.m_szIniFile, pszProfName );
+		if( iniFolder.m_szPrivateIniFile[0] != L'\0' ){
+			iniFolder.m_bReadPrivate = true;
+			iniFolder.m_bWritePrivate = true;
 		}
 	}
 
-	bool bPrivate = bRead? m_pShareData->m_sFileNameManagement.m_IniFolder.m_bReadPrivate: m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate;
-	::lstrcpy( pszIniFileName, bPrivate? m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile: m_pShareData->m_sFileNameManagement.m_IniFolder.m_szIniFile );
+	bool bPrivate = bRead ? iniFolder.m_bReadPrivate : iniFolder.m_bWritePrivate;
+	::lstrcpy( pszIniFileName, bPrivate ? iniFolder.m_szPrivateIniFile : iniFolder.m_szIniFile );
 }

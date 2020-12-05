@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CIOBRIDGE_5C6D9CA0_13F8_415A_A948_6A6EF323BE02_H_
+#define SAKURA_CIOBRIDGE_5C6D9CA0_13F8_415A_A948_6A6EF323BE02_H_
 #pragma once
 
 #include "mem/CMemory.h"
@@ -44,3 +46,4 @@ public:
 		CCodeBase*			pCodeBase	//!< [in]  変換先メモリの文字コードクラス
 	);
 };
+#endif /* SAKURA_CIOBRIDGE_5C6D9CA0_13F8_415A_A948_6A6EF323BE02_H_ */
