@@ -270,7 +270,9 @@ bool CDocFileOperation::SaveFileDialog(
 		SYSTEMTIME localTime = {};
 		::GetLocalTime( &localTime );
 		WCHAR dateTimeString[20] = {};
-		GetDateTimeFormat( dateTimeString, _countof(dateTimeString), L"_%Y%m%d_%H%M%S", localTime );
+		if( !GetDateTimeFormat( dateTimeString, _countof(dateTimeString), L"_%Y%m%d_%H%M%S", localTime ) ){
+			dateTimeString[0] = L'\0';
+		}
 
 		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( m_pcDocRef->m_pcEditWnd->GetHwnd() );
 		const int nId = (node != NULL && 0 < node->m_nId) ? node->m_nId : 0;
