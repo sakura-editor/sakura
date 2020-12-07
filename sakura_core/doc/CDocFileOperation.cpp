@@ -269,15 +269,12 @@ bool CDocFileOperation::SaveFileDialog(
 	if( pSaveInfo->cFilePath[0] == L'\0' ){
 		SYSTEMTIME localTime = {};
 		::GetLocalTime( &localTime );
-		TCHAR format[40] = {};
-		auto_sprintf_s( format, _countof(format), _T("%s_%%Y%%m%%d_%%H%%M%%S"), LS(STR_NO_TITLE2) );
-		if( !GetDateTimeFormat( pSaveInfo->cFilePath, pSaveInfo->cFilePath.GetBufferCount(), format, localTime ) ){
-			// 失敗したら日時の代わりに連番を付与
-			const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( m_pcDocRef->m_pcEditWnd->GetHwnd() );
-			if( 0 < node->m_nId ){
-				auto_sprintf_s( pSaveInfo->cFilePath, pSaveInfo->cFilePath.GetBufferCount(), _T("%s%d"), LS(STR_NO_TITLE2), node->m_nId );
-			}
-		}
+		TCHAR dateTimeString[20] = {};
+		GetDateTimeFormat( dateTimeString, _countof(dateTimeString), _T("_%Y%m%d_%H%M%S"), localTime );
+
+		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( m_pcDocRef->m_pcEditWnd->GetHwnd() );
+		const int nId = (node != NULL && 0 < node->m_nId) ? node->m_nId : 0;
+		auto_sprintf_s( pSaveInfo->cFilePath, pSaveInfo->cFilePath.GetBufferCount(), _T("%s%.0d_%s"), LS(STR_NO_TITLE2), nId, dateTimeString );
 	}
 
 	// ダイアログを表示
