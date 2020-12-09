@@ -370,9 +370,6 @@ UINT_PTR CALLBACK OFNHookProc(
 
 			/* ビューモードの初期値セット */
 			::CheckDlgButton( pData->m_hwndOpenDlg, chx1, pData->m_bViewMode );
-
-			CDialog::SetComboBoxDeleter(pData->m_hwndComboMRU, &pData->m_cRecentFile);
-			CDialog::SetComboBoxDeleter(pData->m_hwndComboOPENFOLDER, &pData->m_cRecentFolder);
 		}
 		break;
 
