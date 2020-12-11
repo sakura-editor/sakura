@@ -229,14 +229,14 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 					break;
 
 				case IDC_BUTTON_FNAME_UPD:	// 更新
+					::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom, _MAX_PATH );
+					::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_TO, szTo, _MAX_PATH );
 					if( -1 != nIndex ){
-						::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom, _MAX_PATH );
-						::DlgItem_GetText( hwndDlg, IDC_EDIT_FNAME_TO,   szTo,   _MAX_PATH );
 						if( -1 != SetListViewItem_FILENAME( hListView, nIndex, szFrom, szTo, false ) ){
 							return TRUE;
 						}
 					}else{
-						// 未選択でリストにひとつも項目がない場合は追加しておく
+						// 項目を選択していない理由が「リストに項目がない」であれば、更新ボタンで項目を追加できるようにする
 						if( 0 == ListView_GetItemCount( hListView ) ){
 							if( -1 != SetListViewItem_FILENAME( hListView, 0, szFrom, szTo, true ) ){
 								return TRUE;
