@@ -37,7 +37,6 @@ jobs:
   - script: choco install "msbuild-sonarqube-runner" -y
     displayName: install msbuild-sonarqube-runner
 
-  # specify java version.
   - task: JavaToolInstaller@0
     inputs:
       versionSpec: '11'
