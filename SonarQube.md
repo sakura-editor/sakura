@@ -94,19 +94,26 @@ https://sonarcloud.io/account/security/ のページでいつでも Access Token
 
 ### ローカルで実行する場合の環境設定 (事前準備)
 
-1. Oracle JRE8 の **64bit 版のランタイム** をダウンロードしてインストールする
-    1. Oracle JRE8 https://java.com/ja/download/manual.jsp (2019/05/02 現在)
-    1. Open JRE8 は Windows 版はダウンロードできなさそう。
-    1. 参考: [Prerequisites and Overview (Supported Platforms)](https://docs.sonarqube.org/latest/requirements/requirements/#header-3)
-    1. 参考: [SonarQubeの Java 11 対応状況](https://qiita.com/hayao_k/items/2cd81161f8dffd3a178b)
+1. chocolatey をインストールする
+  https://chocolatey.org/install#install-with-cmdexe を参考にインストールする。
+  ※powershellコンソールを「管理者として実行」して、サイトにあるスクリプトをコピペ実行するだけです。
 
-1. `JAVA_HOME` の環境変数を設定する
+3. SonarScanner実行環境として Java 11 をインストールする
+  1. JDKを使う場合 https://chocolatey.org/packages/openjdk11
+  2. JREを使う場合 https://chocolatey.org/packages/openjdk11jre
+  3. Oracleに開発者登録している場合 Oracle JDK/JRE で代替してもよいです。
+    1. 普通のJava Runtime Envirionment(jre8)は使えません。
+      https://java.com/ja/download/manual.jsp (2019/05/02 現在)
+    2. 参考: [Prerequisites and Overview (Supported Platforms)](https://docs.sonarqube.org/latest/requirements/requirements/#header-3)
+    3. 参考: [SonarQubeの Java 11 対応状況](https://qiita.com/hayao_k/items/2cd81161f8dffd3a178b)
+    4. SonarSource(=SonarQubeの開発元)が方針転換してJava8を使った静的解析ができなくなりました。
+
+4. `JAVA_HOME` の環境変数を設定する
+  ※コマンドプロンプトで `set J` して `JAVA_HOME` が表示されない場合のみ
 
 	例
 
-	`set JAVA_HOME=C:\Program Files\Java\jre1.8.0_211`
-
-1. https://chocolatey.org/install#install-with-cmdexe を参考に chocolatey をインストールする。
+	`set JAVA_HOME=C:\Program Files\Java\jdk11.0.9`
 
 ### 解析手順の流れ (一般論)
 
