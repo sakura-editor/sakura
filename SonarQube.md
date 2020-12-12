@@ -98,7 +98,7 @@ https://sonarcloud.io/account/security/ のページでいつでも Access Token
   https://chocolatey.org/install#install-with-cmdexe を参考にインストールする。
   ※powershellコンソールを「管理者として実行」して、サイトにあるスクリプトをコピペ実行するだけです。
 
-3. SonnarScanner実行環境として Java 11 をインストールする
+3. SonarScanner実行環境として Java 11 をインストールする
   1. JDKを使う場合 https://chocolatey.org/packages/openjdk11
   2. JREを使う場合 https://chocolatey.org/packages/openjdk11jre
   3. Oracleに開発者登録している場合 Oracle JDK/JRE で代替してもよいです。
