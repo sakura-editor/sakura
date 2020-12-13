@@ -51,7 +51,7 @@ CLayoutInt CLayout::CalcLayoutWidth(const CLayoutMgr& cLayoutMgr) const
 			nWidth += cLayoutMgr.GetActualTsvSpace(nWidth, pText[i]);
 		}
 		else{
-			nWidth += cLayoutMgr.GetLayoutXOfChar(pText, nTextLen, i);
+			nWidth += cLayoutMgr.GetPixelWidthOfChar( pText, nTextLen, i );
 		}
 		i += t_max(CLogicInt(1), CNativeW::GetSizeOfChar(pText, nTextLen, i));
 	}

@@ -867,7 +867,7 @@ void CLayoutMgr::LogicToLayout(
 					nCharKetas = GetActualTsvSpace( nCaretPosX, pData[i] );
 				}
 				else{
-					nCharKetas = GetLayoutXOfChar( pData, nDataLen, i );
+					nCharKetas = GetPixelWidthOfChar( pData, nDataLen, i );
 				}
 //				if( nCharKetas == 0 )				// 削除 サロゲートペア対策	2008/7/5 Uchi
 //					nCharKetas = CLayoutInt(1);
@@ -1001,7 +1001,7 @@ checkloop:;
 			nCharKetas = GetActualTsvSpace( nX, pData[i] );
 		}
 		else{
-			nCharKetas = GetLayoutXOfChar( pData, nDataLen, i );
+			nCharKetas = GetPixelWidthOfChar( pData, nDataLen, i );
 		}
 //		if( nCharKetas == 0 )				// 削除 サロゲートペア対策	2008/7/5 Uchi
 //			nCharKetas = CLayoutInt(1);

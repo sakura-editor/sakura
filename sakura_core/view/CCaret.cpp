@@ -562,7 +562,7 @@ void CCaret::ShowEditCaret()
 					nCaretWidth = GetHankakuDx();
 				}
 				else{
-					CLayoutInt nKeta = m_pEditView->m_pcEditDoc->m_cLayoutMgr.GetLayoutXOfChar(pLine, nLineLen, nIdxFrom);
+					CLayoutInt nKeta = m_pEditView->m_pcEditDoc->m_cLayoutMgr.GetPixelWidthOfChar( pLine, nLineLen, nIdxFrom );
 					if( 0 < nKeta ){
 						nCaretWidth = m_pEditView->GetTextMetrics().GetCharPxWidth(nKeta);
 					}
@@ -593,7 +593,7 @@ void CCaret::ShowEditCaret()
 				pLine[nIdxFrom] == TAB ){
 				nCaretWidth = GetHankakuDx();
 			}else{
-				CLayoutXInt nKeta = m_pEditView->m_pcEditDoc->m_cLayoutMgr.GetLayoutXOfChar(pLine, nLineLen, nIdxFrom);
+				CLayoutXInt nKeta = m_pEditView->m_pcEditDoc->m_cLayoutMgr.GetPixelWidthOfChar( pLine, nLineLen, nIdxFrom );
 				if( 0 < nKeta ){
 					nCaretWidth = m_pEditView->GetTextMetrics().GetCharPxWidth(nKeta);
 				}

@@ -267,16 +267,19 @@ public:
 
 	BOOL CalculateTextWidth( BOOL bCalLineLen = TRUE, CLayoutInt nStart = CLayoutInt(-1), CLayoutInt nEnd = CLayoutInt(-1) );	/* テキスト最大幅を算出する */		// 2009.08.28 nasukoji
 	void ClearLayoutLineWidth( void );				/* 各行のレイアウト行長の記憶をクリアする */		// 2009.08.28 nasukoji
-	CLayoutXInt GetLayoutXOfChar( const wchar_t* pData, int nDataLen, int i ) const {
-		CLayoutXInt nSpace = CLayoutXInt(0);
+
+	// 文字列中の指定位置にある文字の幅をpx単位で返す
+	CHabaXInt GetPixelWidthOfChar( const wchar_t* pData, int nDataLen, int nIdx ) const {
+		CHabaXInt nSpacing = CHabaXInt( 0 );
 		if( m_nSpacing ){
-			nSpace = CLayoutXInt(CNativeW::GetKetaOfChar(pData, nDataLen, i)) * m_nSpacing;
+			nSpacing = CHabaXInt( CNativeW::GetKetaOfChar( pData, nDataLen, nIdx ) * m_nSpacing );
 		}
-		return CNativeW::GetColmOfChar( pData, nDataLen, i ) + nSpace;
+		return CNativeW::GetHabaOfChar( pData, nDataLen, nIdx ) + nSpacing;
 	}
-	CLayoutXInt GetLayoutXOfChar( const CStringRef& str, int i ) const {
-		return GetLayoutXOfChar(str.GetPtr(), str.GetLength(), i);
+	CHabaXInt GetPixelWidthOfChar( const CStringRef& cStr, int nIdx ) const {
+		return GetPixelWidthOfChar( cStr.GetPtr(), cStr.GetLength(), nIdx );
 	}
+
 	CPixelXInt GetWidthPerKeta() const { return Int(m_nCharLayoutXPerKeta); }
 	CPixelXInt GetCharSpacing() const { return m_nSpacing; }
 

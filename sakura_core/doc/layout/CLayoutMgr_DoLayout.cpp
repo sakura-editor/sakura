@@ -26,7 +26,7 @@ static bool _GetKeywordLength(
 	CLogicInt nWordLen = CLogicInt(0);
 	CLayoutInt nWordKetas = CLayoutInt(0);
 	while(nPos<cLineStr.GetLength() && IS_KEYWORD_CHAR(cLineStr.At(nPos))){
-		CLayoutInt k = cLayoutMgr.GetLayoutXOfChar(cLineStr, nPos);
+		CLayoutInt k = cLayoutMgr.GetPixelWidthOfChar( cLineStr, nPos );
 		if(0 == k)k = CLayoutInt(1);
 
 		nWordLen+=1;
@@ -121,7 +121,7 @@ void CLayoutMgr::_DoKutoBurasage(SLayoutWork* pWork)
 	if( (GetMaxLineLayout() - pWork->nPosX < 2) && (pWork->eKinsokuType == KINSOKU_TYPE_NONE) )
 	{
 		// 2007.09.07 kobake   レイアウトとロジックの区別
-		CLayoutInt nCharKetas = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
+		CLayoutInt nCharKetas = GetPixelWidthOfChar( pWork->cLineStr, pWork->nPos );
 
 		if( IsKinsokuPosKuto(GetMaxLineLayout() - pWork->nPosX, nCharKetas) && IsKinsokuKuto( pWork->cLineStr.At(pWork->nPos) ) )
 		{
@@ -140,8 +140,8 @@ void CLayoutMgr::_DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 	 && (pWork->eKinsokuType == KINSOKU_TYPE_NONE) )
 	{
 		// 2007.09.07 kobake   レイアウトとロジックの区別
-		CLayoutInt nCharKetas2 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
-		CLayoutInt nCharKetas3 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos+1 );
+		CLayoutInt nCharKetas2 = GetPixelWidthOfChar( pWork->cLineStr, pWork->nPos );
+		CLayoutInt nCharKetas3 = GetPixelWidthOfChar( pWork->cLineStr, pWork->nPos + 1 );
 
 		if( IsKinsokuPosHead( GetMaxLineLayout() - pWork->nPosX, nCharKetas2, nCharKetas3 )
 		 && IsKinsokuHead( pWork->cLineStr.At(pWork->nPos+1) )
@@ -164,8 +164,8 @@ void CLayoutMgr::_DoGyomatsuKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 	 && ( pWork->nPosX > pWork->nIndent )	//	2004.04.09 pWork->nPosXの解釈変更のため，行頭チェックも変更
 	 && (pWork->eKinsokuType == KINSOKU_TYPE_NONE) )
 	{	/* 行末禁則する && 行末付近 && 行頭でないこと(無限に禁則してしまいそう) */
-		CLayoutInt nCharKetas2 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
-		CLayoutInt nCharKetas3 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos+1 );
+		CLayoutInt nCharKetas2 = GetPixelWidthOfChar( pWork->cLineStr, pWork->nPos );
+		CLayoutInt nCharKetas3 = GetPixelWidthOfChar( pWork->cLineStr, pWork->nPos + 1 );
 
 		if( IsKinsokuPosTail(GetMaxLineLayout() - pWork->nPosX, nCharKetas2, nCharKetas3) && IsKinsokuTail(pWork->cLineStr.At(pWork->nPos)) ){
 			pWork->nWordBgn = pWork->nPos;
@@ -248,7 +248,7 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 				break;
 			}
 			// 2007.09.07 kobake   ロジック幅とレイアウト幅を区別
-			CLayoutInt nCharKetas = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
+			CLayoutInt nCharKetas = GetPixelWidthOfChar( pWork->cLineStr, pWork->nPos );
 //			if( 0 == nCharKetas ){				// 削除 サロゲートペア対策	2008/7/5 Uchi
 //				nCharKetas = CLayoutInt(1);
 //			}
