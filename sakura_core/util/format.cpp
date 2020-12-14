@@ -55,6 +55,11 @@ bool GetDateTimeFormat( WCHAR* szResult, size_t size, const WCHAR* format, const
 		int timeLen = -1;
 		if( *p == L'%' ){
 			++p;
+
+			if( *p == L'\0' ){
+				break;
+			}
+
 			switch( *p ){
 			case L'Y':
 				timeLen = wsprintf( szTime, L"%d", systime.wYear );
@@ -84,14 +89,14 @@ bool GetDateTimeFormat( WCHAR* szResult, size_t size, const WCHAR* format, const
 
 		const size_t remains = (size - 1) - (q - szResult);
 		if( 0 <= timeLen ){
-			if( remains < timeLen || timeLen == 0 ){
+			if( remains < (size_t)timeLen ){
 				break;
 			}
 			wcscpy( q, szTime );
 			++p;
 			q += timeLen;
 		}else{
-			if( remains <= 0 || *p == L'\0' ){
+			if( remains == 0 ){
 				break;
 			}
 			*q++ = *p++;
