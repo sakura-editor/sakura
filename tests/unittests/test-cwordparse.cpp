@@ -135,8 +135,11 @@ TEST(WhatKindOfChar, BoxDrawing)
 
 TEST(WhatKindOfChar, SurrogatePairs)
 {
-	EXPECT_EQ(CK_ETC, CWordParse::WhatKindOfChar(L"🌸", 2, 0));
-	EXPECT_EQ(CK_ZEN_ETC, CWordParse::WhatKindOfChar(L"𠮷", 2, 0));
+//	EXPECT_EQ(CK_ETC, CWordParse::WhatKindOfChar(L"🌸", 2, 0));
+//	EXPECT_EQ(CK_ZEN_ETC, CWordParse::WhatKindOfChar(L"𠮷", 2, 0));
+	EXPECT_EQ(CK_ETC, CWordParse::WhatKindOfChar(L"\xd83c\xdf38", 2, 0));
+	EXPECT_EQ(CK_ZEN_ETC, CWordParse::WhatKindOfChar(L"\xd842\xdfb7", 2, 0));
+
 }
 
 TEST(WhatKindOfTwoChars, ReturnsSameKindIfTwoKindsAreIdentical)
