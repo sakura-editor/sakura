@@ -464,7 +464,7 @@ int CEditView::IsSearchString(
 	else if( m_sCurSearchOption.bWordOnly ) { // 単語検索
 		/* 指定位置の単語の範囲を調べる */
 		CLogicInt posWordHead, posWordEnd;
-		if( ! CWordParse::WhereCurrentWord_2( cStr.GetPtr(), CLogicInt(cStr.GetLength()), nPos, &posWordHead, &posWordEnd, NULL, NULL ) ) {
+		if( ! CWordParse::WhereCurrentWord_2( cStr.GetPtr(), CLogicInt(cStr.GetLength()), nPos, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, &posWordHead, &posWordEnd, NULL, NULL ) ) {
 			return 0; // 指定位置に単語が見つからなかった。
  		}
 		if( nPos != posWordHead ) {
@@ -481,7 +481,7 @@ int CEditView::IsSearchString(
 		const wchar_t* const searchKeyEnd = m_strCurSearchKey.data() + m_strCurSearchKey.size();
 		for( const wchar_t* p = m_strCurSearchKey.data(); p < searchKeyEnd; ) {
 			CLogicInt begin, end; // 検索語に含まれる単語?の位置。WhereCurrentWord_2()の仕様では空白文字列も単語に含まれる。
-			if( CWordParse::WhereCurrentWord_2( p, CLogicInt(searchKeyEnd - p), CLogicInt(0), &begin, &end, NULL, NULL )
+			if( CWordParse::WhereCurrentWord_2( p, CLogicInt(searchKeyEnd - p), CLogicInt(0), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, &begin, &end, NULL, NULL )
 				&& begin == 0 && begin < end
 			) {
 				if( ! WCODE::IsWordDelimiter( *p ) ) {
