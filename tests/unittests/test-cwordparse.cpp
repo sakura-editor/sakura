@@ -31,6 +31,7 @@
 #include <iostream>
 #include <string_view>
 #include "charset/charcode.h"
+#include "mem/CNativeW.h"
 
 std::ostream& operator<<(std::ostream& os, ECharKind kind)
 {
@@ -139,7 +140,6 @@ TEST(WhatKindOfChar, SurrogatePairs)
 //	EXPECT_EQ(CK_ZEN_ETC, CWordParse::WhatKindOfChar(L"𠮷", 2, 0));
 	EXPECT_EQ(CK_ETC, CWordParse::WhatKindOfChar(L"\xd83c\xdf38", 2, 0));
 	EXPECT_EQ(CK_ZEN_ETC, CWordParse::WhatKindOfChar(L"\xd842\xdfb7", 2, 0));
-
 }
 
 TEST(WhatKindOfTwoChars, ReturnsSameKindIfTwoKindsAreIdentical)
@@ -310,4 +310,43 @@ TEST(SearchNextWordPosition4KW, StopsAtIncompatibleKinds)
 	EXPECT_TRUE(CWordParse::SearchNextWordPosition4KW(L"@sakura!",
 				CLogicInt(8), CLogicInt(0), &columnNew, FALSE));
 	EXPECT_EQ(7, columnNew);
+}
+
+TEST(WhereCurrentWord_2, ReturnsFalseIfIndexIsAtNewLineOrEOS)
+{
+	CLogicInt from, to;
+	EXPECT_FALSE(CWordParse::WhereCurrentWord_2(L"sakura", CLogicInt(6),
+			CLogicInt(6), false, &from, &to, nullptr, nullptr));
+	EXPECT_EQ(6, from);
+	EXPECT_EQ(6, to);
+	EXPECT_FALSE(CWordParse::WhereCurrentWord_2(L"sakura\n", CLogicInt(7),
+			CLogicInt(6), false, &from, &to, nullptr, nullptr));
+	EXPECT_EQ(6, from);
+	EXPECT_EQ(6, to);
+}
+
+TEST(WhereCurrentWord_2, RespectsExtEolFlag)
+{
+	CLogicInt from, to;
+	EXPECT_FALSE(CWordParse::WhereCurrentWord_2(L"sakura\x85", CLogicInt(7),
+			CLogicInt(6), true, &from, &to, nullptr, nullptr));
+	EXPECT_EQ(6, from);
+	EXPECT_EQ(6, to);
+	EXPECT_TRUE(CWordParse::WhereCurrentWord_2(L"sakura\x85", CLogicInt(7),
+			CLogicInt(6), false, &from, &to, nullptr, nullptr));
+	EXPECT_EQ(6, from);
+	EXPECT_EQ(7, to);
+}
+
+TEST(WhereCurrentWord_2, ReturnsCMemoryIfSpecified)
+{
+	CLogicInt from, to;
+	CNativeW word, wordLeft;
+	bool result = CWordParse::WhereCurrentWord_2(L"sakura editor",
+		   CLogicInt(13), CLogicInt(10), false, &from, &to, &word, &wordLeft);
+	EXPECT_TRUE(result);
+	EXPECT_EQ(7, from);
+	EXPECT_EQ(13, to);
+	EXPECT_EQ(word, L"editor");
+	EXPECT_EQ(wordLeft, L"edi");
 }
