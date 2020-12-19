@@ -808,8 +808,8 @@ LRESULT CALLBACK SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 
 void CDialog::SetComboBoxDeleter(HWND hwndCtl, CRecent* pRecent)
 {
-	assert(pRecent);
-
+	if (!pRecent || (::GetWindowLongPtr(hwndCtl, GWL_STYLE) & 0b11) == CBS_DROPDOWNLIST)
+		return;
 	COMBOBOXINFO info = { sizeof(COMBOBOXINFO) };
 	if (!::GetComboBoxInfo(hwndCtl, &info))
 		return;
