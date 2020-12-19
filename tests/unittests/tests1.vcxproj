@@ -114,6 +114,7 @@
     <ClCompile Include="test-cprofile.cpp" />
     <ClCompile Include="test-editinfo.cpp" />
     <ClCompile Include="test-file.cpp" />
+    <ClCompile Include="test-format.cpp" />
     <ClCompile Include="test-grepinfo.cpp" />
     <ClCompile Include="test-int2dec.cpp" />
     <ClCompile Include="test-is_mailaddress.cpp" />
