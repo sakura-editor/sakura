@@ -445,7 +445,7 @@ bool CBackupAgent::FormatBackUpPath(
 		}
 
 	}else{ // 詳細設定使用する
-		WCHAR szFormat[1024];
+		std::optional<std::wstring> dateTimeString;
 
 		switch( bup_setting.GetBackupTypeAdv() ){
 		case 4:	//	ファイルの日付，時刻
@@ -453,7 +453,8 @@ bool CBackupAgent::FormatBackUpPath(
 				// 2005.10.20 ryoji FindFirstFileを使うように変更
 				CFileTime ctimeLastWrite;
 				GetLastWriteTimestamp( target_file, &ctimeLastWrite );
-				if( !GetDateTimeFormat( szFormat, _countof(szFormat), bup_setting.m_szBackUpPathAdvanced , ctimeLastWrite.GetSYSTEMTIME() ) ){
+				dateTimeString = GetDateTimeFormat( (const WCHAR*)bup_setting.m_szBackUpPathAdvanced, ctimeLastWrite.GetSYSTEMTIME() );
+				if( !dateTimeString ){
 					return false;
 				}
 			}
@@ -465,8 +466,8 @@ bool CBackupAgent::FormatBackUpPath(
 				SYSTEMTIME	SystemTime;
 				// 2016.07.28 UTC→ローカル時刻に変更
 				::GetLocalTime(&SystemTime);			// 現在時刻を取得
-
-				if( !GetDateTimeFormat( szFormat, _countof(szFormat), bup_setting.m_szBackUpPathAdvanced , SystemTime ) ){
+				dateTimeString = GetDateTimeFormat( (const WCHAR*)bup_setting.m_szBackUpPathAdvanced, SystemTime );
+				if( !dateTimeString ){
 					return false;
 				}
 			}
@@ -503,8 +504,8 @@ bool CBackupAgent::FormatBackUpPath(
 			{
 				// $0-$9を置換
 				//wcscpy( szNewPath, L"" );
-				WCHAR *q= szFormat;
-				WCHAR *q2 = szFormat;
+				WCHAR *q = dateTimeString.value().data();
+				WCHAR *q2 = q;
 				while( *q ){
 					if( *q==L'$' ){
 						++q;
