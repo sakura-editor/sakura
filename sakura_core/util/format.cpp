@@ -32,7 +32,7 @@
 	@param[in] systime 書式化したい日時
 	@return 書式変換後の文字列
 
-	@note 書式文字列で使用できる変換指定子
+	@note 書式文字列では以下の変換指定子が使用できます。
 	@li "%Y" 西暦
 	@li "%y" 下2桁の西暦
 	@li "%m" 2桁の月
@@ -40,38 +40,39 @@
 	@li "%H" 2桁の時
 	@li "%M" 2桁の分
 	@li "%S" 2桁の秒
+	@note 書式文字列は末尾または最初のnull文字までを変換対象とします。
 */
-std::optional<std::wstring> GetDateTimeFormat( std::wstring_view format, const SYSTEMTIME& systime )
+std::wstring GetDateTimeFormat( std::wstring_view format, const SYSTEMTIME& systime )
 {
 	std::wstring result;
 	wchar_t str[6] = {};
-	bool esc = false;
+	bool inSpecifier = false;
 
 	result.reserve( format.length() * 2 );
 
 	for( const auto f : format ){
-		if( esc ){
-			esc = false;
+		if( inSpecifier ){
+			inSpecifier = false;
 			if( f == L'Y' ){
-				(void)wsprintf( str, L"%d", systime.wYear );
+				swprintf( str, _countof(str), L"%d", systime.wYear );
 			}else if( f == L'y' ){
-				(void)wsprintf( str, L"%02d", systime.wYear % 100 );
+				swprintf( str, _countof(str), L"%02d", systime.wYear % 100 );
 			}else if( f == L'm' ){
-				(void)wsprintf( str, L"%02d", systime.wMonth );
+				swprintf( str, _countof(str), L"%02d", systime.wMonth );
 			}else if( f == L'd' ){
-				(void)wsprintf( str, L"%02d", systime.wDay );
+				swprintf( str, _countof(str), L"%02d", systime.wDay );
 			}else if( f == L'H' ){
-				(void)wsprintf( str, L"%02d", systime.wHour );
+				swprintf( str, _countof(str), L"%02d", systime.wHour );
 			}else if( f == L'M' ){
-				(void)wsprintf( str, L"%02d", systime.wMinute );
+				swprintf( str, _countof(str), L"%02d", systime.wMinute );
 			}else if( f == L'S' ){
-				(void)wsprintf( str, L"%02d", systime.wSecond );
+				swprintf( str, _countof(str), L"%02d", systime.wSecond );
 			}else{
-				(void)wsprintf( str, L"%c", f );
+				swprintf( str, _countof(str), L"%c", f );
 			}
 			result.append( str );
 		}else if( f == L'%' ){
-			esc = true;
+			inSpecifier = true;
 		}else if( f == L'\0' ){
 			break;
 		}else{

@@ -27,27 +27,17 @@
 #include "util/format.h"
 
 /*!
- * @brief 入力の妥当性判定に関するテスト
+ * @brief GetDateTimeFormatのテスト
  */
-TEST( format, CheckInputValidity )
-{
-	SYSTEMTIME time = {};
-	time.wYear = 123;
-	EXPECT_TRUE( GetDateTimeFormat( L"", time ) );
-	EXPECT_TRUE( GetDateTimeFormat( L"%Y", time ) );
-}
-
-/*!
- * @brief 書式変換のテスト
- */
-TEST( format, Formatting )
+TEST( format, GetDateTimeFormat )
 {
 	SYSTEMTIME time = {};
 
+	// 変換指定子の解釈
 	auto result1 = GetDateTimeFormat( L"%%-%1-%", time );
-	EXPECT_TRUE( result1 );
-	ASSERT_STREQ( L"%-1-", result1.value().c_str() );
+	ASSERT_STREQ( L"%-1-", result1.c_str() );
 
+	// 数字桁数少
 	time.wYear = 1;
 	time.wMonth = 2;
 	time.wDay = 3;
@@ -55,9 +45,9 @@ TEST( format, Formatting )
 	time.wMinute = 2;
 	time.wSecond = 3;
 	auto result2 = GetDateTimeFormat( L"%Y-%y-%m-%d %H:%M:%S", time );
-	EXPECT_TRUE( result2 );
-	ASSERT_STREQ( L"1-01-02-03 01:02:03", result2.value().c_str() );
+	ASSERT_STREQ( L"1-01-02-03 01:02:03", result2.c_str() );
 
+	// 数字桁数多
 	time.wYear = 12345;
 	time.wMonth = 12;
 	time.wDay = 23;
@@ -65,10 +55,9 @@ TEST( format, Formatting )
 	time.wMinute = 34;
 	time.wSecond = 56;
 	auto result3 = GetDateTimeFormat( L"%Y-%y-%m-%d %H:%M:%S", time );
-	EXPECT_TRUE( result3 );
-	ASSERT_STREQ( L"12345-45-12-23 12:34:56", result3.value().c_str() );
+	ASSERT_STREQ( L"12345-45-12-23 12:34:56", result3.c_str() );
 
+	// 途中にnull文字
 	auto result4 = GetDateTimeFormat( L"%Y-%y-%m-%d\0%H:%M:%S", time );
-	EXPECT_TRUE( result4 );
-	ASSERT_STREQ( L"12345-45-12-23", result4.value().c_str() );
+	ASSERT_STREQ( L"12345-45-12-23", result4.c_str() );
 }
