@@ -29,6 +29,59 @@
 #include "CPropertyManager.h"
 #include "util/window.h"
 
+/*! サイズテーブルを元にサイズ取得
+	あとで書く
+*/
+int ChoosePointSize( int currentSize, int originalSize, const int* sizeTable, const size_t sizeTableCount, int shift )
+{
+	if( sizeTable == NULL || sizeTableCount == 0 || shift == 0 ){
+		return currentSize;
+	}
+
+	bool hanpa = true;
+	for( size_t i = 0; i < sizeTableCount; i++ ){
+		if( originalSize == sizeTable[i] ){
+			hanpa = false;
+			break;
+		}
+	}
+
+	int index = sizeTableCount;
+	for( size_t i = 0; i < sizeTableCount; i++ ){
+		if( currentSize <= sizeTable[i] ){
+			index = (int)i;
+			break;
+		}
+	}
+
+	if( 0 < shift && currentSize < sizeTable[index] ){
+		index += shift - 1;
+	}else{
+		index += shift;
+	}
+
+	int result = currentSize;
+	if( index < 0 ){
+		result = std::min( originalSize, sizeTable[0] );
+	}else if( (int)sizeTableCount - 1 < index ){
+		result = std::max( sizeTable[sizeTableCount - 1], originalSize );
+	}else{
+		result = sizeTable[index];
+		if( hanpa ){
+			// 現在サイズから変更後サイズまでの間に基準サイズがあったらいい感じに補正する
+			if( 0 < index && 0 < shift && currentSize < originalSize && originalSize < result ){
+				result = std::max( sizeTable[index - 1], originalSize );
+			}else if( index < (int)sizeTableCount - 1 && shift < 0 && result < originalSize && originalSize < currentSize ){
+				result = std::min( originalSize, sizeTable[index + 1] );
+			}else{
+				;
+			}
+		}
+	}
+
+	return result;
+}
+
 /*! ツールバーの表示/非表示
 
 	@date 2006.12.19 ryoji 表示切替は CEditWnd::LayoutToolBar(), CEditWnd::EndLayoutBars() で行うように変更
@@ -278,27 +331,19 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 		nPointSize = t_max(sizeTable[0], t_min(sizeTable[_countof(sizeTable)-1], fontSize));
 	} else if( 0 != shift ) {
 		// 現在のフォントに対して、縮小or拡大したフォント選択する場合
-		nPointSize = (mode == 0 ? GetDllShareData().m_Common.m_sView.m_nPointSize
+		const INT nCurrentPointSize = (mode == 0 ? GetDllShareData().m_Common.m_sView.m_nPointSize
 			: GetEditWindow()->GetFontPointSize( mode == 2 ));
+		const INT nOriginalPointSize = (mode == 0) ? nCurrentPointSize : GetEditWindow()->GetFontPointSize( false );
 
-		// フォントの拡大or縮小するためのサイズ検索
-		int i;
-		for( i = 0; i < _countof(sizeTable); i++) {
-			if( nPointSize <= sizeTable[i] ){
-				int index = t_max(0, t_min((int)_countof(sizeTable) - 1, (int)(i + shift)));
-				int nNewPointSize = sizeTable[index];
-				// フォントサイズが変わらないので終了
-				if (nPointSize == nNewPointSize) {
-					return;
-				}
-				nPointSize = nNewPointSize;
-				break;
-			}
+		nPointSize = ChoosePointSize( nCurrentPointSize, nOriginalPointSize, sizeTable, _countof(sizeTable), shift );
+		if( nPointSize == nCurrentPointSize ){
+			return;
 		}
 	} else {
 		// フォントサイズが変わらないので終了
 		return;
 	}
+
 	// 新しいフォントサイズ設定
 	int lfHeight = DpiPointsToPixels(-nPointSize, 10);
 	int nTypeIndex = -1;
