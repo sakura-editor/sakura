@@ -30,14 +30,23 @@
 #include "util/window.h"
 
 /*! サイズテーブルを元にサイズ取得
-	あとで書く
+
+	@param[in] currentSize 現在サイズ
+	@param[in] originalSize 基準サイズ
+	@param[in] sizeTable サイズテーブル
+	@param[in] sizeTableCount サイズテーブルの要素数
+	@param[in] shift 現在サイズを基準とするテーブルインデックス変更量
+	@return 選択されたサイズ
 */
-int ChoosePointSize( int currentSize, int originalSize, const int* sizeTable, const size_t sizeTableCount, int shift )
+int ChoosePointSize( const int currentSize, const int originalSize, const int* sizeTable, const size_t sizeTableCount, const int shift )
 {
 	if( sizeTable == NULL || sizeTableCount == 0 || shift == 0 ){
 		return currentSize;
 	}
 
+	// サイズがsizeTable内のどれにも該当しない場合を「半端」とする
+
+	// 基準サイズが半端かどうか
 	bool hanpa = true;
 	for( size_t i = 0; i < sizeTableCount; i++ ){
 		if( originalSize == sizeTable[i] ){
@@ -54,25 +63,29 @@ int ChoosePointSize( int currentSize, int originalSize, const int* sizeTable, co
 		}
 	}
 
-	if( 0 < shift && currentSize < sizeTable[index] ){
+	if( 0 < shift && index < (int)sizeTableCount && currentSize < sizeTable[index] ){
+		// 現在サイズが半端なので補正
 		index += shift - 1;
 	}else{
 		index += shift;
 	}
 
+	// テーブル末尾要素を指すインデックス
+	const int tailIndex = (int)sizeTableCount - 1;
+
 	int result = currentSize;
 	if( index < 0 ){
-		result = std::min( originalSize, sizeTable[0] );
-	}else if( (int)sizeTableCount - 1 < index ){
-		result = std::max( sizeTable[sizeTableCount - 1], originalSize );
+		result = std::min( { currentSize, originalSize, sizeTable[0] } );
+	}else if( tailIndex < index ){
+		result = std::max( { currentSize, originalSize, sizeTable[tailIndex] } );
 	}else{
 		result = sizeTable[index];
 		if( hanpa ){
 			// 現在サイズから変更後サイズまでの間に基準サイズがあったらいい感じに補正する
-			if( 0 < index && 0 < shift && currentSize < originalSize && originalSize < result ){
-				result = std::max( sizeTable[index - 1], originalSize );
-			}else if( index < (int)sizeTableCount - 1 && shift < 0 && result < originalSize && originalSize < currentSize ){
-				result = std::min( originalSize, sizeTable[index + 1] );
+			if( 0 < shift && currentSize < originalSize && originalSize < result ){
+				result = (0 < index) ? std::max( originalSize, sizeTable[index - 1] ) : originalSize;
+			}else if( shift < 0 && result < originalSize && originalSize < currentSize ){
+				result = (index < tailIndex) ? std::min( originalSize, sizeTable[index + 1] ) : originalSize;
 			}else{
 				;
 			}
