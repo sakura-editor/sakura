@@ -528,6 +528,7 @@
     <ClInclude Include="..\sakura_core\util\tchar_convert.h" />
     <ClInclude Include="..\sakura_core\util\tchar_template.h" />
     <ClInclude Include="..\sakura_core\util\window.h" />
+    <ClInclude Include="..\sakura_core\util\zoom.h" />
     <ClInclude Include="..\sakura_core\version.h" />
     <ClInclude Include="..\sakura_core\view\CCaret.h" />
     <ClInclude Include="..\sakura_core\view\CEditView.h" />
@@ -922,6 +923,7 @@
     <ClCompile Include="..\sakura_core\util\tchar_convert.cpp" />
     <ClCompile Include="..\sakura_core\util\tchar_template.cpp" />
     <ClCompile Include="..\sakura_core\util\window.cpp" />
+    <ClCompile Include="..\sakura_core\util\zoom.cpp" />
     <ClCompile Include="..\sakura_core\view\CCaret.cpp" />
     <ClCompile Include="..\sakura_core\view\CEditView.cpp" />
     <ClCompile Include="..\sakura_core\view\CEditView_Cmdgrep.cpp" />
