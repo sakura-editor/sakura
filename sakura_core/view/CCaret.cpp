@@ -825,31 +825,34 @@ void CCaret::ShowCaretPosInfo()
 	}
 	// ステータスバーに状態を書き出す
 	else{
-		WCHAR	szText_1[64];
-		auto_sprintf( szText_1, LS( STR_STATUS_ROW_COL ), ptCaret.y, ptCaret.x );	//Oct. 30, 2000 JEPRO 千万行も要らん
+		WCHAR szRowCol[64];
+		auto_sprintf( szRowCol, LS( STR_STATUS_ROW_COL ), ptCaret.y, ptCaret.x );	//Oct. 30, 2000 JEPRO 千万行も要らん
 
-		WCHAR	szText_6[16];
+		WCHAR szInsMode[16];
 		if( m_pEditView->IsInsMode() /* Oct. 2, 2005 genta */ ){
-			wcscpy( szText_6, LS( STR_INS_MODE_INS ) );	// "挿入"
+			wcscpy( szInsMode, LS( STR_INS_MODE_INS ) );	// "挿入"
 		}else{
-			wcscpy( szText_6, LS( STR_INS_MODE_OVR ) );	// "上書"
+			wcscpy( szInsMode, LS( STR_INS_MODE_OVR ) );	// "上書"
 		}
+
+		WCHAR szFontSize[16];
+		int currentPointSize = m_pEditDoc->m_pcEditWnd->GetFontPointSize( true );
+		int originalPointSize = m_pEditDoc->m_pcEditWnd->GetFontPointSize( false );
+		auto_sprintf( szFontSize, LS( STR_STATUS_FONTSIZE ), 100 * currentPointSize / originalPointSize );
 
 		auto& statusBar = m_pEditDoc->m_pcEditWnd->m_cStatusBar;
 
 		if( m_bClearStatus ){
 			statusBar.SetStatusText( 0, SBT_NOBORDERS, L"" );
 		}
-		statusBar.SetStatusText( 1, 0,             szText_1 );
-		//	May 12, 2000 genta
-		//	改行コードの表示を追加．後ろの番号を1つずつずらす
-		//	From Here
-		statusBar.SetStatusText( 2, 0,             szEolMode );
-		//	To Here
-		statusBar.SetStatusText( 3, 0,             szCaretChar );
-		statusBar.SetStatusText( 4, 0,             pszCodeName );
-		statusBar.SetStatusText( 5, SBT_OWNERDRAW, L"" );
-		statusBar.SetStatusText( 6, 0,             szText_6 );
+		int nIndex = 1;
+		statusBar.SetStatusText( nIndex++, 0,             szRowCol );
+		statusBar.SetStatusText( nIndex++, 0,             szEolMode );
+		statusBar.SetStatusText( nIndex++, 0,             szCaretChar );
+		statusBar.SetStatusText( nIndex++, 0,             pszCodeName );
+		statusBar.SetStatusText( nIndex++, SBT_OWNERDRAW, L"" );
+		statusBar.SetStatusText( nIndex++, 0,             szInsMode );
+		statusBar.SetStatusText( nIndex++, 0,             szFontSize );
 	}
 }
 
