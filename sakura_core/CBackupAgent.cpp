@@ -457,11 +457,9 @@ bool CBackupAgent::FormatBackUpPath(
 			break;
 		case 2:	//	現在の日付，時刻
 		default:
-			{
-				// 2012.12.26 aroka	詳細設定のファイル保存日時と現在時刻で書式を合わせる
-				// 2016.07.28 UTC→ローカル時刻に変更
-				::GetLocalTime( &time );			// 現在時刻を取得
-			}
+			// 2012.12.26 aroka	詳細設定のファイル保存日時と現在時刻で書式を合わせる
+			// 2016.07.28 UTC→ローカル時刻に変更
+			::GetLocalTime( &time );			// 現在時刻を取得
 			break;
 		}
 
@@ -502,6 +500,9 @@ bool CBackupAgent::FormatBackUpPath(
 				while( *q ){
 					if( *q==L'$' ){
 						++q;
+						if( *q == L'\0' ){
+							break;
+						}
 						if( isdigit(*q) ){
 							q[-1] = L'\0';
 							wcscat( szNewPath, q2 );
