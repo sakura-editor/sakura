@@ -26,90 +26,61 @@
 #include "StdAfx.h"
 #include "format.h"
 
-/*!	日時をフォーマット
+/*!	書式文字列に従い日時を変換
 
-	@param[out] szResult 書式変換後の文字列
-	@param[in] size szResultに格納可能な文字数(ヌル文字を含む)
-	@param[in] format 書式
+	@param[in] format 書式文字列
 	@param[in] systime 書式化したい日時
-	@retval true  書式文字列の変換が完了
-	@retval false 書式文字列の変換が一部または全部失敗
+	@return 書式変換後の文字列
 
-	@note  %Y %y %m %d %H %M %S の変換に対応
-
-	@author aroka
-	@date 2005.11.21 新規
+	@note 書式文字列では以下の変換指定子が使用できます。
+	@li "%Y" 西暦
+	@li "%y" 下2桁の西暦
+	@li "%m" 2桁の月
+	@li "%d" 2桁の日
+	@li "%H" 2桁の時
+	@li "%M" 2桁の分
+	@li "%S" 2桁の秒
+	@note 書式文字列は末尾または最初のnull文字までを変換対象とします。
 */
-bool GetDateTimeFormat( WCHAR* szResult, size_t size, const WCHAR* format, const SYSTEMTIME& systime )
+std::wstring GetDateTimeFormat( std::wstring_view format, const SYSTEMTIME& systime )
 {
-	WCHAR szTime[10] = {};
-	const WCHAR *p = format;
-	WCHAR *q = szResult;
-	bool ret = false;
+	std::wstring result;
+	wchar_t str[6] = {};
+	bool inSpecifier = false;
 
-	if( szResult == NULL || size == 0 || format == NULL ){
-		return false;
-	}
+	result.reserve( format.length() * 2 );
 
-	while( *p ){
-		int timeLen = -1;
-		if( *p == L'%' ){
-			++p;
-
-			if( *p == L'\0' ){
-				break;
+	for( const auto f : format ){
+		if( inSpecifier ){
+			inSpecifier = false;
+			if( f == L'Y' ){
+				swprintf( str, _countof(str), L"%d", systime.wYear );
+			}else if( f == L'y' ){
+				swprintf( str, _countof(str), L"%02d", systime.wYear % 100 );
+			}else if( f == L'm' ){
+				swprintf( str, _countof(str), L"%02d", systime.wMonth );
+			}else if( f == L'd' ){
+				swprintf( str, _countof(str), L"%02d", systime.wDay );
+			}else if( f == L'H' ){
+				swprintf( str, _countof(str), L"%02d", systime.wHour );
+			}else if( f == L'M' ){
+				swprintf( str, _countof(str), L"%02d", systime.wMinute );
+			}else if( f == L'S' ){
+				swprintf( str, _countof(str), L"%02d", systime.wSecond );
+			}else{
+				swprintf( str, _countof(str), L"%c", f );
 			}
-
-			switch( *p ){
-			case L'Y':
-				timeLen = wsprintf( szTime, L"%d", systime.wYear );
-				break;
-			case L'y':
-				timeLen = wsprintf( szTime, L"%02d", (systime.wYear % 100) );
-				break;
-			case L'm':
-				timeLen = wsprintf( szTime, L"%02d", systime.wMonth );
-				break;
-			case L'd':
-				timeLen = wsprintf( szTime, L"%02d", systime.wDay );
-				break;
-			case L'H':
-				timeLen = wsprintf( szTime, L"%02d", systime.wHour );
-				break;
-			case L'M':
-				timeLen = wsprintf( szTime, L"%02d", systime.wMinute );
-				break;
-			case L'S':
-				timeLen = wsprintf( szTime, L"%02d", systime.wSecond );
-				break;
-			default:
-				break;
-			}
-		}
-
-		const size_t remains = (size - 1) - (q - szResult);
-		if( 0 <= timeLen ){
-			if( remains < (size_t)timeLen ){
-				break;
-			}
-			wcscpy( q, szTime );
-			++p;
-			q += timeLen;
+			result.append( str );
+		}else if( f == L'%' ){
+			inSpecifier = true;
+		}else if( f == L'\0' ){
+			break;
 		}else{
-			if( remains == 0 ){
-				break;
-			}
-			*q++ = *p++;
+			result.push_back( f );
 		}
 	}
 
-	*q = L'\0';
-
-	if( *p == L'\0' ){
-		ret = true;
-	}
-
-	return ret;
+	return result;
 }
 
 /*!	バージョン番号の解析
