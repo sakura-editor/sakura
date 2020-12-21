@@ -44,52 +44,50 @@ int ChoosePointSize( const int currentSize, const int originalSize, const int* s
 		return currentSize;
 	}
 
-	// サイズがsizeTable内のどれにも該当しない場合を「半端」とする
+	// 基準サイズを含めたサイズテーブルを用意
+	std::vector<int> internalSizeTable;
+	internalSizeTable.reserve( sizeTableCount + 1 );
+	bool done = false;
+	for( size_t i = 0; i < sizeTableCount; ++i ){
+		if( !done && originalSize <= sizeTable[i] ){
+			done = true;
+			if( originalSize < sizeTable[i] ){
+				internalSizeTable.push_back( originalSize );
+			}
+		}
+		internalSizeTable.push_back( sizeTable[i] );
+	}
+	if( !done ){
+		internalSizeTable.push_back( originalSize );
+	}
 
-	// 基準サイズが半端かどうか
-	bool hanpa = true;
-	for( size_t i = 0; i < sizeTableCount; i++ ){
-		if( originalSize == sizeTable[i] ){
-			hanpa = false;
+	// 現在サイズに該当するサイズテーブル上の位置を探してそこに変更量を反映
+	int index = (int)internalSizeTable.size() + shift;
+	for( size_t i = 0; i < internalSizeTable.size(); ++i ){
+		if( currentSize <= internalSizeTable[i] ){
+			if( 0 < shift && currentSize < internalSizeTable[i] ){
+				// サイズテーブルにピッタリのサイズがない時には補正必要(拡大方向のみ)
+				//                         i
+				//                         |
+				// +-------+-------+---x---+------+-------+ <- internalSizeTable
+				//        -2           |         +2
+				//                currentSize
+				//                            ※shiftが2または-2の場合のイメージ
+				index = (int)i + shift - 1;
+			}else{
+				index = (int)i + shift;
+			}
 			break;
 		}
 	}
-
-	int index = sizeTableCount;
-	for( size_t i = 0; i < sizeTableCount; i++ ){
-		if( currentSize <= sizeTable[i] ){
-			index = (int)i;
-			break;
-		}
-	}
-
-	if( 0 < shift && index < (int)sizeTableCount && currentSize < sizeTable[index] ){
-		// 現在サイズが半端なので補正
-		index += shift - 1;
-	}else{
-		index += shift;
-	}
-
-	// テーブル末尾要素を指すインデックス
-	const int tailIndex = (int)sizeTableCount - 1;
 
 	int result = currentSize;
 	if( index < 0 ){
-		result = std::min( { currentSize, originalSize, sizeTable[0] } );
-	}else if( tailIndex < index ){
-		result = std::max( { currentSize, originalSize, sizeTable[tailIndex] } );
+		result = std::min( { currentSize, internalSizeTable[0] } );
+	}else if( (int)internalSizeTable.size() - 1 < index ){
+		result = std::max( { currentSize, internalSizeTable[internalSizeTable.size() - 1] } );
 	}else{
-		result = sizeTable[index];
-		if( hanpa ){
-			// 現在サイズから変更後サイズまでの間に基準サイズがあったらいい感じに補正する
-			if( 0 < shift && currentSize < originalSize && originalSize < result ){
-				result = (0 < index) ? std::max( originalSize, sizeTable[index - 1] ) : originalSize;
-			}else if( shift < 0 && result < originalSize && originalSize < currentSize ){
-				result = (index < tailIndex) ? std::min( originalSize, sizeTable[index + 1] ) : originalSize;
-			}else{
-				;
-			}
-		}
+		result = internalSizeTable[index];
 	}
 
 	return result;
