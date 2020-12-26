@@ -11,6 +11,11 @@
       <UniqueIdentifier>{0eefa0df-ca7f-489c-9844-9a182e1dba18}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup Condition="Exists('$(VCInstallDir)\Auxiliary\VS\include\CodeCoverage\CodeCoverage.h')">
+    <ClCompile Include="coverage.cpp">
+      <Filter>Other Files</Filter>
+    </ClCompile>
+  </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt">
       <Filter>Other Files</Filter>
@@ -55,9 +60,6 @@
     </ClCompile>
     <ClCompile Include="test-grepinfo.cpp">
       <Filter>Test Files</Filter>
-    </ClCompile>
-    <ClCompile Include="coverage.cpp">
-      <Filter>Other Files</Filter>
     </ClCompile>
     <ClCompile Include="test-loadstring.cpp">
       <Filter>Test Files</Filter>
