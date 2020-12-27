@@ -323,7 +323,7 @@ void CViewCommander::Command_FONT( void )
 void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 {
 	// The point sizes recommended by "The Windows Interface: An Application Design Guide", 1/10ポイント単位
-	static const INT sizeTable[] = { 8*10, 9*10, 10*10, (INT)(10.5*10), 11*10, 12*10, 14*10, 16*10, 18*10, 20*10, 22*10, 24*10, 26*10, 28*10, 32*10, 36*10, 40*10, 44*10, 48*10, 54*10, 60*10, 66*10, 72*10 };
+	static const INT sizeTable[] = { 1*10, 2*10, 3*10, 4*10, 5*10, 6*10, 7*10, 8*10, 9*10, 10*10, (INT)(10.5*10), 11*10, 12*10, 14*10, 16*10, 18*10, 20*10, 22*10, 24*10, 26*10, 28*10, 32*10, 36*10, 40*10, 44*10, 48*10, 54*10, 60*10, 66*10, 72*10 };
 	const LOGFONT& lf = (mode == 0 ? GetDllShareData().m_Common.m_sView.m_lf
 		: GetEditWindow()->GetLogfont( mode == 2 ));
 	INT nPointSize;
