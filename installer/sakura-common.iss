@@ -54,8 +54,8 @@ Name: "zh_hant"; MessagesFile: "compiler:Languages\ChineseTraditional.isl"; Info
 [CustomMessages]
 en.InfoBeforeFile=instmaterials\info_en.txt
 ja.InfoBeforeFile=instmaterials\info.txt
-zh_hans.InfoBeforeFile=instmaterials\info.txt
-zh_hant.InfoBeforeFile=instmaterials\info.txt
+zh_hans.InfoBeforeFile=instmaterials\info_zh_hans.txt
+zh_hant.InfoBeforeFile=instmaterials\info_zh_hant.txt
 
 en.AppName=SAKURA Editor
 ja.AppName=サクラエディタ
