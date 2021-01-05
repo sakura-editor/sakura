@@ -66,9 +66,11 @@ jobs:
       run: build-chm.bat
       shell: cmd
 
-    - name: Fetch ChineseSimplified.isl
+    - name: Fetch .isl files
       run: |
         Invoke-WebRequest -OutFile "C:\Program Files (x86)\inno setup 6\Languages\ChineseSimplified.isl" https://raw.githubusercontent.com/jrsoftware/issrc/main/Files/Languages/Unofficial/ChineseSimplified.isl
+        Invoke-WebRequest -OutFile "C:\program files (x86)\inno setup 6\Languages\ChineseTraditional.isl" https://raw.githubusercontent.com/jrsoftware/issrc/main/Files/Languages/Unofficial/ChineseTraditional.isl
+
 
     - name: Build installer with Inno Setup
       run: build-installer.bat ${{ matrix.platform }} ${{ matrix.config }}
