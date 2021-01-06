@@ -48,7 +48,7 @@ MinVersion=6.1
 [Languages]
 Name: "ja"; MessagesFile: "compiler:Languages\Japanese.isl"
 Name: "en"; MessagesFile: "compiler:Default.isl"; InfoBeforeFile: "instmaterials\info_us.txt"
-Name: "zh_hans"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"; InfoBeforeFile: "instmaterials\info_zh_hans.txt"
+Name: "zh_hans"; MessagesFile: "Languages\ChineseSimplified.isl"; InfoBeforeFile: "instmaterials\info_zh_hans.txt"
 Name: "zh_hant"; MessagesFile: "compiler:Languages\ChineseTraditional.isl"; InfoBeforeFile: "instmaterials\info_zh_hant.txt"
 
 [CustomMessages]
