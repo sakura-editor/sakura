@@ -93,19 +93,6 @@ class CColor_Found;
 #define IDM_JUMPDICT 2001	// 2006.04.10 fon
 #endif
 
-#if !defined(RECONVERTSTRING) && (WINVER < 0x040A)
-typedef struct tagRECONVERTSTRING {
-    DWORD dwSize;
-    DWORD dwVersion;
-    DWORD dwStrLen;
-    DWORD dwStrOffset;
-    DWORD dwCompStrLen;
-    DWORD dwCompStrOffset;
-    DWORD dwTargetStrLen;
-    DWORD dwTargetStrOffset;
-} RECONVERTSTRING, *PRECONVERTSTRING;
-#endif // RECONVERTSTRING
-
 ///	マウスからコマンドが実行された場合の上位ビット
 ///	@date 2006.05.19 genta
 const int CMD_FROM_MOUSE = 2;
