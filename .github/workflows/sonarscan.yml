@@ -1,0 +1,150 @@
+name: SonarCloud
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    paths-ignore:
+      - '**/*.md'
+      - 'ci/**/*'
+      - .gitignore
+      - .editorconfig
+      - appveyor.yml
+      - azure-pipelines.yml
+  pull_request_target:
+    types: [opened, synchronize]
+    paths-ignore:
+      - '**/*.md'
+      - 'ci/**/*'
+      - .gitignore
+      - .editorconfig
+      - appveyor.yml
+      - azure-pipelines.yml
+  schedule:
+    - cron:  '45 7 * * FRI'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  sonar:
+    name: Scan
+    runs-on: windows-latest
+
+    env:
+      BUILD_PLATFORM: x64
+      BUILD_CONFIGURATION: Release
+      SONAR_QUBE_VERSION: '4.5.0.2216'
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        ref: '${{ github.event.pull_request.head.sha }}'
+        fetch-depth: 0
+
+    - name: Setup environment variables
+      run: |
+        echo "SONAR_USER_HOME=${{ github.workspace }}" >> $env:GITHUB_ENV
+        if ('${{ env.GITHUB_BASE_REF }}' -ne '')
+        {
+          echo "BASE_SHA=$(git show -s --format=%H ${{ env.GITHUB_BASE_REF }})" >> $env:GITHUB_ENV
+        }
+        New-Item -Path .sonar -ItemType Directory
+
+    - name: Cache Sonar Analysis
+      uses: actions/cache@v2
+      with:
+        path: |
+          .sonar\cache
+          .sonar\analysis-cache
+        key:
+          sonar-cache-${{ env.SONAR_QUBE_VERSION }}-${{ github.sha }}
+        restore-keys:
+          sonar-cache-${{ env.SONAR_QUBE_VERSION }}-${{ env.BASE_SHA }}
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1
+
+    - name: Fetch Build-Wrapper
+      working-directory: ${{ github.workspace }}\.sonar
+      run: |
+        Invoke-WebRequest -OutFile build-wrapper-win-x86.zip https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip
+        7z rn build-wrapper-win-x86.zip build-wrapper-win-x86 build-wrapper
+        7z x build-wrapper-win-x86.zip
+
+    - name: Build with Build-Wrapper
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      if: env.SONAR_TOKEN
+      run: .sonar\build-wrapper\build-wrapper-win-x86-64.exe
+        --out-dir bw-output
+        MsBuild.exe
+        /p:Platform=${{ env.BUILD_PLATFORM }}
+        /p:Configuration=${{ env.BUILD_CONFIGURATION }}
+        /t:ReBuild
+
+    - name: Install OpenCppCoverage with XmlExporter
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      if: env.SONAR_TOKEN
+      working-directory: ${{ runner.temp }}
+      run: |
+        choco install OpenCppCoverage -y
+        Invoke-WebRequest -OutFile XmlExporter-x64.zip https://github.com/berryzplus/XmlExporter/releases/download/v1.0.0/XmlExporter-x64.zip
+        7z e XmlExporter-x64.zip
+        Move-Item -Path XmlExporter.dll -Destination "C:\Program Files\OpenCppCoverage\Plugins\Exporter\xml.dll"
+        echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
+
+    - name: Run Tests
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      if: env.SONAR_TOKEN
+      shell: cmd
+      run: OpenCppCoverage.exe
+        --export_type xml:tests1-coverage.xml
+        --modules ${{ github.workspace }}\tests\build\${{ env.BUILD_PLATFORM }}\${{ env.BUILD_CONFIGURATION }}\unittests\tests1.exe
+        --sources ${{ github.workspace }}
+        --excluded_sources ${{ github.workspace }}\tests\googletest
+        --working_dir .\${{ env.BUILD_PLATFORM }}\${{ env.BUILD_CONFIGURATION }}
+        --cover_children
+        --
+        .\tests\build\${{ env.BUILD_PLATFORM }}\${{ env.BUILD_CONFIGURATION }}\unittests\tests1.exe
+        --gtest_output=xml:tests1-googletest.xml
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+
+    - name: Fetch SonarScanner
+      working-directory: ${{ github.workspace }}\.sonar
+      run: |
+        Invoke-WebRequest -OutFile sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${{ env.SONAR_QUBE_VERSION }}.zip
+        7z rn sonar-scanner.zip sonar-scanner-${{ env.SONAR_QUBE_VERSION }} scanner
+        7z x sonar-scanner.zip
+
+    - name: Analyze with SonarScanner
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      if: env.SONAR_TOKEN
+      run: |
+        if ('${{ github.event_name }}' -eq 'pull_request_target')
+        {
+          $env:GITHUB_EVENT_NAME = 'pull_request'
+          $env:GITHUB_SHA = $(git show -s --format=%H)
+          $env:GITHUB_REF = 'refs/pull/${{ github.event.number }}/merge'
+        }
+        .\.sonar\scanner\bin\sonar-scanner.bat `
+        -D"sonar.organization=${{ github.repository_owner }}" `
+        -D"sonar.projectKey=$('${{ github.repository }}' -replace '/', '_')" `
+        -D"sonar.host.url=https://sonarcloud.io" `
+        -D"sonar.sourceEncoding=UTF-8" `
+        -D"sonar.sources=." `
+        -D"sonar.cfamily.build-wrapper-output=bw-output" `
+        -D"sonar.cfamily.cache.enabled=true" `
+        -D"sonar.cfamily.cache.path=.sonar\analysis-cache" `
+        -D"sonar.cfamily.cppunit.reportPath=tests1-googletest.xml" `
+        -D"sonar.cfamily.threads=2" `
+        -D"sonar.coverage.exclusions=help\**\*.js,tools\**\*.js" `
+        -D"sonar.coverageReportPaths=tests1-coverage.xml" `
+        -D"sonar.exclusions=.sonar\**\*,bw-output\**\*,HeaderMake\**\*,tests\build\**\*,tests\googletest\**\*,**\test-*"
