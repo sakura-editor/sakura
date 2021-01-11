@@ -13,7 +13,7 @@ trigger:
   paths:
     exclude:
       - '**/*.md'
-      - .github/workflows/*.yml
+      - .github/*
       - .gitignore
       - .travis.yml
       - appveyor.yml
@@ -33,7 +33,7 @@ pr:
   paths:
     exclude:
       - '**/*.md'
-      - .github/workflows/*.yml
+      - .github/*
       - .gitignore
       - .travis.yml
       - appveyor.yml
