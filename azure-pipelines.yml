@@ -33,6 +33,7 @@ pr:
   paths:
     exclude:
       - '**/*.md'
+      - .github/workflows/*.yml
       - .gitignore
       - .travis.yml
       - appveyor.yml
