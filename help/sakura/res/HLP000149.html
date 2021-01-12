@@ -47,21 +47,21 @@ PS	( 2029 )<br>
 -->
 
 <h3>クリップボードへコピーする処理</h3>
-■<strong><font color="blue">矩形選択時</font></strong><br>
+■<strong><span style="color: blue">矩形選択時</span></strong><br>
 <div class="li200">
-	"<font color="red">MSDEVColumnSelect</font>"形式のデータをクリップボードに格納<br>
+	"<span style="color: red">MSDEVColumnSelect</span>"形式のデータをクリップボードに格納<br>
 	<ul>
 		<li>データ内容不定</li>
 	</ul>
 
-	<font color="red">CF_UNICODETEXT</font>形式のデータをクリップボードに格納<br>
+	<span style="color: red">CF_UNICODETEXT</span>形式のデータをクリップボードに格納<br>
 	<ul>
 		<li>選択領域の各行が改行を含む場合はCRLFに変換、改行を含まない場合はCRLFを付加</li>
 		<li>すべての改行コードをCRLFに統一</li>
 		<li>末尾にnull文字を付加</li>
 	</ul>
 
-	"<font color="red">SAKURAClipW</font>"形式のデータをクリップボードに格納<br>
+	"<span style="color: red">SAKURAClipW</span>"形式のデータをクリップボードに格納<br>
 	<ul>
 		<li>先頭0～3の4バイトがint型のデータ長(n)</li>
 		<li>先頭4～4 + 2 * (n - 1) のバイトがUnicodeデータ(バイナリ含む)</li>
@@ -70,53 +70,53 @@ PS	( 2029 )<br>
 	</ul>
 </div>
 
-■<strong><font color="blue">線形選択時</font></strong><br>
+■<strong><span style="color: blue">線形選択時</span></strong><br>
 <div class="li200">
-	<font color="red">CF_UNICODETEXT</font>形式のデータをクリップボードに格納
+	<span style="color: red">CF_UNICODETEXT</span>形式のデータをクリップボードに格納
 	<ul>
 		<li>改行コードは元テキストの状態を保持する。</li>
 		<li>末尾にnull文字を付加</li>
 	</ul>
-	"<font color="red">SAKURAClipW</font>"形式のデータをクリップボードに格納
+	"<span style="color: red">SAKURAClipW</span>"形式のデータをクリップボードに格納
 	<ul>
 		<li>先頭0～3の4バイトがint型のデータ長(n)</li>
 		<li>先頭4～4 + 2 * (n - 1) の2 * n バイトがUnicodeデータ(バイナリ含む)</li>
 	</ul>
 </div>
-■<strong><font color="blue">未選択時</font></strong><br>
+■<strong><span style="color: blue">未選択時</span></strong><br>
 <div class="li200">
 	カーソル位置のレイアウト行データを線形選択時の方法でコピーし、
 	加えて、<a href="HLP000144.html">共通設定</a>のランモード貼付設定が有効になっている場合、
-	"<font color="red">MSDEVLineSelect</font>"形式と
-	"<font color="red">VisualStudioEditorOperationsLineCutCopyClipboardTag</font>"形式のデータをクリップボードに格納
+	"<span style="color: red">MSDEVLineSelect</span>"形式と
+	"<span style="color: red">VisualStudioEditorOperationsLineCutCopyClipboardTag</span>"形式のデータをクリップボードに格納
 </div>
 <br>
 
 <h3>クリップボードから貼り付ける処理</h3>
-<font color="green">クリップボードの形式を調べる</font><br>
+<span style="color: green">クリップボードの形式を調べる</span><br>
 <div class="li200">
-	"<font color="red">MSDEVColumnSelect</font>"形式がある場合
+	"<span style="color: red">MSDEVColumnSelect</span>"形式がある場合
 	<ul>
 		<li>矩形貼り付けとする</li>
 	</ul>
-	"<font color="red">MSDEVLineSelect</font>"形式または
-		"<font color="red">VisualStudioEditorOperationsLineCutCopyClipboardTag</font>"形式がある場合
+	"<span style="color: red">MSDEVLineSelect</span>"形式または
+		"<span style="color: red">VisualStudioEditorOperationsLineCutCopyClipboardTag</span>"形式がある場合
 	<ul>
 		<li><a href="HLP000144.html">共通設定</a>で有効の場合、ラインモード貼付とする</li>
 	</ul>
 	
-	"<font color="red">SAKURAClipW</font>"形式がある場合
+	"<span style="color: red">SAKURAClipW</span>"形式がある場合
 	<ul>
 		<li>そのデータを取り出しそのまま貼り付けデータとする。</li>
 		<li><a href="HLP000144.html">共通設定</a>で「改行コードを変換して貼り付ける」が有効の場合、改行コードを変換する</li>
 	</ul>
-	<font color="red">CF_UNICODETEXT</font>形式のデータがある場合
+	<span style="color: red">CF_UNICODETEXT</span>形式のデータがある場合
 	<ul>
 		<li>そのデータを取り出しそのまま貼り付けデータとする。</li>
 		<li><a href="HLP000144.html">共通設定</a>で「改行コードを変換して貼り付ける」が有効の場合、改行コードを変換する</li>
 		<li>null文字(0x00)以降切捨て</li>
 	</ul>
-	<font color="red">CF_OEMTEXT</font>形式のデータがある場合
+	<span style="color: red">CF_OEMTEXT</span>形式のデータがある場合
 	<ul>
 		<li>そのデータを取り出しShift_JISをUnicodeに変換する。</li>
 		<li><a href="HLP000144.html">共通設定</a>で「改行コードを変換して貼り付ける」が有効の場合、改行コードを変換する</li>

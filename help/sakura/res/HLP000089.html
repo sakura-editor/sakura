@@ -32,22 +32,22 @@
 				<span style="font-size: smaller;color: olive">\の次にある正規表現記号を普通の文字として扱います。またアルファベット文字と組み合わせて特殊な意味を持たせたりします。</span><br>
 			</td></tr>
 <tr><td><code>|</code></td><td>選択子<br><span style="font-size: smaller;color: olive">パターンの論理和</span></td></tr>
-<tr><td><code>(<font color="blue">...</font>)</code></td><td>式集合（グループ）<br><span style="font-size: smaller;color: olive">パターンをグループ化。</span></td></tr>
-<tr><td><code>[<font color="blue">...</font>]</code></td><td>文字集合（文字クラス）<br><span style="font-size: smaller;color: olive">キャラクタクラス。</span></td></tr>
+<tr><td><code>(<span style="color: blue">...</span>)</code></td><td>式集合（グループ）<br><span style="font-size: smaller;color: olive">パターンをグループ化。</span></td></tr>
+<tr><td><code>[<span style="color: blue">...</span>]</code></td><td>文字集合（文字クラス）<br><span style="font-size: smaller;color: olive">キャラクタクラス。</span></td></tr>
 </table>
 
 <h4>文字集合(キャラクタクラス)</h4>
-<code>[<font color="blue">...</font>]</code> の中に以下のものが指定可能です。<br>
+<code>[<span style="color: blue">...</span>]</code> の中に以下のものが指定可能です。<br>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td><code><font color="blue">...</font></code></td><td><br><code>[ABC]</code>はAかBかCのどれかにマッチします。</td></tr>
-<tr><td><code>^<font color="blue">...</font></code></td><td>否定<br><code>[^ABC]</code>はAとBとC以外の任意の1文字にマッチします。</td></tr>
-<tr><td><code><font color="blue">x</font>-<font color="blue">y</font></code></td><td>範囲<br><code>[A-Z]</code>は、「A」から「Z」までの文字のどれか1つとマッチします。</td></tr>
-<tr><td><code>[<font color="blue">...</font>]</code></td><td><font color="green">(鬼)</font> 文字集合内文字集合</td></tr>
-<tr><td><code><font color="blue">..</font>&amp;&amp;<font color="blue">..</font></code></td><td><font color="green">(鬼)</font> 積演算</td></tr>
-<tr><td><code>[:<font color="blue">xxxxx</font>:]</code></td><td><font color="green">(鬼)</font> <a href="http://www.geocities.jp/kosako3/oniguruma/doc/RE.ja.txt" target="_blank">POSIXブラケット</a></td></tr>
-<tr><td><code>[:^<font color="blue">xxxxx</font>:]</code></td><td><font color="green">(鬼)</font> <a href="http://www.geocities.jp/kosako3/oniguruma/doc/RE.ja.txt" target="_blank">POSIXブラケット</a>（否定）</td></tr>
+<tr><td><code><span style="color: blue">...</span></code></td><td><br><code>[ABC]</code>はAかBかCのどれかにマッチします。</td></tr>
+<tr><td><code>^<span style="color: blue">...</span></code></td><td>否定<br><code>[^ABC]</code>はAとBとC以外の任意の1文字にマッチします。</td></tr>
+<tr><td><code><span style="color: blue">x</span>-<span style="color: blue">y</span></code></td><td>範囲<br><code>[A-Z]</code>は、「A」から「Z」までの文字のどれか1つとマッチします。</td></tr>
+<tr><td><code>[<span style="color: blue">...</span>]</code></td><td><span style="color: green">(鬼)</span> 文字集合内文字集合</td></tr>
+<tr><td><code><span style="color: blue">..</span>&amp;&amp;<span style="color: blue">..</span></code></td><td><span style="color: green">(鬼)</span> 積演算</td></tr>
+<tr><td><code>[:<span style="color: blue">xxxxx</span>:]</code></td><td><span style="color: green">(鬼)</span> <a href="http://www.geocities.jp/kosako3/oniguruma/doc/RE.ja.txt" target="_blank">POSIXブラケット</a></td></tr>
+<tr><td><code>[:^<span style="color: blue">xxxxx</span>:]</code></td><td><span style="color: green">(鬼)</span> <a href="http://www.geocities.jp/kosako3/oniguruma/doc/RE.ja.txt" target="_blank">POSIXブラケット</a>（否定）</td></tr>
 </table>
-<font color="green">(鬼)</font> はbregonig.dllのみ<br>
+<span style="color: green">(鬼)</span> はbregonig.dllのみ<br>
 <br>
 
 
@@ -57,9 +57,9 @@
 <tr><td><code>*?</code></td>     <td><code>*</code></td>      <td>直前のパターンの0回以上の繰り返し</td></tr>
 <tr><td><code>+?</code></td>     <td><code>+</code></td>      <td>直前のパターンの1回以上の繰り返し</td></tr>
 <tr><td><code>??</code></td>     <td><code>?</code></td>      <td>直前のパターンが0回または1回現われる</td></tr>
-<tr><td><code>{<font color="blue">n</font>}?</code></td>   <td><code>{<font color="blue">n</font>}</code></td>    <td>直前のパターンの n 回の繰り返し</td></tr>
-<tr><td><code>{<font color="blue">n</font>,}?</code></td>  <td><code>{<font color="blue">n</font>,}</code></td>   <td>直前のパターンの n 回以上の繰り返し</td></tr>
-<tr><td><code>{<font color="blue">n</font>,<font color="blue">m</font>}?</code></td> <td><code>{<font color="blue">n</font>,<font color="blue">m</font>}</code></td>  <td>直前のパターンが n 回以上、 m 回以下</td></tr>
+<tr><td><code>{<span style="color: blue">n</span>}?</code></td>   <td><code>{<span style="color: blue">n</span>}</code></td>    <td>直前のパターンの n 回の繰り返し</td></tr>
+<tr><td><code>{<span style="color: blue">n</span>,}?</code></td>  <td><code>{<span style="color: blue">n</span>,}</code></td>   <td>直前のパターンの n 回以上の繰り返し</td></tr>
+<tr><td><code>{<span style="color: blue">n</span>,<span style="color: blue">m</span>}?</code></td> <td><code>{<span style="color: blue">n</span>,<span style="color: blue">m</span>}</code></td>  <td>直前のパターンが n 回以上、 m 回以下</td></tr>
 </table>
 <br>
 正規表現Aを<code><strong>[A-Z_]*PROC</strong></code> 、正規表現Bを<code><strong>[A-Z_]*?PROC</strong></code> とします。<br>
@@ -77,31 +77,31 @@
 <tr><td><code>\f</code></td><td>フォームフィード／改ページ（FF）</td></tr>
 <tr><td><code>\a</code></td><td>鐘／アラーム（BEL）</td></tr>
 <tr><td><code>\e</code></td><td>退避修飾／エスケープコード（ESC）</td></tr>
-<tr><td><code>\<font color="blue">ooo</font></code></td>	<td><font color="blue">o</font>に8進数で文字コードを指定する (<font color="blue">o</font>は1～3桁)</td></tr>
-<tr><td><code>\x<font color="blue">HH</font></code></td>	<td><font color="blue">H</font>に16進数で文字コードを指定する (<font color="blue">H</font>は1～2桁)</td></tr>
-<tr><td><code>\x{<font color="blue">HHHH</font>}</code></td><td><font color="green">(鬼)</font> 拡張16進数表現(<font color="blue">H</font>は1～4桁)</td></tr>
-<tr><td><code>\c<font color="blue">[</font></code></td>	<td>コントロール文字(<font color="blue">[</font>はコントロール文字)</td></tr>
-<tr><td><code>\Q</code></td>	<td><font color="green">(鬼)</font> \Eに至るまで 正規表現演算子（正規表現記号）を抑制します</td></tr>
-<tr><td><code>\E</code></td>	<td><font color="green">(鬼)</font> 正規表現演算子（正規表現記号）の抑制状態を終端します</td></tr>
+<tr><td><code>\<span style="color: blue">ooo</span></code></td>	<td><span style="color: blue">o</span>に8進数で文字コードを指定する (<span style="color: blue">o</span>は1～3桁)</td></tr>
+<tr><td><code>\x<span style="color: blue">HH</span></code></td>	<td><span style="color: blue">H</span>に16進数で文字コードを指定する (<span style="color: blue">H</span>は1～2桁)</td></tr>
+<tr><td><code>\x{<span style="color: blue">HHHH</span>}</code></td><td><span style="color: green">(鬼)</span> 拡張16進数表現(<span style="color: blue">H</span>は1～4桁)</td></tr>
+<tr><td><code>\c<span style="color: blue">[</span></code></td>	<td>コントロール文字(<span style="color: blue">[</span>はコントロール文字)</td></tr>
+<tr><td><code>\Q</code></td>	<td><span style="color: green">(鬼)</span> \Eに至るまで 正規表現演算子（正規表現記号）を抑制します</td></tr>
+<tr><td><code>\E</code></td>	<td><span style="color: green">(鬼)</span> 正規表現演算子（正規表現記号）の抑制状態を終端します</td></tr>
 </table>
-<font color="green">(鬼)</font> はbregonig.dllのみ
+<span style="color: green">(鬼)</span> はbregonig.dllのみ
 
 <h4>文字種</h4>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td><code>.</code></td><td>\nを除く任意の1文字 <strong>[^\n]</strong>と同じ<br><font color="green">(Unicode版)</font> 改行を除く任意の1文字。<strong>[^\r\n]</strong>と同じ
+<tr><td><code>.</code></td><td>\nを除く任意の1文字 <strong>[^\n]</strong>と同じ<br><span style="color: green">(Unicode版)</span> 改行を除く任意の1文字。<strong>[^\r\n]</strong>と同じ
 <a href="javascript:id=hhctrl.TextPopup('この処理は正規表現DLLではなくsakura側が入力された.を[^\\r\\n]に置き換えています。','ＭＳゴシック,11',9,9,-1,-1)">*1</a>
 </td></tr>
-<tr><td><code>\w</code></td><td>単語の構成文字 <strong>[0-9A-Za-z_]</strong>と同じ<br><font color="green">(鬼)</font> 2バイト文字も含む</td></tr>
+<tr><td><code>\w</code></td><td>単語の構成文字 <strong>[0-9A-Za-z_]</strong>と同じ<br><span style="color: green">(鬼)</span> 2バイト文字も含む</td></tr>
 <tr><td><code>\W</code></td><td>単語の構成文字以外</td></tr>
-<tr><td><code>\s</code></td><td>空白類文字 [ \t\v\x0a\x0d]と同じ<br><font color="green">(鬼)</font> <code>[:space:]</code>と同じ</td></tr>
+<tr><td><code>\s</code></td><td>空白類文字 [ \t\v\x0a\x0d]と同じ<br><span style="color: green">(鬼)</span> <code>[:space:]</code>と同じ</td></tr>
 <tr><td><code>\S</code></td><td>空白類文字以外</td></tr>
-<tr><td><code>\d</code></td><td>10進数字 <br><font color="green">(Unicode版)</font> 2バイト文字=全角数字も含む</td></tr>
+<tr><td><code>\d</code></td><td>10進数字 <br><span style="color: green">(Unicode版)</span> 2バイト文字=全角数字も含む</td></tr>
 <tr><td><code>\D</code></td><td>10進数字以外</td></tr>
-<tr><td><code>\p{<font color="blue">property-name</font>}</code></td><td><font color="green">(鬼)</font> <a href="http://www.geocities.jp/kosako3/oniguruma/doc/RE.ja.txt" target="_blank">キャラクタプロパティ</a></td></tr>
-<tr><td><code>\p{^<font color="blue">property-name</font>}<br>\P{<font color="blue">property-name</font>}</code></td><td><font color="green">(鬼)</font> <a href="http://www.geocities.jp/kosako3/oniguruma/doc/RE.ja.txt" target="_blank">キャラクタプロパティ</a>（否定）</td></tr>
+<tr><td><code>\p{<span style="color: blue">property-name</span>}</code></td><td><span style="color: green">(鬼)</span> <a href="http://www.geocities.jp/kosako3/oniguruma/doc/RE.ja.txt" target="_blank">キャラクタプロパティ</a></td></tr>
+<tr><td><code>\p{^<span style="color: blue">property-name</span>}<br>\P{<span style="color: blue">property-name</span>}</code></td><td><span style="color: green">(鬼)</span> <a href="http://www.geocities.jp/kosako3/oniguruma/doc/RE.ja.txt" target="_blank">キャラクタプロパティ</a>（否定）</td></tr>
 </table>
-<font color="green">(鬼)</font> はbregonig.dllのみ<br>
-<font color="green">(Unicode版)</font> はUnicode版のサクラエディタ<br>
+<span style="color: green">(鬼)</span> はbregonig.dllのみ<br>
+<span style="color: green">(Unicode版)</span> はUnicode版のサクラエディタ<br>
 
 <h4>位置(錨)</h4>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
@@ -111,55 +111,55 @@
 <tr><td><code>\B</code></td><td>単語の境界以外</td></tr>
 <tr><td><code>\A</code></td><td>文字列の最初</td></tr>
 <tr><td><code>\Z</code></td><td>文字列の最後(最後が改行ならば改行の直前)</td></tr>
-<tr><td><code>\z</code></td><td><font color="green">(鬼)</font> 文字列の最後</td></tr>
+<tr><td><code>\z</code></td><td><span style="color: green">(鬼)</span> 文字列の最後</td></tr>
 <tr><td><code>\G</code></td><td>照合開始位置</td></tr>
 </table>
-<font color="green">(鬼)</font> はbregonig.dllのみ
+<span style="color: green">(鬼)</span> はbregonig.dllのみ
 
 <h4>後方参照と部分式呼び出し</h4>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td><code>\<font color="blue">n</font></code></td><td>番号指定による後方参照<br>( )でグループ化した文字列を、<strong>\<font color="blue">n</font></strong>(<font color="blue">n</font>は1以上の整数)で参照します。</td></tr>
-<tr><td><code>\k&lt;<font color="blue">name</font>&gt;<br>\k'<font color="blue">name</font>'</code></td><td><font color="green">(鬼)</font> 名前指定による後方参照</td></tr>
+<tr><td><code>\<span style="color: blue">n</span></code></td><td>番号指定による後方参照<br>( )でグループ化した文字列を、<strong>\<span style="color: blue">n</span></strong>(<span style="color: blue">n</span>は1以上の整数)で参照します。</td></tr>
+<tr><td><code>\k&lt;<span style="color: blue">name</span>&gt;<br>\k'<span style="color: blue">name</span>'</code></td><td><span style="color: green">(鬼)</span> 名前指定による後方参照</td></tr>
 <tr><td><code>
-	\k&lt;<font color="blue">name</font>+<font color="blue">n</font>&gt;<br>
-	\k&lt;<font color="blue">name</font>-<font color="blue">n</font>&gt;<br>
-	\k'<font color="blue">name</font>+<font color="blue">n</font>'<br>
-	\k'<font color="blue">name</font>-<font color="blue">n</font>'
-		</code></td><td><font color="green">(鬼)</font> ネストレベル付き後方参照</td></tr>
-<tr><td><code>\g&lt;<font color="blue">name</font>&gt;<br>\g'<font color="blue">name</font>'</code></td><td><font color="green">(鬼)</font> 名前指定部分式呼出し</td></tr>
-<tr><td><code>\g&lt;<font color="blue">n</font>&gt;<br>\g'<font color="blue">n</font>'</code></td><td><font color="green">(鬼)</font> 番号指定部分式呼出し</td></tr>
+	\k&lt;<span style="color: blue">name</span>+<span style="color: blue">n</span>&gt;<br>
+	\k&lt;<span style="color: blue">name</span>-<span style="color: blue">n</span>&gt;<br>
+	\k'<span style="color: blue">name</span>+<span style="color: blue">n</span>'<br>
+	\k'<span style="color: blue">name</span>-<span style="color: blue">n</span>'
+		</code></td><td><span style="color: green">(鬼)</span> ネストレベル付き後方参照</td></tr>
+<tr><td><code>\g&lt;<span style="color: blue">name</span>&gt;<br>\g'<span style="color: blue">name</span>'</code></td><td><span style="color: green">(鬼)</span> 名前指定部分式呼出し</td></tr>
+<tr><td><code>\g&lt;<span style="color: blue">n</span>&gt;<br>\g'<span style="color: blue">n</span>'</code></td><td><span style="color: green">(鬼)</span> 番号指定部分式呼出し</td></tr>
 </table>
-<font color="green">(鬼)</font> はbregonig.dllのみ
+<span style="color: green">(鬼)</span> はbregonig.dllのみ
 
 <h4>拡張式集合</h4>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td><code>(?#<font color="blue">...</font>)</code></td><td>注釈</td></tr>
-<tr><td><code>(<font color="blue">式</font>)</code></td><td>捕獲式集合</td></tr>
-<tr><td><code>(?:<font color="blue">式</font>)</code></td><td>非捕獲式集合 （グループ化のみ）</td></tr>
-<tr><td><code>(?&lt;<font color="blue">name</font>&gt;<font color="blue">式</font>)<br>(?'<font color="blue">name</font>'<font color="blue">式</font>)</code></td><td><font color="green">(鬼)</font> 名前付き捕獲式集合</td></tr>
-<tr><td><code>(?=<font color="blue">式</font>)</code></td><td>先読み</td></tr>
-<tr><td><code>(?!<font color="blue">式</font>)</code></td><td>否定先読み</td></tr>
-<tr><td><code>(?&lt;=<font color="blue">式</font>)</code></td><td><font color="green">(鬼)</font> 戻り読み</td></tr>
-<tr><td><code>(?&lt;!<font color="blue">式</font>)</code></td><td><font color="green">(鬼)</font> 否定戻り読み</td></tr>
-<tr><td><code>(?&gt;<font color="blue">式</font>)</code></td><td><font color="green">(鬼)</font> 原子的式集合</td></tr>
+<tr><td><code>(?#<span style="color: blue">...</span>)</code></td><td>注釈</td></tr>
+<tr><td><code>(<span style="color: blue">式</span>)</code></td><td>捕獲式集合</td></tr>
+<tr><td><code>(?:<span style="color: blue">式</span>)</code></td><td>非捕獲式集合 （グループ化のみ）</td></tr>
+<tr><td><code>(?&lt;<span style="color: blue">name</span>&gt;<span style="color: blue">式</span>)<br>(?'<span style="color: blue">name</span>'<span style="color: blue">式</span>)</code></td><td><span style="color: green">(鬼)</span> 名前付き捕獲式集合</td></tr>
+<tr><td><code>(?=<span style="color: blue">式</span>)</code></td><td>先読み</td></tr>
+<tr><td><code>(?!<span style="color: blue">式</span>)</code></td><td>否定先読み</td></tr>
+<tr><td><code>(?&lt;=<span style="color: blue">式</span>)</code></td><td><span style="color: green">(鬼)</span> 戻り読み</td></tr>
+<tr><td><code>(?&lt;!<span style="color: blue">式</span>)</code></td><td><span style="color: green">(鬼)</span> 否定戻り読み</td></tr>
+<tr><td><code>(?&gt;<span style="color: blue">式</span>)</code></td><td><span style="color: green">(鬼)</span> 原子的式集合</td></tr>
 <tr><td><code>(?imsx)</code></td><td>孤立オプション<br>i: 大文字小文字照合<br>m: 複数行（サクラエディタではデフォルトでon）<br>s: 単一行  （. が \n にもマッチ）<br>x: 拡張形式（空白を無視、# 以降を無視）</td></tr>
-<tr><td><code>(?imsx-imsx)</code></td><td><font color="green">(鬼)</font> 孤立オプション（bregonig.dllではオプションの否定が可能）</td></tr>
-<tr><td><code>(imsx-imsx:<font color="blue">式</font>)</code></td><td><font color="green">(鬼)</font> 式オプション</td></tr>
+<tr><td><code>(?imsx-imsx)</code></td><td><span style="color: green">(鬼)</span> 孤立オプション（bregonig.dllではオプションの否定が可能）</td></tr>
+<tr><td><code>(imsx-imsx:<span style="color: blue">式</span>)</code></td><td><span style="color: green">(鬼)</span> 式オプション</td></tr>
 </table>
-<font color="green">(鬼)</font> はbregonig.dll のみ
+<span style="color: green">(鬼)</span> はbregonig.dll のみ
 
 <h4>置換で使える参照</h4>
 「置換後」に指定して使います。<br>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td><code>$<font color="blue">n</font></code></td><td>番号指定参照<br>( )でグループ化した文字列を、<strong>$<font color="blue">n</font></strong>(<font color="blue">n</font>は1以上の整数)で参照します。<br>サクラエディタでは<strong>$<font color="blue">n</font></strong>の代わりに<strong>\<font color="blue">n</font></strong>も使用できます。</td></tr>
-<tr><td><code>${<font color="blue">n</font>}</code></td><td><font color="green">(鬼)</font> （安全な）番号指定参照<br>後ろにそのまま続けて数字を書くことができます。</td></tr>
+<tr><td><code>$<span style="color: blue">n</span></code></td><td>番号指定参照<br>( )でグループ化した文字列を、<strong>$<span style="color: blue">n</span></strong>(<span style="color: blue">n</span>は1以上の整数)で参照します。<br>サクラエディタでは<strong>$<span style="color: blue">n</span></strong>の代わりに<strong>\<span style="color: blue">n</span></strong>も使用できます。</td></tr>
+<tr><td><code>${<span style="color: blue">n</span>}</code></td><td><span style="color: green">(鬼)</span> （安全な）番号指定参照<br>後ろにそのまま続けて数字を書くことができます。</td></tr>
 <tr><td><code>$&amp;</code></td><td>マッチした文字列全体</td></tr>
-<tr><td><code>$+</code></td><td><font color="green">(鬼)</font> 最後にマッチした部分文字列</td></tr>
-<tr><td><code>$+{<font color="blue">name</font>}<br>$-{<font color="blue">name</font>}[<font color="blue">n</font>]</code></td><td><font color="green">(鬼)</font> 名前指定参照（Perl 5.10 互換、推奨）</td></tr>
-<tr><td><code>\k&lt;<font color="blue">name</font>&gt;<br>\k'<font color="blue">name</font>'</code></td><td><font color="green">(鬼)</font> 名前指定参照（鬼車準拠）</td></tr>
-<tr><td><code>${<font color="blue">name</font>}</code></td><td><font color="green">(鬼)</font> 名前指定参照（独自拡張、暫定仕様のため非推奨）</td></tr>
+<tr><td><code>$+</code></td><td><span style="color: green">(鬼)</span> 最後にマッチした部分文字列</td></tr>
+<tr><td><code>$+{<span style="color: blue">name</span>}<br>$-{<span style="color: blue">name</span>}[<span style="color: blue">n</span>]</code></td><td><span style="color: green">(鬼)</span> 名前指定参照（Perl 5.10 互換、推奨）</td></tr>
+<tr><td><code>\k&lt;<span style="color: blue">name</span>&gt;<br>\k'<span style="color: blue">name</span>'</code></td><td><span style="color: green">(鬼)</span> 名前指定参照（鬼車準拠）</td></tr>
+<tr><td><code>${<span style="color: blue">name</span>}</code></td><td><span style="color: green">(鬼)</span> 名前指定参照（独自拡張、暫定仕様のため非推奨）</td></tr>
 </table>
-<font color="green">(鬼)</font> はbregonig.dllのみ
+<span style="color: green">(鬼)</span> はbregonig.dllのみ
 
 <h4>bregonig.dllへの変更による違い</h4>
 <ul>
@@ -172,7 +172,7 @@
 	<li><strong>\c\ の動作が異なる。</strong><br>
 		<small>Bregexp.dll では、\c\ は Ctrl+\ を意味していますが、bregonig.dll では、\c の次の \ はエスケープとして解釈されます。Ctrl+\ を指定するには \c\\とする必要があります。（Perl の仕様と異なるため、変更される可能性があります。）</small>
 	</li>
-	<li><strong>置換で \<font color="blue">ooo</font> の動作が少し異なる。</strong><br>
+	<li><strong>置換で \<span style="color: blue">ooo</span> の動作が少し異なる。</strong><br>
 		<small>Perl の動作に近づけてあります。</small>
 	</li>
 	<li><strong>Unicode版は i オプションの動作が異なる。</strong><br>
