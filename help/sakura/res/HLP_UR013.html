@@ -141,9 +141,9 @@
 	<li>マクロReplaceAllの標準動作をReplaceAllLine相当とし，ReplaceAllLinesは廃止．(svn:1049 patches:1636751 ryoji)</li>
 		<ul>
 			2つの動作の差は，位置指定(行頭指定^や単語区切り指定\b)を含むパターンを消去(置換後の文字列が空)の場合に出ます．<br>
-			<li><b>従来のReplaceAll</b>:
+			<li><strong>従来のReplaceAll</strong>:
 			置換後にキャレットがその位置にとどまるイメージのため，パターンが連続すると2つ目も区切りにマッチします．<br></li>
-			<li><b>新しいReplaceAll</b>:
+			<li><strong>新しいReplaceAll</strong>:
 			最初に1行全体でマッチする部分を決定した後に置換を行うので，初期状態で指定位置になかった2つ目が置換されることはありません．<br>
 			これは旧ReplaceAllLines(今回廃止)と同じ動作です．従来のReplaceAllと同様の動作をさせるには，新しく追加したオプション値0x400を指定します．<br></li>
 		</ul>

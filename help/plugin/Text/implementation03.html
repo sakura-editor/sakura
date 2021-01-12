@@ -20,7 +20,7 @@
 　アウトライン解析プラグインは、アウトライン解析ダイアログを表示する際に一度だけ呼びだされる。プラグインコードは、編集中文書の先頭から1行ずつ読み取り、条件に合致すればOutlineオブジェクトの AddFuncInfo, AddFuncInfo2関数でアウトライン解析ダイアログに登録する。<br>
 　アウトライン解析ダイアログはあらかじめ提供されている中から適当なものをOutline.SetListType関数で選択する。ダイアログのタイトルはOutline.SetTitle関数で指定できる。<br>
 <br>
-<b>&lt;疑似コード&gt;</b>
+<strong>&lt;疑似コード&gt;</strong>
 <div class="li200">
 <pre class="code">
 Outline.SetListType( タイプ )            # タイプ: 4.2.3章を参照。
@@ -74,7 +74,7 @@ Outline.SetTitle( 'タイトル文字列' )
 アウトラインプラグインで、タイプに200を指定するとJavaなどoo言語のクラスを表示できますが、「Sakura 構造体」の「構造体」ように後ろにつく文字はJava/C++の固定のものしか選べません。<br>
 SetLabelはプラグインから付加文字列を変更・追加できるようにします (Ver.2.0.9.0以降)。<br>
 <br>
-<b>&lt;例&gt;</b>
+<strong>&lt;例&gt;</strong>
 <div class="li200">
 <pre class="code">
 Outline.SetListType( 200 ); //Javaツリー
@@ -97,7 +97,7 @@ Outline.AddFuncInfo( 5, 1, "Foo::Bar::Fuga", 2 ); //関数
 <br>
 　Enterキーが入力された場合、カーソルが次の行に移動した状態でプラグインが呼び出される。またタイプ別設定の自動インデントが有効の場合、自動インデント後の状態でプラグインが呼び出される。改行されたかどうかは論理桁が1であるかで判定するため、自動インデントはオフにしてもらう必要がある。<br>
 <br>
-<b>&lt;疑似コード&gt;</b>
+<strong>&lt;疑似コード&gt;</strong>
 <div class="li200">
 <pre class="code">
 現在行 ← Editor.ExpandParameter("$y")
@@ -118,7 +118,7 @@ Outline.AddFuncInfo( 5, 1, "Foo::Bar::Fuga", 2 ); //関数
 
 <h4 id="c030503">補完候補検索 ・・・ (Ver.2.0.6.0以降)</h4>
 <div class="li100">
-<b>≪ジャック≫</b><br>
+<strong>≪ジャック≫</strong><br>
 <div class="li200">
 <table class="f">
 <tr><td>ComplementGlobal</td><td>　全てのタイプに適用される補完候補検索</td></tr>
@@ -135,7 +135,7 @@ Outline.AddFuncInfo( 5, 1, "Foo::Bar::Fuga", 2 ); //関数
 
 <h4 id="c030504">エディタイベント ・・・ (Ver.2.0.8.0以降)</h4>
 <div class="li100">
-<b>≪ジャック≫</b><br>
+<strong>≪ジャック≫</strong><br>
 <div class="li200">
 <table class="f">
 <tr><td>EditorStart			</td><td>　新しいエディタウィンドウを開いて初期化完了後に呼ぶ。</td></tr>
