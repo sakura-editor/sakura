@@ -3,12 +3,12 @@
 <!-- TOC -->
 
 - [PR(Pull Request) を簡単にローカルに取得する方法](#prpull-request-を簡単にローカルに取得する方法)
-    - [コマンドライン引数](#コマンドライン引数)
-    - [remote name](#remote-name)
-    - [動作](#動作)
-    - [使用例](#使用例)
-        - [例1: PR36 をローカルに取得したい場合 (SAKURA_EDITOR_REMOTE_NAME を設定していない場合)](#例1-pr36-をローカルに取得したい場合-sakura_editor_remote_name-を設定していない場合)
-        - [例2: Fork したリポジトリで PR40 を取得したい場合](#例2-fork-したリポジトリで-pr40-を取得したい場合)
+  - [コマンドライン引数](#コマンドライン引数)
+  - [remote name](#remote-name)
+  - [動作](#動作)
+  - [使用例](#使用例)
+    - [例1: PR36 をローカルに取得したい場合 (SAKURA_EDITOR_REMOTE_NAME を設定していない場合)](#例1-pr36-をローカルに取得したい場合-sakura_editor_remote_name-を設定していない場合)
+    - [例2: Fork したリポジトリで PR40 を取得したい場合](#例2-fork-したリポジトリで-pr40-を取得したい場合)
 
 <!-- /TOC -->
 

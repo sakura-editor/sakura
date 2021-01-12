@@ -7,7 +7,7 @@
 - [CodeFactor のデフォルトのCPPLINT.CFG](#codefactor-のデフォルトのcpplintcfg)
 - [cpplint.py のインストール](#cpplintpy-のインストール)
 - [cpplint.py の実行](#cpplintpy-の実行)
-    - [cpplint.py のインストール場所の例](#cpplintpy-のインストール場所の例)
+  - [cpplint.py のインストール場所の例](#cpplintpy-のインストール場所の例)
 - [参考サイト](#参考サイト)
 
 <!-- /TOC -->
