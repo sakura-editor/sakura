@@ -21,29 +21,29 @@ Sakura-Editor Macro Reference
 
 <h3>JScript用</h3>
 <pre>
-<span style = "color:green">//ClipMacro.js</span>
-<span style = "color:blue">var</span> oIE = <span style = "color:blue">new</span> ActiveXObject(<span style = "color:#800000">"InternetExplorer.Application"</span>);
-oIE.Navigate(<span style = "color:#800000">"about:blank"</span>);
-<span style = "color:blue">var</span> sRet = oIE.Document.parentWindow.clipboardData.getData(<span style = "color:#800000">"Text"</span>);
-<span style = "color:blue">eval</span>(sRet);
+<span style="color:green">//ClipMacro.js</span>
+<span style="color:blue">var</span> oIE = <span style="color:blue">new</span> ActiveXObject(<span style="color:#800000">"InternetExplorer.Application"</span>);
+oIE.Navigate(<span style="color:#800000">"about:blank"</span>);
+<span style="color:blue">var</span> sRet = oIE.Document.parentWindow.clipboardData.getData(<span style="color:#800000">"Text"</span>);
+<span style="color:blue">eval</span>(sRet);
 </pre>
 
 <h3>VBScript用</h3>
 <pre>
-<span style = "color:green">&#39;ClipMacro.vbs</span>
-<span style = "color:blue">Set</span> oIE = CreateObject(<span style = "color:#800000">"InternetExplorer.Application"</span>)
-oIE.Navigate(<span style = "color:#800000">"about:blank"</span>)
-sRet = oIE.Document.parentWindow.clipboardData.getData(<span style = "color:#800000">"Text"</span>)
-<span style = "color:blue">Set</span> oIE = <span style = "color:blue">Nothing</span>
-<span style = "color:blue">Execute</span> sRet
+<span style="color:green">&#39;ClipMacro.vbs</span>
+<span style="color:blue">Set</span> oIE = CreateObject(<span style="color:#800000">"InternetExplorer.Application"</span>)
+oIE.Navigate(<span style="color:#800000">"about:blank"</span>)
+sRet = oIE.Document.parentWindow.clipboardData.getData(<span style="color:#800000">"Text"</span>)
+<span style="color:blue">Set</span> oIE = <span style="color:blue">Nothing</span>
+<span style="color:blue">Execute</span> sRet
 </pre>
 
 <h3>PerlScript用</h3>
 <pre>
-<span style = "color:green;">#ClipMacro.pls</span>
-<span style = "color:blue;">use</span> Win32::Clipboard;
+<span style="color:green;">#ClipMacro.pls</span>
+<span style="color:blue;">use</span> Win32::Clipboard;
 $CLIP = Win32::Clipboard();
-<span style = "color:blue;">eval</span>($CLIP-&gt;<span style = "color:blue;">GetText</span>());
+<span style="color:blue;">eval</span>($CLIP-&gt;<span style="color:blue;">GetText</span>());
 </pre>
 
 

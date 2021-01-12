@@ -12,7 +12,7 @@
 <h2>改行コードについて</h2>
 <h3>取り扱える改行コード</h3>
 複数の改行コードが混在したファイルも取り扱えるようにする<br>
-<div class=li200>
+<div class="li200">
 <strike>CR00LF00	( 0d 00 0a 00 )</strike>	<img src="images/hint.png">廃止しました。(sakura:1.3.4.1)<br>
 CRLF	( 0d 0a )<br>
 <strike>LFCR	( 0a 0d )</strike>	<img src="images/hint.png">廃止しました。(sakura:2.0.0.0)<br>
@@ -48,7 +48,7 @@ PS	( 2029 )<br>
 
 <h3>クリップボードへコピーする処理</h3>
 ■<b><font color="blue">矩形選択時</font></b><br>
-<div class=li200>
+<div class="li200">
 	"<font color="red">MSDEVColumnSelect</font>"形式のデータをクリップボードに格納<br>
 	<ul>
 		<li>データ内容不定</li>
@@ -71,7 +71,7 @@ PS	( 2029 )<br>
 </div>
 
 ■<b><font color="blue">線形選択時</font></b><br>
-<div class=li200>
+<div class="li200">
 	<font color="red">CF_UNICODETEXT</font>形式のデータをクリップボードに格納
 	<ul>
 		<li>改行コードは元テキストの状態を保持する。</li>
@@ -84,7 +84,7 @@ PS	( 2029 )<br>
 	</ul>
 </div>
 ■<b><font color="blue">未選択時</font></b><br>
-<div class=li200>
+<div class="li200">
 	カーソル位置のレイアウト行データを線形選択時の方法でコピーし、
 	加えて、<a href="HLP000144.html">共通設定</a>のランモード貼付設定が有効になっている場合、
 	"<font color="red">MSDEVLineSelect</font>"形式と
@@ -94,7 +94,7 @@ PS	( 2029 )<br>
 
 <h3>クリップボードから貼り付ける処理</h3>
 <font color="green">クリップボードの形式を調べる</font><br>
-<div class=li200>
+<div class="li200">
 	"<font color="red">MSDEVColumnSelect</font>"形式がある場合
 	<ul>
 		<li>矩形貼り付けとする</li>
@@ -125,12 +125,12 @@ PS	( 2029 )<br>
 	</ul>
 </div><br>
 <h3>[Enter] キー入力時の処理</h3>
-<div class=li200>挿入される改行コードの種類はファイル読み込み時に決定する。<br>
+<div class="li200">挿入される改行コードの種類はファイル読み込み時に決定する。<br>
 [Enter] キー入力時は、その改行コードに変換して格納する。<br>
 </div><br>
 
 <h3>アンドゥ・リドゥバッファへの改行コード格納形式</h3>
-<div class=li200>
+<div class="li200">
 前バージョンは改行コードを\rで表現していた。<br>
 新バージョンはCRLF等をそのまま格納する。<br>
 バッファからの取り出し処理の際、複数種類の改行コードを判別する。<br>
