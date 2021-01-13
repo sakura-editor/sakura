@@ -16,14 +16,14 @@ Sakura-Editor Macro Reference
 		<dd><em>string  S_ExpandParameter ( S1 )</em>&nbsp;&nbsp;<a href="../../sample/SampleExpandParameter.html">使用例</a>
 		<br><br>
 		<table border="1" cellspacing="0" cellpadding="3" width="85%">
-			<tr><th>引数</th><th>型</th><th>内容</th></tr>
+			<tr><th scope="auto">引数</th><th scope="auto">型</th><th scope="auto">内容</th></tr>
 			<tr><td>S1</td><td>文字列</td><td>フォーマット文字列 </td></tr>
 		</table>
 		</dd>
 	<dt>設定値</dt>
 		<dd>引数&nbsp;<em>S1</em>&nbsp;の設定値は次のとおりです。<br><br>
 		<table border="1" cellspacing="0" cellpadding="3" width="85%">
-			<tr><th>値</th><th>内容</th></tr>
+			<tr><th scope="auto">値</th><th scope="auto">内容</th></tr>
 			<tr><td>$$ </td><td>文字 $ 自身 </td></tr>
 			<tr><td>$F </td><td>開いているファイルの名前（フルパス） </td></tr>
 			<tr><td>$f </td><td>開いているファイルの名前（ファイル名+拡張子のみ）</td></tr>
@@ -53,7 +53,7 @@ Sakura-Editor Macro Reference
 		条件文書式：$｛ｃ?A0$：A1$：A2$：．．．$｝<br>
 		条件 ｃ に対応して A0，A1，A2 ．．． のいずれかの文字列が返される。条件 ｃ として用意されている物は以下の通り。<br>
 		<table border="1" cellspacing="0" cellpadding="3" width="85%">
-			<tr><th>条件</th><th>動作</th></tr>
+			<tr><th scope="auto">条件</th><th scope="auto">動作</th></tr>
 			<tr><td>R</td><td>エディタ上で読み取り専用で開いている $： 上書き禁止のファイル $： いずれでもない </td></tr>
 			<tr><td>w</td><td>Grep検索結果ウィンドウ $： アウトプットウィンドウ $： 普通のウィンドウ </td></tr>
 			<tr><td>M</td><td>キーボードマクロ記録中 $： 記録中ではない </td></tr>
