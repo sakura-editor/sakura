@@ -30,7 +30,8 @@ table.box td { border: #666 1px solid; padding: 4px 10px 3px; }
 ■全プラグイン共通<br>
 <div class="li200">
 	<table class="box">
-	<tr><th scope="auto" width="120">[Plugin]</th><th scope="auto"></th></tr>
+	<caption style="display: none">無題</caption>
+<tr><th scope="auto" width="120">[Plugin]</th><th scope="auto"></th></tr>
 	<tr><td>Id</td>				<td>プラグイン識別子。最大UNICODE63文字の、世界でユニークな文字列。<br>
 									使用できる文字は、半角英数と「{}._-」のみとする。「,」と「/」は厳禁。<br>
 									例）{A8E7CC0A-032D-11DF-9E9A-333D56D89593}, jp.co.google.foo.BarPlugin, etc..</td></tr>
@@ -43,7 +44,8 @@ table.box td { border: #666 1px solid; padding: 4px 10px 3px; }
 	</table>
 <br>
 	<table class="box">
-	<tr><th scope="auto" width="120">[Plug]</th><th scope="auto">ジャックと呼び出すハンドラの対応表</th></tr>
+	<caption style="display: none">無題</caption>
+<tr><th scope="auto" width="120">[Plug]</th><th scope="auto">ジャックと呼び出すハンドラの対応表</th></tr>
 	<tr><td><em>ジャック名</em></td>		<td>ハンドラ<br>
 												※一部のジャックには、Label属性を指定することができる。(Outline, SmartIndent等)</td></tr>
 	<tr><td><em>ジャック名</em>.Label</td>	<td>ラベル文字列</td></tr>
@@ -56,7 +58,8 @@ table.box td { border: #666 1px solid; padding: 4px 10px 3px; }
 	</div>
 <br>
 	<table class="box">
-	<tr><th scope="auto" width="120">[Command]</th><th scope="auto">本体に追加するプラグインコマンドの定義</th></tr>
+	<caption style="display: none">無題</caption>
+<tr><th scope="auto" width="120">[Command]</th><th scope="auto">本体に追加するプラグインコマンドの定義</th></tr>
 	<tr><td>C[n]</td>			<td>ハンドラ</td></tr>
 	<tr><td>C[n].Label</td>		<td>コマンド名</td></tr>
 	<tr><td>C[n].Icon</td>		<td>アイコンファイル(16x16のBMPファイル)<br>
@@ -65,7 +68,8 @@ table.box td { border: #666 1px solid; padding: 4px 10px 3px; }
 	　(n=1～49。欠番があるとその後は読み込まれない)<br>
 <br>
 	<table class="box">
-	<tr><th scope="auto" width="120">[Option]</th>	<th scope="auto">プラグインオプションの定義</th></tr>
+	<caption style="display: none">無題</caption>
+<tr><th scope="auto" width="120">[Option]</th>	<th scope="auto">プラグインオプションの定義</th></tr>
 	<tr><td>O[n].Section</td>		<td>オプションファイル中のSection名(最初のみ必須)<br>
 										未指定の場合には、直前の値を使用する。</td></tr>
 	<tr><td>O[n].Key</td>			<td>オプションファイル中のKey名(必須)</td></tr>
@@ -74,7 +78,8 @@ table.box td { border: #666 1px solid; padding: 4px 10px 3px; }
 	<tr><td>O[n].Type</td>			<td>型、以下に定義する。<br>
 										未定義、未指定の場合には文字列型として処理する。<br><br>
 			<table class="box">
-				<tr><td>Str</td>	<td>文字列型(1024文字まで)</td></tr>
+	<caption style="display: none">無題</caption>
+<tr><td>Str</td>	<td>文字列型(1024文字まで)</td></tr>
 				<tr><td>Dir</td>	<td>ディレクトリ型(ボタンでディレクトリの指定が可能) (Ver.2.0.9.0以降)</td></tr>
 				<tr><td>Bool</td>	<td>ブール型 True で 1 False で 0 をプラグインオプションに設定する。</td></tr>
 				<tr><td>Int</td>	<td>整数型(-2147483647～2147483647、32bit符号付整数)</td></tr>
@@ -91,7 +96,8 @@ table.box td { border: #666 1px solid; padding: 4px 10px 3px; }
 	　(n=1～99。欠番があっても読み込む)<br>
 <br>
 	<table class="box">
-	<tr><th scope="auto" width="120">[String]</th><th scope="auto">文字列の定義(sakura 2.1.1.0以降)</th></tr>
+	<caption style="display: none">無題</caption>
+<tr><th scope="auto" width="120">[String]</th><th scope="auto">文字列の定義(sakura 2.1.1.0以降)</th></tr>
 	<tr><td>S[n]</td>		<td>多言語化のための文字列の定義</td></tr>
 	</table>
 	　(n=1～99。欠番があっても読み込む)<br>
@@ -102,7 +108,8 @@ table.box td { border: #666 1px solid; padding: 4px 10px 3px; }
 　例）パスは個別フォルダ起点の相対パスとする。<br>
 　　Outline=outline.js
 	<table class="box">
-	<tr><th scope="auto" width="120">[Wsh]</th><th scope="auto"></th></tr>
+	<caption style="display: none">無題</caption>
+<tr><th scope="auto" width="120">[Wsh]</th><th scope="auto"></th></tr>
 	<tr><td>UseCache</td>	<td>1：ディスクから読み込んだスクリプトをメモリ上にキャッシュする<br>
 								0：キャッシュしない</td></tr>
 	</table>
@@ -112,7 +119,8 @@ table.box td { border: #666 1px solid; padding: 4px 10px 3px; }
 ・<strong><em>現在未実装</em></strong><br>
 ・<strong>Plug</strong>, <strong>Command</strong> セクションでのハンドラにはDLLがエクスポートする関数名を指定する。
 	<table class="box">
-	<tr><th scope="auto" width="120">[DLL]</th><th scope="auto"></th></tr>
+	<caption style="display: none">無題</caption>
+<tr><th scope="auto" width="120">[DLL]</th><th scope="auto"></th></tr>
 	<tr><td>Name</td><td>DLLファイル名</td></tr>
 	</table>
 </div><br>
