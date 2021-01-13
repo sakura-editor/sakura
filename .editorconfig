@@ -7,3 +7,11 @@ indent_size = 4
 
 # 行末のスペースは自動的に削る
 trim_trailing_whitespace = true
+
+[*.md]
+# インデントスタイル：空白文字で2スペース幅
+indent_style = space
+indent_size = 2
+
+# mdファイルの行末スペースには意味があるので削らない
+trim_trailing_whitespace = false
