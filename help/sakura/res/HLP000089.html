@@ -12,7 +12,7 @@
 <META NAME="MS-HKWD" CONTENT="量指定子">
 <!-- .がみにくいのでMS ゴシックにする -->
 <style type="text/css">
-	code {font-family: "ＭＳ ゴシック"; font-size:100%;}
+	code {font-family: "ＭＳ ゴシック", sans-serif; font-size:100%;}
 </style>
 </HEAD>
 <BODY>
@@ -27,6 +27,7 @@
 <h4>基本要素</h4>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 	<caption style="display: none">無題</caption>
+<tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
 <tr><td><code>\</code></td><td>
 				退避修飾（エスケープ）<br>
 				正規表現記号の有効/無効の制御<br>
@@ -41,6 +42,7 @@
 <code>[<span style="color: blue">...</span>]</code> の中に以下のものが指定可能です。<br>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 	<caption style="display: none">無題</caption>
+<tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
 <tr><td><code><span style="color: blue">...</span></code></td><td><br><code>[ABC]</code>はAかBかCのどれかにマッチします。</td></tr>
 <tr><td><code>^<span style="color: blue">...</span></code></td><td>否定<br><code>[^ABC]</code>はAとBとC以外の任意の1文字にマッチします。</td></tr>
 <tr><td><code><span style="color: blue">x</span>-<span style="color: blue">y</span></code></td><td>範囲<br><code>[A-Z]</code>は、「A」から「Z」までの文字のどれか1つとマッチします。</td></tr>
@@ -56,6 +58,7 @@
 <h4>量指定子(数量子)</h4>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 	<caption style="display: none">無題</caption>
+<tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
 <tr><td><small>最小一致<br>(無欲)</small></td><td><small>最大一致<br>(欲張り)</small></td><td> </td></tr>
 <tr><td><code>*?</code></td>     <td><code>*</code></td>      <td>直前のパターンの0回以上の繰り返し</td></tr>
 <tr><td><code>+?</code></td>     <td><code>+</code></td>      <td>直前のパターンの1回以上の繰り返し</td></tr>
@@ -74,6 +77,7 @@
 <h4>文字</h4>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 	<caption style="display: none">無題</caption>
+<tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
 <tr><td><code>\t</code></td><td>水平タブコード（HT,TAB）</td></tr>
 <tr><td><code>\n</code></td><td>ラインフィード（LF）</td></tr>
 <tr><td><code>\r</code></td><td>キャリッジリターン（CR）</td></tr>
@@ -93,6 +97,7 @@
 <h4>文字種</h4>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 	<caption style="display: none">無題</caption>
+<tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
 <tr><td><code>.</code></td><td>\nを除く任意の1文字 <strong>[^\n]</strong>と同じ<br><span style="color: green">(Unicode版)</span> 改行を除く任意の1文字。<strong>[^\r\n]</strong>と同じ
 <a href="javascript:id=hhctrl.TextPopup('この処理は正規表現DLLではなくsakura側が入力された.を[^\\r\\n]に置き換えています。','ＭＳゴシック,11',9,9,-1,-1)">*1</a>
 </td></tr>
@@ -111,6 +116,7 @@
 <h4>位置(錨)</h4>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 	<caption style="display: none">無題</caption>
+<tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
 <tr><td><code>^</code></td><td>行頭<!-- ライブラリやバージョンで意味が違う --></td></tr>
 <tr><td><code>$</code></td><td>行末<!-- ライブラリやバージョンで意味が違う --></td></tr>
 <tr><td><code>\b</code></td><td>単語の境界<br><span style="font-size: smaller;color: olive">[ ]の中ではバックスペースの意味になります</span></td></tr>
@@ -124,8 +130,10 @@
 
 <h4>後方参照と部分式呼び出し</h4>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td><code>\<span style="color: blue">n</font></code></td><td>番号指定による後方参照<br>( )でグループ化した文字列を、<strong>\<span style="color: blue">n</span></strong>(<font color="blue">n</span>は1以上の整数)で参照します。</td></tr>
-<tr><td><code>\k&lt;<span style="color: blue">name</font>&gt;<br>\k'<span style="color: blue">name</span>'</code></td><td><font color="green">(鬼)</span> 名前指定による後方参照</td></tr>
+<caption style="display: none">無題</caption>
+<tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
+<tr><td><code>\<span style="color: blue">n</font></code></td><td>番号指定による後方参照<br>( )でグループ化した文字列を、<strong>\<span style="color: blue">n</span></strong>(<span style="color: blue">n</span>は1以上の整数)で参照します。</td></tr>
+<tr><td><code>\k&lt;<span style="color: blue">name</font>&gt;<br>\k'<span style="color: blue">name</span>'</code></td><td><span style="color: green">(鬼)</span> 名前指定による後方参照</td></tr>
 <tr><td><code>
 	\k&lt;<span style="color: blue">name</span>+<span style="color: blue">n</span>&gt;<br>
 	\k&lt;<span style="color: blue">name</span>-<span style="color: blue">n</span>&gt;<br>
@@ -140,6 +148,7 @@
 <h4>拡張式集合</h4>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
 	<caption style="display: none">無題</caption>
+<tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
 <tr><td><code>(?#<span style="color: blue">...</span>)</code></td><td>注釈</td></tr>
 <tr><td><code>(<span style="color: blue">式</span>)</code></td><td>捕獲式集合</td></tr>
 <tr><td><code>(?:<span style="color: blue">式</span>)</code></td><td>非捕獲式集合 （グループ化のみ）</td></tr>
@@ -158,8 +167,10 @@
 <h4>置換で使える参照</h4>
 「置換後」に指定して使います。<br>
 <table style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td><code>$<span style="color: blue">n</font></code></td><td>番号指定参照<br>( )でグループ化した文字列を、<strong>$<span style="color: blue">n</span></strong>(<span style="color: blue">n</span>は1以上の整数)で参照します。<br>サクラエディタでは<strong>$<span style="color: blue">n</span></strong>の代わりに<strong>\<font color="blue">n</span></strong>も使用できます。</td></tr>
-<tr><td><code>${<span style="color: blue">n</font>}</code></td><td><font color="green">(鬼)</span> （安全な）番号指定参照<br>後ろにそのまま続けて数字を書くことができます。</td></tr>
+<caption style="display: none">無題</caption>
+<tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
+<tr><td><code>$<span style="color: blue">n</font></code></td><td>番号指定参照<br>( )でグループ化した文字列を、<strong>$<span style="color: blue">n</span></strong>(<span style="color: blue">n</span>は1以上の整数)で参照します。<br>サクラエディタでは<strong>$<span style="color: blue">n</span></strong>の代わりに<strong>\<span style="color: blue">n</span></strong>も使用できます。</td></tr>
+<tr><td><code>${<span style="color: blue">n</font>}</code></td><td><span style="color: green">(鬼)</span> （安全な）番号指定参照<br>後ろにそのまま続けて数字を書くことができます。</td></tr>
 <tr><td><code>$&amp;</code></td><td>マッチした文字列全体</td></tr>
 <tr><td><code>$+</code></td><td><span style="color: green">(鬼)</span> 最後にマッチした部分文字列</td></tr>
 <tr><td><code>$+{<span style="color: blue">name</span>}<br>$-{<span style="color: blue">name</span>}[<span style="color: blue">n</span>]</code></td><td><span style="color: green">(鬼)</span> 名前指定参照（Perl 5.10 互換、推奨）</td></tr>

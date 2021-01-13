@@ -44,8 +44,8 @@ Outline.SetTitle( 'タイトル文字列' )
 ※付加情報はタイプによって以下のように解釈される。<br>
 <div class="li200">
 <table class="f">
-	<caption style="display: none">無題</caption>
-<tr><td colspan="3">・タイプ 200:クラスツリー の場合</td></tr>
+<caption style="display: none">無題</caption>
+<tr><th scope="row" colspan="3">・タイプ 200:クラスツリー の場合</th></tr>
 <tr><td width="30" align="right">0</td><td>: 定義位置</td><td>… 無視される</td></tr>
 <tr><td width="30" align="right">1</td><td>: 宣言</td><td>… クリップボードにコピーしても付加される</td></tr>
 <tr><td width="30" align="right">2</td><td>: 通常の関数</td><td></td></tr>
@@ -56,7 +56,7 @@ Outline.SetTitle( 'タイトル文字列' )
 <tr><td width="30" align="right">7</td><td>: 名前空間</td><td>… 前述</td></tr>
 <tr><td width="30" align="right">8</td><td>: インタフェース</td><td></td></tr>
 <tr><td width="30" align="right">9</td><td>: グローバル</td><td>… トップレベルに 3 や 7 以外が来ると生成</td></tr>
-<tr><td colspan="3">・タイプ 8:VB関数一覧 の場合　</td></tr>
+<tr><th scope="row" colspan="3">・タイプ 8:VB関数一覧 の場合　</th></tr>
 <tr><td width="30" align="right">1</td><td>: 宣言</td><td></td></tr>
 <tr><td width="30" align="right">10</td><td>: 関数宣言</td><td></td></tr>
 <tr><td width="30" align="right">20</td><td>: プロシージャ宣言</td><td></td></tr>
@@ -123,6 +123,7 @@ Outline.AddFuncInfo( 5, 1, "Foo::Bar::Fuga", 2 ); //関数
 <div class="li200">
 <table class="f">
 	<caption style="display: none">無題</caption>
+<tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
 <tr><td>ComplementGlobal</td><td>　全てのタイプに適用される補完候補検索</td></tr>
 <tr><td>Complement		</td><td>　タイプ別設定「支援」の選択肢に追加される補完候補検索</td></tr>
 </table>
@@ -141,6 +142,7 @@ Outline.AddFuncInfo( 5, 1, "Foo::Bar::Fuga", 2 ); //関数
 <div class="li200">
 <table class="f">
 	<caption style="display: none">無題</caption>
+<tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
 <tr><td>EditorStart			</td><td>　新しいエディタウィンドウを開いて初期化完了後に呼ぶ。</td></tr>
 <tr><td>EditorEnd			</td><td>　エディタウィンドウを閉じる前に呼ぶ。</td></tr>
 <tr><td>DocumentOpen		</td><td>　ファイルを開いた後に呼ぶ。</td></tr>
