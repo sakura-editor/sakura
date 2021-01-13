@@ -835,10 +835,11 @@ void CCaret::ShowCaretPosInfo()
 			wcscpy( szInsMode, LS( STR_INS_MODE_OVR ) );	// "上書"
 		}
 
-		WCHAR szFontSize[16];
+		WCHAR szFontSize[16+16];
 		int currentPointSize = m_pEditDoc->m_pcEditWnd->GetFontPointSize( true );
 		int originalPointSize = m_pEditDoc->m_pcEditWnd->GetFontPointSize( false );
-		auto_sprintf( szFontSize, LS( STR_STATUS_FONTSIZE ), 100 * currentPointSize / originalPointSize );
+		double zoomRatio = m_pEditDoc->m_blfCurTemp ? m_pEditDoc->m_nZoomRatio : 1.0;
+		auto_sprintf( szFontSize, LS( STR_STATUS_FONTSIZE ), (int)(100 * zoomRatio), currentPointSize / 10.0f, originalPointSize / 10.0f );
 
 		auto& statusBar = m_pEditDoc->m_pcEditWnd->m_cStatusBar;
 

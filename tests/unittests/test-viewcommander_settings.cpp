@@ -24,6 +24,7 @@
 */
 #include <gtest/gtest.h>
 
+#if 0
 int ChoosePointSize( const int currentSize, const int originalSize, const int* sizeTable, const size_t sizeTableCount, const int shift );
 
 /*!
@@ -131,3 +132,4 @@ TEST( viewcommander_settings, ChoosePointSize )
 	EXPECT_EQ( ChoosePointSize( 40, 35, sizeTable3, _countof(sizeTable3), -4 ), 10 );
 	EXPECT_EQ( ChoosePointSize( 40, 35, sizeTable3, _countof(sizeTable3), -5 ), 10 );
 }
+#endif

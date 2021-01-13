@@ -202,6 +202,7 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 	m_blfCurTemp = false;
 	m_nPointSizeCur = -1;
 	m_nPointSizeOrg = -1;
+	m_nZoomRatio = 1.0;
 	m_bTabSpaceCurTemp = false;
 
 	// 文字コード種別を初期化

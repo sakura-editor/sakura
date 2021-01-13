@@ -28,68 +28,22 @@
 #include "util/shell.h"
 #include "CPropertyManager.h"
 #include "util/window.h"
+#include <cmath>
 
-/*! サイズテーブルを元にサイズ取得
 
-	@param[in] currentSize 現在サイズ
-	@param[in] originalSize 基準サイズ
-	@param[in] sizeTable サイズテーブル
-	@param[in] sizeTableCount サイズテーブルの要素数
-	@param[in] shift 現在サイズを基準とするテーブルインデックス変更量
-	@return 選択されたサイズ
-*/
-int ChoosePointSize( const int currentSize, const int originalSize, const int* sizeTable, const size_t sizeTableCount, const int shift )
+double GetTablePosition( const double* table, const size_t count, const double value )
 {
-	if( sizeTable == NULL || sizeTableCount == 0 || shift == 0 ){
-		return currentSize;
-	}
-
-	// 基準サイズを含めたサイズテーブルを用意
-	std::vector<int> internalSizeTable;
-	internalSizeTable.reserve( sizeTableCount + 1 );
-	bool done = false;
-	for( size_t i = 0; i < sizeTableCount; ++i ){
-		if( !done && originalSize <= sizeTable[i] ){
-			done = true;
-			if( originalSize < sizeTable[i] ){
-				internalSizeTable.push_back( originalSize );
-			}
-		}
-		internalSizeTable.push_back( sizeTable[i] );
-	}
-	if( !done ){
-		internalSizeTable.push_back( originalSize );
-	}
-
-	// 現在サイズに該当するサイズテーブル上の位置を探してそこに変更量を反映
-	int index = (int)internalSizeTable.size() + shift;
-	for( size_t i = 0; i < internalSizeTable.size(); ++i ){
-		if( currentSize <= internalSizeTable[i] ){
-			if( 0 < shift && currentSize < internalSizeTable[i] ){
-				// サイズテーブルにピッタリのサイズがない時には補正必要(拡大方向のみ)
-				//                         i
-				//                         |
-				// +-------+-------+---x---+------+-------+ <- internalSizeTable
-				//        -2           |         +2
-				//                currentSize
-				//                            ※shiftが2または-2の場合のイメージ
-				index = (int)i + shift - 1;
+	double result = count - 0.5;
+	for( size_t i = 0; i < count; ++i ){
+		if( value <= table[i] ){
+			if( value == table[i] ){
+				result = i;
 			}else{
-				index = (int)i + shift;
+				result = i - 0.5;
 			}
 			break;
 		}
 	}
-
-	int result = currentSize;
-	if( index < 0 ){
-		result = std::min( { currentSize, internalSizeTable[0] } );
-	}else if( (int)internalSizeTable.size() - 1 < index ){
-		result = std::max( { currentSize, internalSizeTable[internalSizeTable.size() - 1] } );
-	}else{
-		result = internalSizeTable[index];
-	}
-
 	return result;
 }
 
@@ -322,11 +276,17 @@ void CViewCommander::Command_FONT( void )
 */
 void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 {
-	// The point sizes recommended by "The Windows Interface: An Application Design Guide", 1/10ポイント単位
-	static const INT sizeTable[] = { 1*10, 2*10, 3*10, 4*10, 5*10, 6*10, 7*10, 8*10, 9*10, 10*10, (INT)(10.5*10), 11*10, 12*10, 14*10, 16*10, 18*10, 20*10, 22*10, 24*10, 26*10, 28*10, 32*10, 36*10, 40*10, 44*10, 48*10, 54*10, 60*10, 66*10, 72*10 };
+	static const double zoomTable[] = {
+		0.01, 0.011, 0.0125, 0.015, 0.0175, 0.02, 0.0225, 0.025, 0.0275, 0.03, 0.035, 0.04, 0.045, 0.05, 0.06, 0.07, 0.08, 0.09,
+		0.1, 0.11, 0.125, 0.15, 0.175, 0.2, 0.225, 0.25, 0.275, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8, 0.9,
+		1.0, 1.1, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0,
+		10.0, 11.0, 12.5, 15.0, 17.5, 20.0, 22.5, 25.0, 27.5, 30.0, 35.0, 40.0, 45.0, 50.0, 60.0, 70.0, 80.0, 90
+	};
 	const LOGFONT& lf = (mode == 0 ? GetDllShareData().m_Common.m_sView.m_lf
 		: GetEditWindow()->GetLogfont( mode == 2 ));
 	INT nPointSize;
+	const double currentZoomRatio = GetDocument()->m_blfCurTemp ? GetDocument()->m_nZoomRatio : 1.0;
+	double newZoomRatio = currentZoomRatio;
 
 	// TrueTypeのみ対応
 	if( OUT_STROKE_PRECIS != lf.lfOutPrecision && OUT_PS_ONLY_PRECIS != lf.lfOutPrecision ) {
@@ -339,14 +299,64 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 
 	if( 0 != fontSize ){
 		// フォントサイズを直接選択する場合
-		nPointSize = t_max(sizeTable[0], t_min(sizeTable[_countof(sizeTable)-1], fontSize));
+		nPointSize = std::max( 0, fontSize );
 	} else if( 0 != shift ) {
 		// 現在のフォントに対して、縮小or拡大したフォント選択する場合
 		const INT nCurrentPointSize = (mode == 0 ? GetDllShareData().m_Common.m_sView.m_nPointSize
 			: GetEditWindow()->GetFontPointSize( mode == 2 ));
 		const INT nOriginalPointSize = (mode == 0) ? nCurrentPointSize : GetEditWindow()->GetFontPointSize( false );
 
-		nPointSize = ChoosePointSize( nCurrentPointSize, nOriginalPointSize, sizeTable, _countof(sizeTable), shift );
+		double zoomTablePosition = GetTablePosition( zoomTable, _countof(zoomTable), currentZoomRatio );
+		int currentZoomTableIndex = (int)((0 <= shift) ? std::floor( zoomTablePosition ) : std::ceil( zoomTablePosition ));
+		if( (shift < 0 && currentZoomTableIndex < 0) ||
+			(0 <= shift && ((int)_countof(zoomTable) - 1) < currentZoomTableIndex) ){
+			// これ以上動かせません
+			return;
+		}
+
+		int nextIndex = currentZoomTableIndex + shift;
+		int actualShift = shift;
+		INT nLastPointSize = -1;
+		double nLastZoomRatio = 1.0;
+		INT nPointSizeMin = std::min( 10, nOriginalPointSize );
+		INT nPointSizeMax = std::max( 720, nOriginalPointSize );
+		while( true ){
+			int clampedIndex = std::clamp( nextIndex, 0, (int)_countof(zoomTable) - 1 );
+			newZoomRatio = zoomTable[clampedIndex];
+			nPointSize = (INT)(nOriginalPointSize * newZoomRatio) / 5 * 5;
+
+			// ズーム倍率テーブルの上下限を超えていたら終了
+			if( clampedIndex != nextIndex ){
+				break;
+			}
+
+			// ポイント数の上下限を超えていたら丸めて終了
+			if( nPointSize < nPointSizeMin || nPointSizeMax < nPointSize ){
+				nPointSize = std::clamp( nPointSize, nPointSizeMin, nPointSizeMax );
+				newZoomRatio = (double)nPointSize / nOriginalPointSize;
+				break;
+			}
+
+			// サイズ変化が0.5pt以上になるまで進める
+			if( 0 < shift ){
+				if( nPointSize != nCurrentPointSize ){
+					break;
+				}
+			}else{
+				if( nPointSize != nCurrentPointSize ){
+					if( nLastPointSize != -1 && nPointSize != nLastPointSize ){
+						newZoomRatio = nLastZoomRatio;
+						nPointSize = nLastPointSize;
+						break;
+					}
+					nLastZoomRatio = newZoomRatio;
+					nLastPointSize = nPointSize;
+				}
+			}
+
+			nextIndex += (0 <= shift) ? 1 : -1;
+		};
+
 		if( nPointSize == nCurrentPointSize ){
 			return;
 		}
@@ -381,6 +391,7 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 		GetDocument()->m_lfCur.lfHeight = lfHeight;
 		GetDocument()->m_nPointSizeCur = nPointSize;
 		GetDocument()->m_nPointSizeOrg = GetEditWindow()->GetFontPointSize(false);
+		GetDocument()->m_nZoomRatio = newZoomRatio;
 	}
 
 	HWND	hwndFrame;
