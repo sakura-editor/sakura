@@ -1,4 +1,7 @@
-﻿<html><head><title>メッセージボックスについて</title>
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="ja">
+<head>
+<title>メッセージボックスについて</title>
 <LINK REL="stylesheet" TYPE="text/css" HREF="../sakura.css">
 </head>
 <small>
@@ -9,29 +12,29 @@ Sakura-Editor Macro Reference
 マクロの種類により多少工夫が必要です。
 </p>
 
-<a href = "./popup.html">Popupメソッド仕様</a>
+<a href="./popup.html">Popupメソッド仕様</a>
 
 <h3>VBScript</h3>
 <ol>
 <li>VBSからMsgBox関数を呼び出す(sakura1.5.7.0以降)</li>
-<li><a href = "./wsc.html">wsc</a>を経由しMsgBox関数を呼び出す</li>
-<li><a href = "./scriptcontrol.html">ScriptControl</a>からMsgBox関数を呼び出す</li>
+<li><a href="./wsc.html">wsc</a>を経由しMsgBox関数を呼び出す</li>
+<li><a href="./scriptcontrol.html">ScriptControl</a>からMsgBox関数を呼び出す</li>
 <li>Wscript.ShellのPopupを使用する</li>
 <pre>
-<span style = "color:blue">set</span> WSHShell = CreateObject(<span style = "color:#800000">"WScript.Shell"</span>)
-WSHShell.Popup <span style = "color:#800000">"message"</span>, 0, <span style = "color:#800000">"title"</span>, 1
+<span style="color:blue">set</span> WSHShell = CreateObject(<span style="color:#800000">"WScript.Shell"</span>)
+WSHShell.Popup <span style="color:#800000">"message"</span>, 0, <span style="color:#800000">"title"</span>, 1
 </pre>
 <li>WSHから利用できる支援ツールなどを使用する</li>
 </ol>
 
 <h3>JScript</h3>
 <ol>
-<li><a href = "./wsc.html">wsc</a>を経由しVBSのMsgBox関数を呼び出す</li>
-<li><a href = "./scriptcontrol.html">ScriptControl</a>を使用しVBSのMsgBox関数を呼び出す</li>
+<li><a href="./wsc.html">wsc</a>を経由しVBSのMsgBox関数を呼び出す</li>
+<li><a href="./scriptcontrol.html">ScriptControl</a>を使用しVBSのMsgBox関数を呼び出す</li>
 <li>Wscript.ShellのPopupを使用する</li>
 <pre>
-<span style = "color:blue">var</span> WSHShell = <span style = "color:blue">new</span> ActiveXObject(<span style = "color:#800000">"WScript.Shell"</span>);
-WSHShell.Popup(<span style = "color:#800000">"message"</span>, 0, <span style = "color:#800000">"title"</span>, 1);
+<span style="color:blue">var</span> WSHShell = <span style="color:blue">new</span> ActiveXObject(<span style="color:#800000">"WScript.Shell"</span>);
+WSHShell.Popup(<span style="color:#800000">"message"</span>, 0, <span style="color:#800000">"title"</span>, 1);
 </pre>
 <li>WSHから利用できる支援ツールなどを使用する</li>
 </ol>
@@ -41,25 +44,25 @@ WSHShell.Popup(<span style = "color:#800000">"message"</span>, 0, <span style = 
 <ol>
 <li>PerlScriptの隠し関数MsgBoxを使用する</li>
 <pre>MsgBox($Message [, $Buttons [, $Title]]);</pre>
-<li><a href = "./wsc.html">wsc</a>を経由しVBSのMsgBox関数を呼び出す</li>
-<li><a href = "./scriptcontrol.html">ScriptControl</a>を使用しVBSのMsgBox関数を呼び出す</li>
+<li><a href="./wsc.html">wsc</a>を経由しVBSのMsgBox関数を呼び出す</li>
+<li><a href="./scriptcontrol.html">ScriptControl</a>を使用しVBSのMsgBox関数を呼び出す</li>
 <li>Wscript.ShellのPopupを使用する</li>
 <pre>
-<span style = "color:blue">use</span> Win32::OLE;
-$WshShell = Win32::OLE->CreateObject(<span style = "color:#800000">"WScript.Shell"</span>);
-$WshShell->Popup(<span style = "color:#800000">"message"</span>,undef,<span style = "color:#800000">"title"</span>,1);
+<span style="color:blue">use</span> Win32::OLE;
+$WshShell = Win32::OLE->CreateObject(<span style="color:#800000">"WScript.Shell"</span>);
+$WshShell->Popup(<span style="color:#800000">"message"</span>,undef,<span style="color:#800000">"title"</span>,1);
 </pre>
 <li>WSHから利用できる支援ツールなどを使用する</li>
 </ol>
 
 <h3>RubyScript</h3>
 <ol>
-<li><a href = "./wsc.html">wsc</a>を経由する</li>
-<li><a href = "./scriptcontrol.html">ScriptControl</a>から呼び出す</li>
+<li><a href="./wsc.html">wsc</a>を経由する</li>
+<li><a href="./scriptcontrol.html">ScriptControl</a>から呼び出す</li>
 <li>Wscript.ShellのPopupを使用する</li>
 <pre>
-shell = WIN32OLE.<span style = "color:blue">new</span>(<span style = "color:#800000">"WScript.Shell"</span>)
-shell.Popup <span style = "color:#800000">"message"</span>, 0, <span style = "color:#800000">"title"</span>, 1
+shell = WIN32OLE.<span style="color:blue">new</span>(<span style="color:#800000">"WScript.Shell"</span>)
+shell.Popup <span style="color:#800000">"message"</span>, 0, <span style="color:#800000">"title"</span>, 1
 </pre>
 <li>WSHから利用できる支援ツールなどを使用する</li>
 </ol>

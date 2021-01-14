@@ -15,11 +15,11 @@
 -->
 <h2>エディタでの実装</h2>
 
-<h3 id=c0401>マクロ関連クラスの改造</h3>
-<div class=li100>
+<h3 id="c0401">マクロ関連クラスの改造</h3>
+<div class="li100">
 WSHマクロで使用できるインタフェースオブジェクトを、Editorだけではなく複数扱えるように修正した。<br>
 </div>
-<div class=li200>
+<div class="li200">
 <pre>
 CWSHManager                   WSHマクロ実行の入り口。
                               .ExecKeyMacro関数の中でCWSHClientを作成する。
@@ -34,8 +34,8 @@ CIfObj                        純粋なインタフェースオブジェクト
 </pre>
 </div>
 
-<h3 id=c0402>プラグイン関連クラス構成</h3>
-<div class=li200>
+<h3 id="c0402">プラグイン関連クラス構成</h3>
+<div class="li200">
 <pre>
 CPlug
   - CWSHPlug
@@ -48,8 +48,8 @@ CJackManager
 </pre>
 </div>
 
-<h3 id=c0403>課題</h3>
-<div class=li200>
+<h3 id="c0403">課題</h3>
+<div class="li200">
 ・ファイルタイプの判定<br>
 　アウトライン解析とスマートインデントはタイプ別設定画面の選択肢に追加することで どのプラグインを有効にするか選択できる。<br>
 　その他の新たな機能をプラグインにする場合、タイプ別設定画面の改造が必要。<br>
@@ -72,5 +72,5 @@ CJackManager
 　→SetLabel関数で対応(Ver.2.0.9.0以降)<br>
 </div><br>
 
-<center><a href="implementation03.html">前へ＜</a>　　<a href="reference.html">＞次へ</a></center>
+<div style="text-align: center"><a href="implementation03.html">前へ＜</a>　　<a href="reference.html">＞次へ</a></div>
 </BODY></HTML>

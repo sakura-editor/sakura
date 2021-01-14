@@ -91,9 +91,9 @@
 ■関数宣言の書式<br>
 構文: 関数名( 仮引数名 :変数型 ): 戻り値型;<br>
 <br>
-<img src="images/note.png">解説<br>
-PPAから利用する場合、「<b>S_関数名</b>」と、S_をつけてください。<br>
-WSHから利用する場合、「<b>Editor.関数名</b>」のように、オブジェクト名をつけてください。<br>
+<img alt="note" src="images/note.png" />解説<br>
+PPAから利用する場合、「<strong>S_関数名</strong>」と、S_をつけてください。<br>
+WSHから利用する場合、「<strong>Editor.関数名</strong>」のように、オブジェクト名をつけてください。<br>
 <br>
 sakura: その関数が利用可能なバージョンを示します。<br>
 <br>
@@ -171,11 +171,11 @@ sakura: その関数が利用可能なバージョンを示します。<br>
 ・<a href="#GetViewTop">GetViewTop</a>() :Integer<br>
 <br>
 ■ function <span id="GetFilename">GetFilename</span>(): String; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>戻り値</b><br>
+<div class="li200">
+<strong>戻り値</strong><br>
 現在のファイル名が返ります。<br>
 <br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 取得できるファイル名はフルパスです。<br>
 ファイル名が「(無題)」の場合は、空文字列が返ります。<br>
 エラーにはなりません。<br>
@@ -188,11 +188,11 @@ sakura: その関数が利用可能なバージョンを示します。<br>
 sakura:1.2.106.9以降<br>
 <br>
 ■ function <span id="GetSaveFilename">GetSaveFilename</span>(): String; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>戻り値</b><br>
+<div class="li200">
+<strong>戻り値</strong><br>
 保存時のファイル名が返ります。<br>
 <br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 自動実行マクロの「<a href="HLP000201.html">ファイル保存時</a>」の実行中のみ文字列が設定されます。<br>
 それ以外では、空文字列が返ります。<br>
 取得できるファイル名はたいていの場合フルパスです。<br>
@@ -202,14 +202,14 @@ sakura:1.2.106.9以降<br>
 sakura:1.6.5.0以降<br>
 <br>
 ■ function <span id="GetSelectedString">GetSelectedString</span>( int1 :Integer ) :String; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;予約されています。0を指定してください。<br>
 <br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 選択されている文字列が返ります。<br>
 <br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 sakura:1.3.8.0以降<br>
 選択部分全体を返します。未選択の時は空文字列を返します。<br>
 改行コードなども含めて選択範囲の文字列をそのまま取得します。<br>
@@ -226,29 +226,29 @@ sakura:1.3.5.4以降 1.3.7.0まで<br>
 sakura:1.3.5.4以降<br>
 <br>
 ■ function <span id="ExpandParameter">ExpandParameter</span>( str1 :String ): String; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 str1&nbsp;&nbsp;&nbsp;&nbsp;展開したい特殊文字列を指定します。<br>
 <br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 str1 で指定した文字列を展開・置き換えられた結果の文字列が戻ります。<br>
 <br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 <a href="HLP000284.html">ExpandParameter</a>書式がそのまま使える関数です。<br>
 </div>
-<img src="images/hint.png">ヒント ExpandParameter('$F'); は GetFilename(); と同じ値を返します。(無題のときは違います。)<br>
+<img alt="hint" src="images/hint.png" />ヒント ExpandParameter('$F'); は GetFilename(); と同じ値を返します。(無題のときは違います。)<br>
 sakura:1.3.5.4以降<br>
 <br>
 ■ function <span id="GetLineStr">GetLineStr</span>( int1 :Integer ): String; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;取得したい行の行番号を改行単位(1開始)で指定します。<br>
 0 を指定すると、カーソル行の文字列を取得できます。<br>
 <br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 改行コードを含む1行の文字列です。<br>
 <br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 取得する文字列も改行単位です。<br>
 戻り値の文字列が長さ 0 のだった場合、その行は存在しなかったことを意味します。<br>
 int1 がマイナス値だと、エラーが発生します。<br>
@@ -256,29 +256,29 @@ int1 がマイナス値だと、エラーが発生します。<br>
 sakura:1.4.2.0以降<br>
 <br>
 ■ function <span id="GetLineCount">GetLineCount</span>( int1 :Integer ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;予約されています。0を指定してください。<br>
 <br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 改行単位の全行数を返します。<br>
 最終行にデータがない場合、すなわちEOFだけの行は、この行数に含まれません。<br>
 <br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 int1 に 0 以外を指定すると、エラーが発生します。<br>
 EOF だけの行は行数に含まれませんが、カーソルは移動できることに注意してください。<br>
 </div>
 sakura:1.4.2.0以降<br>
 <br>
 ■ function <span id="ChangeTabWidth">ChangeTabWidth</span>( int1 :Integer ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;1～64までの間の値が有効です。<br>
 <br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 設定変更前のタブ幅を返します。<br>
 <br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 引数で指定した値でタブ幅を設定します。<br>
 タブ幅の取得のみ行いたいときは 0 など無効な引数を指定してください。<br>
 変更はこのマクロを実行した画面にだけ適用され、設定には保存しません。<br>
@@ -289,14 +289,14 @@ sakura:1.6.5.0以降<br>
 sakura:1.5.5.0以降<br>
 <br>
 ■ function <span id="ChangeWrapColm">ChangeWrapColm</span>( int1 :Integer ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;折り返し桁数を指定します。<br>
 <br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 元の折り返し桁数を返します。<br>
 <br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 引数で指定した桁数で折り返します。<br>
 有効な桁数の範囲は10～10240です。範囲外の桁数では折り返し桁数を変更しません。<br>
 折り返し桁数の取得のみ行いたいときは 0 を指定してください。<br>
@@ -309,70 +309,70 @@ sakura:1.6.5.0以降<br>
 sakura:1.6.3.0以降<br>
 <br>
 ■ function <span id="IsTextSelected">IsTextSelected</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>戻り値</b><br>
+<div class="li200">
+<strong>戻り値</strong><br>
 0&nbsp;&nbsp;&nbsp;&nbsp;非選択状態<br>
 1&nbsp;&nbsp;&nbsp;&nbsp;選択中<br>
 2&nbsp;&nbsp;&nbsp;&nbsp;矩形選択中<br>
 <br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 選択幅が 0 のときも選択モードになっていれば選択中と判断します。<br>
 </div>
 sakura:1.5.5.0以降<br>
 <br>
 ■ function <span id="GetSelectLineFrom">GetSelectLineFrom</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>戻り値</b><br>
+<div class="li200">
+<strong>戻り値</strong><br>
 選択開始行（1から始まる）を返します。レイアウト座標(折り返し単位)です。<br>
 </div>
 sakura:1.5.5.0以降<br>
 <br>
 ■ function <span id="GetSelectColmFrom">GetSelectColmFrom</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>戻り値</b><br>
+<div class="li200">
+<strong>戻り値</strong><br>
 選択開始桁（1から始まる）を返します。レイアウト座標です。<br>
 </div>
 sakura:1.5.5.0以降<br>
 <br>
 ■ function <span id="GetSelectColumnFrom">GetSelectColumnFrom</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>解説</b><br>
+<div class="li200">
+<strong>解説</strong><br>
 GetSelectColmFromと同じです。
 </div>
 sakura:2.1.0.0以降<br>
 <br>
 ■ function <span id="GetSelectLineTo">GetSelectLineTo</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>戻り値</b><br>
+<div class="li200">
+<strong>戻り値</strong><br>
 選択終了行（1から始まる）を返します。レイアウト座標です。<br>
 </div>
 sakura:1.5.5.0以降<br>
 <br>
 ■ function <span id="GetSelectColmTo">GetSelectColmTo</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>戻り値</b><br>
+<div class="li200">
+<strong>戻り値</strong><br>
 選択終了桁（1から始まる）を返します。レイアウト座標です。<br>
 </div>
 sakura:1.5.5.0以降<br>
 <br>
 ■ function <span id="GetSelectColumnTo">GetSelectColumnTo</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>解説</b><br>
+<div class="li200">
+<strong>解説</strong><br>
 GetSelectColmToと同じです。
 </div>
 sakura:2.1.0.0以降<br>
 <br>
 ■ function <span id="IsInsMode">IsInsMode</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>戻り値</b><br>
+<div class="li200">
+<strong>戻り値</strong><br>
 0&nbsp;&nbsp;&nbsp;&nbsp;上書きモード<br>
 1&nbsp;&nbsp;&nbsp;&nbsp;挿入モード<br>
 </div>
 sakura:1.5.5.0以降<br>
 <br>
 ■ function <span id="GetCharCode">GetCharCode</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>戻り値</b><br>
+<div class="li200">
+<strong>戻り値</strong><br>
 0&nbsp;&nbsp;&nbsp;&nbsp;SJIS<br>
 1&nbsp;&nbsp;&nbsp;&nbsp;JIS<br>
 2&nbsp;&nbsp;&nbsp;&nbsp;EUC<br>
@@ -386,96 +386,97 @@ sakura:1.5.5.0以降<br>
 91&nbsp;&nbsp;&nbsp;&nbsp;CP_OEM (sakura:2.2.0.0以降)<br>
 コードページ番号&nbsp;(sakura:2.2.0.0以降)<br>
 <br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 現在開いているファイルがどの文字コードとして開かれているかを調べます。<br>
 特定範囲、または指定位置のテキストの状態を取得するものではありません。<br>
 </div>
 sakura:1.5.5.0以降<br>
 <br>
 ■ function <span id="GetLineCode">GetLineCode</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>戻り値</b><br>
+<div class="li200">
+<strong>戻り値</strong><br>
 0&nbsp;&nbsp;&nbsp;&nbsp;CRLF<br>
 1&nbsp;&nbsp;&nbsp;&nbsp;CR<br>
 2&nbsp;&nbsp;&nbsp;&nbsp;LF<br>
 <br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 『入力改行コードの指定』で指定された改行コードを調べます。<br>
 特定範囲、または指定位置のテキストの状態を取得するものではありません。<br>
 </div>
 sakura:1.5.5.0以降<br>
 <br>
 ■ function <span id="IsPossibleUndo">IsPossibleUndo</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>戻り値</b><br>
+<div class="li200">
+<strong>戻り値</strong><br>
 0&nbsp;&nbsp;&nbsp;&nbsp;無効<br>
 1&nbsp;&nbsp;&nbsp;&nbsp;有効<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 「<a href="HLP000032.html">元に戻す</a>」が可能か調べます。<br>
 </div>
 sakura:1.5.5.0以降<br>
 <br>
 ■ function <span id="IsPossibleRedo">IsPossibleRedo</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>戻り値</b><br>
+<div class="li200">
+<strong>戻り値</strong><br>
 0&nbsp;&nbsp;&nbsp;&nbsp;無効<br>
 1&nbsp;&nbsp;&nbsp;&nbsp;有効<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 「<a href="HLP000033.html">やり直し</a>」が可能か調べます。<br>
 </div>
 sakura:1.5.5.0以降<br>
 <br>
 ■ function <span id="IsCurTypeExt">IsCurTypeExt</span>( str1 :String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 str1&nbsp;&nbsp;&nbsp;&nbsp;調べる拡張子を指定します。<br>
 <br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 0&nbsp;&nbsp;&nbsp;&nbsp;不一致<br>
 1&nbsp;&nbsp;&nbsp;&nbsp;一致<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 現在適用されているタイプ別設定と、指定した拡張子を持ったファイルを開いた場合に適用されるタイプ別設定が同じかを調べます。<br>
 拡張子はピリオドを除いた文字列です。<br>
 </div>
 sakura:1.6.5.0以降<br>
 <br>
 ■ function <span id="IsSameTypeExt">IsSameTypeExt</span>( str1 :String, str2 :String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 str1&nbsp;&nbsp;&nbsp;&nbsp;調べる1つめの拡張子を指定します。<br>
 str2&nbsp;&nbsp;&nbsp;&nbsp;調べる2つめの拡張子を指定します。<br>
 <br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 0&nbsp;&nbsp;&nbsp;&nbsp;不一致<br>
 1&nbsp;&nbsp;&nbsp;&nbsp;一致<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 2 つそれぞれの拡張子を持ったファイルを開いた場合に適用されるタイプ別設定が同じかどうかを調べます。<br>
 拡張子はピリオドを除いた文字列です。<br>
 </div>
 sakura:1.6.5.0以降<br>
 <br>
 ■ function <span id="InputBox">InputBox</span>( str1 :String, str2 :String, int1 :Integer ) :String; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 str1&nbsp;&nbsp;&nbsp;&nbsp;表示メッセージ<br>
 str2&nbsp;&nbsp;&nbsp;&nbsp;既定の値<br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;最大入力文字数<br>
 <br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 入力文字列。キャンセル押下時は空文字列<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 テキスト入力ダイアログを表示し、入力された文字列を返します。<br>
 </div>
 sakura:2.0.3.0以降<br>
 <br>
 ■ function <span id="MessageBox">MessageBox</span>( str1 :String, int1 :Integer ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 str1&nbsp;&nbsp;&nbsp;&nbsp;表示メッセージ<br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;メッセージボックス種別<br>
 &nbsp;&nbsp;&nbsp;&nbsp;以下の値を足したものを指定します。
 <table>
-<tr><td rowspan="7">表示するボタン</td>
+	<caption style="display: none">無題</caption>
+<tr><th scope="row" rowspan="7">表示するボタン</th>
     <td>0x0</td><td>OK</td></tr>
 <tr><td>0x1</td><td>OK／キャンセル</td></tr>
 <tr><td>0x2</td><td>中止／再試行／無視</td></tr>
@@ -498,9 +499,11 @@ int1&nbsp;&nbsp;&nbsp;&nbsp;メッセージボックス種別<br>
 <tr><td>0x1000</td><td>SYSTEMMODAL</td></tr>
 <tr><td>0x2000</td><td>TASKMODAL</td></tr>
 </table>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 押されたボタンの番号を返します。
 <table>
+	<caption style="display: none">無題</caption>
+<tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
 <tr><td>0x1</td><td>OK</td></tr>
 <tr><td>0x2</td><td>キャンセル</td></tr>
 <tr><td>0x3</td><td>中止</td></tr>
@@ -511,7 +514,7 @@ int1&nbsp;&nbsp;&nbsp;&nbsp;メッセージボックス種別<br>
 <tr><td>0x10</td><td>再実行</td></tr>
 <tr><td>0x11</td><td>続行</td></tr>
 </table>
-<b>解説</b><br>
+<strong>解説</strong><br>
 メッセージボックスを表示します。<br>
 </div>
 sakura:2.0.3.0以降<br>
@@ -522,10 +525,12 @@ sakura:2.0.3.0以降<br>
 ■ function <span id="InfoMsg">InfoMsg</span>( str1 :String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
 ■ function <span id="OkCancelBox">OkCancelBox</span>( str1 :String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
 ■ function <span id="YesNoBox">YesNoBox</span>( str1 :String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>解説</b><br>
+<div class="li200">
+<strong>解説</strong><br>
 それぞれ以下のMessageBox関数と等価です。
 <table>
+    <caption style="display: none">無題</caption>
+<tr style="display: none"><th scope="col"></th><th scope="col"></th></tr>
 <tr><td>ErrorMsg</td><td>「エラーアイコン」＋「OKボタン」</td></tr>
 <tr><td>WarnMsg</td><td>「警告アイコン」＋「OKボタン」</td></tr>
 <tr><td>InfoMsg</td><td>「情報アイコン」＋「OKボタン」</td></tr>
@@ -537,51 +542,51 @@ sakura:2.0.3.0以降<br>
 この関数は、特別にキーマクロ(.mac)形式でも使えます。(sakura 2.1.0.0 以降)<br>
 <br>
 ■ function <span id="FileOpenDialog">FileOpenDialog</span>( str1 :String, str2 :String ) :String; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 str1&nbsp;&nbsp;&nbsp;&nbsp;既定のファイルまたはフォルダパス<br>
 str2&nbsp;&nbsp;&nbsp;&nbsp;フィルタ文字列<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 選択ファイルパス名。キャンセル押下時は空文字列<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 ファイルを開くダイアログを表示します。<br>
 </div>
 sakura:2.0.3.0以降<br>
 <br>
 ■ function <span id="FileSaveDialog">FileSaveDialog</span>( str1 :String, str2 :String ) :String; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 str1&nbsp;&nbsp;&nbsp;&nbsp;既定のファイルまたはフォルダパス<br>
 str2&nbsp;&nbsp;&nbsp;&nbsp;フィルタ文字列<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 選択ファイルパス名。キャンセル押下時は空文字列<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 ファイル保存ダイアログを表示します。<br>
 </div>
 sakura:2.0.3.0以降<br>
 <br>
 ■ function <span id="FolderDialog">FolderDialog</span>( str1 :String, str2 :String ) :String; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 str1&nbsp;&nbsp;&nbsp;&nbsp;表示メッセージ<br>
 str2&nbsp;&nbsp;&nbsp;&nbsp;既定のファイルまたはフォルダパス<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 選択ファイルパス名。キャンセル押下時は空文字列<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 フォルダを開くダイアログを表示します。<br>
 </div>
 sakura:2.0.3.0以降<br>
 <br>
 ■ function <span id="CompareVersion">CompareVersion</span>( str1 :String, str2 :String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 str1&nbsp;&nbsp;&nbsp;&nbsp;バージョン文字列1<br>
 str2&nbsp;&nbsp;&nbsp;&nbsp;バージョン文字列2<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 0&nbsp;&nbsp;&nbsp;&nbsp;等しい<br>
 0以下&nbsp;&nbsp;&nbsp;&nbsp;バージョン文字列1が古い<br>
 0以上&nbsp;&nbsp;&nbsp;&nbsp;バージョン文字列1が新しい<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 2つのバージョン文字列を比較します。<br>
 バージョンは4個までの数字を「.」「-」「_」「+」でつなげたものとし、ほかに以下の記号を認識します。<br>
 &nbsp;&nbsp;&nbsp;&nbsp;「a」「alpha」 ＜ 「b」「beta」 ＜ 「rc」「RC」 ＜ （記号なし） ＜ 「p」「pl」
@@ -589,36 +594,36 @@ str2&nbsp;&nbsp;&nbsp;&nbsp;バージョン文字列2<br>
 sakura:2.0.3.0以降<br>
 <br>
 ■ function <span id="Sleep">Sleep</span>( int1 :Integer ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;スリープ時間（ミリ秒）<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 0<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 指定した時間だけマクロを止めます。<br>
 </div>
 sakura:2.0.3.0以降<br>
 この関数は、特別にキーマクロ(.mac)形式でも使えます。(sakura 2.1.0.0 以降)<br>
 <br>
 ■ function <span id="GetClipboard">GetClipboard</span>( int1 :Integer ) :String; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;予約値。0を指定してください<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 クリップボード文字列<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 クリップボードの文字列を取得します。<br>
 </div>
 sakura:2.0.3.0以降<br>
 <br>
 ■ function <span id="SetClipboard">SetClipboard</span>( int1 :Integer, str1 :String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;オプション<br>
 str1&nbsp;&nbsp;&nbsp;&nbsp;設定する文字列<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 0<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 クリップボードに文字列を設定します。<br>
 オプションは以下の通りです。<br>
 0x00&nbsp;&nbsp;&nbsp;&nbsp;通常コピー<br>
@@ -628,94 +633,94 @@ str1&nbsp;&nbsp;&nbsp;&nbsp;設定する文字列<br>
 sakura:2.0.3.0以降<br>
 <br>
 ■ function <span id="LayoutToLogicLineNum">LayoutToLogicLineNum</span>( int1: Integer ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;レイアウト(折り返し単位)行番号(1開始)<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 ロジック(改行単位)行番号(1開始)<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 レイアウト行番号からロジック行番号を取得します。<br>
 </div>
 sakura:2.0.4.0以降<br>
 <br>
 ■ function <span id="LogicToLayoutLineNum">LogicToLayoutLineNum</span>( int1: Integer, int2: Integer ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;ロジック行番号(1開始)<br>
 int2&nbsp;&nbsp;&nbsp;&nbsp;ロジック桁番号(1開始)<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 レイアウト行番号(1開始)<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 ロジック座標からレイアウト行番号を取得します。<br>
 </div>
 sakura:2.0.4.0以降<br>
 <br>
 ■ function <span id="LineColumnToIndex">LineColumnToIndex</span>( int1: Integer, int2: Integer ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;レイアウト行番号(1開始)<br>
 int2&nbsp;&nbsp;&nbsp;&nbsp;レイアウト桁番号(1開始)<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 ロジック桁番号(1開始)<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 レイアウト座標からロジック桁番号を求めます。<br>
 </div>
 sakura:2.0.4.0以降<br>
 <br>
 ■ function <span id="LineIndexToColumn">LineIndexToColumn</span>( int1: Integer, int2: Integer ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;ロジック行番号(1開始)<br>
 int2&nbsp;&nbsp;&nbsp;&nbsp;ロジック桁番号(1開始)<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 レイアウト桁番号(1開始)<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 ロジック座標からレイアウト桁番号を求めます。<br>
 </div>
 sakura:2.0.4.0以降<br>
 <br>
 ■ function <span id="GetCookie">GetCookie</span>( str1: String, str2: String ) :String; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 str1&nbsp;&nbsp;&nbsp;&nbsp;スコープ名<br>
 str2&nbsp;&nbsp;&nbsp;&nbsp;Cookie名<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 設定されていたCookie値が返ります。<br>
 Cookieが設定されていなかった場合、空文字列が返ります。<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 スコープ名には、"document"と"window"を指定できます。<br>
 スコープ名、Cookie名は大文字小文字を区別します。
 </div>
 sakura:2.0.6.0以降<br>
 <br>
 ■ function <span id="GetCookieDefault">GetCookieDefault</span>( str1: String, str2: String, str3: String ) :String; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 str1&nbsp;&nbsp;&nbsp;&nbsp;スコープ名<br>
 str2&nbsp;&nbsp;&nbsp;&nbsp;Cookie名<br>
 str3&nbsp;&nbsp;&nbsp;&nbsp;デフォルト値<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 設定されていたCookie値が返ります。<br>
 Cookieが設定されていなかった場合、デフォルト値が返ります。<br>
 <br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 スコープ名には、"document"と"window"を指定できます。<br>
 スコープ名、Cookie名は大文字小文字を区別します。
 </div>
 sakura:2.0.6.0以降<br>
 <br>
 ■ function <span id="SetCookie">SetCookie</span>( str1: String, str2: String, str3: String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 str1&nbsp;&nbsp;&nbsp;&nbsp;スコープ名<br>
 str2&nbsp;&nbsp;&nbsp;&nbsp;Cookie名<br>
 str3&nbsp;&nbsp;&nbsp;&nbsp;設定値<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 0: 正常終了<br>
 1: スコープ名が不正だった<br>
 2: Cookie名が不正だった<br>
 <br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 Cookie系マクロでは、マクロ/プラグイン実行終了後も保持できる一時的な文字列を格納しておくことができます。<br>
 プラグインのPlugin.SetOption/GetOptionはグローバルな値を保持するのに使います。<br>
 Cookieでは各ウィンドウごとに別々の値を保持します。<br>
@@ -729,41 +734,41 @@ Cookie名に使用可能な文字は、[0-9A-Za-z_]のみです。<br>
 sakura:2.0.6.0以降<br>
 <br>
 ■ function <span id="DeleteCookie">DeleteCookie</span>( str1: String, str2: String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 str1&nbsp;&nbsp;&nbsp;&nbsp;スコープ名<br>
 str2&nbsp;&nbsp;&nbsp;&nbsp;Cookie名<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 0: 正常終了<br>
 1: スコープ名が不正だった<br>
 2: Cookie名が不正だった<br>
 5: Cookie名に該当するCookieが存在しなかった<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 スコープ名には、"document"と"window"を指定できます。<br>
 スコープ名、Cookie名は大文字小文字を区別します。
 </div>
 sakura:2.0.6.0以降<br>
 <br>
 ■ function <span id="GetCookieNames">GetCookieNames</span>( str1: String ) :String; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 str1&nbsp;&nbsp;&nbsp;&nbsp;スコープ名<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 該当のスコープの全Cookie名がカンマ区切り(例：「option1,option2」)で取得できます。<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 スコープ名、Cookie名は大文字小文字を区別します。<br>
 </div>
 sakura:2.0.6.0以降<br>
 <br>
 ■ function <span id="SetFontSize">SetFontSize</span>( int1: Integer, int2: Integer, int3: Integer ); <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;フォントサイズ(1/10ポイント単位)<br>
 int2&nbsp;&nbsp;&nbsp;&nbsp;フォントサイズを拡大or縮小するための変更量(int1=0のとき有効)<br>
 int3&nbsp;&nbsp;&nbsp;&nbsp;変更範囲(省略可能、ただしPPAマクロは省略不可) sakura:2.1.0.0以降)<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 なし<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 使用中のフォントがTrueTypeのみサイズを変更できます。<br>
 int1でフォントサイズを設定します。1/10ポイント単位になります。<br>
 10.5ptにしたいときは、SetFontSize(105, 0);を設定します。<br>
@@ -782,25 +787,25 @@ sakura:2.0.8.0以降<br>
 この関数は、特別にキーマクロ(.mac)形式でも使えます。<br>
 <br>
 ■ function <span id="GetDrawSwitch">GetDrawSwitch</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>戻り値</b><br>
+<div class="li200">
+<strong>戻り値</strong><br>
 0: 非表示に設定されている<br>
 1: 表示に設定されている<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 画面描画の表示・非表示を取得します。<br>
 </div>
 sakura:2.1.0.0以降<br>
 <br>
 ■ function <span id="SetDrawSwitch">SetDrawSwitch</span>( int1: Integer ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;表示設定値<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0: 非表示<br>
 &nbsp;&nbsp;&nbsp;&nbsp;1: 表示<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 0: 設定する前は非表示に設定されていた<br>
 1: 設定する前は表示に設定されていた<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 画面描画の表示・非表示を設定します。<br>
 戻り値で以前の値が取得できます。<br>
 マクロ・プラグインの実行が完了すると、自動的に実行する直前の値に再設定されます。<br>
@@ -809,14 +814,14 @@ sakura:2.1.0.0以降<br>
 この関数は、特別にキーマクロ(.mac)形式でも使えます。<br>
 <br>
 ■ function <span id="StatusMsg">StatusMsg</span>( str1 :String, int1 :Integer ); <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 str1&nbsp;&nbsp;&nbsp;&nbsp;表示文字列<br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;表示オプション<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0: ステータスバーが非表示のとき、右上に表示(省略時規定値)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;1: ステータスバーが非表示のとき、InfoMsgに表示<br>
 &nbsp;&nbsp;&nbsp;&nbsp;2: ステータスバーが非表示のとき、何もしない<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 ステータスバーに文字列を表示します。<br>
 ただしカーソル移動、次・前検索・再描画等のコマンドでステータス表示が上書きされます。<br>
 </div>
@@ -824,19 +829,19 @@ sakura:2.1.0.0以降<br>
 この関数は、特別にキーマクロ(.mac)形式でも使えます。<br>
 <br>
 ■ function <span id="IsShownStatus">IsShownStatus</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>戻り値</b><br>
+<div class="li200">
+<strong>戻り値</strong><br>
 0: 非表示<br>
 1: 表示<br>
 <br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 ステータスバーが表示されているかを取得します。<br>
 </div>
 sakura:2.1.0.0以降<br>
 <br>
 ■ function <span id="MsgBeep">MsgBeep</span>( int1 :Integer ); <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;音の選択<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-1: ビープ音<br>
 &nbsp;&nbsp;&nbsp;&nbsp; 0: 一般の警告音(省略時規定値)<br>
@@ -844,23 +849,23 @@ int1&nbsp;&nbsp;&nbsp;&nbsp;音の選択<br>
 &nbsp;&nbsp;&nbsp;&nbsp; 2: 問い合わせ音<br>
 &nbsp;&nbsp;&nbsp;&nbsp; 3: 警告音<br>
 &nbsp;&nbsp;&nbsp;&nbsp; 4: 情報音<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 音をならします。OSのシステムで設定されている音がなります。<br>
 </div>
 sakura:2.1.0.0以降<br>
 この関数は、特別にキーマクロ(.mac)形式でも使えます。<br>
 <br>
 ■ function <span id="CommitUndoBuffer">CommitUndoBuffer</span>(); <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>解説</b><br>
+<div class="li200">
+<strong>解説</strong><br>
 Undoバッファを強制登録します。中身がない場合は登録されません。参照カウンタの数は維持されます。<br>
 </div>
 sakura:2.1.0.0以降<br>
 この関数は、特別にキーマクロ(.mac)形式でも使えます。<br>
 <br>
 ■ function <span id="AddRefUndoBuffer">AddRefUndoBuffer</span>(); <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>解説</b><br>
+<div class="li200">
+<strong>解説</strong><br>
 Undoバッファをまとめるように指示を出します。<br>
 参照カウンタを1増加させます。<br>
 </div>
@@ -868,8 +873,8 @@ sakura:2.1.0.0以降<br>
 この関数は、特別にキーマクロ(.mac)形式でも使えます。<br>
 <br>
 ■ function <span id="SetUndoBuffer">SetUndoBuffer</span>(); <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>解説</b><br>
+<div class="li200">
+<strong>解説</strong><br>
 AddRefUndoBufferを実行した回数呼び出すとUndoバッファの内容をRedo/Undoのリストに登録します。中身がない場合は登録されません。<br>
 <br>
 InsText('a');<br>
@@ -893,34 +898,34 @@ sakura:2.1.0.0以降<br>
 この関数は、特別にキーマクロ(.mac)形式でも使えます。<br>
 <br>
 ■ function <span id="AppendUndoBufferCursor">AppendUndoBufferCursor</span>(); <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>解説</b><br>
+<div class="li200">
+<strong>解説</strong><br>
 Undoバッファに現在のカーソル位置を追加し登録します。<br>
 </div>
 sakura:2.1.0.0以降<br>
 この関数は、特別にキーマクロ(.mac)形式でも使えます。<br>
 <br>
 ■ function <span id="GetStrWidth">GetStrWidth</span>(str1 :String, int2 :Integer):Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 str1&nbsp;&nbsp;&nbsp;&nbsp;対象文字列<br>
 int2&nbsp;&nbsp;&nbsp;&nbsp;開始Offset（省略可能、ただしPPAマクロは省略不可）<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 文字列の幅<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 文字列の幅を取得します。<br>
 開始Offsetは1開始です。省略時は1です。タブ幅計算などに使います。改行を含んだ計算はできません。<br>
 </div>
 sakura:2.1.0.0以降<br>
 <br>
 ■ function <span id="GetStrLayoutLength">GetStrLayoutLength</span>(str1 :String, int2 :Integer):Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 str1&nbsp;&nbsp;&nbsp;&nbsp;対象文字列<br>
 int2&nbsp;&nbsp;&nbsp;&nbsp;開始Offset（省略可能、ただしPPAマクロは省略不可）<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 文字列のレイアウト幅<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 文字列のレイアウト幅を取得します。<br>
 開始Offsetは1開始です。省略時は1です。タブ幅計算などに使います。改行を含んだ計算はできません。<br>
 現在のバージョンでは、GetStrWidthと値は同じです。<br>
@@ -928,30 +933,30 @@ int2&nbsp;&nbsp;&nbsp;&nbsp;開始Offset（省略可能、ただしPPAマクロ�
 sakura:2.1.0.0以降<br>
 <br>
 ■ function <span id="GetDefaultCharLength">GetDefaultCharLength</span>():Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>戻り値</b><br>
+<div class="li200">
+<strong>戻り値</strong><br>
 レイアウト幅<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 ルーラー等の1文字幅あたりのレイアウト幅を取得します。<br>
 現在のバージョンでは、1です。<br>
 </div>
 sakura:2.1.0.0以降<br>
 <br>
 ■ function <span id="ClipboardEmpty">ClipboardEmpty</span>(); <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>解説</b><br>
+<div class="li200">
+<strong>解説</strong><br>
 クリップボードを空にします。<br>
 </div>
 sakura:2.1.0.0以降<br>
 <br>
 ■ function <span id="IsIncludeClipboardFormat">IsIncludeClipboardFormat</span>(str1 :String) :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 str1&nbsp;&nbsp;&nbsp;&nbsp;クリップボードフォーマット名<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 0: 該当フォーマットなし<br>
 1: 該当フォーマットあり<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 クリップボードに指定したフォーマットの形式があるか調べます。<br>
 クリップボードフォーマット名にはシステムに登録されたCF_xxxや登録された物が使えます。<br>
 フォーマット名の例一覧：<br>
@@ -968,14 +973,14 @@ str1&nbsp;&nbsp;&nbsp;&nbsp;クリップボードフォーマット名<br>
 sakura:2.1.0.0以降<br>
 <br>
 ■ function <span id="GetClipboardByFormat">GetClipboardByFormat</span>(str1 :String, int2 :Integer, int3:Integer) :String; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 str1&nbsp;&nbsp;&nbsp;&nbsp;クリップボードフォーマット名<br>
 int2&nbsp;&nbsp;&nbsp;&nbsp;モード(文字コードセット)<br>
 int3&nbsp;&nbsp;&nbsp;&nbsp;終端モード<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 クリップボードの内容の文字列<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 クリップボードに指定したフォーマットの形式があるか調べます。<br>
 モードには以下のものが使えます。<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-2&nbsp;&nbsp;&nbsp;&nbsp;サクラ標準処理(使えるフォーマットのみ)<br>
@@ -992,29 +997,29 @@ int3&nbsp;&nbsp;&nbsp;&nbsp;終端モード<br>
 sakura:2.1.0.0以降<br>
 <br>
 ■ function <span id="SetClipboardByFormat">SetClipboardByFormat</span>(str1 :String, str2 :String, int3 :Integer, int4:Integer) :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 str1&nbsp;&nbsp;&nbsp;&nbsp;データ(文字列)<br>
 str2&nbsp;&nbsp;&nbsp;&nbsp;クリップボードフォーマット名<br>
 int3&nbsp;&nbsp;&nbsp;&nbsp;モード(文字コードセット)<br>
 int4&nbsp;&nbsp;&nbsp;&nbsp;終端モード<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 1: 成功<br>
 0: 失敗<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 クリップボードに指定形式でデータを追加します。<br>
 元からあるデータは削除しないので、ClipboardEmptyと併用してください。<br>
 </div>
 sakura:2.1.0.0以降<br>
 <br>
 ■ function <span id="GetLineAttribute">GetLineAttribute</span>(int1 :Integer, int2:Integer) :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;行番号1開始(0==カーソル行)<br>
 int2&nbsp;&nbsp;&nbsp;&nbsp;属性<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 属性によります。<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 属性は以下の種類です。<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;変更行: 戻り値 0=未変更 1=修正あり<br>
 &nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;変更行シーケンス: 戻り値 シーケンス番号<br>
@@ -1025,8 +1030,8 @@ int2&nbsp;&nbsp;&nbsp;&nbsp;属性<br>
 sakura:2.2.0.0以降<br>
 <br>
 ■ function <span id="IsTextSelectingLock">IsTextSelectingLock</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>戻り値</b><br>
+<div class="li200">
+<strong>戻り値</strong><br>
 0&nbsp;&nbsp;&nbsp;&nbsp;未ロック<br>
 1&nbsp;&nbsp;&nbsp;&nbsp;通常選択ロック<br>
 2&nbsp;&nbsp;&nbsp;&nbsp;矩形選択中でロック<br>
@@ -1034,8 +1039,8 @@ sakura:2.2.0.0以降<br>
 sakura:2.2.0.0以降<br>
 <br>
 ■ function <span id="SetViewTop">SetViewTop</span>( int1 :Integer ); <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;行番号<br>
 画面スクロール位置を一番上の行の行番号で設定します。<br>
 </div>
@@ -1043,8 +1048,8 @@ sakura:2.2.0.0以降<br>
 この関数は、特別にキーマクロ(.mac)形式でも使えます。<br>
 <br>
 ■ function <span id="SetViewLeft">SetViewLeft</span>( int1 :Integer ); <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;桁番号<br>
 画面スクロール位置を一番左の桁の桁番号で設定します。<br>
 桁はレイアウト単位で指定します。<br>
@@ -1054,15 +1059,15 @@ sakura:2.2.0.0以降<br>
 この関数は、特別にキーマクロ(.mac)形式でも使えます。<br>
 <br>
 ■ function <span id="GetViewLines">GetViewLines</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>戻り値</b><br>
+<div class="li200">
+<strong>戻り値</strong><br>
 画面に表示されている行数を取得します。<br>
 </div>
 sakura:2.2.0.0以降<br>
 <br>
 ■ function <span id="GetViewColumns">GetViewColumns</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>戻り値</b><br>
+<div class="li200">
+<strong>戻り値</strong><br>
 画面に表示されている桁数を取得します。<br>
 ただし桁数はレイアウト単位なので、プロポーショナル版ではピクセル数になっています。<br>
 ルーラー基準の文字数に変換するには以下のようにします。<br>
@@ -1072,14 +1077,14 @@ var chars = Math.floor(px / GetDefaultCharLength());<br>
 sakura:2.2.0.0以降<br>
 <br>
 ■ function <span id="CreateMenu">CreateMenu</span>( int1 :Integer, str2 :String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>引数</b><br>
+<div class="li200">
+<strong>引数</strong><br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;0=マウス位置に表示 1=カーソル位置に表示<br>
 str2&nbsp;&nbsp;&nbsp;&nbsp;メニュー文字列<br>
-<b>戻り値</b><br>
+<strong>戻り値</strong><br>
 セパレータ要素,サブメニューを除いた、項目番号(1開始)が返ります。<br>
 キャンセルされた場合は 0 です。<br>
-<b>解説</b><br>
+<strong>解説</strong><br>
 メニュー文字列は , 区切りで指定します。<br>
 先頭に以下の文字を付けるとそれぞれの意味になります。<br>
 複数設定する場合は[CD]のように書きます。<br>
@@ -1098,8 +1103,8 @@ str2&nbsp;&nbsp;&nbsp;&nbsp;メニュー文字列<br>
 sakura:2.2.0.0以降<br>
 <br>
 ■ function <span id="GetViewTop">GetViewTop</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
-<div class=li200>
-<b>戻り値</b><br>
+<div class="li200">
+<strong>戻り値</strong><br>
 画面に表示されている一番上の行のレイアウト行番号(1開始)を取得します。<br>
 </div>
 sakura:2.4.2.0以降<br>

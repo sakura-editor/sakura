@@ -21,7 +21,8 @@
 「.mac」「.ppa」はWindowsの関連付けや設定に関係なく実行できます。<br>
 <pre>
 <table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td>拡張子</td><td>種類</td></tr>
+	<caption style="display: none">無題</caption>
+<tr><th scope="col">拡張子</th><th scope="col">種類</th></tr>
 <tr><td>mac</td><td>キーマクロ</td></tr>
 <tr><td>ppa</td><td>PPAマクロ</td></tr>
 <tr><td>js</td><td>WSH:Jscriptマクロ</td></tr>
@@ -38,7 +39,7 @@ UTF-8BOM付きのファイルにすると、UTF-8として読み込みます。W
 
 <h3>キーマクロ例</h3>
 【キーマクロ例1】<br>
-<div class=li200>
+<div class="li200">
 S_InsText("string"); // 文字列挿入<br>
 S_ExecCommand( "C:\\WINDOWS\\explorer .", 0 ); // コマンド実行<br>
 S_Up(); // 3行上に移動<br>
@@ -48,7 +49,7 @@ S_GoLineTop(1); // 1: 空白に関係なく桁位置1に移動，8: 選択して
 </div><br>
 
 【キーマクロ例2】<br>
-<div class=li200>
+<div class="li200">
 //一行挿入のマクロ<br>
 GoLineTop(1);	// 行頭に移動(折り返し単位)<br>
 Char(13);	// 文字入力<br>

@@ -22,53 +22,53 @@ $Fで、現在編集中のファイル名を外部コマンドに渡せます。
 &nbsp;&nbsp;&nbsp;&nbsp;c:\foo.exe "$F"<br>
 のように引用符で囲んで記述します。<br>
 <br>
-<b>□標準出力を得る</b><br>
+<strong>□標準出力を得る</strong><br>
 実行結果を、<a href="HLP000188.html">アウトプットウィンドウ</a>に表示するか編集中のウィンドウに表示します。<br>
 GUIアプリケーションは、「標準出力を得る」にチェックしないでください。画面に表示されません。<br>
 <br>
-<div class=li200>
-<b>SJIS</b><br>
+<div class="li200">
+<strong>SJIS</strong><br>
 標準出力からの実行結果をSJISで受け取ります。<br>
-<b>Unicode</b><br>
+<strong>Unicode</strong><br>
 標準出力からの実行結果をUnicodeで受け取ります。<br>
-<b>UTF-8</b><br>
+<strong>UTF-8</strong><br>
 標準出力からの実行結果をUTF-8で受け取ります。<br>
 <br>
 </div>
-<b>□標準入力に送る</b><br>
+<strong>□標準入力に送る</strong><br>
 編集中のウィンドウの内容を子プロセスの標準入力へリダイレクトします。範囲選択中であれば、選択範囲のみを渡します。<br>
 <br>
-<div class=li200>
-<b>SJIS</b><br>
+<div class="li200">
+<strong>SJIS</strong><br>
 編集中の内容を標準入力へSJISで渡します。<br>
-<b>Unicode</b><br>
+<strong>Unicode</strong><br>
 編集中の内容を標準入力へUnicodeで渡します。<br>
-<b>UTF-8</b><br>
+<strong>UTF-8</strong><br>
 編集中の内容を標準入力へUTF-8で渡します。<br>
 <br>
 </div>
-<b>&lt;標準出力リダイレクト先&gt;</b><br>
-<div class=li200>
-	<b>アウトプットウィンドウ</b><br>
+<strong>&lt;標準出力リダイレクト先&gt;</strong><br>
+<div class="li200">
+	<strong>アウトプットウィンドウ</strong><br>
 	子プロセスの標準出力を、アウトプットウィンドウに出力します。<br>
 	このとき、ほかのウィンドウで同時に「標準出力を得る」リダイレクト先にアウトプットウィンドウを選択して実行しないでください。<br>
 	また、タグジャンプなども控えてください。(出力が化ける事があります)<br>
 	<br>
-	<b>編集中のウィンドウ</b><br>
+	<strong>編集中のウィンドウ</strong><br>
 	子プロセスの標準出力を、編集中のウィンドウに取り込みます。次の条件でそれぞれ動作が変化します。<br>
 	<ul>
-	<li><font color = "blue">範囲選択時：</font>　選択中の文字列が破棄され、子プロセスから標準出力された内容に置き換わります。</li>
-	<li><font color = "blue">非選択時で標準入力指定なし：</font>　現在のカーソル位置に、子プロセスから標準出力された内容が挿入されます。</li>
-	<li><font color = "blue">非選択時で標準入力に送る指定：</font>　現在の編集ウィンドウの内容が破棄され、子プロセスから標準出力された内容に置き換わります。</li>
-	<li><font color = "blue">矩形選択時：</font>　現在未サポート。（矩形編集としての動作もせず、選択状態も不自然に崩れます。）</li>
+	<li><span style="color: blue">範囲選択時：</span>　選択中の文字列が破棄され、子プロセスから標準出力された内容に置き換わります。</li>
+	<li><span style="color: blue">非選択時で標準入力指定なし：</span>　現在のカーソル位置に、子プロセスから標準出力された内容が挿入されます。</li>
+	<li><span style="color: blue">非選択時で標準入力に送る指定：</span>　現在の編集ウィンドウの内容が破棄され、子プロセスから標準出力された内容に置き換わります。</li>
+	<li><span style="color: blue">矩形選択時：</span>　現在未サポート。（矩形編集としての動作もせず、選択状態も不自然に崩れます。）</li>
 	</ul>
 </div>
-<b>□カレントディレクトリ</b><br>
+<strong>□カレントディレクトリ</strong><br>
 コマンドを実行するカレントディレクトリを指定します。(sakura:2.1.0.0以降)<br>
 <br>
-<img src="images/ExtCmd.png"><br>
+<img alt="ExtCmd" src="images/ExtCmd.png" /><br>
 <hr>
-■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
+■<a href="HLP000204.html"><strong>マクロ構文</strong></a><br>
 ・構文: ExecCommand( str1 :String, int2 :Integer, str3 :String );<br>
 &nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;実行するコマンド文字列<br>
 &nbsp;&nbsp;&nbsp;&nbsp;int2&nbsp;&nbsp;&nbsp;&nbsp;実行制御オプション<br>
