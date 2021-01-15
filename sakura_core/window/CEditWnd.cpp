@@ -3087,13 +3087,13 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 		//	May 12, 2000 genta
 		//	2カラム目に改行コードの表示を挿入
 		//	From Here
-		int			nStArr[8];
 		// 2003.08.26 Moca CR0LF0廃止に従い、適当に調整
 		// 2004-02-28 yasu 文字列を出力時の書式に合わせる
 		// 幅を変えた場合にはCEditView::ShowCaretPosInfo()での表示方法を見直す必要あり．
 		// ※pszLabel[3]: ステータスバー文字コード表示領域は大きめにとっておく
-		const WCHAR*	pszLabel[7] = { L"", L"99999 行 9999 列", L"CRLF", L"AAAAAAAAAAAA", L"UTF-16 BOM付", L"REC", L"上書" };	//Oct. 30, 2000 JEPRO 千万行も要らん	文字コード枠を広げる 2008/6/21	Uchi
-		int			nStArrNum = 7;
+		const WCHAR* pszLabel[] = { L"", L"99999 行 9999 列", L"CRLF", L"AAAAAAAAAAAA", L"UTF-16 BOM付", L"REC", L"上書", L"9999 %" };	//Oct. 30, 2000 JEPRO 千万行も要らん	文字コード枠を広げる 2008/6/21	Uchi
+		const size_t nStArrNum = _countof(pszLabel);
+		int nStArr[_countof(pszLabel)] = {};
 		//	To Here
 		int			nAllWidth = rc.right - rc.left;
 		int			nSbxWidth = ::GetSystemMetrics(SM_CXVSCROLL) + ::GetSystemMetrics(SM_CXEDGE); // サイズボックスの幅

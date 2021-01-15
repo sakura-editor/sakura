@@ -3,12 +3,12 @@
 <!-- TOC -->
 
 - [Visual Studio の 各バージョンの PlatformToolset に関して](#visual-studio-の-各バージョンの-platformtoolset-に関して)
-    - [PlatformToolset の対応関係](#platformtoolset-の対応関係)
-    - [異なる Visual Studio のバージョンで開いたときの動作](#異なる-visual-studio-のバージョンで開いたときの動作)
-    - [解決策](#解決策)
-        - [参考情報](#参考情報)
-    - [コマンドラインで PlatformToolset の設定を上書きする方法](#コマンドラインで-platformtoolset-の設定を上書きする方法)
-        - [PlatformToolset の指定に関する参考リンク](#platformtoolset-の指定に関する参考リンク)
+  - [PlatformToolset の対応関係](#platformtoolset-の対応関係)
+  - [異なる Visual Studio のバージョンで開いたときの動作](#異なる-visual-studio-のバージョンで開いたときの動作)
+  - [解決策](#解決策)
+    - [参考情報](#参考情報)
+  - [コマンドラインで PlatformToolset の設定を上書きする方法](#コマンドラインで-platformtoolset-の設定を上書きする方法)
+    - [PlatformToolset の指定に関する参考リンク](#platformtoolset-の指定に関する参考リンク)
 
 <!-- /TOC -->
 

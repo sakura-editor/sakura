@@ -420,12 +420,6 @@ void CEditView::Close()
 //                         イベント                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//WCHAR→WCHAR変換。
-inline wchar_t tchar_to_wchar(WCHAR tc)
-{
-	return tc;
-}
-
 /*
 || メッセージディスパッチャ
 */

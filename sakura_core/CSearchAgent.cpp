@@ -296,7 +296,7 @@ void CSearchAgent::CreateWordList(
 {
 	for( CLogicInt pos = CLogicInt(0); pos < nPatternLen; ) {
 		CLogicInt begin, end; // 検索語に含まれる単語?の posを基準とした相対位置。WhereCurrentWord_2()の仕様では空白文字列も単語に含まれる。
-		if( CWordParse::WhereCurrentWord_2( pszPattern + pos, nPatternLen - pos, CLogicInt(0), &begin, &end, NULL, NULL )
+		if( CWordParse::WhereCurrentWord_2( pszPattern + pos, nPatternLen - pos, CLogicInt(0), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, &begin, &end, NULL, NULL )
 			&& begin == 0 && begin < end
 		) {
 			if( ! WCODE::IsWordDelimiter( pszPattern[pos] ) ) {
@@ -324,7 +324,7 @@ const wchar_t* CSearchAgent::SearchStringWord(
 	CLogicInt nNextWordFrom = CLogicInt(nIdxPos);
 	CLogicInt nNextWordFrom2;
 	CLogicInt nNextWordTo2;
-	while( CWordParse::WhereCurrentWord_2( pLine, CLogicInt(nLineLen), nNextWordFrom, &nNextWordFrom2, &nNextWordTo2, NULL, NULL ) ){
+	while( CWordParse::WhereCurrentWord_2( pLine, CLogicInt(nLineLen), nNextWordFrom, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, &nNextWordFrom2, &nNextWordTo2, NULL, NULL ) ){
 		size_t nSize = searchWords.size();
 		for( size_t iSW = 0; iSW < nSize; ++iSW ) {
 			if( searchWords[iSW].second == nNextWordTo2 - nNextWordFrom2 ){
@@ -368,7 +368,7 @@ bool CSearchAgent::WhereCurrentWord(
 	const wchar_t*	pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
 
 	/* 現在位置の単語の範囲を調べる */
-	return CWordParse::WhereCurrentWord_2( pLine, nLineLen, nIdx, pnIdxFrom, pnIdxTo, pcmcmWord, pcmcmWordLeft );
+	return CWordParse::WhereCurrentWord_2( pLine, nLineLen, nIdx, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, pnIdxFrom, pnIdxTo, pcmcmWord, pcmcmWordLeft );
 }
 
 // 現在位置の左右の単語の先頭位置を調べる

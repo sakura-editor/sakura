@@ -12,11 +12,32 @@ trigger:
       - revert-*
   paths:
     exclude:
-      - '**/*.md'
-      - .github/workflows/*.yml
+      - .github/*
       - .gitignore
       - .travis.yml
       - appveyor.yml
+      - CHANGELOG.md
+      - CONTRIBUTING.md
+      - CPPLINT.md
+      - README.md
+      - SonarQube.md
+      - addDoxygenFileComment.md
+      - appveyor.md
+      - azure-pipelines.md
+      - build.md
+      - ci-build.md
+      - create-big-file.md
+      - debug-tasktray-menu.md
+      - get-PR.md
+      - installer/externals/bregonig/README.md
+      - installer/externals/universal-ctags/README.md
+      - installer/readme.md
+      - remove-redundant-blank-lines.md
+      - tools/find-tools.md
+      - tools/macro/macro.md
+      - tools/zip/readme.md
+      - unittest.md
+      - vcx-props/project-PlatformToolset.md
 
 ###############################################################################################################################
 #   ビルドトリガー (Pull Request)
@@ -32,10 +53,32 @@ pr:
       - revert-*
   paths:
     exclude:
-      - '**/*.md'
+      - .github/*
       - .gitignore
       - .travis.yml
       - appveyor.yml
+      - CHANGELOG.md
+      - CONTRIBUTING.md
+      - CPPLINT.md
+      - README.md
+      - SonarQube.md
+      - addDoxygenFileComment.md
+      - appveyor.md
+      - azure-pipelines.md
+      - build.md
+      - ci-build.md
+      - create-big-file.md
+      - debug-tasktray-menu.md
+      - get-PR.md
+      - installer/externals/bregonig/README.md
+      - installer/externals/universal-ctags/README.md
+      - installer/readme.md
+      - remove-redundant-blank-lines.md
+      - tools/find-tools.md
+      - tools/macro/macro.md
+      - tools/zip/readme.md
+      - unittest.md
+      - vcx-props/project-PlatformToolset.md
 
 ###############################################################################################################################
 #   jobs/job 定義

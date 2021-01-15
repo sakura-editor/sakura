@@ -112,6 +112,7 @@
     <ClCompile Include="test-cmemory.cpp" />
     <ClCompile Include="test-cnative.cpp" />
     <ClCompile Include="test-cprofile.cpp" />
+    <ClCompile Include="test-cwordparse.cpp" />
     <ClCompile Include="test-editinfo.cpp" />
     <ClCompile Include="test-file.cpp" />
     <ClCompile Include="test-format.cpp" />

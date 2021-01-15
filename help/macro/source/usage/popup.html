@@ -1,4 +1,7 @@
-﻿<html><head><title>Popupメソッド</title>
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="ja">
+<head>
+<title>Popupメソッド</title>
 <LINK REL="stylesheet" TYPE="text/css" HREF="../sakura.css">
 <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
 </head>
@@ -11,10 +14,11 @@ Sakura-Editor Macro Reference
 	<dt>機能</dt>
 		<dd>ポップアップ メッセージ ボックスにテキストを表示します。</dd>
 	<dt>構文</dt>
-		<dd><i>intButton = object.Popup(strText,[nSecondsToWait],[strTitle],[nType])</i>
+		<dd><em>intButton = object.Popup(strText,[nSecondsToWait],[strTitle],[nType])</em>
 		<br><br>
-		<table border = "1" cellspacing = "0" cellpadding = "3" width = "85%">
-			<tr><th><nobr>引数</nobr></th><th>内容</th></tr>
+		<table border="1" cellspacing="0" cellpadding="3" width="85%">
+	<caption style="display: none">無題</caption>
+<tr><th scope="auto">引数</th><th scope="auto">内容</th></tr>
 			<tr><td>object </td><td>WshShell オブジェクトです。</td></tr>
 			<tr><td>strText </td><td>ポップアップ ウィンドウに表示するテキストです。</td></tr>
 			<tr><td>nSecondsToWait </td><td>省略可能です。ポップアップ ウィンドウを閉じるまで待機する秒数を指定します。</td></tr>
@@ -24,9 +28,10 @@ Sakura-Editor Macro Reference
 		</table>
 		</dd>
 	<dt>設定値</dt>
-		<dd>引数&nbsp;<i>nType</i>&nbsp;の設定値は次のとおりです。<br><br>
-		<table border = "1" cellspacing = "0" cellpadding = "3" width = "85%">
-			<tr><th>値</th><th>内容</th></tr>
+		<dd>引数&nbsp;<em>nType</em>&nbsp;の設定値は次のとおりです。<br><br>
+		<table border="1" cellspacing="0" cellpadding="3" width="85%">
+	<caption style="display: none">無題</caption>
+<tr><th scope="auto">値</th><th scope="auto">内容</th></tr>
 			<tr><td>0</td><td>[OK] ボタンを表示します。</td></tr>
 			<tr><td>1</td><td>[OK] ボタンと [キャンセル] ボタンを表示します。</td></tr>
 			<tr><td>2</td><td>[中止] ボタン、[再試行] ボタン、および [無視] ボタンを表示します。</td></tr>
@@ -47,8 +52,9 @@ Sakura-Editor Macro Reference
 		<dd>
 		戻り値 intButton は、クリックしたボタンの番号を表します。
 		ボタンをクリックする前に nSecondsToWait で指定した秒数が経過すると、intButton は -1 になります。
-		<table border = "1" cellspacing = "0" cellpadding = "3" width = "85%">
-			<tr><th>値</th><th>内容</th></tr>
+		<table border="1" cellspacing="0" cellpadding="3" width="85%">
+	<caption style="display: none">無題</caption>
+<tr><th scope="auto">値</th><th scope="auto">内容</th></tr>
 			<tr><td>1</td><td>[OK] ボタン。</td></tr>
 			<tr><td>2</td><td>[キャンセル] ボタン。</td></tr>
 			<tr><td>3</td><td>[中止] ボタン。</td></tr>
@@ -60,7 +66,7 @@ Sakura-Editor Macro Reference
 		</dd>
 	<dt>参照</dt>
 		<dd>
-		<a href = "./MessageBox.html">メッセージボックスについて</a>
+		<a href="./MessageBox.html">メッセージボックスについて</a>
 		</dd>
 </dl>
 <hr>

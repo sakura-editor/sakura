@@ -25,29 +25,29 @@
 <li>ショートカット作成などは手作業で行って下さい。</li>
 </ol><br>
 
-<img src="images/note.png"><b>注意</b><div class=li200>
+<img alt="note" src="images/note.png" /><strong>注意</strong><div class="li200">
 Vista以降のUACに対応していないバージョン(1.5.17.0以前)からバージョンアップする場合は、manifestを置くことで<a href="HLP000080.html">Virtual Store</a>が無効化されるため、これまで使っていた設定が引き継がれません。
 必要に応じて<em>sakura.ini</em> を適切な位置へ移動するなどの対応をお願いします。
-詳しくは<a href="HLP000080.html">Virtual Store</a>、<a href="HLP000078.html">ユーザー別設定</a>および<a href = "HLP000077.html">設定フォルダ</a>を参照。<br>
+詳しくは<a href="HLP000080.html">Virtual Store</a>、<a href="HLP000078.html">ユーザー別設定</a>および<a href="HLP000077.html">設定フォルダ</a>を参照。<br>
 </div>
 <br>
 
 <h4>パッケージ版インストール</h4>
-<font color="blue">パッケージ版（インストーラ）を利用した場合には、アンインストール情報などをレジストリに書き込みします。</font><br>
+<span style="color: blue">パッケージ版（インストーラ）を利用した場合には、アンインストール情報などをレジストリに書き込みします。</span><br>
 <br>
 <ol>
 <li>実行中のサクラエディタを(常駐も含めて)すべて終了させます。</li>
 <li>ダウンロードした<em>sinstx-x-xx-x.exe</em> を実行し、ウィザードに従ってください。</li>
-<li>2000以降のOSでは<b>新規インストール時のみ</b>、<a href="HLP000078.html">ユーザー別設定</a>を行うかどうかの選択画面がでます。</li>
+<li>2000以降のOSでは<strong>新規インストール時のみ</strong>、<a href="HLP000078.html">ユーザー別設定</a>を行うかどうかの選択画面がでます。</li>
 </ol><br>
 
-<img src="images/note.png"><b>注意</b><div class=li200>
+<img alt="note" src="images/note.png" /><strong>注意</strong><div class="li200">
 新バージョンに更新したことによってそれまで使えていた機能が動作しなくなる場合があります。<br>
 旧バージョンの実行ファイル<em>sakura.exe</em> と設定ファイル<em>sakura.ini</em> をバックアップしておくことをお勧めします。<br>
 この場合<em>sakura.exe</em> を単に別フォルダに移動しただけでは、ショートカットがリンク先を自動変更して旧バージョンを起動してしまうことがあるのでファイル名を変更したほうがいいでしょう。<br>
 </div>
 <br>
-<img src="images/note.png"><b>注意</b><div class=li200>
+<img alt="note" src="images/note.png" /><strong>注意</strong><div class="li200">
 古いバージョンのパッケージ版では、最後の画面で「今すぐサクラエディタを起動」のチェックボックスがありますが、Vista以降のOSのときはOFFにしてください。ONのまま続行すると、BackSpaceが効かないなどの障害が発生します。その場合は常駐も含めてサクラエディタを一旦すべて終了させてください。
 </div>
 <br>
@@ -61,7 +61,7 @@ Vista以降のUACに対応していないバージョン(1.5.17.0以前)から�
 <li>Vista以降にて<a href="HLP000080.html">Virtual Store</a>が有効になっている場合は、<em>"%LOCALAPPDATA%\VirtualStore"</em> 以下にある<em>sakura.ini</em> などのファイルも削除します。</li>
 <li>自分で作成したショートカットなども削除してください。</li>
 </ol>
-<img src="images/hint.png">ヒント<div class=li200>
+<img alt="hint" src="images/hint.png" />ヒント<div class="li200">
 サクラエディタはレジストリへの書き込みは一切致しませんので、アンインストールにあたりレジストリを操作する必要はありません。<br>
 (sakura:2.0.0.0以降)<br>
 タイプ別設定一覧画面化から関連付け設定を行った場合はレジストリを変更します。<br>
@@ -75,24 +75,26 @@ Vista以降のUACに対応していないバージョン(1.5.17.0以前)から�
 </ol>
 <br>
 
-<img src="images/hint.png">ヒント<div class=li200>
+<img alt="hint" src="images/hint.png" />ヒント<div class="li200">
 <em>sakura.ini</em> というファイルはサクラエディタの設定ファイルです。パッケージ版のアンインストールでは、<em>sakura.ini</em> は削除されません。<br>
 </div>
 <br>
-<img src="images/note.png"><b>注意</b><div class=li200>
+<img alt="note" src="images/note.png" /><strong>注意</strong><div class="li200">
 通常<em>sakura.ini</em> は<em>sakura.exe</em> と同じ場所にありますが、<a href="HLP000078.html">ユーザー別設定</a>を行っている場合や<a href="HLP000080.html">Virtual Store</a>が有効になっているなどの理由で、<em>sakura.ini</em> の保存場所が異なる場合があります。<br>
 <br>
 sakura.iniの保存先
 <table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td>XP以前で標準インストールの場合</td><td>sakura.exeと同じ場所</td></tr>
-<tr><td>2000以降で<a href="HLP000078.html">ユーザー別設定</a>の場合</td><td><a href="HLP000078.html">ユーザー別設定</a>および<a href="HLP000077.html">設定フォルダ</a>参照</td></tr>
-<tr><td>Vista以降で<a href="HLP000080.html">Virtual Store</a>有効の場合</td><td><em>"%LOCALAPPDATA%\VirtualStore\Program Files\sakura"</em> <br><small>*パッケージ版でデフォルトのインストール先を指定した場合</small></td></tr>
+	<caption style="display: none">無題</caption>
+<tr><th scope="row">XP以前で標準インストールの場合</th><td>sakura.exeと同じ場所</td></tr>
+<tr><th scope="row">2000以降で<a href="HLP000078.html">ユーザー別設定</a>の場合</th><td><a href="HLP000078.html">ユーザー別設定</a>および<a href="HLP000077.html">設定フォルダ</a>参照</td></tr>
+<tr><th scope="row">Vista以降で<a href="HLP000080.html">Virtual Store</a>有効の場合</th><td><em>"%LOCALAPPDATA%\VirtualStore\Program Files\sakura"</em> <br><small>*パッケージ版でデフォルトのインストール先を指定した場合</small></td></tr>
 </table>
 </div>
 
 <h3>パッケージ版ファイル一式</h3>
 <table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td>ファイル名</td><td>内容</td></tr>
+	<caption style="display: none">無題</caption>
+	<tr><th scope="col">ファイル名</th><th scope="col">内容</th></tr>
 <tr><td>sakura.exe</td><td>サクラエディタ  本体</td></tr>
 <tr><td>bregonig.dll</td><td>正規表現ライブラリ<br>(1.5.17.x以前ではbregexp.dll)</td></tr>
 <tr><td>bsd_license.txt</td><td>Onigmo (Oniguruma-mod) LICENSE</td></tr>
@@ -106,7 +108,8 @@ sakura.iniの保存先
 
 &lt;keyword&gt;フォルダ
 <table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td>ファイル名</td><td>言語</td><td>内容</td></tr>
+	<caption style="display: none">無題</caption>
+	<tr><th scope="col">ファイル名</th><th scope="col">言語</th><th scope="col">内容</th></tr>
 <tr><td>ABAP4.kwd</td><td>ABAP4</td><td>強調キーワード</td></tr>
 <tr><td>ActionScript.kwd</td><td>ActionScript</td><td>強調キーワード</td></tr>
 <tr><td>AHK.col</td><td>AutoHotkey</td><td>カラー</td></tr>
@@ -207,19 +210,25 @@ sakura.iniの保存先
 <br>
 
 <h4>サクラエディタが作成する作業ファイルについて</h4>
-サクラエディタをインストールした後にサクラエディタを実行すると、 sakura.exeのあるフォルダ（または<a href = "HLP000077.html">設定フォルダ</a>）に以下のファイルが作成されます。<br>
+サクラエディタをインストールした後にサクラエディタを実行すると、 sakura.exeのあるフォルダ（または<a href="HLP000077.html">設定フォルダ</a>）に以下のファイルが作成されます。<br>
 <table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+	<caption style="display: none">無題</caption>
+	<tr><th scope="col">ファイル名</th><th scope="col">説明</th></tr>
 <tr><td>sakura.ini </td><td>サクラエディタ用の設定ファイルです。</td></tr>
 </table>
 <br>
 キーマクロの記録を使うと、共通設定のマクロ一覧のフォルダに以下のファイルが作成されます。<br>
 <table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+	<caption style="display: none">無題</caption>
+	<tr><th scope="col">ファイル名</th><th scope="col">内容</th></tr>
 <tr><td>RecKey.mac</td><td>キーマクロの記録ファイルです。</td></tr>
 </table>
 <br>
 
 <h4>ソースと共に配布されているドキュメント</h4>
 <table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+	<caption style="display: none">無題</caption>
+	<tr><th scope="col">ファイル名</th><th scope="col">内容</th></tr>
 <tr><td>BugsInfo.txt</td><td>バグ／フィックス情報　 (開発メモ その１)</td></tr>
 <tr><td>request.txt</td><td>要望 　(開発メモ その２)</td></tr>
 </table>

@@ -3,18 +3,18 @@
 <!-- TOC -->
 
 - [Azure Pipelines でのビルド](#azure-pipelines-でのビルド)
-    - [Azure Pipelines の利用開始方法](#azure-pipelines-の利用開始方法)
-        - [単にサクラエディタ用のプロジェクトに読み取りアクセスする場合](#単にサクラエディタ用のプロジェクトに読み取りアクセスする場合)
-        - [Azure Pipelines にアカウントがない場合](#azure-pipelines-にアカウントがない場合)
-        - [Azure Pipelines にアカウントがある場合](#azure-pipelines-にアカウントがある場合)
-    - [参考情報](#参考情報)
-    - [参考サイト](#参考サイト)
-    - [Azure Pipelines の設定ファイルの構成](#azure-pipelines-の設定ファイルの構成)
-    - [Azure Pipelines の template ファイルの命名規則](#azure-pipelines-の-template-ファイルの命名規則)
-    - [Azure Pipelines のJOB の構成](#azure-pipelines-のjob-の構成)
-    - [Azure Pipelines の TIPS](#azure-pipelines-の-tips)
-        - [step または JOB の実行条件](#step-または-job-の実行条件)
-    - [CI Buildおよびローカルビルドの環境変数](#CI-Buildおよびローカルビルドの環境変数)
+  - [Azure Pipelines の利用開始方法](#azure-pipelines-の利用開始方法)
+    - [単にサクラエディタ用のプロジェクトに読み取りアクセスする場合](#単にサクラエディタ用のプロジェクトに読み取りアクセスする場合)
+    - [Azure Pipelines にアカウントがない場合](#azure-pipelines-にアカウントがない場合)
+    - [Azure Pipelines にアカウントがある場合](#azure-pipelines-にアカウントがある場合)
+  - [参考情報](#参考情報)
+  - [参考サイト](#参考サイト)
+  - [Azure Pipelines の設定ファイルの構成](#azure-pipelines-の設定ファイルの構成)
+  - [Azure Pipelines の template ファイルの命名規則](#azure-pipelines-の-template-ファイルの命名規則)
+  - [Azure Pipelines のJOB の構成](#azure-pipelines-のjob-の構成)
+  - [Azure Pipelines の TIPS](#azure-pipelines-の-tips)
+    - [step または JOB の実行条件](#step-または-job-の実行条件)
+  - [CI Buildおよびローカルビルドの環境変数](#ci-buildおよびローカルビルドの環境変数)
 
 <!-- /TOC -->
 
