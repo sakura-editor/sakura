@@ -147,4 +147,4 @@ jobs:
         -D"sonar.cfamily.threads=2" `
         -D"sonar.coverage.exclusions=help\**\*.js,tools\**\*.js" `
         -D"sonar.coverageReportPaths=tests1-coverage.xml" `
-        -D"sonar.exclusions=.sonar\**\*,bw-output\**\*,HeaderMake\**\*,tests\build\**\*,tests\googletest\**\*,**\test-*"
+        -D"sonar.exclusions=.sonar\**\*,bw-output\**\*,HeaderMake\**\*,tests\build\**\*,tests\googletest\**\*,**\test-*,tests*-*.xml"
