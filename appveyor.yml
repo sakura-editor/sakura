@@ -31,10 +31,9 @@ install:
 # to run our custom scripts instead of automatic MSBuild
 build_script:
   - cmd: cup vswhere
-  - cmd: |
-    type C:\projects\sakura\installer\Languages\ChineseSimplified.isl
-    build-all.bat %PLATFORM% %CONFIGURATION%
-    
+  - cmd: type C:\projects\sakura\installer\Languages\ChineseSimplified.isl
+  - cmd: build-all.bat %PLATFORM% %CONFIGURATION%
+  
 # to run our custom scripts instead of automatic tests
 test_script:
   - cmd: tests\run-tests.bat %PLATFORM% %CONFIGURATION%
