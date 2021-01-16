@@ -22,7 +22,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include <CodeCoverage\CodeCoverage.h>
+#include <CodeCoverage/CodeCoverage.h>
 
 // Exclude all the code from a particular files:
 // see https://docs.microsoft.com/ja-jp/visualstudio/test/using-code-coverage-to-determine-how-much-code-is-being-tested
