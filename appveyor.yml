@@ -26,7 +26,7 @@ skip_commits:
 install:
 - cmd: |
     pip install openpyxl --user
-    cinst innosetup
+    choco install innosetup
 
 # to run our custom scripts instead of automatic MSBuild
 build_script:
