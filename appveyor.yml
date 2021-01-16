@@ -25,8 +25,10 @@ skip_commits:
 
 install:
 - cmd: |
-    pip install openpyxl --user
-    choco install innosetup
+    py -m pip install --upgrade pip
+    py -m pip install openpyxl --user
+    cup innosetup
+    C:\ProgramData\chocolatey\tools\shimgen.exe --output=C:\ProgramData\chocolatey\bin\ISCC.exe --path="C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
 
 # to run our custom scripts instead of automatic MSBuild
 build_script:
