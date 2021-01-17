@@ -32,13 +32,6 @@ set CHM_MACRO=%TMP_HELP%\macro\macro.chm
 set CHM_PLUGIN=%TMP_HELP%\plugin\plugin.chm
 set CHM_SAKURA=%TMP_HELP%\sakura\sakura.chm
 
-if defined APPVEYOR (
-	if "%PLATFORM%" neq "BuildChm" (
-		goto :download_archive
-		exit /b 0
-	)
-)
-
 set "TOOL_SLN_FILE=%~dp0tools\ChmSourceConverter\ChmSourceConverter.sln"
 @echo "%CMD_MSBUILD%" %TOOL_SLN_FILE% "/p:Platform=Any CPU" /p:Configuration=Release /t:"Build" /v:q
       "%CMD_MSBUILD%" %TOOL_SLN_FILE% "/p:Platform=Any CPU" /p:Configuration=Release /t:"Build" /v:q
@@ -70,9 +63,4 @@ set PROJECT_HHP=%1
 set PROJECT_CHM=%2
 
 powershell.exe -ExecutionPolicy RemoteSigned -File %~dp0help\CompileChm.ps1 %PROJECT_HHP% %PROJECT_CHM%
-exit /b 0
-
-:download_archive
-pwsh.exe -ExecutionPolicy RemoteSigned -File %SRC_HELP%\extract-chm-from-artifact.ps1
-if errorlevel 1 exit /b 1
 exit /b 0
