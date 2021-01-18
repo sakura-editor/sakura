@@ -2458,6 +2458,27 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			Wrap( &Result )->Receive( nLine + 1 );
 			return true;
 		}
+	case F_GETFONTSIZE:
+		{
+			if( 1 <= ArgSize ){
+				if( VariantChangeType( &varCopy.Data, const_cast<VARIANTARG*>(&Arguments[0]), 0, VT_I4) != S_OK ){
+					return false;
+				}
+				int mode = varCopy.Data.lVal;
+				int nPointSize = 0;
+				if( mode == 0 ){
+					nPointSize = GetDllShareData().m_Common.m_sView.m_nPointSize;
+				}else if( mode == 1 || mode == 2 ){
+					nPointSize = View->m_pcEditWnd->GetFontPointSize( mode == 2 );
+				}else{
+					return false;
+				}
+				Wrap( &Result )->Receive( nPointSize );
+				return true;
+			}
+			return false;
+		}
+		break;
 	default:
 		return false;
 	}
