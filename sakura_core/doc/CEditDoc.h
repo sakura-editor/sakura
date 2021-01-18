@@ -65,6 +65,43 @@ struct EditInfo; // 20050705 aroka
 class CFuncInfoArr;
 class CEditApp;
 
+#if 1//仮置
+struct ZoomSetting
+{
+	ZoomSetting(){}
+	ZoomSetting( std::initializer_list<double> iZoomRatios, double nValueMin, double nValueMax, double nValueResolution );
+
+	std::vector<double> m_vZoomRatioTable;
+	double m_nValueMin = 0.0;
+	double m_nValueMax = 0.0;
+	double m_nValueResolution = 0.0;
+};
+
+class CZoomController
+{
+public:
+	CZoomController(){}
+
+	static bool GetZoomedValue( const ZoomSetting& zoomSetting, double nBaseValue, double nCurrentZoomRatio, double nCurrentValue, int nSteps );
+
+	bool HasZoomSetting() const { return m_bHasZoomSetting; }
+	void SetZoomSetting( const ZoomSetting& zoomSetting );
+	void SetBaseValue( double nBaseValue );
+	bool Zoom( int nSteps );
+	double GetZoomRatio() const { return m_nCurrentZoomRatio; }
+	double GetValue() const { return m_nCurrentValue; }
+private:
+	bool m_bHasZoomSetting = false;
+	ZoomSetting m_zoomSetting;
+	double m_nBaseValue = 0.0;
+	double m_nCurrentZoomRatio = 1.0;
+	double m_nCurrentValue = 0.0;
+
+	static bool GetZoomedRatioAndValue( const ZoomSetting& zoomSetting, double nBaseValue, double nCurrentZoomRatio, double nCurrentValue, int nSteps, double* pnZoomRatioOut, double* pnValueOut );
+	static double GetTablePosition( const ZoomSetting& zoomSetting, double zoomRatio );
+};
+#endif//仮置
+
 /*!
 	文書関連情報の管理
 
@@ -160,7 +197,7 @@ public:
 	int				m_nPointSizeCur;			// 一時設定フォントサイズ
 	bool			m_blfCurTemp;				// フォント設定適用中
 	int				m_nPointSizeOrg;			// 元のフォントサイズ
-	double			m_nZoomRatio;
+	CZoomController	m_cTempFontZoomController;	// 一時設定フォントのズーム用
 	bool			m_bTabSpaceCurTemp;			// タブ幅一時設定適用中			// 2013.05.30 Moca
 
 	HBITMAP			m_hBackImg;

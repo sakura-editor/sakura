@@ -150,6 +150,148 @@ static const EFunctionCode EIsModificationForbidden[] = {
 	F_HOKAN,
 };
 
+#if 1//仮置
+ZoomSetting::ZoomSetting( std::initializer_list<double> iZoomRatios, double nValueMin, double nValueMax, double nValueResolution )
+{
+	m_vZoomRatioTable.assign( iZoomRatios );
+	m_nValueMin = nValueMin;
+	m_nValueMax = nValueMax;
+	m_nValueResolution = nValueResolution;
+}
+
+#include <cmath>
+
+bool CZoomController::GetZoomedValue( const ZoomSetting& zoomSetting, double nBaseValue, double nCurrentZoomRatio, double nCurrentValue, int nSteps )
+{
+	double nValue = nCurrentValue;
+	GetZoomedRatioAndValue( zoomSetting, nBaseValue, nCurrentZoomRatio, nCurrentValue, nSteps, NULL, &nValue );
+	return nValue;
+}
+
+void CZoomController::SetZoomSetting( const ZoomSetting& zoomSetting )
+{
+	m_zoomSetting = zoomSetting;
+	m_bHasZoomSetting = true;
+	m_nCurrentZoomRatio = 1.0;
+	m_nCurrentValue = m_nBaseValue;
+}
+
+void CZoomController::SetBaseValue( double nBaseValue )
+{
+	m_nBaseValue = nBaseValue;
+	m_nCurrentZoomRatio = 1.0;
+	m_nCurrentValue = nBaseValue;
+}
+
+bool CZoomController::Zoom( int nSteps )
+{
+	return m_bHasZoomSetting ?
+		GetZoomedRatioAndValue( m_zoomSetting, m_nBaseValue, m_nCurrentZoomRatio, m_nCurrentValue, nSteps, &m_nCurrentZoomRatio, &m_nCurrentValue ) :
+		false;
+}
+
+bool CZoomController::GetZoomedRatioAndValue( const ZoomSetting& zoomSetting, double nBaseValue, double nCurrentZoomRatio, double nCurrentValue, int nSteps, double* pnZoomRatioOut, double* pnValueOut )
+{
+	const auto& table = zoomSetting.m_vZoomRatioTable;
+	if( zoomSetting.m_vZoomRatioTable.size() == 0 || nSteps == 0 ){
+		return false;
+	}
+
+	const bool bZoomUp = (0 < nSteps);
+	const int nTableIndexMin = 0;
+	const int nTableIndexMax = zoomSetting.m_vZoomRatioTable.size() - 1;
+	const double nValueMin = std::min( zoomSetting.m_nValueMin, nBaseValue );
+	const double nValueMax = std::max( zoomSetting.m_nValueMax, nBaseValue );
+
+	double nPosition = GetTablePosition( zoomSetting, nCurrentZoomRatio );
+	int nTableIndex = (int)(bZoomUp ? std::floor( nPosition ) : std::ceil( nPosition ));
+	if( (!bZoomUp && nTableIndex <= nTableIndexMin) || (bZoomUp && nTableIndexMax <= nTableIndex) ){
+		// これ以上拡大/縮小できません	//TODO: この判定、いる？？
+		return false;
+	}
+
+	double nNextZoomRatio = nCurrentZoomRatio;
+	double nNextValue = nCurrentValue;
+	double nLastZoomRatio = nCurrentZoomRatio;
+	double nLastValue = nCurrentValue;
+
+	// m_sizeResolutionで丸めた後の値が変更前の値から変わらなければ
+	// 変わる位置までインデックスを動かしていく
+	nTableIndex += nSteps;
+	while( true ){
+		int clampedIndex = std::clamp( nTableIndex, nTableIndexMin, nTableIndexMax );
+		nNextZoomRatio = zoomSetting.m_vZoomRatioTable[clampedIndex];
+		nNextValue = std::floor( (nBaseValue * nNextZoomRatio) / zoomSetting.m_nValueResolution ) * zoomSetting.m_nValueResolution;
+
+		// 倍率テーブルの端まで到達したら終わり
+		if( clampedIndex != nTableIndex ){
+			break;
+		}
+
+		// 値の上下限を超過したら上下限に丸めて終わる
+		// 倍率は丸めた後のサイズで再計算
+		double clampedValue = std::clamp( nNextValue, nValueMin, nValueMax );
+		if( nNextValue != clampedValue ){
+			nNextZoomRatio = clampedValue / nBaseValue;
+			nNextValue = clampedValue;
+			break;
+		}
+
+		bool sizeChanged = (nNextValue != nCurrentValue);
+		if( bZoomUp ){
+			// 拡大側は値が変わったらすぐ終わる
+			if( sizeChanged ){
+				break;
+			}
+		}else{
+			// 縮小側は一度値が変わった後もう一度値が変わる位置までインデックスを進めてから終わる
+			if( sizeChanged ){
+				if( nLastValue != nCurrentValue && nNextValue != nLastValue ){
+					nNextZoomRatio = nLastZoomRatio;
+					nNextValue = nLastValue;
+					break;
+				}
+			}
+		}
+
+		nLastZoomRatio = nNextZoomRatio;
+		nLastValue = nNextValue;
+		nTableIndex += bZoomUp ? 1 : -1;
+	};
+
+	if( nCurrentValue == nNextValue ){
+		return false;
+	}
+
+	if( pnZoomRatioOut != NULL ){
+		*pnZoomRatioOut = nNextZoomRatio;
+	}
+	if( pnValueOut != NULL ){
+		*pnValueOut = nNextValue;
+	}
+
+	return true;
+}
+
+// 指定した倍率値が倍率テーブルのどこらへんに当たるかを取得
+double CZoomController::GetTablePosition( const ZoomSetting& zoomSetting, double nZoomRatio )
+{
+	const size_t nCount = zoomSetting.m_vZoomRatioTable.size();
+	double nPosition = (double)nCount - 0.5;
+	for( size_t i = 0; i < nCount; ++i ){
+		if( nZoomRatio <= zoomSetting.m_vZoomRatioTable[i] ){
+			if( nZoomRatio == zoomSetting.m_vZoomRatioTable[i] ){
+				nPosition = i;
+			}else{
+				nPosition = i - 0.5;
+			}
+			break;
+		}
+	}
+	return nPosition;
+}
+#endif//仮置
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        生成と破棄                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -202,7 +344,6 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 	m_blfCurTemp = false;
 	m_nPointSizeCur = -1;
 	m_nPointSizeOrg = -1;
-	m_nZoomRatio = 1.0;
 	m_bTabSpaceCurTemp = false;
 
 	// 文字コード種別を初期化

@@ -838,7 +838,7 @@ void CCaret::ShowCaretPosInfo()
 		WCHAR szFontSize[16+16];
 		int currentPointSize = m_pEditDoc->m_pcEditWnd->GetFontPointSize( true );
 		int originalPointSize = m_pEditDoc->m_pcEditWnd->GetFontPointSize( false );
-		double zoomRatio = m_pEditDoc->m_blfCurTemp ? m_pEditDoc->m_nZoomRatio : 1.0;
+		double zoomRatio = m_pEditDoc->m_blfCurTemp ? m_pEditDoc->m_cTempFontZoomController.GetZoomRatio() : 1.0;
 		auto_sprintf( szFontSize, LS( STR_STATUS_FONTSIZE ), (int)(100 * zoomRatio), currentPointSize / 10.0f, originalPointSize / 10.0f );
 
 		auto& statusBar = m_pEditDoc->m_pcEditWnd->m_cStatusBar;

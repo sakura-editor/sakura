@@ -31,22 +31,6 @@
 #include <cmath>
 
 
-double GetTablePosition( const double* table, const size_t count, const double value )
-{
-	double result = count - 0.5;
-	for( size_t i = 0; i < count; ++i ){
-		if( value <= table[i] ){
-			if( value == table[i] ){
-				result = i;
-			}else{
-				result = i - 0.5;
-			}
-			break;
-		}
-	}
-	return result;
-}
-
 /*! ツールバーの表示/非表示
 
 	@date 2006.12.19 ryoji 表示切替は CEditWnd::LayoutToolBar(), CEditWnd::EndLayoutBars() で行うように変更
@@ -269,6 +253,7 @@ void CViewCommander::Command_FONT( void )
 /*! フォントサイズ設定
 	@param fontSize フォントサイズ（1/10ポイント単位）
 	@param shift フォントサイズを拡大or縮小するための変更量(fontSize=0のとき有効)
+	@param mode フォントサイズ設定対象(0:フォント設定 1:タイプ別設定(なければ0と同じ) 2:一時適用フォント)
 
 	@note TrueTypeのみサポート
 
@@ -276,17 +261,27 @@ void CViewCommander::Command_FONT( void )
 */
 void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 {
-	static const double zoomTable[] = {
-		0.01, 0.011, 0.0125, 0.015, 0.0175, 0.02, 0.0225, 0.025, 0.0275, 0.03, 0.035, 0.04, 0.045, 0.05, 0.06, 0.07, 0.08, 0.09,
-		0.1, 0.11, 0.125, 0.15, 0.175, 0.2, 0.225, 0.25, 0.275, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8, 0.9,
-		1.0, 1.1, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0,
-		10.0, 11.0, 12.5, 15.0, 17.5, 20.0, 22.5, 25.0, 27.5, 30.0, 35.0, 40.0, 45.0, 50.0, 60.0, 70.0, 80.0, 90
-	};
+	const int nPointSizeMin = 10;
+	const int nPointSizeMax = 720;
+	static const ZoomSetting zoomSetting(
+		{
+			0.01, 0.011, 0.0125, 0.015, 0.0175, 0.02, 0.0225, 0.025, 0.0275,
+			0.03, 0.035, 0.04, 0.045, 0.05, 0.06, 0.07, 0.08, 0.09,
+
+			0.1, 0.11, 0.125, 0.15, 0.175, 0.2, 0.225, 0.25, 0.275,
+			0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8, 0.9,
+
+			1.0, 1.1, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 2.75,
+			3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0,
+
+			10.0, 11.0, 12.5, 15.0, 17.5, 20.0, 22.5, 25.0, 27.5,
+			30.0, 35.0, 40.0, 45.0, 50.0, 60.0, 70.0, 80.0, 90
+		},
+		nPointSizeMin / 10.0,
+		nPointSizeMax / 10.0,
+		0.5 );
 	const LOGFONT& lf = (mode == 0 ? GetDllShareData().m_Common.m_sView.m_lf
 		: GetEditWindow()->GetLogfont( mode == 2 ));
-	INT nPointSize;
-	const double currentZoomRatio = GetDocument()->m_blfCurTemp ? GetDocument()->m_nZoomRatio : 1.0;
-	double newZoomRatio = currentZoomRatio;
 
 	// TrueTypeのみ対応
 	if( OUT_STROKE_PRECIS != lf.lfOutPrecision && OUT_PS_ONLY_PRECIS != lf.lfOutPrecision ) {
@@ -297,71 +292,38 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 		return;
 	}
 
+	const int nCurrentPointSize = (mode == 0 ? GetDllShareData().m_Common.m_sView.m_nPointSize
+		: GetEditWindow()->GetFontPointSize( mode == 2 ));
+	int nPointSize = nCurrentPointSize;
 	if( 0 != fontSize ){
 		// フォントサイズを直接選択する場合
-		nPointSize = std::max( 0, fontSize );
-	} else if( 0 != shift ) {
+		nPointSize = std::clamp( fontSize, nPointSizeMin, nPointSizeMax );
+	}else if( 0 != shift ){
 		// 現在のフォントに対して、縮小or拡大したフォント選択する場合
-		const INT nCurrentPointSize = (mode == 0 ? GetDllShareData().m_Common.m_sView.m_nPointSize
-			: GetEditWindow()->GetFontPointSize( mode == 2 ));
-		const INT nOriginalPointSize = (mode == 0) ? nCurrentPointSize : GetEditWindow()->GetFontPointSize( false );
+		if( mode == 0 || mode == 1 ){
+			nPointSize = (int)(CZoomController::GetZoomedValue( zoomSetting, nCurrentPointSize, 1.0, nCurrentPointSize, shift ) * 10.0);
+		}else{
+			auto& cZoomController = GetDocument()->m_cTempFontZoomController;
+			if( !cZoomController.HasZoomSetting() ){
+				cZoomController.SetZoomSetting( zoomSetting );
+			}
+			if( !GetDocument()->m_blfCurTemp ){
+				// 一時設定開始
+				cZoomController.SetBaseValue( nCurrentPointSize / 10.0 );
+			}
 
-		double zoomTablePosition = GetTablePosition( zoomTable, _countof(zoomTable), currentZoomRatio );
-		int currentZoomTableIndex = (int)((0 <= shift) ? std::floor( zoomTablePosition ) : std::ceil( zoomTablePosition ));
-		if( (shift < 0 && currentZoomTableIndex < 0) ||
-			(0 <= shift && ((int)_countof(zoomTable) - 1) < currentZoomTableIndex) ){
-			// これ以上動かせません
-			return;
+			if( !cZoomController.Zoom( shift ) ){
+				return;
+			}
+
+			nPointSize = (int)(cZoomController.GetValue() * 10.0);
 		}
-
-		int nextIndex = currentZoomTableIndex + shift;
-		int actualShift = shift;
-		INT nLastPointSize = -1;
-		double nLastZoomRatio = 1.0;
-		INT nPointSizeMin = std::min( 10, nOriginalPointSize );
-		INT nPointSizeMax = std::max( 720, nOriginalPointSize );
-		while( true ){
-			int clampedIndex = std::clamp( nextIndex, 0, (int)_countof(zoomTable) - 1 );
-			newZoomRatio = zoomTable[clampedIndex];
-			nPointSize = (INT)(nOriginalPointSize * newZoomRatio) / 5 * 5;
-
-			// ズーム倍率テーブルの上下限を超えていたら終了
-			if( clampedIndex != nextIndex ){
-				break;
-			}
-
-			// ポイント数の上下限を超えていたら丸めて終了
-			if( nPointSize < nPointSizeMin || nPointSizeMax < nPointSize ){
-				nPointSize = std::clamp( nPointSize, nPointSizeMin, nPointSizeMax );
-				newZoomRatio = (double)nPointSize / nOriginalPointSize;
-				break;
-			}
-
-			// サイズ変化が0.5pt以上になるまで進める
-			if( 0 < shift ){
-				if( nPointSize != nCurrentPointSize ){
-					break;
-				}
-			}else{
-				if( nPointSize != nCurrentPointSize ){
-					if( nLastPointSize != -1 && nPointSize != nLastPointSize ){
-						newZoomRatio = nLastZoomRatio;
-						nPointSize = nLastPointSize;
-						break;
-					}
-					nLastZoomRatio = newZoomRatio;
-					nLastPointSize = nPointSize;
-				}
-			}
-
-			nextIndex += (0 <= shift) ? 1 : -1;
-		};
-
-		if( nPointSize == nCurrentPointSize ){
-			return;
-		}
-	} else {
+	}else{
 		// フォントサイズが変わらないので終了
+		return;
+	}
+
+	if( nPointSize == nCurrentPointSize ){
 		return;
 	}
 
@@ -391,7 +353,6 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 		GetDocument()->m_lfCur.lfHeight = lfHeight;
 		GetDocument()->m_nPointSizeCur = nPointSize;
 		GetDocument()->m_nPointSizeOrg = GetEditWindow()->GetFontPointSize(false);
-		GetDocument()->m_nZoomRatio = newZoomRatio;
 	}
 
 	HWND	hwndFrame;
