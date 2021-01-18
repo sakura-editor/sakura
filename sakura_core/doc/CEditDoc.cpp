@@ -206,7 +206,8 @@ bool CZoomController::GetZoomedRatioAndValue( const ZoomSetting& zoomSetting, do
 	double nPosition = GetTablePosition( zoomSetting, nCurrentZoomRatio );
 	int nTableIndex = (int)(bZoomUp ? std::floor( nPosition ) : std::ceil( nPosition ));
 	if( (!bZoomUp && nTableIndex <= nTableIndexMin) || (bZoomUp && nTableIndexMax <= nTableIndex) ){
-		// これ以上拡大/縮小できません	//TODO: この判定、いる？？
+		// 現在の倍率がすでに倍率テーブルの範囲外でかつ
+		// さらに外側へ移動しようとした場合は今の位置を維持
 		return false;
 	}
 
@@ -223,17 +224,17 @@ bool CZoomController::GetZoomedRatioAndValue( const ZoomSetting& zoomSetting, do
 		nNextZoomRatio = zoomSetting.m_vZoomRatioTable[clampedIndex];
 		nNextValue = std::floor( (nBaseValue * nNextZoomRatio) / zoomSetting.m_nValueResolution ) * zoomSetting.m_nValueResolution;
 
-		// 倍率テーブルの端まで到達したら終わり
-		if( clampedIndex != nTableIndex ){
-			break;
-		}
-
 		// 値の上下限を超過したら上下限に丸めて終わる
 		// 倍率は丸めた後のサイズで再計算
 		double clampedValue = std::clamp( nNextValue, nValueMin, nValueMax );
 		if( nNextValue != clampedValue ){
 			nNextZoomRatio = clampedValue / nBaseValue;
 			nNextValue = clampedValue;
+			break;
+		}
+
+		// 倍率テーブルの端まで到達していたら終わり
+		if( clampedIndex != nTableIndex ){
 			break;
 		}
 
