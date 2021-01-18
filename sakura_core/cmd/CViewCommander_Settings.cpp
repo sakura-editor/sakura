@@ -361,14 +361,14 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 	/* 設定変更を反映させる */
 	// 新たにタイプ別や一時設定が有効になってもフォント名は変わらないのでSIZEのみの変更通知をする
 	if( mode == 0 || mode == 1 ){
-		/* 全編集ウィンドウへメッセージをポストする */
+		/* 全編集ウィンドウへメッセージする */
 		if( mode == 0 ){
-			CAppNodeGroupHandle(0).PostMessageToAllEditors(
+			CAppNodeGroupHandle(0).SendMessageToAllEditors(
 				MYWM_SAVEEDITSTATE,
 				(WPARAM)0, (LPARAM)0, hwndFrame
 			);
 		}
-		CAppNodeGroupHandle(0).PostMessageToAllEditors(
+		CAppNodeGroupHandle(0).SendMessageToAllEditors(
 			MYWM_CHANGESETTING,
 			(WPARAM)nTypeIndex, (LPARAM)PM_CHANGESETTING_FONTSIZE, hwndFrame
 		);
