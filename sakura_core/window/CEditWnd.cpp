@@ -1768,7 +1768,7 @@ LRESULT CEditWnd::DispatchEvent(
 			m_posSaveAry = NULL;
 			break;
 		case PM_CHANGESETTING_FONTSIZE:
-			if( (-1 == wParam && CWM_CACHE_SHARE == GetLogfontCacheMode())
+			if( (-1 == wParam && (CWM_CACHE_SHARE == GetLogfontCacheMode() || GetDocument()->m_blfCurTemp))
 					|| GetDocument()->m_cDocType.GetDocumentType().GetIndex() == wParam ){
 				// 文字幅で幅も変わるので再構築する
 				// 変更中にさらに変更されると困るのでBlockingHookは無効
