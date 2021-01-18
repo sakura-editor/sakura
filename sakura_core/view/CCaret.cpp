@@ -839,7 +839,14 @@ void CCaret::ShowCaretPosInfo()
 		int currentPointSize = m_pEditDoc->m_pcEditWnd->GetFontPointSize( true );
 		int originalPointSize = m_pEditDoc->m_pcEditWnd->GetFontPointSize( false );
 		double zoomRatio = m_pEditDoc->m_blfCurTemp ? m_pEditDoc->m_cTempFontZoomController.GetZoomRatio() : 1.0;
-		auto_sprintf( szFontSize, LS( STR_STATUS_FONTSIZE ), (int)(100 * zoomRatio), currentPointSize / 10.0f, originalPointSize / 10.0f );
+		auto_sprintf( szFontSize, LS( STR_STATUS_FONTSIZE ),
+			(int)(100 * zoomRatio),
+			currentPointSize / 10.0f,
+			originalPointSize / 10.0f,
+			(m_pEditDoc->m_pcEditWnd->GetLogfontCacheMode() == CWM_CACHE_SHARE) ? L"Share" :
+				(m_pEditDoc->m_blfCurTemp) ? L"Temp" :
+				L"Type"
+		);
 
 		auto& statusBar = m_pEditDoc->m_pcEditWnd->m_cStatusBar;
 
