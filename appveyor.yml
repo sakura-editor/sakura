@@ -6,7 +6,6 @@ configuration:
   - Debug
 
 platform:
-  - BuildChm
   - Win32
   - x64
 
@@ -25,46 +24,19 @@ skip_commits:
 
 install:
 - cmd: |
-    pip install openpyxl --user
+    cinst locale-emulator -y
+    cup vswhere
+    py.exe -m pip install openpyxl --user
 
 # to run our custom scripts instead of automatic MSBuild
 build_script:
-  - cmd: cup vswhere
   - cmd: build-all.bat %PLATFORM% %CONFIGURATION%
 
 # to run our custom scripts instead of automatic tests
 test_script:
   - cmd: tests\run-tests.bat %PLATFORM% %CONFIGURATION%
 
-matrix:
-  exclude:
-    - platform: BuildChm
-      configuration: Debug
-
 for:
--
-  matrix:
-    only:
-      - platform: BuildChm
-        configuration: Release
-
-  install:
-    - ps: Set-WinSystemLocale ja-JP
-    - ps: Start-Sleep -s 10
-    - ps: Restart-Computer
-    - ps: Start-Sleep -s 10
-
-  build_script:
-    - cmd: cup vswhere
-    - cmd: build-chm.bat
-    - cmd: help\make-artifacts.bat
-
-  test_script:
-    - cmd: echo This Platform has no tests.
-
-  artifacts:
-    - path: 'sakura-*-Chm.zip*'
-
 # run only for Release
 -
   matrix:
