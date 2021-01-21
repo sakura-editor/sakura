@@ -574,7 +574,7 @@ void GetInidirOrExedir(
 	}
 
 	// EXE基準のフルパスが実在すればそのパスを返す
-	if( CFileNameManager::getInstance()->IsPrivateSettings() ){	// INIとEXEでパスが異なる場合
+	if( CShareData::getInstance()->IsPrivateSettings() ){	// INIとEXEでパスが異なる場合
 		GetExedir( szExedir, szFile );
 		if( fexist(szExedir) ){
 			::lstrcpy( pDir, szExedir );
