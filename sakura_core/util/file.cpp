@@ -509,11 +509,10 @@ void GetInidir(
 	if( pDir == NULL )
 		return;
 	
-	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
 	WCHAR	szPath[_MAX_PATH];
 
 	// sakura.ini のパスを取得
-	CFileNameManager::getInstance()->GetIniFileName( szPath, pszProfileName );
+	CFileNameManager::getInstance()->GetIniFileName( szPath );
 	if( szFile == NULL ){
 		SplitPath_FolderAndFile( szPath, pDir, NULL );
 	}
@@ -555,7 +554,7 @@ void GetInidirOrExedir(
 	}
 
 	// EXE基準のフルパスが実在すればそのパスを返す
-	if( CShareData::getInstance()->IsPrivateSettings() ){	// INIとEXEでパスが異なる場合
+	if( CFileNameManager::getInstance()->IsPrivateSettings() ){	// INIとEXEでパスが異なる場合
 		GetExedir( szExedir, szFile );
 		if( fexist(szExedir) ){
 			::lstrcpy( pDir, szExedir );

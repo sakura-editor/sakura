@@ -262,7 +262,7 @@ static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, LPARAM lParam )
 		// システムフォント設定は言語設定に関係なく実施(force=TRUE)
 		HFONT hFont = UpdateDialogFont( hwndDlg, TRUE );
 
-		if( CShareData::getInstance()->IsPrivateSettings() ){
+		if( CFileNameManager::getInstance()->IsPrivateSettings() ){
 			// 個人設定フォルダを使用するときは「設定フォルダ」ボタンを追加する
 			s_pOldPropSheetWndProc = (WNDPROC)::SetWindowLongPtr( hwndDlg, GWLP_WNDPROC, (LONG_PTR)PropSheetWndProc );
 			HINSTANCE hInstance = (HINSTANCE)::GetModuleHandle( NULL );
