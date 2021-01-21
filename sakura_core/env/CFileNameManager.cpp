@@ -551,13 +551,6 @@ void CFileNameManager::GetIniFileNameDirect( LPWSTR pszPrivateIniFile, LPWSTR ps
 	}
 }
 
-/* iniファイルの保存先がユーザ別設定フォルダかどうか */
-bool CFileNameManager::IsPrivateSettings() const
-{
-	const auto &iniFolder = m_pShareData->m_sFileNameManagement.m_IniFolder;
-	return iniFolder.m_szPrivateIniFile[0] != L'\0';
-}
-
 /**
 	iniファイル名の取得
 
@@ -571,7 +564,8 @@ bool CFileNameManager::IsPrivateSettings() const
 void CFileNameManager::GetIniFileName( LPWSTR pszIniFileName ) const
 {
 	const auto &iniFolder = m_pShareData->m_sFileNameManagement.m_IniFolder;
+	const bool bPrivate = iniFolder.m_szPrivateIniFile[0] != L'\0';
 	const auto& szPrivateIniFile = iniFolder.m_szPrivateIniFile;
 	const auto& szIniFile = iniFolder.m_szIniFile;
-	::wcscpy_s( pszIniFileName, _MAX_PATH, IsPrivateSettings() ? szPrivateIniFile : szIniFile );
+	::wcscpy_s( pszIniFileName, _MAX_PATH, bPrivate ? szPrivateIniFile : szIniFile );
 }
