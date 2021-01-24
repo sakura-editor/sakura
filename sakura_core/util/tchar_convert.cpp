@@ -105,7 +105,7 @@ const WCHAR* easy_format(const WCHAR* format, ...)
 	WCHAR* buf=g_bufBig.GetBuffer<WCHAR>(1024);
 	va_list v;
 	va_start(v,format);
-	tchar_vsprintf(buf,format,v);
+	auto_vsprintf_s(buf,1024,format,v);
 	va_end(v);
 	return buf;
 }

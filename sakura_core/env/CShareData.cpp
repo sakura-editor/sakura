@@ -984,7 +984,7 @@ void CShareData::TraceOut( LPCWSTR lpFmt, ... )
 	LockGuard<CMutex> guard( CShareData::GetMutexShareWork() );
 	va_list argList;
 	va_start( argList, lpFmt );
-	int ret = tchar_vsnprintf_s( m_pShareData->m_sWorkBuffer.GetWorkBuffer<WCHAR>(), 
+	int ret = auto_vsprintf_s( m_pShareData->m_sWorkBuffer.GetWorkBuffer<WCHAR>(), 
 		m_pShareData->m_sWorkBuffer.GetWorkBufferCount<WCHAR>(), lpFmt, argList );
 	va_end( argList );
 	if( -1 == ret ){
