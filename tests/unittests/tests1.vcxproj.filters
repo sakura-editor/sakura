@@ -95,6 +95,9 @@
     <ClCompile Include="test-csakuraenvironment.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-charcode.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartEditorProcessForTest.h">
