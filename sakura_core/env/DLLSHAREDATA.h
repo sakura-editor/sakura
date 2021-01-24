@@ -144,6 +144,9 @@ struct DLLSHAREDATA{
 	SShare_Nodes				m_sNodes;
 	SShare_Handles				m_sHandles;
 
+	SFilePath					m_szIniFile;							//!< EXE基準のiniファイルパス
+	SFilePath					m_szPrivateIniFile;						//!< マルチユーザ用のiniファイルパス
+
 	SCharWidthCache				m_sCharWidth;							//!< 文字半角全角キャッシュ
 	DWORD						m_dwCustColors[16];						//!< フォントDialogカスタムパレット
 
@@ -163,7 +166,6 @@ struct DLLSHAREDATA{
 	//その他
 	SShare_SearchKeywords		m_sSearchKeywords;
 	SShare_TagJump				m_sTagJump;
-	SShare_FileNameManagement	m_sFileNameManagement;
 	SShare_History				m_sHistory;
 
 	//外部コマンド実行ダイアログのオプション

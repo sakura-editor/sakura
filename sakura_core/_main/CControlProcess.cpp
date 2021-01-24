@@ -26,6 +26,78 @@
 //-------------------------------------------------
 
 /*!
+	@brief iniファイルパスを取得する
+ */
+std::filesystem::path CControlProcess::GetIniFileName() const
+{
+	if (GetShareDataPtr()->IsPrivateSettings()) {
+		return CProcess::GetIniFileName();
+	}
+
+	// exe基準のiniファイルパスを得る
+	auto iniPath = GetExeFileName().replace_extension(L".ini");
+
+	// マルチユーザ用のiniファイルパス
+	//		exeと同じフォルダに置かれたマルチユーザ構成設定ファイル（sakura.exe.ini）の内容
+	//		に従ってマルチユーザ用のiniファイルパスを決める
+	auto exeIniPath = GetExeFileName().concat(L".ini");
+	if (bool isMultiUserSeggings = ::GetPrivateProfileInt(L"Settings", L"MultiUser", 0, exeIniPath.c_str()); isMultiUserSeggings) {
+		return GetPrivateIniFileName(exeIniPath, iniPath.filename());
+	}
+
+	const auto filename = iniPath.filename();
+	iniPath.remove_filename();
+
+	if (const auto* pCommandLine = CCommandLine::getInstance(); pCommandLine->IsSetProfile() && *pCommandLine->GetProfileName()) {
+		iniPath.append(pCommandLine->GetProfileName());
+	}
+
+	return iniPath.append(filename.c_str());
+}
+
+/*!
+	@brief マルチユーザ用のiniファイルパスを取得する
+ */
+std::filesystem::path CControlProcess::GetPrivateIniFileName(const std::wstring& exeIniPath, const std::wstring& filename) const
+{
+	KNOWNFOLDERID refFolderId;
+	switch (int nFolder = ::GetPrivateProfileInt(L"Settings", L"UserRootFolder", 0, exeIniPath.c_str())) {
+	case 1:
+		refFolderId = FOLDERID_Profile;			// ユーザのルートフォルダ
+		break;
+	case 2:
+		refFolderId = FOLDERID_Documents;		// ユーザのドキュメントフォルダ
+		break;
+	case 3:
+		refFolderId = FOLDERID_Desktop;			// ユーザのデスクトップフォルダ
+		break;
+	default:
+		refFolderId = FOLDERID_RoamingAppData;	// ユーザのアプリケーションデータフォルダ
+		break;
+	}
+
+	PWSTR pFolderPath = nullptr;
+	::SHGetKnownFolderPath(refFolderId, KF_FLAG_DEFAULT, nullptr, &pFolderPath);
+	std::filesystem::path privateIniPath(pFolderPath);
+	::CoTaskMemFree(pFolderPath);
+
+	std::wstring subFolder(_MAX_DIR, L'\0');
+	::GetPrivateProfileString(L"Settings", L"UserSubFolder", L"sakura", subFolder.data(), (DWORD)subFolder.capacity(), exeIniPath.c_str());
+	subFolder.assign(subFolder.data());
+	if (subFolder.empty())
+	{
+		subFolder = L"sakura";
+	}
+	privateIniPath.append(subFolder);
+
+	if (const auto* pCommandLine = CCommandLine::getInstance(); pCommandLine->IsSetProfile() && *pCommandLine->GetProfileName()) {
+		privateIniPath.append(pCommandLine->GetProfileName());
+	}
+
+	return privateIniPath.append(filename.c_str());
+}
+
+/*!
 	@brief コントロールプロセスを初期化する
 	
 	MutexCPを作成・ロックする。

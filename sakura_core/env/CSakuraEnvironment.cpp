@@ -475,9 +475,8 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		case 'I':	//	May. 19, 2007 ryoji
 			//	iniファイルのフルパス
 			{
-				WCHAR	szPath[_MAX_PATH + 1];
-				CFileNameManager::getInstance()->GetIniFileName( szPath );
-				q = wcs_pushW( q, q_max - q, szPath );
+				auto privateIniPath = GetIniFileName();
+				q = wcs_pushW( q, q_max - q, privateIniPath.c_str() );
 				++p;
 			}
 			break;

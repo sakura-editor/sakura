@@ -37,17 +37,6 @@
 
 struct EditInfo;
 
-//! iniフォルダ設定	// 2007.05.31 ryoji
-struct IniFolder {
-	WCHAR m_szIniFile[_MAX_PATH];			// EXE基準のiniファイルパス
-	WCHAR m_szPrivateIniFile[_MAX_PATH];	// マルチユーザ用のiniファイルパス
-};	/* iniフォルダ設定 */
-
-//共有メモリ内構造体
-struct SShare_FileNameManagement{
-	IniFolder			m_IniFolder;	/**** iniフォルダ設定 ****/
-};
-
 //!ファイル名管理
 class CFileNameManager : public TSingleton<CFileNameManager>{
 	friend class TSingleton<CFileNameManager>;
@@ -85,9 +74,6 @@ public:
 	bool GetMenuFullLabel(WCHAR* pszOutput, int nBuffSize, bool bEspaceAmp, const WCHAR* pszFile, int id, bool bModified, ECodeType nCharCode, bool bFavorite, int index, bool bAccKeyZeroOrigin, HDC hDC);
 	
 	static WCHAR GetAccessKeyByIndex(int index, bool bZeroOrigin);
-
-	static void GetIniFileNameDirect( LPWSTR pszPrivateIniFile, LPWSTR pszIniFile, LPCWSTR pszProfName );	/* 構成設定ファイルからiniファイル名を取得する */	// 2007.09.04 ryoji
-	void GetIniFileName( LPWSTR pszIniFileName ) const;	//!< iniファイル名の取得
 
 private:
 	DLLSHAREDATA* m_pShareData;

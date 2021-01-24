@@ -79,21 +79,20 @@ protected:
 	/*!
 	 * 設定ファイルのパス
 	 *
-	 * CFileNameManager::GetIniFileNameDirectを使ってtests1.iniのパスを取得する。
+	 * GetIniFileNameを使ってtests1.iniのパスを取得する。
 	 */
-	WCHAR szIniFile[_MAX_PATH];
+	std::filesystem::path iniPath;
 
 	/*!
 	 * テストが起動される直前に毎回呼ばれる関数
 	 */
 	void SetUp() override {
 		// INIファイルのパスを取得
-		WCHAR szPrivateIniFile[_MAX_PATH];
-		CFileNameManager::GetIniFileNameDirect( szPrivateIniFile, szIniFile, L"" );
+		iniPath = GetIniFileName();
 
-		if( fexist( szIniFile ) ){
+		if( fexist( iniPath.c_str() ) ){
 			// INIファイルを削除する
-			std::filesystem::remove( szIniFile );
+			std::filesystem::remove( iniPath );
 		}
 	}
 
@@ -102,7 +101,7 @@ protected:
 	 */
 	void TearDown() override {
 		// INIファイルを削除する
-		std::filesystem::remove( szIniFile );
+		std::filesystem::remove( iniPath );
 	}
 };
 
@@ -247,7 +246,7 @@ TEST_F( WinMainTest, runWithNoWin )
 	CControlProcess_Terminate( szProfileName );
 
 	// コントロールプロセスが終了すると、INIファイルが作成される
-	ASSERT_TRUE( fexist( szIniFile ) );
+	ASSERT_TRUE( fexist( iniPath.c_str() ) );
 }
 
 /*!
@@ -301,6 +300,7 @@ TEST_F( WinMainTest, runEditorProcess )
 		strStartupMacro += L"ShowFunckey();";	//ShowFunckey 消す
 		strStartupMacro += L"ShowMiniMap();";	//ShowMiniMap 消す
 		strStartupMacro += L"ShowTab();";		//ShowTab 消す
+		strStartupMacro += L"ExpandParameter('$I');";	// INIファイルパスの取得(呼ぶだけ)
 		strStartupMacro += L"ExitAll();";		//NOTE: このコマンドにより、エディタプロセスは起動された直後に終了する。
 
 		// コマンドラインを組み立てる
@@ -322,5 +322,5 @@ TEST_F( WinMainTest, runEditorProcess )
 	ASSERT_EXIT({ separatedTestProc(); exit(0); }, ::testing::ExitedWithCode(0), ".*" );
 
 	// コントロールプロセスが終了すると、INIファイルが作成される
-	ASSERT_TRUE( fexist( szIniFile ) );
+	ASSERT_TRUE( fexist( iniPath.c_str() ) );
 }

@@ -37,6 +37,7 @@
 #include "env/DLLSHAREDATA.h"
 #include "env/CFileNameManager.h"
 #include "_main/CCommandLine.h"
+#include "_main/CControlProcess.h"
 
 bool fexist(LPCWSTR pszPath)
 {
@@ -472,7 +473,7 @@ int CalcDirectoryDepth(
 std::filesystem::path GetExeFileName()
 {
 	// メモリ確保
-	constexpr const size_t cchPath = _MAX_PATH - 1;
+	constexpr const size_t cchPath = decltype(DLLSHAREDATA::m_szIniFile)::BUFFER_COUNT - 1;
 	std::wstring path(cchPath, L'\0');
 
 	// sakura.exe のパスを取得して返却
@@ -512,7 +513,27 @@ void GetExedir(
 
 	// exeフォルダのフルパス、またはexe基準のファイルパスを取得
 	auto path = GetExePath(filename);
-	::wcsncpy_s(pDir, _MAX_PATH - 1, path.c_str(), _TRUNCATE);
+	::wcsncpy_s(pDir, decltype(DLLSHAREDATA::m_szIniFile)::BUFFER_COUNT - 1, path.c_str(), _TRUNCATE);
+}
+
+/*!
+	@brief iniファイルパスを取得する
+ */
+std::filesystem::path GetIniFileName()
+{
+	if (const auto pProcess = CProcess::getInstance(); pProcess != nullptr) {
+		return pProcess->GetIniFileName();
+	}
+	return GetExeFileName().replace_extension(L".ini");
+}
+
+/*!
+	@brief 設定フォルダのフルパス、またはini基準のファイルパス(フルパス)を返す．
+*/
+std::filesystem::path GetIniPath(const std::wstring_view& filename)
+{
+	// iniファイルパスのファイル名を指定された文字列で置換
+	return GetIniFileName().replace_filename(filename.data());
 }
 
 /*!
@@ -529,18 +550,14 @@ void GetInidir(
 	if( pDir == NULL )
 		return;
 	
-	WCHAR	szPath[_MAX_PATH];
+	std::wstring_view filename(L"");
+	if (szFile != nullptr) {
+		filename = szFile;
+	}
 
-	// sakura.ini のパスを取得
-	CFileNameManager::getInstance()->GetIniFileName( szPath );
-	if( szFile == NULL ){
-		SplitPath_FolderAndFile( szPath, pDir, NULL );
-	}
-	else {
-		WCHAR	szDir[_MAX_PATH];
-		SplitPath_FolderAndFile( szPath, szDir, NULL );
-		auto_snprintf_s( pDir, _MAX_PATH, L"%s\\%s", szDir, szFile );
-	}
+	// 設定フォルダのフルパス、またはini基準のファイルパスを取得
+	auto path = GetIniPath(filename);
+	::wcsncpy_s(pDir, decltype(DLLSHAREDATA::m_szPrivateIniFile)::BUFFER_COUNT - 1, path.c_str(), _TRUNCATE);
 }
 
 /*!
@@ -561,8 +578,7 @@ void GetInidirOrExedir(
 
 	// ファイル名の指定が空の場合はEXEファイルのフルパスを返す（オプション）
 	if( bRetExedirIfFileEmpty && (szFile == NULL || szFile[0] == L'\0') ){
-		GetExedir( szExedir, szFile );
-		::lstrcpy( pDir, szExedir );
+		GetExedir( pDir );
 		return;
 	}
 
@@ -574,12 +590,9 @@ void GetInidirOrExedir(
 	}
 
 	// EXE基準のフルパスが実在すればそのパスを返す
-	if( CShareData::getInstance()->IsPrivateSettings() ){	// INIとEXEでパスが異なる場合
-		GetExedir( szExedir, szFile );
-		if( fexist(szExedir) ){
-			::lstrcpy( pDir, szExedir );
-			return;
-		}
+	if( GetExedir( szExedir, szFile ); fexist(szExedir) ){
+		::wcsncpy_s( pDir, _MAX_PATH - 1, szExedir, _TRUNCATE );
+		return;
 	}
 
 	// どちらにも実在しなければINI基準のフルパスを返す
