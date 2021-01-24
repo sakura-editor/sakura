@@ -30,9 +30,9 @@
 
 class CNativeA final : public CNative{
 public:
-	CNativeA() noexcept;
-	CNativeA( const CNativeA& rhs );
-	CNativeA( CNativeA&& other ) noexcept;
+	CNativeA() noexcept = default;
+	CNativeA( const CNativeA& rhs ) = default;
+	CNativeA( CNativeA&& other ) noexcept = default;
 	CNativeA( const char* szData, size_t cchData );
 	CNativeA( const char* szData);
 
@@ -60,7 +60,7 @@ public:
 
 	//演算子
 	CNativeA& operator = (const CNativeA& rhs)			{ CNative::operator=(rhs); return *this; }
-	CNativeA& operator = (CNativeA&& rhs) noexcept		{ CNative::operator=(std::forward<CNativeA>(rhs)); return *this; }
+	CNativeA& operator = (CNativeA&& rhs) noexcept		{ CNative::operator=(std::move(rhs)); return *this; }
 	const CNativeA& operator=( char );
 	const CNativeA& operator+=( char );
 };
