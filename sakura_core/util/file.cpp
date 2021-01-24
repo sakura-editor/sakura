@@ -467,6 +467,29 @@ int CalcDirectoryDepth(
 }
 
 /*!
+	@brief exeファイルパスを取得する
+ */
+std::filesystem::path GetExeFileName()
+{
+	// メモリ確保
+	constexpr const size_t cchPath = _MAX_PATH - 1;
+	std::wstring path(cchPath, L'\0');
+
+	// sakura.exe のパスを取得して返却
+	::GetModuleFileName(nullptr, path.data(), (DWORD)path.capacity());
+	return path.data();
+}
+
+/*!
+	@brief exeがあるフォルダのフルパス、またはexe基準のファイルパス(フルパス)を返す．
+*/
+std::filesystem::path GetExePath(const std::wstring_view& filename)
+{
+	// sakura.exe のパスのファイル名を指定された文字列で置換
+	return GetExeFileName().replace_filename(filename.data());
+}
+
+/*!
 	@brief exeファイルのあるディレクトリ，または指定されたファイル名のフルパスを返す．
 	
 	@author genta
@@ -481,18 +504,15 @@ void GetExedir(
 {
 	if( pDir == NULL )
 		return;
-	
-	WCHAR	szPath[_MAX_PATH];
-	// sakura.exe のパスを取得
-	::GetModuleFileName( NULL, szPath, _countof(szPath) );
-	if( szFile == NULL ){
-		SplitPath_FolderAndFile( szPath, pDir, NULL );
+
+	std::wstring_view filename(L"");
+	if (szFile != nullptr) {
+		filename = szFile;
 	}
-	else {
-		WCHAR	szDir[_MAX_PATH];
-		SplitPath_FolderAndFile( szPath, szDir, NULL );
-		auto_snprintf_s( pDir, _MAX_PATH, L"%s\\%s", szDir, szFile );
-	}
+
+	// exeフォルダのフルパス、またはexe基準のファイルパスを取得
+	auto path = GetExePath(filename);
+	::wcsncpy_s(pDir, _MAX_PATH - 1, path.c_str(), _TRUNCATE);
 }
 
 /*!

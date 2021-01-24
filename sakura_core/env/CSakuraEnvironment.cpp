@@ -467,10 +467,8 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		case L'S':	//	Sep. 15, 2005 FILE
 			//	サクラエディタのフルパス
 			{
-				SFilePath	szPath;
-
-				::GetModuleFileName( NULL, szPath, _countof2(szPath) );
-				q = wcs_pushW( q, q_max - q, szPath );
+				auto exePath = GetExeFileName();
+				q = wcs_pushW( q, q_max - q, exePath.c_str() );
 				++p;
 			}
 			break;

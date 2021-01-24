@@ -58,3 +58,86 @@ TEST( file, IsInvalidFilenameChars )
 	EXPECT_TRUE(IsInvalidFilenameChars(L"test>.txt"));
 	EXPECT_TRUE(IsInvalidFilenameChars(L"test|.txt"));
 }
+
+/*!
+ * @brief exeファイルパスの取得
+ */
+TEST(file, GetExeFileName)
+{
+	// 標準的なコードでexeファイルのパスを取得
+	std::wstring path(_MAX_PATH, L'\0');
+	::GetModuleFileName(nullptr, path.data(), path.capacity());
+
+	// 関数戻り値が、標準的なコードで取得した結果と一致すること
+	auto exePath = GetExeFileName();
+	ASSERT_STREQ(path.data(), exePath.c_str());
+}
+
+/*!
+ * @brief exeフォルダのフルパスの取得
+ */
+TEST(file, GetExePath_Directory)
+{
+	// テスト対象関数呼び出し
+	auto exeDir = GetExePath(L"");
+
+	// 戻り値はファイル名を含まない
+	ASSERT_FALSE(exeDir.has_filename());
+
+	// パスコンポーネントの最終要素は空になる(\で終わっている)
+	auto lastComponent = *(--exeDir.end());
+	ASSERT_STREQ(L"", lastComponent.c_str());
+
+	// 戻り値はexeファイルパスからファイル名を取り除いたものになる
+	auto exePath = GetExeFileName();
+	ASSERT_STREQ(exePath.remove_filename().c_str(), exeDir.c_str());
+}
+
+/*!
+ * @brief exe基準のファイルパス(フルパス)の取得
+ */
+TEST(file, GetExePath_FileName)
+{
+	// テストに使うファイル名(空でなければなんでもいい)
+	constexpr const auto filename = L"README.txt";
+
+	// テスト対象関数呼び出し
+	auto exeBasePath = GetExePath(filename);
+
+	// 戻り値はファイル名を含む
+	ASSERT_TRUE(exeBasePath.has_filename());
+
+	// 戻り値のファイル名は指定したものになっている
+	ASSERT_STREQ(filename, exeBasePath.filename().c_str());
+
+	// 戻り値の親フォルダはexeファイルパスの親フォルダと等しい
+	auto exePath = GetExeFileName();
+	ASSERT_STREQ(exePath.parent_path().c_str(), exeBasePath.parent_path().c_str());
+}
+
+/*!
+ * @brief 既存コード互換用に残しておく関数のリグレッション
+ */
+TEST(file, Deprecated_GetExedir)
+{
+	// テストに使うファイル名(空でなければなんでもいい)
+	constexpr const auto filename = L"README.txt";
+
+	// 比較用関数呼び出し
+	auto exeBasePath = GetExePath(filename);
+
+	// 戻り値取得用のバッファ
+	WCHAR szBuf[_MAX_PATH];
+
+	// exeフォルダの取得
+	GetExedir(szBuf);
+	::wcscat_s(szBuf, filename);
+	ASSERT_STREQ(exeBasePath.c_str(), szBuf);
+
+	// 一旦クリアする
+	::wcscpy_s(szBuf, L"");
+
+	// exe基準ファイルパスの取得
+	GetExedir(szBuf, filename);
+	ASSERT_STREQ(exeBasePath.c_str(), szBuf);
+}
