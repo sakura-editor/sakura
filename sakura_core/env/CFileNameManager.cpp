@@ -27,7 +27,6 @@
 */
 
 #include "StdAfx.h"
-#include <ShlObj.h> //CSIDL_PROFILE等
 
 #include "DLLSHAREDATA.h"
 #include "CFileNameManager.h"
@@ -38,7 +37,6 @@
 #include "util/string_ex2.h"
 #include "util/file.h"
 #include "util/window.h"
-#include "_main/CCommandLine.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ファイル名管理                         //
@@ -480,104 +478,4 @@ bool CFileNameManager::GetMenuFullLabel(
 		(bModified ? L"*":L" "), pszCharset
 	);
 	return 0 < ret;
-}
-
-/**
-	構成設定ファイルからiniファイル名を取得する
-
-	sakura.exe.iniからsakura.iniの格納フォルダを取得し、フルパス名を返す
-
-	@param[out] pszPrivateIniFile マルチユーザ用のiniファイルパス
-	@param[out] pszIniFile EXE基準のiniファイルパス
-
-	@author ryoji
-	@date 2007.09.04 ryoji 新規作成
-	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
-*/
-void CFileNameManager::GetIniFileNameDirect( LPWSTR pszPrivateIniFile, LPWSTR pszIniFile, LPCWSTR pszProfName )
-{
-	WCHAR szPath[_MAX_PATH];
-	WCHAR szDrive[_MAX_DRIVE];
-	WCHAR szDir[_MAX_DIR];
-	WCHAR szFname[_MAX_FNAME];
-	WCHAR szExt[_MAX_EXT];
-
-	::GetModuleFileName(
-		NULL,
-		szPath, _countof(szPath)
-	);
-	_wsplitpath( szPath, szDrive, szDir, szFname, szExt );
-
-	if( pszProfName[0] == '\0' ){
-		auto_snprintf_s( pszIniFile, _MAX_PATH - 1, L"%s%s%s%s", szDrive, szDir, szFname, L".ini" );
-	}else{
-		auto_snprintf_s( pszIniFile, _MAX_PATH - 1, L"%s%s%s\\%s%s", szDrive, szDir, pszProfName, szFname, L".ini" );
-	}
-
-	// マルチユーザ用のiniファイルパス
-	//		exeと同じフォルダに置かれたマルチユーザ構成設定ファイル（sakura.exe.ini）の内容
-	//		に従ってマルチユーザ用のiniファイルパスを決める
-	pszPrivateIniFile[0] = L'\0';
-	{
-		auto_snprintf_s( szPath, _MAX_PATH - 1, L"%s%s%s%s", szDrive, szDir, szFname, L".exe.ini" );
-		int nEnable = ::GetPrivateProfileInt(L"Settings", L"MultiUser", 0, szPath );
-		if( nEnable ){
-			int nFolder = ::GetPrivateProfileInt(L"Settings", L"UserRootFolder", 0, szPath );
-			switch( nFolder ){
-			case 1:
-				nFolder = CSIDL_PROFILE;			// ユーザのルートフォルダ
-				break;
-			case 2:
-				nFolder = CSIDL_PERSONAL;			// ユーザのドキュメントフォルダ
-				break;
-			case 3:
-				nFolder = CSIDL_DESKTOPDIRECTORY;	// ユーザのデスクトップフォルダ
-				break;
-			default:
-				nFolder = CSIDL_APPDATA;			// ユーザのアプリケーションデータフォルダ
-				break;
-			}
-			::GetPrivateProfileString(L"Settings", L"UserSubFolder", L"sakura", szDir, _MAX_DIR, szPath );
-			if( szDir[0] == L'\0' )
-				::lstrcpy( szDir, L"sakura" );
-			if( GetSpecialFolderPath( nFolder, szPath ) ){
-				if( pszProfName[0] == '\0' ){
-					auto_snprintf_s( pszPrivateIniFile, _MAX_PATH - 1, L"%s\\%s\\%s%s", szPath, szDir, szFname, L".ini" );
-				}else{
-					auto_snprintf_s( pszPrivateIniFile, _MAX_PATH - 1, L"%s\\%s\\%s\\%s%s", szPath, szDir, pszProfName, szFname, L".ini" );
-				}
-			}
-		}
-	}
-}
-
-/**
-	iniファイル名の取得
-
-	共有データからsakura.iniの格納フォルダを取得し、フルパス名を返す
-	（共有データ未設定のときは共有データ設定を行う）
-
-	@param[out] pszIniFileName iniファイル名（フルパス）
-	@param[in] bRead true: 読み込み / false: 書き込み
-
-	@author ryoji
-	@date 2007.05.19 ryoji 新規作成
-*/
-void CFileNameManager::GetIniFileName( LPWSTR pszIniFileName, LPCWSTR pszProfName, BOOL bRead/*=FALSE*/ )
-{
-	auto &iniFolder = m_pShareData->m_sFileNameManagement.m_IniFolder;
-	if( !iniFolder.m_bInit ){
-		iniFolder.m_bInit = true;			// 初期化済フラグ
-		iniFolder.m_bReadPrivate = false;	// マルチユーザ用iniからの読み出しフラグ
-		iniFolder.m_bWritePrivate = false;	// マルチユーザ用iniへの書き込みフラグ
-
-		GetIniFileNameDirect( iniFolder.m_szPrivateIniFile, iniFolder.m_szIniFile, pszProfName );
-		if( iniFolder.m_szPrivateIniFile[0] != L'\0' ){
-			iniFolder.m_bReadPrivate = true;
-			iniFolder.m_bWritePrivate = true;
-		}
-	}
-
-	bool bPrivate = bRead ? iniFolder.m_bReadPrivate : iniFolder.m_bWritePrivate;
-	::lstrcpy( pszIniFileName, bPrivate ? iniFolder.m_szPrivateIniFile : iniFolder.m_szIniFile );
 }

@@ -38,6 +38,18 @@ CProcess::CProcess(
 }
 
 /*!
+	@brief iniファイルパスを取得する
+ */
+std::filesystem::path CProcess::GetIniFileName() const
+{
+	if (m_pcShareData->IsPrivateSettings()) {
+		const DLLSHAREDATA *pShareData = &GetDllShareData();
+		return pShareData->m_szPrivateIniFile.c_str();
+	}
+	return GetExeFileName().replace_extension(L".ini");
+}
+
+/*!
 	@brief プロセスを初期化する
 
 	共有メモリを初期化する

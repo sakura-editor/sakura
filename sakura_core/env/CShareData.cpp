@@ -29,6 +29,7 @@
 #include "env/CShareData_IO.h"
 #include "env/CSakuraEnvironment.h"
 #include "doc/CDocListener.h" // SLoadInfo
+#include "_main/CControlProcess.h"
 #include "_main/CControlTray.h"
 #include "_main/CCommandLine.h"
 #include "_main/CMutex.h"
@@ -146,12 +147,6 @@ bool CShareData::InitShareData()
 		CreateTypeSettings();
 		SetDllShareData( m_pShareData );
 
-		// 2007.05.19 ryoji 実行ファイルフォルダ->設定ファイルフォルダに変更
-		WCHAR	szIniFolder[_MAX_PATH];
-		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bInit = false;
-		GetInidir( szIniFolder );
-		AddLastChar( szIniFolder, _MAX_PATH, L'\\' );
-
 		m_pShareData->m_vStructureVersion = uShareDataVersion;
 		m_pShareData->m_nSize = sizeof(*m_pShareData);
 
@@ -175,6 +170,18 @@ bool CShareData::InitShareData()
 		for( int i = 0; i < _countof(m_pShareData->m_dwCustColors); i++ ){
 			m_pShareData->m_dwCustColors[i] = RGB( 255, 255, 255 );
 		}
+
+		// マルチユーザ用のiniファイルパス(exe基準の初期化よりも先に行う必要がある)
+		auto privateIniPath = GetIniFileName();
+		m_pShareData->m_szPrivateIniFile = privateIniPath.c_str();
+
+		// exe基準のiniファイルパス
+		auto iniPath = GetExeFileName().replace_extension(L".ini");
+		m_pShareData->m_szIniFile = iniPath.c_str();
+
+		// 設定ファイルフォルダ
+		WCHAR	szIniFolder[_MAX_PATH];
+		GetInidir(szIniFolder);
 
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
 		CMRUFile cMRU;
@@ -1085,9 +1092,14 @@ bool CShareData::OpenDebugWindow( HWND hwnd, bool bAllwaysActive )
 	return ret;
 }
 
-/* iniファイルの保存先がユーザ別設定フォルダかどうか */	// 2007.05.25 ryoji
-BOOL CShareData::IsPrivateSettings( void ){
-	return m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate;
+/*!
+	設定フォルダがEXEフォルダと別かどうかを返す
+
+	iniファイルの保存先がユーザ別設定フォルダかどうか 2007.05.25 ryoji
+*/
+[[nodiscard]]  bool CShareData::IsPrivateSettings( void ) const noexcept
+{
+	return m_pShareData != nullptr && 0 != ::wcscmp(m_pShareData->m_szPrivateIniFile, m_pShareData->m_szIniFile);
 }
 
 /*

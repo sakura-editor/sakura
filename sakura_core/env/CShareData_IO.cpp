@@ -35,6 +35,7 @@
 #include "plugin/CPlugin.h"
 #include "uiparts/CMenuDrawer.h"
 #include "_main/CCommandLine.h"
+#include "_main/CControlProcess.h"
 
 void ShareData_IO_Sub_LogFont( CDataProfile& cProfile, const WCHAR* pszSecName,
 	const WCHAR* pszKeyLf, const WCHAR* pszKeyPointSize, const WCHAR* pszKeyFaceName, LOGFONT& lf, INT& nPointSize );
@@ -49,6 +50,23 @@ template <typename T>
 void SetValueLimit(T& target, int maxval)
 {
 	SetValueLimit( target, 0, maxval );
+}
+
+/*!
+	入出力に使うINIファイルのパスを取得する
+	出力時はマルチユーザー設定を考慮したパスを返す。
+	マルチユーザー用のiniファイルが実在する場合はそれを返す。
+	上記以外はexeファイルの拡張子をiniに変えたパスを返す。
+ */
+std::filesystem::path GetIniFileNameForIO(bool bWrite)
+{
+	const auto iniPath = GetExeFileName().replace_extension(L".ini");
+	if (const auto privateIniPath = GetIniFileName();
+		bWrite || fexist(privateIniPath.c_str()))
+	{
+		return privateIniPath;
+	}
+	return iniPath;
 }
 
 /* 共有データのロード */
@@ -86,9 +104,9 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 		cProfile.SetWritingMode();
 	}
 
-	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
 	WCHAR	szIniFileName[_MAX_PATH + 1];
-	CFileNameManager::getInstance()->GetIniFileName( szIniFileName, pszProfileName, bRead );	// 2007.05.19 ryoji iniファイル名を取得する
+	const auto iniPath = GetIniFileNameForIO(!bRead);
+	::wcsncpy_s(szIniFileName, iniPath.c_str(), _TRUNCATE);
 
 //	MYTRACE( L"Iniファイル処理-1 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
 

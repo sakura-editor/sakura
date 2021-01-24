@@ -79,7 +79,7 @@ public:
 	void SetTraceOutSource( HWND hwnd ){ m_hwndTraceOutSource = hwnd; }	/* TraceOut起動元ウィンドウの設定 */
 	bool OpenDebugWindow( HWND hwnd, bool bAllwaysActive );	//!<  デバッグウィンドウを開く
 
-	BOOL IsPrivateSettings( void );
+	[[nodiscard]] bool IsPrivateSettings( void ) const noexcept;
 
 	//マクロ関連
 	int			GetMacroFilename( int idx, WCHAR* pszPath, int nBufLen ); // idxで指定したマクロファイル名（フルパス）を取得する	//	Jun. 14, 2003 genta 引数追加．書式変更

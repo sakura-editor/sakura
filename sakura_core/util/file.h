@@ -28,6 +28,8 @@
 #pragma once
 
 #include <string>
+#include <string_view>
+#include <filesystem>
 
 bool fexist(LPCWSTR pszPath); //!< ファイルまたはディレクトリが存在すればtrue
 
@@ -57,6 +59,11 @@ BOOL GetLongFileName( const WCHAR* pszFilePathSrc, WCHAR* pszFilePathDes );					
 BOOL CheckEXT( const WCHAR* pszPath, const WCHAR* pszExt );					/* 拡張子を調べる */
 const WCHAR* GetFileTitlePointer(const WCHAR* pszPath);							//!< ファイルフルパス内のファイル名を指すポインタを取得。2007.09.20 kobake 作成
 bool _IS_REL_PATH(const WCHAR* path);											//!< 相対パスか判定する。2003.06.23 Moca
+
+std::filesystem::path GetExeFileName();
+std::filesystem::path GetIniFileName();
+std::filesystem::path GetExePath(const std::wstring_view& filename);
+std::filesystem::path GetIniPath(const std::wstring_view& filename);
 
 //※サクラ依存
 void GetExedir( LPWSTR pDir, LPCWSTR szFile = NULL );
