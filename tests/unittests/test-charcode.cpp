@@ -102,6 +102,14 @@ TEST_F(CharWidthCache, IsHankaku)
 	}
 }
 
+TEST_F(CharWidthCache, IsZenkaku) {
+	SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_LOCAL);
+	InitCharWidthCache(lf1);
+
+	EXPECT_EQ(WCODE::IsZenkaku(L'a'), !WCODE::IsHankaku(L'a'));
+	EXPECT_EQ(WCODE::IsZenkaku(L'あ'), !WCODE::IsHankaku(L'あ'));
+}
+
 TEST_F(CharWidthCache, CalcHankakuByFont)
 {
 	SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_LOCAL);
@@ -207,12 +215,6 @@ TEST(charcode, IsInRange)
 	EXPECT_TRUE(WCODE::IsInRange(3, 2, 4));
 	EXPECT_TRUE(WCODE::IsInRange(4, 2, 4));
 	EXPECT_FALSE(WCODE::IsInRange(5, 2, 4));
-}
-
-TEST(charcode, IsZenkaku)
-{
-	EXPECT_FALSE(WCODE::IsZenkaku(L'a'));
-	EXPECT_TRUE(WCODE::IsZenkaku(L'あ'));
 }
 
 TEST(charcode, IsLineDelimiter)
