@@ -26,8 +26,8 @@
 #include "charset/charcode.h"
 #include <gtest/gtest.h>
 #include <algorithm>
-#include <array>
 #include <cstring>
+#include <string>
 #include <Windows.h>
 
 class CharWidthCache : public testing::Test {
@@ -181,50 +181,22 @@ TEST(charcode, IS_KEYWORD_CHAR)
 	}
 }
 
-// 以下、関数が判定している文字がすべてASCII範囲内であれば、テーブルを使って総当たりする。
+// 以下、関数が判定している文字がすべてASCII範囲内であれば総当たりテストを実施する。
 // ASCII範囲外の文字が含まれる関数については適宜テストケースを手書きして対応。
 
 TEST(charcode, IsAZ)
 {
-	constexpr std::array<bool, 128> table = {
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, true,  true,  true,  true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-		true,  false, false, false, false, false, false, true,  true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-		true,  true,  true,  false, false, false, false, false
-	};
-	for (wchar_t ch = 0; ch < table.size(); ++ch) {
-		EXPECT_EQ(WCODE::IsAZ(ch), table[ch]);
+	const std::wstring chars = L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	for (wchar_t ch = 0; ch < 128; ++ch) {
+		EXPECT_EQ(WCODE::IsAZ(ch), chars.find(ch) != std::wstring::npos);
 	}
 }
 
 TEST(charcode, Is09)
 {
-	constexpr std::array<bool, 128> table = {
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false, true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true,  false, false,
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false, false, false,
-		false, false, false, false, false, false, false, false
-	};
-	for (wchar_t ch = 0; ch < table.size(); ++ch) {
-		EXPECT_EQ(WCODE::Is09(ch), table[ch]);
+	const std::wstring chars = L"0123456789";
+	for (wchar_t ch = 0; ch < 128; ++ch) {
+		EXPECT_EQ(WCODE::Is09(ch), chars.find(ch) != std::wstring::npos);
 	}
 }
 
@@ -316,44 +288,16 @@ TEST(charcode, IsBlank)
 
 TEST(charcode, IsValidFileNameChar)
 {
-	constexpr std::array<bool, 128> table = {
-		false, true,  true,  true,  true,  true,  true,  true,  true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-		true,  true,  true,  true,  false, true,  true,  true,  true,  true,
-		true,  true,  false, true,  true,  true,  true,  true,  true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-		false, true,  false, false, true,  true,  true,  true,  true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-		true,  true,  true,  true,  false, true,  true,  true
-	};
-	for (wchar_t ch = 0; ch < table.size(); ++ch) {
-		EXPECT_EQ(WCODE::IsValidFilenameChar(ch), table[ch]);
+	const std::wstring chars(L"\0<>?\"|*", 7);
+	for (wchar_t ch = 0; ch < 128; ++ch) {
+		EXPECT_EQ(WCODE::IsValidFilenameChar(ch), chars.find(ch) == std::wstring::npos);
 	}
 }
 
 TEST(charcode, IsTabAvailableCode)
 {
-	constexpr std::array<bool, 128> table = {
-		false, true,  true,  true,  true,  true,  true,  true,  true,  false,
-		false, true,  true,  false, true,  true,  true,  true,  true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
-		true,  true,  true,  true,  true,  true,  true,  true
-	};
-	for (wchar_t ch = 0; ch < table.size(); ++ch) {
-		EXPECT_EQ(WCODE::IsTabAvailableCode(ch), table[ch]);
+	const std::wstring chars(L"\0\r\n\t", 4);
+	for (wchar_t ch = 0; ch < 128; ++ch) {
+		EXPECT_EQ(WCODE::IsTabAvailableCode(ch), chars.find(ch) == std::wstring::npos);
 	}
 }
