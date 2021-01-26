@@ -35,7 +35,7 @@
 #include "util/string_ex.h"
 
 /*!
-	@breaf 旧コード互換用。可能であれば使わないでください。
+	@brief 旧コード互換用。可能であれば使わないでください。
 
 	代替関数は strnlen か std::char_traits<char>::length です。
  */
@@ -45,7 +45,7 @@ TEST(string_ex, auto_strlenA)
 }
 
 /*!
-	@breaf 旧コード互換用。可能であれば使わないでください。
+	@brief 旧コード互換用。可能であれば使わないでください。
 
 	代替関数は wcsnlen か std::char_traits<wchar_t>::length です。
  */
@@ -55,7 +55,7 @@ TEST(string_ex, auto_strlenW)
 }
 
 /*!
-	@breaf 旧コード互換用。可能であれば使わないでください。
+	@brief 旧コード互換用。可能であれば使わないでください。
 
 	代替関数はないのでロジックを見直してください。
  */
@@ -66,7 +66,7 @@ TEST(string_ex, auto_strchrA)
 }
 
 /*!
-	@breaf 旧コード互換用。可能であれば使わないでください。
+	@brief 旧コード互換用。可能であれば使わないでください。
 
 	代替関数はないのでロジックを見直してください。
  */
@@ -77,28 +77,28 @@ TEST(string_ex, auto_strchrW)
 }
 
 /*!
-	@breaf 旧コード互換用。使わないでください。
+	@brief 旧コード互換用。使わないでください。
 
 	代替関数は snprintf_s か auto_sprintf_s です。
 	可能であれば 非Unicodeな文字列 を扱うコードを書かないでください。
  */
 TEST(string_ex, auto_sprintfA)
 {
-	std::string text(_MAX_PATH, L'\0');
-	auto_sprintf(text.data(), "%s-%d", "test", 101);
-	ASSERT_STREQ("test-101", text.data());
+	char szText[_MAX_PATH];
+	auto_sprintf(szText, "%s-%d", "test", 101);
+	ASSERT_STREQ("test-101", szText);
 }
 
 /*!
-	@breaf 旧コード互換用。使わないでください。
+	@brief 旧コード互換用。使わないでください。
 
 	代替関数は strprintf か _swnprintf_s か auto_sprintf_s です。
  */
 TEST(string_ex, auto_sprintfW)
 {
-	std::wstring text(_MAX_PATH, L'\0');
-	auto_sprintf(text.data(), L"%s-%d", L"test", 101);
-	ASSERT_STREQ(L"test-101", text.data());
+	wchar_t szText[_MAX_PATH];
+	auto_sprintf(szText, L"%s-%d", L"test", 101);
+	ASSERT_STREQ(L"test-101", szText);
 }
 
 TEST(string_ex, strprintf)
@@ -109,7 +109,7 @@ TEST(string_ex, strprintf)
 }
 
 /*!
-	@breaf 独自定義の文字列比較関数。
+	@brief 独自定義の文字列比較関数。
  */
 TEST(string_ex, strncmp_literal)
 {
@@ -122,7 +122,7 @@ TEST(string_ex, strncmp_literal)
 }
 
 /*!
-	@breaf 独自定義の文字列比較関数。
+	@brief 独自定義の文字列比較関数。
  */
 TEST(string_ex, wcsncmp_literal)
 {
@@ -135,26 +135,26 @@ TEST(string_ex, wcsncmp_literal)
 }
 
 /*!
-	@breaf 独自定義の文字列比較関数。
+	@brief 独自定義の文字列比較関数。
  */
 TEST(string_ex, strnicmp_literal)
 {
 	constexpr const char test_data1[] = "abc";
 	constexpr const char test_data2[] = "ABC";
-	constexpr const char test_data3[] = "xyz";
+	constexpr const char test_data3[] = "XYZ";
 	ASSERT_EQ(0, strnicmp_literal(test_data1, test_data2));
 	ASSERT_GT(0, strnicmp_literal(test_data1, test_data3));
 	ASSERT_LT(0, strnicmp_literal(test_data3, test_data1));
 }
 
 /*!
-	@breaf 独自定義の文字列比較関数。
+	@brief 独自定義の文字列比較関数。
  */
 TEST(string_ex, wcsnicmp_literal)
 {
 	constexpr const wchar_t test_data1[] = L"abc";
 	constexpr const wchar_t test_data2[] = L"ABC";
-	constexpr const wchar_t test_data3[] = L"xyz";
+	constexpr const wchar_t test_data3[] = L"XYZ";
 	ASSERT_EQ(0, wcsnicmp_literal(test_data1, test_data2));
 	ASSERT_GT(0, wcsnicmp_literal(test_data1, test_data3));
 	ASSERT_LT(0, wcsnicmp_literal(test_data3, test_data1));
