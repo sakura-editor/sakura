@@ -26,6 +26,7 @@
 #include "charset/charcode.h"
 #include <gtest/gtest.h>
 #include <algorithm>
+#include <array>
 #include <cstring>
 #include <Windows.h>
 
@@ -170,4 +171,189 @@ TEST_F(CharWidthCache, FontNo)
 	EXPECT_EQ(WCODE::GetFontNo(0xe0), 1);  // 「à」。Latin-1 は全角扱いらしい…。
 	EXPECT_EQ(WCODE::GetFontNo(L'あ'), 1);
 	EXPECT_EQ(WCODE::GetFontNo2(0xd83c, 0xdf38), 1);
+}
+
+TEST(charcode, IS_KEYWORD_CHAR)
+{
+	for (wchar_t ch = 0; ch < _countof(gm_keyword_char); ++ch) {
+		EXPECT_EQ(IS_KEYWORD_CHAR(ch),
+			gm_keyword_char[ch] == CK_CSYM || gm_keyword_char[ch] == CK_UDEF);
+	}
+}
+
+// 以下、関数が判定している文字がすべてASCII範囲内であれば、テーブルを使って総当たりする。
+// ASCII範囲外の文字が含まれる関数については適宜テストケースを手書きして対応。
+
+TEST(charcode, IsAZ)
+{
+	constexpr std::array<bool, 128> table = {
+		false, false, false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false, false, false,
+		false, false, false, false, false, true,  true,  true,  true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
+		true,  false, false, false, false, false, false, true,  true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
+		true,  true,  true,  false, false, false, false, false
+	};
+	for (wchar_t ch = 0; ch < table.size(); ++ch) {
+		EXPECT_EQ(WCODE::IsAZ(ch), table[ch]);
+	}
+}
+
+TEST(charcode, Is09)
+{
+	constexpr std::array<bool, 128> table = {
+		false, false, false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false, true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true,  false, false,
+		false, false, false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false
+	};
+	for (wchar_t ch = 0; ch < table.size(); ++ch) {
+		EXPECT_EQ(WCODE::Is09(ch), table[ch]);
+	}
+}
+
+TEST(charcode, IsInRange)
+{
+	EXPECT_FALSE(WCODE::IsInRange(1, 2, 4));
+	EXPECT_TRUE(WCODE::IsInRange(2, 2, 4));
+	EXPECT_TRUE(WCODE::IsInRange(3, 2, 4));
+	EXPECT_TRUE(WCODE::IsInRange(4, 2, 4));
+	EXPECT_FALSE(WCODE::IsInRange(5, 2, 4));
+}
+
+TEST(charcode, IsZenkaku)
+{
+	EXPECT_FALSE(WCODE::IsZenkaku(L'a'));
+	EXPECT_TRUE(WCODE::IsZenkaku(L'あ'));
+}
+
+TEST(charcode, IsLineDelimiter)
+{
+	EXPECT_TRUE(WCODE::IsLineDelimiter(0x0d, false));
+	EXPECT_TRUE(WCODE::IsLineDelimiter(0x0a, false));
+	EXPECT_FALSE(WCODE::IsLineDelimiter(0x85, false));
+	EXPECT_FALSE(WCODE::IsLineDelimiter(0x2028, false));
+	EXPECT_FALSE(WCODE::IsLineDelimiter(0x2029, false));
+
+	EXPECT_TRUE(WCODE::IsLineDelimiter(0x0d, true));
+	EXPECT_TRUE(WCODE::IsLineDelimiter(0x0a, true));
+	EXPECT_TRUE(WCODE::IsLineDelimiter(0x85, true));
+	EXPECT_TRUE(WCODE::IsLineDelimiter(0x2028, true));
+	EXPECT_TRUE(WCODE::IsLineDelimiter(0x2029, true));
+
+	EXPECT_FALSE(WCODE::IsLineDelimiter(L'a', false));
+	EXPECT_FALSE(WCODE::IsLineDelimiter(L'a', true));
+}
+
+TEST(charcode, IsLineDelimiterBasic)
+{
+	EXPECT_TRUE(WCODE::IsLineDelimiterBasic(0x0d));
+	EXPECT_TRUE(WCODE::IsLineDelimiterBasic(0x0a));
+	EXPECT_FALSE(WCODE::IsLineDelimiterBasic(0x85));
+	EXPECT_FALSE(WCODE::IsLineDelimiterBasic(0x2028));
+	EXPECT_FALSE(WCODE::IsLineDelimiterBasic(0x2029));
+	EXPECT_FALSE(WCODE::IsLineDelimiterBasic(L'a'));
+}
+
+TEST(charcode, IsLineDelimiterExt) {
+	EXPECT_TRUE(WCODE::IsLineDelimiterExt(0x0d));
+	EXPECT_TRUE(WCODE::IsLineDelimiterExt(0x0a));
+	EXPECT_TRUE(WCODE::IsLineDelimiterExt(0x85));
+	EXPECT_TRUE(WCODE::IsLineDelimiterExt(0x2028));
+	EXPECT_TRUE(WCODE::IsLineDelimiterExt(0x2029));
+	EXPECT_FALSE(WCODE::IsLineDelimiterExt(L'a'));
+}
+
+TEST(charcode, IsWordDelimiter)
+{
+	EXPECT_TRUE(WCODE::IsWordDelimiter(L' '));
+	EXPECT_TRUE(WCODE::IsWordDelimiter(L'\t'));
+	EXPECT_TRUE(WCODE::IsWordDelimiter(L'　'));
+	EXPECT_FALSE(WCODE::IsWordDelimiter(L'a'));
+	EXPECT_FALSE(WCODE::IsWordDelimiter(L'あ'));
+}
+
+TEST(charcode, IsIndentChar)
+{
+	EXPECT_TRUE(WCODE::IsIndentChar(L' ', false));
+	EXPECT_TRUE(WCODE::IsIndentChar(L'\t', false));
+	EXPECT_FALSE(WCODE::IsIndentChar(L'　', false));
+
+	EXPECT_TRUE(WCODE::IsIndentChar(L' ', true));
+	EXPECT_TRUE(WCODE::IsIndentChar(L'\t', true));
+	EXPECT_TRUE(WCODE::IsIndentChar(L'　', true));
+
+	EXPECT_FALSE(WCODE::IsIndentChar(L'a', false));
+	EXPECT_FALSE(WCODE::IsIndentChar(L'あ', false));
+	EXPECT_FALSE(WCODE::IsIndentChar(L'a', true));
+	EXPECT_FALSE(WCODE::IsIndentChar(L'あ', true));
+}
+
+TEST(charcode, IsBlank)
+{
+	EXPECT_TRUE(WCODE::IsBlank(L' '));
+	EXPECT_TRUE(WCODE::IsBlank(L'\t'));
+	EXPECT_TRUE(WCODE::IsBlank(L'　'));
+	EXPECT_FALSE(WCODE::IsBlank(L'a'));
+	EXPECT_FALSE(WCODE::IsBlank(L'あ'));
+}
+
+TEST(charcode, IsValidFileNameChar)
+{
+	constexpr std::array<bool, 128> table = {
+		false, true,  true,  true,  true,  true,  true,  true,  true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
+		true,  true,  true,  true,  false, true,  true,  true,  true,  true,
+		true,  true,  false, true,  true,  true,  true,  true,  true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
+		false, true,  false, false, true,  true,  true,  true,  true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
+		true,  true,  true,  true,  false, true,  true,  true
+	};
+	for (wchar_t ch = 0; ch < table.size(); ++ch) {
+		EXPECT_EQ(WCODE::IsValidFilenameChar(ch), table[ch]);
+	}
+}
+
+TEST(charcode, IsTabAvailableCode)
+{
+	constexpr std::array<bool, 128> table = {
+		false, true,  true,  true,  true,  true,  true,  true,  true,  false,
+		false, true,  true,  false, true,  true,  true,  true,  true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
+		true,  true,  true,  true,  true,  true,  true,  true
+	};
+	for (wchar_t ch = 0; ch < table.size(); ++ch) {
+		EXPECT_EQ(WCODE::IsTabAvailableCode(ch), table[ch]);
+	}
 }
