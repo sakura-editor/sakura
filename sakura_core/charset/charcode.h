@@ -50,11 +50,6 @@
 #define ESC_				'\x1b'
 #define CRLF_				"\015\012"
 
-//ANSI定数
-namespace ACODE{
-	static const char ESC	= ESC_;
-}
-
 //UNICODE定数
 namespace WCODE{
 	//文字

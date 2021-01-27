@@ -276,7 +276,7 @@ int DetectJisEscseq( const char* pS, const int nLen, EMyJisEscseq* peEscType )
 	pr = const_cast<char*>( pS );
 	pr_end = pS + nLen;
 
-	if( pr[0] == ACODE::ESC ){
+	if( pr[0] == '\x1b' ){
 		expected_esc_len++;
 		pr++;
 		if( pr + 1 < pr_end ){
