@@ -50,22 +50,6 @@
 #define ESC_				'\x1b'
 #define CRLF_				"\015\012"
 
-//ANSI定数
-namespace ACODE{
-	//文字
-	static const char TAB   = TAB_;
-	static const char SPACE = SPACE_;
-	static const char CR	= CR_;
-	static const char LF	= LF_;
-	static const char ESC	= ESC_;
-
-	//文字列
-	static const char CRLF[] = CRLF_;
-
-	//特殊 (BREGEXP)
-	static const wchar_t BREGEXP_DELIMITER = (wchar_t)0xFF;
-}
-
 //UNICODE定数
 namespace WCODE{
 	//文字
@@ -267,57 +251,6 @@ namespace WCODE
 		return ( 0xdc00 == (0xfc00 & c ));
 	}
 */
-}
-
-//ANSI判定関数群
-namespace ACODE
-{
-	inline bool IsAZ(char c)
-	{
-		return (c>='A' && c<='Z') || (c>='a' && c<='z');
-	}
-
-	//!制御文字であるかどうか
-	inline bool IsControlCode(char c)
-	{
-		unsigned char n=(unsigned char)c;
-		if(c==TAB)return false;
-		if(c==CR )return false;
-		if(c==LF )return false;
-		if(n<=0x1F)return true;
-		if(n>=0x7F && n<=0x9F)return true;
-		if(n>=0xE0)return true;
-		return false;
-	}
-
-	//!タブ表示に使える文字かどうか
-	inline bool IsTabAvailableCode(char c)
-	{
-		if(c=='\0')return false;
-		if(c<=0x1f)return false;
-		if(c>=0x7f)return false;
-		return true;
-	}
-
-	//!ファイル名に使える文字であるかどうか
-	inline bool IsValidFilenameChar(const char c)
-	{
-		static const char* table = "<>?\"|*";
-
-		//table内の文字が含まれていて
-		if(strchr(table,c)!=NULL){
-			// 2013.06.01 判定間違いを削除
-			return false;
-		}
-
-		return true;
-	}
-}
-
-//TCHAR判定関数群
-namespace TCODE
-{
-	using namespace WCODE;
 }
 
 // 文字幅の動的計算用キャッシュ関連
