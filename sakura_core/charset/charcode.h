@@ -253,12 +253,6 @@ namespace WCODE
 */
 }
 
-//TCHAR判定関数群
-namespace TCODE
-{
-	using namespace WCODE;
-}
-
 // 文字幅の動的計算用キャッシュ関連
 struct SCharWidthCache {
 	// 文字半角全角キャッシュ
