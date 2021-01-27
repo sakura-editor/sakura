@@ -836,7 +836,7 @@ void CCaret::ShowCaretPosInfo()
 		}
 
 		WCHAR szFontSize[16];
-		double nZoomPercentage = m_pEditDoc->m_blfCurTemp ? (m_pEditDoc->m_nCurrentZoom * 100.0) : 100.0;
+		const double nZoomPercentage = m_pEditDoc->m_blfCurTemp ? (m_pEditDoc->m_nCurrentZoom * 100.0) : 100.0;
 		if( nZoomPercentage < 5.0 ){
 			auto_sprintf( szFontSize, LS( STR_STATUS_FONTZOOM_1 ), nZoomPercentage );
 		}else{

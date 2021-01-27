@@ -29,7 +29,7 @@
 #include "CPropertyManager.h"
 #include "util/window.h"
 #include "util/zoom.h"
-#include "debug//Debug2.h"
+#include <array>
 
 
 /*! ツールバーの表示/非表示
@@ -263,17 +263,17 @@ void CViewCommander::Command_FONT( void )
 void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 {
 	// フォントサイズのズーム倍率テーブル
-	constexpr double nZoomFactors[] = {
+	constexpr std::array<double, 72> aZoomFactors = {
 		0.01, 0.011, 0.0125, 0.015, 0.0175, 0.02, 0.0225, 0.025, 0.0275, 0.03, 0.035, 0.04, 0.045, 0.05, 0.06, 0.07, 0.08, 0.09,
 		0.1, 0.11, 0.125, 0.15, 0.175, 0.2, 0.225, 0.25, 0.275, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8, 0.9,
 		1.0, 1.1, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0,
-		10.0, 11.0, 12.5, 15.0, 17.5, 20.0, 22.5, 25.0, 27.5, 30.0, 35.0, 40.0, 45.0, 50.0, 60.0, 70.0, 80.0, 90
+		10.0, 11.0, 12.5, 15.0, 17.5, 20.0, 22.5, 25.0, 27.5, 30.0, 35.0, 40.0, 45.0, 50.0, 60.0, 70.0, 80.0, 90.0
 	};
 	// 設定できるフォントサイズの下限/上限/最小単位(いずれも1/10ポイント単位)
 	constexpr int nPointSizeMin = 10;
 	constexpr int nPointSizeMax = 720;
 	constexpr int nPointSizeUnit = 5;
-	static const ZoomSetting zoomSetting( nZoomFactors, nPointSizeMin, nPointSizeMax, nPointSizeUnit );
+	static const ZoomSetting zoomSetting( aZoomFactors.begin(), aZoomFactors.end(), nPointSizeMin, nPointSizeMax, nPointSizeUnit );
 	const LOGFONT& lf = (mode == 0 ? GetDllShareData().m_Common.m_sView.m_lf
 		: GetEditWindow()->GetLogfont( mode == 2 ));
 
@@ -291,7 +291,7 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 		GetEditWindow()->GetFontPointSize( mode == 2 );
 	const int nOriginalPointSize = GetEditWindow()->GetFontPointSize( false );
 	double nCurrentZoom = (mode == 2 && GetDocument()->m_blfCurTemp) ? GetDocument()->m_nCurrentZoom : 1.0;
-	int nPointSize = nCurrentPointSize;
+	int nPointSize;
 
 	if( 0 != fontSize ){
 		// フォントサイズを直接選択する場合

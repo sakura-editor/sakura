@@ -50,7 +50,7 @@ bool ZoomSetting::IsValid() const
 	-------|------|------|------|------|------|------|------|------|
 	戻り値 | -0.5 | -0.5 |  0.0 |  0.5 |  1.5 |  2.0 |  2.5 |  2.5 |
 */
-static double GetPositionInTable( const std::vector<double>& vTable, double nValue )
+[[nodiscard]] static double GetPositionInTable( const std::vector<double>& vTable, double nValue )
 {
 	double nPosition = (double)vTable.size() - 0.5;
 	for( size_t i = 0; i < vTable.size(); ++i ){
@@ -72,20 +72,60 @@ static double GetPositionInTable( const std::vector<double>& vTable, double nVal
 	@param[in] nUnit	最小単位(0.0 の場合は丸めなし)
 	@return 丸められた値
 */
-static double GetQuantizedValue( double nValue, double nUnit )
+[[nodiscard]] static double GetQuantizedValue( double nValue, double nUnit )
 {
 	return (0.0 < nUnit) ? std::floor( nValue / nUnit ) * nUnit : nValue;
+}
+
+/*!
+	@brief 指定されたインデックスに該当するズーム倍率を適用した値を取得
+	@param[in] zoomSetting		ズーム設定
+	@param[in] nBaseValue		基準値
+	@param[in] nCurrentValue	変更前の値
+	@param[in] nTableIndex		ズーム倍率テーブルのインデックス
+	@param[out] pnValueOut		変更後のズーム倍率を適用した値
+	@param[out] pnZoomOut		変更後のズーム倍率
+	@return テーブルインデックスおよび値が共に範囲内かどうか
+	@note 戻り値が false の場合においても pnValueOut, pnZoomOut にはそれぞれ範囲内に丸めた値が設定されます。
+*/
+static bool GetZoomedValueInIndex( const ZoomSetting& zoomSetting, double nBaseValue, double nValueMin, double nValueMax, int nTableIndex, double* pnValueOut, double* pnZoomOut )
+{
+	const int nClampedIndex = std::clamp( nTableIndex, 0, ((int)zoomSetting.m_vZoomFactors.size() - 1) );
+	double nNextZoom = zoomSetting.m_vZoomFactors[nClampedIndex];
+	double nNextValue = GetQuantizedValue( nBaseValue * nNextZoom, zoomSetting.m_nValueUnit );
+	bool bWithinRange = true;
+
+	if( nNextValue < nValueMin || nValueMax < nNextValue ){
+		// 値の上下限を超過していたら上下限に丸めて終わる
+		// 倍率は丸めた後のサイズで再計算
+		nNextValue = std::clamp( nNextValue, nValueMin, nValueMax );
+		if( nBaseValue != 0.0 ){
+			nNextZoom = nNextValue / nBaseValue;
+		}
+		bWithinRange = false;
+	}else if( nClampedIndex != nTableIndex ){
+		// 倍率テーブルの端まで到達していたら終わり
+		bWithinRange = false;
+	}else{
+		// インデックス/値ともに範囲内
+	}
+
+	*pnValueOut = nNextValue;
+	*pnZoomOut = nNextZoom;
+
+	return bWithinRange;
 }
 
 /*!
 	@brief 基準値に対してズーム倍率を適用した値を取得
 	@param[in] zoomSetting	ズーム設定
 	@param[in] nBaseValue	基準値
-	@param[in] nCurrentZoom	現在のズーム倍率
+	@param[in] nCurrentZoom	変更前のズーム倍率
 	@param[in] nSteps		ズーム段階の変更量
-	@param[in] pnValueOut	変更後のズーム倍率を適用した値
-	@param[in] pnZoomOut	変更後のズーム倍率
-	@return 丸められた値
+	@param[out] pnValueOut	変更後のズーム倍率を適用した値
+	@param[out] pnZoomOut	変更後のズーム倍率
+	@return ズームできたかどうか
+	@note 戻り値が false の場合には pnValueOut, pnZoomOut は設定されません。
 */
 bool GetZoomedValue( const ZoomSetting& zoomSetting, double nBaseValue, double nCurrentZoom, int nSteps, double* pnValueOut, double* pnZoomOut )
 {
@@ -98,7 +138,7 @@ bool GetZoomedValue( const ZoomSetting& zoomSetting, double nBaseValue, double n
 	const int nTableIndexMax = (int)zoomSetting.m_vZoomFactors.size() - 1;
 
 	const double nPosition = GetPositionInTable( zoomSetting.m_vZoomFactors, nCurrentZoom );
-	int nTableIndex = (int)(bZoomUp ? std::floor( nPosition ) : std::ceil( nPosition ));
+	auto nTableIndex = (int)(bZoomUp ? std::floor( nPosition ) : std::ceil( nPosition ));
 	if( (!bZoomUp && nTableIndex <= nTableIndexMin) || (bZoomUp && nTableIndexMax <= nTableIndex) ){
 		// 現在の倍率がすでに倍率テーブルの範囲外でかつ
 		// さらに外側へ移動しようとした場合は今の位置を維持
@@ -108,6 +148,7 @@ bool GetZoomedValue( const ZoomSetting& zoomSetting, double nBaseValue, double n
 	const double nCurrentValue = GetQuantizedValue( nBaseValue * nCurrentZoom, zoomSetting.m_nValueUnit );
 	const double nValueMin = std::min( {zoomSetting.m_nValueMin, nBaseValue, nCurrentValue} );
 	const double nValueMax = std::max( {zoomSetting.m_nValueMax, nBaseValue, nCurrentValue} );
+	const int nIndexAddition = bZoomUp ? 1 : -1;
 	double nNextValue = nCurrentValue;
 	double nNextZoom = nCurrentZoom;
 	double nLastValue = nCurrentValue;
@@ -117,62 +158,45 @@ bool GetZoomedValue( const ZoomSetting& zoomSetting, double nBaseValue, double n
 	// 最小単位で丸めた後の値が変更前の値から変わらなければ
 	// 変わる位置までインデックスを動かしていく
 	nTableIndex += nSteps;
-	// 本当は while( true ) で良いが万一の暴走回避のため有限回
-	for( size_t i = 0; i < zoomSetting.m_vZoomFactors.size(); ++i ){
-		int clampedIndex = std::clamp( nTableIndex, nTableIndexMin, nTableIndexMax );
-		nNextZoom = zoomSetting.m_vZoomFactors[clampedIndex];
-		nNextValue = GetQuantizedValue( nBaseValue * nNextZoom, zoomSetting.m_nValueUnit );
-
+	// 本当は無限ループで良いが万一の暴走回避のため有限回
+	for( [[maybe_unused]] const double _ : zoomSetting.m_vZoomFactors ){
+		const bool bWithinRange = GetZoomedValueInIndex( zoomSetting, nBaseValue, nValueMin, nValueMax, nTableIndex, &nNextValue, &nNextZoom );
+		const bool bValueChanged = (nNextValue != nCurrentValue);
+		bool bBreak = false;
 		if( bFindingOneMoreChange ){
-			if( nNextValue != nLastValue || clampedIndex != nTableIndex ){
+			if( nNextValue != nLastValue || !bWithinRange ){
 				nNextValue = nLastValue;
 				nNextZoom = nLastZoom;
-				break;
+				bBreak = true;
 			}
+		}else if( !bWithinRange ){
+			// インデックスまたは値が範囲外になったので終わる
+			bBreak = true;
+		}else if( bValueChanged && bZoomUp ){
+			// 拡大方向は値が変わったらそこで確定
+			bBreak = true;
+		}else if( bValueChanged && !bZoomUp ){
+			// 縮小方向は一度値が変わった後もう一度値が変わる位置までインデックスを進めてから終わる
+			bFindingOneMoreChange = true;
 		}else{
-			// 値の上下限を超過したら上下限に丸めて終わる
-			// 倍率は丸めた後のサイズで再計算
-			double clampedValue = std::clamp( nNextValue, nValueMin, nValueMax );
-			if( nNextValue != clampedValue ){
-				if( nBaseValue != 0.0 ){
-					nNextZoom = clampedValue / nBaseValue;
-				}
-				nNextValue = clampedValue;
-				break;
-			}
-
-			// 倍率テーブルの端まで到達していたら終わり
-			if( clampedIndex != nTableIndex ){
-				break;
-			}
-
-			bool bSizeChanged = (nNextValue != nCurrentValue);
-			if( bZoomUp ){
-				// 拡大側は値が変わったらすぐ終わる
-				if( bSizeChanged ){
-					break;
-				}
-			}else{
-				// 縮小側は一度値が変わった後もう一度値が変わる位置までインデックスを進めてから終わる
-				if( bSizeChanged ){
-					bFindingOneMoreChange = true;
-				}
-			}
+			// 値が変化しなかったので次の段階へ
 		}
+
+		if( bBreak ){ break; }
 
 		nLastValue = nNextValue;
 		nLastZoom = nNextZoom;
-		nTableIndex += bZoomUp ? 1 : -1;
-	};
+		nTableIndex += nIndexAddition;
+	}
 
 	if( nCurrentValue == nNextValue ){
 		return false;
 	}
 
-	if( pnValueOut != NULL ){
+	if( pnValueOut != nullptr ){
 		*pnValueOut = nNextValue;
 	}
-	if( pnZoomOut != NULL ){
+	if( pnZoomOut != nullptr ){
 		*pnZoomOut = nNextZoom;
 	}
 

@@ -52,13 +52,13 @@ TEST( zoom, ZoomSetting )
 TEST( zoom, GetZoomedValue_CheckArguments )
 {
 	// ズーム設定が不正
-	EXPECT_EQ( false, GetZoomedValue( ZoomSetting( {1.0}, 1.0, 0.0, 0.0 ), 100.0, 1.0, 1, NULL, NULL ) );
+	EXPECT_EQ( false, GetZoomedValue( ZoomSetting( {1.0}, 1.0, 0.0, 0.0 ), 100.0, 1.0, 1, nullptr, nullptr ) );
 
 	// ズームステップが0
-	EXPECT_EQ( false, GetZoomedValue( ZoomSetting( {0.5, 1.0, 1.5}, 0.0, 200.0, 0.0 ), 100.0, 1.0, 0, NULL, NULL ) );
+	EXPECT_EQ( false, GetZoomedValue( ZoomSetting( {0.5, 1.0, 1.5}, 0.0, 200.0, 0.0 ), 100.0, 1.0, 0, nullptr, nullptr ) );
 
-	// 出力引数はNULLを許容
-	EXPECT_EQ( true, GetZoomedValue( ZoomSetting( {0.5, 1.0, 1.5}, 0.0, 200.0, 0.0 ), 100.0, 1.0, 1, NULL, NULL ) );
+	// 出力引数はnullptrを許容
+	EXPECT_EQ( true, GetZoomedValue( ZoomSetting( {0.5, 1.0, 1.5}, 0.0, 200.0, 0.0 ), 100.0, 1.0, 1, nullptr, nullptr ) );
 }
 
 /*!
