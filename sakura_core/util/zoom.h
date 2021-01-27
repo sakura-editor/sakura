@@ -27,28 +27,34 @@
 #define SAKURA_ZOOM_0CD4E589_F708_48BF_8601_8BF851827765_H_
 #pragma once
 
-#include <initializer_list>
 #include <vector>
 
 /*!
 	@brief ズーム設定を保持
 */
-class ZoomSetting
+struct ZoomSetting
 {
-public:
-	ZoomSetting( std::initializer_list<double> iZoomFactors, double nValueMin, double nValueMax, double nValueUnit );
+	/*!
+		@brief コンストラクタ
+		@param[in] nZoomFactors	ズーム倍率の並び(昇順)
+		@param[in] nValueMin	下限値(上限値以下)
+		@param[in] nValueMax	上限値(下限値以上)
+		@param[in] nValueUnit	値の最小単位(0以上)
+	*/
+	template<size_t nCount>
+	ZoomSetting( const double (&nZoomFactors)[nCount], double nValueMin, double nValueMax, double nValueUnit ) :
+		m_vZoomFactors( std::begin( nZoomFactors ), std::end( nZoomFactors ) ),
+		m_nValueMin( nValueMin ),
+		m_nValueMax( nValueMax ),
+		m_nValueUnit( nValueUnit )
+	{}
 
-	bool IsValid() const { return m_bValid; }
-	const std::vector<double>& GetZoomFactors() const { return m_vZoomFactors; }
-	double GetValueMin() const { return m_nValueMin; }
-	double GetValueMax() const { return m_nValueMax; }
-	double GetValueUnit() const { return m_nValueUnit; }
-private:
-	bool m_bValid;
-	std::vector<double> m_vZoomFactors;
-	double m_nValueMin;
-	double m_nValueMax;
-	double m_nValueUnit;
+	const std::vector<double> m_vZoomFactors;
+	const double m_nValueMin;
+	const double m_nValueMax;
+	const double m_nValueUnit;
+
+	bool IsValid() const;
 };
 
 bool GetZoomedValue( const ZoomSetting& zoomSetting, double nBaseValue, double nCurrentZoom, int nSteps, double* pnValueOut, double* pnZoomOut );

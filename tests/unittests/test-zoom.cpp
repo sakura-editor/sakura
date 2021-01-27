@@ -26,13 +26,10 @@
 #include "util/zoom.h"
 
 /*!
- * @brief ZoomSettingクラスのテスト
+ * @brief ZoomSetting構造体のテスト
  */
 TEST( zoom, ZoomSetting )
 {
-	// 不正な引数 - テーブルが空
-	EXPECT_EQ( false, ZoomSetting( {}, 0.0, 0.0, 1.0 ).IsValid() );
-
 	// 不正な引数 - テーブルが昇順になっていない
 	EXPECT_EQ( false, ZoomSetting( {0.0, 2.0, 1.0}, 0.0, 0.0, 1.0 ).IsValid() );
 
@@ -43,18 +40,10 @@ TEST( zoom, ZoomSetting )
 	EXPECT_EQ( false, ZoomSetting( {1.0}, 0.0, 0.0, -1.0 ).IsValid() );
 
 	// 正しい引数 - テーブルに同一値が含まれる
-	EXPECT_EQ( true, ZoomSetting( {0.0, 0.0, 0.0}, 0.0, 0.0, 1.0 ).IsValid() );
+	EXPECT_EQ( true, ZoomSetting( {0.0, 1.0, 1.0, 2.0}, 0.0, 0.0, 1.0 ).IsValid() );
 
 	// 正しい引数 - 解像度が0
 	EXPECT_EQ( true, ZoomSetting( {0.0}, 0.0, 0.0, 0.0 ).IsValid() );
-
-	// メソッド確認
-	const ZoomSetting setting( {0.0, 0.5, 1.0}, -1.0, 2.0, 3.0 );
-	EXPECT_EQ( true, setting.IsValid() );
-	EXPECT_EQ( 3, setting.GetZoomFactors().size() );
-	EXPECT_EQ( -1.0, setting.GetValueMin() );
-	EXPECT_EQ( 2.0, setting.GetValueMax() );
-	EXPECT_EQ( 3.0, setting.GetValueUnit() );
 }
 
 /*!
@@ -63,7 +52,7 @@ TEST( zoom, ZoomSetting )
 TEST( zoom, GetZoomedValue_CheckArguments )
 {
 	// ズーム設定が不正
-	EXPECT_EQ( false, GetZoomedValue( ZoomSetting( {}, 0.0, 0.0, 0.0 ), 100.0, 1.0, 1, NULL, NULL ) );
+	EXPECT_EQ( false, GetZoomedValue( ZoomSetting( {1.0}, 1.0, 0.0, 0.0 ), 100.0, 1.0, 1, NULL, NULL ) );
 
 	// ズームステップが0
 	EXPECT_EQ( false, GetZoomedValue( ZoomSetting( {0.5, 1.0, 1.5}, 0.0, 200.0, 0.0 ), 100.0, 1.0, 0, NULL, NULL ) );

@@ -29,29 +29,13 @@
 #include <cmath>
 
 /*!
-	@brief コンストラクタ
-	@param[in] iZoomFactors ズーム倍率の並び
-	@param[in] nValueMin 下限値
-	@param[in] nValueMax 上限値
-	@param[in] nValueUnit 値の最小単位
+	@brief 設定値の正当性判定
 */
-ZoomSetting::ZoomSetting( std::initializer_list<double> iZoomFactors, double nValueMin, double nValueMax, double nValueUnit )
+bool ZoomSetting::IsValid() const
 {
-	m_vZoomFactors.assign( iZoomFactors );
-	m_nValueMin = nValueMin;
-	m_nValueMax = nValueMax;
-	m_nValueUnit = nValueUnit;
-
-	// 正当性確認
-	m_bValid = (0 < m_vZoomFactors.size()) && (m_nValueMin <= m_nValueMax) && (0.0 <= m_nValueUnit);
-	if( m_bValid ){
-		for( size_t i = 1; i < m_vZoomFactors.size(); ++i ){
-			if( m_vZoomFactors[i] < m_vZoomFactors[i - 1] ){
-				m_bValid = false;
-				break;
-			}
-		}
-	}
+	return (m_nValueMin <= m_nValueMax)
+		&& (0.0 <= m_nValueUnit)
+		&& std::is_sorted( m_vZoomFactors.begin(), m_vZoomFactors.end() );
 }
 
 /*!
@@ -84,8 +68,8 @@ static double GetPositionInTable( const std::vector<double>& vTable, double nVal
 
 /*!
 	@brief 最小単位で丸めた値を取得
-	@param[in] nValue 対象値
-	@param[in] nUnit 最小単位(0.0 の場合は丸めなし)
+	@param[in] nValue	対象値
+	@param[in] nUnit	最小単位(0.0 の場合は丸めなし)
 	@return 丸められた値
 */
 static double GetQuantizedValue( double nValue, double nUnit )
@@ -95,22 +79,25 @@ static double GetQuantizedValue( double nValue, double nUnit )
 
 /*!
 	@brief 基準値に対してズーム倍率を適用した値を取得
-	@param[in] nValue 対象値
-	@param[in] nUnit 最小単位(0.0 の場合は丸めなし)
+	@param[in] zoomSetting	ズーム設定
+	@param[in] nBaseValue	基準値
+	@param[in] nCurrentZoom	現在のズーム倍率
+	@param[in] nSteps		ズーム段階の変更量
+	@param[in] pnValueOut	変更後のズーム倍率を適用した値
+	@param[in] pnZoomOut	変更後のズーム倍率
 	@return 丸められた値
 */
 bool GetZoomedValue( const ZoomSetting& zoomSetting, double nBaseValue, double nCurrentZoom, int nSteps, double* pnValueOut, double* pnZoomOut )
 {
-	if( !zoomSetting.IsValid() || nSteps == 0 ){
+	if( nSteps == 0 ){
 		return false;
 	}
 
-	const auto& vZoomFactors = zoomSetting.GetZoomFactors();
 	const bool bZoomUp = (0 < nSteps);
 	const int nTableIndexMin = 0;
-	const int nTableIndexMax = (int)vZoomFactors.size() - 1;
+	const int nTableIndexMax = (int)zoomSetting.m_vZoomFactors.size() - 1;
 
-	const double nPosition = GetPositionInTable( vZoomFactors, nCurrentZoom );
+	const double nPosition = GetPositionInTable( zoomSetting.m_vZoomFactors, nCurrentZoom );
 	int nTableIndex = (int)(bZoomUp ? std::floor( nPosition ) : std::ceil( nPosition ));
 	if( (!bZoomUp && nTableIndex <= nTableIndexMin) || (bZoomUp && nTableIndexMax <= nTableIndex) ){
 		// 現在の倍率がすでに倍率テーブルの範囲外でかつ
@@ -118,9 +105,9 @@ bool GetZoomedValue( const ZoomSetting& zoomSetting, double nBaseValue, double n
 		return false;
 	}
 
-	const double nCurrentValue = GetQuantizedValue( nBaseValue * nCurrentZoom, zoomSetting.GetValueUnit() );
-	const double nValueMin = std::min( {zoomSetting.GetValueMin(), nBaseValue, nCurrentValue} );
-	const double nValueMax = std::max( {zoomSetting.GetValueMax(), nBaseValue, nCurrentValue} );
+	const double nCurrentValue = GetQuantizedValue( nBaseValue * nCurrentZoom, zoomSetting.m_nValueUnit );
+	const double nValueMin = std::min( {zoomSetting.m_nValueMin, nBaseValue, nCurrentValue} );
+	const double nValueMax = std::max( {zoomSetting.m_nValueMax, nBaseValue, nCurrentValue} );
 	double nNextValue = nCurrentValue;
 	double nNextZoom = nCurrentZoom;
 	double nLastValue = nCurrentValue;
@@ -131,10 +118,10 @@ bool GetZoomedValue( const ZoomSetting& zoomSetting, double nBaseValue, double n
 	// 変わる位置までインデックスを動かしていく
 	nTableIndex += nSteps;
 	// 本当は while( true ) で良いが万一の暴走回避のため有限回
-	for( size_t i = 0; i < vZoomFactors.size(); ++i ){
+	for( size_t i = 0; i < zoomSetting.m_vZoomFactors.size(); ++i ){
 		int clampedIndex = std::clamp( nTableIndex, nTableIndexMin, nTableIndexMax );
-		nNextZoom = vZoomFactors[clampedIndex];
-		nNextValue = GetQuantizedValue( nBaseValue * nNextZoom, zoomSetting.GetValueUnit() );
+		nNextZoom = zoomSetting.m_vZoomFactors[clampedIndex];
+		nNextValue = GetQuantizedValue( nBaseValue * nNextZoom, zoomSetting.m_nValueUnit );
 
 		if( bFindingOneMoreChange ){
 			if( nNextValue != nLastValue || clampedIndex != nTableIndex ){
