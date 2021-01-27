@@ -505,9 +505,6 @@
     <ClInclude Include="..\sakura_core\util\tchar_convert.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\util\tchar_printf.h">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClInclude>
     <ClInclude Include="..\sakura_core\util\tchar_template.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
@@ -1470,9 +1467,6 @@
       <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\util\tchar_convert.cpp">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\sakura_core\util\tchar_printf.cpp">
       <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\util\tchar_template.cpp">

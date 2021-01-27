@@ -969,37 +969,6 @@ BOOL CShareData::ActiveAlreadyOpenedWindow( const WCHAR* pszPath, HWND* phwndOwn
 }
 
 /*!
-	アウトプットウインドウに出力(書式付)
-
-	アウトプットウインドウが無ければオープンする
-	@param lpFmt [in] 書式指定文字列(wchar_t版)
-	@date 2010.02.22 Moca auto_vsprintfから tchar_vsnprintf_s に変更.長すぎるときは切り詰められる
-*/
-void CShareData::TraceOut( LPCWSTR lpFmt, ... )
-{
-	if( false == OpenDebugWindow( m_hwndTraceOutSource, false ) ){
-		return;
-	}
-	
-	LockGuard<CMutex> guard( CShareData::GetMutexShareWork() );
-	va_list argList;
-	va_start( argList, lpFmt );
-	int ret = tchar_vsnprintf_s( m_pShareData->m_sWorkBuffer.GetWorkBuffer<WCHAR>(), 
-		m_pShareData->m_sWorkBuffer.GetWorkBufferCount<WCHAR>(), lpFmt, argList );
-	va_end( argList );
-	if( -1 == ret ){
-		// 切り詰められた
-		ret = wcslen( m_pShareData->m_sWorkBuffer.GetWorkBuffer<WCHAR>() );
-	}else if( ret < 0 ){
-		// 保護コード:受け側はwParam→size_tで符号なしのため
-		ret = 0;
-	}
-	DWORD_PTR dwMsgResult;
-	::SendMessageTimeout( m_pShareData->m_sHandles.m_hwndDebug, MYWM_ADDSTRINGLEN_W, ret, 0,
-		SMTO_NORMAL, 10000, &dwMsgResult );
-}
-
-/*!
 	アウトプットウインドウに出力(文字列指定)
 
 	長い場合は分割して送る
