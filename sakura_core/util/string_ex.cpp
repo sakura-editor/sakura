@@ -230,8 +230,9 @@ std::wstring vstrprintf(const WCHAR* pszFormat, va_list& argList)
 	}
 
 	// 必要なバッファを確保してフォーマットする
-	std::wstring strOut(cchOut, L'\0');
+	std::wstring strOut(cchOut + 1, L'0');
 	::vswprintf_s(strOut.data(), strOut.capacity(), pszFormat, argList);
+	strOut.resize(cchOut);
 	return strOut;
 }
 
