@@ -31,7 +31,7 @@ jobs:
 
     env:
       BUILD_PLATFORM: x64
-      BUILD_CONFIGURATION: Release
+      BUILD_CONFIGURATION: Debug
       SONAR_QUBE_VERSION: '4.5.0.2216'
 
     steps:
@@ -108,7 +108,7 @@ jobs:
         --cover_children
         --
         .\tests\build\${{ env.BUILD_PLATFORM }}\${{ env.BUILD_CONFIGURATION }}\unittests\tests1.exe
-        --gtest_output=xml:tests1-googletest.xml
+        --gtest_output=xml:${{ github.workspace }}\tests1-googletest.xml
 
     - name: Set up JDK 11
       uses: actions/setup-java@v1
@@ -145,6 +145,6 @@ jobs:
         -D"sonar.cfamily.cache.path=.sonar\analysis-cache" `
         -D"sonar.cfamily.cppunit.reportPath=tests1-googletest.xml" `
         -D"sonar.cfamily.threads=2" `
-        -D"sonar.coverage.exclusions=help\**\*.js,tools\**\*.js" `
+        -D"sonar.coverage.exclusions=help\**\*.js,tests\unittests\coverage.cpp,tools\**\*.js" `
         -D"sonar.coverageReportPaths=tests1-coverage.xml" `
-        -D"sonar.exclusions=.sonar\**\*,bw-output\**\*,HeaderMake\**\*,tests\build\**\*,tests\googletest\**\*,**\test-*"
+        -D"sonar.exclusions=.sonar\**\*,bw-output\**\*,HeaderMake\**\*,tests\build\**\*,tests\googletest\**\*,**\test-*,tests*-*.xml"

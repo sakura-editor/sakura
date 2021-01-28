@@ -46,6 +46,8 @@
 #include "basis/CMyString.h"
 #include "mem/CNativeW.h"
 #include "env/DLLSHAREDATA.h"
+#include "_main/CCommandLine.h"
+#include "_main/CControlProcess.h"
 #include "util/file.h"
 
 /*!
@@ -69,25 +71,17 @@ protected:
 	/*!
 	 * プロファイルマネージャ設定ファイルのパス
 	 */
-	WCHAR szProfileMgrIniName[_MAX_PATH];
+	std::filesystem::path profileMgrIniPath;
 
 	/*!
 	 * テストが起動される直前に毎回呼ばれる関数
 	 */
 	void SetUp() override {
-		// INIファイルのパスを取得
-		WCHAR szPrivateIniFile[_MAX_PATH];
-		WCHAR szIniFile[_MAX_PATH];
-		CFileNameManager::GetIniFileNameDirect( szPrivateIniFile, szIniFile, L"" );
-
 		// プロファイルマネージャ設定ファイルのパスを生成
-		std::wregex re( L"\\.ini$", std::wregex::icase );
-		const auto strProfileMgrIniName = std::regex_replace( szIniFile, re, L"_prof$&" );
-		::wcscpy_s( szProfileMgrIniName, strProfileMgrIniName.data() );
-
-		if( fexist( szProfileMgrIniName ) ){
+		profileMgrIniPath = GetProfileMgrFileName();
+		if( fexist( profileMgrIniPath.c_str() ) ){
 			// プロファイルマネージャー設定を削除する
-			std::filesystem::remove( szProfileMgrIniName );
+			std::filesystem::remove( profileMgrIniPath );
 		}
 	}
 
@@ -96,7 +90,7 @@ protected:
 	 */
 	void TearDown() override {
 		// プロファイルマネージャー設定を削除する
-		std::filesystem::remove( szProfileMgrIniName );
+		std::filesystem::remove( profileMgrIniPath );
 	}
 };
 
@@ -183,4 +177,130 @@ TEST_F( CDlgProfileMgrTest, TrySelectProfile_006 )
 	// プロファイルマネージャー設定が空定義ならプロファイルは確定しない
 	CCommandLineWrapper cCommandLine;
 	ASSERT_FALSE( CDlgProfileMgr::TrySelectProfile( &cCommandLine ) );
+}
+
+/*!
+ * @brief プロファイルマネージャ設定ファイルパスの取得
+ */
+TEST(file, GetProfileMgrFileName_NoArg1)
+{
+	// コマンドラインのグローバル変数をセットする
+	auto pCommandLine = CCommandLine::getInstance();
+	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
+
+	// プロセスのインスタンスを用意する
+	CControlProcess dummy(nullptr, LR"(-PROF="")");
+
+	// iniファイルの拡張子を_prof.iniに変えたパスが返る
+	const auto profileMgrIniPath = GetIniFileName().replace_extension().concat(L"_prof.ini");
+	ASSERT_STREQ(profileMgrIniPath.c_str(), GetProfileMgrFileName().c_str());
+
+	// コマンドラインのグローバル変数を元に戻す
+	pCommandLine->ParseCommandLine(L"", false);
+}
+
+/*!
+ * @brief プロファイルマネージャ設定ファイルパスの取得
+ */
+TEST(file, GetProfileMgrFileName_NoArg2)
+{
+	// コマンドラインのグローバル変数をセットする
+	auto pCommandLine = CCommandLine::getInstance();
+	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
+
+	// プロセスのインスタンスを用意する
+	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
+
+	// iniファイルの拡張子を_prof.iniに変えたパスが返る
+	const auto profileMgrIniPath = GetIniFileName().parent_path().parent_path().append(GetIniFileName().replace_extension().concat(L"_prof.ini").filename().c_str());
+	ASSERT_STREQ(profileMgrIniPath.c_str(), GetProfileMgrFileName().c_str());
+
+	// コマンドラインのグローバル変数を元に戻す
+	pCommandLine->ParseCommandLine(L"", false);
+}
+
+/*!
+ * @brief 指定したプロファイルの設定保存先ディレクトリの取得(プロファイル名が空の時)
+ */
+TEST(file, GetProfileMgrFileName_DefaultProfile1)
+{
+	// コマンドラインのグローバル変数をセットする
+	auto pCommandLine = CCommandLine::getInstance();
+	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
+
+	// プロセスのインスタンスを用意する
+	CControlProcess dummy(nullptr, LR"(-PROF="")");
+
+	// 設定フォルダのパスが返る
+	const auto iniDir = GetIniPath(L"").append("a.txt").remove_filename();
+	ASSERT_STREQ(iniDir.c_str(), GetProfileMgrFileName(L"").c_str());
+
+	// コマンドラインのグローバル変数を元に戻す
+	pCommandLine->ParseCommandLine(L"", false);
+}
+
+/*!
+ * @brief 指定したプロファイルの設定保存先ディレクトリの取得(プロファイル名が空の時)
+ */
+TEST(file, GetProfileMgrFileName_DefaultProfile2)
+{
+	// コマンドラインのグローバル変数をセットする
+	auto pCommandLine = CCommandLine::getInstance();
+	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
+
+	// プロセスのインスタンスを用意する
+	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
+
+	// 設定フォルダのパスが返る
+	const auto iniDir = GetIniFileName().parent_path().parent_path().append("a.txt").remove_filename();
+	ASSERT_STREQ(iniDir.c_str(), GetProfileMgrFileName(L"").c_str());
+
+	// コマンドラインのグローバル変数を元に戻す
+	pCommandLine->ParseCommandLine(L"", false);
+}
+
+/*!
+ * @brief 指定したプロファイルの設定保存先ディレクトリの取得(プロファイル名が空でない時)
+ */
+TEST(file, GetProfileMgrFileName_NamedProfile1)
+{
+	// コマンドラインのグローバル変数をセットする
+	auto pCommandLine = CCommandLine::getInstance();
+	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
+
+	// プロセスのインスタンスを用意する
+	CControlProcess dummy(nullptr, LR"(-PROF="")");
+
+	// テスト用プロファイル名
+	constexpr auto profile = L"profile1";
+
+	// 指定したプロファイルの設定保存先フォルダのパスが返る
+	const auto profileDir = GetIniPath(profile).append("a.txt").remove_filename();
+	ASSERT_STREQ(profileDir.c_str(), GetProfileMgrFileName(profile).c_str());
+
+	// コマンドラインのグローバル変数を元に戻す
+	pCommandLine->ParseCommandLine(L"", false);
+}
+
+/*!
+ * @brief 指定したプロファイルの設定保存先ディレクトリの取得(プロファイル名が空でない時)
+ */
+TEST(file, GetProfileMgrFileName_NamedProfile2)
+{
+	// コマンドラインのグローバル変数をセットする
+	auto pCommandLine = CCommandLine::getInstance();
+	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
+
+	// プロセスのインスタンスを用意する
+	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
+
+	// テスト用プロファイル名
+	constexpr auto profile = L"profile1";
+
+	// 指定したプロファイルの設定保存先フォルダのパスが返る
+	const auto profileDir = GetIniFileName().parent_path().parent_path().append(profile).append("a.txt").remove_filename();
+	ASSERT_STREQ(profileDir.c_str(), GetProfileMgrFileName(profile).c_str());
+
+	// コマンドラインのグローバル変数を元に戻す
+	pCommandLine->ParseCommandLine(L"", false);
 }

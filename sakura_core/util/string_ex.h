@@ -43,8 +43,6 @@
 	auto_～:  引数の型により、自動で処理が決定される版 (例: auto_strcpy)
 */
 
-#include "util/tchar_printf.h"
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          メモリ                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -194,14 +192,15 @@ WCHAR* strtotcs( WCHAR* dest, const ACHAR* src, size_t count );
 WCHAR* strtotcs( WCHAR* dest, const WCHAR* src, size_t count );
 
 //印字系
-#define auto_snprintf_s(buf, count, format, ...) tchar_sprintf_s((buf), count, (format), __VA_ARGS__)
-#define auto_sprintf(buf, format, ...)           tchar_sprintf((buf), (format), __VA_ARGS__)
-#define auto_sprintf_s(buf, nBufCount, format, ...) tchar_snprintf_s((buf), nBufCount, (format), __VA_ARGS__)
+inline int auto_vsprintf(ACHAR* buf, const ACHAR* format, va_list& v) { return ::vsprintf(buf, format, v); }
+inline int auto_vsprintf(WCHAR* buf, const WCHAR* format, va_list& v) { return ::_vswprintf(buf, format, v); }
+inline int auto_sprintf(ACHAR* buf, const ACHAR* format, ...) { va_list args; va_start(args, format); const int n = auto_vsprintf(buf, format, args); va_end(args); return n; }
+inline int auto_sprintf(WCHAR* buf, const WCHAR* format, ...) { va_list args; va_start(args, format); const int n = auto_vsprintf(buf, format, args); va_end(args); return n; }
 
-inline int auto_vsprintf(ACHAR* buf, const ACHAR* format, va_list& v){ return tchar_vsprintf(buf,format,v); }
-inline int auto_vsprintf(WCHAR* buf, const WCHAR* format, va_list& v){ return tchar_vsprintf(buf,format,v); }
-inline int auto_vsprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list& v){ return tchar_vsprintf_s(buf, nBufCount, format, v); }
-inline int auto_vsprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list& v){ return tchar_vsprintf_s(buf, nBufCount, format, v); }
+inline int auto_vsprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list& v) { return ::_vsnprintf_s(buf, nBufCount, _TRUNCATE, format, v); }
+inline int auto_vsprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list& v) { return ::_vsnwprintf_s(buf, nBufCount, _TRUNCATE, format, v); }
+#define auto_sprintf_s(buf, nBufCount, format, ...)		::_sntprintf_s((buf), nBufCount, _TRUNCATE, (format), __VA_ARGS__)
+#define auto_snprintf_s(buf, nBufCount, format, ...)	::_sntprintf_s((buf), nBufCount, _TRUNCATE, (format), __VA_ARGS__)
 
 int vstrprintf( std::wstring& strOut, const WCHAR* pszFormat, va_list& argList );
 int strprintf( std::wstring& strOut, const WCHAR* pszFormat, ... );

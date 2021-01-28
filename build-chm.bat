@@ -32,13 +32,6 @@ set CHM_MACRO=%TMP_HELP%\macro\macro.chm
 set CHM_PLUGIN=%TMP_HELP%\plugin\plugin.chm
 set CHM_SAKURA=%TMP_HELP%\sakura\sakura.chm
 
-if defined APPVEYOR (
-	if "%PLATFORM%" neq "BuildChm" (
-		goto :download_archive
-		exit /b 0
-	)
-)
-
 set "TOOL_SLN_FILE=%~dp0tools\ChmSourceConverter\ChmSourceConverter.sln"
 @echo "%CMD_MSBUILD%" %TOOL_SLN_FILE% "/p:Platform=Any CPU" /p:Configuration=Release /t:"Build" /v:q
       "%CMD_MSBUILD%" %TOOL_SLN_FILE% "/p:Platform=Any CPU" /p:Configuration=Release /t:"Build" /v:q
@@ -68,35 +61,6 @@ exit /b 0
 :BuildChm
 set PROJECT_HHP=%1
 set PROJECT_CHM=%2
-set PROJECT_LOG=%~dp2\Compile.log
 
-if exist "%PROJECT_CHM%" del /F "%PROJECT_CHM%"
-if exist "%PROJECT_LOG%" del /F "%PROJECT_LOG%"
-
-if defined CMD_LEPROC (
-	for /L %%i in (1,1,2) do (
-		"%CMD_LEPROC%" %COMSPEC% /c """%CMD_HHC%"" %PROJECT_HHP%"
-		@rem wait to create chm
-		for /L %%j in (1,1,30) do (
-			ping -n 2 localhost > NUL
-			copy "%PROJECT_LOG%" nul > NUL 2>&1
-			if not errorlevel 1 exit /b 0
-		)
-		echo retry creating %PROJECT_CHM%
-	)
-	echo fail to create %PROJECT_CHM%
-) else (
-	for /L %%i in (1,1,2) do (
-		@rem hhc.exe returns 1 on success, and returns 0 on failure
-		"%CMD_HHC%" %PROJECT_HHP%
-		if errorlevel 1 exit /b 0
-		echo error %PROJECT_HHP% errorlevel %errorlevel%
-		del /F "%PROJECT_CHM%"
-	)
-)
-exit /b 1
-
-:download_archive
-pwsh.exe -ExecutionPolicy RemoteSigned -File %SRC_HELP%\extract-chm-from-artifact.ps1
-if errorlevel 1 exit /b 1
+powershell.exe -ExecutionPolicy RemoteSigned -File %~dp0help\CompileChm.ps1 %PROJECT_HHP% %PROJECT_CHM%
 exit /b 0

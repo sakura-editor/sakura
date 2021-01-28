@@ -467,20 +467,16 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		case L'S':	//	Sep. 15, 2005 FILE
 			//	サクラエディタのフルパス
 			{
-				SFilePath	szPath;
-
-				::GetModuleFileName( NULL, szPath, _countof2(szPath) );
-				q = wcs_pushW( q, q_max - q, szPath );
+				auto exePath = GetExeFileName();
+				q = wcs_pushW( q, q_max - q, exePath.c_str() );
 				++p;
 			}
 			break;
 		case 'I':	//	May. 19, 2007 ryoji
 			//	iniファイルのフルパス
 			{
-				WCHAR	szPath[_MAX_PATH + 1];
-				const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
-				CFileNameManager::getInstance()->GetIniFileName( szPath, pszProfileName );
-				q = wcs_pushW( q, q_max - q, szPath );
+				auto privateIniPath = GetIniFileName();
+				q = wcs_pushW( q, q_max - q, privateIniPath.c_str() );
 				++p;
 			}
 			break;

@@ -112,9 +112,11 @@
     <ClCompile Include="test-cmemory.cpp" />
     <ClCompile Include="test-cnative.cpp" />
     <ClCompile Include="test-cprofile.cpp" />
+    <ClCompile Include="test-csakuraenvironment.cpp" />
     <ClCompile Include="test-cwordparse.cpp" />
     <ClCompile Include="test-editinfo.cpp" />
     <ClCompile Include="test-file.cpp" />
+    <ClCompile Include="test-charcode.cpp" />
     <ClCompile Include="test-format.cpp" />
     <ClCompile Include="test-grepinfo.cpp" />
     <ClCompile Include="test-int2dec.cpp" />
