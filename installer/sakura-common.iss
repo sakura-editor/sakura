@@ -69,13 +69,13 @@ zh_hant.AppVerName=櫻花編輯器
 
 en.AppPublisher=SAKURA Editor developers
 ja.AppPublisher=サクラエディタ開発チーム
-zh_hans.AppPublisher=樱花编辑器 开发者
-zh_hant.AppPublisher=櫻花編輯器 開發者
+zh_hans.AppPublisher=樱花编辑器 开发团队
+zh_hant.AppPublisher=櫻花編輯器 開發团队
 
 en.TypesAll=All
 ja.TypesAll=すべて
 zh_hans.TypesAll=全部安装
-zh_hant.TypesAll==全部安裝
+zh_hant.TypesAll=全部安裝
 
 en.TypesEditorWithHelp=Editor with Help
 ja.TypesEditorWithHelp=本体とヘルプ
@@ -95,7 +95,7 @@ zh_hant.TypesCustom=自定義
 en.ComponentsMain=SAKURA Editor itself
 ja.ComponentsMain=サクラエディタ本体
 zh_hans.ComponentsMain=樱花编辑器
-zh_hant.ComponentsMain=櫻花編輯器本体
+zh_hant.ComponentsMain=櫻花編輯器
 
 en.ComponentsHelp=help files
 ja.ComponentsHelp=ヘルプファイル
