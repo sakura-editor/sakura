@@ -4860,6 +4860,20 @@ ECharWidthCacheMode CEditWnd::GetLogfontCacheMode()
 	return CWM_CACHE_SHARE;
 }
 
+/*!
+	@brief 現在のズーム倍率を取得
+	@return 1.0を等倍とするズーム倍率
+*/
+double CEditWnd::GetFontZoom()
+{
+	const CEditDoc* pDocument = GetDocument();
+	if( pDocument->m_blfCurTemp ){
+		return pDocument->m_nCurrentZoom;
+	}else{
+		return 1.0;
+	}
+}
+
 void CEditWnd::ClearViewCaretPosInfo()
 {
 	for( int v = 0; v < GetAllViewCount(); ++v ){

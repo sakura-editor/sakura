@@ -836,11 +836,10 @@ void CCaret::ShowCaretPosInfo()
 		}
 
 		WCHAR szFontSize[16];
-		const double nZoomPercentage = m_pEditDoc->m_blfCurTemp ? (m_pEditDoc->m_nCurrentZoom * 100.0) : 100.0;
-		if( nZoomPercentage < 5.0 ){
-			auto_sprintf( szFontSize, LS( STR_STATUS_FONTZOOM_1 ), nZoomPercentage );
+		if( const double nZoomPercentage = m_pEditDoc->m_pcEditWnd->GetFontZoom() * 100.0; nZoomPercentage < 5.0 ){
+			auto_sprintf_s( szFontSize, _countof(szFontSize), LS( STR_STATUS_FONTZOOM_1 ), nZoomPercentage );
 		}else{
-			auto_sprintf( szFontSize, LS( STR_STATUS_FONTZOOM_0 ), nZoomPercentage );
+			auto_sprintf_s( szFontSize, _countof(szFontSize), LS( STR_STATUS_FONTZOOM_0 ), nZoomPercentage );
 		}
 
 		auto& statusBar = m_pEditDoc->m_pcEditWnd->m_cStatusBar;
