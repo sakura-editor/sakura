@@ -4866,9 +4866,8 @@ ECharWidthCacheMode CEditWnd::GetLogfontCacheMode()
 */
 double CEditWnd::GetFontZoom()
 {
-	const CEditDoc* pDocument = GetDocument();
-	if( pDocument->m_blfCurTemp ){
-		return pDocument->m_nCurrentZoom;
+	if( GetDocument()->m_blfCurTemp ){
+		return GetDocument()->m_nCurrentZoom;
 	}else{
 		return 1.0;
 	}

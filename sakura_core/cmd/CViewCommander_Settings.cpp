@@ -296,6 +296,7 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 	if( 0 != fontSize ){
 		// フォントサイズを直接選択する場合
 		nPointSize = std::clamp( fontSize, nPointSizeMin, nPointSizeMax );
+		nCurrentZoom = 1.0;
 	}else if( 0 != shift ){
 		// 現在のフォントに対して、縮小or拡大したフォント選択する場合
 		double nPointSizeF = 0.0;
