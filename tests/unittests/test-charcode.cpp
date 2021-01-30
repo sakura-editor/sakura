@@ -183,7 +183,7 @@ TEST_F(CharWidthCache, FontNo)
 
 TEST(charcode, IS_KEYWORD_CHAR)
 {
-	for (wchar_t ch = 0; ch < _countof(gm_keyword_char); ++ch) {
+	for (wchar_t ch = 0; ch < gm_keyword_char.size(); ++ch) {
 		EXPECT_EQ(IS_KEYWORD_CHAR(ch),
 			gm_keyword_char[ch] == CK_CSYM || gm_keyword_char[ch] == CK_UDEF);
 	}
