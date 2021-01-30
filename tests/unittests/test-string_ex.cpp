@@ -101,11 +101,38 @@ TEST(string_ex, auto_sprintfW)
 	ASSERT_STREQ(L"test-101", szText);
 }
 
+/*!
+	@brief 独自定義のフォーマット関数。
+
+	C関数をC++に移植する作業を簡便化する目的で作成。
+	CRT関数sprintf_sに関する注意点が全て当てはまるので注意。
+	例)
+		"%b" など、未定義のフォーマット識別子を指定すると落ちます。
+		フォーマットと引数の整合がとれていないとAV例外で落ちます。
+ */
 TEST(string_ex, strprintf)
+{
+	std::wstring text = strprintf(L"%s-%d", L"test", 101);
+	ASSERT_STREQ(L"test-101", text.c_str());
+}
+
+/*!
+	@brief 独自定義のフォーマット関数(C-Style風)。
+ */
+TEST(string_ex, strprintfOutputToArg)
 {
 	std::wstring text;
 	strprintf(text, L"%s-%d", L"test", 101);
 	ASSERT_STREQ(L"test-101", text.c_str());
+}
+
+/*!
+	@brief 独自定義のフォーマット関数(空文字出力テスト)。
+ */
+TEST(string_ex, strprintfEmpty)
+{
+	std::wstring text = strprintf(L"%hs", "");
+	ASSERT_TRUE(text.empty());
 }
 
 /*!

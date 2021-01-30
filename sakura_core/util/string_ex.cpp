@@ -216,6 +216,46 @@ const char* stristr_j( const char* s1, const char* s2 )
 
 /*!
 	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
+	@param[in]  pszFormat	フォーマット文字列
+	@param[in]  argList		引数リスト
+	@returns フォーマットされた文字列
+*/
+std::wstring vstrprintf(const WCHAR* pszFormat, va_list& argList)
+{
+	// _vscwprintf() はフォーマットに必要な文字数を返す。
+	const int cchOut = ::_vscwprintf(pszFormat, argList);
+	if (cchOut == 0) {
+		// 出力文字数が0なら後続処理は要らない。
+		return std::wstring();
+	}
+
+	// 必要なバッファを確保してフォーマットする
+	std::wstring strOut(cchOut + 1, L'0');
+	::vswprintf_s(strOut.data(), strOut.capacity(), pszFormat, argList);
+	strOut.resize(cchOut);
+	return strOut;
+}
+
+/*!
+	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
+	@param[in]  pszFormat	フォーマット文字列
+	@param[in]  ...			引数リスト
+	@returns フォーマットされた文字列
+*/
+std::wstring strprintf(const WCHAR* pszFormat, ...)
+{
+	va_list argList;
+	va_start(argList, pszFormat);
+
+	const auto strRet = vstrprintf(pszFormat, argList);
+
+	va_end(argList);
+
+	return strRet;
+}
+
+/*!
+	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
 	@param[out] strOut		フォーマットされたテキストを受け取る変数
 	@param[in]  pszFormat	フォーマット文字列
 	@param[in]  argList		引数リスト
@@ -225,27 +265,9 @@ const char* stristr_j( const char* s1, const char* s2 )
 */
 int vstrprintf( std::wstring& strOut, const WCHAR* pszFormat, va_list& argList )
 {
-	// バッファをクリアしておく
-	strOut.clear();
-
-	// _vscwprintf() はフォーマットに必要な文字数を返す。
-	const int cchOut = ::_vscwprintf( pszFormat, argList );
-	if( cchOut <= 0 ){
-		// 出力文字数が0なら後続処理は要らない。また、エラー時は-1が返る。
-		return cchOut;
-	}
-
-	// フォーマットに必要なバッファを確保する
-	strOut.resize( cchOut );
-
-	// vswprintf_s() はコピーした文字数を返す。
-	const int actualCopied = ::vswprintf_s( strOut.data(), strOut.capacity(), pszFormat, argList );
-	if( actualCopied < 0 ){
-		// データサイズを反映する
-		strOut.assign( strOut.data(), cchOut );
-	}
-
-	return actualCopied;
+	// オーバーロードバージョンを呼び出す
+	strOut = vstrprintf(pszFormat, argList);
+	return static_cast<int>(strOut.length());
 }
 
 /*!
