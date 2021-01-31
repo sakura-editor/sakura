@@ -183,10 +183,11 @@ TEST_F(CharWidthCache, FontNo)
 
 TEST(charcode, IS_KEYWORD_CHAR)
 {
-	for (wchar_t ch = 0; ch < _countof(gm_keyword_char); ++ch) {
+	for (wchar_t ch = 0; ch < gm_keyword_char.size(); ++ch) {
 		EXPECT_EQ(IS_KEYWORD_CHAR(ch),
 			gm_keyword_char[ch] == CK_CSYM || gm_keyword_char[ch] == CK_UDEF);
 	}
+	EXPECT_FALSE(IS_KEYWORD_CHAR(static_cast<wchar_t>(-1)));
 }
 
 // 以下、関数が判定している文字がすべてASCII範囲内であれば総当たりテストを実施する。
