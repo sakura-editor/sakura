@@ -187,6 +187,7 @@ TEST(charcode, IS_KEYWORD_CHAR)
 		EXPECT_EQ(IS_KEYWORD_CHAR(ch),
 			gm_keyword_char[ch] == CK_CSYM || gm_keyword_char[ch] == CK_UDEF);
 	}
+	EXPECT_FALSE(IS_KEYWORD_CHAR(static_cast<wchar_t>(-1)));
 }
 
 // 以下、関数が判定している文字がすべてASCII範囲内であれば総当たりテストを実施する。

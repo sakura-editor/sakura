@@ -42,15 +42,14 @@ namespace WCODE{
 	//文字
 	constexpr wchar_t TAB   = L'\t';
 	constexpr wchar_t SPACE = L' ';
-	constexpr wchar_t CR    = L'\015';
-	constexpr wchar_t LF    = L'\012';
+	constexpr wchar_t CR    = L'\r';
+	constexpr wchar_t LF    = L'\n';
 	constexpr wchar_t ESC   = L'\x1b';
 
 	//文字列
-	constexpr wchar_t CRLF[] = L"\015\012";
+	constexpr wchar_t CRLF[] = L"\r\n";
 
 	//特殊 (BREGEXP)
-	//$$ UNICODE版の仮デリミタ。bregonigの仕様がよくわかんないので、とりあえずこんな値にしてます。
 	constexpr wchar_t BREGEXP_DELIMITER = (wchar_t)0xFFFF;
 }
 
@@ -67,7 +66,7 @@ extern const std::array<unsigned char, 128> gm_keyword_char;
 //Nov. 27, 2010 syat   速度改善のためテーブルに変更
 [[nodiscard]] inline bool IS_KEYWORD_CHAR(wchar_t wc)
 {
-	if(wc < gm_keyword_char.size() && (gm_keyword_char[wc] == CK_CSYM||gm_keyword_char[wc] == CK_UDEF) )
+	if(static_cast<std::size_t>(wc) < gm_keyword_char.size() && (gm_keyword_char[wc] == CK_CSYM||gm_keyword_char[wc] == CK_UDEF) )
 		return true;
 	else
 		return false;
@@ -149,10 +148,10 @@ namespace WCODE
 	//!ファイル名に使える文字であるかどうか
 	inline bool IsValidFilenameChar(const wchar_t wc)
 	{
-		constexpr wchar_t table[] = L"<>?\"|*";
+		constexpr const wchar_t table[] = L"<>?\"|*";
 
 		//table内の文字が含まれていたら、ダメ。
-		return wcschr(table, wc) == nullptr;
+		return !wcschr(table, wc);
 	}
 
 	//!タブ表示に使える文字かどうか
@@ -179,8 +178,8 @@ namespace WCODE
 		//$ 他にも全角記号はあると思うけど、とりあえずANSI版時代の判定を踏襲。パフォーマンス悪し。
 		// 2009.06.26 syat 「ゝゞ（ひらがな）」「ヽヾ（カタカナ）」「゛゜（全角濁点）」「仝々〇（漢字）」「ー（長音）」を除外
 		// 2009.10.10 syat ANSI版の修正にあわせて「〆」を記号→漢字にする
-		constexpr wchar_t table[] = L"　、。，．・：；？！´｀¨＾￣＿〃―‐／＼～∥｜…‥‘’“”（）〔〕［］｛｝〈〉《》「」『』【】＋－±×÷＝≠＜＞≦≧∞∴♂♀°′″℃￥＄￠￡％＃＆＊＠§☆★○●◎◇◆□■△▲▽▼※〒→←↑↓〓∈∋⊆⊇⊂⊃∪∩∧∨￢⇒⇔∀∃∠⊥⌒∂∇≡≒≪≫√∽∝∵∫∬Å‰♯♭♪†‡¶◯";
-		return wcschr(table,c)!=nullptr;
+		constexpr const wchar_t table[] = L"　、。，．・：；？！´｀¨＾￣＿〃―‐／＼～∥｜…‥‘’“”（）〔〕［］｛｝〈〉《》「」『』【】＋－±×÷＝≠＜＞≦≧∞∴♂♀°′″℃￥＄￠￡％＃＆＊＠§☆★○●◎◇◆□■△▲▽▼※〒→←↑↓〓∈∋⊆⊇⊂⊃∪∩∧∨￢⇒⇔∀∃∠⊥⌒∂∇≡≒≪≫√∽∝∵∫∬Å‰♯♭♪†‡¶◯";
+		return wcschr(table,c);
 	}
 
 	//! ひらがなかどうか
