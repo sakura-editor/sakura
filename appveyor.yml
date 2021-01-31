@@ -27,6 +27,8 @@ install:
     cinst locale-emulator -y
     cup vswhere
     py.exe -m pip install openpyxl --user
+    cup innosetup
+    C:\ProgramData\chocolatey\tools\shimgen.exe --output=C:\ProgramData\chocolatey\bin\ISCC.exe --path="C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
 
 # to run our custom scripts instead of automatic MSBuild
 build_script:

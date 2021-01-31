@@ -48,70 +48,164 @@ MinVersion=6.1
 [Languages]
 Name: "ja"; MessagesFile: "compiler:Languages\Japanese.isl"
 Name: "en"; MessagesFile: "compiler:Default.isl"; InfoBeforeFile: "instmaterials\info_us.txt"
+Name: "zh_hans"; MessagesFile: "Languages\ChineseSimplified.isl"; InfoBeforeFile: "instmaterials\info_zh_hans.txt"
+Name: "zh_hant"; MessagesFile: "Languages\ChineseTraditional.isl"; InfoBeforeFile: "instmaterials\info_zh_hant.txt"
 
 [CustomMessages]
 en.InfoBeforeFile=instmaterials\info_en.txt
 ja.InfoBeforeFile=instmaterials\info.txt
+zh_hans.InfoBeforeFile=instmaterials\info_zh_hans.txt
+zh_hant.InfoBeforeFile=instmaterials\info_zh_hant.txt
+
 en.AppName=SAKURA Editor
 ja.AppName=サクラエディタ
+zh_hans.AppName=樱花编辑器
+zh_hant.AppName=櫻花編輯器
+
 en.AppVerName=SAKURA Editor
 ja.AppVerName=SAKURA Editor(サクラエディタ)
+zh_hans.AppVerName=樱花编辑器
+zh_hant.AppVerName=櫻花編輯器
+
 en.AppPublisher=SAKURA Editor developers
 ja.AppPublisher=サクラエディタ開発チーム
+zh_hans.AppPublisher=樱花编辑器 开发团队
+zh_hant.AppPublisher=櫻花編輯器 開發团队
+
 en.TypesAll=All
 ja.TypesAll=すべて
+zh_hans.TypesAll=全部安装
+zh_hant.TypesAll=全部安裝
+
 en.TypesEditorWithHelp=Editor with Help
 ja.TypesEditorWithHelp=本体とヘルプ
+zh_hans.TypesEditorWithHelp=本体与帮助文件
+zh_hant.TypesEditorWithHelp=本體與幫助檔
+
 en.TypesEditorOnly=Editor Only
 ja.TypesEditorOnly=本体のみ
+zh_hans.TypesEditorOnly=仅安装本体
+zh_hant.TypesEditorOnly=僅安裝本體
+
 en.TypesCustom=Custom
 ja.TypesCustom=カスタム
+zh_hans.TypesCustom=自定义
+zh_hant.TypesCustom=自定義
+
 en.ComponentsMain=SAKURA Editor itself
 ja.ComponentsMain=サクラエディタ本体
+zh_hans.ComponentsMain=樱花编辑器
+zh_hant.ComponentsMain=櫻花編輯器
+
 en.ComponentsHelp=help files
 ja.ComponentsHelp=ヘルプファイル
+zh_hans.ComponentsHelp=帮助文件
+zh_hant.ComponentsHelp=幫助檔
+
 en.ComponentsKeyword=KeyWord files
 ja.ComponentsKeyword=KeyWordファイル
+zh_hans.ComponentsKeyword=语法提示文件
+zh_hant.ComponentsKeyword=語法提示檔案
+
 en.startmenu=Create &Start Menu
 ja.startmenu=スタートメニューを作成(&S)
+zh_hans.startmenu=添加到开始菜单(&S)
+zh_hant.startmenu=添加到開始菜單(&S)
+
 en.proglist=Add &Program List
 ja.proglist=プログラム一覧に追加(&P)
+zh_hans.proglist=添加到程序列表(&P)
+zh_hant.proglist=添加到程式清單(&P)
+
 en.fileassoc=Add "Open with SAKURA &Editor"
 ja.fileassoc=「SAKURA Editorで開く」メニューの追加(&E)
+zh_hans.fileassoc=添加"用 樱花编辑器 打开"(&E)
+zh_hant.fileassoc=添加“用 櫻花編輯器 打開”(&E)
+
 en.sendto=Add to Send&To Menu
 ja.sendto=送るに追加(&T)
+zh_hans.sendto=添加到"发送到"菜单(&T)
+zh_hant.sendto=添加到“發送到”選單(&T)
+
 en.sakuragrep=Add "&Grep with SAKURA Editor"
 ja.sakuragrep=「SAKURA EditorでGrep」メニューの追加(&G)
+zh_hans.sakuragrep=添加到 "Grep with SAKURA Editor"(&G)
+zh_hant.sakuragrep=添加到 “Grep with SAKURA Editor”(&G)
+
 en.fileassocMenu=Open with SAKURA &Editor
 ja.fileassocMenu=SAKURA Editorで開く(&E)
+zh_hans.fileassocMenu=用 樱花编辑器 打开(&E)
+zh_hant.fileassocMenu=用 櫻花編輯器 打開く(&E)
+
 en.sakuragrepMenu=&Grep with SAKURA Editor
 ja.sakuragrepMenu=SAKURA EditorでGrep(&G)
+zh_hans.sakuragrepMenu=Grep with SAKURA Editor(&G)
+zh_hant.sakuragrepMenu=Grep with SAKURA Editor(&G)
+
 en.residentStartup=&Resident at startup
 ja.residentStartup=起動時に常駐(&R)
+zh_hans.residentStartup=开机时启动(&R)
+zh_hant.residentStartup=開機時啟動(&R)
+
 en.IconPreferencefolder=Preference folder
 ja.IconPreferencefolder=設定フォルダ
+zh_hans.IconPreferencefolder=文件夹设置
+zh_hant.IconPreferencefolder=資料夾設定
+
 en.StartNow=Start now
 ja.StartNow=今すぐサクラエディタを起動
+zh_hans.StartNow=现在启动
+zh_hant.StartNow=現在啟動
+
 en.MultiUser=Install in compatibility mode. When editing system files and programs with user authority, editing results may not be accessible from other applications. (VirtualStore function)
 ja.MultiUser=互換モードでインストールします．システムファイルおよびプログラムをユーザ権限で編集すると編集結果が他のアプリケーションから参照できないことがあります．(VirtualStore機能)
+zh_hans.MultiUser=软件将会以兼容模式安装。使用非管理员用户编辑配置文件时，文件可能无法被管理员用户访问。(VirtualStore功能)
+zh_hant.MultiUser=軟件將會以相容模式安裝。使用非管理員用戶編輯設定檔時，檔案可能無法被管理員用戶訪問。（VirtualStore功能）
+
 en.InitWiz_Title=Selection of Preference preservation method
 ja.InitWiz_Title=設定保存方法の選択
+zh_hans.InitWiz_Title=配置文件保存位置
+zh_hant.InitWiz_Title=設定檔保存位置
+
 en.InitWiz_SubTitle=Please choose whether you want to save the settings for each user or to the location of the executable file
 ja.InitWiz_SubTitle=設定をユーザ毎に保存するか実行ファイルの場所へ保存するかを選択してください
-en.InitWiz_Comment=Please do not change if you're unsure about this
+zh_hans.InitWiz_SubTitle=选择将Sukura配置文件保存至当前用户或软件目录内
+zh_hant.InitWiz_SubTitle=選擇將Sukura設定檔保存至當前用戶或軟件目錄內
+
+en.InitWiz_Comment=Please do not change if you are unsure about this
 ja.InitWiz_Comment=よくわからない場合は変更しないでください
+zh_hans.InitWiz_Comment=若您不清楚此选项，请不要修改
+zh_hant.InitWiz_Comment=若您不清楚此選項，請不要修改
+
 en.InitWiz_Check=Manage Preference individually for each user
 ja.InitWiz_Check=設定をユーザ毎に個別に管理する
+zh_hans.InitWiz_Check=将每个用户的配置文件单独保存
+zh_hant.InitWiz_Check=將每個用戶的設定檔單獨保存
+
 en.ReadyMemo_SaveLocation=Preference file etc. save location
 ja.ReadyMemo_SaveLocation=設定ファイル等格納場所
+zh_hans.ReadyMemo_SaveLocation=设定文件保存位置
+zh_hant.ReadyMemo_SaveLocation=設定檔案保存位置
+
 en.ReadyMemo_UserProfileDir=User-Profile directory
 ja.ReadyMemo_UserProfileDir=ユーザ個別ディレクトリ
+zh_hans.ReadyMemo_UserProfileDir=用户配置文件目录
+zh_hant.ReadyMemo_UserProfileDir=用戶設定檔目錄
+
 en.ReadyMemo_VirtualStoreDisable=Disable
 ja.ReadyMemo_VirtualStoreDisable=無効
+zh_hans.ReadyMemo_VirtualStoreDisable=无效
+zh_hant.ReadyMemo_VirtualStoreDisable=無效
+
 en.ReadyMemo_ExecProfileDir=Same as the executable file
 ja.ReadyMemo_ExecProfileDir=実行ファイルと同一ディレクトリ
+zh_hans.ReadyMemo_ExecProfileDir=与可执行文件相同
+zh_hant.ReadyMemo_ExecProfileDir=與可執行文件相同
+
 en.ReadyMemo_VirtualStoreEnable=Enable
 ja.ReadyMemo_VirtualStoreEnable=有効
+zh_hans.ReadyMemo_VirtualStoreEnable=生效
+zh_hant.ReadyMemo_VirtualStoreEnable=生效
 
 
 
