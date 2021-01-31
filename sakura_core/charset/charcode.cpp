@@ -25,7 +25,7 @@
 
 #include "StdAfx.h"
 #include "charset/charcode.h"
-
+#include <array>
 #include "env/DLLSHAREDATA.h"
 
 /*! キーワードキャラクタ */
@@ -96,12 +96,12 @@ namespace WCODE
 		文字幅情報のキャッシュクラス。
 		1文字当たり2バイトで保存しておく。
 	*/
-	class LocalCache{
+	class CCharWidthCache{
 	public:
-		LocalCache() = default;
-		LocalCache(const LocalCache&) = delete;
-		LocalCache& operator=(const LocalCache&) = delete;
-		~LocalCache()
+		CCharWidthCache() = default;
+		CCharWidthCache(const CCharWidthCache&) = delete;
+		CCharWidthCache& operator=(const CCharWidthCache&) = delete;
+		~CCharWidthCache()
 		{
 			// -- -- 後始末 -- -- //
 			DeleteLocalData();
@@ -235,15 +235,15 @@ namespace WCODE
 		SCharWidthCache*	m_pCache = nullptr;
 	};
 
-	class LocalCacheSelector{
+	class CacheSelector{
 	public:
-		LocalCacheSelector() : pcache(m_localcache.data())
+		CacheSelector() : pcache(m_localcache.data())
 		{
 			for( int i=0; i<CWM_FONT_MAX; i++ ){
 				m_parCache[i] = 0;
 			}
 		}
-		~LocalCacheSelector()
+		~CacheSelector()
 		{
 			for( int i=0; i<CWM_FONT_MAX; i++ ){
 				delete m_parCache[i];
@@ -273,16 +273,16 @@ namespace WCODE
 			if( fMode==CWM_FONT_EDIT ){ m_eLastEditCacheMode = cmode; }
 			WCODE::s_MultiFont = pcache->GetMultiFont();
 		}
-		[[nodiscard]] LocalCache* GetCache(){ return pcache; }
+		[[nodiscard]] CCharWidthCache* GetCache(){ return pcache; }
 	private:
-		std::array<LocalCache, 3> m_localcache;
+		std::array<CCharWidthCache, 3> m_localcache;
 		std::array<SCharWidthCache*, 3> m_parCache;
 		ECharWidthCacheMode m_eLastEditCacheMode = CWM_CACHE_NEUTRAL;
-		LocalCache* pcache;
-		DISALLOW_COPY_AND_ASSIGN(LocalCacheSelector);
+		CCharWidthCache* pcache;
+		DISALLOW_COPY_AND_ASSIGN(CacheSelector);
 	};
 
-	static LocalCacheSelector selector;
+	static CacheSelector selector;
 
 	//文字幅の動的計算。ピクセル幅
 	int CalcPxWidthByFont(wchar_t c)

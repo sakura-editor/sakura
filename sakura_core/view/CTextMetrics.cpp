@@ -72,7 +72,7 @@ void CTextMetrics::Update(HDC hdc, HFONT hFont, int nLineSpace, int nColmSpace)
 	for( int i = 0; i < size; i++ ){
 		HFONT hFontOld = (HFONT)::SelectObject( hdc, hFontArray[i] );
  		SIZE  sz;
-		// LocalCache::m_han_size と一致していなければならない
+		// CCharWidthCache::m_han_size と一致していなければならない
 		{
 			// KB145994
 			// tmAveCharWidth は不正確(半角か全角なのかも不明な値を返す)
