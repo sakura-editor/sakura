@@ -506,14 +506,17 @@ void GetExedir(
 	if( pDir == NULL )
 		return;
 
-	std::wstring_view filename(L"");
+	std::wstring partialPath;
 	if (szFile != nullptr) {
-		filename = szFile;
+		partialPath = szFile;
+	}
+	if (partialPath.empty() || partialPath[0] != L'\\') {
+		partialPath.insert(partialPath.cbegin(), L'\\');
 	}
 
 	// exeフォルダのフルパス、またはexe基準のファイルパスを取得
-	auto path = GetExePath(filename);
-	::wcsncpy_s(pDir, decltype(DLLSHAREDATA::m_szIniFile)::BUFFER_COUNT - 1, path.c_str(), _TRUNCATE);
+	auto path = GetExeFileName().parent_path().concat(partialPath);
+	::wcsncpy_s(pDir, decltype(DLLSHAREDATA::m_szIniFile)::BUFFER_COUNT, path.c_str(), _TRUNCATE);
 }
 
 /*!
@@ -550,14 +553,17 @@ void GetInidir(
 	if( pDir == NULL )
 		return;
 	
-	std::wstring_view filename(L"");
+	std::wstring partialPath;
 	if (szFile != nullptr) {
-		filename = szFile;
+		partialPath = szFile;
+	}
+	if (partialPath.empty() || partialPath[0] != L'\\') {
+		partialPath.insert(partialPath.cbegin(), L'\\');
 	}
 
 	// 設定フォルダのフルパス、またはini基準のファイルパスを取得
-	auto path = GetIniPath(filename);
-	::wcsncpy_s(pDir, decltype(DLLSHAREDATA::m_szPrivateIniFile)::BUFFER_COUNT - 1, path.c_str(), _TRUNCATE);
+	auto path = GetIniFileName().parent_path().concat(partialPath);
+	::wcsncpy_s(pDir, decltype(DLLSHAREDATA::m_szPrivateIniFile)::BUFFER_COUNT, path.c_str(), _TRUNCATE);
 }
 
 /*!
