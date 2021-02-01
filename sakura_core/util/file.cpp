@@ -482,15 +482,6 @@ std::filesystem::path GetExeFileName()
 }
 
 /*!
-	@brief exeがあるフォルダのフルパス、またはexe基準のファイルパス(フルパス)を返す．
-*/
-std::filesystem::path GetExePath(const std::wstring_view& filename)
-{
-	// sakura.exe のパスのファイル名を指定された文字列で置換
-	return GetExeFileName().replace_filename(filename.data());
-}
-
-/*!
 	@brief exeファイルのあるディレクトリ，または指定されたファイル名のフルパスを返す．
 	
 	@author genta
@@ -528,15 +519,6 @@ std::filesystem::path GetIniFileName()
 		return pProcess->GetIniFileName();
 	}
 	return GetExeFileName().replace_extension(L".ini");
-}
-
-/*!
-	@brief 設定フォルダのフルパス、またはini基準のファイルパス(フルパス)を返す．
-*/
-std::filesystem::path GetIniPath(const std::wstring_view& filename)
-{
-	// iniファイルパスのファイル名を指定された文字列で置換
-	return GetIniFileName().replace_filename(filename.data());
 }
 
 /*!

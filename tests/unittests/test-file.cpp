@@ -85,48 +85,6 @@ TEST(file, GetExeFileName)
 }
 
 /*!
- * @brief exeフォルダのフルパスの取得
- */
-TEST(file, GetExePath_Directory)
-{
-	// テスト対象関数呼び出し
-	auto exeDir = GetExePath(L"");
-
-	// 戻り値はファイル名を含まない
-	ASSERT_FALSE(exeDir.has_filename());
-
-	// パスコンポーネントの最終要素は空になる(\で終わっている)
-	auto lastComponent = *(--exeDir.end());
-	ASSERT_STREQ(L"", lastComponent.c_str());
-
-	// 戻り値はexeファイルパスからファイル名を取り除いたものになる
-	auto exePath = GetExeFileName();
-	ASSERT_STREQ(exePath.remove_filename().c_str(), exeDir.c_str());
-}
-
-/*!
- * @brief exe基準のファイルパス(フルパス)の取得
- */
-TEST(file, GetExePath_FileName)
-{
-	// テストに使うファイル名(空でなければなんでもいい)
-	constexpr const auto filename = L"README.txt";
-
-	// テスト対象関数呼び出し
-	auto exeBasePath = GetExePath(filename);
-
-	// 戻り値はファイル名を含む
-	ASSERT_TRUE(exeBasePath.has_filename());
-
-	// 戻り値のファイル名は指定したものになっている
-	ASSERT_STREQ(filename, exeBasePath.filename().c_str());
-
-	// 戻り値の親フォルダはexeファイルパスの親フォルダと等しい
-	auto exePath = GetExeFileName();
-	ASSERT_STREQ(exePath.parent_path().c_str(), exeBasePath.parent_path().c_str());
-}
-
-/*!
  * @brief 既存コード互換用に残しておく関数のリグレッション
  */
 TEST(file, Deprecated_GetExedir)
@@ -135,7 +93,7 @@ TEST(file, Deprecated_GetExedir)
 	constexpr const auto filename = L"README.txt";
 
 	// 比較用関数呼び出し
-	auto exeBasePath = GetExePath(filename);
+	auto exeBasePath = GetExeFileName().parent_path().append(filename);
 
 	// 戻り値取得用のバッファ
 	WCHAR szBuf[_MAX_PATH];
@@ -376,48 +334,6 @@ TEST(file, GetIniFileName_PrivateDocument)
 }
 
 /*!
- * @brief iniフォルダのフルパスの取得
- */
-TEST(file, GetIniPath_Directory)
-{
-	// テスト対象関数呼び出し
-	auto iniDir = GetIniPath(L"");
-
-	// 戻り値はファイル名を含まない
-	ASSERT_FALSE(iniDir.has_filename());
-
-	// パスコンポーネントの最終要素は空になる(\で終わっている)
-	auto lastComponent = *(--iniDir.end());
-	ASSERT_STREQ(L"", lastComponent.c_str());
-
-	// 戻り値はiniファイルパスからファイル名を取り除いたものになる
-	auto iniPath = GetIniFileName();
-	ASSERT_STREQ(iniPath.remove_filename().c_str(), iniDir.c_str());
-}
-
-/*!
- * @brief ini基準のファイルパス(フルパス)の取得
- */
-TEST(file, GetIniPath_FileName)
-{
-	// テストに使うファイル名(空でなければなんでもいい)
-	constexpr const auto filename = L"README.txt";
-
-	// テスト対象関数呼び出し
-	auto iniBasePath = GetIniPath(filename);
-
-	// 戻り値はファイル名を含む
-	ASSERT_TRUE(iniBasePath.has_filename());
-
-	// 戻り値のファイル名は指定したものになっている
-	ASSERT_STREQ(filename, iniBasePath.filename().c_str());
-
-	// 戻り値の親フォルダはiniファイルパスの親フォルダと等しい
-	auto iniPath = GetIniFileName();
-	ASSERT_STREQ(iniPath.parent_path().c_str(), iniBasePath.parent_path().c_str());
-}
-
-/*!
  * @brief 既存コード互換用に残しておく関数のリグレッション
  */
 TEST(file, Deprecated_GetInidir)
@@ -426,7 +342,7 @@ TEST(file, Deprecated_GetInidir)
 	constexpr const auto filename = L"README.txt";
 
 	// 比較用関数呼び出し
-	auto iniBasePath = GetIniPath(filename);
+	auto iniBasePath = GetIniFileName().parent_path().append(filename);
 
 	// 戻り値取得用のバッファ
 	WCHAR szBuf[_MAX_PATH];
@@ -464,11 +380,11 @@ TEST(file, GetInidirOrExedir)
 	std::wstring buf(_MAX_PATH, L'\0');
 
 	GetInidirOrExedir(buf.data(), L"", true);
-	ASSERT_STREQ(GetExePath(L"").c_str(), buf.data());
+	ASSERT_STREQ(GetExeFileName().replace_filename(L"").c_str(), buf.data());
 
 	constexpr auto filename = L"test.txt";
-	auto exeBasePath = GetExePath(filename);
-	auto iniBasePath = GetIniPath(filename);
+	auto exeBasePath = GetExeFileName().parent_path().append(filename);
+	auto iniBasePath = GetIniFileName().parent_path().append(filename);
 
 	// EXE基準のファイルを作る
 	{
@@ -478,7 +394,7 @@ TEST(file, GetInidirOrExedir)
 
 	// INI基準のファイルを作る
 	{
-		EnsureDirectoryExist(GetIniPath(L"").c_str());
+		EnsureDirectoryExist(GetIniFileName().replace_filename(L"").c_str());
 
 		std::wofstream ofs(iniBasePath);
 		ofs << L"TEST(file, GetInidirOrExedir)" << std::endl;
