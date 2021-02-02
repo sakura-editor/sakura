@@ -5,6 +5,7 @@
 #include <stdarg.h>
 
 #include "charset/charcode.h"
+#include "charset/codechecker.h"
 #include "util/std_macro.h"
 #include <limits.h>
 #include <locale.h>

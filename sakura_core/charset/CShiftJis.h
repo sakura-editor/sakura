@@ -27,6 +27,7 @@
 #pragma once
 
 #include "CCodeBase.h"
+#include "charset/codechecker.h"
 #include "charset/codeutil.h"
 
 struct CommonSetting_Statusbar;

@@ -28,6 +28,7 @@
 
 #include <mbstring.h>
 #include "charset/CCodeBase.h"
+#include "charset/codechecker.h"
 #include "charset/codeutil.h"
 
 class CEuc : public CCodeBase{

@@ -20,6 +20,7 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "charset/CUtf8.h"
+#include "charset/codechecker.h"
 #include "util/module.h"
 #include "util/file.h"
 
