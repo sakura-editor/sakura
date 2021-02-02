@@ -32,6 +32,7 @@
 #pragma once
 
 #include "CCodeBase.h"
+#include "charset/codechecker.h"
 
 class CLatin1 : public CCodeBase{
 

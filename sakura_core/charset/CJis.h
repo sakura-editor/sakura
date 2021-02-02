@@ -27,6 +27,7 @@
 #pragma once
 
 #include "CCodeBase.h"
+#include "charset/codechecker.h"
 
 class CJis : public CCodeBase{
 public:

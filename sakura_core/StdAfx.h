@@ -122,8 +122,6 @@
 
 //TCHARユーティリティ
 #include "util/tchar_convert.h"
-#include "charset/charcode.h"
-#include "charset/codechecker.h"
 
 // 2010.04.19 Moca includeの大規模整理
 #ifndef SAKURA_PCH_MODE_MIN

@@ -14,6 +14,7 @@
 #include "StdAfx.h"
 #include "view/CEditView.h"
 #include "window/CEditWnd.h"
+#include "charset/codechecker.h"
 #include "doc/CEditDoc.h"
 #include "doc/logic/CDocLine.h"
 #include "extmodule/CMigemo.h"

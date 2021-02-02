@@ -27,6 +27,7 @@
 #pragma once
 
 #include "charset/charcode.h"
+#include "charset/codechecker.h"
 
 //!< ディレクトリを除いた、ファイル名だけを取得する
 class CharPointerA{
