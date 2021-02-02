@@ -62,8 +62,6 @@ bool _IS_REL_PATH(const WCHAR* path);											//!< 相対パスか判定する
 
 std::filesystem::path GetExeFileName();
 std::filesystem::path GetIniFileName();
-std::filesystem::path GetExePath(const std::wstring_view& filename);
-std::filesystem::path GetIniPath(const std::wstring_view& filename);
 
 //※サクラ依存
 void GetExedir( LPWSTR pDir, LPCWSTR szFile = NULL );

@@ -482,15 +482,6 @@ std::filesystem::path GetExeFileName()
 }
 
 /*!
-	@brief exeがあるフォルダのフルパス、またはexe基準のファイルパス(フルパス)を返す．
-*/
-std::filesystem::path GetExePath(const std::wstring_view& filename)
-{
-	// sakura.exe のパスのファイル名を指定された文字列で置換
-	return GetExeFileName().replace_filename(filename.data());
-}
-
-/*!
 	@brief exeファイルのあるディレクトリ，または指定されたファイル名のフルパスを返す．
 	
 	@author genta
@@ -506,14 +497,17 @@ void GetExedir(
 	if( pDir == NULL )
 		return;
 
-	std::wstring_view filename(L"");
+	std::wstring partialPath;
 	if (szFile != nullptr) {
-		filename = szFile;
+		partialPath = szFile;
+	}
+	if (partialPath.empty() || partialPath[0] != L'\\') {
+		partialPath.insert(partialPath.cbegin(), L'\\');
 	}
 
 	// exeフォルダのフルパス、またはexe基準のファイルパスを取得
-	auto path = GetExePath(filename);
-	::wcsncpy_s(pDir, decltype(DLLSHAREDATA::m_szIniFile)::BUFFER_COUNT - 1, path.c_str(), _TRUNCATE);
+	auto path = GetExeFileName().parent_path().concat(partialPath);
+	::wcsncpy_s(pDir, decltype(DLLSHAREDATA::m_szIniFile)::BUFFER_COUNT, path.c_str(), _TRUNCATE);
 }
 
 /*!
@@ -525,15 +519,6 @@ std::filesystem::path GetIniFileName()
 		return pProcess->GetIniFileName();
 	}
 	return GetExeFileName().replace_extension(L".ini");
-}
-
-/*!
-	@brief 設定フォルダのフルパス、またはini基準のファイルパス(フルパス)を返す．
-*/
-std::filesystem::path GetIniPath(const std::wstring_view& filename)
-{
-	// iniファイルパスのファイル名を指定された文字列で置換
-	return GetIniFileName().replace_filename(filename.data());
 }
 
 /*!
@@ -550,14 +535,17 @@ void GetInidir(
 	if( pDir == NULL )
 		return;
 	
-	std::wstring_view filename(L"");
+	std::wstring partialPath;
 	if (szFile != nullptr) {
-		filename = szFile;
+		partialPath = szFile;
+	}
+	if (partialPath.empty() || partialPath[0] != L'\\') {
+		partialPath.insert(partialPath.cbegin(), L'\\');
 	}
 
 	// 設定フォルダのフルパス、またはini基準のファイルパスを取得
-	auto path = GetIniPath(filename);
-	::wcsncpy_s(pDir, decltype(DLLSHAREDATA::m_szPrivateIniFile)::BUFFER_COUNT - 1, path.c_str(), _TRUNCATE);
+	auto path = GetIniFileName().parent_path().concat(partialPath);
+	::wcsncpy_s(pDir, decltype(DLLSHAREDATA::m_szPrivateIniFile)::BUFFER_COUNT, path.c_str(), _TRUNCATE);
 }
 
 /*!

@@ -232,7 +232,7 @@ TEST(file, GetProfileMgrFileName_DefaultProfile1)
 	CControlProcess dummy(nullptr, LR"(-PROF="")");
 
 	// 設定フォルダのパスが返る
-	const auto iniDir = GetIniPath(L"").append("a.txt").remove_filename();
+	const auto iniDir = GetExeFileName().replace_filename(L"").append("a.txt").remove_filename();
 	ASSERT_STREQ(iniDir.c_str(), GetProfileMgrFileName(L"").c_str());
 
 	// コマンドラインのグローバル変数を元に戻す
@@ -275,7 +275,7 @@ TEST(file, GetProfileMgrFileName_NamedProfile1)
 	constexpr auto profile = L"profile1";
 
 	// 指定したプロファイルの設定保存先フォルダのパスが返る
-	const auto profileDir = GetIniPath(profile).append("a.txt").remove_filename();
+	const auto profileDir = GetExeFileName().replace_filename(profile).append("a.txt").remove_filename();
 	ASSERT_STREQ(profileDir.c_str(), GetProfileMgrFileName(profile).c_str());
 
 	// コマンドラインのグローバル変数を元に戻す
