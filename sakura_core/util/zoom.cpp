@@ -159,7 +159,7 @@ bool GetZoomedValue( const ZoomSetting& zoomSetting, double nBaseValue, double n
 	// 変わる位置までインデックスを動かしていく
 	nTableIndex += nSteps;
 	// 本当は無限ループで良いが万一の暴走回避のため有限回
-	for( [[maybe_unused]] const double _ : zoomSetting.m_vZoomFactors ){
+	for( [[maybe_unused]] double _ : zoomSetting.m_vZoomFactors ){
 		const bool bWithinRange = GetZoomedValueInIndex( zoomSetting, nBaseValue, nValueMin, nValueMax, nTableIndex, &nNextValue, &nNextZoom );
 		const bool bValueChanged = (nNextValue != nCurrentValue);
 		bool bBreak = false;
