@@ -120,10 +120,6 @@ namespace WCODE
 			if(m_hdc){ DeleteDC(m_hdc); m_hdc = nullptr;}
 			if(m_hdcFull){ DeleteDC(m_hdcFull);  m_hdcFull = nullptr;}
 		}
-		static bool IsEqual(const LOGFONT &lhs, const LOGFONT &rhs){
-			return &lhs == &rhs ||
-				0 == memcmp(&lhs, &rhs, sizeof(lhs));
-		}
 
 		// 再初期化
 		void Init(const LOGFONT &lf, const LOGFONT &lfFull, HDC hdcOrg)
@@ -136,7 +132,7 @@ namespace WCODE
 
 			m_hFont = ::CreateFontIndirect( &lf );
 			m_hFontOld = (HFONT)SelectObject(m_hdc,m_hFont);
-			bool bFullFont = !IsEqual(lf,lfFull);
+			const bool bFullFont = &lf != &lfFull && std::memcmp(&lf, &lfFull, sizeof(lf)) != 0;
 			if( bFullFont ){
 				m_bMultiFont = true;
 				m_hdcFull = CreateCompatibleDC(hdcOrg);
@@ -183,25 +179,9 @@ namespace WCODE
 			memset(m_pCache->m_nCharPxWidthCache.data(), 0, sizeof(m_pCache->m_nCharPxWidthCache));
 			m_pCache->m_nCharWidthCacheTest=0x12345678;
 		}
-		void SetCachePx(wchar_t c, short cache_pxwidth)
-		{
-			m_pCache->m_nCharPxWidthCache[c] = cache_pxwidth;
-		}
-		[[nodiscard]] short GetCachePx(wchar_t c) const
-		{
-			return _GetRawPx(c);
-		}
-		[[nodiscard]] bool ExistCache(wchar_t c) const
-		{
-			assert(m_pCache->m_nCharWidthCacheTest==0x12345678);
-			return _GetRawPx(c)!=0x0;
-		}
 		bool CalcHankakuByFont(wchar_t c) const
 		{
-			return IsHankakuByWidth(QueryPixelWidth(c));
-		}
-		[[nodiscard]] bool IsHankakuByWidth(int width) const {
-			return width<=m_han_size.cx;
+			return QueryPixelWidth(c) <= m_han_size.cx;
 		}
 		int QueryPixelWidth(wchar_t c) const
 		{
@@ -218,12 +198,11 @@ namespace WCODE
 			return t_max<int>(1,size.cx);
 		}
 		int CalcPxWidthByFont(wchar_t c) {
-			// -- -- キャッシュが存在すれば、それをそのまま返す -- -- //
-			if (ExistCache(c))return GetCachePx(c);
-
-			// -- -- キャッシュ更新 -- -- //
-			SetCachePx(c, static_cast<short>(QueryPixelWidth(c)));
-			return GetCachePx(c);
+			// キャッシュから文字の情報を取得する。情報がなければ、計算して登録する。
+			if (!m_pCache->m_nCharPxWidthCache[c]) {
+				m_pCache->m_nCharPxWidthCache[c] = static_cast<short>(QueryPixelWidth(c));
+			}
+			return m_pCache->m_nCharPxWidthCache[c];
 		}
 		int CalcPxWidthByFont2(const wchar_t* pc2) const
 		{
@@ -238,10 +217,6 @@ namespace WCODE
 		}
 		
 	protected:
-		[[nodiscard]] short _GetRawPx(wchar_t c) const
-		{
-			return m_pCache->m_nCharPxWidthCache[c];
-		}
 		[[nodiscard]] HDC SelectHDC(wchar_t c) const
 		{
 			return m_hdcFull && WCODE::GetFontNo(c) ? m_hdcFull : m_hdc;
