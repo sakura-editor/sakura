@@ -288,4 +288,6 @@ private:
 void SelectCharWidthCache( ECharWidthFontMode fMode, ECharWidthCacheMode cMode );  //!< モードを変更したいとき
 void InitCharWidthCache( const LOGFONT &lf, ECharWidthFontMode fMode=CWM_FONT_EDIT ); //!< フォントを変更したとき
 void InitCharWidthCacheFromDC(const LOGFONT* lfs, ECharWidthFontMode fMode, HDC hdcOrg );
+[[nodiscard]] CCharWidthCache& GetCharWidthCache();
+
 #endif /* SAKURA_CHARCODE_4C34C669_0BAB_441A_9B1D_2B9AC1895380_H_ */

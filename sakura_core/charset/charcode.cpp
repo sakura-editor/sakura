@@ -308,3 +308,8 @@ void SelectCharWidthCache( ECharWidthFontMode fMode, ECharWidthCacheMode cMode  
 
 	WCODE::selector.Select( fMode, cMode );
 }
+
+[[nodiscard]] CCharWidthCache& GetCharWidthCache()
+{
+	return *WCODE::selector.GetCache();
+}
