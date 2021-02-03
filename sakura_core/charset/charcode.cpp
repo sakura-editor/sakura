@@ -198,14 +198,12 @@ namespace WCODE
 		}
 		bool CalcHankakuByFont(wchar_t c) const
 		{
-			SIZE size={m_han_size.cx*2,0}; //関数が失敗したときのことを考え、全角幅で初期化しておく
-			GetTextExtentPoint32(SelectHDC(c),&c,1,&size);
-			return (size.cx<=m_han_size.cx);
+			return IsHankakuByWidth(QueryPixelWidth(c));
 		}
 		[[nodiscard]] bool IsHankakuByWidth(int width) const {
 			return width<=m_han_size.cx;
 		}
-		int CalcPxWidthByFont(wchar_t c) const
+		int QueryPixelWidth(wchar_t c) const
 		{
 			SIZE size={m_han_size.cx*2,0}; //関数が失敗したときのことを考え、全角幅で初期化しておく
 			// 2014.12.21 コントロールコードの表示・NULが1px幅になるのをスペース幅にする
@@ -218,6 +216,14 @@ namespace WCODE
 			}
 			GetTextExtentPoint32(SelectHDC(c),&c,1,&size);
 			return t_max<int>(1,size.cx);
+		}
+		int CalcPxWidthByFont(wchar_t c) {
+			// -- -- キャッシュが存在すれば、それをそのまま返す -- -- //
+			if (ExistCache(c))return GetCachePx(c);
+
+			// -- -- キャッシュ更新 -- -- //
+			SetCachePx(c, static_cast<short>(QueryPixelWidth(c)));
+			return GetCachePx(c);
 		}
 		int CalcPxWidthByFont2(const wchar_t* pc2) const
 		{
@@ -306,25 +312,18 @@ namespace WCODE
 	//文字幅の動的計算。ピクセル幅
 	int CalcPxWidthByFont(wchar_t c)
 	{
-		LocalCache* pcache = selector.GetCache();
-		// -- -- キャッシュが存在すれば、それをそのまま返す -- -- //
-		if(pcache->ExistCache(c))return pcache->GetCachePx(c);
-
-		// -- -- キャッシュ更新 -- -- //
-		pcache->SetCachePx(c, static_cast<short>(pcache->CalcPxWidthByFont(c)));
-		return pcache->GetCachePx(c);
+		return selector.GetCache()->CalcPxWidthByFont(c);
 	}
 
-	int CalcPxWidthByFont2(const wchar_t* pc){
-		const LocalCache* pcache = selector.GetCache();
-		return pcache->CalcPxWidthByFont2(pc);
+	int CalcPxWidthByFont2(const wchar_t* pc)
+	{
+		return selector.GetCache()->CalcPxWidthByFont2(pc);
 	}
 
 	//文字幅の動的計算。半角ならtrue。
 	bool CalcHankakuByFont(wchar_t c)
 	{
-		const LocalCache* pcache = selector.GetCache();
-		return pcache->IsHankakuByWidth(CalcPxWidthByFont(c));
+		return selector.GetCache()->CalcHankakuByFont(c);
 	}
 
 	// 文字の使用フォントを返す
