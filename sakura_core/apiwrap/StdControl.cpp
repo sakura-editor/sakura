@@ -36,7 +36,7 @@ namespace ApiWrap{
 		}
 
 		// ウィンドウテキストを取得するのに必要なバッファを確保する
-		strText.resize( cchRequired );
+		strText.resize( cchRequired + 1 );
 
 		// GetWindowText() はコピーした文字数を返す。
 		// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getwindowtextw
