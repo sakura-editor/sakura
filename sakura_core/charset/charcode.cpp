@@ -119,7 +119,7 @@ void CCharWidthCache::Init(const LOGFONT &lf, const LOGFONT &lfFull, HDC hdcOrg)
 
 	m_hFont = ::CreateFontIndirect( &lf );
 	m_hFontOld = (HFONT)SelectObject(m_hdc,m_hFont);
-	const bool bFullFont = &lf != &lfFull && std::memcmp(&lf, &lfFull, sizeof(lf)) != 0;
+	const bool bFullFont = &lf != &lfFull && memcmp(&lf, &lfFull, sizeof(lf)) != 0;
 	if( bFullFont ){
 		m_bMultiFont = true;
 		m_hdcFull = CreateCompatibleDC(hdcOrg);
