@@ -245,8 +245,49 @@ enum ECharWidthCacheMode {
 	CWM_CACHE_LOCAL,
 };
 
+/*!
+	文字幅情報のキャッシュクラス。
+	1文字当たり2バイトで文字のピクセル幅を保存しておく。
+*/
+class CCharWidthCache {
+public:
+	CCharWidthCache() = default;
+	CCharWidthCache(const CCharWidthCache&) = delete;
+	CCharWidthCache& operator=(const CCharWidthCache&) = delete;
+	~CCharWidthCache() { DeleteLocalData(); }
+
+	// 再初期化
+	void Init(const LOGFONT& lf, const LOGFONT& lfFull, HDC hdcOrg);
+	void SelectCache(SCharWidthCache* pCache) { m_pCache = pCache; }
+	void Clear();
+	[[nodiscard]] bool GetMultiFont() const { return m_bMultiFont; }
+
+	bool CalcHankakuByFont(wchar_t c) const;
+	int CalcPxWidthByFont(wchar_t c);
+	int CalcPxWidthByFont2(const wchar_t* pc2) const;
+
+private:
+	void DeleteLocalData();
+	int QueryPixelWidth(wchar_t c) const;
+	[[nodiscard]] HDC SelectHDC(wchar_t c) const;
+
+	HDC m_hdc = nullptr;
+	HDC m_hdcFull = nullptr;
+	HFONT m_hFontOld = nullptr;
+	HFONT m_hFontFullOld = nullptr;
+	HFONT m_hFont = nullptr;
+	HFONT m_hFontFull = nullptr;
+	bool m_bMultiFont;
+	SIZE m_han_size;
+	LOGFONT m_lf{};				// 2008/5/15 Uchi
+	LOGFONT m_lf2{};
+	SCharWidthCache* m_pCache = nullptr;
+};
+
 // キャッシュの初期化関数群
 void SelectCharWidthCache( ECharWidthFontMode fMode, ECharWidthCacheMode cMode );  //!< モードを変更したいとき
 void InitCharWidthCache( const LOGFONT &lf, ECharWidthFontMode fMode=CWM_FONT_EDIT ); //!< フォントを変更したとき
 void InitCharWidthCacheFromDC(const LOGFONT* lfs, ECharWidthFontMode fMode, HDC hdcOrg );
+[[nodiscard]] CCharWidthCache& GetCharWidthCache();
+
 #endif /* SAKURA_CHARCODE_4C34C669_0BAB_441A_9B1D_2B9AC1895380_H_ */

@@ -25,7 +25,7 @@
 
 #include "StdAfx.h"
 #include "charset/charcode.h"
-
+#include <array>
 #include "env/DLLSHAREDATA.h"
 
 /*! キーワードキャラクタ */
@@ -91,178 +91,130 @@ namespace WCODE
 	{
 		return wc < gm_keyword_char.size() && gm_keyword_char[wc] == CK_CTRL;
 	}
+}
 
-	/*!
-		文字幅情報のキャッシュクラス。
-		1文字当たり2バイトで保存しておく。
-	*/
-	class LocalCache{
-	public:
-		LocalCache() = default;
-		LocalCache(const LocalCache&) = delete;
-		LocalCache& operator=(const LocalCache&) = delete;
-		~LocalCache()
-		{
-			// -- -- 後始末 -- -- //
-			DeleteLocalData();
-		}
-		void DeleteLocalData(){
-			if (m_hFont != nullptr) {
-				SelectObject(m_hdc, m_hFontOld);
-				DeleteObject(m_hFont);
-				m_hFont = nullptr;
-			}
-			if (m_hFontFull != nullptr) {
-				SelectObject(m_hdcFull, m_hFontFullOld);
-				DeleteObject(m_hFontFull);
-				m_hFontFull = nullptr;
-			}
-			if(m_hdc){ DeleteDC(m_hdc); m_hdc = nullptr;}
-			if(m_hdcFull){ DeleteDC(m_hdcFull);  m_hdcFull = nullptr;}
-		}
-		static bool IsEqual(const LOGFONT &lhs, const LOGFONT &rhs){
-			return &lhs == &rhs ||
-				0 == memcmp(&lhs, &rhs, sizeof(lhs));
-		}
+void CCharWidthCache::DeleteLocalData()
+{
+	if (m_hFont != nullptr) {
+		SelectObject(m_hdc, m_hFontOld);
+		DeleteObject(m_hFont);
+		m_hFont = nullptr;
+	}
+	if (m_hFontFull != nullptr) {
+		SelectObject(m_hdcFull, m_hFontFullOld);
+		DeleteObject(m_hFontFull);
+		m_hFontFull = nullptr;
+	}
+	if(m_hdc){ DeleteDC(m_hdc); m_hdc = nullptr;}
+	if(m_hdcFull){ DeleteDC(m_hdcFull);  m_hdcFull = nullptr;}
+}
 
-		// 再初期化
-		void Init(const LOGFONT &lf, const LOGFONT &lfFull, HDC hdcOrg)
-		{
-			DeleteLocalData();
+void CCharWidthCache::Init(const LOGFONT &lf, const LOGFONT &lfFull, HDC hdcOrg)
+{
+	DeleteLocalData();
 
-			m_hdc = ::CreateCompatibleDC(hdcOrg);
-			m_lf = lf;
-			m_lf2 = lfFull;
+	m_hdc = ::CreateCompatibleDC(hdcOrg);
+	m_lf = lf;
+	m_lf2 = lfFull;
 
-			m_hFont = ::CreateFontIndirect( &lf );
-			m_hFontOld = (HFONT)SelectObject(m_hdc,m_hFont);
-			bool bFullFont = !IsEqual(lf,lfFull);
-			if( bFullFont ){
-				m_bMultiFont = true;
-				m_hdcFull = CreateCompatibleDC(hdcOrg);
-				m_hFontFull = ::CreateFontIndirect(&lfFull);
-				m_hFontFullOld = (HFONT)SelectObject(m_hdcFull, m_hFontFull);
-			}else{
-				m_bMultiFont = false;
-				m_hdcFull = nullptr;
-				m_hFontFull = nullptr;
-				m_hFontFullOld = nullptr;
-			}
-			s_MultiFont = m_bMultiFont;
+	m_hFont = ::CreateFontIndirect( &lf );
+	m_hFontOld = (HFONT)SelectObject(m_hdc,m_hFont);
+	const bool bFullFont = &lf != &lfFull && memcmp(&lf, &lfFull, sizeof(lf)) != 0;
+	if( bFullFont ){
+		m_bMultiFont = true;
+		m_hdcFull = CreateCompatibleDC(hdcOrg);
+		m_hFontFull = ::CreateFontIndirect(&lfFull);
+		m_hFontFullOld = (HFONT)SelectObject(m_hdcFull, m_hFontFull);
+	}else{
+		m_bMultiFont = false;
+		m_hdcFull = nullptr;
+		m_hFontFull = nullptr;
+		m_hFontFullOld = nullptr;
+	}
+	WCODE::s_MultiFont = m_bMultiFont;
 
-			// -- -- 半角基準 -- -- //
-			// CTextMetrics::Update と同じでなければならない
-			std::array<HDC, 2> hdcArr = {m_hdc, m_hdcFull};
-			int size = (bFullFont ? 2 : 1);
-			m_han_size.cx = 1;
-			m_han_size.cy = 1;
-			for(int i = 0; i < size; i++){
-				// KB145994
-				// tmAveCharWidth は不正確(半角か全角なのかも不明な値を返す)
-				SIZE sz;
-				GetTextExtentPoint32(hdcArr[i], L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 52, &sz);
-				sz.cx = (sz.cx / 26 + 1) / 2;
-				if( m_han_size.cx < sz.cx ){
-					m_han_size.cx = sz.cx;
-				}
-				if( m_han_size.cy < sz.cy ){
-					m_han_size.cy = sz.cy;
-				}
-			}
+	// -- -- 半角基準 -- -- //
+	// CTextMetrics::Update と同じでなければならない
+	std::array<HDC, 2> hdcArr = {m_hdc, m_hdcFull};
+	int size = (bFullFont ? 2 : 1);
+	m_han_size.cx = 1;
+	m_han_size.cy = 1;
+	for(int i = 0; i < size; i++){
+		// KB145994
+		// tmAveCharWidth は不正確(半角か全角なのかも不明な値を返す)
+		SIZE sz;
+		GetTextExtentPoint32(hdcArr[i], L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 52, &sz);
+		sz.cx = (sz.cx / 26 + 1) / 2;
+		if( m_han_size.cx < sz.cx ){
+			m_han_size.cx = sz.cx;
 		}
-		void SelectCache( SCharWidthCache* pCache )
-		{
-			m_pCache = pCache;
+		if( m_han_size.cy < sz.cy ){
+			m_han_size.cy = sz.cy;
 		}
-		void Clear()
-		{
-			assert(m_pCache!=0);
-			// キャッシュのクリア
-			memcpy(m_pCache->m_lfFaceName.data(), m_lf.lfFaceName, sizeof(m_lf.lfFaceName));
-			memcpy(m_pCache->m_lfFaceName2.data(), m_lf2.lfFaceName, sizeof(m_lf2.lfFaceName));
-			memset(m_pCache->m_nCharPxWidthCache.data(), 0, sizeof(m_pCache->m_nCharPxWidthCache));
-			m_pCache->m_nCharWidthCacheTest=0x12345678;
-		}
-		void SetCachePx(wchar_t c, short cache_pxwidth)
-		{
-			m_pCache->m_nCharPxWidthCache[c] = cache_pxwidth;
-		}
-		[[nodiscard]] short GetCachePx(wchar_t c) const
-		{
-			return _GetRawPx(c);
-		}
-		[[nodiscard]] bool ExistCache(wchar_t c) const
-		{
-			assert(m_pCache->m_nCharWidthCacheTest==0x12345678);
-			return _GetRawPx(c)!=0x0;
-		}
-		bool CalcHankakuByFont(wchar_t c) const
-		{
-			SIZE size={m_han_size.cx*2,0}; //関数が失敗したときのことを考え、全角幅で初期化しておく
-			GetTextExtentPoint32(SelectHDC(c),&c,1,&size);
-			return (size.cx<=m_han_size.cx);
-		}
-		[[nodiscard]] bool IsHankakuByWidth(int width) const {
-			return width<=m_han_size.cx;
-		}
-		int CalcPxWidthByFont(wchar_t c) const
-		{
-			SIZE size={m_han_size.cx*2,0}; //関数が失敗したときのことを考え、全角幅で初期化しておく
-			// 2014.12.21 コントロールコードの表示・NULが1px幅になるのをスペース幅にする
-			if (WCODE::IsControlCode(c)) {
-				GetTextExtentPoint32(SelectHDC(c),&c,1,&size);
-				const int nCx = size.cx;
-				const wchar_t proxyChar = ((L'\0' == c) ? ' ' : L'･');
-				GetTextExtentPoint32(SelectHDC(proxyChar),&proxyChar,1,&size);
-				return t_max<int>(nCx, size.cx);
-			}
-			GetTextExtentPoint32(SelectHDC(c),&c,1,&size);
-			return t_max<int>(1,size.cx);
-		}
-		int CalcPxWidthByFont2(const wchar_t* pc2) const
-		{
-			SIZE size={m_han_size.cx*2,0};
-			// サロゲートは全角フォント
-			GetTextExtentPoint32(m_hdcFull?m_hdcFull:m_hdc,pc2,2,&size);
-			return t_max<int>(1,size.cx);
-		}
-		[[nodiscard]] bool GetMultiFont() const
-		{
-			return m_bMultiFont;
-		}
+	}
+}
+
+void CCharWidthCache::Clear()
+{
+	assert(m_pCache!=0);
+	// キャッシュのクリア
+	memcpy(m_pCache->m_lfFaceName.data(), m_lf.lfFaceName, sizeof(m_lf.lfFaceName));
+	memcpy(m_pCache->m_lfFaceName2.data(), m_lf2.lfFaceName, sizeof(m_lf2.lfFaceName));
+	memset(m_pCache->m_nCharPxWidthCache.data(), 0, sizeof(m_pCache->m_nCharPxWidthCache));
+	m_pCache->m_nCharWidthCacheTest=0x12345678;
+}
+
+bool CCharWidthCache::CalcHankakuByFont(wchar_t c) const
+{
+	return QueryPixelWidth(c) <= m_han_size.cx;
+}
+
+int CCharWidthCache::QueryPixelWidth(wchar_t c) const
+{
+	SIZE size={m_han_size.cx*2,0}; //関数が失敗したときのことを考え、全角幅で初期化しておく
+	// 2014.12.21 コントロールコードの表示・NULが1px幅になるのをスペース幅にする
+	if (WCODE::IsControlCode(c)) {
+		GetTextExtentPoint32(SelectHDC(c),&c,1,&size);
+		const int nCx = size.cx;
+		const wchar_t proxyChar = ((L'\0' == c) ? ' ' : L'･');
+		GetTextExtentPoint32(SelectHDC(proxyChar),&proxyChar,1,&size);
+		return t_max<int>(nCx, size.cx);
+	}
+	GetTextExtentPoint32(SelectHDC(c),&c,1,&size);
+	return t_max<int>(1,size.cx);
+}
+
+int CCharWidthCache::CalcPxWidthByFont(wchar_t c) {
+	// キャッシュから文字の情報を取得する。情報がなければ、計算して登録する。
+	if (!m_pCache->m_nCharPxWidthCache[c]) {
+		m_pCache->m_nCharPxWidthCache[c] = static_cast<short>(QueryPixelWidth(c));
+	}
+	return m_pCache->m_nCharPxWidthCache[c];
+}
+
+int CCharWidthCache::CalcPxWidthByFont2(const wchar_t* pc2) const
+{
+	SIZE size={m_han_size.cx*2,0};
+	// サロゲートは全角フォント
+	GetTextExtentPoint32(m_hdcFull?m_hdcFull:m_hdc,pc2,2,&size);
+	return t_max<int>(1,size.cx);
+}
 		
-	protected:
-		[[nodiscard]] short _GetRawPx(wchar_t c) const
-		{
-			return m_pCache->m_nCharPxWidthCache[c];
-		}
-		[[nodiscard]] HDC SelectHDC(wchar_t c) const
-		{
-			return m_hdcFull && WCODE::GetFontNo(c) ? m_hdcFull : m_hdc;
-		}
-	private:
-		HDC					m_hdc = nullptr;
-		HDC					m_hdcFull = nullptr;
-		HFONT 				m_hFontOld = nullptr;
-		HFONT				m_hFontFullOld = nullptr;
-		HFONT 				m_hFont = nullptr;
-		HFONT				m_hFontFull = nullptr;
-		bool				m_bMultiFont;
-		SIZE				m_han_size;
-		LOGFONT				m_lf {};				// 2008/5/15 Uchi
-		LOGFONT				m_lf2 {};
-		SCharWidthCache*	m_pCache = nullptr;
-	};
+[[nodiscard]] HDC CCharWidthCache::SelectHDC(wchar_t c) const
+{
+	return m_hdcFull && WCODE::GetFontNo(c) ? m_hdcFull : m_hdc;
+}
 
-	class LocalCacheSelector{
+namespace WCODE {
+	class CacheSelector{
 	public:
-		LocalCacheSelector() : pcache(m_localcache.data())
+		CacheSelector() : pcache(m_localcache.data())
 		{
 			for( int i=0; i<CWM_FONT_MAX; i++ ){
 				m_parCache[i] = 0;
 			}
 		}
-		~LocalCacheSelector()
+		~CacheSelector()
 		{
 			for( int i=0; i<CWM_FONT_MAX; i++ ){
 				delete m_parCache[i];
@@ -292,39 +244,32 @@ namespace WCODE
 			if( fMode==CWM_FONT_EDIT ){ m_eLastEditCacheMode = cmode; }
 			WCODE::s_MultiFont = pcache->GetMultiFont();
 		}
-		[[nodiscard]] LocalCache* GetCache(){ return pcache; }
+		[[nodiscard]] CCharWidthCache* GetCache(){ return pcache; }
 	private:
-		std::array<LocalCache, 3> m_localcache;
+		std::array<CCharWidthCache, 3> m_localcache;
 		std::array<SCharWidthCache*, 3> m_parCache;
 		ECharWidthCacheMode m_eLastEditCacheMode = CWM_CACHE_NEUTRAL;
-		LocalCache* pcache;
-		DISALLOW_COPY_AND_ASSIGN(LocalCacheSelector);
+		CCharWidthCache* pcache;
+		DISALLOW_COPY_AND_ASSIGN(CacheSelector);
 	};
 
-	static LocalCacheSelector selector;
+	static CacheSelector selector;
 
 	//文字幅の動的計算。ピクセル幅
 	int CalcPxWidthByFont(wchar_t c)
 	{
-		LocalCache* pcache = selector.GetCache();
-		// -- -- キャッシュが存在すれば、それをそのまま返す -- -- //
-		if(pcache->ExistCache(c))return pcache->GetCachePx(c);
-
-		// -- -- キャッシュ更新 -- -- //
-		pcache->SetCachePx(c, static_cast<short>(pcache->CalcPxWidthByFont(c)));
-		return pcache->GetCachePx(c);
+		return selector.GetCache()->CalcPxWidthByFont(c);
 	}
 
-	int CalcPxWidthByFont2(const wchar_t* pc){
-		const LocalCache* pcache = selector.GetCache();
-		return pcache->CalcPxWidthByFont2(pc);
+	int CalcPxWidthByFont2(const wchar_t* pc)
+	{
+		return selector.GetCache()->CalcPxWidthByFont2(pc);
 	}
 
 	//文字幅の動的計算。半角ならtrue。
 	bool CalcHankakuByFont(wchar_t c)
 	{
-		const LocalCache* pcache = selector.GetCache();
-		return pcache->IsHankakuByWidth(CalcPxWidthByFont(c));
+		return selector.GetCache()->CalcHankakuByFont(c);
 	}
 
 	// 文字の使用フォントを返す
@@ -362,4 +307,9 @@ void SelectCharWidthCache( ECharWidthFontMode fMode, ECharWidthCacheMode cMode  
 	assert( fMode==CWM_FONT_EDIT || cMode==CWM_CACHE_LOCAL );
 
 	WCODE::selector.Select( fMode, cMode );
+}
+
+[[nodiscard]] CCharWidthCache& GetCharWidthCache()
+{
+	return *WCODE::selector.GetCache();
 }
