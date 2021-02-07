@@ -254,23 +254,39 @@ void CControlProcess_Terminate( LPCWSTR lpszProfileName )
 }
 
 /*!
+ * @brief コントロールプロセスを起動し、終了指示を出して、終了を待つ
+ */
+void CControlProcess_StartAndTerminate(std::wstring_view profileName)
+{
+	// コントロールプロセスを起動する
+	CControlProcess_Start(profileName.data());
+
+	// コントロールプロセスに終了指示を出して終了を待つ
+	CControlProcess_Terminate(profileName.data());
+}
+
+/*!
  * @brief wWinMainを起動してみるテスト
  *  プログラムが起動する正常ルートに潜む障害を検出するためのもの。
  *  コントロールプロセスを実行する。
+ *  プロセス起動は2回行い、1回目でINI作成＆書き込み、2回目でINI読み取りを検証する。
  */
 TEST_P(WinMainTest, runWithNoWin)
 {
 	// テスト用プロファイル名
 	const auto szProfileName(GetParam());
 
-	// コントロールプロセスを起動する
-	CControlProcess_Start( szProfileName );
-
-	// コントロールプロセスに終了指示を出して終了を待つ
-	CControlProcess_Terminate( szProfileName );
+	// コントロールプロセスを起動し、終了指示を出して、終了を待つ
+	CControlProcess_StartAndTerminate(szProfileName);
 
 	// コントロールプロセスが終了すると、INIファイルが作成される
-	ASSERT_TRUE( fexist( iniPath.c_str() ) );
+	ASSERT_TRUE(fexist(iniPath.c_str()));
+
+	// コントロールプロセスを起動し、終了指示を出して、終了を待つ
+	CControlProcess_StartAndTerminate(szProfileName);
+
+	// コントロールプロセスが終了すると、INIファイルが作成される
+	ASSERT_TRUE(fexist(iniPath.c_str()));
 }
 
 /*!
