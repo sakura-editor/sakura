@@ -38,6 +38,7 @@
 #include <mutex>
 #include <regex>
 #include <string>
+#include <string_view>
 #include <thread>
 
 #include "config/maxdata.h"
@@ -48,6 +49,8 @@
 #include "env/DLLSHAREDATA.h"
 #include "util/file.h"
 #include "config/system_constants.h"
+#include "_main/CCommandLine.h"
+#include "_main/CControlProcess.h"
 
 #include "StartEditorProcessForTest.h"
 
@@ -74,7 +77,7 @@ typedef std::unique_ptr<std::remove_pointer<HANDLE>::type, handle_closer> handle
  * 始動前に設定ファイルを削除するようにしている。
  * テスト実行後に設定ファイルを残しておく意味はないので終了後も削除している。
  */
-class WinMainTest : public ::testing::Test {
+class WinMainTest : public ::testing::TestWithParam<const wchar_t*> {
 protected:
 	/*!
 	 * 設定ファイルのパス
@@ -87,13 +90,27 @@ protected:
 	 * テストが起動される直前に毎回呼ばれる関数
 	 */
 	void SetUp() override {
+		// テスト用プロファイル名
+		const std::wstring_view profileName(GetParam());
+
+		// コマンドラインのグローバル変数をセットする
+		auto &commandLine = *CCommandLine::getInstance();
+		const auto strCommandLine = strprintf(LR"(-PROF="%s")", profileName.data());
+		commandLine.ParseCommandLine(strCommandLine.data(), false);
+
+		// プロセスのインスタンスを用意する
+		CControlProcess dummy(nullptr, strCommandLine.data());
+
 		// INIファイルのパスを取得
 		iniPath = GetIniFileName();
 
-		if( fexist( iniPath.c_str() ) ){
-			// INIファイルを削除する
-			std::filesystem::remove( iniPath );
+		// INIファイルを削除する
+		if (fexist(iniPath.c_str())) {
+			std::filesystem::remove(iniPath);
 		}
+
+		// コマンドラインのグローバル変数を元に戻す
+		commandLine.ParseCommandLine(L"", false);
 	}
 
 	/*!
@@ -101,7 +118,14 @@ protected:
 	 */
 	void TearDown() override {
 		// INIファイルを削除する
-		std::filesystem::remove( iniPath );
+		if (fexist(iniPath.c_str())) {
+			std::filesystem::remove(iniPath);
+		}
+
+		// プロファイル指定がある場合、フォルダも削除しておく
+		if (const std::wstring_view profileName(GetParam()); profileName.length() > 0) {
+			std::filesystem::remove(iniPath.parent_path());
+		}
 	}
 };
 
@@ -234,10 +258,10 @@ void CControlProcess_Terminate( LPCWSTR lpszProfileName )
  *  プログラムが起動する正常ルートに潜む障害を検出するためのもの。
  *  コントロールプロセスを実行する。
  */
-TEST_F( WinMainTest, runWithNoWin )
+TEST_P(WinMainTest, runWithNoWin)
 {
 	// テスト用プロファイル名
-	constexpr auto szProfileName = L"";
+	const auto szProfileName(GetParam());
 
 	// コントロールプロセスを起動する
 	CControlProcess_Start( szProfileName );
@@ -254,25 +278,25 @@ TEST_F( WinMainTest, runWithNoWin )
  *  プログラムが起動する正常ルートに潜む障害を検出するためのもの。
  *  エディタプロセスを実行する。
  */
-TEST_F( WinMainTest, runEditorProcess )
+TEST_P(WinMainTest, runEditorProcess)
 {
+	// テスト用プロファイル名
+	const auto szProfileName(GetParam());
+
 	// エディタプロセスを起動するため、テスト実行はプロセスごと分離して行う
-	auto separatedTestProc = [] {
+	auto separatedTestProc = [szProfileName]() {
 		std::mutex mtx;
 		std::condition_variable cv;
 		bool initialized = false;
 
 		// エディタプロセスが起動したコントロールプロセスの終了を待機するスレッド
-		auto waitingThread = std::thread([&mtx, &cv, &initialized] {
+		auto waitingThread = std::thread([&mtx, &cv, &initialized, szProfileName] {
 			// 初期化
 			{
 				std::unique_lock<std::mutex> lock( mtx );
 				initialized = true;
 				cv.notify_one();
 			}
-
-			// テスト用プロファイル名
-			constexpr auto szProfileName = L"";
 
 			// コントロールプロセスの初期化完了を待つ
 			CControlProcess_WaitForInitialized( szProfileName );
@@ -342,3 +366,12 @@ TEST_F( WinMainTest, runEditorProcess )
 	// コントロールプロセスが終了すると、INIファイルが作成される
 	ASSERT_TRUE( fexist( iniPath.c_str() ) );
 }
+
+/*!
+ * @brief パラメータテストをインスタンス化する
+ *  プロファイル指定なしとプロファイル指定ありの2パターンで実体化させる
+ */
+INSTANTIATE_TEST_CASE_P(ParameterizedTestWinMain
+	, WinMainTest
+	, ::testing::Values(L"", L"profile1")
+);
