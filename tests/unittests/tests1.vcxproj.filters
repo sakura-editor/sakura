@@ -98,6 +98,9 @@
     <ClCompile Include="test-charcode.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-cerrorinfo.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartEditorProcessForTest.h">

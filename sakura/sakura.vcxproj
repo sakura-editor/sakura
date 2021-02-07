@@ -257,6 +257,8 @@
     <ClInclude Include="..\sakura_core\apiwrap\CommonControl.h" />
     <ClInclude Include="..\sakura_core\apiwrap\StdApi.h" />
     <ClInclude Include="..\sakura_core\apiwrap\StdControl.h" />
+    <ClInclude Include="..\sakura_core\basis\TComImpl.hpp" />
+    <ClInclude Include="..\sakura_core\basis\CErrorInfo.h" />
     <ClInclude Include="..\sakura_core\basis\CLaxInteger.h" />
     <ClInclude Include="..\sakura_core\basis\CMyPoint.h" />
     <ClInclude Include="..\sakura_core\basis\CMyRect.h" />
@@ -607,6 +609,7 @@
   <ItemGroup>
     <ClCompile Include="..\sakura_core\apiwrap\StdApi.cpp" />
     <ClCompile Include="..\sakura_core\apiwrap\StdControl.cpp" />
+    <ClCompile Include="..\sakura_core\basis\CErrorInfo.cpp" />
     <ClCompile Include="..\sakura_core\basis\CLaxInteger.cpp" />
     <ClCompile Include="..\sakura_core\basis\CMyPoint.cpp" />
     <ClCompile Include="..\sakura_core\basis\CMyRect.cpp" />
