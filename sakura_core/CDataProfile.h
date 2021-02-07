@@ -166,8 +166,8 @@ public:
 	 */
 	template <class T> //T=={bool, int, WORD, wchar_t, char, StringBufferW, StaticString}
 	bool IOProfileData(
-		const WCHAR*			pszSectionName,	//!< [in] セクション名
-		const WCHAR*			pszEntryKey,	//!< [in] エントリ名
+		const std::wstring&		strSectionName,	//!< [in] セクション名
+		const std::wstring&		strEntryKey,	//!< [in] エントリ名
 		T&						tEntryValue		//!< [in,out] エントリ値
 	) noexcept
 	{
@@ -177,7 +177,7 @@ public:
 		bool ret = false;
 		if( IsReadingMode() ){
 			//文字列読み込み
-			if( GetProfileDataImp( pszSectionName, pszEntryKey, buf ) ){
+			if( GetProfileDataImp( strSectionName, strEntryKey, buf ) ){
 				//Tに変換
 				profile_to_value(buf, &tEntryValue);
 				ret = true;
@@ -186,7 +186,7 @@ public:
 			//文字列に変換
 			value_to_profile(tEntryValue, &buf);
 			//文字列書き込み
-			ret = SetProfileDataImp( pszSectionName, pszEntryKey, buf );
+			ret = SetProfileDataImp( strSectionName, strEntryKey, buf );
 		}
 		return ret;
 	}
@@ -194,10 +194,10 @@ public:
 	//2007.08.14 kobake 追加
 	//! intを介して任意型の入出力を行う
 	template <class T>
-	bool IOProfileData_WrapInt( const WCHAR* pszSectionName, const WCHAR* pszEntryKey, T& nEntryValue)
+	bool IOProfileData_WrapInt( const std::wstring& strSectionName, const std::wstring& strEntryKey, T& nEntryValue)
 	{
 		int n=nEntryValue;
-		bool ret=this->IOProfileData( pszSectionName, pszEntryKey, n );
+		bool ret = this->IOProfileData( strSectionName, strEntryKey, n );
 		nEntryValue=(T)n;
 		return ret;
 	}
@@ -208,18 +208,18 @@ public:
  */
 template <> inline
 bool CDataProfile::IOProfileData<std::wstring>(
-	const WCHAR*			pszSectionName,	//!< [in] セクション名
-	const WCHAR*			pszEntryKey,	//!< [in] エントリ名
+	const std::wstring&		strSectionName,	//!< [in] セクション名
+	const std::wstring&		strEntryKey,	//!< [in] エントリ名
 	std::wstring&			strEntryValue	//!< [in,out] エントリ値
 ) noexcept
 {
 	bool ret = false;
 	if( IsReadingMode() ){
 		//文字列読み込み
-		ret = GetProfileDataImp( pszSectionName, pszEntryKey, strEntryValue );
+		ret = GetProfileDataImp( strSectionName, strEntryKey, strEntryValue );
 	}else{
 		//文字列書き込み
-		ret = SetProfileDataImp( pszSectionName, pszEntryKey, strEntryValue );
+		ret = SetProfileDataImp( strSectionName, strEntryKey, strEntryValue );
 	}
 	return ret;
 }
