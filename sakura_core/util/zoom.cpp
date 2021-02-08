@@ -29,16 +29,6 @@
 #include <cmath>
 
 /*!
-	@brief 設定値の正当性判定
-*/
-bool ZoomSetting::IsValid() const
-{
-	return (m_nValueMin <= m_nValueMax)
-		&& (0.0 <= m_nValueUnit)
-		&& std::is_sorted( m_vZoomFactors.begin(), m_vZoomFactors.end() );
-}
-
-/*!
 	@brief 値テーブル上における指定値の位置を取得
 	@param[in] vTable 値テーブル
 	@param[in] nValue 指定値

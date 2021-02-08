@@ -59,8 +59,6 @@ struct ZoomSetting
 	const double m_nValueMin;
 	const double m_nValueMax;
 	const double m_nValueUnit;
-
-	[[nodiscard]] bool IsValid() const;
 };
 
 bool GetZoomedValue( const ZoomSetting& zoomSetting, double nBaseValue, double nCurrentZoom, int nSteps, double* pnValueOut, double* pnZoomOut );
