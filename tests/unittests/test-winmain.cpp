@@ -277,6 +277,9 @@ TEST_F( WinMainTest, runEditorProcess )
 			// コントロールプロセスの初期化完了を待つ
 			CControlProcess_WaitForInitialized( szProfileName );
 
+			// 起動時実行マクロが全部実行し終わるのを待つ
+			::Sleep( 10000 );
+
 			// コントロールプロセスに終了指示を出して終了を待つ
 			CControlProcess_Terminate( szProfileName );
 		});
@@ -315,7 +318,6 @@ TEST_F( WinMainTest, runEditorProcess )
 		strStartupMacro += L"SetFontSize(0, -9999, 2);";// 相対指定 - 限界まで縮小
 		strStartupMacro += L"SetFontSize(10, 0, 2);";	// 元に戻す
 		// フォントサイズ設定のテスト(ここまで)
-		strStartupMacro += L"ExitAll();";		//NOTE: このコマンドにより、エディタプロセスは起動された直後に終了する。
 
 		// コマンドラインを組み立てる
 		std::wstring strCommandLine( _T(__FILE__)  L" -MTYPE=js" );
