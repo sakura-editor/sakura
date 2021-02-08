@@ -286,9 +286,6 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 		return;
 	}
 
-	const int nCurrentPointSize = (mode == 0) ?
-		GetDllShareData().m_Common.m_sView.m_nPointSize :
-		GetEditWindow()->GetFontPointSize( mode == 2 );
 	const int nOriginalPointSize = GetEditWindow()->GetFontPointSize( false );
 	double nCurrentZoom = (mode == 2 && GetDocument()->m_blfCurTemp) ? GetDocument()->m_nCurrentZoom : 1.0;
 	int nPointSize;
@@ -304,11 +301,6 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 			return;
 		}
 		nPointSize = (int)nPointSizeF;
-
-		// フォントサイズが変わらないなら終了
-		if( nPointSize == nCurrentPointSize ){
-			return;
-		}
 	}else{
 		// フォントサイズが変わらないので終了
 		return;
