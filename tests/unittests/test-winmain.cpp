@@ -277,6 +277,9 @@ TEST_F( WinMainTest, runEditorProcess )
 			// コントロールプロセスの初期化完了を待つ
 			CControlProcess_WaitForInitialized( szProfileName );
 
+			// 起動時実行マクロが全部実行し終わるのを待つ
+			::Sleep( 10000 );
+
 			// コントロールプロセスに終了指示を出して終了を待つ
 			CControlProcess_Terminate( szProfileName );
 		});
@@ -301,7 +304,22 @@ TEST_F( WinMainTest, runEditorProcess )
 		strStartupMacro += L"ShowMiniMap();";	//ShowMiniMap 消す
 		strStartupMacro += L"ShowTab();";		//ShowTab 消す
 		strStartupMacro += L"ExpandParameter('$I');";	// INIファイルパスの取得(呼ぶだけ)
-		strStartupMacro += L"ExitAll();";		//NOTE: このコマンドにより、エディタプロセスは起動された直後に終了する。
+		// フォントサイズ設定のテスト(ここから)
+		strStartupMacro += L"SetFontSize(100, 0, 0);";	// 直接指定 - 対象：共通設定
+		strStartupMacro += L"SetFontSize(100, 0, 1);";	// 直接指定 - 対象：タイプ別設定
+		strStartupMacro += L"SetFontSize(100, 0, 2);";	// 直接指定 - 対象：一時適用
+		strStartupMacro += L"SetFontSize(100, 0, 3);";	// 直接指定 - 対象が不正
+		strStartupMacro += L"SetFontSize(0, 0, 0);";	// 直接指定 - フォントサイズ下限未満
+		strStartupMacro += L"SetFontSize(9999, 0, 0);";	// 直接指定 - フォントサイズ上限超過
+		strStartupMacro += L"SetFontSize(0, 0, 2);";	// 相対指定 - サイズ変化なし
+		strStartupMacro += L"SetFontSize(0, 1, 2);";	// 相対指定 - 拡大
+		strStartupMacro += L"SetFontSize(0, -1, 2);";	// 相対指定 - 縮小
+		strStartupMacro += L"SetFontSize(0, 9999, 2);";	// 相対指定 - 限界まで拡大
+		strStartupMacro += L"SetFontSize(0, 1, 2);";	// 相対指定 - これ以上拡大できない
+		strStartupMacro += L"SetFontSize(0, -9999, 2);";// 相対指定 - 限界まで縮小
+		strStartupMacro += L"SetFontSize(0, -1, 2);";	// 相対指定 - これ以上縮小できない
+		strStartupMacro += L"SetFontSize(100, 0, 2);";	// 元に戻す
+		// フォントサイズ設定のテスト(ここまで)
 
 		// コマンドラインを組み立てる
 		std::wstring strCommandLine( _T(__FILE__)  L" -MTYPE=js" );

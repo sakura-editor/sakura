@@ -160,6 +160,7 @@ public:
 	int				m_nPointSizeCur;			// 一時設定フォントサイズ
 	bool			m_blfCurTemp;				// フォント設定適用中
 	int				m_nPointSizeOrg;			// 元のフォントサイズ
+	double			m_nCurrentZoom;				// 一時設定フォントのズーム倍率
 	bool			m_bTabSpaceCurTemp;			// タブ幅一時設定適用中			// 2013.05.30 Moca
 
 	HBITMAP			m_hBackImg;

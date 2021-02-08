@@ -28,6 +28,9 @@
 #include "util/shell.h"
 #include "CPropertyManager.h"
 #include "util/window.h"
+#include "util/zoom.h"
+#include <array>
+
 
 /*! ツールバーの表示/非表示
 
@@ -251,6 +254,7 @@ void CViewCommander::Command_FONT( void )
 /*! フォントサイズ設定
 	@param fontSize フォントサイズ（1/10ポイント単位）
 	@param shift フォントサイズを拡大or縮小するための変更量(fontSize=0のとき有効)
+	@param mode フォントサイズ設定対象(0:フォント設定 1:タイプ別設定(なければ0と同じ) 2:一時適用フォント)
 
 	@note TrueTypeのみサポート
 
@@ -258,11 +262,20 @@ void CViewCommander::Command_FONT( void )
 */
 void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 {
-	// The point sizes recommended by "The Windows Interface: An Application Design Guide", 1/10ポイント単位
-	static const INT sizeTable[] = { 8*10, 9*10, 10*10, (INT)(10.5*10), 11*10, 12*10, 14*10, 16*10, 18*10, 20*10, 22*10, 24*10, 26*10, 28*10, 36*10, 48*10, 72*10 };
+	// フォントサイズのズーム倍率テーブル
+	constexpr std::array<double, 72> aZoomFactors = {
+		0.01, 0.011, 0.0125, 0.015, 0.0175, 0.02, 0.0225, 0.025, 0.0275, 0.03, 0.035, 0.04, 0.045, 0.05, 0.06, 0.07, 0.08, 0.09,
+		0.1, 0.11, 0.125, 0.15, 0.175, 0.2, 0.225, 0.25, 0.275, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8, 0.9,
+		1.0, 1.1, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0,
+		10.0, 11.0, 12.5, 15.0, 17.5, 20.0, 22.5, 25.0, 27.5, 30.0, 35.0, 40.0, 45.0, 50.0, 60.0, 70.0, 80.0, 90.0
+	};
+	// 設定できるフォントサイズの下限/上限/最小単位(いずれも1/10ポイント単位)
+	constexpr int nPointSizeMin = 10;
+	constexpr int nPointSizeMax = 720;
+	constexpr int nPointSizeUnit = 5;
+	static const ZoomSetting zoomSetting( aZoomFactors.begin(), aZoomFactors.end(), nPointSizeMin, nPointSizeMax, nPointSizeUnit );
 	const LOGFONT& lf = (mode == 0 ? GetDllShareData().m_Common.m_sView.m_lf
 		: GetEditWindow()->GetLogfont( mode == 2 ));
-	INT nPointSize;
 
 	// TrueTypeのみ対応
 	if( OUT_STROKE_PRECIS != lf.lfOutPrecision && OUT_PS_ONLY_PRECIS != lf.lfOutPrecision ) {
@@ -273,32 +286,26 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 		return;
 	}
 
+	const int nOriginalPointSize = GetEditWindow()->GetFontPointSize( false );
+	double nCurrentZoom = (mode == 2 && GetDocument()->m_blfCurTemp) ? GetDocument()->m_nCurrentZoom : 1.0;
+	int nPointSize;
+
 	if( 0 != fontSize ){
 		// フォントサイズを直接選択する場合
-		nPointSize = t_max(sizeTable[0], t_min(sizeTable[_countof(sizeTable)-1], fontSize));
-	} else if( 0 != shift ) {
+		nPointSize = std::clamp( fontSize, nPointSizeMin, nPointSizeMax );
+		nCurrentZoom = 1.0;
+	}else if( 0 != shift ){
 		// 現在のフォントに対して、縮小or拡大したフォント選択する場合
-		nPointSize = (mode == 0 ? GetDllShareData().m_Common.m_sView.m_nPointSize
-			: GetEditWindow()->GetFontPointSize( mode == 2 ));
-
-		// フォントの拡大or縮小するためのサイズ検索
-		int i;
-		for( i = 0; i < _countof(sizeTable); i++) {
-			if( nPointSize <= sizeTable[i] ){
-				int index = t_max(0, t_min((int)_countof(sizeTable) - 1, (int)(i + shift)));
-				int nNewPointSize = sizeTable[index];
-				// フォントサイズが変わらないので終了
-				if (nPointSize == nNewPointSize) {
-					return;
-				}
-				nPointSize = nNewPointSize;
-				break;
-			}
+		double nPointSizeF = 0.0;
+		if( !GetZoomedValue( zoomSetting, nOriginalPointSize, nCurrentZoom, shift, &nPointSizeF, &nCurrentZoom ) ){
+			return;
 		}
-	} else {
+		nPointSize = (int)nPointSizeF;
+	}else{
 		// フォントサイズが変わらないので終了
 		return;
 	}
+
 	// 新しいフォントサイズ設定
 	int lfHeight = DpiPointsToPixels(-nPointSize, 10);
 	int nTypeIndex = -1;
@@ -324,7 +331,8 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 		GetDocument()->m_lfCur = lf;
 		GetDocument()->m_lfCur.lfHeight = lfHeight;
 		GetDocument()->m_nPointSizeCur = nPointSize;
-		GetDocument()->m_nPointSizeOrg = GetEditWindow()->GetFontPointSize(false);
+		GetDocument()->m_nPointSizeOrg = nOriginalPointSize;
+		GetDocument()->m_nCurrentZoom = nCurrentZoom;
 	}
 
 	HWND	hwndFrame;

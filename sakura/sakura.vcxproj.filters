@@ -1094,6 +1094,9 @@
     <ClInclude Include="..\sakura_core\GrepInfo.h">
       <Filter>Cpp Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\util\zoom.h">
+      <Filter>Cpp Source Files\util</Filter>
+    </ClInclude>
     <ClInclude Include="..\sakura_core\basis\TComImpl.hpp">
       <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>
@@ -2278,6 +2281,9 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\GrepInfo.cpp">
       <Filter>Cpp Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\util\zoom.cpp">
+      <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
     <ClCompile Include="..\sakura_core\basis\CErrorInfo.cpp">
       <Filter>Cpp Source Files\basis</Filter>
