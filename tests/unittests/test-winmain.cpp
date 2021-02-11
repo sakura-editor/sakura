@@ -212,16 +212,17 @@ void CControlProcess_Start( LPCWSTR lpszProfileName )
  * CControlProcess::Terminateとして実装したいコードです。本体を変えたくないので一時定義しました。
  * 既存コードに該当する処理はありません。
  */
-void CControlProcess_Terminate( LPCWSTR lpszProfileName )
+void CControlProcess_Terminate(std::wstring_view profileName)
 {
 	// トレイウインドウを検索する
 	std::wstring strCEditAppName( GSTR_CEDITAPP );
-	if( lpszProfileName && lpszProfileName[0] ){
-		strCEditAppName += lpszProfileName;
+	if (profileName.length() > 0) {
+		strCEditAppName += profileName;
 	}
 	HWND hTrayWnd = ::FindWindow( strCEditAppName.data(), strCEditAppName.data() );
 	if( !hTrayWnd ){
-		throw std::runtime_error( "tray window is not found." );
+		// ウインドウがなければそのまま抜ける
+		return;
 	}
 
 	// トレイウインドウからプロセスIDを取得する
@@ -301,33 +302,6 @@ TEST_P(WinMainTest, runEditorProcess)
 
 	// エディタプロセスを起動するため、テスト実行はプロセスごと分離して行う
 	auto separatedTestProc = [szProfileName]() {
-		std::mutex mtx;
-		std::condition_variable cv;
-		bool initialized = false;
-
-		// エディタプロセスが起動したコントロールプロセスの終了を待機するスレッド
-		auto waitingThread = std::thread([&mtx, &cv, &initialized, szProfileName] {
-			// 初期化
-			{
-				std::unique_lock<std::mutex> lock( mtx );
-				initialized = true;
-				cv.notify_one();
-			}
-
-			// コントロールプロセスの初期化完了を待つ
-			CControlProcess_WaitForInitialized( szProfileName );
-
-			// 起動時実行マクロが全部実行し終わるのを待つ
-			::Sleep( 10000 );
-
-			// コントロールプロセスに終了指示を出して終了を待つ
-			CControlProcess_Terminate( szProfileName );
-		});
-
-		// スレッドの初期化完了を待機する
-		std::unique_lock<std::mutex> lock( mtx );
-		cv.wait(lock, [&initialized] { return initialized; });
-
 		// 起動時実行マクロの中身を作る
 		std::wstring strStartupMacro;
 		strStartupMacro += L"Down();";
@@ -360,24 +334,24 @@ TEST_P(WinMainTest, runEditorProcess)
 		strStartupMacro += L"SetFontSize(0, -1, 2);";	// 相対指定 - これ以上縮小できない
 		strStartupMacro += L"SetFontSize(100, 0, 2);";	// 元に戻す
 		// フォントサイズ設定のテスト(ここまで)
+		strStartupMacro += L"ExitAll();";		//NOTE: このコマンドにより、エディタプロセスは起動された直後に終了する。
 
 		// コマンドラインを組み立てる
-		std::wstring strCommandLine( _T(__FILE__)  L" -MTYPE=js" );
-		strCommandLine += L" -M=\""s;
-		strCommandLine += std::regex_replace( strStartupMacro, std::wregex( L"\"" ), L"\"\"" );
-		strCommandLine += L"\""s;
+		std::wstring strCommandLine(_T(__FILE__));
+		strCommandLine += strprintf(LR"( -PROF="%s")", szProfileName);
+		strCommandLine += strprintf(LR"( -MTYPE=js -M="%s")", std::regex_replace( strStartupMacro, std::wregex( L"\"" ), L"\"\"" ).c_str());
 
 		// エディタプロセスを起動する
-		StartEditorProcessForTest( strCommandLine );
+		const int ret = StartEditorProcessForTest(strCommandLine);
 
-		// エディタ終了を待機する
-		if( waitingThread.joinable() ){
-			waitingThread.join();
-		}
+		exit(ret);
 	};
 
 	// テストプログラム内のグローバル変数を汚さないために、別プロセスで起動させる
-	ASSERT_EXIT({ separatedTestProc(); exit(0); }, ::testing::ExitedWithCode(0), ".*" );
+	ASSERT_EXIT({ separatedTestProc(); }, ::testing::ExitedWithCode(0), ".*" );
+
+	// コントロールプロセスに終了指示を出して終了を待つ
+	CControlProcess_Terminate(szProfileName);
 
 	// コントロールプロセスが終了すると、INIファイルが作成される
 	ASSERT_TRUE( fexist( iniPath.c_str() ) );
