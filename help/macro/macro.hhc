@@ -10,821 +10,821 @@
 </OBJECT>
 <UL>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="ƒ}ƒNƒƒŠƒtƒ@ƒŒƒ“ƒX">
+		<param name="Name" value="ãƒžã‚¯ãƒ­ãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹">
 		<param name="Local" value="source\right.html">
 		<param name="ImageNumber" value="1">
 		</OBJECT>
 	<UL>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="ŠÖ”">
+			<param name="Name" value="é–¢æ•°">
 			<param name="Local" value="source\reference\index.html">
 			<param name="ImageNumber" value="1">
 			</OBJECT>
 		<UL>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="ƒtƒ@ƒCƒ‹‘€ì">
+				<param name="Name" value="ãƒ•ã‚¡ã‚¤ãƒ«æ“ä½œ">
 				<param name="Local" value="source\reference\file\index.html">
 				<param name="ImageNumber" value="1">
 				</OBJECT>
 			<UL>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="V‹Kì¬">
+					<param name="Name" value="æ–°è¦ä½œæˆ">
 					<param name="Local" value="source\reference\file\S_FileNew.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ŠJ‚­">
+					<param name="Name" value="é–‹ã">
 					<param name="Local" value="source\reference\file\S_FileOpen.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ã‘‚«•Û‘¶">
+					<param name="Name" value="ä¸Šæ›¸ãä¿å­˜">
 					<param name="Local" value="source\reference\file\S_FileSave.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‚·‚×‚Äã‘‚«•Û‘¶">
+					<param name="Name" value="ã™ã¹ã¦ä¸Šæ›¸ãä¿å­˜">
 					<param name="Local" value="source\reference\file\S_FileSaveAll.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="–¼‘O‚ð•t‚¯‚Ä•Û‘¶">
+					<param name="Name" value="åå‰ã‚’ä»˜ã‘ã¦ä¿å­˜">
 					<param name="Local" value="source\reference\file\S_FileSaveAs.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="•Â‚¶‚Ä(–³‘è)">
+					<param name="Name" value="é–‰ã˜ã¦(ç„¡é¡Œ)">
 					<param name="Local" value="source\reference\file\S_FileClose.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="•Â‚¶‚ÄŠJ‚­">
+					<param name="Name" value="é–‰ã˜ã¦é–‹ã">
 					<param name="Local" value="source\reference\file\S_FileCloseOpen.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ŠJ‚«’¼‚·">
+					<param name="Name" value="é–‹ãç›´ã™">
 					<param name="Local" value="source\reference\file\S_FileReopen.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="SJIS‚ÅŠJ‚«’¼‚·">
+					<param name="Name" value="SJISã§é–‹ãç›´ã™">
 					<param name="Local" value="source\reference\file\S_FileReopenSJIS.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="JIS‚ÅŠJ‚«’¼‚·">
+					<param name="Name" value="JISã§é–‹ãç›´ã™">
 					<param name="Local" value="source\reference\file\S_FileReopenJIS.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="EUC‚ÅŠJ‚«’¼‚·">
+					<param name="Name" value="EUCã§é–‹ãç›´ã™">
 					<param name="Local" value="source\reference\file\S_FileReopenEUC.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="Unicode‚ÅŠJ‚«’¼‚·">
+					<param name="Name" value="Unicodeã§é–‹ãç›´ã™">
 					<param name="Local" value="source\reference\file\S_FileReopenUNICODE.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="UnicodeBE‚ÅŠJ‚«’¼‚·">
+					<param name="Name" value="UnicodeBEã§é–‹ãç›´ã™">
 					<param name="Local" value="source\reference\file\S_FileReopenUNICODEBE.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="UTF-8‚ÅŠJ‚«’¼‚·">
+					<param name="Name" value="UTF-8ã§é–‹ãç›´ã™">
 					<param name="Local" value="source\reference\file\S_FileReopenUTF8.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="UTF-7‚ÅŠJ‚«’¼‚·">
+					<param name="Name" value="UTF-7ã§é–‹ãç›´ã™">
 					<param name="Local" value="source\reference\file\S_FileReopenUTF7.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ˆóü">
+					<param name="Name" value="å°åˆ·">
 					<param name="Local" value="source\reference\file\S_Print.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ˆóüƒvƒŒƒrƒ…[">
+					<param name="Name" value="å°åˆ·ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼">
 					<param name="Local" value="source\reference\file\S_PrintPreview.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ˆóüƒy[ƒWÝ’è">
+					<param name="Name" value="å°åˆ·ãƒšãƒ¼ã‚¸è¨­å®š">
 					<param name="Local" value="source\reference\file\S_PrintPageSetup.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="“¯–¼‚ÌC/C++ƒwƒbƒ_(ƒ\[ƒX)‚ðŠJ‚­">
+					<param name="Name" value="åŒåã®C/C++ãƒ˜ãƒƒãƒ€(ã‚½ãƒ¼ã‚¹)ã‚’é–‹ã">
 					<param name="Local" value="source\reference\file\S_OpenHfromtoC.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="SQL*Plus‚ðƒAƒNƒeƒBƒu•\Ž¦">
+					<param name="Name" value="SQL*Plusã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–è¡¨ç¤º">
 					<param name="Local" value="source\reference\file\S_ActivateSQLPLUS.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="SQL*Plus‚ÅŽÀs">
+					<param name="Name" value="SQL*Plusã§å®Ÿè¡Œ">
 					<param name="Local" value="source\reference\file\S_ExecSQLPLUS.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒuƒ‰ƒEƒY">
+					<param name="Name" value="ãƒ–ãƒ©ã‚¦ã‚º">
 					<param name="Local" value="source\reference\file\S_Browse.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒrƒ…[ƒ‚[ƒh">
+					<param name="Name" value="ãƒ“ãƒ¥ãƒ¼ãƒ¢ãƒ¼ãƒ‰">
 					<param name="Local" value="source\reference\file\S_ReadOnly.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒtƒ@ƒCƒ‹‚ÌƒvƒƒpƒeƒB">
+					<param name="Name" value="ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£">
 					<param name="Local" value="source\reference\file\S_PropertyFile.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒTƒNƒ‰ƒGƒfƒBƒ^‚Ì‘SI—¹">
+					<param name="Name" value="ã‚µã‚¯ãƒ©ã‚¨ãƒ‡ã‚£ã‚¿ã®å…¨çµ‚äº†">
 					<param name="Local" value="source\reference\file\S_ExitAll.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 			</UL>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="•ÒW">
+				<param name="Name" value="ç·¨é›†">
 				<param name="Local" value="source\reference\edit\index.html">
 				<param name="ImageNumber" value="1">
 				</OBJECT>
 			<UL>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="•¶Žš“ü—Í">
+					<param name="Name" value="æ–‡å­—å…¥åŠ›">
 					<param name="Local" value="source\reference\edit\S_Char.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘SŠp•¶Žš“ü—Í">
+					<param name="Name" value="å…¨è§’æ–‡å­—å…¥åŠ›">
 					<param name="Local" value="source\reference\edit\S_CharIme.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="Œ³‚É–ß‚·">
+					<param name="Name" value="å…ƒã«æˆ»ã™">
 					<param name="Local" value="source\reference\edit\S_Undo.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‚â‚è’¼‚µ">
+					<param name="Name" value="ã‚„ã‚Šç›´ã—">
 					<param name="Local" value="source\reference\edit\S_Redo.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="íœ">
+					<param name="Name" value="å‰Šé™¤">
 					<param name="Local" value="source\reference\edit\S_Delete.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJ[ƒ\ƒ‹‘O‚ðíœ">
+					<param name="Name" value="ã‚«ãƒ¼ã‚½ãƒ«å‰ã‚’å‰Šé™¤">
 					<param name="Local" value="source\reference\edit\S_DeleteBack.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="’PŒê‚Ì¶’[‚Ü‚Åíœ">
+					<param name="Name" value="å˜èªžã®å·¦ç«¯ã¾ã§å‰Šé™¤">
 					<param name="Local" value="source\reference\edit\S_WordDeleteToStart.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="’PŒê‚Ì‰E’[‚Ü‚Åíœ">
+					<param name="Name" value="å˜èªžã®å³ç«¯ã¾ã§å‰Šé™¤">
 					<param name="Local" value="source\reference\edit\S_WordDeleteToEnd.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="’PŒêØ‚èŽæ‚è">
+					<param name="Name" value="å˜èªžåˆ‡ã‚Šå–ã‚Š">
 					<param name="Local" value="source\reference\edit\S_WordCut.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="’PŒêíœ">
+					<param name="Name" value="å˜èªžå‰Šé™¤">
 					<param name="Local" value="source\reference\edit\S_WordDelete.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="s“ª‚Ü‚ÅØ‚èŽæ‚è(‰üs’PˆÊ)">
+					<param name="Name" value="è¡Œé ­ã¾ã§åˆ‡ã‚Šå–ã‚Š(æ”¹è¡Œå˜ä½)">
 					<param name="Local" value="source\reference\edit\S_LineCutToStart.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="s––‚Ü‚ÅØ‚èŽæ‚è(‰üs’PˆÊ)">
+					<param name="Name" value="è¡Œæœ«ã¾ã§åˆ‡ã‚Šå–ã‚Š(æ”¹è¡Œå˜ä½)">
 					<param name="Local" value="source\reference\edit\S_LineCutToEnd.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="s“ª‚Ü‚Åíœ(‰üs’PˆÊ)">
+					<param name="Name" value="è¡Œé ­ã¾ã§å‰Šé™¤(æ”¹è¡Œå˜ä½)">
 					<param name="Local" value="source\reference\edit\S_LineDeleteToStart.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="s––‚Ü‚Åíœ(‰üs’PˆÊ)">
+					<param name="Name" value="è¡Œæœ«ã¾ã§å‰Šé™¤(æ”¹è¡Œå˜ä½)">
 					<param name="Local" value="source\reference\edit\S_LineDeleteToEnd.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="sØ‚èŽæ‚è(Ü‚è•Ô‚µ’PˆÊ)">
+					<param name="Name" value="è¡Œåˆ‡ã‚Šå–ã‚Š(æŠ˜ã‚Šè¿”ã—å˜ä½)">
 					<param name="Local" value="source\reference\edit\S_CutLine.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="síœ(Ü‚è•Ô‚µ’PˆÊ)">
+					<param name="Name" value="è¡Œå‰Šé™¤(æŠ˜ã‚Šè¿”ã—å˜ä½)">
 					<param name="Local" value="source\reference\edit\S_DeleteLine.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="s‚Ì“ñd‰»(Ü‚è•Ô‚µ’PˆÊ)">
+					<param name="Name" value="è¡Œã®äºŒé‡åŒ–(æŠ˜ã‚Šè¿”ã—å˜ä½)">
 					<param name="Local" value="source\reference\edit\S_DuplicateLine.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="TABƒCƒ“ƒfƒ“ƒg">
+					<param name="Name" value="TABã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆ">
 					<param name="Local" value="source\reference\edit\S_IndentTab.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‹tTABƒCƒ“ƒfƒ“ƒg">
+					<param name="Name" value="é€†TABã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆ">
 					<param name="Local" value="source\reference\edit\S_UnindentTab.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="SPACEƒCƒ“ƒfƒ“ƒg">
+					<param name="Name" value="SPACEã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆ">
 					<param name="Local" value="source\reference\edit\S_IndentSpace.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‹tSPACEƒCƒ“ƒfƒ“ƒg">
+					<param name="Name" value="é€†SPACEã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆ">
 					<param name="Local" value="source\reference\edit\S_UnindentSpace.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="¶(æ“ª)‚Ì‹ó”’‚ðíœ">
+					<param name="Name" value="å·¦(å…ˆé ­)ã®ç©ºç™½ã‚’å‰Šé™¤">
 					<param name="Local" value="source\reference\edit\S_LTrim.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‰E(––”ö)‚Ì‹ó”’‚ðíœ">
+					<param name="Name" value="å³(æœ«å°¾)ã®ç©ºç™½ã‚’å‰Šé™¤">
 					<param name="Local" value="source\reference\edit\S_RTrim.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘I‘ðs‚Ì¸‡ƒ\[ƒg">
+					<param name="Name" value="é¸æŠžè¡Œã®æ˜‡é †ã‚½ãƒ¼ãƒˆ">
 					<param name="Local" value="source\reference\edit\S_SortAsc.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘I‘ðs‚Ì~‡ƒ\[ƒg">
+					<param name="Name" value="é¸æŠžè¡Œã®é™é †ã‚½ãƒ¼ãƒˆ">
 					<param name="Local" value="source\reference\edit\S_SortDesc.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘I‘ðs‚Ìƒ}[ƒW">
+					<param name="Name" value="é¸æŠžè¡Œã®ãƒžãƒ¼ã‚¸">
 					<param name="Local" value="source\reference\edit\S_Merge.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 			</UL>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="ƒJ[ƒ\ƒ‹ˆÚ“®">
+				<param name="Name" value="ã‚«ãƒ¼ã‚½ãƒ«ç§»å‹•">
 				<param name="Local" value="source\reference\cursor\index.html">
 				<param name="ImageNumber" value="1">
 				</OBJECT>
 			<UL>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJ[ƒ\ƒ‹ãˆÚ“®">
+					<param name="Name" value="ã‚«ãƒ¼ã‚½ãƒ«ä¸Šç§»å‹•">
 					<param name="Local" value="source\reference\cursor\S_Up.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJ[ƒ\ƒ‹‰ºˆÚ“®">
+					<param name="Name" value="ã‚«ãƒ¼ã‚½ãƒ«ä¸‹ç§»å‹•">
 					<param name="Local" value="source\reference\cursor\S_Down.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJ[ƒ\ƒ‹¶ˆÚ“®">
+					<param name="Name" value="ã‚«ãƒ¼ã‚½ãƒ«å·¦ç§»å‹•">
 					<param name="Local" value="source\reference\cursor\S_Left.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJ[ƒ\ƒ‹‰EˆÚ“®">
+					<param name="Name" value="ã‚«ãƒ¼ã‚½ãƒ«å³ç§»å‹•">
 					<param name="Local" value="source\reference\cursor\S_Right.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJ[ƒ\ƒ‹ãˆÚ“®(‚Qs‚²‚Æ)">
+					<param name="Name" value="ã‚«ãƒ¼ã‚½ãƒ«ä¸Šç§»å‹•(ï¼’è¡Œã”ã¨)">
 					<param name="Local" value="source\reference\cursor\S_Up2.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJ[ƒ\ƒ‹‰ºˆÚ“®(‚Qs‚²‚Æ)">
+					<param name="Name" value="ã‚«ãƒ¼ã‚½ãƒ«ä¸‹ç§»å‹•(ï¼’è¡Œã”ã¨)">
 					<param name="Local" value="source\reference\cursor\S_Down2.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="’PŒê‚Ì¶’[‚ÉˆÚ“®">
+					<param name="Name" value="å˜èªžã®å·¦ç«¯ã«ç§»å‹•">
 					<param name="Local" value="source\reference\cursor\S_WordLeft.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="’PŒê‚Ì‰E’[‚ÉˆÚ“®">
+					<param name="Name" value="å˜èªžã®å³ç«¯ã«ç§»å‹•">
 					<param name="Local" value="source\reference\cursor\S_WordRight.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="s“ª‚ÉˆÚ“®(Ü‚è•Ô‚µ’PˆÊ)">
+					<param name="Name" value="è¡Œé ­ã«ç§»å‹•(æŠ˜ã‚Šè¿”ã—å˜ä½)">
 					<param name="Local" value="source\reference\cursor\S_GoLineTop.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="s––‚ÉˆÚ“®(Ü‚è•Ô‚µ’PˆÊ)">
+					<param name="Name" value="è¡Œæœ«ã«ç§»å‹•(æŠ˜ã‚Šè¿”ã—å˜ä½)">
 					<param name="Local" value="source\reference\cursor\S_GoLineEnd.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="”¼ƒy[ƒWƒAƒbƒv">
+					<param name="Name" value="åŠãƒšãƒ¼ã‚¸ã‚¢ãƒƒãƒ—">
 					<param name="Local" value="source\reference\cursor\S_HalfPageUp.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="”¼ƒy[ƒWƒ_ƒEƒ“">
+					<param name="Name" value="åŠãƒšãƒ¼ã‚¸ãƒ€ã‚¦ãƒ³">
 					<param name="Local" value="source\reference\cursor\S_HalfPageDown.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‚Pƒy[ƒWƒAƒbƒv">
+					<param name="Name" value="ï¼‘ãƒšãƒ¼ã‚¸ã‚¢ãƒƒãƒ—">
 					<param name="Local" value="source\reference\cursor\S_1PageUp.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‚Pƒy[ƒWƒ_ƒEƒ“">
+					<param name="Name" value="ï¼‘ãƒšãƒ¼ã‚¸ãƒ€ã‚¦ãƒ³">
 					<param name="Local" value="source\reference\cursor\S_1PageDown.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒtƒ@ƒCƒ‹‚Ìæ“ª‚ÉˆÚ“®">
+					<param name="Name" value="ãƒ•ã‚¡ã‚¤ãƒ«ã®å…ˆé ­ã«ç§»å‹•">
 					<param name="Local" value="source\reference\cursor\S_GoFileTop.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒtƒ@ƒCƒ‹‚ÌÅŒã‚ÉˆÚ“®">
+					<param name="Name" value="ãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€å¾Œã«ç§»å‹•">
 					<param name="Local" value="source\reference\cursor\S_GoFileEnd.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJ[ƒ\ƒ‹s‚ðƒEƒBƒ“ƒhƒE’†‰›‚Ö">
+					<param name="Name" value="ã‚«ãƒ¼ã‚½ãƒ«è¡Œã‚’ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä¸­å¤®ã¸">
 					<param name="Local" value="source\reference\cursor\S_CurLineCenter.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ˆÚ“®—š—ð: ‘O‚Ö">
+					<param name="Name" value="ç§»å‹•å±¥æ­´: å‰ã¸">
 					<param name="Local" value="source\reference\cursor\S_MoveHistPrev.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ˆÚ“®—š—ð: ŽŸ‚Ö">
+					<param name="Name" value="ç§»å‹•å±¥æ­´: æ¬¡ã¸">
 					<param name="Local" value="source\reference\cursor\S_MoveHistNext.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="Œ»ÝˆÊ’u‚ðˆÚ“®—š—ð‚É“o˜^">
+					<param name="Name" value="ç¾åœ¨ä½ç½®ã‚’ç§»å‹•å±¥æ­´ã«ç™»éŒ²">
 					<param name="Local" value="source\reference\cursor\S_MoveHistSet.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒeƒLƒXƒg‚ð‚Ps‰º‚ÖƒXƒNƒ[ƒ‹">
+					<param name="Name" value="ãƒ†ã‚­ã‚¹ãƒˆã‚’ï¼‘è¡Œä¸‹ã¸ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«">
 					<param name="Local" value="source\reference\cursor\S_F_WndScrollDown.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒeƒLƒXƒg‚ð‚Psã‚ÖƒXƒNƒ[ƒ‹">
+					<param name="Name" value="ãƒ†ã‚­ã‚¹ãƒˆã‚’ï¼‘è¡Œä¸Šã¸ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«">
 					<param name="Local" value="source\reference\cursor\S_F_WndScrollUp.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ŽŸ‚Ì’i—Ž‚ÖˆÚ“®">
+					<param name="Name" value="æ¬¡ã®æ®µè½ã¸ç§»å‹•">
 					<param name="Local" value="source\reference\cursor\S_GoNextParagraph.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘O‚Ì’i—Ž‚ÖˆÚ“®">
+					<param name="Name" value="å‰ã®æ®µè½ã¸ç§»å‹•">
 					<param name="Local" value="source\reference\cursor\S_GoPrevParagraph.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 			</UL>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="‘I‘ð">
+				<param name="Name" value="é¸æŠž">
 				<param name="Local" value="source\reference\select\index.html">
 				<param name="ImageNumber" value="1">
 				</OBJECT>
 			<UL>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="Œ»ÝˆÊ’u‚Ì’PŒê‘I‘ð">
+					<param name="Name" value="ç¾åœ¨ä½ç½®ã®å˜èªžé¸æŠž">
 					<param name="Local" value="source\reference\select\S_SelectWord.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‚·‚×‚Ä‘I‘ð">
+					<param name="Name" value="ã™ã¹ã¦é¸æŠž">
 					<param name="Local" value="source\reference\select\S_SelectAll.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="”ÍˆÍ‘I‘ðŠJŽn">
+					<param name="Name" value="ç¯„å›²é¸æŠžé–‹å§‹">
 					<param name="Local" value="source\reference\select\S_BeginSelect.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="(”ÍˆÍ‘I‘ð)ƒJ[ƒ\ƒ‹ãˆÚ“®">
+					<param name="Name" value="(ç¯„å›²é¸æŠž)ã‚«ãƒ¼ã‚½ãƒ«ä¸Šç§»å‹•">
 					<param name="Local" value="source\reference\select\S_Up_Sel.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="(”ÍˆÍ‘I‘ð)ƒJ[ƒ\ƒ‹‰ºˆÚ“®">
+					<param name="Name" value="(ç¯„å›²é¸æŠž)ã‚«ãƒ¼ã‚½ãƒ«ä¸‹ç§»å‹•">
 					<param name="Local" value="source\reference\select\S_Down_Sel.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="(”ÍˆÍ‘I‘ð)ƒJ[ƒ\ƒ‹¶ˆÚ“®">
+					<param name="Name" value="(ç¯„å›²é¸æŠž)ã‚«ãƒ¼ã‚½ãƒ«å·¦ç§»å‹•">
 					<param name="Local" value="source\reference\select\S_Left_Sel.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="(”ÍˆÍ‘I‘ð)ƒJ[ƒ\ƒ‹‰EˆÚ“®">
+					<param name="Name" value="(ç¯„å›²é¸æŠž)ã‚«ãƒ¼ã‚½ãƒ«å³ç§»å‹•">
 					<param name="Local" value="source\reference\select\S_Right_Sel.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="(‘I‘ð)ƒJ[ƒ\ƒ‹ãˆÚ“®(‚Qs‚²‚Æ)">
+					<param name="Name" value="(é¸æŠž)ã‚«ãƒ¼ã‚½ãƒ«ä¸Šç§»å‹•(ï¼’è¡Œã”ã¨)">
 					<param name="Local" value="source\reference\select\S_Up2_Sel.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="(‘I‘ð)ƒJ[ƒ\ƒ‹‰ºˆÚ“®(‚Qs‚²‚Æ)">
+					<param name="Name" value="(é¸æŠž)ã‚«ãƒ¼ã‚½ãƒ«ä¸‹ç§»å‹•(ï¼’è¡Œã”ã¨)">
 					<param name="Local" value="source\reference\select\S_Down2_Sel.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="(”ÍˆÍ‘I‘ð)’PŒê‚Ì¶’[‚ÉˆÚ“®">
+					<param name="Name" value="(ç¯„å›²é¸æŠž)å˜èªžã®å·¦ç«¯ã«ç§»å‹•">
 					<param name="Local" value="source\reference\select\S_WordLeft_Sel.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="(”ÍˆÍ‘I‘ð)’PŒê‚Ì‰E’[‚ÉˆÚ“®">
+					<param name="Name" value="(ç¯„å›²é¸æŠž)å˜èªžã®å³ç«¯ã«ç§»å‹•">
 					<param name="Local" value="source\reference\select\S_WordRight_Sel.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="(”ÍˆÍ‘I‘ð)s“ª‚ÉˆÚ“®(Ü‚è•Ô‚µ’PˆÊ)">
+					<param name="Name" value="(ç¯„å›²é¸æŠž)è¡Œé ­ã«ç§»å‹•(æŠ˜ã‚Šè¿”ã—å˜ä½)">
 					<param name="Local" value="source\reference\select\S_GoLineTop_Sel.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="(”ÍˆÍ‘I‘ð)s––‚ÉˆÚ“®(Ü‚è•Ô‚µ’PˆÊ)">
+					<param name="Name" value="(ç¯„å›²é¸æŠž)è¡Œæœ«ã«ç§»å‹•(æŠ˜ã‚Šè¿”ã—å˜ä½)">
 					<param name="Local" value="source\reference\select\S_GoLineEnd_Sel.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="(”ÍˆÍ‘I‘ð)”¼ƒy[ƒWƒAƒbƒv">
+					<param name="Name" value="(ç¯„å›²é¸æŠž)åŠãƒšãƒ¼ã‚¸ã‚¢ãƒƒãƒ—">
 					<param name="Local" value="source\reference\select\S_HalfPageUp_Sel.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="(”ÍˆÍ‘I‘ð)”¼ƒy[ƒWƒ_ƒEƒ“">
+					<param name="Name" value="(ç¯„å›²é¸æŠž)åŠãƒšãƒ¼ã‚¸ãƒ€ã‚¦ãƒ³">
 					<param name="Local" value="source\reference\select\S_HalfPageDown_Sel.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="(”ÍˆÍ‘I‘ð)‚Pƒy[ƒWƒAƒbƒv">
+					<param name="Name" value="(ç¯„å›²é¸æŠž)ï¼‘ãƒšãƒ¼ã‚¸ã‚¢ãƒƒãƒ—">
 					<param name="Local" value="source\reference\select\S_1PageUp_Sel.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="(”ÍˆÍ‘I‘ð)‚Pƒy[ƒWƒ_ƒEƒ“">
+					<param name="Name" value="(ç¯„å›²é¸æŠž)ï¼‘ãƒšãƒ¼ã‚¸ãƒ€ã‚¦ãƒ³">
 					<param name="Local" value="source\reference\select\S_1PageDown_Sel.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="(”ÍˆÍ‘I‘ð)ƒtƒ@ƒCƒ‹‚Ìæ“ª‚ÉˆÚ“®">
+					<param name="Name" value="(ç¯„å›²é¸æŠž)ãƒ•ã‚¡ã‚¤ãƒ«ã®å…ˆé ­ã«ç§»å‹•">
 					<param name="Local" value="source\reference\select\S_GoFileTop_Sel.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="(”ÍˆÍ‘I‘ð)ƒtƒ@ƒCƒ‹‚ÌÅŒã‚ÉˆÚ“®">
+					<param name="Name" value="(ç¯„å›²é¸æŠž)ãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€å¾Œã«ç§»å‹•">
 					<param name="Local" value="source\reference\select\S_GoFileEnd_Sel.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ŽŸ‚Ì’i—Ž‚ÖˆÚ“®">
+					<param name="Name" value="æ¬¡ã®æ®µè½ã¸ç§»å‹•">
 					<param name="Local" value="source\reference\select\S_GoNextParagraph_Sel.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘O‚Ì’i—Ž‚ÖˆÚ“®">
+					<param name="Name" value="å‰ã®æ®µè½ã¸ç§»å‹•">
 					<param name="Local" value="source\reference\select\S_GoPrevParagraph_Sel.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 			</UL>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="‹éŒ`‘I‘ð">
+				<param name="Name" value="çŸ©å½¢é¸æŠž">
 				<param name="Local" value="source\reference\block\index.html">
 				<param name="ImageNumber" value="1">
 				</OBJECT>
 			<UL>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‹éŒ`”ÍˆÍ‘I‘ðŠJŽn">
+					<param name="Name" value="çŸ©å½¢ç¯„å›²é¸æŠžé–‹å§‹">
 					<param name="Local" value="source\reference\block\S_BeginBoxSelect.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 			</UL>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="ƒNƒŠƒbƒvƒ{[ƒh">
+				<param name="Name" value="ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰">
 				<param name="Local" value="source\reference\clipboard\index.html">
 				<param name="ImageNumber" value="1">
 				</OBJECT>
 			<UL>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="Ø‚èŽæ‚è">
+					<param name="Name" value="åˆ‡ã‚Šå–ã‚Š">
 					<param name="Local" value="source\reference\clipboard\S_Cut.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒRƒs[">
+					<param name="Name" value="ã‚³ãƒ”ãƒ¼">
 					<param name="Local" value="source\reference\clipboard\S_Copy.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="“\‚è•t‚¯">
+					<param name="Name" value="è²¼ã‚Šä»˜ã‘">
 					<param name="Local" value="source\reference\clipboard\S_Paste.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="Ü‚è•Ô‚µˆÊ’u‚É‰üs‚ð‚Â‚¯‚ÄƒRƒs[">
+					<param name="Name" value="æŠ˜ã‚Šè¿”ã—ä½ç½®ã«æ”¹è¡Œã‚’ã¤ã‘ã¦ã‚³ãƒ”ãƒ¼">
 					<param name="Local" value="source\reference\clipboard\S_CopyAddCRLF.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="CRLF‰üs‚ÅƒRƒs[">
+					<param name="Name" value="CRLFæ”¹è¡Œã§ã‚³ãƒ”ãƒ¼">
 					<param name="Local" value="source\reference\clipboard\S_CopyCRLF.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‹éŒ`“\‚è•t‚¯">
+					<param name="Name" value="çŸ©å½¢è²¼ã‚Šä»˜ã‘">
 					<param name="Local" value="source\reference\clipboard\S_PasteBox.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒeƒLƒXƒg‚ð“\‚è•t‚¯">
+					<param name="Name" value="ãƒ†ã‚­ã‚¹ãƒˆã‚’è²¼ã‚Šä»˜ã‘">
 					<param name="Local" value="source\reference\clipboard\S_InsText.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ÅŒã‚ÉƒeƒLƒXƒg‚ð’Ç‰Á">
+					<param name="Name" value="æœ€å¾Œã«ãƒ†ã‚­ã‚¹ãƒˆã‚’è¿½åŠ ">
 					<param name="Local" value="source\reference\clipboard\S_AddTail.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘I‘ð”ÍˆÍ“à‘SsƒRƒs[">
+					<param name="Name" value="é¸æŠžç¯„å›²å†…å…¨è¡Œã‚³ãƒ”ãƒ¼">
 					<param name="Local" value="source\reference\clipboard\S_CopyLines.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘I‘ð”ÍˆÍ“à‘Ssˆø—p•„•t‚«ƒRƒs[">
+					<param name="Name" value="é¸æŠžç¯„å›²å†…å…¨è¡Œå¼•ç”¨ç¬¦ä»˜ãã‚³ãƒ”ãƒ¼">
 					<param name="Local" value="source\reference\clipboard\S_CopyLinesAsPassage.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘I‘ð”ÍˆÍ“à‘Sss”Ô†•t‚«ƒRƒs[">
+					<param name="Name" value="é¸æŠžç¯„å›²å†…å…¨è¡Œè¡Œç•ªå·ä»˜ãã‚³ãƒ”ãƒ¼">
 					<param name="Local" value="source\reference\clipboard\S_CopyLinesWithLineNumber.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‚±‚Ìƒtƒ@ƒCƒ‹‚ÌƒpƒX–¼‚ðƒRƒs[">
+					<param name="Name" value="ã“ã®ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹åã‚’ã‚³ãƒ”ãƒ¼">
 					<param name="Local" value="source\reference\clipboard\S_CopyPath.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‚±‚Ìƒtƒ@ƒCƒ‹–¼‚ðƒRƒs[">
+					<param name="Name" value="ã“ã®ãƒ•ã‚¡ã‚¤ãƒ«åã‚’ã‚³ãƒ”ãƒ¼">
 					<param name="Local" value="source\reference\clipboard\S_CopyFilename.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‚±‚Ìƒtƒ@ƒCƒ‹‚ÌƒtƒHƒ‹ƒ_–¼‚ðƒRƒs[">
+					<param name="Name" value="ã“ã®ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ•ã‚©ãƒ«ãƒ€åã‚’ã‚³ãƒ”ãƒ¼">
 					<param name="Local" value="source\reference\clipboard\S_CopyDirPath.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‚±‚Ìƒtƒ@ƒCƒ‹‚ÌƒpƒX–¼‚ÆƒJ[ƒ\ƒ‹ˆÊ’u‚ðƒRƒs[">
+					<param name="Name" value="ã“ã®ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹åã¨ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã‚’ã‚³ãƒ”ãƒ¼">
 					<param name="Local" value="source\reference\clipboard\S_CopyTag.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒL[Š„‚è“–‚Äˆê——‚ðƒRƒs[">
+					<param name="Name" value="ã‚­ãƒ¼å‰²ã‚Šå½“ã¦ä¸€è¦§ã‚’ã‚³ãƒ”ãƒ¼">
 					<param name="Local" value="source\reference\clipboard\S_CopyKeyBindList.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 			</UL>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="‘}“ü">
+				<param name="Name" value="æŒ¿å…¥">
 				<param name="Local" value="source\reference\insert\index.html">
 				<param name="ImageNumber" value="1">
 				</OBJECT>
 			<UL>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="“ú•t‘}“ü">
+					<param name="Name" value="æ—¥ä»˜æŒ¿å…¥">
 					<param name="Local" value="source\reference\insert\S_InsertDate.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="Žž‘}“ü">
+					<param name="Name" value="æ™‚åˆ»æŒ¿å…¥">
 					<param name="Local" value="source\reference\insert\S_InsertTime.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒRƒ“ƒgƒ[ƒ‹ƒR[ƒh‚Ì“ü—Í(ƒ_ƒCƒAƒƒO)">
+					<param name="Name" value="ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã‚³ãƒ¼ãƒ‰ã®å…¥åŠ›(ãƒ€ã‚¤ã‚¢ãƒ­ã‚°)">
 					<param name="Local" value="source\reference\insert\S_CtrlCodeDialog.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 			</UL>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="•ÏŠ·">
+				<param name="Name" value="å¤‰æ›">
 				<param name="Local" value="source\reference\change\index.html">
 				<param name="ImageNumber" value="1">
 				</OBJECT>
 			<UL>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‰p‘å•¶Žš¨‰p¬•¶Žš">
+					<param name="Name" value="è‹±å¤§æ–‡å­—â†’è‹±å°æ–‡å­—">
 					<param name="Local" value="source\reference\change\S_ToLower.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‰p¬•¶Žš¨‰p‘å•¶Žš">
+					<param name="Name" value="è‹±å°æ–‡å­—â†’è‹±å¤§æ–‡å­—">
 					<param name="Local" value="source\reference\change\S_ToUpper.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘SŠp¨”¼Šp">
+					<param name="Name" value="å…¨è§’â†’åŠè§’">
 					<param name="Local" value="source\reference\change\S_ToHankaku.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘SŠpƒJƒ^ƒJƒi¨”¼ŠpƒJƒ^ƒJƒi">
+					<param name="Name" value="å…¨è§’ã‚«ã‚¿ã‚«ãƒŠâ†’åŠè§’ã‚«ã‚¿ã‚«ãƒŠ">
 					<param name="Local" value="source\reference\change\S_ToHankata.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="”¼Šp‰p”¨‘SŠp‰p”">
+					<param name="Name" value="åŠè§’è‹±æ•°â†’å…¨è§’è‹±æ•°">
 					<param name="Local" value="source\reference\change\S_ToZenEi.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘SŠp‰p”¨”¼Šp‰p”">
+					<param name="Name" value="å…¨è§’è‹±æ•°â†’åŠè§’è‹±æ•°">
 					<param name="Local" value="source\reference\change\S_ToHanEi.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="”¼Šp{‘S‚Ð‚ç¨‘SŠpEƒJƒ^ƒJƒi">
+					<param name="Name" value="åŠè§’ï¼‹å…¨ã²ã‚‰â†’å…¨è§’ãƒ»ã‚«ã‚¿ã‚«ãƒŠ">
 					<param name="Local" value="source\reference\change\S_ToZenKata.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="”¼Šp{‘SƒJƒ^¨‘SŠpE‚Ð‚ç‚ª‚È">
+					<param name="Name" value="åŠè§’ï¼‹å…¨ã‚«ã‚¿â†’å…¨è§’ãƒ»ã²ã‚‰ãŒãª">
 					<param name="Local" value="source\reference\change\S_ToZenHira.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="”¼ŠpƒJƒ^ƒJƒi¨‘SŠpƒJƒ^ƒJƒi">
+					<param name="Name" value="åŠè§’ã‚«ã‚¿ã‚«ãƒŠâ†’å…¨è§’ã‚«ã‚¿ã‚«ãƒŠ">
 					<param name="Local" value="source\reference\change\S_HanKataToZenKata.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="”¼ŠpƒJƒ^ƒJƒi¨‘SŠp‚Ð‚ç‚ª‚È">
+					<param name="Name" value="åŠè§’ã‚«ã‚¿ã‚«ãƒŠâ†’å…¨è§’ã²ã‚‰ãŒãª">
 					<param name="Local" value="source\reference\change\S_HanKataToZenHira.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="TAB¨‹ó”’">
+					<param name="Name" value="TABâ†’ç©ºç™½">
 					<param name="Local" value="source\reference\change\S_TABToSPACE.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‹ó”’¨TAB">
+					<param name="Name" value="ç©ºç™½â†’TAB">
 					<param name="Local" value="source\reference\change\S_SPACEToTAB.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="Ž©“®”»•Ê¨SJISƒR[ƒh•ÏŠ·">
+					<param name="Name" value="è‡ªå‹•åˆ¤åˆ¥â†’SJISã‚³ãƒ¼ãƒ‰å¤‰æ›">
 					<param name="Local" value="source\reference\change\S_AutoToSJIS.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="E-Mail(JIS¨SJIS)ƒR[ƒh•ÏŠ·">
+					<param name="Name" value="E-Mail(JISâ†’SJIS)ã‚³ãƒ¼ãƒ‰å¤‰æ›">
 					<param name="Local" value="source\reference\change\S_JIStoSJIS.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="EUC¨SJISƒR[ƒh•ÏŠ·">
+					<param name="Name" value="EUCâ†’SJISã‚³ãƒ¼ãƒ‰å¤‰æ›">
 					<param name="Local" value="source\reference\change\S_EUCtoSJIS.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="Unicode¨SJISƒR[ƒh•ÏŠ·">
+					<param name="Name" value="Unicodeâ†’SJISã‚³ãƒ¼ãƒ‰å¤‰æ›">
 					<param name="Local" value="source\reference\change\S_CodeCnvUNICODEtoSJIS.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="UnicodeBE¨SJISƒR[ƒh•ÏŠ·">
+					<param name="Name" value="UnicodeBEâ†’SJISã‚³ãƒ¼ãƒ‰å¤‰æ›">
 					<param name="Local" value="source\reference\change\S_CodeCnvUNICODEBEtoSJIS.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="UTF-8¨SJISƒR[ƒh•ÏŠ·">
+					<param name="Name" value="UTF-8â†’SJISã‚³ãƒ¼ãƒ‰å¤‰æ›">
 					<param name="Local" value="source\reference\change\S_UTF8toSJIS.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="UTF-7¨SJISƒR[ƒh•ÏŠ·">
+					<param name="Name" value="UTF-7â†’SJISã‚³ãƒ¼ãƒ‰å¤‰æ›">
 					<param name="Local" value="source\reference\change\S_UTF7toSJIS.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="SJIS¨JISƒR[ƒh•ÏŠ·">
+					<param name="Name" value="SJISâ†’JISã‚³ãƒ¼ãƒ‰å¤‰æ›">
 					<param name="Local" value="source\reference\change\S_SJIStoJIS.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="SJIS¨EUCƒR[ƒh•ÏŠ·">
+					<param name="Name" value="SJISâ†’EUCã‚³ãƒ¼ãƒ‰å¤‰æ›">
 					<param name="Local" value="source\reference\change\S_SJIStoEUC.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="SJIS¨UTF-8ƒR[ƒh•ÏŠ·">
+					<param name="Name" value="SJISâ†’UTF-8ã‚³ãƒ¼ãƒ‰å¤‰æ›">
 					<param name="Local" value="source\reference\change\S_SJIStoUTF8.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="SJIS¨UTF-7ƒR[ƒh•ÏŠ·">
+					<param name="Name" value="SJISâ†’UTF-7ã‚³ãƒ¼ãƒ‰å¤‰æ›">
 					<param name="Local" value="source\reference\change\S_SJIStoUTF7.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="Base64ƒfƒR[ƒh‚µ‚Ä•Û‘¶">
+					<param name="Name" value="Base64ãƒ‡ã‚³ãƒ¼ãƒ‰ã—ã¦ä¿å­˜">
 					<param name="Local" value="source\reference\change\S_Base64Decode.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="uudecode‚µ‚Ä•Û‘¶">
+					<param name="Name" value="uudecodeã—ã¦ä¿å­˜">
 					<param name="Local" value="source\reference\change\S_Uudecode.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 			</UL>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="ŒŸõ">
+				<param name="Name" value="æ¤œç´¢">
 				<param name="Local" value="source\reference\find\index.html">
 				<param name="ImageNumber" value="1">
 				</OBJECT>
 			<UL>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ŒŸõ(’PŒêŒŸõƒ_ƒCƒAƒƒO)">
+					<param name="Name" value="æ¤œç´¢(å˜èªžæ¤œç´¢ãƒ€ã‚¤ã‚¢ãƒ­ã‚°)">
 					<param name="Local" value="source\reference\find\S_SearchDialog.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ŽŸ‚ðŒŸõ">
+					<param name="Name" value="æ¬¡ã‚’æ¤œç´¢">
 					<param name="Local" value="source\reference\find\S_SearchNext.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘O‚ðŒŸõ">
+					<param name="Name" value="å‰ã‚’æ¤œç´¢">
 					<param name="Local" value="source\reference\find\S_SearchPrev.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="’uŠ·(’uŠ·ƒ_ƒCƒAƒƒO)">
+					<param name="Name" value="ç½®æ›(ç½®æ›ãƒ€ã‚¤ã‚¢ãƒ­ã‚°)">
 					<param name="Local" value="source\reference\find\S_ReplaceDialog.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="’uŠ·(ŽÀs)">
+					<param name="Name" value="ç½®æ›(å®Ÿè¡Œ)">
 					<param name="Local" value="source\reference\find\S_Replace.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‚·‚×‚Ä’uŠ·(ŽÀs)">
+					<param name="Name" value="ã™ã¹ã¦ç½®æ›(å®Ÿè¡Œ)">
 					<param name="Local" value="source\reference\find\S_ReplaceAll.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ŒŸõƒ}[ƒN‚ÌƒNƒŠƒA">
+					<param name="Name" value="æ¤œç´¢ãƒžãƒ¼ã‚¯ã®ã‚¯ãƒªã‚¢">
 					<param name="Local" value="source\reference\find\S_SearchClearMark.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ŒŸõŠJŽnˆÊ’u‚Ö–ß‚é">
+					<param name="Name" value="æ¤œç´¢é–‹å§‹ä½ç½®ã¸æˆ»ã‚‹">
 					<param name="Local" value="source\reference\find\S_SearchStartPos.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
@@ -834,605 +834,605 @@
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="Žw’èsƒwƒWƒƒƒ“ƒv">
+					<param name="Name" value="æŒ‡å®šè¡Œãƒ˜ã‚¸ãƒ£ãƒ³ãƒ—">
 					<param name="Local" value="source\reference\find\S_Jump.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒAƒEƒgƒ‰ƒCƒ“‰ðÍ">
+					<param name="Name" value="ã‚¢ã‚¦ãƒˆãƒ©ã‚¤ãƒ³è§£æž">
 					<param name="Local" value="source\reference\find\S_Outline.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒ^ƒOƒWƒƒƒ“ƒv">
+					<param name="Name" value="ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—">
 					<param name="Local" value="source\reference\find\S_TagJump.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒ^ƒOƒWƒƒƒ“ƒvƒoƒbƒN">
+					<param name="Name" value="ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—ãƒãƒƒã‚¯">
 					<param name="Local" value="source\reference\find\S_TagJumpBack.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒ^ƒOƒtƒ@ƒCƒ‹‚Ìì¬">
+					<param name="Name" value="ã‚¿ã‚°ãƒ•ã‚¡ã‚¤ãƒ«ã®ä½œæˆ">
 					<param name="Local" value="source\reference\find\S_TagMake.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒ_ƒCƒŒƒNƒgƒ^ƒOƒWƒƒƒ“ƒv">
+					<param name="Name" value="ãƒ€ã‚¤ãƒ¬ã‚¯ãƒˆã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—">
 					<param name="Local" value="source\reference\find\S_DirectTagJump.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒL[ƒ[ƒh‚ðŽw’è‚µ‚Äƒ^ƒOƒWƒƒƒ“ƒv">
+					<param name="Name" value="ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ã‚’æŒ‡å®šã—ã¦ã‚¿ã‚°ã‚¸ãƒ£ãƒ³ãƒ—">
 					<param name="Local" value="source\reference\find\S_KeywordTagJump.html">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒtƒ@ƒCƒ‹“à—e”äŠr">
+					<param name="Name" value="ãƒ•ã‚¡ã‚¤ãƒ«å†…å®¹æ¯”è¼ƒ">
 					<param name="Local" value="source\reference\find\S_Compare.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="DIFF·•ª•\Ž¦(ƒ_ƒCƒAƒƒO)">
+					<param name="Name" value="DIFFå·®åˆ†è¡¨ç¤º(ãƒ€ã‚¤ã‚¢ãƒ­ã‚°)">
 					<param name="Local" value="source\reference\find\S_DiffDialog.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="DIFF·•ª•\Ž¦">
+					<param name="Name" value="DIFFå·®åˆ†è¡¨ç¤º">
 					<param name="Local" value="source\reference\find\S_Diff.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="DIFF·•ª•\Ž¦(ŽŸ‚Ö)">
+					<param name="Name" value="DIFFå·®åˆ†è¡¨ç¤º(æ¬¡ã¸)">
 					<param name="Local" value="source\reference\find\S_DiffNext.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="DIFF·•ª•\Ž¦(‘O‚Ö)">
+					<param name="Name" value="DIFFå·®åˆ†è¡¨ç¤º(å‰ã¸)">
 					<param name="Local" value="source\reference\find\S_DiffPrev.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="DIFF·•ª•\Ž¦(‘S‰ðœ)">
+					<param name="Name" value="DIFFå·®åˆ†è¡¨ç¤º(å…¨è§£é™¤)">
 					<param name="Local" value="source\reference\find\S_DiffReset.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘ÎŠ‡ŒÊ‚ÌŒŸõ">
+					<param name="Name" value="å¯¾æ‹¬å¼§ã®æ¤œç´¢">
 					<param name="Local" value="source\reference\find\S_BracketPair.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒuƒbƒNƒ}[ƒNÝ’èE‰ðœ">
+					<param name="Name" value="ãƒ–ãƒƒã‚¯ãƒžãƒ¼ã‚¯è¨­å®šãƒ»è§£é™¤">
 					<param name="Local" value="source\reference\find\S_BookmarkSet.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ŽŸ‚ÌƒuƒbƒNƒ}[ƒN‚Ö">
+					<param name="Name" value="æ¬¡ã®ãƒ–ãƒƒã‚¯ãƒžãƒ¼ã‚¯ã¸">
 					<param name="Local" value="source\reference\find\S_BookmarkNext.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘O‚ÌƒuƒbƒNƒ}[ƒN‚Ö">
+					<param name="Name" value="å‰ã®ãƒ–ãƒƒã‚¯ãƒžãƒ¼ã‚¯ã¸">
 					<param name="Local" value="source\reference\find\S_BookmarkPrev.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒuƒbƒNƒ}[ƒN‚Ì‘S‰ðœ">
+					<param name="Name" value="ãƒ–ãƒƒã‚¯ãƒžãƒ¼ã‚¯ã®å…¨è§£é™¤">
 					<param name="Local" value="source\reference\find\S_BookmarkReset.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒuƒbƒNƒ}[ƒN‚Ìˆê——">
+					<param name="Name" value="ãƒ–ãƒƒã‚¯ãƒžãƒ¼ã‚¯ã®ä¸€è¦§">
 					<param name="Local" value="source\reference\find\S_BookmarkView.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="Žw’èƒpƒ^[ƒ“‚Éˆê’v‚·‚és‚ðƒ}[ƒN">
+					<param name="Name" value="æŒ‡å®šãƒ‘ã‚¿ãƒ¼ãƒ³ã«ä¸€è‡´ã™ã‚‹è¡Œã‚’ãƒžãƒ¼ã‚¯">
 					<param name="Local" value="source\reference\find\S_BookmarkPattern.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 			</UL>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="ƒ‚[ƒhØ‘Ö">
+				<param name="Name" value="ãƒ¢ãƒ¼ãƒ‰åˆ‡æ›¿">
 				<param name="Local" value="source\reference\mode\index.html">
 				<param name="ImageNumber" value="1">
 				</OBJECT>
 			<UL>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘}“ü^ã‘‚«ƒ‚[ƒhØ‚è‘Ö‚¦">
+					<param name="Name" value="æŒ¿å…¥ï¼ä¸Šæ›¸ããƒ¢ãƒ¼ãƒ‰åˆ‡ã‚Šæ›¿ãˆ">
 					<param name="Local" value="source\reference\mode\S_ChgmodINS.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="“ü—Í‰üsƒR[ƒhŽw’è">
+					<param name="Name" value="å…¥åŠ›æ”¹è¡Œã‚³ãƒ¼ãƒ‰æŒ‡å®š">
 					<param name="Local" value="source\reference\mode\S_ChgmodEOL.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ŠeŽíƒ‚[ƒh‚ÌŽæ‚èÁ‚µ">
+					<param name="Name" value="å„ç¨®ãƒ¢ãƒ¼ãƒ‰ã®å–ã‚Šæ¶ˆã—">
 					<param name="Local" value="source\reference\mode\S_CancelMode.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 			</UL>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="Ý’è">
+				<param name="Name" value="è¨­å®š">
 				<param name="Local" value="source\reference\config\index.html">
 				<param name="ImageNumber" value="1">
 				</OBJECT>
 			<UL>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒc[ƒ‹ƒo[‚ð•\Ž¦A•\Ž¦’†‚Ìƒc[ƒ‹ƒo[‚ð‰B‚·">
+					<param name="Name" value="ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã‚’è¡¨ç¤ºã€è¡¨ç¤ºä¸­ã®ãƒ„ãƒ¼ãƒ«ãƒãƒ¼ã‚’éš ã™">
 					<param name="Local" value="source\reference\config\S_ShowToolbar.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[‚ð•\Ž¦A•\Ž¦’†‚Ìƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[‚ð‰B‚·">
+					<param name="Name" value="ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚­ãƒ¼ã‚’è¡¨ç¤ºã€è¡¨ç¤ºä¸­ã®ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚­ãƒ¼ã‚’éš ã™">
 					<param name="Local" value="source\reference\config\S_ShowFunckey.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒ^ƒuƒo[‚ð•\Ž¦A•\Ž¦’†‚Ìƒ^ƒuƒo[‚ð‰B‚·">
+					<param name="Name" value="ã‚¿ãƒ–ãƒãƒ¼ã‚’è¡¨ç¤ºã€è¡¨ç¤ºä¸­ã®ã‚¿ãƒ–ãƒãƒ¼ã‚’éš ã™">
 					<param name="Local" value="source\reference\config\S_ShowTab.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒXƒe[ƒ^ƒXƒo[‚ð•\Ž¦A•\Ž¦’†‚ÌƒXƒe[ƒ^ƒXƒo[‚ð‰B‚·">
+					<param name="Name" value="ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼ã‚’è¡¨ç¤ºã€è¡¨ç¤ºä¸­ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼ã‚’éš ã™">
 					<param name="Local" value="source\reference\config\S_ShowStatusbar.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒ^ƒCƒv•ÊÝ’èˆê——">
+					<param name="Name" value="ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®šä¸€è¦§">
 					<param name="Local" value="source\reference\config\S_TypeList.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒ^ƒCƒv•ÊÝ’è">
+					<param name="Name" value="ã‚¿ã‚¤ãƒ—åˆ¥è¨­å®š">
 					<param name="Local" value="source\reference\config\S_OptionType.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‹¤’ÊÝ’è">
+					<param name="Name" value="å…±é€šè¨­å®š">
 					<param name="Local" value="source\reference\config\S_OptionCommon.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒtƒHƒ“ƒgÝ’è">
+					<param name="Name" value="ãƒ•ã‚©ãƒ³ãƒˆè¨­å®š">
 					<param name="Local" value="source\reference\config\S_SelectFont.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="Ü‚è•Ô‚µŒ…”">
+					<param name="Name" value="æŠ˜ã‚Šè¿”ã—æ¡æ•°">
 					<param name="Local" value="source\reference\config\S_WrapWindowWidth.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‚¨‹C‚É“ü‚è‚ÌÝ’è">
+					<param name="Name" value="ãŠæ°—ã«å…¥ã‚Šã®è¨­å®š">
 					<param name="Local" value="source\reference\config\S_OptionFavorite.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ˆø—p•„‚Ì•ÏX">
+					<param name="Name" value="å¼•ç”¨ç¬¦ã®å¤‰æ›´">
 					<param name="Local" value="source\reference\config\S_SetMsgQuoteStr.html">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ŠO•”ƒRƒ}ƒ“ƒhŽÀs">
+					<param name="Name" value="å¤–éƒ¨ã‚³ãƒžãƒ³ãƒ‰å®Ÿè¡Œ">
 					<param name="Local" value="source\reference\config\S_ExecCommand.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 			</UL>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[">
+				<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼">
 				<param name="Local" value="source\reference\custom\index.html">
 				<param name="ImageNumber" value="1">
 				</OBJECT>
 			<UL>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‰EƒNƒŠƒbƒNƒƒjƒ…[">
+					<param name="Name" value="å³ã‚¯ãƒªãƒƒã‚¯ãƒ¡ãƒ‹ãƒ¥ãƒ¼">
 					<param name="Local" value="source\reference\custom\S_RMenu.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[1">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼1">
 					<param name="Local" value="source\reference\custom\S_CustMenu1.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[2">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼2">
 					<param name="Local" value="source\reference\custom\S_CustMenu2.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[3">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼3">
 					<param name="Local" value="source\reference\custom\S_CustMenu3.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[4">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼4">
 					<param name="Local" value="source\reference\custom\S_CustMenu4.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[5">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼5">
 					<param name="Local" value="source\reference\custom\S_CustMenu5.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[6">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼6">
 					<param name="Local" value="source\reference\custom\S_CustMenu6.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[7">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼7">
 					<param name="Local" value="source\reference\custom\S_CustMenu7.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[8">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼8">
 					<param name="Local" value="source\reference\custom\S_CustMenu8.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[9">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼9">
 					<param name="Local" value="source\reference\custom\S_CustMenu9.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[10">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼10">
 					<param name="Local" value="source\reference\custom\S_CustMenu10.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[11">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼11">
 					<param name="Local" value="source\reference\custom\S_CustMenu11.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[12">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼12">
 					<param name="Local" value="source\reference\custom\S_CustMenu12.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[13">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼13">
 					<param name="Local" value="source\reference\custom\S_CustMenu13.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[14">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼14">
 					<param name="Local" value="source\reference\custom\S_CustMenu14.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[15">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼15">
 					<param name="Local" value="source\reference\custom\S_CustMenu15.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[16">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼16">
 					<param name="Local" value="source\reference\custom\S_CustMenu16.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[17">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼17">
 					<param name="Local" value="source\reference\custom\S_CustMenu17.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[18">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼18">
 					<param name="Local" value="source\reference\custom\S_CustMenu18.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[19">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼19">
 					<param name="Local" value="source\reference\custom\S_CustMenu19.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[20">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼20">
 					<param name="Local" value="source\reference\custom\S_CustMenu20.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[21">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼21">
 					<param name="Local" value="source\reference\custom\S_CustMenu21.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[22">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼22">
 					<param name="Local" value="source\reference\custom\S_CustMenu22.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[23">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼23">
 					<param name="Local" value="source\reference\custom\S_CustMenu23.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒJƒXƒ^ƒ€ƒƒjƒ…[24">
+					<param name="Name" value="ã‚«ã‚¹ã‚¿ãƒ ãƒ¡ãƒ‹ãƒ¥ãƒ¼24">
 					<param name="Local" value="source\reference\custom\S_CustMenu24.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 			</UL>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="ƒEƒCƒ“ƒhƒE">
+				<param name="Name" value="ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦">
 				<param name="Local" value="source\reference\window\index.html">
 				<param name="ImageNumber" value="1">
 				</OBJECT>
 			<UL>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ã‰º‚É•ªŠ„">
+					<param name="Name" value="ä¸Šä¸‹ã«åˆ†å‰²">
 					<param name="Local" value="source\reference\window\S_SplitWinV.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="¶‰E‚É•ªŠ„">
+					<param name="Name" value="å·¦å³ã«åˆ†å‰²">
 					<param name="Local" value="source\reference\window\S_SplitWinH.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="c‰¡‚É•ªŠ„">
+					<param name="Name" value="ç¸¦æ¨ªã«åˆ†å‰²">
 					<param name="Local" value="source\reference\window\S_SplitWinVH.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒEƒBƒ“ƒhƒE‚ð•Â‚¶‚é">
+					<param name="Name" value="ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‰ã˜ã‚‹">
 					<param name="Local" value="source\reference\window\S_WinClose.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‚·‚×‚Ä•Â‚¶‚é">
+					<param name="Name" value="ã™ã¹ã¦é–‰ã˜ã‚‹">
 					<param name="Local" value="source\reference\window\S_WinCloseAll.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="d‚Ë‚Ä•\Ž¦">
+					<param name="Name" value="é‡ã­ã¦è¡¨ç¤º">
 					<param name="Local" value="source\reference\window\S_CascadeWin.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ã‰º‚É•À‚×‚Ä•\Ž¦">
+					<param name="Name" value="ä¸Šä¸‹ã«ä¸¦ã¹ã¦è¡¨ç¤º">
 					<param name="Local" value="source\reference\window\S_TileWinV.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="¶‰E‚É•À‚×‚Ä•\Ž¦">
+					<param name="Name" value="å·¦å³ã«ä¸¦ã¹ã¦è¡¨ç¤º">
 					<param name="Local" value="source\reference\window\S_TileWinH.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ŽŸ‚ÌƒEƒBƒ“ƒhƒE">
+					<param name="Name" value="æ¬¡ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦">
 					<param name="Local" value="source\reference\window\S_NextWindow.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘O‚ÌƒEƒBƒ“ƒhƒE">
+					<param name="Name" value="å‰ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦">
 					<param name="Local" value="source\reference\window\S_PrevWindow.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="c•ûŒü‚ÉÅ‘å‰»">
+					<param name="Name" value="ç¸¦æ–¹å‘ã«æœ€å¤§åŒ–">
 					<param name="Local" value="source\reference\window\S_MaximizeV.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‰¡•ûŒü‚ÉÅ‘å‰»">
+					<param name="Name" value="æ¨ªæ–¹å‘ã«æœ€å¤§åŒ–">
 					<param name="Local" value="source\reference\window\S_MaximizeH.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‚·‚×‚ÄÅ¬‰»">
+					<param name="Name" value="ã™ã¹ã¦æœ€å°åŒ–">
 					<param name="Local" value="source\reference\window\S_MinimizeAll.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="Ä•`‰æ">
+					<param name="Name" value="å†æç”»">
 					<param name="Local" value="source\reference\window\S_ReDraw.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒAƒEƒgƒvƒbƒgƒEƒBƒ“ƒhƒE•\Ž¦">
+					<param name="Name" value="ã‚¢ã‚¦ãƒˆãƒ—ãƒƒãƒˆã‚¦ã‚£ãƒ³ãƒ‰ã‚¦è¡¨ç¤º">
 					<param name="Local" value="source\reference\window\S_ActivateWinOutput.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="í‚ÉŽè‘O‚É•\Ž¦">
+					<param name="Name" value="å¸¸ã«æ‰‹å‰ã«è¡¨ç¤º">
 					<param name="Local" value="source\reference\window\S_WindowTopMost.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒEƒBƒ“ƒhƒEˆê——">
+					<param name="Name" value="ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä¸€è¦§">
 					<param name="Local" value="source\reference\window\S_WindowList.html">
 					</OBJECT>
 			</UL>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="Žx‰‡">
+				<param name="Name" value="æ”¯æ´">
 				<param name="Local" value="source\reference\support\index.html">
 				<param name="ImageNumber" value="1">
 				</OBJECT>
 			<UL>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="“ü—Í•âŠ®">
+					<param name="Name" value="å…¥åŠ›è£œå®Œ">
 					<param name="Local" value="source\reference\support\S_Complete.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒwƒ‹ƒv–ÚŽŸ">
+					<param name="Name" value="ãƒ˜ãƒ«ãƒ—ç›®æ¬¡">
 					<param name="Local" value="source\reference\support\S_HelpContents.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒwƒ‹ƒvƒL[ƒ[ƒhŒŸõ">
+					<param name="Name" value="ãƒ˜ãƒ«ãƒ—ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰æ¤œç´¢">
 					<param name="Local" value="source\reference\support\S_HelpSearch.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒRƒ}ƒ“ƒhˆê——">
+					<param name="Name" value="ã‚³ãƒžãƒ³ãƒ‰ä¸€è¦§">
 					<param name="Local" value="source\reference\support\S_CommandList.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ŠO•”ƒwƒ‹ƒv‚P">
+					<param name="Name" value="å¤–éƒ¨ãƒ˜ãƒ«ãƒ—ï¼‘">
 					<param name="Local" value="source\reference\support\S_ExtHelp1.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ŠO•”HTMLƒwƒ‹ƒv">
+					<param name="Name" value="å¤–éƒ¨HTMLãƒ˜ãƒ«ãƒ—">
 					<param name="Local" value="source\reference\support\S_ExtHtmlHelp.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒo[ƒWƒ‡ƒ“î•ñ">
+					<param name="Name" value="ãƒãƒ¼ã‚¸ãƒ§ãƒ³æƒ…å ±">
 					<param name="Local" value="source\reference\support\S_About.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 			</UL>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="‚»‚Ì‘¼">
+				<param name="Name" value="ãã®ä»–">
 				<param name="Local" value="source\reference\other\index.html">
 				<param name="ImageNumber" value="1">
 				</OBJECT>
 			<UL>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒtƒ@ƒCƒ‹–¼‚ð•Ô‚·">
+					<param name="Name" value="ãƒ•ã‚¡ã‚¤ãƒ«åã‚’è¿”ã™">
 					<param name="Local" value="source\reference\other\S_GetFilename.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘I‘ð•”•ª‚Ì•¶Žš—ñ‚ðŽæ“¾">
+					<param name="Name" value="é¸æŠžéƒ¨åˆ†ã®æ–‡å­—åˆ—ã‚’å–å¾—">
 					<param name="Local" value="source\reference\other\S_GetSelectedString.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="“ÁŽê•¶Žš‚Ì“WŠJ">
+					<param name="Name" value="ç‰¹æ®Šæ–‡å­—ã®å±•é–‹">
 					<param name="Local" value="source\reference\other\S_ExpandParameter.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="Žw’è˜_—s‚ÌŽæ“¾">
+					<param name="Name" value="æŒ‡å®šè«–ç†è¡Œã®å–å¾—">
 					<param name="Local" value="source\reference\other\S_GetLineStr.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘S˜_—s”‚ÌŽæ“¾">
+					<param name="Name" value="å…¨è«–ç†è¡Œæ•°ã®å–å¾—">
 					<param name="Local" value="source\reference\other\S_GetLineCount.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒ^ƒu•‚ÌŽæ“¾EÝ’è">
+					<param name="Name" value="ã‚¿ãƒ–å¹…ã®å–å¾—ãƒ»è¨­å®š">
 					<param name="Local" value="source\reference\other\S_ChangeTabWidth.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒeƒLƒXƒg‚Ì‘I‘ðó‘Ô‚ðŽæ“¾">
+					<param name="Name" value="ãƒ†ã‚­ã‚¹ãƒˆã®é¸æŠžçŠ¶æ…‹ã‚’å–å¾—">
 					<param name="Local" value="source\reference\other\S_IsTextSelected.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘I‘ðŠJŽns‚ðŽæ“¾">
+					<param name="Name" value="é¸æŠžé–‹å§‹è¡Œã‚’å–å¾—">
 					<param name="Local" value="source\reference\other\S_GetSelectLineFrom.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘I‘ðŠJŽnŒ…‚ðŽæ“¾">
+					<param name="Name" value="é¸æŠžé–‹å§‹æ¡ã‚’å–å¾—">
 					<param name="Local" value="source\reference\other\S_GetSelectColmFrom.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘I‘ðI—¹s‚ðŽæ“¾">
+					<param name="Name" value="é¸æŠžçµ‚äº†è¡Œã‚’å–å¾—">
 					<param name="Local" value="source\reference\other\S_GetSelectLineTo.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘I‘ðI—¹Œ…‚ðŽæ“¾">
+					<param name="Name" value="é¸æŠžçµ‚äº†æ¡ã‚’å–å¾—">
 					<param name="Local" value="source\reference\other\S_GetSelectColmTo.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‘}“ü^ã‘‚«ƒ‚[ƒh‚ÌŽæ“¾">
+					<param name="Name" value="æŒ¿å…¥ï¼ä¸Šæ›¸ããƒ¢ãƒ¼ãƒ‰ã®å–å¾—">
 					<param name="Local" value="source\reference\other\S_IsInsMode.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="•¶ŽšƒR[ƒh‚ÌŽæ“¾">
+					<param name="Name" value="æ–‡å­—ã‚³ãƒ¼ãƒ‰ã®å–å¾—">
 					<param name="Local" value="source\reference\other\S_GetCharCode.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="‰üsƒR[ƒh‚ÌŽæ“¾">
+					<param name="Name" value="æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã®å–å¾—">
 					<param name="Local" value="source\reference\other\S_GetLineCode.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="Undo‰Â”\‚©’²‚×‚é">
+					<param name="Name" value="Undoå¯èƒ½ã‹èª¿ã¹ã‚‹">
 					<param name="Local" value="source\reference\other\S_IsPossibleUndo.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="Redo‰Â”\‚©’²‚×‚é">
+					<param name="Name" value="Redoå¯èƒ½ã‹èª¿ã¹ã‚‹">
 					<param name="Local" value="source\reference\other\S_IsPossibleRedo.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="ƒgƒŒ[ƒXo—Í">
+					<param name="Name" value="ãƒˆãƒ¬ãƒ¼ã‚¹å‡ºåŠ›">
 					<param name="Local" value="source\reference\other\S_TraceOut.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 			</UL>
 		</UL>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="ƒ}ƒNƒ‚ÌŽg—p•û–@">
+			<param name="Name" value="ãƒžã‚¯ãƒ­ã®ä½¿ç”¨æ–¹æ³•">
 			<param name="Local" value="source\usage\index.html">
 			<param name="ImageNumber" value="1">
 			</OBJECT>
 		<UL>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="ƒ}ƒNƒ‚ÌŽí—Þ">
+				<param name="Name" value="ãƒžã‚¯ãƒ­ã®ç¨®é¡ž">
 				<param name="Local" value="source\usage\MacroType.html">
 				<param name="ImageNumber" value="9">
 				</OBJECT>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="ƒ}ƒNƒ‚Ìì¬">
+				<param name="Name" value="ãƒžã‚¯ãƒ­ã®ä½œæˆ">
 				<param name="Local" value="source\usage\BuildMacro.html">
 				<param name="ImageNumber" value="9">
 				</OBJECT>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="ƒ}ƒNƒ‚ÌŠÖ”–¼‚É‚Â‚¢‚Ä">
+				<param name="Name" value="ãƒžã‚¯ãƒ­ã®é–¢æ•°åã«ã¤ã„ã¦">
 				<param name="Local" value="source\usage\func_name.html">
 				<param name="ImageNumber" value="9">
 				</OBJECT>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="ƒL[ƒ}ƒNƒŒ¾ŒêŽd—l">
+				<param name="Name" value="ã‚­ãƒ¼ãƒžã‚¯ãƒ­è¨€èªžä»•æ§˜">
 				<param name="Local" value="source\usage\keymacro.html">
 				<param name="ImageNumber" value="9">
 				</OBJECT>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="ƒ}ƒNƒ‚ÌŽÀs">
+				<param name="Name" value="ãƒžã‚¯ãƒ­ã®å®Ÿè¡Œ">
 				<param name="Local" value="source\usage\ExecMacro.html">
 				<param name="ImageNumber" value="9">
 				</OBJECT>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="ƒƒbƒZ[ƒWƒ{ƒbƒNƒX‚É‚Â‚¢‚Ä">
+				<param name="Name" value="ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒœãƒƒã‚¯ã‚¹ã«ã¤ã„ã¦">
 				<param name="Local" value="source\usage\MessageBox.html">
 				<param name="ImageNumber" value="9">
 				</OBJECT>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="ƒ}ƒNƒ‚ð•”•ªŽÀs‚·‚é‚É‚Í">
+				<param name="Name" value="ãƒžã‚¯ãƒ­ã‚’éƒ¨åˆ†å®Ÿè¡Œã™ã‚‹ã«ã¯">
 				<param name="Local" value="source\usage\clipmacro.html">
 				<param name="ImageNumber" value="9">
 				</OBJECT>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="Windows Script Component‚ÌŽg—p">
+				<param name="Name" value="Windows Script Componentã®ä½¿ç”¨">
 				<param name="Local" value="source\usage\wsc.html">
 				<param name="ImageNumber" value="9">
 				</OBJECT>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="PerlScript‚É‚Â‚¢‚Ä">
+				<param name="Name" value="PerlScriptã«ã¤ã„ã¦">
 				<param name="Local" value="source\usage\perlscript.html">
 				<param name="ImageNumber" value="9">
 				</OBJECT>
 		</UL>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="‚±‚Ìƒwƒ‹ƒvƒtƒ@ƒCƒ‹‚É‚Â‚¢‚Ä">
+			<param name="Name" value="ã“ã®ãƒ˜ãƒ«ãƒ—ãƒ•ã‚¡ã‚¤ãƒ«ã«ã¤ã„ã¦">
 			<param name="Local" value="source\gfdl.html">
 			<param name="ImageNumber" value="9">
 			</OBJECT>

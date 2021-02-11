@@ -907,12 +907,12 @@
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="Popup">
-		<param name="Name" value="Popup���\�b�h">
+		<param name="Name" value="Popupメソッド">
 		<param name="Local" value="source\usage\popup.html">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="MsgBox">
-		<param name="Name" value="���b�Z�[�W�{�b�N�X�ɂ���">
+		<param name="Name" value="メッセージボックスについて">
 		<param name="Local" value="source\usage\MessageBox.html">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
@@ -1979,7 +1979,7 @@
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="ScriptControl">
-		<param name="Name" value="ScriptControl�̎g�p">
+		<param name="Name" value="ScriptControlの使用">
 		<param name="Local" value="source\usage\scriptcontrol.html">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
@@ -2294,7 +2294,7 @@
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="wsc">
-		<param name="Name" value="Windows Script Component�̎g�p">
+		<param name="Name" value="Windows Script Componentの使用">
 		<param name="Local" value="source\usage\wsc.html">
 		</OBJECT>
 </UL>
