@@ -68,7 +68,7 @@ struct handle_closer
 };
 
 //! HANDLE型のスマートポインタ
-typedef std::unique_ptr<std::remove_pointer<HANDLE>::type, handle_closer> handleHolder;
+using handleHolder = std::unique_ptr<std::remove_pointer<HANDLE>::type, handle_closer>;
 
 /*!
  * WinMain起動テストのためのフィクスチャクラス
@@ -135,12 +135,12 @@ protected:
  * CControlProcess::WaitForInitializedとして実装したいコードです。本体を変えたくないので一時定義しました。
  * 既存CProcessFactory::WaitForInitializedControlProcess()と概ね等価です。
  */
-void CControlProcess_WaitForInitialized( LPCWSTR lpszProfileName )
+void CControlProcess_WaitForInitialized(std::wstring_view profileName)
 {
 	// 初期化完了イベントを作成する
 	std::wstring strInitEvent( GSTR_EVENT_SAKURA_CP_INITIALIZED );
-	if( lpszProfileName && lpszProfileName[0] ){
-		strInitEvent += lpszProfileName;
+	if (profileName.length() > 0) {
+		strInitEvent += profileName;
 	}
 	auto hEvent = ::CreateEventW( NULL, TRUE, FALSE, strInitEvent.data() );
 	if (!hEvent) {
@@ -163,7 +163,7 @@ void CControlProcess_WaitForInitialized( LPCWSTR lpszProfileName )
  * CControlProcess::Startとして実装したいコードです。本体を変えたくないので一時定義しました。
  * 既存CProcessFactory::StartControlProcess()と概ね等価です。
  */
-void CControlProcess_Start( LPCWSTR lpszProfileName )
+void CControlProcess_Start(std::wstring_view profileName)
 {
 	// スタートアップ情報
 	STARTUPINFO si = { sizeof(STARTUPINFO), 0 };
@@ -171,19 +171,22 @@ void CControlProcess_Start( LPCWSTR lpszProfileName )
 	si.dwFlags = STARTF_USESHOWWINDOW;
 	si.wShowWindow = SW_SHOWDEFAULT;
 
-	WCHAR szExePath[MAX_PATH];
-	::GetModuleFileNameW( NULL, szExePath, _countof(szExePath) );
+	const auto exePath = GetExeFileName();
 
-	CNativeW cmemCommandLine;
-	cmemCommandLine.AppendStringF( L"\"%s\" -NOWIN -PROF=\"%s\"", szExePath, lpszProfileName );
+	std::wstring strProfileName;
+	if (profileName.length() > 0) {
+		strProfileName = profileName;
+	}
 
-	LPWSTR pszCommandLine = cmemCommandLine.GetStringPtr();
+	std::wstring strCommandLine = strprintf(LR"("%s" -PROF="%s" -NOWIN)", exePath.c_str(), strProfileName.c_str());
+
+	LPWSTR pszCommandLine = strCommandLine.data();
 	DWORD dwCreationFlag = CREATE_DEFAULT_ERROR_MODE;
 	PROCESS_INFORMATION pi;
 
 	// コントロールプロセスを起動する
 	BOOL createSuccess = ::CreateProcess(
-		szExePath,			// 実行可能モジュールパス
+		exePath.c_str(),	// 実行可能モジュールパス
 		pszCommandLine,		// コマンドラインバッファ
 		NULL,				// プロセスのセキュリティ記述子
 		NULL,				// スレッドのセキュリティ記述子
@@ -203,7 +206,7 @@ void CControlProcess_Start( LPCWSTR lpszProfileName )
 	::CloseHandle( pi.hProcess );
 
 	// コントロールプロセスの初期化完了を待つ
-	CControlProcess_WaitForInitialized( lpszProfileName );
+	CControlProcess_WaitForInitialized(profileName);
 }
 
 /*!

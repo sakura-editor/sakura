@@ -33,12 +33,13 @@
 
 #include <algorithm>
 #include <cstdio>
-#include <cstdlib>
+#include <iostream>
 #include <regex>
 #include <string>
 #include <string_view>
 
-#include "debug/Debug2.h"
+#include "basis/primitive.h"
+#include "util/string_ex.h"
 #include "StartEditorProcessForTest.h"
 
 /*!
@@ -49,25 +50,26 @@
  */
 int StartEditorProcessForTest(std::wstring_view commandLine)
 {
-	// 実行中モジュールのインスタンスハンドルを取得する
-	HINSTANCE hInstance = ::GetModuleHandleW(nullptr);
+	//戻り値は0が正常。適当なエラー値を指定しておく。
+	int ret = -1;
 
-	// WinMainに渡すためのコマンドライン
-	std::wstring strCommandLine(commandLine);
+	// コマンドラインに -PROF 指定がない場合は異常終了させる
+	if (std::regex_search(commandLine.data(), std::wregex(LR"(-PROF\b)", std::wregex::icase))) {
+		// 実行中モジュールのインスタンスハンドルを取得する
+		HINSTANCE hInstance = ::GetModuleHandleW(nullptr);
 
-	// コマンドラインに -PROF 指定がない場合は例外を投げて異常終了させる
-	if (!std::regex_search(strCommandLine, std::wregex(LR"(-PROF\b)", std::wregex::icase))) {
-		throw std::runtime_error("profileName is missing..");
+		// WinMainに渡すためのコマンドライン
+		std::wstring strCommandLine(commandLine);
+
+		// ログ出力
+		std::wcout << strprintf(L"%hs(%d): launching process [%s]", __FILE__, __LINE__, commandLine.data()) << std::endl;
+
+		// wWinMainを起動する
+		ret = wWinMain(hInstance, nullptr, strCommandLine.data(), SW_SHOWDEFAULT);
+
+		// ログ出力(途中でexitした場合は出力されない)
+		std::wcout << strprintf(L"%hs(%d): leaving process   [%s] => %d\n", __FILE__, __LINE__, commandLine.data(), ret) << std::endl;
 	}
-
-	// ログ出力
-	printf("%s(%d): launching process [%ls]\n", __FILE__, __LINE__, strCommandLine.c_str());
-
-	// wWinMainを起動する
-	const int ret = wWinMain(hInstance, nullptr, strCommandLine.data(), SW_SHOWDEFAULT);
-
-	// ログ出力(途中でexitした場合は出力されない)
-	printf("%s(%d): leaving process   [%ls] => %d\n", __FILE__, __LINE__, strCommandLine.c_str(), ret);
 
 	return ret;
 }
