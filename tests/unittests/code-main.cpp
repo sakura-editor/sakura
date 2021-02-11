@@ -33,36 +33,45 @@
 
 #include <algorithm>
 #include <cstdio>
-#include <cstdlib>
+#include <iostream>
 #include <regex>
 #include <string>
+#include <string_view>
 
-#include "debug/Debug2.h"
+#include "basis/primitive.h"
+#include "util/string_ex.h"
 #include "StartEditorProcessForTest.h"
 
 /*!
  * テストコード専用wWinMain呼出のラッパー関数
  *
  * 単体テストから wWinMain を呼び出すためのラッパー関数です。
- *
- * コマンドラインでプロファイルが指定されていない場合、空指定を付加します。
+ * コマンドラインには -PROF 指定が含まれている必要があります。
  */
-int StartEditorProcessForTest( const std::wstring_view& strCommandLine )
+int StartEditorProcessForTest(std::wstring_view commandLine)
 {
+	//戻り値は0が正常。適当なエラー値を指定しておく。
+	int ret = -1;
 
-	// 実行中モジュールのインスタンスハンドルを取得する
-	HINSTANCE hInstance = ::GetModuleHandle( NULL );
+	// コマンドラインに -PROF 指定がない場合は異常終了させる
+	if (std::regex_search(commandLine.data(), std::wregex(LR"(-PROF\b)", std::wregex::icase))) {
+		// 実行中モジュールのインスタンスハンドルを取得する
+		HINSTANCE hInstance = ::GetModuleHandleW(nullptr);
 
-	// WinMainを起動するためのコマンドラインを組み立てる
-	std::wstring strCmdBuff( strCommandLine );
+		// WinMainに渡すためのコマンドライン
+		std::wstring strCommandLine(commandLine);
 
-	// コマンドラインに -PROF 指定がない場合は付加する
-	if( !std::regex_search( strCmdBuff, std::wregex( L"-PROF\\b", std::wregex::icase ) ) ){
-		strCmdBuff += L" -PROF=\"\"";
+		// ログ出力
+		std::wcout << strprintf(L"%hs(%d): launching process [%s]", __FILE__, __LINE__, commandLine.data()) << std::endl;
+
+		// wWinMainを起動する
+		ret = wWinMain(hInstance, nullptr, strCommandLine.data(), SW_SHOWDEFAULT);
+
+		// ログ出力(途中でexitした場合は出力されない)
+		std::wcout << strprintf(L"%hs(%d): leaving process   [%s] => %d\n", __FILE__, __LINE__, commandLine.data(), ret) << std::endl;
 	}
 
-	// wWinMainを起動する
-	return wWinMain( hInstance, NULL, &*strCmdBuff.begin(), SW_SHOWDEFAULT );
+	return ret;
 }
 
 /*!
@@ -71,47 +80,23 @@ int StartEditorProcessForTest( const std::wstring_view& strCommandLine )
  * コマンドラインに -PROF 指定がない場合、呼出元に制御を返す。
  * コマンドラインに -PROF 指定がある場合、wWinMainを呼出してプログラムを終了する。
  */
-static void InvokeWinMainIfNeeded( char** ppArgsBegin, char** ppArgsEnd )
+static void InvokeWinMainIfNeeded(std::wstring_view commandLine)
 {
 	// コマンドライン引数がない場合
-	if( ppArgsBegin == ppArgsEnd ){
+	if (commandLine.empty()) {
 		return;
 	}
 
 	// コマンドラインに -PROF 指定がない場合
-	if( ppArgsEnd == std::find_if( ppArgsBegin, ppArgsEnd, []( const char* arg ){ return std::regex_search( arg, std::regex( "-PROF\\b", std::regex::icase ) ); } ) ){
+	if (!std::regex_search(commandLine.data(), std::wregex(LR"(-PROF\b)", std::wregex::icase))) {
 		return;
 	}
 
-	// 最初の引数はプログラム名なので無視する
-	ppArgsBegin++;
-
-	// wWinMainを起動するためのコマンドラインを組み立てる(バッファ長はざっくり定義。)
-	wchar_t szCmdBuf[4096];
-	std::wstring strCommandLine;
-	std::for_each( ppArgsBegin, ppArgsEnd, [&strCommandLine, &szCmdBuf]( const auto* arg ){
-		::swprintf_s( szCmdBuf, L"%hs ", arg );
-		strCommandLine += szCmdBuf;
-	} );
-
-	// 末尾の空白を削る(引数0個はここに来ないのでチェックしない)
-	strCommandLine.assign( strCommandLine.data(), strCommandLine.length() - 1 );
-
-	// 実行中モジュールのインスタンスハンドルを取得する
-	HINSTANCE hInstance = ::GetModuleHandleW( NULL );
-
-	// ログ出力
-	WCHAR *pszCommandLine = &*strCommandLine.begin();
-	printf( "%s(%d): launching process [%ls]\n", __FILE__, __LINE__, pszCommandLine );
-
 	// wWinMainを起動する
-	int ret = wWinMain( hInstance, NULL, pszCommandLine, SW_SHOWDEFAULT );
-
-	// ログ出力(途中でexitした場合は出力されない)
-	printf( "%s(%d): leaving process   [%ls] => %d\n", __FILE__, __LINE__, pszCommandLine, ret );
+	const int ret = StartEditorProcessForTest(commandLine);
 
 	// プログラムを終了する(呼出元に制御は返らない)
-	exit( ret );
+	exit(ret);
 }
 
 /*!
@@ -119,7 +104,7 @@ static void InvokeWinMainIfNeeded( char** ppArgsBegin, char** ppArgsEnd )
  */
 int main(int argc, char **argv) {
 	// コマンドラインに -PROF 指定がある場合、wWinMainを起動して終了する。
-	InvokeWinMainIfNeeded( argv, argv + argc );
+	InvokeWinMainIfNeeded(::GetCommandLineW());
 
 	// WinMainを起動しない場合、標準のgtest_main同様の処理を実行する
 	printf("Running main() from %s\n", __FILE__);
