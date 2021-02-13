@@ -296,8 +296,14 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 		nCurrentZoom = 1.0;
 	}else if( 0 != shift ){
 		// 現在のフォントに対して、縮小or拡大したフォント選択する場合
+		double nBasePointSizeF = nOriginalPointSize;
+		if( nBasePointSizeF == 0.0 ){
+			// 基準値が無効値の時はLOGFONTのサイズから逆算
+			const LOGFONT& lfBase = (mode == 0) ? GetDllShareData().m_Common.m_sView.m_lf : GetEditWindow()->GetLogfont( false );
+			nBasePointSizeF = (lfBase.lfHeight != 0) ? (std::abs( DpiPixelsToPoints( lfBase.lfHeight ) ) * 10.0) : nPointSizeMin;
+		}
 		double nPointSizeF = 0.0;
-		if( !GetZoomedValue( zoomSetting, nOriginalPointSize, nCurrentZoom, shift, &nPointSizeF, &nCurrentZoom ) ){
+		if( !GetZoomedValue( zoomSetting, nBasePointSizeF, nCurrentZoom, shift, &nPointSizeF, &nCurrentZoom ) ){
 			return;
 		}
 		nPointSize = (int)nPointSizeF;

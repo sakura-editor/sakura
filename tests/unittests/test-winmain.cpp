@@ -322,6 +322,8 @@ TEST_P(WinMainTest, runEditorProcess)
 		strStartupMacro += L"ShowTab();";		//ShowTab 消す
 		strStartupMacro += L"ExpandParameter('$I');";	// INIファイルパスの取得(呼ぶだけ)
 		// フォントサイズ設定のテスト(ここから)
+		strStartupMacro += L"SetFontSize(0, 1, 0);";	// 相対指定 - 拡大 - 対象：共通設定
+		strStartupMacro += L"SetFontSize(0, -1, 0);";	// 相対指定 - 縮小 - 対象：共通設定
 		strStartupMacro += L"SetFontSize(100, 0, 0);";	// 直接指定 - 対象：共通設定
 		strStartupMacro += L"SetFontSize(100, 0, 1);";	// 直接指定 - 対象：タイプ別設定
 		strStartupMacro += L"SetFontSize(100, 0, 2);";	// 直接指定 - 対象：一時適用
