@@ -26,8 +26,9 @@
 #define SAKURA_CAPPNODEMANAGER_CAE7A323_DEA3_47E4_91DE_C99A88C32683_H_
 #pragma once
 
-#include "util/design_template.h"
+#include "basis/CMyString.h"
 #include "config/maxdata.h"
+#include "util/design_template.h"
 
 class CAppNodeGroupHandle;
 

@@ -28,9 +28,7 @@
 
 #include "basis/SakuraBasis.h"
 #include "config/maxdata.h"
-#include "charset/charcode.h"
-#include "mem/CNativeW.h"
-#include "types/CType.h"
+#include "charset/charset.h"
 
 /*!
  * ファイル情報

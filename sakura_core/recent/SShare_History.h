@@ -25,6 +25,7 @@
 #ifndef SAKURA_SSHARE_HISTORY_9F7E6200_FEE2_4CAC_A5D3_32EEC4130CFC_H_
 #define SAKURA_SSHARE_HISTORY_9F7E6200_FEE2_4CAC_A5D3_32EEC4130CFC_H_
 
+#include "EditInfo.h"
 #include "config/maxdata.h"
 
 //共有メモリ内構造体
