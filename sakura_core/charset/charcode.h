@@ -283,7 +283,7 @@ void InitCharWidthCacheFromDC(const LOGFONT* lfs, ECharWidthFontMode fMode, HDC 
 
 namespace WCODE {
 	//!半角文字(縦長長方形)かどうか判定
-	bool IsHankaku(wchar_t wc, CCharWidthCache& cache = GetCharWidthCache());
+	bool IsHankaku(wchar_t wc, const CCharWidthCache& cache = GetCharWidthCache());
 	//!全角文字(正方形)かどうか判定
 	inline bool IsZenkaku(wchar_t wc) { return !IsHankaku(wc); }
 }
