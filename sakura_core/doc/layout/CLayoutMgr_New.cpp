@@ -31,7 +31,7 @@
 	@retval true 禁則文字に該当
 	@retval false 禁則文字に該当しない
 */
-bool CLayoutMgr::IsKinsokuHead( wchar_t wc )
+bool CLayoutMgr::IsKinsokuHead( wchar_t wc ) const
 {
 	return m_pszKinsokuHead_1.exist(wc);
 }
@@ -43,7 +43,7 @@ bool CLayoutMgr::IsKinsokuHead( wchar_t wc )
 	@retval true 禁則文字に該当
 	@retval false 禁則文字に該当しない
 */
-bool CLayoutMgr::IsKinsokuTail( wchar_t wc )
+bool CLayoutMgr::IsKinsokuTail( wchar_t wc ) const
 {
 	return m_pszKinsokuTail_1.exist(wc);
 }
@@ -55,7 +55,7 @@ bool CLayoutMgr::IsKinsokuTail( wchar_t wc )
 	@retval true 禁則文字に該当
 	@retval false 禁則文字に該当しない
 */
-bool CLayoutMgr::IsKinsokuKuto( wchar_t wc )
+bool CLayoutMgr::IsKinsokuKuto( wchar_t wc ) const
 {
 	return m_pszKinsokuKuto_1.exist(wc);
 }
@@ -68,7 +68,7 @@ bool CLayoutMgr::IsKinsokuKuto( wchar_t wc )
 	@param[in] nCharKetas2 次のカーソル位置にある文字の幅と間隔
 	@return 処理が必要な位置である場合にtrue
 */
-bool CLayoutMgr::IsKinsokuPosHead( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 )
+bool CLayoutMgr::IsKinsokuPosHead( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 ) const
 {
 	if( nRest < nCharKetas ){
 		// 次の文字で折り返しの場合
@@ -122,7 +122,7 @@ bool CLayoutMgr::IsKinsokuPosHead( CLayoutInt nRest, CLayoutInt nCharKetas, CLay
 	@param[in] nCharKetas2 次のカーソル位置にある文字の幅と間隔
 	@return 処理が必要な位置である場合にtrue
 */
-bool CLayoutMgr::IsKinsokuPosTail( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 )
+bool CLayoutMgr::IsKinsokuPosTail( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 ) const
 {
 	if( nRest < nCharKetas ){
 		// 次の文字で折り返しの場合

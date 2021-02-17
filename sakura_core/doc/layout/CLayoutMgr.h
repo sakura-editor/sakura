@@ -347,9 +347,9 @@ protected:
 private:
 	bool _ExistKinsokuKuto(wchar_t wc) const{ return m_pszKinsokuKuto_1.exist(wc); }
 	bool _ExistKinsokuHead(wchar_t wc) const{ return m_pszKinsokuHead_1.exist(wc); }
-	bool IsKinsokuHead( wchar_t wc );	/*!< 行頭禁則文字をチェックする */	//@@@ 2002.04.08 MIK
-	bool IsKinsokuTail( wchar_t wc );	/*!< 行末禁則文字をチェックする */	//@@@ 2002.04.08 MIK
-	bool IsKinsokuKuto( wchar_t wc );	/*!< 句読点文字をチェックする */	//@@@ 2002.04.17 MIK
+	bool IsKinsokuHead( wchar_t wc ) const;	// 行頭禁則文字をチェックする
+	bool IsKinsokuTail( wchar_t wc ) const;	// 行末禁則文字をチェックする
+	bool IsKinsokuKuto( wchar_t wc ) const;	// 句読点文字をチェックする
 	//	2005-08-20 D.S.Koba 禁則関連処理の関数化
 	/*! 句読点ぶら下げの処理位置か
 		@date 2005-08-20 D.S.Koba
@@ -358,8 +358,8 @@ private:
 	bool IsKinsokuPosKuto(CLayoutInt nRest, CLayoutInt nCharChars ) const {
 		return nRest < nCharChars;
 	}
-	bool IsKinsokuPosHead(CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2);	//!< 行頭禁則の処理位置か
-	bool IsKinsokuPosTail(CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2);	//!< 行末禁則の処理位置か
+	bool IsKinsokuPosHead( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 ) const;	// 行頭禁則の処理位置か
+	bool IsKinsokuPosTail( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 ) const;	// 行末禁則の処理位置か
 private:
 	//	Oct. 1, 2002 genta インデント幅計算関数群
 	CLayoutInt getIndentOffset_Normal( CLayout* pLayoutPrev );
