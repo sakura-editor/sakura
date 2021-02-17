@@ -79,39 +79,6 @@ bool CLayoutMgr::IsKinsokuPosHead( CLayoutInt nRest, CLayoutInt nCharKetas, CLay
 		return true;
 	}
 	return false;
-#if 0
-	switch( (Int)nRest )
-	{
-	//    321012  ↓マジックナンバー
-	// 3 "る）" : 22 "）"の2バイト目で折り返しのとき
-	// 2  "Z）" : 12 "）"の2バイト目で折り返しのとき
-	// 2  "る）": 22 "）"で折り返しのとき
-	// 2  "る)" : 21 ")"で折り返しのとき
-	// 1   "Z）": 12 "）"で折り返しのとき
-	// 1   "Z)" : 11 ")"で折り返しのとき
-	//↑何文字前か？
-	// ※ただし、"るZ"部分が禁則なら処理しない。
-	case 3:	// 3文字前
-		if( nCharKetas == 2 && nCharKetas2 == 2 ){
-			return true;
-		}
-		break;
-	case 2:	// 2文字前
-		if( nCharKetas == 2 ){
-			return true;
-		}
-		else if( nCharKetas == 1 && nCharKetas2 == 2 ){
-			return true;
-		}
-		break;
-	case 1:	// 1文字前
-		if( nCharKetas == 1 ){
-			return true;
-		}
-		break;
-	}
-	return false;
-#endif
 }
 
 /*!
@@ -133,34 +100,6 @@ bool CLayoutMgr::IsKinsokuPosTail( CLayoutInt nRest, CLayoutInt nCharKetas, CLay
 		return true;
 	}
 	return false;
-#if 0
-	switch( (Int)nRest )
-	{
-	case 3:	// 3文字前
-		if( nCharKetas == 2 && nCharKetas2 == 2){
-			// "（あ": "あ"の2バイト目で折り返しのとき
-			return true;
-		}
-		break;
-	case 2:	// 2文字前
-		if( nCharKetas == 2 ){
-			// "（あ": "あ"で折り返しのとき
-			return true;
-		}
-		else if( nCharKetas == 1 && nCharKetas2 == 2){
-			// "(あ": "あ"の2バイト目で折り返しのとき
-			return true;
-		}
-		break;
-	case 1:	// 1文字前
-		if( nCharKetas == 1 ){
-			// "(あ": "あ"で折り返しのとき
-			return true;
-		}
-		break;
-	}
-	return false;
-#endif
 }
 
 /*!

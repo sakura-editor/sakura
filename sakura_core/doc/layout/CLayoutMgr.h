@@ -345,8 +345,6 @@ protected:
 	void _OnLine2(SLayoutWork* pWork);
 
 private:
-	bool _ExistKinsokuKuto(wchar_t wc) const{ return m_pszKinsokuKuto_1.exist(wc); }
-	bool _ExistKinsokuHead(wchar_t wc) const{ return m_pszKinsokuHead_1.exist(wc); }
 	bool IsKinsokuHead( wchar_t wc ) const;	// 行頭禁則文字をチェックする
 	bool IsKinsokuTail( wchar_t wc ) const;	// 行末禁則文字をチェックする
 	bool IsKinsokuKuto( wchar_t wc ) const;	// 句読点文字をチェックする
