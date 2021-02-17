@@ -351,13 +351,7 @@ private:
 	bool IsKinsokuTail( wchar_t wc ) const;	// 行末禁則文字をチェックする
 	bool IsKinsokuKuto( wchar_t wc ) const;	// 句読点文字をチェックする
 	//	2005-08-20 D.S.Koba 禁則関連処理の関数化
-	/*! 句読点ぶら下げの処理位置か
-		@date 2005-08-20 D.S.Koba
-		@date Sep. 3, 2005 genta 最適化
-	*/
-	bool IsKinsokuPosKuto(CLayoutInt nRest, CLayoutInt nCharChars ) const {
-		return nRest < nCharChars;
-	}
+	bool IsKinsokuPosKuto( CLayoutInt nRest, CLayoutInt nCharChars ) const;	// 句読点ぶら下げの処理位置か
 	bool IsKinsokuPosHead( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 ) const;	// 行頭禁則の処理位置か
 	bool IsKinsokuPosTail( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 ) const;	// 行末禁則の処理位置か
 private:

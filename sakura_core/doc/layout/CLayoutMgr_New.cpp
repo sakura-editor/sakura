@@ -164,6 +164,18 @@ bool CLayoutMgr::IsKinsokuPosTail( CLayoutInt nRest, CLayoutInt nCharKetas, CLay
 }
 
 /*!
+	句読点ぶら下げの処理位置であるか調べる
+
+	@param[in] nRest 現在行における残り文字数分の字幅と間隔の合計
+	@param[in] nCharChars 現在のカーソル位置にある文字の幅と間隔
+	@return 処理が必要な位置である場合にtrue
+*/
+bool CLayoutMgr::IsKinsokuPosKuto( CLayoutInt nRest, CLayoutInt nCharChars ) const
+{
+	return nRest < nCharChars;
+}
+
+/*!
 	@brief 行の長さを計算する (2行目以降の字下げ無し)
 	
 	字下げを行わないので，常に0を返す．
