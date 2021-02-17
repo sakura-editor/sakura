@@ -27,8 +27,7 @@
 /*!
 	行頭禁則文字に該当するかを調べる．
 
-	@param[in] pLine 調べる文字へのポインタ
-	@param[in] length 当該箇所の文字サイズ
+	@param[in] wc 調べる文字
 	@retval true 禁則文字に該当
 	@retval false 禁則文字に該当しない
 */
@@ -40,8 +39,7 @@ bool CLayoutMgr::IsKinsokuHead( wchar_t wc )
 /*!
 	行末禁則文字に該当するかを調べる．
 
-	@param[in] pLine 調べる文字へのポインタ
-	@param[in] length 当該箇所の文字サイズ
+	@param[in] wc 調べる文字
 	@retval true 禁則文字に該当
 	@retval false 禁則文字に該当しない
 */
@@ -53,8 +51,7 @@ bool CLayoutMgr::IsKinsokuTail( wchar_t wc )
 /*!
 	禁則対象句読点に該当するかを調べる．
 
-	@param [in] pLine  調べる文字へのポインタ
-	@param [in] length 当該箇所の文字サイズ
+	@param[in] wc 調べる文字
 	@retval true 禁則文字に該当
 	@retval false 禁則文字に該当しない
 */
@@ -64,13 +61,14 @@ bool CLayoutMgr::IsKinsokuKuto( wchar_t wc )
 }
 
 /*!
-	@date 2005-08-20 D.S.Koba _DoLayout()とDoLayout_Range()から分離
+	行頭禁則の処理位置であるか調べる
+
+	@param[in] nRest 現在行における残り文字数分の字幅と間隔の合計
+	@param[in] nCharKetas 現在のカーソル位置にある文字の幅と間隔
+	@param[in] nCharKetas2 次のカーソル位置にある文字の幅と間隔
+	@return 処理が必要な位置である場合にtrue
 */
-bool CLayoutMgr::IsKinsokuPosHead(
-	CLayoutInt nRest,		//!< [in] 行の残り文字数
-	CLayoutInt nCharKetas,	//!< [in] 現在位置の文字サイズ
-	CLayoutInt nCharKetas2	//!< [in] 現在位置の次の文字サイズ
-)
+bool CLayoutMgr::IsKinsokuPosHead( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 )
 {
 	if( nRest < nCharKetas ){
 		// 次の文字で折り返しの場合
@@ -117,13 +115,14 @@ bool CLayoutMgr::IsKinsokuPosHead(
 }
 
 /*!
-	@date 2005-08-20 D.S.Koba _DoLayout()とDoLayout_Range()から分離
+	行末禁則の処理位置であるか調べる
+
+	@param[in] nRest 現在行における残り文字数分の字幅と間隔の合計
+	@param[in] nCharKetas 現在のカーソル位置にある文字の幅と間隔
+	@param[in] nCharKetas2 次のカーソル位置にある文字の幅と間隔
+	@return 処理が必要な位置である場合にtrue
 */
-bool CLayoutMgr::IsKinsokuPosTail(
-	CLayoutInt nRest,		//!< [in] 行の残り文字数
-	CLayoutInt nCharKetas,	//!< [in] 現在位置の文字サイズ
-	CLayoutInt nCharKetas2	//!< [in] 現在位置の次の文字サイズ
-)
+bool CLayoutMgr::IsKinsokuPosTail( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 )
 {
 	if( nRest < nCharKetas ){
 		// 次の文字で折り返しの場合
