@@ -792,7 +792,7 @@ TEST(CNativeW, GetKetaOfChar)
 	// 文字が全角なら2を返す。
 	class FakeCache : public CCharWidthCache {
 	public:
-		virtual bool CalcHankakuByFont(wchar_t c) const override { return false; }
+		bool CalcHankakuByFont(wchar_t c) const override { return false; }
 	} cache;
 	EXPECT_EQ(CNativeW::GetKetaOfChar(L"あ", 1, 0, cache), 2);
 }
@@ -813,7 +813,7 @@ TEST(CNativeW, GetHabaOfChar)
 	// CalcPxWidthByFont で計算した結果を返す。
 	class FakeCache1 : public CCharWidthCache {
 	public:
-		virtual int CalcPxWidthByFont(wchar_t ch) override {
+		int CalcPxWidthByFont(wchar_t ch) override {
 			if (ch == L'a') return 10000;
 			else if (ch == L'b') return 20000;
 			else return 0;
@@ -826,7 +826,7 @@ TEST(CNativeW, GetHabaOfChar)
 	// 指定された位置が下位サロゲートなら0を返す。
 	class FakeCache2 : public CCharWidthCache {
 	public:
-		virtual int CalcPxWidthByFont2(const wchar_t* pc2) const override {
+		int CalcPxWidthByFont2(const wchar_t* pc2) const override {
 			return 20000;
 		}
 	} cache2;
@@ -836,7 +836,7 @@ TEST(CNativeW, GetHabaOfChar)
 	// サロゲートペアが片方しかないときは CalcPxWidthByFont で計算している。
 	class FakeCache3 : public CCharWidthCache {
 	public:
-		virtual int CalcPxWidthByFont(wchar_t c) override {
+		int CalcPxWidthByFont(wchar_t c) override {
 			return 10000;
 		}
 	} cache3;
