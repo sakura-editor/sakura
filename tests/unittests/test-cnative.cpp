@@ -24,6 +24,7 @@
 */
 #include <stdexcept>
 #include <gtest/gtest.h>
+#include "charset/charcode.h"
 #include "mem/CNativeW.h"
 #include "mem/CNativeA.h"
 
@@ -740,4 +741,134 @@ TEST(CNativeW, globalOperatorAdd)
 	constexpr const wchar_t v3[] = L"前半";
 	CNativeW v4(L"後半");
 	EXPECT_STREQ(L"前半後半", (v3 + v4).GetStringPtr());
+}
+
+/*!
+ * @brief GetSizeOfCharの仕様
+ * @remark 指定した文字の符号単位数を返す。
+ */
+TEST(CNativeW, GetSizeOfChar)
+{
+	// 基本多言語面の文字ならば1を返す。
+	EXPECT_EQ(CNativeW::GetSizeOfChar(L"a", 1, 0), 1);
+	// 範囲外なら0を返す。
+	EXPECT_EQ(CNativeW::GetSizeOfChar(L"", 0, 0), 0);
+	// 上位・下位サロゲートの組み合わせであれば2を返す。
+	EXPECT_EQ(CNativeW::GetSizeOfChar(L"\xd83c\xdf38", 2, 0), 2);
+	// 指定位置が下位サロゲートならその他の文字と同様に1を返す。
+	EXPECT_EQ(CNativeW::GetSizeOfChar(L"\xd83c\xdf38", 2, 1), 1);
+}
+
+/*!
+ * @brief GetKetaOfCharの仕様
+ * @remark 指定した文字の桁数を返す。
+ */
+TEST(CNativeW, GetKetaOfChar)
+{
+	// 範囲外なら0を返す。
+	EXPECT_EQ(CNativeW::GetKetaOfChar(L"", 0, 0), 0);
+	// 上位サロゲートなら2を返す。
+	EXPECT_EQ(CNativeW::GetKetaOfChar(L"\xd83c\xdf38", 2, 0), 2);
+	// 上位サロゲートに続く下位サロゲートであれば0を返す。
+	EXPECT_EQ(CNativeW::GetKetaOfChar(L"\xd83c\xdf38", 2, 1), 0);
+	// 下位サロゲートだけなら2を返す。
+	EXPECT_EQ(CNativeW::GetKetaOfChar(L"\xdf38", 1, 0), 2);
+
+	// サクラエディタでは Unicode で表現できない文字コードの破壊を防ぐため、
+	// 不明バイトを下位サロゲートにマップして保持している。
+	// この1バイト文字は半角として扱わなければ不自然なので、
+	// 上位対を持たない下位サロゲート 0xdc00 ～ 0xdcff の範囲に限り、1を返すことになっている。
+	//
+	// https://sourceforge.net/p/sakura-editor/patchunicode/57/
+	// http://sakura-editor.sourceforge.net/cgi-bin/cyclamen/cyclamen.cgi?log=unicode&v=833
+	EXPECT_EQ(CNativeW::GetKetaOfChar(L"\xdbff", 1, 0), 2);
+	for (wchar_t ch = 0xdc00; ch <= 0xdcff; ++ch)
+		EXPECT_EQ(CNativeW::GetKetaOfChar(&ch, 1, 0), 1);
+	EXPECT_EQ(CNativeW::GetKetaOfChar(L"\xdd00", 1, 0), 2);
+
+	// 文字が半角なら1を返す。
+	EXPECT_EQ(CNativeW::GetKetaOfChar(L"a", 1, 0), 1);
+
+	// 文字が全角なら2を返す。
+	class FakeCache : public CCharWidthCache {
+	public:
+		bool CalcHankakuByFont(wchar_t c) const override { return false; }
+	} cache;
+	EXPECT_EQ(CNativeW::GetKetaOfChar(L"あ", 1, 0, cache), 2);
+}
+
+/*!
+ * @brief GetKetaOfCharの仕様
+ * @remark 指定した文字のピクセル単位幅を返す。
+ */
+TEST(CNativeW, GetHabaOfChar)
+{
+	// 範囲外なら0を返す。
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"", 0, 1, GetCharWidthCache(), false), 0);
+
+	// 改行コードなら1を返す。
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\r\n", 2, 0, GetCharWidthCache(), false), 1);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\r\n", 2, 1, GetCharWidthCache(), false), 1);
+
+	// CalcPxWidthByFont で計算した結果を返す。
+	class FakeCache1 : public CCharWidthCache {
+	public:
+		int CalcPxWidthByFont(wchar_t ch) override {
+			if (ch == L'a') return 10000;
+			else if (ch == L'b') return 20000;
+			else return 0;
+		}
+	} cache1;
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"ab", 2, 0, cache1, false), 10000);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"ab", 2, 1, cache1, false), 20000);
+
+	// サロゲートペアの幅は CalcPxWidthByFont2 で計算する。
+	// 指定された位置が下位サロゲートなら0を返す。
+	class FakeCache2 : public CCharWidthCache {
+	public:
+		int CalcPxWidthByFont2(const wchar_t* pc2) const override {
+			return 20000;
+		}
+	} cache2;
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\xd83c\xdf38", 2, 0, cache2, false), 20000);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\xd83c\xdf38", 2, 1, cache2, false), 0);
+
+	// サロゲートペアが片方しかないときは CalcPxWidthByFont で計算している。
+	class FakeCache3 : public CCharWidthCache {
+	public:
+		int CalcPxWidthByFont(wchar_t c) override {
+			return 10000;
+		}
+	} cache3;
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\xd83cあ", 2, 0, cache3, false), 10000);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\xdf38あ", 2, 0, cache3, false), 10000);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"あ\xdf38", 2, 1, cache3, false), 10000);
+}
+
+/*!
+ * @brief GetCharNextの仕様
+ */
+TEST(CNativeW, GetCharNext)
+{
+	constexpr wchar_t* text = L"a\xd83c\xdf38";
+	// 次の文字のアドレスを返す。
+	EXPECT_EQ(CNativeW::GetCharNext(text, 3, text), text + 1);
+	// 上位サロゲートが渡された場合は下位サロゲートを飛ばす。
+	EXPECT_EQ(CNativeW::GetCharNext(text, 3, text + 1), text + 3);
+	// ポインタを進めた結果が範囲外なら &pData[nDataLen] を返す。
+	EXPECT_EQ(CNativeW::GetCharNext(text, 3, text + 3), text + 3);
+}
+
+/*!
+ * @brief GetCharPrevの仕様
+ */
+TEST(CNativeW, GetCharPrev)
+{
+	constexpr wchar_t* text = L"a\xd83c\xdf38" L"d";
+	// 前の文字のアドレスを返す。
+	EXPECT_EQ(CNativeW::GetCharPrev(text, 4, text + 1), text);
+	// 前の文字が下位サロゲートだった場合は下位サロゲートを飛ばす。
+	EXPECT_EQ(CNativeW::GetCharPrev(text, 4, text + 3), text + 1);
+	// ポインタを戻した結果が範囲外なら pData を返す。
+	EXPECT_EQ(CNativeW::GetCharPrev(text, 4, text), text);
 }

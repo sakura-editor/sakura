@@ -88,15 +88,6 @@ namespace WCODE
 		return c>=front && c<=back;
 	}
 
-	//!半角文字(縦長長方形)かどうか判定
-	bool IsHankaku(wchar_t wc);
-
-	//!全角文字(正方形)かどうか判定
-	inline bool IsZenkaku(wchar_t wc)
-	{
-		return !IsHankaku(wc);
-	}
-
 	//!使用フォント番号を返す
 	// (0:半角/1:全角)
 	int GetFontNo(wchar_t c);
@@ -262,9 +253,9 @@ public:
 	void Clear();
 	[[nodiscard]] bool GetMultiFont() const { return m_bMultiFont; }
 
-	bool CalcHankakuByFont(wchar_t c) const;
-	int CalcPxWidthByFont(wchar_t c);
-	int CalcPxWidthByFont2(const wchar_t* pc2) const;
+	virtual bool CalcHankakuByFont(wchar_t c) const;
+	virtual int CalcPxWidthByFont(wchar_t c);
+	virtual int CalcPxWidthByFont2(const wchar_t* pc2) const;
 
 private:
 	void DeleteLocalData();
@@ -289,5 +280,12 @@ void SelectCharWidthCache( ECharWidthFontMode fMode, ECharWidthCacheMode cMode )
 void InitCharWidthCache( const LOGFONT &lf, ECharWidthFontMode fMode=CWM_FONT_EDIT ); //!< フォントを変更したとき
 void InitCharWidthCacheFromDC(const LOGFONT* lfs, ECharWidthFontMode fMode, HDC hdcOrg );
 [[nodiscard]] CCharWidthCache& GetCharWidthCache();
+
+namespace WCODE {
+	//!半角文字(縦長長方形)かどうか判定
+	bool IsHankaku(wchar_t wc, const CCharWidthCache& cache = GetCharWidthCache());
+	//!全角文字(正方形)かどうか判定
+	inline bool IsZenkaku(wchar_t wc) { return !IsHankaku(wc); }
+}
 
 #endif /* SAKURA_CHARCODE_4C34C669_0BAB_441A_9B1D_2B9AC1895380_H_ */

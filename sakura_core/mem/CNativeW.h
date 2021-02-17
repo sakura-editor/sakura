@@ -28,7 +28,9 @@
 
 #include "CNative.h"
 #include "basis/SakuraBasis.h"
+#include "charset/charcode.h"
 #include "debug/Debug2.h" //assert
+#include "env/DLLSHAREDATA.h"
 
 //! 文字列への参照を取得するインターフェース
 class IStringRef{
@@ -163,8 +165,12 @@ public:
 public:
 	// -- -- staticインターフェース -- -- //
 	static CLogicInt GetSizeOfChar( const wchar_t* pData, int nDataLen, int nIdx ); //!< 指定した位置の文字がwchar_t何個分かを返す
-	static CHabaXInt GetHabaOfChar( const wchar_t* pData, int nDataLen, int nIdx );
-	static CKetaXInt GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx ); //!< 指定した位置の文字が半角何個分かを返す
+	static CHabaXInt GetHabaOfChar( const wchar_t* pData, int nDataLen, int nIdx,
+		CCharWidthCache& cache = GetCharWidthCache(),
+		bool bEnableExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol );
+	//! 指定した位置の文字が半角何個分かを返す
+	static CKetaXInt GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx,
+		const CCharWidthCache& cache = GetCharWidthCache() );
 	static const wchar_t* GetCharNext( const wchar_t* pData, int nDataLen, const wchar_t* pDataCurrent ); //!< ポインタで示した文字の次にある文字の位置を返します
 	static const wchar_t* GetCharPrev( const wchar_t* pData, int nDataLen, const wchar_t* pDataCurrent ); //!< ポインタで示した文字の直前にある文字の位置を返します
 

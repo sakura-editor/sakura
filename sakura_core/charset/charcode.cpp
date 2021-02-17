@@ -49,7 +49,7 @@ namespace WCODE
 	bool CalcHankakuByFont(wchar_t);
 
 	//2007.08.30 kobake 追加
-	bool IsHankaku(wchar_t wc)
+	bool IsHankaku(wchar_t wc, const CCharWidthCache& cache)
 	{
 		//※ほぼ未検証。ロジックが確定したらインライン化すると良い。
 
@@ -83,7 +83,7 @@ namespace WCODE
 		}
 
 		//$$ 仮。もう動的に計算しちゃえ。(初回のみ)
-		return CalcHankakuByFont(wc);
+		return cache.CalcHankakuByFont(wc);
 	}
 
 	//!制御文字であるかどうか

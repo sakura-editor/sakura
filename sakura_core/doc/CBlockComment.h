@@ -34,6 +34,8 @@ enum ECommentType{
 #define BLOCKCOMMENT_NUM	2
 #define BLOCKCOMMENT_BUFFERSIZE	16
 
+class CStringRef;
+
 //	2005.11.10 Moca アクセス関数追加
 class CBlockComment{
 public:
