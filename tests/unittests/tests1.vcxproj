@@ -114,6 +114,7 @@
     <ClCompile Include="test-cnative.cpp" />
     <ClCompile Include="test-cprofile.cpp" />
     <ClCompile Include="test-csakuraenvironment.cpp" />
+    <ClCompile Include="test-ctextmetrics.cpp" />
     <ClCompile Include="test-cwordparse.cpp" />
     <ClCompile Include="test-editinfo.cpp" />
     <ClCompile Include="test-file.cpp" />
