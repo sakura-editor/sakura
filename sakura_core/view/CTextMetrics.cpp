@@ -136,7 +136,6 @@ void CTextMetrics::SetHankakuDx(int nDxBasis)
 {
 	m_nDxBasis=nDxBasis;
 	for(int i=0;i<_countof(m_anHankakuDx);i++)m_anHankakuDx[i]=GetHankakuDx();
-	for(int i=0;i<_countof(m_anZenkakuDx);i++)m_anZenkakuDx[i]=GetZenkakuDx();
 }
 void CTextMetrics::SetHankakuDy(int nDyBasis)
 {
@@ -155,7 +154,8 @@ const int* CTextMetrics::GenerateDxArray(
 	int	nHankakuDx,					//!< [in]  半角文字の文字間隔
 	int	nTabSpace,					//   [in]  TAB幅(CLayoutXInt)
 	int	nIndent,					//   [in]  インデント(TAB対応用)(CLayoutXInt)
-	int nCharSpacing				//!< [in]  文字隙間
+	int nCharSpacing,				//!< [in]  文字隙間
+	CCharWidthCache& cache
 )
 {
 	if( (int)vResultArray->size() < nLength ){
@@ -183,9 +183,9 @@ const int* CTextMetrics::GenerateDxArray(
 			if(i+1 < nLength && IsUTF16Low(x[1])){
 				int n = 0;
 				if(nCharSpacing){
-					n = CNativeW::GetKetaOfChar(pText, nLength, i) * nCharSpacing;
+					n = CNativeW::GetKetaOfChar(pText, nLength, i, cache) * nCharSpacing;
 				}
-				*p = WCODE::CalcPxWidthByFont2(x) + n;
+				*p = cache.CalcPxWidthByFont2(x) + n;
 				p++;
 				x++;
 				i++;
@@ -193,17 +193,17 @@ const int* CTextMetrics::GenerateDxArray(
 			}else{
 				int n = 0;
 				if(nCharSpacing){
-					n = CNativeW::GetKetaOfChar(pText, nLength, i) * nCharSpacing;
+					n = CNativeW::GetKetaOfChar(pText, nLength, i, cache) * nCharSpacing;
 				}
-				*p = WCODE::CalcPxWidthByFont(*x) + n;
+				*p = cache.CalcPxWidthByFont(*x) + n;
 				nLayoutCnt += *p;
 			}
 		}else{
 			int n = 0;
 			if(nCharSpacing){
-				n = CNativeW::GetKetaOfChar(pText, nLength, i) * nCharSpacing;
+				n = CNativeW::GetKetaOfChar(pText, nLength, i, cache) * nCharSpacing;
 			}
-			*p = WCODE::CalcPxWidthByFont(*x) + n;
+			*p = cache.CalcPxWidthByFont(*x) + n;
 			nLayoutCnt += *p;
 		}
 	}
@@ -238,7 +238,8 @@ int CTextMetrics::CalcTextWidth2(
 	int nLength,          //!< 文字列長
 	int nHankakuDx,       //!< 半角文字の文字間隔
 	int nCharSpacing,     //!< 文字の隙間
-	std::vector<int>& vDxArray //!< [out] 文字間隔配列
+	std::vector<int>& vDxArray, //!< [out] 文字間隔配列
+	CCharWidthCache& cache
 )
 {
 	const int* pDxArray = CTextMetrics::GenerateDxArray(
@@ -248,7 +249,8 @@ int CTextMetrics::CalcTextWidth2(
 		nHankakuDx,
 		8,
 		0,
-		nCharSpacing
+		nCharSpacing,
+		cache
 	);
 
 	//ピクセル幅を計算
@@ -257,8 +259,9 @@ int CTextMetrics::CalcTextWidth2(
 
 int CTextMetrics::CalcTextWidth3(
 	const wchar_t* pText, //!< 文字列
-	int nLength           //!< 文字列長
+	int nLength,          //!< 文字列長
+	CCharWidthCache& cache
 ) const
 {
-	return CalcTextWidth2(pText, nLength, GetCharPxWidth(), GetCharSpacing(), m_vDxArray);
+	return CalcTextWidth2(pText, nLength, GetCharPxWidth(), GetCharSpacing(), m_vDxArray, cache);
 }
