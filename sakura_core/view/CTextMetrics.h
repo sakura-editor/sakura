@@ -29,6 +29,9 @@
 //2007.08.25 kobake 追加
 
 #include <vector>
+#include <Windows.h>
+#include "basis/SakuraBasis.h"
+#include "charset/charcode.h"
 
 class CTextMetrics;
 
@@ -79,14 +82,14 @@ public:
 	
 	//文字間隔配列を取得
 	const int* GetDxArray_AllHankaku() const{ return m_anHankakuDx; } //!<半角文字列の文字間隔配列を取得。要素数は64。
-	const int* GetDxArray_AllZenkaku() const{ return m_anZenkakuDx; } //!<半角文字列の文字間隔配列を取得。要素数は64。
 
 	const int* GenerateDxArray2(
 		std::vector<int>* vResultArray, //!< [out] 文字間隔配列の受け取りコンテナ
 		const wchar_t* pText,           //!< [in]  文字列
-		int nLength                     //!< [in]  文字列長
+		int nLength,                    //!< [in]  文字列長
+		CCharWidthCache& cache = GetCharWidthCache()
 	) const {
-		return GenerateDxArray(vResultArray, pText, nLength, GetHankakuDx(), 8, 0, GetCharSpacing());
+		return GenerateDxArray(vResultArray, pText, nLength, GetHankakuDx(), 8, 0, GetCharSpacing(), cache);
 	}
 
 	//! 指定した文字列により文字間隔配列を生成する。
@@ -97,7 +100,8 @@ public:
 		int	nHankakuDx,					//!< [in]  半角文字の文字間隔
 		int	nTabSpace = 8,				//   [in]  TAB幅
 		int	nIndent = 0,				//   [in]  インデント
-		int nCharSpacing = 0			//   [in]  文字の間隔
+		int nCharSpacing = 0,			//   [in]  文字の間隔
+		CCharWidthCache& cache = GetCharWidthCache()
 	);
 
 	//!文字列のピクセル幅を返す。
@@ -113,12 +117,14 @@ public:
 		int nLength,          //!< 文字列長
 		int nHankakuDx,       //!< 半角文字の文字間隔
 		int nCharSpacing,     //!< 文字の隙間
-		std::vector<int>& vDxArray //!< [out] 文字間隔配列
+		std::vector<int>& vDxArray, //!< [out] 文字間隔配列
+		CCharWidthCache& cache = GetCharWidthCache()
 	);
 
 	int CalcTextWidth3(
 		const wchar_t* pText, //!< 文字列
-		int nLength           //!< 文字列長
+		int nLength,          //!< 文字列長
+		CCharWidthCache& cache = GetCharWidthCache()
 	) const;
 
 private:
@@ -128,7 +134,6 @@ private:
 	int m_nDxBasis;        //!< 半角文字の文字間隔 (横幅+α)
 	int m_nDyBasis;        //!< 半角文字の行間隔 (縦幅+α)
 	int m_anHankakuDx[64]; //!< 半角用文字間隔配列
-	int m_anZenkakuDx[64]; //!< 全角用文字間隔配列
 	std::vector<int> m_aFontHeightMargin;
 	mutable std::vector<int> m_vDxArray; //!< 文字間隔配列
 };
