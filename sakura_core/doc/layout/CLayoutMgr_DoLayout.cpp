@@ -55,15 +55,7 @@ static bool _GetKeywordLength(
 */
 static bool _IsKinsokuPosHead( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 )
 {
-	if( nRest < nCharKetas ){
-		// 次の文字で折り返しの場合
-		return true;
-	}
-	if( nRest < nCharKetas + nCharKetas2 ){
-		// 次の次の文字で折り返しの場合
-		return true;
-	}
-	return false;
+	return nRest < nCharKetas + nCharKetas2;
 }
 
 /*!
@@ -76,15 +68,7 @@ static bool _IsKinsokuPosHead( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutI
 */
 static bool _IsKinsokuPosTail( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 )
 {
-	if( nRest < nCharKetas ){
-		// 次の文字で折り返しの場合
-		return true;
-	}
-	if( nRest < nCharKetas + nCharKetas2 ){
-		// 次の次の文字で折り返しの場合
-		return true;
-	}
-	return false;
+	return nRest < nCharKetas + nCharKetas2;
 }
 
 /*!
