@@ -348,11 +348,6 @@ private:
 	bool IsKinsokuHead( wchar_t wc ) const;	// 行頭禁則文字をチェックする
 	bool IsKinsokuTail( wchar_t wc ) const;	// 行末禁則文字をチェックする
 	bool IsKinsokuKuto( wchar_t wc ) const;	// 句読点文字をチェックする
-	//	2005-08-20 D.S.Koba 禁則関連処理の関数化
-	bool IsKinsokuPosKuto( CLayoutInt nRest, CLayoutInt nCharChars ) const;	// 句読点ぶら下げの処理位置か
-	bool IsKinsokuPosHead( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 ) const;	// 行頭禁則の処理位置か
-	bool IsKinsokuPosTail( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 ) const;	// 行末禁則の処理位置か
-private:
 	//	Oct. 1, 2002 genta インデント幅計算関数群
 	CLayoutInt getIndentOffset_Normal( CLayout* pLayoutPrev );
 	CLayoutInt getIndentOffset_Tx2x( CLayout* pLayoutPrev );

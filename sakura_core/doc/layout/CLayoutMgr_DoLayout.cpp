@@ -45,6 +45,60 @@ static bool _GetKeywordLength(
 	}
 }
 
+/*!
+	@brief 行頭禁則の処理位置であるか調べる
+
+	@param[in] nRest 現在行に挿入可能な文字の総幅
+	@param[in] nCharKetas 現在の位置にある文字の幅
+	@param[in] nCharKetas2 次の位置にある文字の幅
+	@return 処理が必要な位置ならばtrue
+*/
+static bool _IsKinsokuPosHead( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 )
+{
+	if( nRest < nCharKetas ){
+		// 次の文字で折り返しの場合
+		return true;
+	}
+	if( nRest < nCharKetas + nCharKetas2 ){
+		// 次の次の文字で折り返しの場合
+		return true;
+	}
+	return false;
+}
+
+/*!
+	@brief 行末禁則の処理位置であるか調べる
+
+	@param[in] nRest 現在行に挿入可能な文字の総幅
+	@param[in] nCharKetas 現在の位置にある文字の幅
+	@param[in] nCharKetas2 次の位置にある文字の幅
+	@return 処理が必要な位置ならばtrue
+*/
+static bool _IsKinsokuPosTail( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 )
+{
+	if( nRest < nCharKetas ){
+		// 次の文字で折り返しの場合
+		return true;
+	}
+	if( nRest < nCharKetas + nCharKetas2 ){
+		// 次の次の文字で折り返しの場合
+		return true;
+	}
+	return false;
+}
+
+/*!
+	@brief 句読点ぶら下げの処理位置であるか調べる
+
+	@param[in] nRest 現在行に挿入可能な文字の総幅
+	@param[in] nCharChars 現在の位置にある文字の幅
+	@return 処理が必要な位置ならばtrue
+*/
+static bool _IsKinsokuPosKuto( CLayoutInt nRest, CLayoutInt nCharChars )
+{
+	return nRest < nCharChars;
+}
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      部品ステータス                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -119,13 +173,12 @@ void CLayoutMgr::_DoWordWrap(SLayoutWork* pWork, PF_OnLine pfOnLine)
 void CLayoutMgr::_DoKutoBurasage(SLayoutWork* pWork)
 {
 	// 現在位置が行末付近で禁則処理の実行中でないこと
-	if( ( GetMaxLineLayout() - pWork->nPosX < 2 * GetWidthPerKeta() )
-	 && ( pWork->eKinsokuType == KINSOKU_TYPE_NONE ) )
+	if( GetMaxLineLayout() - pWork->nPosX < 2 * GetWidthPerKeta() && pWork->eKinsokuType == KINSOKU_TYPE_NONE )
 	{
 		// 2007.09.07 kobake   レイアウトとロジックの区別
 		CLayoutInt nCharKetas = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
 
-		if( IsKinsokuPosKuto(GetMaxLineLayout() - pWork->nPosX, nCharKetas) && IsKinsokuKuto( pWork->cLineStr.At(pWork->nPos) ) )
+		if( _IsKinsokuPosKuto( GetMaxLineLayout() - pWork->nPosX, nCharKetas ) && IsKinsokuKuto( pWork->cLineStr.At( pWork->nPos ) ) )
 		{
 			pWork->nWordBgn = pWork->nPos;
 			pWork->nWordLen = 1;
@@ -146,7 +199,7 @@ void CLayoutMgr::_DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 		CLayoutInt nCharKetas2 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
 		CLayoutInt nCharKetas3 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos+1 );
 
-		if( IsKinsokuPosHead( GetMaxLineLayout() - pWork->nPosX, nCharKetas2, nCharKetas3 )
+		if( _IsKinsokuPosHead( GetMaxLineLayout() - pWork->nPosX, nCharKetas2, nCharKetas3 )
 		 && IsKinsokuHead( pWork->cLineStr.At(pWork->nPos+1) )
 		 && ! IsKinsokuHead( pWork->cLineStr.At(pWork->nPos) )	//1文字前が行頭禁則でない
 		 && ! IsKinsokuKuto( pWork->cLineStr.At(pWork->nPos) ) )	//句読点でない
@@ -171,7 +224,8 @@ void CLayoutMgr::_DoGyomatsuKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 		CLayoutInt nCharKetas2 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
 		CLayoutInt nCharKetas3 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos+1 );
 
-		if( IsKinsokuPosTail(GetMaxLineLayout() - pWork->nPosX, nCharKetas2, nCharKetas3) && IsKinsokuTail(pWork->cLineStr.At(pWork->nPos)) ){
+		if( _IsKinsokuPosTail( GetMaxLineLayout() - pWork->nPosX, nCharKetas2, nCharKetas3 ) && IsKinsokuTail( pWork->cLineStr.At( pWork->nPos ) ) )
+		{
 			pWork->nWordBgn = pWork->nPos;
 			pWork->nWordLen = 1;
 			pWork->eKinsokuType = KINSOKU_TYPE_KINSOKU_TAIL;

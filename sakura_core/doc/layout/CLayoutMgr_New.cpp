@@ -61,60 +61,6 @@ bool CLayoutMgr::IsKinsokuKuto( wchar_t wc ) const
 }
 
 /*!
-	行頭禁則の処理位置であるか調べる
-
-	@param[in] nRest 現在行における残り文字数分の字幅と間隔の合計
-	@param[in] nCharKetas 現在の位置にある文字の幅と間隔
-	@param[in] nCharKetas2 次の位置にある文字の幅と間隔
-	@return 処理が必要な位置である場合にtrue
-*/
-bool CLayoutMgr::IsKinsokuPosHead( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 ) const
-{
-	if( nRest < nCharKetas ){
-		// 次の文字で折り返しの場合
-		return true;
-	}
-	if( nRest < nCharKetas + nCharKetas2 ){
-		// 次の次の文字で折り返しの場合
-		return true;
-	}
-	return false;
-}
-
-/*!
-	行末禁則の処理位置であるか調べる
-
-	@param[in] nRest 現在行における残り文字数分の字幅と間隔の合計
-	@param[in] nCharKetas 現在の位置にある文字の幅と間隔
-	@param[in] nCharKetas2 次の位置にある文字の幅と間隔
-	@return 処理が必要な位置である場合にtrue
-*/
-bool CLayoutMgr::IsKinsokuPosTail( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 ) const
-{
-	if( nRest < nCharKetas ){
-		// 次の文字で折り返しの場合
-		return true;
-	}
-	if( nRest < nCharKetas + nCharKetas2 ){
-		// 次の次の文字で折り返しの場合
-		return true;
-	}
-	return false;
-}
-
-/*!
-	句読点ぶら下げの処理位置であるか調べる
-
-	@param[in] nRest 現在行における残り文字数分の字幅と間隔の合計
-	@param[in] nCharChars 現在の位置にある文字の幅と間隔
-	@return 処理が必要な位置である場合にtrue
-*/
-bool CLayoutMgr::IsKinsokuPosKuto( CLayoutInt nRest, CLayoutInt nCharChars ) const
-{
-	return nRest < nCharChars;
-}
-
-/*!
 	@brief 行の長さを計算する (2行目以降の字下げ無し)
 	
 	字下げを行わないので，常に0を返す．
