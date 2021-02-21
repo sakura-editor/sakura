@@ -26,6 +26,8 @@
 #define SAKURA_CDATAPROFILE_401640FD_5B27_454A_B0DE_098E1C4FAEAD_H_
 #pragma once
 
+#include "basis/SakuraBasis.h"
+#include "debug/Debug2.h"
 #include "util/StaticType.h"
 #include "CProfile.h"
 
@@ -166,8 +168,8 @@ public:
 	 */
 	template <class T> //T=={bool, int, WORD, wchar_t, char, StringBufferW, StaticString}
 	bool IOProfileData(
-		const std::wstring&		strSectionName,	//!< [in] セクション名
-		const std::wstring&		strEntryKey,	//!< [in] エントリ名
+		std::wstring_view		sectionName,	//!< [in] セクション名
+		std::wstring_view		entryKey,		//!< [in] エントリ名
 		T&						tEntryValue		//!< [in,out] エントリ値
 	) noexcept
 	{
@@ -177,7 +179,7 @@ public:
 		bool ret = false;
 		if( IsReadingMode() ){
 			//文字列読み込み
-			if( GetProfileDataImp( strSectionName, strEntryKey, buf ) ){
+			if( GetProfileData(sectionName, entryKey, buf) ){
 				//Tに変換
 				profile_to_value(buf, &tEntryValue);
 				ret = true;
@@ -185,8 +187,9 @@ public:
 		}else{
 			//文字列に変換
 			value_to_profile(tEntryValue, &buf);
+			ret = true; //TODO: 変換成否の反映
 			//文字列書き込み
-			ret = SetProfileDataImp( strSectionName, strEntryKey, buf );
+			SetProfileData(sectionName, entryKey, buf);
 		}
 		return ret;
 	}
@@ -208,19 +211,18 @@ public:
  */
 template <> inline
 bool CDataProfile::IOProfileData<std::wstring>(
-	const std::wstring&		strSectionName,	//!< [in] セクション名
-	const std::wstring&		strEntryKey,	//!< [in] エントリ名
+	std::wstring_view		sectionName,	//!< [in] セクション名
+	std::wstring_view		entryKey,		//!< [in] エントリ名
 	std::wstring&			strEntryValue	//!< [in,out] エントリ値
 ) noexcept
 {
-	bool ret = false;
 	if( IsReadingMode() ){
 		//文字列読み込み
-		ret = GetProfileDataImp( strSectionName, strEntryKey, strEntryValue );
+		return GetProfileData(sectionName, entryKey, strEntryValue);
 	}else{
 		//文字列書き込み
-		ret = SetProfileDataImp( strSectionName, strEntryKey, strEntryValue );
+		SetProfileData(sectionName, entryKey, strEntryValue);
+		return true;
 	}
-	return ret;
 }
 #endif /* SAKURA_CDATAPROFILE_401640FD_5B27_454A_B0DE_098E1C4FAEAD_H_ */
