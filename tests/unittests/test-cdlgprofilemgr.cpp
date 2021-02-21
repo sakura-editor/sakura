@@ -48,6 +48,7 @@
 #include "env/DLLSHAREDATA.h"
 #include "_main/CCommandLine.h"
 #include "_main/CControlProcess.h"
+#include "CDataProfile.h"
 #include "util/file.h"
 
 /*!
@@ -132,12 +133,16 @@ TEST_F( CDlgProfileMgrTest, TrySelectProfile_003 )
 TEST_F( CDlgProfileMgrTest, TrySelectProfile_004 )
 {
 	// プロファイル設定を作る
-	SProfileSettings settings;
-	settings.m_szDllLanguage[0] = L'\0';
-	settings.m_nDefaultIndex = 3;
-	settings.m_vProfList = { L"保存用", L"鑑賞用", L"使用用" };
-	settings.m_bDefaultSelect = true;
-	CDlgProfileMgr::WriteProfSettings( settings );
+	CDataProfile cProfile;
+	cProfile.SetWritingMode();
+	cProfile.SetProfileData(L"Profile", L"szDllLanguage", L"");
+	cProfile.SetProfileData(L"Profile", L"nDefaultIndex", L"3");
+	cProfile.SetProfileData(L"Profile", L"nCount", L"3");
+	cProfile.SetProfileData(L"Profile", L"P[1]", L"保存用");
+	cProfile.SetProfileData(L"Profile", L"P[2]", L"鑑賞用");
+	cProfile.SetProfileData(L"Profile", L"P[3]", L"使用用");
+	cProfile.SetProfileData(L"Profile", L"bDefaultSelect", L"1");
+	cProfile.WriteProfile(profileMgrIniPath.c_str(), L"Sakura Profile ini");
 
 	// プロファイルマネージャー設定にデフォルト定義があればプロファイルは確定する
 	CCommandLineWrapper cCommandLine;
@@ -150,12 +155,16 @@ TEST_F( CDlgProfileMgrTest, TrySelectProfile_004 )
 TEST_F( CDlgProfileMgrTest, TrySelectProfile_005 )
 {
 	// プロファイル設定を作る
-	SProfileSettings settings;
-	settings.m_szDllLanguage[0] = L'\0';
-	settings.m_nDefaultIndex = 4;
-	settings.m_vProfList = { L"保存用", L"鑑賞用", L"使用用" };
-	settings.m_bDefaultSelect = true;
-	CDlgProfileMgr::WriteProfSettings( settings );
+	CDataProfile cProfile;
+	cProfile.SetWritingMode();
+	cProfile.SetProfileData(L"Profile", L"szDllLanguage", L"");
+	cProfile.SetProfileData(L"Profile", L"nDefaultIndex", L"4");
+	cProfile.SetProfileData(L"Profile", L"nCount", L"3");
+	cProfile.SetProfileData(L"Profile", L"P[1]", L"保存用");
+	cProfile.SetProfileData(L"Profile", L"P[2]", L"鑑賞用");
+	cProfile.SetProfileData(L"Profile", L"P[3]", L"使用用");
+	cProfile.SetProfileData(L"Profile", L"bDefaultSelect", L"1");
+	cProfile.WriteProfile(profileMgrIniPath.c_str(), L"Sakura Profile ini");
 
 	// プロファイルマネージャー設定のデフォルト定義がおかしればプロファイルは確定しない
 	CCommandLineWrapper cCommandLine;
@@ -168,11 +177,12 @@ TEST_F( CDlgProfileMgrTest, TrySelectProfile_005 )
 TEST_F( CDlgProfileMgrTest, TrySelectProfile_006 )
 {
 	// 空のプロファイル設定を作る
-	SProfileSettings settings;
-	settings.m_szDllLanguage[0] = L'\0';
-	settings.m_nDefaultIndex = -1;
-	settings.m_bDefaultSelect = false;
-	CDlgProfileMgr::WriteProfSettings( settings );
+	CDataProfile cProfile;
+	cProfile.SetWritingMode();
+	cProfile.SetProfileData(L"Profile", L"szDllLanguage", L"");
+	cProfile.SetProfileData(L"Profile", L"nDefaultIndex", L"-1");
+	cProfile.SetProfileData(L"Profile", L"bDefaultSelect", L"0");
+	cProfile.WriteProfile(profileMgrIniPath.c_str(), L"Sakura Profile ini");
 
 	// プロファイルマネージャー設定が空定義ならプロファイルは確定しない
 	CCommandLineWrapper cCommandLine;

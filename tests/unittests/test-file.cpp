@@ -43,6 +43,7 @@
 #include "env/DLLSHAREDATA.h"
 #include "_main/CCommandLine.h"
 #include "_main/CControlProcess.h"
+#include "CDataProfile.h"
 #include "util/file.h"
 
 /*!
@@ -387,18 +388,10 @@ TEST(file, GetInidirOrExedir)
 	auto iniBasePath = GetIniFileName().parent_path().append(filename);
 
 	// EXE基準のファイルを作る
-	{
-		std::wofstream ofs(exeBasePath);
-		ofs << L"TEST(file, GetInidirOrExedir)" << std::endl;
-	}
+	CProfile().WriteProfile(exeBasePath.c_str(), L"file, GetInidirOrExedirのテスト");
 
 	// INI基準のファイルを作る
-	{
-		EnsureDirectoryExist(GetIniFileName().replace_filename(L"").c_str());
-
-		std::wofstream ofs(iniBasePath);
-		ofs << L"TEST(file, GetInidirOrExedir)" << std::endl;
-	}
+	CProfile().WriteProfile(iniBasePath.c_str(), L"file, GetInidirOrExedirのテスト");
 
 	// 両方あるときはINI基準のパスが変える
 	GetInidirOrExedir(buf.data(), filename, true);
@@ -440,21 +433,13 @@ TEST(file, GetIniFileNameForIO)
 	ASSERT_STREQ(iniPath.c_str(), GetIniFileNameForIO(false).c_str());
 
 	// 書き込みモードでないがiniファイルが実在するとき
-	{
-		std::wofstream ofs(iniPath);
-		ofs << L"test" << std::endl;
-		ofs.close();
+	CProfile().WriteProfile(iniPath.c_str(), L"file, GetIniFileNameForIOのテスト");
+	ASSERT_TRUE(fexist(iniPath.c_str()));
 
-		// 実在チェック
-		ASSERT_TRUE(fexist(iniPath.c_str()));
+	// テスト実施
+	ASSERT_STREQ(iniPath.c_str(), GetIniFileNameForIO(false).c_str());
 
-		// テスト実施
-		ASSERT_STREQ(iniPath.c_str(), GetIniFileNameForIO(false).c_str());
-
-		// INIファイルを削除する
-		std::filesystem::remove(iniPath);
-
-		// 削除チェック
-		ASSERT_FALSE(fexist(iniPath.c_str()));
-	}
+	// INIファイルを削除する
+	std::filesystem::remove(iniPath);
+	ASSERT_FALSE(fexist(iniPath.c_str()));
 }

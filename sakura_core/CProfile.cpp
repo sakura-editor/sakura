@@ -35,6 +35,13 @@
 */
 #include "StdAfx.h"
 #include "CProfile.h"
+
+#include <algorithm>
+#include <map>
+#include <string>
+#include <string_view>
+#include <vector>
+
 #include "io/CTextStream.h"
 #include "charset/CUtf8.h"		// Resource読み込みに使用
 #include "CEol.h"
@@ -313,10 +320,6 @@ bool CProfile::_WriteFile(
 	return true;
 }
 
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                            Imp                              //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
 /*! エントリ値をProfileから読み込む
 	
 	@retval true 成功
@@ -324,19 +327,19 @@ bool CProfile::_WriteFile(
 
 	@date 2003-10-22 D.S.Koba 作成
 */
-bool CProfile::GetProfileDataImp(
-	const wstring&	strSectionName,	//!< [in] セクション名
-	const wstring&	strEntryKey,	//!< [in] エントリ名
-	wstring&		strEntryValue	//!< [out] エントリ値
-)
+bool CProfile::GetProfileData(
+	std::wstring_view	sectionName,	//!< [in] セクション名
+	std::wstring_view	entryKey,		//!< [in] エントリ名
+	std::wstring&		strEntryValue	//!< [out] エントリ値
+) const
 {
-	for(auto iter = m_ProfileData.begin(); iter != m_ProfileData.end(); iter++ ) {
-		if( iter->strSectionName == strSectionName ) {
-			auto mapiter = iter->mapEntries.find( strEntryKey );
-			if( iter->mapEntries.end() != mapiter ) {
-				strEntryValue = mapiter->second;
-				return true;
-			}
+	// セクション名が一致するセクションを探す
+	if (const auto iter = std::find_if(m_ProfileData.begin(), m_ProfileData.end(), [&sectionName](const auto& section) {return section.strSectionName == sectionName; }); iter != m_ProfileData.end()) {
+		// キーが一致するエントリを探す
+		if (const auto mapiter = iter->mapEntries.find(entryKey.data()); iter->mapEntries.end() != mapiter) {
+			// エントリの値をコピーする
+			strEntryValue = mapiter->second;
+			return true;
 		}
 	}
 	return false;
@@ -344,42 +347,24 @@ bool CProfile::GetProfileDataImp(
 
 /*! エントリをProfileへ書き込む
 	
-	@retval true  成功
-	@retval false 失敗(処理を入れていないのでfalseは返らない)
-
 	@date 2003-10-21 D.S.Koba 作成
 */
-bool CProfile::SetProfileDataImp(
-	const wstring&	strSectionName,	//!< [in] セクション名
-	const wstring&	strEntryKey,	//!< [in] エントリ名
-	const wstring&	strEntryValue	//!< [in] エントリ値
+void CProfile::SetProfileData(
+	std::wstring_view	sectionName,	//!< [in] セクション名
+	std::wstring_view	entryKey,		//!< [in] エントリ名
+	std::wstring_view	entryValue		//!< [in] エントリ値
 )
 {
-	auto iter = m_ProfileData.begin();
-	for(; iter != m_ProfileData.end(); iter++ ) {
-		if( iter->strSectionName == strSectionName ) {
-			//既存のセクションの場合
-			auto mapiter = iter->mapEntries.find( strEntryKey );
-			if( iter->mapEntries.end() != mapiter ) {
-				//既存のエントリの場合は値を上書き
-				mapiter->second = strEntryValue;
-				break;
-			}
-			else {
-				//既存のエントリが見つからない場合は追加
-				iter->mapEntries.insert( PAIR_STR_STR( strEntryKey, strEntryValue ) );
-				break;
-			}
-		}
+	// セクション名が一致するセクションがない場合、空のセクションを追加する
+	if (const auto iter = std::find_if(m_ProfileData.begin(), m_ProfileData.end(), [&sectionName](const auto& section) {return section.strSectionName == sectionName; }); iter == m_ProfileData.end()) {
+		m_ProfileData.emplace_back(Section{ sectionName.data() });
 	}
-	//既存のセクションではない場合，セクション及びエントリを追加
-	if( iter == m_ProfileData.end() ) {
-		Section Buffer;
-		Buffer.strSectionName = strSectionName;
-		Buffer.mapEntries.insert( PAIR_STR_STR( strEntryKey, strEntryValue ) );
-		m_ProfileData.push_back( Buffer );
+	// セクション名が一致するセクションを探す
+	if (auto iter = std::find_if(m_ProfileData.begin(), m_ProfileData.end(), [&sectionName](const auto& section) {return section.strSectionName == sectionName; }); iter != m_ProfileData.end()) {
+		// エントリに指定された値を書き込む
+		auto& sectionEntries = iter->mapEntries;
+		sectionEntries[entryKey.data()] = entryValue;
 	}
-	return true;
 }
 
 void CProfile::DUMP( void )

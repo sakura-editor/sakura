@@ -38,6 +38,7 @@
 #include <filesystem>
 
 #include "util/file.h"
+#include "CDataProfile.h"
 
 /*!
  * @brief WriteProfileは指定されたパスに含まれるサブディレクトリを作成する
@@ -68,4 +69,111 @@ TEST( CProfile, WriteProfileMakesSubDirectories )
 	p = ::PathFindFileNameW( szIniName );
 	p[0] = L'\0';
 	std::filesystem::remove( szIniName );
+}
+
+/*!
+ * @brief GetProfileDataのテスト
+ */
+TEST(CProfile, GetProfileData_NoSection)
+{
+	CProfile cProfile;
+	cProfile.SetReadingMode();
+
+	// 初期状態は空なのでセクションが見つからない
+	std::wstring value;
+	ASSERT_FALSE(cProfile.GetProfileData(L"存在しないセクション名", L"szTest", value));
+}
+
+/*!
+ * @brief GetProfileDataのテスト
+ */
+TEST(CProfile, GetProfileData_NewSection)
+{
+	CProfile cProfile;
+	cProfile.SetReadingMode();
+
+	std::wstring value;
+	ASSERT_FALSE(cProfile.GetProfileData(L"Test", L"szTest", value));
+
+	// セクションを追加
+	cProfile.SetProfileData(L"Test", L"szTest", L"value");
+
+	// 追加されたセクションを取得
+	ASSERT_TRUE(cProfile.GetProfileData(L"Test", L"szTest", value));
+	ASSERT_STREQ(L"value", value.data());
+}
+
+/*!
+ * @brief GetProfileDataのテスト
+ */
+TEST(CProfile, GetProfileData_NoEntry)
+{
+	CProfile cProfile;
+	cProfile.SetReadingMode();
+
+	std::wstring value;
+	ASSERT_FALSE(cProfile.GetProfileData(L"Test", L"szTest", value));
+
+	cProfile.SetProfileData(L"Test", L"szTest", L"value");
+
+	ASSERT_TRUE(cProfile.GetProfileData(L"Test", L"szTest", value));
+	ASSERT_STREQ(L"value", value.data());
+
+	// 該当するキーがないのでエントリを取得できない
+	ASSERT_FALSE(cProfile.GetProfileData(L"Test", L"nTest", value));
+}
+
+/*!
+ * @brief GetProfileDataのテスト
+ */
+TEST(CProfile, GetProfileData_NewEntry)
+{
+	CProfile cProfile;
+	cProfile.SetReadingMode();
+
+	std::wstring value;
+	ASSERT_FALSE(cProfile.GetProfileData(L"Test", L"szTest", value));
+
+	cProfile.SetProfileData(L"Test", L"szTest", L"value");
+
+	ASSERT_TRUE(cProfile.GetProfileData(L"Test", L"szTest", value));
+	ASSERT_STREQ(L"value", value.data());
+
+	ASSERT_FALSE(cProfile.GetProfileData(L"Test", L"nTest", value));
+
+	cProfile.SetProfileData(L"Test", L"nTest", L"109");
+
+	ASSERT_TRUE(cProfile.GetProfileData(L"Test", L"nTest", value));
+	ASSERT_STREQ(L"109", value.data());
+}
+
+/*!
+ * @brief IOProfileDataのテスト
+ */
+TEST(CDataProfile, IOProfileData)
+{
+	CDataProfile cProfile;
+	cProfile.SetReadingMode();
+
+	std::wstring value;
+	ASSERT_FALSE(cProfile.IOProfileData(L"Test", L"szTest", value));
+
+	cProfile.SetProfileData(L"Test", L"szTest", L"value");
+
+	ASSERT_TRUE(cProfile.IOProfileData(L"Test", L"szTest", value));
+	ASSERT_STREQ(L"value", value.data());
+
+	ASSERT_FALSE(cProfile.IOProfileData(L"Test", L"nTest", value));
+
+	cProfile.SetProfileData(L"Test", L"nTest", L"109");
+
+	ASSERT_TRUE(cProfile.IOProfileData(L"Test", L"nTest", value));
+	ASSERT_STREQ(L"109", value.data());
+
+	int nValue = 0;
+	ASSERT_TRUE(cProfile.IOProfileData(L"Test", L"nTest", nValue));
+	ASSERT_EQ(109, nValue);
+
+	ASSERT_TRUE(cProfile.IOProfileData(L"Test", L"szTest", nValue));
+	ASSERT_EQ(0, nValue);
 }

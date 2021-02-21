@@ -37,6 +37,7 @@
 
 #include <Windows.h>
 #include <string>
+#include <string_view>
 #include <vector>
 #include <map>
 
@@ -61,8 +62,8 @@ class CProfile
 	};
 
 public:
-	CProfile() {}
-	~CProfile() {}
+	CProfile() = default;
+	virtual ~CProfile() = default;
 	void Init( void );
 	bool IsReadingMode( void ) { return m_bRead; }
 	void SetReadingMode( void ) { m_bRead = true; }
@@ -70,16 +71,14 @@ public:
 	bool ReadProfile( const WCHAR* );
 	bool ReadProfileRes( const WCHAR*, const WCHAR*, std::vector<std::wstring>* = NULL );				// 200/5/19 Uchi
 	bool WriteProfile( const WCHAR*, const WCHAR* pszComment);
+	bool GetProfileData(std::wstring_view sectionName, std::wstring_view entryKey, std::wstring& strEntryValue) const;
+	void SetProfileData(std::wstring_view sectionName, std::wstring_view entryKey, std::wstring_view entryValue);
 
 	void DUMP( void );
 
 protected:
 	void ReadOneline( const wstring& line );
 	bool _WriteFile( const wstring& strFilename, const std::vector< wstring >& vecLine);
-
-	bool GetProfileDataImp( const wstring& strSectionName, const wstring& strEntryKey, wstring& strEntryValue);
-
-	bool SetProfileDataImp( const wstring& strSectionName, const wstring& strEntryKey, const wstring& strEntryValue );
 
 protected:
 	// メンバ変数
