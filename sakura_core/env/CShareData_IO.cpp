@@ -118,7 +118,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 			if (langId != MAKELANGID( LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN )) {
 				DLLSHAREDATA* pShareData = &GetDllShareData();
 				wcscpy(pShareData->m_Common.m_sWindow.m_szLanguageDll, L"sakura_lang_en_US.dll");
-				cProfile.IOProfileData( L"Common", L"szLanguageDll", MakeStringBufferW( pShareData->m_Common.m_sWindow.m_szLanguageDll ) );
+				cProfile.IOProfileData(L"Common", L"szLanguageDll", StringBufferW(pShareData->m_Common.m_sWindow.m_szLanguageDll));
 				std::vector<std::wstring> values;
 				pcShare->ConvertLangValues( values, true );
 				CSelectLang::ChangeLang( pShareData->m_Common.m_sWindow.m_szLanguageDll );
@@ -132,7 +132,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 		WCHAR iniVer[256];
 		DWORD mH, mL, lH, lL;
 		mH = mL = lH = lL = 0;	// ※ 古～い ini だと "szVersion" は無い
-		if( cProfile.IOProfileData( LTEXT("Other"), LTEXT("szVersion"), MakeStringBufferW(iniVer) ) )
+		if( cProfile.IOProfileData(LTEXT("Other"), L"szVersion", StringBufferW(iniVer)) )
 			_stscanf( iniVer, L"%u.%u.%u.%u", &mH, &mL, &lH, &lL );
 		DWORD dwMS = (DWORD)MAKELONG(mL, mH);
 		DWORD dwLS = (DWORD)MAKELONG(lL, lH);
@@ -152,7 +152,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 
 	if( bRead ){
 		DLLSHAREDATA* pShareData = &GetDllShareData();
-		cProfile.IOProfileData( L"Common", L"szLanguageDll", MakeStringBufferW( pShareData->m_Common.m_sWindow.m_szLanguageDll ) );
+		cProfile.IOProfileData(L"Common", L"szLanguageDll", StringBufferW(pShareData->m_Common.m_sWindow.m_szLanguageDll));
 		CSelectLang::ChangeLang( pShareData->m_Common.m_sWindow.m_szLanguageDll );
 		pcShare->RefreshString();
 	}
@@ -229,12 +229,12 @@ void CShareData_IO::ShareData_IO_Mru( CDataProfile& cProfile )
 		auto_sprintf( szKeyName, LTEXT("MRU[%02d].nCharCode"), i );
 		cProfile.IOProfileData_WrapInt( pszSecName, szKeyName, pfiWork->m_nCharCode );
 		auto_sprintf( szKeyName, LTEXT("MRU[%02d].szPath"), i );
-		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(pfiWork->m_szPath) );
+		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(pfiWork->m_szPath));
 		auto_sprintf( szKeyName, LTEXT("MRU[%02d].szMark2"), i );
-		if( !cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(pfiWork->m_szMarkLines) ) ){
+		if( !cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(pfiWork->m_szMarkLines)) ){
 			if( cProfile.IsReadingMode() ){
 				auto_sprintf( szKeyName, LTEXT("MRU[%02d].szMark"), i ); // 旧ver互換
-				cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(pfiWork->m_szMarkLines) );
+				cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(pfiWork->m_szMarkLines));
 			}
 		}
 		auto_sprintf( szKeyName, LTEXT("MRU[%02d].nType"), i );
@@ -438,9 +438,9 @@ void CShareData_IO::ShareData_IO_Nickname( CDataProfile& cProfile )
 	int nSize = pShare->m_Common.m_sFileName.m_nTransformFileNameArrNum;
 	for( i = 0; i < nSize; ++i ){
 		auto_sprintf( szKeyName, LTEXT("From%02d"), i );
-		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(pShare->m_Common.m_sFileName.m_szTransformFileNameFrom[i]) );
+		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(pShare->m_Common.m_sFileName.m_szTransformFileNameFrom[i]));
 		auto_sprintf( szKeyName, LTEXT("To%02d"), i );
-		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(pShare->m_Common.m_sFileName.m_szTransformFileNameTo[i]) );
+		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(pShare->m_Common.m_sFileName.m_szTransformFileNameTo[i]));
 	}
 	// 読み込み時，残りをNULLで再初期化
 	if( cProfile.IsReadingMode() ){
@@ -457,7 +457,7 @@ static bool ShareData_IO_RECT( CDataProfile& cProfile, const WCHAR* pszSecName, 
 	WCHAR		szKeyData[100];
 	bool		ret = false;
 	if( cProfile.IsReadingMode() ){
-		ret = cProfile.IOProfileData( pszSecName, pszKeyName, MakeStringBufferW(szKeyData) );
+		ret = cProfile.IOProfileData(pszSecName, pszKeyName, StringBufferW(szKeyData));
 		if( ret ){
 			int buf[4];
 			scan_ints( szKeyData, pszForm, buf );
@@ -475,7 +475,7 @@ static bool ShareData_IO_RECT( CDataProfile& cProfile, const WCHAR* pszSecName, 
 			rcValue.right,
 			rcValue.bottom
 		);
-		ret = cProfile.IOProfileData( pszSecName, pszKeyName, MakeStringBufferW(szKeyData) );
+		ret = cProfile.IOProfileData(pszSecName, pszKeyName, StringBufferW(szKeyData));
 	}
 	return ret;
 }
@@ -508,7 +508,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("m_bRestoreBookmarks")	, common.m_sFile.m_bRestoreBookmarks );
 	cProfile.IOProfileData( pszSecName, LTEXT("bAddCRLFWhenCopy")		, common.m_sEdit.m_bAddCRLFWhenCopy );
 	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("eOpenDialogDir")		, common.m_sEdit.m_eOpenDialogDir );
-	cProfile.IOProfileData( pszSecName, LTEXT("szOpenDialogSelDir")		, StringBufferW(common.m_sEdit.m_OpenDialogSelDir,_countof2(common.m_sEdit.m_OpenDialogSelDir)) );
+	cProfile.IOProfileData(pszSecName, L"szOpenDialogSelDir", common.m_sEdit.m_OpenDialogSelDir);
 	cProfile.IOProfileData( pszSecName, LTEXT("bBoxSelectLock")	, common.m_sEdit.m_bBoxSelectLock );
 	cProfile.IOProfileData( pszSecName, LTEXT("bVistaStyleFileDialog")	, common.m_sEdit.m_bVistaStyleFileDialog );
 	cProfile.IOProfileData( pszSecName, LTEXT("nRepeatedScrollLineNum")	, common.m_sGeneral.m_nRepeatedScrollLineNum );
@@ -544,7 +544,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("nTagJumpModeKeyword")	, common.m_sSearch.m_nTagJumpModeKeyword );
 	
 	/* 正規表現DLL 2007.08.12 genta */
-	cProfile.IOProfileData( pszSecName, LTEXT("szRegexpLib")			, MakeStringBufferW(common.m_sSearch.m_szRegexpLib) );
+	cProfile.IOProfileData(pszSecName, L"szRegexpLib", StringBufferW(common.m_sSearch.m_szRegexpLib));
 	cProfile.IOProfileData( pszSecName, LTEXT("bGTJW_RETURN")			, common.m_sSearch.m_bGTJW_RETURN );
 	cProfile.IOProfileData( pszSecName, LTEXT("bGTJW_LDBLCLK")			, common.m_sSearch.m_bGTJW_LDBLCLK );
 	cProfile.IOProfileData( pszSecName, LTEXT("bBackUp")				, common.m_sBackup.m_bBackUp );
@@ -587,11 +587,11 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("bBackUpPathAdvanced")	, common.m_sBackup.m_bBackUpPathAdvanced );	/* 20051107 aroka */
 	cProfile.IOProfileData( pszSecName, LTEXT("szBackUpPathAdvanced")	, common.m_sBackup.m_szBackUpPathAdvanced );	/* 20051107 aroka */
 	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("nFileShareMode")			, common.m_sFile.m_nFileShareMode );
-	cProfile.IOProfileData( pszSecName, LTEXT("szExtHelp"), MakeStringBufferW(common.m_sHelper.m_szExtHelp) );
-	cProfile.IOProfileData( pszSecName, LTEXT("szExtHtmlHelp"), MakeStringBufferW(common.m_sHelper.m_szExtHtmlHelp) );
+	cProfile.IOProfileData(pszSecName, L"szExtHelp", StringBufferW(common.m_sHelper.m_szExtHelp));
+	cProfile.IOProfileData(pszSecName, L"szExtHtmlHelp", StringBufferW(common.m_sHelper.m_szExtHtmlHelp));
 	
-	cProfile.IOProfileData( pszSecName, LTEXT("szMigemoDll"), MakeStringBufferW(common.m_sHelper.m_szMigemoDll) );
-	cProfile.IOProfileData( pszSecName, LTEXT("szMigemoDict"), MakeStringBufferW(common.m_sHelper.m_szMigemoDict) );
+	cProfile.IOProfileData(pszSecName, L"szMigemoDll", StringBufferW(common.m_sHelper.m_szMigemoDll));
+	cProfile.IOProfileData(pszSecName, L"szMigemoDict", StringBufferW(common.m_sHelper.m_szMigemoDict));
 	
 	// ai 02/05/23 Add S
 	{// Keword Help Font
@@ -609,14 +609,14 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("bDispMiniMap")			, common.m_sWindow.m_bDispMiniMap );
 	cProfile.IOProfileData( pszSecName, LTEXT("nFUNCKEYWND_Place")		, common.m_sWindow.m_nFUNCKEYWND_Place );
 	cProfile.IOProfileData( pszSecName, LTEXT("nFUNCKEYWND_GroupNum")	, common.m_sWindow.m_nFUNCKEYWND_GroupNum );		// 2002/11/04 Moca ファンクションキーのグループボタン数
-	cProfile.IOProfileData( pszSecName, LTEXT("szLanguageDll")			, MakeStringBufferW( common.m_sWindow.m_szLanguageDll ) );
+	cProfile.IOProfileData(pszSecName, L"szLanguageDll", StringBufferW(common.m_sWindow.m_szLanguageDll));
 	cProfile.IOProfileData( pszSecName, LTEXT("nMiniMapFontSize")		, common.m_sWindow.m_nMiniMapFontSize );
 	cProfile.IOProfileData( pszSecName, LTEXT("nMiniMapQuality")		, common.m_sWindow.m_nMiniMapQuality );
 	cProfile.IOProfileData( pszSecName, LTEXT("nMiniMapWidth")			, common.m_sWindow.m_nMiniMapWidth );
 	
 	cProfile.IOProfileData( pszSecName, LTEXT("bDispTabWnd")			, common.m_sTabBar.m_bDispTabWnd );	//タブウインドウ	//@@@ 2003.05.31 MIK
 	cProfile.IOProfileData( pszSecName, LTEXT("bDispTabWndMultiWin")	, common.m_sTabBar.m_bDispTabWndMultiWin );	//タブウインドウ	//@@@ 2003.05.31 MIK
-	cProfile.IOProfileData( pszSecName, LTEXT("szTabWndCaption")		, MakeStringBufferW(common.m_sTabBar.m_szTabWndCaption) );	//@@@ 2003.06.13 MIK
+	cProfile.IOProfileData(pszSecName, L"szTabWndCaption", StringBufferW(common.m_sTabBar.m_szTabWndCaption));	//@@@ 2003.06.13 MIK
 	cProfile.IOProfileData( pszSecName, LTEXT("bSameTabWidth")			, common.m_sTabBar.m_bSameTabWidth );	// 2006.01.28 ryoji タブを等幅にする
 	cProfile.IOProfileData( pszSecName, LTEXT("bDispTabIcon")			, common.m_sTabBar.m_bDispTabIcon );	// 2006.01.28 ryoji タブにアイコンを表示する
 	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("bDispTabClose")	, common.m_sTabBar.m_bDispTabClose );	// 2012.04.14 syat
@@ -640,8 +640,8 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("bSplitterWndHScroll")	, common.m_sWindow.m_bSplitterWndHScroll );
 	cProfile.IOProfileData( pszSecName, LTEXT("bSplitterWndVScroll")	, common.m_sWindow.m_bSplitterWndVScroll );
 	
-	cProfile.IOProfileData( pszSecName, LTEXT("szMidashiKigou")		, MakeStringBufferW(common.m_sFormat.m_szMidashiKigou) );
-	cProfile.IOProfileData( pszSecName, LTEXT("szInyouKigou")			, MakeStringBufferW(common.m_sFormat.m_szInyouKigou) );
+	cProfile.IOProfileData(pszSecName, L"szMidashiKigou", StringBufferW(common.m_sFormat.m_szMidashiKigou));
+	cProfile.IOProfileData(pszSecName, L"szInyouKigou", StringBufferW(common.m_sFormat.m_szInyouKigou));
 	
 	// 2001/06/14 asa-o 補完とキーワードヘルプはタイプ別に移動したので削除：３行
 	// 2002/09/21 Moca bGrepKanjiCode_AutoDetect は bGrepCharSetに統合したので削除
@@ -702,9 +702,9 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("bHokanKey_SPACE")			, common.m_sHelper.m_bHokanKey_SPACE );/* VK_SPACE  補完決定キーが有効/無効 */
 	
 	cProfile.IOProfileData( pszSecName, LTEXT("nDateFormatType")			, common.m_sFormat.m_nDateFormatType );/* 日付書式のタイプ */
-	cProfile.IOProfileData( pszSecName, LTEXT("szDateFormat")				, MakeStringBufferW(common.m_sFormat.m_szDateFormat) );//日付書式
+	cProfile.IOProfileData(pszSecName, L"szDateFormat", StringBufferW(common.m_sFormat.m_szDateFormat));//日付書式
 	cProfile.IOProfileData( pszSecName, LTEXT("nTimeFormatType")			, common.m_sFormat.m_nTimeFormatType );/* 時刻書式のタイプ */
-	cProfile.IOProfileData( pszSecName, LTEXT("szTimeFormat")				, MakeStringBufferW(common.m_sFormat.m_szTimeFormat) );//時刻書式
+	cProfile.IOProfileData(pszSecName, L"szTimeFormat", StringBufferW(common.m_sFormat.m_szTimeFormat));//時刻書式
 	
 	cProfile.IOProfileData( pszSecName, LTEXT("bMenuIcon")					, common.m_sWindow.m_bMenuIcon );//メニューにアイコンを表示する
 	cProfile.IOProfileData( pszSecName, LTEXT("bAutoMIMEdecode")			, common.m_sFile.m_bAutoMIMEdecode );//ファイル読み込み時にMIMEのdecodeを行うか
@@ -729,8 +729,8 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("bFunclistSetFocusOnJump")	, common.m_sOutline.m_bFunclistSetFocusOnJump );
 	
 	//	Apr. 05, 2003 genta ウィンドウキャプションのカスタマイズ
-	cProfile.IOProfileData( pszSecName, LTEXT("szWinCaptionActive") , MakeStringBufferW(common.m_sWindow.m_szWindowCaptionActive) );
-	cProfile.IOProfileData( pszSecName, LTEXT("szWinCaptionInactive"), MakeStringBufferW(common.m_sWindow.m_szWindowCaptionInactive) );
+	cProfile.IOProfileData(pszSecName, L"szWinCaptionActive", StringBufferW(common.m_sWindow.m_szWindowCaptionActive));
+	cProfile.IOProfileData(pszSecName, L"szWinCaptionInactive", StringBufferW(common.m_sWindow.m_szWindowCaptionInactive));
 	
 	// アウトライン/トピックリスト の位置とサイズを記憶  20060201 aroka
 	cProfile.IOProfileData( pszSecName, LTEXT("bRememberOutlineWindowPos"), common.m_sOutline.m_bRememberOutlineWindowPos);
@@ -749,7 +749,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 		const WCHAR* pszForm = LTEXT("%d,%d,%d,%d");
 		WCHAR		szKeyData[1024];
 		if( cProfile.IsReadingMode() ){
-			if( cProfile.IOProfileData( pszSecName, pszKeyName, MakeStringBufferW(szKeyData)) ){
+			if( cProfile.IOProfileData(pszSecName, pszKeyName, StringBufferW(szKeyData)) ){
 				int buf[4];
 				scan_ints( szKeyData, pszForm, buf );
 				common.m_sOutline.m_cxOutlineDockLeft	= buf[0];
@@ -766,7 +766,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 				common.m_sOutline.m_cxOutlineDockRight,
 				common.m_sOutline.m_cyOutlineDockBottom
 			);
-			cProfile.IOProfileData( pszSecName, pszKeyName, MakeStringBufferW(szKeyData) );
+			cProfile.IOProfileData(pszSecName, pszKeyName, StringBufferW(szKeyData));
 		}
 	}
 	cProfile.IOProfileData( pszSecName, LTEXT("nDockOutline"), common.m_sOutline.m_nDockOutline );
@@ -892,7 +892,7 @@ void CShareData_IO::ShareData_IO_Toolbar( CDataProfile& cProfile, CMenuDrawer* p
 		// Plugin String Parametor
 		if( cProfile.IsReadingMode() ){
 			//読み込み
-			cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szText) );
+			cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szText));
 			if (wcschr(szText, L'/') == NULL) {
 				// 番号
 				toolbar.m_nToolBarButtonIdxArr[i] = _wtoi( szText );
@@ -920,7 +920,7 @@ void CShareData_IO::ShareData_IO_Toolbar( CDataProfile& cProfile, CMenuDrawer* p
 					cProfile.IOProfileData( pszSecName, szKeyName, nInvalid );	
 				}
 				else if (GetPlugCmdInfoByFuncCode( eFunc, szText )) {
-					cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szText) );	
+					cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szText));	
 				}
 				else {
 					cProfile.IOProfileData( pszSecName, szKeyName, toolbar.m_nToolBarButtonIdxArr[i] );	
@@ -965,7 +965,7 @@ void CShareData_IO::IO_CustMenu( CDataProfile& cProfile, CommonSetting_CustomMen
 
 	for( i = 0; i < MAX_CUSTOM_MENU; ++i ){
 		auto_sprintf( szKeyName, LTEXT("szCMN[%02d]"), i );
-		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(menu.m_szCustMenuNameArr[i]) );	//	Oct. 15, 2001 genta 最大長指定
+		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(menu.m_szCustMenuNameArr[i]));	//	Oct. 15, 2001 genta 最大長指定
 		auto_sprintf( szKeyName, LTEXT("bCMPOP[%02d]"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, menu.m_bCustMenuPopupArr[i] );
 		auto_sprintf( szKeyName, LTEXT("nCMIN[%02d]"), i );
@@ -976,14 +976,14 @@ void CShareData_IO::IO_CustMenu( CDataProfile& cProfile, CommonSetting_CustomMen
 			// start マクロ名でも設定できるように 2008/5/24 Uchi
 			auto_sprintf( szKeyName, LTEXT("nCMIF[%02d][%02d]"), i, j );
 			if (cProfile.IsReadingMode()) {
-				cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szFuncName));
+				cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szFuncName));
 				n = GetFunctionStrToFunctionCode(szFuncName);
 				menu.m_nCustMenuItemFuncArr[i][j] = n;
 			}
 			else {
 				if (GetPlugCmdInfoByFuncCode( menu.m_nCustMenuItemFuncArr[i][j], szFuncName)) {
 					// Plugin
-					cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szFuncName) );
+					cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szFuncName));
 				}
 				else {
 					if (bOutCmdName) {
@@ -996,7 +996,7 @@ void CShareData_IO::IO_CustMenu( CDataProfile& cProfile, CommonSetting_CustomMen
 						if ( p == NULL ) {
 							auto_sprintf( szFuncName, L"%d", menu.m_nCustMenuItemFuncArr[i][j] );
 						}
-						cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szFuncName) );
+						cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szFuncName));
 					}
 					else {
 						cProfile.IOProfileData_WrapInt( pszSecName, szKeyName, menu.m_nCustMenuItemFuncArr[i][j] );
@@ -1061,7 +1061,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 	int nKeyNameArrUsed = sKeyBind.m_nKeyNameArrNum; // 使用済み領域
 
 	if( cProfile.IsReadingMode() ){ 
-		if (!cProfile.IOProfileData( szSecName, L"KeyBind[000]", MakeStringBufferW(szKeyData) ) ) {
+		if (!cProfile.IOProfileData(szSecName, L"KeyBind[000]", StringBufferW(szKeyData)) ) {
 			bOldVer = true;
 		}
 		else {
@@ -1080,7 +1080,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 			if (bOldVer) {
 				KEYDATA& keydata = sKeyBind.m_pKeyNameArr[i];
 				wcscpy_s( szKeyName, keydata.m_szKeyName );
-				if( cProfile.IOProfileData( szSecName, szKeyName, MakeStringBufferW(szKeyData) ) ){
+				if( cProfile.IOProfileData(szSecName, szKeyName, StringBufferW(szKeyData)) ){
 					int buf[8];
 					scan_ints( szKeyData, LTEXT("%d,%d,%d,%d,%d,%d,%d,%d"), buf );
 					keydata.m_nFuncCodeArr[0]	= (EFunctionCode)buf[0];
@@ -1096,7 +1096,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 			else {		// 新バージョン(キー割り当てのImport,export の合わせた)	2008/5/25 Uchi
 				KEYDATA tmpKeydata;
 				auto_sprintf(szKeyName, L"KeyBind[%03d]", i);
-				if( cProfile.IOProfileData( szSecName, szKeyName, MakeStringBufferW(szKeyData) ) ){
+				if( cProfile.IOProfileData(szSecName, szKeyName, StringBufferW(szKeyData)) ){
 					wchar_t	*p;
 					wchar_t	*pn;
 					int		nRes;
@@ -1165,7 +1165,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 		//		keydata.m_nFuncCodeArr[6],
 		//		keydata.m_nFuncCodeArr[7]
 		//	);
-		//	cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) );
+		//	cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData));
 
 // start 新バージョン	2008/5/25 Uchi
 			KEYDATA& keydata = sKeyBind.m_pKeyNameArr[i];
@@ -1208,7 +1208,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 				auto_sprintf(szWork, L",%s", keydata.m_szKeyName);
 			}
 			wcscat(szKeyData, szWork);
-			cProfile.IOProfileData( szSecName, szKeyName, MakeStringBufferW(szKeyData) );
+			cProfile.IOProfileData(szSecName, szKeyName, StringBufferW(szKeyData));
 //
 		}
 	}
@@ -1238,7 +1238,7 @@ void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].nInts"), i );
 		static const WCHAR* pszForm = LTEXT("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d");
 		if( cProfile.IsReadingMode() ){
-			if( cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) ) ){
+			if( cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData)) ){
 				int buf[19];
 				scan_ints( szKeyData, pszForm, buf );
 				printsetting.m_nPrintFontWidth			= buf[ 0];
@@ -1283,21 +1283,21 @@ void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 				printsetting.m_bFooterUse[1]?1:0,
 				printsetting.m_bFooterUse[2]?1:0
 			);
-			cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) );
+			cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData));
 		}
 
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].szSName")	, i );
-		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(printsetting.m_szPrintSettingName) );
+		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(printsetting.m_szPrintSettingName));
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].szFF")	, i );
-		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(printsetting.m_szPrintFontFaceHan) );
+		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(printsetting.m_szPrintFontFaceHan));
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].szFFZ")	, i );
-		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(printsetting.m_szPrintFontFaceZen) );
+		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(printsetting.m_szPrintFontFaceZen));
 		// ヘッダ/フッタ
 		for( j = 0; j < 3; ++j ){
 			auto_sprintf( szKeyName, LTEXT("PS[%02d].szHF[%d]") , i, j );
-			cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(printsetting.m_szHeaderForm[j]) );
+			cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(printsetting.m_szHeaderForm[j]));
 			auto_sprintf( szKeyName, LTEXT("PS[%02d].szFTF[%d]"), i, j );
-			cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(printsetting.m_szFooterForm[j]) );
+			cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(printsetting.m_szFooterForm[j]));
 		}
 		{ // ヘッダ/フッタ フォント設定
 			WCHAR	szKeyName2[64];
@@ -1315,11 +1315,11 @@ void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 		}
 
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].szDriver"), i );
-		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(printsetting.m_mdmDevMode.m_szPrinterDriverName) );
+		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(printsetting.m_mdmDevMode.m_szPrinterDriverName));
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].szDevice"), i );
-		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(printsetting.m_mdmDevMode.m_szPrinterDeviceName) );
+		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(printsetting.m_mdmDevMode.m_szPrinterDeviceName));
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].szOutput"), i );
-		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(printsetting.m_mdmDevMode.m_szPrinterOutputName) );
+		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(printsetting.m_mdmDevMode.m_szPrinterOutputName));
 
 		// 2002.02.16 hor とりあえず旧設定を変換しとく
 		if(0==wcscmp(printsetting.m_szHeaderForm[0],_EDITL("&f")) &&
@@ -1427,8 +1427,8 @@ static bool ShareData_IO_BlockComment( CDataProfile& cProfile,
 	}
 
 	bool ret = false;
-	if( cProfile.IOProfileData( pszSectionName, pszEntryKeyFrom, MakeStringBufferW( szFrom ) )
-		&& cProfile.IOProfileData( pszSectionName, pszEntryKeyTo, MakeStringBufferW( szTo ) ) ){
+	if( cProfile.IOProfileData(pszSectionName, pszEntryKeyFrom, StringBufferW(szFrom))
+		&& cProfile.IOProfileData(pszSectionName, pszEntryKeyTo, StringBufferW(szTo)) ){
 		//対になる設定が揃った場合のみ有効
 		ret = true;
 	}
@@ -1465,7 +1465,7 @@ static bool ShareData_IO_LineComment( CDataProfile& cProfile,
 	}
 
 	bool ret = false;
-	if( cProfile.IOProfileData( pszSectionName, pszEntryKeyComment, MakeStringBufferW( lbuf ) )
+	if( cProfile.IOProfileData(pszSectionName, pszEntryKeyComment, StringBufferW(lbuf))
 		&& cProfile.IOProfileData( pszSectionName, pszEntryKeyColumn, pos ) ){
 		//対になる設定が揃った場合のみ有効
 		ret = true;
@@ -1498,7 +1498,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	static const WCHAR* pszForm = LTEXT("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d");	//MIK
 	wcscpy( szKeyName, LTEXT("nInts") );
 	if( cProfile.IsReadingMode() ){
-		if( cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) ) ){
+		if( cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData)) ){
 			int buf[12];
 			scan_ints( szKeyData, pszForm, buf );
 			types.m_nIdx					= buf[ 0];
@@ -1537,7 +1537,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 			types.m_nCurrentPrintSetting,
 			types.m_nTsvMode
 		);
-		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) );
+		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData));
 	}
 	// 2005.01.13 MIK Keywordset 3-10
 	cProfile.IOProfileData( pszSecName, LTEXT("nKeywordSelect3"),  types.m_nKeyWordSetIdx[2] );
@@ -1571,13 +1571,13 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 		}
 	}
 
-	cProfile.IOProfileData( pszSecName, LTEXT("szTypeName"), MakeStringBufferW(types.m_szTypeName) );
-	cProfile.IOProfileData( pszSecName, LTEXT("szTypeExts"), MakeStringBufferW(types.m_szTypeExts) );
+	cProfile.IOProfileData(pszSecName, L"szTypeName", StringBufferW(types.m_szTypeName));
+	cProfile.IOProfileData(pszSecName, L"szTypeExts", StringBufferW(types.m_szTypeExts));
 	cProfile.IOProfileData( pszSecName, LTEXT("id"), types.m_id );
 	if( types.m_id < 0 ){
 		types.m_id *= -1;
 	}
-	cProfile.IOProfileData( pszSecName, LTEXT("szTabViewString"), MakeStringBufferW(types.m_szTabViewString) );
+	cProfile.IOProfileData(pszSecName, L"szTabViewString", StringBufferW(types.m_szTabViewString));
 	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("bTabArrow")	, types.m_bTabArrow );	//@@@ 2003.03.26 MIK
 	cProfile.IOProfileData( pszSecName, LTEXT("bInsSpace")			, types.m_bInsSpace );	// 2001.12.03 hor
 
@@ -1595,7 +1595,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	ShareData_IO_LineComment( cProfile, pszSecName, L"szLineComment2", L"nLineCommentColumn2", types.m_cLineComment, 1 );
 	ShareData_IO_LineComment( cProfile, pszSecName, L"szLineComment3", L"nLineCommentColumn3", types.m_cLineComment, 2 );
 
-	cProfile.IOProfileData( pszSecName, LTEXT("szIndentChars")		, MakeStringBufferW(types.m_szIndentChars) );
+	cProfile.IOProfileData(pszSecName, L"szIndentChars", StringBufferW(types.m_szIndentChars));
 	cProfile.IOProfileData( pszSecName, LTEXT("cLineTermChar")		, types.m_cLineTermChar );
 
 	cProfile.IOProfileData( pszSecName, LTEXT("bOutlineDockDisp")			, types.m_bOutlineDockDisp );/* アウトライン解析表示の有無 */
@@ -1605,7 +1605,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 		const WCHAR* pszForm = LTEXT("%d,%d,%d,%d");
 		WCHAR		szKeyData[1024];
 		if( cProfile.IsReadingMode() ){
-			if( cProfile.IOProfileData( pszSecName, pszKeyName, MakeStringBufferW(szKeyData)) ){
+			if( cProfile.IOProfileData(pszSecName, pszKeyName, StringBufferW(szKeyData)) ){
 				int buf[4];
 				scan_ints( szKeyData, pszForm, buf );
 				types.m_cxOutlineDockLeft	= buf[0];
@@ -1622,7 +1622,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 				types.m_cxOutlineDockRight,
 				types.m_cyOutlineDockBottom
 			);
-			cProfile.IOProfileData( pszSecName, pszKeyName, MakeStringBufferW(szKeyData) );
+			cProfile.IOProfileData(pszSecName, pszKeyName, StringBufferW(szKeyData));
 		}
 	}
 	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("nDockOutline")	, 	types.m_nDockOutline );/* アウトライン解析方法 */
@@ -1705,7 +1705,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 			if( cProfile.IsReadingMode() )
 			{
 				types.m_RegexKeywordArr[j].m_nColorIndex = COLORIDX_REGEX1;
-				if( cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData)) )
+				if( cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData)) )
 				{
 					p = wcschr(szKeyData, LTEXT(','));
 					if( p )
@@ -1738,7 +1738,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 				auto_sprintf( szKeyData, LTEXT("%ls,%ls"),
 					GetColorNameByIndex( types.m_RegexKeywordArr[j].m_nColorIndex ),
 					&pKeyword[nPos]);
-				cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) );
+				cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData));
 				nPos += wcslen(&pKeyword[nPos]) + 1;
 			}
 		}
@@ -1754,9 +1754,9 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	cProfile.IOProfileData( pszSecName, LTEXT("bKinsokuRet")	, types.m_bKinsokuRet );	//@@@ 2002.04.13 MIK
 	cProfile.IOProfileData( pszSecName, LTEXT("bKinsokuKuto")	, types.m_bKinsokuKuto );	//@@@ 2002.04.17 MIK
 	cProfile.IOProfileData( pszSecName, LTEXT("bKinsokuHide")	, types.m_bKinsokuHide );	//2012/11/30 Uchi
-	cProfile.IOProfileData( pszSecName, LTEXT("szKinsokuHead")	, MakeStringBufferW(types.m_szKinsokuHead) );
-	cProfile.IOProfileData( pszSecName, LTEXT("szKinsokuTail")	, MakeStringBufferW(types.m_szKinsokuTail) );
-	cProfile.IOProfileData( pszSecName, LTEXT("szKinsokuKuto")	, MakeStringBufferW(types.m_szKinsokuKuto) );	// 2009.08.07 ryoji
+	cProfile.IOProfileData(pszSecName, L"szKinsokuHead", StringBufferW(types.m_szKinsokuHead));
+	cProfile.IOProfileData(pszSecName, L"szKinsokuTail", StringBufferW(types.m_szKinsokuTail));
+	cProfile.IOProfileData(pszSecName, L"szKinsokuKuto", StringBufferW(types.m_szKinsokuKuto));	// 2009.08.07 ryoji
 	cProfile.IOProfileData( pszSecName, LTEXT("bUseDocumentIcon")	, types.m_bUseDocumentIcon );	// Sep. 19 ,2002 genta 変数名誤り修正
 
 //@@@ 2006.04.10 fon ADD-start
@@ -1775,7 +1775,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 				types.m_KeyHelpArr[j].m_bUse = false;
 				types.m_KeyHelpArr[j].m_szAbout[0] = L'\0';
 				types.m_KeyHelpArr[j].m_szPath[0] = L'\0';
-				if( cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData)) ){
+				if( cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData)) ){
 					pH = szKeyData;
 					if( NULL != (pT=wcschr(pH, L',')) ){
 						*pT = L'\0';
@@ -1800,7 +1800,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 						types.m_KeyHelpArr[j].m_szAbout,
 						types.m_KeyHelpArr[j].m_szPath.c_str()
 					);
-					cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) );
+					cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData));
 				}
 			}
 		}
@@ -1855,7 +1855,7 @@ void CShareData_IO::ShareData_IO_KeyWords( CDataProfile& cProfile )
 				int nKeyWordNum = 0;
 				//値の取得
 				auto_sprintf( szKeyName, LTEXT("szSN[%02d]"), i );
-				cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) );
+				cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData));
 				auto_sprintf( szKeyName, LTEXT("nCASE[%02d]"), i );
 				cProfile.IOProfileData( pszSecName, szKeyName, bKEYWORDCASE );
 				auto_sprintf( szKeyName, LTEXT("nKWN[%02d]"), i );
@@ -1874,7 +1874,7 @@ void CShareData_IO::ShareData_IO_KeyWords( CDataProfile& cProfile )
 		int nSize = pCKeyWordSetMgr->m_nKeyWordSetNum;
 		for( i = 0; i < nSize; ++i ){
 			auto_sprintf( szKeyName, LTEXT("szSN[%02d]"), i );
-			cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(pCKeyWordSetMgr->m_szSetNameArr[i]) );
+			cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(pCKeyWordSetMgr->m_szSetNameArr[i]));
 			auto_sprintf( szKeyName, LTEXT("nCASE[%02d]"), i );
 			cProfile.IOProfileData( pszSecName, szKeyName, pCKeyWordSetMgr->m_bKEYWORDCASEArr[i] );
 			auto_sprintf( szKeyName, LTEXT("nKWN[%02d]"), i );
@@ -1899,7 +1899,7 @@ void CShareData_IO::ShareData_IO_KeyWords( CDataProfile& cProfile )
 			}
 			*pMem = L'\0';
 			auto_sprintf( szKeyName, LTEXT("szKW[%02d]"), i );
-			cProfile.IOProfileData( pszSecName, szKeyName, StringBufferW(pszMem,nMemLen) );
+			cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(pszMem, nMemLen));
 			delete [] pszMem;
 		}
 	}
@@ -1924,9 +1924,9 @@ void CShareData_IO::ShareData_IO_Macro( CDataProfile& cProfile )
 		// 2002.02.08 hor 未定義値を無視
 		if( !cProfile.IsReadingMode() && macrorec.m_szName[0] == L'\0' && macrorec.m_szFile[0] == L'\0' ) continue;
 		auto_sprintf( szKeyName, LTEXT("Name[%03d]"), i );
-		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(macrorec.m_szName) );
+		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(macrorec.m_szName));
 		auto_sprintf( szKeyName, LTEXT("File[%03d]"), i );
-		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(macrorec.m_szFile) );
+		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(macrorec.m_szFile));
 		auto_sprintf( szKeyName, LTEXT("ReloadWhenExecute[%03d]"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, macrorec.m_bReloadWhenExecute );
 	}
@@ -1984,9 +1984,9 @@ void CShareData_IO::ShareData_IO_Plugin( CDataProfile& cProfile, CMenuDrawer* pc
 			pluginrec.m_szId[0] = L'\0';
 		}
 		auto_sprintf( szKeyName, LTEXT("P[%02d].Name"), i );
-		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(pluginrec.m_szName) );
+		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(pluginrec.m_szName));
 		auto_sprintf( szKeyName, LTEXT("P[%02d].Id"), i );
-		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(pluginrec.m_szId) );
+		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(pluginrec.m_szId));
 		auto_sprintf( szKeyName, LTEXT("P[%02d].CmdNum"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pluginrec.m_nCmdNum );	// 2010/7/4 Uchi
 		pluginrec.m_state = ( pluginrec.m_szId[0] == '\0' ? PLS_NONE : PLS_STOPPED );
@@ -2196,7 +2196,7 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 			if( pData ){
 				wcscpy(szLine, data[dataNum++].c_str());
 			}else{
-				cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW( szLine ) );
+				cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szLine));
 			}
 
 			// レベル
@@ -2273,7 +2273,7 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 				szFuncName, 
 				pcMenu->m_sKey, 
 				pcMenu->m_nFunc == F_NODE ? pcMenu->m_sName : L"" );
-			cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW( szLine ) );
+			cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szLine));
 		}
 
 		if (cProfile.IsReadingMode() && pcMenu->m_nLevel == 0) {
@@ -2313,7 +2313,7 @@ void CShareData_IO::ShareData_IO_Other( CDataProfile& cProfile )
 	
 	/* CTAGS */	//@@@ 2003.05.12 MIK
 	cProfile.IOProfileData( pszSecName, LTEXT("nTagsOpt")		, pShare->m_nTagsOpt );
-	cProfile.IOProfileData( pszSecName, LTEXT("szTagsCmdLine")	, MakeStringBufferW(pShare->m_szTagsCmdLine) );
+	cProfile.IOProfileData(pszSecName, L"szTagsCmdLine", StringBufferW(pShare->m_szTagsCmdLine));
 	
 	//From Here 2005.04.03 MIK キーワード指定タグジャンプ
 	cProfile.IOProfileData( pszSecName, LTEXT("_TagJumpKeyword_Counts"), pShare->m_sTagJump.m_aTagJumpKeywords._GetSizeRef() );
@@ -2338,7 +2338,7 @@ void CShareData_IO::ShareData_IO_Other( CDataProfile& cProfile )
 					LOWORD( pShare->m_sVersion.m_dwProductVersionMS ),
 					HIWORD( pShare->m_sVersion.m_dwProductVersionLS ),
 					LOWORD( pShare->m_sVersion.m_dwProductVersionLS ) );
-		cProfile.IOProfileData( pszSecName, LTEXT("szVersion"), MakeStringBufferW(iniVer) );
+		cProfile.IOProfileData(pszSecName, L"szVersion", StringBufferW(iniVer));
 
 		// 共有メモリバージョン	2010/5/20 Uchi
 		int		nStructureVersion;
@@ -2367,7 +2367,7 @@ void CShareData_IO::IO_ColorSet( CDataProfile* pcProfile, const WCHAR* pszSecNam
 		static const WCHAR* pszForm = LTEXT("%d,%d,%06x,%06x,%d");
 		auto_sprintf( szKeyName, LTEXT("C[%s]"), g_ColorAttributeArr[j].szName );	//Stonee, 2001/01/12, 2001/01/15
 		if( pcProfile->IsReadingMode() ){
-			if( pcProfile->IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) ) ){
+			if( pcProfile->IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData)) ){
 				int buf[5];
 				scan_ints( szKeyData, pszForm, buf);
 				pColorInfoArr[j].m_bDisp                  = (buf[0]!=0);
@@ -2401,7 +2401,7 @@ void CShareData_IO::IO_ColorSet( CDataProfile* pcProfile, const WCHAR* pszSecNam
 				pColorInfoArr[j].m_sColorAttr.m_cBACK,
 				pColorInfoArr[j].m_sFontAttr.m_bUnderLine?1:0
 			);
-			pcProfile->IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) );
+			pcProfile->IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData));
 		}
 	}
 }
@@ -2417,7 +2417,7 @@ void ShareData_IO_Sub_LogFont( CDataProfile& cProfile, const WCHAR* pszSecName,
 
 	cProfile.IOProfileData( pszSecName, pszKeyPointSize, nPointSize );	// 2009.10.01 ryoji
 	if( cProfile.IsReadingMode() ){
-		if( cProfile.IOProfileData( pszSecName, pszKeyLf, MakeStringBufferW(szKeyData) ) ){
+		if( cProfile.IOProfileData(pszSecName, pszKeyLf, StringBufferW(szKeyData)) ){
 			int buf[13];
 			scan_ints( szKeyData, pszForm, buf );
 			lf.lfHeight			= buf[ 0];
@@ -2458,10 +2458,10 @@ void ShareData_IO_Sub_LogFont( CDataProfile& cProfile, const WCHAR* pszSecName,
 			lf.lfQuality,
 			lf.lfPitchAndFamily
 		);
-		cProfile.IOProfileData( pszSecName, pszKeyLf, MakeStringBufferW(szKeyData) );
+		cProfile.IOProfileData(pszSecName, pszKeyLf, StringBufferW(szKeyData));
 	}
 	
-	cProfile.IOProfileData( pszSecName, pszKeyFaceName, MakeStringBufferW(lf.lfFaceName) );
+	cProfile.IOProfileData(pszSecName, pszKeyFaceName, StringBufferW(lf.lfFaceName));
 }
 
 void CShareData_IO::ShareData_IO_FileTree( CDataProfile& cProfile, SFileTree& fileTree, const WCHAR* pszSecName )

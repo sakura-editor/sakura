@@ -54,9 +54,6 @@ public:
 	StringBufferW& operator = (std::wstring_view rhs);
 };
 
-//文字列バッファ型インスタンスの生成マクロ
-#define MakeStringBufferW(S)	StringBufferW(S,_countof(S))
-
 /*!
  * プロファイル用データ変換
  */
