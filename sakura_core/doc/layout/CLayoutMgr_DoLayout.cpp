@@ -184,7 +184,7 @@ void CLayoutMgr::_DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 		CLayoutInt nCharKetas3 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos+1 );
 		bool bLowSurrogate = false;
 
-		if( nCharKetas3 == 0 )
+		if( nCharKetas3 == 0 && pWork->nPos + 2 < pWork->cLineStr.GetLength() )
 		{
 			// サロゲートペア対策(取得した文字幅が0だったら下位側を読み取ったと判断し、次の位置に進ませる)
 			bLowSurrogate = true;
