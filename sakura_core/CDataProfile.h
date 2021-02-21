@@ -345,14 +345,6 @@ public:
 		std::wstring_view		entryKey,		//!< [in] エントリ名
 		StringBufferW&&			refEntryValue	//!< [in,out] エントリ値
 	);
-
-	//2007.08.14 kobake 追加
-	//! intを介して任意型の入出力を行う
-	template <class T>
-	bool IOProfileData_WrapInt( const std::wstring& strSectionName, const std::wstring& strEntryKey, T& nEntryValue)
-	{
-		return IOProfileData(strSectionName, strEntryKey, nEntryValue);
-	}
 };
 
 #endif /* SAKURA_CDATAPROFILE_401640FD_5B27_454A_B0DE_098E1C4FAEAD_H_ */
