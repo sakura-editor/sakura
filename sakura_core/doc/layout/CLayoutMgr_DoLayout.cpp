@@ -182,14 +182,22 @@ void CLayoutMgr::_DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 		// 2007.09.07 kobake   レイアウトとロジックの区別
 		CLayoutInt nCharKetas2 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
 		CLayoutInt nCharKetas3 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos+1 );
+		bool bLowSurrogate = false;
+
+		if( nCharKetas3 == 0 )
+		{
+			// サロゲートペア対策(取得した文字幅が0だったら下位側を読み取ったと判断し、次の位置に進ませる)
+			bLowSurrogate = true;
+			nCharKetas3 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos + 2 );
+		}
 
 		if( _IsKinsokuPosHead( GetMaxLineLayout() - pWork->nPosX, nCharKetas2, nCharKetas3 )
-		 && IsKinsokuHead( pWork->cLineStr.At(pWork->nPos+1) )
-		 && ! IsKinsokuHead( pWork->cLineStr.At(pWork->nPos) )	//1文字前が行頭禁則でない
-		 && ! IsKinsokuKuto( pWork->cLineStr.At(pWork->nPos) ) )	//句読点でない
+		 && IsKinsokuHead( pWork->cLineStr.At( pWork->nPos + ( bLowSurrogate ? 2 : 1 ) ) )
+		 && !IsKinsokuHead( pWork->cLineStr.At( pWork->nPos ) )		// 1字前が行頭禁則の対象でないこと
+		 && !IsKinsokuKuto( pWork->cLineStr.At( pWork->nPos ) ) )	// 1字前が句読点ぶら下げの対象でないこと
 		{
 			pWork->nWordBgn = pWork->nPos;
-			pWork->nWordLen = 2;
+			pWork->nWordLen = ( bLowSurrogate ? 3 : 2 );
 			pWork->eKinsokuType = KINSOKU_TYPE_KINSOKU_HEAD;
 
 			(this->*pfOnLine)(pWork);
