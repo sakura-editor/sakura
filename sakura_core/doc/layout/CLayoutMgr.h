@@ -334,7 +334,7 @@ protected:
 	//DoLayout用
 	bool _DoKinsokuSkip(SLayoutWork* pWork, PF_OnLine pfOnLine);
 	void _DoWordWrap(SLayoutWork* pWork, PF_OnLine pfOnLine);
-	void _DoKutoBurasage(SLayoutWork* pWork);
+	void _DoKutoBurasage(SLayoutWork* pWork) const;
 	void _DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine);
 	void _DoGyomatsuKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine);
 	bool _DoTab(SLayoutWork* pWork, PF_OnLine pfOnLine);

@@ -53,7 +53,7 @@ static bool _GetKeywordLength(
 	@param[in] nCharKetas2 次の位置にある文字の幅
 	@return 処理が必要な位置ならばtrue
 */
-static bool _IsKinsokuPosHead( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 )
+[[nodiscard]] static bool _IsKinsokuPosHead( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 )
 {
 	return nRest < nCharKetas + nCharKetas2;
 }
@@ -66,7 +66,7 @@ static bool _IsKinsokuPosHead( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutI
 	@param[in] nCharKetas2 次の位置にある文字の幅
 	@return 処理が必要な位置ならばtrue
 */
-static bool _IsKinsokuPosTail( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 )
+[[nodiscard]] static bool _IsKinsokuPosTail( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutInt nCharKetas2 )
 {
 	return nRest < nCharKetas + nCharKetas2;
 }
@@ -78,7 +78,7 @@ static bool _IsKinsokuPosTail( CLayoutInt nRest, CLayoutInt nCharKetas, CLayoutI
 	@param[in] nCharChars 現在の位置にある文字の幅
 	@return 処理が必要な位置ならばtrue
 */
-static bool _IsKinsokuPosKuto( CLayoutInt nRest, CLayoutInt nCharChars )
+[[nodiscard]] static bool _IsKinsokuPosKuto( CLayoutInt nRest, CLayoutInt nCharChars )
 {
 	return nRest < nCharChars;
 }
@@ -154,7 +154,7 @@ void CLayoutMgr::_DoWordWrap(SLayoutWork* pWork, PF_OnLine pfOnLine)
 	}
 }
 
-void CLayoutMgr::_DoKutoBurasage(SLayoutWork* pWork)
+void CLayoutMgr::_DoKutoBurasage(SLayoutWork* pWork) const
 {
 	// 現在位置が行末付近で禁則処理の実行中でないこと
 	if( GetMaxLineLayout() - pWork->nPosX < 2 * GetWidthPerKeta() && pWork->eKinsokuType == KINSOKU_TYPE_NONE )
