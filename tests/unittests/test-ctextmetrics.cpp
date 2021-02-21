@@ -68,7 +68,6 @@ TEST_F(CTextMetricsWithGDI, Update1)
 		EXPECT_EQ(metrics.GetDxArray_AllHankaku()[i], metrics.GetHankakuDx());
 
 	// Updateに依存するその他の関数のテスト
-	EXPECT_EQ(metrics.GetZenkakuDx(), metrics.GetHankakuDx() * 2);
 	EXPECT_EQ(metrics.GetCharSpacing(), metrics.GetHankakuDx() - metrics.GetHankakuWidth());
 	EXPECT_EQ(metrics.GetCharPxWidth(), 1);
 	EXPECT_EQ(metrics.GetCharPxWidth(CLayoutInt(0)), 0);

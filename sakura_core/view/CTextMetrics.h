@@ -28,60 +28,46 @@
 
 //2007.08.25 kobake 追加
 
+#include <array>
 #include <vector>
 #include <Windows.h>
 #include "basis/SakuraBasis.h"
 #include "charset/charcode.h"
-
-class CTextMetrics;
+#include "debug/Debug2.h"
 
 class CTextMetrics{
 public:
-	//コンストラクタ・デストラクタ
-	CTextMetrics();
-	virtual ~CTextMetrics();
 	void CopyTextMetricsStatus(CTextMetrics* pDst) const;
 	void Update(HDC hdc, HFONT hFont, int nLineSpace, int nColmSpace);
 
-	//設定
-private:
-	void SetHankakuWidth(int nHankakuWidth);   //!< 半角文字の幅を設定。単位はピクセル。
-	void SetHankakuHeight(int nHankakuHeight); //!< 半角文字の縦幅を設定。単位はピクセル。
-	void SetHankakuDx(int nHankakuDx);         //!< 半角文字の文字間隔を設定。単位はピクセル。
-	void SetHankakuDy(int nHankakuDy);         //!< 半角文字の行間隔を設定。単位はピクセル。
+	//! 半角文字の横幅を取得。単位はピクセル。
+	[[nodiscard]] int GetHankakuWidth() const { return m_nCharWidth; }
+	//! 半角文字の縦幅を取得。単位はピクセル。
+	[[nodiscard]] int GetHankakuHeight() const { return m_nCharHeight; }
+	//! 半角文字の文字間隔を取得。単位はピクセル。
+	[[nodiscard]] int GetHankakuDx() const { return m_nDxBasis; }
+	//! Y方向文字間隔。文字縦幅＋行間隔。単位はピクセル。
+	[[nodiscard]] int GetHankakuDy() const { return m_nDyBasis; }
 
-	//取得
-public:
-	int GetHankakuWidth() const{ return m_nCharWidth; }		//!< 半角文字の横幅を取得。単位はピクセル。
-	int GetHankakuHeight() const{ return m_nCharHeight; }	//!< 半角文字の縦幅を取得。単位はピクセル。
-	int GetHankakuDx() const{ return m_nDxBasis; }			//!< 半角文字の文字間隔を取得。単位はピクセル。
-	int GetZenkakuDx() const{ return m_nDxBasis*2; }		//!< 全角文字の文字間隔を取得。単位はピクセル。
-	int GetHankakuDy() const{ return m_nDyBasis; }			//!< Y方向文字間隔。文字縦幅＋行間隔。単位はピクセル。
-
-	CPixelXInt GetCharSpacing() const {
+	[[nodiscard]] CPixelXInt GetCharSpacing() const {
 		return GetHankakuDx() - GetHankakuWidth();
 	}
 	// レイアウト幅分のピクセル幅を取得する
-	int GetCharPxWidth(CLayoutXInt col) const{
-		return (Int)col;
+	[[nodiscard]] int GetCharPxWidth(CLayoutXInt col) const {
+		return static_cast<Int>(col);
 	}
-
-	int GetCharPxWidth() const{
-		return 1;
-	}
-	int GetCharHeightMarginByFontNo(int n) const{
-		return m_aFontHeightMargin[n];
-	}
+	[[nodiscard]] int GetCharPxWidth() const { return 1; }
+	[[nodiscard]] int GetCharHeightMarginByFontNo(int) const { return 0; }
 
 	// 固定文字x桁のレイアウト幅を取得する
-	CLayoutXInt GetLayoutXDefault(CKetaXInt chars) const{
-		return CLayoutXInt(GetHankakuDx() * (Int)chars);
+	[[nodiscard]] CLayoutXInt GetLayoutXDefault(CKetaXInt chars) const {
+		return CLayoutXInt(m_nDxBasis * static_cast<Int>(chars));
 	}
 	// 固定文字1桁あたりのレイアウト幅を取得する
-	CLayoutXInt GetLayoutXDefault() const{ return GetLayoutXDefault(CKetaXInt(1));}
+	[[nodiscard]] CLayoutXInt GetLayoutXDefault() const{ return GetLayoutXDefault(CKetaXInt(1)); }
 	
-	//文字間隔配列を取得
-	const int* GetDxArray_AllHankaku() const{ return m_anHankakuDx; } //!<半角文字列の文字間隔配列を取得。要素数は64。
+	//! 半角文字列の文字間隔配列を取得。要素数は64。
+	[[nodiscard]] const int* GetDxArray_AllHankaku() const { return m_anHankakuDx.data(); }
 
 	const int* GenerateDxArray2(
 		std::vector<int>* vResultArray, //!< [out] 文字間隔配列の受け取りコンテナ
@@ -89,7 +75,8 @@ public:
 		int nLength,                    //!< [in]  文字列長
 		CCharWidthCache& cache = GetCharWidthCache()
 	) const {
-		return GenerateDxArray(vResultArray, pText, nLength, GetHankakuDx(), 8, 0, GetCharSpacing(), cache);
+		return GenerateDxArray(vResultArray, pText, nLength,
+			m_nDxBasis, 8, 0, m_nDxBasis - m_nCharWidth, cache);
 	}
 
 	//! 指定した文字列により文字間隔配列を生成する。
@@ -105,7 +92,7 @@ public:
 	);
 
 	//!文字列のピクセル幅を返す。
-	static int CalcTextWidth(
+	[[nodiscard]] static int CalcTextWidth(
 		const wchar_t* pText, //!< 文字列
 		int nLength,          //!< 文字列長
 		const int* pnDx       //!< 文字間隔の入った配列
@@ -128,13 +115,10 @@ public:
 	) const;
 
 private:
-//	HDC m_hdc; //!< 計算に用いるデバイスコンテキスト
 	int	m_nCharWidth;      //!< 半角文字の横幅
 	int m_nCharHeight;     //!< 半角文字の縦幅
 	int m_nDxBasis;        //!< 半角文字の文字間隔 (横幅+α)
 	int m_nDyBasis;        //!< 半角文字の行間隔 (縦幅+α)
-	int m_anHankakuDx[64]; //!< 半角用文字間隔配列
-	std::vector<int> m_aFontHeightMargin;
-	mutable std::vector<int> m_vDxArray; //!< 文字間隔配列
+	std::array<int, 64> m_anHankakuDx; //!< 半角用文字間隔配列
 };
 #endif /* SAKURA_CTEXTMETRICS_7972A864_FDFF_4852_9EA5_A91D39657A7F_H_ */
