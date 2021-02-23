@@ -13,6 +13,7 @@
 	Copyright (C) 2005, MIK, aroka, genta
 	Copyright (C) 2006, fon
 	Copyright (C) 2010, Uchi
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.

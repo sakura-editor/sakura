@@ -11,6 +11,7 @@
 	Copyright (C) 2003, Moca
 	Copyright (C) 2004, Moca
 	Copyright (C) 2005, genta
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.

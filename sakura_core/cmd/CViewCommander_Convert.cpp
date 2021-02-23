@@ -8,6 +8,7 @@
 	Copyright (C) 2000-2001, jepro
 	Copyright (C) 2001, Stonee, Misaka
 	Copyright (C) 2002, ai
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
