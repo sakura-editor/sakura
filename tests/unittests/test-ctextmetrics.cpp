@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2021 Sakura Editor Organization
+	Copyright (C) 2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,7 +22,6 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-
 #include <gtest/gtest.h>
 #include "view/CTextMetrics.h"
 #include <vector>
