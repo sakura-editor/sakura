@@ -804,11 +804,11 @@ TEST(CNativeW, GetKetaOfChar)
 TEST(CNativeW, GetHabaOfChar)
 {
 	// 範囲外なら0を返す。
-	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"", 0, 1, GetCharWidthCache(), false), 0);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"", 0, 1, false, GetCharWidthCache()), 0);
 
 	// 改行コードなら1を返す。
-	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\r\n", 2, 0, GetCharWidthCache(), false), 1);
-	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\r\n", 2, 1, GetCharWidthCache(), false), 1);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\r\n", 2, 0, false, GetCharWidthCache()), 1);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\r\n", 2, 1, false, GetCharWidthCache()), 1);
 
 	// CalcPxWidthByFont で計算した結果を返す。
 	class FakeCache1 : public CCharWidthCache {
@@ -819,8 +819,8 @@ TEST(CNativeW, GetHabaOfChar)
 			else return 0;
 		}
 	} cache1;
-	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"ab", 2, 0, cache1, false), 10000);
-	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"ab", 2, 1, cache1, false), 20000);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"ab", 2, 0, false, cache1), 10000);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"ab", 2, 1, false, cache1), 20000);
 
 	// サロゲートペアの幅は CalcPxWidthByFont2 で計算する。
 	// 指定された位置が下位サロゲートなら0を返す。
@@ -830,8 +830,8 @@ TEST(CNativeW, GetHabaOfChar)
 			return 20000;
 		}
 	} cache2;
-	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\xd83c\xdf38", 2, 0, cache2, false), 20000);
-	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\xd83c\xdf38", 2, 1, cache2, false), 0);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\xd83c\xdf38", 2, 0, false, cache2), 20000);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\xd83c\xdf38", 2, 1, false, cache2), 0);
 
 	// サロゲートペアが片方しかないときは CalcPxWidthByFont で計算している。
 	class FakeCache3 : public CCharWidthCache {
@@ -840,9 +840,9 @@ TEST(CNativeW, GetHabaOfChar)
 			return 10000;
 		}
 	} cache3;
-	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\xd83cあ", 2, 0, cache3, false), 10000);
-	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\xdf38あ", 2, 0, cache3, false), 10000);
-	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"あ\xdf38", 2, 1, cache3, false), 10000);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\xd83cあ", 2, 0, false, cache3), 10000);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\xdf38あ", 2, 0, false, cache3), 10000);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"あ\xdf38", 2, 1, false, cache3), 10000);
 }
 
 /*!

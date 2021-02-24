@@ -31,7 +31,6 @@
 #include "basis/SakuraBasis.h"
 #include "charset/charcode.h"
 #include "debug/Debug2.h" //assert
-#include "env/DLLSHAREDATA.h"
 
 //! 文字列への参照を取得するインターフェース
 class IStringRef{
@@ -167,8 +166,7 @@ public:
 	// -- -- staticインターフェース -- -- //
 	static CLogicInt GetSizeOfChar( const wchar_t* pData, int nDataLen, int nIdx ); //!< 指定した位置の文字がwchar_t何個分かを返す
 	static CHabaXInt GetHabaOfChar( const wchar_t* pData, int nDataLen, int nIdx,
-		CCharWidthCache& cache = GetCharWidthCache(),
-		bool bEnableExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol );
+		bool bEnableExtEol, CCharWidthCache& cache = GetCharWidthCache() );
 	//! 指定した位置の文字が半角何個分かを返す
 	static CKetaXInt GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx,
 		const CCharWidthCache& cache = GetCharWidthCache() );
@@ -179,10 +177,11 @@ public:
 	{
 		return GetKetaOfChar(cStr.GetPtr(), cStr.GetLength(), nIdx);
 	}
-	static CLayoutXInt GetColmOfChar( const wchar_t* pData, int nDataLen, int nIdx )
-		{ return GetHabaOfChar(pData,nDataLen,nIdx);}
-	static CLayoutXInt GetColmOfChar( const CStringRef& cStr, int nIdx )
-		{ return GetHabaOfChar(cStr.GetPtr(), cStr.GetLength(), nIdx);}
+	static CLayoutXInt GetColmOfChar( const wchar_t* pData,
+		int nDataLen, int nIdx, bool bEnableExtEol )
+		{ return GetHabaOfChar(pData,nDataLen,nIdx, bEnableExtEol); }
+	static CLayoutXInt GetColmOfChar( const CStringRef& cStr, int nIdx, bool bEnableExtEol )
+		{ return GetHabaOfChar(cStr.GetPtr(), cStr.GetLength(), nIdx, bEnableExtEol); }
 };
 
 // 派生クラスでメンバー追加禁止

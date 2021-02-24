@@ -33,6 +33,7 @@
 
 #include "_main/CCommandLine.h"
 #include "env/CSakuraEnvironment.h"
+#include "util/string_ex.h"
 
 #include <cstdlib>
 #include <fstream>

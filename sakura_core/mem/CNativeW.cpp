@@ -405,7 +405,7 @@ CKetaXInt CNativeW::GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx,
 
 //! 指定した位置の文字の文字幅を返す
 CHabaXInt CNativeW::GetHabaOfChar( const wchar_t* pData, int nDataLen, int nIdx,
-	CCharWidthCache& cache, bool bEnableExtEol )
+	bool bEnableExtEol, CCharWidthCache& cache )
 {
 	//文字列範囲外なら 0
 	if( nIdx >= nDataLen ){
