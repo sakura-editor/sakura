@@ -1,7 +1,7 @@
 // このファイルにはリソースエディタで編集できない要素を配置します.
 // このファイルのエンコーディング/改行コードは UTF-16LE(BOM)/CRLF です.
 
-#define	S_COPYRIGHT	"Copyright (C) 1998-2020  by Norio Nakatani & Collaborators"
+#define	S_COPYRIGHT	"Copyright (C) 1998-2021  by Norio Nakatani & Collaborators"
 #define FL_VER		PR_VER
 #define FL_VER_STR	PR_VER_STR
 

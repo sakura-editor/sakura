@@ -13,6 +13,7 @@
 	Copyright (C) 2006, maru
 	Copyright (C) 2007, ryoji, genta
 	Copyright (C) 2008, syat
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.

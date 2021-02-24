@@ -2,6 +2,8 @@
 	@brief ズーム倍率算出
 */
 /*
+	Copyright (C) 2021, Sakura Editor Organization
+
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.

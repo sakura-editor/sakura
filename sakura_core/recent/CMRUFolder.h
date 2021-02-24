@@ -9,6 +9,7 @@
 	Copyright (C) 2000, jepro
 	Copyright (C) 2002, YAZAKI, aroka
 	Copyright (C) 2003, MIK
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
