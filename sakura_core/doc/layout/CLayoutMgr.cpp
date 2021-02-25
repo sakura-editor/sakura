@@ -1029,7 +1029,7 @@ void CLayoutMgr::LayoutToLogic( const CLayoutPoint& ptLayout, CLogicPoint* pptLo
 {
 	CLogicPointEx ptEx;
 	LayoutToLogicEx( ptLayout, &ptEx );
-	*pptLogic = ptEx;
+	*pptLogic = std::move(ptEx);
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
