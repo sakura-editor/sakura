@@ -446,22 +446,27 @@ const wchar_t* CNativeW::GetCharNext( const wchar_t* pData, int nDataLen, const 
 	return pNext;
 }
 
-/* ポインタで示した文字の直前にある文字の位置を返します */
-/* 直前にある文字がバッファの先頭の位置を越える場合はpDataを返します */
-const wchar_t* CNativeW::GetCharPrev( const wchar_t* pData, int nDataLen, const wchar_t* pDataCurrent )
+/*!
+	ポインタで示した文字の直前にある文字の位置を返します
+	直前にある文字がバッファの先頭の位置を越える場合はpDataを返します
+
+	@date 2008/07/06 Uchi サロゲートペア対応
+ */
+const wchar_t* CNativeW::GetCharPrev(const wchar_t* pData, ptrdiff_t nDataLen, const wchar_t* pDataCurrent)
 {
-	const wchar_t* pPrev = pDataCurrent - 1;
-	if( pPrev <= pData ){
-		return pData;
+	if (const auto *pPrev = pDataCurrent - 2;
+		pData <= pPrev &&
+		IsUTF16Low(*(pPrev + 1)) &&
+		IsUTF16High(*pPrev))
+	{
+		return pPrev;
 	}
 
-	// サロゲートペア対応	2008/7/6 Uchi
-	if (IsUTF16Low(*pPrev)) {
-		if (IsUTF16High(*(pPrev-1))) {
-			pPrev -= 1;
-		}
+	if (const auto *pPrev = pDataCurrent - 1;
+		pData <= pPrev)
+	{
+		return pPrev;
 	}
 
-	return pPrev;
-//	return ::CharPrev( pData, pDataCurrent );
+	return pData;
 }
