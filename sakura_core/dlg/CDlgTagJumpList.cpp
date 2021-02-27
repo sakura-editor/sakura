@@ -43,6 +43,7 @@
 #include "util/file.h"
 #include "util/window.h"
 #include "util/tchar_convert.h"
+#include "apiwrap/StdControl.h"
 
 #include "sakura_rc.h"
 #include "sakura.hh"

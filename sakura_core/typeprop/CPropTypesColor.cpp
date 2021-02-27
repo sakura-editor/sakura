@@ -36,6 +36,7 @@
 #include "sakura.hh"
 #include "prop/CPropCommon.h"
 #include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
 
 using namespace std;
 

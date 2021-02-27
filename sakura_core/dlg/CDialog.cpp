@@ -33,6 +33,7 @@
 #include "util/module.h"
 #include "util/window.h"
 #include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
 
 /* ダイアログプロシージャ */
 INT_PTR CALLBACK MyDialogProc(

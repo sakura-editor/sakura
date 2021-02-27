@@ -32,6 +32,7 @@
 #include "util/string_ex2.h"
 #include <limits.h>
 #include "apiwrap/CommonControl.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 
 /*!

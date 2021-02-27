@@ -33,6 +33,7 @@
 
 #include "StdAfx.h"
 #include "dlg/CDlgFileUpdateQuery.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 
 BOOL CDlgFileUpdateQuery::OnInitDialog( HWND hWnd, WPARAM wParam, LPARAM lParam )

@@ -46,6 +46,7 @@
 #include <iterator>
 #include <deque>
 #include <memory>
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 
 #define UICHECK_INTERVAL_MILLISEC 100	// UI確認の時間間隔

@@ -34,6 +34,7 @@
 #include "util/window.h"
 #include "uiparts/CImageListMgr.h"
 #include "apiwrap/CommonControl.h"
+#include "apiwrap/StdControl.h"
 
 CMainToolBar::CMainToolBar(CEditWnd* pOwner)
 : m_pOwner(pOwner)

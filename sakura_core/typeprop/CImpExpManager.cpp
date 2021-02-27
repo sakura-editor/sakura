@@ -40,6 +40,7 @@
 #include "plugin/CPlugin.h"
 #include "view/CEditView.h"
 #include "view/colors/CColorStrategy.h"
+#include "apiwrap/StdControl.h"
 
 /*-----------------------------------------------------------------------
 定数

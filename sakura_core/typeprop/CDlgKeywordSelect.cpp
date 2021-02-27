@@ -34,6 +34,7 @@
 #include "CDlgKeywordSelect.h"
 #include "env/DLLSHAREDATA.h"
 #include "CKeyWordSetMgr.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

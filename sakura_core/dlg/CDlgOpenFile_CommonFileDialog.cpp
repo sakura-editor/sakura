@@ -41,6 +41,7 @@
 #include "util/design_template.h"
 #include "basis/CMyString.h"
 #include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

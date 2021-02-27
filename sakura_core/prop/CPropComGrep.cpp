@@ -20,6 +20,7 @@
 #include "extmodule/CBregexp.h"	// 2007.08/12 genta バージョン取得
 #include "util/shell.h"
 #include "util/window.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

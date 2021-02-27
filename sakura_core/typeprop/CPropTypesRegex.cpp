@@ -25,6 +25,7 @@
 #include "typeprop/CImpExpManager.h"	// 2010/4/23 Uchi
 #include "util/shell.h"
 #include "view/colors/EColorIndexType.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

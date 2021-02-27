@@ -28,6 +28,7 @@
 #include "util/shell.h"
 #include "util/window.h"
 #include <memory>
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

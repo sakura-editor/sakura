@@ -41,6 +41,7 @@
 #include "util/shell.h"
 #include "util/window.h"
 #include "util/os.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"	// 2002/2/10 aroka
 #include "sakura.hh"
 

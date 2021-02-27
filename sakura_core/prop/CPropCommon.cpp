@@ -46,6 +46,7 @@
 #include "CEditApp.h"
 #include "util/shell.h"
 #include "util/window.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 
 int	CPropCommon::SearchIntArr( int nKey, int* pnArr, int nArrNum )

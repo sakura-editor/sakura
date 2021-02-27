@@ -36,6 +36,7 @@
 #include "uiparts/CGraphics.h"
 #include "util/shell.h"
 #include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

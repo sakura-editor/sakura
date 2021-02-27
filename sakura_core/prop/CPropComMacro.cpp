@@ -41,6 +41,7 @@
 #include "util/string_ex2.h"
 #include "util/module.h"
 #include "util/os.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

@@ -33,6 +33,7 @@
 #include "charset/CShiftJis.h"
 #include "util/window.h"
 #include "util/tchar_template.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h" // IDD_EXECRUNNING
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

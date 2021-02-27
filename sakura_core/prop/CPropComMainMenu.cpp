@@ -35,6 +35,7 @@
 #include "typeprop/CImpExpManager.h"
 #include "dlg/CDlgInput1.h"
 #include "util/shell.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

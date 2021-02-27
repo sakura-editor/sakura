@@ -25,6 +25,7 @@
 #include "util/file.h"
 #include "util/string_ex2.h"
 #include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

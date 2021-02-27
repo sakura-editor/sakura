@@ -23,6 +23,7 @@
 #include "dlg/CDlgWinSize.h"	//	2004.05.13 Moca
 #include "util/shell.h"
 #include "util/os.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "_main/CProcess.h"

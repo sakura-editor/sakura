@@ -33,6 +33,7 @@
 #include "env/CDocTypeManager.h"
 #include "util/shell.h"
 #include "util/window.h"
+#include "apiwrap/StdControl.h"
 #include "sakura.hh"
 #include "sakura_rc.h"
 

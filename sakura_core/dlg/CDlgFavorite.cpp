@@ -42,6 +42,7 @@
 #include "util/file.h"
 #include "util/os.h"
 #include "util/input.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

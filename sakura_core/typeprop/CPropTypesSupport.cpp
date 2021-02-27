@@ -27,6 +27,7 @@
 #include "util/shell.h"
 #include "util/file.h" // _IS_REL_PATH
 #include "util/window.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
