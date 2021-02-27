@@ -71,6 +71,7 @@
 #include "doc/layout/CLayout.h"
 #include "debug/CRunningTimer.h"
 #include "apiwrap/StdApi.h"
+#include "apiwrap/CommonControl.h"
 #include "sakura_rc.h"
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたので

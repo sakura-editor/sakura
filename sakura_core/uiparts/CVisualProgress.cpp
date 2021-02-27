@@ -27,6 +27,7 @@
 #include "CWaitCursor.h"
 
 #include "window/CEditWnd.h"
+#include "apiwrap/CommonControl.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //

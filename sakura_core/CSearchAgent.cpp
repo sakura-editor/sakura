@@ -36,6 +36,7 @@
 #include "sakura_rc.h"
 #include "CEditApp.h"
 #include "CGrepAgent.h"
+#include "apiwrap/CommonControl.h"
 
 //#define MEASURE_SEARCH_TIME
 #ifdef MEASURE_SEARCH_TIME

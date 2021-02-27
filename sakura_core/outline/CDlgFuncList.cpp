@@ -49,6 +49,7 @@
 #include "dlg/CDlgTagJumpList.h"
 #include "typeprop/CImpExpManager.h"
 #include "apiwrap/StdApi.h"
+#include "apiwrap/CommonControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

@@ -31,6 +31,7 @@
 #include "uiparts/CWaitCursor.h"
 #include "util/os.h"
 #include "util/window.h"
+#include "apiwrap/CommonControl.h"
 #include "sakura_rc.h"
 
 //GetDllShareData用グローバル変数

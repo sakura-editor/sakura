@@ -39,6 +39,7 @@
 #include "charset/charcode.h"
 #include "recent/CRecent.h"
 #include "apiwrap/StdApi.h"
+#include "apiwrap/CommonControl.h"
 
 /*
 	指定ファイルの指定位置にタグジャンプする。

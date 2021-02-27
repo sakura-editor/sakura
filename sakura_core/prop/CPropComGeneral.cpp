@@ -19,6 +19,7 @@
 #include "recent/CMRUFolder.h"
 #include "util/shell.h"
 #include "util/os.h"
+#include "apiwrap/CommonControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

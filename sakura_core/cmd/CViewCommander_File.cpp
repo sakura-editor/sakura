@@ -59,6 +59,7 @@
 #include "env/CSakuraEnvironment.h"
 #include "debug/CRunningTimer.h"
 #include "util/os.h"
+#include "apiwrap/CommonControl.h"
 #include "sakura_rc.h"
 
 /* 新規作成 */

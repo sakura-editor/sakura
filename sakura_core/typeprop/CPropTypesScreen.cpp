@@ -28,6 +28,7 @@
 #include "util/window.h"
 #include "util/file.h" // _IS_REL_PATH
 #include "util/os.h"
+#include "apiwrap/CommonControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "doc/layout/CTsvModeInfo.h"
