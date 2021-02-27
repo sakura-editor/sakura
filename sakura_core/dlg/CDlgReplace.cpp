@@ -22,6 +22,7 @@
 #include "view/CEditView.h"
 #include "util/shell.h"
 #include "util/window.h"
+#include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

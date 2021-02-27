@@ -43,6 +43,7 @@
 #include "util/window.h"
 #include "util/os.h"
 #include "CDataProfile.h"
+#include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 
 struct ARRHEAD {

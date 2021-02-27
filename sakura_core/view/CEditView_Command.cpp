@@ -38,6 +38,7 @@
 #include "_main/CControlTray.h"
 #include "charset/charcode.h"
 #include "recent/CRecent.h"
+#include "apiwrap/StdApi.h"
 
 /*
 	指定ファイルの指定位置にタグジャンプする。

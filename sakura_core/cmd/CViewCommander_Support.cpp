@@ -31,6 +31,7 @@
 #include "env/CHelpManager.h"
 #include "util/module.h"
 #include "util/shell.h"
+#include "apiwrap/StdApi.h"
 
 /*!	入力補完
 	Ctrl+Spaceでここに到着。

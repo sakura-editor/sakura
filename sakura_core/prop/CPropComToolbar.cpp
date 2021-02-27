@@ -24,6 +24,7 @@
 #include "uiparts/CMenuDrawer.h" // 2002/2/10 aroka
 #include "util/shell.h"
 #include "util/window.h"
+#include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

@@ -14,6 +14,8 @@
 #include "StdAfx.h"
 #include "dlg/CDlgCancel.h"
 
+#include "apiwrap/StdApi.h"
+
 CDlgCancel::CDlgCancel()
 {
 	m_bCANCEL = FALSE;	/* IDCANCELボタンが押された */

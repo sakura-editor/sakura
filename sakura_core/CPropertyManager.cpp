@@ -28,6 +28,7 @@
 #include "CPropertyManager.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CDocTypeManager.h"
+#include "apiwrap/StdApi.h"
 #include <memory>
 
 void CPropertyManager::Create( HWND hwndOwner, CImageListMgr* pImageList, CMenuDrawer* pMenuDrawer )

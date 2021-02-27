@@ -28,6 +28,7 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "types/CTypeSupport.h"
+#include "apiwrap/StdApi.h"
 
 void _DispTab( CGraphics& gr, DispPos* pDispPos, const CEditView* pcView );
 

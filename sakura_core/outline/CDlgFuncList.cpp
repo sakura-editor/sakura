@@ -48,6 +48,7 @@
 #include "CDataProfile.h"
 #include "dlg/CDlgTagJumpList.h"
 #include "typeprop/CImpExpManager.h"
+#include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

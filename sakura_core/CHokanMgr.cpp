@@ -25,6 +25,7 @@
 #include "plugin/CComplementIfObj.h"
 #include "util/input.h"
 #include "util/os.h"
+#include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 
 WNDPROC			gm_wpHokanListProc;

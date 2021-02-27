@@ -35,6 +35,7 @@
 #include "plugin/CJackManager.h"
 #include "CAppMode.h"
 #include "env/CDocTypeManager.h"
+#include "apiwrap/StdApi.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //

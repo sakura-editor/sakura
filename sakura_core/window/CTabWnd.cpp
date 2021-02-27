@@ -52,6 +52,7 @@
 #include "util/window.h"
 #include "util/module.h"
 #include "util/string_ex2.h"
+#include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 #include <windowsx.h>
 

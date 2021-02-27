@@ -34,6 +34,7 @@
 #include "macro/CSMacroMgr.h"
 #include "CEditApp.h"
 #include "plugin/CJackManager.h"
+#include "apiwrap/StdApi.h"
 
 CViewCommander::CViewCommander(CEditView* pEditView) : m_pCommanderView(pEditView)
 {

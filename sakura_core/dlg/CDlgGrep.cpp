@@ -29,6 +29,7 @@
 #include "util/window.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CSakuraEnvironment.h"
+#include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

@@ -23,6 +23,7 @@
 #include "dlg/CDlgFind.h"
 #include "view/CEditView.h"
 #include "util/shell.h"
+#include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

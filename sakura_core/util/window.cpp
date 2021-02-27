@@ -29,6 +29,7 @@
 #include <limits.h>
 #include "window.h"
 #include <sstream>
+#include "apiwrap/StdApi.h"
 
 int CDPI::nDpiX = 96;
 int CDPI::nDpiY = 96;

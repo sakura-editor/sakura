@@ -40,6 +40,7 @@
 #include "util/module.h"
 #include "util/design_template.h"
 #include "basis/CMyString.h"
+#include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

@@ -37,6 +37,7 @@
 #include "uiparts/CVisualProgress.h"
 #include "util/file.h"
 #include "io/CFileLoad.h"
+#include "apiwrap/StdApi.h"
 
 ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 {

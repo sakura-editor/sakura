@@ -27,6 +27,7 @@
 #include "util/RegKey.h"
 #include "util/string_ex2.h"
 #include <memory>
+#include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

@@ -40,6 +40,7 @@
 #include "util/os.h"
 #include "charset/CCodeBase.h"
 #include "charset/CCodeFactory.h"
+#include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

@@ -56,6 +56,7 @@
 #include "io/CTextStream.h"
 #include "io/CFileLoad.h"
 #include "CWriteManager.h"
+#include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 
 #define	SAKURA_DIFF_TEMP_PREFIX	L"sakura_diff_"

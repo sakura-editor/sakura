@@ -24,6 +24,7 @@
 #include "util/shell.h"
 #include "util/window.h"
 #include "typeprop/CImpExpManager.h"	// 20210/4/23 Uchi
+#include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

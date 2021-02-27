@@ -31,6 +31,7 @@
 #include "util/window.h"
 #include "util/os.h"
 #include "_main/CMutex.h"
+#include "apiwrap/StdApi.h"
 
 /*!
 	@return true:正常終了 / false:エラー終了

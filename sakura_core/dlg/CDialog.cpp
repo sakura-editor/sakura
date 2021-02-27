@@ -32,6 +32,7 @@
 #include "util/shell.h"
 #include "util/module.h"
 #include "util/window.h"
+#include "apiwrap/StdApi.h"
 
 /* ダイアログプロシージャ */
 INT_PTR CALLBACK MyDialogProc(

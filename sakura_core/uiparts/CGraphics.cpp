@@ -30,6 +30,7 @@
 #include "StdAfx.h"
 #include "CGraphics.h"
 #include "util/std_macro.h"
+#include "apiwrap/StdApi.h"
 
 class CGDIStock
 {

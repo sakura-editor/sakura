@@ -39,6 +39,7 @@
 #include "io/CTextStream.h"
 #include "util/shell.h"
 #include "util/module.h"
+#include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

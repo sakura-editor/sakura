@@ -22,6 +22,7 @@
 #include "env/CShareData.h"
 #include "typeprop/CImpExpManager.h"	// 20210/4/23 Uchi
 #include "util/shell.h"
+#include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
