@@ -260,7 +260,7 @@ int CheckEucjpChar( const char* pS, const int nLen, ECharSet *peCharset )
 		戻り値がゼロより大きい場合に限り，*pnEscType が更新される．\n
 		pnEscType は NULL でも良い．\n
 */
-int DetectJisEscseq( const char* pS, const int nLen, EMyJisEscseq* peEscType )
+int DetectJisEscseq( const char* pS, const size_t nLen, EMyJisEscseq* peEscType )
 {
 	const char *pr, *pr_end;
 	int expected_esc_len;
@@ -368,7 +368,7 @@ int _CheckJisAnyPart(
 	pr_end = pS + nLen;
 
 	for( ; pr < pr_end; pr++ ){
-		nesclen = DetectJisEscseq( pr, pr_end-pr, &emyesc );  // 次のエスケープシーケンスを検索
+		nesclen = DetectJisEscseq( pr, size_t(pr_end-pr), &emyesc );  // 次のエスケープシーケンスを検索
 		if( emyesc != MYJISESC_NONE || nesclen > 0 ){
 			// 長さ nesclen の JIS エスケープシーケンス（種類 emyesc）が見つかった
 			break;
