@@ -30,6 +30,7 @@
 #include "version.h"
 #include "apiwrap/StdApi.h"
 #include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura.hh"
 
 // バージョン情報 CDlgAbout.cpp	//@@@ 2002.01.07 add start MIK

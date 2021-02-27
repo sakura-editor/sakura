@@ -39,6 +39,7 @@
 #include "func/Funccode.h"
 #include "util/shell.h"
 #include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

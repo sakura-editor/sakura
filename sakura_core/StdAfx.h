@@ -128,7 +128,6 @@
 
 #include "util/string_ex.h"
 #include "util/MessageBoxF.h"
-#include "CSelectLang.h"
 #include "String_define.h"
 
 //その他

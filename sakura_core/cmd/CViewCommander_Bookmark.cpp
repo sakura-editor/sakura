@@ -18,6 +18,7 @@
 #include "CViewCommander.h"
 #include "CViewCommander_inline.h"
 #include "docplus/CFuncListManager.h"
+#include "CSelectLang.h"
 
 //	from CViewCommander_New.cpp
 /*!	検索開始位置へ戻る

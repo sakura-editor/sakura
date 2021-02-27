@@ -24,6 +24,7 @@
 #include "env/DLLSHAREDATA.h"
 #include "uiparts/CGraphics.h"
 #include "apiwrap/StdApi.h"
+#include "CSelectLang.h"
 
 constexpr auto SPLITTER_FRAME_WIDTH = 3;
 constexpr auto SPLITTER_MARGIN = 2;

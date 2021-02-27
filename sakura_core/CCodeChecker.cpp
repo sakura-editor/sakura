@@ -33,6 +33,7 @@
 #include "doc/logic/CDocLineMgr.h"
 #include "window/CEditWnd.h"
 #include "util/string_ex.h"
+#include "CSelectLang.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     セーブ時チェック                        //

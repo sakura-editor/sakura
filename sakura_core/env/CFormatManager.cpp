@@ -31,6 +31,7 @@
 #include "DLLSHAREDATA.h"
 
 #include "CFormatManager.h"
+#include "CSelectLang.h"
 
 /*! 日付をフォーマット
 	systime：時刻データ

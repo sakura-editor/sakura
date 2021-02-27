@@ -32,6 +32,7 @@
 #include "util/module.h"
 #include "util/shell.h"
 #include "apiwrap/StdApi.h"
+#include "CSelectLang.h"
 
 /*!	入力補完
 	Ctrl+Spaceでここに到着。

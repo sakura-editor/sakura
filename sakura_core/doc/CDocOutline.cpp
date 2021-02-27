@@ -29,6 +29,7 @@
 #include "charset/charcode.h"
 #include "io/CTextStream.h"
 #include "extmodule/CBregexp.h"
+#include "CSelectLang.h"
 
 /*! ルールファイルの1行を管理する構造体
 

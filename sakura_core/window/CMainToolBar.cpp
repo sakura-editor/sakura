@@ -35,6 +35,7 @@
 #include "uiparts/CImageListMgr.h"
 #include "apiwrap/CommonControl.h"
 #include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 
 CMainToolBar::CMainToolBar(CEditWnd* pOwner)
 : m_pOwner(pOwner)

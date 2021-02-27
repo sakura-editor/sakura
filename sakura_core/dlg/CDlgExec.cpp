@@ -26,6 +26,7 @@
 #include "_main/CAppMode.h"
 #include "doc/CEditDoc.h"
 #include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

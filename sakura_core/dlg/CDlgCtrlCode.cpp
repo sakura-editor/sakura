@@ -35,6 +35,7 @@
 #include "dlg/CDlgCtrlCode.h"
 #include "func/Funccode.h"
 #include "util/shell.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

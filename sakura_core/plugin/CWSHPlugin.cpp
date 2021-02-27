@@ -30,6 +30,7 @@
 #include "plugin/CWSHPlugin.h"
 #include "plugin/CPluginIfObj.h"
 #include "macro/CWSHManager.h"
+#include "CSelectLang.h"
 
 // デストラクタ
 CWSHPlugin::~CWSHPlugin(void)

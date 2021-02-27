@@ -33,6 +33,7 @@
 #include "plugin/CDllPlugin.h"
 #include "util/module.h"
 #include "io/CZipFile.h"
+#include "CSelectLang.h"
 
 //コンストラクタ
 CPluginManager::CPluginManager()

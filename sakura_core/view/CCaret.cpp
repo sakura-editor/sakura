@@ -49,6 +49,7 @@
 #include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"
 #include "window/CEditWnd.h"
+#include "CSelectLang.h"
 
 using namespace std;
 

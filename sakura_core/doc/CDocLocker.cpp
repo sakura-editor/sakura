@@ -26,6 +26,7 @@
 #include "CDocLocker.h"
 #include "CDocFile.h"
 #include "window/CEditWnd.h"
+#include "CSelectLang.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //

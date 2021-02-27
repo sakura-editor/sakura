@@ -32,6 +32,7 @@
 #include "util/os.h"
 #include "util/window.h"
 #include "apiwrap/CommonControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 
 //GetDllShareData用グローバル変数

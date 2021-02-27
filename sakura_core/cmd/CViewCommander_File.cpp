@@ -60,6 +60,7 @@
 #include "debug/CRunningTimer.h"
 #include "util/os.h"
 #include "apiwrap/CommonControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 
 /* 新規作成 */

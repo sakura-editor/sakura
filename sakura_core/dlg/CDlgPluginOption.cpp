@@ -38,6 +38,7 @@
 #include "util/string_ex2.h"
 #include "util/module.h"
 #include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

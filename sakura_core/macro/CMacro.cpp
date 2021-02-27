@@ -58,6 +58,7 @@
 #include "util/ole_convert.h"
 #include "util/os.h"
 #include "uiparts/CWaitCursor.h"
+#include "CSelectLang.h"
 
 CMacro::CMacro( EFunctionCode nFuncID )
 {

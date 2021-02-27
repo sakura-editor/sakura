@@ -33,6 +33,7 @@
 #include <limits.h>
 #include "apiwrap/CommonControl.h"
 #include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 
 /*!

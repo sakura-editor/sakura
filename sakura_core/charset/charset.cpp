@@ -39,6 +39,7 @@
 #include "CCodePage.h"
 #include <vector>
 #include <map>
+#include "CSelectLang.h"
 
 struct SCodeSet {
 	ECodeType		m_eCodeSet;

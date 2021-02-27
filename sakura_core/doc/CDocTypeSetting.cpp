@@ -32,6 +32,7 @@
 
 #include "StdAfx.h"
 #include "CDocTypeSetting.h"
+#include "CSelectLang.h"
 
 //! 色設定(保存用)
 struct ColorInfoIni {

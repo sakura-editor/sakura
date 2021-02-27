@@ -41,6 +41,7 @@
 #include "charset/CCodeBase.h"
 #include "charset/CCodeFactory.h"
 #include "apiwrap/StdApi.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

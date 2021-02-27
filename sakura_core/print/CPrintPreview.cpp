@@ -52,6 +52,7 @@
 #include "view/colors/CColorStrategy.h"
 #include "apiwrap/StdApi.h"
 #include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 
 using namespace std;

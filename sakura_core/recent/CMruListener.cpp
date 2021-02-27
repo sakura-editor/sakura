@@ -33,6 +33,7 @@
 #include "charset/CCodePage.h"
 #include "charset/CCodeMediator.h"
 #include "util/file.h"
+#include "CSelectLang.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        セーブ前後                           //

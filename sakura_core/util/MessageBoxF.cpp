@@ -37,6 +37,7 @@
 #include <tchar.h>
 #include "MessageBoxF.h"
 #include "window/CEditWnd.h"
+#include "CSelectLang.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                 メッセージボックス：実装                    //

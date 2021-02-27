@@ -33,6 +33,7 @@
 #include "cmd/CViewCommander_inline.h"
 #include "view/CEditView.h"
 #include "view/colors/EColorIndexType.h"
+#include "CSelectLang.h"
 
 /*!
  * @brief C/C++のファイル名による判定

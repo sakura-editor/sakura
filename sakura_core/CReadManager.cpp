@@ -31,6 +31,7 @@
 #include "charset/CCodeMediator.h"
 #include "io/CFileLoad.h"
 #include "util/window.h"
+#include "CSelectLang.h"
 
 /*!
 	ファイルを読み込んで格納する（分割読み込みテスト版）

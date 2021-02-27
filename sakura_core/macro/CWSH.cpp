@@ -48,6 +48,7 @@
 #include "util/module.h"
 #include "util/window.h"	// BlockingHook
 #include "dlg/CDlgCancel.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 
 #ifdef USE_JSCRIPT9

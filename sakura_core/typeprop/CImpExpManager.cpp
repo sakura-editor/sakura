@@ -41,6 +41,7 @@
 #include "view/CEditView.h"
 #include "view/colors/CColorStrategy.h"
 #include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 
 /*-----------------------------------------------------------------------
 定数

@@ -36,6 +36,7 @@
 #include "env/CSakuraEnvironment.h"
 #include "CGrepAgent.h"
 #include "apiwrap/StdApi.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 
 // "までを切り取る

@@ -37,6 +37,7 @@
 #include "func/CFuncLookup.h"
 #include "plugin/CJackManager.h"
 #include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 
 //	オフセット値
 const int LUOFFSET_MACRO = 0;

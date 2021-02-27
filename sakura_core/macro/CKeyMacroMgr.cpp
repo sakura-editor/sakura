@@ -27,6 +27,7 @@
 #include "mem/CMemory.h"
 #include "CMacroFactory.h"
 #include "io/CTextStream.h"
+#include "CSelectLang.h"
 
 CKeyMacroMgr::CKeyMacroMgr()
 {

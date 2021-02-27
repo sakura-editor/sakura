@@ -26,6 +26,7 @@
 #include "util/os.h"
 #include "window/CEditWnd.h"
 #include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

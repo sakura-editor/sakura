@@ -38,6 +38,7 @@
 #include "util/string_ex2.h"
 #include "util/file.h"
 #include "util/window.h"
+#include "CSelectLang.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ファイル名管理                         //

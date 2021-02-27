@@ -38,6 +38,7 @@
 #include "StdAfx.h"
 #include "mem/CMemory.h"
 #include "_main/global.h"
+#include "CSelectLang.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //

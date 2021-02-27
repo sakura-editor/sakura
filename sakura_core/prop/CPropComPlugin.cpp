@@ -39,6 +39,7 @@
 #include "dlg/CDlgPluginOption.h"	// 2010/3/22 Uchi
 #include "io/CTextStream.h"
 #include "io/CZipFile.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
