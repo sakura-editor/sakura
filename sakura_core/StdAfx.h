@@ -113,9 +113,6 @@
 #include "basis/primitive.h"
 #include "util/std_macro.h"
 
-//MFC互換
-#include "basis/CMyString.h"
-
 #include "String_define.h"
 
 //その他

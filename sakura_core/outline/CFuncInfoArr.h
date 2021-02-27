@@ -22,6 +22,7 @@ class CFuncInfo;
 #include <map>
 #include "util/design_template.h"
 #include "basis/SakuraBasis.h"
+#include "basis/CMyString.h"
 
 // 標準的な付加情報定数
 #define FL_OBJ_DEFINITION	0	// 親クラスの定義位置
