@@ -124,7 +124,6 @@
 
 //よく使うヘッダ
 #include "mem/CNativeW.h"
-#include "mem/CNativeA.h"
 
 #include "String_define.h"
 
