@@ -116,7 +116,6 @@
 //MFC互換
 #include "basis/CMyString.h"
 #include "basis/CMyRect.h"
-#include "basis/CMyPoint.h"
 
 #include "String_define.h"
 
