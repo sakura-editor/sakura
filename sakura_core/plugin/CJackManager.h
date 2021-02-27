@@ -32,6 +32,7 @@
 
 #include "plugin/CPlugin.h"
 #include <list>
+#include "util/design_template.h"
 
 #define PP_COMMAND_STR	L"Command"
 

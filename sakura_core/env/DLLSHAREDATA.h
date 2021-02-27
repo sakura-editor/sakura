@@ -80,6 +80,7 @@ inline void SetDllShareData(DLLSHAREDATA* pShareData)
 #include "types/CType.h" // STypeConfig
 #include "print/CPrint.h" //PRINTSETTING
 #include "recent/SShare_History.h"	//SShare_History
+#include "charset/charcode.h"
 
 //! 共有フラグ
 struct SShare_Flags{

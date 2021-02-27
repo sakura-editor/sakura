@@ -122,9 +122,6 @@
 //サクラエディタ固有型
 #include "basis/SakuraBasis.h"
 
-//よく使うヘッダ
-#include "mem/CNativeW.h"
-
 #include "String_define.h"
 
 //その他

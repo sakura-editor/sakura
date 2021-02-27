@@ -34,6 +34,7 @@
 #include "doc/CBlockComment.h"
 #include "charset/charset.h"  // ECodeType
 #include "CRegexKeyword.h"	// RegexKeywordInfo
+#include "charset/charcode.h"
 
 //! タブ表示方法
 enum ETabArrow {

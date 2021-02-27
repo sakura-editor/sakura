@@ -34,6 +34,7 @@
 #include <Windows.h>
 #include <cassert>
 #include <vector>
+#include "doc/CDocTypeSetting.h"
 
 /*!
  * @brief API関数FillRectの高速版(ブラシ用)

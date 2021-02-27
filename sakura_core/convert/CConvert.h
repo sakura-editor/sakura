@@ -37,6 +37,8 @@
 
 class CNativeW;
 
+class CNativeW;
+
 class CConvertMediator{
 public:
 	//! 機能種別によるバッファの変換

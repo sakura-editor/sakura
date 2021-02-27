@@ -27,6 +27,9 @@
 #define SAKURA_CVIEWCOMMANDER_2790DAD1_148B_4DC5_8BCB_A2CE3D595F50_H_
 #pragma once
 
+#include "CEol.h"
+#include "types/CType.h"
+
 class CEditView;
 enum EFunctionCode;
 class CEditDoc;
@@ -37,7 +40,7 @@ class CEditWnd;
 class CColorStrategy;
 class CColorStrategyPool;
 class CSMacroMgr;
-#include "CEol.h"
+class CStringRef;
 
 class CViewCommander{
 public:

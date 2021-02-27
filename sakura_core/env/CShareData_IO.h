@@ -34,6 +34,8 @@ struct CommonSetting_MainMenu; // defined CommonSetting.h
 struct CommonSetting_KeyBind;	// defined CommonSetting.h
 struct ColorInfo; // defined doc/CDocTypeSetting.h
 struct SFileTree;
+struct SFileTreeItem;
+struct STypeConfig;
 
 // 2008.XX.XX kobake CShareDataから分離
 // 2008.05.24 Uchi   ShareData_IO_CustMenu, ShareData_IO_KeyBind  move Export、Importに使用

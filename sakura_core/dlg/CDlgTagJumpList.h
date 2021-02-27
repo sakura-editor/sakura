@@ -37,6 +37,7 @@
 
 #include "dlg/CDialog.h"
 #include "recent/CRecentTagjumpKeyword.h"
+#include "mem/CNativeW.h"
 
 //タグファイル名	//	@@ 2005.03.31 MIK 定数化
 #define TAG_FILENAME_T        L"tags"

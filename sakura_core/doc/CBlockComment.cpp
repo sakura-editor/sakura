@@ -16,6 +16,7 @@
 #include "StdAfx.h"
 #include "CBlockComment.h"
 #include "mem/CMemory.h"
+#include "mem/CNativeW.h"
 
 CBlockComment::CBlockComment()
 {

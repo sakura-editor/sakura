@@ -21,6 +21,7 @@
 #include "Funccode_enum.h"
 
 class CFuncLookup;
+class CNativeW;
 
 //! キー情報を保持する
 struct KEYDATA {

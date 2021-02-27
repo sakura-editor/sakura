@@ -26,6 +26,7 @@
 #include "CWordParse.h"
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
+#include "mem/CNativeW.h"
 
 //@@@ 2001.06.23 N.Nakatani
 /*!

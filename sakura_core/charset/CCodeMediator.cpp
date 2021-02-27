@@ -27,6 +27,7 @@
 #include "charset/icu4c/CharsetDetector.h"
 #include "charset/CESI.h"
 #include "io/CBinaryStream.h"
+#include "mem/CMemory.h"
 
 /*
 	日本語コードセット判別

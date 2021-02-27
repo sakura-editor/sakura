@@ -44,6 +44,7 @@ PPA(Poor-Pascal for Application)はDelphi/C++Builder用のPascalインタプリ�
 #include <stdio.h>
 #include "macro/CSMacroMgr.h"
 #include "extmodule/CDllHandler.h"
+#include "mem/CNativeA.h"
 
 #define PPADLL_VER 123
 

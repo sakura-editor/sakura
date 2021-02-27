@@ -23,6 +23,7 @@
 #include "extmodule/CBregexp.h"
 #include "types/CType.h"
 #include "view/colors/EColorIndexType.h"
+#include "mem/CNativeW.h"
 
 #if 0
 #include <stdio.h>

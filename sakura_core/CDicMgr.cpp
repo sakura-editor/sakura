@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include "CDicMgr.h"
 #include "mem/CMemory.h" // 2002/2/10 aroka ヘッダ整理
+#include "mem/CNativeW.h"
 #include "debug/CRunningTimer.h"
 #include "io/CTextStream.h"
 using namespace std;

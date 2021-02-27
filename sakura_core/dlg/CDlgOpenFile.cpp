@@ -20,6 +20,7 @@
 
 #include "StdAfx.h"
 #include "dlg/CDlgOpenFile.h"
+#include "env/DLLSHAREDATA.h"
 
 extern std::shared_ptr<IDlgOpenFile> New_CDlgOpenFile_CommonFileDialog();
 extern std::shared_ptr<IDlgOpenFile> New_CDlgOpenFile_CommonItemDialog();
