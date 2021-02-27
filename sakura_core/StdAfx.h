@@ -126,7 +126,6 @@
 #include "mem/CNativeW.h"
 #include "mem/CNativeA.h"
 
-#include "util/string_ex.h"
 #include "String_define.h"
 
 //その他
