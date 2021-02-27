@@ -111,7 +111,6 @@
 
 //シンプルでよく使うもの
 #include "basis/primitive.h"
-#include "util/std_macro.h"
 
 #include "String_define.h"
 
