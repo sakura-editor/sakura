@@ -28,6 +28,7 @@
 #pragma once
 
 #include "basis/SakuraBasis.h"
+#include "basis/CMySize.h"
 
 #define _CARETMARGINRATE 20
 class CTextArea;
