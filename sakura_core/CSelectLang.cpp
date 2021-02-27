@@ -16,6 +16,7 @@
 #include "CSelectLang.h"
 #include "util/os.h"
 #include "util/module.h"
+#include "debug/Debug2.h"
 
 #include <new>
 

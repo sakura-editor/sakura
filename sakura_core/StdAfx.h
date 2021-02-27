@@ -104,11 +104,6 @@
 #include <memory>
 #endif // ifndef SAKURA_PCH_MODE_MIN
 
-//デバッグ
-#include "debug/Debug1.h"
-#include "debug/Debug2.h"
-#include "debug/Debug3.h"
-
 #include "String_define.h"
 
 //その他

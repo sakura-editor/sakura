@@ -39,6 +39,8 @@
 #include "mem/CMemory.h"
 #include "_main/global.h"
 #include "CSelectLang.h"
+#include "util/MessageBoxF.h"
+#include "debug/Debug2.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //

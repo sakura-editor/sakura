@@ -28,6 +28,7 @@
 #pragma once
 
 #include "util/string_ex.h"
+#include "debug/Debug2.h"
 
 //! ヒープを用いないvector
 //2007.09.23 kobake 作成。

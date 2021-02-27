@@ -37,6 +37,9 @@
 #include "StdAfx.h"
 #include "macro/CIfObj.h"
 
+#include "debug/Debug1.h"
+#include "debug/Debug2.h"
+
 //トレースメッセージ有無
 #if defined( _DEBUG )
 #define TEST
