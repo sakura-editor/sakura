@@ -29,6 +29,7 @@
 #include "StdAfx.h"
 #include "plugin/CDllPlugin.h"
 #include "view/CEditView.h"
+#include "util/tchar_convert.h"
 
 // デストラクタ
 CDllPlugin::~CDllPlugin(void)

@@ -18,6 +18,8 @@
 #include "CMacroFactory.h"
 #include <string.h>
 #include "io/CTextStream.h"
+#include "util/tchar_convert.h"
+
 using namespace std;
 
 CPPA CPPAMacroMgr::m_cPPA;
