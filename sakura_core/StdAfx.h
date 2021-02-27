@@ -146,31 +146,5 @@
 //TCHARユーティリティ
 #include "util/tchar_convert.h"
 
-// 2010.04.19 Moca includeの大規模整理
-#ifndef SAKURA_PCH_MODE_MIN
-#define SAKURA_PCH_MODE_DLLSHARE 1
-#endif
-
-#if defined(SAKURA_PCH_MODE_MAX) || defined(SAKURA_PCH_MODE_DLLSHARE)
-#include "env/DLLSHAREDATA.h"
-#endif
-
-#ifdef SAKURA_PCH_MODE_MAX
-#include "env/CShareData.h"
-#include "_main/CNormalProcess.h"
-#include "_main/CAppMode.h"
-#include "window/CEditWnd.h"
-#include "CEditApp.h"
-#include "doc/CDocReader.h"
-#include "docplus/CModifyManager.h"
-#include "docplus/CDiffManager.h"
-#include "docplus/CBookmarkManager.h"
-#include "CReadManager.h"
-#include "CWriteManager.h"
-#include "CSearchAgent.h"
-//###########超仮
-#include "uiparts/CGraphics.h"
-#endif // SAKURA_PCH_MODE_MAX
-
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ は前行の直前に追加の宣言を挿入します。
