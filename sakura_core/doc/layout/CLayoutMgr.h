@@ -38,6 +38,7 @@
 #include "COpe.h"
 #include "util/container.h"
 #include "util/design_template.h"
+#include "charset/charcode.h"
 #include "env/DLLSHAREDATA.h"
 
 class CBregexp;// 2002/2/10 aroka
@@ -259,7 +260,8 @@ public:
 		int				nTsvMode,
 		CKetaXInt		nMaxLineKetas,
 		CLayoutXInt		nCharLayoutXPerKeta,
-		const LOGFONT*	pLogfont
+		const LOGFONT*	pLogfont,
+		CCharWidthCache& cache = GetCharWidthCache()
 	);
 
 	/* 文字列置換 */
