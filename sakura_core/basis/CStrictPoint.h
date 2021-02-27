@@ -27,6 +27,8 @@
 #define SAKURA_CSTRICTPOINT_61EFDE2B_5ACD_464A_8F49_7FB76A4A34C4_H_
 #pragma once
 
+#include "basis/primitive.h"
+
 //単位が明示的に区別されたポイント型。※POINTは継承しないことにした
 /*
 template <int TYPE> class CStrictPoint : public CMyPoint{

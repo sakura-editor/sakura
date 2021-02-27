@@ -109,9 +109,6 @@
 #include "debug/Debug2.h"
 #include "debug/Debug3.h"
 
-//シンプルでよく使うもの
-#include "basis/primitive.h"
-
 #include "String_define.h"
 
 //その他
