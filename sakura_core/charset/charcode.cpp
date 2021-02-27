@@ -256,23 +256,6 @@ namespace WCODE {
 
 	static CacheSelector selector;
 
-	//文字幅の動的計算。ピクセル幅
-	int CalcPxWidthByFont(wchar_t c)
-	{
-		return selector.GetCache()->CalcPxWidthByFont(c);
-	}
-
-	int CalcPxWidthByFont2(const wchar_t* pc)
-	{
-		return selector.GetCache()->CalcPxWidthByFont2(pc);
-	}
-
-	//文字幅の動的計算。半角ならtrue。
-	bool CalcHankakuByFont(wchar_t c)
-	{
-		return selector.GetCache()->CalcHankakuByFont(c);
-	}
-
 	// 文字の使用フォントを返す
 	// @return 0:半角用 / 1:全角用
 	[[nodiscard]] int GetFontNo( wchar_t c ){
