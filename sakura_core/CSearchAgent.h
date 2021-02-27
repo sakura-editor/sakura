@@ -29,6 +29,7 @@
 
 #include "_main/global.h"
 #include "util/design_template.h"
+#include "basis/SakuraBasis.h"
 
 class CDocLineMgr;
 struct DocLineReplaceArg;

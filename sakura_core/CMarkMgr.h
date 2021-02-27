@@ -35,6 +35,7 @@
 #pragma once
 
 #include <vector>
+#include "basis/SakuraBasis.h"
 
 /*!
 	行マークを管理するクラス。

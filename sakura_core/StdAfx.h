@@ -119,9 +119,6 @@
 #include "basis/CMyPoint.h"
 #include "basis/CMySize.h"
 
-//サクラエディタ固有型
-#include "basis/SakuraBasis.h"
-
 #include "String_define.h"
 
 //その他

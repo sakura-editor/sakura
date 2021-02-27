@@ -30,6 +30,8 @@
 #define SAKURA_CTAGJUMPMANAGER_487A43FC_EB78_44CF_B1E4_6FD78EF1F35A_H_
 #pragma once
 
+#include "basis/SakuraBasis.h"
+
 // 要先行定義
 // #define DLLSHAREDATA.h
 

@@ -45,6 +45,7 @@
 #pragma once
 
 #include "CBregexpDll2.h"
+#include "basis/SakuraBasis.h"
 
 /*!
 	@brief Perl互換正規表現 BREGEXP.DLL をサポートするクラス
