@@ -141,7 +141,7 @@ const char* TABLE_JISESCDATA[] = {
 
 	@return 確認した文字の長さ
 */
-int CheckSjisChar( const char* pS, const int nLen, ECharSet *peCharset )
+int CheckSjisChar( const char* pS, const size_t nLen, ECharSet *peCharset )
 {
 	unsigned char uc;
 
