@@ -368,7 +368,7 @@ int _CheckJisAnyPart(
 	pr_end = pS + nLen;
 
 	for( ; pr < pr_end; pr++ ){
-		nesclen = DetectJisEscseq( pr, size_t(pr_end-pr), &emyesc );  // 次のエスケープシーケンスを検索
+		nesclen = DetectJisEscseq( pr, pr_end-pr, &emyesc );  // 次のエスケープシーケンスを検索
 		if( emyesc != MYJISESC_NONE || nesclen > 0 ){
 			// 長さ nesclen の JIS エスケープシーケンス（種類 emyesc）が見つかった
 			break;
