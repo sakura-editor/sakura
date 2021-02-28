@@ -523,7 +523,7 @@ void CESI::GetEncodingInfo_meta( const char* pS, const int nLen )
 /*!
 	UTF-16 チェッカ内で使う改行コード確認関数
 */
-bool CESI::_CheckUtf16Eol( const char* pS, const int nLen, const bool bbig_endian )
+bool CESI::_CheckUtf16Eol( const char* pS, const size_t nLen, const bool bbig_endian )
 {
 	wchar_t wc0;
 	wchar_t wc1;
