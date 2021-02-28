@@ -199,7 +199,7 @@ int CheckSjisChar( const char* pS, const size_t nLen, ECharSet *peCharset )
 
 	@date 2006.09.23 EUCJP 半角カタカナ判別が間違っていたのを修正．genta
 */
-int CheckEucjpChar( const char* pS, const int nLen, ECharSet *peCharset )
+int CheckEucjpChar( const char* pS, const size_t nLen, ECharSet *peCharset )
 {
 	unsigned char uc;
 
