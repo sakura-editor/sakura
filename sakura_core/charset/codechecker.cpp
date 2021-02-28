@@ -260,7 +260,7 @@ int CheckEucjpChar( const char* pS, const int nLen, ECharSet *peCharset )
 		戻り値がゼロより大きい場合に限り，*pnEscType が更新される．\n
 		pnEscType は NULL でも良い．\n
 */
-int DetectJisEscseq( const char* pS, const int nLen, EMyJisEscseq* peEscType )
+int DetectJisEscseq( const char* pS, const size_t nLen, EMyJisEscseq* peEscType )
 {
 	const char *pr, *pr_end;
 	int expected_esc_len;
