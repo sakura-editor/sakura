@@ -149,9 +149,9 @@ protected:
 	void GetEncodingInfo_latin1( const char* pS, const int nLen );
 	void GetEncodingInfo_meta( const char* pS, const int nLen );
 
-	bool _CheckUtf16Eol( const char* pS, const int nLen, const bool bbig_endian );
-	inline bool _CheckUtf16EolLE( const char* p, const int n ){ return _CheckUtf16Eol( p, n, false ); }
-	inline bool _CheckUtf16EolBE( const char* p, const int n ){ return _CheckUtf16Eol( p, n, true ); }
+	bool _CheckUtf16Eol( const char* pS, const size_t nLen, const bool bbig_endian );
+	inline bool _CheckUtf16EolLE( const char* p, const size_t n ){ return _CheckUtf16Eol( p, n, false ); }
+	inline bool _CheckUtf16EolBE( const char* p, const size_t n ){ return _CheckUtf16Eol( p, n, true ); }
 
 public:
 	//
