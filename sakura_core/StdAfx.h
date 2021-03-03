@@ -70,36 +70,36 @@
 #define _wcstok wcstok
 #endif
 
-#include <Windows.h>
-
-//ビルドオプション的なヘッダ
-#include "config/build_config.h"
-#include "config/maxdata.h"
-
-//高頻度API等
-// #include <CommDlg.h> // WIN32_LEAN_AND_MEANでは必要。OpenFileDialg系
-#include <CommCtrl.h> // コモンコントロール
-#include <stdlib.h>  // _MAX_PATH
+#include <io.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 #include <wchar.h>
 
-#ifndef SAKURA_PCH_MODE_MIN
-// 2010.04.19 重そうなので追加
-#include <HtmlHelp.h>
-#include <ObjIdl.h>
-#include <ShlObj.h>
-#include <ShellAPI.h>
-#include <string.h>
-#include <stdio.h>
-#include <io.h>
-#include <time.h>
-#include <string>
-#include <vector>
-#include <map>
 #include <algorithm>
+#include <array>
+#include <exception>
+#include <functional>
+#include <initializer_list>
+#include <list>
+#include <map>
 #include <memory>
-#endif // ifndef SAKURA_PCH_MODE_MIN
+#include <optional>
+#include <string>
+#include <string_view>
+#include <utility>
+#include <vector>
 
-#include "env/DLLSHAREDATA.h"
+#include <Windows.h>
+#include <CommCtrl.h>
+#include <HtmlHelp.h>
+#include <ImageHlp.h>
+#include <imm.h>
+#include <ObjIdl.h>
+#include <ShellAPI.h>
+#include <ShlObj.h>
+#include <wrl.h>
 
 //その他
 #define malloc_char (char*)malloc
