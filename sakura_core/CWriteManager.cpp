@@ -156,7 +156,7 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 		//ファイルクローズ
 		out.Close();
 	}
-	catch(CError_FileOpen){ //########### 現時点では、この例外が発生した場合は正常に動作できない
+	catch(const CError_FileOpen&){ //########### 現時点では、この例外が発生した場合は正常に動作できない
 		ErrorMessage(
 			CEditWnd::getInstance()->GetHwnd(),
 			LS(STR_SAVEAGENT_OTHER_APP),
@@ -164,10 +164,10 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 		);
 		nRetVal = RESULT_FAILURE;
 	}
-	catch(CError_FileWrite){
+	catch(const CError_FileWrite&){
 		nRetVal = RESULT_FAILURE;
 	}
-	catch(CAppExitException){
+	catch(const CAppExitException&){
 		//中断検出
 		return RESULT_FAILURE;
 	}
