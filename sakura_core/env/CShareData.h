@@ -33,15 +33,17 @@
 #define SAKURA_CSHAREDATA_B25C0FA2_B810_4327_8EC6_0AF46D49593A_H_
 #pragma once
 
+#include <string>
 #include "CSelectLang.h"		// 2011.04.10 nasukoji
-
-class CShareData;
+#include "charset/charset.h"
+#include "util/design_template.h"
 
 // 2010.04.19 Moca DLLSHAREDATA関連はDLLSHAREDATA.h等最低限必要な場所へ移動
 // CShareData.hは、自分のInterfaceしか提供しません。別にDLLSHAREDATA.hをincludeすること。
-struct DLLSHAREDATA;
-struct STypeConfig;
 class CMutex;
+struct DLLSHAREDATA;
+struct SFileTree;
+struct STypeConfig;
 
 /*!	@brief 共有データの管理
 
