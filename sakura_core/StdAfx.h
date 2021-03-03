@@ -101,6 +101,8 @@
 #include <ShlObj.h>
 #include <wrl.h>
 
+#include "env/DLLSHAREDATA.h"
+
 //その他
 #define malloc_char (char*)malloc
 #define GlobalLockChar  (char*)::GlobalLock
