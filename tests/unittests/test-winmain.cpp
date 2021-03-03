@@ -151,7 +151,7 @@ void CControlProcess_WaitForInitialized(std::wstring_view profileName)
 	handleHolder eventHolder( hEvent );
 
 	// 初期化完了イベントを待つ
-	DWORD dwRet = ::WaitForSingleObject( hEvent, 10000 );
+	DWORD dwRet = ::WaitForSingleObject( hEvent, 30000 );
 	if( WAIT_TIMEOUT == dwRet ){
 		throw std::runtime_error( "waitEvent is timeout." );
 	}

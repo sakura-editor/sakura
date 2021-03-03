@@ -258,7 +258,7 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 		return false;
 	}
 	DWORD dwRet;
-	dwRet = ::WaitForSingleObject( hEvent, 10000 );	// 最大10秒間待つ
+	dwRet = ::WaitForSingleObject( hEvent, 30000 );
 	if( WAIT_TIMEOUT == dwRet ){	// コントロールプロセスの初期化が終了しない
 		::CloseHandle( hEvent );
 		TopErrorMessage( NULL, L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。" );
