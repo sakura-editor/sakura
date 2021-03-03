@@ -25,6 +25,7 @@
 #include "util/module.h"
 #include "util/file.h"
 #include "util/tchar_convert.h"
+#include "mem/CNativeA.h"
 
 /*! @brief PCRE メタキャラクタのエスケープ処理を行う。
  （CMigemo::migemo_setproc_int2char の引数として使用）
