@@ -1501,13 +1501,13 @@ int CGrepAgent::DoGrepFile(
 	// ファイルを明示的に閉じるが、ここで閉じないときはデストラクタで閉じている
 	cfl.FileClose();
 	} // try
-	catch( CError_FileOpen ){
+	catch( const CError_FileOpen& ){
 		CNativeW str(LS(STR_GREP_ERR_FILEOPEN));
 		str.Replace(L"%s", pszFullPath);
 		cmemMessage.AppendNativeData( str );
 		return 0;
 	}
-	catch( CError_FileRead ){
+	catch( const CError_FileRead& ){
 		CNativeW str(LS(STR_GREP_ERR_FILEREAD));
 		str.Replace(L"%s", pszFullPath);
 		cmemMessage.AppendNativeData( str );
@@ -1555,7 +1555,7 @@ public:
 			name += L".skrnew";
 			try{
 				out = new CBinaryOutputStream(name.c_str(), true);
-			}catch( CError_FileOpen ){
+			}catch( const CError_FileOpen& ){
 				throw CError_WriteFileOpen();
 			}
 			if( bBom ){
@@ -1940,18 +1940,18 @@ int CGrepAgent::DoGrepReplaceFile(
 	cfl.FileClose();
 	output.Close();
 	} // try
-	catch( CError_FileOpen ){
+	catch( const CError_FileOpen& ){
 		CNativeW str(LS(STR_GREP_ERR_FILEOPEN));
 		str.Replace(L"%s", pszFullPath);
 		cmemMessage.AppendNativeData( str );
 		return 0;
 	}
-	catch( CError_FileRead ){
+	catch( const CError_FileRead& ){
 		CNativeW str(LS(STR_GREP_ERR_FILEREAD));
 		str.Replace(L"%s", pszFullPath);
 		cmemMessage.AppendNativeData( str );
 	}
-	catch( CError_WriteFileOpen ){
+	catch( const CError_WriteFileOpen& ){
 		std::wstring file = pszFullPath;
 		file += L".skrnew";
 		CNativeW str(LS(STR_GREP_ERR_FILEWRITE));

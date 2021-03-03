@@ -131,7 +131,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		// ファイルをクローズする
 		cfl.FileClose();
 	}
-	catch(CAppExitException){
+	catch(const CAppExitException&){
 		//WM_QUITが発生した
 		return RESULT_FAILURE;
 	}
@@ -169,7 +169,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 			 );
 		}
 	}
-	catch( CError_FileRead ){
+	catch( const CError_FileRead& ){
 		eRet = RESULT_FAILURE;
 		ErrorMessage(
 			CEditWnd::getInstance()->GetHwnd(),

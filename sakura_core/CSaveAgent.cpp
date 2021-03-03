@@ -80,7 +80,7 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 				::DeleteFile(pSaveInfo->cFilePath);
 			}
 		}
-		catch(CError_FileOpen){
+		catch(const CError_FileOpen&){
 			// ※ たとえ上書き保存の場合でもここでの失敗では書込み禁止へは遷移しない
 			if( bLock ) pcDoc->m_cDocFileOperation.DoFileLock(false);
 			ErrorMessage(

@@ -119,7 +119,7 @@ bool CDocFileOperation::DoLoadFlow(SLoadInfo* pLoadInfo)
 		eLoadResult = m_pcDocRef->NotifyLoad(*pLoadInfo);	//本処理
 		m_pcDocRef->NotifyAfterLoad(*pLoadInfo);			//後処理
 	}
-	catch(CFlowInterruption){
+	catch(const CFlowInterruption&){
 		eLoadResult = LOADED_INTERRUPT;
 	}
 	catch(...){
@@ -355,7 +355,7 @@ bool CDocFileOperation::DoSaveFlow(SSaveInfo* pSaveInfo)
 		//結果
 		eSaveResult = SAVED_OK; //###仮
 	}
-	catch(CFlowInterruption){
+	catch(const CFlowInterruption&){
 		eSaveResult = SAVED_INTERRUPT;
 	}
 	catch(...){

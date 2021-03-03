@@ -743,7 +743,7 @@ BOOL CViewCommander::Command_PUTFILE(
 			if( 0 < cDst.GetRawLength() )
 				out.Write(cDst.GetRawPtr(),cDst.GetRawLength());
 		}
-		catch(CError_FileOpen)
+		catch(const CError_FileOpen&)
 		{
 			WarningMessage(
 				NULL,
@@ -752,7 +752,7 @@ BOOL CViewCommander::Command_PUTFILE(
 			);
 			bResult = FALSE;
 		}
-		catch(CError_FileWrite)
+		catch(const CError_FileWrite&)
 		{
 			WarningMessage(
 				NULL,
@@ -902,11 +902,11 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 		// ファイルを明示的に閉じるが、ここで閉じないときはデストラクタで閉じている
 		cfl.FileClose();
 	} // try
-	catch( CError_FileOpen ){
+	catch( const CError_FileOpen& ){
 		WarningMessage( NULL, LS(STR_GREP_ERR_FILEOPEN), filename );
 		bResult = FALSE;
 	}
-	catch( CError_FileRead ){
+	catch( const CError_FileRead& ){
 		WarningMessage( NULL, LS(STR_ERR_DLGEDITVWCMDNW12) );
 		bResult = FALSE;
 	} // 例外処理終わり

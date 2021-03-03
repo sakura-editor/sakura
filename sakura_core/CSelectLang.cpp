@@ -335,7 +335,7 @@ int CLoadString::CLoadStrBuffer::LoadString( UINT uid )
 			try{
 				pTemp = new WCHAR[nTemp];
 			}
-			catch(std::bad_alloc){
+			catch(const std::bad_alloc&){
 				// メモリ割り当て例外（例外の発生する環境の場合でも旧来の処理にする）
 				pTemp = NULL;
 			}
