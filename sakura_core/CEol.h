@@ -73,11 +73,6 @@ struct SEolDefinition{
 
 constexpr auto EOL_TYPE_NUM = static_cast<size_t>(EEolType::code_max); // 8
 
-/* 行終端子の配列 */
-extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
-
-#include "basis/SakuraBasis.h"
-
 /*!
 	@brief 行末の改行コードを管理
 

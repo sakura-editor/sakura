@@ -30,6 +30,7 @@
 #include "util/window.h"
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"
+#include "env/DLLSHAREDATA.h"
 #include "sakura_rc.h"
 #include "String_define.h"
 

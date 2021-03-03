@@ -43,6 +43,7 @@
 #include "util/os.h"
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"
+#include "util/string_ex.h"
 #include "sakura_rc.h"	// 2002/2/10 aroka
 #include "sakura.hh"
 #include "String_define.h"
