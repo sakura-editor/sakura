@@ -28,8 +28,6 @@
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CFigure_Eol.h"
 #include "types/CTypeSupport.h"
-#include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
 #include "window/CEditWnd.h"
 #include "apiwrap/StdApi.h"
 

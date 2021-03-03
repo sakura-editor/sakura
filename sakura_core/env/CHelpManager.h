@@ -30,8 +30,8 @@
 #define SAKURA_CHELPMANAGER_57445D73_99E9_4B85_A905_47685753D1DF_H_
 #pragma once
 
-// 要先行定義
-// #include "DLLSHAREDATA.h"
+struct DLLSHAREDATA;
+DLLSHAREDATA& GetDllShareData();
 
 //!ヘルプ管理
 class CHelpManager{

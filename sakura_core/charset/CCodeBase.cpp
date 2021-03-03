@@ -28,10 +28,7 @@
 #include "convert/convert_util2.h"
 #include "charset/codechecker.h"
 #include "CEol.h"
-
-// 非依存推奨
-#include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
+#include "env/CommonSetting.h"
 
 void CCodeBase::GetBom(CMemory* pcmemBom){ pcmemBom->Clear(); }					//!< BOMデータ取得
 
