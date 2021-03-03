@@ -70,8 +70,7 @@
 #define _wcstok wcstok
 #endif
 
-//グローバル
-#include "_main/global.h"
+#include <Windows.h>
 
 //ビルドオプション的なヘッダ
 #include "config/build_config.h"

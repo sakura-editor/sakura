@@ -29,6 +29,7 @@
 #pragma once
 
 #include "basis/SakuraBasis.h"
+#include "_main/global.h"
 
 class CDocLine;
 class CDocLineMgr;

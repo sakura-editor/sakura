@@ -32,6 +32,7 @@
 #include "view/colors/EColorIndexType.h"
 #include "util/design_template.h" //TSingleton
 #include "basis/SakuraBasis.h"
+#include "_main/global.h"
 
 class CDocLine;
 class CDocLineMgr;

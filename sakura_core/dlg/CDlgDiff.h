@@ -36,6 +36,7 @@
 
 #include "dlg/CDialog.h"
 #include "basis/CMyString.h"
+#include "charset/charset.h"
 
 class CDlgDiff;
 

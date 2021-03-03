@@ -37,6 +37,8 @@
 #include <string>
 
 #include "CStream.h"
+#include "charset/charset.h"
+
 class CCodeBase;
 
 //テキスト入力ストリーム (UTF-8, SJIS)
