@@ -32,9 +32,6 @@
 
 #include "basis/SakuraBasis.h"
 
-// 要先行定義
-// #define DLLSHAREDATA.h
-
 // 2004/06/21 novice タグジャンプ機能追加
 //! タグジャンプ情報
 struct TagJump {
@@ -60,6 +57,9 @@ struct SShare_TagJump{
 	BOOL				m_bTagJumpICase;				//!< 大文字小文字を同一視
 	BOOL				m_bTagJumpPartialMatch;				//!< 文字列の途中にマッチ
 };
+
+struct DLLSHAREDATA;
+DLLSHAREDATA& GetDllShareData();
 
 class CTagJumpManager{
 public:
