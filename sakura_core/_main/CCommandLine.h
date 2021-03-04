@@ -84,7 +84,7 @@ public:
 	tagSIZE GetWindowSize() const noexcept { return { m_fi.m_nWindowSizeX, m_fi.m_nWindowSizeY }; }
 	tagPOINT GetWindowOrigin() const noexcept { return { m_fi.m_nWindowOriginX, m_fi.m_nWindowOriginY }; }
 	LPCWSTR GetOpenFile() const noexcept { return m_fi.m_szPath; }
-	int GetFileNum(void) const noexcept { return m_vFiles.size(); }
+	int GetFileNum(void) const noexcept { return static_cast<int>(m_vFiles.size()); }
 	const WCHAR* GetFileName(int i) const noexcept { return i < GetFileNum() ? m_vFiles[i].c_str() : NULL; }
 	void ClearFile(void) noexcept { m_vFiles.clear(); }
 	LPCWSTR GetDocType() const noexcept { return m_fi.m_szDocType; }
