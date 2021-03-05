@@ -101,7 +101,7 @@ void CDlgSetCharSet::SetBOM( void )
 {
 	int 		nIdx;
 	LRESULT		lRes;
-	WPARAM		fCheck;
+	int			fCheck;
 
 	nIdx = Combo_GetCurSel( m_hwndCharSet );
 	lRes = Combo_GetItemData( m_hwndCharSet, nIdx );
@@ -127,7 +127,7 @@ BOOL CDlgSetCharSet::OnCbnSelChange( HWND hwndCtl, int wID )
 {
 	int 		nIdx;
 	LRESULT		lRes;
-	WPARAM		fCheck;
+	int			fCheck;
 
 	switch (wID) {
 	//	文字コードの変更をBOMチェックボックスに反映
