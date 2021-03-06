@@ -120,7 +120,7 @@ public:
 	Me& operator = (const CHAR_TYPE* src){ Assign(src); return *this; }
 
 	//各種メソッド
-	int Length() const{ return auto_strlen(m_szData); }
+	int Length() const { return static_cast<int>(auto_strnlen(m_szData, BUFFER_COUNT)); }
 
 private:
 	CHAR_TYPE m_szData[N_BUFFER_COUNT];
