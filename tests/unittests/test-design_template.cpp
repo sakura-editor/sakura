@@ -63,8 +63,8 @@ TEST(CSingleInstance, CSingleInstance)
 		// 返却されるポインタは、ローカルで確保したインスタンスと等しい
 		ASSERT_EQ(&instance, CSingleInstance::getInstance());
 
-		// 2つ目のインスタンスを確保しようとするとassertで落ちる
-		ASSERT_EXIT({ CSingleInstance instance; }, ::testing::ExitedWithCode(1), ".*");
+		// 2つ目のインスタンスを確保しようとすると例外が発生する
+		ASSERT_THROW({ CSingleInstance instance; }, std::domain_error);
 	}
 
 	// インスタンスが破棄された後にgetInstanceするとNULLが返る

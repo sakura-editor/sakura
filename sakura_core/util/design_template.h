@@ -33,9 +33,8 @@
 #define SAKURA_DESIGN_TEMPLATE_BBC57590_CED0_40D0_B719_F5A4522B8A56_H_
 #pragma once
 
+#include <stdexcept>
 #include <vector>
-
-#include "debug/Debug2.h"
 
 // http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Copy_Constructors
 // A macro to disallow the copy constructor and operator= functions
@@ -63,6 +62,15 @@ public:
 protected:
 	TSingleton(){}
 	DISALLOW_COPY_AND_ASSIGN(TSingleton);
+};
+
+/*!
+	複数インスタンスを生成しようとしたときのエラー
+ */
+class multi_instance_not_allowed : public std::domain_error {
+public:
+	multi_instance_not_allowed()
+		: std::domain_error("multi instance not allowed.") {}
 };
 
 /*!
@@ -106,7 +114,9 @@ protected:
 	 */
 	TSingleInstance()
 	{
-		assert(gm_instance == nullptr);
+		if (gm_instance != nullptr) {
+			throw multi_instance_not_allowed();
+		}
 		gm_instance = static_cast<T*>(this);
 	}
 
