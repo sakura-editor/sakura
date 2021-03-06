@@ -1213,9 +1213,9 @@ LRESULT CEditWnd::DispatchEvent(
 				TEXTMETRIC tm;
 				::GetTextMetrics( lpdis->hDC, &tm );
 				int y = ( lpdis->rcItem.bottom - lpdis->rcItem.top - tm.tmHeight + 1 ) / 2 + lpdis->rcItem.top;
-				::TextOut( lpdis->hDC, lpdis->rcItem.left, y, L"REC", wcslen( L"REC" ) );
+				::TextOut( lpdis->hDC, lpdis->rcItem.left, y, L"REC", 3 );
 				if( COLOR_BTNTEXT == nColor ){
-					::TextOut( lpdis->hDC, lpdis->rcItem.left + 1, y, L"REC", wcslen( L"REC" ) );
+					::TextOut( lpdis->hDC, lpdis->rcItem.left + 1, y, L"REC", 3 );
 				}
 			}
 			return 0;

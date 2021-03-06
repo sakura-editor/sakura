@@ -1116,13 +1116,14 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 	gr.FillMyRect(rc1);
 	/* テキスト */
 	::SetBkMode( gr, TRANSPARENT );
-	::TextOut( gr, rc1.left, rc1.top, pColorInfo->m_szName, wcslen( pColorInfo->m_szName ) );
+	int nameLength = static_cast<int>(wcslen(pColorInfo->m_szName));
+	::TextOut( gr, rc1.left, rc1.top, pColorInfo->m_szName, nameLength );
 	if( pColorInfo->m_sFontAttr.m_bBoldFont ){	/* 太字か */
-		::TextOut( gr, rc1.left + 1, rc1.top, pColorInfo->m_szName, wcslen( pColorInfo->m_szName ) );
+		::TextOut( gr, rc1.left + 1, rc1.top, pColorInfo->m_szName, nameLength );
 	}
 	if( pColorInfo->m_sFontAttr.m_bUnderLine ){	/* 下線か */
 		SIZE	sz;
-		::GetTextExtentPoint32( gr, pColorInfo->m_szName, wcslen( pColorInfo->m_szName ), &sz );
+		::GetTextExtentPoint32( gr, pColorInfo->m_szName, nameLength, &sz );
 		::MoveToEx( gr, rc1.left,		rc1.bottom - 2, NULL );
 		::LineTo( gr, rc1.left + sz.cx,	rc1.bottom - 2 );
 		::MoveToEx( gr, rc1.left,		rc1.bottom - 1, NULL );

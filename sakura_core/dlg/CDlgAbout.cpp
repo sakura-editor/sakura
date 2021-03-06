@@ -460,19 +460,20 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		HFONT hFont;
 		HFONT hFontOld;
 		WCHAR szText[512];
+		int txtLength;
 
 		hdc = BeginPaint( hWnd, &ps );
 
 		// 現在のクライアント矩形、テキスト、フォントを取得する
 		GetClientRect( hWnd, &rc );
-		GetWindowText( hWnd, szText, _countof(szText) );
+		txtLength = GetWindowText( hWnd, szText, _countof(szText) );
 		hFont = (HFONT)SendMessageAny( hWnd, WM_GETFONT, (WPARAM)0, (LPARAM)0 );
 
 		// テキスト描画
 		SetBkMode( hdc, TRANSPARENT );
 		SetTextColor( hdc, pUrlWnd->m_bHilighted? RGB( 0x84, 0, 0 ): RGB( 0, 0, 0xff ) );
 		hFontOld = (HFONT)SelectObject( hdc, (HGDIOBJ)hFont );
-		TextOut( hdc, ::DpiScaleX( 2 ), 0, szText, wcslen( szText ) );
+		TextOut( hdc, ::DpiScaleX( 2 ), 0, szText, txtLength );
 		SelectObject( hdc, (HGDIOBJ)hFontOld );
 
 		// フォーカス枠描画
