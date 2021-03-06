@@ -80,6 +80,8 @@ protected:
 template <class T>
 class TSingleInstance {
 private:
+	using Me = TSingleInstance<T>;
+
 	static T* gm_instance;				//!< シングルインスタンスを保持するポインタ
 
 public:
@@ -90,6 +92,11 @@ public:
 		@retval nullptr インスタンスが未生成
 	 */
 	[[nodiscard]] static T* getInstance() noexcept { return gm_instance; }
+
+	TSingleInstance(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	TSingleInstance(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 
 protected:
 	/*!
