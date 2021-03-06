@@ -180,7 +180,7 @@ void CTipWnd::ComputeWindowSize(
 				rc.SetXYWH( 0, 0, cxScreen, 0 );
 
 				// テキスト描画に必要な矩形を計測する
-				::DrawText( hdc, &pszText[nLineBgn], i - nLineBgn, &rc,
+				::DrawText( hdc, &pszText[nLineBgn], static_cast<int>(i - nLineBgn), &rc,
 					DT_CALCRECT | DT_WORDBREAK | DT_EXPANDTABS | DT_EXTERNALLEADING
 				);
 
@@ -257,7 +257,7 @@ void CTipWnd::DrawTipText(
 			// 計測対象の文字列がブランクでない場合
 			if ( 0 < i - nLineBgn ) {
 				// 指定されたテキストを描画する
-				nHeight = ::DrawText( hdc, &pszText[nLineBgn], i - nLineBgn, &rc,
+				nHeight = ::DrawText( hdc, &pszText[nLineBgn], static_cast<int>(i - nLineBgn), &rc,
 					DT_WORDBREAK | DT_EXPANDTABS | DT_EXTERNALLEADING
 				);
 			}else{
