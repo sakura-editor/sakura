@@ -143,6 +143,8 @@ T* TSingleInstance<T>::gm_instance = nullptr;
 template <class T>
 class TInstanceHolder {
 private:
+	using Me = TInstanceHolder<T>;
+
 	static std::vector<T*> gm_table;	//!< インスタンスを保持する動的配列
 
 public:
@@ -167,6 +169,11 @@ public:
 		}
 		return gm_table[index];
 	}
+
+	TInstanceHolder(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	TInstanceHolder(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 
 protected:
 	/*!
