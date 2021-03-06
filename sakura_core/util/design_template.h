@@ -170,6 +170,14 @@ public:
 		return gm_table[index];
 	}
 
+	/*!
+		作成済みのインスタンスを取得する
+
+		@returns 作成済みのインスタンス
+		@retval nullptr インスタンスが未生成
+	 */
+	[[nodiscard]] static T* getInstance() noexcept { return GetInstance(0); }
+
 	TInstanceHolder(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
 	TInstanceHolder(Me&&) noexcept = delete;

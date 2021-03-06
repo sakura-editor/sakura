@@ -86,6 +86,9 @@ public:
  */
 TEST(CInstanceHolder, CInstanceHolder)
 {
+	// インスタンスが生成される前にgetInstanceするとNULLが返る
+	ASSERT_TRUE(CSingleInstance::getInstance() == nullptr);
+
 	// インスタンスが生成される前にGetInstance(0)するとNULLが返る
 	ASSERT_TRUE(CInstanceHolder::GetInstance(0) == nullptr);
 
@@ -101,6 +104,7 @@ TEST(CInstanceHolder, CInstanceHolder)
 
 		// 返却されるポインタは、ローカルで確保したインスタンスと等しい
 		ASSERT_EQ(&instance, CInstanceHolder::GetInstance(0));
+		ASSERT_EQ(&instance, CInstanceHolder::getInstance());
 
 		// インスタンスの数は1になる
 		ASSERT_EQ(1, CInstanceHolder::GetInstanceCount());
@@ -126,6 +130,7 @@ TEST(CInstanceHolder, CInstanceHolder)
 	}
 
 	// インスタンスが破棄された後は元に戻る
+	ASSERT_TRUE(CSingleInstance::getInstance() == nullptr);
 	ASSERT_TRUE(CInstanceHolder::GetInstance(0) == nullptr);
 	ASSERT_EQ(0, CInstanceHolder::GetInstanceCount());
 }
