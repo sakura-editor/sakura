@@ -64,34 +64,62 @@ protected:
 };
 
 /*!
-	1個しかインスタンスが存在しないクラスからのインスタンス取得インターフェースをstaticで提供。
-	Singletonパターンとは異なり、Instance()呼び出しにより、インスタンスが自動生成されない点に注意。
+	シングルインスタンス
 
-	2007.10.23 kobake 作成
-*/
+	1プロセスあたりのインスタンス数を制限するためのテンプレート。
+	シングルインスタンスは複数インスタンスを生成しないクラスに適用する。
+	シングルインスタンスの生成済みのインスタンスはstaticメソッドから取得できる。
+	インスタンス自動生成は行わないので、インスタンス生成は手動で行うこと。
+
+	デザインパターンの「シングルトン」とは関係ないので、派生クラスは「状態」を持って良い。
+
+	@date 2007.10.23 kobake 作成
+ */
 template <class T>
-class TSingleInstance{
+class TSingleInstance {
+private:
+	static T* gm_instance;				//!< シングルインスタンスを保持するポインタ
+
 public:
-	//公開インターフェース
-	static T* getInstance(){ return gm_instance; } //!< 作成済みのインスタンスを返す。インスタンスが存在しなければ NULL。
+	/*!
+		作成済みのインスタンスを取得する
+
+		@returns 作成済みのインスタンス
+		@retval nullptr インスタンスが未生成
+	 */
+	[[nodiscard]] static T* getInstance() noexcept { return gm_instance; }
 
 protected:
-	//※2個以上のインスタンスは想定していません。assertが破綻を検出します。
+	/*!
+		コンストラクタ
+
+		staticメンバにインスタンスを記録する。
+	 */
 	TSingleInstance()
 	{
-		assert(gm_instance==NULL);
-		gm_instance=static_cast<T*>(this);
+		assert(gm_instance == nullptr);
+		gm_instance = static_cast<T*>(this);
 	}
-	~TSingleInstance()
+
+	/*!
+		デストラクタ
+
+		staticメンバのポインタをクリアする。
+	 */
+	virtual ~TSingleInstance() noexcept
 	{
-		assert(gm_instance);
-		gm_instance=NULL;
+		gm_instance = nullptr;
 	}
-private:
-	static T* gm_instance;
 };
+
+/*!
+	シングルインスタンスを保持するポインタ
+
+	1プロセスあたり1つのインスタンスだけを許可する機構で、
+	TSingleInstance<T>以外からはアクセスさせない。
+ */
 template <class T>
-T* TSingleInstance<T>::gm_instance = NULL;
+T* TSingleInstance<T>::gm_instance = nullptr;
 
 //記録もする
 #include <vector>
