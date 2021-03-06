@@ -33,6 +33,8 @@
 #define SAKURA_DESIGN_TEMPLATE_BBC57590_CED0_40D0_B719_F5A4522B8A56_H_
 #pragma once
 
+#include <vector>
+
 #include "debug/Debug2.h"
 
 // http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Copy_Constructors
@@ -121,35 +123,77 @@ protected:
 template <class T>
 T* TSingleInstance<T>::gm_instance = nullptr;
 
-//記録もする
-#include <vector>
-template <class T> class TInstanceHolder{
+/*!
+	インスタンスホルダー
+
+	プロセス内で生成されたインスタンスを記録するためのテンプレート。
+	インスタンスホルダーは複数インスタンスを生成するクラスに適用する。
+	インスタンスホルダーの生成済みのインスタンスはstaticメソッドから取得できる。
+	インスタンス自動生成は行わないので、インスタンス生成は手動で行うこと。
+
+	デザインパターンの「シングルトン」とは関係ないので、派生クラスは「状態」を持って良い。
+ */
+template <class T>
+class TInstanceHolder {
+private:
+	static std::vector<T*> gm_table;	//!< インスタンスを保持する動的配列
+
 public:
+	/*!
+		作成済みのインスタンス数を取得する
+
+		@returns 作成済みのインスタンス数
+	 */
+	[[nodiscard]] static size_t GetInstanceCount() noexcept { return gm_table.size(); }
+
+	/*!
+		作成済みのインスタンスを取得する
+
+		@param [in]index
+		@returns 作成済みのインスタンス
+		@retval nullptr インスタンスが未生成
+	 */
+	[[nodiscard]] static T* GetInstance(size_t index) noexcept
+	{
+		if (gm_table.size() <= index || gm_table.empty()) {
+			return nullptr;
+		}
+		return gm_table[index];
+	}
+
+protected:
+	/*!
+		コンストラクタ
+
+		staticメンバにインスタンスを記録する。
+	 */
 	TInstanceHolder()
 	{
 		gm_table.push_back(static_cast<T*>(this));
 	}
-	virtual ~TInstanceHolder()
-	{
-		for(size_t i=0;i<gm_table.size();i++){
-			if(gm_table[i]==static_cast<T*>(this)){
-				gm_table.erase(gm_table.begin()+i);
-				break;
-			}
-		}
-	}
-	static int GetInstanceCount(){ return (int)gm_table.size(); }
-	static T* GetInstance(int nIndex)
-	{
-		if(nIndex>=0 && nIndex<(int)gm_table.size()){
-			return gm_table[nIndex];
-		}else{
-			return 0;
-		}
-	}
 
-private:
-	static std::vector<T*> gm_table;
+	/*!
+		デストラクタ
+
+		staticメンバからこのインスタンスのポインタを除去する。
+	 */
+	virtual ~TInstanceHolder() noexcept
+	{
+		if (const auto it = std::find(gm_table.cbegin(), gm_table.cend(), this);
+			it != gm_table.cend())
+		{
+			gm_table.erase(it);
+		}
+	}
 };
-template <class T> std::vector<T*> TInstanceHolder<T>::gm_table;
+
+/*!
+	インスタンスを保持する動的配列
+
+	プロセスで生成したインスタンスを記録する機構で、
+	TInstanceHolder<T>以外からはアクセスさせない。
+ */
+template <class T>
+std::vector<T*> TInstanceHolder<T>::gm_table;
+
 #endif /* SAKURA_DESIGN_TEMPLATE_BBC57590_CED0_40D0_B719_F5A4522B8A56_H_ */
