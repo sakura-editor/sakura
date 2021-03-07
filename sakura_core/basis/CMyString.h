@@ -62,27 +62,22 @@ public:
 	//拡張子を取得する
 	LPCWSTR GetExt( bool bWithoutDot = false ) const
 	{
-		// 文字列の先頭アドレスを取得
-		const WCHAR* head = c_str();
-
 		// 文字列の末尾アドレスを取得
-		const WCHAR* p = wcschr(head,L'\0') - 1;
+		const WCHAR* tail = c_str() + Length();
 
-		// 文字列末尾から逆方向に [\.\\/] を検索
-		while(p>=head){
-			if(*p==L'.')break;
-			if(*p==L'\\')break;
-			if(*p==L'/')break;
-			p--;
+		// 文字列末尾から逆方向に L'.' を検索
+		if (const auto *p = ::wcsrchr(c_str(), L'.')) {
+			// L'.'で始まる文字列がパス区切りを含まない場合のみ「拡張子あり」と看做す
+			if (const bool hasExt = !::wcspbrk(p, L"\\/"); hasExt && !bWithoutDot) {
+				return p;
+			}
+			else if (hasExt && p < tail) {
+				return p + 1;		//bWithoutDot==trueならドットなしを返す
+			}
 		}
 
-		// pが文字列範囲内で、\. を指している場合
-		if(p>=head && *p==L'.'){
-			return bWithoutDot ? p+1 : p;	//bWithoutDot==trueならドットなしを返す
-		}else{
-			// 文字列末尾のアドレスを返す
-			return wcschr(head,L'\0');
-		}
+		// 文字列末尾のアドレスを返す
+		return tail;
 	}
 };
 
