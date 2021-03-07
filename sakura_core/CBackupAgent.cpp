@@ -257,7 +257,6 @@ int CBackupAgent::MakeBackUp(
 		if( bup_setting.m_bBackUpDustBox && !dustflag ){	//@@@ 2002.03.23 ネットワーク・リムーバブルドライブでない
 			WCHAR	szDustPath[_MAX_PATH+1];
 			wcscpy(szDustPath, szPath);
-			szDustPath[wcslen(szDustPath) + 1] = L'\0';
 			SHFILEOPSTRUCT	fos;
 			fos.hwnd   = CEditWnd::getInstance()->GetHwnd();
 			fos.wFunc  = FO_DELETE;
