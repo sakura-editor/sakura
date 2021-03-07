@@ -33,6 +33,9 @@
 #define SAKURA_DESIGN_TEMPLATE_BBC57590_CED0_40D0_B719_F5A4522B8A56_H_
 #pragma once
 
+#include <stdexcept>
+#include <vector>
+
 // http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Copy_Constructors
 // A macro to disallow the copy constructor and operator= functions
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
@@ -62,64 +65,167 @@ protected:
 };
 
 /*!
-	1個しかインスタンスが存在しないクラスからのインスタンス取得インターフェースをstaticで提供。
-	Singletonパターンとは異なり、Instance()呼び出しにより、インスタンスが自動生成されない点に注意。
-
-	2007.10.23 kobake 作成
-*/
-template <class T>
-class TSingleInstance{
+	複数インスタンスを生成しようとしたときのエラー
+ */
+class multi_instance_not_allowed : public std::domain_error {
 public:
-	//公開インターフェース
-	static T* getInstance(){ return gm_instance; } //!< 作成済みのインスタンスを返す。インスタンスが存在しなければ NULL。
+	multi_instance_not_allowed()
+		: std::domain_error("multi instance not allowed.") {}
+};
+
+/*!
+	シングルインスタンス
+
+	1プロセスあたりのインスタンス数を制限するためのテンプレート。
+	シングルインスタンスは複数インスタンスを生成しないクラスに適用する。
+	シングルインスタンスの生成済みのインスタンスはstaticメソッドから取得できる。
+	インスタンス自動生成は行わないので、インスタンス生成は手動で行うこと。
+
+	デザインパターンの「シングルトン」とは関係ないので、派生クラスは「状態」を持って良い。
+
+	@date 2007.10.23 kobake 作成
+ */
+template <class T>
+class TSingleInstance {
+private:
+	using Me = TSingleInstance<T>;
+
+	static T* gm_instance;				//!< シングルインスタンスを保持するポインタ
+
+public:
+	/*!
+		作成済みのインスタンスを取得する
+
+		@returns 作成済みのインスタンス
+		@retval nullptr インスタンスが未生成
+	 */
+	[[nodiscard]] static T* getInstance() noexcept { return gm_instance; }
+
+	TSingleInstance(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	TSingleInstance(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 
 protected:
-	//※2個以上のインスタンスは想定していません。assertが破綻を検出します。
+	/*!
+		コンストラクタ
+
+		staticメンバにインスタンスを記録する。
+	 */
 	TSingleInstance()
 	{
-		assert(gm_instance==NULL);
-		gm_instance=static_cast<T*>(this);
+		if (gm_instance != nullptr) {
+			throw multi_instance_not_allowed();
+		}
+		gm_instance = static_cast<T*>(this);
 	}
-	~TSingleInstance()
-	{
-		assert(gm_instance);
-		gm_instance=NULL;
-	}
-private:
-	static T* gm_instance;
-};
-template <class T>
-T* TSingleInstance<T>::gm_instance = NULL;
 
-//記録もする
-#include <vector>
-template <class T> class TInstanceHolder{
+	/*!
+		デストラクタ
+
+		staticメンバのポインタをクリアする。
+	 */
+	virtual ~TSingleInstance() noexcept
+	{
+		gm_instance = nullptr;
+	}
+};
+
+/*!
+	シングルインスタンスを保持するポインタ
+
+	1プロセスあたり1つのインスタンスだけを許可する機構で、
+	TSingleInstance<T>以外からはアクセスさせない。
+ */
+template <class T>
+T* TSingleInstance<T>::gm_instance = nullptr;
+
+/*!
+	インスタンスホルダー
+
+	プロセス内で生成されたインスタンスを記録するためのテンプレート。
+	インスタンスホルダーは複数インスタンスを生成するクラスに適用する。
+	インスタンスホルダーの生成済みのインスタンスはstaticメソッドから取得できる。
+	インスタンス自動生成は行わないので、インスタンス生成は手動で行うこと。
+
+	デザインパターンの「シングルトン」とは関係ないので、派生クラスは「状態」を持って良い。
+ */
+template <class T>
+class TInstanceHolder {
+private:
+	using Me = TInstanceHolder<T>;
+
+	static std::vector<T*> gm_table;	//!< インスタンスを保持する動的配列
+
 public:
+	/*!
+		作成済みのインスタンス数を取得する
+
+		@returns 作成済みのインスタンス数
+	 */
+	[[nodiscard]] static size_t GetInstanceCount() noexcept { return gm_table.size(); }
+
+	/*!
+		作成済みのインスタンスを取得する
+
+		@param [in]index
+		@returns 作成済みのインスタンス
+		@retval nullptr インスタンスが未生成
+	 */
+	[[nodiscard]] static T* GetInstance(size_t index) noexcept
+	{
+		if (gm_table.size() <= index || gm_table.empty()) {
+			return nullptr;
+		}
+		return gm_table[index];
+	}
+
+	/*!
+		作成済みのインスタンスを取得する
+
+		@returns 作成済みのインスタンス
+		@retval nullptr インスタンスが未生成
+	 */
+	[[nodiscard]] static T* getInstance() noexcept { return GetInstance(0); }
+
+	TInstanceHolder(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	TInstanceHolder(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
+
+protected:
+	/*!
+		コンストラクタ
+
+		staticメンバにインスタンスを記録する。
+	 */
 	TInstanceHolder()
 	{
 		gm_table.push_back(static_cast<T*>(this));
 	}
-	virtual ~TInstanceHolder()
-	{
-		for(size_t i=0;i<gm_table.size();i++){
-			if(gm_table[i]==static_cast<T*>(this)){
-				gm_table.erase(gm_table.begin()+i);
-				break;
-			}
-		}
-	}
-	static int GetInstanceCount(){ return (int)gm_table.size(); }
-	static T* GetInstance(int nIndex)
-	{
-		if(nIndex>=0 && nIndex<(int)gm_table.size()){
-			return gm_table[nIndex];
-		}else{
-			return 0;
-		}
-	}
 
-private:
-	static std::vector<T*> gm_table;
+	/*!
+		デストラクタ
+
+		staticメンバからこのインスタンスのポインタを除去する。
+	 */
+	virtual ~TInstanceHolder() noexcept
+	{
+		if (const auto it = std::find(gm_table.cbegin(), gm_table.cend(), this);
+			it != gm_table.cend())
+		{
+			gm_table.erase(it);
+		}
+	}
 };
-template <class T> std::vector<T*> TInstanceHolder<T>::gm_table;
+
+/*!
+	インスタンスを保持する動的配列
+
+	プロセスで生成したインスタンスを記録する機構で、
+	TInstanceHolder<T>以外からはアクセスさせない。
+ */
+template <class T>
+std::vector<T*> TInstanceHolder<T>::gm_table;
+
 #endif /* SAKURA_DESIGN_TEMPLATE_BBC57590_CED0_40D0_B719_F5A4522B8A56_H_ */
