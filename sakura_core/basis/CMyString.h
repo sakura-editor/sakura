@@ -45,11 +45,11 @@ class CFilePath : public StaticString<WCHAR,_MAX_PATH>{
 private:
 	typedef StaticString<WCHAR,_MAX_PATH> Super;
 public:
-	CFilePath() : Super() { }
+	CFilePath() = default;
 	CFilePath(const WCHAR* rhs) : Super(rhs) { }
 
-	bool IsValidPath() const{ return At(0)!=L'\0'; }
-	std::wstring GetDirPath() const
+	[[nodiscard]] bool IsValidPath() const{ return At(0)!=L'\0'; }
+	[[nodiscard]] std::wstring GetDirPath() const
 	{
 		WCHAR	szDirPath[_MAX_PATH];
 		WCHAR	szDrive[_MAX_DRIVE];
@@ -59,8 +59,9 @@ public:
 		wcscat( szDirPath, szDir );
 		return szDirPath;
 	}
+
 	//拡張子を取得する
-	LPCWSTR GetExt( bool bWithoutDot = false ) const
+	[[nodiscard]] LPCWSTR GetExt( bool bWithoutDot = false ) const
 	{
 		// 文字列の末尾アドレスを取得
 		const WCHAR* tail = c_str() + Length();
