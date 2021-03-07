@@ -207,13 +207,6 @@ namespace WCODE
 	{
 		return c>=0x2500 && c<=0x257F;
 	}
-
-	//!文字が半角かどうかを取得(DLLSHARE/フォント依存)
-	bool CalcHankakuByFont(wchar_t c);
-	//!文字のpx幅を取得(DLLSHARE/フォント依存)
-	int  CalcPxWidthByFont(wchar_t c);
-	//!文字のpx幅を取得(DLLSHARE/フォント依存)
-	int  CalcPxWidthByFont2(const wchar_t* c);
 }
 
 // 文字幅の動的計算用キャッシュ関連
@@ -254,8 +247,11 @@ public:
 	void Clear();
 	[[nodiscard]] bool GetMultiFont() const { return m_bMultiFont; }
 
+	//!文字が半角かどうかを取得(DLLSHARE/フォント依存)
 	virtual bool CalcHankakuByFont(wchar_t c) const;
+	//!文字のpx幅を取得(DLLSHARE/フォント依存)
 	virtual int CalcPxWidthByFont(wchar_t c);
+	//!文字のpx幅を取得(DLLSHARE/フォント依存)
 	virtual int CalcPxWidthByFont2(const wchar_t* pc2) const;
 
 private:

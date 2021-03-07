@@ -76,29 +76,30 @@ TEST_F(CharWidthCache, IsHankaku)
 	// ここからは実行時のフォントを基に計算する文字。
 	SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_LOCAL);
 	InitCharWidthCache(lf1);
+	CCharWidthCache& cache = GetCharWidthCache();
 
 	// 漢字・ハングル・外字の場合、コード表の一番目の文字の幅がすべての文字に適用される。
-	bool kanjiWidth = WCODE::CalcHankakuByFont(L'一');
+	bool kanjiWidth = cache.CalcHankakuByFont(L'一');
 
 	// CJK統合漢字。Unicode 5.1 以降の文字には未対応。
 	for (wchar_t ch = 0x4e00; ch <= 0x9fbb; ++ch) {
-		EXPECT_EQ(WCODE::IsHankaku(ch), kanjiWidth);
+		EXPECT_EQ(WCODE::IsHankaku(ch, cache), kanjiWidth);
 	}
 	// CJK統合漢字拡張A。Unicode 13.0 の追加分には対応していない。
 	for (wchar_t ch = 0x3400; ch <= 0x4d85; ++ch) {
-		EXPECT_EQ(WCODE::IsHankaku(ch), kanjiWidth);
+		EXPECT_EQ(WCODE::IsHankaku(ch, cache), kanjiWidth);
 	}
 
 	// ハングル
-	bool hangulWidth = WCODE::CalcHankakuByFont(L'가');
+	bool hangulWidth = cache.CalcHankakuByFont(L'가');
 	for (wchar_t ch = 0xac00; ch <= 0xd7a3; ++ch) {
-		EXPECT_EQ(WCODE::IsHankaku(ch), hangulWidth);
+		EXPECT_EQ(WCODE::IsHankaku(ch, cache), hangulWidth);
 	}
 
 	// 外字
-	bool privateUseWidth = WCODE::CalcHankakuByFont(0xe000);
+	bool privateUseWidth = cache.CalcHankakuByFont(0xe000);
 	for (wchar_t ch = 0xe000; ch <= 0xe8ff; ++ch) {
-		EXPECT_EQ(WCODE::IsHankaku(ch), privateUseWidth);
+		EXPECT_EQ(WCODE::IsHankaku(ch, cache), privateUseWidth);
 	}
 }
 
@@ -114,21 +115,23 @@ TEST_F(CharWidthCache, CalcHankakuByFont)
 {
 	SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_LOCAL);
 	InitCharWidthCache(lf1);
+	CCharWidthCache& cache = GetCharWidthCache();
 
-	EXPECT_TRUE(WCODE::CalcHankakuByFont(L'a'));
-	EXPECT_FALSE(WCODE::CalcHankakuByFont(L'あ'));
+	EXPECT_TRUE(cache.CalcHankakuByFont(L'a'));
+	EXPECT_FALSE(cache.CalcHankakuByFont(L'あ'));
 }
 
 TEST_F(CharWidthCache, CalcPxWidthByFont)
 {
 	SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_LOCAL);
 	InitCharWidthCache(lf1);
+	CCharWidthCache& cache = GetCharWidthCache();
 
 	SIZE size;
 	GetTextExtentPoint32(dc, L"a", 1, &size);
-	EXPECT_EQ(WCODE::CalcPxWidthByFont(L'a'), size.cx);
+	EXPECT_EQ(cache.CalcPxWidthByFont(L'a'), size.cx);
 	GetTextExtentPoint32(dc, L"あ", 1, &size);
-	EXPECT_EQ(WCODE::CalcPxWidthByFont(L'あ'), size.cx);
+	EXPECT_EQ(cache.CalcPxWidthByFont(L'あ'), size.cx);
 
 	// コントロールコードの幅を普通に計算すると1pxになることがあるため、
 	// スペース・中黒の幅と比較して大きい方をとることになっている。
@@ -139,19 +142,20 @@ TEST_F(CharWidthCache, CalcPxWidthByFont)
 
 	// 理由はわからないが、NULとそれ以外で違う文字の幅を採用している。
 	GetTextExtentPoint32(dc, L"\0", 1, &size);
-	EXPECT_EQ(WCODE::CalcPxWidthByFont('\0'), std::max(size.cx, sizeOfSpace.cx));
+	EXPECT_EQ(cache.CalcPxWidthByFont('\0'), std::max(size.cx, sizeOfSpace.cx));
 	GetTextExtentPoint32(dc, L"\x01", 1, &size);
-	EXPECT_EQ(WCODE::CalcPxWidthByFont('\x01'), std::max(size.cx, sizeOfNakaguro.cx));
+	EXPECT_EQ(cache.CalcPxWidthByFont('\x01'), std::max(size.cx, sizeOfNakaguro.cx));
 }
 
 TEST_F(CharWidthCache, CalcPxWidthByFont2)
 {
 	SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_LOCAL);
 	InitCharWidthCache(lf1);
+	CCharWidthCache& cache = GetCharWidthCache();
 
 	SIZE size;
 	GetTextExtentPoint32(dc, L"\xd83c\xdf38", 2, &size);
-	EXPECT_EQ(WCODE::CalcPxWidthByFont2(L"\xd83c\xdf38"), size.cx);
+	EXPECT_EQ(cache.CalcPxWidthByFont2(L"\xd83c\xdf38"), size.cx);
 }
 
 TEST_F(CharWidthCache, FontNo)
