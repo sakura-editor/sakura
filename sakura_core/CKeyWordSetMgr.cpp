@@ -313,7 +313,7 @@ int CKeyWordSetMgr::DelKeyWord( int nIdx, int nIdx2 )
 	if( 0 >= m_nKeyWordNumArr[nIdx]	){
 		return 3;	//	登録数が0なら上の条件で引っかかるのでここには来ない？
 	}
-	int nDelKeywordLen = static_cast<int>(wcslen( m_szKeyWordArr[m_nStartIdx[nIdx] + nIdx2] ));
+	size_t nDelKeywordLen = wcslen( m_szKeyWordArr[m_nStartIdx[nIdx] + nIdx2] );
 	int  i;
 	int  endPos = m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx] - 1;
 	for( i = m_nStartIdx[nIdx] + nIdx2; i < endPos; ++i ){
