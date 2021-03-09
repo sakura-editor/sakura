@@ -443,3 +443,32 @@ TEST(file, GetIniFileNameForIO)
 	std::filesystem::remove(iniPath);
 	ASSERT_FALSE(fexist(iniPath.c_str()));
 }
+
+/*!
+	GetExtのテスト
+ */
+TEST(CFilePath, GetExt)
+{
+	CFilePath path;
+
+	// 最も単純なパターン
+	path = L"test.txt";
+	ASSERT_STREQ(L".txt", path.GetExt());
+	ASSERT_STREQ(L"txt", path.GetExt(true));
+
+	// ファイルに拡張子がないパターン
+	path = L"lib\\.NET Core\\README";
+	ASSERT_STREQ(L"", path.GetExt());
+	ASSERT_STREQ(L"", path.GetExt(true));
+
+	// 拡張子がない場合に返却されるポインタ値の確認
+	ASSERT_EQ(path.c_str() + path.Length(), path.GetExt());
+
+	// ファイルに拡張子がないパターン
+	path = L"lib/.NET Core/README";
+	ASSERT_STREQ(L"", path.GetExt());
+	ASSERT_STREQ(L"", path.GetExt(true));
+
+	// 拡張子がない場合に返却されるポインタ値の確認
+	ASSERT_EQ(path.c_str() + path.Length(), path.GetExt());
+}
