@@ -150,7 +150,7 @@ bool CColor_Quote::BeginColor(const CStringRef& cStr, int nPos)
 						}else{
 							m_tag.assign(L")\"", 2);
 						}
-						m_nCOMMENTEND = Match_QuoteStr( m_tag.c_str(), m_tag.size(), i + 1, cStr, false );
+						m_nCOMMENTEND = Match_QuoteStr( m_tag.c_str(), static_cast<int>(m_tag.size()), i + 1, cStr, false );
 						m_nColorTypeIndex = 1;
 						return true;
 					}
@@ -230,7 +230,7 @@ bool CColor_Quote::EndColor(const CStringRef& cStr, int nPos)
 			m_nCOMMENTEND = Match_Quote( m_cQuote, nPos, cStr, m_nEscapeType );
 			break;
 		case 1:
-			m_nCOMMENTEND = Match_QuoteStr( m_tag.c_str(), m_tag.size(), nPos, cStr, false );
+			m_nCOMMENTEND = Match_QuoteStr( m_tag.c_str(), static_cast<int>(m_tag.size()), nPos, cStr, false );
 			break;
 		case 2:
 			m_nCOMMENTEND = Match_Quote( m_cQuote, nPos, cStr, STRING_LITERAL_PLSQL );
