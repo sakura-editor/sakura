@@ -29,7 +29,13 @@
 
 //2007.10.02 kobake CEditViewから分離
 
+#include "CSelectLang.h"
 #include "Funccode_enum.h"	// EFunctionCode
+#include "String_define.h"
+#include "basis/SakuraBasis.h"
+#include "util/MessageBoxF.h"
+
+class CNativeW;
 
 class CConvertMediator{
 public:
