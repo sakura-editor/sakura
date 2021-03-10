@@ -73,7 +73,7 @@ const char* CJis::TABLE_JISESCDATA[] = {
 #endif
 
 /*!
-	JIS の一ブロック（エスケープシーケンスとエスケープシーケンスの間の区間）を変換 
+	JIS の一ブロック（エスケープシーケンスとエスケープシーケンスの間の区間）を変換
 
 	eMyJisesc は、MYJISESC_HANKATA か MYJISESC_ZENKAKU。
 */
@@ -131,7 +131,7 @@ int CJis::_JisToUni_block( const unsigned char* pSrc, const int nSrcLen, unsigne
 		for( ; pr < pSrc+nSrcLen-1; pr += 2 ){
 			if( IsJisZen(reinterpret_cast<const char*>(pr)) ){
 				// JIS -> SJIS
-				ctemp = _mbcjistojms( (static_cast<unsigned int>(pr[0]) << 8) | pr[1] );
+				ctemp = _mbcjistojms_j( (static_cast<unsigned int>(pr[0]) << 8) | pr[1] );
 				if( ctemp != 0 ){
 				// 変換に成功。
 					// SJIS → Unicode
@@ -328,7 +328,7 @@ int CJis::_SjisToJis_char( const unsigned char* pSrc, unsigned char* pDst, EChar
 		// JIS -> SJIS
 		ctemp_ = SjisFilter_basis( static_cast<unsigned int>(pSrc[0] << 8) | pSrc[1] );
 		ctemp_ = SjisFilter_ibm2nec( ctemp_ );
-		ctemp = _mbcjmstojis( ctemp_ );
+		ctemp = _mbcjmstojis_j( ctemp_ );
 		if( ctemp != 0 ){
 			// 変換に成功。
 			pDst[0] = static_cast<char>( (ctemp & 0x0000ff00) >> 8 );
@@ -498,8 +498,8 @@ EConvertResult CJis::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* p
 	CNativeW		cCharBuffer;
 	EConvertResult	res;
 	int				i;
-	WCHAR*			pd; 
-	unsigned char*	ps; 
+	WCHAR*			pd;
+	unsigned char*	ps;
 
 	// 2008/6/21 Uchi
 	if (psStatusbar->m_bDispUniInJis) {

@@ -84,9 +84,9 @@ inline int CEuc::_EucjpToUni_char( const unsigned char* pSrc, unsigned short* pD
 		czenkaku[0] = (pSrc[0] & 0x7f);
 		czenkaku[1] = (pSrc[1] & 0x7f);
 		// JIS → SJIS
-		ctemp = _mbcjistojms( (static_cast<unsigned int>(czenkaku[0]) << 8) | czenkaku[1] );
+		ctemp = _mbcjistojms_j( (static_cast<unsigned int>(czenkaku[0]) << 8) | czenkaku[1] );
 		if( ctemp != 0 ){
-			// NEC選定IBM拡張コードポイントををIBM拡張コードポイントにに変換
+			// NEC選定IBM拡張コードポイントをIBM拡張コードポイントに変換
 			unsigned int ctemp_ = SjisFilter_nec2ibm( ctemp );
 			ctemp = ctemp_;
 			// SJIS → Unicode
@@ -160,7 +160,7 @@ inline int CEuc::_UniToEucjp_char( const unsigned short* pSrc, unsigned char* pD
 			// SJIS -> JIS
 			unsigned int ctemp_ = SjisFilter_ibm2nec( (static_cast<unsigned int>(cbuf[0]) << 8) | cbuf[1] );
 				// < IBM拡張文字をNEC選定IBM拡張文字に変換
-			ctemp = _mbcjmstojis( ctemp_ );
+			ctemp = _mbcjmstojis_j( ctemp_ );
 			if( ctemp == 0 ){
 				berror = true;
 				pDst[0] = '?';
