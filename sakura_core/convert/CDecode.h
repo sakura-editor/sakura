@@ -30,6 +30,10 @@
 #define SAKURA_CDECODE_2E6ED248_B211_48AB_BD69_032199189323_H_
 #pragma once
 
+#include "CSelectLang.h"
+#include "String_define.h"
+#include "mem/CNativeW.h"
+
 class CDecode {
 public:
 	virtual ~CDecode() { }

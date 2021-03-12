@@ -116,6 +116,9 @@
     <ClCompile Include="test-cconvert.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-cdecode.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartEditorProcessForTest.h">
