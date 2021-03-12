@@ -1145,16 +1145,14 @@ void CViewCommander::Command_COPYDIRPATH( void )
 void CViewCommander::Command_COPYTAG( void )
 {
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
-		wchar_t	buf[ MAX_PATH + 20 ];
-
 		CLogicPoint ptColLine;
 
 		//	論理行番号を得る
 		GetDocument()->m_cLayoutMgr.LayoutToLogic( GetCaret().GetCaretLayoutPos(), &ptColLine );
 
 		/* クリップボードにデータを設定 */
-		auto_sprintf( buf, L"%s (%d,%d): ", GetDocument()->m_cDocFile.GetFilePath(), ptColLine.y+1, ptColLine.x+1 );
-		m_pCommanderView->MySetClipboardData( buf, wcslen( buf ), false );
+		std::wstring buffer = strprintf(L"%s (%d,%d): ", GetDocument()->m_cDocFile.GetFilePath(), ptColLine.y+1, ptColLine.x+1 );
+		m_pCommanderView->MySetClipboardData(buffer.c_str(), buffer.length(), false);
 	}
 	else{
 		ErrorBeep();
