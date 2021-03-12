@@ -37,18 +37,12 @@
 
 CFileExt::CFileExt()
 {
-	m_nCount = 0;
 	m_vstrFilter.resize( 1 );
 	m_vstrFilter[0] = L'\0';
 
 //	//テキストエディタとして、既定でリストに載ってほしい拡張子
 //	AppendExt( "すべてのファイル", "*" );
 //	AppendExt( "テキストファイル", "txt" );
-}
-
-CFileExt::~CFileExt()
-{
-	m_nCount = 0;
 }
 
 bool CFileExt::AppendExt( const WCHAR *pszName, const WCHAR *pszExt )
@@ -69,21 +63,20 @@ bool CFileExt::AppendExtRaw( const WCHAR *pszName, const WCHAR *pszExt )
 	info.m_sExt = pszExt;
 
 	m_vFileExtInfo.push_back(std::move(info));
-	m_nCount = static_cast<int>(m_vFileExtInfo.size());
 
 	return true;
 }
 
 const WCHAR *CFileExt::GetName( int nIndex )
 {
-	if( nIndex < 0 || nIndex >= m_nCount ) return NULL;
+	if( nIndex < 0 || nIndex >= GetCount() ) return NULL;
 
 	return m_vFileExtInfo[nIndex].m_sTypeName.c_str();
 }
 
 const WCHAR *CFileExt::GetExt( int nIndex )
 {
-	if( nIndex < 0 || nIndex >= m_nCount ) return NULL;
+	if( nIndex < 0 || nIndex >= GetCount() ) return NULL;
 
 	return m_vFileExtInfo[nIndex].m_sExt.c_str();
 }
@@ -96,7 +89,7 @@ const WCHAR *CFileExt::GetExtFilter( void )
 	/* 拡張子フィルタの作成 */
 	m_vstrFilter.resize(0);
 
-	for( i = 0; i < m_nCount; i++ )
+	for( i = 0; i < GetCount(); i++ )
 	{
 		// "%s (%s)\0%s\0"
 		work = m_vFileExtInfo[i].m_sTypeName;
@@ -111,7 +104,7 @@ const WCHAR *CFileExt::GetExtFilter( void )
 		m_vstrFilter.resize( i + work.length() );
 		wmemcpy( &m_vstrFilter[i], &work[0], work.length() );
 	}
-	if( 0 == m_nCount ){
+	if( 0 == GetCount() ){
 		m_vstrFilter.push_back( L'\0' );
 	}
 	m_vstrFilter.push_back( L'\0' );

@@ -41,7 +41,7 @@ class CFileExt
 {
 public:
 	CFileExt();
-	~CFileExt();
+	~CFileExt() = default;
 
 	bool AppendExt( const WCHAR *pszName, const WCHAR *pszExt );
 	bool AppendExtRaw( const WCHAR *pszName, const WCHAR *pszExt );
@@ -52,7 +52,7 @@ public:
 	//2回呼び出すと古いバッファが無効になることがあるのに注意
 	const WCHAR *GetExtFilter( void );
 
-	int GetCount( void ) { return m_nCount; }
+	int GetCount() const { return static_cast<int>(m_vFileExtInfo.size()); }
 
 protected:
 	// 2014.10.30 syat ConvertTypesExtToDlgExtをCDocTypeManagerに移動
@@ -65,7 +65,6 @@ private:
 		std::wstring	m_sExt;			//拡張子
 	};
 
-	int				m_nCount;
 	std::vector<SFileExtInfo>	m_vFileExtInfo;
 	std::vector<WCHAR>	m_vstrFilter;
 
