@@ -896,8 +896,8 @@ TEST(CNativeW, GetCharPrev_Bugs_Preview)
 	const auto *pText = &text[2];
 
 	// これがバグ。範囲外アドレスを返してはならない。
-	EXPECT_EQ(&text[1], CNativeW::GetCharPrev(pText, 2, pText));
+	// EXPECT_EQ(&text[1], CNativeW::GetCharPrev(pText, 2, pText));
 
 	// 対処方法 関数コメントにある仕様通りに修正する。
-	// ASSERT_EQ(&text[2], CNativeW::GetCharPrev(pText, 2, pText));
+	ASSERT_EQ(&text[2], CNativeW::GetCharPrev(pText, 2, pText));
 }

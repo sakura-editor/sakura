@@ -26,6 +26,9 @@
 #include <stdexcept>
 #include "charset/codechecker.h"
 #include "mem/CNativeW.h"
+
+#include <string_view>
+
 #include "CEol.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -446,22 +449,26 @@ const wchar_t* CNativeW::GetCharNext( const wchar_t* pData, int nDataLen, const 
 	return pNext;
 }
 
-/* ポインタで示した文字の直前にある文字の位置を返します */
-/* 直前にある文字がバッファの先頭の位置を越える場合はpDataを返します */
-const wchar_t* CNativeW::GetCharPrev( const wchar_t* pData, int nDataLen, const wchar_t* pDataCurrent )
+/*!
+	ポインタで示した文字の直前にある文字の位置を返します
+	直前にある文字がバッファの先頭の位置を越える場合はpDataを返します
+
+	@date 2008/07/06 Uchi サロゲートペア対応
+ */
+const wchar_t* CNativeW::GetCharPrev(const wchar_t* pData, size_t nDataLen, const wchar_t* pDataCurrent)
 {
-	const wchar_t* pPrev = pDataCurrent - 1;
-	if( pPrev <= pData ){
-		return pData;
-	}
-
-	// サロゲートペア対応	2008/7/6 Uchi
-	if (IsUTF16Low(*pPrev)) {
-		if (IsUTF16High(*(pPrev-1))) {
-			pPrev -= 1;
+	if (const ptrdiff_t nDataPrev = pDataCurrent - pData - 1;
+		0 < nDataPrev)
+	{
+		std::wstring_view data(pData, nDataLen);
+		if (1 < nDataPrev &&
+			IsUTF16Low(data[nDataPrev]) &&
+			IsUTF16High(data[nDataPrev - 1]))
+		{
+			return &data[nDataPrev - 1];
 		}
+		return &data[nDataPrev];
 	}
 
-	return pPrev;
-//	return ::CharPrev( pData, pDataCurrent );
+	return pData;
 }
