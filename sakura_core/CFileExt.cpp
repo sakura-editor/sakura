@@ -83,11 +83,17 @@ const WCHAR *CFileExt::GetExt( int nIndex )
 
 const WCHAR *CFileExt::GetExtFilter( void )
 {
+	CreateExtFilter(m_vstrFilter);
+	return m_vstrFilter.data();
+}
+
+void CFileExt::CreateExtFilter(std::vector<WCHAR>& output) const
+{
 	int		i;
 	std::wstring work;
 
 	/* 拡張子フィルタの作成 */
-	m_vstrFilter.resize(0);
+	output.resize(0);
 
 	for( i = 0; i < GetCount(); i++ )
 	{
@@ -100,14 +106,12 @@ const WCHAR *CFileExt::GetExtFilter( void )
 		work.append(m_vFileExtInfo[i].m_sExt);
 		work.append(L"\0", 1);
 
-		int i = (int)m_vstrFilter.size();
-		m_vstrFilter.resize( i + work.length() );
-		wmemcpy( &m_vstrFilter[i], &work[0], work.length() );
+		int pos = static_cast<int>(output.size());
+		output.resize(pos + work.length());
+		wmemcpy(&output[pos], &work[0], work.length());
 	}
 	if( 0 == GetCount() ){
-		m_vstrFilter.push_back( L'\0' );
+		output.push_back( L'\0' );
 	}
-	m_vstrFilter.push_back( L'\0' );
-
-	return &m_vstrFilter[0];
+	output.push_back( L'\0' );
 }

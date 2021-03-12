@@ -59,6 +59,7 @@ protected:
 	//bool ConvertTypesExtToDlgExt( const WCHAR *pszSrcExt, WCHAR *pszDstExt );
 
 private:
+	void CreateExtFilter(std::vector<WCHAR>& output) const;
 
 	struct SFileExtInfo {
 		std::wstring	m_sTypeName;	//名前
