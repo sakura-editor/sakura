@@ -109,6 +109,7 @@
     <ClCompile Include="test-cclipboard.cpp" />
     <ClCompile Include="test-ccommandline.cpp" />
     <ClCompile Include="test-cconvert.cpp" />
+    <ClCompile Include="test-cdecode.cpp" />
     <ClCompile Include="test-cdlgprofilemgr.cpp" />
     <ClCompile Include="test-cerrorinfo.cpp" />
     <ClCompile Include="test-clayoutint.cpp" />
