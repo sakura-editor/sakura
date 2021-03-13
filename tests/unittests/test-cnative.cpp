@@ -872,3 +872,32 @@ TEST(CNativeW, GetCharPrev)
 	// ポインタを戻した結果が範囲外なら pData を返す。
 	EXPECT_EQ(CNativeW::GetCharPrev(text, 4, text), text);
 }
+
+/*!
+ * @brief GetCharPrevの潜在バグ評価
+ */
+TEST(CNativeW, GetCharPrev_Bugs_Preview)
+{
+	// a、カラー絵文字「男性のシンボル」、x
+	constexpr wchar_t text[] = L"a\U0001F6B9x";
+
+	// text[0] = L'a'
+	// text[1] = (\U0001F6B9 の1ワード目)
+	// text[2] = (\U0001F6B9 の2ワード目)
+	// text[3] = L'x'
+
+	// textのような配列であれば問題はない
+	EXPECT_EQ(&text[0], CNativeW::GetCharPrev(text, _countof(text) - 1, text + 1));
+	EXPECT_EQ(&text[1], CNativeW::GetCharPrev(text, _countof(text) - 1, text + 2));
+	EXPECT_EQ(&text[1], CNativeW::GetCharPrev(text, _countof(text) - 1, text + 3));
+	EXPECT_EQ(&text[3], CNativeW::GetCharPrev(text, _countof(text) - 1, text + 4));
+
+	// 配列の一部を参照した、ないし、異常データを扱う場合に問題がある。
+	const auto *pText = &text[2];
+
+	// これがバグ。範囲外アドレスを返してはならない。
+	// EXPECT_EQ(&text[1], CNativeW::GetCharPrev(pText, 2, pText));
+
+	// 対処方法 関数コメントにある仕様通りに修正する。
+	ASSERT_EQ(&text[2], CNativeW::GetCharPrev(pText, 2, pText));
+}
