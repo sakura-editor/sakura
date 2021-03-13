@@ -32,6 +32,9 @@
 
 #include "StdAfx.h"
 #include "dlg/CDlgTagsMake.h"
+
+#include <Shlwapi.h>
+
 #include "env/DLLSHAREDATA.h"
 #include "func/Funccode.h"
 #include "util/shell.h"
@@ -125,12 +128,7 @@ void CDlgTagsMake::SelectFolder( HWND hwndDlg )
 	if( SelectDir( hwndDlg, LS(STR_DLGTAGMAK_SELECTDIR), szPath, szPath ) )
 	{
 		//末尾に\\マークを追加する．
-		int pos = wcslen( szPath );
-		if( pos > 0 && szPath[ pos - 1 ] != L'\\' )
-		{
-			szPath[ pos     ] = L'\\';
-			szPath[ pos + 1 ] = L'\0';
-		}
+		::PathAddBackslashW( szPath );
 
 		::DlgItem_SetText( hwndDlg, IDC_EDIT_TAG_MAKE_FOLDER, szPath );
 	}
