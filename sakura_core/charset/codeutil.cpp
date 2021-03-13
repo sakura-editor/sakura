@@ -37,9 +37,9 @@
 
 	Shift_JIS fa40～fc4b の範囲の文字は 8754～879a または ed40～eefc に
 	散在する文字に変換された後に，JISに変換されます．
-	
+
 	@param pszSrc [in] 変換する文字列へのポインタ (Shift JIS)
-	
+
 	@author すい
 	@date 2002.10.03 1文字のみ扱い，変換まで行うように変更 genta
 */
@@ -47,7 +47,7 @@ unsigned int _mbcjmstojis_ex( unsigned int nSrc, bool* pbNonroundtrip )
 {
 	unsigned int	tmpw;	/* ← int が 16 bit 以上である事を期待しています。 */
 	bool bnonrt = false;
-	
+
 	unsigned char c0 = static_cast<unsigned char>((nSrc & 0x0000ff00) >> 8);
 	unsigned char c1 = static_cast<unsigned char>(nSrc & 0x000000ff);
 
@@ -78,11 +78,46 @@ unsigned int _mbcjmstojis_ex( unsigned int nSrc, bool* pbNonroundtrip )
 			else	if( tmpw <= 0xfbfc ) {	tmpw -= 0x0d1c;	}	/* fb9c～fbfc → ee80～eee0 (蕫～髙) */
 			else{							tmpw -= 0x0d5f;	}	/* fc40～fc4b → eee1～eeec (髜～黑) */
 		}
-		return _mbcjmstojis( tmpw );
+		return _mbcjmstojis_j( tmpw );
 	}
 	return 0;
 }
 #endif
+
+static _locale_t ja_locale = nullptr;
+
+static void init_ja_locale()
+{
+	if (ja_locale == nullptr) {
+		ja_locale = _create_locale(LC_ALL, "Japanese_Japan.932");
+	}
+}
+
+/*!
+	@brief 常に日本語ロケールを使うSJIS→JIS変換
+
+	SJISコードをJISに変換する．
+
+	@param c [in] 変換する文字 (Shift JIS)
+*/
+unsigned int _mbcjmstojis_j( unsigned int c )
+{
+	init_ja_locale();
+	return _mbcjmstojis_l(c, ja_locale);
+}
+
+/*!
+	@brief 常に日本語ロケールを使うJIS→SJIS変換
+
+	JISコードをSJISに変換する．
+
+	@param c [in] 変換する文字 (JIS)
+*/
+unsigned int _mbcjistojms_j( unsigned int c )
+{
+	init_ja_locale();
+	return _mbcjistojms_l(c, ja_locale);
+}
 
 /*
 	判別テーブル   WinAPI 関数 WideCharToMultiByte の特殊な変換（相互変換できない変換）か

@@ -34,6 +34,8 @@
 //	2008.11.10 引数と戻り値の型を _mbcjmstojis に似せる
 unsigned int _mbcjmstojis_ex( unsigned int );
 #endif
+unsigned int _mbcjmstojis_j( unsigned int );
+unsigned int _mbcjistojms_j( unsigned int );
 
 unsigned int __fastcall SjisFilter_basis( const unsigned int );
 unsigned int __fastcall SjisFilter_ibm2nec( const unsigned int );
