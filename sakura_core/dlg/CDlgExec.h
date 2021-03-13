@@ -34,7 +34,7 @@ public:
 	*/
 	int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);	/* モーダルダイアログの表示 */
 
-	WCHAR	m_szCommand[1024 + 1];	/* コマンドライン */
+	WCHAR	m_szCommand[MAX_CMDLEN];	/* コマンドライン */
 	SFilePath	m_szCurDir;	/* カレントディレクトリ */
 	bool	m_bEditable;			/* 編集ウィンドウへの入力可能 */	// 2009.02.21 ryoji
 
