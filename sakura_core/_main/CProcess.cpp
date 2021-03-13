@@ -35,7 +35,6 @@ CProcess::CProcess(
 , m_pfnMiniDumpWriteDump(NULL)
 #endif
 {
-	m_pcShareData = CShareData::getInstance();
 }
 
 /*!
@@ -43,7 +42,7 @@ CProcess::CProcess(
  */
 std::filesystem::path CProcess::GetIniFileName() const
 {
-	if (m_pcShareData->IsPrivateSettings()) {
+	if (m_cShareData.IsPrivateSettings()) {
 		const DLLSHAREDATA *pShareData = &GetDllShareData();
 		return pShareData->m_szPrivateIniFile.c_str();
 	}
@@ -161,5 +160,5 @@ int CProcess::WriteDump( PEXCEPTION_POINTERS pExceptPtrs )
 */
 void CProcess::RefreshString()
 {
-	m_pcShareData->RefreshString();
+	m_cShareData.RefreshString();
 }
