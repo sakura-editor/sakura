@@ -37,9 +37,8 @@
 /*!
  * @brief コマンドラインパーサ クラス
  */
-class CCommandLine : public TSingleton<CCommandLine> {
-	friend class TSingleton<CCommandLine>;
-protected:
+class CCommandLine : public TInstanceHolder<CCommandLine> {
+public:
 	CCommandLine() noexcept;
 
 private:

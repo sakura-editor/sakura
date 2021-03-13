@@ -130,8 +130,9 @@ TEST(file, GetIniFileName_OutOfProcess)
  */
 TEST(file, GetIniFileName_InProcessDefaultProfileUnInitialized)
 {
-	// コマンドラインのグローバル変数をセットする
-	auto pCommandLine = CCommandLine::getInstance();
+	// コマンドラインのインスタンスを用意する
+	CCommandLine cCommandLine;
+	auto pCommandLine = &cCommandLine;
 	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
 
 	// プロセスのインスタンスを用意する
@@ -140,9 +141,6 @@ TEST(file, GetIniFileName_InProcessDefaultProfileUnInitialized)
 	// exeファイルの拡張子をiniに変えたパスが返る
 	auto path = GetExeFileName().replace_extension(L".ini");
 	ASSERT_STREQ(path.c_str(), GetIniFileName().c_str());
-
-	// コマンドラインのグローバル変数を元に戻す
-	pCommandLine->ParseCommandLine(L"", false);
 }
 
 /*!
@@ -150,8 +148,9 @@ TEST(file, GetIniFileName_InProcessDefaultProfileUnInitialized)
  */
 TEST(file, GetIniFileName_InProcessNamedProfileUnInitialized)
 {
-	// コマンドラインのグローバル変数をセットする
-	auto pCommandLine = CCommandLine::getInstance();
+	// コマンドラインのインスタンスを用意する
+	CCommandLine cCommandLine;
+	auto pCommandLine = &cCommandLine;
 	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
 
 	// プロセスのインスタンスを用意する
@@ -161,9 +160,6 @@ TEST(file, GetIniFileName_InProcessNamedProfileUnInitialized)
 	auto iniPath = GetExeFileName().replace_extension(L".ini");
 	auto path = iniPath.parent_path().append(L"profile1").append(iniPath.filename().c_str());
 	ASSERT_STREQ(path.c_str(), GetIniFileName().c_str());
-
-	// コマンドラインのグローバル変数を元に戻す
-	pCommandLine->ParseCommandLine(L"", false);
 }
 
 /*!
@@ -171,8 +167,9 @@ TEST(file, GetIniFileName_InProcessNamedProfileUnInitialized)
  */
 TEST(file, GetIniFileName_PrivateRoamingAppData)
 {
-	// コマンドラインのグローバル変数をセットする
-	auto pCommandLine = CCommandLine::getInstance();
+	// コマンドラインのインスタンスを用意する
+	CCommandLine cCommandLine;
+	auto pCommandLine = &cCommandLine;
 	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
 
 	// プロセスのインスタンスを用意する
@@ -198,9 +195,6 @@ TEST(file, GetIniFileName_PrivateRoamingAppData)
 	// テスト実施
 	ASSERT_STREQ(expected.c_str(), GetIniFileName().c_str());
 
-	// コマンドラインのグローバル変数を元に戻す
-	pCommandLine->ParseCommandLine(L"", false);
-
 	// INIファイルを削除する
 	std::filesystem::remove(exeIniPath);
 
@@ -213,8 +207,9 @@ TEST(file, GetIniFileName_PrivateRoamingAppData)
  */
 TEST(file, GetIniFileName_PrivateDesktop)
 {
-	// コマンドラインのグローバル変数をセットする
-	auto pCommandLine = CCommandLine::getInstance();
+	// コマンドラインのインスタンスを用意する
+	CCommandLine cCommandLine;
+	auto pCommandLine = &cCommandLine;
 	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
 
 	// プロセスのインスタンスを用意する
@@ -240,9 +235,6 @@ TEST(file, GetIniFileName_PrivateDesktop)
 	// テスト実施
 	ASSERT_STREQ(expected.c_str(), GetIniFileName().c_str());
 
-	// コマンドラインのグローバル変数を元に戻す
-	pCommandLine->ParseCommandLine(L"", false);
-
 	// INIファイルを削除する
 	std::filesystem::remove(exeIniPath);
 
@@ -255,8 +247,9 @@ TEST(file, GetIniFileName_PrivateDesktop)
  */
 TEST(file, GetIniFileName_PrivateProfile)
 {
-	// コマンドラインのグローバル変数をセットする
-	auto pCommandLine = CCommandLine::getInstance();
+	// コマンドラインのインスタンスを用意する
+	CCommandLine cCommandLine;
+	auto pCommandLine = &cCommandLine;
 	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
 
 	// プロセスのインスタンスを用意する
@@ -282,9 +275,6 @@ TEST(file, GetIniFileName_PrivateProfile)
 	// テスト実施
 	ASSERT_STREQ(expected.c_str(), GetIniFileName().c_str());
 
-	// コマンドラインのグローバル変数を元に戻す
-	pCommandLine->ParseCommandLine(L"", false);
-
 	// INIファイルを削除する
 	std::filesystem::remove(exeIniPath);
 
@@ -297,8 +287,9 @@ TEST(file, GetIniFileName_PrivateProfile)
  */
 TEST(file, GetIniFileName_PrivateDocument)
 {
-	// コマンドラインのグローバル変数をセットする
-	auto pCommandLine = CCommandLine::getInstance();
+	// コマンドラインのインスタンスを用意する
+	CCommandLine cCommandLine;
+	auto pCommandLine = &cCommandLine;
 	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
 
 	// プロセスのインスタンスを用意する
@@ -323,9 +314,6 @@ TEST(file, GetIniFileName_PrivateDocument)
 
 	// テスト実施
 	ASSERT_STREQ(expected.c_str(), GetIniFileName().c_str());
-
-	// コマンドラインのグローバル変数を元に戻す
-	pCommandLine->ParseCommandLine(L"", false);
 
 	// INIファイルを削除する
 	std::filesystem::remove(exeIniPath);
@@ -371,8 +359,9 @@ void EnsureDirectoryExist(const std::wstring& strProfileName);
  */
 TEST(file, GetInidirOrExedir)
 {
-	// コマンドラインのグローバル変数をセットする
-	auto pCommandLine = CCommandLine::getInstance();
+	// コマンドラインのインスタンスを用意する
+	CCommandLine cCommandLine;
+	auto pCommandLine = &cCommandLine;
 	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
 
 	// プロセスのインスタンスを用意する
@@ -412,9 +401,6 @@ TEST(file, GetInidirOrExedir)
 	// 両方ないときはINI基準のパスが変える
 	GetInidirOrExedir(buf.data(), filename, true);
 	ASSERT_STREQ(iniBasePath.c_str(), buf.data());
-
-	// コマンドラインのグローバル変数を元に戻す
-	pCommandLine->ParseCommandLine(L"", false);
 }
 
 std::filesystem::path GetIniFileNameForIO(bool bWrite);

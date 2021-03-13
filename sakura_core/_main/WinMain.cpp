@@ -23,6 +23,7 @@
 #include "StdAfx.h"
 #include <Ole2.h>
 #include <locale.h>
+#include "_main/CCommandLine.h"
 #include "CProcessFactory.h"
 #include "CProcess.h"
 #include "util/os.h"
@@ -94,6 +95,9 @@ int WINAPI wWinMain(
 	//開発情報
 	DEBUG_TRACE(L"-- -- WinMain -- --\n");
 	DEBUG_TRACE(L"sizeof(DLLSHAREDATA) = %d\n",sizeof(DLLSHAREDATA));
+
+	//コマンドラインクラスのインスタンスを確保する
+	CCommandLine cCommandLine;
 
 	//プロセスの生成とメッセージループ
 	CProcessFactory aFactory;
