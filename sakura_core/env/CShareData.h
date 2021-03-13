@@ -59,13 +59,12 @@ struct STypeConfig;
 
 	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 */
-class CShareData : public TSingleton<CShareData>
+class CShareData : public TSingleInstance<CShareData>
 {
-	friend class TSingleton<CShareData>;
+public:
 	CShareData();
 	~CShareData();
 
-public:
 	/*
 	||  Attributes & Operations
 	*/
