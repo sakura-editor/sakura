@@ -93,8 +93,8 @@ protected:
 		// テスト用プロファイル名
 		const std::wstring_view profileName(GetParam());
 
-		// コマンドラインのグローバル変数をセットする
-		auto &commandLine = *CCommandLine::getInstance();
+		// コマンドラインのインスタンスを用意する
+		CCommandLine commandLine;
 		const auto strCommandLine = strprintf(LR"(-PROF="%s")", profileName.data());
 		commandLine.ParseCommandLine(strCommandLine.data(), false);
 
@@ -108,9 +108,6 @@ protected:
 		if (fexist(iniPath.c_str())) {
 			std::filesystem::remove(iniPath);
 		}
-
-		// コマンドラインのグローバル変数を元に戻す
-		commandLine.ParseCommandLine(L"", false);
 	}
 
 	/*!
