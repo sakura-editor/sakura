@@ -157,7 +157,7 @@ void CDlgExec::SetData( void )
 	int nOpt;
 	hwndCombo = GetItemHwnd( IDC_COMBO_CODE_GET );
 	nOpt = m_pShareData->m_nExecFlgOpt & 0x88;
-	for( i = 0; _countof(codeTable1); i++ ){
+	for( i = 0; i < _countof(codeTable1); i++ ){
 		if( codeTable1[i] == nOpt ){
 			Combo_SetCurSel( hwndCombo, i );
 			break;
@@ -165,7 +165,7 @@ void CDlgExec::SetData( void )
 	}
 	hwndCombo = GetItemHwnd( IDC_COMBO_CODE_SEND );
 	nOpt = m_pShareData->m_nExecFlgOpt & 0x110;
-	for( i = 0; _countof(codeTable2); i++ ){
+	for( i = 0; i < _countof(codeTable2); i++ ){
 		if( codeTable2[i] == nOpt ){
 			Combo_SetCurSel( hwndCombo, i );
 			break;
