@@ -913,9 +913,9 @@ LPVOID CDlgGrep::GetHelpIdTable(void)
 static void SetGrepFolder( HWND hwndCtrl, LPCWSTR folder )
 {
 	if( wcschr( folder, L';') ){
-		CNativeW strQuoteFolder;
-		strQuoteFolder.AppendStringF(L"\"%s\"", folder);
-		::SetWindowText( hwndCtrl, strQuoteFolder.GetStringPtr() );
+		std::wstring strQuoteFolder;
+		strQuoteFolder = std::wstring(L"\"") + folder + std::wstring(L"\"");
+		::SetWindowText( hwndCtrl, strQuoteFolder.c_str() );
 	}else{
 		::SetWindowText( hwndCtrl, folder );
 	}
