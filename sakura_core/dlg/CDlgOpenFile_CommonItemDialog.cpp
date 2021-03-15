@@ -77,7 +77,7 @@ struct CDlgOpenFile_CommonItemDialog final
 
 	DLLSHAREDATA*	m_pShareData;
 
-	SFilePath		m_szDefaultWildCard;	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
+	std::wstring	m_strDefaultWildCard;	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 	SFilePath		m_szInitialDir;			/* 「開く」での初期ディレクトリ */
 
 	std::vector<LPCWSTR>	m_vMRU;
@@ -416,7 +416,7 @@ CDlgOpenFile_CommonItemDialog::CDlgOpenFile_CommonItemDialog()
 	wcscpy( m_szInitialDir, szDrive );
 	wcscat( m_szInitialDir, szDir );
 
-	wcscpy( m_szDefaultWildCard, L"*.*" );	/*「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
+	m_strDefaultWildCard = L"*.*";	/*「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 
 	return;
 }
@@ -435,7 +435,7 @@ void CDlgOpenFile_CommonItemDialog::Create(
 
 	/* ユーザー定義ワイルドカード（保存時の拡張子補完でも使用される） */
 	if( NULL != pszUserWildCard ){
-		wcscpy( m_szDefaultWildCard, pszUserWildCard );
+		m_strDefaultWildCard = pszUserWildCard;
 	}
 
 	/* 「開く」での初期フォルダ */
@@ -465,7 +465,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 	strs.reserve(8);
 
 	strs.push_back(LS(STR_DLGOPNFL_EXTNAME1));
-	specs.push_back(COMDLG_FILTERSPEC{strs.back().c_str(), m_szDefaultWildCard});
+	specs.push_back(COMDLG_FILTERSPEC{strs.back().c_str(), m_strDefaultWildCard.c_str()});
 
 	switch( eAddFilter ){
 	case EFITER_TEXT:
@@ -484,7 +484,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 		break;
 	}
 
-	if( 0 != wcscmp(m_szDefaultWildCard, L"*.*") ){
+	if( 0 != wcscmp(m_strDefaultWildCard.c_str(), L"*.*") ){
 		strs.push_back(LS(STR_DLGOPNFL_EXTNAME3));
 		specs.push_back(COMDLG_FILTERSPEC{strs.back().c_str(), L"*.*"});
 	}
@@ -747,7 +747,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl1(
 	strs[1] = LS(STR_DLGOPNFL_EXTNAME2);
 	strs[2] = LS(STR_DLGOPNFL_EXTNAME3);
 	specs[0].pszName = strs[0].c_str();
-	specs[0].pszSpec = m_szDefaultWildCard;
+	specs[0].pszSpec = m_strDefaultWildCard.c_str();
 	specs[1].pszName = strs[1].c_str();
 	specs[1].pszSpec = L"*.txt";
 	specs[2].pszName = strs[2].c_str();
