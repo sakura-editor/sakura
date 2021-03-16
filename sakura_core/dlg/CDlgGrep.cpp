@@ -913,11 +913,9 @@ LPVOID CDlgGrep::GetHelpIdTable(void)
 static void SetGrepFolder( HWND hwndCtrl, LPCWSTR folder )
 {
 	if( wcschr( folder, L';') ){
-		WCHAR szQuoteFolder[MAX_PATH];
-		szQuoteFolder[0] = L'"';
-		wcscpy( szQuoteFolder + 1, folder );
-		wcscat( szQuoteFolder, L"\"" );
-		::SetWindowText( hwndCtrl, szQuoteFolder );
+		std::wstring strQuoteFolder;
+		strQuoteFolder = std::wstring(L"\"") + folder + std::wstring(L"\"");
+		::SetWindowText( hwndCtrl, strQuoteFolder.c_str() );
 	}else{
 		::SetWindowText( hwndCtrl, folder );
 	}
