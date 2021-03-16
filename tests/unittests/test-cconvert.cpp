@@ -23,6 +23,7 @@
 */
 
 #include <gtest/gtest.h>
+#include "charset/charcode.h"
 #include "convert/CConvert.h"
 #include "convert/CConvert_HaneisuToZeneisu.h"
 #include "convert/CConvert_HankataToZenhira.h"
@@ -329,34 +330,41 @@ TEST(CConvert, TabToSpace)
 
 TEST(CConvert, SpaceToTab)
 {
+	class FakeCache : public CCharWidthCache {
+	public:
+		bool CalcHankakuByFont(wchar_t ch) override {
+			return ch != L'あ';
+		}
+	} cache;
+
 	CNativeW actual;
 	CNativeW expected;
 
 	actual.SetString(L"");
-	EXPECT_FALSE(CConvert_SpaceToTab(4, 0, false).DoConvert(&actual));
+	EXPECT_FALSE(CConvert_SpaceToTab(4, 0, false, cache).DoConvert(&actual));
 
 	// 空白をタブに変換
 	actual.SetString(L"        ");
 	expected.SetString(L"\t\t");
-	EXPECT_TRUE(CConvert_SpaceToTab(4, 0, false).DoConvert(&actual));
+	EXPECT_TRUE(CConvert_SpaceToTab(4, 0, false, cache).DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// タブは変換しない
 	actual.SetString(L"\t\t");
 	expected.SetString(L"\t\t");
-	EXPECT_TRUE(CConvert_SpaceToTab(4, 0, false).DoConvert(&actual));
+	EXPECT_TRUE(CConvert_SpaceToTab(4, 0, false, cache).DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// 空白の数がタブ幅より少ない場合は変換しない
 	actual.SetString(L"  ");
 	expected.SetString(L"  ");
-	EXPECT_TRUE(CConvert_SpaceToTab(4, 0, false).DoConvert(&actual));
+	EXPECT_TRUE(CConvert_SpaceToTab(4, 0, false, cache).DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// 文字と空白の混在
 	actual.SetString(L" aあ     b ");
 	expected.SetString(L" aあ\t b ");
-	EXPECT_TRUE(CConvert_SpaceToTab(8, 0, false).DoConvert(&actual));
+	EXPECT_TRUE(CConvert_SpaceToTab(8, 0, false, cache).DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 }
 

@@ -29,10 +29,13 @@
 
 #include "CConvert.h"
 
+class CCharWidthCache;
+
 class CConvert_SpaceToTab final : public CConvert{
 public:
-	CConvert_SpaceToTab(int nTabWidth, int nStartColumn, bool bExtEol)
-	: m_nTabWidth(nTabWidth), m_nStartColumn(nStartColumn), m_bExtEol(bExtEol)
+	CConvert_SpaceToTab(int nTabWidth, int nStartColumn, bool bExtEol, CCharWidthCache& cache)
+		: m_nTabWidth(nTabWidth), m_nStartColumn(nStartColumn),
+		  m_bExtEol(bExtEol), m_cCache(cache)
 	{
 	}
 
@@ -42,5 +45,6 @@ private:
 	int m_nTabWidth;
 	int m_nStartColumn;
 	bool m_bExtEol;
+	CCharWidthCache& m_cCache;
 };
 #endif /* SAKURA_CCONVERT_SPACETOTAB_AA8D9341_7190_4332_AA23_C0D9AA4DC8D0_H_ */

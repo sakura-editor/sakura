@@ -792,7 +792,7 @@ TEST(CNativeW, GetKetaOfChar)
 	// 文字が全角なら2を返す。
 	class FakeCache : public CCharWidthCache {
 	public:
-		bool CalcHankakuByFont(wchar_t c) const override { return false; }
+		bool CalcHankakuByFont(wchar_t c) override { return false; }
 	} cache;
 	EXPECT_EQ(CNativeW::GetKetaOfChar(L"あ", 1, 0, cache), 2);
 }

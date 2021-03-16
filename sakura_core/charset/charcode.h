@@ -248,7 +248,7 @@ public:
 	[[nodiscard]] bool GetMultiFont() const { return m_bMultiFont; }
 
 	//!文字が半角かどうかを取得(DLLSHARE/フォント依存)
-	virtual bool CalcHankakuByFont(wchar_t c) const;
+	virtual bool CalcHankakuByFont(wchar_t c);
 	//!文字のpx幅を取得(DLLSHARE/フォント依存)
 	virtual int CalcPxWidthByFont(wchar_t c);
 	//!文字のpx幅を取得(DLLSHARE/フォント依存)
@@ -280,9 +280,11 @@ void InitCharWidthCacheFromDC(const LOGFONT* lfs, ECharWidthFontMode fMode, HDC 
 
 namespace WCODE {
 	//!半角文字(縦長長方形)かどうか判定
-	bool IsHankaku(wchar_t wc, const CCharWidthCache& cache = GetCharWidthCache());
+	bool IsHankaku(wchar_t wc, CCharWidthCache& cache = GetCharWidthCache());
 	//!全角文字(正方形)かどうか判定
-	inline bool IsZenkaku(wchar_t wc) { return !IsHankaku(wc); }
+	inline bool IsZenkaku(wchar_t wc, CCharWidthCache& cache = GetCharWidthCache()) {
+		return !IsHankaku(wc, cache);
+	}
 }
 
 #endif /* SAKURA_CHARCODE_4C34C669_0BAB_441A_9B1D_2B9AC1895380_H_ */

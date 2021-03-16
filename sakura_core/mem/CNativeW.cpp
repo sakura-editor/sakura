@@ -374,7 +374,7 @@ CLogicInt CNativeW::GetSizeOfChar( const wchar_t* pData, int nDataLen, int nIdx 
 }
 
 //! 指定した位置の文字が半角何個分かを返す
-CKetaXInt CNativeW::GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx, const CCharWidthCache& cache)
+CKetaXInt CNativeW::GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx, CCharWidthCache& cache)
 {
 	//文字列範囲外なら 0
 	if( nIdx >= nDataLen )
