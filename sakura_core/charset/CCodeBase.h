@@ -27,6 +27,8 @@
 #define SAKURA_CCODEBASE_1AB194FB_933C_495E_A3A3_62E117C72644_H_
 #pragma once
 
+#include "mem/CNativeW.h"
+
 //定数
 enum EConvertResult{
 	RESULT_COMPLETE, //!< データを失うことなく変換が完了した。
@@ -34,8 +36,6 @@ enum EConvertResult{
 	RESULT_FAILURE,  //!< 何らかの原因により失敗した。
 };
 
-class CMemory;
-class CNativeW;
 struct CommonSetting_Statusbar;
 enum EEolType : char;
 
