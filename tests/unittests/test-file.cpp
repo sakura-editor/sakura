@@ -458,3 +458,24 @@ TEST(CFilePath, GetExt)
 	// 拡張子がない場合に返却されるポインタ値の確認
 	ASSERT_EQ(path.c_str() + path.Length(), path.GetExt());
 }
+
+/*!
+	CFileNameManager::GetFilePathFormatのテスト
+ */
+TEST(CFileNameManager, GetFilePathFormat)
+{
+	// バッファ
+	std::wstring strBuf;
+
+	// 十分な大きさのバッファを指定
+	strBuf = std::wstring(50, L'x');
+	ASSERT_STREQ(LR"(C:\テンポラリ\test.txt)", CFileNameManager::GetFilePathFormat(LR"(C:\%Temp%\test.txt)", strBuf.data(), strBuf.size() + 1, L"%Temp%", L"テンポラリ"));
+
+	// バッファ不足（パターンに一致した部分が切り捨てられる）
+	strBuf = std::wstring(6, L'x');
+	ASSERT_STREQ(LR"(C:\テンポ)", CFileNameManager::GetFilePathFormat(LR"(C:\%Temp%\test.txt)", strBuf.data(), strBuf.size() + 1, L"%Temp%", L"テンポラリ"));
+
+	// バッファ不足（パターンに一致しない部分が切り捨てられる）
+	strBuf = std::wstring(15, L'x');
+	ASSERT_STREQ(LR"(C:\テンポラリ\test.t)", CFileNameManager::GetFilePathFormat(LR"(C:\%Temp%\test.txt)", strBuf.data(), strBuf.size() + 1, L"%Temp%", L"テンポラリ"));
+}
