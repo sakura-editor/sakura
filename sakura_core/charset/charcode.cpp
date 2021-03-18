@@ -50,7 +50,7 @@ namespace WCODE
 	bool CalcHankakuByFont(wchar_t);
 
 	//2007.08.30 kobake 追加
-	bool IsHankaku(wchar_t wc, const CCharWidthCache& cache)
+	bool IsHankaku(wchar_t wc, CCharWidthCache& cache)
 	{
 		//※ほぼ未検証。ロジックが確定したらインライン化すると良い。
 
@@ -165,9 +165,9 @@ void CCharWidthCache::Clear()
 	m_pCache->m_nCharWidthCacheTest=0x12345678;
 }
 
-bool CCharWidthCache::CalcHankakuByFont(wchar_t c) const
+bool CCharWidthCache::CalcHankakuByFont(wchar_t c)
 {
-	return QueryPixelWidth(c) <= m_han_size.cx;
+	return CalcPxWidthByFont(c) <= m_han_size.cx;
 }
 
 int CCharWidthCache::QueryPixelWidth(wchar_t c) const

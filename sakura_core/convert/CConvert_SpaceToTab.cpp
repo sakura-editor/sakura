@@ -100,7 +100,7 @@ bool CConvert_SpaceToTab::DoConvert(CNativeW* pcData)
 						}
 					}
 					nPosX++;
-					if(WCODE::IsZenkaku(pLine[i])) nPosX++;		//全角文字ずれ対応 2008.10.17 matsumo
+					if(WCODE::IsZenkaku(pLine[i], m_cCache)) nPosX++;	//全角文字ずれ対応 2008.10.17 matsumo
 					pDes[nPosDes] = pLine[i];
 					nPosDes++;
 					bSpace = FALSE;
