@@ -107,6 +107,7 @@
   <ItemGroup>
     <ClCompile Include="code-main.cpp" />
     <ClCompile Include="test-cclipboard.cpp" />
+    <ClCompile Include="test-ccodebase.cpp" />
     <ClCompile Include="test-ccommandline.cpp" />
     <ClCompile Include="test-cconvert.cpp" />
     <ClCompile Include="test-cdecode.cpp" />

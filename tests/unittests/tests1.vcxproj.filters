@@ -119,6 +119,9 @@
     <ClCompile Include="test-cdecode.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-ccodebase.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartEditorProcessForTest.h">
