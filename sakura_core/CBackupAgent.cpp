@@ -502,10 +502,8 @@ bool CBackupAgent::FormatBackUpPath(
 							if (STRUNCATE == wcsncat_s(szNewPath, newPathCount, q2, _TRUNCATE)) {
 								return false;
 							}
-							if( folders[*q-L'0'] != 0 ){
-								if (STRUNCATE == wcsncat_s(szNewPath, newPathCount, folders[*q - L'0'], _TRUNCATE)) {
-									return false;
-								}
+							if (folders[*q-L'0'] != 0 && STRUNCATE == wcsncat_s(szNewPath, newPathCount, folders[*q - L'0'], _TRUNCATE)) {
+								return false;
 							}
 							q2 = q+1;
 						}
