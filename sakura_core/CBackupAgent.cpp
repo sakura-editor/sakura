@@ -499,25 +499,20 @@ bool CBackupAgent::FormatBackUpPath(
 						}
 						if( isdigit(*q) ){
 							q[-1] = L'\0';
-							wcscat( szNewPath, q2 );
-//							if( newPathCount <  auto_strlcat( szNewPath, q2, newPathCount ) ){
-//								return false;
-//							}
-							if( folders[*q-L'0'] != 0 ){
-								wcscat( szNewPath, folders[*q-L'0'] );
-//								if( newPathCount < auto_strlcat( szNewPath, folders[*q-L'0'], newPathCount ) ){
-//									return false;
-//								}
+							if (STRUNCATE == wcsncat_s(szNewPath, newPathCount, q2, _TRUNCATE)) {
+								return false;
+							}
+							if (folders[*q-L'0'] != nullptr && STRUNCATE == wcsncat_s(szNewPath, newPathCount, folders[*q - L'0'], _TRUNCATE)) {
+								return false;
 							}
 							q2 = q+1;
 						}
 					}
 					++q;
 				}
-				wcscat( szNewPath, q2 );
-//				if( newPathCount < auto_strlcat( szNewPath, q2, newPathCount ) ){
-//					return false;
-//				}
+				if (STRUNCATE == wcsncat_s(szNewPath, newPathCount, q2, _TRUNCATE)) {
+					return false;
+				}
 			}
 		}
 		{
