@@ -774,8 +774,8 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					if( nMode2 == M2_NORMAL && C_IsOperator(szWordPrev, nLen) ){
 						// 演算子のオペレータだった operator ""i
 						if( nLen + 1 < _countof(szWordPrev) ){
-							szWordPrev[nLen] = pLine[i];
-							szWordPrev[nLen + 1] = L'\0';
+							const wchar_t szOperator[] = { pLine[i], 0 };
+							::wcscat_s( szWordPrev, szOperator );
 						}
 						nMode2 = M2_OPERATOR_WORD;
 					}else{
@@ -1029,8 +1029,8 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					if( nMode2 == M2_NORMAL && C_IsOperator(szWordPrev, nLen) ){
 						// 演算子のオペレータだった operator []
 						if( nLen + 1 < _countof(szWordPrev) ){
-							szWordPrev[nLen] = pLine[i];
-							szWordPrev[nLen + 1] = L'\0';
+							const wchar_t szOperator[] = { pLine[i], 0 };
+							::wcscat_s( szWordPrev, szOperator );
 						}
 						nMode2 = M2_OPERATOR_WORD;
 					}else
