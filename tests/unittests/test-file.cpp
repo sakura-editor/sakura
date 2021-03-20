@@ -458,3 +458,44 @@ TEST(CFilePath, GetExt)
 	// 拡張子がない場合に返却されるポインタ値の確認
 	ASSERT_EQ(path.c_str() + path.Length(), path.GetExt());
 }
+
+/*!
+	CFileNameManager::GetFilePathFormatのテスト
+ */
+TEST(CFileNameManager, GetFilePathFormat)
+{
+	// バッファ
+	std::wstring strBuf;
+
+	// 十分な大きさのバッファを指定
+	strBuf = std::wstring(50, L'x');
+	ASSERT_STREQ(LR"(C:\テンポラリ\test.txt)", CFileNameManager::GetFilePathFormat(LR"(C:\%Temp%\test.txt)", strBuf.data(), strBuf.size() + 1, L"%Temp%", L"テンポラリ"));
+
+	// バッファ不足（パターンに一致した部分が切り捨てられる）
+	strBuf = std::wstring(6, L'x');
+	ASSERT_STREQ(LR"(C:\テンポ)", CFileNameManager::GetFilePathFormat(LR"(C:\%Temp%\test.txt)", strBuf.data(), strBuf.size() + 1, L"%Temp%", L"テンポラリ"));
+
+	// バッファ不足（パターンに一致しない部分が切り捨てられる）
+	strBuf = std::wstring(15, L'x');
+	ASSERT_STREQ(LR"(C:\テンポラリ\test.t)", CFileNameManager::GetFilePathFormat(LR"(C:\%Temp%\test.txt)", strBuf.data(), strBuf.size() + 1, L"%Temp%", L"テンポラリ"));
+
+	// ソースが部分文字列（十分な大きさのバッファを指定）
+	strBuf = std::wstring(50, L'x');
+	ASSERT_STREQ(LR"(C:\テンポラリ\test.txt)", CFileNameManager::GetFilePathFormat(std::wstring_view(LR"(C:\%Temp%\test.txt.bak)", 18), strBuf.data(), strBuf.size() + 1, L"%Temp%", L"テンポラリ"));
+
+	// ソースが部分文字列（十分な大きさのバッファを指定）
+	strBuf = std::wstring(50, L'x');
+	ASSERT_STREQ(LR"(C:\test.txt\テンポラリ)", CFileNameManager::GetFilePathFormat(std::wstring_view(LR"(C:\test.txt\%Temp%.bak)", 18), strBuf.data(), strBuf.size() + 1, L"%Temp%", L"テンポラリ"));
+
+	// ソースが部分文字列（置換文字が1文字アウト、十分な大きさのバッファを指定）
+	strBuf = std::wstring(50, L'x');
+	ASSERT_STREQ(LR"(C:\test.txt\%Temp)", CFileNameManager::GetFilePathFormat(std::wstring_view(LR"(C:\test.txt\%Temp%.bak)", 17), strBuf.data(), strBuf.size() + 1, L"%Temp%", L"テンポラリ"));
+
+	// 置換対象が部分文字列（十分な大きさのバッファを指定）
+	strBuf = std::wstring(50, L'x');
+	ASSERT_STREQ(LR"(C:\テンポラリ\test.txt)", CFileNameManager::GetFilePathFormat(LR"(C:\%Temp%\test.txt)", strBuf.data(), strBuf.size() + 1, std::wstring_view(LR"(%Temp%\)", 6), L"テンポラリ"));
+
+	// 置換先が部分文字列（十分な大きさのバッファを指定）
+	strBuf = std::wstring(50, L'x');
+	ASSERT_STREQ(LR"(C:\テンポラリ\test.txt)", CFileNameManager::GetFilePathFormat(LR"(C:\%Temp%\test.txt)", strBuf.data(), strBuf.size() + 1, L"%Temp%", std::wstring_view(L"テンポラリってる", 5)));
+}

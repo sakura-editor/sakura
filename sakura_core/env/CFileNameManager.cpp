@@ -119,50 +119,27 @@ int CFileNameManager::TransformFileName_MakeCache( void ){
 	@date 2002.11.27 Moca 新規作成
 	@note 大小文字を区別しない。nDestLenに達したときは後ろを切り捨てられる
 */
-LPCWSTR CFileNameManager::GetFilePathFormat( LPCWSTR pszSrc, LPWSTR pszDest, int nDestLen, LPCWSTR pszFrom, LPCWSTR pszTo )
+LPCWSTR CFileNameManager::GetFilePathFormat( std::wstring_view strSrc, LPWSTR pszDest, size_t nDestLen, std::wstring_view strFrom, std::wstring_view strTo )
 {
-	int i, j;
-	int nSrcLen;
-	int nFromLen, nToLen;
-	int nCopy;
-
-	nSrcLen  = wcslen( pszSrc );
-	nFromLen = wcslen( pszFrom );
-	nToLen   = wcslen( pszTo );
-
-	nDestLen--;
-
-	for( i = 0, j = 0; i < nSrcLen && j < nDestLen; i++ ){
-#if defined(_MBCS)
-		if( 0 == _strnicmp( &pszSrc[i], pszFrom, nFromLen ) )
-#else
-		if( 0 == _wcsnicmp( &pszSrc[i], pszFrom, nFromLen ) )
-#endif
-		{
-			nCopy = t_min( nToLen, nDestLen - j );
-			memcpy( &pszDest[j], pszTo, nCopy * sizeof( WCHAR ) );
-			j += nCopy;
-			i += nFromLen - 1;
-		}else{
-#if defined(_MBCS)
-// SJIS 専用処理
-			if( _IS_SJIS_1( (unsigned char)pszSrc[i] ) && i + 1 < nSrcLen && _IS_SJIS_2( (unsigned char)pszSrc[i + 1] ) ){
-				if( j + 1 < nDestLen ){
-					pszDest[j] = pszSrc[i];
-					j++;
-					i++;
-				}else{
-					// SJISの先行バイトだけコピーされるのを防ぐ
-					break;// goto end_of_func;
-				}
+	auto it = strSrc.begin();
+	wchar_t* pDest = pszDest;
+	const wchar_t* pEnd = pszDest + nDestLen;
+	while( it < strSrc.end() && pDest + 1 < pEnd ){
+		if( strFrom.length() <= static_cast<size_t>(strSrc.end() - it) && 0 == ::_wcsnicmp( &*it, strFrom.data(), strFrom.length() ) ){
+			if( strTo.length() < static_cast<size_t>(pEnd - pDest) ){
+				::wcsncpy_s( pDest, pEnd - pDest, strTo.data(), strTo.length() );
+			}else{
+				::wcsncpy_s( pDest, pEnd - pDest, strTo.data(), _TRUNCATE );
+				return pszDest;
 			}
-#endif
-			pszDest[j] = pszSrc[i];
-			j++;
+			pDest += ::wcsnlen( pDest, pEnd - pDest );
+			it += strFrom.length();
+		}else{
+			::wcsncpy_s( pDest, pEnd - pDest, &*it, 1 );
+			++pDest;
+			++it;
 		}
 	}
-// end_of_func:;
-	pszDest[j] = '\0';
 	return pszDest;
 }
 
