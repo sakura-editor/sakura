@@ -1524,14 +1524,12 @@ LRESULT CTabWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				}
 				else
 				{
-					::LoadString( GetAppInstance(), F_GROUPCLOSE, szText, _countof(szText) );
-					szText[_countof(szText) - 1] = L'\0';
+					wcsncpy_s(szText, LS(F_GROUPCLOSE), _TRUNCATE);
 				}
 			}
 			else
 			{
-				::LoadString( GetAppInstance(), F_EXITALLEDITORS, szText, _countof(szText) );
-				szText[_countof(szText) - 1] = L'\0';
+					wcsncpy_s(szText, LS(F_EXITALLEDITORS), _TRUNCATE);
 			}
 		}
 	}
