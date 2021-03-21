@@ -398,7 +398,6 @@ enum CtrlId {
 };
 
 CDlgOpenFile_CommonItemDialog::CDlgOpenFile_CommonItemDialog()
- :m_strDefaultWildCard(L"*.*")	//「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される）
 {
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
