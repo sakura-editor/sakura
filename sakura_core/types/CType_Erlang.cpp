@@ -47,15 +47,14 @@ struct COutlineErlang {
 		STATE_FUNC_ARGS,	//!< 2つめ以降の引数確認中
 		STATE_FUNC_ARGS_FIN,//!< 関数の解析を完了
 		STATE_FUNC_FOUND,	//!< 関数を発見．データの取得が可能
-	} m_state;
+	} m_state = STATE_NORMAL;
 
-	wchar_t m_func[64];	//!< 関数名(Arity含む) = 表示名
-	CLogicInt m_lnum;	//!< 関数の行番号
-	int m_argcount;		//!< 発見した引数の数
-	wchar_t m_parenthesis[32];	//!< 括弧のネストを管理するもの
-	int m_parenthesis_ptr;	//!< 括弧のネストレベル
+	wchar_t m_func[64] = {};		//!< 関数名(Arity含む) = 表示名
+	unsigned m_lnum = 0;			//!< 関数の行番号
+	unsigned m_argcount = 0;		//!< 発見した引数の数
+	wchar_t m_parenthesis[32] = {};	//!< 括弧のネストを管理するもの
+	unsigned m_parenthesis_ptr = 0;	//!< 括弧のネストレベル
 	
-	COutlineErlang();
 	bool parse( const wchar_t* buf, int linelen, CLogicInt linenum );
 	
 	const wchar_t* ScanFuncName( const wchar_t* buf, const wchar_t* end, const wchar_t* p );
@@ -64,7 +63,7 @@ struct COutlineErlang {
 	const wchar_t* ScanArgs( const wchar_t* end, const wchar_t* p );
 	const wchar_t* EnterCond( const wchar_t* end, const wchar_t* p );
 	const wchar_t* GetFuncName() const { return m_func; }
-	CLogicInt GetFuncLine() const { return m_lnum; }
+	[[nodiscard]] CLogicInt GetFuncLine() const { return CLogicInt(m_lnum); }
 
 private:
 	// helper functions
@@ -91,11 +90,6 @@ private:
 	
 	void build_arity(int);
 };
-
-COutlineErlang::COutlineErlang() :
-	m_state( STATE_NORMAL ), m_lnum( 0 ), m_argcount( 0 )
-{
-}
 
 /** 関数名の取得
 
@@ -130,16 +124,12 @@ const wchar_t* COutlineErlang::ScanFuncName( const wchar_t* buf, const wchar_t* 
 		} while( IS_ALNUM( *p ) && p < end );
 	}
 	
-	int buf_len = _countof( m_func );
-	int len = p - buf;
+	auto len = p - buf;
 	if( buf[0] == L'\'' ){
 		++buf;
 		len -= 2;
-		--buf_len;
 	}
-	len = len < buf_len - 1 ? len : buf_len - 1;
-	wcsncpy( m_func, buf, len );
-	m_func[len] = L'\0';
+	::wcsncpy_s( m_func, buf, len );
 	m_state = STATE_FUNC_CANDIDATE_FIN;
 	return p;
 }
@@ -225,7 +215,7 @@ const wchar_t* COutlineErlang::ScanArgs( const wchar_t* end, const wchar_t* p )
 {
 	assert( m_state == STATE_FUNC_ARGS );
 
-	const int parptr_max = _countof( m_parenthesis );
+	const size_t parptr_max = _countof( m_parenthesis );
 	wchar_t quote = L'\0'; // 先頭位置を保存
 	for(const wchar_t* head = p ; p < end ; p++ ){
 		if( quote ){
@@ -391,18 +381,9 @@ bool COutlineErlang::parse( const wchar_t* buf, int linelen, CLogicInt linenum )
 */ 
 void COutlineErlang::build_arity( int arity )
 {
-	const int buf_size = _countof( m_func );
-	int len = wcsnlen( m_func, buf_size );
-	wchar_t *p = &m_func[len];
 	wchar_t numstr[12];
-	
-	if( len + 1 >= buf_size )
-		return; // no room
-
-	numstr[0] = L'/';
-	_itow( arity, numstr + 1, 10 );
-	wcsncpy( p, numstr, buf_size - len - 1 );
-	m_func[ buf_size - 1 ] = L'\0';
+	::_snwprintf_s( numstr, _TRUNCATE, L"/%d", arity );
+	::wcsncat_s( m_func, numstr, _TRUNCATE );
 }
 
 /** Erlang アウトライン解析
