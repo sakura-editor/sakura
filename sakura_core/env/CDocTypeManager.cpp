@@ -221,11 +221,11 @@ void CDocTypeManager::GetFirstExt(const WCHAR* pszTypeExts, WCHAR szFirstExt[], 
 
 	@date 2014.12.06 syat CFileExtから移動
 */
-bool CDocTypeManager::ConvertTypesExtToDlgExt(const WCHAR *pszSrcExt, const WCHAR* szExt, std::wstring& destExt)
+std::wstring CDocTypeManager::ConvertTypesExtToDlgExt(const WCHAR *pszSrcExt, const WCHAR* szExt)
 {
-	destExt.resize(0);
+	std::wstring destExt;
 	//	2003.08.14 MIK NULLじゃなくてfalse
-	if( NULL == pszSrcExt ) return false;
+	if( NULL == pszSrcExt ) return L"";
 
 	if (szExt != NULL && szExt[0] != L'\0') {
 		// ファイルパスがあり、拡張子ありの場合、トップに指定
@@ -255,5 +255,5 @@ bool CDocTypeManager::ConvertTypesExtToDlgExt(const WCHAR *pszSrcExt, const WCHA
 		}
 		token = wcstok_s(nullptr, m_typeExtSeps, &context);
 	}
-	return true;
+	return destExt;
 }

@@ -47,9 +47,10 @@ CFileExt::CFileExt()
 
 bool CFileExt::AppendExt( const WCHAR *pszName, const WCHAR *pszExt )
 {
-	std::wstring workExt;
-
-	if( !CDocTypeManager::ConvertTypesExtToDlgExt( pszExt, nullptr, workExt ) ) return false;
+	std::wstring workExt = CDocTypeManager::ConvertTypesExtToDlgExt(pszExt, nullptr);
+	if (workExt.empty()) {
+		return false;
+	}
 	return AppendExtRaw( pszName, workExt.c_str() );
 }
 

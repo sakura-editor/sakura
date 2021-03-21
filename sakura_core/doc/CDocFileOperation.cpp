@@ -251,7 +251,7 @@ bool CDocFileOperation::SaveFileDialog(
 			}
 		}
 		else {
-			CDocTypeManager::ConvertTypesExtToDlgExt(type.m_szTypeExts, szExt, strDefaultWildCard);
+			strDefaultWildCard = CDocTypeManager::ConvertTypesExtToDlgExt(type.m_szTypeExts, szExt);
 		}
 
 		if(!this->m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath()){

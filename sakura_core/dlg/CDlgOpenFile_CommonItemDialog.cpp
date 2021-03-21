@@ -707,7 +707,8 @@ bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlg(
 			continue;
 		}
 		specs[2 + i].pszName = type->m_szTypeName;
-		if (CDocTypeManager::ConvertTypesExtToDlgExt(type->m_szTypeExts, NULL, worksString)) {
+		worksString = CDocTypeManager::ConvertTypesExtToDlgExt(type->m_szTypeExts, nullptr);
+		if (!worksString.empty()) {
 			strs[2 + i] = worksString;
 			specs[2 + i].pszSpec = strs[2 + i].c_str();
 		}
