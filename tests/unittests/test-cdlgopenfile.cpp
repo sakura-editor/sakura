@@ -43,7 +43,7 @@ TEST(CDlgOpenFile, Construct)
 	CDlgOpenFile cDlgOpenFile;
 }
 
-TEST(CDlgOpenFile, CommonItemDialogCreate)
+TEST(CDlgOpenFile, DISABLED_CommonItemDialogCreate)
 {
 	std::shared_ptr<IDlgOpenFile>impl = New_CDlgOpenFile_CommonItemDialog();
 	impl->Create(
@@ -56,7 +56,7 @@ TEST(CDlgOpenFile, CommonItemDialogCreate)
 	);
 }
 
-TEST(CDlgOpenFile, CommonFileDialogCreate)
+TEST(CDlgOpenFile, DISABLED_CommonFileDialogCreate)
 {
 	std::shared_ptr<IDlgOpenFile>impl = New_CDlgOpenFile_CommonFileDialog();
 	impl->Create(
@@ -69,7 +69,7 @@ TEST(CDlgOpenFile, CommonFileDialogCreate)
 	);
 }
 
-TEST(CDlgOpenFile, CommonItemDialogDefaltFilterLong)
+TEST(CDlgOpenFile, DISABLED_CommonItemDialogDefaltFilterLong)
 {
 	std::shared_ptr<IDlgOpenFile>impl = New_CDlgOpenFile_CommonItemDialog();
 	// 落ちたり例外にならないこと
@@ -83,7 +83,7 @@ TEST(CDlgOpenFile, CommonItemDialogDefaltFilterLong)
 	);
 }
 
-TEST(CDlgOpenFile, CommonFileDialogDefaltFilterLong)
+TEST(CDlgOpenFile, DISABLED_CommonFileDialogDefaltFilterLong)
 {
 	std::shared_ptr<IDlgOpenFile>impl = New_CDlgOpenFile_CommonFileDialog();
 	// 落ちたり例外にならないこと
@@ -97,7 +97,7 @@ TEST(CDlgOpenFile, CommonFileDialogDefaltFilterLong)
 	);
 }
 
-TEST(CDlgOpenFile, CommonFileDialogDefaltFilterMany)
+TEST(CDlgOpenFile, DISABLED_CommonFileDialogDefaltFilterMany)
 {
 	std::shared_ptr<IDlgOpenFile>impl = New_CDlgOpenFile_CommonFileDialog();
 	// 落ちたり例外にならないこと
@@ -111,7 +111,7 @@ TEST(CDlgOpenFile, CommonFileDialogDefaltFilterMany)
 	);
 }
 
-TEST(CDlgOpenFile, CommonItemDialogDefaltFilterMany)
+TEST(CDlgOpenFile, DISABLED_CommonItemDialogDefaltFilterMany)
 {
 	std::shared_ptr<IDlgOpenFile>impl = New_CDlgOpenFile_CommonItemDialog();
 	// 落ちたり例外にならないこと
