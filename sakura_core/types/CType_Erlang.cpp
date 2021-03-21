@@ -63,7 +63,7 @@ struct COutlineErlang {
 	const wchar_t* ScanArgs( const wchar_t* end, const wchar_t* p );
 	const wchar_t* EnterCond( const wchar_t* end, const wchar_t* p );
 	const wchar_t* GetFuncName() const { return m_func; }
-	CLogicInt GetFuncLine() const { return CLogicInt(m_lnum); }
+	[[nodiscard]] CLogicInt GetFuncLine() const { return CLogicInt(m_lnum); }
 
 private:
 	// helper functions
