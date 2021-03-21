@@ -263,7 +263,7 @@ int COutlinePython::ScanString( const wchar_t* data, int linelen, int start_offs
 	assert( m_state == STATE_STRING );
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
-	int quote_char = m_quote_char;
+	auto quote_char = m_quote_char;
 	for( int col = start_offset; col < linelen; ++col ){
 		int nCharChars = CNativeW::GetSizeOfChar( data, linelen, col );
 		if( 1 < nCharChars ){
