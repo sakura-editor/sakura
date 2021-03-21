@@ -381,17 +381,9 @@ bool COutlineErlang::parse( const wchar_t* buf, int linelen, CLogicInt linenum )
 */ 
 void COutlineErlang::build_arity( int arity )
 {
-	const size_t buf_size = _countof( m_func );
-	const size_t len = ::wcsnlen( m_func, buf_size );
-	wchar_t *p = &m_func[len];
 	wchar_t numstr[12];
-	
-	if( len + 1 >= buf_size )
-		return; // no room
-
-	numstr[0] = L'/';
-	_itow( arity, numstr + 1, 10 );
-	::wcsncpy_s( p, buf_size - len, numstr, _TRUNCATE );
+	::_snwprintf_s( numstr, _TRUNCATE, L"/%d", arity );
+	::wcsncat_s( m_func, numstr, _TRUNCATE );
 }
 
 /** Erlang アウトライン解析
