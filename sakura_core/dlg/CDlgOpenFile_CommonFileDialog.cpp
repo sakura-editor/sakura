@@ -93,7 +93,7 @@ struct CDlgOpenFile_CommonFileDialog final : public IDlgOpenFile
 
 	DLLSHAREDATA*	m_pShareData;
 
-	std::wstring	m_strDefaultWildCard;	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
+	std::wstring	m_strDefaultWildCard{ L"*.*" };	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 	SFilePath		m_szInitialDir;			/* 「開く」での初期ディレクトリ */
 
 	std::vector<LPCWSTR>	m_vMRU;
@@ -649,7 +649,6 @@ int AddComboCodePages(HWND hdlg, HWND combo, int nSelCode, bool& bInit)
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 */
 CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog()
- :m_strDefaultWildCard(L"*.*")	//「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される）
 {
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */

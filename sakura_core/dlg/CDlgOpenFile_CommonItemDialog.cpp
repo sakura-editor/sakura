@@ -77,7 +77,7 @@ struct CDlgOpenFile_CommonItemDialog final
 
 	DLLSHAREDATA*	m_pShareData;
 
-	std::wstring	m_strDefaultWildCard;	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
+	std::wstring	m_strDefaultWildCard{ L"*.*" };	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 	SFilePath		m_szInitialDir;			/* 「開く」での初期ディレクトリ */
 
 	std::vector<LPCWSTR>	m_vMRU;

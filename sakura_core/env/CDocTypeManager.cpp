@@ -223,10 +223,10 @@ void CDocTypeManager::GetFirstExt(const WCHAR* pszTypeExts, WCHAR szFirstExt[], 
 */
 std::wstring CDocTypeManager::ConvertTypesExtToDlgExt(const WCHAR *pszSrcExt, const WCHAR* szExt)
 {
-	std::wstring destExt;
 	//	2003.08.14 MIK NULLじゃなくてfalse
-	if( NULL == pszSrcExt ) return L"";
+	if (pszSrcExt == nullptr) return L"";
 
+	std::wstring destExt;
 	if (szExt != NULL && szExt[0] != L'\0') {
 		// ファイルパスがあり、拡張子ありの場合、トップに指定
 		destExt.assign(L"*");
