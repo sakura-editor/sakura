@@ -130,15 +130,15 @@ void CMainStatusBar::SendStatusMessage2( const WCHAR* msg )
 	@param pszText [in] 表示テキスト
 	@param textLen [in] 表示テキストの文字数
 */
-void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText, size_t textLen /* = SIZE_MAX */)
+bool CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText, size_t textLen /* = SIZE_MAX */)
 {
 	if( !m_hwndStatusBar ){
 		assert(m_hwndStatusBar != NULL);
-		return;
+		return false;
 	}
 	// StatusBar_SetText 関数を呼びだすかどうかを判定するラムダ式
 	// （StatusBar_SetText は SB_SETTEXT メッセージを SendMessage で送信する）
-	[&]() -> bool {
+	return [&]() -> bool {
 		// オーナードローの場合は SB_SETTEXT メッセージを無条件に発行するように判定
 		// 本来表示に変化が無い場合には呼び出さない方が表示のちらつきが減るので好ましいが
 		// 判定が難しいので諦める
@@ -177,8 +177,9 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText
 			// 設定済みの文字列と設定する文字列を比較して異なる場合は、SB_SETTEXT メッセージを発行
 			return (wcscmp(prev, pszText) != 0);
 		}
-		else{
-			return true;
+		else {
+			// 設定する文字列長が0の場合は設定する文字列長が0より大きい場合のみ設定する（既に空文字なら空文字を設定する必要は無い為）
+			return textLen > 0;
 		}
-	}() ? StatusBar_SetText( m_hwndStatusBar, nIndex | nOption, pszText ) : 0;
+	}() ? (StatusBar_SetText(m_hwndStatusBar, nIndex | nOption, pszText) != FALSE) : false;
 }
