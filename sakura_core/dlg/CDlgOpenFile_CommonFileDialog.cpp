@@ -739,7 +739,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 		break;
 	}
 
-	if( 0 != wcscmp(m_strDefaultWildCard.c_str(), L"*.*") ){
+	if (m_strDefaultWildCard != L"*.*") {
 		cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), L"*.*" );
 	}
 
