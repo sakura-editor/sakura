@@ -83,13 +83,11 @@ struct COutlinePython {
 		STATE_NORMAL,	//!< 通常行 : 行頭を含む
 		STATE_STRING,	//!< 文字列中
 		STATE_CONTINUE,	//!< 継続行 : 前の行からの続きなので行頭とはみなされない
-	} m_state;
+	} m_state = STATE_NORMAL;
 	
-	int m_quote_char;	//!<	引用符記号
-	bool m_raw_string;	//!<	エスケープ記号無視ならtrue
-	bool m_long_string;	//!<	長い文字列中ならtrue
-
-	COutlinePython();
+	wchar_t m_quote_char = L'\0';	//!< 引用符記号
+	bool m_raw_string = false;		//!< エスケープ記号無視ならtrue
+	bool m_long_string = false;		//!< 長い文字列中ならtrue
 
 	/*	各状態における文字列スキャンを行う
 		Scan*が呼びだされるときは既にその状態になっていることが前提．
@@ -120,17 +118,6 @@ void CType_Python::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_bStringLineOnly = true; // 文字列は行内のみ
 }
 
-/*!コンストラクタ: 初期化
-
-	初期状態をSTATE_NORMALに設定する．
-*/
-COutlinePython::COutlinePython()
-	: m_state( STATE_NORMAL ),
-	m_raw_string( false ),
-	m_long_string( false )
-{
-}
-
 /*! @brief Python文字列の入り口で文字列種別を決定する
 
 	文字列の種類を適切に判別し，内部状態を設定する．
@@ -159,7 +146,7 @@ int COutlinePython::EnterString( const wchar_t* data, int linelen, int start_off
 	int col = start_offset;
 	//	文字列開始チェック
 	if( data[ col ] == '\"' || data[ col ] == '\'' ){
-		int quote_char = data[ col ];
+		auto quote_char = data[ col ];
 		m_state = STATE_STRING;
 		m_quote_char = quote_char;
 		//	文字列の開始
@@ -276,7 +263,7 @@ int COutlinePython::ScanString( const wchar_t* data, int linelen, int start_offs
 	assert( m_state == STATE_STRING );
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
-	int quote_char = m_quote_char;
+	auto quote_char = m_quote_char;
 	for( int col = start_offset; col < linelen; ++col ){
 		int nCharChars = CNativeW::GetSizeOfChar( data, linelen, col );
 		if( 1 < nCharChars ){
