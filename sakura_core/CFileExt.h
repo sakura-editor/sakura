@@ -40,8 +40,7 @@
 class CFileExt
 {
 public:
-	CFileExt();
-	~CFileExt() = default;
+	CFileExt() = default;
 
 	bool AppendExt( const WCHAR *pszName, const WCHAR *pszExt );
 	bool AppendExtRaw( const WCHAR *pszName, const WCHAR *pszExt );

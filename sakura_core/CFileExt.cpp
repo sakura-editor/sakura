@@ -35,16 +35,6 @@
 #include "CFileExt.h"
 #include "env/CDocTypeManager.h"
 
-CFileExt::CFileExt()
-{
-	m_vstrFilter.resize( 1 );
-	m_vstrFilter[0] = L'\0';
-
-//	//テキストエディタとして、既定でリストに載ってほしい拡張子
-//	AppendExt( "すべてのファイル", "*" );
-//	AppendExt( "テキストファイル", "txt" );
-}
-
 bool CFileExt::AppendExt( const WCHAR *pszName, const WCHAR *pszExt )
 {
 	std::wstring workExt = CDocTypeManager::ConvertTypesExtToDlgExt(pszExt, nullptr);
