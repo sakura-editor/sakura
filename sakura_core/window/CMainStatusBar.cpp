@@ -41,11 +41,16 @@ void CMainStatusBar::CreateStatusBar()
 	if( m_hwndStatusBar )return;
 
 	/* ステータスバー */
-	m_hwndStatusBar = ::CreateStatusWindow(
-		WS_CHILD/* | WS_VISIBLE*/ | WS_EX_RIGHT | SBARS_SIZEGRIP,	// 2007.03.08 ryoji WS_VISIBLE 除去
-		L"",
+	m_hwndStatusBar = ::CreateWindowEx(
+		WS_EX_RIGHT | WS_EX_COMPOSITED,
+		STATUSCLASSNAME,
+		NULL,
+		WS_CHILD/* | WS_VISIBLE*/ | SBARS_SIZEGRIP,	// 2007.03.08 ryoji WS_VISIBLE 除去
+		0, 0, 0, 0, // X, Y, nWidth, nHeight
 		m_pOwner->GetHwnd(),
-		IDW_STATUSBAR
+		(HMENU)IDW_STATUSBAR,
+		CEditApp::getInstance()->GetAppInstance(),
+		0
 	);
 
 	/* プログレスバー */
