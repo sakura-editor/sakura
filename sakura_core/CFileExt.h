@@ -52,7 +52,7 @@ public:
 	//2回呼び出すと古いバッファが無効になることがあるのに注意
 	const WCHAR *GetExtFilter( void );
 
-	int GetCount() const { return static_cast<int>(m_vFileExtInfo.size()); }
+	[[nodiscard]] int GetCount() const { return static_cast<int>(m_vFileExtInfo.size()); }
 
 protected:
 	// 2014.10.30 syat ConvertTypesExtToDlgExtをCDocTypeManagerに移動

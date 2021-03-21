@@ -649,6 +649,7 @@ int AddComboCodePages(HWND hdlg, HWND combo, int nSelCode, bool& bInit)
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 */
 CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog()
+ :m_strDefaultWildCard(L"*.*")	//「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される）
 {
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
@@ -666,8 +667,6 @@ CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog()
 	_wsplitpath( szFile, szDrive, szDir, NULL, NULL );
 	wcscpy( m_szInitialDir, szDrive );
 	wcscat( m_szInitialDir, szDir );
-
-	m_strDefaultWildCard = L"*.*";	/*「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 
 	return;
 }

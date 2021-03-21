@@ -49,7 +49,7 @@ bool CFileExt::AppendExt( const WCHAR *pszName, const WCHAR *pszExt )
 {
 	std::wstring workExt;
 
-	if( !CDocTypeManager::ConvertTypesExtToDlgExt( pszExt, NULL, workExt ) ) return false;
+	if( !CDocTypeManager::ConvertTypesExtToDlgExt( pszExt, nullptr, workExt ) ) return false;
 	return AppendExtRaw( pszName, workExt.c_str() );
 }
 
@@ -69,14 +69,14 @@ bool CFileExt::AppendExtRaw( const WCHAR *pszName, const WCHAR *pszExt )
 
 const WCHAR *CFileExt::GetName( int nIndex )
 {
-	if( nIndex < 0 || nIndex >= GetCount() ) return NULL;
+	if( nIndex < 0 || nIndex >= GetCount() ) return nullptr;
 
 	return m_vFileExtInfo[nIndex].m_sTypeName.c_str();
 }
 
 const WCHAR *CFileExt::GetExt( int nIndex )
 {
-	if( nIndex < 0 || nIndex >= GetCount() ) return NULL;
+	if( nIndex < 0 || nIndex >= GetCount() ) return nullptr;
 
 	return m_vFileExtInfo[nIndex].m_sExt.c_str();
 }
@@ -89,13 +89,12 @@ const WCHAR *CFileExt::GetExtFilter( void )
 
 void CFileExt::CreateExtFilter(std::vector<WCHAR>& output) const
 {
-	int		i;
 	std::wstring work;
 
 	/* 拡張子フィルタの作成 */
 	output.resize(0);
 
-	for( i = 0; i < GetCount(); i++ )
+	for (int i = 0; i < GetCount(); i++)
 	{
 		// "%s (%s)\0%s\0"
 		work = m_vFileExtInfo[i].m_sTypeName;
@@ -106,7 +105,7 @@ void CFileExt::CreateExtFilter(std::vector<WCHAR>& output) const
 		work.append(m_vFileExtInfo[i].m_sExt);
 		work.append(L"\0", 1);
 
-		int pos = static_cast<int>(output.size());
+		size_t pos = output.size();
 		output.resize(pos + work.length());
 		wmemcpy(&output[pos], &work[0], work.length());
 	}
