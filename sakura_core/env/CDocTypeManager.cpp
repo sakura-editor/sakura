@@ -217,7 +217,7 @@ void CDocTypeManager::GetFirstExt(const WCHAR* pszTypeExts, WCHAR szFirstExt[], 
 /*! タイプ別設定の拡張子リストをダイアログ用リストに変換する
 	@param pszSrcExt [in]  拡張子リスト 例「.c cpp;.h」(ドットはオプション)
 	@param szExt [in] リストの先頭にする拡張子 例「.h」(ドット必須)
-	@param destExt [out] 拡張子リスト 例「*.h;*.c;*.cpp」
+	@return 拡張子リスト 例「*.h;*.c;*.cpp」
 
 	@date 2014.12.06 syat CFileExtから移動
 */
