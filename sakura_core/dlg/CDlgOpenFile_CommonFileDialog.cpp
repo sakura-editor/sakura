@@ -93,7 +93,7 @@ struct CDlgOpenFile_CommonFileDialog final : public IDlgOpenFile
 
 	DLLSHAREDATA*	m_pShareData;
 
-	SFilePath		m_szDefaultWildCard;	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
+	std::wstring	m_strDefaultWildCard{ L"*.*" };	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 	SFilePath		m_szInitialDir;			/* 「開く」での初期ディレクトリ */
 
 	std::vector<LPCWSTR>	m_vMRU;
@@ -418,7 +418,7 @@ UINT_PTR CALLBACK OFNHookProc(
 						else{
 							switch( pData->m_pOf->nFilterIndex ){	// 選択されているファイルの種類
 							case 1:		// ユーザー定義
-								pszCur = pData->m_pcDlgOpenFile->m_szDefaultWildCard;
+								pszCur = pData->m_pcDlgOpenFile->m_strDefaultWildCard.data();
 								while( *pszCur != L'.' && *pszCur != L'\0' )	// '.'まで読み飛ばす
 									pszCur = ::CharNext(pszCur);
 								i = 0;
@@ -667,8 +667,6 @@ CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog()
 	wcscpy( m_szInitialDir, szDrive );
 	wcscat( m_szInitialDir, szDir );
 
-	wcscpy( m_szDefaultWildCard, L"*.*" );	/*「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
-
 	return;
 }
 
@@ -687,7 +685,7 @@ void CDlgOpenFile_CommonFileDialog::Create(
 
 	/* ユーザー定義ワイルドカード（保存時の拡張子補完でも使用される） */
 	if( NULL != pszUserWildCard ){
-		wcscpy( m_szDefaultWildCard, pszUserWildCard );
+		m_strDefaultWildCard = pszUserWildCard;
 	}
 
 	/* 「開く」での初期フォルダ */
@@ -722,7 +720,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 
 	//	2003.05.12 MIK
 	CFileExt	cFileExt;
-	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_szDefaultWildCard );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_strDefaultWildCard.c_str() );
 
 	switch( eAddFilter ){
 	case EFITER_TEXT:
@@ -740,7 +738,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 		break;
 	}
 
-	if( 0 != wcscmp(m_szDefaultWildCard, L"*.*") ){
+	if (m_strDefaultWildCard != L"*.*") {
 		cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), L"*.*" );
 	}
 
@@ -815,7 +813,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetSaveFileName( WCHAR* pszPath )
 
 	//	2003.05.12 MIK
 	CFileExt	cFileExt;
-	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_szDefaultWildCard );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_strDefaultWildCard.c_str() );
 	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), L"*.txt" );
 	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), L"*.*" );
 	
@@ -979,7 +977,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModalSaveDlg(
 
 	//	2003.05.12 MIK
 	CFileExt	cFileExt;
-	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_szDefaultWildCard );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_strDefaultWildCard.c_str() );
 	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), L"*.txt" );
 	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), L"*.*" );
 

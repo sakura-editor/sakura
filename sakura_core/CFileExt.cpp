@@ -35,100 +35,73 @@
 #include "CFileExt.h"
 #include "env/CDocTypeManager.h"
 
-CFileExt::CFileExt()
-{
-	m_puFileExtInfo = NULL;
-	m_nCount = 0;
-	m_vstrFilter.resize( 1 );
-	m_vstrFilter[0] = L'\0';
-
-//	//テキストエディタとして、既定でリストに載ってほしい拡張子
-//	AppendExt( "すべてのファイル", "*" );
-//	AppendExt( "テキストファイル", "txt" );
-}
-
-CFileExt::~CFileExt()
-{
-	if( m_puFileExtInfo ) free( m_puFileExtInfo );
-	m_puFileExtInfo = NULL;
-	m_nCount = 0;
-}
-
 bool CFileExt::AppendExt( const WCHAR *pszName, const WCHAR *pszExt )
 {
-	WCHAR	szWork[_countof(m_puFileExtInfo[0].m_szExt) + 10];
-
-	if( !CDocTypeManager::ConvertTypesExtToDlgExt( pszExt, NULL, szWork ) ) return false;
-	return AppendExtRaw( pszName, szWork );
+	std::wstring workExt = CDocTypeManager::ConvertTypesExtToDlgExt(pszExt, nullptr);
+	if (workExt.empty()) {
+		return false;
+	}
+	return AppendExtRaw( pszName, workExt.c_str() );
 }
 
 bool CFileExt::AppendExtRaw( const WCHAR *pszName, const WCHAR *pszExt )
 {
-	FileExtInfoTag	*p;
-
 	if( NULL == pszName || pszName[0] == L'\0' ) return false;
 	if( NULL == pszExt  || pszExt[0] == L'\0' ) return false;
 
-	if( NULL == m_puFileExtInfo )
-	{
-		p = (FileExtInfoTag*)malloc( sizeof( FileExtInfoTag ) * 1 );
-		if( NULL == p ) return false;
-	}
-	else
-	{
-		p = (FileExtInfoTag*)realloc( m_puFileExtInfo, sizeof( FileExtInfoTag ) * ( m_nCount + 1 ) );
-		if( NULL == p ) return false;
-	}
-	m_puFileExtInfo = p;
+	SFileExtInfo info;
+	info.m_sTypeName = pszName;
+	info.m_sExt = pszExt;
 
-	wcscpy( m_puFileExtInfo[m_nCount].m_szName, pszName );
-	wcscpy( m_puFileExtInfo[m_nCount].m_szExt, pszExt );
-	m_nCount++;
+	m_vFileExtInfo.push_back(std::move(info));
 
 	return true;
 }
 
 const WCHAR *CFileExt::GetName( int nIndex )
 {
-	if( nIndex < 0 || nIndex >= m_nCount ) return NULL;
+	if( nIndex < 0 || nIndex >= GetCount() ) return nullptr;
 
-	return m_puFileExtInfo[nIndex].m_szName;
+	return m_vFileExtInfo[nIndex].m_sTypeName.c_str();
 }
 
 const WCHAR *CFileExt::GetExt( int nIndex )
 {
-	if( nIndex < 0 || nIndex >= m_nCount ) return NULL;
+	if( nIndex < 0 || nIndex >= GetCount() ) return nullptr;
 
-	return m_puFileExtInfo[nIndex].m_szExt;
+	return m_vFileExtInfo[nIndex].m_sExt.c_str();
 }
 
 const WCHAR *CFileExt::GetExtFilter( void )
 {
-	int		i;
+	CreateExtFilter(m_vstrFilter);
+	return m_vstrFilter.data();
+}
+
+void CFileExt::CreateExtFilter(std::vector<WCHAR>& output) const
+{
 	std::wstring work;
 
 	/* 拡張子フィルタの作成 */
-	m_vstrFilter.resize(0);
+	output.resize(0);
 
-	for( i = 0; i < m_nCount; i++ )
+	for (int i = 0; i < GetCount(); i++)
 	{
 		// "%s (%s)\0%s\0"
-		work = m_puFileExtInfo[i].m_szName;
+		work = m_vFileExtInfo[i].m_sTypeName;
 		work.append(L" (");
-		work.append(m_puFileExtInfo[i].m_szExt);
+		work.append(m_vFileExtInfo[i].m_sExt);
 		work.append(L")");
 		work.append(L"\0", 1);
-		work.append(m_puFileExtInfo[i].m_szExt);
+		work.append(m_vFileExtInfo[i].m_sExt);
 		work.append(L"\0", 1);
 
-		int i = (int)m_vstrFilter.size();
-		m_vstrFilter.resize( i + work.length() );
-		wmemcpy( &m_vstrFilter[i], &work[0], work.length() );
+		size_t pos = output.size();
+		output.resize(pos + work.length());
+		wmemcpy(&output[pos], &work[0], work.length());
 	}
-	if( 0 == m_nCount ){
-		m_vstrFilter.push_back( L'\0' );
+	if( 0 == GetCount() ){
+		output.push_back( L'\0' );
 	}
-	m_vstrFilter.push_back( L'\0' );
-
-	return &m_vstrFilter[0];
+	output.push_back( L'\0' );
 }

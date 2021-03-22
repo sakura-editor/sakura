@@ -1884,6 +1884,10 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 				sFilter = Source;	// フィルタ文字列
 				delete[] Source;
 			}
+			// sDefaultの先はSFilePath型
+			if (MAX_PATH <= sDefault.length()) {
+				return false;
+			}
 
 			CDlgOpenFile cDlgOpenFile;
 			cDlgOpenFile.Create(
@@ -1928,6 +1932,10 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 				Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
 				sDefault = Source;	// 既定のファイル名
 				delete[] Source;
+			}
+			// sDefaultは[MAX_PATH]
+			if (MAX_PATH <= sDefault.length()) {
+				return false;
 			}
 
 			WCHAR szPath[ _MAX_PATH ];

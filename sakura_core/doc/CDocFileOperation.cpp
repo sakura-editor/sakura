@@ -225,7 +225,8 @@ bool CDocFileOperation::SaveFileDialog(
 	//拡張子指定
 	// 一時適用や拡張子なしの場合の拡張子をタイプ別設定から持ってくる
 	// 2008/6/14 大きく改造 Uchi
-	WCHAR	szDefaultWildCard[_MAX_PATH + 10];	// ユーザー指定拡張子
+	std::wstring strDefaultWildCard;	// ユーザー指定拡張子
+	
 	{
 		LPCWSTR	szExt;
 
@@ -241,28 +242,27 @@ bool CDocFileOperation::SaveFileDialog(
 			// 基本
 			if (szExt[0] == L'\0') { 
 				// ファイルパスが無いまたは拡張子なし
-				wcscpy(szDefaultWildCard, L"*.txt");
+				strDefaultWildCard = L"*.txt";
 			}
 			else {
 				// 拡張子あり
-				wcscpy(szDefaultWildCard, L"*");
-				wcscat(szDefaultWildCard, szExt);
+				strDefaultWildCard = L"*";
+				strDefaultWildCard += szExt;
 			}
 		}
 		else {
-			szDefaultWildCard[0] = L'\0'; 
-			CDocTypeManager::ConvertTypesExtToDlgExt(type.m_szTypeExts, szExt, szDefaultWildCard);
+			strDefaultWildCard = CDocTypeManager::ConvertTypesExtToDlgExt(type.m_szTypeExts, szExt);
 		}
 
 		if(!this->m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath()){
 			//「新規から保存時は全ファイル表示」オプション	// 2008/6/15 バグフィックス Uchi
 			if( GetDllShareData().m_Common.m_sFile.m_bNoFilterSaveNew )
-				wcscat(szDefaultWildCard, L";*.*");	// 全ファイル表示
+				strDefaultWildCard += L";*.*";	// 全ファイル表示
 		}
 		else {
 			//「新規以外から保存時は全ファイル表示」オプション
 			if( GetDllShareData().m_Common.m_sFile.m_bNoFilterSaveFile )
-				wcscat(szDefaultWildCard, L";*.*");	// 全ファイル表示
+				strDefaultWildCard += L";*.*";	// 全ファイル表示
 		}
 	}
 
@@ -281,7 +281,7 @@ bool CDocFileOperation::SaveFileDialog(
 	cDlgOpenFile.Create(
 		G_AppInstance(),
 		CEditWnd::getInstance()->GetHwnd(),
-		szDefaultWildCard,
+		strDefaultWildCard.c_str(),
 		CSakuraEnvironment::GetDlgInitialDir().c_str(),	// 初期フォルダ
 		CMRUFile().GetPathList(),		//	最近のファイル
 		CMRUFolder().GetPathList()	//	最近のフォルダ

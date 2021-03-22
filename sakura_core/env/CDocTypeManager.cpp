@@ -215,45 +215,45 @@ void CDocTypeManager::GetFirstExt(const WCHAR* pszTypeExts, WCHAR szFirstExt[], 
 }
 
 /*! タイプ別設定の拡張子リストをダイアログ用リストに変換する
-	@param pszSrcExt [in]  拡張子リスト 例「.c .cpp;.h」
-	@param pszDstExt [out] 拡張子リスト 例「*.c;*.cpp;*.h」
-	@param szExt [in] リストの先頭にする拡張子 例「.h」
+	@param pszSrcExt [in]  拡張子リスト 例「.c cpp;.h」(ドットはオプション)
+	@param szExt [in] リストの先頭にする拡張子 例「.h」(ドット必須)
+	@return 拡張子リスト 例「*.h;*.c;*.cpp」
 
 	@date 2014.12.06 syat CFileExtから移動
 */
-bool CDocTypeManager::ConvertTypesExtToDlgExt( const WCHAR *pszSrcExt, const WCHAR* szExt, WCHAR *pszDstExt )
+std::wstring CDocTypeManager::ConvertTypesExtToDlgExt(const WCHAR *pszSrcExt, const WCHAR* szExt)
 {
-	WCHAR	*token;
-	WCHAR	*p;
-
 	//	2003.08.14 MIK NULLじゃなくてfalse
-	if( NULL == pszSrcExt ) return false;
-	if( NULL == pszDstExt ) return false;
+	if (pszSrcExt == nullptr) return L"";
 
-	p = _wcsdup( pszSrcExt );
-	pszDstExt[0] = L'\0';
-
+	std::wstring destExt;
 	if (szExt != NULL && szExt[0] != L'\0') {
 		// ファイルパスがあり、拡張子ありの場合、トップに指定
-		wcscpy(pszDstExt, L"*");
-		wcscat(pszDstExt, szExt);
+		destExt.assign(L"*");
+		destExt.append(szExt);
 	}
 
-	token = _wcstok(p, m_typeExtSeps);
+	std::wstring strSrcTokens = pszSrcExt;
+	WCHAR* context = nullptr;
+	WCHAR* token = wcstok_s(strSrcTokens.data(), m_typeExtSeps, &context);
 	while( token )
 	{
 		if (szExt == NULL || szExt[0] == L'\0' || wmemicmp(token, szExt + 1) != 0) {
-			if( pszDstExt[0] != '\0' ) wcscat( pszDstExt, L";" );
+			if (0 < destExt.length()) {
+				destExt.append(L";");
+			}
 			// 拡張子指定なし、またはマッチした拡張子でない
 			if (wcspbrk(token, m_typeExtWildcards) == NULL) {
-				if (L'.' == *token) wcscat(pszDstExt, L"*");
-				else                 wcscat(pszDstExt, L"*.");
+				if (L'.' == *token) {
+					destExt.append(L"*");
+				}
+				else {
+					destExt.append(L"*.");
+				}
 			}
-			wcscat(pszDstExt, token);
+			destExt.append(token);
 		}
-
-		token = _wcstok( NULL, m_typeExtSeps );
+		token = wcstok_s(nullptr, m_typeExtSeps, &context);
 	}
-	free( p );	// 2003.05.20 MIK メモリ解放漏れ
-	return true;
+	return destExt;
 }
