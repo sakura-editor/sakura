@@ -91,6 +91,20 @@ TEST(CDocTypeManager, ConvertTypesExtToDlgExtTopNullptr)
 	EXPECT_EQ(expected, actual);
 }
 
+TEST(CDocTypeManager, ConvertTypesExtToDlgExtMerge)
+{
+	const std::wstring expected = { L"*.txt;*.cpp;*.h" };
+	std::wstring actual = CDocTypeManager::ConvertTypesExtToDlgExt(L"txt,cpp,h", L".txt");
+	EXPECT_EQ(expected, actual);
+}
+
+TEST(CDocTypeManager, ConvertTypesExtToDlgExtMerge2)
+{
+	const std::wstring expected = { L"*.txt;*.cpp;*.h" };
+	std::wstring actual = CDocTypeManager::ConvertTypesExtToDlgExt(L"cpp,h,txt", L".txt");
+	EXPECT_EQ(expected, actual);
+}
+
 TEST(CDocTypeManager, ConvertTypesExtToDlgExtExts64)
 {
 	const std::wstring expected = { L"*.txt;*.a;*.b;*.c;*.d;*.e;*.f;*.g;*.h;*.i;*.j;*.k;*.l;*.m;*.n;*.o;*.p;*.q;*.r;*.s;*.t;*.u;*.v;*.w;*.x;*.y;*.z;*.1;*.2;*.3;*.4;*.5;*.6" };
