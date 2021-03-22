@@ -2197,6 +2197,10 @@ BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 	for( int i = 0 ; i < _countof(anchorList); i++ ){
 		HWND hwndCtrl = GetItemHwnd(anchorList[i].id);
 		ResizeItem( hwndCtrl, m_ptDefaultSizeClient, ptNew, m_rcItems[i], anchorList[i].anchor, (anchorList[i].anchor != ANCHOR_ALL));
+//	2013.2.6 aroka ちらつき防止用の試行錯誤
+		if(anchorList[i].anchor == ANCHOR_ALL){
+			::UpdateWindow( hwndCtrl );
+		}
 	}
 
 //	if( IsDocking() )
