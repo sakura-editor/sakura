@@ -120,19 +120,6 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 		return false;
 	}
 
-#ifdef _DEBUG
-	assert(std::wstring(L"abc") == GetQuoteFilePath(L"abc\"def", 100));
-	assert(std::wstring(L"")    == GetQuoteFilePath(L"\"abcdef", 100));
-	assert(std::wstring(L"a")   == GetQuoteFilePath(L"a\"bcdef", 100));
-	assert(std::wstring(L"ab")  == GetQuoteFilePath(L"ab\"cdef", 100));
-	assert(std::wstring(L"abcde") == GetQuoteFilePath(L"abcde\"f", 100));
-	assert(std::wstring(L"abcdef") == GetQuoteFilePath(L"abcdef\"", 100));
-	assert(std::wstring(L"")    == GetQuoteFilePath(L"abcdefg", 100));
-	assert(std::wstring(L"abc") == GetQuoteFilePath(L"abc\"def", 5));
-	assert(std::wstring(L"abc") == GetQuoteFilePath(L"abc\"def", 4));
-	assert(std::wstring(L"")    == GetQuoteFilePath(L"abc\"def", 3));
-#endif
-
 	// ノーマル
 	// C:\RootFolder\SubFolders\FileName.ext(5395,11): str
 
