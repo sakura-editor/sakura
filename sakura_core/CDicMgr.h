@@ -30,7 +30,6 @@ public:
 	||  Constructors
 	*/
 	CDicMgr();
-	~CDicMgr();
 
 	/*
 	||  Attributes & Operations
