@@ -320,7 +320,7 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 					break;
 				}
 				// 相対フォルダorファイル名
-				if (std::wstring strPath = GetQuoteFilePath(&pLine[2], MAX_TAG_PATH); strFile.empty() == false) {
+				if (std::wstring strPath = GetQuoteFilePath(&pLine[2], MAX_TAG_PATH); strPath.empty() == false) {
 					if (strFile.empty() == false) {
 						strPath = AddLastYenPath(strPath);
 					}
@@ -328,8 +328,8 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 					if( MAX_TAG_PATH <= strPath.size() ){
 						break;
 					}
-					if( IsFileExists2(strFile.c_str()) ){
-						strJumpToFile = strFile;
+					if( IsFileExists2(strPath.c_str()) ){
+						strJumpToFile = strPath;
 						break;
 					}
 					// 相対パスだった→◎”を探す
@@ -339,7 +339,7 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 				}
 				break;
 			}else if( 3 <= nLineLen && 0 == wmemcmp( pLine, L"◎\"", 2 ) ){
-				if (std::wstring strPath = GetQuoteFilePath(&pLine[2], MAX_TAG_PATH); strFile.empty() == false) {
+				if (std::wstring strPath = GetQuoteFilePath(&pLine[2], MAX_TAG_PATH); strPath.empty() == false) {
 					strPath = AddLastYenPath(strPath);
 					strPath.append(strFile);
 					if (MAX_TAG_PATH <= strPath.size()) {
