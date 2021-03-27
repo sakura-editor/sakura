@@ -74,24 +74,51 @@ extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
 	オブジェクトに対するメソッドで行えるだけだが、グローバル変数への参照を
 	クラス内部に閉じこめることができるのでそれなりに意味はあると思う。
 */
-class CEol{
+class CEol {
+	EEolType m_eEolType = EOL_NONE;	//!< 改行コードの種類
+
 public:
-	//コンストラクタ・デストラクタ
-	CEol(){ m_eEolType = EOL_NONE; }
-	CEol( EEolType t ){ SetType(t); }
+	static constexpr bool IsNone( EEolType t ) noexcept
+	{
+		return t == EOL_NONE;
+	}
+	static constexpr bool IsValid( EEolType t ) noexcept
+	{
+		return EEolType::none < t && t < EOL_CODEMAX;
+	}
+	static constexpr bool IsNoneOrValid( EEolType t ) noexcept
+	{
+		return IsNone( t ) || IsValid( t );
+	}
+
+	constexpr CEol( EEolType t ) noexcept
+	{
+		SetType( t );
+	}
+	CEol() noexcept = default;
+
+	//取得
+	[[nodiscard]] bool IsNone() const noexcept { return IsNone( m_eEolType ); }			//!< 行終端子がないかどうか
+	[[nodiscard]] bool IsValid() const noexcept { return !IsNone(); }					//!< 行終端子があるかどうか
+	[[nodiscard]] constexpr EEolType GetType() const noexcept { return m_eEolType; }	//!< 現在のTypeを取得
+	[[nodiscard]] LPCWSTR	GetName() const noexcept;	//!< 現在のEOLの名称取得
+	[[nodiscard]] LPCWSTR	GetValue2() const noexcept;	//!< 現在のEOL文字列先頭へのポインタを取得
+	[[nodiscard]] CLogicInt	GetLen() const noexcept;	//!< 現在のEOL長を取得。文字単位。
 
 	//比較
-	bool operator==( EEolType t ) const { return GetType() == t; }
-	bool operator!=( EEolType t ) const { return GetType() != t; }
-
-	//代入
-	const CEol& operator=( const CEol& t ){ m_eEolType = t.m_eEolType; return *this; }
+	[[nodiscard]] constexpr bool operator == ( EEolType t ) const noexcept { return GetType() == t; }
+	[[nodiscard]] constexpr bool operator != ( EEolType t ) const noexcept { return !operator == ( t ); }
 
 	//型変換
-	operator EEolType() const { return GetType(); }
+	[[nodiscard]] constexpr operator EEolType() const { return GetType(); }
 
 	//設定
-	bool SetType( EEolType t);	//	Typeの設定
+	constexpr bool SetType( EEolType t ) noexcept;
+
+	//代入演算子
+	CEol& operator = ( EEolType t ) noexcept { SetType( t ); return *this; }
+
+	//文字列内の行終端子を解析
 	void SetTypeByString( const wchar_t* pszData, int nDataLen );
 	void SetTypeByString( const char* pszData, int nDataLen );
 
@@ -99,20 +126,6 @@ public:
 	void SetTypeByStringForFile( const char* pszData, int nDataLen ){ SetTypeByString( pszData, nDataLen ); }
 	void SetTypeByStringForFile_uni( const char* pszData, int nDataLen );
 	void SetTypeByStringForFile_unibe( const char* pszData, int nDataLen );
-
-	//取得
-	EEolType		GetType()	const{ return m_eEolType; }		//!< 現在のTypeを取得
-	CLogicInt		GetLen()	const { return CLogicInt(g_aEolTable[ m_eEolType ].m_nLen); }	//!< 現在のEOL長を取得。文字単位。
-	const WCHAR*	GetName()	const;	//!< 現在のEOLの名称取得
-	const wchar_t*	GetValue2()	const;	//!< 現在のEOL文字列先頭へのポインタを取得
-	//#####
-
-	bool IsValid() const
-	{
-		return m_eEolType>=EOL_CRLF && m_eEolType<EOL_CODEMAX;
-	}
-
-private:
-	EEolType	m_eEolType;	//!< 改行コードの種類
 };
+
 #endif /* SAKURA_CEOL_036E1E16_7462_46A4_8F59_51D8E171E657_H_ */

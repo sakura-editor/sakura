@@ -122,15 +122,21 @@ EEolType _GetEOLType_unibe( const char* pszData, int nDataLen )
 //-----------------------------------------------
 
 //! 現在のEOLの名称取得
-const WCHAR* CEol::GetName() const
+[[nodiscard]] LPCWSTR CEol::GetName() const noexcept
 {
-	return g_aEolTable[ m_eEolType ].m_szName;
+	return g_aEolTable[static_cast<size_t>(m_eEolType)].m_szName;
 }
 
-//!< 現在のEOL文字列先頭へのポインタを取得
-const wchar_t* CEol::GetValue2() const
+//! 現在のEOL文字列先頭へのポインタを取得
+[[nodiscard]] LPCWSTR CEol::GetValue2() const noexcept
 {
-	return g_aEolTable[ m_eEolType ].m_szDataW;
+	return g_aEolTable[static_cast<size_t>(m_eEolType)].m_szDataW;
+}
+
+//! 現在のEOL文字列長を取得。文字単位。
+[[nodiscard]] CLogicInt	CEol::GetLen() const noexcept
+{
+	return CLogicInt(g_aEolTable[static_cast<size_t>(m_eEolType)].m_nLen);
 }
 
 /*!
@@ -139,16 +145,17 @@ const wchar_t* CEol::GetValue2() const
 	@retval true 正常終了。設定が反映された。
 	@retval false 異常終了。強制的にCRLFに設定。
 */
-bool CEol::SetType( EEolType t )
+constexpr bool CEol::SetType( EEolType t ) noexcept
 {
-	if( t < EOL_NONE || EOL_CODEMAX <= t ){
-		//	異常値
+	if( t == EOL_NONE || IsValid( t ) ){
+		// 正しい値
+		m_eEolType = t;
+		return true;
+	}else{
+		// 異常値
 		m_eEolType = EOL_CRLF;
 		return false;
 	}
-	//	正しい値
-	m_eEolType = t;
-	return true;
 }
 
 void CEol::SetTypeByString( const wchar_t* pszData, int nDataLen )
