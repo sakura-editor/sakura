@@ -391,18 +391,15 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 	}
 
 	// 2011.11.29 Grep形式で失敗した後もTagsを検索する
-	if (strJumpToFile.empty()) {
-		if( Command_TagJumpByTagsFile(bClose) ){	//@@@ 2003.04.13
-			return true;
-		}
+	if (strJumpToFile.empty() && Command_TagJumpByTagsFile(bClose) ){	//@@@ 2003.04.13
+		return true;
 		//	From Here Aug. 27, 2001 genta
 	}
 
 	//	Apr. 21, 2003 genta bClose追加
-	if (strJumpToFile.empty() == false) {
-		if( m_pCommanderView->TagJumpSub(strJumpToFile.c_str(), CMyPoint(nJumpToColumn, nJumpToLine), bClose ) ){	//@@@ 2003.04.13
-			return true;
-		}
+	if (strJumpToFile.empty() == false &&
+		m_pCommanderView->TagJumpSub(strJumpToFile.c_str(), CMyPoint(nJumpToColumn, nJumpToLine), bClose ) ){	//@@@ 2003.04.13
+		return true;
 	}
 
 	return false;
