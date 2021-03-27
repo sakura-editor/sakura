@@ -29,11 +29,6 @@ CDicMgr::CDicMgr()
 	return;
 }
 
-CDicMgr::~CDicMgr()
-{
-	return;
-}
-
 /*!
 	キーワードの検索
 	最初に見つかったキーワードの意味を返す
