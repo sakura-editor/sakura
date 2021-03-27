@@ -166,7 +166,7 @@ void CViewCommander::Command_LineCutToEnd( void )
 
 	CLayoutPoint ptPos;
 
-	if( EEolType::none == pCLayout->GetDocLineRef()->GetEol() ){	/* 改行コードの種類 */
+	if( pCLayout->GetDocLineRef()->GetEol().IsNone() ){	/* 改行コードの種類 */
 		GetDocument()->m_cLayoutMgr.LogicToLayout(
 			CLogicPoint(
 				pCLayout->GetDocLineRef()->GetLengthWithEOL(),
@@ -246,7 +246,7 @@ void CViewCommander::Command_LineDeleteToEnd( void )
 
 	CLayoutPoint ptPos;
 
-	if( EEolType::none == pCLayout->GetDocLineRef()->GetEol() ){	/* 改行コードの種類 */
+	if( pCLayout->GetDocLineRef()->GetEol().IsNone() ){	/* 改行コードの種類 */
 		GetDocument()->m_cLayoutMgr.LogicToLayout(
 			CLogicPoint(
 				pCLayout->GetDocLineRef()->GetLengthWithEOL(),
@@ -414,7 +414,7 @@ void CViewCommander::Command_DUPLICATELINE( void )
 	||	・最終行でない
 	||	→折り返しである
 	*/
-	bCRLF = ( EEolType::none == pcLayout->GetLayoutEol() ) ? FALSE : TRUE;
+	bCRLF = ( pcLayout->GetLayoutEol().IsNone() ) ? FALSE : TRUE;
 
 	bAddCRLF = FALSE;
 	if( !bCRLF ){

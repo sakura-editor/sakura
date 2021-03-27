@@ -648,7 +648,7 @@ bool CMacro::HandleCommand(
 			case 7:		nEol = EEolType::paragraph_separator; break;
 			default:	nEol = EEolType::none; break;
 			}
-			if( nEol != EEolType::none ){
+			if( !CEol::IsNone( nEol ) ){
 				pcEditView->GetCommander().HandleCommand( Index, true, nEol, 0, 0, 0 );
 			}
 		}

@@ -397,7 +397,7 @@ CLayout* CLayoutMgr::CreateLayout(
 		colorInfo
 	);
 
-	if( EEolType::none == pCDocLine->GetEol() ){
+	if( pCDocLine->GetEol().IsNone() ){
 		pLayout->m_cEol.SetType( EEolType::none );/* 改行コードの種類 */
 	}else{
 		if( pLayout->GetLogicOffset() + pLayout->GetLengthWithEOL() >
@@ -462,7 +462,7 @@ bool CLayoutMgr::IsEndOfLine(
 		return false;
 	}
 
-	if( EEolType::none == pLayout->GetLayoutEol().GetType() )
+	if( pLayout->GetLayoutEol().IsNone() )
 	{	/* この行に改行はない */
 		/* この行の最後か？ */
 		if( ptLinePos.x == (Int)pLayout->GetLengthWithEOL() ) return true; //$$ 単位混在
@@ -501,7 +501,7 @@ void CLayoutMgr::GetEndLayoutPos(
 	}
 
 	CLayout *btm = m_pLayoutBot;
-	if( btm->m_cEol != EEolType::none ){
+	if( btm->m_cEol.IsValid() ){
 		//	末尾に改行がある
 		ptLayoutEnd->Set(CLayoutInt(0), GetLineCount());
 	}

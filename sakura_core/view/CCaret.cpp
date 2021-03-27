@@ -435,7 +435,7 @@ BOOL CCaret::GetAdjustCursorPos(
 		if( 0 < nLayoutLineCount ){
 			ptPosXY2.y = nLayoutLineCount - 1;
 			const CLayout* pcLayout = m_pEditDoc->m_cLayoutMgr.SearchLineByLayoutY( ptPosXY2.GetY2() );
-			if( pcLayout->GetLayoutEol() == EEolType::none ){
+			if( pcLayout->GetLayoutEol().IsNone() ){
 				ptPosXY2.x = m_pEditView->LineIndexToColumn( pcLayout, (CLogicInt)pcLayout->GetLengthWithEOL() );
 				// [EOF]のみ折り返すのはやめる	// 2009.02.17 ryoji
 				// 復活するなら ptPosXY2.x に折り返し行インデントを適用するのがよい
@@ -879,7 +879,7 @@ CLayoutInt CCaret::Cursor_UPDOWN( CLayoutInt nMoveLines, bool bSelect )
 
 	// 現在のキャレットY座標 + nMoveLinesが正しいレイアウト行の範囲内に収まるように nMoveLinesを調整する。
 	if( nMoveLines > 0 ) { // 下移動。
-		const bool existsEOFOnlyLine = pLayoutMgr->GetBottomLayout() && pLayoutMgr->GetBottomLayout()->GetLayoutEol() != EEolType::none
+		const bool existsEOFOnlyLine = pLayoutMgr->GetBottomLayout() && pLayoutMgr->GetBottomLayout()->GetLayoutEol().IsValid()
 			|| pLayoutMgr->GetLineCount() == 0;
 		const CLayoutInt maxLayoutLine = pLayoutMgr->GetLineCount() + (existsEOFOnlyLine ? 1 : 0 ) - 1;
 		// 移動先が EOFのみの行を含めたレイアウト行数未満になるように移動量を規正する。
@@ -1095,7 +1095,7 @@ CLayoutInt CCaret::MoveCursorProperly(
 	if( ptNewXY.y >= m_pEditDoc->m_cLayoutMgr.GetLineCount()
 	 && (m_pEditView->GetSelectionInfo().IsMouseSelecting() && m_pEditView->GetSelectionInfo().IsBoxSelecting()) ){
 		const CLayout* layoutEnd = m_pEditDoc->m_cLayoutMgr.GetBottomLayout();
-		bool bEofOnly = (layoutEnd && layoutEnd->GetLayoutEol() != EEolType::none) || NULL == layoutEnd;
+		bool bEofOnly = (layoutEnd && layoutEnd->GetLayoutEol().IsValid()) || NULL == layoutEnd;
 	 	// 2012.01.09 ぴったり[EOF]位置にある場合は位置を維持(1つ上の行にしない)
 	 	if( bEofOnly && ptNewXY.y == m_pEditDoc->m_cLayoutMgr.GetLineCount() && ptNewXY.x == 0 ){
 	 	}else{

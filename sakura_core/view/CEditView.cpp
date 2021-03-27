@@ -1978,7 +1978,7 @@ bool CEditView::GetSelectedData(
 				cmemBuf->AppendString( pszLineNum );
 			}
 
-			if( EEolType::none != pcLayout->GetLayoutEol() ){
+			if( pcLayout->GetLayoutEol().IsValid() ){
 				if( nIdxTo >= nLineLen ){
 					cmemBuf->AppendString( &pLine[nIdxFrom], nLineLen - 1 - nIdxFrom );
 					//	Jul. 25, 2000 genta

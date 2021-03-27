@@ -88,11 +88,9 @@ void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
 		else{
 			SetNewLineCode( EEolType::cr_and_lf );
 		}
-		CDocLine*	pFirstlineinfo = pcDoc->m_cDocLineMgr.GetLine( CLogicInt(0) );
-		if( pFirstlineinfo != NULL ){
-			EEolType t = pFirstlineinfo->GetEol();
-			if( t != EEolType::none && t != EEolType::auto_detect ){
-				SetNewLineCode( t );
+		if( CDocLine* pFirstline = pcDoc->m_cDocLineMgr.GetLine( CLogicInt(0) ); pFirstline != nullptr ){
+			if( const auto cEol = pFirstline->GetEol(); cEol.IsValid() ){
+				SetNewLineCode( cEol.GetType() );
 			}
 		}
 	}

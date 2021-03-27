@@ -1487,8 +1487,8 @@ LRESULT CEditWnd::DispatchEvent(
 					default:
 						nEOLCode = -1;
 					}
-					if( nEOLCode != -1 ){
-						GetActiveView().GetCommander().HandleCommand( F_CHGMOD_EOL, true, nEOLCode, 0, 0, 0 );
+					if( !CEol::IsNone( nEOLCode ) ){
+						GetActiveView().GetCommander().HandleCommand( F_CHGMOD_EOL, true, static_cast<LPARAM>(nEOLCode), 0, 0, 0 );
 					}
 				}
 			}

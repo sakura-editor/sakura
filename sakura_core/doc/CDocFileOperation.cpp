@@ -319,7 +319,7 @@ bool CDocFileOperation::DoSaveFlow(SSaveInfo* pSaveInfo)
 			if(pSaveInfo->bOverwriteMode){
 				// 無変更の場合は警告音を出し、終了
 				if (!m_pcDocRef->m_cDocEditor.IsModified() &&
-					pSaveInfo->cEol==EEolType::none &&	//※改行コード指定保存がリクエストされた場合は、「変更があったもの」とみなす
+					pSaveInfo->cEol.IsNone() &&	//※改行コード指定保存がリクエストされた場合は、「変更があったもの」とみなす
 					!pSaveInfo->bChgCodeSet) {		// 文字コードセットの変更が有った場合は、「変更があったもの」とみなす
 					CEditApp::getInstance()->m_cSoundSet.NeedlessToSaveBeep();
 					throw CFlowInterruption();
@@ -408,7 +408,7 @@ bool CDocFileOperation::FileSaveAs( const WCHAR* filename,ECodeType eCodeType, E
 	if( filename ){
 		// ダイアログなし保存、またはマクロの引数あり
 		sSaveInfo.cFilePath = filename;
-		if( EEolType::none <= eEolType && eEolType < EEolType::code_max ){
+		if( CEol::IsNoneOrValid( eEolType ) ){
 			sSaveInfo.cEol = eEolType;
 		}
 		if( IsValidCodeType(eCodeType) && eCodeType != sSaveInfo.eCharCode ){
