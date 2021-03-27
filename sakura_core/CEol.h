@@ -37,18 +37,27 @@
 #include "_main/global.h"
 #include "basis/SakuraBasis.h"
 
-// 2002/09/22 Moca EOL_CRLF_UNICODEを廃止
-/* 行終端子の種類 */
+/*!
+	行終端子の種類
+
+	行末記号の種類を定義する。
+	0より大きい値は、終端の種類に対応する。
+	ファイル末尾の行では「終端がない状態」があり得る。
+	ドキュメントの行末スタイルに合わせて自動付与を行うための値も定義しておく。
+
+	@date 2002/09/22 Moca EOL_CRLF_UNICODEを廃止
+	@date 2021/03/27 berryzplus 定数に意味のある名前を付ける
+ */
 enum EEolType : char {
-	EOL_NONE,			//!< 
-	EOL_CRLF,			//!< 0d0a
-	EOL_LF,				//!< 0a
-	EOL_CR,				//!< 0d
-	EOL_NEL,			//!< 85
-	EOL_LS,				//!< 2028
-	EOL_PS,				//!< 2029
-	EOL_CODEMAX,		//
-	EOL_UNKNOWN = -1	//
+	none,					//!< 行終端子なし
+	cr_and_lf,				//!< \x0d\x0a 復帰改行
+	line_feed,				//!< \x0a 改行
+	carriage_return,		//!< \x0d 復帰
+	next_line,				//!< \u0085 NEL
+	line_separator,			//!< \u2028 LS
+	paragraph_separator,	//!< \u2029 PS
+	code_max,				//!< 範囲外検出用のマーカー(行終端子として使用しないこと)
+	auto_detect = -1		//!< 行終端子の自動検出
 };
 
 struct SEolDefinition{
@@ -62,7 +71,7 @@ struct SEolDefinition{
 };
 extern const SEolDefinition g_aEolTable[];
 
-#define EOL_TYPE_NUM	EOL_CODEMAX // 8
+#define EOL_TYPE_NUM	EEolType::code_max // 8
 
 /* 行終端子の配列 */
 extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
@@ -75,16 +84,16 @@ extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
 	クラス内部に閉じこめることができるのでそれなりに意味はあると思う。
 */
 class CEol {
-	EEolType m_eEolType = EOL_NONE;	//!< 改行コードの種類
+	EEolType m_eEolType = EEolType::none;	//!< 改行コードの種類
 
 public:
 	static constexpr bool IsNone( EEolType t ) noexcept
 	{
-		return t == EOL_NONE;
+		return t == EEolType::none;
 	}
 	static constexpr bool IsValid( EEolType t ) noexcept
 	{
-		return EEolType::none < t && t < EOL_CODEMAX;
+		return EEolType::none < t && t < EEolType::code_max;
 	}
 	static constexpr bool IsNoneOrValid( EEolType t ) noexcept
 	{

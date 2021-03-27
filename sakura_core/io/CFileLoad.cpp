@@ -243,9 +243,9 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	// To Here Jun. 13, 2003 Moca BOMの除去
 	m_eMode = FLMODE_READY;
 //	m_cmemLine.AllocBuffer( 256 );
-	m_pCodeBase->GetEol( &m_memEols[0], EOL_NEL );
-	m_pCodeBase->GetEol( &m_memEols[1], EOL_LS );
-	m_pCodeBase->GetEol( &m_memEols[2], EOL_PS );
+	m_pCodeBase->GetEol( &m_memEols[0], EEolType::next_line );
+	m_pCodeBase->GetEol( &m_memEols[1], EEolType::line_separator );
+	m_pCodeBase->GetEol( &m_memEols[2], EEolType::paragraph_separator );
 	bool bEolEx = false;
 	int  nMaxEolLen = 0;
 	for( int k = 0; k < (int)_countof(m_memEols); k++ ){
@@ -505,7 +505,7 @@ const char* CFileLoad::GetNextLineCharCode(
 	int nbgn = *pnBgn;
 	int i;
 
-	pcEol->SetType( EOL_NONE );
+	pcEol->SetType( EEolType::none );
 	*pnBufferNext = 0;
 
 	if( nDataLen <= nbgn ){
@@ -522,9 +522,9 @@ const char* CFileLoad::GetNextLineCharCode(
 	case ENCODING_TRAIT_ASCII:
 		{
 			static const EEolType eEolEx[] = {
-				EOL_NEL,
-				EOL_LS,
-				EOL_PS,
+				EEolType::next_line,
+				EEolType::line_separator,
+				EEolType::paragraph_separator,
 			};
 			nLen = nDataLen;
 			for( i = nbgn; i < nDataLen; ++i ){
@@ -638,7 +638,7 @@ const char* CFileLoad::GetNextLineCharCode(
 		for( i = nbgn; i < nDataLen; ++i ){
 			if( m_encodingTrait == ENCODING_TRAIT_EBCDIC && bExtEol ){
 				if( pData[i] == '\x15' ){
-					pcEol->SetType(EOL_NEL);
+					pcEol->SetType(EEolType::next_line);
 					neollen = 1;
 					break;
 				}
@@ -666,7 +666,7 @@ const char* CFileLoad::GetNextLineCharCode(
 		}
 	}else{
 		// CRの場合は、CRLFかもしれないので次のバッファへ送る
-		if( *pcEol == EOL_CR ){
+		if( *pcEol == EEolType::carriage_return ){
 			*pnBufferNext = neollen;
 		}
 	}

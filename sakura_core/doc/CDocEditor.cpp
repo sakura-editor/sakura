@@ -37,7 +37,7 @@
 
 CDocEditor::CDocEditor(CEditDoc* pcDoc)
 : m_pcDocRef(pcDoc)
-, m_cNewLineCode( EOL_CRLF )		//	New Line Type
+, m_cNewLineCode( EEolType::cr_and_lf )		//	New Line Type
 , m_pcOpeBlk( NULL )
 , m_bInsMode( true )	// Oct. 2, 2005 genta
 , m_bIsDocModified( false )	/* 変更フラグ */ // Jan. 22, 2002 genta 型変更
@@ -86,12 +86,12 @@ void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
 			SetNewLineCode( type.m_encoding.m_eDefaultEoltype );	// 2011.01.24 ryoji デフォルトEOL
 		}
 		else{
-			SetNewLineCode( EOL_CRLF );
+			SetNewLineCode( EEolType::cr_and_lf );
 		}
 		CDocLine*	pFirstlineinfo = pcDoc->m_cDocLineMgr.GetLine( CLogicInt(0) );
 		if( pFirstlineinfo != NULL ){
 			EEolType t = pFirstlineinfo->GetEol();
-			if( t != EOL_NONE && t != EOL_UNKNOWN ){
+			if( t != EEolType::none && t != EEolType::auto_detect ){
 				SetNewLineCode( t );
 			}
 		}

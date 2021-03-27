@@ -219,10 +219,10 @@ UINT_PTR CALLBACK OFNHookProc(
 
 	//	From Here	Feb. 9, 2001 genta
 	static const int		nEolValueArr[] = {
-		EOL_NONE,
-		EOL_CRLF,
-		EOL_LF,
-		EOL_CR,
+		EEolType::none,
+		EEolType::cr_and_lf,
+		EEolType::line_feed,
+		EEolType::carriage_return,
 	};
 	//	文字列はResource内に入れる
 	static const WCHAR*	const	pEolNameArr[] = {

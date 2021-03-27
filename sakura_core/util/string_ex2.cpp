@@ -124,7 +124,7 @@ const char* GetNextLine(
 	nBgn = *pnBgn;
 
 	//	May 15, 2000 genta
-	pcEol->SetType( EOL_NONE );
+	pcEol->SetType( EEolType::none );
 	if( *pnBgn >= nDataLen ){
 		return NULL;
 	}
@@ -159,7 +159,7 @@ const wchar_t* GetNextLineW(
 	int		nBgn;
 	nBgn = *pnBgn;
 
-	pcEol->SetType( EOL_NONE );
+	pcEol->SetType( EEolType::none );
 	if( *pnBgn >= nDataLen ){
 		return NULL;
 	}

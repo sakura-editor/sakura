@@ -798,7 +798,7 @@ void CEditWnd::SetDocumentTypeWhenCreate(
 		}
 		else{
 			GetDocument()->SetDocumentEncoding( nCharCode, CCodeTypeName( nCharCode ).IsBomDefOn() );
-			GetDocument()->m_cDocEditor.m_cNewLineCode = EOL_CRLF;
+			GetDocument()->m_cDocEditor.m_cNewLineCode = EEolType::cr_and_lf;
 		}
 	}
 
@@ -1478,12 +1478,12 @@ LRESULT CEditWnd::DispatchEvent(
 					::DestroyMenu( hMenuPopUp );
 					int nEOLCode = 0;
 					switch(nId){
-					case F_CHGMOD_EOL_CRLF: nEOLCode = EOL_CRLF; break;
-					case F_CHGMOD_EOL_CR: nEOLCode = EOL_CR; break;
-					case F_CHGMOD_EOL_LF: nEOLCode = EOL_LF; break;
-					case F_CHGMOD_EOL_NEL: nEOLCode = EOL_NEL; break;
-					case F_CHGMOD_EOL_PS: nEOLCode = EOL_PS; break;
-					case F_CHGMOD_EOL_LS: nEOLCode = EOL_LS; break;
+					case F_CHGMOD_EOL_CRLF: nEOLCode = EEolType::cr_and_lf; break;
+					case F_CHGMOD_EOL_CR: nEOLCode = EEolType::carriage_return; break;
+					case F_CHGMOD_EOL_LF: nEOLCode = EEolType::line_feed; break;
+					case F_CHGMOD_EOL_NEL: nEOLCode = EEolType::next_line; break;
+					case F_CHGMOD_EOL_PS: nEOLCode = EEolType::paragraph_separator; break;
+					case F_CHGMOD_EOL_LS: nEOLCode = EEolType::line_separator; break;
 					default:
 						nEOLCode = -1;
 					}

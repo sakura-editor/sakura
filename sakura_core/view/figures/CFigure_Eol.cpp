@@ -339,7 +339,7 @@ void _DrawEOL(
 	HPEN hPenOld = (HPEN)SelectObject(gr, hPen);
 
 	switch( cEol.GetType() ){
-	case EOL_CRLF:	//	下左矢印
+	case EEolType::cr_and_lf:	//	下左矢印
 		{
 			sx = rcEol.left;						//X左端
 			sy = rcEol.top + ( rcEol.Height() / 2);	//Y中心
@@ -376,7 +376,7 @@ void _DrawEOL(
 			}
 		}
 		break;
-	case EOL_CR:	//	左向き矢印	// 2007.08.17 ryoji EOL_LF -> EOL_CR
+	case EEolType::carriage_return:	//	左向き矢印	// 2007.08.17 ryoji EEolType::line_feed -> EEolType::carriage_return
 		{
 			sx = rcEol.left;
 			sy = rcEol.top + ( rcEol.Height() / 2 );
@@ -409,7 +409,7 @@ void _DrawEOL(
 			}
 		}
 		break;
-	case EOL_LF:	//	下向き矢印	// 2007.08.17 ryoji EOL_CR -> EOL_LF
+	case EEolType::line_feed:	//	下向き矢印	// 2007.08.17 ryoji EEolType::carriage_return -> EEolType::line_feed
 	// 2013.04.22 Moca NEL,LS,PS対応。暫定でLFと同じにする
 		{
 			sx = rcEol.left + ( rcEol.Width() / 2 );
@@ -443,9 +443,9 @@ void _DrawEOL(
 			}
 		}
 		break;
-	case EOL_NEL:
-	case EOL_LS:
-	case EOL_PS:
+	case EEolType::next_line:
+	case EEolType::line_separator:
+	case EEolType::paragraph_separator:
 		{
 			// 左下矢印(折れ曲がりなし)
 			sx = rcEol.left;			//X左端

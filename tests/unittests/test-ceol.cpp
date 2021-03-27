@@ -32,12 +32,12 @@ TEST(CEol, CEol)
 {
 	// 初期値は none 
 	CEol cEol;
-	EXPECT_EQ(EOL_NONE, cEol.GetType());
-	EXPECT_EQ(EOL_NONE, (EEolType)cEol);
+	EXPECT_EQ(EEolType::none, cEol.GetType());
+	EXPECT_EQ(EEolType::none, (EEolType)cEol);
 
 	// 代入したら変更できる
-	cEol = EEolType::EOL_LF;
-	EXPECT_EQ(EEolType::EOL_LF, cEol.GetType());
+	cEol = EEolType::line_feed;
+	EXPECT_EQ(EEolType::line_feed, cEol.GetType());
 
 	// コピーの確認
 	CEol cCopied = cEol;
@@ -49,7 +49,7 @@ TEST(CEol, CEol)
 
 	// CEolは変な値を格納できない（入れようとした場合CRLFになる）
 	cEol = eBadValue;
-	EXPECT_EQ(EEolType::EOL_CRLF, cEol.GetType());
+	EXPECT_EQ(EEolType::cr_and_lf, cEol.GetType());
 }
 
 /*!
@@ -57,9 +57,9 @@ TEST(CEol, CEol)
  */
 TEST(CEol, typeNone)
 {
-	CEol cEol(EOL_NONE);
+	CEol cEol(EEolType::none);
 
-	EXPECT_EQ(EOL_NONE, cEol.GetType());
+	EXPECT_EQ(EEolType::none, cEol.GetType());
 	EXPECT_EQ(0, cEol.GetLen());
 	EXPECT_STREQ(L"改行無", cEol.GetName());
 	EXPECT_STREQ(L"", cEol.GetValue2());
@@ -71,9 +71,9 @@ TEST(CEol, typeNone)
  */
 TEST(CEol, typeCrlf)
 {
-	CEol cEol(EOL_CRLF);
+	CEol cEol(EEolType::cr_and_lf);
 
-	EXPECT_EQ(EOL_CRLF, cEol.GetType());
+	EXPECT_EQ(EEolType::cr_and_lf, cEol.GetType());
 	EXPECT_EQ(2, cEol.GetLen());
 	EXPECT_STREQ(L"CRLF", cEol.GetName());
 	EXPECT_STREQ(L"\r\n", cEol.GetValue2());
@@ -85,9 +85,9 @@ TEST(CEol, typeCrlf)
  */
 TEST(CEol, typeLf)
 {
-	CEol cEol(EOL_LF);
+	CEol cEol(EEolType::line_feed);
 
-	EXPECT_EQ(EOL_LF, cEol.GetType());
+	EXPECT_EQ(EEolType::line_feed, cEol.GetType());
 	EXPECT_EQ(1, cEol.GetLen());
 	EXPECT_STREQ(L"LF", cEol.GetName());
 	EXPECT_STREQ(L"\n", cEol.GetValue2());
@@ -99,9 +99,9 @@ TEST(CEol, typeLf)
  */
 TEST(CEol, typeCr)
 {
-	CEol cEol(EOL_CR);
+	CEol cEol(EEolType::carriage_return);
 
-	EXPECT_EQ(EOL_CR, cEol.GetType());
+	EXPECT_EQ(EEolType::carriage_return, cEol.GetType());
 	EXPECT_EQ(1, cEol.GetLen());
 	EXPECT_STREQ(L"CR", cEol.GetName());
 	EXPECT_STREQ(L"\r", cEol.GetValue2());
@@ -113,9 +113,9 @@ TEST(CEol, typeCr)
  */
 TEST(CEol, typeNel)
 {
-	CEol cEol(EOL_NEL);
+	CEol cEol(EEolType::next_line);
 
-	EXPECT_EQ(EOL_NEL, cEol.GetType());
+	EXPECT_EQ(EEolType::next_line, cEol.GetType());
 	EXPECT_EQ(1, cEol.GetLen());
 	EXPECT_STREQ(L"NEL", cEol.GetName());
 	EXPECT_STREQ(L"\x85", cEol.GetValue2());
@@ -127,9 +127,9 @@ TEST(CEol, typeNel)
  */
 TEST(CEol, typeLs)
 {
-	CEol cEol(EOL_LS);
+	CEol cEol(EEolType::line_separator);
 
-	EXPECT_EQ(EOL_LS, cEol.GetType());
+	EXPECT_EQ(EEolType::line_separator, cEol.GetType());
 	EXPECT_EQ(1, cEol.GetLen());
 	EXPECT_STREQ(L"LS", cEol.GetName());
 	EXPECT_STREQ(L"\u2028", cEol.GetValue2());
@@ -141,9 +141,9 @@ TEST(CEol, typeLs)
  */
 TEST(CEol, typePs)
 {
-	CEol cEol(EOL_PS);
+	CEol cEol(EEolType::paragraph_separator);
 
-	EXPECT_EQ(EOL_PS, cEol.GetType());
+	EXPECT_EQ(EEolType::paragraph_separator, cEol.GetType());
 	EXPECT_EQ(1, cEol.GetLen());
 	EXPECT_STREQ(L"PS", cEol.GetName());
 	EXPECT_STREQ(L"\u2029", cEol.GetValue2());

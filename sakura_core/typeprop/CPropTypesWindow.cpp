@@ -102,12 +102,12 @@ static const wchar_t* aszEolStr[] = {
 	L"PS",
 };
 static const EEolType aeEolType[] = {
-	EOL_CRLF,
-	EOL_LF,
-	EOL_CR,
-	EOL_NEL,
-	EOL_LS,
-	EOL_PS,
+	EEolType::cr_and_lf,
+	EEolType::line_feed,
+	EEolType::carriage_return,
+	EEolType::next_line,
+	EEolType::line_separator,
+	EEolType::paragraph_separator,
 };
 
 // IMEのオープン状態復帰用

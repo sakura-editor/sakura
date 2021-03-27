@@ -34,13 +34,13 @@
 
 /*! 行終端子の配列 */
 const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
-	EOL_NONE			,	// == 0
-	EOL_CRLF			,	// == 2
-	EOL_LF				,	// == 1
-	EOL_CR				,	// == 1
-	EOL_NEL				,	// == 1
-	EOL_LS				,	// == 1
-	EOL_PS					// == 1
+	EEolType::none			,	// == 0
+	EEolType::cr_and_lf			,	// == 2
+	EEolType::line_feed				,	// == 1
+	EEolType::carriage_return				,	// == 1
+	EEolType::next_line				,	// == 1
+	EEolType::line_separator				,	// == 1
+	EEolType::paragraph_separator					// == 1
 };
 
 //-----------------------------------------------
@@ -83,7 +83,7 @@ static const SEolDefinitionForUniFile g_aEolTable_uni_file[] = {
 	行終端子の種類を調べる。
 	@param pszData 調査対象文字列へのポインタ
 	@param nDataLen 調査対象文字列の長さ
-	@return 改行コードの種類。終端子が見つからなかったときはEOL_NONEを返す。
+	@return 改行コードの種類。終端子が見つからなかったときはEEolType::noneを返す。
 */
 template <class T>
 EEolType GetEOLType( const T* pszData, int nDataLen )
@@ -92,7 +92,7 @@ EEolType GetEOLType( const T* pszData, int nDataLen )
 		if( g_aEolTable[i].StartsWith(pszData, nDataLen) )
 			return gm_pnEolTypeArr[i];
 	}
-	return EOL_NONE;
+	return EEolType::none;
 }
 
 /*
@@ -105,7 +105,7 @@ EEolType _GetEOLType_uni( const char* pszData, int nDataLen )
 		if( g_aEolTable_uni_file[i].StartsWithW(pszData, nDataLen) )
 			return gm_pnEolTypeArr[i];
 	}
-	return EOL_NONE;
+	return EEolType::none;
 }
 
 EEolType _GetEOLType_unibe( const char* pszData, int nDataLen )
@@ -114,7 +114,7 @@ EEolType _GetEOLType_unibe( const char* pszData, int nDataLen )
 		if( g_aEolTable_uni_file[i].StartsWithWB(pszData, nDataLen) )
 			return gm_pnEolTypeArr[i];
 	}
-	return EOL_NONE;
+	return EEolType::none;
 }
 
 //-----------------------------------------------
@@ -147,13 +147,13 @@ EEolType _GetEOLType_unibe( const char* pszData, int nDataLen )
 */
 constexpr bool CEol::SetType( EEolType t ) noexcept
 {
-	if( t == EOL_NONE || IsValid( t ) ){
+	if( t == EEolType::none || IsValid( t ) ){
 		// 正しい値
 		m_eEolType = t;
 		return true;
 	}else{
 		// 異常値
-		m_eEolType = EOL_CRLF;
+		m_eEolType = EEolType::cr_and_lf;
 		return false;
 	}
 }

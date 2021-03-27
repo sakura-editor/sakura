@@ -60,7 +60,7 @@ void CViewCommander::Command_CHGMOD_INS( void )
 	@date 2003.06.23 新規作成
 */
 void CViewCommander::Command_CHGMOD_EOL( EEolType e ){
-	if( EOL_NONE < e && e < EOL_CODEMAX  ){
+	if( EEolType::none < e && e < EEolType::code_max  ){
 		GetDocument()->m_cDocEditor.SetNewLineCode( e );
 		// ステータスバーを更新するため
 		// キャレットの行桁位置を表示する関数を呼び出す

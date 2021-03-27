@@ -319,7 +319,7 @@ bool CDocFileOperation::DoSaveFlow(SSaveInfo* pSaveInfo)
 			if(pSaveInfo->bOverwriteMode){
 				// 無変更の場合は警告音を出し、終了
 				if (!m_pcDocRef->m_cDocEditor.IsModified() &&
-					pSaveInfo->cEol==EOL_NONE &&	//※改行コード指定保存がリクエストされた場合は、「変更があったもの」とみなす
+					pSaveInfo->cEol==EEolType::none &&	//※改行コード指定保存がリクエストされた場合は、「変更があったもの」とみなす
 					!pSaveInfo->bChgCodeSet) {		// 文字コードセットの変更が有った場合は、「変更があったもの」とみなす
 					CEditApp::getInstance()->m_cSoundSet.NeedlessToSaveBeep();
 					throw CFlowInterruption();
@@ -388,7 +388,7 @@ bool CDocFileOperation::FileSave()
 	//セーブ情報
 	SSaveInfo sSaveInfo;
 	m_pcDocRef->GetSaveInfo(&sSaveInfo);
-	sSaveInfo.cEol = EOL_NONE; //改行コード無変換
+	sSaveInfo.cEol = EEolType::none; //改行コード無変換
 	sSaveInfo.bOverwriteMode = true; //上書き要求
 
 	//上書き処理
@@ -404,11 +404,11 @@ bool CDocFileOperation::FileSaveAs( const WCHAR* filename,ECodeType eCodeType, E
 	//セーブ情報
 	SSaveInfo sSaveInfo;
 	m_pcDocRef->GetSaveInfo(&sSaveInfo);
-	sSaveInfo.cEol = EOL_NONE; // 初期値は変換しない
+	sSaveInfo.cEol = EEolType::none; // 初期値は変換しない
 	if( filename ){
 		// ダイアログなし保存、またはマクロの引数あり
 		sSaveInfo.cFilePath = filename;
-		if( EOL_NONE <= eEolType && eEolType < EOL_CODEMAX ){
+		if( EEolType::none <= eEolType && eEolType < EEolType::code_max ){
 			sSaveInfo.cEol = eEolType;
 		}
 		if( IsValidCodeType(eCodeType) && eCodeType != sSaveInfo.eCharCode ){
