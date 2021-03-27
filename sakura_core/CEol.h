@@ -35,6 +35,7 @@
 #pragma once
 
 #include "_main/global.h"
+#include "basis/SakuraBasis.h"
 
 // 2002/09/22 Moca EOL_CRLF_UNICODEを廃止
 /* 行終端子の種類 */
@@ -65,8 +66,6 @@ extern const SEolDefinition g_aEolTable[];
 
 /* 行終端子の配列 */
 extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
-
-#include "basis/SakuraBasis.h"
 
 /*!
 	@brief 行末の改行コードを管理
