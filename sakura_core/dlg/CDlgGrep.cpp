@@ -509,7 +509,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			if( szFolder[0] == L'\0' ){
 				::GetCurrentDirectory( nMaxPath, szFolder );
 			}
-			if( SelectDir( GetHwnd(), LS(STR_DLGGREP1), szFolder, szFolder ) ){
+			if( SelectDir( GetHwnd(), LS(STR_DLGGREP1), szFolder, szFolder, _countof(szFolder) ) ){
 				SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), szFolder );
 			}
 		}

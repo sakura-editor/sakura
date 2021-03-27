@@ -1939,7 +1939,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			}
 
 			WCHAR szPath[ _MAX_PATH ];
-			int nRet = SelectDir( View->GetHwnd(), sMessage.c_str(), sDefault.c_str(), szPath );
+			int nRet = SelectDir( View->GetHwnd(), sMessage.c_str(), sDefault.c_str(), szPath, _countof(szPath) );
 			if( nRet == IDOK ){
 				SysString S( szPath, wcslen(szPath) );
 				Wrap( &Result )->Receive( S );

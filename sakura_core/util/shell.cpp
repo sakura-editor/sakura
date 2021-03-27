@@ -40,77 +40,86 @@
 #include "extmodule/CHtmlHelp.h"
 #include <wrl.h>
 
+
+/*!
+	@brief IFileDialog の初期フォルダを設定する
+
+	@param [in] pDialog			設定対象のダイアログ
+	@param [in] pszInitFolder	初期フォルダに設定したいパス
+*/
+static void SetInitialDir( Microsoft::WRL::ComPtr<IFileDialog> pDialog, const WCHAR* pszInitFolder )
+{
+	
+	WCHAR	szInitFolder[MAX_PATH];
+	wcscpy_s( szInitFolder, _countof(szInitFolder), pszInitFolder );
+
+	// フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない
+	CutLastYenFromDirectoryPath( szInitFolder );
+
+	// 初期フォルダを設定
+	Microsoft::WRL::ComPtr<IShellItem> psiFolder;
+	HRESULT hres = SHCreateItemFromParsingName( szInitFolder, nullptr, IID_PPV_ARGS(&psiFolder) );
+	if ( SUCCEEDED(hres) ) {
+		pDialog->SetFolder( psiFolder.Get() );
+	}
+}
+
 /* フォルダ選択ダイアログ */
-BOOL SelectDir(HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR* strFolderName)
+BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR* strFolderName, size_t nMaxCount )
 {
 	using namespace Microsoft::WRL;
-
 	ComPtr<IFileDialog> pDialog;
 	HRESULT hres;
 
 	// インスタンスを作成
-	hres = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pDialog));
-	if (FAILED(hres)) {
+	hres = CoCreateInstance( CLSID_FileOpenDialog, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pDialog) );
+	if ( FAILED(hres) ) {
 		return FALSE;
 	}
 
 	// デフォルト設定を取得
 	DWORD dwOptions = 0;
-	hres = pDialog->GetOptions(&dwOptions);
-	if (FAILED(hres)) {
+	hres = pDialog->GetOptions( &dwOptions );
+	if ( FAILED(hres) ) {
 		return FALSE;
 	}
 
 	// オプションをフォルダを選択可能に変更
-	hres = pDialog->SetOptions(dwOptions | FOS_PICKFOLDERS | FOS_NOCHANGEDIR | FOS_FORCEFILESYSTEM);
-	if (FAILED(hres)) {
+	hres = pDialog->SetOptions( dwOptions | FOS_PICKFOLDERS | FOS_NOCHANGEDIR | FOS_FORCEFILESYSTEM );
+	if ( FAILED(hres) ) {
 		return FALSE;
 	}
 
-
-	{
-		WCHAR	szInitFolder[MAX_PATH];
-
-		wcscpy_s(szInitFolder, _countof(szInitFolder), pszInitFolder);
-		// フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない
-
-		CutLastYenFromDirectoryPath(szInitFolder);
-
-		// 初期フォルダを設定
-		ComPtr<IShellItem> psiFolder;
-		hres = SHCreateItemFromParsingName(szInitFolder, NULL, IID_PPV_ARGS(&psiFolder));
-		if (SUCCEEDED(hres)) {
-			hres = pDialog->SetFolder(psiFolder.Get());
-		}
-	}
+	// 初期フォルダを設定
+	SetInitialDir( pDialog, pszInitFolder );
 
 	// タイトル文字列を設定
-	hres = pDialog->SetTitle(pszTitle);
-	if (FAILED(hres)) {
+	hres = pDialog->SetTitle( pszTitle );
+	if ( FAILED(hres) ) {
 		return FALSE;
 	}
 
 	// フォルダ選択ダイアログを表示
-	hres = pDialog->Show(hWnd);
-	if (FAILED(hres)) {
+	hres = pDialog->Show( hWnd );
+	if ( FAILED(hres) ) {
 		return FALSE;
 	}
 
 	// 選択結果を取得
 	ComPtr<IShellItem> psiResult;
-	hres = pDialog->GetResult(&psiResult);
-	if (FAILED(hres)) {
+	hres = pDialog->GetResult( &psiResult );
+	if ( FAILED(hres) ) {
 		return FALSE;
 	}
 
 	PWSTR pszResult;
-	hres = psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszResult);
-	if (FAILED(hres)) {
+	hres = psiResult->GetDisplayName( SIGDN_FILESYSPATH, &pszResult );
+	if ( FAILED(hres) ) {
 		return FALSE;
 	}
 
-	wcscpy(strFolderName, pszResult);
-	CoTaskMemFree(pszResult);
+	wcscpy_s( strFolderName, nMaxCount, pszResult );
+	CoTaskMemFree( pszResult );
 
 	return TRUE;
 }

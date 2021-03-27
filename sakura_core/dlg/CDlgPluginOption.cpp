@@ -730,7 +730,7 @@ void CDlgPluginOption::SelectDirectory( int iLine )
 
 	WCHAR	sTitle[MAX_LENGTH_VALUE+10];
 	auto_sprintf( sTitle, LS(STR_DLGPLUGINOPT_SELECT), buf);
-	if (SelectDir( GetHwnd(), (const WCHAR*)sTitle /*L"ディレクトリの選択"*/, szDir, szDir )) {
+	if (SelectDir( GetHwnd(), (const WCHAR*)sTitle /*L"ディレクトリの選択"*/, szDir, szDir, _countof(szDir) )) {
 		//	末尾に\マークを追加する．
 		AddLastChar( szDir, _countof(szDir), L'\\' );
 		::DlgItem_SetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR, szDir );
