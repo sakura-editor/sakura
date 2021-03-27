@@ -38,63 +38,81 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "extmodule/CHtmlHelp.h"
-
-int CALLBACK MYBrowseCallbackProc(
-	HWND hwnd,
-	UINT uMsg,
-	LPARAM lParam,
-	LPARAM lpData
-)
-{
-	switch( uMsg ){
-	case BFFM_INITIALIZED:
-		::SendMessage( hwnd, BFFM_SETSELECTION, TRUE, (LPARAM)lpData );
-		break;
-	case BFFM_SELCHANGED:
-		break;
-	}
-	return 0;
-}
+#include <wrl.h>
 
 /* フォルダ選択ダイアログ */
-BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR* strFolderName )
+BOOL SelectDir(HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR* strFolderName)
 {
-	BOOL	bRes;
-	WCHAR	szInitFolder[MAX_PATH];
+	using namespace Microsoft::WRL;
 
-	wcscpy( szInitFolder, pszInitFolder );
-	/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
-	CutLastYenFromDirectoryPath( szInitFolder );
+	ComPtr<IFileDialog> pDialog;
+	HRESULT hres;
 
-	// 2010.08.28 フォルダを開くとフックも含めて色々DLLが読み込まれるので移動
-	CCurrentDirectoryBackupPoint dirBack;
-	ChangeCurrentDirectoryToExeDir();
+	// インスタンスを作成
+	hres = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pDialog));
+	if (FAILED(hres)) {
+		return FALSE;
+	}
 
-	// SHBrowseForFolder()関数に渡す構造体
-	BROWSEINFO bi;
-	bi.hwndOwner = hWnd;
-	bi.pidlRoot = NULL;
-	bi.pszDisplayName = strFolderName;
-	bi.lpszTitle = pszTitle;
-	bi.ulFlags = BIF_RETURNONLYFSDIRS/* | BIF_EDITBOX*//* | BIF_STATUSTEXT*/;
-	bi.lpfn = MYBrowseCallbackProc;
-	bi.lParam = (LPARAM)szInitFolder;
-	bi.iImage = 0;
-	// アイテムＩＤリストを返す
-	// ITEMIDLISTはアイテムの一意を表す構造体
-	LPITEMIDLIST pList = ::SHBrowseForFolder(&bi);
-	if( NULL != pList ){
-		// SHGetPathFromIDList()関数はアイテムＩＤリストの物理パスを探してくれる
-		bRes = ::SHGetPathFromIDList( pList, strFolderName );
-		// :SHBrowseForFolder()で取得したアイテムＩＤリストを削除
-		::CoTaskMemFree( pList );
-		if( bRes ){
-			return TRUE;
-		}else{
-			return FALSE;
+	// デフォルト設定を取得
+	DWORD dwOptions = 0;
+	hres = pDialog->GetOptions(&dwOptions);
+	if (FAILED(hres)) {
+		return FALSE;
+	}
+
+	// オプションをフォルダを選択可能に変更
+	hres = pDialog->SetOptions(dwOptions | FOS_PICKFOLDERS | FOS_NOCHANGEDIR | FOS_FORCEFILESYSTEM);
+	if (FAILED(hres)) {
+		return FALSE;
+	}
+
+
+	{
+		WCHAR	szInitFolder[MAX_PATH];
+
+		wcscpy_s(szInitFolder, _countof(szInitFolder), pszInitFolder);
+		// フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない
+
+		CutLastYenFromDirectoryPath(szInitFolder);
+
+		// 初期フォルダを設定
+		ComPtr<IShellItem> psiFolder;
+		hres = SHCreateItemFromParsingName(szInitFolder, NULL, IID_PPV_ARGS(&psiFolder));
+		if (SUCCEEDED(hres)) {
+			hres = pDialog->SetFolder(psiFolder.Get());
 		}
 	}
-	return FALSE;
+
+	// タイトル文字列を設定
+	hres = pDialog->SetTitle(pszTitle);
+	if (FAILED(hres)) {
+		return FALSE;
+	}
+
+	// フォルダ選択ダイアログを表示
+	hres = pDialog->Show(hWnd);
+	if (FAILED(hres)) {
+		return FALSE;
+	}
+
+	// 選択結果を取得
+	ComPtr<IShellItem> psiResult;
+	hres = pDialog->GetResult(&psiResult);
+	if (FAILED(hres)) {
+		return FALSE;
+	}
+
+	PWSTR pszResult;
+	hres = psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszResult);
+	if (FAILED(hres)) {
+		return FALSE;
+	}
+
+	wcscpy(strFolderName, pszResult);
+	CoTaskMemFree(pszResult);
+
+	return TRUE;
 }
 
 /*!	特殊フォルダのパスを取得する
