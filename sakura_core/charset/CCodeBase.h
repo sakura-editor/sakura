@@ -28,6 +28,7 @@
 #pragma once
 
 #include "mem/CNativeW.h"
+#include "CEol.h"
 
 //定数
 enum EConvertResult{
@@ -37,7 +38,6 @@ enum EConvertResult{
 };
 
 struct CommonSetting_Statusbar;
-enum EEolType : char;
 
 /*!
 	文字コード基底クラス。

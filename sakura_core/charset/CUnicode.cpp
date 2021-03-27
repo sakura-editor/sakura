@@ -108,5 +108,6 @@ void CUnicode::GetEol(CMemory* pcmemEol, EEolType eEolType)
 		{ L"\u2028",	1 * sizeof(wchar_t) },	// EEolType::line_separator
 		{ L"\u2029",	1 * sizeof(wchar_t) },	// EEolType::paragraph_separator
 	};
-	pcmemEol->SetRawData(aEolTable[eEolType].pData,aEolTable[eEolType].nLen);
+	auto& data = aEolTable[static_cast<size_t>(eEolType)];
+	pcmemEol->SetRawData(data.pData, data.nLen);
 }

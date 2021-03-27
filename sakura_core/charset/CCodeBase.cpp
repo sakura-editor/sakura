@@ -125,5 +125,6 @@ void CCodeBase::S_GetEol(CMemory* pcmemEol, EEolType eEolType)
 		{ "",			0 },	// EEolType::line_separator
 		{ "",			0 },	// EEolType::paragraph_separator
 	};
-	pcmemEol->SetRawData(aEolTable[eEolType].szData,aEolTable[eEolType].nLen);
+	auto& data = aEolTable[static_cast<size_t>(eEolType)];
+	pcmemEol->SetRawData(data.szData, data.nLen);
 }

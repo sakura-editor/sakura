@@ -219,10 +219,10 @@ UINT_PTR CALLBACK OFNHookProc(
 
 	//	From Here	Feb. 9, 2001 genta
 	static const int		nEolValueArr[] = {
-		EEolType::none,
-		EEolType::cr_and_lf,
-		EEolType::line_feed,
-		EEolType::carriage_return,
+		static_cast<int>(EEolType::none),
+		static_cast<int>(EEolType::cr_and_lf),
+		static_cast<int>(EEolType::line_feed),
+		static_cast<int>(EEolType::carriage_return),
 	};
 	//	文字列はResource内に入れる
 	static const WCHAR*	const	pEolNameArr[] = {
@@ -303,7 +303,7 @@ UINT_PTR CALLBACK OFNHookProc(
 						nIdx = Combo_AddString( pData->m_hwndComboEOL, pEolNameArr[i] );
 					}
 					Combo_SetItemData( pData->m_hwndComboEOL, nIdx, nEolValueArr[i] );
-					if( nEolValueArr[i] == pData->m_cEol ){
+					if( nEolValueArr[i] == static_cast<int>(pData->m_cEol.GetType()) ){
 						nIdxSel = nIdx;
 					}
 				}

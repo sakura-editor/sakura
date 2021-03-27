@@ -297,5 +297,6 @@ void CUtf7::GetEol(CMemory* pcmemEol, EEolType eEolType)
 		{ "+ICg-",		5 },	// EEolType::line_separator
 		{ "+ICk-",		5 },	// EEolType::paragraph_separator
 	};
-	pcmemEol->SetRawData(aEolTable[eEolType].szData,aEolTable[eEolType].nLen);
+	auto& data = aEolTable[static_cast<size_t>(eEolType)];
+	pcmemEol->SetRawData(data.szData, data.nLen);
 }

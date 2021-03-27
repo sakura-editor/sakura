@@ -48,7 +48,8 @@
 	@date 2002/09/22 Moca EOL_CRLF_UNICODEを廃止
 	@date 2021/03/27 berryzplus 定数に意味のある名前を付ける
  */
-enum EEolType : char {
+enum class EEolType : char {
+	auto_detect = -1,		//!< 行終端子の自動検出
 	none,					//!< 行終端子なし
 	cr_and_lf,				//!< \x0d\x0a 復帰改行
 	line_feed,				//!< \x0a 改行
@@ -57,7 +58,6 @@ enum EEolType : char {
 	line_separator,			//!< \u2028 LS
 	paragraph_separator,	//!< \u2029 PS
 	code_max,				//!< 範囲外検出用のマーカー(行終端子として使用しないこと)
-	auto_detect = -1		//!< 行終端子の自動検出
 };
 
 struct SEolDefinition{
@@ -69,12 +69,8 @@ struct SEolDefinition{
 	bool StartsWith(const WCHAR* pData, int nLen) const{ return m_nLen<=nLen && 0==wmemcmp(pData,m_szDataW,m_nLen); }
 	bool StartsWith(const ACHAR* pData, int nLen) const{ return m_nLen<=nLen && m_szDataA[0] != '\0' && 0==memcmp(pData,m_szDataA,m_nLen); }
 };
-extern const SEolDefinition g_aEolTable[];
 
-#define EOL_TYPE_NUM	EEolType::code_max // 8
-
-/* 行終端子の配列 */
-extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
+constexpr auto EOL_TYPE_NUM = static_cast<size_t>(EEolType::code_max); // 8
 
 /*!
 	@brief 行末の改行コードを管理
@@ -100,7 +96,7 @@ public:
 		return IsNone( t ) || IsValid( t );
 	}
 
-	constexpr CEol( EEolType t ) noexcept
+	constexpr explicit CEol( EEolType t ) noexcept
 	{
 		SetType( t );
 	}
@@ -119,7 +115,7 @@ public:
 	[[nodiscard]] constexpr bool operator != ( EEolType t ) const noexcept { return !operator == ( t ); }
 
 	//型変換
-	[[nodiscard]] constexpr operator EEolType() const { return GetType(); }
+	[[nodiscard]] constexpr explicit operator EEolType() const { return GetType(); }
 
 	//設定
 	constexpr bool SetType( EEolType t ) noexcept;
@@ -136,5 +132,11 @@ public:
 	void SetTypeByStringForFile_uni( const char* pszData, int nDataLen );
 	void SetTypeByStringForFile_unibe( const char* pszData, int nDataLen );
 };
+
+// グローバル演算子
+bool operator == ( const CEol& lhs, const CEol& rhs ) noexcept;
+bool operator != ( const CEol& lhs, const CEol& rhs ) noexcept;
+bool operator == ( EEolType lhs, const CEol& rhs ) noexcept;
+bool operator != ( EEolType lhs, const CEol& rhs ) noexcept;
 
 #endif /* SAKURA_CEOL_036E1E16_7462_46A4_8F59_51D8E171E657_H_ */

@@ -780,7 +780,7 @@ BOOL CViewCommander::Command_PUTFILE(
 			SSaveInfo(
 				filename,
 				nSaveCharCode,
-				EEolType::none,
+				CEol(EEolType::none),
 				bBom
 			)
 		);

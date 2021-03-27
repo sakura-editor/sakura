@@ -32,27 +32,16 @@
 #include "StdAfx.h"
 #include "CEol.h"
 
-/*! 行終端子の配列 */
-const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
-	EEolType::none			,	// == 0
-	EEolType::cr_and_lf			,	// == 2
-	EEolType::line_feed				,	// == 1
-	EEolType::carriage_return				,	// == 1
-	EEolType::next_line				,	// == 1
-	EEolType::line_separator				,	// == 1
-	EEolType::paragraph_separator					// == 1
-};
-
 //-----------------------------------------------
 //	固定データ
 //-----------------------------------------------
 
 const SEolDefinition g_aEolTable[] = {
 	{ L"改行無",	L"",			"",			0 },
-	{ L"CRLF",	L"\x0d\x0a",	"\x0d\x0a",	2 },
+	{ L"CRLF",		L"\x0d\x0a",	"\x0d\x0a",	2 },
 	{ L"LF",		L"\x0a",		"\x0a",		1 },
 	{ L"CR",		L"\x0d",		"\x0d",		1 },
-	{ L"NEL",	L"\x85",		"",			1 },
+	{ L"NEL",		L"\x85",		"",			1 },
 	{ L"LS",		L"\u2028",		"",			1 },
 	{ L"PS",		L"\u2029",		"",			1 },
 };
@@ -88,9 +77,10 @@ static const SEolDefinitionForUniFile g_aEolTable_uni_file[] = {
 template <class T>
 EEolType GetEOLType( const T* pszData, int nDataLen )
 {
-	for( int i = 1; i < EOL_TYPE_NUM; ++i ){
-		if( g_aEolTable[i].StartsWith(pszData, nDataLen) )
-			return gm_pnEolTypeArr[i];
+	for( size_t i = 1; i < EOL_TYPE_NUM; ++i ){
+		if( g_aEolTable[i].StartsWith(pszData, nDataLen) ){
+			return static_cast<EEolType>(i);
+		}
 	}
 	return EEolType::none;
 }
@@ -101,18 +91,20 @@ EEolType GetEOLType( const T* pszData, int nDataLen )
 
 EEolType _GetEOLType_uni( const char* pszData, int nDataLen )
 {
-	for( int i = 1; i < EOL_TYPE_NUM; ++i ){
-		if( g_aEolTable_uni_file[i].StartsWithW(pszData, nDataLen) )
-			return gm_pnEolTypeArr[i];
+	for( size_t i = 1; i < EOL_TYPE_NUM; ++i ){
+		if( g_aEolTable_uni_file[i].StartsWithW(pszData, nDataLen) ){
+			return static_cast<EEolType>(i);
+		}
 	}
 	return EEolType::none;
 }
 
 EEolType _GetEOLType_unibe( const char* pszData, int nDataLen )
 {
-	for( int i = 1; i < EOL_TYPE_NUM; ++i ){
-		if( g_aEolTable_uni_file[i].StartsWithWB(pszData, nDataLen) )
-			return gm_pnEolTypeArr[i];
+	for( size_t i = 1; i < EOL_TYPE_NUM; ++i ){
+		if( g_aEolTable_uni_file[i].StartsWithWB(pszData, nDataLen) ){
+			return static_cast<EEolType>(i);
+		}
 	}
 	return EEolType::none;
 }
@@ -147,7 +139,7 @@ EEolType _GetEOLType_unibe( const char* pszData, int nDataLen )
 */
 constexpr bool CEol::SetType( EEolType t ) noexcept
 {
-	if( t == EEolType::none || IsValid( t ) ){
+	if( IsNoneOrValid( t ) ){
 		// 正しい値
 		m_eEolType = t;
 		return true;
@@ -176,4 +168,24 @@ void CEol::SetTypeByStringForFile_uni( const char* pszData, int nDataLen )
 void CEol::SetTypeByStringForFile_unibe( const char* pszData, int nDataLen )
 {
 	SetType( _GetEOLType_unibe( pszData, nDataLen ) );
+}
+
+bool operator == ( const CEol& lhs, const CEol& rhs ) noexcept
+{
+	return lhs.operator==(static_cast<EEolType>(rhs));
+}
+
+bool operator != ( const CEol& lhs, const CEol& rhs ) noexcept
+{
+	return !(lhs == rhs);
+}
+
+bool operator == ( EEolType lhs, const CEol& rhs ) noexcept
+{
+	return rhs.operator==(lhs);
+}
+
+bool operator != ( EEolType lhs, const CEol& rhs ) noexcept
+{
+	return !(lhs == rhs);
 }

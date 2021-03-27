@@ -481,9 +481,9 @@ BOOL CViewCommander::HandleCommand(
 	case F_CHG_CHARSET:		Command_CHG_CHARSET( (ECodeType)lparam1, lparam2 != 0 );break;	//文字コードセット指定	2010/6/14 Uchi
 	// From Here 2003.06.23 Moca
 	// F_CHGMOD_EOL_xxx はマクロに記録されないが、F_CHGMOD_EOLはマクロに記録されるので、マクロ関数を統合できるという手はず
-	case F_CHGMOD_EOL_CRLF:	HandleCommand( F_CHGMOD_EOL, bRedraw, EEolType::cr_and_lf, 0, 0, 0 );break;	//入力する改行コードをCRLFに設定
-	case F_CHGMOD_EOL_LF:	HandleCommand( F_CHGMOD_EOL, bRedraw, EEolType::line_feed, 0, 0, 0 );break;	//入力する改行コードをLFに設定
-	case F_CHGMOD_EOL_CR:	HandleCommand( F_CHGMOD_EOL, bRedraw, EEolType::carriage_return, 0, 0, 0 );break;	//入力する改行コードをCRに設定
+	case F_CHGMOD_EOL_CRLF:	HandleCommand( F_CHGMOD_EOL, bRedraw, static_cast<LPARAM>(EEolType::cr_and_lf), 0, 0, 0 );break;	//入力する改行コードをCRLFに設定
+	case F_CHGMOD_EOL_LF:	HandleCommand( F_CHGMOD_EOL, bRedraw, static_cast<LPARAM>(EEolType::line_feed), 0, 0, 0 );break;	//入力する改行コードをLFに設定
+	case F_CHGMOD_EOL_CR:	HandleCommand( F_CHGMOD_EOL, bRedraw, static_cast<LPARAM>(EEolType::carriage_return), 0, 0, 0 );break;	//入力する改行コードをCRに設定
 	// 2006.09.03 Moca F_CHGMOD_EOLで break 忘れの修正
 	case F_CHGMOD_EOL:		Command_CHGMOD_EOL( (EEolType)lparam1 );break;	//入力する改行コードを設定
 	// To Here 2003.06.23 Moca

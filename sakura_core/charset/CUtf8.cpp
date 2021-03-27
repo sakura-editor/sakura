@@ -53,7 +53,8 @@ void CUtf8::GetEol(CMemory* pcmemEol, EEolType eEolType){
 		"\xe2\x80\xa8",		3,	// EEolType::line_separator
 		"\xe2\x80\xa9",		3,	// EEolType::paragraph_separator
 	};
-	pcmemEol->SetRawData(aEolTable[eEolType].szData,aEolTable[eEolType].nLen);
+	auto& data = aEolTable[static_cast<size_t>(eEolType)];
+	pcmemEol->SetRawData(data.szData, data.nLen);
 }
 
 /*!
