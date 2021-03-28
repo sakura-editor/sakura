@@ -272,13 +272,13 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 			// EOLタイプ値をマクロ引数値に変換する	// 2009.08.18 ryoji
 			int nFlag;
 			switch( static_cast<EEolType>(lParam) ){
-			case EEolType::cr_and_lf:	nFlag = 1; break;
-			case EEolType::line_feed:	nFlag = 3; break;
-			case EEolType::carriage_return:	nFlag = 4; break;
-			case EEolType::next_line:	nFlag = 5; break;
-			case EEolType::line_separator:	nFlag = 6; break;
+			case EEolType::cr_and_lf:			nFlag = 1; break;
+			case EEolType::line_feed:			nFlag = 3; break;
+			case EEolType::carriage_return:		nFlag = 4; break;
+			case EEolType::next_line:			nFlag = 5; break;
+			case EEolType::line_separator:		nFlag = 6; break;
 			case EEolType::paragraph_separator:	nFlag = 7; break;
-			default:		nFlag = 0; break;
+			default:							nFlag = 0; break;
 			}
 			AddIntParam( nFlag );
 		}
@@ -1645,28 +1645,15 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 	case F_GETLINECODE:
 		//	2005.08.04 maru マクロ追加
 		{
-			int n = 0;
+			int n;
 			switch( View->m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetType() ){
-			case EEolType::cr_and_lf:
-				n = 0;
-				break;
-			case EEolType::carriage_return:
-				n = 1;
-				break;
-			case EEolType::line_feed:
-				n = 2;
-				break;
-			case EEolType::next_line:
-				n = 3;
-				break;
-			case EEolType::line_separator:
-				n = 4;
-				break;
-			case EEolType::paragraph_separator:
-				n = 5;
-				break;
-			default:
-				break;
+			case EEolType::cr_and_lf:			n = 0; break;
+			case EEolType::carriage_return:		n = 1; break;
+			case EEolType::line_feed:			n = 2; break;
+			case EEolType::next_line:			n = 3; break;
+			case EEolType::line_separator:		n = 4; break;
+			case EEolType::paragraph_separator:	n = 5; break;
+			default:							n = 0; break;
 			}
 			Wrap( &Result )->Receive( n );
 		}
