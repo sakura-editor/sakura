@@ -131,25 +131,6 @@ EEolType _GetEOLType_unibe( const char* pszData, int nDataLen )
 	return CLogicInt(g_aEolTable[static_cast<size_t>(m_eEolType)].m_nLen);
 }
 
-/*!
-	行末種別の設定。
-	@param t 行末種別
-	@retval true 正常終了。設定が反映された。
-	@retval false 異常終了。強制的にCRLFに設定。
-*/
-constexpr bool CEol::SetType( EEolType t ) noexcept
-{
-	if( IsNoneOrValid( t ) ){
-		// 正しい値
-		m_eEolType = t;
-		return true;
-	}else{
-		// 異常値
-		m_eEolType = EEolType::cr_and_lf;
-		return false;
-	}
-}
-
 void CEol::SetTypeByString( const wchar_t* pszData, int nDataLen )
 {
 	SetType( GetEOLType( pszData, nDataLen ) );

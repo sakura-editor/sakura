@@ -117,8 +117,24 @@ public:
 	//型変換
 	[[nodiscard]] constexpr explicit operator EEolType() const { return GetType(); }
 
-	//設定
-	constexpr bool SetType( EEolType t ) noexcept;
+	/*!
+		行末種別の設定。
+		@param t 行終端子の種別
+		@retval true 正常終了。設定が反映された。
+		@retval false 異常終了。強制的にCRLFに設定。
+	 */
+	constexpr bool SetType( EEolType t ) noexcept
+	{
+		if( IsNoneOrValid( t ) ){
+			// 正しい値
+			m_eEolType = t;
+			return true;
+		}else{
+			// 異常値
+			m_eEolType = EEolType::cr_and_lf;
+			return false;
+		}
+	}
 
 	//代入演算子
 	CEol& operator = ( EEolType t ) noexcept { SetType( t ); return *this; }
