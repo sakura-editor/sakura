@@ -251,17 +251,16 @@ bool CImpExpType::ImportAscertain( HINSTANCE hInstance, HWND hwndParent, const w
 
 	// Check Version
 	int		nStructureVersion = 0;
-	wchar_t	szKeyVersion[64];
 	if (!m_cProfile.IOProfileData( szSecInfo, szKeyStructureVersion, nStructureVersion )) {
 		sErrMsg = LS(STR_IMPEXP_ERR_TYPE);
 		return false;
 	}
 	if ((unsigned int)nStructureVersion != m_pShareData->m_vStructureVersion) {
-		wcscpy( szKeyVersion, L"?" );
-		m_cProfile.IOProfileData(szSecInfo, szKeyVersion, StringBufferW(szKeyVersion));
+		std::wstring	strKeyVerValue = L"?";
+		m_cProfile.IOProfileData(szSecInfo, szKeyVersion, strKeyVerValue);
 		int nRet = ConfirmMessage( hwndParent,
 			LS(STR_IMPEXP_VER), 
-			GSTR_APPNAME, szKeyVersion, nStructureVersion );
+			GSTR_APPNAME, strKeyVerValue.c_str(), nStructureVersion );
 		if ( IDYES != nRet ) {
 			return false;
 		}
