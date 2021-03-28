@@ -44,13 +44,13 @@ void CMainStatusBar::CreateStatusBar()
 	m_hwndStatusBar = ::CreateWindowEx(
 		WS_EX_RIGHT | WS_EX_COMPOSITED,
 		STATUSCLASSNAME,
-		NULL,
+		nullptr,
 		WS_CHILD/* | WS_VISIBLE*/ | SBARS_SIZEGRIP,	// 2007.03.08 ryoji WS_VISIBLE 除去
 		0, 0, 0, 0, // X, Y, nWidth, nHeight
 		m_pOwner->GetHwnd(),
 		(HMENU)IDW_STATUSBAR,
 		CEditApp::getInstance()->GetAppInstance(),
-		0
+		nullptr
 	);
 
 	/* プログレスバー */
@@ -187,7 +187,7 @@ bool CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText
 			// 設定する文字列長が0の場合は設定する文字列長が0より大きい場合のみ設定する（既に空文字なら空文字を設定する必要は無い為）
 			bDraw = textLen > 0;
 		}
-	}while (0);
+	}while (false);
 	if (bDraw) {
 		StatusBar_SetText(m_hwndStatusBar, nIndex | nOption, pszText);
 	}
