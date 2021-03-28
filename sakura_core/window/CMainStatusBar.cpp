@@ -41,11 +41,16 @@ void CMainStatusBar::CreateStatusBar()
 	if( m_hwndStatusBar )return;
 
 	/* ステータスバー */
-	m_hwndStatusBar = ::CreateStatusWindow(
-		WS_CHILD/* | WS_VISIBLE*/ | WS_EX_RIGHT | SBARS_SIZEGRIP,	// 2007.03.08 ryoji WS_VISIBLE 除去
-		L"",
+	m_hwndStatusBar = ::CreateWindowEx(
+		WS_EX_RIGHT | WS_EX_COMPOSITED,
+		STATUSCLASSNAME,
+		nullptr,
+		WS_CHILD/* | WS_VISIBLE*/ | SBARS_SIZEGRIP,	// 2007.03.08 ryoji WS_VISIBLE 除去
+		0, 0, 0, 0, // X, Y, nWidth, nHeight
 		m_pOwner->GetHwnd(),
-		IDW_STATUSBAR
+		(HMENU)IDW_STATUSBAR,
+		CEditApp::getInstance()->GetAppInstance(),
+		nullptr
 	);
 
 	/* プログレスバー */
@@ -130,20 +135,21 @@ void CMainStatusBar::SendStatusMessage2( const WCHAR* msg )
 	@param pszText [in] 表示テキスト
 	@param textLen [in] 表示テキストの文字数
 */
-void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText, size_t textLen /* = SIZE_MAX */)
+bool CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText, size_t textLen /* = SIZE_MAX */)
 {
 	if( !m_hwndStatusBar ){
 		assert(m_hwndStatusBar != NULL);
-		return;
+		return false;
 	}
-	// StatusBar_SetText 関数を呼びだすかどうかを判定するラムダ式
+	// StatusBar_SetText 関数を呼びだすかどうかを判定する
 	// （StatusBar_SetText は SB_SETTEXT メッセージを SendMessage で送信する）
-	[&]() -> bool {
+	bool bDraw = true;
+	do {
 		// オーナードローの場合は SB_SETTEXT メッセージを無条件に発行するように判定
 		// 本来表示に変化が無い場合には呼び出さない方が表示のちらつきが減るので好ましいが
 		// 判定が難しいので諦める
 		if( nOption == SBT_OWNERDRAW ){
-			return true;
+			break;
 		}
 		// オーナードローではない場合で NULLの場合は空文字に置き換える
 		// NULL を渡しても問題が無いのかどうか公式ドキュメントに記載されていない
@@ -156,13 +162,13 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText
 		LRESULT res = ::StatusBar_GetTextLength( m_hwndStatusBar, nIndex );
 		// 表示オペレーション値が変化する場合は SB_SETTEXT メッセージを発行
 		if( HIWORD(res) != nOption ){
-			return true;
+			break;
 		}
 		size_t prevTextLen = LOWORD(res);
 		WCHAR prev[1024];
 		// 設定済みの文字列長が長過ぎて取得できない場合は、SB_SETTEXT メッセージを発行
 		if( prevTextLen >= _countof(prev) ){
-			return true;
+			break;
 		}
 		// 設定する文字列長パラメータが SIZE_MAX（引数のデフォルト値）な場合は文字列長を取得
 		if( textLen == SIZE_MAX ){
@@ -170,15 +176,20 @@ void CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText
 		}
 		// 設定済みの文字列長と設定する文字列長が異なる場合は、SB_SETTEXT メッセージを発行
 		if( prevTextLen != textLen ){
-			return true;
+			break;
 		}
 		if( prevTextLen > 0 ){
 			::StatusBar_GetText( m_hwndStatusBar, nIndex, prev );
 			// 設定済みの文字列と設定する文字列を比較して異なる場合は、SB_SETTEXT メッセージを発行
-			return (wcscmp(prev, pszText) != 0);
+			bDraw = wcscmp(prev, pszText) != 0;
 		}
-		else{
-			return true;
+		else {
+			// 設定する文字列長が0の場合は設定する文字列長が0より大きい場合のみ設定する（既に空文字なら空文字を設定する必要は無い為）
+			bDraw = textLen > 0;
 		}
-	}() ? StatusBar_SetText( m_hwndStatusBar, nIndex | nOption, pszText ) : 0;
+	}while (false);
+	if (bDraw) {
+		StatusBar_SetText(m_hwndStatusBar, nIndex | nOption, pszText);
+	}
+	return bDraw;
 }
