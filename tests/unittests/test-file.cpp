@@ -71,6 +71,53 @@ TEST( file, IsInvalidFilenameChars )
 	EXPECT_TRUE(IsInvalidFilenameChars(L"test|.txt"));
 }
 
+TEST(file, IsValidPathAvailableChar)
+{
+	EXPECT_TRUE(IsValidPathAvailableChar(L"test.txt"));
+	EXPECT_TRUE(IsValidPathAvailableChar(L".\\test.txt"));
+	EXPECT_TRUE(IsValidPathAvailableChar(L"./test.txt"));
+	EXPECT_TRUE(IsValidPathAvailableChar(L"C:\\test.txt"));
+	EXPECT_TRUE(IsValidPathAvailableChar(L"C:/test.txt"));
+	EXPECT_TRUE(IsValidPathAvailableChar(L"C:\\"));
+	EXPECT_TRUE(IsValidPathAvailableChar(L"C:/"));
+	EXPECT_TRUE(IsValidPathAvailableChar(L"C:\\dir\\test.txt"));
+	EXPECT_TRUE(IsValidPathAvailableChar(L"C:\\dir\\dir2\\test.txt"));
+	EXPECT_TRUE(IsValidPathAvailableChar(L"C:dir\\dir2\\test.txt"));
+
+	EXPECT_TRUE(IsValidPathAvailableChar(L"test:001.txt"));
+	EXPECT_TRUE(IsValidPathAvailableChar(L"\\dir\\dir2\\test:001.txt"));
+
+	// 特別考慮：DOSデバイスパスの?はtrue
+	EXPECT_TRUE(IsValidPathAvailableChar(L"\\\\?\\C:\\test.txt"));
+
+	EXPECT_FALSE(IsValidPathAvailableChar(L"test*.txt"));
+	EXPECT_FALSE(IsValidPathAvailableChar(L"test?.txt"));
+	EXPECT_FALSE(IsValidPathAvailableChar(L"test\".txt"));
+	EXPECT_FALSE(IsValidPathAvailableChar(L"test<.txt"));
+	EXPECT_FALSE(IsValidPathAvailableChar(L"test>.txt"));
+	EXPECT_FALSE(IsValidPathAvailableChar(L"test|.txt"));
+
+	EXPECT_FALSE(IsValidPathAvailableChar(L"C:\\dir\\test*.txt"));
+	EXPECT_FALSE(IsValidPathAvailableChar(L"C:\\dir\\test?.txt"));
+
+	EXPECT_FALSE(IsValidPathAvailableChar(L"C:\\dir*\\text.txt"));
+	EXPECT_FALSE(IsValidPathAvailableChar(L"C:\\dir?\\text.txt"));
+	EXPECT_FALSE(IsValidPathAvailableChar(L"C:\\dir\"\\text.txt"));
+	EXPECT_FALSE(IsValidPathAvailableChar(L"C:\\dir<\\text.txt"));
+	EXPECT_FALSE(IsValidPathAvailableChar(L"C:\\dir>\\text.txt"));
+	EXPECT_FALSE(IsValidPathAvailableChar(L"C:\\dir|\\text.txt"));
+
+	EXPECT_FALSE(IsValidPathAvailableChar(L"C:\\*dir\\text.txt"));
+	EXPECT_FALSE(IsValidPathAvailableChar(L"C:\\?dir\\text.txt"));
+	EXPECT_FALSE(IsValidPathAvailableChar(L"C:\\di*r\\text.txt"));
+
+
+	EXPECT_FALSE(IsValidPathAvailableChar(L"\\\\?\\C:\\test?.txt"));
+	EXPECT_FALSE(IsValidPathAvailableChar(L"\\\\?\\C:\\test*.txt"));
+	EXPECT_FALSE(IsValidPathAvailableChar(L"\\\\?\\C:\\d*ir\\test.txt"));
+	EXPECT_FALSE(IsValidPathAvailableChar(L"\\\\?\\C:\\dir*\\test.txt"));
+}
+
 /*!
  * @brief exeファイルパスの取得
  */

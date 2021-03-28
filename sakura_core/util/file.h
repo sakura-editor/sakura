@@ -39,6 +39,7 @@ bool IsFileExists(const WCHAR* path, bool bFileOnly = false);
 bool IsDirectory(LPCWSTR pszPath);	// 2009.08.20 ryoji
 
 bool IsInvalidFilenameChars( const std::wstring_view& strPath );
+[[nodiscard]] bool IsValidPathAvailableChar(std::wstring_view path);
 
 //	Apr. 30, 2003 genta
 //	ディレクトリの深さを調べる
