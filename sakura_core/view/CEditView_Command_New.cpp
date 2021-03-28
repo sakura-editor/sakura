@@ -138,7 +138,7 @@ void CEditView::InsertData_CEditView(
 			int nSpWidth = GetTextMetrics().CalcTextWidth3(L" ", 1);
 			// 終端直前から挿入位置まで空白を埋める為の処理
 			// 行終端が何らかの改行コードか?
-			if( EOL_NONE != pcLayout->GetLayoutEol() ){
+			if( pcLayout->GetLayoutEol().IsValid() ){
 				nIdxFrom = nLineLen - CLogicInt(1);
 				cMem.AllocStringBuffer( (Int)(ptInsertPos.GetX2() - nLineAllColLen + 1)/ nSpWidth + nDataLen );
 				for( int i = 0; i < ptInsertPos.GetX2() - nLineAllColLen + 1; i += nSpWidth ){
@@ -167,7 +167,7 @@ void CEditView::InsertData_CEditView(
 	else{
 		// 更新が前行からになる可能性を調べる	// 2009.02.17 ryoji
 		const CLayout* pcLayoutWk = m_pcEditDoc->m_cLayoutMgr.GetBottomLayout();
-		if( pcLayoutWk && pcLayoutWk->GetLayoutEol() == EOL_NONE && bKinsoku ){	// 折り返しレイアウト行か？（前行の終端で調査）
+		if( pcLayoutWk && pcLayoutWk->GetLayoutEol().IsNone() && bKinsoku ){	// 折り返しレイアウト行か？（前行の終端で調査）
 			bHintPrev = true;	// 更新が前行からになる可能性がある
 		}
 		if( 0 < ptInsertPos.GetX2() ){
@@ -647,7 +647,7 @@ void CEditView::DeleteData(
 				goto end_of_func;
 			}
 			/* 改行で終わっているか */
-			if( ( EOL_NONE != pcLayout->GetLayoutEol() ) ){
+			if( pcLayout->GetLayoutEol().IsValid() ){
 				goto end_of_func;
 			}
 			/*ファイルの最後に移動 */

@@ -871,7 +871,7 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 			goto prev_line;
 		}
 		/* 改行も削除するんかぃのぉ・・・？ */
-		if( EOL_NONE != pCDocLine->GetEol() &&
+		if( pCDocLine->GetEol().IsValid() &&
 			nWorkPos + nWorkLen > nLineLen - pCDocLine->GetEol().GetLen() // 2002/2/10 aroka CMemory変更
 		){
 			/* 削除する長さに改行も含める */

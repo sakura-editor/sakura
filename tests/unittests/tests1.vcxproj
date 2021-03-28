@@ -114,6 +114,7 @@
     <ClCompile Include="test-cdlgopenfile.cpp" />
     <ClCompile Include="test-cdlgprofilemgr.cpp" />
     <ClCompile Include="test-cdoctypemanager.cpp" />
+    <ClCompile Include="test-ceol.cpp" />
     <ClCompile Include="test-cerrorinfo.cpp" />
     <ClCompile Include="test-cfileext.cpp" />
     <ClCompile Include="test-clayoutint.cpp" />

@@ -215,7 +215,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 				}
 				const bool emptyLine = ! pcLayout || 0 == pcLayout->GetLengthWithoutEOL();
 				const bool selectionIsOutOfLine = reachEndOfLayout && (
-					(pcLayout && pcLayout->GetLayoutEol() != EOL_NONE) ? xLayoutFrom == xLayoutTo : xLayoutTo < rcSel.GetFrom().x
+					(pcLayout && pcLayout->GetLayoutEol().IsValid()) ? xLayoutFrom == xLayoutTo : xLayoutTo < rcSel.GetFrom().x
 				);
 
 				// 入力文字の挿入位置
@@ -675,7 +675,7 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 		if ( sSelectOld.GetTo().x > 0 ) {
 			// 2006.03.31 Moca nSelectLineToOldは、物理行なのでLayout系からDocLine系に修正
 			const CDocLine* pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( sSelectOld.GetTo().GetY2() );
-			if( NULL != pcDocLine && EOL_NONE != pcDocLine->GetEol() ){
+			if( NULL != pcDocLine && pcDocLine->GetEol().IsValid() ){
 				sSelectOld.GetToPointer()->y++;
 			}
 		}
@@ -844,14 +844,14 @@ void CViewCommander::Command_MERGE(void)
 	if ( sSelectOld.GetTo().x > 0 ) {
 #if 0
 		const CLayout* pcLayout=GetDocument()->m_cLayoutMgr.SearchLineByLayoutY(m_pCommanderView->GetSelectionInfo().m_sSelect.GetTo().GetY2()); //2007.10.09 kobake 単位混在バグ修正
-		if( NULL != pcLayout && EOL_NONE != pcLayout->GetLayoutEol() ){
+		if( NULL != pcLayout && pcLayout->GetLayoutEol().IsValid() ){
 			sSelectOld.GetToPointer()->y++;
 			//sSelectOld.GetTo().y++;
 		}
 #else
 		// 2010.08.22 Moca ソートと仕様を合わせる
 		const CDocLine* pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( sSelectOld.GetTo().GetY2() );
-		if( NULL != pcDocLine && EOL_NONE != pcDocLine->GetEol() ){
+		if( NULL != pcDocLine && pcDocLine->GetEol().IsValid() ){
 			sSelectOld.GetToPointer()->y++;
 		}
 #endif

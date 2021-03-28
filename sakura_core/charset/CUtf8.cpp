@@ -45,15 +45,16 @@ void CUtf8::GetEol(CMemory* pcmemEol, EEolType eEolType){
 		int nLen;
 	}
 	aEolTable[EOL_TYPE_NUM] = {
-		"",			0,	// EOL_NONE
-		"\x0d\x0a",	2,	// EOL_CRLF
-		"\x0a",		1,	// EOL_LF
-		"\x0d",		1,	// EOL_CR
-		"\xc2\x85",			2,	// EOL_NEL
-		"\xe2\x80\xa8",		3,	// EOL_LS
-		"\xe2\x80\xa9",		3,	// EOL_PS
+		"",			0,	// EEolType::none
+		"\x0d\x0a",	2,	// EEolType::cr_and_lf
+		"\x0a",		1,	// EEolType::line_feed
+		"\x0d",		1,	// EEolType::carriage_return
+		"\xc2\x85",			2,	// EEolType::next_line
+		"\xe2\x80\xa8",		3,	// EEolType::line_separator
+		"\xe2\x80\xa9",		3,	// EEolType::paragraph_separator
 	};
-	pcmemEol->SetRawData(aEolTable[eEolType].szData,aEolTable[eEolType].nLen);
+	auto& data = aEolTable[static_cast<size_t>(eEolType)];
+	pcmemEol->SetRawData(data.szData, data.nLen);
 }
 
 /*!

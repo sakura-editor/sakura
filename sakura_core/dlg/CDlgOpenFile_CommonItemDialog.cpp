@@ -564,10 +564,10 @@ HRESULT CDlgOpenFile_CommonItemDialog::Customize()
 	if (m_customizeSetting.bUseEol) {
 		hr = StartVisualGroup(CtrlId::LABEL_EOL, LS(STR_FILEDIALOG_EOL)); RETURN_IF_FAILED
 		hr = AddComboBox(CtrlId::COMBO_EOL); RETURN_IF_FAILED
-		hr = AddControlItem(CtrlId::COMBO_EOL, EOL_NONE, LS(STR_DLGOPNFL1)); RETURN_IF_FAILED
-		hr = AddControlItem(CtrlId::COMBO_EOL, EOL_CRLF, L"CR+LF"); RETURN_IF_FAILED
-		hr = AddControlItem(CtrlId::COMBO_EOL, EOL_LF, L"LF (UNIX)"); RETURN_IF_FAILED
-		hr = AddControlItem(CtrlId::COMBO_EOL, EOL_CR, L"CR (Mac)"); RETURN_IF_FAILED
+		hr = AddControlItem(CtrlId::COMBO_EOL, static_cast<DWORD>(EEolType::none), LS(STR_DLGOPNFL1)); RETURN_IF_FAILED
+		hr = AddControlItem(CtrlId::COMBO_EOL, static_cast<DWORD>(EEolType::cr_and_lf), L"CR+LF"); RETURN_IF_FAILED
+		hr = AddControlItem(CtrlId::COMBO_EOL, static_cast<DWORD>(EEolType::line_feed), L"LF (UNIX)"); RETURN_IF_FAILED
+		hr = AddControlItem(CtrlId::COMBO_EOL, static_cast<DWORD>(EEolType::carriage_return), L"CR (Mac)"); RETURN_IF_FAILED
 		hr = SetSelectedControlItem(CtrlId::COMBO_EOL, 0); RETURN_IF_FAILED
 		hr = EndVisualGroup(); RETURN_IF_FAILED
 	}

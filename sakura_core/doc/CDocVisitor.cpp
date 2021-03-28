@@ -59,7 +59,7 @@ void CDocVisitor::SetAllEol(CEol cEol)
 			CDocLine* pcDocLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLine); //#######非効率
 			if(!pcDocLine)break;
 			//改行を置換
-			if(pcDocLine->GetEol()!=EOL_NONE && pcDocLine->GetEol()!=cEol){
+			if( pcDocLine->GetEol().IsValid() && pcDocLine->GetEol() != cEol ){
 				CLogicRange sRange;
 				sRange.SetFrom(CLogicPoint(pcDocLine->GetLengthWithoutEOL(),nLine));
 				sRange.SetTo(CLogicPoint(pcDocLine->GetLengthWithEOL(),nLine));

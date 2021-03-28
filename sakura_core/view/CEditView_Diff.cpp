@@ -477,7 +477,7 @@ BOOL CEditView::MakeDiffTmpFile( WCHAR* filename, HWND hWnd, ECodeType code, boo
 			SSaveInfo(
 				filename,
 				code,
-				EOL_NONE,
+				CEol(EEolType::none),
 				bBom
 			)
 		);

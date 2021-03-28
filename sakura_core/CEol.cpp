@@ -32,27 +32,16 @@
 #include "StdAfx.h"
 #include "CEol.h"
 
-/*! 行終端子の配列 */
-const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
-	EOL_NONE			,	// == 0
-	EOL_CRLF			,	// == 2
-	EOL_LF				,	// == 1
-	EOL_CR				,	// == 1
-	EOL_NEL				,	// == 1
-	EOL_LS				,	// == 1
-	EOL_PS					// == 1
-};
-
 //-----------------------------------------------
 //	固定データ
 //-----------------------------------------------
 
 const SEolDefinition g_aEolTable[] = {
 	{ L"改行無",	L"",			"",			0 },
-	{ L"CRLF",	L"\x0d\x0a",	"\x0d\x0a",	2 },
+	{ L"CRLF",		L"\x0d\x0a",	"\x0d\x0a",	2 },
 	{ L"LF",		L"\x0a",		"\x0a",		1 },
 	{ L"CR",		L"\x0d",		"\x0d",		1 },
-	{ L"NEL",	L"\x85",		"",			1 },
+	{ L"NEL",		L"\x85",		"",			1 },
 	{ L"LS",		L"\u2028",		"",			1 },
 	{ L"PS",		L"\u2029",		"",			1 },
 };
@@ -83,16 +72,17 @@ static const SEolDefinitionForUniFile g_aEolTable_uni_file[] = {
 	行終端子の種類を調べる。
 	@param pszData 調査対象文字列へのポインタ
 	@param nDataLen 調査対象文字列の長さ
-	@return 改行コードの種類。終端子が見つからなかったときはEOL_NONEを返す。
+	@return 改行コードの種類。終端子が見つからなかったときはEEolType::noneを返す。
 */
 template <class T>
 EEolType GetEOLType( const T* pszData, int nDataLen )
 {
-	for( int i = 1; i < EOL_TYPE_NUM; ++i ){
-		if( g_aEolTable[i].StartsWith(pszData, nDataLen) )
-			return gm_pnEolTypeArr[i];
+	for( size_t i = 1; i < EOL_TYPE_NUM; ++i ){
+		if( g_aEolTable[i].StartsWith(pszData, nDataLen) ){
+			return static_cast<EEolType>(i);
+		}
 	}
-	return EOL_NONE;
+	return EEolType::none;
 }
 
 /*
@@ -101,20 +91,22 @@ EEolType GetEOLType( const T* pszData, int nDataLen )
 
 EEolType _GetEOLType_uni( const char* pszData, int nDataLen )
 {
-	for( int i = 1; i < EOL_TYPE_NUM; ++i ){
-		if( g_aEolTable_uni_file[i].StartsWithW(pszData, nDataLen) )
-			return gm_pnEolTypeArr[i];
+	for( size_t i = 1; i < EOL_TYPE_NUM; ++i ){
+		if( g_aEolTable_uni_file[i].StartsWithW(pszData, nDataLen) ){
+			return static_cast<EEolType>(i);
+		}
 	}
-	return EOL_NONE;
+	return EEolType::none;
 }
 
 EEolType _GetEOLType_unibe( const char* pszData, int nDataLen )
 {
-	for( int i = 1; i < EOL_TYPE_NUM; ++i ){
-		if( g_aEolTable_uni_file[i].StartsWithWB(pszData, nDataLen) )
-			return gm_pnEolTypeArr[i];
+	for( size_t i = 1; i < EOL_TYPE_NUM; ++i ){
+		if( g_aEolTable_uni_file[i].StartsWithWB(pszData, nDataLen) ){
+			return static_cast<EEolType>(i);
+		}
 	}
-	return EOL_NONE;
+	return EEolType::none;
 }
 
 //-----------------------------------------------
@@ -122,33 +114,21 @@ EEolType _GetEOLType_unibe( const char* pszData, int nDataLen )
 //-----------------------------------------------
 
 //! 現在のEOLの名称取得
-const WCHAR* CEol::GetName() const
+[[nodiscard]] LPCWSTR CEol::GetName() const noexcept
 {
-	return g_aEolTable[ m_eEolType ].m_szName;
+	return g_aEolTable[static_cast<size_t>(m_eEolType)].m_szName;
 }
 
-//!< 現在のEOL文字列先頭へのポインタを取得
-const wchar_t* CEol::GetValue2() const
+//! 現在のEOL文字列先頭へのポインタを取得
+[[nodiscard]] LPCWSTR CEol::GetValue2() const noexcept
 {
-	return g_aEolTable[ m_eEolType ].m_szDataW;
+	return g_aEolTable[static_cast<size_t>(m_eEolType)].m_szDataW;
 }
 
-/*!
-	行末種別の設定。
-	@param t 行末種別
-	@retval true 正常終了。設定が反映された。
-	@retval false 異常終了。強制的にCRLFに設定。
-*/
-bool CEol::SetType( EEolType t )
+//! 現在のEOL文字列長を取得。文字単位。
+[[nodiscard]] CLogicInt	CEol::GetLen() const noexcept
 {
-	if( t < EOL_NONE || EOL_CODEMAX <= t ){
-		//	異常値
-		m_eEolType = EOL_CRLF;
-		return false;
-	}
-	//	正しい値
-	m_eEolType = t;
-	return true;
+	return CLogicInt(g_aEolTable[static_cast<size_t>(m_eEolType)].m_nLen);
 }
 
 void CEol::SetTypeByString( const wchar_t* pszData, int nDataLen )
@@ -169,4 +149,24 @@ void CEol::SetTypeByStringForFile_uni( const char* pszData, int nDataLen )
 void CEol::SetTypeByStringForFile_unibe( const char* pszData, int nDataLen )
 {
 	SetType( _GetEOLType_unibe( pszData, nDataLen ) );
+}
+
+bool operator == ( const CEol& lhs, const CEol& rhs ) noexcept
+{
+	return lhs.operator==(static_cast<EEolType>(rhs));
+}
+
+bool operator != ( const CEol& lhs, const CEol& rhs ) noexcept
+{
+	return !(lhs == rhs);
+}
+
+bool operator == ( EEolType lhs, const CEol& rhs ) noexcept
+{
+	return rhs.operator==(lhs);
+}
+
+bool operator != ( EEolType lhs, const CEol& rhs ) noexcept
+{
+	return !(lhs == rhs);
 }

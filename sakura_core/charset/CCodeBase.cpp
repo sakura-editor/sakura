@@ -117,13 +117,14 @@ void CCodeBase::S_GetEol(CMemory* pcmemEol, EEolType eEolType)
 		int nLen;
 	}
 	aEolTable[EOL_TYPE_NUM] = {
-		{ "",			0 },	// EOL_NONE
-		{ "\x0d\x0a",	2 },	// EOL_CRLF
-		{ "\x0a",		1 },	// EOL_LF
-		{ "\x0d",		1 },	// EOL_CR
-		{ "",			0 },	// EOL_NEL
-		{ "",			0 },	// EOL_LS
-		{ "",			0 },	// EOL_PS
+		{ "",			0 },	// EEolType::none
+		{ "\x0d\x0a",	2 },	// EEolType::cr_and_lf
+		{ "\x0a",		1 },	// EEolType::line_feed
+		{ "\x0d",		1 },	// EEolType::carriage_return
+		{ "",			0 },	// EEolType::next_line
+		{ "",			0 },	// EEolType::line_separator
+		{ "",			0 },	// EEolType::paragraph_separator
 	};
-	pcmemEol->SetRawData(aEolTable[eEolType].szData,aEolTable[eEolType].nLen);
+	auto& data = aEolTable[static_cast<size_t>(eEolType)];
+	pcmemEol->SetRawData(data.szData, data.nLen);
 }

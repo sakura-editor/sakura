@@ -289,13 +289,14 @@ void CUtf7::GetEol(CMemory* pcmemEol, EEolType eEolType)
 		int nLen;
 	}
 	aEolTable[EOL_TYPE_NUM] = {
-		{ "",			0 },	// EOL_NONE
-		{ "\x0d\x0a",	2 },	// EOL_CRLF
-		{ "\x0a",		1 },	// EOL_LF
-		{ "\x0d",		1 },	// EOL_CR
-		{ "+AIU-",		5 },	// EOL_NEL
-		{ "+ICg-",		5 },	// EOL_LS
-		{ "+ICk-",		5 },	// EOL_PS
+		{ "",			0 },	// EEolType::none
+		{ "\x0d\x0a",	2 },	// EEolType::cr_and_lf
+		{ "\x0a",		1 },	// EEolType::line_feed
+		{ "\x0d",		1 },	// EEolType::carriage_return
+		{ "+AIU-",		5 },	// EEolType::next_line
+		{ "+ICg-",		5 },	// EEolType::line_separator
+		{ "+ICk-",		5 },	// EEolType::paragraph_separator
 	};
-	pcmemEol->SetRawData(aEolTable[eEolType].szData,aEolTable[eEolType].nLen);
+	auto& data = aEolTable[static_cast<size_t>(eEolType)];
+	pcmemEol->SetRawData(data.szData, data.nLen);
 }

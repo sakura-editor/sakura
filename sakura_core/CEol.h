@@ -35,19 +35,29 @@
 #pragma once
 
 #include "_main/global.h"
+#include "basis/SakuraBasis.h"
 
-// 2002/09/22 Moca EOL_CRLF_UNICODEを廃止
-/* 行終端子の種類 */
-enum EEolType : char {
-	EOL_NONE,			//!< 
-	EOL_CRLF,			//!< 0d0a
-	EOL_LF,				//!< 0a
-	EOL_CR,				//!< 0d
-	EOL_NEL,			//!< 85
-	EOL_LS,				//!< 2028
-	EOL_PS,				//!< 2029
-	EOL_CODEMAX,		//
-	EOL_UNKNOWN = -1	//
+/*!
+	行終端子の種類
+
+	行末記号の種類を定義する。
+	0より大きい値は、終端の種類に対応する。
+	ファイル末尾の行では「終端がない状態」があり得る。
+	ドキュメントの行末スタイルに合わせて自動付与を行うための値も定義しておく。
+
+	@date 2002/09/22 Moca EOL_CRLF_UNICODEを廃止
+	@date 2021/03/27 berryzplus 定数に意味のある名前を付ける
+ */
+enum class EEolType : char {
+	auto_detect = -1,		//!< 行終端子の自動検出
+	none,					//!< 行終端子なし
+	cr_and_lf,				//!< \x0d\x0a 復帰改行
+	line_feed,				//!< \x0a 改行
+	carriage_return,		//!< \x0d 復帰
+	next_line,				//!< \u0085 NEL
+	line_separator,			//!< \u2028 LS
+	paragraph_separator,	//!< \u2029 PS
+	code_max,				//!< 範囲外検出用のマーカー(行終端子として使用しないこと)
 };
 
 struct SEolDefinition{
@@ -59,14 +69,8 @@ struct SEolDefinition{
 	bool StartsWith(const WCHAR* pData, int nLen) const{ return m_nLen<=nLen && 0==wmemcmp(pData,m_szDataW,m_nLen); }
 	bool StartsWith(const ACHAR* pData, int nLen) const{ return m_nLen<=nLen && m_szDataA[0] != '\0' && 0==memcmp(pData,m_szDataA,m_nLen); }
 };
-extern const SEolDefinition g_aEolTable[];
 
-#define EOL_TYPE_NUM	EOL_CODEMAX // 8
-
-/* 行終端子の配列 */
-extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
-
-#include "basis/SakuraBasis.h"
+constexpr auto EOL_TYPE_NUM = static_cast<size_t>(EEolType::code_max); // 8
 
 /*!
 	@brief 行末の改行コードを管理
@@ -75,24 +79,67 @@ extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
 	オブジェクトに対するメソッドで行えるだけだが、グローバル変数への参照を
 	クラス内部に閉じこめることができるのでそれなりに意味はあると思う。
 */
-class CEol{
+class CEol {
+	EEolType m_eEolType = EEolType::none;	//!< 改行コードの種類
+
 public:
-	//コンストラクタ・デストラクタ
-	CEol(){ m_eEolType = EOL_NONE; }
-	CEol( EEolType t ){ SetType(t); }
+	static constexpr bool IsNone( EEolType t ) noexcept
+	{
+		return t == EEolType::none;
+	}
+	static constexpr bool IsValid( EEolType t ) noexcept
+	{
+		return EEolType::none < t && t < EEolType::code_max;
+	}
+	static constexpr bool IsNoneOrValid( EEolType t ) noexcept
+	{
+		return IsNone( t ) || IsValid( t );
+	}
+
+	constexpr explicit CEol( EEolType t ) noexcept
+	{
+		SetType( t );
+	}
+	CEol() noexcept = default;
+
+	//取得
+	[[nodiscard]] bool IsNone() const noexcept { return IsNone( m_eEolType ); }			//!< 行終端子がないかどうか
+	[[nodiscard]] bool IsValid() const noexcept { return !IsNone(); }					//!< 行終端子があるかどうか
+	[[nodiscard]] constexpr EEolType GetType() const noexcept { return m_eEolType; }	//!< 現在のTypeを取得
+	[[nodiscard]] LPCWSTR	GetName() const noexcept;	//!< 現在のEOLの名称取得
+	[[nodiscard]] LPCWSTR	GetValue2() const noexcept;	//!< 現在のEOL文字列先頭へのポインタを取得
+	[[nodiscard]] CLogicInt	GetLen() const noexcept;	//!< 現在のEOL長を取得。文字単位。
 
 	//比較
-	bool operator==( EEolType t ) const { return GetType() == t; }
-	bool operator!=( EEolType t ) const { return GetType() != t; }
-
-	//代入
-	const CEol& operator=( const CEol& t ){ m_eEolType = t.m_eEolType; return *this; }
+	[[nodiscard]] constexpr bool operator == ( EEolType t ) const noexcept { return GetType() == t; }
+	[[nodiscard]] constexpr bool operator != ( EEolType t ) const noexcept { return !operator == ( t ); }
 
 	//型変換
-	operator EEolType() const { return GetType(); }
+	[[nodiscard]] constexpr explicit operator EEolType() const { return GetType(); }
 
-	//設定
-	bool SetType( EEolType t);	//	Typeの設定
+	/*!
+		行末種別の設定。
+		@param t 行終端子の種別
+		@retval true 正常終了。設定が反映された。
+		@retval false 異常終了。強制的にCRLFに設定。
+	 */
+	constexpr bool SetType( EEolType t ) noexcept
+	{
+		if( IsNoneOrValid( t ) ){
+			// 正しい値
+			m_eEolType = t;
+			return true;
+		}else{
+			// 異常値
+			m_eEolType = EEolType::cr_and_lf;
+			return false;
+		}
+	}
+
+	//代入演算子
+	CEol& operator = ( EEolType t ) noexcept { SetType( t ); return *this; }
+
+	//文字列内の行終端子を解析
 	void SetTypeByString( const wchar_t* pszData, int nDataLen );
 	void SetTypeByString( const char* pszData, int nDataLen );
 
@@ -100,20 +147,12 @@ public:
 	void SetTypeByStringForFile( const char* pszData, int nDataLen ){ SetTypeByString( pszData, nDataLen ); }
 	void SetTypeByStringForFile_uni( const char* pszData, int nDataLen );
 	void SetTypeByStringForFile_unibe( const char* pszData, int nDataLen );
-
-	//取得
-	EEolType		GetType()	const{ return m_eEolType; }		//!< 現在のTypeを取得
-	CLogicInt		GetLen()	const { return CLogicInt(g_aEolTable[ m_eEolType ].m_nLen); }	//!< 現在のEOL長を取得。文字単位。
-	const WCHAR*	GetName()	const;	//!< 現在のEOLの名称取得
-	const wchar_t*	GetValue2()	const;	//!< 現在のEOL文字列先頭へのポインタを取得
-	//#####
-
-	bool IsValid() const
-	{
-		return m_eEolType>=EOL_CRLF && m_eEolType<EOL_CODEMAX;
-	}
-
-private:
-	EEolType	m_eEolType;	//!< 改行コードの種類
 };
+
+// グローバル演算子
+bool operator == ( const CEol& lhs, const CEol& rhs ) noexcept;
+bool operator != ( const CEol& lhs, const CEol& rhs ) noexcept;
+bool operator == ( EEolType lhs, const CEol& rhs ) noexcept;
+bool operator != ( EEolType lhs, const CEol& rhs ) noexcept;
+
 #endif /* SAKURA_CEOL_036E1E16_7462_46A4_8F59_51D8E171E657_H_ */

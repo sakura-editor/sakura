@@ -42,13 +42,14 @@ void CUnicodeBe::GetEol(CMemory* pcmemEol, EEolType eEolType)
 		int nLen;
 	}
 	aEolTable[EOL_TYPE_NUM] = {
-		{ "",					0 * sizeof(wchar_t) },	// EOL_NONE
-		{ "\x00\x0d\x00\x0a",	2 * sizeof(wchar_t) },	// EOL_CRLF
-		{ "\x00\x0a",			1 * sizeof(wchar_t) },	// EOL_LF
-		{ "\x00\x0d",			1 * sizeof(wchar_t) },	// EOL_CR
-		{ "\x00\x85",			1 * sizeof(wchar_t) },	// EOL_NEL
-		{ "\x20\x28",			1 * sizeof(wchar_t) },	// EOL_LS
-		{ "\x20\x29",			1 * sizeof(wchar_t) },	// EOL_PS
+		{ "",					0 * sizeof(wchar_t) },	// EEolType::none
+		{ "\x00\x0d\x00\x0a",	2 * sizeof(wchar_t) },	// EEolType::cr_and_lf
+		{ "\x00\x0a",			1 * sizeof(wchar_t) },	// EEolType::line_feed
+		{ "\x00\x0d",			1 * sizeof(wchar_t) },	// EEolType::carriage_return
+		{ "\x00\x85",			1 * sizeof(wchar_t) },	// EEolType::next_line
+		{ "\x20\x28",			1 * sizeof(wchar_t) },	// EEolType::line_separator
+		{ "\x20\x29",			1 * sizeof(wchar_t) },	// EEolType::paragraph_separator
 	};
-	pcmemEol->SetRawData(aEolTable[eEolType].pData,aEolTable[eEolType].nLen);
+	auto& data = aEolTable[static_cast<size_t>(eEolType)];
+	pcmemEol->SetRawData(data.pData, data.nLen);
 }
