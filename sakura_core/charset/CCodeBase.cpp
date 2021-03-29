@@ -125,3 +125,38 @@ void CCodeBase::S_GetEol(CMemory* pcmemEol, EEolType eEolType)
 	auto& data = aEolTable[static_cast<size_t>(eEolType)];
 	pcmemEol->SetRawData(data.szData, data.nLen);
 }
+
+/*!
+	改行データ取得
+
+	各種行終端子に対する特定コードによるバイナリ表現のセットを取得する。
+	特定コードで利用できない行終端子については空のバイナリ表現が返る。
+ */
+[[nodiscard]] std::map<EEolType, BinarySequence> CCodeBase::GetEolDifinitions()
+{
+	constexpr struct {
+		EEolType type;
+		std::wstring_view str;
+	}
+	aEolTable[] = {
+		{ EEolType::cr_and_lf,				L"\x0d\x0a",	},
+		{ EEolType::line_feed,				L"\x0a",		},
+		{ EEolType::carriage_return,		L"\x0d",		},
+		{ EEolType::next_line,				L"\x85",		},
+		{ EEolType::line_separator,			L"\u2028",		},
+		{ EEolType::paragraph_separator,	L"\u2029",		},
+	};
+
+	std::map<EEolType, BinarySequence> map;
+	for( auto& eolData : aEolTable ){
+		bool bComplete = false;
+		const auto& str = eolData.str;
+		auto converted = UnicodeToCode( CNativeW( str.data(), str.length() ), &bComplete );
+		if( !bComplete ){
+			converted.clear();
+		}
+		map.try_emplace( eolData.type, std::move(converted) );
+	}
+
+	return map;
+}

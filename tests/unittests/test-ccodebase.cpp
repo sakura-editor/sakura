@@ -26,6 +26,7 @@
 #include "charset/CCodeFactory.h"
 
 #include <cstdlib>
+#include <ostream>
 
 TEST(CCodeBase, MIMEHeaderDecode)
 {
@@ -445,3 +446,46 @@ TEST(CCodeBase, codeUtf32Le)
 	ASSERT_EQ( 0, memcmp( bin.data(), decoded2.data(), decoded2.size() ) );
 	ASSERT_TRUE( bComplete2_2 );
 }
+
+//! googletestの出力に文字セットIDを出力させる
+std::ostream& operator << (std::ostream& os, const ECodeType& eCodeType);
+
+//! EOLテストのためのフィクスチャクラス
+class EolTest : public ::testing::TestWithParam<ECodeType> {};
+
+/*!
+ * @brief GetEol代替関数のテスト
+ */
+TEST_P(EolTest, test)
+{
+	const auto eCodeType = GetParam();
+	auto pCodeBase = CCodeFactory::CreateCodeBase(eCodeType);
+
+	auto map = pCodeBase->GetEolDifinitions();
+	for( const auto&[t,bin] : map ){
+		CMemory m;
+		pCodeBase->GetEol( &m, t );
+		EXPECT_EQ(0, memcmp(m.GetRawPtr(), bin.data(), bin.length()));
+		EXPECT_EQ(m.GetRawLength(), bin.length());
+	}
+}
+
+/*!
+ * @brief パラメータテストをインスタンス化する
+ */
+INSTANTIATE_TEST_CASE_P(ParameterizedTestEol
+	, EolTest
+	, ::testing::Values(
+		CODE_SJIS,
+		CODE_JIS,
+		CODE_EUC,
+		CODE_UNICODE,
+		CODE_UTF8,
+		CODE_UTF7,
+		CODE_UNICODEBE,
+		(ECodeType)12000,	// UTF-32LE
+//		(ECodeType)12001,	// UTF-32BE実装は機能していないため除外
+//		CODE_CESU8,			// CESU8のGetEolは実装漏れ。SJISと同じになるのでコメントアウト。
+		CODE_LATIN1
+	)
+);
