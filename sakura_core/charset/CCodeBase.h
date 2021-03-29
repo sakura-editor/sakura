@@ -106,6 +106,7 @@ public:
 	}
 
 	//ファイル形式
+	[[nodiscard]] virtual BinarySequence GetBomDefinition();
 	virtual void GetBom(CMemory* pcmemBom);											//!< BOMデータ取得
 	[[nodiscard]] virtual std::map<EEolType, BinarySequence> GetEolDifinitions();
 	void GetEol( CMemory* pcmemEol, EEolType eEolType );

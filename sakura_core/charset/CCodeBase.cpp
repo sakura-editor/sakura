@@ -104,6 +104,25 @@ bool CCodeBase::MIMEHeaderDecode( const char* pSrc, const int nSrcLen, CMemory* 
 }
 
 /*!
+	BOMデータ取得
+
+	ByteOrderMarkに対する特定コードによるバイナリ表現を取得する。
+	UTF16以上のマルチバイトUnicodeのバイト順を識別するのに使う。
+ */
+[[nodiscard]] BinarySequence CCodeBase::GetBomDefinition()
+{
+	const CNativeW cBom( L"\xFEFF" );
+
+	bool bComplete = false;
+	auto converted = UnicodeToCode( cBom, &bComplete );
+	if( !bComplete ){
+		converted.clear();
+	}
+
+	return converted;
+}
+
+/*!
 	改行データ取得
 
 	各種行終端子に対する特定コードによるバイナリ表現のセットを取得する。

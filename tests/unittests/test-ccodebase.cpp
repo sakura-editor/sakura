@@ -489,3 +489,48 @@ INSTANTIATE_TEST_CASE_P(ParameterizedTestEol
 		CODE_LATIN1
 	)
 );
+
+//! BOMテストのためのパラメータ型
+using BomTestParamType = std::tuple<ECodeType, std::string_view>;
+
+//! BOMテストのためのフィクスチャクラス
+class BomTest : public ::testing::TestWithParam<BomTestParamType> {};
+
+/*!
+ * @brief GetBom代替関数のテスト
+ */
+TEST_P(BomTest, test) {
+	const auto eCodeType = std::get<0>(GetParam());
+	auto pCodeBase = CCodeFactory::CreateCodeBase(eCodeType);
+
+	const auto str = std::get<1>(GetParam());
+	BinarySequenceView expected(reinterpret_cast<const std::byte*>(str.data()), str.length());
+
+	const auto actual = pCodeBase->GetBomDefinition();
+
+	ASSERT_EQ(expected, actual);
+
+	CMemory m;
+	pCodeBase->GetBom( &m );
+	EXPECT_EQ(0, memcmp(m.GetRawPtr(), actual.data(), actual.length()));
+	EXPECT_EQ(m.GetRawLength(), actual.length());
+}
+
+/*!
+ * @brief パラメータテストをインスタンス化する
+ */
+INSTANTIATE_TEST_CASE_P(ParameterizedTestBom
+	, BomTest
+	, ::testing::Values(
+		BomTestParamType{ CODE_SJIS,		{} },				// 非Unicodeなので実施する意味はない
+		BomTestParamType{ CODE_JIS,			{} },				// 非Unicodeなので実施する意味はない
+		BomTestParamType{ CODE_EUC,			{} },				// 非Unicodeなので実施する意味はない
+		BomTestParamType{ CODE_UNICODE,		"\xFF\xFE" },
+		BomTestParamType{ CODE_UTF8,		"\xEF\xBB\xBF" },
+		BomTestParamType{ CODE_UTF7,		"+/v8-" },			// 対象外なので実施する意味はない
+		BomTestParamType{ CODE_UNICODEBE,	"\xFE\xFF" },
+		BomTestParamType{ CODE_LATIN1,		{} },				// 非Unicodeなので実施する意味はない
+		BomTestParamType{ CODE_CESU8,		"\xEF\xBB\xBF" }
+	)
+);
+
