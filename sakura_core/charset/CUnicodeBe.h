@@ -29,7 +29,6 @@
 
 #include "CCodeBase.h"
 #include "CUnicode.h"
-#include "CEol.h"
 
 class CUnicodeBe : public CCodeBase{
 public:
@@ -37,7 +36,6 @@ public:
 	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst) override{ return UnicodeBEToUnicode(cSrc, pDst); }	//!< 特定コード → UNICODE    変換
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst) override{ return UnicodeToUnicodeBE(cSrc, pDst); }	//!< UNICODE    → 特定コード 変換
 	void GetBom(CMemory* pcmemBom) override;	//!< BOMデータ取得
-	void GetEol(CMemory* pcmemEol, EEolType eEolType) override;	//!< 改行データ取得
 
 public:
 

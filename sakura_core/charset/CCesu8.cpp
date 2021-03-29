@@ -24,7 +24,6 @@
 */
 #include "StdAfx.h"
 #include "CCesu8.h"
-#include "CEol.h"
 
 //! BOMデータ取得
 void CCesu8::GetBom(CMemory* pcmemBom)

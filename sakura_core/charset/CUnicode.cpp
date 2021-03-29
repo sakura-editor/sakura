@@ -27,7 +27,6 @@
 #include "CUnicode.h"
 #include "codechecker.h"
 #include "mem/CMemory.h"
-#include "CEol.h"
 
 EConvertResult CUnicode::_UnicodeToUnicode_in( const CMemory& cSrc, CNativeW* pDstMem, const bool bBigEndian )
 {
@@ -88,23 +87,4 @@ void CUnicode::GetBom(CMemory* pcmemBom)
 {
 	static const BYTE UTF16LE_BOM[]={0xFF,0xFE};
 	pcmemBom->SetRawData(UTF16LE_BOM, sizeof(UTF16LE_BOM));
-}
-
-void CUnicode::GetEol(CMemory* pcmemEol, EEolType eEolType)
-{
-	static const struct{
-		const void* pData;
-		int nLen;
-	}
-	aEolTable[EOL_TYPE_NUM] = {
-		{ L"",			0 * sizeof(wchar_t) },	// EEolType::none
-		{ L"\x0d\x0a",	2 * sizeof(wchar_t) },	// EEolType::cr_and_lf
-		{ L"\x0a",		1 * sizeof(wchar_t) },	// EEolType::line_feed
-		{ L"\x0d",		1 * sizeof(wchar_t) },	// EEolType::carriage_return
-		{ L"\x85",		1 * sizeof(wchar_t) },	// EEolType::next_line
-		{ L"\u2028",	1 * sizeof(wchar_t) },	// EEolType::line_separator
-		{ L"\u2029",	1 * sizeof(wchar_t) },	// EEolType::paragraph_separator
-	};
-	auto& data = aEolTable[static_cast<size_t>(eEolType)];
-	pcmemEol->SetRawData(data.pData, data.nLen);
 }

@@ -485,7 +485,7 @@ INSTANTIATE_TEST_CASE_P(ParameterizedTestEol
 		CODE_UNICODEBE,
 		(ECodeType)12000,	// UTF-32LE
 //		(ECodeType)12001,	// UTF-32BE実装は機能していないため除外
-//		CODE_CESU8,			// CESU8のGetEolは実装漏れ。SJISと同じになるのでコメントアウト。
+		CODE_CESU8,
 		CODE_LATIN1
 	)
 );

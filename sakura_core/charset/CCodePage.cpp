@@ -216,19 +216,6 @@ EConvertResult CCodePage::UnicodeToCP(const CNativeW& cSrc, CMemory* pDst, int c
 	return ret;
 }
 
-void CCodePage::GetEol(CMemory* pcmemEol, EEolType eEolType)
-{
-	CNativeW temp;
-	CUnicode().GetEol(temp._GetMemory(), eEolType);
-	UnicodeToCode(temp, pcmemEol);
-	CNativeW temp2;
-	CodeToUnicode(*pcmemEol, &temp2);
-	// 双方向変換ができる場合だけ設定
-	if( !CNativeW::IsEqual(temp, temp2) ){
-		pcmemEol->Reset();
-	}
-}
-
 void CCodePage::GetBom(CMemory* pcmemBom)
 {
 	CNativeW temp;

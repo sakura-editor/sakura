@@ -105,29 +105,6 @@ bool CCodeBase::MIMEHeaderDecode( const char* pSrc, const int nSrcLen, CMemory* 
 
 /*!
 	改行データ取得
-*/
-// CShiftJisより移動 2010/6/13 Uchi
-void CCodeBase::S_GetEol(CMemory* pcmemEol, EEolType eEolType)
-{
-	static const struct{
-		const char* szData;
-		int nLen;
-	}
-	aEolTable[EOL_TYPE_NUM] = {
-		{ "",			0 },	// EEolType::none
-		{ "\x0d\x0a",	2 },	// EEolType::cr_and_lf
-		{ "\x0a",		1 },	// EEolType::line_feed
-		{ "\x0d",		1 },	// EEolType::carriage_return
-		{ "",			0 },	// EEolType::next_line
-		{ "",			0 },	// EEolType::line_separator
-		{ "",			0 },	// EEolType::paragraph_separator
-	};
-	auto& data = aEolTable[static_cast<size_t>(eEolType)];
-	pcmemEol->SetRawData(data.szData, data.nLen);
-}
-
-/*!
-	改行データ取得
 
 	各種行終端子に対する特定コードによるバイナリ表現のセットを取得する。
 	特定コードで利用できない行終端子については空のバイナリ表現が返る。
@@ -159,4 +136,23 @@ void CCodeBase::S_GetEol(CMemory* pcmemEol, EEolType eEolType)
 	}
 
 	return map;
+}
+
+/*!
+	改行データ取得
+
+	指定した行終端子に対する特定コードによるバイナリ表現を取得する。
+	コードポイントとバイナリシーケンスが1対1に対応付けられる文字コードの改行を検出するのに使う。
+ */
+void CCodeBase::GetEol( CMemory* pcmemEol, EEolType eEolType )
+{
+	if( pcmemEol != nullptr ){
+		const auto map = GetEolDifinitions();
+		if( auto it = map.find( eEolType ); it != map.end() ){
+			const auto& bin = it->second;
+			pcmemEol->SetRawData( bin.data(), bin.length() );
+		}else{
+			pcmemEol->Reset();
+		}
+	}
 }

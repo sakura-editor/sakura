@@ -25,7 +25,6 @@
 
 #include "StdAfx.h"
 #include "CUnicodeBe.h"
-#include "CEol.h"
 
 #include "codechecker.h"
 
@@ -33,23 +32,4 @@ void CUnicodeBe::GetBom(CMemory* pcmemBom)
 {
 	static const BYTE UTF16BE_BOM[]={0xFE,0xFF};
 	pcmemBom->SetRawData(UTF16BE_BOM, sizeof(UTF16BE_BOM));
-}
-
-void CUnicodeBe::GetEol(CMemory* pcmemEol, EEolType eEolType)
-{
-	static const struct{
-		const void* pData;
-		int nLen;
-	}
-	aEolTable[EOL_TYPE_NUM] = {
-		{ "",					0 * sizeof(wchar_t) },	// EEolType::none
-		{ "\x00\x0d\x00\x0a",	2 * sizeof(wchar_t) },	// EEolType::cr_and_lf
-		{ "\x00\x0a",			1 * sizeof(wchar_t) },	// EEolType::line_feed
-		{ "\x00\x0d",			1 * sizeof(wchar_t) },	// EEolType::carriage_return
-		{ "\x00\x85",			1 * sizeof(wchar_t) },	// EEolType::next_line
-		{ "\x20\x28",			1 * sizeof(wchar_t) },	// EEolType::line_separator
-		{ "\x20\x29",			1 * sizeof(wchar_t) },	// EEolType::paragraph_separator
-	};
-	auto& data = aEolTable[static_cast<size_t>(eEolType)];
-	pcmemEol->SetRawData(data.pData, data.nLen);
 }
