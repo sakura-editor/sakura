@@ -477,6 +477,11 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 	szItemName[0] = L'\0';
 	szTemplateName[0] = L'\0';
 	nMode = 0;
+
+	// finalで無名ではない
+	auto is_final_context = [](const wchar_t* pszWord, const wchar_t* pszItemName) {
+		return wcscmp(L"final", pszWord) == 0 && wcscmp(LS(STR_OUTLINE_CPP_NONAME), pszItemName) != 0;
+	};
 	
 	//	Aug. 10, 2004 genta プリプロセス処理クラス
 	CCppPreprocessMng cCppPMng;
@@ -586,7 +591,8 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 								// class Klass:base のように:の前にスペースがない場合
 								if(nMode2 == M2_NAMESPACE_SAVE)
 								{
-									if(szWord[0]!='\0')
+									// 2021.3.27 class Klass final: public base{ の:だったら名前を上書きしない
+									if (szWord[0] != '\0' && !is_final_context(szWord, szItemName))
 										wcscpy( szItemName, szWord );
 									nMode2 = M2_NAMESPACE_END;
 								}
@@ -603,7 +609,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 				}else{
 					// 2002/10/27 frozen　ここから
 					if( nMode2 == M2_NAMESPACE_SAVE ){
-						if( wcscmp(L"final", szWord) == 0 && wcscmp(LS(STR_OUTLINE_CPP_NONAME), szItemName) != 0 ){
+						if(is_final_context(szWord, szItemName)){
 							// strcut name final のfinalはクラス名の一部ではない
 							// ただし struct finalは名前
 						}else{
