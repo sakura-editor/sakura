@@ -27,6 +27,10 @@
 #define SAKURA_CCODEBASE_1AB194FB_933C_495E_A3A3_62E117C72644_H_
 #pragma once
 
+#include <cstddef>
+#include <string>
+#include <string_view>
+
 #include "mem/CNativeW.h"
 #include "CEol.h"
 
@@ -39,6 +43,12 @@ enum EConvertResult{
 
 struct CommonSetting_Statusbar;
 
+//! 変換元バイナリシーケンスを表す型。
+using BinarySequenceView = std::basic_string_view<std::byte>;
+
+//! 復元後バイナリシーケンスを表す型。
+using BinarySequence = std::basic_string<std::byte>;
+
 /*!
 	文字コード基底クラス。
 	
@@ -47,8 +57,42 @@ struct CommonSetting_Statusbar;
 */
 class CCodeBase{
 public:
-	virtual ~CCodeBase(){}
-//	virtual bool IsCode(const CMemory* pMem){return false;}  //!< 特定コードであればtrue
+	virtual ~CCodeBase() noexcept = default;
+
+	/*!
+		特定コードをUnicodeにエンコードする
+
+		@param [in] cSrc 変換対象のバイナリシーケンス
+		@param [out,opt] pResult 変換結果を受け取る変数
+		@returns サクラエディタ仕様のUnicode文字列
+	 */
+	virtual CNativeW CodeToUnicode( BinarySequenceView cSrc, bool* pResult = nullptr )
+	{
+		CMemory cmemSrc( cSrc.data(), cSrc.size() );
+		CNativeW cDest;
+		auto result = CodeToUnicode( cmemSrc, &cDest );
+		if( pResult ){
+			*pResult = result == RESULT_COMPLETE;
+		}
+		return cDest;
+	}
+
+	/*!
+		Unicodeを特定コードにデコードする
+
+		@param [in] cSrc 変換対象のUnicodeシーケンス
+		@param [out,opt] pResult 変換結果を受け取る変数
+		@returns バイナリシーケンス
+	 */
+	virtual BinarySequence UnicodeToCode( const CNativeW& cSrc, bool* pResult = nullptr )
+	{
+		CMemory cDest;
+		auto result = UnicodeToCode( cSrc, &cDest );
+		if( pResult ){
+			*pResult = result == RESULT_COMPLETE;
+		}
+		return BinarySequence( static_cast<std::byte*>(cDest.GetRawPtr()), cDest.GetRawLength() );
+	}
 
 	//文字コード変換
 	virtual EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst)=0;	//!< 特定コード → UNICODE    変換
