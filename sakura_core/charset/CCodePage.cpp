@@ -29,7 +29,6 @@
 */
 #include "StdAfx.h"
 #include "CCodePage.h"
-#include "CUnicode.h"
 #include "charcode.h"
 #include "codechecker.h"
 #include "dlg/CDialog.h"
@@ -214,18 +213,6 @@ EConvertResult CCodePage::UnicodeToCP(const CNativeW& cSrc, CMemory* pDst, int c
 	pDst->SetRawDataHoldBuffer(pDstBuffer, nDstLen);
 	delete [] pDstBuffer;
 	return ret;
-}
-
-void CCodePage::GetBom(CMemory* pcmemBom)
-{
-	CNativeW temp;
-	CUnicode().GetBom(temp._GetMemory());
-	UnicodeToCode(temp, pcmemBom);
-	CNativeW temp2;
-	CodeToUnicode(*pcmemBom, &temp2);
-	if( !CNativeW::IsEqual(temp, temp2) ){
-		pcmemBom->Reset();
-	}
 }
 
 // 文字コード表示用	UNICODE → Hex 変換

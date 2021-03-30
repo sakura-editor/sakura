@@ -273,10 +273,3 @@ EConvertResult CUtf7::UnicodeToUTF7( const CNativeW& cSrc, CMemory* pDstMem )
 
 	return RESULT_COMPLETE;
 }
-
-//! BOMデータ取得
-void CUtf7::GetBom(CMemory* pcmemBom)
-{
-	static const BYTE UTF7_BOM[]= {'+','/','v','8','-'};
-	pcmemBom->SetRawData(UTF7_BOM, sizeof(UTF7_BOM));
-}

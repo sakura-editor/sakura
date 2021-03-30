@@ -25,11 +25,3 @@
 
 #include "StdAfx.h"
 #include "CUnicodeBe.h"
-
-#include "codechecker.h"
-
-void CUnicodeBe::GetBom(CMemory* pcmemBom)
-{
-	static const BYTE UTF16BE_BOM[]={0xFE,0xFF};
-	pcmemBom->SetRawData(UTF16BE_BOM, sizeof(UTF16BE_BOM));
-}

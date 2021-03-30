@@ -30,8 +30,6 @@
 #include "CEol.h"
 #include "env/CommonSetting.h"
 
-void CCodeBase::GetBom(CMemory* pcmemBom){ pcmemBom->Reset(); }					//!< BOMデータ取得
-
 // 表示用16表示	UNICODE → Hex 変換	2008/6/9 Uchi
 EConvertResult CCodeBase::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
 {
@@ -107,7 +105,7 @@ bool CCodeBase::MIMEHeaderDecode( const char* pSrc, const int nSrcLen, CMemory* 
 	BOMデータ取得
 
 	ByteOrderMarkに対する特定コードによるバイナリ表現を取得する。
-	UTF16以上のマルチバイトUnicodeのバイト順を識別するのに使う。
+	マルチバイトなUnicode文字セットのバイト順を識別するのに使う。
  */
 [[nodiscard]] BinarySequence CCodeBase::GetBomDefinition()
 {
@@ -121,6 +119,24 @@ bool CCodeBase::MIMEHeaderDecode( const char* pSrc, const int nSrcLen, CMemory* 
 
 	return converted;
 }
+
+/*!
+	BOMデータ取得
+
+	ByteOrderMarkに対する特定コードによるバイナリ表現を取得する。
+	マルチバイトなUnicode文字セットのバイト順を識別するのに使う。
+ */
+void CCodeBase::GetBom( CMemory* pcmemBom )
+{
+	if( pcmemBom != nullptr ){
+		if( const auto bom = GetBomDefinition(); 0 < bom.length() ){
+			pcmemBom->SetRawData( bom.data(), bom.length() );
+		}else{
+			pcmemBom->Reset();
+		}
+	}
+}
+
 
 /*!
 	改行データ取得
