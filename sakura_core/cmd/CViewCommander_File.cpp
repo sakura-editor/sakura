@@ -62,6 +62,7 @@
 #include "apiwrap/CommonControl.h"
 #include "CSelectLang.h"
 #include "sakura_rc.h"
+#include "config/app_constants.h"
 
 /* 新規作成 */
 void CViewCommander::Command_FILENEW( void )

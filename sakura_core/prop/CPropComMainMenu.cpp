@@ -38,6 +38,7 @@
 #include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "config/app_constants.h"
 
 using std::wstring;
 

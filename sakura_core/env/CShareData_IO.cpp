@@ -37,6 +37,7 @@
 #include "uiparts/CMenuDrawer.h"
 #include "_main/CCommandLine.h"
 #include "_main/CControlProcess.h"
+#include "config/app_constants.h"
 
 void ShareData_IO_Sub_LogFont( CDataProfile& cProfile, const WCHAR* pszSecName,
 	const WCHAR* pszKeyLf, const WCHAR* pszKeyPointSize, const WCHAR* pszKeyFaceName, LOGFONT& lf, INT& nPointSize );

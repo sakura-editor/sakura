@@ -38,6 +38,7 @@
 #include "MessageBoxF.h"
 #include "window/CEditWnd.h"
 #include "CSelectLang.h"
+#include "config/app_constants.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                 メッセージボックス：実装                    //

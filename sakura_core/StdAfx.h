@@ -76,9 +76,6 @@
 #include "config/build_config.h"
 #include "config/maxdata.h"
 
-//定数(プリコンパイル日付に依存)
-#include "config/app_constants.h"		//アプリケーション定数
-
 //高頻度API等
 // #include <CommDlg.h> // WIN32_LEAN_AND_MEANでは必要。OpenFileDialg系
 #include <CommCtrl.h> // コモンコントロール

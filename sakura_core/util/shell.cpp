@@ -38,6 +38,7 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "extmodule/CHtmlHelp.h"
+#include "config/app_constants.h"
 
 int CALLBACK MYBrowseCallbackProc(
 	HWND hwnd,

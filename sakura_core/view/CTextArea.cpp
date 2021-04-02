@@ -30,6 +30,7 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "doc/CEditDoc.h"
+#include "config/app_constants.h"
 
 // 2014.07.26 katze
 //#define USE_LOG10			// この行のコメントを外すと行番号の最小桁数の計算にlog10()を用いる

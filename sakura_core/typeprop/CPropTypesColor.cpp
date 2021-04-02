@@ -37,6 +37,7 @@
 #include "prop/CPropCommon.h"
 #include "apiwrap/StdApi.h"
 #include "apiwrap/StdControl.h"
+#include "config/app_constants.h"
 
 using namespace std;
 

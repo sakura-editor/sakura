@@ -30,6 +30,9 @@
 #include "util/module.h"
 #include "debug/CRunningTimer.h"
 #include "version.h"
+#include "util/std_macro.h"
+#include "env/DLLSHAREDATA.h"
+#include "config/app_constants.h"
 
 // アプリ名。2007.09.21 kobake 整理
 #define _APP_NAME_(TYPE) TYPE("sakura")

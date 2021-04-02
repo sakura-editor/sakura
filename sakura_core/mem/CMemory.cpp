@@ -41,6 +41,7 @@
 #include "CSelectLang.h"
 #include "util/MessageBoxF.h"
 #include "debug/Debug2.h"
+#include "config/app_constants.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //

@@ -42,6 +42,7 @@
 #include "view/colors/CColorStrategy.h"
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"
+#include "config/app_constants.h"
 
 /*-----------------------------------------------------------------------
 定数

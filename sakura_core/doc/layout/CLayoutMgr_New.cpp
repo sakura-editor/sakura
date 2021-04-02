@@ -24,6 +24,7 @@
 #include "charset/charcode.h"
 #include "mem/CMemoryIterator.h"
 #include "util/window.h"
+#include "config/app_constants.h"
 
 /*!
 	行頭禁則文字に該当するかを調べる．

@@ -34,6 +34,8 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "doc/layout/CTsvModeInfo.h"
+#include "env/DLLSHAREDATA.h"
+#include "config/app_constants.h"
 
 static const DWORD p_helpids1[] = {	//11300
 	IDC_EDIT_TYPENAME,				HIDC_EDIT_TYPENAME,			//設定の名前

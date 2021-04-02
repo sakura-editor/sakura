@@ -34,6 +34,7 @@
 #include "window/CEditWnd.h"
 #include "util/string_ex.h"
 #include "CSelectLang.h"
+#include "config/app_constants.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     セーブ時チェック                        //

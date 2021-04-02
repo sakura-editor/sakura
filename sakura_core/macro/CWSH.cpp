@@ -50,6 +50,7 @@
 #include "dlg/CDlgCancel.h"
 #include "CSelectLang.h"
 #include "sakura_rc.h"
+#include "config/app_constants.h"
 
 #ifdef USE_JSCRIPT9
 const GUID CLSID_JSScript9 =

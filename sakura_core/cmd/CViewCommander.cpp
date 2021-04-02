@@ -36,6 +36,7 @@
 #include "plugin/CJackManager.h"
 #include "apiwrap/StdApi.h"
 #include "CSelectLang.h"
+#include "config/app_constants.h"
 
 CViewCommander::CViewCommander(CEditView* pEditView) : m_pCommanderView(pEditView)
 {

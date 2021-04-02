@@ -35,6 +35,7 @@
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"
 #include "sakura_rc.h"
+#include "config/app_constants.h"
 
 /*!
 検索(ボックス)コマンド実行.
