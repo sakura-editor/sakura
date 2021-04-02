@@ -780,6 +780,7 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 			sPos.ForwardLayoutLineRef(1);	//レイアウト行＋＋
 		}
 	}else{
+		auto caretY = GetCaret().GetCaretLayoutPos().GetY2();
 		SColorStrategyInfo sInfo(gr);
 		sInfo.m_pDispPos = &sPos;
 		sInfo.m_pcView = this;
@@ -787,6 +788,8 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 		{
 			//描画X位置リセット
 			sPos.ResetDrawCol();
+
+			auto nLayoutLine = sPos.GetLayoutLineRef();
 
 			//1行描画
 			bool bDispResult = DrawLogicLine(
@@ -810,6 +813,14 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 					DrawBackImage(gr, rc, hdcBgImg);
 					SelectObject(hdcBgImg, hOldBmp);
 					DeleteObject(hdcBgImg);
+				}
+			}
+			// メモリDCを利用しない場合はアンダーライン描画を行描画の直後に行う事でちらつきを抑える
+			if (!bUseMemoryDC && nLayoutLine == caretY)
+			{
+				if (m_pcEditWnd->GetActivePane() == m_nMyIndex) {
+					/* アクティブペインは、アンダーライン描画 */
+					GetCaret().m_cUnderLine.CaretUnderLineON(true, false);
 				}
 			}
 		}
@@ -844,15 +855,14 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 			pPs->rcPaint.top,
 			SRCCOPY
 		);
+		// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+		//     アンダーライン描画をメモリDCからのコピー前処理から後に移動
+		if ( m_pcEditWnd->GetActivePane() == m_nMyIndex ){
+			/* アクティブペインは、アンダーライン描画 */
+			GetCaret().m_cUnderLine.CaretUnderLineON( true, false );
+		}
+		// To Here 2007.09.09 Moca
 	}
-
-	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
-	//     アンダーライン描画をメモリDCからのコピー前処理から後に移動
-	if ( m_pcEditWnd->GetActivePane() == m_nMyIndex ){
-		/* アクティブペインは、アンダーライン描画 */
-		GetCaret().m_cUnderLine.CaretUnderLineON( true, false );
-	}
-	// To Here 2007.09.09 Moca
 
 	/* 03/02/18 対括弧の強調表示(描画) ai */
 	DrawBracketPair( true );
