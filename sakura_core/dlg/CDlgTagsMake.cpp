@@ -125,7 +125,7 @@ void CDlgTagsMake::SelectFolder( HWND hwndDlg )
 	/* フォルダ */
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_TAG_MAKE_FOLDER, szPath, _MAX_PATH );
 
-	if( SelectDir( hwndDlg, LS(STR_DLGTAGMAK_SELECTDIR), szPath, szPath, _countof(szPath) ) )
+	if( SelectDir( hwndDlg, LS(STR_DLGTAGMAK_SELECTDIR), szPath, szPath ) )
 	{
 		//末尾に\\マークを追加する．
 		::PathAddBackslashW( szPath );
