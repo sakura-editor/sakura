@@ -38,6 +38,7 @@
 #include "apiwrap/StdApi.h"
 #include "CSelectLang.h"
 #include "sakura_rc.h"
+#include "config/system_constants.h"
 
 // "までを切り取る
 static bool GetQuoteFilePath( const wchar_t* pLine, wchar_t* pFile, size_t size ){

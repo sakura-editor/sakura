@@ -30,6 +30,7 @@
 #include "io/CTextStream.h"
 #include "extmodule/CBregexp.h"
 #include "CSelectLang.h"
+#include "config/system_constants.h"
 
 /*! ルールファイルの1行を管理する構造体
 

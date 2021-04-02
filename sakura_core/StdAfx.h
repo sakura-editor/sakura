@@ -77,7 +77,6 @@
 #include "config/maxdata.h"
 
 //定数(プリコンパイル日付に依存)
-#include "config/system_constants.h"	//システム定数
 #include "config/app_constants.h"		//アプリケーション定数
 
 //高頻度API等

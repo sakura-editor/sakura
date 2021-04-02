@@ -30,6 +30,7 @@
 #include "window.h"
 #include <sstream>
 #include "apiwrap/StdApi.h"
+#include "config/system_constants.h"
 
 int CDPI::nDpiX = 96;
 int CDPI::nDpiY = 96;

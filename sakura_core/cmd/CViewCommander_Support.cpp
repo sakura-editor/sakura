@@ -33,6 +33,7 @@
 #include "util/shell.h"
 #include "apiwrap/StdApi.h"
 #include "CSelectLang.h"
+#include "config/system_constants.h"
 
 /*!	入力補完
 	Ctrl+Spaceでここに到着。

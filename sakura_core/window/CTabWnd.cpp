@@ -56,6 +56,7 @@
 #include "apiwrap/CommonControl.h"
 #include "sakura_rc.h"
 #include <windowsx.h>
+#include "config/system_constants.h"
 
 // 2006.01.30 ryoji タブのサイズ／位置に関する定義
 // 2009.10.01 ryoji 高DPI対応スケーリング

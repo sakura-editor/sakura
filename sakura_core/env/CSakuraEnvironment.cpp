@@ -44,6 +44,7 @@
 #include "util/module.h" //GetAppVersionInfo
 #include "util/shell.h"
 #include "util/window.h"
+#include "config/system_constants.h"
 
 typedef std::wstring wstring;
 

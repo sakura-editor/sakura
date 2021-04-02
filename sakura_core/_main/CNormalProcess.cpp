@@ -36,6 +36,9 @@
 #include "CAppMode.h"
 #include "env/CDocTypeManager.h"
 #include "apiwrap/StdApi.h"
+#include "CSelectLang.h"
+#include "env/CShareData.h"
+#include "config/system_constants.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //

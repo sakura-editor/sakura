@@ -31,7 +31,7 @@
 #include "util/window.h"
 #include "util/zoom.h"
 #include <array>
-
+#include "config/system_constants.h"
 
 /*! ツールバーの表示/非表示
 

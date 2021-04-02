@@ -40,6 +40,7 @@
 #include "recent/CRecent.h"
 #include "apiwrap/StdApi.h"
 #include "apiwrap/CommonControl.h"
+#include "config/system_constants.h"
 
 /*
 	指定ファイルの指定位置にタグジャンプする。

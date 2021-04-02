@@ -32,6 +32,7 @@
 #include "util/os.h"
 #include "_main/CMutex.h"
 #include "apiwrap/StdApi.h"
+#include "config/system_constants.h"
 
 /*!
 	@return true:正常終了 / false:エラー終了

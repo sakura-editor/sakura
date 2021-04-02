@@ -23,6 +23,7 @@
 #include "env/CShareData_IO.h"
 #include "debug/CRunningTimer.h"
 #include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ヘッダ整理
+#include "config/system_constants.h"
 
 //-------------------------------------------------
 

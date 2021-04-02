@@ -54,6 +54,7 @@
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"
 #include "sakura_rc.h"
+#include "config/system_constants.h"
 
 using namespace std;
 

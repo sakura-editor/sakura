@@ -61,6 +61,7 @@
 #include "util/module.h"
 #include "debug/CRunningTimer.h"
 #include "apiwrap/StdApi.h"
+#include "config/system_constants.h"
 
 LRESULT CALLBACK EditViewWndProc( HWND, UINT, WPARAM, LPARAM );
 VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT_PTR, DWORD );

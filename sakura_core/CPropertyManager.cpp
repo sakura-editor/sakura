@@ -30,6 +30,7 @@
 #include "env/CDocTypeManager.h"
 #include "apiwrap/StdApi.h"
 #include <memory>
+#include "config/system_constants.h"
 
 void CPropertyManager::Create( HWND hwndOwner, CImageListMgr* pImageList, CMenuDrawer* pMenuDrawer )
 {
