@@ -47,6 +47,7 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "config/system_constants.h"
+#include "String_define.h"
 
 const DWORD p_helpids[] = {
 	IDC_TAB_FAVORITE,				HIDC_TAB_FAVORITE,				//タブ

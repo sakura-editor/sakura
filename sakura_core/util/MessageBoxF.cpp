@@ -39,6 +39,7 @@
 #include "window/CEditWnd.h"
 #include "CSelectLang.h"
 #include "config/app_constants.h"
+#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                 メッセージボックス：実装                    //

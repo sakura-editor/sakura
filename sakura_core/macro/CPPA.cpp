@@ -43,6 +43,7 @@
 #include "env/DLLSHAREDATA.h"
 #include "_os/OleTypes.h"
 #include "util/tchar_convert.h"
+#include "String_define.h"
 
 #define NEVER_USED_PARAM(p) ((void)p)
 

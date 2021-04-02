@@ -36,6 +36,7 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "config/app_constants.h"
+#include "String_define.h"
 
 /*!
 検索(ボックス)コマンド実行.

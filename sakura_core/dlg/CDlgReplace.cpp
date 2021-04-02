@@ -27,6 +27,7 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 //置換 CDlgReplace.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//11900

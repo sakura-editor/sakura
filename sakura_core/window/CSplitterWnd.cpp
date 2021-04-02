@@ -26,6 +26,7 @@
 #include "apiwrap/StdApi.h"
 #include "CSelectLang.h"
 #include "config/system_constants.h"
+#include "String_define.h"
 
 constexpr auto SPLITTER_FRAME_WIDTH = 3;
 constexpr auto SPLITTER_MARGIN = 2;

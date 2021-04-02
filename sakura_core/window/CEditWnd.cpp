@@ -75,6 +75,7 @@
 #include "sakura_rc.h"
 #include "config/system_constants.h"
 #include "config/app_constants.h"
+#include "String_define.h"
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたので
 //	定義を削除

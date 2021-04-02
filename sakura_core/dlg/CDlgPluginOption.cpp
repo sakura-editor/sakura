@@ -41,6 +41,7 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 // BOOL変数の表示
 #define	BOOL_DISP_TRUE	L"\u2611"

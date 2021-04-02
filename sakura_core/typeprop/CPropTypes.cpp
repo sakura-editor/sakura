@@ -31,6 +31,7 @@
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"
 #include "sakura_rc.h"
+#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      メッセージ処理                         //

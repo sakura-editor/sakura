@@ -60,6 +60,7 @@
 #include "uiparts/CWaitCursor.h"
 #include "CSelectLang.h"
 #include "config/app_constants.h"
+#include "String_define.h"
 
 CMacro::CMacro( EFunctionCode nFuncID )
 {

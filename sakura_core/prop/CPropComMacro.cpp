@@ -45,6 +45,7 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 //! Popup Help用ID
 //@@@ 2001.12.22 Start by MIK: Popup Help

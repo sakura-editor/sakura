@@ -45,6 +45,7 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"	// 2002/2/10 aroka
 #include "sakura.hh"
+#include "String_define.h"
 
 // 印刷設定 CDlgPrintSetting.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12500

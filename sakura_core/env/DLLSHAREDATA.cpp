@@ -35,6 +35,7 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "config/system_constants.h"
+#include "String_define.h"
 
 //GetDllShareData用グローバル変数
 DLLSHAREDATA* g_theDLLSHAREDATA = NULL;

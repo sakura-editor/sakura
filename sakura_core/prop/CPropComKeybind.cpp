@@ -27,6 +27,7 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "config/system_constants.h"
+#include "String_define.h"
 
 #define STR_SHIFT_PLUS        L"Shift+"  //@@@ 2001.11.08 add MIK
 #define STR_CTRL_PLUS         L"Ctrl+"  //@@@ 2001.11.08 add MIK

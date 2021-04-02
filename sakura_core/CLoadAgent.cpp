@@ -39,6 +39,7 @@
 #include "io/CFileLoad.h"
 #include "apiwrap/StdApi.h"
 #include "config/app_constants.h"
+#include "String_define.h"
 
 ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 {

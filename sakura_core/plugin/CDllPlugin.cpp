@@ -31,6 +31,7 @@
 #include "view/CEditView.h"
 #include "util/tchar_convert.h"
 #include "CSelectLang.h"
+#include "String_define.h"
 
 // デストラクタ
 CDllPlugin::~CDllPlugin(void)

@@ -34,6 +34,7 @@
 #include "view/CEditView.h"
 #include "view/colors/EColorIndexType.h"
 #include "CSelectLang.h"
+#include "String_define.h"
 
 /*!
  * @brief C/C++のファイル名による判定

@@ -35,6 +35,7 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "config/system_constants.h"
+#include "String_define.h"
 
 //GREP CDlgGrep.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12000

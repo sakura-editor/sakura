@@ -41,6 +41,7 @@
 #include "_main/CMutex.h"
 #include "config/system_constants.h"
 #include "config/app_constants.h"
+#include "String_define.h"
 
 // GetOpenedWindowArr用静的変数／構造体
 static BOOL s_bSort;	// ソート指定

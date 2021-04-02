@@ -36,6 +36,7 @@
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"
 #include "sakura_rc.h"
+#include "String_define.h"
 
 BOOL CDlgFileUpdateQuery::OnInitDialog( HWND hWnd, WPARAM wParam, LPARAM lParam )
 {

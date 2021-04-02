@@ -45,6 +45,8 @@
 #include "util/tchar_convert.h"
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"
+#include "mem/CNativeA.h"
+#include "String_define.h"
 
 #include "sakura_rc.h"
 #include "sakura.hh"

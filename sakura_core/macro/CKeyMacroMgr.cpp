@@ -29,6 +29,7 @@
 #include "io/CTextStream.h"
 #include "CSelectLang.h"
 #include "mem/CNativeW.h"
+#include "String_define.h"
 
 CKeyMacroMgr::CKeyMacroMgr()
 {

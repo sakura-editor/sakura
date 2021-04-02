@@ -35,6 +35,7 @@
 #include "util/tchar_template.h"
 #include "apiwrap/StdControl.h"
 #include "sakura_rc.h" // IDD_EXECRUNNING
+#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       外部コマンド                          //

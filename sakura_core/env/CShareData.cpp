@@ -46,6 +46,7 @@
 #include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 #include "config/system_constants.h"
+#include "String_define.h"
 
 struct ARRHEAD {
 	int		nLength;

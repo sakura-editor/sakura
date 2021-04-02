@@ -28,6 +28,7 @@
 #include "util/window.h"
 #include "apiwrap/StdApi.h"
 #include "apiwrap/StdControl.h"
+#include "String_define.h"
 
 #define IDT_FUNCWND 1248
 #define TIMER_TIMEOUT 100

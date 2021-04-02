@@ -99,7 +99,7 @@
 #include <memory>
 #endif // ifndef SAKURA_PCH_MODE_MIN
 
-#include "String_define.h"
+#include "env/DLLSHAREDATA.h"
 
 //その他
 #define malloc_char (char*)malloc

@@ -40,6 +40,7 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
 	IDOK,						HIDOK_SAMECOLOR,						// OK

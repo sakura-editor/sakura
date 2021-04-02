@@ -43,6 +43,7 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "config/app_constants.h"
+#include "String_define.h"
 
 static void LoadPluginTemp(CommonSetting& common, CMenuDrawer& cMenuDrawer);
 

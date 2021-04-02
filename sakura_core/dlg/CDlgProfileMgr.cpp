@@ -39,6 +39,7 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 const DWORD p_helpids[] = {
 	IDC_LIST_PROFILE,				HIDC_LIST_PROFILE,				//プロファイル一覧

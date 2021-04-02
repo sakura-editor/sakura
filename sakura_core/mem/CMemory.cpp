@@ -42,6 +42,7 @@
 #include "util/MessageBoxF.h"
 #include "debug/Debug2.h"
 #include "config/app_constants.h"
+#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //

@@ -33,6 +33,7 @@
 #include "sakura.hh"
 #include "config/system_constants.h"
 #include "config/app_constants.h"
+#include "String_define.h"
 
 using std::wstring;
 

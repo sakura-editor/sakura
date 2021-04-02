@@ -34,6 +34,7 @@
 #include "charset/CCodeMediator.h"
 #include "util/file.h"
 #include "CSelectLang.h"
+#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        セーブ前後                           //
