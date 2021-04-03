@@ -101,6 +101,8 @@
 #include <ShlObj.h>
 #include <wrl.h>
 
+// プロジェクト内のファイルだがプリコンパイル対象とする。
+// プリコンパイルの有無がビルドパフォーマンスに大きく影響するため。
 #include "env/DLLSHAREDATA.h"
 
 //その他
