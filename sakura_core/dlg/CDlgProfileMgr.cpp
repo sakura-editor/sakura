@@ -37,7 +37,7 @@
 #include "util/window.h"
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"
-#include "func/funccode.h"
+#include "func/Funccode.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "String_define.h"
