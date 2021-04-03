@@ -26,6 +26,7 @@
 
 #include "StdAfx.h"
 #include "format.h"
+#include "basis/CMyString.h"
 
 /*!	書式文字列に従い日時を変換
 

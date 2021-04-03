@@ -30,8 +30,6 @@
 //ランタイム情報ライブラリにアクセスするWindowsヘッダを参照する
 #include <ImageHlp.h>
 
-#include "mem/CNativeW.h"
-
 //デバッグ用。
 //VistaだとExtTextOutの結果が即反映されない。この関数を用いると即反映されるので、
 //デバッグ時ステップ実行する際に便利になる。ただし、当然重くなる。

@@ -21,6 +21,7 @@
 class CFuncInfo;
 
 #include "mem/CMemory.h"
+#include "mem/CNativeW.h"
 
 // CDlgFuncList::SetTree()用 m_Info
 #define FUNCINFO_INFOMASK	0xFFFF

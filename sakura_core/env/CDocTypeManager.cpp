@@ -32,6 +32,9 @@
 #include "_main/CMutex.h"
 #include "CFileExt.h"
 #include <Shlwapi.h>	// PathMatchSpec
+#include "apiwrap/StdApi.h"
+#include "env/DLLSHAREDATA.h"
+#include "config/system_constants.h"
 
 const WCHAR* CDocTypeManager::m_typeExtSeps = L" ;,";	// タイプ別拡張子 区切り文字
 const WCHAR* CDocTypeManager::m_typeExtWildcards = L"*?";	// タイプ別拡張子 ワイルドカード

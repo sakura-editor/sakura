@@ -30,7 +30,10 @@
 #define SAKURA_CDOCTYPEMANAGER_ACE5AE64_5C6A_4A70_BACF_99F9A448360D_H_
 #pragma once
 
-#include "DLLSHAREDATA.h"
+#include "types/CType.h"
+
+struct DLLSHAREDATA;
+DLLSHAREDATA& GetDllShareData();
 
 //! ドキュメントタイプ管理
 class CDocTypeManager{

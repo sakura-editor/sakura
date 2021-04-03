@@ -21,6 +21,8 @@
 #include "CGrepAgent.h"
 #include "plugin/CPlugin.h"
 #include "plugin/CJackManager.h"
+#include "CSelectLang.h"
+#include "String_define.h"
 
 /*! GREPダイアログの表示
 

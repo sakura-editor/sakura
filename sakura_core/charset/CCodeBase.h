@@ -32,6 +32,7 @@
 #include <string_view>
 
 #include "mem/CNativeW.h"
+#include "charset/charset.h"
 #include "CEol.h"
 
 //定数

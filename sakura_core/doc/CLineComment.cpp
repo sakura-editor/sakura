@@ -14,6 +14,8 @@
 */
 #include "StdAfx.h"
 #include "CLineComment.h"
+#include "mem/CNativeW.h"
+#include "util/string_ex.h"
 
 CLineComment::CLineComment()
 {

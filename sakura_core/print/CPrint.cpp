@@ -38,6 +38,9 @@
 #include <WinSpool.h>
 #include "CPrint.h"
 #include "_main/global.h"
+#include "CSelectLang.h"
+#include "basis/CMyString.h"
+#include "String_define.h"
 
 // 2006.08.14 Moca 用紙名一覧の重複削除・情報の統合
 const PAPER_INFO CPrint::m_paperInfoArr[] = {

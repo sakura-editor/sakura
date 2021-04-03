@@ -30,6 +30,9 @@
 #include "util/shell.h"
 #include "util/file.h"
 #include "env/CSakuraEnvironment.h"
+#include "CSelectLang.h"
+#include "util/string_ex.h"
+#include "String_define.h"
 
 /* コマンドラインオプション用定数 */
 #define CMDLINEOPT_R			1002 //!< ビューモード

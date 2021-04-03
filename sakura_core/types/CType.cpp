@@ -30,6 +30,7 @@
 #include "env/CDocTypeManager.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
+#include "config/app_constants.h"
 
 void _DefaultConfig(STypeConfig* pType);
 

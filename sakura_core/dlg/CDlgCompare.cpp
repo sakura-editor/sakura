@@ -24,8 +24,11 @@
 #include "util/shell.h"
 #include "util/file.h"
 #include "util/string_ex2.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "config/system_constants.h"
 
 // ファイル内容比較 CDlgCompare.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12300

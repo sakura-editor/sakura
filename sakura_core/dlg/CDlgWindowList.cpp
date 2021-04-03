@@ -24,8 +24,16 @@
 #include "Funccode_enum.h"
 #include "util/shell.h"
 #include "util/window.h"
+#include "apiwrap/StdApi.h"
+#include "debug/Debug2.h"
+#include "util/string_ex.h"
+#include "env/CAppNodeManager.h"
+#include "env/DLLSHAREDATA.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "config/system_constants.h"
+
+struct EditInfo;
 
 const DWORD p_helpids[] = {
 	IDC_LIST_WINDOW,			HIDC_WINLIST_LIST_WINDOW,

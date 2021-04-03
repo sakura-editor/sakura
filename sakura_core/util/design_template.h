@@ -36,6 +36,8 @@
 #include <stdexcept>
 #include <vector>
 
+#include "debug/Debug2.h"
+
 // http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Copy_Constructors
 // A macro to disallow the copy constructor and operator= functions
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \

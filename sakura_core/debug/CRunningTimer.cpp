@@ -19,6 +19,7 @@
 #include <MMSystem.h>
 #include "debug/CRunningTimer.h"
 #include "_main/global.h"
+#include "debug/Debug2.h"
 
 #ifdef _DEBUG
 

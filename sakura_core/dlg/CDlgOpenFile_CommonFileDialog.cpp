@@ -40,8 +40,11 @@
 #include "util/module.h"
 #include "util/design_template.h"
 #include "basis/CMyString.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 static const DWORD p_helpids[] = {	//13100
 //	IDOK,					HIDOK_OPENDLG,		//Winのヘルプで勝手に出てくる

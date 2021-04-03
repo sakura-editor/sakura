@@ -27,8 +27,13 @@
 #include "util/RegKey.h"
 #include "util/string_ex2.h"
 #include <memory>
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "config/system_constants.h"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 using std::wstring;
 

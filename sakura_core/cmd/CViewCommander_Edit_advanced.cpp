@@ -30,6 +30,9 @@
 
 #include "uiparts/CWaitCursor.h"
 #include "mem/CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
+#include "apiwrap/CommonControl.h"
+#include "CSelectLang.h"
+#include "String_define.h"
 
 using namespace std; // 2002/2/3 aroka to here
 

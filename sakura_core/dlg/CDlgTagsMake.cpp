@@ -38,8 +38,11 @@
 #include "env/DLLSHAREDATA.h"
 #include "func/Funccode.h"
 #include "util/shell.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 const DWORD p_helpids[] = {	//13700
 	IDC_EDIT_TAG_MAKE_FOLDER,	HIDC_EDIT_TAG_MAKE_FOLDER,	//タグ作成フォルダ

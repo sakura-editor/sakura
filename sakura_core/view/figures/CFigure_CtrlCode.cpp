@@ -26,6 +26,7 @@
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CFigure_CtrlCode.h"
 #include "types/CTypeSupport.h"
+#include "apiwrap/StdApi.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     CFigure_CtrlCode                        //

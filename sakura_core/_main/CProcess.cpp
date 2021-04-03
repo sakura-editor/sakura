@@ -18,6 +18,9 @@
 #include "StdAfx.h"
 #include "CProcess.h"
 #include "util/module.h"
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
+#include "config/app_constants.h"
 
 /*!
 	@brief プロセス基底クラス

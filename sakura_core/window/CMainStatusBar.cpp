@@ -26,6 +26,7 @@
 #include "CMainStatusBar.h"
 #include "window/CEditWnd.h"
 #include "CEditApp.h"
+#include "apiwrap/CommonControl.h"
 
 CMainStatusBar::CMainStatusBar(CEditWnd* pOwner)
 : m_pOwner(pOwner)

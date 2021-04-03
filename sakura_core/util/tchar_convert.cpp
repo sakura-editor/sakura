@@ -25,6 +25,7 @@
 #include "StdAfx.h"
 #include "util/tchar_convert.h"
 #include "mem/CRecycledBuffer.h"
+#include "charset/charcode.h"
 
 static CRecycledBuffer        g_bufSmall;
 static CRecycledBufferDynamic g_bufBig;

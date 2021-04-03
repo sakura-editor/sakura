@@ -32,6 +32,7 @@
 #include "util/module.h"
 #include "env/CShareData.h"
 #include "env/CSakuraEnvironment.h"
+#include "String_define.h"
 
 /* キーマクロの記録開始／終了 */
 void CViewCommander::Command_RECKEYMACRO( void )

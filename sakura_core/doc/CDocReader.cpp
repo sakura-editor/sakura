@@ -26,6 +26,8 @@
 #include "CDocReader.h"
 #include "logic/CDocLine.h"
 #include "logic/CDocLineMgr.h"
+#include "CSelectLang.h"
+#include "String_define.h"
 
 /* 全行データを返す
 	改行コードは、CRLFに統一される。

@@ -36,8 +36,6 @@
 #define SAKURA_CMEMORY_EE37AF3F_6B73_412E_8F0C_8A64F4250AE3_H_
 #pragma once
 
-#include "_main/global.h"
-
 /*! ファイル文字コードセット判別時の先読み最大サイズ */
 #define CheckKanjiCode_MAXREADLENGTH 16384
 

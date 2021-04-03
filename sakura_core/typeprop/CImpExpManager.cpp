@@ -40,6 +40,10 @@
 #include "plugin/CPlugin.h"
 #include "view/CEditView.h"
 #include "view/colors/CColorStrategy.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 /*-----------------------------------------------------------------------
 定数

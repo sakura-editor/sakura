@@ -28,6 +28,7 @@
 #include "CEol.h"
 #include "charset/charcode.h"
 #include "util/string_ex2.h"
+#include "mem/CNativeW.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     インターフェース                        //

@@ -34,8 +34,12 @@
 #include "dlg/CDlgWinSize.h"
 #include "util/shell.h"
 #include "util/os.h"
+#include "apiwrap/CommonControl.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
 	IDOK,						HIDOK_WINSIZE,				// 閉じる

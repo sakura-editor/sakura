@@ -28,6 +28,7 @@
 #pragma once
 
 class CEditView;
+class CNativeW;
 
 //!品詞解析クラス
 class CViewParser{

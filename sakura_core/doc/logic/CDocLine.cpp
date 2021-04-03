@@ -16,6 +16,7 @@
 #include "StdAfx.h"
 #include "CDocLine.h"
 #include "mem/CMemory.h"
+#include "env/DLLSHAREDATA.h"
 
 CDocLine::CDocLine()
 : m_pPrev( NULL ), m_pNext( NULL )

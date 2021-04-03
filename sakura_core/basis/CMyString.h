@@ -30,6 +30,7 @@
 #include <string>
 #include "util/string_ex.h"
 #include "util/StaticType.h"
+#include "config/maxdata.h"
 
 #define m_delete2(p) { if(p){ delete[] p; p=0; } }
 

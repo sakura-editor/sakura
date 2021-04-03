@@ -32,6 +32,8 @@
 #include "util/design_template.h"
 #include "uiparts/CSoundSet.h"
 #include "uiparts/CImageListMgr.h"
+#include "types/CType.h"
+
 class CEditDoc;
 class CEditWnd;
 class CLoadAgent;

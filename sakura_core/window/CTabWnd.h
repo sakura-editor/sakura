@@ -41,6 +41,7 @@
 
 #include "CWnd.h"
 #include "util/design_template.h"
+#include "env/CommonSetting.h"
 
 class CGraphics;
 struct EditNode;

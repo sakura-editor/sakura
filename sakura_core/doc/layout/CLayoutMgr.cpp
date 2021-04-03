@@ -33,6 +33,7 @@
 #include "CSearchAgent.h"
 #include "debug/CRunningTimer.h"
 #include "charset/charcode.h"
+#include "config/app_constants.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        生成と破棄                           //

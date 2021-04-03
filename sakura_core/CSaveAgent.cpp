@@ -35,6 +35,7 @@
 #include "CEditApp.h"
 #include "_main/CAppMode.h"
 #include "env/CShareData.h"
+#include "String_define.h"
 
 CSaveAgent::CSaveAgent()
 {

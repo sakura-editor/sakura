@@ -28,7 +28,11 @@
 #include "view/colors/EColorIndexType.h"
 #include "util/shell.h"
 #include "util/window.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
+#include "env/DLLSHAREDATA.h"
 #include "sakura_rc.h"
+#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      メッセージ処理                         //

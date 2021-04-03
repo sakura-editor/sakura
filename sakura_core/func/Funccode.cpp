@@ -60,6 +60,7 @@
 #include "CMarkMgr.h"	// CAutoMarkMgr
 #include "util/os.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 //using namespace nsFuncCode;
 

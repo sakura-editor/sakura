@@ -30,10 +30,7 @@
 #include "charset/charcode.h"
 #include "charset/codeutil.h"
 #include "charset/codechecker.h"
-
-// 非依存推奨
-#include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
+#include "env/CommonSetting.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       各種判定定数                          //

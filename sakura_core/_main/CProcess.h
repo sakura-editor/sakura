@@ -22,7 +22,6 @@
 #include "global.h"
 #include "util/design_template.h"
 #include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
 
 #ifdef MINIDUMP_TYPE
 #define USE_CRASHDUMP

@@ -25,6 +25,7 @@
 #include "StdAfx.h"
 #include "CStream.h"
 #include <string>
+#include "util/std_macro.h"
 
 //	::fflush(m_hFile);
 //  ネットワーク上のファイルを扱っている場合、

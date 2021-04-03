@@ -27,6 +27,7 @@
 
 #include "CFigure_HanSpace.h"
 #include "types/CTypeSupport.h"
+#include "apiwrap/StdApi.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     CFigure_HanSpace                        //

@@ -32,6 +32,8 @@
 #include "StdAfx.h"
 #include "CSortedTagJumpList.h"
 
+#include "util/tchar_convert.h"
+
 /*!
 	@date 2005.04.23 genta 管理数の最大値を指定する引数追加
 */

@@ -29,6 +29,7 @@
 #include "util/os.h"
 #include "env/CSakuraEnvironment.h"
 #include "env/CShareData.h"
+#include "config/system_constants.h"
 
 /* 上下に分割 */	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更
 void CViewCommander::Command_SPLIT_V( void )

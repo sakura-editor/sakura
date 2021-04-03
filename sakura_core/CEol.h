@@ -35,6 +35,7 @@
 #pragma once
 
 #include "_main/global.h"
+#include "basis/primitive.h"
 #include "basis/SakuraBasis.h"
 
 /*!

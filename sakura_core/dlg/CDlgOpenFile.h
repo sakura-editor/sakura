@@ -24,6 +24,7 @@
 
 #include <memory>
 #include <vector>
+#include "util/design_template.h"
 
 struct SLoadInfo;	// doc/CDocListener.h
 struct SSaveInfo;	// doc/CDocListener.h

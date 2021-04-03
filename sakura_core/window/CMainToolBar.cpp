@@ -33,6 +33,10 @@
 #include "util/os.h"
 #include "util/window.h"
 #include "uiparts/CImageListMgr.h"
+#include "apiwrap/CommonControl.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
+#include "String_define.h"
 
 CMainToolBar::CMainToolBar(CEditWnd* pOwner)
 : m_pOwner(pOwner)

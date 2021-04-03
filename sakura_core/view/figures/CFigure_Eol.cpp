@@ -28,9 +28,8 @@
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CFigure_Eol.h"
 #include "types/CTypeSupport.h"
-#include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
 #include "window/CEditWnd.h"
+#include "apiwrap/StdApi.h"
 
 //折り返し描画
 void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView);

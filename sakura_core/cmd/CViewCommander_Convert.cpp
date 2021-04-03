@@ -21,6 +21,7 @@
 #include "convert/CDecode_Base64Decode.h"
 #include "convert/CDecode_UuDecode.h"
 #include "io/CBinaryStream.h"
+#include "CSelectLang.h"
 
 /* 小文字 */
 void CViewCommander::Command_TOLOWER( void )

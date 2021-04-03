@@ -40,7 +40,12 @@
 #include "util/os.h"
 #include "charset/CCodeBase.h"
 #include "charset/CCodeFactory.h"
+#include "apiwrap/StdApi.h"
+#include "CSelectLang.h"
+#include "mem/CNativeA.h"
 #include "sakura_rc.h"
+#include "config/system_constants.h"
+#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      マウスイベント                         //

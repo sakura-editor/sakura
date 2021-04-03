@@ -21,6 +21,7 @@
 #include <Windows.h>
 #include "CKeyMacroMgr.h"
 #include "CPPA.h"
+#include "mem/CNativeW.h"
 
 /*-----------------------------------------------------------------------
 クラスの宣言

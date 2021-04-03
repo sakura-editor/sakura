@@ -35,6 +35,7 @@
 #include "dlg/CDialog.h"
 #include "util/tchar_convert.h"
 #include <algorithm>
+#include "apiwrap/StdControl.h"
 
 typedef BOOL (WINAPI *pfn_GetCPInfoExT_t)(UINT, DWORD, CPINFOEX*);
 

@@ -34,6 +34,8 @@
 #include "doc/CDocOutline.h"
 #include "doc/logic/CDocLine.h"
 #include "outline/CFuncInfoArr.h"
+#include "CSelectLang.h"
+#include "String_define.h"
 
 /*!
 	関数に用いることができる文字かどうかの判定

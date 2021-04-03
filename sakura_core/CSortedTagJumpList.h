@@ -33,6 +33,7 @@
 #define SAKURA_CSORTEDTAGJUMPLIST_54B68DB2_20F2_4F62_BB2C_47629293620F_H_
 #pragma once
 
+#include "basis/primitive.h"
 #include "util/design_template.h"
 
 #define MAX_TAG_STRING_LENGTH _MAX_PATH	//管理する文字列の最大長

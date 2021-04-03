@@ -24,8 +24,11 @@
 #include "util/shell.h"
 #include "util/window.h"
 #include "typeprop/CImpExpManager.h"	// 20210/4/23 Uchi
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 using namespace std;
 

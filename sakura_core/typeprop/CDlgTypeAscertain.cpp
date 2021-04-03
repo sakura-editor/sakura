@@ -33,8 +33,12 @@
 #include "env/CDocTypeManager.h"
 #include "util/shell.h"
 #include "util/window.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
+#include "env/DLLSHAREDATA.h"
 #include "sakura.hh"
 #include "sakura_rc.h"
+#include "String_define.h"
 
 // タイプ別設定インポート確認 CDlgTypeAscertain.cpp
 const DWORD p_helpids[] = {

@@ -20,6 +20,7 @@
 #include <Windows.h>
 #include "dlg/CDialog.h"
 #include "util/container.h"
+#include "mem/CNativeW.h"
 
 /*! @brief キーワード補完
 

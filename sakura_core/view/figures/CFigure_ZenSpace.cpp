@@ -26,6 +26,7 @@
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CFigure_ZenSpace.h"
 #include "types/CTypeSupport.h"
+#include "apiwrap/StdApi.h"
 
 void Draw_ZenSpace( CGraphics& gr, const CMyRect& rc );
 

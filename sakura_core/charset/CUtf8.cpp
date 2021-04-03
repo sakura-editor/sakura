@@ -27,10 +27,8 @@
 #include "StdAfx.h"
 #include "CUtf8.h"
 #include "charset/codechecker.h"
-
-// 非依存推奨
-#include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
+#include "CEol.h"
+#include "env/CommonSetting.h"
 
 //! BOMデータ取得
 void CUtf8::GetBom(CMemory* pcmemBom)

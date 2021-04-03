@@ -27,6 +27,23 @@
 #define SAKURA_DLLSHAREDATA_13672D62_A18D_4E76_B3E7_A8192BCDC6A1_H_
 #pragma once
 
+#include "debug/Debug2.h"
+#include "config/maxdata.h"
+
+#include "env/CAppNodeManager.h"	//SShare_Nodes
+//2007.09.28 kobake Common構造体をCShareData.hから分離
+#include "env/CommonSetting.h"
+#include "env/CSearchKeywordManager.h"	//SShare_SearchKeywords
+#include "env/CTagJumpManager.h"		//SShare_TagJump
+#include "env/CFileNameManager.h"		//SShare_FileNameManagement
+
+#include "EditInfo.h"
+#include "types/CType.h" // STypeConfig
+#include "print/CPrint.h" //PRINTSETTING
+#include "recent/SShare_History.h"	//SShare_History
+#include "charset/charcode.h"
+
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         アクセサ                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -66,20 +83,6 @@ inline void SetDllShareData(DLLSHAREDATA* pShareData)
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 // 2010.04.19 Moca CShareDataからDLLSHAREDATAメンバのincludeをDLLSHAREDATA.hに移動
-
-#include "config/maxdata.h"
-
-#include "env/CAppNodeManager.h"	//SShare_Nodes
-//2007.09.28 kobake Common構造体をCShareData.hから分離
-#include "env/CommonSetting.h"
-#include "env/CSearchKeywordManager.h"	//SShare_SearchKeywords
-#include "env/CTagJumpManager.h"		//SShare_TagJump
-#include "env/CFileNameManager.h"		//SShare_FileNameManagement
-
-#include "EditInfo.h"
-#include "types/CType.h" // STypeConfig
-#include "print/CPrint.h" //PRINTSETTING
-#include "recent/SShare_History.h"	//SShare_History
 
 //! 共有フラグ
 struct SShare_Flags{

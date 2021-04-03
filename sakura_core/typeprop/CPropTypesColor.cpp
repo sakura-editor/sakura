@@ -35,6 +35,10 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "prop/CPropCommon.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 using namespace std;
 

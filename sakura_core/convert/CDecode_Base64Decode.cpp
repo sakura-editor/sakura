@@ -33,6 +33,7 @@
 #include "charset/charcode.h"
 #include "convert/convert_util2.h"
 #include "charset/codechecker.h"
+#include "mem/CNativeW.h"
 
 /* Base64デコード */
 bool CDecode_Base64Decode::DoDecode( const CNativeW& pcSrc, CMemory* pcDst )

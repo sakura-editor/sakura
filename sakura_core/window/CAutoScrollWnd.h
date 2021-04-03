@@ -28,7 +28,9 @@
 #pragma once
 
 #include "CWnd.h"
+
 class CEditView;
+class CMyPoint;
 
 class CAutoScrollWnd final: public CWnd
 {

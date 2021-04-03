@@ -26,6 +26,7 @@
 #include "outline/CFuncInfoArr.h"
 #include "plugin/CJackManager.h"
 #include "plugin/COutlineIfObj.h"
+#include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
 
 /*!	アウトライン解析

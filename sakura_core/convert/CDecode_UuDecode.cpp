@@ -28,6 +28,7 @@
 #include "convert/convert_util2.h"
 #include "util/string_ex2.h"
 #include "CEol.h"
+#include "mem/CNativeW.h"
 
 /* Uudecode (デコード）*/
 bool CDecode_UuDecode::DoDecode( const CNativeW& pcSrc, CMemory* pcDst )

@@ -27,6 +27,7 @@
 #include "plugin/CJackManager.h"
 #include "plugin/CSmartIndentIfObj.h"
 #include "debug/CRunningTimer.h"
+#include "apiwrap/CommonControl.h"
 
 /* wchar_t1個分の文字を入力 */
 void CViewCommander::Command_WCHAR( wchar_t wcChar, bool bConvertEOL )

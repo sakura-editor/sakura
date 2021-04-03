@@ -33,6 +33,7 @@
 #include "Funccode_enum.h"	// EFunctionCode
 #include "String_define.h"
 #include "basis/SakuraBasis.h"
+#include "debug/Debug2.h"
 #include "util/MessageBoxF.h"
 
 class CNativeW;

@@ -49,6 +49,9 @@
 #include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"
 #include "window/CEditWnd.h"
+#include "CSelectLang.h"
+#include "apiwrap/CommonControl.h"
+#include "String_define.h"
 
 using namespace std;
 

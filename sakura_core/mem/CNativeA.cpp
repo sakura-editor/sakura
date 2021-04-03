@@ -24,6 +24,7 @@
 */
 #include "StdAfx.h"
 #include "CNativeA.h"
+#include "debug/Debug1.h"
 
 CNativeA::CNativeA( const char* szData, size_t cchData )
 	: CNative()

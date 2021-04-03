@@ -36,6 +36,7 @@
 #include "types/CTypeSupport.h"
 #include "charset/charcode.h"
 #include "doc/layout/CLayout.h"
+#include "apiwrap/StdApi.h"
 
 const CTextArea* CTextDrawer::GetTextArea() const
 {

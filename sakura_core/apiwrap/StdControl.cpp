@@ -24,6 +24,7 @@
 */
 #include "StdAfx.h"
 #include "StdControl.h"
+#include "StdApi.h"
 
 #include <windowsx.h>
 

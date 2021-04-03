@@ -24,6 +24,7 @@
 */
 #include "StdAfx.h"
 #include "CConvert_ToLower.h"
+#include "mem/CNativeW.h"
 
 // 小文字へ変換
 //	変換できないキリル文字Ёの修正	2010/6/5 Uchi

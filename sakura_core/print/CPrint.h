@@ -36,6 +36,7 @@
 
 #include <WinSpool.h>
 #include <CommDlg.h> // PRINTDLG
+#include "basis/primitive.h"
 
 struct	MYDEVMODE {
 	BOOL	m_bPrinterNotFound;	/* プリンタがなかったフラグ */

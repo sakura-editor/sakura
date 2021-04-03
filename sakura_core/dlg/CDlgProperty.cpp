@@ -45,7 +45,9 @@
 #include "charset/CESI.h"
 #include "io/CBinaryStream.h"
 #include "util/shell.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
+#include "String_define.h"
 
 // プロパティ CDlgProperty.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"

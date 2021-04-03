@@ -37,6 +37,7 @@
 #include "CSelectLang.h"		// 2011.04.10 nasukoji
 #include "charset/charset.h"
 #include "util/design_template.h"
+#include "charset/charset.h"
 
 // 2010.04.19 Moca DLLSHAREDATA関連はDLLSHAREDATA.h等最低限必要な場所へ移動
 // CShareData.hは、自分のInterfaceしか提供しません。別にDLLSHAREDATA.hをincludeすること。
