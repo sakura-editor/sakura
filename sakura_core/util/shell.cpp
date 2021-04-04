@@ -38,12 +38,9 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "extmodule/CHtmlHelp.h"
-<<<<<<< HEAD
-#include <wrl.h>
-=======
 #include "config/app_constants.h"
 #include "String_define.h"
->>>>>>> master
+#include <wrl.h>
 
 
 /*!
@@ -52,11 +49,11 @@
 	@param [in] pDialog			設定対象のダイアログ
 	@param [in] pszInitFolder	初期フォルダに設定したいパス
 */
-static void SetInitialDir( Microsoft::WRL::ComPtr<IFileDialog> pDialog, const WCHAR* pszInitFolder )
+static void SetInitialDir( IFileDialog* pDialog, std::wstring_view pszInitFolder )
 {
 	
 	WCHAR	szInitFolder[MAX_PATH];
-	wcscpy_s( szInitFolder, _countof(szInitFolder), pszInitFolder );
+	wcscpy_s( szInitFolder, _countof(szInitFolder), pszInitFolder.data() );
 
 	// フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない
 	CutLastYenFromDirectoryPath( szInitFolder );
@@ -96,7 +93,7 @@ BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WC
 	}
 
 	// 初期フォルダを設定
-	SetInitialDir( pDialog, pszInitFolder );
+	SetInitialDir( pDialog.Get(), pszInitFolder );
 
 	// タイトル文字列を設定
 	hres = pDialog->SetTitle( pszTitle );
