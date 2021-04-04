@@ -43,18 +43,19 @@
 
 //! "までを切り取る
 // sizeは切り出し文字列のNULL終端を含む長さ(wstring::length()+1の値)
-static std::wstring GetQuoteFilePath(const wchar_t* pLine, size_t size)
+static bool GetQuoteFilePath(const wchar_t* pLine, std::wstring& str, size_t size)
 {
 	const wchar_t* pFileEnd = wcschr( pLine, L'\"' );
+	str = L"";
 	if (pFileEnd == nullptr) {
-		return L"";
+		return false;
 	}
 	size_t nFileLen = pFileEnd - pLine;
 	if (0 == nFileLen || size <= nFileLen) {
-		return L"";
+		return false;
 	}
-	std::wstring str(pLine, nFileLen);
-	return str;
+	str.assign(pLine, nFileLen);
+	return !str.empty();
 }
 
 static bool IsFileExists2( const wchar_t* pszFile )
@@ -225,19 +226,19 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 				strJumpToFile.assign(&pLine[2 + nBgn], nPathLen);
 				GetLineColumn( &pLine[2 + nPathLen], &nJumpToLine, &nJumpToColumn );
 				break;
-			}else if (strFile = GetQuoteFilePath(&pLine[2], MAX_TAG_PATH); strFile.empty()) {
+			}else if (!GetQuoteFilePath(&pLine[2], strFile, MAX_TAG_PATH)) {
 				break;
 			}
 			searchMode = TAGLIST_ROOT;
 		}else if( 0 == wmemcmp( pLine, L"◆\"", 2 ) ){
-			if (strFile = GetQuoteFilePath(&pLine[2], MAX_TAG_PATH); strFile.empty()) {
+			if (!GetQuoteFilePath(&pLine[2], strFile, MAX_TAG_PATH)) {
 				break;
 			}
 			searchMode = TAGLIST_SUBPATH;
 		}else if( 0 == wmemcmp( pLine, L"・", 1 ) ){
 			if( pLine[1] == L'"' ){
 				// ・"FileName.ext"
-				if (strFile = GetQuoteFilePath(&pLine[2], MAX_TAG_PATH); strFile.empty()) {
+				if (!GetQuoteFilePath(&pLine[2], strFile, MAX_TAG_PATH)) {
 					break;
 				}
 				searchMode = TAGLIST_SUBPATH;
@@ -299,7 +300,7 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 					continue;
 				}
 				// フォルダ毎：ファイル名
-				if (strFile = GetQuoteFilePath(&pLine[2], MAX_TAG_PATH); strFile.empty() == false ){
+				if (GetQuoteFilePath(&pLine[2], strFile, MAX_TAG_PATH)) {
 					searchMode = TAGLIST_SUBPATH;
 					continue;
 				}
@@ -320,7 +321,8 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 					break;
 				}
 				// 相対フォルダorファイル名
-				if (std::wstring strPath = GetQuoteFilePath(&pLine[2], MAX_TAG_PATH); strPath.empty() == false) {
+				std::wstring strPath;
+				if (GetQuoteFilePath(&pLine[2], strPath, MAX_TAG_PATH)) {
 					if (strFile.empty() == false) {
 						strPath = AddLastYenPath(strPath);
 					}
@@ -339,7 +341,8 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 				}
 				break;
 			}else if( 3 <= nLineLen && 0 == wmemcmp( pLine, L"◎\"", 2 ) ){
-				if (std::wstring strPath = GetQuoteFilePath(&pLine[2], MAX_TAG_PATH); strPath.empty() == false) {
+				std::wstring strPath;
+				if (GetQuoteFilePath(&pLine[2], strPath, MAX_TAG_PATH)) {
 					strPath = AddLastYenPath(strPath);
 					strPath.append(strFile);
 					if (MAX_TAG_PATH <= strPath.size()) {
