@@ -60,6 +60,8 @@
 #include "util/os.h" //WM_MOUSEWHEEL,IMR_RECONVERTSTRING,WM_XBUTTON*,IMR_CONFIRMRECONVERTSTRING
 #include "util/module.h"
 #include "debug/CRunningTimer.h"
+#include "apiwrap/StdApi.h"
+#include "config/system_constants.h"
 
 LRESULT CALLBACK EditViewWndProc( HWND, UINT, WPARAM, LPARAM );
 VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT_PTR, DWORD );
@@ -1789,7 +1791,7 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 */
 bool CEditView::GetSelectedDataSimple( CNativeW &cmemBuf )
 {
-	return GetSelectedData(&cmemBuf, FALSE, NULL, FALSE, false, EOL_UNKNOWN);
+	return GetSelectedData(&cmemBuf, FALSE, NULL, FALSE, false, EEolType::auto_detect);
 }
 
 /* 選択範囲のデータを取得
@@ -1801,7 +1803,7 @@ bool CEditView::GetSelectedData(
 	const wchar_t*	pszQuote,			/* 先頭に付ける引用符 */
 	BOOL			bWithLineNumber,	/* 行番号を付与する */
 	bool			bAddCRLFWhenCopy,	/* 折り返し位置で改行記号を入れる */
-	EEolType		neweol				//	コピー後の改行コード EOL_NONEはコード保存
+	EEolType		neweol				//	コピー後の改行コード EEolType::noneはコード保存
 )
 {
 	const wchar_t*	pLine;
@@ -1923,7 +1925,7 @@ bool CEditView::GetSelectedData(
 		}
 
 		// 改行コードについて。
-		if ( neweol == EOL_UNKNOWN )
+		if ( neweol == EEolType::auto_detect )
 		{
 			nBufSize += wcslen(WCODE::CRLF);
 		}
@@ -1978,11 +1980,11 @@ bool CEditView::GetSelectedData(
 				cmemBuf->AppendString( pszLineNum );
 			}
 
-			if( EOL_NONE != pcLayout->GetLayoutEol() ){
+			if( pcLayout->GetLayoutEol().IsValid() ){
 				if( nIdxTo >= nLineLen ){
 					cmemBuf->AppendString( &pLine[nIdxFrom], nLineLen - 1 - nIdxFrom );
 					//	Jul. 25, 2000 genta
-					cmemBuf->AppendString( ( neweol == EOL_UNKNOWN ) ?
+					cmemBuf->AppendString( ( neweol == EEolType::auto_detect ) ?
 						(pcLayout->GetLayoutEol()).GetValue2() :	//	コード保存
 						appendEol.GetValue2() );			//	新規改行コード
 				}
@@ -1997,7 +1999,7 @@ bool CEditView::GetSelectedData(
 						bWithLineNumber 	/* 行番号を付与する */
 					){
 						//	Jul. 25, 2000 genta
-						cmemBuf->AppendString(( neweol == EOL_UNKNOWN ) ?
+						cmemBuf->AppendString(( neweol == EEolType::auto_detect ) ?
 							m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetValue2() :	//	コード保存
 							appendEol.GetValue2() );		//	新規改行コード
 					}

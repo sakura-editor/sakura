@@ -24,6 +24,7 @@
 */
 #include "StdAfx.h"
 #include "CSoundSet.h"
+#include "util/MessageBoxF.h"
 
 void CSoundSet::NeedlessToSaveBeep()
 {

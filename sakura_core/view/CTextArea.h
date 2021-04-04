@@ -27,10 +27,12 @@
 #define SAKURA_CTEXTAREA_E3BB290D_608F_4F86_B460_8D84F171CB11_H_
 #pragma once
 
+#include "DispPos.h"
+
 class CViewFont;
 class CEditView;
 class CLayoutMgr;
-#include "DispPos.h"
+class CMySize;
 
 class CTextArea{
 public:

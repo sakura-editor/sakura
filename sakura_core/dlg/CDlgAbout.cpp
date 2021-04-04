@@ -28,7 +28,12 @@
 #include "util/window.h"
 #include "sakura_rc.h" // 2002/2/10 aroka 復帰
 #include "version.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura.hh"
+#include "config/system_constants.h"
+#include "String_define.h"
 
 // バージョン情報 CDlgAbout.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12900

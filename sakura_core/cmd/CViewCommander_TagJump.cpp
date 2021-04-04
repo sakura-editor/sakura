@@ -35,7 +35,11 @@
 #include "util/string_ex2.h"
 #include "env/CSakuraEnvironment.h"
 #include "CGrepAgent.h"
+#include "apiwrap/StdApi.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
+#include "config/system_constants.h"
+#include "String_define.h"
 
 // "までを切り取る
 static bool GetQuoteFilePath( const wchar_t* pLine, wchar_t* pFile, size_t size ){

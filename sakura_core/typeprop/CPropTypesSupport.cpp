@@ -27,8 +27,11 @@
 #include "util/shell.h"
 #include "util/file.h" // _IS_REL_PATH
 #include "util/window.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 static const DWORD p_helpids3[] = {	//11500
 	IDC_EDIT_HOKANFILE,				HIDC_EDIT_HOKANFILE,				//単語ファイル名

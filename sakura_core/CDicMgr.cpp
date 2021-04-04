@@ -20,8 +20,12 @@
 #include <stdio.h>
 #include "CDicMgr.h"
 #include "mem/CMemory.h" // 2002/2/10 aroka ヘッダ整理
+#include "mem/CNativeW.h"
 #include "debug/CRunningTimer.h"
 #include "io/CTextStream.h"
+#include "util/string_ex.h"
+#include "config/system_constants.h"
+
 using namespace std;
 
 CDicMgr::CDicMgr()

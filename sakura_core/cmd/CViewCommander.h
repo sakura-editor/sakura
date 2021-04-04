@@ -27,6 +27,9 @@
 #define SAKURA_CVIEWCOMMANDER_2790DAD1_148B_4DC5_8BCB_A2CE3D595F50_H_
 #pragma once
 
+#include "CEol.h"
+#include "types/CType.h"
+
 class CEditView;
 enum EFunctionCode;
 class CEditDoc;
@@ -37,7 +40,7 @@ class CEditWnd;
 class CColorStrategy;
 class CColorStrategyPool;
 class CSMacroMgr;
-#include "CEol.h"
+class CStringRef;
 
 class CViewCommander{
 public:
@@ -213,7 +216,7 @@ public:
 
 	/* クリップボード系 */
 	void Command_CUT( void );						/* 切り取り（選択範囲をクリップボードにコピーして削除）*/
-	void Command_COPY( bool bIgnoreLockAndDisable, bool bAddCRLFWhenCopy, EEolType neweol = EOL_UNKNOWN );/* コピー(選択範囲をクリップボードにコピー) */
+	void Command_COPY( bool bIgnoreLockAndDisable, bool bAddCRLFWhenCopy, EEolType neweol = EEolType::auto_detect );/* コピー(選択範囲をクリップボードにコピー) */
 	void Command_PASTE( int option );						/* 貼り付け（クリップボードから貼り付け）*/
 	void Command_PASTEBOX( int option );					/* 矩形貼り付け（クリップボードから矩形貼り付け）*/
 	//<< 2002/03/29 Azumaiya

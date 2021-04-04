@@ -38,6 +38,10 @@
 #include "_main/CControlTray.h"
 #include "charset/charcode.h"
 #include "recent/CRecent.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/CommonControl.h"
+#include "config/system_constants.h"
+#include "config/app_constants.h"
 
 /*
 	指定ファイルの指定位置にタグジャンプする。
@@ -432,12 +436,12 @@ void CEditView::CopyCurLine(
 	cmemBuf.SetString( pcLayout->GetPtr(), pcLayout->GetLengthWithoutEOL() );
 	if( pcLayout->GetLayoutEol().GetLen() != 0 ){
 		cmemBuf.AppendString(
-			( neweol == EOL_UNKNOWN ) ?
+			( neweol == EEolType::auto_detect ) ?
 				pcLayout->GetLayoutEol().GetValue2() : CEol(neweol).GetValue2()
 		);
 	}else if( bAddCRLFWhenCopy ){	// 2007.10.08 ryoji bAddCRLFWhenCopy対応処理追加
 		cmemBuf.AppendString(
-			( neweol == EOL_UNKNOWN ) ?
+			( neweol == EEolType::auto_detect ) ?
 				WCODE::CRLF : CEol(neweol).GetValue2()
 		);
 	}

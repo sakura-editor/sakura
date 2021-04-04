@@ -31,7 +31,12 @@
 #include "util/window.h"
 #include "util/string_ex2.h"
 #include <limits.h>
+#include "apiwrap/CommonControl.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 /*!
 検索(ボックス)コマンド実行.
@@ -1191,7 +1196,7 @@ void CViewCommander::Command_REPLACE_ALL()
 				cSelectLogic.SetTo(CLogicPoint(CLogicXInt(0), y + CLogicInt(1))); // 次行の行頭
 				if( GetDocument()->m_cDocLineMgr.GetLineCount() == y + CLogicInt(1) ){
 					const CDocLine* pLine = GetDocument()->m_cDocLineMgr.GetLine(y);
-					if( pLine->GetEol() == EOL_NONE ){
+					if( pLine->GetEol().IsNone() ){
 						// EOFは最終データ行にぶら下がりなので、選択終端は行末
 						cSelectLogic.SetTo(CLogicPoint(pLine->GetLengthWithEOL(), y)); // 対象行の行末
 					}

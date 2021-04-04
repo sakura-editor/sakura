@@ -26,8 +26,11 @@
 #include "util/shell.h"
 #include "util/string_ex2.h"
 #include "util/file.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "config/system_constants.h"
 
 const DWORD p_helpids[] = {	//13200
 	IDC_BUTTON_DIFF_DST,		HIDC_BUTTON_DIFF_DST,

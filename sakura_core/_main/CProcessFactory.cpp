@@ -27,6 +27,8 @@
 #include "util/os.h"
 #include <io.h>
 #include <tchar.h>
+#include "CSelectLang.h"
+#include "config/system_constants.h"
 
 class CProcess;
 

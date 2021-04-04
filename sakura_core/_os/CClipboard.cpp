@@ -33,6 +33,7 @@
 #include "charset/CShiftJis.h"
 #include "charset/CUtf8.h"
 #include "CEol.h"
+#include "mem/CNativeA.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //

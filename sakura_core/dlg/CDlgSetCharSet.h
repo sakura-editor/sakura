@@ -18,6 +18,8 @@
 
 #include "dlg/CDialog.h"
 
+enum ECodeType;
+
 //! 文字コードセット設定ダイアログボックス
 class CDlgSetCharSet final : public CDialog
 {

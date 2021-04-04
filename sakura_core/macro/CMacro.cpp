@@ -58,6 +58,9 @@
 #include "util/ole_convert.h"
 #include "util/os.h"
 #include "uiparts/CWaitCursor.h"
+#include "CSelectLang.h"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 CMacro::CMacro( EFunctionCode nFuncID )
 {
@@ -271,15 +274,14 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 		{
 			// EOLタイプ値をマクロ引数値に変換する	// 2009.08.18 ryoji
 			int nFlag;
-			switch( (int)lParam ){
-			case EOL_CRLF:	nFlag = 1; break;
-//			case EOL_LFCR:	nFlag = 2; break;
-			case EOL_LF:	nFlag = 3; break;
-			case EOL_CR:	nFlag = 4; break;
-			case EOL_NEL:	nFlag = 5; break;
-			case EOL_LS:	nFlag = 6; break;
-			case EOL_PS:	nFlag = 7; break;
-			default:		nFlag = 0; break;
+			switch( static_cast<EEolType>(lParam) ){
+			case EEolType::cr_and_lf:			nFlag = 1; break;
+			case EEolType::line_feed:			nFlag = 3; break;
+			case EEolType::carriage_return:		nFlag = 4; break;
+			case EEolType::next_line:			nFlag = 5; break;
+			case EEolType::line_separator:		nFlag = 6; break;
+			case EEolType::paragraph_separator:	nFlag = 7; break;
+			default:							nFlag = 0; break;
 			}
 			AddIntParam( nFlag );
 		}
@@ -637,19 +639,18 @@ bool CMacro::HandleCommand(
 		}
 		{
 			// マクロ引数値をEOLタイプ値に変換する	// 2009.08.18 ryoji
-			int nEol;
+			EEolType nEol;
 			switch( Argument[0] != NULL ? _wtoi(Argument[0]) : 0 ){
-			case 1:		nEol = EOL_CRLF; break;
-//			case 2:		nEol = EOL_LFCR; break;
-			case 3:		nEol = EOL_LF; break;
-			case 4:		nEol = EOL_CR; break;
-			case 5:		nEol = EOL_NEL; break;
-			case 6:		nEol = EOL_LS; break;
-			case 7:		nEol = EOL_PS; break;
-			default:	nEol = EOL_NONE; break;
+			case 1:		nEol = EEolType::cr_and_lf; break;
+			case 3:		nEol = EEolType::line_feed; break;
+			case 4:		nEol = EEolType::carriage_return; break;
+			case 5:		nEol = EEolType::next_line; break;
+			case 6:		nEol = EEolType::line_separator; break;
+			case 7:		nEol = EEolType::paragraph_separator; break;
+			default:	nEol = EEolType::none; break;
 			}
-			if( nEol != EOL_NONE ){
-				pcEditView->GetCommander().HandleCommand( Index, true, nEol, 0, 0, 0 );
+			if( !CEol::IsNone( nEol ) ){
+				pcEditView->GetCommander().HandleCommand( Index, true, static_cast<LPARAM>(nEol), 0, 0, 0 );
 			}
 		}
 		break;
@@ -1204,11 +1205,11 @@ bool CMacro::HandleCommand(
 			}
 			EEolType eEol;
 			switch (nSaveLineCode){
-			case 0:		eEol = EOL_NONE;	break;
-			case 1:		eEol = EOL_CRLF;	break;
-			case 2:		eEol = EOL_LF;		break;
-			case 3:		eEol = EOL_CR;		break;
-			default:	eEol = EOL_NONE;	break;
+			case 0:		eEol = EEolType::none;	break;
+			case 1:		eEol = EEolType::cr_and_lf;	break;
+			case 2:		eEol = EEolType::line_feed;		break;
+			case 3:		eEol = EEolType::carriage_return;		break;
+			default:	eEol = EEolType::none;	break;
 			}
 			
 			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], (LPARAM)nCharCode, (LPARAM)eEol, 0);
@@ -1647,26 +1648,15 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 	case F_GETLINECODE:
 		//	2005.08.04 maru マクロ追加
 		{
-			int n = 0;
-			switch( View->m_pcEditDoc->m_cDocEditor.GetNewLineCode() ){
-			case EOL_CRLF:
-				n = 0;
-				break;
-			case EOL_CR:
-				n = 1;
-				break;
-			case EOL_LF:
-				n = 2;
-				break;
-			case EOL_NEL:
-				n = 3;
-				break;
-			case EOL_LS:
-				n = 4;
-				break;
-			case EOL_PS:
-				n = 5;
-				break;
+			int n;
+			switch( View->m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetType() ){
+			case EEolType::cr_and_lf:			n = 0; break;
+			case EEolType::carriage_return:		n = 1; break;
+			case EEolType::line_feed:			n = 2; break;
+			case EEolType::next_line:			n = 3; break;
+			case EEolType::line_separator:		n = 4; break;
+			case EEolType::paragraph_separator:	n = 5; break;
+			default:							n = 0; break;
 			}
 			Wrap( &Result )->Receive( n );
 		}

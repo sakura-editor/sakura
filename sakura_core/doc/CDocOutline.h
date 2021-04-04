@@ -30,6 +30,7 @@
 class CEditDoc;
 class CFuncInfoArr;
 struct SOneRule;
+enum EOutlineType;
 
 class CDocOutline{
 public:

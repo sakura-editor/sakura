@@ -33,6 +33,9 @@
 #include "doc/logic/CDocLineMgr.h"
 #include "window/CEditWnd.h"
 #include "util/string_ex.h"
+#include "CSelectLang.h"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     セーブ時チェック                        //
@@ -42,7 +45,7 @@
 static bool _CheckSavingEolcode(const CDocLineMgr& pcDocLineMgr, CEol cEolType)
 {
 	bool bMix = false;
-	if( cEolType == EOL_NONE ){	//改行コード変換なし
+	if( cEolType.IsNone() ){	//改行コード変換なし
 		CEol cEolCheck;	//比較対象EOL
 		const CDocLine* pcDocLine = pcDocLineMgr.GetDocLineTop();
 		if( pcDocLine ){
@@ -50,7 +53,7 @@ static bool _CheckSavingEolcode(const CDocLineMgr& pcDocLineMgr, CEol cEolType)
 		}
 		while( pcDocLine ){
 			CEol cEol = pcDocLine->GetEol();
-			if( cEol != cEolCheck && cEol != EOL_NONE ){
+			if( cEol != cEolCheck && cEol.IsValid() ){
 				bMix = true;
 				break;
 			}

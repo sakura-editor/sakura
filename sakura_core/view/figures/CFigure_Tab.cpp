@@ -25,9 +25,8 @@
 #include "StdAfx.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CFigure_Tab.h"
-#include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
 #include "types/CTypeSupport.h"
+#include "apiwrap/StdApi.h"
 
 //2007.08.28 kobake 追加
 void _DispTab( CGraphics& gr, DispPos* pDispPos, const CEditView* pcView );

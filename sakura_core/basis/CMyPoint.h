@@ -28,6 +28,7 @@
 #pragma once
 
 #include <Windows.h> //POINT
+#include "basis/primitive.h"
 
 class CMyPoint : public POINT{
 public:

@@ -26,6 +26,7 @@
 #include "os.h"
 #include "util/module.h"
 #include "extmodule/CUxTheme.h"
+#include "basis/CMyString.h"
 
 /*!	Comctl32.dll のバージョン番号を取得
 

@@ -47,6 +47,7 @@
 #include "charset/CUtf8.h"		// Resource読み込みに使用
 #include "CEol.h"
 #include "util/file.h"
+#include "apiwrap/StdApi.h"
 
 void EnsureDirectoryExist( const std::wstring& strProfileName )
 {

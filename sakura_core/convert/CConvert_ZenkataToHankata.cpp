@@ -25,6 +25,7 @@
 #include "StdAfx.h"
 #include "CConvert_ZenkataToHankata.h"
 #include "convert_util.h"
+#include "mem/CNativeW.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     インターフェース                        //

@@ -15,6 +15,8 @@
 #define SAKURA_CDLGINPUT1_43CB765B_D257_4DBC_85E9_D2587B7E9D8E_H_
 #pragma once
 
+#include "mem/CNativeW.h"
+
 class CDlgInput1;
 
 /*-----------------------------------------------------------------------

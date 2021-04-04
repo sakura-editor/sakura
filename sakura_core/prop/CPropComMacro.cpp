@@ -41,8 +41,11 @@
 #include "util/string_ex2.h"
 #include "util/module.h"
 #include "util/os.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 //! Popup Help用ID
 //@@@ 2001.12.22 Start by MIK: Popup Help

@@ -56,7 +56,10 @@
 #include "io/CTextStream.h"
 #include "io/CFileLoad.h"
 #include "CWriteManager.h"
+#include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
+#include "config/system_constants.h"
+#include "String_define.h"
 
 #define	SAKURA_DIFF_TEMP_PREFIX	L"sakura_diff_"
 
@@ -477,7 +480,7 @@ BOOL CEditView::MakeDiffTmpFile( WCHAR* filename, HWND hWnd, ECodeType code, boo
 			SSaveInfo(
 				filename,
 				code,
-				EOL_NONE,
+				CEol(EEolType::none),
 				bBom
 			)
 		);

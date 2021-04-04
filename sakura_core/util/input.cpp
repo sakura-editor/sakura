@@ -24,6 +24,8 @@
 */
 #include "StdAfx.h"
 #include "input.h"
+#include "apiwrap/StdApi.h"
+#include "config/system_constants.h"
 
 // novice 2004/10/10 マウスサイドボタン対応
 /*!

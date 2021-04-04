@@ -24,6 +24,7 @@
 */
 #include "StdAfx.h"
 #include "CConvert_ToUpper.h"
+#include "mem/CNativeW.h"
 
 // 大文字へ変換
 //	変換できないキリル文字ёの修正	2010/6/5 Uchi

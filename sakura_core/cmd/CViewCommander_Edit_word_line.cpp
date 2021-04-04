@@ -166,7 +166,7 @@ void CViewCommander::Command_LineCutToEnd( void )
 
 	CLayoutPoint ptPos;
 
-	if( EOL_NONE == pCLayout->GetDocLineRef()->GetEol() ){	/* 改行コードの種類 */
+	if( pCLayout->GetDocLineRef()->GetEol().IsNone() ){	/* 改行コードの種類 */
 		GetDocument()->m_cLayoutMgr.LogicToLayout(
 			CLogicPoint(
 				pCLayout->GetDocLineRef()->GetLengthWithEOL(),
@@ -246,7 +246,7 @@ void CViewCommander::Command_LineDeleteToEnd( void )
 
 	CLayoutPoint ptPos;
 
-	if( EOL_NONE == pCLayout->GetDocLineRef()->GetEol() ){	/* 改行コードの種類 */
+	if( pCLayout->GetDocLineRef()->GetEol().IsNone() ){	/* 改行コードの種類 */
 		GetDocument()->m_cLayoutMgr.LogicToLayout(
 			CLogicPoint(
 				pCLayout->GetDocLineRef()->GetLengthWithEOL(),
@@ -300,7 +300,7 @@ void CViewCommander::Command_CUT_LINE( void )
 	// 2007.10.04 ryoji 処理簡素化
 	m_pCommanderView->CopyCurLine(
 		GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy,
-		EOL_UNKNOWN,
+		EEolType::auto_detect,
 		GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste
 	);
 	Command_DELETE_LINE();
@@ -414,7 +414,7 @@ void CViewCommander::Command_DUPLICATELINE( void )
 	||	・最終行でない
 	||	→折り返しである
 	*/
-	bCRLF = ( EOL_NONE == pcLayout->GetLayoutEol() ) ? FALSE : TRUE;
+	bCRLF = ( pcLayout->GetLayoutEol().IsNone() ) ? FALSE : TRUE;
 
 	bAddCRLF = FALSE;
 	if( !bCRLF ){

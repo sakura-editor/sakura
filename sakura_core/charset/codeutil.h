@@ -28,6 +28,7 @@
 #pragma once
 
 #include <Windows.h>
+#include "basis/primitive.h"
 
 #if 0  // 未使用
 //	Oct. 3, 2002 genta

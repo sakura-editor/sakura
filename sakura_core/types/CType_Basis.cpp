@@ -28,6 +28,7 @@
 #include "types/CType.h"
 #include "doc/CDocOutline.h"
 #include "view/colors/EColorIndexType.h"
+#include "config/app_constants.h"
 
 void CType_Basis::InitTypeConfigImp(STypeConfig* pType)
 {

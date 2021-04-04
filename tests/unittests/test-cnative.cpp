@@ -850,7 +850,7 @@ TEST(CNativeW, GetHabaOfChar)
  */
 TEST(CNativeW, GetCharNext)
 {
-	constexpr wchar_t* text = L"a\xd83c\xdf38";
+	constexpr const wchar_t* text = L"a\xd83c\xdf38";
 	// 次の文字のアドレスを返す。
 	EXPECT_EQ(CNativeW::GetCharNext(text, 3, text), text + 1);
 	// 上位サロゲートが渡された場合は下位サロゲートを飛ばす。
@@ -864,7 +864,7 @@ TEST(CNativeW, GetCharNext)
  */
 TEST(CNativeW, GetCharPrev)
 {
-	constexpr wchar_t* text = L"a\xd83c\xdf38" L"d";
+	constexpr const wchar_t* text = L"a\xd83c\xdf38" L"d";
 	// 前の文字のアドレスを返す。
 	EXPECT_EQ(CNativeW::GetCharPrev(text, 4, text + 1), text);
 	// 前の文字が下位サロゲートだった場合は下位サロゲートを飛ばす。
@@ -879,7 +879,7 @@ TEST(CNativeW, GetCharPrev)
 TEST(CNativeW, GetCharPrev_Bugs_Preview)
 {
 	// a、カラー絵文字「男性のシンボル」、x
-	constexpr wchar_t text[] = L"a\U0001F6B9x";
+	constexpr const wchar_t text[] = L"a\U0001F6B9x";
 
 	// text[0] = L'a'
 	// text[1] = (\U0001F6B9 の1ワード目)

@@ -34,6 +34,8 @@
 #include "charset/charcode.h"
 #include "parse/CWordParse.h"
 #include "mem/CMemory.h"
+#include "util/string_ex.h"
+#include "charset/charset.h"
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //

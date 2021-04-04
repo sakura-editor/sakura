@@ -26,8 +26,12 @@
 #include "util/window.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CSakuraEnvironment.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 const DWORD p_helpids[] = {
 	IDC_BUTTON_FOLDER,				HIDC_GREP_REP_BUTTON_FOLDER,			//フォルダ

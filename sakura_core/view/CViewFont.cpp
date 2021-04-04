@@ -26,6 +26,7 @@
 
 #include "StdAfx.h"
 #include "CViewFont.h"
+#include "env/DLLSHAREDATA.h"
 
 /*! フォント作成
 */

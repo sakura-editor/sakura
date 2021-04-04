@@ -28,7 +28,9 @@
 // #include "doc/CEditDoc.h"	//  in under CEditWnd.h
 #include "window/CEditWnd.h"
 #include "dlg/CDlgFileUpdateQuery.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
+#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //

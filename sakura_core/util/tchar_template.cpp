@@ -24,6 +24,7 @@
 */
 #include "StdAfx.h"
 #include "tchar_template.h"
+#include "util/std_macro.h"
 
 // -- -- 必要な文字群を手動で定義 -- -- //
 //アルファベット

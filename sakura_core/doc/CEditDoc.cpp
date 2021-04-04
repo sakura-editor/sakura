@@ -80,6 +80,8 @@
 #include "util/string_ex2.h"
 #include "util/window.h"
 #include "sakura_rc.h"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 #define IDT_ROLLMOUSE	1
 

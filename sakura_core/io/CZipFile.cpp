@@ -29,6 +29,7 @@
 #include "StdAfx.h"
 #include <ShellAPI.h>
 #include "CZipFile.h"
+#include "basis/CMyString.h"
 
 // コンストラクタ
 CZipFile::CZipFile() {

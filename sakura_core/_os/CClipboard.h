@@ -28,6 +28,8 @@
 #pragma once
 
 class CEol;
+class CNativeW;
+class CStringRef;
 
 //!サクラエディタ用クリップボードクラス。後々はこの中で全てのクリップボードAPIを呼ばせたい。
 class CClipboard{

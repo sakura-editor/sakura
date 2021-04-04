@@ -29,8 +29,13 @@
 #include "util/window.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CSakuraEnvironment.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "config/system_constants.h"
+#include "String_define.h"
 
 //GREP CDlgGrep.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12000

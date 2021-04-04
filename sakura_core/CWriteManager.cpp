@@ -35,6 +35,8 @@
 #include "io/CIoBridge.h"
 #include "io/CBinaryStream.h"
 #include "util/window.h"
+#include "CSelectLang.h"
+#include "String_define.h"
 
 /*! バッファ内容をファイルに書き出す (テスト用)
 

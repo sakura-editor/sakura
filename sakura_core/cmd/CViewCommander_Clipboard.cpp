@@ -25,6 +25,7 @@
 #include "view/colors/CColor_Found.h"
 #include "uiparts/CWaitCursor.h"
 #include "util/os.h"
+#include "apiwrap/CommonControl.h"
 
 /** 切り取り(選択範囲をクリップボードにコピーして削除)
 

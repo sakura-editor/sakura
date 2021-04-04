@@ -16,6 +16,8 @@
 #include "StdAfx.h"
 #include "window/CSplitBoxWnd.h"
 #include "uiparts/CGraphics.h"
+#include "apiwrap/StdApi.h"
+#include "config/system_constants.h"
 
 CSplitBoxWnd::CSplitBoxWnd()
 : CWnd(L"::CSplitBoxWnd")

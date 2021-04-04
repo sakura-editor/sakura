@@ -20,6 +20,8 @@
 #include "view/CEditView.h"// 2002/2/3 aroka
 #include "_main/global.h"
 #include "CClipboard.h"
+#include "CSelectLang.h"
+#include "String_define.h"
 
 COleLibrary CYbInterfaceBase::m_olelib;
 

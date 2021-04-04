@@ -59,7 +59,11 @@
 #include "env/CSakuraEnvironment.h"
 #include "debug/CRunningTimer.h"
 #include "util/os.h"
+#include "apiwrap/CommonControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 /* 新規作成 */
 void CViewCommander::Command_FILENEW( void )
@@ -188,7 +192,7 @@ bool CViewCommander::Command_FILESAVE( bool warnbeep, bool askname )
 	//セーブ情報
 	SSaveInfo sSaveInfo;
 	pcDoc->GetSaveInfo(&sSaveInfo);
-	sSaveInfo.cEol = EOL_NONE; //改行コード無変換
+	sSaveInfo.cEol = EEolType::none; //改行コード無変換
 	sSaveInfo.bOverwriteMode = true; //上書き要求
 
 	//上書き処理
@@ -389,7 +393,7 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 				nBool = Command_FILESAVE();
 			}else{
 				//nBool = HandleCommand( F_FILESAVEAS_DIALOG, true, 0, 0, 0, 0 );
-				nBool = Command_FILESAVEAS_DIALOG(NULL, CODE_NONE, EOL_NONE);
+				nBool = Command_FILESAVEAS_DIALOG(NULL, CODE_NONE, EEolType::none);
 			}
 			if( !nBool ){
 				return;
@@ -780,7 +784,7 @@ BOOL CViewCommander::Command_PUTFILE(
 			SSaveInfo(
 				filename,
 				nSaveCharCode,
-				EOL_NONE,
+				CEol(EEolType::none),
 				bBom
 			)
 		);

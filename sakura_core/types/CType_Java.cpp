@@ -31,6 +31,8 @@
 #include "doc/logic/CDocLine.h"
 #include "outline/CFuncInfoArr.h"
 #include "view/Colors/EColorIndexType.h"
+#include "CSelectLang.h"
+#include "String_define.h"
 
 /* Java */
 void CType_Java::InitTypeConfigImp(STypeConfig* pType)

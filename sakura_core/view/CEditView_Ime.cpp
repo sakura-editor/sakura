@@ -26,9 +26,9 @@
 #include <algorithm>
 #include "charset/CShiftJis.h"
 #include "doc/CEditDoc.h"
-#include "env/DLLSHAREDATA.h"
-#include "_main/CAppMode.h"
 #include "window/CEditWnd.h"
+#include "util/tchar_convert.h"
+#include "mem/CNativeA.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           IME                               //

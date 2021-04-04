@@ -91,7 +91,6 @@
     <ClCompile Include="test-cwordparse.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
-    <ClCompile Include="coverage.cpp" />
     <ClCompile Include="test-csakuraenvironment.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
@@ -129,6 +128,9 @@
       <Filter>Test Files</Filter>
     </ClCompile>
     <ClCompile Include="test-cdoctypemanager.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-ceol.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -31,6 +31,11 @@
 #include "env/CHelpManager.h"
 #include "util/module.h"
 #include "util/shell.h"
+#include "apiwrap/StdApi.h"
+#include "CSelectLang.h"
+#include "config/system_constants.h"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 /*!	入力補完
 	Ctrl+Spaceでここに到着。

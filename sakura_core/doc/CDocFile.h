@@ -30,6 +30,8 @@
 
 #include "io/CFile.h"
 #include "util/file.h"
+#include "charset/charset.h"
+
 class CEditDoc;
 
 //####本来はここにあるべきでは無い

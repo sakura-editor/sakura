@@ -28,6 +28,9 @@
 #define SAKURA_CFUNCLISTMANAGER_C2C5861D_3B93_4B1F_B241_E3314414A2C1_H_
 #pragma once
 
+#include "basis/SakuraBasis.h"
+#include "_main/global.h"
+
 class CDocLine;
 class CDocLineMgr;
 

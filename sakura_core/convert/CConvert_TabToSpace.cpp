@@ -27,6 +27,7 @@
 #include "charset/charcode.h"
 #include "CEol.h"
 #include "util/string_ex2.h"
+#include "mem/CNativeW.h"
 
 //! TAB→空白
 bool CConvert_TabToSpace::DoConvert(CNativeW* pcData)

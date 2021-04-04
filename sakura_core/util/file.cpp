@@ -613,6 +613,31 @@ LPCWSTR GetRelPath( LPCWSTR pszPath )
 	return pszFileName;
 }
 
+//! パスに使えない文字が含まれていないかチェックする
+// ファイル名、フォルダ名には「<>*|"?」が使えない
+// しかし「\\?\C:\Program files\」の形式では?が3文字目にあるので除外
+// ストリーム名とのセパレータにはfilename.ext:streamの形式でコロンが使われる
+// コロンは除外文字に入っていない
+bool IsValidPathAvailableChar(std::wstring_view path)
+{
+	if (path.empty()) {
+		// 空文字列セーフ
+		return true;
+	}
+	constexpr auto& dos_device_path = LR"(\\?\)";
+	constexpr size_t len = _countof(dos_device_path) - 1;
+	size_t pos = 0;
+	if (wcsncmp(path.data(), dos_device_path, len) == 0) {
+		pos = len;
+	}
+	for (size_t i = pos; i < path.size(); ++i) {
+		if (!WCODE::IsValidFilenameChar(path[i])) {
+			return false;
+		}
+	}
+	return true;
+}
+
 /**	ファイルの存在チェック
 
 	指定されたパスのファイルが存在するかどうかを確認する。
@@ -628,6 +653,10 @@ LPCWSTR GetRelPath( LPCWSTR pszPath )
 */
 bool IsFileExists(const WCHAR* path, bool bFileOnly)
 {
+	if (!IsValidPathAvailableChar(path)) {
+		// ワイルドカード指定を除外
+		return false;
+	}
 	WIN32_FIND_DATA fd;
 	HANDLE hFind = ::FindFirstFile( path, &fd );
 	if( hFind != INVALID_HANDLE_VALUE ){
@@ -652,6 +681,10 @@ bool IsFileExists(const WCHAR* path, bool bFileOnly)
 */
 bool IsDirectory(LPCWSTR pszPath)
 {
+	if (!IsValidPathAvailableChar(pszPath)) {
+		// ワイルドカード指定を除外
+		return false;
+	}
 	WIN32_FIND_DATA fd;
 	HANDLE hFind = ::FindFirstFile( pszPath, &fd );
 	if(hFind!=INVALID_HANDLE_VALUE){

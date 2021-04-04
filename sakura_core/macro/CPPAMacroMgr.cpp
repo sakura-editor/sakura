@@ -14,10 +14,12 @@
 */
 #include "StdAfx.h"
 #include "CPPAMacroMgr.h"
-#include "mem/CMemory.h"
+#include "mem/CNativeW.h"
 #include "CMacroFactory.h"
 #include <string.h>
 #include "io/CTextStream.h"
+#include "util/tchar_convert.h"
+
 using namespace std;
 
 CPPA CPPAMacroMgr::m_cPPA;

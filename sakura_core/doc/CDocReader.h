@@ -27,6 +27,8 @@
 #define SAKURA_CDOCREADER_0183B68F_2942_40E1_B2A4_59FE0C20268F_H_
 #pragma once
 
+#include "basis/SakuraBasis.h"
+
 class CDocLineMgr;
 
 //as decorator

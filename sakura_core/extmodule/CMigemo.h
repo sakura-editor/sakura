@@ -23,6 +23,8 @@ Migemo はローマ字のまま日本語をインクリメンタル検索する�
 #define SAKURA_CMIGEMO_BEF7C3E9_DC35_4C9D_BC69_8B7F9EBB4463_H_
 #pragma once
 
+#include "basis/primitive.h"
+
 #define MIGEMO_VERSION "1.1"
 
 /* for migemo_load() */

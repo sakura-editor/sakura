@@ -28,10 +28,13 @@
 #pragma once
 
 #include "_main/global.h"
+#include "util/design_template.h"
+#include "basis/SakuraBasis.h"
 
 class CDocLineMgr;
 struct DocLineReplaceArg;
 class CBregexp;
+class CNativeW;
 
 // #define SEARCH_STRING_KMP
 #define SEARCH_STRING_SUNDAY_QUICK

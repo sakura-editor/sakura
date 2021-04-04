@@ -38,6 +38,7 @@
 #include "basis/SakuraBasis.h"
 #include "util/design_template.h"
 #include "CPrint.h" // 2002/2/10 aroka
+#include "types/CType.h"
 
 class CColorStrategy;
 class CColorStrategyPool;
@@ -45,6 +46,7 @@ class CDlgCancel;
 class CEditWnd;
 class CLayout;
 class CLayoutMgr;
+class CStringRef;
 
 class CPrintPreview {
 /* メンバ関数宣言 */

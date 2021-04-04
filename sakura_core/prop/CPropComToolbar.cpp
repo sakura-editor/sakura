@@ -24,8 +24,12 @@
 #include "uiparts/CMenuDrawer.h" // 2002/2/10 aroka
 #include "util/shell.h"
 #include "util/window.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {	//11000

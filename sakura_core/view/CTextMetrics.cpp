@@ -28,6 +28,7 @@
 #include <vector>
 #include "CTextMetrics.h"
 #include "charset/codechecker.h"
+#include "mem/CNativeW.h"
 
 void CTextMetrics::CopyTextMetricsStatus(CTextMetrics* pDst) const
 {

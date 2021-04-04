@@ -32,13 +32,12 @@
 
 #include <string_view>
 
-// 要先行定義
-// #include "DLLSHAREDATA.h"
-
 #include "util/design_template.h"
 #include "config/maxdata.h"
 
+struct DLLSHAREDATA;
 struct EditInfo;
+DLLSHAREDATA& GetDllShareData();
 
 //!ファイル名管理
 class CFileNameManager : public TSingleton<CFileNameManager>{

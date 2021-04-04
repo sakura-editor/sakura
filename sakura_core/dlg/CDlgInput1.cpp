@@ -22,6 +22,8 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "util/window.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 
 // 入力 CDlgInput1.cpp	//@@@ 2002.01.07 add start MIK
 static const DWORD p_helpids[] = {	//13000

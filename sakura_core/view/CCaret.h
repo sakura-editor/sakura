@@ -27,6 +27,9 @@
 #define SAKURA_CCARET_78A7C1D0_0D47_4FF9_AE73_3421E35ABCB0_H_
 #pragma once
 
+#include "basis/SakuraBasis.h"
+#include "basis/CMySize.h"
+
 #define _CARETMARGINRATE 20
 class CTextArea;
 class CEditView;

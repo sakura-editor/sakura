@@ -33,6 +33,7 @@
 #include "uiparts/CGraphics.h"
 
 class	CEditView;
+class CStringRef;
 
 bool _IsPosKeywordHead(const CStringRef& cStr, int nPos);
 

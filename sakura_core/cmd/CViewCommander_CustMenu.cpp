@@ -21,6 +21,8 @@
 #include "CViewCommander.h"
 #include "CViewCommander_inline.h"
 
+#include "apiwrap/StdApi.h"
+
 /* 右クリックメニュー */
 void CViewCommander::Command_MENU_RBUTTON( void )
 {

@@ -28,8 +28,11 @@
 #include "util/shell.h"
 #include "util/window.h"
 #include <memory>
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {	//10800

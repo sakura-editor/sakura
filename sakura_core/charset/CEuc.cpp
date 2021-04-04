@@ -24,10 +24,7 @@
 */
 #include "StdAfx.h"
 #include "CEuc.h"
-
-// 非依存推奨
-#include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
+#include "env/CommonSetting.h"
 
 /*!
 	EUCJP → Unicode 変換関数

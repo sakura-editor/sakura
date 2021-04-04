@@ -49,6 +49,9 @@
 #include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"
 #include "window/CEditWnd.h"
+#include "CSelectLang.h"
+#include "apiwrap/CommonControl.h"
+#include "String_define.h"
 
 using namespace std;
 
@@ -435,7 +438,7 @@ BOOL CCaret::GetAdjustCursorPos(
 		if( 0 < nLayoutLineCount ){
 			ptPosXY2.y = nLayoutLineCount - 1;
 			const CLayout* pcLayout = m_pEditDoc->m_cLayoutMgr.SearchLineByLayoutY( ptPosXY2.GetY2() );
-			if( pcLayout->GetLayoutEol() == EOL_NONE ){
+			if( pcLayout->GetLayoutEol().IsNone() ){
 				ptPosXY2.x = m_pEditView->LineIndexToColumn( pcLayout, (CLogicInt)pcLayout->GetLengthWithEOL() );
 				// [EOF]のみ折り返すのはやめる	// 2009.02.17 ryoji
 				// 復活するなら ptPosXY2.x に折り返し行インデントを適用するのがよい
@@ -844,18 +847,32 @@ void CCaret::ShowCaretPosInfo()
 		}
 
 		auto& statusBar = m_pEditDoc->m_pcEditWnd->m_cStatusBar;
-
+		// SB_SETTEXT メッセージでステータスバーに文字列を設定する度に再描画が行われるのを防ぐ為に
+		// 設定時にパートのRECTを取得し最後にまとめて再描画を行う
+		HWND hWnd = statusBar.GetStatusHwnd();
+		RECT updatedRect = { 0 };
+		auto setStatusText = [&](int nIndex, int nOption, const WCHAR* pszText) {
+			bool ret = statusBar.SetStatusText(nIndex, nOption, pszText);
+			if (ret) {
+				RECT partRect;
+				StatusBar_GetRect(hWnd, nIndex, &partRect);
+				::UnionRect(&updatedRect, &updatedRect, &partRect);
+			}
+		};
+		::SendMessage(hWnd, WM_SETREDRAW, FALSE, 0);
 		if( m_bClearStatus ){
-			statusBar.SetStatusText( 0, SBT_NOBORDERS, L"" );
+			setStatusText( 0, SBT_NOBORDERS, L"" );
 		}
 		int nIndex = 1;
-		statusBar.SetStatusText( nIndex++, 0,             szRowCol );
-		statusBar.SetStatusText( nIndex++, 0,             szEolMode );
-		statusBar.SetStatusText( nIndex++, 0,             szCaretChar );
-		statusBar.SetStatusText( nIndex++, 0,             pszCodeName );
-		statusBar.SetStatusText( nIndex++, SBT_OWNERDRAW, L"" );
-		statusBar.SetStatusText( nIndex++, 0,             szInsMode );
-		statusBar.SetStatusText( nIndex++, 0,             szFontSize );
+		setStatusText( nIndex++, 0,             szRowCol );
+		setStatusText( nIndex++, 0,             szEolMode );
+		setStatusText( nIndex++, 0,             szCaretChar );
+		setStatusText( nIndex++, 0,             pszCodeName );
+		setStatusText( nIndex++, SBT_OWNERDRAW, L"" );
+		setStatusText( nIndex++, 0,             szInsMode );
+		setStatusText( nIndex++, 0,             szFontSize );
+		::SendMessage(hWnd, WM_SETREDRAW, TRUE, 0);
+		InvalidateRect(hWnd, &updatedRect, TRUE);
 	}
 }
 
@@ -879,7 +896,7 @@ CLayoutInt CCaret::Cursor_UPDOWN( CLayoutInt nMoveLines, bool bSelect )
 
 	// 現在のキャレットY座標 + nMoveLinesが正しいレイアウト行の範囲内に収まるように nMoveLinesを調整する。
 	if( nMoveLines > 0 ) { // 下移動。
-		const bool existsEOFOnlyLine = pLayoutMgr->GetBottomLayout() && pLayoutMgr->GetBottomLayout()->GetLayoutEol() != EOL_NONE
+		const bool existsEOFOnlyLine = pLayoutMgr->GetBottomLayout() && pLayoutMgr->GetBottomLayout()->GetLayoutEol().IsValid()
 			|| pLayoutMgr->GetLineCount() == 0;
 		const CLayoutInt maxLayoutLine = pLayoutMgr->GetLineCount() + (existsEOFOnlyLine ? 1 : 0 ) - 1;
 		// 移動先が EOFのみの行を含めたレイアウト行数未満になるように移動量を規正する。
@@ -1095,7 +1112,7 @@ CLayoutInt CCaret::MoveCursorProperly(
 	if( ptNewXY.y >= m_pEditDoc->m_cLayoutMgr.GetLineCount()
 	 && (m_pEditView->GetSelectionInfo().IsMouseSelecting() && m_pEditView->GetSelectionInfo().IsBoxSelecting()) ){
 		const CLayout* layoutEnd = m_pEditDoc->m_cLayoutMgr.GetBottomLayout();
-		bool bEofOnly = (layoutEnd && layoutEnd->GetLayoutEol() != EOL_NONE) || NULL == layoutEnd;
+		bool bEofOnly = (layoutEnd && layoutEnd->GetLayoutEol().IsValid()) || NULL == layoutEnd;
 	 	// 2012.01.09 ぴったり[EOF]位置にある場合は位置を維持(1つ上の行にしない)
 	 	if( bEofOnly && ptNewXY.y == m_pEditDoc->m_cLayoutMgr.GetLineCount() && ptNewXY.x == 0 ){
 	 	}else{

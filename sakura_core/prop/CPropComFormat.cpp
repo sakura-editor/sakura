@@ -21,6 +21,7 @@
 #include "util/shell.h"
 #include "env/DLLSHAREDATA.h" // CFormatManager.hより前に必要
 #include "env/CFormatManager.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

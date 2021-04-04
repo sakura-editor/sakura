@@ -31,6 +31,7 @@
 #include "doc/layout/CLayout.h"
 #include "charset/charcode.h"
 #include "types/CTypeSupport.h"
+#include "apiwrap/StdApi.h"
 
 FigureRenderType CFigure_Text::GetRenderType(SColorStrategyInfo* pInfo)
 {

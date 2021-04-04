@@ -38,7 +38,12 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "extmodule/CHtmlHelp.h"
+<<<<<<< HEAD
 #include <wrl.h>
+=======
+#include "config/app_constants.h"
+#include "String_define.h"
+>>>>>>> master
 
 
 /*!
