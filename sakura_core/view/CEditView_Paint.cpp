@@ -762,6 +762,16 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 	//                      全部の行を描画                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
+	/* アクティブペインは、アンダーライン描画 */
+	const bool bDrawUnderLine = m_pcEditWnd->GetActivePane() == m_nMyIndex;
+	// カーソル行アンダーライン描画を行描画ループ内で行うかどうか
+	const bool bDrawUnderLineWithoutDelay =
+		bDrawUnderLine
+		&& !bUseMemoryDC  // メモリDCを利用しない場合はアンダーライン描画を行描画の直後に行う事でちらつきを抑える
+		&& !m_pTypeData->m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bDisp  // カーソル行より下にあるカーソル位置縦線が消えてしまうので、非表示設定でのみ行う
+		&& m_pTypeData->m_nLineSpace > 0  // 行間を0以下にすると、カーソル行アンダーラインの位置が一つ下の行に含まれるようになるため、レンダリングの対象行が変わるので、行間が0より大きい場合のみ行う
+		;
+
 	//必要な行を描画する	// 2009.03.26 ryoji 行番号のみ描画を通常の行描画と分離（効率化）
 	if(pPs->rcPaint.right <= GetTextArea().GetAreaLeft()){
 		while(sPos.GetLayoutLineRef() <= nLayoutLineTo)
@@ -789,8 +799,9 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 			//描画X位置リセット
 			sPos.ResetDrawCol();
 
-			auto nLayoutLine = sPos.GetLayoutLineRef();
-
+			//DrawLogicLineを呼ぶと値が変わるので呼ぶ前に取得
+			auto nCurrLine = sPos.GetLayoutLineRef();
+			
 			//1行描画
 			bool bDispResult = DrawLogicLine(
 				&sInfo,
@@ -815,13 +826,8 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 					DeleteObject(hdcBgImg);
 				}
 			}
-			// メモリDCを利用しない場合はアンダーライン描画を行描画の直後に行う事でちらつきを抑える
-			if (!bUseMemoryDC && nLayoutLine == caretY)
-			{
-				if (m_pcEditWnd->GetActivePane() == m_nMyIndex) {
-					/* アクティブペインは、アンダーライン描画 */
-					GetCaret().m_cUnderLine.CaretUnderLineON(true, false);
-				}
+			if (bDrawUnderLineWithoutDelay && nCurrLine == caretY) {
+				GetCaret().m_cUnderLine.CaretUnderLineON(true, false);
 			}
 		}
 	}
@@ -855,14 +861,15 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 			pPs->rcPaint.top,
 			SRCCOPY
 		);
-		// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
-		//     アンダーライン描画をメモリDCからのコピー前処理から後に移動
-		if ( m_pcEditWnd->GetActivePane() == m_nMyIndex ){
-			/* アクティブペインは、アンダーライン描画 */
-			GetCaret().m_cUnderLine.CaretUnderLineON( true, false );
-		}
-		// To Here 2007.09.09 Moca
 	}
+
+	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+	//     アンダーライン描画をメモリDCからのコピー前処理から後に移動
+	if ( bDrawUnderLine && !bDrawUnderLineWithoutDelay ){
+		/* アクティブペインは、アンダーライン描画 */
+		GetCaret().m_cUnderLine.CaretUnderLineON( true, false );
+	}
+	// To Here 2007.09.09 Moca
 
 	/* 03/02/18 対括弧の強調表示(描画) ai */
 	DrawBracketPair( true );
