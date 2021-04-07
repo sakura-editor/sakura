@@ -27,13 +27,11 @@
 #include "debug/Debug1.h"
 
 CNativeA::CNativeA( const char* szData, size_t cchData )
-	: CNative()
 {
 	SetString(szData, cchData);
 }
 
 CNativeA::CNativeA(const char* szData)
-	: CNative()
 {
 	SetString(szData);
 }
@@ -49,16 +47,15 @@ void CNativeA::SetString( const char* pszData )
 }
 
 // バッファの内容を置き換える。nLenは文字単位。
-void CNativeA::SetString( const char* pData, int nDataLen )
+void CNativeA::SetString( const char* pData, size_t nDataLen )
 {
-	int nDataLenBytes = nDataLen * sizeof(char);
-	CNative::SetRawData(pData, nDataLenBytes);
+	CNative::SetRawData( pData, nDataLen );
 }
 
 // バッファの内容を置き換える
-void CNativeA::SetNativeData( const CNativeA& pcNative )
+void CNativeA::SetNativeData( const CNativeA& cNative )
 {
-	CNative::SetRawData(pcNative);
+	CNative::SetRawData( cNative.GetRawPtr(), cNative.GetRawLength() );
 }
 
 // バッファの最後にデータを追加する
@@ -68,9 +65,9 @@ void CNativeA::AppendString( const char* pszData )
 }
 
 //! バッファの最後にデータを追加する。nLengthは文字単位。
-void CNativeA::AppendString( const char* pszData, int nLength )
+void CNativeA::AppendString( const char* pszData, size_t nLength )
 {
-	CNative::AppendRawData(pszData, nLength * sizeof(char));
+	CNative::AppendRawData( pszData, nLength );
 }
 
 //! バッファの最後にデータを追加する (フォーマット機能付き)
@@ -104,15 +101,15 @@ const CNativeA& CNativeA::operator = ( char cChar )
 }
 
 //! バッファの最後にデータを追加する
-void CNativeA::AppendNativeData( const CNativeA& pcNative )
+void CNativeA::AppendNativeData( const CNativeA& cNative )
 {
-	AppendString(pcNative.GetStringPtr(), pcNative.GetStringLength());
+	CNativeA::AppendRawData( cNative.GetRawPtr(), cNative.GetRawLength() );
 }
 
 //! (重要：nDataLenは文字単位) バッファサイズの調整。必要に応じて拡大する。
-void CNativeA::AllocStringBuffer( int nDataLen )
+void CNativeA::AllocStringBuffer( size_t nDataLen )
 {
-	CNative::AllocBuffer(nDataLen * sizeof(char));
+	CNative::AllocBuffer( nDataLen );
 }
 
 const CNativeA& CNativeA::operator += ( char ch )
@@ -132,9 +129,9 @@ int CNativeA::GetStringLength() const
 }
 
 // 任意位置の文字取得。nIndexは文字単位。
-char CNativeA::operator[](int nIndex) const
+char CNativeA::operator[]( size_t nIndex ) const
 {
-	if( nIndex < GetStringLength() ){
+	if( static_cast<int>(nIndex) < GetStringLength() ){
 		return GetStringPtr()[nIndex];
 	}else{
 		return 0;
