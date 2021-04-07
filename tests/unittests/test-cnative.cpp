@@ -29,6 +29,42 @@
 #include "mem/CNativeA.h"
 
 /*!
+	CStringRefのテスト
+ */
+TEST(CStringRef, CStringRef)
+{
+	constexpr const wchar_t sz[] = L"test";
+	constexpr const size_t cch = _countof(sz) - 1;
+
+	CStringRef v1;
+	EXPECT_EQ(nullptr, v1.GetPtr());
+	EXPECT_EQ(0, v1.GetLength());
+	EXPECT_FALSE(v1.IsValid());
+	EXPECT_EQ(L'\0', v1.At(0));
+
+	CStringRef v2(sz, cch);
+	EXPECT_STREQ(sz, v2.GetPtr());
+	EXPECT_EQ(cch, v2.GetLength());
+	EXPECT_TRUE(v2.IsValid());
+	EXPECT_EQ(L't', v2.At(0));
+	EXPECT_EQ(L'e', v2.At(1));
+	EXPECT_EQ(L's', v2.At(2));
+	EXPECT_EQ(L't', v2.At(3));
+	EXPECT_EQ(L'\0', v2.At(4));
+
+	CNativeW cmem(sz, cch);
+	CStringRef v3(cmem);
+	EXPECT_STREQ(sz, v3.GetPtr());
+	EXPECT_EQ(cch, v3.GetLength());
+	EXPECT_TRUE(v3.IsValid());
+	EXPECT_EQ(L't', v3.At(0));
+	EXPECT_EQ(L'e', v3.At(1));
+	EXPECT_EQ(L's', v3.At(2));
+	EXPECT_EQ(L't', v3.At(3));
+	EXPECT_EQ(L'\0', v3.At(4));
+}
+
+/*!
  * @brief コンストラクタ(パラメータなし)の仕様
  * @remark バッファは確保されない
  * @remark 文字列長はゼロになる
@@ -328,7 +364,8 @@ TEST(CNativeW, AppendStringWithFormatting)
 	ASSERT_STREQ(L"いちご100%", value.GetStringPtr());
 
 	// フォーマットに NULL を渡したケースをテストする
-	ASSERT_THROW(value.AppendStringF(NULL), std::invalid_argument);
+	ASSERT_THROW(value.AppendStringF(std::wstring_view(nullptr, 0)), std::invalid_argument);
+	ASSERT_THROW(value.AppendStringF(std::wstring_view(L"ダミー", 0)), std::invalid_argument);
 
 	// 文字列長を0にして、追加確保が行われないケースをテストする
 	value = L"いちご100%"; //テスト前の初期値(念のため再代入しておく
