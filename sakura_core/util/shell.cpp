@@ -43,29 +43,6 @@
 #include <wrl.h>
 
 
-/*!
-	@brief IFileDialog の初期フォルダを設定する
-
-	@param [in] pDialog			設定対象のダイアログ
-	@param [in] pszInitFolder	初期フォルダに設定したいパス
-*/
-static void SetInitialDir( IFileDialog* pDialog, std::wstring_view pszInitFolder )
-{
-	
-	WCHAR	szInitFolder[MAX_PATH];
-	wcscpy_s( szInitFolder, _countof(szInitFolder), pszInitFolder.data() );
-
-	// フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない
-	CutLastYenFromDirectoryPath( szInitFolder );
-
-	// 初期フォルダを設定
-	Microsoft::WRL::ComPtr<IShellItem> psiFolder;
-	HRESULT hres = SHCreateItemFromParsingName( szInitFolder, nullptr, IID_PPV_ARGS(&psiFolder) );
-	if ( SUCCEEDED(hres) ) {
-		pDialog->SetFolder( psiFolder.Get() );
-	}
-}
-
 /* フォルダ選択ダイアログ */
 BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR* strFolderName, size_t nMaxCount )
 {
@@ -93,7 +70,11 @@ BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WC
 	}
 
 	// 初期フォルダを設定
-	SetInitialDir( pDialog.Get(), pszInitFolder );
+	ComPtr<IShellItem> psiFolder;
+	hres = SHCreateItemFromParsingName( pszInitFolder, nullptr, IID_PPV_ARGS(&psiFolder) );
+	if ( SUCCEEDED(hres) ) {
+		pDialog->SetFolder( psiFolder.Get() );
+	}
 
 	// タイトル文字列を設定
 	hres = pDialog->SetTitle( pszTitle );
