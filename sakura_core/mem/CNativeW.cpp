@@ -63,7 +63,7 @@ void CNativeW::SetString( const wchar_t* pszData )
 	if (pszData)
 		CNative::SetRawData(pszData,wcslen(pszData) * sizeof(wchar_t));
 	else
-		CMemory::Clear();
+		CMemory::Reset();
 }
 
 void CNativeW::SetStringHoldBuffer( const wchar_t* pData, int nDataLen )

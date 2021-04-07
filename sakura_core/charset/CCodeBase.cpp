@@ -30,7 +30,7 @@
 #include "CEol.h"
 #include "env/CommonSetting.h"
 
-void CCodeBase::GetBom(CMemory* pcmemBom){ pcmemBom->Clear(); }					//!< BOMデータ取得
+void CCodeBase::GetBom(CMemory* pcmemBom){ pcmemBom->Reset(); }					//!< BOMデータ取得
 
 // 表示用16表示	UNICODE → Hex 変換	2008/6/9 Uchi
 EConvertResult CCodeBase::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
