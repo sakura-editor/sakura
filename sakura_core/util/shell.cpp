@@ -101,6 +101,11 @@ BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WC
 		return FALSE;
 	}
 
+	if ( nMaxCount < wcslen(pszResult) ) {
+		CoTaskMemFree( pszResult );
+		return FALSE;
+	}
+
 	wcscpy_s( strFolderName, nMaxCount, pszResult );
 	CoTaskMemFree( pszResult );
 
