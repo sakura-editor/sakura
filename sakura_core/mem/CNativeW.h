@@ -39,7 +39,7 @@ class CStringRef final{
 public:
 	CStringRef() noexcept = default;
 	CStringRef( const wchar_t* pData, size_t nDataLen ) noexcept;
-	CStringRef( const CNativeW& cmem ) noexcept;
+	explicit CStringRef( const CNativeW& cmem ) noexcept;
 
 	[[nodiscard]] const wchar_t* GetPtr() const noexcept { return m_pData; }
 	[[nodiscard]] int GetLength() const noexcept { return static_cast<int>(m_nDataLen); }
