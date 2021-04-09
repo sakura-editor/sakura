@@ -89,7 +89,8 @@ public:
 	void _AppendSz( std::string_view str );
 	void _SetRawLength( size_t nLength );
 	void swap( CMemory& left ) noexcept;
-	[[nodiscard]] int capacity() const noexcept { return 8 <= m_nDataBufSize ? m_nDataBufSize - 2: 0; }
+	//! メモリ再確保を行わずに格納できる最大バイト数を求める
+	[[nodiscard]] virtual int capacity() const noexcept { return 8 <= m_nDataBufSize ? m_nDataBufSize - 2: 0; }
 
 private: // 2002/2/10 aroka アクセス権変更
 	/*

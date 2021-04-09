@@ -123,10 +123,10 @@ public:
 			_SetStringLength(n);
 		}
 	}
-	void swap( CNativeW& left ){
-		CMemory::swap( left );
-	}
-	[[nodiscard]] int capacity() const noexcept {
+	//! メモリバッファを入れ替える
+	using CMemory::swap;
+	//! メモリ再確保を行わずに格納できる最大文字数を求める
+	[[nodiscard]] int capacity() const noexcept override {
 		return CMemory::capacity() / sizeof(wchar_t);
 	}
 
