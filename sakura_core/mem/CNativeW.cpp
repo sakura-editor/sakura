@@ -352,15 +352,12 @@ bool operator != (const wchar_t* lhs, const CNativeW& rhs) noexcept
 //! 文字列置換
 void CNativeW::Replace( std::wstring_view strFrom, std::wstring_view strTo )
 {
-	CNativeW	cmemWork;
-	size_t		nBgnOld = 0;
+	CNativeW	cmemWork(L"");
 	size_t		nBgn = 0;
-	while( nBgn <= GetStringLength() - strFrom.length() ){
+	size_t		nBgnOld = 0;
+	while( CLogicInt(nBgn + strFrom.length()) <= GetStringLength() ){
 		if( 0 == wmemcmp( &GetStringPtr()[nBgn], strFrom.data(), strFrom.length() ) ){
-			if( nBgnOld == 0 && strFrom.length() <= strTo.length() ){
-				cmemWork.AllocStringBuffer( GetStringLength() );
-			}
-			if( 0  < nBgn - nBgnOld ){
+			if( nBgnOld  < nBgn ){
 				cmemWork.AppendString( &GetStringPtr()[nBgnOld], nBgn - nBgnOld );
 			}
 			cmemWork.AppendString( strTo.data(), strTo.length() );
@@ -370,16 +367,10 @@ void CNativeW::Replace( std::wstring_view strFrom, std::wstring_view strTo )
 			nBgn++;
 		}
 	}
-	if( nBgnOld != 0 ){
-		if( 0  < GetStringLength() - nBgnOld ){
-			cmemWork.AppendString( &GetStringPtr()[nBgnOld], GetStringLength() - nBgnOld );
-		}
-		SetNativeData( cmemWork );
-	}else{
-		if( GetStringPtr() == nullptr ){
-			SetString(L"");
-		}
+	if( CLogicInt(nBgnOld) < GetStringLength() ){
+		cmemWork.AppendString( &GetStringPtr()[nBgnOld], GetStringLength() - nBgnOld );
 	}
+	SetRawDataHoldBuffer( cmemWork );
 }
 
 void CNativeW::Replace( const wchar_t* pszFrom, size_t nFromLen, const wchar_t* pszTo, size_t nToLen )
