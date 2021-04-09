@@ -128,7 +128,7 @@ public:
 		CMemory::swap( left );
 	}
 	//! メモリ再確保を行わずに格納できる最大文字数を求める
-	[[nodiscard]] int capacity() const noexcept override {
+	[[nodiscard]] int capacity() const noexcept {
 		return CMemory::capacity() / sizeof(wchar_t);
 	}
 
