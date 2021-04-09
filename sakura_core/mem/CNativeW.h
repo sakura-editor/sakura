@@ -124,7 +124,9 @@ public:
 		}
 	}
 	//! メモリバッファを入れ替える
-	using CMemory::swap;
+	void swap( CNativeW& left ){
+		CMemory::swap( left );
+	}
 	//! メモリ再確保を行わずに格納できる最大文字数を求める
 	[[nodiscard]] int capacity() const noexcept override {
 		return CMemory::capacity() / sizeof(wchar_t);
