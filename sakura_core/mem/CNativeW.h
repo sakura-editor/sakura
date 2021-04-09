@@ -84,8 +84,8 @@ public:
 	void AppendStringF( std::wstring_view format, ... );				//!< バッファの最後にデータを追加する (フォーマット機能付き)
 
 	//CNativeW
-	void SetNativeData( const CNativeW& pcNative );            //!< バッファの内容を置き換える
-	void AppendNativeData( const CNativeW& );                  //!< バッファの最後にデータを追加する
+	void SetNativeData( const CNativeW& cNative );						//!< バッファの内容を置き換える
+	void AppendNativeData( const CNativeW& cNative );					//!< バッファの最後にデータを追加する
 
 	//演算子
 	CNativeW  operator + (const CNativeW& rhs) const	{ return (CNativeW(*this) += rhs); }
@@ -112,7 +112,7 @@ public:
 	//特殊
 	void _SetStringLength( size_t nLength )
 	{
-		CNative::_SetRawLength( nLength * sizeof(wchar_t) );
+		_SetRawLength( nLength * sizeof(wchar_t) );
 	}
 	//末尾を1文字削る
 	void Chop()
@@ -124,10 +124,10 @@ public:
 		}
 	}
 	void swap( CNativeW& left ){
-		CNative::swap(left);
+		CMemory::swap( left );
 	}
-	int capacity() const noexcept {
-		return CNative::capacity() / sizeof(wchar_t);
+	[[nodiscard]] int capacity() const noexcept {
+		return CMemory::capacity() / sizeof(wchar_t);
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

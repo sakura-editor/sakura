@@ -43,19 +43,24 @@ CNativeA::CNativeA(const char* szData)
 // バッファの内容を置き換える
 void CNativeA::SetString( const char* pszData )
 {
-	SetString(pszData,strlen(pszData));
+	if( pszData != nullptr ){
+		std::string_view data( pszData );
+		SetString( data.data(), data.length() );
+	}else{
+		Reset();
+	}
 }
 
 // バッファの内容を置き換える。nLenは文字単位。
 void CNativeA::SetString( const char* pData, size_t nDataLen )
 {
-	CNative::SetRawData( pData, nDataLen );
+	SetRawData( pData, nDataLen );
 }
 
 // バッファの内容を置き換える
 void CNativeA::SetNativeData( const CNativeA& cNative )
 {
-	CNative::SetRawData( cNative.GetRawPtr(), cNative.GetRawLength() );
+	SetRawData( cNative.GetRawPtr(), cNative.GetRawLength() );
 }
 
 // バッファの最後にデータを追加する
@@ -67,7 +72,7 @@ void CNativeA::AppendString( const char* pszData )
 //! バッファの最後にデータを追加する。nLengthは文字単位。
 void CNativeA::AppendString( const char* pszData, size_t nLength )
 {
-	CNative::AppendRawData( pszData, nLength );
+	AppendRawData( pszData, nLength );
 }
 
 //! バッファの最後にデータを追加する (フォーマット機能付き)
@@ -88,7 +93,7 @@ void CNativeA::AppendStringF(const char* pszData, ...)
 	}
 
 	// 追加
-	this->AppendString(buf, len);
+	AppendString( buf, len );
 }
 
 const CNativeA& CNativeA::operator = ( char cChar )
@@ -103,13 +108,13 @@ const CNativeA& CNativeA::operator = ( char cChar )
 //! バッファの最後にデータを追加する
 void CNativeA::AppendNativeData( const CNativeA& cNative )
 {
-	CNativeA::AppendRawData( cNative.GetRawPtr(), cNative.GetRawLength() );
+	AppendRawData( cNative.GetRawPtr(), cNative.GetRawLength() );
 }
 
 //! (重要：nDataLenは文字単位) バッファサイズの調整。必要に応じて拡大する。
 void CNativeA::AllocStringBuffer( size_t nDataLen )
 {
-	CNative::AllocBuffer( nDataLen );
+	AllocBuffer( nDataLen );
 }
 
 const CNativeA& CNativeA::operator += ( char ch )
@@ -125,13 +130,13 @@ const CNativeA& CNativeA::operator += ( char ch )
 
 int CNativeA::GetStringLength() const
 {
-	return CNative::GetRawLength() / sizeof(char);
+	return GetRawLength();
 }
 
 // 任意位置の文字取得。nIndexは文字単位。
 char CNativeA::operator[]( size_t nIndex ) const
 {
-	if( static_cast<int>(nIndex) < GetStringLength() ){
+	if( nIndex < static_cast<size_t>(GetStringLength()) ){
 		return GetStringPtr()[nIndex];
 	}else{
 		return 0;

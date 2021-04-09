@@ -49,7 +49,7 @@ CStringRef::CStringRef( const wchar_t* pData, size_t nDataLen ) noexcept
  */
 CStringRef::CStringRef( const CNativeW& cmem ) noexcept
 	: m_pData(cmem.GetStringPtr())
-	, m_nDataLen(cmem.GetStringLength())
+	, m_nDataLen(static_cast<decltype(m_nDataLen)>(cmem.GetStringLength()))
 {
 }
 
@@ -89,7 +89,7 @@ CNativeW::CNativeW( const wchar_t* pData )
 // バッファの内容を置き換える
 void CNativeW::SetString( const wchar_t* pData, size_t nDataLen )
 {
-	CMemory::SetRawData( pData,nDataLen * sizeof(wchar_t) );
+	SetRawData( pData,nDataLen * sizeof(wchar_t) );
 }
 
 // バッファの内容を置き換える
@@ -99,31 +99,31 @@ void CNativeW::SetString( const wchar_t* pszData )
 		std::wstring_view data(pszData);
 		SetString( data.data(), data.length() );
 	}else{
-		CMemory::Reset();
+		Reset();
 	}
 }
 
 void CNativeW::SetStringHoldBuffer( const wchar_t* pData, size_t nDataLen )
 {
-	CMemory::SetRawDataHoldBuffer( pData, nDataLen * sizeof(wchar_t) );
+	SetRawDataHoldBuffer( pData, nDataLen * sizeof(wchar_t) );
 }
 
 // バッファの内容を置き換える
-void CNativeW::SetNativeData( const CNativeW& pcNative )
+void CNativeW::SetNativeData( const CNativeW& cNative )
 {
-	CNative::SetRawData(pcNative);
+	SetRawData( cNative );
 }
 
 //! (重要：nDataLenは文字単位) バッファサイズの調整。必要に応じて拡大する。
 void CNativeW::AllocStringBuffer( size_t nDataLen )
 {
-	CMemory::AllocBuffer( nDataLen * sizeof(wchar_t) );
+	AllocBuffer( nDataLen * sizeof(wchar_t) );
 }
 
 //! バッファの最後にデータを追加する。nLengthは文字単位。
 void CNativeW::AppendString( const wchar_t* pszData, size_t nDataLen )
 {
-	CMemory::AppendRawData( pszData, nDataLen * sizeof(wchar_t) );
+	AppendRawData( pszData, nDataLen * sizeof(wchar_t) );
 }
 
 //! バッファの最後にデータを追加する
@@ -137,15 +137,15 @@ void CNativeW::AppendString( std::wstring_view data )
  *
  * @param format フォーマット書式文字列
  * @param va_args C-style の可変長引数
- * @throws std::invalid_argument formatがNULL
+ * @throws std::invalid_argument formatが無効値
  * @throws std::bad_alloc メモリ確保に失敗
  * @remark 不正なフォーマットを指定すると無効なパラメータ例外で即死します。
  */
 void CNativeW::AppendStringF( std::wstring_view format, ... )
 {
 	// _vscwprintf に NULL を渡してはならないので除外する
-	if( format.empty() || format.data() == nullptr ){
-		throw std::invalid_argument( "pszFormat can't be nullptr" );
+	if( format.empty() ){
+		throw std::invalid_argument( "format can't be empty" );
 	}
 
 	// 可変長引数のポインタを取得
@@ -178,7 +178,7 @@ void CNativeW::AppendStringF( std::wstring_view format, ... )
 //! バッファの最後にデータを追加する
 void CNativeW::AppendNativeData( const CNativeW& cmemData )
 {
-	CNative::AppendRawData(cmemData.GetStringPtr(), cmemData.GetRawLength());
+	AppendRawData(cmemData.GetStringPtr(), cmemData.GetRawLength());
 }
 
 /*!
@@ -217,7 +217,7 @@ CNativeW operator + (const wchar_t* lhs, const CNativeW& rhs) noexcept(false)
 // GetAt()と同機能
 [[nodiscard]] wchar_t CNativeW::operator[]( size_t nIndex ) const
 {
-	if( static_cast<int>(nIndex) < GetStringLength() ){
+	if( nIndex < static_cast<size_t>(GetStringLength()) ){
 		return GetStringPtr()[nIndex];
 	}else{
 		return 0;
@@ -355,7 +355,7 @@ void CNativeW::Replace( std::wstring_view strFrom, std::wstring_view strTo )
 	CNativeW	cmemWork(L"");
 	size_t		nBgn = 0;
 	size_t		nBgnOld = 0;
-	while( CLogicInt(nBgn + strFrom.length()) <= GetStringLength() ){
+	while( nBgn + strFrom.length() <= static_cast<size_t>(GetStringLength()) ){
 		if( 0 == wmemcmp( &GetStringPtr()[nBgn], strFrom.data(), strFrom.length() ) ){
 			if( nBgnOld  < nBgn ){
 				cmemWork.AppendString( &GetStringPtr()[nBgnOld], nBgn - nBgnOld );
@@ -367,7 +367,7 @@ void CNativeW::Replace( std::wstring_view strFrom, std::wstring_view strTo )
 			nBgn++;
 		}
 	}
-	if( CLogicInt(nBgnOld) < GetStringLength() ){
+	if( nBgnOld < static_cast<size_t>(GetStringLength()) ){
 		cmemWork.AppendString( &GetStringPtr()[nBgnOld], GetStringLength() - nBgnOld );
 	}
 	SetRawDataHoldBuffer( cmemWork );
