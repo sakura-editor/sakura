@@ -35,6 +35,7 @@
 #include "charset/CUtf8.h"
 #include "charset/CUtf7.h"
 #include "CConvert_CodeAutoToSjis.h"
+#include "CConvert_CodeFromSjis.h"
 #include "CConvert_ToLower.h"
 #include "CConvert_ToUpper.h"
 #include "CConvert_ToHankaku.h"
@@ -58,9 +59,6 @@ void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, 
 	// xxx2SJIS:
 	//   1. バッファの内容がANSI版相当になるよう Unicode→SJIS 変換する
 	//   2. xxx→SJIS 変換後にバッファ内容をUNICODE版相当に戻す（SJIS→Unicode）のと等価な結果を得るために xxx→Unicode 変換する
-	// SJIS2xxx:
-	//   1. バッファ内容をANSI版相当に変換（Unicode→SJIS）後に SJIS→xxx 変換するのと等価な結果を得るために Unicode→xxx 変換する
-	//   2. バッファ内容をUNICODE版相当に戻すために SJIS→Unicode 変換する
 
 	switch( nFuncCode ){
 	//コード変換(xxx2SJIS)
@@ -72,11 +70,6 @@ void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, 
 	case F_CODECNV_UTF72SJIS:
 		CShiftJis::UnicodeToSJIS(*pCMemory, pCMemory->_GetMemory());
 		break;
-	//コード変換(SJIS2xxx)
-	case F_CODECNV_SJIS2JIS:		CJis::UnicodeToJIS(*pCMemory, pCMemory->_GetMemory());			break;
-	case F_CODECNV_SJIS2EUC:		CEuc::UnicodeToEUC(*pCMemory, pCMemory->_GetMemory());			break;
-	case F_CODECNV_SJIS2UTF8:		CUtf8::UnicodeToUTF8(*pCMemory, pCMemory->_GetMemory());		break;
-	case F_CODECNV_SJIS2UTF7:		CUtf7::UnicodeToUTF7(*pCMemory, pCMemory->_GetMemory());		break;
 	}
 
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
@@ -108,12 +101,10 @@ void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, 
 	case F_CODECNV_UTF82SJIS:		CUtf8::UTF8ToUnicode(*(pCMemory->_GetMemory()), pCMemory);		break;
 	case F_CODECNV_UTF72SJIS:		CUtf7::UTF7ToUnicode(*(pCMemory->_GetMemory()), pCMemory);		break;
 	//コード変換(SJIS2xxx)
-	case F_CODECNV_SJIS2JIS:
-	case F_CODECNV_SJIS2EUC:
-	case F_CODECNV_SJIS2UTF8:
-	case F_CODECNV_SJIS2UTF7:
-		CShiftJis::SJISToUnicode(*(pCMemory->_GetMemory()), pCMemory);
-		break;
+	case F_CODECNV_SJIS2JIS:		CConvert_CodeFromSjis(CODE_JIS).CallConvert(pCMemory);				break;
+	case F_CODECNV_SJIS2EUC:		CConvert_CodeFromSjis(CODE_EUC).CallConvert(pCMemory);				break;
+	case F_CODECNV_SJIS2UTF8:		CConvert_CodeFromSjis(CODE_UTF8).CallConvert(pCMemory);				break;
+	case F_CODECNV_SJIS2UTF7:		CConvert_CodeFromSjis(CODE_UTF7).CallConvert(pCMemory);				break;
 	}
 
 	return;
