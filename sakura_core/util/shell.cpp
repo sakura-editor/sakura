@@ -46,6 +46,10 @@
 /* フォルダ選択ダイアログ */
 BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR* strFolderName, size_t nMaxCount )
 {
+	if ( nullptr == strFolderName ) {
+		return FALSE;
+	}
+
 	using namespace Microsoft::WRL;
 	ComPtr<IFileDialog> pDialog;
 	HRESULT hres;
@@ -101,15 +105,15 @@ BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WC
 		return FALSE;
 	}
 
-	if ( nMaxCount < wcslen(pszResult) ) {
-		CoTaskMemFree( pszResult );
-		return FALSE;
+	BOOL bRet = TRUE;
+	if ( 0 != wcsncpy_s( strFolderName, nMaxCount, pszResult, _TRUNCATE ) ) {
+		wcsncpy_s( strFolderName, nMaxCount, L"", _TRUNCATE );
+		bRet = FALSE;
 	}
 
-	wcscpy_s( strFolderName, nMaxCount, pszResult );
 	CoTaskMemFree( pszResult );
 
-	return TRUE;
+	return bRet;
 }
 
 /*!	特殊フォルダのパスを取得する
