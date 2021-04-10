@@ -27,7 +27,6 @@
 #include "func/Funccode.h"
 #include "CEol.h"
 #include "charset/charcode.h"
-#include "charset/CCodeMediator.h"
 #include "charset/CCodeFactory.h"
 #include "charset/CShiftJis.h"
 #include "charset/CJis.h"
@@ -35,6 +34,7 @@
 #include "charset/CUnicodeBe.h"
 #include "charset/CUtf8.h"
 #include "charset/CUtf7.h"
+#include "CConvert_CodeAutoToSjis.h"
 #include "CConvert_ToLower.h"
 #include "CConvert_ToUpper.h"
 #include "CConvert_ToHankaku.h"
@@ -64,7 +64,6 @@ void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, 
 
 	switch( nFuncCode ){
 	//コード変換(xxx2SJIS)
-	case F_CODECNV_AUTO2SJIS:
 	case F_CODECNV_EMAIL:
 	case F_CODECNV_EUC2SJIS:
 	case F_CODECNV_UNICODE2SJIS:
@@ -80,22 +79,8 @@ void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, 
 	case F_CODECNV_SJIS2UTF7:		CUtf7::UnicodeToUTF7(*pCMemory, pCMemory->_GetMemory());		break;
 	}
 
-	ECodeType ecode = CODE_NONE;
-	if( nFuncCode == F_CODECNV_AUTO2SJIS ){
-		CCodeMediator ccode( CEditWnd::getInstance()->GetDocument()->m_cDocType.GetDocumentAttribute().m_encoding );
-		ecode = ccode.CheckKanjiCode(
-			reinterpret_cast<const char*>(pCMemory->_GetMemory()->GetRawPtr()),
-			pCMemory->_GetMemory()->GetRawLength() );
-		switch( ecode ){
-		case CODE_JIS:			nFuncCode = F_CODECNV_EMAIL;			break;
-		case CODE_EUC:			nFuncCode = F_CODECNV_EUC2SJIS;			break;
-		case CODE_UNICODE:		nFuncCode = F_CODECNV_UNICODE2SJIS;		break;
-		case CODE_UNICODEBE:	nFuncCode = F_CODECNV_UNICODEBE2SJIS;	break;
-		case CODE_UTF8:			nFuncCode = F_CODECNV_UTF82SJIS;		break;
-		case CODE_UTF7:			nFuncCode = F_CODECNV_UTF72SJIS;		break;
-		}
-	}
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
+	const SEncodingConfig& sEncodingConfig = CEditWnd::getInstance()->GetDocument()->m_cDocType.GetDocumentAttribute().m_encoding;
 
 	switch( nFuncCode ){
 	//文字種変換、整形
@@ -115,14 +100,7 @@ void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, 
 	case F_LTRIM:					CConvert_Trim(true, bExtEol).CallConvert(pCMemory);		break;	// 2001.12.03 hor
 	case F_RTRIM:					CConvert_Trim(false, bExtEol).CallConvert(pCMemory);	break;	// 2001.12.03 hor
 	//コード変換(xxx2SJIS)
-	// 2014.02.10 Moca F_CODECNV_AUTO2SJIS追加。自動判別でSJIS, Latin1, CESU8になった場合をサポート
-	case F_CODECNV_AUTO2SJIS:
-		{
-			int nFlag = true;
-			std::unique_ptr<CCodeBase> pcCode( CCodeFactory::CreateCodeBase(ecode, nFlag) );
-			pcCode->CodeToUnicode(*(pCMemory->_GetMemory()), pCMemory);
-		}
-		break;
+	case F_CODECNV_AUTO2SJIS:		CConvert_CodeAutoToSjis(sEncodingConfig).CallConvert(pCMemory);		break;
 	case F_CODECNV_EMAIL:			CJis::JISToUnicode(*(pCMemory->_GetMemory()), pCMemory, true);	break;
 	case F_CODECNV_EUC2SJIS:		CEuc::EUCToUnicode(*(pCMemory->_GetMemory()), pCMemory);			break;
 	case F_CODECNV_UNICODE2SJIS:	/* 無変換 */										break;
