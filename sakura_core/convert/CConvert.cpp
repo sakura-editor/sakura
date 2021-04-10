@@ -27,15 +27,9 @@
 #include "func/Funccode.h"
 #include "CEol.h"
 #include "charset/charcode.h"
-#include "charset/CCodeFactory.h"
-#include "charset/CShiftJis.h"
-#include "charset/CJis.h"
-#include "charset/CEuc.h"
-#include "charset/CUnicodeBe.h"
-#include "charset/CUtf8.h"
-#include "charset/CUtf7.h"
 #include "CConvert_CodeAutoToSjis.h"
 #include "CConvert_CodeFromSjis.h"
+#include "CConvert_CodeToSjis.h"
 #include "CConvert_ToLower.h"
 #include "CConvert_ToUpper.h"
 #include "CConvert_ToHankaku.h"
@@ -55,23 +49,6 @@
 /* 機能種別によるバッファの変換 */
 void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, CKetaXInt nTabWidth, int nStartColumn )
 {
-	// コード変換はできるだけANSI版のsakuraと互換の結果が得られるように実装する	// 2009.03.26 ryoji
-	// xxx2SJIS:
-	//   1. バッファの内容がANSI版相当になるよう Unicode→SJIS 変換する
-	//   2. xxx→SJIS 変換後にバッファ内容をUNICODE版相当に戻す（SJIS→Unicode）のと等価な結果を得るために xxx→Unicode 変換する
-
-	switch( nFuncCode ){
-	//コード変換(xxx2SJIS)
-	case F_CODECNV_EMAIL:
-	case F_CODECNV_EUC2SJIS:
-	case F_CODECNV_UNICODE2SJIS:
-	case F_CODECNV_UNICODEBE2SJIS:
-	case F_CODECNV_UTF82SJIS:
-	case F_CODECNV_UTF72SJIS:
-		CShiftJis::UnicodeToSJIS(*pCMemory, pCMemory->_GetMemory());
-		break;
-	}
-
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 	const SEncodingConfig& sEncodingConfig = CEditWnd::getInstance()->GetDocument()->m_cDocType.GetDocumentAttribute().m_encoding;
 
@@ -94,12 +71,12 @@ void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, 
 	case F_RTRIM:					CConvert_Trim(false, bExtEol).CallConvert(pCMemory);	break;	// 2001.12.03 hor
 	//コード変換(xxx2SJIS)
 	case F_CODECNV_AUTO2SJIS:		CConvert_CodeAutoToSjis(sEncodingConfig).CallConvert(pCMemory);		break;
-	case F_CODECNV_EMAIL:			CJis::JISToUnicode(*(pCMemory->_GetMemory()), pCMemory, true);	break;
-	case F_CODECNV_EUC2SJIS:		CEuc::EUCToUnicode(*(pCMemory->_GetMemory()), pCMemory);			break;
-	case F_CODECNV_UNICODE2SJIS:	/* 無変換 */										break;
-	case F_CODECNV_UNICODEBE2SJIS:	CUnicodeBe::UnicodeBEToUnicode(*(pCMemory->_GetMemory()), pCMemory);	break;
-	case F_CODECNV_UTF82SJIS:		CUtf8::UTF8ToUnicode(*(pCMemory->_GetMemory()), pCMemory);		break;
-	case F_CODECNV_UTF72SJIS:		CUtf7::UTF7ToUnicode(*(pCMemory->_GetMemory()), pCMemory);		break;
+	case F_CODECNV_EMAIL:			CConvert_CodeToSjis(CODE_JIS).CallConvert(pCMemory);				break;
+	case F_CODECNV_EUC2SJIS:		CConvert_CodeToSjis(CODE_EUC).CallConvert(pCMemory);				break;
+	case F_CODECNV_UNICODE2SJIS:	CConvert_CodeToSjis(CODE_UNICODE).CallConvert(pCMemory);			break;
+	case F_CODECNV_UNICODEBE2SJIS:	CConvert_CodeToSjis(CODE_UNICODEBE).CallConvert(pCMemory);			break;
+	case F_CODECNV_UTF82SJIS:		CConvert_CodeToSjis(CODE_UTF8).CallConvert(pCMemory);				break;
+	case F_CODECNV_UTF72SJIS:		CConvert_CodeToSjis(CODE_UTF7).CallConvert(pCMemory);				break;
 	//コード変換(SJIS2xxx)
 	case F_CODECNV_SJIS2JIS:		CConvert_CodeFromSjis(CODE_JIS).CallConvert(pCMemory);				break;
 	case F_CODECNV_SJIS2EUC:		CConvert_CodeFromSjis(CODE_EUC).CallConvert(pCMemory);				break;
