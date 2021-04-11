@@ -408,14 +408,15 @@ TEST_P(ConvTest, test)
 	const auto eFuncCode = std::get<0>(GetParam());
 	std::wstring_view source = std::get<1>(GetParam());
 	std::wstring_view expected = std::get<2>(GetParam());
-	SEncodingConfig encoding;
+	SEncodingConfig sEncodingConfig;
+	CCharWidthCache cCharWidthCache;
 	CNativeW cmemBuf(source.data(), source.length());
 	CConversionFacade(
 		4,								// タブ幅(タブ幅が半角スペース何個分かを指定する)
 		0,								// 変換開始桁位置
 		false,							// 拡張改行コードを有効にするかどうか
-		encoding,						// 文字コード自動検出のオプション
-		CCharWidthCache()				// 文字幅キャッシュ
+		sEncodingConfig,				// 文字コード自動検出のオプション
+		cCharWidthCache					// 文字幅キャッシュ
 	).ConvMemory(eFuncCode, cmemBuf);
 
 	EXPECT_STREQ(expected.data(), cmemBuf.GetStringPtr());
