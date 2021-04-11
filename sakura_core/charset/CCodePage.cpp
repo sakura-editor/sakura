@@ -225,7 +225,7 @@ void CCodePage::GetEol(CMemory* pcmemEol, EEolType eEolType)
 	CodeToUnicode(*pcmemEol, &temp2);
 	// 双方向変換ができる場合だけ設定
 	if( !CNativeW::IsEqual(temp, temp2) ){
-		pcmemEol->Clear();
+		pcmemEol->Reset();
 	}
 }
 
@@ -237,7 +237,7 @@ void CCodePage::GetBom(CMemory* pcmemBom)
 	CNativeW temp2;
 	CodeToUnicode(*pcmemBom, &temp2);
 	if( !CNativeW::IsEqual(temp, temp2) ){
-		pcmemBom->Clear();
+		pcmemBom->Reset();
 	}
 }
 

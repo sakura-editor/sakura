@@ -1547,7 +1547,7 @@ void CDlgFuncList::SetTreeFile()
 		const WCHAR* pszFrom = szPath;
 		if( m_fileTreeSetting.m_szLoadProjectIni[0] != L'\0'){
 			CNativeW strTemp(pszFrom);
-			strTemp.Replace(L"<iniroot>", IniDirPath);
+			strTemp.Replace(L"<iniroot>", IniDirPath.c_str());
 			if( _countof(szPath2) <= strTemp.GetStringLength() ){
 				wcscpy_s(szPath2, _countof(szPath), L"<Error:Long Path>");
 			}else{

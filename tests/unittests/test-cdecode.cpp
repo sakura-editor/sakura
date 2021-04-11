@@ -50,13 +50,13 @@ TEST(CDecode, Base64)
 	for (const auto& testCase : testCases) {
 		s.SetString(testCase.input);
 		EXPECT_TRUE(CDecode_Base64Decode().DoDecode(s, &m));
-		EXPECT_STREQ(static_cast<char*>(m.GetRawPtr()), testCase.output);
+		EXPECT_STREQ(reinterpret_cast<char*>(m.GetRawPtr()), testCase.output);
 	}
 
 	// 空白は無視する
 	s.SetString(L"c2Fr \t dQ==");
 	EXPECT_TRUE(CDecode_Base64Decode().DoDecode(s, &m));
-	EXPECT_STREQ(static_cast<char*>(m.GetRawPtr()), "saku");
+	EXPECT_STREQ(reinterpret_cast<char*>(m.GetRawPtr()), "saku");
 
 	// 異常な文字があったら変換を中止する
 	s.SetString(L"c2Fr?dQ==");
@@ -81,7 +81,7 @@ TEST(CDecode, uuencode)
 
 		CDecode_UuDecode decoder;
 		EXPECT_TRUE(decoder.DoDecode(s, &m));
-		EXPECT_STREQ(static_cast<char*>(m.GetRawPtr()), testCase.output);
+		EXPECT_STREQ(reinterpret_cast<char*>(m.GetRawPtr()), testCase.output);
 
 		wchar_t fileName[_MAX_PATH];
 		decoder.CopyFilename(fileName);
@@ -91,7 +91,7 @@ TEST(CDecode, uuencode)
 	// ヘッダーおよびフッターの先頭と末尾の空白は無視する
 	s.SetString(L"\tbegin 666 test \r\n!<P  \r\n \r\n\tend \r\n");
 	EXPECT_TRUE(CDecode_UuDecode().DoDecode(s, &m));
-	EXPECT_STREQ(static_cast<char*>(m.GetRawPtr()), "s");
+	EXPECT_STREQ(reinterpret_cast<char*>(m.GetRawPtr()), "s");
 
 	// 入力文字列が空の場合
 	s.SetString(L"");

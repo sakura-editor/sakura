@@ -40,7 +40,7 @@ bool CDecode_UuDecode::DoDecode( const CNativeW& pcSrc, CMemory* pcDst )
 	CEol ceol;
 	bool bsuccess = false;
 
-	pcDst->Clear();
+	pcDst->Reset();
 	psrc = pcSrc.GetStringPtr();
 	nsrclen = pcSrc.GetStringLength();
 
@@ -49,7 +49,7 @@ bool CDecode_UuDecode::DoDecode( const CNativeW& pcSrc, CMemory* pcDst )
 		return false;
 	}
 	pcDst->AllocBuffer( (nsrclen / 4) * 3 + 10 );
-	pw_base = pw = static_cast<char *>( pcDst->GetRawPtr() );
+	pw_base = pw = reinterpret_cast<char *>( pcDst->GetRawPtr() );
 
 	// 先頭の改行・空白文字をスキップ
 	for( ncuridx = 0; ncuridx < nsrclen; ++ncuridx ){

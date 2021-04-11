@@ -27,13 +27,11 @@
 #include "debug/Debug1.h"
 
 CNativeA::CNativeA( const char* szData, size_t cchData )
-	: CNative()
 {
 	SetString(szData, cchData);
 }
 
 CNativeA::CNativeA(const char* szData)
-	: CNative()
 {
 	SetString(szData);
 }
@@ -45,20 +43,24 @@ CNativeA::CNativeA(const char* szData)
 // バッファの内容を置き換える
 void CNativeA::SetString( const char* pszData )
 {
-	SetString(pszData,strlen(pszData));
+	if( pszData != nullptr ){
+		std::string_view data( pszData );
+		SetString( data.data(), data.length() );
+	}else{
+		Reset();
+	}
 }
 
 // バッファの内容を置き換える。nLenは文字単位。
-void CNativeA::SetString( const char* pData, int nDataLen )
+void CNativeA::SetString( const char* pData, size_t nDataLen )
 {
-	int nDataLenBytes = nDataLen * sizeof(char);
-	CNative::SetRawData(pData, nDataLenBytes);
+	SetRawData( pData, nDataLen );
 }
 
 // バッファの内容を置き換える
-void CNativeA::SetNativeData( const CNativeA& pcNative )
+void CNativeA::SetNativeData( const CNativeA& cNative )
 {
-	CNative::SetRawData(pcNative);
+	SetRawData( cNative.GetRawPtr(), cNative.GetRawLength() );
 }
 
 // バッファの最後にデータを追加する
@@ -68,9 +70,9 @@ void CNativeA::AppendString( const char* pszData )
 }
 
 //! バッファの最後にデータを追加する。nLengthは文字単位。
-void CNativeA::AppendString( const char* pszData, int nLength )
+void CNativeA::AppendString( const char* pszData, size_t nLength )
 {
-	CNative::AppendRawData(pszData, nLength * sizeof(char));
+	AppendRawData( pszData, nLength );
 }
 
 //! バッファの最後にデータを追加する (フォーマット機能付き)
@@ -91,7 +93,7 @@ void CNativeA::AppendStringF(const char* pszData, ...)
 	}
 
 	// 追加
-	this->AppendString(buf, len);
+	AppendString( buf, len );
 }
 
 const CNativeA& CNativeA::operator = ( char cChar )
@@ -104,15 +106,15 @@ const CNativeA& CNativeA::operator = ( char cChar )
 }
 
 //! バッファの最後にデータを追加する
-void CNativeA::AppendNativeData( const CNativeA& pcNative )
+void CNativeA::AppendNativeData( const CNativeA& cNative )
 {
-	AppendString(pcNative.GetStringPtr(), pcNative.GetStringLength());
+	AppendRawData( cNative.GetRawPtr(), cNative.GetRawLength() );
 }
 
 //! (重要：nDataLenは文字単位) バッファサイズの調整。必要に応じて拡大する。
-void CNativeA::AllocStringBuffer( int nDataLen )
+void CNativeA::AllocStringBuffer( size_t nDataLen )
 {
-	CNative::AllocBuffer(nDataLen * sizeof(char));
+	AllocBuffer( nDataLen );
 }
 
 const CNativeA& CNativeA::operator += ( char ch )
@@ -128,13 +130,13 @@ const CNativeA& CNativeA::operator += ( char ch )
 
 int CNativeA::GetStringLength() const
 {
-	return CNative::GetRawLength() / sizeof(char);
+	return GetRawLength();
 }
 
 // 任意位置の文字取得。nIndexは文字単位。
-char CNativeA::operator[](int nIndex) const
+char CNativeA::operator[]( size_t nIndex ) const
 {
-	if( nIndex < GetStringLength() ){
+	if( nIndex < static_cast<size_t>(GetStringLength()) ){
 		return GetStringPtr()[nIndex];
 	}else{
 		return 0;

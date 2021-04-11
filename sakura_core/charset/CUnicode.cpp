@@ -57,11 +57,9 @@ EConvertResult CUnicode::_UnicodeToUnicode_in( const CMemory& cSrc, CNativeW* pD
 
 	if( bBigEndian ){
 		if( &cSrc != pDstMem2 && !bCopy ){
-			// コピーしつつ UnicodeBe -> Unicode
-			pDstMem2->SwabHLByte(cSrc);
-		}else{
-			pDstMem2->SwapHLByte();  // UnicodeBe -> Unicode
+			pDstMem2->SetRawDataHoldBuffer( cSrc );
 		}
+		pDstMem2->SwapHLByte();  // UnicodeBe -> Unicode
 	}else if( !bCopy ){
 		pDstMem2->SetRawDataHoldBuffer(pSrc, nSrcLen);
 	}
@@ -71,11 +69,10 @@ EConvertResult CUnicode::_UnicodeToUnicode_in( const CMemory& cSrc, CNativeW* pD
 EConvertResult CUnicode::_UnicodeToUnicode_out( const CNativeW& cSrc, CMemory* pDstMem, const bool bBigEndian )
 {
 	if( bBigEndian == true ){
-		if( cSrc._GetMemory() == pDstMem ){
-			pDstMem->SwapHLByte();   // Unicode -> UnicodeBe
-		}else{
-			pDstMem->SwabHLByte(*(cSrc._GetMemory()));
+		if( cSrc._GetMemory() != pDstMem ){
+			pDstMem->SetRawDataHoldBuffer( *(cSrc._GetMemory()) );
 		}
+		pDstMem->SwapHLByte();   // Unicode -> UnicodeBe
 	}else{
 		if( cSrc._GetMemory() != pDstMem ){
 			pDstMem->SetRawDataHoldBuffer(*(cSrc._GetMemory()));

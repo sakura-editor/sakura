@@ -32,35 +32,26 @@
 #include "charset/charcode.h"
 #include "debug/Debug2.h" //assert
 
-//! 文字列への参照を取得するインターフェース
-class IStringRef{
-public:
-	virtual const wchar_t*	GetPtr()	const = 0;
-	virtual int				GetLength()	const = 0;
-};
+class CNativeW;
 
 //! 文字列への参照を保持するクラス
-class CStringRef final : public IStringRef{
+class CStringRef final{
 public:
-	CStringRef() : m_pData(NULL), m_nDataLen(0) { }
-	CStringRef(const wchar_t* pData, int nDataLen) : m_pData(pData), m_nDataLen(nDataLen) { }
-	const wchar_t*	GetPtr()		const override{ return m_pData;    }
-	int				GetLength()		const override{ return m_nDataLen; }
+	CStringRef() noexcept = default;
+	CStringRef( const wchar_t* pData, size_t nDataLen ) noexcept;
+	explicit CStringRef( const CNativeW& cmem ) noexcept;
 
-	//########補助
-	bool			IsValid()		const{ return m_pData!=NULL; }
-	wchar_t			At(int nIndex)	const
-	{
-		assert(nIndex>=0 && nIndex<m_nDataLen);
-		return m_pData[nIndex];
-	}
+	[[nodiscard]] const wchar_t* GetPtr() const noexcept { return m_pData; }
+	[[nodiscard]] int GetLength() const noexcept { return static_cast<int>(m_nDataLen); }
+	[[nodiscard]] bool IsValid() const noexcept { return m_pData != nullptr; }
+	[[nodiscard]] wchar_t At( size_t nIndex ) const noexcept;
+
 private:
-	const wchar_t*	m_pData;
-	int				m_nDataLen;
+	const wchar_t*	m_pData = nullptr;
+	unsigned		m_nDataLen = 0;
 };
 
 // グローバル演算子の前方宣言
-class CNativeW;
 bool operator == (const CNativeW& lhs, const wchar_t* rhs) noexcept;
 bool operator != (const CNativeW& lhs, const wchar_t* rhs) noexcept;
 bool operator == (const wchar_t* lhs, const CNativeW& rhs) noexcept;
@@ -75,32 +66,28 @@ class CNativeW final : public CNative{
 public:
 	//コンストラクタ・デストラクタ
 	CNativeW() noexcept = default;
-	CNativeW( const CNativeW& rhs ) = default;
-	CNativeW( CNativeW&& other ) noexcept = default;
-	CNativeW( const wchar_t* pData, int nDataLen ); //!< nDataLenは文字単位。
-	CNativeW( const wchar_t* pData);
+	CNativeW( const wchar_t* pData, size_t nDataLen ); //!< nDataLenは文字単位。
+	CNativeW( const wchar_t* pData );
 
 	/*! メモリ確保済みかどうか */
-	bool IsValid() const noexcept { return GetStringPtr() != nullptr; }
+	[[nodiscard]] bool IsValid() const noexcept { return GetStringPtr() != nullptr; }
 
 	//管理
-	void AllocStringBuffer( int nDataLen );                    //!< (重要：nDataLenは文字単位) バッファサイズの調整。必要に応じて拡大する。
+	void AllocStringBuffer( size_t nDataLen );                    //!< (重要：nDataLenは文字単位) バッファサイズの調整。必要に応じて拡大する。
 
 	//WCHAR
-	void SetString( const wchar_t* pData, int nDataLen );      //!< バッファの内容を置き換える。nDataLenは文字単位。
-	void SetString( const wchar_t* pszData );                  //!< バッファの内容を置き換える。NULL 指定時はメモリ解放を行い、文字列長はゼロになる
-	void SetStringHoldBuffer( const wchar_t* pData, int nDataLen );
-	void AppendString( const wchar_t* pszData );               //!< バッファの最後にデータを追加する
-	void AppendString( const wchar_t* pszData, int nLength );  //!< バッファの最後にデータを追加する。nLengthは文字単位。成功すればtrue。メモリ確保に失敗したらfalseを返す。
-	void AppendStringF(const wchar_t* pszData, ...);           //!< バッファの最後にデータを追加する (フォーマット機能付き)
+	void SetString( const wchar_t* pData, size_t nDataLen );			//!< バッファの内容を置き換える。nDataLenは文字単位。
+	void SetString( const wchar_t* pszData );							//!< バッファの内容を置き換える。
+	void SetStringHoldBuffer( const wchar_t* pData, size_t nDataLen );
+	void AppendString( const wchar_t* pszData, size_t nDataLen );		//!< バッファの最後にデータを追加する。nLengthは文字単位。成功すればtrue。メモリ確保に失敗したらfalseを返す。
+	void AppendString( std::wstring_view data );						//!< バッファの最後にデータを追加する
+	void AppendStringF( std::wstring_view format, ... );				//!< バッファの最後にデータを追加する (フォーマット機能付き)
 
 	//CNativeW
-	void SetNativeData( const CNativeW& pcNative );            //!< バッファの内容を置き換える
-	void AppendNativeData( const CNativeW& );                  //!< バッファの最後にデータを追加する
+	void SetNativeData( const CNativeW& cNative );						//!< バッファの内容を置き換える
+	void AppendNativeData( const CNativeW& cNative );					//!< バッファの最後にデータを追加する
 
 	//演算子
-	CNativeW& operator = (const CNativeW& rhs)			{ CNative::operator=(rhs); return *this; }
-	CNativeW& operator = (CNativeW&& rhs) noexcept		{ CNative::operator=(std::move(rhs)); return *this; }
 	CNativeW  operator + (const CNativeW& rhs) const	{ return (CNativeW(*this) += rhs); }
 	CNativeW& operator += (const CNativeW& rhs)			{ AppendNativeData(rhs); return *this; }
 	CNativeW& operator += (wchar_t ch)					{ return (*this += CNativeW(&ch, 1)); }
@@ -108,7 +95,7 @@ public:
 	bool operator != (const CNativeW& rhs) const noexcept { return !(*this == rhs); }
 
 	//ネイティブ取得インターフェース
-	wchar_t operator[](int nIndex) const;                    //!< 任意位置の文字取得。nIndexは文字単位。
+	[[nodiscard]] wchar_t operator[]( size_t nIndex ) const;                    //!< 任意位置の文字取得。nIndexは文字単位。
 	CLogicInt GetStringLength() const                        //!< 文字列長を返す。文字単位。
 	{
 		return CLogicInt(CNative::GetRawLength() / sizeof(wchar_t));
@@ -123,9 +110,9 @@ public:
 	}
 
 	//特殊
-	void _SetStringLength(int nLength)
+	void _SetStringLength( size_t nLength )
 	{
-		CNative::_SetRawLength(nLength*sizeof(wchar_t));
+		_SetRawLength( nLength * sizeof(wchar_t) );
 	}
 	//末尾を1文字削る
 	void Chop()
@@ -136,11 +123,13 @@ public:
 			_SetStringLength(n);
 		}
 	}
+	//! メモリバッファを入れ替える
 	void swap( CNativeW& left ){
-		CNative::swap(left);
+		CMemory::swap( left );
 	}
-	int capacity() const noexcept {
-		return CNative::capacity() / sizeof(wchar_t);
+	//! メモリ再確保を行わずに格納できる最大文字数を求める
+	[[nodiscard]] int capacity() const noexcept {
+		return CMemory::capacity() / sizeof(wchar_t);
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -159,8 +148,8 @@ public:
 	//                           変換                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	void Replace( const wchar_t* pszFrom, const wchar_t* pszTo );   //!< 文字列置換
-	void Replace( const wchar_t* pszFrom, int nFromLen, const wchar_t* pszTo, int nToLen );   //!< 文字列置換
+	void Replace( std::wstring_view strFrom, std::wstring_view strTo );   //!< 文字列置換
+	void Replace( const wchar_t* pszFrom, size_t nFromLen, const wchar_t* pszTo, size_t nToLen );   //!< 文字列置換
 
 public:
 	// -- -- staticインターフェース -- -- //
@@ -186,4 +175,5 @@ public:
 
 // 派生クラスでメンバー追加禁止
 static_assert(sizeof(CNativeW) == sizeof(CNative), "size check");
+
 #endif /* SAKURA_CNATIVEW_3B48F63E_5B62_4FAB_9718_0D80114E20C1_H_ */
