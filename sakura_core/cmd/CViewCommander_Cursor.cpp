@@ -745,13 +745,15 @@ void CViewCommander::Command_1PageUp( bool bSelect, CLayoutYInt nScrollNum )
 		}
 		auto& caret = GetCaret();
 		auto prevCaretPos = caret.GetCaretLayoutPos();
+		bool bNoDispCursorVLine = m_pCommanderView->m_pTypeData->m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bDisp == false;
 		caret.Cursor_UPDOWN( -nScrollNum, bSelect );
 		auto currCaretPos = caret.GetCaretLayoutPos();
 		CLayoutInt nScrolled = m_pCommanderView->ScrollAtV( nViewTopLine - nScrollNum );
 		m_pCommanderView->SyncScrollV(nScrolled);
 		m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);
 		// カーソル位置が変化しなかった、かつ、スクロール行数が0だった場合、描画を省く
-		if (prevCaretPos == currCaretPos && nScrolled == 0) {
+		// タイプ別設定の「カーソル位置縦線」有効時には省かない
+		if (bNoDispCursorVLine && prevCaretPos == currCaretPos && nScrolled == 0) {
 			return;
 		}
 		m_pCommanderView->RedrawAll();
@@ -780,13 +782,15 @@ void CViewCommander::Command_1PageDown( bool bSelect, CLayoutYInt nScrollNum )
 		}
 		auto& caret = GetCaret();
 		auto prevCaretPos = caret.GetCaretLayoutPos();
+		bool bNoDispCursorVLine = m_pCommanderView->m_pTypeData->m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bDisp == false;
 		caret.Cursor_UPDOWN( nScrollNum, bSelect );
 		auto currCaretPos = caret.GetCaretLayoutPos();
 		CLayoutInt nScrolled = m_pCommanderView->ScrollAtV( nViewTopLine + nScrollNum );
 		m_pCommanderView->SyncScrollV(nScrolled);
 		m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);
 		// カーソル位置が変化しなかった、かつ、スクロール行数が0だった場合、描画を省く
-		if (prevCaretPos == currCaretPos && nScrolled == 0) {
+		// タイプ別設定の「カーソル位置縦線」有効時には省かない
+		if (bNoDispCursorVLine && prevCaretPos == currCaretPos && nScrolled == 0) {
 			return;
 		}
 		m_pCommanderView->RedrawAll();
