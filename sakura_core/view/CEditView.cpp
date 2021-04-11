@@ -55,6 +55,7 @@
 #include "CMarkMgr.h"///
 #include "types/CTypeSupport.h"
 #include "convert/CConvert.h"
+#include "util/MessageBoxF.h"
 #include "util/RegKey.h"
 #include "util/string_ex2.h"
 #include "util/os.h" //WM_MOUSEWHEEL,IMR_RECONVERTSTRING,WM_XBUTTON*,IMR_CONFIRMRECONVERTSTRING
@@ -62,6 +63,9 @@
 #include "debug/CRunningTimer.h"
 #include "apiwrap/StdApi.h"
 #include "config/system_constants.h"
+
+#include "CSelectLang.h"
+#include "String_define.h"
 
 LRESULT CALLBACK EditViewWndProc( HWND, UINT, WPARAM, LPARAM );
 VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT_PTR, DWORD );
@@ -1407,7 +1411,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 				{
 					/* 機能種別によるバッファの変換 */
 					int nStartColumn = (Int)sPos.GetX2() / (Int)GetTextMetrics().GetLayoutXDefault();
-					CConvertMediator::ConvMemory( &cmemBuf, nFuncCode, m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(), nStartColumn );
+					CConversionFacade(m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(), nStartColumn, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_encoding, GetCharWidthCache()).ConvMemory(nFuncCode, cmemBuf);
 
 					/* 現在位置にデータを挿入 */
 					CLayoutPoint ptLayoutNew;	// 挿入された部分の次の位置
@@ -1445,7 +1449,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 
 		/* 機能種別によるバッファの変換 */
 		int nStartColum = (Int)GetSelectionInfo().m_sSelect.GetFrom().GetX2() / (Int)GetTextMetrics().GetLayoutXDefault();
-		CConvertMediator::ConvMemory( &cmemBuf, nFuncCode, m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(), nStartColum );
+		CConversionFacade(m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(), nStartColum, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_encoding, GetCharWidthCache()).ConvMemory(nFuncCode, cmemBuf);
 
 		/* データ置換 削除&挿入にも使える */
 		ReplaceData_CEditView(

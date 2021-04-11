@@ -24,9 +24,7 @@
 */
 #include "StdAfx.h"
 #include "CConvert.h"
-#include "func/Funccode.h"
-#include "CEol.h"
-#include "charset/charcode.h"
+
 #include "CConvert_CodeAutoToSjis.h"
 #include "CConvert_CodeFromSjis.h"
 #include "CConvert_CodeToSjis.h"
@@ -44,45 +42,76 @@
 #include "CConvert_ToZenkata.h"
 #include "CConvert_Trim.h"
 
-#include "window/CEditWnd.h"
+#include "CSelectLang.h"
+#include "String_define.h"
+#include "util/MessageBoxF.h"
+
+/*!
+	コンストラクタ
+ */
+CConversionFacade::CConversionFacade(
+	CKetaXInt nTabWidth,
+	int nStartColumn,
+	bool bEnableExtEol,
+	const SEncodingConfig& sEncodingConfig,
+	CCharWidthCache& cCharWidthCache
+)
+	: m_nTabWidth((Int)nTabWidth)
+	, m_nStartColumn(nStartColumn)
+	, m_bEnableExtEol(bEnableExtEol)
+	, m_sEncodingConfig(sEncodingConfig)
+	, m_cCharWidthCache(cCharWidthCache)
+{
+}
 
 /* 機能種別によるバッファの変換 */
-void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, CKetaXInt nTabWidth, int nStartColumn )
+bool CConversionFacade::ConvMemory(EFunctionCode eFuncCode, CNativeW& cData) noexcept
 {
-	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
-	const SEncodingConfig& sEncodingConfig = CEditWnd::getInstance()->GetDocument()->m_cDocType.GetDocumentAttribute().m_encoding;
-
-	switch( nFuncCode ){
-	//文字種変換、整形
-	case F_TOLOWER:					CConvert_ToLower().CallConvert(pCMemory);			break;	// 小文字
-	case F_TOUPPER:					CConvert_ToUpper().CallConvert(pCMemory);			break;	// 大文字
-	case F_TOHANKAKU:				CConvert_ToHankaku().CallConvert(pCMemory);			break;	// 全角→半角
-	case F_TOHANKATA:				CConvert_ZenkataToHankata().CallConvert(pCMemory);	break;	// 全角カタカナ→半角カタカナ
-	case F_TOZENEI:					CConvert_HaneisuToZeneisu().CallConvert(pCMemory);	break;	// 半角英数→全角英数
-	case F_TOHANEI:					CConvert_ZeneisuToHaneisu().CallConvert(pCMemory);	break;	// 全角英数→半角英数
-	case F_TOZENKAKUKATA:			CConvert_ToZenkata().CallConvert(pCMemory);			break;	// 半角＋全ひら→全角・カタカナ
-	case F_TOZENKAKUHIRA:			CConvert_ToZenhira().CallConvert(pCMemory);			break;	// 半角＋全カタ→全角・ひらがな
-	case F_HANKATATOZENKATA:		CConvert_HankataToZenkata().CallConvert(pCMemory);	break;	// 半角カタカナ→全角カタカナ
-	case F_HANKATATOZENHIRA:		CConvert_HankataToZenhira().CallConvert(pCMemory);	break;	// 半角カタカナ→全角ひらがな
-	//文字種変換、整形
-	case F_TABTOSPACE:				CConvert_TabToSpace((Int)nTabWidth, nStartColumn, bExtEol).CallConvert(pCMemory);break;	// TAB→空白
-	case F_SPACETOTAB:				CConvert_SpaceToTab((Int)nTabWidth, nStartColumn, bExtEol, GetCharWidthCache()).CallConvert(pCMemory);break;	// 空白→TAB
-	case F_LTRIM:					CConvert_Trim(true, bExtEol).CallConvert(pCMemory);		break;	// 2001.12.03 hor
-	case F_RTRIM:					CConvert_Trim(false, bExtEol).CallConvert(pCMemory);	break;	// 2001.12.03 hor
-	//コード変換(xxx2SJIS)
-	case F_CODECNV_AUTO2SJIS:		CConvert_CodeAutoToSjis(sEncodingConfig).CallConvert(pCMemory);		break;
-	case F_CODECNV_EMAIL:			CConvert_CodeToSjis(CODE_JIS).CallConvert(pCMemory);				break;
-	case F_CODECNV_EUC2SJIS:		CConvert_CodeToSjis(CODE_EUC).CallConvert(pCMemory);				break;
-	case F_CODECNV_UNICODE2SJIS:	CConvert_CodeToSjis(CODE_UNICODE).CallConvert(pCMemory);			break;
-	case F_CODECNV_UNICODEBE2SJIS:	CConvert_CodeToSjis(CODE_UNICODEBE).CallConvert(pCMemory);			break;
-	case F_CODECNV_UTF82SJIS:		CConvert_CodeToSjis(CODE_UTF8).CallConvert(pCMemory);				break;
-	case F_CODECNV_UTF72SJIS:		CConvert_CodeToSjis(CODE_UTF7).CallConvert(pCMemory);				break;
-	//コード変換(SJIS2xxx)
-	case F_CODECNV_SJIS2JIS:		CConvert_CodeFromSjis(CODE_JIS).CallConvert(pCMemory);				break;
-	case F_CODECNV_SJIS2EUC:		CConvert_CodeFromSjis(CODE_EUC).CallConvert(pCMemory);				break;
-	case F_CODECNV_SJIS2UTF8:		CConvert_CodeFromSjis(CODE_UTF8).CallConvert(pCMemory);				break;
-	case F_CODECNV_SJIS2UTF7:		CConvert_CodeFromSjis(CODE_UTF7).CallConvert(pCMemory);				break;
+	if (CallConvert(eFuncCode, &cData)) {
+		return true;
 	}
+	else {
+		// L"変換でエラーが発生しました"
+		ErrorMessage(nullptr, LS(STR_CONVERT_ERR));
+		return false;
+	}
+}
 
-	return;
+//! 変換機能を呼び出す
+bool CConversionFacade::CallConvert(EFunctionCode eFuncCode, CNativeW* pcData) noexcept
+{
+	switch( eFuncCode ){
+	//文字種変換、整形
+	case F_TOLOWER:					return CConvert_ToLower().DoConvert(pcData);				// 小文字
+	case F_TOUPPER:					return CConvert_ToUpper().DoConvert(pcData);				// 大文字
+	case F_TOHANKAKU:				return CConvert_ToHankaku().DoConvert(pcData);				// 全角→半角
+	case F_TOHANKATA:				return CConvert_ZenkataToHankata().DoConvert(pcData);		// 全角カタカナ→半角カタカナ
+	case F_TOZENEI:					return CConvert_HaneisuToZeneisu().DoConvert(pcData);		// 半角英数→全角英数
+	case F_TOHANEI:					return CConvert_ZeneisuToHaneisu().DoConvert(pcData);		// 全角英数→半角英数
+	case F_TOZENKAKUKATA:			return CConvert_ToZenkata().DoConvert(pcData);				// 半角＋全ひら→全角・カタカナ
+	case F_TOZENKAKUHIRA:			return CConvert_ToZenhira().DoConvert(pcData);				// 半角＋全カタ→全角・ひらがな
+	case F_HANKATATOZENKATA:		return CConvert_HankataToZenkata().DoConvert(pcData);		// 半角カタカナ→全角カタカナ
+	case F_HANKATATOZENHIRA:		return CConvert_HankataToZenhira().DoConvert(pcData);		// 半角カタカナ→全角ひらがな
+	//文字種変換、整形
+	case F_TABTOSPACE:				return CConvert_TabToSpace(m_nTabWidth, m_nStartColumn, m_bEnableExtEol).DoConvert(pcData);					// TAB→空白
+	case F_SPACETOTAB:				return CConvert_SpaceToTab(m_nTabWidth, m_nStartColumn, m_bEnableExtEol, m_cCharWidthCache).DoConvert(pcData);	// 空白→TAB
+	case F_LTRIM:					return CConvert_Trim(true, m_bEnableExtEol).DoConvert(pcData);
+	case F_RTRIM:					return CConvert_Trim(false, m_bEnableExtEol).DoConvert(pcData);
+	//コード変換(xxx2SJIS)
+	case F_CODECNV_AUTO2SJIS:		return CConvert_CodeAutoToSjis(m_sEncodingConfig).DoConvert(pcData);
+	case F_CODECNV_EMAIL:			return CConvert_CodeToSjis(CODE_JIS).DoConvert(pcData);
+	case F_CODECNV_EUC2SJIS:		return CConvert_CodeToSjis(CODE_EUC).DoConvert(pcData);
+	case F_CODECNV_UNICODE2SJIS:	return CConvert_CodeToSjis(CODE_UNICODE).DoConvert(pcData);
+	case F_CODECNV_UNICODEBE2SJIS:	return CConvert_CodeToSjis(CODE_UNICODEBE).DoConvert(pcData);
+	case F_CODECNV_UTF82SJIS:		return CConvert_CodeToSjis(CODE_UTF8).DoConvert(pcData);
+	case F_CODECNV_UTF72SJIS:		return CConvert_CodeToSjis(CODE_UTF7).DoConvert(pcData);
+	//コード変換(SJIS2xxx)
+	case F_CODECNV_SJIS2JIS:		return CConvert_CodeFromSjis(CODE_JIS).DoConvert(pcData);
+	case F_CODECNV_SJIS2EUC:		return CConvert_CodeFromSjis(CODE_EUC).DoConvert(pcData);
+	case F_CODECNV_SJIS2UTF8:		return CConvert_CodeFromSjis(CODE_UTF8).DoConvert(pcData);
+	case F_CODECNV_SJIS2UTF7:		return CConvert_CodeFromSjis(CODE_UTF7).DoConvert(pcData);
+	default:
+		break;
+	}
+	return false;
 }
