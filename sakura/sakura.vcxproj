@@ -317,6 +317,9 @@
     <ClInclude Include="..\sakura_core\config\maxdata.h" />
     <ClInclude Include="..\sakura_core\config\system_constants.h" />
     <ClInclude Include="..\sakura_core\convert\CConvert.h" />
+    <ClInclude Include="..\sakura_core\convert\CConvert_CodeAutoToSjis.h" />
+    <ClInclude Include="..\sakura_core\convert\CConvert_CodeFromSjis.h" />
+    <ClInclude Include="..\sakura_core\convert\CConvert_CodeToSjis.h" />
     <ClInclude Include="..\sakura_core\convert\CConvert_HaneisuToZeneisu.h" />
     <ClInclude Include="..\sakura_core\convert\CConvert_HankataToZenhira.h" />
     <ClInclude Include="..\sakura_core\convert\CConvert_HankataToZenkata.h" />
@@ -678,6 +681,9 @@
     <ClCompile Include="..\sakura_core\cmd\CViewCommander_Window.cpp" />
     <ClCompile Include="..\sakura_core\config\build_config.cpp" />
     <ClCompile Include="..\sakura_core\convert\CConvert.cpp" />
+    <ClCompile Include="..\sakura_core\convert\CConvert_CodeAutoToSjis.cpp" />
+    <ClCompile Include="..\sakura_core\convert\CConvert_CodeFromSjis.cpp" />
+    <ClCompile Include="..\sakura_core\convert\CConvert_CodeToSjis.cpp" />
     <ClCompile Include="..\sakura_core\convert\CConvert_HaneisuToZeneisu.cpp" />
     <ClCompile Include="..\sakura_core\convert\CConvert_HankataToZenhira.cpp" />
     <ClCompile Include="..\sakura_core\convert\CConvert_HankataToZenkata.cpp" />

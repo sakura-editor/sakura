@@ -1103,6 +1103,15 @@
     <ClInclude Include="..\sakura_core\basis\CErrorInfo.h">
       <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\convert\CConvert_CodeAutoToSjis.h">
+      <Filter>Cpp Source Files\convert</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\convert\CConvert_CodeFromSjis.h">
+      <Filter>Cpp Source Files\convert</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\convert\CConvert_CodeToSjis.h">
+      <Filter>Cpp Source Files\convert</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resource\auto_scroll_center.cur">
@@ -2287,6 +2296,15 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\basis\CErrorInfo.cpp">
       <Filter>Cpp Source Files\basis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\convert\CConvert_CodeAutoToSjis.cpp">
+      <Filter>Cpp Source Files\convert</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\convert\CConvert_CodeFromSjis.cpp">
+      <Filter>Cpp Source Files\convert</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\convert\CConvert_CodeToSjis.cpp">
+      <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

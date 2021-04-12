@@ -27,40 +27,55 @@
 #define SAKURA_CCONVERT_781CEC40_5400_4D47_959B_0718AEA82A9B_H_
 #pragma once
 
-//2007.10.02 kobake CEditViewから分離
+#include "Funccode_enum.h"		// EFunctionCode
+#include "basis/SakuraBasis.h"	// CKetaXInt
+#include "charset/charcode.h"	// CCharWidthCache
+#include "mem/CNativeW.h"
+#include "types/CType.h"		// SEncodingConfig
 
-#include "CSelectLang.h"
-#include "Funccode_enum.h"	// EFunctionCode
-#include "String_define.h"
-#include "basis/SakuraBasis.h"
-#include "debug/Debug2.h"
-#include "util/MessageBoxF.h"
+/*!
+	各種変換機能呼出の窓口となるクラス
+ */
+class CConversionFacade {
+	int m_nTabWidth;
+	int m_nStartColumn;
+	bool m_bEnableExtEol;
+	SEncodingConfig m_sEncodingConfig;
+	CCharWidthCache& m_cCharWidthCache;
 
-class CNativeW;
-
-class CConvertMediator{
 public:
-	//! 機能種別によるバッファの変換
-	static void ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, CKetaXInt nTabWidth, int nStartColumn );
+	explicit CConversionFacade(
+		CKetaXInt nTabWidth,
+		int nStartColumn,
+		bool bEnableExtEol,
+		const SEncodingConfig& sEncodingConfig,
+		CCharWidthCache& cCharWidthCache
+	);
 
-protected:
-	static void Command_TRIM2( CNativeW* pCMemory , BOOL bLeft );
+	//! 機能種別によるバッファの変換
+	bool ConvMemory(EFunctionCode eFuncCode, CNativeW& cData) noexcept;
+
+private:
+	//! 変換機能を呼び出す
+	bool CallConvert(EFunctionCode eFuncCode, CNativeW* pcData) noexcept;
 };
 
+/*!
+	各種コンバータの基底クラス
+
+	@date 2007/10/02 kobake CEditViewから分離
+ */
 class CConvert{
 public:
-	virtual ~CConvert(){}
-
-	//インターフェース
-	void CallConvert( CNativeW* pcData )
-	{
-		bool bRet=DoConvert(pcData);
-		if(!bRet){
-			ErrorMessage(NULL,LS(STR_CONVERT_ERR));
-		}
-	}
+	CConvert() noexcept = default;
+	CConvert(const CConvert&) = delete;
+	CConvert& operator = (const CConvert&) = delete;
+	CConvert(CConvert&&) noexcept = delete;
+	CConvert& operator = (CConvert&&) noexcept = delete;
+	virtual ~CConvert() noexcept = default;
 
 	//実装
-	virtual bool DoConvert( CNativeW* pcData )=0;
+	virtual bool DoConvert(CNativeW* pcData) = 0;
 };
+
 #endif /* SAKURA_CCONVERT_781CEC40_5400_4D47_959B_0718AEA82A9B_H_ */
