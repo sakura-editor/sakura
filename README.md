@@ -78,12 +78,7 @@ Sakura Editor をコンパイルするためにはいずれかが必要
 正式バイナリは [Visual Studio Community 2017][Visual Studio Community 2017] でビルドされます。
 
 ### Visual Studio Install options required
-- Windows SDK
-- Windows XP Support for C++
-- Windows 8.1 SDK と UCRT SDK
-- C++ に関する Windows XP サポート
-
-More information: https://github.com/sakura-editor/sakura/issues/6
+- Windows 10 SDK
 
 ### Visual Studio Community 2019 対応に関して
 
@@ -121,7 +116,7 @@ Visaul Studio 2019 で `sakura.sln` を開くと必要なコンポーネント�
 ## How to build
 
 - [7Zip](https://sevenzip.osdn.jp/) のインストールして 7z.exe へのパスを通します。
-- Visual Studio Community 2017 で `sakura.sln` を開いてビルドします。
+- Visual Studio で `sakura.sln` を開いてビルドします。
 
 ### 詳細情報
 
