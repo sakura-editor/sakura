@@ -24,13 +24,34 @@
 */
 #include "StdAfx.h"
 #include "CCodeBase.h"
-#include "charcode.h"
+
+#include "charset/CCodeFactory.h"
 #include "convert/convert_util2.h"
 #include "charset/codechecker.h"
 #include "CEol.h"
 #include "env/CommonSetting.h"
 
-// 表示用16表示	UNICODE → Hex 変換	2008/6/9 Uchi
+/*!
+	文字コードの16進表示
+
+	ステータスバー表示用に文字を16進表記に変換する
+
+	@param [in] cSrc 変換する文字
+	@param [in] sStatusbar 共通設定 ステータスバー
+	@param [in,opt] bUseFallback cSrcが特定コードで表現できない場合にフォールバックするかどうか
+ */
+std::wstring CCodeBase::CodeToHex(const CNativeW& cSrc, const CommonSetting_Statusbar& sStatusbar, bool bUseFallback /* = true */)
+{
+	std::wstring buff(32, L'\0');
+	if (const auto ret = UnicodeToHex(cSrc.GetStringPtr(), cSrc.GetStringLength(), buff.data(), &sStatusbar);
+		ret != RESULT_COMPLETE && bUseFallback) {
+		// うまくコードが取れなかった(Unicodeで表示)
+		return CCodeFactory::CreateCodeBase(CODE_UNICODE)->CodeToHex(cSrc, sStatusbar, false);
+	}
+	return buff.data();
+}
+
+// 表示用16進表示	UNICODE → Hex 変換	2008/6/9 Uchi
 EConvertResult CCodeBase::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
 {
 	if (IsUTF16High(cSrc[0]) && iSLen >= 2 && IsUTF16Low(cSrc[1])) {

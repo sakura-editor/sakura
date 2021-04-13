@@ -111,6 +111,8 @@ public:
 	[[nodiscard]] virtual std::map<EEolType, BinarySequence> GetEolDifinitions();
 	void GetEol( CMemory* pcmemEol, EEolType eEolType );
 
+	// 文字コードの16進表示
+	virtual std::wstring CodeToHex(const CNativeW& cSrc, const CommonSetting_Statusbar& sStatusbar, bool bUseFallback = true);
 	// 文字コード表示用		2008/6/9 Uchi
 	virtual EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE → Hex 変換
 

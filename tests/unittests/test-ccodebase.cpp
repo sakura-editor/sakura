@@ -28,6 +28,8 @@
 #include <cstdlib>
 #include <ostream>
 
+#include "env/CommonSetting.h"
+
 TEST(CCodeBase, MIMEHeaderDecode)
 {
 	CMemory m;
@@ -534,3 +536,163 @@ INSTANTIATE_TEST_CASE_P(ParameterizedTestBom
 	)
 );
 
+//! 表示用16進変換テストのためのフィクスチャクラス
+class CodeToHexTest : public ::testing::TestWithParam<ECodeType> {};
+
+/*!
+ * @brief UnicodeToHex代替関数のテスト
+ */
+TEST_P(CodeToHexTest, test)
+{
+	const auto eCodeType = GetParam();
+	auto pCodeBase = CCodeFactory::CreateCodeBase(eCodeType);
+
+	// Unicodeコードポイントを表示する設定
+	CommonSetting_Statusbar sStatusbar;
+	sStatusbar.m_bDispUniInSjis = true;
+	sStatusbar.m_bDispUniInJis = true;
+	sStatusbar.m_bDispUniInEuc = true;
+	sStatusbar.m_bDispUtf8Codepoint = true;
+	sStatusbar.m_bDispSPCodepoint = true;
+
+	// 日本語 ひらがな「あ」（文字セットがサポートしない文字でも統一仕様）
+	EXPECT_STREQ(L"U+3042", pCodeBase->CodeToHex(L"あ", sStatusbar).c_str());
+
+	// カラー絵文字「男性のシンボル」（サロゲートペア）
+	EXPECT_STREQ(L"U+1F6B9", pCodeBase->CodeToHex(L"\U0001F6B9", sStatusbar).c_str());
+}
+
+/*!
+ * @brief パラメータテストをインスタンス化する
+ */
+INSTANTIATE_TEST_CASE_P(ParameterizedTestToHex
+	, CodeToHexTest
+	, ::testing::Values(
+		CODE_SJIS,
+		CODE_JIS,
+		CODE_EUC,
+		CODE_UNICODE,
+		CODE_UTF8,
+		CODE_UTF7,
+		CODE_UNICODEBE,
+		(ECodeType)12000,
+		(ECodeType)12001,
+		CODE_CESU8,
+		CODE_LATIN1
+	)
+);
+
+/*!
+ * @brief UnicodeToHex代替関数のテスト
+ */
+TEST(CCodeBase, SjisToHex)
+{
+	const auto eCodeType = CODE_SJIS;
+	auto pCodeBase = CCodeFactory::CreateCodeBase(eCodeType);
+
+	// 特定コードのマルチバイトを表示する設定
+	CommonSetting_Statusbar sStatusbar;
+	sStatusbar.m_bDispUniInSjis = false;
+	sStatusbar.m_bDispUniInJis = false;
+	sStatusbar.m_bDispUniInEuc = false;
+	sStatusbar.m_bDispUtf8Codepoint = false;
+	sStatusbar.m_bDispSPCodepoint = false;
+
+	// 日本語 ひらがな「あ」（文字セットがサポートしない文字でも統一仕様）
+	EXPECT_STREQ(L"82A0", pCodeBase->CodeToHex(L"あ", sStatusbar).c_str());
+
+	// カラー絵文字「男性のシンボル」（サロゲートペア）
+	EXPECT_STREQ(L"D83DDEB9", pCodeBase->CodeToHex(L"\U0001F6B9", sStatusbar).c_str());
+}
+
+/*!
+ * @brief UnicodeToHex代替関数のテスト
+ */
+TEST(CCodeBase, JisToHex)
+{
+	const auto eCodeType = CODE_JIS;
+	auto pCodeBase = CCodeFactory::CreateCodeBase(eCodeType);
+
+	// 特定コードのマルチバイトを表示する設定
+	CommonSetting_Statusbar sStatusbar;
+	sStatusbar.m_bDispUniInSjis = false;
+	sStatusbar.m_bDispUniInJis = false;
+	sStatusbar.m_bDispUniInEuc = false;
+	sStatusbar.m_bDispUtf8Codepoint = false;
+	sStatusbar.m_bDispSPCodepoint = false;
+
+	// 日本語 ひらがな「あ」（文字セットがサポートしない文字でも統一仕様）
+	EXPECT_STREQ(L"2422", pCodeBase->CodeToHex(L"あ", sStatusbar).c_str());
+
+	// カラー絵文字「男性のシンボル」（サロゲートペア）
+	EXPECT_STREQ(L"D83DDEB9", pCodeBase->CodeToHex(L"\U0001F6B9", sStatusbar).c_str());
+}
+
+/*!
+ * @brief UnicodeToHex代替関数のテスト
+ */
+TEST(CCodeBase, EucToHex)
+{
+	const auto eCodeType = CODE_EUC;
+	auto pCodeBase = CCodeFactory::CreateCodeBase(eCodeType);
+
+	// 特定コードのマルチバイトを表示する設定
+	CommonSetting_Statusbar sStatusbar;
+	sStatusbar.m_bDispUniInSjis = false;
+	sStatusbar.m_bDispUniInJis = false;
+	sStatusbar.m_bDispUniInEuc = false;
+	sStatusbar.m_bDispUtf8Codepoint = false;
+	sStatusbar.m_bDispSPCodepoint = false;
+
+	// 日本語 ひらがな「あ」（文字セットがサポートしない文字でも統一仕様）
+	EXPECT_STREQ(L"A4A2", pCodeBase->CodeToHex(L"あ", sStatusbar).c_str());
+
+	// カラー絵文字「男性のシンボル」（サロゲートペア）
+	EXPECT_STREQ(L"D83DDEB9", pCodeBase->CodeToHex(L"\U0001F6B9", sStatusbar).c_str());
+}
+
+/*!
+ * @brief UnicodeToHex代替関数のテスト
+ */
+TEST(CCodeBase, Utf8ToHex)
+{
+	const auto eCodeType = CODE_UTF8;
+	auto pCodeBase = CCodeFactory::CreateCodeBase(eCodeType);
+
+	// 特定コードのマルチバイトを表示する設定
+	CommonSetting_Statusbar sStatusbar;
+	sStatusbar.m_bDispUniInSjis = false;
+	sStatusbar.m_bDispUniInJis = false;
+	sStatusbar.m_bDispUniInEuc = false;
+	sStatusbar.m_bDispUtf8Codepoint = false;
+	sStatusbar.m_bDispSPCodepoint = false;
+
+	// 日本語 ひらがな「あ」（文字セットがサポートしない文字でも統一仕様）
+	EXPECT_STREQ(L"E38182", pCodeBase->CodeToHex(L"あ", sStatusbar).c_str());
+
+	// カラー絵文字「男性のシンボル」（サロゲートペア）
+	EXPECT_STREQ(L"F09F9AB9", pCodeBase->CodeToHex(L"\U0001F6B9", sStatusbar).c_str());
+}
+
+/*!
+ * @brief UnicodeToHex代替関数のテスト
+ */
+TEST(CCodeBase, Latin1ToHex)
+{
+	const auto eCodeType = CODE_LATIN1;
+	auto pCodeBase = CCodeFactory::CreateCodeBase(eCodeType);
+
+	// 特定コードのマルチバイトを表示する設定
+	CommonSetting_Statusbar sStatusbar;
+	sStatusbar.m_bDispUniInSjis = false;
+	sStatusbar.m_bDispUniInJis = false;
+	sStatusbar.m_bDispUniInEuc = false;
+	sStatusbar.m_bDispUtf8Codepoint = false;
+	sStatusbar.m_bDispSPCodepoint = false;
+
+	// 日本語 ひらがな「あ」（文字セットがサポートしない文字でも統一仕様）
+	EXPECT_STREQ(L"U+3042", pCodeBase->CodeToHex(L"あ", sStatusbar).c_str());
+
+	// カラー絵文字「男性のシンボル」（サロゲートペア）
+	EXPECT_STREQ(L"D83DDEB9", pCodeBase->CodeToHex(L"\U0001F6B9", sStatusbar).c_str());
+}
