@@ -23,6 +23,9 @@
 
 class CSelectLang
 {
+
+	using Me = CSelectLang;
+
 public:
 	// メッセージリソース用構造体
 	struct SSelLangInfo {
@@ -44,7 +47,11 @@ public:
 	/*
 	||  Constructors
 	*/
-	CSelectLang(){}
+	CSelectLang() noexcept = default;
+	CSelectLang(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CSelectLang(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CSelectLang();
 
 	/*
