@@ -463,7 +463,7 @@ TEST_P(EolTest, test)
 	const auto eCodeType = GetParam();
 	auto pCodeBase = CCodeFactory::CreateCodeBase(eCodeType);
 
-	auto map = pCodeBase->GetEolDifinitions();
+	auto map = pCodeBase->GetEolDefinitions();
 	for( const auto&[t,bin] : map ){
 		CMemory m;
 		pCodeBase->GetEol( &m, t );

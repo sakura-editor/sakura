@@ -48,7 +48,7 @@ std::wstring CCodeBase::CodeToHex(const CNativeW& cSrc, const CommonSetting_Stat
 		// うまくコードが取れなかった(Unicodeで表示)
 		return CCodeFactory::CreateCodeBase(CODE_UNICODE)->CodeToHex(cSrc, sStatusbar, false);
 	}
-	return buff.data();
+	return buff;
 }
 
 // 表示用16進表示	UNICODE → Hex 変換	2008/6/9 Uchi
@@ -165,7 +165,7 @@ void CCodeBase::GetBom( CMemory* pcmemBom )
 	各種行終端子に対する特定コードによるバイナリ表現のセットを取得する。
 	特定コードで利用できない行終端子については空のバイナリ表現が返る。
  */
-[[nodiscard]] std::map<EEolType, BinarySequence> CCodeBase::GetEolDifinitions()
+[[nodiscard]] std::map<EEolType, BinarySequence> CCodeBase::GetEolDefinitions()
 {
 	constexpr struct {
 		EEolType type;
@@ -203,7 +203,7 @@ void CCodeBase::GetBom( CMemory* pcmemBom )
 void CCodeBase::GetEol( CMemory* pcmemEol, EEolType eEolType )
 {
 	if( pcmemEol != nullptr ){
-		const auto map = GetEolDifinitions();
+		const auto map = GetEolDefinitions();
 		if( auto it = map.find( eEolType ); it != map.end() ){
 			const auto& bin = it->second;
 			pcmemEol->SetRawData( bin.data(), bin.length() );
