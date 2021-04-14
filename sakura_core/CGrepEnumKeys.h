@@ -45,6 +45,9 @@
 typedef std::vector< LPCWSTR > VGrepEnumKeys;
 
 class CGrepEnumKeys {
+
+	using Me = CGrepEnumKeys;
+
 public:
 	VGrepEnumKeys m_vecSearchFileKeys;
 	VGrepEnumKeys m_vecSearchFolderKeys;
@@ -56,9 +59,11 @@ public:
 	VGrepEnumKeys m_vecExceptAbsFolderKeys;
 
 public:
-	CGrepEnumKeys(){
-	}
-
+	CGrepEnumKeys() noexcept = default;
+	CGrepEnumKeys(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CGrepEnumKeys(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CGrepEnumKeys(){
 		ClearItems();
 	}
