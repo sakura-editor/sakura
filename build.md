@@ -32,7 +32,7 @@
 ### 実行ファイルのビルドに必要なもの
 
 - (オプション) [7Zip](https://sevenzip.osdn.jp/) (外部依存ファイルの解凍に使用)
-- Visual Studio 2017 または Visual Studio 2019
+- Community または Professional エディション以上の Visual Studio 2017 または Visual Studio 2019
    - Windows 10 SDK のインストールも必要です。
 
 ### HTML ヘルプのビルドに必要なもの

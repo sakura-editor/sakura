@@ -11,8 +11,8 @@
 <!-- 以下は Markdownの参照形式によるリンク の定義です。 -->
 <!-- 参照 https://hail2u.net/blog/coding/markdown-reference-style-links.html -->
 
-[Visual Studio Community 2017]: https://visualstudio.microsoft.com/vs/older-downloads/ "Visual Studio Community 2017"
-[Visual Studio Community 2019]: https://visualstudio.microsoft.com/ja/downloads/ "Visual Studio Community 2019"
+[Visual Studio 2017]: https://visualstudio.microsoft.com/ja/vs/older-downloads/ "Visual Studio 2017"
+[Visual Studio 2019]: https://visualstudio.microsoft.com/ja/downloads/ "Visual Studio 2019"
 [Markdown をローカルで確認する方法]: https://github.com/sakura-editor/sakura/wiki/markdown-%E3%82%92%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E3%81%A7%E7%A2%BA%E8%AA%8D%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95
 [How to extract currently installed Visual Studio component IDs?]: https://stackoverflow.com/questions/52946333/how-to-extract-currently-installed-visual-studio-component-ids
 [Configure Visual Studio across your organization with .vsconfig]: https://devblogs.microsoft.com/setup/configure-visual-studio-across-your-organization-with-vsconfig/
@@ -28,7 +28,7 @@
   - [開発参加ポリシー](#開発参加ポリシー)
   - [Build Requirements](#build-requirements)
     - [Visual Studio Install options required](#visual-studio-install-options-required)
-    - [Visual Studio Community 2019 対応に関して](#visual-studio-community-2019-対応に関して)
+    - [Visual Studio 2019 対応に関して](#visual-studio-2019-対応に関して)
     - [.vsconfig に関して](#vsconfig-に関して)
       - [Visaul Studio 2017/2019 共通](#visaul-studio-20172019-共通)
       - [Visaul Studio 2019 のみ](#visaul-studio-2019-のみ)
@@ -71,16 +71,14 @@ https://github.com/sakura-editor/sakura/wiki
 
 ## Build Requirements
 
-Sakura Editor をコンパイルするためにはいずれかが必要
--  [Visual Studio Community 2017][Visual Studio Community 2017]
--  [Visual Studio Community 2019][Visual Studio Community 2019]
+Sakura Editor をコンパイルするためには、 Community または Professional エディション以上の [Visual Studio 2017][Visual Studio 2017] または [Visual Studio 2019][Visual Studio 2019] が必要です。
 
-正式バイナリは [Visual Studio Community 2017][Visual Studio Community 2017] でビルドされます。
+正式バイナリは [Visual Studio Community 2017][Visual Studio 2017] でビルドされます。
 
 ### Visual Studio Install options required
 - Windows 10 SDK
 
-### Visual Studio Community 2019 対応に関して
+### Visual Studio 2019 対応に関して
 
 Visual Studio 2017/2019 の両対応に関しては  [#866](https://github.com/sakura-editor/sakura/issues/866) で対処済みです。  
 [仕組みに関してはこちらを参照](vcx-props/project-PlatformToolset.md)
