@@ -29,9 +29,16 @@ class COpeBlk;/// 2002/2/10 aroka
 	@brief アンドゥ・リドゥバッファ
 */
 class COpeBuf {
+
+	using Me = COpeBuf;
+
 public:
 	//コンストラクタ・デストラクタ
 	COpeBuf();
+	COpeBuf(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	COpeBuf(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~COpeBuf();
 
 	//状態
