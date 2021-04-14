@@ -34,8 +34,6 @@ public:
 	//CCodeBaseインターフェース
 	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst) override{ return UTF7ToUnicode(cSrc, pDst); }	//!< 特定コード → UNICODE    変換
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst) override{ return UnicodeToUTF7(cSrc, pDst); }	//!< UNICODE    → 特定コード 変換
-	void GetBom(CMemory* pcmemBom) override;	//!< BOMデータ取得
-	void GetEol(CMemory* pcmemEol, EEolType eEolType) override;
 
 public:
 	//実装

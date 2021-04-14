@@ -39,8 +39,6 @@ public:
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst) override{	//!< UNICODE    → 特定コード 変換
 		return UnicodeToUnicode_out(cSrc, pDst);
 	}
-	void GetBom(CMemory* pcmemBom) override;	//!< BOMデータ取得
-	void GetEol(CMemory* pcmemEol, EEolType eEolType) override;	//!< 改行データ取得
 
 public:
 	//実装

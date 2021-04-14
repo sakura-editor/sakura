@@ -29,7 +29,6 @@
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
 #include "convert/convert_util2.h"
-#include "CEol.h"
 
 /*!
 	UTF-7 Set D 部分の読み込み。
@@ -273,30 +272,4 @@ EConvertResult CUtf7::UnicodeToUTF7( const CNativeW& cSrc, CMemory* pDstMem )
 	delete [] pDst;
 
 	return RESULT_COMPLETE;
-}
-
-//! BOMデータ取得
-void CUtf7::GetBom(CMemory* pcmemBom)
-{
-	static const BYTE UTF7_BOM[]= {'+','/','v','8','-'};
-	pcmemBom->SetRawData(UTF7_BOM, sizeof(UTF7_BOM));
-}
-
-void CUtf7::GetEol(CMemory* pcmemEol, EEolType eEolType)
-{
-	static const struct{
-		const char* szData;
-		int nLen;
-	}
-	aEolTable[EOL_TYPE_NUM] = {
-		{ "",			0 },	// EEolType::none
-		{ "\x0d\x0a",	2 },	// EEolType::cr_and_lf
-		{ "\x0a",		1 },	// EEolType::line_feed
-		{ "\x0d",		1 },	// EEolType::carriage_return
-		{ "+AIU-",		5 },	// EEolType::next_line
-		{ "+ICg-",		5 },	// EEolType::line_separator
-		{ "+ICk-",		5 },	// EEolType::paragraph_separator
-	};
-	auto& data = aEolTable[static_cast<size_t>(eEolType)];
-	pcmemEol->SetRawData(data.szData, data.nLen);
 }

@@ -28,6 +28,7 @@
 #pragma once
 
 #include <cstddef>
+#include <map>
 #include <string>
 #include <string_view>
 
@@ -105,9 +106,13 @@ public:
 	}
 
 	//ファイル形式
-	virtual void GetBom(CMemory* pcmemBom);											//!< BOMデータ取得
-	virtual void GetEol(CMemory* pcmemEol, EEolType eEolType){ S_GetEol(pcmemEol,eEolType); }	//!< 改行データ取得
+	[[nodiscard]] virtual BinarySequence GetBomDefinition();
+	void GetBom( CMemory* pcmemBom );
+	[[nodiscard]] virtual std::map<EEolType, BinarySequence> GetEolDefinitions();
+	void GetEol( CMemory* pcmemEol, EEolType eEolType );
 
+	// 文字コードの16進表示
+	virtual std::wstring CodeToHex(const CNativeW& cSrc, const CommonSetting_Statusbar& sStatusbar, bool bUseFallback = true);
 	// 文字コード表示用		2008/6/9 Uchi
 	virtual EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE → Hex 変換
 
@@ -117,9 +122,6 @@ public:
 
 	// MIME Header デコーダ
 	static bool MIMEHeaderDecode(const char* pSrc, const int nSrcLen, CMemory* pcMem, const ECodeType eCodetype);
-
-	// CShiftJisより移動 2010/6/13 Uchi
-	static void S_GetEol(CMemory* pcmemEol, EEolType eEolType);	//!< 改行データ取得
 };
 
 /*!

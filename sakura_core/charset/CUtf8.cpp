@@ -30,31 +30,6 @@
 #include "CEol.h"
 #include "env/CommonSetting.h"
 
-//! BOMデータ取得
-void CUtf8::GetBom(CMemory* pcmemBom)
-{
-	static const BYTE UTF8_BOM[]={0xEF,0xBB,0xBF};
-	pcmemBom->SetRawData(UTF8_BOM, sizeof(UTF8_BOM));
-}
-
-void CUtf8::GetEol(CMemory* pcmemEol, EEolType eEolType){
-	static const struct{
-		const char* szData;
-		int nLen;
-	}
-	aEolTable[EOL_TYPE_NUM] = {
-		"",			0,	// EEolType::none
-		"\x0d\x0a",	2,	// EEolType::cr_and_lf
-		"\x0a",		1,	// EEolType::line_feed
-		"\x0d",		1,	// EEolType::carriage_return
-		"\xc2\x85",			2,	// EEolType::next_line
-		"\xe2\x80\xa8",		3,	// EEolType::line_separator
-		"\xe2\x80\xa9",		3,	// EEolType::paragraph_separator
-	};
-	auto& data = aEolTable[static_cast<size_t>(eEolType)];
-	pcmemEol->SetRawData(data.szData, data.nLen);
-}
-
 /*!
 	UTF-8 → Unicode 実装
 

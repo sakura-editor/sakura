@@ -136,6 +136,7 @@
     <ClCompile Include="test-loadstring.cpp" />
     <ClCompile Include="test-mydevmode.cpp" />
     <ClCompile Include="test-parameterized.cpp" />
+    <ClCompile Include="test-printECodeType.cpp" />
     <ClCompile Include="test-sample-disabled.cpp" />
     <ClCompile Include="test-sample.cpp" />
     <ClCompile Include="test-ssearchoption.cpp" />

@@ -133,6 +133,9 @@
     <ClCompile Include="test-ceol.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-printECodeType.cpp">
+      <Filter>Other Files</Filter>
+    </ClCompile>
     <ClCompile Include="test-printEFunctionCode.cpp">
       <Filter>Other Files</Filter>
     </ClCompile>

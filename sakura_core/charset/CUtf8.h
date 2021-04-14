@@ -42,8 +42,6 @@ public:
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst) override{	//!< UNICODE    → 特定コード 変換
 		return UnicodeToUTF8(cSrc, pDst);
 	}
-	void GetBom(CMemory* pcmemBom) override;																			//!< BOMデータ取得
-	void GetEol(CMemory* pcmemEol, EEolType eEolType) override;
 	EConvertResult _UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar, const bool CESU8Mode);			//!< UNICODE → Hex 変換
 	EConvertResult UnicodeToHex(const wchar_t* ps, const int nsl, WCHAR* pd, const CommonSetting_Statusbar* psStatusbar) override{ return _UnicodeToHex(ps, nsl, pd, psStatusbar, false); }
 
