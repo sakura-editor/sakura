@@ -569,7 +569,7 @@ int CCodePage::S_UTF32BEToUnicode( const char* pSrc, int nSrcLen, wchar_t* pDst,
 		for(; i < nSrcLen; ){
 			if( i + 3 < nSrcLen ){
 				if( pSrcByte[i+1] == 0x00 && pSrcByte[i] == 0x00 ){
-					wchar_t c = static_cast<wchar_t>(pSrcByte[i+1] << 8 | pSrcByte[i]);
+					wchar_t c = static_cast<wchar_t>(pSrcByte[i+2] << 8 | pSrcByte[i+3]);
 					if( IsUtf16SurrogHi(c) || IsUtf16SurrogLow(c) ){
 						// サロゲート断片。バイトごとに出力する)
 						nDstUseLen += 4;
@@ -597,7 +597,7 @@ int CCodePage::S_UTF32BEToUnicode( const char* pSrc, int nSrcLen, wchar_t* pDst,
 	for(; i < nSrcLen; ){
 		if( i + 3 < nSrcLen ){
 			if( pSrcByte[i] == 0x00 && pSrcByte[i+1] == 0x00 ){
-				wchar_t c = static_cast<wchar_t>(pSrcByte[i+1] << 8 | pSrcByte[i]);
+				wchar_t c = static_cast<wchar_t>(pSrcByte[i+2] << 8 | pSrcByte[i+3]);
 				if( IsUtf16SurrogHi(c) || IsUtf16SurrogLow(c) ){
 					nDstUseCharLen = 4;
 					if( nDstUseLen + nDstUseCharLen <= nDstLen ){
