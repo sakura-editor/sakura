@@ -74,8 +74,7 @@ public:
 	||  Constructors
 	*/
 	CKeyWordSetMgr();
-	~CKeyWordSetMgr();
-	
+
 	///	@name キーワードセット操作
 	bool AddKeyWordSet(							//!< セットの追加
 		const wchar_t*	pszSetName,				//!< [in] セット名
@@ -124,10 +123,6 @@ public:
 	void ResetAllKeyWordSet( void ); // 全キーワードセットの削除と初期化
 	// To Here 2004.07.29 Moca
 
-	/*
-	|| 演算子
-	*/
-	const CKeyWordSetMgr& operator=( CKeyWordSetMgr& );
 	/*
 	||  Attributes & Operations
 	*/
