@@ -266,14 +266,16 @@ bool CNormalProcess::InitializeProcess()
 			
 			//	Oct. 9, 2003 genta コマンドラインからGERPダイアログを表示させた場合に
 			//	引数の設定がBOXに反映されない
-			pEditWnd->m_cDlgGrep.m_strText = gi.cmGrepKey.GetStringPtr();		/* 検索文字列 */
-			pEditWnd->m_cDlgGrep.m_bSetText = true;
-			int nSize = _countof2(pEditWnd->m_cDlgGrep.m_szFile);
-			wcsncpy( pEditWnd->m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr(), nSize );	/* 検索ファイル */
-			pEditWnd->m_cDlgGrep.m_szFile[nSize-1] = L'\0';
-			nSize = _countof2(pEditWnd->m_cDlgGrep.m_szFolder);
-			wcsncpy( pEditWnd->m_cDlgGrep.m_szFolder, cmemGrepFolder.GetStringPtr(), nSize );	/* 検索フォルダ */
-			pEditWnd->m_cDlgGrep.m_szFolder[nSize-1] = L'\0';
+			if( gi.cmGrepKey.IsValid() ){
+				pEditWnd->m_cDlgGrep.m_strText = gi.cmGrepKey.GetStringPtr();		/* 検索文字列 */
+				pEditWnd->m_cDlgGrep.m_bSetText = true;
+			}
+			if( auto& szFile = pEditWnd->m_cDlgGrep.m_szFile; gi.cmGrepFile.IsValid() && gi.cmGrepFile.GetStringLength() < _countof2(szFile) ){
+				szFile = gi.cmGrepFile.GetStringPtr();	/* 検索ファイル */
+			}
+			if( auto& szFolder = pEditWnd->m_cDlgGrep.m_szFolder; gi.cmGrepFolder.IsValid() && gi.cmGrepFolder.GetStringLength() < _countof2(szFolder) ){
+				szFolder = gi.cmGrepFolder.GetStringPtr();	/* 検索ファイル */
+			}
 
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
 			int nRet = pEditWnd->m_cDlgGrep.DoModal( GetProcessInstance(), pEditWnd->GetHwnd(),  NULL);
