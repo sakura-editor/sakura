@@ -30,9 +30,16 @@ class COpeBlk;
 	COpe を複数束ねるためのもの。Undo, Redoはこのブロック単位で行われる。
 */
 class COpeBlk {
+
+	using Me = COpeBlk;
+
 public:
 	//コンストラクタ・デストラクタ
 	COpeBlk();
+	COpeBlk(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	COpeBlk(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~COpeBlk();
 
 	//インターフェース

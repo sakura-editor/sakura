@@ -33,10 +33,6 @@ CIcu4cI18n::CIcu4cI18n() noexcept
 {
 }
 
-CIcu4cI18n::~CIcu4cI18n() noexcept
-{
-}
-
 /*!
  * @brief DLLの名前を返す
  */

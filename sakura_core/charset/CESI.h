@@ -85,8 +85,15 @@ enum EBOMType {
 //*/
 
 class CESI {
+
+	using Me = CESI;
+
 public:
 
+	CESI(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CESI(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	virtual ~CESI() { ; }
 	explicit CESI( const SEncodingConfig& ref ) : m_pEncodingConfig(&ref) {
 		m_dwStatus = ESI_NOINFORMATION;

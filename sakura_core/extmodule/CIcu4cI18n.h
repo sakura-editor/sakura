@@ -57,7 +57,6 @@ class CIcu4cI18n final : public CDllImp
 
 public:
 	CIcu4cI18n() noexcept;
-	virtual ~CIcu4cI18n() noexcept;
 
 protected:
 	// CDllImpインタフェース

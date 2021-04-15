@@ -62,13 +62,19 @@ struct SAnchorList
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class CDialog
-{
+class CDialog{
+
+	using Me = CDialog;
+
 public:
 	/*
 	||  Constructors
 	*/
 	CDialog( bool bSizable = false, bool bCheckShareData = true );
+	CDialog(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CDialog(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	virtual ~CDialog();
 	/*
 	||  Attributes & Operations

@@ -62,12 +62,6 @@ CKeyWordSetMgr::CKeyWordSetMgr( void )
 	return;
 }
 
-CKeyWordSetMgr::~CKeyWordSetMgr( void)
-{
-	m_nKeyWordSetNum = 0;
-	return;
-}
-
 /*!
 	@brief 全キーワードセットの削除と初期化
 
@@ -85,27 +79,6 @@ void CKeyWordSetMgr::ResetAllKeyWordSet( void )
 	for( i = 0; i < MAX_SETNUM; i++ ){
 		m_nKeyWordNumArr[i] = 0;
 	}
-}
-
-const CKeyWordSetMgr& CKeyWordSetMgr::operator=( CKeyWordSetMgr& cKeyWordSetMgr )
-{
-//	int		nDataLen;
-//	char*	pData;
-//	int		i;
-	if( this == &cKeyWordSetMgr ){
-		return *this;
-	}
-	m_nCurrentKeyWordSetIdx = cKeyWordSetMgr.m_nCurrentKeyWordSetIdx;
-	m_nKeyWordSetNum = cKeyWordSetMgr.m_nKeyWordSetNum;
-	//配列まるごとコピー
-	memcpy_raw( m_szSetNameArr   , cKeyWordSetMgr.m_szSetNameArr   , sizeof( m_szSetNameArr )    );
-	memcpy_raw( m_bKEYWORDCASEArr, cKeyWordSetMgr.m_bKEYWORDCASEArr, sizeof( m_bKEYWORDCASEArr ) );
-	memcpy_raw( m_nStartIdx      , cKeyWordSetMgr.m_nStartIdx      , sizeof( m_nStartIdx )       );// 2004.07.29 Moca
-	memcpy_raw( m_nKeyWordNumArr , cKeyWordSetMgr.m_nKeyWordNumArr , sizeof( m_nKeyWordNumArr )  );
-	memcpy_raw( m_szKeyWordArr   , cKeyWordSetMgr.m_szKeyWordArr   , sizeof( m_szKeyWordArr )    );
-	memcpy_raw( m_IsSorted       , cKeyWordSetMgr.m_IsSorted       , sizeof( m_IsSorted )        ); //MIK 2000.12.01 binary search
-	memcpy_raw( m_nKeyWordMaxLenArr, cKeyWordSetMgr.m_nKeyWordMaxLenArr, sizeof( m_nKeyWordMaxLenArr ) ); //2014.05.04 Moca
-	return *this;
 }
 
 /*! @brief キーワードセットの追加
