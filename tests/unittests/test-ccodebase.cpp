@@ -451,6 +451,54 @@ TEST(CCodeBase, codeUtf32Le)
 
 //! googletestの出力に文字セットIDを出力させる
 std::ostream& operator << (std::ostream& os, const ECodeType& eCodeType);
+/*!
+ * @brief 文字コード変換のテスト
+ */
+TEST(CCodeBase, codeUtf32Be)
+{
+	const auto eCodeType = (ECodeType)12001;
+	auto pCodeBase = CCodeFactory::CreateCodeBase( eCodeType );
+
+	// 7bit ASCII範囲（等価変換）
+	constexpr auto& mbsAscii = "\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
+	constexpr auto& wcsAscii = L"\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
+
+	// ビッグエンディアンのバイナリを作成
+	std::basic_string<uint32_t> bin;
+	for( const auto ch : mbsAscii ){
+		bin.append( 1, ::_byteswap_ulong( ch ) );
+	}
+
+	bool bComplete1_1 = false;
+	auto encoded = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(bin.data()), bin.size() * sizeof(decltype(bin)::value_type)), &bComplete1_1 );
+	ASSERT_STREQ( wcsAscii, encoded.GetStringPtr() );
+	ASSERT_TRUE( bComplete1_1 );
+
+	bool bComplete1_2 = false;
+	auto decoded = pCodeBase->UnicodeToCode( encoded, &bComplete1_2 );
+	ASSERT_EQ( 0, memcmp( bin.data(), decoded.data(), decoded.size() ) );
+	ASSERT_TRUE( bComplete1_2 );
+
+	// かな漢字の変換（UTF-32BE仕様）
+	constexpr const auto& wcsKanaKanji = L"ｶﾅかなカナ漢字";
+
+	// ビッグエンディアンのバイナリを作成
+	bin.clear();
+	for( const auto ch : wcsKanaKanji ){
+		bin.append( 1, ::_byteswap_ulong( ch ) );
+	}
+
+	bool bComplete2_1 = false;
+	auto encoded2 = pCodeBase->CodeToUnicode( BinarySequenceView( reinterpret_cast<const std::byte*>(bin.data()), bin.size() * sizeof(decltype(bin)::value_type) ), &bComplete2_1 );
+	ASSERT_STREQ( wcsKanaKanji, encoded2.GetStringPtr() );
+	ASSERT_TRUE( bComplete2_1 );
+
+	bool bComplete2_2 = false;
+	auto decoded2 = pCodeBase->UnicodeToCode( encoded2, &bComplete2_2 );
+	ASSERT_EQ( 0, memcmp( bin.data(), decoded2.data(), decoded2.size() ) );
+	ASSERT_TRUE( bComplete2_2 );
+}
+
 
 //! EOLテストのためのフィクスチャクラス
 class EolTest : public ::testing::TestWithParam<ECodeType> {};
