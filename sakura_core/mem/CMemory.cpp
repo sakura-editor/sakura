@@ -189,6 +189,11 @@ void CMemory::SetRawData( const void* pData, size_t nDataLen )
 		// バッファをクリアして末尾に追加
 		Reset();
 		AppendRawData( pData, nDataLen );
+	}else if( m_pRawData == nullptr ){
+		// インスタンスコピーするとバッファが確保される既存の挙動を変えないために追加
+		// これを入れないと取得したCNativeWのNULLチェックを忘れてGetStringPtr()する不作法なコードが落ちます。
+		// 論理的には無駄な処理であるため、いつか削除したいです。
+		AppendRawData( nullptr, 0 );
 	}
 }
 
