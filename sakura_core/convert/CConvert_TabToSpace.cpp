@@ -68,6 +68,7 @@ bool CConvert_TabToSpace::DoConvert(CNativeW* pcData)
 		return false;
 	}
 	pDes = new wchar_t[nPosDes + 1];
+	const auto nMaxDes = nPosDes + 1;
 	nBgn = 0;
 	nPosDes = 0;
 	/* CRLFで区切られる「行」を返す。CRLFは行長に加えない */
@@ -75,7 +76,8 @@ bool CConvert_TabToSpace::DoConvert(CNativeW* pcData)
 		if( 0 < nLineLen ){
 			// 先頭行については開始桁位置を考慮する（さらに折り返し関連の対策が必要？）
 			nPosX = (pcData->GetStringPtr() == pLine)? m_nStartColumn: 0;
-			for( i = 0; i < nLineLen; ++i ){
+			i = 0;
+			while( i < nLineLen && nPosDes < nMaxDes ){
 				if( TAB == pLine[i]	){
 					nWork = m_nTabWidth - ( nPosX % m_nTabWidth );
 					wmemset( &pDes[nPosDes], L' ', nWork );
@@ -84,9 +86,9 @@ bool CConvert_TabToSpace::DoConvert(CNativeW* pcData)
 				}else{
 					pDes[nPosDes] = pLine[i];
 					nPosDes++;
-					nPosX++;
-					if(WCODE::IsZenkaku(pLine[i])) nPosX++;		//全角文字ずれ対応 2008.10.15 matsumo
+					nPosX += WCODE::IsZenkaku(pLine[i]) ? 2 : 1;	//全角文字ずれ対応 2008.10.15 matsumo
 				}
+				++i;
 			}
 		}
 		wmemcpy( &pDes[nPosDes], cEol.GetValue2(), cEol.GetLen() );
