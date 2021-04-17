@@ -109,7 +109,7 @@ int CUtf7::Utf7ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* 
 			if( berror_tmp ){
 				berror = true;
 			}
-			if( nblocklen < 1 && *(pr_next-1) == '-' ){
+			if( nblocklen < 1 && pr < pr_next && *(pr_next - 1) == '-' ){
 				// +- → + 変換
 				*pw = L'+';
 				++pw;
