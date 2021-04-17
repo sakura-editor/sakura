@@ -32,22 +32,20 @@
 ### 実行ファイルのビルドに必要なもの
 
 - (オプション) [7Zip](https://sevenzip.osdn.jp/) (外部依存ファイルの解凍に使用)
-- Visual Studio 2017 Comminity Edition
-   以下オプションも必要です。
-   - Windows XP Support for C++
-   - Windows 8.1 SDK と UCRT SDK
-   - C++ に関する Windows XP サポート
+- Community または Professional エディション以上の Visual Studio 2017 または Visual Studio 2019
+   - Windows 10 SDK のインストールも必要です。
 
 ### HTML ヘルプのビルドに必要なもの
 
 - HTML ヘルプコンパイラ (hhc.exe)
-   - Visual Studio 2017 のインストールにて以下のオプションを有効にすることにより導入されます。
+   - Visual Studio のインストールにて以下のオプションを有効にすることにより導入されます。
       - 「C++ によるデスクトップ開発」を有効にする
       - 右のペインで 「C++ によるデスクトップ開発」を選ぶ
-      - 「x86用とx64用のVisual C++ MFC」をチェックする
+      - Visual Studio 2017 の場合は「x86用とx64用のVisual C++ MFC」を、Visual Studio 2019 の場合は「最新 v142 ビルド ツールの C++ MFC (x86 & x64)」をチェックする
       - 変更を確定する
    - VSインストール後でもVisual Studio Installerを起動して導入可能です。 
 ![vsi](https://user-images.githubusercontent.com/39618965/44622575-012dcc80-a8f6-11e8-906a-14d8cd6dfac9.PNG)
+   - [.vsconfig](.vsconfig) を使用してインストールした場合は自動的にインストールされます。
    - ヘルプファイルを編集する場合 HTML Help Workshop 等の編集ソフトも別途必要になります。
 
 ### インストーラのビルドに必要なもの
@@ -68,7 +66,7 @@
 
 #### 方法1 (GUI)
 
-Visual Studio Community 2017 で `sakura.sln` をダブルクリックして開いてビルドします。
+Visual Studio で `sakura.sln` をダブルクリックして開いてビルドします。
 
 #### 方法2 (コマンドライン)
 
