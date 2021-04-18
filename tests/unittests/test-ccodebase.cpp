@@ -449,8 +449,6 @@ TEST(CCodeBase, codeUtf32Le)
 	ASSERT_TRUE( bComplete2_2 );
 }
 
-//! googletestの出力に文字セットIDを出力させる
-std::ostream& operator << (std::ostream& os, const ECodeType& eCodeType);
 /*!
  * @brief 文字コード変換のテスト
  */
@@ -499,6 +497,8 @@ TEST(CCodeBase, codeUtf32Be)
 	ASSERT_TRUE( bComplete2_2 );
 }
 
+//! googletestの出力に文字セットIDを出力させる
+std::ostream& operator << (std::ostream& os, const ECodeType& eCodeType);
 
 //! EOLテストのためのフィクスチャクラス
 class EolTest : public ::testing::TestWithParam<ECodeType> {};
