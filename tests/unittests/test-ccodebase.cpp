@@ -264,12 +264,12 @@ TEST(CCodeBase, codeLatin1)
 	// Unicodeに変換できない文字はない（Latin1仕様）
 
 	// Unicodeから変換できない文字（Latin1仕様）
-	constexpr const auto& wcsOGuy = L"ｶﾅかなカナ漢字";
-	constexpr const auto& mbsOGuy = "????????";
+	constexpr const auto& wcsKanaKanji = L"ｶﾅかなカナ漢字";
+	constexpr const auto& mbsKanaKanji = "????????";
 
 	bool bComplete4_2 = true;
-	auto decoded4 = pCodeBase->UnicodeToCode(wcsOGuy, &bComplete4_2);
-	ASSERT_EQ(0, memcmp(mbsOGuy, decoded4.data(), decoded4.size()));
+	auto decoded4 = pCodeBase->UnicodeToCode(wcsKanaKanji, &bComplete4_2);
+	ASSERT_EQ(0, memcmp(mbsKanaKanji, decoded4.data(), decoded4.size()));
 	ASSERT_FALSE(bComplete4_2);
 }
 
