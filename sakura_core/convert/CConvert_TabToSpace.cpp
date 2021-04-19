@@ -46,7 +46,7 @@ bool CConvert_TabToSpace::DoConvert(CNativeW* pcData)
 		CEol eol;
 		/* CRLFで区切られる「行」を返す。CRLFは行長に加えない */
 		const wchar_t* line = GetNextLineW(source.data(),
-			source.length(), &lineLength, &begin, &eol, m_bExtEol);
+			static_cast<int>(source.length()), &lineLength, &begin, &eol, m_bExtEol);
 		if (!line)
 			break;
 		// 先頭行については開始桁位置を考慮する（さらに折り返し関連の対策が必要？）
