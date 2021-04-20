@@ -219,24 +219,13 @@ void CGrepAgent::AddTail( CEditView* pcEditView, const CNativeW& cmem, bool bAdd
 */
 DWORD CGrepAgent::DoGrep(
 	CEditView*				pcViewDst,
+	const GrepInfo&			gi,
 	bool					bGrepReplace,
-	const CNativeW*			pcmGrepKey,
-	const CNativeW*			pcmGrepReplace,
-	const CNativeW*			pcmGrepFile,
-	const CNativeW*			pcmGrepFolder,
-	bool					bGrepCurFolder,
-	BOOL					bGrepSubFolder,
-	bool					bGrepStdout,
-	bool					bGrepHeader,
-	const SSearchOption&	sSearchOption,
-	ECodeType				nGrepCharSet,	// 2002/09/21 Moca 文字コードセット選択
-	int						nGrepOutputLineType,
-	int						nGrepOutputStyle,
-	bool					bGrepOutputFileOnly,
-	bool					bGrepOutputBaseFolder,
-	bool					bGrepSeparateFolder,
 	bool					bGrepPaste,
-	bool					bGrepBackup
+	bool					bGrepBackup,
+	bool					bGrepCurFolder,
+	bool					bGrepHeader,
+	bool					bGrepStdout
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DoGrep" );
@@ -248,6 +237,19 @@ DWORD CGrepAgent::DoGrep(
 	}
 
 	this->m_bGrepRunning = true;
+
+	const CNativeW*			pcmGrepKey				= &gi.cmGrepKey;
+	const CNativeW*			pcmGrepReplace			= &gi.cmGrepRep;
+	const CNativeW*			pcmGrepFile				= &gi.cmGrepFile;
+	const CNativeW*			pcmGrepFolder			= &gi.cmGrepFolder;
+	BOOL					bGrepSubFolder			= gi.bGrepSubFolder;
+	const SSearchOption&	sSearchOption			= gi.sGrepSearchOption;
+	ECodeType				nGrepCharSet			= gi.nGrepCharSet;
+	int						nGrepOutputLineType		= gi.nGrepOutputLineType;
+	int						nGrepOutputStyle		= gi.nGrepOutputStyle;
+	bool					bGrepOutputFileOnly		= gi.bGrepOutputFileOnly;
+	bool					bGrepOutputBaseFolder	= gi.bGrepOutputBaseFolder;
+	bool					bGrepSeparateFolder		= gi.bGrepSeparateFolder;
 
 	int			nHitCount = 0;
 	CDlgCancel	cDlgCancel;

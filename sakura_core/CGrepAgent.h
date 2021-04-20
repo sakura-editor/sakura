@@ -28,6 +28,8 @@
 #pragma once
 
 #include "doc/CDocListener.h"
+#include "GrepInfo.h"
+
 class CDlgCancel;
 class CEditView;
 class CSearchStringPattern;
@@ -82,24 +84,13 @@ public:
 	// Grep実行
 	DWORD DoGrep(
 		CEditView*				pcViewDst,
-		bool					bGrepReplace,
-		const CNativeW*			pcmGrepKey,
-		const CNativeW*			pcmGrepReplace,
-		const CNativeW*			pcmGrepFile,
-		const CNativeW*			pcmGrepFolder,
-		bool					bGrepCurFolder,
-		BOOL					bGrepSubFolder,
-		bool					bGrepStdout,
-		bool					bGrepHeader,
-		const SSearchOption&	sSearchOption,
-		ECodeType				nGrepCharSet,	// 2002/09/21 Moca 文字コードセット選択
-		int						nGrepOutputLineType,
-		int						nGrepOutputStyle,
-		bool					bGrepOutputFileOnly,	//!< [in] ファイル毎最初のみ出力
-		bool					bGrepOutputBaseFolder,	//!< [in] ベースフォルダ表示
-		bool					bGrepSeparateFolder,	//!< [in] フォルダ毎に表示
-		bool					bGrepPaste,
-		bool					bGrepBackup
+		const GrepInfo&			gi,
+		bool					bGrepReplace	= false,
+		bool					bGrepPaste		= false,
+		bool					bGrepBackup		= false,
+		bool					bGrepCurFolder	= false,
+		bool					bGrepHeader		= true,
+		bool					bGrepStdout		= false
 	);
 
 private:

@@ -89,26 +89,23 @@ void CViewCommander::Command_GREP( void )
 			GetDocument()->OnChangeType();
 		}
 		
+		GrepInfo gi;
+		gi.cmGrepKey				= std::move(cmWork1);
+		gi.cmGrepRep				= std::move(cmWork4);
+		gi.cmGrepFile				= std::move(cmWork2);
+		gi.cmGrepFolder				= std::move(cmWork3);
+		gi.bGrepSubFolder			= GetEditWindow()->m_cDlgGrep.m_bSubFolder;
+		gi.sGrepSearchOption		= GetEditWindow()->m_cDlgGrep.m_sSearchOption;
+		gi.nGrepCharSet				= GetEditWindow()->m_cDlgGrep.m_nGrepCharSet;
+		gi.nGrepOutputLineType		= GetEditWindow()->m_cDlgGrep.m_nGrepOutputLineType;
+		gi.nGrepOutputStyle			= GetEditWindow()->m_cDlgGrep.m_nGrepOutputStyle;
+		gi.bGrepOutputFileOnly		= GetEditWindow()->m_cDlgGrep.m_bGrepOutputFileOnly;
+		gi.bGrepOutputBaseFolder	= GetEditWindow()->m_cDlgGrep.m_bGrepOutputBaseFolder;
+		gi.bGrepSeparateFolder		= GetEditWindow()->m_cDlgGrep.m_bGrepSeparateFolder;
+
 		CEditApp::getInstance()->m_pcGrepAgent->DoGrep(
 			m_pCommanderView,
-			false,
-			&cmWork1,
-			&cmWork4,
-			&cmWork2,
-			&cmWork3,
-			false,
-			GetEditWindow()->m_cDlgGrep.m_bSubFolder,
-			false,
-			true, // Header
-			GetEditWindow()->m_cDlgGrep.m_sSearchOption,
-			GetEditWindow()->m_cDlgGrep.m_nGrepCharSet,
-			GetEditWindow()->m_cDlgGrep.m_nGrepOutputLineType,
-			GetEditWindow()->m_cDlgGrep.m_nGrepOutputStyle,
-			GetEditWindow()->m_cDlgGrep.m_bGrepOutputFileOnly,
-			GetEditWindow()->m_cDlgGrep.m_bGrepOutputBaseFolder,
-			GetEditWindow()->m_cDlgGrep.m_bGrepSeparateFolder,
-			false,
-			false
+			gi
 		);
 
 		//プラグイン：DocumentOpenイベント実行
@@ -183,24 +180,24 @@ void CViewCommander::Command_GREP_REPLACE( void )
 		  !CAppMode::getInstance()->IsDebugMode()
 		)
 	){
+		GrepInfo gi;
+		gi.cmGrepKey				= std::move(cmWork1);
+		gi.cmGrepRep				= std::move(cmWork4);
+		gi.cmGrepFile				= std::move(cmWork2);
+		gi.cmGrepFolder				= std::move(cmWork3);
+		gi.bGrepSubFolder			= cDlgGrepRep.m_bSubFolder;
+		gi.sGrepSearchOption		= cDlgGrepRep.m_sSearchOption;
+		gi.nGrepCharSet				= cDlgGrepRep.m_nGrepCharSet;
+		gi.nGrepOutputLineType		= cDlgGrepRep.m_nGrepOutputLineType;
+		gi.nGrepOutputStyle			= cDlgGrepRep.m_nGrepOutputStyle;
+		gi.bGrepOutputFileOnly		= cDlgGrepRep.m_bGrepOutputFileOnly;
+		gi.bGrepOutputBaseFolder	= cDlgGrepRep.m_bGrepOutputBaseFolder;
+		gi.bGrepSeparateFolder		= cDlgGrepRep.m_bGrepSeparateFolder;
+
 		CEditApp::getInstance()->m_pcGrepAgent->DoGrep(
 			m_pCommanderView,
+			gi,
 			true,
-			&cmWork1,
-			&cmWork4,
-			&cmWork2,
-			&cmWork3,
-			false,
-			cDlgGrepRep.m_bSubFolder,
-			false, // Stdout
-			true, // Header
-			cDlgGrepRep.m_sSearchOption,
-			cDlgGrepRep.m_nGrepCharSet,
-			cDlgGrepRep.m_nGrepOutputLineType,
-			cDlgGrepRep.m_nGrepOutputStyle,
-			cDlgGrepRep.m_bGrepOutputFileOnly,
-			cDlgGrepRep.m_bGrepOutputBaseFolder,
-			cDlgGrepRep.m_bGrepSeparateFolder,
 			cDlgGrepRep.m_bPaste,
 			cDlgGrepRep.m_bBackup
 		);
