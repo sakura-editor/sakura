@@ -36,8 +36,8 @@
 | バッチファイル | 説明 |
 ----|---- 
 |[build-all.bat](build-all.bat)| appveyor.yml から呼ばれるバッチファイル  |
-|[build-sln.bat](build-sln.bat)| solution をビルドするバッチファイル |
-|[build-gnu.bat](build-gnu.bat)| Makefile をビルドするバッチファイル |
+|[build-sln.bat](build-sln.bat) | solution をビルドする |
+|[build-gnu.bat](build-gnu.bat) | Makefile をビルドする |
 |[build-sonar-qube-start.bat](build-sonar-qube-start.bat) | SonarQube の準備を行う |
 |[build-sonar-qube-env.bat](build-sonar-qube-env.bat) | SonarQube の実行に必要な環境変数の設定を行う |
 |[sakura\preBuild.bat](sakura/preBuild.bat) | 特に何もしない |
@@ -46,11 +46,11 @@
 |[tests\googletest.build.cmd](tests/googletest.build.cmd) | Google Test をビルドする |
 |[tests\compiletests.run.cmd](tests/compiletests.run.cmd) | コンパイルテストを実行する |
 |[build-sonar-qube-finish.bat](build-sonar-qube-finish.bat) | SonarQube の解析結果をアップロードする |
-|[parse-buildlog.bat](parse-buildlog.bat)    | ビルドログを解析するバッチファイル |
-|[build-chm.bat](build-chm.bat)       | compiled HTML ファイルをビルドするバッチファイル |
-|[build-installer.bat](build-installer.bat) | インストーラをビルドするバッチファイル |
-|[zipArtifacts.bat](zipArtifacts.bat)       | 成果物を zip に固めるバッチファイル |
-|[calc-hash.bat](calc-hash.bat)             | 成果物の sha256 を計算するバッチファイル |
+|[parse-buildlog.bat](parse-buildlog.bat) | ビルドログを解析する |
+|[build-chm.bat](build-chm.bat) | compiled HTML ファイルをビルドする |
+|[build-installer.bat](build-installer.bat) | インストーラをビルドする |
+|[zipArtifacts.bat](zipArtifacts.bat) | 成果物を zip ファイルにまとめる |
+|[calc-hash.bat](calc-hash.bat) | 成果物のハッシュ値を計算する |
 
 ### 関連情報
 

@@ -9,15 +9,15 @@
 |GIT_REMOTE_ORIGIN_URL|git remote origin URL|◎|◎|◎|◎|
 |GIT_TAG_NAME|git の tag|◎|◎|◎|◎|
 |CI_ACCOUNT_NAME|CI のアカウント名|×|◎|◎|◎|
+|CI_REPO_NAME|リポジトリ名|×|◎|◎|◎|
+|CI_BUILD_VERSION|CI のビルドバージョン (文字列)|×|◎|◎|◎|
 |CI_BUILD_NUMBER|CI のビルド番号 (数値)|×|◎|◎|◎|
 |CI_BUILD_URL|CI のビルドURL|×|◎|◎|◎|
-|CI_BUILD_VERSION|CI のビルドバージョン (文字列)|×|◎|◎|◎|
-|CI_REPO_NAME|リポジトリ名|×|◎|◎|◎|
 |GITHUB_COMMIT_URL|GitHub の Commit URL|×|◎|◎|◎|
-|GITHUB_PR_HEAD_URL|GitHub の PR の Head の URL|×|○ (PRのみ)|○ (PRのみ)|○ (PRのみ)|
-|GITHUB_PR_HEAD_COMMIT|GitHub の PR の Head Revision|×|○ (PRのみ)|○ (PRのみ)|○ (PRのみ)|
-|GITHUB_PR_HEAD_SHORT_COMMIT|GitHub の PR の Head Revision 短縮形|×|○ (PRのみ)|○ (PRのみ)|○ (PRのみ)|
 |GITHUB_PR_NUMBER|GitHub の PR 番号|×|○ (PRのみ)|○ (PRのみ)|○ (PRのみ)|
+|GITHUB_PR_HEAD_COMMIT | GitHub の PR の Head commit Hash | × | ○ (PRのみ) | ○ (PRのみ) | ○ (PRのみ) |
+|GITHUB_PR_HEAD_SHORT_COMMIT | GitHub の PR の Head commit Hash 短縮形 | × | ○ (PRのみ) | ○ (PRのみ) | ○ (PRのみ) |
+|GITHUB_PR_HEAD_URL | GitHub の PR の Head commit の URL | × | ○ (PRのみ) | ○ (PRのみ) | ○ (PRのみ) |
 
 ## 入力として使用する環境変数
 
@@ -27,12 +27,12 @@
 ----|---- 
 |APPVEYOR                           | バッチが appveyor で実行されているかどうか  |
 |APPVEYOR_URL                       | https://ci.appveyor.com |
-|APPVEYOR_ACCOUNT_NAME              | appveyor のアカウント名 (sakura editor の場合 "sakuraeditor") |
-|APPVEYOR_PROJECT_SLUG              | project slug (appveyor の URL 名) |
-|APPVEYOR_REPO_PROVIDER             | appveyor の参照するリポジトリ種別 (GitHub の場合 "gitHub") |
+|APPVEYOR_ACCOUNT_NAME              | AppVeyor のアカウント名 (sakura editor の場合 "sakuraeditor") |
+|APPVEYOR_PROJECT_SLUG              | AppVeyor のプロジェクト名 |
+|APPVEYOR_REPO_PROVIDER             | AppVeyor が参照するリポジトリの種別 (GitHub の場合 "gitHub") |
 |APPVEYOR_REPO_NAME                 | リポジトリ名 (owner-name/repo-name) |
-|APPVEYOR_BUILD_VERSION             | appveyor.yml の version フィールドの値 |
-|APPVEYOR_BUILD_NUMBER              | ビルド番号 |
+|APPVEYOR_BUILD_VERSION             | ビルドバージョン (文字列) |
+|APPVEYOR_BUILD_NUMBER              | ビルド番号 (数値) |
 |APPVEYOR_PULL_REQUEST_NUMBER       | Pull Request 番号 |
 |APPVEYOR_PULL_REQUEST_HEAD_COMMIT  | Pull Request の Head commit Hash |
 
@@ -47,8 +47,8 @@ APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使う
 |環境変数|説明|
 |--|--|
 |SYSTEM_TEAMFOUNDATIONSERVERURI | `https://dev.azure.com/sakuraeditor/` |
-|BUILD_DEFINITIONNAME|アカウント名|
-|SYSTEM_TEAMPROJECT | プロジェクト名 |
+|BUILD_DEFINITIONNAME | Azure Pipeline のアカウント名 |
+|SYSTEM_TEAMPROJECT | Azure Pipelines のプロジェクト名 |
 |BUILD_REPOSITORY_PROVIDER | Pipeline が参照するリポジトリの種別 (GitHubの場合 "GitHub") |
 |BUILD_REPOSITORY_NAME|リポジトリ名 (owner-name/repo-name)|
 |BUILD_BUILDNUMBER|ビルドバージョン (文字列)|
