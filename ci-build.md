@@ -1,4 +1,4 @@
-﻿# CI でのビルド
+﻿# CI でのビルドにて使用される環境変数
 
 ## githash.bat で設定する環境変数
 
@@ -18,7 +18,6 @@
 |GITHUB_PR_HEAD_COMMIT|GitHub の PR の Head Revision|×|○ (PRのみ)|○ (PRのみ)|○ (PRのみ)|
 |GITHUB_PR_HEAD_SHORT_COMMIT|GitHub の PR の Head Revision 短縮形|×|○ (PRのみ)|○ (PRのみ)|○ (PRのみ)|
 |GITHUB_PR_NUMBER|GitHub の PR 番号|×|○ (PRのみ)|○ (PRのみ)|○ (PRのみ)|
-|DEV_VERSION|開発バージョンかどうか|◎|◎|◎|◎|
 
 ## 入力として使用する環境変数
 
@@ -31,19 +30,17 @@
 |APPVEYOR_BUILD_NUMBER              | ビルド番号 |
 |APPVEYOR_URL                       | https://ci.appveyor.com |
 |APPVEYOR_BUILD_VERSION             | appveyor.yml の version フィールドの値 |
-|APPVEYOR_BUILD_ID                  | ビルドID (ビルド結果URLに含まれる数値です。`build-chm.bat`が実行中のビルドを識別するために使います。) |
 |APPVEYOR_PROJECT_SLUG              | project slug (appveyor の URL 名) |
 |APPVEYOR_PULL_REQUEST_NUMBER       | Pull Request 番号 |
 |APPVEYOR_PULL_REQUEST_HEAD_COMMIT  | Pull Request の Head commit Hash |
 |APPVEYOR_REPO_NAME                 | リポジトリ名 (owner-name/repo-name) |
 |APPVEYOR_REPO_PROVIDER             | appveyor の参照するリポジトリ種別 (GitHub の場合 "gitHub") |
-|~~READONLY_TOKEN~~                 | デバッグ用です。 appveyor の REST API に渡す [Bearer Token](https://www.appveyor.com/docs/api/#Authentication) をスクリプト外から渡せるように定義しています。 appveyor では使いません。(未定義なので値は''になります。) |
 
 APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使うようにしました。[#876](https://github.com/sakura-editor/sakura/pull/876)
 
 * 上記環境変数をローカル環境で set コマンドで設定することにより appveyor でビルドしなくてもローカルでテストできます。
+    - 成果物に含まれる `set_appveyor_env.bat` を使用して設定することもできます。
 * 上記の環境変数がどんな値になるのかは、過去の appveyor ビルドでのログを見ることによって確認できます。
-* `build-chm.bat`をローカルでテストするには完了済みのビルドIDが必要です。ビルドIDは[history](https://ci.appveyor.com/project/sakuraeditor/sakura/history)から各ビルド結果を表示するとURL末尾に付いている数字です。
 
 ### Azure Pipelines
 
@@ -55,6 +52,9 @@ APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使う
 |BUILD_BUILDNUMBER|ビルドバージョン (文字列)|
 |SYSTEM_PULLREQUEST_PULLREQUESTNUMBER|Pull Request 番号|
 |SYSTEM_PULLREQUEST_SOURCECOMMITID|Pull Request の Head commit Hash|
+|SYSTEM_TEAMFOUNDATIONSERVERURI | `https://dev.azure.com/sakuraeditor/` |
+|SYSTEM_TEAMPROJECT | プロジェクト名 |
+|BUILD_REPOSITORY_PROVIDER | Pipeline が参照するリポジトリの種別 (GitHubの場合 "GitHub") |
 
 ## githash.h で生成するマクロ
 

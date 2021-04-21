@@ -122,7 +122,7 @@ Visaul Studio 2019 で `sakura.sln` を開くと必要なコンポーネント�
 
 ## CI Buildおよびローカルビルドの環境変数
 
-[CI でのビルド](ci-build.md) を参照
+[こちら](ci-build.md) を参照してください。
 
 ## PR(Pull Request) を簡単にローカルに取得する方法
 
