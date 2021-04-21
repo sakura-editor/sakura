@@ -26,15 +26,15 @@
 | 環境変数 | 説明 |
 ----|---- 
 |APPVEYOR                           | バッチが appveyor で実行されているかどうか  |
-|APPVEYOR_ACCOUNT_NAME              | appveyor のアカウント名 (sakura editor の場合 "sakuraeditor") |
-|APPVEYOR_BUILD_NUMBER              | ビルド番号 |
 |APPVEYOR_URL                       | https://ci.appveyor.com |
-|APPVEYOR_BUILD_VERSION             | appveyor.yml の version フィールドの値 |
+|APPVEYOR_ACCOUNT_NAME              | appveyor のアカウント名 (sakura editor の場合 "sakuraeditor") |
 |APPVEYOR_PROJECT_SLUG              | project slug (appveyor の URL 名) |
+|APPVEYOR_REPO_PROVIDER             | appveyor の参照するリポジトリ種別 (GitHub の場合 "gitHub") |
+|APPVEYOR_REPO_NAME                 | リポジトリ名 (owner-name/repo-name) |
+|APPVEYOR_BUILD_VERSION             | appveyor.yml の version フィールドの値 |
+|APPVEYOR_BUILD_NUMBER              | ビルド番号 |
 |APPVEYOR_PULL_REQUEST_NUMBER       | Pull Request 番号 |
 |APPVEYOR_PULL_REQUEST_HEAD_COMMIT  | Pull Request の Head commit Hash |
-|APPVEYOR_REPO_NAME                 | リポジトリ名 (owner-name/repo-name) |
-|APPVEYOR_REPO_PROVIDER             | appveyor の参照するリポジトリ種別 (GitHub の場合 "gitHub") |
 
 APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使うようにしました。[#876](https://github.com/sakura-editor/sakura/pull/876)
 
@@ -46,15 +46,15 @@ APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使う
 
 |環境変数|説明|
 |--|--|
-|BUILD_REPOSITORY_NAME|リポジトリ名 (owner-name/repo-name)|
-|BUILD_DEFINITIONNAME|アカウント名|
-|BUILD_BUILDID|ビルド番号 (数値)|
-|BUILD_BUILDNUMBER|ビルドバージョン (文字列)|
-|SYSTEM_PULLREQUEST_PULLREQUESTNUMBER|Pull Request 番号|
-|SYSTEM_PULLREQUEST_SOURCECOMMITID|Pull Request の Head commit Hash|
 |SYSTEM_TEAMFOUNDATIONSERVERURI | `https://dev.azure.com/sakuraeditor/` |
+|BUILD_DEFINITIONNAME|アカウント名|
 |SYSTEM_TEAMPROJECT | プロジェクト名 |
 |BUILD_REPOSITORY_PROVIDER | Pipeline が参照するリポジトリの種別 (GitHubの場合 "GitHub") |
+|BUILD_REPOSITORY_NAME|リポジトリ名 (owner-name/repo-name)|
+|BUILD_BUILDNUMBER|ビルドバージョン (文字列)|
+|BUILD_BUILDID|ビルド番号 (数値)|
+|SYSTEM_PULLREQUEST_PULLREQUESTNUMBER|Pull Request 番号|
+|SYSTEM_PULLREQUEST_SOURCECOMMITID|Pull Request の Head commit Hash|
 
 ## githash.h で生成するマクロ
 

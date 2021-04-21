@@ -59,9 +59,9 @@ https://azure.microsoft.com/ja-jp/services/devops/pipelines/ にアクセスし�
   - [ci/azure-pipelines/template.job.build-on-msys2.yml](ci/azure-pipelines/template.job.build-on-msys2.yml) sakura editor 本体を MinGW でビルド、単体テストを MinGW でビルド、実行
     - [ci/azure-pipelines/template.steps.install-mingw-w64-gcc.yml](ci/azure-pipelines/template.steps.install-mingw-w64-gcc.yml) mingw-w64-gcc のインストール
   - [ci/azure-pipelines/template.job.SonarQube.yml](ci/azure-pipelines/template.job.SonarQube.yml) SonarQube での解析
-  - [ci/azure-pipelines/template.job.checkEncoding.yml](ci/azure-pipelines/template.job.checkEncoding.yml) 文字コードの確認
   - [ci/azure-pipelines/template.job.cppcheck.yml](ci/azure-pipelines/template.job.cppcheck.yml) cppcheck の実行
   - [ci/azure-pipelines/template.job.doxygen.yml](ci/azure-pipelines/template.job.doxygen.yml) doxygen の実行
+  - [ci/azure-pipelines/template.job.checkEncoding.yml](ci/azure-pipelines/template.job.checkEncoding.yml) 文字コードの確認
   - [ci/azure-pipelines/template.job.python-check.yml](ci/azure-pipelines/template.job.python-check.yml) python スクリプトのコンパイル確認
     - [ci/azure-pipelines/template.steps.install-python-modules.yml](ci/azure-pipelines/template.steps.install-python-modules.yml) 必要な python モジュールのインストール
 
