@@ -228,7 +228,49 @@ TEST(CCodeBase, codeLatin1)
 	EXPECT_EQ( 0, memcmp( mbsAscii, decoded1.data(), decoded1.size() ) );
 	EXPECT_TRUE( bComplete1_2 );
 
-	// Latin1はかな漢字変換非サポート
+	// Latin1はかな漢字変換非サポートなので、0x80以上の変換できる文字をチェックする
+	// 符号位置 81, 8D, 8F, 90, および 9D は未使用だが、そのまま出力される。
+	constexpr const auto& wcsLatin1ExtChars =
+		L"€\x81‚ƒ„…†‡ˆ‰Š‹Œ\x8DŽ\x8F"
+		L"\x90‘’“”•–—˜™š›œ\x9DžŸ"
+		L"\xA0¡¢£¤¥¦§¨©ª«¬\xAD®¯"
+		L"°±²³´µ¶·¸¹º»¼½¾¿"
+		L"ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏ"
+		L"ÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞß"
+		L"àáâãäåæçèéêëìíîï"
+		L"ðñòóôõö÷øùúûüýþÿ"
+		;
+	constexpr const auto& mbsLatin1ExtChars =
+		"\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8A\x8B\x8C\x8D\x8E\x8F"
+		"\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9A\x9B\x9C\x9D\x9E\x9F"
+		"\xA0\xA1\xA2\xA3\xA4\xA5\xA6\xA7\xA8\xA9\xAA\xAB\xAC\xAD\xAE\xAF"
+		"\xB0\xB1\xB2\xB3\xB4\xB5\xB6\xB7\xB8\xB9\xBA\xBB\xBC\xBD\xBE\xBF"
+		"\xC0\xC1\xC2\xC3\xC4\xC5\xC6\xC7\xC8\xC9\xCA\xCB\xCC\xCD\xCE\xCF"
+		"\xD0\xD1\xD2\xD3\xD4\xD5\xD6\xD7\xD8\xD9\xDA\xDB\xDC\xDD\xDE\xDF"
+		"\xE0\xE1\xE2\xE3\xE4\xE5\xE6\xE7\xE8\xE9\xEA\xEB\xEC\xED\xEE\xEF"
+		"\xF0\xF1\xF2\xF3\xF4\xF5\xF6\xF7\xF8\xF9\xFA\xFB\xFC\xFD\xFE\xFF"
+		;
+
+	bool bComplete2_1 = false;
+	auto encoded2 = pCodeBase->CodeToUnicode(BinarySequenceView(reinterpret_cast<const std::byte*>(mbsLatin1ExtChars), _countof(mbsLatin1ExtChars)), &bComplete2_1);
+	ASSERT_STREQ(wcsLatin1ExtChars, encoded2.GetStringPtr());
+	ASSERT_TRUE(bComplete2_1);
+
+	bool bComplete2_2 = false;
+	auto decoded2 = pCodeBase->UnicodeToCode(encoded2, &bComplete2_2);
+	ASSERT_EQ(0, memcmp(mbsLatin1ExtChars, decoded2.data(), decoded2.size()));
+	ASSERT_TRUE(bComplete2_2);
+
+	// Unicodeに変換できない文字はない（Latin1仕様）
+
+	// Unicodeから変換できない文字（Latin1仕様）
+	constexpr const auto& wcsKanaKanji = L"ｶﾅかなカナ漢字";
+	constexpr const auto& mbsKanaKanji = "????????";
+
+	bool bComplete4_2 = true;
+	auto decoded4 = pCodeBase->UnicodeToCode(wcsKanaKanji, &bComplete4_2);
+	ASSERT_EQ(0, memcmp(mbsKanaKanji, decoded4.data(), decoded4.size()));
+	ASSERT_FALSE(bComplete4_2);
 }
 
 /*!
@@ -449,8 +491,6 @@ TEST(CCodeBase, codeUtf32Le)
 	ASSERT_TRUE( bComplete2_2 );
 }
 
-//! googletestの出力に文字セットIDを出力させる
-std::ostream& operator << (std::ostream& os, const ECodeType& eCodeType);
 /*!
  * @brief 文字コード変換のテスト
  */
@@ -499,6 +539,8 @@ TEST(CCodeBase, codeUtf32Be)
 	ASSERT_TRUE( bComplete2_2 );
 }
 
+//! googletestの出力に文字セットIDを出力させる
+std::ostream& operator << (std::ostream& os, const ECodeType& eCodeType);
 
 //! EOLテストのためのフィクスチャクラス
 class EolTest : public ::testing::TestWithParam<ECodeType> {};
