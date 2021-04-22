@@ -78,11 +78,11 @@ bool CEditView::TagJumpSub(
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	WCHAR	szJumpToFile[1024];
 	HWND hwndTarget = NULL;
-	if( 0 == auto_strncmp(pszFileName, _T(":HWND:["), 7) ){
+	if( 0 == wcsncmp(pszFileName, L":HWND:[", 7) ){
 #ifdef _WIN64
-		_stscanf(pszFileName + 7, _T("%016I64x"), &hwndTarget);
+		_stscanf(pszFileName + 7, L"%016I64x", &hwndTarget);
 #else
-		_stscanf(pszFileName + 7, _T("%08x"), &hwndTarget);
+		_stscanf(pszFileName + 7, L"%08x", &hwndTarget);
 #endif
 		if( !IsSakuraMainWindow(hwndTarget) ){
 			return false;
@@ -92,14 +92,14 @@ bool CEditView::TagJumpSub(
 			GetInidirOrExedir( szJumpToFile, pszFileName );
 		}
 		else {
-			_tcscpy( szJumpToFile, pszFileName );
+			wcscpy( szJumpToFile, pszFileName );
 		}
 
 		/* ロングファイル名を取得する */
-		TCHAR	szWork[1024];
+		WCHAR	szWork[1024];
 		if( FALSE != ::GetLongFileName( szJumpToFile, szWork ) )
 		{
-			_tcscpy( szJumpToFile, szWork );
+			wcscpy( szJumpToFile, szWork );
 		}
 	}
 

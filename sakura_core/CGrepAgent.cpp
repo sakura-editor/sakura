@@ -123,7 +123,7 @@ public:
 	}
 	~CFileLoadOrWnd(){
 	}
-	ECodeType FileOpen(const TCHAR* pszFile, bool bBigFile, ECodeType charCode, int nFlag)
+	ECodeType FileOpen(const WCHAR* pszFile, bool bBigFile, ECodeType charCode, int nFlag)
 	{
 		if( m_hWnd ){
 			DWORD_PTR dwMsgResult = 0;
@@ -297,19 +297,19 @@ void CGrepAgent::AddTail( CEditView* pcEditView, const CNativeW& cmem, bool bAdd
 	}
 }
 
-int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, TCHAR* pszWindowName, TCHAR* pszWindowPath, const TCHAR* pszFile)
+int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, WCHAR* pszWindowName, WCHAR* pszWindowPath, const WCHAR* pszFile)
 {
-	if( 0 != auto_strncmp(_T(":HWND:"), pszFile, 6) ){
+	if( 0 != wcsncmp(L":HWND:", pszFile, 6) ){
 		return 0; // ハンドルGrepではない
 	}
 #ifdef _WIN64
-	_stscanf(pszFile + 6, _T("%016I64x"), &hWndTarget);
+	_stscanf(pszFile + 6, L"%016I64x", &hWndTarget);
 #else
-	_stscanf(pszFile + 6, _T("%08x"), &hWndTarget);
+	_stscanf(pszFile + 6, L"%08x", &hWndTarget);
 #endif
 	if( pmemTitle ){
 		const wchar_t* p = L"Window:[";
-		pmemTitle->SetStringHoldBuffer(p, auto_strlen(p));
+		pmemTitle->SetStringHoldBuffer(p, wcslen(p));
 	}
 	if( !IsSakuraMainWindow(hWndTarget) ){
 		return -1;
@@ -318,30 +318,30 @@ int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, TCHAR* pszWindowName, TC
 	EditInfo* editInfo = &(GetDllShareData().m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO);
 	if( '\0' == editInfo->m_szPath[0] ){
 		// Grepかアウトプットか無題
-		TCHAR szTitle[_MAX_PATH];
-		TCHAR szGrep[100];
+		WCHAR szTitle[_MAX_PATH];
+		WCHAR szGrep[100];
 		editInfo->m_bIsModified = false;
 		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode(hWndTarget);
-		TCHAR* pszTagName = szTitle;
+		WCHAR* pszTagName = szTitle;
 		if( editInfo->m_bIsGrep ){
 			// Grepは検索キーとタグがぶつかることがあるので単に(Grep)と表示
 			pszTagName = szGrep;
-			auto_strcpy(pszTagName, _T("(Grep)"));
+			wcscpy(pszTagName, L"(Grep)");
 		}
 		CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape(szTitle, _countof(szTitle), editInfo, node->m_nId, -1, NULL );
 #ifdef _WIN64
-		auto_sprintf(pszWindowName, _T(":HWND:[%016I64x]%ts"), hWndTarget, pszTagName);
+		auto_sprintf(pszWindowName, L":HWND:[%016I64x]%s", hWndTarget, pszTagName);
 #else
-		auto_sprintf(pszWindowName, _T(":HWND:[%08x]%ts"), hWndTarget, pszTagName);
+		auto_sprintf(pszWindowName, L":HWND:[%08x]%s", hWndTarget, pszTagName);
 #endif
 		if( pmemTitle ){
-			pmemTitle->AppendStringT(szTitle);
+			pmemTitle->AppendString(szTitle);
 		}
 		pszWindowPath[0] = L'\0';
 	}else{
 		SplitPath_FolderAndFile(editInfo->m_szPath, pszWindowPath, pszWindowName);
 		if( pmemTitle ){
-			pmemTitle->AppendStringT(pszWindowName);
+			pmemTitle->AppendString(pszWindowName);
 		}
 	}
 	if( pmemTitle ){
@@ -603,8 +603,8 @@ DWORD CGrepAgent::DoGrep(
 	}
 
 	HWND hWndTarget = NULL;
-	TCHAR szWindowName[_MAX_PATH];
-	TCHAR szWindowPath[_MAX_PATH];
+	WCHAR szWindowName[_MAX_PATH];
+	WCHAR szWindowPath[_MAX_PATH];
 	{
 		int nHwndRet = GetHwndTitle(hWndTarget, &cmemWork, szWindowName, szWindowPath, pcmGrepFile->GetStringPtr());
 		if( -1 == nHwndRet ){
@@ -750,10 +750,10 @@ DWORD CGrepAgent::DoGrep(
 			bool bOutputBaseFolder = false;
 			bool bOutputFolderName = false;
 			// 複数ウィンドウループ予約
-			int nPathLen = auto_strlen(szWindowPath);
-			std::tstring currentFile = szWindowPath;
+			int nPathLen = wcslen(szWindowPath);
+			std::wstring currentFile = szWindowPath;
 			if( currentFile.size() ){
-				currentFile += _T('\\');
+				currentFile += L'\\';
 				nPathLen += 1;
 			}
 			currentFile += szWindowName;
@@ -771,7 +771,7 @@ DWORD CGrepAgent::DoGrep(
 				&nHitCount,
 				currentFile.c_str(),
 				szWindowPath,
-				(sGrepOption.bGrepSeparateFolder && sGrepOption.bGrepOutputBaseFolder ? _T("") : szWindowPath),
+				(sGrepOption.bGrepSeparateFolder && sGrepOption.bGrepOutputBaseFolder ? L"" : szWindowPath),
 				(sGrepOption.bGrepSeparateFolder ? szWindowName : currentFile.c_str() + nPathLen),
 				bOutputBaseFolder,
 				bOutputFolderName,
@@ -794,7 +794,7 @@ DWORD CGrepAgent::DoGrep(
 	}else{
 		for( int nPath = 0; nPath < (int)vPaths.size(); nPath++ ){
 			bool bOutputBaseFolder = false;
-			std::tstring sPath = ChopYen( vPaths[nPath] );
+			std::wstring sPath = ChopYen( vPaths[nPath] );
 			int nTreeRet = DoGrepTree(
 				pcViewDst,
 				&cDlgCancel,

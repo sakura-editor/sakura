@@ -82,7 +82,7 @@ static bool IsHWNDTag( const wchar_t* pLine, wchar_t* pFile, int* pnLen = NULL )
 			}
 			if( i != nLen && nLen <= 16 + 8 ){
 				if( pFile ){
-					auto_memcpy(pFile, pLine, nLen);
+					wmemcpy(pFile, pLine, nLen);
 				}
 				if( pnLen ){
 					*pnLen = nLen;
@@ -369,7 +369,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 		if( IsHWNDTag(pLine, NULL, &nLen) ){
 			int nFileEnd = GetLineColumnPos(pLine);
 			if( nFileEnd ){
-				auto_memcpy(szJumpToFile, pLine, nLen);
+				wmemcpy(szJumpToFile, pLine, nLen);
 				szJumpToFile[nLen] = L'\0';
 				GetLineColumn(&pLine[nFileEnd + 1], &nJumpToLine, &nJumpToColumn);
 			}
@@ -413,7 +413,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 
 	//	Apr. 21, 2003 genta bClose追加
 	if( szJumpToFile[0] ){
-		std::tstring tstrFile = to_tchar(szJumpToFile);
+		std::wstring tstrFile = szJumpToFile;
 		if( m_pCommanderView->TagJumpSub( tstrFile.c_str(), CMyPoint(nJumpToColumn, nJumpToLine), bClose ) ){	//@@@ 2003.04.13
 			return true;
 		}
@@ -783,7 +783,7 @@ bool CViewCommander::Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int cou
 		// 現在のタイプ別の1番目の拡張子を拝借
 		WCHAR szExts[MAX_TYPES_EXTS];
 		CDocTypeManager::GetFirstExt(m_pCommanderView->m_pTypeData->m_szTypeExts, szExts, _countof(szExts));
-		size_t nExtLen = auto_strlen( szExts );
+		size_t nExtLen = wcslen( szExts );
 		wcscat( szCurrentPath, L"\\dmy" );
 		if( nExtLen ){
 			wcscat( szCurrentPath, L"." );
