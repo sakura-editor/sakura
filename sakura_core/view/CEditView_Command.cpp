@@ -61,7 +61,7 @@ bool CEditView::TagJumpSub(
 	bool*			pbJumpToSelf	//!< [out] オプションNULL可。自分にジャンプしたか
 )
 {
-	HWND	hwndOwner;
+	HWND	hwndOwner = NULL;
 	POINT	poCaret;
 	// 2004/06/21 novice タグジャンプ機能追加
 	TagJump	tagJump;
