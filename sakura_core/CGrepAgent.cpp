@@ -775,7 +775,8 @@ DWORD CGrepAgent::DoGrep(
 				(sGrepOption.bGrepSeparateFolder ? szWindowName : currentFile.c_str() + nPathLen),
 				bOutputBaseFolder,
 				bOutputFolderName,
-				cmemMessage
+				cmemMessage,
+				cUnicodeBuffer
 			);
 			if( nTreeRet == -1 ){
 				nGrepTreeResult = -1;
@@ -810,7 +811,9 @@ DWORD CGrepAgent::DoGrep(
 				&cRegexp,
 				0,
 				bOutputBaseFolder,
-				&nHitCount
+				&nHitCount,
+				cmemMessage,
+				cUnicodeBuffer
 			);
 			if( nTreeRet == -1 ){
 				nGrepTreeResult = -1;
