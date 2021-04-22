@@ -298,6 +298,19 @@ void AddLastYenFromDirectoryPath( WCHAR* pszFolder )
 	return;
 }
 
+//! パスらしき文字列の末尾に'\\'または'/'がなかったら'\\'を付加する
+std::wstring AddLastYenPath(std::wstring_view path)
+{
+	std::wstring ret{ path };
+	if (0 == ret.size()) {
+		return ret;
+	}
+	if (auto c = ret.back(); !(c == L'\\' || c == L'/')) {
+		ret.append(L"\\");
+	}
+	return ret;
+}
+
 /* ファイルのフルパスを、フォルダとファイル名に分割 */
 /* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
 void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR* pszFile )
