@@ -711,19 +711,28 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 	if( bChecked ){
 		::DlgItem_GetText(GetHwnd(), IDC_COMBO_FILE, m_szFile, _countof2(m_szFile));
 		::DlgItem_GetText(GetHwnd(), IDC_COMBO_FOLDER, m_szFolder, _countof2(m_szFolder));
+		::DlgItem_GetText(GetHwnd(), IDC_COMBO_EXCLUDE_FILE, m_szExcludeFile, _countof2(m_szExcludeFile));
+		::DlgItem_GetText(GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, m_szExcludeFolder, _countof2(m_szExcludeFolder));
 
 		::DlgItem_SetText( GetHwnd(), IDC_COMBO_FILE, LS(STR_DLGGREP_THISDOC) );
 		SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), LS(STR_DLGGREP_THISDOC) );
+		::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FILE, L"" );
+		::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, L"" );
 		::CheckDlgButton( GetHwnd(), IDC_CHK_SUBFOLDER, BST_UNCHECKED );
 		bEnableControls = FALSE;
 	}else{
 		::DlgItem_SetText(GetHwnd(), IDC_COMBO_FILE, m_szFile);
 		::DlgItem_SetText(GetHwnd(), IDC_COMBO_FOLDER, m_szFolder);
+		::DlgItem_SetText(GetHwnd(), IDC_COMBO_EXCLUDE_FILE, m_szExcludeFile);
+		::DlgItem_SetText(GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, m_szExcludeFolder);
 	}
 	::EnableWindow( GetItemHwnd( IDC_COMBO_FILE ),    bEnableControls );
 	::EnableWindow( GetItemHwnd( IDC_COMBO_FOLDER ),  bEnableControls );
 	::EnableWindow( GetItemHwnd( IDC_BUTTON_FOLDER ), bEnableControls );
 	::EnableWindow( GetItemHwnd( IDC_CHK_SUBFOLDER ), bEnableControls );
+	::EnableWindow( GetItemHwnd( IDC_BUTTON_FILEOPENDIR ),    bEnableControls );
+	::EnableWindow( GetItemHwnd( IDC_COMBO_EXCLUDE_FILE ),    bEnableControls );
+	::EnableWindow( GetItemHwnd( IDC_COMBO_EXCLUDE_FOLDER ),    bEnableControls );
 	return;
 }
 
