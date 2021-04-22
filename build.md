@@ -172,14 +172,16 @@ build-sln.bat x64   Debug
 
 ### CI でのビルドをスキップする方法
 
-ビルドに関係ない修正 (ドキュメントの修正など)を行った場合に、コミットメッセージの中に
-`[ci skip]` を含めることで、Appveyor での CI ビルドを行わないようにすることができます。
-ただし PR をマージするときには、CI のビルドは走ります。
+ビルドに関係ない修正 (ドキュメントの修正など) を行った場合に、
+コミットメッセージの中に `[ci skip]` または `[skip ci]` というキーワードを含めることで、 CI ビルドを行わないようにすることができます。  
+ただし PR をマージするときは実行されます。
 
-#### 参考サイト
+#### 参考情報
 
-- https://srz-zumix.blogspot.com/2018/03/ci-ci-20183.html
-- https://www.appveyor.com/docs/how-to/filtering-commits/#skip-commits
+- https://qiita.com/vmmhypervisor/items/f10c77a375c2a663b300
+- https://www.appveyor.com/docs/how-to/filtering-commits/#skip-directive-in-commit-message
+- https://docs.microsoft.com/ja-jp/azure/devops/pipelines/repos/azure-repos-git?view=azure-devops&tabs=yaml#skipping-ci-for-individual-commits
+- https://github.blog/changelog/2021-02-08-github-actions-skip-pull-request-and-push-workflows-with-skip-ci/
 
 ### MinGW w64 ビルド
 
