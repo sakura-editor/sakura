@@ -49,6 +49,7 @@
 #include <iterator>
 #include <deque>
 #include <memory>
+#include "apiwrap/StdApi.h"
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"
 #include "sakura_rc.h"
