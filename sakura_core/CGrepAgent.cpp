@@ -165,7 +165,7 @@ public:
 			if( 0 < nLineLen ){
 				if( 1 < nLineLen && (*buffer)[nLineLen - 2] == WCODE::CR &&
 						(*buffer)[nLineLen - 1] == WCODE::LF){
-					pcEol->SetType(EOL_CRLF);
+					pcEol->SetType(EEolType::cr_and_lf);
 				}else{
 					pcEol->SetTypeByString(buffer->GetStringPtr() + nLineLen - 1, 1);
 				}
