@@ -23,6 +23,7 @@
   - [開発者向けの情報](#開発者向けの情報)
     - [githash.h の更新のスキップ](#githashh-の更新のスキップ)
     - [Powershell によるZIPファイルの圧縮、解凍、内容確認の強制](#powershell-によるzipファイルの圧縮解凍内容確認の強制)
+    - [CI でのビルドをスキップする方法](#ci-でのビルドをスキップする方法)
     - [MinGW w64 ビルド](#mingw-w64-ビルド)
 
 <!-- /TOC -->
@@ -168,6 +169,17 @@ build-sln.bat Win32 Debug
 build-sln.bat x64   Release
 build-sln.bat x64   Debug
 ```
+
+### CI でのビルドをスキップする方法
+
+ビルドに関係ない修正 (ドキュメントの修正など)を行った場合に、コミットメッセージの中に
+`[ci skip]` を含めることで、Appveyor での CI ビルドを行わないようにすることができます。
+ただし PR をマージするときには、CI のビルドは走ります。
+
+#### 参考サイト
+
+- https://srz-zumix.blogspot.com/2018/03/ci-ci-20183.html
+- https://www.appveyor.com/docs/how-to/filtering-commits/#skip-commits
 
 ### MinGW w64 ビルド
 
