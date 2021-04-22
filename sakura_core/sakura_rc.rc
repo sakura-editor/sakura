@@ -3170,7 +3170,7 @@ BEGIN
     STR_DLGGREP4            "検索対象フォルダを指定してください。"
     STR_DLGGREP5            "検索対象フォルダが正しくありません。"
     STR_DLGGREP6            "検索対象フォルダが長すぎます。"
-    STR_DLGGREP_THISDOC			"(現在のドキュメント)"
+    STR_DLGGREP_THISDOC     "(現在のドキュメント)"
     STR_DLGJUMP1            "正しく行番号を入力してください。"
     STR_DLGJUMP_PSLQL       "%d 行  %s  パッケージ仕様部"
     STR_DLGOPNFL1           "変換なし"
