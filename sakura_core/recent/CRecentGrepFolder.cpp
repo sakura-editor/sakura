@@ -39,7 +39,7 @@ CRecentGrepFolder::CRecentGrepFolder()
 		GetShareData()->m_sSearchKeywords.m_aGrepFolders.dataPtr(),
 		GetShareData()->m_sSearchKeywords.m_aGrepFolders.dataPtr()->GetBufferCount(),
 		&GetShareData()->m_sSearchKeywords.m_aGrepFolders._GetSizeRef(),
-		NULL,
+		GetShareData()->m_sSearchKeywords.m_aGrepFoldersFav,
 		MAX_GREPFOLDER,
 		NULL
 	);

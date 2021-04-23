@@ -40,7 +40,7 @@ CRecentCmd::CRecentCmd()
 		GetShareData()->m_sHistory.m_aCommands.dataPtr(),
 		GetShareData()->m_sHistory.m_aCommands.dataPtr()->GetBufferCount(),
 		&GetShareData()->m_sHistory.m_aCommands._GetSizeRef(),
-		NULL,
+		GetShareData()->m_sHistory.m_aCommandsFav,
 		MAX_CMDARR,
 		NULL
 	);

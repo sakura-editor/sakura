@@ -39,6 +39,11 @@ struct SShare_SearchKeywords{
 	StaticVector< StaticString<WCHAR, MAX_GREP_PATH>, MAX_GREPFOLDER, const WCHAR*>	m_aGrepFolders;
 	StaticVector< StaticString<WCHAR, MAX_EXCLUDE_PATH>, MAX_EXCLUDEFILE,   const WCHAR*>	m_aExcludeFiles;
 	StaticVector< StaticString<WCHAR, MAX_EXCLUDE_PATH>, MAX_EXCLUDEFOLDER, const WCHAR*>	m_aExcludeFolders;
+
+	bool m_aSearchKeysFav[MAX_SEARCHKEY];
+	bool m_aReplaceKeysFav[MAX_REPLACEKEY];
+	bool m_aGrepFilesFav[MAX_GREPFILE];
+	bool m_aGrepFoldersFav[MAX_GREPFOLDER];
 };
 
 struct DLLSHAREDATA;

@@ -311,6 +311,10 @@ void CShareData_IO::ShareData_IO_Keys( CDataProfile& cProfile )
 	for( i = 0; i < nSize; ++i ){
 		auto_sprintf( szKeyName, LTEXT("SEARCHKEY[%02d]"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sSearchKeywords.m_aSearchKeys[i] );
+		if( cProfile.IsReadingMode() || pShare->m_sSearchKeywords.m_aSearchKeysFav[i] ){
+			auto_sprintf( szKeyName, LTEXT("SEARCHKEY[%02d].Fav"), i );
+			cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sSearchKeywords.m_aSearchKeysFav[i] );
+		}
 	}
 
 	cProfile.IOProfileData( pszSecName, LTEXT("_REPLACEKEY_Counts"), pShare->m_sSearchKeywords.m_aReplaceKeys._GetSizeRef() );
@@ -319,6 +323,10 @@ void CShareData_IO::ShareData_IO_Keys( CDataProfile& cProfile )
 	for( i = 0; i < nSize; ++i ){
 		auto_sprintf( szKeyName, LTEXT("REPLACEKEY[%02d]"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sSearchKeywords.m_aReplaceKeys[i] );
+		if( cProfile.IsReadingMode() || pShare->m_sSearchKeywords.m_aReplaceKeysFav[i] ){
+			auto_sprintf( szKeyName, LTEXT("REPLACEKEY[%02d].Fav"), i );
+			cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sSearchKeywords.m_aReplaceKeysFav[i] );
+		}
 	}
 }
 
@@ -343,6 +351,10 @@ void CShareData_IO::ShareData_IO_Grep( CDataProfile& cProfile )
 	for( i = 0; i < nSize; ++i ){
 		auto_sprintf( szKeyName, LTEXT("GREPFILE[%02d]"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sSearchKeywords.m_aGrepFiles[i] );
+		if( cProfile.IsReadingMode() || pShare->m_sSearchKeywords.m_aGrepFilesFav[i] ){
+			auto_sprintf( szKeyName, LTEXT("GREPFILE[%02d].Fav"), i );
+			cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sSearchKeywords.m_aGrepFilesFav[i] );
+		}
 	}
 
 	cProfile.IOProfileData( pszSecName, LTEXT("_GREPFOLDER_Counts"), pShare->m_sSearchKeywords.m_aGrepFolders._GetSizeRef() );
@@ -351,6 +363,10 @@ void CShareData_IO::ShareData_IO_Grep( CDataProfile& cProfile )
 	for( i = 0; i < nSize; ++i ){
 		auto_sprintf( szKeyName, LTEXT("GREPFOLDER[%02d]"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sSearchKeywords.m_aGrepFolders[i] );
+		if( cProfile.IsReadingMode() || pShare->m_sSearchKeywords.m_aGrepFoldersFav[i] ){
+			auto_sprintf( szKeyName, LTEXT("GREPFOLDER[%02d].Fav"), i );
+			cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sSearchKeywords.m_aGrepFoldersFav[i] );
+		}
 	}
 
 	/* 除外ファイルパターン */
@@ -409,6 +425,10 @@ void CShareData_IO::ShareData_IO_Cmd( CDataProfile& cProfile )
 	for( i = 0; i < nSize; ++i ){
 		auto_sprintf( szKeyName, LTEXT("szCmdArr[%02d]"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_aCommands[i] );
+		if( cProfile.IsReadingMode() || pShare->m_sHistory.m_aCommandsFav[i] ){
+			auto_sprintf( szKeyName, LTEXT("szCmdArr[%02d].Fav"), i );
+			cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_aCommandsFav[i] );
+		}
 	}
 
 	cProfile.IOProfileData( pszSecName, LTEXT("nCurDirArrNum"), pShare->m_sHistory.m_aCurDirs._GetSizeRef() );
@@ -417,6 +437,10 @@ void CShareData_IO::ShareData_IO_Cmd( CDataProfile& cProfile )
 	for( i = 0; i < nSize; ++i ){
 		auto_sprintf( szKeyName, LTEXT("szCurDirArr[%02d]"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_aCurDirs[i] );
+		if( cProfile.IsReadingMode() || pShare->m_sHistory.m_aCurDirsFav[i] ){
+			auto_sprintf( szKeyName, LTEXT("szCurDirArr[%02d].Fav"), i );
+			cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_aCurDirsFav[i] );
+		}
 	}
 }
 

@@ -95,6 +95,13 @@ CMutex& CShareData::GetMutexShareWork(){
 	return g_cMutexShareWork;
 }
 
+static void ClearFavorite(bool* aBoolArr, size_t size)
+{
+	for(size_t i = 0; i < size; i++){
+		aBoolArr[i] = false;
+	}
+}
+
 //! CShareDataクラスの初期化処理
 /*!
 	CShareDataクラスを利用する前に必ず呼び出すこと。
@@ -694,11 +701,16 @@ bool CShareData::InitShareData()
 		}
 
 		{
+			SShare_SearchKeywords& sKeys = m_pShareData->m_sSearchKeywords;
 			m_pShareData->m_sSearchKeywords.m_aSearchKeys.clear();
 			m_pShareData->m_sSearchKeywords.m_aReplaceKeys.clear();
 			m_pShareData->m_sSearchKeywords.m_aGrepFiles.clear();
 			m_pShareData->m_sSearchKeywords.m_aGrepFiles.push_back(L"*.*");
 			m_pShareData->m_sSearchKeywords.m_aGrepFolders.clear();
+			ClearFavorite(sKeys.m_aSearchKeysFav,  _countof(sKeys.m_aSearchKeysFav));
+			ClearFavorite(sKeys.m_aReplaceKeysFav, _countof(sKeys.m_aReplaceKeysFav));
+			ClearFavorite(sKeys.m_aGrepFilesFav,   _countof(sKeys.m_aGrepFilesFav));
+			ClearFavorite(sKeys.m_aGrepFoldersFav, _countof(sKeys.m_aGrepFoldersFav));
 
 			// 2004/06/21 novice タグジャンプ機能追加
 			m_pShareData->m_sTagJump.m_TagJumpNum = 0;
@@ -714,8 +726,11 @@ bool CShareData::InitShareData()
 
 			wcscpy( m_pShareData->m_sHistory.m_szIMPORTFOLDER, szIniFolder );	/* 設定インポート用フォルダ */
 
+			SShare_History& sHis = m_pShareData->m_sHistory;
 			m_pShareData->m_sHistory.m_aCommands.clear();
 			m_pShareData->m_sHistory.m_aCurDirs.clear();
+			ClearFavorite(sHis.m_aCommandsFav, _countof(sHis.m_aCommandsFav));
+			ClearFavorite(sHis.m_aCurDirsFav,  _countof(sHis.m_aCurDirsFav));
 
 			m_pShareData->m_nExecFlgOpt = 1;	/* 外部コマンド実行の「標準出力を得る」 */	// 2006.12.03 maru オプションの拡張のため
 

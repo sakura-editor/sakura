@@ -156,7 +156,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_SEARCH );
 		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_SEARCH;
-		m_aFavoriteInfo[i].m_bHaveFavorite = false;
+		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = true;
@@ -167,7 +167,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_REPLACE );
 		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_REPLACE;
-		m_aFavoriteInfo[i].m_bHaveFavorite = false;
+		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = true;
@@ -178,7 +178,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_GREP_FILE );
 		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_GREP_FILE;
-		m_aFavoriteInfo[i].m_bHaveFavorite = false;
+		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = true;
@@ -189,7 +189,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_GREP_FOLDER );
 		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_GREP_FOLDER;
-		m_aFavoriteInfo[i].m_bHaveFavorite = false;
+		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = true;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = false;
@@ -200,7 +200,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_EXT_COMMAND );
 		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_CMD;
-		m_aFavoriteInfo[i].m_bHaveFavorite = false;
+		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = true;
@@ -211,7 +211,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_CURRENT_DIR );
 		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_CUR_DIR;
-		m_aFavoriteInfo[i].m_bHaveFavorite = false;
+		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = true;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = false;
