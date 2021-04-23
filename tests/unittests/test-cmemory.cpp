@@ -144,3 +144,37 @@ TEST(CMemory, OverMaxSize)
 	cmem.AllocBuffer(static_cast<unsigned>(INT_MAX) + 1);
 	ASSERT_TRUE(cmem.GetRawPtr() == nullptr);
 }
+
+/*!
+	CMemory::AppendRawDataのテスト
+	様々なサイズのデータ追加が正常に行える事の確認
+ */
+TEST(CMemory, AppendRawData)
+{
+	const size_t n = 2 * 5000;
+	const size_t sumAnswer = n / 2 * (n + 1);
+	std::vector<char> buff(n);
+	for (size_t i = 0; i < n; ++i) {
+		buff[i] = '0' + (i % 10);
+	}
+	const void* pData = &buff[0];
+	CMemory cmem;
+	cmem.AllocBuffer(sumAnswer);
+	size_t sum = 0;
+	for (size_t i = 0; i <= n; ++i) {
+		{
+			cmem.AppendRawData(pData, i);
+			sum += i;
+			ASSERT_TRUE(cmem.GetRawLength() == sum);
+		}
+		{
+			// #1638 の修正に関連した試験
+			CMemory cmemTmp;
+			cmemTmp.AllocBuffer(1);
+			cmemTmp.AppendRawData(pData, i);
+			auto rawLen = cmemTmp.GetRawLength();
+			ASSERT_TRUE(rawLen == i);
+		}
+	}
+	ASSERT_TRUE(sum == sumAnswer);
+}
