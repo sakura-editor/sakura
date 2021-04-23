@@ -3196,6 +3196,7 @@ BEGIN
     STR_DLGGREP4            "Please define the target search folder."
     STR_DLGGREP5            "Target folder is not correct."
     STR_DLGGREP6            "Target folder is too long"
+	STR_DLGGREP_THISDOC			"(Current document)"
     STR_DLGJUMP1            "Please input correct line number"
     STR_DLGJUMP_PSLQL       "%d Ln  %s  Package Specification"
     STR_DLGOPNFL1           "as is"

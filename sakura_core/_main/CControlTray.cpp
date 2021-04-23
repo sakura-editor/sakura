@@ -68,6 +68,8 @@ static LRESULT CALLBACK CControlTrayWndProc( HWND, UINT, WPARAM, LPARAM );
 //Stonee, 2001/07/01  多重起動された場合は前回のダイアログを前面に出すようにした。
 void CControlTray::DoGrep()
 {
+	m_cDlgGrep.m_bEnableThisText = false;
+
 	//Stonee, 2001/06/30
 	//前回のダイアログがあれば前面に (suggested by genta)
 	if ( ::IsWindow(m_cDlgGrep.GetHwnd()) ){

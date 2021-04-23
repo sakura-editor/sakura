@@ -1946,6 +1946,10 @@ LRESULT CEditWnd::DispatchEvent(
 		wmemcpy( m_pShareData->m_sWorkBuffer.GetWorkBuffer<EDIT_CHAR>(), pLine, nEnd );
 		return nLineLen;
 	}
+	case MYWM_GETLINECOUNT:
+	{
+		return GetDocument()->m_cDocLineMgr.GetLineCount();
+	}
 
 	// 2010.05.11 Moca MYWM_ADDSTRINGLEN_Wを追加 NULセーフ
 	case MYWM_ADDSTRINGLEN_W:
