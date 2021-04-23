@@ -614,16 +614,16 @@ DWORD CGrepAgent::DoGrep(
 			}
 			return 0;
 		}else if( 0 == nHwndRet ){
-			cmemWork.SetStringT( pcmGrepFile->GetStringPtr() );
+			{
+				// 解析済みのファイルパターン配列を取得する
+				const auto& vecSearchFileKeys = cGrepEnumKeys.m_vecSearchFileKeys;
+				std::wstring strPatterns = FormatPathList( vecSearchFileKeys );
+				cmemWork.SetString( strPatterns.c_str(), strPatterns.length() );
+			}
 		}
 	}
 	cmemMessage.AppendString( LS( STR_GREP_SEARCH_TARGET ) );	//L"検索対象   "
-	{
-		// 解析済みのファイルパターン配列を取得する
-		const auto& vecSearchFileKeys = cGrepEnumKeys.m_vecSearchFileKeys;
-		std::wstring strPatterns = FormatPathList( vecSearchFileKeys );
-		cmemMessage.AppendString( strPatterns.c_str(), strPatterns.length() );
-	}
+	cmemMessage += cmemWork;
 	cmemMessage.AppendString( L"\r\n" );
 
 	cmemMessage.AppendString( LS( STR_GREP_SEARCH_FOLDER ) );	//L"フォルダ   "
