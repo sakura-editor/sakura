@@ -295,6 +295,7 @@ public:
 // To Here 2001.12.03 hor
 	// Apr. 03, 2003 genta 引数追加
 	bool Command_TAGJUMP( bool bClose = false );		/* タグジャンプ機能 */
+	bool Command_TagJumpNoMessage( bool bClose );		// タグジャンプ機能(メッセージ通知なし)
 	void Command_TAGJUMPBACK( void );					/* タグジャンプバック機能 */
 	bool Command_TagJumpByTagsFileMsg(bool bMsg);				//ダイレクトタグジャンプ(通知つき)
 	bool Command_TagJumpByTagsFile(bool bClose);				//ダイレクトタグジャンプ	//@@@ 2003.04.13 MIK

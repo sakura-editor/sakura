@@ -227,7 +227,7 @@ void CMemory::SetRawDataHoldBuffer( const CMemory& cmemData )
 void CMemory::AppendRawData( const void* pData, size_t nDataLen )
 {
 	// メモリが足りなければ確保する
-	if( m_nDataBufSize <= m_nRawLen + nDataLen ){
+	if( m_nDataBufSize <= m_nRawLen + nDataLen + sizeof(wchar_t) ){
 		AllocBuffer( m_nRawLen + nDataLen );
 	}
 

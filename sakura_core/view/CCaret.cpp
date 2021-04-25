@@ -873,6 +873,7 @@ void CCaret::ShowCaretPosInfo()
 		setStatusText( nIndex++, 0,             szFontSize );
 		::SendMessage(hWnd, WM_SETREDRAW, TRUE, 0);
 		InvalidateRect(hWnd, &updatedRect, TRUE);
+		UpdateWindow(hWnd);
 	}
 }
 
