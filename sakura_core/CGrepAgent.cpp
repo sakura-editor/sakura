@@ -310,6 +310,9 @@ int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, WCHAR* pszWindowName, WC
 #endif
 	if( pmemTitle ){
 		const wchar_t* p = L"Window:[";
+		if( !p ){
+			return false;
+		}
 		pmemTitle->SetStringHoldBuffer(p, wcslen(p));
 	}
 	if( !IsSakuraMainWindow(hWndTarget) ){
@@ -319,15 +322,15 @@ int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, WCHAR* pszWindowName, WC
 	EditInfo* editInfo = &(GetDllShareData().m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO);
 	if( '\0' == editInfo->m_szPath[0] ){
 		// Grepかアウトプットか無題
-		WCHAR szTitle[_MAX_PATH];
-		WCHAR szGrep[100];
+		WCHAR szTitle[_MAX_PATH]{};
+		WCHAR szGrep[100]{};
 		editInfo->m_bIsModified = false;
 		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode(hWndTarget);
 		WCHAR* pszTagName = szTitle;
 		if( editInfo->m_bIsGrep ){
 			// Grepは検索キーとタグがぶつかることがあるので単に(Grep)と表示
 			pszTagName = szGrep;
-			wcscpy(pszTagName, L"(Grep)");
+			wcsncpy_s(pszTagName, _countof(szTitle), L"(Grep)", _TRUNCATE);
 		}
 		CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape(szTitle, _countof(szTitle), editInfo, node->m_nId, -1, NULL );
 #ifdef _WIN64
@@ -751,7 +754,10 @@ DWORD CGrepAgent::DoGrep(
 			bool bOutputBaseFolder = false;
 			bool bOutputFolderName = false;
 			// 複数ウィンドウループ予約
-			int nPathLen = wcslen(szWindowPath);
+			if( !szWindowPath ){
+				return false;
+			}
+			int nPathLen = static_cast<size_t>(wcslen(szWindowPath));
 			std::wstring currentFile = szWindowPath;
 			if( currentFile.size() ){
 				currentFile += L'\\';
