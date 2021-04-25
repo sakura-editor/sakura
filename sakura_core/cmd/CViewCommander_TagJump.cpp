@@ -159,8 +159,11 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 	nJumpToColumn = 0;
 
 	//ファイル名バッファ
+	wchar_t		szJumpToFile[1024];
+	wchar_t		szFile[_MAX_PATH] = { L'\0' };
 	size_t		nBgn;
 	size_t		nPathLen;
+	wmemset(szJumpToFile, 0, _countof(szJumpToFile));
 
 	/*
 	  カーソル位置変換
