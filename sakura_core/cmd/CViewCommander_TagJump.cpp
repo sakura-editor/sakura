@@ -241,15 +241,10 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 				break;
 			}else if( !GetQuoteFilePath( &pLine[2], szFile, _countof(szFile) ) ){
 				break;
-			}else if( IsHWNDTag(&pLine[2], szJumpToFile) ){
-				break;
 			}
 			searchMode = TAGLIST_ROOT;
 		}else if( 0 == wmemcmp( pLine, L"◆\"", 2 ) ){
 			if( !GetQuoteFilePath( &pLine[2], szFile, _countof(szFile) ) ){
-				break;
-			}
-			if( IsHWNDTag(&pLine[2], szJumpToFile) ){
 				break;
 			}
 			searchMode = TAGLIST_SUBPATH;
@@ -267,16 +262,38 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 				searchMode = TAGLIST_FILEPATH;
 			}else{
 				// ノーマル/ファイル相対パス
-				// ・FileName.ext(123,45): str
-				// ・FileName.ext(123,45)  [SJIS]: str
-				// ・subpath\FileName.ext(123,45): str
-				// ・:HWND:[01234567](無題)2(123,45): str
-				int fileEnd = GetLineColumnPos(pLine);
-				if( 0 < fileEnd && fileEnd - 1 < (int)_countof(szFile) ){
-					wmemcpy( szFile, pLine + 1, fileEnd - 1 );
-					szFile[fileEnd - 1] = L'\0';
-					GetLineColumn( &pLine[fileEnd + 1], &nJumpToLine, &nJumpToColumn );
-					if( IsHWNDTag(pLine + 1, szJumpToFile) ){
+				// ･FileName.ext(123,45): str
+				// ･FileName.ext(123,45)  [SJIS]: str
+				const wchar_t* pTagEnd = wcsstr( pLine, L"): " );
+				if( !pTagEnd ){
+					pTagEnd = wcsstr( pLine, L"]: " );
+					if( pTagEnd ){
+						int fileEnd = pTagEnd - pLine - 1;
+						for( ; 1 < fileEnd; fileEnd-- ){
+							if( L'[' == pLine[fileEnd] ){
+								fileEnd--;
+								break;
+							}
+						}
+						for( ; 1 < fileEnd && L' ' == pLine[fileEnd]; fileEnd-- ){}
+						if( ')' == pLine[fileEnd] ){
+							pTagEnd = &pLine[fileEnd];
+						}else{
+							pTagEnd = NULL;
+						}
+					}
+				}
+				if( pTagEnd ){
+					int fileEnd = pTagEnd - pLine - 1;
+					for( ; 1 < fileEnd && (L'0' <= pLine[fileEnd] && pLine[fileEnd] <= L'9'); fileEnd-- ){}
+					if(    1 < fileEnd && (L',' == pLine[fileEnd]) ){ fileEnd--; }
+					for( ; 1 < fileEnd && (L'0' <= pLine[fileEnd] && pLine[fileEnd] <= L'9'); fileEnd-- ){}
+					if( 1 < fileEnd && L'(' == pLine[fileEnd] && fileEnd - 1 < (int)_countof(szFile) ){
+						wmemcpy( szFile, pLine + 1, fileEnd - 1 );
+						szFile[fileEnd - 1] = L'\0';
+						GetLineColumn( &pLine[fileEnd + 1], &nJumpToLine, &nJumpToColumn );
+						searchMode = TAGLIST_SUBPATH;
+					}else{
 						break;
 					}
 					searchMode = TAGLIST_SUBPATH;
@@ -300,9 +317,6 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 				if( searchMode == TAGLIST_SUBPATH || searchMode == TAGLIST_ROOT ){
 					continue;
 				}
-				if( IsHWNDTag(&pLine[2], szJumpToFile) ){
-					break;
-				}
 				// フォルダ毎：ファイル名
 				if( GetQuoteFilePath(&pLine[2], szFile, _countof(szFile)) ){
 					searchMode = TAGLIST_SUBPATH;
@@ -318,9 +332,6 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 			}else if( 3 <= nLineLen && 0 == wmemcmp( pLine, L"■\"", 2 ) ){
 				if( searchMode == TAGLIST_ROOT ){
 					continue;
-				}
-				if( IsHWNDTag(&pLine[2], szJumpToFile) ){
-					break;
 				}
 				// ファイル毎(WZ風)：フルパス
 				if( IsFilePath( &pLine[2], &nBgn, &nPathLen ) && !_IS_REL_PATH( &pLine[2] ) ){
@@ -365,17 +376,6 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 		if( NULL == pLine ){
 			goto can_not_tagjump;
 		}
-		int nLen = 0;
-		if( IsHWNDTag(pLine, NULL, &nLen) ){
-			int nFileEnd = GetLineColumnPos(pLine);
-			if( nFileEnd ){
-				wmemcpy(szJumpToFile, pLine, nLen);
-				szJumpToFile[nLen] = L'\0';
-				GetLineColumn(&pLine[nFileEnd + 1], &nJumpToLine, &nJumpToColumn);
-			}
-		}
-	}
-	if( szJumpToFile[0] == L'\0' ){
 		//@@@ 2001.12.31 YAZAKI
 		const wchar_t *p = pLine;
 		const wchar_t *p_end = p + nLineLen;
@@ -413,8 +413,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 
 	//	Apr. 21, 2003 genta bClose追加
 	if( szJumpToFile[0] ){
-		std::wstring tstrFile = szJumpToFile;
-		if( m_pCommanderView->TagJumpSub( tstrFile.c_str(), CMyPoint(nJumpToColumn, nJumpToLine), bClose ) ){	//@@@ 2003.04.13
+		if( m_pCommanderView->TagJumpSub( szJumpToFile, CMyPoint(nJumpToColumn, nJumpToLine), bClose ) ){	//@@@ 2003.04.13
 			return true;
 		}
 	}
