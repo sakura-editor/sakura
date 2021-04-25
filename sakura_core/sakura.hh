@@ -1148,6 +1148,7 @@
 #define HIDC_GREP_REP_CHK_PASTE				14505	//クリップボードから貼り付け
 #define HIDC_GREP_REP_CHK_WORD				14506	//単語単位
 #define HIDC_GREP_REP_CHK_SUBFOLDER			14507	//サブフォルダも検索
+#define HIDC_GREP_REP_CHK_FROMTHISTEXT      14804	//このテキストから
 #define HIDC_GREP_REP_CHK_LOHICASE			14509	//大文字小文字
 #define HIDC_GREP_REP_CHK_REGULAREXP		14510	//正規表現
 #define HIDC_GREP_REP_CHK_BACKUP			14511	//バックアップ作成
