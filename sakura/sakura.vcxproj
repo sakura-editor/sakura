@@ -492,6 +492,7 @@
     <ClInclude Include="..\sakura_core\recent\CRecentReplace.h" />
     <ClInclude Include="..\sakura_core\recent\CRecentSearch.h" />
     <ClInclude Include="..\sakura_core\recent\CRecentTagjumpKeyword.h" />
+    <ClInclude Include="..\sakura_core\recent\SShare_History.h" />
     <ClInclude Include="..\sakura_core\sakura.hh" />
     <ClInclude Include="..\sakura_core\sakura_rc.h" />
     <ClInclude Include="..\sakura_core\StdAfx.h" />
