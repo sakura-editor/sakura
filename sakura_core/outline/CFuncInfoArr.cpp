@@ -18,34 +18,9 @@
 #include "outline/CFuncInfoArr.h"
 #include "outline/CFuncInfo.h"
 
-/* CFuncInfoArrクラス構築 */
-CFuncInfoArr::CFuncInfoArr()
+void CFuncInfoArr::Empty(void)
 {
-	m_nFuncInfoArrNum = 0;	/* 配列要素数 */
-	m_ppcFuncInfoArr = NULL;	/* 配列 */
-	m_nAppendTextLenMax = 0;
-	return;
-}
-
-/* CFuncInfoArrクラス消滅 */
-CFuncInfoArr::~CFuncInfoArr()
-{
-	Empty();
-	return;
-}
-
-void CFuncInfoArr::Empty( void )
-{
-	int i;
-	if( m_nFuncInfoArrNum > 0 && NULL != m_ppcFuncInfoArr ){
-		for( i = 0; i < m_nFuncInfoArrNum; ++i ){
-			delete m_ppcFuncInfoArr[i];
-			m_ppcFuncInfoArr[i] = NULL;
-		}
-		m_nFuncInfoArrNum = 0;
-		free( m_ppcFuncInfoArr );
-		m_ppcFuncInfoArr = NULL;
-	}
+	m_cFuncInfoArr.clear();
 	m_AppendTextArr.clear();
 	m_nAppendTextLenMax = 0;
 	return;
@@ -55,23 +30,16 @@ void CFuncInfoArr::Empty( void )
 /* データがない場合はNULLを返す */
 CFuncInfo* CFuncInfoArr::GetAt( int nIdx )
 {
-	if( nIdx >= m_nFuncInfoArrNum ){
+	if( nIdx >= m_cFuncInfoArr.size() ){
 		return NULL;
 	}
-	return m_ppcFuncInfoArr[nIdx];
+	return &m_cFuncInfoArr[nIdx];
 }
 
 /*! 配列の最後にデータを追加する */
-void CFuncInfoArr::AppendData( CFuncInfo* pcFuncInfo )
+void CFuncInfoArr::AppendData( CFuncInfo&& cFuncInfo )
 {
-	if( 0 == m_nFuncInfoArrNum){
-		m_ppcFuncInfoArr = (CFuncInfo**)malloc( sizeof(CFuncInfo*) * (m_nFuncInfoArrNum + 1) );
-	}else{
-		m_ppcFuncInfoArr = (CFuncInfo**)realloc( m_ppcFuncInfoArr, sizeof(CFuncInfo*) * (m_nFuncInfoArrNum + 1) );
-	}
-	m_ppcFuncInfoArr[m_nFuncInfoArrNum] = pcFuncInfo;
-	m_nFuncInfoArrNum++;
-	return;
+	m_cFuncInfoArr.emplace_back(cFuncInfo);
 }
 
 /*! 配列の最後にデータを追加する
@@ -89,10 +57,8 @@ void CFuncInfoArr::AppendData(
 	int				nDepth				//!< 深さ
 )
 {
-	CFuncInfo* pcFuncInfo = new CFuncInfo( nFuncLineCRLF, nFuncColCRLF, nFuncLineLAYOUT, nFuncColLAYOUT,
-		pszFuncName, pszFileName, nInfo );
-	pcFuncInfo->m_nDepth = nDepth;
-	AppendData( pcFuncInfo );
+	AppendData(CFuncInfo(nFuncLineCRLF, nFuncColCRLF, nFuncLineLAYOUT, nFuncColLAYOUT,
+		pszFuncName, pszFileName, nInfo, nDepth));
 	return;
 }
 
@@ -113,14 +79,13 @@ void CFuncInfoArr::DUMP( void )
 #ifdef _DEBUG
 	int i;
 	MYTRACE( L"=============================\n" );
-	for( i = 0; i < m_nFuncInfoArrNum; i++ ){
+	for( i = 0; i < m_cFuncInfoArr.size(); i++ ){
 		MYTRACE( L"[%d]------------------\n", i );
-		MYTRACE( L"m_nFuncLineCRLF	=%d\n", m_ppcFuncInfoArr[i]->m_nFuncLineCRLF );
-		MYTRACE( L"m_nFuncLineLAYOUT	=%d\n", m_ppcFuncInfoArr[i]->m_nFuncLineLAYOUT );
-		MYTRACE( L"m_cmemFuncName	=[%s]\n", m_ppcFuncInfoArr[i]->m_cmemFuncName.GetStringPtr() );
-		MYTRACE( L"m_cmemFileName	=[%s]\n",
-			(m_ppcFuncInfoArr[i]->m_cmemFileName.GetStringPtr() ? m_ppcFuncInfoArr[i]->m_cmemFileName.GetStringPtr() : L"NULL") );
-		MYTRACE( L"m_nInfo			=%d\n", m_ppcFuncInfoArr[i]->m_nInfo );
+		MYTRACE( L"m_nFuncLineCRLF	=%d\n", m_cFuncInfoArr[i].m_nFuncLineCRLF );
+		MYTRACE( L"m_nFuncLineLAYOUT	=%d\n", m_cFuncInfoArr[i].m_nFuncLineLAYOUT );
+		MYTRACE( L"m_cmemFuncName	=[%s]\n", m_cFuncInfoArr[i].m_cmemFuncName.c_str() );
+		MYTRACE( L"m_cmemFileName	=[%s]\n", m_cFuncInfoArr[i].m_cmemFileName.c_str() );
+		MYTRACE( L"m_nInfo			=%d\n", m_cFuncInfoArr[i].m_nInfo );
 	}
 	MYTRACE( L"=============================\n" );
 #endif

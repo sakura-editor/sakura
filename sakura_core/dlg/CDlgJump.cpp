@@ -257,12 +257,12 @@ void CDlgJump::SetData( void )
 			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 				auto_sprintf( szText, LS(STR_DLGJUMP_PSLQL),
 					cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF,
-					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
+					cFuncInfoArr.GetAt( i )->m_cmemFuncName.c_str()
 				);
 			}else{
 				auto_sprintf( szText, LS(STR_DLGJUMP_PSLQL),
 					cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT,
-					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
+					cFuncInfoArr.GetAt( i )->m_cmemFuncName.c_str()
 				);
 			}
 			nIndex = Combo_AddString( hwndCtrl, szText );
@@ -278,12 +278,12 @@ void CDlgJump::SetData( void )
 			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 				auto_sprintf( szText, LS(STR_DLGJUMP_PSLQL),
 					cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF,
-					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
+					cFuncInfoArr.GetAt( i )->m_cmemFuncName.c_str()
 				);
 			}else{
 				auto_sprintf( szText, LS(STR_DLGJUMP_PSLQL),
 					cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT,
-					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
+					cFuncInfoArr.GetAt( i )->m_cmemFuncName.c_str()
 				);
 			}
 			nIndexCurSel = nIndex = Combo_AddString( hwndCtrl, szText );

@@ -127,7 +127,7 @@ int CALLBACK CDlgFuncList::CompareFunc_Asc( LPARAM lParam1, LPARAM lParam2, LPAR
 	}
 	//	Apr. 23, 2005 genta 行番号を左端へ
 	if( FL_COL_NAME == pcDlgFuncList->m_nSortCol){	/* 名前でソート */
-		return wmemicmp( pcFuncInfo1->m_cmemFuncName.GetStringPtr(), pcFuncInfo2->m_cmemFuncName.GetStringPtr() );
+		return wmemicmp( pcFuncInfo1->m_cmemFuncName.c_str(), pcFuncInfo2->m_cmemFuncName.c_str() );
 	}
 	//	Apr. 23, 2005 genta 行番号を左端へ
 	if( FL_COL_ROW == pcDlgFuncList->m_nSortCol){	/* 行（＋桁）でソート */
@@ -561,7 +561,7 @@ void CDlgFuncList::SetData()
 			int nBuffLen = 0;
 			for(int i = 0; i < nNum; ++i ){
 				const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
-				nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength();
+				nBuffLen += pcFuncInfo->m_cmemFuncName.size();
 			}
 			m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
 		}
@@ -600,7 +600,7 @@ void CDlgFuncList::SetData()
 			ListView_SetItem( hwndList, &item);
 
 			item.mask = LVIF_TEXT;
-			item.pszText = const_cast<WCHAR*>(pcFuncInfo->m_cmemFuncName.GetStringPtr());
+			item.pszText = const_cast<WCHAR*>(pcFuncInfo->m_cmemFuncName.c_str());
 			item.iItem = i;
 			item.iSubItem = FL_COL_NAME;
 			ListView_SetItem( hwndList, &item);
@@ -638,7 +638,7 @@ void CDlgFuncList::SetData()
 				);
 				m_cmemClipText.AppendString(szText);
 				// "%s(%s)\r\n"
-				m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
+				m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName.c_str());
 				m_cmemClipText.AppendString(L"(");
 				m_cmemClipText.AppendString(item.pszText);
 				m_cmemClipText.AppendString(L")\r\n");
@@ -652,7 +652,7 @@ void CDlgFuncList::SetData()
 					pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
 				);
 				m_cmemClipText.AppendString(szText);
-				m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
+				m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName.c_str());
 				m_cmemClipText.AppendString(L"\r\n");
 			}
 		}
@@ -775,7 +775,7 @@ bool CDlgFuncList::GetTreeFileFullName(HWND hwndTree, HTREEITEM target, std::wst
 		TreeView_GetItem( hwndTree, &tvItem );
 		if( ((-tvItem.lParam) % 10) == 3 ){
 			*pnItem = (-tvItem.lParam) / 10;
-			std::wstring path = m_pcFuncInfoArr->GetAt(*pnItem)->m_cmemFileName.GetStringPtr();
+			std::wstring path = m_pcFuncInfoArr->GetAt(*pnItem)->m_cmemFileName;
 			path += L"\\";
 			path += *pPath;
 			*pPath = path;
@@ -928,7 +928,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddC
 		int nBuffLen = 0;
 		for( int i = 0; i < nNum; i++ ){
 			const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
-			nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength();
+			nBuffLen += pcFuncInfo->m_cmemFuncName.size();
 		}
 		m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
 	}
@@ -947,7 +947,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddC
 	bSelected = FALSE;
 	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
 		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
-		const WCHAR* pWork = pcFuncInfo->m_cmemFuncName.GetStringPtr();
+		const WCHAR* pWork = pcFuncInfo->m_cmemFuncName.c_str();
 		int m = 0;
 		vStrClasses.clear();
 		nClassNest = 0;
@@ -1146,7 +1146,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddC
 		);
 		m_cmemClipText.AppendString( szText ); /* クリップボードコピー用テキスト */
 		// "%s%ls\r\n"
-		m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
+		m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName.c_str());
 		m_cmemClipText.AppendString(FL_OBJ_DECLARE == pcFuncInfo->m_nInfo ? m_pcFuncInfoArr->GetAppendText( FL_OBJ_DECLARE ).c_str() : L"" ); 	//	Jan. 04, 2001 genta C++で使用
 		m_cmemClipText.AppendString(L"\r\n");
 
@@ -1194,7 +1194,7 @@ void CDlgFuncList::SetListVB (void)
 		int nBuffLen = 0;
 		for( int i = 0; i < nNum; i++ ){
 			const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
-			nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength();
+			nBuffLen += pcFuncInfo->m_cmemFuncName.size();
 		}
 		m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
 	}
@@ -1232,7 +1232,7 @@ void CDlgFuncList::SetListVB (void)
 		ListView_SetItem( hwndList, &item);
 
 		item.mask = LVIF_TEXT;
-		item.pszText = const_cast<WCHAR*>(pcFuncInfo->m_cmemFuncName.GetStringPtr());
+		item.pszText = const_cast<WCHAR*>(pcFuncInfo->m_cmemFuncName.c_str());
 		item.iItem = i;
 		item.iSubItem = FL_COL_NAME;
 		ListView_SetItem( hwndList, &item);
@@ -1336,7 +1336,7 @@ void CDlgFuncList::SetListVB (void)
 			);
 			m_cmemClipText.AppendString(szText);
 			// "%s(%s)\r\n"
-			m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
+			m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName.c_str());
 			m_cmemClipText.AppendString(L"(");
 			m_cmemClipText.AppendString(item.pszText);
 			m_cmemClipText.AppendString(L")\r\n");
@@ -1351,7 +1351,7 @@ void CDlgFuncList::SetListVB (void)
 			);
 			m_cmemClipText.AppendString(szText);
 			// "%s\r\n"
-			m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
+			m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName.c_str());
 			m_cmemClipText.AppendString(L"\r\n");
 		}
 	}
@@ -1405,7 +1405,7 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 		for( int i = 0; i < nFuncInfoArrNum; i++ ){
 			const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
 			if( pcFuncInfo->IsAddClipText() ){
-				nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength() + pcFuncInfo->m_nDepth * 2;
+				nBuffLen += pcFuncInfo->m_cmemFuncName.size() + pcFuncInfo->m_nDepth * 2;
 				nCount++;
 			}
 		}
@@ -1423,7 +1423,7 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 		cTVInsertStruct.hParent = phParentStack[ nStackPointer ];
 		cTVInsertStruct.hInsertAfter = hInsertAfter;
 		cTVInsertStruct.item.mask = TVIF_TEXT | TVIF_PARAM;
-		cTVInsertStruct.item.pszText = pcFuncInfo->m_cmemFuncName.GetStringPtr();
+		cTVInsertStruct.item.pszText = const_cast<WCHAR*>(pcFuncInfo->m_cmemFuncName.c_str());
 		cTVInsertStruct.item.lParam = i;	//	あとでこの数値（＝m_pcFuncInfoArrの何番目のアイテムか）を見て、目的地にジャンプするぜ!!。
 
 		/*	親子関係をチェック
@@ -1455,12 +1455,12 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 		if( pcFuncInfo->IsAddClipText() ){
 			CNativeW text;
 			if( tagjump ){
-				const WCHAR* pszFileName = pcFuncInfo->m_cmemFileName.GetStringPtr();
+				const WCHAR* pszFileName = pcFuncInfo->m_cmemFileName.c_str();
 				if( pszFileName == NULL ){
 					pszFileName = m_pcFuncInfoArr->m_szFilePath;
 				}
 				text.AllocStringBuffer(
-					  pcFuncInfo->m_cmemFuncName.GetStringLength()
+					  pcFuncInfo->m_cmemFuncName.size()
 					+ nStackPointer * 2 + 1
 					+ wcslen( pszFileName )
 					+ 20
@@ -1484,7 +1484,7 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 				}
 				text.AppendString(L" ");
 				
-				text.AppendNativeData( pcFuncInfo->m_cmemFuncName );
+				text.AppendNativeData( pcFuncInfo->m_cmemFuncName.c_str() );
 			}
 			text.AppendString( L"\r\n" );
 			m_cmemClipText.AppendNativeData( text );	/* クリップボードコピー用テキスト */
@@ -2464,7 +2464,7 @@ BOOL CDlgFuncList::OnJump( bool bCheckAutoClose, bool bFileJump )	//2002.02.08 h
 					bFileJumpSelf = TagJumpTimer(m_sJumpFile.c_str(), poCaret, bCheckAutoClose);
 				}
 			}else
-			if( m_cFuncInfo != NULL && 0 < m_cFuncInfo->m_cmemFileName.GetStringLength() ){
+			if( m_cFuncInfo != NULL && 0 < m_cFuncInfo->m_cmemFileName.size() ){
 				if( bFileJump ){
 					nLineTo = m_cFuncInfo->m_nFuncLineCRLF;
 					nColTo = m_cFuncInfo->m_nFuncColCRLF;
@@ -2472,7 +2472,7 @@ BOOL CDlgFuncList::OnJump( bool bCheckAutoClose, bool bFileJump )	//2002.02.08 h
 					CMyPoint poCaret; // TagJumpSubも1開始
 					poCaret.x = nColTo;
 					poCaret.y = nLineTo;
-					bFileJumpSelf = TagJumpTimer(m_cFuncInfo->m_cmemFileName.GetStringPtr(), poCaret, bCheckAutoClose);
+					bFileJumpSelf = TagJumpTimer(m_cFuncInfo->m_cmemFileName.c_str(), poCaret, bCheckAutoClose);
 				}
 			}else{
 				nLineTo = m_cFuncInfo->m_nFuncLineCRLF;
@@ -4091,8 +4091,8 @@ bool CDlgFuncList::GetFuncInfoIndex( CLayoutInt nCurLine, CLayoutInt nCurCol, in
 	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
 		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
 
-		if( (pcFuncInfo->m_cmemFileName.GetStringPtr() && m_pcFuncInfoArr->m_szFilePath[0]) ){
-			if( 0 != wmemicmp( pcFuncInfo->m_cmemFileName.GetStringPtr(), m_pcFuncInfoArr->m_szFilePath.c_str() ) ){
+		if( (!pcFuncInfo->m_cmemFileName.empty() && m_pcFuncInfoArr->m_szFilePath[0]) ){
+			if( 0 != wmemicmp( pcFuncInfo->m_cmemFileName.c_str(), m_pcFuncInfoArr->m_szFilePath.c_str() ) ){
 				continue;
 			}
 		}
