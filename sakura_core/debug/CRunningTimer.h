@@ -70,9 +70,16 @@ public:
 	void WriteTrace(const char* msg = "") const;
 
 protected:
-	DWORD	m_nStartTime;
-	char	m_szText[100];	//!< タイマー名
-	int		m_nDeapth;	//!< このオブジェクトのネストの深さ
+	double			m_nStartTime;				// 計測開始時間(ms)
+	char			m_szText[100];	//!< タイマー名
+	int				m_nDeapth;	//!< このオブジェクトのネストの深さ
+	LARGE_INTEGER	m_nPerformanceFrequency;	// 計時用
+
+	enum class OutputTiming { Normal, Enter };
+
+	double GetTime() const;
+	void OutputTrace( double time, const char* msg, OutputTiming timing = OutputTiming::Normal ) const;
+	void Output( std::wstring_view fmt, ... ) const;
 
 #ifdef _DEBUG
 	static int m_nNestCount;
