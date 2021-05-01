@@ -198,26 +198,25 @@ static bool CPP_IsFunctionAfterKeyword( const wchar_t* s )
 
 class CCppPreprocessMng {
 public:
-	CCppPreprocessMng(void) :
-		// 2007.12.15 genta : m_bitpatternを0にしないと，
-		// いきなり#elseが現れたときにパターンがおかしくなる
-		m_ismultiline( false ), m_maxnestlevel( 32 ), m_stackptr( 0 ), m_bitpattern( 0 ), m_enablebuf( 0 )
-	{}
+	CCppPreprocessMng(void) = default;
 
 	CLogicInt ScanLine(const wchar_t*, CLogicInt);
 
 private:
-	bool m_ismultiline; //!< 複数行のディレクティブ
-	int m_maxnestlevel;	//!< ネストレベルの最大値
+	bool m_ismultiline = false; //!< 複数行のディレクティブ
+	int m_maxnestlevel = 32;	//!< ネストレベルの最大値
 
-	int m_stackptr;	//!< ネストレベル
+	int m_stackptr = 0;	//!< ネストレベル
 	/*!
 		ネストレベルに対応するビットパターン
 		
 		m_stackptr = n の時，下から(n-1)bit目に1が入っている
 	*/
-	unsigned int m_bitpattern;
-	unsigned int m_enablebuf;	//!< 処理の有無を保存するバッファ
+	// 2007.12.15 genta : m_bitpatternを0にしないと，
+	// いきなり#elseが現れたときにパターンがおかしくなる
+	unsigned int m_bitpattern = 0;
+	unsigned int m_enablebuf = 0;	//!< 処理の有無を保存するバッファ
+	unsigned int m_activated = 0;   //!< 処理しない有効化したコードが有ったかどうかを記録するバッファ
 };
 
 /*!
@@ -280,13 +279,29 @@ CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 	for( ; C_IsSpace( *p, bExtEol ) && p < lastptr ; ++p )
 		;
 
+	enum CppDirectiveType {
+		Directive_None,
+		Directive_If,
+		Directive_Ifdef,
+		Directive_Ifndef,
+		Directive_Else,
+		Directive_Elif,
+		Directive_Endif,
+	} directive = Directive_None;
+	     if (p + 5 < lastptr && wcsncmp_literal(p, L"ifdef" ) == 0) { directive = Directive_Ifdef;  p += 5; }
+	else if (p + 6 < lastptr && wcsncmp_literal(p, L"ifndef") == 0) { directive = Directive_Ifndef; p += 6; }
+	else if (p + 2 < lastptr && wcsncmp_literal(p, L"if"    ) == 0) { directive = Directive_If;     p += 2; }
+	else if (p + 4 < lastptr && wcsncmp_literal(p, L"else"  ) == 0) { directive = Directive_Else;   p += 4; }
+	else if (p + 4 < lastptr && wcsncmp_literal(p, L"elif"  ) == 0) { directive = Directive_Elif;   p += 4; }
+	else if (p + 5 < lastptr && wcsncmp_literal(p, L"endif" ) == 0) { directive = Directive_Endif;  p += 5; }
+
+
 	//	ここからPreprocessor directive解析
-	if( p + 2 + 2 < lastptr && wcsncmp_literal( p, L"if" ) == 0 ){
-		// if
-		p += 2;
-		
-		int enable = 0;	//	0: 処理しない, 1: else以降が有効, 2: 最初が有効, 
-		
+	switch (directive) {
+	case Directive_If:
+	case Directive_Ifdef:
+	case Directive_Ifndef:
+	case Directive_Elif:
 		//	if 0は最初が無効部分とみなす．
 		//	それ以外のif/ifdef/ifndefは最初が有効部分と見なす
 		//	最初の条件によってこの時点ではp < lastptrなので判定省略
@@ -297,42 +312,55 @@ CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 			//	2007.12.15 genta
 			for( ; ( C_IsSpace( *p, bExtEol ) || *p == L'(' ) && p < lastptr ; ++p )
 				;
-			if( *p == L'0' ){
-				enable = 1;
+			bool bZero = (*p == L'0');
+			//	保存領域の確保とビットパターンの設定
+			if (directive == Directive_If || directive == Directive_Ifdef || directive == Directive_Ifndef) {
+				m_bitpattern = 1 << m_stackptr;
+				++m_stackptr;
+				if (bZero) {
+					m_enablebuf |= m_bitpattern;
+				}
+				else if (m_stackptr == 1 || m_activated & (1 << (m_stackptr - 2))) {
+					m_activated |= m_bitpattern;
+				}
 			}
-			else {
-				enable = 2;
+			else if (0 < m_stackptr && m_stackptr < m_maxnestlevel) {
+				if (bZero || (m_activated & m_bitpattern)) {
+					m_enablebuf |= m_bitpattern;
+				}
+				else if (!(m_activated & m_bitpattern)) {
+					m_enablebuf &= ~m_bitpattern;
+					m_activated |= m_bitpattern;
+				}
 			}
 		}
-		else if(
-			( p + 3 < lastptr && wcsncmp_literal( p, L"def" ) == 0 ) ||
-			( p + 4 < lastptr && wcsncmp_literal( p, L"ndef" ) == 0 )){
-			enable = 2;
-		}
-		
-		//	保存領域の確保とビットパターンの設定
-		if( enable > 0 ){
-			m_bitpattern = 1 << m_stackptr;
-			++m_stackptr;
-			if( enable == 1 ){
-				m_enablebuf |= m_bitpattern;
-			}
-		}
-	}
-	else if( p + 4 < lastptr && wcsncmp_literal( p, L"else" ) == 0 ){
+		break;
+	case Directive_Else:
 		//	2007.12.14 genta : #ifが無く#elseが出たときのガード追加
 		if( 0 < m_stackptr && m_stackptr < m_maxnestlevel ){
-			m_enablebuf ^= m_bitpattern;
+			if (m_activated & m_bitpattern) {
+				m_enablebuf |= m_bitpattern;
+			}
+			else {
+				if (!(m_activated & m_bitpattern)) {
+					m_enablebuf &= ~m_bitpattern;
+				}
+				if (m_stackptr == 1 || m_activated & (1 << (m_stackptr - 2))) {
+					m_activated |= m_bitpattern;
+				}
+			}
 		}
-	}
-	else if( p + 5 < lastptr && wcsncmp_literal( p, L"endif" ) == 0 ){
+		break;
+	case Directive_Endif:
 		if( m_stackptr > 0 ){
 			--m_stackptr;
 			m_enablebuf &= ~m_bitpattern;
+			m_activated &= ~m_bitpattern;
 			m_bitpattern = ( 1 << ( m_stackptr - 1 ));
 		}
-	}
-	else{
+		break;
+	case Directive_None:
+	default:
 		m_ismultiline = C_IsLineEsc(str, length); // 行末が \ で終わっていないか
 	}
 
