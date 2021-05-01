@@ -1112,6 +1112,9 @@
     <ClInclude Include="..\sakura_core\convert\CConvert_CodeToSjis.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\recent\SShare_History.h">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resource\auto_scroll_center.cur">

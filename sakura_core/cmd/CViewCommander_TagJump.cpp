@@ -41,18 +41,21 @@
 #include "config/system_constants.h"
 #include "String_define.h"
 
-// "までを切り取る
-static bool GetQuoteFilePath( const wchar_t* pLine, wchar_t* pFile, size_t size ){
+//! "までを切り取る
+// sizeは切り出し文字列のNULL終端を含む長さ(wstring::length()+1の値)
+static bool GetQuoteFilePath(const wchar_t* pLine, std::wstring& str, size_t size)
+{
 	const wchar_t* pFileEnd = wcschr( pLine, L'\"' );
-	if( pFileEnd ){
-		int nFileLen = pFileEnd - pLine;
-		if( 0 < nFileLen && nFileLen < (int)size ){
-			wmemcpy( pFile, pLine, nFileLen );
-			pFile[nFileLen] = L'\0';
-			return true;
-		}
+	str = L"";
+	if (pFileEnd == nullptr) {
+		return false;
 	}
-	return false;
+	size_t nFileLen = pFileEnd - pLine;
+	if (0 == nFileLen || size <= nFileLen) {
+		return false;
+	}
+	str.assign(pLine, nFileLen);
+	return !str.empty();
 }
 
 static bool IsFileExists2( const wchar_t* pszFile )
@@ -78,6 +81,15 @@ static bool IsFileExists2( const wchar_t* pszFile )
 */
 bool CViewCommander::Command_TAGJUMP( bool bClose )
 {
+	bool ret = Command_TagJumpNoMessage(bClose);
+	if(ret == false){
+		m_pCommanderView->SendStatusMessage(LS(STR_ERR_TAGJMP1));	//@@@ 2003.04.13
+	}
+	return ret;
+}
+
+bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
+{
 	//	2004.05.13 Moca 初期値を1ではなく元の位置を継承するように
 	// 0以下は未指定扱い。(1開始)
 	int			nJumpToLine;
@@ -86,11 +98,8 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 	nJumpToColumn = 0;
 
 	//ファイル名バッファ
-	wchar_t		szJumpToFile[1024];
-	wchar_t		szFile[_MAX_PATH] = {L'\0'};
 	size_t		nBgn;
 	size_t		nPathLen;
-	wmemset( szJumpToFile, 0, _countof(szJumpToFile) );
 
 	/*
 	  カーソル位置変換
@@ -109,7 +118,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 	CLogicInt		nLineLen;
 	const wchar_t*	pLine = CDocLine::GetDocLineStrWithEOL_Safe(GetDocument()->m_cDocLineMgr.GetLine(ptXY.GetY2()), &nLineLen);
 	if( NULL == pLine ){
-		goto can_not_tagjump;
+		return false;
 	}
 
 	// ノーマル
@@ -130,6 +139,14 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 	// ・SubFolders\FileName2.ext(5395,11): str
 	// ・SubFolders\FileName2.ext(5396,11): str
 	// ・SubFolders\FileName3.ext(123,11): str
+
+	// ノーマル/フォルダ毎
+	// ■"C:\RootFolder"
+	// ・FileName.cpp(5395,11): str
+	// ■"C:\RootFolder\SubFolders"
+	// ・FileName2.ext(5395,11): str
+	// ・FileName2.ext(5396,11): str
+	// ・FileName3.ext(123,11): str
 
 	// ファイル毎(WZ風)
 	// ■"C:\RootFolder\FileName.ext"
@@ -162,8 +179,41 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 	// ◆"FileName3.ext"
 	// ・(   123,12   ): str
 
+	// ファイル毎/フォルダ毎
+	// ■"C:\RootFolder"
+	// ◆"FileName.ext"
+	// ・(  5395,11   ): str
+	// ■"C:\RootFolder\SubFolders"
+	// ◆"FileName2.ext"
+	// ・(  5395,11   ): str
+	// ・(  5396,11   ): str
+
+
 	// Grep結果のタグジャンプ検索
 	// ・→◆→■→◎ の順に検索してパスを結合する
+
+	// 自動選択を選ぶとエンコード名表示
+	// C:\RootFolder\SubFolders\FileName.ext(150,6)  [UTF-8]: str
+	// ・SubFolders\FileName.ext(150,6)  [UTF-8]: str
+	// ・FileName.ext(150,6)  [UTF-8]: str
+
+	// ■"C:\RootFolder\SubFolders\FileName.ext"  [UTF-8]
+	// ・(   150,6    ): str
+
+	// ◎"C:\RootFolder"
+	// ■"FileName.ext"  [UTF-8]
+	// ・(  5395,11   ): str
+	// ■"SubFolders\FileName2.ext"  [UTF-8]
+	// ・(  5395,11   ): str
+
+	// ■"C:\RootFolder\SubFolders\"
+	// ◆"FileName.ext"  [UTF-8]
+	// ・(   150,60   ): str
+
+	std::wstring	strJumpToFile;
+	std::wstring	strFile;
+	constexpr int MAX_TAG_PATH = MAX_PATH;
+
 	do{
 		enum TagListSeachMode{
 			TAGLIST_FILEPATH,
@@ -173,22 +223,22 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 		if( 0 == wmemcmp( pLine, L"■\"", 2 ) ){
 			/* WZ風のタグリストか */
 			if( IsFilePath( &pLine[2], &nBgn, &nPathLen ) && !_IS_REL_PATH( &pLine[2] ) ){
-				wmemcpy( szJumpToFile, &pLine[2 + nBgn], nPathLen );
+				strJumpToFile.assign(&pLine[2 + nBgn], nPathLen);
 				GetLineColumn( &pLine[2 + nPathLen], &nJumpToLine, &nJumpToColumn );
 				break;
-			}else if( !GetQuoteFilePath( &pLine[2], szFile, _countof(szFile) ) ){
+			}else if (!GetQuoteFilePath(&pLine[2], strFile, MAX_TAG_PATH)) {
 				break;
 			}
 			searchMode = TAGLIST_ROOT;
 		}else if( 0 == wmemcmp( pLine, L"◆\"", 2 ) ){
-			if( !GetQuoteFilePath( &pLine[2], szFile, _countof(szFile) ) ){
+			if (!GetQuoteFilePath(&pLine[2], strFile, MAX_TAG_PATH)) {
 				break;
 			}
 			searchMode = TAGLIST_SUBPATH;
 		}else if( 0 == wmemcmp( pLine, L"・", 1 ) ){
 			if( pLine[1] == L'"' ){
 				// ・"FileName.ext"
-				if( !GetQuoteFilePath( &pLine[2], szFile, _countof(szFile) ) ){
+				if (!GetQuoteFilePath(&pLine[2], strFile, MAX_TAG_PATH)) {
 					break;
 				}
 				searchMode = TAGLIST_SUBPATH;
@@ -224,9 +274,8 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 					for( ; 1 < fileEnd && (L'0' <= pLine[fileEnd] && pLine[fileEnd] <= L'9'); fileEnd-- ){}
 					if(    1 < fileEnd && (L',' == pLine[fileEnd]) ){ fileEnd--; }
 					for( ; 1 < fileEnd && (L'0' <= pLine[fileEnd] && pLine[fileEnd] <= L'9'); fileEnd-- ){}
-					if( 1 < fileEnd && L'(' == pLine[fileEnd] && fileEnd - 1 < (int)_countof(szFile) ){
-						wmemcpy( szFile, pLine + 1, fileEnd - 1 );
-						szFile[fileEnd - 1] = L'\0';
+					if( 1 < fileEnd && L'(' == pLine[fileEnd] && fileEnd - 1 < MAX_TAG_PATH ){
+						strFile.assign(pLine + 1, fileEnd - 1);
 						GetLineColumn( &pLine[fileEnd + 1], &nJumpToLine, &nJumpToColumn );
 						searchMode = TAGLIST_SUBPATH;
 					}else{
@@ -251,7 +300,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 					continue;
 				}
 				// フォルダ毎：ファイル名
-				if( GetQuoteFilePath(&pLine[2], szFile, _countof(szFile)) ){
+				if (GetQuoteFilePath(&pLine[2], strFile, MAX_TAG_PATH)) {
 					searchMode = TAGLIST_SUBPATH;
 					continue;
 				}
@@ -268,31 +317,39 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 				}
 				// ファイル毎(WZ風)：フルパス
 				if( IsFilePath( &pLine[2], &nBgn, &nPathLen ) && !_IS_REL_PATH( &pLine[2] ) ){
-					wmemcpy( szJumpToFile, &pLine[2 + nBgn], nPathLen );
+					strJumpToFile.assign(&pLine[2 + nBgn], nPathLen);
 					break;
 				}
 				// 相対フォルダorファイル名
-				wchar_t		szPath[_MAX_PATH];
-				if( GetQuoteFilePath( &pLine[2], szPath, _countof(szPath) ) ){
-					if( szFile[0] ){
-						AddLastYenFromDirectoryPath( szPath );
+				std::wstring strPath;
+				if (GetQuoteFilePath(&pLine[2], strPath, MAX_TAG_PATH)) {
+					if (strFile.empty() == false) {
+						strPath = AddLastYenPath(strPath);
 					}
-					wcscat( szPath, szFile );
-					if( IsFileExists2( szPath ) ){
-						wcscpy( szJumpToFile, szPath );
+					strPath.append(strFile);
+					if( MAX_TAG_PATH <= strPath.size() ){
+						break;
+					}
+					if( IsFileExists2(strPath.c_str()) ){
+						strJumpToFile = strPath;
 						break;
 					}
 					// 相対パスだった→◎”を探す
-					wcscpy( szFile, szPath );
+					strFile = strPath;
 					searchMode = TAGLIST_ROOT;
 					continue;
 				}
 				break;
 			}else if( 3 <= nLineLen && 0 == wmemcmp( pLine, L"◎\"", 2 ) ){
-				if( GetQuoteFilePath( &pLine[2], szJumpToFile, _countof(szJumpToFile) ) ){
-					AddLastYenFromDirectoryPath( szJumpToFile );
-					wcscat( szJumpToFile, szFile );
-					if( IsFileExists2( szJumpToFile ) ){
+				std::wstring strPath;
+				if (GetQuoteFilePath(&pLine[2], strPath, MAX_TAG_PATH)) {
+					strPath = AddLastYenPath(strPath);
+					strPath.append(strFile);
+					if (MAX_TAG_PATH <= strPath.size()) {
+						break;
+					}
+					if (IsFileExists2(strPath.c_str())) {
+						strJumpToFile = strPath;
 						break;
 					}
 				}
@@ -304,10 +361,10 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 		}
 	}while(0);
 
-	if( szJumpToFile[0] == L'\0' ){
+	if (strJumpToFile.empty()) {
 		pLine = GetDocument()->m_cDocLineMgr.GetLine(ptXYOrg.GetY2())->GetDocLineStrWithEOL(&nLineLen);
 		if( NULL == pLine ){
-			goto can_not_tagjump;
+			return false;
 		}
 		//@@@ 2001.12.31 YAZAKI
 		const wchar_t *p = pLine;
@@ -324,7 +381,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 
 			//	Check Path
 			if( IsFilePath( p, &nBgn, &nPathLen ) ){
-				wmemcpy( szJumpToFile, &p[nBgn], nPathLen );
+				strJumpToFile.assign(&p[nBgn], nPathLen);
 				GetLineColumn( &p[nBgn + nPathLen], &nJumpToLine, &nJumpToColumn );
 				break;
 			}
@@ -337,22 +394,17 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 	}
 
 	// 2011.11.29 Grep形式で失敗した後もTagsを検索する
-	if( szJumpToFile[0] == L'\0' ){
-		if( Command_TagJumpByTagsFile(bClose) ){	//@@@ 2003.04.13
-			return true;
-		}
+	if (strJumpToFile.empty() && Command_TagJumpByTagsFile(bClose) ){	//@@@ 2003.04.13
+		return true;
 		//	From Here Aug. 27, 2001 genta
 	}
 
 	//	Apr. 21, 2003 genta bClose追加
-	if( szJumpToFile[0] ){
-		if( m_pCommanderView->TagJumpSub( szJumpToFile, CMyPoint(nJumpToColumn, nJumpToLine), bClose ) ){	//@@@ 2003.04.13
-			return true;
-		}
+	if (strJumpToFile.empty() == false &&
+		m_pCommanderView->TagJumpSub(strJumpToFile.c_str(), CMyPoint(nJumpToColumn, nJumpToLine), bClose ) ){	//@@@ 2003.04.13
+		return true;
 	}
 
-can_not_tagjump:;
-	m_pCommanderView->SendStatusMessage(LS(STR_ERR_TAGJMP1));	//@@@ 2003.04.13
 	return false;
 }
 

@@ -873,6 +873,7 @@ void CCaret::ShowCaretPosInfo()
 		setStatusText( nIndex++, 0,             szFontSize );
 		::SendMessage(hWnd, WM_SETREDRAW, TRUE, 0);
 		InvalidateRect(hWnd, &updatedRect, TRUE);
+		UpdateWindow(hWnd);
 	}
 }
 
@@ -963,6 +964,11 @@ CLayoutInt CCaret::Cursor_UPDOWN( CLayoutInt nMoveLines, bool bSelect )
 		bVertLineDoNotOFF = false;
 	}
 	GetAdjustCursorPos( &ptTo );
+
+	if (ptTo == ptCaret) {
+		return CLayoutInt(0);
+	}
+
 	if( bSelect ) {
 		/* 現在のカーソル位置によって選択範囲を変更 */
 		m_pEditView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptTo );
