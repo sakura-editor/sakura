@@ -357,7 +357,7 @@ void CLayoutMgr::_OnLine1(SLayoutWork* pWork)
 */
 void CLayoutMgr::_DoLayout(bool bBlockingHook)
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CLayoutMgr::_DoLayout" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CLayoutMgr::_DoLayout" );
 
 	/*	表示上のX位置
 		2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)

@@ -491,7 +491,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 */
 CSMacroMgr::CSMacroMgr()
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CSMacroMgr::CSMacroMgr" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CSMacroMgr::CSMacroMgr" );
 	
 	m_pShareData = &GetDllShareData();
 	

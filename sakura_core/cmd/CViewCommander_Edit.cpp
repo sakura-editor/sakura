@@ -297,7 +297,7 @@ void CViewCommander::Command_UNDO( void )
 		return;
 	}
 
-	MY_RUNNINGTIMER( cRunningTimer, "CViewCommander::Command_UNDO()" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CViewCommander::Command_UNDO()" );
 
 	COpe*		pcOpe = NULL;
 
@@ -554,7 +554,7 @@ void CViewCommander::Command_REDO( void )
 	if( !GetDocument()->m_cDocEditor.IsEnableRedo() ){	/* Redo(やり直し)可能な状態か？ */
 		return;
 	}
-	MY_RUNNINGTIMER( cRunningTimer, "CViewCommander::Command_REDO()" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CViewCommander::Command_REDO()" );
 
 	COpe*		pcOpe = NULL;
 	COpeBlk*	pcOpeBlk;

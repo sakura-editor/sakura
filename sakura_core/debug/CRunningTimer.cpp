@@ -27,24 +27,21 @@
 
 int CRunningTimer::m_nNestCount = 0;
 
-CRunningTimer::CRunningTimer( const char* pszText )
+CRunningTimer::CRunningTimer( std::wstring_view name ) :
+	m_timerName( name )
 {
 	::QueryPerformanceFrequency( &m_nPerformanceFrequency );
 
 	Reset();
 
-	if( pszText != NULL )
-		strcpy( m_szText, pszText );
-	else
-		m_szText[0] = '\0';
-	m_nDeapth = m_nNestCount++;
-	OutputTrace( m_nStartTime, "Enter", OutputTiming::Enter );
+	m_nDepth = m_nNestCount++;
+	OutputTrace( m_nStartTime, L"Enter", OutputTiming::Enter );
 	return;
 }
 
 CRunningTimer::~CRunningTimer()
 {
-	OutputTrace( GetTime(), "Exit Scope" );
+	OutputTrace( GetTime(), L"Exit Scope" );
 	m_nNestCount--;
 	return;
 }
@@ -62,20 +59,20 @@ DWORD CRunningTimer::Read()
 /*!
 	@date 2002.10.15 genta
 */
-void CRunningTimer::WriteTrace(const char* msg) const
+void CRunningTimer::WriteTrace( std::wstring_view msg ) const
 {
 	OutputTrace( GetTime(), msg );
 }
 
-void CRunningTimer::OutputTrace( double nCurrentTime, const char* msg, OutputTiming timing ) const
+void CRunningTimer::OutputTrace( double nCurrentTime, std::wstring_view msg, OutputTiming timing ) const
 {
 	if( timing == OutputTiming::Enter )
 	{
-		Output( L"%3d:\"%hs\" : %hs \n", m_nDeapth, m_szText, msg );
+		Output( L"%3d:\"%s\" : %s \n", m_nDepth, m_timerName.c_str(), msg.data() );
 	}
 	else
 	{
-		Output( L"%3d:\"%hs\", %d㍉秒 : %hs\n", m_nDeapth, m_szText, (int)(nCurrentTime - m_nStartTime), msg );
+		Output( L"%3d:\"%s\", %d㍉秒 : %s\n", m_nDepth, m_timerName.c_str(), (int)(nCurrentTime - m_nStartTime), msg.data() );
 	}
 }
 

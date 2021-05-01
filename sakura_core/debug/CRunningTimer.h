@@ -37,6 +37,9 @@
 #pragma once
 
 #include <windows.h>
+#include <string>
+#include <string_view>
+
 // RunningTimerで経過時間の測定を行う場合にはコメントを外してください
 //#define TIME_MEASURE
 
@@ -58,7 +61,7 @@ public:
 	/*
 	||  Constructors
 	*/
-	CRunningTimer( const char* Text = NULL);
+	CRunningTimer( std::wstring_view name = L"" );
 	~CRunningTimer();
 
 	/*
@@ -67,18 +70,18 @@ public:
 	void Reset();
 	DWORD Read();
 	
-	void WriteTrace(const char* msg = "") const;
+	void WriteTrace( std::wstring_view msg = L"" ) const;
 
 protected:
 	double			m_nStartTime;				// 計測開始時間(ms)
-	char			m_szText[100];	//!< タイマー名
-	int				m_nDeapth;	//!< このオブジェクトのネストの深さ
+	std::wstring	m_timerName;				// タイマー名
+	int				m_nDepth;					// このオブジェクトのネストの深さ
 	LARGE_INTEGER	m_nPerformanceFrequency;	// 計時用
 
 	enum class OutputTiming { Normal, Enter };
 
 	double GetTime() const;
-	void OutputTrace( double time, const char* msg, OutputTiming timing = OutputTiming::Normal ) const;
+	void OutputTrace( double time, std::wstring_view msg, OutputTiming timing = OutputTiming::Normal ) const;
 	void Output( std::wstring_view fmt, ... ) const;
 
 #ifdef _DEBUG

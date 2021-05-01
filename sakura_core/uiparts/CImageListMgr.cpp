@@ -148,7 +148,7 @@ HBITMAP ConvertTo32bppBMP(HBITMAP hbmpSrc)
 */
 bool CImageListMgr::Create(HINSTANCE hInstance)
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CImageListMgr::Create" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CImageListMgr::Create" );
 	if( m_hIconBitmap != NULL ){	//	既に構築済みなら無視する
 		return true;
 	}
