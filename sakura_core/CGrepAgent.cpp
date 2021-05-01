@@ -330,7 +330,7 @@ int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, WCHAR* pszWindowName, WC
 		if( editInfo->m_bIsGrep ){
 			// Grepは検索キーとタグがぶつかることがあるので単に(Grep)と表示
 			pszTagName = szGrep;
-			wcsncpy_s(pszTagName, _countof(szTitle), L"(Grep)", _TRUNCATE);
+			wcsncpy_s(pszTagName, _countof(szGrep), L"(Grep)", _TRUNCATE);
 		}
 		CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape(szTitle, _countof(szTitle), editInfo, node->m_nId, -1, NULL );
 #ifdef _WIN64
