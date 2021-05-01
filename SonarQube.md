@@ -17,7 +17,7 @@
   - [SonarQube に関する情報](#sonarqube-に関する情報)
     - [SonarQube の使用方法に関するサイト](#sonarqube-の使用方法に関するサイト)
     - [SonarScanner の使用方法](#sonarscanner-の使用方法)
-  - [CI でのビルド](#ci-でのビルド)
+  - [CI での実行](#ci-での実行)
     - [azure pipelines の設定](#azure-pipelines-の設定)
       - [環境変数](#環境変数)
       - [スケジュール設定](#スケジュール設定)
@@ -59,17 +59,14 @@
 
 ### SonarQube
 
-[SonarQube][SonarQube] は
-[sonarsource][sonarsource] が提供する静的解析サービス。  
-
+[SonarQube][SonarQube] は [sonarsource][sonarsource] が提供する静的解析サービス。
 
 ### SonarCloud
 
 [SonarCloud][SonarCloud] は [SonarQube][SonarQube] のクラウド版。  
 いつものごとく、オープンソースに対してはタダです。
 
-サクラエディタのソースコード解析には 1時間半ほどかかるので、並列実行が可能な Azure Pipelines で夜間の定期タスクのみで解析を実施します。  
-(Appveyor では実施しない。定期タスク以外でも実施しない。)
+サクラエディタのソースコード解析には 1時間半ほどかかるので、並列実行が可能な Azure Pipelines における夜間の定期タスクでのみ解析を実施します。
 
 ## SonarQube のローカルでの使用方法
 
@@ -94,21 +91,21 @@ https://sonarcloud.io/account/security/ のページでいつでも Access Token
 
 ### ローカルで実行する場合の環境設定 (事前準備)
 
-1. chocolatey をインストールする
-  https://chocolatey.org/install#install-with-cmdexe を参考にインストールする。
+1. chocolatey をインストールする  
+  https://chocolatey.org/install#install-with-cmdexe を参考にインストールする。  
   ※powershellコンソールを「管理者として実行」して、サイトにあるスクリプトをコピペ実行するだけです。
 
-3. SonarScanner実行環境として Java 11 をインストールする
-  1. JDKを使う場合 https://chocolatey.org/packages/openjdk11
-  2. JREを使う場合 https://chocolatey.org/packages/openjdk11jre
-  3. Oracleに開発者登録している場合 Oracle JDK/JRE で代替してもよいです。
-    1. 普通のJava Runtime Envirionment(jre8)は使えません。
-      https://java.com/ja/download/manual.jsp (2019/05/02 現在)
-    2. 参考: [Prerequisites and Overview (Supported Platforms)](https://docs.sonarqube.org/latest/requirements/requirements/#header-3)
-    3. 参考: [SonarQubeの Java 11 対応状況](https://qiita.com/hayao_k/items/2cd81161f8dffd3a178b)
-    4. SonarSource(=SonarQubeの開発元)が方針転換してJava8を使った静的解析ができなくなりました。
+2. SonarScanner実行環境として Java 11 をインストールする
+    1. JDKを使う場合 https://chocolatey.org/packages/openjdk11
+    2. JREを使う場合 https://chocolatey.org/packages/openjdk11jre
+    3. Oracleに開発者登録している場合 Oracle JDK/JRE で代替してもよいです。
+    4. 参考情報
+        - 普通の [Java Runtime Envirionment (jre8)](https://java.com/ja/download/manual.jsp) は使えません。  
+          SonarSource の方針により Java8 を使った静的解析はできなくなりました。
+        - [Prerequisites and Overview (Supported Platforms)](https://docs.sonarqube.org/latest/requirements/requirements/#header-3)
+        - [SonarQubeの Java 11 対応状況](https://qiita.com/hayao_k/items/2cd81161f8dffd3a178b)
 
-4. `JAVA_HOME` の環境変数を設定する
+3. `JAVA_HOME` の環境変数を設定する
   ※コマンドプロンプトで `set J` して `JAVA_HOME` が表示されない場合のみ
 
 	例
@@ -163,7 +160,7 @@ build-sln.bat Win32 Release
 
 https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+MSBuild#AnalyzingwithSonarQubeScannerforMSBuild-Usage
 
-## CI でのビルド
+## CI での実行
 
 ### azure pipelines の設定
 
@@ -263,7 +260,7 @@ steps:
 
 ### Appveyor の設定
 
-**appveyor で実施する場合、タイムアウトになってビルドに成功しないので現状で使用していない **
+**AppVeyor ではタイムアウトになってビルドが成功しないため、現状では実施していません**
 
 Appveyor のプロジェクトで Settings の Environment にアクセスして `Add variable` を押して環境変数を追加する。
 

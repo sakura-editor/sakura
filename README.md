@@ -122,7 +122,7 @@ Visaul Studio 2019 で `sakura.sln` を開くと必要なコンポーネント�
 
 ## CI Buildおよびローカルビルドの環境変数
 
-[CI でのビルド](ci-build.md) を参照
+[こちら](ci/build-envvars.md) を参照してください。
 
 ## PR(Pull Request) を簡単にローカルに取得する方法
 
@@ -132,13 +132,14 @@ Visaul Studio 2019 で `sakura.sln` を開くと必要なコンポーネント�
 
 ### ビルドの仕組み (Azure Pipelines)
 
-[azure-pipelines.md](azure-pipelines.md) でビルドの仕組みを説明しています。
+[azure-pipelines.md](ci/azure-pipelines/azure-pipelines.md) でビルドの仕組みを説明しています。
 
 ## CI Build (AppVeyor)
 
 ### ビルドの仕組み (AppVeyor)
 
-[appveyor.md](appveyor.md) でビルドの仕組みを説明しています。
+AppVeyor では、 [build-all.bat](build-all.bat) を使用してビルドを行っています。
+ビルドに使用されるバッチファイルについては [build-batchfiles.md](ci/build-batchfiles.md) を参照してください。
 
 ### ビルド成果物を利用する上での注意事項
 

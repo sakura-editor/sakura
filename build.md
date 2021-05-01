@@ -23,6 +23,7 @@
   - [開発者向けの情報](#開発者向けの情報)
     - [githash.h の更新のスキップ](#githashh-の更新のスキップ)
     - [Powershell によるZIPファイルの圧縮、解凍、内容確認の強制](#powershell-によるzipファイルの圧縮解凍内容確認の強制)
+    - [CI でのビルドをスキップする方法](#ci-でのビルドをスキップする方法)
     - [MinGW w64 ビルド](#mingw-w64-ビルド)
 
 <!-- /TOC -->
@@ -109,11 +110,12 @@ build-all.bat Win32 Release
 
 ### appveyor でのビルドの仕組み
 
-[こちら](appveyor.md) で appveyor 上でのビルドの仕組みを説明しています。
+AppVeyor では、 [build-all.bat](build-all.bat) を使用してビルドを行っています。
+ビルドに使用されるバッチファイルについては [build-batchfiles.md](ci/build-batchfiles.md) を参照してください。
 
 ### Azure Pipelines でのビルドの仕組み
 
-[こちら](azure-pipelines.md) で [Azure Pipelines](https://azure.microsoft.com/ja-jp/services/devops/pipelines/) 上でのビルドの仕組みを説明しています。
+[こちら](ci/azure-pipelines/azure-pipelines.md) で [Azure Pipelines](https://azure.microsoft.com/ja-jp/services/devops/pipelines/) 上でのビルドの仕組みを説明しています。
 
 ### インストーラの仕組み
 
@@ -168,6 +170,19 @@ build-sln.bat Win32 Debug
 build-sln.bat x64   Release
 build-sln.bat x64   Debug
 ```
+
+### CI でのビルドをスキップする方法
+
+ビルドに関係ない修正 (ドキュメントの修正など) を行った場合に、
+コミットメッセージの中に `[ci skip]` または `[skip ci]` というキーワードを含めることで、 CI ビルドを行わないようにすることができます。  
+ただし PR をマージするときは実行されます。
+
+#### 参考情報
+
+- https://qiita.com/vmmhypervisor/items/f10c77a375c2a663b300
+- https://www.appveyor.com/docs/how-to/filtering-commits/#skip-directive-in-commit-message
+- https://docs.microsoft.com/ja-jp/azure/devops/pipelines/repos/azure-repos-git?view=azure-devops&tabs=yaml#skipping-ci-for-individual-commits
+- https://github.blog/changelog/2021-02-08-github-actions-skip-pull-request-and-push-workflows-with-skip-ci/
 
 ### MinGW w64 ビルド
 
