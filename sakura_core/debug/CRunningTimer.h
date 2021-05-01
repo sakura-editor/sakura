@@ -41,8 +41,16 @@
 #include <string_view>
 #include <chrono>
 
-// RunningTimerで経過時間の測定を行う場合にはコメントを外してください
+// 本番コードに組み込まれている時間計測の結果を出力ペインに出したい時にコメントを外して下さい
 //#define TIME_MEASURE
+
+#if defined(TIME_MEASURE)
+  #define MY_TRACETIME(c,m) (c).WriteTrace(m)
+  #define MY_RUNNINGTIMER(c,m) CRunningTimer c(m, CRunningTimer::OutputStyle::Conventional)
+#else
+  #define MY_TRACETIME(c,m)
+  #define MY_RUNNINGTIMER(c,m)
+#endif
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -50,9 +58,9 @@
 /*!
 	@brief 処理所要時間の計測クラス
 
-	定義の切り替えのみでタイマーのON/OFFを行えるようにするため，
-	このクラスを直接使わず，後ろにあるMY_RUNNINGTIMERとMY_TRACETIMEを
-	使うこと．
+	本番コードに時間計測箇所を組み込む場合には、
+	このクラスを直接使わず代わりにMY_RUNNINGTIMER,MY_TRACETIMEマクロを使用して下さい。
+	(計測が必要な時以外で出力ペインを計測ログが埋め尽くさないようにするため)
 
 	@date 2002/10/16  genta WriteTrace及びマクロ追加
 */
@@ -99,18 +107,6 @@ protected:
 	void OutputTrace( TimePoint currentTime, TraceType traceType, std::wstring_view msg = L"" ) const;
 	void Output( std::wstring_view fmt, ... ) const;
 
-#ifdef _DEBUG
 	static int m_nNestCount;
-#endif
 };
-
-//	Oct. 16, 2002 genta
-//	#ifdef _DEBUG～#endifで逐一囲まなくても簡単にタイマーのON/OFFを行うためのマクロ
-#if defined(_DEBUG) && defined(TIME_MEASURE)
-  #define MY_TRACETIME(c,m) (c).WriteTrace(m)
-  #define MY_RUNNINGTIMER(c,m) CRunningTimer c(m, CRunningTimer::OutputStyle::Conventional)
-#else
-  #define MY_TRACETIME(c,m)
-  #define MY_RUNNINGTIMER(c,m)
-#endif
 #endif /* SAKURA_CRUNNINGTIMER_B4A1B7C4_EA83_41F2_9132_21DE3A57470D_H_ */

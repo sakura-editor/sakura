@@ -21,8 +21,6 @@
 #include "_main/global.h"
 #include "debug/Debug2.h"
 
-#ifdef _DEBUG
-
 #pragma comment(lib, "winmm.lib")
 
 CRunningTimer::TimePoint CRunningTimer::m_initialTime = std::chrono::high_resolution_clock::now();
@@ -175,5 +173,3 @@ void CRunningTimer::Output( std::wstring_view fmt, ... ) const
 
 	OutputDebugStringW( str.data() );
 }
-
-#endif
