@@ -425,7 +425,6 @@ void CDlgFuncList::SetData()
 	m_bDummyLParamMode = false;
 	m_vecDummylParams.clear();
 
-	//2002.02.08 hor 隠しといてアイテム削除→あとで表示
 	::SendMessage(hwndList, WM_SETREDRAW, (WPARAM)FALSE, 0);
 	::SendMessage(hwndTree, WM_SETREDRAW, (WPARAM)FALSE, 0);
 	ListView_DeleteAllItems( hwndList );
