@@ -326,9 +326,8 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 				// ・subpath\FileName.ext(123,45): str
 				// ・:HWND:[01234567](無題)2(123,45): str
 				int fileEnd = GetLineColumnPos(pLine);
-				if( 0 < fileEnd && fileEnd - 1 < (int)_countof(szFile) ){
-					wmemcpy( szFile, pLine + 1, fileEnd - 1 );
-					szFile[fileEnd - 1] = L'\0';
+				if (1 < fileEnd && L'(' == pLine[fileEnd] && fileEnd - 1 < MAX_TAG_PATH) {
+					strFile.assign(pLine + 1, fileEnd - 1);
 					GetLineColumn( &pLine[fileEnd + 1], &nJumpToLine, &nJumpToColumn );
 					if( IsHWNDTag(pLine + 1, szJumpToFile) ){
 						break;
@@ -423,7 +422,7 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 		}
 	}while(0);
 
-	if (strJumpToFile.empty()) {
+	if (strJumpToFile.empty() || szJumpToFile[0] == L'\0') {
 		pLine = GetDocument()->m_cDocLineMgr.GetLine(ptXYOrg.GetY2())->GetDocLineStrWithEOL(&nLineLen);
 		if( NULL == pLine ){
 			return false;
@@ -438,7 +437,7 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 			}
 		}
 	}
-	if( szJumpToFile[0] == L'\0' ){
+	if (strJumpToFile.empty() || szJumpToFile[0] == L'\0') {
 		//@@@ 2001.12.31 YAZAKI
 		const wchar_t *p = pLine;
 		const wchar_t *p_end = p + nLineLen;
@@ -471,13 +470,22 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 		return true;
 		//	From Here Aug. 27, 2001 genta
 	}
+	if (szJumpToFile[0] == L'\0' && Command_TagJumpByTagsFile(bClose) ){	//@@@ 2003.04.13
+		return true;
+		//	From Here Aug. 27, 2001 genta
+	}
 
 	//	Apr. 21, 2003 genta bClose追加
-		std::wstring wstrFile = szJumpToFile;
-	if (wstrFile.empty() == false &&
-		m_pCommanderView->TagJumpSub(wstrFile.c_str(), CMyPoint(nJumpToColumn, nJumpToLine), bClose ) ){	//@@@ 2003.04.13
+	if (strJumpToFile.empty() == false &&
+		m_pCommanderView->TagJumpSub(strJumpToFile.c_str(), CMyPoint(nJumpToColumn, nJumpToLine), bClose)) {	//@@@ 2003.04.13
 		return true;
 	}
+	std::wstring strJumpToFileHWND = szJumpToFile;
+	if (strJumpToFileHWND.empty() == false &&
+		m_pCommanderView->TagJumpSub(strJumpToFileHWND.c_str(), CMyPoint(nJumpToColumn, nJumpToLine), bClose ) ){	//@@@ 2003.04.13
+		return true;
+	}
+
 
 	return false;
 }
