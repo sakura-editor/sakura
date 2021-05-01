@@ -28,19 +28,42 @@
 CRunningTimer::TimePoint CRunningTimer::m_initialTime = std::chrono::high_resolution_clock::now();
 int CRunningTimer::m_nNestCount = 0;
 
-CRunningTimer::CRunningTimer( std::wstring_view name ) :
-	m_timerName( name )
+CRunningTimer::CRunningTimer( std::wstring_view name, OutputStyle style ) :
+	m_timerName( name ),
+	m_nNameOutputWidthMin( 40 ),
+	m_outputStyle( style )
 {
 	Reset();
 
+	if( m_timerName.length() == 0 && m_outputStyle == OutputStyle::Markdown )
+	{
+		// 字下げ位置がわかるように何か文字列を入れておく
+		m_timerName = L"(no name)";
+	}
+
+	m_nNameOutputWidth = m_nNameOutputWidthMin;
+	if( m_nNameOutputWidth < m_timerName.size() )
+	{
+		m_nNameOutputWidth = m_timerName.size();
+	}
+
 	m_nDepth = m_nNestCount++;
-	OutputTrace( m_startTime, L"Enter", OutputTiming::Enter );
+	if( m_nDepth == 0 )
+	{
+		OutputHeader();
+	}
+	OutputTrace( m_startTime, TraceType::Enter );
+
 	return;
 }
 
 CRunningTimer::~CRunningTimer()
 {
-	OutputTrace( GetTime(), L"Exit Scope" );
+	OutputTrace( GetTime(), TraceType::ExitScope );
+	if( m_nDepth == 0 )
+	{
+		OutputFooter();
+	}
 	m_nNestCount--;
 	return;
 }
@@ -48,6 +71,7 @@ CRunningTimer::~CRunningTimer()
 void CRunningTimer::Reset()
 {
 	m_startTime = GetTime();
+	m_lastTime = m_startTime;
 }
 
 DWORD CRunningTimer::Read()
@@ -58,9 +82,11 @@ DWORD CRunningTimer::Read()
 /*!
 	@date 2002.10.15 genta
 */
-void CRunningTimer::WriteTrace( std::wstring_view msg ) const
+void CRunningTimer::WriteTrace( std::wstring_view msg )
 {
-	OutputTrace( GetTime(), msg );
+	auto currentTime = GetTime();
+	OutputTrace( currentTime, TraceType::Normal, msg );
+	m_lastTime = currentTime;
 }
 
 double CRunningTimer::GetElapsedTimeInSeconds( TimePoint from, TimePoint to )
@@ -73,15 +99,67 @@ CRunningTimer::TimePoint CRunningTimer::GetTime() const
 	return std::chrono::high_resolution_clock::now();
 }
 
-void CRunningTimer::OutputTrace( TimePoint currentTime, std::wstring_view msg, OutputTiming timing ) const
+void CRunningTimer::OutputHeader() const
 {
-	if( timing == OutputTiming::Enter )
+	if( m_outputStyle == OutputStyle::Markdown )
 	{
-		Output( L"%3d:\"%s\" : %s \n", m_nDepth, m_timerName.c_str(), msg.data() );
+		Output( L"| timestamp (s) | %-*s | time (ms) | diff (ms) | message\n", m_nNameOutputWidth, L"name" );
+		Output( L"|--------------:|-%.*s-|----------:|----------:|--------\n", m_nNameOutputWidth, L"----------------------------------------------------------------------------------------------------" );
 	}
 	else
 	{
-		Output( L"%3d:\"%s\", %d㍉秒 : %s\n", m_nDepth, m_timerName.c_str(), (int)(GetElapsedTimeInSeconds( m_startTime, currentTime ) * 1000.0), msg.data() );
+		;
+	}
+}
+
+void CRunningTimer::OutputFooter() const
+{
+	if( m_outputStyle == OutputStyle::Markdown )
+	{
+		Output( L"\n" );
+	}
+	else
+	{
+		;
+	}
+}
+
+void CRunningTimer::OutputTrace( TimePoint currentTime, TraceType traceType, std::wstring_view msg ) const
+{
+	if( m_outputStyle == OutputStyle::Markdown )
+	{
+		msg =
+			(traceType == TraceType::Enter) ? L"== Enter ==" :
+			(traceType == TraceType::ExitScope) ? L"== Exit Scope ==" :
+			msg;
+		Output( L"| %13.6f | %.*s%-*s | %9.3f | %9.3f | %s\n",
+			GetElapsedTimeInSeconds( m_initialTime, currentTime ),
+			m_nDepth * 2, L"_ _ _ _ _ _ _ _ _ _ ", (m_nNameOutputWidth - (m_nDepth * 2)), m_timerName.c_str(),
+			GetElapsedTimeInSeconds( m_startTime, currentTime ) * 1000.0,
+			GetElapsedTimeInSeconds( m_lastTime, currentTime ) * 1000.0,
+			msg.data() );
+	}
+	else
+	{
+		msg =
+			(traceType == TraceType::Enter) ? L"Enter" :
+			(traceType == TraceType::ExitScope) ? L"Exit Scope" :
+			msg;
+		if( traceType == TraceType::Enter )
+		{
+			Output( L"%3d:\"%s\" : %s\n",
+				m_nDepth,
+				m_timerName.c_str(),
+				msg.data() );
+		}
+		else
+		{
+			Output( L"%3d:\"%s\", %d㍉秒 : %s\n",
+				m_nDepth,
+				m_timerName.c_str(),
+				(int)(GetElapsedTimeInSeconds( m_startTime, currentTime ) * 1000.0),
+				msg.data() );
+		}
 	}
 }
 

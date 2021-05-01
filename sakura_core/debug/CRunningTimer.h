@@ -59,10 +59,12 @@
 class CRunningTimer
 {
 public:
+	enum class OutputStyle { Conventional, Markdown };
+
 	/*
 	||  Constructors
 	*/
-	CRunningTimer( std::wstring_view name = L"" );
+	CRunningTimer( std::wstring_view name = L"", OutputStyle style = OutputStyle::Markdown );
 	~CRunningTimer();
 
 	/*
@@ -70,24 +72,31 @@ public:
 	*/
 	void Reset();
 	DWORD Read();
-
-	void WriteTrace( std::wstring_view msg = L"" ) const;
+	void WriteTrace( std::wstring_view msg = L"" );
 
 protected:
+	enum class TraceType { Normal, Enter, ExitScope };
 	typedef std::chrono::high_resolution_clock::time_point TimePoint;
 
 	static TimePoint m_initialTime;				// タイムスタンプ基準時間
 
+	const size_t	m_nNameOutputWidthMin;		// タイマー名最低出力幅(文字数)
+
 	TimePoint		m_startTime;				// 計測開始時間
+	TimePoint		m_lastTime;					// 最後に出力した時間
 	std::wstring	m_timerName;				// タイマー名
 	int				m_nDepth;					// このオブジェクトのネストの深さ
+	OutputStyle		m_outputStyle;				// ログの出力形式
+	size_t			m_nNameOutputWidth;			// タイマー名出力幅(文字数)
 	LARGE_INTEGER	m_nPerformanceFrequency;	// 計時用
 
 	enum class OutputTiming { Normal, Enter };
 
 	static double GetElapsedTimeInSeconds( TimePoint from, TimePoint to );
 	TimePoint GetTime() const;
-	void OutputTrace( TimePoint currentTime, std::wstring_view msg, OutputTiming timing = OutputTiming::Normal ) const;
+	void OutputHeader() const;
+	void OutputFooter() const;
+	void OutputTrace( TimePoint currentTime, TraceType traceType, std::wstring_view msg = L"" ) const;
 	void Output( std::wstring_view fmt, ... ) const;
 
 #ifdef _DEBUG
@@ -99,7 +108,7 @@ protected:
 //	#ifdef _DEBUG～#endifで逐一囲まなくても簡単にタイマーのON/OFFを行うためのマクロ
 #if defined(_DEBUG) && defined(TIME_MEASURE)
   #define MY_TRACETIME(c,m) (c).WriteTrace(m)
-  #define MY_RUNNINGTIMER(c,m) CRunningTimer c(m)
+  #define MY_RUNNINGTIMER(c,m) CRunningTimer c(m, CRunningTimer::OutputStyle::Conventional)
 #else
   #define MY_TRACETIME(c,m)
   #define MY_RUNNINGTIMER(c,m)
