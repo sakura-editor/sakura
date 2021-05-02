@@ -3,8 +3,8 @@
 <!-- TOC -->
 
 - [単体テスト](#単体テスト)
-  - [googletest](#googletest)
-  - [cmake](#cmake)
+  - [GoogleTest](#googletest)
+  - [CMake](#cmake)
   - [単体テストのディレクトリ構造](#単体テストのディレクトリ構造)
   - [単体テスト関連のバッチファイル](#単体テスト関連のバッチファイル)
     - [一覧](#一覧)
@@ -14,24 +14,24 @@
 
 <!-- /TOC -->
 
-## googletest
+## GoogleTest
 
 単体テストフレームワークとしてオープンソースでいくつか公開されていますが、
-google が開発している [googletest](https://github.com/google/googletest) を使用します。
+Google が開発している [GoogleTest](https://github.com/google/googletest) を使用します。
 
-[googletest](https://github.com/google/googletest) は github でソースコードが公開されているので
+[GoogleTest](https://github.com/google/googletest) は GitHub でソースコードが公開されているので
 git submodule の機能を使用してソースコードを参照してテストと同時にビルドします。
 
-## cmake
+## CMake
 
-googletest はビルドシステムに [cmake](https://cmake.org/) を使用します。
-cmake は CMakeLists.txt というテキストファイルにビルド設定を記載して
-cmake を実行することにより、各プラットフォームに固有のネイティブの
+GoogleTest はビルドシステムに [CMake](https://cmake.org/) を使用します。
+CMake は CMakeLists.txt というテキストファイルにビルド設定を記載して
+CMake を実行することにより、各プラットフォームに固有のネイティブの
 ビルドシステム用のファイルを生成してビルドします。
 
-googletest を使用して作成する単体テストも cmake でビルド設定を行います。
+GoogleTest を使用して作成する単体テストも CMake でビルド設定を行います。
 
-cmake は Visual Studio 用のプロジェクト生成に対応しているため
+CMake は Visual Studio 用のプロジェクト生成に対応しているため
 Visual Studio 用のプロジェクトを生成してビルドすれば 
 GUI でステップ実行することができます。
 
