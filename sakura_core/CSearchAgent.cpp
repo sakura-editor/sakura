@@ -942,14 +942,14 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 					ref._SetStringLength(nWorkPos);
 					ref.AppendString(pInsData, nInsLen);
 					ref.AppendNativeData(pCDocLineNext->_GetDocLineDataWithEOL());
-					pCDocLine->SetEol();
+					pCDocLine->SetEol(GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol);
 				}else{
 					CNativeW tmp;
 					tmp.AllocStringBuffer(nNewLen);
 					tmp.AppendString(pLine, nWorkPos);
 					tmp.AppendString(pInsData, nInsLen);
 					tmp.AppendNativeData(pCDocLineNext->_GetDocLineDataWithEOL());
-					pCDocLine->SetDocLineStringMove(&tmp);
+					pCDocLine->SetDocLineStringMove(&tmp, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol);
 				}
 				if( bChangeOneLine ){
 					pArg->nInsSeq = CModifyVisitor().GetLineModifiedSeq(pCDocLine);
@@ -975,7 +975,7 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 				/* 行内データ削除 */
 				CNativeW tmp;
 				tmp.SetString(pLine, nWorkPos);
-				pCDocLine->SetDocLineStringMove(&tmp);
+				pCDocLine->SetDocLineStringMove(&tmp, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol);
 				CModifyVisitor().SetLineModified(pCDocLine, pArg->nDelSeq);	/* 変更フラグ */
 			}
 		}
@@ -1012,7 +1012,7 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 					tmp.AppendString(pLine, nWorkPos);
 					tmp.AppendString(pInsData, nInsLen);
 					tmp.AppendString(&pLine[nWorkPos + nWorkLen], nAfterLen);
-					pCDocLine->SetDocLineStringMove(&tmp);
+					pCDocLine->SetDocLineStringMove(&tmp, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol);
 				}
 			}
 			if( bChangeOneLine ){
@@ -1133,10 +1133,10 @@ prev_line:;
 					tmp.AllocStringBuffer(cPrevLine.GetLength() + cmemLine.GetStringLength());
 					tmp.AppendString(cPrevLine.GetPtr(), cPrevLine.GetLength());
 					tmp.AppendNativeData(cmemLine);
-					pCDocLineNew->SetDocLineStringMove(&tmp);
+					pCDocLineNew->SetDocLineStringMove(&tmp, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol);
 				}
 				else{
-					pCDocLineNew->SetDocLineStringMove(&cmemLine);
+					pCDocLineNew->SetDocLineStringMove(&cmemLine, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol);
 				}
 				CModifyVisitor().SetLineModified(pCDocLineNew, (*pArg->pInsData)[nCount].nSeq);
 			}
@@ -1152,21 +1152,21 @@ prev_line:;
 						cmemCurLine.swap(tmp);
 						tmp._SetStringLength(cPrevLine.GetLength());
 						tmp.AppendNativeData(cmemLine);
-						pCDocLine->SetDocLineStringMove(&tmp);
+						pCDocLine->SetDocLineStringMove(&tmp, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol);
 						cNextLine = CStringRef(cmemCurLine.GetStringPtr(), cmemCurLine.GetStringLength());
 					}else{
 						CNativeW tmp;
 						tmp.AllocStringBuffer(cPrevLine.GetLength() + cmemLine.GetStringLength());
 						tmp.AppendString(cPrevLine.GetPtr(), cPrevLine.GetLength());
 						tmp.AppendNativeData(cmemLine);
-						pCDocLine->SetDocLineStringMove(&tmp);
+						pCDocLine->SetDocLineStringMove(&tmp, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol);
 					}
 					CModifyVisitor().SetLineModified(pCDocLine, (*pArg->pInsData)[nCount].nSeq);
 					pCDocLine = pCDocLine->GetNextLine();
 				}
 				else{
 					CDocLine* pCDocLineNew = m_pcDocLineMgr->InsertNewLine(pCDocLine);	//pCDocLineの前に挿入
-					pCDocLineNew->SetDocLineStringMove(&cmemLine);
+					pCDocLineNew->SetDocLineStringMove(&cmemLine, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol);
 					CModifyVisitor().SetLineModified(pCDocLineNew, (*pArg->pInsData)[nCount].nSeq);
 				}
 			}
@@ -1199,7 +1199,7 @@ prev_line:;
 		tmp.AppendString(cNextLine.GetPtr(), cNextLine.GetLength());
 		if( NULL == pCDocLine ){
 			CDocLine* pCDocLineNew = m_pcDocLineMgr->AddNewLine();	//末尾に追加
-			pCDocLineNew->SetDocLineStringMove(&tmp);
+			pCDocLineNew->SetDocLineStringMove(&tmp, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol);
 			pCDocLineNew->m_sMark = markNext;
 			if( !bLastEOLReplace || !bSetMark ){
 				CModifyVisitor().SetLineModified(pCDocLineNew, nSeq);
@@ -1213,7 +1213,7 @@ prev_line:;
 				pCDocLine = m_pcDocLineMgr->InsertNewLine(pCDocLine);	//pCDocLineの前に挿入
 				pCDocLine->m_sMark = markNext;
 			}
-			pCDocLine->SetDocLineStringMove(&tmp);
+			pCDocLine->SetDocLineStringMove(&tmp, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol);
 			if( !bLastEOLReplace || !bSetMark ){
 				CModifyVisitor().SetLineModified(pCDocLine, nSeq);
 			}

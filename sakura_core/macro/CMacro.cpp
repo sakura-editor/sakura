@@ -2192,7 +2192,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 					varCopy2.Data.lVal = 1;
 				}
 				CDocLine tmpDocLine;
-				tmpDocLine.SetDocLineString(varCopy.Data.bstrVal, ::SysStringLen(varCopy.Data.bstrVal));
+				tmpDocLine.SetDocLineString(varCopy.Data.bstrVal, ::SysStringLen(varCopy.Data.bstrVal), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol);
 				const int tmpLenWithEol1 = tmpDocLine.GetLengthWithoutEOL() + (0 < tmpDocLine.GetEol().GetLen() ? 1: 0);
 				const CLayoutXInt offset(varCopy2.Data.lVal - 1);
 				const CLayout tmpLayout(
