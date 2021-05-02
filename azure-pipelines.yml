@@ -36,7 +36,7 @@ trigger:
       - tools/find-tools.md
       - tools/macro/macro.md
       - tools/zip/readme.md
-      - unittest.md
+      - tests/unittest.md
       - vcx-props/project-PlatformToolset.md
 
 ###############################################################################################################################
@@ -77,7 +77,7 @@ pr:
       - tools/find-tools.md
       - tools/macro/macro.md
       - tools/zip/readme.md
-      - unittest.md
+      - tests/unittest.md
       - vcx-props/project-PlatformToolset.md
 
 ###############################################################################################################################

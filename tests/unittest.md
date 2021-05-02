@@ -51,36 +51,36 @@ GUI でステップ実行することができます。
 
 | バッチファイル | 説明 |
 ----|---- 
-|[tests\build-and-test.bat](tests/build-and-test.bat) | ビルドと単体テストを順に行う |
-|[tests\create-project.bat](tests/create-project.bat) | 単体テスト用のプロジェクトファイルを作成する |
-|[tests\build-project.bat](tests/build-project.bat) | 単体テスト用のプロジェクトをビルドする |
-|[tests\run-tests.bat](tests/run-tests.bat) | 単体テストを実行する |
+|[tests\build-and-test.bat](build-and-test.bat) | ビルドと単体テストを順に行う |
+|[tests\create-project.bat](create-project.bat) | 単体テスト用のプロジェクトファイルを作成する |
+|[tests\build-project.bat](build-project.bat) | 単体テスト用のプロジェクトをビルドする |
+|[tests\run-tests.bat](run-tests.bat) | 単体テストを実行する |
 
 ### 呼び出し構造
 
-- [tests\build-and-test.bat](tests/build-and-test.bat)
-    - [tests\create-project.bat](tests/create-project.bat)
-        - build-gnu.bat : Makefile をビルドする (platform が MinGW の場合)
-        - build-sln.bat : ソリューションをビルドする (platform が Win32 または x64 の場合)
+- [tests\build-and-test.bat](build-and-test.bat)
+    - [tests\create-project.bat](create-project.bat)
+        - [build-gnu.bat](../build-gnu.bat) : Makefile をビルドする (platform が MinGW の場合)
+        - [build-sln.bat](../build-sln.bat) : ソリューションをビルドする (platform が Win32 または x64 の場合)
         - git.exe
         - cmake.exe
-    - [tests\build-project.bat](tests/build-project.bat)
+    - [tests\build-project.bat](build-project.bat)
         - git.exe
         - cmake.exe
-    - [tests\run-tests.bat](tests/run-tests.bat)
+    - [tests\run-tests.bat](run-tests.bat)
         - tests\tests*.exe : 単体テストを実行する
-        - tests\test_result_filter_tell_AppVeyor.bat : AppVeyor のテストタブにテスト結果を出力する
+        - [tests\test_result_filter_tell_AppVeyor.bat](test_result_filter_tell_AppVeyor.bat) : AppVeyor のテストタブにテスト結果を出力する
 
 ### 使用するバッチファイルの引数
 
 | バッチファイル | 第一引数 | 第二引数 |
 ----|----|----
-|[tests\build-and-test.bat](tests/build-and-test.bat)| platform ("Win32" または "x64" または "MinGW") | configuration ("Debug" または "Release")  |
-|[tests\create-project.bat](tests/create-project.bat)| platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
-|[tests\build-project.bat](tests/build-project.bat)  | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
-|[tests\run-tests.bat](tests/run-tests.bat)          | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
+|[tests\build-and-test.bat](build-and-test.bat) | platform ("Win32" または "x64" または "MinGW") | configuration ("Debug" または "Release")  |
+|[tests\create-project.bat](create-project.bat) | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
+|[tests\build-project.bat](build-project.bat) | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
+|[tests\run-tests.bat](run-tests.bat) | platform ("Win32" または "x64") | configuration ("Debug" または "Release")  |
 
 ## インクルードディレクトリ
 
-単体テスト用の [CMakeLists.txt](tests/unittests/CMakeLists.txt) で [サクラエディタ用のディレクトリ](sakura_core) に
+単体テスト用の [CMakeLists.txt](unittests/CMakeLists.txt) で [サクラエディタ用のディレクトリ](../sakura_core) に
 インクルードディレクトリを指定するので、そこからの相対パスを指定すれば、サクラエディタのヘッダをインクルードできます。

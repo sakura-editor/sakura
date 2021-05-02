@@ -172,7 +172,7 @@ https://ci.appveyor.com/project/sakuraeditor/sakura/history
 
 ### 単体テスト
 
-[単体テスト](unittest.md) を参照
+[こちら](tests/unittest.md) を参照してください。
 
 ### デバッグ方法
 
