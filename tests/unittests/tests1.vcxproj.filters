@@ -139,6 +139,9 @@
     <ClCompile Include="test-printEFunctionCode.cpp">
       <Filter>Other Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-cdocline.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartEditorProcessForTest.h">
