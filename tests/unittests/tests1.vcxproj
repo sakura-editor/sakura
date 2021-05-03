@@ -107,6 +107,7 @@
     <ClCompile Include="code-main.cpp" />
     <ClCompile Include="test-cdocline.cpp" />
     <ClCompile Include="test-cdoclinemgr.cpp" />
+    <ClCompile Include="test-czipfile.cpp" />
     <ClCompile Include="test-printEFunctionCode.cpp" />
     <ClCompile Include="test-cclipboard.cpp" />
     <ClCompile Include="test-ccodebase.cpp" />
@@ -145,6 +146,15 @@
     <ClCompile Include="test-string_ex.cpp" />
     <ClCompile Include="test-zoom.cpp" />
     <ClCompile Include="test-winmain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="tests1_rc.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="tests1_rc.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="test-resources\test-plugin.zip" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

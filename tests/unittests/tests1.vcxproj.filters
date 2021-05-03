@@ -10,6 +10,9 @@
     <Filter Include="Other Files">
       <UniqueIdentifier>{0eefa0df-ca7f-489c-9844-9a182e1dba18}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{577a09a1-f9e4-4ea0-b342-453c5252cb06}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup Condition="Exists('$(VCInstallDir)\Auxiliary\VS\include\CodeCoverage\CodeCoverage.h')">
     <ClCompile Include="coverage.cpp">
@@ -145,10 +148,26 @@
     <ClCompile Include="test-cdoclinemgr.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-czipfile.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartEditorProcessForTest.h">
       <Filter>Other Files</Filter>
     </ClInclude>
+    <ClInclude Include="tests1_rc.h">
+      <Filter>Other Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="tests1_rc.rc">
+      <Filter>Other Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="test-resources\test-plugin.zip">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
