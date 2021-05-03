@@ -142,6 +142,9 @@
     <ClCompile Include="test-cdocline.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-cdoclinemgr.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartEditorProcessForTest.h">
