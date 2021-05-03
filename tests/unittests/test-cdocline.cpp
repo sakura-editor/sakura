@@ -118,23 +118,23 @@ TEST(CDocLine, GetDocLineStrWithEOL)
 		EXPECT_EQ(CDocLine::GetDocLineStrWithEOL_Safe(&line, &n), line.GetPtr());
 		EXPECT_EQ(n, line.GetLengthWithEOL());
 
-#ifdef USE_STRICT_INT
+		// USE_STRICT_INT 定義時は別の関数が呼ばれる
 		int n2 = 123;
 		EXPECT_EQ(line.GetDocLineStrWithEOL(&n), line.GetPtr());
 		EXPECT_EQ(n, line.GetLengthWithEOL());
-#endif
 	}
 	{
 		CLogicInt n(123);
+		EXPECT_EQ(CDocLine::GetDocLineStrWithEOL_Safe(nullptr, &n), nullptr);
+		EXPECT_EQ(n, CLogicInt(0));
+
+#ifdef _MSC_VER
+		n = 123;
 		CDocLine* p = reinterpret_cast<CDocLine*>(0);
 		EXPECT_EQ(p->GetDocLineStrWithEOL(&n), nullptr);
 		EXPECT_EQ(n, CLogicInt(0));
 
-		n = 123;
-		EXPECT_EQ(CDocLine::GetDocLineStrWithEOL_Safe(nullptr, &n), nullptr);
-		EXPECT_EQ(n, CLogicInt(0));
-
-#ifdef USE_STRICT_INT
+		// USE_STRICT_INT 定義時は別の関数が呼ばれる
 		int n2 = 123;
 		EXPECT_EQ(p->GetDocLineStrWithEOL(&n), nullptr);
 		EXPECT_EQ(n, 0);
@@ -157,14 +157,16 @@ TEST(CDocLine, GetStringRefWithEOL)
 	}
 	{
 		CLogicInt n(123);
-		CDocLine* p = reinterpret_cast<CDocLine*>(0);
-		CStringRef ref = p->GetStringRefWithEOL();
+		CStringRef ref = CDocLine::GetStringRefWithEOL_Safe(nullptr);
 		EXPECT_EQ(ref.GetPtr(), nullptr);
 		EXPECT_EQ(ref.GetLength(), 0);
 
-		ref = CDocLine::GetStringRefWithEOL_Safe(nullptr);
+#ifdef _MSC_VER
+		CDocLine* p = reinterpret_cast<CDocLine*>(0);
+		ref = p->GetStringRefWithEOL();
 		EXPECT_EQ(ref.GetPtr(), nullptr);
 		EXPECT_EQ(ref.GetLength(), 0);
+#endif
 	}
 }
 
