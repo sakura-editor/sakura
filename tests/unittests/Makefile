@@ -39,12 +39,18 @@ MKDIR = md
 RM = del
 DIRSEP = $(strip \ )
 DEVNULL = NUL
+ICONV = iconv.exe
+SED = sed.exe
+P7Z = 7z.exe
 else
 # If unix-like shell is used.
 MKDIR = mkdir -p
 RM = rm -f
 DIRSEP = /
 DEVNULL = /dev/null
+ICONV = iconv
+SED = sed
+P7Z = 7z
 endif
 
 ifndef PREFIX
@@ -120,7 +126,8 @@ exe= $(or $(OUTDIR),.)/tests1.exe
 
 SRCS = $(wildcard $(SRCDIR)/test-*.cpp) \
        $(wildcard $(SRCDIR)/code-*.cpp)
-OBJS = $(SRCS:$(SRCDIR)/%.cpp=%.o)
+OBJS = $(SRCS:$(SRCDIR)/%.cpp=%.o) \
+       tests1_rc.o
 
 DEPS= $(OBJS:%.o=%.d)
 
@@ -139,6 +146,12 @@ $(exe): $(OBJS) $(SAKURA_OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 $(OBJS):
+
+tests1_rc.o: tests1_rc.rc.utf8 $(sakura_rc) resources.ja-JP.zip resources.en-US.zip
+	$(RC) -c utf-8 -I. -I$(SRCDIR) $(DEFINES) $< -o $@
+
+tests1_rc.rc.utf8: tests1_rc.rc
+	$(ICONV) -f utf-16 -t utf-8 $(SRCDIR)/$(subst .utf8,,$(@F)) | $(SED) -e 1i'#pragma code_page(65001)' > $@
 
 clean:
 	-$(RM) $(subst /,$(DIRSEP),$(exe) $(OBJS))

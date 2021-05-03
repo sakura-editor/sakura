@@ -49,6 +49,9 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalOptions>/source-charset:utf-8 /execution-charset:shift_jis %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>comctl32.lib;Imm32.lib;mpr.lib;imagehlp.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -109,6 +112,7 @@
     <ClCompile Include="test-cdoclinemgr.cpp" />
     <ClCompile Include="test-csearchagent.cpp" />
     <ClCompile Include="test-crunningtimer.cpp" />
+    <ClCompile Include="test-czipfile.cpp" />
     <ClCompile Include="test-printEFunctionCode.cpp" />
     <ClCompile Include="test-cclipboard.cpp" />
     <ClCompile Include="test-ccodebase.cpp" />
@@ -149,6 +153,12 @@
     <ClCompile Include="test-winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="tests1_rc.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="tests1_rc.rc" />
+  </ItemGroup>
+  <ItemGroup>
     <Text Include="CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup Condition="Exists('$(VCInstallDir)\Auxiliary\VS\include\CodeCoverage\CodeCoverage.h')">
@@ -166,4 +176,20 @@
     <ClInclude Include="StartEditorProcessForTest.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ItemGroup>
+    <TestResource Include="test-plugin\plugin.def" />
+  </ItemGroup>
+  <Target Name="MakeTestResource" BeforeTargets="ResourceCompile" Inputs="@(TestResource->'resources\ja-JP\%(RelativeDir)%(filename)%(Extension)')" Outputs="$(IntDir)resources.ja-JP.zip">
+    <Exec Command="7z u &quot;$(IntDir)resources.ja-JP.zip&quot; -tzip @(TestResource->'%(RelativeDir)%(filename)%(Extension)',' ')" WorkingDirectory="$(ProjectDir)resources\ja-JP" />
+  </Target>
+  <Target Name="MakeTestResourceEnUS" BeforeTargets="ResourceCompile" Inputs="@(TestResource->'resources\en-US\%(RelativeDir)%(filename)%(Extension)')" Outputs="$(IntDir)resources.en-US.zip">
+    <Exec Command="7z u &quot;$(IntDir)resources.en-US.zip&quot; -tzip @(TestResource->'%(RelativeDir)%(filename)%(Extension)',' ')" WorkingDirectory="$(ProjectDir)resources\en-US" />
+  </Target>
+  <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
+    <!-- Add files to @Clean just before running CoreClean. -->
+    <ItemGroup>
+      <Clean Include="$(IntDir)resources.ja-JP.zip" />
+      <Clean Include="$(IntDir)resources.en-US.zip" />
+    </ItemGroup>
+  </Target>
 </Project>
