@@ -53,8 +53,8 @@ TEST(CDocLineMgr, ListManipulations)
 	ASSERT_NE(b, nullptr);
 	b->SetDocLineString(L"B", 1, false);
 	EXPECT_EQ(m.GetLineCount(), 2);
-	//EXPECT_EQ(m.GetLine(CLogicInt(0)), b);
-	//EXPECT_EQ(m.GetLine(CLogicInt(1)), a);
+	EXPECT_EQ(m.GetLine(CLogicInt(0)), b);
+	EXPECT_EQ(m.GetLine(CLogicInt(1)), a);
 	EXPECT_EQ(m.GetLine(CLogicInt(2)), nullptr);
 	EXPECT_EQ(m.GetDocLineTop(), b);
 	EXPECT_EQ(m.GetDocLineBottom(), a);
@@ -64,8 +64,8 @@ TEST(CDocLineMgr, ListManipulations)
 	ASSERT_NE(c, nullptr);
 	c->SetDocLineString(L"C", 1, false);
 	EXPECT_EQ(m.GetLineCount(), 3);
-	//EXPECT_EQ(m.GetLine(CLogicInt(0)), b);
-	//EXPECT_EQ(m.GetLine(CLogicInt(1)), c);
+	EXPECT_EQ(m.GetLine(CLogicInt(0)), b);
+	EXPECT_EQ(m.GetLine(CLogicInt(1)), c);
 	EXPECT_EQ(m.GetLine(CLogicInt(2)), a);
 	EXPECT_EQ(m.GetDocLineTop(), b);
 	EXPECT_EQ(m.GetDocLineBottom(), a);

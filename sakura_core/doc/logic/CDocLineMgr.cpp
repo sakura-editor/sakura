@@ -275,6 +275,10 @@ void CDocLineMgr::_InsertBeforePos(CDocLine* pDocLineNew, CDocLine* pPos)
 	if(pPos){
 		pDocLineNew->m_pPrev = pPos->GetPrevLine();
 		pPos->m_pPrev = pDocLineNew;
+
+		//前回参照位置をリセット
+		m_pCodePrevRefer = nullptr;
+		m_nPrevReferLine = 0;
 	}
 	else{
 		pDocLineNew->m_pPrev = m_pDocLineBot;
