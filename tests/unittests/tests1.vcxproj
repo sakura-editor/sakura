@@ -40,7 +40,6 @@
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <Import Project="$(ProjectDir)..\googletest.targets" />
-  <Import Project="$(ProjectDir)..\compiletests.targets" />
   <ItemDefinitionGroup Label="tests1.common">
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
