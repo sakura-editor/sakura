@@ -107,6 +107,7 @@
   <ItemGroup>
     <ClCompile Include="code-main.cpp" />
     <ClCompile Include="test-cdocline.cpp" />
+    <ClCompile Include="test-cdoclinemgr.cpp" />
     <ClCompile Include="test-printEFunctionCode.cpp" />
     <ClCompile Include="test-cclipboard.cpp" />
     <ClCompile Include="test-ccodebase.cpp" />
