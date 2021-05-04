@@ -61,14 +61,21 @@ int StartEditorProcessForTest(std::wstring_view commandLine)
 		// WinMainに渡すためのコマンドライン
 		std::wstring strCommandLine(commandLine);
 
+		// テスト専用仕様： プロファイル「grepstdout」のときはログ出力しない
+		const bool bProfileGrepStdout = std::regex_search(commandLine.data(), std::wregex(LR"(-PROF=grepstdout\b)", std::wregex::icase));
+
 		// ログ出力
-		std::wcout << strprintf(L"%hs(%d): launching process [%s]", __FILE__, __LINE__, commandLine.data()) << std::endl;
+		if (bProfileGrepStdout) {
+			std::wcout << strprintf(L"%hs(%d): launching process [%s]", __FILE__, __LINE__, commandLine.data()) << std::endl;
+		}
 
 		// wWinMainを起動する
 		ret = wWinMain(hInstance, nullptr, strCommandLine.data(), SW_SHOWDEFAULT);
 
 		// ログ出力(途中でexitした場合は出力されない)
-		std::wcout << strprintf(L"%hs(%d): leaving process   [%s] => %d\n", __FILE__, __LINE__, commandLine.data(), ret) << std::endl;
+		if (bProfileGrepStdout) {
+			std::wcout << strprintf(L"%hs(%d): leaving process   [%s] => %d\n", __FILE__, __LINE__, commandLine.data(), ret) << std::endl;
+		}
 	}
 
 	return ret;
