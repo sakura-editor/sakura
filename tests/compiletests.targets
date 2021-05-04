@@ -1,12 +1,17 @@
 <Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="CompileTest">
     <CompileTestSourceDir>$(MSBuildThisFileDirectory)compiletests\</CompileTestSourceDir>
-    <CompileTestBuildDir>$(MSBuildThisFileDirectory)build\$(Platform)\$(Configuration)\compiletests\</CompileTestBuildDir>
+    <CompileTestBuildDir>$(SolutionDir)build\$(Platform)\$(Configuration)\compiletests\</CompileTestBuildDir>
   </PropertyGroup>
+  <ItemGroup>
+    <CompileTestTarget Include="..\sakura_core\basis\CLaxInteger.h" />
+    <CompileTestTarget Include="..\sakura_core\basis\CStrictInteger.h" />
+    <CompileTestTarget Include="..\sakura_core\basis\SakuraBasis.h" />
+  </ItemGroup>
   <Target Name="MakeCompileTestBuildDir" Condition="!Exists('$(CompileTestBuildDir)')">
     <MakeDir Directories="$(CompileTestBuildDir)" />
   </Target>
-  <Target Name="RunCompileTests" DependsOnTargets="MakeCompileTestBuildDir" BeforeTargets="ClCompile" Condition="!Exists('$(CompileTestBuildDir)CMakeCache.txt')">
+  <Target Name="RunCompileTests" DependsOnTargets="MakeCompileTestBuildDir" BeforeTargets="ClCompile" Inputs="@(CompileTestTarget)" Outputs="$(CompileTestBuildDir)CMakeCache.txt">
     <PropertyGroup>
       <VsVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(VisualStudioVersion)', '^(\d+).*', '$1'))</VsVersion>
     </PropertyGroup>
