@@ -160,8 +160,8 @@ public:
 	//! 指定した位置の文字が半角何個分かを返す
 	static CKetaXInt GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx,
 		CCharWidthCache& cache = GetCharWidthCache() );
-	static CKetaXInt GetKetaOfChar( const CStringRef& cStr, int nIdx )
-		{ return GetKetaOfChar( cStr.GetPtr(), cStr.GetLength(), nIdx ); }
+	static CKetaXInt GetKetaOfChar(const CStringRef& cStr, int nIdx, CCharWidthCache& cache = GetCharWidthCache())
+		{ return GetKetaOfChar(cStr.GetPtr(), cStr.GetLength(), nIdx, cache); }
 	static const wchar_t* GetCharNext( const wchar_t* pData, int nDataLen, const wchar_t* pDataCurrent ); //!< ポインタで示した文字の次にある文字の位置を返します
 	static const wchar_t* GetCharPrev(const wchar_t* pData, size_t nDataLen, const wchar_t* pDataCurrent); //!< ポインタで示した文字の直前にある文字の位置を返します
 
