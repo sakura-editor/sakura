@@ -39,6 +39,7 @@
 #include <windows.h>
 #include <string>
 #include <string_view>
+#include <chrono>
 
 // RunningTimerで経過時間の測定を行う場合にはコメントを外してください
 //#define TIME_MEASURE
@@ -69,19 +70,24 @@ public:
 	*/
 	void Reset();
 	DWORD Read();
-	
+
 	void WriteTrace( std::wstring_view msg = L"" ) const;
 
 protected:
-	double			m_nStartTime;				// 計測開始時間(ms)
+	typedef std::chrono::high_resolution_clock::time_point TimePoint;
+
+	static TimePoint m_initialTime;				// タイムスタンプ基準時間
+
+	TimePoint		m_startTime;				// 計測開始時間
 	std::wstring	m_timerName;				// タイマー名
 	int				m_nDepth;					// このオブジェクトのネストの深さ
 	LARGE_INTEGER	m_nPerformanceFrequency;	// 計時用
 
 	enum class OutputTiming { Normal, Enter };
 
-	double GetTime() const;
-	void OutputTrace( double time, std::wstring_view msg, OutputTiming timing = OutputTiming::Normal ) const;
+	static double GetElapsedTimeInSeconds( TimePoint from, TimePoint to );
+	TimePoint GetTime() const;
+	void OutputTrace( TimePoint currentTime, std::wstring_view msg, OutputTiming timing = OutputTiming::Normal ) const;
 	void Output( std::wstring_view fmt, ... ) const;
 
 #ifdef _DEBUG

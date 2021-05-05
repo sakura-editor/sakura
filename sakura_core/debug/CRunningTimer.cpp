@@ -25,17 +25,16 @@
 
 #pragma comment(lib, "winmm.lib")
 
+CRunningTimer::TimePoint CRunningTimer::m_initialTime = std::chrono::high_resolution_clock::now();
 int CRunningTimer::m_nNestCount = 0;
 
 CRunningTimer::CRunningTimer( std::wstring_view name ) :
 	m_timerName( name )
 {
-	::QueryPerformanceFrequency( &m_nPerformanceFrequency );
-
 	Reset();
 
 	m_nDepth = m_nNestCount++;
-	OutputTrace( m_nStartTime, L"Enter", OutputTiming::Enter );
+	OutputTrace( m_startTime, L"Enter", OutputTiming::Enter );
 	return;
 }
 
@@ -48,12 +47,12 @@ CRunningTimer::~CRunningTimer()
 
 void CRunningTimer::Reset()
 {
-	m_nStartTime = GetTime();
+	m_startTime = GetTime();
 }
 
 DWORD CRunningTimer::Read()
 {
-	return (DWORD)(GetTime() - m_nStartTime);
+	return (DWORD)(GetElapsedTimeInSeconds( m_startTime, GetTime() ) * 1000.0);
 }
 
 /*!
@@ -64,7 +63,17 @@ void CRunningTimer::WriteTrace( std::wstring_view msg ) const
 	OutputTrace( GetTime(), msg );
 }
 
-void CRunningTimer::OutputTrace( double nCurrentTime, std::wstring_view msg, OutputTiming timing ) const
+double CRunningTimer::GetElapsedTimeInSeconds( TimePoint from, TimePoint to )
+{
+	return (double)std::chrono::duration_cast<std::chrono::nanoseconds>( to - from ).count() / 1000.0 / 1000.0 / 1000.0;
+}
+
+CRunningTimer::TimePoint CRunningTimer::GetTime() const
+{
+	return std::chrono::high_resolution_clock::now();
+}
+
+void CRunningTimer::OutputTrace( TimePoint currentTime, std::wstring_view msg, OutputTiming timing ) const
 {
 	if( timing == OutputTiming::Enter )
 	{
@@ -72,15 +81,8 @@ void CRunningTimer::OutputTrace( double nCurrentTime, std::wstring_view msg, Out
 	}
 	else
 	{
-		Output( L"%3d:\"%s\", %d㍉秒 : %s\n", m_nDepth, m_timerName.c_str(), (int)(nCurrentTime - m_nStartTime), msg.data() );
+		Output( L"%3d:\"%s\", %d㍉秒 : %s\n", m_nDepth, m_timerName.c_str(), (int)(GetElapsedTimeInSeconds( m_startTime, currentTime ) * 1000.0), msg.data() );
 	}
-}
-
-double CRunningTimer::GetTime() const
-{
-	LARGE_INTEGER nCounter;
-	::QueryPerformanceCounter( &nCounter );
-	return (double)nCounter.QuadPart / m_nPerformanceFrequency.QuadPart * 1000.0;
 }
 
 void CRunningTimer::Output( std::wstring_view fmt, ... ) const
