@@ -23,31 +23,26 @@
 
 #pragma comment(lib, "winmm.lib")
 
-CRunningTimer::TimePoint CRunningTimer::m_initialTime = std::chrono::high_resolution_clock::now();
 int CRunningTimer::m_nNestCount = 0;
+CRunningTimer::TimePoint CRunningTimer::m_initialTime = std::chrono::high_resolution_clock::now();
 
 CRunningTimer::CRunningTimer( std::wstring_view name, OutputStyle style ) :
 	m_timerName( name ),
-	m_nNameOutputWidthMin( 40 ),
 	m_outputStyle( style )
 {
 	Reset();
 
-	if( m_timerName.length() == 0 && m_outputStyle == OutputStyle::Markdown )
-	{
+	if( m_timerName.length() == 0 && m_outputStyle == OutputStyle::Markdown ){
 		// 字下げ位置がわかるように何か文字列を入れておく
 		m_timerName = L"(no name)";
 	}
 
-	m_nNameOutputWidth = m_nNameOutputWidthMin;
-	if( m_nNameOutputWidth < m_timerName.size() )
-	{
+	if( m_nNameOutputWidth < m_timerName.size() ){
 		m_nNameOutputWidth = m_timerName.size();
 	}
 
-	m_nDepth = m_nNestCount++;
-	if( m_nDepth == 0 )
-	{
+	m_nDepth = CRunningTimer::m_nNestCount++;
+	if( m_nDepth == 0 ){
 		OutputHeader();
 	}
 	OutputTrace( m_startTime, TraceType::Enter );
@@ -58,8 +53,7 @@ CRunningTimer::CRunningTimer( std::wstring_view name, OutputStyle style ) :
 CRunningTimer::~CRunningTimer()
 {
 	OutputTrace( GetTime(), TraceType::ExitScope );
-	if( m_nDepth == 0 )
-	{
+	if( m_nDepth == 0 ){
 		OutputFooter();
 	}
 	m_nNestCount--;
@@ -99,59 +93,55 @@ CRunningTimer::TimePoint CRunningTimer::GetTime() const
 
 void CRunningTimer::OutputHeader() const
 {
-	if( m_outputStyle == OutputStyle::Markdown )
-	{
+	if( m_outputStyle == OutputStyle::Markdown ){
 		Output( L"| timestamp (s) | %-*s | time (ms) | diff (ms) | message\n", m_nNameOutputWidth, L"name" );
 		Output( L"|--------------:|-%.*s-|----------:|----------:|--------\n", m_nNameOutputWidth, L"----------------------------------------------------------------------------------------------------" );
-	}
-	else
-	{
-		;
+	}else{
+		// 従来形式では出力するものなし
 	}
 }
 
 void CRunningTimer::OutputFooter() const
 {
-	if( m_outputStyle == OutputStyle::Markdown )
-	{
+	if( m_outputStyle == OutputStyle::Markdown ){
 		Output( L"\n" );
-	}
-	else
-	{
-		;
+	}else{
+		// 従来形式では出力するものなし
 	}
 }
 
 void CRunningTimer::OutputTrace( TimePoint currentTime, TraceType traceType, std::wstring_view msg ) const
 {
-	if( m_outputStyle == OutputStyle::Markdown )
-	{
-		msg =
-			(traceType == TraceType::Enter) ? L"== Enter ==" :
-			(traceType == TraceType::ExitScope) ? L"== Exit Scope ==" :
-			msg;
+	if( m_outputStyle == OutputStyle::Markdown ){
+		if( traceType == TraceType::Enter ){
+			msg = L"== Enter ==";
+		}else if( traceType == TraceType::ExitScope ){
+			msg = L"== Exit Scope ==";
+		}else{
+			//msg = msg;
+		}
+
 		Output( L"| %13.6f | %.*s%-*s | %9.3f | %9.3f | %s\n",
-			GetElapsedTimeInSeconds( m_initialTime, currentTime ),
+			GetElapsedTimeInSeconds( CRunningTimer::m_initialTime, currentTime ),
 			m_nDepth * 2, L"_ _ _ _ _ _ _ _ _ _ ", (m_nNameOutputWidth - (m_nDepth * 2)), m_timerName.c_str(),
 			GetElapsedTimeInSeconds( m_startTime, currentTime ) * 1000.0,
 			GetElapsedTimeInSeconds( m_lastTime, currentTime ) * 1000.0,
 			msg.data() );
-	}
-	else
-	{
-		msg =
-			(traceType == TraceType::Enter) ? L"Enter" :
-			(traceType == TraceType::ExitScope) ? L"Exit Scope" :
-			msg;
-		if( traceType == TraceType::Enter )
-		{
+	}else{
+		if( traceType == TraceType::Enter ){
+			msg = L"Enter";
+		}else if( traceType == TraceType::ExitScope ){
+			msg = L"Exit Scope";
+		}else{
+			//msg = msg;
+		}
+
+		if( traceType == TraceType::Enter ){
 			Output( L"%3d:\"%s\" : %s\n",
 				m_nDepth,
 				m_timerName.c_str(),
 				msg.data() );
-		}
-		else
-		{
+		}else{
 			Output( L"%3d:\"%s\", %d㍉秒 : %s\n",
 				m_nDepth,
 				m_timerName.c_str(),

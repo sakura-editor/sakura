@@ -15,8 +15,8 @@
 	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
 	freely, subject to the following restrictions:
 
 		1. The origin of this software must not be misrepresented;
@@ -25,7 +25,7 @@
 		   in the product documentation would be appreciated but is
 		   not required.
 
-		2. Altered source versions must be plainly marked as such, 
+		2. Altered source versions must be plainly marked as such,
 		   and must not be misrepresented as being the original software.
 
 		3. This notice may not be removed or altered from any source
@@ -84,21 +84,10 @@ public:
 
 protected:
 	enum class TraceType { Normal, Enter, ExitScope };
-	typedef std::chrono::high_resolution_clock::time_point TimePoint;
+	using TimePoint = std::chrono::high_resolution_clock::time_point;
 
+	static int m_nNestCount;
 	static TimePoint m_initialTime;				// タイムスタンプ基準時間
-
-	const size_t	m_nNameOutputWidthMin;		// タイマー名最低出力幅(文字数)
-
-	TimePoint		m_startTime;				// 計測開始時間
-	TimePoint		m_lastTime;					// 最後に出力した時間
-	std::wstring	m_timerName;				// タイマー名
-	int				m_nDepth;					// このオブジェクトのネストの深さ
-	OutputStyle		m_outputStyle;				// ログの出力形式
-	size_t			m_nNameOutputWidth;			// タイマー名出力幅(文字数)
-	LARGE_INTEGER	m_nPerformanceFrequency;	// 計時用
-
-	enum class OutputTiming { Normal, Enter };
 
 	static double GetElapsedTimeInSeconds( TimePoint from, TimePoint to );
 	TimePoint GetTime() const;
@@ -107,6 +96,12 @@ protected:
 	void OutputTrace( TimePoint currentTime, TraceType traceType, std::wstring_view msg = L"" ) const;
 	void Output( std::wstring_view fmt, ... ) const;
 
-	static int m_nNestCount;
+private:
+	TimePoint		m_startTime;				// 計測開始時間
+	TimePoint		m_lastTime;					// 最後に出力した時間
+	std::wstring	m_timerName;				// タイマー名
+	int				m_nDepth;					// このオブジェクトのネストの深さ
+	OutputStyle		m_outputStyle;				// ログの出力形式
+	size_t			m_nNameOutputWidth = 40;	// タイマー名出力幅(文字数)(初期値は最小幅)
 };
 #endif /* SAKURA_CRUNNINGTIMER_B4A1B7C4_EA83_41F2_9132_21DE3A57470D_H_ */
