@@ -788,12 +788,16 @@ TEST(CNativeW, GetSizeOfChar)
 {
 	// 基本多言語面の文字ならば1を返す。
 	EXPECT_EQ(CNativeW::GetSizeOfChar(L"a", 1, 0), 1);
+	EXPECT_EQ(CNativeW::GetSizeOfChar(CStringRef(L"a", 1), 0), 1);
 	// 範囲外なら0を返す。
 	EXPECT_EQ(CNativeW::GetSizeOfChar(L"", 0, 0), 0);
+	EXPECT_EQ(CNativeW::GetSizeOfChar(CStringRef(L"", 0), 0), 0);
 	// 上位・下位サロゲートの組み合わせであれば2を返す。
 	EXPECT_EQ(CNativeW::GetSizeOfChar(L"\xd83c\xdf38", 2, 0), 2);
+	EXPECT_EQ(CNativeW::GetSizeOfChar(CStringRef(L"\xd83c\xdf38", 2), 0), 2);
 	// 指定位置が下位サロゲートならその他の文字と同様に1を返す。
 	EXPECT_EQ(CNativeW::GetSizeOfChar(L"\xd83c\xdf38", 2, 1), 1);
+	EXPECT_EQ(CNativeW::GetSizeOfChar(CStringRef(L"\xd83c\xdf38", 2), 1), 1);
 }
 
 /*!
@@ -804,12 +808,16 @@ TEST(CNativeW, GetKetaOfChar)
 {
 	// 範囲外なら0を返す。
 	EXPECT_EQ(CNativeW::GetKetaOfChar(L"", 0, 0), 0);
+	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(L"", 0), 0), 0);
 	// 上位サロゲートなら2を返す。
 	EXPECT_EQ(CNativeW::GetKetaOfChar(L"\xd83c\xdf38", 2, 0), 2);
+	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(L"\xd83c\xdf38", 2), 0), 2);
 	// 上位サロゲートに続く下位サロゲートであれば0を返す。
 	EXPECT_EQ(CNativeW::GetKetaOfChar(L"\xd83c\xdf38", 2, 1), 0);
+	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(L"\xd83c\xdf38", 2), 1), 0);
 	// 下位サロゲートだけなら2を返す。
 	EXPECT_EQ(CNativeW::GetKetaOfChar(L"\xdf38", 1, 0), 2);
+	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(L"\xdf38", 1), 0), 2);
 
 	// サクラエディタでは Unicode で表現できない文字コードの破壊を防ぐため、
 	// 不明バイトを下位サロゲートにマップして保持している。
@@ -819,12 +827,17 @@ TEST(CNativeW, GetKetaOfChar)
 	// https://sourceforge.net/p/sakura-editor/patchunicode/57/
 	// http://sakura-editor.sourceforge.net/cgi-bin/cyclamen/cyclamen.cgi?log=unicode&v=833
 	EXPECT_EQ(CNativeW::GetKetaOfChar(L"\xdbff", 1, 0), 2);
-	for (wchar_t ch = 0xdc00; ch <= 0xdcff; ++ch)
+	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(L"\xdbff", 1), 0), 2);
+	for (wchar_t ch = 0xdc00; ch <= 0xdcff; ++ch) {
 		EXPECT_EQ(CNativeW::GetKetaOfChar(&ch, 1, 0), 1);
+		EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(&ch, 1), 0), 1);
+	}
 	EXPECT_EQ(CNativeW::GetKetaOfChar(L"\xdd00", 1, 0), 2);
+	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(L"\xdd00", 1), 0), 2);
 
 	// 文字が半角なら1を返す。
 	EXPECT_EQ(CNativeW::GetKetaOfChar(L"a", 1, 0), 1);
+	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(L"a", 1), 0), 1);
 
 	// 文字が全角なら2を返す。
 	class FakeCache : public CCharWidthCache {
@@ -832,6 +845,7 @@ TEST(CNativeW, GetKetaOfChar)
 		bool CalcHankakuByFont(wchar_t c) override { return false; }
 	} cache;
 	EXPECT_EQ(CNativeW::GetKetaOfChar(L"あ", 1, 0, cache), 2);
+	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(L"あ", 1), 0, cache), 2);
 }
 
 /*!

@@ -49,12 +49,12 @@ static bool _GetKeywordLength(
 	CLogicInt nWordLen = CLogicInt(0);
 	CLayoutInt nWordKetas = CLayoutInt(0);
 	while(nPos<cLineStr.GetLength() && IS_KEYWORD_CHAR(cLineStr.At(nPos))){
+		CLogicXInt nCharSize = CNativeW::GetSizeOfChar( cLineStr, nPos );
 		CLayoutInt k = cLayoutMgr.GetLayoutXOfChar(cLineStr, nPos);
-		if(0 == k)k = CLayoutInt(1);
 
-		nWordLen+=1;
+		nWordLen += nCharSize;
 		nWordKetas+=k;
-		nPos++;
+		nPos += nCharSize;
 	}
 	//結果
 	if(nWordLen>0){
@@ -188,7 +188,7 @@ void CLayoutMgr::_DoKutoBurasage(SLayoutWork* pWork) const
 		if( _IsKinsokuPosKuto( GetMaxLineLayout() - pWork->nPosX, nCharKetas ) && IsKinsokuKuto( pWork->cLineStr.At( pWork->nPos ) ) )
 		{
 			pWork->nWordBgn = pWork->nPos;
-			pWork->nWordLen = 1;
+			pWork->nWordLen = CNativeW::GetSizeOfChar( pWork->cLineStr, pWork->nPos );
 			pWork->eKinsokuType = KINSOKU_TYPE_KINSOKU_KUTO;
 		}
 	}
@@ -203,24 +203,17 @@ void CLayoutMgr::_DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 	 && (pWork->eKinsokuType == KINSOKU_TYPE_NONE) )
 	{
 		// 2007.09.07 kobake   レイアウトとロジックの区別
-		CLayoutInt nCharKetas2 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
-		CLayoutInt nCharKetas3 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos+1 );
-		bool bLowSurrogate = false;
+		CLogicXInt nCharSize = CNativeW::GetSizeOfChar( pWork->cLineStr, pWork->nPos );
+		CLayoutXInt nCharKetas1 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
+		CLayoutXInt nCharKetas2 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos + nCharSize );
 
-		if( nCharKetas3 == 0 && pWork->nPos + 2 < pWork->cLineStr.GetLength() )
-		{
-			// サロゲートペア対策(取得した文字幅が0だったら下位側を読み取ったと判断し、次の位置に進ませる)
-			bLowSurrogate = true;
-			nCharKetas3 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos + 2 );
-		}
-
-		if( _IsKinsokuPosHead( GetMaxLineLayout() - pWork->nPosX, nCharKetas2, nCharKetas3 )
-		 && IsKinsokuHead( pWork->cLineStr.At( pWork->nPos + ( bLowSurrogate ? 2 : 1 ) ) )
+		if( _IsKinsokuPosHead( GetMaxLineLayout() - pWork->nPosX, nCharKetas1, nCharKetas2 )
+		 && IsKinsokuHead( pWork->cLineStr.At( pWork->nPos + nCharSize ) )
 		 && !IsKinsokuHead( pWork->cLineStr.At( pWork->nPos ) )		// 1字前が行頭禁則の対象でないこと
 		 && !IsKinsokuKuto( pWork->cLineStr.At( pWork->nPos ) ) )	// 1字前が句読点ぶら下げの対象でないこと
 		{
 			pWork->nWordBgn = pWork->nPos;
-			pWork->nWordLen = ( bLowSurrogate ? 3 : 2 );
+			pWork->nWordLen = nCharSize + CNativeW::GetSizeOfChar( pWork->cLineStr, pWork->nPos + nCharSize );
 			pWork->eKinsokuType = KINSOKU_TYPE_KINSOKU_HEAD;
 
 			(this->*pfOnLine)(pWork);
@@ -236,13 +229,14 @@ void CLayoutMgr::_DoGyomatsuKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 	 && ( pWork->nPosX > pWork->nIndent )	//	2004.04.09 pWork->nPosXの解釈変更のため，行頭チェックも変更
 	 && (pWork->eKinsokuType == KINSOKU_TYPE_NONE) )
 	{
-		CLayoutInt nCharKetas2 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
-		CLayoutInt nCharKetas3 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos+1 );
+		CLogicXInt nCharSize = CNativeW::GetSizeOfChar( pWork->cLineStr, pWork->nPos );
+		CLayoutXInt nCharKetas1 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
+		CLayoutXInt nCharKetas2 = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos + nCharSize );
 
-		if( _IsKinsokuPosTail( GetMaxLineLayout() - pWork->nPosX, nCharKetas2, nCharKetas3 ) && IsKinsokuTail( pWork->cLineStr.At( pWork->nPos ) ) )
+		if( _IsKinsokuPosTail( GetMaxLineLayout() - pWork->nPosX, nCharKetas1, nCharKetas2 ) && IsKinsokuTail( pWork->cLineStr.At( pWork->nPos ) ) )
 		{
 			pWork->nWordBgn = pWork->nPos;
-			pWork->nWordLen = 1;
+			pWork->nWordLen = nCharSize;
 			pWork->eKinsokuType = KINSOKU_TYPE_KINSOKU_TAIL;
 
 			(this->*pfOnLine)(pWork);
@@ -260,7 +254,7 @@ bool CLayoutMgr::_DoTab(SLayoutWork* pWork, PF_OnLine pfOnLine)
 		return true;
 	}
 	pWork->nPosX += nCharKetas;
-	pWork->nPos += CLogicInt(1);
+	pWork->nPos += CNativeW::GetSizeOfChar( pWork->cLineStr, pWork->nPos );
 	return false;
 }
 
@@ -322,9 +316,6 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 			}
 			// 2007.09.07 kobake   ロジック幅とレイアウト幅を区別
 			CLayoutInt nCharKetas = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
-//			if( 0 == nCharKetas ){				// 削除 サロゲートペア対策	2008/7/5 Uchi
-//				nCharKetas = CLayoutInt(1);
-//			}
 
 			if( pWork->nPosX + nCharKetas > GetMaxLineLayout() ){
 				if( pWork->eKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
@@ -336,7 +327,7 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 					}
 				}
 			}
-			pWork->nPos += 1;
+			pWork->nPos += CNativeW::GetSizeOfChar( pWork->cLineStr, pWork->nPos );
 			pWork->nPosX += nCharKetas;
 		}
 	}

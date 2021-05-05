@@ -153,19 +153,20 @@ public:
 
 public:
 	// -- -- staticインターフェース -- -- //
-	static CLogicInt GetSizeOfChar( const wchar_t* pData, int nDataLen, int nIdx ); //!< 指定した位置の文字がwchar_t何個分かを返す
-	static CHabaXInt GetHabaOfChar( const wchar_t* pData, int nDataLen, int nIdx,
-		bool bEnableExtEol, CCharWidthCache& cache = GetCharWidthCache() );
+	//! 指定した位置の文字がwchar_t何個分かを返す
+	static CLogicInt GetSizeOfChar( const wchar_t* pData, int nDataLen, int nIdx );
+	static CLogicInt GetSizeOfChar( const CStringRef& cStr, int nIdx )
+		{ return GetSizeOfChar( cStr.GetPtr(), cStr.GetLength(), nIdx ); }
 	//! 指定した位置の文字が半角何個分かを返す
 	static CKetaXInt GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx,
 		CCharWidthCache& cache = GetCharWidthCache() );
+	static CKetaXInt GetKetaOfChar(const CStringRef& cStr, int nIdx, CCharWidthCache& cache = GetCharWidthCache())
+		{ return GetKetaOfChar(cStr.GetPtr(), cStr.GetLength(), nIdx, cache); }
 	static const wchar_t* GetCharNext( const wchar_t* pData, int nDataLen, const wchar_t* pDataCurrent ); //!< ポインタで示した文字の次にある文字の位置を返します
 	static const wchar_t* GetCharPrev(const wchar_t* pData, size_t nDataLen, const wchar_t* pDataCurrent); //!< ポインタで示した文字の直前にある文字の位置を返します
 
-	static CKetaXInt GetKetaOfChar( const CStringRef& cStr, int nIdx ) //!< 指定した位置の文字が半角何個分かを返す
-	{
-		return GetKetaOfChar(cStr.GetPtr(), cStr.GetLength(), nIdx);
-	}
+	static CHabaXInt GetHabaOfChar( const wchar_t* pData, int nDataLen, int nIdx,
+		bool bEnableExtEol, CCharWidthCache& cache = GetCharWidthCache() );
 	static CLayoutXInt GetColmOfChar( const wchar_t* pData,
 		int nDataLen, int nIdx, bool bEnableExtEol )
 		{ return GetHabaOfChar(pData,nDataLen,nIdx, bEnableExtEol); }
