@@ -151,6 +151,9 @@
     <ClCompile Include="test-czipfile.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-grepstdout.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartEditorProcessForTest.h">

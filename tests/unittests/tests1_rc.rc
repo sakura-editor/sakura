@@ -49,6 +49,7 @@ END
 // 101
 //
 IDR_ZIPRES1               101                     "./test-resources/test-plugin.zip"
+IDR_ZIPRES2               101                     "./test-resources/grep-resources.zip"
 
 #endif    // 日本語 (日本) resources
 /////////////////////////////////////////////////////////////////////////////
