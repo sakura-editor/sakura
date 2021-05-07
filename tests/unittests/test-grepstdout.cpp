@@ -186,9 +186,6 @@ std::filesystem::path GrepStdoutTest::INI_PATH;
  */
 void GrepStdoutTest::SetUpTestCase()
 {
-	// 暫定対応
-	std::filesystem::rename(L"sakura_lang_en_US.dll", L"sakura_lang_en_US_disabled.dll");
-
 	// コマンドラインのインスタンスを用意する
 	CCommandLine commandLine;
 	const auto strCommandLine = strprintf(LR"(-PROF="%s")", PROFILE_NAME.data());
