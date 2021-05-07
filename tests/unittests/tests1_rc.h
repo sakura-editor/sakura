@@ -1,6 +1,6 @@
 ﻿//{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ で生成されたインクルード ファイル。
-// test1.rc で使用
+// test1_rc.rc で使用
 //
 #define IDR_ZIPRES1                    101
 #define IDR_ZIPRES2                    102
