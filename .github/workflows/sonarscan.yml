@@ -107,7 +107,7 @@ jobs:
         --working_dir .\${{ env.BUILD_PLATFORM }}\${{ env.BUILD_CONFIGURATION }}
         --cover_children
         --
-        .\tests\build\${{ env.BUILD_PLATFORM }}\${{ env.BUILD_CONFIGURATION }}\unittests\tests1.exe
+        .\${{ env.BUILD_PLATFORM }}\${{ env.BUILD_CONFIGURATION }}\tests1.exe
         --gtest_output=xml:${{ github.workspace }}\tests1-googletest.xml
 
     - name: Set up JDK 11
@@ -147,4 +147,4 @@ jobs:
         -D"sonar.cfamily.threads=2" `
         -D"sonar.coverage.exclusions=help\**\*.js,tests\unittests\coverage.cpp,tools\**\*.js" `
         -D"sonar.coverageReportPaths=tests1-coverage.xml" `
-        -D"sonar.exclusions=.sonar\**\*,bw-output\**\*,HeaderMake\**\*,tests\build\**\*,tests\googletest\**\*,**\test-*,tests*-*.xml"
+        -D"sonar.exclusions=.sonar\**\*,bw-output\**\*,HeaderMake\**\*,build\**\*,tests\googletest\**\*,**\test-*,tests*-*.xml"
