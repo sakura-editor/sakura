@@ -31,6 +31,7 @@ DIRSEP = $(strip \ )
 DEVNULL = NUL
 ICONV = C:\msys64\usr\bin\iconv.exe
 SED = C:\msys64\usr\bin\sed.exe
+TAR = tar
 else
 # If unix-like shell is used.
 MKDIR = mkdir -p
@@ -39,6 +40,7 @@ DIRSEP = /
 DEVNULL = /dev/null
 ICONV = iconv
 SED = sed
+TAR = tar
 endif
 
 ifndef PREFIX
@@ -100,6 +102,8 @@ LIBS= \
  $(MYLIBS)
 
 exe= $(or $(OUTDIR),.)/sakura.exe
+bregonig= $(or $(OUTDIR),.)/bregonig.dll
+ctags= $(or $(OUTDIR),.)/ctags.exe
 
 SRCS = $(wildcard $(SRCDIR)/*.cpp) \
        $(wildcard $(SRCDIR)/*/*.cpp) \
@@ -120,10 +124,18 @@ GENERATED_FILES= \
 HEADERMAKETOOLDIR= $(SRCDIR)/../HeaderMake
 HEADERMAKE= $(or $(OUTDIR),$(HEADERMAKETOOLDIR))/HeaderMake.exe
 
-all: $(exe)
+all: $(exe) \
+     $(bregonig) \
+     $(ctags)
 
 $(exe): $(OBJS) sakura_rc.o
 	$(CXX) -o $@ $(OBJS) sakura_rc.o $(LIBS)
+
+$(bregonig): $(SRCDIR)/../installer/externals/bregonig/bron420.zip
+	$(TAR) xf $< -O x64/bregonig.dll > $@
+
+$(ctags): $(SRCDIR)/../installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x64.zip
+	$(TAR) xf $< ctags.exe
 
 Funccode_define.h: Funccode_x.hsrc $(HEADERMAKE)
 	$(HEADERMAKE) -in=$< -out=$@ -mode=define
