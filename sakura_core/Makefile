@@ -135,7 +135,7 @@ $(bregonig): $(SRCDIR)/../installer/externals/bregonig/bron420.zip
 	$(TAR) xf $< -O x64/bregonig.dll > $@
 
 $(ctags): $(SRCDIR)/../installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x64.zip
-	$(TAR) xf $< ctags.exe > $@
+	$(TAR) xf $< -O ctags.exe > $@
 
 Funccode_define.h: Funccode_x.hsrc $(HEADERMAKE)
 	$(HEADERMAKE) -in=$< -out=$@ -mode=define
