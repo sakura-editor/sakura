@@ -143,7 +143,7 @@ $(exe): $(OBJS) $(SAKURA_OBJS)
 $(OBJS):
 
 tests1_rc.o: tests1_rc.rc.utf8 $(sakura_rc)
-	$(RC) -c utf-8 --language=0411 $(DEFINES) $< -o $@
+	$(RC) -c utf-8 -I$(SRCDIR) $(DEFINES) $< -o $@
 
 tests1_rc.rc.utf8: tests1_rc.rc
 	$(ICONV) -f utf-16 -t utf-8 $(SRCDIR)/$(subst .utf8,,$(@F)) | $(SED) -e 1i'#pragma code_page(65001)' > $@
