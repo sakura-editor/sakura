@@ -73,12 +73,16 @@ exit /b 0
 		set CI_REPO_NAME=%APPVEYOR_REPO_NAME%
 	) else if defined BUILD_REPOSITORY_NAME (
 		set CI_REPO_NAME=%BUILD_REPOSITORY_NAME%
+	) else if defined GITHUB_REPOSITORY (
+		set CI_REPO_NAME=%GITHUB_REPOSITORY%
 	)
 
 	if defined APPVEYOR_ACCOUNT_NAME (
 		set CI_ACCOUNT_NAME=%APPVEYOR_ACCOUNT_NAME%
 	) else if defined BUILD_DEFINITIONNAME (
 		set CI_ACCOUNT_NAME=%BUILD_DEFINITIONNAME%
+	) else if defined GITHUB_ACTOR (
+		set CI_ACCOUNT_NAME=%GITHUB_ACTOR%
 	)
 
 	@rem ----------------------------------------------------------------------------------------------------------
@@ -95,6 +99,8 @@ exit /b 0
 	) else if defined BUILD_BUILDID (
 		@rem example BUILD_BUILDID=672
 		set CI_BUILD_NUMBER=%BUILD_BUILDID%
+	) else if defined GITHUB_RUN_NUMBER (
+		set CI_BUILD_NUMBER=%GITHUB_RUN_NUMBER%
 	)
 
 	if defined APPVEYOR_BUILD_VERSION (
@@ -103,18 +109,24 @@ exit /b 0
 	) else if defined BUILD_BUILDNUMBER (
 		@rem example BUILD_BUILDNUMBER=20200205.4
 		set CI_BUILD_VERSION=%BUILD_BUILDNUMBER%
+	) else if defined GITHUB_RUN_ID (
+		set CI_BUILD_VERSION=%GITHUB_RUN_ID%
 	)
 
 	if defined APPVEYOR_PULL_REQUEST_NUMBER (
 		set GITHUB_PR_NUMBER=%APPVEYOR_PULL_REQUEST_NUMBER%
 	) else if defined SYSTEM_PULLREQUEST_PULLREQUESTNUMBER (
 		set GITHUB_PR_NUMBER=%SYSTEM_PULLREQUEST_PULLREQUESTNUMBER%
+	) else if not "%GITHUB_PULL_REQUEST_NUMBER%" == "" (
+		set GITHUB_PR_NUMBER=%GITHUB_PULL_REQUEST_NUMBER%
 	)
 
 	if defined APPVEYOR_PULL_REQUEST_HEAD_COMMIT (
 		set GITHUB_PR_HEAD_COMMIT=%APPVEYOR_PULL_REQUEST_HEAD_COMMIT%
 	) else if defined SYSTEM_PULLREQUEST_SOURCECOMMITID (
 		set GITHUB_PR_HEAD_COMMIT=%SYSTEM_PULLREQUEST_SOURCECOMMITID%
+	) else if not "%GITHUB_PULL_REQUEST_HEAD_SHA%" == "" (
+		set GITHUB_PR_HEAD_COMMIT=%GITHUB_PULL_REQUEST_HEAD_SHA%
 	)
 
 	if not "%GITHUB_PR_HEAD_COMMIT%" == "" (
@@ -123,14 +135,19 @@ exit /b 0
 		set GITHUB_PR_HEAD_SHORT_COMMIT=
 	)
 
-	if "%BUILD_REPOSITORY_PROVIDER%"=="GitHub" (
-		set GITHUB_ON=1
-	)
 	if "%APPVEYOR_REPO_PROVIDER%"=="gitHub" (
+		set GITHUB_ON=1
+	) else if "%BUILD_REPOSITORY_PROVIDER%"=="GitHub" (
+		set GITHUB_ON=1
+	) else if defined GITHUB_ACTIONS (
 		set GITHUB_ON=1
 	)
 
-	set PREFIX_GITHUB=https://github.com
+	if defined GITHUB_SERVER_URL (
+		set PREFIX_GITHUB=%GITHUB_SERVER_URL%
+	) else (
+		set PREFIX_GITHUB=https://github.com
+	)
 	if "%GITHUB_ON%" == "1" (
 		set "GITHUB_COMMIT_URL=%PREFIX_GITHUB%/%CI_REPO_NAME%/commit/%GIT_COMMIT_HASH%"
 		@rem Not Pull Request
@@ -146,6 +163,7 @@ exit /b 0
 :set_ci_build_url
 	call :set_ci_build_url_for_appveyor
 	call :set_ci_build_url_for_azurepipelines
+	call :set_ci_build_url_for_github_actions
 	exit /b 0
 
 :set_ci_build_url_for_appveyor
@@ -162,6 +180,14 @@ exit /b 0
 	if not defined SYSTEM_TEAMPROJECT             exit /b 0
 	if not defined BUILD_BUILDID                  exit /b 0
 	set CI_BUILD_URL=%SYSTEM_TEAMFOUNDATIONSERVERURI%%SYSTEM_TEAMPROJECT%/_build/results?buildId=%BUILD_BUILDID%
+	exit /b 0
+
+:set_ci_build_url_for_github_actions
+	if not defined GITHUB_ACTIONS    exit /b 0
+	if not defined GITHUB_SERVER_URL exit /b 0
+	if not defined GITHUB_REPOSITORY exit /b 0
+	if not defined GITHUB_RUN_ID     exit /b 0
+	set CI_BUILD_URL=%GITHUB_SERVER_URL%/%GITHUB_REPOSITORY%/actions/runs/%GITHUB_RUN_ID%
 	exit /b 0
 
 :update_output_githash
