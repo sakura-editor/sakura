@@ -45,6 +45,10 @@ jobs:
           - Win32
           - x64
 
+    env:
+      GITHUB_PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
+      GITHUB_PULL_REQUEST_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     ## see https://github.com/actions/checkout
