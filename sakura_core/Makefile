@@ -31,6 +31,7 @@ DIRSEP = $(strip \ )
 DEVNULL = NUL
 ICONV = C:\msys64\usr\bin\iconv.exe
 SED = C:\msys64\usr\bin\sed.exe
+P7Z = "C:\Program Files\7-Zip\7z.exe"
 else
 # If unix-like shell is used.
 MKDIR = mkdir -p
@@ -39,6 +40,7 @@ DIRSEP = /
 DEVNULL = /dev/null
 ICONV = iconv
 SED = sed
+P7Z = 7z
 endif
 
 ifndef PREFIX
@@ -130,10 +132,10 @@ $(exe): $(OBJS) sakura_rc.o
 	$(CXX) -o $@ $(OBJS) sakura_rc.o $(LIBS)
 
 $(bregonig): $(SRCDIR)/../installer/externals/bregonig/bron420.zip
-	7z e $< -o$(@D) x64/$(@F)
+	$(P7Z) e $< -o$(@D) x64/$(@F)
 
 $(ctags): $(SRCDIR)/../installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x64.zip
-	7z e $< -o$(@D) $(@F)
+	$(P7Z) e $< -o$(@D) $(@F)
 
 Funccode_define.h: Funccode_x.hsrc $(HEADERMAKE)
 	$(HEADERMAKE) -in=$< -out=$@ -mode=define
