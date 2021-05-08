@@ -191,10 +191,10 @@ TEST(CZipFIle, CZipFIle)
 		// zipファイルパスを設定する
 		ASSERT_TRUE(cZipFile.SetZip(tempPath.c_str()));
 
-// Azure Pipelinesで失敗するので無効化
-#if 0
 		// プラグイン設定があるかチェックする
-		std::wstring folderName;
+		std::wstring folderName(L"test-plugin");
+		// Azure Pipelinesで失敗するので無効化
+#if 0
 		ASSERT_TRUE(cZipFile.ChkPluginDef(L"plugin.def", folderName));
 #endif
 
