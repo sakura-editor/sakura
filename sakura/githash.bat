@@ -234,9 +234,6 @@ exit /b 0
 		@echo GITHUB_PR_HEAD_COMMIT       : %GITHUB_PR_HEAD_COMMIT%
 		@echo GITHUB_PR_HEAD_URL          : %GITHUB_PR_HEAD_URL%
 		@echo.
-		@echo APPVEYOR_URL          : %APPVEYOR_URL%
-		@echo APPVEYOR_PROJECT_SLUG : %APPVEYOR_PROJECT_SLUG%
-		@echo.
 
 		if exist "%GITHASH_H%" del "%GITHASH_H%"
 		move /y "%GITHASH_H_TMP%" "%GITHASH_H%"
@@ -340,21 +337,5 @@ exit /b 0
 	) else (
 		echo #define CI_BUILD_URL                  "%CI_BUILD_URL%"
 	)
-
-	echo // APPVEYOR specific variables
-
-	if "%APPVEYOR_URL%" == "" (
-		echo // APPVEYOR_URL is not defined
-	) else (
-		echo #define APPVEYOR_URL "%APPVEYOR_URL%"
-	)
-
-	if "%APPVEYOR_PROJECT_SLUG%" == "" (
-		echo // APPVEYOR_PROJECT_SLUG is not defined
-	) else (
-		echo #define APPVEYOR_PROJECT_SLUG "%APPVEYOR_PROJECT_SLUG%"
-	)
-	echo // APPVEYOR specific variables end
-	echo //
 
 	exit /b 0
