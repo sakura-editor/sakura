@@ -132,10 +132,10 @@ $(exe): $(OBJS) sakura_rc.o
 	$(CXX) -o $@ $(OBJS) sakura_rc.o $(LIBS)
 
 $(bregonig): $(SRCDIR)/../installer/externals/bregonig/bron420.zip
-	$(P7Z) e $< -o$(@D) x64/$(@F)
+	$(P7Z) e $< -o$(@D) -y x64/$(@F)
 
 $(ctags): $(SRCDIR)/../installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x64.zip
-	$(P7Z) e $< -o$(@D) $(@F)
+	$(P7Z) e $< -o$(@D) -y $(@F)
 
 Funccode_define.h: Funccode_x.hsrc $(HEADERMAKE)
 	$(HEADERMAKE) -in=$< -out=$@ -mode=define
