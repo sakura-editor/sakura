@@ -131,7 +131,7 @@ public:
 	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 	int SearchWord( CLogicPoint ptSerachBegin, ESearchDirection eDirection, CLogicRange* pMatchRange, const CSearchStringPattern& pattern ); /* 単語検索 */
 
-	void ReplaceData( DocLineReplaceArg* pArg );
+	void ReplaceData( DocLineReplaceArg* pArg, bool bEnableExtEol );
 private:
 	CDocLineMgr* m_pcDocLineMgr;
 };

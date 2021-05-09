@@ -821,7 +821,8 @@ bool CEditView::ReplaceData_CEditView3(
 		DLRArg.pInsData = pInsData;
 		DLRArg.nDelSeq = nDelSeq;
 		// DLRArg.ptNewPos;
-		CSearchAgent(&GetDocument()->m_cDocLineMgr).ReplaceData( &DLRArg );
+		CSearchAgent(&GetDocument()->m_cDocLineMgr).ReplaceData(
+			&DLRArg, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol);
 	}else{
 		LRArg.sDelRange    = sDelRange;		//!< 削除範囲レイアウト
 		LRArg.pcmemDeleted = pcMemDeleted;	//!< [out] 削除されたデータ
