@@ -26,12 +26,11 @@
 int CRunningTimer::m_nNestCount = 0;
 CRunningTimer::TimePoint CRunningTimer::m_initialTime = std::chrono::high_resolution_clock::now();
 
-CRunningTimer::CRunningTimer( std::wstring_view name, OutputStyle style ) :
+CRunningTimer::CRunningTimer( std::wstring_view name, OutputMode mode, OutputStyle style ) :
 	m_timerName( name ),
+	m_outputMode( mode ),
 	m_outputStyle( style )
 {
-	Reset();
-
 	if( m_timerName.length() == 0 && m_outputStyle == OutputStyle::Markdown ){
 		// 字下げ位置がわかるように何か文字列を入れておく
 		m_timerName = L"(no name)";
@@ -45,14 +44,16 @@ CRunningTimer::CRunningTimer( std::wstring_view name, OutputStyle style ) :
 	if( m_nDepth == 0 ){
 		OutputHeader();
 	}
-	OutputTrace( m_startTime, TraceType::Enter );
+	Reset();
+	WriteTraceInternal( m_startTime, TraceType::Enter );
 
 	return;
 }
 
 CRunningTimer::~CRunningTimer()
 {
-	OutputTrace( GetTime(), TraceType::ExitScope );
+	WriteTraceInternal( GetTime(), TraceType::ExitScope );
+	FlushPendingTraces();
 	if( m_nDepth == 0 ){
 		OutputFooter();
 	}
@@ -62,13 +63,14 @@ CRunningTimer::~CRunningTimer()
 
 void CRunningTimer::Reset()
 {
+	FlushPendingTraces();
 	m_startTime = GetTime();
 	m_lastTime = m_startTime;
 }
 
-DWORD CRunningTimer::Read()
+uint32_t CRunningTimer::Read()
 {
-	return (DWORD)(GetElapsedTimeInSeconds( m_startTime, GetTime() ) * 1000.0);
+	return (uint32_t)(GetElapsedTimeInSeconds( m_startTime, GetTime() ) * 1000.0);
 }
 
 /*!
@@ -76,9 +78,27 @@ DWORD CRunningTimer::Read()
 */
 void CRunningTimer::WriteTrace( std::wstring_view msg )
 {
+	WriteTraceFormat( L"%s", msg );
+}
+
+void CRunningTimer::WriteTrace( int32_t n )
+{
+	WriteTraceFormat( L"%d", n );
+}
+
+void CRunningTimer::WriteTraceFormat( std::wstring_view fmt, ... )
+{
 	auto currentTime = GetTime();
-	OutputTrace( currentTime, TraceType::Normal, msg );
-	m_lastTime = currentTime;
+
+	va_list args;
+	va_start( args, fmt );
+
+	std::wstring msg;
+	vstrprintf( msg, fmt.data(), args );
+
+	va_end( args );
+
+	WriteTraceInternal( currentTime, TraceType::Normal, msg );
 }
 
 double CRunningTimer::GetElapsedTimeInSeconds( TimePoint from, TimePoint to )
@@ -89,6 +109,27 @@ double CRunningTimer::GetElapsedTimeInSeconds( TimePoint from, TimePoint to )
 CRunningTimer::TimePoint CRunningTimer::GetTime() const
 {
 	return std::chrono::high_resolution_clock::now();
+}
+
+void CRunningTimer::WriteTraceInternal( TimePoint currentTime, TraceType traceType, std::wstring_view msg )
+{
+	if( m_outputMode == OutputMode::OnExitScope ){
+		// 溜めておいて後でまとめて出力
+		m_pendingTraces.emplace_back( TraceEntry( currentTime, traceType, msg ) );
+	}else{
+		// 溜めずにすぐ出力
+		OutputTrace( currentTime, traceType, msg );
+		m_lastTime = currentTime;
+	}
+}
+
+void CRunningTimer::FlushPendingTraces()
+{
+	for( const auto& p : m_pendingTraces ){
+		OutputTrace( p.m_timePoint, p.m_traceType, p.m_msg );
+		m_lastTime = p.m_timePoint;
+	}
+	m_pendingTraces.clear();
 }
 
 void CRunningTimer::OutputHeader() const
