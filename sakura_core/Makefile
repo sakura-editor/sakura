@@ -31,7 +31,7 @@ DIRSEP = $(strip \ )
 DEVNULL = NUL
 ICONV = C:\msys64\usr\bin\iconv.exe
 SED = C:\msys64\usr\bin\sed.exe
-P7Z = "C:\Program Files\7-Zip\7z.exe"
+P7Z = C:\msys64\usr\bin\7z
 else
 # If unix-like shell is used.
 MKDIR = mkdir -p
