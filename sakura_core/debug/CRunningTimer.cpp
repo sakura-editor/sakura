@@ -16,12 +16,7 @@
 */
 
 #include "StdAfx.h"
-#include <MMSystem.h>
 #include "debug/CRunningTimer.h"
-#include "_main/global.h"
-#include "debug/Debug2.h"
-
-#pragma comment(lib, "winmm.lib")
 
 int CRunningTimer::m_nNestCount = 0;
 CRunningTimer::TimePoint CRunningTimer::m_initialTime = std::chrono::high_resolution_clock::now();
