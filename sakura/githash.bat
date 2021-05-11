@@ -187,24 +187,26 @@ exit /b 0
 		del "%GITHASH_H_TMP%"
 		@echo %GITHASH_H% was not updated.
 	) else (
+		@echo GIT_TAG_NAME          : %GIT_TAG_NAME%
 		@echo GIT_SHORT_COMMIT_HASH : %GIT_SHORT_COMMIT_HASH%
 		@echo GIT_COMMIT_HASH       : %GIT_COMMIT_HASH%
 		@echo GIT_REMOTE_ORIGIN_URL : %GIT_REMOTE_ORIGIN_URL%
-		@echo GIT_TAG_NAME          : %GIT_TAG_NAME%
 		@echo.
+		@echo CI_ACCOUNT_NAME       : %CI_ACCOUNT_NAME%
 		@echo CI_REPO_NAME          : %CI_REPO_NAME%
-		@echo CI_ACCOUNT_NAME             : %CI_ACCOUNT_NAME%
-		@echo CI_BUILD_VERSION            : %CI_BUILD_VERSION%
-		@echo CI_BUILD_NUMBER             : %CI_BUILD_NUMBER%
-		@echo CI_BUILD_URL                : %CI_BUILD_URL%
+		@echo CI_BUILD_VERSION      : %CI_BUILD_VERSION%
+		@echo CI_BUILD_NUMBER       : %CI_BUILD_NUMBER%
+		@echo CI_BUILD_URL          : %CI_BUILD_URL%
 		@echo.
 		@echo GITHUB_COMMIT_URL           : %GITHUB_COMMIT_URL%
-		@echo GITHUB_PR_HEAD_URL          : %GITHUB_PR_HEAD_URL%
-		@echo GITHUB_PR_HEAD_COMMIT       : %GITHUB_PR_HEAD_COMMIT%
+		@echo GITHUB_PR_NUMBER            : %GITHUB_PR_NUMBER%
 		@echo GITHUB_PR_HEAD_SHORT_COMMIT : %GITHUB_PR_HEAD_SHORT_COMMIT%
+		@echo GITHUB_PR_HEAD_COMMIT       : %GITHUB_PR_HEAD_COMMIT%
+		@echo GITHUB_PR_HEAD_URL          : %GITHUB_PR_HEAD_URL%
 		@echo.
 		@echo APPVEYOR_URL          : %APPVEYOR_URL%
 		@echo APPVEYOR_PROJECT_SLUG : %APPVEYOR_PROJECT_SLUG%
+		@echo.
 
 		if exist "%GITHASH_H%" del "%GITHASH_H%"
 		move /y "%GITHASH_H_TMP%" "%GITHASH_H%"
