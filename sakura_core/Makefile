@@ -29,9 +29,9 @@ MKDIR = md
 RM = del
 DIRSEP = $(strip \ )
 DEVNULL = NUL
-ICONV = C:\msys64\usr\bin\iconv.exe
-SED = C:\msys64\usr\bin\sed.exe
-P7Z = C:\msys64\usr\bin\7z
+ICONV = iconv.exe
+SED = sed.exe
+P7Z = 7z.exe
 else
 # If unix-like shell is used.
 MKDIR = mkdir -p

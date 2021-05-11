@@ -37,8 +37,8 @@ MKDIR = md
 RM = del
 DIRSEP = $(strip \ )
 DEVNULL = NUL
-ICONV = C:\msys64\usr\bin\iconv.exe
-SED = C:\msys64\usr\bin\sed.exe
+ICONV = iconv.exe
+SED = sed.exe
 else
 # If unix-like shell is used.
 MKDIR = mkdir -p
