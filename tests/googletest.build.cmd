@@ -63,7 +63,7 @@ if "%PLATFORM%" == "x64" (
   -DCMAKE_BUILD_TYPE=%CONFIGURATION% ^
   -DCMAKE_INSTALL_PREFIX=%GOOGLETEST_INSTALL_PATH%  ^
   %GENERATOR_OPTS%                                  ^
-  -DBUILD_GMOCK=OFF                                 ^
+  -DBUILD_GMOCK=ON                                  ^
   -Dgtest_build_tests=OFF                           ^
   -Dgtest_build_samples=OFF                         ^
   %SOURCE_DIR%                                      ^
