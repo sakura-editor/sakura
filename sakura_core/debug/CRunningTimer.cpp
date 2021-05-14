@@ -17,6 +17,7 @@
 
 #include "StdAfx.h"
 #include "debug/CRunningTimer.h"
+#include <stdarg.h>
 
 int CRunningTimer::m_nNestCount = 0;
 CRunningTimer::TimePoint CRunningTimer::m_initialTime = std::chrono::high_resolution_clock::now();
@@ -63,7 +64,7 @@ void CRunningTimer::Reset()
 	m_lastTime = m_startTime;
 }
 
-uint32_t CRunningTimer::Read()
+uint32_t CRunningTimer::Read() const
 {
 	return (uint32_t)(GetElapsedTimeInSeconds( m_startTime, GetTime() ) * 1000.0);
 }
@@ -79,21 +80,6 @@ void CRunningTimer::WriteTrace( std::wstring_view msg )
 void CRunningTimer::WriteTrace( int32_t n )
 {
 	WriteTraceFormat( L"%d", n );
-}
-
-void CRunningTimer::WriteTraceFormat( std::wstring_view fmt, ... )
-{
-	auto currentTime = GetTime();
-
-	va_list args;
-	va_start( args, fmt );
-
-	std::wstring msg;
-	vstrprintf( msg, fmt.data(), args );
-
-	va_end( args );
-
-	WriteTraceInternal( currentTime, TraceType::Normal, msg );
 }
 
 double CRunningTimer::GetElapsedTimeInSeconds( TimePoint from, TimePoint to )
@@ -154,7 +140,7 @@ void CRunningTimer::OutputTrace( TimePoint currentTime, TraceType traceType, std
 		}else if( traceType == TraceType::ExitScope ){
 			msg = L"== Exit Scope ==";
 		}else{
-			//msg = msg;
+			//msg = msg
 		}
 
 		Output( L"| %13.6f | %.*s%-*s | %9.3f | %9.3f | %s\n",
@@ -169,7 +155,7 @@ void CRunningTimer::OutputTrace( TimePoint currentTime, TraceType traceType, std
 		}else if( traceType == TraceType::ExitScope ){
 			msg = L"Exit Scope";
 		}else{
-			//msg = msg;
+			//msg = msg
 		}
 
 		if( traceType == TraceType::Enter ){

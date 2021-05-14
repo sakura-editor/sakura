@@ -36,9 +36,11 @@
 #define SAKURA_CRUNNINGTIMER_B4A1B7C4_EA83_41F2_9132_21DE3A57470D_H_
 #pragma once
 
+#include "util/string_ex.h"
 #include <string>
 #include <string_view>
 #include <chrono>
+#include <vector>
 
 // 本番コードに組み込まれている時間計測の結果を出力ペインに出したい時にコメントを外して下さい
 //#define TIME_MEASURE
@@ -87,6 +89,7 @@ public:
 		@param[in]	name	ログの出力形式
 	*/
 	CRunningTimer( std::wstring_view name = L"", OutputMode mode = OutputMode::OnWriteTrace, OutputStyle style = OutputStyle::Markdown );
+
 	~CRunningTimer();
 
 	/*!
@@ -98,7 +101,7 @@ public:
 		現在の経過時間を取得
 		@return 経過時間(ms)
 	*/
-	uint32_t Read();
+	uint32_t Read() const;
 
 	/*!
 		現在の経過時間に対してログ書き込む
@@ -117,7 +120,14 @@ public:
 		@param[in]	fmt		書式文字列
 		@param[in]	...		書式文字列に対応する引数
 	*/
-	void WriteTraceFormat( std::wstring_view fmt, ... );
+	template <typename... T>
+	void WriteTraceFormat( std::wstring_view fmt, T... args )
+	{
+		auto currentTime = GetTime();
+		std::wstring msg;
+		strprintf( msg, fmt.data(), args... );
+		WriteTraceInternal( currentTime, TraceType::Normal, msg );
+	}
 
 protected:
 	enum class TraceType { Normal, Enter, ExitScope };
