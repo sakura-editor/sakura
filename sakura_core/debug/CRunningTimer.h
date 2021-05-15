@@ -104,19 +104,19 @@ public:
 	uint32_t Read() const;
 
 	/*!
-		現在の経過時間に対してログ書き込む
+		現在の経過時間でログを書き込む
 		@param[in]	msg		ログのメッセージ欄に出力する文字列
 	*/
 	void WriteTrace( std::wstring_view msg = L"" );
 
 	/*!
-		現在の経過時間に対してログ書き込む
+		現在の経過時間でログを書き込む
 		@param[in]	n		ログのメッセージ欄に出力する数値
 	*/
 	void WriteTrace( int32_t n );
 
 	/*!
-		現在の経過時間に対してログ書き込む
+		現在の経過時間でログを書き込む
 		@param[in]	fmt		書式文字列
 		@param[in]	...		書式文字列に対応する引数
 	*/
@@ -146,10 +146,11 @@ protected:
 	static int m_nNestCount;
 	static TimePoint m_initialTime;				// タイムスタンプ基準時間
 
+	static TimePoint GetTime();
 	static double GetElapsedTimeInSeconds( TimePoint from, TimePoint to );
+
 	void WriteTraceInternal( TimePoint currentTime, TraceType traceType, std::wstring_view msg = L"" );
 	void FlushPendingTraces();
-	TimePoint GetTime() const;
 	void OutputHeader() const;
 	void OutputFooter() const;
 	void OutputTrace( TimePoint currentTime, TraceType traceType, std::wstring_view msg ) const;

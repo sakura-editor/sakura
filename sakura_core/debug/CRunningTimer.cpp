@@ -74,7 +74,7 @@ uint32_t CRunningTimer::Read() const
 */
 void CRunningTimer::WriteTrace( std::wstring_view msg )
 {
-	WriteTraceFormat( L"%s", msg );
+	WriteTraceFormat( L"%s", msg.data() );
 }
 
 void CRunningTimer::WriteTrace( int32_t n )
@@ -82,14 +82,14 @@ void CRunningTimer::WriteTrace( int32_t n )
 	WriteTraceFormat( L"%d", n );
 }
 
-double CRunningTimer::GetElapsedTimeInSeconds( TimePoint from, TimePoint to )
-{
-	return (double)std::chrono::duration_cast<std::chrono::nanoseconds>( to - from ).count() / 1000.0 / 1000.0 / 1000.0;
-}
-
-CRunningTimer::TimePoint CRunningTimer::GetTime() const
+CRunningTimer::TimePoint CRunningTimer::GetTime()
 {
 	return std::chrono::high_resolution_clock::now();
+}
+
+double CRunningTimer::GetElapsedTimeInSeconds( TimePoint from, TimePoint to )
+{
+	return std::chrono::duration<double>(to - from).count();
 }
 
 void CRunningTimer::WriteTraceInternal( TimePoint currentTime, TraceType traceType, std::wstring_view msg )
