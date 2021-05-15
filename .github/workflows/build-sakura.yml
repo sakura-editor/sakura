@@ -44,11 +44,6 @@ jobs:
         platform:
           - Win32
           - x64
-    env:
-      CI_ACCOUNT_NAME: ${{github.actor}}
-      CI_REPO_NAME: ${{github.repository}}
-      CI_BUILD_VERSION: ${{github.run_id}}
-      CI_BUILD_NUMBER: ${{github.run_number}}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -61,6 +56,11 @@ jobs:
 
     - name: Setup environment variables
       run: |
+        echo "CI_ACCOUNT_NAME=${{github.actor}}" >> $env:GITHUB_ENV
+        echo "CI_REPO_NAME=${{github.repository}}" >> $env:GITHUB_ENV
+        echo "CI_BUILD_VERSION=${{github.run_id}}" >> $env:GITHUB_ENV
+        echo "CI_BUILD_NUMBER=${{github.run_number}}" >> $env:GITHUB_ENV
+
         echo("CI_BUILD_URL=" `
           + "${env:GITHUB_SERVER_URL}/${{github.repository}}/" `
           + "actions/runs/${{github.run_id}}") >> $env:GITHUB_ENV
