@@ -73,7 +73,7 @@ CNormalProcess::~CNormalProcess()
 */
 bool CNormalProcess::InitializeProcess()
 {
-	MY_RUNNINGTIMER( cRunningTimer, "NormalProcess::Init" );
+	MY_RUNNINGTIMER( cRunningTimer, L"NormalProcess::Init" );
 
 	/* プロセス初期化の目印 */
 	HANDLE	hMutex = _GetInitializeMutex();	// 2002/2/8 aroka 込み入っていたので分離
@@ -137,15 +137,15 @@ bool CNormalProcess::InitializeProcess()
 	}
 
 	// プラグイン読み込み
-	MY_TRACETIME( cRunningTimer, "Before Init Jack" );
+	MY_TRACETIME( cRunningTimer, L"Before Init Jack" );
 	/* ジャック初期化 */
 	CJackManager::getInstance();
-	MY_TRACETIME( cRunningTimer, "After Init Jack" );
+	MY_TRACETIME( cRunningTimer, L"After Init Jack" );
 
-	MY_TRACETIME( cRunningTimer, "Before Load Plugins" );
+	MY_TRACETIME( cRunningTimer, L"Before Load Plugins" );
 	/* プラグイン読み込み */
 	CPluginManager::getInstance()->LoadAllPlugin();
-	MY_TRACETIME( cRunningTimer, "After Load Plugins" );
+	MY_TRACETIME( cRunningTimer, L"After Load Plugins" );
 
 	// エディタアプリケーションを作成。2007.10.23 kobake
 	// グループIDを取得
@@ -168,7 +168,7 @@ bool CNormalProcess::InitializeProcess()
 	bGrepMode  = CCommandLine::getInstance()->IsGrepMode();
 	bGrepDlg   = CCommandLine::getInstance()->IsGrepDlg();
 
-	MY_TRACETIME( cRunningTimer, "CheckFile" );
+	MY_TRACETIME( cRunningTimer, L"CheckFile" );
 
 	// -1: SetDocumentTypeWhenCreate での強制指定なし
 	const CTypeConfig nType = (fi.m_szDocType[0] == '\0' ? CTypeConfig(-1) : CDocTypeManager().GetDocumentTypeOfExt(fi.m_szDocType));
@@ -478,7 +478,7 @@ void CNormalProcess::OnExitProcess()
 */
 HANDLE CNormalProcess::_GetInitializeMutex() const
 {
-	MY_RUNNINGTIMER( cRunningTimer, "NormalProcess::_GetInitializeMutex" );
+	MY_RUNNINGTIMER( cRunningTimer, L"NormalProcess::_GetInitializeMutex" );
 	HANDLE hMutex;
 	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
 	std::wstring strMutexInitName = GSTR_MUTEX_SAKURA_INIT;

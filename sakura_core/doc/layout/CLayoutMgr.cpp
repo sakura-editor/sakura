@@ -123,7 +123,7 @@ void CLayoutMgr::SetLayoutInfo(
 	CCharWidthCache&	cache
 )
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CLayoutMgr::SetLayoutInfo" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CLayoutMgr::SetLayoutInfo" );
 
 	assert_warning( (!bDoLayout && m_nMaxLineKetas == nMaxLineKetas) || bDoLayout );
 	assert_warning( (!bDoLayout && m_nTabSpace == refType.m_nTabSpace) || bDoLayout );
@@ -616,7 +616,7 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 /* 論理行が挿入された場合は０より大きい行数 */
 void CLayoutMgr::ShiftLogicalLineNum( CLayout* pLayoutPrev, CLogicInt nShiftLines )
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CLayoutMgr::ShiftLogicalLineNum" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CLayoutMgr::ShiftLogicalLineNum" );
 
 	CLayout* pLayout;
 	if( 0 == nShiftLines ){

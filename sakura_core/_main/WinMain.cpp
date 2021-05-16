@@ -85,7 +85,7 @@ int WINAPI wWinMain(
 	::_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF);
 #endif
 
-	MY_RUNNINGTIMER(cRunningTimer, "WinMain" );
+	MY_RUNNINGTIMER(cRunningTimer, L"WinMain" );
 	{
 		// 2014.04.24 DLLの検索パスからカレントディレクトリを削除する
 		::SetDllDirectory( L"" );
@@ -107,7 +107,7 @@ int WINAPI wWinMain(
 	CProcess *process = 0;
 	try{
 		process = aFactory.Create( hInstance, lpCmdLine );
-		MY_TRACETIME( cRunningTimer, "ProcessObject Created" );
+		MY_TRACETIME( cRunningTimer, L"ProcessObject Created" );
 	}
 	catch(...){
 	}

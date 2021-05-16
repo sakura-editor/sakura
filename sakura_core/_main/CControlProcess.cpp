@@ -115,7 +115,7 @@ std::filesystem::path CControlProcess::GetPrivateIniFileName(const std::wstring&
 */
 bool CControlProcess::InitializeProcess()
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CControlProcess::InitializeProcess" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CControlProcess::InitializeProcess" );
 
 	// アプリケーション実行検出用(インストーラで使用)
 	m_hMutex = ::CreateMutex( NULL, FALSE, GSTR_MUTEX_SAKURA );
@@ -171,12 +171,12 @@ bool CControlProcess::InitializeProcess()
 	CSelectLang::ChangeLang( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );
 	RefreshString();
 
-	MY_TRACETIME( cRunningTimer, "Before new CControlTray" );
+	MY_TRACETIME( cRunningTimer, L"Before new CControlTray" );
 
 	/* タスクトレイにアイコン作成 */
 	m_pcTray = new CControlTray;
 
-	MY_TRACETIME( cRunningTimer, "After new CControlTray" );
+	MY_TRACETIME( cRunningTimer, L"After new CControlTray" );
 
 	HWND hwnd = m_pcTray->Create( GetProcessInstance() );
 	if( !hwnd ){

@@ -74,7 +74,7 @@ void CEditView::InsertData_CEditView(
 )
 {
 #ifdef _DEBUG
-	MY_RUNNINGTIMER( cRunningTimer, "CEditView::InsertData_CEditView" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CEditView::InsertData_CEditView" );
 #endif
 
 	//2007.10.18 kobake COpe処理をここにまとめる
@@ -359,7 +359,7 @@ void CEditView::DeleteData2(
 )
 {
 #ifdef _DEBUG
-	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DeleteData(1)" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CEditView::DeleteData(1)" );
 #endif
 	const wchar_t*	pLine;
 	CLogicInt		nLineLen;
@@ -442,7 +442,7 @@ void CEditView::DeleteData(
 )
 {
 #ifdef _DEBUG
-	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DeleteData(2)" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CEditView::DeleteData(2)" );
 #endif
 	const wchar_t*	pLine;
 	CLogicInt		nLineLen;
