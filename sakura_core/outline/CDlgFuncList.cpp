@@ -1484,7 +1484,7 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 				}
 				text.AppendString(L" ");
 				
-				text.AppendNativeData( pcFuncInfo->m_cmemFuncName.c_str() );
+				text.AppendString( pcFuncInfo->m_cmemFuncName.c_str() );
 			}
 			text.AppendString( L"\r\n" );
 			m_cmemClipText.AppendNativeData( text );	/* クリップボードコピー用テキスト */
