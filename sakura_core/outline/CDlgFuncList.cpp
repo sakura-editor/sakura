@@ -1146,7 +1146,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddC
 		);
 		m_cmemClipText.AppendString( szText ); /* クリップボードコピー用テキスト */
 		// "%s%ls\r\n"
-		m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName.c_str());
+		m_cmemClipText.AppendString(pcFuncInfo->m_cmemFuncName.c_str());
 		m_cmemClipText.AppendString(FL_OBJ_DECLARE == pcFuncInfo->m_nInfo ? m_pcFuncInfoArr->GetAppendText( FL_OBJ_DECLARE ).c_str() : L"" ); 	//	Jan. 04, 2001 genta C++で使用
 		m_cmemClipText.AppendString(L"\r\n");
 
