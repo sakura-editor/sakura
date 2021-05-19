@@ -652,7 +652,7 @@ void CDlgFuncList::SetData()
 					pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
 				);
 				m_cmemClipText.AppendString(szText);
-				m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName.c_str());
+				m_cmemClipText.AppendString(pcFuncInfo->m_cmemFuncName.c_str());
 				m_cmemClipText.AppendString(L"\r\n");
 			}
 		}
