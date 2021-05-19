@@ -638,7 +638,7 @@ void CDlgFuncList::SetData()
 				);
 				m_cmemClipText.AppendString(szText);
 				// "%s(%s)\r\n"
-				m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName.c_str());
+				m_cmemClipText.AppendString(pcFuncInfo->m_cmemFuncName.c_str());
 				m_cmemClipText.AppendString(L"(");
 				m_cmemClipText.AppendString(item.pszText);
 				m_cmemClipText.AppendString(L")\r\n");
