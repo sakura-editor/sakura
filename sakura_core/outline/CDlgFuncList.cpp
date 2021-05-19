@@ -1351,7 +1351,7 @@ void CDlgFuncList::SetListVB (void)
 			);
 			m_cmemClipText.AppendString(szText);
 			// "%s\r\n"
-			m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName.c_str());
+			m_cmemClipText.AppendString(pcFuncInfo->m_cmemFuncName.c_str());
 			m_cmemClipText.AppendString(L"\r\n");
 		}
 	}
