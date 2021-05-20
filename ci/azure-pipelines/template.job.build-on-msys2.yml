@@ -37,7 +37,8 @@ jobs:
     displayName: Build with MinGW-w64-gcc
 
   # Unit tests
-  - script: tests\build-and-test.bat $(BuildPlatform) $(Configuration)
+  - pwsh: .\tests1.exe --gtest_output=xml:$(build.sourcesDirectory)\tests1.exe-googletest-$(BuildPlatform)-$(Configuration).xml
+    workingDirectory: $(build.sourcesDirectory)\$(BuildPlatform)\$(Configuration)
     displayName: Unit test
 
   # see https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/copy-files?view=azure-devops&tabs=yaml

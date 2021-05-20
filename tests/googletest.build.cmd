@@ -5,12 +5,15 @@ set GOOGLETEST_INSTALL_PATH=%~dp2
 set SOURCE_DIR=%~dp0googletest
 
 :: find generic tools
-if not defined CMD_VSWHERE call %~dp0..\tools\find-tools.bat
-
-set /a NUM_VSVERSION_NEXT=NUM_VSVERSION + 1
+if not defined CMD_NINJA call %~dp0..\tools\find-tools.bat
 
 if not exist "%CMD_CMAKE%" (
   echo "no cmake found."
+  exit /b 1
+)
+
+if not exist "%CMD_NINJA%" (
+  echo "no ninja found."
   exit /b 1
 )
 
@@ -23,16 +26,6 @@ if not exist CMakeLists.txt (
   "%CMD_GIT%" submodule update --init || exit /b 1
 )
 popd
-
-if not exist "%CMD_NINJA%" (
-  set GENERATOR="%CMAKE_G_PARAM%"
-  set GENERATOR_OPTS=-A %PLATFORM% "-DCMAKE_CONFIGURATION_TYPES=Debug;Release"
-  set "MAKE_PROGRAM=%CMD_MSBUILD%"
-) else (
-  set GENERATOR=Ninja
-  set GENERATOR_OPTS=-DCMAKE_BUILD_TYPE=%CONFIGURATION%
-  set "MAKE_PROGRAM=%CMD_NINJA%"
-)
 
 mkdir %BUILD_DIR% > NUL 2>&1
 pushd %BUILD_DIR%
@@ -47,10 +40,15 @@ call :run_cmake_configure
 goto :EOF
 
 :run_cmake_configure
-call :find_cl_compiler
-
-:: replace back-slash to slash in the path.
-set CL_COMPILER=%CMD_CL:\=/%
+if "%PLATFORM%" == "Win32" (
+  call :find_cl_compilers
+)
+if "%PLATFORM%" == "x64" (
+  call :find_cl_compilers
+)
+if "%PLATFORM%" == "MinGW" (
+  call :find_gcc_compilers
+)
 
 :: install lib64 for x64-platform.
 if "%PLATFORM%" == "x64" (
@@ -58,22 +56,34 @@ if "%PLATFORM%" == "x64" (
 )
 
 :: run cmake configuration.
-"%CMD_CMAKE%" -G %GENERATOR%                        ^
-  "-DCMAKE_MAKE_PROGRAM=%MAKE_PROGRAM%"             ^
-  "-DCMAKE_C_COMPILER=%CL_COMPILER%"                ^
-  "-DCMAKE_CXX_COMPILER=%CL_COMPILER%"              ^
+"%CMD_CMAKE%" -G Ninja ^
+  "-DCMAKE_MAKE_PROGRAM=%CMD_NINJA%" ^
+  "-DCMAKE_C_COMPILER=%C_COMPILER%" ^
+  "-DCMAKE_CXX_COMPILER=%CXX_COMPILER%" ^
+  -DCMAKE_BUILD_TYPE=%CONFIGURATION% ^
   -DCMAKE_INSTALL_PREFIX=%GOOGLETEST_INSTALL_PATH%  ^
   %GENERATOR_OPTS%                                  ^
-  -DBUILD_GMOCK=OFF                                 ^
+  -DBUILD_GMOCK=ON                                  ^
   -Dgtest_build_tests=OFF                           ^
   -Dgtest_build_samples=OFF                         ^
   %SOURCE_DIR%                                      ^
   || endlocal && exit /b 1
 goto :EOF
 
-:find_cl_compiler
+:find_cl_compilers
+call :find_cl
+set C_COMPILER=%CMD_CL:\=/%
+set CXX_COMPILER=%CMD_CL:\=/%
+goto :EOF
+
+:find_cl
 for /f "usebackq delims=" %%a in (`where cl.exe`) do (
   set "CMD_CL=%%a"
   goto :EOF
 )
+goto :EOF
+
+:find_gcc_compilers
+set C_COMPILER=C:/msys64/mingw64/bin/gcc.exe
+set CXX_COMPILER=C:/msys64/mingw64/bin/g++.exe
 goto :EOF

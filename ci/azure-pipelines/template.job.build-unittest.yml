@@ -41,6 +41,11 @@ jobs:
   - script: build-sln.bat       $(BuildPlatform) $(Configuration)
     displayName: Build solution
 
+  # Unit tests
+  - pwsh: .\tests1.exe --gtest_output=xml:$(build.sourcesDirectory)\tests1.exe-googletest-$(BuildPlatform)-$(Configuration).xml
+    workingDirectory: $(build.sourcesDirectory)\$(BuildPlatform)\$(Configuration)
+    displayName: Unit test
+
   # Toolbar Bitmap Split/Mux
   - script: build-bmp-tools.bat $(Configuration)
     displayName: Bitmap Split/Mux
@@ -61,10 +66,6 @@ jobs:
   - script: zipArtifacts.bat    $(BuildPlatform) $(Configuration)
     condition: eq(variables['Configuration'], 'Release')
     displayName: Zip files for artifacts
-
-  # Unit tests
-  - script: tests\run-tests.bat $(BuildPlatform) $(Configuration)
-    displayName: Unit test
 
   # see https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/copy-files?view=azure-devops&tabs=yaml
   #

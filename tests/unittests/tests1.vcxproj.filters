@@ -151,10 +151,21 @@
     <ClCompile Include="test-crunningtimer.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-czipfile.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartEditorProcessForTest.h">
       <Filter>Other Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="tests1_rc.h">
+      <Filter>Other Files</Filter>
+    </ClInclude>
+    <ResourceCompile Include="tests1_rc.rc">
+      <Filter>Other Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
