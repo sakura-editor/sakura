@@ -54,6 +54,35 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1
 
+    - name: Setup environment variables
+      run: |
+        echo "CI_ACCOUNT_NAME=${{github.actor}}" >> $env:GITHUB_ENV
+        echo "CI_REPO_NAME=${{github.repository}}" >> $env:GITHUB_ENV
+        echo "CI_BUILD_VERSION=${{github.run_id}}" >> $env:GITHUB_ENV
+        echo "CI_BUILD_NUMBER=${{github.run_number}}" >> $env:GITHUB_ENV
+
+        echo("CI_BUILD_URL=" `
+          + "${env:GITHUB_SERVER_URL}/${{github.repository}}/" `
+          + "actions/runs/${{github.run_id}}") >> $env:GITHUB_ENV
+
+        echo("GITHUB_COMMIT_URL=" `
+          + "${env:GITHUB_SERVER_URL}/${{github.repository}}/" `
+          + "commit/${{github.sha}}") >> $env:GITHUB_ENV
+
+        if ('pull_request' -eq '${{github.event_name}}') {
+          echo("GITHUB_PR_NUMBER=" `
+            + "${{github.event.pull_request.number}}") >> $env:GITHUB_ENV
+          echo("GITHUB_PR_HEAD_SHORT_COMMIT=" `
+            + "${{github.event.pull_request.head.sha}}".SubString(0, 8)) >> $env:GITHUB_ENV
+          echo("GITHUB_PR_HEAD_COMMIT=" `
+            + "${{github.event.pull_request.head.sha}}") >> $env:GITHUB_ENV
+          echo("GITHUB_PR_HEAD_URL=" `
+            + "${env:GITHUB_SERVER_URL}/${{github.repository}}/" `
+            + "pull/${{github.event.pull_request.number}}/" `
+            + "commits/${{github.event.pull_request.head.sha}}") >> $env:GITHUB_ENV
+        }
+      shell: pwsh
+
     - name: MSBuild
       run: build-sln.bat ${{ matrix.platform }} ${{ matrix.config }}
       shell: cmd
