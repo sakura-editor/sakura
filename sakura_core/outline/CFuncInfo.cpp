@@ -31,9 +31,9 @@ CFuncInfo::CFuncInfo(
 	m_nFuncColCRLF = nFuncColCRLF;			/* 関数のある桁(CRLF単位) */
 	m_nFuncLineLAYOUT = nFuncLineLAYOUT;	/* 関数のある行(折り返し単位) */
 	m_nFuncColLAYOUT = nFuncColLAYOUT;		/* 関数のある桁(折り返し単位) */
-	m_cmemFuncName = pszFuncName;
+	m_strFuncName = pszFuncName;
 	if( pszFileName ){
-		m_cmemFileName = pszFileName;
+		m_strFileName = pszFileName;
 	}
 	m_nInfo = nInfo;
 	m_nDepth = nDepth;

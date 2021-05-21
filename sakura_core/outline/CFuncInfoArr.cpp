@@ -26,16 +26,6 @@ void CFuncInfoArr::Empty(void)
 	return;
 }
 
-/* 0<=の指定番号のデータを返す */
-/* データがない場合はNULLを返す */
-CFuncInfo* CFuncInfoArr::GetAt( int nIdx )
-{
-	if( nIdx >= m_cFuncInfoArr.size() ){
-		return NULL;
-	}
-	return &m_cFuncInfoArr[nIdx];
-}
-
 /*! 配列の最後にデータを追加する */
 void CFuncInfoArr::AppendData( CFuncInfo&& cFuncInfo )
 {
@@ -83,8 +73,8 @@ void CFuncInfoArr::DUMP( void )
 		MYTRACE( L"[%d]------------------\n", i );
 		MYTRACE( L"m_nFuncLineCRLF	=%d\n", m_cFuncInfoArr[i].m_nFuncLineCRLF );
 		MYTRACE( L"m_nFuncLineLAYOUT	=%d\n", m_cFuncInfoArr[i].m_nFuncLineLAYOUT );
-		MYTRACE( L"m_cmemFuncName	=[%s]\n", m_cFuncInfoArr[i].m_cmemFuncName.c_str() );
-		MYTRACE( L"m_cmemFileName	=[%s]\n", m_cFuncInfoArr[i].m_cmemFileName.c_str() );
+		MYTRACE( L"m_strFuncName	=[%s]\n", m_cFuncInfoArr[i].m_strFuncName.c_str() );
+		MYTRACE( L"m_strFileName	=[%s]\n", m_cFuncInfoArr[i].m_strFileName.c_str() );
 		MYTRACE( L"m_nInfo			=%d\n", m_cFuncInfoArr[i].m_nInfo );
 	}
 	MYTRACE( L"=============================\n" );

@@ -184,7 +184,7 @@ protected:
 	EDockSide GetDropRect( POINT ptDrag, POINT ptDrop, LPRECT pRect, bool bForceFloat );
 	BOOL Track( POINT ptDrag );
 	bool GetTreeFileFullName(HWND, HTREEITEM, std::wstring*, int*);
-	bool TagJumpTimer(const WCHAR*, CMyPoint, bool);
+	bool TagJumpTimer(std::wstring_view, CMyPoint, bool);
 
 private:
 	//	May 18, 2001 genta
