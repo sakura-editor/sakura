@@ -115,7 +115,7 @@ int CALLBACK CDlgFuncList::CompareFunc_Asc( LPARAM lParam1, LPARAM lParam2, LPAR
 	CDlgFuncList*	pcDlgFuncList;
 	pcDlgFuncList = (CDlgFuncList*)lParamSort;
 
-	size_t num = pcDlgFuncList->m_pcFuncInfoArr->GetNum();
+	int num = pcDlgFuncList->m_pcFuncInfoArr->GetNum();
 	if (lParam1 < 0 || lParam1 >= num) {
 		return -1;
 	}
@@ -555,9 +555,9 @@ void CDlgFuncList::SetData()
 		m_cmemClipText.SetString(L"");	/* クリップボードコピー用テキスト */
 		{
 			const int nBuffLenTag = 13 + wcslen(m_pcFuncInfoArr->m_szFilePath);
-			const size_t nNum = m_pcFuncInfoArr->GetNum();
+			const int nNum = m_pcFuncInfoArr->GetNum();
 			size_t nBuffLen = 0;
-			for(size_t i = 0; i < nNum; ++i ){
+			for( int i = 0; i < nNum; ++i ){
 				const CFuncInfo& cFuncInfo = m_pcFuncInfoArr->GetAt(i);
 				nBuffLen += cFuncInfo.m_strFuncName.size();
 			}
@@ -921,9 +921,9 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, HTREEITEM hInsertAfter, BOOL bAddC
 	m_cmemClipText.SetString( L"" );
 	{
 		const int nBuffLenTag = 13 + wcslen(m_pcFuncInfoArr->m_szFilePath);
-		const size_t nNum = m_pcFuncInfoArr->GetNum();
+		const int nNum = m_pcFuncInfoArr->GetNum();
 		int nBuffLen = 0;
-		for( size_t i = 0; i < nNum; i++ ){
+		for( int i = 0; i < nNum; i++ ){
 			const CFuncInfo& cFuncInfo = m_pcFuncInfoArr->GetAt(i);
 			nBuffLen += cFuncInfo.m_strFuncName.size();
 		}
@@ -1186,9 +1186,9 @@ void CDlgFuncList::SetListVB (void)
 	m_cmemClipText.SetString( L"" );
 	{
 		const int nBuffLenTag = 17 + wcslen(m_pcFuncInfoArr->m_szFilePath);
-		const size_t nNum = m_pcFuncInfoArr->GetNum();
+		const int nNum = m_pcFuncInfoArr->GetNum();
 		int nBuffLen = 0;
-		for( size_t i = 0; i < nNum; i++ ){
+		for( int i = 0; i < nNum; i++ ){
 			const CFuncInfo& cFuncInfo = m_pcFuncInfoArr->GetAt(i);
 			nBuffLen += cFuncInfo.m_strFuncName.size();
 		}
@@ -1452,7 +1452,7 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 			CNativeW text;
 			if( tagjump ){
 				const WCHAR* pszFileName = cFuncInfo.m_strFileName.c_str();
-				if( pszFileName == NULL ){
+				if( cFuncInfo.m_strFileName.empty() ){
 					pszFileName = m_pcFuncInfoArr->m_szFilePath;
 				}
 				text.AllocStringBuffer(
@@ -1506,8 +1506,8 @@ void CDlgFuncList::SetDocLineFuncList()
 	CDocLineMgr* pcDocLineMgr = &pcEditView->GetDocument()->m_cDocLineMgr;
 	
 	CFuncListManager().ResetAllFucListMark(pcDocLineMgr, false);
-	size_t num = m_pcFuncInfoArr->GetNum();
-	for( size_t i = 0; i < num; ++i ){
+	int num = m_pcFuncInfoArr->GetNum();
+	for( int i = 0; i < num; ++i ){
 		const CFuncInfo& cFuncInfo = m_pcFuncInfoArr->GetAt(i);
 		if( 0 < cFuncInfo.m_nFuncLineCRLF ){
 			CDocLine* pcDocLine = pcDocLineMgr->GetLine( cFuncInfo.m_nFuncLineCRLF - 1 );
