@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
 インクルードガード付加マクロ(powershell版)
 
