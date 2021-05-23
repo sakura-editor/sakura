@@ -1874,7 +1874,6 @@ void CShareData_IO::ShareData_IO_KeyWords( CDataProfile& cProfile )
 		}
 	}else{
 		auto strMem = std::wstring();
-		strMem.reserve(MAX_KEYWORDNUM);
 		int nSize = pCKeyWordSetMgr->m_nKeyWordSetNum;
 		for( int i = 0; i < nSize; ++i ){
 			auto_sprintf( szKeyName, LTEXT("szSN[%02d]"), i );
