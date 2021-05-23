@@ -238,15 +238,6 @@ struct MyRGBQUAD : tagRGBQUAD
 		rgbRed = 0;
 		rgbReserved = 0;
 	}
-	MyRGBQUAD( std::initializer_list<BYTE> a ) noexcept
-		: tagRGBQUAD()
-	{
-		assert( a.size() <= 4 );
-		decltype(rgbBlue) *p = &rgbBlue;
-		for ( auto it = a.begin(); it != a.end(); ++it, ++p ) {
-			*p = *it;
-		}
-	}
 	bool operator == ( const RGBQUAD &rhs ) const noexcept
 	{
 		return rgbBlue == rhs.rgbBlue
