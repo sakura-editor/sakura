@@ -62,8 +62,9 @@ public:
 	void push_back(SET_TYPE e)
 	{
 		assert(m_nCount<MAX_SIZE);
-		m_nCount++;
-		m_aElements[m_nCount-1]=e;
+		if (0 <= m_nCount && m_nCount < MAX_SIZE) {
+			m_aElements[m_nCount++] = e;
+		}
 	}
 	void resize(int nNewSize)
 	{
