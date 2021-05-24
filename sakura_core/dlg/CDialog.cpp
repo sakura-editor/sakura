@@ -185,12 +185,12 @@ BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	// Modified by KEITA for WIN64 2003.9.6
 	::SetWindowLongPtr( m_hWnd, DWLP_USER, lParam );
 
+	m_hFontDialog = UpdateDialogFont( hwndDlg );
+
 	/* ダイアログデータの設定 */
 	SetData();
 
 	SetDialogPosSize();
-
-	m_hFontDialog = UpdateDialogFont( hwndDlg );
 
 	m_bInited = TRUE;
 	return TRUE;

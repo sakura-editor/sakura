@@ -160,14 +160,7 @@ BOOL CDlgPrintSetting::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 	//	::SetTimer( GetHwnd(), IDT_PRINTSETTING, 500, NULL );
 	//UpdatePrintableLineAndColumn();
 
-	BOOL bRet = CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
-
-	// ダイアログフォントの寸法を得ておく
-	LOGFONT	lf;
-	::GetObject(GetDialogFont(), sizeof(LOGFONT), &lf);
-	m_nFontHeight = lf.lfHeight;		// フォントサイズ
-
-	return bRet;
+	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 }
 
 BOOL CDlgPrintSetting::OnDestroy( void )
@@ -905,14 +898,17 @@ void CDlgPrintSetting::SetFontName( int idTxt, int idUse, LOGFONT& lf, int nPoin
 	CheckDlgButtonBool( GetHwnd(), idUse, bUseFont);
 	::EnableWindow( GetItemHwnd( idUse ), bUseFont );
 	if (bUseFont) {
-		LOGFONT	lft;
-		lft = lf;
-		lft.lfHeight = m_nFontHeight;		// フォントサイズをダイアログに合せる
+		// サイズだけはダイアログフォントに合わせ
+		// それ以外は引数lfで指定された設定を採用
+		LOGFONT	lfCreate = lf;
+		LOGFONT	lfDialogFont = {};
+		::GetObject( GetDialogFont(), sizeof(LOGFONT), &lfDialogFont );
+		lfCreate.lfHeight = lfDialogFont.lfHeight;
 
 		HFONT	hFontOld = (HFONT)::SendMessage(GetItemHwnd( idTxt ), WM_GETFONT, 0, 0 );
 
 		// 論理フォントを作成
-		HFONT	hFont = ::CreateFontIndirect( &lft );
+		HFONT	hFont = ::CreateFontIndirect( &lfCreate );
 		if (hFont) {
 			// フォントの設定
 			::SendMessage( GetItemHwnd( idTxt ), WM_SETFONT, (WPARAM)hFont, MAKELPARAM(FALSE, 0) );
