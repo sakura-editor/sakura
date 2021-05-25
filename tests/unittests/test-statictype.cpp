@@ -60,11 +60,10 @@ TEST(StaticVector, push_back)
 	// デバッグビルドでは、正常にクラッシュする
 	EXPECT_DEATH({ vec.push_back(0xffffff); }, "");
 #else
-	// リリースビルドではクラッシュしない
-	// 呼出元が例外に対応していないため、例外を投げるべきではない
-	EXPECT_NO_THROW({ vec.push_back(0xffffff); });
+	// リリースビルドでもクラッシュする
+	EXPECT_THROW({ vec.push_back(0xffffff); }, std::out_of_range);
+#endif
 
 	// 追加できないので、サイズをカウントアップしてはいけない
 	EXPECT_EQ(1, vec.size());
-#endif
 }
