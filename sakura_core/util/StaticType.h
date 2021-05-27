@@ -27,6 +27,8 @@
 #define SAKURA_STATICTYPE_54CC2BD5_4C7C_4584_B515_EF8C533B90EA_H_
 #pragma once
 
+#include <stdexcept>
+
 #include "util/string_ex.h"
 #include "debug/Debug2.h"
 
@@ -62,8 +64,10 @@ public:
 	void push_back(SET_TYPE e)
 	{
 		assert(m_nCount<MAX_SIZE);
-		m_nCount++;
-		m_aElements[m_nCount-1]=e;
+		if (MAX_SIZE <= m_nCount) {
+			throw std::out_of_range("m_nCount is out of range.");
+		}
+		m_aElements[m_nCount++] = e;
 	}
 	void resize(int nNewSize)
 	{

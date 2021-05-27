@@ -147,6 +147,7 @@
     <ClCompile Include="test-sample-disabled.cpp" />
     <ClCompile Include="test-sample.cpp" />
     <ClCompile Include="test-ssearchoption.cpp" />
+    <ClCompile Include="test-statictype.cpp" />
     <ClCompile Include="test-StdControl.cpp" />
     <ClCompile Include="test-string_ex.cpp" />
     <ClCompile Include="test-zoom.cpp" />

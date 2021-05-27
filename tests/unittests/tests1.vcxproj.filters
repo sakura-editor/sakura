@@ -154,6 +154,9 @@
     <ClCompile Include="test-czipfile.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-statictype.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartEditorProcessForTest.h">
