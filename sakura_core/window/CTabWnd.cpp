@@ -1575,6 +1575,49 @@ LRESULT CTabWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 	return 0L;
 }
 
+/*!	指定したタブの上部にその位置を示す帯を描画
+	@param[in]	gr			描画管理
+	@param[in]	lprcClient	タブウィンドウのクライアント領域
+	@param[in]	nTabIndex	対象タブのインデックス
+*/
+void CTabWnd::DrawTopBand( CGraphics& gr, const LPRECT lprcClient, int nTabIndex )
+{
+	POINT pt;
+	RECT rcCurSel;
+
+	TabCtrl_GetItemRect( m_hwndTab, nTabIndex, &rcCurSel );
+	pt.x = rcCurSel.left;
+	pt.y = 0;
+	::ClientToScreen( m_hwndTab, &pt );
+	::ScreenToClient( GetHwnd(), &pt );
+	rcCurSel.right = pt.x + (rcCurSel.right - rcCurSel.left) - 1;
+	rcCurSel.left = pt.x + 1;
+	rcCurSel.top = lprcClient->top + TAB_MARGIN_TOP - 2;
+	rcCurSel.bottom = lprcClient->top + TAB_MARGIN_TOP;
+
+	if( rcCurSel.left < lprcClient->left + TAB_MARGIN_LEFT )
+		rcCurSel.left = lprcClient->left + TAB_MARGIN_LEFT;	// 左端限界値
+
+	HWND hwndUpDown = ::FindWindowEx( m_hwndTab, NULL, UPDOWN_CLASS, 0 );	// タブ内の Up-Down コントロール
+	if( hwndUpDown && ::IsWindowVisible( hwndUpDown ) )
+	{
+		POINT ptREnd;
+		RECT rcUpDown;
+
+		::GetWindowRect( hwndUpDown, &rcUpDown );
+		ptREnd.x = rcUpDown.left;
+		ptREnd.y = 0;
+		::ScreenToClient( GetHwnd(), &ptREnd );
+		if( rcCurSel.right > ptREnd.x )
+			rcCurSel.right = ptREnd.x;	// 右端限界値
+	}
+
+	if( rcCurSel.left < rcCurSel.right )
+	{
+		::MyFillRect( gr, rcCurSel, RGB( 255, 128, 0 ) );
+	}
+}
+
 /*!	WM_PAINT処理
 
 	@date 2005.09.01 ryoji タブの上に境界線を追加
@@ -1604,47 +1647,9 @@ LRESULT CTabWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 	// 上側に境界線を描画する
 	::DrawEdge(gr, &rc, EDGE_ETCHED, BF_TOP);
 
-	// Windowsクラシックスタイルの場合はアクティブタブの上部にトップバンドを描画する	// 2006.03.27 ryoji
-	if( !m_bVisualStyle )
-	{
-		int nCurSel = TabCtrl_GetCurSel( m_hwndTab );
-		if( nCurSel >= 0 )
-		{
-			POINT pt;
-			RECT rcCurSel;
-
-			TabCtrl_GetItemRect( m_hwndTab, nCurSel, &rcCurSel );
-			pt.x = rcCurSel.left;
-			pt.y = 0;
-			::ClientToScreen( m_hwndTab, &pt );
-			::ScreenToClient( GetHwnd(), &pt );
-			rcCurSel.right = pt.x + (rcCurSel.right - rcCurSel.left) - 1;
-			rcCurSel.left = pt.x + 1;
-			rcCurSel.top = rc.top + TAB_MARGIN_TOP - 2;
-			rcCurSel.bottom = rc.top + TAB_MARGIN_TOP;
-
-			if( rcCurSel.left < rc.left + TAB_MARGIN_LEFT )
-				rcCurSel.left = rc.left + TAB_MARGIN_LEFT;	// 左端限界値
-
-			HWND hwndUpDown = ::FindWindowEx( m_hwndTab, NULL, UPDOWN_CLASS, 0 );	// タブ内の Up-Down コントロール
-			if( hwndUpDown && ::IsWindowVisible( hwndUpDown ) )
-			{
-				POINT ptREnd;
-				RECT rcUpDown;
-
-				::GetWindowRect( hwndUpDown, &rcUpDown );
-				ptREnd.x = rcUpDown.left;
-				ptREnd.y = 0;
-				::ScreenToClient( GetHwnd(), &ptREnd );
-				if( rcCurSel.right > ptREnd.x )
-					rcCurSel.right = ptREnd.x;	// 右端限界値
-			}
-
-			if( rcCurSel.left < rcCurSel.right )
-			{
-				::MyFillRect( gr, rcCurSel, RGB( 255, 128, 0 ) );
-			}
-		}
+	// トップバンドを描画する
+	if( int nCurSel = TabCtrl_GetCurSel( m_hwndTab ); 0 <= nCurSel ){
+		DrawTopBand( gr, &rc, nCurSel );
 	}
 
 	// サイズボックスを描画する
