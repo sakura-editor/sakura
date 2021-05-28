@@ -40,11 +40,17 @@
 */
 class CMutex
 {
+	using Me = CMutex;
+
 public:
 	CMutex( BOOL bInitialOwner, LPCWSTR pszName, LPSECURITY_ATTRIBUTES psa = NULL )
 	{
 		m_hObj = ::CreateMutex( psa, bInitialOwner, pszName );
 	}
+	CMutex(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CMutex(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CMutex()
 	{
 		if( NULL != m_hObj )
