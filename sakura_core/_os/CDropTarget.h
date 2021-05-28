@@ -50,10 +50,16 @@ private:
 
 class CYbInterfaceBase
 {
+	using Me = CYbInterfaceBase;
+
 private:
 	static COleLibrary m_olelib;
 protected:
 	CYbInterfaceBase();
+	CYbInterfaceBase(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CYbInterfaceBase(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CYbInterfaceBase();
 	static HRESULT QueryInterfaceImpl( IUnknown*, REFIID, REFIID, void** );
 };
