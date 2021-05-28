@@ -783,6 +783,10 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg, bool bEnableExtEol )
 		CDlgCancel*& m_pDlg;
 	public:
 		CDLgCandelCloser(CDlgCancel*& pDlg): m_pDlg(pDlg){}
+		CDLgCandelCloser(const CDLgCandelCloser&) = delete;
+		CDLgCandelCloser& operator = (const CDLgCandelCloser&) = delete;
+		CDLgCandelCloser(CDLgCandelCloser&&) noexcept = delete;
+		CDLgCandelCloser& operator = (CDLgCandelCloser&&) noexcept = delete;
 		~CDLgCandelCloser(){
 			if( NULL != m_pDlg ){
 				// 進捗ダイアログを表示しない場合と同じ動きになるようにダイアログは遅延破棄する
