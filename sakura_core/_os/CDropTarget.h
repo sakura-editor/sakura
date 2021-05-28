@@ -31,11 +31,17 @@ class CEditView;// 2002/2/3 aroka ヘッダ軽量化
 -----------------------------------------------------------------------*/
 class COleLibrary
 {
+	using Me = COleLibrary;
+
 	friend class CYbInterfaceBase;
 private:
 //	DWORD m_dwCount;	// 2009.01.08 ryoji m_dwCount削除
 	COleLibrary();
 public:
+	COleLibrary(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	COleLibrary(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~COleLibrary();
 private:
 	void Initialize();
