@@ -81,12 +81,18 @@ public:
 
 class CDropTarget : public CYbInterfaceImpl<IDropTarget>
 {
+	using Me = CDropTarget;
+
 public:
 	/*
 	||  Constructors
 	*/
 	CDropTarget( CEditWnd* );	// 2008.06.20 ryoji
 	CDropTarget( CEditView* );
+	CDropTarget(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CDropTarget(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CDropTarget();
 	/*
 	||  Attributes & Operations
