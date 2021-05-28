@@ -98,6 +98,8 @@ protected:
 */
 template<class EXCLUSIVE_OBJECT>
 class LockGuard {
+	using Me = LockGuard< EXCLUSIVE_OBJECT>;
+
 	EXCLUSIVE_OBJECT& o_;
 public:
 	LockGuard(EXCLUSIVE_OBJECT& ex) : o_( ex ){
@@ -107,7 +109,10 @@ public:
 	LockGuard(EXCLUSIVE_OBJECT& ex, PARAM p) : o_( ex ){
 		o_.Lock(p);
 	}
-	
+	LockGuard(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	LockGuard(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~LockGuard() {
 		o_.Unlock();
 	}
