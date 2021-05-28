@@ -1156,6 +1156,10 @@ bool CControlTray::OpenNewEditor(
 	struct CResponsefileDeleter{
 		LPCWSTR fileName;
 		CResponsefileDeleter(): fileName(NULL){}
+		CResponsefileDeleter(const CResponsefileDeleter&) = delete;
+		CResponsefileDeleter operator = (const CResponsefileDeleter&) = delete;
+		CResponsefileDeleter(CResponsefileDeleter&&) noexcept = delete;
+		CResponsefileDeleter operator = (CResponsefileDeleter&&) noexcept = delete;
 		~CResponsefileDeleter(){
 			if( fileName && fileName[0] ){
 				::DeleteFile( fileName );
