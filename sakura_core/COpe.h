@@ -33,24 +33,6 @@ class CLineData final {
 public:
 	CNativeW cmemLine;
 	int nSeq;
-	CLineData() = default;
-	CLineData(const CLineData& source) = default;
-	CLineData(CLineData&& other) noexcept {
-		swap(other);
-	}
-
-private:
-	void swap(CLineData& o) noexcept {
-		std::swap(cmemLine, o.cmemLine);
-		std::swap(nSeq, o.nSeq);
-	}
-
-public:
-	CLineData& operator = (const CLineData& rhs) = default;
-	CLineData& operator = (CLineData&& rhs) noexcept {
-		swap(rhs);
-		return *this;
-	}
 };
 
 typedef std::vector<CLineData> COpeLineData;
