@@ -63,11 +63,17 @@ public:
 class CWSHPlugin final :
 	public CPlugin
 {
+	using Me = CWSHPlugin;
+
 	//コンストラクタ
 public:
 	CWSHPlugin( const wstring& sBaseDir ) : CPlugin( sBaseDir ) {
 		m_bUseCache = false;
 	}
+	CWSHPlugin(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CWSHPlugin(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 
 	//デストラクタ
 public:
