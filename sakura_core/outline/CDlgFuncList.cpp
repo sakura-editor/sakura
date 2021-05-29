@@ -3417,6 +3417,10 @@ bool CDlgFuncList::ChangeLayout( int nId )
 	struct SAutoSwitch
 	{
 		SAutoSwitch( bool* pbSwitch ): m_pbSwitch( pbSwitch ) { *m_pbSwitch = true; }
+		SAutoSwitch(const SAutoSwitch&) = delete;
+		SAutoSwitch& operator = (const SAutoSwitch&) = delete;
+		SAutoSwitch(SAutoSwitch&&) noexcept = delete;
+		SAutoSwitch& operator = (SAutoSwitch&&) noexcept = delete;
 		~SAutoSwitch() { *m_pbSwitch = false; }
 		bool* m_pbSwitch;
 	} SAutoSwitch( &m_bInChangeLayout );	// 処理中は m_bInChangeLayout フラグを ON にしておく
@@ -3712,6 +3716,10 @@ BOOL CDlgFuncList::Track( POINT ptDrag )
 	struct SLockWindowUpdate
 	{	// 画面にゴミが残らないように
 		SLockWindowUpdate(){ ::LockWindowUpdate( ::GetDesktopWindow() ); }
+		SLockWindowUpdate(const SLockWindowUpdate&) = delete;
+		SLockWindowUpdate& operator = (const SLockWindowUpdate&) = delete;
+		SLockWindowUpdate(SLockWindowUpdate&&) noexcept = delete;
+		SLockWindowUpdate& operator = (SLockWindowUpdate&&) noexcept = delete;
 		~SLockWindowUpdate(){ ::LockWindowUpdate( NULL ); }
 	} sLockWindowUpdate;
 

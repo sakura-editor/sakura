@@ -132,6 +132,8 @@ struct PRINTSETTING {
 */
 class CPrint
 {
+	using Me = CPrint;
+
 public:
 	static const PAPER_INFO m_paperInfoArr[];	//!< 用紙情報一覧
 	static const int m_nPaperInfoArrNum; //!< 用紙情報一覧の要素数
@@ -160,6 +162,10 @@ public:
 	||  Constructors
 	*/
 	CPrint();
+	CPrint(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CPrint(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CPrint();
 
 	/*

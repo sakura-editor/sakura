@@ -91,8 +91,14 @@ private:
 //コンストラクタでカレントディレクトリを保存し、デストラクタでカレントディレクトリを復元するモノ。
 //2008.03.01 kobake 作成
 class CCurrentDirectoryBackupPoint{
+	using Me = CCurrentDirectoryBackupPoint;
+
 public:
 	CCurrentDirectoryBackupPoint();
+	CCurrentDirectoryBackupPoint(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CCurrentDirectoryBackupPoint(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CCurrentDirectoryBackupPoint();
 private:
 	WCHAR m_szCurDir[_MAX_PATH];

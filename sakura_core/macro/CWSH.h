@@ -35,6 +35,8 @@ typedef void (*ScriptErrorHandler)(BSTR Description, BSTR Source, void *Data);
 
 class CWSHClient final : IWSHClient
 {
+	using Me = CWSHClient;
+
 public:
 	// 型定義
 	typedef std::vector<CIfObj*> List;      // 所有しているインタフェースオブジェクトのリスト
@@ -42,6 +44,10 @@ public:
 
 	// コンストラクタ・デストラクタ
 	CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler, void *AData);
+	CWSHClient(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CWSHClient(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CWSHClient();
 
 	// フィールド・アクセサ
