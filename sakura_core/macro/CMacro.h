@@ -65,6 +65,9 @@ struct CMacroParam{
 		m_nDataLen = obj.m_nDataLen;
 		m_eType = obj.m_eType;
 	}
+	CMacroParam& operator = (const CMacroParam&) = delete;
+	CMacroParam(CMacroParam&&) noexcept = delete;
+	CMacroParam& operator = (CMacroParam&&) noexcept = delete;
 	~CMacroParam(){
 		Clear();
 	}
