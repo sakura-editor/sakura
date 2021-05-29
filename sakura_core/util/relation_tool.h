@@ -62,8 +62,14 @@ private:
 
 //! 1つのCSubjectをウォッチする
 class CListener{
+	using Me = CListener;
+
 public:
 	CListener();
+	CListener(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CListener(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	virtual ~CListener();
 
 	//公開インターフェース
