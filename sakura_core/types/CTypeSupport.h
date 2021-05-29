@@ -40,7 +40,6 @@
 class CTypeSupport{
 	using Me = CTypeSupport;
 
-private:
 	static const COLORREF INVALID_COLOR=0xFFFFFFFF; //無効な色定数
 
 public:

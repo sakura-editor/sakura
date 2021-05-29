@@ -73,8 +73,6 @@ private:
 class CRecycledBufferDynamic{
 	using Me = CRecycledBufferDynamic;
 
-//コンフィグ
-private:
 	static const int CHAIN_COUNT = 64;   //再利用可能なブロック数。
 
 //コンストラクタ・デストラクタ

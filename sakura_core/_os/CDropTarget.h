@@ -52,7 +52,6 @@ class CYbInterfaceBase
 {
 	using Me = CYbInterfaceBase;
 
-private:
 	static COleLibrary m_olelib;
 protected:
 	CYbInterfaceBase();
