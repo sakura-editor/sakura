@@ -1614,7 +1614,9 @@ void CTabWnd::DrawTopBand( CGraphics& gr, const LPRECT lprcClient, int nTabIndex
 
 	if( rcCurSel.left < rcCurSel.right )
 	{
-		::MyFillRect( gr, rcCurSel, RGB( 255, 128, 0 ) );
+		COLORREF color = RGB( 255, 128, 0 );
+		::GetSystemAccentColor( &color );
+		::MyFillRect( gr, rcCurSel, color );
 	}
 }
 

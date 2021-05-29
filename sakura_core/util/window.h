@@ -195,4 +195,6 @@ private:
 
 HFONT UpdateDialogFont( HWND hwnd, BOOL force = FALSE );
 
+bool GetSystemAccentColor( COLORREF* pColorOut );
+
 #endif /* SAKURA_WINDOW_A0833476_5E32_46BE_87B6_ECD55F10D34A_H_ */
