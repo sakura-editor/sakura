@@ -205,7 +205,7 @@ bool IsLocalDrive( const WCHAR* pszDrive )
 
 const WCHAR* GetFileTitlePointer(const WCHAR* pszPath)
 {
-	CharPointerT p;
+	CharPointerW p;
 	const WCHAR* pszName;
 	p = pszName = pszPath;
 	while( *p )
@@ -447,7 +447,7 @@ int CalcDirectoryDepth(
 	int depth = 0;
  
 	//	とりあえず\の数を数える
-	for( CharPointerT p = path; *p != L'\0'; ++p ){
+	for( CharPointerW p = path; *p != L'\0'; ++p ){
 		if( *p == L'\\' ){
 			++depth;
 			//	フルパスには入っていないはずだが念のため

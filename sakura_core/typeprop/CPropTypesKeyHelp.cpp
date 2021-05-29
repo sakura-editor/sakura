@@ -681,7 +681,7 @@ static WCHAR* strcnv(WCHAR *str)
 static WCHAR* GetFileName(const WCHAR* fullpath)
 {
 	const WCHAR* pszName = fullpath;
-	CharPointerT p = fullpath;
+	CharPointerW p = fullpath;
 	while( *p != L'\0'  ){
 		if( *p == L'\\' ){
 			pszName = p + 1;
