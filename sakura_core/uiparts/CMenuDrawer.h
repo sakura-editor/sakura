@@ -47,11 +47,17 @@ struct DLLSHAREDATA;
 */
 class CMenuDrawer
 {
+	using Me = CMenuDrawer;
+
 public:
 	/*
 	||  Constructors
 	*/
 	CMenuDrawer();
+	CMenuDrawer(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CMenuDrawer(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CMenuDrawer();
 	void Create( HINSTANCE hInstance, HWND hWndOwner, CImageListMgr* pcIcons );
 
