@@ -52,10 +52,16 @@
 		当初の独自描画に戻した．
 */
 class CImageListMgr {
+	using Me = CImageListMgr;
+
 public:
 
 	//	constructor
 	CImageListMgr();
+	CImageListMgr(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CImageListMgr(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CImageListMgr();
 
 	bool Create(HINSTANCE hInstance);	//	生成
