@@ -20,8 +20,8 @@
 	warranty. In no event will the authors be held liable for any damages
 	arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any purpose, 
-	including commercial applications, and to alter it and redistribute it 
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
 	freely, subject to the following restrictions:
 
 		1. The origin of this software must not be misrepresented;
@@ -30,7 +30,7 @@
 		   in the product documentation would be appreciated but is
 		   not required.
 
-		2. Altered source versions must be plainly marked as such, 
+		2. Altered source versions must be plainly marked as such,
 		   and must not be misrepresented as being the original software.
 
 		3. This notice may not be removed or altered from any source
@@ -1019,7 +1019,7 @@ void CTabWnd::Close( void )
 			::SetWindowLongPtr( m_hwndTab, GWLP_WNDPROC, (LONG_PTR)gm_pOldWndProc );
 			gm_pOldWndProc = NULL;
 		}
-		
+
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( m_hwndTab, GWLP_USERDATA, (LONG_PTR)NULL );
 
@@ -1086,7 +1086,7 @@ LRESULT CTabWnd::OnDestroy( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 
 	return 0L;
 }
- 
+
 /*! WM_LBUTTONDBLCLK処理
 	@date 2006.03.26 ryoji 新規作成
 */
@@ -1590,14 +1590,14 @@ void CTabWnd::DrawTopBand( CGraphics& gr, const LPRECT lprcClient, int nTabIndex
 	pt.y = 0;
 	::ClientToScreen( m_hwndTab, &pt );
 	::ScreenToClient( GetHwnd(), &pt );
-	rcCurSel.right = pt.x + (rcCurSel.right - rcCurSel.left) - 1;
-	rcCurSel.left = pt.x + 1;
-	rcCurSel.top = lprcClient->top + TAB_MARGIN_TOP - 2;
+	rcCurSel.left = pt.x;
+	rcCurSel.right = pt.x + (rcCurSel.right - rcCurSel.left);
+	rcCurSel.top = lprcClient->top + 1;
 	rcCurSel.bottom = lprcClient->top + TAB_MARGIN_TOP;
 
-	if( rcCurSel.left < lprcClient->left + TAB_MARGIN_LEFT )
-		rcCurSel.left = lprcClient->left + TAB_MARGIN_LEFT;	// 左端限界値
-
+	// 左右の範囲制限
+	// - 左側はそのまま
+	// - 右側は[<][>]ボタンが表示中ならその左端まで
 	HWND hwndUpDown = ::FindWindowEx( m_hwndTab, NULL, UPDOWN_CLASS, 0 );	// タブ内の Up-Down コントロール
 	if( hwndUpDown && ::IsWindowVisible( hwndUpDown ) )
 	{
@@ -1653,7 +1653,7 @@ LRESULT CTabWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 	}
 
 	// サイズボックスを描画する
-	if (!m_pShareData->m_Common.m_sWindow.m_bDispSTATUSBAR 
+	if (!m_pShareData->m_Common.m_sWindow.m_bDispSTATUSBAR
 		&& !m_pShareData->m_Common.m_sWindow.m_bDispFUNCKEYWND
 		&& m_pShareData->m_Common.m_sTabBar.m_eTabPosition == TabPosition_Bottom) {
 		SizeBox_ONOFF(true);
@@ -1934,7 +1934,7 @@ int CTabWnd::FindTabIndexByHWND( HWND hWnd )
 		tcitem.mask   = TCIF_PARAM;
 		tcitem.lParam = (LPARAM)0;
 		TabCtrl_GetItem( m_hwndTab, i, &tcitem );
-		
+
 		if( (HWND)tcitem.lParam == hWnd ) return i;
 	}
 
