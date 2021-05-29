@@ -112,11 +112,17 @@ inline bool DlgItem_Enable(HWND hwndDlg, int nIDDlgItem, bool nEnable)
 // 最大の幅を報告します
 class CTextWidthCalc
 {
+	using Me = CTextWidthCalc;
+
 public:
 	CTextWidthCalc(HWND hParentDlg, int nID);
 	CTextWidthCalc(HWND hwndThis);
 	CTextWidthCalc(HFONT font);
 	CTextWidthCalc(HDC hdc);
+	CTextWidthCalc(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CTextWidthCalc(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	virtual ~CTextWidthCalc();
 	void Reset(){ nCx = 0; nExt = 0; }
 	void SetCx(int cx = 0){ nCx = cx; }
