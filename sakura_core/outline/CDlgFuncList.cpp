@@ -3716,6 +3716,10 @@ BOOL CDlgFuncList::Track( POINT ptDrag )
 	struct SLockWindowUpdate
 	{	// 画面にゴミが残らないように
 		SLockWindowUpdate(){ ::LockWindowUpdate( ::GetDesktopWindow() ); }
+		SLockWindowUpdate(const SLockWindowUpdate&) = delete;
+		SLockWindowUpdate& operator = (const SLockWindowUpdate&) = delete;
+		SLockWindowUpdate(SLockWindowUpdate&&) noexcept = delete;
+		SLockWindowUpdate& operator = (SLockWindowUpdate&&) noexcept = delete;
 		~SLockWindowUpdate(){ ::LockWindowUpdate( NULL ); }
 	} sLockWindowUpdate;
 
