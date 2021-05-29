@@ -34,8 +34,14 @@ class CTextMetrics;
 class CGraphics;
 
 class CRuler{
+	using Me = CRuler;
+
 public:
 	CRuler(const CEditView* pEditView, const CEditDoc* pEditDoc);
+	CRuler(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CRuler(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	virtual ~CRuler();
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
