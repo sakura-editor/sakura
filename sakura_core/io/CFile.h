@@ -72,8 +72,14 @@ private:
 
 //!一時ファイル
 class CTmpFile{
+	using Me = CTmpFile;
+
 public:
 	CTmpFile(){ m_fp = tmpfile(); }
+	CTmpFile(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CTmpFile(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CTmpFile(){ fclose(m_fp); }
 	FILE* GetFilePointer() const{ return m_fp; }
 private:
