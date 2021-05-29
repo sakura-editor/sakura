@@ -232,6 +232,8 @@ protected:
 
 class CPlugin
 {
+	using Me = CPlugin;
+
 	//型定義
 protected:
 	typedef std::wstring wstring;
@@ -244,6 +246,10 @@ public:
 	//コンストラクタ
 public:
 	CPlugin( const wstring& sBaseDir );
+	CPlugin(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CPlugin(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 
 	//デストラクタ
 public:
