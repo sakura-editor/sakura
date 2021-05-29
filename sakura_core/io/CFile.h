@@ -38,9 +38,15 @@ enum EShareMode{
 };
 
 class CFile{
+	using Me = CFile;
+
 public:
 	//コンストラクタ・デストラクタ
 	CFile(LPCWSTR pszPath = NULL);
+	CFile(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CFile(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	virtual ~CFile();
 	//パス
 	const CFilePath& GetFilePathClass() const { return m_szFilePath; }
