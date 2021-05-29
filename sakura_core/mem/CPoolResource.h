@@ -34,12 +34,19 @@
 template <typename T>
 class CPoolResource : public std::pmr::memory_resource
 {
+	using Me = CPoolResource;
+
 public:
 	CPoolResource()
 	{
 		// 始めのブロックをメモリ確保
 		AllocateBlock();
 	}
+
+	CPoolResource(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CPoolResource(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 
 	virtual ~CPoolResource()
 	{
