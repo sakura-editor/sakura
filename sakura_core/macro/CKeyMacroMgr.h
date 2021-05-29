@@ -34,11 +34,17 @@ class CMacro;
 */
 class CKeyMacroMgr : public CMacroManagerBase
 {
+	using Me = CKeyMacroMgr;
+
 public:
 	/*
 	||  Constructors
 	*/
 	CKeyMacroMgr();
+	CKeyMacroMgr(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CKeyMacroMgr(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CKeyMacroMgr();
 
 	/*
