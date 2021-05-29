@@ -175,6 +175,8 @@ private:
 
 class CDCFont
 {
+	using Me = CDCFont;
+
 public:
 	CDCFont(LOGFONT& font, HWND hwnd = NULL){
 		m_hwnd = hwnd;
@@ -182,6 +184,10 @@ public:
 		m_hFont = ::CreateFontIndirect(&font);
 		m_hFontOld = (HFONT)::SelectObject(m_hDC, m_hFont);
 	}
+	CDCFont(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CDCFont(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CDCFont(){
 		if( m_hDC ){
 			::SelectObject(m_hDC, m_hFontOld);
