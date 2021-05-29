@@ -1575,45 +1575,6 @@ LRESULT CTabWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 	return 0L;
 }
 
-/*!	指定したタブの上部にその位置を示す帯を描画
-	@param[in]	gr			描画管理
-	@param[in]	lprcClient	タブウィンドウのクライアント領域
-	@param[in]	nTabIndex	対象タブのインデックス
-*/
-void CTabWnd::DrawTopBand( const CGraphics& gr, const RECT* prcClient, int nTabIndex ) const
-{
-	RECT rcTab = {};
-	TabCtrl_GetItemRect( m_hwndTab, nTabIndex, &rcTab );
-	POINT pt = { rcTab.left, 0 };
-	::ClientToScreen( m_hwndTab, &pt );
-	::ScreenToClient( GetHwnd(), &pt );
-	RECT rcTopBand = {};
-	rcTopBand.left = pt.x;
-	rcTopBand.right = pt.x + (rcTab.right - rcTab.left);
-	rcTopBand.top = prcClient->top + 1;
-	rcTopBand.bottom = prcClient->top + TAB_MARGIN_TOP;
-
-	// 左右の範囲制限
-	// - 左側はそのまま
-	// - 右側は[<][>]ボタンが表示中ならその左端まで
-	if( auto hwndUpDown = ::FindWindowEx( m_hwndTab, nullptr, UPDOWN_CLASS, nullptr );
-		::IsWindowVisible( hwndUpDown ) ){
-		RECT rcUpDown = {};
-		::GetWindowRect( hwndUpDown, &rcUpDown );
-		POINT ptREnd = { rcUpDown.left, 0 };
-		::ScreenToClient( GetHwnd(), &ptREnd );
-		if( rcTopBand.right > ptREnd.x ){
-			rcTopBand.right = ptREnd.x;	// 右端限界値
-		}
-	}
-
-	if( rcTopBand.left < rcTopBand.right ){
-		COLORREF color = RGB( 255, 128, 0 );
-		::GetSystemAccentColor( &color );
-		::MyFillRect( gr, rcTopBand, color );
-	}
-}
-
 /*!	WM_PAINT処理
 
 	@date 2005.09.01 ryoji タブの上に境界線を追加
@@ -1645,7 +1606,7 @@ LRESULT CTabWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 
 	// トップバンドを描画する
 	if( auto nCurSel = TabCtrl_GetCurSel( m_hwndTab ); 0 <= nCurSel ){
-		DrawTopBand( gr, &rc, nCurSel );
+		DrawTopBand( gr, rc, nCurSel );
 	}
 
 	// サイズボックスを描画する
@@ -2738,6 +2699,45 @@ void CTabWnd::DrawTabCloseBtn( CGraphics& gr, const LPRECT lprcClient, bool sele
 	gr.SetPen( ::GetSysColor(nIndex) );
 	gr.SetBrushColor( ::GetSysColor(nIndex) );
 	DrawCloseFigure( gr, rcBtn );
+}
+
+/*!	指定したタブの上部にその位置を示す帯を描画
+	@param[in]	gr			描画管理
+	@param[in]	rcClient	タブウィンドウのクライアント領域
+	@param[in]	nTabIndex	対象タブのインデックス
+*/
+void CTabWnd::DrawTopBand( const CGraphics& gr, const RECT& rcClient, int nTabIndex ) const
+{
+	RECT rcTab = {};
+	TabCtrl_GetItemRect( m_hwndTab, nTabIndex, &rcTab );
+	POINT pt = { rcTab.left, 0 };
+	::ClientToScreen( m_hwndTab, &pt );
+	::ScreenToClient( GetHwnd(), &pt );
+	RECT rcTopBand = {};
+	rcTopBand.left = pt.x;
+	rcTopBand.right = pt.x + (rcTab.right - rcTab.left);
+	rcTopBand.top = rcClient.top + 1;	// DrawEdgeで描画した境界線(1px)をよける
+	rcTopBand.bottom = rcClient.top + TAB_MARGIN_TOP;
+
+	// 左右の範囲制限
+	// - 左側はそのまま
+	// - 右側は[<][>]ボタンが表示中ならその左端まで
+	if( auto hwndUpDown = ::FindWindowEx( m_hwndTab, nullptr, UPDOWN_CLASS, nullptr );
+		::IsWindowVisible( hwndUpDown ) ){
+		RECT rcUpDown = {};
+		::GetWindowRect( hwndUpDown, &rcUpDown );
+		POINT ptREnd = { rcUpDown.left, 0 };
+		::ScreenToClient( GetHwnd(), &ptREnd );
+		if( rcTopBand.right > ptREnd.x ){
+			rcTopBand.right = ptREnd.x;	// 右端限界値
+		}
+	}
+
+	if( rcTopBand.left < rcTopBand.right ){
+		COLORREF color = RGB( 255, 128, 0 );
+		::GetSystemAccentColor( &color );
+		::MyFillRect( gr, rcTopBand, color );
+	}
 }
 
 /*! 一覧ボタンの矩形取得処理
