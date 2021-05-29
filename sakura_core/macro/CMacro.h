@@ -98,11 +98,17 @@ struct CMacroParam{
 */
 class CMacro
 {
+	using Me = CMacro;
+
 public:
 	/*
 	||  Constructors
 	*/
 	CMacro( EFunctionCode nFuncID );	//	機能IDを指定して初期化
+	CMacro(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CMacro(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CMacro();
 	void ClearMacroParam();
 
