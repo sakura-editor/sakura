@@ -36,9 +36,15 @@ class CListener;
 
 //! 複数のCListenerからウォッチされる
 class CSubject{
+	using Me = CSubject;
+
 public:
 	//コンストラクタ・デストラクタ
 	CSubject();
+	CSubject(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CSubject(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	virtual ~CSubject();
 
 	//公開インターフェース
