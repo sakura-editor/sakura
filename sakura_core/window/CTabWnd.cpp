@@ -1580,43 +1580,37 @@ LRESULT CTabWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 	@param[in]	lprcClient	タブウィンドウのクライアント領域
 	@param[in]	nTabIndex	対象タブのインデックス
 */
-void CTabWnd::DrawTopBand( CGraphics& gr, const LPRECT lprcClient, int nTabIndex )
+void CTabWnd::DrawTopBand( const CGraphics& gr, const RECT* prcClient, int nTabIndex ) const
 {
-	POINT pt;
-	RECT rcCurSel;
-
-	TabCtrl_GetItemRect( m_hwndTab, nTabIndex, &rcCurSel );
-	pt.x = rcCurSel.left;
-	pt.y = 0;
+	RECT rcTab = {};
+	TabCtrl_GetItemRect( m_hwndTab, nTabIndex, &rcTab );
+	POINT pt = { rcTab.left, 0 };
 	::ClientToScreen( m_hwndTab, &pt );
 	::ScreenToClient( GetHwnd(), &pt );
-	rcCurSel.left = pt.x;
-	rcCurSel.right = pt.x + (rcCurSel.right - rcCurSel.left);
-	rcCurSel.top = lprcClient->top + 1;
-	rcCurSel.bottom = lprcClient->top + TAB_MARGIN_TOP;
+	RECT rcTopBand = {};
+	rcTopBand.left = pt.x;
+	rcTopBand.right = pt.x + (rcTab.right - rcTab.left);
+	rcTopBand.top = prcClient->top + 1;
+	rcTopBand.bottom = prcClient->top + TAB_MARGIN_TOP;
 
 	// 左右の範囲制限
 	// - 左側はそのまま
 	// - 右側は[<][>]ボタンが表示中ならその左端まで
-	HWND hwndUpDown = ::FindWindowEx( m_hwndTab, NULL, UPDOWN_CLASS, 0 );	// タブ内の Up-Down コントロール
-	if( hwndUpDown && ::IsWindowVisible( hwndUpDown ) )
-	{
-		POINT ptREnd;
-		RECT rcUpDown;
-
+	if( auto hwndUpDown = ::FindWindowEx( m_hwndTab, nullptr, UPDOWN_CLASS, nullptr );
+		::IsWindowVisible( hwndUpDown ) ){
+		RECT rcUpDown = {};
 		::GetWindowRect( hwndUpDown, &rcUpDown );
-		ptREnd.x = rcUpDown.left;
-		ptREnd.y = 0;
+		POINT ptREnd = { rcUpDown.left, 0 };
 		::ScreenToClient( GetHwnd(), &ptREnd );
-		if( rcCurSel.right > ptREnd.x )
-			rcCurSel.right = ptREnd.x;	// 右端限界値
+		if( rcTopBand.right > ptREnd.x ){
+			rcTopBand.right = ptREnd.x;	// 右端限界値
+		}
 	}
 
-	if( rcCurSel.left < rcCurSel.right )
-	{
+	if( rcTopBand.left < rcTopBand.right ){
 		COLORREF color = RGB( 255, 128, 0 );
 		::GetSystemAccentColor( &color );
-		::MyFillRect( gr, rcCurSel, color );
+		::MyFillRect( gr, rcTopBand, color );
 	}
 }
 
@@ -1650,7 +1644,7 @@ LRESULT CTabWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 	::DrawEdge(gr, &rc, EDGE_ETCHED, BF_TOP);
 
 	// トップバンドを描画する
-	if( int nCurSel = TabCtrl_GetCurSel( m_hwndTab ); 0 <= nCurSel ){
+	if( auto nCurSel = TabCtrl_GetCurSel( m_hwndTab ); 0 <= nCurSel ){
 		DrawTopBand( gr, &rc, nCurSel );
 	}
 
