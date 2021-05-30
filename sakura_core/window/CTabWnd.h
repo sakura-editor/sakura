@@ -147,6 +147,7 @@ protected:
 	void DrawCloseFigure( CGraphics& gr, const RECT &btnRect );			/*!< 閉じるマーク描画処理 */
 	void DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient );			/*!< 閉じるボタン描画処理 */		// 2006.10.21 ryoji
 	void DrawTabCloseBtn( CGraphics& gr, const LPRECT lprcClient, bool selected, bool bHover );	/*!< タブを閉じるボタン描画処理 */		// 2012.04.14 syat
+	void DrawTopBand( const CGraphics& gr, const RECT& rcClient, int nTabIndex ) const;
 	void GetListBtnRect( const LPRECT lprcClient, LPRECT lprc );	/*!< 一覧ボタンの矩形取得処理 */
 	void GetCloseBtnRect( const LPRECT lprcClient, LPRECT lprc );	/*!< 閉じるボタンの矩形取得処理 */	// 2006.10.21 ryoji
 	void GetTabCloseBtnRect( const LPRECT lprcClient, LPRECT lprc, bool selected );	/*!< タブを閉じるボタンの矩形取得処理 */	// 2012.04.14 syat
