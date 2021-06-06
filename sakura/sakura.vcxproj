@@ -289,7 +289,6 @@
     <ClInclude Include="..\sakura_core\charset\CESI.h" />
     <ClInclude Include="..\sakura_core\charset\CEuc.h" />
     <ClInclude Include="..\sakura_core\charset\charcode.h" />
-    <ClInclude Include="..\sakura_core\charset\CharPointer.h" />
     <ClInclude Include="..\sakura_core\charset\charset.h" />
     <ClInclude Include="..\sakura_core\charset\CJis.h" />
     <ClInclude Include="..\sakura_core\charset\CLatin1.h" />
