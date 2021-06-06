@@ -28,11 +28,6 @@ class CDlgInput1;
 class CDlgInput1
 {
 public:
-	/*
-	||  Constructors
-	*/
-	CDlgInput1();
-	~CDlgInput1();
 	BOOL DoModal( HINSTANCE hInstApp, HWND hwndParent, const WCHAR* pszTitle,
 				  const WCHAR* pszMessage, int nMaxTextLen, WCHAR* pszText );	/* モードレスダイアログの表示 */
 
