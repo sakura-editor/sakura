@@ -52,6 +52,7 @@
 #include "CSelectLang.h"
 #include "apiwrap/CommonControl.h"
 #include "String_define.h"
+#include <VersionHelpers.h>
 
 using namespace std;
 
@@ -59,6 +60,7 @@ using namespace std;
 #define SCROLLMARGIN_RIGHT 4
 #define SCROLLMARGIN_NOMOVE 4
 
+const bool IsWin10 = IsWindows10OrGreater();
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         外部依存                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -859,7 +861,14 @@ void CCaret::ShowCaretPosInfo()
 				::UnionRect(&updatedRect, &updatedRect, &partRect);
 			}
 		};
-		::SendMessage(hWnd, WM_SETREDRAW, FALSE, 0);
+		if (IsWin10) {
+			::SendMessage(hWnd, WM_SETREDRAW, FALSE, 0);
+		}else{
+			if (m_pEditView->GetSelectionInfo().IsMouseSelecting() || m_pEditView->m_bDragMode) {
+			}else{
+				::SendMessage(hWnd, WM_SETREDRAW, FALSE, 0);
+			}
+		}
 		if( m_bClearStatus ){
 			setStatusText( 0, SBT_NOBORDERS, L"" );
 		}
