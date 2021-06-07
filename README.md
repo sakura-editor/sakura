@@ -30,8 +30,8 @@
     - [Visual Studio Install options required](#visual-studio-install-options-required)
     - [Visual Studio 2019 対応に関して](#visual-studio-2019-対応に関して)
     - [.vsconfig に関して](#vsconfig-に関して)
-      - [Visaul Studio 2017/2019 共通](#visaul-studio-20172019-共通)
-      - [Visaul Studio 2019 のみ](#visaul-studio-2019-のみ)
+      - [Visual Studio 2017/2019 共通](#visual-studio-20172019-共通)
+      - [Visual Studio 2019 のみ](#visual-studio-2019-のみ)
       - [参照](#参照)
   - [How to build](#how-to-build)
     - [詳細情報](#詳細情報)
@@ -89,7 +89,7 @@ Sakura Editor のコンパイルに必要なコンポーネントを Visual Stud
 
 [#1162](https://github.com/sakura-editor/sakura/pull/1162) で [.vsconfig](.vsconfig) というファイルを sakura.sln と同じディレクトリに配置しています。
 
-#### Visaul Studio 2017/2019 共通
+#### Visual Studio 2017/2019 共通
 
 `vs_community__XXXXX.exe` でインストールする際に、--config オプションをつけてインストールする。
 あるいは構成変更することにより、必要なコンポーネントを自動的にインストールします。
@@ -98,10 +98,10 @@ Sakura Editor のコンパイルに必要なコンポーネントを Visual Stud
 vs_community__XXXXX.exe --config <.vsconfig のファイルパス>
 ```
 
-#### Visaul Studio 2019 のみ
+#### Visual Studio 2019 のみ
 
 `sakura.sln` と同じディレクトリに [.vsconfig](.vsconfig) が存在するので、
-Visaul Studio 2019 で `sakura.sln` を開くと必要なコンポーネントが足りない場合、インストールを促す表示が出るので、インストールをクリックすると自動的にインストールする。
+Visual Studio 2019 で `sakura.sln` を開くと必要なコンポーネントが足りない場合、インストールを促す表示が出るので、インストールをクリックすると自動的にインストールする。
 
 #### 参照
 
