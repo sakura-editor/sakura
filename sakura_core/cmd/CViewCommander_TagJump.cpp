@@ -849,10 +849,7 @@ bool CViewCommander::Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int cou
 		// 現在のタイプ別の1番目の拡張子を拝借
 		WCHAR szExts[MAX_TYPES_EXTS];
 		CDocTypeManager::GetFirstExt(m_pCommanderView->m_pTypeData->m_szTypeExts, szExts, _countof(szExts));
-		if( !szExts ){
-			return false;
-		}
-		size_t nExtLen = wcslen( szExts );
+		auto nExtLen = wcslnen_s( szExts, _countof(szExts) );
 		wcscat( szCurrentPath, L"\\dmy" );
 		if( nExtLen ){
 			wcscat( szCurrentPath, L"." );

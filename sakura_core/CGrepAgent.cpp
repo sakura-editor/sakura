@@ -310,10 +310,7 @@ int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, WCHAR* pszWindowName, WC
 #endif
 	if( pmemTitle ){
 		const wchar_t* p = L"Window:[";
-		if( !p ){
-			return false;
-		}
-		pmemTitle->SetStringHoldBuffer(p, wcslen(p));
+		pmemTitle->SetStringHoldBuffer(p, 8);
 	}
 	if( !IsSakuraMainWindow(hWndTarget) ){
 		return -1;
@@ -754,10 +751,7 @@ DWORD CGrepAgent::DoGrep(
 			bool bOutputBaseFolder = false;
 			bool bOutputFolderName = false;
 			// 複数ウィンドウループ予約
-			if( !szWindowPath ){
-				return false;
-			}
-			int nPathLen = static_cast<size_t>(wcslen(szWindowPath));
+			auto nPathLen = wcsnlen_s(szWindowPath, _countof(szWindowPath));
 			std::wstring currentFile = szWindowPath;
 			if( currentFile.size() ){
 				currentFile += L'\\';
