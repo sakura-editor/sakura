@@ -798,6 +798,7 @@ DWORD CGrepAgent::DoGrep(
 				CEditWnd::getInstance()->RedrawAllViews( pcViewDst );
 			cmemMessage.Clear();
 		}
+		nHitCount = nGrepTreeResult;
 	}else{
 		for( int nPath = 0; nPath < (int)vPaths.size(); nPath++ ){
 			bool bOutputBaseFolder = false;
@@ -828,10 +829,10 @@ DWORD CGrepAgent::DoGrep(
 			}
 			nGrepTreeResult += nTreeRet;
 		}
-	}
-	if( 0 < cmemMessage.GetStringLength() ) {
-		AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
-		cmemMessage._SetStringLength(0);
+		if( 0 < cmemMessage.GetStringLength() ) {
+			AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
+			cmemMessage._SetStringLength(0);
+		}
 	}
 	if( -1 == nGrepTreeResult && sGrepOption.bGrepHeader ){
 		const wchar_t* p = LS( STR_GREP_SUSPENDED );	//L"中断しました。\r\n"
