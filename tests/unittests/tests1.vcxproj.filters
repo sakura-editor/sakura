@@ -139,10 +139,36 @@
     <ClCompile Include="test-printEFunctionCode.cpp">
       <Filter>Other Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-cdocline.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-cdoclinemgr.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-csearchagent.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-crunningtimer.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-czipfile.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-statictype.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartEditorProcessForTest.h">
       <Filter>Other Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="tests1_rc.h">
+      <Filter>Other Files</Filter>
+    </ClInclude>
+    <ResourceCompile Include="tests1_rc.rc">
+      <Filter>Other Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

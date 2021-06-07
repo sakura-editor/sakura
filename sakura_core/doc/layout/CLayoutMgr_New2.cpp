@@ -67,7 +67,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	DLRArg.pInsData = pArg->pInsData;			// 挿入するデータ
 	DLRArg.nDelSeq = pArg->nDelSeq;
 	CSearchAgent(m_pcDocLineMgr).ReplaceData(
-		&DLRArg
+		&DLRArg, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol
 	);
 	pArg->nInsSeq = DLRArg.nInsSeq;
 

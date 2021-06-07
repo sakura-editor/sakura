@@ -502,7 +502,7 @@ void CViewCommander::Command_PROPERTY_FILE( void )
 		/* 全行データを返すテスト */
 		wchar_t*	pDataAll;
 		int		nDataAllLen;
-		CRunningTimer cRunningTimer( "CViewCommander::Command_PROPERTY_FILE 全行データを返すテスト" );
+		CRunningTimer cRunningTimer( L"CViewCommander::Command_PROPERTY_FILE 全行データを返すテスト" );
 		cRunningTimer.Reset();
 		pDataAll = CDocReader(GetDocument()->m_cDocLineMgr).GetAllData( &nDataAllLen );
 //		MYTRACE( L"全データ取得             (%dバイト) 所要時間(ミリ秒) = %d\n", nDataAllLen, cRunningTimer.Read() );

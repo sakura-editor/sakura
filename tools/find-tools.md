@@ -17,12 +17,14 @@
 | 7-Zip              | CMD_7Z       | 7-Zip              | 7z           |
 | HTML Help Workshop | CMD_HHC      | HTML Help Workshop | hhc.exe      |
 | Inno Setup 5       | CMD_ISCC     | Inno Setup 5       | ISCC.exe     |
-| cppcheck           | CMD_CPPCHECK | cppcheck           | cppcheck.exe |
-| doxygen            | CMD_DOXYGEN  | doxygen\bin        | doxygen.exe  |
+| Cppcheck           | CMD_CPPCHECK | cppcheck           | cppcheck.exe |
+| Doxygen            | CMD_DOXYGEN  | doxygen\bin        | doxygen.exe  |
 | vswhere            | CMD_VSWHERE  | Microsoft Visual Studio\Installer | vswhere.exe  |
 | MSBuild            | CMD_MSBUILD  | 特殊               | MSBuild.exe  |
 | Locale Emulator    | CMD_LEPROC   | なし               | LEProc.exe   |
-| python             | CMD_PYTHON   | なし               | py.exe(python.exe) |
+| Python             | CMD_PYTHON   | なし               | py.exe (python.exe) |
+| CMake              | CMD_CMAKE    | CMake\bin          | cmake        |
+| Ninja              | CMD_NINJA    | なし               | ninja        |
 
 ## MSBuild以外の探索手順
 MSBuild以外の探索手順は同一であり、7-Zipを例に説明する。
@@ -79,12 +81,12 @@ MSBuild以外の探索手順は同一であり、7-Zipを例に説明する。
 
 ## python
 
-ビルドバッチで利用するpythonインタープリターの存在確認をします。
-適切なpythonインタープリターが見つかると、環境変数 `CMD_PYTHON` が定義されます。
-適切なpythonインタープリターが見つからない場合、`CMD_PYTHON` は定義されません。
-pythonインタープリターはビルド要件ではないのでpythonを利用するバッチには `CMD_PYTHON` チェックを挟む必要があります。
+ビルドバッチで利用する Python インタープリターの存在確認をします。
+適切な Python インタープリターが見つかると、環境変数 `CMD_PYTHON` が定義されます。
+適切な Python インタープリターが見つからない場合、 `CMD_PYTHON` は定義されません。
+Python インタープリターはビルド要件ではないので、 Python を利用するバッチには `CMD_PYTHON` チェックを挟む必要があります。
 
-1. python Launcher(py.exe)が存在し、`py.exe --version`でバージョンが取れたら、それを使う。
+1. Python Launcher (py.exe) が存在し、 `py.exe --version` でバージョンが取れたら、それを使う。
 1. パスが通っているpython.exeで`python.exe --version`してバージョンが取れたら、それを使う。
 
 

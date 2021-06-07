@@ -1839,7 +1839,6 @@ void CShareData_IO::ShareData_IO_KeyWords( CDataProfile& cProfile )
 	DLLSHAREDATA* pShare = &GetDllShareData();
 
 	const WCHAR*		pszSecName = LTEXT("KeyWords");
-	int				i, j;
 	WCHAR			szKeyName[64];
 	WCHAR			szKeyData[1024];
 	CKeyWordSetMgr*	pCKeyWordSetMgr = &pShare->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
@@ -1853,7 +1852,7 @@ void CShareData_IO::ShareData_IO_KeyWords( CDataProfile& cProfile )
 			// 2004.11.25 Moca キーワードセットの情報は、直接書き換えないで関数を利用する
 			// 初期設定されているため、先に削除しないと固定メモリの確保に失敗する可能性がある
 			pCKeyWordSetMgr->ResetAllKeyWordSet();
-			for( i = 0; i < nKeyWordSetNum; ++i ){
+			for( int i = 0; i < nKeyWordSetNum; ++i ){
 				bool bKEYWORDCASE = false;
 				int nKeyWordNum = 0;
 				//値の取得
@@ -1874,8 +1873,9 @@ void CShareData_IO::ShareData_IO_KeyWords( CDataProfile& cProfile )
 			}
 		}
 	}else{
+		auto strMem = std::wstring();
 		int nSize = pCKeyWordSetMgr->m_nKeyWordSetNum;
-		for( i = 0; i < nSize; ++i ){
+		for( int i = 0; i < nSize; ++i ){
 			auto_sprintf( szKeyName, LTEXT("szSN[%02d]"), i );
 			cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(pCKeyWordSetMgr->m_szSetNameArr[i]));
 			auto_sprintf( szKeyName, LTEXT("nCASE[%02d]"), i );
@@ -1883,27 +1883,17 @@ void CShareData_IO::ShareData_IO_KeyWords( CDataProfile& cProfile )
 			auto_sprintf( szKeyName, LTEXT("nKWN[%02d]"), i );
 			cProfile.IOProfileData( pszSecName, szKeyName, pCKeyWordSetMgr->m_nKeyWordNumArr[i] );
 			
-			int nMemLen = 0;
-			for( j = 0; j < pCKeyWordSetMgr->m_nKeyWordNumArr[i]; ++j ){
-				nMemLen += wcslen( pCKeyWordSetMgr->GetKeyWord( i, j ) );
-				nMemLen ++;
+			strMem.clear();
+			for( int j = 0; j < pCKeyWordSetMgr->m_nKeyWordNumArr[i]; ++j ){
+				strMem += pCKeyWordSetMgr->GetKeyWord( i, j );
+				strMem += L'\t';
 			}
-			nMemLen ++;
+			auto nMemLen = static_cast<int>(strMem.length() + 1);
+			auto pszMem = strMem.data();
 			auto_sprintf( szKeyName, LTEXT("szKW[%02d].Size"), i );
 			cProfile.IOProfileData( pszSecName, szKeyName, nMemLen );
-			wchar_t* pszMem = new wchar_t[nMemLen + 1];	//	May 25, 2003 genta 区切りをTABに変更したので，最後の\0の分を追加
-			wchar_t* pMem = pszMem;
-			for( j = 0; j < pCKeyWordSetMgr->m_nKeyWordNumArr[i]; ++j ){
-				//	May 25, 2003 genta 区切りをTABに変更
-				int kwlen = wcslen( pCKeyWordSetMgr->GetKeyWord( i, j ) );
-				wmemcpy( pMem, pCKeyWordSetMgr->GetKeyWord( i, j ), kwlen );
-				pMem += kwlen;
-				*pMem++ = L'\t';
-			}
-			*pMem = L'\0';
 			auto_sprintf( szKeyName, LTEXT("szKW[%02d]"), i );
 			cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(pszMem, nMemLen));
-			delete [] pszMem;
 		}
 	}
 }

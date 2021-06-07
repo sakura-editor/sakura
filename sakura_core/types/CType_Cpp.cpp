@@ -1225,8 +1225,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						//	長さチェックは必須
 						if( nWordIdx < nMaxWordLeng ){
 							nMode = 1;
-							szWord[nWordIdx] = pLine[i];
-							szWord[nWordIdx + 1] = L'\0';
+							::wcsncpy_s(&szWord[nWordIdx], nMaxWordLeng - nWordIdx, &pLine[i], 1);
 						}
 						else{
 							nMode = 999;

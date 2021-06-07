@@ -37,12 +37,16 @@ MKDIR = md
 RM = del
 DIRSEP = $(strip \ )
 DEVNULL = NUL
+ICONV = iconv.exe
+SED = sed.exe
 else
 # If unix-like shell is used.
 MKDIR = mkdir -p
 RM = rm -f
 DIRSEP = /
 DEVNULL = /dev/null
+ICONV = iconv
+SED = sed
 endif
 
 ifndef PREFIX
@@ -97,8 +101,11 @@ ifneq ($(SAKURA_CORE),.)
 endif
 	$(MAKE) -f $< -C $(@D) $(@F)
 
-sakura_lang_rc.o: sakura_lang_rc.rc $(sakura_rc)
+sakura_lang_rc.o: sakura_lang_rc.rc.utf8 sakura_lang_rc.rc2.utf8 $(sakura_rc)
 	$(RC) -c utf-8 --language=0409 $(DEFINES) -I$(SAKURA_CORE) -I$(SRCDIR)/../sakura_core $< -o $@
+
+sakura_lang_rc.rc.utf8 sakura_lang_rc.rc2.utf8: sakura_lang_rc.rc sakura_lang_rc.rc2
+	$(ICONV) -f utf-16 -t utf-8 $(SRCDIR)/$(subst .utf8,,$(@F)) | $(SED) -e 1i'#pragma code_page(65001)' -e '/#include/s/.rc2\b/.rc2.utf8/' > $@
 
 clean:
 	-$(RM) $(subst /,$(DIRSEP),$(dll) $(OBJS))

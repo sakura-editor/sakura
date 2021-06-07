@@ -59,9 +59,15 @@ private:
 //テキスト出力ストリーム
 // 2008.01.26 kobake 出力文字コードを任意で指定できるように変更
 class CTextOutputStream final : public COutputStream{
+	using Me = CTextOutputStream;
+
 public:
 	//コンストラクタ・デストラクタ
 	CTextOutputStream(const WCHAR* pszPath, ECodeType eCodeType = CODE_UTF8, bool bExceptionMode = false, bool bBom = true);
+	CTextOutputStream(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CTextOutputStream(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	virtual ~CTextOutputStream();
 
 	//文字列書込。改行を入れたい場合は、文字列内に'\n'を含めること。(クラス側で適切な改行コードに変換して出力します)

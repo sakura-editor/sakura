@@ -182,5 +182,5 @@ void CDocEditAgent::AddLineStrX( const wchar_t* pData, int nDataLen )
 	CDocLine* pDocLine = m_pcDocLineMgr->AddNewLine();
 
 	//インスタンス設定
-	pDocLine->SetDocLineString(pData, nDataLen);
+	pDocLine->SetDocLineString(pData, nDataLen, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol);
 }

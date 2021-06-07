@@ -308,6 +308,7 @@ TEST_P(WinMainTest, runEditorProcess)
 		strStartupMacro += L"Up();";
 		strStartupMacro += L"Right();";
 		strStartupMacro += L"Left();";
+		strStartupMacro += L"Outline(0);";		//アウトライン解析
 		strStartupMacro += L"ShowFunckey();";	//ShowFunckey 出す
 		strStartupMacro += L"ShowMiniMap();";	//ShowMiniMap 出す
 		strStartupMacro += L"ShowTab();";		//ShowTab 出す
@@ -336,6 +337,7 @@ TEST_P(WinMainTest, runEditorProcess)
 		strStartupMacro += L"SetFontSize(0, -1, 2);";	// 相対指定 - これ以上縮小できない
 		strStartupMacro += L"SetFontSize(100, 0, 2);";	// 元に戻す
 		// フォントサイズ設定のテスト(ここまで)
+		strStartupMacro += L"Outline(2);";		//アウトライン解析を閉じる
 		strStartupMacro += L"ExitAll();";		//NOTE: このコマンドにより、エディタプロセスは起動された直後に終了する。
 
 		// コマンドラインを組み立てる

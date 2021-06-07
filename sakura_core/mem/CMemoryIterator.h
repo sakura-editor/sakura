@@ -110,8 +110,6 @@ public:
 			if( m_nSpacing ){
 				m_nColumn_Delta += CLayoutXInt(CNativeW::GetKetaOfChar(m_pLine, m_nLineLen, m_nIndex) * m_nSpacing);
 			}
-//			if( 0 == m_nColumn_Delta )				// 削除 サロゲートペア対策	2008/7/5 Uchi
-//				m_nColumn_Delta = CLayoutInt(1);
 		}
 	}
 	

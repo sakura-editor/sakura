@@ -174,7 +174,7 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 , m_nCommandExecNum( 0 )			/* コマンド実行回数 */
 , m_hBackImg(NULL)
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CEditDoc::CEditDoc" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CEditDoc::CEditDoc" );
 
 	// レイアウト管理情報の初期化
 	m_cLayoutMgr.Create( this, &m_cDocLineMgr );
@@ -420,7 +420,7 @@ void CEditDoc::InitAllView( void )
 */
 BOOL CEditDoc::Create( CEditWnd* pcEditWnd )
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CEditDoc::Create" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CEditDoc::Create" );
 
 	m_pcEditWnd = pcEditWnd;
 
@@ -429,7 +429,7 @@ BOOL CEditDoc::Create( CEditWnd* pcEditWnd )
 
 	SetBackgroundImage();
 
-	MY_TRACETIME( cRunningTimer, "End: PropSheet" );
+	MY_TRACETIME( cRunningTimer, L"End: PropSheet" );
 
 	return TRUE;
 }

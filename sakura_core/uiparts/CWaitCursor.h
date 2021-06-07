@@ -28,11 +28,17 @@
 */
 class CWaitCursor
 {
+	using Me = CWaitCursor;
+
 public:
 	/*
 	||  Constructors
 	*/
 	CWaitCursor( HWND, bool bEnable = true );
+	CWaitCursor(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CWaitCursor(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CWaitCursor();
 
 	bool IsEnable(){ return m_bEnable; }

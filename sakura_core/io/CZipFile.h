@@ -38,8 +38,14 @@ private:
 	Folder*			pZipFile;
 	std::wstring	sZipName;
 
+	using Me = CZipFile;
+
 public:
 	CZipFile();		// コンストラクタ
+	CZipFile(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CZipFile(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CZipFile();	// デストラクタ
 
 public:

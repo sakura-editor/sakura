@@ -1201,7 +1201,7 @@ bool CEditView::IsCurrentPositionURL(
 	std::wstring*		pstrURL		//!< [out] URL文字列受け取り先。NULLを指定した場合はURL文字列を受け取らない。
 )
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CEditView::IsCurrentPositionURL" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CEditView::IsCurrentPositionURL" );
 
 	// URLを強調表示するかどうかチェックする	// 2009.05.27 ryoji
 	bool bDispUrl = CTypeSupport(this,COLORIDX_URL).IsDisp();

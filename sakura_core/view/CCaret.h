@@ -88,8 +88,14 @@ private:
 };
 
 class CCaret{
+	using Me = CCaret;
+
 public:
 	CCaret(CEditView* pEditView, const CEditDoc* pEditDoc);
+	CCaret(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CCaret(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	virtual ~CCaret();
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

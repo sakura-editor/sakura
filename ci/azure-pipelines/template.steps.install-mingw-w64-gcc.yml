@@ -5,5 +5,5 @@
 #       なし
 #############################################################################################################
 steps:
-  - script: C:\msys64\usr\bin\bash --login -c "pacman -S --noconfirm mingw-w64-x86_64-gtest"
-    displayName: install MinGW-w64-gtest
+  - script: echo nothing to do.
+    displayName: nothing to do

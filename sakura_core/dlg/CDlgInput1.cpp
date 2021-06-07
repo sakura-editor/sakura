@@ -64,16 +64,6 @@ INT_PTR CALLBACK CDlgInput1Proc(
 	}
 }
 
-CDlgInput1::CDlgInput1()
-{
-	return;
-}
-
-CDlgInput1::~CDlgInput1()
-{
-	return;
-}
-
 /* モードレスダイアログの表示 */
 BOOL CDlgInput1::DoModal(
 	HINSTANCE		hInstApp,

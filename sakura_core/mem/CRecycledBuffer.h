@@ -71,8 +71,8 @@ private:
 };
 
 class CRecycledBufferDynamic{
-//コンフィグ
-private:
+	using Me = CRecycledBufferDynamic;
+
 	static const int CHAIN_COUNT = 64;   //再利用可能なブロック数。
 
 //コンストラクタ・デストラクタ
@@ -84,6 +84,10 @@ public:
 			m_buf[i]=NULL;
 		}
 	}
+	CRecycledBufferDynamic(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CRecycledBufferDynamic(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CRecycledBufferDynamic()
 	{
 		for(int i=0;i<_countof(m_buf);i++){

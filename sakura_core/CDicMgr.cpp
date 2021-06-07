@@ -49,7 +49,7 @@ BOOL CDicMgr::Search(
 )
 {
 #ifdef _DEBUG
-	CRunningTimer cRunningTimer( "CDicMgr::Search" );
+	CRunningTimer cRunningTimer( L"CDicMgr::Search" );
 #endif
 	long	i;
 	const wchar_t*	pszDelimit = L" /// ";

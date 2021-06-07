@@ -1,4 +1,4 @@
-﻿# CI でのビルド
+﻿# CI でのビルドにて使用される環境変数
 
 ## githash.bat で設定する環境変数
 
@@ -9,16 +9,15 @@
 |GIT_REMOTE_ORIGIN_URL|git remote origin URL|◎|◎|◎|◎|
 |GIT_TAG_NAME|git の tag|◎|◎|◎|◎|
 |CI_ACCOUNT_NAME|CI のアカウント名|×|◎|◎|◎|
+|CI_REPO_NAME|リポジトリ名|×|◎|◎|◎|
+|CI_BUILD_VERSION|CI のビルドバージョン (文字列)|×|◎|◎|◎|
 |CI_BUILD_NUMBER|CI のビルド番号 (数値)|×|◎|◎|◎|
 |CI_BUILD_URL|CI のビルドURL|×|◎|◎|◎|
-|CI_BUILD_VERSION|CI のビルドバージョン (文字列)|×|◎|◎|◎|
-|CI_REPO_NAME|リポジトリ名|×|◎|◎|◎|
 |GITHUB_COMMIT_URL|GitHub の Commit URL|×|◎|◎|◎|
-|GITHUB_PR_HEAD_URL|GitHub の PR の Head の URL|×|○ (PRのみ)|○ (PRのみ)|○ (PRのみ)|
-|GITHUB_PR_HEAD_COMMIT|GitHub の PR の Head Revision|×|○ (PRのみ)|○ (PRのみ)|○ (PRのみ)|
-|GITHUB_PR_HEAD_SHORT_COMMIT|GitHub の PR の Head Revision 短縮形|×|○ (PRのみ)|○ (PRのみ)|○ (PRのみ)|
 |GITHUB_PR_NUMBER|GitHub の PR 番号|×|○ (PRのみ)|○ (PRのみ)|○ (PRのみ)|
-|DEV_VERSION|開発バージョンかどうか|◎|◎|◎|◎|
+|GITHUB_PR_HEAD_COMMIT | GitHub の PR の Head commit Hash | × | ○ (PRのみ) | ○ (PRのみ) | ○ (PRのみ) |
+|GITHUB_PR_HEAD_SHORT_COMMIT | GitHub の PR の Head commit Hash 短縮形 | × | ○ (PRのみ) | ○ (PRのみ) | ○ (PRのみ) |
+|GITHUB_PR_HEAD_URL | GitHub の PR の Head commit の URL | × | ○ (PRのみ) | ○ (PRのみ) | ○ (PRのみ) |
 
 ## 入力として使用する環境変数
 
@@ -27,32 +26,33 @@
 | 環境変数 | 説明 |
 ----|---- 
 |APPVEYOR                           | バッチが appveyor で実行されているかどうか  |
-|APPVEYOR_ACCOUNT_NAME              | appveyor のアカウント名 (sakura editor の場合 "sakuraeditor") |
-|APPVEYOR_BUILD_NUMBER              | ビルド番号 |
 |APPVEYOR_URL                       | https://ci.appveyor.com |
-|APPVEYOR_BUILD_VERSION             | appveyor.yml の version フィールドの値 |
-|APPVEYOR_BUILD_ID                  | ビルドID (ビルド結果URLに含まれる数値です。`build-chm.bat`が実行中のビルドを識別するために使います。) |
-|APPVEYOR_PROJECT_SLUG              | project slug (appveyor の URL 名) |
+|APPVEYOR_ACCOUNT_NAME              | AppVeyor のアカウント名 (sakura editor の場合 "sakuraeditor") |
+|APPVEYOR_PROJECT_SLUG              | AppVeyor のプロジェクト名 |
+|APPVEYOR_REPO_PROVIDER             | AppVeyor が参照するリポジトリの種別 (GitHub の場合 "gitHub") |
+|APPVEYOR_REPO_NAME                 | リポジトリ名 (owner-name/repo-name) |
+|APPVEYOR_BUILD_VERSION             | ビルドバージョン (文字列) |
+|APPVEYOR_BUILD_NUMBER              | ビルド番号 (数値) |
 |APPVEYOR_PULL_REQUEST_NUMBER       | Pull Request 番号 |
 |APPVEYOR_PULL_REQUEST_HEAD_COMMIT  | Pull Request の Head commit Hash |
-|APPVEYOR_REPO_NAME                 | リポジトリ名 (owner-name/repo-name) |
-|APPVEYOR_REPO_PROVIDER             | appveyor の参照するリポジトリ種別 (GitHub の場合 "gitHub") |
-|~~READONLY_TOKEN~~                 | デバッグ用です。 appveyor の REST API に渡す [Bearer Token](https://www.appveyor.com/docs/api/#Authentication) をスクリプト外から渡せるように定義しています。 appveyor では使いません。(未定義なので値は''になります。) |
 
 APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使うようにしました。[#876](https://github.com/sakura-editor/sakura/pull/876)
 
 * 上記環境変数をローカル環境で set コマンドで設定することにより appveyor でビルドしなくてもローカルでテストできます。
+    - 成果物に含まれる `set_appveyor_env.bat` を使用して設定することもできます。
 * 上記の環境変数がどんな値になるのかは、過去の appveyor ビルドでのログを見ることによって確認できます。
-* `build-chm.bat`をローカルでテストするには完了済みのビルドIDが必要です。ビルドIDは[history](https://ci.appveyor.com/project/sakuraeditor/sakura/history)から各ビルド結果を表示するとURL末尾に付いている数字です。
 
 ### Azure Pipelines
 
 |環境変数|説明|
 |--|--|
+|SYSTEM_TEAMFOUNDATIONSERVERURI | `https://dev.azure.com/sakuraeditor/` |
+|BUILD_DEFINITIONNAME | Azure Pipeline のアカウント名 |
+|SYSTEM_TEAMPROJECT | Azure Pipelines のプロジェクト名 |
+|BUILD_REPOSITORY_PROVIDER | Pipeline が参照するリポジトリの種別 (GitHubの場合 "GitHub") |
 |BUILD_REPOSITORY_NAME|リポジトリ名 (owner-name/repo-name)|
-|BUILD_DEFINITIONNAME|アカウント名|
-|BUILD_BUILDID|ビルド番号 (数値)|
 |BUILD_BUILDNUMBER|ビルドバージョン (文字列)|
+|BUILD_BUILDID|ビルド番号 (数値)|
 |SYSTEM_PULLREQUEST_PULLREQUESTNUMBER|Pull Request 番号|
 |SYSTEM_PULLREQUEST_SOURCECOMMITID|Pull Request の Head commit Hash|
 

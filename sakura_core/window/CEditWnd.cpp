@@ -585,7 +585,7 @@ HWND CEditWnd::Create(
 	int				nGroup		//!< [in] グループID
 )
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CEditWnd::Create" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CEditWnd::Create" );
 
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
@@ -683,7 +683,7 @@ HWND CEditWnd::Create(
 	hWndArr[1] = NULL;
 	m_cSplitterWnd.SetChildWndArr( hWndArr );
 
-	MY_TRACETIME( cRunningTimer, "View created" );
+	MY_TRACETIME( cRunningTimer, L"View created" );
 
 	// -- -- -- -- 各種バー作成 -- -- -- -- //
 

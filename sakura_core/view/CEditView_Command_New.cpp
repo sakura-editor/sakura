@@ -74,7 +74,7 @@ void CEditView::InsertData_CEditView(
 )
 {
 #ifdef _DEBUG
-	MY_RUNNINGTIMER( cRunningTimer, "CEditView::InsertData_CEditView" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CEditView::InsertData_CEditView" );
 #endif
 
 	//2007.10.18 kobake COpe処理をここにまとめる
@@ -359,7 +359,7 @@ void CEditView::DeleteData2(
 )
 {
 #ifdef _DEBUG
-	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DeleteData(1)" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CEditView::DeleteData(1)" );
 #endif
 	const wchar_t*	pLine;
 	CLogicInt		nLineLen;
@@ -442,7 +442,7 @@ void CEditView::DeleteData(
 )
 {
 #ifdef _DEBUG
-	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DeleteData(2)" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CEditView::DeleteData(2)" );
 #endif
 	const wchar_t*	pLine;
 	CLogicInt		nLineLen;
@@ -821,7 +821,8 @@ bool CEditView::ReplaceData_CEditView3(
 		DLRArg.pInsData = pInsData;
 		DLRArg.nDelSeq = nDelSeq;
 		// DLRArg.ptNewPos;
-		CSearchAgent(&GetDocument()->m_cDocLineMgr).ReplaceData( &DLRArg );
+		CSearchAgent(&GetDocument()->m_cDocLineMgr).ReplaceData(
+			&DLRArg, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol);
 	}else{
 		LRArg.sDelRange    = sDelRange;		//!< 削除範囲レイアウト
 		LRArg.pcmemDeleted = pcMemDeleted;	//!< [out] 削除されたデータ
