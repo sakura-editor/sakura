@@ -112,11 +112,17 @@ inline bool DlgItem_Enable(HWND hwndDlg, int nIDDlgItem, bool nEnable)
 // 最大の幅を報告します
 class CTextWidthCalc
 {
+	using Me = CTextWidthCalc;
+
 public:
 	CTextWidthCalc(HWND hParentDlg, int nID);
 	CTextWidthCalc(HWND hwndThis);
 	CTextWidthCalc(HFONT font);
 	CTextWidthCalc(HDC hdc);
+	CTextWidthCalc(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CTextWidthCalc(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	virtual ~CTextWidthCalc();
 	void Reset(){ nCx = 0; nExt = 0; }
 	void SetCx(int cx = 0){ nCx = cx; }
@@ -169,6 +175,8 @@ private:
 
 class CDCFont
 {
+	using Me = CDCFont;
+
 public:
 	CDCFont(LOGFONT& font, HWND hwnd = NULL){
 		m_hwnd = hwnd;
@@ -176,6 +184,10 @@ public:
 		m_hFont = ::CreateFontIndirect(&font);
 		m_hFontOld = (HFONT)::SelectObject(m_hDC, m_hFont);
 	}
+	CDCFont(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CDCFont(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CDCFont(){
 		if( m_hDC ){
 			::SelectObject(m_hDC, m_hFontOld);
@@ -194,5 +206,7 @@ private:
 };
 
 HFONT UpdateDialogFont( HWND hwnd, BOOL force = FALSE );
+
+bool GetSystemAccentColor( COLORREF* pColorOut );
 
 #endif /* SAKURA_WINDOW_A0833476_5E32_46BE_87B6_ECD55F10D34A_H_ */

@@ -223,7 +223,7 @@ CControlTray::~CControlTray()
 /* 作成 */
 HWND CControlTray::Create( HINSTANCE hInstance )
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CControlTray::Create" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CControlTray::Create" );
 
 	//同名同クラスのウィンドウが既に存在していたら、失敗
 	m_hInstance = hInstance;
@@ -1156,6 +1156,10 @@ bool CControlTray::OpenNewEditor(
 	struct CResponsefileDeleter{
 		LPCWSTR fileName;
 		CResponsefileDeleter(): fileName(NULL){}
+		CResponsefileDeleter(const CResponsefileDeleter&) = delete;
+		CResponsefileDeleter operator = (const CResponsefileDeleter&) = delete;
+		CResponsefileDeleter(CResponsefileDeleter&&) noexcept = delete;
+		CResponsefileDeleter operator = (CResponsefileDeleter&&) noexcept = delete;
 		~CResponsefileDeleter(){
 			if( fileName && fileName[0] ){
 				::DeleteFile( fileName );

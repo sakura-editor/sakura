@@ -85,6 +85,7 @@ public:
 	//コンストラクタ・デストラクタ
 	CStrictInteger(){ m_value=0; }
 	CStrictInteger(const Me& rhs){ m_value=rhs.m_value; }
+	~CStrictInteger() noexcept = default;
 
 	//intからの変換は、「明示的に指定したときのみ」可能
 	explicit CStrictInteger(int value){ m_value=value; }

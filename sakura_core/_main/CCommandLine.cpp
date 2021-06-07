@@ -243,7 +243,7 @@ void CCommandLine::ParseKanjiCodeFromFileName(LPWSTR pszExeFileName, int cchExeF
 */
 void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CCommandLine::Parse" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CCommandLine::Parse" );
 
 	WCHAR	szPath[_MAX_PATH];
 	bool	bFind = false;				// ファイル名発見フラグ

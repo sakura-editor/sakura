@@ -117,7 +117,7 @@ static void ClearFavorite(bool* aBoolArr, size_t size)
 */
 bool CShareData::InitShareData()
 {
-	MY_RUNNINGTIMER(cRunningTimer,"CShareData::InitShareData" );
+	MY_RUNNINGTIMER(cRunningTimer,L"CShareData::InitShareData" );
 
 	m_hwndTraceOutSource = NULL;	// 2006.06.26 ryoji
 

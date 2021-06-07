@@ -34,13 +34,17 @@
 
 template < class DATA_TYPE, class RECEIVE_TYPE = const DATA_TYPE* >
 class CRecentImp : public CRecent{
-private:
-	typedef CRecentImp<DATA_TYPE,RECEIVE_TYPE>	Me;
+	using Me = CRecentImp<DATA_TYPE, RECEIVE_TYPE>;
+
 	typedef DATA_TYPE							DataType;
 	typedef RECEIVE_TYPE						ReceiveType;
 
 public:
 	CRecentImp(){ Terminate(); }
+	CRecentImp(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CRecentImp(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	virtual ~CRecentImp(){ Terminate(); }
 
 protected:

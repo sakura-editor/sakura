@@ -29,8 +29,9 @@ MKDIR = md
 RM = del
 DIRSEP = $(strip \ )
 DEVNULL = NUL
-ICONV = C:\msys64\usr\bin\iconv.exe
-SED = C:\msys64\usr\bin\sed.exe
+ICONV = iconv.exe
+SED = sed.exe
+P7Z = 7z.exe
 else
 # If unix-like shell is used.
 MKDIR = mkdir -p
@@ -39,6 +40,7 @@ DIRSEP = /
 DEVNULL = /dev/null
 ICONV = iconv
 SED = sed
+P7Z = 7z
 endif
 
 ifndef PREFIX
@@ -92,6 +94,7 @@ LIBS= \
  -lmpr \
  -limagehlp \
  -lshlwapi \
+ -ldwmapi \
  -lwinmm \
  -lwindowscodecs \
  -lmsimg32 \
@@ -100,6 +103,8 @@ LIBS= \
  $(MYLIBS)
 
 exe= $(or $(OUTDIR),.)/sakura.exe
+bregonig= $(or $(OUTDIR),.)/bregonig.dll
+ctags= $(or $(OUTDIR),.)/ctags.exe
 
 SRCS = $(wildcard $(SRCDIR)/*.cpp) \
        $(wildcard $(SRCDIR)/*/*.cpp) \
@@ -120,10 +125,18 @@ GENERATED_FILES= \
 HEADERMAKETOOLDIR= $(SRCDIR)/../HeaderMake
 HEADERMAKE= $(or $(OUTDIR),$(HEADERMAKETOOLDIR))/HeaderMake.exe
 
-all: $(exe)
+all: $(exe) \
+     $(bregonig) \
+     $(ctags)
 
 $(exe): $(OBJS) sakura_rc.o
 	$(CXX) -o $@ $(OBJS) sakura_rc.o $(LIBS)
+
+$(bregonig): ../installer/externals/bregonig/bron420.zip
+	$(P7Z) e $< -o$(@D) -y x64/$(@F)
+
+$(ctags): ../installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x64.zip
+	$(P7Z) e $< -o$(@D) -y $(@F)
 
 Funccode_define.h: Funccode_x.hsrc $(HEADERMAKE)
 	$(HEADERMAKE) -in=$< -out=$@ -mode=define
@@ -152,7 +165,7 @@ sakura_rc.o: sakura_rc.rc.utf8 sakura_rc.rc2.utf8 githash.h Funccode_define.h
 	$(RC) -c utf-8 --language=0411 $(DEFINES) -I. -I$(SRCDIR) $< -o $@
 
 sakura_rc.rc.utf8 sakura_rc.rc2.utf8: sakura_rc.rc sakura_rc.rc2
-	$(ICONV) -f utf-16 -t utf-8 $(subst .utf8,,$(@F)) | $(SED) -e 1i'#pragma code_page(65001)' -e '/#include/s/.rc2\b/.rc2.utf8/' > $@
+	$(ICONV) -f utf-16 -t utf-8 $(SRCDIR)/$(subst .utf8,,$(@F)) | $(SED) -e 1i'#pragma code_page(65001)' -e '/#include/s/.rc2\b/.rc2.utf8/' > $@
 
 clean:
 	-$(RM) $(subst /,$(DIRSEP),$(exe) $(OBJS) $(HEADERMAKE)) StdAfx.h.gch $(GENERATED_FILES) sakura_rc.o sakura_rc.*.utf8

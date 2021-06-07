@@ -36,11 +36,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros">
-    <OutDir>(ProjectDir)..\..\..\build\$(Platform)\$(Configuration)\unittests\</OutDir>
-    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)build\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <Import Project="$(ProjectDir)..\googletest.targets" />
-  <Import Project="$(ProjectDir)..\compiletests.targets" />
   <ItemDefinitionGroup Label="tests1.common">
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -50,9 +49,12 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalOptions>/source-charset:utf-8 /execution-charset:shift_jis %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>comctl32.lib;Imm32.lib;mpr.lib;imagehlp.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;Imm32.lib;mpr.lib;imagehlp.lib;Shlwapi.lib;Dwmapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -101,11 +103,16 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Link Include="$(SolutionDir)sakura\$(Platform)\$(Configuration)\*.obj" />
-    <Link Include="$(SolutionDir)sakura\$(Platform)\$(Configuration)\*.res" />
+    <Link Include="$(SolutionDir)build\$(Platform)\$(Configuration)\sakura_core\*.obj" />
+    <Link Include="$(SolutionDir)build\$(Platform)\$(Configuration)\sakura_core\*.res" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code-main.cpp" />
+    <ClCompile Include="test-cdocline.cpp" />
+    <ClCompile Include="test-cdoclinemgr.cpp" />
+    <ClCompile Include="test-csearchagent.cpp" />
+    <ClCompile Include="test-crunningtimer.cpp" />
+    <ClCompile Include="test-czipfile.cpp" />
     <ClCompile Include="test-printEFunctionCode.cpp" />
     <ClCompile Include="test-cclipboard.cpp" />
     <ClCompile Include="test-ccodebase.cpp" />
@@ -140,10 +147,17 @@
     <ClCompile Include="test-sample-disabled.cpp" />
     <ClCompile Include="test-sample.cpp" />
     <ClCompile Include="test-ssearchoption.cpp" />
+    <ClCompile Include="test-statictype.cpp" />
     <ClCompile Include="test-StdControl.cpp" />
     <ClCompile Include="test-string_ex.cpp" />
     <ClCompile Include="test-zoom.cpp" />
     <ClCompile Include="test-winmain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="tests1_rc.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="tests1_rc.rc" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
@@ -152,7 +166,7 @@
     <ClCompile Include="coverage.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="$(ProjectDir)..\..\sakura\sakura.vcxproj">
+    <ProjectReference Include="$(SolutionDir)sakura\sakura.vcxproj">
       <Project>{af03508c-515e-4a0e-87be-67ed1e254bd0}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\sakura_lang_en_US\sakura_lang_en_US.vcxproj">
@@ -163,4 +177,20 @@
     <ClInclude Include="StartEditorProcessForTest.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ItemGroup>
+    <TestResource Include="test-plugin\plugin.def" />
+  </ItemGroup>
+  <Target Name="MakeTestResource" BeforeTargets="ResourceCompile" Inputs="@(TestResource->'resources\ja-JP\%(RelativeDir)%(filename)%(Extension)')" Outputs="$(IntDir)resources.ja-JP.zip">
+    <Exec Command="7z u &quot;$(IntDir)resources.ja-JP.zip&quot; -tzip @(TestResource->'%(RelativeDir)%(filename)%(Extension)',' ')" WorkingDirectory="$(ProjectDir)resources\ja-JP" />
+  </Target>
+  <Target Name="MakeTestResourceEnUS" BeforeTargets="ResourceCompile" Inputs="@(TestResource->'resources\en-US\%(RelativeDir)%(filename)%(Extension)')" Outputs="$(IntDir)resources.en-US.zip">
+    <Exec Command="7z u &quot;$(IntDir)resources.en-US.zip&quot; -tzip @(TestResource->'%(RelativeDir)%(filename)%(Extension)',' ')" WorkingDirectory="$(ProjectDir)resources\en-US" />
+  </Target>
+  <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
+    <!-- Add files to @Clean just before running CoreClean. -->
+    <ItemGroup>
+      <Clean Include="$(IntDir)resources.ja-JP.zip" />
+      <Clean Include="$(IntDir)resources.en-US.zip" />
+    </ItemGroup>
+  </Target>
 </Project>

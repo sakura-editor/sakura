@@ -27,6 +27,7 @@
 #define SAKURA_PRIMITIVE_C8059DE4_C986_492E_9C09_7F044049C481_H_
 #pragma once
 
+#include <Windows.h>
 #include "config/build_config.h"
 
 // -- -- -- -- 文字 -- -- -- -- //

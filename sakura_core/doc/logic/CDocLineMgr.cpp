@@ -162,7 +162,7 @@ const CDocLine* CDocLineMgr::GetLine( CLogicInt nLine ) const
 	  || m_nLines - nLine < nPrevToLineNumDiff
 	){
 		if( m_pCodePrevRefer == NULL ){
-			MY_RUNNINGTIMER( cRunningTimer, "CDocLineMgr::GetLine() 	m_pCodePrevRefer == NULL" );
+			MY_RUNNINGTIMER( cRunningTimer, L"CDocLineMgr::GetLine() 	m_pCodePrevRefer == NULL" );
 		}
 
 		if( nLine < (m_nLines / 2) ){

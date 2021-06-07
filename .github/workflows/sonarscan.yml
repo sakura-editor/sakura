@@ -98,16 +98,17 @@ jobs:
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       if: env.SONAR_TOKEN
-      shell: cmd
-      run: OpenCppCoverage.exe
-        --export_type xml:tests1-coverage.xml
-        --modules ${{ github.workspace }}\tests\build\${{ env.BUILD_PLATFORM }}\${{ env.BUILD_CONFIGURATION }}\unittests\tests1.exe
-        --sources ${{ github.workspace }}
-        --excluded_sources ${{ github.workspace }}\tests\googletest
-        --working_dir .\${{ env.BUILD_PLATFORM }}\${{ env.BUILD_CONFIGURATION }}
-        --cover_children
-        --
-        .\tests\build\${{ env.BUILD_PLATFORM }}\${{ env.BUILD_CONFIGURATION }}\unittests\tests1.exe
+      run: |
+        $env:CMD_TESTS1 = $(Get-ChildItem -Recurse tests1.exe)[0].FullName
+        OpenCppCoverage.exe `
+        --export_type xml:tests1-coverage.xml `
+        --modules $env:CMD_TESTS1  `
+        --sources ${{ github.workspace }} `
+        --excluded_sources ${{ github.workspace }}\tests\googletest `
+        --working_dir .\${{ env.BUILD_PLATFORM }}\${{ env.BUILD_CONFIGURATION }} `
+        --cover_children `
+        -- `
+        $env:CMD_TESTS1 `
         --gtest_output=xml:${{ github.workspace }}\tests1-googletest.xml
 
     - name: Set up JDK 11
@@ -147,4 +148,4 @@ jobs:
         -D"sonar.cfamily.threads=2" `
         -D"sonar.coverage.exclusions=help\**\*.js,tests\unittests\coverage.cpp,tools\**\*.js" `
         -D"sonar.coverageReportPaths=tests1-coverage.xml" `
-        -D"sonar.exclusions=.sonar\**\*,bw-output\**\*,HeaderMake\**\*,tests\build\**\*,tests\googletest\**\*,**\test-*,tests*-*.xml"
+        -D"sonar.exclusions=.sonar\**\*,build\**\*,bw-output\**\*,HeaderMake\**\*,tests\build\**\*,tests\googletest\**\*,**\test-*,tests*-*.xml"

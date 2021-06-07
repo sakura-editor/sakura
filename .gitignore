@@ -11,9 +11,8 @@
 /cppcheck-*.xml
 /cppcheck-install.log
 /help/sakura/sakura.hh
-/tests/build
-/tests/unittests/Win32
-/tests/unittests/x64
+/build
+/MinGW
 /Win32
 /x64
 Backup
@@ -32,4 +31,3 @@ sha256.txt
 tags
 testData_*.txt
 UpgradeLog.htm
-/tools/googletest

@@ -53,14 +53,17 @@ https://azure.microsoft.com/ja-jp/services/devops/pipelines/ にアクセスし�
 
 ## Azure Pipelines の設定ファイルの構成
 
-- [azure-pipelines.yml](azure-pipelines.yml) 最上位の設定ファイル
-  - [ci/azure-pipelines/template.job.build-unittest.yml](ci/azure-pipelines/template.job.build-unittest.yml) sakura editor 本体のビルド、HTML ヘルプのビルド、インストーラのビルド、単体テストのビルド、実行
-    - [ci/azure-pipelines/template.steps.install-python-modules.yml](ci/azure-pipelines/template.steps.install-python-modules.yml) 必要な python モジュールのインストール
-  - [ci/azure-pipelines/template.job.SonarQube.yml](ci/azure-pipelines/template.job.SonarQube.yml) SonarQube での解析
-  - [ci/azure-pipelines/template.job.checkEncoding.yml](ci/azure-pipelines/template.job.checkEncoding.yml) 文字コードの確認
-  - [ci/azure-pipelines/template.job.cppcheck.yml](ci/azure-pipelines/template.job.cppcheck.yml) cppcheck の実行
-  - [ci/azure-pipelines/template.job.doxygen.yml](ci/azure-pipelines/template.job.doxygen.yml) doxygen の実行
-    - [ci/azure-pipelines/template.steps.install-python-modules.yml](ci/azure-pipelines/template.steps.install-python-modules.yml) 必要な python モジュールのインストール
+- [azure-pipelines.yml](../../azure-pipelines.yml) 最上位の設定ファイル
+  - [ci/azure-pipelines/template.job.build-unittest.yml](template.job.build-unittest.yml) sakura editor 本体のビルド、HTML ヘルプのビルド、インストーラのビルド、単体テストのビルド、実行
+    - [ci/azure-pipelines/template.steps.install-python-modules.yml](template.steps.install-python-modules.yml) 必要な python モジュールのインストール
+  - [ci/azure-pipelines/template.job.build-on-msys2.yml](template.job.build-on-msys2.yml) sakura editor 本体を MinGW でビルド、単体テストを MinGW でビルド、実行
+    - [ci/azure-pipelines/template.steps.install-mingw-w64-gcc.yml](template.steps.install-mingw-w64-gcc.yml) mingw-w64-gcc のインストール
+  - [ci/azure-pipelines/template.job.SonarQube.yml](template.job.SonarQube.yml) SonarQube での解析
+  - [ci/azure-pipelines/template.job.cppcheck.yml](template.job.cppcheck.yml) cppcheck の実行
+  - [ci/azure-pipelines/template.job.doxygen.yml](template.job.doxygen.yml) doxygen の実行
+  - [ci/azure-pipelines/template.job.checkEncoding.yml](template.job.checkEncoding.yml) 文字コードの確認
+  - [ci/azure-pipelines/template.job.python-check.yml](template.job.python-check.yml) python スクリプトのコンパイル確認
+    - [ci/azure-pipelines/template.steps.install-python-modules.yml](template.steps.install-python-modules.yml) 必要な python モジュールのインストール
 
 ## Azure Pipelines の template ファイルの命名規則
 
@@ -73,12 +76,14 @@ https://azure.microsoft.com/ja-jp/services/devops/pipelines/ にアクセスし�
 
 | JOB 名 | 説明 | job を定義する template |
 ----|----|----
-|VS2017               | サクラエディタのビルドを行う | [ci/azure-pipelines/template.job.build-unittest.yml](ci/azure-pipelines/template.job.build-unittest.yml) |
-|SonarQube            | SonarQube での解析を行う     | [ci/azure-pipelines/template.job.SonarQube.yml](ci/azure-pipelines/template.job.SonarQube.yml)           |
-|cppcheck             | cppcheck を行う              | [ci/azure-pipelines/template.job.cppcheck.yml](ci/azure-pipelines/template.job.cppcheck.yml)             |
-|doxygen              | doxygen  を行う              | [ci/azure-pipelines/template.job.doxygen.yml](ci/azure-pipelines/template.job.doxygen.yml)               |
-|checkEncoding        | 文字コードのチェックを行う   | [ci/azure-pipelines/template.job.checkEncoding.yml](ci/azure-pipelines/template.job.checkEncoding.yml)   |
-|script_check         | python のコンパイルのチェックを行う   | [ci/azure-pipelines/template.job.python-check.yml](ci/azure-pipelines/template.job.python-check.yml)   |
+|VS2017 | Visual Studio 2017 でサクラエディタのビルドを行う | [template.job.build-unittest.yml](template.job.build-unittest.yml) |
+|VS2019 | Visual Studio 2019 でサクラエディタのビルドを行う | [template.job.build-unittest.yml](template.job.build-unittest.yml) |
+|MinGW | MinGW でサクラエディタのビルドを行う | [template.job.build-on-msys2.yml](template.job.build-on-msys2.yml) |
+|SonarQube | SonarQube での解析を行う | [template.job.SonarQube.yml](template.job.SonarQube.yml) |
+|cppcheck | cppcheck を行う | [template.job.cppcheck.yml](template.job.cppcheck.yml) |
+|doxygen | doxygen  を行う | [template.job.doxygen.yml](template.job.doxygen.yml) |
+|checkEncoding | 文字コードのチェックを行う | [template.job.checkEncoding.yml](template.job.checkEncoding.yml) |
+|script_check | python のコンパイルのチェックを行う | [template.job.python-check.yml](template.job.python-check.yml) |
 
 ## Azure Pipelines の TIPS
 
@@ -103,4 +108,4 @@ googletest でテストを実施するにあたって、googletest のテスト�
 
 ## CI Buildおよびローカルビルドの環境変数
 
-[CI でのビルド](ci-build.md) を参照
+[こちら](../build-envvars.md) を参照してください。

@@ -239,7 +239,7 @@ DWORD CGrepAgent::DoGrep(
 	bool					bGrepBackup
 )
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DoGrep" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CEditView::DoGrep" );
 
 	// 再入不可
 	if( this->m_bGrepRunning ){

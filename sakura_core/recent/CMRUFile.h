@@ -46,9 +46,15 @@ class CMenuDrawer;
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 class CMRUFile {
+	using Me = CMRUFile;
+
 public:
 	//	コンストラクタ
 	CMRUFile();
+	CMRUFile(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CMRUFile(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CMRUFile();
 
 	//	メニューを取得する

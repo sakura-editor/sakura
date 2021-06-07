@@ -34,8 +34,14 @@
 
 class CGDIStock
 {
+	using Me = CGDIStock;
+
 public:
 	CGDIStock(){}
+	CGDIStock(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CGDIStock(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CGDIStock()
 	{
 		while(!m_vObjects.empty()){

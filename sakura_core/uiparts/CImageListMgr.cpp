@@ -148,7 +148,7 @@ HBITMAP ConvertTo32bppBMP(HBITMAP hbmpSrc)
 */
 bool CImageListMgr::Create(HINSTANCE hInstance)
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CImageListMgr::Create" );
+	MY_RUNNINGTIMER( cRunningTimer, L"CImageListMgr::Create" );
 	if( m_hIconBitmap != NULL ){	//	既に構築済みなら無視する
 		return true;
 	}
@@ -237,15 +237,6 @@ struct MyRGBQUAD : tagRGBQUAD
 		rgbGreen = 0;
 		rgbRed = 0;
 		rgbReserved = 0;
-	}
-	MyRGBQUAD( std::initializer_list<BYTE> a ) noexcept
-		: tagRGBQUAD()
-	{
-		assert( a.size() <= 4 );
-		decltype(rgbBlue) *p = &rgbBlue;
-		for ( auto it = a.begin(); it != a.end(); ++it, ++p ) {
-			*p = *it;
-		}
 	}
 	bool operator == ( const RGBQUAD &rhs ) const noexcept
 	{

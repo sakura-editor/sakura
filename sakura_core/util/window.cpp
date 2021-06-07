@@ -31,6 +31,7 @@
 #include <sstream>
 #include "apiwrap/StdApi.h"
 #include "config/system_constants.h"
+#include <dwmapi.h>	//DwmGetColorizationColor
 
 int CDPI::nDpiX = 96;
 int CDPI::nDpiY = 96;
@@ -429,4 +430,24 @@ HFONT UpdateDialogFont( HWND hwnd, BOOL force )
 	}
 
 	return hFontDialog;
+}
+
+/*!
+	アクセントカラーを取得
+	@param[out]	pColorOut	アクセントカラーを格納(nullptr許容)
+	@retval		true		取得成功
+	@retval		false		取得失敗
+*/
+bool GetSystemAccentColor( COLORREF* pColorOut )
+{
+	DWORD dwArgb = 0;
+	BOOL bOpaque = FALSE;
+	bool bResult = FALSE;
+	if( SUCCEEDED( ::DwmGetColorizationColor( &dwArgb, &bOpaque ) ) ){
+		if( pColorOut != nullptr ){
+			*pColorOut = RGB( (dwArgb >> 16) & 0xFFU, (dwArgb >> 8) & 0xFFU, dwArgb & 0xFFU );
+		}
+		bResult = TRUE;
+	}
+	return bResult;
 }
