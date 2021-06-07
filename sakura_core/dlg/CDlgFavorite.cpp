@@ -351,17 +351,28 @@ void CDlgFavorite::SetDataOne( int nIndex, int nLvItemIndex )
 int CDlgFavorite::GetData( void )
 {
 	int		nTab;
+	const int nFavoriteMax = 3;
+	CNativeW	cmemMessage;
 
 	for( nTab = 0; m_aFavoriteInfo[nTab].m_pRecent; nTab++ )
 	{
 		if( m_aFavoriteInfo[nTab].m_bHaveFavorite )
 		{
-			GetFavorite( nTab );
+			int nFavoriteCount = GetFavorite(nTab, true);
+			if (nTab >= 3 && nFavoriteCount >= nFavoriteMax) {
+				cmemMessage.AppendStringF(L"%s : %d\n", m_aFavoriteInfo[nTab].m_strCaption.c_str(), nFavoriteCount);
+			}
 
 			//リストを更新する。
 			CRecent* pRecent = m_aFavoriteInfo[nTab].m_pRecent;
 			pRecent->UpdateView();
 		}
+	}
+	if (cmemMessage.GetStringLength() > 0)
+	{
+		cmemMessage.AppendString(L"お気に入りの上限を超えています");
+		WarningMessage(GetHwnd(), cmemMessage.GetStringPtr());
+		cmemMessage.Clear();
 	}
 
 	return TRUE;
@@ -484,6 +495,32 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//ChangeSlider( m_nCurrentTab );
 
 	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
+}
+
+// お気に入りのフラグだけ適用
+int CDlgFavorite::GetFavorite(int nIndex, bool bFavoriteCount = false)
+{
+	CRecent* const pRecent = m_aFavoriteInfo[nIndex].m_pRecent;
+	const HWND      hwndList = m_aListViewInfo[nIndex].hListView;
+	if (m_aFavoriteInfo[nIndex].m_bHaveFavorite) {
+		int nFavoriteCount = 0;
+		const int nCount = ListView_GetItemCount(hwndList);
+		for (int i = 0; i < nCount; i++) {
+			const int  recIndex = ListView_GetLParamInt(hwndList, i);
+			const BOOL bret = ListView_GetCheckState(hwndList, i);
+			if (bret) {
+				pRecent->SetFavorite(recIndex, true);
+				nFavoriteCount++;
+			}
+			else {
+				pRecent->SetFavorite(recIndex, false);
+			}
+		}
+		if (bFavoriteCount) {
+			return nFavoriteCount;
+		}
+	}
+	return false;
 }
 
 BOOL CDlgFavorite::OnBnClicked( int wID )
@@ -815,21 +852,6 @@ changed:
 	SetDataOne( nIndex, nCurrentIndex );
 	
 	return true;
-}
-
-// お気に入りのフラグだけ適用
-void CDlgFavorite::GetFavorite( int nIndex )
-{
-	CRecent * const pRecent  = m_aFavoriteInfo[nIndex].m_pRecent;
-	const HWND      hwndList = m_aListViewInfo[nIndex].hListView;
-	if( m_aFavoriteInfo[nIndex].m_bHaveFavorite ){
-		const int nCount = ListView_GetItemCount( hwndList );
-		for( int i = 0; i < nCount; i++ ){
-			const int  recIndex = ListView_GetLParamInt( hwndList, i );
-			const BOOL bret = ListView_GetCheckState( hwndList, i );
-			pRecent->SetFavorite( recIndex, bret ? true : false );
-		}
-	}
 }
 
 /*
