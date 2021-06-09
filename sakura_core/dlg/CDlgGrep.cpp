@@ -721,6 +721,10 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 		::CheckDlgButton( GetHwnd(), IDC_CHK_SUBFOLDER, BST_UNCHECKED );
 		bEnableControls = FALSE;
 	}else{
+		std::wstring strFile(m_szFile);
+		if (strFile.substr(0, 6) == L":HWND:") {
+			wcscpy(m_szFile, L"*.*");
+		}
 		::DlgItem_SetText(GetHwnd(), IDC_COMBO_FILE, m_szFile);
 		::DlgItem_SetText(GetHwnd(), IDC_COMBO_FOLDER, m_szFolder);
 		::DlgItem_SetText(GetHwnd(), IDC_COMBO_EXCLUDE_FILE, m_szExcludeFile);
@@ -807,6 +811,12 @@ int CDlgGrep::GetData( void )
 		auto_sprintf(szHwnd, L":HWND:%08x", ::GetParent(GetHwnd()));
 #endif
 		m_szFile = szHwnd;
+	}else{
+		std::wstring strFile(m_szFile);
+		if (strFile.substr(0, 6) == L":HWND:") {
+			WarningMessage(GetHwnd(), L"対象ファイルに:HWND:は入力できません");
+			return FALSE;
+		}
 	}
 	/* 検索フォルダ */
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_FOLDER, m_szFolder, _countof2(m_szFolder) );
