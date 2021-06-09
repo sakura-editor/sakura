@@ -723,7 +723,7 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 	}else{
 		std::wstring strFile(m_szFile);
 		if (strFile.substr(0, 6) == L":HWND:") {
-			wcscpy(m_szFile, L"*.*");
+			wcsncpy_s(m_szFile, _countof(m_szFile), L"*.*", _TRUNCATE);
 		}
 		::DlgItem_SetText(GetHwnd(), IDC_COMBO_FILE, m_szFile);
 		::DlgItem_SetText(GetHwnd(), IDC_COMBO_FOLDER, m_szFolder);
