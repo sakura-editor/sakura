@@ -351,8 +351,8 @@ void CDlgFavorite::SetDataOne( int nIndex, int nLvItemIndex )
 int CDlgFavorite::GetData( void )
 {
 	int		nTab;
-	const int nFavoriteMax = 3;
-	CNativeW	cmemMessage;
+	const int		nFavoriteMax = 3;
+	std::wstring	FavoriteMaxMessage(L"");
 
 	for( nTab = 0; m_aFavoriteInfo[nTab].m_pRecent; nTab++ )
 	{
@@ -360,7 +360,8 @@ int CDlgFavorite::GetData( void )
 		{
 			int nFavoriteCount = GetFavorite(nTab, true);
 			if (nTab >= 3 && nFavoriteCount >= nFavoriteMax) {
-				cmemMessage.AppendStringF(L"%s : %d\n", m_aFavoriteInfo[nTab].m_strCaption.c_str(), nFavoriteCount);
+				std::wstring buffer = strprintf(L"%s : %d\n", m_aFavoriteInfo[nTab].m_strCaption.c_str(), nFavoriteCount);
+				FavoriteMaxMessage.append(buffer);
 			}
 
 			//リストを更新する。
@@ -368,12 +369,12 @@ int CDlgFavorite::GetData( void )
 			pRecent->UpdateView();
 		}
 	}
-	if (cmemMessage.GetStringLength() > 0)
-	{
-		cmemMessage.AppendString(L"お気に入りの上限を超えています");
-		WarningMessage(GetHwnd(), cmemMessage.GetStringPtr());
-		cmemMessage.Clear();
-	}
+	if (!FavoriteMaxMessage.empty())
+		{
+			FavoriteMaxMessage += L"お気に入りの上限を超えています";
+			WarningMessage(GetHwnd(), FavoriteMaxMessage.c_str());
+			FavoriteMaxMessage.clear();
+		}
 
 	return TRUE;
 }
@@ -520,7 +521,7 @@ int CDlgFavorite::GetFavorite(int nIndex, bool bFavoriteCount = false)
 			return nFavoriteCount;
 		}
 	}
-	return false;
+	return 0;
 }
 
 BOOL CDlgFavorite::OnBnClicked( int wID )
