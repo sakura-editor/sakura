@@ -274,9 +274,6 @@
     <ClInclude Include="..\sakura_core\charset\charcode.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
-    <ClInclude Include="..\sakura_core\charset\CharPointer.h">
-      <Filter>Cpp Source Files\charset</Filter>
-    </ClInclude>
     <ClInclude Include="..\sakura_core\charset\charset.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>

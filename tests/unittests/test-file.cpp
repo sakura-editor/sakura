@@ -478,6 +478,45 @@ TEST(file, GetIniFileNameForIO)
 }
 
 /*!
+ * @brief フルパスからファイル名を取り出す
+ */
+TEST(file, GetFileTitlePointer)
+{
+	// フルパスからファイル名を取得する
+	EXPECT_STREQ(L"test.txt", GetFileTitlePointer(LR"(C:\Temp\test.txt)"));
+
+	// フルパスにファイル名が含まれていない場合
+	EXPECT_STREQ(L"", GetFileTitlePointer(LR"(C:\Temp\)"));
+
+	// フルパスに\\が含まれていない場合
+	EXPECT_STREQ(L"test.txt", GetFileTitlePointer(L"test.txt"));
+
+	// 渡したパスが無効な場合は落ちます。
+	EXPECT_DEATH({ GetFileTitlePointer(nullptr); }, ".*");
+}
+
+/*!
+ * @brief ディレクトリの深さを計算する
+ */
+TEST(file, CalcDirectoryDepth)
+{
+	// ドライブ文字を含むフルパス
+	EXPECT_EQ(1, CalcDirectoryDepth(LR"(C:\Temp\test.txt)"));
+
+	// 共有フォルダを含むフルパス
+	EXPECT_EQ(1, CalcDirectoryDepth(LR"(\\host\Temp\test.txt)"));
+
+	// ドライブなしのフルパス
+	EXPECT_EQ(1, CalcDirectoryDepth(LR"(\Temp\test.txt)"));
+
+	// 相対パス（？）
+	EXPECT_EQ(1, CalcDirectoryDepth(LR"(C:\Temp\.\test.txt)"));
+
+	// 渡したパスが無効な場合は落ちます。
+	EXPECT_DEATH({ CalcDirectoryDepth(nullptr); }, ".*");
+}
+
+/*!
 	GetExtのテスト
  */
 TEST(CFilePath, GetExt)
