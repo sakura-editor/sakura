@@ -71,7 +71,7 @@ static bool IsFileExists2( const wchar_t* pszFile )
 	return IsFileExists(pszFile, true);
 }
 
-static bool IsHWNDTag( const wchar_t* pLine, wchar_t* pFile, int* pnLen = NULL )
+static bool IsHWNDTag( const wchar_t* pLine, std::wstring& str, int* pnLen = NULL )
 {
 	if( 0 == wcsncmp(pLine, L":HWND:[", 7) ){
 		const wchar_t* pFileEnd = wcsstr( pLine, L"]" );
@@ -84,12 +84,11 @@ static bool IsHWNDTag( const wchar_t* pLine, wchar_t* pFile, int* pnLen = NULL )
 				}
 			}
 			if( i != nLen && nLen <= 16 + 8 ){
-				if( pFile ){
-					wmemcpy(pFile, pLine, nLen);
-				}
 				if( pnLen ){
 					*pnLen = nLen;
+					return true;
 				}
+				str.assign(pLine, nLen);
 				return true;
 			}
 		}
@@ -159,11 +158,8 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 	nJumpToColumn = 0;
 
 	//ファイル名バッファ
-	wchar_t		szJumpToFile[1024];
-	wchar_t		szFile[_MAX_PATH] = { L'\0' };
 	size_t		nBgn;
 	size_t		nPathLen;
-	wmemset(szJumpToFile, 0, _countof(szJumpToFile));
 
 	/*
 	  カーソル位置変換
@@ -299,7 +295,7 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 		}else if( 0 == wmemcmp( pLine, L"◆\"", 2 ) ){
 			if (!GetQuoteFilePath(&pLine[2], strFile, MAX_TAG_PATH)) {
 				break;
-			}else if( IsHWNDTag(&pLine[2], szJumpToFile) ){
+			}else if( IsHWNDTag(&pLine[2], strJumpToFile) ){
 				break;
 			}
 			searchMode = TAGLIST_SUBPATH;
@@ -309,7 +305,7 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 				if (!GetQuoteFilePath(&pLine[2], strFile, MAX_TAG_PATH)) {
 					break;
 				}
-			if( IsHWNDTag(&pLine[2], szJumpToFile) ){
+			if( IsHWNDTag(&pLine[2], strJumpToFile) ){
 				break;
 			}
 
@@ -329,7 +325,7 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 				if (1 < fileEnd && L'(' == pLine[fileEnd] && fileEnd - 1 < MAX_TAG_PATH) {
 					strFile.assign(pLine + 1, fileEnd - 1);
 					GetLineColumn( &pLine[fileEnd + 1], &nJumpToLine, &nJumpToColumn );
-					if( IsHWNDTag(pLine + 1, szJumpToFile) ){
+					if( IsHWNDTag(pLine + 1, strJumpToFile) ){
 						break;
 					}
 					searchMode = TAGLIST_SUBPATH;
@@ -354,7 +350,7 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 				if( searchMode == TAGLIST_SUBPATH || searchMode == TAGLIST_ROOT ){
 					continue;
 				}
-				if( IsHWNDTag(&pLine[2], szJumpToFile) ){
+				if( IsHWNDTag(&pLine[2], strJumpToFile) ){
 					break;
 				}
 				// フォルダ毎：ファイル名
@@ -373,7 +369,7 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 				if( searchMode == TAGLIST_ROOT ){
 					continue;
 				}
-				if( IsHWNDTag(&pLine[2], szJumpToFile) ){
+				if( IsHWNDTag(&pLine[2], strJumpToFile) ){
 					break;
 				}
 				// ファイル毎(WZ風)：フルパス
@@ -422,22 +418,22 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 		}
 	}while(0);
 
-	if (strJumpToFile.empty() || szJumpToFile[0] == L'\0') {
+	if (strJumpToFile.empty()) {
 		pLine = GetDocument()->m_cDocLineMgr.GetLine(ptXYOrg.GetY2())->GetDocLineStrWithEOL(&nLineLen);
 		if( NULL == pLine ){
 			return false;
 		}
 		int nLen = 0;
-		if( IsHWNDTag(pLine, NULL, &nLen) ){
+		std::wstring test;
+		if (IsHWNDTag(pLine, test, &nLen)) {
 			int nFileEnd = GetLineColumnPos(pLine);
 			if( nFileEnd ){
-				wmemcpy(szJumpToFile, pLine, nLen);
-				szJumpToFile[nLen] = L'\0';
+				strJumpToFile.assign(pLine, nLen);
 				GetLineColumn(&pLine[nFileEnd + 1], &nJumpToLine, &nJumpToColumn);
 			}
 		}
 	}
-	if (strJumpToFile.empty() || szJumpToFile[0] == L'\0') {
+	if (strJumpToFile.empty()) {
 		//@@@ 2001.12.31 YAZAKI
 		const wchar_t *p = pLine;
 		const wchar_t *p_end = p + nLineLen;
@@ -470,22 +466,12 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 		return true;
 		//	From Here Aug. 27, 2001 genta
 	}
-	if (szJumpToFile[0] == L'\0' && Command_TagJumpByTagsFile(bClose) ){	//@@@ 2003.04.13
-		return true;
-		//	From Here Aug. 27, 2001 genta
-	}
 
 	//	Apr. 21, 2003 genta bClose追加
 	if (strJumpToFile.empty() == false &&
 		m_pCommanderView->TagJumpSub(strJumpToFile.c_str(), CMyPoint(nJumpToColumn, nJumpToLine), bClose)) {	//@@@ 2003.04.13
 		return true;
 	}
-	std::wstring strJumpToFileHWND = szJumpToFile;
-	if (strJumpToFileHWND.empty() == false &&
-		m_pCommanderView->TagJumpSub(strJumpToFileHWND.c_str(), CMyPoint(nJumpToColumn, nJumpToLine), bClose ) ){	//@@@ 2003.04.13
-		return true;
-	}
-
 
 	return false;
 }
