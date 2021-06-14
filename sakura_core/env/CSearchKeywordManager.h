@@ -34,16 +34,15 @@
 struct SShare_SearchKeywords{
 	// -- -- 検索キー -- -- //
 	StaticVector< StaticString<WCHAR, _MAX_PATH>, MAX_SEARCHKEY,  const WCHAR*>	m_aSearchKeys;
+	bool m_aSearchKeysFav[MAX_SEARCHKEY];
 	StaticVector< StaticString<WCHAR, _MAX_PATH>, MAX_REPLACEKEY, const WCHAR*>	m_aReplaceKeys;
+	bool m_aReplaceKeysFav[MAX_REPLACEKEY];
 	StaticVector< StaticString<WCHAR, MAX_GREP_PATH>, MAX_GREPFILE,   const WCHAR*>	m_aGrepFiles;
+	bool m_aGrepFilesFav[MAX_GREPFILE];
 	StaticVector< StaticString<WCHAR, MAX_GREP_PATH>, MAX_GREPFOLDER, const WCHAR*>	m_aGrepFolders;
+	bool m_aGrepFoldersFav[MAX_GREPFOLDER];
 	StaticVector< StaticString<WCHAR, MAX_EXCLUDE_PATH>, MAX_EXCLUDEFILE,   const WCHAR*>	m_aExcludeFiles;
 	StaticVector< StaticString<WCHAR, MAX_EXCLUDE_PATH>, MAX_EXCLUDEFOLDER, const WCHAR*>	m_aExcludeFolders;
-
-	bool m_aSearchKeysFav[MAX_SEARCHKEY];
-	bool m_aReplaceKeysFav[MAX_REPLACEKEY];
-	bool m_aGrepFilesFav[MAX_GREPFILE];
-	bool m_aGrepFoldersFav[MAX_GREPFOLDER];
 };
 
 struct DLLSHAREDATA;

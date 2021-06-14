@@ -77,7 +77,8 @@ protected:
 	//void	ChangeSlider( int nIndex );
 	void	UpdateUIState();
 	
-	int     GetFavorite( int nIndex, bool bFavoriteCount );
+	void    GetFavorite( int nIndex );
+	int     GetListFavorite( int nIndex );
 	int     DeleteSelected();
 	void	AddItem();
 	void	EditItem();
