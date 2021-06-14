@@ -60,7 +60,6 @@ using namespace std;
 #define SCROLLMARGIN_RIGHT 4
 #define SCROLLMARGIN_NOMOVE 4
 
-const bool IsWin10 = IsWindows10OrGreater();
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         外部依存                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -861,11 +860,10 @@ void CCaret::ShowCaretPosInfo()
 				::UnionRect(&updatedRect, &updatedRect, &partRect);
 			}
 		};
-		if (IsWin10) {
+		if (IsWindows10OrGreater()) {
 			::SendMessage(hWnd, WM_SETREDRAW, FALSE, 0);
 		}else{
-			if (m_pEditView->GetSelectionInfo().IsMouseSelecting() || m_pEditView->m_bDragMode) {
-			}else{
+			if (!m_pEditView->GetSelectionInfo().IsMouseSelecting() && !m_pEditView->m_bDragMode) {
 				::SendMessage(hWnd, WM_SETREDRAW, FALSE, 0);
 			}
 		}
