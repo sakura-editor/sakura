@@ -631,8 +631,34 @@ BOOL CDlgFavorite::OnNotify(NMHDR* pNMHDR)
 			switch(pNMHDR->code )
 			{
 			case NM_DBLCLK:
-				EditItem();
-				return TRUE;
+				{
+					LVHITTESTINFO lvht = { 0 };
+					::GetCursorPos(&lvht.pt);
+					::ScreenToClient(hwndList, &lvht.pt);
+					ListView_HitTest(hwndList, &lvht);
+					if ((lvht.flags & LVHT_ONITEM)) {
+						ListView_SetCheckState(hwndList, (int)lvht.iItem, true);
+					}
+					if ((lvht.flags & LVHT_ONITEMLABEL)) {
+						ListView_SetCheckState(hwndList, (int)lvht.iItem, false);
+						EditItem();
+					}
+				}
+				return true;
+			case NM_CLICK:
+				{
+					LVHITTESTINFO lvht = { 0 };
+					::GetCursorPos(&lvht.pt);
+					::ScreenToClient(hwndList, &lvht.pt);
+					ListView_HitTest(hwndList, &lvht);
+					if ((lvht.flags & LVHT_ONITEMSTATEICON)) {
+						int nFavoriteCount = GetListFavorite(m_nCurrentTab);
+						if (nFavoriteLimit <= nFavoriteCount) {
+							ListView_SetCheckState(hwndList, (int)lvht.iItem, true);
+						}
+					}
+				}
+				return true;
 			case NM_RCLICK:
 				{
 					POINT po;
@@ -656,6 +682,20 @@ BOOL CDlgFavorite::OnNotify(NMHDR* pNMHDR)
 				{
 				case VK_DELETE:
 					DeleteSelected();
+					return TRUE;
+				case VK_SPACE:
+					{
+						const int nCount = ListView_GetItemCount(hwndList);
+						int nFavoriteCount = GetListFavorite(m_nCurrentTab);
+						if (nFavoriteLimit <= nFavoriteCount) {
+							for (int i = 0; i < nCount; i++) {
+								if (ListView_GetItemState(hwndList, i, LVIS_FOCUSED)) {
+									ListView_SetCheckState(hwndList, i, true);
+									break;
+								}
+							}
+						}
+					}
 					return TRUE;
 				case VK_APPS:
 					{
