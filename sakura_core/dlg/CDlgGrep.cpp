@@ -718,7 +718,6 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 		SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), LS(STR_DLGGREP_THISDOC) );
 		::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FILE, L"" );
 		::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, L"" );
-		::CheckDlgButton( GetHwnd(), IDC_CHK_SUBFOLDER, BST_UNCHECKED );
 		bEnableControls = FALSE;
 	}else{
 		std::wstring strFile(m_szFile);
@@ -736,7 +735,9 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 	::EnableWindow( GetItemHwnd( IDC_CHK_SUBFOLDER ), bEnableControls );
 	::EnableWindow( GetItemHwnd( IDC_BUTTON_FILEOPENDIR ),    bEnableControls );
 	::EnableWindow( GetItemHwnd( IDC_COMBO_EXCLUDE_FILE ),    bEnableControls );
-	::EnableWindow( GetItemHwnd( IDC_COMBO_EXCLUDE_FOLDER ),    bEnableControls );
+	::EnableWindow( GetItemHwnd( IDC_COMBO_EXCLUDE_FOLDER ),  bEnableControls );
+	::EnableWindow( GetItemHwnd( IDC_BUTTON_FOLDER_UP ),      bEnableControls );
+	::EnableWindow( GetItemHwnd( IDC_BUTTON_CURRENTFOLDER ),  bEnableControls );
 	return;
 }
 
@@ -814,7 +815,7 @@ int CDlgGrep::GetData( void )
 	}else{
 		std::wstring strFile(m_szFile);
 		if (strFile.substr(0, 6) == L":HWND:") {
-			WarningMessage(GetHwnd(), L"対象ファイルに:HWND:は入力できません");
+			ErrorMessage(GetHwnd(), LS(STR_DLGGREP_THISDOC_ERROR));
 			return FALSE;
 		}
 	}
