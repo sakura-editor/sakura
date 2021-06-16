@@ -79,6 +79,7 @@ protected:
 	
 	void    GetFavorite( int nIndex );
 	int     GetListFavorite( int nIndex );
+	bool    IsGreaterThanOrEqualMax(int nTab, int nMax);
 	int     DeleteSelected();
 	void	AddItem();
 	void	EditItem();

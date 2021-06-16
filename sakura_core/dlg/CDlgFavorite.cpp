@@ -652,8 +652,8 @@ BOOL CDlgFavorite::OnNotify(NMHDR* pNMHDR)
 					::ScreenToClient(hwndList, &lvht.pt);
 					ListView_HitTest(hwndList, &lvht);
 					if ((lvht.flags & LVHT_ONITEMSTATEICON)) {
-						int nFavoriteCount = GetListFavorite(m_nCurrentTab);
-						if (nFavoriteLimit <= nFavoriteCount) {
+						//IsGreaterThanMax
+						if (IsGreaterThanOrEqualMax(m_nCurrentTab, nFavoriteLimit)) {
 							ListView_SetCheckState(hwndList, (int)lvht.iItem, true);
 						}
 					}
@@ -685,9 +685,9 @@ BOOL CDlgFavorite::OnNotify(NMHDR* pNMHDR)
 					return TRUE;
 				case VK_SPACE:
 					{
-						const int nCount = ListView_GetItemCount(hwndList);
-						int nFavoriteCount = GetListFavorite(m_nCurrentTab);
-						if (nFavoriteLimit <= nFavoriteCount) {
+						//IsGreaterThanMax
+						if (IsGreaterThanOrEqualMax(m_nCurrentTab, nFavoriteLimit)) {
+							const int nCount = ListView_GetItemCount(hwndList);
 							for (int i = 0; i < nCount; i++) {
 								if (ListView_GetItemState(hwndList, i, LVIS_FOCUSED)) {
 									ListView_SetCheckState(hwndList, i, true);
@@ -903,6 +903,28 @@ int CDlgFavorite::GetListFavorite(int nIndex)
 		}
 	}
 	return nFavoriteCount;
+}
+
+bool CDlgFavorite::IsGreaterThanOrEqualMax(int nTab, int nMax)
+{
+	if (nTab < ignoreTab) {
+		return false;
+	}
+	const HWND hwndList = m_aListViewInfo[nTab].hListView;
+	const int nCount = ListView_GetItemCount(hwndList);
+	if (nCount < nMax) {
+		return false;
+	}
+	int nFavoriteCount = 0;
+	for (int i = 0; i < nCount; i++) {
+		if (ListView_GetCheckState(hwndList, i)) {
+			nFavoriteCount++;
+			if (nFavoriteCount >= nMax) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 /*
