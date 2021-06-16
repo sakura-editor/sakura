@@ -376,7 +376,7 @@ int CDlgFavorite::GetData( void )
 	}
 	if (!strReachFavLimitMsg.empty())
 		{
-			strReachFavLimitMsg.append(LS( STR_DLGFAV_FAV_LIMIT ));
+			strReachFavLimitMsg.append(LS( STR_DLGFAV_FAV_COUNT_LIMIT ));
 			WarningMessage(GetHwnd(), strReachFavLimitMsg.c_str());
 			strReachFavLimitMsg.clear();
 		}
