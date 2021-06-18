@@ -791,11 +791,11 @@ int CDlgGrep::GetData( void )
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_FILE, m_szFile, _countof2(m_szFile) );
 	bool bFromThisText = IsDlgButtonCheckedBool(GetHwnd(), IDC_CHK_FROMTHISTEXT);
 	if( bFromThisText ){
-		TCHAR szHwnd[_MAX_PATH];
+		WCHAR szHwnd[_MAX_PATH];
 #ifdef _WIN64
-		auto_sprintf(szHwnd, _T(":HWND:%016I64x"), ::GetParent(GetHwnd()));
+		auto_sprintf(szHwnd, L":HWND:%016I64x", ::GetParent(GetHwnd()));
 #else
-		auto_sprintf(szHwnd, _T(":HWND:%08x"), ::GetParent(GetHwnd()));
+		auto_sprintf(szHwnd, L":HWND:%08x", ::GetParent(GetHwnd()));
 #endif
 		m_szFile = szHwnd;
 	}

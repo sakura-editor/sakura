@@ -85,7 +85,7 @@ static bool IsHWNDTag( const wchar_t* pLine, wchar_t* pFile, int* pnLen = NULL )
 			}
 			if( i != nLen && nLen <= 16 + 8 ){
 				if( pFile ){
-					auto_memcpy(pFile, pLine, nLen);
+					wmemcpy(szJumpToFile, pLine, nLen);
 				}
 				if( pnLen ){
 					*pnLen = nLen;
@@ -470,7 +470,7 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 	//	Apr. 21, 2003 genta bClose追加
 	if (strJumpToFile.empty() == false &&
 		m_pCommanderView->TagJumpSub(strJumpToFile.c_str(), CMyPoint(nJumpToColumn, nJumpToLine), bClose ) ){	//@@@ 2003.04.13
-		std::tstring tstrFile = to_tchar(szJumpToFile);
+		std::wstring tstrFile = szJumpToFile;
 		if( m_pCommanderView->TagJumpSub( tstrFile.c_str(), CMyPoint(nJumpToColumn, nJumpToLine), bClose ) ){	//@@@ 2003.04.13
 		return true;
 	}
