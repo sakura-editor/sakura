@@ -80,7 +80,7 @@ bool CEditView::TagJumpSub(
 	HWND hwndTarget = NULL;
 	if( 0 == auto_strncmp(pszFileName, _T(":HWND:["), 7) ){
 #ifdef _WIN64
-		_stscanf(pszFileName + 7, _T("%016I64x"), &hwndTrget);
+		_stscanf(pszFileName + 7, _T("%016I64x"), &hwndTarget);
 #else
 		_stscanf(pszFileName + 7, _T("%08x"), &hwndTarget);
 #endif

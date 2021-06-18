@@ -303,7 +303,7 @@ int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, TCHAR* pszWindowName, TC
 		return 0; // ハンドルGrepではない
 	}
 #ifdef _WIN64
-	_stscanf(pszFile + 6, _T("%016I64x"), &hWndTrget);
+	_stscanf(pszFile + 6, _T("%016I64x"), &hWndTarget);
 #else
 	_stscanf(pszFile + 6, _T("%08x"), &hWndTarget);
 #endif
@@ -330,7 +330,7 @@ int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, TCHAR* pszWindowName, TC
 		}
 		CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape(szTitle, _countof(szTitle), editInfo, node->m_nId, -1, NULL );
 #ifdef _WIN64
-		auto_sprintf(pszWindowName, _T(":HWND:[%016I64x]%ts"), hWndTrget, pszTagName);
+		auto_sprintf(pszWindowName, _T(":HWND:[%016I64x]%ts"), hWndTarget, pszTagName);
 #else
 		auto_sprintf(pszWindowName, _T(":HWND:[%08x]%ts"), hWndTarget, pszTagName);
 #endif
