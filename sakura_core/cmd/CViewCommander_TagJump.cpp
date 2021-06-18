@@ -83,7 +83,7 @@ static bool IsHWNDTag( const wchar_t* pLine, wchar_t* pFile, int* pnLen = NULL )
 					break;
 				}
 			}
-			if( i != nLen && nLen <= 16 + 7 ){
+			if( i != nLen && nLen <= 16 + 8 ){
 				if( pFile ){
 					auto_memcpy(pFile, pLine, nLen);
 				}
@@ -837,7 +837,7 @@ bool CViewCommander::Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int cou
 		// 現在のタイプ別の1番目の拡張子を拝借
 		WCHAR szExts[MAX_TYPES_EXTS];
 		CDocTypeManager::GetFirstExt(m_pCommanderView->m_pTypeData->m_szTypeExts, szExts, _countof(szExts));
-		int nExtLen = wcslen( szExts );
+		size_t nExtLen = auto_strlen( szExts );
 		wcscat( szCurrentPath, L"\\dmy" );
 		if( nExtLen ){
 			wcscat( szCurrentPath, L"." );
