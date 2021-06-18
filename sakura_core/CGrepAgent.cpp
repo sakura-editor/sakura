@@ -49,6 +49,7 @@
 #include <iterator>
 #include <deque>
 #include <memory>
+#include "apiwrap/StdApi.h"
 #include "apiwrap/StdControl.h"
 #include "CSelectLang.h"
 #include "sakura_rc.h"
@@ -164,7 +165,7 @@ public:
 			if( 0 < nLineLen ){
 				if( 1 < nLineLen && (*buffer)[nLineLen - 2] == WCODE::CR &&
 						(*buffer)[nLineLen - 1] == WCODE::LF){
-					pcEol->SetType(EOL_CRLF);
+					pcEol->SetType(EEolType::cr_and_lf);
 				}else{
 					pcEol->SetTypeByString(buffer->GetStringPtr() + nLineLen - 1, 1);
 				}
@@ -775,7 +776,8 @@ DWORD CGrepAgent::DoGrep(
 				(sGrepOption.bGrepSeparateFolder ? szWindowName : currentFile.c_str() + nPathLen),
 				bOutputBaseFolder,
 				bOutputFolderName,
-				cmemMessage
+				cmemMessage,
+				cUnicodeBuffer
 			);
 			if( nTreeRet == -1 ){
 				nGrepTreeResult = -1;
@@ -811,7 +813,9 @@ DWORD CGrepAgent::DoGrep(
 				&cRegexp,
 				0,
 				bOutputBaseFolder,
-				&nHitCount
+				&nHitCount,
+				cmemMessage,
+				cUnicodeBuffer
 			);
 			if( nTreeRet == -1 ){
 				nGrepTreeResult = -1;
