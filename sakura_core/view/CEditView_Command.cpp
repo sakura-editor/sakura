@@ -32,6 +32,7 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CTagJumpManager.h"
+#include "env/CSakuraEnvironment.h"
 #include "util/file.h"
 #include "util/module.h"
 #include "util/window.h"
@@ -76,18 +77,30 @@ bool CEditView::TagJumpSub(
 	//	予め絶対パスに変換する．(キーワードヘルプジャンプで用いる)
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	WCHAR	szJumpToFile[1024];
-	if( bRelFromIni && _IS_REL_PATH( pszFileName ) ){
-		GetInidirOrExedir( szJumpToFile, pszFileName );
-	}
-	else {
-		wcscpy( szJumpToFile, pszFileName );
-	}
+	HWND hwndTarget = NULL;
+	if( 0 == auto_strncmp(pszFileName, _T(":HWND:["), 7) ){
+#ifdef _WIN64
+		_stscanf(pszFileName + 7, _T("%016I64x"), &hwndTrget);
+#else
+		_stscanf(pszFileName + 7, _T("%08x"), &hwndTarget);
+#endif
+		if( !IsSakuraMainWindow(hwndTarget) ){
+			return false;
+		}
+	}else{
+		if( bRelFromIni && _IS_REL_PATH( pszFileName ) ){
+			GetInidirOrExedir( szJumpToFile, pszFileName );
+		}
+		else {
+			_tcscpy( szJumpToFile, pszFileName );
+		}
 
-	/* ロングファイル名を取得する */
-	WCHAR	szWork[1024];
-	if( FALSE != ::GetLongFileName( szJumpToFile, szWork ) )
-	{
-		wcscpy( szJumpToFile, szWork );
+		/* ロングファイル名を取得する */
+		TCHAR	szWork[1024];
+		if( FALSE != ::GetLongFileName( szJumpToFile, szWork ) )
+		{
+			_tcscpy( szJumpToFile, szWork );
+		}
 	}
 
 // 2004/06/21 novice タグジャンプ機能追加
@@ -108,8 +121,11 @@ bool CEditView::TagJumpSub(
 	/* 指定ファイルが開かれているか調べる */
 	/* 開かれている場合は開いているウィンドウのハンドルも返す */
 	/* ファイルを開いているか */
-	if( CShareData::getInstance()->IsPathOpened( szJumpToFile, &hwndOwner ) )
+	if( hwndTarget || CShareData::getInstance()->IsPathOpened( szJumpToFile, &hwndOwner ) )
 	{
+		if( hwndTarget ){
+			hwndOwner = hwndTarget;
+		}
 		// 2004.05.13 Moca マイナス値は無効
 		if( 0 < ptJumpTo.y ){
 			/* カーソルを移動させる */

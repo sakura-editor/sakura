@@ -75,6 +75,7 @@ static void SetGrepFolder( HWND hwndCtrl, LPCWSTR folder );
 
 CDlgGrep::CDlgGrep()
 {
+	m_bEnableThisText = true;
 	m_bSubFolder = FALSE;				// サブフォルダからも検索する
 	m_bFromThisText = FALSE;			// この編集中のテキストから検索する
 	m_sSearchOption.Reset();			// 検索オプション
@@ -685,7 +686,7 @@ void CDlgGrep::SetData( void )
 	}
 	// To Here Jun. 29, 2001 genta
 
-	if( m_szCurrentFilePath[0] != L'\0' ){
+	if( m_bEnableThisText ){
 		::EnableWindow( GetItemHwnd( IDC_CHK_FROMTHISTEXT ), TRUE );
 	}else{
 		::EnableWindow( GetItemHwnd( IDC_CHK_FROMTHISTEXT ), FALSE );
@@ -707,19 +708,17 @@ void CDlgGrep::SetData( void )
 void CDlgGrep::SetDataFromThisText( bool bChecked )
 {
 	BOOL bEnableControls = TRUE;
-	if( 0 != m_szCurrentFilePath[0] && bChecked ){
-		WCHAR	szWorkFolder[MAX_PATH];
-		WCHAR	szWorkFile[MAX_PATH];
-		// 2003.08.01 Moca ファイル名はスペースなどは区切り記号になるので、""で囲い、エスケープする
-		szWorkFile[0] = L'"';
-		SplitPath_FolderAndFile( m_szCurrentFilePath, szWorkFolder, szWorkFile + 1 );
-		wcscat( szWorkFile, L"\"" ); // 2003.08.01 Moca
-		::DlgItem_SetText( GetHwnd(), IDC_COMBO_FILE, szWorkFile );
-		
-		SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), szWorkFolder );
+	if( bChecked ){
+		::DlgItem_GetText(GetHwnd(), IDC_COMBO_FILE, m_szFile, _countof2(m_szFile));
+		::DlgItem_GetText(GetHwnd(), IDC_COMBO_FOLDER, m_szFolder, _countof2(m_szFolder));
 
+		::DlgItem_SetText( GetHwnd(), IDC_COMBO_FILE, LS(STR_DLGGREP_THISDOC) );
+		SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), LS(STR_DLGGREP_THISDOC) );
 		::CheckDlgButton( GetHwnd(), IDC_CHK_SUBFOLDER, BST_UNCHECKED );
 		bEnableControls = FALSE;
+	}else{
+		::DlgItem_SetText(GetHwnd(), IDC_COMBO_FILE, m_szFile);
+		::DlgItem_SetText(GetHwnd(), IDC_COMBO_FOLDER, m_szFolder);
 	}
 	::EnableWindow( GetItemHwnd( IDC_COMBO_FILE ),    bEnableControls );
 	::EnableWindow( GetItemHwnd( IDC_COMBO_FOLDER ),  bEnableControls );
@@ -790,6 +789,16 @@ int CDlgGrep::GetData( void )
 
 	/* 検索ファイル */
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_FILE, m_szFile, _countof2(m_szFile) );
+	bool bFromThisText = IsDlgButtonCheckedBool(GetHwnd(), IDC_CHK_FROMTHISTEXT);
+	if( bFromThisText ){
+		TCHAR szHwnd[_MAX_PATH];
+#ifdef _WIN64
+		auto_sprintf(szHwnd, _T(":HWND:%016I64x"), ::GetParent(GetHwnd()));
+#else
+		auto_sprintf(szHwnd, _T(":HWND:%08x"), ::GetParent(GetHwnd()));
+#endif
+		m_szFile = szHwnd;
+	}
 	/* 検索フォルダ */
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_FOLDER, m_szFolder, _countof2(m_szFolder) );
 	/* 除外ファイル */
@@ -827,7 +836,9 @@ int CDlgGrep::GetData( void )
 		return FALSE;
 	}
 
-	{
+	if( bFromThisText ){
+		m_szFolder[0] = L'\0';
+	}else{
 		//カレントディレクトリを保存。このブロックから抜けるときに自動でカレントディレクトリは復元される。
 		CCurrentDirectoryBackupPoint cCurDirBackup;
 
