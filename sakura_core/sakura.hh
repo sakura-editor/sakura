@@ -810,7 +810,7 @@
 #define HIDC_GREP_BUTTON_HELP			12004	//ヘルプ
 #define HIDC_GREP_CHK_WORD				12005	//単語単位
 #define HIDC_GREP_CHK_SUBFOLDER			12006	//サブフォルダも検索
-#define HIDC_GREP_CHK_FROMTHISTEXT		12007	//このファイルから
+#define HIDC_GREP_CHK_FROMTHISTEXT		12007	//編集中のテキストから検索
 #define HIDC_GREP_CHK_LOHICASE			12008	//大文字小文字
 #define HIDC_GREP_CHK_REGULAREXP		12009	//正規表現
 // #define HIDC_GREP_CHK_KANJICODEAUTODETECT	12010	//文字コードセット自動判別

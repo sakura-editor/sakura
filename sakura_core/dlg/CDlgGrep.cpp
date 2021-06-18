@@ -46,7 +46,7 @@ const DWORD p_helpids[] = {	//12000
 	IDC_BUTTON_HELP,				HIDC_GREP_BUTTON_HELP,				//ヘルプ
 	IDC_CHK_WORD,					HIDC_GREP_CHK_WORD,					//単語単位
 	IDC_CHK_SUBFOLDER,				HIDC_GREP_CHK_SUBFOLDER,			//サブフォルダも検索
-	IDC_CHK_FROMTHISTEXT,			HIDC_GREP_CHK_FROMTHISTEXT,			//このファイルから
+	IDC_CHK_FROMTHISTEXT,			HIDC_GREP_CHK_FROMTHISTEXT,			//編集中のテキストから検索
 	IDC_CHK_LOHICASE,				HIDC_GREP_CHK_LOHICASE,				//大文字小文字
 	IDC_CHK_REGULAREXP,				HIDC_GREP_CHK_REGULAREXP,			//正規表現
 	IDC_COMBO_CHARSET,				HIDC_GREP_COMBO_CHARSET,			//文字コードセット
@@ -711,19 +711,33 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 	if( bChecked ){
 		::DlgItem_GetText(GetHwnd(), IDC_COMBO_FILE, m_szFile, _countof2(m_szFile));
 		::DlgItem_GetText(GetHwnd(), IDC_COMBO_FOLDER, m_szFolder, _countof2(m_szFolder));
+		::DlgItem_GetText(GetHwnd(), IDC_COMBO_EXCLUDE_FILE, m_szExcludeFile, _countof2(m_szExcludeFile));
+		::DlgItem_GetText(GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, m_szExcludeFolder, _countof2(m_szExcludeFolder));
 
 		::DlgItem_SetText( GetHwnd(), IDC_COMBO_FILE, LS(STR_DLGGREP_THISDOC) );
 		SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), LS(STR_DLGGREP_THISDOC) );
-		::CheckDlgButton( GetHwnd(), IDC_CHK_SUBFOLDER, BST_UNCHECKED );
+		::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FILE, L"" );
+		::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, L"" );
 		bEnableControls = FALSE;
 	}else{
+		std::wstring strFile(m_szFile);
+		if (strFile.substr(0, 6) == L":HWND:") {
+			wcsncpy_s(m_szFile, _countof2(m_szFile), L"*.*", _TRUNCATE);
+		}
 		::DlgItem_SetText(GetHwnd(), IDC_COMBO_FILE, m_szFile);
 		::DlgItem_SetText(GetHwnd(), IDC_COMBO_FOLDER, m_szFolder);
+		::DlgItem_SetText(GetHwnd(), IDC_COMBO_EXCLUDE_FILE, m_szExcludeFile);
+		::DlgItem_SetText(GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, m_szExcludeFolder);
 	}
 	::EnableWindow( GetItemHwnd( IDC_COMBO_FILE ),    bEnableControls );
 	::EnableWindow( GetItemHwnd( IDC_COMBO_FOLDER ),  bEnableControls );
 	::EnableWindow( GetItemHwnd( IDC_BUTTON_FOLDER ), bEnableControls );
 	::EnableWindow( GetItemHwnd( IDC_CHK_SUBFOLDER ), bEnableControls );
+	::EnableWindow( GetItemHwnd( IDC_BUTTON_FILEOPENDIR ),    bEnableControls );
+	::EnableWindow( GetItemHwnd( IDC_COMBO_EXCLUDE_FILE ),    bEnableControls );
+	::EnableWindow( GetItemHwnd( IDC_COMBO_EXCLUDE_FOLDER ),  bEnableControls );
+	::EnableWindow( GetItemHwnd( IDC_BUTTON_FOLDER_UP ),      bEnableControls );
+	::EnableWindow( GetItemHwnd( IDC_BUTTON_CURRENTFOLDER ),  bEnableControls );
 	return;
 }
 
@@ -798,6 +812,12 @@ int CDlgGrep::GetData( void )
 		auto_sprintf(szHwnd, L":HWND:%08x", ::GetParent(GetHwnd()));
 #endif
 		m_szFile = szHwnd;
+	}else{
+		std::wstring strFile(m_szFile);
+		if (strFile.substr(0, 6) == L":HWND:") {
+			ErrorMessage(GetHwnd(), LS(STR_DLGGREP_THISDOC_ERROR));
+			return FALSE;
+		}
 	}
 	/* 検索フォルダ */
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_FOLDER, m_szFolder, _countof2(m_szFolder) );
