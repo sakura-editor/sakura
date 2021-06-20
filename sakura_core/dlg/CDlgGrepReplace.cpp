@@ -42,7 +42,7 @@ const DWORD p_helpids[] = {
 	IDC_CHK_PASTE,					HIDC_GREP_REP_CHK_PASTE,				//クリップボードから貼り付け
 	IDC_CHK_WORD,					HIDC_GREP_REP_CHK_WORD,					//単語単位
 	IDC_CHK_SUBFOLDER,				HIDC_GREP_REP_CHK_SUBFOLDER,			//サブフォルダも検索
-//	IDC_CHK_FROMTHISTEXT,			HIDC_GREP_REP_CHK_FROMTHISTEXT,			//このファイルから
+	IDC_CHK_FROMTHISTEXT,			HIDC_GREP_REP_CHK_FROMTHISTEXT,			//編集中のテキストから検索
 	IDC_CHK_LOHICASE,				HIDC_GREP_REP_CHK_LOHICASE,				//大文字小文字
 	IDC_CHK_REGULAREXP,				HIDC_GREP_REP_CHK_REGULAREXP,			//正規表現
 	IDC_CHK_BACKUP,					HIDC_GREP_REP_CHK_BACKUP,				//バックアップ作成
@@ -192,6 +192,9 @@ void CDlgGrepReplace::SetData( void )
 	CheckDlgButtonBool( GetHwnd(), IDC_CHK_BACKUP, m_bBackup );
 
 	CDlgGrep::SetData();
+
+	/* 編集中テキストから検索チェックを無効化 */
+	::EnableWindow(GetItemHwnd(IDC_CHK_FROMTHISTEXT), FALSE);
 }
 
 /*! ダイアログデータの取得
