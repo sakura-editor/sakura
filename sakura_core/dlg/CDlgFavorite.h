@@ -35,7 +35,15 @@
 #pragma once
 
 #include "dlg/CDialog.h"
-#include "recent/CRecent.h"
+#include "recent/CRecentFile.h"
+#include "recent/CRecentFolder.h"
+#include "recent/CRecentExceptMru.h"
+#include "recent/CRecentSearch.h"
+#include "recent/CRecentReplace.h"
+#include "recent/CRecentGrepFile.h"
+#include "recent/CRecentGrepFolder.h"
+#include "recent/CRecentCmd.h"
+#include "recent/CRecentCurDir.h"
 
 //!「履歴とお気に入りの管理」ダイアログ
 //アクセス方法：[設定] - [履歴の管理]

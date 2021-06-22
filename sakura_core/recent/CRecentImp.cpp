@@ -27,8 +27,19 @@
 #include "StdAfx.h"
 #include "CRecentImp.h"
 
-#include "env/CAppNodeManager.h" // EditNode
-#include "EditInfo.h" // EditInfo
+#include "CRecentCmd.h"
+#include "CRecentCurDir.h"
+#include "CRecentEditNode.h"
+#include "CRecentExceptMru.h"
+#include "CRecentExcludeFile.h"
+#include "CRecentExcludeFolder.h"
+#include "CRecentFile.h"
+#include "CRecentFolder.h"
+#include "CRecentGrepFile.h"
+#include "CRecentGrepFolder.h"
+#include "CRecentReplace.h"
+#include "CRecentSearch.h"
+#include "CRecentTagjumpKeyword.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           生成                              //
@@ -548,18 +559,20 @@ bool CRecentImp<T, S>::UpdateView()
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      インスタンス化                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-template class CRecentImp<CCmdString, LPCWSTR>;
-template class CRecentImp<EditNode>;
-template class CRecentImp<EditInfo>;
-template class CRecentImp<CPathString, LPCWSTR>;
-template class CRecentImp<CGrepFileString, LPCWSTR>;
+template class CRecentImp<CCmdString, LPCWSTR>;				// CRecentCmd
+template class CRecentImp<EditNode>;						// CRecentEditNode
+template class CRecentImp<EditInfo>;						// CRecentFile
+template class CRecentImp<CPathString, LPCWSTR>;			// CRecentFolder
+template class CRecentImp<CGrepFileString, LPCWSTR>;		// CRecentGrepFile
 #ifndef __MINGW32__
-template class CRecentImp<CMetaPath, LPCWSTR>;
-template class CRecentImp<CGrepFolderString, LPCWSTR>;
-template class CRecentImp<CSearchString, LPCWSTR>;
-template class CRecentImp<CTagjumpKeywordString, LPCWSTR>;
-template class CRecentImp<CCurDirString, LPCWSTR>;
+template class CRecentImp<CMetaPath, LPCWSTR>;				// CRecentExceptMRU
+template class CRecentImp<CGrepFolderString, LPCWSTR>;		// CRecentGrepFolder
+template class CRecentImp<CSearchString, LPCWSTR>;			// CRecentSearch
+template class CRecentImp<CTagjumpKeywordString, LPCWSTR>;	// CRecentTagjumpKeyword
+template class CRecentImp<CCurDirString, LPCWSTR>;			// CRecentCurDir
+template class CRecentImp<CExcludeFileString, LPCWSTR>;		// CRecentExcludeFile
+template class CRecentImp<CExcludeFolderString, LPCWSTR>;	// CRecentExcludeFolder
 #endif
 #if !defined(__MINGW32__) || (defined(__MINGW32__) && !defined(UNICODE))
-template class CRecentImp<CReplaceString, LPCWSTR>;
+template class CRecentImp<CReplaceString, LPCWSTR>;			// CRecentReplace
 #endif

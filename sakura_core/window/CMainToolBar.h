@@ -27,8 +27,8 @@
 #define SAKURA_CMAINTOOLBAR_FEA7E388_DFEC_4E15_94CC_90A7E779797B_H_
 #pragma once
 
-#include "recent/CRecent.h"
 #include "dlg/CDialog.h"
+#include "recent/CRecentSearch.h"
 
 class CEditWnd;
 class CImageListMgr;

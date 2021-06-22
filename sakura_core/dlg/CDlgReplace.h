@@ -21,8 +21,9 @@
 #pragma once
 
 #include "dlg/CDialog.h"
-#include "recent/CRecent.h"
 #include "util/window.h"
+#include "recent/CRecentReplace.h"
+#include "recent/CRecentSearch.h"
 
 /*-----------------------------------------------------------------------
 クラスの宣言

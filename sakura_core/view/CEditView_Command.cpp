@@ -37,11 +37,11 @@
 #include "util/window.h"
 #include "_main/CControlTray.h"
 #include "charset/charcode.h"
-#include "recent/CRecent.h"
 #include "apiwrap/StdApi.h"
 #include "apiwrap/CommonControl.h"
 #include "config/system_constants.h"
 #include "config/app_constants.h"
+#include "recent/CRecentCmd.h"
 
 /*
 	指定ファイルの指定位置にタグジャンプする。

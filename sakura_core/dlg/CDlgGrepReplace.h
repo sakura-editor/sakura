@@ -21,6 +21,7 @@ class CDlgGrep;
 
 #include "dlg/CDialog.h"
 #include "dlg/CDlgGrep.h"
+#include "recent/CRecentReplace.h"
 
 //! GREP置換ダイアログボックス
 class CDlgGrepReplace final : public CDlgGrep
