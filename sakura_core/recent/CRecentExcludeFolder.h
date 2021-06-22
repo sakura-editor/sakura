@@ -1,4 +1,5 @@
-﻿/*
+﻿/*! @file
+
 	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
@@ -27,6 +28,7 @@
 
 #include "CRecentImp.h"
 #include "util/StaticType.h"
+#include "config/maxdata.h"
 
 typedef StaticString<WCHAR, MAX_EXCLUDE_PATH> CExcludeFolderString;
 
