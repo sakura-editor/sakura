@@ -76,6 +76,7 @@ static void SetGrepFolder( HWND hwndCtrl, LPCWSTR folder );
 CDlgGrep::CDlgGrep()
 {
 	m_bEnableThisText = true;
+	m_bSelectOnceThisText = false;
 	m_bSubFolder = FALSE;				// サブフォルダからも検索する
 	m_bFromThisText = FALSE;			// この編集中のテキストから検索する
 	m_sSearchOption.Reset();			// 検索オプション
@@ -558,7 +559,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 		return TRUE;
 	case IDCANCEL:
 //		::EndDialog( hwndDlg, FALSE );
-		if (::IsDlgButtonChecked(GetHwnd(), IDC_CHK_FROMTHISTEXT)) {
+		if (m_bSelectOnceThisText) {
 			if (m_pShareData->m_sSearchKeywords.m_aGrepFiles.size()) {
 				wcsncpy_s(m_szFile, _countof2(m_szFile), m_pShareData->m_sSearchKeywords.m_aGrepFiles[0], _TRUNCATE);	/* 検索ファイル */
 			}
@@ -752,6 +753,7 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 	::EnableWindow( GetItemHwnd( IDC_COMBO_EXCLUDE_FOLDER ),  bEnableControls );
 	::EnableWindow( GetItemHwnd( IDC_BUTTON_FOLDER_UP ),      bEnableControls );
 	::EnableWindow( GetItemHwnd( IDC_BUTTON_CURRENTFOLDER ),  bEnableControls );
+	m_bSelectOnceThisText = true;
 	return;
 }
 
