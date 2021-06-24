@@ -558,6 +558,20 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 		return TRUE;
 	case IDCANCEL:
 //		::EndDialog( hwndDlg, FALSE );
+		if (::IsDlgButtonChecked(GetHwnd(), IDC_CHK_FROMTHISTEXT)) {
+			if (m_pShareData->m_sSearchKeywords.m_aGrepFiles.size()) {
+				wcsncpy_s(m_szFile, _countof2(m_szFile), m_pShareData->m_sSearchKeywords.m_aGrepFiles[0], _TRUNCATE);	/* 検索ファイル */
+			}
+			if (m_pShareData->m_sSearchKeywords.m_aGrepFolders.size()) {
+				wcsncpy_s(m_szFolder, _countof2(m_szFolder), m_pShareData->m_sSearchKeywords.m_aGrepFolders[0], _TRUNCATE);	/* 検索フォルダ */
+			}
+			if (m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
+				wcsncpy_s(m_szExcludeFile, _countof2(m_szExcludeFile), m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0], _TRUNCATE);	/* 除外ファイル */
+			}
+			if (m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
+				wcsncpy_s(m_szExcludeFolder, _countof2(m_szExcludeFolder), m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0], _TRUNCATE);	/* 除外フォルダ */
+			}
+		}
 		CloseDialog( FALSE );
 		return TRUE;
 	}
