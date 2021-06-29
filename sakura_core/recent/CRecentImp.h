@@ -1,7 +1,5 @@
 ﻿/*! @file */
 // 各CRecent実装クラスのベースクラス
-
-// エディタ系ファイルからincludeするときは CRecent.h をinclude
 /*
 	Copyright (C) 2008, kobake
 	Copyright (C) 2018-2021, Sakura Editor Organization
@@ -123,17 +121,4 @@ protected:
 	size_t		m_nTextMaxLength;		//!< 最大テキスト長(終端含む)
 };
 
-#include "CRecentFile.h"
-#include "CRecentFolder.h"
-#include "CRecentExceptMru.h"
-#include "CRecentSearch.h"
-#include "CRecentReplace.h"
-#include "CRecentGrepFile.h"
-#include "CRecentGrepFolder.h"
-#include "CRecentExcludeFile.h"
-#include "CRecentExcludeFolder.h"
-#include "CRecentCmd.h"
-#include "CRecentCurDir.h"
-#include "CRecentEditNode.h"
-#include "CRecentTagjumpKeyword.h"
 #endif /* SAKURA_CRECENTIMP_B18E6196_5684_44E4_91E0_ADB1542BF7E1_H_ */

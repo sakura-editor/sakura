@@ -26,8 +26,7 @@
 
 #include "StdAfx.h"
 #include "CRecentTagjumpKeyword.h"
-#include "env/DLLSHAREDATA.h"
-#include <string.h>
+#include "config/maxdata.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           生成                              //

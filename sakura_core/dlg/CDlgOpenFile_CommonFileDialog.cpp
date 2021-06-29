@@ -32,7 +32,6 @@
 #include "CEol.h"
 #include "charset/CCodePage.h"
 #include "doc/CDocListener.h"
-#include "recent/CRecent.h"
 #include "util/window.h"
 #include "util/shell.h"
 #include "util/file.h"
@@ -45,6 +44,8 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "String_define.h"
+#include "recent/CRecentFile.h"
+#include "recent/CRecentFolder.h"
 
 static const DWORD p_helpids[] = {	//13100
 //	IDOK,					HIDOK_OPENDLG,		//Winのヘルプで勝手に出てくる

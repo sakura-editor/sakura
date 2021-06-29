@@ -26,8 +26,7 @@
 
 #include "StdAfx.h"
 #include "CRecentFolder.h"
-#include <string.h>
-#include "env/DLLSHAREDATA.h"
+#include "config/maxdata.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           生成                              //

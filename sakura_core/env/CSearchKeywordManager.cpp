@@ -31,7 +31,12 @@
 #include "DLLSHAREDATA.h"
 
 #include "CSearchKeywordManager.h"
-#include "recent/CRecent.h"
+#include "recent/CRecentSearch.h"
+#include "recent/CRecentReplace.h"
+#include "recent/CRecentGrepFile.h"
+#include "recent/CRecentGrepFolder.h"
+#include "recent/CRecentExcludeFile.h"
+#include "recent/CRecentExcludeFolder.h"
 
 /*!	m_aSearchKeysにpszSearchKeyを追加する。
 	YAZAKI

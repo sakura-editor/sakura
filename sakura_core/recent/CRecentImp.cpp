@@ -27,8 +27,19 @@
 #include "StdAfx.h"
 #include "CRecentImp.h"
 
-#include "env/CAppNodeManager.h" // EditNode
-#include "EditInfo.h" // EditInfo
+#include "CRecentCmd.h"
+#include "CRecentCurDir.h"
+#include "CRecentEditNode.h"
+#include "CRecentExceptMru.h"
+#include "CRecentExcludeFile.h"
+#include "CRecentExcludeFolder.h"
+#include "CRecentFile.h"
+#include "CRecentFolder.h"
+#include "CRecentGrepFile.h"
+#include "CRecentGrepFolder.h"
+#include "CRecentReplace.h"
+#include "CRecentSearch.h"
+#include "CRecentTagjumpKeyword.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           生成                              //

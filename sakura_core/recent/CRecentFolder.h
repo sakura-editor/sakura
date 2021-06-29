@@ -30,8 +30,6 @@
 #include "CRecentImp.h"
 #include "util/StaticType.h"
 
-//StaticVector< StaticString<WCHAR, _MAX_PATH>, MAX_GREPFOLDER, const WCHAR*>
-
 typedef StaticString<WCHAR, _MAX_PATH> CPathString;
 
 //! フォルダの履歴を管理 (RECENT_FOR_FOLDER)
