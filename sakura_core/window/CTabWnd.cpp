@@ -47,7 +47,6 @@
 #include "env/CShareData.h"
 #include "env/CSakuraEnvironment.h"
 #include "uiparts/CGraphics.h"
-#include "recent/CRecentEditNode.h"
 #include "util/os.h" //WM_THEMECHANGED
 #include "util/window.h"
 #include "util/module.h"
@@ -1781,7 +1780,6 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 		if( -1 != nIndex )
 		{
 			TCITEM	tcitem;
-			CRecentEditNode	cRecentEditNode;
 			WCHAR	szName[1024];
 			//	Jun. 19, 2004 genta
 			EditNode	*p;
