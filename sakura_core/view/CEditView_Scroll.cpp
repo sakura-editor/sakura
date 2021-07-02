@@ -417,7 +417,6 @@ CLayoutInt CEditView::ScrollAtV( CLayoutInt nPos, BOOL bRedrawScrollBar )
 		if( GetDrawSwitch() ){
 			RECT rcClip2 = {0,0,0,0};
 			ScrollDraw(nScrollRowNum, CLayoutInt(0), rcScrol, rcClip, rcClip2);
-			::UpdateWindow( GetHwnd() );
 		}
 	}
 
@@ -497,7 +496,6 @@ CLayoutInt CEditView::ScrollAtH( CLayoutInt nPos, BOOL bRedrawScrollBar )
 		if( GetDrawSwitch() ){
 			RECT rcClip = {0,0,0,0};
 			ScrollDraw(CLayoutInt(0), nScrollColNum, rcScrol, rcClip, rcClip2);
-			::UpdateWindow( GetHwnd() );
 		}
 	}
 	//	2006.1.28 aroka 判定条件誤り修正 (バーが消えてもスクロールしない)
@@ -602,6 +600,7 @@ void CEditView::ScrollDraw(CLayoutInt nScrollRowNum, CLayoutInt nScrollColNum, c
 	if( nScrollColNum != 0 ){
 		InvalidateRect( &rcClip2, FALSE );
 	}
+	UpdateWindow();
 }
 
 void CEditView::MiniMapRedraw(bool bUpdateAll)
