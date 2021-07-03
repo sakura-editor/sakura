@@ -300,6 +300,7 @@ CLayoutInt CCaret::MoveCursor(
 			m_pEditView->GetTextArea().OffsetViewTopLine(-nScrollRowNum);
 			if( m_pEditView->GetDrawSwitch() ){
 				m_pEditView->InvalidateRect( NULL );
+				m_pEditView->UpdateWindow();
 				if( m_pEditView->m_pcEditWnd->GetMiniMap().GetHwnd() ){
 					m_pEditView->MiniMapRedraw(true);
 				}
