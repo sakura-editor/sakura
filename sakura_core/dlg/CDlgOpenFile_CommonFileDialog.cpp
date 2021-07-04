@@ -44,8 +44,6 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "String_define.h"
-#include "recent/CRecentFile.h"
-#include "recent/CRecentFolder.h"
 
 static const DWORD p_helpids[] = {	//13100
 //	IDOK,					HIDOK_OPENDLG,		//Winのヘルプで勝手に出てくる
@@ -122,9 +120,6 @@ public:
 	SFilePath		m_szPath;	// 拡張子の補完を自前で行ったときのファイルパス	// 2006.11.10 ryoji
 
 	bool			m_bInitCodePage;
-
-	CRecentFile				m_cRecentFile;
-	CRecentFolder			m_cRecentFolder;
 
 	OPENFILENAME*	m_pOf;
 	OPENFILENAME	m_ofn;		/* 2005.10.29 ryoji OPENFILENAME「ファイルを開く」ダイアログ用構造体 */
