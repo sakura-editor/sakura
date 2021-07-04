@@ -46,6 +46,8 @@ public:
 	int DoModal( HINSTANCE, HWND, const WCHAR* );	/* モーダルダイアログの表示 */
 //	HWND DoModeless( HINSTANCE, HWND, const char* );	/* モードレスダイアログの表示 */
 
+	bool		m_bEnableThisText;
+	bool		m_bSelectOnceThisText;
 	BOOL		m_bSubFolder;/*!< サブフォルダからも検索する */
 	BOOL		m_bFromThisText;/*!< この編集中のテキストから検索する */
 

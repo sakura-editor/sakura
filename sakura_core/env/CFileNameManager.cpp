@@ -453,9 +453,9 @@ bool CFileNameManager::GetMenuFullLabel(
 		pszCharset = szCodePageName;
 	}
 	
-	int ret = auto_snprintf_s( pszOutput, nBuffSize, L"%s%s%s %s%s",
+	int ret = auto_snprintf_s( pszOutput, nBuffSize, L"%s%s%s%s%s",
 		szAccKey, (bFavorite ? L"★ " : L""), pszName,
-		(bModified ? L"*":L" "), pszCharset
+		(bModified ? L" *":L""), pszCharset
 	);
 	return 0 < ret;
 }

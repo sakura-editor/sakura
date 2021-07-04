@@ -149,7 +149,7 @@ BEGIN
     RTEXT           "&Look in:",IDC_STATIC,4,50,64,8
     COMBOBOX        IDC_COMBO_FOLDER,72,50,282,120,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "&...",IDC_BUTTON_FOLDER,356,50,16,10
-    CONTROL         "Current file (&M)",IDC_CHK_FROMTHISTEXT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,72,64,120,8
+    CONTROL         "Current text (&M)",IDC_CHK_FROMTHISTEXT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,72,64,120,8
     CONTROL         "Include &subfolders",IDC_CHK_SUBFOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,72,74,120,8
     CONTROL         "Set current folder as &default",IDC_CHK_DEFAULTFOLDER,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,72,84,120,8
@@ -202,7 +202,7 @@ BEGIN
     RTEXT           "&Look in:",IDC_STATIC,4,64,64,8
     COMBOBOX        IDC_COMBO_FOLDER,72,64,282,120,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "&...",IDC_BUTTON_FOLDER,356,64,16,10
-    CONTROL         "Current file (&M)",IDC_CHK_FROMTHISTEXT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,72,78,120,8
+    CONTROL         "Current text (&M)",IDC_CHK_FROMTHISTEXT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,72,78,120,8
     CONTROL         "Inlucde &subfolders",IDC_CHK_SUBFOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,72,88,120,8
     CONTROL         "Set current folder as &default",IDC_CHK_DEFAULTFOLDER,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,72,98,120,8
@@ -3212,6 +3212,7 @@ BEGIN
     STR_DLGGREP4            "Please define the target search folder."
     STR_DLGGREP5            "Target folder is not correct."
     STR_DLGGREP6            "Target folder is too long"
+    STR_DLGGREP_THISDOC     "(Current document)"
     STR_DLGJUMP1            "Please input correct line number"
     STR_DLGJUMP_PSLQL       "%d Ln  %s  Package Specification"
     STR_DLGOPNFL1           "as is"

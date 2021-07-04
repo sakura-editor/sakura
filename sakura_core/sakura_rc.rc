@@ -143,7 +143,7 @@ BEGIN
     RTEXT           "検索場所(&L):",IDC_STATIC,4,50,52,8
     COMBOBOX        IDC_COMBO_FOLDER,60,50,254,120,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "&...",IDC_BUTTON_FOLDER,316,50,16,10
-    CONTROL         "編集中のファイルから検索(&M)",IDC_CHK_FROMTHISTEXT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,60,64,120,8
+    CONTROL         "編集中のテキストから検索(&M)",IDC_CHK_FROMTHISTEXT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,60,64,120,8
     CONTROL         "サブフォルダも検索(&S)",IDC_CHK_SUBFOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,60,74,120,8
     CONTROL         "カレントフォルダが初期値(&D)",IDC_CHK_DEFAULTFOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,60,84,120,8
     PUSHBUTTON      "上階層へ(&U)",IDC_BUTTON_FOLDER_UP,230,64,50,14
@@ -193,7 +193,7 @@ BEGIN
     RTEXT           "検索場所(&L):",IDC_STATIC,4,64,52,8
     COMBOBOX        IDC_COMBO_FOLDER,60,64,254,120,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "&...",IDC_BUTTON_FOLDER,316,64,16,10
-    CONTROL         "編集中のファイルから検索(&M)",IDC_CHK_FROMTHISTEXT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,60,78,120,8
+    CONTROL         "編集中のテキストから検索(&M)",IDC_CHK_FROMTHISTEXT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,60,78,120,8
     CONTROL         "サブフォルダも検索(&S)",IDC_CHK_SUBFOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,60,88,120,8
     CONTROL         "カレントフォルダが初期値(&D)",IDC_CHK_DEFAULTFOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,60,98,120,8
     PUSHBUTTON      "上階層へ(&U)",IDC_BUTTON_FOLDER_UP,230,78,50,14
@@ -3175,6 +3175,8 @@ BEGIN
     STR_DLGGREP4            "検索対象フォルダを指定してください。"
     STR_DLGGREP5            "検索対象フォルダが正しくありません。"
     STR_DLGGREP6            "検索対象フォルダが長すぎます。"
+    STR_DLGGREP_THISDOC     "(現在のドキュメント)"
+    STR_DLGGREP_THISDOC_ERROR "対象ファイルに:HWND:は入力できません"
     STR_DLGJUMP1            "正しく行番号を入力してください。"
     STR_DLGJUMP_PSLQL       "%d 行  %s  パッケージ仕様部"
     STR_DLGOPNFL1           "変換なし"
