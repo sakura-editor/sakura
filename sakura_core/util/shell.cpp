@@ -29,6 +29,9 @@
 #include <ShlObj.h>
 #include <ShellAPI.h>
 #include <CdErr.h> // Nov. 3, 2005 genta	//CDERR_FINDRESFAILURE等
+
+#include <regex>
+
 #include "util/shell.h"
 #include "util/string_ex2.h"
 #include "util/file.h"
@@ -591,7 +594,7 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 
 		WCHAR buf[256];
 		swprintf( buf, _countof(buf), L"https://sakura-editor.github.io/help/HLP%06Iu.html", dwData );
-		ShellExecute( ::GetActiveWindow(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
+		OpenByBrowser( ::GetActiveWindow(), buf );
 	}
 
 	return TRUE;
@@ -644,4 +647,27 @@ BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool Fixed
 	*piPointSize = cf.iPointSize;
 
 	return TRUE;
+}
+
+//! ブラウザで開く
+bool OpenByBrowser(HWND hWnd, std::wstring_view url)
+{
+	if (url.empty()) {
+		return false;
+	}
+
+	if (!std::regex_search(url.data(), std::wregex(LR"(^[a-z]+://\b)"))
+		&& !std::regex_search(url.data(), std::wregex(LR"(^(mailto|news):)"))
+		&& !std::regex_search(url.data(), std::wregex(LR"(^[A-Z]:\\)", std::wregex::icase))
+		&& !std::regex_search(url.data(), std::wregex(LR"(^\\\\:)"))) {
+		return false;
+	}
+
+	// If the function succeeds, it returns a value greater than 32. 
+	if (auto hInstance = ::ShellExecuteW(hWnd, L"open", url.data(), nullptr, nullptr, SW_SHOWNORMAL);
+		hInstance <= (decltype(hInstance))32) {
+		return false;
+	}
+
+	return true;
 }

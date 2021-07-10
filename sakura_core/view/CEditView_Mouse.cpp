@@ -38,6 +38,7 @@
 #include "uiparts/HandCursor.h"
 #include "util/input.h"
 #include "util/os.h"
+#include "util/shell.h"
 #include "charset/CCodeBase.h"
 #include "charset/CCodeFactory.h"
 #include "apiwrap/StdApi.h"
@@ -1533,7 +1534,7 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 static unsigned __stdcall ShellExecuteProc( LPVOID lpParameter )
 {
 	LPWSTR pszFile = (LPWSTR)lpParameter;
-	::ShellExecute( NULL, L"open", pszFile, NULL, NULL, SW_SHOW );
+	OpenByBrowser( ::GetActiveWindow(), pszFile );
 	free( pszFile );
 	return 0;
 }

@@ -40,6 +40,7 @@
 #include "io/CTextStream.h"
 #include "io/CZipFile.h"
 #include "CSelectLang.h"
+#include "util/shell.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "config/app_constants.h"
@@ -267,7 +268,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					if (sel >= 0){
 						CPlugin* plugin = CPluginManager::getInstance()->GetPlugin(sel);
 						if (plugin != NULL){
-							::ShellExecute(NULL, L"Open", plugin->m_sUrl.c_str(), NULL, NULL, SW_SHOW);
+							OpenByBrowser( hwndDlg, plugin->m_sUrl );
 						}
 					}
 				}

@@ -52,6 +52,7 @@
 #include "CWriteManager.h"
 #include "CEditApp.h"
 #include "recent/CMRUFile.h"
+#include "util/shell.h"
 #include "util/window.h"
 #include "charset/CCodeFactory.h"
 #include "plugin/CPlugin.h"
@@ -450,28 +451,9 @@ void CViewCommander::Command_BROWSE( void )
 		ErrorBeep();
 		return;
 	}
-//	char	szURL[MAX_PATH + 64];
-//	auto_sprintf( szURL, L"%ls", GetDocument()->m_cDocFile.GetFilePath() );
-	/* URLを開く */
-//	::ShellExecuteEx( NULL, L"open", szURL, NULL, NULL, SW_SHOW );
 
-    SHELLEXECUTEINFO info; 
-    info.cbSize =sizeof(info);
-    info.fMask = 0;
-    info.hwnd = NULL;
-    info.lpVerb = NULL;
-    info.lpFile = GetDocument()->m_cDocFile.GetFilePath();
-    info.lpParameters = NULL;
-    info.lpDirectory = NULL;
-    info.nShow = SW_SHOWNORMAL;
-    info.hInstApp = 0;
-    info.lpIDList = NULL;
-    info.lpClass = NULL;
-    info.hkeyClass = 0; 
-    info.dwHotKey = 0;
-    info.hIcon =0;
-
-	::ShellExecuteEx(&info);
+	std::wstring_view path(GetDocument()->m_cDocFile.GetFilePath());
+	OpenByBrowser(m_pCommanderView->GetHwnd(), path);
 
 	return;
 }
