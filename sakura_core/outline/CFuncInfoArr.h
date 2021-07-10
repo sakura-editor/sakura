@@ -17,12 +17,12 @@
 #define SAKURA_CFUNCINFOARR_6E07CB18_7314_42F8_BA10_7C20E5ADCB76_H_
 #pragma once
 
-class CFuncInfo;
 #include <string>
 #include <map>
 #include "util/design_template.h"
 #include "basis/SakuraBasis.h"
 #include "basis/CMyString.h"
+#include "outline/CFuncInfo.h"
 
 // 標準的な付加情報定数
 #define FL_OBJ_DEFINITION	0	// 親クラスの定義位置
@@ -40,14 +40,14 @@ class CFuncInfo;
 //! アウトライン解析 データ配列
 class CFuncInfoArr {
 public:
-	CFuncInfoArr();	/* CFuncInfoArrクラス構築 */
-	~CFuncInfoArr();	/* CFuncInfoArrクラス消滅 */
-	CFuncInfo* GetAt( int nIdx );	/* 0<=の指定番号のデータを返す */
-	void AppendData( CFuncInfo* pcFuncInfo );	/* 配列の最後にデータを追加する */
+	CFuncInfoArr() = default;	/* CFuncInfoArrクラス構築 */
+	~CFuncInfoArr() = default;	/* CFuncInfoArrクラス消滅 */
+	CFuncInfo& GetAt(int nIdx) { return m_cFuncInfoArr[nIdx]; }
+	const CFuncInfo& GetAt(int nIdx) const { return m_cFuncInfoArr[nIdx]; }
 	void AppendData( CLogicInt nFuncLineCRLF, CLayoutInt nFuncLineLAYOUT, const WCHAR* pszFuncName,
 					 int nInfo, int nDepth = 0 );	/* 配列の最後にデータを追加する 2002.04.01 YAZAKI 深さ導入*/
 	void AppendData( CLogicInt nLogicLine, CLogicInt nLogicCol, CLayoutInt nLayoutLine, CLayoutInt nLayoutCol, const WCHAR*, const WCHAR*, int, int nDepth = 0 );	/* 配列の最後にデータを追加する 2010.03.01 syat 桁導入*/
-	int	GetNum( void ){	return m_nFuncInfoArrNum; }	/* 配列要素数を返す */
+	int GetNum( void ) const {	return (int)m_cFuncInfoArr.size(); }	/* 配列要素数を返す */
 	void Empty( void );
 	void DUMP( void );
 	void SetAppendText( int info, std::wstring s, bool overwrite );
@@ -57,10 +57,10 @@ public:
 public:
 	SFilePath	m_szFilePath;	/*!< 解析対象ファイル名 */
 private:
-	int			m_nFuncInfoArrNum;	/*!< 配列要素数 */
-	CFuncInfo**	m_ppcFuncInfoArr;	/*!< 配列 */
+	void AppendData( CFuncInfo&& cFuncInfo );	/* 配列の最後にデータを追加する */
+	std::vector<CFuncInfo> m_cFuncInfoArr;
 	std::map<int, std::wstring>	m_AppendTextArr;	// 追加文字列のリスト
-	int			m_nAppendTextLenMax;
+	int	m_nAppendTextLenMax = 0;
 
 	DISALLOW_COPY_AND_ASSIGN(CFuncInfoArr);
 };
