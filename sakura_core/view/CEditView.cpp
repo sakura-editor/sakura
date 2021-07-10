@@ -772,6 +772,10 @@ LRESULT CEditView::DispatchEvent(
 			m_pcDropTarget->Revoke_DropTarget();
 		}
 
+		if (m_threadUrlOpen.joinable()) {
+			m_threadUrlOpen.join();
+		}
+
 		/* タイマー終了 */
 		::KillTimer( GetHwnd(), IDT_ROLLMOUSE );
 
