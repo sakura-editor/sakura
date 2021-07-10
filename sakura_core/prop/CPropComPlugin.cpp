@@ -243,7 +243,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 							break;
 						}
 					}
-					::ShellExecute( NULL, L"open", sBaseDir.c_str(), NULL, NULL, SW_SHOW );
+					OpenByExplorer( hwndDlg, sBaseDir );
 				}
 				break;
 			case IDC_PLUGIN_README:		// ReadMe表示	// 2011/11/2 Uchi

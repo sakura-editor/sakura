@@ -522,17 +522,9 @@ void CViewCommander::Command_OPEN_FOLDER_IN_EXPLORER(void)
 		return;
 	}
 
-	// ドキュメントパスを変数に入れる
-	LPCWSTR pszDocPath = GetDocument()->m_cDocFile.GetFilePath();
-
-	// Windows Explorerの引数を作る
-	CNativeW explorerCommand;
-	explorerCommand.AppendStringF(L"/select,\"%s\"", pszDocPath);
-	LPCWSTR pszExplorerCommand = explorerCommand.GetStringPtr();
-
-	auto hInstance = ::ShellExecute(GetMainWindow(), L"open", L"explorer.exe", pszExplorerCommand, NULL, SW_SHOWNORMAL);
-	// If the function succeeds, it returns a value greater than 32. 
-	if (hInstance <= (decltype(hInstance))32) {
+	// ドキュメントパスを変数に入れてWindowsエクスプローラーで開く
+	if (std::filesystem::path docPath = GetDocument()->m_cDocFile.GetFilePath();
+		!OpenByExplorer(GetMainWindow(), docPath)) {
 		ErrorBeep();
 		return;
 	}
