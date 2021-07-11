@@ -85,6 +85,10 @@ void CViewCommander::Command_SEARCH_NEXT(
 	CLogicRange*	pcSelectLogic		//!< [out] 選択範囲のロジック版。マッチ範囲を返す。すべて置換/高速モードで使用
 )
 {
+	// 見つからないときのメッセージをリソースから指定できるようにローカルコピーしておく
+	const std::wstring copyOfNotFoundMessage(pszNotFoundMessage ? pszNotFoundMessage : L"");
+	pszNotFoundMessage = pszNotFoundMessage ? copyOfNotFoundMessage.data() : nullptr;
+
 	bool		bSelecting;
 	bool		bFlag1 = false;
 	bool		bSelectingLock_Old = false;
