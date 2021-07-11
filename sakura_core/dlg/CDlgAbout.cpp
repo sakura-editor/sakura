@@ -25,6 +25,7 @@
 #include "uiparts/HandCursor.h"
 #include "util/file.h"
 #include "util/module.h"
+#include "util/shell.h"
 #include "util/window.h"
 #include "sakura_rc.h" // 2002/2/10 aroka 復帰
 #include "version.h"
@@ -330,28 +331,28 @@ BOOL CDlgAbout::OnStnClicked( int wID )
 //	case IDC_STATIC_URL_ORG:	del 2008/7/4 Uchi
 		//	Web Browserの起動
 		{
-			WCHAR buf[512];
-			::GetWindowText( GetItemHwnd( wID ), buf, _countof(buf) );
-			::ShellExecute( GetHwnd(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
+			std::wstring url;
+			ApiWrap::DlgItem_GetText(GetHwnd(), wID, url);
+			OpenWithBrowser(GetHwnd(), url);
 			return TRUE;
 		}
 	case IDC_STATIC_URL_CI_BUILD:
 		{
 #if defined(CI_BUILD_URL)
-			::ShellExecute(GetHwnd(), NULL, _T(CI_BUILD_URL), NULL, NULL, SW_SHOWNORMAL);
+			OpenWithBrowser(GetHwnd(), _T(CI_BUILD_URL));
 #elif defined(GIT_REMOTE_ORIGIN_URL)
-			::ShellExecute(GetHwnd(), NULL, _T(GIT_REMOTE_ORIGIN_URL), NULL, NULL, SW_SHOWNORMAL);
+			OpenWithBrowser(GetHwnd(), _T(GIT_REMOTE_ORIGIN_URL));
 #endif
 			return TRUE;
 		}
 	case IDC_STATIC_URL_GITHUB_COMMIT:
 #if defined(GITHUB_COMMIT_URL)
-		::ShellExecute(GetHwnd(), NULL, _T(GITHUB_COMMIT_URL), NULL, NULL, SW_SHOWNORMAL);
+		OpenWithBrowser(GetHwnd(), _T(GITHUB_COMMIT_URL));
 #endif
 		return TRUE;
 	case IDC_STATIC_URL_GITHUB_PR:
 #if defined(GITHUB_PR_HEAD_URL)
-		::ShellExecute(GetHwnd(), NULL, _T(GITHUB_PR_HEAD_URL), NULL, NULL, SW_SHOWNORMAL);
+		OpenWithBrowser(GetHwnd(), _T(GITHUB_PR_HEAD_URL));
 #endif
 		return TRUE;
 	}

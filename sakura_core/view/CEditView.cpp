@@ -775,6 +775,13 @@ LRESULT CEditView::DispatchEvent(
 		/* タイマー終了 */
 		::KillTimer( GetHwnd(), IDT_ROLLMOUSE );
 
+		// 「URLを開く」処理の完了をチェックして必要があれば待機する
+		// 開始後、joinされてないstd::threadを破棄すると例外が起きる。
+		// ダブルクリックで「URLを開く」をしてない場合、このif文には入らない。
+		if (m_threadUrlOpen.joinable()) {
+			m_threadUrlOpen.join();
+		}
+
 //		MYTRACE( L"	WM_DESTROY\n" );
 		/*
 		||子ウィンドウの破棄

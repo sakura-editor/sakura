@@ -46,6 +46,9 @@
 #include <Windows.h>
 #include <ObjIdl.h>  // LPDATAOBJECT
 #include <ShellAPI.h>  // HDROP
+
+#include <thread>
+
 #include "CTextMetrics.h"
 #include "CTextDrawer.h"
 #include "CTextArea.h"
@@ -120,6 +123,8 @@ class CEditView
 , public CMyWnd
 , public CDocListenerEx
 {
+	std::thread m_threadUrlOpen;
+
 public:
 	const CEditDoc* GetDocument() const
 	{
