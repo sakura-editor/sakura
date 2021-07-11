@@ -29,30 +29,23 @@
 
 template <class PointType>
 class CRangeBase{
+	using Me = CRangeBase<PointType>;
+
 public:
 	typedef typename PointType::IntType IntType;
 public:
 	//コンストラクタ
-	CRangeBase()
-	{
-	}
-	CRangeBase(const CRangeBase& rhs)
-	{
-		operator=(rhs);
-	}
+	CRangeBase() = default;
+	CRangeBase(const Me&) = default;
+	Me& operator = (const Me&) = default;
+	CRangeBase(Me&&) noexcept = default;
+	Me& operator = (Me&&) noexcept = default;
 	CRangeBase(const PointType& _ptFrom,const PointType& _ptTo)
 	{
 		m_ptFrom=_ptFrom;
 		m_ptTo=_ptTo;
 	}
-
-	//代入
-	CRangeBase& operator = (const CRangeBase& rhs)
-	{
-		m_ptFrom=rhs.m_ptFrom;
-		m_ptTo=rhs.m_ptTo;
-		return *this;
-	}
+	~CRangeBase() = default;
 
 	//比較
 	bool operator == (const CRangeBase& rhs) const
