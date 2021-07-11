@@ -1579,10 +1579,13 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 				// 2009.05.21 syat UNCパスだと1分以上無応答になることがあるのでスレッド化
 				CWaitCursor cWaitCursor( GetHwnd() );	// カーソルを砂時計にする
 
+				// 前回分の「URLを開く」処理の完了をチェックして必要があれば待機する
 				if (m_threadUrlOpen.joinable()) {
 					m_threadUrlOpen.join();
 				}
 
+				// 新規スレッドで「URLを開く」を実行する
+				// ※初期化完了するまではメインスレッドの実行がブロックされることに注意。
 				std::mutex mtx;
 				std::condition_variable cv;
 				bool initialized = false;
@@ -1597,12 +1600,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 					}
 
 					// 本処理
-					if( !OpenWithBrowser( GetHwnd(), url ) ){
-						// ユーザーのURL起動指示に反応した目印としてちょっとの時間だけ砂時計カーソルを表示しておく
-						// ShellExecute は即座にエラー終了することがちょくちょくあるので WaitForSingleObject ではなく Sleep を使用（ex.存在しないパスの起動）
-						// 【補足】いずれの API でも待ちを長め（2～3秒）にするとなぜか Web ブラウザ未起動からの起動が重くなる模様（PCタイプ, XP/Vista, IE/FireFox に関係なく）
-						::Sleep( 200 );
-					}
+					OpenWithBrowser( GetHwnd(), url );
 				});
 				std::unique_lock lock( mtx );
 				cv.wait(lock, [&initialized] { return initialized; });

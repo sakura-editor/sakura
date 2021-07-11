@@ -635,6 +635,9 @@ bool OpenWithExplorer(HWND hWnd, const std::filesystem::path& path)
 	std::wstring params;
 	const wchar_t* lpParameters = nullptr;
 
+	// ファイル名（最後の'\'に続く部分）がドット('.')でない場合、
+	// Windowsエクスプローラーのコマンドを指定してファイルを選択させる。
+	// ※ドットは「フォルダ自身」を表す特殊なファイル名。
 	if (path.filename() != L".") {
 		std::wstring buf(_MAX_PATH, wchar_t());
 		size_t requiredSize;
