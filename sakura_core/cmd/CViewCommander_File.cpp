@@ -453,7 +453,7 @@ void CViewCommander::Command_BROWSE( void )
 	}
 
 	std::wstring_view path(GetDocument()->m_cDocFile.GetFilePath());
-	OpenByBrowser(m_pCommanderView->GetHwnd(), path);
+	OpenWithBrowser(m_pCommanderView->GetHwnd(), path);
 
 	return;
 }
@@ -524,7 +524,7 @@ void CViewCommander::Command_OPEN_FOLDER_IN_EXPLORER(void)
 
 	// ドキュメントパスを変数に入れてWindowsエクスプローラーで開く
 	if (std::filesystem::path docPath = GetDocument()->m_cDocFile.GetFilePath();
-		!OpenByExplorer(GetMainWindow(), docPath)) {
+		!OpenWithExplorer(GetMainWindow(), docPath)) {
 		ErrorBeep();
 		return;
 	}

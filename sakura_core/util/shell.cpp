@@ -218,7 +218,7 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 			// 選択されたメニューの処理
 			switch( nId ){
 			case 100:	// 設定フォルダを開く
-				OpenByExplorer(hwnd, GetIniFileName());
+				OpenWithExplorer(hwnd, GetIniFileName());
 				break;
 
 			case 101:	// インポート／エクスポートの起点リセット（起点を設定フォルダにする）
@@ -567,7 +567,7 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 
 		WCHAR buf[256];
 		swprintf( buf, _countof(buf), L"https://sakura-editor.github.io/help/HLP%06Iu.html", dwData );
-		OpenByBrowser( ::GetActiveWindow(), buf );
+		OpenWithBrowser( ::GetActiveWindow(), buf );
 	}
 
 	return TRUE;
@@ -623,7 +623,7 @@ BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool Fixed
 }
 
 //! Windows エクスプローラーで開く
-bool OpenByExplorer(HWND hWnd, const std::filesystem::path& path)
+bool OpenWithExplorer(HWND hWnd, const std::filesystem::path& path)
 {
 	if (path.empty()) {
 		return false;
@@ -657,7 +657,7 @@ bool OpenByExplorer(HWND hWnd, const std::filesystem::path& path)
 }
 
 //! ブラウザで開く
-bool OpenByBrowser(HWND hWnd, std::wstring_view url)
+bool OpenWithBrowser(HWND hWnd, std::wstring_view url)
 {
 	if (url.empty()) {
 		return false;

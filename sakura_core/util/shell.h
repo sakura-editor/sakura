@@ -61,9 +61,9 @@ INT_PTR MyPropertySheet( LPPROPSHEETHEADER lppsph );	// 独自拡張プロパテ
 BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool );	// 2009.10.01 ryoji ポイントサイズ（1/10ポイント単位）引数追加
 
 //! Windows エクスプローラーで開く
-bool OpenByExplorer(HWND hWnd, const std::filesystem::path& path);
+bool OpenWithExplorer(HWND hWnd, const std::filesystem::path& path);
 
 //! ブラウザで開く
-bool OpenByBrowser(HWND hWnd, std::wstring_view url);
+bool OpenWithBrowser(HWND hWnd, std::wstring_view url);
 
 #endif /* SAKURA_SHELL_0A8B6454_B007_46E5_9606_8D2FD7993B91_H_ */

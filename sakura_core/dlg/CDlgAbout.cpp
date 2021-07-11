@@ -333,26 +333,26 @@ BOOL CDlgAbout::OnStnClicked( int wID )
 		{
 			std::wstring url;
 			ApiWrap::DlgItem_GetText(GetHwnd(), wID, url);
-			OpenByBrowser(GetHwnd(), url);
+			OpenWithBrowser(GetHwnd(), url);
 			return TRUE;
 		}
 	case IDC_STATIC_URL_CI_BUILD:
 		{
 #if defined(CI_BUILD_URL)
-			OpenByBrowser(GetHwnd(), _T(CI_BUILD_URL));
+			OpenWithBrowser(GetHwnd(), _T(CI_BUILD_URL));
 #elif defined(GIT_REMOTE_ORIGIN_URL)
-			OpenByBrowser(GetHwnd(), _T(GIT_REMOTE_ORIGIN_URL));
+			OpenWithBrowser(GetHwnd(), _T(GIT_REMOTE_ORIGIN_URL));
 #endif
 			return TRUE;
 		}
 	case IDC_STATIC_URL_GITHUB_COMMIT:
 #if defined(GITHUB_COMMIT_URL)
-		OpenByBrowser(GetHwnd(), _T(GITHUB_COMMIT_URL));
+		OpenWithBrowser(GetHwnd(), _T(GITHUB_COMMIT_URL));
 #endif
 		return TRUE;
 	case IDC_STATIC_URL_GITHUB_PR:
 #if defined(GITHUB_PR_HEAD_URL)
-		OpenByBrowser(GetHwnd(), _T(GITHUB_PR_HEAD_URL));
+		OpenWithBrowser(GetHwnd(), _T(GITHUB_PR_HEAD_URL));
 #endif
 		return TRUE;
 	}
