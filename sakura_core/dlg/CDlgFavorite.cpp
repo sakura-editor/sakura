@@ -33,6 +33,7 @@
 
 #include "StdAfx.h"
 #include <algorithm>
+#include <tuple>
 #include "CDlgFavorite.h"
 #include "dlg/CDlgInput1.h"
 #include "env/DLLSHAREDATA.h"
@@ -88,6 +89,9 @@ static const SAnchorList anchorList[] = {
 static int FormatFavoriteColumn( WCHAR*, int, int , bool );
 static int ListView_GetLParamInt( HWND, int );
 static int CALLBACK CompareListViewFunc( LPARAM, LPARAM, LPARAM );
+
+const int nFavoriteMax = 3;
+const int ignoreTab = 3;
 
 struct CompareListViewLParam
 {
@@ -156,7 +160,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_SEARCH );
 		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_SEARCH;
-		m_aFavoriteInfo[i].m_bHaveFavorite = false;
+		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = true;
@@ -167,7 +171,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_REPLACE );
 		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_REPLACE;
-		m_aFavoriteInfo[i].m_bHaveFavorite = false;
+		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = true;
@@ -178,7 +182,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_GREP_FILE );
 		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_GREP_FILE;
-		m_aFavoriteInfo[i].m_bHaveFavorite = false;
+		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = true;
@@ -189,7 +193,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_GREP_FOLDER );
 		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_GREP_FOLDER;
-		m_aFavoriteInfo[i].m_bHaveFavorite = false;
+		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = true;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = false;
@@ -200,7 +204,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_EXT_COMMAND );
 		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_CMD;
-		m_aFavoriteInfo[i].m_bHaveFavorite = false;
+		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = true;
@@ -211,7 +215,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_strCaption = LS( STR_DLGFAV_CURRENT_DIR );
 		m_aFavoriteInfo[i].m_pszCaption = m_aFavoriteInfo[i].m_strCaption.c_str();
 		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_CUR_DIR;
-		m_aFavoriteInfo[i].m_bHaveFavorite = false;
+		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = true;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = false;
@@ -351,18 +355,31 @@ void CDlgFavorite::SetDataOne( int nIndex, int nLvItemIndex )
 int CDlgFavorite::GetData( void )
 {
 	int		nTab;
+	std::wstring	strReachFavLimitMsg;
+	std::tuple<int,int> FavoriteCountAndHistory;
 
 	for( nTab = 0; m_aFavoriteInfo[nTab].m_pRecent; nTab++ )
 	{
 		if( m_aFavoriteInfo[nTab].m_bHaveFavorite )
 		{
-			GetFavorite( nTab );
+			GetFavorite(nTab);
+			FavoriteCountAndHistory = GetListFavorite(nTab);
+			if (std::get<0>(FavoriteCountAndHistory) >= nFavoriteMax) {
+				std::wstring buffer = strprintf(L"%s : %d (%d)\n", m_aFavoriteInfo[nTab].m_strCaption.c_str(), std::get<0>(FavoriteCountAndHistory), std::get<1>(FavoriteCountAndHistory));
+				strReachFavLimitMsg.append(buffer);
+			}
 
 			//リストを更新する。
 			CRecent* pRecent = m_aFavoriteInfo[nTab].m_pRecent;
 			pRecent->UpdateView();
 		}
 	}
+	if (!strReachFavLimitMsg.empty())
+		{
+			strReachFavLimitMsg.append(LS( STR_DLGFAV_FAV_COUNT_LIMIT ));
+			WarningMessage(GetHwnd(), strReachFavLimitMsg.c_str());
+			strReachFavLimitMsg.clear();
+		}
 
 	return TRUE;
 }
@@ -614,8 +631,34 @@ BOOL CDlgFavorite::OnNotify(NMHDR* pNMHDR)
 			switch(pNMHDR->code )
 			{
 			case NM_DBLCLK:
-				EditItem();
-				return TRUE;
+				{
+					LVHITTESTINFO lvht = { 0 };
+					::GetCursorPos(&lvht.pt);
+					::ScreenToClient(hwndList, &lvht.pt);
+					ListView_HitTest(hwndList, &lvht);
+					if ((lvht.flags & LVHT_ONITEM)) {
+						ListView_SetCheckState(hwndList, (int)lvht.iItem, true);
+					}
+					if ((lvht.flags & LVHT_ONITEMLABEL)) {
+						ListView_SetCheckState(hwndList, (int)lvht.iItem, false);
+						EditItem();
+					}
+				}
+				return true;
+			case NM_CLICK:
+				{
+					LVHITTESTINFO lvht = { 0 };
+					::GetCursorPos(&lvht.pt);
+					::ScreenToClient(hwndList, &lvht.pt);
+					ListView_HitTest(hwndList, &lvht);
+					if ((lvht.flags & LVHT_ONITEMSTATEICON)) {
+						//IsGreaterThanMax
+						if (IsGreaterThanOrEqualMax(m_nCurrentTab)) {
+							ListView_SetCheckState(hwndList, (int)lvht.iItem, true);
+						}
+					}
+				}
+				return true;
 			case NM_RCLICK:
 				{
 					POINT po;
@@ -639,6 +682,20 @@ BOOL CDlgFavorite::OnNotify(NMHDR* pNMHDR)
 				{
 				case VK_DELETE:
 					DeleteSelected();
+					return TRUE;
+				case VK_SPACE:
+					{
+						//IsGreaterThanMax
+						if (IsGreaterThanOrEqualMax(m_nCurrentTab)) {
+							const int nCount = ListView_GetItemCount(hwndList);
+							for (int i = 0; i < nCount; i++) {
+								if (ListView_GetItemState(hwndList, i, LVIS_FOCUSED)) {
+									ListView_SetCheckState(hwndList, i, true);
+									break;
+								}
+							}
+						}
+					}
 					return TRUE;
 				case VK_APPS:
 					{
@@ -818,18 +875,61 @@ changed:
 }
 
 // お気に入りのフラグだけ適用
-void CDlgFavorite::GetFavorite( int nIndex )
+void CDlgFavorite::GetFavorite(int nIndex)
 {
-	CRecent * const pRecent  = m_aFavoriteInfo[nIndex].m_pRecent;
+	CRecent* const pRecent = m_aFavoriteInfo[nIndex].m_pRecent;
 	const HWND      hwndList = m_aListViewInfo[nIndex].hListView;
-	if( m_aFavoriteInfo[nIndex].m_bHaveFavorite ){
-		const int nCount = ListView_GetItemCount( hwndList );
-		for( int i = 0; i < nCount; i++ ){
-			const int  recIndex = ListView_GetLParamInt( hwndList, i );
-			const BOOL bret = ListView_GetCheckState( hwndList, i );
-			pRecent->SetFavorite( recIndex, bret ? true : false );
+	if (m_aFavoriteInfo[nIndex].m_bHaveFavorite) {
+		const int nCount = ListView_GetItemCount(hwndList);
+		for (int i = 0; i < nCount; i++) {
+			const int  recIndex = ListView_GetLParamInt(hwndList, i);
+			const BOOL bret = ListView_GetCheckState(hwndList, i);
+			pRecent->GetTextMaxLength();
+			pRecent->SetFavorite(recIndex, bret ? true : false);
 		}
 	}
+}
+
+std::tuple<int,int> CDlgFavorite::GetListFavorite(int nIndex)
+{
+	if (nIndex < ignoreTab) {
+		return std::make_tuple(0,0);
+	}
+	const HWND hwndList = m_aListViewInfo[nIndex].hListView;
+	CRecent* const pRecent = m_aFavoriteInfo[nIndex].m_pRecent;
+	int nMax = pRecent->GetArrayCount();
+	int nFavoriteCount = 0;
+	const int nCount = ListView_GetItemCount(hwndList);
+	for (int i = 0; i < nCount; i++) {
+		if (ListView_GetCheckState(hwndList, i)) {
+			nFavoriteCount++;
+		}
+	}
+	return std::make_tuple( nFavoriteCount, nMax - nFavoriteCount);
+}
+
+bool CDlgFavorite::IsGreaterThanOrEqualMax(int nTab)
+{
+	if (nTab < ignoreTab) {
+		return false;
+	}
+	const HWND hwndList = m_aListViewInfo[nTab].hListView;
+	const int nCount = ListView_GetItemCount(hwndList);
+	CRecent* const pRecent = m_aFavoriteInfo[nTab].m_pRecent;
+	int nMax = pRecent->GetArrayCount() - 20;
+	if (nCount < nMax) {
+		return false;
+	}
+	int nFavoriteCount = 0;
+	for (int i = 0; i < nCount; i++) {
+		if (ListView_GetCheckState(hwndList, i)) {
+			nFavoriteCount++;
+			if (nFavoriteCount >= nMax) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 /*
