@@ -59,8 +59,15 @@ protected:
 	BOOL OnDestroy() override;
 	BOOL OnBnClicked(int wID) override;
 	BOOL OnActivate( WPARAM wParam, LPARAM lParam ) override;	// 2009.11.29 ryoji
+	BOOL OnSize( WPARAM wParam, LPARAM lParam ) override;
+	BOOL OnSizing(WPARAM wParam, LPARAM lParam) override;
+	int OnNcHitTest(WPARAM wParam, LPARAM lParam) override;
 
 	// BOOL OnKeyDown( WPARAM wParam, LPARAM lParam ) override;
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
+
+	POINT m_ptDefaultSizeScreen;
+	POINT m_ptDefaultSizeClient;
+	std::vector<RECT> m_rcItems;
 };
 #endif /* SAKURA_CDLGFIND_AF260AA4_6075_4B87_9F03_2CEEDAD64094_H_ */
