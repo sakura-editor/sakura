@@ -22,6 +22,8 @@
 #include "StdAfx.h"
 #include <algorithm>
 #include <memory>
+#include <WinUser.h>
+
 #include "dlg/CDialog.h"
 #include "CEditApp.h"
 #include "env/CShareData.h"
@@ -358,6 +360,11 @@ BOOL CDialog::OnSize( WPARAM wParam, LPARAM lParam )
 	return FALSE;
 }
 
+BOOL CDialog::OnSizing(WPARAM wParam, LPARAM lParam)
+{
+	return FALSE;
+}
+
 BOOL CDialog::OnMove( WPARAM wParam, LPARAM lParam )
 {
 	/* ダイアログの位置の記憶 */
@@ -374,6 +381,11 @@ BOOL CDialog::OnMove( WPARAM wParam, LPARAM lParam )
 	m_nHeight = rc.bottom - rc.top;
 	DEBUG_TRACE( L"CDialog::OnMove() m_xPos=%d m_yPos=%d\n", m_xPos, m_yPos );
 	return TRUE;
+}
+
+int CDialog::OnNcHitTest(WPARAM wParam, LPARAM lParam)
+{
+	return ::DefWindowProc(m_hWnd, WM_NCHITTEST, wParam, lParam);
 }
 
 void CDialog::CreateSizeBox( void )
@@ -408,6 +420,7 @@ INT_PTR CDialog::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 	case WM_SIZE:
 		m_hWnd = hwndDlg;
 		return OnSize( wParam, lParam );
+	case WM_SIZING:		return OnSizing( wParam, lParam );
 	case WM_MOVE:
 		m_hWnd = hwndDlg;
 		return OnMove( wParam, lParam );
@@ -420,6 +433,10 @@ INT_PTR CDialog::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 	case WM_CHARTOITEM:	return OnCharToItem( wParam, lParam );
 	case WM_HELP:		return OnPopupHelp( wParam, lParam );	//@@@ 2002.01.18 add
 	case WM_CONTEXTMENU:return OnContextMenu( wParam, lParam );	//@@@ 2002.01.18 add
+	case WM_NCHITTEST:
+		m_hWnd = hwndDlg;
+		SetWindowLongPtr(m_hWnd, DWLP_MSGRESULT, OnNcHitTest(wParam, lParam));
+		return TRUE;
 	}
 	return FALSE;
 }
