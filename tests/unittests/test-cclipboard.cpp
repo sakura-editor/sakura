@@ -28,33 +28,36 @@
 #define NOMINMAX
 #endif /* #ifndef NOMINMAX */
 
-#include <tchar.h>
+#include <string>
+#include <string_view>
+
 #include <Windows.h>
-#include <Shlwapi.h>
 #include <CommCtrl.h>
 
+#include "CEol.h"
 #include "mem/CNativeW.h"
 #include "_os/CClipboard.h"
 
-/*!
- * HWND型のスマートポインタを実現するためのdeleterクラス
- */
-struct window_closer
-{
-	void operator()(HWND hWnd) const
-	{
-		::DestroyWindow(hWnd);
+class CClipboard1 : public testing::Test {
+protected:
+	void SetUp() override {
+		hInstance = ::GetModuleHandle(nullptr);
+		hWnd = ::CreateWindowExW(0, WC_STATICW, L"test", 0, 1, 1, 1, 1, nullptr, nullptr, hInstance, nullptr);
+		if (!hWnd) FAIL();
 	}
+	void TearDown() override {
+		if (hWnd)
+			::DestroyWindow(hWnd);
+	}
+
+	HINSTANCE hInstance = nullptr;
+	HWND hWnd = nullptr;
 };
-
-//! HWND型のスマートポインタ
-using windowHolder = std::unique_ptr<std::remove_pointer<HWND>::type, window_closer>;
-
 
 /*!
  * @brief SetHtmlTextのテスト
  */
-TEST(CClipboard, SetHtmlText)
+TEST_F(CClipboard1, SetHtmlText)
 {
 	constexpr const wchar_t inputData[] = L"test 109";
 	constexpr const char expected[] =
@@ -71,36 +74,64 @@ TEST(CClipboard, SetHtmlText)
 
 	const UINT uHtmlFormat = ::RegisterClipboardFormat(L"HTML Format");
 
-	auto hInstance = ::GetModuleHandleW(nullptr);
-	if (HWND hWnd = ::CreateWindowExW(0, WC_STATICW, L"test", 0, 1, 1, 1, 1, nullptr, nullptr, hInstance, nullptr); hWnd) {
-		// HWNDをスマートポインタに入れる
-		windowHolder holder(hWnd);
+	// クリップボード操作クラスでSetHtmlTextする
+	CClipboard cClipBoard(hWnd);
 
-		// クリップボード操作クラスでSetHtmlTextする
-		CClipboard cClipBoard(hWnd);
+	// 操作は失敗しないはず。
+	ASSERT_TRUE(cClipBoard.SetHtmlText(inputData));
 
-		// 操作は失敗しないはず。
-		ASSERT_TRUE(cClipBoard.SetHtmlText(inputData));
+	// 操作に成功するとHTML形式のデータを利用できるはず。
+	ASSERT_TRUE(::IsClipboardFormatAvailable(uHtmlFormat));
 
-		// 操作に成功するとHTML形式のデータを利用できるはず。
-		ASSERT_TRUE(::IsClipboardFormatAvailable(uHtmlFormat));
+	// クリップボード操作クラスが対応してないので生APIを呼んで確認する。
 
-		// クリップボード操作クラスが対応してないので生APIを呼んで確認する。
+	// グローバルメモリをロックできた場合のみ中身を取得しに行く
+	if (HGLOBAL hClipData = ::GetClipboardData(uHtmlFormat); hClipData != nullptr) {
+		// データをstd::stringにコピーする
+		const size_t cchData = ::GlobalSize(hClipData);
+		const char* pData = (char*)::GlobalLock(hClipData);
+		std::string strClipData(pData, cchData);
 
-		// グローバルメモリをロックできた場合のみ中身を取得しに行く
-		if (HGLOBAL hClipData = ::GetClipboardData(uHtmlFormat); hClipData != nullptr) {
-			// データをstd::stringにコピーする
-			const size_t cchData = ::GlobalSize(hClipData);
-			const char* pData = (char*)::GlobalLock(hClipData);
-			std::string strClipData(pData, cchData);
+		// 使い終わったらロック解除する
+		::GlobalUnlock(hClipData);
 
-			// 使い終わったらロック解除する
-			::GlobalUnlock(hClipData);
-
-			ASSERT_STREQ(expected, strClipData.c_str());
-		}
-		else {
-			FAIL();
-		}
+		ASSERT_STREQ(expected, strClipData.c_str());
 	}
+	else {
+		FAIL();
+	}
+}
+
+TEST_F(CClipboard1, SetTextAndGetText)
+{
+	const std::wstring_view text = L"てすと";
+	CClipboard clipboard(hWnd);
+	CNativeW buffer;
+	bool column;
+	bool line;
+	CEol eol(EEolType::cr_and_lf);
+
+	clipboard.Empty();
+
+	// テキストを設定する（矩形選択フラグなし・行選択フラグなし）
+	EXPECT_TRUE(clipboard.SetText(text.data(), text.length(), false, false, -1));
+	EXPECT_TRUE(CClipboard::HasValidData());
+	// Unicode文字列を取得する
+	EXPECT_TRUE(clipboard.GetText(&buffer, &column, &line, eol, CF_UNICODETEXT));
+	EXPECT_EQ(buffer.Compare(text.data()), 0);
+	EXPECT_FALSE(column);
+	EXPECT_FALSE(line);
+
+	clipboard.Empty();
+
+	// テキストを設定する（矩形選択あり・行選択あり）
+	EXPECT_TRUE(clipboard.SetText(text.data(), text.length(), true, true, -1));
+	EXPECT_TRUE(CClipboard::HasValidData());
+	// サクラエディタ独自形式データを取得する
+	EXPECT_TRUE(clipboard.GetText(&buffer, &column, nullptr, eol, CClipboard::GetSakuraFormat()));
+	EXPECT_EQ(buffer.Compare(text.data()), 0);
+	EXPECT_TRUE(column);
+	EXPECT_TRUE(clipboard.GetText(&buffer, nullptr, &line, eol, CClipboard::GetSakuraFormat()));
+	EXPECT_EQ(buffer.Compare(text.data()), 0);
+	EXPECT_TRUE(line);
 }
