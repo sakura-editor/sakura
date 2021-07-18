@@ -453,7 +453,8 @@ void CViewCommander::Command_BROWSE( void )
 	}
 
 	std::wstring_view path(GetDocument()->m_cDocFile.GetFilePath());
-	OpenWithBrowser(m_pCommanderView->GetHwnd(), path);
+	std::wstring url(strprintf(L"file:///%s", path.data()));
+	OpenWithBrowser(m_pCommanderView->GetHwnd(), url);
 
 	return;
 }
