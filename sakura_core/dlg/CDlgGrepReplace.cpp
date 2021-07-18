@@ -66,6 +66,21 @@ const DWORD p_helpids[] = {
 	0, 0
 };
 
+static const SAnchorList anchorList[] = {
+	IDC_COMBO_TEXT,					ANCHOR_LEFT_RIGHT,
+	IDC_COMBO_TEXT2,				ANCHOR_LEFT_RIGHT,
+	IDC_COMBO_FOLDER,				ANCHOR_LEFT_RIGHT,
+	IDC_BUTTON_FOLDER,				ANCHOR_RIGHT,
+	IDC_BUTTON_FOLDER_UP,			ANCHOR_RIGHT,
+	IDC_BUTTON_CURRENTFOLDER,		ANCHOR_RIGHT,
+	IDC_COMBO_FILE,					ANCHOR_LEFT_RIGHT,
+	IDC_COMBO_EXCLUDE_FILE,			ANCHOR_LEFT_RIGHT,
+	IDC_COMBO_EXCLUDE_FOLDER,		ANCHOR_LEFT_RIGHT,
+	IDOK,							ANCHOR_RIGHT,
+	IDCANCEL,						ANCHOR_RIGHT,
+	IDC_BUTTON_HELP,				ANCHOR_RIGHT,
+};
+
 CDlgGrepReplace::CDlgGrepReplace()
 {
 	if( 0 < m_pShareData->m_sSearchKeywords.m_aReplaceKeys.size() ){
@@ -143,6 +158,20 @@ BOOL CDlgGrepReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	HFONT hFont = SetMainFont( GetItemHwnd( IDC_COMBO_TEXT2 ) );
 	m_cFontText2.SetFont( hFontOld, hFont, GetItemHwnd( IDC_COMBO_TEXT2 ) );
 
+	RECT rc;
+	::GetClientRect(hwndDlg, &rc);
+	m_ptDefaultSizeClient.x = rc.right;
+	m_ptDefaultSizeClient.y = rc.bottom;
+
+	::GetWindowRect(hwndDlg, &rc);
+	m_ptDefaultSizeScreen.x = rc.right - rc.left;
+	m_ptDefaultSizeScreen.y = rc.bottom - rc.top;
+
+	m_rcItems.resize(_countof(anchorList));
+	for (int i = 0; i < _countof(anchorList); i++) {
+		GetItemClientRect(anchorList[i].id, m_rcItems[i]);
+	}
+
 	return bRet;
 }
 
@@ -177,6 +206,75 @@ BOOL CDlgGrepReplace::OnBnClicked( int wID )
 	}
 	/* 基底クラスメンバ */
 	return CDlgGrep::OnBnClicked( wID );
+}
+
+BOOL CDlgGrepReplace::OnSize(WPARAM wParam, LPARAM lParam)
+{
+	CDialog::OnSize(wParam, lParam);
+
+	POINT ptNew;
+	ptNew.x = LOWORD(lParam);
+	ptNew.y = HIWORD(lParam);
+
+	for (int i = 0; i < _countof(anchorList); i++) {
+		ResizeItem(GetItemHwnd(anchorList[i].id), m_ptDefaultSizeClient, ptNew, m_rcItems[i], anchorList[i].anchor);
+	}
+	return TRUE;
+}
+
+BOOL CDlgGrepReplace::OnSizing(WPARAM wParam, LPARAM lParam)
+{
+	RECT& rc = *(RECT*)lParam;
+
+	switch (wParam) {
+	case WMSZ_BOTTOMRIGHT:
+	case WMSZ_RIGHT:
+	case WMSZ_TOPRIGHT:
+		if (rc.right - rc.left < m_ptDefaultSizeScreen.x) {
+			rc.right = rc.left + m_ptDefaultSizeScreen.x;
+		}
+		break;
+	case WMSZ_BOTTOMLEFT:
+	case WMSZ_LEFT:
+	case WMSZ_TOPLEFT:
+		if (rc.right - rc.left < m_ptDefaultSizeScreen.x) {
+			rc.left = rc.right - m_ptDefaultSizeScreen.x;
+		}
+		break;
+	}
+
+	switch (wParam) {
+	case WMSZ_BOTTOM:
+	case WMSZ_BOTTOMLEFT:
+	case WMSZ_BOTTOMRIGHT:
+		rc.bottom = rc.top + m_ptDefaultSizeScreen.y;
+		break;
+	case WMSZ_TOP:
+	case WMSZ_TOPLEFT:
+	case WMSZ_TOPRIGHT:
+		rc.top = rc.bottom - m_ptDefaultSizeScreen.y;
+		break;
+	}
+
+	return TRUE;
+}
+
+int CDlgGrepReplace::OnNcHitTest(WPARAM wParam, LPARAM lParam)
+{
+	int ret = CDialog::OnNcHitTest(wParam, lParam);
+	switch (ret) {
+	case HTTOPLEFT:
+	case HTBOTTOMLEFT:
+		return HTLEFT;
+	case HTTOPRIGHT:
+	case HTBOTTOMRIGHT:
+		return HTRIGHT;
+	case HTBOTTOM:
+	case HTTOP:
+		return HTBORDER;
+	default:
+		return ret;
+	}
 }
 
 /* ダイアログデータの設定 */
