@@ -25,14 +25,21 @@
 */
 
 #include "StdAfx.h"
+#include "util/shell.h"
+
+#include <cderr.h>			// CDERR_FINDRESFAILURE等
+#include <comdef.h>
+#include <comutil.h>
+#include <urlmon.h>
+#include <wrl.h>
 #include <HtmlHelp.h>
+#include <shellapi.h>
 #include <ShlObj.h>
-#include <ShellAPI.h>
-#include <CdErr.h> // Nov. 3, 2005 genta	//CDERR_FINDRESFAILURE等
 
 #include <regex>
 
-#include "util/shell.h"
+#include "debug/Debug1.h"
+#include "util/RegKey.h"
 #include "util/string_ex2.h"
 #include "util/file.h"
 #include "util/os.h"
@@ -43,8 +50,8 @@
 #include "extmodule/CHtmlHelp.h"
 #include "config/app_constants.h"
 #include "String_define.h"
-#include <wrl.h>
 
+#pragma comment(lib, "urlmon.lib")
 
 /* フォルダ選択ダイアログ */
 BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR* strFolderName, size_t nMaxCount )
@@ -659,6 +666,72 @@ bool OpenWithExplorer(HWND hWnd, const std::filesystem::path& path)
 	return true;
 }
 
+/*!
+ * 指定したプロトコルに関連付けされたProgIDを取得する
+ */
+std::wstring GetProgIdForProtocol(std::wstring_view protocol)
+{
+	constexpr const auto& defaultProgId = L"MSEdgeHTM";
+
+	// HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice
+	if (const auto keyPath(strprintf(LR"(SOFTWARE\Microsoft\Windows\Shell\Associations\UrlAssociations\%s\UserChoice)", protocol.data()));
+		CRegKey::ExistsKey(HKEY_CURRENT_USER, keyPath.data()))
+	{
+		CRegKey regKey;
+		if (const auto errorCode = regKey.Open(HKEY_CURRENT_USER, keyPath.data(), KEY_READ);
+			errorCode != 0)
+		{
+			return defaultProgId;
+		}
+
+		std::wstring buf(1024, wchar_t());
+		if (const auto errorCode = regKey.GetValue(L"ProgId", buf.data(), static_cast<uint32_t>(buf.capacity()), nullptr);
+			errorCode != 0)
+		{
+			return defaultProgId;
+		}
+
+		buf.resize(::wcsnlen(buf.data(), 1024));
+
+		return buf;
+	}
+
+	return defaultProgId;
+}
+
+/*!
+ * 指定したProgIDに関連付けされたコマンドラインを取得する
+ */
+std::wstring GetCommandAssociatedWithProgID(std::wstring_view progId)
+{
+	constexpr const auto& notAssociated = L"";
+
+	// HKEY_CLASSES_ROOT\MSEdgeHTM\shell\open\command
+	if (const auto keyPath(strprintf(LR"(%s\shell\open\command)", progId.data()));
+		CRegKey::ExistsKey(HKEY_CLASSES_ROOT, keyPath.data()))
+	{
+		CRegKey regKey;
+		if (const auto errorCode = regKey.Open(HKEY_CLASSES_ROOT, keyPath.data(), KEY_READ);
+			errorCode != 0)
+		{
+			return notAssociated;
+		}
+
+		std::wstring buf(1024, wchar_t());
+		if (const auto errorCode = regKey.GetValue(nullptr, buf.data(), static_cast<uint32_t>(buf.capacity()), nullptr);
+			errorCode != 0)
+		{
+			return notAssociated;
+		}
+
+		buf.resize(::wcsnlen(buf.data(), 1024));
+
+		return buf;
+	}
+
+	return notAssociated;
+}
+
 //! ブラウザで開く
 bool OpenWithBrowser(HWND hWnd, std::wstring_view url)
 {
@@ -666,15 +739,59 @@ bool OpenWithBrowser(HWND hWnd, std::wstring_view url)
 		return false;
 	}
 
-	if (!std::regex_search(url.data(), std::wregex(LR"(^[a-z]+://\b)"))
-		&& !std::regex_search(url.data(), std::wregex(LR"(^(mailto|news):)"))
-		&& !std::regex_search(url.data(), std::wregex(LR"(^[A-Z]:\\)", std::wregex::icase))
-		&& !std::regex_search(url.data(), std::wregex(LR"(^\\\\:)"))) {
+	using namespace Microsoft::WRL;
+	ComPtr<IUri> pUri;
+	DWORD dwFlags = Uri_CREATE_NO_CRACK_UNKNOWN_SCHEMES | Uri_CREATE_NO_IE_SETTINGS;
+	if (const auto hr = ::CreateUri(url.data(), dwFlags, 0, &pUri);
+		FAILED(hr)) {
+		_com_error ex(hr);
+		auto desc = ex.Description();
+		TRACE("%s", (const wchar_t*)desc);
 		return false;
 	}
 
+	_bstr_t bstrSchemeName;
+	if (const auto hr = pUri->GetSchemeName(&bstrSchemeName.GetBSTR());
+		FAILED(hr)) {
+		_com_error ex(hr);
+		auto desc = ex.Description();
+		TRACE("%s", (const wchar_t*)desc);
+		return false;
+	}
+
+	std::filesystem::path browserPath;
+	std::wstring_view verb = L"open";
+	std::wstring_view file = url.data();
+	std::wstring params;
+	const wchar_t* lpParameters = nullptr;
+
+	// fileプロトコル対策
+	if (bstrSchemeName == _bstr_t(L"file")) {
+		// 実行可能ファイルはダウンロードになるので失敗させる
+		if (const std::filesystem::path urlPath(url.data());
+			::_wcsicmp(urlPath.extension().c_str(), L".exe") == 0) {
+			return false;
+		}
+
+		// HTTPプロトコルに関連付けられたコマンドラインを取得し、パターンマッチでパラメータを組み立てる
+		// => "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --single-argument %1
+		std::wsmatch matched;
+		std::wregex re(LR"(^("[^"]+"|[^ ]+)\s+(.+))");
+		if (auto browserCommandline = GetCommandAssociatedWithProgID(GetProgIdForProtocol(L"http"));
+			std::regex_search(browserCommandline, matched, re)) {
+			// $1 ブラウザのパス
+			std::wstring buf = matched[1];
+			buf.erase(std::remove(buf.begin(), buf.end(), L'\"'), buf.cend());
+			browserPath = buf.data();
+			file = browserPath.c_str();
+			// $2 パラメータ
+			params = std::regex_replace(matched[2].str(), std::wregex(L"%1"), url.data());
+			lpParameters = params.c_str();
+		}
+	}
+
 	// If the function succeeds, it returns a value greater than 32. 
-	if (auto hInstance = ::ShellExecuteW(hWnd, L"open", url.data(), nullptr, nullptr, SW_SHOWNORMAL);
+	if (auto hInstance = ::ShellExecuteW(hWnd, verb.data(), file.data(), lpParameters, nullptr, SW_SHOWNORMAL);
 		hInstance <= (decltype(hInstance))32) {
 		return false;
 	}
