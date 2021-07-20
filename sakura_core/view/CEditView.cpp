@@ -1802,7 +1802,7 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 */
 bool CEditView::GetSelectedDataSimple( CNativeW &cmemBuf )
 {
-	return GetSelectedData(&cmemBuf, FALSE, NULL, FALSE, false, EEolType::auto_detect);
+	return GetSelectedData(&cmemBuf, NULL, FALSE, false, EEolType::auto_detect);
 }
 
 /* 選択範囲のデータを取得
@@ -1810,7 +1810,6 @@ bool CEditView::GetSelectedDataSimple( CNativeW &cmemBuf )
 */
 bool CEditView::GetSelectedData(
 	CNativeW*		cmemBuf,
-	BOOL			bLineOnly,
 	const wchar_t*	pszQuote,			/* 先頭に付ける引用符 */
 	BOOL			bWithLineNumber,	/* 行番号を付与する */
 	bool			bAddCRLFWhenCopy,	/* 折り返し位置で改行記号を入れる */
@@ -1864,9 +1863,6 @@ bool CEditView::GetSelectedData(
 
 				nBufSize += nIdxTo - nIdxFrom;
 			}
-			if( bLineOnly ){	/* 複数行選択の場合は先頭の行のみ */
-				break;
-			}
 		}
 
 		// 大まかに見た容量を元にサイズをあらかじめ確保しておく。
@@ -1893,9 +1889,6 @@ bool CEditView::GetSelectedData(
 			}
 			++nRowNum;
 			cmemBuf->AppendString( WCODE::CRLF );
-			if( bLineOnly ){	/* 複数行選択の場合は先頭の行のみ */
-				break;
-			}
 		}
 	}
 	else{
@@ -1950,9 +1943,6 @@ bool CEditView::GetSelectedData(
 		for (; i != 0 && pcLayout != NULL; i--, pcLayout = pcLayout->GetNextLayout() )
 		{
 			nBufSize += pcLayout->GetLengthWithoutEOL() + appendEol.GetLen();
-			if( bLineOnly ){	/* 複数行選択の場合は先頭の行のみ */
-				break;
-			}
 		}
 
 		// 調べた長さ分だけバッファを取っておく。
@@ -2015,9 +2005,6 @@ bool CEditView::GetSelectedData(
 							appendEol.GetValue2() );		//	新規改行コード
 					}
 				}
-			}
-			if( bLineOnly ){	/* 複数行選択の場合は先頭の行のみ */
-				break;
 			}
 		}
 	}
@@ -2252,7 +2239,7 @@ void CEditView::CopySelectedAllLines(
 	/* 選択範囲をクリップボードにコピー */
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合は終了する */
-	if( !GetSelectedData( &cmemBuf, FALSE, pszQuote, bWithLineNumber, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
+	if( !GetSelectedData( &cmemBuf, pszQuote, bWithLineNumber, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 		ErrorBeep();
 		return;
 	}
