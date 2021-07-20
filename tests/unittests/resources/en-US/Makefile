@@ -45,7 +45,9 @@ RC= $(RCPREFIX)windres
 
 TARGET = $(or $(OUTDIR),.)/resources.en-US.zip
 
-SRC_DIRS = test-plugin
+SRC_DIRS = test-plugin \
+           test-data \
+           expect-data
 
 all: $(TARGET)
 

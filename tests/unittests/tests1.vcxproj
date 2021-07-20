@@ -113,6 +113,7 @@
     <ClCompile Include="test-csearchagent.cpp" />
     <ClCompile Include="test-crunningtimer.cpp" />
     <ClCompile Include="test-czipfile.cpp" />
+    <ClCompile Include="test-grepstdout.cpp" />
     <ClCompile Include="test-printEFunctionCode.cpp" />
     <ClCompile Include="test-cclipboard.cpp" />
     <ClCompile Include="test-ccodebase.cpp" />
@@ -179,6 +180,39 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ItemGroup>
     <TestResource Include="test-plugin\plugin.def" />
+    <TestResource Include="expect-data/runFileSearch001.txt" />
+    <TestResource Include="expect-data/runFileSearch002.txt" />
+    <TestResource Include="expect-data/runFileSearch003.txt" />
+    <TestResource Include="expect-data/runFileSearch004.txt" />
+    <TestResource Include="expect-data/runFileSearch005.txt" />
+    <TestResource Include="expect-data/runFileSearch006.txt" />
+    <TestResource Include="expect-data/runFileSearch007.txt" />
+    <TestResource Include="expect-data/runFileSearch008.txt" />
+    <TestResource Include="expect-data/runFileSearch009.txt" />
+    <TestResource Include="expect-data/runRegexGrep001.txt" />
+    <TestResource Include="expect-data/runRegexGrep002.txt" />
+    <TestResource Include="expect-data/runRegexGrep003.txt" />
+    <TestResource Include="expect-data/runRegexGrep004.txt" />
+    <TestResource Include="test-data/UTF16BE.txt" />
+    <TestResource Include="test-data/UTF16LE.txt" />
+    <TestResource Include="test-data/UTF8.txt" />
+    <TestResource Include="test-data/folder1/UTF16BE.txt" />
+    <TestResource Include="test-data/folder1/UTF16LE.txt" />
+    <TestResource Include="test-data/folder1/UTF8.txt" />
+    <TestResource Include="test-data/folder1/folder2/UTF16BE.txt" />
+    <TestResource Include="test-data/folder1/folder2/UTF16LE.txt" />
+    <TestResource Include="test-data/folder1/folder2/UTF8.txt" />
+    <TestResource Include="test-data/folder1/folder2/除外ファイル.txt" />
+    <TestResource Include="test-data/folder1/除外ファイル.txt" />
+    <TestResource Include="test-data/folder1/除外フォルダ/UTF16BE.txt" />
+    <TestResource Include="test-data/folder1/除外フォルダ/UTF16LE.txt" />
+    <TestResource Include="test-data/folder1/除外フォルダ/UTF8.txt" />
+    <TestResource Include="test-data/folder1/除外フォルダ/除外ファイル.txt" />
+    <TestResource Include="test-data/除外ファイル.txt" />
+    <TestResource Include="test-data/除外フォルダ/UTF16BE.txt" />
+    <TestResource Include="test-data/除外フォルダ/UTF16LE.txt" />
+    <TestResource Include="test-data/除外フォルダ/UTF8.txt" />
+    <TestResource Include="test-data/除外フォルダ/除外ファイル.txt" />
   </ItemGroup>
   <Target Name="MakeTestResource" BeforeTargets="ResourceCompile" Inputs="@(TestResource->'resources\ja-JP\%(RelativeDir)%(filename)%(Extension)')" Outputs="$(IntDir)resources.ja-JP.zip">
     <Exec Command="7z u &quot;$(IntDir)resources.ja-JP.zip&quot; -tzip @(TestResource->'%(RelativeDir)%(filename)%(Extension)',' ')" WorkingDirectory="$(ProjectDir)resources\ja-JP" />
