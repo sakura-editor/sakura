@@ -2252,13 +2252,7 @@ void CEditView::CopySelectedAllLines(
 	/* 選択範囲をクリップボードにコピー */
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合は終了する */
-	if( !GetSelectedData(
-		&cmemBuf,
-		FALSE,
-		pszQuote, /* 引用符 */
-		bWithLineNumber, /* 行番号を付与する */
-		GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy /* 折り返し位置に改行記号を入れる */
-	) ){
+	if( !GetSelectedData( &cmemBuf, FALSE, pszQuote, bWithLineNumber, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 		ErrorBeep();
 		return;
 	}
