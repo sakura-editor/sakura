@@ -1816,10 +1816,6 @@ bool CEditView::GetSelectedData(
 	EEolType		neweol				//	コピー後の改行コード EEolType::noneはコード保存
 )
 {
-	const wchar_t*	pLine;
-	CLogicInt		nLineLen;
-	const CLayout*	pcLayout;
-
 	/* 範囲選択がされていない */
 	if( !GetSelectionInfo().IsTextSelected() ){
 		return false;
@@ -1844,12 +1840,11 @@ bool CEditView::GetSelectedData(
 		int nBufSize = wcslen(WCODE::CRLF) * (Int)i;
 
 		// 実際の文字量。
-		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( rcSel.top, &nLineLen, &pcLayout );
-		for(; i != CLayoutInt(0) && pcLayout != NULL; i--, pcLayout = pcLayout->GetNextLayout())
-		{
-			pLine = pcLayout->GetPtr() + pcLayout->GetLogicOffset();
-			nLineLen = CLogicInt(pcLayout->GetLengthWithEOL());
-			if( NULL != pLine )
+		for( auto nLineNum = rcSel.top; nLineNum <= rcSel.bottom; ++nLineNum ){
+			const CLayout* pcLayout = nullptr;
+			CLogicInt nLineLen;
+			const auto* pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
+			if( pLine != nullptr && pcLayout != nullptr )
 			{
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
 				const auto nIdxFrom		= LineColumnToIndex( pcLayout, rcSel.left  );
@@ -1865,8 +1860,10 @@ bool CEditView::GetSelectedData(
 
 		bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 		for( auto nLineNum = rcSel.top; nLineNum <= rcSel.bottom; ++nLineNum ){
-			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
-			if( NULL != pLine ){
+			const CLayout* pcLayout = nullptr;
+			CLogicInt nLineLen;
+			const auto* pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
+			if( pLine != nullptr && pcLayout != nullptr ){
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
 				const auto nIdxFrom		= LineColumnToIndex( pcLayout, rcSel.left  );
 				const auto nIdxTo		= LineColumnToIndex( pcLayout, rcSel.right );
@@ -1904,7 +1901,6 @@ bool CEditView::GetSelectedData(
 		//  無駄な容量確保が出ていますので、もう少し精度を上げたいところですが・・・。
 		//  とはいえ、逆に小さく見積もることになってしまうと、かなり速度をとられる要因になってしまうので
 		// 困ってしまうところですが・・・。
-		m_pcEditDoc->m_cLayoutMgr.GetLineStr( GetSelectionInfo().m_sSelect.GetFrom().GetY2(), &nLineLen, &pcLayout );
 		int nBufSize = 0;
 
 		int i = (Int)(GetSelectionInfo().m_sSelect.GetTo().y - GetSelectionInfo().m_sSelect.GetFrom().y);
@@ -1935,9 +1931,14 @@ bool CEditView::GetSelectedData(
 		nBufSize *= (Int)i;
 
 		// 実際の各行の長さ。
-		for (; i != 0 && pcLayout != NULL; i--, pcLayout = pcLayout->GetNextLayout() )
-		{
-			nBufSize += pcLayout->GetLengthWithoutEOL() + appendEol.GetLen();
+		for (auto nLineNum = GetSelectionInfo().m_sSelect.GetFrom().y; nLineNum <= GetSelectionInfo().m_sSelect.GetTo().y; ++nLineNum) {
+			const CLayout* pcLayout = nullptr;
+			CLogicInt nLineLen;
+			const auto* pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr(nLineNum, &nLineLen, &pcLayout);
+			if (pLine != nullptr && pcLayout != nullptr)
+			{
+				nBufSize += nLineLen;
+			}
 		}
 
 		// 調べた長さ分だけバッファを取っておく。
@@ -1945,8 +1946,10 @@ bool CEditView::GetSelectedData(
 		//>> 2002/04/18 Azumaiya
 
 		for( auto nLineNum = GetSelectionInfo().m_sSelect.GetFrom().GetY2(); nLineNum <= GetSelectionInfo().m_sSelect.GetTo().y; ++nLineNum ){
-			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
-			if( NULL == pLine ){
+			const CLayout* pcLayout = nullptr;
+			CLogicInt nLineLen;
+			const auto *pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
+			if( pLine == nullptr || pcLayout == nullptr){
 				break;
 			}
 
