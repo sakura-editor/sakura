@@ -1820,7 +1820,6 @@ bool CEditView::GetSelectedData(
 	CLogicInt		nLineLen;
 	CLayoutInt		nLineNum;
 	const CLayout*	pcLayout;
-	CEol			appendEol( neweol );
 
 	/* 範囲選択がされていない */
 	if( !GetSelectionInfo().IsTextSelected() ){
@@ -1895,6 +1894,9 @@ bool CEditView::GetSelectedData(
 
 		// 行番号整形バッファ(L" 1234:"を出力できるよう桁数+2桁分確保する)
 		std::wstring lineNumBuf(nLineNumCols + 2, wchar_t());
+
+		// 線形選択をコピーする場合は、改行コード変換を指示することができる謎仕様。
+		CEol appendEol(neweol);
 
 		//<< 2002/04/18 Azumaiya
 		//  これから貼り付けに使う領域の大まかなサイズを取得する。
