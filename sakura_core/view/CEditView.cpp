@@ -1802,7 +1802,7 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 */
 bool CEditView::GetSelectedDataSimple( CNativeW &cmemBuf )
 {
-	return GetSelectedData(cmemBuf, L"", false, false, EEolType::auto_detect);
+	return GetSelectedData( cmemBuf );
 }
 
 /* 選択範囲のデータを取得
@@ -1813,7 +1813,7 @@ bool CEditView::GetSelectedData(
 	std::wstring_view	quoteMark,			//!< [in] 引用部分を表す文字列（「> 」など）
 	bool				bWithLineNumber,	//!< [in] 行番号を付与するか
 	bool				bInsertEolAtWrap,	//!< [in] 折り返し位置で改行記号を入れるか
-	EEolType		neweol				//	コピー後の改行コード EEolType::noneはコード保存
+	EEolType			newEolType			//!< [in] 改行コード書き替えモードの変更後改行コード（EEolType::noneはコード保存）
 )
 {
 	// 大前提
@@ -1933,7 +1933,7 @@ bool CEditView::GetSelectedData(
 		std::wstring lineNumBuf(nLineNumCols + 2, wchar_t());
 
 		// 線形選択をコピーする場合は、改行コード変換を指示することができる謎仕様。
-		CEol appendEol(neweol);
+		CEol appendEol(newEolType);
 
 		// コピーに必要なバッファサイズ
 		size_t nBufSize = 0;
@@ -1976,14 +1976,14 @@ bool CEditView::GetSelectedData(
 			// 行データが改行コードで終わっているとき
 			if( pcLayout->GetLayoutEol().IsValid() ){
 				nBufSize += nIdxTo - nIdxFrom - pcLayout->GetLayoutEol().GetLen();
-				nBufSize += neweol == EEolType::auto_detect
+				nBufSize += newEolType == EEolType::none
 					? pcLayout->GetLayoutEol().GetLen()
 					: appendEol.GetLen();
 			}
 			// 行データが改行コードで終わっていない、かつ、折り返し改行を付けるとき
 			else if (bInsertEolAtWrap){
 				nBufSize += nIdxTo - nIdxFrom;
-				nBufSize += neweol == EEolType::auto_detect
+				nBufSize += newEolType == EEolType::none
 					? m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetLen()
 					: appendEol.GetLen();
 			}
@@ -2039,14 +2039,14 @@ bool CEditView::GetSelectedData(
 				// 行データの終端は改行コードの手前までにする
 				cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom - pcLayout->GetLayoutEol().GetLen() );
 				// 変換指定に従い、改行コードを付与する
-				cmemBuf.AppendString(neweol == EEolType::auto_detect
+				cmemBuf.AppendString(newEolType == EEolType::none
 					? pcLayout->GetLayoutEol().GetValue2()	//	コード保存
 					: appendEol.GetValue2());				//	新規改行コード
 			}
 			// 行データが改行コードで終わっていない、かつ、折り返し改行を付けるとき
 			else if (bInsertEolAtWrap){
 				cmemBuf.AppendString(&pLine[nIdxFrom], nIdxTo - nIdxFrom);
-				cmemBuf.AppendString(neweol == EEolType::auto_detect
+				cmemBuf.AppendString(newEolType == EEolType::none
 					? m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetValue2()
 					: appendEol.GetValue2());		//	新規改行コード
 			}
