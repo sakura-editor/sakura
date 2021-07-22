@@ -159,7 +159,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 					return;
 				}
 				/* 選択範囲のデータを取得 */
-				if( GetSelectedData( &cmemCurText, L"", FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy)) {
+				if( GetSelectedData( cmemCurText, L"", FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy)) {
 					DWORD dwEffects;
 					DWORD dwEffectsSrc = ( !m_pcEditDoc->IsEditable() )?
 											DROPEFFECT_COPY: DROPEFFECT_COPY | DROPEFFECT_MOVE;

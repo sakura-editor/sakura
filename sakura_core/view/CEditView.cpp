@@ -1802,14 +1802,14 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 */
 bool CEditView::GetSelectedDataSimple( CNativeW &cmemBuf )
 {
-	return GetSelectedData(&cmemBuf, L"", FALSE, false, EEolType::auto_detect);
+	return GetSelectedData(cmemBuf, L"", FALSE, false, EEolType::auto_detect);
 }
 
 /* 選択範囲のデータを取得
 	正常時はTRUE,範囲未選択の場合はFALSEを返す
 */
 bool CEditView::GetSelectedData(
-	CNativeW*		cmemBuf,
+	CNativeW&			cmemBuf,			//!< [out] バッファ
 	std::wstring_view	quoteMark,			//!< [in] 引用部分を表す文字列（「> 」など）
 	BOOL			bWithLineNumber,	/* 行番号を付与する */
 	bool			bAddCRLFWhenCopy,	/* 折り返し位置で改行記号を入れる */
@@ -1880,9 +1880,9 @@ bool CEditView::GetSelectedData(
 		}
 
 		// メモリ確保
-		cmemBuf->Clear();
-		cmemBuf->AllocStringBuffer(nBufSize);
-		if( cmemBuf->capacity() < nBufSize ){
+		cmemBuf.Clear();
+		cmemBuf.AllocStringBuffer(nBufSize);
+		if( cmemBuf.capacity() < nBufSize ){
 			return false;
 		}
 
@@ -1906,16 +1906,16 @@ bool CEditView::GetSelectedData(
 					// 行データの終端は改行コードの手前までにする
 					CEol cEol;
 					cEol.SetTypeByString( &pLine[nIdxFrom], nIdxTo - nIdxFrom);
-					cmemBuf->AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom - cEol.GetLen() );
+					cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom - cEol.GetLen() );
 				}
 				// 選択範囲が改行コードで終わっていないとき
 				else{
-					cmemBuf->AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
+					cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
 				}
 			}
 
 			// 矩形選択のコピー時は改行コード固定。
-			cmemBuf->AppendString(WCODE::CRLF);
+			cmemBuf.AppendString(WCODE::CRLF);
 		}
 	}
 	// 通常の選択（線形選択）の場合
@@ -1994,9 +1994,9 @@ bool CEditView::GetSelectedData(
 		}
 
 		// メモリ確保
-		cmemBuf->Clear();
-		cmemBuf->AllocStringBuffer(nBufSize);
-		if( cmemBuf->capacity() < nBufSize ){
+		cmemBuf.Clear();
+		cmemBuf.AllocStringBuffer(nBufSize);
+		if( cmemBuf.capacity() < nBufSize ){
 			return false;
 		}
 
@@ -2024,35 +2024,35 @@ bool CEditView::GetSelectedData(
 
 			// 引用部分を表す文字列（「> 」など）を付与する
 			if( quoteMark.length() > 0 ){
-				cmemBuf->AppendString( quoteMark.data() );
+				cmemBuf.AppendString( quoteMark.data() );
 			}
 
 			// 行番号を付与する
 			if( bWithLineNumber ){
 				// 行番号は L" 1234:" 形式で出力する
 				::swprintf_s(lineNumBuf.data(), lineNumBuf.capacity(), L"% *d:", static_cast<uint32_t>(nLineNumCols), (int)(Int)(nLineNum + 1));
-				cmemBuf->AppendString(lineNumBuf.data());
+				cmemBuf.AppendString(lineNumBuf.data());
 			}
 
 			// 行データが改行コードで終わっているとき
 			if( pcLayout->GetLayoutEol().IsValid() ){
 				// 行データの終端は改行コードの手前までにする
-				cmemBuf->AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom - pcLayout->GetLayoutEol().GetLen() );
+				cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom - pcLayout->GetLayoutEol().GetLen() );
 				// 変換指定に従い、改行コードを付与する
-				cmemBuf->AppendString(neweol == EEolType::auto_detect
+				cmemBuf.AppendString(neweol == EEolType::auto_detect
 					? pcLayout->GetLayoutEol().GetValue2()	//	コード保存
 					: appendEol.GetValue2());				//	新規改行コード
 			}
 			// 行データが改行コードで終わっていない、かつ、折り返し改行を付けるとき
 			else if (bAddCRLFWhenCopy){
-				cmemBuf->AppendString(&pLine[nIdxFrom], nIdxTo - nIdxFrom);
-				cmemBuf->AppendString(neweol == EEolType::auto_detect
+				cmemBuf.AppendString(&pLine[nIdxFrom], nIdxTo - nIdxFrom);
+				cmemBuf.AppendString(neweol == EEolType::auto_detect
 					? m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetValue2()
 					: appendEol.GetValue2());		//	新規改行コード
 			}
 			// 行データが改行コードで終わっていないとき
 			else{
-				cmemBuf->AppendString(&pLine[nIdxFrom], nIdxTo - nIdxFrom);
+				cmemBuf.AppendString(&pLine[nIdxFrom], nIdxTo - nIdxFrom);
 			}
 		}
 	}
@@ -2292,7 +2292,7 @@ void CEditView::CopySelectedAllLines(
 	/* 選択範囲をクリップボードにコピー */
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合は終了する */
-	if( !GetSelectedData( &cmemBuf, quotesMark, bWithLineNumber, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
+	if( !GetSelectedData( cmemBuf, quotesMark, bWithLineNumber, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 		ErrorBeep();
 		return;
 	}
