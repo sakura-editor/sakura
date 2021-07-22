@@ -1821,7 +1821,6 @@ bool CEditView::GetSelectedData(
 	CLayoutInt		nLineNum;
 	CLogicInt		nIdxFrom;
 	CLogicInt		nIdxTo;
-	int				nRowNum;
 	const CLayout*	pcLayout;
 	CEol			appendEol( neweol );
 
@@ -1869,7 +1868,6 @@ bool CEditView::GetSelectedData(
 		//>> 2002/04/18 Azumaiya
 
 		bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
-		nRowNum = 0;
 		for( nLineNum = rcSel.top; nLineNum <= rcSel.bottom; ++nLineNum ){
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
 			if( NULL != pLine ){
@@ -1886,7 +1884,6 @@ bool CEditView::GetSelectedData(
 					}
 				}
 			}
-			++nRowNum;
 			cmemBuf->AppendString( WCODE::CRLF );
 		}
 	}
