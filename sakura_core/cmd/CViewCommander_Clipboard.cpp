@@ -58,7 +58,7 @@ void CViewCommander::Command_CUT( void )
 
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
-	if( !m_pCommanderView->GetSelectedData( &cmemBuf, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
+	if( !m_pCommanderView->GetSelectedData( &cmemBuf, L"", FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy)) {
 		ErrorBeep();
 		return;
 	}
@@ -107,7 +107,7 @@ void CViewCommander::Command_COPY(
 		}
 		/* 選択範囲のデータを取得 */
 		/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
-		if( !m_pCommanderView->GetSelectedData( &cmemBuf, NULL, FALSE, bAddCRLFWhenCopy, neweol ) ){
+		if( !m_pCommanderView->GetSelectedData( &cmemBuf, L"", FALSE, bAddCRLFWhenCopy, neweol)) {
 			ErrorBeep();
 			return;
 		}

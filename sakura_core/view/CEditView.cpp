@@ -1802,7 +1802,7 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 */
 bool CEditView::GetSelectedDataSimple( CNativeW &cmemBuf )
 {
-	return GetSelectedData(&cmemBuf, NULL, FALSE, false, EEolType::auto_detect);
+	return GetSelectedData(&cmemBuf, L"", FALSE, false, EEolType::auto_detect);
 }
 
 /* 選択範囲のデータを取得
@@ -1810,7 +1810,7 @@ bool CEditView::GetSelectedDataSimple( CNativeW &cmemBuf )
 */
 bool CEditView::GetSelectedData(
 	CNativeW*		cmemBuf,
-	const wchar_t*	pszQuote,			/* 先頭に付ける引用符 */
+	std::wstring_view	quoteMark,			//!< [in] 引用部分を表す文字列（「> 」など）
 	BOOL			bWithLineNumber,	/* 行番号を付与する */
 	bool			bAddCRLFWhenCopy,	/* 折り返し位置で改行記号を入れる */
 	EEolType		neweol				//	コピー後の改行コード EEolType::noneはコード保存
@@ -1915,9 +1915,9 @@ bool CEditView::GetSelectedData(
 		int i = (Int)(GetSelectionInfo().m_sSelect.GetTo().y - GetSelectionInfo().m_sSelect.GetFrom().y);
 
 		// 先頭に引用符を付けるとき。
-		if ( NULL != pszQuote )
+		if ( quoteMark.length() > 0 )
 		{
-			nBufSize += wcslen(pszQuote);
+			nBufSize += quoteMark.length();
 		}
 
 		// 行番号を付ける。
@@ -1970,8 +1970,9 @@ bool CEditView::GetSelectedData(
 				continue;
 			}
 
-			if( NULL != pszQuote && pszQuote[0] != L'\0' ){	/* 先頭に付ける引用符 */
-				cmemBuf->AppendString( pszQuote );
+			// 引用部分を表す文字列（「> 」など）を付与する
+			if( quoteMark.length() > 0 ){
+				cmemBuf->AppendString( quoteMark.data() );
 			}
 
 			// 行番号を付与する
@@ -1996,7 +1997,7 @@ bool CEditView::GetSelectedData(
 				cmemBuf->AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
 				if( nIdxTo >= nLineLen ){
 					if( bAddCRLFWhenCopy ||  /* 折り返し行に改行を付けてコピー */
-						NULL != pszQuote || /* 先頭に付ける引用符 */
+						quoteMark.length() > 0 || /* 先頭に付ける引用符 */
 						bWithLineNumber 	/* 行番号を付与する */
 					){
 						//	Jul. 25, 2000 genta
@@ -2244,7 +2245,7 @@ void CEditView::CopySelectedAllLines(
 	/* 選択範囲をクリップボードにコピー */
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合は終了する */
-	if( !GetSelectedData( &cmemBuf, quotesMark.data(), bWithLineNumber, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
+	if( !GetSelectedData( &cmemBuf, quotesMark, bWithLineNumber, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 		ErrorBeep();
 		return;
 	}
