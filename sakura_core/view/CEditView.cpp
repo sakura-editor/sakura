@@ -1816,6 +1816,11 @@ bool CEditView::GetSelectedData(
 	EEolType		neweol				//	コピー後の改行コード EEolType::noneはコード保存
 )
 {
+	// 大前提
+	assert(m_pcEditDoc);
+
+	auto& cLayoutMgr = m_pcEditDoc->m_cLayoutMgr;
+
 	/* 範囲選択がされていない */
 	if( !GetSelectionInfo().IsTextSelected() ){
 		return false;
@@ -1841,7 +1846,7 @@ bool CEditView::GetSelectedData(
 		for( auto nLineNum = rcSel.top; nLineNum <= rcSel.bottom; ++nLineNum ){
 			const CLayout* pcLayout = nullptr;
 			CLogicInt nLineLen;
-			const auto* pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
+			const auto* pLine = cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
 			if( pcLayout == nullptr || pLine == nullptr ){
 				break;
 			}
@@ -1880,7 +1885,7 @@ bool CEditView::GetSelectedData(
 		for( auto nLineNum = rcSel.top; nLineNum <= rcSel.bottom; ++nLineNum ){
 			const CLayout* pcLayout = nullptr;
 			CLogicInt nLineLen;
-			const auto* pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
+			const auto* pLine = cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
 			if( pcLayout == nullptr || pLine == nullptr ){
 				break;
 			}
@@ -1916,7 +1921,7 @@ bool CEditView::GetSelectedData(
 
 		// 行番号を付与する場合の、行番号桁数
 		const size_t nLineNumCols = bWithLineNumber
-			? GetTextArea().DetectWidthOfLineNumberArea_calculate(&m_pcEditDoc->m_cLayoutMgr, true) + 1
+			? GetTextArea().DetectWidthOfLineNumberArea_calculate(&cLayoutMgr, true) + 1
 			: 0;
 
 		// 行番号整形バッファ(L" 1234:"を出力できるよう桁数+2桁分確保する)
@@ -1932,7 +1937,7 @@ bool CEditView::GetSelectedData(
 		for( auto nLineNum = GetSelectionInfo().m_sSelect.GetFrom().GetY2(); nLineNum <= GetSelectionInfo().m_sSelect.GetTo().y; ++nLineNum ){
 			const CLayout* pcLayout = nullptr;
 			CLogicInt nLineLen;
-			const auto *pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
+			const auto *pLine = cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
 			if( pLine == nullptr || pcLayout == nullptr){
 				break;
 			}
@@ -1991,7 +1996,7 @@ bool CEditView::GetSelectedData(
 		for( auto nLineNum = GetSelectionInfo().m_sSelect.GetFrom().GetY2(); nLineNum <= GetSelectionInfo().m_sSelect.GetTo().y; ++nLineNum ){
 			const CLayout* pcLayout = nullptr;
 			CLogicInt nLineLen;
-			const auto *pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
+			const auto *pLine = cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
 			if( pLine == nullptr || pcLayout == nullptr){
 				break;
 			}
