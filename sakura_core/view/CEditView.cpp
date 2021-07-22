@@ -1910,8 +1910,6 @@ bool CEditView::GetSelectedData(
 	}
 	// 通常の選択（線形選択）の場合
 	else{
-		cmemBuf->SetString(L"");
-
 		// パラメータの補正
 		// 引用記号または行番号を付与する場合、折り返し位置に改行を付ける
 		bAddCRLFWhenCopy |= quoteMark.length() > 0 || bWithLineNumber;
@@ -1927,55 +1925,64 @@ bool CEditView::GetSelectedData(
 		// 線形選択をコピーする場合は、改行コード変換を指示することができる謎仕様。
 		CEol appendEol(neweol);
 
-		//<< 2002/04/18 Azumaiya
-		//  これから貼り付けに使う領域の大まかなサイズを取得する。
-		//  大まかというレベルですので、サイズ計算の誤差が（容量を多く見積もる方に）結構出ると思いますが、
-		// まぁ、速さ優先ということで勘弁してください。
-		//  無駄な容量確保が出ていますので、もう少し精度を上げたいところですが・・・。
-		//  とはいえ、逆に小さく見積もることになってしまうと、かなり速度をとられる要因になってしまうので
-		// 困ってしまうところですが・・・。
-
-		int i = (Int)(GetSelectionInfo().m_sSelect.GetTo().y - GetSelectionInfo().m_sSelect.GetFrom().y);
-
-		// 先頭に引用符を付けるとき。
-		if ( quoteMark.length() > 0 )
-		{
-			nBufSize += quoteMark.length();
-		}
-
-		// 行番号を付ける。
-		if ( bWithLineNumber )
-		{
-			nBufSize += nLineNumCols;
-		}
-
-		// 改行コードについて。
-		if ( neweol == EEolType::auto_detect )
-		{
-			nBufSize += wcslen(WCODE::CRLF);
-		}
-		else
-		{
-			nBufSize += appendEol.GetLen();
-		}
-
-		// すべての行について同様の操作をするので、行数倍する。
-		nBufSize *= (Int)i;
-
-		// 実際の各行の長さ。
-		for (auto nLineNum = GetSelectionInfo().m_sSelect.GetFrom().y; nLineNum <= GetSelectionInfo().m_sSelect.GetTo().y; ++nLineNum) {
+		// データ計測部
+		for( auto nLineNum = GetSelectionInfo().m_sSelect.GetFrom().GetY2(); nLineNum <= GetSelectionInfo().m_sSelect.GetTo().y; ++nLineNum ){
 			const CLayout* pcLayout = nullptr;
 			CLogicInt nLineLen;
-			const auto* pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr(nLineNum, &nLineLen, &pcLayout);
-			if (pLine != nullptr && pcLayout != nullptr)
-			{
-				nBufSize += nLineLen;
+			const auto *pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
+			if( pLine == nullptr || pcLayout == nullptr){
+				break;
+			}
+
+			// 行内の桁位置を行頭からのオフセットに変換
+			const auto nIdxFrom = nLineNum == GetSelectionInfo().m_sSelect.GetFrom().y
+				? LineColumnToIndex(pcLayout, GetSelectionInfo().m_sSelect.GetFrom().x)
+				: CLogicInt(0);
+			const auto nIdxTo = nLineNum == GetSelectionInfo().m_sSelect.GetTo().y
+				? LineColumnToIndex(pcLayout, GetSelectionInfo().m_sSelect.GetTo().x)
+				: nLineLen;
+
+			// 引用部分を表す文字列（「> 」など）を付与する
+			if( quoteMark.length() > 0 ){
+				nBufSize += quoteMark.length();
+			}
+
+			// 行番号を付与する
+			if( bWithLineNumber ){
+				nBufSize += nLineNumCols + 2;
+			}
+
+			// 行データがなくなったら終了
+			if( nIdxFrom == nIdxTo ){
+				break;
+			}
+
+			// 行データが改行コードで終わっているとき
+			if( pcLayout->GetLayoutEol().IsValid() ){
+				nBufSize += nIdxTo - nIdxFrom - pcLayout->GetLayoutEol().GetLen();
+				nBufSize += neweol == EEolType::auto_detect
+					? pcLayout->GetLayoutEol().GetLen()
+					: appendEol.GetLen();
+			}
+			// 行データが改行コードで終わっていない、かつ、折り返し改行を付けるとき
+			else if (bAddCRLFWhenCopy){
+				nBufSize += nIdxTo - nIdxFrom;
+				nBufSize += neweol == EEolType::auto_detect
+					? m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetLen()
+					: appendEol.GetLen();
+			}
+			// 行データが改行コードで終わっていないとき
+			else{
+				nBufSize += nIdxTo - nIdxFrom;
 			}
 		}
 
-		// 調べた長さ分だけバッファを取っておく。
+		// メモリ確保
+		cmemBuf->Clear();
 		cmemBuf->AllocStringBuffer(nBufSize);
-		//>> 2002/04/18 Azumaiya
+		if( cmemBuf->capacity() < nBufSize ){
+			return false;
+		}
 
 		// データ取得部
 		for( auto nLineNum = GetSelectionInfo().m_sSelect.GetFrom().GetY2(); nLineNum <= GetSelectionInfo().m_sSelect.GetTo().y; ++nLineNum ){
