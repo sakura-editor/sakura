@@ -1912,6 +1912,10 @@ bool CEditView::GetSelectedData(
 	else{
 		cmemBuf->SetString(L"");
 
+		// パラメータの補正
+		// 引用記号または行番号を付与する場合、折り返し位置に改行を付ける
+		bAddCRLFWhenCopy |= quoteMark.length() > 0 || bWithLineNumber;
+
 		// 行番号を付与する場合の、行番号桁数
 		const size_t nLineNumCols = bWithLineNumber
 			? GetTextArea().DetectWidthOfLineNumberArea_calculate(&m_pcEditDoc->m_cLayoutMgr, true) + 1
@@ -1973,6 +1977,7 @@ bool CEditView::GetSelectedData(
 		cmemBuf->AllocStringBuffer(nBufSize);
 		//>> 2002/04/18 Azumaiya
 
+		// データ取得部
 		for( auto nLineNum = GetSelectionInfo().m_sSelect.GetFrom().GetY2(); nLineNum <= GetSelectionInfo().m_sSelect.GetTo().y; ++nLineNum ){
 			const CLayout* pcLayout = nullptr;
 			CLogicInt nLineLen;
@@ -1981,6 +1986,7 @@ bool CEditView::GetSelectedData(
 				break;
 			}
 
+			// 行内の桁位置を行頭からのオフセットに変換
 			const auto nIdxFrom = nLineNum == GetSelectionInfo().m_sSelect.GetFrom().y
 				? LineColumnToIndex(pcLayout, GetSelectionInfo().m_sSelect.GetFrom().x)
 				: CLogicInt(0);
@@ -1988,8 +1994,9 @@ bool CEditView::GetSelectedData(
 				? LineColumnToIndex(pcLayout, GetSelectionInfo().m_sSelect.GetTo().x)
 				: nLineLen;
 
-			if( nIdxTo - nIdxFrom == CLogicInt(0) ){
-				continue;
+			// 行データがなくなったら終了
+			if( nIdxFrom == nIdxTo ){
+				break;
 			}
 
 			// 引用部分を表す文字列（「> 」など）を付与する
@@ -2004,30 +2011,25 @@ bool CEditView::GetSelectedData(
 				cmemBuf->AppendString(lineNumBuf.data());
 			}
 
+			// 行データが改行コードで終わっているとき
 			if( pcLayout->GetLayoutEol().IsValid() ){
-				if( nIdxTo >= nLineLen ){
-					cmemBuf->AppendString( &pLine[nIdxFrom], nLineLen - 1 - nIdxFrom );
-					//	Jul. 25, 2000 genta
-					cmemBuf->AppendString( ( neweol == EEolType::auto_detect ) ?
-						(pcLayout->GetLayoutEol()).GetValue2() :	//	コード保存
-						appendEol.GetValue2() );			//	新規改行コード
-				}
-				else {
-					cmemBuf->AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
-				}
-			}else{
-				cmemBuf->AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
-				if( nIdxTo >= nLineLen ){
-					if( bAddCRLFWhenCopy ||  /* 折り返し行に改行を付けてコピー */
-						quoteMark.length() > 0 || /* 先頭に付ける引用符 */
-						bWithLineNumber 	/* 行番号を付与する */
-					){
-						//	Jul. 25, 2000 genta
-						cmemBuf->AppendString(( neweol == EEolType::auto_detect ) ?
-							m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetValue2() :	//	コード保存
-							appendEol.GetValue2() );		//	新規改行コード
-					}
-				}
+				// 行データの終端は改行コードの手前までにする
+				cmemBuf->AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom - pcLayout->GetLayoutEol().GetLen() );
+				// 変換指定に従い、改行コードを付与する
+				cmemBuf->AppendString(neweol == EEolType::auto_detect
+					? pcLayout->GetLayoutEol().GetValue2()	//	コード保存
+					: appendEol.GetValue2());				//	新規改行コード
+			}
+			// 行データが改行コードで終わっていない、かつ、折り返し改行を付けるとき
+			else if (bAddCRLFWhenCopy){
+				cmemBuf->AppendString(&pLine[nIdxFrom], nIdxTo - nIdxFrom);
+				cmemBuf->AppendString(neweol == EEolType::auto_detect
+					? m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetValue2()
+					: appendEol.GetValue2());		//	新規改行コード
+			}
+			// 行データが改行コードで終わっていないとき
+			else{
+				cmemBuf->AppendString(&pLine[nIdxFrom], nIdxTo - nIdxFrom);
 			}
 		}
 	}
