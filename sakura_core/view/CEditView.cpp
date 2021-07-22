@@ -1821,9 +1821,6 @@ bool CEditView::GetSelectedData(
 		return false;
 	}
 
-	// コピーに必要なバッファサイズ
-	size_t nBufSize = 0;
-
 	// 矩形選択中の場合
 	if( GetSelectionInfo().IsBoxSelecting() ){
 		/* 2点を対角とする矩形を求める */
@@ -1836,6 +1833,9 @@ bool CEditView::GetSelectedData(
 
 		// 行末判定関数に渡す設定値
 		const bool bEnableExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
+
+		// コピーに必要なバッファサイズ
+		size_t nBufSize = 0;
 
 		// データ計測部
 		for( auto nLineNum = rcSel.top; nLineNum <= rcSel.bottom; ++nLineNum ){
@@ -1924,6 +1924,9 @@ bool CEditView::GetSelectedData(
 
 		// 線形選択をコピーする場合は、改行コード変換を指示することができる謎仕様。
 		CEol appendEol(neweol);
+
+		// コピーに必要なバッファサイズ
+		size_t nBufSize = 0;
 
 		// データ計測部
 		for( auto nLineNum = GetSelectionInfo().m_sSelect.GetFrom().GetY2(); nLineNum <= GetSelectionInfo().m_sSelect.GetTo().y; ++nLineNum ){
