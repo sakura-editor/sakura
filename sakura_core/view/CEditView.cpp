@@ -1823,19 +1823,12 @@ bool CEditView::GetSelectedData(
 	CLogicInt		nIdxFrom;
 	CLogicInt		nIdxTo;
 	int				nRowNum;
-	int				nLineNumCols = 0;
 	const CLayout*	pcLayout;
 	CEol			appendEol( neweol );
 
 	/* 範囲選択がされていない */
 	if( !GetSelectionInfo().IsTextSelected() ){
 		return false;
-	}
-	if( bWithLineNumber ){	/* 行番号を付与する */
-		/* 行番号表示に必要な桁数を計算 */
-		// 2014.11.30 桁はレイアウト単位である必要がある
-		nLineNumCols = GetTextArea().DetectWidthOfLineNumberArea_calculate(&m_pcEditDoc->m_cLayoutMgr, true);
-		nLineNumCols += 1;
 	}
 
 	CLayoutRect			rcSel;
@@ -1907,6 +1900,14 @@ bool CEditView::GetSelectedData(
 	}
 	else{
 		cmemBuf->SetString(L"");
+
+		// 行番号を付与する場合の、行番号桁数
+		const size_t nLineNumCols = bWithLineNumber
+			? GetTextArea().DetectWidthOfLineNumberArea_calculate(&m_pcEditDoc->m_cLayoutMgr, true) + 1
+			: 0;
+
+		// 行番号整形バッファ(L" 1234:"を出力できるよう桁数+2桁分確保する)
+		std::wstring lineNumBuf(nLineNumCols + 2, wchar_t());
 
 		//<< 2002/04/18 Azumaiya
 		//  これから貼り付けに使う領域の大まかなサイズを取得する。
@@ -1985,7 +1986,9 @@ bool CEditView::GetSelectedData(
 
 			// 行番号を付与する
 			if( bWithLineNumber ){
-				cmemBuf->AppendStringF(L"% *d:", nLineNumCols, (int)(Int)(nLineNum + 1));
+				// 行番号は L" 1234:" 形式で出力する
+				::swprintf_s(lineNumBuf.data(), lineNumBuf.capacity(), L"% *d:", static_cast<uint32_t>(nLineNumCols), (int)(Int)(nLineNum + 1));
+				cmemBuf->AppendString(lineNumBuf.data());
 			}
 
 			if( pcLayout->GetLayoutEol().IsValid() ){
