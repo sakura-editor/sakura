@@ -1819,8 +1819,6 @@ bool CEditView::GetSelectedData(
 	const wchar_t*	pLine;
 	CLogicInt		nLineLen;
 	CLayoutInt		nLineNum;
-	CLogicInt		nIdxFrom;
-	CLogicInt		nIdxTo;
 	const CLayout*	pcLayout;
 	CEol			appendEol( neweol );
 
@@ -1856,8 +1854,8 @@ bool CEditView::GetSelectedData(
 			if( NULL != pLine )
 			{
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
-				nIdxFrom	= LineColumnToIndex( pcLayout, rcSel.left  );
-				nIdxTo		= LineColumnToIndex( pcLayout, rcSel.right );
+				const auto nIdxFrom		= LineColumnToIndex( pcLayout, rcSel.left  );
+				const auto nIdxTo		= LineColumnToIndex( pcLayout, rcSel.right );
 
 				nBufSize += nIdxTo - nIdxFrom;
 			}
@@ -1872,8 +1870,8 @@ bool CEditView::GetSelectedData(
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
 			if( NULL != pLine ){
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
-				nIdxFrom	= LineColumnToIndex( pcLayout, rcSel.left  );
-				nIdxTo		= LineColumnToIndex( pcLayout, rcSel.right );
+				const auto nIdxFrom		= LineColumnToIndex( pcLayout, rcSel.left  );
+				const auto nIdxTo		= LineColumnToIndex( pcLayout, rcSel.right );
 				//2002.02.08 hor
 				// pLineがNULLのとき(矩形エリアの端がEOFのみの行を含むとき)は以下を処理しない
 				if( nIdxTo - nIdxFrom > 0 ){
@@ -1950,18 +1948,14 @@ bool CEditView::GetSelectedData(
 			if( NULL == pLine ){
 				break;
 			}
-			if( nLineNum == GetSelectionInfo().m_sSelect.GetFrom().y ){
-				/* 指定された桁に対応する行のデータ内の位置を調べる */
-				nIdxFrom = LineColumnToIndex( pcLayout, GetSelectionInfo().m_sSelect.GetFrom().GetX2() );
-			}else{
-				nIdxFrom = CLogicInt(0);
-			}
-			if( nLineNum == GetSelectionInfo().m_sSelect.GetTo().y ){
-				/* 指定された桁に対応する行のデータ内の位置を調べる */
-				nIdxTo = LineColumnToIndex( pcLayout, GetSelectionInfo().m_sSelect.GetTo().GetX2() );
-			}else{
-				nIdxTo = nLineLen;
-			}
+
+			const auto nIdxFrom = nLineNum == GetSelectionInfo().m_sSelect.GetFrom().y
+				? LineColumnToIndex(pcLayout, GetSelectionInfo().m_sSelect.GetFrom().x)
+				: CLogicInt(0);
+			const auto nIdxTo = nLineNum == GetSelectionInfo().m_sSelect.GetTo().y
+				? LineColumnToIndex(pcLayout, GetSelectionInfo().m_sSelect.GetTo().x)
+				: nLineLen;
+
 			if( nIdxTo - nIdxFrom == CLogicInt(0) ){
 				continue;
 			}
