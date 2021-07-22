@@ -2200,10 +2200,15 @@ int CEditView::IsCurrentPositionSelectedTEST(
 //                      クリップボード                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/* 選択範囲内の全行をクリップボードにコピーする */
+/*! 選択範囲内の全行をクリップボードにコピーする
+ *
+ * 選択範囲を行全体に拡張してエディタ表示を更新し、選択範囲のコピーを実行する。
+ * 選択範囲を拡張するので、初期状態でテキストが選択されている必要はないように思われるが、
+ * 初期状態でテキストが選択されてない場合はなぜか失敗する。
+ */
 void CEditView::CopySelectedAllLines(
-	const wchar_t*	pszQuote,		//!< 先頭に付ける引用符
-	BOOL			bWithLineNumber	//!< 行番号を付与する
+	bool				bWithLineNumber,	//!< [in] 行番号を付与するか
+	std::wstring_view	quotesMark			//!< [in,opt] 引用部分を表す文字列（「> 」など）
 )
 {
 	CNativeW	cmemBuf;
@@ -2239,7 +2244,7 @@ void CEditView::CopySelectedAllLines(
 	/* 選択範囲をクリップボードにコピー */
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合は終了する */
-	if( !GetSelectedData( &cmemBuf, pszQuote, bWithLineNumber, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
+	if( !GetSelectedData( &cmemBuf, quotesMark.data(), bWithLineNumber, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 		ErrorBeep();
 		return;
 	}

@@ -636,34 +636,20 @@ void CViewCommander::Command_ADDTAIL(
 //選択範囲内全行コピー
 void CViewCommander::Command_COPYLINES( void )
 {
-	/* 選択範囲内の全行をクリップボードにコピーする */
-	m_pCommanderView->CopySelectedAllLines(
-		NULL,	/* 引用符 */
-		FALSE	/* 行番号を付与する */
-	);
-	return;
+	m_pCommanderView->CopySelectedAllLines( false );
 }
 
 //選択範囲内全行引用符付きコピー
 void CViewCommander::Command_COPYLINESASPASSAGE( void )
 {
-	/* 選択範囲内の全行をクリップボードにコピーする */
-	m_pCommanderView->CopySelectedAllLines(
-		GetDllShareData().m_Common.m_sFormat.m_szInyouKigou,	/* 引用符 */
-		FALSE 									/* 行番号を付与する */
-	);
-	return;
+	std::wstring_view inyouKigou( GetDllShareData().m_Common.m_sFormat.m_szInyouKigou );
+	m_pCommanderView->CopySelectedAllLines( false, inyouKigou );
 }
 
 //選択範囲内全行行番号付きコピー
 void CViewCommander::Command_COPYLINESWITHLINENUMBER( void )
 {
-	/* 選択範囲内の全行をクリップボードにコピーする */
-	m_pCommanderView->CopySelectedAllLines(
-		NULL,	/* 引用符 */
-		TRUE	/* 行番号を付与する */
-	);
-	return;
+	m_pCommanderView->CopySelectedAllLines( true );
 }
 
 static bool AppendHTMLColor(
