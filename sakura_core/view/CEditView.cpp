@@ -1802,7 +1802,7 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 */
 bool CEditView::GetSelectedDataSimple( CNativeW &cmemBuf )
 {
-	return GetSelectedData(cmemBuf, L"", FALSE, false, EEolType::auto_detect);
+	return GetSelectedData(cmemBuf, L"", false, false, EEolType::auto_detect);
 }
 
 /* 選択範囲のデータを取得
@@ -1811,7 +1811,7 @@ bool CEditView::GetSelectedDataSimple( CNativeW &cmemBuf )
 bool CEditView::GetSelectedData(
 	CNativeW&			cmemBuf,			//!< [out] バッファ
 	std::wstring_view	quoteMark,			//!< [in] 引用部分を表す文字列（「> 」など）
-	BOOL			bWithLineNumber,	/* 行番号を付与する */
+	bool				bWithLineNumber,	//!< [in] 行番号を付与するか
 	bool			bAddCRLFWhenCopy,	/* 折り返し位置で改行記号を入れる */
 	EEolType		neweol				//	コピー後の改行コード EEolType::noneはコード保存
 )
