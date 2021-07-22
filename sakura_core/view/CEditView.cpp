@@ -1821,19 +1821,24 @@ bool CEditView::GetSelectedData(
 
 	auto& cLayoutMgr = m_pcEditDoc->m_cLayoutMgr;
 
+	const auto& cSelection = GetSelectionInfo();
+
 	/* 範囲選択がされていない */
-	if( !GetSelectionInfo().IsTextSelected() ){
+	if( !cSelection.IsTextSelected() ){
 		return false;
 	}
 
 	// 矩形選択中の場合
-	if( GetSelectionInfo().IsBoxSelecting() ){
+	if( cSelection.IsBoxSelecting() ){
+		const auto ptSelectFrom = cSelection.m_sSelect.GetFrom();
+		const auto ptSelectTo = cSelection.m_sSelect.GetTo();
+
 		/* 2点を対角とする矩形を求める */
 		CLayoutRect rcSel;
 		TwoPointToRect(
 			&rcSel,
-			GetSelectionInfo().m_sSelect.GetFrom(),		// 範囲選択開始
-			GetSelectionInfo().m_sSelect.GetTo()		// 範囲選択終了
+			ptSelectFrom,		// 範囲選択開始
+			ptSelectTo		// 範囲選択終了
 		);
 
 		// 行末判定関数に渡す設定値
@@ -1933,8 +1938,11 @@ bool CEditView::GetSelectedData(
 		// コピーに必要なバッファサイズ
 		size_t nBufSize = 0;
 
+		const auto ptSelectFrom = cSelection.m_sSelect.GetFrom();
+		const auto ptSelectTo = cSelection.m_sSelect.GetTo();
+
 		// データ計測部
-		for( auto nLineNum = GetSelectionInfo().m_sSelect.GetFrom().GetY2(); nLineNum <= GetSelectionInfo().m_sSelect.GetTo().y; ++nLineNum ){
+		for( auto nLineNum = ptSelectFrom.y; nLineNum <= ptSelectTo.y; ++nLineNum ){
 			const CLayout* pcLayout = nullptr;
 			CLogicInt nLineLen;
 			const auto *pLine = cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
@@ -1943,11 +1951,11 @@ bool CEditView::GetSelectedData(
 			}
 
 			// 行内の桁位置を行頭からのオフセットに変換
-			const auto nIdxFrom = nLineNum == GetSelectionInfo().m_sSelect.GetFrom().y
-				? LineColumnToIndex(pcLayout, GetSelectionInfo().m_sSelect.GetFrom().x)
+			const auto nIdxFrom = nLineNum == ptSelectFrom.y
+				? LineColumnToIndex(pcLayout, ptSelectFrom.x)
 				: CLogicInt(0);
-			const auto nIdxTo = nLineNum == GetSelectionInfo().m_sSelect.GetTo().y
-				? LineColumnToIndex(pcLayout, GetSelectionInfo().m_sSelect.GetTo().x)
+			const auto nIdxTo = nLineNum == ptSelectTo.y
+				? LineColumnToIndex(pcLayout, ptSelectTo.x)
 				: nLineLen;
 
 			// 引用部分を表す文字列（「> 」など）を付与する
@@ -1993,7 +2001,7 @@ bool CEditView::GetSelectedData(
 		}
 
 		// データ取得部
-		for( auto nLineNum = GetSelectionInfo().m_sSelect.GetFrom().GetY2(); nLineNum <= GetSelectionInfo().m_sSelect.GetTo().y; ++nLineNum ){
+		for( auto nLineNum = ptSelectFrom.y; nLineNum <= ptSelectTo.y; ++nLineNum ){
 			const CLayout* pcLayout = nullptr;
 			CLogicInt nLineLen;
 			const auto *pLine = cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
@@ -2002,11 +2010,11 @@ bool CEditView::GetSelectedData(
 			}
 
 			// 行内の桁位置を行頭からのオフセットに変換
-			const auto nIdxFrom = nLineNum == GetSelectionInfo().m_sSelect.GetFrom().y
-				? LineColumnToIndex(pcLayout, GetSelectionInfo().m_sSelect.GetFrom().x)
+			const auto nIdxFrom = nLineNum == ptSelectFrom.y
+				? LineColumnToIndex(pcLayout, ptSelectFrom.x)
 				: CLogicInt(0);
-			const auto nIdxTo = nLineNum == GetSelectionInfo().m_sSelect.GetTo().y
-				? LineColumnToIndex(pcLayout, GetSelectionInfo().m_sSelect.GetTo().x)
+			const auto nIdxTo = nLineNum == ptSelectTo.y
+				? LineColumnToIndex(pcLayout, ptSelectTo.x)
 				: nLineLen;
 
 			// 行データがなくなったら終了
