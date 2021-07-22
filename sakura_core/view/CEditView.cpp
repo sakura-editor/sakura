@@ -1812,7 +1812,7 @@ bool CEditView::GetSelectedData(
 	CNativeW&			cmemBuf,			//!< [out] バッファ
 	std::wstring_view	quoteMark,			//!< [in] 引用部分を表す文字列（「> 」など）
 	bool				bWithLineNumber,	//!< [in] 行番号を付与するか
-	bool			bAddCRLFWhenCopy,	/* 折り返し位置で改行記号を入れる */
+	bool				bInsertEolAtWrap,	//!< [in] 折り返し位置で改行記号を入れるか
 	EEolType		neweol				//	コピー後の改行コード EEolType::noneはコード保存
 )
 {
@@ -1922,7 +1922,7 @@ bool CEditView::GetSelectedData(
 	else{
 		// パラメータの補正
 		// 引用記号または行番号を付与する場合、折り返し位置に改行を付ける
-		bAddCRLFWhenCopy |= quoteMark.length() > 0 || bWithLineNumber;
+		bInsertEolAtWrap |= quoteMark.length() > 0 || bWithLineNumber;
 
 		// 行番号を付与する場合の、行番号桁数
 		const size_t nLineNumCols = bWithLineNumber
@@ -1981,7 +1981,7 @@ bool CEditView::GetSelectedData(
 					: appendEol.GetLen();
 			}
 			// 行データが改行コードで終わっていない、かつ、折り返し改行を付けるとき
-			else if (bAddCRLFWhenCopy){
+			else if (bInsertEolAtWrap){
 				nBufSize += nIdxTo - nIdxFrom;
 				nBufSize += neweol == EEolType::auto_detect
 					? m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetLen()
@@ -2044,7 +2044,7 @@ bool CEditView::GetSelectedData(
 					: appendEol.GetValue2());				//	新規改行コード
 			}
 			// 行データが改行コードで終わっていない、かつ、折り返し改行を付けるとき
-			else if (bAddCRLFWhenCopy){
+			else if (bInsertEolAtWrap){
 				cmemBuf.AppendString(&pLine[nIdxFrom], nIdxTo - nIdxFrom);
 				cmemBuf.AppendString(neweol == EEolType::auto_detect
 					? m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetValue2()
