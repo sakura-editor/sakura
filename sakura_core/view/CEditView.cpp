@@ -1818,7 +1818,6 @@ bool CEditView::GetSelectedData(
 {
 	const wchar_t*	pLine;
 	CLogicInt		nLineLen;
-	CLayoutInt		nLineNum;
 	const CLayout*	pcLayout;
 
 	/* 範囲選択がされていない */
@@ -1865,7 +1864,7 @@ bool CEditView::GetSelectedData(
 		//>> 2002/04/18 Azumaiya
 
 		bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
-		for( nLineNum = rcSel.top; nLineNum <= rcSel.bottom; ++nLineNum ){
+		for( auto nLineNum = rcSel.top; nLineNum <= rcSel.bottom; ++nLineNum ){
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
 			if( NULL != pLine ){
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
@@ -1945,7 +1944,7 @@ bool CEditView::GetSelectedData(
 		cmemBuf->AllocStringBuffer(nBufSize);
 		//>> 2002/04/18 Azumaiya
 
-		for( nLineNum = GetSelectionInfo().m_sSelect.GetFrom().GetY2(); nLineNum <= GetSelectionInfo().m_sSelect.GetTo().y; ++nLineNum ){
+		for( auto nLineNum = GetSelectionInfo().m_sSelect.GetFrom().GetY2(); nLineNum <= GetSelectionInfo().m_sSelect.GetTo().y; ++nLineNum ){
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
 			if( NULL == pLine ){
 				break;
