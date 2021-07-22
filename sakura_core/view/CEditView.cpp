@@ -1824,7 +1824,8 @@ bool CEditView::GetSelectedData(
 	// コピーに必要なバッファサイズ
 	size_t nBufSize = 0;
 
-	if( GetSelectionInfo().IsBoxSelecting() ){	/* 矩形範囲選択中 */
+	// 矩形選択中の場合
+	if( GetSelectionInfo().IsBoxSelecting() ){
 		/* 2点を対角とする矩形を求める */
 		CLayoutRect rcSel;
 		TwoPointToRect(
@@ -1883,6 +1884,7 @@ bool CEditView::GetSelectedData(
 			cmemBuf->AppendString( WCODE::CRLF );
 		}
 	}
+	// 通常の選択（線形選択）の場合
 	else{
 		cmemBuf->SetString(L"");
 
