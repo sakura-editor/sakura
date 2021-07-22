@@ -1830,10 +1830,9 @@ bool CEditView::GetSelectedData(
 		return false;
 	}
 
-	CLayoutRect			rcSel;
-
 	if( GetSelectionInfo().IsBoxSelecting() ){	/* 矩形範囲選択中 */
 		/* 2点を対角とする矩形を求める */
+		CLayoutRect rcSel;
 		TwoPointToRect(
 			&rcSel,
 			GetSelectionInfo().m_sSelect.GetFrom(),	// 範囲選択開始
