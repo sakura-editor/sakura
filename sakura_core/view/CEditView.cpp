@@ -1830,40 +1830,51 @@ bool CEditView::GetSelectedData(
 		CLayoutRect rcSel;
 		TwoPointToRect(
 			&rcSel,
-			GetSelectionInfo().m_sSelect.GetFrom(),	// 範囲選択開始
+			GetSelectionInfo().m_sSelect.GetFrom(),		// 範囲選択開始
 			GetSelectionInfo().m_sSelect.GetTo()		// 範囲選択終了
 		);
-		cmemBuf->SetString(L"");
 
 		// 行末判定関数に渡す設定値
 		const bool bEnableExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
-		//<< 2002/04/18 Azumaiya
-		// サイズ分だけ要領をとっておく。
-		// 結構大まかに見ています。
-		CLayoutInt i = rcSel.bottom - rcSel.top + 1; // 2013.05.06 「+1」
-
-		// 最初に行数分の改行量を計算してしまう。
-		nBufSize = wcslen(WCODE::CRLF) * (Int)i;
-
-		// 実際の文字量。
+		// データ計測部
 		for( auto nLineNum = rcSel.top; nLineNum <= rcSel.bottom; ++nLineNum ){
 			const CLayout* pcLayout = nullptr;
 			CLogicInt nLineLen;
 			const auto* pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
-			if( pLine != nullptr && pcLayout != nullptr )
-			{
-				/* 指定された桁に対応する行のデータ内の位置を調べる */
-				const auto nIdxFrom		= LineColumnToIndex( pcLayout, rcSel.left  );
-				const auto nIdxTo		= LineColumnToIndex( pcLayout, rcSel.right );
-
-				nBufSize += nIdxTo - nIdxFrom;
+			if( pcLayout == nullptr || pLine == nullptr ){
+				break;
 			}
+
+			// 行内の桁位置を行頭からのオフセットに変換
+			const auto nIdxFrom		= LineColumnToIndex( pcLayout, rcSel.left );
+			const auto nIdxTo		= LineColumnToIndex( pcLayout, rcSel.right );
+
+			// 行データが1文字以上ある場合
+			if( nIdxFrom < nIdxTo ){
+				// 選択範囲が改行コードで終わっているとき
+				if( WCODE::IsLineDelimiter( pLine[nIdxTo - 1], bEnableExtEol ) ){
+					// 行データの終端は改行コードの手前までにする
+					CEol cEol;
+					cEol.SetTypeByString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
+					nBufSize += nIdxTo - nIdxFrom - cEol.GetLen();
+				}
+				// 選択範囲が改行コードで終わっていないとき
+				else {
+					nBufSize += nIdxTo - nIdxFrom;
+				}
+			}
+
+			// 矩形選択のコピー時は改行コード固定。
+			nBufSize += 2; // countof(WCODE::CRLF) - 1
 		}
 
-		// 大まかに見た容量を元にサイズをあらかじめ確保しておく。
+		// メモリ確保
+		cmemBuf->Clear();
 		cmemBuf->AllocStringBuffer(nBufSize);
-		//>> 2002/04/18 Azumaiya
+		if( cmemBuf->capacity() < nBufSize ){
+			return false;
+		}
 
 		// データ取得部
 		for( auto nLineNum = rcSel.top; nLineNum <= rcSel.bottom; ++nLineNum ){
