@@ -1899,9 +1899,6 @@ bool GetBoxSelectedData(
 	const Func& LineColumnsToIndexes
 )
 {
-	// コピーに必要なバッファサイズ
-	size_t nBufSize = 0;
-
 	// 大前提
 	assert(m_pcEditDoc);
 
@@ -1943,8 +1940,6 @@ bool CEditView::_GetBoxSelectedData( CNativeW& cmemBuf, const CViewSelect& cSele
 {
 	// 大前提
 	assert(m_pcEditDoc);
-
-	const auto& cLayoutMgr = m_pcEditDoc->m_cLayoutMgr;
 
 	/* 2点を対角とする矩形を求める */
 	CLayoutRect rcSel;
