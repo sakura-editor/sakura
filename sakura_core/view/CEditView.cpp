@@ -1890,6 +1890,55 @@ size_t CountBoxSelectedData(
 	return nBufSize;
 }
 
+template<class Func = std::function<std::tuple<CLogicXInt, CLogicXInt>(CLayoutInt, const CLayout*)>>
+bool GetBoxSelectedData(
+	CNativeW& cmemBuf,
+	const CEditDoc* m_pcEditDoc,
+	const CLayoutRect& rcSel,
+	bool bEnableExtEol,
+	const Func& LineColumnsToIndexes
+)
+{
+	// コピーに必要なバッファサイズ
+	size_t nBufSize = 0;
+
+	// 大前提
+	assert(m_pcEditDoc);
+
+	const auto& cLayoutMgr = m_pcEditDoc->m_cLayoutMgr;
+
+	// データ取得部
+	for( auto nLineNum = rcSel.top; nLineNum <= rcSel.bottom; ++nLineNum ){
+		const CLayout* pcLayout = nullptr;
+		CLogicInt nLineLen;
+		const auto* pLine = cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
+		if( pcLayout == nullptr || pLine == nullptr ){
+			break;
+		}
+
+		// 行データが1文字以上ある場合
+		if (auto [nIdxFrom, nIdxTo] = LineColumnsToIndexes(nLineNum, pcLayout);
+			nIdxFrom < nIdxTo) {
+			// 選択範囲が改行コードで終わっているとき
+			if( WCODE::IsLineDelimiter(pLine[nIdxTo - 1], bEnableExtEol) ){
+				// 行データの終端は改行コードの手前までにする
+				CEol cEol;
+				cEol.SetTypeByString( &pLine[nIdxFrom], nIdxTo - nIdxFrom);
+				cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom - cEol.GetLen() );
+			}
+			// 選択範囲が改行コードで終わっていないとき
+			else{
+				cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
+			}
+		}
+
+		// 矩形選択のコピー時は改行コード固定。
+		cmemBuf.AppendString(WCODE::CRLF);
+	}
+
+	return true;
+}
+
 bool CEditView::_GetBoxSelectedData( CNativeW& cmemBuf, const CViewSelect& cSelection, bool bEnableExtEol ) const
 {
 	// 大前提
@@ -1923,36 +1972,8 @@ bool CEditView::_GetBoxSelectedData( CNativeW& cmemBuf, const CViewSelect& cSele
 		return false;
 	}
 
-	// データ取得部
-	for( auto nLineNum = rcSel.top; nLineNum <= rcSel.bottom; ++nLineNum ){
-		const CLayout* pcLayout = nullptr;
-		CLogicInt nLineLen;
-		const auto* pLine = cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
-		if( pcLayout == nullptr || pLine == nullptr ){
-			break;
-		}
-
-		// 行データが1文字以上ある場合
-		if (auto [nIdxFrom, nIdxTo] = LineColumnsToIndexes(nLineNum, pcLayout);
-			nIdxFrom < nIdxTo) {
-			// 選択範囲が改行コードで終わっているとき
-			if( WCODE::IsLineDelimiter(pLine[nIdxTo - 1], bEnableExtEol) ){
-				// 行データの終端は改行コードの手前までにする
-				CEol cEol;
-				cEol.SetTypeByString( &pLine[nIdxFrom], nIdxTo - nIdxFrom);
-				cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom - cEol.GetLen() );
-			}
-			// 選択範囲が改行コードで終わっていないとき
-			else{
-				cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
-			}
-		}
-
-		// 矩形選択のコピー時は改行コード固定。
-		cmemBuf.AppendString(WCODE::CRLF);
-	}
-
-	return true;
+	// データ取得
+	return GetBoxSelectedData( cmemBuf, m_pcEditDoc, rcSel, bEnableExtEol, LineColumnsToIndexes );
 }
 
 template<class Func = std::function<std::tuple<CLogicXInt, CLogicXInt>(CLayoutInt, const CLayout*)>>
