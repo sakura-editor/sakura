@@ -1830,15 +1830,12 @@ bool CEditView::GetSelectedData(
 
 	// 矩形選択中の場合
 	if( cSelection.IsBoxSelecting() ){
-		const auto ptSelectFrom = cSelection.m_sSelect.GetFrom();
-		const auto ptSelectTo = cSelection.m_sSelect.GetTo();
-
 		/* 2点を対角とする矩形を求める */
 		CLayoutRect rcSel;
 		TwoPointToRect(
 			&rcSel,
-			ptSelectFrom,		// 範囲選択開始
-			ptSelectTo		// 範囲選択終了
+			cSelection.m_sSelect.GetFrom(),		// 範囲選択開始
+			cSelection.m_sSelect.GetTo()		// 範囲選択終了
 		);
 
 		// 行末判定関数に渡す設定値
