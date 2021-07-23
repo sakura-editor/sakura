@@ -1958,8 +1958,7 @@ bool CEditView::_GetBoxSelectedData( CNativeW& cmemBuf, const CViewSelect& cSele
 template<class Func = std::function<std::tuple<CLogicXInt, CLogicXInt>(CLayoutInt, const CLayout*)>>
 size_t CountLinearSelectedData(
 	const CEditDoc* m_pcEditDoc,
-	const CLayoutPoint& ptSelectFrom,
-	const CLayoutPoint& ptSelectTo,
+	const CViewSelect& cSelection,
 	std::wstring_view quoteMark,
 	size_t nLineNumCols,
 	bool bInsertEolAtWrap,
@@ -1974,6 +1973,8 @@ size_t CountLinearSelectedData(
 	assert(m_pcEditDoc);
 
 	const auto& cLayoutMgr = m_pcEditDoc->m_cLayoutMgr;
+	const auto ptSelectFrom = cSelection.m_sSelect.GetFrom();
+	const auto ptSelectTo = cSelection.m_sSelect.GetTo();
 
 	// データ計測部
 	for( auto nLineNum = ptSelectFrom.y; nLineNum <= ptSelectTo.y; ++nLineNum ){
@@ -2055,7 +2056,7 @@ bool CEditView::_GetLinearSelectedData( CNativeW& cmemBuf, const CViewSelect& cS
 	};
 
 	// コピーに必要なバッファサイズを計測
-	const size_t nBufSize = CountLinearSelectedData( m_pcEditDoc, ptSelectFrom, ptSelectTo, quoteMark, nLineNumCols, bInsertEolAtWrap, newEolType, LineColumnsToIndexes );
+	const size_t nBufSize = CountLinearSelectedData( m_pcEditDoc, cSelection, quoteMark, nLineNumCols, bInsertEolAtWrap, newEolType, LineColumnsToIndexes );
 
 	// メモリ確保
 	cmemBuf.Clear();
