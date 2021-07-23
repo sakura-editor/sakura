@@ -1814,7 +1814,7 @@ bool CEditView::GetSelectedData(
 	bool				bWithLineNumber,	//!< [in] 行番号を付与するか
 	bool				bInsertEolAtWrap,	//!< [in] 折り返し位置で改行記号を入れるか
 	EEolType			newEolType			//!< [in] 改行コード書き替えモード時の代替改行コード（EEolType::noneはコード保存）
-)
+) const
 {
 	// 大前提
 	assert(m_pcEditDoc);
@@ -1839,7 +1839,7 @@ bool CEditView::GetSelectedData(
 	}
 }
 
-bool CEditView::_GetBoxSelectedData( CNativeW& cmemBuf, const CViewSelect& cSelection, bool bEnableExtEol )
+bool CEditView::_GetBoxSelectedData( CNativeW& cmemBuf, const CViewSelect& cSelection, bool bEnableExtEol ) const
 {
 	// 大前提
 	assert(m_pcEditDoc);
@@ -1931,7 +1931,7 @@ bool CEditView::_GetBoxSelectedData( CNativeW& cmemBuf, const CViewSelect& cSele
 	return true;
 }
 
-bool CEditView::_GetLinearSelectedData( CNativeW& cmemBuf, const CViewSelect& cSelection, std::wstring_view quoteMark, bool bWithLineNumber, bool bInsertEolAtWrap, EEolType newEolType )
+bool CEditView::_GetLinearSelectedData( CNativeW& cmemBuf, const CViewSelect& cSelection, std::wstring_view quoteMark, bool bWithLineNumber, bool bInsertEolAtWrap, EEolType newEolType ) const
 {
 	// 大前提
 	assert(m_pcEditDoc);
