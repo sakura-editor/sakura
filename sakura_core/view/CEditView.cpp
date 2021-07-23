@@ -1842,11 +1842,12 @@ bool CEditView::GetSelectedData(
 	}
 }
 
-static size_t CountBoxSelectedData(
+template<class Func = std::function<std::tuple<CLogicXInt, CLogicXInt>(CLayoutInt, const CLayout*)>>
+size_t CountBoxSelectedData(
 	const CEditDoc* m_pcEditDoc,
 	const CLayoutRect& rcSel,
 	bool bEnableExtEol,
-	std::function<std::tuple<CLogicXInt, CLogicXInt>(CLayoutInt, const CLayout*)> LineColumnsToIndexes
+	const Func& LineColumnsToIndexes
 )
 {
 	// コピーに必要なバッファサイズ
@@ -1954,7 +1955,8 @@ bool CEditView::_GetBoxSelectedData( CNativeW& cmemBuf, const CViewSelect& cSele
 	return true;
 }
 
-static size_t CountLinearSelectedData(
+template<class Func = std::function<std::tuple<CLogicXInt, CLogicXInt>(CLayoutInt, const CLayout*)>>
+size_t CountLinearSelectedData(
 	const CEditDoc* m_pcEditDoc,
 	const CLayoutPoint& ptSelectFrom,
 	const CLayoutPoint& ptSelectTo,
@@ -1962,7 +1964,7 @@ static size_t CountLinearSelectedData(
 	size_t nLineNumCols,
 	bool bInsertEolAtWrap,
 	EEolType newEolType,
-	std::function<std::tuple<CLogicXInt, CLogicXInt>(CLayoutInt, const CLayout*)> LineColumnsToIndexes
+	const Func& LineColumnsToIndexes
 )
 {
 	// コピーに必要なバッファサイズ
