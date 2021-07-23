@@ -1813,7 +1813,7 @@ bool CEditView::GetSelectedData(
 	std::wstring_view	quoteMark,			//!< [in] 引用部分を表す文字列（「> 」など）
 	bool				bWithLineNumber,	//!< [in] 行番号を付与するか
 	bool				bInsertEolAtWrap,	//!< [in] 折り返し位置で改行記号を入れるか
-	EEolType			newEolType			//!< [in] 改行コード書き替えモードの変更後改行コード（EEolType::noneはコード保存）
+	EEolType			newEolType			//!< [in] 改行コード書き替えモード時の代替改行コード（EEolType::noneはコード保存）
 )
 {
 	// 大前提
