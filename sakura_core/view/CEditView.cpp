@@ -1808,6 +1808,18 @@ bool CEditView::GetSelectedDataSimple( CNativeW &cmemBuf ) const
 	return GetSelectedData( cmemBuf );
 }
 
+/*!
+ *  選択範囲のデータを取得するクラス
+ */
+class CGetSelectedData
+{
+public:
+	virtual bool GetData( CNativeW& cmemBuf ) const = 0;
+
+protected:
+	virtual size_t _CountData() const = 0;
+};
+
 /* 選択範囲のデータを取得
 	正常時はTRUE,範囲未選択の場合はFALSEを返す
 */
