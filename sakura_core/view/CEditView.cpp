@@ -1819,7 +1819,7 @@ bool CEditView::GetSelectedData(
 	// 大前提
 	assert(m_pcEditDoc);
 
-	auto& cLayoutMgr = m_pcEditDoc->m_cLayoutMgr;
+	const auto& cLayoutMgr = m_pcEditDoc->m_cLayoutMgr;
 
 	const auto& cSelection = GetSelectionInfo();
 
