@@ -1819,8 +1819,6 @@ bool CEditView::GetSelectedData(
 	// 大前提
 	assert(m_pcEditDoc);
 
-	const auto& cLayoutMgr = m_pcEditDoc->m_cLayoutMgr;
-
 	const auto& cSelection = GetSelectionInfo();
 
 	/* 範囲選択がされていない */
@@ -1830,227 +1828,249 @@ bool CEditView::GetSelectedData(
 
 	// 矩形選択中の場合
 	if( cSelection.IsBoxSelecting() ){
-		/* 2点を対角とする矩形を求める */
-		CLayoutRect rcSel;
-		TwoPointToRect(
-			&rcSel,
-			cSelection.m_sSelect.GetFrom(),		// 範囲選択開始
-			cSelection.m_sSelect.GetTo()		// 範囲選択終了
-		);
-
 		// 行末判定関数に渡す設定値
 		const bool bEnableExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
-		// コピーに必要なバッファサイズ
-		size_t nBufSize = 0;
-
-		// データ計測部
-		for( auto nLineNum = rcSel.top; nLineNum <= rcSel.bottom; ++nLineNum ){
-			const CLayout* pcLayout = nullptr;
-			CLogicInt nLineLen;
-			const auto* pLine = cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
-			if( pcLayout == nullptr || pLine == nullptr ){
-				break;
-			}
-
-			// 行内の桁位置を行頭からのオフセットに変換
-			const auto nIdxFrom		= LineColumnToIndex( pcLayout, rcSel.left );
-			const auto nIdxTo		= LineColumnToIndex( pcLayout, rcSel.right );
-
-			// 行データが1文字以上ある場合
-			if( nIdxFrom < nIdxTo ){
-				// 選択範囲が改行コードで終わっているとき
-				if( WCODE::IsLineDelimiter( pLine[nIdxTo - 1], bEnableExtEol ) ){
-					// 行データの終端は改行コードの手前までにする
-					CEol cEol;
-					cEol.SetTypeByString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
-					nBufSize += nIdxTo - nIdxFrom - cEol.GetLen();
-				}
-				// 選択範囲が改行コードで終わっていないとき
-				else {
-					nBufSize += nIdxTo - nIdxFrom;
-				}
-			}
-
-			// 矩形選択のコピー時は改行コード固定。
-			nBufSize += 2; // countof(WCODE::CRLF) - 1
-		}
-
-		// メモリ確保
-		cmemBuf.Clear();
-		cmemBuf.AllocStringBuffer(nBufSize);
-		if( cmemBuf.capacity() < nBufSize ){
-			return false;
-		}
-
-		// データ取得部
-		for( auto nLineNum = rcSel.top; nLineNum <= rcSel.bottom; ++nLineNum ){
-			const CLayout* pcLayout = nullptr;
-			CLogicInt nLineLen;
-			const auto* pLine = cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
-			if( pcLayout == nullptr || pLine == nullptr ){
-				break;
-			}
-
-			// 行内の桁位置を行頭からのオフセットに変換
-			const auto nIdxFrom		= LineColumnToIndex( pcLayout, rcSel.left  );
-			const auto nIdxTo		= LineColumnToIndex( pcLayout, rcSel.right );
-
-			// 行データが1文字以上ある場合
-			if( nIdxFrom < nIdxTo ){
-				// 選択範囲が改行コードで終わっているとき
-				if( WCODE::IsLineDelimiter(pLine[nIdxTo - 1], bEnableExtEol) ){
-					// 行データの終端は改行コードの手前までにする
-					CEol cEol;
-					cEol.SetTypeByString( &pLine[nIdxFrom], nIdxTo - nIdxFrom);
-					cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom - cEol.GetLen() );
-				}
-				// 選択範囲が改行コードで終わっていないとき
-				else{
-					cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
-				}
-			}
-
-			// 矩形選択のコピー時は改行コード固定。
-			cmemBuf.AppendString(WCODE::CRLF);
-		}
+		return _GetBoxSelectedData( cmemBuf, cSelection, bEnableExtEol );
 	}
 	// 通常の選択（線形選択）の場合
 	else{
-		// パラメータの補正
-		// 引用記号または行番号を付与する場合、折り返し位置に改行を付ける
-		bInsertEolAtWrap |= quoteMark.length() > 0 || bWithLineNumber;
+		return _GetLinearSelectedData( cmemBuf, cSelection, quoteMark, bWithLineNumber, bInsertEolAtWrap, newEolType );
+	}
+}
 
-		// 行番号を付与する場合の、行番号桁数
-		const size_t nLineNumCols = bWithLineNumber
-			? GetTextArea().DetectWidthOfLineNumberArea_calculate(&cLayoutMgr, true) + 1
-			: 0;
+bool CEditView::_GetBoxSelectedData( CNativeW& cmemBuf, const CViewSelect& cSelection, bool bEnableExtEol )
+{
+	// 大前提
+	assert(m_pcEditDoc);
 
-		// 行番号整形バッファ(L" 1234:"を出力できるよう桁数+2桁分確保する)
-		std::wstring lineNumBuf(nLineNumCols + 2, wchar_t());
+	const auto& cLayoutMgr = m_pcEditDoc->m_cLayoutMgr;
 
-		// 線形選択をコピーする場合は、改行コード変換を指示することができる謎仕様。
-		CEol appendEol(newEolType);
+	/* 2点を対角とする矩形を求める */
+	CLayoutRect rcSel;
+	TwoPointToRect(
+		&rcSel,
+		cSelection.m_sSelect.GetFrom(),		// 範囲選択開始
+		cSelection.m_sSelect.GetTo()		// 範囲選択終了
+	);
 
-		// コピーに必要なバッファサイズ
-		size_t nBufSize = 0;
+	// コピーに必要なバッファサイズ
+	size_t nBufSize = 0;
 
-		const auto ptSelectFrom = cSelection.m_sSelect.GetFrom();
-		const auto ptSelectTo = cSelection.m_sSelect.GetTo();
-
-		// データ計測部
-		for( auto nLineNum = ptSelectFrom.y; nLineNum <= ptSelectTo.y; ++nLineNum ){
-			const CLayout* pcLayout = nullptr;
-			CLogicInt nLineLen;
-			const auto *pLine = cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
-			if( pLine == nullptr || pcLayout == nullptr){
-				break;
-			}
-
-			// 行内の桁位置を行頭からのオフセットに変換
-			const auto nIdxFrom = nLineNum == ptSelectFrom.y
-				? LineColumnToIndex(pcLayout, ptSelectFrom.x)
-				: CLogicInt(0);
-			const auto nIdxTo = nLineNum == ptSelectTo.y
-				? LineColumnToIndex(pcLayout, ptSelectTo.x)
-				: nLineLen;
-
-			// 引用部分を表す文字列（「> 」など）を付与する
-			if( quoteMark.length() > 0 ){
-				nBufSize += quoteMark.length();
-			}
-
-			// 行番号を付与する
-			if( bWithLineNumber ){
-				nBufSize += nLineNumCols + 2;
-			}
-
-			// 行データがなくなったら終了
-			if( nIdxFrom == nIdxTo ){
-				break;
-			}
-
-			// 行データが改行コードで終わっているとき
-			if( pcLayout->GetLayoutEol().IsValid() ){
-				nBufSize += nIdxTo - nIdxFrom - pcLayout->GetLayoutEol().GetLen();
-				nBufSize += newEolType == EEolType::none
-					? pcLayout->GetLayoutEol().GetLen()
-					: appendEol.GetLen();
-			}
-			// 行データが改行コードで終わっていない、かつ、折り返し改行を付けるとき
-			else if (bInsertEolAtWrap){
-				nBufSize += nIdxTo - nIdxFrom;
-				nBufSize += newEolType == EEolType::none
-					? m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetLen()
-					: appendEol.GetLen();
-			}
-			// 行データが改行コードで終わっていないとき
-			else{
-				nBufSize += nIdxTo - nIdxFrom;
-			}
+	// データ計測部
+	for( auto nLineNum = rcSel.top; nLineNum <= rcSel.bottom; ++nLineNum ){
+		const CLayout* pcLayout = nullptr;
+		CLogicInt nLineLen;
+		const auto* pLine = cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
+		if( pcLayout == nullptr || pLine == nullptr ){
+			break;
 		}
 
-		// メモリ確保
-		cmemBuf.Clear();
-		cmemBuf.AllocStringBuffer(nBufSize);
-		if( cmemBuf.capacity() < nBufSize ){
-			return false;
-		}
+		// 行内の桁位置を行頭からのオフセットに変換
+		const auto nIdxFrom		= LineColumnToIndex( pcLayout, rcSel.left );
+		const auto nIdxTo		= LineColumnToIndex( pcLayout, rcSel.right );
 
-		// データ取得部
-		for( auto nLineNum = ptSelectFrom.y; nLineNum <= ptSelectTo.y; ++nLineNum ){
-			const CLayout* pcLayout = nullptr;
-			CLogicInt nLineLen;
-			const auto *pLine = cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
-			if( pLine == nullptr || pcLayout == nullptr){
-				break;
-			}
-
-			// 行内の桁位置を行頭からのオフセットに変換
-			const auto nIdxFrom = nLineNum == ptSelectFrom.y
-				? LineColumnToIndex(pcLayout, ptSelectFrom.x)
-				: CLogicInt(0);
-			const auto nIdxTo = nLineNum == ptSelectTo.y
-				? LineColumnToIndex(pcLayout, ptSelectTo.x)
-				: nLineLen;
-
-			// 行データがなくなったら終了
-			if( nIdxFrom == nIdxTo ){
-				break;
-			}
-
-			// 引用部分を表す文字列（「> 」など）を付与する
-			if( quoteMark.length() > 0 ){
-				cmemBuf.AppendString( quoteMark.data() );
-			}
-
-			// 行番号を付与する
-			if( bWithLineNumber ){
-				// 行番号は L" 1234:" 形式で出力する
-				::swprintf_s(lineNumBuf.data(), lineNumBuf.capacity(), L"% *d:", static_cast<uint32_t>(nLineNumCols), (int)(Int)(nLineNum + 1));
-				cmemBuf.AppendString(lineNumBuf.data());
-			}
-
-			// 行データが改行コードで終わっているとき
-			if( pcLayout->GetLayoutEol().IsValid() ){
+		// 行データが1文字以上ある場合
+		if( nIdxFrom < nIdxTo ){
+			// 選択範囲が改行コードで終わっているとき
+			if( WCODE::IsLineDelimiter( pLine[nIdxTo - 1], bEnableExtEol ) ){
 				// 行データの終端は改行コードの手前までにする
-				cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom - pcLayout->GetLayoutEol().GetLen() );
-				// 変換指定に従い、改行コードを付与する
-				cmemBuf.AppendString(newEolType == EEolType::none
-					? pcLayout->GetLayoutEol().GetValue2()	//	コード保存
-					: appendEol.GetValue2());				//	新規改行コード
+				CEol cEol;
+				cEol.SetTypeByString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
+				nBufSize += nIdxTo - nIdxFrom - cEol.GetLen();
 			}
-			// 行データが改行コードで終わっていない、かつ、折り返し改行を付けるとき
-			else if (bInsertEolAtWrap){
-				cmemBuf.AppendString(&pLine[nIdxFrom], nIdxTo - nIdxFrom);
-				cmemBuf.AppendString(newEolType == EEolType::none
-					? m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetValue2()
-					: appendEol.GetValue2());		//	新規改行コード
+			// 選択範囲が改行コードで終わっていないとき
+			else {
+				nBufSize += nIdxTo - nIdxFrom;
 			}
-			// 行データが改行コードで終わっていないとき
+		}
+
+		// 矩形選択のコピー時は改行コード固定。
+		nBufSize += 2; // countof(WCODE::CRLF) - 1
+	}
+
+	// メモリ確保
+	cmemBuf.Clear();
+	cmemBuf.AllocStringBuffer(nBufSize);
+	if( cmemBuf.capacity() < nBufSize ){
+		return false;
+	}
+
+	// データ取得部
+	for( auto nLineNum = rcSel.top; nLineNum <= rcSel.bottom; ++nLineNum ){
+		const CLayout* pcLayout = nullptr;
+		CLogicInt nLineLen;
+		const auto* pLine = cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
+		if( pcLayout == nullptr || pLine == nullptr ){
+			break;
+		}
+
+		// 行内の桁位置を行頭からのオフセットに変換
+		const auto nIdxFrom		= LineColumnToIndex( pcLayout, rcSel.left  );
+		const auto nIdxTo		= LineColumnToIndex( pcLayout, rcSel.right );
+
+		// 行データが1文字以上ある場合
+		if( nIdxFrom < nIdxTo ){
+			// 選択範囲が改行コードで終わっているとき
+			if( WCODE::IsLineDelimiter(pLine[nIdxTo - 1], bEnableExtEol) ){
+				// 行データの終端は改行コードの手前までにする
+				CEol cEol;
+				cEol.SetTypeByString( &pLine[nIdxFrom], nIdxTo - nIdxFrom);
+				cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom - cEol.GetLen() );
+			}
+			// 選択範囲が改行コードで終わっていないとき
 			else{
-				cmemBuf.AppendString(&pLine[nIdxFrom], nIdxTo - nIdxFrom);
+				cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
 			}
+		}
+
+		// 矩形選択のコピー時は改行コード固定。
+		cmemBuf.AppendString(WCODE::CRLF);
+	}
+
+	return true;
+}
+
+bool CEditView::_GetLinearSelectedData( CNativeW& cmemBuf, const CViewSelect& cSelection, std::wstring_view quoteMark, bool bWithLineNumber, bool bInsertEolAtWrap, EEolType newEolType )
+{
+	// 大前提
+	assert(m_pcEditDoc);
+
+	const auto& cLayoutMgr = m_pcEditDoc->m_cLayoutMgr;
+
+	// パラメータの補正
+	// 引用記号または行番号を付与する場合、折り返し位置に改行を付ける
+	bInsertEolAtWrap |= quoteMark.length() > 0 || bWithLineNumber;
+
+	// 行番号を付与する場合の、行番号桁数
+	const size_t nLineNumCols = bWithLineNumber
+		? GetTextArea().DetectWidthOfLineNumberArea_calculate(&cLayoutMgr, true) + 1
+		: 0;
+
+	// 行番号整形バッファ(L" 1234:"を出力できるよう桁数+2桁分確保する)
+	std::wstring lineNumBuf(nLineNumCols + 2, wchar_t());
+
+	// 線形選択をコピーする場合は、改行コード変換を指示することができる謎仕様。
+	CEol appendEol(newEolType);
+
+	// コピーに必要なバッファサイズ
+	size_t nBufSize = 0;
+
+	const auto ptSelectFrom = cSelection.m_sSelect.GetFrom();
+	const auto ptSelectTo = cSelection.m_sSelect.GetTo();
+
+	// データ計測部
+	for( auto nLineNum = ptSelectFrom.y; nLineNum <= ptSelectTo.y; ++nLineNum ){
+		const CLayout* pcLayout = nullptr;
+		CLogicInt nLineLen;
+		const auto *pLine = cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
+		if( pLine == nullptr || pcLayout == nullptr){
+			break;
+		}
+
+		// 行内の桁位置を行頭からのオフセットに変換
+		const auto nIdxFrom = nLineNum == ptSelectFrom.y
+			? LineColumnToIndex(pcLayout, ptSelectFrom.x)
+			: CLogicInt(0);
+		const auto nIdxTo = nLineNum == ptSelectTo.y
+			? LineColumnToIndex(pcLayout, ptSelectTo.x)
+			: nLineLen;
+
+		// 引用部分を表す文字列（「> 」など）を付与する
+		if( quoteMark.length() > 0 ){
+			nBufSize += quoteMark.length();
+		}
+
+		// 行番号を付与する
+		if( bWithLineNumber ){
+			nBufSize += nLineNumCols + 2;
+		}
+
+		// 行データがなくなったら終了
+		if( nIdxFrom == nIdxTo ){
+			break;
+		}
+
+		// 行データが改行コードで終わっているとき
+		if( pcLayout->GetLayoutEol().IsValid() ){
+			nBufSize += nIdxTo - nIdxFrom - pcLayout->GetLayoutEol().GetLen();
+			nBufSize += newEolType == EEolType::none
+				? pcLayout->GetLayoutEol().GetLen()
+				: appendEol.GetLen();
+		}
+		// 行データが改行コードで終わっていない、かつ、折り返し改行を付けるとき
+		else if (bInsertEolAtWrap){
+			nBufSize += nIdxTo - nIdxFrom;
+			nBufSize += newEolType == EEolType::none
+				? m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetLen()
+				: appendEol.GetLen();
+		}
+		// 行データが改行コードで終わっていないとき
+		else{
+			nBufSize += nIdxTo - nIdxFrom;
+		}
+	}
+
+	// メモリ確保
+	cmemBuf.Clear();
+	cmemBuf.AllocStringBuffer(nBufSize);
+	if( cmemBuf.capacity() < nBufSize ){
+		return false;
+	}
+
+	// データ取得部
+	for( auto nLineNum = ptSelectFrom.y; nLineNum <= ptSelectTo.y; ++nLineNum ){
+		const CLayout* pcLayout = nullptr;
+		CLogicInt nLineLen;
+		const auto *pLine = cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
+		if( pLine == nullptr || pcLayout == nullptr){
+			break;
+		}
+
+		// 行内の桁位置を行頭からのオフセットに変換
+		const auto nIdxFrom = nLineNum == ptSelectFrom.y
+			? LineColumnToIndex(pcLayout, ptSelectFrom.x)
+			: CLogicInt(0);
+		const auto nIdxTo = nLineNum == ptSelectTo.y
+			? LineColumnToIndex(pcLayout, ptSelectTo.x)
+			: nLineLen;
+
+		// 行データがなくなったら終了
+		if( nIdxFrom == nIdxTo ){
+			break;
+		}
+
+		// 引用部分を表す文字列（「> 」など）を付与する
+		if( quoteMark.length() > 0 ){
+			cmemBuf.AppendString( quoteMark.data() );
+		}
+
+		// 行番号を付与する
+		if( bWithLineNumber ){
+			// 行番号は L" 1234:" 形式で出力する
+			::swprintf_s(lineNumBuf.data(), lineNumBuf.capacity(), L"% *d:", static_cast<uint32_t>(nLineNumCols), (int)(Int)(nLineNum + 1));
+			cmemBuf.AppendString(lineNumBuf.data());
+		}
+
+		// 行データが改行コードで終わっているとき
+		if( pcLayout->GetLayoutEol().IsValid() ){
+			// 行データの終端は改行コードの手前までにする
+			cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom - pcLayout->GetLayoutEol().GetLen() );
+			// 変換指定に従い、改行コードを付与する
+			cmemBuf.AppendString(newEolType == EEolType::none
+				? pcLayout->GetLayoutEol().GetValue2()	//	コード保存
+				: appendEol.GetValue2());				//	新規改行コード
+		}
+		// 行データが改行コードで終わっていない、かつ、折り返し改行を付けるとき
+		else if (bInsertEolAtWrap){
+			cmemBuf.AppendString(&pLine[nIdxFrom], nIdxTo - nIdxFrom);
+			cmemBuf.AppendString(newEolType == EEolType::none
+				? m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetValue2()
+				: appendEol.GetValue2());		//	新規改行コード
+		}
+		// 行データが改行コードで終わっていないとき
+		else{
+			cmemBuf.AppendString(&pLine[nIdxFrom], nIdxTo - nIdxFrom);
 		}
 	}
 
