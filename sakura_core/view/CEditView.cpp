@@ -1905,7 +1905,7 @@ bool CEditView::_GetBoxSelectedData( CNativeW& cmemBuf, const CViewSelect& cSele
 	);
 
 	// ローカル関数定義
-	auto LineColumnsToIndexes = [this, rcSel](const CLayoutInt nLineNum, const CLayout* pcLayout) -> std::tuple<CLogicXInt, CLogicXInt> {
+	auto LineColumnsToIndexes = [this, rcSel]([[maybe_unused]] const CLayoutInt nLineNum, const CLayout* pcLayout) -> std::tuple<CLogicXInt, CLogicXInt> {
 		// 行内の桁位置を行頭からのオフセットに変換
 		const auto nIdxFrom		= LineColumnToIndex( pcLayout, rcSel.left );
 		const auto nIdxTo		= LineColumnToIndex( pcLayout, rcSel.right );
