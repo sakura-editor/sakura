@@ -1979,8 +1979,8 @@ size_t CountLinearSelectedData(
 	// データ計測部
 	for( auto nLineNum = ptSelectFrom.y; nLineNum <= ptSelectTo.y; ++nLineNum ){
 		const CLayout* pcLayout = nullptr;
-		CLogicInt nLineLen;
-		if( !cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout ) || !pcLayout ){
+		if( CLogicInt nLineLen(0);
+			!cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout ) || !pcLayout ){
 			break;
 		}
 
@@ -2021,49 +2021,24 @@ size_t CountLinearSelectedData(
 	return nBufSize;
 }
 
-bool CEditView::_GetLinearSelectedData( CNativeW& cmemBuf, const CViewSelect& cSelection, std::wstring_view quoteMark, bool bWithLineNumber, bool bInsertEolAtWrap, EEolType newEolType ) const
+template<class Func = std::function<std::tuple<CLogicXInt, CLogicXInt>(CLayoutInt, const CLayout*)>>
+bool GetLinearSelectedData(
+	CNativeW& cmemBuf,
+	const CEditDoc* m_pcEditDoc,
+	const CViewSelect& cSelection,
+	std::wstring_view quoteMark,
+	size_t nLineNumCols,
+	bool bInsertEolAtWrap,
+	EEolType newEolType,
+	const Func& LineColumnsToIndexes
+)
 {
 	// 大前提
 	assert(m_pcEditDoc);
 
 	const auto& cLayoutMgr = m_pcEditDoc->m_cLayoutMgr;
-
-	// パラメータの補正
-	// 引用記号または行番号を付与する場合、折り返し位置に改行を付ける
-	bInsertEolAtWrap |= quoteMark.length() > 0 || bWithLineNumber;
-
-	// 行番号を付与する場合の、行番号桁数
-	const size_t nLineNumCols = bWithLineNumber
-		? GetTextArea().DetectWidthOfLineNumberArea_calculate(&cLayoutMgr, true) + 1
-		: 0;
-
-	// 行番号整形バッファ(L" 1234:"を出力できるよう桁数+2桁分確保する)
-	std::wstring lineNumBuf(nLineNumCols + 2, wchar_t());
-
 	const auto ptSelectFrom = cSelection.m_sSelect.GetFrom();
 	const auto ptSelectTo = cSelection.m_sSelect.GetTo();
-
-	// ローカル関数定義
-	auto LineColumnsToIndexes = [this, ptSelectFrom, ptSelectTo](const CLayoutInt nLineNum, const CLayout* pcLayout) {
-		// 行内の桁位置を行頭からのオフセットに変換
-		const auto nIdxFrom = nLineNum == ptSelectFrom.y
-			? LineColumnToIndex(pcLayout, ptSelectFrom.x)
-			: CLogicInt(0);
-		const auto nIdxTo = nLineNum == ptSelectTo.y
-			? LineColumnToIndex(pcLayout, ptSelectTo.x)
-			: pcLayout->GetLengthWithEOL();
-		return std::make_tuple(nIdxFrom, nIdxTo);
-	};
-
-	// コピーに必要なバッファサイズを計測
-	const size_t nBufSize = CountLinearSelectedData( m_pcEditDoc, cSelection, quoteMark, nLineNumCols, bInsertEolAtWrap, newEolType, LineColumnsToIndexes );
-
-	// メモリ確保
-	cmemBuf.Clear();
-	cmemBuf.AllocStringBuffer(nBufSize);
-	if( cmemBuf.capacity() < nBufSize ){
-		return false;
-	}
 
 	// データ取得部
 	for( auto nLineNum = ptSelectFrom.y; nLineNum <= ptSelectTo.y; ++nLineNum ){
@@ -2115,6 +2090,54 @@ bool CEditView::_GetLinearSelectedData( CNativeW& cmemBuf, const CViewSelect& cS
 	}
 
 	return true;
+}
+
+bool CEditView::_GetLinearSelectedData( CNativeW& cmemBuf, const CViewSelect& cSelection, std::wstring_view quoteMark, bool bWithLineNumber, bool bInsertEolAtWrap, EEolType newEolType ) const
+{
+	// 大前提
+	assert(m_pcEditDoc);
+
+	const auto& cLayoutMgr = m_pcEditDoc->m_cLayoutMgr;
+
+	// パラメータの補正
+	// 引用記号または行番号を付与する場合、折り返し位置に改行を付ける
+	bInsertEolAtWrap |= quoteMark.length() > 0 || bWithLineNumber;
+
+	// 行番号を付与する場合の、行番号桁数
+	const size_t nLineNumCols = bWithLineNumber
+		? GetTextArea().DetectWidthOfLineNumberArea_calculate(&cLayoutMgr, true) + 1
+		: 0;
+
+	// 行番号整形バッファ(L" 1234:"を出力できるよう桁数+2桁分確保する)
+	std::wstring lineNumBuf(nLineNumCols + 2, wchar_t());
+
+	const auto ptSelectFrom = cSelection.m_sSelect.GetFrom();
+	const auto ptSelectTo = cSelection.m_sSelect.GetTo();
+
+	// ローカル関数定義
+	auto LineColumnsToIndexes = [this, ptSelectFrom, ptSelectTo](const CLayoutInt nLineNum, const CLayout* pcLayout) {
+		// 行内の桁位置を行頭からのオフセットに変換
+		const auto nIdxFrom = nLineNum == ptSelectFrom.y
+			? LineColumnToIndex(pcLayout, ptSelectFrom.x)
+			: CLogicInt(0);
+		const auto nIdxTo = nLineNum == ptSelectTo.y
+			? LineColumnToIndex(pcLayout, ptSelectTo.x)
+			: pcLayout->GetLengthWithEOL();
+		return std::make_tuple(nIdxFrom, nIdxTo);
+	};
+
+	// コピーに必要なバッファサイズを計測
+	const size_t nBufSize = CountLinearSelectedData( m_pcEditDoc, cSelection, quoteMark, nLineNumCols, bInsertEolAtWrap, newEolType, LineColumnsToIndexes );
+
+	// メモリ確保
+	cmemBuf.Clear();
+	cmemBuf.AllocStringBuffer(nBufSize);
+	if( cmemBuf.capacity() < nBufSize ){
+		return false;
+	}
+
+	// データ取得
+	return GetLinearSelectedData( cmemBuf, m_pcEditDoc, cSelection, quoteMark, nLineNumCols, bInsertEolAtWrap, newEolType, LineColumnsToIndexes );
 }
 
 /* 選択範囲内の１行の選択
