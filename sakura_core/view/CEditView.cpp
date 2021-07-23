@@ -1862,7 +1862,7 @@ static size_t CountBoxSelectedData(
 		const CLayout* pcLayout = nullptr;
 		CLogicInt nLineLen;
 		const auto* pLine = cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
-		if( pcLayout == nullptr || pLine == nullptr ){
+		if( !pLine || !pcLayout ){
 			break;
 		}
 
@@ -1977,8 +1977,7 @@ static size_t CountLinearSelectedData(
 	for( auto nLineNum = ptSelectFrom.y; nLineNum <= ptSelectTo.y; ++nLineNum ){
 		const CLayout* pcLayout = nullptr;
 		CLogicInt nLineLen;
-		const auto *pLine = cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
-		if( pLine == nullptr || pcLayout == nullptr){
+		if( !cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout ) || !pcLayout ){
 			break;
 		}
 
