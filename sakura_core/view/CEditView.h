@@ -325,7 +325,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	// 2002/01/19 novice public属性に変更
-	bool GetSelectedDataSimple( CNativeW& cmemBuf );// 選択範囲のデータを取得
+	bool GetSelectedDataSimple( CNativeW& cmemBuf ) const;// 選択範囲のデータを取得
 	bool GetSelectedDataOne( CNativeW& cmemBuf, int nMaxLen );
 	bool GetSelectedData( CNativeW& cmemBuf, std::wstring_view quoteMark = L"", bool bWithLineNumber = false, bool bInsertEolAtWrap = false, EEolType newEolType = EEolType::none) const;	/* 選択範囲のデータを取得 */
 

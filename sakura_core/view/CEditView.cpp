@@ -1800,7 +1800,7 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 /* 選択範囲のデータを取得
 	正常時はTRUE,範囲未選択の場合はFALSEを返す
 */
-bool CEditView::GetSelectedDataSimple( CNativeW &cmemBuf )
+bool CEditView::GetSelectedDataSimple( CNativeW &cmemBuf ) const
 {
 	return GetSelectedData( cmemBuf );
 }
