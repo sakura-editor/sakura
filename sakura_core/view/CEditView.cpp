@@ -2061,6 +2061,9 @@ bool GetLinearSelectedData(
 	const auto ptSelectFrom = cSelection.m_sSelect.GetFrom();
 	const auto ptSelectTo = cSelection.m_sSelect.GetTo();
 
+	// 行番号整形バッファ(L" 1234:"を出力できるよう桁数+2桁分確保する)
+	std::wstring lineNumBuf(nLineNumCols + 2, wchar_t());
+
 	// データ取得部
 	for( auto nLineNum = ptSelectFrom.y; nLineNum <= ptSelectTo.y; ++nLineNum ){
 		const CLayout* pcLayout = nullptr;
@@ -2079,7 +2082,7 @@ bool GetLinearSelectedData(
 			}
 
 			// 行番号を付与する
-			if( bWithLineNumber ){
+			if( nLineNumCols > 0 ){
 				// 行番号は L" 1234:" 形式で出力する
 				::swprintf_s(lineNumBuf.data(), lineNumBuf.capacity(), L"% *d:", static_cast<uint32_t>(nLineNumCols), (int)(Int)(nLineNum + 1));
 				cmemBuf.AppendString(lineNumBuf.data());
@@ -2128,9 +2131,6 @@ bool CEditView::_GetLinearSelectedData( CNativeW& cmemBuf, const CViewSelect& cS
 	const size_t nLineNumCols = bWithLineNumber
 		? GetTextArea().DetectWidthOfLineNumberArea_calculate(&cLayoutMgr, true) + 1
 		: 0;
-
-	// 行番号整形バッファ(L" 1234:"を出力できるよう桁数+2桁分確保する)
-	std::wstring lineNumBuf(nLineNumCols + 2, wchar_t());
 
 	const auto ptSelectFrom = cSelection.m_sSelect.GetFrom();
 	const auto ptSelectTo = cSelection.m_sSelect.GetTo();
