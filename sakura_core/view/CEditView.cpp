@@ -1868,6 +1868,35 @@ private:
 	}
 };
 
+/*!
+ *  矩形選択範囲のデータを取得するクラス
+ */
+class CGetBoxSelectedData : public CGetSelectedData
+{
+	const CEditView* m_pcEditView;
+	CLayoutRect rcSel;
+	bool bEnableExtEol;
+
+public:
+	explicit CGetBoxSelectedData(
+		const CEditView* m_pcEditView,
+		const CLayoutRect& _rcSel,
+		const bool _bEnableExtEol
+	) noexcept;
+
+protected:
+	[[nodiscard]] size_t _CountData() const override;
+	[[nodiscard]] bool _GetData( CNativeW& cmemBuf ) const  override;
+
+private:
+	[[nodiscard]] std::tuple<CLogicXInt, CLogicXInt> LineColumnsToIndexes(const CLayoutInt nLineNum, const CLayout* pcLayout) const {
+		// 行内の桁位置を行頭からのオフセットに変換
+		const auto nIdxFrom		= m_pcEditView->LineColumnToIndex( pcLayout, rcSel.left );
+		const auto nIdxTo		= m_pcEditView->LineColumnToIndex( pcLayout, rcSel.right );
+		return std::make_tuple(nIdxFrom, nIdxTo);
+	}
+};
+
 /* 選択範囲のデータを取得
 	正常時はTRUE,範囲未選択の場合はFALSEを返す
 */
@@ -1902,21 +1931,23 @@ bool CEditView::GetSelectedData(
 	}
 }
 
-template<class Func = std::function<std::tuple<CLogicXInt, CLogicXInt>(CLayoutInt, const CLayout*)>>
-size_t CountBoxSelectedData(
-	const CEditDoc* m_pcEditDoc,
-	const CLayoutRect& rcSel,
-	bool bEnableExtEol,
-	const Func& LineColumnsToIndexes
-)
+CGetBoxSelectedData::CGetBoxSelectedData(
+	const CEditView* _pcEditView,
+	const CLayoutRect& _rcSel,
+	const bool _bEnableExtEol
+) noexcept
+	: m_pcEditView(_pcEditView)
+	, rcSel(_rcSel)
+	, bEnableExtEol(_bEnableExtEol)
+{
+}
+
+[[nodiscard]] size_t CGetBoxSelectedData::_CountData() const
 {
 	// コピーに必要なバッファサイズ
 	size_t nBufSize = 0;
 
-	// 大前提
-	assert(m_pcEditDoc);
-
-	const auto& cLayoutMgr = m_pcEditDoc->m_cLayoutMgr;
+	const auto& cLayoutMgr = m_pcEditView->m_pcEditDoc->m_cLayoutMgr;
 
 	// データ計測部
 	for( auto nLineNum = rcSel.top; nLineNum <= rcSel.bottom; ++nLineNum ){
@@ -1950,19 +1981,9 @@ size_t CountBoxSelectedData(
 	return nBufSize;
 }
 
-template<class Func = std::function<std::tuple<CLogicXInt, CLogicXInt>(CLayoutInt, const CLayout*)>>
-bool GetBoxSelectedData(
-	CNativeW& cmemBuf,
-	const CEditDoc* m_pcEditDoc,
-	const CLayoutRect& rcSel,
-	bool bEnableExtEol,
-	const Func& LineColumnsToIndexes
-)
+[[nodiscard]] bool CGetBoxSelectedData::_GetData( CNativeW& cmemBuf ) const
 {
-	// 大前提
-	assert(m_pcEditDoc);
-
-	const auto& cLayoutMgr = m_pcEditDoc->m_cLayoutMgr;
+	const auto& cLayoutMgr = m_pcEditView->m_pcEditDoc->m_cLayoutMgr;
 
 	// データ取得部
 	for( auto nLineNum = rcSel.top; nLineNum <= rcSel.bottom; ++nLineNum ){
@@ -2009,26 +2030,8 @@ bool CEditView::_GetBoxSelectedData( CNativeW& cmemBuf, const CViewSelect& cSele
 		cSelection.m_sSelect.GetTo()		// 範囲選択終了
 	);
 
-	// ローカル関数定義
-	auto LineColumnsToIndexes = [this, rcSel]([[maybe_unused]] const CLayoutInt nLineNum, const CLayout* pcLayout) {
-		// 行内の桁位置を行頭からのオフセットに変換
-		const auto nIdxFrom		= LineColumnToIndex( pcLayout, rcSel.left );
-		const auto nIdxTo		= LineColumnToIndex( pcLayout, rcSel.right );
-		return std::make_tuple(nIdxFrom, nIdxTo);
-	};
-
-	// コピーに必要なバッファサイズを計測
-	const size_t nBufSize = CountBoxSelectedData( m_pcEditDoc, rcSel, bEnableExtEol, LineColumnsToIndexes );
-
-	// メモリ確保
-	cmemBuf.Clear();
-	cmemBuf.AllocStringBuffer(nBufSize);
-	if( cmemBuf.capacity() < nBufSize ){
-		return false;
-	}
-
-	// データ取得
-	return GetBoxSelectedData( cmemBuf, m_pcEditDoc, rcSel, bEnableExtEol, LineColumnsToIndexes );
+	auto selectedData = CGetBoxSelectedData( this, rcSel, bEnableExtEol );
+	return selectedData.GetData( cmemBuf );
 }
 
 CGetLinearSelectedData::CGetLinearSelectedData(
