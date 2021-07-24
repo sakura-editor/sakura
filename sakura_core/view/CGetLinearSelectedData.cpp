@@ -73,7 +73,9 @@ CGetLinearSelectedData::CGetLinearSelectedData(
 
 			// 行データが改行コードで終わっているとき
 			if( pcLayout->GetLayoutEol().IsValid() ){
-				nBufSize += nIdxTo - nIdxFrom - pcLayout->GetLayoutEol().GetLen();
+				// 行データのサイズから、改行文字の「1桁分」を引く
+				nBufSize += nIdxTo - nIdxFrom - 1;
+				// 改行コードの「文字数」を足す
 				nBufSize += newEolType == EEolType::none
 					? pcLayout->GetLayoutEol().GetLen()
 					: CEol(newEolType).GetLen();
@@ -81,6 +83,7 @@ CGetLinearSelectedData::CGetLinearSelectedData(
 			// 行データが改行コードで終わっていない、かつ、折り返し改行を付けるとき
 			else if (bInsertEolAtWrap){
 				nBufSize += nIdxTo - nIdxFrom;
+				// 改行コードの「文字数」を足す
 				nBufSize += newEolType == EEolType::none
 					? m_pcEditView->m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetLen()
 					: CEol(newEolType).GetLen();
@@ -129,7 +132,8 @@ CGetLinearSelectedData::CGetLinearSelectedData(
 			// 行データが改行コードで終わっているとき
 			if( pcLayout->GetLayoutEol().IsValid() ){
 				// 行データの終端は改行コードの手前までにする
-				cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom - pcLayout->GetLayoutEol().GetLen() );
+				// ※CRLFも表示上は「1桁」であることに注意。
+				cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom - 1 ); //改行文字の1桁分を引く
 				// 変換指定に従い、改行コードを付与する
 				cmemBuf.AppendString(newEolType == EEolType::none
 					? pcLayout->GetLayoutEol().GetValue2()						//	コード保存
@@ -137,15 +141,16 @@ CGetLinearSelectedData::CGetLinearSelectedData(
 			}
 			// 行データが改行コードで終わっていない、かつ、折り返し改行を付けるとき
 			else if (bInsertEolAtWrap){
-				// 行データの終端は改行コードの手前までにする
+				// 行データは終端まで出力する
 				cmemBuf.AppendString(&pLine[nIdxFrom], nIdxTo - nIdxFrom);
 				// ドキュメントの改行コードまたは指定された改行コードを付与する
 				cmemBuf.AppendString(newEolType == EEolType::none
 					? m_pcEditView->m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetValue2()	//	コード保存
-					: CEol(newEolType).GetValue2());							//	新規改行コード
+					: CEol(newEolType).GetValue2());										//	新規改行コード
 			}
 			// 行データが改行コードで終わっていないとき
 			else{
+				// 行データは終端まで出力する
 				cmemBuf.AppendString(&pLine[nIdxFrom], nIdxTo - nIdxFrom);
 			}
 		}
