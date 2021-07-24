@@ -1813,7 +1813,14 @@ bool CEditView::GetSelectedDataSimple( CNativeW &cmemBuf ) const
  */
 class CGetSelectedData
 {
+	using Me = CGetSelectedData;
+
 public:
+	CGetSelectedData() noexcept = default;
+	CGetSelectedData(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	virtual ~CGetSelectedData() noexcept = default;
+
 	virtual bool GetData( CNativeW& cmemBuf ) const;
 
 protected:
