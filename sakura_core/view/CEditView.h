@@ -329,10 +329,6 @@ public:
 	bool GetSelectedDataOne( CNativeW& cmemBuf, int nMaxLen );
 	bool GetSelectedData( CNativeW& cmemBuf, std::wstring_view quoteMark = L"", bool bWithLineNumber = false, bool bInsertEolAtWrap = false, EEolType newEolType = EEolType::none) const;	/* 選択範囲のデータを取得 */
 
-private:
-	bool _GetBoxSelectedData( CNativeW& cmemBuf, const CViewSelect& cSelection, bool bEnableExtEol ) const;
-	bool _GetLinearSelectedData( CNativeW& cmemBuf, const CViewSelect& cSelection, std::wstring_view quoteMark, bool bWithLineNumber, bool bInsertEolAtWrap, EEolType newEolType ) const;
-
 public:
 	int IsCurrentPositionSelected( CLayoutPoint ptCaretPos );					/* 指定カーソル位置が選択エリア内にあるか */
 	int IsCurrentPositionSelectedTEST( const CLayoutPoint& ptCaretPos, const CLayoutRange& sSelect ) const;/* 指定カーソル位置が選択エリア内にあるか */

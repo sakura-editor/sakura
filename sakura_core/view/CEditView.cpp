@@ -1830,50 +1830,34 @@ bool CEditView::GetSelectedData(
 
 	// 矩形選択中の場合
 	if( cSelection.IsBoxSelecting() ){
+		/* 2点を対角とする矩形を求める */
+		CLayoutRect rcSel;
+		TwoPointToRect(
+			&rcSel,
+			cSelection.m_sSelect.GetFrom(),		// 範囲選択開始
+			cSelection.m_sSelect.GetTo()		// 範囲選択終了
+		);
+
 		// 行末判定関数に渡す設定値
 		const bool bEnableExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
-		return _GetBoxSelectedData( cmemBuf, cSelection, bEnableExtEol );
+		auto selectedData = CGetBoxSelectedData( this, rcSel, bEnableExtEol );
+		return selectedData.GetData( cmemBuf );
 	}
 	// 通常の選択（線形選択）の場合
 	else{
-		return _GetLinearSelectedData( cmemBuf, cSelection, quoteMark, bWithLineNumber, bInsertEolAtWrap, newEolType );
+		// パラメータの補正
+		// 引用記号または行番号を付与する場合、折り返し位置に改行を付ける
+		bInsertEolAtWrap |= quoteMark.length() > 0 || bWithLineNumber;
+
+		// 行番号を付与する場合の、行番号桁数
+		const size_t nLineNumCols = bWithLineNumber
+			? GetTextArea().DetectWidthOfLineNumberArea_calculate(&m_pcEditDoc->m_cLayoutMgr, true) + 1
+			: 0;
+
+		auto selectedData = CGetLinearSelectedData( this, cSelection, quoteMark, nLineNumCols, bInsertEolAtWrap, newEolType );
+		return selectedData.GetData( cmemBuf );
 	}
-}
-
-bool CEditView::_GetBoxSelectedData( CNativeW& cmemBuf, const CViewSelect& cSelection, bool bEnableExtEol ) const
-{
-	// 大前提
-	assert(m_pcEditDoc);
-
-	/* 2点を対角とする矩形を求める */
-	CLayoutRect rcSel;
-	TwoPointToRect(
-		&rcSel,
-		cSelection.m_sSelect.GetFrom(),		// 範囲選択開始
-		cSelection.m_sSelect.GetTo()		// 範囲選択終了
-	);
-
-	auto selectedData = CGetBoxSelectedData( this, rcSel, bEnableExtEol );
-	return selectedData.GetData( cmemBuf );
-}
-
-bool CEditView::_GetLinearSelectedData( CNativeW& cmemBuf, const CViewSelect& cSelection, std::wstring_view quoteMark, bool bWithLineNumber, bool bInsertEolAtWrap, EEolType newEolType ) const
-{
-	// 大前提
-	assert(m_pcEditDoc);
-
-	// パラメータの補正
-	// 引用記号または行番号を付与する場合、折り返し位置に改行を付ける
-	bInsertEolAtWrap |= quoteMark.length() > 0 || bWithLineNumber;
-
-	// 行番号を付与する場合の、行番号桁数
-	const size_t nLineNumCols = bWithLineNumber
-		? GetTextArea().DetectWidthOfLineNumberArea_calculate(&m_pcEditDoc->m_cLayoutMgr, true) + 1
-		: 0;
-
-	auto selectedData = CGetLinearSelectedData( this, cSelection, quoteMark, nLineNumCols, bInsertEolAtWrap, newEolType );
-	return selectedData.GetData( cmemBuf );
 }
 
 /* 選択範囲内の１行の選択
