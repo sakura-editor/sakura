@@ -57,10 +57,8 @@ CGetBoxSelectedData::CGetBoxSelectedData(
 			nIdxFrom < nIdxTo) {
 			// 選択範囲が改行コードで終わっているとき
 			if( WCODE::IsLineDelimiter( pLine[nIdxTo - 1], bEnableExtEol ) ){
-				// 行データの終端は改行コードの手前までにする
-				CEol cEol;
-				cEol.SetTypeByString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
-				nBufSize += nIdxTo - nIdxFrom - cEol.GetLen();
+				// 行データのサイズから、改行文字の「1桁分」を引く
+				nBufSize += nIdxTo - nIdxFrom - 1;
 			}
 			// 選択範囲が改行コードで終わっていないとき
 			else {
@@ -94,9 +92,8 @@ CGetBoxSelectedData::CGetBoxSelectedData(
 			// 選択範囲が改行コードで終わっているとき
 			if( WCODE::IsLineDelimiter(pLine[nIdxTo - 1], bEnableExtEol) ){
 				// 行データの終端は改行コードの手前までにする
-				CEol cEol;
-				cEol.SetTypeByString( &pLine[nIdxFrom], nIdxTo - nIdxFrom);
-				cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom - cEol.GetLen() );
+				// ※CRLFも表示上は「1桁」であることに注意。
+				cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom - 1 );
 			}
 			// 選択範囲が改行コードで終わっていないとき
 			else{
