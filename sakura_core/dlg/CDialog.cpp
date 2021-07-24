@@ -230,31 +230,67 @@ void CDialog::SetDialogPosSize()
 
 			RECT rc;
 			RECT rcWork;
+			RECT rcMonitor;
 			rc.left = m_xPos;
 			rc.top = m_yPos;
 			rc.right = m_xPos + m_nWidth;
 			rc.bottom = m_yPos + m_nHeight;
-			GetMonitorWorkRect(&rc, &rcWork);
+
+			GetMonitorWorkRect(&rc, &rcWork, &rcMonitor);
+			
+			// １ドットの空きを入れる
+			rcWork.top += 1;
+			rcWork.bottom -= 1;
+			rcWork.left += 1;
+			rcWork.right -= 1;
+
+			// ワークスペース座標のオフセットを求める
+			// タスクバーが左や上にある場合にこの考慮が必要
+			LONG xOffset = rcWork.left - rcMonitor.left;
+			LONG yOffset = rcWork.top - rcMonitor.top;
+
+			// ワークスペース座標のオフセットを加算
+			rc.left += xOffset;
+			rc.right += xOffset;
+			rc.top += yOffset;
+			rc.bottom += yOffset;
+
+			// ワークスペース領域に収まるようにウィンドウ位置調整
 			LONG workHeight = rcWork.bottom - rcWork.top;
 			LONG workWidth = rcWork.right - rcWork.left;
-			if( rc.bottom > workHeight ){
-				LONG diff = rc.bottom - workHeight;
-				rc.top -= diff;
-				rc.bottom -= diff;
+			if( rc.bottom > rcWork.bottom ){
+				if( m_nHeight > workHeight ){
+					rc.top = rcWork.top;
+					rc.bottom = rc.top + m_nHeight;
+				}else {
+					rc.bottom = rcWork.bottom;
+					rc.top = rc.bottom - m_nHeight;
+				}
 			}
-			if( rc.right > workWidth ){
-				LONG diff = rc.right - workWidth;
-				rc.left -= diff;
-				rc.right -= diff;
+			if( rc.right > rcWork.right ){
+				if( m_nWidth > workWidth ){
+					rc.left = rc.left;
+					rc.right = rc.left + m_nHeight;
+				}else {
+					rc.right = rcWork.right;
+					rc.left = rc.right - m_nWidth;
+				}
 			}
-			if( rc.top < 0 ){
-				rc.bottom -= rc.top;
-				rc.top = 0;
+			if( rc.top < rcWork.top ){
+				rc.top = rcWork.top;
+				rc.bottom = rc.top + m_nHeight;
 			}
-			if( rc.left < 0 ){
-				rc.right -= rc.left;
-				rc.left = 0;
+			if( rc.left < rcWork.left ){
+				rc.left = rcWork.left;
+				rc.right = rc.left + m_nWidth;
 			}
+
+			// ワークスペース座標のオフセットを引いて元に戻す
+			rc.left -= xOffset;
+			rc.right -= xOffset;
+			rc.top -= yOffset;
+			rc.bottom -= yOffset;
+
 			m_xPos = rc.left;
 			m_yPos = rc.top;
 			m_nWidth = rc.right - rc.left;
