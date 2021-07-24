@@ -1,5 +1,5 @@
-﻿/*! @file */
-/*
+﻿/*! @file
+
 	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
@@ -51,7 +51,7 @@ protected:
 	[[nodiscard]] bool _GetData( CNativeW& cmemBuf ) const  override;
 
 private:
-	[[nodiscard]] std::tuple<CLogicXInt, CLogicXInt> LineColumnsToIndexes(const CLayoutInt nLineNum, const CLayout* pcLayout) const {
+	[[nodiscard]] std::tuple<CLogicXInt, CLogicXInt> LineColumnsToIndexes([[maybe_unused]] const CLayoutInt nLineNum, const CLayout* pcLayout) const {
 		// 行内の桁位置を行頭からのオフセットに変換
 		const auto nIdxFrom		= m_pcEditView->LineColumnToIndex( pcLayout, rcSel.left );
 		const auto nIdxTo		= m_pcEditView->LineColumnToIndex( pcLayout, rcSel.right );
