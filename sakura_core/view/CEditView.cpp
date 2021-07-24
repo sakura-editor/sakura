@@ -1849,7 +1849,7 @@ public:
 		size_t nLineNumCols,
 		bool bInsertEolAtWrap,
 		EEolType newEolType
-	);
+	) noexcept;
 
 protected:
 	[[nodiscard]] size_t _CountData() const override;
@@ -2038,15 +2038,15 @@ CGetLinearSelectedData::CGetLinearSelectedData(
 	size_t _nLineNumCols,
 	bool _bInsertEolAtWrap,
 	EEolType _newEolType
-)
+) noexcept
+	: m_pcEditView(_pcEditView)
+	, ptSelectFrom(cSelection.m_sSelect.GetFrom())
+	, ptSelectTo(cSelection.m_sSelect.GetTo())
+	, quoteMark(_quoteMark)
+	, nLineNumCols(_nLineNumCols)
+	, bInsertEolAtWrap(_bInsertEolAtWrap)
+	, newEolType(_newEolType)
 {
-	m_pcEditView = _pcEditView;
-	ptSelectFrom = cSelection.m_sSelect.GetFrom();
-	ptSelectTo = cSelection.m_sSelect.GetTo();
-	quoteMark = _quoteMark;
-	nLineNumCols = _nLineNumCols;
-	bInsertEolAtWrap = _bInsertEolAtWrap;
-	newEolType = _newEolType;
 }
 
 [[nodiscard]] size_t CGetLinearSelectedData::_CountData() const
