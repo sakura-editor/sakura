@@ -1112,6 +1112,15 @@
     <ClInclude Include="..\sakura_core\recent\SShare_History.h">
       <Filter>Cpp Source Files\recent</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\view\CGetBoxSelectedData.h">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\view\CGetLinearSelectedData.h">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sakura_core\view\CGetSelectedData.h">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resource\auto_scroll_center.cur">
@@ -2305,6 +2314,15 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\convert\CConvert_CodeToSjis.cpp">
       <Filter>Cpp Source Files\convert</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\view\CGetBoxSelectedData.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\view\CGetLinearSelectedData.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\view\CGetSelectedData.cpp">
+      <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
