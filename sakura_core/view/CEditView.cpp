@@ -1814,10 +1814,51 @@ bool CEditView::GetSelectedDataSimple( CNativeW &cmemBuf ) const
 class CGetSelectedData
 {
 public:
-	virtual bool GetData( CNativeW& cmemBuf ) const = 0;
+	virtual bool GetData( CNativeW& cmemBuf ) const;
 
 protected:
 	virtual size_t _CountData() const = 0;
+	virtual bool _GetData( CNativeW& cmemBuf ) const = 0;
+};
+
+/*!
+ *  通常選択範囲のデータを取得するクラス
+ */
+class CGetLinearSelectedData : public CGetSelectedData
+{
+	const CEditView* m_pcEditView;
+	CLayoutPoint ptSelectFrom;
+	CLayoutPoint ptSelectTo;
+	std::wstring_view quoteMark = L"";
+	size_t nLineNumCols = 0;
+	bool bInsertEolAtWrap = false;
+	EEolType newEolType = EEolType::none;
+
+public:
+	explicit CGetLinearSelectedData(
+		const CEditView* m_pcEditView,
+		const CViewSelect& cSelection,
+		std::wstring_view quoteMark,
+		size_t nLineNumCols,
+		bool bInsertEolAtWrap,
+		EEolType newEolType
+	);
+
+protected:
+	[[nodiscard]] size_t _CountData() const override;
+	[[nodiscard]] bool _GetData( CNativeW& cmemBuf ) const  override;
+
+private:
+	[[nodiscard]] std::tuple<CLogicXInt, CLogicXInt> LineColumnsToIndexes(const CLayoutInt nLineNum, const CLayout* pcLayout) const {
+		// 行内の桁位置を行頭からのオフセットに変換
+		const auto nIdxFrom = nLineNum == ptSelectFrom.y
+			? m_pcEditView->LineColumnToIndex(pcLayout, ptSelectFrom.x)
+			: CLogicInt(0);
+		const auto nIdxTo = nLineNum == ptSelectTo.y
+			? m_pcEditView->LineColumnToIndex(pcLayout, ptSelectTo.x)
+			: pcLayout->GetLengthWithEOL();
+		return std::make_tuple(nIdxFrom, nIdxTo);
+	}
 };
 
 /* 選択範囲のデータを取得
@@ -1983,26 +2024,30 @@ bool CEditView::_GetBoxSelectedData( CNativeW& cmemBuf, const CViewSelect& cSele
 	return GetBoxSelectedData( cmemBuf, m_pcEditDoc, rcSel, bEnableExtEol, LineColumnsToIndexes );
 }
 
-template<class Func = std::function<std::tuple<CLogicXInt, CLogicXInt>(CLayoutInt, const CLayout*)>>
-size_t CountLinearSelectedData(
-	const CEditDoc* m_pcEditDoc,
+CGetLinearSelectedData::CGetLinearSelectedData(
+	const CEditView* _pcEditView,
 	const CViewSelect& cSelection,
-	std::wstring_view quoteMark,
-	size_t nLineNumCols,
-	bool bInsertEolAtWrap,
-	EEolType newEolType,
-	const Func& LineColumnsToIndexes
+	std::wstring_view _quoteMark,
+	size_t _nLineNumCols,
+	bool _bInsertEolAtWrap,
+	EEolType _newEolType
 )
+{
+	m_pcEditView = _pcEditView;
+	ptSelectFrom = cSelection.m_sSelect.GetFrom();
+	ptSelectTo = cSelection.m_sSelect.GetTo();
+	quoteMark = _quoteMark;
+	nLineNumCols = _nLineNumCols;
+	bInsertEolAtWrap = _bInsertEolAtWrap;
+	newEolType = _newEolType;
+}
+
+[[nodiscard]] size_t CGetLinearSelectedData::_CountData() const
 {
 	// コピーに必要なバッファサイズ
 	size_t nBufSize = 0;
 
-	// 大前提
-	assert(m_pcEditDoc);
-
-	const auto& cLayoutMgr = m_pcEditDoc->m_cLayoutMgr;
-	const auto ptSelectFrom = cSelection.m_sSelect.GetFrom();
-	const auto ptSelectTo = cSelection.m_sSelect.GetTo();
+	const auto& cLayoutMgr = m_pcEditView->m_pcEditDoc->m_cLayoutMgr;
 
 	// データ計測部
 	for( auto nLineNum = ptSelectFrom.y; nLineNum <= ptSelectTo.y; ++nLineNum ){
@@ -2036,7 +2081,7 @@ size_t CountLinearSelectedData(
 			else if (bInsertEolAtWrap){
 				nBufSize += nIdxTo - nIdxFrom;
 				nBufSize += newEolType == EEolType::none
-					? m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetLen()
+					? m_pcEditView->m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetLen()
 					: CEol(newEolType).GetLen();
 			}
 			// 行データが改行コードで終わっていないとき
@@ -2049,24 +2094,9 @@ size_t CountLinearSelectedData(
 	return nBufSize;
 }
 
-template<class Func = std::function<std::tuple<CLogicXInt, CLogicXInt>(CLayoutInt, const CLayout*)>>
-bool GetLinearSelectedData(
-	CNativeW& cmemBuf,
-	const CEditDoc* m_pcEditDoc,
-	const CViewSelect& cSelection,
-	std::wstring_view quoteMark,
-	size_t nLineNumCols,
-	bool bInsertEolAtWrap,
-	EEolType newEolType,
-	const Func& LineColumnsToIndexes
-)
+[[nodiscard]] bool CGetLinearSelectedData::_GetData( CNativeW& cmemBuf ) const
 {
-	// 大前提
-	assert(m_pcEditDoc);
-
-	const auto& cLayoutMgr = m_pcEditDoc->m_cLayoutMgr;
-	const auto ptSelectFrom = cSelection.m_sSelect.GetFrom();
-	const auto ptSelectTo = cSelection.m_sSelect.GetTo();
+	const auto& cLayoutMgr = m_pcEditView->m_pcEditDoc->m_cLayoutMgr;
 
 	// 行番号整形バッファ(L" 1234:"を出力できるよう桁数+2桁分確保する)
 	std::wstring lineNumBuf(nLineNumCols + 2, wchar_t());
@@ -2110,7 +2140,7 @@ bool GetLinearSelectedData(
 				cmemBuf.AppendString(&pLine[nIdxFrom], nIdxTo - nIdxFrom);
 				// ドキュメントの改行コードまたは指定された改行コードを付与する
 				cmemBuf.AppendString(newEolType == EEolType::none
-					? m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetValue2()	//	コード保存
+					? m_pcEditView->m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetValue2()	//	コード保存
 					: CEol(newEolType).GetValue2());							//	新規改行コード
 			}
 			// 行データが改行コードで終わっていないとき
@@ -2123,39 +2153,10 @@ bool GetLinearSelectedData(
 	return true;
 }
 
-bool CEditView::_GetLinearSelectedData( CNativeW& cmemBuf, const CViewSelect& cSelection, std::wstring_view quoteMark, bool bWithLineNumber, bool bInsertEolAtWrap, EEolType newEolType ) const
+[[nodiscard]] bool CGetSelectedData::GetData( CNativeW& cmemBuf ) const
 {
-	// 大前提
-	assert(m_pcEditDoc);
-
-	const auto& cLayoutMgr = m_pcEditDoc->m_cLayoutMgr;
-
-	// パラメータの補正
-	// 引用記号または行番号を付与する場合、折り返し位置に改行を付ける
-	bInsertEolAtWrap |= quoteMark.length() > 0 || bWithLineNumber;
-
-	// 行番号を付与する場合の、行番号桁数
-	const size_t nLineNumCols = bWithLineNumber
-		? GetTextArea().DetectWidthOfLineNumberArea_calculate(&cLayoutMgr, true) + 1
-		: 0;
-
-	const auto ptSelectFrom = cSelection.m_sSelect.GetFrom();
-	const auto ptSelectTo = cSelection.m_sSelect.GetTo();
-
-	// ローカル関数定義
-	auto LineColumnsToIndexes = [this, ptSelectFrom, ptSelectTo](const CLayoutInt nLineNum, const CLayout* pcLayout) {
-		// 行内の桁位置を行頭からのオフセットに変換
-		const auto nIdxFrom = nLineNum == ptSelectFrom.y
-			? LineColumnToIndex(pcLayout, ptSelectFrom.x)
-			: CLogicInt(0);
-		const auto nIdxTo = nLineNum == ptSelectTo.y
-			? LineColumnToIndex(pcLayout, ptSelectTo.x)
-			: pcLayout->GetLengthWithEOL();
-		return std::make_tuple(nIdxFrom, nIdxTo);
-	};
-
 	// コピーに必要なバッファサイズを計測
-	const size_t nBufSize = CountLinearSelectedData( m_pcEditDoc, cSelection, quoteMark, nLineNumCols, bInsertEolAtWrap, newEolType, LineColumnsToIndexes );
+	const size_t nBufSize = _CountData();
 
 	// メモリ確保
 	cmemBuf.Clear();
@@ -2165,7 +2166,25 @@ bool CEditView::_GetLinearSelectedData( CNativeW& cmemBuf, const CViewSelect& cS
 	}
 
 	// データ取得
-	return GetLinearSelectedData( cmemBuf, m_pcEditDoc, cSelection, quoteMark, nLineNumCols, bInsertEolAtWrap, newEolType, LineColumnsToIndexes );
+	return _GetData( cmemBuf );
+}
+
+bool CEditView::_GetLinearSelectedData( CNativeW& cmemBuf, const CViewSelect& cSelection, std::wstring_view quoteMark, bool bWithLineNumber, bool bInsertEolAtWrap, EEolType newEolType ) const
+{
+	// 大前提
+	assert(m_pcEditDoc);
+
+	// パラメータの補正
+	// 引用記号または行番号を付与する場合、折り返し位置に改行を付ける
+	bInsertEolAtWrap |= quoteMark.length() > 0 || bWithLineNumber;
+
+	// 行番号を付与する場合の、行番号桁数
+	const size_t nLineNumCols = bWithLineNumber
+		? GetTextArea().DetectWidthOfLineNumberArea_calculate(&m_pcEditDoc->m_cLayoutMgr, true) + 1
+		: 0;
+
+	auto selectedData = CGetLinearSelectedData( this, cSelection, quoteMark, nLineNumCols, bInsertEolAtWrap, newEolType );
+	return selectedData.GetData( cmemBuf );
 }
 
 /* 選択範囲内の１行の選択
