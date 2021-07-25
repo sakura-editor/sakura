@@ -50,28 +50,8 @@ void CViewCommander::Command_CUT( void )
 
 		isLineSelected = true;
 
-		// 現在行（＝現在のカーソル行）を取得
-		const auto ptCaretPos = GetCaret().GetCaretLayoutPos();
-		const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( ptCaretPos.y );
-		if( pcLayout == nullptr ){
-			ErrorBeep();
-			return;
-		}
-
-		// 現在行の行頭に移動
-		Command_GOLINETOP( false, 0 );
-
-		// 現在行が最終行であれば行末に移動
-		if( pcLayout == GetDocument()->m_cLayoutMgr.GetBottomLayout() ){
-			Command_GOLINEEND( true, 0, 0 );
-		}
-		// 現在行が最終行でなければ次行に移動
-		else {
-			Command_DOWN( true, false );
-		}
-
-		// 選択に失敗したら抜ける
-		if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
+		// 選択範囲を拡張する
+		if( !Command_EXPAND_SELECTION() ){
 			ErrorBeep();
 			return;
 		}
@@ -129,29 +109,10 @@ void CViewCommander::Command_COPY(
 		}
 
 		isLineSelected = true;
-
-		// 現在行（＝現在のカーソル行）を取得
 		ptCaretPos = GetCaret().GetCaretLayoutPos();
-		const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( ptCaretPos.y );
-		if( pcLayout == nullptr ){
-			ErrorBeep();
-			return;
-		}
 
-		// 現在行の行頭に移動
-		Command_GOLINETOP( false, 0 );
-
-		// 現在行が最終行であれば行末に移動
-		if( pcLayout == GetDocument()->m_cLayoutMgr.GetBottomLayout() ){
-			Command_GOLINEEND( true, 0, 0 );
-		}
-		// 現在行が最終行でなければ次行に移動
-		else {
-			Command_DOWN( true, false );
-		}
-
-		// 選択に失敗したら抜ける
-		if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
+		// 選択範囲を拡張する
+		if( !Command_EXPAND_SELECTION() ){
 			ErrorBeep();
 			return;
 		}
@@ -682,39 +643,10 @@ void CViewCommander::Command_ADDTAIL(
 //選択範囲内全行コピー
 void CViewCommander::Command_COPYLINES( void )
 {
-	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
+	// 選択範囲を拡張する
+	if( !Command_EXPAND_SELECTION() ){
 		return;
 	}
-
-	// 選択範囲内の全行を選択状態にする
-	CLayoutRange sSelect( m_pCommanderView->GetSelectionInfo().m_sSelect );
-
-	// 選択開始位置を拡張する
-	if( const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( sSelect.GetFrom().y );
-		!pcLayout )
-	{
-		return;
-	}else{
-		sSelect.SetFromX( pcLayout->GetIndent() );
-	}
-
-	// 選択終了位置を拡張する
-	if( const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( sSelect.GetTo().y );
-		!pcLayout )
-	{
-		return;
-	}else if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() || pcLayout->GetIndent() < sSelect.GetTo().x ){
-		// 選択範囲を次行頭まで拡大する
-		sSelect.SetToY( sSelect.GetTo().y + 1 );
-		sSelect.SetToX( pcLayout->GetNextLayout()
-			? pcLayout->GetIndent()
-			: CLayoutInt(0) );
-	}else{
-		sSelect.SetToX( pcLayout->GetIndent() );
-	}
-
-	Command_MOVECURSORLAYOUT( sSelect.GetFrom(), 0 );
-	Command_MOVECURSORLAYOUT( sSelect.GetTo(), 0x01 );
 
 	// コピー実行
 	Command_COPY( L"", false, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy, EEolType::none );
@@ -723,39 +655,10 @@ void CViewCommander::Command_COPYLINES( void )
 //選択範囲内全行引用符付きコピー
 void CViewCommander::Command_COPYLINESASPASSAGE( void )
 {
-	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
+	// 選択範囲を拡張する
+	if( !Command_EXPAND_SELECTION() ){
 		return;
 	}
-
-	// 選択範囲内の全行を選択状態にする
-	CLayoutRange sSelect( m_pCommanderView->GetSelectionInfo().m_sSelect );
-
-	// 選択開始位置を拡張する
-	if( const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( sSelect.GetFrom().y );
-		!pcLayout )
-	{
-		return;
-	}else{
-		sSelect.SetFromX( pcLayout->GetIndent() );
-	}
-
-	// 選択終了位置を拡張する
-	if( const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( sSelect.GetTo().y );
-		!pcLayout )
-	{
-		return;
-	}else if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() || pcLayout->GetIndent() < sSelect.GetTo().x ){
-		// 選択範囲を次行頭まで拡大する
-		sSelect.SetToY( sSelect.GetTo().y + 1 );
-		sSelect.SetToX( pcLayout->GetNextLayout()
-			? pcLayout->GetIndent()
-			: CLayoutInt(0) );
-	}else{
-		sSelect.SetToX( pcLayout->GetIndent() );
-	}
-
-	Command_MOVECURSORLAYOUT( sSelect.GetFrom(), 0 );
-	Command_MOVECURSORLAYOUT( sSelect.GetTo(), 0x01 );
 
 	// コピー実行
 	Command_COPY( GetDllShareData().m_Common.m_sFormat.m_szInyouKigou, false, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy, EEolType::none );
@@ -764,39 +667,10 @@ void CViewCommander::Command_COPYLINESASPASSAGE( void )
 //選択範囲内全行行番号付きコピー
 void CViewCommander::Command_COPYLINESWITHLINENUMBER( void )
 {
-	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
+	// 選択範囲を拡張する
+	if( !Command_EXPAND_SELECTION() ){
 		return;
 	}
-
-	// 選択範囲内の全行を選択状態にする
-	CLayoutRange sSelect( m_pCommanderView->GetSelectionInfo().m_sSelect );
-
-	// 選択開始位置を拡張する
-	if( const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( sSelect.GetFrom().y );
-		!pcLayout )
-	{
-		return;
-	}else{
-		sSelect.SetFromX( pcLayout->GetIndent() );
-	}
-
-	// 選択終了位置を拡張する
-	if( const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( sSelect.GetTo().y );
-		!pcLayout )
-	{
-		return;
-	}else if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() || pcLayout->GetIndent() < sSelect.GetTo().x ){
-		// 選択範囲を次行頭まで拡大する
-		sSelect.SetToY( sSelect.GetTo().y + 1 );
-		sSelect.SetToX( pcLayout->GetNextLayout()
-			? pcLayout->GetIndent()
-			: CLayoutInt(0) );
-	}else{
-		sSelect.SetToX( pcLayout->GetIndent() );
-	}
-
-	Command_MOVECURSORLAYOUT( sSelect.GetFrom(), 0 );
-	Command_MOVECURSORLAYOUT( sSelect.GetTo(), 0x01 );
 
 	// コピー実行
 	Command_COPY( L"", true, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy, EEolType::none );

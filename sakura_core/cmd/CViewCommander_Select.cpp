@@ -140,6 +140,54 @@ void CViewCommander::Command_SELECTLINE( int lparam )
 	return;
 }
 
+/*!
+ * 現在の選択範囲を拡張します。
+ *
+ * 選択開始位置をレイアウト行頭に、
+ * 選択終了位置をレイアウト行末または次行のレイアウト行頭に変更して選択範囲を拡張します。
+ * 範囲拡張の方法から成功時の選択範囲は線形選択になります。
+ */
+bool CViewCommander::Command_EXPAND_SELECTION( void )
+{
+	// マウスによる範囲選択中
+	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){
+		return false;
+	}
+
+	// 選択範囲内の全行を選択状態にする
+	auto sSelect = m_pCommanderView->GetSelectionInfo().m_sSelect;
+
+	// 選択開始位置を拡張する
+	if( const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( sSelect.GetFrom().y );
+		!pcLayout ){
+		return false;
+	}else{
+		sSelect.SetFromX( CLayoutInt(0) );
+	}
+
+	// 選択終了位置を拡張する
+	if( const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( sSelect.GetTo().y );
+		!pcLayout ){
+		return false;
+	}else if( pcLayout == GetDocument()->m_cLayoutMgr.GetBottomLayout() ){
+		// 選択範囲を行末まで拡大する
+		sSelect.SetToX( pcLayout->CalcLayoutWidth( GetDocument()->m_cLayoutMgr ) );
+	}else{
+		// 選択範囲を次行頭まで拡大する
+		sSelect.SetToY( sSelect.GetTo().y + 1 );
+		sSelect.SetToX( CLayoutInt(0) );
+	}
+
+	// 選択開始位置に移動する（既存の選択は解除する）
+	Command_MOVECURSORLAYOUT( sSelect.GetFrom(), 0 );
+
+	// 選択終了位置まで選択する
+	Command_MOVECURSORLAYOUT( sSelect.GetTo(), 0x01 );
+
+	// 範囲選択できているかどうかを返す
+	return m_pCommanderView->GetSelectionInfo().IsTextSelected();
+}
+
 /* 範囲選択開始 */
 void CViewCommander::Command_BEGIN_SELECT( void )
 {

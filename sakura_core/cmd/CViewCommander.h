@@ -207,6 +207,7 @@ public:
 	bool Command_SELECTWORD( CLayoutPoint* pptCaretPos = NULL );		/* 現在位置の単語選択 */
 	void Command_SELECTALL( void );			/* すべて選択 */
 	void Command_SELECTLINE( int lparam );	/* 1行選択 */	// 2007.10.13 nasukoji
+	bool Command_EXPAND_SELECTION( void );	//!< 選択範囲拡張
 	void Command_BEGIN_SELECT( void );		/* 範囲選択開始 */
 
 	/* 矩形選択系 */
