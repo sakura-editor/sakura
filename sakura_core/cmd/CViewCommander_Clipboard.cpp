@@ -104,9 +104,9 @@ void CViewCommander::Command_CUT( void )
 	@date 2007.11.18 ryoji 「選択なしでコピーを可能にする」オプション処理追加
 */
 void CViewCommander::Command_COPY(
-	bool		bIgnoreLockAndDisable,	//!< [in] 選択範囲を解除するか？
-	bool		bAddCRLFWhenCopy,		//!< [in] 折り返し位置に改行コードを挿入するか？
-	EEolType	neweol					//!< [in] コピーするときのEOL。
+	bool		bDeselectAfterCopy,		//!< [in] 選択範囲を解除するか？
+	bool		bInsertEolAtWrap,		//!< [in] 折り返し位置に改行コードを挿入するか？
+	EEolType	newEolType				//!< [in] コピーするときのEOL。
 )
 {
 	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){	/* マウスによる範囲選択中 */
@@ -161,7 +161,7 @@ void CViewCommander::Command_COPY(
 
 	// 選択範囲のデータを取得
 	CNativeW cmemBuf;
-	if( !m_pCommanderView->GetSelectedData( cmemBuf, L"", false, bAddCRLFWhenCopy, neweol) ){
+	if( !m_pCommanderView->GetSelectedData( cmemBuf, L"", false, bInsertEolAtWrap, newEolType) ){
 		ErrorBeep();
 		return;
 	}
@@ -179,7 +179,7 @@ void CViewCommander::Command_COPY(
 	}
 
 	/* 選択範囲の後片付け */
-	if( !bIgnoreLockAndDisable ){
+	if( !bDeselectAfterCopy ){
 		/* 選択状態のロック */
 		if( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ){
 			m_pCommanderView->GetSelectionInfo().m_bSelectingLock = false;
