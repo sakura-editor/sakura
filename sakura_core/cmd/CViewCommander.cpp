@@ -372,9 +372,9 @@ BOOL CViewCommander::HandleCommand(
 
 	/* クリップボード系 */
 	case F_CUT:						Command_CUT();break;					//切り取り(選択範囲をクリップボードにコピーして削除)
-	case F_COPY:					Command_COPY( false, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy );break;			//コピー(選択範囲をクリップボードにコピー)
-	case F_COPY_ADDCRLF:			Command_COPY( false, true );break;		//折り返し位置に改行をつけてコピー(選択範囲をクリップボードにコピー)
-	case F_COPY_CRLF:				Command_COPY( false, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy, EEolType::cr_and_lf );break;	//CRLF改行でコピー(選択範囲をクリップボードにコピー)
+	case F_COPY:					Command_COPY( GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy );break;			//コピー(選択範囲をクリップボードにコピー)
+	case F_COPY_ADDCRLF:			Command_COPY( true );break;		//折り返し位置に改行をつけてコピー(選択範囲をクリップボードにコピー)
+	case F_COPY_CRLF:				Command_COPY( GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy, EEolType::cr_and_lf );break;	//CRLF改行でコピー(選択範囲をクリップボードにコピー)
 	case F_PASTE:					Command_PASTE( (int)lparam1 );break;				//貼り付け(クリップボードから貼り付け)
 	case F_PASTEBOX:				Command_PASTEBOX( (int)lparam1 );break;				//矩形貼り付け(クリップボードから矩形貼り付け)
 	case F_INSBOXTEXT:				Command_INSBOXTEXT((const wchar_t*)lparam1, (int)lparam2 );break;				//矩形テキスト挿入

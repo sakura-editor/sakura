@@ -104,7 +104,6 @@ void CViewCommander::Command_CUT( void )
 	@date 2007.11.18 ryoji 「選択なしでコピーを可能にする」オプション処理追加
 */
 void CViewCommander::Command_COPY(
-	bool		bDeselectAfterCopy,		//!< [in] 選択範囲を解除するか？
 	bool		bInsertEolAtWrap,		//!< [in] 折り返し位置に改行コードを挿入するか？
 	EEolType	newEolType				//!< [in] コピーするときのEOL。
 )
@@ -178,25 +177,12 @@ void CViewCommander::Command_COPY(
 		Command_MOVECURSORLAYOUT( ptCaretPos, 0 );
 	}
 
-	/* 選択範囲の後片付け */
-	if( !bDeselectAfterCopy ){
-		/* 選択状態のロック */
-		if( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ){
-			m_pCommanderView->GetSelectionInfo().m_bSelectingLock = false;
-			m_pCommanderView->GetSelectionInfo().PrintSelectionInfoMsg();
-			if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
-				GetCaret().m_cUnderLine.CaretUnderLineON(true, false);
-			}
-		}
+	// 設定に応じて、選択状態を解除する
+	if( GetDllShareData().m_Common.m_sEdit.m_bCopyAndDisablSelection
+		&& m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
+		// 現在の選択範囲を非選択状態に戻す
+		m_pCommanderView->GetSelectionInfo().DisableSelectArea( true );
 	}
-	if( GetDllShareData().m_Common.m_sEdit.m_bCopyAndDisablSelection ){	/* コピーしたら選択解除 */
-		/* テキストが選択されているか */
-		if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
-			/* 現在の選択範囲を非選択状態に戻す */
-			m_pCommanderView->GetSelectionInfo().DisableSelectArea( true );
-		}
-	}
-	return;
 }
 
 /** 貼り付け(クリップボードから貼り付け)
