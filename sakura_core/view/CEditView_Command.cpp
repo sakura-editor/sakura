@@ -452,12 +452,12 @@ void CEditView::CopyCurLine(
 	cmemBuf.SetString( pcLayout->GetPtr(), pcLayout->GetLengthWithoutEOL() );
 	if( pcLayout->GetLayoutEol().GetLen() != 0 ){
 		cmemBuf.AppendString(
-			( neweol == EEolType::auto_detect ) ?
+			( neweol == EEolType::none ) ?
 				pcLayout->GetLayoutEol().GetValue2() : CEol(neweol).GetValue2()
 		);
 	}else if( bAddCRLFWhenCopy ){	// 2007.10.08 ryoji bAddCRLFWhenCopy対応処理追加
 		cmemBuf.AppendString(
-			( neweol == EEolType::auto_detect ) ?
+			( neweol == EEolType::none ) ?
 				WCODE::CRLF : CEol(neweol).GetValue2()
 		);
 	}

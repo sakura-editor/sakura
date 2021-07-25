@@ -300,7 +300,7 @@ void CViewCommander::Command_CUT_LINE( void )
 	// 2007.10.04 ryoji 処理簡素化
 	m_pCommanderView->CopyCurLine(
 		GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy,
-		EEolType::auto_detect,
+		EEolType::none,
 		GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste
 	);
 	Command_DELETE_LINE();
