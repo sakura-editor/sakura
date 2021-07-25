@@ -181,7 +181,6 @@ public:
 	bool MySetClipboardData( const WCHAR* pszText, int nTextLen, bool bColumnSelect, bool bLineSelect = false );	/* クリップボードにデータを設定 */
 
 	//利用
-	void CopyCurLine( bool bAddCRLFWhenCopy, EEolType neweol, bool bEnableLineModePaste );	/* カーソル行をクリップボードにコピーする */	// 2007.10.08 ryoji
 	void CopySelectedAllLines( bool bWithLineNumber, std::wstring_view quotesMark = L"" );			/* 選択範囲内の全行をクリップボードにコピーする */
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

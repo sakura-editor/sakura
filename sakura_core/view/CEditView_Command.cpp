@@ -427,53 +427,6 @@ BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 	return TRUE;
 }
 
-/*!
-	カーソル行をクリップボードにコピーする
-
-	@date 2007.10.08 ryoji 新規（Command_COPY()から処理抜き出し）
-*/
-void CEditView::CopyCurLine(
-	bool			bAddCRLFWhenCopy,		//!< [in] 折り返し位置に改行コードを挿入するか？
-	EEolType		neweol,					//!< [in] コピーするときのEOL。
-	bool			bEnableLineModePaste	//!< [in] ラインモード貼り付けを可能にする
-)
-{
-	if( GetSelectionInfo().IsTextSelected() ){
-		return;
-	}
-
-	const CLayout*	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().y );
-	if( NULL == pcLayout ){
-		return;
-	}
-
-	/* クリップボードに入れるべきテキストデータを、cmemBufに格納する */
-	CNativeW cmemBuf;
-	cmemBuf.SetString( pcLayout->GetPtr(), pcLayout->GetLengthWithoutEOL() );
-	if( pcLayout->GetLayoutEol().GetLen() != 0 ){
-		cmemBuf.AppendString(
-			( neweol == EEolType::none ) ?
-				pcLayout->GetLayoutEol().GetValue2() : CEol(neweol).GetValue2()
-		);
-	}else if( bAddCRLFWhenCopy ){	// 2007.10.08 ryoji bAddCRLFWhenCopy対応処理追加
-		cmemBuf.AppendString(
-			( neweol == EEolType::none ) ?
-				WCODE::CRLF : CEol(neweol).GetValue2()
-		);
-	}
-
-	/* クリップボードにデータcmemBufの内容を設定 */
-	BOOL bSetResult = MySetClipboardData(
-		cmemBuf.GetStringPtr(),
-		cmemBuf.GetStringLength(),
-		false,
-		bEnableLineModePaste
-	);
-	if( !bSetResult ){
-		ErrorBeep();
-	}
-}
-
 void CEditView::DrawBracketCursorLine(bool bDraw)
 {
 	if( bDraw ){

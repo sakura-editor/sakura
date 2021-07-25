@@ -291,20 +291,34 @@ void CViewCommander::Command_CUT_LINE( void )
 		return;
 	}
 
-	const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().y );
-	if( NULL == pcLayout ){
+	// 現在行（＝現在のカーソル行）を取得
+	const auto ptCaretPos = GetCaret().GetCaretLayoutPos();
+	const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( ptCaretPos.y );
+	if( pcLayout == nullptr ){
 		ErrorBeep();
 		return;
 	}
 
-	// 2007.10.04 ryoji 処理簡素化
-	m_pCommanderView->CopyCurLine(
-		GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy,
-		EEolType::none,
-		GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste
-	);
-	Command_DELETE_LINE();
-	return;
+	// 現在行の行頭に移動
+	Command_GOLINETOP( false, 0 );
+
+	// 現在行が最終行であれば行末に移動
+	if( pcLayout == GetDocument()->m_cLayoutMgr.GetBottomLayout() ){
+		Command_GOLINEEND( true, 0, 0 );
+	}
+	// 現在行が最終行でなければ次行に移動
+	else {
+		Command_DOWN( true, false );
+	}
+
+	// 選択に失敗したら抜ける
+	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
+		ErrorBeep();
+		return;
+	}
+
+	// 切り取り実行
+	Command_CUT();
 }
 
 /* 行削除(折り返し単位) */

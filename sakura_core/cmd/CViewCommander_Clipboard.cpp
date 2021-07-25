@@ -38,32 +38,57 @@ void CViewCommander::Command_CUT( void )
 		return;
 	}
 
-	CNativeW	cmemBuf;
-	bool	bBeginBoxSelect;
-	/* 範囲選択がされていない */
+	// ラインコピー（＝非選択状態からの行コピー）か
+	bool isLineSelected = false;
+
+	// テキストが選択されていない場合
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
-		/* 非選択時は、カーソル行を切り取り */
+		/* 非選択時は、カーソル行をコピーする */
 		if( !GetDllShareData().m_Common.m_sEdit.m_bEnableNoSelectCopy ){	// 2007.11.18 ryoji
 			return;	// 何もしない（音も鳴らさない）
 		}
-		//行切り取り(折り返し単位)
-		Command_CUT_LINE();
-		return;
-	}
-	if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
-		bBeginBoxSelect = true;
-	}else{
-		bBeginBoxSelect = false;
+
+		isLineSelected = true;
+
+		// 現在行（＝現在のカーソル行）を取得
+		const auto ptCaretPos = GetCaret().GetCaretLayoutPos();
+		const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( ptCaretPos.y );
+		if( pcLayout == nullptr ){
+			ErrorBeep();
+			return;
+		}
+
+		// 現在行の行頭に移動
+		Command_GOLINETOP( false, 0 );
+
+		// 現在行が最終行であれば行末に移動
+		if( pcLayout == GetDocument()->m_cLayoutMgr.GetBottomLayout() ){
+			Command_GOLINEEND( true, 0, 0 );
+		}
+		// 現在行が最終行でなければ次行に移動
+		else {
+			Command_DOWN( true, false );
+		}
+
+		// 選択に失敗したら抜ける
+		if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
+			ErrorBeep();
+			return;
+		}
 	}
 
-	/* 選択範囲のデータを取得 */
-	/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
-	if( !m_pCommanderView->GetSelectedData( cmemBuf, L"", false, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy)) {
+	// 矩形選択中かどうか
+	const bool isBoxSelected = m_pCommanderView->GetSelectionInfo().IsBoxSelecting();
+
+	// 選択範囲のデータを取得
+	CNativeW cmemBuf;
+	if( !m_pCommanderView->GetSelectedData( cmemBuf, L"", false, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 		ErrorBeep();
 		return;
 	}
-	/* クリップボードにデータを設定 */
-	if( !m_pCommanderView->MySetClipboardData( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), bBeginBoxSelect ) ){
+
+	/* クリップボードにデータcmemBufの内容を設定 */
+	if( !m_pCommanderView->MySetClipboardData( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), isBoxSelected, isLineSelected ) ){
 		ErrorBeep();
 		return;
 	}
@@ -84,41 +109,74 @@ void CViewCommander::Command_COPY(
 	EEolType	neweol					//!< [in] コピーするときのEOL。
 )
 {
-	CNativeW	cmemBuf;
-	bool		bBeginBoxSelect = false;
+	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){	/* マウスによる範囲選択中 */
+		ErrorBeep();
+		return;
+	}
 
-	/* クリップボードに入れるべきテキストデータを、cmemBufに格納する */
+	// ラインコピー（＝非選択状態からの行コピー）か
+	bool isLineSelected = false;
+
+	// ラインコピー前のキャレット位置
+	CLayoutPoint ptCaretPos;
+
+	// テキストが選択されていない場合
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
 		/* 非選択時は、カーソル行をコピーする */
 		if( !GetDllShareData().m_Common.m_sEdit.m_bEnableNoSelectCopy ){	// 2007.11.18 ryoji
 			return;	// 何もしない（音も鳴らさない）
 		}
-		m_pCommanderView->CopyCurLine(
-			bAddCRLFWhenCopy,
-			neweol,
-			GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste
-		);
+
+		isLineSelected = true;
+
+		// 現在行（＝現在のカーソル行）を取得
+		ptCaretPos = GetCaret().GetCaretLayoutPos();
+		const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( ptCaretPos.y );
+		if( pcLayout == nullptr ){
+			ErrorBeep();
+			return;
+		}
+
+		// 現在行の行頭に移動
+		Command_GOLINETOP( false, 0 );
+
+		// 現在行が最終行であれば行末に移動
+		if( pcLayout == GetDocument()->m_cLayoutMgr.GetBottomLayout() ){
+			Command_GOLINEEND( true, 0, 0 );
+		}
+		// 現在行が最終行でなければ次行に移動
+		else {
+			Command_DOWN( true, false );
+		}
+
+		// 選択に失敗したら抜ける
+		if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
+			ErrorBeep();
+			return;
+		}
 	}
-	else{
-		/* テキストが選択されているときは、選択範囲のデータを取得 */
 
-		if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
-			bBeginBoxSelect = TRUE;
-		}
-		/* 選択範囲のデータを取得 */
-		/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
-		if( !m_pCommanderView->GetSelectedData( cmemBuf, L"", false, bAddCRLFWhenCopy, neweol)) {
-			ErrorBeep();
-			return;
-		}
+	// 矩形選択中かどうか
+	const bool isBoxSelected = m_pCommanderView->GetSelectionInfo().IsBoxSelecting();
 
-		/* クリップボードにデータcmemBufの内容を設定 */
-		if( !m_pCommanderView->MySetClipboardData( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), bBeginBoxSelect, FALSE ) ){
-			ErrorBeep();
-			return;
-		}
+	// 選択範囲のデータを取得
+	CNativeW cmemBuf;
+	if( !m_pCommanderView->GetSelectedData( cmemBuf, L"", false, bAddCRLFWhenCopy, neweol) ){
+		ErrorBeep();
+		return;
+	}
+
+	/* クリップボードにデータcmemBufの内容を設定 */
+	if( !m_pCommanderView->MySetClipboardData( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), isBoxSelected, isLineSelected ) ){
+		ErrorBeep();
+		return;
 	}
 	cmemBuf.Clear();
+
+	if( isLineSelected ){
+		// 選択を元に戻す
+		Command_MOVECURSORLAYOUT( ptCaretPos, 0 );
+	}
 
 	/* 選択範囲の後片付け */
 	if( !bIgnoreLockAndDisable ){
