@@ -82,7 +82,7 @@ void CViewCommander::Command_CUT( void )
 
 	// 選択範囲のデータを取得
 	CNativeW cmemBuf;
-	if( !m_pCommanderView->GetSelectedData( cmemBuf, L"", false, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
+	if( !m_pCommanderView->GetSelectedData( cmemBuf, L"", false, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy, EEolType::none ) ){
 		ErrorBeep();
 		return;
 	}
@@ -104,8 +104,10 @@ void CViewCommander::Command_CUT( void )
 	@date 2007.11.18 ryoji 「選択なしでコピーを可能にする」オプション処理追加
 */
 void CViewCommander::Command_COPY(
-	bool		bInsertEolAtWrap,		//!< [in] 折り返し位置に改行コードを挿入するか？
-	EEolType	newEolType				//!< [in] コピーするときのEOL。
+	std::wstring_view	quoteMark,				//!< [in] 引用部分を表す文字列（「> 」など）
+	bool				bWithLineNumber,		//!< [in] 行番号を付与するか
+	bool				bInsertEolAtWrap,		//!< [in] 折り返し位置で改行記号を入れるか
+	EEolType			newEolType				//!< [in] 改行コード書き替えモード時の代替改行コード（EEolType::noneはコード保存）
 )
 {
 	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){	/* マウスによる範囲選択中 */
@@ -160,7 +162,7 @@ void CViewCommander::Command_COPY(
 
 	// 選択範囲のデータを取得
 	CNativeW cmemBuf;
-	if( !m_pCommanderView->GetSelectedData( cmemBuf, L"", false, bInsertEolAtWrap, newEolType) ){
+	if( !m_pCommanderView->GetSelectedData( cmemBuf, quoteMark, bWithLineNumber, bInsertEolAtWrap, newEolType ) ){
 		ErrorBeep();
 		return;
 	}
@@ -680,20 +682,124 @@ void CViewCommander::Command_ADDTAIL(
 //選択範囲内全行コピー
 void CViewCommander::Command_COPYLINES( void )
 {
-	m_pCommanderView->CopySelectedAllLines( false );
+	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
+		return;
+	}
+
+	// 選択範囲内の全行を選択状態にする
+	CLayoutRange sSelect( m_pCommanderView->GetSelectionInfo().m_sSelect );
+
+	// 選択開始位置を拡張する
+	if( const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( sSelect.GetFrom().y );
+		!pcLayout )
+	{
+		return;
+	}else{
+		sSelect.SetFromX( pcLayout->GetIndent() );
+	}
+
+	// 選択終了位置を拡張する
+	if( const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( sSelect.GetTo().y );
+		!pcLayout )
+	{
+		return;
+	}else if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() || pcLayout->GetIndent() < sSelect.GetTo().x ){
+		// 選択範囲を次行頭まで拡大する
+		sSelect.SetToY( sSelect.GetTo().y + 1 );
+		sSelect.SetToX( pcLayout->GetNextLayout()
+			? pcLayout->GetIndent()
+			: CLayoutInt(0) );
+	}else{
+		sSelect.SetToX( pcLayout->GetIndent() );
+	}
+
+	Command_MOVECURSORLAYOUT( sSelect.GetFrom(), 0 );
+	Command_MOVECURSORLAYOUT( sSelect.GetTo(), 0x01 );
+
+	// コピー実行
+	Command_COPY( L"", false, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy, EEolType::none );
 }
 
 //選択範囲内全行引用符付きコピー
 void CViewCommander::Command_COPYLINESASPASSAGE( void )
 {
-	std::wstring_view inyouKigou( GetDllShareData().m_Common.m_sFormat.m_szInyouKigou );
-	m_pCommanderView->CopySelectedAllLines( false, inyouKigou );
+	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
+		return;
+	}
+
+	// 選択範囲内の全行を選択状態にする
+	CLayoutRange sSelect( m_pCommanderView->GetSelectionInfo().m_sSelect );
+
+	// 選択開始位置を拡張する
+	if( const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( sSelect.GetFrom().y );
+		!pcLayout )
+	{
+		return;
+	}else{
+		sSelect.SetFromX( pcLayout->GetIndent() );
+	}
+
+	// 選択終了位置を拡張する
+	if( const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( sSelect.GetTo().y );
+		!pcLayout )
+	{
+		return;
+	}else if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() || pcLayout->GetIndent() < sSelect.GetTo().x ){
+		// 選択範囲を次行頭まで拡大する
+		sSelect.SetToY( sSelect.GetTo().y + 1 );
+		sSelect.SetToX( pcLayout->GetNextLayout()
+			? pcLayout->GetIndent()
+			: CLayoutInt(0) );
+	}else{
+		sSelect.SetToX( pcLayout->GetIndent() );
+	}
+
+	Command_MOVECURSORLAYOUT( sSelect.GetFrom(), 0 );
+	Command_MOVECURSORLAYOUT( sSelect.GetTo(), 0x01 );
+
+	// コピー実行
+	Command_COPY( GetDllShareData().m_Common.m_sFormat.m_szInyouKigou, false, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy, EEolType::none );
 }
 
 //選択範囲内全行行番号付きコピー
 void CViewCommander::Command_COPYLINESWITHLINENUMBER( void )
 {
-	m_pCommanderView->CopySelectedAllLines( true );
+	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
+		return;
+	}
+
+	// 選択範囲内の全行を選択状態にする
+	CLayoutRange sSelect( m_pCommanderView->GetSelectionInfo().m_sSelect );
+
+	// 選択開始位置を拡張する
+	if( const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( sSelect.GetFrom().y );
+		!pcLayout )
+	{
+		return;
+	}else{
+		sSelect.SetFromX( pcLayout->GetIndent() );
+	}
+
+	// 選択終了位置を拡張する
+	if( const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( sSelect.GetTo().y );
+		!pcLayout )
+	{
+		return;
+	}else if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() || pcLayout->GetIndent() < sSelect.GetTo().x ){
+		// 選択範囲を次行頭まで拡大する
+		sSelect.SetToY( sSelect.GetTo().y + 1 );
+		sSelect.SetToX( pcLayout->GetNextLayout()
+			? pcLayout->GetIndent()
+			: CLayoutInt(0) );
+	}else{
+		sSelect.SetToX( pcLayout->GetIndent() );
+	}
+
+	Command_MOVECURSORLAYOUT( sSelect.GetFrom(), 0 );
+	Command_MOVECURSORLAYOUT( sSelect.GetTo(), 0x01 );
+
+	// コピー実行
+	Command_COPY( L"", true, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy, EEolType::none );
 }
 
 static bool AppendHTMLColor(

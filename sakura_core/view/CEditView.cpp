@@ -1804,18 +1804,18 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 */
 bool CEditView::GetSelectedDataSimple( CNativeW &cmemBuf ) const
 {
-	return GetSelectedData( cmemBuf );
+	return GetSelectedData( cmemBuf, L"", false, false, EEolType::none );
 }
 
 /* 選択範囲のデータを取得
 	正常時はTRUE,範囲未選択の場合はFALSEを返す
 */
 bool CEditView::GetSelectedData(
-	CNativeW&			cmemBuf,			//!< [out] バッファ
-	std::wstring_view	quoteMark,			//!< [in] 引用部分を表す文字列（「> 」など）
-	bool				bWithLineNumber,	//!< [in] 行番号を付与するか
-	bool				bInsertEolAtWrap,	//!< [in] 折り返し位置で改行記号を入れるか
-	EEolType			newEolType			//!< [in] 改行コード書き替えモード時の代替改行コード（EEolType::noneはコード保存）
+	CNativeW&			cmemBuf,				//!< [out] バッファ
+	std::wstring_view	quoteMark,				//!< [in] 引用部分を表す文字列（「> 」など）
+	bool				bWithLineNumber,		//!< [in] 行番号を付与するか
+	bool				bInsertEolAtWrap,		//!< [in] 折り返し位置で改行記号を入れるか
+	EEolType			newEolType				//!< [in] 改行コード書き替えモード時の代替改行コード（EEolType::noneはコード保存）
 ) const
 {
 	// 大前提
@@ -2047,58 +2047,6 @@ int CEditView::IsCurrentPositionSelectedTEST(
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      クリップボード                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-/*! 選択範囲内の全行をクリップボードにコピーする
- *
- * 選択範囲を行全体に拡張してエディタ表示を更新し、選択範囲のコピーを実行する。
- * 選択範囲を拡張するので、初期状態でテキストが選択されている必要はないように思われるが、
- * 初期状態でテキストが選択されてない場合はなぜか失敗する。
- */
-void CEditView::CopySelectedAllLines(
-	bool				bWithLineNumber,	//!< [in] 行番号を付与するか
-	std::wstring_view	quotesMark			//!< [in,opt] 引用部分を表す文字列（「> 」など）
-)
-{
-	CNativeW	cmemBuf;
-
-	if( !GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
-		return;
-	}
-	{	// 選択範囲内の全行を選択状態にする
-		CLayoutRange sSelect( GetSelectionInfo().m_sSelect );
-		const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( sSelect.GetFrom().y );
-		if( !pcLayout ) return;
-		sSelect.SetFromX( pcLayout->GetIndent() );
-		pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( sSelect.GetTo().y );
-		if( pcLayout && (GetSelectionInfo().IsBoxSelecting() || sSelect.GetTo().x > pcLayout->GetIndent()) ){
-			// 選択範囲を次行頭まで拡大する
-			sSelect.SetToY( sSelect.GetTo().y + 1 );
-			pcLayout = pcLayout->GetNextLayout();
-		}
-		sSelect.SetToX( pcLayout? pcLayout->GetIndent(): CLayoutInt(0) );
-		GetCaret().GetAdjustCursorPos( sSelect.GetToPointer() );	// EOF行を超えていたら座標修正
-
-		GetSelectionInfo().DisableSelectArea( false ); // 2011.06.03 true →false
-		GetSelectionInfo().SetSelectArea( sSelect );
-
-		GetCaret().MoveCursor( GetSelectionInfo().m_sSelect.GetTo(), false );
-		GetCaret().ShowEditCaret();
-	}
-	/* 再描画 */
-	//	::UpdateWindow();
-	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
-	Call_OnPaint(PAINT_LINENUMBER | PAINT_BODY, false);
-	// To Here 2007.09.09 Moca
-	/* 選択範囲をクリップボードにコピー */
-	/* 選択範囲のデータを取得 */
-	/* 正常時はTRUE,範囲未選択の場合は終了する */
-	if( !GetSelectedData( cmemBuf, quotesMark, bWithLineNumber, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
-		ErrorBeep();
-		return;
-	}
-	/* クリップボードにデータを設定 */
-	MySetClipboardData( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), false );
-}
 
 /*! クリップボードからデータを取得
 	@date 2005.05.29 novice UNICODE TEXT 対応処理を追加
