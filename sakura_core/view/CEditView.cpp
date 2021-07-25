@@ -1852,7 +1852,7 @@ bool CEditView::GetSelectedData(
 
 		// 行番号を付与する場合の、行番号桁数
 		const size_t nLineNumCols = bWithLineNumber
-			? GetTextArea().DetectWidthOfLineNumberArea_calculate(&m_pcEditDoc->m_cLayoutMgr, true) + 1
+			? GetTextArea().DetectWidthOfLineNumberArea_calculate(&m_pcEditDoc->m_cLayoutMgr, true)
 			: 0;
 
 		auto selectedData = CGetLinearSelectedData( this, cSelection, quoteMark, nLineNumCols, bInsertEolAtWrap, newEolType );
