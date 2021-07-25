@@ -67,7 +67,7 @@ CGetBoxSelectedData::CGetBoxSelectedData(
 		}
 
 		// 矩形選択のコピー時は改行コード固定。
-		nBufSize += 2; // countof(WCODE::CRLF) - 1
+		nBufSize += m_pcEditView->m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetLen();
 	}
 
 	return nBufSize;
@@ -102,7 +102,7 @@ CGetBoxSelectedData::CGetBoxSelectedData(
 		}
 
 		// 矩形選択のコピー時は改行コード固定。
-		cmemBuf.AppendString(WCODE::CRLF);
+		cmemBuf.AppendString(m_pcEditView->m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetValue2());
 	}
 
 	return true;
