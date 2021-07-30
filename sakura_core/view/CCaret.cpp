@@ -860,7 +860,9 @@ void CCaret::ShowCaretPosInfo()
 				::UnionRect(&updatedRect, &updatedRect, &partRect);
 			}
 		};
-		::SendMessage(hWnd, WM_SETREDRAW, FALSE, 0);
+		if (!m_pEditView->GetSelectionInfo().IsMouseSelecting() && !m_pEditView->m_bDragMode) {
+			::SendMessage(hWnd, WM_SETREDRAW, FALSE, 0);
+		}
 		if( m_bClearStatus ){
 			setStatusText( 0, SBT_NOBORDERS, L"" );
 		}
