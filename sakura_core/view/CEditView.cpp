@@ -1802,7 +1802,7 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 */
 bool CEditView::GetSelectedDataSimple( CNativeW &cmemBuf )
 {
-	return GetSelectedData(&cmemBuf, FALSE, NULL, FALSE, false, EEolType::auto_detect);
+	return GetSelectedData(&cmemBuf, FALSE, NULL, FALSE, false, EEolType::none);
 }
 
 /* 選択範囲のデータを取得
@@ -1936,7 +1936,7 @@ bool CEditView::GetSelectedData(
 		}
 
 		// 改行コードについて。
-		if ( neweol == EEolType::auto_detect )
+		if ( neweol == EEolType::none )
 		{
 			nBufSize += wcslen(WCODE::CRLF);
 		}
@@ -1995,7 +1995,7 @@ bool CEditView::GetSelectedData(
 				if( nIdxTo >= nLineLen ){
 					cmemBuf->AppendString( &pLine[nIdxFrom], nLineLen - 1 - nIdxFrom );
 					//	Jul. 25, 2000 genta
-					cmemBuf->AppendString( ( neweol == EEolType::auto_detect ) ?
+					cmemBuf->AppendString( ( neweol == EEolType::none ) ?
 						(pcLayout->GetLayoutEol()).GetValue2() :	//	コード保存
 						appendEol.GetValue2() );			//	新規改行コード
 				}
@@ -2010,7 +2010,7 @@ bool CEditView::GetSelectedData(
 						bWithLineNumber 	/* 行番号を付与する */
 					){
 						//	Jul. 25, 2000 genta
-						cmemBuf->AppendString(( neweol == EEolType::auto_detect ) ?
+						cmemBuf->AppendString(( neweol == EEolType::none ) ?
 							m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetValue2() :	//	コード保存
 							appendEol.GetValue2() );		//	新規改行コード
 					}
