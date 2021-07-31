@@ -216,7 +216,7 @@ public:
 
 	/* クリップボード系 */
 	void Command_CUT( void );						/* 切り取り（選択範囲をクリップボードにコピーして削除）*/
-	void Command_COPY( bool bIgnoreLockAndDisable, bool bAddCRLFWhenCopy, EEolType neweol = EEolType::auto_detect );/* コピー(選択範囲をクリップボードにコピー) */
+	void Command_COPY( bool bIgnoreLockAndDisable, bool bAddCRLFWhenCopy, EEolType neweol = EEolType::none );/* コピー(選択範囲をクリップボードにコピー) */
 	void Command_PASTE( int option );						/* 貼り付け（クリップボードから貼り付け）*/
 	void Command_PASTEBOX( int option );					/* 矩形貼り付け（クリップボードから矩形貼り付け）*/
 	//<< 2002/03/29 Azumaiya
