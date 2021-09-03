@@ -146,6 +146,21 @@ BOOL CDlgGrepReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	return bRet;
 }
 
+BOOL CDlgGrepReplace::OnCbnDropDown( HWND hwndCtl, int wID )
+{
+	switch( wID ){
+	case IDC_COMBO_TEXT2:
+		if ( ::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
+			const auto& keys = m_pShareData->m_sSearchKeywords.m_aReplaceKeys;
+			for( int i = 0; i < keys.size(); ++i ){
+				Combo_AddString( hwndCtl, keys[i] );
+			}
+		}
+		break;
+	}
+	return CDlgGrep::OnCbnDropDown( hwndCtl, wID );
+}
+
 BOOL CDlgGrepReplace::OnDestroy()
 {
 	m_cFontText2.ReleaseOnDestroy();
@@ -184,10 +199,6 @@ void CDlgGrepReplace::SetData( void )
 {
 	/* 置換後 */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT2, m_strText2.c_str() );
-	HWND	hwndCombo = GetItemHwnd( IDC_COMBO_TEXT2 );
-	for( int i = 0; i < m_pShareData->m_sSearchKeywords.m_aReplaceKeys.size(); ++i ){
-		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aReplaceKeys[i] );
-	}
 	
 	CheckDlgButtonBool( GetHwnd(), IDC_CHK_BACKUP, m_bBackup );
 

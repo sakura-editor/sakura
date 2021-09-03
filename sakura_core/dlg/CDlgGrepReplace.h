@@ -50,6 +50,7 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
+	BOOL OnCbnDropDown( HWND hwndCtl, int wID ) override;
 	BOOL OnDestroy() override;
 	BOOL OnBnClicked(int wID) override;
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
