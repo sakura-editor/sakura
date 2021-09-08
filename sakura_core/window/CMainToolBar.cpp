@@ -293,6 +293,9 @@ void CMainToolBar::CreateToolBar( void )
 						//位置とサイズを取得する
 						rc.right = rc.left = rc.top = rc.bottom = 0;
 						Toolbar_GetItemRect( m_hwndToolBar, count-1, &rc );
+						// Social Distance
+						rc.left += cxBorder;
+						rc.right -= cxBorder;
 
 						//コンボボックスを作る
 						m_hwndSearchBox = CreateWindow( WC_COMBOBOX, L"Combo",
@@ -334,15 +337,15 @@ void CMainToolBar::CreateToolBar( void )
 
 							CDialog::SetComboBoxDeleter(m_hwndSearchBox, &m_cRecentSearch);
 
-							// コンボボックスの位置と幅を調整する
+							// コンボボックスの垂直位置を調整する
 							CMyRect rcCombo;
 							::GetWindowRect( m_hwndSearchBox, &rcCombo );
 							::SetWindowPos( m_hwndSearchBox, NULL,
-								rc.left + cxBorder,
+								rc.left,	//作ったときと同じ値を指定
 								rc.top + (rc.bottom - rc.top - rcCombo.Height()) / 2,
-								rcCombo.Width() - cxBorder * 2,
-								rcCombo.Height(),
-								SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOSENDCHANGING );
+								0,			//rcCombo.Width()のまま変えない
+								0,			//rcCombo.Height()のまま変えない
+								SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOSENDCHANGING );
 						}
 						break;
 
