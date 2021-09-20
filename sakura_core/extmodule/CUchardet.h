@@ -34,8 +34,6 @@ typedef struct uchardet * uchardet_t;
 class CUchardet final : public CDllImp
 {
 public:
-	CUchardet() noexcept = default;
-
 	// DLL関数ポインタ
 	uchardet_t (*_uchardet_new)(void) = nullptr;
 	void (*_uchardet_delete)(uchardet_t ud) = nullptr;
