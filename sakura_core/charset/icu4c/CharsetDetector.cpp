@@ -28,7 +28,6 @@
 CharsetDetector::CharsetDetector() noexcept
 	: _icuin()
 	, _csd(nullptr)
-	, _ud(nullptr)
 {
 	_icuin.InitDll();
 	_uchardet.InitDll();
@@ -97,14 +96,13 @@ ECodeType CharsetDetector::Detect(const std::string_view& bytes)
 		if (!_ud) {
 			return CODE_ERROR;
 		}
-		int ret = _uchardet.uchardet_handle_data(_ud, bytes.data(), bytes.length());
-		if (ret != 0) {
+		_uchardet.uchardet_reset(_ud);
+		if (_uchardet.uchardet_handle_data(_ud, bytes.data(), bytes.length()) != 0) {
 			return CODE_ERROR;
 		}
 		_uchardet.uchardet_data_end(_ud);
 		std::string_view name = _uchardet.uchardet_get_charset(_ud);
 		auto code = name2code(name);
-		_uchardet.uchardet_reset(_ud);
 		return code;
 	}
 	return CODE_ERROR;

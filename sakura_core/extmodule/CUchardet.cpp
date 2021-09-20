@@ -51,7 +51,7 @@ bool CUchardet::InitDllImp()
 		{ &_uchardet_data_end,		"uchardet_data_end" },
 		{ &_uchardet_reset,			"uchardet_reset" },
 		{ &_uchardet_get_charset,	"uchardet_get_charset" },
-		{ NULL, 0 }
+		{ nullptr, 0 }
 	};
 	return RegisterEntries(table);
 }

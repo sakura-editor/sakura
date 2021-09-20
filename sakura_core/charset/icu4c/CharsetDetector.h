@@ -40,7 +40,7 @@ class CharsetDetector final
 	UCharsetDetector* _csd;
 
 	CUchardet _uchardet;
-	uchardet_t _ud;
+	uchardet_t _ud = nullptr;
 
 public:
 	CharsetDetector() noexcept;
