@@ -194,3 +194,31 @@ bool CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText
 	}
 	return bDraw;
 }
+
+/*!
+	@breif プログレスバーを表示する
+*/
+void CMainStatusBar::ShowProgressBar() const {
+	if (m_hwndStatusBar && m_hwndProgressBar) {
+		RECT rcProgressArea = {};
+		// プログレスバーを表示するステータスバー上の領域を取得
+		ApiWrap::StatusBar_GetRect(m_hwndStatusBar, 0, &rcProgressArea);
+		::ShowWindow(m_hwndProgressBar, SW_SHOW);
+		::InvalidateRect(m_hwndStatusBar, &rcProgressArea, TRUE);
+		::UpdateWindow(m_hwndStatusBar);
+	}
+}
+
+/*!
+	@breif プログレスバーを非表示にする
+*/
+void CMainStatusBar::HideProgressBar() const {
+	if (m_hwndStatusBar && m_hwndProgressBar) {
+		RECT rcProgressArea = {};
+		// プログレスバーが表示されているステータスバー上の領域を取得
+		ApiWrap::StatusBar_GetRect(m_hwndStatusBar, 0, &rcProgressArea);
+		::ShowWindow(m_hwndProgressBar, SW_HIDE);
+		::InvalidateRect(m_hwndStatusBar, &rcProgressArea, TRUE);
+		::UpdateWindow(m_hwndStatusBar);
+	}
+}
