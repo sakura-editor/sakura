@@ -195,9 +195,6 @@ bool CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText
 	return bDraw;
 }
 
-/*!
-	@breif プログレスバーを表示する
-*/
 void CMainStatusBar::ShowProgressBar() const {
 	if (m_hwndStatusBar && m_hwndProgressBar) {
 		RECT rcProgressArea = {};
@@ -209,9 +206,6 @@ void CMainStatusBar::ShowProgressBar() const {
 	}
 }
 
-/*!
-	@breif プログレスバーを非表示にする
-*/
 void CMainStatusBar::HideProgressBar() const {
 	if (m_hwndStatusBar && m_hwndProgressBar) {
 		RECT rcProgressArea = {};
