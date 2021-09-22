@@ -56,8 +56,7 @@ public:
 
 	//設定
 	bool SetStatusText(int nIndex, int nOption, const WCHAR* pszText, size_t textLen = SIZE_MAX);
-	void ShowProgressBar() const;
-	void HideProgressBar() const;
+	void ShowProgressBar(bool bShow) const;
 private:
 	CEditWnd*	m_pOwner;
 	HWND		m_hwndStatusBar;

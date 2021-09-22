@@ -195,23 +195,18 @@ bool CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText
 	return bDraw;
 }
 
-void CMainStatusBar::ShowProgressBar() const {
+//! プログレスバーの表示/非表示を切り替える
+void CMainStatusBar::ShowProgressBar(bool bShow) const {
 	if (m_hwndStatusBar && m_hwndProgressBar) {
-		RECT rcProgressArea = {};
 		// プログレスバーを表示するステータスバー上の領域を取得
-		ApiWrap::StatusBar_GetRect(m_hwndStatusBar, 0, &rcProgressArea);
-		::ShowWindow(m_hwndProgressBar, SW_SHOW);
-		::InvalidateRect(m_hwndStatusBar, &rcProgressArea, TRUE);
-		::UpdateWindow(m_hwndStatusBar);
-	}
-}
-
-void CMainStatusBar::HideProgressBar() const {
-	if (m_hwndStatusBar && m_hwndProgressBar) {
 		RECT rcProgressArea = {};
-		// プログレスバーが表示されているステータスバー上の領域を取得
 		ApiWrap::StatusBar_GetRect(m_hwndStatusBar, 0, &rcProgressArea);
-		::ShowWindow(m_hwndProgressBar, SW_HIDE);
+		if (bShow) {
+			::ShowWindow(m_hwndProgressBar, SW_SHOW);
+		} else {
+			::ShowWindow(m_hwndProgressBar, SW_HIDE);
+		}
+		// プログレスバー表示領域を再描画
 		::InvalidateRect(m_hwndStatusBar, &rcProgressArea, TRUE);
 		::UpdateWindow(m_hwndStatusBar);
 	}
