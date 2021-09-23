@@ -80,9 +80,9 @@ bool CEditView::TagJumpSub(
 	HWND hwndTarget = NULL;
 	if( 0 == wcsncmp(pszFileName, L":HWND:[", 7) ){
 #ifdef _WIN64
-		_stscanf(pszFileName + 7, L"%016I64x", &hwndTarget);
+		_stscanf(pszFileName + 7, L"%016I64x", (size_t*)&hwndTarget);
 #else
-		_stscanf(pszFileName + 7, L"%08x", &hwndTarget);
+		_stscanf(pszFileName + 7, L"%08x", (size_t*)&hwndTarget);
 #endif
 		if( !IsSakuraMainWindow(hwndTarget) ){
 			return false;
