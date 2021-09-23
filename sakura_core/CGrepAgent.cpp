@@ -303,11 +303,7 @@ int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, WCHAR* pszWindowName, WC
 	if( 0 != wcsncmp(L":HWND:", pszFile, 6) ){
 		return 0; // ハンドルGrepではない
 	}
-#ifdef _WIN64
-	_stscanf(pszFile + 6, L"%016I64x", (size_t*)&hWndTarget);
-#else
-	_stscanf(pszFile + 6, L"%08x", (size_t*)&hWndTarget);
-#endif
+	_stscanf(pszFile + 6, L"%x", (size_t*)&hWndTarget);
 	if( pmemTitle ){
 		const wchar_t* p = L"Window:[";
 		pmemTitle->SetStringHoldBuffer(p, 8);
