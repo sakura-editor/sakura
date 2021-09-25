@@ -84,6 +84,7 @@
 #include <initializer_list>
 #include <list>
 #include <map>
+#include <unordered_map>
 #include <memory>
 #include <optional>
 #include <string>
