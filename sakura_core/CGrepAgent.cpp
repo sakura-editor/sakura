@@ -300,20 +300,19 @@ void CGrepAgent::AddTail( CEditView* pcEditView, const CNativeW& cmem, bool bAdd
 
 int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, WCHAR* pszWindowName, WCHAR* pszWindowPath, const WCHAR* pszFile)
 {
-	if( 0 != wcsncmp(L":HWND:", pszFile, 6) ){
+	hWndTarget = nullptr;	//out引数をクリアする
+
+	constexpr auto& szTargetPrefix = L":HWND:";
+	constexpr auto cchTargetPrefix = _countof(szTargetPrefix) - 1;
+	if( 0 != wcsncmp(pszFile, szTargetPrefix, cchTargetPrefix) ){
 		return 0; // ハンドルGrepではない
 	}
-#ifdef _WIN64
-	_stscanf(pszFile + 6, L"%016I64x", &hWndTarget);
-#else
-	_stscanf(pszFile + 6, L"%08x", &hWndTarget);
-#endif
+	if( 0 >= ::swscanf_s(pszFile + cchTargetPrefix, L"%x", (size_t*)&hWndTarget) || !IsSakuraMainWindow(hWndTarget) ){
+		return -1; // ハンドルを読み取れなかった、または、対象ウインドウハンドルが存在しない
+	}
 	if( pmemTitle ){
 		const wchar_t* p = L"Window:[";
 		pmemTitle->SetStringHoldBuffer(p, 8);
-	}
-	if( !IsSakuraMainWindow(hWndTarget) ){
-		return -1;
 	}
 	::SendMessageAny(hWndTarget, MYWM_GETFILEINFO, 0, 0);
 	EditInfo* editInfo = &(GetDllShareData().m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO);

@@ -77,14 +77,11 @@ bool CEditView::TagJumpSub(
 	//	予め絶対パスに変換する．(キーワードヘルプジャンプで用いる)
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	WCHAR	szJumpToFile[1024];
-	HWND hwndTarget = NULL;
-	if( 0 == wcsncmp(pszFileName, L":HWND:[", 7) ){
-#ifdef _WIN64
-		_stscanf(pszFileName + 7, L"%016I64x", &hwndTarget);
-#else
-		_stscanf(pszFileName + 7, L"%08x", &hwndTarget);
-#endif
-		if( !IsSakuraMainWindow(hwndTarget) ){
+	HWND hwndTarget = nullptr;
+	constexpr auto& szTargetPrefix = L":HWND:[";
+	constexpr auto cchTargetPrefix = _countof(szTargetPrefix) - 1;
+	if( 0 == wcsncmp(pszFileName, szTargetPrefix, cchTargetPrefix) ){
+		if( 0 >= ::swscanf_s(pszFileName + cchTargetPrefix, L"%x", (size_t*)&hwndTarget) || !IsSakuraMainWindow(hwndTarget) ){
 			return false;
 		}
 	}else{
