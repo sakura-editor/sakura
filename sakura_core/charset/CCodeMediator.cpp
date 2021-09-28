@@ -24,7 +24,7 @@
 */
 #include "StdAfx.h"
 #include "charset/CCodeMediator.h"
-#include "charset/icu4c/CharsetDetector.h"
+#include "charset/CharsetDetector.h"
 #include "charset/CESI.h"
 #include "io/CBinaryStream.h"
 #include "mem/CMemory.h"

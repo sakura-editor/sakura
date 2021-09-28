@@ -22,30 +22,37 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_CHARSETDETECTOR_23D1755A_0001_4BAE_96C1_C3BD492E6BD0_H_
-#define SAKURA_CHARSETDETECTOR_23D1755A_0001_4BAE_96C1_C3BD492E6BD0_H_
-#pragma once
-
-#include <string_view>
-
-#include "extmodule/CIcu4cI18n.h"
+#include "StdAfx.h"
+#include "CUchardet.h"
 
 /*!
- * @brief 文字コード検出クラス
+ * @brief DLLの名前を返す
  */
-class CharsetDetector final
+LPCWSTR CUchardet::GetDllNameImp( [[maybe_unused]] int index )
 {
-	CIcu4cI18n _icuin;
-	UCharsetDetector* _csd;
+	return L"uchardet.dll";
+}
 
-public:
-	CharsetDetector() noexcept;
-	~CharsetDetector() noexcept;
+/*!
+	DLLの初期化
 
-	bool IsAvailable() const noexcept {
-		return _icuin.IsAvailable();
-	}
+	関数のアドレスを取得してメンバに保管する．
 
-	ECodeType Detect(const std::string_view& bytes);
-};
-#endif /* SAKURA_CHARSETDETECTOR_23D1755A_0001_4BAE_96C1_C3BD492E6BD0_H_ */
+	@retval true 成功
+	@retval false アドレス取得に失敗
+*/
+bool CUchardet::InitDllImp()
+{
+	// DLL内関数名リスト
+	const ImportTable table[] = {
+		{ &_uchardet_new,			"uchardet_new" },
+		{ &_uchardet_delete,		"uchardet_delete" },
+		{ &_uchardet_handle_data,	"uchardet_handle_data" },
+		{ &_uchardet_data_end,		"uchardet_data_end" },
+		{ &_uchardet_reset,			"uchardet_reset" },
+		{ &_uchardet_get_charset,	"uchardet_get_charset" },
+		{ nullptr, 0 }
+	};
+	return RegisterEntries(table);
+}
+

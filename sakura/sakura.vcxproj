@@ -290,6 +290,7 @@
     <ClInclude Include="..\sakura_core\charset\CEuc.h" />
     <ClInclude Include="..\sakura_core\charset\charcode.h" />
     <ClInclude Include="..\sakura_core\charset\charset.h" />
+    <ClInclude Include="..\sakura_core\charset\CharsetDetector.h" />
     <ClInclude Include="..\sakura_core\charset\CJis.h" />
     <ClInclude Include="..\sakura_core\charset\CLatin1.h" />
     <ClInclude Include="..\sakura_core\charset\codechecker.h" />
@@ -299,7 +300,6 @@
     <ClInclude Include="..\sakura_core\charset\CUnicodeBe.h" />
     <ClInclude Include="..\sakura_core\charset\CUtf7.h" />
     <ClInclude Include="..\sakura_core\charset\CUtf8.h" />
-    <ClInclude Include="..\sakura_core\charset\icu4c\CharsetDetector.h" />
     <ClInclude Include="..\sakura_core\CHokanMgr.h" />
     <ClInclude Include="..\sakura_core\CKeyWordSetMgr.h" />
     <ClInclude Include="..\sakura_core\CLoadAgent.h" />
@@ -415,6 +415,7 @@
     <ClInclude Include="..\sakura_core\extmodule\CHtmlHelp.h" />
     <ClInclude Include="..\sakura_core\extmodule\CIcu4cI18n.h" />
     <ClInclude Include="..\sakura_core\extmodule\CMigemo.h" />
+    <ClInclude Include="..\sakura_core\extmodule\CUchardet.h" />
     <ClInclude Include="..\sakura_core\extmodule\CUxTheme.h" />
     <ClInclude Include="..\sakura_core\Funccode_define.h" />
     <ClInclude Include="..\sakura_core\Funccode_enum.h" />
@@ -638,6 +639,7 @@
     <ClCompile Include="..\sakura_core\charset\CEuc.cpp" />
     <ClCompile Include="..\sakura_core\charset\charcode.cpp" />
     <ClCompile Include="..\sakura_core\charset\charset.cpp" />
+    <ClCompile Include="..\sakura_core\charset\CharsetDetector.cpp" />
     <ClCompile Include="..\sakura_core\charset\CJis.cpp" />
     <ClCompile Include="..\sakura_core\charset\CLatin1.cpp" />
     <ClCompile Include="..\sakura_core\charset\codechecker.cpp" />
@@ -647,7 +649,6 @@
     <ClCompile Include="..\sakura_core\charset\CUnicodeBe.cpp" />
     <ClCompile Include="..\sakura_core\charset\CUtf7.cpp" />
     <ClCompile Include="..\sakura_core\charset\CUtf8.cpp" />
-    <ClCompile Include="..\sakura_core\charset\icu4c\CharsetDetector.cpp" />
     <ClCompile Include="..\sakura_core\CHokanMgr.cpp" />
     <ClCompile Include="..\sakura_core\CKeyWordSetMgr.cpp" />
     <ClCompile Include="..\sakura_core\CLoadAgent.cpp" />
@@ -783,6 +784,7 @@
     <ClCompile Include="..\sakura_core\extmodule\CHtmlHelp.cpp" />
     <ClCompile Include="..\sakura_core\extmodule\CIcu4cI18n.cpp" />
     <ClCompile Include="..\sakura_core\extmodule\CMigemo.cpp" />
+    <ClCompile Include="..\sakura_core\extmodule\CUchardet.cpp" />
     <ClCompile Include="..\sakura_core\extmodule\CUxTheme.cpp" />
     <ClCompile Include="..\sakura_core\func\CFuncKeyWnd.cpp" />
     <ClCompile Include="..\sakura_core\func\CFuncLookup.cpp" />
