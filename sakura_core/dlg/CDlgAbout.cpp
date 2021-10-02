@@ -209,8 +209,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	// 2行目
 #ifdef GIT_COMMIT_HASH
-#define VER_GITHASH "(GitHash " GIT_COMMIT_HASH ")"
-	cmemMsg.AppendString( _T(VER_GITHASH) L"\r\n");
+	cmemMsg.AppendString( L"(GitHash " _T(GIT_COMMIT_HASH) L")\r\n" );
 #endif
 
 	// 3行目
