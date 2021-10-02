@@ -203,7 +203,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	cmemMsg.AppendString( L" " _T(ALPHA_VERSION_STR));
 #endif
 #ifdef GIT_TAG_NAME
-	cmemMsg.AppendStringF(L" (tag %s)", _T(GIT_TAG_NAME));
+	cmemMsg.AppendString( L" (tag " _T(GIT_TAG_NAME) L")" );
 #endif
 	cmemMsg.AppendString( L"\r\n" );
 
