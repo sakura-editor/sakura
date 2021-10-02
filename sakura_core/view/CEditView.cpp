@@ -1883,6 +1883,11 @@ bool CEditView::GetSelectedData(
 		cmemBuf->AllocStringBuffer(nBufSize);
 		//>> 2002/04/18 Azumaiya
 
+		// メモリ確保に失敗したら抜ける
+		if( 0 == cmemBuf->GetStringLength() ){
+			return false;
+		}
+
 		bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 		nRowNum = 0;
 		for( nLineNum = rcSel.top; nLineNum <= rcSel.bottom; ++nLineNum ){
@@ -1960,6 +1965,11 @@ bool CEditView::GetSelectedData(
 		// 調べた長さ分だけバッファを取っておく。
 		cmemBuf->AllocStringBuffer(nBufSize);
 		//>> 2002/04/18 Azumaiya
+
+		// メモリ確保に失敗したら抜ける
+		if( 0 == cmemBuf->GetStringLength() ){
+			return false;
+		}
 
 		for( nLineNum = GetSelectionInfo().m_sSelect.GetFrom().GetY2(); nLineNum <= GetSelectionInfo().m_sSelect.GetTo().y; ++nLineNum ){
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
