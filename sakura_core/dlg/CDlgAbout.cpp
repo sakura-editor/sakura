@@ -186,9 +186,6 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	cmemMsg.AppendString(L"   ");
 
 	// バージョン情報・コンフィグ情報 //
-#ifdef GIT_COMMIT_HASH
-#define VER_GITHASH "(GitHash " GIT_COMMIT_HASH ")"
-#endif
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
 	
@@ -211,7 +208,8 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	cmemMsg.AppendString( L"\r\n" );
 
 	// 2行目
-#ifdef VER_GITHASH
+#ifdef GIT_COMMIT_HASH
+#define VER_GITHASH "(GitHash " GIT_COMMIT_HASH ")"
 	cmemMsg.AppendString( _T(VER_GITHASH) L"\r\n");
 #endif
 
