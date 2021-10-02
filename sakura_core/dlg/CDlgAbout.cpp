@@ -164,8 +164,6 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	/* この実行ファイルの情報 */
 	::GetModuleFileName( NULL, szFile, _countof( szFile ) );
 	
-	//	Oct. 22, 2005 genta タイムスタンプ取得の共通関数利用
-
 	/* バージョン情報 */
 	//	Nov. 6, 2000 genta	Unofficial Releaseのバージョンとして設定
 	//	Jun. 8, 2001 genta	GPL化に伴い、OfficialなReleaseとしての道を歩み始める
@@ -174,25 +172,24 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	2010.04.15 Moca コンパイラ情報を分離/WINヘッダ,N_SHAREDATA_VERSION追加
 
 	// 以下の形式で出力
-	//サクラエディタ   Ver. 2.0.0.0
+	//サクラエディタ   Ver. 2.4.1.0 32bit DEBUG dev
 	//(GitHash xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx)
+	//(GitURL https://github.com/sakura/sakura-editor.git)
 	//
 	//      Share Ver: 96
 	//      Compile Info: V 1400  WR WIN600/I601/C000/N600
 	//      Last Modified: 1999/9/9 00:00:00
 	//      (あればSKR_PATCH_INFOの文字列がそのまま表示)
 	CNativeW cmemMsg;
+
+	// 1行目
+	// バージョン情報
 	cmemMsg.AppendString(LS(STR_DLGABOUT_APPNAME)); // e.g. "サクラエディタ", "Sakura Editor"
 	cmemMsg.AppendString(L"   ");
 
-	// バージョン情報・コンフィグ情報 //
-#ifdef GIT_COMMIT_HASH
-#define VER_GITHASH "(GitHash " GIT_COMMIT_HASH ")"
-#endif
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
 	
-	// 1行目
 	cmemMsg.AppendStringF(
 		L"v%d.%d.%d.%d",
 		HIWORD(dwVersionMS), LOWORD(dwVersionMS), HIWORD(dwVersionLS), LOWORD(dwVersionLS) // e.g. {2, 3, 2, 0}
@@ -206,13 +203,13 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	cmemMsg.AppendString( L" " _T(ALPHA_VERSION_STR));
 #endif
 #ifdef GIT_TAG_NAME
-	cmemMsg.AppendStringF(L" (tag %s)", _T(GIT_TAG_NAME));
+	cmemMsg.AppendString( L" (tag " _T(GIT_TAG_NAME) L")" );
 #endif
 	cmemMsg.AppendString( L"\r\n" );
 
 	// 2行目
-#ifdef VER_GITHASH
-	cmemMsg.AppendString( _T(VER_GITHASH) L"\r\n");
+#ifdef GIT_COMMIT_HASH
+	cmemMsg.AppendString( L"(GitHash " _T(GIT_COMMIT_HASH) L")\r\n" );
 #endif
 
 	// 3行目
@@ -231,6 +228,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	);
 
 	// 更新日情報
+	//	Oct. 22, 2005 genta タイムスタンプ取得の共通関数利用
 	CFileTime cFileTime;
 	GetLastWriteTimestamp( szFile, &cFileTime );
 	cmemMsg.AppendStringF(
