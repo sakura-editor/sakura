@@ -915,7 +915,7 @@ void CEditWnd::LayoutMainMenu()
 					const CJackManager* pcJackManager = CJackManager::getInstance();
 
 					CPlug::Array plugs = pcJackManager->GetPlugs( PP_COMMAND );
-					for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
+					for( CPlug::ArrayIter it = plugs.cbegin(); it != plugs.cend(); it++ ){
 						nCount++;
 					}
 				}
@@ -2634,7 +2634,7 @@ bool CEditWnd::InitMenu_Special(HMENU hMenu, EFunctionCode eFunc)
 			HMENU hMenuPlugin = 0;
 
 			CPlug::Array plugs = pcJackManager->GetPlugs( PP_COMMAND );
-			for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
+			for( CPlug::ArrayIter it = plugs.cbegin(); it != plugs.cend(); it++ ){
 				const CPlugin* curPlugin = &(*it)->m_cPlugin;
 				if( curPlugin != prevPlugin ){
 					//プラグインが変わったらプラグインポップアップメニューを登録

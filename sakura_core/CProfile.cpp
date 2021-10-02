@@ -250,10 +250,10 @@ bool CProfile::WriteProfile(
 		vecLine.push_back( LTEXT(";") + wstring( pszComment ) );		// //->;	2008/5/24 Uchi
 		vecLine.push_back( LTEXT("") );
 	}
-	for(auto iter = m_ProfileData.begin(); iter != m_ProfileData.end(); iter++ ) {
+	for(auto iter = m_ProfileData.cbegin(); iter != m_ProfileData.cend(); iter++ ) {
 		//セクション名を書き込む
 		vecLine.push_back( LTEXT("[") + iter->strSectionName + LTEXT("]") );
-		for(auto mapiter = iter->mapEntries.cbegin(); mapiter != iter->mapEntries.end(); mapiter++ ) {
+		for(auto mapiter = iter->mapEntries.cbegin(); mapiter != iter->mapEntries.cend(); mapiter++ ) {
 			//エントリを書き込む
 			vecLine.push_back( mapiter->first + LTEXT("=") + mapiter->second );
 		}
@@ -336,9 +336,9 @@ bool CProfile::GetProfileData(
 ) const
 {
 	// セクション名が一致するセクションを探す
-	if (const auto iter = std::find_if(m_ProfileData.begin(), m_ProfileData.end(), [&sectionName](const auto& section) {return section.strSectionName == sectionName; }); iter != m_ProfileData.end()) {
+	if (const auto iter = std::find_if(m_ProfileData.cbegin(), m_ProfileData.cend(), [&sectionName](const auto& section) {return section.strSectionName == sectionName; }); iter != m_ProfileData.cend()) {
 		// キーが一致するエントリを探す
-		if (const auto mapiter = iter->mapEntries.find(entryKey.data()); iter->mapEntries.end() != mapiter) {
+		if (const auto mapiter = iter->mapEntries.find(entryKey.data()); iter->mapEntries.cend() != mapiter) {
 			// エントリの値をコピーする
 			strEntryValue = mapiter->second;
 			return true;
@@ -358,7 +358,7 @@ void CProfile::SetProfileData(
 )
 {
 	// セクション名が一致するセクションがない場合、空のセクションを追加する
-	if (const auto iter = std::find_if(m_ProfileData.begin(), m_ProfileData.end(), [&sectionName](const auto& section) {return section.strSectionName == sectionName; }); iter == m_ProfileData.end()) {
+	if (const auto iter = std::find_if(m_ProfileData.cbegin(), m_ProfileData.cend(), [&sectionName](const auto& section) {return section.strSectionName == sectionName; }); iter == m_ProfileData.cend()) {
 		m_ProfileData.emplace_back(Section{ sectionName.data() });
 	}
 	// セクション名が一致するセクションを探す
@@ -374,9 +374,9 @@ void CProfile::DUMP( void )
 #ifdef _DEBUG
 	//	2006.02.20 ryoji: MAP_STR_STR_ITER削除時の修正漏れによるコンパイルエラー修正
 	MYTRACE( L"\n\nCProfile::DUMP()======================" );
-	for(auto iter = m_ProfileData.begin(); iter != m_ProfileData.end(); iter++ ) {
+	for(auto iter = m_ProfileData.cbegin(); iter != m_ProfileData.cend(); iter++ ) {
 		MYTRACE( L"\n■strSectionName=%ls", iter->strSectionName.c_str() );
-		for(auto mapiter = iter->mapEntries.begin(); mapiter != iter->mapEntries.end(); mapiter++ ) {
+		for(auto mapiter = iter->mapEntries.cbegin(); mapiter != iter->mapEntries.cend(); mapiter++ ) {
 			MYTRACE( L"\"%ls\" = \"%ls\"\n", mapiter->first.c_str(), mapiter->second.c_str() );
 		}
 	}

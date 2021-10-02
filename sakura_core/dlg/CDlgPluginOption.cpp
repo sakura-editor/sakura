@@ -125,7 +125,7 @@ void CDlgPluginOption::SetData( void )
 
 	CPluginOption* cOpt;
 	CPluginOption::ArrayIter it;
-	for( i=0, it = m_cPlugin->m_options.begin(); it != m_cPlugin->m_options.end(); i++, it++ ){
+	for( i=0, it = m_cPlugin->m_options.cbegin(); it != m_cPlugin->m_options.cend(); i++, it++ ){
 		cOpt = *it;
 
 		auto_snprintf_s( buf, _countof(buf), L"%ls", cOpt->GetLabel().c_str());
@@ -173,7 +173,7 @@ void CDlgPluginOption::SetData( void )
 			selects = cOpt->GetSelects();
 
 			buf[0] = L'\0';
-			for (auto it = selects.begin(); it != selects.end(); it++) {
+			for (auto it = selects.cbegin(); it != selects.cend(); it++) {
 				SepSelect(*it, &sView, &sTrg);
 				if (sValue == sTrg) {
 					auto_snprintf_s( buf, _countof(buf), L"%ls", sView.c_str());
@@ -231,7 +231,7 @@ int CDlgPluginOption::GetData( void )
 	CPluginOption* cOpt;
 	WCHAR	buf[MAX_LENGTH_VALUE+1];
 	CPluginOption::ArrayIter it;
-	for( i=0, it = m_cPlugin->m_options.begin(); it != m_cPlugin->m_options.end(); i++, it++ ){
+	for( i=0, it = m_cPlugin->m_options.cbegin(); it != m_cPlugin->m_options.cend(); i++, it++ ){
 		cOpt = *it;
 
 		memset_raw( &lvi, 0, sizeof( lvi ));
@@ -258,7 +258,7 @@ int CDlgPluginOption::GetData( void )
 			selects = cOpt->GetSelects();
 			wstring sWbuf = buf;
 
-			for (auto it = selects.begin(); it != selects.end(); it++) {
+			for (auto it = selects.cbegin(); it != selects.cend(); it++) {
 				SepSelect(*it, &sView, &sTrg);
 				if (sView == sWbuf) {
 					auto_sprintf( buf, L"%ls", sTrg.c_str());
@@ -599,7 +599,7 @@ void CDlgPluginOption::SetToEdit( int iLine )
 			wstring	sWbuf = buf;
 			nSelIdx = -1;		// 選択
 			i = 0;
-			for (auto it = selects.begin(); it != selects.end(); it++) {
+			for (auto it = selects.cbegin(); it != selects.cend(); it++) {
 				SepSelect(*it, &sView, &sValue);
 				nItemIdx = Combo_AddString( hwndCombo, sView.c_str() );
 				if (sView == sWbuf) {

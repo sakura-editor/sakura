@@ -123,11 +123,11 @@ int CFileNameManager::TransformFileName_MakeCache( void ){
 */
 LPCWSTR CFileNameManager::GetFilePathFormat( std::wstring_view strSrc, LPWSTR pszDest, size_t nDestLen, std::wstring_view strFrom, std::wstring_view strTo )
 {
-	auto it = strSrc.begin();
+	auto it = strSrc.cbegin();
 	wchar_t* pDest = pszDest;
 	const wchar_t* pEnd = pszDest + nDestLen;
-	while( it < strSrc.end() && pDest + 1 < pEnd ){
-		if( strFrom.length() <= static_cast<size_t>(strSrc.end() - it) && 0 == ::_wcsnicmp( &*it, strFrom.data(), strFrom.length() ) ){
+	while( it < strSrc.cend() && pDest + 1 < pEnd ){
+		if( strFrom.length() <= static_cast<size_t>(strSrc.cend() - it) && 0 == ::_wcsnicmp( &*it, strFrom.data(), strFrom.length() ) ){
 			if( strTo.length() < static_cast<size_t>(pEnd - pDest) ){
 				::wcsncpy_s( pDest, pEnd - pDest, strTo.data(), strTo.length() );
 			}else{

@@ -613,7 +613,7 @@ static void LoadPluginTemp(CommonSetting& common, CMenuDrawer& cMenuDrawer)
 		// ツールバーアイコンの更新
 		const CPlug::Array& plugs = CJackManager::getInstance()->GetPlugs( PP_COMMAND );
 		cMenuDrawer.m_pcIcons->ResetExtend();
-		for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ) {
+		for( CPlug::ArrayIter it = plugs.cbegin(); it != plugs.cend(); it++ ) {
 			int iBitmap = CMenuDrawer::TOOLBAR_ICON_PLUGCOMMAND_DEFAULT - 1;
 			const CPlug* plug = *it;
 			if( !plug->m_sIcon.empty() ){
