@@ -143,7 +143,7 @@ static LPCWSTR GetEscapePattern(const std::wstring& pattern)
 static void AppendExcludeFolderPatterns(CNativeW& cFilePattern, const CNativeW& cmWorkExcludeFolder)
 {
 	auto patterns = CGrepEnumKeys::SplitPattern(cmWorkExcludeFolder.GetStringPtr());
-	for (auto iter = patterns.begin(); iter != patterns.end(); ++iter)
+	for (auto iter = patterns.cbegin(); iter != patterns.cend(); ++iter)
 	{
 		const auto & pattern = (*iter);
 		LPCWSTR escapeStr = GetEscapePattern(pattern);
@@ -160,7 +160,7 @@ static void AppendExcludeFolderPatterns(CNativeW& cFilePattern, const CNativeW& 
 static void AppendExcludeFilePatterns(CNativeW& cFilePattern, const CNativeW& cmWorkExcludeFile)
 {
 	auto patterns = CGrepEnumKeys::SplitPattern(cmWorkExcludeFile.GetStringPtr());
-	for (auto iter = patterns.begin(); iter != patterns.end(); ++iter)
+	for (auto iter = patterns.cbegin(); iter != patterns.cend(); ++iter)
 	{
 		const auto & pattern = (*iter);
 		LPCWSTR escapeStr = GetEscapePattern(pattern);
