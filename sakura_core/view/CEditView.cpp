@@ -1886,7 +1886,7 @@ bool CEditView::GetSelectedData(
 		//>> 2002/04/18 Azumaiya
 
 		// メモリ確保に失敗したら抜ける
-		if( 0 == cmemBuf->GetStringLength() ){
+		if( 0 == cmemBuf->capacity() ){
 			return false;
 		}
 
@@ -1969,7 +1969,7 @@ bool CEditView::GetSelectedData(
 		//>> 2002/04/18 Azumaiya
 
 		// メモリ確保に失敗したら抜ける
-		if( 0 == cmemBuf->GetStringLength() ){
+		if( 0 == cmemBuf->capacity() ){
 			return false;
 		}
 
