@@ -618,7 +618,7 @@ DWORD CGrepAgent::DoGrep(
 				// 解析済みのファイルパターン配列を取得する
 				const auto& vecSearchFileKeys = cGrepEnumKeys.m_vecSearchFileKeys;
 				std::wstring strPatterns = FormatPathList( vecSearchFileKeys );
-				cmemWork.SetString( strPatterns.c_str(), strPatterns.length() );
+				cmemWork.SetString( strPatterns );
 			}
 		}
 	}

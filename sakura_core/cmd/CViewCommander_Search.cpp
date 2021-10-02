@@ -910,7 +910,7 @@ void CViewCommander::Command_REPLACE_ALL()
 	else
 	{
 		// 2004.05.14 Moca 全置換の途中で他のウィンドウで置換されるとまずいのでコピーする
-		cmemClip.SetString( GetEditWindow()->m_cDlgReplace.m_strText2.c_str() );
+		cmemClip.SetString( GetEditWindow()->m_cDlgReplace.m_strText2 );
 	}
 
 	CLogicInt nREPLACEKEY = cmemClip.GetStringLength();

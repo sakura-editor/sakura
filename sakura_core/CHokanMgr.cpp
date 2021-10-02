@@ -199,7 +199,7 @@ int CHokanMgr::Search(
 	if( 1 == m_vKouho.size() ){
 		if(pcmemHokanWord != NULL){
 			m_nCurKouhoIdx = -1;
-			pcmemHokanWord->SetString( m_vKouho[0].c_str() );
+			pcmemHokanWord->SetString( m_vKouho[0] );
 			return 1;
 		}
 	}
