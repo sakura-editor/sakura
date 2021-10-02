@@ -33,7 +33,7 @@
 //                           名前                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-extern const WCHAR g_szGStrAppName[];
+extern WCHAR g_szGStrAppName[128];
 
 #define GSTR_APPNAME_W  g_szGStrAppName		//!< アプリ名の文字列
 #define GSTR_APPNAME    GSTR_APPNAME_W

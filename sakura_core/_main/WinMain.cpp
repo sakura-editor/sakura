@@ -32,7 +32,6 @@
 #include "version.h"
 #include "util/std_macro.h"
 #include "env/DLLSHAREDATA.h"
-#include "config/app_constants.h"
 
 /*!
 	Windows Entry point

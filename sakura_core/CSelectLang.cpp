@@ -14,6 +14,8 @@
 
 #include "stdafx.h"
 #include "CSelectLang.h"
+
+#include "config/app_constants.h"
 #include "util/os.h"
 #include "util/module.h"
 #include "debug/Debug2.h"
@@ -117,6 +119,9 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 		psLangInfo->bValid = TRUE;		// メッセージリソースDLLとして有効
 
 		m_psLangInfoList.push_back( psLangInfo );
+
+		// アプリ名をリソースから読み込む
+		::wcsncpy_s(GSTR_APPNAME, LS(STR_GSTR_APPNAME), _TRUNCATE);
 	}
 
 	if( m_psLangInfo != NULL && m_psLangInfo->hInstance && m_psLangInfo->hInstance != GetModuleHandle(NULL) ){
@@ -403,6 +408,9 @@ HINSTANCE CSelectLang::ChangeLang( UINT nIndex )
 
 	// ロケールを設定
 	::SetThreadUILanguage( m_psLangInfo->wLangId );
+
+	// アプリ名をリソースから読み込む
+	::wcsncpy_s(GSTR_APPNAME, LS(STR_GSTR_APPNAME), _TRUNCATE);
 
 	return m_psLangInfo->hInstance;
 }
