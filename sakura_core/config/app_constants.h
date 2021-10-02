@@ -34,12 +34,9 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 extern const WCHAR g_szGStrAppName[];
-extern const CHAR  g_szGStrAppNameA[];
-extern const WCHAR g_szGStrAppNameW[];
 
-#define GSTR_APPNAME    g_szGStrAppName		//!< アプリ名の文字列 (TCHAR版)
-#define GSTR_APPNAME_A  g_szGStrAppNameA	//!< アプリ名の文字列 (CHAR版)
-#define GSTR_APPNAME_W  g_szGStrAppNameW	//!< アプリ名の文字列 (UNICODE版)
+#define GSTR_APPNAME_W  g_szGStrAppName		//!< アプリ名の文字列
+#define GSTR_APPNAME    GSTR_APPNAME_W
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      テキストエリア                         //

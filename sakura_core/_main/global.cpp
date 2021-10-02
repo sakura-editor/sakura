@@ -16,9 +16,36 @@
 */
 
 #include "StdAfx.h"
-#include "global.h"
+#include "_main/global.h"
+
+#include "config/app_constants.h"
 #include "window/CEditWnd.h"
 #include "CNormalProcess.h"
+
+// アプリ名。2007.09.21 kobake 整理
+#define _APP_NAME_(TYPE) TYPE("sakura")
+
+#ifdef _DEBUG
+#define _APP_NAME_2_(TYPE) TYPE("(デバッグ版)")
+#else
+#define _APP_NAME_2_(TYPE) TYPE("")
+#endif
+
+#ifdef ALPHA_VERSION
+#define _APP_NAME_3_(TYPE) TYPE("(Alpha Version)")
+#else
+#define _APP_NAME_3_(TYPE) TYPE("")
+#endif
+
+#ifdef DEV_VERSION
+#define _APP_NAME_DEV_(TYPE) TYPE("(dev Version)")
+#else
+#define _APP_NAME_DEV_(TYPE) TYPE("")
+#endif
+
+#define _GSTR_APPNAME_(TYPE)  _APP_NAME_(TYPE) _APP_NAME_2_(TYPE) _APP_NAME_DEV_(TYPE) _APP_NAME_3_(TYPE)
+
+const WCHAR g_szGStrAppName[] = _GSTR_APPNAME_(_T);		// この変数を直接参照せずに GSTR_APPNAME を使うこと
 
 //2007.10.02 kobake CEditWndのインスタンスへのポインタをここに保存しておく
 CEditWnd* g_pcEditWnd = NULL;
