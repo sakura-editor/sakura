@@ -1833,12 +1833,14 @@ bool CEditView::GetSelectedData(
 	if( !GetSelectionInfo().IsTextSelected() ){
 		return false;
 	}
+	std::wstring strLineNum;
 	if( bWithLineNumber ){	/* 行番号を付与する */
 		/* 行番号表示に必要な桁数を計算 */
 		// 2014.11.30 桁はレイアウト単位である必要がある
 		nLineNumCols = GetTextArea().DetectWidthOfLineNumberArea_calculate(&m_pcEditDoc->m_cLayoutMgr, true);
 		nLineNumCols += 1;
-		pszLineNum = new wchar_t[nLineNumCols + 1];
+		strLineNum.assign(nLineNumCols, L'\0');
+		pszLineNum = strLineNum.data();
 	}
 
 	CLayoutRect			rcSel;
@@ -2030,9 +2032,6 @@ bool CEditView::GetSelectedData(
 				break;
 			}
 		}
-	}
-	if( bWithLineNumber ){	/* 行番号を付与する */
-		delete [] pszLineNum;
 	}
 	return true;
 }
