@@ -18,12 +18,26 @@
 #include "StdAfx.h"
 #include "_main/global.h"
 
+#include "basis/CErrorInfo.h"
 #include "config/app_constants.h"
 #include "window/CEditWnd.h"
 #include "CNormalProcess.h"
 
-// アプリ名。2007.09.21 kobake 整理
-WCHAR g_szGStrAppName[128];		// この変数を直接参照せずに GSTR_APPNAME を使うこと
+/*!
+	アプリ名を取得します。
+	プロセスの生成前にアプリ名を取得することはできません。
+
+	@date 2007/09/21 kobake 整理
+ */
+LPCWSTR GetAppName( void )
+{
+	const auto pcProcess = CProcess::getInstance();
+	if( !pcProcess )
+	{
+		::_com_raise_error(E_FAIL, MakeMsgError(L"Any process has been instantiated."));
+	}
+	return pcProcess->GetAppName();
+}
 
 //2007.10.02 kobake CEditWndのインスタンスへのポインタをここに保存しておく
 CEditWnd* g_pcEditWnd = NULL;

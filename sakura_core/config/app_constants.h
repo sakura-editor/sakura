@@ -33,9 +33,9 @@
 //                           名前                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-extern WCHAR g_szGStrAppName[128];
+LPCWSTR GetAppName( void );
 
-#define GSTR_APPNAME_W  g_szGStrAppName		//!< アプリ名の文字列
+#define GSTR_APPNAME_W  GetAppName()		//!< アプリ名の文字列
 #define GSTR_APPNAME    GSTR_APPNAME_W
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
