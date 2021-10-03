@@ -78,7 +78,7 @@ public:
 	//WCHAR
 	void SetString( const wchar_t* pData, size_t nDataLen );			//!< バッファの内容を置き換える。nDataLenは文字単位。
 	void SetString( const wchar_t* pszData );							//!< バッファの内容を置き換える。
-	void SetString( const std::wstring& str ) { SetString(str.c_str(), str.length()); }
+	void SetString( std::wstring_view str ) { SetString(str.data(), str.length()); }
 	void SetStringHoldBuffer( const wchar_t* pData, size_t nDataLen );
 	void AppendString( const wchar_t* pszData, size_t nDataLen );		//!< バッファの最後にデータを追加する。nLengthは文字単位。成功すればtrue。メモリ確保に失敗したらfalseを返す。
 	void AppendString( std::wstring_view data );						//!< バッファの最後にデータを追加する
