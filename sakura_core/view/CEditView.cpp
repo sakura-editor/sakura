@@ -1833,12 +1833,14 @@ bool CEditView::GetSelectedData(
 	if( !GetSelectionInfo().IsTextSelected() ){
 		return false;
 	}
+	std::wstring strLineNum;
 	if( bWithLineNumber ){	/* 行番号を付与する */
 		/* 行番号表示に必要な桁数を計算 */
 		// 2014.11.30 桁はレイアウト単位である必要がある
 		nLineNumCols = GetTextArea().DetectWidthOfLineNumberArea_calculate(&m_pcEditDoc->m_cLayoutMgr, true);
 		nLineNumCols += 1;
-		pszLineNum = new wchar_t[nLineNumCols + 1];
+		strLineNum.assign(nLineNumCols, L'\0');
+		pszLineNum = strLineNum.data();
 	}
 
 	CLayoutRect			rcSel;
@@ -1882,6 +1884,11 @@ bool CEditView::GetSelectedData(
 		// 大まかに見た容量を元にサイズをあらかじめ確保しておく。
 		cmemBuf->AllocStringBuffer(nBufSize);
 		//>> 2002/04/18 Azumaiya
+
+		// メモリ確保に失敗したら抜ける
+		if( 0 == cmemBuf->capacity() ){
+			return false;
+		}
 
 		bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 		nRowNum = 0;
@@ -1961,6 +1968,11 @@ bool CEditView::GetSelectedData(
 		cmemBuf->AllocStringBuffer(nBufSize);
 		//>> 2002/04/18 Azumaiya
 
+		// メモリ確保に失敗したら抜ける
+		if( 0 == cmemBuf->capacity() ){
+			return false;
+		}
+
 		for( nLineNum = GetSelectionInfo().m_sSelect.GetFrom().GetY2(); nLineNum <= GetSelectionInfo().m_sSelect.GetTo().y; ++nLineNum ){
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
 			if( NULL == pLine ){
@@ -2020,9 +2032,6 @@ bool CEditView::GetSelectedData(
 				break;
 			}
 		}
-	}
-	if( bWithLineNumber ){	/* 行番号を付与する */
-		delete [] pszLineNum;
 	}
 	return true;
 }
