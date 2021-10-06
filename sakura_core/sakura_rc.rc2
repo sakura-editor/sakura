@@ -1,6 +1,28 @@
 // このファイルにはリソースエディタで編集できない要素を配置します.
 // このファイルのエンコーディング/改行コードは UTF-16LE(BOM)/CRLF です.
 
+#define _APP_NAME_1 "sakura"
+
+#ifdef _DEBUG
+#define _APP_NAME_2 "(デバッグ版)"
+#else
+#define _APP_NAME_2 ""
+#endif
+
+#ifdef DEV_VERSION
+#define _APP_NAME_3 "(dev Version)"
+#else
+#define _APP_NAME_3 ""
+#endif
+
+#ifdef ALPHA_VERSION
+#define _APP_NAME_4 "(Alpha Version)"
+#else
+#define _APP_NAME_4 ""
+#endif
+
+#define _GSTR_APPNAME  _APP_NAME_1 _APP_NAME_2 _APP_NAME_3 _APP_NAME_4
+
 #define	S_COPYRIGHT	"Copyright (C) 1998-2021  by Norio Nakatani & Collaborators"
 #define FL_VER		PR_VER
 #define FL_VER_STR	PR_VER_STR
@@ -137,6 +159,7 @@ BEGIN
 #else
 	STR_BREGONIG_INIT				"bregonig.dll の利用に失敗しました。\r\n正規表現を利用するには Unicode 版の bregonig.dll が必要です。\r\n入手方法はヘルプを参照してください。"
 #endif
+	STR_GSTR_APPNAME				_GSTR_APPNAME
 
 	// Select Language
 	STR_SELLANG_NAME				"Japanese"						// language name [Primary language (Sublanguage)]

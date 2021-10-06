@@ -1,6 +1,28 @@
 // このファイルにはリソースエディタで編集できない要素を配置します.
 // このファイルのエンコーディング/改行コードは UTF-16LE(BOM)/CRLF です.
 
+#define _APP_NAME_1 "sakura"
+
+#ifdef _DEBUG
+#define _APP_NAME_2 "(debug build)"
+#else
+#define _APP_NAME_2 ""
+#endif
+
+#ifdef DEV_VERSION
+#define _APP_NAME_3 "(dev Version)"
+#else
+#define _APP_NAME_3 ""
+#endif
+
+#ifdef ALPHA_VERSION
+#define _APP_NAME_4 "(Alpha Version)"
+#else
+#define _APP_NAME_4 ""
+#endif
+
+#define _GSTR_APPNAME  _APP_NAME_1 _APP_NAME_2 _APP_NAME_3 _APP_NAME_4
+
 #define	S_COPYRIGHT				"Copyright (C) 1998-2021  by Norio Nakatani & Collaborators"
 #define	S_COPYRIGHT_TRANSLATION	"Copyright (C) 2011-2021  by Lucien & Collaborators"
 #define FL_VER		PR_VER
@@ -148,4 +170,5 @@ BEGIN
 #else
 	STR_BREGONIG_INIT				"failed to init the bregonig.dll.\r\nRegex relies upon bregonig.dll(Uniocde ver) to work.\r\nPlease refer to the help for assistance."
 #endif
+	STR_GSTR_APPNAME				_GSTR_APPNAME
 END

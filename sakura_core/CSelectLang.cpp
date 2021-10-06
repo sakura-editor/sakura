@@ -14,6 +14,8 @@
 
 #include "stdafx.h"
 #include "CSelectLang.h"
+
+#include "_main/CProcess.h"
 #include "util/os.h"
 #include "util/module.h"
 #include "debug/Debug2.h"
@@ -403,6 +405,12 @@ HINSTANCE CSelectLang::ChangeLang( UINT nIndex )
 
 	// ロケールを設定
 	::SetThreadUILanguage( m_psLangInfo->wLangId );
+
+	// アプリ名をリソースから読み込む
+	if( auto pcProcess = CProcess::getInstance() )
+	{
+		pcProcess->UpdateAppName(LS(STR_GSTR_APPNAME));
+	}
 
 	return m_psLangInfo->hInstance;
 }
