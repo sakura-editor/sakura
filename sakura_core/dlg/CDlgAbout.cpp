@@ -172,8 +172,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	2010.04.15 Moca コンパイラ情報を分離/WINヘッダ,N_SHAREDATA_VERSION追加
 
 	// 以下の形式で出力
-	//サクラエディタ   Ver. 2.4.1.0 32bit DEBUG dev
-	//(GitHash xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx)
+	//サクラエディタ開発版(64bitデバッグ) v2.4.1.1234GHA (xxxxxxxx)
 	//(GitURL https://github.com/sakura/sakura-editor.git)
 	//
 	//      Share Ver: 96
@@ -184,28 +183,14 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	// 1行目
 	// バージョン情報
-	cmemMsg.AppendString(LS(STR_DLGABOUT_APPNAME)); // e.g. "サクラエディタ", "Sakura Editor"
-	cmemMsg.AppendString(L"   ");
-
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
 	
 	cmemMsg.AppendStringF(
-		L"v%d.%d.%d.%d",
+		L"%s v%d.%d.%d.%d" LTEXT(BUILD_ENV_NAME) LTEXT(VERSION_HASH) L"\r\n",
+		LS(STR_GSTR_APPNAME),
 		HIWORD(dwVersionMS), LOWORD(dwVersionMS), HIWORD(dwVersionLS), LOWORD(dwVersionLS) // e.g. {2, 3, 2, 0}
 	);
-	cmemMsg.AppendString( L" " _T(VER_PLATFORM) );
-	cmemMsg.AppendString( _T(SPACE_WHEN_DEBUG) _T(VER_CONFIG) );
-#ifdef DEV_VERSION
-	cmemMsg.AppendString( _T(DEV_VERSION_STR_WITH_SPACE) );
-#endif
-#ifdef ALPHA_VERSION
-	cmemMsg.AppendString( L" " _T(ALPHA_VERSION_STR));
-#endif
-#ifdef GIT_TAG_NAME
-	cmemMsg.AppendString( L" (tag " _T(GIT_TAG_NAME) L")" );
-#endif
-	cmemMsg.AppendString( L"\r\n" );
 
 	// 2行目
 #ifdef GIT_COMMIT_HASH
@@ -221,9 +206,8 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	cmemMsg.AppendString( L"\r\n" );
 
 	// コンパイル情報
-	cmemMsg.AppendString( L"      Compile Info: " );
 	cmemMsg.AppendStringF(
-		_T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) L"%d " TSTR_TARGET_MODE L" WIN%03x/I%03x/C%03x/N%03x\r\n",
+		L"      Compile Info: " _T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) L"%d " TSTR_TARGET_MODE L" WIN%03x/I%03x/C%03x/N%03x\r\n",
 		COMPILER_VER, WINVER, _WIN32_IE, MY_WIN32_WINDOWS, MY_WIN32_WINNT
 	);
 
