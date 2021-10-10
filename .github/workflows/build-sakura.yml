@@ -49,6 +49,8 @@ jobs:
     steps:
     ## see https://github.com/actions/checkout
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
 
     ## see https://github.com/microsoft/setup-msbuild
     - name: Add msbuild to PATH
