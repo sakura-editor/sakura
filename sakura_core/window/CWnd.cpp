@@ -180,8 +180,6 @@ HWND CWnd::Create(
 		return NULL;
 	}
 
-	/* ウィンドウ作成後の処理 */
-	AfterCreateWindow();
 	return m_hWnd;
 }
 
