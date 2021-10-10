@@ -22,7 +22,7 @@
 #endif
 
 #if defined(_WIN64) || defined(_DEBUG)
-#define _GSTR_APPNAME  _APP_NAME_1 _APP_NAME_2 "(" _APP_NAME_3 _APP_NAME_4 ")"
+#define _GSTR_APPNAME  _APP_NAME_1 _APP_NAME_2 " (" _APP_NAME_3 _APP_NAME_4 ")"
 #else
 #define _GSTR_APPNAME  _APP_NAME_1 _APP_NAME_2 _APP_NAME_3 _APP_NAME_4
 #endif

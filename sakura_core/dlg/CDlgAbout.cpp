@@ -172,7 +172,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	2010.04.15 Moca コンパイラ情報を分離/WINヘッダ,N_SHAREDATA_VERSION追加
 
 	// 以下の形式で出力
-	//サクラエディタ開発版(64bitデバッグ) v2.4.1.1234GHA (xxxxxxxx)
+	//サクラエディタ開発版(64bitデバッグ) Ver. 2.4.1.1234 GHA (xxxxxxxx)
 	//(GitURL https://github.com/sakura/sakura-editor.git)
 	//
 	//      Share Ver: 96
@@ -187,7 +187,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
 	
 	cmemMsg.AppendStringF(
-		L"%s v%d.%d.%d.%d" LTEXT(BUILD_ENV_NAME) LTEXT(VERSION_HASH) L"\r\n",
+		L"%s Ver. %d.%d.%d.%d " LTEXT(BUILD_ENV_NAME) LTEXT(VERSION_HASH) L"\r\n",
 		LS(STR_GSTR_APPNAME),
 		HIWORD(dwVersionMS), LOWORD(dwVersionMS), HIWORD(dwVersionLS), LOWORD(dwVersionLS) // e.g. {2, 3, 2, 0}
 	);
