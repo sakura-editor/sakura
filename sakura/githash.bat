@@ -56,11 +56,15 @@ exit /b 0
 		for /f "usebackq" %%s in (`"%CMD_GIT%" describe --tags --contains 2^>nul`) do (
 			set GIT_TAG_NAME=%%s
 		)
+
+		:: Gitリポジトリの累積コミット数(取れない場合は0)
+		call :set_build_version
 	) else (
 		set GIT_SHORT_COMMIT_HASH=
 		set GIT_COMMIT_HASH=
 		set GIT_REMOTE_ORIGIN_URL=
 		set GIT_TAG_NAME=
+		set BUILD_VERSION=0
 	)
 
 	:: ビルド環境の名前が未定義なら local とする
@@ -68,21 +72,14 @@ exit /b 0
 		set BUILD_ENV_NAME=Local
 	)
 
-	:: Gitリポジトリの累積コミット数(取れない場合は0)
-	call :set_build_version
-
 	@rem get back to the original directory
 	popd
 
 	exit /b 0
 
 :set_build_version
+	if not "%GIT_ENABLED%" == "1" exit /b 0
 	if defined BUILD_VERSION exit /b 0
-	:: MinGWビルドは判定を諦める
-	if "%SHELL%" == "/usr/bin/bash") do (
-		set BUILD_VERSION=0
-		exit /b 0
-	)
 
 	:: gitがPATHに存在するかチェックする
 	set HAS_GIT_IN_PATH=0
