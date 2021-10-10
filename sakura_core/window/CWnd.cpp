@@ -151,9 +151,6 @@ HWND CWnd::Create(
 {
 	m_hwndParent = hwndParent;
 
-	/* ウィンドウ作成前の処理(クラス登録前) ( virtual )*/
-	PreviCreateWindow();
-
 	/* 初期ウィンドウサイズ */
 	/* ウィンドウの作成 */
 
