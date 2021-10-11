@@ -95,17 +95,6 @@ void CTipWnd::Create( HINSTANCE hInstance, HWND hwndParent )
 	return;
 }
 
-/*!	CreateWindowの後
-
-	CWnd::AfterCreateWindowでウィンドウを表示するようになっているのを
-	動かなくするための空関数
-
-	@date 2006.01.09 genta 新規作成
-*/
-void CTipWnd::AfterCreateWindow( void )
-{
-}
-
 /* Tipを表示 */
 void CTipWnd::Show( int nX, int nY, RECT* pRect )
 {
