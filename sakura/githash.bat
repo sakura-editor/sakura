@@ -80,19 +80,8 @@ exit /b 0
 :set_build_version
 	if not "%GIT_ENABLED%" == "1" exit /b 0
 	if defined BUILD_VERSION exit /b 0
-
-	:: gitがPATHに存在するかチェックする
-	set HAS_GIT_IN_PATH=0
-	for /f "usebackq" %%a in (`where $PATH:git`) do ( 
-		set HAS_GIT_IN_PATH=1
-	)
-
-	if "%HAS_GIT_IN_PATH%" == "1" (
-		for /f "usebackq" %%s in (`git log --oneline --no-merges ^| find /C " "`) do (
-			set BUILD_VERSION=%%s
-		)
-	) else (
-		set BUILD_VERSION=0
+	for /f "usebackq" %%s in (`"%CMD_GIT%" rev-list --count --no-merges @`) do (
+		set BUILD_VERSION=%%s
 	)
 	exit /b 0
 
