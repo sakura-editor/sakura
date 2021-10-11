@@ -93,6 +93,7 @@
 #include <vector>
 
 #include <Windows.h>
+#include <windowsx.h>
 #include <CommCtrl.h>
 #include <HtmlHelp.h>
 #include <ImageHlp.h>
