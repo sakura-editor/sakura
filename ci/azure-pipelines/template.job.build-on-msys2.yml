@@ -25,11 +25,6 @@ jobs:
   - checkout:   self       # self represents the repo where the initial Pipelines YAML file was found
     clean:      all        # what to clean each time; if not mentioned, does not clean
 
-  - bash: |
-      BUILD_VERSION=`git log --oneline --no-merges | wc -l`
-      echo "##vso[task.setvariable variable=BUILD_VERSION]$BUILD_VERSION"
-    displayName: compute BUILD_VERSION
-
   # show environmental variables for debug.
   - script: set
     displayName: Show environmental variables for debug
