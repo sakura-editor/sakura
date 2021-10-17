@@ -218,7 +218,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 		case IDCANCEL:
 			{
 				CLogicPoint pt(point.x < 0 ? CLogicInt(0) : point.x, point.y);
-				pcDoc->m_pcEditWnd->GetActiveView().GetCommander().Command_MOVECURSOR(pt, 0);
+				GetEditWnd().GetActiveView().GetCommander().Command_MOVECURSOR(pt, 0);
 			}
 			return CALLBACK_INTERRUPT; //中断
 		}

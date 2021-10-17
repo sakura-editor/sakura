@@ -3438,7 +3438,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 				if( nId == OUTLINE_LAYOUT_FILECHANGED ) return false;	// ファイル切替ではフローティングは開かない（従来互換）
 			}
 			// ※ 裏では一時的に Disable 化しておいて開く（タブモードでの不正な画面切り替え抑止）
-			CEditView* pcEditView = &pDoc->m_pcEditWnd->GetActiveView();
+			CEditView* pcEditView = &GetEditWnd().GetActiveView();
 			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetEditWnd().GetHwnd(), FALSE );
 			if( m_nOutlineType == OUTLINE_DEFAULT ){
 				bool bType = (ProfDockSet() != 0);
@@ -3548,7 +3548,7 @@ void CDlgFuncList::OnOutlineNotify( WPARAM wParam, LPARAM lParam )
 	CEditDoc* pDoc = CEditDoc::GetInstance(0);	// 今は非表示かもしれないので (CEditView*)m_lParam は使えない
 	switch( wParam ){
 	case 0:	// 設定変更通知（ドッキングモード or サイズ）, lParam: 通知元の HWND
-		if( (HWND)lParam == pDoc->m_pcEditWnd->GetHwnd() )
+		if( (HWND)lParam == GetEditWnd().GetHwnd() )
 			return;	// 自分からの通知は無視
 		ChangeLayout( OUTLINE_LAYOUT_BACKGROUND );	// アウトライン画面を再配置
 		break;

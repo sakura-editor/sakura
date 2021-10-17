@@ -120,7 +120,7 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 	// カーソル位置の文字列を取得
 	const CLayout*	pcLayout;
 	CLogicInt		nLineLen;
-	const CEditView* pcView = &pcEditDoc->m_pcEditWnd->GetActiveView();
+	const CEditView* pcView = &GetEditWnd().GetActiveView();
 	const CCaret* pcCaret = &pcView->GetCaret();
 	const CLayoutMgr* pLayoutMgr = &pcEditDoc->m_cLayoutMgr;
 	const wchar_t*	pLine = pLayoutMgr->GetLineStr( pcCaret->GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout );
