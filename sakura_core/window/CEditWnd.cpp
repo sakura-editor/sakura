@@ -233,13 +233,10 @@ CEditWnd::CEditWnd()
 , m_IconClicked(icNone) //by 鬼(2)
 , m_nSelectCountMode( SELECT_COUNT_TOGGLE )	//文字カウント方法の初期値はSELECT_COUNT_TOGGLE→共通設定に従う
 {
-	g_pcEditWnd=this;
 }
 
 CEditWnd::~CEditWnd()
 {
-	g_pcEditWnd=NULL;
-
 	delete m_pPrintPreview;
 	m_pPrintPreview = NULL;
 
