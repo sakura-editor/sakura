@@ -400,7 +400,7 @@ HWND CDlgFuncList::DoModeless(
 		pDlgTemplate->style = (WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | DS_SETFONT);
 		hwndRet = CDialog::DoModeless( hInstance, MyGetAncestor(hwndParent, GA_ROOT), pDlgTemplate, lParam, SW_HIDE );
 		::GlobalFree( pDlgTemplate );
-		pcEditView->m_pcEditWnd->EndLayoutBars( m_bEditWndReady );	// 画面の再レイアウト
+		GetEditWnd().EndLayoutBars( m_bEditWndReady );	// 画面の再レイアウト
 	}else{
 		hwndRet = CDialog::DoModeless( hInstance, MyGetAncestor(hwndParent, GA_ROOT), IDD_FUNCLIST, lParam, SW_SHOW );
 	}
@@ -1748,7 +1748,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		if( !IsDocking() && m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos ){
 			WINDOWPLACEMENT cWindowPlacement;
 			cWindowPlacement.length = sizeof( cWindowPlacement );
-			if (::GetWindowPlacement( pcEditView->m_pcEditWnd->GetHwnd(), &cWindowPlacement )){
+			if (::GetWindowPlacement( GetEditWnd().GetHwnd(), &cWindowPlacement )){
 				/* ウィンドウ位置・サイズを-1以外の値にしておくと、CDialogで使用される． */
 				m_xPos = m_pShareData->m_Common.m_sOutline.m_xOutlineWindowPos + cWindowPlacement.rcNormalPosition.left;
 				m_yPos = m_pShareData->m_Common.m_sOutline.m_yOutlineWindowPos + cWindowPlacement.rcNormalPosition.top;
@@ -1792,7 +1792,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		}
 		// 他ウィンドウに変更を通知する
 		if( ProfDockSync() ){
-			HWND hwndEdit = pcEditView->m_pcEditWnd->GetHwnd();
+			HWND hwndEdit = GetEditWnd().GetHwnd();
 			PostOutlineNotifyToAllEditors( (WPARAM)0, (LPARAM)hwndEdit );
 		}
 	}
@@ -2282,7 +2282,7 @@ BOOL CDlgFuncList::OnDestroy( void )
 	/* アウトライン ■位置とサイズを記憶する */ // 20060201 aroka
 	// 前提条件：m_lParam が CDialog::OnDestroy でクリアされないこと
 	CEditView* pcEditView=(CEditView*)m_lParam;
-	HWND hwndEdit = pcEditView->m_pcEditWnd->GetHwnd();
+	HWND hwndEdit = GetEditWnd().GetHwnd();
 	if( !IsDocking() && m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos ){
 		/* 親のウィンドウ位置・サイズを記憶 */
 		WINDOWPLACEMENT cWindowPlacement;
@@ -2299,7 +2299,7 @@ BOOL CDlgFuncList::OnDestroy( void )
 	// ドッキング画面を閉じるときは画面を再レイアウトする
 	// ドッキングでアプリ終了時には hwndEdit は NULL になっている（親に先に WM_DESTROY が送られるため）
 	if( IsDocking() && hwndEdit )
-		pcEditView->m_pcEditWnd->EndLayoutBars();
+		GetEditWnd().EndLayoutBars();
 
 	// 明示的にアウトライン画面を閉じたときだけアウトライン表示フラグを OFF にする
 	// フローティングでアプリ終了時やタブモードで裏にいる場合は ::IsWindowVisible( hwndEdit ) が FALSE を返す
@@ -2636,7 +2636,7 @@ void CDlgFuncList::GetDockSpaceRect( LPRECT pRect )
 		hwnd[nCount] = GetHwnd();
 		nCount++;
 	}
-	hwnd[nCount] = pcEditView->m_pcEditWnd->GetMiniMap().GetHwnd();
+	hwnd[nCount] = GetEditWnd().GetMiniMap().GetHwnd();
 	if( hwnd[nCount] != NULL ){
 		nCount++;
 	}
@@ -3262,7 +3262,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 
 	// メニュー選択された状態に切り替える
 	EFunctionCode nFuncCode = GetFuncCodeRedraw(m_nOutlineType);
-	HWND hwndEdit = pcEditView->m_pcEditWnd->GetHwnd();
+	HWND hwndEdit = GetEditWnd().GetHwnd();
 	if( nId == 450 ){	// 更新
 		CEditView* pcEditView = (CEditView*)m_lParam;
 		pcEditView->GetCommander().HandleCommand( nFuncCode, true, SHOW_RELOAD, 0, 0, 0 );
@@ -3292,7 +3292,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 			if( pCDocLine ){
 				CBookmarkSetter cBookmark(pCDocLine);
 				cBookmark.SetBookmark(false);
-				pcEditView->m_pcEditWnd->Views_Redraw();
+				GetEditWnd().Views_Redraw();
 			}
 		}
 		pcEditView->GetCommander().HandleCommand(nFuncCode, true, SHOW_RELOAD, 0, 0, 0);
@@ -3440,7 +3440,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 			}
 			// ※ 裏では一時的に Disable 化しておいて開く（タブモードでの不正な画面切り替え抑止）
 			CEditView* pcEditView = &pDoc->m_pcEditWnd->GetActiveView();
-			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( pcEditView->m_pcEditWnd->GetHwnd(), FALSE );
+			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetEditWnd().GetHwnd(), FALSE );
 			if( m_nOutlineType == OUTLINE_DEFAULT ){
 				bool bType = (ProfDockSet() != 0);
 				if( bType ){
@@ -3452,7 +3452,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 			}
 			EOutlineType nOutlineType = GetOutlineTypeRedraw(m_nOutlineType);	// ブックマークかアウトライン解析かは最後に開いていた時の状態を引き継ぐ（初期状態はアウトライン解析）
 			pcEditView->GetCommander().Command_FUNCLIST( SHOW_NORMAL, nOutlineType );	// 開く	※ HandleCommand(F_OUTLINE,...) だと印刷プレビュー状態で実行されないので Command_FUNCLIST()
-			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( pcEditView->m_pcEditWnd->GetHwnd(), TRUE );
+			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetEditWnd().GetHwnd(), TRUE );
 			return true;	// 解析した
 		}
 	}else{	// 現在は表示
@@ -3477,7 +3477,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 				if( nId == OUTLINE_LAYOUT_FILECHANGED ) return false;	// ファイル切替ではフローティングは開かない（従来互換）
 			}
 			// ※ 裏では一時的に Disable 化しておいて開く（タブモードでの不正な画面切り替え抑止）
-			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( pcEditView->m_pcEditWnd->GetHwnd(), FALSE );
+			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetEditWnd().GetHwnd(), FALSE );
 			if( m_nOutlineType == OUTLINE_DEFAULT ){
 				bool bType = (ProfDockSet() != 0);
 				if( bType ){
@@ -3489,7 +3489,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 			}
 			EOutlineType nOutlineType = GetOutlineTypeRedraw(m_nOutlineType);
 			pcEditView->GetCommander().Command_FUNCLIST( SHOW_NORMAL, nOutlineType );	// 開く	※ HandleCommand(F_OUTLINE,...) だと印刷プレビュー状態で実行されないので Command_FUNCLIST()
-			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( pcEditView->m_pcEditWnd->GetHwnd(), TRUE );
+			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetEditWnd().GetHwnd(), TRUE );
 			return true;	// 解析した
 		}
 
@@ -3532,7 +3532,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 		::SetWindowPos( GetHwnd(), NULL,
 			rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top,
 			SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_NOACTIVATE | ((eDockSideOld == eDockSideNew)? 0: SWP_FRAMECHANGED) );	// SWP_FRAMECHANGED 指定で WM_NCCALCSIZE（非クライアント領域の再計算）に誘導する
-		pcEditView->m_pcEditWnd->EndLayoutBars( m_bEditWndReady );
+		GetEditWnd().EndLayoutBars( m_bEditWndReady );
 	}
 	return false;
 }

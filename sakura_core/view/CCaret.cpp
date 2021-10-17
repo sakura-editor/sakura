@@ -301,7 +301,7 @@ CLayoutInt CCaret::MoveCursor(
 			if( m_pEditView->GetDrawSwitch() ){
 				m_pEditView->InvalidateRect( NULL );
 				m_pEditView->UpdateWindow();
-				if( m_pEditView->m_pcEditWnd->GetMiniMap().GetHwnd() ){
+				if( GetEditWnd().GetMiniMap().GetHwnd() ){
 					m_pEditView->MiniMapRedraw(true);
 				}
 			}
@@ -336,7 +336,7 @@ CLayoutInt CCaret::MoveCursor(
 
 			if( m_pEditView->GetDrawSwitch() ){
 				m_pEditView->ScrollDraw(nScrollRowNum, nScrollColNum, rcScroll, rcClip, rcClip2);
-				if( m_pEditView->m_pcEditWnd->GetMiniMap().GetHwnd() ){
+				if( GetEditWnd().GetMiniMap().GetHwnd() ){
 					m_pEditView->MiniMapRedraw(false);
 				}
 			}
