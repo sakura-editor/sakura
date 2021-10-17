@@ -418,11 +418,9 @@ void CEditDoc::InitAllView( void )
 	@date 2001.09.29 genta マクロクラスを渡すように
 	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 */
-BOOL CEditDoc::Create( CEditWnd* pcEditWnd )
+BOOL CEditDoc::Create( void )
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CEditDoc::Create" );
-
-	m_pcEditWnd = pcEditWnd;
 
 	//	Oct. 2, 2001 genta
 	m_cFuncLookup.Init( GetDllShareData().m_Common.m_sMacro.m_MacroTable, &GetDllShareData().m_Common );
