@@ -71,7 +71,7 @@ void CDocEditor::SetModified( bool flag, bool redraw)
 void CDocEditor::OnBeforeLoad(SLoadInfo* sLoadInfo)
 {
 	//ビューのテキスト選択解除
-	GetListeningDoc()->m_pcEditWnd->Views_DisableSelectArea(true);
+	GetEditWnd().Views_DisableSelectArea(true);
 }
 
 void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)

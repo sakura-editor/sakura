@@ -663,7 +663,7 @@ void CEditDoc::OnChangeSetting(
 	int			i;
 	HWND		hwndProgress = NULL;
 
-	CEditWnd*	pCEditWnd = m_pcEditWnd;	//	Sep. 10, 2002 genta
+	CEditWnd*	pCEditWnd = &GetEditWnd();	//	Sep. 10, 2002 genta
 
 	if( NULL != pCEditWnd ){
 		hwndProgress = pCEditWnd->m_cStatusBar.GetProgressHwnd();

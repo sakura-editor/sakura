@@ -3182,7 +3182,7 @@ INT_PTR CDlgFuncList::OnNcPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 {
 	// メニューを作成する
-	CEditView* pcEditView = &CEditDoc::GetInstance(0)->m_pcEditWnd->GetActiveView();
+	CEditView* pcEditView = &GetEditWnd().GetActiveView();
 	CDocTypeManager().GetTypeConfig( CTypeConfig(m_nDocType), m_type );
 	EDockSide eDockSide = ProfDockSide();	// 設定上の配置
 	UINT uFlags = MF_BYPOSITION | MF_STRING;
@@ -3394,7 +3394,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 */
 void CDlgFuncList::Refresh( void )
 {
-	CEditWnd* pcEditWnd = CEditDoc::GetInstance(0)->m_pcEditWnd;
+	CEditWnd* pcEditWnd = &GetEditWnd();
 	BOOL bReloaded = ChangeLayout( OUTLINE_LAYOUT_FILECHANGED );	// 現在設定に従ってアウトライン画面を再配置する
 	if( !bReloaded && pcEditWnd->m_cDlgFuncList.GetHwnd() ){
 		EOutlineType nOutlineType = GetOutlineTypeRedraw(m_nOutlineType);

@@ -89,7 +89,7 @@ bool CAutoReloadAgent::_ToDoChecking() const
 	if(hwndActive!=CEditWnd::getInstance()->GetHwnd())return false;
 	if(!GetListeningDoc()->m_cDocFile.GetFilePathClass().IsValidPath())return false;
 	if(GetListeningDoc()->m_cDocFile.IsFileTimeZero()) return false;	/* 現在編集中のファイルのタイムスタンプ */
-	if(GetListeningDoc()->m_pcEditWnd->m_pPrintPreview ) return false;	// 印刷プレビュー中	2013/5/8 Uchi
+	if(GetEditWnd().m_pPrintPreview ) return false;	// 印刷プレビュー中	2013/5/8 Uchi
 	return true;
 }
 
