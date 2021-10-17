@@ -39,7 +39,7 @@ inline CEditDoc* CViewCommander::GetDocument()
 }
 inline CEditWnd* CViewCommander::GetEditWindow()
 {
-	return m_pCommanderView->m_pcEditWnd;
+	return &GetEditWnd();
 }
 inline HWND CViewCommander::GetMainWindow()
 {

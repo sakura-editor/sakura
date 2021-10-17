@@ -248,9 +248,8 @@ INT_PTR CDlgFuncList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 		// それでは都合が悪いので，特別に以下の処理を行って他と同様な挙動が得られるようにする．
 		if( (BOOL)wParam ){
 			CEditView* pcEditView = (CEditView*)m_lParam;
-			CEditWnd* pcEditWnd = pcEditView->m_pcEditWnd;
 			if( ::GetActiveWindow() == GetHwnd() ){
-				::SetActiveWindow( pcEditWnd->GetHwnd() );
+				::SetActiveWindow( GetEditWnd().GetHwnd() );
 				BlockingHook( NULL );	// キュー内に溜まっているメッセージを処理
 				::SetActiveWindow( GetHwnd() );
 				return 0L;
@@ -2485,7 +2484,7 @@ BOOL CDlgFuncList::OnJump( bool bCheckAutoClose, bool bFileJump )	//2002.02.08 h
 				m_pShareData->m_sWorkBuffer.m_LogicPoint = poCaret;
 
 				//	2006.07.09 genta 移動時に選択状態を保持するように
-				::SendMessageAny( ((CEditView*)m_lParam)->m_pcEditWnd->GetHwnd(),
+				::SendMessageAny( GetEditWnd().GetHwnd(),
 					MYWM_SETCARETPOS, 0, PM_SETCARETPOS_KEEPSELECT );
 			}
 			if( bCheckAutoClose && bFileJumpSelf ){
@@ -2958,7 +2957,7 @@ INT_PTR CDlgFuncList::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 		::SetWindowPos( GetHwnd(), NULL,
 			rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top,
 			SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_NOACTIVATE );
-		((CEditView*)m_lParam)->m_pcEditWnd->EndLayoutBars( m_bEditWndReady );
+		GetEditWnd().EndLayoutBars( m_bEditWndReady );
 
 		// 移動後の配置情報を記憶する
 		GetWindowRect( GetHwnd(), &rc );
@@ -3045,7 +3044,7 @@ INT_PTR CDlgFuncList::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 		if( ProfDockSync() ){
 			// 他ウィンドウに変更を通知する
-			HWND hwndEdit = ((CEditView*)m_lParam)->m_pcEditWnd->GetHwnd();
+			HWND hwndEdit = GetEditWnd().GetHwnd();
 			PostOutlineNotifyToAllEditors( (WPARAM)0, (LPARAM)hwndEdit );
 		}
 		return 1L;
@@ -3796,7 +3795,7 @@ BOOL CDlgFuncList::Track( POINT ptDrag )
 					::MoveWindow( GetHwnd(), rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, TRUE );
 				}
 				if( ProfDockSync() ){
-					PostOutlineNotifyToAllEditors( (WPARAM)0, (LPARAM)((CEditView*)m_lParam)->m_pcEditWnd->GetHwnd() );	// 他ウィンドウにドッキング配置変更を通知する
+					PostOutlineNotifyToAllEditors( (WPARAM)0, (LPARAM)GetEditWnd().GetHwnd() );	// 他ウィンドウにドッキング配置変更を通知する
 				}
 				return TRUE;
 			}
