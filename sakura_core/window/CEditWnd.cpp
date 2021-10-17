@@ -690,7 +690,7 @@ HWND CEditWnd::Create(
 	// -- -- -- -- 子ウィンドウ作成 -- -- -- -- //
 
 	/* 分割フレーム作成 */
-	m_cSplitterWnd.Create( G_AppInstance(), GetHwnd(), this );
+	m_cSplitterWnd.Create( GetHwnd() );
 
 	/* ビュー */
 	GetView(0).Create( m_cSplitterWnd.GetHwnd(), GetDocument(), 0, TRUE, false  );
