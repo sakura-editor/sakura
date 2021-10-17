@@ -157,7 +157,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	/* Constructors */
-	CEditView(CEditWnd* pcEditWnd);
+	CEditView( void );
 	~CEditView();
 	void Close();
 	/* 初期化系メンバ関数 */
@@ -620,7 +620,6 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	//参照
-	CEditWnd*		m_pcEditWnd;	//!< ウィンドウ
 	CEditDoc*		m_pcEditDoc;	//!< ドキュメント
 	const STypeConfig*	m_pTypeData;
 

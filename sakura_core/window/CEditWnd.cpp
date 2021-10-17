@@ -619,12 +619,12 @@ HWND CEditWnd::Create(
 		m_pcEditViewArr[i] = NULL;
 	}
 	// [0] - [3] まで作成・初期化していたものを[0]だけ作る。ほかは分割されるまで何もしない
-	m_pcEditViewArr[0] = new CEditView(this);
+	m_pcEditViewArr[0] = new CEditView();
 	m_pcEditView = m_pcEditViewArr[0];
 
 	m_pcViewFont = new CViewFont(&GetLogfont());
 
-	m_pcEditViewMiniMap = new CEditView(this);
+	m_pcEditViewMiniMap = new CEditView();
 
 	m_pcViewFontMiniMap = new CViewFont(&GetLogfont(), true);
 
@@ -4344,7 +4344,7 @@ bool CEditWnd::CreateEditViewBySplit(int nViewCount )
 	if( GetAllViewCount() < nViewCount ){
 		for( int i = GetAllViewCount(); i < nViewCount; i++ ){
 			assert( NULL == m_pcEditViewArr[i] );
-			m_pcEditViewArr[i] = new CEditView(this);
+			m_pcEditViewArr[i] = new CEditView();
 			m_pcEditViewArr[i]->Create( m_cSplitterWnd.GetHwnd(), GetDocument(), i, FALSE, false );
 		}
 		m_nEditViewCount = nViewCount;

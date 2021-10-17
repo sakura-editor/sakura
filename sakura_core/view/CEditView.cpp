@@ -136,9 +136,8 @@ VOID CALLBACK EditViewTimerProc(
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-CEditView::CEditView(CEditWnd* pcEditWnd)
+CEditView::CEditView( void )
 : CViewCalc(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
-, m_pcEditWnd(pcEditWnd)
 , m_pcTextArea(NULL)
 , m_pcCaret(NULL)
 , m_pcRuler(NULL)
