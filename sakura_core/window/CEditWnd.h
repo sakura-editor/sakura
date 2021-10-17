@@ -422,4 +422,7 @@ private:
 public:
 	ESelectCountMode	m_nSelectCountMode; // 選択文字カウント方法
 };
+
+CEditWnd& GetEditWnd( void );
+
 #endif /* SAKURA_CEDITWND_6C771A35_3CC8_4932_BF15_823C40487A9F_H_ */
