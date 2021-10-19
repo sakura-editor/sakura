@@ -175,7 +175,7 @@ public:
 		case F_PL_ADDCOMMAND:			//コマンドを追加する
 			{
 				int id = m_cPlugin.AddCommand( Arguments[0], Arguments[1], Arguments[2], true );
-				View->m_pcEditWnd->RegisterPluginCommand( id );
+				GetEditWnd().RegisterPluginCommand( id );
 			}
 			break;
 		}

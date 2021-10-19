@@ -301,7 +301,7 @@ CLayoutInt CCaret::MoveCursor(
 			if( m_pEditView->GetDrawSwitch() ){
 				m_pEditView->InvalidateRect( NULL );
 				m_pEditView->UpdateWindow();
-				if( m_pEditView->m_pcEditWnd->GetMiniMap().GetHwnd() ){
+				if( GetEditWnd().GetMiniMap().GetHwnd() ){
 					m_pEditView->MiniMapRedraw(true);
 				}
 			}
@@ -336,7 +336,7 @@ CLayoutInt CCaret::MoveCursor(
 
 			if( m_pEditView->GetDrawSwitch() ){
 				m_pEditView->ScrollDraw(nScrollRowNum, nScrollColNum, rcScroll, rcClip, rcClip2);
-				if( m_pEditView->m_pcEditWnd->GetMiniMap().GetHwnd() ){
+				if( GetEditWnd().GetMiniMap().GetHwnd() ){
 					m_pEditView->MiniMapRedraw(false);
 				}
 			}
@@ -383,7 +383,7 @@ CLayoutInt CCaret::MoveCursor(
 
 	// アウトライン表示の選択位置を更新
 	CLayoutPoint poCaret = GetCaretLayoutPos();
-	m_pEditDoc->m_pcEditWnd->m_cDlgFuncList.NotifyCaretMovement( poCaret.GetY2() + 1, poCaret.GetX2() + 1 );
+	GetEditWnd().m_cDlgFuncList.NotifyCaretMovement( poCaret.GetY2() + 1, poCaret.GetX2() + 1 );
 
 	return nScrollRowNum;
 }
@@ -665,7 +665,7 @@ void CCaret::ShowCaretPosInfo()
 	}
 
 	// ステータスバーハンドルを取得
-	HWND hwndStatusBar = m_pEditDoc->m_pcEditWnd->m_cStatusBar.GetStatusHwnd();
+	HWND hwndStatusBar = GetEditWnd().m_cStatusBar.GetStatusHwnd();
 
 	// カーソル位置の文字列を取得
 	const CLayout*	pcLayout;
@@ -826,7 +826,7 @@ void CCaret::ShowCaretPosInfo()
 			szLeft,
 			szRight
 		);
-		m_pEditDoc->m_pcEditWnd->PrintMenubarMessage( szText );
+		GetEditWnd().PrintMenubarMessage( szText );
 	}
 	// ステータスバーに状態を書き出す
 	else{
@@ -841,13 +841,13 @@ void CCaret::ShowCaretPosInfo()
 		}
 
 		WCHAR szFontSize[16];
-		if( const double nZoomPercentage = m_pEditDoc->m_pcEditWnd->GetFontZoom() * 100.0; nZoomPercentage < 5.0 ){
+		if( const double nZoomPercentage = GetEditWnd().GetFontZoom() * 100.0; nZoomPercentage < 5.0 ){
 			auto_sprintf_s( szFontSize, _countof(szFontSize), LS( STR_STATUS_FONTZOOM_1 ), nZoomPercentage );
 		}else{
 			auto_sprintf_s( szFontSize, _countof(szFontSize), LS( STR_STATUS_FONTZOOM_0 ), nZoomPercentage );
 		}
 
-		auto& statusBar = m_pEditDoc->m_pcEditWnd->m_cStatusBar;
+		auto& statusBar = GetEditWnd().m_cStatusBar;
 		// SB_SETTEXT メッセージでステータスバーに文字列を設定する度に再描画が行われるのを防ぐ為に
 		// 設定時にパートのRECTを取得し最後にまとめて再描画を行う
 		HWND hWnd = statusBar.GetStatusHwnd();

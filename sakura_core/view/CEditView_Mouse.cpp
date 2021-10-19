@@ -64,7 +64,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 	CMyPoint ptMouse(_xPos,_yPos);
 
 	if( m_bHokan ){
-		m_pcEditWnd->m_cHokanMgr.Hide();
+		GetEditWnd().m_cHokanMgr.Hide();
 		m_bHokan = FALSE;
 	}
 
@@ -164,12 +164,12 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 					DWORD dwEffectsSrc = ( !m_pcEditDoc->IsEditable() )?
 											DROPEFFECT_COPY: DROPEFFECT_COPY | DROPEFFECT_MOVE;
 					int nOpe = m_pcEditDoc->m_cDocEditor.m_cOpeBuf.GetCurrentPointer();
-					m_pcEditWnd->SetDragSourceView( this );
+					GetEditWnd().SetDragSourceView( this );
 					CDataObject data( cmemCurText.GetStringPtr(), cmemCurText.GetStringLength(), GetSelectionInfo().IsBoxSelecting() );
 					dwEffects = data.DragDrop( TRUE, dwEffectsSrc );
-					m_pcEditWnd->SetDragSourceView( NULL );
+					GetEditWnd().SetDragSourceView( NULL );
 					if( m_pcEditDoc->m_cDocEditor.m_cOpeBuf.GetCurrentPointer() == nOpe ){	// ドキュメント変更なしか？	// 2007.12.09 ryoji
-						m_pcEditWnd->SetActivePane( m_nMyIndex );
+						GetEditWnd().SetActivePane( m_nMyIndex );
 						if( DROPEFFECT_MOVE == (dwEffectsSrc & dwEffects) ){
 							// 移動範囲を削除する
 							// ドロップ先が移動を処理したが自ドキュメントにここまで変更が無い
@@ -676,17 +676,17 @@ void CEditView::OnMBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 
 	// ホイール操作によるページスクロールあり
 	if( GetDllShareData().m_Common.m_sGeneral.m_nPageScrollByWheel == MOUSEFUNCTION_CENTER &&
-	    m_pcEditWnd->IsPageScrollByWheel() )
+	    GetEditWnd().IsPageScrollByWheel() )
 	{
-		m_pcEditWnd->SetPageScrollByWheel( FALSE );
+		GetEditWnd().SetPageScrollByWheel( FALSE );
 		return;
 	}
 
 	// ホイール操作によるページスクロールあり
 	if( GetDllShareData().m_Common.m_sGeneral.m_nHorizontalScrollByWheel == MOUSEFUNCTION_CENTER &&
-	    m_pcEditWnd->IsHScrollByWheel() )
+	    GetEditWnd().IsHScrollByWheel() )
 	{
-		m_pcEditWnd->SetHScrollByWheel( FALSE );
+		GetEditWnd().SetHScrollByWheel( FALSE );
 		return;
 	}
 
@@ -849,17 +849,17 @@ void CEditView::OnXLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 
 	// ホイール操作によるページスクロールあり
 	if( GetDllShareData().m_Common.m_sGeneral.m_nPageScrollByWheel == MOUSEFUNCTION_LEFTSIDE &&
-	    m_pcEditWnd->IsPageScrollByWheel() )
+	    GetEditWnd().IsPageScrollByWheel() )
 	{
-		m_pcEditWnd->SetPageScrollByWheel( FALSE );
+		GetEditWnd().SetPageScrollByWheel( FALSE );
 		return;
 	}
 
 	// ホイール操作によるページスクロールあり
 	if( GetDllShareData().m_Common.m_sGeneral.m_nHorizontalScrollByWheel == MOUSEFUNCTION_LEFTSIDE &&
-	    m_pcEditWnd->IsHScrollByWheel() )
+	    GetEditWnd().IsHScrollByWheel() )
 	{
-		m_pcEditWnd->SetHScrollByWheel( FALSE );
+		GetEditWnd().SetHScrollByWheel( FALSE );
 		return;
 	}
 
@@ -909,19 +909,19 @@ void CEditView::OnXRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 
 	// ホイール操作によるページスクロールあり
 	if( GetDllShareData().m_Common.m_sGeneral.m_nPageScrollByWheel == MOUSEFUNCTION_RIGHTSIDE &&
-	    m_pcEditWnd->IsPageScrollByWheel() )
+	    GetEditWnd().IsPageScrollByWheel() )
 	{
 		// ホイール操作によるページスクロールありをOFF
-		m_pcEditWnd->SetPageScrollByWheel( FALSE );
+		GetEditWnd().SetPageScrollByWheel( FALSE );
 		return;
 	}
 
 	// ホイール操作によるページスクロールあり
 	if( GetDllShareData().m_Common.m_sGeneral.m_nHorizontalScrollByWheel == MOUSEFUNCTION_RIGHTSIDE &&
-	    m_pcEditWnd->IsHScrollByWheel() )
+	    GetEditWnd().IsHScrollByWheel() )
 	{
 		// ホイール操作による横スクロールありをOFF
-		m_pcEditWnd->SetHScrollByWheel( FALSE );
+		GetEditWnd().SetHScrollByWheel( FALSE );
 		return;
 	}
 
@@ -1005,7 +1005,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 			if( ptNew.y < 0 ){
 				ptNew.y = CLayoutYInt(0);
 			}
-			CEditView& view = m_pcEditWnd->GetActiveView();
+			CEditView& view = GetEditWnd().GetActiveView();
 			ptNew.x = 0;
 			CLogicPoint ptNewLogic;
 			view.GetCaret().GetAdjustCursorPos( &ptNew );
@@ -1386,14 +1386,14 @@ LRESULT CEditView::OnMOUSEWHEEL2( WPARAM wParam, LPARAM lParam, bool bHorizontal
 		if( bKeyPageScroll ){
 			if( bHorizontal ){
 				// ホイール操作による横スクロールあり
-				m_pcEditWnd->SetHScrollByWheel( TRUE );
+				GetEditWnd().SetHScrollByWheel( TRUE );
 			}
 			// ホイール操作によるページスクロールあり
-			m_pcEditWnd->SetPageScrollByWheel( TRUE );
+			GetEditWnd().SetPageScrollByWheel( TRUE );
 		}else{
 			if( bHorizontal ){
 				// ホイール操作による横スクロールあり
-				m_pcEditWnd->SetHScrollByWheel( TRUE );
+				GetEditWnd().SetHScrollByWheel( TRUE );
 			}
 		}
 
@@ -1719,7 +1719,7 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 	}
 
 	/* 自分をアクティブペインにする */
-	m_pcEditWnd->SetActivePane( m_nMyIndex );
+	GetEditWnd().SetActivePane( m_nMyIndex );
 
 	// 現在のカーソル位置を記憶する	// 2007.12.09 ryoji
 	m_ptCaretPos_DragEnter = GetCaret().GetCaretLayoutPos();
@@ -1748,7 +1748,7 @@ STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect
 
 	*pdwEffect = TranslateDropEffect( m_cfDragData, dwKeyState, pt, *pdwEffect );
 
-	CEditView* pcDragSourceView = m_pcEditWnd->GetDragSourceView();
+	CEditView* pcDragSourceView = GetEditWnd().GetDragSourceView();
 
 	// ドラッグ元が他ビューで、このビューのカーソルがドラッグ元の選択範囲内の場合は禁止マークにする
 	// ※自ビューのときは禁止マークにしない（他アプリでも多くはそうなっている模様）	// 2009.06.09 ryoji
@@ -1817,7 +1817,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 		return PostMyDropFiles( pDataObject );
 
 	// 外部からのドロップは以後の処理ではコピーと同様に扱う
-	CEditView* pcDragSourceView = m_pcEditWnd->GetDragSourceView();
+	CEditView* pcDragSourceView = GetEditWnd().GetDragSourceView();
 	bMove = (*pdwEffect == DROPEFFECT_MOVE) && pcDragSourceView;
 	bBoxData = m_bDragBoxData;
 
@@ -2130,7 +2130,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 	switch( nId ){
 	case 110:	// ファイルを開く
 		// 通常のドロップファイル処理を行う
-		::SendMessageAny( m_pcEditWnd->GetHwnd(), WM_DROPFILES, (WPARAM)hDrop, 0 );
+		::SendMessageAny( GetEditWnd().GetHwnd(), WM_DROPFILES, (WPARAM)hDrop, 0 );
 		break;
 
 	case 100:	// パス名を貼り付ける
@@ -2221,7 +2221,7 @@ DWORD CEditView::TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, POINTL pt
 	if( cf == CF_HDROP )	// 2008.06.20 ryoji
 		return DROPEFFECT_LINK;
 
-	CEditView* pcDragSourceView = m_pcEditWnd->GetDragSourceView();
+	CEditView* pcDragSourceView = GetEditWnd().GetDragSourceView();
 
 	// 2008.06.21 ryoji
 	// Win 98/Me 環境では外部からのドラッグ時に GetKeyState() ではキー状態を正しく取得できないため、
@@ -2244,5 +2244,5 @@ DWORD CEditView::TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, POINTL pt
 
 bool CEditView::IsDragSource( void )
 {
-	return ( this == m_pcEditWnd->GetDragSourceView() );
+	return ( this == GetEditWnd().GetDragSourceView() );
 }

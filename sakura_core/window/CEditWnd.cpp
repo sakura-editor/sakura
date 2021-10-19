@@ -49,6 +49,7 @@
 #include "_main/CCommandLine.h"	/// 2003/1/26 aroka
 #include "_main/CAppMode.h"
 #include "_os/CDropTarget.h"
+#include "basis/CErrorInfo.h"
 #include "dlg/CDlgAbout.h"
 #include "dlg/CDlgPrintSetting.h"
 #include "env/CShareData.h"
@@ -119,7 +120,7 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 	// カーソル位置の文字列を取得
 	const CLayout*	pcLayout;
 	CLogicInt		nLineLen;
-	const CEditView* pcView = &pcEditDoc->m_pcEditWnd->GetActiveView();
+	const CEditView* pcView = &GetEditWnd().GetActiveView();
 	const CCaret* pcCaret = &pcView->GetCaret();
 	const CLayoutMgr* pLayoutMgr = &pcEditDoc->m_cLayoutMgr;
 	const wchar_t*	pLine = pLayoutMgr->GetLineStr( pcCaret->GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout );
@@ -178,6 +179,22 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 	}
 }
 
+/*!
+ * 編集ウインドウのインスタンスを取得します。
+ *
+ * 編集ウインドウの生存期間ははエディタプロセスと同じなので、
+ * ほとんどの場合、このグローバル関数を使ってアクセスできます。
+ */
+CEditWnd& GetEditWnd( void )
+{
+	const auto pcEditWnd = CEditWnd::getInstance();
+	if( !pcEditWnd )
+	{
+		::_com_raise_error(E_FAIL, MakeMsgError(L"Any CEditWnd has been instantiated."));
+	}
+	return (CEditWnd&)*pcEditWnd;
+}
+
 //	/* メッセージループ */
 //	DWORD MessageLoop_Thread( DWORD pCEditWndObject );
 
@@ -216,13 +233,10 @@ CEditWnd::CEditWnd()
 , m_IconClicked(icNone) //by 鬼(2)
 , m_nSelectCountMode( SELECT_COUNT_TOGGLE )	//文字カウント方法の初期値はSELECT_COUNT_TOGGLE→共通設定に従う
 {
-	g_pcEditWnd=this;
 }
 
 CEditWnd::~CEditWnd()
 {
-	g_pcEditWnd=NULL;
-
 	delete m_pPrintPreview;
 	m_pPrintPreview = NULL;
 
@@ -602,12 +616,12 @@ HWND CEditWnd::Create(
 		m_pcEditViewArr[i] = NULL;
 	}
 	// [0] - [3] まで作成・初期化していたものを[0]だけ作る。ほかは分割されるまで何もしない
-	m_pcEditViewArr[0] = new CEditView(this);
+	m_pcEditViewArr[0] = new CEditView();
 	m_pcEditView = m_pcEditViewArr[0];
 
 	m_pcViewFont = new CViewFont(&GetLogfont());
 
-	m_pcEditViewMiniMap = new CEditView(this);
+	m_pcEditViewMiniMap = new CEditView();
 
 	m_pcViewFontMiniMap = new CViewFont(&GetLogfont(), true);
 
@@ -673,7 +687,7 @@ HWND CEditWnd::Create(
 	// -- -- -- -- 子ウィンドウ作成 -- -- -- -- //
 
 	/* 分割フレーム作成 */
-	m_cSplitterWnd.Create( G_AppInstance(), GetHwnd(), this );
+	m_cSplitterWnd.Create( GetHwnd() );
 
 	/* ビュー */
 	GetView(0).Create( m_cSplitterWnd.GetHwnd(), GetDocument(), 0, TRUE, false  );
@@ -4327,7 +4341,7 @@ bool CEditWnd::CreateEditViewBySplit(int nViewCount )
 	if( GetAllViewCount() < nViewCount ){
 		for( int i = GetAllViewCount(); i < nViewCount; i++ ){
 			assert( NULL == m_pcEditViewArr[i] );
-			m_pcEditViewArr[i] = new CEditView(this);
+			m_pcEditViewArr[i] = new CEditView();
 			m_pcEditViewArr[i]->Create( m_cSplitterWnd.GetHwnd(), GetDocument(), i, FALSE, false );
 		}
 		m_nEditViewCount = nViewCount;

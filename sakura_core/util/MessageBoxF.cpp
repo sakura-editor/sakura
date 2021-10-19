@@ -36,6 +36,7 @@
 #include <stdarg.h>
 #include <tchar.h>
 #include "MessageBoxF.h"
+#include "_main/CProcess.h"
 #include "window/CEditWnd.h"
 #include "CSelectLang.h"
 #include "config/app_constants.h"
@@ -74,14 +75,24 @@ int Wrap_MessageBox(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType)
 	);
 }
 
-HWND GetMessageBoxOwner(HWND hwndOwner)
+/*!
+ * メッセージボックスのオーナーウインドウを取得します。
+ *
+ * @param [in,opt] hWndOwner オーナーウインドウ
+ * @returns メッセージボックスのオーナーウインドウ
+ * @retval 指定したオーナーウインドウが不正値で、プロセスのメインウインドウが作成済みの場合
+ * @retval hWndOwner 指定したオーナーウインドウが適正値で、メインウインドウが未作成の場合
+ */
+HWND GetMessageBoxOwner(HWND hWndOwner)
 {
-	if(hwndOwner==NULL && g_pcEditWnd){
-		return g_pcEditWnd->GetHwnd();
+	if( !hWndOwner || !::IsWindow(hWndOwner) )
+	{
+		if( const auto pcProcess = CProcess::getInstance() )
+		{
+			hWndOwner = pcProcess->GetMainWindow();
+		}
 	}
-	else{
-		return hwndOwner;
-	}
+	return hWndOwner;
 }
 
 /*!

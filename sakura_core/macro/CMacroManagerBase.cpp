@@ -64,7 +64,7 @@ void CMacroBeforeAfter::ExecKeyMacroAfter( class CEditView* pcEditView, int flag
 			pcEditView->SetUndoBuffer();
 		}
 	}
-	pcEditView->m_pcEditWnd->SetDrawSwitchOfAllViews(m_bDrawSwitchOld);
+	GetEditWnd().SetDrawSwitchOfAllViews(m_bDrawSwitchOld);
 }
 
 // CMacroManagerBase
