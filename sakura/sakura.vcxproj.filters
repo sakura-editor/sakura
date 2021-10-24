@@ -1112,6 +1112,9 @@
     <ClInclude Include="..\sakura_core\charset\CharsetDetector.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
+    <ClInclude Include="..\sakura_core\view\CMiniMapView.h">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resource\auto_scroll_center.cur">
@@ -2308,6 +2311,9 @@
     </ClCompile>
     <ClCompile Include="..\sakura_core\charset\CharsetDetector.cpp">
       <Filter>Cpp Source Files\charset</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sakura_core\view\CMiniMapView.cpp">
+      <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
