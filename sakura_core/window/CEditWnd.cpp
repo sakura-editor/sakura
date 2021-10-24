@@ -187,12 +187,12 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
  */
 CEditWnd& GetEditWnd( void )
 {
-	const auto pcEditWnd = CEditWnd::getInstance();
+	auto pcEditWnd = CEditWnd::getInstance();
 	if( !pcEditWnd )
 	{
 		::_com_raise_error(E_FAIL, MakeMsgError(L"Any CEditWnd has been instantiated."));
 	}
-	return (CEditWnd&)*pcEditWnd;
+	return *pcEditWnd;
 }
 
 //	/* メッセージループ */
