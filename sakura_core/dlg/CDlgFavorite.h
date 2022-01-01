@@ -86,7 +86,6 @@ protected:
 	void	UpdateUIState();
 	
 	void    GetFavorite( int nIndex );
-	std::tuple<int,int> GetListFavorite( int nIndex );
 	bool    IsGreaterThanOrEqualMax( int nTab );
 	int     DeleteSelected();
 	void	AddItem();
