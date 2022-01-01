@@ -40,6 +40,7 @@
 #include "io/CTextStream.h"
 #include "io/CZipFile.h"
 #include "CSelectLang.h"
+#include "util/shell.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "config/app_constants.h"
@@ -242,7 +243,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 							break;
 						}
 					}
-					::ShellExecute( NULL, L"open", sBaseDir.c_str(), NULL, NULL, SW_SHOW );
+					OpenWithExplorer( hwndDlg, sBaseDir );
 				}
 				break;
 			case IDC_PLUGIN_README:		// ReadMe表示	// 2011/11/2 Uchi
@@ -267,7 +268,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					if (sel >= 0){
 						CPlugin* plugin = CPluginManager::getInstance()->GetPlugin(sel);
 						if (plugin != NULL){
-							::ShellExecute(NULL, L"Open", plugin->m_sUrl.c_str(), NULL, NULL, SW_SHOW);
+							OpenWithBrowser( hwndDlg, plugin->m_sUrl );
 						}
 					}
 				}
@@ -612,7 +613,7 @@ static void LoadPluginTemp(CommonSetting& common, CMenuDrawer& cMenuDrawer)
 		// ツールバーアイコンの更新
 		const CPlug::Array& plugs = CJackManager::getInstance()->GetPlugs( PP_COMMAND );
 		cMenuDrawer.m_pcIcons->ResetExtend();
-		for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ) {
+		for( CPlug::ArrayIter it = plugs.cbegin(); it != plugs.cend(); it++ ) {
 			int iBitmap = CMenuDrawer::TOOLBAR_ICON_PLUGCOMMAND_DEFAULT - 1;
 			const CPlug* plug = *it;
 			if( !plug->m_sIcon.empty() ){

@@ -24,7 +24,6 @@ jobs:
   steps:
   - checkout:   self       # self represents the repo where the initial Pipelines YAML file was found
     clean:      all        # what to clean each time; if not mentioned, does not clean
-    fetchDepth: 5          # the depth of commits to ask Git to fetch; defaults to no limit
 
   # show environmental variables for debug.
   - script: set

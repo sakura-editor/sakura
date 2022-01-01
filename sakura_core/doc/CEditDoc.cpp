@@ -259,11 +259,11 @@ void CEditDoc::Clear()
 	// 「基本」のタイプ別設定を適用
 	m_cDocType.SetDocumentType( CDocTypeManager().GetDocumentTypeOfPath( m_cDocFile.GetFilePath() ), true );
 	m_blfCurTemp = false;
-	m_pcEditWnd->m_pcViewFontMiniMap->UpdateFont(&m_pcEditWnd->GetLogfont());
-	InitCharWidthCache( m_pcEditWnd->m_pcViewFontMiniMap->GetLogfont(), CWM_FONT_MINIMAP );
-	SelectCharWidthCache( CWM_FONT_EDIT, m_pcEditWnd->GetLogfontCacheMode() );
-	InitCharWidthCache( m_pcEditWnd->GetLogfont() );
-	m_pcEditWnd->m_pcViewFont->UpdateFont(&m_pcEditWnd->GetLogfont());
+	GetEditWnd().m_pcViewFontMiniMap->UpdateFont(&GetEditWnd().GetLogfont());
+	InitCharWidthCache( GetEditWnd().m_pcViewFontMiniMap->GetLogfont(), CWM_FONT_MINIMAP );
+	SelectCharWidthCache( CWM_FONT_EDIT, GetEditWnd().GetLogfontCacheMode() );
+	InitCharWidthCache( GetEditWnd().GetLogfont() );
+	GetEditWnd().m_pcViewFont->UpdateFont(&GetEditWnd().GetLogfont());
 
 	// 2008.06.07 nasukoji	折り返し方法の追加に対応
 	const STypeConfig& ref = m_cDocType.GetDocumentAttribute();
@@ -271,8 +271,8 @@ void CEditDoc::Clear()
 	if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH ){
 		nMaxLineKetas = CKetaXInt(MAXLINEKETAS);
 	}
-	m_cLayoutMgr.SetLayoutInfo( true, false, ref, ref.m_nTabSpace, ref.m_nTsvMode, nMaxLineKetas, CLayoutXInt(-1), &m_pcEditWnd->GetLogfont() );
-	m_pcEditWnd->ClearViewCaretPosInfo();
+	m_cLayoutMgr.SetLayoutInfo( true, false, ref, ref.m_nTabSpace, ref.m_nTsvMode, nMaxLineKetas, CLayoutXInt(-1), &GetEditWnd().GetLogfont() );
+	GetEditWnd().ClearViewCaretPosInfo();
 }
 
 /* 既存データのクリア */
@@ -408,7 +408,7 @@ void CEditDoc::InitAllView( void )
 		m_cLayoutMgr.ClearLayoutLineWidth();	// 各行のレイアウト行長の記憶をクリアする
 
 	// CEditWndに引越し
-	m_pcEditWnd->InitAllViews();
+	GetEditWnd().InitAllViews();
 
 	return;
 }
@@ -418,11 +418,9 @@ void CEditDoc::InitAllView( void )
 	@date 2001.09.29 genta マクロクラスを渡すように
 	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 */
-BOOL CEditDoc::Create( CEditWnd* pcEditWnd )
+BOOL CEditDoc::Create( void )
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CEditDoc::Create" );
-
-	m_pcEditWnd = pcEditWnd;
 
 	//	Oct. 2, 2001 genta
 	m_cFuncLookup.Init( GetDllShareData().m_Common.m_sMacro.m_MacroTable, &GetDllShareData().m_Common );
@@ -500,11 +498,11 @@ void CEditDoc::GetEditInfo(
 	wcscpy(pfi->m_szPath, m_cDocFile.GetFilePath());
 
 	//表示域
-	pfi->m_nViewTopLine = m_pcEditWnd->GetActiveView().GetTextArea().GetViewTopLine();	/* 表示域の一番上の行(0開始) */
-	pfi->m_nViewLeftCol = m_pcEditWnd->GetActiveView().GetTextArea().GetViewLeftCol();	/* 表示域の一番左の桁(0開始) */
+	pfi->m_nViewTopLine = GetEditWnd().GetActiveView().GetTextArea().GetViewTopLine();	/* 表示域の一番上の行(0開始) */
+	pfi->m_nViewLeftCol = GetEditWnd().GetActiveView().GetTextArea().GetViewLeftCol();	/* 表示域の一番左の桁(0開始) */
 
 	//キャレット位置
-	pfi->m_ptCursor.Set(m_pcEditWnd->GetActiveView().GetCaret().GetCaretLogicPos());
+	pfi->m_ptCursor.Set(GetEditWnd().GetActiveView().GetCaret().GetCaretLogicPos());
 
 	//各種状態
 	pfi->m_bIsModified = m_cDocEditor.IsModified();			/* 変更フラグ */
@@ -595,30 +593,30 @@ BOOL CEditDoc::HandleCommand( EFunctionCode nCommand )
 	switch( LOWORD( nCommand )){
 	case F_PREVWINDOW:	//前のウィンドウ
 		{
-			int nPane = m_pcEditWnd->m_cSplitterWnd.GetPrevPane();
+			int nPane = GetEditWnd().m_cSplitterWnd.GetPrevPane();
 			if( -1 != nPane ){
-				m_pcEditWnd->SetActivePane( nPane );
+				GetEditWnd().SetActivePane( nPane );
 			}else{
-				CControlTray::ActiveNextWindow( m_pcEditWnd->GetHwnd() );
+				CControlTray::ActiveNextWindow( GetEditWnd().GetHwnd() );
 			}
 		}
 		return TRUE;
 	case F_NEXTWINDOW:	//次のウィンドウ
 		{
-			int nPane = m_pcEditWnd->m_cSplitterWnd.GetNextPane();
+			int nPane = GetEditWnd().m_cSplitterWnd.GetNextPane();
 			if( -1 != nPane ){
-				m_pcEditWnd->SetActivePane( nPane );
+				GetEditWnd().SetActivePane( nPane );
 			}
 			else{
-				CControlTray::ActivePrevWindow( m_pcEditWnd->GetHwnd() );
+				CControlTray::ActivePrevWindow( GetEditWnd().GetHwnd() );
 			}
 		}
 		return TRUE;
 	case F_CHG_CHARSET:
-		return m_pcEditWnd->GetActiveView().GetCommander().HandleCommand( nCommand, true, (LPARAM)CODE_NONE, 0, 0, 0 );
+		return GetEditWnd().GetActiveView().GetCommander().HandleCommand( nCommand, true, (LPARAM)CODE_NONE, 0, 0, 0 );
 
 	default:
-		return m_pcEditWnd->GetActiveView().GetCommander().HandleCommand( nCommand, true, 0, 0, 0, 0 );
+		return GetEditWnd().GetActiveView().GetCommander().HandleCommand( nCommand, true, 0, 0, 0, 0 );
 	}
 }
 
@@ -639,7 +637,7 @@ void CEditDoc::OnChangeType()
 			const STypeConfig& types = m_cDocType.GetDocumentAttribute();
 			m_cDocFile.SetCodeSet( types.m_encoding.m_eDefaultCodetype, types.m_encoding.m_bDefaultBom );
 			m_cDocEditor.m_cNewLineCode = types.m_encoding.m_eDefaultEoltype;
-			m_pcEditWnd->GetActiveView().GetCaret().ShowCaretPosInfo();
+			GetEditWnd().GetActiveView().GetCaret().ShowCaretPosInfo();
 		}
 	}
 
@@ -665,7 +663,7 @@ void CEditDoc::OnChangeSetting(
 	int			i;
 	HWND		hwndProgress = NULL;
 
-	CEditWnd*	pCEditWnd = m_pcEditWnd;	//	Sep. 10, 2002 genta
+	CEditWnd*	pCEditWnd = &GetEditWnd();	//	Sep. 10, 2002 genta
 
 	if( NULL != pCEditWnd ){
 		hwndProgress = pCEditWnd->m_cStatusBar.GetProgressHwnd();
@@ -700,18 +698,18 @@ void CEditDoc::OnChangeSetting(
 
 	CLogicPointEx* posSaveAry = NULL;
 
-	if( m_pcEditWnd->m_posSaveAry ){
+	if( GetEditWnd().m_posSaveAry ){
 		if( bDoLayout ){
-			posSaveAry = m_pcEditWnd->m_posSaveAry;
-			m_pcEditWnd->m_posSaveAry = NULL;
+			posSaveAry = GetEditWnd().m_posSaveAry;
+			GetEditWnd().m_posSaveAry = NULL;
 		}
 	}else{
-		if( m_pcEditWnd->m_pPrintPreview ){
+		if( GetEditWnd().m_pPrintPreview ){
 			// 一時的に設定を戻す
 			SelectCharWidthCache( CWM_FONT_EDIT, CWM_CACHE_NEUTRAL );
 		}
 		if( bDoLayout ){
-			posSaveAry = m_pcEditWnd->SavePhysPosOfAllView();
+			posSaveAry = GetEditWnd().SavePhysPosOfAllView();
 		}
 	}
 
@@ -755,12 +753,12 @@ void CEditDoc::OnChangeSetting(
 	}
 
 	// フォント更新
-	m_pcEditWnd->m_pcViewFont->UpdateFont(&m_pcEditWnd->GetLogfont());
-	m_pcEditWnd->m_pcViewFontMiniMap->UpdateFont(&m_pcEditWnd->GetLogfont());
+	GetEditWnd().m_pcViewFont->UpdateFont(&GetEditWnd().GetLogfont());
+	GetEditWnd().m_pcViewFontMiniMap->UpdateFont(&GetEditWnd().GetLogfont());
 
-	InitCharWidthCache( m_pcEditWnd->m_pcViewFontMiniMap->GetLogfont(), CWM_FONT_MINIMAP );
-	SelectCharWidthCache( CWM_FONT_EDIT, m_pcEditWnd->GetLogfontCacheMode() );
-	InitCharWidthCache( m_pcEditWnd->GetLogfont() );
+	InitCharWidthCache( GetEditWnd().m_pcViewFontMiniMap->GetLogfont(), CWM_FONT_MINIMAP );
+	SelectCharWidthCache( CWM_FONT_EDIT, GetEditWnd().GetLogfontCacheMode() );
+	InitCharWidthCache( GetEditWnd().GetLogfont() );
 
 	CKetaXInt nMaxLineKetas = ref.m_nMaxLineKetas;
 	CKetaXInt nTabSpace = ref.m_nTabSpace;
@@ -813,9 +811,9 @@ void CEditDoc::OnChangeSetting(
 		nTabSpace = m_cLayoutMgr.GetTabSpaceKetas();	// 現在のタブ幅
 	}
 	CProgressSubject* pOld = CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(&m_cLayoutMgr);
-	m_cLayoutMgr.SetLayoutInfo( bDoLayout, bBlockingHook, ref, nTabSpace, nTsvMode, nMaxLineKetas, CLayoutXInt(-1), &m_pcEditWnd->GetLogfont() );
+	m_cLayoutMgr.SetLayoutInfo( bDoLayout, bBlockingHook, ref, nTabSpace, nTsvMode, nMaxLineKetas, CLayoutXInt(-1), &GetEditWnd().GetLogfont() );
 	CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
-	m_pcEditWnd->ClearViewCaretPosInfo();
+	GetEditWnd().ClearViewCaretPosInfo();
 
 	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
 	if( m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP )
@@ -824,29 +822,29 @@ void CEditDoc::OnChangeSetting(
 		m_cLayoutMgr.ClearLayoutLineWidth();	// 各行のレイアウト行長の記憶をクリアする
 
 	/* ビューに設定変更を反映させる */
-	int viewCount = m_pcEditWnd->GetAllViewCount();
+	int viewCount = GetEditWnd().GetAllViewCount();
 	for( i = 0; i < viewCount; ++i ){
-		m_pcEditWnd->GetView(i).OnChangeSetting();
+		GetEditWnd().GetView(i).OnChangeSetting();
 	}
-	m_pcEditWnd->GetMiniMap().OnChangeSetting();
+	GetEditWnd().GetMiniMap().OnChangeSetting();
 	if( posSaveAry ){
-		m_pcEditWnd->RestorePhysPosOfAllView( posSaveAry );
+		GetEditWnd().RestorePhysPosOfAllView( posSaveAry );
 	}
 	for( i = 0; i < viewCount; i++ ){
-		m_pcEditWnd->GetView(i).AdjustScrollBars();	// 2008.06.18 ryoji
+		GetEditWnd().GetView(i).AdjustScrollBars();	// 2008.06.18 ryoji
 	}
-	m_pcEditWnd->GetMiniMap().AdjustScrollBars();
+	GetEditWnd().GetMiniMap().AdjustScrollBars();
 	if( hwndProgress ){
 		::ShowWindow( hwndProgress, SW_HIDE );
 	}
-	if( m_pcEditWnd->m_pPrintPreview ){
+	if( GetEditWnd().m_pPrintPreview ){
 		// 設定を戻す
 		SelectCharWidthCache( CWM_FONT_PRINT, CWM_CACHE_LOCAL );
 	}
 
 	if(!bFromSetFontSize ){
 		// 親ウィンドウのタイトルを更新
-		m_pcEditWnd->UpdateCaption();
+		GetEditWnd().UpdateCaption();
 	}
 }
 
@@ -958,7 +956,7 @@ BOOL CEditDoc::OnFileClose(bool bGrepNoConfirm)
 		default:
 			if (m_cDocFile.IsChgCodeSet()) {
 				m_cDocFile.CancelChgCodeSet();	// 文字コードセットの変更をキャンセルする
-				this->m_pcEditWnd->GetActiveView().GetCaret().ShowCaretPosInfo();	// ステータス表示
+				GetEditWnd().GetActiveView().GetCaret().ShowCaretPosInfo();	// ステータス表示
 			}
 			return FALSE;
 		}
@@ -979,7 +977,7 @@ void CEditDoc::RunAutoMacro( int idx, LPCWSTR pszSaveFilePath )
 {
 	// 開ファイル／タイプ変更時はアウトラインを再解析する
 	if( pszSaveFilePath == NULL ){
-		m_pcEditWnd->m_cDlgFuncList.Refresh();
+		GetEditWnd().m_cDlgFuncList.Refresh();
 	}
 
 	static bool bRunning = false;

@@ -426,7 +426,7 @@ int CCodePage::AddComboCodePages(HWND hwnd, HWND combo, int nSelCode)
 	}
 	Combo_SetItemData( combo, nIdx, CODE_CPOEM );
 	CCodePage::CodePageList& cpList = CCodePage::GetCodePageList();
-	for( auto it = cpList.begin(); it != cpList.end(); ++it ){
+	for( auto it = cpList.cbegin(); it != cpList.cend(); ++it ){
 		nIdx = Combo_AddString(combo, it->second.c_str());
 		Combo_SetItemData(combo, nIdx, it->first);
 		if( nSelCode == it->first ){

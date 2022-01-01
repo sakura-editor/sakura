@@ -64,10 +64,11 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 	//マクロ
 	m_pcSMacroMgr = new CSMacroMgr();
 
+	//ドキュメントの作成
+	m_pcEditDoc->Create();
+
 	//ウィンドウの作成
 	m_pcEditWnd = CEditWnd::getInstance();
-
-	m_pcEditDoc->Create( m_pcEditWnd );
 	m_pcEditWnd->Create( m_pcEditDoc, &m_cIcons, nGroupId );
 
 	//MRU管理

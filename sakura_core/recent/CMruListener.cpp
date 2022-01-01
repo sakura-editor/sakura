@@ -160,7 +160,7 @@ void CMruListener::OnAfterLoad(const SLoadInfo& sLoadInfo)
 		pcDoc->m_cLayoutMgr.LogicToLayout(eiOld.m_ptCursor, &ptCaretPos);
 
 		//ビュー取得
-		CEditView& cView = pcDoc->m_pcEditWnd->GetActiveView();
+		CEditView& cView = GetEditWnd().GetActiveView();
 
 		if( ptCaretPos.GetY2() >= pcDoc->m_cLayoutMgr.GetLineCount() ){
 			//ファイルの最後に移動

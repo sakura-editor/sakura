@@ -26,8 +26,6 @@
 
 #include "StdAfx.h"
 #include "CRecentEditNode.h"
-#include <string.h>
-#include "env/DLLSHAREDATA.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           生成                              //

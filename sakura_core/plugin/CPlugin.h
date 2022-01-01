@@ -204,18 +204,18 @@ public:
 
 	//操作
 public:
-	wstring	GetLabel( void )	{ return m_sLabel; }
-	void	GetKey( wstring* sectin, wstring* key )	{ 
+	wstring	GetLabel( void ) const  { return m_sLabel; }
+	void	GetKey( wstring* sectin, wstring* key ) const { 
 		*sectin = m_sSection; 
 		*key = m_sKey;
 	}
-	wstring	GetType( void )		{ return m_sType; }
-	int 	GetIndex( void )	{ return m_index; }
-	std::vector<wstring>	GetSelects()
+	wstring	GetType( void ) const	{ return m_sType; }
+	int 	GetIndex( void ) const	{ return m_index; }
+	std::vector<wstring>	GetSelects() const
 	{
 		return (wstring_split(m_sSelects, L'|'));
 	}
-	wstring	GetDefaultVal(){ return m_sDefaultVal; }
+	wstring	GetDefaultVal() const { return m_sDefaultVal; }
 
 protected:
 	CPlugin*	m_parent;

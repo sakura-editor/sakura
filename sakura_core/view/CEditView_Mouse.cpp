@@ -22,9 +22,15 @@
 */
 
 #include "StdAfx.h"
-#include <process.h> // _beginthreadex
-#include <limits.h>
 #include "CEditView.h"
+
+#include <limits.h>
+
+#include <thread>
+#include <atomic>
+#include <mutex>
+#include <condition_variable>
+
 #include "_main/CAppMode.h"
 #include "CEditApp.h"
 #include "CGrepAgent.h" // use CEditApp.h
@@ -38,6 +44,7 @@
 #include "uiparts/HandCursor.h"
 #include "util/input.h"
 #include "util/os.h"
+#include "util/shell.h"
 #include "charset/CCodeBase.h"
 #include "charset/CCodeFactory.h"
 #include "apiwrap/StdApi.h"
@@ -57,7 +64,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 	CMyPoint ptMouse(_xPos,_yPos);
 
 	if( m_bHokan ){
-		m_pcEditWnd->m_cHokanMgr.Hide();
+		GetEditWnd().m_cHokanMgr.Hide();
 		m_bHokan = FALSE;
 	}
 
@@ -157,12 +164,12 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 					DWORD dwEffectsSrc = ( !m_pcEditDoc->IsEditable() )?
 											DROPEFFECT_COPY: DROPEFFECT_COPY | DROPEFFECT_MOVE;
 					int nOpe = m_pcEditDoc->m_cDocEditor.m_cOpeBuf.GetCurrentPointer();
-					m_pcEditWnd->SetDragSourceView( this );
+					GetEditWnd().SetDragSourceView( this );
 					CDataObject data( cmemCurText.GetStringPtr(), cmemCurText.GetStringLength(), GetSelectionInfo().IsBoxSelecting() );
 					dwEffects = data.DragDrop( TRUE, dwEffectsSrc );
-					m_pcEditWnd->SetDragSourceView( NULL );
+					GetEditWnd().SetDragSourceView( NULL );
 					if( m_pcEditDoc->m_cDocEditor.m_cOpeBuf.GetCurrentPointer() == nOpe ){	// ドキュメント変更なしか？	// 2007.12.09 ryoji
-						m_pcEditWnd->SetActivePane( m_nMyIndex );
+						GetEditWnd().SetActivePane( m_nMyIndex );
 						if( DROPEFFECT_MOVE == (dwEffectsSrc & dwEffects) ){
 							// 移動範囲を削除する
 							// ドロップ先が移動を処理したが自ドキュメントにここまで変更が無い
@@ -669,17 +676,17 @@ void CEditView::OnMBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 
 	// ホイール操作によるページスクロールあり
 	if( GetDllShareData().m_Common.m_sGeneral.m_nPageScrollByWheel == MOUSEFUNCTION_CENTER &&
-	    m_pcEditWnd->IsPageScrollByWheel() )
+	    GetEditWnd().IsPageScrollByWheel() )
 	{
-		m_pcEditWnd->SetPageScrollByWheel( FALSE );
+		GetEditWnd().SetPageScrollByWheel( FALSE );
 		return;
 	}
 
 	// ホイール操作によるページスクロールあり
 	if( GetDllShareData().m_Common.m_sGeneral.m_nHorizontalScrollByWheel == MOUSEFUNCTION_CENTER &&
-	    m_pcEditWnd->IsHScrollByWheel() )
+	    GetEditWnd().IsHScrollByWheel() )
 	{
-		m_pcEditWnd->SetHScrollByWheel( FALSE );
+		GetEditWnd().SetHScrollByWheel( FALSE );
 		return;
 	}
 
@@ -842,17 +849,17 @@ void CEditView::OnXLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 
 	// ホイール操作によるページスクロールあり
 	if( GetDllShareData().m_Common.m_sGeneral.m_nPageScrollByWheel == MOUSEFUNCTION_LEFTSIDE &&
-	    m_pcEditWnd->IsPageScrollByWheel() )
+	    GetEditWnd().IsPageScrollByWheel() )
 	{
-		m_pcEditWnd->SetPageScrollByWheel( FALSE );
+		GetEditWnd().SetPageScrollByWheel( FALSE );
 		return;
 	}
 
 	// ホイール操作によるページスクロールあり
 	if( GetDllShareData().m_Common.m_sGeneral.m_nHorizontalScrollByWheel == MOUSEFUNCTION_LEFTSIDE &&
-	    m_pcEditWnd->IsHScrollByWheel() )
+	    GetEditWnd().IsHScrollByWheel() )
 	{
-		m_pcEditWnd->SetHScrollByWheel( FALSE );
+		GetEditWnd().SetHScrollByWheel( FALSE );
 		return;
 	}
 
@@ -902,19 +909,19 @@ void CEditView::OnXRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 
 	// ホイール操作によるページスクロールあり
 	if( GetDllShareData().m_Common.m_sGeneral.m_nPageScrollByWheel == MOUSEFUNCTION_RIGHTSIDE &&
-	    m_pcEditWnd->IsPageScrollByWheel() )
+	    GetEditWnd().IsPageScrollByWheel() )
 	{
 		// ホイール操作によるページスクロールありをOFF
-		m_pcEditWnd->SetPageScrollByWheel( FALSE );
+		GetEditWnd().SetPageScrollByWheel( FALSE );
 		return;
 	}
 
 	// ホイール操作によるページスクロールあり
 	if( GetDllShareData().m_Common.m_sGeneral.m_nHorizontalScrollByWheel == MOUSEFUNCTION_RIGHTSIDE &&
-	    m_pcEditWnd->IsHScrollByWheel() )
+	    GetEditWnd().IsHScrollByWheel() )
 	{
 		// ホイール操作による横スクロールありをOFF
-		m_pcEditWnd->SetHScrollByWheel( FALSE );
+		GetEditWnd().SetHScrollByWheel( FALSE );
 		return;
 	}
 
@@ -998,7 +1005,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 			if( ptNew.y < 0 ){
 				ptNew.y = CLayoutYInt(0);
 			}
-			CEditView& view = m_pcEditWnd->GetActiveView();
+			CEditView& view = GetEditWnd().GetActiveView();
 			ptNew.x = 0;
 			CLogicPoint ptNewLogic;
 			view.GetCaret().GetAdjustCursorPos( &ptNew );
@@ -1379,14 +1386,14 @@ LRESULT CEditView::OnMOUSEWHEEL2( WPARAM wParam, LPARAM lParam, bool bHorizontal
 		if( bKeyPageScroll ){
 			if( bHorizontal ){
 				// ホイール操作による横スクロールあり
-				m_pcEditWnd->SetHScrollByWheel( TRUE );
+				GetEditWnd().SetHScrollByWheel( TRUE );
 			}
 			// ホイール操作によるページスクロールあり
-			m_pcEditWnd->SetPageScrollByWheel( TRUE );
+			GetEditWnd().SetPageScrollByWheel( TRUE );
 		}else{
 			if( bHorizontal ){
 				// ホイール操作による横スクロールあり
-				m_pcEditWnd->SetHScrollByWheel( TRUE );
+				GetEditWnd().SetHScrollByWheel( TRUE );
 			}
 		}
 
@@ -1529,15 +1536,6 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	return;
 }
 
-/* ShellExecuteを呼び出すプロシージャ */
-static unsigned __stdcall ShellExecuteProc( LPVOID lpParameter )
-{
-	LPWSTR pszFile = (LPWSTR)lpParameter;
-	::ShellExecute( NULL, L"open", pszFile, NULL, NULL, SW_SHOW );
-	free( pszFile );
-	return 0;
-}
-
 // マウス左ボタンダブルクリック
 // 2007.01.18 kobake IsCurrentPositionURL仕様変更に伴い、処理の書き換え
 void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
@@ -1581,20 +1579,31 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 				// 2009.05.21 syat UNCパスだと1分以上無応答になることがあるのでスレッド化
 				CWaitCursor cWaitCursor( GetHwnd() );	// カーソルを砂時計にする
 
-				unsigned int nThreadId;
-				LPCWSTR szUrl = strOPEN.c_str();
-				LPWSTR szUrlDup = _wcsdup( szUrl );
-				HANDLE hThread = (HANDLE)_beginthreadex( NULL, 0, ShellExecuteProc, (LPVOID)szUrlDup, 0, &nThreadId );
-				if( hThread != INVALID_HANDLE_VALUE ){
-					// ユーザーのURL起動指示に反応した目印としてちょっとの時間だけ砂時計カーソルを表示しておく
-					// ShellExecute は即座にエラー終了することがちょくちょくあるので WaitForSingleObject ではなく Sleep を使用（ex.存在しないパスの起動）
-					// 【補足】いずれの API でも待ちを長め（2～3秒）にするとなぜか Web ブラウザ未起動からの起動が重くなる模様（PCタイプ, XP/Vista, IE/FireFox に関係なく）
-					::Sleep(200);
-					::CloseHandle(hThread);
-				}else{
-					//スレッド作成失敗
-					free( szUrlDup );
+				// 前回分の「URLを開く」処理の完了をチェックして必要があれば待機する
+				if (m_threadUrlOpen.joinable()) {
+					m_threadUrlOpen.join();
 				}
+
+				// 新規スレッドで「URLを開く」を実行する
+				// ※初期化完了するまではメインスレッドの実行がブロックされることに注意。
+				std::mutex mtx;
+				std::condition_variable cv;
+				bool initialized = false;
+				m_threadUrlOpen = std::thread( [this, strOPEN, &mtx, &cv, &initialized] {
+					// 初期化
+					std::wstring url(strOPEN);
+					if (!initialized)
+					{
+						std::unique_lock lock( mtx );
+						initialized = true;
+						cv.notify_one();
+					}
+
+					// 本処理
+					OpenWithBrowser( GetHwnd(), url );
+				});
+				std::unique_lock lock( mtx );
+				cv.wait(lock, [&initialized] { return initialized; });
 			}
 			return;
 		}
@@ -1710,7 +1719,7 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 	}
 
 	/* 自分をアクティブペインにする */
-	m_pcEditWnd->SetActivePane( m_nMyIndex );
+	GetEditWnd().SetActivePane( m_nMyIndex );
 
 	// 現在のカーソル位置を記憶する	// 2007.12.09 ryoji
 	m_ptCaretPos_DragEnter = GetCaret().GetCaretLayoutPos();
@@ -1739,7 +1748,7 @@ STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect
 
 	*pdwEffect = TranslateDropEffect( m_cfDragData, dwKeyState, pt, *pdwEffect );
 
-	CEditView* pcDragSourceView = m_pcEditWnd->GetDragSourceView();
+	CEditView* pcDragSourceView = GetEditWnd().GetDragSourceView();
 
 	// ドラッグ元が他ビューで、このビューのカーソルがドラッグ元の選択範囲内の場合は禁止マークにする
 	// ※自ビューのときは禁止マークにしない（他アプリでも多くはそうなっている模様）	// 2009.06.09 ryoji
@@ -1808,7 +1817,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 		return PostMyDropFiles( pDataObject );
 
 	// 外部からのドロップは以後の処理ではコピーと同様に扱う
-	CEditView* pcDragSourceView = m_pcEditWnd->GetDragSourceView();
+	CEditView* pcDragSourceView = GetEditWnd().GetDragSourceView();
 	bMove = (*pdwEffect == DROPEFFECT_MOVE) && pcDragSourceView;
 	bBoxData = m_bDragBoxData;
 
@@ -2121,7 +2130,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 	switch( nId ){
 	case 110:	// ファイルを開く
 		// 通常のドロップファイル処理を行う
-		::SendMessageAny( m_pcEditWnd->GetHwnd(), WM_DROPFILES, (WPARAM)hDrop, 0 );
+		::SendMessageAny( GetEditWnd().GetHwnd(), WM_DROPFILES, (WPARAM)hDrop, 0 );
 		break;
 
 	case 100:	// パス名を貼り付ける
@@ -2212,7 +2221,7 @@ DWORD CEditView::TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, POINTL pt
 	if( cf == CF_HDROP )	// 2008.06.20 ryoji
 		return DROPEFFECT_LINK;
 
-	CEditView* pcDragSourceView = m_pcEditWnd->GetDragSourceView();
+	CEditView* pcDragSourceView = GetEditWnd().GetDragSourceView();
 
 	// 2008.06.21 ryoji
 	// Win 98/Me 環境では外部からのドラッグ時に GetKeyState() ではキー状態を正しく取得できないため、
@@ -2235,5 +2244,5 @@ DWORD CEditView::TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, POINTL pt
 
 bool CEditView::IsDragSource( void )
 {
-	return ( this == m_pcEditWnd->GetDragSourceView() );
+	return ( this == GetEditWnd().GetDragSourceView() );
 }

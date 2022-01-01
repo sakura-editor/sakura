@@ -34,7 +34,6 @@ constexpr auto SPLITTER_MARGIN = 2;
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CSplitterWnd::CSplitterWnd()
 : CWnd(L"::CSplitterWnd")
-, m_pcEditWnd(NULL)
 , m_nAllSplitRows(1)					/* 分割行数 */
 , m_nAllSplitCols(1)					/* 分割桁数 */
 , m_nVSplitPos(0)					/* 垂直分割位置 */
@@ -61,17 +60,15 @@ CSplitterWnd::~CSplitterWnd()
 }
 
 /* 初期化 */
-HWND CSplitterWnd::Create( HINSTANCE hInstance, HWND hwndParent, void* pCEditWnd )
+HWND CSplitterWnd::Create( HWND hwndParent )
 {
 	LPCWSTR pszClassName = L"SplitterWndClass";
 
 	/* 初期化 */
-	m_pcEditWnd	= pCEditWnd;
-
 	/* ウィンドウクラス作成 */
 	ATOM atWork;
 	atWork = RegisterWC(
-		hInstance,
+		G_AppInstance(),
 		NULL,// Handle to the class icon.
 		NULL,	//Handle to a small icon
 		NULL,// Handle to the class cursor.
@@ -247,7 +244,7 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 	BOOL				bVUp;
 	BOOL				bHUp;
 	BOOL				bSizeBox;
-	CEditWnd*			pCEditWnd = (CEditWnd*)m_pcEditWnd;
+	CEditWnd*			pCEditWnd = &GetEditWnd();
 	bVUp = FALSE;
 	bHUp = FALSE;
 
@@ -805,7 +802,7 @@ LRESULT CSplitterWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 /* ウィンドウサイズの変更処理 */
 LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	CEditWnd*	pCEditWnd = (CEditWnd*)m_pcEditWnd;
+	CEditWnd*	pCEditWnd = &GetEditWnd();
 	CEditView*	pcViewArr[MAXCOUNTOFVIEW];
 	int					i;
 	RECT		rcClient;

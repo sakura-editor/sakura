@@ -362,7 +362,7 @@ bool CWSHClient::Execute(const wchar_t *AScript)
 		{
 			bool bAddNamedItemError = false;
 
-			for( ListIter it = m_IfObjArr.begin(); it != m_IfObjArr.end(); it++ )
+			for( ListIter it = m_IfObjArr.cbegin(); it != m_IfObjArr.cend(); it++ )
 			{
 				DWORD dwFlag = SCRIPTITEM_ISVISIBLE;
 

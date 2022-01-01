@@ -36,7 +36,7 @@
 bool CConvert_TabToSpace::DoConvert(CNativeW* pcData)
 {
 	const std::wstring_view source(pcData->GetStringPtr(), pcData->GetStringLength());
-	const std::ptrdiff_t numOfTabs = std::count(source.begin(), source.end(), L'\t');
+	const auto numOfTabs = std::count(source.cbegin(), source.cend(), L'\t');
 	std::wstring buffer;
 	buffer.reserve(source.length() + numOfTabs * (m_nTabWidth - 1));
 

@@ -570,7 +570,9 @@ user_cancel:
 		if( bCancelEnd && bOutputExtInfo ){
 			//	2006.12.03 maru アウトプットウィンドウにのみ出力
 			//最後にテキストを追加
-			oa.OutputW( LS(STR_EDITVIEW_EXECCMD_STOP) );
+			// L"\r\n中断しました。\r\n"
+			std::wstring msg( LS(STR_EDITVIEW_EXECCMD_STOP) );
+			oa.OutputW( msg.c_str(), (int)msg.length() );
 		}
 		
 		{

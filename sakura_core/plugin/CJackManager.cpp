@@ -217,7 +217,7 @@ EFunctionCode CJackManager::GetCommandCode( int index ) const
 //プラグインコマンドの名前を返す
 int CJackManager::GetCommandName( int funccode, WCHAR* buf, int size ) const
 {
-	for( CPlug::ArrayIter it = m_Jacks[ PP_COMMAND ].plugs.begin(); it != m_Jacks[ PP_COMMAND ].plugs.end(); it++ ){
+	for( CPlug::ArrayIter it = m_Jacks[ PP_COMMAND ].plugs.cbegin(); it != m_Jacks[ PP_COMMAND ].plugs.cend(); it++ ){
 		if( ((CPlug*)(*it))->GetFunctionCode() == funccode ){
 			wcsncpy( buf, ((CPlug*)(*it))->m_sLabel.c_str(), size );
 			buf[ size-1 ] = L'\0';
@@ -237,7 +237,7 @@ int CJackManager::GetCommandCount() const
 CPlug* CJackManager::GetCommandById( int id ) const
 {
 	const CPlug::Array& plugs = GetPlugs( PP_COMMAND );
-	for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
+	for( CPlug::ArrayIter it = plugs.cbegin(); it != plugs.cend(); it++ ){
 		if( (*it)->GetFunctionCode() == id ){
 			return (*it);
 		}

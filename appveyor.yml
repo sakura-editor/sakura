@@ -8,8 +8,9 @@ platform:
   - Win32
   - x64
 
-# set clone depth
-clone_depth: 5
+# comment-out clone_depth to fetch entire repository.
+## set clone depth
+#clone_depth: 5
 
 # see "Skip commits" at https://www.appveyor.com/docs/how-to/filtering-commits/#commit-files-github-and-bitbucket-only
 skip_commits:

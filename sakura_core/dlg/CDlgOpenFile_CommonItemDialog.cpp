@@ -929,7 +929,7 @@ int CDlgOpenFile_CommonItemDialog::AddComboCodePages( int nSelCode )
 		nSel = nSelCode;
 	}
 	CCodePage::CodePageList& cpList = CCodePage::GetCodePageList();
-	for( auto it = cpList.begin(); it != cpList.end(); ++it ){
+	for( auto it = cpList.cbegin(); it != cpList.cend(); ++it ){
 		hr = AddControlItem(CtrlId::COMBO_CODE, (DWORD)it->first, it->second.c_str());
 		if( nSelCode == it->first ){
 			SetSelectedControlItem(CtrlId::COMBO_CODE, (DWORD)it->first);

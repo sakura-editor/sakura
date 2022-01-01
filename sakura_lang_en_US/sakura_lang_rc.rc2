@@ -1,10 +1,34 @@
 // このファイルにはリソースエディタで編集できない要素を配置します.
 // このファイルのエンコーディング/改行コードは UTF-16LE(BOM)/CRLF です.
 
+#define _APP_NAME_1 "SAKURA Editor"
+
+#ifdef DEV_VERSION
+#define _APP_NAME_2 " Dev"
+#else
+#define _APP_NAME_2 ""
+#endif
+
+#ifdef _WIN64
+#define _APP_NAME_3 "64bit"
+#else
+#define _APP_NAME_3 "32bit"
+#endif
+
+#ifdef _DEBUG
+#define _APP_NAME_4 " Debug"
+#else
+#define _APP_NAME_4 ""
+#endif
+
+#if defined(_WIN64) || defined(_DEBUG)
+#define _GSTR_APPNAME  _APP_NAME_1 _APP_NAME_2 " (" _APP_NAME_3 _APP_NAME_4 ")"
+#else
+#define _GSTR_APPNAME  _APP_NAME_1 _APP_NAME_2 _APP_NAME_3 _APP_NAME_4
+#endif
+
 #define	S_COPYRIGHT				"Copyright (C) 1998-2021  by Norio Nakatani & Collaborators"
 #define	S_COPYRIGHT_TRANSLATION	"Copyright (C) 2011-2021  by Lucien & Collaborators"
-#define FL_VER		PR_VER
-#define FL_VER_STR	PR_VER_STR
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -71,8 +95,8 @@ END
 // Version
 //
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION    FL_VER
- PRODUCTVERSION PR_VER
+ FILEVERSION    FILE_VERSION
+ PRODUCTVERSION PRODUCT_VERSION
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x01L
@@ -90,13 +114,13 @@ BEGIN
             VALUE "Comments", "This is free software\0"
             VALUE "CompanyName", "Project: Sakura-Editor\0"
             VALUE "FileDescription", "Sakura Editor Language DLL(en_US)\0"
-            VALUE "FileVersion", FL_VER_STR
+            VALUE "FileVersion", VERSION_STR
             VALUE "InternalName", "sakura\0"
             VALUE "LegalCopyright", S_COPYRIGHT_TRANSLATION
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
-            VALUE "ProductName", "Sakura Editor Language DLL\0"
-            VALUE "ProductVersion", RESOURCE_VERSION_STRING(PR_VER_STR) // e.g. "2.3.2.0 4a0de579 UNICODE 64bit DEBUG"
+            VALUE "ProductName", _GSTR_APPNAME "\0"
+            VALUE "ProductVersion", VERSION_STR VERSION_HASH // e.g. "2.4.1.0 (4a0de579)"
         END
     END
     BLOCK "VarFileInfo"
@@ -148,4 +172,5 @@ BEGIN
 #else
 	STR_BREGONIG_INIT				"failed to init the bregonig.dll.\r\nRegex relies upon bregonig.dll(Uniocde ver) to work.\r\nPlease refer to the help for assistance."
 #endif
+	STR_GSTR_APPNAME				_GSTR_APPNAME
 END

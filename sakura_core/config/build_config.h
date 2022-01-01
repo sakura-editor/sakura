@@ -110,7 +110,4 @@ static const bool UNICODE_BOOL=true;
     #define DBG_NEW new
 #endif
 
-#if _WIN64
-#define ALPHA_VERSION
-#endif
 #endif /* SAKURA_BUILD_CONFIG_DB7D8D47_EA6A_4ABF_A081_A31875D78808_H_ */

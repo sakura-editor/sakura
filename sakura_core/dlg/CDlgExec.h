@@ -18,6 +18,7 @@
 
 #include "dlg/CDialog.h"
 #include "recent/CRecentCmd.h"
+#include "recent/CRecentCurDir.h"
 
 /*-----------------------------------------------------------------------
 クラスの宣言

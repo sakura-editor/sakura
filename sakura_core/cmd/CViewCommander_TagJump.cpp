@@ -71,6 +71,66 @@ static bool IsFileExists2( const wchar_t* pszFile )
 	return IsFileExists(pszFile, true);
 }
 
+static bool IsHWNDTag( const wchar_t* pLine, std::wstring& str, int* pnLen = NULL )
+{
+	if( 0 == wcsncmp(pLine, L":HWND:[", 7) ){
+		const wchar_t* pFileEnd = wcsstr( pLine, L"]" );
+		if( pFileEnd ){
+			const int nLen = pFileEnd - pLine + 1;
+			int i = 7;
+			for( ; i < nLen; i++ ){
+				if( !(WCODE::Is09(pLine[i]) || (L'a' <= pLine[i] && L'f' <= pLine[i])) ){
+					break;
+				}
+			}
+			if( i != nLen && nLen <= 16 + 8 ){
+				if( pnLen ){
+					*pnLen = nLen;
+					return true;
+				}
+				str.assign(pLine, nLen);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+static int GetLineColumnPos(const wchar_t* pLine)
+{
+	// filename(1234,56): str
+	const wchar_t* pTagEnd = wcsstr( pLine, L"): " );
+	if( !pTagEnd ){
+		// filename(1234,56)  [SJIS]: str
+		pTagEnd = wcsstr( pLine, L"]: " );
+		if( pTagEnd ){
+			int fileEnd = pTagEnd - pLine - 1;
+			for( ; 1 < fileEnd; fileEnd-- ){
+				if( L'[' == pLine[fileEnd] ){
+					fileEnd--;
+					break;
+				}
+			}
+			for( ; 1 < fileEnd && L' ' == pLine[fileEnd]; fileEnd-- ){}
+			if( ')' == pLine[fileEnd] ){
+				pTagEnd = &pLine[fileEnd];
+			}else{
+				pTagEnd = NULL;
+			}
+		}
+	}
+	if( pTagEnd ){
+		int fileEnd = pTagEnd - pLine - 1;
+		for( ; 1 < fileEnd && (L'0' <= pLine[fileEnd] && pLine[fileEnd] <= L'9'); fileEnd-- ){}
+		if(    1 < fileEnd && (L',' == pLine[fileEnd]) ){ fileEnd--; }
+		for( ; 1 < fileEnd && (L'0' <= pLine[fileEnd] && pLine[fileEnd] <= L'9'); fileEnd-- ){}
+		if( 1 < fileEnd && L'(' == pLine[fileEnd] ){
+			return fileEnd;
+		}
+	}
+	return 0;
+}
+
 /*! タグジャンプ
 
 	@param bClose [in] true:元ウィンドウを閉じる
@@ -123,6 +183,8 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 
 	// ノーマル
 	// C:\RootFolder\SubFolders\FileName.ext(5395,11): str
+	// :HWND:[01234567] 無題1(1234,56): str
+	// :HWND:[01234567] 無題1(1234,56)  [SJIS]: str
 
 	// ノーマル/ベースフォルダ/フォルダ毎
 	// ◎"C:\RootFolder"
@@ -233,6 +295,8 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 		}else if( 0 == wmemcmp( pLine, L"◆\"", 2 ) ){
 			if (!GetQuoteFilePath(&pLine[2], strFile, MAX_TAG_PATH)) {
 				break;
+			}else if( IsHWNDTag(&pLine[2], strJumpToFile) ){
+				break;
 			}
 			searchMode = TAGLIST_SUBPATH;
 		}else if( 0 == wmemcmp( pLine, L"・", 1 ) ){
@@ -241,46 +305,31 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 				if (!GetQuoteFilePath(&pLine[2], strFile, MAX_TAG_PATH)) {
 					break;
 				}
+			if( IsHWNDTag(&pLine[2], strJumpToFile) ){
+				break;
+			}
 				searchMode = TAGLIST_SUBPATH;
 			}else if( pLine[1] == L'(' ){
 				// ファイル毎(WZ風)
+				// ・(    12,34   ): str
 				GetLineColumn( &pLine[1], &nJumpToLine, &nJumpToColumn );
 				searchMode = TAGLIST_FILEPATH;
 			}else{
 				// ノーマル/ファイル相対パス
-				// ･FileName.ext(123,45): str
-				// ･FileName.ext(123,45)  [SJIS]: str
-				const wchar_t* pTagEnd = wcsstr( pLine, L"): " );
-				if( !pTagEnd ){
-					pTagEnd = wcsstr( pLine, L"]: " );
-					if( pTagEnd ){
-						int fileEnd = pTagEnd - pLine - 1;
-						for( ; 1 < fileEnd; fileEnd-- ){
-							if( L'[' == pLine[fileEnd] ){
-								fileEnd--;
-								break;
-							}
-						}
-						for( ; 1 < fileEnd && L' ' == pLine[fileEnd]; fileEnd-- ){}
-						if( ')' == pLine[fileEnd] ){
-							pTagEnd = &pLine[fileEnd];
-						}else{
-							pTagEnd = NULL;
-						}
-					}
-				}
-				if( pTagEnd ){
-					int fileEnd = pTagEnd - pLine - 1;
-					for( ; 1 < fileEnd && (L'0' <= pLine[fileEnd] && pLine[fileEnd] <= L'9'); fileEnd-- ){}
-					if(    1 < fileEnd && (L',' == pLine[fileEnd]) ){ fileEnd--; }
-					for( ; 1 < fileEnd && (L'0' <= pLine[fileEnd] && pLine[fileEnd] <= L'9'); fileEnd-- ){}
-					if( 1 < fileEnd && L'(' == pLine[fileEnd] && fileEnd - 1 < MAX_TAG_PATH ){
-						strFile.assign(pLine + 1, fileEnd - 1);
-						GetLineColumn( &pLine[fileEnd + 1], &nJumpToLine, &nJumpToColumn );
-						searchMode = TAGLIST_SUBPATH;
-					}else{
+				// ・FileName.ext(123,45): str
+				// ・FileName.ext(123,45)  [SJIS]: str
+				// ・subpath\FileName.ext(123,45): str
+				// ・:HWND:[01234567](無題)2(123,45): str
+				int fileEnd = GetLineColumnPos(pLine);
+				if (1 < fileEnd && L'(' == pLine[fileEnd] && fileEnd - 1 < MAX_TAG_PATH) {
+					strFile.assign(pLine + 1, fileEnd - 1);
+					GetLineColumn( &pLine[fileEnd + 1], &nJumpToLine, &nJumpToColumn );
+					if( IsHWNDTag(pLine + 1, strJumpToFile) ){
 						break;
 					}
+					searchMode = TAGLIST_SUBPATH;
+				}else{
+					break;
 				}
 			}
 		}else{
@@ -299,6 +348,9 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 				if( searchMode == TAGLIST_SUBPATH || searchMode == TAGLIST_ROOT ){
 					continue;
 				}
+				if( IsHWNDTag(&pLine[2], strJumpToFile) ){
+					break;
+				}
 				// フォルダ毎：ファイル名
 				if (GetQuoteFilePath(&pLine[2], strFile, MAX_TAG_PATH)) {
 					searchMode = TAGLIST_SUBPATH;
@@ -314,6 +366,9 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 			}else if( 3 <= nLineLen && 0 == wmemcmp( pLine, L"■\"", 2 ) ){
 				if( searchMode == TAGLIST_ROOT ){
 					continue;
+				}
+				if( IsHWNDTag(&pLine[2], strJumpToFile) ){
+					break;
 				}
 				// ファイル毎(WZ風)：フルパス
 				if( IsFilePath( &pLine[2], &nBgn, &nPathLen ) && !_IS_REL_PATH( &pLine[2] ) ){
@@ -366,6 +421,17 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 		if( NULL == pLine ){
 			return false;
 		}
+		int nLen = 0;
+		std::wstring test;
+		if (IsHWNDTag(pLine, test, &nLen)) {
+			int nFileEnd = GetLineColumnPos(pLine);
+			if( nFileEnd ){
+				strJumpToFile.assign(pLine, nLen);
+				GetLineColumn(&pLine[nFileEnd + 1], &nJumpToLine, &nJumpToColumn);
+			}
+		}
+	}
+	if (strJumpToFile.empty()) {
 		//@@@ 2001.12.31 YAZAKI
 		const wchar_t *p = pLine;
 		const wchar_t *p_end = p + nLineLen;
@@ -767,7 +833,7 @@ bool CViewCommander::Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int cou
 		// 現在のタイプ別の1番目の拡張子を拝借
 		WCHAR szExts[MAX_TYPES_EXTS];
 		CDocTypeManager::GetFirstExt(m_pCommanderView->m_pTypeData->m_szTypeExts, szExts, _countof(szExts));
-		int nExtLen = wcslen( szExts );
+		auto nExtLen = wcsnlen_s( szExts, _countof(szExts) );
 		wcscat( szCurrentPath, L"\\dmy" );
 		if( nExtLen ){
 			wcscat( szCurrentPath, L"." );

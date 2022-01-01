@@ -32,7 +32,6 @@
 #include "CEol.h"
 #include "charset/CCodePage.h"
 #include "doc/CDocListener.h"
-#include "recent/CRecent.h"
 #include "util/window.h"
 #include "util/shell.h"
 #include "util/file.h"
@@ -121,9 +120,6 @@ public:
 	SFilePath		m_szPath;	// 拡張子の補完を自前で行ったときのファイルパス	// 2006.11.10 ryoji
 
 	bool			m_bInitCodePage;
-
-	CRecentFile				m_cRecentFile;
-	CRecentFolder			m_cRecentFolder;
 
 	OPENFILENAME*	m_pOf;
 	OPENFILENAME	m_ofn;		/* 2005.10.29 ryoji OPENFILENAME「ファイルを開く」ダイアログ用構造体 */

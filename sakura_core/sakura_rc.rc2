@@ -1,9 +1,33 @@
 // このファイルにはリソースエディタで編集できない要素を配置します.
 // このファイルのエンコーディング/改行コードは UTF-16LE(BOM)/CRLF です.
 
+#define _APP_NAME_1 "サクラエディタ"
+
+#ifdef DEV_VERSION
+#define _APP_NAME_2 "開発版"
+#else
+#define _APP_NAME_2 ""
+#endif
+
+#ifdef _WIN64
+#define _APP_NAME_3 "64bit"
+#else
+#define _APP_NAME_3 "32bit"
+#endif
+
+#ifdef _DEBUG
+#define _APP_NAME_4 "デバッグ"
+#else
+#define _APP_NAME_4 ""
+#endif
+
+#if defined(_WIN64) || defined(_DEBUG)
+#define _GSTR_APPNAME  _APP_NAME_1 _APP_NAME_2 "(" _APP_NAME_3 _APP_NAME_4 ")"
+#else
+#define _GSTR_APPNAME  _APP_NAME_1 _APP_NAME_2 _APP_NAME_3 _APP_NAME_4
+#endif
+
 #define	S_COPYRIGHT	"Copyright (C) 1998-2021  by Norio Nakatani & Collaborators"
-#define FL_VER		PR_VER
-#define FL_VER_STR	PR_VER_STR
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -68,8 +92,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION    FL_VER
- PRODUCTVERSION PR_VER
+ FILEVERSION    FILE_VERSION
+ PRODUCTVERSION PRODUCT_VERSION
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x01L
@@ -87,13 +111,13 @@ BEGIN
             VALUE "Comments", "このソフトはフリーソフトです。\0"
             VALUE "CompanyName", "Project: Sakura-Editor\0"
             VALUE "FileDescription", "サクラエディタ\0"
-            VALUE "FileVersion", FL_VER_STR
+            VALUE "FileVersion", VERSION_STR
             VALUE "InternalName", "sakura\0"
             VALUE "LegalCopyright", S_COPYRIGHT
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
-            VALUE "ProductName", "サクラエディタ\0"
-            VALUE "ProductVersion", RESOURCE_VERSION_STRING(PR_VER_STR) // e.g. "2.3.2.0 (4a0de579) UNICODE 64bit DEBUG"
+            VALUE "ProductName", _GSTR_APPNAME "\0"
+            VALUE "ProductVersion", VERSION_STR VERSION_HASH    // e.g. "2.4.1.0 (4a0de579)"
         END
     END
     BLOCK "VarFileInfo"
@@ -137,6 +161,7 @@ BEGIN
 #else
 	STR_BREGONIG_INIT				"bregonig.dll の利用に失敗しました。\r\n正規表現を利用するには Unicode 版の bregonig.dll が必要です。\r\n入手方法はヘルプを参照してください。"
 #endif
+	STR_GSTR_APPNAME				_GSTR_APPNAME
 
 	// Select Language
 	STR_SELLANG_NAME				"Japanese"						// language name [Primary language (Sublanguage)]

@@ -26,8 +26,7 @@
 
 #include "StdAfx.h"
 #include "recent/CRecentFile.h"
-#include <string.h>
-#include "env/DLLSHAREDATA.h"
+#include "config/maxdata.h"
 
 /*
 	アイテムの比較要素を取得する。

@@ -57,7 +57,7 @@ CDocEditor::CDocEditor(CEditDoc* pcDoc)
 void CDocEditor::SetModified( bool flag, bool redraw)
 {
 	if( redraw ){
-		m_pcDocRef->m_pcEditWnd->m_cDlgFuncList.NotifyDocModification();
+		GetEditWnd().m_cDlgFuncList.NotifyDocModification();
 	}
 
 	if( m_bIsDocModified == flag )	//	変更がなければ何もしない
@@ -65,13 +65,13 @@ void CDocEditor::SetModified( bool flag, bool redraw)
 
 	m_bIsDocModified = flag;
 	if( redraw )
-		m_pcDocRef->m_pcEditWnd->UpdateCaption();
+		GetEditWnd().UpdateCaption();
 }
 
 void CDocEditor::OnBeforeLoad(SLoadInfo* sLoadInfo)
 {
 	//ビューのテキスト選択解除
-	GetListeningDoc()->m_pcEditWnd->Views_DisableSelectArea(true);
+	GetEditWnd().Views_DisableSelectArea(true);
 }
 
 void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
@@ -129,7 +129,7 @@ void CDocEditor::SetImeMode( int mode )
 {
 	DWORD	conv, sent;
 	HIMC	hIme;
-	HWND	hwnd = m_pcDocRef->m_pcEditWnd->GetActiveView().GetHwnd();
+	HWND	hwnd = GetEditWnd().GetActiveView().GetHwnd();
 
 	hIme = ImmGetContext( hwnd ); //######大丈夫？ // 2013.06.04 EditWndからViewに変更
 

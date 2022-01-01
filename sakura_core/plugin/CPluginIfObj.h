@@ -114,7 +114,7 @@ public:
 					&& LOWORD(ID) == F_PL_GETOPTION ) {
 					// 設定されていなければデフォルトを取得 
 					CPluginOption::ArrayIter it;
-					for (it = m_cPlugin.m_options.begin(); it != m_cPlugin.m_options.end(); it++) {
+					for (it = m_cPlugin.m_options.cbegin(); it != m_cPlugin.m_options.cend(); it++) {
 						wstring sSectionTmp;
 						wstring sKeyTmp;
 						(*it)->GetKey(&sSectionTmp, &sKeyTmp);
@@ -175,7 +175,7 @@ public:
 		case F_PL_ADDCOMMAND:			//コマンドを追加する
 			{
 				int id = m_cPlugin.AddCommand( Arguments[0], Arguments[1], Arguments[2], true );
-				View->m_pcEditWnd->RegisterPluginCommand( id );
+				GetEditWnd().RegisterPluginCommand( id );
 			}
 			break;
 		}

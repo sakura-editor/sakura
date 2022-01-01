@@ -84,6 +84,7 @@
 #include <initializer_list>
 #include <list>
 #include <map>
+#include <unordered_map>
 #include <memory>
 #include <optional>
 #include <string>
@@ -92,6 +93,7 @@
 #include <vector>
 
 #include <Windows.h>
+#include <windowsx.h>
 #include <CommCtrl.h>
 #include <HtmlHelp.h>
 #include <ImageHlp.h>

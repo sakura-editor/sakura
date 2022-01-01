@@ -56,16 +56,33 @@ exit /b 0
 		for /f "usebackq" %%s in (`"%CMD_GIT%" describe --tags --contains 2^>nul`) do (
 			set GIT_TAG_NAME=%%s
 		)
+
+		:: Gitリポジトリの累積コミット数(取れない場合は0)
+		call :set_build_version
 	) else (
 		set GIT_SHORT_COMMIT_HASH=
 		set GIT_COMMIT_HASH=
 		set GIT_REMOTE_ORIGIN_URL=
 		set GIT_TAG_NAME=
+		set BUILD_VERSION=0
+	)
+
+	:: ビルド環境の名前が未定義なら local とする
+	if not defined BUILD_ENV_NAME (
+		set BUILD_ENV_NAME=Local
 	)
 
 	@rem get back to the original directory
 	popd
 
+	exit /b 0
+
+:set_build_version
+	if not "%GIT_ENABLED%" == "1" exit /b 0
+	if defined BUILD_VERSION exit /b 0
+	for /f "usebackq" %%s in (`"%CMD_GIT%" rev-list --count --no-merges @`) do (
+		set BUILD_VERSION=%%s
+	)
 	exit /b 0
 
 :set_repo_and_pr_variables
@@ -142,6 +159,7 @@ exit /b 0
 :set_ci_build_url
 	call :set_ci_build_url_for_appveyor
 	call :set_ci_build_url_for_azurepipelines
+	call :set_ci_build_url_for_githubactions
 	exit /b 0
 
 :set_ci_build_url_for_appveyor
@@ -150,6 +168,7 @@ exit /b 0
 	if not defined APPVEYOR_ACCOUNT_NAME  exit /b 0
 	if not defined APPVEYOR_PROJECT_SLUG  exit /b 0
 	if not defined APPVEYOR_BUILD_VERSION exit /b 0
+	set BUILD_ENV_NAME=Appveyor
 	set CI_BUILD_URL=%APPVEYOR_URL%/project/%APPVEYOR_ACCOUNT_NAME%/%APPVEYOR_PROJECT_SLUG%/build/%APPVEYOR_BUILD_VERSION%
 	exit /b 0
 
@@ -157,7 +176,14 @@ exit /b 0
 	if not defined SYSTEM_TEAMFOUNDATIONSERVERURI exit /b 0
 	if not defined SYSTEM_TEAMPROJECT             exit /b 0
 	if not defined BUILD_BUILDID                  exit /b 0
+	set BUILD_ENV_NAME=AZP
 	set CI_BUILD_URL=%SYSTEM_TEAMFOUNDATIONSERVERURI%%SYSTEM_TEAMPROJECT%/_build/results?buildId=%BUILD_BUILDID%
+	exit /b 0
+
+:set_ci_build_url_for_githubactions
+	if not defined GITHUB_ACTIONS exit /b 0
+	if not "%GITHUB_ACTIONS%" == "true" exit /b 0
+	set BUILD_ENV_NAME=GHA
 	exit /b 0
 
 :update_output_githash
@@ -206,6 +232,9 @@ exit /b 0
 		@echo.
 		@echo APPVEYOR_URL          : %APPVEYOR_URL%
 		@echo APPVEYOR_PROJECT_SLUG : %APPVEYOR_PROJECT_SLUG%
+		@echo.
+		@echo BUILD_ENV_NAME        : %BUILD_ENV_NAME%
+		@echo BUILD_VERSION         : %BUILD_VERSION%
 		@echo.
 
 		if exist "%GITHASH_H%" del "%GITHASH_H%"
@@ -326,5 +355,8 @@ exit /b 0
 	)
 	echo // APPVEYOR specific variables end
 	echo //
+
+	echo #define BUILD_ENV_NAME "%BUILD_ENV_NAME%"
+	echo #define BUILD_VERSION %BUILD_VERSION%
 
 	exit /b 0

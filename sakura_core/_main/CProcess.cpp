@@ -16,11 +16,14 @@
 */
 
 #include "StdAfx.h"
-#include "CProcess.h"
+#include "_main/CProcess.h"
+
 #include "util/module.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "config/app_constants.h"
+#include "CSelectLang.h"
+#include "String_define.h"
 
 /*!
 	@brief プロセス基底クラス
@@ -38,6 +41,8 @@ CProcess::CProcess(
 , m_pfnMiniDumpWriteDump(NULL)
 #endif
 {
+	// アプリ名をリソースから読み込む
+	m_strAppName = LS(STR_GSTR_APPNAME);
 }
 
 /*!
@@ -164,4 +169,12 @@ int CProcess::WriteDump( PEXCEPTION_POINTERS pExceptPtrs )
 void CProcess::RefreshString()
 {
 	m_cShareData.RefreshString();
+}
+
+/*!
+	言語選択後にアプリ名を更新します。
+ */
+void CProcess::UpdateAppName( std::wstring_view appName )
+{
+	m_strAppName = appName;
 }

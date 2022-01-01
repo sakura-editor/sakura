@@ -417,7 +417,6 @@ CLayoutInt CEditView::ScrollAtV( CLayoutInt nPos, BOOL bRedrawScrollBar )
 		if( GetDrawSwitch() ){
 			RECT rcClip2 = {0,0,0,0};
 			ScrollDraw(nScrollRowNum, CLayoutInt(0), rcScrol, rcClip, rcClip2);
-			::UpdateWindow( GetHwnd() );
 		}
 	}
 
@@ -497,7 +496,6 @@ CLayoutInt CEditView::ScrollAtH( CLayoutInt nPos, BOOL bRedrawScrollBar )
 		if( GetDrawSwitch() ){
 			RECT rcClip = {0,0,0,0};
 			ScrollDraw(CLayoutInt(0), nScrollColNum, rcScrol, rcClip, rcClip2);
-			::UpdateWindow( GetHwnd() );
 		}
 	}
 	//	2006.1.28 aroka 判定条件誤り修正 (バーが消えてもスクロールしない)
@@ -602,12 +600,13 @@ void CEditView::ScrollDraw(CLayoutInt nScrollRowNum, CLayoutInt nScrollColNum, c
 	if( nScrollColNum != 0 ){
 		InvalidateRect( &rcClip2, FALSE );
 	}
+	UpdateWindow();
 }
 
 void CEditView::MiniMapRedraw(bool bUpdateAll)
 {
-	if( this == &m_pcEditWnd->GetActiveView() && m_pcEditWnd->GetMiniMap().GetHwnd() ){
-		CEditView& miniMap = m_pcEditWnd->GetMiniMap();
+	if( this == &GetEditWnd().GetActiveView() && GetEditWnd().GetMiniMap().GetHwnd() ){
+		CEditView& miniMap = GetEditWnd().GetMiniMap();
 		CLayoutYInt nViewTop = miniMap.m_nPageViewTop;
 		CLayoutYInt nViewBottom = miniMap.m_nPageViewBottom;
 		CLayoutYInt nDiff = nViewTop - GetTextArea().GetViewTopLine();
@@ -688,10 +687,10 @@ void CEditView::MiniMapRedraw(bool bUpdateAll)
 void CEditView::SyncScrollV( CLayoutInt line )
 {
 	if( GetDllShareData().m_Common.m_sWindow.m_bSplitterWndVScroll && line != 0 
-		&& m_pcEditWnd->IsEnablePane(m_nMyIndex^0x01)
+		&& GetEditWnd().IsEnablePane(m_nMyIndex^0x01)
 		&& 0 <= m_nMyIndex
 	){
-		CEditView&	editView = m_pcEditWnd->GetView(m_nMyIndex^0x01);
+		CEditView&	editView = GetEditWnd().GetView(m_nMyIndex^0x01);
 #if 0
 		//	差分を保ったままスクロールする場合
 		editView.ScrollByV( line );
@@ -716,10 +715,10 @@ void CEditView::SyncScrollV( CLayoutInt line )
 void CEditView::SyncScrollH( CLayoutInt col )
 {
 	if( GetDllShareData().m_Common.m_sWindow.m_bSplitterWndHScroll && col != 0
-		&& m_pcEditWnd->IsEnablePane(m_nMyIndex^0x02)
+		&& GetEditWnd().IsEnablePane(m_nMyIndex^0x02)
 		&& 0 <= m_nMyIndex
 	){
-		CEditView&	cEditView = m_pcEditWnd->GetView(m_nMyIndex^0x02);
+		CEditView&	cEditView = GetEditWnd().GetView(m_nMyIndex^0x02);
 		HDC			hdc = ::GetDC( cEditView.GetHwnd() );
 		
 #if 0

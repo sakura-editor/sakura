@@ -25,11 +25,21 @@
 */
 
 #include "StdAfx.h"
-#include <HtmlHelp.h>
-#include <ShlObj.h>
-#include <ShellAPI.h>
-#include <CdErr.h> // Nov. 3, 2005 genta	//CDERR_FINDRESFAILURE等
 #include "util/shell.h"
+
+#include <cderr.h>			// CDERR_FINDRESFAILURE等
+#include <comdef.h>
+#include <comutil.h>
+#include <urlmon.h>
+#include <wrl.h>
+#include <HtmlHelp.h>
+#include <shellapi.h>
+#include <ShlObj.h>
+
+#include <regex>
+
+#include "debug/Debug1.h"
+#include "util/RegKey.h"
 #include "util/string_ex2.h"
 #include "util/file.h"
 #include "util/os.h"
@@ -40,8 +50,8 @@
 #include "extmodule/CHtmlHelp.h"
 #include "config/app_constants.h"
 #include "String_define.h"
-#include <wrl.h>
 
+#pragma comment(lib, "urlmon.lib")
 
 /* フォルダ選択ダイアログ */
 BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR* strFolderName, size_t nMaxCount )
@@ -215,36 +225,9 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 			// 選択されたメニューの処理
 			switch( nId ){
 			case 100:	// 設定フォルダを開く
-				WCHAR szPath[_MAX_PATH];
-				GetInidir( szPath );
-
-				// フォルダの ITEMIDLIST を取得して ShellExecuteEx() で開く
-				// Note. MSDN の ShellExecute() の解説にある方法でフォルダを開こうとした場合、
-				//       フォルダと同じ場所に <フォルダ名>.exe があるとうまく動かない。
-				//       verbが"open"やNULLではexeのほうが実行され"explore"では失敗する
-				//       （フォルダ名の末尾に'\\'を付加してもWindows 2000では付加しないのと同じ動作になってしまう）
-				LPSHELLFOLDER pDesktopFolder;
-				if( SUCCEEDED(::SHGetDesktopFolder(&pDesktopFolder)) ){
-					LPMALLOC pMalloc;
-					if( SUCCEEDED(::SHGetMalloc(&pMalloc)) ){
-						LPITEMIDLIST pIDL;
-						WCHAR* pszDisplayName = szPath;
-						if( SUCCEEDED(pDesktopFolder->ParseDisplayName(NULL, NULL, pszDisplayName, NULL, &pIDL, NULL)) ){
-							SHELLEXECUTEINFO si;
-							::ZeroMemory( &si, sizeof(si) );
-							si.cbSize   = sizeof(si);
-							si.fMask    = SEE_MASK_IDLIST;
-							si.lpVerb   = L"open";
-							si.lpIDList = pIDL;
-							si.nShow    = SW_SHOWNORMAL;
-							::ShellExecuteEx( &si );	// フォルダを開く
-							pMalloc->Free( (void*)pIDL );
-						}
-						pMalloc->Release();
-					}
-					pDesktopFolder->Release();
-				}
+				OpenWithExplorer(hwnd, GetIniFileName());
 				break;
+
 			case 101:	// インポート／エクスポートの起点リセット（起点を設定フォルダにする）
 				int nMsgResult = MYMESSAGEBOX(
 					hwnd,
@@ -591,7 +574,7 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 
 		WCHAR buf[256];
 		swprintf( buf, _countof(buf), L"https://sakura-editor.github.io/help/HLP%06Iu.html", dwData );
-		ShellExecute( ::GetActiveWindow(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
+		OpenWithBrowser( ::GetActiveWindow(), buf );
 	}
 
 	return TRUE;
@@ -644,4 +627,174 @@ BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool Fixed
 	*piPointSize = cf.iPointSize;
 
 	return TRUE;
+}
+
+//! Windows エクスプローラーで開く
+bool OpenWithExplorer(HWND hWnd, const std::filesystem::path& path)
+{
+	if (path.empty()) {
+		return false;
+	}
+
+	std::filesystem::path explorerPath;
+	std::wstring_view verb = L"explore";
+	std::wstring_view file = path.c_str();
+	std::wstring params;
+	const wchar_t* lpParameters = nullptr;
+
+	// ファイル名（最後の'\'に続く部分）がドット('.')でない場合、
+	// Windowsエクスプローラーのコマンドを指定してファイルを選択させる。
+	// ※ドットは「フォルダ自身」を表す特殊なファイル名。
+	if (path.filename() != L".") {
+		std::wstring buf(_MAX_PATH, wchar_t());
+		size_t requiredSize;
+		_wgetenv_s(&requiredSize, buf.data(), buf.capacity(), L"windir");
+		verb = L"open";
+		explorerPath = buf.data();
+		explorerPath /= L"explorer.exe";
+		file = explorerPath.c_str();
+		params = strprintf(L"/select,\"%s\"", path.c_str());
+		lpParameters = params.c_str();
+	}
+
+	// If the function succeeds, it returns a value greater than 32. 
+	if (auto hInstance = ::ShellExecuteW(hWnd, verb.data(), file.data(), lpParameters, nullptr, SW_SHOWNORMAL);
+		hInstance <= (decltype(hInstance))32) {
+		return false;
+	}
+
+	return true;
+}
+
+/*!
+ * 指定したプロトコルに関連付けされたProgIDを取得する
+ */
+std::wstring GetProgIdForProtocol(std::wstring_view protocol)
+{
+	constexpr const auto& defaultProgId = L"MSEdgeHTM";
+
+	// HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice
+	if (const auto keyPath(strprintf(LR"(SOFTWARE\Microsoft\Windows\Shell\Associations\UrlAssociations\%s\UserChoice)", protocol.data()));
+		CRegKey::ExistsKey(HKEY_CURRENT_USER, keyPath.data()))
+	{
+		CRegKey regKey;
+		if (const auto errorCode = regKey.Open(HKEY_CURRENT_USER, keyPath.data(), KEY_READ);
+			errorCode != 0)
+		{
+			return defaultProgId;
+		}
+
+		std::wstring buf(1024, wchar_t());
+		if (const auto errorCode = regKey.GetValue(L"ProgId", buf.data(), static_cast<uint32_t>(buf.capacity()), nullptr);
+			errorCode != 0)
+		{
+			return defaultProgId;
+		}
+
+		buf.resize(::wcsnlen(buf.data(), 1024));
+
+		return buf;
+	}
+
+	return defaultProgId;
+}
+
+/*!
+ * 指定したProgIDに関連付けされたコマンドラインを取得する
+ */
+std::wstring GetCommandAssociatedWithProgID(std::wstring_view progId)
+{
+	constexpr const auto& notAssociated = L"";
+
+	// HKEY_CLASSES_ROOT\MSEdgeHTM\shell\open\command
+	if (const auto keyPath(strprintf(LR"(%s\shell\open\command)", progId.data()));
+		CRegKey::ExistsKey(HKEY_CLASSES_ROOT, keyPath.data()))
+	{
+		CRegKey regKey;
+		if (const auto errorCode = regKey.Open(HKEY_CLASSES_ROOT, keyPath.data(), KEY_READ);
+			errorCode != 0)
+		{
+			return notAssociated;
+		}
+
+		std::wstring buf(1024, wchar_t());
+		if (const auto errorCode = regKey.GetValue(nullptr, buf.data(), static_cast<uint32_t>(buf.capacity()), nullptr);
+			errorCode != 0)
+		{
+			return notAssociated;
+		}
+
+		buf.resize(::wcsnlen(buf.data(), 1024));
+
+		return buf;
+	}
+
+	return notAssociated;
+}
+
+//! ブラウザで開く
+bool OpenWithBrowser(HWND hWnd, std::wstring_view url)
+{
+	if (url.empty()) {
+		return false;
+	}
+
+	using namespace Microsoft::WRL;
+	ComPtr<IUri> pUri;
+	DWORD dwFlags = Uri_CREATE_NO_CRACK_UNKNOWN_SCHEMES | Uri_CREATE_NO_IE_SETTINGS;
+	if (const auto hr = ::CreateUri(url.data(), dwFlags, 0, &pUri);
+		FAILED(hr)) {
+		_com_error ex(hr);
+		auto desc = ex.Description();
+		TRACE("%s", (const wchar_t*)desc);
+		return false;
+	}
+
+	_bstr_t bstrSchemeName;
+	if (const auto hr = pUri->GetSchemeName(&bstrSchemeName.GetBSTR());
+		FAILED(hr)) {
+		_com_error ex(hr);
+		auto desc = ex.Description();
+		TRACE("%s", (const wchar_t*)desc);
+		return false;
+	}
+
+	std::filesystem::path browserPath;
+	std::wstring_view verb = L"open";
+	std::wstring_view file = url.data();
+	std::wstring params;
+	const wchar_t* lpParameters = nullptr;
+
+	// fileプロトコル対策
+	if (bstrSchemeName == _bstr_t(L"file")) {
+		// 実行可能ファイルはダウンロードになるので失敗させる
+		if (const std::filesystem::path urlPath(url.data());
+			::_wcsicmp(urlPath.extension().c_str(), L".exe") == 0) {
+			return false;
+		}
+
+		// HTTPプロトコルに関連付けられたコマンドラインを取得し、パターンマッチでパラメータを組み立てる
+		// => "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --single-argument %1
+		std::wsmatch matched;
+		std::wregex re(LR"(^("[^"]+"|[^ ]+)\s+(.+))");
+		if (auto browserCommandline = GetCommandAssociatedWithProgID(GetProgIdForProtocol(L"http"));
+			std::regex_search(browserCommandline, matched, re)) {
+			// $1 ブラウザのパス
+			std::wstring buf = matched[1];
+			buf.erase(std::remove(buf.begin(), buf.end(), L'\"'), buf.cend());
+			browserPath = buf.data();
+			file = browserPath.c_str();
+			// $2 パラメータ
+			params = std::regex_replace(matched[2].str(), std::wregex(L"%1"), url.data());
+			lpParameters = params.c_str();
+		}
+	}
+
+	// If the function succeeds, it returns a value greater than 32. 
+	if (auto hInstance = ::ShellExecuteW(hWnd, verb.data(), file.data(), lpParameters, nullptr, SW_SHOWNORMAL);
+		hInstance <= (decltype(hInstance))32) {
+		return false;
+	}
+
+	return true;
 }

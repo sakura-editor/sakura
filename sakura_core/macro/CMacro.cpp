@@ -178,10 +178,10 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 
 	case F_JUMP:	//	指定行へジャンプ（ただしPL/SQLコンパイルエラー行へのジャンプは未対応）
 		{
-			AddIntParam( pcEditView->m_pcEditWnd->m_cDlgJump.m_nLineNum );
+			AddIntParam( GetEditWnd().m_cDlgJump.m_nLineNum );
 			LPARAM lFlag = 0x00;
 			lFlag |= GetDllShareData().m_bLineNumIsCRLF_ForJump		? 0x01 : 0x00;
-			lFlag |= pcEditView->m_pcEditWnd->m_cDlgJump.m_bPLSQL	? 0x02 : 0x00;
+			lFlag |= GetEditWnd().m_cDlgJump.m_bPLSQL	? 0x02 : 0x00;
 			AddIntParam( lFlag );
 		}
 		break;
@@ -206,7 +206,7 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 	case F_REPLACE_ALL:
 		{
 			AddStringParam( pcEditView->m_strCurSearchKey.c_str() );	//	lParamを追加。
-			AddStringParam( pcEditView->m_pcEditWnd->m_cDlgReplace.m_strText2.c_str() );	//	lParamを追加。
+			AddStringParam( GetEditWnd().m_cDlgReplace.m_strText2.c_str() );	//	lParamを追加。
 
 			LPARAM lFlag = 0x00;
 			lFlag |= pcEditView->m_sCurSearchOption.bWordOnly		? 0x01 : 0x00;
@@ -215,9 +215,9 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND				? 0x08 : 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bAutoCloseDlgFind				? 0x10 : 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bSearchAll					? 0x20 : 0x00;
-			lFlag |= pcEditView->m_pcEditWnd->m_cDlgReplace.m_nPaste					? 0x40 : 0x00;	//	CShareDataに入れなくていいの？
+			lFlag |= GetEditWnd().m_cDlgReplace.m_nPaste					? 0x40 : 0x00;	//	CShareDataに入れなくていいの？
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bSelectedArea					? 0x80 : 0x00;	//	置換する時は選べない
-			lFlag |= pcEditView->m_pcEditWnd->m_cDlgReplace.m_nReplaceTarget << 8;	//	8bitシフト（0x100で掛け算）
+			lFlag |= GetEditWnd().m_cDlgReplace.m_nReplaceTarget << 8;	//	8bitシフト（0x100で掛け算）
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bConsecutiveAll				? 0x0400: 0x00;	// 2007.01.16 ryoji
 			AddIntParam( lFlag );
 		}
@@ -228,13 +228,13 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 			CDlgGrep* pcDlgGrep;
 			CDlgGrepReplace* pcDlgGrepRep;
 			if( F_GREP == m_nFuncID ){
-				pcDlgGrep = &pcEditView->m_pcEditWnd->m_cDlgGrep;
+				pcDlgGrep = &GetEditWnd().m_cDlgGrep;
 				pcDlgGrepRep = NULL;
 				AddStringParam( pcDlgGrep->m_strText.c_str() );
 			}else{
-				pcDlgGrep = pcDlgGrepRep = &pcEditView->m_pcEditWnd->m_cDlgGrepReplace;
+				pcDlgGrep = pcDlgGrepRep = &GetEditWnd().m_cDlgGrepReplace;
 				AddStringParam( pcDlgGrep->m_strText.c_str() );
-				AddStringParam( pcEditView->m_pcEditWnd->m_cDlgGrepReplace.m_strText2.c_str() );
+				AddStringParam( GetEditWnd().m_cDlgGrepReplace.m_strText2.c_str() );
 			}
 			AddStringParam( GetDllShareData().m_sSearchKeywords.m_aGrepFiles[0] );	//	lParamを追加。
 			AddStringParam( GetDllShareData().m_sSearchKeywords.m_aGrepFolders[0] );	//	lParamを追加。
@@ -715,10 +715,10 @@ bool CMacro::HandleCommand(
 			return false;
 		}
 		{
-			pcEditView->m_pcEditWnd->m_cDlgJump.m_nLineNum = _wtoi(Argument[0]);	//ジャンプ先
+			GetEditWnd().m_cDlgJump.m_nLineNum = _wtoi(Argument[0]);	//ジャンプ先
 			LPARAM lFlag = Argument[1] != NULL ? _wtoi(Argument[1]) : 1; // デフォルト1
 			GetDllShareData().m_bLineNumIsCRLF_ForJump = ((lFlag & 0x01)!=0);
-			pcEditView->m_pcEditWnd->m_cDlgJump.m_bPLSQL = lFlag & 0x02 ? 1 : 0;
+			GetEditWnd().m_cDlgJump.m_bPLSQL = lFlag & 0x02 ? 1 : 0;
 			pcEditView->GetCommander().HandleCommand( Index, true, 0, 0, 0, 0 );	//	標準
 		}
 		break;
@@ -933,7 +933,7 @@ bool CMacro::HandleCommand(
 			return false;
 		}
 		{
-			CDlgReplace& cDlgReplace = pcEditView->m_pcEditWnd->m_cDlgReplace;
+			CDlgReplace& cDlgReplace = GetEditWnd().m_cDlgReplace;
 			LPARAM lFlag = Argument[2] != NULL ? _wtoi(Argument[2]) : 0;
 			SSearchOption sSearchOption;
 			sSearchOption.bWordOnly			= (0 != (lFlag & 0x01));
@@ -1328,13 +1328,13 @@ bool CMacro::HandleCommand(
 			if( (val1 & 0x03) == 0 ){
 				pcEditView->SendStatusMessage( val0.c_str() );
 			}else if( (val1 & 0x03) == 1 ){
-				if( NULL != pcEditView->m_pcEditWnd->m_cStatusBar.GetStatusHwnd() ){
+				if( NULL != GetEditWnd().m_cStatusBar.GetStatusHwnd() ){
 					pcEditView->SendStatusMessage( val0.c_str() );
 				}else{
 					InfoMessage( pcEditView->GetHwnd(), L"%s", val0.c_str() );
 				}
 			}else if( (val1 & 0x03) == 2 ){
-				pcEditView->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( val0.c_str() );
+				GetEditWnd().m_cStatusBar.SendStatusMessage2( val0.c_str() );
 			}
 		}
 		break;
@@ -1579,7 +1579,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			// 2013.04.30 Moca 条件追加。不要な場合はChangeLayoutParamを呼ばない
 			if( 0 < varCopy.Data.iVal && nTab != varCopy.Data.iVal ){
 				View->GetDocument()->m_bTabSpaceCurTemp = true;
-				View->m_pcEditWnd->ChangeLayoutParam(
+				GetEditWnd().ChangeLayoutParam(
 					false, 
 					CKetaXInt(varCopy.Data.iVal),
 					View->m_pcEditDoc->m_cLayoutMgr.m_tsvInfo.m_nTsvMode,
@@ -1591,7 +1591,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 					// 最大幅の再算出時に各行のレイアウト長の計算も行う
 					View->m_pcEditDoc->m_cLayoutMgr.CalculateTextWidth();
 				}
-				View->m_pcEditWnd->RedrawAllViews( NULL );		// TAB幅が変わったので再描画が必要
+				GetEditWnd().RedrawAllViews( NULL );		// TAB幅が変わったので再描画が必要
 			}
 		}
 		return true;
@@ -1683,7 +1683,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 				return true;
 			View->m_pcEditDoc->m_nTextWrapMethodCur = WRAP_SETTING_WIDTH;
 			View->m_pcEditDoc->m_bTextWrapMethodCurTemp = !( View->m_pcEditDoc->m_nTextWrapMethodCur == View->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod );
-			View->m_pcEditWnd->ChangeLayoutParam(
+			GetEditWnd().ChangeLayoutParam(
 				false, 
 				View->m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(),
 				View->m_pcEditDoc->m_cLayoutMgr.m_tsvInfo.m_nTsvMode,
@@ -2130,7 +2130,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		{
 			if( 1 <= ArgSize ){
 				if( !VariantToI4(varCopy, Arguments[0]) ) return false;
-				int ret = (View->m_pcEditWnd->SetDrawSwitchOfAllViews(varCopy.Data.iVal != 0) ? 1: 0);
+				int ret = (GetEditWnd().SetDrawSwitchOfAllViews(varCopy.Data.iVal != 0) ? 1: 0);
 				Wrap( &Result )->Receive( ret );
 				return true;
 			}
@@ -2144,7 +2144,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		}
 	case F_ISSHOWNSTATUS:
 		{
-			int ret = (NULL != View->m_pcEditWnd->m_cStatusBar.GetStatusHwnd() ? 1: 0);
+			int ret = (NULL != GetEditWnd().m_cStatusBar.GetStatusHwnd() ? 1: 0);
 			Wrap( &Result )->Receive( ret );
 			return true;
 		}

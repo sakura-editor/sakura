@@ -36,7 +36,7 @@ public:
 	CViewFont(const LOGFONT *plf, bool bMiniMap = false)
 	{
 		m_bMiniMap = bMiniMap;
-		CreateFont(plf);
+		CreateFonts(plf);
 	}
 	CViewFont(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
@@ -44,13 +44,13 @@ public:
 	Me& operator = (Me&&) noexcept = delete;
 	virtual ~CViewFont()
 	{
-		DeleteFont();
+		DeleteFonts();
 	}
 
 	void UpdateFont(const LOGFONT *plf)
 	{
-		DeleteFont();
-		CreateFont(plf);
+		DeleteFonts();
+		CreateFonts(plf);
 	}
 
 	HFONT ChooseFontHandle( int fontNo, SFontAttr sFontAttr ) const;		/* フォントを選ぶ */
@@ -66,8 +66,8 @@ public:
 	}
 
 private:
-	void CreateFont(const LOGFONT *plf);
-	void DeleteFont();
+	void CreateFonts( const LOGFONT *plf );
+	void DeleteFonts( void );
 
 	HFONT	m_hFont_HAN;			/* 現在のフォントハンドル */
 	HFONT	m_hFont_HAN_BOLD;		/* 現在のフォントハンドル(太字) */

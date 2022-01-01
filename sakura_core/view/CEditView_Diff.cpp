@@ -208,7 +208,7 @@ void CEditView::ViewDiffInfo(
 	}
 
 	//分割したビューも更新
-	m_pcEditWnd->Views_Redraw();
+	GetEditWnd().Views_Redraw();
 
 	return;
 }

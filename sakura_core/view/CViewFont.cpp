@@ -30,7 +30,7 @@
 
 /*! フォント作成
 */
-void CViewFont::CreateFont(const LOGFONT *plf)
+void CViewFont::CreateFonts( const LOGFONT *plf )
 {
 	LOGFONT	lf;
 	int miniSize = GetDllShareData().m_Common.m_sWindow.m_nMiniMapFontSize;
@@ -88,7 +88,7 @@ void CViewFont::CreateFont(const LOGFONT *plf)
 
 /*! フォント削除
 */
-void CViewFont::DeleteFont()
+void CViewFont::DeleteFonts()
 {
 	DeleteObject( m_hFont_HAN );
 	DeleteObject( m_hFont_HAN_BOLD );

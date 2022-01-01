@@ -21,6 +21,7 @@ class CDlgGrep;
 
 #include "dlg/CDialog.h"
 #include "dlg/CDlgGrep.h"
+#include "recent/CRecentReplace.h"
 
 //! GREP置換ダイアログボックス
 class CDlgGrepReplace final : public CDlgGrep
@@ -49,6 +50,7 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
+	BOOL OnCbnDropDown( HWND hwndCtl, int wID ) override;
 	BOOL OnDestroy() override;
 	BOOL OnBnClicked(int wID) override;
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add

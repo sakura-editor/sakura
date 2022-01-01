@@ -24,10 +24,9 @@
 		   distribution.
 */
 
-#include "stdafx.h"
-#include "CRecentExceptMRU.h"
-#include <string.h>
-#include "env/DLLSHAREDATA.h"
+#include "StdAfx.h"
+#include "CRecentExceptMru.h"
+#include "config/maxdata.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           生成                              //

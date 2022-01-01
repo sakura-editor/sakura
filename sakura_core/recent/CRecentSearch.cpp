@@ -27,8 +27,6 @@
 #include "StdAfx.h"
 #include "CRecentSearch.h"
 #include "config/maxdata.h"
-#include "env/DLLSHAREDATA.h"
-#include <string.h>
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           生成                              //

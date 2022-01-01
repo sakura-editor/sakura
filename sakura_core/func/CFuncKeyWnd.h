@@ -64,7 +64,6 @@ protected:
 	int CalcButtonSize( void );	/* ボタンのサイズを計算 */
 
 	/* 仮想関数 */
-	void AfterCreateWindow( void ) override{}	// ウィンドウ作成後の処理	// 2007.03.13 ryoji 可視化しない
 
 	/* 仮想関数 メッセージ処理 詳しくは実装を参照 */
 	LRESULT OnTimer(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;	// WM_TIMERタイマーの処理

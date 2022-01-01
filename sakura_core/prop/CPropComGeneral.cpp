@@ -26,6 +26,8 @@
 #include "sakura.hh"
 #include "config/app_constants.h"
 #include "String_define.h"
+#include "recent/CRecentFile.h"
+#include "recent/CRecentFolder.h"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 TYPE_NAME_ID<int> SpecialScrollModeArr[] = {

@@ -20,8 +20,12 @@
 class CDlgGrep;
 
 #include "dlg/CDialog.h"
-#include "recent/CRecent.h"
 #include "util/window.h"
+#include "recent/CRecentSearch.h"
+#include "recent/CRecentGrepFile.h"
+#include "recent/CRecentGrepFolder.h"
+#include "recent/CRecentExcludeFile.h"
+#include "recent/CRecentExcludeFolder.h"
 
 #define DEFAULT_EXCLUDE_FILE_PATTERN    L"*.msi;*.exe;*.obj;*.pdb;*.ilk;*.res;*.pch;*.iobj;*.ipdb"
 #define DEFAULT_EXCLUDE_FOLDER_PATTERN  L".git;.svn;.vs"
@@ -42,6 +46,8 @@ public:
 	int DoModal( HINSTANCE, HWND, const WCHAR* );	/* モーダルダイアログの表示 */
 //	HWND DoModeless( HINSTANCE, HWND, const char* );	/* モードレスダイアログの表示 */
 
+	bool		m_bEnableThisText;
+	bool		m_bSelectOnceThisText;
 	BOOL		m_bSubFolder;/*!< サブフォルダからも検索する */
 	BOOL		m_bFromThisText;/*!< この編集中のテキストから検索する */
 

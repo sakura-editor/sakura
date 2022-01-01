@@ -68,6 +68,8 @@ static LRESULT CALLBACK CControlTrayWndProc( HWND, UINT, WPARAM, LPARAM );
 //Stonee, 2001/07/01  多重起動された場合は前回のダイアログを前面に出すようにした。
 void CControlTray::DoGrep()
 {
+	m_cDlgGrep.m_bEnableThisText = false;
+
 	//Stonee, 2001/06/30
 	//前回のダイアログがあれば前面に (suggested by genta)
 	if ( ::IsWindow(m_cDlgGrep.GetHwnd()) ){
@@ -808,7 +810,7 @@ LRESULT CControlTray::DispatchEvent(
 							// アイコンの登録
 							const CPlug::Array& plugs = CJackManager::getInstance()->GetPlugs( PP_COMMAND );
 							m_cMenuDrawer.m_pcIcons->ResetExtend();
-							for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ) {
+							for( CPlug::ArrayIter it = plugs.cbegin(); it != plugs.cend(); it++ ) {
 								int iBitmap = CMenuDrawer::TOOLBAR_ICON_PLUGCOMMAND_DEFAULT - 1;
 								const CPlug* plug = *it;
 								if( !plug->m_sIcon.empty() ){

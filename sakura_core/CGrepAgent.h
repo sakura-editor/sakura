@@ -129,6 +129,7 @@ private:
 	int DoGrepFile(
 		CEditView*				pcViewDst,
 		CDlgCancel*				pcDlgCancel,
+		HWND					hWndTarget,
 		const wchar_t*			pszKey,
 		const WCHAR*			pszFile,
 		const SSearchOption&	sSearchOption,

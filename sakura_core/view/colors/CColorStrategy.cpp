@@ -141,7 +141,7 @@ bool SColorStrategyInfo::CheckChangeColor(const CStringRef& cLineStr)
 	if( m_pcView->m_bMiniMap ){
 		CTypeSupport cPageViewBg(m_pcView, COLORIDX_PAGEVIEW);
 		if( cPageViewBg.IsDisp() ){
-			CEditView& cActiveView = m_pcView->m_pcEditWnd->GetActiveView();
+			CEditView& cActiveView = GetEditWnd().GetActiveView();
 			CLayoutInt curLine = m_pDispPos->GetLayoutLineRef();
 			if( m_colorIdxBackLine == COLORIDX_PAGEVIEW ){
 				if( cActiveView.GetTextArea().GetViewTopLine() <= curLine && curLine < cActiveView.GetTextArea().GetBottomLine() ){

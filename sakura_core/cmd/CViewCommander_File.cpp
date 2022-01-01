@@ -52,6 +52,7 @@
 #include "CWriteManager.h"
 #include "CEditApp.h"
 #include "recent/CMRUFile.h"
+#include "util/shell.h"
 #include "util/window.h"
 #include "charset/CCodeFactory.h"
 #include "plugin/CPlugin.h"
@@ -450,28 +451,10 @@ void CViewCommander::Command_BROWSE( void )
 		ErrorBeep();
 		return;
 	}
-//	char	szURL[MAX_PATH + 64];
-//	auto_sprintf( szURL, L"%ls", GetDocument()->m_cDocFile.GetFilePath() );
-	/* URLを開く */
-//	::ShellExecuteEx( NULL, L"open", szURL, NULL, NULL, SW_SHOW );
 
-    SHELLEXECUTEINFO info; 
-    info.cbSize =sizeof(info);
-    info.fMask = 0;
-    info.hwnd = NULL;
-    info.lpVerb = NULL;
-    info.lpFile = GetDocument()->m_cDocFile.GetFilePath();
-    info.lpParameters = NULL;
-    info.lpDirectory = NULL;
-    info.nShow = SW_SHOWNORMAL;
-    info.hInstApp = 0;
-    info.lpIDList = NULL;
-    info.lpClass = NULL;
-    info.hkeyClass = 0; 
-    info.dwHotKey = 0;
-    info.hIcon =0;
-
-	::ShellExecuteEx(&info);
+	std::wstring_view path(GetDocument()->m_cDocFile.GetFilePath());
+	std::wstring url(strprintf(L"file:///%s", path.data()));
+	OpenWithBrowser(m_pCommanderView->GetHwnd(), url);
 
 	return;
 }
@@ -540,17 +523,9 @@ void CViewCommander::Command_OPEN_FOLDER_IN_EXPLORER(void)
 		return;
 	}
 
-	// ドキュメントパスを変数に入れる
-	LPCWSTR pszDocPath = GetDocument()->m_cDocFile.GetFilePath();
-
-	// Windows Explorerの引数を作る
-	CNativeW explorerCommand;
-	explorerCommand.AppendStringF(L"/select,\"%s\"", pszDocPath);
-	LPCWSTR pszExplorerCommand = explorerCommand.GetStringPtr();
-
-	auto hInstance = ::ShellExecute(GetMainWindow(), L"open", L"explorer.exe", pszExplorerCommand, NULL, SW_SHOWNORMAL);
-	// If the function succeeds, it returns a value greater than 32. 
-	if (hInstance <= (decltype(hInstance))32) {
+	// ドキュメントパスを変数に入れてWindowsエクスプローラーで開く
+	if (std::filesystem::path docPath = GetDocument()->m_cDocFile.GetFilePath();
+		!OpenWithExplorer(GetMainWindow(), docPath)) {
 		ErrorBeep();
 		return;
 	}

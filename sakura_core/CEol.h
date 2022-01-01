@@ -50,8 +50,7 @@
 	@date 2021/03/27 berryzplus 定数に意味のある名前を付ける
  */
 enum class EEolType : char {
-	auto_detect = -1,		//!< 行終端子の自動検出
-	none,					//!< 行終端子なし
+	none,					//!< 行終端子なし（改行コード変換では「変換しない」）
 	cr_and_lf,				//!< \x0d\x0a 復帰改行
 	line_feed,				//!< \x0a 改行
 	carriage_return,		//!< \x0d 復帰

@@ -108,10 +108,10 @@ void CDocType::SetDocumentIcon()
 	
 	HICON	hIconBig, hIconSmall;
 	if( this->GetDocumentAttribute().m_bUseDocumentIcon )
-		m_pcDocRef->m_pcEditWnd->GetRelatedIcon( m_pcDocRef->m_cDocFile.GetFilePath(), &hIconBig, &hIconSmall );
+		GetEditWnd().GetRelatedIcon( m_pcDocRef->m_cDocFile.GetFilePath(), &hIconBig, &hIconSmall );
 	else
-		m_pcDocRef->m_pcEditWnd->GetDefaultIcon( &hIconBig, &hIconSmall );
+		GetEditWnd().GetDefaultIcon( &hIconBig, &hIconSmall );
 
-	m_pcDocRef->m_pcEditWnd->SetWindowIcon( hIconBig, ICON_BIG );
-	m_pcDocRef->m_pcEditWnd->SetWindowIcon( hIconSmall, ICON_SMALL );
+	GetEditWnd().SetWindowIcon( hIconBig, ICON_BIG );
+	GetEditWnd().SetWindowIcon( hIconSmall, ICON_SMALL );
 }

@@ -71,8 +71,6 @@ protected:
 	void DrawTipText( HDC hdc, const RECT& rcPaint );	/* ウィンドウのテキストを表示 */
 
 	/* 仮想関数 */
-	//	Jan. 9, 2006 genta
-	void AfterCreateWindow( void ) override;
 
 	/* 仮想関数 メッセージ処理 詳しくは実装を参照 */
 	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) override;/* 描画処理 */

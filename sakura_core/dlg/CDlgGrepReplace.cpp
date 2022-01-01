@@ -42,7 +42,7 @@ const DWORD p_helpids[] = {
 	IDC_CHK_PASTE,					HIDC_GREP_REP_CHK_PASTE,				//クリップボードから貼り付け
 	IDC_CHK_WORD,					HIDC_GREP_REP_CHK_WORD,					//単語単位
 	IDC_CHK_SUBFOLDER,				HIDC_GREP_REP_CHK_SUBFOLDER,			//サブフォルダも検索
-//	IDC_CHK_FROMTHISTEXT,			HIDC_GREP_REP_CHK_FROMTHISTEXT,			//このファイルから
+	IDC_CHK_FROMTHISTEXT,			HIDC_GREP_REP_CHK_FROMTHISTEXT,			//編集中のテキストから検索
 	IDC_CHK_LOHICASE,				HIDC_GREP_REP_CHK_LOHICASE,				//大文字小文字
 	IDC_CHK_REGULAREXP,				HIDC_GREP_REP_CHK_REGULAREXP,			//正規表現
 	IDC_CHK_BACKUP,					HIDC_GREP_REP_CHK_BACKUP,				//バックアップ作成
@@ -146,6 +146,21 @@ BOOL CDlgGrepReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	return bRet;
 }
 
+BOOL CDlgGrepReplace::OnCbnDropDown( HWND hwndCtl, int wID )
+{
+	switch( wID ){
+	case IDC_COMBO_TEXT2:
+		if ( ::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
+			const auto& keys = m_pShareData->m_sSearchKeywords.m_aReplaceKeys;
+			for( int i = 0; i < keys.size(); ++i ){
+				Combo_AddString( hwndCtl, keys[i] );
+			}
+		}
+		break;
+	}
+	return CDlgGrep::OnCbnDropDown( hwndCtl, wID );
+}
+
 BOOL CDlgGrepReplace::OnDestroy()
 {
 	m_cFontText2.ReleaseOnDestroy();
@@ -184,14 +199,13 @@ void CDlgGrepReplace::SetData( void )
 {
 	/* 置換後 */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT2, m_strText2.c_str() );
-	HWND	hwndCombo = GetItemHwnd( IDC_COMBO_TEXT2 );
-	for( int i = 0; i < m_pShareData->m_sSearchKeywords.m_aReplaceKeys.size(); ++i ){
-		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aReplaceKeys[i] );
-	}
 	
 	CheckDlgButtonBool( GetHwnd(), IDC_CHK_BACKUP, m_bBackup );
 
 	CDlgGrep::SetData();
+
+	/* 編集中テキストから検索チェックを無効化 */
+	::EnableWindow(GetItemHwnd(IDC_CHK_FROMTHISTEXT), FALSE);
 }
 
 /*! ダイアログデータの取得
