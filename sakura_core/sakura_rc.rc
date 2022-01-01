@@ -3008,7 +3008,7 @@ BEGIN
     STR_DLGFAV_EXT_COMMAND  "コマンド"
     STR_DLGFAV_HIDDEN       "(非表示)"
     STR_DLGFAV_FAVORITE     "お気に入り"
-    STR_DLGFAV_FAV_COUNT_LIMIT "お気に入りの上限を超えています"
+    STR_DLGFAV_FAV_COUNT_LIMIT "お気に入りの数(履歴として使える数)\nお気に入りの上限を超えています"
     STR_DLGFAV_CONF_DEL_FAV "最近使った%sの履歴を削除します。\nよろしいですか？\n"
     STR_DLGFAV_CONF_DEL_NOTFAV "最近使った%sの履歴のお気に入り以外を削除します。\nよろしいですか？"
 END

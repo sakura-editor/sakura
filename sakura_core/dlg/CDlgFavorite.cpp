@@ -33,6 +33,7 @@
 
 #include "StdAfx.h"
 #include <algorithm>
+#include <tuple>
 #include "CDlgFavorite.h"
 #include "dlg/CDlgInput1.h"
 #include "env/DLLSHAREDATA.h"
@@ -90,7 +91,6 @@ static int ListView_GetLParamInt( HWND, int );
 static int CALLBACK CompareListViewFunc( LPARAM, LPARAM, LPARAM );
 
 const int nFavoriteMax = 3;
-const int nFavoriteLimit = 6;
 const int ignoreTab = 3;
 
 struct CompareListViewLParam
@@ -356,16 +356,16 @@ int CDlgFavorite::GetData( void )
 {
 	int		nTab;
 	std::wstring	strReachFavLimitMsg;
-	int nFavoriteCount=0;
+	std::tuple<int,int> FavoriteCountAndHistory;
 
 	for( nTab = 0; m_aFavoriteInfo[nTab].m_pRecent; nTab++ )
 	{
 		if( m_aFavoriteInfo[nTab].m_bHaveFavorite )
 		{
 			GetFavorite(nTab);
-			nFavoriteCount = GetListFavorite(nTab);
-			if (nFavoriteCount >= nFavoriteMax) {
-				std::wstring buffer = strprintf(L"%s : %d\n", m_aFavoriteInfo[nTab].m_strCaption.c_str(), nFavoriteCount);
+			FavoriteCountAndHistory = GetListFavorite(nTab);
+			if (std::get<0>(FavoriteCountAndHistory) >= nFavoriteMax) {
+				std::wstring buffer = strprintf(L"%s : %d (%d)\n", m_aFavoriteInfo[nTab].m_strCaption.c_str(), std::get<0>(FavoriteCountAndHistory), std::get<1>(FavoriteCountAndHistory));
 				strReachFavLimitMsg.append(buffer);
 			}
 
@@ -664,7 +664,7 @@ BOOL CDlgFavorite::OnNotify(NMHDR* pNMHDR)
 					ListView_HitTest(hwndList, &lvht);
 					if ((lvht.flags & LVHT_ONITEMSTATEICON)) {
 						//IsGreaterThanMax
-						if (IsGreaterThanOrEqualMax(m_nCurrentTab, nFavoriteLimit)) {
+						if (IsGreaterThanOrEqualMax(m_nCurrentTab)) {
 							ListView_SetCheckState(hwndList, (int)lvht.iItem, true);
 						}
 					}
@@ -697,7 +697,7 @@ BOOL CDlgFavorite::OnNotify(NMHDR* pNMHDR)
 				case VK_SPACE:
 					{
 						//IsGreaterThanMax
-						if (IsGreaterThanOrEqualMax(m_nCurrentTab, nFavoriteLimit)) {
+						if (IsGreaterThanOrEqualMax(m_nCurrentTab)) {
 							const int nCount = ListView_GetItemCount(hwndList);
 							for (int i = 0; i < nCount; i++) {
 								if (ListView_GetItemState(hwndList, i, LVIS_FOCUSED)) {
@@ -895,17 +895,20 @@ void CDlgFavorite::GetFavorite(int nIndex)
 		for (int i = 0; i < nCount; i++) {
 			const int  recIndex = ListView_GetLParamInt(hwndList, i);
 			const BOOL bret = ListView_GetCheckState(hwndList, i);
+			pRecent->GetTextMaxLength();
 			pRecent->SetFavorite(recIndex, bret ? true : false);
 		}
 	}
 }
 
-int CDlgFavorite::GetListFavorite(int nIndex)
+std::tuple<int,int> CDlgFavorite::GetListFavorite(int nIndex)
 {
 	if (nIndex < ignoreTab) {
-		return 0;
+		return std::make_tuple(0,0);
 	}
 	const HWND hwndList = m_aListViewInfo[nIndex].hListView;
+	CRecent* const pRecent = m_aFavoriteInfo[nIndex].m_pRecent;
+	int nMax = pRecent->GetArrayCount();
 	int nFavoriteCount = 0;
 	const int nCount = ListView_GetItemCount(hwndList);
 	for (int i = 0; i < nCount; i++) {
@@ -913,16 +916,18 @@ int CDlgFavorite::GetListFavorite(int nIndex)
 			nFavoriteCount++;
 		}
 	}
-	return nFavoriteCount;
+	return std::make_tuple( nFavoriteCount, nMax - nFavoriteCount);
 }
 
-bool CDlgFavorite::IsGreaterThanOrEqualMax(int nTab, int nMax)
+bool CDlgFavorite::IsGreaterThanOrEqualMax(int nTab)
 {
 	if (nTab < ignoreTab) {
 		return false;
 	}
 	const HWND hwndList = m_aListViewInfo[nTab].hListView;
 	const int nCount = ListView_GetItemCount(hwndList);
+	CRecent* const pRecent = m_aFavoriteInfo[nTab].m_pRecent;
+	int nMax = pRecent->GetArrayCount() - 20;
 	if (nCount < nMax) {
 		return false;
 	}
