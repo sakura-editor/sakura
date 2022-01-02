@@ -483,6 +483,12 @@ BOOL CHokanMgr::OnSize( WPARAM wParam, LPARAM lParam )
 	POINT	po;
 	RECT	rcDlg;
 
+	::GetWindowRect(GetHwnd(), &rcDlg);
+	m_xPos = rcDlg.left;
+	m_xPos = rcDlg.top;
+	m_nWidth = rcDlg.right - rcDlg.left;
+	m_nHeight = rcDlg.bottom - rcDlg.top;
+
 	::GetClientRect( GetHwnd(), &rcDlg );
 	nWidth = rcDlg.right - rcDlg.left;  // width of client area
 	nHeight = rcDlg.bottom - rcDlg.top; // height of client area
