@@ -483,7 +483,7 @@ BOOL CHokanMgr::OnSize( WPARAM wParam, LPARAM lParam )
 
 	::GetWindowRect(GetHwnd(), &rcDlg);
 	m_xPos = rcDlg.left;
-	m_xPos = rcDlg.top;
+	m_yPos = rcDlg.top;
 	m_nWidth = rcDlg.right - rcDlg.left;
 	m_nHeight = rcDlg.bottom - rcDlg.top;
 
