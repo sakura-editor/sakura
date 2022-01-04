@@ -475,17 +475,21 @@ BOOL CHokanMgr::OnSize( WPARAM wParam, LPARAM lParam )
 		IDC_LIST_WORDS
 	};
 	int		nControls = _countof( Controls );
-	int		nWidth;
-	int		nHeight;
 	int		i;
 	RECT	rc;
 	HWND	hwndCtrl;
 	POINT	po;
 	RECT	rcDlg;
 
+	::GetWindowRect(GetHwnd(), &rcDlg);
+	m_xPos = rcDlg.left;
+	m_yPos = rcDlg.top;
+	m_nWidth = rcDlg.right - rcDlg.left;
+	m_nHeight = rcDlg.bottom - rcDlg.top;
+
 	::GetClientRect( GetHwnd(), &rcDlg );
-	nWidth = rcDlg.right - rcDlg.left;  // width of client area
-	nHeight = rcDlg.bottom - rcDlg.top; // height of client area
+	int nClientWidth = rcDlg.right - rcDlg.left;  // width of client area
+	int nClientHeight = rcDlg.bottom - rcDlg.top; // height of client area
 
 //	2001/06/18 Start by asa-o: サイズ変更後の位置を保存
 	m_poWin.x = rcDlg.left - 4;
@@ -512,8 +516,8 @@ BOOL CHokanMgr::OnSize( WPARAM wParam, LPARAM lParam )
 				NULL,
 				rc.left,
 				rc.top,
-				nWidth - rc.left * 2,
-				nHeight - rc.top * 2/* - 20*/,
+				nClientWidth - rc.left * 2,
+				nClientHeight - rc.top * 2/* - 20*/,
 				SWP_NOOWNERZORDER | SWP_NOZORDER
 			);
 		}
