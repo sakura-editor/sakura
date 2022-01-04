@@ -289,6 +289,7 @@ normal_action:;
 				GetSelectionInfo().BeginSelectArea();				// 現在のカーソル位置から選択を開始する
 				GetSelectionInfo().m_bBeginLineSelect = false;		// 行単位選択中 OFF
 			}
+			return;
 		}else
 		/* 選択開始処理 */
 		/* SHIFTキーが押されていたか */
