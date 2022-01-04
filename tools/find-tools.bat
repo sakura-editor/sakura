@@ -154,10 +154,9 @@ exit /b
 ::
 :: ARG_VSVERSION
 ::     latest => the latest version of installed Visual Studio
-::     2017   => Visual Studio 2017
-::     2019   => Visual Studio 2019
-::     15     => Visual Studio 2017
-::     16     => Visual Studio 2019
+::     2017 or 15  => Visual Studio 2017
+::     2019 or 16  => Visual Studio 2019
+::     2022 or 17  => Visual Studio 2022
 :: ---------------------------------------------------------------------------------------------------------------------
 :msbuild
     :: convert productLineVersion to Internal Major Version
@@ -167,6 +166,8 @@ exit /b
         set NUM_VSVERSION=15
     ) else if "%ARG_VSVERSION%" == "2019" (
         set NUM_VSVERSION=16
+    ) else if "%ARG_VSVERSION%" == "2022" (
+        set NUM_VSVERSION=17
     ) else if "%ARG_VSVERSION%" == "latest" (
         call :check_latest_installed_vsversion
     ) else (
@@ -185,6 +186,8 @@ exit /b
         set CMAKE_G_PARAM=Visual Studio 15 2017
     ) else if "%NUM_VSVERSION%" == "16" (
         set CMAKE_G_PARAM=Visual Studio 16 2019
+    ) else if "%NUM_VSVERSION%" == "17" (
+        set CMAKE_G_PARAM=Visual Studio 17 2022
     ) else (
         call :set_cmake_gparam_automatically
     )
