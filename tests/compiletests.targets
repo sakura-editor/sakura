@@ -18,6 +18,7 @@
     <SetEnv name="platform" value="$(Platform)" prefix="false" />
     <SetEnv name="configuration" value="$(Configuration)" prefix="false" />
     <SetEnv name="NUM_VSVERSION" value="$(VsVersion)" prefix="false" />
+    <SetEnv name="ARG_VSVERSION" value="$(VsVersion)" prefix="false" />
     <Exec Command="$(MSBuildThisFileDirectory)compiletests.run.cmd &quot;$(CompileTestBuildDir)&quot;" ConsoleToMSBuild="true" />
   </Target>
   <Target Name="AppendCleanTargetsForCompileTest" BeforeTargets="CoreClean">
