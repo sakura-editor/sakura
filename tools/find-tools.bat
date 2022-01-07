@@ -167,6 +167,8 @@ exit /b
         set NUM_VSVERSION=15
     ) else if "%ARG_VSVERSION%" == "2019" (
         set NUM_VSVERSION=16
+    ) else if "%ARG_VSVERSION%" == "2022" (
+        set NUM_VSVERSION=17
     ) else if "%ARG_VSVERSION%" == "latest" (
         call :check_latest_installed_vsversion
     ) else (
@@ -185,6 +187,8 @@ exit /b
         set CMAKE_G_PARAM=Visual Studio 15 2017
     ) else if "%NUM_VSVERSION%" == "16" (
         set CMAKE_G_PARAM=Visual Studio 16 2019
+    ) else if "%NUM_VSVERSION%" == "17" (
+        set CMAKE_G_PARAM=Visual Studio 17 2022
     ) else (
         call :set_cmake_gparam_automatically
     )
