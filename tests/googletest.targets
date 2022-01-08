@@ -37,7 +37,7 @@
     </PropertyGroup>
     <SetEnv name="platform" value="$(Platform)" prefix="false" />
     <SetEnv name="configuration" value="$(Configuration)" prefix="false" />
-    <SetEnv name="NUM_VSVERSION" value="$(VsVersion)" prefix="false" />
+    <SetEnv name="ARG_VSVERSION" value="$(VsVersion)" prefix="false" />
     <Exec Command="$(MSBuildThisFileDirectory)googletest.build.cmd &quot;$(GoogleTestBuildDir)&quot; &quot;$(GoogleTestInstallDir)&quot;" ConsoleToMSBuild="true" />
   </Target>
   <Target Name="AppendCleanTargetsForGoogleTest" BeforeTargets="CoreClean">

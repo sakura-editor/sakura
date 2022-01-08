@@ -5,8 +5,6 @@ set SOURCE_DIR=%~dp0compiletests
 :: find generic tools
 if not defined CMD_VSWHERE call %~dp0..\tools\find-tools.bat
 
-set /a NUM_VSVERSION_NEXT=NUM_VSVERSION + 1
-
 if not exist "%CMD_CMAKE%" (
   echo "no cmake found."
   exit /b 1
