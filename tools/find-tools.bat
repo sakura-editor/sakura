@@ -161,10 +161,14 @@ exit /b
 ::     16     => Visual Studio 2019
 :: ---------------------------------------------------------------------------------------------------------------------
 :msbuild
+    if defined ARG_VSVERSION (
+        goto :convert_arg_vsversion
+    )
+    goto :varidate_num_vsversion
+
+:convert_arg_vsversion
     :: convert productLineVersion to Internal Major Version
-    if "%ARG_VSVERSION%" == "" (
-        set NUM_VSVERSION=15
-    ) else if "%ARG_VSVERSION%" == "2017" (
+    if "%ARG_VSVERSION%" == "2017" (
         set NUM_VSVERSION=15
     ) else if "%ARG_VSVERSION%" == "2019" (
         set NUM_VSVERSION=16
@@ -174,6 +178,11 @@ exit /b
         call :check_latest_installed_vsversion
     ) else (
         set NUM_VSVERSION=%ARG_VSVERSION%
+    )
+
+:varidate_num_vsversion
+    if not defined NUM_VSVERSION (
+        set NUM_VSVERSION=15
     )
 
     call :check_installed_vsversion
