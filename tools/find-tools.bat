@@ -5,9 +5,34 @@ if "%1" equ "clear" (
     call :clear_variables
     echo find-tools.bat has been cleared
     exit /b
-) else if "%~1" neq "" (
+)
+
+if not defined CMD_VSWHERE call :vswhere 2> nul
+if not exist "%CMD_VSWHERE%" (
+    echo vswhere was not found
+    exit /b
+)
+
+set ARG_VSVERSION=
+if "%1" neq "" (
     set "ARG_VSVERSION=%~1"
 )
+call :convert_arg_vsversion
+if not defined ARG_VSVERSION (
+    call :convert_arg_vsversion
+)
+
+if defined NUM_VSVERSION (
+    if "%ARG_VSVERSION%" neq "%NUM_VSVERSION%" (
+        call :clear_variables
+        setlocal
+        set "ARG_VSVERSION=%~1"
+        call :vswhere
+        call :convert_arg_vsversion
+    )
+)
+set NUM_VSVERSION=%ARG_VSVERSION%
+
 if defined FIND_TOOLS_CALLED (
     echo find-tools.bat already called
     exit /b
@@ -18,7 +43,6 @@ if not defined CMD_GIT      call :Git      2> nul
 if not defined CMD_7Z       call :7z       2> nul
 if not defined CMD_HHC      call :hhc      2> nul
 if not defined CMD_ISCC     call :iscc     2> nul
-if not defined CMD_VSWHERE  call :vswhere  2> nul
 if not defined CMD_MSBUILD  call :msbuild  2> nul
 if not defined CMD_CMAKE    call :cmake    2> nul
 if not defined CMD_NINJA    call :cmake    2> nul
@@ -34,6 +58,7 @@ echo ^|- CMD_CMAKE=%CMD_CMAKE%
 echo ^|- CMD_NINJA=%CMD_NINJA%
 echo ^|- CMD_LEPROC=%CMD_LEPROC%
 echo ^|- CMD_PYTHON=%CMD_PYTHON%
+echo ^|- NUM_VSVERSION=%NUM_VSVERSION%
 echo ^|- CMAKE_G_PARAM=%CMAKE_G_PARAM%
 endlocal ^
     && set "CMD_GIT=%CMD_GIT%"                  ^
@@ -68,6 +93,42 @@ exit /b
     set NUM_VSVERSION=
     set CMAKE_G_PARAM=
     set FIND_TOOLS_CALLED=
+    exit /b
+
+:convert_arg_vsversion
+    if not defined ARG_VSVERSION (
+        set "ARG_VSVERSION=%NUM_VSVERSION%"
+    )
+    if not defined ARG_VSVERSION (
+        set "ARG_VSVERSION=latest"
+    )
+
+    :: convert productLineVersion to Internal Major Version
+    if "%ARG_VSVERSION%" == "2017" (
+        set ARG_VSVERSION=15
+    ) else if "%ARG_VSVERSION%" == "2019" (
+        set ARG_VSVERSION=16
+    ) else if "%ARG_VSVERSION%" == "latest" (
+        call :get_latest_installed_vsversion
+    )
+    ::指定されたバージョンのC++がインストールされているかチェック
+    set /a ARG_VSVERSION_NEXT=ARG_VSVERSION + 1
+    for /f "usebackq delims=" %%d in (`"%CMD_VSWHERE%" -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath -version [%ARG_VSVERSION%^,%ARG_VSVERSION_NEXT%^)`) do (
+        if exist "%%d" exit /b
+    )
+    ::指定されたバージョンが存在しなければ「指定なし」にしてやり直す
+    set ARG_VSVERSION=
+    exit /b
+
+:get_latest_installed_vsversion
+    for /f "usebackq delims=" %%v in (`"%CMD_VSWHERE%" -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationVersion -latest`) do (
+        set VSVERSION=%%v
+    )
+    if defined VSVERSION (
+        set ARG_VSVERSION=%VSVERSION:~0,2%
+    ) else (
+        set ARG_VSVERSION=15
+    )
     exit /b
 
 :Git
@@ -129,51 +190,28 @@ exit /b
 
 :: ---------------------------------------------------------------------------------------------------------------------
 :: sub routine for finding msbuild
-::
-:: ARG_VSVERSION
-::     latest => the latest version of installed Visual Studio
-::     2017   => Visual Studio 2017
-::     2019   => Visual Studio 2019
-::     15     => Visual Studio 2017
-::     16     => Visual Studio 2019
 :: ---------------------------------------------------------------------------------------------------------------------
 :msbuild
-    if defined ARG_VSVERSION (
-        goto :convert_arg_vsversion
-    )
-    goto :varidate_num_vsversion
-
-:convert_arg_vsversion
-    :: convert productLineVersion to Internal Major Version
-    if "%ARG_VSVERSION%" == "2017" (
-        set NUM_VSVERSION=15
-    ) else if "%ARG_VSVERSION%" == "2019" (
-        set NUM_VSVERSION=16
-    ) else if "%ARG_VSVERSION%" == "latest" (
-        call :check_latest_installed_vsversion
-    ) else (
-        set NUM_VSVERSION=%ARG_VSVERSION%
-    )
-
-:varidate_num_vsversion
-    if not defined NUM_VSVERSION (
-        set NUM_VSVERSION=15
-    )
-
-    call :check_installed_vsversion
-
-    call :find_msbuild
-    if not exist "%CMD_MSBUILD%" (
+    :: vs2017単独インストールで導入されるvswhereには機能制限がある
+    if "%ARG_VSVERSION%" == "15" (
         call :find_msbuild_legacy
-        set NUM_VSVERSION=15
-    )
-
-    if "%NUM_VSVERSION%" == "15" (
         set CMAKE_G_PARAM=Visual Studio 15 2017
-    ) else if "%NUM_VSVERSION%" == "16" (
-        set CMAKE_G_PARAM=Visual Studio 16 2019
     ) else (
+        call :find_msbuild
         call :set_cmake_gparam_automatically
+    )
+    exit /b
+
+:find_msbuild
+    set /a NUM_VSVERSION_NEXT=NUM_VSVERSION + 1
+    for /f "usebackq delims=" %%a in (`"%CMD_VSWHERE%" -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe -version [%NUM_VSVERSION%^,%NUM_VSVERSION_NEXT%^)`) do (
+        set "CMD_MSBUILD=%%a"
+    )
+    exit /b
+
+:find_msbuild_legacy
+    for /f "usebackq delims=" %%d in (`"%CMD_VSWHERE%" -requires Microsoft.Component.MSBuild -property installationPath -version [15^,16^)`) do (
+        set "CMD_MSBUILD=%%d\MSBuild\15.0\Bin\MSBuild.exe"
     )
     exit /b
 
@@ -187,42 +225,6 @@ exit /b
     for /f "usebackq delims=" %%v in (`"%CMD_VSWHERE%" -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property catalog_productLineVersion -version [%NUM_VSVERSION%^,%NUM_VSVERSION_NEXT%^)`) do (
         set VS_PRODUCT_LINE_VERSION=%%v
     )
-    exit /b
-
-:check_latest_installed_vsversion
-    for /f "usebackq delims=" %%v in (`"%CMD_VSWHERE%" -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationVersion -latest`) do (
-        set VSVERSION=%%v
-    )
-    set NUM_VSVERSION=%VSVERSION:~0,2%
-    exit /b
-
-:check_installed_vsversion
-    set /a NUM_VSVERSION_NEXT=NUM_VSVERSION + 1
-    for /f "usebackq delims=" %%d in (`"%CMD_VSWHERE%" -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath -version [%NUM_VSVERSION%^,%NUM_VSVERSION_NEXT%^)`) do (
-        if exist "%%d" exit /b
-    )
-    call :check_latest_installed_vsversion
-    exit /b
-
-:find_msbuild
-    set /a NUM_VSVERSION_NEXT=NUM_VSVERSION + 1
-    for /f "usebackq delims=" %%a in (`"%CMD_VSWHERE%" -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe -version [%NUM_VSVERSION%^,%NUM_VSVERSION_NEXT%^)`) do (
-        set "CMD_MSBUILD=%%a"
-    )
-    if exist "%CMD_MSBUILD%" (
-        exit /b
-    )
-    set CMD_MSBUILD=
-    exit /b
-
-:find_msbuild_legacy
-    for /f "usebackq delims=" %%d in (`"%CMD_VSWHERE%" -requires Microsoft.Component.MSBuild -property installationPath -version [15^,16^)`) do (
-        set "CMD_MSBUILD=%%d\MSBuild\15.0\Bin\MSBuild.exe"
-    )
-    if exist "%CMD_MSBUILD%" (
-        exit /b
-    )
-    set CMD_MSBUILD=
     exit /b
 
 :cmake
