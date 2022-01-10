@@ -7,7 +7,6 @@ if "%1" equ "clear" (
     set CMD_7Z=
     set CMD_HHC=
     set CMD_ISCC=
-    set CMD_DOXYGEN=
     set CMD_VSWHERE=
     set CMD_MSBUILD=
     set CMD_CMAKE=
@@ -32,7 +31,6 @@ if not defined CMD_GIT      call :Git      2> nul
 if not defined CMD_7Z       call :7z       2> nul
 if not defined CMD_HHC      call :hhc      2> nul
 if not defined CMD_ISCC     call :iscc     2> nul
-if not defined CMD_DOXYGEN  call :doxygen  2> nul
 if not defined CMD_VSWHERE  call :vswhere  2> nul
 if not defined CMD_MSBUILD  call :msbuild  2> nul
 if not defined CMD_CMAKE    call :cmake    2> nul
@@ -43,7 +41,6 @@ echo ^|- CMD_GIT=%CMD_GIT%
 echo ^|- CMD_7Z=%CMD_7Z%
 echo ^|- CMD_HHC=%CMD_HHC%
 echo ^|- CMD_ISCC=%CMD_ISCC%
-echo ^|- CMD_DOXYGEN=%CMD_DOXYGEN%
 echo ^|- CMD_VSWHERE=%CMD_VSWHERE%
 echo ^|- CMD_MSBUILD=%CMD_MSBUILD%
 echo ^|- CMD_CMAKE=%CMD_CMAKE%
@@ -56,7 +53,6 @@ endlocal ^
     && set "CMD_7Z=%CMD_7Z%"                    ^
     && set "CMD_HHC=%CMD_HHC%"                  ^
     && set "CMD_ISCC=%CMD_ISCC%"                ^
-    && set "CMD_DOXYGEN=%CMD_DOXYGEN%"          ^
     && set "CMD_VSWHERE=%CMD_VSWHERE%"          ^
     && set "CMD_MSBUILD=%CMD_MSBUILD%"          ^
     && set "CMD_CMAKE=%CMD_CMAKE%"              ^
@@ -113,15 +109,6 @@ set APPDIR=Inno Setup 6
 set PATH2=%PATH%;%ProgramFiles%\%APPDIR%\;%ProgramFiles(x86)%\%APPDIR%\;%ProgramW6432%\%APPDIR%\;
 for /f "usebackq delims=" %%a in (`where $PATH2:ISCC.exe`) do ( 
     set "CMD_ISCC=%%a"
-    exit /b
-)
-exit /b
-
-:doxygen
-set APPDIR=doxygen\bin
-set PATH2=%PATH%;%ProgramFiles%\%APPDIR%\;%ProgramFiles(x86)%\%APPDIR%\;%ProgramW6432%\%APPDIR%\;
-for /f "usebackq delims=" %%a in (`where $PATH2:doxygen.exe`) do ( 
-    set "CMD_DOXYGEN=%%a"
     exit /b
 )
 exit /b
