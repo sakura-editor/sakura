@@ -27,13 +27,14 @@
 #include "StdAfx.h"
 #include "CViewFont.h"
 #include "env/DLLSHAREDATA.h"
+#include "util/window.h"
 
 /*! フォント作成
 */
 void CViewFont::CreateFonts( const LOGFONT *plf )
 {
 	LOGFONT	lf;
-	int miniSize = GetDllShareData().m_Common.m_sWindow.m_nMiniMapFontSize;
+	int miniSize = ::DpiScaleX(GetDllShareData().m_Common.m_sWindow.m_nMiniMapFontSize);
 	int quality = GetDllShareData().m_Common.m_sWindow.m_nMiniMapQuality;
 	int outPrec = OUT_TT_ONLY_PRECIS;	// FixedSys等でMiniMapのフォントが小さくならない修正
 

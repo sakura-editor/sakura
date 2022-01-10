@@ -31,6 +31,7 @@
 #include "env/DLLSHAREDATA.h"
 #include "doc/CEditDoc.h"
 #include "config/app_constants.h"
+#include "util/window.h"
 
 // 2014.07.26 katze
 //#define USE_LOG10			// この行のコメントを外すと行番号の最小桁数の計算にlog10()を用いる
@@ -63,8 +64,8 @@ CTextArea::CTextArea(CEditView* pEditView)
 	m_nViewRowNum = CLayoutInt(0);			/* 表示域の行数 */
 	m_nViewTopLine = CLayoutInt(0);			/* 表示域の一番上の行 */
 	m_nViewLeftCol = CLayoutInt(0);			/* 表示域の一番左の桁 */
-	SetTopYohaku( pShareData->m_Common.m_sWindow.m_nRulerBottomSpace ); 	/* ルーラーとテキストの隙間 */
-	SetLeftYohaku( pShareData->m_Common.m_sWindow.m_nLineNumRightSpace );
+	SetTopYohaku(DpiScaleY(pShareData->m_Common.m_sWindow.m_nRulerBottomSpace)); 	/* ルーラーとテキストの隙間 */
+	SetLeftYohaku(DpiScaleX(pShareData->m_Common.m_sWindow.m_nLineNumRightSpace));
 	m_nViewAlignTop = GetTopYohaku();		/* 表示域の上端座標 */
 }
 

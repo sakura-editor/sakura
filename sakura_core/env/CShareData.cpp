@@ -272,7 +272,7 @@ bool CShareData::InitShareData()
 			sWindow.m_bDispMiniMap = false;			// ミニマップを表示する
 			sWindow.m_nFUNCKEYWND_Place = 1;			/* ファンクションキー表示位置／0:上 1:下 */
 			sWindow.m_nFUNCKEYWND_GroupNum = 4;			// 2002/11/04 Moca ファンクションキーのグループボタン数
-			sWindow.m_nMiniMapFontSize = -1;
+			sWindow.m_nMiniMapFontSize = -2;
 			sWindow.m_nMiniMapQuality = NONANTIALIASED_QUALITY;
 			sWindow.m_nMiniMapWidth = 150;
 

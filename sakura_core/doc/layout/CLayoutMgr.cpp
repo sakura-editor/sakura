@@ -34,6 +34,7 @@
 #include "debug/CRunningTimer.h"
 #include "charset/charcode.h"
 #include "config/app_constants.h"
+#include "util/window.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        生成と破棄                           //
@@ -137,7 +138,7 @@ void CLayoutMgr::SetLayoutInfo(
 	if (nTsvModeOld != nTsvMode && nTsvMode != TSV_MODE_NONE) {
 		m_tsvInfo.CalcTabLength(this->m_pcDocLineMgr);
 	}
-	m_nSpacing = refType.m_nColumnSpace;
+	m_nSpacing = DpiScaleX(refType.m_nColumnSpace);
 	if( nCharLayoutXPerKeta == -1 )
 	{
 		// Viewが持ってるフォント情報は古い、しょうがないので自分で作る
@@ -145,8 +146,8 @@ void CLayoutMgr::SetLayoutInfo(
 		HDC hdc = ::GetDC(hwnd);
 		CViewFont viewFont(pLogfont);
 		CTextMetrics temp;
-		temp.Update(hdc, viewFont.GetFontHan(), refType.m_nLineSpace, refType.m_nColumnSpace);
-		m_nCharLayoutXPerKeta = temp.GetHankakuWidth() + m_pTypeConfig->m_nColumnSpace;
+		temp.Update(hdc, viewFont.GetFontHan(), DpiScaleY(refType.m_nLineSpace), DpiScaleX(refType.m_nColumnSpace));
+		m_nCharLayoutXPerKeta = temp.GetHankakuWidth() + DpiScaleX(m_pTypeConfig->m_nColumnSpace);
 		::ReleaseDC(hwnd, hdc);
 	}else{
 		m_nCharLayoutXPerKeta = nCharLayoutXPerKeta;
