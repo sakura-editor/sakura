@@ -1,6 +1,7 @@
 @echo off
 set platform=%1
 set configuration=%2
+:: %3 は find-tools.bat の ARG_VSVERSION に使います。
 
 if "%platform%" == "Win32" (
 	@rem OK
@@ -33,7 +34,7 @@ if "%platform%" == "MinGW" (
 )
 
 @echo ---- start build-sln.bat ----
-call build-sln.bat       %PLATFORM% %CONFIGURATION% || (echo error build-sln.bat       && exit /b 1)
+call build-sln.bat       %PLATFORM% %CONFIGURATION% %3 || (echo error build-sln.bat       && exit /b 1)
 @echo ---- end   build-sln.bat ----
 @echo.
 
