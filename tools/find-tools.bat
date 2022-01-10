@@ -2,22 +2,7 @@
 setlocal
 
 if "%1" equ "clear" (
-    endlocal
-    set CMD_GIT=
-    set CMD_7Z=
-    set CMD_HHC=
-    set CMD_ISCC=
-    set CMD_CPPCHECK=
-    set CMD_DOXYGEN=
-    set CMD_VSWHERE=
-    set CMD_MSBUILD=
-    set CMD_CMAKE=
-    set CMD_NINJA=
-    set CMD_LEPROC=
-    set CMD_PYTHON=
-    set NUM_VSVERSION=
-    set CMAKE_G_PARAM=
-    set FIND_TOOLS_CALLED=
+    call :clear_variables
     echo find-tools.bat has been cleared
     exit /b
 ) else if "%~1" neq "" (
@@ -74,6 +59,25 @@ endlocal ^
 
 set FIND_TOOLS_CALLED=1
 exit /b
+
+:clear_variables
+    endlocal
+    set CMD_GIT=
+    set CMD_7Z=
+    set CMD_HHC=
+    set CMD_ISCC=
+    set CMD_CPPCHECK=
+    set CMD_DOXYGEN=
+    set CMD_VSWHERE=
+    set CMD_MSBUILD=
+    set CMD_CMAKE=
+    set CMD_NINJA=
+    set CMD_LEPROC=
+    set CMD_PYTHON=
+    set NUM_VSVERSION=
+    set CMAKE_G_PARAM=
+    set FIND_TOOLS_CALLED=
+    exit /b
 
 :Git
 set APPDIR=Git\Cmd
