@@ -1,7 +1,7 @@
 *.kwd text
 *.khp text
 *.hkn text
-*.bat text
+*.bat text eol=crlf
 Makefile text eol=lf
 sakura_rc.h text eol=crlf
 *.rc text working-tree-encoding=utf-16le-bom eol=crlf
