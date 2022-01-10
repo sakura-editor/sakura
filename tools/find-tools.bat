@@ -108,6 +108,8 @@ exit /b
         set ARG_VSVERSION=15
     ) else if "%ARG_VSVERSION%" == "2019" (
         set ARG_VSVERSION=16
+    ) else if "%ARG_VSVERSION%" == "2022" (
+        set ARG_VSVERSION=17
     ) else if "%ARG_VSVERSION%" == "latest" (
         call :get_latest_installed_vsversion
     )
