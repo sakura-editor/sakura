@@ -1,6 +1,7 @@
 @echo off
 set platform=%1
 set configuration=%2
+:: %3 は find-tools.bat の ARG_VSVERSION に使います。
 
 if "%platform%" == "Win32" (
 	@rem OK
@@ -19,7 +20,7 @@ if "%configuration%" == "Release" (
 	call :showhelp %0
 	exit /b 1
 )
-if not defined CMD_MSBUILD call %~dp0tools\find-tools.bat
+if not defined CMD_MSBUILD call %~dp0tools\find-tools.bat %3
 if not defined CMD_MSBUILD (
 	echo msbuild.exe was not found.
 	exit /b 1
