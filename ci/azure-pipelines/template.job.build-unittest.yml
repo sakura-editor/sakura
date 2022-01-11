@@ -31,7 +31,32 @@ jobs:
   - script: set
     displayName: Show environmental variables for debug
 
-  - template: /ci/azure-pipelines/template.steps.install-python-modules.yml
+  # Install dependencies
+  - pwsh: |
+      choco install autohotkey.install --confirm
+
+      $LEWorkDir = "$(Build.SourcesDirectory)\le"
+      New-Item "${LEWorkDir}" -ItemType Directory
+      Set-Location "${LEWorkDir}"
+      Invoke-WebRequest `
+        -Uri "https://github.com/xupefei/Locale-Emulator/releases/download/v2.5.0.1/Locale.Emulator.2.5.0.1.zip" `
+        -OutFile "${LEWorkDir}\locale-emulator.zip"
+      Expand-Archive "${LEWorkDir}\locale-emulator.zip"
+      New-Item "${LEWorkDir}\le-init.ahk" -Value @"
+        #NoEnv
+        #NoTrayIcon
+        SetTitleMatchMode, 1
+        window_title = % "LE Context Menu Installer - V"
+        WinWait, %window_title%, , 20
+        WinClose %window_title%
+      "@
+      Start-Process "AutoHotKey" -ArgumentList "${LEWorkDir}\le-init.ahk"
+      Start-Process "${LEWorkDir}\locale-emulator\LEInstaller.exe"
+      echo "##vso[task.prependpath]${LEWorkDir}\locale-emulator\"
+      Set-Location "$(Build.SourcesDirectory)"
+
+      choco upgrade innosetup --confirm
+    displayName: Install dependencies
 
   # Build solution
   - script: build-sln.bat       $(BuildPlatform) $(Configuration)
@@ -45,10 +70,6 @@ jobs:
   # Toolbar Bitmap Split/Mux
   - script: build-bmp-tools.bat $(Configuration)
     displayName: Bitmap Split/Mux
-
-  # Install Locale Emulator
-  - script: choco install locale-emulator -y
-    displayName: Install Locale Emulator
 
   # Build HTML Help
   - script: build-chm.bat

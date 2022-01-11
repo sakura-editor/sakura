@@ -111,6 +111,17 @@ jobs:
     vmImage: 'windows-2019'
     displayName: VS2019
 
+# サクラエディタのビルドを行う JOB (VS2022)
+# * サクラエディタ本体
+# * HTML Help
+# * Installer
+# * 単体テスト
+- template: ci/azure-pipelines/template.job.build-unittest.yml
+  parameters:
+    name: VS2022
+    vmImage: 'windows-2022'
+    displayName: VS2022
+
 # サクラエディタのビルドを行う JOB(MinGW)
 # * サクラエディタ本体
 # * 単体テスト
