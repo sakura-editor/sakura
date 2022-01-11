@@ -61,7 +61,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        choco install autohotkey.install --no-progress --confirm
+        choco install autohotkey.install --confirm
 
         $LEWorkDir = "${{github.workspace}}\le"
         New-Item "${LEWorkDir}" -ItemType Directory
@@ -83,7 +83,7 @@ jobs:
         echo "${LEWorkDir}\locale-emulator" >> $env:GITHUB_PATH
         Set-Location "${{github.workspace}}"
 
-        choco upgrade innosetup --no-progress --confirm
+        choco upgrade innosetup --confirm
       shell: pwsh
 
     - name: Setup environment variables
