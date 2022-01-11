@@ -34,10 +34,13 @@ jobs:
   build:
     # The type of runner that the job will run on
     name: MSBuild
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
+        os:
+          - windows-2019
+          - windows-2022
         config:
           - Debug
           - Release
@@ -55,6 +58,33 @@ jobs:
     ## see https://github.com/microsoft/setup-msbuild
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1
+
+    - name: Install dependencies
+      run: |
+        choco install autohotkey.install --no-progress --confirm
+
+        $LEWorkDir = "${{github.workspace}}\le"
+        New-Item "${LEWorkDir}" -ItemType Directory
+        Set-Location "${LEWorkDir}"
+        Invoke-WebRequest `
+          -Uri "https://github.com/xupefei/Locale-Emulator/releases/download/v2.5.0.1/Locale.Emulator.2.5.0.1.zip" `
+          -OutFile "${LEWorkDir}\locale-emulator.zip"
+        Expand-Archive "${LEWorkDir}\locale-emulator.zip"
+        New-Item "${LEWorkDir}\le-init.ahk" -Value @"
+          #NoEnv
+          #NoTrayIcon
+          SetTitleMatchMode, 1
+          window_title = % "LE Context Menu Installer - V"
+          WinWait, %window_title%, , 20
+          WinClose %window_title%
+        "@
+        Start-Process "AutoHotKey" -ArgumentList "${LEWorkDir}\le-init.ahk"
+        Start-Process "${LEWorkDir}\locale-emulator\LEInstaller.exe"
+        echo "${LEWorkDir}\locale-emulator" >> $env:GITHUB_PATH
+        Set-Location "${{github.workspace}}"
+
+        choco upgrade innosetup --no-progress --confirm
+      shell: pwsh
 
     - name: Setup environment variables
       run: |
@@ -87,10 +117,6 @@ jobs:
 
     - name: MSBuild
       run: build-sln.bat ${{ matrix.platform }} ${{ matrix.config }}
-      shell: cmd
-
-    - name: Install Locale Emulator
-      run: choco install locale-emulator -y
       shell: cmd
 
     - name: Build HTML Help
