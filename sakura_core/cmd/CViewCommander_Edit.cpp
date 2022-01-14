@@ -857,6 +857,7 @@ void CViewCommander::Command_DELETE_BACK( void )
 									GetCaret().GetCaretLogicPos()
 								)
 							);
+							GetDocument()->m_cDocEditor.m_nOpeBlkRedawCount++;
 						}
 						m_pCommanderView->DeleteData( true );
 					}
