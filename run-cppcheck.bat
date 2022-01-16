@@ -21,7 +21,7 @@ if "%configuration%" == "Release" (
 	exit /b 1
 )
 
-call %~dp0tools\find-tools.bat
+if not defined CMD_CPPCHECK call :cppcheck
 if not defined CMD_CPPCHECK (
 	echo cppcheck.exe was not found. so skip to run it.
 	exit /b 0
@@ -66,6 +66,15 @@ if exist "%CMD_CPPCHECK%" (
 	@echo cppcheck success
 )
 exit /b %ERROR_RESULT%
+
+:cppcheck
+set APPDIR=cppcheck
+set PATH2=%PATH%;%ProgramFiles%\%APPDIR%\;%ProgramFiles(x86)%\%APPDIR%\;%ProgramW6432%\%APPDIR%\;
+for /f "usebackq delims=" %%a in (`where $PATH2:cppcheck.exe`) do ( 
+    set "CMD_CPPCHECK=%%a"
+    exit /b
+)
+exit /b
 
 
 @rem ------------------------------------------------------------------------------
