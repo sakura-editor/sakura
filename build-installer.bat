@@ -21,7 +21,7 @@ if "%configuration%" == "Release" (
 	exit /b 1
 )
 
-if not defined CMD_ISCC call %~dp0tools\find-tools.bat
+if not defined CMD_ISCC call :iscc
 if not defined CMD_ISCC (
 	echo ISCC.exe was not found.
 	exit /b 1
@@ -80,6 +80,23 @@ set SAKURA_ISS=installer\sakura-%platform%.iss
 @echo running "%CMD_ISCC%" %SAKURA_ISS%
 "%CMD_ISCC%" %SAKURA_ISS% > %ISS_LOG_FILE% || (echo error && exit /b 1)
 exit /b 0
+
+:iscc
+set APPDIR=Inno Setup 5
+set PATH2=%PATH%;%ProgramFiles%\%APPDIR%\;%ProgramFiles(x86)%\%APPDIR%\;%ProgramW6432%\%APPDIR%\;
+for /f "usebackq delims=" %%a in (`where $PATH2:ISCC.exe`) do ( 
+    set "CMD_ISCC=%%a"
+    exit /b
+)
+if exist "%CMD_ISCC%" exit /b
+
+set APPDIR=Inno Setup 6
+set PATH2=%PATH%;%ProgramFiles%\%APPDIR%\;%ProgramFiles(x86)%\%APPDIR%\;%ProgramW6432%\%APPDIR%\;
+for /f "usebackq delims=" %%a in (`where $PATH2:ISCC.exe`) do ( 
+    set "CMD_ISCC=%%a"
+    exit /b
+)
+exit /b
 
 @rem ------------------------------------------------------------------------------
 @rem show help
