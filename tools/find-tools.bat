@@ -53,6 +53,7 @@ echo ^|- CMD_CMAKE=%CMD_CMAKE%
 echo ^|- CMD_NINJA=%CMD_NINJA%
 echo ^|- CMD_LEPROC=%CMD_LEPROC%
 echo ^|- CMD_PYTHON=%CMD_PYTHON%
+echo ^|- NUM_VSVERSION=%NUM_VSVERSION%
 echo ^|- CMAKE_G_PARAM=%CMAKE_G_PARAM%
 endlocal ^
     && set "CMD_GIT=%CMD_GIT%"                  ^
