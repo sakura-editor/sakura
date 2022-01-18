@@ -72,7 +72,7 @@ jobs:
   #     https://docs.microsoft.com/en-us/azure/devops/pipelines/process/conditions?view=azure-devops&tabs=yaml#job-status-functions
   #
   - task: CopyFiles@1
-    condition: succeededOrFailed()
+    condition: and(eq(variables['Configuration'], 'Release'), succeededOrFailed())
     displayName: Copy to ArtifactStagingDirectory
     inputs:
       contents: |
@@ -82,7 +82,7 @@ jobs:
 
   # see https://docs.microsoft.com/en-us/azure/devops/pipelines/artifacts/build-artifacts?view=azure-devops&tabs=yaml
   - task: PublishBuildArtifacts@1
-    condition: succeededOrFailed()
+    condition: and(eq(variables['Configuration'], 'Release'), succeededOrFailed())
     displayName: Publish ArtifactStagingDirectory
     inputs:
        pathtoPublish: '$(Build.ArtifactStagingDirectory)'
