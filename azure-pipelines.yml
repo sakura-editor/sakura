@@ -87,17 +87,6 @@ pr:
 ###############################################################################################################################
 jobs:
 
-# サクラエディタのビルドを行う JOB (VS2017)
-# * サクラエディタ本体
-# * HTML Help
-# * Installer
-# * 単体テスト
-- template: ci/azure-pipelines/template.job.build-unittest.yml
-  parameters:
-    name: VS2017
-    vmImage: 'VS2017-Win2016'
-    displayName: VS2017
-
 # サクラエディタのビルドを行う JOB (VS2019)
 # * サクラエディタ本体
 # * HTML Help
