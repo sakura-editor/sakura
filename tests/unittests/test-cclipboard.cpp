@@ -28,11 +28,15 @@
 #define NOMINMAX
 #endif /* #ifndef NOMINMAX */
 
-#include <tchar.h>
+#include <memory>
+#include <string>
+#include <string_view>
+#include <type_traits>
+
 #include <Windows.h>
-#include <Shlwapi.h>
 #include <CommCtrl.h>
 
+#include "CEol.h"
 #include "mem/CNativeW.h"
 #include "_os/CClipboard.h"
 
@@ -103,4 +107,55 @@ TEST(CClipboard, SetHtmlText)
 			FAIL();
 		}
 	}
+}
+
+class CClipboardTestFixture : public testing::Test {
+protected:
+	void SetUp() override {
+		hInstance = ::GetModuleHandle(nullptr);
+		hWnd = ::CreateWindowExW(0, WC_STATICW, L"test", 0, 1, 1, 1, 1, nullptr, nullptr, hInstance, nullptr);
+		if (!hWnd) FAIL();
+	}
+	void TearDown() override {
+		if (hWnd)
+			::DestroyWindow(hWnd);
+	}
+
+	HINSTANCE hInstance = nullptr;
+	HWND hWnd = nullptr;
+};
+
+TEST_F(CClipboardTestFixture, SetTextAndGetText)
+{
+	const std::wstring_view text = L"てすと";
+	CClipboard clipboard(hWnd);
+	CNativeW buffer;
+	bool column;
+	bool line;
+	CEol eol(EEolType::cr_and_lf);
+
+	// テストを実行する前にクリップボードの内容を破棄しておく。
+	clipboard.Empty();
+
+	// テキストを設定する（矩形選択フラグなし・行選択フラグなし）
+	EXPECT_TRUE(clipboard.SetText(text.data(), text.length(), false, false, -1));
+	EXPECT_TRUE(CClipboard::HasValidData());
+	// Unicode文字列を取得する
+	EXPECT_TRUE(clipboard.GetText(&buffer, &column, &line, eol, CF_UNICODETEXT));
+	EXPECT_STREQ(buffer.GetStringPtr(), text.data());
+	EXPECT_FALSE(column);
+	EXPECT_FALSE(line);
+
+	clipboard.Empty();
+
+	// テキストを設定する（矩形選択あり・行選択あり）
+	EXPECT_TRUE(clipboard.SetText(text.data(), text.length(), true, true, -1));
+	EXPECT_TRUE(CClipboard::HasValidData());
+	// サクラエディタ独自形式データを取得する
+	EXPECT_TRUE(clipboard.GetText(&buffer, &column, nullptr, eol, CClipboard::GetSakuraFormat()));
+	EXPECT_STREQ(buffer.GetStringPtr(), text.data());
+	EXPECT_TRUE(column);
+	EXPECT_TRUE(clipboard.GetText(&buffer, nullptr, &line, eol, CClipboard::GetSakuraFormat()));
+	EXPECT_STREQ(buffer.GetStringPtr(), text.data());
+	EXPECT_TRUE(line);
 }
