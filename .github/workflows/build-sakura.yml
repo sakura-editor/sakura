@@ -108,6 +108,10 @@ jobs:
       run: build-chm.bat
       shell: cmd
 
+    - name: Update/Install Inno Setup
+      run: choco upgrade innosetup --confirm
+      shell: pwsh
+
     - name: Build installer with Inno Setup
       run: build-installer.bat ${{ matrix.platform }} ${{ matrix.config }}
       shell: cmd
