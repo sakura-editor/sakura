@@ -90,8 +90,19 @@ jobs:
       shell: cmd
 
     - name: Install Locale Emulator
-      run: choco install locale-emulator -y
-      shell: cmd
+      run: |
+        choco install autohotkey.install --confirm
+        $LEExpandDir = "${{github.workspace}}\tools\locale-emulator"
+        $LEInitScript = "${{github.workspace}}\ci\init-locale-emulator.ahk"
+        New-Item "${LEExpandDir}" -ItemType Directory
+        Invoke-WebRequest `
+          "https://github.com/xupefei/Locale-Emulator/releases/download/v2.5.0.1/Locale.Emulator.2.5.0.1.zip" `
+          -OutFile "${LEExpandDir}\locale-emulator.zip"
+        Expand-Archive "${LEExpandDir}\locale-emulator.zip" "${LEExpandDir}"
+        Start-Process "AutoHotKey" "${LEInitScript}"
+        Start-Process "${LEExpandDir}\LEInstaller.exe"
+        echo "${LEExpandDir}" >> $env:GITHUB_PATH
+      shell: pwsh
 
     - name: Build HTML Help
       run: build-chm.bat
