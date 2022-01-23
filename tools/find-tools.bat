@@ -2,6 +2,7 @@
 setlocal
 
 if "%1" equ "clear" (
+    endlocal
     call :clear_variables
     echo find-tools.bat has been cleared
     exit /b
@@ -24,6 +25,7 @@ if not defined ARG_VSVERSION (
 
 if defined NUM_VSVERSION (
     if "%ARG_VSVERSION%" neq "%NUM_VSVERSION%" (
+        endlocal
         call :clear_variables
         setlocal
         set "ARG_VSVERSION=%~1"
@@ -85,7 +87,6 @@ set FIND_TOOLS_CALLED=1
 exit /b
 
 :clear_variables
-    endlocal
     set CMD_GIT=
     set CMD_7Z=
     set CMD_HHC=
@@ -221,7 +222,7 @@ exit /b
 :: ---------------------------------------------------------------------------------------------------------------------
 :msbuild
     :: vs2017単独インストールで導入されるvswhereには機能制限がある
-    if "%ARG_VSVERSION%" == "15" (
+    if "%NUM_VSVERSION%" == "15" (
         call :find_msbuild_legacy
         set CMAKE_G_PARAM=Visual Studio 15 2017
     ) else (
@@ -296,7 +297,7 @@ exit /b
 call :find_py
 call :check_python_version
 if defined CMD_PYTHON (
-	exit /b 0
+    exit /b 0
 )
 
 call :find_python
