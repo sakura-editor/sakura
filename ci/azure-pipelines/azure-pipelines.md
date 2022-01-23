@@ -76,7 +76,6 @@ https://azure.microsoft.com/ja-jp/services/devops/pipelines/ にアクセスし�
 
 | JOB 名 | 説明 | job を定義する template |
 ----|----|----
-|VS2017 | Visual Studio 2017 でサクラエディタのビルドを行う | [template.job.build-unittest.yml](template.job.build-unittest.yml) |
 |VS2019 | Visual Studio 2019 でサクラエディタのビルドを行う | [template.job.build-unittest.yml](template.job.build-unittest.yml) |
 |MinGW | MinGW でサクラエディタのビルドを行う | [template.job.build-on-msys2.yml](template.job.build-on-msys2.yml) |
 |SonarQube | SonarQube での解析を行う | [template.job.SonarQube.yml](template.job.SonarQube.yml) |
