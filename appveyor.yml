@@ -19,8 +19,8 @@ skip_commits:
     - .gitignore
     - .editorconfig
     - 'azure-pipelines*.yml'
-    - 'ci/azure-pipelines/template*.yml'
-    - '.github/workflows/*.yml'
+    - 'ci/azure-pipelines/*'
+    - '.github/*'
 
 install:
 - cmd: |

@@ -10,7 +10,7 @@ on:
       - .editorconfig
       - appveyor.yml
       - 'azure-pipelines*.yml'
-      - 'ci/azure-pipelines/template*.yml'
+      - 'ci/**/*'
 
   pull_request:
     paths-ignore:
@@ -19,7 +19,7 @@ on:
       - .editorconfig
       - appveyor.yml
       - 'azure-pipelines*.yml'
-      - 'ci/azure-pipelines/template*.yml'
+      - 'ci/**/*'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
