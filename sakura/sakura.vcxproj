@@ -951,7 +951,7 @@
   <Target Name="ExtractCtags" Condition="'$(Platform)' == 'x64'" DependsOnTargets="Link" BeforeTargets="FinalizeBuildStatus" Inputs="$(SolutionDir)installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x64.zip" Outputs="$(OutDir)\ctags.exe">
     <Exec Command="7z e &quot;$(SolutionDir)installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x64.zip&quot; -o$(OutDir) -y ctags.exe" />
   </Target>
-  <Target Name="ExtractCtags" Condition="'$(Platform)' == 'Win32'" DependsOnTargets="ClCompile" BeforeTargets="FinalizeBuildStatus" Inputs="$(SolutionDir)installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x86.zip" Outputs="$(OutDir)\ctags.exe">
+  <Target Name="ExtractCtags" Condition="'$(Platform)' == 'Win32'" DependsOnTargets="Link" BeforeTargets="FinalizeBuildStatus" Inputs="$(SolutionDir)installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x86.zip" Outputs="$(OutDir)\ctags.exe">
     <Exec Command="7z e &quot;$(SolutionDir)installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x86.zip&quot; -o$(OutDir) -y ctags.exe" />
   </Target>
   <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
