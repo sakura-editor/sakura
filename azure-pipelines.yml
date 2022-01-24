@@ -4,12 +4,6 @@
 #   https://docs.microsoft.com/en-us/azure/devops/pipelines/build/triggers?view=azure-devops&viewFallbackFrom=vsts&tabs=yaml
 ###############################################################################################################################
 trigger:
-  branches:
-    include:
-      - master
-      - develop
-      - feature/*
-      - revert-*
   paths:
     exclude:
       - .github/*
@@ -45,12 +39,6 @@ trigger:
 #   https://docs.microsoft.com/en-us/azure/devops/pipelines/build/triggers?view=azure-devops&tabs=yaml#pull-request-validation
 ###############################################################################################################################
 pr:
-  branches:
-    include:
-      - master
-      - develop
-      - feature/*
-      - revert-*
   paths:
     exclude:
       - .github/*
