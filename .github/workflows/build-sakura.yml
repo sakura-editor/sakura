@@ -92,6 +92,11 @@ jobs:
       run: build-sln.bat ${{ matrix.platform }} ${{ matrix.config }}
       shell: cmd
 
+    - name: Run unit tests
+      run: .\tests1.exe --gtest_output=xml:${{github.workspace}}\tests1.exe-googletest-${{matrix.platform}}-${{matrix.config}}.xml
+      working-directory: ${{github.workspace}}\${{matrix.platform}}\${{matrix.config}}
+      shell: pwsh
+
     - name: Install Locale Emulator
       run: |
         choco install autohotkey.install --confirm
