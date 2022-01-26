@@ -65,9 +65,9 @@ jobs:
   - script: build-chm.bat
     displayName: Build HTML Help
 
-  # Install/Update Inno Setup
+  # Update/Install Inno Setup
   - pwsh: choco upgrade innosetup --confirm
-    displayName: Install/Update Inno Setup
+    displayName: Update/Install Inno Setup
 
   # Build installer with Inno Setup
   - script: build-installer.bat $(BuildPlatform) $(Configuration)
