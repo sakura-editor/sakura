@@ -47,12 +47,27 @@ jobs:
     displayName: Bitmap Split/Mux
 
   # Install Locale Emulator
-  - script: choco install locale-emulator -y
+  - pwsh: |
+      choco install autohotkey.install --confirm
+      $LEExpandDir = "$(Build.SourcesDirectory)\tools\locale-emulator"
+      $LEInitScript = "$(Build.SourcesDirectory)\ci\init-locale-emulator.ahk"
+      New-Item "${LEExpandDir}" -ItemType Directory
+      Invoke-WebRequest `
+        "https://github.com/xupefei/Locale-Emulator/releases/download/v2.5.0.1/Locale.Emulator.2.5.0.1.zip" `
+        -OutFile "${LEExpandDir}\locale-emulator.zip"
+      Expand-Archive "${LEExpandDir}\locale-emulator.zip" "${LEExpandDir}"
+      Start-Process "AutoHotKey" "${LEInitScript}"
+      Start-Process "${LEExpandDir}\LEInstaller.exe"
+      echo "##vso[task.prependpath]${LEExpandDir}"
     displayName: Install Locale Emulator
 
   # Build HTML Help
   - script: build-chm.bat
     displayName: Build HTML Help
+
+  # Update/Install Inno Setup
+  - pwsh: choco upgrade innosetup --confirm
+    displayName: Update/Install Inno Setup
 
   # Build installer with Inno Setup
   - script: build-installer.bat $(BuildPlatform) $(Configuration)
