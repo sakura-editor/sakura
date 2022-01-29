@@ -7,10 +7,8 @@
     <GoogleTestLibInstallDir Condition="'$(Platform)' == 'Win32'">$(GoogleTestInstallDir)lib</GoogleTestLibInstallDir>
     <GoogleTestLibInstallDir Condition="'$(Platform)' == 'x64'">$(GoogleTestInstallDir)lib64</GoogleTestLibInstallDir>
     <LibraryPath>$(GoogleTestLibInstallDir);$(LibraryPath)</LibraryPath>
-    <NameSuffix Condition="'$(Configuration)' == 'Debug'">d</NameSuffix>
-    <NameSuffix Condition="'$(Configuration)' == 'Release'"></NameSuffix>
-    <GTestLibName>gtest$(NameSuffix).lib</GTestLibName>
-    <GTestMainLibName>gtest_main$(NameSuffix).lib</GTestMainLibName>
+    <GTestLibName>gtest.lib</GTestLibName>
+    <GTestMainLibName>gtest_main.lib</GTestMainLibName>
     <GTestLibPath>$(GoogleTestLibInstallDir)\$(GTestLibName)</GTestLibPath>
     <GTestMainLibPath>$(GoogleTestLibInstallDir)\$(GTestMainLibName)</GTestMainLibPath>
   </PropertyGroup>
