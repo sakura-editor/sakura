@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -25,40 +25,14 @@
 #include "StdAfx.h"
 #include "CIcu4cI18n.h"
 
-CIcu4cI18n::CIcu4cI18n() noexcept
-	: _ucsdet_open(nullptr)
-	, _ucsdet_setText(nullptr)
-	, _ucsdet_detect(nullptr)
-	, _ucsdet_close(nullptr)
-{
-}
+#include <ntddndis.h>
 
-/*!
- * @brief DLLの名前を返す
- */
-LPCWSTR CIcu4cI18n::GetDllNameImp( [[maybe_unused]] int index )
-{
-	return L"icuin66.dll"; //バージョンは固定
-}
-
-/*!
-	DLLの初期化
-
-	関数のアドレスを取得してメンバに保管する．
-
-	@retval true 成功
-	@retval false アドレス取得に失敗
-*/
-bool CIcu4cI18n::InitDllImp()
-{
-	//DLL内関数名リスト
-	const ImportTable table[] = {
-		{ &_ucsdet_open,		"ucsdet_open_66" },		//バージョンは固定
-		{ &_ucsdet_setText,		"ucsdet_setText_66" },	//バージョンは固定
-		{ &_ucsdet_detect,		"ucsdet_detect_66" },	//バージョンは固定
-		{ &_ucsdet_getName,		"ucsdet_getName_66" },	//バージョンは固定
-		{ &_ucsdet_close,		"ucsdet_close_66" },	//バージョンは固定
-		{ NULL, 0 }
-	};
-	return RegisterEntries(table);
-}
+// リンクするライブラリはSDKにより変える
+#if defined(NDIS_SUPPORT_NDIS683)
+// Windows 10 SDK 10.0.18362以降を利用している場合
+#  pragma comment(lib, "icu.lib")
+#else
+// Windows 10 SDK 10.0.18362を利用できない場合(vs2017でビルドする場合)
+#  pragma comment(lib, "icuin.lib")
+#  pragma comment(lib, "icuuc.lib")
+#endif
