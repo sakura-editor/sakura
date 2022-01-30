@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -26,37 +26,33 @@
 #define SAKURA_CICU4CI18N_16EE9B14_2791_4C5D_AE1E_E78FBF5CB083_H_
 #pragma once
 
-#include "CDllHandler.h"
-
-//ICU4Cの型定義
-class UCharsetDetector;
-class UCharsetMatch;
-
-typedef enum UErrorCode {
-	U_ZERO_ERROR = 0,     /**< No error, no warning. */
-} UErrorCode;
+#include <icu.h>
 
 /*!
- * ICU4C の i18n ライブラリ(icuin.dll) をラップするクラス
+ * ICU4C のライブラリ(icu.dll) をラップするクラス
+ *
+ * Windows 10 1703でICU4CがWindowsに統合された。
+ * この実装では最新1903以降で導入されたicu.dllを使うようにしている。
+ * 1703～1809だと実装DLLが2つに分かれていてicu.dllが存在しない。
  */
 class CIcu4cI18n final : public CDllImp
 {
 	// DLL関数型定義
-	typedef UCharsetDetector*		(__cdecl *ucsdet_open_t)(UErrorCode *status);
-	typedef void					(__cdecl *ucsdet_setText_t)(UCharsetDetector *ucsd, const char *textIn, int32_t len, UErrorCode *status);
-	typedef const UCharsetMatch *	(__cdecl *ucsdet_detect_t)(UCharsetDetector *ucsd, UErrorCode *status);
-	typedef const char*				(__cdecl *ucsdet_getName_t)(const UCharsetMatch *ucsm, UErrorCode *status);
-	typedef void					(__cdecl *ucsdet_close_t)(UCharsetDetector *ucsd);
+	using ucsdet_open_t = decltype(::ucsdet_open);
+	using ucsdet_setText_t = decltype(::ucsdet_setText);
+	using ucsdet_detect_t = decltype(::ucsdet_detect);
+	using ucsdet_getName_t = decltype(::ucsdet_getName);
+	using ucsdet_close_t = decltype(::ucsdet_close);
 
 	// メンバ定義
-	ucsdet_open_t		_ucsdet_open;
-	ucsdet_setText_t	_ucsdet_setText;
-	ucsdet_detect_t		_ucsdet_detect;
-	ucsdet_getName_t	_ucsdet_getName;
-	ucsdet_close_t		_ucsdet_close;
+	ucsdet_open_t*		_ucsdet_open = nullptr;
+	ucsdet_setText_t*	_ucsdet_setText = nullptr;
+	ucsdet_detect_t*	_ucsdet_detect = nullptr;
+	ucsdet_getName_t*	_ucsdet_getName = nullptr;
+	ucsdet_close_t*		_ucsdet_close = nullptr;
 
 public:
-	CIcu4cI18n() noexcept;
+	CIcu4cI18n() noexcept = default;
 
 protected:
 	// CDllImpインタフェース

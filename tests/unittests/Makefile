@@ -146,7 +146,7 @@ $(exe): $(OBJS) $(SAKURA_OBJS)
 
 icu4MinGW/icu.h:
 	-$(MKDIR) icu4MinGW > $(DEVNULL) 2>&1
-	cp $(subst /, $(DIRSEP), "C:/Program Files (x86)/Windows Kits/10/Include/10.0.18362.0/um/icu.h") $(subst /, $(DIRSEP), ./)
+	cp "C:/Program Files (x86)/Windows Kits/10/Include/10.0.18362.0/um/icu.h" ./icu4MinGW/
 
 .cpp.o: icu4MinGW/icu.h
 	$(CXX) $(CXXFLAGS) -o $@ -c $<

@@ -25,20 +25,12 @@
 #include "StdAfx.h"
 #include "CIcu4cI18n.h"
 
-CIcu4cI18n::CIcu4cI18n() noexcept
-	: _ucsdet_open(nullptr)
-	, _ucsdet_setText(nullptr)
-	, _ucsdet_detect(nullptr)
-	, _ucsdet_close(nullptr)
-{
-}
-
 /*!
  * @brief DLLの名前を返す
  */
 LPCWSTR CIcu4cI18n::GetDllNameImp( [[maybe_unused]] int index )
 {
-	return L"icuin66.dll"; //バージョンは固定
+	return L"icu.dll";
 }
 
 /*!
@@ -53,11 +45,11 @@ bool CIcu4cI18n::InitDllImp()
 {
 	//DLL内関数名リスト
 	const ImportTable table[] = {
-		{ &_ucsdet_open,		"ucsdet_open_66" },		//バージョンは固定
-		{ &_ucsdet_setText,		"ucsdet_setText_66" },	//バージョンは固定
-		{ &_ucsdet_detect,		"ucsdet_detect_66" },	//バージョンは固定
-		{ &_ucsdet_getName,		"ucsdet_getName_66" },	//バージョンは固定
-		{ &_ucsdet_close,		"ucsdet_close_66" },	//バージョンは固定
+		{ &_ucsdet_open,		"ucsdet_open" },
+		{ &_ucsdet_setText,		"ucsdet_setText" },
+		{ &_ucsdet_detect,		"ucsdet_detect" },
+		{ &_ucsdet_getName,		"ucsdet_getName" },
+		{ &_ucsdet_close,		"ucsdet_close" },
 		{ NULL, 0 }
 	};
 	return RegisterEntries(table);
