@@ -66,6 +66,7 @@ DEFINES= \
  -DNTDDI_VERSION=NTDDI_WIN10_RS3 \
  -D_UNICODE \
  -DUNICODE \
+ -DNTDDI_VERSION=NTDDI_WIN10_RS3 \
  $(MYDEFINES)
 
 ifeq (,$(findstring -D_DEBUG,$(DEFINES)))
@@ -80,6 +81,7 @@ CFLAGS= \
  -MMD \
  -I. \
  -I$(SRCDIR) \
+ -isystem icu4MinGW \
  $(DEFINES) $(MYCFLAGS)
 CXXFLAGS= $(CFLAGS) \
  -std=c++17 \
@@ -149,7 +151,11 @@ Funccode_enum.h: Funccode_x.hsrc $(HEADERMAKE)
 githash.h:
 	cmd /c $(subst /,\,$(SRCDIR))\..\sakura\githash.bat .
 
-StdAfx.h.gch: StdAfx.h githash.h Funccode_enum.h
+icu4MinGW/icu.h:
+	-$(MKDIR) icu4MinGW > $(DEVNULL) 2>&1
+	cp $(subst /, $(DIRSEP), "C:/Program Files (x86)/Windows Kits/10/Include/10.0.18362.0/um/icu.h") $(subst /, $(DIRSEP), ./)
+
+StdAfx.h.gch: StdAfx.h githash.h Funccode_enum.h icu4MinGW/icu.h
 ifneq ($(SRCDIR),.)
 	-$(MKDIR) $(subst /,$(DIRSEP),$(DIRS)) > $(DEVNULL) 2>&1
 endif

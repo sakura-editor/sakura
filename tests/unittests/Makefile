@@ -93,6 +93,7 @@ CFLAGS= \
  -I$(SRCDIR)/../../sakura_core \
  -I. \
  -I$(SRCDIR) \
+ -isystem icu4MinGW \
  $(DEFINES) $(MYCFLAGS)
 
 CXXFLAGS= $(CFLAGS) \
@@ -143,7 +144,11 @@ all: $(exe)
 $(exe): $(OBJS) $(SAKURA_OBJS)
 	$(CXX) -o $@ $(OBJS) $(SAKURA_OBJS) $(LIBS)
 
-.cpp.o:
+icu4MinGW/icu.h:
+	-$(MKDIR) icu4MinGW > $(DEVNULL) 2>&1
+	cp $(subst /, $(DIRSEP), "C:/Program Files (x86)/Windows Kits/10/Include/10.0.18362.0/um/icu.h") $(subst /, $(DIRSEP), ./)
+
+.cpp.o: icu4MinGW/icu.h
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 $(OBJS):
