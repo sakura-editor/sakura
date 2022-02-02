@@ -19,7 +19,7 @@
 | Inno Setup 5       | CMD_ISCC     | Inno Setup 5       | ISCC.exe     |
 | Cppcheck           | CMD_CPPCHECK | cppcheck           | cppcheck.exe |
 | Doxygen            | CMD_DOXYGEN  | doxygen\bin        | doxygen.exe  |
-| vswhere            | CMD_VSWHERE  | Microsoft Visual Studio\Installer | vswhere.exe  |
+| Visual Studio Locator | CMD_VSWHERE | Microsoft Visual Studio\Installer | vswhere.exe |
 | MSBuild            | CMD_MSBUILD  | 特殊               | MSBuild.exe  |
 | Locale Emulator    | CMD_LEPROC   | なし               | LEProc.exe   |
 | Python             | CMD_PYTHON   | なし               | py.exe (python.exe) |
@@ -41,39 +41,31 @@ MSBuild以外の探索手順は同一であり、7-Zipを例に説明する。
 
 ### ユーザーがビルドに使用する Visual Studio のバージョンを切り替える方法
 
-環境変数 ```ARG_VSVERSION``` の値でビルドに使用するバージョンを切り替えられる。
+環境変数 `NUM_VSVERSION` の値でビルドに使用するバージョンを切り替えられる。
 
-| ARG_VSVERSION  | 使用される Visual Studio のバージョン  |
-| -------------- | ------------------------------------- |
-| 空             | インストールされている Visual Studio の最新   |
-| 15             | Visual Studio 2017                           |
-| 16             | Visual Studio 2019                           |
-| 2017           | Visual Studio 2017                           |
-| 2019           | Visual Studio 2019                           |
+| NUM_VSVERSION  | 使用される Visual Studio のバージョン  |
+| -------------- | -------------------------------------- |
+| （未定義）     | インストールされている最新のバージョン |
+| 15             | Visual Studio 2017                     |
+| 16             | Visual Studio 2019                     |
+| 17             | Visual Studio 2022                     |
 
 ### 検索ロジック
 
-1. `ARG_VSVERSION` から`VC++`のバージョン指定(`NUM_VSVERSION`)を判断する。
-	1. `ARG_VSVERSION` 未指定の場合、`15`が指定されたものとみなす。
-	1. `ARG_VSVERSION` が`2017`の場合、`15`が指定されたものとみなす。
-	1. `ARG_VSVERSION` が`2019`の場合、`16`が指定されたものとみなす。
-	1. `ARG_VSVERSION` が`latest`の場合、最新バージョンを取得する。
-	1. `ARG_VSVERSION` が上記以外の場合、`%ARG_VSVERSION%`が指定されたものとみなす。
-1. 指定されたバージョンのVC++がインストールされているかチェックする。  
-	1. `vswhere -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath -version [%NUM_VSVERSION%, %NUM_VSVERSION% + 1)` を実行する。
-	1. 取得したパスが存在していたら、バージョン指定(`NUM_VSVERSION`)は正しいとみなす。
-	1. 取得したパスが存在していなかったら、最新バージョンを取得する。
-1. インストール済み`VC++`の最新バージョンを取得する。
-	1.  `vswhere -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationVersion -latest` を実行する。
-	1.  取得したバージョンが指定されたものとみなす。(`NUM_VSVERSION`に代入する。)
-1. 指定されたバージョンの`MsBuild.exe`を検索する。
-	1. `-find`オプションを付けて`MsBuild.exe`を検索する。(`vswhere -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe -version [%NUM_VSVERSION%, %NUM_VSVERSION% + 1)`)
-	1. `vswhere` が VS2019 以降ver の場合、`MSBuild.exe` が見つかるので検索終了。
-	1. `vswhere` が VS2017 以前ver の場合、`MSBuild.exe` が見つからない(エラーになる)ので検索続行。
-1. VS2017 の `MsBuild.exe` を検索する。
-	1. VS2017 のインストールパスを検索する。(`vswhere -requires Microsoft.Component.MSBuild -property installationPath -version [15^,16^)`)
-	1. VS2017 のインストールパス配下の所定位置(`%Vs2017InstallRoot%\MSBuild\15.0\Bin`)に`MSBuild.exe`が存在する場合、そのパスを `MSBuild.exe` のパスとみなす。
-		この場合、バージョン指定(`NUM_VSVERSION`)に`15`が指定されたものとみなす。
+1. バッチファイルの引数をチェックする。
+   1. 引数が指定されていない場合、`NUM_VSVERSION`が定義されていればその値を、そうでなければ`latest`を指定したものとみなす。
+   2. 引数にプロダクトバージョン（例：`2019`）が指定されている場合は値をメジャーバージョンに変換する。
+      `latest`を指定した場合は、実行環境にインストールされている最新のメジャーバージョンを取得する。
+   3. 指定したバージョンがインストールされているか確認し、見つからなければ引数の指定はなかったものとみなしてチェックをやり直す。
+   4. `NUM_VSVERSION`が指定されている場合に限り、設定されている値とここまでのチェックで見つかったバージョンが同じであるか確認する。
+      もし異なっている場合は環境変数を初期化した上で引数チェックをやり直す。
+2. 引数チェックで決定したバージョンの MSBuild を探す。
+   - Visual Studio 2017 が選択された場合
+      - VS2017 のインストールパスを取得し、配下の所定位置に`MSBuild.exe`が存在する場合、そのパスを`MSBuild`のパスとして利用する。
+      - CMakeのジェネレータ名を示す`CMAKE_G_PARAM`に`Visual Studio 15 2017`を設定する。
+   - Visual Studio 2019 以降が選択された場合
+      - Visual Studio Locator の`-find`オプションを利用して`MSBuild.exe`を検索し、見つかったパスを`MSBuild`のパスとして利用する。
+      - `NUM_VSVERSION`と別途取得したプロダクトバージョンからCMakeのジェネレータ名を生成し、`CMAKE_G_PARAM`に設定する。
 
 ### 参照
 * https://github.com/Microsoft/vswhere
