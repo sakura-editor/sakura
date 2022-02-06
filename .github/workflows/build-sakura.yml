@@ -4,7 +4,6 @@ name: build sakura
 # events but only for the master branch
 on:
   workflow_dispatch:
-
   push:
     branches:
       - master
@@ -16,7 +15,6 @@ on:
       - appveyor.yml
       - 'azure-pipelines*.yml'
       - 'ci/azure-pipelines/template*.yml'
-
   pull_request:
     branches:
       - master
