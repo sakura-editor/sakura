@@ -4,9 +4,6 @@ name: build sakura
 # events but only for the master branch
 on:
   push:
-    branches:
-      - master
-      - feature/*
     paths-ignore:
       - '**/*.md'
       - .gitignore
@@ -16,10 +13,6 @@ on:
       - 'ci/azure-pipelines/template*.yml'
 
   pull_request:
-    branches:
-      - master
-      - feature/*
-      - release/*
     paths-ignore:
       - '**/*.md'
       - .gitignore
