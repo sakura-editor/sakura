@@ -1,18 +1,24 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Target Name="ExtractBregOnig" DependsOnTargets="Link" BeforeTargets="FinalizeBuildStatus" Inputs="$(SolutionDir)installer\externals\bregonig\bron420.zip" Outputs="$(OutDir)\bregonig.dll">
-    <Exec Command="7z e &quot;$(SolutionDir)installer\externals\bregonig\bron420.zip&quot; -o$(OutDir) -y x64/bregonig.dll" Condition="'$(Platform)' == 'x64'" />
-    <Exec Command="7z e &quot;$(SolutionDir)installer\externals\bregonig\bron420.zip&quot; -o$(OutDir) -y bregonig.dll" Condition="'$(Platform)' == 'Win32'" />
+  <PropertyGroup Label="ExtractArchives">
+    <BregOnigArchive>$(SolutionDir)installer\externals\bregonig\bron420.zip</BregOnigArchive>
+    <BregOnigInternalPath Condition="'$(Platform)' == 'x64'"  >x64/bregonig.dll</BregOnigInternalPath>
+    <BregOnigInternalPath Condition="'$(Platform)' == 'Win32'">bregonig.dll</BregOnigInternalPath>
+    <BregOnigOutPath>$(OutDir)bregonig.dll</BregOnigOutPath>
+    <CtagsArchive Condition="'$(Platform)' == 'x64'"  >$(SolutionDir)installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x64.zip</CtagsArchive>
+    <CtagsArchive Condition="'$(Platform)' == 'Win32'">$(SolutionDir)installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x86.zip</CtagsArchive>
+    <CtagsInternalPath>ctags.exe</CtagsInternalPath>
+    <CtagsOutPath>$(OutDir)ctags.exe</CtagsOutPath>
+  </PropertyGroup>
+  <Target Name="ExtractBregOnig" DependsOnTargets="Link" BeforeTargets="FinalizeBuildStatus" Inputs="$(BregOnigArchive)" Outputs="$(BregOnigOutPath)">
+    <Exec Command="7z e &quot;$(BregOnigArchive)&quot; -o$(OutDir) -y $(BregOnigInternalPath)" />
   </Target>
-  <Target Name="ExtractCtags" Condition="'$(Platform)' == 'x64'" DependsOnTargets="Link" BeforeTargets="FinalizeBuildStatus" Inputs="$(SolutionDir)installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x64.zip" Outputs="$(OutDir)\ctags.exe">
-    <Exec Command="7z e &quot;$(SolutionDir)installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x64.zip&quot; -o$(OutDir) -y ctags.exe" />
-  </Target>
-  <Target Name="ExtractCtags" Condition="'$(Platform)' == 'Win32'" DependsOnTargets="Link" BeforeTargets="FinalizeBuildStatus" Inputs="$(SolutionDir)installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x86.zip" Outputs="$(OutDir)\ctags.exe">
-    <Exec Command="7z e &quot;$(SolutionDir)installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x86.zip&quot; -o$(OutDir) -y ctags.exe" />
+  <Target Name="ExtractCtags" DependsOnTargets="Link" BeforeTargets="FinalizeBuildStatus" Inputs="$(CtagsArchive)" Outputs="$(CtagsOutPath)">
+    <Exec Command="7z e &quot;$(CtagsArchive)&quot; -o$(OutDir) -y $(CtagsInternalPath)" />
   </Target>
   <Target Name="AppendCleanTargetsForExtractedFiles" BeforeTargets="CoreClean">
     <ItemGroup>
-      <Clean Include="$(OutDir)bregonig.dll" />
-      <Clean Include="$(OutDir)ctags.exe" />
+      <Clean Include="$(BregOnigOutPath)" />
+      <Clean Include="$(CtagsOutPath)" />
     </ItemGroup>
   </Target>
 </Project>
