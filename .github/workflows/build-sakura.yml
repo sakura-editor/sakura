@@ -3,6 +3,7 @@ name: build sakura
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
+  workflow_dispatch:
   push:
     paths-ignore:
       - '**/*.md'
@@ -11,7 +12,6 @@ on:
       - appveyor.yml
       - 'azure-pipelines*.yml'
       - 'ci/azure-pipelines/template*.yml'
-
   pull_request:
     paths-ignore:
       - '**/*.md'
