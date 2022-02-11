@@ -718,7 +718,7 @@ void CEditView::OnMBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 void CALLBACK AutoScrollTimerProc( HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime )
 {
 	CEditView*	pCEditView;
-	pCEditView = ( CEditView* )::GetWindowLongPtr( hwnd, 0 );
+	pCEditView = ( CEditView* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
 	if( NULL != pCEditView ){
 		pCEditView->AutoScrollOnTimer();
 	}
