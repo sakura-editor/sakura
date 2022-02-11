@@ -914,23 +914,12 @@
   </ImportGroup>
   <Import Project="..\sakura\githash.targets" />
   <Import Project="..\sakura\funccode.targets" />
+  <Import Project="..\sakura\ExtractArchives.targets" />
   <Import Project="..\tests\compiletests.targets" />
-  <Target Name="ExtractBregOnig" DependsOnTargets="Link" BeforeTargets="FinalizeBuildStatus" Inputs="$(SolutionDir)installer\externals\bregonig\bron420.zip" Outputs="$(OutDir)\bregonig.dll">
-    <Exec Command="7z e &quot;$(SolutionDir)installer\externals\bregonig\bron420.zip&quot; -o$(OutDir) -y x64/bregonig.dll" Condition="'$(Platform)' == 'x64'" />
-    <Exec Command="7z e &quot;$(SolutionDir)installer\externals\bregonig\bron420.zip&quot; -o$(OutDir) -y bregonig.dll" Condition="'$(Platform)' == 'Win32'" />
-  </Target>
-  <Target Name="ExtractCtags" Condition="'$(Platform)' == 'x64'" DependsOnTargets="Link" BeforeTargets="FinalizeBuildStatus" Inputs="$(SolutionDir)installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x64.zip" Outputs="$(OutDir)\ctags.exe">
-    <Exec Command="7z e &quot;$(SolutionDir)installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x64.zip&quot; -o$(OutDir) -y ctags.exe" />
-  </Target>
-  <Target Name="ExtractCtags" Condition="'$(Platform)' == 'Win32'" DependsOnTargets="Link" BeforeTargets="FinalizeBuildStatus" Inputs="$(SolutionDir)installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x86.zip" Outputs="$(OutDir)\ctags.exe">
-    <Exec Command="7z e &quot;$(SolutionDir)installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x86.zip&quot; -o$(OutDir) -y ctags.exe" />
-  </Target>
   <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
     <!-- Add files to @Clean just before running CoreClean. -->
     <ItemGroup>
       <Clean Include="$(OutDir)sakura.ini" />
-      <Clean Include="$(OutDir)bregonig.dll" />
-      <Clean Include="$(OutDir)ctags.exe" />
     </ItemGroup>
   </Target>
 </Project>
