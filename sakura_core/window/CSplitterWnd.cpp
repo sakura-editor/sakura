@@ -298,7 +298,7 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 
 	int v;
 	for( v=0; v < m_nChildWndCount; v++ ){
-		pcViewArr[v] = ( CEditView* )::GetWindowLongPtr( m_ChildWndArr[v], 0 );
+		pcViewArr[v] = ( CEditView* )::GetWindowLongPtr( m_ChildWndArr[v], GWLP_USERDATA );
 	}
 	::GetClientRect( GetHwnd(), &rc );
 	if( nHorizontal < nLimit ){
@@ -809,7 +809,7 @@ LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	const int	nFrameWidth = DpiScaleX(SPLITTER_FRAME_WIDTH);
 	BOOL		bSizeBox;
 	for( i = 0; i < m_nChildWndCount; ++i ){
-		pcViewArr[i] = ( CEditView* )::GetWindowLongPtr( m_ChildWndArr[i], 0 );
+		pcViewArr[i] = ( CEditView* )::GetWindowLongPtr( m_ChildWndArr[i], GWLP_USERDATA );
 	}
 
 	/*
