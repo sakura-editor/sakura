@@ -27,14 +27,47 @@ psInfo.CreateNoWindow = true;
 psInfo.UseShellExecute = false;
 psInfo.RedirectStandardOutput = true;
 
-args = "7z e \"" + ArchivePath.ToString() + "\" -o\"" + Path.GetDirectoryName(Output.ToString()) + "\" -y " + InternalPath;
-psInfo.FileName = "cmd";
-psInfo.Arguments = "/c " + args;
+string outputTimestamp = null;
+string sourceTimestamp = null;
 
-Log.LogMessage(MessageImportance.Normal, args);
-p = Process.Start(psInfo);
+if (File.Exists(Output.ToString())) {
+  args = "((Get-ItemPropertyValue -Path '" + Output.ToString() + "' -name LastWriteTime).ToString('u'))";
+  psInfo.FileName = "powershell";
+  psInfo.Arguments = "-NoLogo -ExecutionPolicy RemoteSigned -Command " + args;
 
-Log.LogMessage(MessageImportance.Low, p.StandardOutput.ReadToEnd());
+  Log.LogMessage(MessageImportance.Low, args);
+  p = Process.Start(psInfo);
+  
+  outputTimestamp = p.StandardOutput.ReadToEnd();
+  p.Dispose();
+  p = null;
+
+  if (!string.IsNullOrEmpty(outputTimestamp)) {
+    args = "(((7z l '" + ArchivePath.ToString() + "' " + InternalPath + " | Select-String " + InternalPath + ").ToString().SubString(0, 19) | Get-Date).ToString('u'))";
+    psInfo.Arguments = "-NoLogo -ExecutionPolicy RemoteSigned -Command " + args;
+
+    Log.LogMessage(MessageImportance.Low, args);
+    p = Process.Start(psInfo);
+
+    sourceTimestamp = p.StandardOutput.ReadToEnd();
+    p.Dispose();
+    p = null;
+  }
+}
+
+if (string.IsNullOrEmpty(outputTimestamp) ||
+    string.IsNullOrEmpty(sourceTimestamp) ||
+    outputTimestamp != sourceTimestamp)
+{
+  args = "7z e \"" + ArchivePath.ToString() + "\" -o\"" + Path.GetDirectoryName(Output.ToString()) + "\" -y " + InternalPath;
+  psInfo.FileName = "cmd";
+  psInfo.Arguments = "/c " + args;
+
+  Log.LogMessage(MessageImportance.Normal, args);
+  p = Process.Start(psInfo);
+
+  Log.LogMessage(MessageImportance.Low, p.StandardOutput.ReadToEnd());
+}
 ]]></Code>
     </Task>
   </UsingTask>
