@@ -9,11 +9,46 @@
     <CtagsInternalPath>ctags.exe</CtagsInternalPath>
     <CtagsOutPath>$(OutDir)ctags.exe</CtagsOutPath>
   </PropertyGroup>
-  <Target Name="ExtractBregOnig" DependsOnTargets="Link" BeforeTargets="FinalizeBuildStatus" Inputs="$(BregOnigArchive)" Outputs="$(BregOnigOutPath)">
-    <Exec Command="7z e &quot;$(BregOnigArchive)&quot; -o$(OutDir) -y $(BregOnigInternalPath)" />
+  <UsingTask TaskName="ExtractArchive" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <ArchivePath ParameterType="Microsoft.Build.Framework.ITaskItem" Required="true" />
+      <Output ParameterType="Microsoft.Build.Framework.ITaskItem" Required="true" />
+      <InternalPath Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Diagnostics" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+Process p;
+string args;
+
+ProcessStartInfo psInfo = new ProcessStartInfo();
+psInfo.CreateNoWindow = true;
+psInfo.UseShellExecute = false;
+psInfo.RedirectStandardOutput = true;
+
+args = "7z e \"" + ArchivePath.ToString() + "\" -o\"" + Path.GetDirectoryName(Output.ToString()) + "\" -y " + InternalPath;
+psInfo.FileName = "cmd";
+psInfo.Arguments = "/c " + args;
+
+Log.LogMessage(MessageImportance.Normal, args);
+p = Process.Start(psInfo);
+
+Log.LogMessage(MessageImportance.Low, p.StandardOutput.ReadToEnd());
+]]></Code>
+    </Task>
+  </UsingTask>
+  <Target Name="ExtractBregOnig" DependsOnTargets="Link" BeforeTargets="FinalizeBuildStatus">
+    <ExtractArchive
+      ArchivePath="$(BregOnigArchive)"
+      InternalPath="$(BregOnigInternalPath)"
+      Output="$(BregOnigOutPath)" />
   </Target>
-  <Target Name="ExtractCtags" DependsOnTargets="Link" BeforeTargets="FinalizeBuildStatus" Inputs="$(CtagsArchive)" Outputs="$(CtagsOutPath)">
-    <Exec Command="7z e &quot;$(CtagsArchive)&quot; -o$(OutDir) -y $(CtagsInternalPath)" />
+  <Target Name="ExtractCtags" DependsOnTargets="Link" BeforeTargets="FinalizeBuildStatus">
+    <ExtractArchive
+      ArchivePath="$(CtagsArchive)"
+      InternalPath="$(CtagsInternalPath)"
+      Output="$(CtagsOutPath)" />
   </Target>
   <Target Name="AppendCleanTargetsForExtractedFiles" BeforeTargets="CoreClean">
     <ItemGroup>
