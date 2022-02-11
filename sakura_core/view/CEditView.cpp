@@ -288,7 +288,7 @@ BOOL CEditView::Create(
 	wc.style			= CS_DBLCLKS | CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW;
 	wc.lpfnWndProc		= EditViewWndProc;
 	wc.cbClsExtra		= 0;
-	wc.cbWndExtra		= sizeof( LONG_PTR );
+	wc.cbWndExtra		= 0;
 	wc.hInstance		= G_AppInstance();
 	wc.hIcon			= LoadIcon( NULL, IDI_APPLICATION );
 	wc.hCursor			= NULL/*LoadCursor( NULL, IDC_IBEAM )*/;
