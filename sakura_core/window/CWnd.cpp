@@ -123,7 +123,7 @@ ATOM CWnd::RegisterWC(
 	wc.style = CS_DBLCLKS;
 	wc.lpfnWndProc   = CWndProc;
 	wc.cbClsExtra    = 0;
-	wc.cbWndExtra = NULL;
+	wc.cbWndExtra    = 32;
 	wc.hInstance     = m_hInstance;
 	wc.hIcon         = hIcon;
 	wc.hCursor       = hCursor;
