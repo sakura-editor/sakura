@@ -6,32 +6,11 @@
 trigger:
   paths:
     exclude:
-      - .github/*
+      - '**/*.md'
+      - '.github/*'
       - .gitignore
-      - .travis.yml
+      - .editorconfig
       - appveyor.yml
-      - CHANGELOG.md
-      - CONTRIBUTING.md
-      - CPPLINT.md
-      - README.md
-      - SonarQube.md
-      - addDoxygenFileComment.md
-      - build.md
-      - create-big-file.md
-      - debug-tasktray-menu.md
-      - get-PR.md
-      - ci/azure-pipelines/azure-pipelines.md
-      - ci/build-batchfiles.md
-      - ci/build-envvars.md
-      - installer/externals/bregonig/README.md
-      - installer/externals/universal-ctags/README.md
-      - installer/readme.md
-      - remove-redundant-blank-lines.md
-      - tools/find-tools.md
-      - tools/macro/macro.md
-      - tools/zip/readme.md
-      - tests/unittest.md
-      - vcx-props/project-PlatformToolset.md
 
 ###############################################################################################################################
 #   ビルドトリガー (Pull Request)
@@ -41,32 +20,11 @@ trigger:
 pr:
   paths:
     exclude:
-      - .github/*
+      - '**/*.md'
+      - '.github/*'
       - .gitignore
-      - .travis.yml
+      - .editorconfig
       - appveyor.yml
-      - CHANGELOG.md
-      - CONTRIBUTING.md
-      - CPPLINT.md
-      - README.md
-      - SonarQube.md
-      - addDoxygenFileComment.md
-      - build.md
-      - create-big-file.md
-      - debug-tasktray-menu.md
-      - get-PR.md
-      - ci/azure-pipelines/azure-pipelines.md
-      - ci/build-batchfiles.md
-      - ci/build-envvars.md
-      - installer/externals/bregonig/README.md
-      - installer/externals/universal-ctags/README.md
-      - installer/readme.md
-      - remove-redundant-blank-lines.md
-      - tools/find-tools.md
-      - tools/macro/macro.md
-      - tools/zip/readme.md
-      - tests/unittest.md
-      - vcx-props/project-PlatformToolset.md
 
 ###############################################################################################################################
 #   jobs/job 定義
