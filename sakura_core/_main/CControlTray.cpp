@@ -247,7 +247,7 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 								CS_BYTEALIGNWINDOW;
 		wc.lpfnWndProc		= CControlTrayWndProc;
 		wc.cbClsExtra		= 0;
-		wc.cbWndExtra		= 0;
+		wc.cbWndExtra = NULL;
 		wc.hInstance		= m_hInstance;
 		wc.hIcon			= LoadIcon( NULL, IDI_APPLICATION );
 		wc.hCursor			= LoadCursor( NULL, IDC_ARROW );

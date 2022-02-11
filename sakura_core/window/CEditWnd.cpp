@@ -376,7 +376,7 @@ HWND CEditWnd::_CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo)
 	wc.style			= CS_DBLCLKS | CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW;
 	wc.lpfnWndProc		= CEditWndProc;
 	wc.cbClsExtra		= 0;
-	wc.cbWndExtra		= 32;
+	wc.cbWndExtra = NULL;
 	wc.hInstance		= G_AppInstance();
 	//	Dec, 2, 2002 genta アイコン読み込み方法変更
 	wc.hIcon			= GetAppIcon( G_AppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, false );
