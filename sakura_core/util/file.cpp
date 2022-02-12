@@ -996,27 +996,31 @@ void my_splitpath_w (
 // -----------------------------------------------------------------------------
 int FileMatchScore( const WCHAR *file1, const WCHAR *file2 );
 
-// フルパスからファイル名の.以降を分離する
-// 2014.06.15 フォルダ名に.が含まれた場合、フォルダが分離されたのを修正
-static void FileNameSepExt( const WCHAR *file, WCHAR* pszFile, WCHAR* pszExt )
+// フルパスからファイル名と拡張子（ファイル名の.以降）を分離する
+// @date 2014/06/15 moca_skr フォルダ名に.が含まれた場合、フォルダが分離されたのを修正した対応で新規作成
+template<size_t cchFile, size_t cchExt>
+void FileNameSepExt( std::wstring_view file, WCHAR (&szFile)[cchFile], WCHAR (&szExt)[cchExt] )
 {
-	const WCHAR* folderPos = file;
-	const WCHAR* x = folderPos;
-	while( x ){
-		x = wcschr(folderPos, L'\\');
-		if( x ){
-			x++;
-			folderPos = x;
-		}
-	}
-	const WCHAR* p = wcschr(folderPos, L'.');
-	if( p ){
-		wmemcpy(pszFile, file, p - file);
-		pszFile[p - file] = L'\0';
-		wcscpy(pszExt, p);
+	const WCHAR* folderPos;
+	folderPos = ::wcsrchr(file.data(), L'\\');
+	if( folderPos ){
+		folderPos++;
 	}else{
-		wcscpy(pszFile, file);
-		pszExt[0] = L'\0';
+		folderPos = file.data();
+	}
+
+	if (const auto p = ::wcschr(folderPos, L'.');
+		p && p - folderPos < cchFile)
+	{
+		::wcsncpy_s(szFile, folderPos, p - folderPos);
+		if (STRUNCATE == ::wcsncpy_s(szExt, p, _TRUNCATE)) {
+			::wcscpy_s(szExt, L"");
+		}
+	}else{
+		if (STRUNCATE == ::wcsncpy_s(szFile, folderPos, _TRUNCATE)) {
+			::wcscpy_s(szFile, L"");
+		}
+		::wcscpy_s(szExt, L"");
 	}
 }
 

@@ -516,6 +516,70 @@ TEST(file, CalcDirectoryDepth)
 	EXPECT_DEATH({ CalcDirectoryDepth(nullptr); }, ".*");
 }
 
+
+template<size_t cchFile, size_t cchExt>
+void FileNameSepExt(std::wstring_view file, WCHAR(&szFile)[cchFile], WCHAR(&szExt)[cchExt]);
+
+/*!
+	FileNameSepExtのテスト
+ */
+TEST(file, FileNameSepExt)
+{
+	// バッファ
+	WCHAR szFile[_MAX_PATH]{};
+	WCHAR szExt[_MAX_PATH]{};
+
+	// 標準的なパターン（ファイル名＋拡張子）
+	FileNameSepExt(LR"(C:\TEMP\test.txt)", szFile, szExt);
+	ASSERT_STREQ(LR"(test)", szFile);
+	ASSERT_STREQ(LR"(.txt)", szExt);
+
+	// テストパターン（フォルダ名が拡張子っぽいものを含む）
+	FileNameSepExt(LR"(C:\TEMP.NET\test.txt)", szFile, szExt);
+	ASSERT_STREQ(LR"(test)", szFile);
+	ASSERT_STREQ(LR"(.txt)", szExt);
+
+	// テストパターン（拡張子がない）
+	FileNameSepExt(LR"(C:\TEMP.NET\test)", szFile, szExt);
+	ASSERT_STREQ(LR"(test)", szFile);
+	ASSERT_STREQ(LR"()", szExt);
+
+	// テストパターン（フォルダがない）
+	FileNameSepExt(LR"(test.txt)", szFile, szExt);
+	ASSERT_STREQ(LR"(test)", szFile);
+	ASSERT_STREQ(LR"(.txt)", szExt);
+
+	// テストパターン（ファイル名がない）
+	FileNameSepExt(LR"(C:\TEMP.NET\.txt)", szFile, szExt);
+	ASSERT_STREQ(LR"()", szFile);
+	ASSERT_STREQ(LR"(.txt)", szExt);
+
+	// テストパターン（ファイル名も拡張子もない）
+	FileNameSepExt(LR"(C:\TEMP.NET\)", szFile, szExt);
+	ASSERT_STREQ(LR"()", szFile);
+	ASSERT_STREQ(LR"()", szExt);
+
+	// テストパターン（パスが空文字）
+	FileNameSepExt(LR"()", szFile, szExt);
+	ASSERT_STREQ(LR"()", szFile);
+	ASSERT_STREQ(LR"()", szExt);
+
+	// 異常パターンのパス構築用バッファ
+	WCHAR szLongPath[1024]{};
+
+	// 異常パターン（ファイル名のバッファが足りない）
+	::swprintf_s(szLongPath, LR"(C:\TEMP\%-*s.txt)", _countof(szFile), L"test");
+	FileNameSepExt(szLongPath, szFile, szExt);
+	ASSERT_STREQ(LR"()", szFile);
+	ASSERT_STREQ(LR"()", szExt);
+
+	// 異常パターン（拡張子のバッファが足りない）
+	::swprintf_s(szLongPath, LR"(C:\TEMP\test%-*s)", _countof(szExt), L".txt");
+	FileNameSepExt(szLongPath, szFile, szExt);
+	ASSERT_STREQ(LR"(test)", szFile);
+	ASSERT_STREQ(LR"()", szExt);
+}
+
 /*!
 	GetExtのテスト
  */
