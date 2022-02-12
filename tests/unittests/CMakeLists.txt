@@ -52,12 +52,12 @@ endif ()
 if(BUILD_GTEST)
 	# Build GoogleTest from source code.
 	target_link_libraries(${project_name} PRIVATE gtest)
-	target_link_libraries(${project_name} PRIVATE gtest_main)
+	target_link_libraries(${project_name} PRIVATE gmock)
 else()
 	# Build without GoogleTest(use system library).
 	find_package(GTest REQUIRED)
 	target_link_libraries(${project_name} PRIVATE GTest::GTest)
-	target_link_libraries(${project_name} PRIVATE GTest::Main)
+	target_link_libraries(${project_name} PRIVATE GTest::GMock)
 endif()
 
 # link libraries

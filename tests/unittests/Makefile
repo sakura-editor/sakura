@@ -119,7 +119,7 @@ LIBS= \
  -lcomdlg32 \
  -L$(GOOGLETEST_INSTALL_DIR)/lib \
  -lgtest \
- -lgtest_main \
+ -lgmock \
  $(MYLIBS)
 
 exe= $(or $(OUTDIR),.)/tests1.exe
