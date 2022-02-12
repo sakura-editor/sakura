@@ -160,17 +160,23 @@ private:
 
 class CFontAutoDeleter
 {
-public:
-	CFontAutoDeleter();
-	~CFontAutoDeleter();
-	void SetFont( HFONT hfontOld, HFONT hfont, HWND hwnd );
-	void ReleaseOnDestroy();
-	// void Release();
-
 private:
-	HFONT m_hFontOld;
-	HFONT m_hFont;
-	HWND  m_hwnd;
+	HFONT m_hFont = nullptr;
+
+	using Me = CFontAutoDeleter;
+
+	void	Clear();
+
+public:
+	CFontAutoDeleter() = default;
+	CFontAutoDeleter(const Me& other);
+	Me& operator = (const Me& other);
+	virtual ~CFontAutoDeleter();
+
+	void	SetFont( HFONT hFontOld, HFONT hFont, HWND hWnd );
+	void	ReleaseOnDestroy();
+
+	[[nodiscard]] HFONT	GetFont() const { return m_hFont; }
 };
 
 class CDCFont
