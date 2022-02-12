@@ -585,15 +585,15 @@ TEST(file, FileMatchScoreSepExt)
 
 	// サロゲート文字を含む1
 	result = FileMatchScoreSepExt(
-		LR"(C:\TEMP\test👉👆.TST)",
-		LR"(C:\TEMP\TEST👉👇.txt)");
-	ASSERT_EQ(_countof(LR"(test👉)") - 1 + _countof(LR"(.t)") - 1, result);
+		L"C:\\TEMP\\test\xD83D\xDC49\xD83D\xDC46.TST",
+		L"C:\\TEMP\\TEST\xD83D\xDC49\xD83D\xDC47.txt");
+	ASSERT_EQ(_countof(LR"(testXX)") - 1 + _countof(LR"(.t)") - 1, result);
 
 	// サロゲート文字を含む2
 	result = FileMatchScoreSepExt(
-		LR"(C:\TEMP\TEST👉👇.txt)",
-		LR"(C:\TEMP\test👉👆.TST)");
-	ASSERT_EQ(_countof(LR"(test👉)") - 1 + _countof(LR"(.t)") - 1, result);
+		L"C:\\TEMP\\TEST\xD83D\xDC49\xD83D\xDC47.txt",
+		L"C:\\TEMP\\test\xD83D\xDC49\xD83D\xDC46.TST");
+	ASSERT_EQ(_countof(LR"(testXX)") - 1 + _countof(LR"(.t)") - 1, result);
 }
 
 /*!
