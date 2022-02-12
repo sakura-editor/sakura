@@ -114,7 +114,7 @@ bool GetLastWriteTimestamp( const WCHAR* filename, CFileTime* pcFileTime ); //	O
 void my_splitpath_w ( const wchar_t *comln , wchar_t *drv,wchar_t *dir,wchar_t *fnm,wchar_t *ext );
 #define my_splitpath_t my_splitpath_w
 
-int FileMatchScoreSepExt( const WCHAR *file1, const WCHAR *file2 );
+int FileMatchScoreSepExt( std::wstring_view file1, std::wstring_view file2 );
 
 void GetStrTrancateWidth( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int nPxWidth );
 void GetShortViewPath(WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int nPxWidth, bool bFitMode );
