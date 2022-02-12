@@ -996,40 +996,38 @@ void my_splitpath_w (
 // -----------------------------------------------------------------------------
 int FileMatchScore( const WCHAR *file1, const WCHAR *file2 );
 
-// フルパスからファイル名の.以降を分離する
-// 2014.06.15 フォルダ名に.が含まれた場合、フォルダが分離されたのを修正
-static void FileNameSepExt( const WCHAR *file, WCHAR* pszFile, WCHAR* pszExt )
+// フルパスからファイル名と拡張子（ファイル名の.以降）を分離する
+// @date 2014/06/15 moca_skr フォルダ名に.が含まれた場合、フォルダが分離されたのを修正した対応で新規作成
+static void FileNameSepExt( std::wstring_view file, std::wstring& szFile, std::wstring& szExt )
 {
-	const WCHAR* folderPos = file;
-	const WCHAR* x = folderPos;
-	while( x ){
-		x = wcschr(folderPos, L'\\');
-		if( x ){
-			x++;
-			folderPos = x;
-		}
-	}
-	const WCHAR* p = wcschr(folderPos, L'.');
-	if( p ){
-		wmemcpy(pszFile, file, p - file);
-		pszFile[p - file] = L'\0';
-		wcscpy(pszExt, p);
+	const WCHAR* folderPos;
+	folderPos = ::wcsrchr(file.data(), L'\\');
+	if( folderPos ){
+		folderPos++;
 	}else{
-		wcscpy(pszFile, file);
-		pszExt[0] = L'\0';
+		folderPos = file.data();
+	}
+
+	if (const auto p = ::wcschr(folderPos, L'.'))
+	{
+		szFile.assign(folderPos, p - folderPos);
+		szExt.assign(p);
+	}else{
+		szFile.assign(folderPos);
+		szExt.clear();
 	}
 }
 
-int FileMatchScoreSepExt( const WCHAR *file1, const WCHAR *file2 )
+int FileMatchScoreSepExt( std::wstring_view file1, std::wstring_view file2 )
 {
-	WCHAR szFile1[_MAX_PATH];
-	WCHAR szFile2[_MAX_PATH];
-	WCHAR szFileExt1[_MAX_PATH];
-	WCHAR szFileExt2[_MAX_PATH];
+	std::wstring szFile1;
+	std::wstring szFile2;
+	std::wstring szFileExt1;
+	std::wstring szFileExt2;
 	FileNameSepExt(file1, szFile1, szFileExt1);
 	FileNameSepExt(file2, szFile2, szFileExt2);
-	int score = FileMatchScore(szFile1, szFile2);
-	score += FileMatchScore(szFileExt1, szFileExt2);
+	int score = FileMatchScore(szFile1.data(), szFile2.data());
+	score += FileMatchScore(szFileExt1.data(), szFileExt2.data());
 	return score;
 }
 
