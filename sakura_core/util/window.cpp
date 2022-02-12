@@ -308,7 +308,7 @@ CFontAutoDeleter& CFontAutoDeleter::operator = (const Me& other)
 
 CFontAutoDeleter::CFontAutoDeleter(Me&& other) noexcept
 {
-	operator = (std::forward<CFontAutoDeleter>(other));
+	operator = (std::move(other));
 }
 
 CFontAutoDeleter& CFontAutoDeleter::operator = (Me&& other) noexcept
@@ -321,7 +321,7 @@ CFontAutoDeleter& CFontAutoDeleter::operator = (Me&& other) noexcept
 	return *this;
 }
 
-CFontAutoDeleter::~CFontAutoDeleter()
+CFontAutoDeleter::~CFontAutoDeleter() noexcept
 {
 	Clear();
 }
@@ -334,7 +334,7 @@ void CFontAutoDeleter::Clear() noexcept
 	}
 }
 
-void CFontAutoDeleter::SetFont( [[maybe_unused]] const HFONT hFontOld, const HFONT hFont, [[maybe_unused]] const HWND hWnd )
+void CFontAutoDeleter::SetFont( [[maybe_unused]] const HFONT& hFontOld, const HFONT& hFont, [[maybe_unused]] const HWND& hWnd )
 {
 	Clear();
 

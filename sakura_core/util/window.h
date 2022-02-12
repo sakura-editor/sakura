@@ -173,9 +173,9 @@ public:
 	Me& operator = (const Me& other);
 	CFontAutoDeleter(Me&& other) noexcept;
 	Me& operator = (Me&& other) noexcept;
-	virtual ~CFontAutoDeleter();
+	virtual ~CFontAutoDeleter() noexcept;
 
-	void	SetFont( const HFONT hFontOld, const HFONT hFont, const HWND hWnd );
+	void	SetFont( const HFONT& hFontOld, const HFONT& hFont, const HWND& hWnd );
 	void	ReleaseOnDestroy();
 
 	[[nodiscard]] HFONT	GetFont() const { return m_hFont; }
