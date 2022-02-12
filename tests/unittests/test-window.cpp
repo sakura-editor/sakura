@@ -62,5 +62,9 @@ TEST( CFontAutoDeleter, test )
 
 		other.ReleaseOnDestroy();
 		ASSERT_EQ(nullptr, other.GetFont());
+
+		CFontAutoDeleter another = std::move(deletor);
+		ASSERT_EQ(hFont, another.GetFont());
+		ASSERT_EQ(nullptr, deletor.GetFont());
 	}
 }
