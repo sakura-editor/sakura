@@ -287,56 +287,66 @@ int CTextWidthCalc::GetTextHeight() const
 	return tm.tmHeight;
 }
 
-CFontAutoDeleter::CFontAutoDeleter()
-	: m_hFontOld(NULL)
-	, m_hFont(NULL)
-	, m_hwnd(NULL)
-{}
-
-CFontAutoDeleter::~CFontAutoDeleter()
+CFontAutoDeleter::CFontAutoDeleter(const Me& other)
 {
-	if( m_hFont ){
-		DeleteObject( m_hFont );
-		m_hFont = NULL;
+	operator = (other);
+}
+
+CFontAutoDeleter& CFontAutoDeleter::operator = (const Me& other)
+{
+	Clear();
+
+	if (const auto hFont = other.m_hFont) {
+		if (LOGFONT lf = {};
+			::GetObject(hFont, sizeof(lf), &lf)) {
+			m_hFont = ::CreateFontIndirect(&lf);
+		}
+	}
+
+	return *this;
+}
+
+CFontAutoDeleter::CFontAutoDeleter(Me&& other) noexcept
+{
+	operator = (std::move(other));
+}
+
+CFontAutoDeleter& CFontAutoDeleter::operator = (Me&& other) noexcept
+{
+	Clear();
+
+	m_hFont = other.m_hFont;
+	other.m_hFont = nullptr;
+
+	return *this;
+}
+
+CFontAutoDeleter::~CFontAutoDeleter() noexcept
+{
+	Clear();
+}
+
+void CFontAutoDeleter::Clear() noexcept
+{
+	if (m_hFont) {
+		::DeleteObject(m_hFont);
+		m_hFont = nullptr;
 	}
 }
 
-void CFontAutoDeleter::SetFont( HFONT hfontOld, HFONT hfont, HWND hwnd )
+void CFontAutoDeleter::SetFont( [[maybe_unused]] const HFONT& hFontOld, const HFONT& hFont, [[maybe_unused]] const HWND& hWnd )
 {
-	if( m_hFont ){
-		::DeleteObject( m_hFont );
-	}
-	if( m_hFont != hfontOld ){
-		m_hFontOld = hfontOld;
-	}
-	m_hFont = hfont;
-	m_hwnd = hwnd;
+	Clear();
+
+	m_hFont = hFont;
 }
 
 /*! ウィンドウのリリース(WM_DESTROY用)
 */
 void CFontAutoDeleter::ReleaseOnDestroy()
 {
-	if( m_hFont ){
-		::DeleteObject( m_hFont );
-		m_hFont = NULL;
-	}
-	m_hFontOld = NULL;
+	Clear();
 }
-
-/*! ウィンドウ生存中のリリース
-*/
-#if 0
-void CFontAutoDeleter::Release()
-{
-	if( m_hwnd && m_hFont ){
-		::SendMessageAny( m_hwnd, WM_SETFONT, (WPARAM)m_hFontOld, FALSE );
-		::DeleteObject( m_hFont );
-		m_hFont = NULL;
-		m_hwnd = NULL;
-	}
-}
-#endif
 
 /*!
 	システムフォントに準拠したフォントを取得
