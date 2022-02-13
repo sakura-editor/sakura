@@ -69,7 +69,7 @@ public:
 
 protected:
 	// 単体テスト用
-	CClipboard(bool openStatus) : m_bOpenResult(openStatus) {}
+	explicit CClipboard(bool openStatus) : m_bOpenResult(openStatus) {}
 	virtual HANDLE SetClipboardData(UINT uFormat, HANDLE hMem);
 	virtual HANDLE GetClipboardData(UINT uFormat);
 	virtual BOOL EmptyClipboard();
