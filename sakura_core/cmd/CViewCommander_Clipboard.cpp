@@ -26,6 +26,7 @@
 #include "uiparts/CWaitCursor.h"
 #include "util/os.h"
 #include "apiwrap/CommonControl.h"
+#include "_os/CClipboard.h"
 
 /** 切り取り(選択範囲をクリップボードにコピーして削除)
 

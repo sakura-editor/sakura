@@ -66,5 +66,16 @@ public:
 	static bool HasValidData();    //!< クリップボード内に、サクラエディタで扱えるデータがあればtrue
 	static CLIPFORMAT GetSakuraFormat(); //!< サクラエディタ独自のクリップボードデータ形式
 	static int GetDataType();      //!< クリップボードデータ形式(CF_UNICODETEXT等)の取得
+
+protected:
+	// 単体テスト用コンストラクタ
+	explicit CClipboard(bool openStatus) : m_bOpenResult(openStatus) {}
+
+	// 同名の Windows API に引数を転送する仮想メンバ関数。
+	// 単体テスト内でオーバーライドすることで副作用のないテストを実施するのが目的。
+	virtual HANDLE SetClipboardData(UINT uFormat, HANDLE hMem) const;
+	virtual HANDLE GetClipboardData(UINT uFormat) const;
+	virtual BOOL EmptyClipboard() const;
+	virtual BOOL IsClipboardFormatAvailable(UINT format) const;
 };
 #endif /* SAKURA_CCLIPBOARD_4E783022_214C_4E51_A2E0_54EC343500F6_H_ */

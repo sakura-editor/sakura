@@ -61,6 +61,7 @@
 #include "CSelectLang.h"
 #include "config/app_constants.h"
 #include "String_define.h"
+#include "_os/CClipboard.h"
 
 CMacro::CMacro( EFunctionCode nFuncID )
 {

@@ -56,7 +56,7 @@ CClipboard::~CClipboard()
 
 void CClipboard::Empty()
 {
-	::EmptyClipboard();
+	EmptyClipboard();
 }
 
 void CClipboard::Close()
@@ -112,7 +112,7 @@ bool CClipboard::SetText(
 		::GlobalUnlock( hgClipText );
 
 		//クリップボードに設定
-		::SetClipboardData( CF_UNICODETEXT, hgClipText );
+		SetClipboardData( CF_UNICODETEXT, hgClipText );
 		bUnicodeText = false;
 	}
 	//	1回しか通らない. breakでここまで飛ぶ
@@ -142,7 +142,7 @@ bool CClipboard::SetText(
 		::GlobalUnlock( hgClipSakura );
 
 		//クリップボードに設定
-		::SetClipboardData( uFormatSakuraClip, hgClipSakura );
+		SetClipboardData( uFormatSakuraClip, hgClipSakura );
 		bSakuraText = false;
 	}
 	//	1回しか通らない. breakでここまで飛ぶ
@@ -160,7 +160,7 @@ bool CClipboard::SetText(
 				BYTE* pClip = GlobalLockBYTE( hgClipMSDEVColumn );
 				pClip[0] = 0;
 				::GlobalUnlock( hgClipMSDEVColumn );
-				::SetClipboardData( uFormat, hgClipMSDEVColumn );
+				SetClipboardData( uFormat, hgClipMSDEVColumn );
 			}
 		}
 	}
@@ -178,7 +178,7 @@ bool CClipboard::SetText(
 				BYTE* pClip = (BYTE*)::GlobalLock( hgClipMSDEVLine );
 				pClip[0] = 0x01;
 				::GlobalUnlock( hgClipMSDEVLine );
-				::SetClipboardData( uFormat, hgClipMSDEVLine );
+				SetClipboardData( uFormat, hgClipMSDEVLine );
 			}
 		}
 	}
@@ -194,7 +194,7 @@ bool CClipboard::SetText(
 				BYTE* pClip = (BYTE*)::GlobalLock( hgClipMSDEVLine2 );
 				pClip[0] = 0x01;	// ※ ClipSpy で調べるとデータはこれとは違うが内容には無関係に動くっぽい
 				::GlobalUnlock( hgClipMSDEVLine2 );
-				::SetClipboardData( uFormat, hgClipMSDEVLine2 );
+				SetClipboardData( uFormat, hgClipMSDEVLine2 );
 			}
 		}
 	}
@@ -250,7 +250,7 @@ bool CClipboard::SetHtmlText(const CNativeW& cmemBUf)
 
 	//クリップボードに設定
 	UINT uFormat = ::RegisterClipboardFormat( L"HTML Format" );
-	::SetClipboardData( uFormat, hgClipText );
+	SetClipboardData( uFormat, hgClipText );
 	return true;
 }
 
@@ -299,8 +299,8 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 	//サクラ形式のデータがあれば取得
 	CLIPFORMAT uFormatSakuraClip = CClipboard::GetSakuraFormat();
 	if( (uGetFormat == -1 || uGetFormat == uFormatSakuraClip)
-		&& ::IsClipboardFormatAvailable( uFormatSakuraClip ) ){
-		HGLOBAL hSakura = ::GetClipboardData( uFormatSakuraClip );
+		&& IsClipboardFormatAvailable( uFormatSakuraClip ) ){
+		HGLOBAL hSakura = GetClipboardData( uFormatSakuraClip );
 		if (hSakura != NULL) {
 			BYTE* pData = (BYTE*)::GlobalLock(hSakura);
 			size_t nLength        = *((int*)pData);
@@ -315,7 +315,7 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 	// From Here 2005/05/29 novice UNICODE TEXT 対応処理を追加
 	HGLOBAL hUnicode = NULL;
 	if( uGetFormat == -1 || uGetFormat == CF_UNICODETEXT ){
-		hUnicode = ::GetClipboardData( CF_UNICODETEXT );
+		hUnicode = GetClipboardData( CF_UNICODETEXT );
 	}
 	if( hUnicode != NULL ){
 		//DWORD nLen = GlobalSize(hUnicode);
@@ -329,7 +329,7 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 	//OEMTEXT形式のデータがあれば取得
 	HGLOBAL hText = NULL;
 	if( uGetFormat == -1 || uGetFormat == CF_OEMTEXT ){
-		hText = ::GetClipboardData( CF_OEMTEXT );
+		hText = GetClipboardData( CF_OEMTEXT );
 	}
 	if( hText != NULL ){
 		char* szData = GlobalLockChar(hText);
@@ -348,8 +348,8 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 	/* 2008.09.10 bosagami パス貼り付け対応 */
 	//HDROP形式のデータがあれば取得
 	if( (uGetFormat == -1 || uGetFormat == CF_HDROP)
-		&& ::IsClipboardFormatAvailable(CF_HDROP) ){
-		HDROP hDrop = (HDROP)::GetClipboardData(CF_HDROP);
+		&& IsClipboardFormatAvailable(CF_HDROP) ){
+		HDROP hDrop = (HDROP)GetClipboardData(CF_HDROP);
 		if(hDrop != NULL){
 			WCHAR sTmpPath[_MAX_PATH + 1] = {0};
 			const int nMaxCnt = DragQueryFile(hDrop, 0xFFFFFFFF, NULL, 0);
@@ -672,4 +672,20 @@ int CClipboard::GetDataType()
 	if(::IsClipboardFormatAvailable(CF_OEMTEXT))return CF_OEMTEXT;
 	if(::IsClipboardFormatAvailable(CF_HDROP))return CF_HDROP;
 	return -1;
+}
+
+HANDLE CClipboard::SetClipboardData(UINT uFormat, HANDLE hMem) const {
+	return ::SetClipboardData(uFormat, hMem);
+}
+
+HANDLE CClipboard::GetClipboardData(UINT uFormat) const {
+	return ::GetClipboardData(uFormat);
+}
+
+BOOL CClipboard::EmptyClipboard() const {
+	return ::EmptyClipboard();
+}
+
+BOOL CClipboard::IsClipboardFormatAvailable(UINT format) const {
+	return ::IsClipboardFormatAvailable(format);
 }

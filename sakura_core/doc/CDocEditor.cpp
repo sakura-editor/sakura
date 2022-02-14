@@ -34,6 +34,7 @@
 #include "CEol.h"
 #include "window/CEditWnd.h"
 #include "debug/CRunningTimer.h"
+#include "_os/CClipboard.h"
 
 CDocEditor::CDocEditor(CEditDoc* pcDoc)
 : m_pcDocRef(pcDoc)
@@ -165,6 +166,11 @@ void CDocEditor::SetImeMode( int mode )
 	ImmReleaseContext( hwnd, hIme ); //######大丈夫？
 }
 //	To Here Nov. 20, 2000 genta
+
+bool CDocEditor::IsEnablePaste() const
+{
+	return CClipboard::HasValidData();
+}
 
 /*!
 	末尾に行を追加
