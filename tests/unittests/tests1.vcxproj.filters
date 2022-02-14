@@ -160,6 +160,9 @@
     <ClCompile Include="test-window.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-csharedata.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartEditorProcessForTest.h">
