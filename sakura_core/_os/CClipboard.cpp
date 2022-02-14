@@ -674,18 +674,18 @@ int CClipboard::GetDataType()
 	return -1;
 }
 
-HANDLE CClipboard::SetClipboardData(UINT uFormat, HANDLE hMem) {
+HANDLE CClipboard::SetClipboardData(UINT uFormat, HANDLE hMem) const {
 	return ::SetClipboardData(uFormat, hMem);
 }
 
-HANDLE CClipboard::GetClipboardData(UINT uFormat) {
+HANDLE CClipboard::GetClipboardData(UINT uFormat) const {
 	return ::GetClipboardData(uFormat);
 }
 
-BOOL CClipboard::EmptyClipboard() {
+BOOL CClipboard::EmptyClipboard() const {
 	return ::EmptyClipboard();
 }
 
-BOOL CClipboard::IsClipboardFormatAvailable(UINT format) {
+BOOL CClipboard::IsClipboardFormatAvailable(UINT format) const {
 	return ::IsClipboardFormatAvailable(format);
 }

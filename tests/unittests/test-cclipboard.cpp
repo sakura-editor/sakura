@@ -211,10 +211,10 @@ class MockCClipboard : public CClipboard {
 public:
 	MockCClipboard(bool openStatus = true) : CClipboard(openStatus) {}
 	~MockCClipboard() override {}
-	MOCK_METHOD2(SetClipboardData, HANDLE (UINT, HANDLE));
-	MOCK_METHOD1(GetClipboardData, HANDLE (UINT));
-	MOCK_METHOD0(EmptyClipboard, BOOL ());
-	MOCK_METHOD1(IsClipboardFormatAvailable, BOOL (UINT));
+	MOCK_CONST_METHOD2(SetClipboardData, HANDLE (UINT, HANDLE));
+	MOCK_CONST_METHOD1(GetClipboardData, HANDLE (UINT));
+	MOCK_CONST_METHOD0(EmptyClipboard, BOOL ());
+	MOCK_CONST_METHOD1(IsClipboardFormatAvailable, BOOL (UINT));
 };
 
 // Empty のテスト。
