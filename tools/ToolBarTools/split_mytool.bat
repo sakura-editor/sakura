@@ -1,5 +1,9 @@
 @echo off
 
+:: バッチファイル名から、処理対象のファイル名を取得する
+set IMAGE_NAME=%~n0
+set IMAGE_NAME=%IMAGE_NAME:~6%
+
 :: ToolBarImageSplitter.exeの生成チェック
 if not exist "%~dp0ToolBarImageSplitter\bin\Debug\ToolBarImageSplitter.exe" (
     call :BuildToolBarTools
@@ -11,7 +15,7 @@ if not exist "%~dp0ToolBarImageSplitter\bin\Debug\ToolBarImageSplitter.exe" (
 
 :: ツール実行
 pushd "%~dp0"
-.\ToolBarImageSplitter\bin\Debug\ToolBarImageSplitter.exe ..\..\resource\mytool.bmp .\mytool
+.\ToolBarImageSplitter\bin\Debug\ToolBarImageSplitter.exe ..\..\resource\%IMAGE_NAME%.bmp .\%IMAGE_NAME%
 
 :: 実行結果を表示するため一時停止
 pause
