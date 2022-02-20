@@ -177,4 +177,9 @@
       <Filter>Other Files</Filter>
     </ResourceCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config">
+      <Filter>Other Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>
