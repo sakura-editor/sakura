@@ -44,6 +44,56 @@ bool operator != (const EditInfo& lhs, const EditInfo& rhs) noexcept;
 bool operator == (const GrepInfo& lhs, const GrepInfo& rhs) noexcept;
 bool operator != (const GrepInfo& lhs, const GrepInfo& rhs) noexcept;
 
+// Boost spirit の導入検証
+// http://www.kmonos.net/alang/boost/classes/spirit.html
+#include <iostream>
+#include <boost/spirit/include/qi.hpp>
+#include <boost/phoenix.hpp>
+
+// 例3: 少しちゃんとした例。数式を計算します
+//	 文法定義
+//	   expr ::= term ('+' term | '-' term)*
+//	   term ::= fctr ('*' fctr | '/' fctr)*
+//	   fctr ::= int | '(' expr ')'
+//	 開始記号
+//	   expr
+//
+template<typename Iterator>
+struct calc
+	: boost::spirit::qi::grammar<Iterator, int(), boost::spirit::ascii::space_type>
+{
+	using namespace std;
+	using namespace boost;
+	using namespace boost::spirit;
+
+	qi::rule<Iterator, int(), ascii::space_type> expr;
+	qi::rule<Iterator, int(), ascii::space_type> term;
+	qi::rule<Iterator, int(), ascii::space_type> fctr;
+
+	calc() : calc::base_type(expr)
+	{
+		expr = term[_val = _1] >> *(('+' >> term[_val += _1]) | ('-' >> term[_val -= _1]));
+		term = fctr[_val = _1] >> *(('*' >> fctr[_val *= _1]) | ('/' >> fctr[_val /= _1]))[&Oops];
+		fctr = int_ | '(' >> expr >> ')';
+	}
+
+	// 計算ついでに、* と / を見ると意味もなく Oops! と叫ぶコード
+	static void Oops() { cout << "Oops!" << endl; }
+};
+
+TEST(CCommandLine, UseBoostSpirit)
+{
+	std::string str = "100 + 101 * 4";
+	calc<std::string::iterator> c;
+
+	int result = -1;
+
+	std::string::iterator it = str.begin();
+	if (boost::spirit::qi::phrase_parse(it, str.end(), c, boost::spirit::ascii::space, result)) {
+		std::cout << result << std::endl;
+	}
+}
+
 /*!
  * ローカルパスをフルパスに変換する
  *
