@@ -257,6 +257,7 @@ exit /b
     exit /b
 
 :cmake
+set /a NUM_VSVERSION_NEXT=NUM_VSVERSION + 1
 for /f "usebackq delims=" %%a in (`"%CMD_VSWHERE%" -property installationPath -version [%NUM_VSVERSION%^,%NUM_VSVERSION_NEXT%^)`) do (
     pushd "%%a"
     call "%%a\Common7\Tools\vsdevcmd\ext\cmake.bat"

@@ -912,10 +912,10 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <Import Project="..\tests\compiletests.targets" />
   <Import Project="..\sakura\githash.targets" />
   <Import Project="..\sakura\funccode.targets" />
   <Import Project="..\sakura\ExtractArchives.targets" />
-  <Import Project="..\tests\compiletests.targets" />
   <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
     <!-- Add files to @Clean just before running CoreClean. -->
     <ItemGroup>
