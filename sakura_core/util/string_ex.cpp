@@ -26,6 +26,7 @@
 #include "string_ex.h"
 
 #include <stdarg.h>
+#include <array>
 
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
@@ -268,7 +269,14 @@ int vstrprintf(std::wstring& strOut, const WCHAR* pszFormat, va_list& argList)
 	::vswprintf_s(strOut.data(), strOut.capacity(), pszFormat, argList);
 
 	// NUL終端する
-	strOut.assign(strOut.data(), cchOut);
+	if (strOut.empty() && cchOut < 8) {
+		std::array<wchar_t, 8> buf;
+		::wcsncpy_s(buf.data(), buf.size(), strOut.data(), cchOut);
+		strOut.assign(buf.data(), cchOut);
+	}
+	else {
+		strOut.assign(strOut.data(), cchOut);
+	}
 
 	return cchOut;
 }
@@ -303,7 +311,15 @@ int vstrprintf(std::string& strOut, const CHAR* pszFormat, va_list& argList)
 	::vsprintf_s(strOut.data(), strOut.capacity(), pszFormat, argList);
 
 	// NUL終端する
-	strOut.assign(strOut.data(), cchOut);
+	if (strOut.empty() && cchOut < 16) {
+		std::array<char, 16> buf;
+		::strncpy_s(buf.data(), buf.size(), strOut.data(), cchOut);
+		strOut.assign(buf.data(), cchOut);
+	}
+	else {
+		strOut.assign(strOut.data(), cchOut);
+	}
+
 
 	return cchOut;
 }
