@@ -136,6 +136,99 @@ TEST(string_ex, strprintfEmpty)
 }
 
 /*!
+	@brief 独自定義のフォーマット関数(C-Style風)。
+
+	バッファが極端に小さい場合の確認。
+	wtd::wstringのスモールバッファは7文字分。
+ */
+TEST(string_ex, strprintfW_small_output)
+{
+	std::wstring text = strprintf(L"");
+	EXPECT_STREQ(L"", text.c_str());
+
+	text = strprintf(L"%d", 1);
+	EXPECT_STREQ(L"1", text.c_str());
+
+	text = strprintf(L"%d", 12);
+	EXPECT_STREQ(L"12", text.c_str());
+
+	text = strprintf(L"%d", 123);
+	EXPECT_STREQ(L"123", text.c_str());
+
+	text = strprintf(L"%d", 1234);
+	EXPECT_STREQ(L"1234", text.c_str());
+
+	text = strprintf(L"%d", 12345);
+	EXPECT_STREQ(L"12345", text.c_str());
+
+	text = strprintf(L"%d", 123456);
+	EXPECT_STREQ(L"123456", text.c_str());
+
+	text = strprintf(L"%d", 1234567);
+	EXPECT_STREQ(L"1234567", text.c_str());
+}
+
+/*!
+	@brief 独自定義のフォーマット関数(C-Style風)。
+
+	バッファが極端に小さい場合の確認
+	wtd::stringのスモールバッファは15文字分。
+ */
+TEST(string_ex, strprintfA_small_output)
+{
+	std::string text = strprintf("");
+	EXPECT_STREQ("", text.c_str());
+
+	text = strprintf("%d", 1);
+	EXPECT_STREQ("1", text.c_str());
+
+	text = strprintf("%d", 12);
+	EXPECT_STREQ("12", text.c_str());
+
+	text = strprintf("%d", 123);
+	EXPECT_STREQ("123", text.c_str());
+
+	text = strprintf("%d", 1234);
+	EXPECT_STREQ("1234", text.c_str());
+
+	text = strprintf("%d", 12345);
+	EXPECT_STREQ("12345", text.c_str());
+
+	text = strprintf("%d", 123456);
+	EXPECT_STREQ("123456", text.c_str());
+
+	text = strprintf("%d", 1234567);
+	EXPECT_STREQ("1234567", text.c_str());
+
+	text = strprintf("%d", 12345678);
+	EXPECT_STREQ("12345678", text.c_str());
+
+	text = strprintf("%d", 123456789);
+	EXPECT_STREQ("123456789", text.c_str());
+
+	text = strprintf("%d", 1234567890);
+	EXPECT_STREQ("1234567890", text.c_str());
+
+	text = strprintf("1234567890%d", 1);
+	EXPECT_STREQ("12345678901", text.c_str());
+
+	text = strprintf("1234567890%d", 12);
+	EXPECT_STREQ("123456789012", text.c_str());
+
+	text = strprintf("1234567890%d", 123);
+	EXPECT_STREQ("1234567890123", text.c_str());
+
+	text = strprintf("1234567890%d", 1234);
+	EXPECT_STREQ("12345678901234", text.c_str());
+
+	text = strprintf("1234567890%d", 12345);
+	EXPECT_STREQ("123456789012345", text.c_str());
+
+	text = strprintf("1234567890%d", 123456);
+	EXPECT_STREQ("1234567890123456", text.c_str());
+}
+
+/*!
 	@brief 独自定義の文字列比較関数。
  */
 TEST(string_ex, strncmp_literal)
