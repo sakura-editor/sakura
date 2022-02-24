@@ -119,11 +119,21 @@ TEST(string_ex, strprintf)
 /*!
 	@brief 独自定義のフォーマット関数(C-Style風)。
  */
-TEST(string_ex, strprintfOutputToArg)
+TEST(string_ex, strprintfWOutputToArg)
 {
-	std::wstring text;
+	std::wstring text(1024, L'\0');
 	strprintf(text, L"%s-%d", L"test", 101);
 	ASSERT_STREQ(L"test-101", text.c_str());
+}
+
+/*!
+	@brief 独自定義のフォーマット関数(C-Style風)。
+ */
+TEST(string_ex, strprintfAOutputToArg)
+{
+	std::string text(1024, '\0');
+	strprintf(text, "%ls-of-active-codepage-%d", L"test", 101);
+	ASSERT_STREQ("test-of-active-codepage-101", text.c_str());
 }
 
 /*!
