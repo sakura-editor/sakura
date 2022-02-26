@@ -31,6 +31,8 @@
 #include <tchar.h>
 #include <Windows.h>
 
+#include <stdexcept>
+
 #include "basis/primitive.h"
 #include "util/string_ex.h"
 
@@ -236,6 +238,25 @@ TEST(string_ex, strprintfA_small_output)
 
 	text = strprintf("1234567890%d", 123456);
 	EXPECT_STREQ("1234567890123456", text.c_str());
+}
+
+/*!
+	@brief 独自定義のフォーマット関数(C-Style風)。
+
+	Cロケールを設定し忘れた場合、SJISバイナリから標準文字列への変換は失敗する。
+	テスト作成時に混乱する可能性があるので、例外を投げるようにしてある。
+	CRT関数が「フォーマットが不正ならクラッシュさせる」という設計なので、
+	フォーマットチェック機構としては役立たずである点に注意すること。
+ */
+TEST(string_ex, strprintfA_throws)
+{
+	// Cのロケールを設定し忘れた場合、エラーが返る
+	setlocale(LC_ALL, "English");
+	EXPECT_THROW(strprintf("%ls", L"てすと"), std::invalid_argument);
+
+	// Cのロケールを日本語にした場合、正しく変換できる
+	setlocale(LC_ALL, "Japanese");
+	EXPECT_STREQ("てすと", strprintf("%ls", L"てすと").data());
 }
 
 /*!

@@ -25,8 +25,11 @@
 #include "StdAfx.h"
 #include "string_ex.h"
 
+#include <errno.h>
 #include <stdarg.h>
 #include <array>
+#include <memory>
+#include <stdexcept>
 
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
@@ -35,6 +38,21 @@
 #include <locale.h>
 
 int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, unsigned int dcount, bool flag );
+
+/*!
+ * va_list型のスマートポインタを実現するためのdeleterクラス
+ */
+struct vaList_ender
+{
+	void operator()(va_list argList) const
+	{
+		va_end(argList);
+	}
+};
+
+//! va_list型のスマートポインタ
+using vaListHolder = std::unique_ptr<std::remove_pointer<va_list>::type, vaList_ender>;
+
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           文字                              //
@@ -253,9 +271,8 @@ int vstrprintf(std::wstring& strOut, const WCHAR* pszFormat, va_list& argList)
 {
 	// _vscwprintf() はフォーマットに必要な文字数を返す。
 	const int cchOut = ::_vscwprintf(pszFormat, argList);
-	// 出力文字数が0なら後続処理は要らない。
-	if (!cchOut) {
-		return 0;
+	if (cchOut <= 0) {
+		return cchOut;
 	}
 
 	// 必要なバッファを確保する
@@ -295,9 +312,8 @@ int vstrprintf(std::string& strOut, const CHAR* pszFormat, va_list& argList)
 {
 	// _vscwprintf() はフォーマットに必要な文字数を返す。
 	const int cchOut = ::_vscprintf(pszFormat, argList);
-	// 出力文字数が0なら後続処理は要らない。
-	if (!cchOut) {
-		return 0;
+	if (cchOut <= 0) {
+		return cchOut;
 	}
 
 	// 必要なバッファを確保する
@@ -374,11 +390,16 @@ int strprintf(std::string& strOut, const CHAR* pszFormat, ...)
 	@param[in]  pszFormat	フォーマット文字列
 	@param[in]  ...			引数リスト
 	@returns フォーマットされた文字列
+	@throws invalid_argument フォーマット文字列が正しくないとき
 */
 std::wstring vstrprintf(const WCHAR* pszFormat, va_list& argList)
 {
+	// 出力バッファを確保する
 	std::wstring strOut;
+
+	// 戻り値が0未満ならエラーだが、再現させられないのでハンドルしない
 	vstrprintf(strOut, pszFormat, argList);
+
 	return strOut;
 }
 
@@ -388,11 +409,22 @@ std::wstring vstrprintf(const WCHAR* pszFormat, va_list& argList)
 	@param[in]  pszFormat	フォーマット文字列
 	@param[in]  ...			引数リスト
 	@returns フォーマットされた文字列
+	@throws invalid_argument フォーマット文字列が正しくないとき
 */
 std::string vstrprintf(const CHAR* pszFormat, va_list& argList)
 {
+	// 出力バッファを確保する
 	std::string strOut;
-	vstrprintf(strOut, pszFormat, argList);
+
+	// 戻り値が0未満ならエラー
+	if (const int nRet = vstrprintf(strOut, pszFormat, argList);
+		0 > nRet)
+	{
+		std::array<char, 1024> msg;
+		::strerror_s(msg.data(), msg.size(), nRet);
+		throw std::invalid_argument(msg.data());
+	}
+
 	return strOut;
 }
 
@@ -402,17 +434,16 @@ std::string vstrprintf(const CHAR* pszFormat, va_list& argList)
 	@param[in]  pszFormat	フォーマット文字列
 	@param[in]  ...			引数リスト
 	@returns フォーマットされた文字列
+	@throws invalid_argument フォーマット文字列が正しくないとき
 */
 std::wstring strprintf(const WCHAR* pszFormat, ...)
 {
 	va_list argList;
 	va_start(argList, pszFormat);
 
-	const auto strOut = vstrprintf(pszFormat, argList);
+	vaListHolder holder(argList);
 
-	va_end(argList);
-
-	return strOut;
+	return vstrprintf(pszFormat, argList);
 }
 
 /*!
@@ -421,17 +452,16 @@ std::wstring strprintf(const WCHAR* pszFormat, ...)
 	@param[in]  pszFormat	フォーマット文字列
 	@param[in]  ...			引数リスト
 	@returns フォーマットされた文字列
+	@throws invalid_argument フォーマット文字列が正しくないとき
 */
 std::string strprintf(const CHAR* pszFormat, ...)
 {
 	va_list argList;
 	va_start(argList, pszFormat);
 
-	const auto strOut = vstrprintf(pszFormat, argList);
+	vaListHolder holder(argList);
 
-	va_end(argList);
-
-	return strOut;
+	return vstrprintf(pszFormat, argList);
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
