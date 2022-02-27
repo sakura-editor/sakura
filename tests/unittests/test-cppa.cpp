@@ -24,7 +24,6 @@
 */
 #include <gtest/gtest.h>
 
-#include <iostream>
 #include <string_view>
 
 #include "macro/CPPA.h"
@@ -41,8 +40,9 @@ TEST(CPPA, stdError)
 	std::string_view msg = "something is wrong.";
 	CPPA::stdError(0, msg.data());
 
-	//EXPECT_STREQ(msg.data(), testing::internal::GetCapturedStderr().data());
-	const auto temp(testing::internal::GetCapturedStderr());
-	std::cerr << temp << std::endl;
-	EXPECT_STREQ(msg.data(), temp.data());
+	////EXPECT_STREQ(msg.data(), testing::internal::GetCapturedStderr().data());
+	//const auto temp(testing::internal::GetCapturedStderr());
+	//std::cerr << temp << std::endl;
+	//EXPECT_STREQ(msg.data(), temp.data());
+	EXPECT_STREQ(strprintf(L"%hs\n", msg.data()).data(), u8stowcs(testing::internal::GetCapturedStderr()).data());
 }

@@ -53,34 +53,13 @@ int Wrap_MessageBox(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType)
 	// 選択中の言語IDを取得する
 	LANGID wLangId = CSelectLang::getDefaultLangId();
 
-	// 標準エラー出力を取得する
-	HANDLE hStdErr = ::GetStdHandle( STD_ERROR_HANDLE );
-	if( hStdErr ){
-			// lpTextの文字列長を求める
-		DWORD dwTextLen = lpText ? ::wcslen( lpText ) : 0;
-
-		// lpText を標準エラー出力に書き出す
-		DWORD dwWritten = 0;
-		::WriteConsoleW( hStdErr, lpText, dwTextLen, &dwWritten, NULL );
-
-		// エラーが発生していたら標準エラー出力に書き出す
-		if (const auto dwErrorCode = ::GetLastError()) {
-			CHAR* pMsg;
-			::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER |
-				FORMAT_MESSAGE_IGNORE_INSERTS |
-				FORMAT_MESSAGE_FROM_SYSTEM,
-				nullptr,
-				dwErrorCode,
-				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-				(LPSTR)&pMsg,
-				0,
-				nullptr
-			);
-
-			std::cerr << pMsg;
-
-			::LocalFree((HLOCAL)pMsg);	//	エラーメッセージバッファを解放
+	// 標準エラー出力が存在する場合
+	if(::GetStdHandle(STD_ERROR_HANDLE)){
+		if (lpText) {
+			// lpText を標準エラー出力に書き出す
+			std::cerr << wcstou8s(lpText);
 		}
+		std::cerr << std::endl;
 
 		// いい加減な戻り値を返す。(返り値0は未定義なので本来返らない値を返している)
 		return 0;
