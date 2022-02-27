@@ -45,6 +45,24 @@
 #include "config/app_constants.h"
 #include "String_define.h"
 
+constexpr int logNOLOG = 0;
+constexpr int logDEBUG = 1;
+constexpr int logINFO_ = 2;
+constexpr int logWARN_ = 3;
+constexpr int logERROR = 4;
+constexpr int logFATAL = 5;
+constexpr int logTestOnly = -1;
+
+class Log {
+public:
+	std::ostream& Get(int loggerId) const {
+		if (loggerId == logTestOnly) {
+			return std::clog;
+		}
+		return std::cout;
+	}
+};
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                 メッセージボックス：実装                    //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -56,10 +74,10 @@ int Wrap_MessageBox(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType)
 	// 標準エラー出力が存在する場合
 	if(::GetStdHandle(STD_ERROR_HANDLE)){
 		if (lpText) {
-			// lpText を標準エラー出力に書き出す
-			std::clog << wcstou8s(lpText);
+			// lpText をテスト専用ロガーに書き出す
+			Log().Get(logTestOnly) << wcstou8s(lpText);
 		}
-		std::clog << std::endl;
+		Log().Get(logTestOnly) << std::endl;
 
 		// いい加減な戻り値を返す。(返り値0は未定義なので本来返らない値を返している)
 		return 0;
