@@ -241,25 +241,6 @@ TEST(string_ex, strprintfA_small_output)
 }
 
 /*!
-	@brief 独自定義のフォーマット関数(C-Style風)。
-
-	Cロケールを設定し忘れた場合、SJISバイナリから標準文字列への変換は失敗する。
-	テスト作成時に混乱する可能性があるので、例外を投げるようにしてある。
-	CRT関数が「フォーマットが不正ならクラッシュさせる」という設計なので、
-	フォーマットチェック機構としては役立たずである点に注意すること。
- */
-TEST(string_ex, strprintfA_throws)
-{
-	// Cのロケールを設定し忘れた場合、エラーが返る
-	setlocale(LC_ALL, "English");
-	EXPECT_THROW(strprintf("%ls", L"てすと"), std::invalid_argument);
-
-	// Cのロケールを日本語にした場合、正しく変換できる
-	setlocale(LC_ALL, "Japanese");
-	EXPECT_STREQ("てすと", strprintf("%ls", L"てすと").data());
-}
-
-/*!
 	@brief 独自定義の文字列比較関数。
  */
 TEST(string_ex, strncmp_literal)
