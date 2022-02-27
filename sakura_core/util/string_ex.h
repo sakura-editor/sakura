@@ -29,6 +29,7 @@
 
 #include <vadefs.h>
 #include <string>
+#include <string_view>
 #include "basis/primitive.h"
 #include "debug/Debug2.h"
 
@@ -234,6 +235,11 @@ char*	wcstombs_new(const wchar_t* src); //戻り値はnew[]で確保して返す
 char*	wcstombs_new(const wchar_t* pSrc,int nSrcLen); //戻り値はnew[]で確保して返す。
 void	wcstombs_vector(const wchar_t* pSrc, std::vector<char>* ret); //戻り値はvectorとして返す。
 void	wcstombs_vector(const wchar_t* pSrc, int nSrcLen, std::vector<char>* ret); //戻り値はvectorとして返す。
+
+std::string wcstombs(std::string& strOut, std::wstring_view strInput);
+std::wstring u8stowcs(std::wstring& strOut, std::string_view strInput);
+std::wstring u8stowcs(std::string_view strInput);
+std::string wcstou8s(std::wstring_view strInput);
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       リテラル比較                          //
