@@ -25,7 +25,11 @@
 #include "StdAfx.h"
 #include "string_ex.h"
 
+#include <errno.h>
 #include <stdarg.h>
+#include <array>
+#include <memory>
+#include <stdexcept>
 
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
@@ -240,79 +244,204 @@ const char* stristr_j( const char* s1, const char* s2 )
 
 /*!
 	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
+		事前に確保したバッファに結果を書き込む高速バージョン
+	@param[in, out] strOut	フォーマットされたテキストを受け取る変数
 	@param[in]  pszFormat	フォーマット文字列
 	@param[in]  argList		引数リスト
-	@returns フォーマットされた文字列
-*/
-std::wstring vstrprintf(const WCHAR* pszFormat, va_list& argList)
+	@returns 出力された文字数。NUL終端を含まない。
+	@retval >= 0 正常終了
+	@retval < 0 異常終了
+ */
+int vstrprintf(std::wstring& strOut, const WCHAR* pszFormat, va_list& argList)
 {
 	// _vscwprintf() はフォーマットに必要な文字数を返す。
 	const int cchOut = ::_vscwprintf(pszFormat, argList);
-	if (cchOut == 0) {
-		// 出力文字数が0なら後続処理は要らない。
-		return std::wstring();
+	if (cchOut <= 0) {
+		strOut.clear();
+		return cchOut;
 	}
 
-	// 必要なバッファを確保してフォーマットする
-	std::wstring strOut(cchOut + 1, L'0');
+	// 必要なバッファを確保する
+	if (const size_t required = cchOut + 1;
+		strOut.capacity() <= required)
+	{
+		strOut.resize(required, L'0');
+	}
+
+	// フォーマットする
 	::vswprintf_s(strOut.data(), strOut.capacity(), pszFormat, argList);
-	strOut.resize(cchOut);
+
+	// NUL終端する
+	if (strOut.empty() && cchOut < 8) {
+		std::array<wchar_t, 8> buf;
+		::wcsncpy_s(buf.data(), buf.size(), strOut.data(), cchOut);
+		strOut.assign(buf.data(), cchOut);
+	}
+	else {
+		strOut.assign(strOut.data(), cchOut);
+	}
+
+	return cchOut;
+}
+
+/*!
+	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
+		事前に確保したバッファに結果を書き込む高速バージョン
+	@param[in, out] strOut	フォーマットされたテキストを受け取る変数
+	@param[in]  pszFormat	フォーマット文字列
+	@param[in]  argList		引数リスト
+	@returns 出力された文字数。NUL終端を含まない。
+	@retval >= 0 正常終了
+	@retval < 0 異常終了
+ */
+int vstrprintf(std::string& strOut, const CHAR* pszFormat, va_list& argList)
+{
+	// _vscwprintf() はフォーマットに必要な文字数を返す。
+	const int cchOut = ::_vscprintf(pszFormat, argList);
+	if (cchOut <= 0) {
+		strOut.clear();
+		return cchOut;
+	}
+
+	// 必要なバッファを確保する
+	if (const size_t required = cchOut + 1;
+		strOut.capacity() <= required)
+	{
+		strOut.resize(required, L'0');
+	}
+
+	// フォーマットする
+	::vsprintf_s(strOut.data(), strOut.capacity(), pszFormat, argList);
+
+	// NUL終端する
+	if (strOut.empty() && cchOut < 16) {
+		std::array<char, 16> buf;
+		::strncpy_s(buf.data(), buf.size(), strOut.data(), cchOut);
+		strOut.assign(buf.data(), cchOut);
+	}
+	else {
+		strOut.assign(strOut.data(), cchOut);
+	}
+
+	return cchOut;
+}
+
+/*!
+	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
+		事前に確保したバッファに結果を書き込む高速バージョン
+	@param[in, out] strOut	フォーマットされたテキストを受け取る変数
+	@param[in]  pszFormat	フォーマット文字列
+	@param[in]  argList		引数リスト
+	@returns 出力された文字数。NUL終端を含まない。
+	@retval >= 0 正常終了
+	@retval < 0 異常終了
+ */
+int strprintf(std::wstring& strOut, const WCHAR* pszFormat, ...)
+{
+	va_list argList;
+	va_start(argList, pszFormat);
+
+	const auto nRet = vstrprintf(strOut, pszFormat, argList);
+
+	va_end(argList);
+
+	return nRet;
+}
+
+/*!
+	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
+		事前に確保したバッファに結果を書き込む高速バージョン
+	@param[in, out] strOut	フォーマットされたテキストを受け取る変数
+	@param[in]  pszFormat	フォーマット文字列
+	@param[in]  argList		引数リスト
+	@returns 出力された文字数。NUL終端を含まない。
+	@retval >= 0 正常終了
+	@retval < 0 異常終了
+ */
+int strprintf(std::string& strOut, const CHAR* pszFormat, ...)
+{
+	va_list argList;
+	va_start(argList, pszFormat);
+
+	const auto nRet = vstrprintf(strOut, pszFormat, argList);
+
+	va_end(argList);
+
+	return nRet;
+}
+
+/*!
+	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
+		動的にバッファを確保する簡易バージョン
+	@param[in]  pszFormat	フォーマット文字列
+	@param[in]  ...			引数リスト
+	@returns フォーマットされた文字列
+ */
+std::wstring vstrprintf(const WCHAR* pszFormat, va_list& argList)
+{
+	// 出力バッファを確保する
+	std::wstring strOut;
+
+	const auto nRet = vstrprintf(strOut, pszFormat, argList);
+	assert(nRet >= 0);
+
 	return strOut;
 }
 
 /*!
 	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
+		動的にバッファを確保する簡易バージョン
 	@param[in]  pszFormat	フォーマット文字列
 	@param[in]  ...			引数リスト
 	@returns フォーマットされた文字列
-*/
+ */
+std::string vstrprintf(const CHAR* pszFormat, va_list& argList)
+{
+	// 出力バッファを確保する
+	std::string strOut;
+
+	const int nRet = vstrprintf(strOut, pszFormat, argList);
+	assert(nRet >= 0);
+
+	return strOut;
+}
+
+/*!
+	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
+		動的にバッファを確保する簡易バージョン
+	@param[in]  pszFormat	フォーマット文字列
+	@param[in]  ...			引数リスト
+	@returns フォーマットされた文字列
+ */
 std::wstring strprintf(const WCHAR* pszFormat, ...)
 {
 	va_list argList;
 	va_start(argList, pszFormat);
 
-	const auto strRet = vstrprintf(pszFormat, argList);
+	const auto strOut = vstrprintf(pszFormat, argList);
 
 	va_end(argList);
 
-	return strRet;
+	return strOut;
 }
 
 /*!
 	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
-	@param[out] strOut		フォーマットされたテキストを受け取る変数
-	@param[in]  pszFormat	フォーマット文字列
-	@param[in]  argList		引数リスト
-	@returns 出力された文字数。NUL終端を含まない。
-	@retval >= 0 正常終了
-	@retval < 0 異常終了
-*/
-int vstrprintf( std::wstring& strOut, const WCHAR* pszFormat, va_list& argList )
-{
-	// オーバーロードバージョンを呼び出す
-	strOut = vstrprintf(pszFormat, argList);
-	return static_cast<int>(strOut.length());
-}
-
-/*!
-	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
-	@param[out] strOut		フォーマットされたテキストを受け取る変数
+		動的にバッファを確保する簡易バージョン
 	@param[in]  pszFormat	フォーマット文字列
 	@param[in]  ...			引数リスト
-	@returns 出力された文字数。NUL終端を含まない。
-	@retval >= 0 正常終了
-	@retval < 0 異常終了
-*/
-int strprintf( std::wstring& strOut, const WCHAR* pszFormat, ... )
+	@returns フォーマットされた文字列
+ */
+std::string strprintf(const CHAR* pszFormat, ...)
 {
 	va_list argList;
-	va_start( argList, pszFormat );
+	va_start(argList, pszFormat);
 
-	const int nRet = vstrprintf( strOut, pszFormat, argList );
+	const auto strOut = vstrprintf(pszFormat, argList);
 
-	va_end( argList );
+	va_end(argList);
 
-	return nRet;
+	return strOut;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
