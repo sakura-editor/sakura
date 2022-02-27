@@ -264,7 +264,10 @@ private:
 	static void __stdcall stdStrFunc( const char* FuncName, const int Index, const char* Argument[], const int ArgSize, int* Err_CD, char** ResultValue);
 	static bool CallHandleFunction( const int Index, const char* Arg[], int ArgSize, VARIANT* Result ); // 2002.02.24 Moca
 
+public:
 	static void __stdcall stdError( int Err_CD, const char* Err_Mes );	//	2003.06.01 Moca
+
+private:
 	static void __stdcall stdFinishProc();	//	2003.06.01 Moca
 
 	//	メンバ変数
