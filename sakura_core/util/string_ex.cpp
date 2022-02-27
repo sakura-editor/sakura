@@ -511,7 +511,7 @@ std::wstring u8stowcs(std::wstring& strOut, std::string_view strInput)
 		CP_UTF8,
 		0,
 		strInput.data(),
-		strInput.length(),
+		(int)strInput.length(),
 		nullptr,
 		0
 	);
@@ -533,9 +533,9 @@ std::wstring u8stowcs(std::wstring& strOut, std::string_view strInput)
 		CP_UTF8,
 		0,
 		strInput.data(),
-		strInput.length(),
+		(int)strInput.length(),
 		strOut.data(),
-		strOut.capacity()
+		(int)strOut.capacity()
 	);
 
 	// NUL終端する
@@ -565,7 +565,7 @@ std::string wcstou8s(std::string& strOut, std::wstring_view strInput)
 		CP_UTF8,
 		0,
 		strInput.data(),
-		strInput.length(),
+		(int)strInput.length(),
 		nullptr,
 		0,
 		nullptr,
@@ -589,9 +589,9 @@ std::string wcstou8s(std::string& strOut, std::wstring_view strInput)
 		CP_UTF8,
 		0,
 		strInput.data(),
-		strInput.length(),
+		(int)strInput.length(),
 		strOut.data(),
-		strOut.capacity(),
+		(int)strOut.capacity(),
 		nullptr,
 		nullptr
 	);
