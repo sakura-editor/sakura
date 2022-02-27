@@ -57,9 +57,9 @@ int Wrap_MessageBox(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType)
 	if(::GetStdHandle(STD_ERROR_HANDLE)){
 		if (lpText) {
 			// lpText を標準エラー出力に書き出す
-			std::cerr << wcstou8s(lpText);
+			std::clog << wcstou8s(lpText);
 		}
-		std::cerr << std::endl;
+		std::clog << std::endl;
 
 		// いい加減な戻り値を返す。(返り値0は未定義なので本来返らない値を返している)
 		return 0;
