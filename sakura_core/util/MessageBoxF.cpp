@@ -105,12 +105,11 @@ int VMessageBoxF(
 	va_list&	v			//!< [in,out] 引数リスト
 )
 {
-	hwndOwner=GetMessageBoxOwner(hwndOwner);
-	//整形
-	static WCHAR szBuf[16000];
-	auto_vsprintf_s(szBuf,_countof(szBuf),lpText,v);
-	//API呼び出し
-	return ::MessageBox( hwndOwner, szBuf, lpCaption, uType);
+	const auto buf = vstrprintf(lpText,v);
+	if (!hwndOwner) {
+		hwndOwner = GetMessageBoxOwner(hwndOwner);
+	}
+	return ::MessageBox(hwndOwner, buf.data(), lpCaption, uType);
 }
 
 int MessageBoxF( HWND hwndOwner, UINT uType, LPCWSTR lpCaption, LPCWSTR lpText, ... )
