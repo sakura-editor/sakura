@@ -243,6 +243,44 @@ const char* stristr_j( const char* s1, const char* s2 )
 }
 
 /*!
+	@brief 文字列の終端位置を調整する
+	@param[in, out] strOut	終端位置修正対象のインスタンス
+	@param[in]  cchOut		終端位置
+	@returns 終端位置を調整されたインスタンス。
+ */
+std::wstring& eos(std::wstring& strOut, size_t cchOut)
+{
+	if (strOut.empty() && cchOut < 8) {
+		std::wstring buf(strOut.data());
+		strOut.assign(buf.data(), cchOut);
+	}
+	else {
+		strOut.assign(strOut.data(), cchOut);
+	}
+
+	return strOut;
+}
+
+/*!
+	@brief 文字列の終端位置を調整する
+	@param[in, out] strOut	終端位置修正対象のインスタンス
+	@param[in]  cchOut		終端位置
+	@returns 終端位置を調整されたインスタンス。
+ */
+std::string& eos(std::string& strOut, size_t cchOut)
+{
+	if (strOut.empty() && cchOut < 16) {
+		std::string buf(strOut.data());
+		strOut.assign(buf.data(), cchOut);
+	}
+	else {
+		strOut.assign(strOut.data(), cchOut);
+	}
+
+	return strOut;
+}
+
+/*!
 	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
 		事前に確保したバッファに結果を書き込む高速バージョン
 	@param[in, out] strOut	フォーマットされたテキストを受け取る変数
@@ -272,14 +310,7 @@ int vstrprintf(std::wstring& strOut, const WCHAR* pszFormat, va_list& argList)
 	::vswprintf_s(strOut.data(), strOut.capacity(), pszFormat, argList);
 
 	// NUL終端する
-	if (strOut.empty() && cchOut < 8) {
-		std::array<wchar_t, 8> buf;
-		::wcsncpy_s(buf.data(), buf.size(), strOut.data(), cchOut);
-		strOut.assign(buf.data(), cchOut);
-	}
-	else {
-		strOut.assign(strOut.data(), cchOut);
-	}
+	eos(strOut, cchOut);
 
 	return cchOut;
 }
@@ -314,14 +345,7 @@ int vstrprintf(std::string& strOut, const CHAR* pszFormat, va_list& argList)
 	::vsprintf_s(strOut.data(), strOut.capacity(), pszFormat, argList);
 
 	// NUL終端する
-	if (strOut.empty() && cchOut < 16) {
-		std::array<char, 16> buf;
-		::strncpy_s(buf.data(), buf.size(), strOut.data(), cchOut);
-		strOut.assign(buf.data(), cchOut);
-	}
-	else {
-		strOut.assign(strOut.data(), cchOut);
-	}
+	eos(strOut, cchOut);
 
 	return cchOut;
 }
@@ -668,14 +692,7 @@ std::wstring u8stowcs(std::wstring& strOut, std::string_view strInput)
 	);
 
 	// NUL終端する
-	if (strOut.empty() && cchOut < 16) {
-		std::array<wchar_t, 8> buf;
-		::wcsncpy_s(buf.data(), buf.size(), strOut.data(), cchOut);
-		strOut.assign(buf.data(), cchOut);
-	}
-	else {
-		strOut.assign(strOut.data(), cchOut);
-	}
+	eos(strOut, cchOut);
 
 	return strOut;
 }
@@ -726,14 +743,7 @@ std::string wcstou8s(std::string& strOut, std::wstring_view strInput)
 	);
 
 	// NUL終端する
-	if (strOut.empty() && cchOut < 16) {
-		std::array<char, 16> buf;
-		::strncpy_s(buf.data(), buf.size(), strOut.data(), cchOut);
-		strOut.assign(buf.data(), cchOut);
-	}
-	else {
-		strOut.assign(strOut.data(), cchOut);
-	}
+	eos(strOut, cchOut);
 
 	return strOut;
 }

@@ -206,6 +206,9 @@ inline int auto_vsprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va
 #define auto_sprintf_s(buf, nBufCount, format, ...)		::_sntprintf_s((buf), nBufCount, _TRUNCATE, (format), __VA_ARGS__)
 #define auto_snprintf_s(buf, nBufCount, format, ...)	::_sntprintf_s((buf), nBufCount, _TRUNCATE, (format), __VA_ARGS__)
 
+std::wstring& eos(std::wstring& strOut, size_t cchOut);
+std::string& eos(std::string& strOut, size_t cchOut);
+
 int vstrprintf(std::wstring& strOut, const WCHAR* pszFormat, va_list& argList);
 int vstrprintf(std::string& strOut, const CHAR* pszFormat, va_list& argList);
 int strprintf(std::wstring& strOut, const WCHAR* pszFormat, ...);
