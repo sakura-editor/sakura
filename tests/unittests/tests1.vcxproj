@@ -142,6 +142,7 @@
     <ClCompile Include="test-int2dec.cpp" />
     <ClCompile Include="test-is_mailaddress.cpp" />
     <ClCompile Include="test-loadstring.cpp" />
+    <ClCompile Include="test-messageboxf.cpp" />
     <ClCompile Include="test-mydevmode.cpp" />
     <ClCompile Include="test-parameterized.cpp" />
     <ClCompile Include="test-printECodeType.cpp" />
@@ -156,6 +157,7 @@
     <ClCompile Include="test-winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="eval_outputs.hpp" />
     <ClInclude Include="tests1_rc.h" />
   </ItemGroup>
   <ItemGroup>
