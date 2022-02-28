@@ -7,6 +7,10 @@
       Outputs="$(GeneratedGitHash)"
       AfterTargets="SelectClCompile"
       BeforeTargets="ClCompile">
+    <PropertyGroup>
+      <VsVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(VisualStudioVersion)', '^(\d+).*', '$1'))</VsVersion>
+    </PropertyGroup>
+    <SetEnv name="NUM_VSVERSION" value="$(VsVersion)" prefix="false" />
     <Exec Command="..\sakura\githash.bat ..\sakura_core $(GeneratedGitHash)" />
   </Target>
 </Project>
