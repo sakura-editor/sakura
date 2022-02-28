@@ -626,6 +626,142 @@ void wcstombs_vector(const wchar_t* pSrc, int nSrcLen, std::vector<char>* ret)
 	(*ret)[nNewLen]='\0';
 }
 
+/*!
+	@brief u8文字列を標準文字列に変換する。
+		事前に確保したバッファに結果を書き込む高速バージョン
+	@param[in, out] strOut	変換された標準文字列を受け取る変数
+	@param[in]  strInput	u8文字列
+	@returns 標準文字列
+ */
+std::wstring u8stowcs(std::wstring& strOut, std::string_view strInput)
+{
+	// 必要なバッファのサイズを確認する
+	const auto cchOut = ::MultiByteToWideChar(
+		CP_UTF8,
+		0,
+		strInput.data(),
+		(int)strInput.length(),
+		nullptr,
+		0
+	);
+
+	if (cchOut <= 0) {
+		strOut.clear();
+		return strOut;
+	}
+
+	// 必要なバッファを確保する
+	if (const size_t required = cchOut + 1;
+		strOut.capacity() <= required)
+	{
+		strOut.resize(required, L'0');
+	}
+
+	// 変換する
+	::MultiByteToWideChar(
+		CP_UTF8,
+		0,
+		strInput.data(),
+		(int)strInput.length(),
+		strOut.data(),
+		(int)strOut.capacity()
+	);
+
+	// NUL終端する
+	if (strOut.empty() && cchOut < 16) {
+		std::array<wchar_t, 8> buf;
+		::wcsncpy_s(buf.data(), buf.size(), strOut.data(), cchOut);
+		strOut.assign(buf.data(), cchOut);
+	}
+	else {
+		strOut.assign(strOut.data(), cchOut);
+	}
+
+	return strOut;
+}
+
+/*!
+	@brief 標準文字列をu8文字列に変換する。
+		事前に確保したバッファに結果を書き込む高速バージョン
+	@param[in, out] strOut	変換されたu8文字列を受け取る変数
+	@param[in]  strInput	標準文字列
+	@returns u8文字列
+ */
+std::string wcstou8s(std::string& strOut, std::wstring_view strInput)
+{
+	// 必要なバッファのサイズを確認する
+	const auto cchOut= ::WideCharToMultiByte(
+		CP_UTF8,
+		0,
+		strInput.data(),
+		(int)strInput.length(),
+		nullptr,
+		0,
+		nullptr,
+		nullptr
+	);
+
+	if (cchOut <= 0) {
+		strOut.clear();
+		return strOut;
+	}
+
+	// 必要なバッファを確保する
+	if (const size_t required = cchOut + 1;
+		strOut.capacity() <= required)
+	{
+		strOut.resize(required, L'0');
+	}
+
+	// 変換する
+	::WideCharToMultiByte(
+		CP_UTF8,
+		0,
+		strInput.data(),
+		(int)strInput.length(),
+		strOut.data(),
+		(int)strOut.capacity(),
+		nullptr,
+		nullptr
+	);
+
+	// NUL終端する
+	if (strOut.empty() && cchOut < 16) {
+		std::array<char, 16> buf;
+		::strncpy_s(buf.data(), buf.size(), strOut.data(), cchOut);
+		strOut.assign(buf.data(), cchOut);
+	}
+	else {
+		strOut.assign(strOut.data(), cchOut);
+	}
+
+	return strOut;
+}
+
+/*!
+	@brief u8文字列を標準文字列に変換する。
+		動的にバッファを確保する簡易バージョン
+	@param[in]  strInput	u8文字列
+	@returns 標準文字列
+ */
+std::wstring u8stowcs(std::string_view strInput)
+{
+	std::wstring strOut;
+	return u8stowcs(strOut, strInput);
+}
+
+/*!
+	@brief 標準文字列をu8文字列に変換する。
+		動的にバッファを確保する簡易バージョン
+	@param[in]  strInput	標準文字列
+	@returns u8文字列
+ */
+std::string wcstou8s(std::wstring_view strInput)
+{
+	std::string strOut;
+	return wcstou8s(strOut, strInput);
+}
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          メモリ                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
