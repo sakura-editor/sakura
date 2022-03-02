@@ -391,13 +391,13 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 		pszErr = LS(STR_ERR_DLGPPA6);
 	}
 
+	std::wstring_view msgTitle(LS(STR_ERR_DLGPPA7));	// L"PPA実行エラー"
+
 	if (m_CurInstance && 0 < m_CurInstance->m_cMemDebug.GetStringLength()) {
-		// L"PPA実行エラー"
-		MYMESSAGEBOX(hWndMsgParent, MB_OK, LS(STR_ERR_DLGPPA7), L"%s\n%hs", pszErr, m_CurInstance->m_cMemDebug.GetStringPtr());
+		MYMESSAGEBOX(hWndMsgParent, MB_OK, msgTitle.data(), L"%s\n%hs", pszErr, m_CurInstance->m_cMemDebug.GetStringPtr());
 	}
 	else {
-		// L"PPA実行エラー"
-		MYMESSAGEBOX(hWndMsgParent, MB_OK, LS(STR_ERR_DLGPPA7), L"%s", pszErr);
+		MYMESSAGEBOX(hWndMsgParent, MB_OK, msgTitle.data(), L"%s", pszErr);
 	}
 }
 
