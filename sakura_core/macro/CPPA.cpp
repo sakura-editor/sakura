@@ -35,6 +35,9 @@
 
 #include "StdAfx.h"
 #include "CPPA.h"
+
+#include <algorithm>
+
 #include "view/CEditView.h"
 #include "func/Funccode.h"
 #include "CMacro.h"
@@ -346,28 +349,28 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 	WCHAR szMes[2048]; // 2048あれば足りるかと
 	const WCHAR* pszErr = szMes;
 	if (0 < Err_CD) {
-		int i, FuncID;
-		FuncID = Err_CD - 1;
+		// Err_CDから機能IDに変換する
+		const int FuncID = Err_CD - 1;
 		char szFuncDec[1024];
 		szFuncDec[0] = '\0';
-		for( i = 0; CSMacroMgr::m_MacroFuncInfoCommandArr[i].m_nFuncID != -1; i++ ){
-			if( CSMacroMgr::m_MacroFuncInfoCommandArr[i].m_nFuncID == FuncID ){
-				GetDeclarations( CSMacroMgr::m_MacroFuncInfoCommandArr[i], szFuncDec );
-				break;
-			}
+		// マクロコマンドの配列から機能IDに一致するものを探す
+		if (const auto found = std::find_if(std::cbegin(CSMacroMgr::m_MacroFuncInfoCommandArr), std::cend(CSMacroMgr::m_MacroFuncInfoCommandArr), [FuncID](const auto& funcInfo) {return funcInfo.m_nFuncID == FuncID; });
+			found != std::cend(CSMacroMgr::m_MacroFuncInfoCommandArr))
+		{
+			GetDeclarations(*found, szFuncDec);
 		}
-		if( CSMacroMgr::m_MacroFuncInfoArr[i].m_nFuncID != -1 ){
-			for( i = 0; CSMacroMgr::m_MacroFuncInfoArr[i].m_nFuncID != -1; i++ ){
-				if( CSMacroMgr::m_MacroFuncInfoArr[i].m_nFuncID == FuncID ){
-					GetDeclarations( CSMacroMgr::m_MacroFuncInfoArr[i], szFuncDec );
-					break;
-				}
-			}
+		// マクロコマンドが見つからなかったら、マクロ関数の配列も探す
+		else if (const auto foundFunc = std::find_if(std::cbegin(CSMacroMgr::m_MacroFuncInfoArr), std::cend(CSMacroMgr::m_MacroFuncInfoArr), [FuncID](const auto& funcInfo) {return funcInfo.m_nFuncID == FuncID; });
+			foundFunc != std::cend(CSMacroMgr::m_MacroFuncInfoArr))
+		{
+			GetDeclarations(*foundFunc, szFuncDec);
 		}
-		if( szFuncDec[0] != '\0' ){
+
+		if (szFuncDec[0] != '\0') {
 			// L"関数の実行エラー\n%hs"
 			auto_sprintf( szMes, LS(STR_ERR_DLGPPA2), szFuncDec );
-		}else{
+		}
+		else {
 			// L"不明な関数の実行エラー(バグです)\nFunc_ID=%d"
 			auto_sprintf( szMes, LS(STR_ERR_DLGPPA3), FuncID );
 		}
