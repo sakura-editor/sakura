@@ -488,3 +488,41 @@ TEST(CPPA, stdError_user_errors)
 	EXPECT_ERROUT(cPpa.CallStdError(-1, nullptr), L"エラー情報が不正");
 	EXPECT_ERROUT(cPpa.CallStdError(-1, &chNul), L"未定義のエラー\nError_CD=-1\n");
 }
+
+/*!
+	CPPA::GetDeclarationsのテスト
+ */
+TEST(CPPA, GetDeclarations)
+{
+	setlocale(LC_ALL, "Japanese");
+
+	CPpaStub cPpa;
+
+	std::string buffer;
+	MacroFuncInfo cMacroFuncInfo[] = {
+		{ 1, L"Cmd1", { VT_I4, VT_BSTR, VT_EMPTY, VT_EMPTY }, VT_EMPTY },
+		{ 2, L"Cmd2", { VT_BSTR, VT_I4, VT_EMPTY, VT_EMPTY }, VT_EMPTY },
+		{ 3, L"Cmd3", { VT_BOOL, VT_EMPTY, VT_EMPTY, VT_EMPTY }, VT_EMPTY },
+		{ 4, L"Func1", { VT_I4, VT_BSTR, VT_EMPTY, VT_EMPTY }, VT_I4 },
+		{ 5, L"Func2", { VT_BSTR, VT_I4, VT_EMPTY, VT_EMPTY }, VT_BSTR },
+		{ 6, L"Func3", { VT_BOOL, VT_EMPTY, VT_EMPTY, VT_EMPTY }, VT_BOOL },
+	};
+
+	cPpa.GetDeclarations(cMacroFuncInfo[0], buffer);
+	EXPECT_STREQ("procedure S_Cmd1(i0: Integer; s1: string); index 1;", buffer.data());
+
+	cPpa.GetDeclarations(cMacroFuncInfo[1], buffer);
+	EXPECT_STREQ("procedure S_Cmd2(s0: string; i1: Integer); index 2;", buffer.data());
+
+	cPpa.GetDeclarations(cMacroFuncInfo[2], buffer);
+	EXPECT_STREQ("procedure S_Cmd3(u0: Unknown); index 3;", buffer.data());
+
+	cPpa.GetDeclarations(cMacroFuncInfo[3], buffer);
+	EXPECT_STREQ("function S_Func1(i0: Integer; s1: string): Integer; index 4;", buffer.data());
+
+	cPpa.GetDeclarations(cMacroFuncInfo[4], buffer);
+	EXPECT_STREQ("function S_Func2(s0: string; i1: Integer): string; index 5;", buffer.data());
+
+	cPpa.GetDeclarations(cMacroFuncInfo[5], buffer);
+	EXPECT_STREQ("function S_Func3(u0: Unknown); index 6;", buffer.data());
+}
