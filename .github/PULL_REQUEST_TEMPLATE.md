@@ -6,6 +6,27 @@
 <!-- PR の目的を記載してください -->
 <!-- 参考: https://github.com/sakura-editor/sakura/wiki/Pull-Request-%E3%82%92%E9%80%81%E3%82%8B%E9%9A%9B%E3%81%AE%E6%B3%A8%E6%84%8F -->
 
+## <!-- 必須 --> ターゲット
+
+<!-- 編集 必須 -->
+<!-- 以下はテンプレートなので、追加、削除してください。 -->
+
+- サクラエディタ本体
+  - 正式リリース版
+  - Azure Pipelines ビルド版
+  - AppVeyor ビルド版
+  - GitHub Actions ビルド版
+  - ローカルビルド版
+- ヘルプ
+- インストーラ
+- ビルド関連
+  - ビルド手順
+  - Azure Pipelines
+  - AppVeyor
+  - GitHub Actions
+  - ローカルビルド
+- その他
+
 ## <!-- 必須 --> カテゴリ
 
 <!-- 編集 必須 -->
@@ -17,19 +38,6 @@
 - 速度向上
 - リファクタリング
 - ドキュメント修正
-- プログラムの動作上の問題
-  - 正式リリース版
-  - Azure Pipelines ビルド版
-  - AppVeyor ビルド版
-  - GitHub Actions ビルド版
-  - ローカルビルド版
-- ビルド関連
-  - ビルド手順
-  - Azure Pipelines
-  - AppVeyor
-  - GitHub Actions
-  - ローカルビルド
-- ドキュメントの問題
 - GitHub 関連の問題
 - 実験 (master へのマージを目的としない)
 - その他の問題
