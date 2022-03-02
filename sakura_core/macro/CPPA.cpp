@@ -378,8 +378,8 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 		}
 	}
 	else if (0 > Err_CD && Err_Mes) {
-		// L"未定義のエラー\nError_CD=%d\n%s"
-		strprintf(msg, LS(STR_ERR_DLGPPA5), Err_CD, to_wchar(Err_Mes));
+		// L"未定義のエラー\nError_CD=%d\n%hs"
+		strprintf(msg, LS(STR_ERR_DLGPPA5), Err_CD, Err_Mes);
 	}
 	else {
 		// L"エラー情報が不正"

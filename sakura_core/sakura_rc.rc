@@ -3645,7 +3645,7 @@ BEGIN
     STR_ERR_DLGPPA2         "関数の実行エラー\n%hs"
     STR_ERR_DLGPPA3         "不明な関数の実行エラー(バグです)\nFunc_ID=%d"
     STR_ERR_DLGPPA4         "詳細不明のエラー"
-    STR_ERR_DLGPPA5         "未定義のエラー\nError_CD=%d\n%s"
+    STR_ERR_DLGPPA5         "未定義のエラー\nError_CD=%d\n%hs"
     STR_ERR_DLGPPA6         "エラー情報が不正"
     STR_ERR_DLGPPA7         "PPA実行エラー"
     STR_ERR_CPRINT01        "OpenPrinter()に失敗。\nプリンタデバイス名=[%s]"

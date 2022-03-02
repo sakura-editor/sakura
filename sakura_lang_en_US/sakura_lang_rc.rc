@@ -3710,7 +3710,7 @@ BEGIN
     STR_ERR_DLGPPA2         "Error executing function\n%hs"
     STR_ERR_DLGPPA3         "Unknown type of error whilst executing a function (Bug?)\nFunc_ID=%d"
     STR_ERR_DLGPPA4         "Detailed Unknown Error"
-    STR_ERR_DLGPPA5         "Undefined Error\nError_CD=%d\n%s"
+    STR_ERR_DLGPPA5         "Undefined Error\nError_CD=%d\n%hs"
     STR_ERR_DLGPPA6         "Error report is not correct"
     STR_ERR_DLGPPA7         "PPA Execution Error"
     STR_ERR_CPRINT01        "OpenPrinter() failed.\nPrinter Device Name=[%s]"
