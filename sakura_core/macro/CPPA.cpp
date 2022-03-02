@@ -37,6 +37,8 @@
 #include "CPPA.h"
 
 #include <algorithm>
+#include <string>
+#include <string_view>
 
 #include "view/CEditView.h"
 #include "func/Funccode.h"
@@ -184,34 +186,30 @@ bool CPPA::InitDllImp()
 	SetDefine( "sakura-editor" );	// 2003.06.01 Moca SAKURAエディタ用独自関数を準備
 	AddStrObj( "UserErrorMes", "", FALSE, 2 ); // 2003.06.01 デバッグ用文字列変数を用意
 
-	int i;
-	
 	//	Jun. 16, 2003 genta 一時作業エリア
-	char buf[1024];
+	std::string buf(1024, L'\0');
+
 	// コマンドに置き換えられない関数 ＝ PPA無しでは使えない。。。
-	for (i=0; CSMacroMgr::m_MacroFuncInfoArr[i].m_pszFuncName != NULL; i++) {
-		//	2003.06.08 Moca メモリーリークの修正
-		//	2003.06.16 genta バッファを外から与えるように
-		//	関数登録用文字列を作成する
-		GetDeclarations( CSMacroMgr::m_MacroFuncInfoArr[i], buf );
-		SetDefProc( buf );
+	for (const auto& funcInfo : CSMacroMgr::m_MacroFuncInfoArr) {
+		if (funcInfo.m_pszFuncName) {
+			SetDefProcByFuncInfo(funcInfo, buf);
+		}
 	}
 
 	// コマンドに置き換えられる関数 ＝ PPA無しでも使える。
-	for (i=0; CSMacroMgr::m_MacroFuncInfoCommandArr[i].m_pszFuncName != NULL; i++) {
-		//	2003.06.08 Moca メモリーリークの修正
-		//	2003.06.16 genta バッファを外から与えるように
-		//	関数登録用文字列を作成する
-		GetDeclarations( CSMacroMgr::m_MacroFuncInfoCommandArr[i], buf );
-		SetDefProc( buf );
+	for (const auto& funcInfo : CSMacroMgr::m_MacroFuncInfoCommandArr) {
+		if (funcInfo.m_pszFuncName) {
+			SetDefProcByFuncInfo(funcInfo, buf);
+		}
 	}
+
 	return true; 
 }
 
 /*! PPAに関数を登録するための文字列を作成する
 
-	@param cMacroFuncInfo [in]	マクロデータ
-	@param szBuffer [out]		生成した文字列を入れるバッファへのポインタ
+	@param [in] cMacroFuncInfo	マクロデータ
+	@param [out] buffer		生成した文字列を入れるバッファへのポインタ
 
 	@note バッファサイズは 9 + 3 + メソッド名の長さ + 13 * 4 + 9 + 5 は最低必要
 
@@ -221,80 +219,75 @@ bool CPPA::InitDllImp()
 
 	@date 2003.06.16 genta 無駄なnew/deleteを避けるためバッファを外から与えるように
 */
-char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer )
+std::string& CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, std::string& buffer )
 {
-	char szType[20];			//	procedure/function用バッファ
-	char szReturn[20];			//	戻り値型用バッファ
-	if (cMacroFuncInfo.m_varResult == VT_EMPTY){
-		strcpy( szType, "procedure" );
-		szReturn[0] = '\0';
+	std::string_view type;			//	procedure/function用バッファ
+	std::string_view returnType;			//	戻り値型用バッファ
+	if (cMacroFuncInfo.m_varResult == VT_EMPTY) {
+		type = "procedure";
+		returnType = "";
 	}
 	else {
-		strcpy( szType, "function" );
-		if (cMacroFuncInfo.m_varResult == VT_BSTR){
-			strcpy( szReturn, ": string" );
-		}
-		else if ( cMacroFuncInfo.m_varResult == VT_I4 ){
-			strcpy( szReturn, ": Integer" );
-		}
-		else {
-			szReturn[0] = '\0';
+		type = "function";
+		switch (cMacroFuncInfo.m_varResult) {
+		case VT_BSTR:	returnType = ": string";	break;
+		case VT_I4:		returnType = ": Integer";	break;
+		default:		returnType = "";			break;
 		}
 	}
-	
-	char szArguments[8][20];	//	引数用バッファ
-	int i;
-	for (i=0; i<8; i++){
-		VARTYPE type = VT_EMPTY;
-		if( i < 4 ){
-			type = cMacroFuncInfo.m_varArguments[i];
-		}else{
-			if( cMacroFuncInfo.m_pData && i < cMacroFuncInfo.m_pData->m_nArgMinSize ){
-				type = cMacroFuncInfo.m_pData->m_pVarArgEx[i - 4];
-			}
+
+	std::string args(8 * 20, L'\0');
+	args.clear();
+
+	for (int i = 0; i < 8; i++) {
+		VARTYPE vt = VT_EMPTY;
+		if (i < 4) {
+			vt = cMacroFuncInfo.m_varArguments[i];
 		}
-		if ( type == VT_EMPTY ){
+		else if (cMacroFuncInfo.m_pData && i < cMacroFuncInfo.m_pData->m_nArgMinSize) {
+			vt = cMacroFuncInfo.m_pData->m_pVarArgEx[i - 4];
+		}
+
+		if (vt == VT_EMPTY) {
 			break;
 		}
-		if ( type == VT_BSTR ){
-			strcpy( szArguments[i], "s0: string" );
-			szArguments[i][1] = '0' + (char)i;
+
+		switch (vt) {
+		case VT_BSTR:	args += strprintf("s%d: string", i); break;
+		case VT_I4:		args += strprintf("i%d: Integer", i); break;
+		default:		args += strprintf("u%d: Unknown", i); break;
 		}
-		else if ( type == VT_I4 ){
-			strcpy( szArguments[i], "i0: Integer" );
-			szArguments[i][1] = '0' + (char)i;
-		}
-		else {
-			strcpy( szArguments[i], "u0: Unknown" );
-		}
+
+		args += "; ";
 	}
-	if ( i > 0 ){	//	引数があったとき
-		int j;
-		char szArgument[8*20];
-		// 2002.12.06 Moca 原因不明だが，strcatがVC6Proでうまく動かなかったため，strcpyにしてみたら動いた
-		strcpy( szArgument, szArguments[0] );
-		for ( j=1; j<i; j++){
-			strcat( szArgument, "; " );
-			strcat( szArgument, szArguments[j] );
-		}
-		auto_sprintf( szBuffer, "%hs S_%ls(%hs)%hs; index %d;",
-			szType,
-			cMacroFuncInfo.m_pszFuncName,
-			szArgument,
-			szReturn,
-			cMacroFuncInfo.m_nFuncID
-		);
+
+	std::wstring funcName(cMacroFuncInfo.m_pszFuncName ? cMacroFuncInfo.m_pszFuncName : L"");
+
+	if (const auto length = std::char_traits<char>::length(args.data());
+		length > 2)
+	{
+		funcName += strprintf(L"(%.*hs)", length - 2, args.data());
 	}
-	else {
-		auto_sprintf( szBuffer, "%hs S_%ls%hs; index %d;",
-			szType,
-			cMacroFuncInfo.m_pszFuncName,
-			szReturn,
-			cMacroFuncInfo.m_nFuncID
-		);
-	}
-	//	Jun. 01, 2003 Moca / Jun. 16, 2003 genta
-	return szBuffer;
+
+	strprintf(buffer, "%hs S_%ls%hs; index %d;",
+		type.data(),
+		funcName.data(),
+		returnType.data(),
+		cMacroFuncInfo.m_nFuncID
+	);
+
+	return buffer;
+}
+
+/*!
+	関数情報から関数登録用文字列を作成し、PPAに登録します。
+	@param [in] cMacroFuncInfo 関数情報
+	@param [in, out] buffer 確保済みバッファ
+ */
+void CPPA::SetDefProcByFuncInfo(const MacroFuncInfo& cMacroFuncInfo, std::string& buffer)
+{
+	GetDeclarations(cMacroFuncInfo, buffer);
+	SetDefProc(buffer.data());
 }
 
 /*! ユーザー定義文字列型オブジェクト
@@ -346,61 +339,60 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 		? m_CurInstance->m_pcEditView->GetHwnd()
 		: (HWND)nullptr;
 
-	WCHAR szMes[2048]; // 2048あれば足りるかと
-	const WCHAR* pszErr = szMes;
+	std::wstring msg(2048, L'\0');
+	std::string funcDesc(1024, L'\0');
+
 	if (0 < Err_CD) {
 		// Err_CDから機能IDに変換する
 		const int FuncID = Err_CD - 1;
-		char szFuncDec[1024];
-		szFuncDec[0] = '\0';
 		// マクロコマンドの配列から機能IDに一致するものを探す
 		if (const auto found = std::find_if(std::cbegin(CSMacroMgr::m_MacroFuncInfoCommandArr), std::cend(CSMacroMgr::m_MacroFuncInfoCommandArr), [FuncID](const auto& funcInfo) {return funcInfo.m_nFuncID == FuncID; });
 			found != std::cend(CSMacroMgr::m_MacroFuncInfoCommandArr))
 		{
-			GetDeclarations(*found, szFuncDec);
+			GetDeclarations(*found, funcDesc);
 		}
 		// マクロコマンドが見つからなかったら、マクロ関数の配列も探す
 		else if (const auto foundFunc = std::find_if(std::cbegin(CSMacroMgr::m_MacroFuncInfoArr), std::cend(CSMacroMgr::m_MacroFuncInfoArr), [FuncID](const auto& funcInfo) {return funcInfo.m_nFuncID == FuncID; });
 			foundFunc != std::cend(CSMacroMgr::m_MacroFuncInfoArr))
 		{
-			GetDeclarations(*foundFunc, szFuncDec);
+			GetDeclarations(*foundFunc, funcDesc);
 		}
 
-		if (szFuncDec[0] != '\0') {
+		if (const auto length = std::char_traits<char>::length(funcDesc.data())) {
 			// L"関数の実行エラー\n%hs"
-			auto_sprintf( szMes, LS(STR_ERR_DLGPPA2), szFuncDec );
+			strprintf(msg, LS(STR_ERR_DLGPPA2), funcDesc.data());
 		}
 		else {
 			// L"不明な関数の実行エラー(バグです)\nFunc_ID=%d"
-			auto_sprintf( szMes, LS(STR_ERR_DLGPPA3), FuncID );
+			strprintf(msg, LS(STR_ERR_DLGPPA3), FuncID);
 		}
 	}
 	else if (0 == Err_CD && Err_Mes) {
 		if (Err_Mes[0]) {
 			// PPAのエラー
-			pszErr = to_wchar(Err_Mes);
+			strprintf(msg, L"%hs", Err_Mes);
 		}
 		else {
 			// L"詳細不明のエラー"
-			pszErr = LS(STR_ERR_DLGPPA4);
+			msg = LS(STR_ERR_DLGPPA4);
 		}
 	}
 	else if (0 > Err_CD && Err_Mes) {
 		// L"未定義のエラー\nError_CD=%d\n%s"
-		auto_snprintf_s(szMes, _countof(szMes), LS(STR_ERR_DLGPPA5), Err_CD, to_wchar(Err_Mes));
+		strprintf(msg, LS(STR_ERR_DLGPPA5), Err_CD, to_wchar(Err_Mes));
 	}
 	else {
 		// L"エラー情報が不正"
-		pszErr = LS(STR_ERR_DLGPPA6);
+		msg = LS(STR_ERR_DLGPPA6);
 	}
 
 	std::wstring_view msgTitle(LS(STR_ERR_DLGPPA7));	// L"PPA実行エラー"
 
 	if (m_CurInstance && 0 < m_CurInstance->m_cMemDebug.GetStringLength()) {
-		MYMESSAGEBOX(hWndMsgParent, MB_OK, msgTitle.data(), L"%s\n%hs", pszErr, m_CurInstance->m_cMemDebug.GetStringPtr());
+		MYMESSAGEBOX(hWndMsgParent, MB_OK, msgTitle.data(), L"%s\n%hs", msg.data(), m_CurInstance->m_cMemDebug.GetStringPtr());
 	}
 	else {
-		MYMESSAGEBOX(hWndMsgParent, MB_OK, msgTitle.data(), L"%s", pszErr);
+		MYMESSAGEBOX(hWndMsgParent, MB_OK, msgTitle.data(), L"%s", msg.data());
 	}
 }
 

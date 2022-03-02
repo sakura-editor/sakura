@@ -42,6 +42,9 @@ PPA(Poor-Pascal for Application)はDelphi/C++Builder用のPascalインタプリ�
 
 #include <ObjIdl.h>  // VARIANT等
 #include <stdio.h>
+
+#include <string>
+
 #include "macro/CSMacroMgr.h"
 #include "extmodule/CDllHandler.h"
 #include "mem/CNativeA.h"
@@ -77,8 +80,9 @@ public:
 	//! PPAメッセージを取得する
 	const char* GetLastMessage(void) const { return m_szMsg; }
 
-	//	Jun. 16, 2003 genta 引数追加
-	static char* GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer );
+	static std::string& GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, std::string& buffer );
+
+	void SetDefProcByFuncInfo(const MacroFuncInfo& cMacroFuncInfo, std::string& buffer);
 
 protected:
 	//	Jul. 5, 2001 genta インターフェース変更に伴う引数追加
