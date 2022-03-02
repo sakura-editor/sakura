@@ -33,9 +33,10 @@
 */
 
 #include "StdAfx.h"
-#include <stdarg.h>
-#include <tchar.h>
 #include "MessageBoxF.h"
+
+#include <iostream>
+
 #include "_main/CProcess.h"
 #include "window/CEditWnd.h"
 #include "CSelectLang.h"
@@ -50,15 +51,10 @@ int Wrap_MessageBox(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType)
 	// 選択中の言語IDを取得する
 	LANGID wLangId = CSelectLang::getDefaultLangId();
 
-	// 標準エラー出力を取得する
-	HANDLE hStdErr = ::GetStdHandle( STD_ERROR_HANDLE );
-	if( hStdErr ){
-			// lpTextの文字列長を求める
-		DWORD dwTextLen = lpText ? ::wcslen( lpText ) : 0;
-
+	// 標準エラー出力が存在する場合
+	if(::GetStdHandle(STD_ERROR_HANDLE)){
 		// lpText を標準エラー出力に書き出す
-		DWORD dwWritten = 0;
-		::WriteConsoleW( hStdErr, lpText, dwTextLen, &dwWritten, NULL );
+		std::clog << (lpText ? wcstou8s(lpText) : "") << std::endl;
 
 		// いい加減な戻り値を返す。(返り値0は未定義なので本来返らない値を返している)
 		return 0;
@@ -109,12 +105,11 @@ int VMessageBoxF(
 	va_list&	v			//!< [in,out] 引数リスト
 )
 {
-	hwndOwner=GetMessageBoxOwner(hwndOwner);
-	//整形
-	static WCHAR szBuf[16000];
-	auto_vsprintf_s(szBuf,_countof(szBuf),lpText,v);
-	//API呼び出し
-	return ::MessageBox( hwndOwner, szBuf, lpCaption, uType);
+	const auto buf = vstrprintf(lpText,v);
+	if (!hwndOwner) {
+		hwndOwner = GetMessageBoxOwner(hwndOwner);
+	}
+	return ::MessageBox(hwndOwner, buf.data(), lpCaption, uType);
 }
 
 int MessageBoxF( HWND hwndOwner, UINT uType, LPCWSTR lpCaption, LPCWSTR lpText, ... )

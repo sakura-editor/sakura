@@ -163,9 +163,15 @@
     <ClCompile Include="test-csharedata.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-messageboxf.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartEditorProcessForTest.h">
+      <Filter>Other Files</Filter>
+    </ClInclude>
+    <ClInclude Include="eval_outputs.hpp">
       <Filter>Other Files</Filter>
     </ClInclude>
   </ItemGroup>
