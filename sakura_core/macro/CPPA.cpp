@@ -365,34 +365,41 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 			}
 		}
 		if( szFuncDec[0] != '\0' ){
+			// L"関数の実行エラー\n%hs"
 			auto_sprintf( szMes, LS(STR_ERR_DLGPPA2), szFuncDec );
 		}else{
+			// L"不明な関数の実行エラー(バグです)\nFunc_ID=%d"
 			auto_sprintf( szMes, LS(STR_ERR_DLGPPA3), FuncID );
 		}
 	}else{
 		//	2007.07.26 genta : ネスト実行した場合にPPAが不正なポインタを渡す可能性を考慮．
 		//	実際には不正なエラーは全てPPA.DLL内部でトラップされるようだが念のため．
 		if( IsBadStringPtrA( Err_Mes, 256 )){
+			// L"エラー情報が不正"
 			pszErr = LS(STR_ERR_DLGPPA6);
 		}else{
 			switch( Err_CD ){
 			case 0:
 				if( '\0' == Err_Mes[0] ){
+					// L"詳細不明のエラー"
 					pszErr = LS(STR_ERR_DLGPPA4);
 				}else{
 					pszErr = to_wchar(Err_Mes);
 				}
 				break;
 			default:
+				// L"未定義のエラー\nError_CD=%d\n%s"
 				auto_sprintf( szMes, LS(STR_ERR_DLGPPA5), Err_CD, to_wchar(Err_Mes) );
 			}
 		}
 	}
 
 	if (m_CurInstance && 0 < m_CurInstance->m_cMemDebug.GetStringLength()) {
+		// L"PPA実行エラー"
 		MYMESSAGEBOX(hWndMsgParent, MB_OK, LS(STR_ERR_DLGPPA7), L"%s\n%hs", pszErr, m_CurInstance->m_cMemDebug.GetStringPtr());
 	}
 	else {
+		// L"PPA実行エラー"
 		MYMESSAGEBOX(hWndMsgParent, MB_OK, LS(STR_ERR_DLGPPA7), L"%s", pszErr);
 	}
 }
