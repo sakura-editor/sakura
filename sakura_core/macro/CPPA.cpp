@@ -332,10 +332,16 @@ void __stdcall CPPA::stdStrObj(const char* ObjName, int Index, BYTE GS_Mode, int
 */
 void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 {
-	if( false != m_CurInstance->m_bError ){
-		return;
+	if (m_CurInstance) {
+		if (false != m_CurInstance->m_bError) {
+			return;
+		}
+		m_CurInstance->m_bError = true; // 関数内で関数を呼ぶ場合等、2回表示されるのを防ぐ
 	}
-	m_CurInstance->m_bError = true; // 関数内で関数を呼ぶ場合等、2回表示されるのを防ぐ
+
+	const auto hWndMsgParent = m_CurInstance && m_CurInstance->m_pcEditView
+		? m_CurInstance->m_pcEditView->GetHwnd()
+		: (HWND)nullptr;
 
 	WCHAR szMes[2048]; // 2048あれば足りるかと
 	const WCHAR* pszErr = szMes;
@@ -382,11 +388,12 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 			}
 		}
 	}
-	if( 0 == m_CurInstance->m_cMemDebug.GetStringLength() ){
-		MYMESSAGEBOX( m_CurInstance->m_pcEditView->GetHwnd(), MB_OK, LS(STR_ERR_DLGPPA7), L"%s", pszErr );
+
+	if (m_CurInstance && 0 < m_CurInstance->m_cMemDebug.GetStringLength()) {
+		MYMESSAGEBOX(hWndMsgParent, MB_OK, LS(STR_ERR_DLGPPA7), L"%s\n%hs", pszErr, m_CurInstance->m_cMemDebug.GetStringPtr());
 	}
-	else{
-		MYMESSAGEBOX( m_CurInstance->m_pcEditView->GetHwnd(), MB_OK, LS(STR_ERR_DLGPPA7), L"%s\n%hs", pszErr, m_CurInstance->m_cMemDebug.GetStringPtr() );
+	else {
+		MYMESSAGEBOX(hWndMsgParent, MB_OK, LS(STR_ERR_DLGPPA7), L"%s", pszErr);
 	}
 }
 
