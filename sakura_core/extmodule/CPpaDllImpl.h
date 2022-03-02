@@ -30,41 +30,41 @@
 
 class CPpaDllImpl : public CDllImp {
 private:
-	void	(WINAPI *m_pfnExecute)();
-	void	(WINAPI* m_pfnSetSource)(const char* ss);
-	void	(WINAPI* m_pfnSetDeclare)(const char* ss);
-	void	(WINAPI* m_pfnSetDefProc)(const char* ss);
-	void	(WINAPI* m_pfnSetDefine)(const char* ss);
-	void	(WINAPI* m_pfnAddIntVar)(const char*, int, int);
-	void	(WINAPI* m_pfnAddStrVar)(const char*, const char*, int);
-	void	(WINAPI *m_pfnSetIntFunc)(void* p);
-	void	(WINAPI *m_pfnSetStrFunc)(void* p);
-	void	(WINAPI *m_pfnSetProc)(void* p);
-	void	(WINAPI *m_pfnSetErrProc)(void* p);
-	void	(WINAPI *m_pfnAbort)();
-	int		(WINAPI *m_pfnGetVersion)();
-	void	(WINAPI *m_pfnDeleteVar)(const char*);
-	int		(WINAPI *m_pfnGetArgInt)(int);
-	char*	(WINAPI *m_pfnGetArgStr)(int);
-	char*	(WINAPI *m_pfnGetArgBStr)(int);
-	void	(WINAPI *m_pfnSetStrObj)(void* proc);
-	void	(WINAPI *m_pfnSetIntObj)(void* proc);
-	void	(WINAPI *m_pfnAddIntObj)(const char*, int, BOOL, int);
-	void	(WINAPI *m_pfnAddStrObj)(const char*, const char*, BOOL, int);
-	int		(WINAPI *m_pfnGetIntVar)(const char* ss);
-	char*	(WINAPI *m_pfnGetStrVar)(const char* ss);
-	char*	(WINAPI *m_pfnGetBStrVar)(const char* ss);
-	BOOL	(WINAPI *m_pfnSetIntVar)(const char*, int);
-	BOOL	(WINAPI *m_pfnSetStrVar)(const char*, const char*);
-	void	(WINAPI *m_pfnAddRealVar)(const char*, double, BOOL);
-	void	(WINAPI *m_pfnSetRealObj)(void* p);
-	void	(WINAPI *m_pfnAddRealObj)(const char*, double, BOOL, LONG);
-	double	(WINAPI *m_pfnGetRealVar)(const char*);
-	BOOL	(WINAPI *m_pfnSetRealVar)(const char*, double);
-	void	(WINAPI *m_pfnSetRealFunc)(void* p);
-	DWORD	(WINAPI *m_pfnGetArgReal)(int);
-	BYTE	(WINAPI *m_pfnIsRunning)();
-	void	(WINAPI *m_pfnSetFinishProc)(void* p);	//	2003.06.01 Moca
+	void	(WINAPI *m_pfnExecute)() = nullptr;
+	void	(WINAPI *m_pfnSetSource)(const char* ss) = nullptr;
+	void	(WINAPI *m_pfnSetDeclare)(const char* ss) = nullptr;
+	void	(WINAPI *m_pfnSetDefProc)(const char* ss) = nullptr;
+	void	(WINAPI *m_pfnSetDefine)(const char* ss) = nullptr;
+	void	(WINAPI *m_pfnAddIntVar)(const char*, int, int) = nullptr;
+	void	(WINAPI *m_pfnAddStrVar)(const char*, const char*, int) = nullptr;
+	void	(WINAPI *m_pfnSetIntFunc)(void* p) = nullptr;
+	void	(WINAPI *m_pfnSetStrFunc)(void* p) = nullptr;
+	void	(WINAPI *m_pfnSetProc)(void* p) = nullptr;
+	void	(WINAPI *m_pfnSetErrProc)(void* p) = nullptr;
+	void	(WINAPI *m_pfnAbort)() = nullptr;
+	int		(WINAPI *m_pfnGetVersion)() = nullptr;
+	void	(WINAPI *m_pfnDeleteVar)(const char*) = nullptr;
+	int		(WINAPI *m_pfnGetArgInt)(int) = nullptr;
+	char*	(WINAPI *m_pfnGetArgStr)(int) = nullptr;
+	char*	(WINAPI *m_pfnGetArgBStr)(int) = nullptr;
+	void	(WINAPI *m_pfnSetStrObj)(void* proc) = nullptr;
+	void	(WINAPI *m_pfnSetIntObj)(void* proc) = nullptr;
+	void	(WINAPI *m_pfnAddIntObj)(const char*, int, BOOL, int) = nullptr;
+	void	(WINAPI *m_pfnAddStrObj)(const char*, const char*, BOOL, int) = nullptr;
+	int		(WINAPI *m_pfnGetIntVar)(const char* ss) = nullptr;
+	char*	(WINAPI *m_pfnGetStrVar)(const char* ss) = nullptr;
+	char*	(WINAPI *m_pfnGetBStrVar)(const char* ss) = nullptr;
+	BOOL	(WINAPI *m_pfnSetIntVar)(const char*, int) = nullptr;
+	BOOL	(WINAPI *m_pfnSetStrVar)(const char*, const char*) = nullptr;
+	void	(WINAPI *m_pfnAddRealVar)(const char*, double, BOOL) = nullptr;
+	void	(WINAPI *m_pfnSetRealObj)(void* p) = nullptr;
+	void	(WINAPI *m_pfnAddRealObj)(const char*, double, BOOL, LONG) = nullptr;
+	double	(WINAPI *m_pfnGetRealVar)(const char*) = nullptr;
+	BOOL	(WINAPI *m_pfnSetRealVar)(const char*, double) = nullptr;
+	void	(WINAPI *m_pfnSetRealFunc)(void* p) = nullptr;
+	DWORD	(WINAPI *m_pfnGetArgReal)(int) = nullptr;
+	BYTE	(WINAPI *m_pfnIsRunning)() = nullptr;
+	void	(WINAPI *m_pfnSetFinishProc)(void* p) = nullptr;
 
 protected:
 	bool InitDllImp() override;
