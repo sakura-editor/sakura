@@ -74,7 +74,7 @@ bool CPPA::Execute(CEditView* pcEditView, int flags )
 	//PPAの多重起動禁止 2008.10.22 syat
 	if ( CPPA::m_bIsRunning ) {
 		MYMESSAGEBOX( pcEditView->GetHwnd(), MB_OK, LS(STR_ERR_DLGPPA7), LS(STR_ERR_DLGPPA1) );
-		Abort();
+		m_fnAbort();
 		CPPA::m_bIsRunning = false;
 		return false;
 	}
@@ -90,7 +90,7 @@ bool CPPA::Execute(CEditView* pcEditView, int flags )
 	//	実行前にインスタンスを待避する
 	PpaExecInfo* old_instance = m_CurInstance;
 	m_CurInstance = &info;
-	CPpaDllImpl::Execute();
+	m_fnExecute();
 	
 	//	マクロ実行完了後はここに戻ってくる
 	m_CurInstance = old_instance;
@@ -98,6 +98,11 @@ bool CPPA::Execute(CEditView* pcEditView, int flags )
 	//PPAの多重起動禁止 2008.10.22 syat
 	CPPA::m_bIsRunning = false;
 	return !info.m_bError;
+}
+
+LPCWSTR CPPA::GetDllNameImp(int nIndex)
+{
+	return L"PPA.DLL";
 }
 
 /*!
@@ -111,9 +116,61 @@ bool CPPA::Execute(CEditView* pcEditView, int flags )
 bool CPPA::InitDllImp()
 {
 	/* PPA.DLLが持っている関数を準備 */
-	if (!CPpaDllImpl::InitDllImp()) {
+
+	//	Apr. 15, 2002 genta constを付けた
+	//	アドレスの入れ場所はオブジェクトに依存するので
+	//	static配列にはできない。
+	const ImportTable table[] = 
+	{
+		{ &m_fnExecute,		"Execute" },
+		{ &m_fnSetDeclare,	"SetDeclare" },
+		{ &m_fnSetSource,	"SetSource" },
+		{ &m_fnSetDefProc,	"SetDefProc" },
+		{ &m_fnSetDefine,	"SetDefine" },
+		{ &m_fnSetIntFunc,	"SetIntFunc" },
+		{ &m_fnSetStrFunc,	"SetStrFunc" },
+		{ &m_fnSetProc,		"SetProc" },
+		{ &m_fnSetErrProc,	"SetErrProc" },
+		{ &m_fnAbort,		"ppaAbort" },
+		{ &m_fnGetVersion,	"GetVersion" },
+		{ &m_fnDeleteVar,	"DeleteVar" },
+		{ &m_fnGetArgInt,	"GetArgInt" },
+		{ &m_fnGetArgStr,	"GetArgStr" },
+		{ &m_fnGetArgBStr,	"GetArgBStr" },
+		{ &m_fnGetIntVar,	"GetIntVar" },
+		{ &m_fnGetStrVar,	"GetStrVar" },
+		{ &m_fnGetBStrVar,	"GetBStrVar" },
+		{ &m_fnSetIntVar,	"SetIntVar" },
+		{ &m_fnSetStrVar,	"SetStrVar" },
+		{ &m_fnAddIntObj,	"AddIntObj" },
+		{ &m_fnAddStrObj,	"AddStrObj" },
+		{ &m_fnAddIntVar,	"AddIntVar" },
+		{ &m_fnAddStrVar,	"AddStrVar" },
+		{ &m_fnSetIntObj,	"SetIntObj" },
+		{ &m_fnSetStrObj,	"SetStrObj" },
+
+#if PPADLL_VER >= 120
+		{ &m_fnAddRealVar,	"AddRealVar" },
+		{ &m_fnSetRealObj,	"SetRealObj" },
+		{ &m_fnAddRealObj,	"AddRealObj" },
+		{ &m_fnGetRealVar,	"GetRealVar" },
+		{ &m_fnSetRealVar,	"SetRealVar" },
+		{ &m_fnSetRealFunc,	"SetRealFunc" },
+		{ &m_fnGetArgReal,	"GetArgReal" },
+#endif
+
+#if PPADLL_VER >= 123
+		{ &m_fnIsRunning, "IsRunning" },
+		{ &m_fnSetFinishProc, "SetFinishProc"}, // 2003.06.23 Moca
+#endif
+
+		{ NULL, 0 }
+	};
+
+	//	Apr. 15, 2002 genta
+	//	CDllImpの共通関数化した
+	if( ! RegisterEntries(table) )
 		return false;
-	}
 
 	SetIntFunc((void *)CPPA::stdIntFunc);	// 2003.02.24 Moca
 	SetStrFunc((void *)CPPA::stdStrFunc);
