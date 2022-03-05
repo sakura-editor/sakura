@@ -41,7 +41,7 @@ VARTYPE s_MacroArgEx_s[] = {VT_BSTR};
 MacroFuncInfoEx s_MacroInfoEx_s = {5, 5, s_MacroArgEx_s};
 #endif
 
-MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[m_nCommands] =
+const std::vector<MacroFuncInfo> CSMacroMgr::m_MacroFuncInfoCommandArr =
 {
 //	機能番号			関数名			引数				作業用バッファ
 
@@ -413,7 +413,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[m_nCommands] =
 	{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
 
-MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[m_nFuncInfos] =
+const std::vector<MacroFuncInfo> CSMacroMgr::m_MacroFuncInfoArr =
 {
 	//ID					関数名							引数										戻り値の型	m_pszData
 	{F_GETFILENAME,			LTEXT("GetFilename"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //ファイル名を返す

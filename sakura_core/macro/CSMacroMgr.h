@@ -39,6 +39,8 @@
 #include <Windows.h>
 #include <WTypes.h> //VARTYPE
 
+#include <vector>
+
 #include "CMacroManagerBase.h"
 #include "env/DLLSHAREDATA.h"
 #include "config/maxdata.h"
@@ -67,7 +69,7 @@ struct MacroFuncInfo {
 	MacroFuncInfoEx*	m_pData;
 };
 //マクロ関数情報構造体配列
-typedef MacroFuncInfo* MacroFuncInfoArray;
+using MacroFuncInfoArray = const MacroFuncInfo*;
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -178,11 +180,9 @@ private:
 
 	std::wstring	m_sMacroPath;	// Loadしたマクロ名
 
-	static constexpr auto m_nCommands = 321;
-	static constexpr auto m_nFuncInfos = 62;
 public:
-	static MacroFuncInfo	m_MacroFuncInfoCommandArr[m_nCommands];	// コマンド情報(戻り値なし)
-	static MacroFuncInfo	m_MacroFuncInfoArr[m_nFuncInfos];		// 関数情報(戻り値あり)
+	static const std::vector<MacroFuncInfo>	m_MacroFuncInfoCommandArr;	//!< コマンド情報(戻り値なし)
+	static const std::vector<MacroFuncInfo>	m_MacroFuncInfoArr;			//!< 関数情報(戻り値あり)
 
 	DISALLOW_COPY_AND_ASSIGN(CSMacroMgr);
 };

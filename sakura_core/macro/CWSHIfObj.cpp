@@ -33,10 +33,20 @@
 */
 
 #include "StdAfx.h"
-#include <memory>
 #include "macro/CWSHIfObj.h"
+
+#include <memory>
+#include <string_view>
+#include <vector>
+
 #include "macro/CSMacroMgr.h" // MacroFuncInfo
 #include "Funccode_enum.h" // EFunctionCode::FA_FROMMACRO
+
+// コンストラクタ
+CWSHIfObj::CWSHIfObj(const wchar_t* name, bool isGlobal)
+	: CIfObj(name, isGlobal)
+{
+}
 
 //コマンド・関数を準備する
 void CWSHIfObj::ReadyMethods( CEditView* pView, int flags )
@@ -51,49 +61,51 @@ void CWSHIfObj::ReadyMethods( CEditView* pView, int flags )
 
 /** WSHマクロエンジンへコマンド登録を行う
 
-	@date 2007.07.20 genta flags追加．flagはコマンド登録段階で混ぜておく．
+	@date 2002/08/29 genta 番人の値が変更されたのでここも変更
+	@date 2007/07/20 genta flags追加．flagはコマンド登録段階で混ぜておく．
+	@date 2009/09/05 syat CWSHManagerから移動
 */
-void CWSHIfObj::ReadyCommands(MacroFuncInfo *Info, int flags)
+void CWSHIfObj::ReadyCommands(MacroFuncInfoArray pFuncInfo, int flags)
 {
-	while(Info->m_nFuncID != -1)	// Aug. 29, 2002 genta 番人の値が変更されたのでここも変更
+	std::wstring_view funcName;
+	std::vector<VARTYPE> varArgs(_countof(pFuncInfo->m_varArguments), VT_EMPTY);
+
+	while (pFuncInfo->m_nFuncID != (int)F_INVALID)
 	{
-		wchar_t FuncName[256];
-		wcscpy(FuncName, Info->m_pszFuncName);
+		funcName = pFuncInfo->m_pszFuncName;
 
 		int ArgCount = 0;
-		if( Info->m_pData ){
-			ArgCount = Info->m_pData->m_nArgMinSize;
-		}else{
-			for(int i = 0; i < 4; ++i){
-				if(Info->m_varArguments[i] != VT_EMPTY) 
+		if (pFuncInfo->m_pData) {
+			ArgCount = pFuncInfo->m_pData->m_nArgMinSize;
+		}
+		else {
+			for (int i = 0; i < _countof(pFuncInfo->m_varArguments); ++i) {
+				if (pFuncInfo->m_varArguments[i] != VT_EMPTY)
 					++ArgCount;
 			}
 		}
-		VARTYPE* varArgTmp = NULL;
-		VARTYPE* varArg = Info->m_varArguments;
-		if( 4 < ArgCount ){
-			varArgTmp = varArg = new VARTYPE[ArgCount];
-			for( int i = 0; i < ArgCount; i++ ){
-				if( i < 4 ){
-					varArg[i] = Info->m_varArguments[i];
-				}else{
-					varArg[i] = Info->m_pData->m_pVarArgEx[i-4];
-				}
+
+		varArgs.resize(ArgCount, VT_EMPTY);
+
+		for (int i = 0; i < ArgCount; i++) {
+			if (i < _countof(pFuncInfo->m_varArguments)) {
+				varArgs[i] = pFuncInfo->m_varArguments[i];
+			}
+			else {
+				varArgs[i] = pFuncInfo->m_pData->m_pVarArgEx[i - _countof(pFuncInfo->m_varArguments)];
 			}
 		}
-		//	2007.07.21 genta : flagを加えた値を登録する
-		this->AddMethod(
-			FuncName,
-			(Info->m_nFuncID | flags),
-			varArg,
+
+		AddMethod(
+			funcName.data(),
+			pFuncInfo->m_nFuncID | flags,
+			varArgs.data(),
 			ArgCount,
-			Info->m_varResult,
+			pFuncInfo->m_varResult,
 			reinterpret_cast<CIfObjMethod>(&CWSHIfObj::MacroCommand)
-			/* CWSHIfObjを継承したサブクラスからReadyCommandsを呼び出した場合、
-			 * サブクラスのMacroCommandが呼び出される。 */
 		);
-		delete [] varArgTmp;
-		++Info;
+
+		++pFuncInfo;
 	}
 }
 
