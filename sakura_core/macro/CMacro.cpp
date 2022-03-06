@@ -1818,7 +1818,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 				uType |= MB_YESNO | MB_ICONQUESTION;
 				break;
 			}
-			int ret = ::MessageBox( View->GetHwnd(), sMessage.c_str(), L"sakura macro", uType );
+			int ret = ::MessageBox( View ? View->GetHwnd() : nullptr, sMessage.c_str(), L"sakura macro", uType );
 			Wrap( &Result )->Receive( ret );
 		}
 		return true;

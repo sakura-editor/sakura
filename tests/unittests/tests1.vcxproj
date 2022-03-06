@@ -182,6 +182,7 @@
     <ClInclude Include="StartEditorProcessForTest.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Import Project="..\stubs\ppa_stub\ppa_stub.targets" />
   <ItemGroup>
     <TestResource Include="test-plugin\plugin.def" />
   </ItemGroup>

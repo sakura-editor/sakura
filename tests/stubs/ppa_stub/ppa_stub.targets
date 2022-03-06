@@ -1,0 +1,27 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
+  <PropertyGroup Label="PpaStub">
+    <PpaStubCMakeLists>$(MSBuildThisFileDirectory)CMakeLists.txt</PpaStubCMakeLists>
+    <PpaStubBuildDir>$(SolutionDir)build\$(Platform)\$(Configuration)\ppa_stub\</PpaStubBuildDir>
+    <PpaStubRuntime>$(OutDir)ppa_stub.dll</PpaStubRuntime>
+  </PropertyGroup>
+  <Target Name="MakePpaStubBuildDir" Condition="!Exists('$(PpaStubBuildDir)')">
+    <MakeDir Directories="$(PpaStubBuildDir)" />
+  </Target>
+  <Target Name="BuildPpaStub"
+    DependsOnTargets="MakePpaStubBuildDir;Link"
+    BeforeTargets="FinalizeBuildStatus">
+    <PropertyGroup>
+      <VsVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(VisualStudioVersion)', '^(\d+).*', '$1'))</VsVersion>
+    </PropertyGroup>
+    <SetEnv name="platform" value="$(Platform)" prefix="false" />
+    <SetEnv name="configuration" value="$(Configuration)" prefix="false" />
+    <SetEnv name="NUM_VSVERSION" value="$(VsVersion)" prefix="false" />
+    <Exec Command="$(MSBuildThisFileDirectory)..\stub.build.cmd &quot;$(PpaStubCMakeLists)&quot; &quot;$(PpaStubBuildDir)&quot; &quot;$(PpaStubRuntime)&quot;" ConsoleToMSBuild="true" />
+  </Target>
+  <Target Name="AppendCleanTargetsForPpaStub" BeforeTargets="CoreClean">
+    <ItemGroup>
+      <Clean Include="$(PpaStubRuntime)" />
+    </ItemGroup>
+    <RemoveDir Directories="$(PpaStubBuildDir)" />
+  </Target>
+</Project>

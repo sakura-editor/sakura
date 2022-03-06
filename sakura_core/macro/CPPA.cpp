@@ -56,9 +56,21 @@
 #define omGet (0)
 #define omSet (1)
 
-//	2007.07.26 genta
-CPPA::PpaExecInfo* CPPA::m_CurInstance = NULL;
-bool			CPPA::m_bIsRunning = false;
+PpaExecInfo* CPPA::m_CurInstance = nullptr;
+
+CPPA::ExecInfoHolder CPPA::RegisterExecInfo(PpaExecInfo& execInfo)
+{
+	m_CurInstance = &execInfo;
+
+	return ExecInfoHolder(&execInfo);
+}
+
+void CPPA::exec_terminator::operator()(PpaExecInfo* pExecInfo) const
+{
+	UNREFERENCED_PARAMETER(pExecInfo);
+
+	m_CurInstance = nullptr;
+}
 
 CPPA::CPPA()
 {
@@ -68,35 +80,27 @@ CPPA::~CPPA()
 {
 }
 
-//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 bool CPPA::Execute(CEditView* pcEditView, int flags )
 {
 	//PPAの多重起動禁止 2008.10.22 syat
-	if ( CPPA::m_bIsRunning ) {
-		MYMESSAGEBOX( pcEditView->GetHwnd(), MB_OK, LS(STR_ERR_DLGPPA7), LS(STR_ERR_DLGPPA1) );
-		m_fnAbort();
-		CPPA::m_bIsRunning = false;
+	if (m_CurInstance) {
+		const auto hWndMsgParent = pcEditView
+			? pcEditView->GetHwnd()
+			: (HWND)nullptr;
+		std::wstring_view msgTitle(LS(STR_ERR_DLGPPA7));	// L"PPA実行エラー"
+		// L"PPA実行中に新たにPPAマクロを呼び出すことはできません"
+		MYMESSAGEBOX(hWndMsgParent, MB_OK, msgTitle.data(), LS(STR_ERR_DLGPPA1));
 		return false;
 	}
-	CPPA::m_bIsRunning = true;
 
 	PpaExecInfo info;
 	info.m_pcEditView = pcEditView;
-	info.m_pShareData = &GetDllShareData();
-	info.m_bError = false;			//	2003.06.01 Moca
-	info.m_cMemDebug.SetString("");	//	2003.06.01 Moca
-	info.m_commandflags = flags | FA_FROMMACRO;	//	2007.07.22 genta
-	
-	//	実行前にインスタンスを待避する
-	PpaExecInfo* old_instance = m_CurInstance;
-	m_CurInstance = &info;
+	info.m_commandflags = flags | FA_FROMMACRO;
+
+	// 実行情報を登録してSetSourceで指定したPascalスクリプトを実行する
+	const auto execInfoHolder = RegisterExecInfo(info);
 	m_fnExecute();
 	
-	//	マクロ実行完了後はここに戻ってくる
-	m_CurInstance = old_instance;
-
-	//PPAの多重起動禁止 2008.10.22 syat
-	CPPA::m_bIsRunning = false;
 	return !info.m_bError;
 }
 
@@ -189,14 +193,14 @@ bool CPPA::InitDllImp()
 	//	Jun. 16, 2003 genta 一時作業エリア
 	std::string buf(1024, L'\0');
 
-	// コマンドに置き換えられない関数 ＝ PPA無しでは使えない。。。
+	// マクロ関数（戻り値のある関数）
 	for (const auto& funcInfo : CSMacroMgr::m_MacroFuncInfoArr) {
 		if (funcInfo.m_pszFuncName) {
 			SetDefProcByFuncInfo(funcInfo, buf);
 		}
 	}
 
-	// コマンドに置き換えられる関数 ＝ PPA無しでも使える。
+	// マクロコマンド（戻り値のない関数）
 	for (const auto& funcInfo : CSMacroMgr::m_MacroFuncInfoCommandArr) {
 		if (funcInfo.m_pszFuncName) {
 			SetDefProcByFuncInfo(funcInfo, buf);
@@ -261,7 +265,7 @@ std::string& CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, std::st
 		args += "; ";
 	}
 
-	std::wstring funcName(cMacroFuncInfo.m_pszFuncName ? cMacroFuncInfo.m_pszFuncName : L"");
+	std::wstring funcName(cMacroFuncInfo.m_pszFuncName);
 
 	if (const auto length = std::char_traits<char>::length(args.data());
 		length > 2)
@@ -328,12 +332,12 @@ void __stdcall CPPA::stdStrObj(const char* ObjName, int Index, BYTE GS_Mode, int
 */
 void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 {
-	if (m_CurInstance) {
-		if (false != m_CurInstance->m_bError) {
-			return;
-		}
-		m_CurInstance->m_bError = true; // 関数内で関数を呼ぶ場合等、2回表示されるのを防ぐ
+	// 既に処理済みなら直ちに抜ける
+	if (m_CurInstance->m_bError) {
+		return;
 	}
+
+	m_CurInstance->m_bError = true; // 関数内で関数を呼ぶ場合等、2回表示されるのを防ぐ
 
 	const auto hWndMsgParent = m_CurInstance && m_CurInstance->m_pcEditView
 		? m_CurInstance->m_pcEditView->GetHwnd()

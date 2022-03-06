@@ -43,6 +43,7 @@ PPA(Poor-Pascal for Application)はDelphi/C++Builder用のPascalインタプリ�
 #include <ObjIdl.h>  // VARIANT等
 #include <stdio.h>
 
+#include <memory>
 #include <string>
 
 #include "macro/CSMacroMgr.h"
@@ -51,11 +52,30 @@ PPA(Poor-Pascal for Application)はDelphi/C++Builder用のPascalインタプリ�
 
 #define PPADLL_VER 123
 
+namespace ppa {
+	constexpr auto omGet = 0;
+	constexpr auto omSet = 1;
+}
+
 /*
 PPA(Poor-Pascal for Application)はDelphi/C++Builder用の
 Pascalインタプリタコンポーネントです。
 アプリケーションにマクロ機能を搭載する事を目的に作成されています。
 */
+
+//	2007.07.26 genta : PPAのネストを許容するために，別データ構造とする．
+struct PpaExecInfo {
+	CNativeA		m_cMemRet = "";			//!< コールバックからDLLに渡す文字列を保持
+	CEditView* m_pcEditView = nullptr;	//	2003.06.01 Moca
+	bool			m_bError = false;		//!< エラーが2回表示されるのを防ぐ	2003.06.01 Moca
+	CNativeA		m_cMemDebug = "";		//!< デバッグ用変数UserErrorMes 2003.06.01 Moca
+	/** オプションフラグ
+
+		CEditView::HandleCommand()にコマンドと一緒に渡すことで
+		コマンドの素性を教える．
+	*/
+	int				m_commandflags = NULL;	//!< 
+};
 
 /*!
 	@brief PPA.DLL をサポートするクラス
@@ -267,35 +287,27 @@ private:
 		const char* Argument[], const int ArgSize, int* Err_CD, int* ResultValue); // 2002.02.24 Moca
 	static void __stdcall stdStrFunc( const char* FuncName, const int Index, const char* Argument[], const int ArgSize, int* Err_CD, char** ResultValue);
 	static bool CallHandleFunction( const int Index, const char* Arg[], int ArgSize, VARIANT* Result ); // 2002.02.24 Moca
-
-public:
 	static void __stdcall stdError( int Err_CD, const char* Err_Mes );	//	2003.06.01 Moca
-
-private:
 	static void __stdcall stdFinishProc();	//	2003.06.01 Moca
 
 	//	メンバ変数
 	char		m_szMsg[80];		//!< CPPAからのメッセージを保持する
 
-	//	2007.07.26 genta : PPAのネストを許容するために，別データ構造とする．
-	
-	struct PpaExecInfo {
-		CNativeA		m_cMemRet;		//!< コールバックからDLLに渡す文字列を保持
-		CEditView*		m_pcEditView;	//	2003.06.01 Moca
-		DLLSHAREDATA*	m_pShareData;	//	2003.06.01 Moca
-		bool			m_bError;		//!< エラーが2回表示されるのを防ぐ	2003.06.01 Moca
-		CNativeA		m_cMemDebug;	//!< デバッグ用変数UserErrorMes 2003.06.01 Moca
-		/** オプションフラグ
-		
-			CEditView::HandleCommand()にコマンドと一緒に渡すことで
-			コマンドの素性を教える．
-		*/
-		int				m_commandflags;	//!< 
+	static PpaExecInfo*	m_CurInstance;	//!< 現在実行中のインスタンス
+
+public:
+	/*!
+	 * PpaExecInfo型のスマートポインタを実現するためのdeleterクラス
+	 */
+	struct exec_terminator
+	{
+		void operator()(PpaExecInfo*) const;
 	};
-	//	2007.07.26 genta : 現在実行中のインスタンス
-	static PpaExecInfo* m_CurInstance;
-	//PPAの多重起動禁止 2008.10.22 syat
-	static bool				m_bIsRunning;	//!< PPAが同時実行されるのを防ぐ
+
+	//! PpaExecInfo型のスマートポインタ
+	using ExecInfoHolder = std::unique_ptr<std::remove_pointer<PpaExecInfo*>::type, exec_terminator>;
+
+	static ExecInfoHolder RegisterExecInfo(PpaExecInfo& execInfo);
 
 /*	関数名はCMacroが持つ。
 	static struct MacroFuncInfo	S_Table[];
