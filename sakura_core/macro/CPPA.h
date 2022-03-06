@@ -305,7 +305,7 @@ public:
 	};
 
 	//! PpaExecInfo型のスマートポインタ
-	using ExecInfoHolder = std::unique_ptr<std::remove_pointer<PpaExecInfo*>::type, exec_terminator>;
+	using ExecInfoHolder = std::unique_ptr<std::remove_pointer_t<PpaExecInfo*>, exec_terminator>;
 
 	static ExecInfoHolder RegisterExecInfo(PpaExecInfo& execInfo);
 

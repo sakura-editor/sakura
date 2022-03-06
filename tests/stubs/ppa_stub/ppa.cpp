@@ -24,131 +24,102 @@
  */
 #include "ppa_stub.h"
 
-void APIENTRY SetDefine(LPCSTR ss)
-{
+void APIENTRY SetDefine(LPCSTR ss) {
 }
 
-void APIENTRY SetDefProc(LPCSTR ss)
-{
+void APIENTRY SetDefProc(LPCSTR ss) {
 }
 
-void APIENTRY SetDeclare(LPCSTR ss)
-{
+void APIENTRY SetDeclare(LPCSTR ss) {
 }
 
-void APIENTRY SetSource(LPCSTR ss)
-{
+void APIENTRY SetSource(LPCSTR ss) {
 }
 
-void APIENTRY Execute()
-{
+void APIENTRY Execute() {
 }
 
-void APIENTRY AddIntVar(LPCSTR lpszDef, int nVal, int nCnst)
-{
+void APIENTRY AddIntVar(LPCSTR lpszDef, int nVal, int nCnst) {
 }
 
-void APIENTRY AddStrVar(LPCSTR lpszDef, LPCSTR lpszVal, int nCnst)
-{
+void APIENTRY AddStrVar(LPCSTR lpszDef, LPCSTR lpszVal, int nCnst) {
 }
 
-void APIENTRY ppaAbort()
-{
+void APIENTRY ppaAbort() {
 }
 
-int APIENTRY GetPpaVersion()
-{
+int APIENTRY GetPpaVersion() {
 	return 124;
 }
 
-void APIENTRY DeleteVar(LPCSTR ss)
-{
+void APIENTRY DeleteVar(LPCSTR ss) {
 }
 
-int APIENTRY GetArgInt(int index)
-{
+int APIENTRY GetArgInt(int index) {
 	return 0;
 }
 
-LPSTR APIENTRY GetArgStr(int index)
-{
+LPSTR APIENTRY GetArgStr(int index) {
 	return nullptr;
 }
 
-LPSTR APIENTRY GetArgBStr(int index)
-{
+LPSTR APIENTRY GetArgBStr(int index) {
 	return nullptr;
 }
 
-void APIENTRY SetIntObj(void* proc)
-{
+void APIENTRY SetIntObj(void* proc) {
 }
 
-void APIENTRY AddIntObj(LPCSTR ss, int def, BOOL read, int index)
-{
+void APIENTRY AddIntObj(LPCSTR ss, int def, BOOL read, int index) {
 }
 
-void APIENTRY AddStrObj(LPCSTR ss, LPCSTR def, BOOL read, int index)
-{
+void APIENTRY AddStrObj(LPCSTR ss, LPCSTR def, BOOL read, int index) {
 }
 
-int APIENTRY GetIntVar(LPCSTR ss)
-{
+int APIENTRY GetIntVar(LPCSTR ss) {
 	return 0;
 }
 
-LPSTR APIENTRY GetStrVar(LPCSTR ss)
-{
+LPSTR APIENTRY GetStrVar(LPCSTR ss) {
 	return nullptr;
 }
 
-LPSTR APIENTRY GetBStrVar(LPCSTR ss)
-{
+LPSTR APIENTRY GetBStrVar(LPCSTR ss) {
 	return nullptr;
 }
 
-BOOL APIENTRY SetIntVar(LPCSTR ss, int val)
-{
+BOOL APIENTRY SetIntVar(LPCSTR ss, int val) {
 	return FALSE;
 }
 
-BOOL APIENTRY SetStrVar(LPCSTR ss, LPCSTR val)
-{
+BOOL APIENTRY SetStrVar(LPCSTR ss, LPCSTR val) {
 	return FALSE;
 }
 
-void APIENTRY AddRealVar(LPCSTR ss, double val, BOOL cnst)
-{
+void APIENTRY AddRealVar(LPCSTR ss, double val, BOOL cnst) {
 }
 
-void APIENTRY SetRealObj(void* proc)
-{
+void APIENTRY SetRealObj(void* proc) {
 }
 
-void APIENTRY AddRealObj(LPCSTR ss, double val, BOOL read, LONG index)
-{
+void APIENTRY AddRealObj(LPCSTR ss, double val, BOOL read, LONG index) {
 }
 
-double APIENTRY GetRealVar(LPCSTR ss)
-{
+double APIENTRY GetRealVar(LPCSTR ss) {
 	return 0;
 }
 
-BOOL APIENTRY SetRealVar(LPCSTR ss, double val)
-{
+BOOL APIENTRY SetRealVar(LPCSTR ss, double val) {
 	return FALSE;
 }
 
-void APIENTRY SetRealFunc(void* proc)
-{
+void APIENTRY SetRealFunc(void* proc) {
 }
 
-DWORD APIENTRY GetArgReal(int index)
-{
+DWORD APIENTRY GetArgReal(int index) {
 	return NULL;
 }
 
-BYTE APIENTRY IsRunning()
-{
+BYTE APIENTRY IsRunning() {
 	return FALSE;
 }

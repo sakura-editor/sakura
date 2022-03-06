@@ -32,24 +32,21 @@
 std::unique_ptr<CPpaStub> CPpaStub::gm_Instance = nullptr;
 
 //! PPAスタブのインスタンスを生成する
-void CPpaStub::createInstance()
-{
+void CPpaStub::createInstance() {
 	assert(!gm_Instance);
 
 	gm_Instance = std::make_unique<CPpaStub>();
 }
 
 //! PPAスタブのインスタンスを取得する
-CPpaStub* CPpaStub::getInstance() noexcept
-{
+CPpaStub* CPpaStub::getInstance() noexcept {
 	assert(gm_Instance);
 
 	return gm_Instance.get();
 }
 
 //! PPAスタブのインスタンスを解放する
-void CPpaStub::releaseInstance() noexcept
-{
+void CPpaStub::releaseInstance() noexcept {
 	gm_Instance.reset();
 }
 
@@ -78,6 +75,7 @@ BOOL APIENTRY DllMain(
 		break;
 
 	case DLL_PROCESS_DETACH:
+	default:
 		CPpaStub::releaseInstance();
 		break;
 	}
