@@ -117,7 +117,7 @@ void APIENTRY SetRealFunc(void* proc) {
 }
 
 DWORD APIENTRY GetArgReal(int index) {
-	return NULL;
+	return 0;
 }
 
 BYTE APIENTRY IsRunning() {

@@ -137,8 +137,6 @@ SAKURA_SRCS = $(wildcard $(SRCDIR)/../../sakura_core/*.cpp) \
 SAKURA_OBJS = $(SAKURA_SRCS:$(SRCDIR)/../../sakura_core/%.cpp=$(SAKURA_CORE)/%.o) \
               $(SAKURA_CORE)/sakura_rc.o
 
-ppa_stub= $(or $(OUTDIR),.)/ppa_stub.dll
-
 all: $(exe)
 
 $(exe): $(OBJS) $(SAKURA_OBJS)
@@ -155,14 +153,9 @@ tests1_rc.o: tests1_rc.rc.utf8 $(sakura_rc) resources.ja-JP.zip resources.en-US.
 tests1_rc.rc.utf8: tests1_rc.rc
 	$(ICONV) -f utf-16 -t utf-8 $(SRCDIR)/$(subst .utf8,,$(@F)) | $(SED) -e 1i'#pragma code_page(65001)' > $@
 
-$(ppa_stub): $(SRCDIR)/../stubs/ppa_stub/CMakeLists.txt
-	-$(MKDIR) $(subst /,$(DIRSEP),../ppa_stub/) > $(DEVNULL) 2>&1
-	cmd /c $(subst /,\,$(SRCDIR))\..\stubs\stub.build.cmd $(subst /,\,$<) ..\ppa_stub\ $(subst /,\,$@)
-
 clean:
 	-$(RM) $(subst /,$(DIRSEP),$(exe) $(OBJS))
 	-$(RM) $(subst /,$(DIRSEP),$(DEPS))
-	-$(RM) $(subst /,$(DIRSEP),$(ppa_stub))
 
 .SUFFIXES: .cpp .o
 .PHONY: all clean

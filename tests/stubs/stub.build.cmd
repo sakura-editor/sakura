@@ -32,11 +32,9 @@ goto :EOF
 
 :: run cmake configuration.
 :run_cmake_configure
-if "%PLATFORM%" == "MinGW" (
-  call :find_gcc_compilers
-) else (
-  call :find_cl_compilers
-)
+if "%PLATFORM%" == "x64"   call :find_msvc
+if "%PLATFORM%" == "Win32" call :find_msvc
+if "%PLATFORM%" == "MinGW" call :find_gcc
 
 "%CMD_CMAKE%" -G Ninja^
   "-DCMAKE_MAKE_PROGRAM=%CMD_NINJA%"^
@@ -48,7 +46,7 @@ if "%PLATFORM%" == "MinGW" (
   "%SOURCE_DIR%"
 goto :EOF
 
-:find_cl_compilers
+:find_msvc
 if not defined CMD_CL call :find_cl
 set C_COMPILER=%CMD_CL:\=/%
 set CXX_COMPILER=%CMD_CL:\=/%
@@ -61,7 +59,7 @@ for /f "usebackq delims=" %%a in (`where cl.exe`) do (
 )
 goto :EOF
 
-:find_gcc_compilers
+:find_gcc
 if not defined CMD_CC call :find_cc
 if not defined CMD_CXX call :find_cxx
 set C_COMPILER=%CMD_CC:\=/%

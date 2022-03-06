@@ -76,6 +76,11 @@ if errorlevel 1 (
 	exit /b 1
 )
 
+@rem build "ppa_stub".
+set PPA_BUILD_DIR=%~dp0build\%platform%\%configuration%\ppa_stub\
+mkdir "%PPA_BUILD_DIR%" > NUL 2>&1
+"%~dp0tests\stubs\stub.build.cmd" "%~dp0tests\stubs\ppa_stub\CMakeLists.txt" "%PPA_BUILD_DIR%" "%OUTDIR%"
+
 @rem build "tests1".
 set TESTS1_MAKEFILE=%~dp0tests\unittests\Makefile
 set TESTS1_BUILD_DIR=%~dp0build\%platform%\%configuration%\tests1
