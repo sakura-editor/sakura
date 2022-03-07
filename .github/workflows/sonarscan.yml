@@ -147,6 +147,7 @@ jobs:
         -D"sonar.cfamily.cache.path=.sonar\analysis-cache" `
         -D"sonar.cfamily.cppunit.reportPath=tests1-googletest.xml" `
         -D"sonar.cfamily.threads=2" `
-        -D"sonar.coverage.exclusions=help\**\*.js,tests\unittests\coverage.cpp,tools\**\*.js" `
+        -D"sonar.python.version=3" `
+        -D"sonar.coverage.exclusions=help\**\*.js,tests\unittests\coverage.cpp,tests\stubs\**\*.cpp,tools\**\*.js" `
         -D"sonar.coverageReportPaths=tests1-coverage.xml" `
-        -D"sonar.exclusions=.sonar\**\*,build\**\*,bw-output\**\*,HeaderMake\**\*,tests\build\**\*,tests\googletest\**\*,**\test-*,tests*-*.xml"
+        -D"sonar.exclusions=.sonar\**\*,build\**\*,bw-output\**\*,HeaderMake\**\*,tests\googletest\**\,**\test-*,tests\stubs\**\*,tests*-*.xml*"
