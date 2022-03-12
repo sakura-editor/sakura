@@ -26,13 +26,11 @@
 
 #include "TExtModule.hpp"
 
-#include <HtmlHelp.h>	// CHtmlHelp.hで必要
-
 #include "extmodule/CBregexpDll2.h"
 #include "extmodule/CHtmlHelp.h"
-//#include "extmodule/CIcu4cI18n.h"		//継承不可なのでテストできない
+#include "extmodule/CIcu4cI18n.h"
 //#include "extmodule/CMigemo.h"		//TSingletonなのでテストできない
-//#include "extmodule/CUchardet.h"		//継承不可なのでテストできない
+#include "extmodule/CUchardet.h"
 //#include "extmodule/CUxTheme.h"		//TSingletonなのでテストできない
 #include "macro/CPPA.h"
 //#include "plugin/CDllPlugin.h"		//継承不可なのでテストできない
@@ -94,6 +92,8 @@ REGISTER_TYPED_TEST_SUITE_P(
 using ExtModuleImplementations = ::testing::Types<
 	CBregexpDll2,
 	CHtmlHelp,
+	CIcu4cI18n,
+	CUchardet,
 	CPPA>;
 
 //! パラメータテストをインスタンス化する

@@ -31,7 +31,7 @@ typedef struct uchardet * uchardet_t;
 /*!
  * uchardet ライブラリ(uchardet.dll) をラップするクラス
  */
-class CUchardet final : public CDllImp
+class CUchardet : public CDllImp
 {
 public:
 	// DLL関数ポインタ
