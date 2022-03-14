@@ -109,7 +109,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	//コンストラクタ・デストラクタ
-	CDllImp()noexcept;
+	CDllImp();
 	CDllImp(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
 	CDllImp(Me&&) noexcept = delete;
@@ -210,7 +210,7 @@ protected:
 	//                        メンバ変数                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 private:
-	HINSTANCE		m_hInstance = nullptr;
+	HINSTANCE		m_hInstance;
 	std::wstring	m_strLoadedDllName;
 };
 #endif /* SAKURA_CDLLHANDLER_B27A5A93_E49F_4618_8958_6883D63BBABB_H_ */

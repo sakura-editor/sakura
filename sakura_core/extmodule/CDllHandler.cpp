@@ -37,7 +37,8 @@
 //                        生成と破棄                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CDllImp::CDllImp() noexcept
+CDllImp::CDllImp()
+	: m_hInstance( NULL )
 {
 }
 
