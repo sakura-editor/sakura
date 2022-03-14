@@ -29,7 +29,7 @@
 #include "extmodule/CBregexpDll2.h"
 #include "extmodule/CHtmlHelp.h"
 #include "extmodule/CIcu4cI18n.h"
-//#include "extmodule/CMigemo.h"		//TSingletonなのでテストできない
+#include "extmodule/CMigemo.h"		//TSingletonなのでテストできない
 #include "extmodule/CUchardet.h"
 //#include "extmodule/CUxTheme.h"		//TSingletonなのでテストできない
 #include "macro/CPPA.h"
@@ -93,6 +93,7 @@ using ExtModuleImplementations = ::testing::Types<
 	CBregexpDll2,
 	CHtmlHelp,
 	CIcu4cI18n,
+	CMigemo,
 	CUchardet,
 	CPPA>;
 
