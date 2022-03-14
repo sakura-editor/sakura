@@ -57,7 +57,7 @@ typedef struct _migemo migemo;
 
 class CMigemo : public CDllImp, public TSingleInstance<CMigemo> {
 public:
-	CMigemo() noexcept = default;
+	CMigemo() = default;
 	virtual ~CMigemo();
 
 	//	Entry Point
