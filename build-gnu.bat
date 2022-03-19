@@ -34,7 +34,7 @@ if not defined CMD_NINJA call %~dp0tools\find-tools.bat
 
 @rem create output directory, all executables will be placed here.
 set OUTDIR=%~dp0%platform%\%configuration%
-mkdir "%~dp0%platform%\%configuration%" > NUL 2>&1
+mkdir %OUTDIR% > NUL 2>&1
 
 @rem build "sakura_core".
 set SAKURA_CORE_MAKEFILE=%~dp0sakura_core\Makefile
