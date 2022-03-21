@@ -220,7 +220,7 @@ BOOL CEditView::Create(
 	m_szComposition[0] = L'\0';
 
 	/* ルーラー表示 */
-	GetTextArea().SetAreaTop(GetTextArea().GetAreaTop()+GetDllShareData().m_Common.m_sWindow.m_nRulerHeight);	/* ルーラー高さ */
+	GetTextArea().SetAreaTop(GetTextArea().GetAreaTop()+DpiScaleY(GetDllShareData().m_Common.m_sWindow.m_nRulerHeight));	/* ルーラー高さ */
 	GetRuler().SetRedrawFlag();	// ルーラー全体を描き直す時=true   2002.02.25 Add By KK
 	m_hdcCompatDC = NULL;		/* 再描画用コンパチブルＤＣ */
 	m_hbmpCompatBMP = NULL;		/* 再描画用メモリＢＭＰ */
@@ -274,13 +274,13 @@ BOOL CEditView::Create(
 	m_cRegexKeyword = new CRegexKeyword( GetDllShareData().m_Common.m_sSearch.m_szRegexpLib );	//@@@ 2001.11.17 add MIK
 	m_cRegexKeyword->RegexKeySetTypes(m_pTypeData);	//@@@ 2001.11.17 add MIK
 
-	GetTextArea().SetTopYohaku( GetDllShareData().m_Common.m_sWindow.m_nRulerBottomSpace ); 	/* ルーラーとテキストの隙間 */
+	GetTextArea().SetTopYohaku(DpiScaleY(GetDllShareData().m_Common.m_sWindow.m_nRulerBottomSpace)); 	/* ルーラーとテキストの隙間 */
 	GetTextArea().SetAreaTop( GetTextArea().GetTopYohaku() );								/* 表示域の上端座標 */
 	/* ルーラー表示 */
 	if( m_pTypeData->m_ColorInfoArr[COLORIDX_RULER].m_bDisp && !m_bMiniMap ){
-		GetTextArea().SetAreaTop( GetTextArea().GetAreaTop() + GetDllShareData().m_Common.m_sWindow.m_nRulerHeight);	/* ルーラー高さ */
+		GetTextArea().SetAreaTop(GetTextArea().GetAreaTop() + DpiScaleY(GetDllShareData().m_Common.m_sWindow.m_nRulerHeight));	/* ルーラー高さ */
 	}
-	GetTextArea().SetLeftYohaku( GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace );
+	GetTextArea().SetLeftYohaku(DpiScaleX(GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace));
 
 	/* ウィンドウクラスの登録 */
 	//	Apr. 27, 2000 genta
@@ -1121,7 +1121,7 @@ void CEditView::SetFont( void )
 	if( m_bMiniMap ){
 		GetTextMetrics().Update(hdc, GetFontset().GetFontHan(), 0, 0);
 	}else{
-		GetTextMetrics().Update(hdc, GetFontset().GetFontHan(), m_pTypeData->m_nLineSpace, m_pTypeData->m_nColumnSpace);
+		GetTextMetrics().Update(hdc, GetFontset().GetFontHan(), DpiScaleY(m_pTypeData->m_nLineSpace), DpiScaleX(m_pTypeData->m_nColumnSpace));
 	}
 
 	::ReleaseDC( GetHwnd(), hdc );
@@ -1690,7 +1690,7 @@ void CEditView::OnChangeSetting()
 	}
 	RECT		rc;
 
-	GetTextArea().SetTopYohaku( GetDllShareData().m_Common.m_sWindow.m_nRulerBottomSpace ); 		/* ルーラーとテキストの隙間 */
+	GetTextArea().SetTopYohaku(DpiScaleY(GetDllShareData().m_Common.m_sWindow.m_nRulerBottomSpace)); 		/* ルーラーとテキストの隙間 */
 	GetTextArea().SetAreaTop( GetTextArea().GetTopYohaku() );									/* 表示域の上端座標 */
 
 	// 文書種別更新
@@ -1698,9 +1698,9 @@ void CEditView::OnChangeSetting()
 
 	/* ルーラー表示 */
 	if( m_pTypeData->m_ColorInfoArr[COLORIDX_RULER].m_bDisp && !m_bMiniMap ){
-		GetTextArea().SetAreaTop(GetTextArea().GetAreaTop() + GetDllShareData().m_Common.m_sWindow.m_nRulerHeight);	/* ルーラー高さ */
+		GetTextArea().SetAreaTop(GetTextArea().GetAreaTop() + DpiScaleY(GetDllShareData().m_Common.m_sWindow.m_nRulerHeight));	/* ルーラー高さ */
 	}
-	GetTextArea().SetLeftYohaku( GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace );
+	GetTextArea().SetLeftYohaku(DpiScaleX(GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace));
 
 	/* フォントの変更 */
 	SetFont();

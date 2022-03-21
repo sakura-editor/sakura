@@ -3303,7 +3303,7 @@ LRESULT CEditWnd::OnSize2( WPARAM wParam, LPARAM lParam, bool bUpdateStatus )
 	// ミニマップ
 	int nMiniMapWidth = 0;
 	if( m_cMiniMapView.GetHwnd() ){
-		nMiniMapWidth = GetDllShareData().m_Common.m_sWindow.m_nMiniMapWidth;
+		nMiniMapWidth = ::DpiScaleX(GetDllShareData().m_Common.m_sWindow.m_nMiniMapWidth);
 		::MoveWindow( m_cMiniMapView.GetHwnd(),
 			(eDockSideFL == DOCKSIDE_RIGHT)? cx - nFuncListWidth - nMiniMapWidth: cx - nMiniMapWidth,
 			(eDockSideFL == DOCKSIDE_TOP)? nTop + nFuncListHeight: nTop,
