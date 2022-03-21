@@ -55,11 +55,9 @@ typedef struct _migemo migemo;
 #include "CDllHandler.h"
 #include "util/design_template.h"
 
-class CMigemo : public TSingleton<CMigemo>, public CDllImp {
-	friend class TSingleton<CMigemo>;
-	CMigemo(){}
-
+class CMigemo : public CDllImp, public TSingleInstance<CMigemo> {
 public:
+	CMigemo() = default;
 	virtual ~CMigemo();
 
 	//	Entry Point

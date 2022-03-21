@@ -35,6 +35,8 @@
 #define SAKURA_CHTMLHELP_7003298B_3900_42FD_9A02_1BCD4E9A8546_H_
 #pragma once
 
+#include <HtmlHelp.h>
+
 #include "CDllHandler.h"
 
 /*!

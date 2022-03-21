@@ -50,5 +50,6 @@ protected:
 
 private:
 	CEditApp*	m_pcEditApp;	//2007.10.23 kobake
+	CMigemo		m_cMigemo;
 };
 #endif /* SAKURA_CNORMALPROCESS_F2808B31_61DC_4BE0_8661_9626478AC7F9_H_ */
