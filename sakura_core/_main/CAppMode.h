@@ -30,8 +30,9 @@
 #include "util/design_template.h"
 #include "doc/CDocListener.h"
 
-class CAppMode : public TSingleton<CAppMode>, public CDocListenerEx{ //###仮
-	friend class TSingleton<CAppMode>;
+class CAppMode : public CDocListenerEx, public TSingleInstance<CAppMode> {
+
+public:
 	CAppMode()
 	: m_bViewMode( false )	// ビューモード
 	, m_bDebugMode( false )		// デバッグモニタモード
@@ -39,7 +40,6 @@ class CAppMode : public TSingleton<CAppMode>, public CDocListenerEx{ //###仮
 		m_szGrepKey[0] = L'\0';
 	}
 
-public:
 	//インターフェース
 	bool	IsViewMode() const				{ return m_bViewMode; }			//!< ビューモードを取得
 	void	SetViewMode(bool bViewMode)		{ m_bViewMode = bViewMode; }	//!< ビューモードを設定

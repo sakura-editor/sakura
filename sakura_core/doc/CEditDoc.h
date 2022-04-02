@@ -57,6 +57,7 @@
 #include "CBackupAgent.h"
 #include "CAutoSaveAgent.h"
 #include "CAutoReloadAgent.h"
+#include "CCodeChecker.h"
 #include "func/CFuncLookup.h"
 #include "CEol.h"
 #include "macro/CCookieManager.h"
@@ -81,8 +82,10 @@ class CEditDoc
 , public TInstanceHolder<CEditDoc>
 {
 private:
-	CModifyManager		m_cModifyManager;
+	CAppMode			m_cAppMode;
+	CCodeChecker		m_cCodeChecker;
 	CDiffManager		m_cDiffManager;
+	CModifyManager		m_cModifyManager;
 
 public:
 	//コンストラクタ・デストラクタ
