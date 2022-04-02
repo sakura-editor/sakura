@@ -26,8 +26,17 @@
 #include "doc/logic/CDocLineMgr.h"
 
 #include <array>
+#include <cstdlib>
+#include <filesystem>
 
-TEST(CDocLineMgr, ListManipulations)
+#include "CEditorProcessForTest.hpp"
+
+/*!
+ * CDocLineMgrのためのフィクスチャクラス
+ */
+using CDocLineMgrTest = TEditorProcessTest<CDocLineMgr>;
+
+TEST_F(CDocLineMgrTest, ListManipulations)
 {
 	CDocLineMgr m;
 
@@ -139,7 +148,7 @@ TEST(CDocLineMgr, ListManipulations)
 	EXPECT_EQ(m.GetDocLineBottom(), nullptr);
 }
 
-TEST(CDocLineMgr, RandomAccess)
+TEST_F(CDocLineMgrTest, RandomAccess)
 {
 	std::array<CDocLine*, 100> lines;
 	CDocLineMgr m;
