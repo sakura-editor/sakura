@@ -18,12 +18,17 @@
 #pragma once
 
 #include <filesystem>
+#include <memory>
 #include <string>
 #include <string_view>
 
 #include "global.h"
 #include "util/design_template.h"
+#include "env/CAppNodeManager.h"
+#include "env/CFileNameManager.h"
 #include "env/CShareData.h"
+#include "plugin/CJackManager.h"
+#include "plugin/CPluginManager.h"
 
 #ifdef MINIDUMP_TYPE
 #define USE_CRASHDUMP
@@ -36,6 +41,17 @@
 	@brief プロセス基底クラス
 */
 class CProcess : public TSingleInstance<CProcess> {
+private:
+	using CAppNodeManagerPtr = std::unique_ptr<CAppNodeManager>;
+	using CFileNameManagerPtr = std::unique_ptr<CFileNameManager>;
+	using CJackManagerPtr = std::unique_ptr<CJackManager>;
+	using CPluginManagerPtr = std::unique_ptr<CPluginManager>;
+
+	CAppNodeManagerPtr		m_pcAppNodeManager = nullptr;
+	CFileNameManagerPtr		m_pcFileNameManager = nullptr;
+	CJackManagerPtr			m_pcJackManager = nullptr;
+	CPluginManagerPtr		m_pcPluginManager = nullptr;
+
 public:
 	CProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine );
 	bool Run();

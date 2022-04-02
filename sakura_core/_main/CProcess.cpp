@@ -72,6 +72,26 @@ bool CProcess::InitializeProcess()
 		return false;
 	}
 
+	if (m_pcAppNodeManager = std::make_unique<CAppNodeManager>();
+		m_pcAppNodeManager == nullptr) {
+		return false;
+	}
+
+	if (m_pcFileNameManager = std::make_unique<CFileNameManager>();
+		m_pcFileNameManager == nullptr) {
+		return false;
+	}
+
+	if (m_pcJackManager = std::make_unique<CJackManager>();
+		m_pcJackManager == nullptr) {
+		return false;
+	}
+
+	if (m_pcPluginManager = std::make_unique<CPluginManager>();
+		m_pcPluginManager == nullptr) {
+		return false;
+	}
+
 	/* リソースから製品バージョンの取得 */
 	//	2004.05.13 Moca 共有データのバージョン情報はコントロールプロセスだけが
 	//	ShareDataで設定するように変更したのでここからは削除

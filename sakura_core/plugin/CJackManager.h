@@ -74,14 +74,14 @@ enum ERegisterPlugResult {
 };
 
 //ジャック管理クラス
-class CJackManager final : public TSingleton<CJackManager>{
-	friend class TSingleton<CJackManager>;
+class CJackManager final : public TSingleInstance<CJackManager> {
+private:
+	using wstring = std::wstring;
+
+public:
 	CJackManager();
 
-	typedef std::wstring wstring;
-
 	//操作
-public:
 	ERegisterPlugResult RegisterPlug( wstring pszJack, CPlug* plug );	//プラグをジャックに関連付ける
 	bool UnRegisterPlug( wstring pszJack, CPlug* plug );	//プラグの関連付けを解除する
 	bool GetUsablePlug( EJack jack, PlugId plugId, CPlug::Array* plugs );	//利用可能なプラグを検索する

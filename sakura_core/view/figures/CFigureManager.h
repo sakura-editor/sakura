@@ -31,12 +31,11 @@
 #include "util/design_template.h"
 #include "CFigureStrategy.h"
 
-class CFigureManager : public TSingleton<CFigureManager>{
-	friend class TSingleton<CFigureManager>;
+class CFigureManager : public TSingleInstance<CFigureManager> {
+public:
 	CFigureManager();
 	virtual ~CFigureManager();
 
-public:
 	//! 描画するCFigureを取得
 	//	@param	pText	対象文字列の先頭
 	//	@param	nTextLen	pTextから行末までの長さ(ただしCRLF==2)

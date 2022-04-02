@@ -48,10 +48,7 @@ enum EDiffMark : char {
 };
 
 //! DIFF挙動の管理
-class CDiffManager : public TSingleton<CDiffManager>{
-	friend class TSingleton<CDiffManager>;
-	CDiffManager(){}
-
+class CDiffManager : public TSingleInstance<CDiffManager> {
 public:
 	void SetDiffUse(bool b){ m_bIsDiffUse = b; }
 	bool IsDiffUse() const{ return m_bIsDiffUse; }		//!< DIFF使用中

@@ -52,6 +52,8 @@
 #include "CDocLocker.h"
 #include "layout/CLayoutMgr.h"
 #include "logic/CDocLineMgr.h"
+#include "docplus/CDiffManager.h"
+#include "docplus/CModifyManager.h"
 #include "CBackupAgent.h"
 #include "CAutoSaveAgent.h"
 #include "CAutoReloadAgent.h"
@@ -78,6 +80,10 @@ class CEditDoc
 : public CDocSubject
 , public TInstanceHolder<CEditDoc>
 {
+private:
+	CModifyManager		m_cModifyManager;
+	CDiffManager		m_cDiffManager;
+
 public:
 	//コンストラクタ・デストラクタ
 	CEditDoc(CEditApp* pcApp);

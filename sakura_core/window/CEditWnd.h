@@ -63,6 +63,7 @@
 #include "util/design_template.h"
 #include "doc/CDocListener.h"
 #include "uiparts/CMenuDrawer.h"
+#include "view/figures/CFigureManager.h"
 #include "view/CViewFont.h"
 #include "view/CMiniMapView.h"
 
@@ -99,6 +100,9 @@ class CEditWnd
 : public TSingleton<CEditWnd>
 , public CDocListenerEx
 {
+private:
+	CFigureManager		m_cFigureManager;
+
 	friend class TSingleton<CEditWnd>;
 	CEditWnd();
 	~CEditWnd();

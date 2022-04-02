@@ -30,12 +30,13 @@
 #define SAKURA_CPLUGINMANAGER_CE705DAD_1876_4B21_9052_07A9BFD292DE_H_
 #pragma once
 
+#include "util/design_template.h"
 #include "plugin/CPlugin.h"
 #include <list>
 #include <string>
 
-class CPluginManager final : public TSingleton<CPluginManager>{
-	friend class TSingleton<CPluginManager>;
+class CPluginManager final : public TSingleInstance<CPluginManager> {
+public:
 	CPluginManager();
 
 	// 型定義

@@ -27,17 +27,14 @@
 #define SAKURA_CMODIFYMANAGER_12000875_531F_42DC_A6B0_231385193CB8_H_
 #pragma once
 
-#include "util/design_template.h" //TSingleton
-#include "doc/CDocListener.h" // CDocListenerEx
+#include "util/design_template.h"
+#include "doc/CDocListener.h"
 
 class CDocLine;
 class CDocLineMgr;
 
 //! Modified管理
-class CModifyManager : public TSingleton<CModifyManager>, public CDocListenerEx{
-	friend class TSingleton<CModifyManager>;
-	CModifyManager(){}
-
+class CModifyManager : public CDocListenerEx, public TSingleInstance<CModifyManager> {
 public:
 	void OnAfterSave(const SSaveInfo& sSaveInfo) override;
 };

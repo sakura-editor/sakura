@@ -40,15 +40,14 @@ struct EditInfo;
 DLLSHAREDATA& GetDllShareData();
 
 //!ファイル名管理
-class CFileNameManager : public TSingleton<CFileNameManager>{
-	friend class TSingleton<CFileNameManager>;
+class CFileNameManager : public TSingleInstance<CFileNameManager> {
+public:
 	CFileNameManager()
 	{
 		m_pShareData = &GetDllShareData();
 		m_nTransformFileNameCount = -1;
 	}
 
-public:
 	//ファイル名関連
 	LPWSTR GetTransformFileNameFast( LPCWSTR, LPWSTR, int nDestLen, HDC hDC, bool bFitMode = true, int cchMaxWidth = 0 );	// 2002.11.24 Moca Add
 	int TransformFileName_MakeCache( void );

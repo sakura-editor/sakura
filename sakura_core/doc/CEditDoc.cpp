@@ -193,12 +193,6 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 	//	自動保存の設定	//	Aug, 21, 2000 genta
 	m_cAutoSaveAgent.ReloadAutoSaveParam();
 
-	//$$ CModifyManager インスタンスを生成
-	CModifyManager::getInstance();
-
-	//$$ CCodeChecker インスタンスを生成
-	CCodeChecker::getInstance();
-
 	// 2008.06.07 nasukoji	テキストの折り返し方法を初期化
 	m_nTextWrapMethodCur = m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
 	m_bTextWrapMethodCurTemp = false;									// 一時設定適用中を解除
