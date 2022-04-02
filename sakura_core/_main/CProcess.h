@@ -22,13 +22,13 @@
 #include <string>
 #include <string_view>
 
-#include "global.h"
-#include "util/design_template.h"
+#include "_main/global.h"
 #include "env/CAppNodeManager.h"
 #include "env/CFileNameManager.h"
 #include "env/CShareData.h"
 #include "plugin/CJackManager.h"
 #include "plugin/CPluginManager.h"
+#include "util/design_template.h"
 
 #ifdef MINIDUMP_TYPE
 #define USE_CRASHDUMP
@@ -54,14 +54,14 @@ private:
 
 public:
 	CProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine );
+	virtual ~CProcess() = default;
+
 	bool Run();
-	virtual ~CProcess(){}
 	virtual void RefreshString();
 
 	virtual std::filesystem::path GetIniFileName() const;
 
 protected:
-	CProcess();
 	virtual bool InitializeProcess();
 	virtual bool MainLoop() = 0;
 	virtual void OnExitProcess() = 0;
