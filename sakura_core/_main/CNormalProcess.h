@@ -16,8 +16,11 @@
 #define SAKURA_CNORMALPROCESS_F2808B31_61DC_4BE0_8661_9626478AC7F9_H_
 #pragma once
 
+#include <memory>
+
 #include "global.h"
 #include "CProcess.h"
+#include "doc/CEditDoc.h"
 #include "extmodule/CMigemo.h"
 #include "CEditApp.h"
 #include "util/design_template.h"
@@ -32,6 +35,11 @@ class CEditWnd;
 	エディタプロセスはCEditWndクラスのインスタンスを作る。
 */
 class CNormalProcess final : public CProcess {
+private:
+	using CEditDocPtr = std::unique_ptr<CEditDoc>;
+
+	CEditDocPtr		m_pcEditDoc = nullptr;
+
 public:
 	//コンストラクタ・デストラクタ
 	CNormalProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine );

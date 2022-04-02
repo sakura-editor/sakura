@@ -48,7 +48,7 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 	m_cIcons.Create( m_hInst );	//	CreateImage List
 
 	//ドキュメントの作成
-	m_pcEditDoc = new CEditDoc(this);
+	m_pcEditDoc = CEditDoc::getInstance();
 
 	//IO管理
 	m_pcLoadAgent = new CLoadAgent();
@@ -92,7 +92,6 @@ CEditApp::~CEditApp()
 	delete m_pcVisualProgress;
 	delete m_pcSaveAgent;
 	delete m_pcLoadAgent;
-	delete m_pcEditDoc;
 }
 
 /*! 共通設定 プロパティシート */

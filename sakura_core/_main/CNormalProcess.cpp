@@ -89,6 +89,15 @@ bool CNormalProcess::InitializeProcess()
 	/* 言語を選択する */
 	CSelectLang::ChangeLang( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );
 
+	// ドキュメントのインスタンスを生成する
+	if (m_pcEditDoc = std::make_unique<CEditDoc>(nullptr);
+		m_pcEditDoc == nullptr)
+	{
+		::ReleaseMutex(hMutex);
+		::CloseHandle(hMutex);
+		return false;
+	}
+
 	/* コマンドラインオプション */
 	bool			bViewMode = false;
 	bool			bDebugMode;
