@@ -16,15 +16,11 @@
 #define SAKURA_CNORMALPROCESS_F2808B31_61DC_4BE0_8661_9626478AC7F9_H_
 #pragma once
 
-#include <memory>
-
-#include "global.h"
-#include "CProcess.h"
+#include "_main/CProcess.h"
 #include "doc/CEditDoc.h"
 #include "extmodule/CMigemo.h"
 #include "window/CEditWnd.h"
 #include "CEditApp.h"
-#include "util/design_template.h"
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -43,6 +39,7 @@ private:
 	CEditDocPtr		m_pcEditDoc = nullptr;
 	CEditAppPtr		m_pcEditApp = nullptr;
 	CEditWndPtr		m_pcEditWnd = nullptr;
+	CMigemo			m_cMigemo;
 
 public:
 	//コンストラクタ・デストラクタ
@@ -55,12 +52,8 @@ protected:
 	bool MainLoop() override;
 	void OnExitProcess() override;
 
-protected:
 	//実装補助
 	HANDLE _GetInitializeMutex() const; // 2002/2/8 aroka
 	void OpenFiles(HWND hwnd);
-
-private:
-	CMigemo		m_cMigemo;
 };
 #endif /* SAKURA_CNORMALPROCESS_F2808B31_61DC_4BE0_8661_9626478AC7F9_H_ */
