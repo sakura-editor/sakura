@@ -40,6 +40,21 @@
 #include "util/module.h"
 #include "util/shell.h"
 
+CEditApp::CEditApp()
+{
+	// ドキュメントの作成
+	m_pcEditDoc = CEditDoc::getInstance();
+	m_pcEditDoc->Create();
+
+	m_pcLoadAgent = new CLoadAgent();
+	m_pcSaveAgent = new CSaveAgent();
+	m_pcVisualProgress = new CVisualProgress();
+	m_pcGrepAgent = new CGrepAgent();
+	m_pcSMacroMgr = new CSMacroMgr();
+	m_pcMruListener = new CMruListener();
+	m_pcPropertyManager = new CPropertyManager();
+}
+
 void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 {
 	m_hInst = hInst;
@@ -47,35 +62,11 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 	//ヘルパ作成
 	m_cIcons.Create( m_hInst );	//	CreateImage List
 
-	//ドキュメントの作成
-	m_pcEditDoc = CEditDoc::getInstance();
-
-	//IO管理
-	m_pcLoadAgent = new CLoadAgent();
-	m_pcSaveAgent = new CSaveAgent();
-	m_pcVisualProgress = new CVisualProgress();
-
-	//GREPモード管理
-	m_pcGrepAgent = new CGrepAgent();
-
-	//編集モード
-	CAppMode::getInstance();	//ウィンドウよりも前にイベントを受け取るためにここでインスタンス作成
-
-	//マクロ
-	m_pcSMacroMgr = new CSMacroMgr();
-
-	//ドキュメントの作成
-	m_pcEditDoc->Create();
-
 	//ウィンドウの作成
 	m_pcEditWnd = CEditWnd::getInstance();
 	m_pcEditWnd->Create( m_pcEditDoc, &m_cIcons, nGroupId );
 
-	//MRU管理
-	m_pcMruListener = new CMruListener();
-
 	//プロパティ管理
-	m_pcPropertyManager = new CPropertyManager();
 	m_pcPropertyManager->Create(
 		m_pcEditWnd->GetHwnd(),
 		&GetIcons(),

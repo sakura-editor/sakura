@@ -37,8 +37,10 @@ class CEditWnd;
 class CNormalProcess final : public CProcess {
 private:
 	using CEditDocPtr = std::unique_ptr<CEditDoc>;
+	using CEditAppPtr = std::unique_ptr<CEditApp>;
 
 	CEditDocPtr		m_pcEditDoc = nullptr;
+	CEditAppPtr		m_pcEditApp = nullptr;
 
 public:
 	//コンストラクタ・デストラクタ
@@ -57,7 +59,6 @@ protected:
 	void OpenFiles(HWND hwnd);
 
 private:
-	CEditApp*	m_pcEditApp;	//2007.10.23 kobake
 	CMigemo		m_cMigemo;
 };
 #endif /* SAKURA_CNORMALPROCESS_F2808B31_61DC_4BE0_8661_9626478AC7F9_H_ */

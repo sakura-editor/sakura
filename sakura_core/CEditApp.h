@@ -46,12 +46,11 @@ class CGrepAgent;
 enum EFunctionCode;
 
 //!エディタ部分アプリケーションクラス。CNormalProcess1個につき、1個存在。
-class CEditApp : public TSingleton<CEditApp>{
-	friend class TSingleton<CEditApp>;
-	CEditApp(){}
-	virtual ~CEditApp();
-
+class CEditApp final : public TSingleInstance<CEditApp> {
 public:
+	CEditApp();
+	~CEditApp();
+
 	void Create(HINSTANCE hInst, int);
 
 	//モジュール情報

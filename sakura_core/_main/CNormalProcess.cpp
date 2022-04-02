@@ -46,7 +46,6 @@
 
 CNormalProcess::CNormalProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 : CProcess( hInstance, lpCmdLine )
-, m_pcEditApp( NULL )
 {
 }
 
@@ -92,6 +91,15 @@ bool CNormalProcess::InitializeProcess()
 	// ドキュメントのインスタンスを生成する
 	if (m_pcEditDoc = std::make_unique<CEditDoc>(nullptr);
 		m_pcEditDoc == nullptr)
+	{
+		::ReleaseMutex(hMutex);
+		::CloseHandle(hMutex);
+		return false;
+	}
+
+	// エディタアプリのインスタンスを生成
+	if (m_pcEditApp = std::make_unique<CEditApp>();
+		m_pcEditApp == nullptr)
 	{
 		::ReleaseMutex(hMutex);
 		::CloseHandle(hMutex);
@@ -163,7 +171,6 @@ bool CNormalProcess::InitializeProcess()
 		nGroupId = CAppNodeManager::getInstance()->GetFreeGroupId();
 	}
 	// CEditAppを作成
-	m_pcEditApp = CEditApp::getInstance();
 	m_pcEditApp->Create(GetProcessInstance(), nGroupId);
 	CEditWnd* pEditWnd = m_pcEditApp->GetEditWindow();
 	if( NULL == pEditWnd->GetHwnd() ){
