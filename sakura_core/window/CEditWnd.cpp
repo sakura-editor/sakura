@@ -45,6 +45,9 @@
 #include <ShlObj.h>
 
 #include "window/CEditWnd.h"
+
+#include <algorithm>
+
 #include "_main/CControlTray.h"
 #include "_main/CCommandLine.h"	/// 2003/1/26 aroka
 #include "_main/CAppMode.h"
@@ -233,6 +236,32 @@ CEditWnd::CEditWnd()
 , m_IconClicked(icNone) //by 鬼(2)
 , m_nSelectCountMode( SELECT_COUNT_TOGGLE )	//文字カウント方法の初期値はSELECT_COUNT_TOGGLE→共通設定に従う
 {
+	m_pShareData = &GetDllShareData();
+
+	m_pcEditDoc = GetListeningDoc();
+
+	m_pcEditDoc->m_cLayoutMgr.SetLayoutInfo( true, false, m_pcEditDoc->m_cDocType.GetDocumentAttribute(),
+		m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(), m_pcEditDoc->m_cLayoutMgr.m_tsvInfo.m_nTsvMode,
+		m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas(), CLayoutXInt(-1), &GetLogfont() );
+
+	// [0] - [3] まで作成・初期化していたものを[0]だけ作る。ほかは分割されるまで何もしない
+	std::fill(std::begin(m_pcEditViewArr), std::end(m_pcEditViewArr), nullptr);
+	m_pcEditViewArr[0] = new CEditView();
+	m_pcEditView = m_pcEditViewArr[0];
+
+	m_pcViewFont = new CViewFont(&GetLogfont());
+	m_pcViewFontMiniMap = new CViewFont(&GetLogfont(), true);
+
+	wmemset(m_pszMenubarMessage, L' ', MENUBAR_MESSAGE_MAX_LEN);	// null終端は不要
+	InitMenubarMessageFont();
+
+	m_pcDropTarget = new CDropTarget(this);
+
+	// ホイールスクロール有無状態をクリア
+	ClearMouseState();
+
+	// アクセラレータテーブルを作成する
+	CreateAccelTbl();
 }
 
 CEditWnd::~CEditWnd()
@@ -599,39 +628,6 @@ HWND CEditWnd::Create(
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CEditWnd::Create" );
-
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData();
-
-	m_pcEditDoc = pcEditDoc;
-
-	m_pcEditDoc->m_cLayoutMgr.SetLayoutInfo( true, false, m_pcEditDoc->m_cDocType.GetDocumentAttribute(),
-		m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(), m_pcEditDoc->m_cLayoutMgr.m_tsvInfo.m_nTsvMode,
-		m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas(), CLayoutXInt(-1), &GetLogfont() );
-
-	for( int i = 0; i < _countof(m_pcEditViewArr); i++ ){
-		m_pcEditViewArr[i] = NULL;
-	}
-	// [0] - [3] まで作成・初期化していたものを[0]だけ作る。ほかは分割されるまで何もしない
-	m_pcEditViewArr[0] = new CEditView();
-	m_pcEditView = m_pcEditViewArr[0];
-
-	m_pcViewFont = new CViewFont(&GetLogfont());
-
-	m_pcViewFontMiniMap = new CViewFont(&GetLogfont(), true);
-
-	wmemset( m_pszMenubarMessage, L' ', MENUBAR_MESSAGE_MAX_LEN );	// null終端は不要
-
-	//	Dec. 4, 2002 genta
-	InitMenubarMessageFont();
-
-	m_pcDropTarget = new CDropTarget( this );	// 右ボタンドロップ用	// 2008.06.20 ryoji
-
-	// 2009.01.17 nasukoji	ホイールスクロール有無状態をクリア
-	ClearMouseState();
-
-	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
-	CreateAccelTbl();
 
 	//ウィンドウ数制限
 	if( m_pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK

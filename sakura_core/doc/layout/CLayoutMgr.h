@@ -214,7 +214,7 @@ public:
 		LogicToLayout( ptLogicEx, pptLayout, nLineHint );
 		if( 0 < ptLogicEx.ext ){
 			// 文字幅換算をする
-			int ext = std::max(0, ::MulDiv((Int)ptLogicEx.ext, (Int)m_nCharLayoutXPerKeta, (Int)ptLogicEx.haba));
+			int ext = std::max<int>(0, ::MulDiv((Int)ptLogicEx.ext, (Int)m_nCharLayoutXPerKeta, (Int)ptLogicEx.haba));
 			pptLayout->x += ext;
 		}
 	}

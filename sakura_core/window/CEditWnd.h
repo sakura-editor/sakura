@@ -96,18 +96,14 @@ struct STabGroupInfo{
 // 2002.02.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 // 2007.10.30 kobake IsFuncEnable,IsFuncCheckedをFunccode.hに移動
 // 2007.10.30 kobake OnHelp_MenuItemをCEditAppに移動
-class CEditWnd
-: public TSingleton<CEditWnd>
-, public CDocListenerEx
-{
+class CEditWnd : public CDocListenerEx, public TSingleInstance<CEditWnd> {
 private:
 	CFigureManager		m_cFigureManager;
 
-	friend class TSingleton<CEditWnd>;
+public:
 	CEditWnd();
 	~CEditWnd();
 
-public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           作成                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

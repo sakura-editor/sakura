@@ -22,9 +22,9 @@
 #include "CProcess.h"
 #include "doc/CEditDoc.h"
 #include "extmodule/CMigemo.h"
+#include "window/CEditWnd.h"
 #include "CEditApp.h"
 #include "util/design_template.h"
-class CEditWnd;
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -38,9 +38,11 @@ class CNormalProcess final : public CProcess {
 private:
 	using CEditDocPtr = std::unique_ptr<CEditDoc>;
 	using CEditAppPtr = std::unique_ptr<CEditApp>;
+	using CEditWndPtr = std::unique_ptr<CEditWnd>;
 
 	CEditDocPtr		m_pcEditDoc = nullptr;
 	CEditAppPtr		m_pcEditApp = nullptr;
+	CEditWndPtr		m_pcEditWnd = nullptr;
 
 public:
 	//コンストラクタ・デストラクタ

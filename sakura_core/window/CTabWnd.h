@@ -39,6 +39,9 @@
 #define SAKURA_CTABWND_E95D57BD_51E6_467A_9F6D_2C68BF122449_H_
 #pragma once
 
+#include <Windows.h>
+#include <CommCtrl.h>
+
 #include "CWnd.h"
 #include "util/design_template.h"
 #include "env/CommonSetting.h"

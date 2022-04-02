@@ -106,6 +106,15 @@ bool CNormalProcess::InitializeProcess()
 		return false;
 	}
 
+	// 編集ウインドウのインスタンスを生成する
+	if (m_pcEditWnd = std::make_unique<CEditWnd>();
+		m_pcEditWnd == nullptr)
+	{
+		::ReleaseMutex(hMutex);
+		::CloseHandle(hMutex);
+		return false;
+	}
+
 	/* コマンドラインオプション */
 	bool			bViewMode = false;
 	bool			bDebugMode;
@@ -172,7 +181,7 @@ bool CNormalProcess::InitializeProcess()
 	}
 	// CEditAppを作成
 	m_pcEditApp->Create(GetProcessInstance(), nGroupId);
-	CEditWnd* pEditWnd = m_pcEditApp->GetEditWindow();
+	CEditWnd* pEditWnd = m_pcEditWnd.get();
 	if( NULL == pEditWnd->GetHwnd() ){
 		::ReleaseMutex( hMutex );
 		::CloseHandle( hMutex );

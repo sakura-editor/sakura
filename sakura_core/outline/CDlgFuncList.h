@@ -24,6 +24,8 @@
 #pragma once
 
 #include <Windows.h>
+#include <CommCtrl.h>
+
 #include "dlg/CDialog.h"
 #include "doc/CEditDoc.h"
 
