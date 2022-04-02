@@ -68,9 +68,7 @@ protected:
 
 protected:
 	void			SetMainWindow(HWND hwnd){ m_hWnd = hwnd; }
-#ifdef USE_CRASHDUMP
-	int				WriteDump( PEXCEPTION_POINTERS pExceptPtrs );
-#endif
+
 public:
 	HINSTANCE		GetProcessInstance() const{ return m_hInstance; }
 	CShareData&		GetShareData()   { return m_cShareData; }
@@ -83,17 +81,6 @@ public:
 private:
 	HINSTANCE	m_hInstance;
 	HWND		m_hWnd;
-#ifdef USE_CRASHDUMP
-	BOOL (WINAPI *m_pfnMiniDumpWriteDump)(
-		HANDLE hProcess,
-		DWORD ProcessId,
-		HANDLE hFile,
-		MINIDUMP_TYPE DumpType,
-		PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam,
-		PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam,
-		PMINIDUMP_CALLBACK_INFORMATION CallbackParam
-		);
-#endif
 	CShareData		m_cShareData;
 	std::wstring	m_strAppName;
 };

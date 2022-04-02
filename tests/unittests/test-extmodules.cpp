@@ -27,6 +27,7 @@
 #include "TExtModule.hpp"
 
 #include "extmodule/CBregexpDll2.h"
+#include "extmodule/CDbgHelp.h"
 #include "extmodule/CHtmlHelp.h"
 #include "extmodule/CIcu4cI18n.h"
 #include "extmodule/CMigemo.h"
@@ -91,6 +92,7 @@ REGISTER_TYPED_TEST_SUITE_P(
  */
 using ExtModuleImplementations = ::testing::Types<
 	CBregexpDll2,
+	CDbgHelp,
 	CHtmlHelp,
 	CIcu4cI18n,
 	CMigemo,
