@@ -31,3 +31,9 @@
 	testing::internal::CaptureStderr(); \
 	statementExpression; \
 	EXPECT_STREQ(strprintf(L"%s\n", expected).data(), u8stowcs(testing::internal::GetCapturedStderr()).data())
+
+// 標準エラー出力に何も出力されないことを評価します
+#define EXPECT_NOERROUT(statementExpression) \
+	testing::internal::CaptureStderr(); \
+	statementExpression; \
+	EXPECT_STREQ(L"", u8stowcs(testing::internal::GetCapturedStderr()).data())

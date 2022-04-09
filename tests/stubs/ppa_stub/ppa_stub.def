@@ -1,0 +1,44 @@
+﻿LIBRARY "PPA_STUB"
+
+EXPORTS
+	AddIntObj                   @18
+	AddIntVar
+	AddRealObj                   @8
+	AddRealVar                   @9
+	AddStrObj                   @17
+	AddStrVar
+	DeleteVar                   @29
+	Execute                     @35
+	GetArgBStr                  @22
+	GetArgInt                   @24
+	GetArgReal                  @3
+	GetArgStr                   @23
+	GetBStrVar                  @13
+	GetIntVar                   @16
+	GetRealVar                   @7
+	GetStrVar                   @14
+	GetVersion=GetPpaVersion    @21
+	IsRunning                    @2
+	SetDeclare                  @37
+	SetDefProc                  @33
+	SetDefine                   @32
+	SetErrProc                  @25
+	SetFinishProc                @1
+	SetIntFunc                  @28
+	SetIntObj                   @11
+	SetIntVar                   @15
+	SetProc                     @26
+	SetRealFunc                  @5
+	SetRealObj                   @4
+	SetRealVar                   @6
+	SetSource                   @36
+	SetStrFunc                  @27
+	SetStrObj                   @10
+	SetStrVar                   @12
+	ppaAbort                    @34
+	CallProc
+	CallIntFunc
+	CallStrFunc
+	CallStrObj
+	CallErrorProc
+	CallFinishProc

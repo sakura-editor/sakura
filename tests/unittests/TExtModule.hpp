@@ -54,6 +54,24 @@ public:
 		// 将来的には、適切な戻り値型に変更したい。
 		this->InitDll(nullptr);
 	}
+
+	/*!
+		指定したシグニチャを持つAPI関数を呼び出す
+	 */
+	template<typename ProcType, typename ... Args>
+	void CallDllProc(LPCSTR procName, Args... args) const {
+		if (const auto hModule = this->GetInstance()) {
+			if (const auto pfnProc = (ProcType)::GetProcAddress(hModule, procName)) {
+				pfnProc(args...);
+			}
+			else {
+				FAIL();
+			}
+		}
+		else {
+			FAIL();
+		}
+	}
 };
 
 /*!

@@ -76,6 +76,9 @@ if errorlevel 1 (
 	exit /b 1
 )
 
+@rem build "ppa_stub".
+call "%~dp0tools\cmake-build-and-install.cmd" "%~dp0tests\stubs\ppa_stub" "%~dp0build\%platform%\%configuration%\ppa_stub" "%OUTDIR%"
+
 @rem build "tests1".
 set TESTS1_MAKEFILE=%~dp0tests\unittests\Makefile
 set TESTS1_BUILD_DIR=%~dp0build\%platform%\%configuration%\tests1
