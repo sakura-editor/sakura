@@ -51,9 +51,21 @@
 #define omGet (0)
 #define omSet (1)
 
-//	2007.07.26 genta
-CPPA::PpaExecInfo* CPPA::m_CurInstance = NULL;
-bool			CPPA::m_bIsRunning = false;
+PpaExecInfo* CPPA::m_CurInstance = nullptr;
+
+CPPA::ExecInfoHolder CPPA::RegisterExecInfo(PpaExecInfo& execInfo)
+{
+	m_CurInstance = &execInfo;
+
+	return ExecInfoHolder(&execInfo);
+}
+
+void CPPA::exec_terminator::operator()(LPPpaExecInfo pExecInfo) const
+{
+	UNREFERENCED_PARAMETER(pExecInfo);
+
+	m_CurInstance = nullptr;
+}
 
 CPPA::CPPA()
 {
@@ -63,36 +75,30 @@ CPPA::~CPPA()
 {
 }
 
-//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 bool CPPA::Execute(CEditView* pcEditView, int flags )
 {
-	//PPAの多重起動禁止 2008.10.22 syat
-	if ( CPPA::m_bIsRunning ) {
-		MYMESSAGEBOX( pcEditView->GetHwnd(), MB_OK, LS(STR_ERR_DLGPPA7), LS(STR_ERR_DLGPPA1) );
-		m_fnAbort();
-		CPPA::m_bIsRunning = false;
-		return false;
+	if (pcEditView && IsAvailable()) {
+		// PPAの多重起動チェック
+		if (m_CurInstance) {
+			std::wstring_view msgTitle(LS(STR_ERR_DLGPPA7));	// L"PPA実行エラー"
+			// L"PPA実行中に新たにPPAマクロを呼び出すことはできません"
+			MYMESSAGEBOX(pcEditView->GetHwnd(), MB_OK, msgTitle.data(), LS(STR_ERR_DLGPPA1));
+			return false;
+		}
+
+		// 実行コンテキストを生成する
+		PpaExecInfo info;
+		info.m_pcEditView = pcEditView;
+		info.m_commandflags = flags | FA_FROMMACRO;
+
+		// 実行情報を登録してSetSourceで指定したPascalスクリプトを実行する
+		const auto execInfoHolder = RegisterExecInfo(info);
+		m_fnExecute();
+
+		return !info.m_bError;
 	}
-	CPPA::m_bIsRunning = true;
 
-	PpaExecInfo info;
-	info.m_pcEditView = pcEditView;
-	info.m_pShareData = &GetDllShareData();
-	info.m_bError = false;			//	2003.06.01 Moca
-	info.m_cMemDebug.SetString("");	//	2003.06.01 Moca
-	info.m_commandflags = flags | FA_FROMMACRO;	//	2007.07.22 genta
-	
-	//	実行前にインスタンスを待避する
-	PpaExecInfo* old_instance = m_CurInstance;
-	m_CurInstance = &info;
-	m_fnExecute();
-	
-	//	マクロ実行完了後はここに戻ってくる
-	m_CurInstance = old_instance;
-
-	//PPAの多重起動禁止 2008.10.22 syat
-	CPPA::m_bIsRunning = false;
-	return !info.m_bError;
+	return false;
 }
 
 LPCWSTR CPPA::GetDllNameImp(int nIndex)

@@ -42,6 +42,9 @@ PPA(Poor-Pascal for Application)はDelphi/C++Builder用のPascalインタプリ�
 
 #include <ObjIdl.h>  // VARIANT等
 #include <stdio.h>
+
+#include <memory>
+
 #include "macro/CSMacroMgr.h"
 #include "extmodule/CDllHandler.h"
 #include "mem/CNativeA.h"
@@ -53,6 +56,20 @@ PPA(Poor-Pascal for Application)はDelphi/C++Builder用の
 Pascalインタプリタコンポーネントです。
 アプリケーションにマクロ機能を搭載する事を目的に作成されています。
 */
+
+/*!
+	PPAの実行コンテキスト
+
+	@date 2003/06/01 Moca ベースになる変数を追加した（らしい）
+	@date 2007/07/26 genta PPAのネストを許容するために，別データ構造とする．
+ */
+typedef struct _PpaExecInfo {
+	CNativeA		m_cMemRet = "";			//!< コールバックからDLLに渡す文字列を保持
+	CEditView*		m_pcEditView = nullptr;	//!< マクロを実行したエディタ。メッセージボックスの親ウインドウとして使う
+	bool			m_bError = false;		//!< エラーが2回表示されるのを防ぐ
+	CNativeA		m_cMemDebug = "";		//!< デバッグ用変数UserErrorMes
+	int				m_commandflags = 0;		//!< オプションフラグ
+} PpaExecInfo, *LPPpaExecInfo;
 
 /*!
 	@brief PPA.DLL をサポートするクラス
@@ -270,25 +287,21 @@ private:
 	//	メンバ変数
 	char		m_szMsg[80];		//!< CPPAからのメッセージを保持する
 
-	//	2007.07.26 genta : PPAのネストを許容するために，別データ構造とする．
-	
-	struct PpaExecInfo {
-		CNativeA		m_cMemRet;		//!< コールバックからDLLに渡す文字列を保持
-		CEditView*		m_pcEditView;	//	2003.06.01 Moca
-		DLLSHAREDATA*	m_pShareData;	//	2003.06.01 Moca
-		bool			m_bError;		//!< エラーが2回表示されるのを防ぐ	2003.06.01 Moca
-		CNativeA		m_cMemDebug;	//!< デバッグ用変数UserErrorMes 2003.06.01 Moca
-		/** オプションフラグ
-		
-			CEditView::HandleCommand()にコマンドと一緒に渡すことで
-			コマンドの素性を教える．
-		*/
-		int				m_commandflags;	//!< 
+	static PpaExecInfo*	m_CurInstance;	//!< 現在実行中のインスタンス
+
+public:
+	/*!
+	 * PpaExecInfo型のスマートポインタを実現するためのdeleterクラス
+	 */
+	struct exec_terminator
+	{
+		void operator()(LPPpaExecInfo) const;
 	};
-	//	2007.07.26 genta : 現在実行中のインスタンス
-	static PpaExecInfo* m_CurInstance;
-	//PPAの多重起動禁止 2008.10.22 syat
-	static bool				m_bIsRunning;	//!< PPAが同時実行されるのを防ぐ
+
+	//! PpaExecInfo型のスマートポインタ
+	using ExecInfoHolder = std::unique_ptr<std::remove_pointer_t<PpaExecInfo*>, exec_terminator>;
+
+	static ExecInfoHolder RegisterExecInfo(PpaExecInfo& execInfo);
 
 /*	関数名はCMacroが持つ。
 	static struct MacroFuncInfo	S_Table[];
