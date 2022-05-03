@@ -490,7 +490,7 @@ LRESULT CEditView::DispatchEvent(
 
 		// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
 	case WM_SHOWWINDOW:
-		// ウィンドウ非表示の再に互換BMPを廃棄してメモリーを節約する
+		// ウィンドウ非表示の再に互換BMPを廃棄してメモリを節約する
 		if( hwnd == GetHwnd() && (BOOL)wParam == FALSE ){
 			DeleteCompatibleBitmap();
 		}

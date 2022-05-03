@@ -426,7 +426,7 @@ void CFileLoad::Buffering( void )
 {
 	DWORD	ReadSize;
 
-	// メモリー確保
+	// メモリ確保
 	if( NULL == m_pReadBuf ){
 		int nBufSize;
 		nBufSize = ( m_nFileSize < gm_nBufSizeDef )?( static_cast<int>(m_nFileSize) ):( gm_nBufSizeDef );
@@ -438,7 +438,7 @@ void CFileLoad::Buffering( void )
 
 		m_pReadBuf = (char *)malloc( nBufSize );
 		if( NULL == m_pReadBuf ){
-			throw CError_FileRead(); // メモリー確保に失敗
+			throw CError_FileRead(); // メモリ確保に失敗
 		}
 		m_nReadDataLen = 0;
 		m_nReadBufSize = nBufSize;
