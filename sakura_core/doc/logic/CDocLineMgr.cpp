@@ -27,7 +27,7 @@
 #include <io.h>
 #include <list>
 #include "CDocLineMgr.h"
-#include "CDocLine.h"// 2002/2/10 aroka ヘッダ整理
+#include "CDocLine.h"// 2002/2/10 aroka ヘッダー整理
 #include "charset/charcode.h"
 #include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"

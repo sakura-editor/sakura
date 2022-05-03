@@ -633,11 +633,11 @@ int CDlgPrintSetting::GetData( void )
 	::DlgItem_GetText( GetHwnd(), IDC_EDIT_FOOT2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[1], HEADER_MAX );	//	100文字で制限しないと。。。
 	::DlgItem_GetText( GetHwnd(), IDC_EDIT_FOOT3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[2], HEADER_MAX );	//	100文字で制限しないと。。。
 
-	// ヘッダフォント
+	// ヘッダーフォント
 	if (!IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_USE_FONT_HEAD )) {
 		memset( &m_PrintSettingArr[m_nCurrentPrintSetting].m_lfHeader, 0, sizeof(LOGFONT) );
 	}
-	// フッタフォント
+	// フッターフォント
 	if (!IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_USE_FONT_FOOT )) {
 		memset( &m_PrintSettingArr[m_nCurrentPrintSetting].m_lfFooter, 0, sizeof(LOGFONT) );
 	}
@@ -733,11 +733,11 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 	::DlgItem_SetText( GetHwnd(), IDC_EDIT_FOOT2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_CENTER] );	//	100文字で制限しないと。。。
 	::DlgItem_SetText( GetHwnd(), IDC_EDIT_FOOT3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_RIGHT] );	//	100文字で制限しないと。。。
 
-	// ヘッダフォント
+	// ヘッダーフォント
 	SetFontName( IDC_STATIC_FONT_HEAD, IDC_CHECK_USE_FONT_HEAD,
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_lfHeader,
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_nHeaderPointSize );
-	// フッタフォント
+	// フッターフォント
 	SetFontName( IDC_STATIC_FONT_FOOT, IDC_CHECK_USE_FONT_FOOT,
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_lfFooter,
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_nFooterPointSize );

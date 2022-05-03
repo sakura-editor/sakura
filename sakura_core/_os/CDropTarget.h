@@ -24,7 +24,7 @@
 class CDropTarget;
 class CYbInterfaceBase;
 class CEditWnd;	// 2008.06.20 ryoji
-class CEditView;// 2002/2/3 aroka ヘッダ軽量化
+class CEditView;// 2002/2/3 aroka ヘッダー軽量化
 
 /*-----------------------------------------------------------------------
 クラスの宣言

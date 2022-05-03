@@ -171,7 +171,7 @@ def writeToXLSX(outfile, data):
 		# 列幅に必要なサイズを保持する配列
 		maxWidths = []
 		
-		# ヘッダ部分を設定する
+		# ヘッダー部分を設定する
 		y = 0
 		for x, item in enumerate(excelKeys):
 			cell = ws.cell(row=y+1, column=x+1)
@@ -283,7 +283,7 @@ def writeToXLSX(outfile, data):
 				'blobURL',
 			]
 		
-			# ヘッダ部分を設定
+			# ヘッダー部分を設定
 			for x, key in enumerate(outputKeys):
 				cell = wsError.cell(row=y+1, column=x+1)
 				cell.value = key

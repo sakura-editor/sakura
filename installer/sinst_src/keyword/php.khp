@@ -6,7 +6,7 @@ apache_response_headers /// array apache_response_headers ( void)\n Fetch all HT
 apache_setenv /// int apache_setenv ( string variable, string value [, bool walk_to_top])\nApacheサブプロセスの環境変数を設定する
 ascii2ebcdic /// int ascii2ebcdic ( string ascii_str)\nASCIIからEBCDICに文字列を変換する
 ebcdic2ascii /// int ebcdic2ascii ( string ebcdic_str)\nEBCDICからASCIIに文字列を変換する
-getallheaders /// array getallheaders ( void)\n全てのHTTPリクエストヘッダを取得する
+getallheaders /// array getallheaders ( void)\n全てのHTTPリクエストヘッダーを取得する
 virtual /// int virtual ( string filename)\nApacheサブリクエストを実行する
 array_change_key_case /// array array_change_key_case ( array input [, int case])\n 配列のキーを全て小文字または大文字にして返す 
 array_chunk /// array array_chunk ( array input, int size [, bool preserve_keys])\n配列を分割する
@@ -723,7 +723,7 @@ gmp_sqrtrm /// array gmp_sqrtrm ( resource a)\n余りと平方根
 gmp_strval /// string gmp_strval ( resource gmpnumber, int [base])\nGMP 数を文字列に変換する
 gmp_sub /// resource gmp_sub ( resource a, resource b)\n数値の減算
 gmp_xor /// resource gmp_xor ( resource a, resource b)\n論理演算 XOR
-header /// int header ( string string [, bool replace])\n生のHTTPヘッダを送信する
+header /// int header ( string string [, bool replace])\n生のHTTPヘッダーを送信する
 headers_sent /// boolean headers_sent ( void)\nヘッダーが送信されている場合に TRUE を返す
 setcookie /// int setcookie ( string name, string [value], int [expire], string [path], string [domain], int [secure])\nクッキーを送信する
 hw_Array2Objrec /// strin hw_array2objrec ( array object_array)\n オブジェクト配列からオブジェクトレコードに属性を変換する 
@@ -846,7 +846,7 @@ iconv_set_encoding /// array iconv_set_encoding ( string type, string charset)\n
 iconv /// string iconv ( string in_charset, string out_charset, string str)\n リクエストした文字エンコーディングに文字列を変換する 
 ob_iconv_handler /// array ob_iconv_handler ( string contents, int status)\n 出力バッファハンドラとして文字エンコーディングを変換する 
 exif_imagetype /// int|false exif_imagetype ( string filename)\nイメージの型を定義する
-exif_read_data /// array exif_read_data ( string filename [, string sections [, bool arrays [, bool thumbnail]]])\n JPEGまたはTIFFから EXIFヘッダを読みこむ 
+exif_read_data /// array exif_read_data ( string filename [, string sections [, bool arrays [, bool thumbnail]]])\n JPEGまたはTIFFから EXIFヘッダーを読みこむ 
 exif_thumbnail /// string exif_thumbnail ( string filename [, int &width [, int &height]])\nTIFFまたはJPEGイメージに埋め込まれたサムネイルを取得する
 GetImageSize /// array getimagesize ( string filename, array [imageinfo])\nJPEG、GIF、PNG、SWF画像の大きさを取得する
 image_type_to_mime_type /// string image_type_to_mime_type ( int imagetype)\nGet Mime-Type for image-type returned by getimagesize, exif_read_data, exif_thumbnail, exif_imagetype
@@ -939,7 +939,7 @@ iptcparse /// array iptcparse ( string iptcblock)\n バイナリのIPTChttp://ww
 http://www.iptc.org/ /// \n
 JPEG2WBMP /// int jpeg2wbmp ( string jpegname, string wbmpname, int d_height, int d_width, int threshold)\n JPEGイメージファイルからWBMPイメージファイルに変換する 
 PNG2WBMP /// int png2wbmp ( string pngname, string wbmpname, int d_height, int d_width, int threshold)\n PNGイメージファイルからWBMPイメージファイルに変換する 
-read_exif_data /// array read_exif_data ( string filename)\nJPEGからEXIFヘッダを読み込む
+read_exif_data /// array read_exif_data ( string filename)\nJPEGからEXIFヘッダーを読み込む
 imap_8bit /// string imap_8bit ( string string)\n 8bit 文字列を quoted-printable 文字列に変換する 
 imap_alerts /// array imap_alerts ( void)\n ページリクエストの間または最後にスタックがリセットされて以来発生した 全てのIMAP警告メッセージを返す 
 imap_append /// int imap_append ( int imap_stream, string mbox, string message, string [flags])\n 指定されたメールボックスに文字列メッセージを追加する 
@@ -955,17 +955,17 @@ imap_delete /// int imap_delete ( int imap_stream, int msg_number, int [flags])\
 imap_deletemailbox /// int imap_deletemailbox ( int imap_stream, string mbox)\nメールボックスを削除する
 imap_errors /// array imap_errors ( void)\n ページのリクエストの間かエラースタックがリセットされて以来 生じた全てのIMAPエラーを返す 
 imap_expunge /// int imap_expunge ( int imap_stream)\n 削除用にマークされたすべてのメッセージを削除する 
-imap_fetch_overview /// array imap_fetch_overview ( int imap_stream, string sequence)\n 指定したメッセージのヘッダ情報の概要を読む 
+imap_fetch_overview /// array imap_fetch_overview ( int imap_stream, string sequence)\n 指定したメッセージのヘッダー情報の概要を読む 
 imap_fetchbody /// string imap_fetchbody ( int imap_stream, int msg_number, string part_number, flags [flags])\nメッセージ本文中の特定のセクションを取り出す
-imap_fetchheader /// string imap_fetchheader ( int imap_stream, int msgno, int flags)\nメッセージのヘッダを返す
+imap_fetchheader /// string imap_fetchheader ( int imap_stream, int msgno, int flags)\nメッセージのヘッダーを返す
 imap_fetchstructure /// object imap_fetchstructure ( int imap_stream, int msg_number, int [flags])\n 特定のメッセージの構造を読み込む 
 imap_get_quota /// array imap_get_quota ( int imap_stream, string quota_root)\n クオータレベルの設定、メールボックス毎の使用状況を取得する 
 imap_get_quotaroot /// array imap_get_quotaroot ( resource imap_stream, string quota_root)\n Retrieve the quota settings per user 
 imap_getmailboxes /// array imap_getmailboxes ( int imap_stream, string ref, string pattern)\n メールボックスのリストを読み込み、各ボックスに関する詳細な情報を返す 
 imap_getsubscribed /// array imap_getsubscribed ( int imap_stream, string ref, string pattern)\n購読中の全メールボックスの一覧
-imap_header /// object imap_header ( int imap_stream, int msg_number, int [fromlength], int [subjectlength], string [defaulthost])\nメッセージのヘッダを読む
-imap_headerinfo /// object imap_headerinfo ( int imap_stream, int msg_number, int [fromlength], int [subjectlength], string [defaulthost])\nメッセージヘッダを読み込む
-imap_headers /// array imap_headers ( int imap_stream)\n メールボックス内の、すべてのメッセージのヘッダを返す 
+imap_header /// object imap_header ( int imap_stream, int msg_number, int [fromlength], int [subjectlength], string [defaulthost])\nメッセージのヘッダーを読む
+imap_headerinfo /// object imap_headerinfo ( int imap_stream, int msg_number, int [fromlength], int [subjectlength], string [defaulthost])\nメッセージヘッダーを読み込む
+imap_headers /// array imap_headers ( int imap_stream)\n メールボックス内の、すべてのメッセージのヘッダーを返す 
 imap_last_error /// string imap_last_error ( void)\n ページリクエスト時に生じた直近の IMAP エラーを返す 
 imap_list /// array imap_list ( resource imap_stream, string ref, string pattern)\nRead the list of mailboxes
 imap_listmailbox /// array imap_listmailbox ( int imap_stream, string ref, string pattern)\nメールボックスのリストを読む
@@ -987,7 +987,7 @@ imap_qprint /// string imap_qprint ( string string)\nquoted-printable 文字列�
 imap_renamemailbox /// int imap_renamemailbox ( int imap_stream, string old_mbox, string new_mbox)\nメールボックスの名前を変更する
 imap_reopen /// int imap_reopen ( int imap_stream, string mailbox, string [flags])\n 新規メールボックスへのIMAP ストリームを再度オープンする 
 imap_rfc822_parse_adrlist /// array imap_rfc822_parse_adrlist ( string address, string default_host)\nアドレス文字列を解釈します
-imap_rfc822_parse_headers /// object imap_rfc822_parse_headers ( string headers, string [defaulthost])\n文字列からメールヘッダを解釈する
+imap_rfc822_parse_headers /// object imap_rfc822_parse_headers ( string headers, string [defaulthost])\n文字列からメールヘッダーを解釈する
 imap_rfc822_write_address /// string imap_rfc822_write_address ( string mailbox, string host, string personal)\n 指定したメールボックス、ホスト、個人情報を適当にフォーマットされ た電子メールアドレスにして返す 
 imap_scanmailbox /// array imap_scanmailbox ( int imap_stream, string ref, string pattern, string content)\n メールボックスのリストを読み、メールボックスのテキストにおいて 文字列を検索する 
 imap_search /// array imap_search ( int imap_stream, string criteria, int flags)\n 指定した検索条件にマッチするメッセージを配列として返す 
@@ -1221,11 +1221,11 @@ mb_convert_case /// string mb_convert_case ( string str, int mode [, string enco
 mb_convert_encoding /// string mb_convert_encoding ( string str, string to-encoding [, mixed from-encoding])\n文字エンコーディングを変換する
 mb_convert_kana /// string mb_convert_kana ( string str, string option [, mixed encoding])\n カナを("全角かな"、"半角かな"等に)変換する 
 mb_convert_variables /// string mb_convert_variables ( string to-encoding, mixed from-encoding, mixed vars)\n変数の文字コードを変換する
-mb_decode_mimeheader /// string mb_decode_mimeheader ( string str)\nMIMEヘッダフィールドの文字列をデコードする
+mb_decode_mimeheader /// string mb_decode_mimeheader ( string str)\nMIMEヘッダーフィールドの文字列をデコードする
 mb_decode_numericentity /// string mb_decode_numericentity ( string str, array convmap [, string encoding])\n HTML数値エンティティを文字にデコードする 
 mb_detect_encoding /// string mb_detect_encoding ( string str [, mixed encoding-list])\n文字エンコーディングを検出する
 mb_detect_order /// array mb_detect_order ( [mixed encoding-list])\n 文字エンコーディング検出順序の設定/取得 
-mb_encode_mimeheader /// string mb_encode_mimeheader ( string str [, string charset [, string transfer-encoding [, string linefeed]]])\nMIMEヘッダの文字列をエンコードする
+mb_encode_mimeheader /// string mb_encode_mimeheader ( string str [, string charset [, string transfer-encoding [, string linefeed]]])\nMIMEヘッダーの文字列をエンコードする
 mb_encode_numericentity /// string mb_encode_numericentity ( string str, array convmap [, string encoding])\n 文字をHTML数値エンティティにエンコードする 
 mb_ereg_match /// bool mb_ereg_match ( string pattern, string string [, string option])\nマルチバイト文字列が正規表現に一致するか調べる
 mb_ereg_replace /// string mb_ereg_replace ( string pattern, string replacement, string string [, array option])\nマルチバイト文字列に正規表現による置換を行う

@@ -140,7 +140,7 @@ public:
 	enum StaticMagicNambers{
 		//! スクロールバーとアイテムの間の隙間
 		WIDTH_MARGIN_SCROLLBER = 8,
-		//! リストビューヘッダ マージン
+		//! リストビューヘッダー マージン
 		WIDTH_LV_HEADER = 17,
 		//! リストビューのマージン
 		WIDTH_LV_ITEM_NORMAL  = 14,

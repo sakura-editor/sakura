@@ -46,7 +46,7 @@
 #include "cmd/CViewCommander_inline.h"
 #include "view/CEditView.h" //2002/2/10 aroka
 #include "macro/CSMacroMgr.h" //2002/2/10 aroka
-#include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
+#include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダー整理
 #include "_os/OleTypes.h" //2003-02-21 鬼
 #include "io/CTextStream.h"
 #include "window/CEditWnd.h"

@@ -101,8 +101,8 @@ S_FileReopenUTF7 /// void  S_FileReopenUTF7 ( ) ；\nUTF-7で開き直す
 S_Print /// void  S_Print ( ) ；\n印刷
 S_PrintPreview /// void  S_PrintPreview ( ) ；\n印刷プレビュー
 S_PrintPageSetup /// void  S_PrintPageSetup ( ) ；\n印刷ページ設定
-S_OpenHfromtoC /// void  S_OpenHfromtoC ( ) ；\n同名のC/C++ヘッダ(ソース)を開く
-S_OpenHHpp /// void  S_OpenHHpp ( ) ；\n同名のC/C++ヘッダファイルを開く
+S_OpenHfromtoC /// void  S_OpenHfromtoC ( ) ；\n同名のC/C++ヘッダー(ソース)を開く
+S_OpenHHpp /// void  S_OpenHHpp ( ) ；\n同名のC/C++ヘッダーファイルを開く
 S_OpenCCpp /// void  S_OpenCCpp ( ) ；\n同名のC/C++ソースファイルを開く
 S_ActivateSQLPLUS /// void  S_ActivateSQLPLUS ( ) ；\nOracle SQL*Plusをアクティブ表示
 S_ExecSQLPLUS /// void  S_ExecSQLPLUS ( ) ；\nOracle SQL*Plusで実行

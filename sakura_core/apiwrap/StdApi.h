@@ -27,7 +27,7 @@
 #define SAKURA_STDAPI_29C8A971_234C_46ED_96DB_A2D479992ABE_H_
 #pragma once
 
-//ランタイム情報ライブラリにアクセスするWindowsヘッダを参照する
+//ランタイム情報ライブラリにアクセスするWindowsヘッダーを参照する
 #include <ImageHlp.h>
 
 //デバッグ用。

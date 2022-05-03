@@ -1295,14 +1295,14 @@ void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(printsetting.m_szPrintFontFaceHan));
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].szFFZ")	, i );
 		cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(printsetting.m_szPrintFontFaceZen));
-		// ヘッダ/フッタ
+		// ヘッダー/フッター
 		for( j = 0; j < 3; ++j ){
 			auto_sprintf( szKeyName, LTEXT("PS[%02d].szHF[%d]") , i, j );
 			cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(printsetting.m_szHeaderForm[j]));
 			auto_sprintf( szKeyName, LTEXT("PS[%02d].szFTF[%d]"), i, j );
 			cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(printsetting.m_szFooterForm[j]));
 		}
-		{ // ヘッダ/フッタ フォント設定
+		{ // ヘッダー/フッター フォント設定
 			WCHAR	szKeyName2[64];
 			WCHAR	szKeyName3[64];
 			auto_sprintf( szKeyName,  LTEXT("PS[%02d].lfHeader"),			i );

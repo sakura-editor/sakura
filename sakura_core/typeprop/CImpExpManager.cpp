@@ -566,7 +566,7 @@ bool CImpExpColors::Import( const wstring& sFileName, wstring& sErrMsg )
 	}
 
 	/* ファイル先頭 */
-	//ヘッダ読取
+	//ヘッダー読取
 	wstring szHeader = in.ReadLineW();
 	if(szHeader.length()>=2) {
 		//コメントを抜く
@@ -910,7 +910,7 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 			sErrMsg += sFileName;
 			return false;
 		}
-		// ヘッダチェック
+		// ヘッダーチェック
 		wstring	szLine = in.ReadLineW();
 		bVer2 = true;
 		if ( wcscmp(szLine.c_str(), WSTR_KEYBIND_HEAD2) != 0)	bVer2 = false;
@@ -1034,7 +1034,7 @@ bool CImpExpKeybind::Export( const wstring& sFileName, wstring& sErrMsg )
 	// 書き込みモード設定
 	cProfile.SetWritingMode();
 
-	// ヘッダ
+	// ヘッダー
 	StaticString<wchar_t,256> szKeydataHead = WSTR_KEYBIND_HEAD4;
 	cProfile.IOProfileData( szSecInfo, L"KEYBIND_VERSION", szKeydataHead );
 	cProfile.IOProfileData(szSecInfo, L"KEYBIND_COUNT", m_Common.m_sKeyBind.m_nKeyNameArrNum );
@@ -1060,7 +1060,7 @@ bool CImpExpCustMenu::Import( const wstring& sFileName, wstring& sErrMsg )
 {
 	const auto& strPath = sFileName;
 
-	//ヘッダ確認
+	//ヘッダー確認
 	CTextInputStream in(strPath.c_str());
 	if (!in) {
 		sErrMsg = LS(STR_IMPEXP_ERR_FILEOPEN);
@@ -1101,14 +1101,14 @@ bool CImpExpCustMenu::Export( const wstring& sFileName, wstring& sErrMsg )
 	out.Close();
 
 	/* カスタムメニュー情報 */
-	//ヘッダ
+	//ヘッダー
 	CDataProfile	cProfile;
 	CommonSetting_CustomMenu* menu=&m_Common.m_sCustomMenu;
 
 	// 書き込みモード設定
 	cProfile.SetWritingMode();
 
-	//ヘッダ
+	//ヘッダー
 	cProfile.IOProfileData(szSecInfo, L"MENU_VERSION", StringBufferW(WSTR_CUSTMENU_HEAD_V2));
 	int iWork = MAX_CUSTOM_MENU;
 	cProfile.IOProfileData(szSecInfo, L"MAX_CUSTOM_MENU", iWork );
@@ -1224,7 +1224,7 @@ bool CImpExpMainMenu::Import( const wstring& sFileName, wstring& sErrMsg )
 {
 	const auto& strPath = sFileName;
 
-	//ヘッダ確認
+	//ヘッダー確認
 	CTextInputStream in(strPath.c_str());
 	if (!in) {
 		sErrMsg = LS(STR_IMPEXP_ERR_FILEOPEN);
@@ -1264,14 +1264,14 @@ bool CImpExpMainMenu::Export( const wstring& sFileName, wstring& sErrMsg )
 
 	out.Close();
 
-	//ヘッダ
+	//ヘッダー
 	CDataProfile	cProfile;
 	CommonSetting_MainMenu* menu=&m_Common.m_sMainMenu;
 
 	// 書き込みモード設定
 	cProfile.SetWritingMode();
 
-	//ヘッダ
+	//ヘッダー
 	cProfile.IOProfileData(szSecInfo, L"MENU_VERSION", StringBufferW(WSTR_MAINMENU_HEAD_V1));
 	
 	//内容

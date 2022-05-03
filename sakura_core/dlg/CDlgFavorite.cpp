@@ -636,7 +636,7 @@ BOOL CDlgFavorite::OnNotify(NMHDR* pNMHDR)
 				}
 				return TRUE;
 
-			// ListViewヘッダクリック:ソートする
+			// ListViewヘッダークリック:ソートする
 			case LVN_COLUMNCLICK:
 				ListViewSort(
 					m_aListViewInfo[m_nCurrentTab],
@@ -1130,7 +1130,7 @@ void CDlgFavorite::ListViewSort(ListViewSortInfo& info, const CRecent* pRecent, 
 		info.bSortAscending = (bReverse ? (!info.bSortAscending): true);
 	}
 	
-	// ヘッダ書き換え
+	// ヘッダー書き換え
 	WCHAR szHeader[200];
 	LV_COLUMN	col;
 	if( -1 != info.nSortColumn ){

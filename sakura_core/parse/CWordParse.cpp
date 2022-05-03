@@ -477,7 +477,7 @@ BOOL IsURL(
 	if( wc_to_c(*begin)==0 ) return FALSE;	/* 2バイト文字 */
 	if( 0 < url_char[wc_to_c(*begin)] ){	/* URL開始文字 */
 		for(urlp = &url_table[url_char[wc_to_c(*begin)]-1]; urlp->name[0] == wc_to_c(*begin); urlp++){	/* URLテーブルを探索 */
-			if( (urlp->length <= end - begin) && (wmemcmp(urlp->name, begin, urlp->length) == 0) ){	/* URLヘッダは一致した */
+			if( (urlp->length <= end - begin) && (wmemcmp(urlp->name, begin, urlp->length) == 0) ){	/* URLヘッダーは一致した */
 				if( urlp->is_mail ){	/* メール専用の解析へ */
 					if( IsMailAddress(begin, urlp->length, end - begin - urlp->length, pnMatchLen) ){
 						*pnMatchLen = *pnMatchLen + urlp->length;
@@ -488,7 +488,7 @@ BOOL IsURL(
 				for(i = urlp->length; i < end - begin; i++){	/* 通常の解析へ */
 					if( wc_to_c(begin[i])==0 || (!(url_char[wc_to_c(begin[i])])) ) break;	/* 終端に達した */
 				}
-				if( i == urlp->length ) return FALSE;	/* URLヘッダだけ */
+				if( i == urlp->length ) return FALSE;	/* URLヘッダーだけ */
 				*pnMatchLen = i;
 				return TRUE;
 			}

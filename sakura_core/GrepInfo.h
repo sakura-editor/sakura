@@ -46,7 +46,7 @@ struct GrepInfo {
 	SSearchOption	sGrepSearchOption;		//!< 検索オプション
 	bool			bGrepCurFolder;			//!< カレントディレクトリを維持
 	bool			bGrepStdout;			//!< 標準出力モード
-	bool			bGrepHeader;			//!< ヘッダ情報表示
+	bool			bGrepHeader;			//!< ヘッダー情報表示
 	bool			bGrepSubFolder;			//!< サブフォルダを検索する
 	ECodeType		nGrepCharSet;			//!< 文字コードセット
 	int				nGrepOutputStyle;		//!< 結果出力形式

@@ -74,13 +74,13 @@
 
 class CViewFont;
 class CRuler;
-class CDropTarget; /// 2002/2/3 aroka ヘッダ軽量化
+class CDropTarget; /// 2002/2/3 aroka ヘッダー軽量化
 class COpeBlk;///
 class CSplitBoxWnd;///
 class CRegexKeyword;///
-class CAutoMarkMgr; /// 2002/2/3 aroka ヘッダ軽量化 to here
-class CEditDoc;	//	2002/5/13 YAZAKI ヘッダ軽量化
-class CLayout;	//	2002/5/13 YAZAKI ヘッダ軽量化
+class CAutoMarkMgr; /// 2002/2/3 aroka ヘッダー軽量化 to here
+class CEditDoc;	//	2002/5/13 YAZAKI ヘッダー軽量化
+class CLayout;	//	2002/5/13 YAZAKI ヘッダー軽量化
 class CMigemo;	// 2004.09.14 isearch
 struct SColorStrategyInfo;
 struct CColor3Setting;
