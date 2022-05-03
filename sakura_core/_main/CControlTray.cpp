@@ -33,6 +33,7 @@
 #include "debug/CRunningTimer.h"
 #include "dlg/CDlgOpenFile.h"
 #include "dlg/CDlgAbout.h"		//Nov. 21, 2000 JEPROtest
+#include "dlg/CDlgFavorite.h"
 #include "dlg/CDlgWindowList.h"
 #include "plugin/CPluginManager.h"
 #include "plugin/CJackManager.h"
@@ -899,6 +900,13 @@ LRESULT CControlTray::DispatchEvent(
 				case F_GREP_DIALOG:
 					/* Grep */
 					DoGrep();  //Stonee, 2001/03/21  Grepを別関数に
+					break;
+				case F_FAVORITE:
+					if (CDlgFavorite cDlgFavorite;
+						cDlgFavorite.GetHwnd() == nullptr)
+					{
+						cDlgFavorite.DoModal(m_hInstance, GetTrayHwnd(), (LPARAM)NULL);
+					}
 					break;
 				case F_FILESAVEALL:	// Jan. 24, 2005 genta 全て上書き保存
 					CAppNodeGroupHandle(0).PostMessageToAllEditors(
