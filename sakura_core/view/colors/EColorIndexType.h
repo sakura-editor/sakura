@@ -61,7 +61,7 @@ enum EColorIndexType {
 	COLORIDX_WRAP,			//!< 折り返し記号
 	COLORIDX_VERTLINE,		//!< 指定桁縦線	// 2005.11.08 Moca
 	COLORIDX_EOF,			//!< EOF記号
-	COLORIDX_DIGIT,			//!< 半角数値	 //@@@ 2001.02.17 by MIK //色設定Ver.3からユーザファイルに対しては文字列で処理しているのでリナンバリングしてもよい. Mar. 7, 2001 JEPRO noted
+	COLORIDX_DIGIT,			//!< 半角数値	 //@@@ 2001.02.17 by MIK //色設定Ver.3からユーザーファイルに対しては文字列で処理しているのでリナンバリングしてもよい. Mar. 7, 2001 JEPRO noted
 	COLORIDX_BRACKET_PAIR,	//!< 対括弧	  // 02/09/18 ai Add
 	COLORIDX_SELECT,		//!< 選択範囲
 	COLORIDX_SEARCH,		//!< 検索文字列

@@ -50,7 +50,7 @@ CRecentGrepFolder::CRecentGrepFolder()
 /*
 	アイテムの比較要素を取得する。
 
-	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
+	@note	取得後のポインタはユーザー管理の構造体にキャストして参照してください。
 */
 const WCHAR* CRecentGrepFolder::GetItemText( int nIndex ) const
 {

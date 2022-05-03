@@ -67,7 +67,7 @@ TEST(CFileExt, RawLongFilter)
 {
 	CFileExt cFileExt;
 	cFileExt.AppendExtRaw(
-		L"ユーザ設定",
+		L"ユーザー設定",
 		L"*.extensin_250_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_longX"
 	);
 }
@@ -76,7 +76,7 @@ TEST(CFileExt, RawManyFilter)
 {
 	CFileExt cFileExt;
 	cFileExt.AppendExtRaw(
-		L"ユーザ指定",
+		L"ユーザー指定",
 		L"*.extensin_50_0_long_long_long_long_long_long_long_l;*.extensin_50_1_long_long_long_long_long_long_long_l;*.extensin_50_2_long_long_long_long_long_long_long_l;*.extensin_50_3_long_long_long_long_long_long_long_l;*.extensin_50_4_long_long_long_long_long_long_long_l;*.extensin_50_5_long_long_long_long_long_long_long_l;*.extensin_50_6_long_long_long_long_long_long_long_l;*.extensin_50_7_long_long_long_long_long_long_long_l;*.extensin_50_8_long_long_long_long_long_long_long_l;*.extensin_50_9_long_long_long_long_long_long_long_l"
 	);
 }
@@ -85,7 +85,7 @@ TEST(CFileExt, LongFilter)
 {
 	CFileExt cFileExt;
 	cFileExt.AppendExt(
-		L"ユーザ設定",
+		L"ユーザー設定",
 		L"*.extensin_250_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_longX"
 	);
 }

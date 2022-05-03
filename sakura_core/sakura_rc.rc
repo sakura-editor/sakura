@@ -2936,7 +2936,7 @@ STRINGTABLE
 BEGIN
     STR_PLGMGR_INST_IDNUM   "Plugin.IDの先頭に数字は使用できません"
     STR_PLGMGR_INST_NAME    "同じプラグインが別の名前でインストールされています。上書きしますか？\n　はい　→　新しい「%s」を使用\n　いいえ→　インストール済みの「%ls」を使用"
-    STR_PLGMGR_INST_USERCANCEL "ユーザキャンセル"
+    STR_PLGMGR_INST_USERCANCEL "ユーザーキャンセル"
     STR_PLGMGR_INST_MAX     "プラグインをこれ以上登録できません"
     STR_WSHPLUG_LOADMACRO   "マクロの読み込みに失敗しました。\n\n%s"
     STR_CARET_WITHBOM       " BOM付"

@@ -138,7 +138,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 			}
 			else
 			{
-				//使用するになってるんだけどDisableにする。もうユーザは変更できない。
+				//使用するになってるんだけどDisableにする。もうユーザーは変更できない。
 				EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_REGEX ), FALSE );
 			}
 		}

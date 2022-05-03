@@ -449,7 +449,7 @@ bool CDocFileOperation::FileSaveAs( const WCHAR* filename,ECodeType eCodeType, E
 
 /*
 	閉じて(無題)。
-	ユーザキャンセル操作等によりクローズされなかった場合は false を返す。
+	ユーザーキャンセル操作等によりクローズされなかった場合は false を返す。
 
 	@date 2006.12.30 ryoji CEditView::Command_FILESAVEAS()から処理本体を切り出し
 */
