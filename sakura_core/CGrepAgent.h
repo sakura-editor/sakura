@@ -39,7 +39,7 @@ struct SGrepOption{
 	bool		bGrepReplace;			//!< Grep置換
 	bool		bGrepSubFolder;			//!< サブフォルダからも検索する
 	bool		bGrepStdout;			//!< 標準出力モード
-	bool		bGrepHeader;			//!< ヘッダー・フッダー表示
+	bool		bGrepHeader;			//!< ヘッダー・フッター表示
 	ECodeType	nGrepCharSet;			//!< 文字コードセット選択
 	int			nGrepOutputLineType;	//!< 0:ヒット部分を出力, 1: ヒット行を出力, 2: 否ヒット行を出力
 	int			nGrepOutputStyle;		//!< 出力形式 1: Normal, 2: WZ風(ファイル単位) 3: 結果のみ
