@@ -212,7 +212,7 @@ normal_action:;
 		}
 		GetSelectionInfo().m_ptMouseRollPosOld = ptMouse;	// マウス範囲選択前回位置(XY座標)
 
-		/* 範囲選択開始 & マウスキャプチャー */
+		/* 範囲選択開始 & マウスキャプチャ */
 		GetSelectionInfo().SelectBeginBox();
 
 		::SetCapture( GetHwnd() );
@@ -248,7 +248,7 @@ normal_action:;
 		/* マウスのキャプチャなど */
 		GetSelectionInfo().m_ptMouseRollPosOld = ptMouse;	// マウス範囲選択前回位置(XY座標)
 		
-		/* 範囲選択開始 & マウスキャプチャー */
+		/* 範囲選択開始 & マウスキャプチャ */
 		GetSelectionInfo().SelectBeginNazo();
 		::SetCapture( GetHwnd() );
 		GetCaret().HideCaret_( GetHwnd() ); // 2002/07/22 novice
@@ -1513,7 +1513,7 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 {
 //	MYTRACE( L"OnLBUTTONUP()\n" );
 
-	/* 範囲選択終了 & マウスキャプチャーおわり */
+	/* 範囲選択終了 & マウスキャプチャおわり */
 	if( GetSelectionInfo().IsMouseSelecting() ){	/* 範囲選択中 */
 		/* マウス キャプチャを解放 */
 		::ReleaseCapture();
@@ -1671,7 +1671,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 	*/
 	if(F_SELECTWORD != nFuncID) return;
 
-	/* 範囲選択開始 & マウスキャプチャー */
+	/* 範囲選択開始 & マウスキャプチャ */
 	GetSelectionInfo().SelectBeginWord();
 
 	if( GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH ){	/* 現在のフォントは固定幅フォントである */

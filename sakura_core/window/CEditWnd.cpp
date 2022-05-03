@@ -3376,7 +3376,7 @@ LRESULT CEditWnd::OnHScroll( WPARAM wParam, LPARAM lParam )
 
 LRESULT CEditWnd::OnLButtonDown( WPARAM wParam, LPARAM lParam )
 {
-	//by 鬼(2) キャプチャーして押されたら非クライアントでもこっちに来る
+	//by 鬼(2) キャプチャして押されたら非クライアントでもこっちに来る
 	if(m_IconClicked != icNone)
 		return 0;
 
