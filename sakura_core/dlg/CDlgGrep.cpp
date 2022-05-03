@@ -309,7 +309,7 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	Combo_LimitText( GetItemHwnd( IDC_COMBO_EXCLUDE_FILE ), _countof2(m_szExcludeFile) - 1);
 	Combo_LimitText( GetItemHwnd( IDC_COMBO_EXCLUDE_FOLDER ), _countof2(m_szExcludeFolder) - 1);
 
-	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
+	/* コンボボックスのユーザー インターフェースを拡張インターフェースにする */
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT ), TRUE );
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_FILE ), TRUE );
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_FOLDER ), TRUE );

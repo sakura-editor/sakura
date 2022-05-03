@@ -47,9 +47,9 @@ public:
 	static CMacroManagerBase* Creator(const WCHAR* FileExt);
 	static void declare();
 
-	void AddParam( CWSHIfObj* param );				//インタフェースオブジェクトを追加する
-	void AddParam( CWSHIfObj::List& params );		//インタフェースオブジェクト達を追加する
-	void ClearParam();								//インタフェースオブジェクトを削除する
+	void AddParam( CWSHIfObj* param );				//インターフェースオブジェクトを追加する
+	void AddParam( CWSHIfObj::List& params );		//インターフェースオブジェクト達を追加する
+	void ClearParam();								//インターフェースオブジェクトを削除する
 protected:
 	std::wstring m_Source;
 	std::wstring m_EngineName;

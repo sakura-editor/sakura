@@ -51,7 +51,7 @@ public:
 	virtual ~CBregexpDll2();
 
 protected:
-	// CDllImpインタフェース
+	// CDllImpインターフェース
 	virtual LPCWSTR GetDllNameImp(int nIndex); // Jul. 5, 2001 genta インターフェース変更に伴う引数追加
 	virtual bool InitDllImp();
 

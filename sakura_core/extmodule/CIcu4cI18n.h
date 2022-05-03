@@ -59,7 +59,7 @@ public:
 	CIcu4cI18n() noexcept;
 
 protected:
-	// CDllImpインタフェース
+	// CDllImpインターフェース
 	LPCWSTR GetDllNameImp(int nIndex) override;
 	bool InitDllImp() override;
 

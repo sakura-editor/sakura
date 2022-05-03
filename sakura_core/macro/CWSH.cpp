@@ -60,7 +60,7 @@ const GUID CLSID_JSScript9 =
 };
 #endif
 
-/* 2009.10.29 syat インタフェースオブジェクト部分をCWSHIfObj.hに分離
+/* 2009.10.29 syat インターフェースオブジェクト部分をCWSHIfObj.hに分離
 class CInterfaceObjectTypeInfo: public ImplementsIUnknown<ITypeInfo>
  */
 
@@ -126,7 +126,7 @@ public:
 #ifdef TEST
 		wcout << L"GetItemInfo:" << pstrName << endl;
 #endif
-		//指定された名前のインタフェースオブジェクトを検索
+		//指定された名前のインターフェースオブジェクトを検索
 		const CWSHClient::List& objects = m_Client->GetInterfaceObjects();
 		for( CWSHClient::ListIter it = objects.begin(); it != objects.end(); it++ )
 		{
@@ -276,7 +276,7 @@ CWSHClient::CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler,
 
 CWSHClient::~CWSHClient()
 {
-	//インタフェースオブジェクトを解放
+	//インターフェースオブジェクトを解放
 	for( ListIter it = m_IfObjArr.begin(); it != m_IfObjArr.end(); it++ ){
 		(*it)->Release();
 	}
@@ -441,7 +441,7 @@ void CWSHClient::Error(const wchar_t* Description)
 	SysFreeString(D);
 }
 
-//インタフェースオブジェクトの追加
+//インターフェースオブジェクトの追加
 void CWSHClient::AddInterfaceObject( CIfObj* obj )
 {
 	if( !obj ) return;

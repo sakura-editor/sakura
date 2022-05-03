@@ -1,5 +1,5 @@
 ﻿/*!	@file
-	@brief WSHインタフェースオブジェクト基本クラス
+	@brief WSHインターフェースオブジェクト基本クラス
 
 	@date 2009.10.29 syat CWSH.hから切り出し
 
@@ -67,7 +67,7 @@ public:
 class CIfObj;
 typedef HRESULT (CIfObj::*CIfObjMethod)(int ID, DISPPARAMS *Arguments, VARIANT* Result, void *Data);
 
-//CIfObjが必要とするWSHClientのインタフェース
+//CIfObjが必要とするWSHClientのインターフェース
 class IWSHClient
 {
 public:
@@ -96,7 +96,7 @@ public:
 	virtual ~CIfObj();
 
 	// フィールド・アクセサ
-	const std::wstring::value_type* Name() const { return this->m_sName.c_str(); } // インタフェースオブジェクト名
+	const std::wstring::value_type* Name() const { return this->m_sName.c_str(); } // インターフェースオブジェクト名
 	bool IsGlobal() const { return this->m_isGlobal; } //オブジェクト名の省略可否
 	IWSHClient* Owner() const { return this->m_Owner; } // オーナーIWSHClient
 	std::wstring m_sName;

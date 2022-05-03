@@ -282,7 +282,7 @@ UINT_PTR CALLBACK OFNHookProc(
 			// 2005.11.02 ryoji 初期レイアウト設定
 			CDlgOpenFile_CommonFileDialog::InitLayout( pData->m_hwndOpenDlg, hdlg, pData->m_hwndComboCODES );
 
-			/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
+			/* コンボボックスのユーザー インターフェースを拡張インターフェースにする */
 			Combo_SetExtendedUI( pData->m_hwndComboCODES, TRUE );
 			Combo_SetExtendedUI( pData->m_hwndComboMRU, TRUE );
 			Combo_SetExtendedUI( pData->m_hwndComboOPENFOLDER, TRUE );
