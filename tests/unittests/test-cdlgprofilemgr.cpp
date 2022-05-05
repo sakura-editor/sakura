@@ -232,7 +232,7 @@ TEST(file, GetProfileMgrFileName_DefaultProfile1)
 	// プロセスのインスタンスを用意する
 	CControlProcess dummy(nullptr, LR"(-PROF="")");
 
-	// 設定フォルダのパスが返る
+	// 設定フォルダーのパスが返る
 	const auto iniDir = GetExeFileName().replace_filename(L"").append("a.txt").remove_filename();
 	ASSERT_STREQ(iniDir.c_str(), GetProfileMgrFileName(L"").c_str());
 }
@@ -250,7 +250,7 @@ TEST(file, GetProfileMgrFileName_DefaultProfile2)
 	// プロセスのインスタンスを用意する
 	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
 
-	// 設定フォルダのパスが返る
+	// 設定フォルダーのパスが返る
 	const auto iniDir = GetIniFileName().parent_path().parent_path().append("a.txt").remove_filename();
 	ASSERT_STREQ(iniDir.c_str(), GetProfileMgrFileName(L"").c_str());
 }
@@ -271,7 +271,7 @@ TEST(file, GetProfileMgrFileName_NamedProfile1)
 	// テスト用プロファイル名
 	constexpr auto profile = L"profile1";
 
-	// 指定したプロファイルの設定保存先フォルダのパスが返る
+	// 指定したプロファイルの設定保存先フォルダーのパスが返る
 	const auto profileDir = GetExeFileName().replace_filename(profile).append("a.txt").remove_filename();
 	ASSERT_STREQ(profileDir.c_str(), GetProfileMgrFileName(profile).c_str());
 }
@@ -292,7 +292,7 @@ TEST(file, GetProfileMgrFileName_NamedProfile2)
 	// テスト用プロファイル名
 	constexpr auto profile = L"profile1";
 
-	// 指定したプロファイルの設定保存先フォルダのパスが返る
+	// 指定したプロファイルの設定保存先フォルダーのパスが返る
 	const auto profileDir = GetIniFileName().parent_path().parent_path().append(profile).append("a.txt").remove_filename();
 	ASSERT_STREQ(profileDir.c_str(), GetProfileMgrFileName(profile).c_str());
 }

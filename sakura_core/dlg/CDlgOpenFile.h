@@ -110,7 +110,7 @@ public:
 		bool bOptions = true) override;
 	bool DoModalSaveDlg(SSaveInfo*	pSaveInfo, bool bSimpleMode) override;
 
-	// 設定フォルダ相対ファイル選択(共有データ,ini位置依存)
+	// 設定フォルダー相対ファイル選択(共有データ,ini位置依存)
 	static BOOL SelectFile(HWND parent, HWND hwndCtl, const WCHAR* filter,
 						   bool resolvePath, EFilter eAddFilter = EFITER_TEXT);
 

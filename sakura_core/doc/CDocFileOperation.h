@@ -44,7 +44,7 @@ public:
 	//ロードUI
 	bool OpenFileDialog(
 		HWND				hwndParent,
-		const WCHAR*		pszOpenFolder,	//!< [in]  NULL以外を指定すると初期フォルダを指定できる
+		const WCHAR*		pszOpenFolder,	//!< [in]  NULL以外を指定すると初期フォルダーを指定できる
 		SLoadInfo*			pLoadInfo,		//!< [in,out] ロード情報
 		std::vector<std::wstring>&	files
 	);

@@ -1573,8 +1573,8 @@ void CDlgFuncList::SetTreeFile()
 		// lvis.item.lParam
 		// 0 以下(nFuncInfo): m_pcFuncInfoArr->At(nFuncInfo)にファイル名
 		// -1: Grepのファイル名要素
-		// -2: Grepのサブフォルダ要素
-		// -(nFuncInfo * 10 + 3): Grepルートフォルダ要素
+		// -2: Grepのサブフォルダー要素
+		// -(nFuncInfo * 10 + 3): Grepルートフォルダー要素
 		// -4: データ・追加操作なし
 		TVINSERTSTRUCT tvis;
 		tvis.hParent      = hParentTree.back();
@@ -1642,7 +1642,7 @@ void CDlgFuncList::SetTreeFileSub( HTREEITEM hParent, const WCHAR* pszFile )
 	CGrepEnumFolders cGrepExceptAbsFolders;
 	cGrepExceptAbsFolders.Enumerates(L"", cGrepEnumKeys.m_vecExceptAbsFolderKeys, cGrepEnumOptions);
 
-	//フォルダ一覧作成
+	//フォルダー一覧作成
 	CGrepEnumFilterFolders cGrepEnumFilterFolders;
 	cGrepEnumFilterFolders.Enumerates( basePath.c_str(), cGrepEnumKeys, cGrepEnumOptions, cGrepExceptAbsFolders );
 	int nItemCount = cGrepEnumFilterFolders.GetCount();
@@ -3867,7 +3867,7 @@ void CDlgFuncList::LoadFileTreeSetting( CFileTreeSetting& data, SFilePath& IniDi
 	data.m_szDefaultProjectIni = pFileTree->m_szProjectIni;
 	data.m_szLoadProjectIni = L"";
 	if( data.m_bProject ){
-		// 各フォルダのプロジェクトファイル読み込み
+		// 各フォルダーのプロジェクトファイル読み込み
 		WCHAR szPath[_MAX_PATH];
 		::GetLongFileName( L".", szPath );
 		wcscat( szPath, L"\\" );

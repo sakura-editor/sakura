@@ -85,8 +85,8 @@ wchar_t* ExParam_LongName( wchar_t* q, wchar_t* q_max, EExpParamName eLongParam 
 	@li /  開いているファイルの名前（フルパス。パスの区切りが/）
 	@li N  開いているファイルの名前(簡易表示)
 	@li n  無題の通し番号
-	@li E  開いているファイルのあるフォルダの名前(簡易表示)
-	@li e  開いているファイルのあるフォルダの名前
+	@li E  開いているファイルのあるフォルダーの名前(簡易表示)
+	@li e  開いているファイルのあるフォルダーの名前
 	@li B  タイプ別設定の名前
 	@li b  開いているファイルの拡張子
 	@li Q  印刷ページ設定の名前
@@ -241,7 +241,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			}
 			++p;
 			break;
-		case L'E':	// 開いているファイルのあるフォルダの名前(簡易表示)	2012/12/2 Uchi
+		case L'E':	// 開いているファイルのあるフォルダーの名前(簡易表示)	2012/12/2 Uchi
 			if( !pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
 				q = wcs_pushW( q, q_max - q, NO_TITLE.c_str(), NO_TITLE_LEN );
 			}
@@ -273,7 +273,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			}
 			++p;
 			break;
-		case L'e':	// 開いているファイルのあるフォルダの名前		2012/12/2 Uchi
+		case L'e':	// 開いているファイルのあるフォルダーの名前		2012/12/2 Uchi
 			if( !pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
 				q = wcs_pushW( q, q_max - q, NO_TITLE.c_str(), NO_TITLE_LEN );
 			}
@@ -706,10 +706,10 @@ wchar_t* ExParam_LongName( wchar_t* q, wchar_t* q_max, EExpParamName eLongParam 
 	return q;
 }
 
-/*!	@brief 初期フォルダ取得
+/*!	@brief 初期フォルダー取得
 
 	@param bControlProcess [in] trueのときはOPENDIALOGDIR_CUR->OPENDIALOGDIR_MRUに変更
-	@return 初期フォルダ
+	@return 初期フォルダー
 */
 std::wstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
 {

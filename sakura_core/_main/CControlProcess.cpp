@@ -42,7 +42,7 @@ std::filesystem::path CControlProcess::GetIniFileName() const
 	auto iniPath = GetExeFileName().replace_extension(L".ini");
 
 	// マルチユーザー用のiniファイルパス
-	//		exeと同じフォルダに置かれたマルチユーザー構成設定ファイル（sakura.exe.ini）の内容
+	//		exeと同じフォルダーに置かれたマルチユーザー構成設定ファイル（sakura.exe.ini）の内容
 	//		に従ってマルチユーザー用のiniファイルパスを決める
 	auto exeIniPath = GetExeFileName().concat(L".ini");
 	if (bool isMultiUserSeggings = ::GetPrivateProfileInt(L"Settings", L"MultiUser", 0, exeIniPath.c_str()); isMultiUserSeggings) {
@@ -67,16 +67,16 @@ std::filesystem::path CControlProcess::GetPrivateIniFileName(const std::wstring&
 	KNOWNFOLDERID refFolderId;
 	switch (int nFolder = ::GetPrivateProfileInt(L"Settings", L"UserRootFolder", 0, exeIniPath.c_str())) {
 	case 1:
-		refFolderId = FOLDERID_Profile;			// ユーザーのルートフォルダ
+		refFolderId = FOLDERID_Profile;			// ユーザーのルートフォルダー
 		break;
 	case 2:
-		refFolderId = FOLDERID_Documents;		// ユーザーのドキュメントフォルダ
+		refFolderId = FOLDERID_Documents;		// ユーザーのドキュメントフォルダー
 		break;
 	case 3:
-		refFolderId = FOLDERID_Desktop;			// ユーザーのデスクトップフォルダ
+		refFolderId = FOLDERID_Desktop;			// ユーザーのデスクトップフォルダー
 		break;
 	default:
-		refFolderId = FOLDERID_RoamingAppData;	// ユーザーのアプリケーションデータフォルダ
+		refFolderId = FOLDERID_RoamingAppData;	// ユーザーのアプリケーションデータフォルダー
 		break;
 	}
 

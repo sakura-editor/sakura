@@ -32,7 +32,7 @@
 
 typedef StaticString<WCHAR, _MAX_PATH> CPathString;
 
-//! フォルダの履歴を管理 (RECENT_FOR_FOLDER)
+//! フォルダーの履歴を管理 (RECENT_FOR_FOLDER)
 class CRecentFolder final : public CRecentImp<CPathString, LPCWSTR>{
 public:
 	//生成

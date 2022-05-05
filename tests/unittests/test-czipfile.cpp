@@ -117,11 +117,11 @@ bool WriteBinaryToFile(BinarySequenceView bin, std::filesystem::path path)
  */
 std::filesystem::path GetTempFilePath(std::wstring_view prefix)
 {
-	// 一時フォルダのパスを取得する
+	// 一時フォルダーのパスを取得する
 	const std::wstring tempDir = std::filesystem::temp_directory_path();
 
 	// パス生成に必要なバッファを確保する
-	// （一時フォルダのパス＋接頭辞(3文字)＋4桁の16進数＋拡張子＋NUL終端）
+	// （一時フォルダーのパス＋接頭辞(3文字)＋4桁の16進数＋拡張子＋NUL終端）
 	std::wstring buf(tempDir.length() + 3 + 4 + 4 + 1, L'\0');
 
 	// Windows API関数を呼び出す。

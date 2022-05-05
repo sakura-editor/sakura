@@ -439,7 +439,7 @@ void CDlgOpenFile_CommonItemDialog::Create(
 		m_strDefaultWildCard = pszUserWildCard;
 	}
 
-	/* 「開く」での初期フォルダ */
+	/* 「開く」での初期フォルダー */
 	if( pszDefaultPath && pszDefaultPath[0] != L'\0' ){	//現在編集中のファイルのパス	//@@@ 2002.04.18
 		WCHAR szDrive[_MAX_DRIVE];
 		WCHAR szDir[_MAX_DIR];

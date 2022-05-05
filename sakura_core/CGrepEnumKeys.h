@@ -78,7 +78,7 @@ public:
 		return excludeFiles;
 	}
 
-	// 除外フォルダの2つの解析済み配列から1つのリストを作る
+	// 除外フォルダーの2つの解析済み配列から1つのリストを作る
 	auto GetExcludeFolders() const ->  std::list<decltype(m_vecExceptFolderKeys)::value_type> {
 		std::list<decltype(m_vecExceptFolderKeys)::value_type> excludeFolders;
 		const auto& folderKeys = m_vecExceptFolderKeys;
@@ -89,7 +89,7 @@ public:
 	}
 
 	int SetFileKeys( LPCWSTR lpKeys ){
-		const WCHAR* WILDCARD_ANY = L"*.*";	//サブフォルダ探索用
+		const WCHAR* WILDCARD_ANY = L"*.*";	//サブフォルダー探索用
 		ClearItems();
 		
 		std::vector< wstring > patterns = SplitPattern(lpKeys);
@@ -158,8 +158,8 @@ public:
 	}
 
 	/*!
-		@brief 除外フォルダパターンを追加する
-		@param[in]	lpKeys	除外フォルダパターン
+		@brief 除外フォルダーパターンを追加する
+		@param[in]	lpKeys	除外フォルダーパターン
 	*/
 	int AddExceptFolder(LPCWSTR lpKeys) {
 		return ParseAndAddException(lpKeys, m_vecExceptFolderKeys, m_vecExceptAbsFolderKeys);
@@ -242,7 +242,7 @@ private:
 
 	/*
 		@retval 0 正常終了
-		@retval 1 *\file.exe などのフォルダ部分でのワイルドカードはエラー
+		@retval 1 *\file.exe などのフォルダー部分でのワイルドカードはエラー
 	*/
 	int ValidateKey( LPCWSTR key ){
 		// 

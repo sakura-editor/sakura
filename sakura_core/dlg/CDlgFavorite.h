@@ -114,7 +114,7 @@ private:
 		int			m_nId;				//コントロールのID
 		bool		m_bHaveFavorite;	//お気に入りを持っているか？
 		bool		m_bHaveView;		//表示数変更機能をもっているか？
-		bool		m_bFilePath;		//ファイル/フォルダか？
+		bool		m_bFilePath;		//ファイル/フォルダーか？
 		bool		m_bEditable;		//編集可能
 		bool		m_bAddExcept;		//除外へ追加
 		int			m_nViewCount;		//カレントの表示数

@@ -48,13 +48,13 @@ ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 	// リロード要求の場合は、継続。
 	if(pLoadInfo->bRequestReload)goto next;
 
-	//フォルダが指定された場合は「ファイルを開く」ダイアログを表示し、実際のファイル入力を促す
+	//フォルダーが指定された場合は「ファイルを開く」ダイアログを表示し、実際のファイル入力を促す
 	if( IsDirectory(pLoadInfo->cFilePath) ){
 		std::vector<std::wstring> files;
 		SLoadInfo sLoadInfo(L"", CODE_AUTODETECT, false);
 		bool bDlgResult = pcDoc->m_cDocFileOperation.OpenFileDialog(
 			CEditWnd::getInstance()->GetHwnd(),
-			pLoadInfo->cFilePath,	//指定されたフォルダ
+			pLoadInfo->cFilePath,	//指定されたフォルダー
 			&sLoadInfo,
 			files
 		);

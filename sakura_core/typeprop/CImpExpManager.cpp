@@ -133,7 +133,7 @@ bool CImpExpManager::ImportUI( HINSTANCE hInstance, HWND hwndParent )
 		hInstance,
 		hwndParent,
 		GetDefaultExtension(),
-		GetDllShareData().m_sHistory.m_szIMPORTFOLDER // インポート用フォルダ
+		GetDllShareData().m_sHistory.m_szIMPORTFOLDER // インポート用フォルダー
 	);
 	WCHAR	szPath[_MAX_PATH + 1];
 	szPath[0] = L'\0';
@@ -180,7 +180,7 @@ bool CImpExpManager::ExportUI( HINSTANCE hInstance, HWND hwndParent )
 		hInstance,
 		hwndParent,
 		GetDefaultExtension(),
-		GetDllShareData().m_sHistory.m_szIMPORTFOLDER // インポート用フォルダ
+		GetDllShareData().m_sHistory.m_szIMPORTFOLDER // インポート用フォルダー
 	);
 	WCHAR			szPath[_MAX_PATH + 1];
 	szPath[0] = L'\0';

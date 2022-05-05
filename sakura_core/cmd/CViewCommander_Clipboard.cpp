@@ -1121,7 +1121,7 @@ void CViewCommander::Command_COPYPATH( void )
 	}
 }
 
-/* 現在編集中のファイルのフォルダ名をクリップボードにコピー */
+/* 現在編集中のファイルのフォルダー名をクリップボードにコピー */
 void CViewCommander::Command_COPYDIRPATH( void )
 {
 	if (!GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath()) {
@@ -1138,7 +1138,7 @@ void CViewCommander::Command_COPYDIRPATH( void )
 		strFolder.erase(itrClear);
 	}
 	
-	/* クリップボードにフォルダ名をコピー */
+	/* クリップボードにフォルダー名をコピー */
 	m_pCommanderView->MySetClipboardData( strFolder.c_str(), strFolder.size(), false );
 }
 

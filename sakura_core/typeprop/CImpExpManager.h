@@ -65,7 +65,7 @@ protected:
 	// Import Folderの設定
 	inline void SetImportFolder( const WCHAR* szPath ) 
 	{
-		/* ファイルのフルパスをフォルダとファイル名に分割 */
+		/* ファイルのフルパスをフォルダーとファイル名に分割 */
 		/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
 		::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL );
 		wcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, L"\\" );

@@ -37,7 +37,7 @@
 BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData);	/* WinHelp のかわりに HtmlHelp を呼び出す */	// 2006.07.22 ryoji
 
 /* Shell Interface系(?) */
-BOOL SelectDir(HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR* strFolderName, size_t nMaxCount );	/* フォルダ選択ダイアログ */
+BOOL SelectDir(HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR* strFolderName, size_t nMaxCount );	/* フォルダー選択ダイアログ */
 
 template <size_t nMaxCount>
 BOOL SelectDir(HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR(&strFolderName)[nMaxCount])
@@ -53,7 +53,7 @@ DWORD NetConnect ( const WCHAR strNetWorkPass[] );
 /* ヘルプの目次を表示 */
 void ShowWinHelpContents( HWND hwnd );
 
-BOOL GetSpecialFolderPath( int nFolder, LPWSTR pszPath );	// 特殊フォルダのパスを取得する	// 2007.05.19 ryoji
+BOOL GetSpecialFolderPath( int nFolder, LPWSTR pszPath );	// 特殊フォルダーのパスを取得する	// 2007.05.19 ryoji
 
 INT_PTR MyPropertySheet( LPPROPSHEETHEADER lppsph );	// 独自拡張プロパティシート	// 2007.05.24 ryoji
 

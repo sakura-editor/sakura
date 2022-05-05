@@ -117,7 +117,7 @@ int CFileNameManager::TransformFileName_MakeCache( void ){
 	return nCount;
 }
 
-/*!	ファイル・フォルダ名を置換して、簡易表示名を取得する
+/*!	ファイル・フォルダー名を置換して、簡易表示名を取得する
 	@date 2002.11.27 Moca 新規作成
 	@note 大小文字を区別しない。nDestLenに達したときは後ろを切り捨てられる
 */
@@ -213,13 +213,13 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 			ps++;
 			// %SAKURA%
 			if( 0 == wmemicmp( L"SAKURA%", ps, 7 ) ){
-				// exeのあるフォルダ
+				// exeのあるフォルダー
 				GetExedir( szPath );
 				nMetaLen = 6;
 			}
 			// %SAKURADATA%	// 2007.06.06 ryoji
 			else if( 0 == wmemicmp( L"SAKURADATA%", ps, 11 ) ){
-				// iniのあるフォルダ
+				// iniのあるフォルダー
 				GetInidir( szPath );
 				nMetaLen = 10;
 			}
@@ -298,7 +298,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 				}
 			}
 
-			// 最後のフォルダ区切り記号を削除する
+			// 最後のフォルダー区切り記号を削除する
 			// [A:\]などのルートであっても削除
 			for(nPathLen = 0; pStr2[nPathLen] != L'\0'; nPathLen++ ){
 #ifdef _MBCS

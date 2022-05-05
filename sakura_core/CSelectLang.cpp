@@ -131,7 +131,7 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 	//カレントディレクトリを保存。関数から抜けるときに自動でカレントディレクトリは復元される。
 	CCurrentDirectoryBackupPoint cCurDirBackup;
 	ChangeCurrentDirectoryToExeDir();
-// ★iniまたはexeフォルダとなるように改造が必要
+// ★iniまたはexeフォルダーとなるように改造が必要
 
 	WIN32_FIND_DATA w32fd;
 	WCHAR szPath[] = L"sakura_lang_*.dll";			// サーチするメッセージリソースDLL
@@ -139,7 +139,7 @@ HINSTANCE CSelectLang::InitializeLanguageEnvironment( void )
 	BOOL result = (INVALID_HANDLE_VALUE != handle) ? TRUE : FALSE;
 
 	while( result ){
-		if( ! (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ){		//フォルダでない
+		if( ! (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ){		//フォルダーでない
 			// バッファに登録する。
 			psLangInfo = new SSelLangInfo();
 			wcscpy( psLangInfo->szDllName, w32fd.cFileName );

@@ -31,7 +31,7 @@
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {	//10000
-	IDC_BUTTON_BACKUP_FOLDER_REF,	HIDC_BUTTON_BACKUP_FOLDER_REF,	//バックアップフォルダ参照
+	IDC_BUTTON_BACKUP_FOLDER_REF,	HIDC_BUTTON_BACKUP_FOLDER_REF,	//バックアップフォルダー参照
 	IDC_CHECK_BACKUP,				HIDC_CHECK_BACKUP,				//バックアップの作成
 	IDC_CHECK_BACKUP_YEAR,			HIDC_CHECK_BACKUP_YEAR,			//バックアップファイル名（西暦年）
 	IDC_CHECK_BACKUP_MONTH,			HIDC_CHECK_BACKUP_MONTH,		//バックアップファイル名（月）
@@ -40,10 +40,10 @@ static const DWORD p_helpids[] = {	//10000
 	IDC_CHECK_BACKUP_MIN,			HIDC_CHECK_BACKUP_MIN,			//バックアップファイル名（分）
 	IDC_CHECK_BACKUP_SEC,			HIDC_CHECK_BACKUP_SEC,			//バックアップファイル名（秒）
 	IDC_CHECK_BACKUPDIALOG,			HIDC_CHECK_BACKUPDIALOG,		//作成前に確認
-	IDC_CHECK_BACKUPFOLDER,			HIDC_CHECK_BACKUPFOLDER,		//指定フォルダに作成
-	IDC_CHECK_BACKUP_FOLDER_RM,		HIDC_CHECK_BACKUP_FOLDER_RM,	//指定フォルダに作成(リムーバブルメディアのみ)
+	IDC_CHECK_BACKUPFOLDER,			HIDC_CHECK_BACKUPFOLDER,		//指定フォルダーに作成
+	IDC_CHECK_BACKUP_FOLDER_RM,		HIDC_CHECK_BACKUP_FOLDER_RM,	//指定フォルダーに作成(リムーバブルメディアのみ)
 	IDC_CHECK_BACKUP_DUSTBOX,		HIDC_CHECK_BACKUP_DUSTBOX,		//バックアップファイルをごみ箱に放り込む	//@@@ 2001.12.11 add MIK
-	IDC_EDIT_BACKUPFOLDER,			HIDC_EDIT_BACKUPFOLDER,			//保存フォルダ名
+	IDC_EDIT_BACKUPFOLDER,			HIDC_EDIT_BACKUPFOLDER,			//保存フォルダー名
 	IDC_EDIT_BACKUP_3,				HIDC_EDIT_BACKUP_3,				//世代数
 	IDC_RADIO_BACKUP_TYPE1,			HIDC_RADIO_BACKUP_TYPE1,		//バックアップの種類（拡張子）
 //	IDC_RADIO_BACKUP_TYPE2,			HIDC_RADIO_BACKUP_TYPE2NEWHID,		//バックアップの種類（日付・時刻） // 2002.11.09 Moca HIDが.._TYPE3と逆だった	// Jun.  5, 2004 genta 廃止
@@ -97,7 +97,7 @@ INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
-		//	Oct. 5, 2002 genta バックアップフォルダ名の入力サイズを指定
+		//	Oct. 5, 2002 genta バックアップフォルダー名の入力サイズを指定
 		//	Oct. 8, 2002 genta 最後に付加される\の領域を残すためバッファサイズ-1しか入力させない
 		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFOLDER ), _countof2(m_Common.m_sBackup.m_szBackUpFolder) - 1 - 1 );
 		// 20051107 aroka
@@ -171,9 +171,9 @@ INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 				UpdateBackupFile( hwndDlg );
 				EnableBackupInput(hwndDlg);
 				return TRUE;
-			case IDC_BUTTON_BACKUP_FOLDER_REF:	/* フォルダ参照 */
+			case IDC_BUTTON_BACKUP_FOLDER_REF:	/* フォルダー参照 */
 				{
-					/* バックアップを作成するフォルダ */
+					/* バックアップを作成するフォルダー */
 					WCHAR		szFolder[_MAX_PATH];
 					::DlgItem_GetText( hwndDlg, IDC_EDIT_BACKUPFOLDER, szFolder, _countof( szFolder ));
 
@@ -189,7 +189,7 @@ INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 				UpdateBackupFile( hwndDlg );
 			}
 			break;	/* BN_CLICKED */
-		case EN_CHANGE: // 20051107 aroka フォルダが変更されたらリアルタイムにエディットボックス内を更新
+		case EN_CHANGE: // 20051107 aroka フォルダーが変更されたらリアルタイムにエディットボックス内を更新
 			switch( wID ){
 			case IDC_EDIT_BACKUPFOLDER:
 				// 2009.02.21 ryoji 後ろに\が追加されるので，1文字余裕をみる必要がある．
@@ -238,7 +238,7 @@ void CPropBackup::SetData( HWND hwndDlg )
 	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_BACKUP, m_Common.m_sBackup.m_bBackUp );
 	/* バックアップの作成前に確認 */
 	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_BACKUPDIALOG, m_Common.m_sBackup.m_bBackUpDialog );
-//	/* 指定フォルダにバックアップを作成する */ //	20051107 aroka 「バックアップの作成」に連動させる
+//	/* 指定フォルダーにバックアップを作成する */ //	20051107 aroka 「バックアップの作成」に連動させる
 //	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUPFOLDER, .m_sBackup.m_bBackUpFolder );
 
 	/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
@@ -279,23 +279,23 @@ void CPropBackup::SetData( HWND hwndDlg )
 	/* バックアップファイル名：日付の秒 */
 	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_BACKUP_SEC, m_Common.m_sBackup.GetBackupOpt(BKUP_SEC) );
 
-	/* 指定フォルダにバックアップを作成する */ // 20051107 aroka 移動：連動対象にする。
+	/* 指定フォルダーにバックアップを作成する */ // 20051107 aroka 移動：連動対象にする。
 	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_BACKUPFOLDER, m_Common.m_sBackup.m_bBackUpFolder );
 	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_BACKUP_FOLDER_RM, m_Common.m_sBackup.m_bBackUpFolderRM );	// 2010/5/27 Uchi
 
-	/* バックアップを作成するフォルダ */
+	/* バックアップを作成するフォルダー */
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_BACKUPFOLDER, m_Common.m_sBackup.m_szBackUpFolder );
 
 	/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
 	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUP_DUSTBOX, m_Common.m_sBackup.m_bBackUpDustBox?BST_CHECKED:BST_UNCHECKED );	//@@@ 2001.12.11 add MIK
 
-	/* バックアップ先フォルダを詳細設定する */ // 20051107 aroka
+	/* バックアップ先フォルダーを詳細設定する */ // 20051107 aroka
 	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUP_ADVANCED, m_Common.m_sBackup.m_bBackUpPathAdvanced?BST_CHECKED:BST_UNCHECKED );
 
-	/* バックアップを作成するフォルダの詳細設定 */ // 20051107 aroka
+	/* バックアップを作成するフォルダーの詳細設定 */ // 20051107 aroka
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_BACKUPFILE, m_Common.m_sBackup.m_szBackUpPathAdvanced );
 
-	/* バックアップを作成するフォルダの詳細設定 */ // 20051128 aroka
+	/* バックアップを作成するフォルダーの詳細設定 */ // 20051128 aroka
 	switch( m_Common.m_sBackup.GetBackupTypeAdv() ){
 	case 2:
 		::CheckDlgButton( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1A, 1 );	// 付加する日付のタイプ(現時刻)
@@ -329,7 +329,7 @@ int CPropBackup::GetData( HWND hwndDlg )
 	m_Common.m_sBackup.m_bBackUp = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_BACKUP );
 	/* バックアップの作成前に確認 */
 	m_Common.m_sBackup.m_bBackUpDialog = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_BACKUPDIALOG );
-//	/* 指定フォルダにバックアップを作成する */ // 20051107 aroka 「バックアップの作成」に連動させる
+//	/* 指定フォルダーにバックアップを作成する */ // 20051107 aroka 「バックアップの作成」に連動させる
 //	m_Common.m_sBackup.m_bBackUpFolder = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUPFOLDER );
 
 	/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
@@ -377,11 +377,11 @@ int CPropBackup::GetData( HWND hwndDlg )
 	/* バックアップファイル名：日付の秒 */
 	m_Common.m_sBackup.SetBackupOpt(BKUP_SEC, ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP_SEC ) == BST_CHECKED);
 
-	/* 指定フォルダにバックアップを作成する */ // 20051107 aroka 移動
+	/* 指定フォルダーにバックアップを作成する */ // 20051107 aroka 移動
 	m_Common.m_sBackup.m_bBackUpFolder = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_BACKUPFOLDER );
 	m_Common.m_sBackup.m_bBackUpFolderRM = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_BACKUP_FOLDER_RM );	// 2010/5/27 Uchi
 
-	/* バックアップを作成するフォルダ */
+	/* バックアップを作成するフォルダー */
 	//	Oct. 5, 2002 genta サイズをsizeof()で指定
 	//	Oct. 8, 2002 genta 後ろに\が追加されるので，1文字余裕を見る必要がある．
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_BACKUPFOLDER, m_Common.m_sBackup.m_szBackUpFolder, _countof2(m_Common.m_sBackup.m_szBackUpFolder) - 1);
@@ -389,9 +389,9 @@ int CPropBackup::GetData( HWND hwndDlg )
 	/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
 	m_Common.m_sBackup.m_bBackUpDustBox = (BST_CHECKED==::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP_DUSTBOX ));	//@@@ 2001.12.11 add MIK
 
-	/* 指定フォルダにバックアップを作成する詳細設定 */ // 20051107 aroka
+	/* 指定フォルダーにバックアップを作成する詳細設定 */ // 20051107 aroka
 	m_Common.m_sBackup.m_bBackUpPathAdvanced = (BST_CHECKED==::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP_ADVANCED ));
-	/* バックアップを作成するフォルダ */ // 20051107 aroka
+	/* バックアップを作成するフォルダー */ // 20051107 aroka
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_BACKUPFILE, m_Common.m_sBackup.m_szBackUpPathAdvanced, _countof2( m_Common.m_sBackup.m_szBackUpPathAdvanced ) - 1);
 
 	// 20051128 aroka 詳細設定の日付のタイプ
@@ -480,7 +480,7 @@ void CPropBackup::EnableBackupInput(HWND hwndDlg)
 	SHOWENABLE( IDC_RADIO_BACKUP_DATETYPE2A,	bAdvanced, bBackup );
 
 	SHOWENABLE( IDC_CHECK_BACKUPFOLDER,		TRUE, bBackup );
-	SHOWENABLE( IDC_LABEL_BACKUP_4,			TRUE, bBackup && bFolder );	// added Sept. 6, JEPRO フォルダ指定したときだけEnableになるように変更
+	SHOWENABLE( IDC_LABEL_BACKUP_4,			TRUE, bBackup && bFolder );	// added Sept. 6, JEPRO フォルダー指定したときだけEnableになるように変更
 	SHOWENABLE( IDC_CHECK_BACKUP_FOLDER_RM,	TRUE, bBackup && bFolder );	// 2010/5/27 Uchi
 	SHOWENABLE( IDC_EDIT_BACKUPFOLDER,		TRUE, bBackup && bFolder );
 	SHOWENABLE( IDC_BUTTON_BACKUP_FOLDER_REF,	TRUE, bBackup && bFolder );

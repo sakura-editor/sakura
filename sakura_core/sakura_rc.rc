@@ -144,15 +144,15 @@ BEGIN
     COMBOBOX        IDC_COMBO_FOLDER,60,50,254,120,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "&...",IDC_BUTTON_FOLDER,316,50,16,10
     CONTROL         "編集中のテキストから検索(&M)",IDC_CHK_FROMTHISTEXT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,60,64,120,8
-    CONTROL         "サブフォルダも検索(&S)",IDC_CHK_SUBFOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,60,74,120,8
-    CONTROL         "カレントフォルダが初期値(&D)",IDC_CHK_DEFAULTFOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,60,84,120,8
+    CONTROL         "サブフォルダーも検索(&S)",IDC_CHK_SUBFOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,60,74,120,8
+    CONTROL         "カレントフォルダーが初期値(&D)",IDC_CHK_DEFAULTFOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,60,84,120,8
     PUSHBUTTON      "上階層へ(&U)",IDC_BUTTON_FOLDER_UP,230,64,50,14
-    PUSHBUTTON      "現フォルダ(&G)",IDC_BUTTON_CURRENTFOLDER,282,64,50,14,BS_MULTILINE
+    PUSHBUTTON      "現フォルダー(&G)",IDC_BUTTON_CURRENTFOLDER,282,64,50,14,BS_MULTILINE
     RTEXT           "対象ファイル(&I):",IDC_STATIC,4,96,52,8,NOT WS_GROUP
     COMBOBOX        IDC_COMBO_FILE,60,96,272,120,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     RTEXT           "除外ファイル(&J):",IDC_STATIC,4,110,52,8,NOT WS_GROUP
     COMBOBOX        IDC_COMBO_EXCLUDE_FILE,60,110,272,120,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
-    RTEXT           "除外フォルダ(&K):",IDC_STATIC,4,124,53,8
+    RTEXT           "除外フォルダー(&K):",IDC_STATIC,4,124,53,8
     COMBOBOX        IDC_COMBO_EXCLUDE_FOLDER,60,124,272,120,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     GROUPBOX        "結果出力",IDC_STATIC,60,140,68,44,WS_GROUP
     CONTROL         "該当行(&1)",IDC_RADIO_OUTPUTLINE,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,68,152,56,8
@@ -164,8 +164,8 @@ BEGIN
     CONTROL         "結果のみ(&6)",IDC_RADIO_OUTPUTSTYLE3,"Button",BS_AUTORADIOBUTTON,140,172,56,8
     GROUPBOX        "その他",IDC_STATIC,204,140,180,44,WS_GROUP
     CONTROL         "ファイル毎最初のみ検索(&7)",IDC_CHECK_FILE_ONLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,212,152,96,8
-    CONTROL         "フォルダ毎に表示(&8)",IDC_CHECK_SEP_FOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,212,162,96,8
-    CONTROL         "ベースフォルダ表示(&9)",IDC_CHECK_BASE_PATH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,212,172,96,8
+    CONTROL         "フォルダー毎に表示(&8)",IDC_CHECK_SEP_FOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,212,162,96,8
+    CONTROL         "ベースフォルダー表示(&9)",IDC_CHECK_BASE_PATH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,212,172,96,8
     LTEXT           "文字コードセット(&A):",IDC_STATIC,312,148,66,8
     COMBOBOX        IDC_COMBO_CHARSET,312,158,64,120,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     CONTROL         "C&P",IDC_CHECK_CP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,312,172,30,8
@@ -194,15 +194,15 @@ BEGIN
     COMBOBOX        IDC_COMBO_FOLDER,60,64,254,120,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "&...",IDC_BUTTON_FOLDER,316,64,16,10
     CONTROL         "編集中のテキストから検索(&M)",IDC_CHK_FROMTHISTEXT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,60,78,120,8
-    CONTROL         "サブフォルダも検索(&S)",IDC_CHK_SUBFOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,60,88,120,8
-    CONTROL         "カレントフォルダが初期値(&D)",IDC_CHK_DEFAULTFOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,60,98,120,8
+    CONTROL         "サブフォルダーも検索(&S)",IDC_CHK_SUBFOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,60,88,120,8
+    CONTROL         "カレントフォルダーが初期値(&D)",IDC_CHK_DEFAULTFOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,60,98,120,8
     PUSHBUTTON      "上階層へ(&U)",IDC_BUTTON_FOLDER_UP,230,78,50,14
-    PUSHBUTTON      "現フォルダ(&G)",IDC_BUTTON_CURRENTFOLDER,282,78,50,14,BS_MULTILINE
+    PUSHBUTTON      "現フォルダー(&G)",IDC_BUTTON_CURRENTFOLDER,282,78,50,14,BS_MULTILINE
     RTEXT           "対象ファイル(&I):",IDC_STATIC,4,110,52,8,NOT WS_GROUP
     COMBOBOX        IDC_COMBO_FILE,60,110,272,120,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     RTEXT           "除外ファイル(&J):",IDC_STATIC,4,124,52,8,NOT WS_GROUP
     COMBOBOX        IDC_COMBO_EXCLUDE_FILE,60,124,272,120,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
-    RTEXT           "除外フォルダ(&K):",IDC_STATIC,4,138,52,8
+    RTEXT           "除外フォルダー(&K):",IDC_STATIC,4,138,52,8
     COMBOBOX        IDC_COMBO_EXCLUDE_FOLDER,60,138,272,120,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     GROUPBOX        "結果出力",IDC_STATIC,60,154,68,44,WS_GROUP
     CONTROL         "該当行(&1)",IDC_RADIO_OUTPUTLINE,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,68,166,56,8
@@ -213,8 +213,8 @@ BEGIN
     CONTROL         "結果のみ(&6)",IDC_RADIO_OUTPUTSTYLE3,"Button",BS_AUTORADIOBUTTON,140,186,56,8
     GROUPBOX        "その他",IDC_STATIC,204,154,180,44,WS_GROUP
     CONTROL         "ファイル毎最初のみ検索(&7)",IDC_CHECK_FILE_ONLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,212,166,96,8
-    CONTROL         "フォルダ毎に表示(&8)",IDC_CHECK_SEP_FOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,212,176,96,8
-    CONTROL         "ベースフォルダ表示(&9)",IDC_CHECK_BASE_PATH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,212,186,96,8
+    CONTROL         "フォルダー毎に表示(&8)",IDC_CHECK_SEP_FOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,212,176,96,8
+    CONTROL         "ベースフォルダー表示(&9)",IDC_CHECK_BASE_PATH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,212,186,96,8
     LTEXT           "文字コードセット(&A):",IDC_STATIC,312,162,62,8
     COMBOBOX        IDC_COMBO_CHARSET,312,172,64,120,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     CONTROL         "C&P",IDC_CHECK_CP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,312,186,30,8
@@ -231,7 +231,7 @@ BEGIN
     LTEXT           "検索しています・・・",IDC_STATIC,5,5,61,10,NOT WS_GROUP
     LTEXT           "ファイル",IDC_STATIC,5,21,26,10,NOT WS_GROUP
     LTEXT           "IDC_STATIC_CURPATH",IDC_STATIC_CURFILE,36,20,252,10,NOT WS_GROUP
-    LTEXT           "フォルダ",IDC_STATIC,5,34,27,10,NOT WS_GROUP
+    LTEXT           "フォルダー",IDC_STATIC,5,34,27,10,NOT WS_GROUP
     EDITTEXT        IDC_STATIC_CURPATH,36,35,252,20,ES_MULTILINE | ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
     PUSHBUTTON      "キャンセル(&X)",IDCANCEL,238,60,50,14
     LTEXT           "0",IDC_STATIC_HITCOUNT,76,5,44,10,NOT WS_GROUP,WS_EX_RIGHT
@@ -512,7 +512,7 @@ BEGIN
     COMBOBOX        IDC_COMBO_EOL,226,13,50,126,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "最近のファイル(&F):",IDC_STATIC,5,32,59,10
     COMBOBOX        IDC_COMBO_MRU,71,30,185,236,CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "最近のフォルダ(&D):",IDC_STATIC,5,49,61,10
+    LTEXT           "最近のフォルダー(&D):",IDC_STATIC,5,49,61,10
     COMBOBOX        IDC_COMBO_OPENFOLDER,71,46,185,236,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
 END
 
@@ -583,11 +583,11 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "タグファイルの作成"
 FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
-    LTEXT           "タグ作成フォルダ",IDC_STATIC,7,7,65,10
+    LTEXT           "タグ作成フォルダー",IDC_STATIC,7,7,65,10
     EDITTEXT        IDC_EDIT_TAG_MAKE_FOLDER,7,18,201,12,ES_AUTOHSCROLL
     PUSHBUTTON      "...",IDC_BUTTON_TAG_MAKE_REF,211,17,15,12
     PUSHBUTTON      "上(&B)",IDC_BUTTON_FOLDER_UP,186,31,25,14
-    CONTROL         "サブフォルダも対象にする",IDC_CHECK_TAG_MAKE_RECURSE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,34,107,10
+    CONTROL         "サブフォルダーも対象にする",IDC_CHECK_TAG_MAKE_RECURSE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,34,107,10
     LTEXT           "コマンドラインオプション",IDC_STATIC,7,49,86,10
     EDITTEXT        IDC_EDIT_TAG_MAKE_CMDLINE,96,47,130,12,ES_AUTOHSCROLL
     DEFPUSHBUTTON   "作成(&O)",IDOK,68,64,50,14
@@ -1052,7 +1052,7 @@ BEGIN
     EDITTEXT        IDC_EDIT_MAX_MRU_FILE,168,184,28,12,ES_AUTOHSCROLL | WS_GROUP
     CONTROL         "Spin1",IDC_SPIN_MAX_MRU_FILE,"msctls_updown32",UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,196,184,9,12
     PUSHBUTTON      "履歴をクリア(&C)...",IDC_BUTTON_CLEAR_MRU_FILE,208,184,61,14
-    LTEXT           "フォルダの履歴MA&X",IDC_STATIC,163,202,74,10
+    LTEXT           "フォルダーの履歴MA&X",IDC_STATIC,163,202,74,10
     EDITTEXT        IDC_EDIT_MAX_MRU_FOLDER,168,214,28,12,ES_AUTOHSCROLL | WS_GROUP
     CONTROL         "Spin1",IDC_SPIN_MAX_MRU_FOLDER,"msctls_updown32",UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,196,214,9,12
     PUSHBUTTON      "履歴をクリア(&L)...",IDC_BUTTON_CLEAR_MRU_FOLDER,208,214,61,14
@@ -1203,9 +1203,9 @@ BEGIN
     GROUPBOX        "上書きモード",IDC_STATIC,3,143,137,58,WS_GROUP
     CONTROL         "クリックで&URLを選択する",IDC_CHECK_bSelectClickedURL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,149,18,120,10
     GROUPBOX        "クリッカブルURL",IDC_STATIC,144,3,142,35,WS_GROUP
-    CONTROL         "カレントフォルダ(&U)",IDC_RADIO_CURDIR,"Button",BS_AUTORADIOBUTTON,149,54,90,10
-    CONTROL         "最近使ったフォルダ(&M)",IDC_RADIO_MRUDIR,"Button",BS_AUTORADIOBUTTON,149,69,90,10
-    CONTROL         "指定フォルダ(&F)",IDC_RADIO_SELDIR,"Button",BS_AUTORADIOBUTTON,149,84,90,10
+    CONTROL         "カレントフォルダー(&U)",IDC_RADIO_CURDIR,"Button",BS_AUTORADIOBUTTON,149,54,90,10
+    CONTROL         "最近使ったフォルダー(&M)",IDC_RADIO_MRUDIR,"Button",BS_AUTORADIOBUTTON,149,69,90,10
+    CONTROL         "指定フォルダー(&F)",IDC_RADIO_SELDIR,"Button",BS_AUTORADIOBUTTON,149,84,90,10
     EDITTEXT        IDC_EDIT_FILEOPENDIR,149,100,111,12,ES_AUTOHSCROLL
     PUSHBUTTON      "...",IDC_BUTTON_FILEOPENDIR,261,100,9,12
     GROUPBOX        "ファイルダイアログの初期位置",IDC_STATIC,144,41,142,79,WS_GROUP
@@ -1321,10 +1321,10 @@ BEGIN
     LTEXT           "",IDC_STATIC,12,60,271,83,NOT WS_VISIBLE
     CONTROL         "保存時の日付・時刻を使用",IDC_RADIO_BACKUP_DATETYPE1A,"Button",BS_AUTORADIOBUTTON | WS_GROUP,12,104,111,10
     CONTROL         "前回のファイル更新時の日付・時刻を使用",IDC_RADIO_BACKUP_DATETYPE2A,"Button",BS_AUTORADIOBUTTON,12,118,149,10
-    LTEXT           "$x : x個上のフォルダ名(0-9)\r* : 拡張子\r\r%Y/%m/%d : 年月日 %y西暦(2桁) \r%H:%M:%S: 時分秒   \r%% : '%'記号\r",IDC_LABEL_BACKUP_HELP2,165,75,115,50,SS_SUNKEN
-    CONTROL         "指定フォルダに作成する(&P)",IDC_CHECK_BACKUPFOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,148,107,10
+    LTEXT           "$x : x個上のフォルダー名(0-9)\r* : 拡張子\r\r%Y/%m/%d : 年月日 %y西暦(2桁) \r%H:%M:%S: 時分秒   \r%% : '%'記号\r",IDC_LABEL_BACKUP_HELP2,165,75,115,50,SS_SUNKEN
+    CONTROL         "指定フォルダーに作成する(&P)",IDC_CHECK_BACKUPFOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,148,107,10
     CONTROL         "リムーバブルメディアのみ(&L)",IDC_CHECK_BACKUP_FOLDER_RM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,120,148,133,10
-    LTEXT           "フォルダ名(&F)",IDC_LABEL_BACKUP_4,24,162,87,10
+    LTEXT           "フォルダー名(&F)",IDC_LABEL_BACKUP_4,24,162,87,10
     EDITTEXT        IDC_EDIT_BACKUPFOLDER,73,160,195,12,ES_AUTOHSCROLL
     PUSHBUTTON      "&...",IDC_BUTTON_BACKUP_FOLDER_REF,271,160,9,12
     CONTROL         "バックアップファイルをごみ箱に放り込む(&X)",IDC_CHECK_BACKUP_DUSTBOX,
@@ -1522,7 +1522,7 @@ FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
     CONTROL         "プラグインを有効にする(&E)",IDC_CHECK_PluginEnable,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,9,100,10
     PUSHBUTTON      "ZIPプラグインを導入(&Z)",IDC_PLUGIN_INST_ZIP,192,6,96,14
-    PUSHBUTTON      "フォルダを開く(&F)",IDC_PLUGIN_OpenFolder,120,20,70,14
+    PUSHBUTTON      "フォルダーを開く(&F)",IDC_PLUGIN_OpenFolder,120,20,70,14
     PUSHBUTTON      "新規プラグインを追加(&I)",IDC_PLUGIN_SearchNew,192,20,96,14
     LTEXT           "プラグイン一覧",IDC_STATIC,4,28,50,10
     CONTROL         "List1",IDC_PLUGINLIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,3,41,285,108
@@ -1648,14 +1648,14 @@ CAPTION "ファイルツリー設定"
 FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
     LTEXT           "設定：共通設定",IDC_STATIC_SETTFING_FROM,4,4,282,10
-    CONTROL         "各フォルダの設定を読み込む(&I)",IDC_CHECK_LOADINI,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,16,120,9
+    CONTROL         "各フォルダーの設定を読み込む(&I)",IDC_CHECK_LOADINI,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,16,120,9
     LTEXT           "デフォルト設定ファイル名(&J)",IDC_STATIC,4,28,110,10
     EDITTEXT        IDC_EDIT_DEFINI,13,39,124,13,ES_AUTOHSCROLL
     PUSHBUTTON      "...(&1)",IDC_BUTTON_REF1,137,39,17,13
     PUSHBUTTON      "読み込み(&V)",IDC_BUTTON_LOAD,108,53,47,14
     CONTROL         "Grep(&G)",IDC_RADIO_GREP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,6,72,56,10
     CONTROL         "ファイル(&F)",IDC_RADIO_FILE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,6,85,56,10
-    CONTROL         "フォルダ(&2)",IDC_RADIO_FOLDER,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,6,98,56,10
+    CONTROL         "フォルダー(&2)",IDC_RADIO_FOLDER,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,6,98,56,10
     GROUPBOX        "種類",IDC_STATIC,1,61,89,50,WS_GROUP
     LTEXT           "パス(&T)",IDC_STATIC_PATH,3,119,22,10
     EDITTEXT        IDC_EDIT_PATH,38,117,122,13,ES_AUTOHSCROLL
@@ -2239,7 +2239,7 @@ BEGIN
     F_TOPMOST_SET           "常に手前に表示"
     F_FILE_REOPEN_SUBMENU   "開き直す"
     F_FILE_RCNTFILE_SUBMENU "最近使ったファイル"
-    F_FILE_RCNTFLDR_SUBMENU "最近使ったフォルダ"
+    F_FILE_RCNTFLDR_SUBMENU "最近使ったフォルダー"
     F_EDIT_INS_SUBMENU      "挿入"
     F_EDIT_COS_SUBMENU      "整形"
     F_EDIT_MOV_SUBMENU      "移動"
@@ -2513,7 +2513,7 @@ END
 STRINGTABLE
 BEGIN
     F_CREATEKEYBINDLIST     "キー割り当て一覧をコピー"
-    F_COPYDIRPATH           "このファイルのフォルダ名をコピー"
+    F_COPYDIRPATH           "このファイルのフォルダー名をコピー"
 END
 
 STRINGTABLE
@@ -2522,7 +2522,7 @@ BEGIN
     F_INS_TIME              "時刻挿入"
     F_CTRL_CODE_DIALOG      "コントロールコード入力..."
     F_INS_FILE_USED_RECENTLY "最近使ったファイル挿入"
-    F_INS_FOLDER_USED_RECENTLY "最近使ったフォルダ挿入"
+    F_INS_FOLDER_USED_RECENTLY "最近使ったフォルダー挿入"
 END
 
 STRINGTABLE
@@ -2886,7 +2886,7 @@ STRINGTABLE
 BEGIN
     F_WINDOW_LIST           "ウィンドウリスト"
     F_FILE_USED_RECENTLY    "最近使ったファイル"
-    F_FOLDER_USED_RECENTLY  "最近使ったフォルダ"
+    F_FOLDER_USED_RECENTLY  "最近使ったフォルダー"
     F_CUSTMENU_LIST         "カスタムメニューリスト"
     F_USERMACRO_LIST        "登録済みマクロリスト"
     F_PLUGIN_LIST           "プラグインコマンドリスト"
@@ -2921,8 +2921,8 @@ BEGIN
     STR_SHELL_INFO          "情報"
     STR_SHELL_MENU_OPEN     "開く(&O)..."
     STR_SHELL_MENU_IMPEXP   "インポート／エクスポートの起点リセット(&R)"
-    STR_SHELL_IMPEXPDIR     "各種設定のインポート／エクスポート用ファイル選択画面の\n初期表示フォルダを設定フォルダに戻します。"
-    STR_SHELL_INIFOLDER     "設定フォルダ(&/) >>"
+    STR_SHELL_IMPEXPDIR     "各種設定のインポート／エクスポート用ファイル選択画面の\n初期表示フォルダーを設定フォルダーに戻します。"
+    STR_SHELL_INIFOLDER     "設定フォルダー(&/) >>"
     STR_ERR_GLOBAL01        "自動選択"
     STR_PREVIEW_ONLY        "(印刷プレビューでのみ使用できます)"
     STR_NOT_SAVED           "(保存されていません)"
@@ -3000,11 +3000,11 @@ BEGIN
     STR_ERR_DLGCTL36        "ユニット区切"
     STR_ERR_DLGCTL37        "削除"
     STR_DLGFAV_FILE         "ファイル"
-    STR_DLGFAV_FOLDER       "フォルダ"
+    STR_DLGFAV_FOLDER       "フォルダー"
     STR_DLGFAV_SEARCH       "検索"
     STR_DLGFAV_REPLACE      "置換"
     STR_DLGFAV_GREP_FILE    "GREPファイル"
-    STR_DLGFAV_GREP_FOLDER  "GREPフォルダ"
+    STR_DLGFAV_GREP_FOLDER  "GREPフォルダー"
     STR_DLGFAV_EXT_COMMAND  "コマンド"
     STR_DLGFAV_HIDDEN       "(非表示)"
     STR_DLGFAV_FAVORITE     "お気に入り"
@@ -3017,7 +3017,7 @@ BEGIN
     STR_DLGFAV_CONF_DEL_PATH "最近使った%sの存在しないパスを削除します。\nよろしいですか？"
     STR_DLGFAV_DELIMITER    "、"
     STR_DLGFAV_FAV_REFRESH  "履歴(%s)が更新されたため編集中情報を破棄し再表示しました。"
-    STR_DLGFAV_FF_EXCLUDE   "ファイル・フォルダ除外"
+    STR_DLGFAV_FF_EXCLUDE   "ファイル・フォルダー除外"
     STR_DLGFAV_CURRENT_DIR  "カレントディレクトリ"
     STR_DLGFAV_ADD          "追加"
     STR_DLGFAV_ADD_PROMPT   "追加する文字列を入力してください。"
@@ -3086,7 +3086,7 @@ BEGIN
     STR_LOADAGENT_BIG_ERROR "'%s'\nというファイルを開けません。\nファイルサイズが大きすぎます。\n\n指定ファイルのサイズ: %s\nファイルサイズの上限: %s"
     STR_ERR_FILEPATH_TOO_LONG "%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
     STR_GREP_EXCLUDE_FILE   "除外ファイル   "
-    STR_GREP_EXCLUDE_FOLDER "除外フォルダ   "
+    STR_GREP_EXCLUDE_FOLDER "除外フォルダー   "
     STR_FILEDIALOG_READONLY "読み取り専用ファイルとして開く(&R)"
     STR_FILEDIALOG_CODE     "文字コードセット(&C):"
     STR_FILEDIALOG_EOL      "改行コード(&E):"
@@ -3127,8 +3127,8 @@ BEGIN
     STR_DLGFNCLST_LIST_COL  "桁"
     STR_DLGFNCLST_LIST_COL_M "桁 *"
     STR_DLGFNCLST_LIST_M    "*"
-    STR_DLGGREP1            "検索するフォルダを選んでください"
-    STR_DLGGREP2            "ファイル指定のフォルダ部分にはワイルドカードは使えません。"
+    STR_DLGGREP1            "検索するフォルダーを選んでください"
+    STR_DLGGREP2            "ファイル指定のフォルダー部分にはワイルドカードは使えません。"
     STR_DLGGREP3            "ファイル指定にはフルパスは使えません"
 END
 
@@ -3166,15 +3166,15 @@ BEGIN
     STR_DLLPLG_TITLE        "DLLプラグイン"
     STR_DLLPLG_INIT_ERR1    "DLLの読み込みに失敗しました\n%s\n%ls"
     STR_DLLPLG_INIT_ERR2    "DLLの読み込みに失敗しました"
-    STR_PLGMGR_FOLDER       "プラグインフォルダを作成出来ません"
+    STR_PLGMGR_FOLDER       "プラグインフォルダーを作成出来ません"
     STR_PLGMGR_CANCEL       "キャンセルされました"
 END
 
 STRINGTABLE
 BEGIN
-    STR_DLGGREP4            "検索対象フォルダを指定してください。"
-    STR_DLGGREP5            "検索対象フォルダが正しくありません。"
-    STR_DLGGREP6            "検索対象フォルダが長すぎます。"
+    STR_DLGGREP4            "検索対象フォルダーを指定してください。"
+    STR_DLGGREP5            "検索対象フォルダーが正しくありません。"
+    STR_DLGGREP6            "検索対象フォルダーが長すぎます。"
     STR_DLGGREP_THISDOC     "(現在のドキュメント)"
     STR_DLGGREP_THISDOC_ERROR "対象ファイルに:HWND:は入力できません"
     STR_DLGJUMP1            "正しく行番号を入力してください。"
@@ -3254,7 +3254,7 @@ BEGIN
     STR_DLGFLPROP_ATTRIBUTES "ファイル属性  "
     STR_DLGFLPROP_AT_ARCHIVE "/アーカイブ"
     STR_DLGFLPROP_AT_COMPRESS "/圧縮"
-    STR_DLGFLPROP_AT_FOLDER "/フォルダ"
+    STR_DLGFLPROP_AT_FOLDER "/フォルダー"
     STR_DLGFLPROP_AT_HIDDEN "/隠し"
     STR_DLGFLPROP_AT_NORMAL "/ノーマル"
     STR_DLGFLPROP_AT_OFFLINE "/オフライン"
@@ -3286,7 +3286,7 @@ BEGIN
     STR_DLGTAGJMP_LIST5     "ファイル名"
     STR_DLGTAGJMP_LIST6     "備考"
     STR_DLGTAGJMP3          "キーワード 検索中..."
-    STR_DLGTAGMAK_SELECTDIR "タグ作成フォルダの選択"
+    STR_DLGTAGMAK_SELECTDIR "タグ作成フォルダーの選択"
 END
 
 STRINGTABLE
@@ -3422,16 +3422,16 @@ BEGIN
     STR_GREP_SEARCH_CONDITION "\r\n□検索条件  "
     STR_GREP_SEARCH_FILE    "「ファイル検索」\r\n"
     STR_GREP_SEARCH_TARGET  "検索対象       "
-    STR_GREP_SEARCH_FOLDER  "フォルダ       "
-    STR_GREP_SUBFOLDER_YES  "    (サブフォルダも検索)\r\n"
-    STR_GREP_SUBFOLDER_NO   "    (サブフォルダを検索しない)\r\n"
+    STR_GREP_SEARCH_FOLDER  "フォルダー       "
+    STR_GREP_SUBFOLDER_YES  "    (サブフォルダーも検索)\r\n"
+    STR_GREP_SUBFOLDER_NO   "    (サブフォルダーを検索しない)\r\n"
     STR_GREP_COMPLETE_WORD  "    (単語単位で探す)\r\n"
 END
 
 STRINGTABLE
 BEGIN
     STR_FILEDIALOG_MRU      "最近のファイル(&F):"
-    STR_FILEDIALOG_OPENFOLDER "最近のフォルダ(&D):"
+    STR_FILEDIALOG_OPENFOLDER "最近のフォルダー(&D):"
     STR_IMPEXP_REGEX4       "キーワードが長過ぎるため切り捨てました。"
     STR_STATUS_FONTZOOM_0   "%4.0f %%"
     STR_STATUS_FONTZOOM_1   "%4.1f %%"
@@ -3452,7 +3452,7 @@ BEGIN
     STR_GREP_TIMER          "処理時間: %dミリ秒\r\n"
     STR_GREP_SHOW_FIRST_MATCH "    (ファイル毎最初のみ検索)\r\n"
     STR_GREP_ERR_ENUMKEYS0  "(不明)"
-    STR_GREP_ERR_ENUMKEYS1  "ファイル指定のフォルダ部分にはワイルドカードは使えません"
+    STR_GREP_ERR_ENUMKEYS1  "ファイル指定のフォルダー部分にはワイルドカードは使えません"
     STR_GREP_ERR_ENUMKEYS2  "ファイル指定にはフルパスは使えません"
     STR_GREP_ERR_FILEOPEN   "file open error [%s]\r\n"
 END
@@ -3468,7 +3468,7 @@ BEGIN
     STR_FILETREE_FROM_COMMON "設定: 共通設定"
     STR_FILETREE_FROM_TYPE  "設定: タイプ別設定"
     STR_FILETREE_FROM_FILE  "設定: %s"
-    STR_FILETREE_CURDIR     "<カレントフォルダ>"
+    STR_FILETREE_CURDIR     "<カレントフォルダー>"
     STR_FILETREE_MAXCOUNT   "最大数(%d)を超えたため切り捨てました"
     STR_FILETREE_MENU_ROOT  "INIルート(&I)"
     STR_FILETREE_MENU_MYDOC "マイ ドキュメント(&Y)"
@@ -3631,7 +3631,7 @@ BEGIN
     STR_ERR_DLGMACRO10      "置換先パターンが指定されていません．"
     STR_ERR_DLGMACRO11      "GREPパターンが指定されていません．"
     STR_ERR_DLGMACRO12      "ファイル種別が指定されていません．"
-    STR_ERR_DLGMACRO13      "検索先フォルダが指定されていません．"
+    STR_ERR_DLGMACRO13      "検索先フォルダーが指定されていません．"
     STR_ERR_DLGMACRO14      "読み込みファイル名が指定されていません．"
     STR_ERR_DLGMACRO15      "保存ファイル名が指定されていません．"
 END
@@ -3669,7 +3669,7 @@ BEGIN
     STR_ERR_DLGPROCFACT3    "'%s'\nプロセスの起動に失敗しました。\n%s"
     STR_ERR_DLGPROCFACT4    "'%ls'\nコントロールプロセスの起動に失敗しました。"
     STR_ERR_DLGPROCFACT5    "エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。"
-    STR_PROPCOMBK_SEL_FOLDER "バックアップを作成するフォルダを選んでください"
+    STR_PROPCOMBK_SEL_FOLDER "バックアップを作成するフォルダーを選んでください"
     STR_PROPCOMBK_DUSTBOX   "(ゴミ箱)"
     STR_PROPCOMCUSTMENU_SEP " ─────────────"
     STR_PROPCOMCUSTMENU_AC1 "メニューアイテムのアクセスキー設定"
@@ -3680,7 +3680,7 @@ STRINGTABLE
 BEGIN
     STR_DLGABOUT_APPNAME    "サクラエディタ"
     STR_DLGEXEC_SELECT_CURDIR "カレントディレクトリを選んでください"
-    STR_PROPEDIT_SELECT_DIR "ファイルダイアログの指定フォルダの選択"
+    STR_PROPEDIT_SELECT_DIR "ファイルダイアログの指定フォルダーの選択"
     STR_DLGTYPEASC_IMPORT   "--そのままインポート--"
     STR_PROPCOMMAINMENU_EDIT "編集してください"
     STR_PROPCOMMAINMENU_SEP "――――――――――"
@@ -3702,7 +3702,7 @@ BEGIN
     STR_PROPCOMFNM_LIST2    "置換後"
     STR_PROPCOMFNM_ERR_REG  "これ以上登録できません。"
     STR_PROPCOMGREP_DLL     "正規表現は使用できません"
-    STR_PROPCOMHELP_MIGEMODIR "検索するフォルダを選んでください"
+    STR_PROPCOMHELP_MIGEMODIR "検索するフォルダーを選んでください"
     STR_PROPCOMKEYBIND_UNASSIGN "未割付"
     STR_PROPCOMKEYWORD_ERR_LEN "キーワードの長さは%dバイトまでです。"
     STR_PROPCOMKEYWORD_SETMAX "セットは%d個までしか登録できません。\n"
@@ -3722,8 +3722,8 @@ BEGIN
     STR_ERR_DLGPROPCOMMON24 "CPropCommon::DoPropertySheet()内でエラーが出ました。\npsh.nStartPage=[%d]\n::PropertySheet()失敗\n\n%s\n"
     STR_PROPCOMGEN_FILE1    "最近使ったファイルの履歴を削除します。\nよろしいですか？\n"
     STR_PROPCOMGEN_FILE2    "最近使ったファイルの履歴を削除しました。\n"
-    STR_PROPCOMGEN_DIR1     "最近使ったフォルダの履歴を削除します。\nよろしいですか？\n"
-    STR_PROPCOMGEN_DIR2     "最近使ったフォルダの履歴を削除しました。\n"
+    STR_PROPCOMGEN_DIR1     "最近使ったフォルダーの履歴を削除します。\nよろしいですか？\n"
+    STR_PROPCOMGEN_DIR2     "最近使ったフォルダーの履歴を削除しました。\n"
     STR_PROPCOMTOOL_ERR01   "Toolbar Dialog: 要素の挿入に失敗しました。(%d:%d)"
     STR_PROPCOMTOOL_ERR02   "Toolbar Dialog: INS: 値の設定に失敗しました。:%d"
     STR_PROPCOMTOOL_ERR03   "Toolbar Dialog: 要素の追加に失敗しました。(%d:%d)"
@@ -3761,7 +3761,7 @@ STRINGTABLE
 BEGIN
     STR_PROPCOMMAINMENU_ERR5 "重複したアクセスキーがあります。\n"
     STR_PROPCOMMAINMENU_ERR6 "未設定のアクセスキーがあります。\n"
-    STR_PROPCOMPLG_ERR1     "プラグインはこのウィンドウで読み込まれていないか、フォルダが異なるため\n設定を変更できません"
+    STR_PROPCOMPLG_ERR1     "プラグインはこのウィンドウで読み込まれていないか、フォルダーが異なるため\n設定を変更できません"
     STR_PROPCOMPLG_ERR2     "ReadMeファイルが開けません"
     STR_PROPCOMPLG_ERR3     "ReadMeファイルが見つかりません "
     STR_PROPCOMPLG_STATE1   "追加"
@@ -3799,7 +3799,7 @@ END
 
 STRINGTABLE
 BEGIN
-    STR_PROPCOMPLG_LIST5    "フォルダ"
+    STR_PROPCOMPLG_LIST5    "フォルダー"
     STR_PROPCOMPLG_DELETE   "%ls を削除しますか"
     STR_DLGTYPELIST_ERR1    "関連付けに失敗しました\n"
     STR_DLGTYPELIST_ERR2    "関連付け解除に失敗しました\n"
@@ -4056,8 +4056,8 @@ BEGIN
     STR_PLGMGR_INSTALL      "プラグイン「%s」をインストールしますか？"
     STR_PLGMGR_INSTALL_ERR  "プラグイン「%s」をインストールできませんでした\n理由：%ls"
     STR_PLGMGR_ERR_ZIP      "ZIPファイルは扱えません"
-    STR_PLGMGR_ERR_FOLDER   "プラグインフォルダがありません"
-    STR_PLGMGR_ERR_CREATEDIR "プラグインフォルダを作成出来ません"
+    STR_PLGMGR_ERR_FOLDER   "プラグインフォルダーがありません"
+    STR_PLGMGR_ERR_CREATEDIR "プラグインフォルダーを作成出来ません"
     STR_PLGMGR_INST_ZIP_ACCESS "ZIPファイル「%s」にアクセス出来ません"
     STR_PLGMGR_INST_ZIP_DEF "ZIPファイル「%s」にはプラグイン定義ファイル（plugin.def）がありません"
     STR_PLGMGR_INST_ZIP_ALREADY "「%s」は既にインストールされています\n上書きしますか？"

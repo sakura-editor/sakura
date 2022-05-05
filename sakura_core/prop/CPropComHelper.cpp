@@ -164,7 +164,7 @@ INT_PTR CPropHelper::DispatchEvent(
 			case IDC_BUTTON_OPENMDICT:	/* MigemoDict場所指定「参照...」ボタン */
 				{
 					WCHAR	szPath[_MAX_PATH];
-					/* 検索フォルダ */
+					/* 検索フォルダー */
 					// 2007.05.27 ryoji 相対パスは設定ファイルからのパスを優先
 					if( _IS_REL_PATH( m_Common.m_sHelper.m_szMigemoDict ) ){
 						GetInidirOrExedir( szPath, m_Common.m_sHelper.m_szMigemoDict, TRUE );

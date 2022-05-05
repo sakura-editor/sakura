@@ -382,7 +382,7 @@ BOOL CViewCommander::HandleCommand(
 	case F_ADDTAIL_W:				Command_ADDTAIL( (const wchar_t*)lparam1, (int)lparam2 );break;	/* 最後にテキストを追加 */
 	case F_COPYFNAME:				Command_COPYFILENAME();break;			//このファイル名をクリップボードにコピー / /2002/2/3 aroka
 	case F_COPYPATH:				Command_COPYPATH();break;				//このファイルのパス名をクリップボードにコピー
-	case F_COPYDIRPATH:				Command_COPYDIRPATH();break;				//このファイルのフォルダ名をクリップボードにコピー
+	case F_COPYDIRPATH:				Command_COPYDIRPATH();break;				//このファイルのフォルダー名をクリップボードにコピー
 	case F_COPYTAG:					Command_COPYTAG();break;				//このファイルのパス名とカーソル位置をコピー	//Sept. 15, 2000 jepro 上と同じ説明になっていたのを修正
 	case F_COPYLINES:				Command_COPYLINES();break;				//選択範囲内全行コピー
 	case F_COPYLINESASPASSAGE:		Command_COPYLINESASPASSAGE();break;		//選択範囲内全行引用符付きコピー
@@ -398,7 +398,7 @@ BOOL CViewCommander::HandleCommand(
     case F_CTRL_CODE_DIALOG:		Command_CtrlCode_Dialog();break;	/* コントロールコードの入力(ダイアログ) */	//@@@ 2002.06.02 MIK
     case F_CTRL_CODE:				Command_WCHAR( (wchar_t)lparam1, false );break;
 	case F_INS_FILE_USED_RECENTLY:	Command_INS_FILE_USED_RECENTLY();break;		//最近使ったファイル挿入
-	case F_INS_FOLDER_USED_RECENTLY:Command_INS_FOLDER_USED_RECENTLY();break;	//最近使ったフォルダ挿入
+	case F_INS_FOLDER_USED_RECENTLY:Command_INS_FOLDER_USED_RECENTLY();break;	//最近使ったフォルダー挿入
 
 	/* 変換 */
 	case F_TOLOWER:					Command_TOLOWER();break;				/* 小文字 */

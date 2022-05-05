@@ -242,7 +242,7 @@ public:
 CWSHClient::CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler, void *AData): 
 				m_OnError(AErrorHandler), m_Data(AData), m_Valid(false), m_Engine(NULL)
 { 
-	// 2010.08.28 DLL インジェクション対策としてEXEのフォルダに移動する
+	// 2010.08.28 DLL インジェクション対策としてEXEのフォルダーに移動する
 	CCurrentDirectoryBackupPoint dirBack;
 	ChangeCurrentDirectoryToExeDir();
 	

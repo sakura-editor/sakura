@@ -57,7 +57,7 @@ void ChangeCurrentDirectoryToExeDir()
 HMODULE LoadLibraryExedir(LPCWSTR pszDll)
 {
 	CCurrentDirectoryBackupPoint dirBack;
-	// DLL インジェクション対策としてEXEのフォルダに移動する
+	// DLL インジェクション対策としてEXEのフォルダーに移動する
 	ChangeCurrentDirectoryToExeDir();
 	return ::LoadLibrary( pszDll );
 }

@@ -41,7 +41,7 @@ TYPE_NAME_ID<int> SpecialScrollModeArr[] = {
 
 static const DWORD p_helpids[] = {	//10900
 	IDC_BUTTON_CLEAR_MRU_FILE,		HIDC_BUTTON_CLEAR_MRU_FILE,			//履歴をクリア（ファイル）
-	IDC_BUTTON_CLEAR_MRU_FOLDER,	HIDC_BUTTON_CLEAR_MRU_FOLDER,		//履歴をクリア（フォルダ）
+	IDC_BUTTON_CLEAR_MRU_FOLDER,	HIDC_BUTTON_CLEAR_MRU_FOLDER,		//履歴をクリア（フォルダー）
 	IDC_CHECK_FREECARET,			HIDC_CHECK_FREECARET,				//フリーカーソル
 //DEL	IDC_CHECK_INDENT,				HIDC_CHECK_INDENT,					//自動インデント ：タイプ別へ移動
 //DEL	IDC_CHECK_INDENT_WSPACE,		HIDC_CHECK_INDENT_WSPACE,			//全角空白もインデント ：タイプ別へ移動
@@ -56,7 +56,7 @@ static const DWORD p_helpids[] = {	//10900
 	IDC_HOTKEY_TRAYMENU,			HIDC_HOTKEY_TRAYMENU,				//左クリックメニューのショートカットキー
 	IDC_EDIT_REPEATEDSCROLLLINENUM,	HIDC_EDIT_REPEATEDSCROLLLINENUM,	//スクロール行数
 	IDC_EDIT_MAX_MRU_FILE,			HIDC_EDIT_MAX_MRU_FILE,				//ファイル履歴の最大数
-	IDC_EDIT_MAX_MRU_FOLDER,		HIDC_EDIT_MAX_MRU_FOLDER,			//フォルダ履歴の最大数
+	IDC_EDIT_MAX_MRU_FOLDER,		HIDC_EDIT_MAX_MRU_FOLDER,			//フォルダー履歴の最大数
 	IDC_RADIO_CARETTYPE0,			HIDC_RADIO_CARETTYPE0,				//カーソル形状（Windows風）
 	IDC_RADIO_CARETTYPE1,			HIDC_RADIO_CARETTYPE1,				//カーソル形状（MS-DOS風）
 	IDC_SPIN_REPEATEDSCROLLLINENUM,	HIDC_EDIT_REPEATEDSCROLLLINENUM,
@@ -166,7 +166,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 				InfoMessage( hwndDlg, LS(STR_PROPCOMGEN_FILE2) );
 				return TRUE;
 			case IDC_BUTTON_CLEAR_MRU_FOLDER:
-				/* フォルダの履歴をクリア */
+				/* フォルダーの履歴をクリア */
 				if( IDCANCEL == ::MYMESSAGEBOX( hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
 					LS(STR_PROPCOMGEN_DIR1) ) ){
 					return TRUE;
@@ -259,7 +259,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, nVal, FALSE );
 			return TRUE;
 		case IDC_SPIN_MAX_MRU_FOLDER:
-			/* フォルダの履歴MAX */
+			/* フォルダーの履歴MAX */
 //			MYTRACE( L"IDC_SPIN_MAX_MRU_FOLDER\n" );
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
@@ -393,7 +393,7 @@ void CPropGeneral::SetData( HWND hwndDlg )
 	/* ファイルの履歴MAX */
 	::SetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, m_Common.m_sGeneral.m_nMRUArrNum_MAX, FALSE );
 
-	/* フォルダの履歴MAX */
+	/* フォルダーの履歴MAX */
 	::SetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX, FALSE );
 
 	/* タスクトレイを使う */
@@ -487,7 +487,7 @@ int CPropGeneral::GetData( HWND hwndDlg )
 		cRecentFile.Terminate();
 	}
 
-	/* フォルダの履歴MAX */
+	/* フォルダーの履歴MAX */
 	m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, NULL, FALSE );
 	if( m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX < 0 ){
 		m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX = 0;

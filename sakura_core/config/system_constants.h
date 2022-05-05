@@ -143,7 +143,7 @@
 	STypeConfigに独自TABマークフラグ追加 2003.03.28 MIK
 
 	Version 43:
-	最近使ったファイル・フォルダにお気に入りを追加 2003.04.08 MIK
+	最近使ったファイル・フォルダーにお気に入りを追加 2003.04.08 MIK
 
 	Version 44:
 	Window Caption文字列領域をCommonに追加 2003.04.05 genta
@@ -200,7 +200,7 @@
 	改行で行末の空白を削除するオプション(タイプ別設定) 2005/10/11 ryoji
 
 	Version 62:
-	バックアップフォルダ 2005.11.07 aroka
+	バックアップフォルダー 2005.11.07 aroka
 
 	Version 63:
 	指定桁縦線表示追加 2005.11.08 Moca
@@ -248,7 +248,7 @@
 	タブのグループ化 2007.06.20 ryoji
 
 	Version 77:
-	iniフォルダ設定 2007.05.31 ryoji
+	iniフォルダー設定 2007.05.31 ryoji
 
 	Version 78:
 	エディタ－トレイ間でのUI特権分離確認のためのバージョン合わせ 2007.06.07 ryoji
@@ -530,7 +530,7 @@
 	ini読み取り専用オプション 2014.12.08 Moca
 
 	Version 171:
-	Grepファイル・フォルダ長を512(MAX_GREP_PATH)に変更
+	Grepファイル・フォルダー長を512(MAX_GREP_PATH)に変更
 
 	Version 172:
 	キーワードヘルプの右クリックメニュー表示選択
@@ -539,7 +539,7 @@
 	STypeConfigにm_backImgOpacity 追加
 
 	Version 174:
-	除外ファイル、除外フォルダを追加
+	除外ファイル、除外フォルダーを追加
 
 	Version 175:
 	Vistaスタイルのファイルダイアログ（CommonSetting_Edit::m_bVistaStyleFileDialog）を追加

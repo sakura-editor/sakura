@@ -255,7 +255,7 @@ FILE* _wfopen_absini(LPCWSTR fname, LPCWSTR mode, BOOL bOrExedir/*=TRUE*/ )
 	return _wfopen( fname, mode );
 }
 
-/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない */
+/* フォルダーの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない */
 void CutLastYenFromDirectoryPath( WCHAR* pszFolder )
 {
 	if( 3 == wcslen( pszFolder )
@@ -264,7 +264,7 @@ void CutLastYenFromDirectoryPath( WCHAR* pszFolder )
 	){
 		/* ドライブ名:\ */
 	}else{
-		/* フォルダの最後が半角かつ'\\'の場合は、取り除く */
+		/* フォルダーの最後が半角かつ'\\'の場合は、取り除く */
 		int	nFolderLen;
 		int	nCharChars;
 		nFolderLen = wcslen( pszFolder );
@@ -286,7 +286,7 @@ void AddLastYenFromDirectoryPath( WCHAR* pszFolder )
 	){
 		/* ドライブ名:\ */
 	}else{
-		/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
+		/* フォルダーの最後が半角かつ'\\'でない場合は、付加する */
 		int	nFolderLen;
 		nFolderLen = wcslen( pszFolder );
 		if( 0 < nFolderLen ){
@@ -313,7 +313,7 @@ std::wstring AddLastYenPath(std::wstring_view path)
 	return ret;
 }
 
-/* ファイルのフルパスを、フォルダとファイル名に分割 */
+/* ファイルのフルパスを、フォルダーとファイル名に分割 */
 /* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
 void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR* pszFile )
 {
@@ -327,7 +327,7 @@ void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR*
 	if( NULL != pszFolder ){
 		wcscpy( pszFolder, szDrive );
 		wcscat( pszFolder, szDir );
-		/* フォルダの最後が半角かつ'\\'の場合は、取り除く */
+		/* フォルダーの最後が半角かつ'\\'の場合は、取り除く */
 		nFolderLen = wcslen( pszFolder );
 		if( 0 < nFolderLen ){
 			nCharChars = &pszFolder[nFolderLen] - CNativeW::GetCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] );
@@ -343,16 +343,16 @@ void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR*
 	return;
 }
 
-/* フォルダ、ファイル名から、結合したパスを作成
+/* フォルダー、ファイル名から、結合したパスを作成
  * [c:\work\test] + [aaa.txt] → [c:\work\test\aaa.txt]
- * フォルダ末尾に円記号があってもなくても良い。
+ * フォルダー末尾に円記号があってもなくても良い。
  */
 void Concat_FolderAndFile( const WCHAR* pszDir, const WCHAR* pszTitle, WCHAR* pszPath )
 {
 	WCHAR* out=pszPath;
 	const WCHAR* in;
 
-	//フォルダをコピー
+	//フォルダーをコピー
 	for( in=pszDir ; *in != '\0'; ){
 		*out++ = *in++;
 	}
@@ -526,7 +526,7 @@ void GetExedir(
 		partialPath.insert(partialPath.cbegin(), L'\\');
 	}
 
-	// exeフォルダのフルパス、またはexe基準のファイルパスを取得
+	// exeフォルダーのフルパス、またはexe基準のファイルパスを取得
 	auto path = GetExeFileName().parent_path().concat(partialPath);
 	::wcsncpy_s(pDir, decltype(DLLSHAREDATA::m_szIniFile)::BUFFER_COUNT, path.c_str(), _TRUNCATE);
 }
@@ -564,7 +564,7 @@ void GetInidir(
 		partialPath.insert(partialPath.cbegin(), L'\\');
 	}
 
-	// 設定フォルダのフルパス、またはini基準のファイルパスを取得
+	// 設定フォルダーのフルパス、またはini基準のファイルパスを取得
 	auto path = GetIniFileName().parent_path().concat(partialPath);
 	::wcsncpy_s(pDir, decltype(DLLSHAREDATA::m_szPrivateIniFile)::BUFFER_COUNT, path.c_str(), _TRUNCATE);
 }
@@ -634,7 +634,7 @@ LPCWSTR GetRelPath( LPCWSTR pszPath )
 }
 
 //! パスに使えない文字が含まれていないかチェックする
-// ファイル名、フォルダ名には「<>*|"?」が使えない
+// ファイル名、フォルダー名には「<>*|"?」が使えない
 // しかし「\\?\C:\Program files\」の形式では?が3文字目にあるので除外
 // ストリーム名とのセパレータにはfilename.ext:streamの形式でコロンが使われる
 // コロンは除外文字に入っていない
@@ -997,7 +997,7 @@ void my_splitpath_w (
 int FileMatchScore( const WCHAR *file1, const WCHAR *file2 );
 
 // フルパスからファイル名と拡張子（ファイル名の.以降）を分離する
-// @date 2014/06/15 moca_skr フォルダ名に.が含まれた場合、フォルダが分離されたのを修正した対応で新規作成
+// @date 2014/06/15 moca_skr フォルダー名に.が含まれた場合、フォルダーが分離されたのを修正した対応で新規作成
 static void FileNameSepExt( std::wstring_view file, std::wstring& szFile, std::wstring& szExt )
 {
 	const WCHAR* folderPos;
@@ -1179,7 +1179,7 @@ void GetShortViewPath( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int n
 			nNext += t_max(1, (int)(Int)CNativeW::GetSizeOfChar(path, nPathLen, nNext));
 		}
 		if( path[nNext] != L'\0' ){
-			// サブフォルダ省略
+			// サブフォルダー省略
 			// C:\...\dir\file.ext
 			std::wstring strTemp(path, nLeft + 1);
 			if( nLeft + 1 < nRight ){
@@ -1190,7 +1190,7 @@ void GetShortViewPath( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int n
 				wcsncpy_s(dest, nSize, strTemp.c_str(), _TRUNCATE);
 				return;
 			}
-			// C:\...\dir\   フォルダパスだった。最後のフォルダを表示
+			// C:\...\dir\   フォルダーパスだった。最後のフォルダーを表示
 			if( path[nNext+1] == L'\0' ){
 				if( bFitMode ){
 					GetStrTrancateWidth(dest, nSize, strTemp.c_str(), hDC, nPxWidth);

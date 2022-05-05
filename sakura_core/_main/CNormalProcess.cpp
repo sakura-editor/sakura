@@ -245,7 +245,7 @@ bool CNormalProcess::InitializeProcess()
 			CNativeW cmemGrepFolder = gi.cmGrepFolder;
 			if( gi.cmGrepFolder.GetStringLength() < MAX_GREP_PATH ){
 				CSearchKeywordManager().AddToGrepFolderArr( gi.cmGrepFolder.GetStringPtr() );
-				// 2013.05.21 指定なしの場合はカレントフォルダにする
+				// 2013.05.21 指定なしの場合はカレントフォルダーにする
 				if( cmemGrepFolder.GetStringLength() == 0 ){
 					WCHAR szCurDir[_MAX_PATH];
 					::GetCurrentDirectory( _countof(szCurDir), szCurDir );
@@ -272,7 +272,7 @@ bool CNormalProcess::InitializeProcess()
 			wcsncpy( pEditWnd->m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr(), nSize );	/* 検索ファイル */
 			pEditWnd->m_cDlgGrep.m_szFile[nSize-1] = L'\0';
 			nSize = _countof2(pEditWnd->m_cDlgGrep.m_szFolder);
-			wcsncpy( pEditWnd->m_cDlgGrep.m_szFolder, cmemGrepFolder.GetStringPtr(), nSize );	/* 検索フォルダ */
+			wcsncpy( pEditWnd->m_cDlgGrep.m_szFolder, cmemGrepFolder.GetStringPtr(), nSize );	/* 検索フォルダー */
 			pEditWnd->m_cDlgGrep.m_szFolder[nSize-1] = L'\0';
 
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
