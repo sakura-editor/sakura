@@ -2052,7 +2052,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	SetUndoBuffer();
 
 	::GlobalUnlock( hData );
-	// 2004.07.12 fotomo/もか メモリーリークの修正
+	// 2004.07.12 fotomo/もか メモリリークの修正
 	if( 0 == (GMEM_LOCKCOUNT & ::GlobalFlags(hData)) ){
 		::GlobalFree( hData );
 	}

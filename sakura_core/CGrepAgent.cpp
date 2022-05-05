@@ -1064,7 +1064,7 @@ int CGrepAgent::DoGrepTree(
 			}
 
 			//フォルダ名を作成する。
-			// 2010.08.01 キャンセルでメモリーリークしてました
+			// 2010.08.01 キャンセルでメモリリークしてました
 			std::wstring currentPath  = pszPath;
 			currentPath += L"\\";
 			currentPath += lpFileName;

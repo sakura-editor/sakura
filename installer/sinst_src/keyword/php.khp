@@ -1556,7 +1556,7 @@ get_browser /// object get_browser ( string [user_agent])\n ユーザのブラ�
 highlight_file /// bool highlight_file ( string filename)\nファイルの構文ハイライト表示
 highlight_string /// bool highlight_string ( string str)\n文字列の構文ハイライト化
 ignore_user_abort /// int ignore_user_abort ( int [setting])\n クライアント接続が断となった時にスクリプトの実行を中断するかどう かを設定する 
-leak /// void leak ( int bytes)\nメモリーをリークする
+leak /// void leak ( int bytes)\nメモリをリークする
 pack /// string pack ( string format [, mixed args])\nデータをバイナリ文字列にパックする
 show_source /// bool show_source ( string filename)\nファイルの構文ハイライト表示
 sleep /// void sleep ( int seconds)\n実行を遅延させる
