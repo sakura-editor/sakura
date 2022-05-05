@@ -2315,8 +2315,8 @@ proc_close /// int proc_close ( resource process)\n Close a process opened by pr
 proc_open /// resource proc_open ( string cmd, array descriptorspec, array pipes)\n Execute a command and open file pointers for input/output 
 shell_exec /// string shell_exec ( string cmd)\n シェルによりコマンドを実行し、文字列として出力全体を返す 
 system /// string system ( string command, int [return_var])\n外部プログラムの実行と表示
-printer_abort /// void printer_abort ( resource handle)\nプリンタのスプールファイルを削除する
-printer_close /// void printer_close ( resource handle)\nプリンタへの接続を閉じる
+printer_abort /// void printer_abort ( resource handle)\nプリンターのスプールファイルを削除する
+printer_close /// void printer_close ( resource handle)\nプリンターへの接続を閉じる
 printer_create_brush /// mixed printer_create_brush ( int style, string color)\n新規ブラシを作成する
 printer_create_dc /// void printer_create_dc ( resource handle)\n新規デバイスコンテキストを作成する
 printer_create_font /// mixed printer_create_font ( string face, int height, int width, int font_weight, bool italic, bool underline, bool strikeout, int orientaton)\n新規フォントを作成する
@@ -2335,17 +2335,17 @@ printer_draw_roundrect /// void printer_draw_roundrect ( resource handle, int ul
 printer_draw_text /// void printer_draw_text ( resource printer_handle, string text, int x, int y)\nテキストを描画する
 printer_end_doc /// bool printer_end_doc ( resource handle)\nドキュメントを閉じる
 printer_end_page /// bool printer_end_page ( resource handle)\nアクティブなページを閉じる
-printer_get_option /// mixed printer_get_option ( resource handle, string option)\nプリンタ設定データを取得する
-printer_list /// array printer_list ( int enumtype [, string name [, int level]])\nサーバで付加されたプリンタの配列を返す
+printer_get_option /// mixed printer_get_option ( resource handle, string option)\nプリンター設定データを取得する
+printer_list /// array printer_list ( int enumtype [, string name [, int level]])\nサーバで付加されたプリンターの配列を返す
 printer_logical_fontheight /// int printer_logical_fontheight ( resource handle, int height)\n論理フォントの高さを取得する
-printer_open /// mixed printer_open ( [string devicename])\nプリンタへの接続をオープンする
+printer_open /// mixed printer_open ( [string devicename])\nプリンターへの接続をオープンする
 printer_select_brush /// void printer_select_brush ( resource printer_handle, resource brush_handle)\nブラシを選択する
 printer_select_font /// void printer_select_font ( resource printer_handle, resource font_handle)\nフォントを選択する
 printer_select_pen /// void printer_select_pen ( resource printer_handle, resource pen_handle)\nペンを選択する
-printer_set_option /// bool printer_set_option ( resource handle, int option, mixed value)\nプリンタの接続を設定する
+printer_set_option /// bool printer_set_option ( resource handle, int option, mixed value)\nプリンターの接続を設定する
 printer_start_doc /// bool printer_start_doc ( resource handle [, string document])\n新規ドキュメントを開始する
 printer_start_page /// bool printer_start_page ( resource handle)\n新規ページを開始する
-printer_write /// bool printer_write ( resource handle, string content)\nプリンタへデータを書き込む
+printer_write /// bool printer_write ( resource handle, string content)\nプリンターへデータを書き込む
 pspell_add_to_personal /// int pspell_add_to_personal ( int dictionary_link, string word)\nユーザーの単語リストに単語を追加
 pspell_add_to_session /// int pspell_add_to_session ( int dictionary_link, string word)\n カレントのセッションの単語リストに単語を追加 
 pspell_check /// bool pspell_check ( int dictionary_link, string word)\n単語をチェックする

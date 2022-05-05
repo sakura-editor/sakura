@@ -2999,9 +2999,9 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 				GetDocument()->m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting]
 		);
 
-		//	プリンタの情報を取得。
+		//	プリンターの情報を取得。
 
-		/* 現在のデフォルトプリンタの情報を取得 */
+		/* 現在のデフォルトプリンターの情報を取得 */
 		BOOL bRes;
 		bRes = m_pPrintPreview->GetDefaultPrinterInfo();
 		if( !bRes ){

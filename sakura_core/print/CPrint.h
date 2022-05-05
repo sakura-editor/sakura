@@ -39,10 +39,10 @@
 #include "basis/primitive.h"
 
 struct	MYDEVMODE {
-	BOOL	m_bPrinterNotFound;	/* プリンタがなかったフラグ */
-	WCHAR	m_szPrinterDriverName[_MAX_PATH + 1];	// プリンタドライバ名
-	WCHAR	m_szPrinterDeviceName[_MAX_PATH + 1];	// プリンタデバイス名
-	WCHAR	m_szPrinterOutputName[_MAX_PATH + 1];	// プリンタポート名
+	BOOL	m_bPrinterNotFound;	/* プリンターがなかったフラグ */
+	WCHAR	m_szPrinterDriverName[_MAX_PATH + 1];	// プリンタードライバー名
+	WCHAR	m_szPrinterDeviceName[_MAX_PATH + 1];	// プリンターデバイス名
+	WCHAR	m_szPrinterOutputName[_MAX_PATH + 1];	// プリンターポート名
 	DWORD	dmFields;
 	short	dmOrientation;
 	short	dmPaperSize;
@@ -109,7 +109,7 @@ struct PRINTSETTING {
 	bool			m_bPrintKinsokuKuto;				//!< 句読点のぶらさげ	//@@@ 2002.04.17 MIK
 	bool			m_bPrintLineNumber;					/*!< 行番号を印刷する */
 
-	MYDEVMODE		m_mdmDevMode;						/*!< プリンタ設定 DEVMODE用 */
+	MYDEVMODE		m_mdmDevMode;						/*!< プリンター設定 DEVMODE用 */
 	BOOL			m_bHeaderUse[3];					/* ヘッダーが使われているか？	*/
 	EDIT_CHAR		m_szHeaderForm[3][HEADER_MAX];		/* 0:左寄せヘッダー。1:中央寄せヘッダー。2:右寄せヘッダー。*/
 	BOOL			m_bFooterUse[3];					/* フッターが使われているか？	*/
@@ -171,8 +171,8 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	BOOL GetDefaultPrinter( MYDEVMODE *pMYDEVMODE );		/* デフォルトのプリンタ情報を取得 */
-	BOOL PrintDlg( PRINTDLG *pd, MYDEVMODE *pMYDEVMODE );				/* プリンタ情報を取得 */
+	BOOL GetDefaultPrinter( MYDEVMODE *pMYDEVMODE );		/* デフォルトのプリンター情報を取得 */
+	BOOL PrintDlg( PRINTDLG *pd, MYDEVMODE *pMYDEVMODE );				/* プリンター情報を取得 */
 	/* 印刷/プレビューに必要な情報を取得 */
 	BOOL GetPrintMetrics(
 		MYDEVMODE*	pMYDEVMODE,
@@ -208,7 +208,7 @@ private:
 	/*
 	||  メンバ変数
 	*/
-	HGLOBAL	m_hDevMode;							//!< 現在プリンタのDEVMODEへのメモリハンドル
-	HGLOBAL	m_hDevNames;						//!< 現在プリンタのDEVNAMESへのメモリハンドル
+	HGLOBAL	m_hDevMode;							//!< 現在プリンターのDEVMODEへのメモリハンドル
+	HGLOBAL	m_hDevNames;						//!< 現在プリンターのDEVNAMESへのメモリハンドル
 };
 #endif /* SAKURA_CPRINT_CB147282_3673_4A39_9B0A_C5C323C39C56_H_ */
