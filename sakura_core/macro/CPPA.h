@@ -33,7 +33,7 @@
 		   distribution.
 */
 /*
-PPA(Poor-Pascal for Application)はDelphi/C++Builder用のPascalインタプリタコンポーネントです。
+PPA(Poor-Pascal for Application)はDelphi/C++Builder用のPascalインタープリタコンポーネントです。
 */
 
 #ifndef SAKURA_CPPA_FB41BBAE_DFBC_449D_9342_5D9424CFE086_H_
@@ -50,7 +50,7 @@ PPA(Poor-Pascal for Application)はDelphi/C++Builder用のPascalインタプリ�
 
 /*
 PPA(Poor-Pascal for Application)はDelphi/C++Builder用の
-Pascalインタプリタコンポーネントです。
+Pascalインタープリタコンポーネントです。
 アプリケーションにマクロ機能を搭載する事を目的に作成されています。
 */
 
