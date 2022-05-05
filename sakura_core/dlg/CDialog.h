@@ -1,5 +1,5 @@
 ﻿/*!	@file
-	@brief Dialog Box基底クラスヘッダファイル
+	@brief Dialog Box基底クラスヘッダーファイル
 
 	@author Norio Nakatani
 */

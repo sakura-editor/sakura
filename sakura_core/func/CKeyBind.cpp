@@ -600,14 +600,14 @@ EFunctionCode CKeyBind::GetFuncCodeAt( KEYDATA& KeyData, int nState, BOOL bGetDe
 //2001.12.06 hor Alt+A を「SORT_ASC」に割当
 //Jan. 13, 2001 JEPRO	Ctrl+B に「ブラウズ」を追加
 //Jan. 16, 2001 JEPRO	SHift+Ctrl+C に「.hと同名の.c(なければ.cpp)を開く」を追加
-//Feb. 07, 2001 JEPRO	SHift+Ctrl+C を「.hと同名の.c(なければ.cpp)を開く」→「同名のC/C++ヘッダ(ソース)を開く」に変更
+//Feb. 07, 2001 JEPRO	SHift+Ctrl+C を「.hと同名の.c(なければ.cpp)を開く」→「同名のC/C++ヘッダー(ソース)を開く」に変更
 //Jan. 16, 2001 JEPRO	Ctrl+D に「単語切り取り」, Shift+Ctrl+D に「単語削除」を追加
 //2001.12.06 hor Alt+D を「SORT_DESC」に割当
 //Oct. 7, 2000 JEPRO	Ctrl+Alt+E に「重ねて表示」を追加
 //Jan. 16, 2001	JEPRO	Ctrl+E に「行切り取り(折り返し単位)」, Shift+Ctrl+E に「行削除(折り返し単位)」を追加
 //Oct. 07, 2000 JEPRO	Ctrl+Alt+H に「上下に並べて表示」を追加
 //Jan. 16, 2001 JEPRO	Ctrl+H を「カーソル前を削除」→「カーソル行をウィンドウ中央へ」に変更し	Shift+Ctrl+H に「.cまたは.cppと同名の.hを開く」を追加
-//Feb. 07, 2001 JEPRO	SHift+Ctrl+H を「.cまたは.cppと同名の.hを開く」→「同名のC/C++ヘッダ(ソース)を開く」に変更
+//Feb. 07, 2001 JEPRO	SHift+Ctrl+H を「.cまたは.cppと同名の.hを開く」→「同名のC/C++ヘッダー(ソース)を開く」に変更
 //Jan. 21, 2001	JEPRO	Ctrl+I に「行の二重化」を追加
 //Jan. 16, 2001	JEPRO	Ctrl+K に「行末まで切り取り(改行単位)」, Shift+Ctrl+E に「行末まで削除(改行単位)」を追加
 //Jan. 14, 2001 JEPRO	Ctrl+Alt+L に「小文字」, Shift+Ctrl+Alt+L に「大文字」を追加

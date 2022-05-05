@@ -188,7 +188,7 @@ public:
 	int  GetAllPageNum(){ return m_nAllPageNum; }	/* 現在のページ */
 
 	/*
-	||	ヘッダ・フッタ
+	||	ヘッダー・フッター
 	*/
 	void SetHeader(char* pszWork[]);	//	&fなどを登録
 	void SetFooter(char* pszWork[]);	//	&p/&Pなどを登録

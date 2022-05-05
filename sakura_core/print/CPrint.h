@@ -110,16 +110,16 @@ struct PRINTSETTING {
 	bool			m_bPrintLineNumber;					/*!< 行番号を印刷する */
 
 	MYDEVMODE		m_mdmDevMode;						/*!< プリンタ設定 DEVMODE用 */
-	BOOL			m_bHeaderUse[3];					/* ヘッダが使われているか？	*/
-	EDIT_CHAR		m_szHeaderForm[3][HEADER_MAX];		/* 0:左寄せヘッダ。1:中央寄せヘッダ。2:右寄せヘッダ。*/
-	BOOL			m_bFooterUse[3];					/* フッタが使われているか？	*/
-	EDIT_CHAR		m_szFooterForm[3][FOOTER_MAX];		/* 0:左寄せフッタ。1:中央寄せフッタ。2:右寄せフッタ。*/
+	BOOL			m_bHeaderUse[3];					/* ヘッダーが使われているか？	*/
+	EDIT_CHAR		m_szHeaderForm[3][HEADER_MAX];		/* 0:左寄せヘッダー。1:中央寄せヘッダー。2:右寄せヘッダー。*/
+	BOOL			m_bFooterUse[3];					/* フッターが使われているか？	*/
+	EDIT_CHAR		m_szFooterForm[3][FOOTER_MAX];		/* 0:左寄せフッター。1:中央寄せフッター。2:右寄せフッター。*/
 
-	// ヘッダ/フッタのフォント(lfFaceNameが設定されていなければ半角/全角フォントを使用)
-	LOGFONT			m_lfHeader;							// ヘッダフォント用LOGFONT構造体
-	int 			m_nHeaderPointSize;					// ヘッダフォントポイントサイズ
-	LOGFONT			m_lfFooter;							// フッタフォント用LOGFONT構造体
-	int 			m_nFooterPointSize;					// フッタフォントポイントサイズ
+	// ヘッダー/フッターのフォント(lfFaceNameが設定されていなければ半角/全角フォントを使用)
+	LOGFONT			m_lfHeader;							// ヘッダーフォント用LOGFONT構造体
+	int 			m_nHeaderPointSize;					// ヘッダーフォントポイントサイズ
+	LOGFONT			m_lfFooter;							// フッターフォント用LOGFONT構造体
+	int 			m_nFooterPointSize;					// フッターフォントポイントサイズ
 };
 
 /*-----------------------------------------------------------------------
@@ -154,7 +154,7 @@ public:
 	static int CalculatePrintableColumns( PRINTSETTING*, int width, int nLineNumberColumns );
 	static int CalculatePrintableLines( PRINTSETTING*, int height );
 
-	/* ヘッダ・フッタの高さ計算 */
+	/* ヘッダー・フッターの高さ計算 */
 	static int CalcHeaderHeight( PRINTSETTING* );
 	static int CalcFooterHeight( PRINTSETTING* );
 public:

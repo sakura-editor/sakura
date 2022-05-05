@@ -52,7 +52,7 @@
 #define HLP000162	162 //印刷
 #define HLP000120	120 //印刷プレビュー
 #define HLP000122	122 //ページ設定
-#define HLP000192	192 //同名のC/C++ヘッダ(ソース)を開く
+#define HLP000192	192 //同名のC/C++ヘッダー(ソース)を開く
 #define HLP000132	132 //Oracle SQL*Plusをアクティブ表示
 #define HLP000027	27 //Oracle SQL*Plusで実行
 #define HLP000121	121 //ブラウズ
@@ -294,7 +294,7 @@
 #define HLP000100	100 //ヘルプ目次
 #define HLP000101	101 //キーワード検索
 #define HLP000189	189 //コマンド一覧
-//#define HLP000024	24 //同名のC/C++ヘッダファイルを開く
+//#define HLP000024	24 //同名のC/C++ヘッダーファイルを開く
 //#define HLP000026	26 //同名のC/C++ソースファイルを開く
 #define HLP000198	198 //テキストを１行下へスクロール
 #define HLP000199	199 //テキストを１行上へスクロール

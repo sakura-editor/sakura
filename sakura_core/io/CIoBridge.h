@@ -37,7 +37,7 @@ public:
 		const CMemory&	cSrc,			//!< [in]  変換元メモリ
 		CNativeW*		pDst,			//!< [out] 変換先メモリ(UNICODE)
 		CCodeBase*		pCodeBase,		//!< [in]  変換元メモリの文字コードクラス
-		int				nFlag			//!< [in]  bit 0: MIME Encodeされたヘッダをdecodeするかどうか
+		int				nFlag			//!< [in]  bit 0: MIME Encodeされたヘッダーをdecodeするかどうか
 	);
 
 	//! ファイルのエンコードへ変更

@@ -740,7 +740,7 @@ void CDlgFuncList::SetData()
 		::ShowWindow( GetItemHwnd( IDC_COMBO_nSortType ), SW_HIDE );
 		::ShowWindow( GetItemHwnd( IDC_STATIC_nSortType ), SW_HIDE );
 		//ListView_SortItems( hwndList, CompareFunc_Asc, (LPARAM)this );  // 2005.04.05 zenryaku ソート状態を保持
-		SortListView( hwndList, m_nSortCol );	// 2005.04.23 genta 関数化(ヘッダ書き換えのため)
+		SortListView( hwndList, m_nSortCol );	// 2005.04.23 genta 関数化(ヘッダー書き換えのため)
 	}
 
 	//2002.02.08 hor
@@ -2102,7 +2102,7 @@ BOOL CDlgFuncList::OnNotify(NMHDR* pNMHDR)
 }
 /*!
 	指定されたカラムでリストビューをソートする．
-	同時にヘッダも書き換える．
+	同時にヘッダーも書き換える．
 
 	ソート後はフォーカスが画面内に現れるように表示位置を調整する．
 

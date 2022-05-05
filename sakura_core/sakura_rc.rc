@@ -1254,7 +1254,7 @@ BEGIN
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,140,174,10
     CONTROL         "ファイルを開いたときにブックマークを復元する(&B)",IDC_CHECK_RestoreBookmarks,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,155,214,10
-    CONTROL         "ファイルを開いたときにMIMEエンコードされたヘッダをデコードする(&D)",IDC_CHECK_AutoMIMEDecode,
+    CONTROL         "ファイルを開いたときにMIMEエンコードされたヘッダーをデコードする(&D)",IDC_CHECK_AutoMIMEDecode,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,169,231,10
     CONTROL         "前回と異なる文字コードのとき問い合わせを行う(&Q)",IDC_CHECK_QueryIfCodeChange,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,182,223,13
@@ -2273,7 +2273,7 @@ END
 
 STRINGTABLE
 BEGIN
-    F_OPEN_HfromtoC         "同名のC/C++ヘッダ(ソース)を開く"
+    F_OPEN_HfromtoC         "同名のC/C++ヘッダー(ソース)を開く"
     F_ACTIVATE_SQLPLUS      "SQL*Plusをアクティブ表示"
     F_PLSQL_COMPILE_ON_SQLPLUS "SQL*Plusで実行"
 END
@@ -2959,7 +2959,7 @@ BEGIN
     STR_DLGCTRLCODE_NAME    "名前"
     STR_DLGCTRLCODE_DESC    "説明"
     STR_ERR_DLGCTL5         "空文字"
-    STR_ERR_DLGCTL6         "ヘッダ開始"
+    STR_ERR_DLGCTL6         "ヘッダー開始"
     STR_ERR_DLGCTL7         "テキスト開始"
     STR_ERR_DLGCTL8         "テキスト終了"
     STR_ERR_DLGCTL9         "転送終了"
@@ -3509,7 +3509,7 @@ BEGIN
     STR_ERR_CEDITVIEW_CMD05 "タグファイルを作成中です。"
     STR_ERR_CEDITVIEW_CMD06 "タグ作成コマンド実行は失敗しました。\n\n%hs"
     STR_ERR_CEDITVIEW_CMD07 "タグファイルの作成が終了しました。"
-    STR_ERR_CEDITVIEW_CMD08 "C/C++ヘッダファイルのオープンに失敗しました。"
+    STR_ERR_CEDITVIEW_CMD08 "C/C++ヘッダーファイルのオープンに失敗しました。"
     STR_ERR_CEDITVIEW_CMD09 "C/C++ソースファイルのオープンに失敗しました。"
     STR_ERR_CEDITVIEW_CMD10 "クリップボードに有効なデータがありません！"
     STR_ERR_CEDITVIEW_CMD11 "最後まで置換しました。"

@@ -169,7 +169,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	Jun. 8, 2001 genta	GPL化に伴い、OfficialなReleaseとしての道を歩み始める
 	//	Feb. 7, 2002 genta コンパイラ情報追加
 	//	2004.05.13 Moca バージョン番号は、プロセスごとに取得する
-	//	2010.04.15 Moca コンパイラ情報を分離/WINヘッダ,N_SHAREDATA_VERSION追加
+	//	2010.04.15 Moca コンパイラ情報を分離/WINヘッダー,N_SHAREDATA_VERSION追加
 
 	// 以下の形式で出力
 	//サクラエディタ開発版(64bitデバッグ) Ver. 2.4.1.1234 GHA (xxxxxxxx)

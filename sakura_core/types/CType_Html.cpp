@@ -73,7 +73,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 	bool			bCDATA = false;
 	bool			bParaTag = false;	//	2008.08.15 aroka
 
-	/*	ネストの深さは、nMaxStackレベルまで、ひとつのヘッダは、最長32文字まで区別
+	/*	ネストの深さは、nMaxStackレベルまで、ひとつのヘッダーは、最長32文字まで区別
 		（32文字まで同じだったら同じものとして扱います）
 	*/
 	// 2014.12.25 ネスト32→64

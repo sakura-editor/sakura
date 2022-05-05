@@ -229,7 +229,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstri
 		sTitleOverride = title.c_str();
 	}
 
-	/*	ネストの深さは、32レベルまで、ひとつのヘッダは、最長256文字まで区別
+	/*	ネストの深さは、32レベルまで、ひとつのヘッダーは、最長256文字まで区別
 		（256文字まで同じだったら同じものとして扱います）
 	*/
 	const int	nMaxStack = 32;	//	ネストの最深

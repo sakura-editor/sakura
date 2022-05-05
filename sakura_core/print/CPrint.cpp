@@ -639,7 +639,7 @@ int CPrint::CalculatePrintableLines( PRINTSETTING *pPS, int nPaperAllHeight )
 }
 
 /*!
-	ヘッダ高さの計算(行送り分こみ)
+	ヘッダー高さの計算(行送り分こみ)
 	@date 2013.05.16 Uchi 新規作成
 */
 int CPrint::CalcHeaderHeight( PRINTSETTING* pPS )
@@ -664,7 +664,7 @@ int CPrint::CalcHeaderHeight( PRINTSETTING* pPS )
 }
 
 /*!
-	フッタ高さの計算(行送り分こみ)
+	フッター高さの計算(行送り分こみ)
 	@date 2013.05.16 Uchi 新規作成
 */
 int CPrint::CalcFooterHeight( PRINTSETTING* pPS )

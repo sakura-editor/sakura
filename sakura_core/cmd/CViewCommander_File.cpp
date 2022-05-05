@@ -310,7 +310,7 @@ void CViewCommander::Command_PRINT_PAGESETUP( void )
 }
 
 //From Here Feb. 10, 2001 JEPRO 追加
-/* C/C++ヘッダファイルまたはソースファイル オープン機能 */
+/* C/C++ヘッダーファイルまたはソースファイル オープン機能 */
 BOOL CViewCommander::Command_OPEN_HfromtoC( BOOL bCheckOnly )
 {
 	if ( Command_OPEN_HHPP( bCheckOnly, FALSE ) )	return TRUE;
@@ -321,11 +321,11 @@ BOOL CViewCommander::Command_OPEN_HfromtoC( BOOL bCheckOnly )
 // 2003.06.28 Moca コメントとして残っていたコードを削除
 }
 
-/* C/C++ヘッダファイル オープン機能 */		//Feb. 10, 2001 jepro	説明を「インクルードファイル」から変更
+/* C/C++ヘッダーファイル オープン機能 */		//Feb. 10, 2001 jepro	説明を「インクルードファイル」から変更
 //BOOL CViewCommander::Command_OPENINCLUDEFILE( BOOL bCheckOnly )
 BOOL CViewCommander::Command_OPEN_HHPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 {
-	// 2003.06.28 Moca ヘッダ・ソースのコードを統合＆削除
+	// 2003.06.28 Moca ヘッダー・ソースのコードを統合＆削除
 	static const WCHAR* source_ext[] = { L"c", L"cpp", L"cxx", L"cc", L"cp", L"c++" };
 	static const WCHAR* header_ext[] = { L"h", L"hpp", L"hxx", L"hh", L"hp", L"h++" };
 	return m_pCommanderView->OPEN_ExtFromtoExt(
@@ -338,7 +338,7 @@ BOOL CViewCommander::Command_OPEN_HHPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 //BOOL CViewCommander::Command_OPENCCPP( BOOL bCheckOnly )	//Feb. 10, 2001 JEPRO	コマンド名を若干変更
 BOOL CViewCommander::Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 {
-	// 2003.06.28 Moca ヘッダ・ソースのコードを統合＆削除
+	// 2003.06.28 Moca ヘッダー・ソースのコードを統合＆削除
 	static const WCHAR* source_ext[] = { L"c", L"cpp", L"cxx", L"cc", L"cp", L"c++" };
 	static const WCHAR* header_ext[] = { L"h", L"hpp", L"hxx", L"hh", L"hp", L"h++" };
 	return m_pCommanderView->OPEN_ExtFromtoExt(

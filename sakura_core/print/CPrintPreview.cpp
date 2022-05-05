@@ -264,7 +264,7 @@ LRESULT CPrintPreview::OnPaint(
 
 	int nHeaderHeight = CPrint::CalcHeaderHeight( m_pPrintSetting );
 
-	// ヘッダ
+	// ヘッダー
 	if( nHeaderHeight ){
 		DrawHeaderFooter( hdc, cRect, true );
 	}
@@ -281,7 +281,7 @@ LRESULT CPrintPreview::OnPaint(
 		pStrategyStart
 	);
 
-	// フッタ
+	// フッター
 	if( CPrint::CalcFooterHeight( m_pPrintSetting ) ){
 		DrawHeaderFooter( hdc, cRect, false );
 	}
@@ -1136,7 +1136,7 @@ void CPrintPreview::OnPrint( void )
 	cRect.top    = nDirectY * (                              m_pPrintSetting->m_nPrintMarginTY - m_nPreview_PaperOffsetTop + 5 );
 	cRect.bottom = nDirectY * ( m_nPreview_PaperAllHeight - (m_pPrintSetting->m_nPrintMarginBY + m_nPreview_PaperOffsetTop + 5) );
 
-	/* ヘッダ・フッタの$pを展開するために、m_nCurPageNumを保持 */
+	/* ヘッダー・フッターの$pを展開するために、m_nCurPageNumを保持 */
 	WORD	nCurPageNumOld = m_nCurPageNum;
 	CColorStrategy* pStrategy = DrawPageTextFirst( m_nCurPageNum );
 	for( i = 0; i < nNum; ++i ){
@@ -1166,7 +1166,7 @@ void CPrintPreview::OnPrint( void )
 
 		int nHeaderHeight = CPrint::CalcHeaderHeight( m_pPrintSetting );
 
-		// ヘッダ印刷
+		// ヘッダー印刷
 		if( nHeaderHeight ){
 			DrawHeaderFooter( hdc, cRect, true );
 		}
@@ -1193,7 +1193,7 @@ void CPrintPreview::OnPrint( void )
 			pStrategy
 		);
 
-		// フッタ印刷
+		// フッター印刷
 		if( CPrint::CalcFooterHeight( m_pPrintSetting ) ){
 			DrawHeaderFooter( hdc, cRect, false );
 		}
@@ -1235,7 +1235,7 @@ static void Tab2Space(wchar_t* pTrg)
 	}
 }
 
-/*! 印刷/印刷プレビュー ヘッダ･フッタの描画
+/*! 印刷/印刷プレビュー ヘッダー･フッターの描画
 */
 void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader )
 {
