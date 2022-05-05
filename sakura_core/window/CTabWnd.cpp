@@ -200,7 +200,7 @@ LRESULT CTabWnd::OnTabLButtonDown( WPARAM wParam, LPARAM lParam )
 		TabCtrl_GetItemRect(m_hwndTab, nSrcTab, &rcItem);
 		GetTabCloseBtnRect(&rcItem, &rcClose, nSrcTab == TabCtrl_GetCurSel(m_hwndTab));
 		if( ::PtInRect(&rcClose, hitinfo.pt) ){
-			// 閉じるボタン上ならキャプチャー開始
+			// 閉じるボタン上ならキャプチャ開始
 			m_nTabCloseCapture = nSrcTab;
 			::SetCapture( m_hwndTab );
 			return 0L;
@@ -238,7 +238,7 @@ LRESULT CTabWnd::OnTabLButtonUp( WPARAM wParam, LPARAM lParam )
 		if( ::PtInRect(&rcClose, hitinfo.pt) ){
 			ExecTabCommand( F_WINCLOSE, MAKEPOINTS(lParam) );
 		}
-		// キャプチャー解除
+		// キャプチャ解除
 		BreakDrag();
 		return 0L;
 	}
@@ -1110,7 +1110,7 @@ LRESULT CTabWnd::OnCaptureChanged( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 /*!	WM_LBUTTONDOWN処理
 	@date 2006.02.01 ryoji 新規作成
 	@date 2006.11.30 ryoji タブ一覧ボタンクリック関数を廃止して処理取り込み
-	                       閉じるボタン上ならキャプチャー開始
+	                       閉じるボタン上ならキャプチャ開始
 */
 LRESULT CTabWnd::OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
@@ -1133,11 +1133,11 @@ LRESULT CTabWnd::OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	}
 	else
 	{
-		// 閉じるボタン上ならキャプチャー開始
+		// 閉じるボタン上ならキャプチャ開始
 		GetCloseBtnRect( &rc, &rcBtn );
 		if( ::PtInRect( &rcBtn, pt ) )
 		{
-			m_eCaptureSrc = CAPT_CLOSE;	// キャプチャー元は閉じるボタン
+			m_eCaptureSrc = CAPT_CLOSE;	// キャプチャ元は閉じるボタン
 			::SetCapture( GetHwnd() );
 		}
 	}
@@ -1158,9 +1158,9 @@ LRESULT CTabWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	pt.y = HIWORD(lParam);
 	::GetClientRect( GetHwnd(), &rc );
 
-	if( ::GetCapture() == GetHwnd() )	// 自ウィンドウがマウスキャプチャーしている?
+	if( ::GetCapture() == GetHwnd() )	// 自ウィンドウがマウスキャプチャしている?
 	{
-		if( m_eCaptureSrc == CAPT_CLOSE )	// キャプチャー元は閉じるボタン?
+		if( m_eCaptureSrc == CAPT_CLOSE )	// キャプチャ元は閉じるボタン?
 		{
 			// 閉じるボタン上ならタブを閉じる
 			GetCloseBtnRect( &rc, &rcBtn );
@@ -1186,7 +1186,7 @@ LRESULT CTabWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			}
 		}
 
-		// キャプチャー解除
+		// キャプチャ解除
 		m_eCaptureSrc = CAPT_NONE;
 		::ReleaseCapture();
 	}

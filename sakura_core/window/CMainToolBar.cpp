@@ -106,7 +106,7 @@ static LRESULT CALLBACK ToolBarWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPAR
 	switch( msg )
 	{
 	// WinXP Visual Style のときにツールバー上でのマウス左右ボタン同時押しで無応答になる
-	//（マウスをキャプチャーしたまま放さない） 問題を回避するために右ボタンを無視する
+	//（マウスをキャプチャしたまま放さない） 問題を回避するために右ボタンを無視する
 	case WM_RBUTTONDOWN:
 	case WM_RBUTTONUP:
 		return 0L;				// 右ボタンの UP/DOWN は本来のウィンドウプロシージャに渡さない
