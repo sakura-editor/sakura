@@ -169,7 +169,7 @@ next:
 			return CALLBACK_INTERRUPT;
 		}
 
-		// ファイルサイズがユーザ設定の閾値以上の場合は警告ダイアログを出す
+		// ファイルサイズがユーザー設定の閾値以上の場合は警告ダイアログを出す
 		if (GetDllShareData().m_Common.m_sFile.m_bAlertIfLargeFile) {
 			// GetDllShareData().m_Common.m_sFile.m_nAlertFileSize はMB単位
 			if( (nFileSize.QuadPart>>20) >= (GetDllShareData().m_Common.m_sFile.m_nAlertFileSize) ){

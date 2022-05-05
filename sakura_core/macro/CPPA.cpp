@@ -325,7 +325,7 @@ void __stdcall CPPA::stdStrObj(const char* ObjName, int Index, BYTE GS_Mode, int
 	@param Err_CD IN  0以外各コールバック関数が設定した値
 			 1以上 FuncID + 1
 			 0     PPAのエラー
-			-1以下 その他ユーザ定義エラー
+			-1以下 その他ユーザー定義エラー
 	@param Err_Mes IN エラーメッセージ
 
 	@date 2003.06.01 Moca

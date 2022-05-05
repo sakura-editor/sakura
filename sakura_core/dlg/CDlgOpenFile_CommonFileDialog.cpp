@@ -1071,7 +1071,7 @@ void CDlgOpenFile_CommonFileDialog::DlgOpenFail(void)
 	const WCHAR*	pszError;
 	DWORD dwError = ::CommDlgExtendedError();
 	if( dwError == 0 ){
-		//	ユーザキャンセルによる
+		//	ユーザーキャンセルによる
 		return;
 	}
 	

@@ -332,7 +332,7 @@
 - CodeFactor の badge を追加 [\#693](https://github.com/sakura-editor/sakura/pull/693) ([m-tmatma](https://github.com/m-tmatma))
 - WinMainを整理したい [\#692](https://github.com/sakura-editor/sakura/pull/692) ([berryzplus](https://github.com/berryzplus))
 - 8bit256色ツールアイコンを取り込む [\#690](https://github.com/sakura-editor/sakura/pull/690) ([berryzplus](https://github.com/berryzplus))
-- マルチユーザ設定を有効にする [\#689](https://github.com/sakura-editor/sakura/pull/689) ([berryzplus](https://github.com/berryzplus))
+- マルチユーザー設定を有効にする [\#689](https://github.com/sakura-editor/sakura/pull/689) ([berryzplus](https://github.com/berryzplus))
 - ツール類のコンパイルオプションに/MPを付ける [\#688](https://github.com/sakura-editor/sakura/pull/688) ([berryzplus](https://github.com/berryzplus))
 - 「このファイルのパス名をコピー」 をタブメニューにも追加する [\#666](https://github.com/sakura-editor/sakura/pull/666) ([m-tmatma](https://github.com/m-tmatma))
 - 縦スクロール時に不必要にルーラーの再描画がされないように対策 [\#660](https://github.com/sakura-editor/sakura/pull/660) ([beru](https://github.com/beru))

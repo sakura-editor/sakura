@@ -175,7 +175,7 @@ bool CShareData::InitShareData()
 			m_pShareData->m_dwCustColors[i] = RGB( 255, 255, 255 );
 		}
 
-		// マルチユーザ用のiniファイルパス(exe基準の初期化よりも先に行う必要がある)
+		// マルチユーザー用のiniファイルパス(exe基準の初期化よりも先に行う必要がある)
 		auto privateIniPath = GetIniFileName();
 		m_pShareData->m_szPrivateIniFile = privateIniPath.c_str();
 
@@ -379,7 +379,7 @@ bool CShareData::InitShareData()
 			//ファイルの保存
 			sFile.m_bEnableUnmodifiedOverwrite = false;	// 無変更でも上書きするか
 
-			// 「名前を付けて保存」でファイルの種類が[ユーザ指定]のときのファイル一覧表示	//ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
+			// 「名前を付けて保存」でファイルの種類が[ユーザー指定]のときのファイル一覧表示	//ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
 			sFile.m_bNoFilterSaveNew = true;		// 新規から保存時は全ファイル表示
 			sFile.m_bNoFilterSaveFile = true;		// 新規以外から保存時は全ファイル表示
 
@@ -1068,7 +1068,7 @@ bool CShareData::OpenDebugWindow( HWND hwnd, bool bAllwaysActive )
 /*!
 	設定フォルダがEXEフォルダと別かどうかを返す
 
-	iniファイルの保存先がユーザ別設定フォルダかどうか 2007.05.25 ryoji
+	iniファイルの保存先がユーザー別設定フォルダかどうか 2007.05.25 ryoji
 */
 [[nodiscard]]  bool CShareData::IsPrivateSettings( void ) const noexcept
 {

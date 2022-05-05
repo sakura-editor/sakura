@@ -129,7 +129,7 @@ int CProcess::WriteDump( PEXCEPTION_POINTERS pExceptPtrs )
 
 	static WCHAR szFile[MAX_PATH];
 	// 出力先はiniと同じ（InitializeProcess()後に確定）
-	// Vista以降では C:\Users\(ユーザ名)\AppData\Local\CrashDumps に出力
+	// Vista以降では C:\Users\(ユーザー名)\AppData\Local\CrashDumps に出力
 	GetInidirOrExedir( szFile, _APP_NAME_(_T) L".dmp" );
 
 	HANDLE hFile = ::CreateFile(

@@ -149,7 +149,7 @@ struct DLLSHAREDATA{
 	SShare_Handles				m_sHandles;
 
 	SFilePath					m_szIniFile;							//!< EXE基準のiniファイルパス
-	SFilePath					m_szPrivateIniFile;						//!< マルチユーザ用のiniファイルパス
+	SFilePath					m_szPrivateIniFile;						//!< マルチユーザー用のiniファイルパス
 
 	SCharWidthCache				m_sCharWidth;							//!< 文字半角全角キャッシュ
 	DWORD						m_dwCustColors[16];						//!< フォントDialogカスタムパレット

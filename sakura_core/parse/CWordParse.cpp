@@ -158,7 +158,7 @@ ECharKind CWordParse::WhatKindOfChar(
 		if( IsHankakuKatakana(c) )return CK_KATA;	// 半角のカタカナ
 		if( 0x00C0 <= c && c < 0x0180 && c != 0x00D7 && c != 0x00F7 )return CK_LATIN;
 													// ラテン１補助、ラテン拡張のうちアルファベット風のもの（×÷を除く）
-		//if( c == L'#'|| c == L'$' || c == L'@'|| c == L'\\' )return CK_UDEF;	// ユーザ定義
+		//if( c == L'#'|| c == L'$' || c == L'@'|| c == L'\\' )return CK_UDEF;	// ユーザー定義
 
 		//その他
 		if( IsZenkakuSpace(c)    )return CK_ZEN_SPACE;	// 全角スペース
@@ -207,7 +207,7 @@ ECharKind CWordParse::WhatKindOfTwoChars( ECharKind kindPre, ECharKind kindCur )
 
 	if( kindPre == CK_LATIN )kindPre = CK_CSYM;		// ラテン系文字はアルファベットとみなす
 	if( kindCur == CK_LATIN )kindCur = CK_CSYM;
-	if( kindPre == CK_UDEF )kindPre = CK_ETC;		// ユーザ定義文字はその他の半角とみなす
+	if( kindPre == CK_UDEF )kindPre = CK_ETC;		// ユーザー定義文字はその他の半角とみなす
 	if( kindCur == CK_UDEF )kindCur = CK_ETC;
 	if( kindPre == CK_CTRL )kindPre = CK_ETC;		// 制御文字はその他の半角とみなす
 	if( kindCur == CK_CTRL )kindCur = CK_ETC;
@@ -233,7 +233,7 @@ ECharKind CWordParse::WhatKindOfTwoChars4KW( ECharKind kindPre, ECharKind kindCu
 
 	if( kindPre == CK_LATIN )kindPre = CK_CSYM;		// ラテン系文字はアルファベットとみなす
 	if( kindCur == CK_LATIN )kindCur = CK_CSYM;
-	if( kindPre == CK_UDEF )kindPre = CK_CSYM;		// ユーザ定義文字はアルファベットとみなす
+	if( kindPre == CK_UDEF )kindPre = CK_CSYM;		// ユーザー定義文字はアルファベットとみなす
 	if( kindCur == CK_UDEF )kindCur = CK_CSYM;
 	if( kindPre == CK_CTRL )kindPre = CK_CTRL;		// 制御文字はそのまま制御文字とみなす
 	if( kindCur == CK_CTRL )kindCur = CK_CTRL;

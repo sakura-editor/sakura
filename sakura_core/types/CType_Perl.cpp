@@ -33,7 +33,7 @@
 #include "view/Colors/EColorIndexType.h"
 
 /* Perl */
-//Jul. 08, 2001 JEPRO Perl ユーザに贈る
+//Jul. 08, 2001 JEPRO Perl ユーザーに贈る
 //Jul. 08, 2001 JEPRO 追加
 void CType_Perl::InitTypeConfigImp(STypeConfig* pType)
 {

@@ -161,7 +161,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 		);
 	}
 
-	//ユーザ問い合わせ
+	//ユーザー問い合わせ
 	if (bTmpResult) {
 		int nDlgResult = MYMESSAGEBOX(
 			CEditWnd::getInstance()->GetHwnd(),
@@ -185,7 +185,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 		point, cmemChar
 	);
 
-	//ユーザ問い合わせ
+	//ユーザー問い合わせ
 	if(nTmpResult==RESULT_LOSESOME){
 		WCHAR szCpName[100];
 		WCHAR  szLineNum[60];  // 123桁

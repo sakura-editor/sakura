@@ -222,7 +222,7 @@ TEST(file, GetIniFileName_PrivateRoamingAppData)
 	// プロセスのインスタンスを用意する
 	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
 
-	// マルチユーザ構成設定ファイルのパス
+	// マルチユーザー構成設定ファイルのパス
 	auto exeIniPath = GetExeFileName().concat(L".ini");
 
 	// 設定を書き込む
@@ -262,7 +262,7 @@ TEST(file, GetIniFileName_PrivateDesktop)
 	// プロセスのインスタンスを用意する
 	CControlProcess dummy(nullptr, LR"(-PROF="")");
 
-	// マルチユーザ構成設定ファイルのパス
+	// マルチユーザー構成設定ファイルのパス
 	auto exeIniPath = GetExeFileName().concat(L".ini");
 
 	// 設定を書き込む
@@ -302,7 +302,7 @@ TEST(file, GetIniFileName_PrivateProfile)
 	// プロセスのインスタンスを用意する
 	CControlProcess dummy(nullptr, LR"(-PROF="")");
 
-	// マルチユーザ構成設定ファイルのパス
+	// マルチユーザー構成設定ファイルのパス
 	auto exeIniPath = GetExeFileName().concat(L".ini");
 
 	// 設定を書き込む
@@ -342,7 +342,7 @@ TEST(file, GetIniFileName_PrivateDocument)
 	// プロセスのインスタンスを用意する
 	CControlProcess dummy(nullptr, LR"(-PROF="")");
 
-	// マルチユーザ構成設定ファイルのパス
+	// マルチユーザー構成設定ファイルのパス
 	auto exeIniPath = GetExeFileName().concat(L".ini");
 
 	// 設定を書き込む

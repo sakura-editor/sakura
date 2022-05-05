@@ -31,7 +31,7 @@
 /*
 	アイテムの比較要素を取得する。
 
-	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
+	@note	取得後のポインタはユーザー管理の構造体にキャストして参照してください。
 */
 const WCHAR* CRecentFile::GetItemText( int nIndex ) const
 {
