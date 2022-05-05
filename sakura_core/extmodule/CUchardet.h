@@ -43,7 +43,7 @@ public:
 	const char * (*_uchardet_get_charset)(uchardet_t ud) = nullptr;
 
 protected:
-	// CDllImpインタフェース
+	// CDllImpインターフェース
 	LPCWSTR GetDllNameImp(int nIndex) override;
 	bool InitDllImp() override;
 

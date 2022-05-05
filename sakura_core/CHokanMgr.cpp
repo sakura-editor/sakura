@@ -177,7 +177,7 @@ int CHokanMgr::Search(
 		}
 
 		for( auto it = plugs.begin(); it != plugs.end(); ++it ){
-			//インタフェースオブジェクト準備
+			//インターフェースオブジェクト準備
 			CWSHIfObj::List params;
 			std::wstring curWord = pszCurWord;
 			CComplementIfObj* objComp = new CComplementIfObj( curWord , this, nOption );

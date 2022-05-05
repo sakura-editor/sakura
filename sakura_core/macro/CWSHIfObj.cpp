@@ -1,5 +1,5 @@
 ﻿/*!	@file
-	@brief WSHインタフェースオブジェクト基本クラス
+	@brief WSHインターフェースオブジェクト基本クラス
 
 	@date 2009.10.29 syat CWSH.cppから切り出し
 */

@@ -103,7 +103,7 @@ void CDlgExec::SetData( void )
 	/* ユーザーがコンボ ボックスのエディット コントロールに入力できるテキストの長さを制限する */
 	Combo_LimitText( GetItemHwnd( IDC_COMBO_m_szCommand ), _countof( m_szCommand ) - 1 );
 	Combo_LimitText( GetItemHwnd( IDC_COMBO_CUR_DIR ), _countof2( m_szCurDir ) - 1 );
-	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
+	/* コンボボックスのユーザー インターフェースを拡張インターフェースにする */
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_m_szCommand ), TRUE );
 
 	{	//	From Here 2007.01.02 maru 引数を拡張のため

@@ -70,6 +70,6 @@ protected:
 	LPVOID GetHelpIdTable(void) override;
 
 private:
-	SAscertainInfo* m_psi;			// インターフェイス
+	SAscertainInfo* m_psi;			// インターフェース
 };
 #endif /* SAKURA_CDLGTYPEASCERTAIN_7000A035_D26C_4FB2_AE75_6A63F3F806B9_H_ */

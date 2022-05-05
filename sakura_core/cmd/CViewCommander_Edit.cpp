@@ -176,7 +176,7 @@ end_of_for:;
 
 			if( plugs.size() > 0 ){
 				assert_warning( 1 == plugs.size() );
-				//インタフェースオブジェクト準備
+				//インターフェースオブジェクト準備
 				CWSHIfObj::List params;
 				CSmartIndentIfObj* objIndent = new CSmartIndentIfObj( wcChar );	//スマートインデントオブジェクト
 				objIndent->AddRef();
