@@ -338,12 +338,12 @@ BEGIN
     PUSHBUTTON      "拡大(&I)",IDC_BUTTON_ZOOMUP,90,16,30,14
     LTEXT           "999/999",IDC_STATIC_ZOOM,131,19,35,10
     PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,167,1,39,14
-    CONTROL         "滑らか(&A)",IDC_CHECK_ANTIALIAS,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,207,3,43,10
+    CONTROL         "滑らか(&A)",IDC_CHECK_ANTIALIAS,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,208,3,44,10
     PUSHBUTTON      "戻る(&Q)",IDCANCEL,167,16,39,14
-    PUSHBUTTON      "プリンタ(&R)",IDC_BUTTON_PRINTERSELECT,208,16,40,14
-    ICON            IDI_PRINTER,IDC_STATIC,251,3,11,9,SS_REALSIZEIMAGE
-    LTEXT           "Static",IDC_STATIC_PRNDEV,263,4,137,10
-    LTEXT           "Static",IDC_STATIC_PAPER,251,19,149,10
+    PUSHBUTTON      "プリンター(&R)",IDC_BUTTON_PRINTERSELECT,208,16,44,14
+    ICON            IDI_PRINTER,IDC_STATIC,254,3,11,9,SS_REALSIZEIMAGE
+    LTEXT           "Static",IDC_STATIC_PRNDEV,266,4,137,10
+    LTEXT           "Static",IDC_STATIC_PAPER,254,19,149,10
 END
 
 IDD_PRINTSETTING DIALOGEX 0, 0, 302, 257
@@ -3569,7 +3569,7 @@ BEGIN
     STR_EDITWND_MENU_LS     "入力改行コード指定(L&S)"
     STR_EDITWND_MENU_PS     "入力改行コード指定(&PS)"
     STR_ERR_DLGEDITWND13    "文字:\t\t%ls (%s)\n\nSJIS:\t\t%s\nJIS:\t\t%s\nEUC:\t\t%s\nLatin1:\t\t%s\nUTF-16:\t\t%s\nUTF-8:\t\t%s\nCESU-8:\t\t%s"
-    STR_ERR_DLGEDITWND14    "印刷プレビューを実行する前に、プリンタをインストールしてください。\n"
+    STR_ERR_DLGEDITWND14    "印刷プレビューを実行する前に、プリンターをインストールしてください。\n"
     STR_MENU_OUTPUT         "%s アウトプット"
     STR_ERR_DLGEDITWND20    "99999 L 9999 C"
     STR_ERR_DLGEDITWND21    "CFLF"
@@ -3648,12 +3648,12 @@ BEGIN
     STR_ERR_DLGPPA5         "未定義のエラー\nError_CD=%d\n%s"
     STR_ERR_DLGPPA6         "エラー情報が不正"
     STR_ERR_DLGPPA7         "PPA実行エラー"
-    STR_ERR_CPRINT01        "OpenPrinter()に失敗。\nプリンタデバイス名=[%s]"
-    STR_ERR_CPRINT02        "StartDoc()に失敗。\nプリンタデバイス名=[%s]"
+    STR_ERR_CPRINT01        "OpenPrinter()に失敗。\nプリンターデバイス名=[%s]"
+    STR_ERR_CPRINT02        "StartDoc()に失敗。\nプリンターデバイス名=[%s]"
     STR_ERR_CPRINT03        "不明"
     STR_ERR_DLGPRNPRVW1     "横"
     STR_ERR_DLGPRNPRVW2     "縦"
-    STR_ERR_DLGPRNPRVW3     "現在のプリンタ %s では、\n指定された用紙 %s は使用できません。\n利用可能な用紙 %s に変更しました。"
+    STR_ERR_DLGPRNPRVW3     "現在のプリンター %s では、\n指定された用紙 %s は使用できません。\n利用可能な用紙 %s に変更しました。"
 END
 
 STRINGTABLE
