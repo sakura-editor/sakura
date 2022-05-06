@@ -53,11 +53,11 @@ FILE *_wfopen_absexe(LPCWSTR fname, LPCWSTR mode); // 2003.06.23 Moca
 FILE *_wfopen_absini(LPCWSTR fname, LPCWSTR mode, BOOL bOrExedir = TRUE); // 2007.05.19 ryoji
 
 //パス文字列処理
-void CutLastYenFromDirectoryPath( WCHAR* pszFolder );			/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
-void AddLastYenFromDirectoryPath( WCHAR* pszFolder );			/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
+void CutLastYenFromDirectoryPath( WCHAR* pszFolder );			/* フォルダーの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
+void AddLastYenFromDirectoryPath( WCHAR* pszFolder );			/* フォルダーの最後が半角かつ'\\'でない場合は、付加する */
 std::wstring AddLastYenPath(std::wstring_view path);
-void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR* pszFile );	/* ファイルのフルパスを、フォルダとファイル名に分割 */
-void Concat_FolderAndFile( const WCHAR* pszDir, const WCHAR* pszTitle, WCHAR* pszPath );/* フォルダ、ファイル名から、結合したパスを作成 */
+void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR* pszFile );	/* ファイルのフルパスを、フォルダーとファイル名に分割 */
+void Concat_FolderAndFile( const WCHAR* pszDir, const WCHAR* pszTitle, WCHAR* pszPath );/* フォルダー、ファイル名から、結合したパスを作成 */
 BOOL GetLongFileName( const WCHAR* pszFilePathSrc, WCHAR* pszFilePathDes );					/* ロングファイル名を取得する */
 BOOL CheckEXT( const WCHAR* pszPath, const WCHAR* pszExt );					/* 拡張子を調べる */
 const WCHAR* GetFileTitlePointer(const WCHAR* pszPath);							//!< ファイルフルパス内のファイル名を指すポインタを取得。2007.09.20 kobake 作成

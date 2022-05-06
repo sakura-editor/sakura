@@ -710,7 +710,7 @@ void CDlgPluginOption::SelectDirectory( int iLine )
 {
 	WCHAR	szDir[_MAX_PATH+1];
 
-	/* 検索フォルダ */
+	/* 検索フォルダー */
 	::DlgItem_GetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR, szDir, _countof(szDir) );
 
 	if (_IS_REL_PATH( szDir )) {

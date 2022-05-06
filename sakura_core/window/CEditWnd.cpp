@@ -892,7 +892,7 @@ void CEditWnd::LayoutMainMenu()
 					nCount = cRecentFile.GetViewCount();
 				}
 				break;
-			case F_FOLDER_USED_RECENTLY:	// 最近使ったフォルダ
+			case F_FOLDER_USED_RECENTLY:	// 最近使ったフォルダー
 				{
 					CRecentFolder	cRecentFolder;
 					nCount = cRecentFolder.GetViewCount();
@@ -2221,9 +2221,9 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			SLoadInfo sLoadInfo(checkEditInfo.m_szPath, checkEditInfo.m_nCharCode, false);
 			GetDocument()->m_cDocFileOperation.FileLoad( &sLoadInfo );	//	Oct.  9, 2004 genta 共通関数化
 		}
-		//最近使ったフォルダ
+		//最近使ったフォルダー
 		else if( wID - IDM_SELOPENFOLDER >= 0 && wID - IDM_SELOPENFOLDER < 999){
-			//フォルダ取得
+			//フォルダー取得
 			const CMRUFolder cMRUFolder;
 			LPCWSTR pszFolderPath = cMRUFolder.GetPath( wID - IDM_SELOPENFOLDER );
 
@@ -2595,8 +2595,8 @@ bool CEditWnd::InitMenu_Special(HMENU hMenu, EFunctionCode eFunc)
 			bInList = (cMRU.MenuLength() > 0);
 		}
 		break;
-	case F_FOLDER_USED_RECENTLY:	// 最近使ったフォルダ
-		/* 最近使ったフォルダのメニューを作成 */
+	case F_FOLDER_USED_RECENTLY:	// 最近使ったフォルダー
+		/* 最近使ったフォルダーのメニューを作成 */
 		{
 			//@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
 			const CMRUFolder cMRUFolder;
@@ -3774,7 +3774,7 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 		m_cMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 	}
 
-	/* 最近使ったフォルダのメニューを作成 */
+	/* 最近使ったフォルダーのメニューを作成 */
 	const CMRUFolder cMRUFolder;
 	hMenuPopUp = cMRUFolder.CreateMenu( &m_cMenuDrawer );
 	if ( cMRUFolder.MenuLength() > 0 )

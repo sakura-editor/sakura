@@ -281,7 +281,7 @@ const EFunctionCode pnFuncList_Clip[] = {	//Oct. 16, 2000 JEPRO 変数名変更(
 	F_COPY_COLOR_HTML_LINENUMBER,	//選択範囲内行番号色付きHTMLコピー
 	F_COPYFNAME					,	//このファイル名をクリップボードにコピー //2002/2/3 aroka
 	F_COPYPATH					,	//このファイルのパス名をクリップボードにコピー
-	F_COPYDIRPATH				,	//このファイルのフォルダ名をクリップボードにコピー
+	F_COPYDIRPATH				,	//このファイルのフォルダー名をクリップボードにコピー
 	F_COPYTAG					,	//このファイルのパス名とカーソル位置をコピー	//Sept. 14, 2000 JEPRO メニューに合わせて下に移動
 	F_CREATEKEYBINDLIST				//キー割り当て一覧をコピー	//Sept. 15, 2000 JEPRO IDM_TESTのままではうまくいかないのでFに変えて登録	//Dec. 25, 2000 復活
 };
@@ -293,7 +293,7 @@ const EFunctionCode pnFuncList_Insert[] = {
 	F_INS_TIME				,	// 時刻挿入
 	F_CTRL_CODE_DIALOG		,	// コントロールコードの入力
 	F_INS_FILE_USED_RECENTLY,	// 最近使ったファイル挿入
-	F_INS_FOLDER_USED_RECENTLY,	// 最近使ったフォルダ挿入
+	F_INS_FOLDER_USED_RECENTLY,	// 最近使ったフォルダー挿入
 };
 const int nFincList_Insert_Num = _countof( pnFuncList_Insert );
 
@@ -751,7 +751,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_COPY_COLOR_HTML:			return HLP000342;	//選択範囲内色付きHTMLコピー
 	case F_COPY_COLOR_HTML_LINENUMBER:	return HLP000343;	//選択範囲内行番号色付きHTMLコピー
 	case F_COPYPATH:		return HLP000056;			//このファイルのパス名をクリップボードにコピー
-	case F_COPYDIRPATH:		return HLP000380;			//このファイルのフォルダ名をクリップボードにコピー
+	case F_COPYDIRPATH:		return HLP000380;			//このファイルのフォルダー名をクリップボードにコピー
 	case F_COPYTAG:			return HLP000175;			//このファイルのパス名とカーソル位置をコピー	//Oct. 17, 2000 JEPRO 追加
 	case F_COPYFNAME:		return HLP000303;			//このファイル名をクリップボードにコピー // 2002/2/3 aroka
 //	case IDM_TEST_CREATEKEYBINDLIST:	return 57;	//キー割り当て一覧をクリップボードへコピー	//Sept. 15, 2000 jepro「リスト」を「一覧」に変更
@@ -970,7 +970,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 		if( IDM_SELMRU <= nFuncID && nFuncID < IDM_SELMRU + MAX_MRU ){
 			return HLP000029;	//最近使ったファイル
 		}else if( IDM_SELOPENFOLDER <= nFuncID && nFuncID < IDM_SELOPENFOLDER + MAX_OPENFOLDER ){
-			return HLP000023;	//最近使ったフォルダ
+			return HLP000023;	//最近使ったフォルダー
 		}else if( IDM_SELWINDOW <= nFuncID && nFuncID < IDM_SELWINDOW + MAX_EDITWINDOWS ){
 			return HLP000097;	//ウィンドウリスト
 		}else if( F_USERMACRO_0 <= nFuncID && nFuncID < F_USERMACRO_0 + MAX_CUSTMACRO ){

@@ -53,7 +53,7 @@
 
 #pragma comment(lib, "urlmon.lib")
 
-/* フォルダ選択ダイアログ */
+/* フォルダー選択ダイアログ */
 BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR* strFolderName, size_t nMaxCount )
 {
 	if ( nullptr == strFolderName ) {
@@ -77,13 +77,13 @@ BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WC
 		return FALSE;
 	}
 
-	// オプションをフォルダを選択可能に変更
+	// オプションをフォルダーを選択可能に変更
 	hres = pDialog->SetOptions( dwOptions | FOS_PICKFOLDERS | FOS_NOCHANGEDIR | FOS_FORCEFILESYSTEM );
 	if ( FAILED(hres) ) {
 		return FALSE;
 	}
 
-	// 初期フォルダを設定
+	// 初期フォルダーを設定
 	ComPtr<IShellItem> psiFolder;
 	hres = SHCreateItemFromParsingName( pszInitFolder, nullptr, IID_PPV_ARGS(&psiFolder) );
 	if ( SUCCEEDED(hres) ) {
@@ -96,7 +96,7 @@ BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WC
 		return FALSE;
 	}
 
-	// フォルダ選択ダイアログを表示
+	// フォルダー選択ダイアログを表示
 	hres = pDialog->Show( hWnd );
 	if ( FAILED(hres) ) {
 		return FALSE;
@@ -126,11 +126,11 @@ BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WC
 	return bRet;
 }
 
-/*!	特殊フォルダのパスを取得する
+/*!	特殊フォルダーのパスを取得する
 	SHGetSpecialFolderPath API（shell32.dll version 4.71以上が必要）と同等の処理をする
 
 	@param [in] nFolder CSIDL (constant special item ID list)
-	@param [out] pszPath 特殊フォルダのパス
+	@param [out] pszPath 特殊フォルダーのパス
 
 	@author ryoji
 	@date 2007.05.19 新規
@@ -224,11 +224,11 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 
 			// 選択されたメニューの処理
 			switch( nId ){
-			case 100:	// 設定フォルダを開く
+			case 100:	// 設定フォルダーを開く
 				OpenWithExplorer(hwnd, GetIniFileName());
 				break;
 
-			case 101:	// インポート／エクスポートの起点リセット（起点を設定フォルダにする）
+			case 101:	// インポート／エクスポートの起点リセット（起点を設定フォルダーにする）
 				int nMsgResult = MYMESSAGEBOX(
 					hwnd,
 					MB_OKCANCEL | MB_ICONINFORMATION,
@@ -266,7 +266,7 @@ static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, LPARAM lParam )
 		HFONT hFont = UpdateDialogFont( hwndDlg, TRUE );
 
 		if( CShareData::getInstance()->IsPrivateSettings() ){
-			// 個人設定フォルダを使用するときは「設定フォルダ」ボタンを追加する
+			// 個人設定フォルダーを使用するときは「設定フォルダー」ボタンを追加する
 			s_pOldPropSheetWndProc = (WNDPROC)::SetWindowLongPtr( hwndDlg, GWLP_WNDPROC, (LONG_PTR)PropSheetWndProc );
 			HINSTANCE hInstance = (HINSTANCE)::GetModuleHandle( NULL );
 			HWND hwndBtn = ::CreateWindowEx( 0, WC_BUTTON, LS(STR_SHELL_INIFOLDER), BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 0, 0, 140, 20, hwndDlg, (HMENU)0x02000, hInstance, NULL );
@@ -408,7 +408,7 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCWSTR lpszLinkFile, LPWSTR lpszPath )
 		return FALSE;
 	}
 
-	// 2010.08.28 DLL インジェクション対策としてEXEのフォルダに移動する
+	// 2010.08.28 DLL インジェクション対策としてEXEのフォルダーに移動する
 	CCurrentDirectoryBackupPoint dirBack;
 	ChangeCurrentDirectoryToExeDir();
 
@@ -644,7 +644,7 @@ bool OpenWithExplorer(HWND hWnd, const std::filesystem::path& path)
 
 	// ファイル名（最後の'\'に続く部分）がドット('.')でない場合、
 	// Windowsエクスプローラーのコマンドを指定してファイルを選択させる。
-	// ※ドットは「フォルダ自身」を表す特殊なファイル名。
+	// ※ドットは「フォルダー自身」を表す特殊なファイル名。
 	if (path.filename() != L".") {
 		std::wstring buf(_MAX_PATH, wchar_t());
 		size_t requiredSize;

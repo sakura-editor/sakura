@@ -399,7 +399,7 @@ fxtget /// fxtget p1,"file"  [hspext.dll]\np1=変数名 : 情報が格納され�
 fxtset /// fxtset p1,"file"  [hspext.dll]\np1=変数名 : 設定する情報が格納されている数値型の配列変数名\n"file"　　: ファイル名指定\n"file"で指定したファイルのタイムスタンプ情報を、\np1で指定した変数のものに変更します。
 lzcopy /// lzcopy "name"  [hspext.dll]\n"name" :圧縮ファイル名\nMicrosoftのcompress.exe形式の圧縮ファイルを解凍しながらコピーを\n行ないます。
 lzdist /// lzdist "path"  [hspext.dll]\n"path" :lzcopy命令の解凍コピー先ディレクトリ\nlzcopy命令の解凍コピー先ディレクトリを指定します。
-selfolder /// selfolder p1,"message"  [hspext.dll]\np1=変数名 : 選択されたパス名が格納される文字列型の変数名\n"message" : ダイアログに表示される文字列\nWindowsのシステムで使用されている、フォルダ選択ダイアログを表示して、\nフォルダ名を取得します。
+selfolder /// selfolder p1,"message"  [hspext.dll]\np1=変数名 : 選択されたパス名が格納される文字列型の変数名\n"message" : ダイアログに表示される文字列\nWindowsのシステムで使用されている、フォルダー選択ダイアログを表示して、\nフォルダー名を取得します。
 
 ★ 拡張画面制御命令[hspext]
 gfcopy /// gfcopy p1  [hspext.dll]\np1=0～100(0) : 半透明コピーレート(%)\np1で指定したレートで画面イメージをコピーします。

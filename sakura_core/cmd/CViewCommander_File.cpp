@@ -122,18 +122,18 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 			my_splitpath_t(defName.c_str(), szPath, szDir, szName, szExt);
 			wcscat(szPath, szDir);
 			if( 0 == wmemicmp(defName.c_str(), szPath) ){
-				// defNameはフォルダ名だった
+				// defNameはフォルダー名だった
 			}else{
 				CFilePath path = defName.c_str();
 				if( 0 == wmemicmp(path.GetDirPath().c_str(), szPath) ){
-					// フォルダ名までは実在している
+					// フォルダー名までは実在している
 					sLoadInfo.cFilePath = defName.c_str();
 				}
 			}
 		}
 		bool bDlgResult = GetDocument()->m_cDocFileOperation.OpenFileDialog(
 			CEditWnd::getInstance()->GetHwnd(),	//[in]  オーナーウィンドウ
-			defName.length()==0 ? NULL : defName.c_str(),	//[in]  フォルダ
+			defName.length()==0 ? NULL : defName.c_str(),	//[in]  フォルダー
 			&sLoadInfo,							//[out] ロード情報受け取り
 			files								//[out] ファイル名
 		);

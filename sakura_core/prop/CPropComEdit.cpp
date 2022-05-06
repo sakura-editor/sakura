@@ -43,11 +43,11 @@ static const DWORD p_helpids[] = {	//10210
 	//	2007.02.11 genta クリッカブルURLをこのページに移動
 	IDC_CHECK_bSelectClickedURL,	HIDC_CHECK_bSelectClickedURL,	//クリッカブルURL
 	IDC_CHECK_CONVERTEOLPASTE,			HIDC_CHECK_CONVERTEOLPASTE,			//改行コードを変換して貼り付ける
-	IDC_RADIO_CURDIR,					HIDC_RADIO_CURDIR,						//カレントフォルダ
-	IDC_RADIO_MRUDIR,					HIDC_RADIO_MRUDIR,						//最近使ったフォルダ
-	IDC_RADIO_SELDIR,					HIDC_RADIO_SELDIR,						//指定フォルダ
-	IDC_EDIT_FILEOPENDIR,				HIDC_EDIT_FILEOPENDIR,					//指定フォルダパス
-	IDC_BUTTON_FILEOPENDIR, 			HIDC_EDIT_FILEOPENDIR,					//指定フォルダパス
+	IDC_RADIO_CURDIR,					HIDC_RADIO_CURDIR,						//カレントフォルダー
+	IDC_RADIO_MRUDIR,					HIDC_RADIO_MRUDIR,						//最近使ったフォルダー
+	IDC_RADIO_SELDIR,					HIDC_RADIO_SELDIR,						//指定フォルダー
+	IDC_EDIT_FILEOPENDIR,				HIDC_EDIT_FILEOPENDIR,					//指定フォルダーパス
+	IDC_BUTTON_FILEOPENDIR, 			HIDC_EDIT_FILEOPENDIR,					//指定フォルダーパス
 	IDC_CHECK_ENABLEEXTEOL,				HIDC_CHECK_ENABLEEXTEOL,				//改行コードNEL,PS,LSを有効にする
 	IDC_CHECK_BOXSELECTLOCK,			HIDC_CHECK_BOXSELECTLOCK,				//矩形選択移動で選択をロックする
 //	IDC_STATIC,							-1,
@@ -302,7 +302,7 @@ int CPropEdit::GetData( HWND hwndDlg )
 */
 void CPropEdit::EnableEditPropInput( HWND hwndDlg )
 {
-	// 指定フォルダ
+	// 指定フォルダー
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_SELDIR ) ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_FILEOPENDIR ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_FILEOPENDIR ), TRUE );

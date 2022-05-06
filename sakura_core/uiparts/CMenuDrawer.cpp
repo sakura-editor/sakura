@@ -294,7 +294,7 @@ CMenuDrawer::CMenuDrawer()
 /* 175 */		F_COPY_ADDCRLF					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//折り返し位置に改行をつけてコピー
 /* 176 */		F_COPY_COLOR_HTML				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//選択範囲内色付きHTMLコピー
 /* 177 */		F_COPY_COLOR_HTML_LINENUMBER	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//選択範囲内行番号色付きHTMLコピー
-/* 178 */		F_COPYDIRPATH					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//このファイルのフォルダ名をクリップボードにコピー
+/* 178 */		F_COPYDIRPATH					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//このファイルのフォルダー名をクリップボードにコピー
 /* 179 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 180 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 181 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
@@ -307,7 +307,7 @@ CMenuDrawer::CMenuDrawer()
 /* 186 */		F_INS_TIME	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//時刻挿入	//Nov. 5, 2000 JEPRO 追加
 /* 187 */		F_CTRL_CODE_DIALOG	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//コントロールコードの入力(ダイアログ)	//@@@ 2002.06.02 MIK
 /* 188 */		F_INS_FILE_USED_RECENTLY	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//最近使ったファイル挿入
-/* 189 */		F_INS_FOLDER_USED_RECENTLY	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//最近使ったフォルダ挿入
+/* 189 */		F_INS_FOLDER_USED_RECENTLY	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//最近使ったフォルダー挿入
 /* 190 */		F_DISABLE	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 191 */		F_DISABLE	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 192 */		F_DISABLE	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー

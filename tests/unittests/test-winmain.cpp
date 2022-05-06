@@ -119,7 +119,7 @@ protected:
 			std::filesystem::remove(iniPath);
 		}
 
-		// プロファイル指定がある場合、フォルダも削除しておく
+		// プロファイル指定がある場合、フォルダーも削除しておく
 		if (const std::wstring_view profileName(GetParam()); profileName.length() > 0) {
 			std::filesystem::remove(iniPath.parent_path());
 		}

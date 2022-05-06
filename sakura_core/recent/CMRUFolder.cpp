@@ -40,7 +40,7 @@ CMRUFolder::~CMRUFolder()
 }
 
 /*!
-	フォルダ履歴メニューの作成
+	フォルダー履歴メニューの作成
 	
 	@param pCMenuDrawer [in] (out?) メニュー作成で用いるMenuDrawer
 	
@@ -57,7 +57,7 @@ HMENU CMRUFolder::CreateMenu( CMenuDrawer* pCMenuDrawer ) const
 }
 
 /*!
-	フォルダ履歴メニューの作成
+	フォルダー履歴メニューの作成
 	
 	@param 追加するメニューのハンドル
 	@param pCMenuDrawer [in] (out?) メニュー作成で用いるMenuDrawer
@@ -98,7 +98,7 @@ std::vector<LPCWSTR> CMRUFolder::GetPathList() const
 {
 	std::vector<LPCWSTR> ret;
 	for( int i = 0; i < m_cRecentFolder.GetItemCount(); ++i ){
-		//	「共通設定」→「全般」→「フォルダの履歴MAX」を反映
+		//	「共通設定」→「全般」→「フォルダーの履歴MAX」を反映
 		if ( i >= m_cRecentFolder.GetViewCount() ) break;
 		ret.push_back(m_cRecentFolder.GetItemText(i));
 	}
@@ -115,7 +115,7 @@ void CMRUFolder::ClearAll()
 	m_cRecentFolder.DeleteAllItem();
 }
 
-/*	@brief 開いたフォルダ リストへの登録
+/*	@brief 開いたフォルダー リストへの登録
 
 	@date 2001.12.26  CShareData::AddOPENFOLDERListから移動した。（YAZAKI）
 */

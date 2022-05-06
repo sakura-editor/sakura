@@ -86,7 +86,7 @@ struct CommonSetting_General
 
 	//履歴
 	int		m_nMRUArrNum_MAX;				//!< ファイルの履歴MAX
-	int		m_nOPENFOLDERArrNum_MAX;		//!< フォルダの履歴MAX
+	int		m_nOPENFOLDERArrNum_MAX;		//!< フォルダーの履歴MAX
 
 	//ノーカテゴリ
 	BOOL	m_bCloseAllConfirm;				//!< [すべて閉じる]で他に編集用のウィンドウがあれば確認する	// 2006.12.25 ryoji
@@ -206,9 +206,9 @@ struct CommonSetting_TabBar
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //! ファイルダイアログの初期位置
 enum EOpenDialogDir{
-	OPENDIALOGDIR_CUR, //!< カレントフォルダ
-	OPENDIALOGDIR_MRU, //!< 最近使ったフォルダ
-	OPENDIALOGDIR_SEL, //!< 指定フォルダ
+	OPENDIALOGDIR_CUR, //!< カレントフォルダー
+	OPENDIALOGDIR_MRU, //!< 最近使ったフォルダー
+	OPENDIALOGDIR_SEL, //!< 指定フォルダー
 };
 
 struct CommonSetting_Edit
@@ -234,7 +234,7 @@ struct CommonSetting_Edit
 	BOOL	m_bSelectClickedURL;		//!< URLがクリックされたら選択するか
 
 	EOpenDialogDir	m_eOpenDialogDir;	//!< ファイルダイアログの初期位置
-	SFilePath	m_OpenDialogSelDir;		//!< 指定フォルダ
+	SFilePath	m_OpenDialogSelDir;		//!< 指定フォルダー
 
 	bool	m_bEnableExtEol;			//!< NEL,PS,LSを改行コードとして利用する
 	bool	m_bBoxSelectLock;			//!< (矩形選択)移動でロックする
@@ -350,9 +350,9 @@ public:
 public:
 	bool		m_bBackUp;					//!< 保存時にバックアップを作成する
 	bool		m_bBackUpDialog;			//!< バックアップの作成前に確認
-	bool		m_bBackUpFolder;			//!< 指定フォルダにバックアップを作成する
-	bool		m_bBackUpFolderRM;			//!< 指定フォルダにバックアップを作成する(リムーバブルメディアのみ)
-	SFilePath	m_szBackUpFolder;			//!< バックアップを作成するフォルダ
+	bool		m_bBackUpFolder;			//!< 指定フォルダーにバックアップを作成する
+	bool		m_bBackUpFolderRM;			//!< 指定フォルダーにバックアップを作成する(リムーバブルメディアのみ)
+	SFilePath	m_szBackUpFolder;			//!< バックアップを作成するフォルダー
 	int 		m_nBackUpType;				//!< バックアップファイル名のタイプ 1=(.bak) 2=*_日付.*
 	int 		m_nBackUpType_Opt1;			//!< バックアップファイル名：オプション1
 	int 		m_nBackUpType_Opt2;			//!< バックアップファイル名：オプション2
@@ -361,8 +361,8 @@ public:
 	int 		m_nBackUpType_Opt5;			//!< バックアップファイル名：オプション5
 	int 		m_nBackUpType_Opt6;			//!< バックアップファイル名：オプション6
 	bool		m_bBackUpDustBox;			//!< バックアップファイルをごみ箱に放り込む	//@@@ 2001.12.11 add MIK
-	bool		m_bBackUpPathAdvanced;		//!< バックアップ先フォルダを詳細設定する 20051107 aroka
-	SFilePath	m_szBackUpPathAdvanced;		//!< バックアップを作成するフォルダの詳細設定 20051107 aroka
+	bool		m_bBackUpPathAdvanced;		//!< バックアップ先フォルダーを詳細設定する 20051107 aroka
+	SFilePath	m_szBackUpPathAdvanced;		//!< バックアップを作成するフォルダーの詳細設定 20051107 aroka
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -398,14 +398,14 @@ struct CommonSetting_Search
 	int				m_bNOTIFYNOTFOUND;			//!< 検索／置換  見つからないときメッセージを表示
 	int				m_bSelectedArea;			//!< 置換  選択範囲内置換
 
-	int				m_bGrepSubFolder;			//!< Grep: サブフォルダも検索
+	int				m_bGrepSubFolder;			//!< Grep: サブフォルダーも検索
 	int				m_nGrepOutputLineType;		//!< Grep: 行を出力/該当部分/否マッチ行 を出力
 	int				m_nGrepOutputStyle;			//!< Grep: 出力形式
-	int				m_bGrepDefaultFolder;		//!< Grep: フォルダの初期値をカレントフォルダにする
+	int				m_bGrepDefaultFolder;		//!< Grep: フォルダーの初期値をカレントフォルダーにする
 	ECodeType		m_nGrepCharSet;				//!< Grep: 文字コードセット // 2002/09/20 Moca Add
 	bool			m_bGrepOutputFileOnly;		//!< Grep: ファイル毎最初のみ検索
-	bool			m_bGrepOutputBaseFolder;	//!< Grep: ベースフォルダ表示
-	bool			m_bGrepSeparateFolder;		//!< Grep: フォルダ毎に表示
+	bool			m_bGrepOutputBaseFolder;	//!< Grep: ベースフォルダー表示
+	bool			m_bGrepSeparateFolder;		//!< Grep: フォルダー毎に表示
 	bool			m_bGrepBackup;				//!< Grep: バックアップ作成
 
 	BOOL			m_bCaretTextForSearch;		//!< カーソル位置の文字列をデフォルトの検索文字列にする 2006.08.23 ryoji
@@ -508,7 +508,7 @@ struct CommonSetting_Macro
 {
 	WCHAR			m_szKeyMacroFileName[MAX_PATH];	//!< キーボードマクロのファイル名
 	MacroRec		m_MacroTable[MAX_CUSTMACRO];	//!< キー割り当て用マクロテーブル		Sep. 14, 2001 genta
-	SFilePath		m_szMACROFOLDER;				//!< マクロ用フォルダ
+	SFilePath		m_szMACROFOLDER;				//!< マクロ用フォルダー
 	int				m_nMacroOnOpened;				//!< オープン後自動実行マクロ番号	@@@ 2006.09.01 ryoji
 	int				m_nMacroOnTypeChanged;			//!< タイプ変更後自動実行マクロ番号	@@@ 2006.09.01 ryoji
 	int				m_nMacroOnSave;					//!< 保存前自動実行マクロ番号	@@@ 2006.09.01 ryoji
@@ -550,7 +550,7 @@ enum EFileTreeItemType{
 struct SFileTreeItem{
 public:
 	EFileTreeItemType m_eFileTreeItemType;
-	SFilePath	m_szTargetPath;	//!< フォルダorファイルパス
+	SFilePath	m_szTargetPath;	//!< フォルダーorファイルパス
 	StaticString<WCHAR,_MAX_PATH> m_szLabelName; //!< ラベル名(""のときはファイル名を使う)
 	int  m_nDepth;	//!< 階層
 
@@ -673,7 +673,7 @@ enum EPluginState {
 struct PluginRec
 {
 	WCHAR			m_szId[MAX_PLUGIN_ID];		//!< プラグインID
-	WCHAR			m_szName[MAX_PLUGIN_NAME];	//!< プラグインフォルダ/設定ファイル名
+	WCHAR			m_szName[MAX_PLUGIN_NAME];	//!< プラグインフォルダー/設定ファイル名
 	EPluginState	m_state;					//!< プラグイン状態。設定ファイルに保存せずメモリ上のみ。
 	int 			m_nCmdNum;					//!< プラグイン コマンドの数	// 2010/7/3 Uchi
 };

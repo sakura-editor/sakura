@@ -87,13 +87,13 @@ void CControlTray::DoGrep()
 		wcscpy( m_cDlgGrep.m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
 	}
 	if( 0 < m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
-		wcscpy( m_cDlgGrep.m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダ */
+		wcscpy( m_cDlgGrep.m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダー */
 	}
 	if (0 < m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
 		wcscpy(m_cDlgGrep.m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);	/* 除外ファイル */
 	}
 	if (0 < m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
-		wcscpy(m_cDlgGrep.m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);	/* 除外フォルダ */
+		wcscpy(m_cDlgGrep.m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);	/* 除外フォルダー */
 	}
 
 	/* Grepダイアログの表示 */
@@ -138,7 +138,7 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 
 	//GOPTオプション
 	WCHAR pOpt[64] = L"";
-	if( cDlgGrep.m_bSubFolder					)wcscat( pOpt, L"S" );	// サブフォルダからも検索する
+	if( cDlgGrep.m_bSubFolder					)wcscat( pOpt, L"S" );	// サブフォルダーからも検索する
 	if( cDlgGrep.m_sSearchOption.bLoHiCase		)wcscat( pOpt, L"L" );	// 英大文字と英小文字を区別する
 	if( cDlgGrep.m_sSearchOption.bRegularExp	)wcscat( pOpt, L"R" );	// 正規表現
 	if( cDlgGrep.m_nGrepOutputLineType == 1     )wcscat( pOpt, L"P" );	// 行を出力する
@@ -1544,7 +1544,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	int nEnable = (cMRU.MenuLength() > 0 ? 0 : MF_GRAYED);
 	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | nEnable, (UINT_PTR)hMenuPopUp , LS( F_FILE_RCNTFILE_SUBMENU ), L"F" );
 
-	/* 最近使ったフォルダのメニューを作成 */
+	/* 最近使ったフォルダーのメニューを作成 */
 //@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
 	const CMRUFolder cMRUFolder;
 	hMenuPopUp = cMRUFolder.CreateMenu( &m_cMenuDrawer );

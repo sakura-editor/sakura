@@ -297,7 +297,7 @@ int CBackupAgent::MakeBackUp(
 
 	@date 2005.11.29 aroka
 		MakeBackUpから分離．書式を元にバックアップファイル名を作成する機能追加
-	@date 2013.04.15 novice 指定フォルダのメタ文字列展開サポート
+	@date 2013.04.15 novice 指定フォルダーのメタ文字列展開サポート
 
 	@todo Advanced modeでの世代管理
 */
@@ -319,21 +319,21 @@ bool CBackupAgent::FormatBackUpPath(
 	_wsplitpath( target_file, szDrive, szDir, szFname, szExt );
 
 	if( bup_setting.m_bBackUpFolder
-	  && (!bup_setting.m_bBackUpFolderRM || !IsLocalDrive( target_file ))) {	/* 指定フォルダにバックアップを作成する */	// m_bBackUpFolderRM 追加	2010/5/27 Uchi
+	  && (!bup_setting.m_bBackUpFolderRM || !IsLocalDrive( target_file ))) {	/* 指定フォルダーにバックアップを作成する */	// m_bBackUpFolderRM 追加	2010/5/27 Uchi
 		WCHAR selDir[_MAX_PATH];
 		CFileNameManager::ExpandMetaToFolder( bup_setting.m_szBackUpFolder, selDir, _countof(selDir) );
 		if (GetFullPathName(selDir, _MAX_PATH, szNewPath, &psNext) == 0) {
 			// うまく取れなかった
 			wcscpy( szNewPath, selDir );
 		}
-		/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
+		/* フォルダーの最後が半角かつ'\\'でない場合は、付加する */
 		AddLastYenFromDirectoryPath( szNewPath );
 	}
 	else{
 		auto_sprintf( szNewPath, L"%s%s", szDrive, szDir );
 	}
 
-	/* 相対フォルダを挿入 */
+	/* 相対フォルダーを挿入 */
 	if( !bup_setting.m_bBackUpPathAdvanced ){
 		__time64_t 	ltime = 0;
 		struct	tm result = {0};
@@ -463,7 +463,7 @@ bool CBackupAgent::FormatBackUpPath(
 
 		{
 			// make keys
-			// $0-$9に対応するフォルダ名を切り出し
+			// $0-$9に対応するフォルダー名を切り出し
 			WCHAR keybuff[1024];
 			wcscpy( keybuff, szDir );
 			CutLastYenFromDirectoryPath( keybuff );

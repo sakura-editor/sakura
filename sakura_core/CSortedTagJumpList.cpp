@@ -86,7 +86,7 @@ void CSortedTagJumpList::Empty( void )
 }
 
 /*
-	基準フォルダを登録し、基準フォルダIDを取得
+	基準フォルダーを登録し、基準フォルダーIDを取得
 	@date 2010.07.23 Moca 新規追加
 */
 int CSortedTagJumpList::AddBaseDir( const WCHAR* baseDir )
@@ -106,7 +106,7 @@ int CSortedTagJumpList::AddBaseDir( const WCHAR* baseDir )
 	@param[in] type		種類
 	@param[in] note		備考
 	@param[in] depth	(さかのぼる)階層
-	@param[in] baseDirId	基準フォルダID。0で空文字列指定 (AddBaseDirの戻り値)
+	@param[in] baseDirId	基準フォルダーID。0で空文字列指定 (AddBaseDirの戻り値)
 	@retval TRUE  追加した
 	@retval FALSE 追加失敗
 	@date 2010.07.23 Moca baseDirId 追加
@@ -168,7 +168,7 @@ BOOL CSortedTagJumpList::AddParamA( const ACHAR* keyword, const ACHAR* filename,
 	@param[out] type		種類
 	@param[out] note		備考
 	@param[out] depth		(さかのぼる)階層
-	@param[out] baseDir		ファイル名の基準フォルダ
+	@param[out] baseDir		ファイル名の基準フォルダー
 	@return 処理結果
 
 	@note 不要な情報の場合は引数に NULL を指定する。

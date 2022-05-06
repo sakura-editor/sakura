@@ -122,7 +122,7 @@ public:
 			wcscpy( lpPath, lpBaseFolder );
 			wcscpy( lpPath + baseLen, L"\\" );
 			wcscpy( lpPath + baseLen + 1, vecKeys[ i ] );
-			// vecKeys[ i ] ==> "subdir\*.h" 等の場合に後で(ファイル|フォルダ)名に "subdir\" を連結する
+			// vecKeys[ i ] ==> "subdir\*.h" 等の場合に後で(ファイル|フォルダー)名に "subdir\" を連結する
 			const WCHAR* keyDirYen = wcsrchr( vecKeys[ i ], L'\\' );
 			const WCHAR* keyDirSlash = wcsrchr( vecKeys[ i ], L'/' );
 			const WCHAR* keyDir;
@@ -166,7 +166,7 @@ public:
 							m_vpItems.push_back( PairGrepEnumItem( lpName, w32fd.nFileSizeLow ) );
 							found++; // 2011.11.19
 							if( pExceptItems && nKeyDirLen ){
-								// フォルダを含んだパスなら検索済みとして除外指定に追加する
+								// フォルダーを含んだパスなら検索済みとして除外指定に追加する
 								pExceptItems->m_vpItems.push_back( PairGrepEnumItem( lpFullPath, w32fd.nFileSizeLow ) );
 							}else{
 								delete [] lpFullPath;

@@ -41,14 +41,14 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	CNativeW GetPackedGFileString() const;	//!< 除外ファイル、除外フォルダの設定を "-GFILE=" の設定に pack する
+	CNativeW GetPackedGFileString() const;	//!< 除外ファイル、除外フォルダーの設定を "-GFILE=" の設定に pack する
 	BOOL OnCbnDropDown( HWND hwndCtl, int wID ) override;
 	int DoModal( HINSTANCE, HWND, const WCHAR* );	/* モーダルダイアログの表示 */
 //	HWND DoModeless( HINSTANCE, HWND, const char* );	/* モードレスダイアログの表示 */
 
 	bool		m_bEnableThisText;
 	bool		m_bSelectOnceThisText;
-	BOOL		m_bSubFolder;/*!< サブフォルダからも検索する */
+	BOOL		m_bSubFolder;/*!< サブフォルダーからも検索する */
 	BOOL		m_bFromThisText;/*!< この編集中のテキストから検索する */
 
 	SSearchOption	m_sSearchOption;	//!< 検索オプション
@@ -57,15 +57,15 @@ public:
 	int			m_nGrepOutputStyle;		/*!< Grep: 出力形式 */
 	int			m_nGrepOutputLineType;		//!< 結果出力：行を出力/該当部分/否マッチ行
 	bool		m_bGrepOutputFileOnly;		/*!< ファイル毎最初のみ検索 */
-	bool		m_bGrepOutputBaseFolder;	/*!< ベースフォルダ表示 */
-	bool		m_bGrepSeparateFolder;		/*!< フォルダ毎に表示 */
+	bool		m_bGrepOutputBaseFolder;	/*!< ベースフォルダー表示 */
+	bool		m_bGrepSeparateFolder;		/*!< フォルダー毎に表示 */
 
 	std::wstring	m_strText;				/*!< 検索文字列 */
 	bool			m_bSetText;				//!< 検索文字列を設定したか
 	SFilePathLong	m_szFile;				//!< 検索ファイル
-	SFilePathLong	m_szFolder;				//!< 検索フォルダ
+	SFilePathLong	m_szFolder;				//!< 検索フォルダー
 	SFilePathLong	m_szExcludeFile;		//!< 除外ファイル
-	SFilePathLong	m_szExcludeFolder;		//!< 除外フォルダ
+	SFilePathLong	m_szExcludeFolder;		//!< 除外フォルダー
 	SFilePath	m_szCurrentFilePath;
 protected:
 	CRecentSearch			m_cRecentSearch;

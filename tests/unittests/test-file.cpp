@@ -149,7 +149,7 @@ TEST(file, Deprecated_GetExedir)
 	// 戻り値取得用のバッファを指定しない場合、何も起きない
 	GetExedir(nullptr);
 
-	// exeフォルダの取得
+	// exeフォルダーの取得
 	GetExedir(szBuf);
 	::wcscat_s(szBuf, filename);
 	ASSERT_STREQ(exeBasePath.c_str(), szBuf);
@@ -203,7 +203,7 @@ TEST(file, GetIniFileName_InProcessNamedProfileUnInitialized)
 	// プロセスのインスタンスを用意する
 	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
 
-	// exeファイルの拡張子をiniに変えたパスの最後のフォルダにプロファイル名を加えたパスが返る
+	// exeファイルの拡張子をiniに変えたパスの最後のフォルダーにプロファイル名を加えたパスが返る
 	auto iniPath = GetExeFileName().replace_extension(L".ini");
 	auto path = iniPath.parent_path().append(L"profile1").append(iniPath.filename().c_str());
 	ASSERT_STREQ(path.c_str(), GetIniFileName().c_str());
@@ -386,7 +386,7 @@ TEST(file, Deprecated_GetInidir)
 	// 戻り値取得用のバッファを指定しない場合、何も起きない
 	GetInidir(nullptr);
 
-	// iniフォルダの取得
+	// iniフォルダーの取得
 	GetInidir(szBuf);
 	::wcscat_s(szBuf, filename);
 	ASSERT_STREQ(iniBasePath.c_str(), szBuf);
@@ -503,7 +503,7 @@ TEST(file, CalcDirectoryDepth)
 	// ドライブ文字を含むフルパス
 	EXPECT_EQ(1, CalcDirectoryDepth(LR"(C:\Temp\test.txt)"));
 
-	// 共有フォルダを含むフルパス
+	// 共有フォルダーを含むフルパス
 	EXPECT_EQ(1, CalcDirectoryDepth(LR"(\\host\Temp\test.txt)"));
 
 	// ドライブなしのフルパス
@@ -529,7 +529,7 @@ TEST(file, FileMatchScoreSepExt)
 		LR"(C:\TEMP\TEST.TXT)");
 	ASSERT_EQ(_countof(LR"(test.txt)") - 1, result);
 
-	// FileNameSepExtのテストパターン（パスにフォルダが含まれない）
+	// FileNameSepExtのテストパターン（パスにフォルダーが含まれない）
 	result = FileMatchScoreSepExt(
 		LR"(TEST.TXT)",
 		LR"(test.txt)");

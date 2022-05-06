@@ -80,7 +80,7 @@ void CViewCommander::Command_INS_FILE_USED_RECENTLY( void )
 	Command_INSTEXT( true, s.c_str(), (CLogicInt)s.size(), TRUE );
 }
 
-// 最近使ったフォルダ挿入
+// 最近使ったフォルダー挿入
 void CViewCommander::Command_INS_FOLDER_USED_RECENTLY( void )
 {
 	std::wstring eol = GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2();

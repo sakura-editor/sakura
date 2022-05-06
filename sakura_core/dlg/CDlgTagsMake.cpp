@@ -45,11 +45,11 @@
 #include "String_define.h"
 
 const DWORD p_helpids[] = {	//13700
-	IDC_EDIT_TAG_MAKE_FOLDER,	HIDC_EDIT_TAG_MAKE_FOLDER,	//タグ作成フォルダ
+	IDC_EDIT_TAG_MAKE_FOLDER,	HIDC_EDIT_TAG_MAKE_FOLDER,	//タグ作成フォルダー
 	IDC_BUTTON_TAG_MAKE_REF,	HIDC_BUTTON_TAG_MAKE_REF,	//参照
 	IDC_BUTTON_FOLDER_UP,		HIDC_BUTTON_TAG_MAKE_FOLDER_UP,	// 上
 	IDC_EDIT_TAG_MAKE_CMDLINE,	HIDC_EDIT_TAG_MAKE_CMDLINE,	//コマンドライン
-	IDC_CHECK_TAG_MAKE_RECURSE,	HIDC_CHECK_TAG_MAKE_RECURSE,	//サブフォルダも対象
+	IDC_CHECK_TAG_MAKE_RECURSE,	HIDC_CHECK_TAG_MAKE_RECURSE,	//サブフォルダーも対象
 	IDOK,						HIDC_TAG_MAKE_IDOK,
 	IDCANCEL,					HIDC_TAG_MAKE_IDCANCEL,
 	IDC_BUTTON_HELP,			HIDC_BUTTON_TAG_MAKE_HELP,
@@ -117,7 +117,7 @@ BOOL CDlgTagsMake::OnBnClicked( int wID )
 }
 
 /*!
-	フォルダを選択する
+	フォルダーを選択する
 	
 	@param hwndDlg [in] ダイアログボックスのウィンドウハンドル
 */
@@ -125,7 +125,7 @@ void CDlgTagsMake::SelectFolder( HWND hwndDlg )
 {
 	WCHAR	szPath[_MAX_PATH + 1];
 
-	/* フォルダ */
+	/* フォルダー */
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_TAG_MAKE_FOLDER, szPath, _MAX_PATH );
 
 	if( SelectDir( hwndDlg, LS(STR_DLGTAGMAK_SELECTDIR), szPath, szPath ) )
@@ -140,7 +140,7 @@ void CDlgTagsMake::SelectFolder( HWND hwndDlg )
 /* ダイアログデータの設定 */
 void CDlgTagsMake::SetData( void )
 {
-	//作成フォルダ
+	//作成フォルダー
 	Combo_LimitText( GetItemHwnd( IDC_EDIT_TAG_MAKE_FOLDER ), _countof( m_szPath ) );
 	::DlgItem_SetText( GetHwnd(), IDC_EDIT_TAG_MAKE_FOLDER, m_szPath );
 
@@ -160,7 +160,7 @@ void CDlgTagsMake::SetData( void )
 /* TRUE==正常  FALSE==入力エラー */
 int CDlgTagsMake::GetData( void )
 {
-	//フォルダ
+	//フォルダー
 	::DlgItem_GetText( GetHwnd(), IDC_EDIT_TAG_MAKE_FOLDER, m_szPath, _countof( m_szPath ) );
 	int length = wcslen( m_szPath );
 	if( length > 0 )

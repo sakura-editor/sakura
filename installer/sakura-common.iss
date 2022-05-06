@@ -148,7 +148,7 @@ zh_hans.residentStartup=开机时启动(&R)
 zh_hant.residentStartup=開機時啟動(&R)
 
 en.IconPreferencefolder=Preference folder
-ja.IconPreferencefolder=設定フォルダ
+ja.IconPreferencefolder=設定フォルダー
 zh_hans.IconPreferencefolder=文件夹设置
 zh_hant.IconPreferencefolder=資料夾設定
 
@@ -464,7 +464,7 @@ begin
       ( MultiUserPage.Values[0] = False ) then
       begin
 {
-         Program Files等のシステムフォルダへインストールする場合はUACを無効にしないと設定が保存できません。
+         Program Files等のシステムフォルダーへインストールする場合はUACを無効にしないと設定が保存できません。
 }
          selected := MsgBox(
           CustomMessage('MultiUser'),

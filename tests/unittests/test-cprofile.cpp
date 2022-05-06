@@ -60,12 +60,12 @@ TEST( CProfile, WriteProfileMakesSubDirectories )
 	// ファイルを削除
 	std::filesystem::remove( szIniName );
 
-	// フォルダを削除
+	// フォルダーを削除
 	p = ::PathFindFileNameW( szIniName );
 	p[0] = L'\0';
 	std::filesystem::remove( szIniName );
 
-	// フォルダを削除
+	// フォルダーを削除
 	p = ::PathFindFileNameW( szIniName );
 	p[0] = L'\0';
 	std::filesystem::remove( szIniName );

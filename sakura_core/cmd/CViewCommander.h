@@ -229,7 +229,7 @@ public:
 	void Command_ADDTAIL( const wchar_t* pszData, int nDataLen);	/* 最後にテキストを追加 */
 	void Command_COPYFILENAME( void );				/* このファイル名をクリップボードにコピー */ //2002/2/3 aroka
 	void Command_COPYPATH( void );					/* このファイルのパス名をクリップボードにコピー */
-	void Command_COPYDIRPATH( void );				/* このファイルのフォルダ名をクリップボードにコピー */
+	void Command_COPYDIRPATH( void );				/* このファイルのフォルダー名をクリップボードにコピー */
 	void Command_COPYTAG( void );					/* このファイルのパス名とカーソル位置をコピー */
 	void Command_COPYLINES( void );					/* 選択範囲内全行コピー */
 	void Command_COPYLINESASPASSAGE( void );		/* 選択範囲内全行引用符付きコピー */
@@ -244,7 +244,7 @@ public:
 	void Command_INS_TIME( void );	//時刻挿入
 	void Command_CtrlCode_Dialog(void);		/* コントロールコードの入力(ダイアログ) */	//@@@ 2002.06.02 MIK
 	void Command_INS_FILE_USED_RECENTLY( void );	//最近使ったファイル挿入
-	void Command_INS_FOLDER_USED_RECENTLY( void );	//最近使ったフォルダ挿入
+	void Command_INS_FOLDER_USED_RECENTLY( void );	//最近使ったフォルダー挿入
 
 	/* 変換系 */
 	void Command_TOLOWER( void );				/* 小文字 */

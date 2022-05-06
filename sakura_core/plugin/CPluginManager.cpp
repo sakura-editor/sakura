@@ -39,12 +39,12 @@
 //コンストラクタ
 CPluginManager::CPluginManager()
 {
-	//pluginsフォルダの場所を取得
+	//pluginsフォルダーの場所を取得
 	WCHAR szPluginPath[_MAX_PATH];
-	GetInidir( szPluginPath, L"plugins\\" );	//iniと同じ階層のpluginsフォルダを検索
+	GetInidir( szPluginPath, L"plugins\\" );	//iniと同じ階層のpluginsフォルダーを検索
 	m_sBaseDir.append(szPluginPath);
 
-	//Exeフォルダ配下pluginsフォルダのパスを取得
+	//Exeフォルダー配下pluginsフォルダーのパスを取得
 	WCHAR	szPath[_MAX_PATH];
 	WCHAR	szFolder[_MAX_PATH];
 	WCHAR	szFname[_MAX_PATH];
@@ -79,11 +79,11 @@ bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 	HANDLE hFind;
 	CZipFile	cZipFile;
 
-	//プラグインフォルダの配下を検索
+	//プラグインフォルダーの配下を検索
 	WIN32_FIND_DATA wf;
 	hFind = FindFirstFile( (m_sBaseDir + L"*").c_str(), &wf );
 	if (hFind == INVALID_HANDLE_VALUE) {
-		//プラグインフォルダが存在しない
+		//プラグインフォルダーが存在しない
 		if (!CreateDirectory(m_sBaseDir.c_str(), NULL)) {
 			InfoMessage( hWndOwner, L"%s", LS(STR_PLGMGR_FOLDER));
 			return true;
@@ -92,7 +92,7 @@ bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 	::FindClose(hFind);
 
 	bool	bCancel = false;
-	//プラグインフォルダの配下を検索
+	//プラグインフォルダーの配下を検索
 	bool bFindNewDir = SearchNewPluginDir(common, hWndOwner, m_sBaseDir, bCancel);
 	if (!bCancel && m_sBaseDir != m_sExePluginDir) {
 		bFindNewDir |= SearchNewPluginDir(common, hWndOwner, m_sExePluginDir, bCancel);
@@ -125,7 +125,7 @@ bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, 
 	WIN32_FIND_DATA wf;
 	hFind = FindFirstFile( (sSearchDir + L"*").c_str(), &wf );
 	if (hFind == INVALID_HANDLE_VALUE) {
-		//プラグインフォルダが存在しない
+		//プラグインフォルダーが存在しない
 		return false;
 	}
 	bool bFindNewDir = false;
@@ -135,7 +135,7 @@ bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, 
 			wcscmp(wf.cFileName, L".")!=0 && wcscmp(wf.cFileName, L"..")!=0 &&
 			wmemicmp(wf.cFileName, L"unuse") !=0 )
 		{
-			//インストール済みチェック。フォルダ名＝プラグインテーブルの名前ならインストールしない
+			//インストール済みチェック。フォルダー名＝プラグインテーブルの名前ならインストールしない
 			// 2010.08.04 大文字小文字同一視にする
 			bool isNotInstalled = true;
 			for( int iNo=0; iNo < MAX_PLUGIN; iNo++ ){
@@ -146,7 +146,7 @@ bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, 
 			}
 			if( !isNotInstalled ){ continue; }
 
-			// 2011.08.20 syat plugin.defが存在しないフォルダは飛ばす
+			// 2011.08.20 syat plugin.defが存在しないフォルダーは飛ばす
 			if( ! IsFileExists( (sSearchDir + wf.cFileName + L"\\" + PII_FILENAME).c_str(), true ) ){
 				continue;
 			}
@@ -220,11 +220,11 @@ bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, const
 		return false;
 	}
 
-	//プラグインフォルダの存在を確認
+	//プラグインフォルダーの存在を確認
 	WIN32_FIND_DATA wf;
 	HANDLE		hFind;
 	if ((hFind = ::FindFirstFile( (m_sBaseDir + L"*").c_str(), &wf )) == INVALID_HANDLE_VALUE) {
-		//プラグインフォルダが存在しない
+		//プラグインフォルダーが存在しない
 		if (m_sBaseDir == m_sExePluginDir) {
 			InfoMessage( hWndOwner, LS(STR_PLGMGR_ERR_FOLDER));
 			::FindClose(hFind);
@@ -256,14 +256,14 @@ bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, co
 	bool			bSkip = false;
 	bool			bNewPlugin = false;
 
-	// Plugin フォルダ名の取得,定義ファイルの確認
+	// Plugin フォルダー名の取得,定義ファイルの確認
 	if (bOk && !cZipFile.SetZip(sZipFile)) {
 		auto_snprintf_s( msg, _countof(msg), LS(STR_PLGMGR_INST_ZIP_ACCESS), sDispName.c_str() );
 		bOk = false;
 		bSkip = bInSearch;
 	}
 
-	// Plgin フォルダ名の取得,定義ファイルの確認
+	// Plgin フォルダー名の取得,定義ファイルの確認
 	if (bOk && !cZipFile.ChkPluginDef(PII_FILENAME, sFolderName)) {
 		auto_snprintf_s( msg, _countof(msg), LS(STR_PLGMGR_INST_ZIP_DEF), sDispName.c_str() );
 		bOk = false;
@@ -295,8 +295,8 @@ bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, co
 		}
 	}
 	else {
-		// pluginsフォルダ検索中
-		// フォルダ チェック。すでに解凍されていたならインストールしない(前段でインストール済み或は可否を確認済み)
+		// pluginsフォルダー検索中
+		// フォルダー チェック。すでに解凍されていたならインストールしない(前段でインストール済み或は可否を確認済み)
 		if (bOk && (fexist((m_sBaseDir + sFolderName).c_str())
 			|| fexist((m_sExePluginDir + sFolderName).c_str())) ) {
 			bOk = false;

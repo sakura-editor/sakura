@@ -54,7 +54,7 @@
 #define CMDLINEOPT_WY			10   //!< ウィンドウ左上のY座標
 #define CMDLINEOPT_GKEY			101  //!< Grepの検索文字列
 #define CMDLINEOPT_GFILE		102  //!< Grepの検索対象のファイル
-#define CMDLINEOPT_GFOLDER		103  //!< Grepの検索対象のフォルダ
+#define CMDLINEOPT_GFOLDER		103  //!< Grepの検索対象のフォルダー
 #define CMDLINEOPT_GOPT			104  //!< Grepの条件
 #define CMDLINEOPT_GCODE		105  //!< Grepでの文字コードを指定
 #define CMDLINEOPT_M			106  //!< 起動時に実行するマクロのファイル名を指定
@@ -446,7 +446,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 					case 'H':
 						m_gi.bGrepHeader = false;	break;
 					case 'S':
-						// サブフォルダからも検索する
+						// サブフォルダーからも検索する
 						m_gi.bGrepSubFolder = true;	break;
 					case 'L':
 						// 英大文字と英小文字を区別する

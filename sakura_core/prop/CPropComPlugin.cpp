@@ -54,7 +54,7 @@ static const DWORD p_helpids[] = {	//11700
 	IDC_PLUGINLIST,			HIDC_PLUGINLIST,			//プラグインリスト
 	IDC_PLUGIN_INST_ZIP,	HIDC_PLUGIN_INST_ZIP,		//Zipプラグインを追加	// 2011/11/2 Uchi
 	IDC_PLUGIN_SearchNew,	HIDC_PLUGIN_SearchNew,		//新規プラグインを追加
-	IDC_PLUGIN_OpenFolder,	HIDC_PLUGIN_OpenFolder,		//フォルダを開く
+	IDC_PLUGIN_OpenFolder,	HIDC_PLUGIN_OpenFolder,		//フォルダーを開く
 	IDC_PLUGIN_Remove,		HIDC_PLUGIN_Remove,			//プラグインを削除
 	IDC_PLUGIN_OPTION,		HIDC_PLUGIN_OPTION,			//プラグイン設定	// 2010/3/22 Uchi
 	IDC_PLUGIN_README,		HIDC_PLUGIN_README,			//ReadMe表示		// 2011/11/2 Uchi
@@ -195,7 +195,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 						}
 						SetData_LIST( hwndDlg );	//リストの再構築
 					}
-					// フォルダを記憶
+					// フォルダーを記憶
 					WCHAR	szFolder[_MAX_PATH + 1];
 					WCHAR	szFname[_MAX_PATH + 1];
 					SplitPath_FolderAndFile(szPath, szFolder, szFname);
@@ -223,7 +223,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
 					int sel = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
 					if( sel >= 0 && m_Common.m_sPlugin.m_PluginTable[sel].m_state == PLS_LOADED ){
-						// 2010.08.21 プラグイン名(フォルダ名)の同一性の確認
+						// 2010.08.21 プラグイン名(フォルダー名)の同一性の確認
 						CPlugin* plugin = CPluginManager::getInstance()->GetPlugin(sel);
 						wstring sDirName = plugin->GetFolderName().c_str();
 						if( plugin && 0 == wmemicmp(sDirName.c_str(), m_Common.m_sPlugin.m_PluginTable[sel].m_szName ) ){
@@ -235,7 +235,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					}
 				}
 				break;
-			case IDC_PLUGIN_OpenFolder:			// フォルダを開く
+			case IDC_PLUGIN_OpenFolder:			// フォルダーを開く
 				{
 					std::wstring sBaseDir = CPluginManager::getInstance()->GetBaseDir() + L".";
 					if( ! IsDirectory(sBaseDir.c_str()) ){
@@ -250,7 +250,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 				{
 					HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
 					int sel = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
-					std::wstring sName = m_Common.m_sPlugin.m_PluginTable[sel].m_szName;	// 個別フォルダ名
+					std::wstring sName = m_Common.m_sPlugin.m_PluginTable[sel].m_szName;	// 個別フォルダー名
 					std::wstring sReadMeName = GetReadMeFile(sName);
 					if (!sReadMeName.empty()) {
 						if (!BrowseReadMe(sReadMeName)) {
@@ -403,7 +403,7 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 		}
 		ListView_SetItem( hListView, &sItem );
 
-		//フォルダ
+		//フォルダー
 		memset_raw( &sItem, 0, sizeof( sItem ));
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
@@ -531,7 +531,7 @@ std::wstring CPropPlugin::GetReadMeFile(const std::wstring& sName)
 		fl = new CFile(sReadMeName.c_str());
 	}
 	if (!fl->IsFileExist()) {
-		// exeフォルダ配下
+		// exeフォルダー配下
 		sReadMeName = CPluginManager::getInstance()->GetExePluginDir()
 			+ sName + L"\\ReadMe.txt";
 		delete fl;

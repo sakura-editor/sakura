@@ -80,10 +80,10 @@ void CDocFileOperation::DoFileUnlock()
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /* 「ファイルを開く」ダイアログ */
-//	Mar. 30, 2003 genta	ファイル名未定時の初期ディレクトリをカレントフォルダに
+//	Mar. 30, 2003 genta	ファイル名未定時の初期ディレクトリをカレントフォルダーに
 bool CDocFileOperation::OpenFileDialog(
 	HWND				hwndParent,		//!< [in]
-	const WCHAR*		pszOpenFolder,	//!< [in]     NULL以外を指定すると初期フォルダを指定できる
+	const WCHAR*		pszOpenFolder,	//!< [in]     NULL以外を指定すると初期フォルダーを指定できる
 	SLoadInfo*			pLoadInfo,		//!< [in,out] ロード情報
 	std::vector<std::wstring>&	files
 )
@@ -97,7 +97,7 @@ bool CDocFileOperation::OpenFileDialog(
 		G_AppInstance(),
 		hwndParent,
 		L"*.*",
-		pszOpenFolder ? pszOpenFolder : CSakuraEnvironment::GetDlgInitialDir().c_str(),	// 初期フォルダ
+		pszOpenFolder ? pszOpenFolder : CSakuraEnvironment::GetDlgInitialDir().c_str(),	// 初期フォルダー
 		CMRUFile().GetPathList(),															// MRUリストのファイルのリスト
 		CMRUFolder().GetPathList()														// OPENFOLDERリストのファイルのリスト
 	);
@@ -216,7 +216,7 @@ void CDocFileOperation::ReloadCurrentFile(
 
 /*! 「ファイル名を付けて保存」ダイアログ
 	@date 2001.02.09 genta	改行コードを示す引数追加
-	@date 2003.03.30 genta	ファイル名未定時の初期ディレクトリをカレントフォルダに
+	@date 2003.03.30 genta	ファイル名未定時の初期ディレクトリをカレントフォルダーに
 	@date 2003.07.20 ryoji	BOMの有無を示す引数追加
 	@date 2006.11.10 ryoji	ユーザー指定の拡張子を状況依存で変化させる
 */
@@ -284,9 +284,9 @@ bool CDocFileOperation::SaveFileDialog(
 		G_AppInstance(),
 		CEditWnd::getInstance()->GetHwnd(),
 		strDefaultWildCard.c_str(),
-		CSakuraEnvironment::GetDlgInitialDir().c_str(),	// 初期フォルダ
+		CSakuraEnvironment::GetDlgInitialDir().c_str(),	// 初期フォルダー
 		CMRUFile().GetPathList(),		//	最近のファイル
-		CMRUFolder().GetPathList()	//	最近のフォルダ
+		CMRUFolder().GetPathList()	//	最近のフォルダー
 	);
 	return cDlgOpenFile.DoModalSaveDlg( pSaveInfo, pSaveInfo->eCharCode == CODE_CODEMAX );
 }

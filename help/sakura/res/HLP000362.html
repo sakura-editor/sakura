@@ -15,7 +15,7 @@
 <img alt="GrepReplace" src="images/GrepReplace.png" /><br>
 
 ディスクにある複数のファイルから、指定した文字列を検索・置換することができます。(sakura:2.2.0.0以降)<br>
-指定したフォルダの下層のフォルダを全て置換することもできます。<br>
+指定したフォルダーの下層のフォルダーを全て置換することもできます。<br>
 サクラエディタ自身や他のプログラムが排他制御で書き込み禁止の場合、改名処理に失敗します。<br>
 
 以下の手順で置換処理を実行します。<br>
@@ -39,26 +39,26 @@
 	カンマ、スペース、セミコロン(, ;)のどれかで区切ると複数の条件を指定できます。<br>
 	ファイル名に(, ;)を含む場合は、ダブルクオーテーションで囲うことで、ひとつのファイル名として扱えます。<br>
 	ファイルパターンの先頭に!を付ける(例: !*.obj)と，そのパターンに当たるファイルをGrep対象から外します。<br>
-	ファイルパターンの先頭に#を付ける(例: #*.svn)と、そのパターンに当たるサブフォルダをGrep対象から外します。<br>
+	ファイルパターンの先頭に#を付ける(例: #*.svn)と、そのパターンに当たるサブフォルダーをGrep対象から外します。<br>
 	  指定位置にかかわらず除外指定は検索指定より優先されます． <br>
 	何も指定しない場合は、「*.*」を指定したことになります。<br>
-	<strong>(フォルダ)</strong> … 検索対象ファイルのあるフォルダを指定します。エクスプローラなどからのフォルダのドロップも受け付けます。<br>
-	複数フォルダを;で区切って指定することができます。;を含むフォルダを指定する場合は""で囲ってください。<br>
+	<strong>(フォルダー)</strong> … 検索対象ファイルのあるフォルダーを指定します。エクスプローラなどからのフォルダーのドロップも受け付けます。<br>
+	複数フォルダーを;で区切って指定することができます。;を含むフォルダーを指定する場合は""で囲ってください。<br>
 
 	<strong>(除外ファイル)</strong> … 検索対象から外すファイルパターンを指定します。<br>
 	<strong>(ファイル)</strong> で ファイルパターンの先頭に!を付ける ことにより除外ファイルを指定できるのを簡単に使えるようにするものです。<br>
 	ファイルパターンを;で区切って指定することができます。;を含むファイルパターンを指定する場合は""で囲ってください。(sakura:2.4.0.0以降)<br>
 
-	<strong>(除外フォルダ)</strong> … 検索対象から外すフォルダパターンを指定します。<br>
-	<strong>(ファイル)</strong> で ファイルパターンの先頭に#を付ける ことにより除外フォルダを指定できるのを簡単に使えるようにするものです。<br>
-	フォルダパターンを;で区切って指定することができます。;を含むフォルダパターンを指定する場合は""で囲ってください。(sakura:2.4.0.0以降)<br>
+	<strong>(除外フォルダー)</strong> … 検索対象から外すフォルダーパターンを指定します。<br>
+	<strong>(ファイル)</strong> で ファイルパターンの先頭に#を付ける ことにより除外フォルダーを指定できるのを簡単に使えるようにするものです。<br>
+	フォルダーパターンを;で区切って指定することができます。;を含むフォルダーパターンを指定する場合は""で囲ってください。(sakura:2.4.0.0以降)<br>
 
 	□<strong>単語単位で探す</strong><br>
 	&nbsp;&nbsp;&nbsp;&nbsp;単語として識別するもののみ検索します。<br>
 	&nbsp;&nbsp;&nbsp;&nbsp;スペースなどで区切ると複数単語検索が行えます。<br>
 
-	■<strong>サブフォルダからも検索する</strong><br>
-	&nbsp;&nbsp;&nbsp;&nbsp;指定フォルダの下層フォルダからも検索するかどうかを指定します。<br>
+	■<strong>サブフォルダーからも検索する</strong><br>
+	&nbsp;&nbsp;&nbsp;&nbsp;指定フォルダーの下層フォルダーからも検索するかどうかを指定します。<br>
 
 	□<strong>英大文字と小文字を区別する</strong><br>
 	&nbsp;&nbsp;&nbsp;&nbsp;半角英字の大文字と小文字を区別して検索するかどうかを指定します。<br>
@@ -66,16 +66,16 @@
 
 	□<strong>ファイル毎最初のみ検索</strong> … ファイル毎に1回だけ結果を出力します。<br>
 
-	□<strong>ベースフォルダ表示</strong> … ルートフォルダの表示とそこからの相対パスで出力します。<br>
+	□<strong>ベースフォルダー表示</strong> … ルートフォルダーの表示とそこからの相対パスで出力します。<br>
 
-	□<strong>フォルダ毎に表示</strong> … サブフォルダ毎にパスをまとめて相対パスで出力します。<br>
+	□<strong>フォルダー毎に表示</strong> … サブフォルダー毎にパスをまとめて相対パスで出力します。<br>
 
 	□<strong>文字コードセット</strong><br>
 	&nbsp;&nbsp;&nbsp;&nbsp;検索対象となるファイルの<a href="HLP000271.html">文字コードセット</a>を選択します。<br>
 	&nbsp;&nbsp;&nbsp;&nbsp;<strong>自動選択</strong>、SJIS、JIS、EUC、Latin1(Windows-1252)、UTF-16、UTF-16BE、UTF-8、CESU-8、UTF-7、コードページから選択します。<br>
 
-	□<strong>フォルダの初期値をカレントフォルダにする</strong><br>
-	&nbsp;&nbsp;&nbsp;&nbsp;現在開いているファイルがあるフォルダを(フォルダ)の初期値にします。次回のダイアログ表示時に反映されます。<br>
+	□<strong>フォルダーの初期値をカレントフォルダーにする</strong><br>
+	&nbsp;&nbsp;&nbsp;&nbsp;現在開いているファイルがあるフォルダーを(フォルダー)の初期値にします。次回のダイアログ表示時に反映されます。<br>
 
 	□<strong>正規表現</strong> … 検索条件に、<a href="HLP000089.html">正規表現</a>を使うかどうかを指定します。<br>
 
@@ -101,10 +101,10 @@
 	</div>
 
 	<strong>[上]ボタン</strong><br>
-	&nbsp;&nbsp;&nbsp;&nbsp;フォルダを1階層上に設定します。<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;フォルダーを1階層上に設定します。<br>
 
-	<strong>[現フォルダ]ボタン</strong><br>
-	&nbsp;&nbsp;&nbsp;&nbsp;このボタンを押すと現在開いているファイルを元に「フォルダ」を設定します。<br>
+	<strong>[現フォルダー]ボタン</strong><br>
+	&nbsp;&nbsp;&nbsp;&nbsp;このボタンを押すと現在開いているファイルを元に「フォルダー」を設定します。<br>
 </div>
 
 <br>
@@ -120,13 +120,13 @@ sakura:2.4.0.0以降では配布物の中に含まれますが、それ以前の
 &nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;検索文字列<br>
 &nbsp;&nbsp;&nbsp;&nbsp;str2&nbsp;&nbsp;&nbsp;&nbsp;置換後文字列<br>
 &nbsp;&nbsp;&nbsp;&nbsp;str3&nbsp;&nbsp;&nbsp;&nbsp;検索対象にするファイル名<br>
-&nbsp;&nbsp;&nbsp;&nbsp;str4&nbsp;&nbsp;&nbsp;&nbsp;検索対象にするフォルダ名<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str4&nbsp;&nbsp;&nbsp;&nbsp;検索対象にするフォルダー名<br>
 &nbsp;&nbsp;&nbsp;&nbsp;int5&nbsp;&nbsp;&nbsp;&nbsp;オプション（省略可能、ただしPPAマクロは省略不可）<br>
 &nbsp;&nbsp;&nbsp;&nbsp;int6&nbsp;&nbsp;&nbsp;&nbsp;文字コードセット（省略可能、ただしPPAマクロは省略不可）<br>
 ・記録:	○<br>
 ・解説<br>
 オプションには以下の値の組み合わせを指定できます。<br>
-&nbsp;&nbsp;&nbsp;&nbsp;0x01&nbsp;&nbsp;&nbsp;&nbsp;サブフォルダからも検索する（省略時規定値）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x01&nbsp;&nbsp;&nbsp;&nbsp;サブフォルダーからも検索する（省略時規定値）<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x02&nbsp;&nbsp;&nbsp;&nbsp;<em>この編集中のテキストから検索する（未実装）</em><br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x04&nbsp;&nbsp;&nbsp;&nbsp;英大文字と英小文字を区別する（省略時規定値）<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x08&nbsp;&nbsp;&nbsp;&nbsp;<a href="HLP000089.html">正規表現</a><br>
@@ -151,8 +151,8 @@ sakura:2.4.0.0以降では配布物の中に含まれますが、それ以前の
 &nbsp;&nbsp;&nbsp;&nbsp;0x6300&nbsp;&nbsp;&nbsp;&nbsp;自動選択<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x010000;&nbsp;&nbsp;単語単位で探す<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x020000;&nbsp;&nbsp;ファイル毎最初のみ検索<br>
-&nbsp;&nbsp;&nbsp;&nbsp;0x040000;&nbsp;&nbsp;ベースフォルダ表示<br>
-&nbsp;&nbsp;&nbsp;&nbsp;0x080000;&nbsp;&nbsp;フォルダ毎に表示<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x040000;&nbsp;&nbsp;ベースフォルダー表示<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x080000;&nbsp;&nbsp;フォルダー毎に表示<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x100000;&nbsp;&nbsp;クリップボードから貼り付ける<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x200000;&nbsp;&nbsp;バックアップ作成<br>
 文字コード自動判別を設定した場合と文字コードセットを 自動選択にした場合の動作は同じです。<br>

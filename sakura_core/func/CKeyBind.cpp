@@ -461,7 +461,7 @@ WCHAR* CKeyBind::GetMenuLabel(
 	if( bKeyStr ){
 		CNativeW    cMemAccessKey;
 		// 2010.07.11 Moca メニューラベルの「\t」の付加条件変更
-		// [ファイル/フォルダ/ウィンドウ一覧以外]から[アクセスキーがあるときのみ]に付加するように変更
+		// [ファイル/フォルダー/ウィンドウ一覧以外]から[アクセスキーがあるときのみ]に付加するように変更
 		/* 機能に対応するキー名の取得 */
 		if( GetKeyStr( hInstance, nKeyNameArrNum, pKeyNameArr, cMemAccessKey, nFuncId, bGetDefFuncCode ) ){
 			// バッファが足りないときは入れない
