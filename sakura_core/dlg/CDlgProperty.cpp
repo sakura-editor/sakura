@@ -259,7 +259,7 @@ void CDlgProperty::SetData( void )
 		in.Close();
 		goto end_of_CodeTest;
 	}
-	pBuf = GlobalLockChar( hgData );
+	pBuf = static_cast<char*>(::GlobalLock(hgData));
 	in.Read( pBuf, nBufLen );
 	in.Close();
 
