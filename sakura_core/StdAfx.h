@@ -109,10 +109,6 @@
 
 //その他
 #define malloc_char (char*)malloc
-#define GlobalLockChar  (char*)::GlobalLock
-#define GlobalLockUChar (unsigned char*)::GlobalLock
-#define GlobalLockWChar (wchar_t*)::GlobalLock
-#define GlobalLockBYTE  (BYTE*)::GlobalLock
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ は前行の直前に追加の宣言を挿入します。

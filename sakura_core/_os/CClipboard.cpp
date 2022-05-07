@@ -86,7 +86,7 @@ bool CClipboard::SetText(
 		nTextLen + 1
 	);
 	if( hgClipText ){
-		char* pszClip = GlobalLockChar( hgClipText );
+		char* pszClip = static_cast<char*>(::GlobalLock(hgClipText));
 		memcpy( pszClip, pszText, nTextLen );
 		pszClip[nTextLen] = '\0';
 		::GlobalUnlock( hgClipText );
@@ -106,7 +106,7 @@ bool CClipboard::SetText(
 		if( !hgClipText )break;
 
 		//確保した領域にデータをコピー
-		wchar_t* pszClip = GlobalLockWChar( hgClipText );
+		wchar_t* pszClip = static_cast<wchar_t*>(::GlobalLock(hgClipText));
 		wmemcpy( pszClip, pData, nDataLen );	//データ
 		pszClip[nDataLen] = L'\0';				//終端ヌル
 		::GlobalUnlock( hgClipText );
@@ -135,7 +135,7 @@ bool CClipboard::SetText(
 		if( !hgClipSakura )break;
 
 		//確保した領域にデータをコピー
-		BYTE* pClip = GlobalLockBYTE( hgClipSakura );
+		BYTE* pClip = static_cast<BYTE*>(::GlobalLock(hgClipSakura));
 		*((int*)pClip) = nDataLen; pClip += sizeof(int);								//データの長さ
 		wmemcpy( (wchar_t*)pClip, pData, nDataLen ); pClip += nDataLen*sizeof(wchar_t);	//データ
 		*((wchar_t*)pClip) = L'\0'; pClip += sizeof(wchar_t);							//終端ヌル
@@ -157,7 +157,7 @@ bool CClipboard::SetText(
 				1
 			);
 			if( hgClipMSDEVColumn ){
-				BYTE* pClip = GlobalLockBYTE( hgClipMSDEVColumn );
+				BYTE* pClip = static_cast<BYTE*>(::GlobalLock(hgClipMSDEVColumn));
 				pClip[0] = 0;
 				::GlobalUnlock( hgClipMSDEVColumn );
 				SetClipboardData( uFormat, hgClipMSDEVColumn );
@@ -241,7 +241,7 @@ bool CClipboard::SetHtmlText(const CNativeW& cmemBUf)
 	if( !hgClipText ) return false;
 
 	//確保した領域にデータをコピー
-	char* pszClip = GlobalLockChar( hgClipText );
+	char* pszClip = static_cast<char*>(::GlobalLock(hgClipText));
 	memcpy_raw( pszClip, cmemHeader.GetStringPtr(), cmemHeader.GetStringLength() );	//データ
 	memcpy_raw( pszClip + cmemHeader.GetStringLength(), cmemUtf8.GetStringPtr(), cmemUtf8.GetStringLength() );	//データ
 	memcpy_raw( pszClip + cmemHeader.GetStringLength() + cmemUtf8.GetStringLength(), cmemFooter.GetStringPtr(), cmemFooter.GetStringLength() );	//データ
@@ -319,7 +319,7 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 	}
 	if( hUnicode != NULL ){
 		//DWORD nLen = GlobalSize(hUnicode);
-		wchar_t* szData = GlobalLockWChar(hUnicode);
+		wchar_t* szData = static_cast<wchar_t*>(::GlobalLock(hUnicode));
 		cmemBuf->SetString( szData );
 		::GlobalUnlock(hUnicode);
 		return true;
@@ -332,7 +332,7 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 		hText = GetClipboardData( CF_OEMTEXT );
 	}
 	if( hText != NULL ){
-		char* szData = GlobalLockChar(hText);
+		char* szData = static_cast<char*>(::GlobalLock(hText));
 		//SJIS→UNICODE
 		CMemory cmemSjis( szData, GlobalSize(hText) );
 		CNativeW cmemUni;
@@ -515,7 +515,7 @@ bool CClipboard::SetClipboradByFormat(const CStringRef& cstr, const wchar_t* pFo
 	if( !hgClipText ){
 		return false;
 	}
-	char* pszClip = GlobalLockChar( hgClipText );
+	char* pszClip = static_cast<char*>(::GlobalLock(hgClipText));
 	memcpy( pszClip, pBuf, nTextByteLen );
 	if( nulLen ){
 		memset( &pszClip[nTextByteLen], 0, nulLen );
