@@ -659,7 +659,7 @@ CLIPFORMAT CClipboard::GetSakuraFormat()
 }
 
 //!< クリップボードデータ形式(CF_UNICODETEXT等)の取得
-int CClipboard::GetDataType()
+int CClipboard::GetDataType() const
 {
 	//扱える形式が１つでもあればtrue
 	// 2013.06.11 GetTextの取得順に変更

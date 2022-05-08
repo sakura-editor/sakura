@@ -57,7 +57,7 @@ public:
 	//演算子
 	operator bool() const{ return m_bOpenResult!=FALSE; } //!< クリップボードを開けたならtrue
 
-	int GetDataType();      //!< クリップボードデータ形式(CF_UNICODETEXT等)の取得
+	int GetDataType() const; //!< クリップボードデータ形式(CF_UNICODETEXT等)の取得
 
 private:
 	HWND m_hwnd;
