@@ -152,7 +152,7 @@ bool CClipboard::SetText(
 	if( bColumnSelect ){
 		UINT uFormat = ::RegisterClipboardFormat( L"MSDEVColumnSelect" );
 		if( 0 != uFormat ){
-			hgClipMSDEVColumn = ::GlobalAlloc(
+			hgClipMSDEVColumn = GlobalAlloc(
 				GMEM_MOVEABLE | GMEM_DDESHARE,
 				1
 			);
@@ -170,7 +170,7 @@ bool CClipboard::SetText(
 	if( bLineSelect ){
 		UINT uFormat = ::RegisterClipboardFormat( L"MSDEVLineSelect" );
 		if( 0 != uFormat ){
-			hgClipMSDEVLine = ::GlobalAlloc(
+			hgClipMSDEVLine = GlobalAlloc(
 				GMEM_MOVEABLE | GMEM_DDESHARE,
 				1
 			);
@@ -186,7 +186,7 @@ bool CClipboard::SetText(
 	if( bLineSelect ){
 		UINT uFormat = ::RegisterClipboardFormat( L"VisualStudioEditorOperationsLineCutCopyClipboardTag" );
 		if( 0 != uFormat ){
-			hgClipMSDEVLine2 = ::GlobalAlloc(
+			hgClipMSDEVLine2 = GlobalAlloc(
 				GMEM_MOVEABLE | GMEM_DDESHARE,
 				1
 			);
@@ -276,7 +276,7 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 	//矩形選択や行選択のデータがあれば取得
 	if( NULL != pbColumnSelect || NULL != pbLineSelect ){
 		UINT uFormat = 0;
-		while( ( uFormat = ::EnumClipboardFormats( uFormat ) ) != 0 ){
+		while( ( uFormat = EnumClipboardFormats( uFormat ) ) != 0 ){
 			// Jul. 2, 2005 genta : check return value of GetClipboardFormatName
 			WCHAR szFormatName[128];
 			if( ::GetClipboardFormatName( uFormat, szFormatName, _countof(szFormatName) - 1 ) ){
@@ -425,7 +425,7 @@ static CLIPFORMAT GetClipFormat(const wchar_t* pFormatName)
 bool CClipboard::IsIncludeClipboradFormat(const wchar_t* pFormatName)
 {
 	CLIPFORMAT uFormat = GetClipFormat(pFormatName);
-	if( ::IsClipboardFormatAvailable(uFormat) ){
+	if( IsClipboardFormatAvailable(uFormat) ){
 		return true;
 	}
 	return false;
@@ -508,7 +508,7 @@ bool CClipboard::SetClipboradByFormat(const CStringRef& cstr, const wchar_t* pFo
 	case 0: nulLen = 0; break;
 	default: nulLen = 0; break;
 	}
-	HGLOBAL hgClipText = ::GlobalAlloc(
+	HGLOBAL hgClipText = GlobalAlloc(
 		GMEM_MOVEABLE | GMEM_DDESHARE,
 		nTextByteLen + nulLen
 	);
@@ -521,7 +521,7 @@ bool CClipboard::SetClipboradByFormat(const CStringRef& cstr, const wchar_t* pFo
 		memset( &pszClip[nTextByteLen], 0, nulLen );
 	}
 	::GlobalUnlock( hgClipText );
-	::SetClipboardData( uFormat, hgClipText );
+	SetClipboardData( uFormat, hgClipText );
 
 	return true;
 }
@@ -563,7 +563,7 @@ bool CClipboard::GetClipboradByFormat(CNativeW& mem, const wchar_t* pFormatName,
 	if( uFormat == (CLIPFORMAT)-1 ){
 		return false;
 	}
-	if( !::IsClipboardFormatAvailable(uFormat) ){
+	if( !IsClipboardFormatAvailable(uFormat) ){
 		return false;
 	}
 	if( nMode == -2 ){
@@ -576,10 +576,10 @@ bool CClipboard::GetClipboradByFormat(CNativeW& mem, const wchar_t* pFormatName,
 		}
 		return bret;
 	}
-	HGLOBAL hClipData = ::GetClipboardData( uFormat );
+	HGLOBAL hClipData = GetClipboardData( uFormat );
 	if( hClipData != NULL ){
 		bool retVal = true;
-		const BYTE* pData = (BYTE*)::GlobalLock( hClipData );
+		const BYTE* pData = (BYTE*)GlobalLock( hClipData );
 		if( pData == NULL ){
 			return false;
 		}
@@ -633,10 +633,6 @@ bool CClipboard::GetClipboradByFormat(CNativeW& mem, const wchar_t* pFormatName,
 	return false;
 }
 
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                  staticインターフェース                     //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
 //! クリップボード内に、サクラエディタで扱えるデータがあればtrue
 bool CClipboard::HasValidData()
 {
@@ -667,10 +663,10 @@ int CClipboard::GetDataType()
 {
 	//扱える形式が１つでもあればtrue
 	// 2013.06.11 GetTextの取得順に変更
-	if(::IsClipboardFormatAvailable(GetSakuraFormat()))return GetSakuraFormat();
-	if(::IsClipboardFormatAvailable(CF_UNICODETEXT))return CF_UNICODETEXT;
-	if(::IsClipboardFormatAvailable(CF_OEMTEXT))return CF_OEMTEXT;
-	if(::IsClipboardFormatAvailable(CF_HDROP))return CF_HDROP;
+	if(IsClipboardFormatAvailable(GetSakuraFormat()))return GetSakuraFormat();
+	if(IsClipboardFormatAvailable(CF_UNICODETEXT))return CF_UNICODETEXT;
+	if(IsClipboardFormatAvailable(CF_OEMTEXT))return CF_OEMTEXT;
+	if(IsClipboardFormatAvailable(CF_HDROP))return CF_HDROP;
 	return -1;
 }
 
@@ -688,4 +684,16 @@ BOOL CClipboard::EmptyClipboard() const {
 
 BOOL CClipboard::IsClipboardFormatAvailable(UINT format) const {
 	return ::IsClipboardFormatAvailable(format);
+}
+
+UINT CClipboard::EnumClipboardFormats(UINT format) const {
+	return ::EnumClipboardFormats(format);
+}
+
+HGLOBAL CClipboard::GlobalAlloc(UINT uFlags, SIZE_T dwBytes) const {
+	return ::GlobalAlloc(uFlags, dwBytes);
+}
+
+LPVOID CClipboard::GlobalLock(HGLOBAL hMem) const {
+	return ::GlobalLock(hMem);
 }
