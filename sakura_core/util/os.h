@@ -27,6 +27,8 @@
 #define SAKURA_OS_0C5BD7E8_67ED_467C_916F_CCDC1F9A26BF_H_
 #pragma once
 
+#include <new>
+#include <Windows.h>
 #include <ObjIdl.h> // LPDATAOBJECT
 
 //システム資源
@@ -117,4 +119,35 @@ BOOL IsPowerShellAvailable(void);
 	@return	手続きが成功したら true 失敗したら false
 */
 BOOL ImeSetOpen(HWND hWnd, BOOL bOpen, BOOL* pBackup);
+
+// グローバルメモリを RAII で管理する簡易ヘルパークラス
+class GlobalMemory final {
+	HGLOBAL handle_;
+public:
+	GlobalMemory(UINT flags, SIZE_T bytes) : handle_(::GlobalAlloc(flags, bytes)) {
+		if (!handle_)
+			throw std::bad_alloc();
+	}
+	GlobalMemory(const GlobalMemory&) = delete;
+	GlobalMemory& operator=(const GlobalMemory&) = delete;
+	GlobalMemory(GlobalMemory&&) = default;
+	GlobalMemory& operator=(GlobalMemory&&) = default;
+	~GlobalMemory() {
+		if (handle_)
+			::GlobalFree(handle_);
+	}
+	HGLOBAL Get() { return handle_; }
+	template <typename T> bool Lock(std::function<void (T*)> f) {
+		return Lock<T>(handle_, f);
+	}
+	template <typename T> static bool Lock(HGLOBAL handle, std::function<void (T*)> f) {
+		void* p = ::GlobalLock(handle);
+		if (!p)
+			return false;
+		f(static_cast<T*>(p));
+		::GlobalUnlock(handle);
+		return true;
+	}
+};
+
 #endif /* SAKURA_OS_0C5BD7E8_67ED_467C_916F_CCDC1F9A26BF_H_ */

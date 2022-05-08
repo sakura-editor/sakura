@@ -44,6 +44,7 @@
 #include "CEol.h"
 #include "mem/CNativeW.h"
 #include "_os/CClipboard.h"
+#include "util/os.h"
 
 using ::testing::_;
 using ::testing::Invoke;
@@ -208,25 +209,6 @@ TEST(CClipboard, SetText6) {
 	ON_CALL(clipboard, GlobalAlloc(_, 1)).WillByDefault(Return(nullptr));
 	EXPECT_FALSE(clipboard.SetText(text.data(), text.length(), false, true, 0));
 }
-
-// グローバルメモリを RAII で管理する簡易ヘルパークラス
-class GlobalMemory {
-public:
-	GlobalMemory(UINT flags, SIZE_T bytes) : handle_(::GlobalAlloc(flags, bytes)) {}
-	GlobalMemory(const GlobalMemory&) = delete;
-	GlobalMemory& operator=(const GlobalMemory&) = delete;
-	~GlobalMemory() {
-		if (handle_)
-			::GlobalFree(handle_);
-	}
-	HGLOBAL Get() { return handle_; }
-	template <typename T> void Lock(std::function<void (T*)> f) {
-		f(reinterpret_cast<T*>(::GlobalLock(handle_)));
-		::GlobalUnlock(handle_);
-	}
-private:
-	HGLOBAL handle_;
-};
 
 // GetText のテストで使用するダミーデータを準備するためのフィクスチャクラス
 class CClipboardGetText : public testing::Test {
