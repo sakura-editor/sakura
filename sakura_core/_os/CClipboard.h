@@ -57,6 +57,8 @@ public:
 	//演算子
 	operator bool() const{ return m_bOpenResult!=FALSE; } //!< クリップボードを開けたならtrue
 
+	int GetDataType() const; //!< クリップボードデータ形式(CF_UNICODETEXT等)の取得
+
 private:
 	HWND m_hwnd;
 	BOOL m_bOpenResult;
@@ -65,7 +67,6 @@ private:
 public:
 	static bool HasValidData();    //!< クリップボード内に、サクラエディタで扱えるデータがあればtrue
 	static CLIPFORMAT GetSakuraFormat(); //!< サクラエディタ独自のクリップボードデータ形式
-	static int GetDataType();      //!< クリップボードデータ形式(CF_UNICODETEXT等)の取得
 
 protected:
 	// 単体テスト用コンストラクタ
@@ -77,5 +78,8 @@ protected:
 	virtual HANDLE GetClipboardData(UINT uFormat) const;
 	virtual BOOL EmptyClipboard() const;
 	virtual BOOL IsClipboardFormatAvailable(UINT format) const;
+	virtual UINT EnumClipboardFormats(UINT format) const;
+	virtual HGLOBAL GlobalAlloc(UINT uFlags, SIZE_T dwBytes) const;
+	virtual LPVOID GlobalLock(HGLOBAL hMem) const;
 };
 #endif /* SAKURA_CCLIPBOARD_4E783022_214C_4E51_A2E0_54EC343500F6_H_ */
