@@ -944,10 +944,10 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 {
 	CMyPoint ptMouse(xPos_, yPos_);
 
-	if( m_cMousePousePos != ptMouse ){
-		m_cMousePousePos = ptMouse;
-		if( m_nMousePouse < 0 ){
-			m_nMousePouse = 0;
+	if( m_cMousePausePos != ptMouse ){
+		m_cMousePausePos = ptMouse;
+		if( m_nMousePause < 0 ){
+			m_nMousePause = 0;
 		}
 	}
 
@@ -1103,7 +1103,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 					}
 				}else
 				/* アイビーム */
-				if( 0 <= m_nMousePouse ){
+				if( 0 <= m_nMousePause ){
 					::SetCursor( ::LoadCursor( NULL, IDC_IBEAM ) );
 				}
 			}
@@ -1112,7 +1112,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 	}
 	// 以下、マウスでの選択中(ドラッグ中)
 
-	if( 0 <= m_nMousePouse ){
+	if( 0 <= m_nMousePause ){
 		::SetCursor( ::LoadCursor( NULL, IDC_IBEAM ) );
 	}
 

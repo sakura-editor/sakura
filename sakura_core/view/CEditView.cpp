@@ -151,7 +151,7 @@ CEditView::CEditView( void )
 , m_bActivateByMouse( FALSE )	// 2007.10.02 nasukoji
 , m_nWheelDelta(0)
 , m_eWheelScroll(F_0)
-, m_nMousePouse(0)
+, m_nMousePause(0)
 , m_nAutoScrollMode(0)
 , m_cHistory(NULL)
 , m_cRegexKeyword(NULL)
@@ -569,8 +569,8 @@ LRESULT CEditView::DispatchEvent(
 			/* テキストを貼り付け */
 			BOOL bHokan;
 			bHokan = m_bHokan;
-			if( m_bHideMouse && 0 <= m_nMousePouse ){
-				m_nMousePouse = -1;
+			if( m_bHideMouse && 0 <= m_nMousePause ){
+				m_nMousePause = -1;
 				::SetCursor( NULL );
 			}
 			GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)pszText, (LPARAM)wcslen(pszText), TRUE, 0 );
