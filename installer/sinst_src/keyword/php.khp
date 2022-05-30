@@ -1833,7 +1833,7 @@ ncurses_timeout /// void ncurses_timeout ( int millisec)\n特別なキーシー�
 ncurses_typeahead /// int ncurses_typeahead ( int fd)\n typeahead確認用に別のファイル記述子を指定する 
 ncurses_ungetch /// int ncurses_ungetch ( int keycode)\n入力ストリームに1文字戻す
 ncurses_ungetmouse /// bool ncurses_ungetmouse ( array mevent)\nマウスイベントをキーにプッシュする
-ncurses_use_default_colors /// bool ncurses_use_default_colors ( void)\n 端末のデフォルト色をカラーID -1に割り付ける 
+ncurses_use_default_colors /// bool ncurses_use_default_colors ( void)\n 端末のデフォルト色をカラーID -1に割り当てる 
 ncurses_use_env /// void ncurses_use_env ( bool flag)\n端末の大きさに関する環境情報の使用を制御する
 ncurses_use_extended_names /// int ncurses_use_extended_names ( bool flag)\n terminfo記述において拡張名の使用を制御する 
 ncurses_vidattr /// int ncurses_vidattr ( int intarg)\n
