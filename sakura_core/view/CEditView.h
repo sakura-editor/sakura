@@ -693,8 +693,8 @@ public:
 	CMyPoint		m_cMouseDownPos;	//!< クリック時のマウス座標
 	int				m_nWheelDelta;	//!< ホイール変化量
 	EFunctionCode	m_eWheelScroll; //!< スクロールの種類
-	int				m_nMousePouse;	// マウス停止時間
-	CMyPoint		m_cMousePousePos;	// マウスの停止位置
+	int				m_nMousePause;	// マウス停止時間
+	CMyPoint		m_cMousePausePos;	// マウスの停止位置
 	bool			m_bHideMouse;
 
 	int				m_nAutoScrollMode;			//!< オートスクロールモード
