@@ -762,6 +762,10 @@ static void DeleteRecentItem(
 
 		// 履歴項目を削除
 		int nRecentIndex = pRecent->FindItemByText( cItemText.GetStringPtr() );
+		// お気に入りチェック
+		if( pRecent->IsFavorite(nRecentIndex) ){
+			return;
+		}
 		if( 0 <= nRecentIndex ){
 			pRecent->DeleteItem(nRecentIndex);
 		}
