@@ -14,7 +14,7 @@
 	Copyright (C) 2006, genta, Moca, fon
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2009, ryoji
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -26,7 +26,7 @@
 #include "charset/charcode.h"
 #include "COpe.h" ///	2002/2/3 aroka from here
 #include "COpeBlk.h" ///
-#include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
+#include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダー整理
 #include "doc/CDocReader.h"
 #include "doc/layout/CLayout.h"
 #include "doc/logic/CDocLine.h"

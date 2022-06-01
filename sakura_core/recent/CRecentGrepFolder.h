@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -33,7 +33,7 @@
 
 typedef StaticString<WCHAR, MAX_GREP_PATH> CGrepFolderString;
 
-//! GREPフォルダの履歴を管理 (RECENT_FOR_GREP_FOLDER)
+//! GREPフォルダーの履歴を管理 (RECENT_FOR_GREP_FOLDER)
 class CRecentGrepFolder final : public CRecentImp<CGrepFolderString, LPCWSTR>{
 public:
 	//生成

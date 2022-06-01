@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -39,7 +39,7 @@
 	@version	2.0
 	@note	Windows用にコーディングしてある
 	@retval	TRUE	正常読み込み
-	@retval	FALSE	エラー(またはユーザによるキャンセル?)
+	@retval	FALSE	エラー(またはユーザーによるキャンセル?)
 	@date	2002/08/30 Moca 旧ReadFileを元に作成 ファイルアクセスに関する部分をCFileLoadで行う
 	@date	2003/07/26 ryoji BOMの状態の取得を追加
 */

@@ -19,7 +19,7 @@
 	Copyright (C) 2010, ryoji
 	Copyright (C) 2011, ryoji, nasukoji
 	Copyright (C) 2012, Moca, ryoji
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -226,8 +226,8 @@ BOOL CViewCommander::HandleCommand(
 	case F_PRINT:				Command_PRINT();break;					/* 印刷 */
 	case F_PRINT_PREVIEW:		Command_PRINT_PREVIEW();break;			/* 印刷プレビュー */
 	case F_PRINT_PAGESETUP:		Command_PRINT_PAGESETUP();break;		/* 印刷ページ設定 */	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
-	case F_OPEN_HfromtoC:		bRet = Command_OPEN_HfromtoC( (BOOL)lparam1 );break;	/* 同名のC/C++ヘッダ(ソース)を開く */	//Feb. 7, 2001 JEPRO 追加
-//	case F_OPEN_HHPP:			bRet = Command_OPEN_HHPP( (BOOL)lparam1, TRUE );break;		/* 同名のC/C++ヘッダファイルを開く */	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更		del 2008/6/23 Uchi
+	case F_OPEN_HfromtoC:		bRet = Command_OPEN_HfromtoC( (BOOL)lparam1 );break;	/* 同名のC/C++ヘッダー(ソース)を開く */	//Feb. 7, 2001 JEPRO 追加
+//	case F_OPEN_HHPP:			bRet = Command_OPEN_HHPP( (BOOL)lparam1, TRUE );break;		/* 同名のC/C++ヘッダーファイルを開く */	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更		del 2008/6/23 Uchi
 //	case F_OPEN_CCPP:			bRet = Command_OPEN_CCPP( (BOOL)lparam1, TRUE );break;		/* 同名のC/C++ソースファイルを開く */	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更	del 2008/6/23 Uchi
 	case F_ACTIVATE_SQLPLUS:	Command_ACTIVATE_SQLPLUS();break;		/* Oracle SQL*Plusをアクティブ表示 */
 	case F_PLSQL_COMPILE_ON_SQLPLUS:									/* Oracle SQL*Plusで実行 */
@@ -382,7 +382,7 @@ BOOL CViewCommander::HandleCommand(
 	case F_ADDTAIL_W:				Command_ADDTAIL( (const wchar_t*)lparam1, (int)lparam2 );break;	/* 最後にテキストを追加 */
 	case F_COPYFNAME:				Command_COPYFILENAME();break;			//このファイル名をクリップボードにコピー / /2002/2/3 aroka
 	case F_COPYPATH:				Command_COPYPATH();break;				//このファイルのパス名をクリップボードにコピー
-	case F_COPYDIRPATH:				Command_COPYDIRPATH();break;				//このファイルのフォルダ名をクリップボードにコピー
+	case F_COPYDIRPATH:				Command_COPYDIRPATH();break;				//このファイルのフォルダー名をクリップボードにコピー
 	case F_COPYTAG:					Command_COPYTAG();break;				//このファイルのパス名とカーソル位置をコピー	//Sept. 15, 2000 jepro 上と同じ説明になっていたのを修正
 	case F_COPYLINES:				Command_COPYLINES();break;				//選択範囲内全行コピー
 	case F_COPYLINESASPASSAGE:		Command_COPYLINESASPASSAGE();break;		//選択範囲内全行引用符付きコピー
@@ -398,7 +398,7 @@ BOOL CViewCommander::HandleCommand(
     case F_CTRL_CODE_DIALOG:		Command_CtrlCode_Dialog();break;	/* コントロールコードの入力(ダイアログ) */	//@@@ 2002.06.02 MIK
     case F_CTRL_CODE:				Command_WCHAR( (wchar_t)lparam1, false );break;
 	case F_INS_FILE_USED_RECENTLY:	Command_INS_FILE_USED_RECENTLY();break;		//最近使ったファイル挿入
-	case F_INS_FOLDER_USED_RECENTLY:Command_INS_FOLDER_USED_RECENTLY();break;	//最近使ったフォルダ挿入
+	case F_INS_FOLDER_USED_RECENTLY:Command_INS_FOLDER_USED_RECENTLY();break;	//最近使ったフォルダー挿入
 
 	/* 変換 */
 	case F_TOLOWER:					Command_TOLOWER();break;				/* 小文字 */
@@ -647,7 +647,7 @@ BOOL CViewCommander::HandleCommand(
 
 			if( plugs.size() > 0 ){
 				assert_warning( 1 == plugs.size() );
-				//インタフェースオブジェクト準備
+				//インターフェースオブジェクト準備
 				CWSHIfObj::List params;
 				//プラグイン呼び出し
 				( *plugs.begin() )->Invoke( m_pCommanderView, params );

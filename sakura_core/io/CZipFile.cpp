@@ -4,7 +4,7 @@
 */
 /*
 	Copyright (C) 2011, Uchi
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -77,7 +77,7 @@ bool CZipFile::SetZip(const std::wstring& sZipPath)
 	return true;
 }
 
-// ZIP File 内 フォルダ名取得と定義ファイル検査(Plugin用)
+// ZIP File 内 フォルダー名取得と定義ファイル検査(Plugin用)
 bool CZipFile::ChkPluginDef(const std::wstring& sDefFile, std::wstring& sFolderName)
 {
 	HRESULT			hr;

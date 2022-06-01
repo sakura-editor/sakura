@@ -10,7 +10,7 @@
 	Copyright (C) 2001, hor
 	Copyright (C) 2002, MIK
 	Copyright (C) 2003, かろと
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -112,9 +112,9 @@ CPrint::~CPrint( void )
 	return;
 }
 
-/*! @brief プリンタダイアログを表示して、プリンタを選択する
+/*! @brief プリンターダイアログを表示して、プリンターを選択する
 ** 
-** @param pPD			[i/o]	プリンタダイアログ構造体
+** @param pPD			[i/o]	プリンターダイアログ構造体
 ** @param pMYDEVMODE 	[i/o] 	印刷設定
 
 	@author かろと
@@ -123,9 +123,9 @@ CPrint::~CPrint( void )
 BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 {
 	DEVMODE*	pDEVMODE;
-	DEVNAMES*	pDEVNAMES;		/* プリンタ設定 DEVNAMES用*/
+	DEVNAMES*	pDEVNAMES;		/* プリンター設定 DEVNAMES用*/
 
-	// デフォルトプリンタが選択されていなければ、選択する
+	// デフォルトプリンターが選択されていなければ、選択する
 	if ( m_hDevMode == NULL ) {
 		if ( !GetDefaultPrinter( pMYDEVMODE ) ) {
 			return FALSE;
@@ -133,7 +133,7 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 	}
 
 	//
-	//  現在のプリンタ設定の必要部分を変更
+	//  現在のプリンター設定の必要部分を変更
 	//
 	pDEVMODE = (DEVMODE*)::GlobalLock( m_hDevMode );
 	pDEVMODE->dmOrientation			= pMYDEVMODE->dmOrientation;
@@ -143,12 +143,12 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 	// PrintDlg()でReAllocされる事を考えて、呼び出す前にUnlock
 	::GlobalUnlock( m_hDevMode );
 
-	/* プリンタダイアログを表示して、プリンタを選択 */
+	/* プリンターダイアログを表示して、プリンターを選択 */
 	pPD->lStructSize = sizeof(*pPD);
 	pPD->hDevMode = m_hDevMode;
 	pPD->hDevNames = m_hDevNames;
 	if( !::PrintDlg( pPD ) ){
-		// プリンタを変更しなかった
+		// プリンターを変更しなかった
 		return FALSE;
 	}
 
@@ -158,29 +158,29 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 	pDEVMODE = (DEVMODE*)::GlobalLock( m_hDevMode );
 	pDEVNAMES = (DEVNAMES*)::GlobalLock( m_hDevNames );
 
-	// プリンタドライバ名
+	// プリンタードライバー名
 	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDriverName,
 		_countof(pMYDEVMODE->m_szPrinterDriverName),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset
 	);
-	// プリンタデバイス名
+	// プリンターデバイス名
 	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDeviceName,
 		_countof(pMYDEVMODE->m_szPrinterDeviceName),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset
 	);
-	// プリンタポート名
+	// プリンターポート名
 	wcscpy_s(
 		pMYDEVMODE->m_szPrinterOutputName,
 		_countof(pMYDEVMODE->m_szPrinterOutputName),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset
 	);
 
-	// プリンタから得られた、dmFieldsは変更しない
-	// プリンタがサポートしないbitをセットすると、プリンタドライバによっては、不安定な動きをする場合がある
+	// プリンターから得られた、dmFieldsは変更しない
+	// プリンターがサポートしないbitをセットすると、プリンタードライバーによっては、不安定な動きをする場合がある
 	// pMYDEVMODEは、コピーしたいbitで１のものだけセットする
-	// →プリンタから得られた dmFieldsが1でないLength,Width情報に、間違った長さが入っているプリンタドライバでは、
+	// →プリンターから得られた dmFieldsが1でないLength,Width情報に、間違った長さが入っているプリンタードライバーでは、
 	//   縦・横が正しく印刷されない不具合となっていた(2003.07.03 かろと)
 	pMYDEVMODE->dmFields = pDEVMODE->dmFields & (DM_ORIENTATION | DM_PAPERSIZE | DM_PAPERLENGTH | DM_PAPERWIDTH);
 	pMYDEVMODE->dmOrientation		= pDEVMODE->dmOrientation;
@@ -188,17 +188,17 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 	pMYDEVMODE->dmPaperLength		= pDEVMODE->dmPaperLength;
 	pMYDEVMODE->dmPaperWidth		= pDEVMODE->dmPaperWidth;
 
-	DEBUG_TRACE( L" (入力/出力) デバイス ドライバ=[%s]\n", (WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
+	DEBUG_TRACE( L" (入力/出力) デバイス ドライバー=[%s]\n", (WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
 	DEBUG_TRACE( L" (入力/出力) デバイス名=[%s]\n",        (WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
 	DEBUG_TRACE( L"物理出力メディア (出力ポート) =[%s]\n", (WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset );
-	DEBUG_TRACE( L"デフォルトのプリンタか=[%d]\n",          pDEVNAMES->wDefault );
+	DEBUG_TRACE( L"デフォルトのプリンターか=[%d]\n",          pDEVNAMES->wDefault );
 
 	::GlobalUnlock( m_hDevMode );
 	::GlobalUnlock( m_hDevNames );
 	return TRUE;
 }
 
-/*! @brief デフォルトのプリンタを取得し、MYDEVMODE に設定 
+/*! @brief デフォルトのプリンターを取得し、MYDEVMODE に設定 
 ** 
 ** @param pMYDEVMODE 	[out] 	印刷設定
 */
@@ -206,7 +206,7 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 {
 	PRINTDLG	pd;
 	DEVMODE*	pDEVMODE;
-	DEVNAMES*	pDEVNAMES;		/* プリンタ設定 DEVNAMES用*/
+	DEVNAMES*	pDEVNAMES;		/* プリンター設定 DEVNAMES用*/
 
 	// 2009.08.08 印刷で用紙サイズ、横指定が効かない問題対応 syat
 	//// すでに DEVMODEを取得済みなら、何もしない
@@ -218,16 +218,16 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 	if( m_hDevMode == NULL ){
 		//
 		// PRINTDLG構造体を初期化する（ダイアログは表示しないように）
-		// PrintDlg()でデフォルトプリンタのデバイス名などを取得する
+		// PrintDlg()でデフォルトプリンターのデバイス名などを取得する
 		//
 		memset_raw ( &pd, 0, sizeof(pd) );
 		pd.lStructSize	= sizeof(pd);
 		pd.Flags		= PD_RETURNDEFAULT;
 		if( !::PrintDlg( &pd ) ){
-			pMYDEVMODE->m_bPrinterNotFound = TRUE;	/* プリンタがなかったフラグ */
+			pMYDEVMODE->m_bPrinterNotFound = TRUE;	/* プリンターがなかったフラグ */
 			return FALSE;
 		}
-		pMYDEVMODE->m_bPrinterNotFound = FALSE;	/* プリンタがなかったフラグ */
+		pMYDEVMODE->m_bPrinterNotFound = FALSE;	/* プリンターがなかったフラグ */
 
 		/* 初期化 */
 		memset_raw( pMYDEVMODE, 0, sizeof(*pMYDEVMODE) );
@@ -239,29 +239,29 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 	pDEVMODE = (DEVMODE*)::GlobalLock( m_hDevMode );
 	pDEVNAMES = (DEVNAMES*)::GlobalLock( m_hDevNames );
 
-	// プリンタドライバ名
+	// プリンタードライバー名
 	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDriverName,
 		_countof(pMYDEVMODE->m_szPrinterDriverName),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset
 	);
-	// プリンタデバイス名
+	// プリンターデバイス名
 	wcscpy_s(
 		pMYDEVMODE->m_szPrinterDeviceName,
 		_countof(pMYDEVMODE->m_szPrinterDeviceName),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset
 	);
-	// プリンタポート名
+	// プリンターポート名
 	wcscpy_s(
 		pMYDEVMODE->m_szPrinterOutputName,
 		_countof(pMYDEVMODE->m_szPrinterOutputName),
 		(const WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset
 	);
 
-	// プリンタから得られた、dmFieldsは変更しない
-	// プリンタがサポートしないbitをセットすると、プリンタドライバによっては、不安定な動きをする場合がある
+	// プリンターから得られた、dmFieldsは変更しない
+	// プリンターがサポートしないbitをセットすると、プリンタードライバーによっては、不安定な動きをする場合がある
 	// pMYDEVMODEは、コピーしたいbitで１のものだけコピーする
-	// →プリンタから得られた dmFieldsが1でないLength,Width情報に、間違った長さが入っているプリンタドライバでは、
+	// →プリンターから得られた dmFieldsが1でないLength,Width情報に、間違った長さが入っているプリンタードライバーでは、
 	//   縦・横が正しく印刷されない不具合となっていた(2003.07.03 かろと)
 	pMYDEVMODE->dmFields = pDEVMODE->dmFields & (DM_ORIENTATION | DM_PAPERSIZE | DM_PAPERLENGTH | DM_PAPERWIDTH);
 	pMYDEVMODE->dmOrientation		= pDEVMODE->dmOrientation;
@@ -269,10 +269,10 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 	pMYDEVMODE->dmPaperLength		= pDEVMODE->dmPaperLength;
 	pMYDEVMODE->dmPaperWidth		= pDEVMODE->dmPaperWidth;
 
-	DEBUG_TRACE( L" (入力/出力) デバイス ドライバ=[%s]\n", (WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
+	DEBUG_TRACE( L" (入力/出力) デバイス ドライバー=[%s]\n", (WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
 	DEBUG_TRACE( L" (入力/出力) デバイス名=[%s]\n",        (WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
 	DEBUG_TRACE( L"物理出力メディア (出力ポート) =[%s]\n", (WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset );
-	DEBUG_TRACE( L"デフォルトのプリンタか=[%d]\n",          pDEVNAMES->wDefault );
+	DEBUG_TRACE( L"デフォルトのプリンターか=[%d]\n",          pDEVNAMES->wDefault );
 
 	::GlobalUnlock( m_hDevMode );
 	::GlobalUnlock( m_hDevNames );
@@ -280,7 +280,7 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 }
 
 /*! 
-** @brief プリンタをオープンし、hDCを作成する
+** @brief プリンターをオープンし、hDCを作成する
 */
 HDC CPrint::CreateDC(
 	MYDEVMODE*	pMYDEVMODE,
@@ -291,23 +291,23 @@ HDC CPrint::CreateDC(
 	HANDLE		hPrinter = NULL;
 	DEVMODE*	pDEVMODE;
 
-	// プリンタが選択されていなければ、NULLを返す
+	// プリンターが選択されていなければ、NULLを返す
 	if ( m_hDevMode == NULL ) {
 		return NULL;
 	}
 
 	//
-	// OpenPrinter()で、デバイス名でプリンタハンドルを取得
+	// OpenPrinter()で、デバイス名でプリンターハンドルを取得
 	//
 	if( !::OpenPrinter(
-		pMYDEVMODE->m_szPrinterDeviceName,		/* プリンタデバイス名 */
-		&hPrinter,					/* プリンタハンドルのポインタ */
+		pMYDEVMODE->m_szPrinterDeviceName,		/* プリンターデバイス名 */
+		&hPrinter,					/* プリンターハンドルのポインタ */
 		NULL
 	) ){
 		auto_sprintf(
 			pszErrMsg,
 			LS(STR_ERR_CPRINT01),
-			pMYDEVMODE->m_szPrinterDeviceName	/* プリンタデバイス名 */
+			pMYDEVMODE->m_szPrinterDeviceName	/* プリンターデバイス名 */
 		);
 		goto end_of_func;
 	}
@@ -319,26 +319,26 @@ HDC CPrint::CreateDC(
 	pDEVMODE->dmPaperWidth			= pMYDEVMODE->dmPaperWidth;
 
 	//
-	//DocumentProperties()でアプリケーション独自のプリンタ設定に変更する
+	//DocumentProperties()でアプリケーション独自のプリンター設定に変更する
 	//
 	::DocumentProperties(
 		NULL,
 		hPrinter,
-		pMYDEVMODE->m_szPrinterDeviceName	/* プリンタデバイス名 */,
+		pMYDEVMODE->m_szPrinterDeviceName	/* プリンターデバイス名 */,
 		pDEVMODE,
 		pDEVMODE,
 		DM_OUT_BUFFER | DM_IN_BUFFER
 	);
 	/* 指定デバイスに対するデバイス コンテキストを作成します。 */
 	hdc = ::CreateDC(
-		pMYDEVMODE->m_szPrinterDriverName,	/* プリンタドライバ名 */
-		pMYDEVMODE->m_szPrinterDeviceName,	/* プリンタデバイス名 */
-		pMYDEVMODE->m_szPrinterOutputName,	/* プリンタポート名 */
+		pMYDEVMODE->m_szPrinterDriverName,	/* プリンタードライバー名 */
+		pMYDEVMODE->m_szPrinterDeviceName,	/* プリンターデバイス名 */
+		pMYDEVMODE->m_szPrinterOutputName,	/* プリンターポート名 */
 		pDEVMODE
 	);
 
 	// pMYDEVMODEは、コピーしたいbitで１のものだけコピーする
-	// →プリンタから得られた dmFieldsが1でないLength,Width情報に、間違った長さが入っているプリンタドライバでは、
+	// →プリンターから得られた dmFieldsが1でないLength,Width情報に、間違った長さが入っているプリンタードライバーでは、
 	//   縦・横が正しく印刷されない不具合となっていた(2003.07.03 かろと)
 	pMYDEVMODE->dmFields = pDEVMODE->dmFields & (DM_ORIENTATION | DM_PAPERSIZE | DM_PAPERLENGTH | DM_PAPERWIDTH);
 	pMYDEVMODE->dmOrientation		= pDEVMODE->dmOrientation;
@@ -383,7 +383,7 @@ BOOL CPrint::GetPrintMetrics(
 		return FALSE;
 	}
 
-	/* CreateDC実行によって得られた実際のプリンタの用紙の幅、高さを取得 */
+	/* CreateDC実行によって得られた実際のプリンターの用紙の幅、高さを取得 */
 	if( !GetPaperSize( pnPaperAllWidth, pnPaperAllHeight, pMYDEVMODE ) ){
 		*pnPaperAllWidth = *pnPaperWidth + 2 * (*pnPaperOffsetLeft);
 		*pnPaperAllHeight = *pnPaperHeight + 2 * (*pnPaperOffsetTop);
@@ -495,7 +495,7 @@ BOOL CPrint::PrintOpen(
 		auto_sprintf(
 			pszErrMsg,
 			LS(STR_ERR_CPRINT02),
-			pMYDEVMODE->m_szPrinterDeviceName	/* プリンタデバイス名 */
+			pMYDEVMODE->m_szPrinterDeviceName	/* プリンターデバイス名 */
 		);
 		bRet = FALSE;
 		goto end_of_func;
@@ -556,7 +556,7 @@ const PAPER_INFO* CPrint::FindPaperInfo( int id )
 
 /*!	@brief PRINTSETTINGの初期化
 
-	ここではm_mdmDevModeの プリンタ設定は取得・初期化しない
+	ここではm_mdmDevModeの プリンター設定は取得・初期化しない
 
 	@date 2006.08.14 Moca  Initializeから名称変更。初期化単位をShareDate全てからPRINTSETTING単位に変更．
 		本関数からDLLSHAREDATAへアクセスする代わりに，CShareDataからPPRINTSETTING単位で逐一渡してもらう．
@@ -584,8 +584,8 @@ void CPrint::SettingInitialize( PRINTSETTING& pPrintSetting, const WCHAR* settin
 	pPrintSetting.m_nPrintMarginRX = 100;		/* 印刷用紙マージン 右(1/10mm単位) */
 	pPrintSetting.m_nPrintPaperOrientation = DMORIENT_PORTRAIT;	/* 用紙方向 DMORIENT_PORTRAIT (1) または DMORIENT_LANDSCAPE (2) */
 	pPrintSetting.m_nPrintPaperSize = DMPAPER_A4;	/* 用紙サイズ */
-	/* プリンタ設定 DEVMODE用 */
-	/* プリンタ設定を取得するのはコストがかかるので、後ほど */
+	/* プリンター設定 DEVMODE用 */
+	/* プリンター設定を取得するのはコストがかかるので、後ほど */
 	//	m_cPrint.GetDefaultPrinterInfo( &(pPrintSetting.m_mdmDevMode) );
 	pPrintSetting.m_bHeaderUse[0] = TRUE;
 	pPrintSetting.m_bHeaderUse[1] = FALSE;
@@ -639,7 +639,7 @@ int CPrint::CalculatePrintableLines( PRINTSETTING *pPS, int nPaperAllHeight )
 }
 
 /*!
-	ヘッダ高さの計算(行送り分こみ)
+	ヘッダー高さの計算(行送り分こみ)
 	@date 2013.05.16 Uchi 新規作成
 */
 int CPrint::CalcHeaderHeight( PRINTSETTING* pPS )
@@ -664,7 +664,7 @@ int CPrint::CalcHeaderHeight( PRINTSETTING* pPS )
 }
 
 /*!
-	フッタ高さの計算(行送り分こみ)
+	フッター高さの計算(行送り分こみ)
 	@date 2013.05.16 Uchi 新規作成
 */
 int CPrint::CalcFooterHeight( PRINTSETTING* pPS )

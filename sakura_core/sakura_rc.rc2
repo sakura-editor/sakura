@@ -27,7 +27,7 @@
 #define _GSTR_APPNAME  _APP_NAME_1 _APP_NAME_2 _APP_NAME_3 _APP_NAME_4
 #endif
 
-#define	S_COPYRIGHT	"Copyright (C) 1998-2021  by Norio Nakatani & Collaborators"
+#define	S_COPYRIGHT	"Copyright (C) 1998-2022  by Norio Nakatani & Collaborators"
 
 /////////////////////////////////////////////////////////////////////////////
 //

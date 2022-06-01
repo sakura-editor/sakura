@@ -14,7 +14,7 @@
 	Copyright (C) 2009, ryoji
 	Copyright (C) 2012, Moca
 	Copyright (C) 2013, Uchi
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -164,7 +164,7 @@ INT_PTR CPropHelper::DispatchEvent(
 			case IDC_BUTTON_OPENMDICT:	/* MigemoDict場所指定「参照...」ボタン */
 				{
 					WCHAR	szPath[_MAX_PATH];
-					/* 検索フォルダ */
+					/* 検索フォルダー */
 					// 2007.05.27 ryoji 相対パスは設定ファイルからのパスを優先
 					if( _IS_REL_PATH( m_Common.m_sHelper.m_szMigemoDict ) ){
 						GetInidirOrExedir( szPath, m_Common.m_sHelper.m_szMigemoDict, TRUE );

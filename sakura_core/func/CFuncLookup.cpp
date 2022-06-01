@@ -10,7 +10,7 @@
 /*
 	Copyright (C) 2001, genta
 	Copyright (C) 2007, ryoji
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -216,7 +216,7 @@ void CFuncLookup::SetCategory2Combo( HWND hComboBox ) const
 		Combo_AddString( hComboBox, LS( nsFuncCode::ppszFuncKind[i] ) );
 	}
 
-	//	ユーザマクロ
+	//	ユーザーマクロ
 	Combo_AddString( hComboBox, LS( STR_ERR_DLGFUNCLKUP01 ) );
 	//	カスタムメニュー
 	Combo_AddString( hComboBox, LS( STR_ERR_DLGFUNCLKUP02 ) );

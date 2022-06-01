@@ -7,7 +7,7 @@
 /*
 	Copyright (C) 2003, MIK
 	Copyright (C) 2010, Moca
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -115,7 +115,7 @@ private:
 		int			m_nId;				//コントロールのID
 		bool		m_bHaveFavorite;	//お気に入りを持っているか？
 		bool		m_bHaveView;		//表示数変更機能をもっているか？
-		bool		m_bFilePath;		//ファイル/フォルダか？
+		bool		m_bFilePath;		//ファイル/フォルダーか？
 		bool		m_bEditable;		//編集可能
 		bool		m_bAddExcept;		//除外へ追加
 		int			m_nViewCount;		//カレントの表示数

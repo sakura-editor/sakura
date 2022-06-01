@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -112,7 +112,7 @@ private:
 	union Node {
 		~Node() {}
 		T element;	// 要素型
-		Node* next; // ブロックのヘッダの場合は、次のブロックに繋がる
+		Node* next; // ブロックのヘッダーの場合は、次のブロックに繋がる
 					// 解放後の未割当領域の場合は次の未割当領域に繋がる
 	};
 	

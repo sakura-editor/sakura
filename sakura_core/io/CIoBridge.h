@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -37,7 +37,7 @@ public:
 		const CMemory&	cSrc,			//!< [in]  変換元メモリ
 		CNativeW*		pDst,			//!< [out] 変換先メモリ(UNICODE)
 		CCodeBase*		pCodeBase,		//!< [in]  変換元メモリの文字コードクラス
-		int				nFlag			//!< [in]  bit 0: MIME Encodeされたヘッダをdecodeするかどうか
+		int				nFlag			//!< [in]  bit 0: MIME Encodeされたヘッダーをdecodeするかどうか
 	);
 
 	//! ファイルのエンコードへ変更

@@ -14,7 +14,7 @@
 	Copyright (C) 2009, ryoji
 	Copyright (C) 2012, Moca, syat, novice, uchi
 	Copyright (C) 2013, Moca, Uchi, aroka, novice, syat, ryoji
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -200,7 +200,7 @@ LRESULT CTabWnd::OnTabLButtonDown( WPARAM wParam, LPARAM lParam )
 		TabCtrl_GetItemRect(m_hwndTab, nSrcTab, &rcItem);
 		GetTabCloseBtnRect(&rcItem, &rcClose, nSrcTab == TabCtrl_GetCurSel(m_hwndTab));
 		if( ::PtInRect(&rcClose, hitinfo.pt) ){
-			// 閉じるボタン上ならキャプチャー開始
+			// 閉じるボタン上ならキャプチャ開始
 			m_nTabCloseCapture = nSrcTab;
 			::SetCapture( m_hwndTab );
 			return 0L;
@@ -238,7 +238,7 @@ LRESULT CTabWnd::OnTabLButtonUp( WPARAM wParam, LPARAM lParam )
 		if( ::PtInRect(&rcClose, hitinfo.pt) ){
 			ExecTabCommand( F_WINCLOSE, MAKEPOINTS(lParam) );
 		}
-		// キャプチャー解除
+		// キャプチャ解除
 		BreakDrag();
 		return 0L;
 	}
@@ -1110,7 +1110,7 @@ LRESULT CTabWnd::OnCaptureChanged( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 /*!	WM_LBUTTONDOWN処理
 	@date 2006.02.01 ryoji 新規作成
 	@date 2006.11.30 ryoji タブ一覧ボタンクリック関数を廃止して処理取り込み
-	                       閉じるボタン上ならキャプチャー開始
+	                       閉じるボタン上ならキャプチャ開始
 */
 LRESULT CTabWnd::OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
@@ -1133,11 +1133,11 @@ LRESULT CTabWnd::OnLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	}
 	else
 	{
-		// 閉じるボタン上ならキャプチャー開始
+		// 閉じるボタン上ならキャプチャ開始
 		GetCloseBtnRect( &rc, &rcBtn );
 		if( ::PtInRect( &rcBtn, pt ) )
 		{
-			m_eCaptureSrc = CAPT_CLOSE;	// キャプチャー元は閉じるボタン
+			m_eCaptureSrc = CAPT_CLOSE;	// キャプチャ元は閉じるボタン
 			::SetCapture( GetHwnd() );
 		}
 	}
@@ -1158,9 +1158,9 @@ LRESULT CTabWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	pt.y = HIWORD(lParam);
 	::GetClientRect( GetHwnd(), &rc );
 
-	if( ::GetCapture() == GetHwnd() )	// 自ウィンドウがマウスキャプチャーしている?
+	if( ::GetCapture() == GetHwnd() )	// 自ウィンドウがマウスキャプチャしている?
 	{
-		if( m_eCaptureSrc == CAPT_CLOSE )	// キャプチャー元は閉じるボタン?
+		if( m_eCaptureSrc == CAPT_CLOSE )	// キャプチャ元は閉じるボタン?
 		{
 			// 閉じるボタン上ならタブを閉じる
 			GetCloseBtnRect( &rc, &rcBtn );
@@ -1186,7 +1186,7 @@ LRESULT CTabWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			}
 		}
 
-		// キャプチャー解除
+		// キャプチャ解除
 		m_eCaptureSrc = CAPT_NONE;
 		::ReleaseCapture();
 	}
@@ -2385,7 +2385,7 @@ HIMAGELIST CTabWnd::InitImageList( void )
 	{
 		// システムイメージリストを取得する
 		// 注：複製後に差し替えて利用するアイコンには事前にアクセスしておかないとイメージが入らない
-		//     ここでは「フォルダを閉じたアイコン」、「フォルダを開いたアイコン」を差し替え用として利用
+		//     ここでは「フォルダーを閉じたアイコン」、「フォルダーを開いたアイコン」を差し替え用として利用
 		//     WinNT4.0 では SHGetFileInfo() の第一引数に同名を指定すると同じインデックスを返してくることがある？
 		// 2016.08.06 ".0" の場合に Win10で同じインデックスが返ってくるので、"C:\\"に変更
 

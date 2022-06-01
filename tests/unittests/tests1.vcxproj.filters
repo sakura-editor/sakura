@@ -157,9 +157,30 @@
     <ClCompile Include="test-statictype.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="test-window.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-csharedata.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-messageboxf.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-cppa.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test-extmodules.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StartEditorProcessForTest.h">
+      <Filter>Other Files</Filter>
+    </ClInclude>
+    <ClInclude Include="eval_outputs.hpp">
+      <Filter>Other Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TExtModule.hpp">
       <Filter>Other Files</Filter>
     </ClInclude>
   </ItemGroup>

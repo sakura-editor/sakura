@@ -7,7 +7,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, YAZAKI
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -33,7 +33,7 @@ class CFuncInfo;
 #define FL_OBJ_ENUM			5	// 列挙体
 #define FL_OBJ_UNION		6	// 共用体
 #define FL_OBJ_NAMESPACE	7	// 名前空間
-#define FL_OBJ_INTERFACE	8	// インタフェース
+#define FL_OBJ_INTERFACE	8	// インターフェース
 #define FL_OBJ_GLOBAL		9	// グローバル（組み込み解析では使用しない）
 #define FL_OBJ_ELEMENT_MAX	30	// プラグインで追加可能な定数の上限
 

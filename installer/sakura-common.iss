@@ -148,7 +148,7 @@ zh_hans.residentStartup=开机时启动(&R)
 zh_hant.residentStartup=開機時啟動(&R)
 
 en.IconPreferencefolder=Preference folder
-ja.IconPreferencefolder=設定フォルダ
+ja.IconPreferencefolder=設定フォルダー
 zh_hans.IconPreferencefolder=文件夹设置
 zh_hant.IconPreferencefolder=資料夾設定
 
@@ -158,7 +158,7 @@ zh_hans.StartNow=现在启动
 zh_hant.StartNow=現在啟動
 
 en.MultiUser=Install in compatibility mode. When editing system files and programs with user authority, editing results may not be accessible from other applications. (VirtualStore function)
-ja.MultiUser=互換モードでインストールします．システムファイルおよびプログラムをユーザ権限で編集すると編集結果が他のアプリケーションから参照できないことがあります．(VirtualStore機能)
+ja.MultiUser=互換モードでインストールします．システムファイルおよびプログラムをユーザー権限で編集すると編集結果が他のアプリケーションから参照できないことがあります．(VirtualStore機能)
 zh_hans.MultiUser=软件将会以兼容模式安装。使用非管理员用户编辑配置文件时，文件可能无法被管理员用户访问。(VirtualStore功能)
 zh_hant.MultiUser=軟件將會以相容模式安裝。使用非管理員用戶編輯設定檔時，檔案可能無法被管理員用戶訪問。（VirtualStore功能）
 
@@ -168,7 +168,7 @@ zh_hans.InitWiz_Title=配置文件保存位置
 zh_hant.InitWiz_Title=設定檔保存位置
 
 en.InitWiz_SubTitle=Please choose whether you want to save the settings for each user or to the location of the executable file
-ja.InitWiz_SubTitle=設定をユーザ毎に保存するか実行ファイルの場所へ保存するかを選択してください
+ja.InitWiz_SubTitle=設定をユーザー毎に保存するか実行ファイルの場所へ保存するかを選択してください
 zh_hans.InitWiz_SubTitle=选择将Sukura配置文件保存至当前用户或软件目录内
 zh_hant.InitWiz_SubTitle=選擇將Sukura設定檔保存至當前用戶或軟件目錄內
 
@@ -178,7 +178,7 @@ zh_hans.InitWiz_Comment=若您不清楚此选项，请不要修改
 zh_hant.InitWiz_Comment=若您不清楚此選項，請不要修改
 
 en.InitWiz_Check=Manage Preference individually for each user
-ja.InitWiz_Check=設定をユーザ毎に個別に管理する
+ja.InitWiz_Check=設定をユーザー毎に個別に管理する
 zh_hans.InitWiz_Check=将每个用户的配置文件单独保存
 zh_hant.InitWiz_Check=將每個用戶的設定檔單獨保存
 
@@ -188,7 +188,7 @@ zh_hans.ReadyMemo_SaveLocation=设定文件保存位置
 zh_hant.ReadyMemo_SaveLocation=設定檔案保存位置
 
 en.ReadyMemo_UserProfileDir=User-Profile directory
-ja.ReadyMemo_UserProfileDir=ユーザ個別ディレクトリ
+ja.ReadyMemo_UserProfileDir=ユーザー個別ディレクトリ
 zh_hans.ReadyMemo_UserProfileDir=用户配置文件目录
 zh_hant.ReadyMemo_UserProfileDir=用戶設定檔目錄
 
@@ -464,7 +464,7 @@ begin
       ( MultiUserPage.Values[0] = False ) then
       begin
 {
-         Program Files等のシステムフォルダへインストールする場合はUACを無効にしないと設定が保存できません。
+         Program Files等のシステムフォルダーへインストールする場合はUACを無効にしないと設定が保存できません。
 }
          selected := MsgBox(
           CustomMessage('MultiUser'),

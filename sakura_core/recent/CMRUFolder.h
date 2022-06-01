@@ -1,5 +1,5 @@
 ﻿/*!	@file
-	@brief MRUリストと呼ばれるリストを管理する。フォルダ版。
+	@brief MRUリストと呼ばれるリストを管理する。フォルダー版。
 
 	@author YAZAKI
 	@date 2001/12/23  新規作成
@@ -9,7 +9,7 @@
 	Copyright (C) 2000, jepro
 	Copyright (C) 2002, YAZAKI, aroka
 	Copyright (C) 2003, MIK
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -59,7 +59,7 @@ public:
 	HMENU CreateMenu( HMENU hMenu, CMenuDrawer* pCMenuDrawer ) const;	//	2010/5/21 Uchi
 	BOOL DestroyMenu( HMENU hMenu ) const;
 	
-	//	フォルダ名の一覧を教えて
+	//	フォルダー名の一覧を教えて
 	std::vector<LPCWSTR> GetPathList() const;
 
 	//	アクセス関数

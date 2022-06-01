@@ -10,7 +10,7 @@
 	Copyright (C) 2005, MIK
 	Copyright (C) 2006, genta, ryoji
 	Copyright (C) 2010, Moca
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -1136,7 +1136,7 @@ int CDlgTagJumpList::find_key_core(
 	}
 	
 	WCHAR	szTagFile[1024];		//タグファイル
-	WCHAR	szNextPath[1024];		//次検索フォルダ
+	WCHAR	szNextPath[1024];		//次検索フォルダー
 	szNextPath[0] = L'\0';
 	vector_ex<std::wstring> seachDirs;
 
@@ -1616,7 +1616,7 @@ int CDlgTagJumpList::CalcMaxUpDirectory( const WCHAR* p )
 {
 	int loop = CalcDirectoryDepth( p );
 	if( loop <  0 ) loop =  0;
-	if( loop > (_MAX_PATH/2) ) loop = (_MAX_PATH/2);	//\A\B\C...のようなとき1フォルダで2文字消費するので...
+	if( loop > (_MAX_PATH/2) ) loop = (_MAX_PATH/2);	//\A\B\C...のようなとき1フォルダーで2文字消費するので...
 	return loop;
 }
 
@@ -1675,7 +1675,7 @@ WCHAR* CDlgTagJumpList::CopyDirDir( WCHAR* dest, const WCHAR* target, const WCHA
 }
 
 /*
-	@param dir [in,out] フォルダのパス 
+	@param dir [in,out] フォルダーのパス 
 	in == C:\dir\subdir\
 	out == C:\dir\
 */

@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -39,7 +39,7 @@ typedef enum UErrorCode {
 /*!
  * ICU4C の i18n ライブラリ(icuin.dll) をラップするクラス
  */
-class CIcu4cI18n final : public CDllImp
+class CIcu4cI18n : public CDllImp
 {
 	// DLL関数型定義
 	typedef UCharsetDetector*		(__cdecl *ucsdet_open_t)(UErrorCode *status);
@@ -59,7 +59,7 @@ public:
 	CIcu4cI18n() noexcept;
 
 protected:
-	// CDllImpインタフェース
+	// CDllImpインターフェース
 	LPCWSTR GetDllNameImp(int nIndex) override;
 	bool InitDllImp() override;
 

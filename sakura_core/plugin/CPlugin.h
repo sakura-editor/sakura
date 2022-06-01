@@ -4,7 +4,7 @@
 */
 /*
 	Copyright (C) 2009, syat
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -45,7 +45,7 @@ typedef int PlugId;
 #define PII_L10NDIR					L"local"
 #define PII_L10NFILEBASE			L"plugin_"
 #define PII_L10NFILEEXT				L".def"
-//オプションファイル拡張子（オプションファイル＝個別フォルダ名＋拡張子）
+//オプションファイル拡張子（オプションファイル＝個別フォルダー名＋拡張子）
 #define PII_OPTFILEEXT				L".ini"
 
 //プラグイン定義ファイル・キー文字列
@@ -277,10 +277,10 @@ protected:
 
 	//属性
 public:
-	wstring GetFilePath( const wstring& sFileName ) const;				//プラグインフォルダ基準の相対パスをフルパスに変換
+	wstring GetFilePath( const wstring& sFileName ) const;				//プラグインフォルダー基準の相対パスをフルパスに変換
 	wstring GetPluginDefPath() const{ return GetFilePath( PII_FILENAME ); }	//プラグイン定義ファイルのパス
 	wstring GetOptionPath() const{ return m_sOptionDir + PII_OPTFILEEXT; }	//オプションファイルのパス
-	wstring GetFolderName() const;	//プラグインのフォルダ名を取得
+	wstring GetFolderName() const;	//プラグインのフォルダー名を取得
 	virtual CPlug::Array GetPlugs() const = 0;								//プラグの一覧
 
 	//メンバ変数

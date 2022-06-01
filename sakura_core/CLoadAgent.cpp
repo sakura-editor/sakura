@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -48,13 +48,13 @@ ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 	// リロード要求の場合は、継続。
 	if(pLoadInfo->bRequestReload)goto next;
 
-	//フォルダが指定された場合は「ファイルを開く」ダイアログを表示し、実際のファイル入力を促す
+	//フォルダーが指定された場合は「ファイルを開く」ダイアログを表示し、実際のファイル入力を促す
 	if( IsDirectory(pLoadInfo->cFilePath) ){
 		std::vector<std::wstring> files;
 		SLoadInfo sLoadInfo(L"", CODE_AUTODETECT, false);
 		bool bDlgResult = pcDoc->m_cDocFileOperation.OpenFileDialog(
 			CEditWnd::getInstance()->GetHwnd(),
-			pLoadInfo->cFilePath,	//指定されたフォルダ
+			pLoadInfo->cFilePath,	//指定されたフォルダー
 			&sLoadInfo,
 			files
 		);
@@ -169,7 +169,7 @@ next:
 			return CALLBACK_INTERRUPT;
 		}
 
-		// ファイルサイズがユーザ設定の閾値以上の場合は警告ダイアログを出す
+		// ファイルサイズがユーザー設定の閾値以上の場合は警告ダイアログを出す
 		if (GetDllShareData().m_Common.m_sFile.m_bAlertIfLargeFile) {
 			// GetDllShareData().m_Common.m_sFile.m_nAlertFileSize はMB単位
 			if( (nFileSize.QuadPart>>20) >= (GetDllShareData().m_Common.m_sFile.m_nAlertFileSize) ){

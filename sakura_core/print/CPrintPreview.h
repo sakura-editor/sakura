@@ -7,7 +7,7 @@
 /*
 	Copyright (C) 2002, YAZAKI
 	Copyright (C) 2003, かろと
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -188,7 +188,7 @@ public:
 	int  GetAllPageNum(){ return m_nAllPageNum; }	/* 現在のページ */
 
 	/*
-	||	ヘッダ・フッタ
+	||	ヘッダー・フッター
 	*/
 	void SetHeader(char* pszWork[]);	//	&fなどを登録
 	void SetFooter(char* pszWork[]);	//	&p/&Pなどを登録
@@ -268,8 +268,8 @@ public:
 protected:
 	STypeConfig m_typePrint;
 
-	// プレビューから出ても現在のプリンタ情報を記憶しておけるようにstaticにする 2003.05.02 かろと
-	static CPrint	m_cPrint;					//!< 現在のプリンタ情報
+	// プレビューから出ても現在のプリンター情報を記憶しておけるようにstaticにする 2003.05.02 かろと
+	static CPrint	m_cPrint;					//!< 現在のプリンター情報
 
 	bool			m_bLockSetting;				// 設定のロック
 	bool			m_bDemandUpdateSetting;		// 設定の更新要求

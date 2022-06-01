@@ -10,7 +10,7 @@
 	Copyright (C) 2002, Moca, MIK, YAZAKI
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2009, ryoji
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -259,7 +259,7 @@ void CDlgProperty::SetData( void )
 		in.Close();
 		goto end_of_CodeTest;
 	}
-	pBuf = GlobalLockChar( hgData );
+	pBuf = static_cast<char*>(::GlobalLock(hgData));
 	in.Read( pBuf, nBufLen );
 	in.Close();
 

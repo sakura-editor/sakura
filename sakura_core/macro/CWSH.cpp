@@ -10,7 +10,7 @@
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, FILE, zenryaku
 	Copyright (C) 2009, syat
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -60,7 +60,7 @@ const GUID CLSID_JSScript9 =
 };
 #endif
 
-/* 2009.10.29 syat インタフェースオブジェクト部分をCWSHIfObj.hに分離
+/* 2009.10.29 syat インターフェースオブジェクト部分をCWSHIfObj.hに分離
 class CInterfaceObjectTypeInfo: public ImplementsIUnknown<ITypeInfo>
  */
 
@@ -126,7 +126,7 @@ public:
 #ifdef TEST
 		wcout << L"GetItemInfo:" << pstrName << endl;
 #endif
-		//指定された名前のインタフェースオブジェクトを検索
+		//指定された名前のインターフェースオブジェクトを検索
 		const CWSHClient::List& objects = m_Client->GetInterfaceObjects();
 		for( CWSHClient::ListIter it = objects.begin(); it != objects.end(); it++ )
 		{
@@ -242,7 +242,7 @@ public:
 CWSHClient::CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler, void *AData): 
 				m_OnError(AErrorHandler), m_Data(AData), m_Valid(false), m_Engine(NULL)
 { 
-	// 2010.08.28 DLL インジェクション対策としてEXEのフォルダに移動する
+	// 2010.08.28 DLL インジェクション対策としてEXEのフォルダーに移動する
 	CCurrentDirectoryBackupPoint dirBack;
 	ChangeCurrentDirectoryToExeDir();
 	
@@ -276,7 +276,7 @@ CWSHClient::CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler,
 
 CWSHClient::~CWSHClient()
 {
-	//インタフェースオブジェクトを解放
+	//インターフェースオブジェクトを解放
 	for( ListIter it = m_IfObjArr.begin(); it != m_IfObjArr.end(); it++ ){
 		(*it)->Release();
 	}
@@ -441,7 +441,7 @@ void CWSHClient::Error(const wchar_t* Description)
 	SysFreeString(D);
 }
 
-//インタフェースオブジェクトの追加
+//インターフェースオブジェクトの追加
 void CWSHClient::AddInterfaceObject( CIfObj* obj )
 {
 	if( !obj ) return;

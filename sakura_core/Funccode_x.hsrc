@@ -19,7 +19,7 @@
 //	[参考]
 //	10000- : ウィンドウ一覧で使用する
 //	11000- : 最近使ったファイルで使用する
-//	12000- : 最近使ったフォルダで使用する
+//	12000- : 最近使ったフォルダーで使用する
 
 //enum EFunctionCode{
 
@@ -49,7 +49,7 @@ F_PLUGCOMMAND_LAST			= 21999,
 // Main Menu 特殊機能
 F_WINDOW_LIST				= 29001,	// ウィンドウリスト
 F_FILE_USED_RECENTLY		= 29002,	// 最近使ったファイル
-F_FOLDER_USED_RECENTLY		= 29003,	// 最近使ったフォルダ
+F_FOLDER_USED_RECENTLY		= 29003,	// 最近使ったフォルダー
 F_CUSTMENU_LIST				= 29004,	// カスタムメニューリスト
 F_USERMACRO_LIST			= 29005,	// 登録済みマクロリスト
 F_PLUGIN_LIST				= 29006,	// プラグインコマンドリスト
@@ -86,9 +86,9 @@ F_PRINT						= 30150,	//印刷								なし
 F_PRINT_PREVIEW				= 30151,	//印刷プレビュー					なし
 F_PRINT_PAGESETUP			= 30152,	//印刷ページ設定					なし
 //F_PRINT_DIALOG			= 30151,	//印刷ダイアログ					？
-//F_OPEN_HHPP					= 30160,	//同名のC/C++ヘッダファイルを開く	bool bCheckOnly	// del	2008/6/23 Uchi
+//F_OPEN_HHPP					= 30160,	//同名のC/C++ヘッダーファイルを開く	bool bCheckOnly	// del	2008/6/23 Uchi
 //F_OPEN_CCPP					= 30161,	//同名のC/C++ソースファイルを開く	bool bCheckOnly	// del	2008/6/23 Uchi
-F_OPEN_HfromtoC				= 30162,	//同名のC/C++ヘッダ(ソース)を開く	bool bCheckOnly
+F_OPEN_HfromtoC				= 30162,	//同名のC/C++ヘッダー(ソース)を開く	bool bCheckOnly
 F_ACTIVATE_SQLPLUS			= 30170,	//Oracle SQL*Plusをアクティブ表示	なし
 F_PLSQL_COMPILE_ON_SQLPLUS	= 30171,	//Oracle SQL*Plusで実行				なし
 F_BROWSE					= 30180,	//ブラウズ							なし
@@ -260,7 +260,7 @@ F_COPYPATH					= 30620,	//このファイルのパス名をクリップボード
 F_COPYTAG					= 30621,	//このファイルのパス名とカーソル位置をコピー	なし
 F_COPYFNAME					= 30622,	//このファイル名をクリップボードにコピー		なし
 F_CREATEKEYBINDLIST			= 30630,	//キー割り当て一覧をコピー						なし
-F_COPYDIRPATH				= 30631,	//このファイルのフォルダ名をクリップボードにコピー	なし
+F_COPYDIRPATH				= 30631,	//このファイルのフォルダー名をクリップボードにコピー	なし
 
 
 // 挿入系
@@ -269,7 +269,7 @@ F_INS_TIME				= 30791,	//時刻挿入										なし
 F_CTRL_CODE_DIALOG		= 30792,	//コントロールコードの入力(ダイアログ)			なし
 F_CTRL_CODE				= 30793,	//コントロールコードの入力						wchar_t code
 F_INS_FILE_USED_RECENTLY	= 30794,	// 最近使ったファイル挿入
-F_INS_FOLDER_USED_RECENTLY	= 30795,	// 最近使ったフォルダ挿入
+F_INS_FOLDER_USED_RECENTLY	= 30795,	// 最近使ったフォルダー挿入
 
 
 // 変換系
@@ -552,7 +552,7 @@ F_COMPAREVERSION	= 40029,	// バージョン番号の比較
 F_MACROSLEEP		= 40030,	// 指定した時間（ミリ秒）停止
 F_FILEOPENDIALOG	= 40031,	// ファイルを開くダイアログの表示
 F_FILESAVEDIALOG	= 40032,	// ファイルを保存ダイアログの表示
-F_FOLDERDIALOG		= 40033,	// フォルダを開くダイアログの表示
+F_FOLDERDIALOG		= 40033,	// フォルダーを開くダイアログの表示
 F_GETCLIPBOARD		= 40034,	// クリップボードの文字列を取得
 F_SETCLIPBOARD		= 40035,	// クリップボードに文字列を設定
 F_LAYOUTTOLOGICLINENUM	= 40036,	// ロジック行番号取得

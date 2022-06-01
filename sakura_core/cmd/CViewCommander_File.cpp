@@ -12,7 +12,7 @@
 	Copyright (C) 2005, genta
 	Copyright (C) 2006, ryoji, maru
 	Copyright (C) 2007, ryoji, maru, genta
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -122,18 +122,18 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 			my_splitpath_t(defName.c_str(), szPath, szDir, szName, szExt);
 			wcscat(szPath, szDir);
 			if( 0 == wmemicmp(defName.c_str(), szPath) ){
-				// defNameはフォルダ名だった
+				// defNameはフォルダー名だった
 			}else{
 				CFilePath path = defName.c_str();
 				if( 0 == wmemicmp(path.GetDirPath().c_str(), szPath) ){
-					// フォルダ名までは実在している
+					// フォルダー名までは実在している
 					sLoadInfo.cFilePath = defName.c_str();
 				}
 			}
 		}
 		bool bDlgResult = GetDocument()->m_cDocFileOperation.OpenFileDialog(
 			CEditWnd::getInstance()->GetHwnd(),	//[in]  オーナーウィンドウ
-			defName.length()==0 ? NULL : defName.c_str(),	//[in]  フォルダ
+			defName.length()==0 ? NULL : defName.c_str(),	//[in]  フォルダー
 			&sLoadInfo,							//[out] ロード情報受け取り
 			files								//[out] ファイル名
 		);
@@ -310,7 +310,7 @@ void CViewCommander::Command_PRINT_PAGESETUP( void )
 }
 
 //From Here Feb. 10, 2001 JEPRO 追加
-/* C/C++ヘッダファイルまたはソースファイル オープン機能 */
+/* C/C++ヘッダーファイルまたはソースファイル オープン機能 */
 BOOL CViewCommander::Command_OPEN_HfromtoC( BOOL bCheckOnly )
 {
 	if ( Command_OPEN_HHPP( bCheckOnly, FALSE ) )	return TRUE;
@@ -321,11 +321,11 @@ BOOL CViewCommander::Command_OPEN_HfromtoC( BOOL bCheckOnly )
 // 2003.06.28 Moca コメントとして残っていたコードを削除
 }
 
-/* C/C++ヘッダファイル オープン機能 */		//Feb. 10, 2001 jepro	説明を「インクルードファイル」から変更
+/* C/C++ヘッダーファイル オープン機能 */		//Feb. 10, 2001 jepro	説明を「インクルードファイル」から変更
 //BOOL CViewCommander::Command_OPENINCLUDEFILE( BOOL bCheckOnly )
 BOOL CViewCommander::Command_OPEN_HHPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 {
-	// 2003.06.28 Moca ヘッダ・ソースのコードを統合＆削除
+	// 2003.06.28 Moca ヘッダー・ソースのコードを統合＆削除
 	static const WCHAR* source_ext[] = { L"c", L"cpp", L"cxx", L"cc", L"cp", L"c++" };
 	static const WCHAR* header_ext[] = { L"h", L"hpp", L"hxx", L"hh", L"hp", L"h++" };
 	return m_pCommanderView->OPEN_ExtFromtoExt(
@@ -338,7 +338,7 @@ BOOL CViewCommander::Command_OPEN_HHPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 //BOOL CViewCommander::Command_OPENCCPP( BOOL bCheckOnly )	//Feb. 10, 2001 JEPRO	コマンド名を若干変更
 BOOL CViewCommander::Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 {
-	// 2003.06.28 Moca ヘッダ・ソースのコードを統合＆削除
+	// 2003.06.28 Moca ヘッダー・ソースのコードを統合＆削除
 	static const WCHAR* source_ext[] = { L"c", L"cpp", L"cxx", L"cc", L"cp", L"c++" };
 	static const WCHAR* header_ext[] = { L"h", L"hpp", L"hxx", L"hh", L"hp", L"h++" };
 	return m_pCommanderView->OPEN_ExtFromtoExt(

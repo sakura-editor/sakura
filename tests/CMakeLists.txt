@@ -33,7 +33,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # create solution folder
 if(BUILD_GTEST)
 	set_target_properties(gtest       PROPERTIES FOLDER GoogleTest)
-	set_target_properties(gtest_main  PROPERTIES FOLDER GoogleTest)
+	set_target_properties(gmock       PROPERTIES FOLDER GoogleTest)
 endif()
 set_target_properties(tests1      PROPERTIES FOLDER Tests)
 

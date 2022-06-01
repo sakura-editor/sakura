@@ -3,10 +3,8 @@ name: build sakura
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
+  workflow_dispatch:
   push:
-    branches:
-      - master
-      - feature/*
     paths-ignore:
       - '**/*.md'
       - .gitignore
@@ -14,12 +12,7 @@ on:
       - appveyor.yml
       - 'azure-pipelines*.yml'
       - 'ci/azure-pipelines/template*.yml'
-
   pull_request:
-    branches:
-      - master
-      - feature/*
-      - release/*
     paths-ignore:
       - '**/*.md'
       - .gitignore
@@ -34,10 +27,13 @@ jobs:
   build:
     # The type of runner that the job will run on
     name: MSBuild
-    runs-on: windows-latest
+    runs-on: ${{matrix.os}}
 
     strategy:
       matrix:
+        os:
+          - windows-2019
+          - windows-2022
         config:
           - Debug
           - Release
@@ -89,13 +85,33 @@ jobs:
       run: build-sln.bat ${{ matrix.platform }} ${{ matrix.config }}
       shell: cmd
 
+    - name: Run unit tests
+      run: .\tests1.exe --gtest_output=xml:${{github.workspace}}\tests1.exe-googletest-${{matrix.platform}}-${{matrix.config}}.xml
+      working-directory: ${{github.workspace}}\${{matrix.platform}}\${{matrix.config}}
+      shell: pwsh
+
     - name: Install Locale Emulator
-      run: choco install locale-emulator -y
-      shell: cmd
+      run: |
+        choco install autohotkey.install --confirm
+        $LEExpandDir = "${{github.workspace}}\tools\locale-emulator"
+        $LEInitScript = "${{github.workspace}}\ci\init-locale-emulator.ahk"
+        New-Item "${LEExpandDir}" -ItemType Directory
+        Invoke-WebRequest `
+          "https://github.com/xupefei/Locale-Emulator/releases/download/v2.5.0.1/Locale.Emulator.2.5.0.1.zip" `
+          -OutFile "${LEExpandDir}\locale-emulator.zip"
+        Expand-Archive "${LEExpandDir}\locale-emulator.zip" "${LEExpandDir}"
+        Start-Process "AutoHotKey" "${LEInitScript}"
+        Start-Process "${LEExpandDir}\LEInstaller.exe"
+        echo "${LEExpandDir}" >> $env:GITHUB_PATH
+      shell: pwsh
 
     - name: Build HTML Help
       run: build-chm.bat
       shell: cmd
+
+    - name: Update/Install Inno Setup
+      run: choco upgrade innosetup --confirm
+      shell: pwsh
 
     - name: Build installer with Inno Setup
       run: build-installer.bat ${{ matrix.platform }} ${{ matrix.config }}

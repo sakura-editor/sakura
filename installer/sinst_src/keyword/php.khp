@@ -6,7 +6,7 @@ apache_response_headers /// array apache_response_headers ( void)\n Fetch all HT
 apache_setenv /// int apache_setenv ( string variable, string value [, bool walk_to_top])\nApacheサブプロセスの環境変数を設定する
 ascii2ebcdic /// int ascii2ebcdic ( string ascii_str)\nASCIIからEBCDICに文字列を変換する
 ebcdic2ascii /// int ebcdic2ascii ( string ebcdic_str)\nEBCDICからASCIIに文字列を変換する
-getallheaders /// array getallheaders ( void)\n全てのHTTPリクエストヘッダを取得する
+getallheaders /// array getallheaders ( void)\n全てのHTTPリクエストヘッダーを取得する
 virtual /// int virtual ( string filename)\nApacheサブリクエストを実行する
 array_change_key_case /// array array_change_key_case ( array input [, int case])\n 配列のキーを全て小文字または大文字にして返す 
 array_chunk /// array array_chunk ( array input, int size [, bool preserve_keys])\n配列を分割する
@@ -137,7 +137,7 @@ com_propput /// void com_propput ( resource com_object, string property, mixed v
 com_propset /// void com_propset ( resource com_object, string property, mixed value)\n COMコンポーネントのプロパティに値を代入する 
 com_release /// void com_release ( void)\n コンポーネントリファレンスカウンタを減らす 
 com_set /// void com_set ( resource com_object, string property, mixed value)\n COMコンポーネントのプロパティに値を代入する 
-call_user_method_array /// mixed call_user_method_array ( string method_name, object obj [, array paramarr])\n パラメータの配列を指定してユーザメソッドをコールする 
+call_user_method_array /// mixed call_user_method_array ( string method_name, object obj [, array paramarr])\n パラメータの配列を指定してユーザーメソッドをコールする 
 call_user_method /// mixed call_user_method ( string method_name, object obj [, mixed parameter [, mixed ...]])\n 指定したオブジェクトのユーザーメソッドをコールする 
 class_exists /// bool class_exists ( string class_name)\nクラスが定義済か確認する
 get_class_methods /// array get_class_methods ( string class_name)\nクラスメソッドの名前を連想配列として返す
@@ -459,12 +459,12 @@ dotnet_load /// int dotnet_load ( string assembly_name [, string datatype_name [
 error_log /// int error_log ( string message, int message_type, string [destination], string [extra_headers])\nエラーメッセージを送信する
 error_reporting /// int error_reporting ( int [level])\n出力するPHPエラーの種類を設定する
 restore_error_handler /// void restore_error_handler ( void)\n 以前のエラーハンドラ関数を回復する 
-set_error_handler /// string set_error_handler ( string error_handler)\n ユーザ定義のエラーハンドラ関数を設定する 
-trigger_error /// void trigger_error ( string error_msg, int [error_type])\n ユーザレベルのエラー/警告/通知メッセージを生成する 
-user_error /// void user_error ( string error_msg, int [error_type])\n ユーザレベルのエラー/警告/通知メッセージを発生する 
+set_error_handler /// string set_error_handler ( string error_handler)\n ユーザー定義のエラーハンドラ関数を設定する 
+trigger_error /// void trigger_error ( string error_msg, int [error_type])\n ユーザーレベルのエラー/警告/通知メッセージを生成する 
+user_error /// void user_error ( string error_msg, int [error_type])\n ユーザーレベルのエラー/警告/通知メッセージを発生する 
 fbsql_affected_rows /// int fbsql_affected_rows ( [int link_identifier])\n 直近のFrontBase処理により作用を受けたレコードの数を得る 
 fbsql_autocommit /// bool fbsql_autocommit ( resource link_identifier [, bool OnOff])\nautocommitを有効または無効にする
-fbsql_change_user /// resource fbsql_change_user ( string user, string password [, string database [, int link_identifier]])\n アクティブな接続にログインしているユーザを変更する 
+fbsql_change_user /// resource fbsql_change_user ( string user, string password [, string database [, int link_identifier]])\n アクティブな接続にログインしているユーザーを変更する 
 fbsql_close /// boolean fbsql_close ( [resource link_identifier])\nFrontBase接続を閉じる
 fbsql_commit /// bool fbsql_commit ( [resource link_identifier])\nデータベースへのトランザクションをコミットする
 fbsql_connect /// resource fbsql_connect ( [string hostname [, string username [, string password]]])\nFrontBaseサーバへの接続をオープンする
@@ -664,8 +664,8 @@ ftp_site /// bool ftp_site ( resource ftp_stream, string cmd)\nSITEコマンド�
 ftp_size /// int ftp_size ( resource ftp_stream, string remote_file)\n指定したファイルのサイズを返す
 ftp_ssl_connect /// resource ftp_ssl_connect ( string host [, int port [, int timeout]])\nOpens an Secure SSL-FTP connection
 ftp_systype /// string ftp_systype ( resource ftp_stream)\n リモート FTP サーバーのシステム型IDを返す 
-call_user_func_array /// mixed call_user_func_array ( string function_name [, array paramarr])\n パラメータの配列を指定してユーザ関数をコールする 
-call_user_func /// mixed call_user_func ( string function_name [, mixed parameter [, mixed ...]])\n 最初の引数で指定したユーザ関数をコールする 
+call_user_func_array /// mixed call_user_func_array ( string function_name [, array paramarr])\n パラメータの配列を指定してユーザー関数をコールする 
+call_user_func /// mixed call_user_func ( string function_name [, mixed parameter [, mixed ...]])\n 最初の引数で指定したユーザー関数をコールする 
 create_function /// string create_function ( string args, string code)\n匿名(ラムダ形式)関数を作成する
 func_get_arg /// mixed func_get_arg ( int arg_num)\n引数のリストから要素を1つ返す
 func_get_args /// array func_get_args ( void )\n関数の引数リストを配列として返す
@@ -723,7 +723,7 @@ gmp_sqrtrm /// array gmp_sqrtrm ( resource a)\n余りと平方根
 gmp_strval /// string gmp_strval ( resource gmpnumber, int [base])\nGMP 数を文字列に変換する
 gmp_sub /// resource gmp_sub ( resource a, resource b)\n数値の減算
 gmp_xor /// resource gmp_xor ( resource a, resource b)\n論理演算 XOR
-header /// int header ( string string [, bool replace])\n生のHTTPヘッダを送信する
+header /// int header ( string string [, bool replace])\n生のHTTPヘッダーを送信する
 headers_sent /// boolean headers_sent ( void)\nヘッダーが送信されている場合に TRUE を返す
 setcookie /// int setcookie ( string name, string [value], int [expire], string [path], string [domain], int [secure])\nクッキーを送信する
 hw_Array2Objrec /// strin hw_array2objrec ( array object_array)\n オブジェクト配列からオブジェクトレコードに属性を変換する 
@@ -846,7 +846,7 @@ iconv_set_encoding /// array iconv_set_encoding ( string type, string charset)\n
 iconv /// string iconv ( string in_charset, string out_charset, string str)\n リクエストした文字エンコーディングに文字列を変換する 
 ob_iconv_handler /// array ob_iconv_handler ( string contents, int status)\n 出力バッファハンドラとして文字エンコーディングを変換する 
 exif_imagetype /// int|false exif_imagetype ( string filename)\nイメージの型を定義する
-exif_read_data /// array exif_read_data ( string filename [, string sections [, bool arrays [, bool thumbnail]]])\n JPEGまたはTIFFから EXIFヘッダを読みこむ 
+exif_read_data /// array exif_read_data ( string filename [, string sections [, bool arrays [, bool thumbnail]]])\n JPEGまたはTIFFから EXIFヘッダーを読みこむ 
 exif_thumbnail /// string exif_thumbnail ( string filename [, int &width [, int &height]])\nTIFFまたはJPEGイメージに埋め込まれたサムネイルを取得する
 GetImageSize /// array getimagesize ( string filename, array [imageinfo])\nJPEG、GIF、PNG、SWF画像の大きさを取得する
 image_type_to_mime_type /// string image_type_to_mime_type ( int imagetype)\nGet Mime-Type for image-type returned by getimagesize, exif_read_data, exif_thumbnail, exif_imagetype
@@ -939,7 +939,7 @@ iptcparse /// array iptcparse ( string iptcblock)\n バイナリのIPTChttp://ww
 http://www.iptc.org/ /// \n
 JPEG2WBMP /// int jpeg2wbmp ( string jpegname, string wbmpname, int d_height, int d_width, int threshold)\n JPEGイメージファイルからWBMPイメージファイルに変換する 
 PNG2WBMP /// int png2wbmp ( string pngname, string wbmpname, int d_height, int d_width, int threshold)\n PNGイメージファイルからWBMPイメージファイルに変換する 
-read_exif_data /// array read_exif_data ( string filename)\nJPEGからEXIFヘッダを読み込む
+read_exif_data /// array read_exif_data ( string filename)\nJPEGからEXIFヘッダーを読み込む
 imap_8bit /// string imap_8bit ( string string)\n 8bit 文字列を quoted-printable 文字列に変換する 
 imap_alerts /// array imap_alerts ( void)\n ページリクエストの間または最後にスタックがリセットされて以来発生した 全てのIMAP警告メッセージを返す 
 imap_append /// int imap_append ( int imap_stream, string mbox, string message, string [flags])\n 指定されたメールボックスに文字列メッセージを追加する 
@@ -955,17 +955,17 @@ imap_delete /// int imap_delete ( int imap_stream, int msg_number, int [flags])\
 imap_deletemailbox /// int imap_deletemailbox ( int imap_stream, string mbox)\nメールボックスを削除する
 imap_errors /// array imap_errors ( void)\n ページのリクエストの間かエラースタックがリセットされて以来 生じた全てのIMAPエラーを返す 
 imap_expunge /// int imap_expunge ( int imap_stream)\n 削除用にマークされたすべてのメッセージを削除する 
-imap_fetch_overview /// array imap_fetch_overview ( int imap_stream, string sequence)\n 指定したメッセージのヘッダ情報の概要を読む 
+imap_fetch_overview /// array imap_fetch_overview ( int imap_stream, string sequence)\n 指定したメッセージのヘッダー情報の概要を読む 
 imap_fetchbody /// string imap_fetchbody ( int imap_stream, int msg_number, string part_number, flags [flags])\nメッセージ本文中の特定のセクションを取り出す
-imap_fetchheader /// string imap_fetchheader ( int imap_stream, int msgno, int flags)\nメッセージのヘッダを返す
+imap_fetchheader /// string imap_fetchheader ( int imap_stream, int msgno, int flags)\nメッセージのヘッダーを返す
 imap_fetchstructure /// object imap_fetchstructure ( int imap_stream, int msg_number, int [flags])\n 特定のメッセージの構造を読み込む 
 imap_get_quota /// array imap_get_quota ( int imap_stream, string quota_root)\n クオータレベルの設定、メールボックス毎の使用状況を取得する 
 imap_get_quotaroot /// array imap_get_quotaroot ( resource imap_stream, string quota_root)\n Retrieve the quota settings per user 
 imap_getmailboxes /// array imap_getmailboxes ( int imap_stream, string ref, string pattern)\n メールボックスのリストを読み込み、各ボックスに関する詳細な情報を返す 
 imap_getsubscribed /// array imap_getsubscribed ( int imap_stream, string ref, string pattern)\n購読中の全メールボックスの一覧
-imap_header /// object imap_header ( int imap_stream, int msg_number, int [fromlength], int [subjectlength], string [defaulthost])\nメッセージのヘッダを読む
-imap_headerinfo /// object imap_headerinfo ( int imap_stream, int msg_number, int [fromlength], int [subjectlength], string [defaulthost])\nメッセージヘッダを読み込む
-imap_headers /// array imap_headers ( int imap_stream)\n メールボックス内の、すべてのメッセージのヘッダを返す 
+imap_header /// object imap_header ( int imap_stream, int msg_number, int [fromlength], int [subjectlength], string [defaulthost])\nメッセージのヘッダーを読む
+imap_headerinfo /// object imap_headerinfo ( int imap_stream, int msg_number, int [fromlength], int [subjectlength], string [defaulthost])\nメッセージヘッダーを読み込む
+imap_headers /// array imap_headers ( int imap_stream)\n メールボックス内の、すべてのメッセージのヘッダーを返す 
 imap_last_error /// string imap_last_error ( void)\n ページリクエスト時に生じた直近の IMAP エラーを返す 
 imap_list /// array imap_list ( resource imap_stream, string ref, string pattern)\nRead the list of mailboxes
 imap_listmailbox /// array imap_listmailbox ( int imap_stream, string ref, string pattern)\nメールボックスのリストを読む
@@ -987,7 +987,7 @@ imap_qprint /// string imap_qprint ( string string)\nquoted-printable 文字列�
 imap_renamemailbox /// int imap_renamemailbox ( int imap_stream, string old_mbox, string new_mbox)\nメールボックスの名前を変更する
 imap_reopen /// int imap_reopen ( int imap_stream, string mailbox, string [flags])\n 新規メールボックスへのIMAP ストリームを再度オープンする 
 imap_rfc822_parse_adrlist /// array imap_rfc822_parse_adrlist ( string address, string default_host)\nアドレス文字列を解釈します
-imap_rfc822_parse_headers /// object imap_rfc822_parse_headers ( string headers, string [defaulthost])\n文字列からメールヘッダを解釈する
+imap_rfc822_parse_headers /// object imap_rfc822_parse_headers ( string headers, string [defaulthost])\n文字列からメールヘッダーを解釈する
 imap_rfc822_write_address /// string imap_rfc822_write_address ( string mailbox, string host, string personal)\n 指定したメールボックス、ホスト、個人情報を適当にフォーマットされ た電子メールアドレスにして返す 
 imap_scanmailbox /// array imap_scanmailbox ( int imap_stream, string ref, string pattern, string content)\n メールボックスのリストを読み、メールボックスのテキストにおいて 文字列を検索する 
 imap_search /// array imap_search ( int imap_stream, string criteria, int flags)\n 指定した検索条件にマッチするメッセージを配列として返す 
@@ -1086,22 +1086,22 @@ ingres_num_rows /// int ingres_num_rows ( resource [link])\n 直近のクエリ�
 ingres_pconnect /// resource ingres_pconnect ( string [database], string [username], string [password])\n Ingres II データベースへの持続的接続をオープンする 
 ingres_query /// bool ingres_query ( string query, resource [link])\nIngres II にSQLクエリを送信する
 ingres_rollback /// bool ingres_rollback ( resource [link])\nトランザクションをロールバックする
-ircg_channel_mode /// boolean ircg_channel_mode ( resource connection, string channel, string mode_spec, string nick)\n ユーザ用にチャンネルモードフラグを設定する 
+ircg_channel_mode /// boolean ircg_channel_mode ( resource connection, string channel, string mode_spec, string nick)\n ユーザー用にチャンネルモードフラグを設定する 
 ircg_disconnect /// boolean ircg_disconnect ( resource connection, string reason)\n サーバへの接続を閉じる 
 ircg_fetch_error_msg /// array ircg_fetch_error_msg ( resource connection)\n 以前のircg処理からエラーを返す 
-ircg_get_username /// string ircg_get_username ( int connection)\n 接続用にユーザ名を取得する 
+ircg_get_username /// string ircg_get_username ( int connection)\n 接続用にユーザー名を取得する 
 ircg_html_encode /// boolean ircg_html_encode ( string html_string)\n HTMLで保存された文字列をエンコードする 
-ircg_ignore_add /// boolean ircg_ignore_add ( resource connection, string nick)\n サーバ上の除外リストにユーザを追加する 
-ircg_ignore_del /// boolean ircg_ignore_del ( resource connection, string nick)\n サーバ上の除外リストからユーザを削除する 
+ircg_ignore_add /// boolean ircg_ignore_add ( resource connection, string nick)\n サーバ上の除外リストにユーザーを追加する 
+ircg_ignore_del /// boolean ircg_ignore_del ( resource connection, string nick)\n サーバ上の除外リストからユーザーを削除する 
 ircg_is_conn_alive /// boolean ircg_is_conn_alive ( resource connection)\n 接続ステータスを確認する 
 ircg_join /// boolean ircg_join ( resource connection, string channel)\n 接続中のサーバ上でチャンネルに接続する 
-ircg_kick /// boolean ircg_kick ( resource connection, string channel, string nick, string reason)\n サーバ上のチャネルからユーザを排除する 
+ircg_kick /// boolean ircg_kick ( resource connection, string channel, string nick, string reason)\n サーバ上のチャネルからユーザーを排除する 
 ircg_lookup_format_messages /// boolean ircg_lookup_format_messages ( string name)\n IRCメッセージの表示用文字列フォーマットの設定を選択する 
-ircg_msg /// boolean ircg_msg ( resource connection, string recipient, string message [, boolean suppress])\n サーバ上のチャンネルまたはユーザにメッセージを送信する 
+ircg_msg /// boolean ircg_msg ( resource connection, string recipient, string message [, boolean suppress])\n サーバ上のチャンネルまたはユーザーにメッセージを送信する 
 ircg_nick /// boolean ircg_nick ( resource connection, string nick)\n サーバ上のニックネームを変更する 
 ircg_nickname_escape /// string ircg_nickname_escape ( string nick)\n ニックネームの中の特別な文字がIRC互換となるようにデコードする 
 ircg_nickname_unescape /// string ircg_nickname_unescape ( string nick)\n エンコードされたニックネームをデコードする 
-ircg_notice /// boolean ircg_notice ( resource connection, string , string message)\n サーバ上のユーザに通知を送信する 
+ircg_notice /// boolean ircg_notice ( resource connection, string , string message)\n サーバ上のユーザーに通知を送信する 
 ircg_part /// boolean ircg_part ( resource connection, string channel)\n サーバ上のチャンネルから離脱する 
 ircg_pconnect /// resource ircg_pconnect ( string username [, string server_ip [, int server_port [, string msg_format [, array ctcp_messages [, array user_settings]]]]])\n IRCサーバに接続する 
 ircg_register_format_messages /// boolean ircg_register_format_messages ( string name, array messages)\n IRCメッセージの表示用文字列フォーマットの設定を登録する 
@@ -1109,7 +1109,7 @@ ircg_set_current /// boolean ircg_set_current ( resource connection)\n 出力用
 ircg_set_file /// bool ircg_set_file ( int connection, string path)\n 接続用にログファイルを設定する 
 ircg_set_on_die /// bool ircg_set_on_die ( int connection, string host, int port, string data)\n 接続が終了する際にホスト側で実行されるアクションを設定する 
 ircg_topic /// boolean ircg_topic ( resource connection, string channel, string new_topic)\n サーバ上のチャネル用にトピックを設定する 
-ircg_whois /// boolean ircg_whois ( resource connection, string nick)\n サーバ上のニックネームからユーザ情報を検索する 
+ircg_whois /// boolean ircg_whois ( resource connection, string nick)\n サーバ上のニックネームからユーザー情報を検索する 
 java_last_exception_clear /// void java_last_exception_clear ( void)\n直近の例外をクリアする
 java_last_exception_get /// exception java_last_exception_get ( void)\n直近のJava例外を取得する
 ldap_8859_to_t61 /// string ldap_8859_to_t61 ( string value)\n 8859文字をt61文字に変換する 
@@ -1120,7 +1120,7 @@ ldap_compare /// int ldap_compare ( int link_identifier, string dn, string attri
 ldap_connect /// int ldap_connect ( string [hostname], int [port])\nLDAP サーバーへ接続する
 ldap_count_entries /// int ldap_count_entries ( int link_identifier, int result_identifier)\nサーチ時のエントリ数をカウントする
 ldap_delete /// int ldap_delete ( int link_identifier, string dn)\nディレクトリからエントリを削除する
-ldap_dn2ufn /// string ldap_dn2ufn ( string dn)\n DN をユーザに分かりやすい名前のフォーマットに変換する 
+ldap_dn2ufn /// string ldap_dn2ufn ( string dn)\n DN をユーザーに分かりやすい名前のフォーマットに変換する 
 ldap_err2str /// string ldap_err2str ( int errno)\n LDAP のエラー番号をエラーメッセージ文字列に変換する 
 ldap_errno /// int ldap_errno ( int link_id)\n 直近の LDAP コマンドのLDAP エラー番号を返す 
 ldap_error /// string ldap_error ( int link_id)\n 直近のLDAPコマンドのLDAP エラーメッセージを返す 
@@ -1221,11 +1221,11 @@ mb_convert_case /// string mb_convert_case ( string str, int mode [, string enco
 mb_convert_encoding /// string mb_convert_encoding ( string str, string to-encoding [, mixed from-encoding])\n文字エンコーディングを変換する
 mb_convert_kana /// string mb_convert_kana ( string str, string option [, mixed encoding])\n カナを("全角かな"、"半角かな"等に)変換する 
 mb_convert_variables /// string mb_convert_variables ( string to-encoding, mixed from-encoding, mixed vars)\n変数の文字コードを変換する
-mb_decode_mimeheader /// string mb_decode_mimeheader ( string str)\nMIMEヘッダフィールドの文字列をデコードする
+mb_decode_mimeheader /// string mb_decode_mimeheader ( string str)\nMIMEヘッダーフィールドの文字列をデコードする
 mb_decode_numericentity /// string mb_decode_numericentity ( string str, array convmap [, string encoding])\n HTML数値エンティティを文字にデコードする 
 mb_detect_encoding /// string mb_detect_encoding ( string str [, mixed encoding-list])\n文字エンコーディングを検出する
 mb_detect_order /// array mb_detect_order ( [mixed encoding-list])\n 文字エンコーディング検出順序の設定/取得 
-mb_encode_mimeheader /// string mb_encode_mimeheader ( string str [, string charset [, string transfer-encoding [, string linefeed]]])\nMIMEヘッダの文字列をエンコードする
+mb_encode_mimeheader /// string mb_encode_mimeheader ( string str [, string charset [, string transfer-encoding [, string linefeed]]])\nMIMEヘッダーの文字列をエンコードする
 mb_encode_numericentity /// string mb_encode_numericentity ( string str, array convmap [, string encoding])\n 文字をHTML数値エンティティにエンコードする 
 mb_ereg_match /// bool mb_ereg_match ( string pattern, string string [, string option])\nマルチバイト文字列が正規表現に一致するか調べる
 mb_ereg_replace /// string mb_ereg_replace ( string pattern, string replacement, string string [, array option])\nマルチバイト文字列に正規表現による置換を行う
@@ -1552,11 +1552,11 @@ defined /// bool defined ( string name)\n 指定した名前の定数が存在�
 die /// この関数は\nexit()のエイリアス
 eval /// mixed eval ( string code_str)\n文字列をPHPコードとして評価する
 exit /// void exit ( [string status])\nメッセージを出力し、カレントのスクリプトを終了する
-get_browser /// object get_browser ( string [user_agent])\n ユーザのブラウザの機能を取得する 
+get_browser /// object get_browser ( string [user_agent])\n ユーザーのブラウザの機能を取得する 
 highlight_file /// bool highlight_file ( string filename)\nファイルの構文ハイライト表示
 highlight_string /// bool highlight_string ( string str)\n文字列の構文ハイライト化
 ignore_user_abort /// int ignore_user_abort ( int [setting])\n クライアント接続が断となった時にスクリプトの実行を中断するかどう かを設定する 
-leak /// void leak ( int bytes)\nメモリーをリークする
+leak /// void leak ( int bytes)\nメモリをリークする
 pack /// string pack ( string format [, mixed args])\nデータをバイナリ文字列にパックする
 show_source /// bool show_source ( string filename)\nファイルの構文ハイライト表示
 sleep /// void sleep ( int seconds)\n実行を遅延させる
@@ -1833,7 +1833,7 @@ ncurses_timeout /// void ncurses_timeout ( int millisec)\n特別なキーシー�
 ncurses_typeahead /// int ncurses_typeahead ( int fd)\n typeahead確認用に別のファイル記述子を指定する 
 ncurses_ungetch /// int ncurses_ungetch ( int keycode)\n入力ストリームに1文字戻す
 ncurses_ungetmouse /// bool ncurses_ungetmouse ( array mevent)\nマウスイベントをキーにプッシュする
-ncurses_use_default_colors /// bool ncurses_use_default_colors ( void)\n 端末のデフォルト色をカラーID -1に割り付ける 
+ncurses_use_default_colors /// bool ncurses_use_default_colors ( void)\n 端末のデフォルト色をカラーID -1に割り当てる 
 ncurses_use_env /// void ncurses_use_env ( bool flag)\n端末の大きさに関する環境情報の使用を制御する
 ncurses_use_extended_names /// int ncurses_use_extended_names ( bool flag)\n terminfo記述において拡張名の使用を制御する 
 ncurses_vidattr /// int ncurses_vidattr ( int intarg)\n
@@ -1847,11 +1847,11 @@ notes_drop_db /// bool notes_drop_db ( string database_name)\nロータスノー
 notes_find_note /// bool notes_find_note ( string database_name, string name [, string type])\n database_nameにあるノートIDを返す。ノートの名前を指定する。typeは 省略可 
 notes_header_info /// object notes_header_info ( string server, string mailbox, int msg_number)\n 指定したサーバ上の指定したメールボックスにあるメッセージ msg_numberをオープンする 
 notes_list_msgs /// bool notes_list_msgs ( string db)\n選択したdatabase_nameからノートを返す
-notes_mark_read /// string notes_mark_read ( string database_name, string user_name, string note_id)\nユーザuser_name用にnote_idに既読マークを付ける
-notes_mark_unread /// string notes_mark_unread ( string database_name, string user_name, string note_id)\nユーザuser_name用にnote_idに未読マークを付ける
+notes_mark_read /// string notes_mark_read ( string database_name, string user_name, string note_id)\nユーザーuser_name用にnote_idに既読マークを付ける
+notes_mark_unread /// string notes_mark_unread ( string database_name, string user_name, string note_id)\nユーザーuser_name用にnote_idに未読マークを付ける
 notes_nav_create /// bool notes_nav_create ( string database_name, string name)\ndatabase_nameにナビゲータ名を作成する
 notes_search /// string notes_search ( string database_name, string keywords)\ndatabase_nameのキーワードにマッチするノーツを見つける
-notes_unread /// string notes_unread ( string database_name, string user_name)\nカレントユーザuser_nameに関して未読のノートIDを返す
+notes_unread /// string notes_unread ( string database_name, string user_name)\nカレントユーザーuser_nameに関して未読のノートIDを返す
 notes_version /// string notes_version ( string database_name)\nロータスノーツのバージョンを取得する
 odbc_autocommit /// int odbc_autocommit ( int connection_id, int [OnOff])\nautocommitの動作をオンまたはオフにします
 odbc_binmode /// int odbc_binmode ( int result_id, int mode)\nバイナリカラムデータを処理する
@@ -2178,7 +2178,7 @@ getlastmod /// int getlastmod ( void)\n最終ページ更新時刻を取得す�
 getmygid /// int getmygid ( void)\nPHPスクリプトの所有者のGIDを得る
 getmyinode /// int getmyinode ( void)\n現在のスクリプトの i ノードを取得する
 getmypid /// int getmypid ( void)\nPHP のプロセス ID を取得する
-getmyuid /// int getmyuid ( void)\nPHP スクリプト所有者のユーザ ID を取得する
+getmyuid /// int getmyuid ( void)\nPHP スクリプト所有者のユーザー ID を取得する
 getopt /// string getopt ( string options)\nGets options from the command line argument list
 getrusage /// array getrusage ( int [who])\nカレントリソースの使用に関する情報を得る
 ini_alter /// string ini_alter ( string varname, string newvalue)\n設定オプションの値を変更する
@@ -2212,7 +2212,7 @@ posix_getpgid /// int posix_getpgid ( int pid)\nジョブ制御のプロセス�
 posix_getpgrp /// int posix_getpgrp ( void)\n 現在のプロセスのグループIDを返す 
 posix_getpid /// int posix_getpid ( void)\n現在のプロセスIDを返す
 posix_getppid /// int posix_getppid ( void)\n親プロセスのIDを返す
-posix_getpwnam /// array posix_getpwnam ( string username)\n指定したユーザ名を有するユーザに関する情報を返す
+posix_getpwnam /// array posix_getpwnam ( string username)\n指定したユーザー名を有するユーザーに関する情報を返す
 posix_getpwuid /// array posix_getpwuid ( int uid)\n指定したユーザーIDを有するユーザーに関する情報を返す
 posix_getrlimit /// array posix_getrlimit ( void )\nシステムリソース制限に関する情報を返す
 posix_getsid /// int posix_getsid ( int pid)\nプロセスの現在のsidを得る
@@ -2315,8 +2315,8 @@ proc_close /// int proc_close ( resource process)\n Close a process opened by pr
 proc_open /// resource proc_open ( string cmd, array descriptorspec, array pipes)\n Execute a command and open file pointers for input/output 
 shell_exec /// string shell_exec ( string cmd)\n シェルによりコマンドを実行し、文字列として出力全体を返す 
 system /// string system ( string command, int [return_var])\n外部プログラムの実行と表示
-printer_abort /// void printer_abort ( resource handle)\nプリンタのスプールファイルを削除する
-printer_close /// void printer_close ( resource handle)\nプリンタへの接続を閉じる
+printer_abort /// void printer_abort ( resource handle)\nプリンターのスプールファイルを削除する
+printer_close /// void printer_close ( resource handle)\nプリンターへの接続を閉じる
 printer_create_brush /// mixed printer_create_brush ( int style, string color)\n新規ブラシを作成する
 printer_create_dc /// void printer_create_dc ( resource handle)\n新規デバイスコンテキストを作成する
 printer_create_font /// mixed printer_create_font ( string face, int height, int width, int font_weight, bool italic, bool underline, bool strikeout, int orientaton)\n新規フォントを作成する
@@ -2335,18 +2335,18 @@ printer_draw_roundrect /// void printer_draw_roundrect ( resource handle, int ul
 printer_draw_text /// void printer_draw_text ( resource printer_handle, string text, int x, int y)\nテキストを描画する
 printer_end_doc /// bool printer_end_doc ( resource handle)\nドキュメントを閉じる
 printer_end_page /// bool printer_end_page ( resource handle)\nアクティブなページを閉じる
-printer_get_option /// mixed printer_get_option ( resource handle, string option)\nプリンタ設定データを取得する
-printer_list /// array printer_list ( int enumtype [, string name [, int level]])\nサーバで付加されたプリンタの配列を返す
+printer_get_option /// mixed printer_get_option ( resource handle, string option)\nプリンター設定データを取得する
+printer_list /// array printer_list ( int enumtype [, string name [, int level]])\nサーバで付加されたプリンターの配列を返す
 printer_logical_fontheight /// int printer_logical_fontheight ( resource handle, int height)\n論理フォントの高さを取得する
-printer_open /// mixed printer_open ( [string devicename])\nプリンタへの接続をオープンする
+printer_open /// mixed printer_open ( [string devicename])\nプリンターへの接続をオープンする
 printer_select_brush /// void printer_select_brush ( resource printer_handle, resource brush_handle)\nブラシを選択する
 printer_select_font /// void printer_select_font ( resource printer_handle, resource font_handle)\nフォントを選択する
 printer_select_pen /// void printer_select_pen ( resource printer_handle, resource pen_handle)\nペンを選択する
-printer_set_option /// bool printer_set_option ( resource handle, int option, mixed value)\nプリンタの接続を設定する
+printer_set_option /// bool printer_set_option ( resource handle, int option, mixed value)\nプリンターの接続を設定する
 printer_start_doc /// bool printer_start_doc ( resource handle [, string document])\n新規ドキュメントを開始する
 printer_start_page /// bool printer_start_page ( resource handle)\n新規ページを開始する
-printer_write /// bool printer_write ( resource handle, string content)\nプリンタへデータを書き込む
-pspell_add_to_personal /// int pspell_add_to_personal ( int dictionary_link, string word)\nユーザの単語リストに単語を追加
+printer_write /// bool printer_write ( resource handle, string content)\nプリンターへデータを書き込む
+pspell_add_to_personal /// int pspell_add_to_personal ( int dictionary_link, string word)\nユーザーの単語リストに単語を追加
 pspell_add_to_session /// int pspell_add_to_session ( int dictionary_link, string word)\n カレントのセッションの単語リストに単語を追加 
 pspell_check /// bool pspell_check ( int dictionary_link, string word)\n単語をチェックする
 pspell_clear_session /// int pspell_clear_session ( int dictionary_link)\nカレントのセッションをクリアする
@@ -2439,7 +2439,7 @@ session_readonly /// void session_readonly ( void)\nBegin session - reinitialize
 session_register /// bool session_register ( mixed name, mixed [...])\n現在のセッションに1つ以上の変数を登録する
 session_save_path /// string session_save_path ( string [path])\n 現在のセッションデータ保存パスを取得または設定する 
 session_set_cookie_params /// void session_set_cookie_params ( int lifetime, string [path], string [domain])\n セッションクッキーパラメータを設定する 
-session_set_save_handler /// void session_set_save_handler ( string open, string close, string read, string write, string destroy, string gc)\n ユーザ定義のセッション保存関数を設定する 
+session_set_save_handler /// void session_set_save_handler ( string open, string close, string read, string write, string destroy, string gc)\n ユーザー定義のセッション保存関数を設定する 
 session_start /// bool session_start ( void)\nセッションデータを初期化する
 session_unregister /// bool session_unregister ( string name)\n現在のセッションから変数の登録を削除する
 session_unset /// void session_unset ( void)\n 全てのセッション変数を開放する 
@@ -2486,7 +2486,7 @@ swf_mulcolor /// void swf_mulcolor ( float r, float g, float b, float a)\n グ�
 swf_nextid /// int swf_nextid ( void)\n 次の未使用のオブジェクトIDを返す 
 swf_oncondition /// void swf_oncondition ( int transition)\n アクションリストのトリガとして使用されるトランジションを定義する 
 swf_openfile /// void swf_openfile ( string filename, float width, float height, float framerate, float r, float g, float b)\n 新規にShockwave Flashファイルをオープンする 
-swf_ortho2 /// void swf_ortho2 ( float xmin, float xmax, float ymin, float ymax)\n ユーザ座標の2D直交マッピングをカレントのビューポイントに定義する 
+swf_ortho2 /// void swf_ortho2 ( float xmin, float xmax, float ymin, float ymax)\n ユーザー座標の2D直交マッピングをカレントのビューポイントに定義する 
 swf_ortho /// void swf_ortho ( float xmin, float xmax, float ymin, float ymax, float zmin, float zmax)\n カレントのビューポートにおけるユーザー座標の直交マッピングを定義する 
 swf_perspective /// void swf_perspective ( float fovy, float aspect, float near, float far)\n 遠近法による投影変換を定義する 
 swf_placeobject /// void swf_placeobject ( int objid, int depth)\n オブジェクトを画面に配置する 
@@ -2706,19 +2706,19 @@ vpopmail_add_alias_domain_ex /// bool vpopmail_add_alias_domain_ex ( string oldd
 vpopmail_add_alias_domain /// bool vpopmail_add_alias_domain ( string domain, string aliasdomain)\n仮想ドメインへのエイリアスを追加する
 vpopmail_add_domain_ex /// bool vpopmail_add_domain_ex ( string domain, string passwd [, string quota [, string bounce [, bool apop]]])\n新規に仮想ドメインを追加する
 vpopmail_add_domain /// bool vpopmail_add_domain ( string domain, string dir, int uid, int gid)\n仮想ドメインを新たに追加する
-vpopmail_add_user /// bool vpopmail_add_user ( string user, string domain, string password [, string gecos [, bool apop]])\n指定した仮想ドメインに新規ユーザを追加する
+vpopmail_add_user /// bool vpopmail_add_user ( string user, string domain, string password [, string gecos [, bool apop]])\n指定した仮想ドメインに新規ユーザーを追加する
 vpopmail_alias_add /// bool vpopmail_alias_add ( string user, string domain, string alias)\n仮想エイリアスを追加する
 vpopmail_alias_del_domain /// bool vpopmail_alias_del_domain ( string domain)\nあるドメインに関する仮想エイリアスを全て削除する
-vpopmail_alias_del /// bool vpopmail_alias_del ( string user, string domain)\nあるユーザの仮想エイリアスを全て削除する
+vpopmail_alias_del /// bool vpopmail_alias_del ( string user, string domain)\nあるユーザーの仮想エイリアスを全て削除する
 vpopmail_alias_get_all /// array vpopmail_alias_get_all ( string domain)\nあるドメインに関するエイリアスを全て取得する
 vpopmail_alias_get /// array vpopmail_alias_get ( string alias, string domain)\nあるドメインに関するエイリアスを取得する
-vpopmail_auth_user /// bool vpopmail_auth_user ( string user, string domain, string password [, string apop])\n ユーザ名/ドメイン/パスワードの認証を試み、true/falseを返す 
+vpopmail_auth_user /// bool vpopmail_auth_user ( string user, string domain, string password [, string apop])\n ユーザー名/ドメイン/パスワードの認証を試み、true/falseを返す 
 vpopmail_del_domain_ex /// bool vpopmail_del_domain_ex ( string domain)\n仮想ドメインを削除する
 vpopmail_del_domain /// bool vpopmail_del_domain ( string domain)\n仮想ドメインを削除する
-vpopmail_del_user /// bool vpopmail_del_user ( string user, string domain)\n仮想ドメインからユーザを削除する
+vpopmail_del_user /// bool vpopmail_del_user ( string user, string domain)\n仮想ドメインからユーザーを削除する
 vpopmail_error /// string vpopmail_error ( void)\n 直近のvpopmailエラーに関するエラーメッセージを取得する 
-vpopmail_passwd /// bool vpopmail_passwd ( string user, string domain, string password)\n仮想ユーザのパスワードを変更する
-vpopmail_set_user_quota /// bool vpopmail_set_user_quota ( string user, string domain, string quota)\n仮想ユーザの容量制限(クオータ)を設定する
+vpopmail_passwd /// bool vpopmail_passwd ( string user, string domain, string password)\n仮想ユーザーのパスワードを変更する
+vpopmail_set_user_quota /// bool vpopmail_set_user_quota ( string user, string domain, string quota)\n仮想ユーザーの容量制限(クオータ)を設定する
 w32api_deftype /// int w32api_deftype ( string typename, string member1_type, string member1_name)\n他のw32api_functionsで使用するために型を定義する
 w32api_init_dtype /// resource w32api_init_dtype ( string typename, mixed val1, mixed val2)\n データ型typenameのインスタンスを作成し、val1, val2, 関数の値で埋 める 
 w32api_invoke_function /// mixed w32api_invoke_function ( string funcname)\n 関数名の後ろで指定された引数を指定して関数funcnameを実行する 

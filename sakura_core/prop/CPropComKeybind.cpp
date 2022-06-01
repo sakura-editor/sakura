@@ -11,7 +11,7 @@
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2009, nasukoji
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -199,7 +199,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 				/* Keybind:キー割り当て設定をエクスポートする */
 				Export( hwndDlg );
 				return TRUE;
-			case IDC_BUTTON_ASSIGN:	/* 割付 */
+			case IDC_BUTTON_ASSIGN:	/* 割当 */
 				nIndex = List_GetCurSel( hwndKeyList );
 				nIndex2 = Combo_GetCurSel( hwndCombo );
 				nIndex3 = List_GetCurSel( hwndFuncList );
@@ -271,7 +271,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 				}
 				nFuncCode = m_Common.m_sKeyBind.m_pKeyNameArr[nIndex].m_nFuncCodeArr[i];
 				// Oct. 2, 2001 genta
-				// 2007.11.02 ryoji F_DISABLEなら未割付
+				// 2007.11.02 ryoji F_DISABLEなら未割当
 				if( nFuncCode == F_DISABLE ){
 					wcsncpy( pszLabel, LS(STR_PROPCOMKEYBIND_UNASSIGN), _countof(pszLabel) - 1 );
 					pszLabel[_countof(pszLabel) - 1] = L'\0';

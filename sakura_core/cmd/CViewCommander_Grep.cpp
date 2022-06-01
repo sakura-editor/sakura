@@ -7,7 +7,7 @@
 	Copyright (C) 2003, MIK
 	Copyright (C) 2005, genta
 	Copyright (C) 2006, ryoji
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -236,7 +236,7 @@ void CViewCommander::Command_GREP_REPLACE( void )
 		//GOPTオプション
 		WCHAR	pOpt[64];
 		pOpt[0] = L'\0';
-		if( cDlgGrepRep.m_bSubFolder				)wcscat( pOpt, L"S" );	// サブフォルダからも検索する
+		if( cDlgGrepRep.m_bSubFolder				)wcscat( pOpt, L"S" );	// サブフォルダーからも検索する
 		if( cDlgGrepRep.m_sSearchOption.bWordOnly	)wcscat( pOpt, L"W" );	// 単語単位で探す
 		if( cDlgGrepRep.m_sSearchOption.bLoHiCase	)wcscat( pOpt, L"L" );	// 英大文字と英小文字を区別する
 		if( cDlgGrepRep.m_sSearchOption.bRegularExp	)wcscat( pOpt, L"R" );	// 正規表現

@@ -33,21 +33,21 @@ ZIP形式で圧縮されたものをパソコンにダウンロードしてく�
 これでインストールは完了ですが、まだプラグインは利用できません。
 これ以降に新しく開いたエディタでは起動時にプラグインが読み込まれ、利用可能になります。
 </p>
-<img alt="hint" src="images/hint.png" />Windows2000はZIPプラグインに未対応のため、ダウンロードしたファイルをプラグインフォルダ配下に解凍し、「新規プラグインを追加」からインストールしてください。<br>
+<img alt="hint" src="images/hint.png" />Windows2000はZIPプラグインに未対応のため、ダウンロードしたファイルをプラグインフォルダー配下に解凍し、「新規プラグインを追加」からインストールしてください。<br>
 <p>
 プラグインは最大40個までインストールできます。
 </p>
 <p>
-プラグインをインストールすると、設定ファイルがあるフォルダの下にpluginsフォルダができ、その配下にZIPファイルの中身が展開されます。
-ユーザ別設定が有効な場合は<em>C:\Users\(ユーザ名)\AppData\Roaming\sakura\plugins</em>、そうでなければ<em>C:\Program Files(x86)\sakura\plugins</em>にあるはずです。<br>
-以下、pluginsを<strong>プラグインフォルダ</strong>と呼び、その下のプラグインごとのフォルダを<strong>個別フォルダ</strong>と呼びます。<br>
+プラグインをインストールすると、設定ファイルがあるフォルダーの下にpluginsフォルダーができ、その配下にZIPファイルの中身が展開されます。
+ユーザー別設定が有効な場合は<em>C:\Users\(ユーザー名)\AppData\Roaming\sakura\plugins</em>、そうでなければ<em>C:\Program Files(x86)\sakura\plugins</em>にあるはずです。<br>
+以下、pluginsを<strong>プラグインフォルダー</strong>と呼び、その下のプラグインごとのフォルダーを<strong>個別フォルダー</strong>と呼びます。<br>
 </p>
 </div>
 <h4>アンインストール</h4>
 <div class="li200">
 <p>
 プラグインのアンインストールは、設定画面から「削除」を行います。
-ディスク上には残るので、完全に削除する場合は手動で個別フォルダを削除してください。
+ディスク上には残るので、完全に削除する場合は手動で個別フォルダーを削除してください。
 ディスクから削除していなければ、「新規プラグインの追加」で再度インストールできます。
 </p>
 </div>
@@ -56,18 +56,18 @@ ZIP形式で圧縮されたものをパソコンにダウンロードしてく�
 <p>
 プラグインの新バージョンが出た場合は、設定画面からZIPプラグインの導入でファイルを指定し更新し、エディタ本体を再起動すると利用可能になります。
 </p>
-<img alt="hint" src="images/hint.png" />Windows2000の場合は、個別フォルダの内容を上書きして更新してください。
+<img alt="hint" src="images/hint.png" />Windows2000の場合は、個別フォルダーの内容を上書きして更新してください。
 </div>
 
 <h3 id="c0202">大まかな動き</h3>
 <div class="li200">
 ・エディタプロセスの起動時に、共通情報のプラグインテーブルを参照し、インストール済みのプラグインに対して以下の読み込み操作を行う。<br>
-　個別フォルダ内にはプラグインの情報を記述したテキストファイル(plugin.def)があり、エディタはまずこのテキストファイルを読み込む。<br>
+　個別フォルダー内にはプラグインの情報を記述したテキストファイル(plugin.def)があり、エディタはまずこのテキストファイルを読み込む。<br>
 　以下、このファイルを<strong>プラグイン定義ファイル</strong>と呼ぶ。<br>
 <br>
-　また、プラグインフォルダ直下に、プラグインごとのテキストファイルを置き、そこにプラグインのオプションなど可変の情報を記述する。<br>
+　また、プラグインフォルダー直下に、プラグインごとのテキストファイルを置き、そこにプラグインのオプションなど可変の情報を記述する。<br>
 　以下、このファイルを<strong>オプションファイル</strong>と呼ぶ。<br>
-　ファイル名は "個別フォルダ名.ini" とする。<br>
+　ファイル名は "個別フォルダー名.ini" とする。<br>
 　プラグイン定義ファイルのOptionセクションで指定した項目は、共通設定のプラグイン個別設定から値を編集できる。<br>
 <br>
 ・プラグイン定義ファイルの内容に従い、メモリ上にプラグインオブジェクトを作成する。<br>
@@ -83,15 +83,15 @@ ZIP形式で圧縮されたものをパソコンにダウンロードしてく�
 　(現時点でDLLプラグインはまだ使い物にならない)<br>
 </div><br>
 
-<h3 id="c0203">フォルダ構成</h3>
+<h3 id="c0203">フォルダー構成</h3>
 <div class="li300">
 <pre>
-設定ファイルフォルダ
+設定ファイルフォルダー
   ├ sakura.ini
   └ plugins/
       ├ ○○.ini           // オプションファイル
       ├ ××.ini
-      ├ ○○/              // 個別フォルダ
+      ├ ○○/              // 個別フォルダー
       │  ├ plugin.def     // プラグイン定義ファイル
       │  ├ readme.txt     // 説明
       │  ├ ○○_A.js      // プログラム等
@@ -122,7 +122,7 @@ ZIP形式で圧縮されたものをパソコンにダウンロードしてく�
 <div class="li200">
 <table class="box">
 	<caption style="display: none">無題</caption>
-<tr><th scope="auto" class="box">プラグインの種類</th><th scope="auto" class="box">ジャック名<br>([Plug]で定義)</th><th scope="auto" class="box"><em>ジャック名</em>.Label</th><th scope="auto" class="box">インタフェースオブジェクト</th></tr>
+<tr><th scope="auto" class="box">プラグインの種類</th><th scope="auto" class="box">ジャック名<br>([Plug]で定義)</th><th scope="auto" class="box"><em>ジャック名</em>.Label</th><th scope="auto" class="box">インターフェースオブジェクト</th></tr>
 <tr><td class="box"><a href="implementation03.html#c030501">アウトライン解析</a></td><td class="box">Outline</td><td class="box">アウトライン標準ルール選択肢</td><td class="box"><a href="implementation02.html#c030403">Outline</a></td></tr>
 <tr><td class="box"><a href="implementation03.html#c030502">スマートインデント</a></td><td class="box">Indent</td><td class="box">スマートインデント選択肢</td><td class="box"><a href="implementation02.html#c030404">Indent</a></td></tr>
 <tr><td class="box" rowspan="2"><a href="implementation03.html#c030503">補完候補検索</a><br>(Ver.2.0.6.0以降)</td><td class="box">ComplementGlobal</td><td class="box">no</td><td class="box" rowspan="2"><a href="implementation02.html#c030405">Complement</a></td></tr>

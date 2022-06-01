@@ -30,7 +30,7 @@
 	<li>文書末を含む選択状態で文字列を貼り付けるとEOF表示が消える (svn:1681 patches:2895958 unicode:1052 ryoji)</li>
 	<li>r1676(#2869217)で起きる bcc5.5.1のエラー対策 (svn:1680 patches:2869217 ds14050)</li>
 	<li>上検索の結果が幅0のとき選択範囲が 1あったのを 0に修正 (svn:1675 patches:2869217 unicode:1035 ds14050)</li>
-	<li>浅いフォルダにあるファイルの編集・保存時にバックアップ処理で異常終了する (svn:1738 patches:2875910 dev:5624 あろか)</li>
+	<li>浅いフォルダーにあるファイルの編集・保存時にバックアップ処理で異常終了する (svn:1738 patches:2875910 dev:5624 あろか)</li>
 	<li>タブバーツールチップの&表示不正 (svn:1739 patches:2912612 dev:5637 ryoji)</li>
 	<li>検索・置換マクロのエラーチェック不具合 (svn:1741 patches:2921768 dev:5648 ryoji)</li>
 	<li>-GREPDLG指定でキャレットが消える (svn:1742 patches:2928898 dev:5650 ryoji)</li>
@@ -42,7 +42,7 @@
 	<li>不要なコードの存在によりコンパイル時に警告が発生する (svn:1749 patches:2989036 dev:5671 なすこじ)</li>
 	<li>アウトライン解析（トグル）で「C 関数一覧」画面が閉じない (svn:1831 patches:3009187 dev:5675 ryoji)</li>
 	<li>折り返し行インデントで折り返すとメモリを食い尽くす (svn:1832 patches:3025944 dev:5677 もか)</li>
-	<li>Undo/Redoでのメモリーリーク修正 (svn:1834 patches:3055719 もか)</li>
+	<li>Undo/Redoでのメモリリーク修正 (svn:1834 patches:3055719 もか)</li>
 	<li>チップウィンドウのリソースリーク修正 (svn:1835 patches:3056634 もか)</li>
 	<li>Grep結果画面の強調表示に単語単位が適用されていない (svn:1836 patches:3056638 dev:5685 unicode:1334 もか)</li>
 	<li>Grepの出力順が不正になることがある (svn:1836 patches:3056638 dev:5685 もか)</li>
@@ -58,7 +58,7 @@
 	<li>存在しないcursor1.curのsakura.dsp登録を解除 (svn:1829 patches:2992320 dev:5673 ryoji)</li>
 	<li>Viewウィンドウの遅延作成(ANSI版) (svn:1830 patches:3008991 unicode:1249 もか)</li>
 	<li>ツールバー折返しの番号ずれ対応 (svn:1833 patches:3026401 dev:5676 syat,もか)</li>
-	<li>ユーザの意図しないプログラム実行の抑制(A用) (svn:1839 patches:3055711 dev:5679 dev:5685 もか)</li>
+	<li>ユーザーの意図しないプログラム実行の抑制(A用) (svn:1839 patches:3055711 dev:5679 dev:5685 もか)</li>
 </ul>
 
 <h3>Sep. 26, 2009 (1.6.5.0)</h3>
@@ -124,7 +124,7 @@
 	<li>コンボボックスでリスト表示＋末尾削除＋Enterで削除部分が復活する (svn:1496 patches:2394131 dev:5503 syat)</li>
 	<li>アウトライン解析の「フォーカスを移す」で分割画面のアクティブビューが切り替わる (svn:1505 patches:2461745 ryoji)</li>
 	<li>アイコン（メニュー、ツールバー）が黒くなる (svn:1506 patches:2497716 data:6842 ryoji)</li>
-	<li>GrepへのDrag &amp; Dropフォルダパス貼り付けが動作しない (svn:1507 patches:2497740 ryoji)</li>
+	<li>GrepへのDrag &amp; Dropフォルダーパス貼り付けが動作しない (svn:1507 patches:2497740 ryoji)</li>
 	<li>Grep時のファイル名パターンのバッファオーバラン対策 (svn:1510 patches:2402850 data:6818 dev:5484なすこじ)</li>
 </ul>
 
@@ -171,7 +171,7 @@
 	<li>タブ切り替えでスクロールバーの動作が不正になることがある (svn:1356 patches:1971010 ryoji)</li>
 	<li>行数が1のときにCDocLineMgr::DeleteNodeが呼ばれるとメモリリークが発生する (svn:1335 patches:1923031 ryoji)</li>
 	<li>CEditWnd::OnMouseMoveでCDropSourceがメモリリークする (svn:1323 patches:1958000 ryoji)</li>
-	<li>[同名のC/C++ヘッダファイルを開く]と[同名のC/C++ソースファイルを開く]の動作が逆(svn:1293 patches:1938647 ryoji)</li>
+	<li>[同名のC/C++ヘッダーファイルを開く]と[同名のC/C++ソースファイルを開く]の動作が逆(svn:1293 patches:1938647 ryoji)</li>
 	<li>ATOK16/2007の単語登録操作時に単語欄に選択範囲の語句が表示されない (svn:1231 patches:1881776 もか)</li>
 	<li>2ページになる文書の印刷プレビューで前のページに移動するとホイールスクロールができなくなる (svn:1223 patches:1881776 dev:5243 なすこじ，げんた)</li>
 	<li>タブグループ画面からタブを切り離せなくなることがある (svn:1419 patches:1842668 ryoji)</li>
@@ -253,10 +253,10 @@
 [機能追加]<br />
 <ul>
 	<li>Grep 画面へのドラッグ＆ドロップ (svn:1117 patches:1786543 bosagami, げんた)</li>
-	<li>Vista UACとマルチユーザへの対応 (svn:1120 patches:1721425 dev:4809 ryoji)</li>
+	<li>Vista UACとマルチユーザーへの対応 (svn:1120 patches:1721425 dev:4809 ryoji)</li>
 	<ul>
 		<li>sakura.ini等の設定ファイルを個人のプロファイルディレクトリに置ける</li>
-		<li>管理者権限とユーザ権限のプロセス混在を防止</li>
+		<li>管理者権限とユーザー権限のプロセス混在を防止</li>
 		<li>sakuextとの連携</li>
 	</ul>
 	<li>Pythonアウトライン解析 (svn:1121 patches:1668208 げんた)</li>

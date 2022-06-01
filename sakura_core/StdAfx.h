@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -106,13 +106,6 @@
 // プロジェクト内のファイルだがプリコンパイル対象とする。
 // プリコンパイルの有無がビルドパフォーマンスに大きく影響するため。
 #include "env/DLLSHAREDATA.h"
-
-//その他
-#define malloc_char (char*)malloc
-#define GlobalLockChar  (char*)::GlobalLock
-#define GlobalLockUChar (unsigned char*)::GlobalLock
-#define GlobalLockWChar (wchar_t*)::GlobalLock
-#define GlobalLockBYTE  (BYTE*)::GlobalLock
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ は前行の直前に追加の宣言を挿入します。

@@ -2,7 +2,7 @@
 //2007.09.30 kobake CDocLineMgr から分離
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -43,7 +43,7 @@ enum ECharKind{
 	CK_CSYM,			//!< 識別子に使用可能な文字 (英数字、アンダースコア)
 	CK_KATA,			//!< 半角のカタカナ 0xA1<=c<=0xFD
 	CK_LATIN,			//!< ラテン１補助、ラテン拡張のうちアルファベット風のもの 0x00C0<=c<0x0180
-	CK_UDEF,			//!< ユーザ定義キーワード文字（#$@\）
+	CK_UDEF,			//!< ユーザー定義キーワード文字（#$@\）
 	CK_ETC,				//!< 半角のその他
 
 	CK_ZEN_SPACE,		//!< 全角スペース

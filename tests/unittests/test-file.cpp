@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -149,7 +149,7 @@ TEST(file, Deprecated_GetExedir)
 	// 戻り値取得用のバッファを指定しない場合、何も起きない
 	GetExedir(nullptr);
 
-	// exeフォルダの取得
+	// exeフォルダーの取得
 	GetExedir(szBuf);
 	::wcscat_s(szBuf, filename);
 	ASSERT_STREQ(exeBasePath.c_str(), szBuf);
@@ -203,7 +203,7 @@ TEST(file, GetIniFileName_InProcessNamedProfileUnInitialized)
 	// プロセスのインスタンスを用意する
 	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
 
-	// exeファイルの拡張子をiniに変えたパスの最後のフォルダにプロファイル名を加えたパスが返る
+	// exeファイルの拡張子をiniに変えたパスの最後のフォルダーにプロファイル名を加えたパスが返る
 	auto iniPath = GetExeFileName().replace_extension(L".ini");
 	auto path = iniPath.parent_path().append(L"profile1").append(iniPath.filename().c_str());
 	ASSERT_STREQ(path.c_str(), GetIniFileName().c_str());
@@ -222,7 +222,7 @@ TEST(file, GetIniFileName_PrivateRoamingAppData)
 	// プロセスのインスタンスを用意する
 	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
 
-	// マルチユーザ構成設定ファイルのパス
+	// マルチユーザー構成設定ファイルのパス
 	auto exeIniPath = GetExeFileName().concat(L".ini");
 
 	// 設定を書き込む
@@ -262,7 +262,7 @@ TEST(file, GetIniFileName_PrivateDesktop)
 	// プロセスのインスタンスを用意する
 	CControlProcess dummy(nullptr, LR"(-PROF="")");
 
-	// マルチユーザ構成設定ファイルのパス
+	// マルチユーザー構成設定ファイルのパス
 	auto exeIniPath = GetExeFileName().concat(L".ini");
 
 	// 設定を書き込む
@@ -302,7 +302,7 @@ TEST(file, GetIniFileName_PrivateProfile)
 	// プロセスのインスタンスを用意する
 	CControlProcess dummy(nullptr, LR"(-PROF="")");
 
-	// マルチユーザ構成設定ファイルのパス
+	// マルチユーザー構成設定ファイルのパス
 	auto exeIniPath = GetExeFileName().concat(L".ini");
 
 	// 設定を書き込む
@@ -342,7 +342,7 @@ TEST(file, GetIniFileName_PrivateDocument)
 	// プロセスのインスタンスを用意する
 	CControlProcess dummy(nullptr, LR"(-PROF="")");
 
-	// マルチユーザ構成設定ファイルのパス
+	// マルチユーザー構成設定ファイルのパス
 	auto exeIniPath = GetExeFileName().concat(L".ini");
 
 	// 設定を書き込む
@@ -386,7 +386,7 @@ TEST(file, Deprecated_GetInidir)
 	// 戻り値取得用のバッファを指定しない場合、何も起きない
 	GetInidir(nullptr);
 
-	// iniフォルダの取得
+	// iniフォルダーの取得
 	GetInidir(szBuf);
 	::wcscat_s(szBuf, filename);
 	ASSERT_STREQ(iniBasePath.c_str(), szBuf);
@@ -503,7 +503,7 @@ TEST(file, CalcDirectoryDepth)
 	// ドライブ文字を含むフルパス
 	EXPECT_EQ(1, CalcDirectoryDepth(LR"(C:\Temp\test.txt)"));
 
-	// 共有フォルダを含むフルパス
+	// 共有フォルダーを含むフルパス
 	EXPECT_EQ(1, CalcDirectoryDepth(LR"(\\host\Temp\test.txt)"));
 
 	// ドライブなしのフルパス
@@ -514,6 +514,86 @@ TEST(file, CalcDirectoryDepth)
 
 	// 渡したパスが無効な場合は落ちます。
 	EXPECT_DEATH({ CalcDirectoryDepth(nullptr); }, ".*");
+}
+
+/*!
+	FileMatchScoreSepExtのテスト
+ */
+TEST(file, FileMatchScoreSepExt)
+{
+	int result = 0;
+
+	// FileNameSepExtのテストパターン
+	result = FileMatchScoreSepExt(
+		LR"(C:\TEMP\test.txt)",
+		LR"(C:\TEMP\TEST.TXT)");
+	ASSERT_EQ(_countof(LR"(test.txt)") - 1, result);
+
+	// FileNameSepExtのテストパターン（パスにフォルダーが含まれない）
+	result = FileMatchScoreSepExt(
+		LR"(TEST.TXT)",
+		LR"(test.txt)");
+	ASSERT_EQ(_countof(LR"(test.txt)") - 1, result);
+
+	// FileNameSepExtのテストパターン（ファイル名がない）
+	result = FileMatchScoreSepExt(
+		LR"(C:\TEMP\.txt)",
+		LR"(C:\TEMP\.txt)");
+	ASSERT_EQ(_countof(LR"(.txt)") - 1, result);
+
+	// FileNameSepExtのテストパターン（拡張子がない）
+	result = FileMatchScoreSepExt(
+		LR"(C:\TEMP\test)",
+		LR"(C:\TEMP\test)");
+	ASSERT_EQ(_countof(LR"(test)") - 1, result);
+
+	// 全く同じパス同士の比較（ファイル名＋拡張子が完全一致）
+	result = FileMatchScoreSepExt(
+		LR"(C:\TEMP\test.txt)",
+		LR"(C:\TEMP\TEST.TXT)");
+	ASSERT_EQ(_countof(LR"(test.txt)") - 1, result);
+
+	// 異なるパスでファイル名＋拡張子が同じ（ファイル名＋拡張子が完全一致）
+	result = FileMatchScoreSepExt(
+		LR"(C:\TEMP1\TEST.TXT)",
+		LR"(C:\TEMP2\test.txt)");
+	ASSERT_EQ(_countof(LR"(test.txt)") - 1, result);
+
+	// ファイル名が異なる1（最長一致を取得）
+	result = FileMatchScoreSepExt(
+		LR"(C:\TEMP\test.txt)",
+		LR"(C:\TEMP\TEST1.TST)");
+	ASSERT_EQ(_countof(LR"(test)") - 1 + _countof(LR"(.t)") - 1, result);
+
+	// ファイル名が異なる2（最長一致を取得）
+	result = FileMatchScoreSepExt(
+		LR"(C:\TEMP\test1.tst)",
+		LR"(C:\TEMP\TEST.TXT)");
+	ASSERT_EQ(_countof(LR"(test)") - 1 + _countof(LR"(.t)") - 1, result);
+
+	// 拡張子が異なる1（最長一致を取得）
+	result = FileMatchScoreSepExt(
+		LR"(C:\TEMP\test.txt)",
+		LR"(C:\TEMP\TEXT.TXTX)");
+	ASSERT_EQ(_countof(LR"(te)") - 1 + _countof(LR"(.txt)") - 1, result);
+
+	// 拡張子が異なる2（最長一致を取得）
+	result = FileMatchScoreSepExt(
+		LR"(C:\TEMP\text.txtx)",
+		LR"(C:\TEMP\TEST.TXT)");
+	ASSERT_EQ(_countof(LR"(te)") - 1 + _countof(LR"(.txt)") - 1, result);
+
+	// サロゲート文字を含む1
+	result = FileMatchScoreSepExt(
+		L"C:\\TEMP\\test\xD83D\xDC49\xD83D\xDC46.TST",
+		L"C:\\TEMP\\TEST\xD83D\xDC49\xD83D\xDC47.txt");
+	ASSERT_EQ(_countof(LR"(testXX)") - 1 + _countof(LR"(.t)") - 1, result);
+
+	// サロゲート文字を含む2
+	result = FileMatchScoreSepExt(
+		L"C:\\TEMP\\TEST\xD83D\xDC49\xD83D\xDC47.txt",
+		L"C:\\TEMP\\test\xD83D\xDC49\xD83D\xDC46.TST");
+	ASSERT_EQ(_countof(LR"(testXX)") - 1 + _countof(LR"(.t)") - 1, result);
 }
 
 /*!

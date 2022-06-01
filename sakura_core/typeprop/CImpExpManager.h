@@ -6,7 +6,7 @@
 */
 /*
 	Copyright (C) 2010, Uchi, Moca
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -65,7 +65,7 @@ protected:
 	// Import Folderの設定
 	inline void SetImportFolder( const WCHAR* szPath ) 
 	{
-		/* ファイルのフルパスをフォルダとファイル名に分割 */
+		/* ファイルのフルパスをフォルダーとファイル名に分割 */
 		/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
 		::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL );
 		wcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, L"\\" );

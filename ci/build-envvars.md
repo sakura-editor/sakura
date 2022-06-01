@@ -94,12 +94,12 @@ APPVEYOR_REPO_TAG_NAME は利用をやめて 代わりに GIT_TAG_NAME を使う
 | SHORTHASH     | commit hash の先頭8文字                            | 実体は GIT_SHORT_COMMIT_HASH      |
 | RELEASE_PHASE | "alpha" または 空                                  | x64 ビルドの場合のみ有効               |
 | BASENAME      | 成果物の zip ファイル名(拡張子含まない部分)        | 常に有効                               |
-| WORKDIR       | 作業用フォルダ                                     | 常に有効                               |
-| WORKDIR_LOG   | ログファイル用の作業用フォルダ                     | 常に有効                               |
-| WORKDIR_EXE   | 実行ファイル(一般向け)用の作業用フォルダ           | 常に有効                               |
-| WORKDIR_DEV   | 開発者向け成果物用の作業用フォルダ                 | 常に有効                               |
-| WORKDIR_INST  | インストーラ用の作業用フォルダ                     | 常に有効                               |
-| WORKDIR_ASM   | アセンブラ出力用の作業用フォルダ                   | 常に有効                               |
+| WORKDIR       | 作業用フォルダー                                     | 常に有効                               |
+| WORKDIR_LOG   | ログファイル用の作業用フォルダー                     | 常に有効                               |
+| WORKDIR_EXE   | 実行ファイル(一般向け)用の作業用フォルダー           | 常に有効                               |
+| WORKDIR_DEV   | 開発者向け成果物用の作業用フォルダー                 | 常に有効                               |
+| WORKDIR_INST  | インストーラ用の作業用フォルダー                     | 常に有効                               |
+| WORKDIR_ASM   | アセンブラ出力用の作業用フォルダー                   | 常に有効                               |
 | OUTFILE       | 成果物の zip ファイル名                            | 常に有効                               |
 | OUTFILE_LOG   | ログファイルの成果物の zip ファイル名              | 常に有効                               |
 | OUTFILE_EXE   | 実行ファイル(一般向け)の成果物の zip ファイル名    | 常に有効                               |

@@ -17,7 +17,7 @@
 	Copyright (C) 2006, genta, ryoji
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2010, ryoji
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -740,7 +740,7 @@ void CDlgFuncList::SetData()
 		::ShowWindow( GetItemHwnd( IDC_COMBO_nSortType ), SW_HIDE );
 		::ShowWindow( GetItemHwnd( IDC_STATIC_nSortType ), SW_HIDE );
 		//ListView_SortItems( hwndList, CompareFunc_Asc, (LPARAM)this );  // 2005.04.05 zenryaku ソート状態を保持
-		SortListView( hwndList, m_nSortCol );	// 2005.04.23 genta 関数化(ヘッダ書き換えのため)
+		SortListView( hwndList, m_nSortCol );	// 2005.04.23 genta 関数化(ヘッダー書き換えのため)
 	}
 
 	//2002.02.08 hor
@@ -1573,8 +1573,8 @@ void CDlgFuncList::SetTreeFile()
 		// lvis.item.lParam
 		// 0 以下(nFuncInfo): m_pcFuncInfoArr->At(nFuncInfo)にファイル名
 		// -1: Grepのファイル名要素
-		// -2: Grepのサブフォルダ要素
-		// -(nFuncInfo * 10 + 3): Grepルートフォルダ要素
+		// -2: Grepのサブフォルダー要素
+		// -(nFuncInfo * 10 + 3): Grepルートフォルダー要素
 		// -4: データ・追加操作なし
 		TVINSERTSTRUCT tvis;
 		tvis.hParent      = hParentTree.back();
@@ -1642,7 +1642,7 @@ void CDlgFuncList::SetTreeFileSub( HTREEITEM hParent, const WCHAR* pszFile )
 	CGrepEnumFolders cGrepExceptAbsFolders;
 	cGrepExceptAbsFolders.Enumerates(L"", cGrepEnumKeys.m_vecExceptAbsFolderKeys, cGrepEnumOptions);
 
-	//フォルダ一覧作成
+	//フォルダー一覧作成
 	CGrepEnumFilterFolders cGrepEnumFilterFolders;
 	cGrepEnumFilterFolders.Enumerates( basePath.c_str(), cGrepEnumKeys, cGrepEnumOptions, cGrepExceptAbsFolders );
 	int nItemCount = cGrepEnumFilterFolders.GetCount();
@@ -2102,7 +2102,7 @@ BOOL CDlgFuncList::OnNotify(NMHDR* pNMHDR)
 }
 /*!
 	指定されたカラムでリストビューをソートする．
-	同時にヘッダも書き換える．
+	同時にヘッダーも書き換える．
 
 	ソート後はフォーカスが画面内に現れるように表示位置を調整する．
 
@@ -3867,7 +3867,7 @@ void CDlgFuncList::LoadFileTreeSetting( CFileTreeSetting& data, SFilePath& IniDi
 	data.m_szDefaultProjectIni = pFileTree->m_szProjectIni;
 	data.m_szLoadProjectIni = L"";
 	if( data.m_bProject ){
-		// 各フォルダのプロジェクトファイル読み込み
+		// 各フォルダーのプロジェクトファイル読み込み
 		WCHAR szPath[_MAX_PATH];
 		::GetLongFileName( L".", szPath );
 		wcscat( szPath, L"\\" );

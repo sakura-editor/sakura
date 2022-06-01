@@ -17,7 +17,7 @@
 	Copyright (C) 2007, ryoji, じゅうじ, maru
 	Copyright (C) 2009, nasukoji, ryoji
 	Copyright (C) 2010, ryoji
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -95,7 +95,7 @@ LRESULT CALLBACK EditViewWndProc(
 		pCEdit = reinterpret_cast<CEditView*>(pCreate->lpCreateParams);
 		return pCEdit->DispatchEvent( hwnd, uMsg, wParam, lParam );
 	default:
-		pCEdit = ( CEditView* )::GetWindowLongPtr( hwnd, 0 );
+		pCEdit = ( CEditView* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
 		if( NULL != pCEdit ){
 			//	May 16, 2000 genta
 			//	From Here
@@ -124,7 +124,7 @@ VOID CALLBACK EditViewTimerProc(
 )
 {
 	CEditView*	pCEditView;
-	pCEditView = ( CEditView* )::GetWindowLongPtr( hwnd, 0 );
+	pCEditView = ( CEditView* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
 	if( NULL != pCEditView ){
 		pCEditView->OnTimer( hwnd, uMsg, idEvent, dwTime );
 	}
@@ -151,7 +151,7 @@ CEditView::CEditView( void )
 , m_bActivateByMouse( FALSE )	// 2007.10.02 nasukoji
 , m_nWheelDelta(0)
 , m_eWheelScroll(F_0)
-, m_nMousePouse(0)
+, m_nMousePause(0)
 , m_nAutoScrollMode(0)
 , m_cHistory(NULL)
 , m_cRegexKeyword(NULL)
@@ -220,7 +220,7 @@ BOOL CEditView::Create(
 	m_szComposition[0] = L'\0';
 
 	/* ルーラー表示 */
-	GetTextArea().SetAreaTop(GetTextArea().GetAreaTop()+GetDllShareData().m_Common.m_sWindow.m_nRulerHeight);	/* ルーラー高さ */
+	GetTextArea().SetAreaTop(GetTextArea().GetAreaTop()+DpiScaleY(GetDllShareData().m_Common.m_sWindow.m_nRulerHeight));	/* ルーラー高さ */
 	GetRuler().SetRedrawFlag();	// ルーラー全体を描き直す時=true   2002.02.25 Add By KK
 	m_hdcCompatDC = NULL;		/* 再描画用コンパチブルＤＣ */
 	m_hbmpCompatBMP = NULL;		/* 再描画用メモリＢＭＰ */
@@ -274,13 +274,13 @@ BOOL CEditView::Create(
 	m_cRegexKeyword = new CRegexKeyword( GetDllShareData().m_Common.m_sSearch.m_szRegexpLib );	//@@@ 2001.11.17 add MIK
 	m_cRegexKeyword->RegexKeySetTypes(m_pTypeData);	//@@@ 2001.11.17 add MIK
 
-	GetTextArea().SetTopYohaku( GetDllShareData().m_Common.m_sWindow.m_nRulerBottomSpace ); 	/* ルーラーとテキストの隙間 */
+	GetTextArea().SetTopYohaku(DpiScaleY(GetDllShareData().m_Common.m_sWindow.m_nRulerBottomSpace)); 	/* ルーラーとテキストの隙間 */
 	GetTextArea().SetAreaTop( GetTextArea().GetTopYohaku() );								/* 表示域の上端座標 */
 	/* ルーラー表示 */
 	if( m_pTypeData->m_ColorInfoArr[COLORIDX_RULER].m_bDisp && !m_bMiniMap ){
-		GetTextArea().SetAreaTop( GetTextArea().GetAreaTop() + GetDllShareData().m_Common.m_sWindow.m_nRulerHeight);	/* ルーラー高さ */
+		GetTextArea().SetAreaTop(GetTextArea().GetAreaTop() + DpiScaleY(GetDllShareData().m_Common.m_sWindow.m_nRulerHeight));	/* ルーラー高さ */
 	}
-	GetTextArea().SetLeftYohaku( GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace );
+	GetTextArea().SetLeftYohaku(DpiScaleX(GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace));
 
 	/* ウィンドウクラスの登録 */
 	//	Apr. 27, 2000 genta
@@ -288,7 +288,7 @@ BOOL CEditView::Create(
 	wc.style			= CS_DBLCLKS | CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW;
 	wc.lpfnWndProc		= EditViewWndProc;
 	wc.cbClsExtra		= 0;
-	wc.cbWndExtra		= sizeof( LONG_PTR );
+	wc.cbWndExtra		= 0;
 	wc.hInstance		= G_AppInstance();
 	wc.hIcon			= LoadIcon( NULL, IDI_APPLICATION );
 	wc.hCursor			= NULL/*LoadCursor( NULL, IDC_IBEAM )*/;
@@ -451,7 +451,7 @@ LRESULT CEditView::DispatchEvent(
 		return OnMOUSEHWHEEL( wParam, lParam );
 
 	case WM_CREATE:
-		::SetWindowLongPtr( hwnd, 0, (LONG_PTR) this );
+		::SetWindowLongPtr( hwnd, GWLP_USERDATA, (LONG_PTR) this );
 		m_hwndSizeBox = ::CreateWindowEx(
 			0L,									/* no extended styles */
 			WC_SCROLLBAR,						/* scroll bar control class */
@@ -490,7 +490,7 @@ LRESULT CEditView::DispatchEvent(
 
 		// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
 	case WM_SHOWWINDOW:
-		// ウィンドウ非表示の再に互換BMPを廃棄してメモリーを節約する
+		// ウィンドウ非表示の再に互換BMPを廃棄してメモリを節約する
 		if( hwnd == GetHwnd() && (BOOL)wParam == FALSE ){
 			DeleteCompatibleBitmap();
 		}
@@ -569,8 +569,8 @@ LRESULT CEditView::DispatchEvent(
 			/* テキストを貼り付け */
 			BOOL bHokan;
 			bHokan = m_bHokan;
-			if( m_bHideMouse && 0 <= m_nMousePouse ){
-				m_nMousePouse = -1;
+			if( m_bHideMouse && 0 <= m_nMousePause ){
+				m_nMousePause = -1;
 				::SetCursor( NULL );
 			}
 			GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)pszText, (LPARAM)wcslen(pszText), TRUE, 0 );
@@ -1121,7 +1121,7 @@ void CEditView::SetFont( void )
 	if( m_bMiniMap ){
 		GetTextMetrics().Update(hdc, GetFontset().GetFontHan(), 0, 0);
 	}else{
-		GetTextMetrics().Update(hdc, GetFontset().GetFontHan(), m_pTypeData->m_nLineSpace, m_pTypeData->m_nColumnSpace);
+		GetTextMetrics().Update(hdc, GetFontset().GetFontHan(), DpiScaleY(m_pTypeData->m_nLineSpace), DpiScaleX(m_pTypeData->m_nColumnSpace));
 	}
 
 	::ReleaseDC( GetHwnd(), hdc );
@@ -1690,7 +1690,7 @@ void CEditView::OnChangeSetting()
 	}
 	RECT		rc;
 
-	GetTextArea().SetTopYohaku( GetDllShareData().m_Common.m_sWindow.m_nRulerBottomSpace ); 		/* ルーラーとテキストの隙間 */
+	GetTextArea().SetTopYohaku(DpiScaleY(GetDllShareData().m_Common.m_sWindow.m_nRulerBottomSpace)); 		/* ルーラーとテキストの隙間 */
 	GetTextArea().SetAreaTop( GetTextArea().GetTopYohaku() );									/* 表示域の上端座標 */
 
 	// 文書種別更新
@@ -1698,9 +1698,9 @@ void CEditView::OnChangeSetting()
 
 	/* ルーラー表示 */
 	if( m_pTypeData->m_ColorInfoArr[COLORIDX_RULER].m_bDisp && !m_bMiniMap ){
-		GetTextArea().SetAreaTop(GetTextArea().GetAreaTop() + GetDllShareData().m_Common.m_sWindow.m_nRulerHeight);	/* ルーラー高さ */
+		GetTextArea().SetAreaTop(GetTextArea().GetAreaTop() + DpiScaleY(GetDllShareData().m_Common.m_sWindow.m_nRulerHeight));	/* ルーラー高さ */
 	}
-	GetTextArea().SetLeftYohaku( GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace );
+	GetTextArea().SetLeftYohaku(DpiScaleX(GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace));
 
 	/* フォントの変更 */
 	SetFont();

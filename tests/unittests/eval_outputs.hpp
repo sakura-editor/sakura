@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2021, Sakura Editor Organization
+	Copyright (C) 2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,14 +22,12 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include "StdAfx.h"
-#include <comdef.h>
-#include <OAIdl.h>
+#include <gtest/gtest.h>
 
-/*!
-	MinGW向け_com_raise_error実装
- */
-void _com_raise_error(HRESULT hr, IErrorInfo* pErrorInfo)
-{
-	throw _com_error(hr, pErrorInfo, true);
-}
+#include "util/string_ex.h"
+
+// 標準エラー出力に吐き出されたメッセージを評価します
+#define EXPECT_ERROUT(statementExpression, expected) \
+	testing::internal::CaptureStderr(); \
+	statementExpression; \
+	EXPECT_STREQ(strprintf(L"%s\n", expected).data(), u8stowcs(testing::internal::GetCapturedStderr()).data())

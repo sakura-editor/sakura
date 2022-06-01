@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -57,6 +57,8 @@ public:
 	//演算子
 	operator bool() const{ return m_bOpenResult!=FALSE; } //!< クリップボードを開けたならtrue
 
+	int GetDataType() const; //!< クリップボードデータ形式(CF_UNICODETEXT等)の取得
+
 private:
 	HWND m_hwnd;
 	BOOL m_bOpenResult;
@@ -65,6 +67,19 @@ private:
 public:
 	static bool HasValidData();    //!< クリップボード内に、サクラエディタで扱えるデータがあればtrue
 	static CLIPFORMAT GetSakuraFormat(); //!< サクラエディタ独自のクリップボードデータ形式
-	static int GetDataType();      //!< クリップボードデータ形式(CF_UNICODETEXT等)の取得
+
+protected:
+	// 単体テスト用コンストラクタ
+	explicit CClipboard(bool openStatus) : m_bOpenResult(openStatus) {}
+
+	// 同名の Windows API に引数を転送する仮想メンバ関数。
+	// 単体テスト内でオーバーライドすることで副作用のないテストを実施するのが目的。
+	virtual HANDLE SetClipboardData(UINT uFormat, HANDLE hMem) const;
+	virtual HANDLE GetClipboardData(UINT uFormat) const;
+	virtual BOOL EmptyClipboard() const;
+	virtual BOOL IsClipboardFormatAvailable(UINT format) const;
+	virtual UINT EnumClipboardFormats(UINT format) const;
+	virtual HGLOBAL GlobalAlloc(UINT uFlags, SIZE_T dwBytes) const;
+	virtual LPVOID GlobalLock(HGLOBAL hMem) const;
 };
 #endif /* SAKURA_CCLIPBOARD_4E783022_214C_4E51_A2E0_54EC343500F6_H_ */

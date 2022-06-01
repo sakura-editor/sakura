@@ -7,7 +7,7 @@
 /*
 	Copyright (C) 2007-2008, kobake
 	Copyright (C) 2009, rastiv
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -33,7 +33,7 @@
 /*
 	++ 概要 ++
 
-	enum と define の2種類の定数定義ヘッダを生成するためのモノ
+	enum と define の2種類の定数定義ヘッダーを生成するためのモノ
 
 	enum定数はソースコードから参照し、(デバッグがしやすくなる)
 	define定数はリソースから参照する  (リソース内ではenum定数を利用できない)

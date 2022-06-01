@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -27,7 +27,7 @@
 #define SAKURA_STDAPI_29C8A971_234C_46ED_96DB_A2D479992ABE_H_
 #pragma once
 
-//ランタイム情報ライブラリにアクセスするWindowsヘッダを参照する
+//ランタイム情報ライブラリにアクセスするWindowsヘッダーを参照する
 #include <ImageHlp.h>
 
 //デバッグ用。

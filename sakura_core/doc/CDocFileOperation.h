@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -44,7 +44,7 @@ public:
 	//ロードUI
 	bool OpenFileDialog(
 		HWND				hwndParent,
-		const WCHAR*		pszOpenFolder,	//!< [in]  NULL以外を指定すると初期フォルダを指定できる
+		const WCHAR*		pszOpenFolder,	//!< [in]  NULL以外を指定すると初期フォルダーを指定できる
 		SLoadInfo*			pLoadInfo,		//!< [in,out] ロード情報
 		std::vector<std::wstring>&	files
 	);

@@ -8,7 +8,7 @@
 	Copyright (C) 2002-2003, MIK
 	Copyright (C) 2006, ryoji
 +	Copyright (C) 2011, nasukoji
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -57,7 +57,7 @@ struct ctrl_info_t {
 	const WCHAR		*jname;		//説明
 } static p_ctrl_list[] = {
 	{ 0x0000, 0x00c0, L"NUL", L""	}, //NULL 空文字
-	{ 0x0001, 'A', L"SOH", L""	}, //START OF HEADING ヘッダ開始
+	{ 0x0001, 'A', L"SOH", L""	}, //START OF HEADING ヘッダー開始
 	{ 0x0002, 'B', L"STX", L""	}, //START OF TEXT テキスト開始
 	{ 0x0003, 'C', L"ETX", L""	}, //END OF TEXT テキスト終了
 	{ 0x0004, 'D', L"EOT", L""	}, //END OF TRANSMISSION 転送終了

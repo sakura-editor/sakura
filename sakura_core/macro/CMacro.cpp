@@ -16,7 +16,7 @@
 	Copyright (C) 2008, nasukoji, ryoji
 	Copyright (C) 2009, ryoji, nasukoji
 	Copyright (C) 2011, syat
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -46,7 +46,7 @@
 #include "cmd/CViewCommander_inline.h"
 #include "view/CEditView.h" //2002/2/10 aroka
 #include "macro/CSMacroMgr.h" //2002/2/10 aroka
-#include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
+#include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダー整理
 #include "_os/OleTypes.h" //2003-02-21 鬼
 #include "io/CTextStream.h"
 #include "window/CEditWnd.h"
@@ -61,6 +61,7 @@
 #include "CSelectLang.h"
 #include "config/app_constants.h"
 #include "String_define.h"
+#include "_os/CClipboard.h"
 
 CMacro::CMacro( EFunctionCode nFuncID )
 {
@@ -1020,10 +1021,10 @@ bool CMacro::HandleCommand(
 	case F_GREP:
 		//	Argument[0]	検索文字列
 		//	Argument[1]	検索対象にするファイル名
-		//	Argument[2]	検索対象にするフォルダ名
+		//	Argument[2]	検索対象にするフォルダー名
 		//	Argument[3]:
 		//		次の数値の和。
-		//		0x01	サブフォルダからも検索する
+		//		0x01	サブフォルダーからも検索する
 		//		0x02	この編集中のテキストから検索する（未実装）
 		//		0x04	英大文字と英小文字を区別する
 		//		0x08	正規表現
@@ -1043,8 +1044,8 @@ bool CMacro::HandleCommand(
 		//		0x0100 ～ 0xff00	文字コードセット番号 * 0x100
 		//		0x010000	単語単位で探す
 		//		0x020000	ファイル毎最初のみ検索
-		//		0x040000	ベースフォルダ表示
-		//		0x080000	フォルダ毎に表示
+		//		0x040000	ベースフォルダー表示
+		//		0x080000	フォルダー毎に表示
 		{
 			if( Argument[0] == NULL ){
 				::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
@@ -1085,7 +1086,7 @@ bool CMacro::HandleCommand(
 				cmWork4.SetString( Argument[1] );	cmWork4.Replace( L"\"", L"\"\"" );	//	置換後
 			}
 			CNativeW cmWork2;	cmWork2.SetString( Argument[ArgIndex+1] );	cmWork2.Replace( L"\"", L"\"\"" );	//	ファイル名
-			CNativeW cmWork3;	cmWork3.SetString( Argument[ArgIndex+2] );	cmWork3.Replace( L"\"", L"\"\"" );	//	フォルダ名
+			CNativeW cmWork3;	cmWork3.SetString( Argument[ArgIndex+2] );	cmWork3.Replace( L"\"", L"\"\"" );	//	フォルダー名
 
 			LPARAM lFlag = wtoi_def(Argument[ArgIndex+3], 5);
 
@@ -1126,7 +1127,7 @@ bool CMacro::HandleCommand(
 
 			//GOPTオプション
 			pOpt[0] = '\0';
-			if( lFlag & 0x01 )wcscat( pOpt, L"S" );	/* サブフォルダからも検索する */
+			if( lFlag & 0x01 )wcscat( pOpt, L"S" );	/* サブフォルダーからも検索する */
 			if( lFlag & 0x04 )wcscat( pOpt, L"L" );	/* 英大文字と英小文字を区別する */
 			if( lFlag & 0x08 )wcscat( pOpt, L"R" );	/* 正規表現 */
 			if(          0x20 == (lFlag & 0x400020) )wcscat( pOpt, L"P" );	// 行を出力する
@@ -1903,7 +1904,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		}
 		return true;
 	case F_FOLDERDIALOG:
-		//	2011.03.18 syat フォルダダイアログの表示
+		//	2011.03.18 syat フォルダーダイアログの表示
 		{
 			WCHAR *Source;
 			int SourceLength;

@@ -6,7 +6,7 @@
 */
 /*
 	Copyright (C) 2010, Uchi
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -70,6 +70,6 @@ protected:
 	LPVOID GetHelpIdTable(void) override;
 
 private:
-	SAscertainInfo* m_psi;			// インターフェイス
+	SAscertainInfo* m_psi;			// インターフェース
 };
 #endif /* SAKURA_CDLGTYPEASCERTAIN_7000A035_D26C_4FB2_AE75_6A63F3F806B9_H_ */

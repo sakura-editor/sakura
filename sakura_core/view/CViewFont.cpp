@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -27,13 +27,14 @@
 #include "StdAfx.h"
 #include "CViewFont.h"
 #include "env/DLLSHAREDATA.h"
+#include "util/window.h"
 
 /*! フォント作成
 */
 void CViewFont::CreateFonts( const LOGFONT *plf )
 {
 	LOGFONT	lf;
-	int miniSize = GetDllShareData().m_Common.m_sWindow.m_nMiniMapFontSize;
+	int miniSize = ::DpiScaleX(GetDllShareData().m_Common.m_sWindow.m_nMiniMapFontSize);
 	int quality = GetDllShareData().m_Common.m_sWindow.m_nMiniMapQuality;
 	int outPrec = OUT_TT_ONLY_PRECIS;	// FixedSys等でMiniMapのフォントが小さくならない修正
 

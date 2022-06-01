@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -185,7 +185,7 @@ bool CEditView::TagJumpSub(
 
 /*! 指定拡張子のファイルに対応するファイルを開く補助関数
 
-	@date 2003.06.28 Moca ヘッダ・ソースファイルオープン機能のコードを統合
+	@date 2003.06.28 Moca ヘッダー・ソースファイルオープン機能のコードを統合
 	@date 2008.04.09 ryoji 処理対象(file_ext)と開く対象(open_ext)の扱いが逆になっていたのを修正
 */
 BOOL CEditView::OPEN_ExtFromtoExt(

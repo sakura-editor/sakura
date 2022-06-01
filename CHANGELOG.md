@@ -92,7 +92,7 @@
 ### その他変更
 
 - バージョン情報に表示するプロジェクトURLに付けるラベルキャプションを短くする [\#1215](https://github.com/sakura-editor/sakura/pull/1215) ([berryzplus](https://github.com/berryzplus))
-- 除外ファイル・除外フォルダの指定をGrep置換でも使えるようにする [\#1210](https://github.com/sakura-editor/sakura/pull/1210) ([berryzplus](https://github.com/berryzplus))
+- 除外ファイル・除外フォルダーの指定をGrep置換でも使えるようにする [\#1210](https://github.com/sakura-editor/sakura/pull/1210) ([berryzplus](https://github.com/berryzplus))
 - キーワードを指定してタグジャンプができないバグを修正 [\#1208](https://github.com/sakura-editor/sakura/pull/1208) ([7-rate](https://github.com/7-rate))
 - マクロMakeStringBufferW0を廃止する [\#1203](https://github.com/sakura-editor/sakura/pull/1203) ([berryzplus](https://github.com/berryzplus))
 - ヘルプのコピーライトの年とソフト名変更。 [\#1202](https://github.com/sakura-editor/sakura/pull/1202) ([KENCHjp](https://github.com/KENCHjp))
@@ -173,9 +173,9 @@
 
 ### 機能追加
 
-- 最近使ったファイル挿入 と 最近使ったフォルダ挿入 を行う機能追加 [\#1063](https://github.com/sakura-editor/sakura/pull/1063) ([beru](https://github.com/beru))
+- 最近使ったファイル挿入 と 最近使ったフォルダー挿入 を行う機能追加 [\#1063](https://github.com/sakura-editor/sakura/pull/1063) ([beru](https://github.com/beru))
 - PlatformToolset 指定をプロパティーシートに分離して VS2017 および VS2019 で両対応できるようにする [\#866](https://github.com/sakura-editor/sakura/pull/866) ([m-tmatma](https://github.com/m-tmatma))
-- 「同名のC/C++ヘッダ\(ソース\)を開く」機能が利用可能か調べる処理で拡張子の確認が行われるように記述追加 [\#812](https://github.com/sakura-editor/sakura/pull/812) ([beru](https://github.com/beru))
+- 「同名のC/C++ヘッダー\(ソース\)を開く」機能が利用可能か調べる処理で拡張子の確認が行われるように記述追加 [\#812](https://github.com/sakura-editor/sakura/pull/812) ([beru](https://github.com/beru))
 
 ### バグ修正
 
@@ -252,7 +252,7 @@
 ### 機能追加
 
 - Window テキストをCNativeT で取得/設定するユーティリティ関数を追加 [\#776](https://github.com/sakura-editor/sakura/pull/776) ([m-tmatma](https://github.com/m-tmatma))
-- 開いているファイルのフォルダのパスをクリップボードにコピーできるようにする [\#718](https://github.com/sakura-editor/sakura/pull/718) ([m-tmatma](https://github.com/m-tmatma))
+- 開いているファイルのフォルダーのパスをクリップボードにコピーできるようにする [\#718](https://github.com/sakura-editor/sakura/pull/718) ([m-tmatma](https://github.com/m-tmatma))
 - Vistaスタイルのファイルダイアログを使えるようにする [\#716](https://github.com/sakura-editor/sakura/pull/716) ([beru](https://github.com/beru))
 - 背景画像表示の不透明度を設定出来るように変更 [\#704](https://github.com/sakura-editor/sakura/pull/704) ([ds14050](https://github.com/ds14050))
 - Windows Imaging Component を使って背景画像を読み込み、透過描画対応 [\#683](https://github.com/sakura-editor/sakura/pull/683) ([beru](https://github.com/beru))
@@ -268,7 +268,7 @@
 - ツールバーを非表示から表示に切り替える際にアイコンの状態を設定する処理を呼び出し [\#464](https://github.com/sakura-editor/sakura/pull/464) ([beru](https://github.com/beru))
 - メールアドレスの色替え判定を高速化すると同時にRFCに準拠させる [\#421](https://github.com/sakura-editor/sakura/pull/421) ([berryzplus](https://github.com/berryzplus))
 - 『SAKURAで Grep』をエクスプローラに追加する [\#411](https://github.com/sakura-editor/sakura/pull/411) ([m-tmatma](https://github.com/m-tmatma))
-- grep/grep 置換で除外ファイル、除外フォルダを指定できるようにする [\#403](https://github.com/sakura-editor/sakura/pull/403) ([m-tmatma](https://github.com/m-tmatma))
+- grep/grep 置換で除外ファイル、除外フォルダーを指定できるようにする [\#403](https://github.com/sakura-editor/sakura/pull/403) ([m-tmatma](https://github.com/m-tmatma))
 - 環境変数 SKIP\_CREATE\_GITHASH が 1 にセットしている場合、githash.h の生成をスキップする [\#319](https://github.com/sakura-editor/sakura/pull/319) ([m-tmatma](https://github.com/m-tmatma))
 - res ファイルのハッシュを計算するスクリプト [\#317](https://github.com/sakura-editor/sakura/pull/317) ([m-tmatma](https://github.com/m-tmatma))
 - python のアウトライン解析を実装 [\#314](https://github.com/sakura-editor/sakura/pull/314) ([m-tmatma](https://github.com/m-tmatma))
@@ -277,8 +277,8 @@
 
 ### バグ修正
 
-- grep で 除外ファイル、除外フォルダが効かない のを修正 [\#758](https://github.com/sakura-editor/sakura/pull/758) ([m-tmatma](https://github.com/m-tmatma))
-- grep で 除外ファイル、除外フォルダが効かない問題を修正するため、除外パターンを指定するコマンドラインを復活する [\#750](https://github.com/sakura-editor/sakura/pull/750) ([m-tmatma](https://github.com/m-tmatma))
+- grep で 除外ファイル、除外フォルダーが効かない のを修正 [\#758](https://github.com/sakura-editor/sakura/pull/758) ([m-tmatma](https://github.com/m-tmatma))
+- grep で 除外ファイル、除外フォルダーが効かない問題を修正するため、除外パターンを指定するコマンドラインを復活する [\#750](https://github.com/sakura-editor/sakura/pull/750) ([m-tmatma](https://github.com/m-tmatma))
 - ウィンドウ一覧画面を開いた後にウィンドウサイズを大きくしてから閉じて開き直すとウィンドウサイズにコントロールが追従していない問題を修正 [\#726](https://github.com/sakura-editor/sakura/pull/726) ([beru](https://github.com/beru))
 - マウスクリックによるキャレット移動が出来なくなる不具合の解消 [\#574](https://github.com/sakura-editor/sakura/pull/574) ([beru](https://github.com/beru))
 - Fix \#539 「Texのファイルで落ちます。」 [\#553](https://github.com/sakura-editor/sakura/pull/553) ([ds14050](https://github.com/ds14050))
@@ -313,7 +313,7 @@
 - Copyright を 2019 にする [\#761](https://github.com/sakura-editor/sakura/pull/761) ([m-tmatma](https://github.com/m-tmatma))
 - issue template を追加する [\#757](https://github.com/sakura-editor/sakura/pull/757) ([m-tmatma](https://github.com/m-tmatma))
 - プラグインを列挙して呼び出す同じような記述があちらこちらにあったので、CJackManager::InvokePlugins を追加して使用 [\#755](https://github.com/sakura-editor/sakura/pull/755) ([beru](https://github.com/beru))
-- Revert "grep で 除外ファイル、除外フォルダが効かない問題を修正するため、除外パターンを指定するコマンドラインを復活する" [\#753](https://github.com/sakura-editor/sakura/pull/753) ([m-tmatma](https://github.com/m-tmatma))
+- Revert "grep で 除外ファイル、除外フォルダーが効かない問題を修正するため、除外パターンを指定するコマンドラインを復活する" [\#753](https://github.com/sakura-editor/sakura/pull/753) ([m-tmatma](https://github.com/m-tmatma))
 - 新規インストール時に言語設定に英語を適用する処理方法の変更 [\#749](https://github.com/sakura-editor/sakura/pull/749) ([beru](https://github.com/beru))
 - doxygen と cppcheck のインストールを install セクションで行う [\#742](https://github.com/sakura-editor/sakura/pull/742) ([m-tmatma](https://github.com/m-tmatma))
 - 開いているファイル名をクリップボードにコピーする機能をデフォルトでメニューに追加する [\#741](https://github.com/sakura-editor/sakura/pull/741) ([m-tmatma](https://github.com/m-tmatma))
@@ -332,7 +332,7 @@
 - CodeFactor の badge を追加 [\#693](https://github.com/sakura-editor/sakura/pull/693) ([m-tmatma](https://github.com/m-tmatma))
 - WinMainを整理したい [\#692](https://github.com/sakura-editor/sakura/pull/692) ([berryzplus](https://github.com/berryzplus))
 - 8bit256色ツールアイコンを取り込む [\#690](https://github.com/sakura-editor/sakura/pull/690) ([berryzplus](https://github.com/berryzplus))
-- マルチユーザ設定を有効にする [\#689](https://github.com/sakura-editor/sakura/pull/689) ([berryzplus](https://github.com/berryzplus))
+- マルチユーザー設定を有効にする [\#689](https://github.com/sakura-editor/sakura/pull/689) ([berryzplus](https://github.com/berryzplus))
 - ツール類のコンパイルオプションに/MPを付ける [\#688](https://github.com/sakura-editor/sakura/pull/688) ([berryzplus](https://github.com/berryzplus))
 - 「このファイルのパス名をコピー」 をタブメニューにも追加する [\#666](https://github.com/sakura-editor/sakura/pull/666) ([m-tmatma](https://github.com/m-tmatma))
 - 縦スクロール時に不必要にルーラーの再描画がされないように対策 [\#660](https://github.com/sakura-editor/sakura/pull/660) ([beru](https://github.com/beru))
@@ -340,7 +340,7 @@
 - 辞書Tipの描画改善、およびHighDPI対応 [\#647](https://github.com/sakura-editor/sakura/pull/647) ([berryzplus](https://github.com/berryzplus))
 - フォントラベルのHighDPI対応 [\#645](https://github.com/sakura-editor/sakura/pull/645) ([berryzplus](https://github.com/berryzplus))
 - 分割線ウィンドウクラスの処理で使用している各数値をDPI設定に応じて調整 [\#641](https://github.com/sakura-editor/sakura/pull/641) ([beru](https://github.com/beru))
-- 独自拡張プロパティシートの「設定フォルダ」ボタンの位置調整処理でDPIを考慮 [\#638](https://github.com/sakura-editor/sakura/pull/638) ([beru](https://github.com/beru))
+- 独自拡張プロパティシートの「設定フォルダー」ボタンの位置調整処理でDPIを考慮 [\#638](https://github.com/sakura-editor/sakura/pull/638) ([beru](https://github.com/beru))
 - `ファイルの場所を コマンドプロンプトを開く` で 管理者ではないときに 32bit アプリから 64bit OS上で起動したときに 32bit で起動してしまうのを修正 [\#627](https://github.com/sakura-editor/sakura/pull/627) ([m-tmatma](https://github.com/m-tmatma))
 - 設定データ読み込み処理において言語設定切り替え後にMRUエントリが無い場合は新規インストール後とみなし false を返すように変更 [\#620](https://github.com/sakura-editor/sakura/pull/620) ([beru](https://github.com/beru))
 - reST 用の拡張子 \(.rst\) を関連付け用の設定に追加 [\#612](https://github.com/sakura-editor/sakura/pull/612) ([m-tmatma](https://github.com/m-tmatma))
@@ -373,7 +373,7 @@
 - LICENSEファイルを追加する [\#470](https://github.com/sakura-editor/sakura/pull/470) ([berryzplus](https://github.com/berryzplus))
 - IME編集エリアの位置変更を行う ImmSetCompositionWindow の呼び出しは IMEが開いている時だけに限定 [\#460](https://github.com/sakura-editor/sakura/pull/460) ([beru](https://github.com/beru))
 - ツールバーの状態更新を必要な場合にのみ行うように変更 [\#456](https://github.com/sakura-editor/sakura/pull/456) ([beru](https://github.com/beru))
-- bregonig のライセンスファイルをライセンス用のサブフォルダに配置する [\#455](https://github.com/sakura-editor/sakura/pull/455) ([m-tmatma](https://github.com/m-tmatma))
+- bregonig のライセンスファイルをライセンス用のサブフォルダーに配置する [\#455](https://github.com/sakura-editor/sakura/pull/455) ([m-tmatma](https://github.com/m-tmatma))
 - SetScrollInfo の呼び出しを抑制 [\#453](https://github.com/sakura-editor/sakura/pull/453) ([beru](https://github.com/beru))
 - ステータスバーのテキスト設定、既に同じ値が設定されている場合は再設定しないようにする [\#452](https://github.com/sakura-editor/sakura/pull/452) ([beru](https://github.com/beru))
 - タイプ別設定のカラーで強調キーワードの共通設定を押すと表示されるダイアログの高さ調整、DPIスケーリング [\#443](https://github.com/sakura-editor/sakura/pull/443) ([beru](https://github.com/beru))
@@ -396,7 +396,7 @@
 - deleteのオーバーロードがGCCに怒られる対応 [\#386](https://github.com/sakura-editor/sakura/pull/386) ([berryzplus](https://github.com/berryzplus))
 - HTML Help 中のリンクを GitHub のものに変える [\#383](https://github.com/sakura-editor/sakura/pull/383) ([m-tmatma](https://github.com/m-tmatma))
 - githash.batも exit /b 0 にする [\#374](https://github.com/sakura-editor/sakura/pull/374) ([berryzplus](https://github.com/berryzplus))
-- MinGW向けMakefileからbtoolフォルダへの参照を取り除く [\#371](https://github.com/sakura-editor/sakura/pull/371) ([berryzplus](https://github.com/berryzplus))
+- MinGW向けMakefileからbtoolフォルダーへの参照を取り除く [\#371](https://github.com/sakura-editor/sakura/pull/371) ([berryzplus](https://github.com/berryzplus))
 - sakura\_lang\_en\_US.dll の MinGW 向け Makefile を更新する [\#369](https://github.com/sakura-editor/sakura/pull/369) ([berryzplus](https://github.com/berryzplus))
 - HTML Help Workshop がVS2017で導入される条件 [\#366](https://github.com/sakura-editor/sakura/pull/366) ([KENCHjp](https://github.com/KENCHjp))
 - MINGW\_HAS\_SECURE\_APIが無効か判定する式の修正 [\#363](https://github.com/sakura-editor/sakura/pull/363) ([berryzplus](https://github.com/berryzplus))
@@ -405,7 +405,7 @@
 - githash.bat のエラー耐性を上げる [\#360](https://github.com/sakura-editor/sakura/pull/360) ([m-tmatma](https://github.com/m-tmatma))
 - インストーラの UI を英語対応にする [\#359](https://github.com/sakura-editor/sakura/pull/359) ([m-tmatma](https://github.com/m-tmatma))
 - MinGWでサクラエディタをビルドできるようにメイクファイルを更新する [\#351](https://github.com/sakura-editor/sakura/pull/351) ([berryzplus](https://github.com/berryzplus))
-- インストーラ関連のフォルダを無視ファイルに追加 [\#343](https://github.com/sakura-editor/sakura/pull/343) ([m-tmatma](https://github.com/m-tmatma))
+- インストーラ関連のフォルダーを無視ファイルに追加 [\#343](https://github.com/sakura-editor/sakura/pull/343) ([m-tmatma](https://github.com/m-tmatma))
 - バッチファイルのコピーで /Y と /B をつける [\#342](https://github.com/sakura-editor/sakura/pull/342) ([m-tmatma](https://github.com/m-tmatma))
 - ビルドに関するドキュメントを更新、SKIP\_CREATE\_GITHASH に関する説明を移動 [\#341](https://github.com/sakura-editor/sakura/pull/341) ([m-tmatma](https://github.com/m-tmatma))
 - keyword ディレクトリ以下のファイルの説明を追加 [\#340](https://github.com/sakura-editor/sakura/pull/340) ([m-tmatma](https://github.com/m-tmatma))
@@ -413,7 +413,7 @@
 - インストーラ用のドキュメントを更新 [\#337](https://github.com/sakura-editor/sakura/pull/337) ([m-tmatma](https://github.com/m-tmatma))
 - postBuild.bat の処理内容を更新 [\#336](https://github.com/sakura-editor/sakura/pull/336) ([m-tmatma](https://github.com/m-tmatma))
 - bregonig.dll のファイル内容とタイムスタンプを比較する [\#335](https://github.com/sakura-editor/sakura/pull/335) ([m-tmatma](https://github.com/m-tmatma))
-- インストーラの生成先のフォルダにプラットフォーム名を含める [\#333](https://github.com/sakura-editor/sakura/pull/333) ([m-tmatma](https://github.com/m-tmatma))
+- インストーラの生成先のフォルダーにプラットフォーム名を含める [\#333](https://github.com/sakura-editor/sakura/pull/333) ([m-tmatma](https://github.com/m-tmatma))
 - \#329 によるデグレを修正 \(bron412.zip の bregonig.dll が使われなくなる\) [\#332](https://github.com/sakura-editor/sakura/pull/332) ([m-tmatma](https://github.com/m-tmatma))
 - 大きすぎるファイル \(2GBくらいを超えるもの\) を読み込もうとしたときに正しくエラーメッセージを出す [\#330](https://github.com/sakura-editor/sakura/pull/330) ([kobake](https://github.com/kobake))
 - bregonig.dll を sakura.exe と同じ場所に自動配置 [\#329](https://github.com/sakura-editor/sakura/pull/329) ([kobake](https://github.com/kobake))

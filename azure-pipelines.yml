@@ -4,40 +4,13 @@
 #   https://docs.microsoft.com/en-us/azure/devops/pipelines/build/triggers?view=azure-devops&viewFallbackFrom=vsts&tabs=yaml
 ###############################################################################################################################
 trigger:
-  branches:
-    include:
-      - master
-      - develop
-      - feature/*
-      - revert-*
   paths:
     exclude:
-      - .github/*
+      - '**/*.md'
+      - '.github/*'
       - .gitignore
-      - .travis.yml
+      - .editorconfig
       - appveyor.yml
-      - CHANGELOG.md
-      - CONTRIBUTING.md
-      - CPPLINT.md
-      - README.md
-      - SonarQube.md
-      - addDoxygenFileComment.md
-      - build.md
-      - create-big-file.md
-      - debug-tasktray-menu.md
-      - get-PR.md
-      - ci/azure-pipelines/azure-pipelines.md
-      - ci/build-batchfiles.md
-      - ci/build-envvars.md
-      - installer/externals/bregonig/README.md
-      - installer/externals/universal-ctags/README.md
-      - installer/readme.md
-      - remove-redundant-blank-lines.md
-      - tools/find-tools.md
-      - tools/macro/macro.md
-      - tools/zip/readme.md
-      - tests/unittest.md
-      - vcx-props/project-PlatformToolset.md
 
 ###############################################################################################################################
 #   ビルドトリガー (Pull Request)
@@ -45,40 +18,13 @@ trigger:
 #   https://docs.microsoft.com/en-us/azure/devops/pipelines/build/triggers?view=azure-devops&tabs=yaml#pull-request-validation
 ###############################################################################################################################
 pr:
-  branches:
-    include:
-      - master
-      - develop
-      - feature/*
-      - revert-*
   paths:
     exclude:
-      - .github/*
+      - '**/*.md'
+      - '.github/*'
       - .gitignore
-      - .travis.yml
+      - .editorconfig
       - appveyor.yml
-      - CHANGELOG.md
-      - CONTRIBUTING.md
-      - CPPLINT.md
-      - README.md
-      - SonarQube.md
-      - addDoxygenFileComment.md
-      - build.md
-      - create-big-file.md
-      - debug-tasktray-menu.md
-      - get-PR.md
-      - ci/azure-pipelines/azure-pipelines.md
-      - ci/build-batchfiles.md
-      - ci/build-envvars.md
-      - installer/externals/bregonig/README.md
-      - installer/externals/universal-ctags/README.md
-      - installer/readme.md
-      - remove-redundant-blank-lines.md
-      - tools/find-tools.md
-      - tools/macro/macro.md
-      - tools/zip/readme.md
-      - tests/unittest.md
-      - vcx-props/project-PlatformToolset.md
 
 ###############################################################################################################################
 #   jobs/job 定義
@@ -86,18 +32,6 @@ pr:
 #   https://docs.microsoft.com/en-us/azure/devops/pipelines/process/phases?view=azure-devops&tabs=yaml
 ###############################################################################################################################
 jobs:
-
-# サクラエディタのビルドを行う JOB (VS2017)
-# * サクラエディタ本体
-# * HTML Help
-# * Installer
-# * 単体テスト
-- template: ci/azure-pipelines/template.job.build-unittest.yml
-  parameters:
-    name: VS2017
-    vmImage: 'VS2017-Win2016'
-    displayName: VS2017
-    ARG_VSVERSION: 15
 
 # サクラエディタのビルドを行う JOB (VS2019)
 # * サクラエディタ本体
@@ -111,7 +45,13 @@ jobs:
     name: VS2019
     vmImage: 'windows-2019'
     displayName: VS2019
-    ARG_VSVERSION: 16
+
+# サクラエディタのビルドを行う JOB (VS2022)
+- template: ci/azure-pipelines/template.job.build-unittest.yml
+  parameters:
+    name: VS2022
+    vmImage: 'windows-2022'
+    displayName: VS2022
 
 # サクラエディタのビルドを行う JOB(MinGW)
 # * サクラエディタ本体
@@ -119,35 +59,35 @@ jobs:
 - template: ci/azure-pipelines/template.job.build-on-msys2.yml
   parameters:
     name: MinGW
-    vmImage: 'VS2017-Win2016'
+    vmImage: 'windows-latest'
     displayName: MinGW
 
 # SonarQube で解析を行う JOB
 - template: ci/azure-pipelines/template.job.SonarQube.yml
   parameters:
     name: SonarQube
-    vmImage: 'VS2017-Win2016'
+    vmImage: 'windows-latest'
     displayName: SonarQube
 
 # Cppcheck を行う JOB
 - template: ci/azure-pipelines/template.job.cppcheck.yml
   parameters:
     name: cppcheck
-    vmImage: 'VS2017-Win2016'
+    vmImage: 'windows-latest'
     displayName: cppcheck
 
 # doxygen を行う JOB
 - template: ci/azure-pipelines/template.job.doxygen.yml
   parameters:
     name: doxygen
-    vmImage: 'VS2017-Win2016'
+    vmImage: 'windows-latest'
     displayName: doxygen
 
 # 文字コードのチェックを行う JOB
 - template: ci/azure-pipelines/template.job.checkEncoding.yml
   parameters:
     name: checkEncoding
-    vmImage: 'VS2017-Win2016'
+    vmImage: 'windows-latest'
 
 #############################################################################################################
 #   Python スクリプトのコンパイル確認を行う job
@@ -155,5 +95,5 @@ jobs:
 - template: ci/azure-pipelines/template.job.python-check.yml
   parameters:
     name: script_check
-    vmImage: 'VS2017-Win2016'
+    vmImage: 'windows-latest'
     displayName: script_check

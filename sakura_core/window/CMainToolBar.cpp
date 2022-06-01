@@ -4,7 +4,7 @@
 	Copyright (C) 2008, kobake
 	Copyright (C) 2010, Uchi, Moca
 	Copyright (C) 2012, aroka, Uchi
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -106,7 +106,7 @@ static LRESULT CALLBACK ToolBarWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPAR
 	switch( msg )
 	{
 	// WinXP Visual Style のときにツールバー上でのマウス左右ボタン同時押しで無応答になる
-	//（マウスをキャプチャーしたまま放さない） 問題を回避するために右ボタンを無視する
+	//（マウスをキャプチャしたまま放さない） 問題を回避するために右ボタンを無視する
 	case WM_RBUTTONDOWN:
 	case WM_RBUTTONUP:
 		return 0L;				// 右ボタンの UP/DOWN は本来のウィンドウプロシージャに渡さない

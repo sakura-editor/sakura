@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2007, kobake
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -65,7 +65,7 @@ static const bool UNICODE_BOOL=true;
 #define FILL_STRANGE_IN_NEW_MEMORY
 #endif
 
-//crtdbg.hによるメモリーリークチェックを使うかどうか (デバッグ用)
+//crtdbg.hによるメモリリークチェックを使うかどうか (デバッグ用)
 #if defined(_MSC_VER) &&  defined(_DEBUG)
 #define USE_LEAK_CHECK_WITH_CRTDBG
 #endif
@@ -92,7 +92,7 @@ static const bool UNICODE_BOOL=true;
 		);
 #endif
 
-//crtdbg.hによるメモリーリークチェックを使うかどうか (デバッグ用)
+//crtdbg.hによるメモリリークチェックを使うかどうか (デバッグ用)
 #ifdef USE_LEAK_CHECK_WITH_CRTDBG
 	//Cランタイムの機能を使ってメモリリークを検出する
 	//  メモリリークチェックの結果出力を得るには

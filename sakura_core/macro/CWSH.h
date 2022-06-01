@@ -5,12 +5,12 @@
 	@date 2002年4月28日,5月3日,5月5日,5月6日,5月13日,5月16日
 	@date 2002.08.25 genta リンクエラー回避のためCWSHManager.hにエディタの
 		マクロインターフェース部を分離．
-	@date 2009.10.29 syat インタフェースオブジェクト部分をCWSHIfObj.hに分離
+	@date 2009.10.29 syat インターフェースオブジェクト部分をCWSHIfObj.hに分離
 */
 /*
 	Copyright (C) 2002, 鬼, genta
 	Copyright (C) 2009, syat
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -25,7 +25,7 @@
 //↑Microsoft Platform SDK より
 #include "macro/CIfObj.h"
 
-/* 2009.10.29 syat インタフェースオブジェクト部分をCWSHIfObj.hに分離
+/* 2009.10.29 syat インターフェースオブジェクト部分をCWSHIfObj.hに分離
 template<class Base>
 class ImplementsIUnknown: public Base
 
@@ -39,7 +39,7 @@ class CWSHClient final : IWSHClient
 
 public:
 	// 型定義
-	typedef std::vector<CIfObj*> List;      // 所有しているインタフェースオブジェクトのリスト
+	typedef std::vector<CIfObj*> List;      // 所有しているインターフェースオブジェクトのリスト
 	typedef List::const_iterator ListIter;	// そのイテレータ
 
 	// コンストラクタ・デストラクタ

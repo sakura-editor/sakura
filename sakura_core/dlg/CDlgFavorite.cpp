@@ -8,7 +8,7 @@
 	Copyright (C) 2003, MIK
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2010, Moca
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -52,12 +52,12 @@
 const DWORD p_helpids[] = {
 	IDC_TAB_FAVORITE,				HIDC_TAB_FAVORITE,				//タブ
 	IDC_LIST_FAVORITE_FILE,			HIDC_LIST_FAVORITE_FILE,		//ファイル
-	IDC_LIST_FAVORITE_FOLDER,		HIDC_LIST_FAVORITE_FOLDER,		//フォルダ
+	IDC_LIST_FAVORITE_FOLDER,		HIDC_LIST_FAVORITE_FOLDER,		//フォルダー
 	IDC_LIST_FAVORITE_EXCEPTMRU,	HIDC_LIST_FAVORITE_EXCEPTMRU,	//MRU除外
 	IDC_LIST_FAVORITE_SEARCH,		HIDC_LIST_FAVORITE_SEARCH,		//検索
 	IDC_LIST_FAVORITE_REPLACE,		HIDC_LIST_FAVORITE_REPLACE,		//置換
 	IDC_LIST_FAVORITE_GREP_FILE,	HIDC_LIST_FAVORITE_GREPFILE,	//GREPファイル
-	IDC_LIST_FAVORITE_GREP_FOLDER,	HIDC_LIST_FAVORITE_GREPFOLDER,	//GREPフォルダ
+	IDC_LIST_FAVORITE_GREP_FOLDER,	HIDC_LIST_FAVORITE_GREPFOLDER,	//GREPフォルダー
 	IDC_LIST_FAVORITE_CMD,			HIDC_LIST_FAVORITE_CMD,			//コマンド
 	IDC_LIST_FAVORITE_CUR_DIR,		HIDC_LIST_FAVORITE_CUR_DIR,		//カレントディレクトリ
 //	IDC_STATIC_BUTTONS,				-1,
@@ -663,7 +663,7 @@ BOOL CDlgFavorite::OnNotify(NMHDR* pNMHDR)
 				}
 				return TRUE;
 
-			// ListViewヘッダクリック:ソートする
+			// ListViewヘッダークリック:ソートする
 			case LVN_COLUMNCLICK:
 				ListViewSort(
 					m_aListViewInfo[m_nCurrentTab],
@@ -1195,7 +1195,7 @@ void CDlgFavorite::ListViewSort(ListViewSortInfo& info, const CRecent* pRecent, 
 		info.bSortAscending = (bReverse ? (!info.bSortAscending): true);
 	}
 	
-	// ヘッダ書き換え
+	// ヘッダー書き換え
 	WCHAR szHeader[200];
 	LV_COLUMN	col;
 	if( -1 != info.nSortColumn ){

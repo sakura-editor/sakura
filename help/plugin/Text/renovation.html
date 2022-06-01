@@ -17,15 +17,15 @@
 
 <h3 id="c0401">マクロ関連クラスの改造</h3>
 <div class="li100">
-WSHマクロで使用できるインタフェースオブジェクトを、Editorだけではなく複数扱えるように修正した。<br>
+WSHマクロで使用できるインターフェースオブジェクトを、Editorだけではなく複数扱えるように修正した。<br>
 </div>
 <div class="li200">
 <pre>
 CWSHManager                   WSHマクロ実行の入り口。
                               .ExecKeyMacro関数の中でCWSHClientを作成する。
 CWSHClient                    WSH呼び出しの入り口。
-CIfObj                        純粋なインタフェースオブジェクト
-  - CWSHIfObj                   WSHマクロに特化したインタフェースオブジェクト
+CIfObj                        純粋なインターフェースオブジェクト
+  - CWSHIfObj                   WSHマクロに特化したインターフェースオブジェクト
       - CEditorIfObj              今までのEditorオブジェクト
       - plugin/CPluginIfObj       プラグイン共通機能を提供するPluginオブジェクト
       - plugin/COutlineIfObj      アウトライン解析機能を提供するOutlineオブジェクト

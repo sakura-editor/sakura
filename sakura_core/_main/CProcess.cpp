@@ -9,7 +9,7 @@
 	Copyright (C) 2002, aroka 新規作成
 	Copyright (C) 2004, Moca
 	Copyright (C) 2009, ryoji
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -129,7 +129,7 @@ int CProcess::WriteDump( PEXCEPTION_POINTERS pExceptPtrs )
 
 	static WCHAR szFile[MAX_PATH];
 	// 出力先はiniと同じ（InitializeProcess()後に確定）
-	// Vista以降では C:\Users\(ユーザ名)\AppData\Local\CrashDumps に出力
+	// Vista以降では C:\Users\(ユーザー名)\AppData\Local\CrashDumps に出力
 	GetInidirOrExedir( szFile, _APP_NAME_(_T) L".dmp" );
 
 	HANDLE hFile = ::CreateFile(

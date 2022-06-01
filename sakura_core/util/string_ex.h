@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -29,6 +29,7 @@
 
 #include <vadefs.h>
 #include <string>
+#include <string_view>
 #include "basis/primitive.h"
 #include "debug/Debug2.h"
 
@@ -205,10 +206,17 @@ inline int auto_vsprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va
 #define auto_sprintf_s(buf, nBufCount, format, ...)		::_sntprintf_s((buf), nBufCount, _TRUNCATE, (format), __VA_ARGS__)
 #define auto_snprintf_s(buf, nBufCount, format, ...)	::_sntprintf_s((buf), nBufCount, _TRUNCATE, (format), __VA_ARGS__)
 
+std::wstring& eos(std::wstring& strOut, size_t cchOut);
+std::string& eos(std::string& strOut, size_t cchOut);
+
+int vstrprintf(std::wstring& strOut, const WCHAR* pszFormat, va_list& argList);
+int vstrprintf(std::string& strOut, const CHAR* pszFormat, va_list& argList);
+int strprintf(std::wstring& strOut, const WCHAR* pszFormat, ...);
+int strprintf(std::string& strOut, const CHAR* pszFormat, ...);
 std::wstring vstrprintf(const WCHAR* pszFormat, va_list& argList);
+std::string vstrprintf(const CHAR* pszFormat, va_list& argList);
 std::wstring strprintf(const WCHAR* pszFormat, ...);
-int vstrprintf( std::wstring& strOut, const WCHAR* pszFormat, va_list& argList );
-int strprintf( std::wstring& strOut, const WCHAR* pszFormat, ... );
+std::string strprintf(const CHAR* pszFormat, ...);
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      文字コード変換                         //
@@ -234,6 +242,11 @@ char*	wcstombs_new(const wchar_t* src); //戻り値はnew[]で確保して返す
 char*	wcstombs_new(const wchar_t* pSrc,int nSrcLen); //戻り値はnew[]で確保して返す。
 void	wcstombs_vector(const wchar_t* pSrc, std::vector<char>* ret); //戻り値はvectorとして返す。
 void	wcstombs_vector(const wchar_t* pSrc, int nSrcLen, std::vector<char>* ret); //戻り値はvectorとして返す。
+
+std::wstring u8stowcs(std::wstring& strOut, std::string_view strInput);
+std::string wcstou8s(std::string& strOut, std::wstring_view strInput);
+std::wstring u8stowcs(std::string_view strInput);
+std::string wcstou8s(std::wstring_view strInput);
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       リテラル比較                          //

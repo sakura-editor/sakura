@@ -9,7 +9,7 @@
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, FILE, zenryaku
 	Copyright (C) 2009, syat
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -68,7 +68,7 @@ bool CWSHMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 	bool bRet = false;
 	if(Engine->m_Valid)
 	{
-		//インタフェースオブジェクトの登録
+		//インターフェースオブジェクトの登録
 		CWSHIfObj* objEditor = new CEditorIfObj();
 		objEditor->ReadyMethods( EditView, flags );
 		Engine->AddInterfaceObject( objEditor );
@@ -141,19 +141,19 @@ void CWSHMacroManager::declare()
 	CMacroFactory::getInstance()->RegisterCreator(Creator);
 }
 
-//インタフェースオブジェクトを追加する
+//インターフェースオブジェクトを追加する
 void CWSHMacroManager::AddParam( CWSHIfObj* param )
 {
 	m_Params.push_back( param );
 }
 
-//インタフェースオブジェクト達を追加する
+//インターフェースオブジェクト達を追加する
 void CWSHMacroManager::AddParam( CWSHIfObj::List& params )
 {
 	m_Params.insert( m_Params.end(), params.begin(), params.end() );
 }
 
-//インタフェースオブジェクトを削除する
+//インターフェースオブジェクトを削除する
 void CWSHMacroManager::ClearParam()
 {
 	m_Params.clear();

@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2007, kobake
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -35,9 +35,9 @@ enum maxdata{
 	MAX_SEARCHKEY				=  30,	//!< 検索キー
 	MAX_REPLACEKEY				=  30,	//!< 置換キー
 	MAX_GREPFILE				=  30,	//!< Grepファイル
-	MAX_GREPFOLDER				=  30,	//!< Grepフォルダ
+	MAX_GREPFOLDER				=  30,	//!< Grepフォルダー
 	MAX_EXCLUDEFILE				=  30,	//!< 除外ファイル
-	MAX_EXCLUDEFOLDER			=  30,	//!< 除外フォルダ
+	MAX_EXCLUDEFOLDER			=  30,	//!< 除外フォルダー
 	MAX_GREP_PATH				= 512,	//!< Grepファイルパス長
 	MAX_EXCLUDE_PATH			= 512,	//!< 除外ファイルパス長
 	MAX_TYPES					=  60,	//!< タイプ別設定

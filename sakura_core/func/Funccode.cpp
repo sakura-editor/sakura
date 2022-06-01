@@ -15,7 +15,7 @@
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2008, nasukoji
 	Copyright (C) 2009, ryoji
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -113,8 +113,8 @@ const EFunctionCode pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(
 	F_PRINT				,	//印刷
 	F_PRINT_PREVIEW		,	//印刷プレビュー
 	F_PRINT_PAGESETUP	,	//印刷ページ設定	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
-	F_OPEN_HfromtoC		,	//同名のC/C++ヘッダ(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
-//	F_OPEN_HHPP			,	//同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更		del 2008/6/23 Uchi
+	F_OPEN_HfromtoC		,	//同名のC/C++ヘッダー(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
+//	F_OPEN_HHPP			,	//同名のC/C++ヘッダーファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更		del 2008/6/23 Uchi
 //	F_OPEN_CCPP			,	//同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更	del 2008/6/23 Uchi
 	F_ACTIVATE_SQLPLUS			,	/* Oracle SQL*Plusをアクティブ表示 */	//Sept. 20, 2000 「コンパイル」JEPRO アクティブ表示を上に移動した
 	F_PLSQL_COMPILE_ON_SQLPLUS	,	/* Oracle SQL*Plusで実行 */	//Sept. 20, 2000 jepro 説明の「コンパイル」を「実行」に統一
@@ -281,7 +281,7 @@ const EFunctionCode pnFuncList_Clip[] = {	//Oct. 16, 2000 JEPRO 変数名変更(
 	F_COPY_COLOR_HTML_LINENUMBER,	//選択範囲内行番号色付きHTMLコピー
 	F_COPYFNAME					,	//このファイル名をクリップボードにコピー //2002/2/3 aroka
 	F_COPYPATH					,	//このファイルのパス名をクリップボードにコピー
-	F_COPYDIRPATH				,	//このファイルのフォルダ名をクリップボードにコピー
+	F_COPYDIRPATH				,	//このファイルのフォルダー名をクリップボードにコピー
 	F_COPYTAG					,	//このファイルのパス名とカーソル位置をコピー	//Sept. 14, 2000 JEPRO メニューに合わせて下に移動
 	F_CREATEKEYBINDLIST				//キー割り当て一覧をコピー	//Sept. 15, 2000 JEPRO IDM_TESTのままではうまくいかないのでFに変えて登録	//Dec. 25, 2000 復活
 };
@@ -293,7 +293,7 @@ const EFunctionCode pnFuncList_Insert[] = {
 	F_INS_TIME				,	// 時刻挿入
 	F_CTRL_CODE_DIALOG		,	// コントロールコードの入力
 	F_INS_FILE_USED_RECENTLY,	// 最近使ったファイル挿入
-	F_INS_FOLDER_USED_RECENTLY,	// 最近使ったフォルダ挿入
+	F_INS_FOLDER_USED_RECENTLY,	// 最近使ったフォルダー挿入
 };
 const int nFincList_Insert_Num = _countof( pnFuncList_Insert );
 
@@ -604,8 +604,8 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_PRINT:				return HLP000162;			//印刷				//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
 	case F_PRINT_PREVIEW:		return HLP000120;			//印刷プレビュー
 	case F_PRINT_PAGESETUP:		return HLP000122;			//印刷ページ設定	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
-	case F_OPEN_HfromtoC:		return HLP000192;			//同名のC/C++ヘッダ(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
-//	case F_OPEN_HHPP:			return HLP000024;			//同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更		del 2008/6/23 Uchi
+	case F_OPEN_HfromtoC:		return HLP000192;			//同名のC/C++ヘッダー(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
+//	case F_OPEN_HHPP:			return HLP000024;			//同名のC/C++ヘッダーファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更		del 2008/6/23 Uchi
 //	case F_OPEN_CCPP:			return HLP000026;			//同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更	del 2008/6/23 Uchi
 	case F_ACTIVATE_SQLPLUS:	return HLP000132;			/* Oracle SQL*Plusをアクティブ表示 */
 	case F_PLSQL_COMPILE_ON_SQLPLUS:	return HLP000027;	/* Oracle SQL*Plusで実行 */
@@ -751,7 +751,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_COPY_COLOR_HTML:			return HLP000342;	//選択範囲内色付きHTMLコピー
 	case F_COPY_COLOR_HTML_LINENUMBER:	return HLP000343;	//選択範囲内行番号色付きHTMLコピー
 	case F_COPYPATH:		return HLP000056;			//このファイルのパス名をクリップボードにコピー
-	case F_COPYDIRPATH:		return HLP000380;			//このファイルのフォルダ名をクリップボードにコピー
+	case F_COPYDIRPATH:		return HLP000380;			//このファイルのフォルダー名をクリップボードにコピー
 	case F_COPYTAG:			return HLP000175;			//このファイルのパス名とカーソル位置をコピー	//Oct. 17, 2000 JEPRO 追加
 	case F_COPYFNAME:		return HLP000303;			//このファイル名をクリップボードにコピー // 2002/2/3 aroka
 //	case IDM_TEST_CREATEKEYBINDLIST:	return 57;	//キー割り当て一覧をクリップボードへコピー	//Sept. 15, 2000 jepro「リスト」を「一覧」に変更
@@ -970,7 +970,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 		if( IDM_SELMRU <= nFuncID && nFuncID < IDM_SELMRU + MAX_MRU ){
 			return HLP000029;	//最近使ったファイル
 		}else if( IDM_SELOPENFOLDER <= nFuncID && nFuncID < IDM_SELOPENFOLDER + MAX_OPENFOLDER ){
-			return HLP000023;	//最近使ったフォルダ
+			return HLP000023;	//最近使ったフォルダー
 		}else if( IDM_SELWINDOW <= nFuncID && nFuncID < IDM_SELWINDOW + MAX_EDITWINDOWS ){
 			return HLP000097;	//ウィンドウリスト
 		}else if( F_USERMACRO_0 <= nFuncID && nFuncID < F_USERMACRO_0 + MAX_CUSTMACRO ){
@@ -1180,8 +1180,8 @@ bool IsFuncEnable( const CEditDoc* pcEditDoc, const DLLSHAREDATA* pShareData, EF
 	case F_UNDO:		return pcEditDoc->m_cDocEditor.IsEnableUndo();	/* Undo(元に戻す)可能な状態か？ */
 	case F_REDO:		return pcEditDoc->m_cDocEditor.IsEnableRedo();	/* Redo(やり直し)可能な状態か？ */
 
-	case F_OPEN_HfromtoC:				//同名のC/C++ヘッダ(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
-//	case F_OPEN_HHPP:					//同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更		del 2008/6/23 Uchi
+	case F_OPEN_HfromtoC:				//同名のC/C++ヘッダー(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
+//	case F_OPEN_HHPP:					//同名のC/C++ヘッダーファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更		del 2008/6/23 Uchi
 //	case F_OPEN_CCPP:					//同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更	del 2008/6/23 Uchi
 		return pcEditDoc->m_cDocFile.GetFilePathClass().IsValidPath() && GetEditWnd().GetActiveView().GetCommander().Command_OPEN_HfromtoC(TRUE);
 	case F_COPYPATH:

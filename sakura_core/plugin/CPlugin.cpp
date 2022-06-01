@@ -4,7 +4,7 @@
 */
 /*
 	Copyright (C) 2009, syat
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -219,7 +219,7 @@ bool CPlugin::ReadPluginDefOption( CDataProfile *cProfile, CDataProfile *cProfil
 	return true;
 }
 
-//プラグインフォルダ基準の相対パスをフルパスに変換
+//プラグインフォルダー基準の相対パスをフルパスに変換
 std::wstring CPlugin::GetFilePath( const wstring& sFileName ) const
 {
 	return m_sBaseDir + L"\\" + sFileName;

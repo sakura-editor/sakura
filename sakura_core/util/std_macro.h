@@ -2,7 +2,7 @@
 //2007.10.18 kobake 作成
 /*
 	Copyright (C) 2007, kobake
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -34,7 +34,7 @@
 	2007.10.18 kobake
 	テンプレート式 min とか max とか。
 
-	どっかの標準ヘッダに、同じようなものがあった気がするけど、
+	どっかの標準ヘッダーに、同じようなものがあった気がするけど、
 	NOMINMAX を定義するにしても、なんだか min とか max とかいう名前だと、
 	テンプレートを呼んでるんだかマクロを呼んでるんだか訳分かんないので、
 	明示的に「t_～」という名前を持つ関数を用意。

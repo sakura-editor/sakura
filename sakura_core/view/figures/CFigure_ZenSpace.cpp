@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -27,6 +27,7 @@
 #include "CFigure_ZenSpace.h"
 #include "types/CTypeSupport.h"
 #include "apiwrap/StdApi.h"
+#include "util/window.h"
 
 void Draw_ZenSpace( CGraphics& gr, const CMyRect& rc );
 
@@ -92,7 +93,7 @@ void CFigure_ZenSpace::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pc
 			CMyRect rcZenSp;
 			// 注：ベースライン無視
 			rcZenSp.SetPos(pDispPos->GetDrawPos().x, pDispPos->GetDrawPos().y);
-			rcZenSp.SetSize(dx[0]- pcView->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nColumnSpace,
+			rcZenSp.SetSize(dx[0]- DpiScaleX(pcView->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nColumnSpace),
 				pcView->GetTextMetrics().GetHankakuHeight());
 
 			// 描画

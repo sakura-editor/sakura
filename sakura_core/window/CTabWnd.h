@@ -12,7 +12,7 @@
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2012, Moca, syat
 	Copyright (C) 2013, Uchi, aroka, novice, syat, ryoji
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -192,7 +192,7 @@ private:
 	BOOL		m_bHovering;
 	BOOL		m_bListBtnHilighted;
 	BOOL		m_bCloseBtnHilighted;	//!< 閉じるボタンハイライト状態	// 2006.10.21 ryoji
-	CaptureSrc	m_eCaptureSrc;			//!< キャプチャー元
+	CaptureSrc	m_eCaptureSrc;			//!< キャプチャ元
 	BOOL		m_bTabSwapped;			//!< ドラッグ中にタブの入れ替えがあったかどうか
 	LONG*		m_nTabBorderArray;		//!< ドラッグ前のタブ境界位置配列
 	LOGFONT		m_lf;					//!< 表示フォントの特性情報

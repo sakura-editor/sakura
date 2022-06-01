@@ -6,7 +6,7 @@
 */
 /*
 	Copyright (C) 2010, Uchi
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -710,7 +710,7 @@ void CDlgPluginOption::SelectDirectory( int iLine )
 {
 	WCHAR	szDir[_MAX_PATH+1];
 
-	/* 検索フォルダ */
+	/* 検索フォルダー */
 	::DlgItem_GetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR, szDir, _countof(szDir) );
 
 	if (_IS_REL_PATH( szDir )) {

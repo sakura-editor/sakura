@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -60,12 +60,12 @@ TEST( CProfile, WriteProfileMakesSubDirectories )
 	// ファイルを削除
 	std::filesystem::remove( szIniName );
 
-	// フォルダを削除
+	// フォルダーを削除
 	p = ::PathFindFileNameW( szIniName );
 	p[0] = L'\0';
 	std::filesystem::remove( szIniName );
 
-	// フォルダを削除
+	// フォルダーを削除
 	p = ::PathFindFileNameW( szIniName );
 	p[0] = L'\0';
 	std::filesystem::remove( szIniName );

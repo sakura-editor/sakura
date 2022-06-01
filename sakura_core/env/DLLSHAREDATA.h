@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -149,7 +149,7 @@ struct DLLSHAREDATA{
 	SShare_Handles				m_sHandles;
 
 	SFilePath					m_szIniFile;							//!< EXE基準のiniファイルパス
-	SFilePath					m_szPrivateIniFile;						//!< マルチユーザ用のiniファイルパス
+	SFilePath					m_szPrivateIniFile;						//!< マルチユーザー用のiniファイルパス
 
 	SCharWidthCache				m_sCharWidth;							//!< 文字半角全角キャッシュ
 	DWORD						m_dwCustColors[16];						//!< フォントDialogカスタムパレット

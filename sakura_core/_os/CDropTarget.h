@@ -8,7 +8,7 @@
 	Copyright (C) 2002, aroka
 	Copyright (C) 2008, ryoji
 	Copyright (C) 2009, ryoji
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -24,7 +24,7 @@
 class CDropTarget;
 class CYbInterfaceBase;
 class CEditWnd;	// 2008.06.20 ryoji
-class CEditView;// 2002/2/3 aroka ヘッダ軽量化
+class CEditView;// 2002/2/3 aroka ヘッダー軽量化
 
 /*-----------------------------------------------------------------------
 クラスの宣言

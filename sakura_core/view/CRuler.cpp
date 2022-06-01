@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -28,6 +28,7 @@
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
 #include "types/CTypeSupport.h"
+#include "util/window.h"
 
 CRuler::CRuler(const CEditView* pEditView, const CEditDoc* pEditDoc)
 : m_pEditView(pEditView)
@@ -122,7 +123,7 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 	}
 	if (m_hFont == NULL) {
 		LOGFONT	lf = {0};
-		lf.lfHeight			= 1 - pCommon->m_sWindow.m_nRulerHeight;	//	2002/05/13 ai
+		lf.lfHeight			= DpiScaleY(1 - pCommon->m_sWindow.m_nRulerHeight);	//	2002/05/13 ai
 		lf.lfWidth			= 0;
 		lf.lfEscapement		= 0;
 		lf.lfOrientation	= 0;

@@ -16,7 +16,7 @@
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, ryoji
 	Copyright (C) 2009, nasukoji
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -74,13 +74,13 @@
 
 class CViewFont;
 class CRuler;
-class CDropTarget; /// 2002/2/3 aroka ヘッダ軽量化
+class CDropTarget; /// 2002/2/3 aroka ヘッダー軽量化
 class COpeBlk;///
 class CSplitBoxWnd;///
 class CRegexKeyword;///
-class CAutoMarkMgr; /// 2002/2/3 aroka ヘッダ軽量化 to here
-class CEditDoc;	//	2002/5/13 YAZAKI ヘッダ軽量化
-class CLayout;	//	2002/5/13 YAZAKI ヘッダ軽量化
+class CAutoMarkMgr; /// 2002/2/3 aroka ヘッダー軽量化 to here
+class CEditDoc;	//	2002/5/13 YAZAKI ヘッダー軽量化
+class CLayout;	//	2002/5/13 YAZAKI ヘッダー軽量化
 class CMigemo;	// 2004.09.14 isearch
 struct SColorStrategyInfo;
 struct CColor3Setting;
@@ -693,8 +693,8 @@ public:
 	CMyPoint		m_cMouseDownPos;	//!< クリック時のマウス座標
 	int				m_nWheelDelta;	//!< ホイール変化量
 	EFunctionCode	m_eWheelScroll; //!< スクロールの種類
-	int				m_nMousePouse;	// マウス停止時間
-	CMyPoint		m_cMousePousePos;	// マウスの停止位置
+	int				m_nMousePause;	// マウス停止時間
+	CMyPoint		m_cMousePausePos;	// マウスの停止位置
 	bool			m_bHideMouse;
 
 	int				m_nAutoScrollMode;			//!< オートスクロールモード

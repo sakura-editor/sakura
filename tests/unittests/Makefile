@@ -81,8 +81,6 @@ ifeq (,$(findstring -D_DEBUG,$(DEFINES)))
 ifeq (,$(findstring -DNDEBUG,$(DEFINES)))
 DEFINES += -DNDEBUG
 endif
-else
-LIB_SUFFIX = d
 endif
 
 CFLAGS= \
@@ -120,8 +118,8 @@ LIBS= \
  -lgdi32 \
  -lcomdlg32 \
  -L$(GOOGLETEST_INSTALL_DIR)/lib \
- -lgtest$(or $(LIB_SUFFIX),) \
- -lgtest_main$(or $(LIB_SUFFIX),) \
+ -lgtest \
+ -lgmock \
  $(MYLIBS)
 
 exe= $(or $(OUTDIR),.)/tests1.exe

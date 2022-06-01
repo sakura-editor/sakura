@@ -2,7 +2,7 @@
 /*
 	Copyright (C) 2008, kobake
 	Copyright (C) 2013, Moca
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -51,7 +51,7 @@ CRecentCurDir::CRecentCurDir()
 /*
 	アイテムの比較要素を取得する。
 
-	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
+	@note	取得後のポインタはユーザー管理の構造体にキャストして参照してください。
 */
 const WCHAR* CRecentCurDir::GetItemText( int nIndex ) const
 {

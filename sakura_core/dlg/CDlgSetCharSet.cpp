@@ -6,7 +6,7 @@
 */
 /*
 	Copyright (C) 2010, Uchi
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -54,7 +54,7 @@ BOOL CDlgSetCharSet::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	m_hwndCharSet = GetItemHwnd( IDC_COMBO_CHARSET );	// 文字コードセットコンボボックス
 	m_hwndCheckBOM = GetItemHwnd( IDC_CHECK_BOM );		// BOMチェックボックス
 
-	// コンボボックスのユーザー インターフェイスを拡張インターフェースにする
+	// コンボボックスのユーザー インターフェースを拡張インターフェースにする
 	Combo_SetExtendedUI( m_hwndCharSet, TRUE );
 
 	// 文字コードセット選択コンボボックス初期化

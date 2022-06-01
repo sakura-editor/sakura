@@ -4,7 +4,7 @@
 */
 /*
 	Copyright (C) 2009, syat
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -60,7 +60,7 @@ private:
 
 	//属性
 public:
-	//pluginsフォルダのパス
+	//pluginsフォルダーのパス
 	const wstring GetBaseDir() { return m_sBaseDir; }
 	const wstring GetExePluginDir() { return m_sExePluginDir; }
 	bool SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, const wstring& sSearchDir, bool& bCancel );		//新規プラグインを追加する(下請け)
@@ -70,7 +70,7 @@ public:
 	// メンバ変数
 private:
 	CPlugin::List m_plugins;
-	wstring m_sBaseDir;					//pluginsフォルダのパス
-	wstring m_sExePluginDir;			//Exeフォルダ配下pluginsフォルダのパス
+	wstring m_sBaseDir;					//pluginsフォルダーのパス
+	wstring m_sExePluginDir;			//Exeフォルダー配下pluginsフォルダーのパス
 };
 #endif /* SAKURA_CPLUGINMANAGER_CE705DAD_1876_4B21_9052_07A9BFD292DE_H_ */

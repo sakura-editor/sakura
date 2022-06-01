@@ -10,7 +10,7 @@
 	Copyright (C) 2002, aroka, YAZAKI
 	Copyright (C) 2003, MIK
 	Copyright (C) 2007, ryoji
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -298,7 +298,7 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 
 	int v;
 	for( v=0; v < m_nChildWndCount; v++ ){
-		pcViewArr[v] = ( CEditView* )::GetWindowLongPtr( m_ChildWndArr[v], 0 );
+		pcViewArr[v] = ( CEditView* )::GetWindowLongPtr( m_ChildWndArr[v], GWLP_USERDATA );
 	}
 	::GetClientRect( GetHwnd(), &rc );
 	if( nHorizontal < nLimit ){
@@ -809,7 +809,7 @@ LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	const int	nFrameWidth = DpiScaleX(SPLITTER_FRAME_WIDTH);
 	BOOL		bSizeBox;
 	for( i = 0; i < m_nChildWndCount; ++i ){
-		pcViewArr[i] = ( CEditView* )::GetWindowLongPtr( m_ChildWndArr[i], 0 );
+		pcViewArr[i] = ( CEditView* )::GetWindowLongPtr( m_ChildWndArr[i], GWLP_USERDATA );
 	}
 
 	/*

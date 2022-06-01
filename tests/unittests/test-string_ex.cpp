@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -30,6 +30,8 @@
 
 #include <tchar.h>
 #include <Windows.h>
+
+#include <stdexcept>
 
 #include "basis/primitive.h"
 #include "util/string_ex.h"
@@ -119,11 +121,21 @@ TEST(string_ex, strprintf)
 /*!
 	@brief 独自定義のフォーマット関数(C-Style風)。
  */
-TEST(string_ex, strprintfOutputToArg)
+TEST(string_ex, strprintfWOutputToArg)
 {
-	std::wstring text;
+	std::wstring text(1024, L'\0');
 	strprintf(text, L"%s-%d", L"test", 101);
 	ASSERT_STREQ(L"test-101", text.c_str());
+}
+
+/*!
+	@brief 独自定義のフォーマット関数(C-Style風)。
+ */
+TEST(string_ex, strprintfAOutputToArg)
+{
+	std::string text(1024, '\0');
+	strprintf(text, "%ls-of-active-codepage-%d", L"test", 101);
+	ASSERT_STREQ("test-of-active-codepage-101", text.c_str());
 }
 
 /*!
@@ -133,6 +145,123 @@ TEST(string_ex, strprintfEmpty)
 {
 	std::wstring text = strprintf(L"%hs", "");
 	ASSERT_TRUE(text.empty());
+}
+
+/*!
+	@brief 独自定義のフォーマット関数(C-Style風)。
+
+	バッファが極端に小さい場合の確認。
+	wtd::wstringのスモールバッファは7文字分。
+ */
+TEST(string_ex, strprintfW_small_output)
+{
+	std::wstring text = strprintf(L"");
+	EXPECT_STREQ(L"", text.c_str());
+
+	text = strprintf(L"%d", 1);
+	EXPECT_STREQ(L"1", text.c_str());
+
+	text = strprintf(L"%d", 12);
+	EXPECT_STREQ(L"12", text.c_str());
+
+	text = strprintf(L"%d", 123);
+	EXPECT_STREQ(L"123", text.c_str());
+
+	text = strprintf(L"%d", 1234);
+	EXPECT_STREQ(L"1234", text.c_str());
+
+	text = strprintf(L"%d", 12345);
+	EXPECT_STREQ(L"12345", text.c_str());
+
+	text = strprintf(L"%d", 123456);
+	EXPECT_STREQ(L"123456", text.c_str());
+
+	text = strprintf(L"%d", 1234567);
+	EXPECT_STREQ(L"1234567", text.c_str());
+}
+
+/*!
+	@brief 独自定義のフォーマット関数(C-Style風)。
+
+	バッファが極端に小さい場合の確認
+	wtd::stringのスモールバッファは15文字分。
+ */
+TEST(string_ex, strprintfA_small_output)
+{
+	std::string text = strprintf("");
+	EXPECT_STREQ("", text.c_str());
+
+	text = strprintf("%d", 1);
+	EXPECT_STREQ("1", text.c_str());
+
+	text = strprintf("%d", 12);
+	EXPECT_STREQ("12", text.c_str());
+
+	text = strprintf("%d", 123);
+	EXPECT_STREQ("123", text.c_str());
+
+	text = strprintf("%d", 1234);
+	EXPECT_STREQ("1234", text.c_str());
+
+	text = strprintf("%d", 12345);
+	EXPECT_STREQ("12345", text.c_str());
+
+	text = strprintf("%d", 123456);
+	EXPECT_STREQ("123456", text.c_str());
+
+	text = strprintf("%d", 1234567);
+	EXPECT_STREQ("1234567", text.c_str());
+
+	text = strprintf("%d", 12345678);
+	EXPECT_STREQ("12345678", text.c_str());
+
+	text = strprintf("%d", 123456789);
+	EXPECT_STREQ("123456789", text.c_str());
+
+	text = strprintf("%d", 1234567890);
+	EXPECT_STREQ("1234567890", text.c_str());
+
+	text = strprintf("1234567890%d", 1);
+	EXPECT_STREQ("12345678901", text.c_str());
+
+	text = strprintf("1234567890%d", 12);
+	EXPECT_STREQ("123456789012", text.c_str());
+
+	text = strprintf("1234567890%d", 123);
+	EXPECT_STREQ("1234567890123", text.c_str());
+
+	text = strprintf("1234567890%d", 1234);
+	EXPECT_STREQ("12345678901234", text.c_str());
+
+	text = strprintf("1234567890%d", 12345);
+	EXPECT_STREQ("123456789012345", text.c_str());
+
+	text = strprintf("1234567890%d", 123456);
+	EXPECT_STREQ("1234567890123456", text.c_str());
+}
+
+/*!
+	@brief 標準文字列をu8文字列に変換する。
+ */
+TEST(string_ex, wcstou8s)
+{
+	// wcs→u8変換ができること
+	ASSERT_STREQ(wcstou8s(L"This is 運命").data(), u8"This is 運命");
+
+	// 空文字列も問題なく変換できること
+	ASSERT_STREQ(wcstou8s(L"").data(), u8"");
+}
+
+/*!
+	@brief u8文字列を標準文字列に変換する。
+ */
+TEST(string_ex, u8stowcs)
+{
+	// u8→wcs変換ができること
+	ASSERT_STREQ(u8stowcs(u8"This is 運命").data(), L"This is 運命");
+
+	// 空文字列も問題なく変換できること
+	ASSERT_STREQ(u8stowcs(u8"").data(), L"");
 }
 
 /*!

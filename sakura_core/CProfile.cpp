@@ -12,7 +12,7 @@
 	Copyright (C) 2004, D.S.Koba, MIK, genta
 	Copyright (C) 2006, D.S.Koba, ryoji
 	Copyright (C) 2009, ryoji
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -53,11 +53,11 @@ void EnsureDirectoryExist( const std::wstring& strProfileName )
 {
 	const size_t cchLastYen = strProfileName.find_last_of( L'\\' );
 	if( cchLastYen != std::wstring::npos && cchLastYen < strProfileName.length() && cchLastYen + 1 < _MAX_PATH ){
-		// フォルダのパスを取得する
+		// フォルダーのパスを取得する
 		WCHAR szProfileFolder[_MAX_PATH]{ 0 };
 		::wcsncpy_s( szProfileFolder, strProfileName.data(), cchLastYen + 1 );
 
-		// フォルダが存在しなければ作成する
+		// フォルダーが存在しなければ作成する
 		if( !IsDirectory( szProfileFolder ) ){
 			MakeSureDirectoryPathExistsW( szProfileFolder );
 		}

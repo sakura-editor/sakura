@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -34,6 +34,7 @@
 #include "CEol.h"
 #include "window/CEditWnd.h"
 #include "debug/CRunningTimer.h"
+#include "_os/CClipboard.h"
 
 CDocEditor::CDocEditor(CEditDoc* pcDoc)
 : m_pcDocRef(pcDoc)
@@ -165,6 +166,11 @@ void CDocEditor::SetImeMode( int mode )
 	ImmReleaseContext( hwnd, hIme ); //######大丈夫？
 }
 //	To Here Nov. 20, 2000 genta
+
+bool CDocEditor::IsEnablePaste() const
+{
+	return CClipboard::HasValidData();
+}
 
 /*!
 	末尾に行を追加

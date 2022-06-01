@@ -7,12 +7,10 @@
     <GoogleTestLibInstallDir Condition="'$(Platform)' == 'Win32'">$(GoogleTestInstallDir)lib</GoogleTestLibInstallDir>
     <GoogleTestLibInstallDir Condition="'$(Platform)' == 'x64'">$(GoogleTestInstallDir)lib64</GoogleTestLibInstallDir>
     <LibraryPath>$(GoogleTestLibInstallDir);$(LibraryPath)</LibraryPath>
-    <NameSuffix Condition="'$(Configuration)' == 'Debug'">d</NameSuffix>
-    <NameSuffix Condition="'$(Configuration)' == 'Release'"></NameSuffix>
-    <GTestLibName>gtest$(NameSuffix).lib</GTestLibName>
-    <GTestMainLibName>gtest_main$(NameSuffix).lib</GTestMainLibName>
+    <GTestLibName>gtest.lib</GTestLibName>
     <GTestLibPath>$(GoogleTestLibInstallDir)\$(GTestLibName)</GTestLibPath>
-    <GTestMainLibPath>$(GoogleTestLibInstallDir)\$(GTestMainLibName)</GTestMainLibPath>
+    <GMockLibName>gmock.lib</GMockLibName>
+    <GMockLibPath>$(GoogleTestLibInstallDir)\$(GMockLibName)</GMockLibPath>
   </PropertyGroup>
   <ItemDefinitionGroup Label="GoogleTest.Requirements">
     <ClCompile>
@@ -22,7 +20,7 @@
   <ItemDefinitionGroup Label="GoogleTest.Libs">
     <Link>
       <AdditionalDependencies>$(GTestLibName);%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalDependencies>$(GTestMainLibName);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(GMockLibName);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Target Name="MakeGoogleTestBuildDir" Condition="!Exists('$(GoogleTestBuildDir)')">
@@ -31,7 +29,7 @@
   <Target Name="MakeGoogleTestInstallDir" Condition="!Exists('$(GoogleTestInstallDir)')">
     <MakeDir Directories="$(GoogleTestInstallDir)" />
   </Target>
-  <Target Name="BuildGoogleTest" DependsOnTargets="MakeGoogleTestBuildDir;MakeGoogleTestInstallDir" BeforeTargets="ClCompile" Condition="!Exists('$(GTestLibPath)') Or !Exists('$(GTestMainLibPath)')">
+  <Target Name="BuildGoogleTest" DependsOnTargets="MakeGoogleTestBuildDir;MakeGoogleTestInstallDir" BeforeTargets="ClCompile" Condition="!Exists('$(GTestLibPath)') Or !Exists('$(GMockLibPath)')">
     <PropertyGroup>
       <VsVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(VisualStudioVersion)', '^(\d+).*', '$1'))</VsVersion>
     </PropertyGroup>

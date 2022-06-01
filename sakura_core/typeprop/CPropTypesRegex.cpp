@@ -9,7 +9,7 @@
 	Copyright (C) 2002, MIK
 	Copyright (C) 2003, MIK, KEITA
 	Copyright (C) 2006, ryoji
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -138,7 +138,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 			}
 			else
 			{
-				//使用するになってるんだけどDisableにする。もうユーザは変更できない。
+				//使用するになってるんだけどDisableにする。もうユーザーは変更できない。
 				EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_REGEX ), FALSE );
 			}
 		}

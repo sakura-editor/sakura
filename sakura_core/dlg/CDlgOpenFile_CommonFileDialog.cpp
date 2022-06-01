@@ -12,7 +12,7 @@
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, novice, ryoji
 	Copyright (C) 2006, ryoji, Moca
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -51,7 +51,7 @@ static const DWORD p_helpids[] = {	//13100
 //	IDC_BUTTON_HELP,		HIDC_OPENDLG_BUTTON_HELP,		//ヘルプボタン
 	IDC_COMBO_CODE,			HIDC_OPENDLG_COMBO_CODE,		//文字コードセット
 	IDC_COMBO_MRU,			HIDC_OPENDLG_COMBO_MRU,			//最近のファイル
-	IDC_COMBO_OPENFOLDER,	HIDC_OPENDLG_COMBO_OPENFOLDER,	//最近のフォルダ
+	IDC_COMBO_OPENFOLDER,	HIDC_OPENDLG_COMBO_OPENFOLDER,	//最近のフォルダー
 	IDC_COMBO_EOL,			HIDC_OPENDLG_COMBO_EOL,			//改行コード
 	IDC_CHECK_BOM,			HIDC_OPENDLG_CHECK_BOM,			//BOM	// 2006.08.06 ryoji
 	IDC_CHECK_CP,			HIDC_OPENDLG_CHECK_CP,			//CP
@@ -249,7 +249,7 @@ UINT_PTR CALLBACK OFNHookProc(
 			hwndFrame = ::GetParent( hdlg );
 			::GetWindowRect( hwndFrame, &pData->m_pcDlgOpenFile->m_pShareData->m_Common.m_sOthers.m_rcOpenDialog );
 
-			// 2005.10.29 ryoji 最近のファイル／フォルダ コンボの右端を子ダイアログの右端に合わせる
+			// 2005.10.29 ryoji 最近のファイル／フォルダー コンボの右端を子ダイアログの右端に合わせる
 			::GetWindowRect( pData->m_hwndComboMRU, &rc );
 			po.x = rc.left;
 			po.y = rc.top;
@@ -282,7 +282,7 @@ UINT_PTR CALLBACK OFNHookProc(
 			// 2005.11.02 ryoji 初期レイアウト設定
 			CDlgOpenFile_CommonFileDialog::InitLayout( pData->m_hwndOpenDlg, hdlg, pData->m_hwndComboCODES );
 
-			/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
+			/* コンボボックスのユーザー インターフェースを拡張インターフェースにする */
 			Combo_SetExtendedUI( pData->m_hwndComboCODES, TRUE );
 			Combo_SetExtendedUI( pData->m_hwndComboMRU, TRUE );
 			Combo_SetExtendedUI( pData->m_hwndComboOPENFOLDER, TRUE );
@@ -585,7 +585,7 @@ UINT_PTR CALLBACK OFNHookProc(
 
 				case IDC_COMBO_OPENFOLDER:
 					if ( Combo_GetCount( pData->m_hwndComboOPENFOLDER ) == 0) {
-						/* 最近開いたフォルダ コンボボックス初期値設定 */
+						/* 最近開いたフォルダー コンボボックス初期値設定 */
 						//	2003.06.22 Moca m_vOPENFOLDER がNULLの場合を考慮する
 						int nSize = (int)pData->m_pcDlgOpenFile->m_vOPENFOLDER.size();
 						for( i = 0; i < nSize; i++ ){
@@ -687,7 +687,7 @@ void CDlgOpenFile_CommonFileDialog::Create(
 		m_strDefaultWildCard = pszUserWildCard;
 	}
 
-	/* 「開く」での初期フォルダ */
+	/* 「開く」での初期フォルダー */
 	if( pszDefaultPath && pszDefaultPath[0] != L'\0' ){	//現在編集中のファイルのパス	//@@@ 2002.04.18
 		WCHAR szDrive[_MAX_DRIVE];
 		WCHAR szDir[_MAX_DIR];
@@ -751,7 +751,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 	pData->m_ofn.hInstance = CSelectLang::getLangRsrcInstance();
 	pData->m_ofn.lpstrFilter = cFileExt.GetExtFilter();
 	// From Here Jun. 23, 2002 genta
-	// 「開く」での初期フォルダチェック強化
+	// 「開く」での初期フォルダーチェック強化
 // 2005/02/20 novice デフォルトのファイル名は何も設定しない
 	{
 		WCHAR szDrive[_MAX_DRIVE];
@@ -1071,7 +1071,7 @@ void CDlgOpenFile_CommonFileDialog::DlgOpenFail(void)
 	const WCHAR*	pszError;
 	DWORD dwError = ::CommDlgExtendedError();
 	if( dwError == 0 ){
-		//	ユーザキャンセルによる
+		//	ユーザーキャンセルによる
 		return;
 	}
 	
@@ -1171,7 +1171,7 @@ void CDlgOpenFile_CommonFileDialog::InitLayout( HWND hwndOpenDlg, HWND hwndDlg, 
 		hwndCtrl = ::GetWindow( hwndCtrl, GW_HWNDNEXT );
 	}
 
-	// 標準コントロールのプレースフォルダ（stc32）と子ダイアログの幅をオープンダイアログの幅にあわせる
+	// 標準コントロールのプレースフォルダー（stc32）と子ダイアログの幅をオープンダイアログの幅にあわせる
 	//     WM_INITDIALOG を抜けるとさらにオープンダイアログ側で現在の位置関係からレイアウト調整が行われる
 	//     ここで以下の処理をやっておかないとコントロールが意図しない場所に動いてしまうことがある
 	//     （例えば、BOM のチェックボックスが画面外に飛んでしまうなど）
@@ -1180,7 +1180,7 @@ void CDlgOpenFile_CommonFileDialog::InitLayout( HWND hwndOpenDlg, HWND hwndDlg, 
 	::GetClientRect( hwndOpenDlg, &rc );
 	nWidth = rc.right - rc.left;
 
-	// 標準コントロールプレースフォルダの幅を変更する
+	// 標準コントロールプレースフォルダーの幅を変更する
 	hwndCtrl = ::GetDlgItem( hwndDlg, stc32 );
 	::GetWindowRect( hwndCtrl, &rc );
 	::SetWindowPos( hwndCtrl, 0, 0, 0, nWidth, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );

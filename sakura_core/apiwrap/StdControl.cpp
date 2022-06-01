@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -108,7 +108,7 @@ namespace ApiWrap{
 		}
 
 		// アイテムテキストを設定するのに必要なバッファを確保する
-		strText.resize( cchRequired );
+		strText.resize(cchRequired + 1);
 
 		// ListBox_GetText() はコピーした文字数を返す。
 		const int actualCopied = ListBox_GetText( hList, nIndex, strText.data() );

@@ -10,7 +10,7 @@
 	Copyright (C) 2002, YAZAKI, Moca, genta
 	Copyright (C) 2003, MIK
 	Copyright (C) 2006, genta
-	Copyright (C) 2018-2021, Sakura Editor Organization
+	Copyright (C) 2018-2022, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -214,9 +214,9 @@ void CMRUFile::Add( EditInfo* pEditInfo )
 
 	WCHAR	szDrive[_MAX_DRIVE];
 	WCHAR	szDir[_MAX_DIR];
-	WCHAR	szFolder[_MAX_PATH + 1];	//	ドライブ＋フォルダ
+	WCHAR	szFolder[_MAX_PATH + 1];	//	ドライブ＋フォルダー
 
-	_wsplitpath( pEditInfo->m_szPath, szDrive, szDir, NULL, NULL );	//	ドライブとフォルダを取り出す。
+	_wsplitpath( pEditInfo->m_szPath, szDrive, szDir, NULL, NULL );	//	ドライブとフォルダーを取り出す。
 
 	//	Jan.  10, 2006 genta USBメモリはRemovable mediaと認識されるようなので，
 	//	一応無効化する．

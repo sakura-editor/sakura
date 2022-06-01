@@ -52,7 +52,7 @@
 #define HLP000162	162 //印刷
 #define HLP000120	120 //印刷プレビュー
 #define HLP000122	122 //ページ設定
-#define HLP000192	192 //同名のC/C++ヘッダ(ソース)を開く
+#define HLP000192	192 //同名のC/C++ヘッダー(ソース)を開く
 #define HLP000132	132 //Oracle SQL*Plusをアクティブ表示
 #define HLP000027	27 //Oracle SQL*Plusで実行
 #define HLP000121	121 //ブラウズ
@@ -62,10 +62,10 @@
 #define HLP000377	377 //管理者としてコマンドプロンプトを開く
 #define HLP000378	378 //PowerShellを開く
 #define HLP000379	379 //管理者としてPowerShellを開く
-#define HLP000380	380 //このファイルのフォルダ名をコピー
+#define HLP000380	380 //このファイルのフォルダー名をコピー
 #define HLP000363	363 //プロファイルマネージャ
 #define HLP000029	29 //最近使ったファイル
-#define HLP000023	23 //最近使ったフォルダ
+#define HLP000023	23 //最近使ったフォルダー
 #define HLP000030	30 //編集の全終了	// 2007.02.13 ryoji
 #define HLP000028	28 //サクラエディタの全終了
 #define HLP000031	31 //「編集(E)」メニューの一覧
@@ -215,7 +215,7 @@
 #define HLP000197	197 //タイプ別設定 『支援』プロパティ
 #define HLP000203	203 //タイプ別設定 『正規表現キーワード』プロパティ	//@@@ 2001.11.17 add MIK
 #define HLP000315	315 //タイプ別設定 『キーワードヘルプ』プロパティ	// 2006.10.06 ryoji
-#define HLP000077	77 //設定フォルダ（iniフォルダ）	// 2007.09.09 maru
+#define HLP000077	77 //設定フォルダー（iniフォルダー）	// 2007.09.09 maru
 #define HLP000078	78 //ユーザー別設定					// 2007.09.23 maru
 #define HLP000079	79 //Visual Style					// 2007.09.30 maru
 #define HLP000080	80 //Virtual Store					// 2007.09.30 maru
@@ -294,7 +294,7 @@
 #define HLP000100	100 //ヘルプ目次
 #define HLP000101	101 //キーワード検索
 #define HLP000189	189 //コマンド一覧
-//#define HLP000024	24 //同名のC/C++ヘッダファイルを開く
+//#define HLP000024	24 //同名のC/C++ヘッダーファイルを開く
 //#define HLP000026	26 //同名のC/C++ソースファイルを開く
 #define HLP000198	198 //テキストを１行下へスクロール
 #define HLP000199	199 //テキストを１行上へスクロール
@@ -408,7 +408,7 @@
 #define HLP_HISTORY	4001 //ヘルプファイル更新履歴
 
 
-#define HIDC_BUTTON_BACKUP_FOLDER_REF			10000 //バックアップフォルダ参照
+#define HIDC_BUTTON_BACKUP_FOLDER_REF			10000 //バックアップフォルダー参照
 #define HIDC_CHECK_BACKUP						10010 //バックアップの作成
 #define HIDC_CHECK_BACKUP_YEAR					10011 //バックアップファイル名（西暦年）
 #define HIDC_CHECK_BACKUP_MONTH					10012 //バックアップファイル名（月）
@@ -417,10 +417,10 @@
 #define HIDC_CHECK_BACKUP_MIN					10015 //バックアップファイル名（分）
 #define HIDC_CHECK_BACKUP_SEC					10016 //バックアップファイル名（秒）
 #define HIDC_CHECK_BACKUPDIALOG					10017 //作成前に確認
-#define HIDC_CHECK_BACKUPFOLDER					10018 //指定フォルダに作成
+#define HIDC_CHECK_BACKUPFOLDER					10018 //指定フォルダーに作成
 #define HIDC_CHECK_BACKUP_DUSTBOX				10019 //バックアップをごみ箱に放り込む	//@@@ 2002.01.03
-#define HIDC_CHECK_BACKUP_FOLDER_RM				10020 //指定フォルダに作成(リムーバブルメディアのみ)	// 2010/5/27 Uchi
-#define HIDC_EDIT_BACKUPFOLDER					10040 //保存フォルダ名
+#define HIDC_CHECK_BACKUP_FOLDER_RM				10020 //指定フォルダーに作成(リムーバブルメディアのみ)	// 2010/5/27 Uchi
+#define HIDC_EDIT_BACKUPFOLDER					10040 //保存フォルダー名
 #define HIDC_EDIT_BACKUP_3						10041 //世代数
 #define HIDC_EDIT_BACKUPFILE					10042 //保存ファイル名
 #define HIDC_RADIO_BACKUP_TYPE1					10060 //バックアップの種類（拡張子）
@@ -460,10 +460,10 @@
 #define HIDC_CHECK_bOverWriteFixMode			10218 //文字幅に合わせてスペースを詰める
 #define HIDC_CHECK_bOverWriteBoxDelete			10219 //矩形入力で選択範囲を削除する
 #define HIDC_CHECK_CONVERTEOLPASTE				10217 //改行コードを変換して貼り付ける // 2009.02.28 salarm
-#define HIDC_RADIO_CURDIR						10220 //カレントフォルダ
-#define HIDC_RADIO_MRUDIR						10221 //最近使ったフォルダ
-#define HIDC_RADIO_SELDIR						10222 //指定フォルダ
-#define HIDC_EDIT_FILEOPENDIR					10223 //指定フォルダパス
+#define HIDC_RADIO_CURDIR						10220 //カレントフォルダー
+#define HIDC_RADIO_MRUDIR						10221 //最近使ったフォルダー
+#define HIDC_RADIO_SELDIR						10222 //指定フォルダー
+#define HIDC_EDIT_FILEOPENDIR					10223 //指定フォルダーパス
 #define HIDC_CHECK_ENABLEEXTEOL					10224 //改行コードNEL,PS,LSを有効にする
 #define HIDC_CHECK_BOXSELECTLOCK				10225 //矩形選択移動で選択をロックする
 #define HIDC_CHECK_EXCVLUSIVE_NO				10310 //ファイルの排他制御（排他制御しない）
@@ -552,7 +552,7 @@
 #define HIDC_BUTTON_KEYSETRENAME				10831 //セットの名称変更	// 2006.08.06 ryoji
 #define HIDC_LIST_KEYWORD						10840 //キーワード一覧
 #define HIDC_BUTTON_CLEAR_MRU_FILE				10900 //履歴をクリア（ファイル）
-#define HIDC_BUTTON_CLEAR_MRU_FOLDER			10901 //履歴をクリア（フォルダ）
+#define HIDC_BUTTON_CLEAR_MRU_FOLDER			10901 //履歴をクリア（フォルダー）
 #define HIDC_CHECK_FREECARET					10910 //フリーカーソル
 #define HIDC_CHECK_INDENT						10911 //自動インデント
 #define HIDC_CHECK_INDENT_WSPACE				10912 //全角空白もインデント
@@ -569,7 +569,7 @@
 #define HIDC_HOTKEY_TRAYMENU					10940 //左クリックメニューのショートカットキー
 #define HIDC_EDIT_REPEATEDSCROLLLINENUM			10941 //スクロール行数
 #define HIDC_EDIT_MAX_MRU_FILE					10942 //ファイル履歴の最大数
-#define HIDC_EDIT_MAX_MRU_FOLDER				10943 //フォルダ履歴の最大数
+#define HIDC_EDIT_MAX_MRU_FOLDER				10943 //フォルダー履歴の最大数
 #define HIDC_RADIO_CARETTYPE0					10960 //カーソル形状（Windows風）
 #define HIDC_RADIO_CARETTYPE1					10961 //カーソル形状（MS-DOS風）
 #define HIDC_BUTTON_DELETE_TOOLBAR				11000 //ツールバーから機能削除
@@ -753,7 +753,7 @@
 #define HIDC_LIST_PLUGIN_OPTIONS	11761	//プラグインオプションリスト	// 2010/3/22 Uchi
 #define HIDC_EDIT_PLUGIN_OPTION		11762	//プラグインオプション編集		// 2010/3/22 Uchi
 #define HIDC_MACROCANCELTIMER		11763	//マクロ停止ダイアログ表示待ち時間	// 2011.08.04 syat
-#define HIDC_PLUGIN_OpenFolder		11764	//プラグインフォルダを開く
+#define HIDC_PLUGIN_OpenFolder		11764	//プラグインフォルダーを開く
 #define HIDC_EDIT_AUTOLOAD_DELAY	11765	//自動読込時遅延
 #define HIDC_CHECK_KINSOKUHIDE		11766	//ぶら下げを隠す			// 2012.11.30 Uchi
 #define HIDC_PLUGIN_README			11767	//ReadMe表示					// 2011/11/2 Uchi
@@ -803,13 +803,13 @@
 #define HIDC_REP_RADIO_LINEDELETE		11923	//置換対象：行削除
 
 //GREP
-#define HIDC_GREP_BUTTON_FOLDER			12000	//フォルダ
-#define HIDC_GREP_BUTTON_CURRENTFOLDER	12001	//現フォルダ
+#define HIDC_GREP_BUTTON_FOLDER			12000	//フォルダー
+#define HIDC_GREP_BUTTON_CURRENTFOLDER	12001	//現フォルダー
 #define HIDOK_GREP						12002	//検索
 #define HIDCANCEL_GREP					12003	//キャンセル
 #define HIDC_GREP_BUTTON_HELP			12004	//ヘルプ
 #define HIDC_GREP_CHK_WORD				12005	//単語単位
-#define HIDC_GREP_CHK_SUBFOLDER			12006	//サブフォルダも検索
+#define HIDC_GREP_CHK_SUBFOLDER			12006	//サブフォルダーも検索
 #define HIDC_GREP_CHK_FROMTHISTEXT		12007	//編集中のテキストから検索
 #define HIDC_GREP_CHK_LOHICASE			12008	//大文字小文字
 #define HIDC_GREP_CHK_REGULAREXP		12009	//正規表現
@@ -817,21 +817,21 @@
 #define HIDC_GREP_COMBO_CHARSET			12010	//文字コードセット
 #define HIDC_GREP_COMBO_TEXT			12011	//条件
 #define HIDC_GREP_COMBO_FILE			12012	//ファイル
-#define HIDC_GREP_COMBO_FOLDER			12013	//フォルダ
+#define HIDC_GREP_COMBO_FOLDER			12013	//フォルダー
 #define HIDC_GREP_RADIO_OUTPUTLINE		12014	//結果出力：行単位
 #define HIDC_GREP_RADIO_OUTPUTMARKED	12015	//結果出力：該当部分
 #define HIDC_GREP_RADIO_OUTPUTSTYLE1	12016	//結果出力形式：ノーマル
 #define HIDC_GREP_RADIO_OUTPUTSTYLE2	12017	//結果出力形式：ファイル毎
 #define HIDC_GREP_STATIC_JRE32VER		12018	//正規表現バージョン
-#define HIDC_GREP_CHK_DEFAULTFOLDER		12019	//フォルダの初期値をカレントフォルダにする
+#define HIDC_GREP_CHK_DEFAULTFOLDER		12019	//フォルダーの初期値をカレントフォルダーにする
 #define HIDC_RADIO_OUTPUTSTYLE3			12020	//結果出力形式：結果のみ
 #define HIDC_CHECK_FILE_ONLY			12021	//ファイル毎最初のみ検索
-#define HIDC_CHECK_BASE_PATH			12022	//ベースフォルダ表示
-#define HIDC_CHECK_SEP_FOLDER			12023	//フォルダ毎に表示
+#define HIDC_CHECK_BASE_PATH			12022	//ベースフォルダー表示
+#define HIDC_CHECK_SEP_FOLDER			12023	//フォルダー毎に表示
 #define HIDC_GREP_BUTTON_FOLDER_UP		12024	//Up
 #define HIDC_GREP_CHECK_CP				12025	//コードページ
 #define HIDC_GREP_COMBO_EXCLUDE_FILE	12026	//除外ファイル
-#define HIDC_GREP_COMBO_EXCLUDE_FOLDER	12027	//除外フォルダ
+#define HIDC_GREP_COMBO_EXCLUDE_FOLDER	12027	//除外フォルダー
 
 //外部コマンド
 #define HIDC_EXEC_BUTTON_REFERENCE	12100	//参照
@@ -975,7 +975,7 @@
 #define HIDC_OPENDLG_BUTTON_HELP 13102	//ヘルプ	//@@@ 2002.01.10
 #define HIDC_OPENDLG_COMBO_CODE	13103	//文字コードセット
 #define HIDC_OPENDLG_COMBO_MRU	13104	//最近のファイル
-#define HIDC_OPENDLG_COMBO_OPENFOLDER	13105	//最近のフォルダ
+#define HIDC_OPENDLG_COMBO_OPENFOLDER	13105	//最近のフォルダー
 #define HIDC_OPENDLG_COMBO_EOL	13106	//改行コード
 #define HIDC_OPENDLG_CHECK_BOM	13107	//BOM	// 2006.08.06 ryoji
 #define HIDC_OPENDLG_CHECK_CP	13108	//CP
@@ -1140,14 +1140,14 @@
 #define HIDC_BUTTON_TREE_INITIALIZE			14413	//メニューを初期状態に戻す
 #define HIDC_CHECK_KEY_PARENTHESES			14414	//アクセスキーを必ず( )付で表示(&P)
 
-#define HIDC_GREP_REP_BUTTON_FOLDER			14500	//フォルダ
-#define HIDC_GREP_REP_BUTTON_CURRENTFOLDER	14501	//現フォルダ
+#define HIDC_GREP_REP_BUTTON_FOLDER			14500	//フォルダー
+#define HIDC_GREP_REP_BUTTON_CURRENTFOLDER	14501	//現フォルダー
 #define HIDOK_GREP_REP						14502	//置換開始
 #define HIDCANCEL_GREP_REP					14503	//キャンセル
 #define HIDC_GREP_REP_BUTTON_HELP			14504	//ヘルプ
 #define HIDC_GREP_REP_CHK_PASTE				14505	//クリップボードから貼り付け
 #define HIDC_GREP_REP_CHK_WORD				14506	//単語単位
-#define HIDC_GREP_REP_CHK_SUBFOLDER			14507	//サブフォルダも検索
+#define HIDC_GREP_REP_CHK_SUBFOLDER			14507	//サブフォルダーも検索
 #define HIDC_GREP_REP_CHK_FROMTHISTEXT      14804	//編集中のテキストから検索
 #define HIDC_GREP_REP_CHK_LOHICASE			14509	//大文字小文字
 #define HIDC_GREP_REP_CHK_REGULAREXP		14510	//正規表現
@@ -1156,7 +1156,7 @@
 #define HIDC_GREP_REP_COMBO_TEXT			14513	//置換前
 #define HIDC_GREP_REP_COMBO_TEXT2			14514	//置換後
 #define HIDC_GREP_REP_COMBO_FILE			14515	//ファイル
-#define HIDC_GREP_REP_COMBO_FOLDER			14516	//フォルダ
+#define HIDC_GREP_REP_COMBO_FOLDER			14516	//フォルダー
 #define HIDC_GREP_REP_BUTTON_FOLDER_UP		14517	//上
 #define HIDC_GREP_REP_RADIO_OUTPUTLINE		14518	//結果出力：行単位
 #define HIDC_GREP_REP_RADIO_OUTPUTMARKED	14519	//結果出力：該当部分
@@ -1164,10 +1164,10 @@
 #define HIDC_GREP_REP_RADIO_OUTPUTSTYLE2	14521	//結果出力形式：ファイル毎
 #define HIDC_GREP_REP_RADIO_OUTPUTSTYLE3	14522	//結果出力形式：結果のみ
 #define HIDC_GREP_REP_STATIC_JRE32VER		14523	//正規表現バージョン
-#define HIDC_GREP_REP_CHK_DEFAULTFOLDER		14524	//フォルダの初期値をカレントフォルダにする
+#define HIDC_GREP_REP_CHK_DEFAULTFOLDER		14524	//フォルダーの初期値をカレントフォルダーにする
 #define HIDC_GREP_REP_CHECK_FILE_ONLY		14525	//ファイル毎最初のみ検索
-#define HIDC_GREP_REP_CHECK_BASE_PATH		14526	//ベースフォルダ表示
-#define HIDC_GREP_REP_CHECK_SEP_FOLDER		14527	//フォルダ毎に表示
+#define HIDC_GREP_REP_CHECK_BASE_PATH		14526	//ベースフォルダー表示
+#define HIDC_GREP_REP_CHECK_SEP_FOLDER		14527	//フォルダー毎に表示
 #define HIDC_GREP_REP_CHECK_CP				14528	//CP
 
 //プロファイル一覧
