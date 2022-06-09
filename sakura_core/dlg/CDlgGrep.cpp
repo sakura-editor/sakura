@@ -250,11 +250,20 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCur
 	m_bGrepOutputBaseFolder = m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder;
 	m_bGrepSeparateFolder = m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder;
 
+	if( pszCurrentFilePath ){	// 2010.01.10 ryoji
+		wcscpy(m_szCurrentFilePath, pszCurrentFilePath);
+	}
+
 	// 2013.05.21 コンストラクタからDoModalに移動
 	// m_strText は呼び出し元で設定済み
 	if( m_szFile[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
 		wcscpy( m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
 	}
+	if( m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder && m_szCurrentFilePath[0] != L'\0' ){
+		WCHAR	szWorkFile[MAX_PATH];
+		SplitPath_FolderAndFile( m_szCurrentFilePath, m_szFolder, szWorkFile );
+		SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), m_szFolder );
+	}else
 	if( m_szFolder[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
 		wcscpy( m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダー */
 	}
@@ -285,10 +294,6 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCur
 			/* 履歴に残して後で選択できるようにする */
 			m_pShareData->m_sSearchKeywords.m_aExcludeFolders.push_back(DEFAULT_EXCLUDE_FOLDER_PATTERN);
 		}
-	}
-
-	if( pszCurrentFilePath ){	// 2010.01.10 ryoji
-		wcscpy(m_szCurrentFilePath, pszCurrentFilePath);
 	}
 
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_GREP, (LPARAM)NULL );
@@ -598,15 +603,6 @@ void CDlgGrep::SetData( void )
 
 	/* 除外フォルダー */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, m_szExcludeFolder);
-
-	if((m_szFolder[0] == L'\0' || m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder) &&
-		m_szCurrentFilePath[0] != L'\0'
-	){
-		WCHAR	szWorkFolder[MAX_PATH];
-		WCHAR	szWorkFile[MAX_PATH];
-		SplitPath_FolderAndFile( m_szCurrentFilePath, szWorkFolder, szWorkFile );
-		SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), szWorkFolder );
-	}
 
 	/* サブフォルダーからも検索する */
 	::CheckDlgButton( GetHwnd(), IDC_CHK_SUBFOLDER, m_bSubFolder );
