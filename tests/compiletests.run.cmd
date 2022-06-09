@@ -36,7 +36,9 @@ set CL_COMPILER=%CMD_CL:\=/%
 :: run cmake configuration.
 "%CMD_CMAKE%" -G %GENERATOR%                        ^
   "-DCMAKE_MAKE_PROGRAM=%MAKE_PROGRAM%"             ^
+  "-DCMAKE_C_COMPILER=%CL_COMPILER%"                ^
   "-DCMAKE_CXX_COMPILER=%CL_COMPILER%"              ^
+  "-Wno-dev"                                        ^
   %GENERATOR_OPTS%                                  ^
   %SOURCE_DIR%                                      ^
   || endlocal && exit /b 1

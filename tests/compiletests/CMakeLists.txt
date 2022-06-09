@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 
-project(compile_test CXX)
+enable_language(CXX)
 
 set( SAKURA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../sakura_core)
 set( SAKURA_DEFINITIONS -D_DEBUG -D_UNICODE -DUNICODE -D_WIN32_WINNT=_WIN32_WINNT_WIN7)
