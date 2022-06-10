@@ -259,10 +259,10 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCur
 	if( m_szFile[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
 		wcscpy( m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
 	}
-	if( m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder && m_szCurrentFilePath[0] != L'\0' ){
+	if( m_szFolder[0] == L'\0' && m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder &&
+		m_szCurrentFilePath[0] != L'\0' ){
 		WCHAR	szWorkFile[MAX_PATH];
 		SplitPath_FolderAndFile( m_szCurrentFilePath, m_szFolder, szWorkFile );
-		SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), m_szFolder );
 	}else
 	if( m_szFolder[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
 		wcscpy( m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダー */
