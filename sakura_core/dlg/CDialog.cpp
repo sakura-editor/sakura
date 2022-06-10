@@ -757,15 +757,16 @@ static void DeleteRecentItem(
 			return;
 		}
 
-		// コンボボックスのリストアイテム削除
-		Combo_DeleteString( hwndCombo, nIndex );
-
-		// 履歴項目を削除
 		int nRecentIndex = pRecent->FindItemByText( cItemText.GetStringPtr() );
 		// お気に入りチェック
 		if( pRecent->IsFavorite(nRecentIndex) ){
 			return;
 		}
+
+		// コンボボックスのリストアイテム削除
+		Combo_DeleteString( hwndCombo, nIndex );
+
+		// 履歴項目を削除
 		if( 0 <= nRecentIndex ){
 			pRecent->DeleteItem(nRecentIndex);
 		}
