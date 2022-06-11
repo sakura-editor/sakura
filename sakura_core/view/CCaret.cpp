@@ -294,6 +294,39 @@ CLayoutInt CCaret::MoveCursor(
 	}
 	//	To Here 2007.07.28 じゅうじ
 	if( bScroll ){
+		if (abs((Int)nScrollRowNum) < 10) {
+			struct ScrollRowRecord {
+				Int nScrollRowNum;
+				DWORD dwTime;
+			};
+			static ScrollRowRecord s_records[128] = {0};
+			static size_t s_recordPos = 0;
+			DWORD dwNow = GetTickCount();
+			Int nScrollRowsPerTiming = 0;
+			int nRecs = 0;
+			for (size_t i=0; i<_countof(s_records); ++i) {
+				auto& rec = s_records[i];
+				DWORD dwTimeDiff = dwNow - rec.dwTime;
+				if (dwTimeDiff <= 100) {
+					nScrollRowsPerTiming += rec.nScrollRowNum;
+					++nRecs;
+				}
+			}
+			if (abs(nScrollRowsPerTiming) >= 8) {
+				nScrollRowNum = std::min(nScrollRowNum, (CLayoutInt)+1);
+				nScrollRowNum = std::max(nScrollRowNum, (CLayoutInt)-1);
+			}
+			{
+				auto& rec = s_records[s_recordPos];
+				rec.dwTime = dwNow;
+				rec.nScrollRowNum = nScrollRowNum;
+				++s_recordPos;
+				if (s_recordPos >= _countof(s_records)) {
+					s_recordPos = 0;
+				}
+			}
+		}
+		
 		/* スクロール */
 		if( t_abs( nScrollColNum ) >= m_pEditView->GetTextArea().m_nViewColNum ||
 			t_abs( nScrollRowNum ) >= m_pEditView->GetTextArea().m_nViewRowNum ){
