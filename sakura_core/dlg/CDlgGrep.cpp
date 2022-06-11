@@ -250,20 +250,11 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCur
 	m_bGrepOutputBaseFolder = m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder;
 	m_bGrepSeparateFolder = m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder;
 
-	if( pszCurrentFilePath ){	// 2010.01.10 ryoji
-		wcscpy(m_szCurrentFilePath, pszCurrentFilePath);
-	}
-
 	// 2013.05.21 コンストラクタからDoModalに移動
 	// m_strText は呼び出し元で設定済み
 	if( m_szFile[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
 		wcscpy( m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
 	}
-	if( m_szFolder[0] == L'\0' && m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder &&
-		m_szCurrentFilePath[0] != L'\0' ){
-		WCHAR	szWorkFile[MAX_PATH];
-		SplitPath_FolderAndFile( m_szCurrentFilePath, m_szFolder, szWorkFile );
-	}else
 	if( m_szFolder[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
 		wcscpy( m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダー */
 	}
@@ -296,6 +287,10 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCur
 		}
 	}
 
+	if( pszCurrentFilePath ){	// 2010.01.10 ryoji
+		wcscpy(m_szCurrentFilePath, pszCurrentFilePath);
+	}
+
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_GREP, (LPARAM)NULL );
 }
 
@@ -306,6 +301,14 @@ WNDPROC g_pOnFolderProc;
 BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	_SetHwnd( hwndDlg );
+
+	/* カレントフォルダーが初期値 */
+	if((m_szFolder[0] == L'\0' || m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder) &&
+		m_szCurrentFilePath[0] != L'\0'
+	){
+		WCHAR	szWorkFile[MAX_PATH];
+		SplitPath_FolderAndFile( m_szCurrentFilePath, m_szFolder, szWorkFile );
+	}
 
 	/* ユーザーがコンボボックスのエディット コントロールに入力できるテキストの長さを制限する */
 	//	Combo_LimitText( GetItemHwnd( IDC_COMBO_TEXT ), _MAX_PATH - 1 );
