@@ -306,8 +306,7 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	if((m_szFolder[0] == L'\0' || m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder) &&
 		m_szCurrentFilePath[0] != L'\0'
 	){
-		WCHAR	szWorkFile[MAX_PATH];
-		SplitPath_FolderAndFile( m_szCurrentFilePath, m_szFolder, szWorkFile );
+		SplitPath_FolderAndFile( m_szCurrentFilePath, m_szFolder, nullptr );
 	}
 
 	/* ユーザーがコンボボックスのエディット コントロールに入力できるテキストの長さを制限する */
