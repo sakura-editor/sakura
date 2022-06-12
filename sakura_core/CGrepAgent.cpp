@@ -1738,9 +1738,10 @@ public:
 
 class CWriteData{
 public:
-	CWriteData(int& hit, LPCWSTR name, ECodeType code_, bool bBom_, bool bOldSave_, CNativeW& message)
+	CWriteData(int& hit, LPCWSTR name_, ECodeType code_, bool bBom_, bool bOldSave_, CNativeW& message)
 		:nHitCount(hit)
-		,fileName(name)
+		,fileName(name_)
+		,name(name_)
 		,code(code_)
 		,bBom(bBom_)
 		,bOldSave(bOldSave_)
@@ -1748,7 +1749,9 @@ public:
 		,out(NULL)
 		,pcCodeBase(CCodeFactory::CreateCodeBase(code_,0))
 		,memMessage(message)
-		{}
+	{
+		name += L".skrnew";
+	}
 	void AppendBuffer(const CNativeW& strLine)
 	{
 		if( !out ){
@@ -1765,8 +1768,6 @@ public:
 	void OutputHead()
 	{
 		if( !out ){
-			std::wstring name = fileName;
-			name += L".skrnew";
 			try{
 				out = new CBinaryOutputStream(name.c_str(), true);
 			}catch( const CError_FileOpen& ){
@@ -1819,8 +1820,6 @@ public:
 					return;
 				}
 			}
-			std::wstring name(fileName);
-			name += L".skrnew";
 			if( FALSE == ::MoveFile( name.c_str(), fileName ) ){
 				memMessage.AppendString( LS(STR_GREP_REP_ERR_REPLACE) );
 				memMessage.AppendStringF( L"[%s]\r\n", fileName );
@@ -1835,14 +1834,13 @@ public:
 			out->Close();
 			delete out;
 			out = NULL;
-			std::wstring name(fileName);
-			name += L".skrnew";
 			::DeleteFile( name.c_str() );
 		}
 	}
 private:
 	int& nHitCount;
 	LPCWSTR fileName;
+	std::wstring name;
 	ECodeType code;
 	bool bBom;
 	bool bOldSave;
