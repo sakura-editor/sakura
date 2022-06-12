@@ -44,7 +44,7 @@
 #define SAKURA_CEDITWND_6C771A35_3CC8_4932_BF15_823C40487A9F_H_
 #pragma once
 
-#include <ShellAPI.h>// HDROP
+#include <shellapi.h>// HDROP
 #include "_main/global.h"
 #include "CMainToolBar.h"
 #include "CTabWnd.h"	//@@@ 2003.05.31 MIK

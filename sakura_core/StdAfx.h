@@ -99,7 +99,7 @@
 #include <ImageHlp.h>
 #include <imm.h>
 #include <ObjIdl.h>
-#include <ShellAPI.h>
+#include <shellapi.h>
 #include <ShlObj.h>
 #include <wrl.h>
 
