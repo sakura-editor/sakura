@@ -45,7 +45,7 @@
 
 #include <Windows.h>
 #include <ObjIdl.h>  // LPDATAOBJECT
-#include <ShellAPI.h>  // HDROP
+#include <shellapi.h>  // HDROP
 
 #include <thread>
 
