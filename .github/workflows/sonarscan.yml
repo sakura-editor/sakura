@@ -33,7 +33,7 @@ jobs:
     env:
       BUILD_PLATFORM: x64
       BUILD_CONFIGURATION: Debug
-      SONAR_QUBE_VERSION: '4.5.0.2216'
+      SONAR_QUBE_VERSION: '4.7.0.2747'
 
     steps:
     - name: Checkout
