@@ -296,36 +296,34 @@ CLayoutInt CCaret::MoveCursor(
 	if( bScroll ){
 		if( abs( (Int)nScrollRowNum ) < 7 &&
 			( m_pEditView->GetSelectionInfo().IsMouseSelecting() || m_pEditView->m_bDragMode )){
-			struct ScrollRowRecord {
+			struct ScrollRowRecord{
 				Int nScrollRowNum;
 				DWORD dwTime;
 			};
-			static ScrollRowRecord s_records[128] = { 0 };
+			static std::array<ScrollRowRecord, 128> s_records{};
 			static size_t s_recordPos = 0;
 			DWORD dwNow = GetTickCount();
 			Int nScrollRowsPerTiming = 0;
 			DWORD dwPerTiming = 80;
-			if( nScrollRowNum > 0 && m_pEditView->m_bDragMode) {
+			if( nScrollRowNum > 0 && m_pEditView->m_bDragMode ){
 				dwPerTiming = 30;
 			}
-			for( size_t i = 0; i < _countof( s_records ); ++i ){
-				auto& rec = s_records[i];
-				DWORD dwTimeDiff = dwNow - rec.dwTime;
-				if( dwTimeDiff <= dwPerTiming ){
-					nScrollRowsPerTiming += rec.nScrollRowNum;
-				}
-			}
+
+			std::for_each(s_records.begin(), s_records.end(),
+				[ dwNow, dwPerTiming, &nScrollRowsPerTiming ]( ScrollRowRecord rec ){
+					if( ( dwNow - rec.dwTime ) <= dwPerTiming ){
+						nScrollRowsPerTiming += rec.nScrollRowNum;
+					}
+			});
 			if( abs( nScrollRowsPerTiming ) >= 1 ){
 				nScrollRowNum = 0;
 			}
-			{
-				auto& rec = s_records[s_recordPos];
-				rec.dwTime = dwNow;
-				rec.nScrollRowNum = nScrollRowNum;
-				++s_recordPos;
-				if( s_recordPos >= _countof( s_records ) ){
-					s_recordPos = 0;
-				}
+			auto& rec = s_records[s_recordPos];
+			rec.dwTime = dwNow;
+			rec.nScrollRowNum = nScrollRowNum;
+			++s_recordPos;
+			if( s_recordPos >=  s_records.size() ){
+				s_recordPos = 0;
 			}
 		}
 		/* スクロール */
