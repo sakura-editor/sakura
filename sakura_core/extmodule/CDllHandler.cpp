@@ -125,7 +125,7 @@ EDllResult CDllImp::InitDll(LPCWSTR pszSpecifiedDllName)
 	}
 }
 
-bool CDllImp::DeinitDll(bool force)
+bool CDllImp::DeinitDll(bool force) noexcept
 {
 	if( m_hInstance == NULL || (!IsAvailable()) ){
 		//	DLLが読み込まれていなければ何もしない
