@@ -300,7 +300,7 @@ CLayoutInt CCaret::MoveCursor(
 				Int nScrollRowNum;
 				DWORD dwTime;
 			};
-			static std::array<ScrollRowRecord, 128> s_records{};
+			static std::array<ScrollRowRecord, 512> s_records{};
 			static size_t s_recordPos = 0;
 			DWORD dwNow = GetTickCount();
 			Int nScrollRowsPerTiming = 0;
