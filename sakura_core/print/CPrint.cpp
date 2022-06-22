@@ -394,7 +394,7 @@ BOOL CPrint::GetPrintMetrics(
 
 	/* 最小左マージンと最小上マージンを取得(1mm単位) */
 	POINT	po;
-	if( 0 < ::Escape( hdc, GETPRINTINGOFFSET, (int)NULL, NULL, (LPPOINT)&po ) ){
+	if( 0 < ::Escape( hdc, GETPRINTINGOFFSET, 0, NULL, (LPPOINT)&po ) ){
 		::DPtoLP( hdc, &po, 1 );
 		*pnPaperOffsetLeft = (short)abs( po.x );	/* 用紙余白左端 */
 		*pnPaperOffsetTop  = (short)abs( po.y );	/* 用紙余白上端 */
