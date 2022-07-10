@@ -28,6 +28,15 @@
 #include "mem/CNativeW.h"
 #include "mem/CNativeA.h"
 
+// NULL定義補正
+// 詳細はStdAfx.hを参照
+#ifdef __cplusplus
+# pragma warning( push )
+# pragma warning( disable : 4005 )
+# define NULL nullptr
+# pragma warning( pop )
+#endif // end of #ifdef __cplusplus
+
 /*!
 	CStringRefのテスト
  */
@@ -37,7 +46,7 @@ TEST(CStringRef, CStringRef)
 	constexpr const size_t cch = _countof(sz) - 1;
 
 	CStringRef v1;
-	EXPECT_EQ(nullptr, v1.GetPtr());
+	EXPECT_EQ(NULL, v1.GetPtr());
 	EXPECT_EQ(0, v1.GetLength());
 	EXPECT_FALSE(v1.IsValid());
 	EXPECT_EQ(L'\0', v1.At(0));
@@ -132,11 +141,11 @@ TEST(CNativeW, ConstructWithStringNull)
 {
 	CNativeW value(NULL);
 	EXPECT_EQ(0, value.GetStringLength());
-	EXPECT_EQ(nullptr, value.GetStringPtr());
+	EXPECT_EQ(NULL, value.GetStringPtr());
 
-	CNativeW value2(nullptr);
+	CNativeW value2(NULL);
 	EXPECT_EQ(0, value2.GetStringLength());
-	EXPECT_EQ(nullptr, value2.GetStringPtr());
+	EXPECT_EQ(NULL, value2.GetStringPtr());
 }
 
 /*!
@@ -261,16 +270,16 @@ TEST(CNativeW, AssignString)
 }
 
 /*!
- * @brief 代入演算子(nullptr指定)の仕様
+ * @brief 代入演算子(NULL指定)の仕様
  * @remark バッファを確保している場合は解放される
  * @remark 文字列長はゼロになる
  */
 TEST(CNativeW, AssignStringNullPointer)
 {
 	CNativeW value(L"test");
-	value = nullptr;
+	value = NULL;
 	EXPECT_EQ(0, value.GetStringLength());
-	EXPECT_EQ(nullptr, value.GetStringPtr());
+	EXPECT_EQ(NULL, value.GetStringPtr());
 }
 
 /*!
@@ -321,33 +330,16 @@ TEST(CNativeW, AppendString)
 }
 
 /*!
- * @brief 加算代入演算子(nullptr指定)の仕様
+ * @brief 加算代入演算子(NULL指定)の仕様
  * @remark 加算代入しても内容に変化無し
  */
 TEST(CNativeW, AppendStringNullPointer)
 {
 	CNativeW org(L"orz");
 	CNativeW value(org);
-	value += nullptr;
+	value += NULL;
 	EXPECT_EQ(value.GetStringLength(), org.GetStringLength());
 	EXPECT_EQ(org, value);
-}
-
-/*!
- * @brief 加算代入演算子(NULL指定)の仕様
- * @remark バッファが確保される
- * @remark 文字列長は演算子呼出前の文字列長+1になる
- */
-TEST(CNativeW, AppendStringNullLiteral)
-{
-	CNativeW value;
-#ifdef _MSC_VER
-	value += NULL; // operator += (wchar_t) と解釈される
-#else
-	value += static_cast<wchar_t>(NULL);
-#endif
-	ASSERT_STREQ(L"", value.GetStringPtr());
-	EXPECT_EQ(1, value.GetStringLength());
 }
 
 /*!
@@ -364,7 +356,7 @@ TEST(CNativeW, AppendStringWithFormatting)
 	ASSERT_STREQ(L"いちご100%", value.GetStringPtr());
 
 	// フォーマットに NULL を渡したケースをテストする
-	ASSERT_THROW(value.AppendStringF(std::wstring_view(nullptr, 0)), std::invalid_argument);
+	ASSERT_THROW(value.AppendStringF(std::wstring_view(NULL, 0)), std::invalid_argument);
 	ASSERT_THROW(value.AppendStringF(std::wstring_view(L"ダミー", 0)), std::invalid_argument);
 
 	// 文字列長を0にして、追加確保が行われないケースをテストする
@@ -411,12 +403,12 @@ TEST(CNativeW, operatorEqualNull)
 
 /*!
  * @brief 等価比較演算子のテスト
- *  nullptrとの等価比較を行う
+ *  NULLとの等価比較を行う
  */
 TEST(CNativeW, operatorEqualNullptr)
 {
 	CNativeW value;
-	ASSERT_EQ(value, nullptr);
+	ASSERT_EQ(value, NULL);
 }
 
 /*!
@@ -553,13 +545,13 @@ TEST(CNativeW, operatorNotEqualAlmostSameString)
 
 /*!
  * @brief 否定の等価比較演算子のテスト
- *  nullptrとの等価比較を行う
+ *  NULLとの等価比較を行う
  */
 TEST(CNativeW, operatorNotEqualNullptr)
 {
 	constexpr const wchar_t text[] = L"おっす！オラ(ry";
 	CNativeW value(text);
-	ASSERT_NE(value, nullptr);
+	ASSERT_NE(value, NULL);
 }
 
 /*!
@@ -731,16 +723,16 @@ TEST(CNativeW, CompareWithCNativeW)
 /*!
  * 文字列ポインタ型との比較のテスト
  *
- * @remark < 0 自身がメモリ未確保、かつ、比較対象がnullptr以外
+ * @remark < 0 自身がメモリ未確保、かつ、比較対象がNULL以外
  * @remark < 0 文字列値が比較対象より小さい
- * @remark == 0 自身がメモリ未確保、かつ、比較対象がnullptr
- * @remark > 0 自身がメモリ確保済み、かつ、比較対象がnullptr
+ * @remark == 0 自身がメモリ未確保、かつ、比較対象がNULL
+ * @remark > 0 自身がメモリ確保済み、かつ、比較対象がNULL
  * @remark > 0 文字列値が比較対象より大きい
  */
 TEST(CNativeW, CompareWithStringPtr)
 {
 	//互いに値の異なる文字列定数を定義する
-	constexpr const wchar_t* pcN0 = nullptr;
+	constexpr const wchar_t* pcN0 = NULL;
 	constexpr const wchar_t szS0[] = L"ab";
 	constexpr const wchar_t szM0[] = L"aac";
 	constexpr const wchar_t szM1[] = L"abc";
