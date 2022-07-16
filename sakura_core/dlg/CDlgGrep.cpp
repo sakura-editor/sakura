@@ -17,7 +17,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include <ShellAPI.h>
+#include <shellapi.h>
 #include "dlg/CDlgGrep.h"
 #include "CGrepAgent.h"
 #include "CGrepEnumKeys.h"
@@ -301,6 +301,13 @@ WNDPROC g_pOnFolderProc;
 BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	_SetHwnd( hwndDlg );
+
+	/* カレントフォルダーが初期値 */
+	if((m_szFolder[0] == L'\0' || m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder) &&
+		m_szCurrentFilePath[0] != L'\0'
+	){
+		SplitPath_FolderAndFile( m_szCurrentFilePath, m_szFolder, nullptr );
+	}
 
 	/* ユーザーがコンボボックスのエディット コントロールに入力できるテキストの長さを制限する */
 	//	Combo_LimitText( GetItemHwnd( IDC_COMBO_TEXT ), _MAX_PATH - 1 );
@@ -598,15 +605,6 @@ void CDlgGrep::SetData( void )
 
 	/* 除外フォルダー */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_EXCLUDE_FOLDER, m_szExcludeFolder);
-
-	if((m_szFolder[0] == L'\0' || m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder) &&
-		m_szCurrentFilePath[0] != L'\0'
-	){
-		WCHAR	szWorkFolder[MAX_PATH];
-		WCHAR	szWorkFile[MAX_PATH];
-		SplitPath_FolderAndFile( m_szCurrentFilePath, szWorkFolder, szWorkFile );
-		SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), szWorkFolder );
-	}
 
 	/* サブフォルダーからも検索する */
 	::CheckDlgButton( GetHwnd(), IDC_CHK_SUBFOLDER, m_bSubFolder );

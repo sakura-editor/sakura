@@ -29,7 +29,7 @@
 */
 
 #include "StdAfx.h"
-#include <ShellAPI.h>
+#include <shellapi.h>
 #include "prop/CPropCommon.h"
 #include "CEditApp.h"
 #include "plugin/CJackManager.h"

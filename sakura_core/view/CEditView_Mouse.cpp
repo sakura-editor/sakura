@@ -1192,7 +1192,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 				}
 			}
 		}else{
-			GetCaret().MoveCursorToClientPoint( ptMouse, true, &ptNewCursor );
+			GetCaret().MoveCursorToClientPoint( ptMouse, false, &ptNewCursor );
 		}
 		GetSelectionInfo().m_ptMouseRollPosOld = ptMouse; // マウス範囲選択前回位置(XY座標)
 

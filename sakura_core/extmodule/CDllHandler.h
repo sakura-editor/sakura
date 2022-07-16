@@ -131,7 +131,7 @@ public:
 	//! 終了処理とDLLアンロード
 	bool DeinitDll(
 		bool force = false	//!< [in] 終了処理に失敗してもDLLを解放するかどうか
-	);
+	) noexcept;
 
 	//! インスタンスハンドルの取得
 	HINSTANCE GetInstance() const { return m_hInstance; }
