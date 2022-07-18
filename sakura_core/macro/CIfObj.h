@@ -59,7 +59,7 @@ public:
 	virtual ULONG STDMETHODCALLTYPE Release() { -- m_RefCount; int R = m_RefCount; if(m_RefCount == 0) delete this; return R; }
 public:
 	ImplementsIUnknown(): m_RefCount(0) {}
-	virtual ~ImplementsIUnknown(){}
+	virtual ~ImplementsIUnknown() = default;
 };
 
 //WSH一般

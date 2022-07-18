@@ -32,7 +32,7 @@
 class CMySize : public SIZE{
 public:
 	//コンストラクタ・デストラクタ
-	CMySize(){} //※初期化なし
+	CMySize() = default; //※初期化なし
 	CMySize(int _cx,int _cy){ cx=_cx; cy=_cy; }
 	CMySize(const SIZE& rhs){ cx=rhs.cx; cy=rhs.cy; }
 

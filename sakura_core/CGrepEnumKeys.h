@@ -69,8 +69,8 @@ public:
 	}
 
 	// 除外ファイルの2つの解析済み配列から1つのリストを作る
-	auto GetExcludeFiles() const ->  std::list<decltype(m_vecExceptFileKeys)::value_type> {
-		std::list<decltype(m_vecExceptFileKeys)::value_type> excludeFiles;
+	auto GetExcludeFiles() const ->  std::vector<decltype(m_vecExceptFileKeys)::value_type> {
+		std::vector<decltype(m_vecExceptFileKeys)::value_type> excludeFiles;
 		const auto& fileKeys = m_vecExceptFileKeys;
 		excludeFiles.insert( excludeFiles.cend(), fileKeys.cbegin(), fileKeys.cend() );
 		const auto& absFileKeys = m_vecExceptAbsFileKeys;
@@ -79,8 +79,8 @@ public:
 	}
 
 	// 除外フォルダーの2つの解析済み配列から1つのリストを作る
-	auto GetExcludeFolders() const ->  std::list<decltype(m_vecExceptFolderKeys)::value_type> {
-		std::list<decltype(m_vecExceptFolderKeys)::value_type> excludeFolders;
+	auto GetExcludeFolders() const ->  std::vector<decltype(m_vecExceptFolderKeys)::value_type> {
+		std::vector<decltype(m_vecExceptFolderKeys)::value_type> excludeFolders;
 		const auto& folderKeys = m_vecExceptFolderKeys;
 		excludeFolders.insert( excludeFolders.cend(), folderKeys.cbegin(), folderKeys.cend() );
 		const auto& absFolderKeys = m_vecExceptAbsFolderKeys;

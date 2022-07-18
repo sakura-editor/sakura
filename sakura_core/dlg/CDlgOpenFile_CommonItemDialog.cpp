@@ -462,6 +462,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 {
 	//	2003.05.12 MIK
 	std::vector<COMDLG_FILTERSPEC> specs;
+	specs.reserve(7);
 	std::vector<std::wstring> strs;
 	strs.reserve(8);
 

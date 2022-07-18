@@ -41,9 +41,8 @@ public:
 	CRangeBase(Me&&) noexcept = default;
 	Me& operator = (Me&&) noexcept = default;
 	CRangeBase(const PointType& _ptFrom,const PointType& _ptTo)
+		: m_ptFrom(_ptFrom), m_ptTo(_ptTo)
 	{
-		m_ptFrom=_ptFrom;
-		m_ptTo=_ptTo;
 	}
 	~CRangeBase() = default;
 

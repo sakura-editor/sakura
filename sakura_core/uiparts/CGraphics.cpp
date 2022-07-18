@@ -37,7 +37,7 @@ class CGDIStock
 	using Me = CGDIStock;
 
 public:
-	CGDIStock(){}
+	CGDIStock() = default;
 	CGDIStock(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
 	CGDIStock(Me&&) noexcept = delete;

@@ -116,11 +116,11 @@ void CEditView::InsertData_CEditView(
 			 || m_pTypeData->m_bKinsokuKuto );	//@@@ 2002.04.19 MIK
 
 	CLayoutInt	nLineAllColLen;
-	CLogicInt	nIdxFrom = CLogicInt(0);
 	CLayoutInt	nColumnFrom = ptInsertPos.GetX2();
 	CNativeW	cMem(L"");
 	COpeLineData insData;
 	if( pLine ){
+		CLogicInt	nIdxFrom = CLogicInt(0);
 		// 更新が前行からになる可能性を調べる	// 2009.02.17 ryoji
 		// ※折り返し行頭への句読点入力で前の行だけが更新される場合もある
 		// ※挿入位置は行途中でも句読点入力＋ワードラップで前の文字列から続けて前行に回り込む場合もある

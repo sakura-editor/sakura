@@ -68,7 +68,7 @@ void CMainToolBar::ProcSearchBox( MSG *msg )
 					//検索キーを登録
 					CSearchKeywordManager().AddToSearchKeyArr( strText.c_str() );
 				}
-				m_pOwner->GetActiveView().m_strCurSearchKey = strText;
+				m_pOwner->GetActiveView().m_strCurSearchKey = std::move(strText);
 				m_pOwner->GetActiveView().m_bCurSearchUpdate = true;
 				m_pOwner->GetActiveView().ChangeCurRegexp();
 
@@ -604,7 +604,7 @@ int CMainToolBar::GetSearchKey(std::wstring& strText)
 	if( m_hwndSearchBox ){
 		ApiWrap::Wnd_GetText( m_hwndSearchBox, strText );
 	}else{
-		strText = L"";
+		strText.clear();
 	}
 	return strText.length();
 }

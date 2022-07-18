@@ -708,11 +708,10 @@ LRESULT CEditView::DispatchEvent(
 //		MYTRACE( L"	WM_VSCROLL nPos=%d\n", GetScrollPos( m_hwndVScrollBar, SB_CTL ) );
 		//	Sep. 11, 2004 genta 同期スクロールの関数化
 		{
-			CLayoutInt Scroll = OnVScroll(
-				(int) LOWORD( wParam ), ((int) HIWORD( wParam )) * m_nVScrollRate );
-
 			//	シフトキーが押されていないときだけ同期スクロール
 			if(!GetKeyState_Shift()){
+				CLayoutInt Scroll = OnVScroll(
+					(int)LOWORD(wParam), ((int)HIWORD(wParam)) * m_nVScrollRate);
 				SyncScrollV( Scroll );
 			}
 		}
@@ -723,11 +722,10 @@ LRESULT CEditView::DispatchEvent(
 //		MYTRACE( L"	WM_HSCROLL nPos=%d\n", GetScrollPos( m_hwndHScrollBar, SB_CTL ) );
 		//	Sep. 11, 2004 genta 同期スクロールの関数化
 		{
-			CLayoutInt Scroll = OnHScroll(
-				(int) LOWORD( wParam ), ((int) HIWORD( wParam )) );
-
 			//	シフトキーが押されていないときだけ同期スクロール
 			if(!GetKeyState_Shift()){
+				CLayoutInt Scroll = OnHScroll(
+					(int)LOWORD(wParam), ((int)HIWORD(wParam)));
 				SyncScrollH( Scroll );
 			}
 		}
@@ -1396,9 +1394,9 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 				nIdxFrom	= CLogicInt(0);
 				nIdxTo		= CLogicInt(0);
 			}
-			CLogicInt	nDelPos = nDelPosNext;
 			nDelLen	= nDelLenNext;
 			if( nLineNum < rcSelLayout.bottom && 0 < nDelLen ){
+				CLogicInt	nDelPos = nDelPosNext;
 				CLayoutPoint sPos;
 				m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum + CLayoutInt(1), &nLineLen2, &pcLayout );
 				sPos.Set(
@@ -1826,7 +1824,6 @@ bool CEditView::GetSelectedData(
 	wchar_t*		pszLineNum = NULL;
 	const wchar_t*	pszSpaces = L"                    ";
 	const CLayout*	pcLayout;
-	CEol			appendEol( neweol );
 
 	/* 範囲選択がされていない */
 	if( !GetSelectionInfo().IsTextSelected() ){
@@ -1915,6 +1912,7 @@ bool CEditView::GetSelectedData(
 		}
 	}
 	else{
+		CEol appendEol(neweol);
 		cmemBuf->SetString(L"");
 
 		//<< 2002/04/18 Azumaiya
@@ -2648,7 +2646,7 @@ bool  CEditView::ShowKeywordHelp( POINT po, LPCWSTR pszHelp, LPRECT prcHokanWin)
 					return false;
 				}
 			}else{
-				m_cTipWnd.m_cKey = cmemCurText;
+				m_cTipWnd.m_cKey = std::move(cmemCurText);
 				/* 検索実行 */
 				if(!KeySearchCore(&m_cTipWnd.m_cKey))	// 2006.04.10 fon
 					return FALSE;

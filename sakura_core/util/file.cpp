@@ -832,7 +832,6 @@ void GetExistPathW( wchar_t *po , const wchar_t *pi )
 {
 	wchar_t	*pw,*ps;
 	int		cnt;
-	wchar_t	drv[4] = L"_:\\";
 	int		dl;		/* ドライブの状態 */
 
 	/* pi の内容を
@@ -851,6 +850,7 @@ void GetExistPathW( wchar_t *po , const wchar_t *pi )
 
 	dl = GetExistPath_NO_DriveLetter;	/*「ドライブレターが無い」にしておく*/
 	if( *(po+1)==L':' && WCODE::IsAZ(*po) ){	/* 先頭にドライブレターがある。そのドライブが有効かどうか判定する */
+		wchar_t	drv[4] = L"_:\\";
 		drv[0] = *po;
 		if( _waccess(drv,0) == 0 )	dl = GetExistPath_AV_Drive;		/* 有効 */
 		else						dl = GetExistPath_IV_Drive;		/* 無効 */

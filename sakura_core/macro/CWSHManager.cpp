@@ -92,7 +92,7 @@ bool CWSHMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 BOOL CWSHMacroManager::LoadKeyMacro(HINSTANCE hInstance, const WCHAR* pszPath)
 {
 	//ソース読み込み -> m_Source
-	m_Source=L"";
+	m_Source.clear();
 	
 	CTextInputStream in(pszPath);
 	if(!in)

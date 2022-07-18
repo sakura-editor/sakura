@@ -62,7 +62,7 @@ public:
 	}
 
 protected:
-	TSingleton(){}
+	TSingleton() = default;
 	DISALLOW_COPY_AND_ASSIGN(TSingleton);
 };
 

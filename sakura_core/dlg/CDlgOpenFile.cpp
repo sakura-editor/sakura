@@ -25,9 +25,7 @@
 extern std::shared_ptr<IDlgOpenFile> New_CDlgOpenFile_CommonFileDialog();
 extern std::shared_ptr<IDlgOpenFile> New_CDlgOpenFile_CommonItemDialog();
 
-CDlgOpenFile::CDlgOpenFile()
-{
-}
+CDlgOpenFile::CDlgOpenFile() = default;
 
 void CDlgOpenFile::Create(
 	HINSTANCE					hInstance,

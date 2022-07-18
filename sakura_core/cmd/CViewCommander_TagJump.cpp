@@ -46,7 +46,7 @@
 static bool GetQuoteFilePath(const wchar_t* pLine, std::wstring& str, size_t size)
 {
 	const wchar_t* pFileEnd = wcschr( pLine, L'\"' );
-	str = L"";
+	str.clear();
 	if (pFileEnd == nullptr) {
 		return false;
 	}
@@ -74,7 +74,7 @@ static bool IsFileExists2( const wchar_t* pszFile )
 static bool IsHWNDTag( const wchar_t* pLine, std::wstring& str, int* pnLen = NULL )
 {
 	if( 0 == wcsncmp(pLine, L":HWND:[", 7) ){
-		const wchar_t* pFileEnd = wcsstr( pLine, L"]" );
+		const wchar_t* pFileEnd = wcschr( pLine, L']' );
 		if( pFileEnd ){
 			const int nLen = pFileEnd - pLine + 1;
 			int i = 7;
@@ -390,7 +390,7 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 						break;
 					}
 					// 相対パスだった→◎”を探す
-					strFile = strPath;
+					strFile = std::move(strPath);
 					searchMode = TAGLIST_ROOT;
 					continue;
 				}
@@ -404,7 +404,7 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 						break;
 					}
 					if (IsFileExists2(strPath.c_str())) {
-						strJumpToFile = strPath;
+						strJumpToFile = std::move(strPath);
 						break;
 					}
 				}

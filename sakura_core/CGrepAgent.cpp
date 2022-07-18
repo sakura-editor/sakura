@@ -122,8 +122,7 @@ public:
 		, m_nLineNum(0)
 	{
 	}
-	~CFileLoadOrWnd(){
-	}
+	~CFileLoadOrWnd() = default;
 	ECodeType FileOpen(const WCHAR* pszFile, bool bBigFile, ECodeType charCode, int nFlag)
 	{
 		if( m_hWnd ){

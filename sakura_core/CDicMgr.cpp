@@ -70,6 +70,7 @@ BOOL CDicMgr::Search(
 	}
 
 	wchar_t	szLine[LINEREADBUFSIZE];
+	size_t szDelimit = wcslen(pszDelimit);
 	for(int line=1 ; in; line++ ){	// 2006.04.10 fon
 		//1行読み込み
 		{
@@ -81,7 +82,7 @@ BOOL CDicMgr::Search(
 		pszWork = wcsstr( szLine, pszDelimit );
 		if( NULL != pszWork && szLine[0] != L';' ){
 			*pszWork = L'\0';
-			pszWork += wcslen( pszDelimit );
+			pszWork += szDelimit;
 
 			/* 最初のトークンを取得します。 */
 			wchar_t *context = NULL;

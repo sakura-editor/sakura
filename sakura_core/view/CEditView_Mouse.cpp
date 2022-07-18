@@ -1572,7 +1572,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 					strOPEN = L"ht" + strURL;
 				}
 				else{
-					strOPEN = strURL;
+					strOPEN = std::move(strURL);
 				}
 			}
 			{

@@ -762,7 +762,7 @@ void CDlgFuncList::SetData()
 
 bool CDlgFuncList::GetTreeFileFullName(HWND hwndTree, HTREEITEM target, std::wstring* pPath, int* pnItem)
 {
-	*pPath = L"";
+	(*pPath).clear();
 	*pnItem = -1;
 	do{
 		TVITEM tvItem;
@@ -777,7 +777,7 @@ bool CDlgFuncList::GetTreeFileFullName(HWND hwndTree, HTREEITEM target, std::wst
 			std::wstring path = m_pcFuncInfoArr->GetAt(*pnItem)->m_cmemFileName.GetStringPtr();
 			path += L"\\";
 			path += *pPath;
-			*pPath = path;
+			*pPath = std::move(path);
 			return true;
 		}
 		if( tvItem.lParam != -1 && tvItem.lParam != -2 ){
@@ -787,7 +787,7 @@ bool CDlgFuncList::GetTreeFileFullName(HWND hwndTree, HTREEITEM target, std::wst
 			std::wstring path = szFileName;
 			path += L"\\";
 			path += *pPath;
-			*pPath = path;
+			*pPath = std::move(path);
 		}else{
 			*pPath = szFileName;
 		}
@@ -830,7 +830,7 @@ int CDlgFuncList::GetData( void )
 	TV_ITEM			tvi;
 
 	m_cFuncInfo = NULL;
-	m_sJumpFile = L"";
+	m_sJumpFile.clear();
 	hwndList = GetItemHwnd( IDC_LIST_FL );
 	if( m_nViewType == VIEWTYPE_LIST ){
 		//	List
@@ -870,7 +870,7 @@ int CDlgFuncList::GetData( void )
 						if( tvi.lParam == -1 ){
 							int nItem;
 							if( !GetTreeFileFullName( hwndTree, htiItem, &m_sJumpFile, &nItem ) ){
-								m_sJumpFile = L""; // error
+								m_sJumpFile.clear(); // error
 							}
 						}
 					}

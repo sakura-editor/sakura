@@ -676,7 +676,7 @@ BOOL CSMacroMgr::Load( int idx, HINSTANCE hInstance, const WCHAR* pszPath, const
 		ext = pszType;
 	}
 
-	m_sMacroPath = L"";
+	m_sMacroPath.clear();
 	*ppMacro = CMacroFactory::getInstance()->Create(ext);
 	if( *ppMacro == NULL )
 		return FALSE;

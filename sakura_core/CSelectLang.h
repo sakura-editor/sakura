@@ -130,9 +130,9 @@ public:
 	/*
 	||  Constructors
 	*/
-	CLoadString(){}
+	CLoadString() = default;
 	CLoadString( UINT uid ){ LoadString( uid ); }		// 文字列読み込み付きコンストラクタ
-	/*virtual*/ ~CLoadString(){}
+	/*virtual*/ ~CLoadString() = default;
 
 	/*
 	||  Attributes & Operations

@@ -162,9 +162,7 @@ CPropCommon::CPropCommon()
 	return;
 }
 
-CPropCommon::~CPropCommon()
-{
-}
+CPropCommon::~CPropCommon() = default;
 
 /* 初期化 */
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
