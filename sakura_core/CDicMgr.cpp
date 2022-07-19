@@ -52,7 +52,8 @@ BOOL CDicMgr::Search(
 	CRunningTimer cRunningTimer( L"CDicMgr::Search" );
 #endif
 	long	i;
-	const wchar_t*	pszDelimit = L" /// ";
+	constexpr auto& pszDelimit = L" /// ";
+	constexpr auto cchDelimit = _countof(pszDelimit) - 1;
 	wchar_t*	pszWork;
 	int		nRes;
 	wchar_t*	pszToken;
@@ -70,7 +71,6 @@ BOOL CDicMgr::Search(
 	}
 
 	wchar_t	szLine[LINEREADBUFSIZE];
-	size_t szDelimit = wcslen(pszDelimit);
 	for(int line=1 ; in; line++ ){	// 2006.04.10 fon
 		//1行読み込み
 		{
@@ -82,7 +82,7 @@ BOOL CDicMgr::Search(
 		pszWork = wcsstr( szLine, pszDelimit );
 		if( NULL != pszWork && szLine[0] != L';' ){
 			*pszWork = L'\0';
-			pszWork += szDelimit;
+			pszWork += cchDelimit;
 
 			/* 最初のトークンを取得します。 */
 			wchar_t *context = NULL;

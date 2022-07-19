@@ -115,9 +115,9 @@ public:
 	int Enumerates( LPCWSTR lpBaseFolder, VGrepEnumKeys& vecKeys, CGrepEnumOptions& option, CGrepEnumFileBase* pExceptItems = NULL ){
 		int found = 0;
 
-		size_t szBaseFolder = wcslen(lpBaseFolder);
+		const auto cchBaseFolder = lpBaseFolder ? wcsnlen_s(lpBaseFolder, _MAX_PATH - 1) : 0;
 		for( int i = 0; i < (int)vecKeys.size(); i++ ){
-			int baseLen = szBaseFolder;
+			int baseLen = cchBaseFolder;
 			LPWSTR lpPath = new WCHAR[ baseLen + wcslen( vecKeys[ i ] ) + 2 ];
 			if( NULL == lpPath ) break;
 			wcscpy( lpPath, lpBaseFolder );

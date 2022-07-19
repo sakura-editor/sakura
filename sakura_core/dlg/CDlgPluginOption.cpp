@@ -148,7 +148,7 @@ void CDlgPluginOption::SetData( void )
 			if( !cProfile->IOProfileData( sSection.c_str(), sKey.c_str(), sValue ) ){
 				// Optionが見つからなかったらDefault値を設定
 				sValue = cOpt->GetDefaultVal();
-				if( sValue != wstring() ){
+				if( sValue.length() ){
 					bLoadDefault = true;
 					cProfile->SetWritingMode();
 					cProfile->IOProfileData( sSection.c_str(), sKey.c_str(), sValue );
@@ -158,7 +158,7 @@ void CDlgPluginOption::SetData( void )
 		}
 
 		if (cOpt->GetType() == OPTION_TYPE_BOOL) {
-			wcscpy( buf, sValue == wstring( L"0") || sValue == wstring() ? BOOL_DISP_FALSE : BOOL_DISP_TRUE );
+			wcscpy_s( buf, sValue == L"0"s || sValue.empty() ? BOOL_DISP_FALSE : BOOL_DISP_TRUE );
 		}
 		else if (cOpt->GetType() == OPTION_TYPE_INT) {
 			// 数値へ正規化

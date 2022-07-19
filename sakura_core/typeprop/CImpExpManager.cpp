@@ -765,7 +765,7 @@ bool CImpExpKeyHelp::Import( const wstring& sFileName, wstring& sErrMsg )
 		WCHAR *p1, *p2, *p3;
 		p1 = &buff[9];
 		p3 = p1;					//結果確認用に初期化
-		if( NULL != (p2=wcschr(p1,LTEXT(','))) ){
+		if( p2 = wcschr(p1, L',') ){
 			*p2 = LTEXT('\0');
 			p2 += 1;				//カンマの次が、次の要素
 			if( NULL != (p3=wcschr(p2,LTEXT(','))) ){

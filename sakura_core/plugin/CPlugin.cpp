@@ -265,7 +265,7 @@ std::vector<std::wstring> wstring_split( std::wstring sTrg, wchar_t cSep )
         splitVec.push_back( sTrg.substr( 0, idx ) );
         sTrg = sTrg.substr( ++idx );
     }
-	if (!sTrg.empty()) {
+	if (sTrg.length()) {
 		splitVec.push_back( sTrg );
 	}
 
@@ -278,7 +278,7 @@ bool CPlugin::ReadPluginDefString( CDataProfile *cProfile, CDataProfile *cProfil
 {
 	WCHAR bufKey[64];
 	m_aStrings.clear();
-	m_aStrings.emplace_back( L"" ); // 0番目ダミー
+	m_aStrings.emplace_back( std::wstring() ); // 0番目ダミー
 	for( int nCount = 1; nCount < MAX_PLUG_STRING; nCount++ ){	//添え字は１から始める
 		wstring sVal = L"";
 		_swprintf( bufKey, L"S[%d]", nCount );

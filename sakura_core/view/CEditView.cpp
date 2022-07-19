@@ -711,7 +711,7 @@ LRESULT CEditView::DispatchEvent(
 			//	シフトキーが押されていないときだけ同期スクロール
 			if(!GetKeyState_Shift()){
 				CLayoutInt Scroll = OnVScroll(
-					(int)LOWORD(wParam), ((int)HIWORD(wParam)) * m_nVScrollRate);
+					LOWORD(wParam), HIWORD(wParam) * m_nVScrollRate);
 				SyncScrollV( Scroll );
 			}
 		}
@@ -1913,7 +1913,7 @@ bool CEditView::GetSelectedData(
 	}
 	else{
 		CEol appendEol(neweol);
-		cmemBuf->SetString(L"");
+		cmemBuf->Clear();
 
 		//<< 2002/04/18 Azumaiya
 		//  これから貼り付けに使う領域の大まかなサイズを取得する。
