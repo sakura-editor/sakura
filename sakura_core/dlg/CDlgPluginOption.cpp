@@ -47,6 +47,8 @@
 #define	BOOL_DISP_TRUE	L"\u2611"
 #define	BOOL_DISP_FALSE	L"\u2610"
 
+using namespace std::string_literals;
+
 // 編集領域を表示、非表示にする
 static inline void CtrlShow(HWND hwndDlg, int id, BOOL bShow)
 {
