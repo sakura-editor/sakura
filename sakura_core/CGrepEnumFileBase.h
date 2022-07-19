@@ -115,7 +115,7 @@ public:
 	int Enumerates( LPCWSTR lpBaseFolder, VGrepEnumKeys& vecKeys, CGrepEnumOptions& option, CGrepEnumFileBase* pExceptItems = NULL ){
 		int found = 0;
 
-		const auto cchBaseFolder = lpBaseFolder ? wcsnlen_s(lpBaseFolder, _MAX_PATH - 1) : 0;
+		const auto cchBaseFolder = lpBaseFolder ? wcsnlen_s(lpBaseFolder, 4096 - 1) : 0; // FIXME: パス長の上限は暫定値。
 		for( int i = 0; i < (int)vecKeys.size(); i++ ){
 			int baseLen = cchBaseFolder;
 			LPWSTR lpPath = new WCHAR[ baseLen + wcslen( vecKeys[ i ] ) + 2 ];
