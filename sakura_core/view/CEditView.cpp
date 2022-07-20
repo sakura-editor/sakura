@@ -708,10 +708,11 @@ LRESULT CEditView::DispatchEvent(
 //		MYTRACE( L"	WM_VSCROLL nPos=%d\n", GetScrollPos( m_hwndVScrollBar, SB_CTL ) );
 		//	Sep. 11, 2004 genta 同期スクロールの関数化
 		{
+			// 垂直スクロールする
+			auto Scroll = OnVScroll(LOWORD(wParam), HIWORD(wParam) * m_nVScrollRate);
+
 			//	シフトキーが押されていないときだけ同期スクロール
 			if(!GetKeyState_Shift()){
-				CLayoutInt Scroll = OnVScroll(
-					LOWORD(wParam), HIWORD(wParam) * m_nVScrollRate);
 				SyncScrollV( Scroll );
 			}
 		}
@@ -722,10 +723,11 @@ LRESULT CEditView::DispatchEvent(
 //		MYTRACE( L"	WM_HSCROLL nPos=%d\n", GetScrollPos( m_hwndHScrollBar, SB_CTL ) );
 		//	Sep. 11, 2004 genta 同期スクロールの関数化
 		{
+			// 水平スクロールする
+			auto Scroll = OnHScroll(LOWORD(wParam), HIWORD(wParam));
+
 			//	シフトキーが押されていないときだけ同期スクロール
 			if(!GetKeyState_Shift()){
-				CLayoutInt Scroll = OnHScroll(
-					(int)LOWORD(wParam), ((int)HIWORD(wParam)));
 				SyncScrollH( Scroll );
 			}
 		}
