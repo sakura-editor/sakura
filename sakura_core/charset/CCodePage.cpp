@@ -394,8 +394,8 @@ CCodePage::CodePageList& CCodePage::GetCodePageList()
 		}
 	}
 	// 独自実装部分を定義
-	result.push_back( CCodePage::CodePageList::value_type(12000, L"12000 (UTF-32LE)") );
-	result.push_back( CCodePage::CodePageList::value_type(12001, L"12001 (UTF-32BE)") );
+	result.emplace_back( 12000, L"12000 (UTF-32LE)" );
+	result.emplace_back( 12001, L"12001 (UTF-32BE)" );
 
 	std::sort(result.begin(),result.end(), sortByCodePage());
 	return result;

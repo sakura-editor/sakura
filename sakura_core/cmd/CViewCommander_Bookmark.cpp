@@ -268,14 +268,18 @@ void CViewCommander::Command_BOOKMARK_SET(void)
 		);
 		for(CLogicInt nY=ptFrom.GetY2();nY<=ptTo.y;nY++){
 			pCDocLine=GetDocument()->m_cDocLineMgr.GetLine( nY );
-			CBookmarkSetter cBookmark(pCDocLine);
-			if(pCDocLine)cBookmark.SetBookmark(!cBookmark.IsBookmarked());
+			if(pCDocLine){
+				CBookmarkSetter cBookmark(pCDocLine);
+				cBookmark.SetBookmark(!cBookmark.IsBookmarked());
+			}
 		}
 	}
 	else{
 		pCDocLine=GetDocument()->m_cDocLineMgr.GetLine( GetCaret().GetCaretLogicPos().GetY2() );
-		CBookmarkSetter cBookmark(pCDocLine);
-		if(pCDocLine)cBookmark.SetBookmark(!cBookmark.IsBookmarked());
+		if(pCDocLine){
+			CBookmarkSetter cBookmark(pCDocLine);
+			cBookmark.SetBookmark(!cBookmark.IsBookmarked());
+		}
 	}
 
 	// 2002.01.16 hor 分割したビューも更新

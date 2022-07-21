@@ -185,22 +185,20 @@ public:
 	//コンストラクタ
 public:
 	CPluginOption( CPlugin* parent, wstring sLabel, wstring sSection, wstring sKey, wstring sType, wstring sSelects, wstring sDefaultVal, int index) 
+		: m_sLabel(sLabel), m_sSection(sSection), m_sKey(sKey)
 	{
 		m_parent	= parent;
-		m_sLabel	= sLabel;
-		m_sSection	= sSection;
-		m_sKey		= sKey;
 		// 小文字変換
 		std::transform( sType.begin (), sType.end (), sType.begin (), my_towlower2 );
-		m_sType		= sType;
-		m_sSelects	= sSelects;
-		m_sDefaultVal = sDefaultVal;
+		m_sType		= std::move(sType);
+		m_sSelects	= std::move(sSelects);
+		m_sDefaultVal = std::move(sDefaultVal);
 		m_index		= index;
 	}
 
 	//デストラクタ
 public:
-	~CPluginOption() {}
+	~CPluginOption() = default;
 
 	//操作
 public:

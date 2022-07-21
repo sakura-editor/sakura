@@ -425,7 +425,7 @@ int CPluginManager::InstallPlugin( CommonSetting& common, const WCHAR* pszPlugin
 		auto_sprintf( szPlugKey, L"C[%d]", i);
 		sPlugCmd.clear();
 		cProfDef.IOProfileData( PII_COMMAND, szPlugKey, sPlugCmd );
-		if (sPlugCmd == L"") {
+		if (sPlugCmd.empty()) {
 			break;
 		}
 		plugin_table[nEmpty].m_nCmdNum = i;
@@ -446,7 +446,7 @@ bool CPluginManager::LoadAllPlugin(CommonSetting* common)
 	std::wstring szLangName;
 	{
 		std::wstring szDllName = GetDllShareData().m_Common.m_sWindow.m_szLanguageDll;
-		if( szDllName == L"" ){
+		if( szDllName.empty() ){
 			szLangName = L"ja_JP";
 		}else{
 			// "sakura_lang_*.dll"

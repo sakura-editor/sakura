@@ -71,6 +71,7 @@ void CEditView_Paint::Call_OnPaint(
 
 	//領域を作成 -> rc
 	std::vector<CMyRect> rcs;
+	rcs.reserve(3);
 	if(nPaintFlag & PAINT_LINENUMBER)rcs.push_back(rcLineNumber);
 	if(nPaintFlag & PAINT_RULER)rcs.push_back(rcRuler);
 	if(nPaintFlag & PAINT_BODY)rcs.push_back(rcBody);

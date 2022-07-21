@@ -36,8 +36,7 @@
 
 static const WCHAR NULSTR[] = L"";
 
-CMacroFactory::CMacroFactory()
-{}
+CMacroFactory::CMacroFactory() = default;
 
 /*!
 	与えられた拡張子をmapのkeyに変換する

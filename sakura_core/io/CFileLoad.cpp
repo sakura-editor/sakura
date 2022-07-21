@@ -407,7 +407,7 @@ EConvertResult CFileLoad::ReadLine_core(
 		if( m_bBomExist && 1 <= pUnicodeBuffer->GetStringLength() ){
 			if( pUnicodeBuffer->GetStringPtr()[0] == 0xfeff ){
 				CNativeW tmp(pUnicodeBuffer->GetStringPtr() + 1, pUnicodeBuffer->GetStringLength() - 1);
-				*pUnicodeBuffer = tmp;
+				*pUnicodeBuffer = std::move(tmp);
 			}
 		}
 	}

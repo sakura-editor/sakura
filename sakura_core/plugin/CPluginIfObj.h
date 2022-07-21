@@ -144,7 +144,7 @@ public:
 					Wrap(&Result)->Receive(S);
 					return true;
 				}else if( 0 == num ){
-					std::wstring str = m_cPlugin.m_sLangName.c_str();
+					std::wstring str = m_cPlugin.m_sLangName;
 					SysString S(str.c_str(), str.size());
 					Wrap(&Result)->Receive(S);
 					return true;

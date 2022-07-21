@@ -50,7 +50,7 @@ enum EDiffMark : char {
 //! DIFF挙動の管理
 class CDiffManager : public TSingleton<CDiffManager>{
 	friend class TSingleton<CDiffManager>;
-	CDiffManager(){}
+	CDiffManager() = default;
 
 public:
 	void SetDiffUse(bool b){ m_bIsDiffUse = b; }

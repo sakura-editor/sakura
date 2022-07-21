@@ -41,6 +41,4 @@ CFuncInfo::CFuncInfo(
 }
 
 /* CFuncInfoクラス消滅 */
-CFuncInfo::~CFuncInfo()
-{
-}
+CFuncInfo::~CFuncInfo() = default;

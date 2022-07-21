@@ -138,7 +138,7 @@ bool CDllImp::DeinitDll(bool force) noexcept
 	//DLL解放
 	if( ret || force ){
 		//DLL名を解放
-		m_strLoadedDllName = L"";
+		m_strLoadedDllName.clear();
 
 		//DLL解放
 		::FreeLibrary( m_hInstance );

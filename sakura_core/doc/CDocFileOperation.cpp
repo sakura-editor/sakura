@@ -179,8 +179,6 @@ void CDocFileOperation::ReloadCurrentFile(
 	}
 
 	//カーソル位置保存
-	CLayoutInt		nViewTopLine = GetEditWnd().GetActiveView().GetTextArea().GetViewTopLine();	/* 表示域の一番上の行(0開始) */
-	CLayoutInt		nViewLeftCol = GetEditWnd().GetActiveView().GetTextArea().GetViewLeftCol();	/* 表示域の一番左の桁(0開始) */
 	CLayoutPoint	ptCaretPosXY = GetEditWnd().GetActiveView().GetCaret().GetCaretLayoutPos();
 
 	//ロード
@@ -195,6 +193,8 @@ void CDocFileOperation::ReloadCurrentFile(
 	// カーソル位置復元 (※ここではオプションのカーソル位置復元（＝改行単位）が指定されていない場合でも復元する)
 	// 2007.08.23 ryoji 表示領域復元
 	if( ptCaretPosXY.GetY2() < m_pcDocRef->m_cLayoutMgr.GetLineCount() ){
+		CLayoutInt nViewTopLine = GetEditWnd().GetActiveView().GetTextArea().GetViewTopLine();	/* 表示域の一番上の行(0開始) */
+		CLayoutInt nViewLeftCol = GetEditWnd().GetActiveView().GetTextArea().GetViewLeftCol();	/* 表示域の一番左の桁(0開始) */
 		GetEditWnd().GetActiveView().GetTextArea().SetViewTopLine(nViewTopLine);
 		GetEditWnd().GetActiveView().GetTextArea().SetViewLeftCol(nViewLeftCol);
 	}

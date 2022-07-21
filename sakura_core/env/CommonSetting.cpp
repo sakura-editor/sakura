@@ -79,9 +79,7 @@ class CommonValue{
 private:
 	typedef CommonValue<T> Me;
 public:
-	CommonValue()
-	{
-	}
+	CommonValue() = default;
 	void Regist(const char* szEntryKey)
 	{
 		//CommonValueリストに自分を追加

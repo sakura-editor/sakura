@@ -357,7 +357,6 @@ bool CImpExpType::Import( const wstring& sFileName, wstring& sErrMsg )
 	wchar_t* pSlashPos;
 	wchar_t	szFileName[_MAX_PATH+1];
 	bool	bCase;
-	wstring	sErrMag;
 	CommonSetting& common = m_pShareData->m_Common;
 
 	// 強調キーワード
@@ -636,7 +635,7 @@ bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 		if( line.length() < 12 ) continue;
 		if( wmemcmp(&line[0], L"RxKey[", 6) != 0 ) continue;
 		if( wmemcmp(&line[9], L"]=", 2) != 0 ) continue;
-		auto sepPos = line.find_first_of(L",", 11); // ColorName と RegexKeyword の間の区切り文字の存在を確認する
+		auto sepPos = line.find_first_of(L',', 11); // ColorName と RegexKeyword の間の区切り文字の存在を確認する
 		if( sepPos == decltype(line)::npos ) continue;
 		line[sepPos] = L'\0'; // 区切り文字をNULL終端に置き換える事で標準Cライブラリの関数で ColorName を読み取りやすくする
 		const wchar_t* pColorNameInLine = &line[11];
@@ -766,10 +765,10 @@ bool CImpExpKeyHelp::Import( const wstring& sFileName, wstring& sErrMsg )
 		WCHAR *p1, *p2, *p3;
 		p1 = &buff[9];
 		p3 = p1;					//結果確認用に初期化
-		if( NULL != (p2=wcsstr(p1,LTEXT(","))) ){
+		if( p2 = wcschr(p1, L',') ){
 			*p2 = LTEXT('\0');
 			p2 += 1;				//カンマの次が、次の要素
-			if( NULL != (p3=wcsstr(p2,LTEXT(","))) ){
+			if( NULL != (p3=wcschr(p2,LTEXT(','))) ){
 				*p3 = LTEXT('\0');
 				p3 += 1;			//カンマの次が、次の要素
 			}

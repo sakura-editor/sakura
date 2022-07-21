@@ -72,7 +72,7 @@ using namespace std;
 */
 void CProfile::Init( void )
 {
-	m_strProfileName = L"";
+	m_strProfileName.clear();
 	m_ProfileData.clear();
 	m_bRead = true;
 	return;
@@ -100,17 +100,17 @@ void CProfile::ReadOneline(
 	// セクション取得
 	//	Jan. 29, 2004 genta compare使用
 	if( line.compare( 0, 1, LTEXT("[") ) == 0 
-			&& line.find( LTEXT("=") ) == line.npos
-			&& line.find( LTEXT("]") ) == ( line.size() - 1 ) ) {
+			&& line.find( LTEXT('=') ) == line.npos
+			&& line.find( LTEXT(']') ) == ( line.size() - 1 ) ) {
 		Section Buffer;
 		Buffer.strSectionName = line.substr( 1, line.size() - 1 - 1 );
 		m_ProfileData.push_back( Buffer );
 	}
 	// エントリ取得
 	else if( !m_ProfileData.empty() ) {	//最初のセクション以前の行のエントリは無視
-		wstring::size_type idx = line.find( LTEXT("=") );
+		wstring::size_type idx = line.find( LTEXT('=') );
 		if( line.npos != idx ) {
-			m_ProfileData.back().mapEntries.insert( PAIR_STR_STR( line.substr(0,idx), line.substr(idx+1) ) );
+			m_ProfileData.back().mapEntries.emplace( line.substr(0,idx), line.substr(idx+1) );
 		}
 	}
 }
@@ -247,7 +247,7 @@ bool CProfile::WriteProfile(
     
 	std::vector< wstring > vecLine;
 	if( NULL != pszComment ) {
-		vecLine.push_back( LTEXT(";") + wstring( pszComment ) );		// //->;	2008/5/24 Uchi
+		vecLine.emplace_back( LTEXT(";") + wstring( pszComment ) );		// //->;	2008/5/24 Uchi
 		vecLine.push_back( LTEXT("") );
 	}
 	for(auto iter = m_ProfileData.cbegin(); iter != m_ProfileData.cend(); iter++ ) {

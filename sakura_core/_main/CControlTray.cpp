@@ -815,7 +815,7 @@ LRESULT CControlTray::DispatchEvent(
 								int iBitmap = CMenuDrawer::TOOLBAR_ICON_PLUGCOMMAND_DEFAULT - 1;
 								const CPlug* plug = *it;
 								if( !plug->m_sIcon.empty() ){
-									iBitmap = m_cMenuDrawer.m_pcIcons->Add( plug->m_cPlugin.GetFilePath( plug->m_sIcon.c_str() ).c_str() );
+									iBitmap = m_cMenuDrawer.m_pcIcons->Add( plug->m_cPlugin.GetFilePath( plug->m_sIcon ).c_str() );
 								}
 								m_cMenuDrawer.AddToolButton( iBitmap, plug->GetFunctionCode() );
 							}

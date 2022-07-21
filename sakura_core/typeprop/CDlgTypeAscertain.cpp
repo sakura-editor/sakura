@@ -81,7 +81,7 @@ BOOL CDlgTypeAscertain::OnBnClicked( int wID )
 		wchar_t	buff2[_MAX_PATH + 20];
 
 		m_psi->bAddType = IsDlgButtonCheckedBool( GetHwnd(), IDC_RADIO_TYPE_ADD );
-		m_psi->sColorFile = L"";
+		m_psi->sColorFile.clear();
 		m_psi->nColorType = Combo_GetCurSel( GetItemHwnd( IDC_COMBO_COLORS ) ) - 1;
 		if (m_psi->nColorType >= MAX_TYPES && Combo_GetLBText( GetItemHwnd( IDC_COMBO_COLORS ), m_psi->nColorType + 1, buff1)) {
 			if (_stscanf( buff1, L"File -- %ls", buff2 ) > 0) {

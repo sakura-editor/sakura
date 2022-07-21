@@ -225,7 +225,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					if( sel >= 0 && m_Common.m_sPlugin.m_PluginTable[sel].m_state == PLS_LOADED ){
 						// 2010.08.21 プラグイン名(フォルダー名)の同一性の確認
 						CPlugin* plugin = CPluginManager::getInstance()->GetPlugin(sel);
-						wstring sDirName = plugin->GetFolderName().c_str();
+						wstring sDirName = plugin->GetFolderName();
 						if( plugin && 0 == wmemicmp(sDirName.c_str(), m_Common.m_sPlugin.m_PluginTable[sel].m_szName ) ){
 							CDlgPluginOption cDlgPluginOption;
 							cDlgPluginOption.DoModal( ::GetModuleHandle(NULL), hwndDlg, this, sel );
@@ -545,7 +545,7 @@ std::wstring CPropPlugin::GetReadMeFile(const std::wstring& sName)
 	}
 
 	if (!fl->IsFileExist()) {
-		sReadMeName = L"";
+		sReadMeName.clear();
 	}
 	delete fl;
 	return sReadMeName;
@@ -617,7 +617,7 @@ static void LoadPluginTemp(CommonSetting& common, CMenuDrawer& cMenuDrawer)
 			int iBitmap = CMenuDrawer::TOOLBAR_ICON_PLUGCOMMAND_DEFAULT - 1;
 			const CPlug* plug = *it;
 			if( !plug->m_sIcon.empty() ){
-				iBitmap = cMenuDrawer.m_pcIcons->Add( plug->m_cPlugin.GetFilePath( plug->m_sIcon.c_str() ).c_str() );
+				iBitmap = cMenuDrawer.m_pcIcons->Add( plug->m_cPlugin.GetFilePath( plug->m_sIcon ).c_str() );
 			}
 			cMenuDrawer.AddToolButton( iBitmap, plug->GetFunctionCode() );
 		}

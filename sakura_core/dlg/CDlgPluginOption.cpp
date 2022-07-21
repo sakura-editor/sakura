@@ -47,6 +47,8 @@
 #define	BOOL_DISP_TRUE	L"\u2611"
 #define	BOOL_DISP_FALSE	L"\u2610"
 
+using namespace std::string_literals;
+
 // 編集領域を表示、非表示にする
 static inline void CtrlShow(HWND hwndDlg, int id, BOOL bShow)
 {
@@ -119,7 +121,7 @@ void CDlgPluginOption::SetData( void )
 	ListView_DeleteAllItems( hwndList );	// リストを空にする
 	m_Line = -1;							// 行非選択
 
-	std::unique_ptr<CDataProfile> cProfile( new CDataProfile );
+	auto cProfile = std::make_unique<CDataProfile>();
 	cProfile->SetReadingMode();
 	cProfile->ReadProfile( m_cPlugin->GetOptionPath().c_str() );
 
@@ -139,17 +141,16 @@ void CDlgPluginOption::SetData( void )
 		wstring sSection;
 		wstring sKey;
 		wstring sValue;
-		wstring sType;
 
 		cOpt->GetKey(&sSection, &sKey);
 		if( sSection.empty() || sKey.empty() ) {
-			sValue = L"";
+			sValue.clear();
 		}
 		else {
 			if( !cProfile->IOProfileData( sSection.c_str(), sKey.c_str(), sValue ) ){
 				// Optionが見つからなかったらDefault値を設定
 				sValue = cOpt->GetDefaultVal();
-				if( sValue != wstring(L"") ){
+				if( sValue.length() ){
 					bLoadDefault = true;
 					cProfile->SetWritingMode();
 					cProfile->IOProfileData( sSection.c_str(), sKey.c_str(), sValue );
@@ -159,7 +160,7 @@ void CDlgPluginOption::SetData( void )
 		}
 
 		if (cOpt->GetType() == OPTION_TYPE_BOOL) {
-			wcscpy( buf, sValue == wstring( L"0") || sValue == wstring( L"") ? BOOL_DISP_FALSE : BOOL_DISP_TRUE );
+			wcscpy_s( buf, sValue == L"0"s || sValue.empty() ? BOOL_DISP_FALSE : BOOL_DISP_TRUE );
 		}
 		else if (cOpt->GetType() == OPTION_TYPE_INT) {
 			// 数値へ正規化
@@ -223,7 +224,7 @@ int CDlgPluginOption::GetData( void )
 	// リスト
 	hwndList = GetItemHwnd( IDC_LIST_PLUGIN_OPTIONS );
 
-	std::unique_ptr<CDataProfile> cProfile( new CDataProfile );
+	auto cProfile = std::make_unique<CDataProfile>();
 	cProfile->SetReadingMode();
 	cProfile->ReadProfile( m_cPlugin->GetOptionPath().c_str() );
 	cProfile->SetWritingMode();

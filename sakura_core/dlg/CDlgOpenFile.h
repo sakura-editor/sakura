@@ -91,7 +91,7 @@ class CDlgOpenFile final : public IDlgOpenFile
 public:
 	//コンストラクタ・デストラクタ
 	CDlgOpenFile();
-	~CDlgOpenFile() {}
+	~CDlgOpenFile() = default;
 
 	void Create(
 		HINSTANCE					hInstance,
