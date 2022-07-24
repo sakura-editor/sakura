@@ -44,6 +44,7 @@
 #include "util/format.h"
 #include "CSelectLang.h"
 #include "String_define.h"
+#include "util/module.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          ロック                             //
@@ -479,6 +480,8 @@ bool CDocFileOperation::FileClose()
 
 	// 2006.09.01 ryoji オープン後自動実行マクロを実行する
 	m_pcDocRef->RunAutoMacro( GetDllShareData().m_Common.m_sMacro.m_nMacroOnOpened );
+
+	ChangeCurrentDirectoryToExeDir();
 
 	return true;
 }
