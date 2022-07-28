@@ -109,9 +109,7 @@ CPropTypes::CPropTypes()
 	(static_cast<CPropTypesScreen*>(this))->CPropTypes_Screen();
 }
 
-CPropTypes::~CPropTypes()
-{
-}
+CPropTypes::~CPropTypes() = default;
 
 /* 初期化 */
 void CPropTypes::Create( HINSTANCE hInstApp, HWND hwndParent )

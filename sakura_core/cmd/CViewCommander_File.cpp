@@ -110,10 +110,10 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 	//ロード情報
 	SLoadInfo sLoadInfo(filename?filename:L"", nCharCode, bViewMode);
 	std::vector<std::wstring> files;
-	std::wstring defName = (defaultName ? defaultName : L"");
 
 	//必要であれば「ファイルを開く」ダイアログ
 	if(!sLoadInfo.cFilePath.IsValidPath()){
+		std::wstring defName = (defaultName ? defaultName : L"");
 		if( !defName.empty() ){
 			WCHAR szPath[_MAX_PATH];
 			WCHAR szDir[_MAX_DIR];
@@ -693,8 +693,6 @@ BOOL CViewCommander::Command_PUTFILE(
 	{	/* 選択範囲を出力 */
 		try
 		{
-			CBinaryOutputStream out(filename,true);
-
 			// 選択範囲の取得 -> cMem
 			CNativeW cMem;
 			m_pCommanderView->GetSelectedDataSimple(cMem);
@@ -719,8 +717,10 @@ BOOL CViewCommander::Command_PUTFILE(
 			pcSaveCode->UnicodeToCode(*pConvBuffer, &cDst);
 
 			//書込
-			if( 0 < cDst.GetRawLength() )
-				out.Write(cDst.GetRawPtr(),cDst.GetRawLength());
+			if( 0 < cDst.GetRawLength() ){
+				CBinaryOutputStream out(filename, true);
+				out.Write(cDst.GetRawPtr(), cDst.GetRawLength());
+			}
 		}
 		catch(const CError_FileOpen&)
 		{

@@ -86,7 +86,7 @@ bool CZipFile::ChkPluginDef(const std::wstring& sDefFile, std::wstring& sFolderN
 	long			lCount;
 	bool			bFoundDef = false;
 
-	sFolderName = L"";
+	sFolderName.clear();
 
 	// ZIP File List
 	hr = pZipFile->Items(&pZipFileItems);

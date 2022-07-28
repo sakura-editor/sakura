@@ -245,7 +245,7 @@ int CDlgReplace::GetData( void )
 
 	/* 置換後文字列 */
 	if( ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_LINEDELETE ) ){
-		m_strText2 = L"";
+		m_strText2.clear();
 	}else{
 		ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT2, m_strText2 );
 	}

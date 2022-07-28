@@ -22,9 +22,7 @@ CDocLine::CDocLine()
 {
 }
 
-CDocLine::~CDocLine()
-{
-}
+CDocLine::~CDocLine() = default;
 
 /* 空行（スペース、タブ、改行記号のみの行）かどうかを取得する
 	true：空行だ。

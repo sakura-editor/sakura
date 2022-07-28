@@ -657,7 +657,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 				cMemRepKey2 = cMemRepKey;
 				cMemRepKey2 += cMemMatchStr;
 			} else if (nReplaceTarget == 2) { // 選択終点へ挿入
-				cMemRepKey2 = cMemMatchStr;
+				cMemRepKey2 = std::move(cMemMatchStr);
 				cMemRepKey2 += cMemRepKey;
 			} else {
 				cMemRepKey2 = cMemRepKey;
@@ -966,10 +966,10 @@ void CViewCommander::Command_REPLACE_ALL()
 			cMemRepKey2 = cmemClip;
 			cMemRepKey2 += cMemMatchStr;
 		} else if (nReplaceTarget == 2) { // 選択終点へ挿入
-			cMemRepKey2 = cMemMatchStr;
+			cMemRepKey2 = std::move(cMemMatchStr);
 			cMemRepKey2 += cmemClip;
 		} else {
-			cMemRepKey2 = cmemClip;
+			cMemRepKey2 = std::move(cmemClip);
 		}
 		// 正規表現オプションの設定2006.04.01 かろと
 		int nFlag = (m_pCommanderView->m_sCurSearchOption.bLoHiCase ? CBregexp::optCaseSensitive : CBregexp::optNothing);
@@ -1094,8 +1094,8 @@ void CViewCommander::Command_REPLACE_ALL()
 					  out = left < right && (...) というのがまさに対応を迫られた痕跡ですよ。
 				*/
 				const CLayoutInt firstLeft =  ptNewFrom.x - raggedLeftDiff;
-				const CLogicInt  lastRight = (Int)ptNew.x - colDif;
 				if (ptNewFrom.y == ptNew.y) { // 一番よくあるケースではレイアウトの取得・計算が不要。
+					const CLogicInt lastRight = (Int)ptNew.x - colDif;
 					out = firstLeft < sRangeA.GetFrom().x || boxRight.x < lastRight;
 				} else {
 					for (CLayoutInt ll = ptNewFrom.y; ll <= ptNew.y; ++ll) { // ll = Layout Line
