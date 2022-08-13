@@ -10,7 +10,7 @@ enable_language(CXX)
 set(CMAKE_CXX_STANDARD 17)    # C++17...
 set(CMAKE_CXX_STANDARD_REQUIRED ON) #...is required...
 
-# switch DLL or static libary by specifying by command line
+# switch DLL or static library by specifying by command line
 set (LIB_TYPE STATIC)
 if (BUILD_SHARED_LIBS)
   # User wants to build Dynamic Libraries, so change the LIB_TYPE variable to CMake keyword 'SHARED'
