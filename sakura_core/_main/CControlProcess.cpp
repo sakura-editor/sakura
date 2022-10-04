@@ -64,24 +64,24 @@ std::filesystem::path CControlProcess::GetIniFileName() const
  */
 std::filesystem::path CControlProcess::GetPrivateIniFileName(const std::wstring& exeIniPath, const std::wstring& filename) const
 {
+	const auto nFolder = ::GetPrivateProfileInt(L"Settings", L"UserRootFolder", 0, exeIniPath.c_str());
 	KNOWNFOLDERID refFolderId;
-	switch (int nFolder = ::GetPrivateProfileInt(L"Settings", L"UserRootFolder", 0, exeIniPath.c_str())) {
+	switch (nFolder) {
 	case 1:
+	case 3:
 		refFolderId = FOLDERID_Profile;			// ユーザーのルートフォルダー
 		break;
 	case 2:
 		refFolderId = FOLDERID_Documents;		// ユーザーのドキュメントフォルダー
 		break;
-	case 3:
-		refFolderId = FOLDERID_Desktop;			// ユーザーのデスクトップフォルダー
-		break;
+
 	default:
 		refFolderId = FOLDERID_RoamingAppData;	// ユーザーのアプリケーションデータフォルダー
 		break;
 	}
 
 	PWSTR pFolderPath = nullptr;
-	::SHGetKnownFolderPath(refFolderId, KF_FLAG_DEFAULT, nullptr, &pFolderPath);
+	::SHGetKnownFolderPath(refFolderId, KF_FLAG_DEFAULT_PATH, NULL, &pFolderPath);
 	std::filesystem::path privateIniPath(pFolderPath);
 	::CoTaskMemFree(pFolderPath);
 
@@ -91,6 +91,9 @@ std::filesystem::path CControlProcess::GetPrivateIniFileName(const std::wstring&
 	if (subFolder.empty())
 	{
 		subFolder = L"sakura";
+	}
+	if (nFolder == 3) {
+		privateIniPath.append("Desktop");
 	}
 	privateIniPath.append(subFolder);
 

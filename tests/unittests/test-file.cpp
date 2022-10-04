@@ -210,9 +210,46 @@ TEST(file, GetIniFileName_InProcessNamedProfileUnInitialized)
 }
 
 /*!
+ * マルチユーザー設定ファイルを使うテストのためのフィクスチャクラス
+ *
+ * 設定ファイルを使うテストは「設定ファイルがない状態」からの始動を想定しているので
+ * 始動前に設定ファイルを削除するようにしている。
+ * テスト実行後に設定ファイルを残しておく意味はないので終了後も削除している。
+ */
+class CExeIniTest : public ::testing::Test {
+protected:
+	/*!
+	 * マルチユーザー構成設定ファイルのパス
+	 */
+	std::filesystem::path exeIniPath;
+
+	/*!
+	 * テストが起動される直前に毎回呼ばれる関数
+	 */
+	void SetUp() override {
+		// マルチユーザー構成設定ファイルのパス
+		exeIniPath = GetExeFileName().concat(L".ini");
+	}
+
+	/*!
+	 * テストが実行された直後に毎回呼ばれる関数
+	 */
+	void TearDown() override {
+		// 存在チェック
+		if (std::filesystem::exists(exeIniPath)) {
+			// マルチユーザー構成設定ファイルを削除する
+			std::filesystem::remove(exeIniPath);
+		}
+
+		// 削除チェック
+		ASSERT_FALSE(fexist(exeIniPath.c_str()));
+	}
+};
+
+/*!
  * @brief iniファイルパスの取得
  */
-TEST(file, GetIniFileName_PrivateRoamingAppData)
+TEST_F(CExeIniTest, GetIniFileName_PrivateRoamingAppData)
 {
 	// コマンドラインのインスタンスを用意する
 	CCommandLine cCommandLine;
@@ -221,9 +258,6 @@ TEST(file, GetIniFileName_PrivateRoamingAppData)
 
 	// プロセスのインスタンスを用意する
 	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
-
-	// マルチユーザー構成設定ファイルのパス
-	auto exeIniPath = GetExeFileName().concat(L".ini");
 
 	// 設定を書き込む
 	::WritePrivateProfileString(L"Settings", L"MultiUser", L"1", exeIniPath.c_str());
@@ -241,18 +275,12 @@ TEST(file, GetIniFileName_PrivateRoamingAppData)
 
 	// テスト実施
 	ASSERT_STREQ(expected.c_str(), GetIniFileName().c_str());
-
-	// INIファイルを削除する
-	std::filesystem::remove(exeIniPath);
-
-	// 削除チェック
-	ASSERT_FALSE(fexist(exeIniPath.c_str()));
 }
 
 /*!
  * @brief iniファイルパスの取得
  */
-TEST(file, GetIniFileName_PrivateDesktop)
+TEST_F(CExeIniTest, GetIniFileName_PrivateDesktop)
 {
 	// コマンドラインのインスタンスを用意する
 	CCommandLine cCommandLine;
@@ -261,9 +289,6 @@ TEST(file, GetIniFileName_PrivateDesktop)
 
 	// プロセスのインスタンスを用意する
 	CControlProcess dummy(nullptr, LR"(-PROF="")");
-
-	// マルチユーザー構成設定ファイルのパス
-	auto exeIniPath = GetExeFileName().concat(L".ini");
 
 	// 設定を書き込む
 	::WritePrivateProfileString(L"Settings", L"MultiUser", L"1", exeIniPath.c_str());
@@ -281,18 +306,12 @@ TEST(file, GetIniFileName_PrivateDesktop)
 
 	// テスト実施
 	ASSERT_STREQ(expected.c_str(), GetIniFileName().c_str());
-
-	// INIファイルを削除する
-	std::filesystem::remove(exeIniPath);
-
-	// 削除チェック
-	ASSERT_FALSE(fexist(exeIniPath.c_str()));
 }
 
 /*!
  * @brief iniファイルパスの取得
  */
-TEST(file, GetIniFileName_PrivateProfile)
+TEST_F(CExeIniTest, GetIniFileName_PrivateProfile)
 {
 	// コマンドラインのインスタンスを用意する
 	CCommandLine cCommandLine;
@@ -301,9 +320,6 @@ TEST(file, GetIniFileName_PrivateProfile)
 
 	// プロセスのインスタンスを用意する
 	CControlProcess dummy(nullptr, LR"(-PROF="")");
-
-	// マルチユーザー構成設定ファイルのパス
-	auto exeIniPath = GetExeFileName().concat(L".ini");
 
 	// 設定を書き込む
 	::WritePrivateProfileString(L"Settings", L"MultiUser", L"1", exeIniPath.c_str());
@@ -321,18 +337,12 @@ TEST(file, GetIniFileName_PrivateProfile)
 
 	// テスト実施
 	ASSERT_STREQ(expected.c_str(), GetIniFileName().c_str());
-
-	// INIファイルを削除する
-	std::filesystem::remove(exeIniPath);
-
-	// 削除チェック
-	ASSERT_FALSE(fexist(exeIniPath.c_str()));
 }
 
 /*!
  * @brief iniファイルパスの取得
  */
-TEST(file, GetIniFileName_PrivateDocument)
+TEST_F(CExeIniTest, GetIniFileName_PrivateDocument)
 {
 	// コマンドラインのインスタンスを用意する
 	CCommandLine cCommandLine;
@@ -341,9 +351,6 @@ TEST(file, GetIniFileName_PrivateDocument)
 
 	// プロセスのインスタンスを用意する
 	CControlProcess dummy(nullptr, LR"(-PROF="")");
-
-	// マルチユーザー構成設定ファイルのパス
-	auto exeIniPath = GetExeFileName().concat(L".ini");
 
 	// 設定を書き込む
 	::WritePrivateProfileString(L"Settings", L"MultiUser", L"1", exeIniPath.c_str());
@@ -361,12 +368,6 @@ TEST(file, GetIniFileName_PrivateDocument)
 
 	// テスト実施
 	ASSERT_STREQ(expected.c_str(), GetIniFileName().c_str());
-
-	// INIファイルを削除する
-	std::filesystem::remove(exeIniPath);
-
-	// 削除チェック
-	ASSERT_FALSE(fexist(exeIniPath.c_str()));
 }
 
 /*!
