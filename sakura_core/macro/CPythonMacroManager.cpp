@@ -1032,6 +1032,11 @@ BOOL CPythonMacroManager::LoadKeyMacro(HINSTANCE hInstance, const WCHAR* pszPath
 	m_strMacro.resize(sz);
 	fread(&m_strMacro[0], 1, sz, f);
 	fclose(f);
+	// detect and erase UTF-8 BOM
+	constexpr const BYTE utf8BOM[]{ 0xef, 0xbb, 0xbf };
+	if (sz >= 3 && memcmp(&m_strMacro[0], utf8BOM, 3) == 0) {
+		m_strMacro.erase(0, 3);
+	}
 	return TRUE;
 }
 
