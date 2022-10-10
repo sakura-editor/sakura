@@ -927,11 +927,11 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 		if (!s_hModule) {
 			return false;
 		}
-	}
-	for (size_t i = 0; i < _countof(symbols); ++i) {
-		auto& s = symbols[i];
-		auto sym = ::GetProcAddress(s_hModule, s.name);
-		*(void**)s.ptr = (void*)sym;
+		for (size_t i = 0; i < _countof(symbols); ++i) {
+			auto& s = symbols[i];
+			auto sym = ::GetProcAddress(s_hModule, s.name);
+			*(void**)s.ptr = (void*)sym;
+		}
 	}
 
 	if (PyImport_AppendInittab("SakuraEditor", PyInit_SakuraEditor) == -1) {
