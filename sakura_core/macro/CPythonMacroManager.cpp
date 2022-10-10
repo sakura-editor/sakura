@@ -939,13 +939,13 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 
 	if (PyImport_AppendInittab("SakuraEditor", PyInit_SakuraEditor) == -1) {
 		fprintf(stderr, "Error: could not extend in-built modules SakuraEditor\n");
-		exit(1);
+		return false;
 	}
 
 	Py_InitializeEx(0);
 
 	if (!Py_IsInitialized()) {
-		return 0;
+		return false;
 	}
 
 	//const char* version = Py_GetVersion();
@@ -954,24 +954,48 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 	if (!module) {
 		PyErr_Print();
 		fprintf(stderr, "Error: could not import module 'SakuraEditor'\n");
-		assert(false);
+		return false;
 	}
 
 	for (auto& desc : g_commandDescs) {
-		int ret = PyModule_AddObject(module, desc.ml_name, PyCFunction_New(&desc, PyCapsule_New(&desc, nullptr, nullptr)));
+		auto cap = PyCapsule_New(&desc, nullptr, nullptr);
+		auto fn = PyCFunction_New(&desc, cap);
+		if (0 < PyModule_AddObject(module, desc.ml_name, fn)) {
+			Py_XDECREF(fn);
+			Py_XDECREF(cap);
+		}
 	}
 	for (auto& desc : g_functionDescs) {
-		int ret = PyModule_AddObject(module, desc.ml_name, PyCFunction_New(&desc, PyCapsule_New(&desc, nullptr, nullptr)));
+		auto cap = PyCapsule_New(&desc, nullptr, nullptr);
+		auto fn = PyCFunction_New(&desc, cap);
+		if (0 < PyModule_AddObject(module, desc.ml_name, fn)) {
+			Py_XDECREF(fn);
+			Py_XDECREF(cap);
+		}
 	}
 
 	g_pEditView = EditView;
 
 	PyObject* pCode = Py_CompileString(m_str.c_str(), to_achar(m_pszPath), Py_file_input);
+	if (!pCode) {
+		return false;
+	}
 	PyObject* pMain = PyImport_AddModule("__main__");
+	if (!pMain) {
+		return false;
+	}
 	PyObject* pGlobals = PyModule_GetDict(pMain);
+	if (!pGlobals) {
+		return false;
+	}
 	PyObject* pLocals = PyDict_New();
-
+	if (!pLocals) {
+		return false;
+	}
 	PyObject* pObj = PyEval_EvalCode(pCode, pGlobals, pLocals);
+	if (!pObj) {
+		return false;
+	}
 
 	Py_XDECREF(pMain);
 	Py_XDECREF(pCode);
