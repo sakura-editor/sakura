@@ -258,6 +258,8 @@ EXTERN int (*PyState_RemoveModule)(PyModuleDef* def);
 
 EXTERN int (*PyErr_BadArgument)(void);
 EXTERN void (*PyErr_Print)(void);
+EXTERN PyObject* (*PyErr_Occurred)(void);
+EXTERN void (*PyErr_Fetch)(PyObject** ptype, PyObject** pvalue, PyObject** ptraceback);
 
 EXTERN long (*PyLong_AsLong)(PyObject*);
 EXTERN PyObject* (*PyLong_FromLong)(long);
@@ -573,6 +575,8 @@ constexpr Symbol symbols[] = {
 
 	X(PyErr_BadArgument),
 	X(PyErr_Print),
+	X(PyErr_Occurred),
+	X(PyErr_Fetch),
 
 	X(PyLong_AsLong),
 	X(PyLong_FromLong),
@@ -994,6 +998,12 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 	}
 	PyObject* pObj = PyEval_EvalCode(pCode, pGlobals, pLocals);
 	if (!pObj) {
+		//PyErr_Print();
+		PyObject* ptype, * pvalue, * ptraceback;
+		PyErr_Fetch(&ptype, &pvalue, &ptraceback);
+		Py_ssize_t sz = 0;
+		wchar_t* pStrErrorMessage = PyUnicode_AsWideCharString(pvalue, &sz);
+		TRACE("%s", pStrErrorMessage);
 		return false;
 	}
 
