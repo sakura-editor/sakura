@@ -799,8 +799,9 @@ PyObject* handleCommand(PyObject* self, PyObject* args)
 		}
 
 		if (varType == VT_BSTR) {
-			wchar_t* str = PyUnicode_AsWideCharString(arg, NULL);
-			strArguments[i] = str;
+			Py_ssize_t sz = 0;
+			wchar_t* str = PyUnicode_AsWideCharString(arg, &sz);
+			strArguments[i].assign(str, sz);
 			PyMem_Free(str);
 		}else if (varType == VT_I4) {
 			long value = PyLong_AsLong(arg);
@@ -857,9 +858,11 @@ PyObject* handleFunction(PyObject* self, PyObject* args)
 		::VariantInit(&vtArgs[i]);
 		if (varType == VT_BSTR) {
 			Py_ssize_t sz = 0;
-			const char* str = PyUnicode_AsUTF8AndSize(arg, &sz);
+			wchar_t* str = PyUnicode_AsWideCharString(arg, &sz);
+			assert(str);
 			SysString S(str, (int)sz);
 			Wrap(&vtArgs[i])->Receive(S);
+			PyMem_Free(str);
 		}else if (varType == VT_I4) {
 			vtArgs[i].vt = VT_I4;
 			vtArgs[i].lVal = PyLong_AsLong(arg);
@@ -1007,7 +1010,7 @@ BOOL CPythonMacroManager::LoadKeyMacroStr(HINSTANCE hInstance, const WCHAR* pszC
 // static
 CMacroManagerBase* CPythonMacroManager::Creator(const WCHAR* FileExt)
 {
-	if (wcsicmp( FileExt, L"py" ) == 0) {
+	if (_wcsicmp( FileExt, L"py" ) == 0) {
 		return new CPythonMacroManager;
 	}
 	return NULL;
