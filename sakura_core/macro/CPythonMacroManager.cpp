@@ -984,6 +984,9 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 BOOL CPythonMacroManager::LoadKeyMacro(HINSTANCE hInstance, const WCHAR* pszPath)
 {
 	FILE* f = _wfopen(pszPath, L"rb");
+	if (!f) {
+		return FALSE;
+	}
 	long sz = _filelength(_fileno(f));
 	m_pszPath = pszPath;
 	m_str.resize(sz);
