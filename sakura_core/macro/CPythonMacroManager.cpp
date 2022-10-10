@@ -856,8 +856,9 @@ PyObject* handleFunction(PyObject* self, PyObject* args)
 
 		::VariantInit(&vtArgs[i]);
 		if (varType == VT_BSTR) {
-			const char* str = PyUnicode_AsUTF8(arg);
-			SysString S(str, (int)strlen(str));
+			Py_ssize_t sz = 0;
+			const char* str = PyUnicode_AsUTF8AndSize(arg, &sz);
+			SysString S(str, (int)sz);
 			Wrap(&vtArgs[i])->Receive(S);
 		}else if (varType == VT_I4) {
 			vtArgs[i].vt = VT_I4;
@@ -930,7 +931,7 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 	for (size_t i = 0; i < _countof(symbols); ++i) {
 		auto& s = symbols[i];
 		auto sym = ::GetProcAddress(s_hModule, s.name);
-		*(void**)s.ptr = sym;
+		*(void**)s.ptr = (void*)sym;
 	}
 
 	if (PyImport_AppendInittab("SakuraEditor", PyInit_SakuraEditor) == -1) {
