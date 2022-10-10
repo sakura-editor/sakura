@@ -976,7 +976,7 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 
 	g_pEditView = EditView;
 
-	PyObject* pCode = Py_CompileString(m_str.c_str(), to_achar(m_pszPath), Py_file_input);
+	PyObject* pCode = Py_CompileString(m_strMacro.c_str(), m_strPath.c_str(), Py_file_input);
 	if (!pCode) {
 		return false;
 	}
@@ -1008,27 +1008,37 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 	return true;
 }
 
+inline
+bool wide2utf8(std::string& utf8, const WCHAR* psz)
+{
+	int nbytes = WideCharToMultiByte(CP_UTF8, 0, psz, -1, NULL, 0, NULL, NULL);
+	if (nbytes == 0)
+		return false;
+	utf8.resize(nbytes);
+	nbytes = WideCharToMultiByte(CP_UTF8, 0, psz, -1, &utf8[0], nbytes, NULL, NULL);
+	if (nbytes == 0)
+		return false;
+	return true;
+}
+
 BOOL CPythonMacroManager::LoadKeyMacro(HINSTANCE hInstance, const WCHAR* pszPath)
 {
 	FILE* f = _wfopen(pszPath, L"rb");
 	if (!f) {
 		return FALSE;
 	}
+	wide2utf8(m_strPath, pszPath);
 	long sz = _filelength(_fileno(f));
-	m_pszPath = pszPath;
-	m_str.resize(sz);
-	fread(&m_str[0], 1, sz, f);
+	m_strMacro.resize(sz);
+	fread(&m_strMacro[0], 1, sz, f);
 	fclose(f);
 	return TRUE;
 }
 
 BOOL CPythonMacroManager::LoadKeyMacroStr(HINSTANCE hInstance, const WCHAR* pszCode)
 {
-	int newLen = WideCharToMultiByte(CP_UTF8, 0, pszCode, -1, NULL, 0, NULL, NULL);
-	m_pszPath = L"";
-	m_str.resize(newLen);
-	WideCharToMultiByte(CP_UTF8, 0, pszCode, -1, &m_str[0], newLen, NULL, NULL);
-	return TRUE;
+	m_strPath.clear();
+	return wide2utf8(m_strMacro, pszCode) ? TRUE : FALSE;
 }
 
 // static

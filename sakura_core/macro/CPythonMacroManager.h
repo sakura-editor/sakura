@@ -45,6 +45,6 @@ public:
 	static void declare();
 
 protected:
-	const WCHAR* m_pszPath;
-	std::string m_str;
+	std::string m_strPath;
+	std::string m_strMacro;
 };
