@@ -1007,7 +1007,7 @@ BOOL CPythonMacroManager::LoadKeyMacroStr(HINSTANCE hInstance, const WCHAR* pszC
 // static
 CMacroManagerBase* CPythonMacroManager::Creator(const WCHAR* FileExt)
 {
-	if (wcscmp( FileExt, L"py" ) == 0) {
+	if (wcsicmp( FileExt, L"py" ) == 0) {
 		return new CPythonMacroManager;
 	}
 	return NULL;
