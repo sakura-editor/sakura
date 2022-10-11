@@ -35,6 +35,7 @@
 #include "_os/OleTypes.h"
 #include "CMacro.h"
 #include "util/tchar_convert.h"
+#include "util/module.h"
 
 namespace {
 
@@ -930,7 +931,7 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 {
 	static HMODULE s_hModule;
 	if (!s_hModule) {
-		s_hModule = LoadLibrary(L"python3.dll");
+		s_hModule = LoadLibraryExedir(L"python3.dll");
 		if (!s_hModule) {
 			return false;
 		}
