@@ -771,15 +771,6 @@ std::vector<std::string> g_functionNames;
 std::vector<PyMethodDef> g_functionDescs;
 CEditView* g_pEditView;
 
-std::wstring utf8_to_utf16le(const char* src)
-{
-	int newLen = MultiByteToWideChar(CP_UTF8, 0, src, -1, NULL, 0);
-	std::wstring ret;
-	ret.resize(newLen + 1);
-	MultiByteToWideChar(CP_UTF8, 0, src, -1, &ret[0], newLen);
-	return ret;
-}
-
 PyObject* handleCommand(PyObject* self, PyObject* args)
 {
 	const PyMethodDef* pDesc = (const PyMethodDef*) PyCapsule_GetPointer(self, nullptr);
