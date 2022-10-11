@@ -36,6 +36,7 @@
 #include "CMacro.h"
 #include "util/tchar_convert.h"
 #include "util/module.h"
+#include "view/CEditView.h"
 
 namespace {
 
@@ -257,10 +258,13 @@ EXTERN PyObject* (*PyState_FindModule)(PyModuleDef* def);
 EXTERN int (*PyState_AddModule)(PyObject* module, PyModuleDef* def);
 EXTERN int (*PyState_RemoveModule)(PyModuleDef* def);
 
-EXTERN int (*PyErr_BadArgument)(void);
+EXTERN void (*PyErr_PrintEx)(int set_sys_last_vars);
 EXTERN void (*PyErr_Print)(void);
+EXTERN int (*PyErr_BadArgument)(void);
 EXTERN PyObject* (*PyErr_Occurred)(void);
 EXTERN void (*PyErr_Fetch)(PyObject** ptype, PyObject** pvalue, PyObject** ptraceback);
+EXTERN void (*PyErr_Restore)(PyObject* type, PyObject* value, PyObject* traceback);
+EXTERN void (*PyErr_NormalizeException)(PyObject** exc, PyObject** val, PyObject** tb);
 
 EXTERN long (*PyLong_AsLong)(PyObject*);
 EXTERN PyObject* (*PyLong_FromLong)(long);
@@ -574,10 +578,13 @@ constexpr Symbol symbols[] = {
 	X(PyState_AddModule),
 	X(PyState_RemoveModule),
 
-	X(PyErr_BadArgument),
+	X(PyErr_PrintEx),
 	X(PyErr_Print),
+	X(PyErr_BadArgument),
 	X(PyErr_Occurred),
 	X(PyErr_Fetch),
+	X(PyErr_Restore),
+	X(PyErr_NormalizeException),
 
 	X(PyLong_AsLong),
 	X(PyLong_FromLong),
@@ -927,6 +934,27 @@ CPythonMacroManager::CPythonMacroManager()
 	s_initialized = true;
 }
 
+static
+void ShowError(CEditView* pView, LPCWSTR lpCaption)
+{
+	PyObject* ptype, * pvalue, * ptraceback;
+	PyErr_Fetch(&ptype, &pvalue, &ptraceback);
+	PyErr_NormalizeException(&ptype, &pvalue, &ptraceback);
+	if (pvalue) {
+		PyObject* str = PyObject_Str(pvalue);
+		if (str) {
+			Py_ssize_t sz = 0;
+			wchar_t* pMsg = PyUnicode_AsWideCharString(str, &sz);
+			if (pMsg) {
+				MessageBox(pView->GetHwnd(), pMsg, lpCaption, MB_ICONERROR);
+				PyMem_Free(pMsg);
+			}
+			Py_DecRef(str);
+		}
+	}
+	PyErr_Restore(ptype, pvalue, ptraceback);
+}
+
 bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 {
 	static HMODULE s_hModule;
@@ -957,8 +985,6 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 	//const char* compiler = Py_GetCompiler();
 	PyObject* module = PyImport_ImportModule("SakuraEditor");
 	if (!module) {
-		PyErr_Print();
-		fprintf(stderr, "Error: could not import module 'SakuraEditor'\n");
 		return false;
 	}
 
@@ -983,6 +1009,7 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 
 	PyObject* pCode = Py_CompileString(m_strMacro.c_str(), m_strPath.c_str(), Py_file_input);
 	if (!pCode) {
+		ShowError(EditView, m_wstrPath.c_str());
 		return false;
 	}
 	PyObject* pMain = PyImport_AddModule("__main__");
@@ -999,12 +1026,7 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 	}
 	PyObject* pObj = PyEval_EvalCode(pCode, pGlobals, pLocals);
 	if (!pObj) {
-		//PyErr_Print();
-		PyObject* ptype, * pvalue, * ptraceback;
-		PyErr_Fetch(&ptype, &pvalue, &ptraceback);
-		Py_ssize_t sz = 0;
-		wchar_t* pStrErrorMessage = PyUnicode_AsWideCharString(pvalue, &sz);
-		TRACE("%s", pStrErrorMessage);
+		ShowError(EditView, m_wstrPath.c_str());
 		return false;
 	}
 
@@ -1038,6 +1060,7 @@ BOOL CPythonMacroManager::LoadKeyMacro(HINSTANCE hInstance, const WCHAR* pszPath
 	if (!f) {
 		return FALSE;
 	}
+	m_wstrPath = pszPath;
 	wide2utf8(m_strPath, pszPath);
 	long sz = _filelength(_fileno(f));
 	m_strMacro.resize(sz);
@@ -1054,6 +1077,7 @@ BOOL CPythonMacroManager::LoadKeyMacro(HINSTANCE hInstance, const WCHAR* pszPath
 BOOL CPythonMacroManager::LoadKeyMacroStr(HINSTANCE hInstance, const WCHAR* pszCode)
 {
 	m_strPath.clear();
+	m_wstrPath.clear();
 	return wide2utf8(m_strMacro, pszCode) ? TRUE : FALSE;
 }
 

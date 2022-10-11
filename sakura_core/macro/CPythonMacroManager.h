@@ -46,5 +46,6 @@ public:
 
 protected:
 	std::string m_strPath;
+	std::wstring m_wstrPath;
 	std::string m_strMacro;
 };
