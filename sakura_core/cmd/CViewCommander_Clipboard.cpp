@@ -847,6 +847,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 	while( pcLayout && pcLayout->GetLogicOffset() ){
 		pcLayout = pcLayout->GetPrevLayout();
 	}
+	if( !pcLayout )return;
 	SColorAttr sColorAttr = { (COLORREF)-1, (COLORREF)-1 };
 	SColorAttr sColorAttrNext = { (COLORREF)-1, (COLORREF)-1 };
 	SColorAttr sColorAttrLast = { (COLORREF)-1, (COLORREF)-1 };
