@@ -1453,7 +1453,10 @@ LRESULT CEditWnd::DispatchEvent(
 				LPNMMOUSE mp = (LPNMMOUSE) lParam;
 				if( mp->dwItemSpec == 2 ){	//	入力改行モード
 					enum eEolExts {
-						F_CHGMOD_EOL_NEL = F_CHGMOD_EOL_CR + 1,
+						F_CHGMOD_EOL_CRLF = EFunctionCode::F_CHGMOD_EOL_CRLF,
+						F_CHGMOD_EOL_LF = EFunctionCode::F_CHGMOD_EOL_LF,
+						F_CHGMOD_EOL_CR = EFunctionCode::F_CHGMOD_EOL_CR,
+						F_CHGMOD_EOL_NEL,
 						F_CHGMOD_EOL_PS,
 						F_CHGMOD_EOL_LS,
 					};
@@ -1493,7 +1496,7 @@ LRESULT CEditWnd::DispatchEvent(
 					);
 					::DestroyMenu( hMenuPopUp );
 					EEolType nEOLCode;
-					switch(nId){
+					switch((eEolExts)nId){
 					case F_CHGMOD_EOL_CRLF:	nEOLCode = EEolType::cr_and_lf; break;
 					case F_CHGMOD_EOL_CR:	nEOLCode = EEolType::carriage_return; break;
 					case F_CHGMOD_EOL_LF:	nEOLCode = EEolType::line_feed; break;
