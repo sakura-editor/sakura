@@ -747,6 +747,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 			GetDocument()->m_cLayoutMgr.GetLineStr(rcSel.top, &nLineLenTmp, &pcLayout);
 		}
 		pcLayoutTop = pcLayout;
+		if( !pcLayoutTop )return;
 		CLayoutInt i = rcSel.top;
 		for(; pcLayout != NULL && i <= rcSel.bottom; i++, pcLayout = pcLayout->GetNextLayout())
 		{
