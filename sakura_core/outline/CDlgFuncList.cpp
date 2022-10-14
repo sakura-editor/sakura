@@ -3368,7 +3368,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 					*pnWidth = (rc.right - rc.left) / 3;
 				if( *pnWidth > rc.right - rc.left - DOCK_MIN_SIZE ) *pnWidth = rc.right - rc.left - DOCK_MIN_SIZE;
 				if( *pnWidth < DOCK_MIN_SIZE ) *pnWidth = DOCK_MIN_SIZE;
-			}else{
+			}else if( pnHeight ){
 				if( *pnHeight == 0 )	// 初回
 					*pnHeight = (rc.bottom - rc.top) / 3;
 				if( *pnHeight > rc.bottom - rc.top - DOCK_MIN_SIZE ) *pnHeight = rc.bottom - rc.top - DOCK_MIN_SIZE;
