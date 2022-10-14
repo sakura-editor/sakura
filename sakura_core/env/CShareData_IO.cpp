@@ -2139,6 +2139,7 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 	WCHAR	szLine[1024];
 	WCHAR*	p = NULL;
 	WCHAR*	pn;
+	if( !pData )return;
 	std::vector<std::wstring>& data = *pData;
 	int dataNum = 0;
 
