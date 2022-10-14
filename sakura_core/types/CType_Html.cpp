@@ -87,16 +87,24 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 		LT_DEFAULT,		LT_INLINE,		LT_IGNORE,		LT_EMPTY,
 		LT_BLOCK,		LT_PARAGRAPH,	LT_HEADING
 	};
-	enum ELabelType	nLabelType;				// ラベルの種別
+	auto nLabelType = LT_DEFAULT;	// ラベルの種別
 	CLogicInt		nLineCount;
 	/*	同じ見出し要素（hy）を次に上位レベルの見出し(hx)が現れるまで同じ深さにそろえます。
 		このため、見出しの深さを記憶しておきます。
 		下位レベルの見出しの深さは現れるまで不定で、前の章節での深さは影響しません。 2008.08.15 aroka
 	*/
-	int				nHeadDepth[6+1];		// [0]は 空けておく
-	for(k=0;k<=6;k++){
+	int nHeadDepth[6 + 1] = {};		// [0]は 空けておく
+	for( k = 1; k < _countof(nHeadDepth); k++ ){
 		nHeadDepth[k] = -1;
 	}
+
+	/*
+	 * 解析中の見出しレベル
+	 * 1～6の数値。
+	 * 0は見出し解析中ではないことを示す。
+	 */
+	uint8_t headingLevel = 0;
+
 	for(nLineCount=CLogicInt(0);nLineCount<m_pcDocRef->m_cDocLineMgr.GetLineCount();nLineCount++)
 	{
 		pLineBuf	=	m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
@@ -129,7 +137,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 				continue;
 			}
 			// 2004.04.20 Moca To Here
-			if( *pLine!=L'<' || nDepth>=nMaxStack )
+			if( nDepth >= nMaxStack || *pLine != L'<' )
 			{
 				continue;
 			}
@@ -181,7 +189,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 			if( !bXml ){
 				_wcslwr( szTag );
 			}
-			
+
 			nLabelType = LT_DEFAULT;
 			if( !bXml ){
 				// 物理要素（見た目を変えるためのタグ）は構造解析しない。
@@ -243,6 +251,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 				}
 				if( (szTag[0]==L'h') && (L'1'<=szTitle[1]&&szTitle[1]<=L'6') ){
 					nLabelType = LT_HEADING;
+					headingLevel = szTitle[1] - L'0';
 				}
 			}
 
@@ -259,13 +268,13 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 						}
 					}
 					if( nLabelType==LT_HEADING ){
-						if( nHeadDepth[szTitle[1]-L'0'] != -1 ) // 小見出し:既出
+						if( nHeadDepth[headingLevel] != -1 ) // 小見出し:既出
 						{
-							nDepth = nHeadDepth[szTitle[1]-L'0'];
-							for(k=szTitle[1]-L'0';k<=6;k++){
+							nDepth = nHeadDepth[headingLevel];
+							for( k = headingLevel; k < _countof(nHeadDepth); k++ ){
 								nHeadDepth[k] = -1;
 							}
-							nHeadDepth[szTitle[1]-L'0'] = nDepth;
+							nHeadDepth[headingLevel] = nDepth;
 							bParaTag = false;
 						}
 					}
@@ -375,7 +384,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 					}
 				}else{
 					if( nLabelType==LT_HEADING ){	//	見出しの終わり
-						nHeadDepth[szTitle[1]-L'0'] = nDepth;
+						nHeadDepth[headingLevel] = nDepth;
 						nDepth++;
 					}
 					if( nLabelType==LT_PARAGRAPH ){
