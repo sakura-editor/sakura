@@ -50,7 +50,7 @@ public:
 	BOOL AddParamA( const ACHAR* keyword, const ACHAR* filename, int no, ACHAR type, const ACHAR* note, int depth, const int baseDirId );
 	BOOL GetParam( int index, WCHAR* keyword, WCHAR* filename, int* no, WCHAR* type, WCHAR* note, int* depth, WCHAR* baseDir );
 	int GetCount( void ){ return m_nCount; }
-	void Empty( void );
+	void Empty( void ) noexcept;
 	bool IsOverflow( void ){ return m_bOverflow; }
 
 	typedef struct tagjump_info_t {
@@ -81,7 +81,7 @@ private:
 	//	2005.04.22 genta 最大値を可変に
 	const int		m_MAX_TAGJUMPLIST;	//!< 管理する情報の最大数
 
-	void Free( TagJumpInfo* item );
+	void Free( TagJumpInfo* item ) noexcept;
 
 	DISALLOW_COPY_AND_ASSIGN(CSortedTagJumpList);
 };

@@ -57,7 +57,7 @@ CSortedTagJumpList::~CSortedTagJumpList()
 
 	@param[in] item 削除するアイテム
 */
-void CSortedTagJumpList::Free( TagJumpInfo* item )
+void CSortedTagJumpList::Free( TagJumpInfo* item ) noexcept
 {
 	free( item->keyword );
 	free( item->filename );
@@ -69,7 +69,7 @@ void CSortedTagJumpList::Free( TagJumpInfo* item )
 /*
 	リストをすべて解放する。
 */
-void CSortedTagJumpList::Empty( void )
+void CSortedTagJumpList::Empty( void ) noexcept
 {
 	TagJumpInfo*	p;
 	TagJumpInfo*	next;
