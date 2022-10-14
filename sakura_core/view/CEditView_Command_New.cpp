@@ -81,7 +81,8 @@ void CEditView::InsertData_CEditView(
 	CInsertOpe* pcOpe = NULL;
 	int opeSeq;
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-		pcOpe = new CInsertOpe();
+		pcOpe = new (std::nothrow) CInsertOpe();
+		if( !pcOpe )return;
 		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 			ptInsertPos,
 			&pcOpe->m_ptCaretPos_PHY_Before
@@ -321,7 +322,7 @@ void CEditView::InsertData_CEditView(
 					pcView->RedrawLines(nLayoutTop, nLayoutBottom);
 				}
 				GetEditWnd().GetMiniMap().RedrawLines(nLayoutTop, nLayoutBottom);
-				if( !m_bDoing_UndoRedo && pcOpe ){
+				if( !m_bDoing_UndoRedo ){
 					GetDocument()->m_cDocEditor.m_nOpeBlkRedawCount++;
 				}
 			}
@@ -329,7 +330,7 @@ void CEditView::InsertData_CEditView(
 	}
 
 	//2007.10.18 kobake ここでCOpe処理をまとめる
-	if( !m_bDoing_UndoRedo ){
+	if( !m_bDoing_UndoRedo && pcOpe ){
 		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 			*pptNewPos,
 			&pcOpe->m_ptCaretPos_PHY_After
