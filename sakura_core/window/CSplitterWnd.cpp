@@ -239,7 +239,7 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 	RECT				rc;
 	int					nAllSplitRowsOld = m_nAllSplitRows;	/* 分割行数 */
 	int					nAllSplitColsOld = m_nAllSplitCols;	/* 分割桁数 */
-	CEditView*			pcViewArr[MAXCOUNTOFVIEW];
+	CEditView*			pcViewArr[MAXCOUNTOFVIEW] = {};
 //	int					i;
 	BOOL				bVUp;
 	BOOL				bHUp;
