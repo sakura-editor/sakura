@@ -79,7 +79,7 @@ CListener::~CListener()
 	Listen(NULL);
 }
 
-CSubject* CListener::Listen(CSubject* pcSubject)
+CSubject* CListener::Listen(CSubject* pcSubject) noexcept
 {
 	CSubject* pOld = GetListeningSubject();
 

@@ -73,8 +73,8 @@ public:
 	virtual ~CListener();
 
 	//公開インターフェース
-	CSubject* Listen(CSubject* pcSubject); //!< 直前にウォッチしていたサブジェクトを返す
-	CSubject* GetListeningSubject() const{ return m_pcSubjectRef; }
+	CSubject* Listen(CSubject* pcSubject) noexcept; //!< 直前にウォッチしていたサブジェクトを返す
+	CSubject* GetListeningSubject() const noexcept { return m_pcSubjectRef; }
 
 private:
 	CSubject* m_pcSubjectRef;
