@@ -1632,15 +1632,8 @@ WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 	DEBUG_TRACE( L"file  %s\n", fileName );
 	DEBUG_TRACE( L"depth %d\n",  depth );
 	//完全パス名を作成する。
-	const WCHAR	*p = fileName;
-	if( p[0] == L'\\' ){	//ドライブなし絶対パスか？
-		if( p[1] == L'\\' ){	//ネットワークパスか？
-			wcscpy( pszOutput, p );	//何も加工しない。
-		}else{
-			//ドライブ加工したほうがよい？
-			wcscpy( pszOutput, p );	//何も加工しない。
-		}
-	}else if( _istalpha( p[0] ) && p[1] == L':' ){	//絶対パスか？
+	if( const WCHAR	*p = fileName;
+		( p && p[0] == L'\\' ) || ( p && iswalpha( p[0] ) && p[1] == L':' ) ){	//絶対パスか？
 		wcscpy( pszOutput, p );	//何も加工しない。
 	}else{
 		for( int i = 0; i < depth; i++ ){
