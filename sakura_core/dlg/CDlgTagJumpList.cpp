@@ -755,11 +755,7 @@ bool CDlgTagJumpList::GetFullPathAndLine( int index, WCHAR *fullPath, int count,
 		AddLastYenFromDirectoryPath( dirFileName );
 		const WCHAR	*p = fileName;
 		if( p[0] == L'\\' ){
-			if( p[1] == L'\\' ){
-				wcscpy( dirFileName, p );
-			}else{
-				wcscpy( dirFileName, p );
-			}
+			wcscpy( dirFileName, p );
 		}else if( _istalpha( p[0] ) && p[1] == L':' ){
 			wcscpy( dirFileName, p );
 		}else{
