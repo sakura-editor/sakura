@@ -48,13 +48,15 @@ CRunningTimer::CRunningTimer( std::wstring_view name, OutputMode mode, OutputSty
 
 CRunningTimer::~CRunningTimer()
 {
-	WriteTraceInternal( GetTime(), TraceType::ExitScope );
-	FlushPendingTraces();
-	if( m_nDepth == 0 ){
-		OutputFooter();
+	try {
+		WriteTraceInternal( GetTime(), TraceType::ExitScope );
+		FlushPendingTraces();
+		if( m_nDepth == 0 ){
+			OutputFooter();
+		}
+		m_nNestCount--;
 	}
-	m_nNestCount--;
-	return;
+	catch (...) {}
 }
 
 void CRunningTimer::Reset()
