@@ -136,15 +136,10 @@ inline bool C_IsWordChar( wchar_t c )
 */
 static bool C_IsOperator( wchar_t* szStr, int nLen	)
 {
-	if( nLen >= 8 && szStr[ nLen - 1 ] == L'r' ){
-		if( nLen > 8 ?
-				wcscmp( szStr + nLen - 9, L":operator" ) == 0 :	// メンバー関数による定義
-				wcscmp( szStr, L"operator" ) == 0	// friend関数による定義
-		 ){
-		 	return true;
-		}
-	}
-	return false;
+	return 0 < nLen
+		&& 8 <= nLen
+		&& szStr[nLen - 1] == L'r'
+		&& 0 == wcsncmp(szStr + nLen - 8, L"operator", _countof(L"operator") - 1);
 }
 //	To Here Apr. 1, 2001 genta
 
