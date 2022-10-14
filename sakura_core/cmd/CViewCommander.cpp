@@ -668,7 +668,7 @@ BOOL CViewCommander::HandleCommand(
 */
 void CViewCommander::Sub_BoxSelectLock( int flags )
 {
-	bool bSelLock;
+	bool bSelLock = false;
 	if( flags == 0x00 ){
 		bSelLock = GetDllShareData().m_Common.m_sEdit.m_bBoxSelectLock;
 	}else if( flags == 0x01 ){
