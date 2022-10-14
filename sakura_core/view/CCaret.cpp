@@ -780,7 +780,7 @@ void CCaret::ShowCaretPosInfo()
 	// -- -- -- -- キャレット位置の文字情報 -> szCaretChar -- -- -- -- //
 	//
 	WCHAR szCaretChar[32]=L"";
-	if( pLine ){
+	if( pLine && pcLayout ){
 		// 指定された桁に対応する行のデータ内の位置を調べる
 		CLogicInt nIdx = GetCaretLogicPos().GetX2() - pcLayout->GetLogicOffset();
 		if( nIdx < nLineLen ){
