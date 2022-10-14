@@ -76,11 +76,14 @@ void CGraphics::Init(HDC hdc)
 
 CGraphics::~CGraphics()
 {
-	ClearClipping();
-	ClearMyFont();
-	ClearPen();
-	ClearBrush();
-	RestoreTextColors();
+	try {
+		ClearClipping();
+		ClearMyFont();
+		ClearPen();
+		ClearBrush();
+		RestoreTextColors();
+	}
+	catch (...) {}
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
