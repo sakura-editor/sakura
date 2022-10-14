@@ -830,16 +830,19 @@ wchar_t* wcsrchr2( const wchar_t *pt , const wchar_t ch1 , const wchar_t ch2 ){
 
 void GetExistPathW( wchar_t *po , const wchar_t *pi )
 {
-	wchar_t	*pw,*ps;
-	int		cnt;
-	int		dl;		/* ドライブの状態 */
+	if( !po )return;
+	if( !pi )return;
+
+	wchar_t	*ps;
 
 	/* pi の内容を
 	/ ・ " を削除しつつ
 	/ ・ / を \ に変換しつつ(Win32API では / も \ と同等に扱われるから)
 	/ ・最大 ( _MAX_PATH-1 ) 文字まで
 	/ po にコピーする。 */
-	for( pw=po,cnt=0 ; ( *pi != L'\0' ) && ( cnt < _MAX_PATH-1 ) ; pi++ ){
+	int cnt = 0;
+	wchar_t* pw = po;
+	for( ; *pi && cnt < _MAX_PATH - 1; pi++ ){
 		/* /," 共に Shift_JIS の漢字コード中には含まれないので Shift_JIS 判定は不要。 */
 		if( *pi == L'\"' )	continue;		/*  " なら何もしない。次の文字へ */
 		if( *pi == L'/' )	*pw++ = L'\\';	/*  / なら \ に変換してコピー    */
@@ -848,8 +851,9 @@ void GetExistPathW( wchar_t *po , const wchar_t *pi )
 	}
 	*pw = L'\0';		/* 文字列終端 */
 
+	int dl;		/* ドライブの状態 */
 	dl = GetExistPath_NO_DriveLetter;	/*「ドライブレターが無い」にしておく*/
-	if( *(po+1)==L':' && WCODE::IsAZ(*po) ){	/* 先頭にドライブレターがある。そのドライブが有効かどうか判定する */
+	if( 0 < cnt && po[1] == L':' && WCODE::IsAZ(*po) ){	/* 先頭にドライブレターがある。そのドライブが有効かどうか判定する */
 		wchar_t	drv[4] = L"_:\\";
 		drv[0] = *po;
 		if( _waccess(drv,0) == 0 )	dl = GetExistPath_AV_Drive;		/* 有効 */
@@ -865,7 +869,7 @@ void GetExistPathW( wchar_t *po , const wchar_t *pi )
 
 	/* ps = 検索開始位置 */
 	ps = po;	/* ↓文字列の先頭が \\ なら、\ 検索処理の対象から外す */
-	if( ( *po == L'\\' )&&( *(po+1) == L'\\' ) )	ps +=2;
+	if( po[0] == L'\\' && 0 < cnt && po[1] == L'\\' )	ps +=2;
 
 	if( *ps == L'\0' ){	/* 検索対象が空文字列なら */
 		*po = L'\0';		/* 返値文字列 = "";(空文字列) */
