@@ -400,17 +400,10 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, WCHAR *pszFilename )
 	int nwlen, nstartidx;
 	CHAR_TYPE pszSplitChars[16];
 
-	if( sizeof(CHAR_TYPE) == 2 ){
-		// スペースまたはタブが区切り文字
-		pszSplitChars[0] = L' ';
-		pszSplitChars[1] = L'\t';
-		pszSplitChars[2] = L'\0';
-	}else{
-		// スペースまたはタブが区切り文字
-		pszSplitChars[0] = ' ';
-		pszSplitChars[1] = '\t';
-		pszSplitChars[2] = '\0';
-	}
+	// スペースまたはタブが区切り文字
+	pszSplitChars[0] = ' ';
+	pszSplitChars[1] = '\t';
+	pszSplitChars[2] = '\0';
 	
 	if( nLen < 1 ){
 		if( pszFilename ){
