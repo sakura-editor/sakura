@@ -635,16 +635,9 @@ EndFunc:
 
 	// 非文字と予約コードポイントをチェック
 	if( nOption != 0 && echarset != CHARSET_BINARY ){
-		wchar32_t wc32;
-		wc32 = DecodeUtf8( reinterpret_cast<const unsigned char*>(pS), ncwidth );
-		if( (nOption & UC_NONCHARACTER) && IsUnicodeNoncharacter(wc32) ){
-			echarset = CHARSET_BINARY;
-			ncwidth = 1;
-		}else{
-			// 保護コード
-			echarset = CHARSET_BINARY;
-			ncwidth = 1;
-		}
+		// 保護コード
+		echarset = CHARSET_BINARY;
+		ncwidth = 1;
 	}
 
 	if( peCharset ){
