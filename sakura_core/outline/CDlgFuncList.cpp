@@ -2473,7 +2473,7 @@ BOOL CDlgFuncList::OnJump( bool bCheckAutoClose, bool bFileJump )	//2002.02.08 h
 					poCaret.y = nLineTo;
 					bFileJumpSelf = TagJumpTimer(m_cFuncInfo->m_cmemFileName.GetStringPtr(), poCaret, bCheckAutoClose);
 				}
-			}else{
+			}else if( m_cFuncInfo ){
 				nLineTo = m_cFuncInfo->m_nFuncLineCRLF;
 				nColTo = m_cFuncInfo->m_nFuncColCRLF;
 				/* カーソルを移動させる */
