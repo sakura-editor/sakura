@@ -26,6 +26,9 @@
 
 #include "StdAfx.h"
 #include "CUtf7.h"
+
+#include <string_view>
+
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
 #include "convert/convert_util2.h"
@@ -79,31 +82,36 @@ int CUtf7::_Utf7SetBToUni_block( const char* pSrc, const int nSrcLen, wchar_t* p
 
 int CUtf7::Utf7ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError )
 {
-	const char *pr, *pr_end;
-	char *pr_next;
-	wchar_t *pw;
-	int nblocklen=0;
-	bool berror_tmp, berror=false;
+	bool berror = false;
 
-	pr = pSrc;
-	pr_end = pSrc + nSrcLen;
-	pw = pDst;
+	std::string_view src(pSrc, nSrcLen);
 
-	do{
+	auto pr      = src.cbegin();
+	auto pr_end  = src.cend();
+	auto pr_next = src.begin();
+
+	auto* pw = pDst;
+
+	while( pr_next < pr_end && *pr )
+	{
+		bool berror_tmp = false;
+
 		// UTF-7 Set D 部分のチェック
-		nblocklen = CheckUtf7DPart( pr, pr_end-pr, &pr_next, &berror_tmp );
-		if( berror_tmp == true ){
+		auto pr_next2 = &*pr_next;
+		int nblocklen = CheckUtf7DPart( &*pr, pr_end - pr, &pr_next2, &berror_tmp );
+		if( berror_tmp ){
 			berror = true;
 		}
-		pw += _Utf7SetDToUni_block( pr, nblocklen, pw );
-
-		pr = pr_next;  // 次の読み込み位置を取得
-		if( pr_next >= pr_end ){
+		pr_next += pr_next2 - &*pr_next;
+		pw += _Utf7SetDToUni_block( &*pr, nblocklen, pw );
+		if( pr_end <= pr_next || !*pr_next ){
 			break;
 		}
+		pr = pr_next;  // 次の読み込み位置を取得
 
 		// UTF-7 Set B 部分のチェック
-		nblocklen = CheckUtf7BPart( pr, pr_end-pr, &pr_next, &berror_tmp, UC_LOOSE );
+		nblocklen = CheckUtf7BPart( &*pr, pr_end - pr, &pr_next2, &berror_tmp, UC_LOOSE );
+		pr_next += pr_next2 - &*pr_next;
 		{
 			// エラーがあってもできるところまでデコード
 			if( berror_tmp ){
@@ -114,14 +122,14 @@ int CUtf7::Utf7ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* 
 				*pw = L'+';
 				++pw;
 			}else{
-				pw += _Utf7SetBToUni_block( pr, nblocklen, pw, &berror_tmp );
-				if( berror_tmp != false ){
+				pw += _Utf7SetBToUni_block( &*pr, nblocklen, pw, &berror_tmp );
+				if( berror_tmp ){
 					berror = true;
 				}
 			}
 		}
 		pr = pr_next;  // 次の読み込み位置を取得
-	}while( pr_next < pr_end );
+	}
 
 	if( pbError ){
 		*pbError = berror;
@@ -135,7 +143,7 @@ int CUtf7::Utf7ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* 
 EConvertResult CUtf7::UTF7ToUnicode( const CMemory& cSrc, CNativeW* pDstMem )
 {
 	// エラー状態：
-	bool bError;
+	bool bError = false;
 
 	// データ取得
 	int nDataLen = cSrc.GetRawLength();
@@ -207,7 +215,7 @@ int CUtf7::_UniToUtf7SetB_block( const wchar_t* pSrc, const int nSrcLen, char* p
 	return pw - pDst;
 }
 
-int CUtf7::UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst )
+int CUtf7::UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst, int nDstLen )
 {
 	const wchar_t *pr, *pr_base;
 	const wchar_t* pr_end;
@@ -229,10 +237,12 @@ int CUtf7::UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst )
 
 		if( *pr == L'+' ){
 			// '+' → "+-"
-			pw[0] = '+';
-			pw[1] = '-';
+			if( nDstLen < pw + 2 - pDst ){
+				break;
+			}
+			*(pw++) = '+';
+			*(pw++) = '-';
 			++pr;
-			pw += 2;
 		}else{
 			for( ; pr < pr_end; ++pr ){
 				if( IsUtf7SetD(*pr) ){
@@ -258,18 +268,15 @@ EConvertResult CUtf7::UnicodeToUTF7( const CNativeW& cSrc, CMemory* pDstMem )
 
 	// 出力先バッファの確保
 	// 最大で、変換元のデータ長の５倍。
-	char *pDst = new (std::nothrow) char[ nSrcLen * 5 + 1 ];  // * → +ACo-
-	if( pDst == NULL ){
-		return RESULT_FAILURE;
-	}
+	int nDstLen = nSrcLen * 5;
+	std::string dst( nDstLen, char() );  // * → +ACo-
+	auto pDst = dst.data();
 
 	// 変換
-	int nDstLen = UniToUtf7( pSrc, nSrcLen, pDst );
+	nDstLen = UniToUtf7( pSrc, nSrcLen, pDst, nDstLen );
 
 	// pMem にデータをセット
 	pDstMem->SetRawDataHoldBuffer( pDst, nDstLen );
-
-	delete [] pDst;
 
 	return RESULT_COMPLETE;
 }
